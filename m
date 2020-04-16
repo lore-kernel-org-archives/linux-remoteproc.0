@@ -1,1579 +1,2187 @@
-Return-Path: <SRS0=YAOw=57=vger.kernel.org=linux-remoteproc-owner@kernel.org>
+Return-Path: <SRS0=fbBE=6A=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32204C3815B
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 15 Apr 2020 22:44:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3923FC38A2E
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 16 Apr 2020 00:56:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E7B3E2078B
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 15 Apr 2020 22:44:54 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="WP3XmJHt"
+	by mail.kernel.org (Postfix) with ESMTP id E95EC208E0
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 16 Apr 2020 00:56:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1586998592;
+	bh=G2eBtcKH3ZU7TLGLX2n1XUrUVxFuZmYpCFiZNgfs480=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=MTZ/yy0B9f1Ee5d3IZapMmYxlrBY4dP2u4buTRWoVcwqGKcICv2f7WRDDG6RzzliL
+	 Utz1S3IMpy3p+gBSyl0yzr+K+5zcK71LqH6LKczEusF5mqj+I9OJyTcsO534gkSdrZ
+	 f+GEnQHrRUicW0V6Uky+IOTwHKYA2OgHzYSsc8pc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725960AbgDOWow (ORCPT
+        id S2405707AbgDPA4R (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 15 Apr 2020 18:44:52 -0400
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:56910 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725855AbgDOWot (ORCPT
+        Wed, 15 Apr 2020 20:56:17 -0400
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:34783 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2405193AbgDPA4A (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 15 Apr 2020 18:44:49 -0400
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 03FMiY4R125572;
-        Wed, 15 Apr 2020 17:44:34 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1586990674;
-        bh=/QpOnWDHlIsUBsD0986QH7zhIUP26cPO4nIq9U2kLUw=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=WP3XmJHtGkbs2JaMMSesj5gsrRsMAoToSZfYZF4eE5epTLdyBFlc3Am0TcFNctMlv
-         KCBrj+G7LS3zHQs8a5VJC1wbopOtE2da1flE6iUVzgmp3NXMkp1vDDhbZq/o5/+Adr
-         zV7BeRXi2sX4SQzFPGQtahmkc/0N2L5AmSUmMvN0=
-Received: from DLEE107.ent.ti.com (dlee107.ent.ti.com [157.170.170.37])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 03FMiY7R023345
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 15 Apr 2020 17:44:34 -0500
-Received: from DLEE105.ent.ti.com (157.170.170.35) by DLEE107.ent.ti.com
- (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Wed, 15
- Apr 2020 17:44:33 -0500
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE105.ent.ti.com
- (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Wed, 15 Apr 2020 17:44:33 -0500
-Received: from [10.250.70.56] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 03FMiXvO008733;
-        Wed, 15 Apr 2020 17:44:33 -0500
-Subject: Re: [PATCH 5/7] remoteproc/k3-r5: Add a remoteproc driver for R5F
- subsystem
-To:     Mathieu Poirier <mathieu.poirier@linaro.org>
-CC:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Lokesh Vutla <lokeshvutla@ti.com>,
-        <linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20200324201819.23095-1-s-anna@ti.com>
- <20200324201819.23095-6-s-anna@ti.com> <20200409212501.GA32029@xps15>
-From:   Suman Anna <s-anna@ti.com>
-Message-ID: <2d83c22a-9302-1ab9-e241-87fbd7a30dbf@ti.com>
-Date:   Wed, 15 Apr 2020 17:44:33 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+        Wed, 15 Apr 2020 20:56:00 -0400
+Received: by mail-oi1-f195.google.com with SMTP id x10so5820023oie.1;
+        Wed, 15 Apr 2020 17:55:55 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=eClXGZSWzJvd/DoV8OQnLad2ik2PHMQB1UFXcLxOlyI=;
+        b=a2x9dSgmdXQR6cKsQquTIZjfL9wl4qscHwQBfQ3ONbHGRol4qFIr2rYCPOgw57I2Bv
+         ewxdMKJ+67k3I7gSQrF0QI1zCGT78gDTKHvzBaxnRvobTpFx197sJcsYBE2PsPDatiM3
+         yNFeE82Ms+khOscQa8wt5bmlPIhSfx2e9ZU+wnXwhWLNqWdwN849NRVvVaVrJWnJyuwS
+         JUDYt66IJY5JlAVljZFGXlZ0GQMP/qeneZ2XKHa324fNRZdedT1Q9l6zD3AyNi9tr4C6
+         xhUeRHRK1Gl41DCf/reW+5Xr20N0AROaevIZARkC8C4M6q8ZSzfJdMqE3J3e1Wy5kymS
+         DSsA==
+X-Gm-Message-State: AGi0Pua9K7u3s0lW/uWQo1Wts//gfuFgkm2/+TZxVEdu+sMTlf/sapVv
+        sHFVhXOjK/ewaFHvberEmRg67cI=
+X-Google-Smtp-Source: APiQypJcmhkLoxiza+Hcqr+q/TETJrB0u/CR0IpN7QMM7LB3ELKlyz7AeJlLvikTUJNxY1wOGLGAkA==
+X-Received: by 2002:aca:6243:: with SMTP id w64mr1452526oib.28.1586998553596;
+        Wed, 15 Apr 2020 17:55:53 -0700 (PDT)
+Received: from xps15.herring.priv (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.googlemail.com with ESMTPSA id s13sm7380326oov.28.2020.04.15.17.55.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 15 Apr 2020 17:55:52 -0700 (PDT)
+From:   Rob Herring <robh@kernel.org>
+To:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
+        Maxime Ripard <mripard@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Sam Ravnborg <sam@ravnborg.org>, Vinod Koul <vkoul@kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Pavel Machek <pavel@ucw.cz>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Heiko Stuebner <heiko@sntech.de>, Andrew Lunn <andrew@lunn.ch>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Fabio Estevam <festevam@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Amit Kucheria <amit.kucheria@linaro.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-i2c@vger.kernel.org,
+        linux-hwmon@vger.kernel.org, linux-iio@vger.kernel.org,
+        linux-input@vger.kernel.org, linux-leds@vger.kernel.org,
+        linux-media@vger.kernel.org, linux-mmc@vger.kernel.org,
+        linux-mtd@lists.infradead.org, linux-can@vger.kernel.org,
+        netdev@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-pwm@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org, linux-riscv@lists.infradead.org,
+        linux-rtc@vger.kernel.org, linux-serial@vger.kernel.org,
+        alsa-devel@alsa-project.org, linux-spi@vger.kernel.org
+Subject: [PATCH 1/2] dt-bindings: Clean-up schema indentation formatting
+Date:   Wed, 15 Apr 2020 19:55:48 -0500
+Message-Id: <20200416005549.9683-1-robh@kernel.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <20200409212501.GA32029@xps15>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Transfer-Encoding: 8bit
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
-Message-ID: <20200415224433.wn-Zh6xIchhAVwzWfO5o4_4ScnHFPrv53gSVLUKbC-s@z>
+Message-ID: <20200416005548.-BKINNOltwkHpST7bHhL9A2GZgEKs2XmWTs6XzoPzSA@z>
 
-On 4/9/20 4:25 PM, Mathieu Poirier wrote:
-> On Tue, Mar 24, 2020 at 03:18:17PM -0500, Suman Anna wrote:
->> The TI K3 family of SoCs typically have one or more dual-core Arm Cortex
->> R5F processor clusters/subsystems (R5FSS). This R5F subsystem/cluster
->> can be configured at boot time to be either run in a LockStep mode or in
->> an Asymmetric Multi Processing (AMP) fashion in Split-mode. This subsystem
->> has 64 KB each Tightly-Coupled Memory (TCM) internal memories for each
->> core split between two banks - TCMA and TCMB (further interleaved into
->> two banks). The subsystem does not have an MMU, but has a Region Address
->> Translater (RAT) module that is accessible only from the R5Fs for providing
->> translations between 32-bit CPU addresses into larger system bus addresses.
->>
->> Add a remoteproc driver to support this subsystem to be able to load and
->> boot the R5F cores primarily in LockStep mode. The code also includes the
->> base support for Split mode. Error Recovery and Power Management features
->> are not currently supported. Loading support includes the internal TCMs
->> and DDR. RAT support is left for a future patch, and as such the reserved
->> memory carveout regions are all expected to be using memory regions within
->> the first 2 GB.
->>
->> The R5F remote processors do not have an MMU, and so require fixed memory
->> carveout regions matching the firmware image addresses. Support for this
->> is provided by mandating multiple memory regions to be attached to the
->> remoteproc device. The first memory region will be used to serve as the
->> DMA pool for all dynamic allocations like the vrings and vring buffers.
->> The remaining memory regions are mapped into the kernel at device probe
->> time, and are used to provide address translations for firmware image
->> segments without the need for any RSC_CARVEOUT entries. Any firmware
->> image using memory outside of the supplied reserved memory carveout
->> regions will be errored out.
->>
->> The R5F processors on TI K3 SoCs require a specific sequence for booting
->> and shutting down the processors. This sequence is also dependent on the
->> mode (LockStep or Split) the R5F cluster is configured for. The R5F cores
->> have a Memory Protection Unit (MPU) that has a default configuration that
->> does not allow the cores to run out of DDR out of reset. This is resolved
->> by using the TCMs for boot-strapping code that applies the appropriate
->> executable permissions on desired DDR memory. The loading into the TCMs
->> requires that the resets be released first with the cores in halted state.
->> The Power Sleep Controller (PSC) module on K3 SoCs requires that the cores
->> be in WFI/WFE states with no active bus transactions before the cores can
->> be put back into reset. Support for this is provided by using the newly
->> introduced .prepare() and .unprepare() ops in the remoteproc core. The
->> .prepare() ops is invoked before any loading, and the .unprepare() ops
->> is invoked after the remoteproc resource cleanup. The R5F core resets
->> are deasserted in .prepare() and asserted in .unprepare(), and the cores
->> themselves are started and halted in .start() and .stop() ops. This
->> ensures symmetric usage and allows the R5F cores state machine to be
->> maintained properly between using the sysfs 'state' variable, bind/unbind
->> and regular module load/unload flows.
->>
->> The subsystem is represented as a single remoteproc in LockStep mode, and
->> as two remoteprocs in Split mode. The driver uses various TI-SCI interfaces
->> to talk to the System Controller (DMSC) for managing configuration, power
->> and reset management of these cores. IPC between the A53 cores and the R5
->> cores is supported through the virtio rpmsg stack using shared memory and
->> OMAP Mailboxes.
->>
->> The AM65x SoCs typically have a single R5FSS in the MCU voltage domain. The
->> J721E SoCs uses a slightly revised IP and typically have three R5FSSs, with
->> one cluster present within the MCU voltage domain (MCU_R5FSS0), and the
->> remaining two clusters present in the MAIN voltage domain (MAIN_R5FSS0 and
->> MAIN_R5FSS1). The integration of these clusters on J721E SoC is also
->> slightly different in that these IPs do support an actual local reset line,
->> while they are a no-op on AM65x SoCs.
->>
->> Signed-off-by: Suman Anna <s-anna@ti.com>
->> ---
->>   drivers/remoteproc/Kconfig               |   16 +
->>   drivers/remoteproc/Makefile              |    1 +
->>   drivers/remoteproc/ti_k3_r5_remoteproc.c | 1346 ++++++++++++++++++++++
->>   3 files changed, 1363 insertions(+)
->>   create mode 100644 drivers/remoteproc/ti_k3_r5_remoteproc.c
->>
->> diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
->> index de3862c15fcc..073048b4c0fb 100644
->> --- a/drivers/remoteproc/Kconfig
->> +++ b/drivers/remoteproc/Kconfig
->> @@ -224,6 +224,22 @@ config STM32_RPROC
->>   
->>   	  This can be either built-in or a loadable module.
->>   
->> +config TI_K3_R5_REMOTEPROC
->> +	tristate "TI K3 R5 remoteproc support"
->> +	depends on ARCH_K3
->> +	select MAILBOX
->> +	select OMAP2PLUS_MBOX
->> +	help
->> +	  Say y here to support TI's R5F remote processor subsystems
->> +	  on various TI K3 family of SoCs through the remote processor
->> +	  framework.
->> +
->> +	  You want to say y here in order to offload some processing
->> +	  tasks to these processors
->> +
->> +	  It's safe to say N here if you're not interested in utilizing
->> +	  a slave processor
->> +
->>   endif # REMOTEPROC
->>   
->>   endmenu
->> diff --git a/drivers/remoteproc/Makefile b/drivers/remoteproc/Makefile
->> index e30a1b15fbac..00ba826818af 100644
->> --- a/drivers/remoteproc/Makefile
->> +++ b/drivers/remoteproc/Makefile
->> @@ -28,3 +28,4 @@ qcom_wcnss_pil-y			+= qcom_wcnss_iris.o
->>   obj-$(CONFIG_ST_REMOTEPROC)		+= st_remoteproc.o
->>   obj-$(CONFIG_ST_SLIM_REMOTEPROC)	+= st_slim_rproc.o
->>   obj-$(CONFIG_STM32_RPROC)		+= stm32_rproc.o
->> +obj-$(CONFIG_TI_K3_R5_REMOTEPROC)	+= ti_k3_r5_remoteproc.o
->> diff --git a/drivers/remoteproc/ti_k3_r5_remoteproc.c b/drivers/remoteproc/ti_k3_r5_remoteproc.c
->> new file mode 100644
->> index 000000000000..655f8f14c37d
->> --- /dev/null
->> +++ b/drivers/remoteproc/ti_k3_r5_remoteproc.c
->> @@ -0,0 +1,1346 @@
->> +// SPDX-License-Identifier: GPL-2.0-only
->> +/*
->> + * TI K3 R5F (MCU) Remote Processor driver
->> + *
->> + * Copyright (C) 2017-2020 Texas Instruments Incorporated - http://www.ti.com/
->> + *	Suman Anna <s-anna@ti.com>
->> + */
->> +
->> +#include <linux/dma-mapping.h>
->> +#include <linux/err.h>
->> +#include <linux/interrupt.h>
->> +#include <linux/kernel.h>
->> +#include <linux/mailbox_client.h>
->> +#include <linux/module.h>
->> +#include <linux/of_device.h>
->> +#include <linux/of_address.h>
->> +#include <linux/of_reserved_mem.h>
->> +#include <linux/platform_device.h>
->> +#include <linux/pm_runtime.h>
->> +#include <linux/remoteproc.h>
->> +#include <linux/omap-mailbox.h>
->> +#include <linux/reset.h>
->> +#include <linux/soc/ti/ti_sci_protocol.h>
->> +
->> +#include "omap_remoteproc.h"
->> +#include "remoteproc_internal.h"
->> +#include "ti_sci_proc.h"
->> +
->> +/* This address can either be for ATCM or BTCM with the other at address 0x0 */
->> +#define K3_R5_TCM_DEV_ADDR	0x41010000
->> +
->> +/* R5 TI-SCI Processor Configuration Flags */
->> +#define PROC_BOOT_CFG_FLAG_R5_DBG_EN			0x00000001
->> +#define PROC_BOOT_CFG_FLAG_R5_DBG_NIDEN			0x00000002
->> +#define PROC_BOOT_CFG_FLAG_R5_LOCKSTEP			0x00000100
->> +#define PROC_BOOT_CFG_FLAG_R5_TEINIT			0x00000200
->> +#define PROC_BOOT_CFG_FLAG_R5_NMFI_EN			0x00000400
->> +#define PROC_BOOT_CFG_FLAG_R5_TCM_RSTBASE		0x00000800
->> +#define PROC_BOOT_CFG_FLAG_R5_BTCM_EN			0x00001000
->> +#define PROC_BOOT_CFG_FLAG_R5_ATCM_EN			0x00002000
->> +
->> +/* R5 TI-SCI Processor Control Flags */
->> +#define PROC_BOOT_CTRL_FLAG_R5_CORE_HALT		0x00000001
->> +
->> +/* R5 TI-SCI Processor Status Flags */
->> +#define PROC_BOOT_STATUS_FLAG_R5_WFE			0x00000001
->> +#define PROC_BOOT_STATUS_FLAG_R5_WFI			0x00000002
->> +#define PROC_BOOT_STATUS_FLAG_R5_CLK_GATED		0x00000004
->> +#define PROC_BOOT_STATUS_FLAG_R5_LOCKSTEP_PERMITTED	0x00000100
->> +
->> +/**
->> + * struct k3_r5_mem - internal memory structure
->> + * @cpu_addr: MPU virtual address of the memory region
->> + * @bus_addr: Bus address used to access the memory region
->> + * @dev_addr: Device address from remoteproc view
->> + * @size: Size of the memory region
->> + */
->> +struct k3_r5_mem {
->> +	void __iomem *cpu_addr;
->> +	phys_addr_t bus_addr;
->> +	u32 dev_addr;
->> +	size_t size;
->> +};
->> +
->> +enum cluster_mode {
->> +	CLUSTER_MODE_SPLIT = 0,
->> +	CLUSTER_MODE_LOCKSTEP,
->> +};
->> +
->> +/**
->> + * struct k3_r5_cluster - K3 R5F Cluster structure
->> + * @dev: cached device pointer
->> + * @mode: Mode to configure the Cluster - Split or LockStep
->> + * @cores: list of R5 cores within the cluster
->> + */
->> +struct k3_r5_cluster {
->> +	struct device *dev;
->> +	enum cluster_mode mode;
->> +	struct list_head cores;
->> +};
->> +
->> +/**
->> + * struct k3_r5_core - K3 R5 core structure
->> + * @elem: linked list item
->> + * @dev: cached device pointer
->> + * @rproc: rproc handle representing this core
->> + * @mem: internal memory regions data
->> + * @num_mems: number of internal memory regions
->> + * @reset: reset control handle
->> + * @tsp: TI-SCI processor control handle
->> + * @ti_sci: TI-SCI handle
->> + * @ti_sci_id: TI-SCI device identifier
->> + * @atcm_enable: flag to control ATCM enablement
->> + * @btcm_enable: flag to control BTCM enablement
->> + * @loczrama: flag to dictate which TCM is at device address 0x0
->> + */
->> +struct k3_r5_core {
->> +	struct list_head elem;
->> +	struct device *dev;
->> +	struct rproc *rproc;
->> +	struct k3_r5_mem *mem;
->> +	int num_mems;
->> +	struct reset_control *reset;
->> +	struct ti_sci_proc *tsp;
->> +	const struct ti_sci_handle *ti_sci;
->> +	u32 ti_sci_id;
->> +	u32 atcm_enable;
->> +	u32 btcm_enable;
->> +	u32 loczrama;
->> +};
->> +
->> +/**
->> + * struct k3_r5_rproc - K3 remote processor state
->> + * @dev: cached device pointer
->> + * @cluster: cached pointer to parent cluster structure
->> + * @mbox: mailbox channel handle
->> + * @client: mailbox client to request the mailbox channel
->> + * @rproc: rproc handle
->> + * @core: cached pointer to r5 core structure being used
->> + * @rmem: reserved memory regions data
->> + * @num_rmems: number of reserved memory regions
->> + */
->> +struct k3_r5_rproc {
->> +	struct device *dev;
->> +	struct k3_r5_cluster *cluster;
->> +	struct mbox_chan *mbox;
->> +	struct mbox_client client;
->> +	struct rproc *rproc;
->> +	struct k3_r5_core *core;
->> +	struct k3_r5_mem *rmem;
->> +	int num_rmems;
->> +};
->> +
->> +/**
->> + * k3_r5_rproc_mbox_callback() - inbound mailbox message handler
->> + * @client: mailbox client pointer used for requesting the mailbox channel
->> + * @data: mailbox payload
->> + *
->> + * This handler is invoked by the OMAP mailbox driver whenever a mailbox
->> + * message is received. Usually, the mailbox payload simply contains
->> + * the index of the virtqueue that is kicked by the remote processor,
->> + * and we let remoteproc core handle it.
->> + *
->> + * In addition to virtqueue indices, we also have some out-of-band values
->> + * that indicate different events. Those values are deliberately very
->> + * large so they don't coincide with virtqueue indices.
->> + */
->> +static void k3_r5_rproc_mbox_callback(struct mbox_client *client, void *data)
->> +{
->> +	struct k3_r5_rproc *kproc = container_of(client, struct k3_r5_rproc,
->> +						client);
->> +	struct device *dev = kproc->rproc->dev.parent;
->> +	const char *name = kproc->rproc->name;
->> +	u32 msg = omap_mbox_message(data);
->> +
->> +	dev_dbg(dev, "mbox msg: 0x%x\n", msg);
->> +
->> +	switch (msg) {
->> +	case RP_MBOX_CRASH:
->> +		/*
->> +		 * remoteproc detected an exception, but error recovery is not
->> +		 * supported. So, just log this for now
->> +		 */
->> +		dev_err(dev, "K3 R5F rproc %s crashed\n", name);
->> +		break;
->> +	case RP_MBOX_ECHO_REPLY:
->> +		dev_info(dev, "received echo reply from %s\n", name);
->> +		break;
->> +	default:
->> +		/* silently handle all other valid messages */
->> +		if (msg >= RP_MBOX_READY && msg < RP_MBOX_END_MSG)
->> +			return;
->> +		if (msg > kproc->rproc->max_notifyid) {
->> +			dev_dbg(dev, "dropping unknown message 0x%x", msg);
->> +			return;
->> +		}
->> +		/* msg contains the index of the triggered vring */
->> +		if (rproc_vq_interrupt(kproc->rproc, msg) == IRQ_NONE)
->> +			dev_dbg(dev, "no message was found in vqid %d\n", msg);
->> +	}
->> +}
->> +
->> +/* kick a virtqueue */
->> +static void k3_r5_rproc_kick(struct rproc *rproc, int vqid)
->> +{
->> +	struct k3_r5_rproc *kproc = rproc->priv;
->> +	struct device *dev = rproc->dev.parent;
->> +	mbox_msg_t msg = (mbox_msg_t)vqid;
->> +	int ret;
->> +
->> +	/* send the index of the triggered virtqueue in the mailbox payload */
->> +	ret = mbox_send_message(kproc->mbox, (void *)msg);
->> +	if (ret < 0)
->> +		dev_err(dev, "failed to send mailbox message, status = %d\n",
->> +			ret);
->> +}
->> +
->> +static int k3_r5_split_reset(struct k3_r5_core *core)
->> +{
->> +	int ret;
->> +
->> +	ret = reset_control_assert(core->reset);
->> +	if (ret) {
->> +		dev_err(core->dev, "local-reset assert failed, ret = %d\n",
->> +			ret);
->> +		return ret;
->> +	}
->> +
->> +	ret = core->ti_sci->ops.dev_ops.put_device(core->ti_sci,
->> +						   core->ti_sci_id);
->> +	if (ret) {
->> +		dev_err(core->dev, "module-reset assert failed, ret = %d\n",
->> +			ret);
->> +		if (reset_control_deassert(core->reset))
->> +			dev_warn(core->dev, "local-reset deassert back failed\n");
->> +	}
->> +
->> +	return ret;
->> +}
->> +
->> +static int k3_r5_split_release(struct k3_r5_core *core)
->> +{
->> +	int ret;
->> +
->> +	ret = core->ti_sci->ops.dev_ops.get_device(core->ti_sci,
->> +						   core->ti_sci_id);
->> +	if (ret) {
->> +		dev_err(core->dev, "module-reset deassert failed, ret = %d\n",
->> +			ret);
->> +		return ret;
->> +	}
->> +
->> +	ret = reset_control_deassert(core->reset);
->> +	if (ret) {
->> +		dev_err(core->dev, "local-reset deassert failed, ret = %d\n",
->> +			ret);
->> +		if (core->ti_sci->ops.dev_ops.put_device(core->ti_sci,
->> +							 core->ti_sci_id))
->> +			dev_warn(core->dev, "module-reset assert back failed\n");
->> +	}
->> +
->> +	return ret;
->> +}
->> +
->> +static int k3_r5_lockstep_reset(struct k3_r5_cluster *cluster)
->> +{
->> +	struct k3_r5_core *core;
->> +	int ret;
->> +
->> +	/* assert local reset on all applicable cores */
->> +	list_for_each_entry(core, &cluster->cores, elem) {
->> +		ret = reset_control_assert(core->reset);
->> +		if (ret) {
->> +			dev_err(core->dev, "local-reset assert failed, ret = %d\n",
->> +				ret);
->> +			core = list_prev_entry(core, elem);
->> +			goto unroll_local_reset;
->> +		}
->> +	}
->> +
->> +	/* disable PSC modules on all applicable cores */
->> +	list_for_each_entry(core, &cluster->cores, elem) {
->> +		ret = core->ti_sci->ops.dev_ops.put_device(core->ti_sci,
->> +							   core->ti_sci_id);
->> +		if (ret) {
->> +			dev_err(core->dev, "module-reset assert failed, ret = %d\n",
->> +				ret);
->> +			goto unroll_module_reset;
->> +		}
->> +	}
->> +
->> +	return 0;
->> +
->> +unroll_module_reset:
->> +	list_for_each_entry_continue_reverse(core, &cluster->cores, elem) {
->> +		if (core->ti_sci->ops.dev_ops.put_device(core->ti_sci,
->> +							 core->ti_sci_id))
->> +			dev_warn(core->dev, "module-reset assert back failed\n");
->> +	}
->> +	core = list_last_entry(&cluster->cores, struct k3_r5_core, elem);
->> +unroll_local_reset:
->> +	list_for_each_entry_from_reverse(core, &cluster->cores, elem) {
->> +		if (reset_control_deassert(core->reset))
->> +			dev_warn(core->dev, "local-reset deassert back failed\n");
->> +	}
->> +
->> +	return ret;
->> +}
->> +
->> +static int k3_r5_lockstep_release(struct k3_r5_cluster *cluster)
->> +{
->> +	struct k3_r5_core *core;
->> +	int ret;
->> +
->> +	/* enable PSC modules on all applicable cores */
->> +	list_for_each_entry_reverse(core, &cluster->cores, elem) {
-> 
-> Out of curiosity, any HW specific reason to start with the last core?
+Fix various inconsistencies in schema indentation. Most of these are
+list indentation which should be 2 spaces more than the start of the
+enclosing keyword. This doesn't matter functionally, but affects running
+scripts which do transforms on the schema files.
 
-Yeah, that is the order required by HW. We have different sequencing 
-between LockStep and Split-modes. Please see the comments added in the 
-descriptions for k3_r5_rproc_start() and k3_r5_rproc_stop() functions below.
+Signed-off-by: Rob Herring <robh@kernel.org>
+---
+ .../devicetree/bindings/arm/altera.yaml       |  6 +-
+ .../amlogic/amlogic,meson-gx-ao-secure.yaml   |  2 +-
+ .../devicetree/bindings/arm/bitmain.yaml      |  2 +-
+ .../devicetree/bindings/arm/nxp/lpc32xx.yaml  |  9 ++-
+ .../bindings/arm/socionext/uniphier.yaml      | 26 ++++----
+ .../bindings/arm/stm32/st,mlahb.yaml          |  2 +-
+ .../bindings/arm/stm32/st,stm32-syscon.yaml   |  6 +-
+ .../bindings/ata/faraday,ftide010.yaml        |  4 +-
+ .../bindings/bus/allwinner,sun8i-a23-rsb.yaml |  4 +-
+ .../clock/allwinner,sun4i-a10-gates-clk.yaml  |  8 +--
+ .../devicetree/bindings/clock/fsl,plldig.yaml | 17 +++--
+ .../devicetree/bindings/clock/qcom,mmcc.yaml  | 16 ++---
+ .../bindings/connector/usb-connector.yaml     |  6 +-
+ .../crypto/allwinner,sun4i-a10-crypto.yaml    | 14 ++--
+ .../bindings/crypto/allwinner,sun8i-ce.yaml   | 16 ++---
+ .../bindings/crypto/amlogic,gxl-crypto.yaml   |  2 +-
+ .../display/allwinner,sun4i-a10-hdmi.yaml     | 40 ++++++------
+ .../display/allwinner,sun4i-a10-tcon.yaml     | 58 ++++++++---------
+ .../display/allwinner,sun6i-a31-mipi-dsi.yaml | 28 ++++----
+ .../display/allwinner,sun8i-a83t-dw-hdmi.yaml | 10 +--
+ .../bindings/display/bridge/lvds-codec.yaml   | 18 +++---
+ .../display/panel/sony,acx424akp.yaml         |  2 +-
+ .../display/panel/xinpeng,xpp055c272.yaml     |  4 +-
+ .../bindings/display/renesas,cmm.yaml         | 16 ++---
+ .../devicetree/bindings/dma/ti/k3-udma.yaml   |  8 +--
+ .../bindings/gpio/brcm,xgs-iproc-gpio.yaml    |  2 +-
+ .../bindings/gpu/arm,mali-midgard.yaml        | 18 +++---
+ .../devicetree/bindings/gpu/vivante,gc.yaml   |  2 +-
+ .../devicetree/bindings/i2c/i2c-rk3x.yaml     | 10 +--
+ .../bindings/iio/adc/adi,ad7124.yaml          |  4 +-
+ .../bindings/iio/adc/lltc,ltc2496.yaml        |  6 +-
+ .../input/allwinner,sun4i-a10-lradc-keys.yaml |  4 +-
+ .../bindings/input/touchscreen/goodix.yaml    |  2 +-
+ .../bindings/interconnect/qcom,msm8916.yaml   |  4 +-
+ .../bindings/interconnect/qcom,msm8974.yaml   |  4 +-
+ .../bindings/interconnect/qcom,qcs404.yaml    |  4 +-
+ .../allwinner,sun7i-a20-sc-nmi.yaml           | 12 ++--
+ .../intel,ixp4xx-interrupt.yaml               |  8 +--
+ .../interrupt-controller/st,stm32-exti.yaml   | 12 ++--
+ .../bindings/iommu/samsung,sysmmu.yaml        | 10 +--
+ .../bindings/mailbox/st,stm32-ipcc.yaml       |  2 +-
+ .../media/allwinner,sun4i-a10-csi.yaml        | 28 ++++----
+ .../bindings/media/amlogic,gx-vdec.yaml       | 14 ++--
+ .../bindings/media/renesas,ceu.yaml           | 28 ++++----
+ .../bindings/media/renesas,vin.yaml           |  8 +--
+ .../devicetree/bindings/media/ti,vpe.yaml     |  2 +-
+ .../memory-controllers/fsl/imx8m-ddrc.yaml    |  6 +-
+ .../bindings/mfd/st,stm32-lptimer.yaml        |  4 +-
+ .../bindings/mfd/st,stm32-timers.yaml         |  4 +-
+ .../devicetree/bindings/mfd/syscon.yaml       | 12 ++--
+ .../devicetree/bindings/mmc/cdns,sdhci.yaml   |  2 +-
+ .../bindings/mmc/rockchip-dw-mshc.yaml        | 16 ++---
+ .../bindings/mmc/socionext,uniphier-sd.yaml   | 14 ++--
+ .../devicetree/bindings/mtd/denali,nand.yaml  |  4 +-
+ .../net/allwinner,sun8i-a83t-emac.yaml        |  4 +-
+ .../bindings/net/can/bosch,m_can.yaml         | 52 +++++++--------
+ .../bindings/net/renesas,ether.yaml           |  4 +-
+ .../bindings/net/ti,cpsw-switch.yaml          | 12 ++--
+ .../bindings/net/ti,davinci-mdio.yaml         | 27 ++++----
+ .../bindings/phy/intel,lgm-emmc-phy.yaml      |  2 +-
+ .../devicetree/bindings/pwm/pwm-samsung.yaml  | 16 ++---
+ .../bindings/remoteproc/st,stm32-rproc.yaml   |  2 +-
+ .../reset/brcm,bcm7216-pcie-sata-rescal.yaml  |  4 +-
+ .../devicetree/bindings/rtc/st,stm32-rtc.yaml | 38 +++++------
+ .../bindings/serial/amlogic,meson-uart.yaml   | 16 ++---
+ .../devicetree/bindings/serial/rs485.yaml     | 17 ++---
+ .../bindings/soc/amlogic/amlogic,canvas.yaml  | 10 +--
+ .../bindings/sound/renesas,fsi.yaml           | 16 ++---
+ .../bindings/spi/qcom,spi-qcom-qspi.yaml      | 10 +--
+ .../devicetree/bindings/spi/renesas,hspi.yaml |  4 +-
+ .../devicetree/bindings/spi/spi-pl022.yaml    |  2 +-
+ .../bindings/spi/st,stm32-qspi.yaml           |  4 +-
+ .../allwinner,sun4i-a10-system-control.yaml   | 64 +++++++++----------
+ .../bindings/thermal/amlogic,thermal.yaml     | 10 +--
+ .../bindings/timer/arm,arch_timer.yaml        |  4 +-
+ .../bindings/timer/arm,arch_timer_mmio.yaml   |  4 +-
+ .../devicetree/bindings/usb/dwc2.yaml         |  8 +--
+ 77 files changed, 450 insertions(+), 450 deletions(-)
 
-> 
->> +		ret = core->ti_sci->ops.dev_ops.get_device(core->ti_sci,
->> +							   core->ti_sci_id);
->> +		if (ret) {
->> +			dev_err(core->dev, "module-reset deassert failed, ret = %d\n",
->> +				ret);
->> +			core = list_next_entry(core, elem);
->> +			goto unroll_module_reset;
->> +		}
->> +	}
->> +
->> +	/* deassert local reset on all applicable cores */
->> +	list_for_each_entry_reverse(core, &cluster->cores, elem) {
->> +		ret = reset_control_deassert(core->reset);
->> +		if (ret) {
->> +			dev_err(core->dev, "module-reset deassert failed, ret = %d\n",
->> +				ret);
->> +			goto unroll_local_reset;
->> +		}
->> +	}
->> +
->> +	return 0;
->> +
->> +unroll_local_reset:
->> +	list_for_each_entry_continue(core, &cluster->cores, elem) {
->> +		if (reset_control_assert(core->reset))
->> +			dev_warn(core->dev, "local-reset assert back failed\n");
->> +	}
->> +	core = list_first_entry(&cluster->cores, struct k3_r5_core, elem);
->> +unroll_module_reset:
->> +	list_for_each_entry_from(core, &cluster->cores, elem) {
->> +		if (core->ti_sci->ops.dev_ops.put_device(core->ti_sci,
->> +							 core->ti_sci_id))
->> +			dev_warn(core->dev, "module-reset assert back failed\n");
->> +	}
->> +
->> +	return ret;
->> +}
->> +
->> +static inline int k3_r5_core_halt(struct k3_r5_core *core)
->> +{
->> +	return ti_sci_proc_set_control(core->tsp,
->> +				       PROC_BOOT_CTRL_FLAG_R5_CORE_HALT, 0);
->> +}
->> +
->> +static inline int k3_r5_core_run(struct k3_r5_core *core)
->> +{
->> +	return ti_sci_proc_set_control(core->tsp,
->> +				       0, PROC_BOOT_CTRL_FLAG_R5_CORE_HALT);
->> +}
->> +
->> +/*
->> + * The R5F cores have controls for both a reset and a halt/run. The code
->> + * execution from DDR requires the initial boot-strapping code to be run
->> + * from the internal TCMs. This function is used to release the resets on
->> + * applicable cores to allow loading into the TCMs. The .prepare() ops is
->> + * invoked by remoteproc core before any firmware loading, and is followed
->> + * by the .start() ops after loading to actually let the R5 cores run.
->> + */
->> +static int k3_r5_rproc_prepare(struct rproc *rproc)
->> +{
->> +	struct k3_r5_rproc *kproc = rproc->priv;
->> +	struct k3_r5_cluster *cluster = kproc->cluster;
->> +	struct k3_r5_core *core = kproc->core;
->> +	struct device *dev = kproc->dev;
->> +	int ret;
->> +
->> +	ret = cluster->mode ? k3_r5_lockstep_release(cluster) :
->> +			      k3_r5_split_release(core);
->> +	if (ret)
->> +		dev_err(dev, "unable to enable cores for TCM loading, ret = %d\n",
->> +			ret);
->> +
->> +	return ret;
->> +}
->> +
->> +/*
->> + * This function implements the .unprepare() ops and performs the complimentary
->> + * operations to that of the .prepare() ops. The function is used to assert the
->> + * resets on all applicable cores for the rproc device (depending on LockStep
->> + * or Split mode). This completes the second portion of powering down the R5F
->> + * cores. The cores themselves are only halted in the .stop() ops, and the
->> + * .unprepare() ops is invoked by the remoteproc core after the remoteproc is
->> + * stopped.
->> + */
->> +static int k3_r5_rproc_unprepare(struct rproc *rproc)
->> +{
->> +	struct k3_r5_rproc *kproc = rproc->priv;
->> +	struct k3_r5_cluster *cluster = kproc->cluster;
->> +	struct k3_r5_core *core = kproc->core;
->> +	struct device *dev = kproc->dev;
->> +	int ret;
->> +
->> +	ret = cluster->mode ? k3_r5_lockstep_reset(cluster) :
->> +			      k3_r5_split_reset(core);
->> +	if (ret)
->> +		dev_err(dev, "unable to disable cores, ret = %d\n", ret);
->> +
->> +	return ret;
->> +}
->> +
->> +/*
->> + * The R5F start sequence includes two different operations
->> + * 1. Configure the boot vector for R5F core(s)
->> + * 2. Unhalt/Run the R5F core(s)
->> + *
->> + * The sequence is different between LockStep and Split modes. The LockStep
->> + * mode requires the boot vector to be configured only for Core0, and then
->> + * unhalt both the cores to start the execution - Core1 needs to be unhalted
->> + * first followed by Core0. The Split-mode requires that Core0 to be maintained
->> + * always in a higher power state that Core1 (implying Core1 needs to be started
->> + * always only after Core0 is started).
->> + */
->> +static int k3_r5_rproc_start(struct rproc *rproc)
->> +{
->> +	struct k3_r5_rproc *kproc = rproc->priv;
->> +	struct k3_r5_cluster *cluster = kproc->cluster;
->> +	struct mbox_client *client = &kproc->client;
->> +	struct device *dev = kproc->dev;
->> +	struct k3_r5_core *core;
->> +	u32 boot_addr;
->> +	int ret;
->> +
->> +	client->dev = dev;
->> +	client->tx_done = NULL;
->> +	client->rx_callback = k3_r5_rproc_mbox_callback;
->> +	client->tx_block = false;
->> +	client->knows_txdone = false;
->> +
->> +	kproc->mbox = mbox_request_channel(client, 0);
->> +	if (IS_ERR(kproc->mbox)) {
->> +		ret = -EBUSY;
->> +		dev_err(dev, "mbox_request_channel failed: %ld\n",
->> +			PTR_ERR(kproc->mbox));
->> +		return ret;
->> +	}
-> 
-> Does this needs to be done every time a remote processor is booted or could it
-> be done just once in k3_r5_core_of_init()?
+diff --git a/Documentation/devicetree/bindings/arm/altera.yaml b/Documentation/devicetree/bindings/arm/altera.yaml
+index 49e0362ddc11..b388c5aa7984 100644
+--- a/Documentation/devicetree/bindings/arm/altera.yaml
++++ b/Documentation/devicetree/bindings/arm/altera.yaml
+@@ -13,8 +13,8 @@ properties:
+   compatible:
+     items:
+       - enum:
+-        - altr,socfpga-cyclone5
+-        - altr,socfpga-arria5
+-        - altr,socfpga-arria10
++          - altr,socfpga-cyclone5
++          - altr,socfpga-arria5
++          - altr,socfpga-arria10
+       - const: altr,socfpga
+ ...
+diff --git a/Documentation/devicetree/bindings/arm/amlogic/amlogic,meson-gx-ao-secure.yaml b/Documentation/devicetree/bindings/arm/amlogic/amlogic,meson-gx-ao-secure.yaml
+index 66213bd95e6e..6cc74523ebfd 100644
+--- a/Documentation/devicetree/bindings/arm/amlogic/amlogic,meson-gx-ao-secure.yaml
++++ b/Documentation/devicetree/bindings/arm/amlogic/amlogic,meson-gx-ao-secure.yaml
+@@ -25,7 +25,7 @@ select:
 
-This is to ensure that we are not registering any mailbox callbacks 
-until the resource table is parsed and allocated.
+ properties:
+   compatible:
+-   items:
++    items:
+       - const: amlogic,meson-gx-ao-secure
+       - const: syscon
 
-> 
->> +
->> +	/*
->> +	 * Ping the remote processor, this is only for sanity-sake for now;
->> +	 * there is no functional effect whatsoever.
->> +	 *
->> +	 * Note that the reply will _not_ arrive immediately: this message
->> +	 * will wait in the mailbox fifo until the remote processor is booted.
->> +	 */
->> +	ret = mbox_send_message(kproc->mbox, (void *)RP_MBOX_ECHO_REQUEST);
->> +	if (ret < 0) {
->> +		dev_err(dev, "mbox_send_message failed: %d\n", ret);
->> +		goto put_mbox;
->> +	}
->> +
->> +	boot_addr = rproc->bootaddr;
->> +	/* TODO: add boot_addr sanity checking */
->> +	dev_err(dev, "booting R5F core using boot addr = 0x%x\n", boot_addr);
-> 
-> s/dev_err()/dev_dbg()
+diff --git a/Documentation/devicetree/bindings/arm/bitmain.yaml b/Documentation/devicetree/bindings/arm/bitmain.yaml
+index 0efdb4ac028e..5cd5b36cff2d 100644
+--- a/Documentation/devicetree/bindings/arm/bitmain.yaml
++++ b/Documentation/devicetree/bindings/arm/bitmain.yaml
+@@ -13,6 +13,6 @@ properties:
+   compatible:
+     items:
+       - enum:
+-        - bitmain,sophon-edge
++          - bitmain,sophon-edge
+       - const: bitmain,bm1880
+ ...
+diff --git a/Documentation/devicetree/bindings/arm/nxp/lpc32xx.yaml b/Documentation/devicetree/bindings/arm/nxp/lpc32xx.yaml
+index 07f39d3eee7e..f7f024910e71 100644
+--- a/Documentation/devicetree/bindings/arm/nxp/lpc32xx.yaml
++++ b/Documentation/devicetree/bindings/arm/nxp/lpc32xx.yaml
+@@ -17,9 +17,8 @@ properties:
+           - nxp,lpc3230
+           - nxp,lpc3240
+       - items:
+-        - enum:
+-            - ea,ea3250
+-            - phytec,phy3250
+-        - const: nxp,lpc3250
+-
++          - enum:
++              - ea,ea3250
++              - phytec,phy3250
++          - const: nxp,lpc3250
+ ...
+diff --git a/Documentation/devicetree/bindings/arm/socionext/uniphier.yaml b/Documentation/devicetree/bindings/arm/socionext/uniphier.yaml
+index 65ad6d8a3c99..113f93b9ae55 100644
+--- a/Documentation/devicetree/bindings/arm/socionext/uniphier.yaml
++++ b/Documentation/devicetree/bindings/arm/socionext/uniphier.yaml
+@@ -17,45 +17,45 @@ properties:
+       - description: LD4 SoC boards
+         items:
+           - enum:
+-            - socionext,uniphier-ld4-ref
++              - socionext,uniphier-ld4-ref
+           - const: socionext,uniphier-ld4
+       - description: Pro4 SoC boards
+         items:
+           - enum:
+-            - socionext,uniphier-pro4-ace
+-            - socionext,uniphier-pro4-ref
+-            - socionext,uniphier-pro4-sanji
++              - socionext,uniphier-pro4-ace
++              - socionext,uniphier-pro4-ref
++              - socionext,uniphier-pro4-sanji
+           - const: socionext,uniphier-pro4
+       - description: sLD8 SoC boards
+         items:
+           - enum:
+-            - socionext,uniphier-sld8-ref
++              - socionext,uniphier-sld8-ref
+           - const: socionext,uniphier-sld8
+       - description: PXs2 SoC boards
+         items:
+           - enum:
+-            - socionext,uniphier-pxs2-gentil
+-            - socionext,uniphier-pxs2-vodka
++              - socionext,uniphier-pxs2-gentil
++              - socionext,uniphier-pxs2-vodka
+           - const: socionext,uniphier-pxs2
+       - description: LD6b SoC boards
+         items:
+           - enum:
+-            - socionext,uniphier-ld6b-ref
++              - socionext,uniphier-ld6b-ref
+           - const: socionext,uniphier-ld6b
+       - description: LD11 SoC boards
+         items:
+           - enum:
+-            - socionext,uniphier-ld11-global
+-            - socionext,uniphier-ld11-ref
++              - socionext,uniphier-ld11-global
++              - socionext,uniphier-ld11-ref
+           - const: socionext,uniphier-ld11
+       - description: LD20 SoC boards
+         items:
+           - enum:
+-            - socionext,uniphier-ld20-global
+-            - socionext,uniphier-ld20-ref
++              - socionext,uniphier-ld20-global
++              - socionext,uniphier-ld20-ref
+           - const: socionext,uniphier-ld20
+       - description: PXs3 SoC boards
+         items:
+           - enum:
+-            - socionext,uniphier-pxs3-ref
++              - socionext,uniphier-pxs3-ref
+           - const: socionext,uniphier-pxs3
+diff --git a/Documentation/devicetree/bindings/arm/stm32/st,mlahb.yaml b/Documentation/devicetree/bindings/arm/stm32/st,mlahb.yaml
+index 55f7938c4826..9f276bc9efa0 100644
+--- a/Documentation/devicetree/bindings/arm/stm32/st,mlahb.yaml
++++ b/Documentation/devicetree/bindings/arm/stm32/st,mlahb.yaml
+@@ -20,7 +20,7 @@ description: |
+   [2]: https://wiki.st.com/stm32mpu/wiki/STM32MP15_RAM_mapping
 
-Yes, ok.
+ allOf:
+- - $ref: /schemas/simple-bus.yaml#
++  - $ref: /schemas/simple-bus.yaml#
 
-> 
->> +
->> +	/* boot vector need not be programmed for Core1 in LockStep mode */
->> +	core = kproc->core;
->> +	ret = ti_sci_proc_set_config(core->tsp, boot_addr, 0, 0);
->> +	if (ret)
->> +		goto put_mbox;
->> +
->> +	/* unhalt/run all applicable cores */
->> +	if (cluster->mode) {
->> +		list_for_each_entry_reverse(core, &cluster->cores, elem) {
->> +			ret = k3_r5_core_run(core);
->> +			if (ret)
->> +				goto unroll_core_run;
->> +		}
->> +	} else {
->> +		ret = k3_r5_core_run(core);
->> +		if (ret)
->> +			goto put_mbox;
->> +	}
->> +
->> +	return 0;
->> +
->> +unroll_core_run:
->> +	list_for_each_entry_continue(core, &cluster->cores, elem) {
->> +		if (k3_r5_core_halt(core))
->> +			dev_warn(core->dev, "core halt back failed\n");
->> +	}
->> +put_mbox:
->> +	mbox_free_channel(kproc->mbox);
->> +	return ret;
->> +}
->> +
->> +/*
->> + * The R5F stop function includes the following operations
->> + * 1. Halt R5F core(s)
->> + *
->> + * The sequence is different between LockStep and Split modes, and the order
->> + * of cores the operations are performed are also in general reverse to that
->> + * of the start function. The LockStep mode requires each operation to be
->> + * performed first on Core0 followed by Core1. The Split-mode requires that
->> + * Core0 to be maintained always in a higher power state that Core1 (implying
->> + * Core1 needs to be stopped first before Core0).
->> + *
->> + * Note that the R5F halt operation in general is not effective when the R5F
->> + * core is running, but is needed to make sure the core won't run after
->> + * deasserting the reset the subsequent time. The asserting of reset can
->> + * be done here, but is preferred to be done in the .unprepare() ops - this
->> + * maintains the symmetric behavior between the .start(), .stop(), .prepare()
->> + * and .unprepare() ops, and also balances them well between sysfs 'state'
->> + * flow and device bind/unbind or module removal.
->> + */
->> +static int k3_r5_rproc_stop(struct rproc *rproc)
->> +{
->> +	struct k3_r5_rproc *kproc = rproc->priv;
->> +	struct k3_r5_cluster *cluster = kproc->cluster;
->> +	struct k3_r5_core *core = kproc->core;
->> +	int ret;
->> +
->> +	/* halt all applicable cores */
->> +	if (cluster->mode) {
->> +		list_for_each_entry(core, &cluster->cores, elem) {
->> +			ret = k3_r5_core_halt(core);
->> +			if (ret) {
->> +				core = list_prev_entry(core, elem);
->> +				goto unroll_core_halt;
->> +			}
->> +		}
->> +	} else {
->> +		ret = k3_r5_core_halt(core);
->> +		if (ret)
->> +			goto out;
->> +	}
->> +
->> +	mbox_free_channel(kproc->mbox);
->> +
->> +	return 0;
->> +
->> +unroll_core_halt:
->> +	list_for_each_entry_from_reverse(core, &cluster->cores, elem) {
->> +		if (k3_r5_core_run(core))
->> +			dev_warn(core->dev, "core run back failed\n");
->> +	}
->> +out:
->> +	return ret;
->> +}
->> +
->> +/*
->> + * Internal Memory translation helper
->> + *
->> + * Custom function implementing the rproc .da_to_va ops to provide address
->> + * translation (device address to kernel virtual address) for internal RAMs
->> + * present in a DSP or IPU device). The translated addresses can be used
->> + * either by the remoteproc core for loading, or by any rpmsg bus drivers.
->> + */
->> +static void *k3_r5_rproc_da_to_va(struct rproc *rproc, u64 da, size_t len)
->> +{
->> +	struct k3_r5_rproc *kproc = rproc->priv;
->> +	struct k3_r5_core *core = kproc->core;
->> +	void __iomem *va = NULL;
->> +	phys_addr_t bus_addr;
->> +	u32 dev_addr, offset;
->> +	size_t size;
->> +	int i;
->> +
->> +	if (len == 0)
->> +		return NULL;
->> +
->> +	/* handle both R5 and SoC views of ATCM and BTCM */
->> +	for (i = 0; i < core->num_mems; i++) {
->> +		bus_addr = core->mem[i].bus_addr;
->> +		dev_addr = core->mem[i].dev_addr;
->> +		size = core->mem[i].size;
->> +
->> +		/* handle R5-view addresses of TCMs */
->> +		if (da >= dev_addr && ((da + len) <= (dev_addr + size))) {
->> +			offset = da - dev_addr;
->> +			va = core->mem[i].cpu_addr + offset;
->> +			return (__force void *)va;
->> +		}
->> +
->> +		/* handle SoC-view addresses of TCMs */
->> +		if (da >= bus_addr && ((da + len) <= (bus_addr + size))) {
->> +			offset = da - bus_addr;
->> +			va = core->mem[i].cpu_addr + offset;
->> +			return (__force void *)va;
->> +		}
->> +	}
->> +
->> +	/* handle static DDR reserved memory regions */
->> +	for (i = 0; i < kproc->num_rmems; i++) {
->> +		dev_addr = kproc->rmem[i].dev_addr;
->> +		size = kproc->rmem[i].size;
->> +
->> +		if (da >= dev_addr && ((da + len) <= (dev_addr + size))) {
->> +			offset = da - dev_addr;
->> +			va = kproc->rmem[i].cpu_addr + offset;
->> +			return (__force void *)va;
->> +		}
->> +	}
->> +
->> +	return NULL;
->> +}
->> +
->> +static const struct rproc_ops k3_r5_rproc_ops = {
->> +	.prepare	= k3_r5_rproc_prepare,
->> +	.unprepare	= k3_r5_rproc_unprepare,
->> +	.start		= k3_r5_rproc_start,
->> +	.stop		= k3_r5_rproc_stop,
->> +	.kick		= k3_r5_rproc_kick,
->> +	.da_to_va	= k3_r5_rproc_da_to_va,
->> +};
->> +
->> +static const char *k3_r5_rproc_get_firmware(struct device *dev)
->> +{
->> +	const char *fw_name;
->> +	int ret;
->> +
->> +	ret = of_property_read_string(dev->of_node, "firmware-name",
->> +				      &fw_name);
->> +	if (ret) {
->> +		dev_err(dev, "failed to parse firmware-name property, ret = %d\n",
->> +			ret);
->> +		return ERR_PTR(ret);
->> +	}
->> +
->> +	return fw_name;
->> +}
->> +
->> +static int k3_r5_rproc_configure(struct k3_r5_rproc *kproc)
->> +{
->> +	struct k3_r5_cluster *cluster = kproc->cluster;
->> +	struct device *dev = kproc->dev;
->> +	struct k3_r5_core *core0, *core, *temp;
->> +	u32 ctrl = 0, cfg = 0, stat = 0;
->> +	u32 set_cfg = 0, clr_cfg = 0;
->> +	u64 boot_vec = 0;
->> +	bool lockstep_en;
->> +	int ret;
->> +
->> +	core0 = list_first_entry(&cluster->cores, struct k3_r5_core, elem);
->> +	core = cluster->mode ? core0 : kproc->core;
->> +
->> +	ret = ti_sci_proc_get_status(core->tsp, &boot_vec, &cfg, &ctrl,
->> +				     &stat);
->> +	if (ret < 0)
->> +		return ret;
->> +
->> +	dev_dbg(dev, "boot_vector = 0x%llx, cfg = 0x%x ctrl = 0x%x stat = 0x%x\n",
->> +		boot_vec, cfg, ctrl, stat);
->> +
->> +	lockstep_en = !!(stat & PROC_BOOT_STATUS_FLAG_R5_LOCKSTEP_PERMITTED);
->> +	if (!lockstep_en && cluster->mode) {
->> +		dev_err(cluster->dev, "lockstep mode not permitted, force configuring for split-mode\n");
->> +		cluster->mode = 0;
->> +	}
->> +
->> +	/* always enable ARM mode and set boot vector to 0 */
->> +	boot_vec = 0x0;
->> +	if (core == core0) {
->> +		clr_cfg = PROC_BOOT_CFG_FLAG_R5_TEINIT;
->> +		/*
->> +		 * LockStep configuration bit is Read-only on Split-mode _only_
->> +		 * devices and system firmware will NACK any requests with the
->> +		 * bit configured, so program it only on permitted devices
->> +		 */
->> +		if (lockstep_en)
->> +			clr_cfg |= PROC_BOOT_CFG_FLAG_R5_LOCKSTEP;
->> +	}
->> +
->> +	if (core->atcm_enable)
->> +		set_cfg |= PROC_BOOT_CFG_FLAG_R5_ATCM_EN;
->> +	else
->> +		clr_cfg |= PROC_BOOT_CFG_FLAG_R5_ATCM_EN;
->> +
->> +	if (core->btcm_enable)
->> +		set_cfg |= PROC_BOOT_CFG_FLAG_R5_BTCM_EN;
->> +	else
->> +		clr_cfg |= PROC_BOOT_CFG_FLAG_R5_BTCM_EN;
->> +
->> +	if (core->loczrama)
->> +		set_cfg |= PROC_BOOT_CFG_FLAG_R5_TCM_RSTBASE;
->> +	else
->> +		clr_cfg |= PROC_BOOT_CFG_FLAG_R5_TCM_RSTBASE;
->> +
->> +	if (cluster->mode) {
->> +		/*
->> +		 * work around system firmware limitations to make sure both
->> +		 * cores are programmed symmetrically in LockStep. LockStep
->> +		 * and TEINIT config is only allowed with Core0.
->> +		 */
->> +		list_for_each_entry(temp, &cluster->cores, elem) {
->> +			ret = k3_r5_core_halt(core);
->> +			if (ret)
->> +				goto out;
->> +
->> +			if (temp != core) {
->> +				clr_cfg &= ~PROC_BOOT_CFG_FLAG_R5_LOCKSTEP;
->> +				clr_cfg &= ~PROC_BOOT_CFG_FLAG_R5_TEINIT;
->> +			}
->> +			ret = ti_sci_proc_set_config(temp->tsp, boot_vec,
->> +						     set_cfg, clr_cfg);
->> +			if (ret)
->> +				goto out;
->> +		}
->> +
->> +		set_cfg = PROC_BOOT_CFG_FLAG_R5_LOCKSTEP;
->> +		clr_cfg = 0;
->> +		ret = ti_sci_proc_set_config(core->tsp, boot_vec,
->> +					     set_cfg, clr_cfg);
->> +	} else {
->> +		ret = k3_r5_core_halt(core);
->> +		if (ret)
->> +			goto out;
->> +
->> +		ret = ti_sci_proc_set_config(core->tsp, boot_vec,
->> +					     set_cfg, clr_cfg);
->> +	}
->> +
->> +out:
->> +	return ret;
->> +}
->> +
->> +static int k3_r5_reserved_mem_init(struct k3_r5_rproc *kproc)
->> +{
->> +	struct device *dev = kproc->dev;
->> +	struct device_node *np = dev->of_node;
->> +	struct device_node *rmem_np;
->> +	struct reserved_mem *rmem;
->> +	int num_rmems;
->> +	int ret, i;
->> +
->> +	num_rmems = of_property_count_elems_of_size(np, "memory-region",
->> +						    sizeof(phandle));
->> +	if (num_rmems <= 0) {
->> +		dev_err(dev, "device does not have reserved memory regions, ret = %d\n",
->> +			num_rmems);
->> +		return -EINVAL;
->> +	}
->> +	if (num_rmems < 2) {
->> +		dev_err(dev, "device needs atleast two memory regions to be defined, num = %d\n",
->> +			num_rmems);
->> +		return -EINVAL;
->> +	}
->> +
->> +	/* use reserved memory region 0 for vring DMA allocations */
->> +	ret = of_reserved_mem_device_init_by_idx(dev, np, 0);
->> +	if (ret) {
->> +		dev_err(dev, "device cannot initialize DMA pool, ret = %d\n",
->> +			ret);
->> +		return ret;
->> +	}
->> +
->> +	num_rmems--;
->> +	kproc->rmem = kcalloc(num_rmems, sizeof(*kproc->rmem), GFP_KERNEL);
->> +	if (!kproc->rmem) {
->> +		ret = -ENOMEM;
->> +		goto release_rmem;
->> +	}
->> +
->> +	/* use remaining reserved memory regions for static carveouts */
->> +	for (i = 0; i < num_rmems; i++) {
->> +		rmem_np = of_parse_phandle(np, "memory-region", i + 1);
->> +		if (!rmem_np) {
->> +			ret = -EINVAL;
->> +			goto unmap_rmem;
->> +		}
->> +
->> +		rmem = of_reserved_mem_lookup(rmem_np);
->> +		if (!rmem) {
->> +			of_node_put(rmem_np);
->> +			ret = -EINVAL;
->> +			goto unmap_rmem;
->> +		}
->> +		of_node_put(rmem_np);
->> +
->> +		kproc->rmem[i].bus_addr = rmem->base;
->> +		/* 64-bit address regions currently not supported */
->> +		kproc->rmem[i].dev_addr = (u32)rmem->base;
-> 
-> Because the bus and the device addresses are the same I have to deduce the AP
-> and the R5 have the same view of the memory.  Please add a comment to assert
-> that is really the case.
+ properties:
+   compatible:
+diff --git a/Documentation/devicetree/bindings/arm/stm32/st,stm32-syscon.yaml b/Documentation/devicetree/bindings/arm/stm32/st,stm32-syscon.yaml
+index baff80197d5a..cf5db5e273f3 100644
+--- a/Documentation/devicetree/bindings/arm/stm32/st,stm32-syscon.yaml
++++ b/Documentation/devicetree/bindings/arm/stm32/st,stm32-syscon.yaml
+@@ -14,9 +14,9 @@ properties:
+   compatible:
+     oneOf:
+       - items:
+-        - enum:
+-          - st,stm32mp157-syscfg
+-        - const: syscon
++          - enum:
++              - st,stm32mp157-syscfg
++          - const: syscon
 
-Yes for now, since we are not using the Region Address Translator yet 
-which would have provided address extension from 32-bit device addresses 
-to 64-bit bus addresses.
+   reg:
+     maxItems: 1
+diff --git a/Documentation/devicetree/bindings/ata/faraday,ftide010.yaml b/Documentation/devicetree/bindings/ata/faraday,ftide010.yaml
+index bfc6357476fd..6451928dd2ce 100644
+--- a/Documentation/devicetree/bindings/ata/faraday,ftide010.yaml
++++ b/Documentation/devicetree/bindings/ata/faraday,ftide010.yaml
+@@ -26,8 +26,8 @@ properties:
+     oneOf:
+       - const: faraday,ftide010
+       - items:
+-        - const: cortina,gemini-pata
+-        - const: faraday,ftide010
++          - const: cortina,gemini-pata
++          - const: faraday,ftide010
 
-regards
-Suman
+   reg:
+     maxItems: 1
+diff --git a/Documentation/devicetree/bindings/bus/allwinner,sun8i-a23-rsb.yaml b/Documentation/devicetree/bindings/bus/allwinner,sun8i-a23-rsb.yaml
+index 80973619342d..32d33b983d66 100644
+--- a/Documentation/devicetree/bindings/bus/allwinner,sun8i-a23-rsb.yaml
++++ b/Documentation/devicetree/bindings/bus/allwinner,sun8i-a23-rsb.yaml
+@@ -21,8 +21,8 @@ properties:
+     oneOf:
+       - const: allwinner,sun8i-a23-rsb
+       - items:
+-        - const: allwinner,sun8i-a83t-rsb
+-        - const: allwinner,sun8i-a23-rsb
++          - const: allwinner,sun8i-a83t-rsb
++          - const: allwinner,sun8i-a23-rsb
 
-> 
->> +		kproc->rmem[i].size = rmem->size;
->> +		kproc->rmem[i].cpu_addr = ioremap_wc(rmem->base, rmem->size);
->> +		if (!kproc->rmem[i].cpu_addr) {
->> +			dev_err(dev, "failed to map reserved memory#%d at %pa of size %pa\n",
->> +				i + 1, &rmem->base, &rmem->size);
->> +			ret = -ENOMEM;
->> +			goto unmap_rmem;
->> +		}
->> +
->> +		dev_dbg(dev, "reserved memory%d: bus addr %pa size 0x%zx va %pK da 0x%x\n",
->> +			i + 1, &kproc->rmem[i].bus_addr,
->> +			kproc->rmem[i].size, kproc->rmem[i].cpu_addr,
->> +			kproc->rmem[i].dev_addr);
->> +	}
->> +	kproc->num_rmems = num_rmems;
->> +
->> +	return 0;
->> +
->> +unmap_rmem:
->> +	for (i--; i >= 0; i--) {
->> +		if (kproc->rmem[i].cpu_addr)
->> +			iounmap(kproc->rmem[i].cpu_addr);
->> +	}
->> +	kfree(kproc->rmem);
->> +release_rmem:
->> +	of_reserved_mem_device_release(dev);
->> +	return ret;
->> +}
->> +
->> +static void k3_r5_reserved_mem_exit(struct k3_r5_rproc *kproc)
->> +{
->> +	int i;
->> +
->> +	for (i = 0; i < kproc->num_rmems; i++)
->> +		iounmap(kproc->rmem[i].cpu_addr);
->> +	kfree(kproc->rmem);
->> +
->> +	of_reserved_mem_device_release(kproc->dev);
->> +}
->> +
->> +static int k3_r5_cluster_rproc_init(struct platform_device *pdev)
->> +{
->> +	struct k3_r5_cluster *cluster = platform_get_drvdata(pdev);
->> +	struct device *dev = &pdev->dev;
->> +	struct k3_r5_rproc *kproc;
->> +	struct k3_r5_core *core, *core1;
->> +	struct device *cdev;
->> +	const char *fw_name;
->> +	struct rproc *rproc;
->> +	int ret;
->> +
->> +	core1 = list_last_entry(&cluster->cores, struct k3_r5_core, elem);
->> +	list_for_each_entry(core, &cluster->cores, elem) {
->> +		cdev = core->dev;
->> +		fw_name = k3_r5_rproc_get_firmware(cdev);
->> +		if (IS_ERR(fw_name)) {
->> +			ret = PTR_ERR(fw_name);
->> +			goto out;
->> +		}
->> +
->> +		rproc = rproc_alloc(cdev, dev_name(cdev), &k3_r5_rproc_ops,
->> +				    fw_name, sizeof(*kproc));
->> +		if (!rproc) {
->> +			ret = -ENOMEM;
->> +			goto out;
->> +		}
->> +
->> +		/* K3 R5s have a Region Address Translator (RAT) but no MMU */
->> +		rproc->has_iommu = false;
->> +		/* error recovery is not supported at present */
->> +		rproc->recovery_disabled = true;
->> +
->> +		kproc = rproc->priv;
->> +		kproc->cluster = cluster;
->> +		kproc->core = core;
->> +		kproc->dev = cdev;
->> +		kproc->rproc = rproc;
->> +		core->rproc = rproc;
->> +
->> +		ret = k3_r5_rproc_configure(kproc);
->> +		if (ret) {
->> +			dev_err(dev, "initial configure failed, ret = %d\n",
->> +				ret);
->> +			goto err_config;
->> +		}
->> +
->> +		ret = k3_r5_reserved_mem_init(kproc);
->> +		if (ret) {
->> +			dev_err(dev, "reserved memory init failed, ret = %d\n",
->> +				ret);
->> +			goto err_config;
->> +		}
->> +
->> +		ret = rproc_add(rproc);
->> +		if (ret) {
->> +			dev_err(dev, "rproc_add failed, ret = %d\n", ret);
->> +			goto err_add;
->> +		}
->> +
->> +		/* create only one rproc in lockstep mode */
->> +		if (cluster->mode)
->> +			break;
->> +	}
->> +
->> +	return 0;
->> +
->> +err_split:
->> +	rproc_del(rproc);
->> +err_add:
->> +	k3_r5_reserved_mem_exit(kproc);
->> +err_config:
->> +	rproc_free(rproc);
->> +	core->rproc = NULL;
->> +out:
->> +	/* undo core0 upon any failures on core1 in split-mode */
->> +	if (!cluster->mode && core == core1) {
->> +		core = list_prev_entry(core, elem);
->> +		rproc = core->rproc;
->> +		kproc = rproc->priv;
->> +		goto err_split;
->> +	}
->> +	return ret;
->> +}
->> +
->> +static int k3_r5_cluster_rproc_exit(struct platform_device *pdev)
->> +{
->> +	struct k3_r5_cluster *cluster = platform_get_drvdata(pdev);
->> +	struct k3_r5_rproc *kproc;
->> +	struct k3_r5_core *core;
->> +	struct rproc *rproc;
->> +
->> +	/*
->> +	 * lockstep mode has only one rproc associated with first core, whereas
->> +	 * split-mode has two rprocs associated with each core, and requires
->> +	 * that core1 be powered down first
->> +	 */
->> +	core = cluster->mode ?
->> +		list_first_entry(&cluster->cores, struct k3_r5_core, elem) :
->> +		list_last_entry(&cluster->cores, struct k3_r5_core, elem);
->> +
->> +	list_for_each_entry_from_reverse(core, &cluster->cores, elem) {
->> +		rproc = core->rproc;
->> +		kproc = rproc->priv;
->> +
->> +		rproc_del(rproc);
->> +
->> +		k3_r5_reserved_mem_exit(kproc);
->> +
->> +		rproc_free(rproc);
->> +		core->rproc = NULL;
->> +	}
->> +
->> +	return 0;
->> +}
->> +
->> +static int k3_r5_core_of_get_internal_memories(struct platform_device *pdev,
->> +					       struct k3_r5_core *core)
->> +{
->> +	static const char * const mem_names[] = {"atcm", "btcm"};
->> +	struct device *dev = &pdev->dev;
->> +	struct resource *res;
->> +	int num_mems;
->> +	int i, ret;
->> +
->> +	num_mems = ARRAY_SIZE(mem_names);
->> +	core->mem = devm_kcalloc(dev, num_mems, sizeof(*core->mem), GFP_KERNEL);
->> +	if (!core->mem)
->> +		return -ENOMEM;
->> +
->> +	for (i = 0; i < num_mems; i++) {
->> +		res = platform_get_resource_byname(pdev, IORESOURCE_MEM,
->> +						   mem_names[i]);
->> +		if (!res) {
->> +			dev_err(dev, "found no memory resource for %s\n",
->> +				mem_names[i]);
->> +			ret = -EINVAL;
->> +			goto fail;
->> +		}
->> +		if (!devm_request_mem_region(dev, res->start,
->> +					     resource_size(res),
->> +					     dev_name(dev))) {
->> +			dev_err(dev, "could not request %s region for resource\n",
->> +				mem_names[i]);
->> +			ret = -EBUSY;
->> +			goto fail;
->> +		}
->> +
->> +		/*
->> +		 * TCMs are designed in general to support RAM-like backing
->> +		 * memories. So, map these as Normal Non-Cached memories. This
->> +		 * also avoids/fixes any potential alignment faults due to
->> +		 * unaligned data accesses when using memcpy() or memset()
->> +		 * functions (normally seen with device type memory).
->> +		 */
->> +		core->mem[i].cpu_addr = devm_ioremap_wc(dev, res->start,
->> +							resource_size(res));
->> +		if (IS_ERR(core->mem[i].cpu_addr)) {
->> +			dev_err(dev, "failed to map %s memory\n", mem_names[i]);
->> +			ret = PTR_ERR(core->mem[i].cpu_addr);
->> +			devm_release_mem_region(dev, res->start,
->> +						resource_size(res));
->> +			goto fail;
->> +		}
->> +		core->mem[i].bus_addr = res->start;
->> +
->> +		/*
->> +		 * TODO:
->> +		 * The R5F cores can place ATCM & BTCM anywhere in its address
->> +		 * based on the corresponding Region Registers in the System
->> +		 * Control coprocessor. For now, place ATCM and BTCM at
->> +		 * addresses 0 and 0x41010000 (same as the bus address on AM65x
->> +		 * SoCs) based on loczrama setting
->> +		 */
->> +		if (!strcmp(mem_names[i], "atcm")) {
->> +			core->mem[i].dev_addr = core->loczrama ?
->> +							0 : K3_R5_TCM_DEV_ADDR;
->> +		} else {
->> +			core->mem[i].dev_addr = core->loczrama ?
->> +							K3_R5_TCM_DEV_ADDR : 0;
->> +		}
->> +		core->mem[i].size = resource_size(res);
->> +
->> +		dev_dbg(dev, "memory %8s: bus addr %pa size 0x%zx va %pK da 0x%x\n",
->> +			mem_names[i], &core->mem[i].bus_addr,
->> +			core->mem[i].size, core->mem[i].cpu_addr,
->> +			core->mem[i].dev_addr);
->> +	}
->> +	core->num_mems = num_mems;
->> +
->> +	return 0;
->> +
->> +fail:
->> +	for (i--; i >= 0; i--) {
->> +		devm_iounmap(dev, core->mem[i].cpu_addr);
->> +		devm_release_mem_region(dev, core->mem[i].bus_addr,
->> +					core->mem[i].size);
->> +	}
->> +	if (core->mem)
->> +		devm_kfree(dev, core->mem);
->> +	return ret;
->> +}
->> +
->> +static
->> +struct ti_sci_proc *k3_r5_core_of_get_tsp(struct device *dev,
->> +					  const struct ti_sci_handle *sci)
->> +{
->> +	struct ti_sci_proc *tsp;
->> +	u32 temp[2];
->> +	int ret;
->> +
->> +	ret = of_property_read_u32_array(dev->of_node, "ti,sci-proc-ids",
->> +					 temp, 2);
->> +	if (ret < 0)
->> +		return ERR_PTR(ret);
->> +
->> +	tsp = kzalloc(sizeof(*tsp), GFP_KERNEL);
->> +	if (!tsp)
->> +		return ERR_PTR(-ENOMEM);
->> +
->> +	tsp->dev = dev;
->> +	tsp->sci = sci;
->> +	tsp->ops = &sci->ops.proc_ops;
->> +	tsp->proc_id = temp[0];
->> +	tsp->host_id = temp[1];
->> +
->> +	return tsp;
->> +}
->> +
->> +static int k3_r5_core_of_init(struct platform_device *pdev)
->> +{
->> +	struct device *dev = &pdev->dev;
->> +	struct device_node *np = dev->of_node;
->> +	struct k3_r5_core *core;
->> +	int ret, ret1;
->> +
->> +	core = devm_kzalloc(dev, sizeof(*core), GFP_KERNEL);
->> +	if (!core)
->> +		return -ENOMEM;
->> +
->> +	core->dev = dev;
->> +	core->atcm_enable = 0;
->> +	core->btcm_enable = 1;
->> +	core->loczrama = 1;
->> +
->> +	ret = of_property_read_u32(np, "atcm-enable", &core->atcm_enable);
->> +	if (ret < 0 && ret != -EINVAL) {
->> +		dev_err(dev, "invalid format for atcm-enable, ret = %d\n", ret);
->> +		goto err_of;
->> +	}
->> +
->> +	ret = of_property_read_u32(np, "btcm-enable", &core->btcm_enable);
->> +	if (ret < 0 && ret != -EINVAL) {
->> +		dev_err(dev, "invalid format for btcm-enable, ret = %d\n", ret);
->> +		goto err_of;
->> +	}
->> +
->> +	ret = of_property_read_u32(np, "loczrama", &core->loczrama);
->> +	if (ret < 0 && ret != -EINVAL) {
->> +		dev_err(dev, "invalid format for loczrama, ret = %d\n", ret);
->> +		goto err_of;
->> +	}
->> +
->> +	core->ti_sci = ti_sci_get_by_phandle(np, "ti,sci");
->> +	if (IS_ERR(core->ti_sci)) {
->> +		ret = PTR_ERR(core->ti_sci);
->> +		if (ret != -EPROBE_DEFER) {
->> +			dev_err(dev, "failed to get ti-sci handle, ret = %d\n",
->> +				ret);
->> +		}
->> +		core->ti_sci = NULL;
->> +		goto err_of;
->> +	}
->> +
->> +	ret = of_property_read_u32(np, "ti,sci-dev-id", &core->ti_sci_id);
->> +	if (ret) {
->> +		dev_err(dev, "missing 'ti,sci-dev-id' property\n");
->> +		goto err_sci_id;
->> +	}
->> +
->> +	core->reset = reset_control_get_exclusive(dev, NULL);
->> +	if (IS_ERR(core->reset)) {
->> +		ret = PTR_ERR(core->reset);
->> +		if (ret != -EPROBE_DEFER) {
->> +			dev_err(dev, "failed to get reset handle, ret = %d\n",
->> +				ret);
->> +		}
->> +		goto err_sci_id;
->> +	}
->> +
->> +	core->tsp = k3_r5_core_of_get_tsp(dev, core->ti_sci);
->> +	if (IS_ERR(core->tsp)) {
->> +		dev_err(dev, "failed to construct ti-sci proc control, ret = %d\n",
->> +			ret);
->> +		ret = PTR_ERR(core->tsp);
->> +		goto err_sci_proc;
->> +	}
->> +
->> +	ret = ti_sci_proc_request(core->tsp);
->> +	if (ret < 0) {
->> +		dev_err(dev, "ti_sci_proc_request failed, ret = %d\n", ret);
->> +		goto err_proc;
->> +	}
->> +
->> +	ret = k3_r5_core_of_get_internal_memories(pdev, core);
->> +	if (ret) {
->> +		dev_err(dev, "failed to get internal memories, ret = %d\n",
->> +			ret);
->> +		goto err_intmem;
->> +	}
->> +
->> +	platform_set_drvdata(pdev, core);
->> +
->> +	return 0;
->> +
->> +err_intmem:
->> +	ret1 = ti_sci_proc_release(core->tsp);
->> +	if (ret1)
->> +		dev_err(dev, "failed to release proc, ret1 = %d\n", ret1);
->> +err_proc:
->> +	kfree(core->tsp);
->> +err_sci_proc:
->> +	reset_control_put(core->reset);
->> +err_sci_id:
->> +	ret1 = ti_sci_put_handle(core->ti_sci);
->> +	if (ret1)
->> +		dev_err(dev, "failed to put ti_sci handle, ret = %d\n", ret1);
->> +err_of:
->> +	devm_kfree(dev, core);
->> +	return ret;
->> +}
->> +
->> +/*
->> + * free the resources explicitly since driver model is not being used
->> + * for the child R5F devices
->> + */
->> +static int k3_r5_core_of_exit(struct platform_device *pdev)
->> +{
->> +	struct k3_r5_core *core = platform_get_drvdata(pdev);
->> +	struct device *dev = &pdev->dev;
->> +	int i, ret;
->> +
->> +	for (i = 0; i < core->num_mems; i++) {
->> +		devm_release_mem_region(dev, core->mem[i].bus_addr,
->> +					core->mem[i].size);
->> +		devm_iounmap(dev, core->mem[i].cpu_addr);
->> +	}
->> +	if (core->mem)
->> +		devm_kfree(dev, core->mem);
->> +
->> +	ret = ti_sci_proc_release(core->tsp);
->> +	if (ret)
->> +		dev_err(dev, "failed to release proc, ret = %d\n", ret);
->> +
->> +	kfree(core->tsp);
->> +	reset_control_put(core->reset);
->> +
->> +	ret = ti_sci_put_handle(core->ti_sci);
->> +	if (ret)
->> +		dev_err(dev, "failed to put ti_sci handle, ret = %d\n", ret);
->> +
->> +	platform_set_drvdata(pdev, NULL);
->> +	devm_kfree(dev, core);
->> +
->> +	return ret;
->> +}
->> +
->> +static int k3_r5_cluster_of_init(struct platform_device *pdev)
->> +{
->> +	struct k3_r5_cluster *cluster = platform_get_drvdata(pdev);
->> +	struct device *dev = &pdev->dev;
->> +	struct device_node *np = dev->of_node;
->> +	struct platform_device *cpdev;
->> +	struct device_node *child;
->> +	struct k3_r5_core *core, *temp;
->> +	int ret;
->> +
->> +	for_each_available_child_of_node(np, child) {
->> +		cpdev = of_find_device_by_node(child);
->> +		if (!cpdev) {
->> +			ret = -ENODEV;
->> +			dev_err(dev, "could not get R5 core platform device\n");
->> +			goto fail;
->> +		}
->> +
->> +		ret = k3_r5_core_of_init(cpdev);
->> +		if (ret) {
->> +			dev_err(dev, "k3_r5_core_of_init failed, ret = %d\n",
->> +				ret);
->> +			put_device(&cpdev->dev);
->> +			goto fail;
->> +		}
->> +
->> +		core = platform_get_drvdata(cpdev);
->> +		put_device(&cpdev->dev);
->> +		list_add_tail(&core->elem, &cluster->cores);
->> +	}
->> +
->> +	return 0;
->> +
->> +fail:
->> +	list_for_each_entry_safe_reverse(core, temp, &cluster->cores, elem) {
->> +		list_del(&core->elem);
->> +		cpdev = to_platform_device(core->dev);
->> +		if (k3_r5_core_of_exit(cpdev))
->> +			dev_err(dev, "k3_r5_core_of_exit cleanup failed\n");
->> +	}
->> +	return ret;
->> +}
->> +
->> +static int k3_r5_cluster_of_exit(struct platform_device *pdev)
->> +{
->> +	struct k3_r5_cluster *cluster = platform_get_drvdata(pdev);
->> +	struct device *dev = &pdev->dev;
->> +	struct platform_device *cpdev;
->> +	struct k3_r5_core *core, *temp;
->> +	int ret;
->> +
->> +	list_for_each_entry_safe_reverse(core, temp, &cluster->cores, elem) {
->> +		list_del(&core->elem);
->> +		cpdev = to_platform_device(core->dev);
->> +		ret = k3_r5_core_of_exit(cpdev);
->> +		if (ret) {
->> +			dev_err(dev, "k3_r5_core_of_exit failed, ret = %d\n",
->> +				ret);
->> +			break;
->> +		}
->> +	}
->> +
->> +	return ret;
->> +}
->> +
->> +static int k3_r5_probe(struct platform_device *pdev)
->> +{
->> +	struct device *dev = &pdev->dev;
->> +	struct device_node *np = dev->of_node;
->> +	struct k3_r5_cluster *cluster;
->> +	int ret, ret1;
->> +	int num_cores;
->> +
->> +	cluster = devm_kzalloc(dev, sizeof(*cluster), GFP_KERNEL);
->> +	if (!cluster)
->> +		return -ENOMEM;
->> +
->> +	cluster->dev = dev;
->> +	cluster->mode = CLUSTER_MODE_LOCKSTEP;
->> +	INIT_LIST_HEAD(&cluster->cores);
->> +
->> +	ret = of_property_read_u32(np, "lockstep-mode", &cluster->mode);
->> +	if (ret < 0 && ret != -EINVAL) {
->> +		dev_err(dev, "invalid format for lockstep-mode, ret = %d\n",
->> +			ret);
->> +		return ret;
->> +	}
->> +
->> +	num_cores = of_get_available_child_count(np);
->> +	if (num_cores != 2) {
->> +		dev_err(dev, "MCU cluster requires both R5F cores to be enabled, num_cores = %d\n",
->> +			num_cores);
->> +		return -ENODEV;
->> +	}
->> +
->> +	platform_set_drvdata(pdev, cluster);
->> +
->> +	dev_dbg(dev, "creating child devices for R5F cores\n");
->> +	ret = of_platform_populate(np, NULL, NULL, dev);
->> +	if (ret) {
->> +		dev_err(dev, "of_platform_populate failed, ret = %d\n", ret);
->> +		return ret;
->> +	}
->> +
->> +	ret = k3_r5_cluster_of_init(pdev);
->> +	if (ret) {
->> +		dev_err(dev, "k3_r5_cluster_of_init failed, ret = %d\n", ret);
->> +		goto fail_of;
->> +	}
->> +
->> +	ret = k3_r5_cluster_rproc_init(pdev);
->> +	if (ret) {
->> +		dev_err(dev, "k3_r5_cluster_rproc_init failed, ret = %d\n",
->> +			ret);
->> +		goto fail_rproc;
->> +	}
->> +
->> +	return 0;
->> +
->> +fail_rproc:
->> +	ret1 = k3_r5_cluster_of_exit(pdev);
->> +	if (ret1)
->> +		dev_err(dev, "k3_r5_cluster_of_exit failed, ret = %d\n", ret1);
->> +fail_of:
->> +	of_platform_depopulate(dev);
->> +	return ret;
->> +}
->> +
->> +static int k3_r5_remove(struct platform_device *pdev)
->> +{
->> +	struct device *dev = &pdev->dev;
->> +	int ret;
->> +
->> +	ret = k3_r5_cluster_rproc_exit(pdev);
->> +	if (ret) {
->> +		dev_err(dev, "k3_r5_cluster_rproc_exit failed, ret = %d\n",
->> +			ret);
->> +		goto fail;
->> +	}
->> +
->> +	ret = k3_r5_cluster_of_exit(pdev);
->> +	if (ret) {
->> +		dev_err(dev, "k3_r5_cluster_of_exit failed, ret = %d\n", ret);
->> +		goto fail;
->> +	}
->> +
->> +	dev_dbg(dev, "removing child devices for R5F cores\n");
->> +	of_platform_depopulate(dev);
->> +
->> +fail:
->> +	return ret;
->> +}
->> +
->> +static const struct of_device_id k3_r5_of_match[] = {
->> +	{ .compatible = "ti,am654-r5fss", },
->> +	{ .compatible = "ti,j721e-r5fss", },
->> +	{ /* sentinel */ },
->> +};
->> +MODULE_DEVICE_TABLE(of, k3_r5_of_match);
->> +
->> +static struct platform_driver k3_r5_rproc_driver = {
->> +	.probe = k3_r5_probe,
->> +	.remove = k3_r5_remove,
->> +	.driver = {
->> +		.name = "k3_r5_rproc",
->> +		.of_match_table = k3_r5_of_match,
->> +	},
->> +};
->> +
->> +module_platform_driver(k3_r5_rproc_driver);
->> +
->> +MODULE_LICENSE("GPL v2");
->> +MODULE_DESCRIPTION("TI K3 R5F remote processor driver");
->> +MODULE_AUTHOR("Suman Anna <s-anna@ti.com>");
->> -- 
->> 2.23.0
->>
+   reg:
+     maxItems: 1
+diff --git a/Documentation/devicetree/bindings/clock/allwinner,sun4i-a10-gates-clk.yaml b/Documentation/devicetree/bindings/clock/allwinner,sun4i-a10-gates-clk.yaml
+index ed1b2126a81b..9a37a357cb4e 100644
+--- a/Documentation/devicetree/bindings/clock/allwinner,sun4i-a10-gates-clk.yaml
++++ b/Documentation/devicetree/bindings/clock/allwinner,sun4i-a10-gates-clk.yaml
+@@ -52,12 +52,12 @@ properties:
+       - const: allwinner,sun4i-a10-dram-gates-clk
 
+       - items:
+-        - const: allwinner,sun5i-a13-dram-gates-clk
+-        - const: allwinner,sun4i-a10-gates-clk
++          - const: allwinner,sun5i-a13-dram-gates-clk
++          - const: allwinner,sun4i-a10-gates-clk
+
+       - items:
+-        - const: allwinner,sun8i-h3-apb0-gates-clk
+-        - const: allwinner,sun4i-a10-gates-clk
++          - const: allwinner,sun8i-h3-apb0-gates-clk
++          - const: allwinner,sun4i-a10-gates-clk
+
+   reg:
+     maxItems: 1
+diff --git a/Documentation/devicetree/bindings/clock/fsl,plldig.yaml b/Documentation/devicetree/bindings/clock/fsl,plldig.yaml
+index a203d5d498db..8141f22410dd 100644
+--- a/Documentation/devicetree/bindings/clock/fsl,plldig.yaml
++++ b/Documentation/devicetree/bindings/clock/fsl,plldig.yaml
+@@ -28,15 +28,14 @@ properties:
+     const: 0
+
+   fsl,vco-hz:
+-     description: Optional for VCO frequency of the PLL in Hertz.
+-        The VCO frequency of this PLL cannot be changed during runtime
+-        only at startup. Therefore, the output frequencies are very
+-        limited and might not even closely match the requested frequency.
+-        To work around this restriction the user may specify its own
+-        desired VCO frequency for the PLL.
+-     minimum: 650000000
+-     maximum: 1300000000
+-     default: 1188000000
++    description: Optional for VCO frequency of the PLL in Hertz. The VCO frequency
++      of this PLL cannot be changed during runtime only at startup. Therefore,
++      the output frequencies are very limited and might not even closely match
++      the requested frequency. To work around this restriction the user may specify
++      its own desired VCO frequency for the PLL.
++    minimum: 650000000
++    maximum: 1300000000
++    default: 1188000000
+
+ required:
+   - compatible
+diff --git a/Documentation/devicetree/bindings/clock/qcom,mmcc.yaml b/Documentation/devicetree/bindings/clock/qcom,mmcc.yaml
+index f684fe67db84..acc31b3991bd 100644
+--- a/Documentation/devicetree/bindings/clock/qcom,mmcc.yaml
++++ b/Documentation/devicetree/bindings/clock/qcom,mmcc.yaml
+@@ -15,15 +15,15 @@ description: |
+   power domains.
+
+ properties:
+-  compatible :
++  compatible:
+     enum:
+-       - qcom,mmcc-apq8064
+-       - qcom,mmcc-apq8084
+-       - qcom,mmcc-msm8660
+-       - qcom,mmcc-msm8960
+-       - qcom,mmcc-msm8974
+-       - qcom,mmcc-msm8996
+-       - qcom,mmcc-msm8998
++      - qcom,mmcc-apq8064
++      - qcom,mmcc-apq8084
++      - qcom,mmcc-msm8660
++      - qcom,mmcc-msm8960
++      - qcom,mmcc-msm8974
++      - qcom,mmcc-msm8996
++      - qcom,mmcc-msm8998
+
+   clocks:
+     items:
+diff --git a/Documentation/devicetree/bindings/connector/usb-connector.yaml b/Documentation/devicetree/bindings/connector/usb-connector.yaml
+index 4638d7adb806..369c58e22a06 100644
+--- a/Documentation/devicetree/bindings/connector/usb-connector.yaml
++++ b/Documentation/devicetree/bindings/connector/usb-connector.yaml
+@@ -144,7 +144,7 @@ required:
+
+ examples:
+   # Micro-USB connector with HS lines routed via controller (MUIC).
+-  - |+
++  - |
+     muic-max77843 {
+       usb_con1: connector {
+         compatible = "usb-b-connector";
+@@ -156,7 +156,7 @@ examples:
+   # USB-C connector attached to CC controller (s2mm005), HS lines routed
+   # to companion PMIC (max77865), SS lines to USB3 PHY and SBU to DisplayPort.
+   # DisplayPort video lines are routed to the connector via SS mux in USB3 PHY.
+-  - |+
++  - |
+     ccic: s2mm005 {
+       usb_con2: connector {
+         compatible = "usb-c-connector";
+@@ -190,7 +190,7 @@ examples:
+
+   # USB-C connector attached to a typec port controller(ptn5110), which has
+   # power delivery support and enables drp.
+-  - |+
++  - |
+     #include <dt-bindings/usb/pd.h>
+     typec: ptn5110 {
+       usb_con3: connector {
+diff --git a/Documentation/devicetree/bindings/crypto/allwinner,sun4i-a10-crypto.yaml b/Documentation/devicetree/bindings/crypto/allwinner,sun4i-a10-crypto.yaml
+index 8b9a8f337f16..fc823572bcff 100644
+--- a/Documentation/devicetree/bindings/crypto/allwinner,sun4i-a10-crypto.yaml
++++ b/Documentation/devicetree/bindings/crypto/allwinner,sun4i-a10-crypto.yaml
+@@ -15,16 +15,16 @@ properties:
+     oneOf:
+       - const: allwinner,sun4i-a10-crypto
+       - items:
+-        - const: allwinner,sun5i-a13-crypto
+-        - const: allwinner,sun4i-a10-crypto
++          - const: allwinner,sun5i-a13-crypto
++          - const: allwinner,sun4i-a10-crypto
+       - items:
+-        - const: allwinner,sun6i-a31-crypto
+-        - const: allwinner,sun4i-a10-crypto
++          - const: allwinner,sun6i-a31-crypto
++          - const: allwinner,sun4i-a10-crypto
+       - items:
+-        - const: allwinner,sun7i-a20-crypto
+-        - const: allwinner,sun4i-a10-crypto
++          - const: allwinner,sun7i-a20-crypto
++          - const: allwinner,sun4i-a10-crypto
+       - items:
+-        - const: allwinner,sun8i-a33-crypto
++          - const: allwinner,sun8i-a33-crypto
+
+   reg:
+     maxItems: 1
+diff --git a/Documentation/devicetree/bindings/crypto/allwinner,sun8i-ce.yaml b/Documentation/devicetree/bindings/crypto/allwinner,sun8i-ce.yaml
+index 2c459b8c76ff..7a60d84289cc 100644
+--- a/Documentation/devicetree/bindings/crypto/allwinner,sun8i-ce.yaml
++++ b/Documentation/devicetree/bindings/crypto/allwinner,sun8i-ce.yaml
+@@ -50,16 +50,16 @@ if:
+         const: allwinner,sun50i-h6-crypto
+ then:
+   properties:
+-      clocks:
+-        minItems: 3
+-      clock-names:
+-        minItems: 3
++    clocks:
++      minItems: 3
++    clock-names:
++      minItems: 3
+ else:
+   properties:
+-      clocks:
+-        maxItems: 2
+-      clock-names:
+-        maxItems: 2
++    clocks:
++      maxItems: 2
++    clock-names:
++      maxItems: 2
+
+ required:
+   - compatible
+diff --git a/Documentation/devicetree/bindings/crypto/amlogic,gxl-crypto.yaml b/Documentation/devicetree/bindings/crypto/amlogic,gxl-crypto.yaml
+index 5becc60a0e28..385b23d255c3 100644
+--- a/Documentation/devicetree/bindings/crypto/amlogic,gxl-crypto.yaml
++++ b/Documentation/devicetree/bindings/crypto/amlogic,gxl-crypto.yaml
+@@ -12,7 +12,7 @@ maintainers:
+ properties:
+   compatible:
+     items:
+-    - const: amlogic,gxl-crypto
++      - const: amlogic,gxl-crypto
+
+   reg:
+     maxItems: 1
+diff --git a/Documentation/devicetree/bindings/display/allwinner,sun4i-a10-hdmi.yaml b/Documentation/devicetree/bindings/display/allwinner,sun4i-a10-hdmi.yaml
+index 5d4915aed1e2..75e6479397a5 100644
+--- a/Documentation/devicetree/bindings/display/allwinner,sun4i-a10-hdmi.yaml
++++ b/Documentation/devicetree/bindings/display/allwinner,sun4i-a10-hdmi.yaml
+@@ -21,8 +21,8 @@ properties:
+       - const: allwinner,sun5i-a10s-hdmi
+       - const: allwinner,sun6i-a31-hdmi
+       - items:
+-        - const: allwinner,sun7i-a20-hdmi
+-        - const: allwinner,sun5i-a10s-hdmi
++          - const: allwinner,sun7i-a20-hdmi
++          - const: allwinner,sun5i-a10s-hdmi
+
+   reg:
+     maxItems: 1
+@@ -33,32 +33,32 @@ properties:
+   clocks:
+     oneOf:
+       - items:
+-        - description: The HDMI interface clock
+-        - description: The HDMI module clock
+-        - description: The first video PLL
+-        - description: The second video PLL
++          - description: The HDMI interface clock
++          - description: The HDMI module clock
++          - description: The first video PLL
++          - description: The second video PLL
+
+       - items:
+-        - description: The HDMI interface clock
+-        - description: The HDMI module clock
+-        - description: The HDMI DDC clock
+-        - description: The first video PLL
+-        - description: The second video PLL
++          - description: The HDMI interface clock
++          - description: The HDMI module clock
++          - description: The HDMI DDC clock
++          - description: The first video PLL
++          - description: The second video PLL
+
+   clock-names:
+     oneOf:
+       - items:
+-        - const: ahb
+-        - const: mod
+-        - const: pll-0
+-        - const: pll-1
++          - const: ahb
++          - const: mod
++          - const: pll-0
++          - const: pll-1
+
+       - items:
+-        - const: ahb
+-        - const: mod
+-        - const: ddc
+-        - const: pll-0
+-        - const: pll-1
++          - const: ahb
++          - const: mod
++          - const: ddc
++          - const: pll-0
++          - const: pll-1
+
+   resets:
+     maxItems: 1
+diff --git a/Documentation/devicetree/bindings/display/allwinner,sun4i-a10-tcon.yaml b/Documentation/devicetree/bindings/display/allwinner,sun4i-a10-tcon.yaml
+index e5344c4ae226..87cb77b32ee3 100644
+--- a/Documentation/devicetree/bindings/display/allwinner,sun4i-a10-tcon.yaml
++++ b/Documentation/devicetree/bindings/display/allwinner,sun4i-a10-tcon.yaml
+@@ -35,26 +35,26 @@ properties:
+       - const: allwinner,sun9i-a80-tcon-tv
+
+       - items:
+-        - enum:
+-          - allwinner,sun7i-a20-tcon0
+-          - allwinner,sun7i-a20-tcon1
+-        - const: allwinner,sun7i-a20-tcon
++          - enum:
++              - allwinner,sun7i-a20-tcon0
++              - allwinner,sun7i-a20-tcon1
++          - const: allwinner,sun7i-a20-tcon
+
+       - items:
+-        - enum:
+-            - allwinner,sun50i-a64-tcon-lcd
+-        - const: allwinner,sun8i-a83t-tcon-lcd
++          - enum:
++              - allwinner,sun50i-a64-tcon-lcd
++          - const: allwinner,sun8i-a83t-tcon-lcd
+
+       - items:
+-        - enum:
+-          - allwinner,sun8i-h3-tcon-tv
+-          - allwinner,sun50i-a64-tcon-tv
+-        - const: allwinner,sun8i-a83t-tcon-tv
++          - enum:
++              - allwinner,sun8i-h3-tcon-tv
++              - allwinner,sun50i-a64-tcon-tv
++          - const: allwinner,sun8i-a83t-tcon-tv
+
+       - items:
+-        - enum:
+-          - allwinner,sun50i-h6-tcon-tv
+-        - const: allwinner,sun8i-r40-tcon-tv
++          - enum:
++              - allwinner,sun50i-h6-tcon-tv
++          - const: allwinner,sun8i-r40-tcon-tv
+
+   reg:
+     maxItems: 1
+@@ -83,37 +83,37 @@ properties:
+   resets:
+     anyOf:
+       - items:
+-        - description: TCON Reset Line
++          - description: TCON Reset Line
+
+       - items:
+-        - description: TCON Reset Line
+-        - description: TCON LVDS Reset Line
++          - description: TCON Reset Line
++          - description: TCON LVDS Reset Line
+
+       - items:
+-        - description: TCON Reset Line
+-        - description: TCON eDP Reset Line
++          - description: TCON Reset Line
++          - description: TCON eDP Reset Line
+
+       - items:
+-        - description: TCON Reset Line
+-        - description: TCON eDP Reset Line
+-        - description: TCON LVDS Reset Line
++          - description: TCON Reset Line
++          - description: TCON eDP Reset Line
++          - description: TCON LVDS Reset Line
+
+   reset-names:
+     oneOf:
+       - const: lcd
+
+       - items:
+-        - const: lcd
+-        - const: lvds
++          - const: lcd
++          - const: lvds
+
+       - items:
+-        - const: lcd
+-        - const: edp
++          - const: lcd
++          - const: edp
+
+       - items:
+-        - const: lcd
+-        - const: edp
+-        - const: lvds
++          - const: lcd
++          - const: edp
++          - const: lvds
+
+   ports:
+     type: object
+diff --git a/Documentation/devicetree/bindings/display/allwinner,sun6i-a31-mipi-dsi.yaml b/Documentation/devicetree/bindings/display/allwinner,sun6i-a31-mipi-dsi.yaml
+index 9e90c2b00960..eed05b26cdf3 100644
+--- a/Documentation/devicetree/bindings/display/allwinner,sun6i-a31-mipi-dsi.yaml
++++ b/Documentation/devicetree/bindings/display/allwinner,sun6i-a31-mipi-dsi.yaml
+@@ -76,28 +76,28 @@ required:
+ allOf:
+   - if:
+       properties:
+-         compatible:
+-           contains:
+-             const: allwinner,sun6i-a31-mipi-dsi
++        compatible:
++          contains:
++            const: allwinner,sun6i-a31-mipi-dsi
+
+     then:
+-        properties:
+-          clocks:
+-            minItems: 2
++      properties:
++        clocks:
++          minItems: 2
+
+-        required:
+-          - clock-names
++      required:
++        - clock-names
+
+   - if:
+       properties:
+-         compatible:
+-           contains:
+-             const: allwinner,sun50i-a64-mipi-dsi
++        compatible:
++          contains:
++            const: allwinner,sun50i-a64-mipi-dsi
+
+     then:
+-        properties:
+-          clocks:
+-            minItems: 1
++      properties:
++        clocks:
++          minItems: 1
+
+ additionalProperties: false
+
+diff --git a/Documentation/devicetree/bindings/display/allwinner,sun8i-a83t-dw-hdmi.yaml b/Documentation/devicetree/bindings/display/allwinner,sun8i-a83t-dw-hdmi.yaml
+index 4d6795690ac3..fa4769a0b26e 100644
+--- a/Documentation/devicetree/bindings/display/allwinner,sun8i-a83t-dw-hdmi.yaml
++++ b/Documentation/devicetree/bindings/display/allwinner,sun8i-a83t-dw-hdmi.yaml
+@@ -29,11 +29,11 @@ properties:
+       - const: allwinner,sun50i-h6-dw-hdmi
+
+       - items:
+-        - enum:
+-          - allwinner,sun8i-h3-dw-hdmi
+-          - allwinner,sun8i-r40-dw-hdmi
+-          - allwinner,sun50i-a64-dw-hdmi
+-        - const: allwinner,sun8i-a83t-dw-hdmi
++          - enum:
++              - allwinner,sun8i-h3-dw-hdmi
++              - allwinner,sun8i-r40-dw-hdmi
++              - allwinner,sun50i-a64-dw-hdmi
++          - const: allwinner,sun8i-a83t-dw-hdmi
+
+   reg:
+     maxItems: 1
+diff --git a/Documentation/devicetree/bindings/display/bridge/lvds-codec.yaml b/Documentation/devicetree/bindings/display/bridge/lvds-codec.yaml
+index 8f373029f5d2..e737951f5873 100644
+--- a/Documentation/devicetree/bindings/display/bridge/lvds-codec.yaml
++++ b/Documentation/devicetree/bindings/display/bridge/lvds-codec.yaml
+@@ -32,17 +32,17 @@ properties:
+   compatible:
+     oneOf:
+       - items:
+-        - enum:
+-          - ti,ds90c185       # For the TI DS90C185 FPD-Link Serializer
+-          - ti,ds90c187       # For the TI DS90C187 FPD-Link Serializer
+-          - ti,sn75lvds83     # For the TI SN75LVDS83 FlatLink transmitter
+-        - const: lvds-encoder # Generic LVDS encoder compatible fallback
++          - enum:
++              - ti,ds90c185   # For the TI DS90C185 FPD-Link Serializer
++              - ti,ds90c187   # For the TI DS90C187 FPD-Link Serializer
++              - ti,sn75lvds83 # For the TI SN75LVDS83 FlatLink transmitter
++          - const: lvds-encoder # Generic LVDS encoder compatible fallback
+       - items:
+-        - enum:
+-          - ti,ds90cf384a     # For the DS90CF384A FPD-Link LVDS Receiver
+-        - const: lvds-decoder # Generic LVDS decoders compatible fallback
++          - enum:
++              - ti,ds90cf384a # For the DS90CF384A FPD-Link LVDS Receiver
++          - const: lvds-decoder # Generic LVDS decoders compatible fallback
+       - enum:
+-        - thine,thc63lvdm83d  # For the THC63LVDM83D LVDS serializer
++          - thine,thc63lvdm83d # For the THC63LVDM83D LVDS serializer
+
+   ports:
+     type: object
+diff --git a/Documentation/devicetree/bindings/display/panel/sony,acx424akp.yaml b/Documentation/devicetree/bindings/display/panel/sony,acx424akp.yaml
+index 185dcc8fd1f9..78d060097052 100644
+--- a/Documentation/devicetree/bindings/display/panel/sony,acx424akp.yaml
++++ b/Documentation/devicetree/bindings/display/panel/sony,acx424akp.yaml
+@@ -18,7 +18,7 @@ properties:
+   reg: true
+   reset-gpios: true
+   vddi-supply:
+-     description: regulator that supplies the vddi voltage
++    description: regulator that supplies the vddi voltage
+   enforce-video-mode: true
+
+ required:
+diff --git a/Documentation/devicetree/bindings/display/panel/xinpeng,xpp055c272.yaml b/Documentation/devicetree/bindings/display/panel/xinpeng,xpp055c272.yaml
+index d9fdb58e06b4..891de2256d22 100644
+--- a/Documentation/devicetree/bindings/display/panel/xinpeng,xpp055c272.yaml
++++ b/Documentation/devicetree/bindings/display/panel/xinpeng,xpp055c272.yaml
+@@ -19,9 +19,9 @@ properties:
+   backlight: true
+   reset-gpios: true
+   iovcc-supply:
+-     description: regulator that supplies the iovcc voltage
++    description: regulator that supplies the iovcc voltage
+   vci-supply:
+-     description: regulator that supplies the vci voltage
++    description: regulator that supplies the vci voltage
+
+ required:
+   - compatible
+diff --git a/Documentation/devicetree/bindings/display/renesas,cmm.yaml b/Documentation/devicetree/bindings/display/renesas,cmm.yaml
+index a57037b9e9ba..005406c89507 100644
+--- a/Documentation/devicetree/bindings/display/renesas,cmm.yaml
++++ b/Documentation/devicetree/bindings/display/renesas,cmm.yaml
+@@ -21,15 +21,15 @@ properties:
+   compatible:
+     oneOf:
+       - items:
+-        - enum:
+-          - renesas,r8a7795-cmm
+-          - renesas,r8a7796-cmm
+-          - renesas,r8a77965-cmm
+-          - renesas,r8a77990-cmm
+-          - renesas,r8a77995-cmm
+-        - const: renesas,rcar-gen3-cmm
++          - enum:
++              - renesas,r8a7795-cmm
++              - renesas,r8a7796-cmm
++              - renesas,r8a77965-cmm
++              - renesas,r8a77990-cmm
++              - renesas,r8a77995-cmm
++          - const: renesas,rcar-gen3-cmm
+       - items:
+-        - const: renesas,rcar-gen2-cmm
++          - const: renesas,rcar-gen2-cmm
+
+   reg:
+     maxItems: 1
+diff --git a/Documentation/devicetree/bindings/dma/ti/k3-udma.yaml b/Documentation/devicetree/bindings/dma/ti/k3-udma.yaml
+index 39ea05e6e5ff..85056982a242 100644
+--- a/Documentation/devicetree/bindings/dma/ti/k3-udma.yaml
++++ b/Documentation/devicetree/bindings/dma/ti/k3-udma.yaml
+@@ -69,10 +69,10 @@ properties:
+     maxItems: 3
+
+   reg-names:
+-   items:
+-     - const: gcfg
+-     - const: rchanrt
+-     - const: tchanrt
++    items:
++      - const: gcfg
++      - const: rchanrt
++      - const: tchanrt
+
+   msi-parent: true
+
+diff --git a/Documentation/devicetree/bindings/gpio/brcm,xgs-iproc-gpio.yaml b/Documentation/devicetree/bindings/gpio/brcm,xgs-iproc-gpio.yaml
+index 5f1ed20e43ee..4f2cbd8307a7 100644
+--- a/Documentation/devicetree/bindings/gpio/brcm,xgs-iproc-gpio.yaml
++++ b/Documentation/devicetree/bindings/gpio/brcm,xgs-iproc-gpio.yaml
+@@ -27,7 +27,7 @@ properties:
+   gpio-controller: true
+
+   '#gpio-cells':
+-      const: 2
++    const: 2
+
+   ngpios:
+     minimum: 0
+diff --git a/Documentation/devicetree/bindings/gpu/arm,mali-midgard.yaml b/Documentation/devicetree/bindings/gpu/arm,mali-midgard.yaml
+index 0407e45eb8c4..a7a67e0a42e5 100644
+--- a/Documentation/devicetree/bindings/gpu/arm,mali-midgard.yaml
++++ b/Documentation/devicetree/bindings/gpu/arm,mali-midgard.yaml
+@@ -16,33 +16,33 @@ properties:
+     oneOf:
+       - items:
+           - enum:
+-             - samsung,exynos5250-mali
++              - samsung,exynos5250-mali
+           - const: arm,mali-t604
+       - items:
+           - enum:
+-             - samsung,exynos5420-mali
++              - samsung,exynos5420-mali
+           - const: arm,mali-t628
+       - items:
+           - enum:
+-             - allwinner,sun50i-h6-mali
++              - allwinner,sun50i-h6-mali
+           - const: arm,mali-t720
+       - items:
+           - enum:
+-             - amlogic,meson-gxm-mali
+-             - realtek,rtd1295-mali
++              - amlogic,meson-gxm-mali
++              - realtek,rtd1295-mali
+           - const: arm,mali-t820
+       - items:
+           - enum:
+-             - arm,juno-mali
++              - arm,juno-mali
+           - const: arm,mali-t624
+       - items:
+           - enum:
+-             - rockchip,rk3288-mali
+-             - samsung,exynos5433-mali
++              - rockchip,rk3288-mali
++              - samsung,exynos5433-mali
+           - const: arm,mali-t760
+       - items:
+           - enum:
+-             - rockchip,rk3399-mali
++              - rockchip,rk3399-mali
+           - const: arm,mali-t860
+
+           # "arm,mali-t830"
+diff --git a/Documentation/devicetree/bindings/gpu/vivante,gc.yaml b/Documentation/devicetree/bindings/gpu/vivante,gc.yaml
+index 0bc4b38d5cbb..e1ac6ff5a230 100644
+--- a/Documentation/devicetree/bindings/gpu/vivante,gc.yaml
++++ b/Documentation/devicetree/bindings/gpu/vivante,gc.yaml
+@@ -9,7 +9,7 @@ title: Vivante GPU Bindings
+ description: Vivante GPU core devices
+
+ maintainers:
+-  -  Lucas Stach <l.stach@pengutronix.de>
++  - Lucas Stach <l.stach@pengutronix.de>
+
+ properties:
+   compatible:
+diff --git a/Documentation/devicetree/bindings/i2c/i2c-rk3x.yaml b/Documentation/devicetree/bindings/i2c/i2c-rk3x.yaml
+index 61eac76c84c4..790aa7218ee0 100644
+--- a/Documentation/devicetree/bindings/i2c/i2c-rk3x.yaml
++++ b/Documentation/devicetree/bindings/i2c/i2c-rk3x.yaml
+@@ -28,14 +28,14 @@ properties:
+       - const: rockchip,rk3399-i2c
+       - items:
+           - enum:
+-            - rockchip,rk3036-i2c
+-            - rockchip,rk3368-i2c
++              - rockchip,rk3036-i2c
++              - rockchip,rk3368-i2c
+           - const: rockchip,rk3288-i2c
+       - items:
+           - enum:
+-            - rockchip,px30-i2c
+-            - rockchip,rk3308-i2c
+-            - rockchip,rk3328-i2c
++              - rockchip,px30-i2c
++              - rockchip,rk3308-i2c
++              - rockchip,rk3328-i2c
+           - const: rockchip,rk3399-i2c
+
+   reg:
+diff --git a/Documentation/devicetree/bindings/iio/adc/adi,ad7124.yaml b/Documentation/devicetree/bindings/iio/adc/adi,ad7124.yaml
+index f0934b295edc..97087a45ce54 100644
+--- a/Documentation/devicetree/bindings/iio/adc/adi,ad7124.yaml
++++ b/Documentation/devicetree/bindings/iio/adc/adi,ad7124.yaml
+@@ -72,8 +72,8 @@ patternProperties:
+           The channel number. It can have up to 8 channels on ad7124-4
+           and 16 channels on ad7124-8, numbered from 0 to 15.
+         items:
+-         minimum: 0
+-         maximum: 15
++          minimum: 0
++          maximum: 15
+
+       adi,reference-select:
+         description: |
+diff --git a/Documentation/devicetree/bindings/iio/adc/lltc,ltc2496.yaml b/Documentation/devicetree/bindings/iio/adc/lltc,ltc2496.yaml
+index 118809a03279..97f521d654ea 100644
+--- a/Documentation/devicetree/bindings/iio/adc/lltc,ltc2496.yaml
++++ b/Documentation/devicetree/bindings/iio/adc/lltc,ltc2496.yaml
+@@ -7,9 +7,9 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
+ title: Linear Technology / Analog Devices LTC2496 ADC
+
+ maintainers:
+- - Lars-Peter Clausen <lars@metafoo.de>
+- - Michael Hennerich <Michael.Hennerich@analog.com>
+- - Stefan Popa <stefan.popa@analog.com>
++  - Lars-Peter Clausen <lars@metafoo.de>
++  - Michael Hennerich <Michael.Hennerich@analog.com>
++  - Stefan Popa <stefan.popa@analog.com>
+
+ properties:
+   compatible:
+diff --git a/Documentation/devicetree/bindings/input/allwinner,sun4i-a10-lradc-keys.yaml b/Documentation/devicetree/bindings/input/allwinner,sun4i-a10-lradc-keys.yaml
+index 5b3b71c9c018..512a6af5aa42 100644
+--- a/Documentation/devicetree/bindings/input/allwinner,sun4i-a10-lradc-keys.yaml
++++ b/Documentation/devicetree/bindings/input/allwinner,sun4i-a10-lradc-keys.yaml
+@@ -16,8 +16,8 @@ properties:
+       - const: allwinner,sun4i-a10-lradc-keys
+       - const: allwinner,sun8i-a83t-r-lradc
+       - items:
+-        - const: allwinner,sun50i-a64-lradc
+-        - const: allwinner,sun8i-a83t-r-lradc
++          - const: allwinner,sun50i-a64-lradc
++          - const: allwinner,sun8i-a83t-r-lradc
+
+   reg:
+     maxItems: 1
+diff --git a/Documentation/devicetree/bindings/input/touchscreen/goodix.yaml b/Documentation/devicetree/bindings/input/touchscreen/goodix.yaml
+index c8ea9434c9cc..e81cfa56f25a 100644
+--- a/Documentation/devicetree/bindings/input/touchscreen/goodix.yaml
++++ b/Documentation/devicetree/bindings/input/touchscreen/goodix.yaml
+@@ -63,7 +63,7 @@ required:
+   - interrupts
+
+ examples:
+-- |
++  - |
+     i2c {
+       #address-cells = <1>;
+       #size-cells = <0>;
+diff --git a/Documentation/devicetree/bindings/interconnect/qcom,msm8916.yaml b/Documentation/devicetree/bindings/interconnect/qcom,msm8916.yaml
+index 4107e60cab12..e1009ae4e8f7 100644
+--- a/Documentation/devicetree/bindings/interconnect/qcom,msm8916.yaml
++++ b/Documentation/devicetree/bindings/interconnect/qcom,msm8916.yaml
+@@ -10,8 +10,8 @@ maintainers:
+   - Georgi Djakov <georgi.djakov@linaro.org>
+
+ description: |
+-   The Qualcomm MSM8916 interconnect providers support adjusting the
+-   bandwidth requirements between the various NoC fabrics.
++  The Qualcomm MSM8916 interconnect providers support adjusting the
++  bandwidth requirements between the various NoC fabrics.
+
+ properties:
+   compatible:
+diff --git a/Documentation/devicetree/bindings/interconnect/qcom,msm8974.yaml b/Documentation/devicetree/bindings/interconnect/qcom,msm8974.yaml
+index 9af3c6e59cff..8004c4baf397 100644
+--- a/Documentation/devicetree/bindings/interconnect/qcom,msm8974.yaml
++++ b/Documentation/devicetree/bindings/interconnect/qcom,msm8974.yaml
+@@ -10,8 +10,8 @@ maintainers:
+   - Brian Masney <masneyb@onstation.org>
+
+ description: |
+-   The Qualcomm MSM8974 interconnect providers support setting system
+-   bandwidth requirements between various network-on-chip fabrics.
++  The Qualcomm MSM8974 interconnect providers support setting system
++  bandwidth requirements between various network-on-chip fabrics.
+
+ properties:
+   reg:
+diff --git a/Documentation/devicetree/bindings/interconnect/qcom,qcs404.yaml b/Documentation/devicetree/bindings/interconnect/qcom,qcs404.yaml
+index 8d65c5f80679..3fbb8785fbc9 100644
+--- a/Documentation/devicetree/bindings/interconnect/qcom,qcs404.yaml
++++ b/Documentation/devicetree/bindings/interconnect/qcom,qcs404.yaml
+@@ -10,8 +10,8 @@ maintainers:
+   - Georgi Djakov <georgi.djakov@linaro.org>
+
+ description: |
+-   The Qualcomm QCS404 interconnect providers support adjusting the
+-   bandwidth requirements between the various NoC fabrics.
++  The Qualcomm QCS404 interconnect providers support adjusting the
++  bandwidth requirements between the various NoC fabrics.
+
+ properties:
+   reg:
+diff --git a/Documentation/devicetree/bindings/interrupt-controller/allwinner,sun7i-a20-sc-nmi.yaml b/Documentation/devicetree/bindings/interrupt-controller/allwinner,sun7i-a20-sc-nmi.yaml
+index cf09055da78b..7cd6b8bacfa0 100644
+--- a/Documentation/devicetree/bindings/interrupt-controller/allwinner,sun7i-a20-sc-nmi.yaml
++++ b/Documentation/devicetree/bindings/interrupt-controller/allwinner,sun7i-a20-sc-nmi.yaml
+@@ -27,15 +27,15 @@ properties:
+         deprecated: true
+       - const: allwinner,sun7i-a20-sc-nmi
+       - items:
+-        - const: allwinner,sun8i-a83t-r-intc
+-        - const: allwinner,sun6i-a31-r-intc
++          - const: allwinner,sun8i-a83t-r-intc
++          - const: allwinner,sun6i-a31-r-intc
+       - const: allwinner,sun9i-a80-sc-nmi
+       - items:
+-        - const: allwinner,sun50i-a64-r-intc
+-        - const: allwinner,sun6i-a31-r-intc
++          - const: allwinner,sun50i-a64-r-intc
++          - const: allwinner,sun6i-a31-r-intc
+       - items:
+-        - const: allwinner,sun50i-h6-r-intc
+-        - const: allwinner,sun6i-a31-r-intc
++          - const: allwinner,sun50i-h6-r-intc
++          - const: allwinner,sun6i-a31-r-intc
+
+   reg:
+     maxItems: 1
+diff --git a/Documentation/devicetree/bindings/interrupt-controller/intel,ixp4xx-interrupt.yaml b/Documentation/devicetree/bindings/interrupt-controller/intel,ixp4xx-interrupt.yaml
+index ccc507f384d2..14dced11877b 100644
+--- a/Documentation/devicetree/bindings/interrupt-controller/intel,ixp4xx-interrupt.yaml
++++ b/Documentation/devicetree/bindings/interrupt-controller/intel,ixp4xx-interrupt.yaml
+@@ -25,10 +25,10 @@ properties:
+   compatible:
+     items:
+       - enum:
+-        - intel,ixp42x-interrupt
+-        - intel,ixp43x-interrupt
+-        - intel,ixp45x-interrupt
+-        - intel,ixp46x-interrupt
++          - intel,ixp42x-interrupt
++          - intel,ixp43x-interrupt
++          - intel,ixp45x-interrupt
++          - intel,ixp46x-interrupt
+
+   reg:
+     maxItems: 1
+diff --git a/Documentation/devicetree/bindings/interrupt-controller/st,stm32-exti.yaml b/Documentation/devicetree/bindings/interrupt-controller/st,stm32-exti.yaml
+index 9e5c6608b4e3..2a5b29567926 100644
+--- a/Documentation/devicetree/bindings/interrupt-controller/st,stm32-exti.yaml
++++ b/Documentation/devicetree/bindings/interrupt-controller/st,stm32-exti.yaml
+@@ -14,13 +14,13 @@ properties:
+   compatible:
+     oneOf:
+       - items:
+-        - enum:
+-          - st,stm32-exti
+-          - st,stm32h7-exti
++          - enum:
++              - st,stm32-exti
++              - st,stm32h7-exti
+       - items:
+-        - enum:
+-          - st,stm32mp1-exti
+-        - const: syscon
++          - enum:
++              - st,stm32mp1-exti
++          - const: syscon
+
+   "#interrupt-cells":
+     const: 2
+diff --git a/Documentation/devicetree/bindings/iommu/samsung,sysmmu.yaml b/Documentation/devicetree/bindings/iommu/samsung,sysmmu.yaml
+index 0e33cd9e010e..af51b91c893e 100644
+--- a/Documentation/devicetree/bindings/iommu/samsung,sysmmu.yaml
++++ b/Documentation/devicetree/bindings/iommu/samsung,sysmmu.yaml
+@@ -54,13 +54,13 @@ properties:
+   clock-names:
+     oneOf:
+       - items:
+-        - const: sysmmu
++          - const: sysmmu
+       - items:
+-        - const: sysmmu
+-        - const: master
++          - const: sysmmu
++          - const: master
+       - items:
+-        - const: aclk
+-        - const: pclk
++          - const: aclk
++          - const: pclk
+
+   "#iommu-cells":
+     const: 0
+diff --git a/Documentation/devicetree/bindings/mailbox/st,stm32-ipcc.yaml b/Documentation/devicetree/bindings/mailbox/st,stm32-ipcc.yaml
+index 5b13d6672996..db851541d619 100644
+--- a/Documentation/devicetree/bindings/mailbox/st,stm32-ipcc.yaml
++++ b/Documentation/devicetree/bindings/mailbox/st,stm32-ipcc.yaml
+@@ -24,7 +24,7 @@ properties:
+     maxItems: 1
+
+   clocks:
+-     maxItems: 1
++    maxItems: 1
+
+   interrupts:
+     items:
+diff --git a/Documentation/devicetree/bindings/media/allwinner,sun4i-a10-csi.yaml b/Documentation/devicetree/bindings/media/allwinner,sun4i-a10-csi.yaml
+index 8453ee340b9f..09318830db47 100644
+--- a/Documentation/devicetree/bindings/media/allwinner,sun4i-a10-csi.yaml
++++ b/Documentation/devicetree/bindings/media/allwinner,sun4i-a10-csi.yaml
+@@ -20,11 +20,11 @@ properties:
+       - const: allwinner,sun4i-a10-csi1
+       - const: allwinner,sun7i-a20-csi0
+       - items:
+-        - const: allwinner,sun7i-a20-csi1
+-        - const: allwinner,sun4i-a10-csi1
++          - const: allwinner,sun7i-a20-csi1
++          - const: allwinner,sun4i-a10-csi1
+       - items:
+-        - const: allwinner,sun8i-r40-csi0
+-        - const: allwinner,sun7i-a20-csi0
++          - const: allwinner,sun8i-r40-csi0
++          - const: allwinner,sun7i-a20-csi0
+
+   reg:
+     maxItems: 1
+@@ -35,24 +35,24 @@ properties:
+   clocks:
+     oneOf:
+       - items:
+-        - description: The CSI interface clock
+-        - description: The CSI DRAM clock
++          - description: The CSI interface clock
++          - description: The CSI DRAM clock
+
+       - items:
+-        - description: The CSI interface clock
+-        - description: The CSI ISP clock
+-        - description: The CSI DRAM clock
++          - description: The CSI interface clock
++          - description: The CSI ISP clock
++          - description: The CSI DRAM clock
+
+   clock-names:
+     oneOf:
+       - items:
+-        - const: bus
+-        - const: ram
++          - const: bus
++          - const: ram
+
+       - items:
+-        - const: bus
+-        - const: isp
+-        - const: ram
++          - const: bus
++          - const: isp
++          - const: ram
+
+   resets:
+     maxItems: 1
+diff --git a/Documentation/devicetree/bindings/media/amlogic,gx-vdec.yaml b/Documentation/devicetree/bindings/media/amlogic,gx-vdec.yaml
+index 37d77e065491..5a1da4029c37 100644
+--- a/Documentation/devicetree/bindings/media/amlogic,gx-vdec.yaml
++++ b/Documentation/devicetree/bindings/media/amlogic,gx-vdec.yaml
+@@ -29,14 +29,14 @@ properties:
+   compatible:
+     oneOf:
+       - items:
+-        - enum:
+-          - amlogic,gxbb-vdec # GXBB (S905)
+-          - amlogic,gxl-vdec # GXL (S905X, S905D)
+-          - amlogic,gxm-vdec # GXM (S912)
+-        - const: amlogic,gx-vdec
++          - enum:
++              - amlogic,gxbb-vdec # GXBB (S905)
++              - amlogic,gxl-vdec # GXL (S905X, S905D)
++              - amlogic,gxm-vdec # GXM (S912)
++          - const: amlogic,gx-vdec
+       - enum:
+-        - amlogic,g12a-vdec # G12A (S905X2, S905D2)
+-        - amlogic,sm1-vdec # SM1 (S905X3, S905D3)
++          - amlogic,g12a-vdec # G12A (S905X2, S905D2)
++          - amlogic,sm1-vdec # SM1 (S905X3, S905D3)
+
+   interrupts:
+     minItems: 2
+diff --git a/Documentation/devicetree/bindings/media/renesas,ceu.yaml b/Documentation/devicetree/bindings/media/renesas,ceu.yaml
+index fcb5f13704a5..f2393458814e 100644
+--- a/Documentation/devicetree/bindings/media/renesas,ceu.yaml
++++ b/Documentation/devicetree/bindings/media/renesas,ceu.yaml
+@@ -32,23 +32,23 @@ properties:
+     additionalProperties: false
+
+     properties:
+-       endpoint:
+-         type: object
+-         additionalProperties: false
++      endpoint:
++        type: object
++        additionalProperties: false
+
+          # Properties described in
+          # Documentation/devicetree/bindings/media/video-interfaces.txt
+-         properties:
+-           remote-endpoint: true
+-           hsync-active: true
+-           vsync-active: true
+-           field-even-active: false
+-           bus-width:
+-             enum: [8, 16]
+-             default: 8
+-
+-         required:
+-           - remote-endpoint
++        properties:
++          remote-endpoint: true
++          hsync-active: true
++          vsync-active: true
++          field-even-active: false
++          bus-width:
++            enum: [8, 16]
++            default: 8
++
++        required:
++          - remote-endpoint
+
+     required:
+       - endpoint
+diff --git a/Documentation/devicetree/bindings/media/renesas,vin.yaml b/Documentation/devicetree/bindings/media/renesas,vin.yaml
+index 1ec947b4781f..ecc09f1124d4 100644
+--- a/Documentation/devicetree/bindings/media/renesas,vin.yaml
++++ b/Documentation/devicetree/bindings/media/renesas,vin.yaml
+@@ -261,13 +261,13 @@ properties:
+
+         anyOf:
+           - required:
+-            - endpoint@0
++              - endpoint@0
+           - required:
+-            - endpoint@1
++              - endpoint@1
+           - required:
+-            - endpoint@2
++              - endpoint@2
+           - required:
+-            - endpoint@3
++              - endpoint@3
+
+         additionalProperties: false
+
+diff --git a/Documentation/devicetree/bindings/media/ti,vpe.yaml b/Documentation/devicetree/bindings/media/ti,vpe.yaml
+index f3a8a350e85f..ef473f287399 100644
+--- a/Documentation/devicetree/bindings/media/ti,vpe.yaml
++++ b/Documentation/devicetree/bindings/media/ti,vpe.yaml
+@@ -17,7 +17,7 @@ description: |-
+
+ properties:
+   compatible:
+-      const: ti,dra7-vpe
++    const: ti,dra7-vpe
+
+   reg:
+     items:
+diff --git a/Documentation/devicetree/bindings/memory-controllers/fsl/imx8m-ddrc.yaml b/Documentation/devicetree/bindings/memory-controllers/fsl/imx8m-ddrc.yaml
+index c9e6c22cb5be..445e46feda69 100644
+--- a/Documentation/devicetree/bindings/memory-controllers/fsl/imx8m-ddrc.yaml
++++ b/Documentation/devicetree/bindings/memory-controllers/fsl/imx8m-ddrc.yaml
+@@ -25,9 +25,9 @@ properties:
+   compatible:
+     items:
+       - enum:
+-        - fsl,imx8mn-ddrc
+-        - fsl,imx8mm-ddrc
+-        - fsl,imx8mq-ddrc
++          - fsl,imx8mn-ddrc
++          - fsl,imx8mm-ddrc
++          - fsl,imx8mq-ddrc
+       - const: fsl,imx8m-ddrc
+
+   reg:
+diff --git a/Documentation/devicetree/bindings/mfd/st,stm32-lptimer.yaml b/Documentation/devicetree/bindings/mfd/st,stm32-lptimer.yaml
+index ddf190cb800b..e675611f80d0 100644
+--- a/Documentation/devicetree/bindings/mfd/st,stm32-lptimer.yaml
++++ b/Documentation/devicetree/bindings/mfd/st,stm32-lptimer.yaml
+@@ -66,8 +66,8 @@ patternProperties:
+       reg:
+         description: Identify trigger hardware block.
+         items:
+-         minimum: 0
+-         maximum: 2
++          minimum: 0
++          maximum: 2
+
+     required:
+       - compatible
+diff --git a/Documentation/devicetree/bindings/mfd/st,stm32-timers.yaml b/Documentation/devicetree/bindings/mfd/st,stm32-timers.yaml
+index 590849ee9f32..4acda7ce3b44 100644
+--- a/Documentation/devicetree/bindings/mfd/st,stm32-timers.yaml
++++ b/Documentation/devicetree/bindings/mfd/st,stm32-timers.yaml
+@@ -102,8 +102,8 @@ patternProperties:
+       reg:
+         description: Identify trigger hardware block.
+         items:
+-         minimum: 0
+-         maximum: 16
++          minimum: 0
++          maximum: 16
+
+     required:
+       - compatible
+diff --git a/Documentation/devicetree/bindings/mfd/syscon.yaml b/Documentation/devicetree/bindings/mfd/syscon.yaml
+index 39375e4313d2..7a39486b215a 100644
+--- a/Documentation/devicetree/bindings/mfd/syscon.yaml
++++ b/Documentation/devicetree/bindings/mfd/syscon.yaml
+@@ -33,13 +33,13 @@ properties:
+   compatible:
+     anyOf:
+       - items:
+-        - enum:
+-          - allwinner,sun8i-a83t-system-controller
+-          - allwinner,sun8i-h3-system-controller
+-          - allwinner,sun8i-v3s-system-controller
+-          - allwinner,sun50i-a64-system-controller
++          - enum:
++              - allwinner,sun8i-a83t-system-controller
++              - allwinner,sun8i-h3-system-controller
++              - allwinner,sun8i-v3s-system-controller
++              - allwinner,sun50i-a64-system-controller
+
+-        - const: syscon
++          - const: syscon
+
+       - contains:
+           const: syscon
+diff --git a/Documentation/devicetree/bindings/mmc/cdns,sdhci.yaml b/Documentation/devicetree/bindings/mmc/cdns,sdhci.yaml
+index 2f45dd0d04db..d43a0c557a44 100644
+--- a/Documentation/devicetree/bindings/mmc/cdns,sdhci.yaml
++++ b/Documentation/devicetree/bindings/mmc/cdns,sdhci.yaml
+@@ -17,7 +17,7 @@ properties:
+   compatible:
+     items:
+       - enum:
+-         - socionext,uniphier-sd4hc
++          - socionext,uniphier-sd4hc
+       - const: cdns,sd4hc
+
+   reg:
+diff --git a/Documentation/devicetree/bindings/mmc/rockchip-dw-mshc.yaml b/Documentation/devicetree/bindings/mmc/rockchip-dw-mshc.yaml
+index 89c3edd6a728..4ee3ed6efab4 100644
+--- a/Documentation/devicetree/bindings/mmc/rockchip-dw-mshc.yaml
++++ b/Documentation/devicetree/bindings/mmc/rockchip-dw-mshc.yaml
+@@ -30,21 +30,21 @@ properties:
+       - items:
+           - enum:
+             # for Rockchip PX30
+-            - rockchip,px30-dw-mshc
++              - rockchip,px30-dw-mshc
+             # for Rockchip RK3036
+-            - rockchip,rk3036-dw-mshc
++              - rockchip,rk3036-dw-mshc
+             # for Rockchip RK322x
+-            - rockchip,rk3228-dw-mshc
++              - rockchip,rk3228-dw-mshc
+             # for Rockchip RK3308
+-            - rockchip,rk3308-dw-mshc
++              - rockchip,rk3308-dw-mshc
+             # for Rockchip RK3328
+-            - rockchip,rk3328-dw-mshc
++              - rockchip,rk3328-dw-mshc
+             # for Rockchip RK3368
+-            - rockchip,rk3368-dw-mshc
++              - rockchip,rk3368-dw-mshc
+             # for Rockchip RK3399
+-            - rockchip,rk3399-dw-mshc
++              - rockchip,rk3399-dw-mshc
+             # for Rockchip RV1108
+-            - rockchip,rv1108-dw-mshc
++              - rockchip,rv1108-dw-mshc
+           - const: rockchip,rk3288-dw-mshc
+
+   reg:
+diff --git a/Documentation/devicetree/bindings/mmc/socionext,uniphier-sd.yaml b/Documentation/devicetree/bindings/mmc/socionext,uniphier-sd.yaml
+index cdfac9b4411b..8d6413f48823 100644
+--- a/Documentation/devicetree/bindings/mmc/socionext,uniphier-sd.yaml
++++ b/Documentation/devicetree/bindings/mmc/socionext,uniphier-sd.yaml
+@@ -35,15 +35,15 @@ properties:
+     oneOf:
+       - const: host
+       - items:
+-        - const: host
+-        - const: bridge
++          - const: host
++          - const: bridge
+       - items:
+-        - const: host
+-        - const: hw
++          - const: host
++          - const: hw
+       - items:
+-        - const: host
+-        - const: bridge
+-        - const: hw
++          - const: host
++          - const: bridge
++          - const: hw
+
+   resets:
+     minItems: 1
+diff --git a/Documentation/devicetree/bindings/mtd/denali,nand.yaml b/Documentation/devicetree/bindings/mtd/denali,nand.yaml
+index 46e6b6726bc0..c07b91592cbd 100644
+--- a/Documentation/devicetree/bindings/mtd/denali,nand.yaml
++++ b/Documentation/devicetree/bindings/mtd/denali,nand.yaml
+@@ -54,8 +54,8 @@ properties:
+         reg:  register reset
+     oneOf:
+       - items:
+-        - const: nand
+-        - const: reg
++          - const: nand
++          - const: reg
+       - const: nand
+       - const: reg
+
+diff --git a/Documentation/devicetree/bindings/net/allwinner,sun8i-a83t-emac.yaml b/Documentation/devicetree/bindings/net/allwinner,sun8i-a83t-emac.yaml
+index db36b4d86484..c7c9ad4e3f9f 100644
+--- a/Documentation/devicetree/bindings/net/allwinner,sun8i-a83t-emac.yaml
++++ b/Documentation/devicetree/bindings/net/allwinner,sun8i-a83t-emac.yaml
+@@ -19,8 +19,8 @@ properties:
+       - const: allwinner,sun8i-v3s-emac
+       - const: allwinner,sun50i-a64-emac
+       - items:
+-        - const: allwinner,sun50i-h6-emac
+-        - const: allwinner,sun50i-a64-emac
++          - const: allwinner,sun50i-h6-emac
++          - const: allwinner,sun50i-a64-emac
+
+   reg:
+     maxItems: 1
+diff --git a/Documentation/devicetree/bindings/net/can/bosch,m_can.yaml b/Documentation/devicetree/bindings/net/can/bosch,m_can.yaml
+index cccf8202c8f7..7a784dc4e513 100644
+--- a/Documentation/devicetree/bindings/net/can/bosch,m_can.yaml
++++ b/Documentation/devicetree/bindings/net/can/bosch,m_can.yaml
+@@ -9,7 +9,7 @@ title: Bosch MCAN controller Bindings
+ description: Bosch MCAN controller for CAN bus
+
+ maintainers:
+-  -  Sriram Dash <sriram.dash@samsung.com>
++  - Sriram Dash <sriram.dash@samsung.com>
+
+ properties:
+   compatible:
+@@ -51,31 +51,31 @@ properties:
+
+   bosch,mram-cfg:
+     description: |
+-                 Message RAM configuration data.
+-                 Multiple M_CAN instances can share the same Message RAM
+-                 and each element(e.g Rx FIFO or Tx Buffer and etc) number
+-                 in Message RAM is also configurable, so this property is
+-                 telling driver how the shared or private Message RAM are
+-                 used by this M_CAN controller.
+-
+-                 The format should be as follows:
+-                 <offset sidf_elems xidf_elems rxf0_elems rxf1_elems rxb_elems txe_elems txb_elems>
+-                 The 'offset' is an address offset of the Message RAM where
+-                 the following elements start from. This is usually set to
+-                 0x0 if you're using a private Message RAM. The remain cells
+-                 are used to specify how many elements are used for each FIFO/Buffer.
+-
+-                 M_CAN includes the following elements according to user manual:
+-                 11-bit Filter	0-128 elements / 0-128 words
+-                 29-bit Filter	0-64 elements / 0-128 words
+-                 Rx FIFO 0	0-64 elements / 0-1152 words
+-                 Rx FIFO 1	0-64 elements / 0-1152 words
+-                 Rx Buffers	0-64 elements / 0-1152 words
+-                 Tx Event FIFO	0-32 elements / 0-64 words
+-                 Tx Buffers	0-32 elements / 0-576 words
+-
+-                 Please refer to 2.4.1 Message RAM Configuration in Bosch
+-                 M_CAN user manual for details.
++      Message RAM configuration data.
++      Multiple M_CAN instances can share the same Message RAM
++      and each element(e.g Rx FIFO or Tx Buffer and etc) number
++      in Message RAM is also configurable, so this property is
++      telling driver how the shared or private Message RAM are
++      used by this M_CAN controller.
++
++      The format should be as follows:
++      <offset sidf_elems xidf_elems rxf0_elems rxf1_elems rxb_elems txe_elems txb_elems>
++      The 'offset' is an address offset of the Message RAM where
++      the following elements start from. This is usually set to
++      0x0 if you're using a private Message RAM. The remain cells
++      are used to specify how many elements are used for each FIFO/Buffer.
++
++      M_CAN includes the following elements according to user manual:
++      11-bit Filter	0-128 elements / 0-128 words
++      29-bit Filter	0-64 elements / 0-128 words
++      Rx FIFO 0	0-64 elements / 0-1152 words
++      Rx FIFO 1	0-64 elements / 0-1152 words
++      Rx Buffers	0-64 elements / 0-1152 words
++      Tx Event FIFO	0-32 elements / 0-64 words
++      Tx Buffers	0-32 elements / 0-576 words
++
++      Please refer to 2.4.1 Message RAM Configuration in Bosch
++      M_CAN user manual for details.
+     allOf:
+       - $ref: /schemas/types.yaml#/definitions/int32-array
+       - items:
+diff --git a/Documentation/devicetree/bindings/net/renesas,ether.yaml b/Documentation/devicetree/bindings/net/renesas,ether.yaml
+index 7f84df9790e2..2eaa8799e002 100644
+--- a/Documentation/devicetree/bindings/net/renesas,ether.yaml
++++ b/Documentation/devicetree/bindings/net/renesas,ether.yaml
+@@ -40,8 +40,8 @@ properties:
+
+   reg:
+     items:
+-       - description: E-DMAC/feLic registers
+-       - description: TSU registers
++      - description: E-DMAC/feLic registers
++      - description: TSU registers
+     minItems: 1
+
+   interrupts:
+diff --git a/Documentation/devicetree/bindings/net/ti,cpsw-switch.yaml b/Documentation/devicetree/bindings/net/ti,cpsw-switch.yaml
+index 976f139bb66e..8fc8d3be303b 100644
+--- a/Documentation/devicetree/bindings/net/ti,cpsw-switch.yaml
++++ b/Documentation/devicetree/bindings/net/ti,cpsw-switch.yaml
+@@ -23,14 +23,14 @@ properties:
+     oneOf:
+       - const: ti,cpsw-switch
+       - items:
+-         - const: ti,am335x-cpsw-switch
+-         - const: ti,cpsw-switch
++          - const: ti,am335x-cpsw-switch
++          - const: ti,cpsw-switch
+       - items:
+-        - const: ti,am4372-cpsw-switch
+-        - const: ti,cpsw-switch
++          - const: ti,am4372-cpsw-switch
++          - const: ti,cpsw-switch
+       - items:
+-        - const: ti,dra7-cpsw-switch
+-        - const: ti,cpsw-switch
++          - const: ti,dra7-cpsw-switch
++          - const: ti,cpsw-switch
+
+   reg:
+     maxItems: 1
+diff --git a/Documentation/devicetree/bindings/net/ti,davinci-mdio.yaml b/Documentation/devicetree/bindings/net/ti,davinci-mdio.yaml
+index 242ac4935a4b..2ea14ab29254 100644
+--- a/Documentation/devicetree/bindings/net/ti,davinci-mdio.yaml
++++ b/Documentation/devicetree/bindings/net/ti,davinci-mdio.yaml
+@@ -18,25 +18,24 @@ allOf:
+ properties:
+   compatible:
+     oneOf:
+-       - const: ti,davinci_mdio
+-       - items:
+-         - const: ti,keystone_mdio
+-         - const: ti,davinci_mdio
+-       - items:
+-         - const: ti,cpsw-mdio
+-         - const: ti,davinci_mdio
+-       - items:
+-         - const: ti,am4372-mdio
+-         - const: ti,cpsw-mdio
+-         - const: ti,davinci_mdio
++      - const: ti,davinci_mdio
++      - items:
++          - const: ti,keystone_mdio
++          - const: ti,davinci_mdio
++      - items:
++          - const: ti,cpsw-mdio
++          - const: ti,davinci_mdio
++      - items:
++          - const: ti,am4372-mdio
++          - const: ti,cpsw-mdio
++          - const: ti,davinci_mdio
+
+   reg:
+     maxItems: 1
+
+   bus_freq:
+-      maximum: 2500000
+-      description:
+-        MDIO Bus frequency
++    maximum: 2500000
++    description: MDIO Bus frequency
+
+   ti,hwmods:
+     description: TI hwmod name
+diff --git a/Documentation/devicetree/bindings/phy/intel,lgm-emmc-phy.yaml b/Documentation/devicetree/bindings/phy/intel,lgm-emmc-phy.yaml
+index 9a346d6290d9..77bb5309918e 100644
+--- a/Documentation/devicetree/bindings/phy/intel,lgm-emmc-phy.yaml
++++ b/Documentation/devicetree/bindings/phy/intel,lgm-emmc-phy.yaml
+@@ -23,7 +23,7 @@ description: |+
+
+ properties:
+   compatible:
+-      const: intel,lgm-emmc-phy
++    const: intel,lgm-emmc-phy
+
+   "#phy-cells":
+     const: 0
+diff --git a/Documentation/devicetree/bindings/pwm/pwm-samsung.yaml b/Documentation/devicetree/bindings/pwm/pwm-samsung.yaml
+index ea7f32905172..4fe64f4dd594 100644
+--- a/Documentation/devicetree/bindings/pwm/pwm-samsung.yaml
++++ b/Documentation/devicetree/bindings/pwm/pwm-samsung.yaml
+@@ -49,17 +49,17 @@ properties:
+       are available.
+     oneOf:
+       - items:
+-        - const: timers
++          - const: timers
+       - items:
+-        - const: timers
+-        - const: pwm-tclk0
++          - const: timers
++          - const: pwm-tclk0
+       - items:
+-        - const: timers
+-        - const: pwm-tclk1
++          - const: timers
++          - const: pwm-tclk1
+       - items:
+-        - const: timers
+-        - const: pwm-tclk0
+-        - const: pwm-tclk1
++          - const: timers
++          - const: pwm-tclk0
++          - const: pwm-tclk1
+
+   interrupts:
+     description:
+diff --git a/Documentation/devicetree/bindings/remoteproc/st,stm32-rproc.yaml b/Documentation/devicetree/bindings/remoteproc/st,stm32-rproc.yaml
+index c0d83865e933..4ff4d3df0a06 100644
+--- a/Documentation/devicetree/bindings/remoteproc/st,stm32-rproc.yaml
++++ b/Documentation/devicetree/bindings/remoteproc/st,stm32-rproc.yaml
+@@ -25,7 +25,7 @@ properties:
+     maxItems: 3
+
+   resets:
+-     maxItems: 1
++    maxItems: 1
+
+   st,syscfg-holdboot:
+     allOf:
+diff --git a/Documentation/devicetree/bindings/reset/brcm,bcm7216-pcie-sata-rescal.yaml b/Documentation/devicetree/bindings/reset/brcm,bcm7216-pcie-sata-rescal.yaml
+index 512a33bdb208..dfce6738b033 100644
+--- a/Documentation/devicetree/bindings/reset/brcm,bcm7216-pcie-sata-rescal.yaml
++++ b/Documentation/devicetree/bindings/reset/brcm,bcm7216-pcie-sata-rescal.yaml
+@@ -7,7 +7,9 @@ $schema: "http://devicetree.org/meta-schemas/core.yaml#"
+
+ title: BCM7216 RESCAL reset controller
+
+-description: This document describes the BCM7216 RESCAL reset controller which is responsible for controlling the reset of the SATA and PCIe0/1 instances on BCM7216.
++description: This document describes the BCM7216 RESCAL reset controller
++  which is responsible for controlling the reset of the SATA and PCIe0/1
++  instances on BCM7216.
+
+ maintainers:
+   - Florian Fainelli <f.fainelli@gmail.com>
+diff --git a/Documentation/devicetree/bindings/rtc/st,stm32-rtc.yaml b/Documentation/devicetree/bindings/rtc/st,stm32-rtc.yaml
+index 48c6cafca90c..57b087574aa1 100644
+--- a/Documentation/devicetree/bindings/rtc/st,stm32-rtc.yaml
++++ b/Documentation/devicetree/bindings/rtc/st,stm32-rtc.yaml
+@@ -38,10 +38,10 @@ properties:
+           minItems: 3
+           maxItems: 3
+     description: |
+-       Phandle/offset/mask triplet. The phandle to pwrcfg used to
+-       access control register at offset, and change the dbp (Disable Backup
+-       Protection) bit represented by the mask, mandatory to disable/enable backup
+-       domain (RTC registers) write protection.
++      Phandle/offset/mask triplet. The phandle to pwrcfg used to
++      access control register at offset, and change the dbp (Disable Backup
++      Protection) bit represented by the mask, mandatory to disable/enable backup
++      domain (RTC registers) write protection.
+
+   assigned-clocks:
+     description: |
+@@ -78,14 +78,14 @@ allOf:
+             const: st,stm32h7-rtc
+
+     then:
+-       properties:
+-         clocks:
+-           minItems: 2
+-           maxItems: 2
++      properties:
++        clocks:
++          minItems: 2
++          maxItems: 2
+
+-       required:
+-         - clock-names
+-         - st,syscfg
++      required:
++        - clock-names
++        - st,syscfg
+
+   - if:
+       properties:
+@@ -94,16 +94,16 @@ allOf:
+             const: st,stm32mp1-rtc
+
+     then:
+-       properties:
+-         clocks:
+-           minItems: 2
+-           maxItems: 2
++      properties:
++        clocks:
++          minItems: 2
++          maxItems: 2
+
+-         assigned-clocks: false
+-         assigned-clock-parents: false
++        assigned-clocks: false
++        assigned-clock-parents: false
+
+-       required:
+-         - clock-names
++      required:
++        - clock-names
+
+ required:
+   - compatible
+diff --git a/Documentation/devicetree/bindings/serial/amlogic,meson-uart.yaml b/Documentation/devicetree/bindings/serial/amlogic,meson-uart.yaml
+index d4178ab0d675..75ebc9952a99 100644
+--- a/Documentation/devicetree/bindings/serial/amlogic,meson-uart.yaml
++++ b/Documentation/devicetree/bindings/serial/amlogic,meson-uart.yaml
+@@ -24,18 +24,18 @@ properties:
+     oneOf:
+       - description: Always-on power domain UART controller
+         items:
+-        - enum:
++          - enum:
++              - amlogic,meson6-uart
++              - amlogic,meson8-uart
++              - amlogic,meson8b-uart
++              - amlogic,meson-gx-uart
++          - const: amlogic,meson-ao-uart
++      - description: Everything-Else power domain UART controller
++        enum:
+           - amlogic,meson6-uart
+           - amlogic,meson8-uart
+           - amlogic,meson8b-uart
+           - amlogic,meson-gx-uart
+-        - const: amlogic,meson-ao-uart
+-      - description: Everything-Else power domain UART controller
+-        enum:
+-        - amlogic,meson6-uart
+-        - amlogic,meson8-uart
+-        - amlogic,meson8b-uart
+-        - amlogic,meson-gx-uart
+
+   reg:
+     maxItems: 1
+diff --git a/Documentation/devicetree/bindings/serial/rs485.yaml b/Documentation/devicetree/bindings/serial/rs485.yaml
+index d4beaf11222d..2b8261ea6d9c 100644
+--- a/Documentation/devicetree/bindings/serial/rs485.yaml
++++ b/Documentation/devicetree/bindings/serial/rs485.yaml
+@@ -6,13 +6,12 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
+
+ title: RS485 serial communications Bindings
+
+-description: The RTS signal is capable of automatically controlling
+-             line direction for the built-in half-duplex mode.
+-             The properties described hereafter shall be given to a
+-             half-duplex capable UART node.
++description: The RTS signal is capable of automatically controlling line
++  direction for the built-in half-duplex mode. The properties described
++  hereafter shall be given to a half-duplex capable UART node.
+
+ maintainers:
+-  -  Rob Herring <robh@kernel.org>
++  - Rob Herring <robh@kernel.org>
+
+ properties:
+   rs485-rts-delay:
+@@ -37,9 +36,11 @@ properties:
+     $ref: /schemas/types.yaml#/definitions/flag
+
+   linux,rs485-enabled-at-boot-time:
+-    description: enables the rs485 feature at boot time. It can be disabled later with proper ioctl.
++    description: enables the rs485 feature at boot time. It can be disabled
++      later with proper ioctl.
+     $ref: /schemas/types.yaml#/definitions/flag
+
+   rs485-rx-during-tx:
+-   description: enables the receiving of data even while sending data.
+-   $ref: /schemas/types.yaml#/definitions/flag
++    description: enables the receiving of data even while sending data.
++    $ref: /schemas/types.yaml#/definitions/flag
++...
+diff --git a/Documentation/devicetree/bindings/soc/amlogic/amlogic,canvas.yaml b/Documentation/devicetree/bindings/soc/amlogic/amlogic,canvas.yaml
+index cb008fd188d8..02b2d5ba01d6 100644
+--- a/Documentation/devicetree/bindings/soc/amlogic/amlogic,canvas.yaml
++++ b/Documentation/devicetree/bindings/soc/amlogic/amlogic,canvas.yaml
+@@ -26,11 +26,11 @@ properties:
+   compatible:
+     oneOf:
+       - items:
+-        - enum:
+-          - amlogic,meson8-canvas
+-          - amlogic,meson8b-canvas
+-          - amlogic,meson8m2-canvas
+-        - const: amlogic,canvas
++          - enum:
++              - amlogic,meson8-canvas
++              - amlogic,meson8b-canvas
++              - amlogic,meson8m2-canvas
++          - const: amlogic,canvas
+       - const: amlogic,canvas # GXBB and newer SoCs
+
+   reg:
+diff --git a/Documentation/devicetree/bindings/sound/renesas,fsi.yaml b/Documentation/devicetree/bindings/sound/renesas,fsi.yaml
+index d1b65554e681..91cf4176abd5 100644
+--- a/Documentation/devicetree/bindings/sound/renesas,fsi.yaml
++++ b/Documentation/devicetree/bindings/sound/renesas,fsi.yaml
+@@ -17,16 +17,16 @@ properties:
+     oneOf:
+       # for FSI2 SoC
+       - items:
+-        - enum:
+-          - renesas,fsi2-sh73a0
+-          - renesas,fsi2-r8a7740
+-        - enum:
+-          - renesas,sh_fsi2
++          - enum:
++              - renesas,fsi2-sh73a0
++              - renesas,fsi2-r8a7740
++          - enum:
++              - renesas,sh_fsi2
+       # for Generic
+       - items:
+-        - enum:
+-          - renesas,sh_fsi
+-          - renesas,sh_fsi2
++          - enum:
++              - renesas,sh_fsi
++              - renesas,sh_fsi2
+
+   reg:
+     maxItems: 1
+diff --git a/Documentation/devicetree/bindings/spi/qcom,spi-qcom-qspi.yaml b/Documentation/devicetree/bindings/spi/qcom,spi-qcom-qspi.yaml
+index 0cf470eaf2a0..406286149a6b 100644
+--- a/Documentation/devicetree/bindings/spi/qcom,spi-qcom-qspi.yaml
++++ b/Documentation/devicetree/bindings/spi/qcom,spi-qcom-qspi.yaml
+@@ -8,12 +8,12 @@ $schema: "http://devicetree.org/meta-schemas/core.yaml#"
+ title: Qualcomm Quad Serial Peripheral Interface (QSPI)
+
+ maintainers:
+- - Mukesh Savaliya <msavaliy@codeaurora.org>
+- - Akash Asthana <akashast@codeaurora.org>
++  - Mukesh Savaliya <msavaliy@codeaurora.org>
++  - Akash Asthana <akashast@codeaurora.org>
+
+-description:
+- The QSPI controller allows SPI protocol communication in single, dual, or quad
+- wire transmission modes for read/write access to slaves such as NOR flash.
++description: The QSPI controller allows SPI protocol communication in single,
++  dual, or quad wire transmission modes for read/write access to slaves such
++  as NOR flash.
+
+ allOf:
+   - $ref: /spi/spi-controller.yaml#
+diff --git a/Documentation/devicetree/bindings/spi/renesas,hspi.yaml b/Documentation/devicetree/bindings/spi/renesas,hspi.yaml
+index c429cf4bea5b..f492cb9fea12 100644
+--- a/Documentation/devicetree/bindings/spi/renesas,hspi.yaml
++++ b/Documentation/devicetree/bindings/spi/renesas,hspi.yaml
+@@ -16,8 +16,8 @@ properties:
+   compatible:
+     items:
+       - enum:
+-        - renesas,hspi-r8a7778 # R-Car M1A
+-        - renesas,hspi-r8a7779 # R-Car H1
++          - renesas,hspi-r8a7778 # R-Car M1A
++          - renesas,hspi-r8a7779 # R-Car H1
+       - const: renesas,hspi
+
+   reg:
+diff --git a/Documentation/devicetree/bindings/spi/spi-pl022.yaml b/Documentation/devicetree/bindings/spi/spi-pl022.yaml
+index dfb697c69341..22ba4e90655b 100644
+--- a/Documentation/devicetree/bindings/spi/spi-pl022.yaml
++++ b/Documentation/devicetree/bindings/spi/spi-pl022.yaml
+@@ -51,7 +51,7 @@ properties:
+
+   pl022,rt:
+     description: indicates the controller should run the message pump with realtime
+-               priority to minimise the transfer latency on the bus (boolean)
++      priority to minimise the transfer latency on the bus (boolean)
+     type: boolean
+
+   dmas:
+diff --git a/Documentation/devicetree/bindings/spi/st,stm32-qspi.yaml b/Documentation/devicetree/bindings/spi/st,stm32-qspi.yaml
+index 3665a5fe6b7f..1a342ce1f798 100644
+--- a/Documentation/devicetree/bindings/spi/st,stm32-qspi.yaml
++++ b/Documentation/devicetree/bindings/spi/st,stm32-qspi.yaml
+@@ -24,8 +24,8 @@ properties:
+
+   reg-names:
+     items:
+-     - const: qspi
+-     - const: qspi_mm
++      - const: qspi
++      - const: qspi_mm
+
+   clocks:
+     maxItems: 1
+diff --git a/Documentation/devicetree/bindings/sram/allwinner,sun4i-a10-system-control.yaml b/Documentation/devicetree/bindings/sram/allwinner,sun4i-a10-system-control.yaml
+index 4b5509436588..f5825935fd22 100644
+--- a/Documentation/devicetree/bindings/sram/allwinner,sun4i-a10-system-control.yaml
++++ b/Documentation/devicetree/bindings/sram/allwinner,sun4i-a10-system-control.yaml
+@@ -29,8 +29,8 @@ properties:
+       - const: allwinner,sun4i-a10-system-control
+       - const: allwinner,sun5i-a13-system-control
+       - items:
+-        - const: allwinner,sun7i-a20-system-control
+-        - const: allwinner,sun4i-a10-system-control
++          - const: allwinner,sun7i-a20-system-control
++          - const: allwinner,sun4i-a10-system-control
+       - const: allwinner,sun8i-a23-system-control
+       - const: allwinner,sun8i-h3-system-control
+       - const: allwinner,sun50i-a64-sram-controller
+@@ -38,11 +38,11 @@ properties:
+       - const: allwinner,sun50i-a64-system-control
+       - const: allwinner,sun50i-h5-system-control
+       - items:
+-        - const: allwinner,sun50i-h6-system-control
+-        - const: allwinner,sun50i-a64-system-control
++          - const: allwinner,sun50i-h6-system-control
++          - const: allwinner,sun50i-a64-system-control
+       - items:
+-        - const: allwinner,suniv-f1c100s-system-control
+-        - const: allwinner,sun4i-a10-system-control
++          - const: allwinner,suniv-f1c100s-system-control
++          - const: allwinner,sun4i-a10-system-control
+
+   reg:
+     maxItems: 1
+@@ -69,44 +69,44 @@ patternProperties:
+               - const: allwinner,sun4i-a10-sram-d
+               - const: allwinner,sun50i-a64-sram-c
+               - items:
+-                - const: allwinner,sun5i-a13-sram-a3-a4
+-                - const: allwinner,sun4i-a10-sram-a3-a4
++                  - const: allwinner,sun5i-a13-sram-a3-a4
++                  - const: allwinner,sun4i-a10-sram-a3-a4
+               - items:
+-                - const: allwinner,sun7i-a20-sram-a3-a4
+-                - const: allwinner,sun4i-a10-sram-a3-a4
++                  - const: allwinner,sun7i-a20-sram-a3-a4
++                  - const: allwinner,sun4i-a10-sram-a3-a4
+               - items:
+-                - const: allwinner,sun5i-a13-sram-c1
+-                - const: allwinner,sun4i-a10-sram-c1
++                  - const: allwinner,sun5i-a13-sram-c1
++                  - const: allwinner,sun4i-a10-sram-c1
+               - items:
+-                - const: allwinner,sun7i-a20-sram-c1
+-                - const: allwinner,sun4i-a10-sram-c1
++                  - const: allwinner,sun7i-a20-sram-c1
++                  - const: allwinner,sun4i-a10-sram-c1
+               - items:
+-                - const: allwinner,sun8i-a23-sram-c1
+-                - const: allwinner,sun4i-a10-sram-c1
++                  - const: allwinner,sun8i-a23-sram-c1
++                  - const: allwinner,sun4i-a10-sram-c1
+               - items:
+-                - const: allwinner,sun8i-h3-sram-c1
+-                - const: allwinner,sun4i-a10-sram-c1
++                  - const: allwinner,sun8i-h3-sram-c1
++                  - const: allwinner,sun4i-a10-sram-c1
+               - items:
+-                - const: allwinner,sun50i-a64-sram-c1
+-                - const: allwinner,sun4i-a10-sram-c1
++                  - const: allwinner,sun50i-a64-sram-c1
++                  - const: allwinner,sun4i-a10-sram-c1
+               - items:
+-                - const: allwinner,sun50i-h5-sram-c1
+-                - const: allwinner,sun4i-a10-sram-c1
++                  - const: allwinner,sun50i-h5-sram-c1
++                  - const: allwinner,sun4i-a10-sram-c1
+               - items:
+-                - const: allwinner,sun50i-h6-sram-c1
+-                - const: allwinner,sun4i-a10-sram-c1
++                  - const: allwinner,sun50i-h6-sram-c1
++                  - const: allwinner,sun4i-a10-sram-c1
+               - items:
+-                - const: allwinner,sun5i-a13-sram-d
+-                - const: allwinner,sun4i-a10-sram-d
++                  - const: allwinner,sun5i-a13-sram-d
++                  - const: allwinner,sun4i-a10-sram-d
+               - items:
+-                - const: allwinner,sun7i-a20-sram-d
+-                - const: allwinner,sun4i-a10-sram-d
++                  - const: allwinner,sun7i-a20-sram-d
++                  - const: allwinner,sun4i-a10-sram-d
+               - items:
+-                - const: allwinner,suniv-f1c100s-sram-d
+-                - const: allwinner,sun4i-a10-sram-d
++                  - const: allwinner,suniv-f1c100s-sram-d
++                  - const: allwinner,sun4i-a10-sram-d
+               - items:
+-                - const: allwinner,sun50i-h6-sram-c
+-                - const: allwinner,sun50i-a64-sram-c
++                  - const: allwinner,sun50i-h6-sram-c
++                  - const: allwinner,sun50i-a64-sram-c
+
+ required:
+   - "#address-cells"
+diff --git a/Documentation/devicetree/bindings/thermal/amlogic,thermal.yaml b/Documentation/devicetree/bindings/thermal/amlogic,thermal.yaml
+index e43ec50bda37..999c6b365f1d 100644
+--- a/Documentation/devicetree/bindings/thermal/amlogic,thermal.yaml
++++ b/Documentation/devicetree/bindings/thermal/amlogic,thermal.yaml
+@@ -13,11 +13,11 @@ description: Binding for Amlogic Thermal
+
+ properties:
+   compatible:
+-      items:
+-        - enum:
+-            - amlogic,g12a-cpu-thermal
+-            - amlogic,g12a-ddr-thermal
+-        - const: amlogic,g12a-thermal
++    items:
++      - enum:
++          - amlogic,g12a-cpu-thermal
++          - amlogic,g12a-ddr-thermal
++      - const: amlogic,g12a-thermal
+
+   reg:
+     maxItems: 1
+diff --git a/Documentation/devicetree/bindings/timer/arm,arch_timer.yaml b/Documentation/devicetree/bindings/timer/arm,arch_timer.yaml
+index fa255672e8e5..135186f83925 100644
+--- a/Documentation/devicetree/bindings/timer/arm,arch_timer.yaml
++++ b/Documentation/devicetree/bindings/timer/arm,arch_timer.yaml
+@@ -28,10 +28,10 @@ properties:
+               - arm,armv7-timer
+       - items:
+           - enum:
+-            - arm,armv7-timer
++              - arm,armv7-timer
+       - items:
+           - enum:
+-            - arm,armv8-timer
++              - arm,armv8-timer
+
+   interrupts:
+     items:
+diff --git a/Documentation/devicetree/bindings/timer/arm,arch_timer_mmio.yaml b/Documentation/devicetree/bindings/timer/arm,arch_timer_mmio.yaml
+index 582bbef62b95..6ff718ede184 100644
+--- a/Documentation/devicetree/bindings/timer/arm,arch_timer_mmio.yaml
++++ b/Documentation/devicetree/bindings/timer/arm,arch_timer_mmio.yaml
+@@ -20,7 +20,7 @@ properties:
+   compatible:
+     items:
+       - enum:
+-        - arm,armv7-timer-mem
++          - arm,armv7-timer-mem
+
+   reg:
+     maxItems: 1
+@@ -77,7 +77,7 @@ patternProperties:
+           - description: physical timer irq
+           - description: virtual timer irq
+
+-      reg :
++      reg:
+         minItems: 1
+         maxItems: 2
+         items:
+diff --git a/Documentation/devicetree/bindings/usb/dwc2.yaml b/Documentation/devicetree/bindings/usb/dwc2.yaml
+index 0d6d850a7f17..fb2f62aef5fa 100644
+--- a/Documentation/devicetree/bindings/usb/dwc2.yaml
++++ b/Documentation/devicetree/bindings/usb/dwc2.yaml
+@@ -62,14 +62,14 @@ properties:
+
+   resets:
+     items:
+-     - description: common reset
+-     - description: ecc reset
++      - description: common reset
++      - description: ecc reset
+     minItems: 1
+
+   reset-names:
+     items:
+-     - const: dwc2
+-     - const: dwc2-ecc
++      - const: dwc2
++      - const: dwc2-ecc
+     minItems: 1
+
+   phys:
+--
+2.20.1
