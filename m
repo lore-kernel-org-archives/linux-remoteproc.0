@@ -1,56 +1,48 @@
-Return-Path: <mst@redhat.com>
-Return-Path: <mst@redhat.com>
-Date: Mon, 6 Apr 2020 21:08:01 -0400
-From: "Michael S. Tsirkin" <mst@redhat.com>
-Subject: [PATCH v7 15/19] remoteproc: switch to virtio_legacy_init/size
-Message-ID: <20200407010700.446571-16-mst@redhat.com>
-References: <20200407010700.446571-1-mst@redhat.com>
+Return-Path: <linux-remoteproc-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.99]:51292 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727896AbgDPXH3 (ORCPT
+        <rfc822;linux-remoteproc@vger.kernel.org>);
+        Thu, 16 Apr 2020 19:07:29 -0400
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <20200407010700.446571-1-mst@redhat.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
-To: linux-kernel@vger.kernel.org
-Cc: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, linux-remoteproc@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+Subject: Re: Build failure in omap_remoteproc due to 02e6d546e3bd
+From: patchwork-bot+linux-remoteproc@kernel.org
+Message-Id: <158707844927.17838.6909682471662108981.git-patchwork-notify@kernel.org>
+Date: Thu, 16 Apr 2020 23:07:29 +0000
+References: <20200327185055.GA22438@ubuntu-m2-xlarge-x86>
+In-Reply-To: <20200327185055.GA22438@ubuntu-m2-xlarge-x86>
+Sender: linux-remoteproc-owner@vger.kernel.org
+To: Nathan Chancellor <natechancellor@gmail.com>
+Cc: linux-remoteproc@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-These are used for legacy ring format, switch to APIs that make this
-explicit.
+Hello:
 
-Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
----
- drivers/remoteproc/remoteproc_core.c   | 2 +-
- drivers/remoteproc/remoteproc_virtio.c | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+This patch was applied to andersson/remoteproc.git (refs/heads/for-next).
 
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remo=
-teproc_core.c
-index 097f33e4f1f3..c350a01e6c4e 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -322,7 +322,7 @@ int rproc_alloc_vring(struct rproc_vdev *rvdev, int i)
- =09struct rproc_mem_entry *mem;
-=20
- =09/* actual size of vring (in bytes) */
--=09size =3D PAGE_ALIGN(vring_size(rvring->len, rvring->align));
-+=09size =3D PAGE_ALIGN(vring_legacy_size(rvring->len, rvring->align));
-=20
- =09rsc =3D (void *)rproc->table_ptr + rvdev->rsc_offset;
-=20
-diff --git a/drivers/remoteproc/remoteproc_virtio.c b/drivers/remoteproc/re=
-moteproc_virtio.c
-index 8c07cb2ca8ba..35b02468197a 100644
---- a/drivers/remoteproc/remoteproc_virtio.c
-+++ b/drivers/remoteproc/remoteproc_virtio.c
-@@ -95,7 +95,7 @@ static struct virtqueue *rp_find_vq(struct virtio_device =
-*vdev,
- =09len =3D rvring->len;
-=20
- =09/* zero vring */
--=09size =3D vring_size(len, rvring->align);
-+=09size =3D vring_legacy_size(len, rvring->align);
- =09memset(addr, 0, size);
-=20
- =09dev_dbg(dev, "vring%d: va %pK qsz %d notifyid %d\n",
---=20
-MST
+On Fri, 27 Mar 2020 11:50:55 -0700 you wrote:
+> Hi all,
+> 
+> Apologies if this has already been reported, I did not see anything in
+> the archives. On next-20200327, I see the following build error:
+> 
+> drivers/remoteproc/omap_remoteproc.c:174:44: error: too many arguments
+> to function call, expected 2, have 3
+>         timer->timer_ops->set_load(timer->odt, 0, 0);
+>         ~~~~~~~~~~~~~~~~~~~~~~~~~~                ^
+> 1 error generated.
+> 
+> [...]
+
+
+Here is a summary with links:
+  - Build failure in omap_remoteproc due to 02e6d546e3bd
+    https://git.kernel.org/andersson/remoteproc/c/e6d05acd57013114977ec77a131fe79d2f542774
+
+You are awesome, thank you!
+
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/pwbot
