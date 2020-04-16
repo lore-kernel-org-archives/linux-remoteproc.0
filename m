@@ -1,100 +1,59 @@
-Return-Path: <bounce+9957f9.be9e4a-bjorn.andersson=linaro.org@mg.codeaurora.org>
-Sender: sibis=codeaurora.org@mg.codeaurora.org
-From: Sibi Sankar <sibis@codeaurora.org>
-Subject: [PATCH 5/5] arm64: dts: qcom: sc7180: Update Q6V5 MSS node
-Date: Fri, 17 Apr 2020 19:56:05 +0530
-Message-Id: <20200417142605.28885-6-sibis@codeaurora.org>
-In-Reply-To: <20200417142605.28885-1-sibis@codeaurora.org>
-References: <20200417142605.28885-1-sibis@codeaurora.org>
+Return-Path: <arnaud.pouliquen@st.com>
+From: Arnaud Pouliquen <arnaud.pouliquen@st.com>
+Subject: [RFC 01/18] remoteproc: Store resource table address in rvdev
+Date: Thu, 16 Apr 2020 18:13:14 +0200
+Message-ID: <20200416161331.7606-2-arnaud.pouliquen@st.com>
+In-Reply-To: <20200416161331.7606-1-arnaud.pouliquen@st.com>
+References: <20200416161331.7606-1-arnaud.pouliquen@st.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To: bjorn.andersson@linaro.org
-Cc: agross@kernel.org, robh+dt@kernel.org, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, evgreen@chromium.org, ohad@wizery.com, mka@chromium.org, dianders@chromium.org, devicetree@vger.kernel.org, Sibi Sankar <sibis@codeaurora.org>
+Content-Type: text/plain
+To: Bjorn Andersson <bjorn.andersson@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>, Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, arnaud.pouliquen@st.com
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Add TCSR node and update MSS node to support MSA based Modem boot on
-SC7180 SoCs.
+Store the resource table address in rvdev struct to be able to
+retrieve it from vdev device.
+This patch prepares the migration of rdev management in rproc_virtio.
+Indeed remoteproc virtio will have to complete the vdev and vrings
+resource table structures.
 
-Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
+Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@st.com>
 ---
+ drivers/remoteproc/remoteproc_core.c | 1 +
+ include/linux/remoteproc.h           | 2 ++
+ 2 files changed, 3 insertions(+)
 
-Depends on the following bindings:
-iommus: https://patchwork.kernel.org/patch/11443101/
-spare-regs: https://patchwork.kernel.org/patch/11491425/
-
- arch/arm64/boot/dts/qcom/sc7180-idp.dts | 42 +++++++++++++++++++++++++
- arch/arm64/boot/dts/qcom/sc7180.dtsi    |  5 +++
- 2 files changed, 47 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/qcom/sc7180-idp.dts b/arch/arm64/boot/dts/qcom/sc7180-idp.dts
-index e613d70cc0198..6f472872be1a3 100644
---- a/arch/arm64/boot/dts/qcom/sc7180-idp.dts
-+++ b/arch/arm64/boot/dts/qcom/sc7180-idp.dts
-@@ -319,6 +319,48 @@ &qupv3_id_1 {
- 	status = "okay";
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index 097f33e4f1f3..2a0425ab82a7 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -504,6 +504,7 @@ static int rproc_handle_vdev(struct rproc *rproc, struct fw_rsc_vdev *rsc,
+ 
+ 	kref_init(&rvdev->refcount);
+ 
++	rvdev->rsc = rsc;
+ 	rvdev->id = rsc->id;
+ 	rvdev->rproc = rproc;
+ 	rvdev->index = rproc->nb_vdev++;
+diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+index 16ad66683ad0..a78e28bda962 100644
+--- a/include/linux/remoteproc.h
++++ b/include/linux/remoteproc.h
+@@ -567,6 +567,7 @@ struct rproc_vring {
+  * @rproc: the rproc handle
+  * @vdev: the virio device
+  * @vring: the vrings for this vdev
++ * @rsc: address of the resource table
+  * @rsc_offset: offset of the vdev's resource entry
+  * @index: vdev position versus other vdev declared in resource table
+  */
+@@ -580,6 +581,7 @@ struct rproc_vdev {
+ 	struct list_head node;
+ 	struct rproc *rproc;
+ 	struct rproc_vring vring[RVDEV_NUM_VRINGS];
++	struct fw_rsc_vdev *rsc;
+ 	u32 rsc_offset;
+ 	u32 index;
  };
- 
-+&remoteproc_mpss {
-+	compatible = "qcom,sc7180-mss-pil";
-+	reg = <0 0x04080000 0 0x410>, <0 0x04180000 0 0x48>;
-+	reg-names = "qdsp6", "rmb";
-+
-+	clocks = <&gcc GCC_MSS_CFG_AHB_CLK>,
-+		 <&gcc GCC_MSS_Q6_MEMNOC_AXI_CLK>,
-+		 <&gcc GCC_MSS_NAV_AXI_CLK>,
-+		 <&gcc GCC_MSS_SNOC_AXI_CLK>,
-+		 <&gcc GCC_MSS_MFAB_AXIS_CLK>,
-+		 <&rpmhcc RPMH_CXO_CLK>;
-+	clock-names = "iface", "bus", "nav", "snoc_axi",
-+		      "mnoc_axi", "xo";
-+
-+	iommus = <&apps_smmu 0x460 0x1>, <&apps_smmu 0x444 0x2>;
-+
-+	resets = <&aoss_reset AOSS_CC_MSS_RESTART>,
-+		 <&pdc_reset PDC_MODEM_SYNC_RESET>;
-+	reset-names = "mss_restart", "pdc_reset";
-+
-+	qcom,halt-regs = <&tcsr_mutex_regs 0x23000 0x25000 0x24000>;
-+	qcom,spare-regs = <&tcsr_regs 0xb3e4>;
-+
-+	power-domains = <&aoss_qmp AOSS_QMP_LS_MODEM>,
-+			<&rpmhpd SC7180_CX>,
-+			<&rpmhpd SC7180_MX>,
-+			<&rpmhpd SC7180_MSS>;
-+	power-domain-names = "load_state", "cx", "mx", "mss";
-+
-+	/delete-property/memory-region;
-+
-+	status = "okay";
-+
-+	mba {
-+		memory-region = <&mba_mem>;
-+	};
-+
-+	mpss {
-+		memory-region = <&mpss_mem>;
-+	};
-+};
-+
- &uart3 {
- 	status = "okay";
- 
-diff --git a/arch/arm64/boot/dts/qcom/sc7180.dtsi b/arch/arm64/boot/dts/qcom/sc7180.dtsi
-index e319762a0bffc..c49801ddb9d70 100644
---- a/arch/arm64/boot/dts/qcom/sc7180.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sc7180.dtsi
-@@ -981,6 +981,11 @@ tcsr_mutex_regs: syscon@1f40000 {
- 			reg = <0 0x01f40000 0 0x40000>;
- 		};
- 
-+		tcsr_regs: syscon@1fc0000 {
-+			compatible = "syscon";
-+			reg = <0 0x01fc0000 0 0x40000>;
-+		};
-+
- 		tlmm: pinctrl@3500000 {
- 			compatible = "qcom,sc7180-pinctrl";
- 			reg = <0 0x03500000 0 0x300000>,
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.17.1
