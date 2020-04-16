@@ -1,39 +1,46 @@
-Return-Path: <paul@crapouillou.net>
-From: Paul Cercueil <paul@crapouillou.net>
-Subject: [PATCH v6 5/5] MAINTAINERS: Add myself as reviewer for Ingenic rproc driver
-Date: Fri, 17 Apr 2020 19:00:40 +0200
-Message-Id: <20200417170040.174319-5-paul@crapouillou.net>
-In-Reply-To: <20200417170040.174319-1-paul@crapouillou.net>
-References: <20200417170040.174319-1-paul@crapouillou.net>
+Return-Path: <linux-remoteproc-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.99]:51318 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728322AbgDPXHa (ORCPT
+        <rfc822;linux-remoteproc@vger.kernel.org>);
+        Thu, 16 Apr 2020 19:07:30 -0400
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Arnaud Pouliquen <arnaud.pouliquen@st.com>
-Cc: od@zcrc.me, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>
+Subject: Re: [PATCH] remoteproc/omap: Fix set_load call in
+ omap_rproc_request_timer
+From: patchwork-bot+linux-remoteproc@kernel.org
+Message-Id: <158707844983.17838.7154296955803704839.git-patchwork-notify@kernel.org>
+Date: Thu, 16 Apr 2020 23:07:29 +0000
+References: <20200403013134.11407-1-natechancellor@gmail.com>
+In-Reply-To: <20200403013134.11407-1-natechancellor@gmail.com>
+Sender: linux-remoteproc-owner@vger.kernel.org
+To: Nathan Chancellor <natechancellor@gmail.com>
+Cc: linux-remoteproc@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Add myself as the reviewer for the Ingenic VPU remoteproc driver.
+Hello:
 
-Signed-off-by: Paul Cercueil <paul@crapouillou.net>
----
+This patch was applied to andersson/remoteproc.git (refs/heads/for-next).
 
-Notes:
-    v4: New patch
-    v5-v6: No change
+On Thu,  2 Apr 2020 18:31:35 -0700 you wrote:
+> When building arm allyesconfig:
+> 
+> drivers/remoteproc/omap_remoteproc.c:174:44: error: too many arguments
+> to function call, expected 2, have 3
+>         timer->timer_ops->set_load(timer->odt, 0, 0);
+>         ~~~~~~~~~~~~~~~~~~~~~~~~~~                ^
+> 1 error generated.
+> 
+> [...]
 
- MAINTAINERS | 1 +
- 1 file changed, 1 insertion(+)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index e64e5db31497..1677071197a0 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -8418,6 +8418,7 @@ F:	drivers/mtd/nand/raw/ingenic/
- F:	drivers/pinctrl/pinctrl-ingenic.c
- F:	drivers/power/supply/ingenic-battery.c
- F:	drivers/pwm/pwm-jz4740.c
-+F:	drivers/remoteproc/ingenic_rproc.c
- F:	drivers/rtc/rtc-jz4740.c
- F:	drivers/tty/serial/8250/8250_ingenic.c
- F:	drivers/usb/musb/jz4740.c
+Here is a summary with links:
+  - remoteproc/omap: Fix set_load call in omap_rproc_request_timer
+    https://git.kernel.org/andersson/remoteproc/c/e6d05acd57013114977ec77a131fe79d2f542774
+
+You are awesome, thank you!
+
 -- 
-2.25.1
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/pwbot
