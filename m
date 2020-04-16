@@ -1,70 +1,56 @@
-Return-Path: <s-anna@ti.com>
-From: Suman Anna <s-anna@ti.com>
-Subject: [PATCH 2/2] remoteproc: Use a local copy for the name field
-Date: Thu, 16 Apr 2020 19:20:36 -0500
-Message-ID: <20200417002036.24359-3-s-anna@ti.com>
-In-Reply-To: <20200417002036.24359-1-s-anna@ti.com>
-References: <20200417002036.24359-1-s-anna@ti.com>
+Return-Path: <arnaud.pouliquen@st.com>
+From: Arnaud Pouliquen <arnaud.pouliquen@st.com>
+Subject: [RFC 11/18] remoteproc: Add child node component in rproc match list
+Date: Thu, 16 Apr 2020 18:13:24 +0200
+Message-ID: <20200416161331.7606-12-arnaud.pouliquen@st.com>
+In-Reply-To: <20200416161331.7606-1-arnaud.pouliquen@st.com>
+References: <20200416161331.7606-1-arnaud.pouliquen@st.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-To: Bjorn Andersson <bjorn.andersson@linaro.org>, Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: linux-remoteproc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Suman Anna <s-anna@ti.com>
+To: Bjorn Andersson <bjorn.andersson@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>, Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, arnaud.pouliquen@st.com
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-The current name field used in the remoteproc structure is simply
-a pointer to a name field supplied during the rproc_alloc() call.
-The pointer passed in by remoteproc drivers during registration is
-typically a dev_name pointer, but it is possible that the pointer
-will no longer remain valid if the devices themselves were created
-at runtime like in the case of of_platform_populate(), and were
-deleted upon any failures within the respective remoteproc driver
-probe function.
+Add the components, associated to the child devices populated, in
+the match list for synchronization relying on bind/unbind mechanism.
 
-So, allocate and maintain a local copy for this name field to
-keep it agnostic of the logic used in the remoteproc drivers.
-
-Signed-off-by: Suman Anna <s-anna@ti.com>
+Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@st.com>
 ---
-v1:
- - Patch baselined on top of Mathieu's rproc_alloc() refactor
-   series, and so addresses Bjorn's simplified cleanup comments
- - Switch to {kstrdup/kfree}_const variants
-v0: https://patchwork.kernel.org/patch/11456385/
-
- drivers/remoteproc/remoteproc_core.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ drivers/remoteproc/remoteproc_core.c | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
 
 diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index e38f627059ac..3cebface3f26 100644
+index 75f84fd3bd60..ecb36f64b1a0 100644
 --- a/drivers/remoteproc/remoteproc_core.c
 +++ b/drivers/remoteproc/remoteproc_core.c
-@@ -1984,6 +1984,7 @@ static void rproc_type_release(struct device *dev)
+@@ -1608,6 +1608,8 @@ static void rproc_crash_handler_work(struct work_struct *work)
+ static int rproc_platform_populate(struct rproc *rproc)
+ {
+ 	struct device *dev = rproc->dev.parent;
++	struct device_node *node = dev->of_node;
++	struct device_node *child_np;
+ 	int ret;
  
- 	kfree(rproc->firmware);
- 	kfree(rproc->ops);
-+	kfree_const(rproc->name);
- 	kfree(rproc);
- }
+ 	ret = of_platform_populate(dev->of_node, NULL, NULL, dev);
+@@ -1617,6 +1619,19 @@ static int rproc_platform_populate(struct rproc *rproc)
+ 		goto depopulate;
+ 	}
  
-@@ -2069,7 +2070,6 @@ struct rproc *rproc_alloc(struct device *dev, const char *name,
- 	if (!rproc)
- 		return NULL;
- 
--	rproc->name = name;
- 	rproc->priv = &rproc[1];
- 	rproc->auto_boot = true;
- 	rproc->elf_class = ELFCLASS32;
-@@ -2081,6 +2081,10 @@ struct rproc *rproc_alloc(struct device *dev, const char *name,
- 	rproc->dev.driver_data = rproc;
- 	idr_init(&rproc->notifyids);
- 
-+	rproc->name = kstrdup_const(name, GFP_KERNEL);
-+	if (!rproc->name)
-+		goto put_device;
++	child_np = of_get_next_available_child(node, NULL);
 +
- 	if (rproc_alloc_firmware(rproc, name, firmware))
- 		goto put_device;
++	while (child_np) {
++		of_node_get(node);
++		component_match_add_release(dev, &rproc->match,
++					    rproc_release_of, rproc_compare_of,
++					    child_np);
++		child_np = of_get_next_available_child(node, child_np);
++	}
++
++	if (!rproc->match)
++		dev_dbg(dev, "No available child\n");
++
+ 	return 0;
  
+ depopulate:
 -- 
-2.26.0
+2.17.1
