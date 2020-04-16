@@ -1,146 +1,111 @@
-Return-Path: <bjorn.andersson@linaro.org>
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: [PATCH 3/4] rpmsg: glink: Integrate glink_ssr in qcom_glink
-Date: Wed, 22 Apr 2020 17:37:35 -0700
-Message-Id: <20200423003736.2027371-4-bjorn.andersson@linaro.org>
-In-Reply-To: <20200423003736.2027371-1-bjorn.andersson@linaro.org>
-References: <20200423003736.2027371-1-bjorn.andersson@linaro.org>
+Return-Path: <arnaud.pouliquen@st.com>
+From: Arnaud Pouliquen <arnaud.pouliquen@st.com>
+Subject: [RFC 08/18] remoteproc: Externalize carveout functions
+Date: Thu, 16 Apr 2020 18:13:21 +0200
+Message-ID: <20200416161331.7606-9-arnaud.pouliquen@st.com>
+In-Reply-To: <20200416161331.7606-1-arnaud.pouliquen@st.com>
+References: <20200416161331.7606-1-arnaud.pouliquen@st.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To: Andy Gross <agross@kernel.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, Chris Lew <clew@codeaurora.org>, Sibi <sibis@codeaurora.org>, Siddharth Gupta <sidgup@codeaurora.org>
+Content-Type: text/plain
+To: Bjorn Andersson <bjorn.andersson@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>, Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, arnaud.pouliquen@st.com
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-In all but the very special case of a system with _only_ glink_rpm,
-GLINK is dependent on glink_ssr, so move it to rpmsg and combine it with
-qcom_glink_native in the new qcom_glink kernel module.
+The carveout functions are also used for the vring memories.
+Externalize related functions to prepare migration of
+the vring management in rproc virtio.
 
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@st.com>
 ---
- drivers/rpmsg/Kconfig                                    | 6 +++---
- drivers/rpmsg/Makefile                                   | 3 ++-
- drivers/{soc/qcom/glink_ssr.c => rpmsg/qcom_glink_ssr.c} | 4 ----
- drivers/soc/qcom/Kconfig                                 | 9 ---------
- drivers/soc/qcom/Makefile                                | 1 -
- include/linux/rpmsg/qcom_glink.h                         | 7 +------
- 6 files changed, 6 insertions(+), 24 deletions(-)
- rename drivers/{soc/qcom/glink_ssr.c => rpmsg/qcom_glink_ssr.c} (97%)
+ drivers/remoteproc/remoteproc_core.c     | 18 +++++++-----------
+ drivers/remoteproc/remoteproc_internal.h |  4 ++++
+ 2 files changed, 11 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/rpmsg/Kconfig b/drivers/rpmsg/Kconfig
-index a9108ff563dc..f96716893c2a 100644
---- a/drivers/rpmsg/Kconfig
-+++ b/drivers/rpmsg/Kconfig
-@@ -24,13 +24,13 @@ config RPMSG_MTK_SCP
- 	  remote processors in MediaTek platforms.
- 	  This use IPI and IPC to communicate with remote processors.
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index cb40aae12b98..ac57cd8016be 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -51,11 +51,6 @@ static LIST_HEAD(rproc_list);
+ typedef int (*rproc_handle_resource_t)(struct rproc *rproc,
+ 				 void *, int offset, int avail);
  
--config RPMSG_QCOM_GLINK_NATIVE
-+config RPMSG_QCOM_GLINK
- 	tristate
- 	select RPMSG
- 
- config RPMSG_QCOM_GLINK_RPM
- 	tristate "Qualcomm RPM Glink driver"
--	select RPMSG_QCOM_GLINK_NATIVE
-+	select RPMSG_QCOM_GLINK
- 	depends on HAS_IOMEM
- 	depends on MAILBOX
- 	help
-@@ -40,7 +40,7 @@ config RPMSG_QCOM_GLINK_RPM
- 
- config RPMSG_QCOM_GLINK_SMEM
- 	tristate "Qualcomm SMEM Glink driver"
--	select RPMSG_QCOM_GLINK_NATIVE
-+	select RPMSG_QCOM_GLINK
- 	depends on MAILBOX
- 	depends on QCOM_SMEM
- 	help
-diff --git a/drivers/rpmsg/Makefile b/drivers/rpmsg/Makefile
-index ae92a7fb08f6..ffe932ef6050 100644
---- a/drivers/rpmsg/Makefile
-+++ b/drivers/rpmsg/Makefile
-@@ -2,8 +2,9 @@
- obj-$(CONFIG_RPMSG)		+= rpmsg_core.o
- obj-$(CONFIG_RPMSG_CHAR)	+= rpmsg_char.o
- obj-$(CONFIG_RPMSG_MTK_SCP)	+= mtk_rpmsg.o
-+qcom_glink-objs			:= qcom_glink_native.o qcom_glink_ssr.o
-+obj-$(CONFIG_RPMSG_QCOM_GLINK) += qcom_glink.o
- obj-$(CONFIG_RPMSG_QCOM_GLINK_RPM) += qcom_glink_rpm.o
--obj-$(CONFIG_RPMSG_QCOM_GLINK_NATIVE) += qcom_glink_native.o
- obj-$(CONFIG_RPMSG_QCOM_GLINK_SMEM) += qcom_glink_smem.o
- obj-$(CONFIG_RPMSG_QCOM_SMD)	+= qcom_smd.o
- obj-$(CONFIG_RPMSG_VIRTIO)	+= virtio_rpmsg_bus.o
-diff --git a/drivers/soc/qcom/glink_ssr.c b/drivers/rpmsg/qcom_glink_ssr.c
-similarity index 97%
-rename from drivers/soc/qcom/glink_ssr.c
-rename to drivers/rpmsg/qcom_glink_ssr.c
-index 847d79c935f1..dcd1ce616974 100644
---- a/drivers/soc/qcom/glink_ssr.c
-+++ b/drivers/rpmsg/qcom_glink_ssr.c
-@@ -164,7 +164,3 @@ static struct rpmsg_driver qcom_glink_ssr_driver = {
- 	},
- };
- module_rpmsg_driver(qcom_glink_ssr_driver);
+-static int rproc_alloc_carveout(struct rproc *rproc,
+-				struct rproc_mem_entry *mem);
+-static int rproc_release_carveout(struct rproc *rproc,
+-				  struct rproc_mem_entry *mem);
 -
--MODULE_ALIAS("rpmsg:glink_ssr");
--MODULE_DESCRIPTION("Qualcomm GLINK SSR notifier");
--MODULE_LICENSE("GPL v2");
-diff --git a/drivers/soc/qcom/Kconfig b/drivers/soc/qcom/Kconfig
-index 19332ea40234..5140bd82f1be 100644
---- a/drivers/soc/qcom/Kconfig
-+++ b/drivers/soc/qcom/Kconfig
-@@ -35,15 +35,6 @@ config QCOM_GENI_SE
- 	  driver is also used to manage the common aspects of multiple Serial
- 	  Engines present in the QUP.
+ /* Unique indices for remoteproc devices */
+ static DEFINE_IDA(rproc_dev_index);
  
--config QCOM_GLINK_SSR
--	tristate "Qualcomm Glink SSR driver"
--	depends on RPMSG
--	depends on QCOM_RPROC_COMMON
--	help
--	  Say y here to enable GLINK SSR support. The GLINK SSR driver
--	  implements the SSR protocol for notifying the remote processor about
--	  neighboring subsystems going up or down.
--
- config QCOM_GSBI
- 	tristate "QCOM General Serial Bus Interface"
- 	depends on ARCH_QCOM || COMPILE_TEST
-diff --git a/drivers/soc/qcom/Makefile b/drivers/soc/qcom/Makefile
-index 5d6b83dc58e8..e9cacc9ad401 100644
---- a/drivers/soc/qcom/Makefile
-+++ b/drivers/soc/qcom/Makefile
-@@ -3,7 +3,6 @@ CFLAGS_rpmh-rsc.o := -I$(src)
- obj-$(CONFIG_QCOM_AOSS_QMP) +=	qcom_aoss.o
- obj-$(CONFIG_QCOM_GENI_SE) +=	qcom-geni-se.o
- obj-$(CONFIG_QCOM_COMMAND_DB) += cmd-db.o
--obj-$(CONFIG_QCOM_GLINK_SSR) +=	glink_ssr.o
- obj-$(CONFIG_QCOM_GSBI)	+=	qcom_gsbi.o
- obj-$(CONFIG_QCOM_MDT_LOADER)	+= mdt_loader.o
- obj-$(CONFIG_QCOM_OCMEM)	+= ocmem.o
-diff --git a/include/linux/rpmsg/qcom_glink.h b/include/linux/rpmsg/qcom_glink.h
-index 09daa0acde2c..daded9fddf36 100644
---- a/include/linux/rpmsg/qcom_glink.h
-+++ b/include/linux/rpmsg/qcom_glink.h
-@@ -12,6 +12,7 @@ struct qcom_glink;
- struct qcom_glink *qcom_glink_smem_register(struct device *parent,
- 					    struct device_node *node);
- void qcom_glink_smem_unregister(struct qcom_glink *glink);
-+void qcom_glink_ssr_notify(const char *ssr_name);
+@@ -281,8 +276,8 @@ rproc_find_carveout_by_name(struct rproc *rproc, const char *name, ...)
+  *
+  * Return: 0 if carveout matches request else error
+  */
+-static int rproc_check_carveout_da(struct rproc *rproc,
+-				   struct rproc_mem_entry *mem, u32 da, u32 len)
++int rproc_check_carveout_da(struct rproc *rproc,
++			    struct rproc_mem_entry *mem, u32 da, u32 len)
+ {
+ 	struct device *dev = &rproc->dev;
+ 	int delta;
+@@ -315,6 +310,7 @@ static int rproc_check_carveout_da(struct rproc *rproc,
  
- #else
- 
-@@ -23,12 +24,6 @@ qcom_glink_smem_register(struct device *parent,
+ 	return 0;
  }
++EXPORT_SYMBOL(rproc_check_carveout_da);
  
- static inline void qcom_glink_smem_unregister(struct qcom_glink *glink) {}
--
--#endif
--
--#if IS_ENABLED(CONFIG_RPMSG_QCOM_GLINK_SSR)
--void qcom_glink_ssr_notify(const char *ssr_name);
--#else
- static inline void qcom_glink_ssr_notify(const char *ssr_name) {}
- #endif
+ int rproc_alloc_vring(struct rproc_vdev *rvdev, int i)
+ {
+@@ -695,8 +691,7 @@ static int rproc_handle_devmem(struct rproc *rproc, struct fw_rsc_devmem *rsc,
+  * This function allocate specified memory entry @mem using
+  * dma_alloc_coherent() as default allocator
+  */
+-static int rproc_alloc_carveout(struct rproc *rproc,
+-				struct rproc_mem_entry *mem)
++int rproc_alloc_carveout(struct rproc *rproc, struct rproc_mem_entry *mem)
+ {
+ 	struct rproc_mem_entry *mapping = NULL;
+ 	struct device *dev = &rproc->dev;
+@@ -791,6 +786,7 @@ static int rproc_alloc_carveout(struct rproc *rproc,
+ 	dma_free_coherent(dev->parent, mem->len, va, dma);
+ 	return ret;
+ }
++EXPORT_SYMBOL(rproc_alloc_carveout);
  
+ /**
+  * rproc_release_carveout() - release acquired carveout
+@@ -800,8 +796,7 @@ static int rproc_alloc_carveout(struct rproc *rproc,
+  * This function releases specified memory entry @mem allocated via
+  * rproc_alloc_carveout() function by @rproc.
+  */
+-static int rproc_release_carveout(struct rproc *rproc,
+-				  struct rproc_mem_entry *mem)
++int rproc_release_carveout(struct rproc *rproc, struct rproc_mem_entry *mem)
+ {
+ 	struct device *dev = &rproc->dev;
+ 
+@@ -809,6 +804,7 @@ static int rproc_release_carveout(struct rproc *rproc,
+ 	dma_free_coherent(dev->parent, mem->len, mem->va, mem->dma);
+ 	return 0;
+ }
++EXPORT_SYMBOL(rproc_release_carveout);
+ 
+ /**
+  * rproc_handle_carveout() - handle phys contig memory allocation requests
+diff --git a/drivers/remoteproc/remoteproc_internal.h b/drivers/remoteproc/remoteproc_internal.h
+index f5eaffac2fcd..f230296908ac 100644
+--- a/drivers/remoteproc/remoteproc_internal.h
++++ b/drivers/remoteproc/remoteproc_internal.h
+@@ -71,6 +71,10 @@ struct resource_table *rproc_elf_find_loaded_rsc_table(struct rproc *rproc,
+ 						       const struct firmware *fw);
+ struct rproc_mem_entry *
+ rproc_find_carveout_by_name(struct rproc *rproc, const char *name, ...);
++int rproc_check_carveout_da(struct rproc *rproc, struct rproc_mem_entry *mem,
++			    u32 da, u32 len);
++int rproc_alloc_carveout(struct rproc *rproc, struct rproc_mem_entry *mem);
++int rproc_release_carveout(struct rproc *rproc, struct rproc_mem_entry *mem);
+ 
+ static inline
+ int rproc_fw_sanity_check(struct rproc *rproc, const struct firmware *fw)
 -- 
-2.24.0
+2.17.1
