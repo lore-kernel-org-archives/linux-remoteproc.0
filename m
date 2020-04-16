@@ -1,206 +1,42 @@
-Return-Path: <nikita.shubin@maquefel.me>
-From: nikita.shubin@maquefel.me
-Subject: [PATCH v2 3/3] remoteproc: imx_rproc: memory regions
-Date: Mon,  6 Apr 2020 14:33:10 +0300
-Message-Id: <20200406113310.3041-4-nikita.shubin@maquefel.me>
-In-Reply-To: <20200406113310.3041-1-nikita.shubin@maquefel.me>
-References: <20200304142628.8471-1-NShubin@topcon.com>
- <20200406113310.3041-1-nikita.shubin@maquefel.me>
+Return-Path: <linux-remoteproc-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.99]:51276 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726319AbgDPXH3 (ORCPT
+        <rfc822;linux-remoteproc@vger.kernel.org>);
+        Thu, 16 Apr 2020 19:07:29 -0400
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-To: nikita.shubin@maquefel.me
-Cc: Nikita Shubin <NShubin@topcon.com>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, NXP Linux Team <linux-imx@nxp.com>, linux-remoteproc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] rpmsg: fix a comment typo for rpmsg_device_match()
+From: patchwork-bot+linux-remoteproc@kernel.org
+Message-Id: <158707844890.17838.7721061437896209308.git-patchwork-notify@kernel.org>
+Date: Thu, 16 Apr 2020 23:07:28 +0000
+References: <20200313165049.62907-1-wenhu.wang@vivo.com>
+In-Reply-To: <20200313165049.62907-1-wenhu.wang@vivo.com>
+Sender: linux-remoteproc-owner@vger.kernel.org
+To: Wang Wenhu <wenhu.wang@vivo.com>
+Cc: linux-remoteproc@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Add support for carveout memory regions required for vdev vring's and
-buffer.
+Hello:
 
-Search in device tree and allocate memory regions like for ocram:
+This patch was applied to andersson/remoteproc.git (refs/heads/for-next).
 
-vdev0vring0: vdev0vring0@00920000 {
-	compatible = "shared-dma-pool";
-        reg = <0x00920000 0x2000>;
-        no-map;
-};
+On Fri, 13 Mar 2020 09:50:49 -0700 you wrote:
+> Should be 'a' rather than 'an'.
+> 
+> Signed-off-by: WANG Wenhu <wenhu.wang@vivo.com>
+> ---
+>  drivers/rpmsg/rpmsg_core.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-vdev0vring1: vdev0vring1@00922000 {
-	compatible = "shared-dma-pool";
-	reg = <0x00922000 0x2000>;
-	no-map;
-};
 
-vdev0buffer: vdev0buffer@00924000 {
-	compatible = "shared-dma-pool";
-	reg = <0x00924000 0x4000>;
-	no-map;
-};
+Here is a summary with links:
+  - rpmsg: fix a comment typo for rpmsg_device_match()
+    https://git.kernel.org/andersson/remoteproc/c/075894d45656fe9aeced4f34ef692b52791d78dc
 
-imx7d-cm4 {
-	compatible = "fsl,imx7d-cm4";
-	memory-region = <&ocram>, <&vdev0vring0>, <&vdev0vring1>, \
-		<&vdev0buffer>;
-}
+You are awesome, thank you!
 
-vdev0vring0, vdev0vring1, vdev0buffer are required for virtio
-functioning.
-
-Signed-off-by: Nikita Shubin <NShubin@topcon.com>
----
- drivers/remoteproc/imx_rproc.c | 119 ++++++++++++++++++++++++++++++++-
- 1 file changed, 118 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rproc.c
-index d2bede4ccb70..cdcff2bd2867 100644
---- a/drivers/remoteproc/imx_rproc.c
-+++ b/drivers/remoteproc/imx_rproc.c
-@@ -11,6 +11,7 @@
- #include <linux/module.h>
- #include <linux/of_address.h>
- #include <linux/of_device.h>
-+#include <linux/of_reserved_mem.h>
- #include <linux/platform_device.h>
- #include <linux/regmap.h>
- #include <linux/remoteproc.h>
-@@ -238,6 +239,29 @@ static int imx_rproc_da_to_sys(struct imx_rproc *priv, u64 da,
- 	return -ENOENT;
- }
- 
-+static int imx_rproc_sys_to_da(struct imx_rproc *priv, u64 sys,
-+				int len, u64 *da)
-+{
-+	const struct imx_rproc_dcfg *dcfg = priv->dcfg;
-+	int i;
-+
-+	/* parse address translation table */
-+	for (i = 0; i < dcfg->att_size; i++) {
-+		const struct imx_rproc_att *att = &dcfg->att[i];
-+
-+		if (sys >= att->sa && sys + len <= att->sa + att->size) {
-+			unsigned int offset = sys - att->sa;
-+
-+			*da = att->da + offset;
-+			return 0;
-+		}
-+	}
-+
-+	dev_warn(priv->dev, "Translation failed: sys = 0x%llx len = 0x%x\n",
-+			 sys, len);
-+	return -ENOENT;
-+}
-+
- static void *imx_rproc_da_to_va(struct rproc *rproc, u64 da, int len)
- {
- 	struct imx_rproc *priv = rproc->priv;
-@@ -372,16 +396,109 @@ static void imx_rproc_kick(struct rproc *rproc, int vqid)
- 		err = mbox_send_message(ddata->mb[i].chan, &vqid);
- 		if (err < 0)
- 			dev_err(&rproc->dev, "%s: failed (%s, err:%d)\n",
--					__func__, ddata->mb[i].name, err);
-+				__func__, ddata->mb[i].name, err);
- 			return;
- 	}
- }
- 
-+static int imx_rproc_mem_alloc(struct rproc *rproc,
-+				struct rproc_mem_entry *mem)
-+{
-+	struct device *dev = rproc->dev.parent;
-+	void *va;
-+
-+	dev_dbg(dev, "map memory: %pa+%x\n", &mem->dma, mem->len);
-+	va = ioremap_wc(mem->dma, mem->len);
-+	if (IS_ERR_OR_NULL(va)) {
-+		dev_err(dev, "Unable to map memory region: %pa+%x\n",
-+				&mem->dma, mem->len);
-+		return -ENOMEM;
-+	}
-+
-+	/* Update memory entry va */
-+	mem->va = va;
-+
-+	return 0;
-+}
-+
-+static int imx_rproc_mem_release(struct rproc *rproc,
-+				struct rproc_mem_entry *mem)
-+{
-+	dev_dbg(rproc->dev.parent, "unmap memory: %pa\n", &mem->dma);
-+	iounmap(mem->va);
-+
-+	return 0;
-+}
-+
-+static int imx_rproc_parse_fw(struct rproc *rproc, const struct firmware *fw)
-+{
-+	struct imx_rproc *priv = rproc->priv;
-+	struct device *dev = rproc->dev.parent;
-+	struct device_node *np = dev->of_node;
-+	struct of_phandle_iterator it;
-+	struct rproc_mem_entry *mem = 0;
-+	struct reserved_mem *rmem;
-+	u64 da;
-+	int index = 0;
-+
-+	/* Register associated reserved memory regions */
-+	of_phandle_iterator_init(&it, np, "memory-region", NULL, 0);
-+	while (of_phandle_iterator_next(&it) == 0) {
-+		rmem = of_reserved_mem_lookup(it.node);
-+		if (!rmem) {
-+			dev_err(dev, "unable to acquire memory-region\n");
-+			return -EINVAL;
-+		}
-+
-+		/*
-+		 * Let's assume all data in device tree is from
-+		 * CPU A7 point of view then we should translate
-+		 * rmem->base into M4 da
-+		 */
-+		if (imx_rproc_sys_to_da(priv, rmem->base, rmem->size, &da)) {
-+			dev_err(dev, "memory region not valid %pa\n",
-+				&rmem->base);
-+			return -EINVAL;
-+		}
-+
-+		if (strcmp(it.node->name, "vdev0buffer")) {
-+			/* Register memory region */
-+			mem = rproc_mem_entry_init(dev, NULL,
-+						(dma_addr_t)rmem->base,
-+						rmem->size, da,
-+						imx_rproc_mem_alloc,
-+						imx_rproc_mem_release,
-+						it.node->name);
-+
-+			if (mem)
-+				rproc_coredump_add_segment(rproc, da,
-+							rmem->size);
-+		} else {
-+			mem = rproc_of_resm_mem_entry_init(dev, index,
-+							rmem->size,
-+							rmem->base,
-+							it.node->name);
-+		}
-+
-+		if (!mem)
-+			return -ENOMEM;
-+
-+		rproc_add_carveout(rproc, mem);
-+		index++;
-+	}
-+
-+	return rproc_elf_load_rsc_table(rproc, fw);
-+}
-+
- static const struct rproc_ops imx_rproc_ops = {
- 	.start		= imx_rproc_start,
- 	.stop		= imx_rproc_stop,
- 	.da_to_va	= imx_rproc_da_to_va,
- 	.kick		= imx_rproc_kick,
-+	.load		= rproc_elf_load_segments,
-+	.parse_fw	= imx_rproc_parse_fw,
-+	.find_loaded_rsc_table = rproc_elf_find_loaded_rsc_table,
-+	.sanity_check	= rproc_elf_sanity_check,
- 	.get_boot_addr	= rproc_elf_get_boot_addr,
- };
- 
 -- 
-2.25.1
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/pwbot
