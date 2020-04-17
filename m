@@ -2,229 +2,197 @@ Return-Path: <SRS0=ybdg=6B=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_2
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9F31C2D0EF
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 17 Apr 2020 17:27:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0ED2C3815B
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 17 Apr 2020 17:48:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A9EE6208E4
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 17 Apr 2020 17:27:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D895C20780
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 17 Apr 2020 17:48:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=maquefel.me header.i=@maquefel.me header.b="pE4GLC7e"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="TYqA11K1"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728602AbgDQR1q (ORCPT
+        id S1729736AbgDQRso (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 17 Apr 2020 13:27:46 -0400
-Received: from forward103p.mail.yandex.net ([77.88.28.106]:34230 "EHLO
-        forward103p.mail.yandex.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728509AbgDQR1q (ORCPT
+        Fri, 17 Apr 2020 13:48:44 -0400
+Received: from mail26.static.mailgun.info ([104.130.122.26]:49551 "EHLO
+        mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729804AbgDQRsn (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 17 Apr 2020 13:27:46 -0400
-Received: from mxback24g.mail.yandex.net (mxback24g.mail.yandex.net [IPv6:2a02:6b8:0:1472:2741:0:8b7:324])
-        by forward103p.mail.yandex.net (Yandex) with ESMTP id AC7B318C1A51;
-        Fri, 17 Apr 2020 20:27:37 +0300 (MSK)
-Received: from myt5-95c1fb78270f.qloud-c.yandex.net (myt5-95c1fb78270f.qloud-c.yandex.net [2a02:6b8:c12:1725:0:640:95c1:fb78])
-        by mxback24g.mail.yandex.net (mxback/Yandex) with ESMTP id EKcukuagzZ-Ra70qsfR;
-        Fri, 17 Apr 2020 20:27:37 +0300
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maquefel.me; s=mail; t=1587144457;
-        bh=bEQYQySpw3bm91XQ79ljUoQm7kSTivm9dk+9MeI0Tm0=;
-        h=In-Reply-To:Subject:Cc:To:From:References:Date:Message-ID;
-        b=pE4GLC7eZoOPzErAOndCGb+cA+eIPvlmHojLUkyEn7cDItw8m/LvyD7KhE6Ryo3DU
-         n6hXKla0b9kxUBt9Mc2F53kmjz2kZRFspjbIvsIlxoHMan7s9eFPj46tGzjgGQk8He
-         7JBLYZRk2bgUBxIxRVN/8csSvl0UDgISBnIUU55U=
-Authentication-Results: mxback24g.mail.yandex.net; dkim=pass header.i=@maquefel.me
-Received: by myt5-95c1fb78270f.qloud-c.yandex.net (smtp/Yandex) with ESMTPSA id g0wCxkGACe-RZ2iFG8N;
-        Fri, 17 Apr 2020 20:27:35 +0300
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-        (Client certificate not present)
-Date:   Fri, 17 Apr 2020 20:26:53 +0300
-From:   Nikita Shubin <nikita.shubin@maquefel.me>
-To:     Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc:     Nikita Shubin <nshubin@topcon.com>,
-        Ohad Ben-Cohen <ohad@wizery.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 1/3] remoteproc: imx_rproc: set pc on start
-Message-ID: <20200417202653.00002500@maquefel.me>
-In-Reply-To: <CANLsYkxvuwFdG3YnE7tTxQaD7uF0d_XnPjt1KS++FFe0W3fbdw@mail.gmail.com>
-References: <20200304142628.8471-1-NShubin@topcon.com>
-        <20200406113310.3041-1-nikita.shubin@maquefel.me>
-        <20200406113310.3041-2-nikita.shubin@maquefel.me>
-        <20200414164519.GA24061@xps15>
-        <45761587100993@mail.yandex.ru>
-        <CANLsYkxvuwFdG3YnE7tTxQaD7uF0d_XnPjt1KS++FFe0W3fbdw@mail.gmail.com>
-X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; i686-w64-mingw32)
+        Fri, 17 Apr 2020 13:48:43 -0400
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1587145722; h=Message-ID: References: In-Reply-To: Subject:
+ Cc: To: From: Date: Content-Transfer-Encoding: Content-Type:
+ MIME-Version: Sender; bh=sN1KGMlgseijcBMFgDvpDzEuyZDuDmpUlOblDIwo/s0=;
+ b=TYqA11K1wC2R2Efun8rNA1aRTdReifZm504NozC3cn5eV3VYowKhfb87U/4Z8ejbJODmBr7X
+ FAc0fsFOzKtrNiJl3f9XC31TJ3jlLAna05DqUarIs7/GKjBYgnlUAvS17ZFv9ddnHjcLOSnj
+ taR5huuDR2E8ad/etlys/Ol0gPo=
+X-Mailgun-Sending-Ip: 104.130.122.26
+X-Mailgun-Sid: WyI4ZWZiZiIsICJsaW51eC1yZW1vdGVwcm9jQHZnZXIua2VybmVsLm9yZyIsICJiZTllNGEiXQ==
+Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
+ by mxa.mailgun.org with ESMTP id 5e99ebe4.7f3ea96e7ab0-smtp-out-n04;
+ Fri, 17 Apr 2020 17:48:20 -0000 (UTC)
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 0C5D1C4478C; Fri, 17 Apr 2020 17:48:19 +0000 (UTC)
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: rishabhb)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 25E3AC44788;
+        Fri, 17 Apr 2020 17:48:18 +0000 (UTC)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
 Content-Transfer-Encoding: 7bit
+Date:   Fri, 17 Apr 2020 10:48:18 -0700
+From:   rishabhb@codeaurora.org
+To:     Loic PALLARDY <loic.pallardy@st.com>
+Cc:     linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        bjorn.andersson@linaro.org, ohad@wizery.com,
+        mathieu.poirier@linaro.org, tsoni@codeaurora.org,
+        psodagud@codeaurora.org, sidgup@codeaurora.org
+Subject: Re: [PATCH 3/3] remoteproc: Add coredump sysfs attribute
+In-Reply-To: <8b807eab057e4dfabbc48d31cbf0b4cc@SFHDAG7NODE2.st.com>
+References: <1587062312-4939-1-git-send-email-rishabhb@codeaurora.org>
+ <1587062312-4939-3-git-send-email-rishabhb@codeaurora.org>
+ <8b807eab057e4dfabbc48d31cbf0b4cc@SFHDAG7NODE2.st.com>
+Message-ID: <3c115358fd10ac728559d876976ed391@codeaurora.org>
+X-Sender: rishabhb@codeaurora.org
+User-Agent: Roundcube Webmail/1.3.9
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
-Message-ID: <20200417172653.E7m0YgER67TOwUEO2NCFr24AJSitFu9e80vFGw2XOmo@z>
+Message-ID: <20200417174818.QFkvG1ZSTOdcWLZEgT2D05d5tAhPpVeLfgHE1L-I99Y@z>
 
-On Fri, 17 Apr 2020 11:01:22 -0600
-Mathieu Poirier <mathieu.poirier@linaro.org> wrote:
-
-> On Thu, 16 Apr 2020 at 23:40, <nikita.shubin@maquefel.me> wrote:
-> >
-> > Hi Mathieue,
-> >
-> > Hi Nikita,
-> >
-> > On Mon, Apr 06, 2020 at 02:33:08PM +0300, nikita.shubin@maquefel.me
-> > wrote:
-> >
-> >  In case elf file interrupt vector is not supposed to be at OCRAM_S,
-> >  it is needed to write elf entry point to OCRAM_S + 0x4, to boot M4
-> >  firmware.
-> >
-> >  Otherwise firmware located anywhere besides OCRAM_S won't boot.
-> >
-> >  The firmware must set stack poiner as first instruction:
-> >
-> >  Reset_Handler:
-> >      ldr sp, = __stack /* set stack pointer */
-> >
-> >  Signed-off-by: Nikita Shubin <NShubin@topcon.com>
-> >
-> >
-> > The address in the SoB has to match what is found in the "From:"
-> > field of the email header. Checkpatch is complaining about that,
-> > something I would have expected to be fixed before sending this set
-> > out.
-> >
-> > Noted and will be fixed.
-> >
-> >  ---
-> >   drivers/remoteproc/imx_rproc.c | 16 +++++++++++++++-
-> >   1 file changed, 15 insertions(+), 1 deletion(-)
-> >
-> >  diff --git a/drivers/remoteproc/imx_rproc.c
-> > b/drivers/remoteproc/imx_rproc.c index 3e72b6f38d4b..bebc58d0f711
-> > 100644 --- a/drivers/remoteproc/imx_rproc.c
-> >  +++ b/drivers/remoteproc/imx_rproc.c
-> >  @@ -45,6 +45,8 @@
-> >
-> >   #define IMX7D_RPROC_MEM_MAX 8
-> >
-> >  +#define IMX_BOOT_PC 0x4
-> >  +
-> >   /**
-> >    * struct imx_rproc_mem - slim internal memory structure
-> >    * @cpu_addr: MPU virtual address of the memory region
-> >  @@ -85,6 +87,7 @@ struct imx_rproc {
-> >           const struct imx_rproc_dcfg *dcfg;
-> >           struct imx_rproc_mem mem[IMX7D_RPROC_MEM_MAX];
-> >           struct clk *clk;
-> >  + void __iomem *bootreg;
-> >   };
-> >
-> >   static const struct imx_rproc_att imx_rproc_att_imx7d[] = {
-> >  @@ -162,11 +165,16 @@ static int imx_rproc_start(struct rproc
-> > *rproc) struct device *dev = priv->dev;
-> >           int ret;
-> >
-> >  + /* write entry point to program counter */
-> >  + writel(rproc->bootaddr, priv->bootreg);
-> >
-> >
-> > What happens on all the other IMX systems where this fix is not
-> > needed? Will they continue to work properly?
-> >
-> > Yes, my bad, it is also needed for IMX6 (but even so i need to
-> > study this topic more carefully), this should be applied
-> > exclusively for imx7d for now, and if will be needed someone with
-> > imx6 hardware to test on can extend this on imx6 also.
-> >
-> >
-> >
-> >
-> >  +
-> >           ret = regmap_update_bits(priv->regmap, dcfg->src_reg,
-> >                                    dcfg->src_mask, dcfg->src_start);
-> >           if (ret)
-> >                   dev_err(dev, "Failed to enable M4!\n");
-> >
-> >  + dev_info(&rproc->dev, "Started from 0x%x\n", rproc->bootaddr);
-> >  +
-> >           return ret;
-> >   }
-> >
-> >  @@ -182,6 +190,9 @@ static int imx_rproc_stop(struct rproc *rproc)
-> >           if (ret)
-> >                   dev_err(dev, "Failed to stop M4!\n");
-> >
-> >  + /* clear entry points */
-> >  + writel(0, priv->bootreg);
-> >  +
-> >           return ret;
-> >   }
-> >
-> >  @@ -243,7 +254,8 @@ static void *imx_rproc_da_to_va(struct rproc
-> > *rproc, u64 da, int len) static const struct rproc_ops
-> > imx_rproc_ops = { .start = imx_rproc_start,
-> >           .stop = imx_rproc_stop,
-> >  - .da_to_va = imx_rproc_da_to_va,
-> >  + .da_to_va = imx_rproc_da_to_va,
-> >  + .get_boot_addr = rproc_elf_get_boot_addr,
-> >
-> >
-> > How is this useful? Sure it will set rproc->bootaddr in
-> > rproc_fw_boot() but what good does that do when it is invariably
-> > set again in imx_rproc_start() ?
-> >
-> > The priv->bootreg is the address where we are writing Entry Point
-> > and it is fixed, 0x04 address is translated to 0x00180004, so don't
-> > quite understand you we are writing rproc->bootaddr into
-> > priv->bootreg, not wiseversa.
-> >
+On 2020-04-17 00:54, Loic PALLARDY wrote:
+> Hi Rishabh,
 > 
-> What is your reason to set ops->get_boot_addr ?  How does that help
-> the work done in this patch?
-
-The reason is the following :
-
-remoteproc_core.c:
-| rproc_fw_boot(struct rproc *rproc, const struct firmware *fw)
-| rproc->bootaddr = rproc_get_boot_addr(rproc, fw);
-
-remoteproc_internal.h
-| static inline
-| u32 rproc_get_boot_addr(struct rproc *rproc, const struct firmware
-*fw) | {
-| 	if (rproc->ops->get_boot_addr)
-| 		return rproc->ops->get_boot_addr(rproc, fw);
-|
-|	return 0;
-| }
-
+>> -----Original Message-----
+>> From: linux-remoteproc-owner@vger.kernel.org <linux-remoteproc-
+>> owner@vger.kernel.org> On Behalf Of Rishabh Bhatnagar
+>> Sent: jeudi 16 avril 2020 20:39
+>> To: linux-remoteproc@vger.kernel.org; linux-kernel@vger.kernel.org
+>> Cc: bjorn.andersson@linaro.org; ohad@wizery.com;
+>> mathieu.poirier@linaro.org; tsoni@codeaurora.org;
+>> psodagud@codeaurora.org; sidgup@codeaurora.org; Rishabh Bhatnagar
+>> <rishabhb@codeaurora.org>
+>> Subject: [PATCH 3/3] remoteproc: Add coredump sysfs attribute
+>> 
+>> Add coredump sysfs attribute to configure the type of memory dump.
+>> User can select between default or inline coredump functionality.
+>> Also coredump collection can be disabled through this interface.
+>> This functionality can be configured differently for different
+>> remote processors.
+>> This provides an option to dynamically configure the dump type
+>> based on userpsace capability.
+> I think this should be under debugfs as it is not link to remoteproc
+> control but only
+> to its debug capability. Moreover other fields related to coredump are
+> already un debugfs control.
 > 
-> >
-> >   };
-> >
-> >   static int imx_rproc_addr_init(struct imx_rproc *priv,
-> >  @@ -360,6 +372,8 @@ static int imx_rproc_probe(struct
-> > platform_device *pdev) goto err_put_rproc;
-> >           }
-> >
-> >  + priv->bootreg = imx_rproc_da_to_va(rproc, IMX_BOOT_PC,
-> > sizeof(u32)); +
-> >           /*
-> >            * clk for M4 block including memory. Should be
-> >            * enabled before .start for FW transfer.
-> >  --
-> >  2.25.1
-> >
-
+> Regards,
+> Loic
+Hi Loic,
+We initially thought of that but the problem is that debugfs is not
+mounted for production builds. So we would be limited to only default
+coredump and loose the capability to disable/move to inline coredump.
+>> 
+>> Signed-off-by: Rishabh Bhatnagar <rishabhb@codeaurora.org>
+>> ---
+>>  drivers/remoteproc/remoteproc_sysfs.c | 57
+>> +++++++++++++++++++++++++++++++++++
+>>  1 file changed, 57 insertions(+)
+>> 
+>> diff --git a/drivers/remoteproc/remoteproc_sysfs.c
+>> b/drivers/remoteproc/remoteproc_sysfs.c
+>> index 7f8536b..d112664 100644
+>> --- a/drivers/remoteproc/remoteproc_sysfs.c
+>> +++ b/drivers/remoteproc/remoteproc_sysfs.c
+>> @@ -9,6 +9,62 @@
+>> 
+>>  #define to_rproc(d) container_of(d, struct rproc, dev)
+>> 
+>> +/*
+>> + * A coredump-configuration-to-string lookup table, for exposing a
+>> + * human readable configuration via sysfs. Always keep in sync with
+>> + * enum rproc_coredump_conf
+>> + */
+>> +static const char * const rproc_coredump_str[] = {
+>> +	[COREDUMP_DEFAULT]	= "default",
+>> +	[COREDUMP_INLINE]	= "inline",
+>> +	[COREDUMP_DISABLED]	= "disabled",
+>> +};
+>> +
+>> +/* Expose the current coredump configuration via sysfs */
+>> +static ssize_t coredump_show(struct device *dev, struct 
+>> device_attribute
+>> *attr,
+>> +			      char *buf)
+>> +{
+>> +	struct rproc *rproc = to_rproc(dev);
+>> +
+>> +	return sprintf(buf, "%s\n", rproc_coredump_str[rproc-
+>> >coredump_conf]);
+>> +}
+>> +
+>> +/* Change the coredump configuration via sysfs */
+>> +static ssize_t coredump_store(struct device *dev, struct 
+>> device_attribute
+>> *attr,
+>> +			       const char *buf, size_t count)
+>> +{
+>> +	struct rproc *rproc = to_rproc(dev);
+>> +	int err;
+>> +
+>> +	err = mutex_lock_interruptible(&rproc->lock);
+>> +	if (err) {
+>> +		dev_err(dev, "can't lock rproc %s: %d\n", rproc->name, err);
+>> +		return -EINVAL;
+>> +	}
+>> +
+>> +	if (rproc->state == RPROC_CRASHED) {
+>> +		dev_err(dev, "can't change coredump configuration\n");
+>> +		err = -EBUSY;
+>> +		goto out;
+>> +	}
+>> +
+>> +	if (sysfs_streq(buf, "disable"))
+>> +		rproc->coredump_conf = COREDUMP_DISABLED;
+>> +	else if (sysfs_streq(buf, "inline"))
+>> +		rproc->coredump_conf = COREDUMP_INLINE;
+>> +	else if (sysfs_streq(buf, "default"))
+>> +		rproc->coredump_conf = COREDUMP_DEFAULT;
+>> +	else {
+>> +		dev_err(dev, "Invalid coredump configuration\n");
+>> +		err = -EINVAL;
+>> +	}
+>> +out:
+>> +	mutex_unlock(&rproc->lock);
+>> +
+>> +	return err ? err : count;
+>> +}
+>> +static DEVICE_ATTR_RW(coredump);
+>> +
+>>  /* Expose the loaded / running firmware name via sysfs */
+>>  static ssize_t firmware_show(struct device *dev, struct 
+>> device_attribute
+>> *attr,
+>>  			  char *buf)
+>> @@ -127,6 +183,7 @@ static ssize_t name_show(struct device *dev, 
+>> struct
+>> device_attribute *attr,
+>>  	&dev_attr_firmware.attr,
+>>  	&dev_attr_state.attr,
+>>  	&dev_attr_name.attr,
+>> +	&dev_attr_coredump.attr,
+>>  	NULL
+>>  };
+>> 
+>> --
+>> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora
+>> Forum,
+>> a Linux Foundation Collaborative Project
