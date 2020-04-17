@@ -2,146 +2,375 @@ Return-Path: <SRS0=ybdg=6B=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 518EFC2D0EF
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 17 Apr 2020 15:48:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6315C352BE
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 17 Apr 2020 16:02:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 298D42054F
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 17 Apr 2020 15:48:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AA2B820936
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 17 Apr 2020 16:02:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=web.de header.i=@web.de header.b="DrB1Mcgn"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MjL6mhUF"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729573AbgDQPs4 (ORCPT
+        id S1729428AbgDQQCO (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 17 Apr 2020 11:48:56 -0400
-Received: from mout.web.de ([212.227.17.12]:34901 "EHLO mout.web.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728593AbgDQPs4 (ORCPT
+        Fri, 17 Apr 2020 12:02:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49788 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728542AbgDQQCN (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 17 Apr 2020 11:48:56 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
-        s=dbaedf251592; t=1587138530;
-        bh=uR9Ez3u/7GnvtnBI9nN/OKjFu21RjRLKSDicsZqRY3U=;
-        h=X-UI-Sender-Class:Subject:To:Cc:References:From:Date:In-Reply-To;
-        b=DrB1Mcgne/caxQXbrbYB2UKkQoeXq3ezMyPzrmS6QZ1ZKgaUnS/3D/3uHPoOBhAY+
-         dqMRyWMJg7hYLaN8A+r6CiHztjqWgHWfz8pZzHNxnbSpoilIk6uYI8AoJDwMqm5Bl5
-         jJF9MaPF01Fetizw0pL3tBWRwqpeoDM9vk6lPu3Y=
-X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
-Received: from [192.168.1.2] ([2.243.97.227]) by smtp.web.de (mrweb101
- [213.165.67.124]) with ESMTPSA (Nemesis) id 0LeLKb-1itCHf1nOn-00qBUu; Fri, 17
- Apr 2020 17:48:50 +0200
-Subject: Re: [v2 5/7] remoteproc: Restructure firmware name allocation
-To:     Suman Anna <s-anna@ti.com>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        linux-remoteproc@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, Alex Elder <elder@linaro.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Ohad Ben-Cohen <ohad@wizery.com>
-References: <20200415204858.2448-1-mathieu.poirier@linaro.org>
- <20200415204858.2448-6-mathieu.poirier@linaro.org>
- <aa565fea-b1c4-9b5c-73ed-591244afee19@web.de>
- <e887c990-8cba-62b0-0f47-3ea0c166d603@ti.com>
-From:   Markus Elfring <Markus.Elfring@web.de>
-Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
- 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 FEE=
-Message-ID: <7a978c24-945d-8d39-3a0a-30e0678d569a@web.de>
-Date:   Fri, 17 Apr 2020 17:48:49 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+        Fri, 17 Apr 2020 12:02:13 -0400
+Received: from mail-il1-x142.google.com (mail-il1-x142.google.com [IPv6:2607:f8b0:4864:20::142])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 81598C061A0F
+        for <linux-remoteproc@vger.kernel.org>; Fri, 17 Apr 2020 09:02:13 -0700 (PDT)
+Received: by mail-il1-x142.google.com with SMTP id q10so1242520ile.0
+        for <linux-remoteproc@vger.kernel.org>; Fri, 17 Apr 2020 09:02:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Ow0Kc3IM7l1Pl3ygzeT9L0fTTZ4DxTMoAT1E2719uQ0=;
+        b=MjL6mhUFmzxZPCPPwZHrpqBTfExrGPFMKXuLWJNZjiqPGw1TaITDyuMVu5NYeW/byO
+         eSUdppSk7qLuYr9tTvaPYCbzyrUyG8fhffyDMvgC1x/BTSw9nYtXJTKyXWZ4/MOqkYmC
+         gApC+IhrUCpaD+sdi8wZObjkXi8wVbvWCV3cmPLqUsmhF82aG/30NdeirrRx88Rsrq4A
+         BFP3D0gZh9R83MKlnVnsFDH7vSQcohUfo7v4JI0u1139FxH1HxG+n/bBRaF4TsLw06P/
+         39dPOqtdZsy/sJQBQ/FbqgD+eCthGBz4KY+CmF3vgGTU7QJydz+BXB8DdZDHFVteWh8D
+         cjfg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Ow0Kc3IM7l1Pl3ygzeT9L0fTTZ4DxTMoAT1E2719uQ0=;
+        b=rq8ydKIopWQ0ckfofpeB2npgZxF7l0MEzrm+DYj4KMxOhLgpzEDlhkMoALhg/rxBWA
+         k8P7ggEWD8h8ERWJB2EPgwWIul67Cx1+mfaBXCfvdAWlnfnkdyKI/dYp00qD8SdXqcX6
+         mdskmP6NOI5dUF3J9W5leehibsSaWuRewqzpZM6TdE1Lkd+e9D5RmRFC0apFRHx5DIPJ
+         K5QU/gNTqlWF+12rgjW/XMnKypv4a7aczLpvLUmYzFa+u3qwLjB+Z8BeYyTFGNtsf1dR
+         I+YQv+n1/emRdMyKdtdpCWVSl7nz9/dMLLSAi+aUBsK73dE9HaYAXpIJYD1WchAndMDV
+         f/Xw==
+X-Gm-Message-State: AGi0Pubxt7zyAbd0ftU4/efZ3St9AXS7l3Uodee69J/xUFFUyWtqLdWO
+        +gpq66Zr/XdggQ+UN2IhUY4dkQFYl/y+ELtzaMeU5w==
+X-Google-Smtp-Source: APiQypLLN6hpNPrciosxVWRfxqtxblYXJhb0mAZ+3XY79TIlLCuwTRGnOJcQga3hcnrDuAiwihy0ALVG1vK6DqTNjkE=
+X-Received: by 2002:a05:6e02:68a:: with SMTP id o10mr3808041ils.72.1587139332463;
+ Fri, 17 Apr 2020 09:02:12 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <e887c990-8cba-62b0-0f47-3ea0c166d603@ti.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:V/6dhADAQ7uzeRvMgrEKzEC9uCndlCMfp54nMDIGD8OtskzlNmQ
- jMqOaW2aYturyVDB04AnhqR7NBQyT9owiovvUKzhdC0XPlTBdu6oFuoz8xPmckedOci7gcc
- 1obJAijCmgBqgLK+8zcTtsMlo+beiCzXGrPw8VfR2F9WHJbQjeS/IRIi1UrbL3g5rZLYWfV
- BcHZsxFvC+crF49TXKUIQ==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:hLJf7nT6nXA=:f0sodW8Cn/RldVBY+9kWaN
- fumjX39YA43Ph6mFqlidFMcHwXEqe++S0d7a7JBuHco/g2VsHbQKAfE2Cc7zjRLdNlTGBkaZg
- oZAIWrWy/LrRwZBqn2LYyf6gmYt3lSRbw/8OEzTu8LRWfMSoK17rOALw7Z7rbnrBz+09IqQPE
- 6TjlWo+c5d7AhgBbVg9dkECjBWF6N+YtsuZmxNuVsOu/KrCDbfdrmzgOZwpC6M6QB2pY42mbz
- UtRBO5aCvBZfxm5s6i9nnj77LybwywISb1EVYOh+LW//xCVE5KzGG4mEfd4BGMYafYukgESjO
- i4NBcNHM29fqyOI9+B2g1ymEl/Fiw8cTVJC03cySjdzI+nPMtcqUXaVosnxBtK9iPNky9NHik
- E3sG3uYtruzeg6vnCqIdtKnawojfNIxvRgcL5hWOPSZcGQNnxG9339zAtywfBwJRBDb5JqP2Q
- KmRUdckZf/depuLOOiJtgSiGp402Rz5H1IAmIJcNHysTOJAwtu7AaMTdXCCHe1FGTFakji9k/
- 0TIwhb/ldlPg2oQrSxb+sKZnO0SBkqsMCmtbrBAIIBthO0CXayKKLfl++L8Ad0GJu87ILr0GN
- l1mOTNK2yw0UX2AOpZeSDE4HeJawEhgDeOCQayVPU6lGeWwZ2rYqKtIK0UQzCMSbmS1cFMFZs
- higZ5jXWZZzLERS28V2b8RCb365AugLkRlDk6/hscqjWw7Bz0t/9jvShemTQuNmajTjYnakGu
- h0VVfAx8WPEBAwhG492sOlVJ5PfYzxX2VDBX5xRyql2BGArDrfFLmUJe4bPd6mdouuKWT/MBd
- qCq4P/x8iKZdBvJAAl4wNZoypsoYsW0DUdiwLeFkHFL6gPonsfKtXEkIGh/Hi+3crGjcJ2j/P
- fxvbm2qTLjFI3jfetIjFw4H2TixlaksmINQyAim1QAqAYjrtoz6oQNExDtAuYheLZUMUuBsLE
- CrXZL4/0QnuxAB5q9AXKSy+pKjKqXUM/E9uD48sjBLrU5mfz/ypD3hwc1JWRJxa7QoxCdlO0L
- yZI4TR9jyLU596RITkgY/kH9t8Y81GLhOfedf31hcyScRbqlMnOg+KUw9+HQu8eJXoDZ1ErYw
- JA0kDflDhxAmSeNgN4P/DCspZtRLYN+6HTuWnilep8GxbEnc+2tcRAY0jZ607UsvJr5X01tqv
- 8+j03ZUQa1jOIxRhcBGUYngheCwTZBzBO67WDWtiZKdl4JEB3Je/YSzhXszfjtx1s40ZtFa8N
- t07n0Qk/mSWwDIOci
+References: <20200304142628.8471-1-NShubin@topcon.com> <20200406113310.3041-1-nikita.shubin@maquefel.me>
+ <20200406113310.3041-3-nikita.shubin@maquefel.me> <20200414172004.GB24061@xps15>
+ <20200417113747.00007cfb@maquefel.me>
+In-Reply-To: <20200417113747.00007cfb@maquefel.me>
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+Date:   Fri, 17 Apr 2020 10:02:01 -0600
+Message-ID:
+ <CANLsYkwun87oVw5ZG_g0niq7Yns5+xWJEVb72FwP=d3PruXCcQ@mail.gmail.com>
+Subject: Re: [PATCH v2 2/3] remoteproc: imx_rproc: mailbox support
+To:     Nikita Shubin <nikita.shubin@maquefel.me>
+Cc:     Nikita Shubin <NShubin@topcon.com>,
+        Ohad Ben-Cohen <ohad@wizery.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        linux-remoteproc <linux-remoteproc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
-Message-ID: <20200417154849.mwkfAVjR3eqecJAj5iSyUJT0FuNkTZgujeLoo6fqnEs@z>
+Message-ID: <20200417160201.vmMrpoFZ7daM0rFxGDrFb8vmexWDPv_Yfoc2-e3e-nc@z>
 
->> =C2=A0=C2=A0=C2=A0=C2=A0p =3D firmware ? kstrdup_const(=E2=80=A6) : kas=
-printf(=E2=80=A6);
+On Fri, 17 Apr 2020 at 02:38, Nikita Shubin <nikita.shubin@maquefel.me> wrote:
 >
-> For simple assignments, I too prefer the ternary operator,
+> On Tue, 14 Apr 2020 11:20:05 -0600
+> Mathieu Poirier <mathieu.poirier@linaro.org> wrote:
+>
+> > On Mon, Apr 06, 2020 at 02:33:09PM +0300, nikita.shubin@maquefel.me
+> > wrote:
+> > > Add support for mailboxes to imx_rproc
+> > >
+> > > Signed-off-by: Nikita Shubin <NShubin@topcon.com>
+> > > ---
+> > >  drivers/remoteproc/Kconfig     |   2 +
+> > >  drivers/remoteproc/imx_rproc.c | 142
+> > > ++++++++++++++++++++++++++++++++- 2 files changed, 143
+> > > insertions(+), 1 deletion(-)
+> > >
+> > > diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
+> > > index 94afdde4bc9f..02d23a54c9cf 100644
+> > > --- a/drivers/remoteproc/Kconfig
+> > > +++ b/drivers/remoteproc/Kconfig
+> > > @@ -17,6 +17,8 @@ if REMOTEPROC
+> > >  config IMX_REMOTEPROC
+> > >     tristate "IMX6/7 remoteproc support"
+> > >     depends on ARCH_MXC
+> > > +   select MAILBOX
+> > > +   select IMX_MBOX
+> > >     help
+> > >       Say y here to support iMX's remote processors (Cortex M4
+> > >       on iMX7D) via the remote processor framework.
+> > > diff --git a/drivers/remoteproc/imx_rproc.c
+> > > b/drivers/remoteproc/imx_rproc.c index bebc58d0f711..d2bede4ccb70
+> > > 100644 --- a/drivers/remoteproc/imx_rproc.c
+> > > +++ b/drivers/remoteproc/imx_rproc.c
+> > > @@ -14,6 +14,9 @@
+> > >  #include <linux/platform_device.h>
+> > >  #include <linux/regmap.h>
+> > >  #include <linux/remoteproc.h>
+> > > +#include <linux/mailbox_client.h>
+> > > +
+> > > +#include "remoteproc_internal.h"
+> > >
+> > >  #define IMX7D_SRC_SCR                      0x0C
+> > >  #define IMX7D_ENABLE_M4                    BIT(3)
+> > > @@ -47,6 +50,12 @@
+> > >
+> > >  #define IMX_BOOT_PC                        0x4
+> > >
+> > > +#define IMX_MBOX_NB_VQ                     2
+> > > +#define IMX_MBOX_NB_MBX            2
+> >
+> > Please align this.
+> >
+> > > +
+> > > +#define IMX_MBX_VQ0                "vq0"
+> > > +#define IMX_MBX_VQ1                "vq1"
+> > > +
+> > >  /**
+> > >   * struct imx_rproc_mem - slim internal memory structure
+> > >   * @cpu_addr: MPU virtual address of the memory region
+> > > @@ -80,6 +89,14 @@ struct imx_rproc_dcfg {
+> > >     size_t                          att_size;
+> > >  };
+> > >
+> > > +struct imx_mbox {
+> > > +   const unsigned char name[10];
+> > > +   struct mbox_chan *chan;
+> > > +   struct mbox_client client;
+> > > +   struct work_struct vq_work;
+> > > +   int vq_id;
+> > > +};
+> > > +
+> > >  struct imx_rproc {
+> > >     struct device                   *dev;
+> > >     struct regmap                   *regmap;
+> > > @@ -88,6 +105,8 @@ struct imx_rproc {
+> > >     struct imx_rproc_mem
+> > > mem[IMX7D_RPROC_MEM_MAX]; struct clk                        *clk;
+> > >     void __iomem                    *bootreg;
+> > > +   struct imx_mbox mb[IMX_MBOX_NB_MBX];
+> > > +   struct workqueue_struct *workqueue;
+> > >  };
+> > >
+> > >  static const struct imx_rproc_att imx_rproc_att_imx7d[] = {
+> > > @@ -251,10 +270,118 @@ static void *imx_rproc_da_to_va(struct rproc
+> > > *rproc, u64 da, int len) return va;
+> > >  }
+> > >
+> > > +static void imx_rproc_mb_vq_work(struct work_struct *work)
+> > > +{
+> > > +   struct imx_mbox *mb = container_of(work, struct imx_mbox,
+> > > vq_work);
+> > > +   struct rproc *rproc = dev_get_drvdata(mb->client.dev);
+> > > +
+> > > +   if (rproc_vq_interrupt(rproc, mb->vq_id) == IRQ_NONE)
+> > > +           dev_dbg(&rproc->dev, "no message found in vq%d\n",
+> > > mb->vq_id); +}
+> > > +
+> > > +static void imx_rproc_mb_callback(struct mbox_client *cl, void
+> > > *data) +{
+> > > +   struct rproc *rproc = dev_get_drvdata(cl->dev);
+> > > +   struct imx_mbox *mb = container_of(cl, struct imx_mbox,
+> > > client);
+> > > +   struct imx_rproc *ddata = rproc->priv;
+> > > +
+> > > +   queue_work(ddata->workqueue, &mb->vq_work);
+> > > +}
+> > > +
+> > > +static const struct imx_mbox imx_rproc_mbox[IMX_MBOX_NB_MBX] = {
+> > > +   {
+> > > +           .name = IMX_MBX_VQ0,
+> > > +           .vq_id = 0,
+> > > +           .client = {
+> > > +                   .rx_callback = imx_rproc_mb_callback,
+> > > +                   .tx_block = false,
+> > > +           },
+> > > +   },
+> > > +   {
+> > > +           .name = IMX_MBX_VQ1,
+> > > +           .vq_id = 1,
+> > > +           .client = {
+> > > +                   .rx_callback = imx_rproc_mb_callback,
+> > > +                   .tx_block = false,
+> > > +           },
+> > > +   },
+> > > +};
+> > > +
+> > > +static void imx_rproc_request_mbox(struct rproc *rproc)
+> > > +{
+> > > +   struct imx_rproc *ddata = rproc->priv;
+> > > +   struct device *dev = &rproc->dev;
+> > > +   unsigned int i;
+> > > +   const unsigned char *name;
+> > > +   struct mbox_client *cl;
+> > > +
+> > > +   /* Initialise mailbox structure table */
+> > > +   memcpy(ddata->mb, imx_rproc_mbox, sizeof(imx_rproc_mbox));
+> > > +
+> > > +   for (i = 0; i < IMX_MBOX_NB_MBX; i++) {
+> > > +           name = ddata->mb[i].name;
+> > > +
+> > > +           cl = &ddata->mb[i].client;
+> > > +           cl->dev = dev->parent;
+> > > +
+> > > +           ddata->mb[i].chan =
+> > > mbox_request_channel_byname(cl, name); +
+> > > +           dev_dbg(dev, "%s: name=%s, idx=%u\n",
+> > > +                   __func__, name, ddata->mb[i].vq_id);
+> > > +
+> > > +           if (IS_ERR(ddata->mb[i].chan)) {
+> > > +                   dev_warn(dev, "cannot get %s mbox\n",
+> > > name);
+> > > +                   ddata->mb[i].chan = NULL;
+> >
+> > If the mailbox isn't ready this driver will fail without a chance of
+> > recovery. Since most of the code in this patch is a carbon copy of
+> > the implementation found in stm32_proc.c, I suggest you do the same
+> > as they did in stm32_rproc_request_mbox() and privision for cases
+> > where requesting a channel returns -EPROBE_DEFER.
+> >
+>
+> Noted, will be fixed.
+>
+> > > +           }
+> > > +
+> > > +           if (ddata->mb[i].vq_id >= 0)
+> > > +                   INIT_WORK(&ddata->mb[i].vq_work,
+> > > imx_rproc_mb_vq_work);
+> > > +   }
+> > > +}
+> > > +
+> > > +static void imx_rproc_free_mbox(struct rproc *rproc)
+> > > +{
+> > > +   struct imx_rproc *ddata = rproc->priv;
+> > > +   unsigned int i;
+> > > +
+> > > +   dev_dbg(&rproc->dev, "%s: %d boxes\n",
+> > > +           __func__, ARRAY_SIZE(ddata->mb));
+> > > +
+> > > +   for (i = 0; i < ARRAY_SIZE(ddata->mb); i++) {
+> > > +           if (ddata->mb[i].chan)
+> > > +                   mbox_free_channel(ddata->mb[i].chan);
+> > > +           ddata->mb[i].chan = NULL;
+> > > +   }
+> > > +}
+> > > +
+> > > +static void imx_rproc_kick(struct rproc *rproc, int vqid)
+> > > +{
+> > > +   struct imx_rproc *ddata = rproc->priv;
+> > > +   unsigned int i;
+> > > +   int err;
+> > > +
+> > > +   if (WARN_ON(vqid >= IMX_MBOX_NB_VQ))
+> > > +           return;
+> > > +
+> > > +   for (i = 0; i < IMX_MBOX_NB_MBX; i++) {
+> > > +           if (vqid != ddata->mb[i].vq_id)
+> > > +                   continue;
+> > > +           if (!ddata->mb[i].chan)
+> > > +                   return;
+> > > +           dev_dbg(&rproc->dev, "sending message : vqid =
+> > > %d\n", vqid);
+> > > +           err = mbox_send_message(ddata->mb[i].chan, &vqid);
+> > > +           if (err < 0)
+> > > +                   dev_err(&rproc->dev, "%s: failed (%s,
+> > > err:%d)\n",
+> > > +                                   __func__,
+> > > ddata->mb[i].name, err);
+> > > +                   return;
+> > > +   }
+> > > +}
+> > > +
+> > >  static const struct rproc_ops imx_rproc_ops = {
+> > >     .start          = imx_rproc_start,
+> > >     .stop           = imx_rproc_stop,
+> > >     .da_to_va       = imx_rproc_da_to_va,
+> > > +   .kick           = imx_rproc_kick,
+> > >     .get_boot_addr  = rproc_elf_get_boot_addr,
+> > >  };
+> > >
+> > > @@ -384,14 +511,26 @@ static int imx_rproc_probe(struct
+> > > platform_device *pdev) goto err_put_rproc;
+> > >     }
+> > >
+> > > +   priv->workqueue = create_workqueue(dev_name(dev));
+> > > +   if (!priv->workqueue) {
+> > > +           dev_err(dev, "cannot create workqueue\n");
+> > > +           ret = -ENOMEM;
+> > > +           goto err_put_clk;
+> > > +   }
+> > > +
+> > > +   imx_rproc_request_mbox(rproc);
+> > > +
+> > >     ret = rproc_add(rproc);
+> > >     if (ret) {
+> > >             dev_err(dev, "rproc_add failed\n");
+> > > -           goto err_put_clk;
+> > > +           goto err_free_mb;
+> > >     }
+> > >
+> > >     return 0;
+> > >
+> > > +err_free_mb:
+> > > +   imx_rproc_free_mbox(rproc);
+> > > +   destroy_workqueue(priv->workqueue);
+> > >  err_put_clk:
+> > >     clk_disable_unprepare(priv->clk);
+> > >  err_put_rproc:
+> > > @@ -407,6 +546,7 @@ static int imx_rproc_remove(struct
+> > > platform_device *pdev)
+> > >     clk_disable_unprepare(priv->clk);
+> > >     rproc_del(rproc);
+> > > +   imx_rproc_free_mbox(rproc);
+> >
+> > I have no issues with people reusing code already found in the kernel
+> > - in fact I encourage it because it makes reviewing patches much
+> > easier.  On the flip side you have to give credit where it is due.
+> > Here adding a line in the changelog that mentions where you took your
+> > inspiration from will be much appreciated.
+>
+> Please don't blame on things i never did citing my own self from 0/0:
 
-Thanks for your feedback.
+I am not blaming you at all.
 
+>
+> | Regarding mailboxes and memory regions :
+>
+> | This code is heavily derived from stm32-rproc (i.e. copy pasted) and
+> | this fact needs to reflected in commits, please tell me how to
+> | emphasize this fact.
+>
+> I am eager to give credits.
 
-> but in this case, I think it is better to leave the current code as is.
+I didn't notice that in the original cover letter.  In the changelog,
+between the description of the work and the signed-off-by and on a
+line on its own, simply write that "the work is inspired from the
+STM32 platform driver (drivers/remoteproc/stm32_rproc.c)".
 
-Would you like to consider the use of the function =E2=80=9Ckvasprintf_con=
-st=E2=80=9D
-according to your review comment for the update step =E2=80=9C[PATCH v2 4/=
-7] remoteproc:
-Use kstrdup_const() rather than kstrup()=E2=80=9D?
-
-Regards,
-Markus
+>
+>
+> >
+> > Thanks,
+> > Mathieu
+> >
+> > >     rproc_free(rproc);
+> > >
+> > >     return 0;
+> > > --
+> > > 2.25.1
+> > >
+>
