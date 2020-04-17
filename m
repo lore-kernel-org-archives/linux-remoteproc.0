@@ -2,197 +2,138 @@ Return-Path: <SRS0=ybdg=6B=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0ED2C3815B
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 17 Apr 2020 17:48:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 213BDC2D0EF
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 17 Apr 2020 19:22:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D895C20780
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 17 Apr 2020 17:48:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F3AAF2078E
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 17 Apr 2020 19:21:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="TYqA11K1"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HOiEvn1C"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729736AbgDQRso (ORCPT
+        id S1730368AbgDQTV7 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 17 Apr 2020 13:48:44 -0400
-Received: from mail26.static.mailgun.info ([104.130.122.26]:49551 "EHLO
-        mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729804AbgDQRsn (ORCPT
+        Fri, 17 Apr 2020 15:21:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52514 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728192AbgDQTV7 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 17 Apr 2020 13:48:43 -0400
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1587145722; h=Message-ID: References: In-Reply-To: Subject:
- Cc: To: From: Date: Content-Transfer-Encoding: Content-Type:
- MIME-Version: Sender; bh=sN1KGMlgseijcBMFgDvpDzEuyZDuDmpUlOblDIwo/s0=;
- b=TYqA11K1wC2R2Efun8rNA1aRTdReifZm504NozC3cn5eV3VYowKhfb87U/4Z8ejbJODmBr7X
- FAc0fsFOzKtrNiJl3f9XC31TJ3jlLAna05DqUarIs7/GKjBYgnlUAvS17ZFv9ddnHjcLOSnj
- taR5huuDR2E8ad/etlys/Ol0gPo=
-X-Mailgun-Sending-Ip: 104.130.122.26
-X-Mailgun-Sid: WyI4ZWZiZiIsICJsaW51eC1yZW1vdGVwcm9jQHZnZXIua2VybmVsLm9yZyIsICJiZTllNGEiXQ==
-Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5e99ebe4.7f3ea96e7ab0-smtp-out-n04;
- Fri, 17 Apr 2020 17:48:20 -0000 (UTC)
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 0C5D1C4478C; Fri, 17 Apr 2020 17:48:19 +0000 (UTC)
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: rishabhb)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 25E3AC44788;
-        Fri, 17 Apr 2020 17:48:18 +0000 (UTC)
+        Fri, 17 Apr 2020 15:21:59 -0400
+Received: from mail-pl1-x641.google.com (mail-pl1-x641.google.com [IPv6:2607:f8b0:4864:20::641])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 106B3C061A0C
+        for <linux-remoteproc@vger.kernel.org>; Fri, 17 Apr 2020 12:21:59 -0700 (PDT)
+Received: by mail-pl1-x641.google.com with SMTP id z6so1304255plk.10
+        for <linux-remoteproc@vger.kernel.org>; Fri, 17 Apr 2020 12:21:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=zMiXOyiLL5u4PWujbjCmvRqsaMSoEDouVZ76G40OsaI=;
+        b=HOiEvn1CydEmRhsVyHkWxtwxyhRBVsz7FG8B3D11JoSSKOkTdYpUxLwVzX+cVt5lJz
+         NaNF3KChUSzVBLCGZkljHGR1IQ0eijL0VDieRE3Fp2vp1N7ISY//759ujAneqrpH8yrR
+         5ZO6ifVnydwKmU2A7i59lmaLzKI68y1+ko1vKsBwJ0J+0BPTOc32FSzercDDxGkdaIl0
+         d/a/9x89kuSakmVgjCmIQkVWTGg3NCuE3DPRsx9vqEAkurk8keqaPatIf0Xmmb5+U3S4
+         nkV2fovh4MJPftXgcSEMHaXwYVEafC4nBqtu+aUcR38/7kY8WYARpmJtvxlcZTC4ldQA
+         yRVg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=zMiXOyiLL5u4PWujbjCmvRqsaMSoEDouVZ76G40OsaI=;
+        b=Boj2vHDjdfLhqQWCXxTFznqk+z6mRChWkgjjE3rb3AXl5SEB1LLv0dWyNjFjCsNQlO
+         hCT3mgStdy7mcDO48alYsAK63TYOndxfX6QoECo4N1h+1EFaTA1cTRRlEr4diPxA9bJw
+         WP97QwVTlEQRpCTEe97JGePYa6mjn4yWioE8AkeYLvZoa/zB1Y+Ry4iMncTAvKCEMjiu
+         KbYiTqbVIQR2svMupQDsLu79WTtsknhZ09HglE7e2jy6RYCz9Yq7vCBk6Z9hYH5tDXOj
+         Dle/WrnYG15eFErYdMydQa2ROJDQqJk/YahYyolJkYNhsDx0UmolZQRgaEJIVRNJX7Tl
+         eJEQ==
+X-Gm-Message-State: AGi0PuYwyENwfMsmYDCQtEfgWnMgIzDps459vhxkEMvarsWZ/zj7tOz5
+        ON1wQQIm9A76tQezZceOT12Nzw==
+X-Google-Smtp-Source: APiQypLCZ2gSD93SLEZLZ1nDN2rC1wWCt+YehOgoKcmEhMz8hMDxzJBnTZh3xOSbkmhbkcT/lDedfw==
+X-Received: by 2002:a17:902:6ac7:: with SMTP id i7mr4663865plt.116.1587151318406;
+        Fri, 17 Apr 2020 12:21:58 -0700 (PDT)
+Received: from xps15 (S0106002369de4dac.cg.shawcable.net. [68.147.8.254])
+        by smtp.gmail.com with ESMTPSA id nu13sm6551802pjb.22.2020.04.17.12.21.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 17 Apr 2020 12:21:57 -0700 (PDT)
+Date:   Fri, 17 Apr 2020 13:21:55 -0600
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Peng Fan <peng.fan@nxp.com>, ohad@wizery.com,
+        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-imx@nxp.com
+Subject: Re: [PATCH 2/2] remoteproc: use filesz as backup when translate
+ memsz fail
+Message-ID: <20200417192155.GA6797@xps15>
+References: <1586420572-28353-1-git-send-email-peng.fan@nxp.com>
+ <1586420572-28353-2-git-send-email-peng.fan@nxp.com>
+ <20200410012226.GV20625@builder.lan>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Fri, 17 Apr 2020 10:48:18 -0700
-From:   rishabhb@codeaurora.org
-To:     Loic PALLARDY <loic.pallardy@st.com>
-Cc:     linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        bjorn.andersson@linaro.org, ohad@wizery.com,
-        mathieu.poirier@linaro.org, tsoni@codeaurora.org,
-        psodagud@codeaurora.org, sidgup@codeaurora.org
-Subject: Re: [PATCH 3/3] remoteproc: Add coredump sysfs attribute
-In-Reply-To: <8b807eab057e4dfabbc48d31cbf0b4cc@SFHDAG7NODE2.st.com>
-References: <1587062312-4939-1-git-send-email-rishabhb@codeaurora.org>
- <1587062312-4939-3-git-send-email-rishabhb@codeaurora.org>
- <8b807eab057e4dfabbc48d31cbf0b4cc@SFHDAG7NODE2.st.com>
-Message-ID: <3c115358fd10ac728559d876976ed391@codeaurora.org>
-X-Sender: rishabhb@codeaurora.org
-User-Agent: Roundcube Webmail/1.3.9
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200410012226.GV20625@builder.lan>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
-Message-ID: <20200417174818.QFkvG1ZSTOdcWLZEgT2D05d5tAhPpVeLfgHE1L-I99Y@z>
+Message-ID: <20200417192155.izipvStwx-nMalE-7GT_iFBUNVGj6NjKA0p0M40xuRA@z>
 
-On 2020-04-17 00:54, Loic PALLARDY wrote:
-> Hi Rishabh,
+On Thu, Apr 09, 2020 at 06:22:26PM -0700, Bjorn Andersson wrote:
+> On Thu 09 Apr 01:22 PDT 2020, Peng Fan wrote:
 > 
->> -----Original Message-----
->> From: linux-remoteproc-owner@vger.kernel.org <linux-remoteproc-
->> owner@vger.kernel.org> On Behalf Of Rishabh Bhatnagar
->> Sent: jeudi 16 avril 2020 20:39
->> To: linux-remoteproc@vger.kernel.org; linux-kernel@vger.kernel.org
->> Cc: bjorn.andersson@linaro.org; ohad@wizery.com;
->> mathieu.poirier@linaro.org; tsoni@codeaurora.org;
->> psodagud@codeaurora.org; sidgup@codeaurora.org; Rishabh Bhatnagar
->> <rishabhb@codeaurora.org>
->> Subject: [PATCH 3/3] remoteproc: Add coredump sysfs attribute
->> 
->> Add coredump sysfs attribute to configure the type of memory dump.
->> User can select between default or inline coredump functionality.
->> Also coredump collection can be disabled through this interface.
->> This functionality can be configured differently for different
->> remote processors.
->> This provides an option to dynamically configure the dump type
->> based on userpsace capability.
-> I think this should be under debugfs as it is not link to remoteproc
-> control but only
-> to its debug capability. Moreover other fields related to coredump are
-> already un debugfs control.
+> > Since we no need memset if memsz is larger than filesz, we could
+> > use filesz for the da to va translation when memsz translation fail.
+> > 
+> 
+> To me this implies that the firmware has a segment that's larger than
+> the memory that it's going to run in. I think even if we're not writing
+> to the entire memsz, asking da_to_va for the entire memsz provides a
+> valuable sanity check.
 > 
 > Regards,
-> Loic
-Hi Loic,
-We initially thought of that but the problem is that debugfs is not
-mounted for production builds. So we would be limited to only default
-coredump and loose the capability to disable/move to inline coredump.
->> 
->> Signed-off-by: Rishabh Bhatnagar <rishabhb@codeaurora.org>
->> ---
->>  drivers/remoteproc/remoteproc_sysfs.c | 57
->> +++++++++++++++++++++++++++++++++++
->>  1 file changed, 57 insertions(+)
->> 
->> diff --git a/drivers/remoteproc/remoteproc_sysfs.c
->> b/drivers/remoteproc/remoteproc_sysfs.c
->> index 7f8536b..d112664 100644
->> --- a/drivers/remoteproc/remoteproc_sysfs.c
->> +++ b/drivers/remoteproc/remoteproc_sysfs.c
->> @@ -9,6 +9,62 @@
->> 
->>  #define to_rproc(d) container_of(d, struct rproc, dev)
->> 
->> +/*
->> + * A coredump-configuration-to-string lookup table, for exposing a
->> + * human readable configuration via sysfs. Always keep in sync with
->> + * enum rproc_coredump_conf
->> + */
->> +static const char * const rproc_coredump_str[] = {
->> +	[COREDUMP_DEFAULT]	= "default",
->> +	[COREDUMP_INLINE]	= "inline",
->> +	[COREDUMP_DISABLED]	= "disabled",
->> +};
->> +
->> +/* Expose the current coredump configuration via sysfs */
->> +static ssize_t coredump_show(struct device *dev, struct 
->> device_attribute
->> *attr,
->> +			      char *buf)
->> +{
->> +	struct rproc *rproc = to_rproc(dev);
->> +
->> +	return sprintf(buf, "%s\n", rproc_coredump_str[rproc-
->> >coredump_conf]);
->> +}
->> +
->> +/* Change the coredump configuration via sysfs */
->> +static ssize_t coredump_store(struct device *dev, struct 
->> device_attribute
->> *attr,
->> +			       const char *buf, size_t count)
->> +{
->> +	struct rproc *rproc = to_rproc(dev);
->> +	int err;
->> +
->> +	err = mutex_lock_interruptible(&rproc->lock);
->> +	if (err) {
->> +		dev_err(dev, "can't lock rproc %s: %d\n", rproc->name, err);
->> +		return -EINVAL;
->> +	}
->> +
->> +	if (rproc->state == RPROC_CRASHED) {
->> +		dev_err(dev, "can't change coredump configuration\n");
->> +		err = -EBUSY;
->> +		goto out;
->> +	}
->> +
->> +	if (sysfs_streq(buf, "disable"))
->> +		rproc->coredump_conf = COREDUMP_DISABLED;
->> +	else if (sysfs_streq(buf, "inline"))
->> +		rproc->coredump_conf = COREDUMP_INLINE;
->> +	else if (sysfs_streq(buf, "default"))
->> +		rproc->coredump_conf = COREDUMP_DEFAULT;
->> +	else {
->> +		dev_err(dev, "Invalid coredump configuration\n");
->> +		err = -EINVAL;
->> +	}
->> +out:
->> +	mutex_unlock(&rproc->lock);
->> +
->> +	return err ? err : count;
->> +}
->> +static DEVICE_ATTR_RW(coredump);
->> +
->>  /* Expose the loaded / running firmware name via sysfs */
->>  static ssize_t firmware_show(struct device *dev, struct 
->> device_attribute
->> *attr,
->>  			  char *buf)
->> @@ -127,6 +183,7 @@ static ssize_t name_show(struct device *dev, 
->> struct
->> device_attribute *attr,
->>  	&dev_attr_firmware.attr,
->>  	&dev_attr_state.attr,
->>  	&dev_attr_name.attr,
->> +	&dev_attr_coredump.attr,
->>  	NULL
->>  };
->> 
->> --
->> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora
->> Forum,
->> a Linux Foundation Collaborative Project
+> Bjorn
+> 
+> > Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> > ---
+> >  drivers/remoteproc/remoteproc_elf_loader.c | 12 ++++++++++--
+> >  1 file changed, 10 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/drivers/remoteproc/remoteproc_elf_loader.c b/drivers/remoteproc/remoteproc_elf_loader.c
+> > index cc50fe70d50c..74d425a4b34c 100644
+> > --- a/drivers/remoteproc/remoteproc_elf_loader.c
+> > +++ b/drivers/remoteproc/remoteproc_elf_loader.c
+> > @@ -229,8 +229,16 @@ int rproc_elf_load_segments(struct rproc *rproc, const struct firmware *fw)
+> >  		if (!ptr) {
+> >  			dev_err(dev, "bad phdr da 0x%llx mem 0x%llx\n", da,
+> >  				memsz);
+> > -			ret = -EINVAL;
+> > -			break;
+> > +
+> > +			ptr = rproc_da_to_va(rproc, da, filesz);
+> > +			if (!ptr) {
+> > +				dev_err(dev,
+> > +					"bad phdr da 0x%llx mem 0x%llx\n",
+> > +					da, filesz);
+> > +				ret = -EINVAL;
+> > +				break;
+> > +			}
+> > +
+
+Adding to Bjorn's comment, I think if rproc_da_to_va() fails with memsz but
+succeeds with filesz something went wrong with how memory was laid out in the
+DT or the ELF resources.  To me this patch offers the wrong solution - the
+focus should be on why rproc_da_to_va() fails.
+
+Thanks,
+Mathieu  
+
+> >  		}
+> >  
+> >  		/* put the segment where the remote processor expects it */
+> > -- 
+> > 2.16.4
+> > 
