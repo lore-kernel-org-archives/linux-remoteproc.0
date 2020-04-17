@@ -2,143 +2,124 @@ Return-Path: <SRS0=ybdg=6B=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE6B7C2D0EF
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 17 Apr 2020 13:50:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 680E9C38A2B
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 17 Apr 2020 14:26:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 84D9D2087E
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 17 Apr 2020 13:50:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 47B4E20857
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 17 Apr 2020 14:26:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="hN7fEaQJ"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="HawVa4PL"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730761AbgDQNuE (ORCPT
+        id S1727833AbgDQO0n (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 17 Apr 2020 09:50:04 -0400
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:55610 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730731AbgDQNuD (ORCPT
+        Fri, 17 Apr 2020 10:26:43 -0400
+Received: from mail27.static.mailgun.info ([104.130.122.27]:28361 "EHLO
+        mail27.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727884AbgDQO0m (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 17 Apr 2020 09:50:03 -0400
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 03HDo2eg071207;
-        Fri, 17 Apr 2020 08:50:02 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1587131402;
-        bh=j5wFi+TfsuaZTYKTgVJ0AgTcn5CS2jUXSCWPWYserYA=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=hN7fEaQJnfqxgIrmOCII/XwEr9pPT9kgJwL83JjyNKZqLqaFbOLGDTTgIrsVQ3hXw
-         UWuKBTthtgQ0R8pXphV8MNIUNRGtO3yuY9MA8bY9VJCLBcOTNF4Hut9VVBxvVQhJkB
-         WH4Dw/TMoXZAI8bW1HEoDxLNDtui4m4Q58Vkej3w=
-Received: from DLEE111.ent.ti.com (dlee111.ent.ti.com [157.170.170.22])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id 03HDo2J5125957;
-        Fri, 17 Apr 2020 08:50:02 -0500
-Received: from DLEE113.ent.ti.com (157.170.170.24) by DLEE111.ent.ti.com
- (157.170.170.22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Fri, 17
- Apr 2020 08:50:02 -0500
-Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE113.ent.ti.com
- (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Fri, 17 Apr 2020 08:50:01 -0500
-Received: from [10.250.48.148] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id 03HDo14D124693;
-        Fri, 17 Apr 2020 08:50:01 -0500
-Subject: Re: [PATCH v2 7/7] remoteproc: Get rid of tedious error path
-To:     Mathieu Poirier <mathieu.poirier@linaro.org>,
-        <bjorn.andersson@linaro.org>, <ohad@wizery.com>
-CC:     <elder@linaro.org>, <Markus.Elfring@web.de>,
-        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20200415204858.2448-1-mathieu.poirier@linaro.org>
- <20200415204858.2448-8-mathieu.poirier@linaro.org>
-From:   Suman Anna <s-anna@ti.com>
-Message-ID: <6b21d836-a31c-eeaa-efff-aff589861775@ti.com>
-Date:   Fri, 17 Apr 2020 08:50:01 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+        Fri, 17 Apr 2020 10:26:42 -0400
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1587133601; h=Content-Transfer-Encoding: MIME-Version:
+ References: In-Reply-To: Message-Id: Date: Subject: Cc: To: From:
+ Sender; bh=V0BM74plzUXwmZRobVylefhe8gss4+FMm2xiE+kR1gs=; b=HawVa4PLFh0vaaCbqIcYcYStoBMe3P27HUej4lVuowVf6XB4koGkUhlJl5B+1KfYwH3P1bNo
+ ug998hSmq5t1P3aEPNWakxxtY/SL6AaJMCZaMYgUWJQIfeXvu7yHoGzPC1gHad0ob4lT1P1Q
+ 4l3/fguLJbLDpATGdKoRLx3DIac=
+X-Mailgun-Sending-Ip: 104.130.122.27
+X-Mailgun-Sid: WyI4ZWZiZiIsICJsaW51eC1yZW1vdGVwcm9jQHZnZXIua2VybmVsLm9yZyIsICJiZTllNGEiXQ==
+Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
+ by mxa.mailgun.org with ESMTP id 5e99bca1.7f4d409508f0-smtp-out-n05;
+ Fri, 17 Apr 2020 14:26:41 -0000 (UTC)
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id C7C85C433CB; Fri, 17 Apr 2020 14:26:39 +0000 (UTC)
+Received: from blr-ubuntu-87.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: sibis)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id D9179C43636;
+        Fri, 17 Apr 2020 14:26:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D9179C43636
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=sibis@codeaurora.org
+From:   Sibi Sankar <sibis@codeaurora.org>
+To:     bjorn.andersson@linaro.org
+Cc:     agross@kernel.org, robh+dt@kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, evgreen@chromium.org,
+        ohad@wizery.com, mka@chromium.org, dianders@chromium.org,
+        devicetree@vger.kernel.org, Sibi Sankar <sibis@codeaurora.org>
+Subject: [PATCH 4/5] arm64: dts: qcom: sc7180: Add Q6V5 MSS node
+Date:   Fri, 17 Apr 2020 19:56:04 +0530
+Message-Id: <20200417142605.28885-5-sibis@codeaurora.org>
+X-Mailer: git-send-email 2.25.0
+In-Reply-To: <20200417142605.28885-1-sibis@codeaurora.org>
+References: <20200417142605.28885-1-sibis@codeaurora.org>
 MIME-Version: 1.0
-In-Reply-To: <20200415204858.2448-8-mathieu.poirier@linaro.org>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Transfer-Encoding: 8bit
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
-Message-ID: <20200417135001.taOG8cHxz4mbJstWrzun5_XPDjAuS3IvEbXU_ljWgqU@z>
+Message-ID: <20200417142604.qQtFyu9f5HeZPYMI2Lfpy3JraocJa8tJrfIwlITBkWM@z>
 
-On 4/15/20 3:48 PM, Mathieu Poirier wrote:
-> Get rid of tedious error management by moving firmware and operation
-> allocation after calling device_initialize().  That way we take advantage
-> of the automatic call to rproc_type_release() to cleanup after ourselves
-> when put_device() is called.
-> 
-> Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-> Reviewed-by: Alex Elder <elder@linaro.org>
+This patch adds Q6V5 MSS PAS remoteproc node for SC7180 SoCs.
 
-Acked-by: Suman Anna <s-anna@ti.com>
+Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
+---
+ arch/arm64/boot/dts/qcom/sc7180.dtsi | 36 ++++++++++++++++++++++++++++
+ 1 file changed, 36 insertions(+)
 
-regards
-Suman
-
-> ---
->   drivers/remoteproc/remoteproc_core.c | 22 +++++++++-------------
->   1 file changed, 9 insertions(+), 13 deletions(-)
-> 
-> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-> index a5a0ceb86b3f..405c94f151a7 100644
-> --- a/drivers/remoteproc/remoteproc_core.c
-> +++ b/drivers/remoteproc/remoteproc_core.c
-> @@ -2056,12 +2056,6 @@ struct rproc *rproc_alloc(struct device *dev, const char *name,
->   	if (!rproc)
->   		return NULL;
->   
-> -	if (rproc_alloc_firmware(rproc, name, firmware))
-> -		goto free_rproc;
-> -
-> -	if (rproc_alloc_ops(rproc, ops))
-> -		goto free_firmware;
-> -
->   	rproc->name = name;
->   	rproc->priv = &rproc[1];
->   	rproc->auto_boot = true;
-> @@ -2074,12 +2068,17 @@ struct rproc *rproc_alloc(struct device *dev, const char *name,
->   	rproc->dev.driver_data = rproc;
->   	idr_init(&rproc->notifyids);
->   
-> +	if (rproc_alloc_firmware(rproc, name, firmware))
-> +		goto put_device;
-> +
-> +	if (rproc_alloc_ops(rproc, ops))
-> +		goto put_device;
-> +
->   	/* Assign a unique device index and name */
->   	rproc->index = ida_simple_get(&rproc_dev_index, 0, 0, GFP_KERNEL);
->   	if (rproc->index < 0) {
->   		dev_err(dev, "ida_simple_get failed: %d\n", rproc->index);
-> -		put_device(&rproc->dev);
-> -		return NULL;
-> +		goto put_device;
->   	}
->   
->   	dev_set_name(&rproc->dev, "remoteproc%d", rproc->index);
-> @@ -2100,11 +2099,8 @@ struct rproc *rproc_alloc(struct device *dev, const char *name,
->   	rproc->state = RPROC_OFFLINE;
->   
->   	return rproc;
-> -
-> -free_firmware:
-> -	kfree(rproc->firmware);
-> -free_rproc:
-> -	kfree(rproc);
-> +put_device:
-> +	put_device(&rproc->dev);
->   	return NULL;
->   }
->   EXPORT_SYMBOL(rproc_alloc);
-> 
-
+diff --git a/arch/arm64/boot/dts/qcom/sc7180.dtsi b/arch/arm64/boot/dts/qcom/sc7180.dtsi
+index f73ffd74d4fcd..e319762a0bffc 100644
+--- a/arch/arm64/boot/dts/qcom/sc7180.dtsi
++++ b/arch/arm64/boot/dts/qcom/sc7180.dtsi
+@@ -1372,6 +1372,42 @@ sd-cd {
+ 			};
+ 		};
+ 
++		remoteproc_mpss: remoteproc@4080000 {
++			compatible = "qcom,sc7180-mpss-pas";
++			reg = <0x0 0x04080000 0x0 0x4040>;
++
++			interrupts-extended = <&intc GIC_SPI 266 IRQ_TYPE_EDGE_RISING>,
++					      <&modem_smp2p_in 0 IRQ_TYPE_EDGE_RISING>,
++					      <&modem_smp2p_in 1 IRQ_TYPE_EDGE_RISING>,
++					      <&modem_smp2p_in 2 IRQ_TYPE_EDGE_RISING>,
++					      <&modem_smp2p_in 3 IRQ_TYPE_EDGE_RISING>,
++					      <&modem_smp2p_in 7 IRQ_TYPE_EDGE_RISING>;
++			interrupt-names = "wdog", "fatal", "ready", "handover",
++					  "stop-ack", "shutdown-ack";
++
++			clocks = <&rpmhcc RPMH_CXO_CLK>;
++			clock-names = "xo";
++
++			power-domains = <&aoss_qmp AOSS_QMP_LS_MODEM>,
++					<&rpmhpd SC7180_CX>,
++					<&rpmhpd SC7180_MSS>;
++			power-domain-names = "load_state", "cx", "mss";
++
++			memory-region = <&mpss_mem>;
++
++			qcom,smem-states = <&modem_smp2p_out 0>;
++			qcom,smem-state-names = "stop";
++
++			status = "disabled";
++
++			glink-edge {
++				interrupts = <GIC_SPI 449 IRQ_TYPE_EDGE_RISING>;
++				label = "modem";
++				qcom,remote-pid = <1>;
++				mboxes = <&apss_shared 12>;
++			};
++		};
++
+ 		sdhc_2: sdhci@8804000 {
+ 			compatible = "qcom,sc7180-sdhci", "qcom,sdhci-msm-v5";
+ 			reg = <0 0x08804000 0 0x1000>;
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
