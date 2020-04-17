@@ -1,66 +1,53 @@
-Date: Sun, 19 Apr 2020 22:17:23 -0700
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Return-Path: <mathieu.poirier@linaro.org>
+Return-Path: <mathieu.poirier@linaro.org>
+Date: Fri, 17 Apr 2020 15:28:06 -0600
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
 Subject: Re: [PATCH v2 5/7] remoteproc: Restructure firmware name allocation
-Message-ID: <20200420051720.GE1516868@builder.lan>
+Message-ID: <20200417212806.GB10372@xps15>
 References: <20200415204858.2448-1-mathieu.poirier@linaro.org>
  <20200415204858.2448-6-mathieu.poirier@linaro.org>
- <9a4b6342-750e-284a-2343-8151b478589b@linaro.org>
+ <aa565fea-b1c4-9b5c-73ed-591244afee19@web.de>
+ <e887c990-8cba-62b0-0f47-3ea0c166d603@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <9a4b6342-750e-284a-2343-8151b478589b@linaro.org>
-To: Alex Elder <elder@linaro.org>
-Cc: Mathieu Poirier <mathieu.poirier@linaro.org>, ohad@wizery.com, s-anna@ti.com, Markus.Elfring@web.de, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <e887c990-8cba-62b0-0f47-3ea0c166d603@ti.com>
+To: Suman Anna <s-anna@ti.com>
+Cc: Markus Elfring <Markus.Elfring@web.de>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Alex Elder <elder@linaro.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On Wed 15 Apr 14:23 PDT 2020, Alex Elder wrote:
-
-> On 4/15/20 3:48 PM, Mathieu Poirier wrote:
-> > Improve the readability of function rproc_alloc_firmware() by using
-> > a non-negated condition.
+On Fri, Apr 17, 2020 at 08:39:39AM -0500, Suman Anna wrote:
+> Hi Markus,
+> 
+> On 4/16/20 1:26 AM, Markus Elfring wrote:
+> > …
+> > > +++ b/drivers/remoteproc/remoteproc_core.c
+> > > @@ -1984,14 +1984,14 @@ static int rproc_alloc_firmware(struct rproc *rproc,
+> > >   {
+> > >   	const char *p;
+> > > 
+> > > -	if (!firmware)
+> > > +	if (firmware)
+> > > +		p = kstrdup_const(firmware, GFP_KERNEL);
+> > > +	else
+> > >   		/*
+> > >   		 * If the caller didn't pass in a firmware name then
+> > >   		 * construct a default name.
+> > >   		 */
+> > >   		p = kasprintf(GFP_KERNEL, "rproc-%s-fw", name);
+> > > -	else
+> > > -		p = kstrdup_const(firmware, GFP_KERNEL);
 > > 
-> > Suggested-by: Alex Elder <elder@linaro.org>
-> > Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-> 
-> If it were me, I'd move the comment above the if statement and
-> perhaps reword it a little bit to describe what's happening.
-> But no matter, this looks good.
-> 
-
-This would also avoid the fact that we have a multiline block without
-braces (which isn't needed, but looks odd to me). So that sounds like a
-good idea.
-
-Regards,
-Bjorn
-
-> Reviewed-by: Alex Elder <elder@linaro.org>
-> 
-> > ---
-> >  drivers/remoteproc/remoteproc_core.c | 6 +++---
-> >  1 file changed, 3 insertions(+), 3 deletions(-)
+> > Can the use of the conditional operator make sense at such source code places?
 > > 
-> > diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-> > index ebaff496ef81..0bfa6998705d 100644
-> > --- a/drivers/remoteproc/remoteproc_core.c
-> > +++ b/drivers/remoteproc/remoteproc_core.c
-> > @@ -1984,14 +1984,14 @@ static int rproc_alloc_firmware(struct rproc *rproc,
-> >  {
-> >  	const char *p;
-> >  
-> > -	if (!firmware)
-> > +	if (firmware)
-> > +		p = kstrdup_const(firmware, GFP_KERNEL);
-> > +	else
-> >  		/*
-> >  		 * If the caller didn't pass in a firmware name then
-> >  		 * construct a default name.
-> >  		 */
-> >  		p = kasprintf(GFP_KERNEL, "rproc-%s-fw", name);
-> > -	else
-> > -		p = kstrdup_const(firmware, GFP_KERNEL);
-> >  
-> >  	if (!p)
-> >  		return -ENOMEM;
-> > 
+> > 	p = firmware ? kstrdup_const(…) : kasprintf(…);
 > 
+> For simple assignments, I too prefer the ternary operator, but in this case,
+> I think it is better to leave the current code as is.
+
+I agree with Suman, that's why I didn't use the conditional operator.
+
+> 
+> regards
+> Suman
