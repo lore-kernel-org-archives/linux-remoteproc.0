@@ -2,162 +2,222 @@ Return-Path: <SRS0=ybdg=6B=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6874C2D0EF
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 17 Apr 2020 15:35:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9540FC38A2B
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 17 Apr 2020 15:37:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AF21620936
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 17 Apr 2020 15:35:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6F34121D79
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 17 Apr 2020 15:37:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Ltd7kDcs"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="J+rBrCBF"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729021AbgDQPfy (ORCPT
+        id S1729046AbgDQPh5 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 17 Apr 2020 11:35:54 -0400
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:47540 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728956AbgDQPfy (ORCPT
+        Fri, 17 Apr 2020 11:37:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45994 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1729008AbgDQPh5 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 17 Apr 2020 11:35:54 -0400
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 03HFZq48090492;
-        Fri, 17 Apr 2020 10:35:52 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1587137752;
-        bh=hJeyNDpmGRXVeIvbuGZyC5Hmururm2U2J7LTl5PaVDY=;
-        h=Subject:From:To:CC:References:Date:In-Reply-To;
-        b=Ltd7kDcszWTv7cdimoUV3xi/9vpHRt6ZIJT8OoIEDhAAiIL4+01zakWMZuiOdW0Pk
-         zgQ78fyXxe4p27f8v6cPj+gs76KGPcJK1rjkVl3tRTsuEW2/sFhkRBbe6KjjVXmubA
-         5t7dgA+ooJ8spbgjF7zhemgG6n0r3dfgxDkRb0vU=
-Received: from DLEE109.ent.ti.com (dlee109.ent.ti.com [157.170.170.41])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 03HFZqp6065739
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 17 Apr 2020 10:35:52 -0500
-Received: from DLEE103.ent.ti.com (157.170.170.33) by DLEE109.ent.ti.com
- (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Fri, 17
- Apr 2020 10:35:52 -0500
-Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE103.ent.ti.com
- (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Fri, 17 Apr 2020 10:35:52 -0500
-Received: from [10.250.48.148] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id 03HFZpQm089838;
-        Fri, 17 Apr 2020 10:35:51 -0500
-Subject: Re: [PATCH v2 6/7] remoteproc: Split rproc_ops allocation from
- rproc_alloc()
-From:   Suman Anna <s-anna@ti.com>
-To:     Mathieu Poirier <mathieu.poirier@linaro.org>,
-        <bjorn.andersson@linaro.org>, <ohad@wizery.com>
-CC:     <elder@linaro.org>, <Markus.Elfring@web.de>,
-        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20200415204858.2448-1-mathieu.poirier@linaro.org>
- <20200415204858.2448-7-mathieu.poirier@linaro.org>
- <61497230-40ec-ffc6-3cc0-e5cb754ac859@ti.com>
-Message-ID: <58eaa90a-9777-4abe-fbf7-229cc68a37aa@ti.com>
-Date:   Fri, 17 Apr 2020 10:35:51 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+        Fri, 17 Apr 2020 11:37:57 -0400
+Received: from mail-io1-xd44.google.com (mail-io1-xd44.google.com [IPv6:2607:f8b0:4864:20::d44])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D1B8BC061A0F
+        for <linux-remoteproc@vger.kernel.org>; Fri, 17 Apr 2020 08:37:55 -0700 (PDT)
+Received: by mail-io1-xd44.google.com with SMTP id w20so2764536iob.2
+        for <linux-remoteproc@vger.kernel.org>; Fri, 17 Apr 2020 08:37:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=dZWbHNkoj0JZBFRa+7yN5L8lU5vuTUFT6sy1jTrj+/w=;
+        b=J+rBrCBFPfAcAzCoUBAgycYe++RupvfFwXFvaRbQpkLMxxN0S5WCn5cfjJVIlCrQ36
+         mL/IQ1yzyXK05wmytKfYtt17r1lzKS7l58phN2KOR+QZMYeOhlirBW0EDynJUSOhURcA
+         0yLVVi2Pi+WeHoYF8YGqMHXGOmXScTtxuU4ZoeUTke6WePb0YpP0ExmMFCjtbobWwjlE
+         5LJSPXy7TAM2r7eL8t3JNlDzZW9D7pRmqlUYFkZmYN+XTlAnawgyG+BuIkDsqFp510mC
+         EVLl9N0yjmJmjUtq2LqTyZsvQhM+9Fw3ZRffjIjjCSSd2GJmYx+ku80QFsStAhKZXgtw
+         5SWQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=dZWbHNkoj0JZBFRa+7yN5L8lU5vuTUFT6sy1jTrj+/w=;
+        b=uDbrS3Dbdj+AAy9IwQDo6QgZnEx9V1Em9AGeLO3pBaKJo3RcPkQ5i6SI5RHmC5DWQO
+         8UDfDPiTU9k7InY3gJmsS+r87HNi5vEFQmP2gqTWC1Sbueqs4MCAtboKb54SX4arc73E
+         NUuRvjxsdcsyxXOQncghatfVbQZ3qnSiNP7HgZjbw69D2Uw4Jq7i4IJkccOH48UTKA6f
+         3CI2W3Nq/XkgYzJE7n1nclDi6sTmAbhDhGrxWVpaPEqJOZqM30teP9IlXVuYXlKFAAaC
+         Yyz9MzzGsehWEWjHMDmqqIGMvFbw06sStJsqWCL194uwMugIJtb3of2TxLsPrB1x1w5g
+         aGGQ==
+X-Gm-Message-State: AGi0PuYSIEDpOOYojido+wzCMy+AdtFHi6RhXdwYpQuhIBvuGRfJNA00
+        H7lYzJak5tegcIkv1QMOaEz+cRSieU8gRilGDxEjMA==
+X-Google-Smtp-Source: APiQypI0krjI+mvmWnI3ESAaCfeAhP5hfOH/kONmQVYxbtIdkgljt8qhfrmnxB6jyEg7Dngv0pYSHIFhvNB4U/D3cbU=
+X-Received: by 2002:a6b:3842:: with SMTP id f63mr3467174ioa.90.1587137873074;
+ Fri, 17 Apr 2020 08:37:53 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <61497230-40ec-ffc6-3cc0-e5cb754ac859@ti.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+References: <20200304142628.8471-1-NShubin@topcon.com> <20200406113310.3041-1-nikita.shubin@maquefel.me>
+ <20200406113310.3041-2-nikita.shubin@maquefel.me> <20200414164519.GA24061@xps15>
+ <20200417151132.00005f8c@maquefel.me>
+In-Reply-To: <20200417151132.00005f8c@maquefel.me>
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+Date:   Fri, 17 Apr 2020 09:37:42 -0600
+Message-ID:
+ <CANLsYkxeL+a43eDzwJjXyFBFSwRVXjiYd4TcTbEcuuj+wgEZdw@mail.gmail.com>
+Subject: Re: [PATCH v2 1/3] remoteproc: imx_rproc: set pc on start
+To:     Nikita Shubin <nikita.shubin@maquefel.me>
+Cc:     Nikita Shubin <NShubin@topcon.com>,
+        Ohad Ben-Cohen <ohad@wizery.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        linux-remoteproc <linux-remoteproc@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
-Message-ID: <20200417153551.yW-h-gJ9jv4Bz2xTnhSo-NoxtzAE5l7w5HR7MrUOCz0@z>
+Message-ID: <20200417153742.Iwj2rO0fCmFtEzqJN1Y_W3657DHC2L51DuaOObcFsjw@z>
 
-On 4/17/20 8:49 AM, Suman Anna wrote:
-> On 4/15/20 3:48 PM, Mathieu Poirier wrote:
->> Make the rproc_ops allocation a function on its own in an effort
->> to clean up function rproc_alloc().
->>
->> Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
->> Reviewed-by: Alex Elder <elder@linaro.org>
->> ---
->>   drivers/remoteproc/remoteproc_core.c | 32 +++++++++++++++++-----------
->>   1 file changed, 20 insertions(+), 12 deletions(-)
->>
->> diff --git a/drivers/remoteproc/remoteproc_core.c 
->> b/drivers/remoteproc/remoteproc_core.c
->> index 0bfa6998705d..a5a0ceb86b3f 100644
->> --- a/drivers/remoteproc/remoteproc_core.c
->> +++ b/drivers/remoteproc/remoteproc_core.c
->> @@ -2001,6 +2001,25 @@ static int rproc_alloc_firmware(struct rproc 
->> *rproc,
->>       return 0;
->>   }
->> +static int rproc_alloc_ops(struct rproc *rproc, const struct 
->> rproc_ops *ops)
->> +{
->> +    rproc->ops = kmemdup(ops, sizeof(*ops), GFP_KERNEL);
->> +    if (!rproc->ops)
->> +        return -ENOMEM;
->> +
->> +    /* Default to ELF loader if no load function is specified */
->> +    if (!rproc->ops->load) {
->> +        rproc->ops->load = rproc_elf_load_segments;
->> +        rproc->ops->parse_fw = rproc_elf_load_rsc_table;
->> +        rproc->ops->find_loaded_rsc_table =
->> +                        rproc_elf_find_loaded_rsc_table;
->> +        rproc->ops->sanity_check = rproc_elf_sanity_check;
-> 
-> So, the conditional check on sanity check is dropped and the callback 
-> switched here without the changelog reflecting anything why. You should 
-> just rebase this patch on top of Clement's patch [1] that removes the 
-> conditional flag, and also usage from the remoteproc platform drivers.
-> 
-> regards
-> Suman
-> 
-> [1] https://patchwork.kernel.org/patch/11462013/
+On Fri, 17 Apr 2020 at 06:12, Nikita Shubin <nikita.shubin@maquefel.me> wrote:
+>
+> On Tue, 14 Apr 2020 10:45:19 -0600
+> Mathieu Poirier <mathieu.poirier@linaro.org> wrote:
+>
+> > Hi Nikita,
+> >
+> > On Mon, Apr 06, 2020 at 02:33:08PM +0300, nikita.shubin@maquefel.me
+> > wrote:
+> > > In case elf file interrupt vector is not supposed to be at OCRAM_S,
+> > > it is needed to write elf entry point to OCRAM_S + 0x4, to boot M4
+> > > firmware.
+> > >
+> > > Otherwise firmware located anywhere besides OCRAM_S won't boot.
+> > >
+> > > The firmware must set stack poiner as first instruction:
+> > >
+> > > Reset_Handler:
+> > >     ldr   sp, = __stack      /* set stack pointer */
+> > >
+> > > Signed-off-by: Nikita Shubin <NShubin@topcon.com>
+> >
+> > The address in the SoB has to match what is found in the "From:"
+> > field of the email header.  Checkpatch is complaining about that,
+> > something I would have expected to be fixed before sending this set
+> > out.
+> >
+> > > ---
+> > >  drivers/remoteproc/imx_rproc.c | 16 +++++++++++++++-
+> > >  1 file changed, 15 insertions(+), 1 deletion(-)
+> > >
+> > > diff --git a/drivers/remoteproc/imx_rproc.c
+> > > b/drivers/remoteproc/imx_rproc.c index 3e72b6f38d4b..bebc58d0f711
+> > > 100644 --- a/drivers/remoteproc/imx_rproc.c
+> > > +++ b/drivers/remoteproc/imx_rproc.c
+> > > @@ -45,6 +45,8 @@
+> > >
+> > >  #define IMX7D_RPROC_MEM_MAX                8
+> > >
+> > > +#define IMX_BOOT_PC                        0x4
+> > > +
+> > >  /**
+> > >   * struct imx_rproc_mem - slim internal memory structure
+> > >   * @cpu_addr: MPU virtual address of the memory region
+> > > @@ -85,6 +87,7 @@ struct imx_rproc {
+> > >     const struct imx_rproc_dcfg     *dcfg;
+> > >     struct imx_rproc_mem
+> > > mem[IMX7D_RPROC_MEM_MAX]; struct clk                        *clk;
+> > > +   void __iomem                    *bootreg;
+> > >  };
+> > >
+> > >  static const struct imx_rproc_att imx_rproc_att_imx7d[] = {
+> > > @@ -162,11 +165,16 @@ static int imx_rproc_start(struct rproc
+> > > *rproc) struct device *dev = priv->dev;
+> > >     int ret;
+> > >
+> > > +   /* write entry point to program counter */
+> > > +   writel(rproc->bootaddr, priv->bootreg);
+> >
+> > What happens on all the other IMX systems where this fix is not
+> > needed?  Will they continue to work properly?
+>
+> Mathieu you are totally correct imx6/imx7 use different addresses they
+> boot.
+>
+> For imx7:
+> | On i.MX 7Dual/7Solo, the boot vector for the Cortex-M4 core is located
+> | at the start of the OCRAM_S (On Chip RAM - Secure) whose address is
+> | 0x0018_0000 from Cortex-A7.
+>
+> For imx6:
+> | The Boot vector for the Cortex-M4 core is located at the start of the
+> | TCM_L whose address is 0x007F_8000 from the Cortex-A9. This is a
+> | different location than on the i.MX 7Dual/7Solo
+>
+> But on imx7 0x0 is translated to 0x0018_0000 by imx_rproc_da_to_va, and
+> on imx7 0x0 is translated to 0x007F_8000, using imx_rproc_att_imx7d and
+> imx_rproc_att_imx6sx respectively.
 
-Sorry, gave the wrong link, that was v1. This is the latest,
-https://patchwork.kernel.org/patch/11466955/
+My point here is that before your patch, this driver was running on
+IMX platforms.  How does your work impact existing platforms that are
+booting properly?
 
-> 
-> 
->> +        rproc->ops->get_boot_addr = rproc_elf_get_boot_addr;
->> +    }
->> +
->> +    return 0;
->> +}
->> +
->>   /**
->>    * rproc_alloc() - allocate a remote processor handle
->>    * @dev: the underlying device
->> @@ -2040,8 +2059,7 @@ struct rproc *rproc_alloc(struct device *dev, 
->> const char *name,
->>       if (rproc_alloc_firmware(rproc, name, firmware))
->>           goto free_rproc;
->> -    rproc->ops = kmemdup(ops, sizeof(*ops), GFP_KERNEL);
->> -    if (!rproc->ops)
->> +    if (rproc_alloc_ops(rproc, ops))
->>           goto free_firmware;
->>       rproc->name = name;
->> @@ -2068,16 +2086,6 @@ struct rproc *rproc_alloc(struct device *dev, 
->> const char *name,
->>       atomic_set(&rproc->power, 0);
->> -    /* Default to ELF loader if no load function is specified */
->> -    if (!rproc->ops->load) {
->> -        rproc->ops->load = rproc_elf_load_segments;
->> -        rproc->ops->parse_fw = rproc_elf_load_rsc_table;
->> -        rproc->ops->find_loaded_rsc_table = 
->> rproc_elf_find_loaded_rsc_table;
->> -        if (!rproc->ops->sanity_check)
->> -            rproc->ops->sanity_check = rproc_elf32_sanity_check;
->> -        rproc->ops->get_boot_addr = rproc_elf_get_boot_addr;
->> -    }
->> -
->>       mutex_init(&rproc->lock);
->>       INIT_LIST_HEAD(&rproc->carveouts);
->>
-> 
-
+>
+> I have no information about IMX8 (i have found none available
+> publicity), but should be the same as Cortex-M boots from 0x0.
+>
+> >
+> > > +
+> > >     ret = regmap_update_bits(priv->regmap, dcfg->src_reg,
+> > >                              dcfg->src_mask, dcfg->src_start);
+> > >     if (ret)
+> > >             dev_err(dev, "Failed to enable M4!\n");
+> > >
+> > > +   dev_info(&rproc->dev, "Started from 0x%x\n",
+> > > rproc->bootaddr); +
+> > >     return ret;
+> > >  }
+> > >
+> > > @@ -182,6 +190,9 @@ static int imx_rproc_stop(struct rproc *rproc)
+> > >     if (ret)
+> > >             dev_err(dev, "Failed to stop M4!\n");
+> > >
+> > > +   /* clear entry points */
+> > > +   writel(0, priv->bootreg);
+> > > +
+> > >     return ret;
+> > >  }
+> > >
+> > > @@ -243,7 +254,8 @@ static void *imx_rproc_da_to_va(struct rproc
+> > > *rproc, u64 da, int len) static const struct rproc_ops
+> > > imx_rproc_ops = { .start            = imx_rproc_start,
+> > >     .stop           = imx_rproc_stop,
+> > > -   .da_to_va       = imx_rproc_da_to_va,
+> > > +   .da_to_va       = imx_rproc_da_to_va,
+> > > +   .get_boot_addr  = rproc_elf_get_boot_addr,
+> >
+> > How is this useful?  Sure it will set rproc->bootaddr in
+> > rproc_fw_boot() but what good does that do when it is invariably set
+> > again in imx_rproc_start() ?
+> >
+> > >  };
+> > >
+> > >  static int imx_rproc_addr_init(struct imx_rproc *priv,
+> > > @@ -360,6 +372,8 @@ static int imx_rproc_probe(struct
+> > > platform_device *pdev) goto err_put_rproc;
+> > >     }
+> > >
+> > > +   priv->bootreg = imx_rproc_da_to_va(rproc, IMX_BOOT_PC,
+> > > sizeof(u32)); +
+> > >     /*
+> > >      * clk for M4 block including memory. Should be
+> > >      * enabled before .start for FW transfer.
+> > > --
+> > > 2.25.1
+> > >
+>
