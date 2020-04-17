@@ -7,42 +7,42 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 680E9C38A2B
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 17 Apr 2020 14:26:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DC6AC38A2C
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 17 Apr 2020 14:26:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 47B4E20857
+	by mail.kernel.org (Postfix) with ESMTP id F377C22240
 	for <linux-remoteproc@archiver.kernel.org>; Fri, 17 Apr 2020 14:26:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="HawVa4PL"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="L6b/Ud9M"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727833AbgDQO0n (ORCPT
+        id S1727915AbgDQO0n (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
         Fri, 17 Apr 2020 10:26:43 -0400
-Received: from mail27.static.mailgun.info ([104.130.122.27]:28361 "EHLO
-        mail27.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727884AbgDQO0m (ORCPT
+Received: from mail26.static.mailgun.info ([104.130.122.26]:38374 "EHLO
+        mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727833AbgDQO0l (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 17 Apr 2020 10:26:42 -0400
+        Fri, 17 Apr 2020 10:26:41 -0400
 DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1587133601; h=Content-Transfer-Encoding: MIME-Version:
+ s=smtp; t=1587133600; h=Content-Transfer-Encoding: MIME-Version:
  References: In-Reply-To: Message-Id: Date: Subject: Cc: To: From:
- Sender; bh=V0BM74plzUXwmZRobVylefhe8gss4+FMm2xiE+kR1gs=; b=HawVa4PLFh0vaaCbqIcYcYStoBMe3P27HUej4lVuowVf6XB4koGkUhlJl5B+1KfYwH3P1bNo
- ug998hSmq5t1P3aEPNWakxxtY/SL6AaJMCZaMYgUWJQIfeXvu7yHoGzPC1gHad0ob4lT1P1Q
- 4l3/fguLJbLDpATGdKoRLx3DIac=
-X-Mailgun-Sending-Ip: 104.130.122.27
+ Sender; bh=x86bACcWwyiPyc4OKrVA8+tJ0fW/beo73TgHQ5I1XPc=; b=L6b/Ud9Mum9jv6ZofWWaMS6hgvRGCRYBz9PvjkHijuApaAQHTTyisX1Bqnd9tbjhfVdKwG9o
+ EouxBo4gQ5QsZWlGJsS48LfAKlLrd8cR/Rm+bqyNNZXVSzXaiAWy1YZPSGAQUu/7bh4KMwLc
+ CzGzm1t3sKxTBGln59WSDhm0tqE=
+X-Mailgun-Sending-Ip: 104.130.122.26
 X-Mailgun-Sid: WyI4ZWZiZiIsICJsaW51eC1yZW1vdGVwcm9jQHZnZXIua2VybmVsLm9yZyIsICJiZTllNGEiXQ==
 Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5e99bca1.7f4d409508f0-smtp-out-n05;
- Fri, 17 Apr 2020 14:26:41 -0000 (UTC)
+ by mxa.mailgun.org with ESMTP id 5e99bc94.7f996d13e030-smtp-out-n01;
+ Fri, 17 Apr 2020 14:26:28 -0000 (UTC)
 Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id C7C85C433CB; Fri, 17 Apr 2020 14:26:39 +0000 (UTC)
+        id AF5B0C432C2; Fri, 17 Apr 2020 14:26:27 +0000 (UTC)
 Received: from blr-ubuntu-87.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
         (Authenticated sender: sibis)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id D9179C43636;
-        Fri, 17 Apr 2020 14:26:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D9179C43636
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id A1789C44788;
+        Fri, 17 Apr 2020 14:26:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A1789C44788
 Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=sibis@codeaurora.org
 From:   Sibi Sankar <sibis@codeaurora.org>
@@ -52,9 +52,9 @@ Cc:     agross@kernel.org, robh+dt@kernel.org,
         linux-kernel@vger.kernel.org, evgreen@chromium.org,
         ohad@wizery.com, mka@chromium.org, dianders@chromium.org,
         devicetree@vger.kernel.org, Sibi Sankar <sibis@codeaurora.org>
-Subject: [PATCH 4/5] arm64: dts: qcom: sc7180: Add Q6V5 MSS node
-Date:   Fri, 17 Apr 2020 19:56:04 +0530
-Message-Id: <20200417142605.28885-5-sibis@codeaurora.org>
+Subject: [PATCH 1/5] dt-bindings: remoteproc: qcom: Add SC7180 MPSS support
+Date:   Fri, 17 Apr 2020 19:56:01 +0530
+Message-Id: <20200417142605.28885-2-sibis@codeaurora.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200417142605.28885-1-sibis@codeaurora.org>
 References: <20200417142605.28885-1-sibis@codeaurora.org>
@@ -64,62 +64,43 @@ Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
-Message-ID: <20200417142604.qQtFyu9f5HeZPYMI2Lfpy3JraocJa8tJrfIwlITBkWM@z>
+Message-ID: <20200417142601.Ptt_h3dhYP2gcOnBeZQ14HliFJfn6j0usPXIzhVQLtA@z>
 
-This patch adds Q6V5 MSS PAS remoteproc node for SC7180 SoCs.
+Add MPSS PAS support for SC7180 SoCs.
 
 Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
 ---
- arch/arm64/boot/dts/qcom/sc7180.dtsi | 36 ++++++++++++++++++++++++++++
- 1 file changed, 36 insertions(+)
+ Documentation/devicetree/bindings/remoteproc/qcom,adsp.txt | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/qcom/sc7180.dtsi b/arch/arm64/boot/dts/qcom/sc7180.dtsi
-index f73ffd74d4fcd..e319762a0bffc 100644
---- a/arch/arm64/boot/dts/qcom/sc7180.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sc7180.dtsi
-@@ -1372,6 +1372,42 @@ sd-cd {
- 			};
- 		};
- 
-+		remoteproc_mpss: remoteproc@4080000 {
-+			compatible = "qcom,sc7180-mpss-pas";
-+			reg = <0x0 0x04080000 0x0 0x4040>;
-+
-+			interrupts-extended = <&intc GIC_SPI 266 IRQ_TYPE_EDGE_RISING>,
-+					      <&modem_smp2p_in 0 IRQ_TYPE_EDGE_RISING>,
-+					      <&modem_smp2p_in 1 IRQ_TYPE_EDGE_RISING>,
-+					      <&modem_smp2p_in 2 IRQ_TYPE_EDGE_RISING>,
-+					      <&modem_smp2p_in 3 IRQ_TYPE_EDGE_RISING>,
-+					      <&modem_smp2p_in 7 IRQ_TYPE_EDGE_RISING>;
-+			interrupt-names = "wdog", "fatal", "ready", "handover",
-+					  "stop-ack", "shutdown-ack";
-+
-+			clocks = <&rpmhcc RPMH_CXO_CLK>;
-+			clock-names = "xo";
-+
-+			power-domains = <&aoss_qmp AOSS_QMP_LS_MODEM>,
-+					<&rpmhpd SC7180_CX>,
-+					<&rpmhpd SC7180_MSS>;
-+			power-domain-names = "load_state", "cx", "mss";
-+
-+			memory-region = <&mpss_mem>;
-+
-+			qcom,smem-states = <&modem_smp2p_out 0>;
-+			qcom,smem-state-names = "stop";
-+
-+			status = "disabled";
-+
-+			glink-edge {
-+				interrupts = <GIC_SPI 449 IRQ_TYPE_EDGE_RISING>;
-+				label = "modem";
-+				qcom,remote-pid = <1>;
-+				mboxes = <&apss_shared 12>;
-+			};
-+		};
-+
- 		sdhc_2: sdhci@8804000 {
- 			compatible = "qcom,sc7180-sdhci", "qcom,sdhci-msm-v5";
- 			reg = <0 0x08804000 0 0x1000>;
+diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,adsp.txt b/Documentation/devicetree/bindings/remoteproc/qcom,adsp.txt
+index 9938918b2fea3..22604d2cd3f87 100644
+--- a/Documentation/devicetree/bindings/remoteproc/qcom,adsp.txt
++++ b/Documentation/devicetree/bindings/remoteproc/qcom,adsp.txt
+@@ -15,6 +15,7 @@ on the Qualcomm ADSP Hexagon core.
+ 		    "qcom,qcs404-adsp-pas"
+ 		    "qcom,qcs404-cdsp-pas"
+ 		    "qcom,qcs404-wcss-pas"
++		    "qcom,sc7180-mpss-pas"
+ 		    "qcom,sdm845-adsp-pas"
+ 		    "qcom,sdm845-cdsp-pas"
+ 		    "qcom,sm8150-adsp-pas"
+@@ -46,6 +47,7 @@ on the Qualcomm ADSP Hexagon core.
+ 	qcom,sm8150-slpi-pas:
+ 		    must be "wdog", "fatal", "ready", "handover", "stop-ack"
+ 	qcom,qcs404-wcss-pas:
++	qcom,sc7180-mpss-pas:
+ 	qcom,sm8150-mpss-pas:
+ 		    must be "wdog", "fatal", "ready", "handover", "stop-ack",
+ 		    "shutdown-ack"
+@@ -106,6 +108,7 @@ on the Qualcomm ADSP Hexagon core.
+ 	qcom,sm8150-adsp-pas:
+ 	qcom,sm8150-cdsp-pas:
+ 		    must be "cx", "load_state"
++	qcom,sc7180-mpss-pas:
+ 	qcom,sm8150-mpss-pas:
+ 		    must be "cx", "load_state", "mss"
+ 	qcom,sm8150-slpi-pas:
 -- 
 The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
 a Linux Foundation Collaborative Project
