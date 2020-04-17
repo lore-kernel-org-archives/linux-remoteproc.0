@@ -1,81 +1,117 @@
-Return-Path: <mathieu.poirier@linaro.org>
-Return-Path: <mathieu.poirier@linaro.org>
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-Subject: [PATCH 3/4] remoteproc: Split rproc_ops allocation from rproc_alloc()
-Date: Mon, 13 Apr 2020 13:34:00 -0600
-Message-Id: <20200413193401.27234-4-mathieu.poirier@linaro.org>
-In-Reply-To: <20200413193401.27234-1-mathieu.poirier@linaro.org>
-References: <20200413193401.27234-1-mathieu.poirier@linaro.org>
+Return-Path: <paul@crapouillou.net>
+From: Paul Cercueil <paul@crapouillou.net>
+Subject: [PATCH v6 1/5] dt-bindings: Document JZ47xx VPU auxiliary processor
+Date: Fri, 17 Apr 2020 19:00:36 +0200
+Message-Id: <20200417170040.174319-1-paul@crapouillou.net>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-To: bjorn.andersson@linaro.org, ohad@wizery.com
-Cc: s-anna@ti.com, elder@linaro.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Arnaud Pouliquen <arnaud.pouliquen@st.com>
+Cc: od@zcrc.me, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>, Rob Herring <robh@kernel.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Make the rproc_ops allocation a function on its own in order to
-introduce more flexibility to function rproc_alloc().
+Inside the Video Processing Unit (VPU) of the recent JZ47xx SoCs from
+Ingenic is a second Xburst MIPS CPU very similar to the main core.
+This document describes the devicetree bindings for this auxiliary
+processor.
 
-Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+Reviewed-by: Rob Herring <robh@kernel.org>
 ---
- drivers/remoteproc/remoteproc_core.c | 32 +++++++++++++++++-----------
- 1 file changed, 20 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index 4dee63f319ba..c272d78f07e8 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -2006,6 +2006,25 @@ static int rproc_alloc_firmware(struct rproc *rproc,
- 	return 0;
- }
- 
-+static int rproc_alloc_ops(struct rproc *rproc, const struct rproc_ops *ops)
-+{
-+	rproc->ops = kmemdup(ops, sizeof(*ops), GFP_KERNEL);
-+	if (!rproc->ops)
-+		return -ENOMEM;
+Notes:
+    v2: Update TCSM0 address in example
+    v3: Change node name to 'video-decoder'
+    v4: Convert to YAML. I didn't add Rob's Ack on v3 because of that (sorry Rob)
+    v5: - Fix 'reg' not in <addr, len> pairs
+    	- Add missing include to devicetree example
+    v6: No change
+
+ .../bindings/remoteproc/ingenic,vpu.yaml      | 77 +++++++++++++++++++
+ 1 file changed, 77 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/remoteproc/ingenic,vpu.yaml
+
+diff --git a/Documentation/devicetree/bindings/remoteproc/ingenic,vpu.yaml b/Documentation/devicetree/bindings/remoteproc/ingenic,vpu.yaml
+new file mode 100644
+index 000000000000..c019f9fbe916
+--- /dev/null
++++ b/Documentation/devicetree/bindings/remoteproc/ingenic,vpu.yaml
+@@ -0,0 +1,77 @@
++# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: "http://devicetree.org/schemas/remoteproc/ingenic,vpu.yaml#"
++$schema: "http://devicetree.org/meta-schemas/core.yaml#"
 +
-+	/* Default to ELF loader if no load function is specified */
-+	if (!rproc->ops->load) {
-+		rproc->ops->load = rproc_elf_load_segments;
-+		rproc->ops->parse_fw = rproc_elf_load_rsc_table;
-+		rproc->ops->find_loaded_rsc_table =
-+						rproc_elf_find_loaded_rsc_table;
-+		rproc->ops->sanity_check = rproc_elf_sanity_check;
-+		rproc->ops->get_boot_addr = rproc_elf_get_boot_addr;
-+	}
++title: Ingenic Video Processing Unit bindings
 +
-+	return 0;
-+}
++description:
++  Inside the Video Processing Unit (VPU) of the recent JZ47xx SoCs from
++  Ingenic is a second Xburst MIPS CPU very similar to the main core.
++  This document describes the devicetree bindings for this auxiliary
++  processor.
 +
- /**
-  * rproc_alloc() - allocate a remote processor handle
-  * @dev: the underlying device
-@@ -2045,8 +2064,7 @@ struct rproc *rproc_alloc(struct device *dev, const char *name,
- 	if (rproc_alloc_firmware(rproc, name, firmware))
- 		goto free_rproc;
- 
--	rproc->ops = kmemdup(ops, sizeof(*ops), GFP_KERNEL);
--	if (!rproc->ops)
-+	if (rproc_alloc_ops(rproc, ops))
- 		goto free_firmware;
- 
- 	rproc->name = name;
-@@ -2073,16 +2091,6 @@ struct rproc *rproc_alloc(struct device *dev, const char *name,
- 
- 	atomic_set(&rproc->power, 0);
- 
--	/* Default to ELF loader if no load function is specified */
--	if (!rproc->ops->load) {
--		rproc->ops->load = rproc_elf_load_segments;
--		rproc->ops->parse_fw = rproc_elf_load_rsc_table;
--		rproc->ops->find_loaded_rsc_table = rproc_elf_find_loaded_rsc_table;
--		if (!rproc->ops->sanity_check)
--			rproc->ops->sanity_check = rproc_elf32_sanity_check;
--		rproc->ops->get_boot_addr = rproc_elf_get_boot_addr;
--	}
--
- 	mutex_init(&rproc->lock);
- 
- 	INIT_LIST_HEAD(&rproc->carveouts);
++maintainers:
++  - Paul Cercueil <paul@crapouillou.net>
++
++properties:
++  compatible:
++    const: ingenic,jz4770-vpu-rproc
++
++  reg:
++    items:
++      - description: aux registers
++      - description: tcsm0 registers
++      - description: tcsm1 registers
++      - description: sram registers
++
++  reg-names:
++    items:
++      - const: aux
++      - const: tcsm0
++      - const: tcsm1
++      - const: sram
++
++  clocks:
++    items:
++      - description: aux clock
++      - description: vpu clock
++
++  clock-names:
++    items:
++      - const: aux
++      - const: vpu
++
++  interrupts:
++    description: VPU hardware interrupt
++
++required:
++  - compatible
++  - reg
++  - reg-names
++  - clocks
++  - clock-names
++  - interrupts
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/clock/jz4770-cgu.h>
++
++    vpu: video-decoder@132a0000 {
++      compatible = "ingenic,jz4770-vpu-rproc";
++
++      reg = <0x132a0000 0x20>, /* AUX */
++            <0x132b0000 0x4000>, /* TCSM0 */
++            <0x132c0000 0xc000>, /* TCSM1 */
++            <0x132f0000 0x7000>; /* SRAM */
++      reg-names = "aux", "tcsm0", "tcsm1", "sram";
++
++      clocks = <&cgu JZ4770_CLK_AUX>, <&cgu JZ4770_CLK_VPU>;
++      clock-names = "aux", "vpu";
++
++      interrupt-parent = <&cpuintc>;
++      interrupts = <3>;
++    };
 -- 
-2.20.1
+2.25.1
