@@ -2,275 +2,229 @@ Return-Path: <SRS0=ybdg=6B=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_2
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4AA2C2D0EF
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 17 Apr 2020 17:11:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9F31C2D0EF
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 17 Apr 2020 17:27:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8CC8A2076D
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 17 Apr 2020 17:11:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A9EE6208E4
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 17 Apr 2020 17:27:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qqkD47l8"
+	dkim=pass (1024-bit key) header.d=maquefel.me header.i=@maquefel.me header.b="pE4GLC7e"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728454AbgDQRLV (ORCPT
+        id S1728602AbgDQR1q (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 17 Apr 2020 13:11:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60540 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728098AbgDQRLU (ORCPT
+        Fri, 17 Apr 2020 13:27:46 -0400
+Received: from forward103p.mail.yandex.net ([77.88.28.106]:34230 "EHLO
+        forward103p.mail.yandex.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728509AbgDQR1q (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 17 Apr 2020 13:11:20 -0400
-Received: from mail-pg1-x541.google.com (mail-pg1-x541.google.com [IPv6:2607:f8b0:4864:20::541])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A2C3EC061A0C
-        for <linux-remoteproc@vger.kernel.org>; Fri, 17 Apr 2020 10:11:20 -0700 (PDT)
-Received: by mail-pg1-x541.google.com with SMTP id 2so1391972pgp.11
-        for <linux-remoteproc@vger.kernel.org>; Fri, 17 Apr 2020 10:11:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=MwZ5r02j5DDu60b1Yf9fovCXLqb5sheQ6pTSo/D8kaw=;
-        b=qqkD47l8byHNt7HvcF2YWHI8Ln1OLaurWVoh8ZPaayTt3kJndV4E6vQECtjPzxFfSW
-         X7VJJs7Vk775xW4hvTcgl22hvwy/7iauD3LJcPpkWR5VXnAoPkk8eqqEXKXBOXGzSD4L
-         FEcy3aKLz8b5lt3JdCyLOLIQOuVDjGfyxfQNLRB4uco6lzfWJjRpSXle+6COvQd9GGPK
-         GnqcdTMAMYCycNXQdX3ugEUBcvwd2s5p9wyKqgoo4caxt2KLoYpIqkxap6uZZfR19ijO
-         AdF0H/bRlEkoh4fGxGwC8pSAMeKN1Mc8c42RcIvV9bkluBMJYUwC4Mtao9DYbS8dzpyC
-         h6Hg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=MwZ5r02j5DDu60b1Yf9fovCXLqb5sheQ6pTSo/D8kaw=;
-        b=PTQVhFcR4Ny1JempuKV5TqQxflveBt9aCLbSFMeaLqZxnp4vCDtkYwHE1X6LoKjMOk
-         bX/9hg4Dh4NJwM3E5M4tDzwB85CCYmbRIKZPcETGJahoD8fpvOgUzNdzAOTt/UbqA+M+
-         oOvSrF0hNJrBhf674oakjY3e7o9teqQseUv6xUCMn4E8wxf4ESoUklUQGCvIZCNIv6Og
-         hz+TP/cv5qp9hOaTXPelRfuPGcUiERn2Lmyk62FUQPu177aHoxYqNedRk1fafm6ioKPf
-         xc6H1M/yBZch0EZwieGtsXlAp8L3p6/nBnprDfYDSeZbsvhMdJUgN6sVnKepPR/wunLx
-         y3nw==
-X-Gm-Message-State: AGi0PuYxu853+Ta1RWcLZLiFZ7oW+j7hFgOjKk1wT3D38APgvV1VKK1U
-        PIFeLYVTAHYrSknxkJqqNaUOVA==
-X-Google-Smtp-Source: APiQypIulTHG+RBBZXvWiEQM4Jv4FTSexWl0Z/vnVRTL12zNnihOWSGrnncl1pym0ocnUvjzdqetOw==
-X-Received: by 2002:a63:fc45:: with SMTP id r5mr2738667pgk.440.1587143479915;
-        Fri, 17 Apr 2020 10:11:19 -0700 (PDT)
-Received: from yoga (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id o99sm6186906pjo.8.2020.04.17.10.11.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 Apr 2020 10:11:19 -0700 (PDT)
-Date:   Fri, 17 Apr 2020 10:11:16 -0700
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Loic PALLARDY <loic.pallardy@st.com>
-Cc:     Rishabh Bhatnagar <rishabhb@codeaurora.org>,
+        Fri, 17 Apr 2020 13:27:46 -0400
+Received: from mxback24g.mail.yandex.net (mxback24g.mail.yandex.net [IPv6:2a02:6b8:0:1472:2741:0:8b7:324])
+        by forward103p.mail.yandex.net (Yandex) with ESMTP id AC7B318C1A51;
+        Fri, 17 Apr 2020 20:27:37 +0300 (MSK)
+Received: from myt5-95c1fb78270f.qloud-c.yandex.net (myt5-95c1fb78270f.qloud-c.yandex.net [2a02:6b8:c12:1725:0:640:95c1:fb78])
+        by mxback24g.mail.yandex.net (mxback/Yandex) with ESMTP id EKcukuagzZ-Ra70qsfR;
+        Fri, 17 Apr 2020 20:27:37 +0300
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maquefel.me; s=mail; t=1587144457;
+        bh=bEQYQySpw3bm91XQ79ljUoQm7kSTivm9dk+9MeI0Tm0=;
+        h=In-Reply-To:Subject:Cc:To:From:References:Date:Message-ID;
+        b=pE4GLC7eZoOPzErAOndCGb+cA+eIPvlmHojLUkyEn7cDItw8m/LvyD7KhE6Ryo3DU
+         n6hXKla0b9kxUBt9Mc2F53kmjz2kZRFspjbIvsIlxoHMan7s9eFPj46tGzjgGQk8He
+         7JBLYZRk2bgUBxIxRVN/8csSvl0UDgISBnIUU55U=
+Authentication-Results: mxback24g.mail.yandex.net; dkim=pass header.i=@maquefel.me
+Received: by myt5-95c1fb78270f.qloud-c.yandex.net (smtp/Yandex) with ESMTPSA id g0wCxkGACe-RZ2iFG8N;
+        Fri, 17 Apr 2020 20:27:35 +0300
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (Client certificate not present)
+Date:   Fri, 17 Apr 2020 20:26:53 +0300
+From:   Nikita Shubin <nikita.shubin@maquefel.me>
+To:     Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc:     Nikita Shubin <nshubin@topcon.com>,
+        Ohad Ben-Cohen <ohad@wizery.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
         "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "ohad@wizery.com" <ohad@wizery.com>,
-        "mathieu.poirier@linaro.org" <mathieu.poirier@linaro.org>,
-        "tsoni@codeaurora.org" <tsoni@codeaurora.org>,
-        "psodagud@codeaurora.org" <psodagud@codeaurora.org>,
-        "sidgup@codeaurora.org" <sidgup@codeaurora.org>
-Subject: Re: [PATCH 2/3] remoteproc: Add inline coredump functionality
-Message-ID: <20200417171116.GE987656@yoga>
-References: <1587062312-4939-1-git-send-email-rishabhb@codeaurora.org>
- <1587062312-4939-2-git-send-email-rishabhb@codeaurora.org>
- <1b85229632dd44f198b3e0ff9414b458@SFHDAG7NODE2.st.com>
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 1/3] remoteproc: imx_rproc: set pc on start
+Message-ID: <20200417202653.00002500@maquefel.me>
+In-Reply-To: <CANLsYkxvuwFdG3YnE7tTxQaD7uF0d_XnPjt1KS++FFe0W3fbdw@mail.gmail.com>
+References: <20200304142628.8471-1-NShubin@topcon.com>
+        <20200406113310.3041-1-nikita.shubin@maquefel.me>
+        <20200406113310.3041-2-nikita.shubin@maquefel.me>
+        <20200414164519.GA24061@xps15>
+        <45761587100993@mail.yandex.ru>
+        <CANLsYkxvuwFdG3YnE7tTxQaD7uF0d_XnPjt1KS++FFe0W3fbdw@mail.gmail.com>
+X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; i686-w64-mingw32)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1b85229632dd44f198b3e0ff9414b458@SFHDAG7NODE2.st.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
-Message-ID: <20200417171116.xqH_r9blT8AaKlouEx3-btM1HWyj03-hXyXlP2NrcvE@z>
+Message-ID: <20200417172653.E7m0YgER67TOwUEO2NCFr24AJSitFu9e80vFGw2XOmo@z>
 
-On Fri 17 Apr 00:52 PDT 2020, Loic PALLARDY wrote:
+On Fri, 17 Apr 2020 11:01:22 -0600
+Mathieu Poirier <mathieu.poirier@linaro.org> wrote:
 
-> Hi Rishabh,
+> On Thu, 16 Apr 2020 at 23:40, <nikita.shubin@maquefel.me> wrote:
+> >
+> > Hi Mathieue,
+> >
+> > Hi Nikita,
+> >
+> > On Mon, Apr 06, 2020 at 02:33:08PM +0300, nikita.shubin@maquefel.me
+> > wrote:
+> >
+> >  In case elf file interrupt vector is not supposed to be at OCRAM_S,
+> >  it is needed to write elf entry point to OCRAM_S + 0x4, to boot M4
+> >  firmware.
+> >
+> >  Otherwise firmware located anywhere besides OCRAM_S won't boot.
+> >
+> >  The firmware must set stack poiner as first instruction:
+> >
+> >  Reset_Handler:
+> >      ldr sp, = __stack /* set stack pointer */
+> >
+> >  Signed-off-by: Nikita Shubin <NShubin@topcon.com>
+> >
+> >
+> > The address in the SoB has to match what is found in the "From:"
+> > field of the email header. Checkpatch is complaining about that,
+> > something I would have expected to be fixed before sending this set
+> > out.
+> >
+> > Noted and will be fixed.
+> >
+> >  ---
+> >   drivers/remoteproc/imx_rproc.c | 16 +++++++++++++++-
+> >   1 file changed, 15 insertions(+), 1 deletion(-)
+> >
+> >  diff --git a/drivers/remoteproc/imx_rproc.c
+> > b/drivers/remoteproc/imx_rproc.c index 3e72b6f38d4b..bebc58d0f711
+> > 100644 --- a/drivers/remoteproc/imx_rproc.c
+> >  +++ b/drivers/remoteproc/imx_rproc.c
+> >  @@ -45,6 +45,8 @@
+> >
+> >   #define IMX7D_RPROC_MEM_MAX 8
+> >
+> >  +#define IMX_BOOT_PC 0x4
+> >  +
+> >   /**
+> >    * struct imx_rproc_mem - slim internal memory structure
+> >    * @cpu_addr: MPU virtual address of the memory region
+> >  @@ -85,6 +87,7 @@ struct imx_rproc {
+> >           const struct imx_rproc_dcfg *dcfg;
+> >           struct imx_rproc_mem mem[IMX7D_RPROC_MEM_MAX];
+> >           struct clk *clk;
+> >  + void __iomem *bootreg;
+> >   };
+> >
+> >   static const struct imx_rproc_att imx_rproc_att_imx7d[] = {
+> >  @@ -162,11 +165,16 @@ static int imx_rproc_start(struct rproc
+> > *rproc) struct device *dev = priv->dev;
+> >           int ret;
+> >
+> >  + /* write entry point to program counter */
+> >  + writel(rproc->bootaddr, priv->bootreg);
+> >
+> >
+> > What happens on all the other IMX systems where this fix is not
+> > needed? Will they continue to work properly?
+> >
+> > Yes, my bad, it is also needed for IMX6 (but even so i need to
+> > study this topic more carefully), this should be applied
+> > exclusively for imx7d for now, and if will be needed someone with
+> > imx6 hardware to test on can extend this on imx6 also.
+> >
+> >
+> >
+> >
+> >  +
+> >           ret = regmap_update_bits(priv->regmap, dcfg->src_reg,
+> >                                    dcfg->src_mask, dcfg->src_start);
+> >           if (ret)
+> >                   dev_err(dev, "Failed to enable M4!\n");
+> >
+> >  + dev_info(&rproc->dev, "Started from 0x%x\n", rproc->bootaddr);
+> >  +
+> >           return ret;
+> >   }
+> >
+> >  @@ -182,6 +190,9 @@ static int imx_rproc_stop(struct rproc *rproc)
+> >           if (ret)
+> >                   dev_err(dev, "Failed to stop M4!\n");
+> >
+> >  + /* clear entry points */
+> >  + writel(0, priv->bootreg);
+> >  +
+> >           return ret;
+> >   }
+> >
+> >  @@ -243,7 +254,8 @@ static void *imx_rproc_da_to_va(struct rproc
+> > *rproc, u64 da, int len) static const struct rproc_ops
+> > imx_rproc_ops = { .start = imx_rproc_start,
+> >           .stop = imx_rproc_stop,
+> >  - .da_to_va = imx_rproc_da_to_va,
+> >  + .da_to_va = imx_rproc_da_to_va,
+> >  + .get_boot_addr = rproc_elf_get_boot_addr,
+> >
+> >
+> > How is this useful? Sure it will set rproc->bootaddr in
+> > rproc_fw_boot() but what good does that do when it is invariably
+> > set again in imx_rproc_start() ?
+> >
+> > The priv->bootreg is the address where we are writing Entry Point
+> > and it is fixed, 0x04 address is translated to 0x00180004, so don't
+> > quite understand you we are writing rproc->bootaddr into
+> > priv->bootreg, not wiseversa.
+> >
 > 
-> > -----Original Message-----
-> > From: linux-remoteproc-owner@vger.kernel.org <linux-remoteproc-
-> > owner@vger.kernel.org> On Behalf Of Rishabh Bhatnagar
-> > Sent: jeudi 16 avril 2020 20:39
-> > To: linux-remoteproc@vger.kernel.org; linux-kernel@vger.kernel.org
-> > Cc: bjorn.andersson@linaro.org; ohad@wizery.com;
-> > mathieu.poirier@linaro.org; tsoni@codeaurora.org;
-> > psodagud@codeaurora.org; sidgup@codeaurora.org; Rishabh Bhatnagar
-> > <rishabhb@codeaurora.org>
-> > Subject: [PATCH 2/3] remoteproc: Add inline coredump functionality
-> > 
-> > This patch adds the inline coredump functionality. The current
-> > coredump implementation uses vmalloc area to copy all the segments.
-> > But this might put a lot of strain on low memory targets as the
-> > firmware size sometimes is in ten's of MBs. The situation becomes
-> > worse if there are multiple remote processors  undergoing recovery
-> > at the same time. This patch directly copies the device memory to
-> > userspace buffer and avoids extra memory usage. This requires
-> > recovery to be halted until data is read by userspace and free
-> > function is called.
-> > 
-> > Signed-off-by: Rishabh Bhatnagar <rishabhb@codeaurora.org>
-> > ---
-> >  drivers/remoteproc/remoteproc_coredump.c | 130
-> > +++++++++++++++++++++++++++++++
-> >  drivers/remoteproc/remoteproc_internal.h |  23 +++++-
-> >  include/linux/remoteproc.h               |   2 +
-> >  3 files changed, 153 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/drivers/remoteproc/remoteproc_coredump.c
-> > b/drivers/remoteproc/remoteproc_coredump.c
-> > index 9de0467..888b7dec91 100644
-> > --- a/drivers/remoteproc/remoteproc_coredump.c
-> > +++ b/drivers/remoteproc/remoteproc_coredump.c
-> > @@ -12,6 +12,84 @@
-> >  #include <linux/remoteproc.h>
-> >  #include "remoteproc_internal.h"
-> > 
-> > +static void rproc_free_dump(void *data)
-> > +{
-> > +	struct rproc_coredump_state *dump_state = data;
-> > +
-> > +	complete(&dump_state->dump_done);
-> > +}
-> > +
-> > +static unsigned long resolve_addr(loff_t user_offset,
-> > +				   struct list_head *segments,
-> > +				   unsigned long *data_left)
-> > +{
-> > +	struct rproc_dump_segment *segment;
-> > +
-> > +	list_for_each_entry(segment, segments, node) {
-> > +		if (user_offset >= segment->size)
-> > +			user_offset -= segment->size;
-> > +		else
-> > +			break;
-> > +	}
-> > +
-> > +	if (&segment->node == segments) {
-> > +		*data_left = 0;
-> > +		return 0;
-> > +	}
-> > +
-> > +	*data_left = segment->size - user_offset;
-> > +
-> > +	return segment->da + user_offset;
-> > +}
-> > +
-> > +static ssize_t rproc_read_dump(char *buffer, loff_t offset, size_t count,
-> > +				void *data, size_t header_size)
-> > +{
-> > +	void *device_mem;
-> > +	size_t data_left, copy_size, bytes_left = count;
-> > +	unsigned long addr;
-> > +	struct rproc_coredump_state *dump_state = data;
-> > +	struct rproc *rproc = dump_state->rproc;
-> > +	void *elfcore = dump_state->header;
-> > +
-> > +	/* Copy the header first */
-> > +	if (offset < header_size) {
-> > +		copy_size = header_size - offset;
-> > +		copy_size = min(copy_size, bytes_left);
-> > +
-> > +		memcpy(buffer, elfcore + offset, copy_size);
-> > +		offset += copy_size;
-> > +		bytes_left -= copy_size;
-> > +		buffer += copy_size;
-> > +	}
-> > +
-> > +	while (bytes_left) {
-> > +		addr = resolve_addr(offset - header_size,
-> > +				    &rproc->dump_segments, &data_left);
-> > +		/* EOF check */
-> > +		if (data_left == 0) {
-> > +			pr_info("Ramdump complete %lld bytes read",
-> > offset);
-> > +			break;
-> > +		}
-> > +
-> > +		copy_size = min_t(size_t, bytes_left, data_left);
-> > +
-> > +		device_mem = rproc->ops->da_to_va(rproc, addr,
-> > copy_size);
-> > +		if (!device_mem) {
-> > +			pr_err("Address:%lx with size %zd out of remoteproc
-> > carveout\n",
-> > +				addr, copy_size);
-> > +			return -ENOMEM;
-> > +		}
-> > +		memcpy(buffer, device_mem, copy_size);
-> > +
-> > +		offset += copy_size;
-> > +		buffer += copy_size;
-> > +		bytes_left -= copy_size;
-> > +	}
-> > +
-> > +	return count - bytes_left;
-> > +}
-> > +
-> >  static void create_elf_header(void *data, int phnum, struct rproc *rproc)
-> >  {
-> >  	struct elf32_phdr *phdr;
-> > @@ -55,6 +133,58 @@ static void create_elf_header(void *data, int phnum,
-> > struct rproc *rproc)
-> >  }
-> > 
-> >  /**
-> > + * rproc_inline_coredump() - perform synchronized coredump
-> > + * @rproc:	rproc handle
-> > + *
-> > + * This function will generate an ELF header for the registered segments
-> > + * and create a devcoredump device associated with rproc. This function
-> > + * directly copies the segments from device memory to userspace. The
-> > + * recovery is stalled until the enitire coredump is read. This approach
-> Typo entire -> entire
-> > + * avoids using extra vmalloc memory(which can be really large).
-> > + */
-> > +void rproc_inline_coredump(struct rproc *rproc)
-> > +{
-> > +	struct rproc_dump_segment *segment;
-> > +	struct elf32_phdr *phdr;
-> > +	struct elf32_hdr *ehdr;
-> > +	struct rproc_coredump_state *dump_state;
-> > +	size_t header_size;
-> > +	void *data;
-> > +	int phnum = 0;
-> > +
-> > +	if (list_empty(&rproc->dump_segments))
-> > +		return;
-> > +
-> > +	header_size = sizeof(*ehdr);
-> > +	list_for_each_entry(segment, &rproc->dump_segments, node) {
-> > +		header_size += sizeof(*phdr);
-> > +
-> > +		phnum++;
-> > +	}
-> > +
-> > +	data = vmalloc(header_size);
-> > +	if (!data)
-> > +		return;
-> > +
-> > +	ehdr = data;
-> > +	create_elf_header(data, phnum, rproc);
-> > +
-> > +	dump_state = kzalloc(sizeof(*dump_state), GFP_KERNEL);
-> > +	dump_state->rproc = rproc;
-> > +	dump_state->header = data;
-> > +	init_completion(&dump_state->dump_done);
-> > +
-> > +	dev_coredumpm(&rproc->dev, NULL, dump_state, header_size,
-> > GFP_KERNEL,
-> > +		      rproc_read_dump, rproc_free_dump);
-> > +
-> > +	/* Wait until the dump is read and free is called */
-> > +	wait_for_completion(&dump_state->dump_done);
-> 
-> Maybe good to add a timeout with value programmable via debugfs?
-> 
+> What is your reason to set ops->get_boot_addr ?  How does that help
+> the work done in this patch?
 
-devcoredump provides a timeout already, although not configurable today.
-I believe this is sufficient, but a mentioning in the comment would be
-useful.
+The reason is the following :
 
-Regards,
-Bjorn
+remoteproc_core.c:
+| rproc_fw_boot(struct rproc *rproc, const struct firmware *fw)
+| rproc->bootaddr = rproc_get_boot_addr(rproc, fw);
+
+remoteproc_internal.h
+| static inline
+| u32 rproc_get_boot_addr(struct rproc *rproc, const struct firmware
+*fw) | {
+| 	if (rproc->ops->get_boot_addr)
+| 		return rproc->ops->get_boot_addr(rproc, fw);
+|
+|	return 0;
+| }
+
+> 
+> >
+> >   };
+> >
+> >   static int imx_rproc_addr_init(struct imx_rproc *priv,
+> >  @@ -360,6 +372,8 @@ static int imx_rproc_probe(struct
+> > platform_device *pdev) goto err_put_rproc;
+> >           }
+> >
+> >  + priv->bootreg = imx_rproc_da_to_va(rproc, IMX_BOOT_PC,
+> > sizeof(u32)); +
+> >           /*
+> >            * clk for M4 block including memory. Should be
+> >            * enabled before .start for FW transfer.
+> >  --
+> >  2.25.1
+> >
+
