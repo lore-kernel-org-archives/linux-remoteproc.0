@@ -1,146 +1,104 @@
 Return-Path: <nikita.shubin@maquefel.me>
-Date: Fri, 17 Apr 2020 15:11:32 +0300
-From: Nikita Shubin <nikita.shubin@maquefel.me>
-Subject: Re: [PATCH v2 1/3] remoteproc: imx_rproc: set pc on start
-Message-ID: <20200417151132.00005f8c@maquefel.me>
+From: nikita.shubin@maquefel.me
 In-Reply-To: <20200414164519.GA24061@xps15>
 References: <20200304142628.8471-1-NShubin@topcon.com>
-	<20200406113310.3041-1-nikita.shubin@maquefel.me>
-	<20200406113310.3041-2-nikita.shubin@maquefel.me>
-	<20200414164519.GA24061@xps15>
+	 <20200406113310.3041-1-nikita.shubin@maquefel.me>
+	 <20200406113310.3041-2-nikita.shubin@maquefel.me> <20200414164519.GA24061@xps15>
+Subject: Re: [PATCH v2 1/3] remoteproc: imx_rproc: set pc on start
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Date: Fri, 17 Apr 2020 08:40:36 +0300
+Message-Id: <45761587100993@mail.yandex.ru>
+Content-Transfer-Encoding: base64
+Content-Type: text/html; charset=utf-8
 To: Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: Nikita Shubin <NShubin@topcon.com>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, NXP Linux Team <linux-imx@nxp.com>, linux-remoteproc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc: Nikita Shubin <nshubin@topcon.com>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, NXP Linux Team <linux-imx@nxp.com>, "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On Tue, 14 Apr 2020 10:45:19 -0600
-Mathieu Poirier <mathieu.poirier@linaro.org> wrote:
-
-> Hi Nikita,
-> 
-> On Mon, Apr 06, 2020 at 02:33:08PM +0300, nikita.shubin@maquefel.me
-> wrote:
-> > In case elf file interrupt vector is not supposed to be at OCRAM_S,
-> > it is needed to write elf entry point to OCRAM_S + 0x4, to boot M4
-> > firmware.
-> > 
-> > Otherwise firmware located anywhere besides OCRAM_S won't boot.
-> > 
-> > The firmware must set stack poiner as first instruction:
-> > 
-> > Reset_Handler:
-> >     ldr   sp, = __stack      /* set stack pointer */
-> > 
-> > Signed-off-by: Nikita Shubin <NShubin@topcon.com>
-> 
-> The address in the SoB has to match what is found in the "From:"
-> field of the email header.  Checkpatch is complaining about that,
-> something I would have expected to be fixed before sending this set
-> out.
-> 
-> > ---
-> >  drivers/remoteproc/imx_rproc.c | 16 +++++++++++++++-
-> >  1 file changed, 15 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/remoteproc/imx_rproc.c
-> > b/drivers/remoteproc/imx_rproc.c index 3e72b6f38d4b..bebc58d0f711
-> > 100644 --- a/drivers/remoteproc/imx_rproc.c
-> > +++ b/drivers/remoteproc/imx_rproc.c
-> > @@ -45,6 +45,8 @@
-> >  
-> >  #define IMX7D_RPROC_MEM_MAX		8
-> >  
-> > +#define IMX_BOOT_PC			0x4
-> > +
-> >  /**
-> >   * struct imx_rproc_mem - slim internal memory structure
-> >   * @cpu_addr: MPU virtual address of the memory region
-> > @@ -85,6 +87,7 @@ struct imx_rproc {
-> >  	const struct imx_rproc_dcfg	*dcfg;
-> >  	struct imx_rproc_mem
-> > mem[IMX7D_RPROC_MEM_MAX]; struct clk			*clk;
-> > +	void __iomem			*bootreg;
-> >  };
-> >  
-> >  static const struct imx_rproc_att imx_rproc_att_imx7d[] = {
-> > @@ -162,11 +165,16 @@ static int imx_rproc_start(struct rproc
-> > *rproc) struct device *dev = priv->dev;
-> >  	int ret;
-> >  
-> > +	/* write entry point to program counter */
-> > +	writel(rproc->bootaddr, priv->bootreg);
-> 
-> What happens on all the other IMX systems where this fix is not
-> needed?  Will they continue to work properly?   
-
-Mathieu you are totally correct imx6/imx7 use different addresses they
-boot.
-
-For imx7:
-| On i.MX 7Dual/7Solo, the boot vector for the Cortex-M4 core is located
-| at the start of the OCRAM_S (On Chip RAM - Secure) whose address is
-| 0x0018_0000 from Cortex-A7.
-
-For imx6:
-| The Boot vector for the Cortex-M4 core is located at the start of the
-| TCM_L whose address is 0x007F_8000 from the Cortex-A9. This is a
-| different location than on the i.MX 7Dual/7Solo
-
-But on imx7 0x0 is translated to 0x0018_0000 by imx_rproc_da_to_va, and
-on imx7 0x0 is translated to 0x007F_8000, using imx_rproc_att_imx7d and 
-imx_rproc_att_imx6sx respectively.
-
-I have no information about IMX8 (i have found none available
-publicity), but should be the same as Cortex-M boots from 0x0.
-
-> 
-> > +
-> >  	ret = regmap_update_bits(priv->regmap, dcfg->src_reg,
-> >  				 dcfg->src_mask, dcfg->src_start);
-> >  	if (ret)
-> >  		dev_err(dev, "Failed to enable M4!\n");
-> >  
-> > +	dev_info(&rproc->dev, "Started from 0x%x\n",
-> > rproc->bootaddr); +
-> >  	return ret;
-> >  }
-> >  
-> > @@ -182,6 +190,9 @@ static int imx_rproc_stop(struct rproc *rproc)
-> >  	if (ret)
-> >  		dev_err(dev, "Failed to stop M4!\n");
-> >  
-> > +	/* clear entry points */
-> > +	writel(0, priv->bootreg);
-> > +
-> >  	return ret;
-> >  }
-> >  
-> > @@ -243,7 +254,8 @@ static void *imx_rproc_da_to_va(struct rproc
-> > *rproc, u64 da, int len) static const struct rproc_ops
-> > imx_rproc_ops = { .start		= imx_rproc_start,
-> >  	.stop		= imx_rproc_stop,
-> > -	.da_to_va       = imx_rproc_da_to_va,
-> > +	.da_to_va	= imx_rproc_da_to_va,
-> > +	.get_boot_addr	= rproc_elf_get_boot_addr,
-> 
-> How is this useful?  Sure it will set rproc->bootaddr in
-> rproc_fw_boot() but what good does that do when it is invariably set
-> again in imx_rproc_start() ? 
-> 
-> >  };
-> >  
-> >  static int imx_rproc_addr_init(struct imx_rproc *priv,
-> > @@ -360,6 +372,8 @@ static int imx_rproc_probe(struct
-> > platform_device *pdev) goto err_put_rproc;
-> >  	}
-> >  
-> > +	priv->bootreg = imx_rproc_da_to_va(rproc, IMX_BOOT_PC,
-> > sizeof(u32)); +
-> >  	/*
-> >  	 * clk for M4 block including memory. Should be
-> >  	 * enabled before .start for FW transfer.
-> > -- 
-> > 2.25.1
-> > 
+PGRpdj5IaSBNYXRoaWV1ZSw8L2Rpdj48YmxvY2txdW90ZT48cD5IaSBOaWtpdGEsPGJyIC8+PGJy
+IC8+T24gTW9uLCBBcHIgMDYsIDIwMjAgYXQgMDI6MzM6MDhQTSArMDMwMCwgPGEgaHJlZj0ibWFp
+bHRvOm5pa2l0YS5zaHViaW5AbWFxdWVmZWwubWUiPm5pa2l0YS5zaHViaW5AbWFxdWVmZWwubWU8
+L2E+IHdyb3RlOjwvcD48YmxvY2txdW90ZT7CoEluIGNhc2UgZWxmIGZpbGUgaW50ZXJydXB0IHZl
+Y3RvciBpcyBub3Qgc3VwcG9zZWQgdG8gYmUgYXQgT0NSQU1fUyw8YnIgLz7CoGl0IGlzIG5lZWRl
+ZCB0byB3cml0ZSBlbGYgZW50cnkgcG9pbnQgdG8gT0NSQU1fUyArIDB4NCwgdG8gYm9vdCBNNDxi
+ciAvPsKgZmlybXdhcmUuPGJyIC8+PGJyIC8+wqBPdGhlcndpc2UgZmlybXdhcmUgbG9jYXRlZCBh
+bnl3aGVyZSBiZXNpZGVzIE9DUkFNX1Mgd29uJ3QgYm9vdC48YnIgLz48YnIgLz7CoFRoZSBmaXJt
+d2FyZSBtdXN0IHNldCBzdGFjayBwb2luZXIgYXMgZmlyc3QgaW5zdHJ1Y3Rpb246PGJyIC8+PGJy
+IC8+wqBSZXNldF9IYW5kbGVyOjxiciAvPsKgwqDCoMKgwqBsZHIgc3AsID0gX19zdGFjayAvKiBz
+ZXQgc3RhY2sgcG9pbnRlciAqLzxiciAvPjxiciAvPsKgU2lnbmVkLW9mZi1ieTogTmlraXRhIFNo
+dWJpbiAmbHQ7PGEgaHJlZj0ibWFpbHRvOk5TaHViaW5AdG9wY29uLmNvbSI+TlNodWJpbkB0b3Bj
+b24uY29tPC9hPiZndDs8L2Jsb2NrcXVvdGU+PHA+PGJyIC8+VGhlIGFkZHJlc3MgaW4gdGhlIFNv
+QiBoYXMgdG8gbWF0Y2ggd2hhdCBpcyBmb3VuZCBpbiB0aGUgIkZyb206IiBmaWVsZCBvZiB0aGU8
+YnIgLz5lbWFpbCBoZWFkZXIuIENoZWNrcGF0Y2ggaXMgY29tcGxhaW5pbmcgYWJvdXQgdGhhdCwg
+c29tZXRoaW5nIEkgd291bGQgaGF2ZTxiciAvPmV4cGVjdGVkIHRvIGJlIGZpeGVkIGJlZm9yZSBz
+ZW5kaW5nIHRoaXMgc2V0IG91dC48L3A+PC9ibG9ja3F1b3RlPjxkaXY+Tm90ZWQgYW5kIHdpbGwg
+YmUgZml4ZWQuPC9kaXY+PGJsb2NrcXVvdGU+PGJsb2NrcXVvdGU+wqAtLS08YnIgLz7CoMKgZHJp
+dmVycy9yZW1vdGVwcm9jL2lteF9ycHJvYy5jIHwgMTYgKysrKysrKysrKysrKysrLTxiciAvPsKg
+wqAxIGZpbGUgY2hhbmdlZCwgMTUgaW5zZXJ0aW9ucygrKSwgMSBkZWxldGlvbigtKTxiciAvPjxi
+ciAvPsKgZGlmZiAtLWdpdCBhL2RyaXZlcnMvcmVtb3RlcHJvYy9pbXhfcnByb2MuYyBiL2RyaXZl
+cnMvcmVtb3RlcHJvYy9pbXhfcnByb2MuYzxiciAvPsKgaW5kZXggM2U3MmI2ZjM4ZDRiLi5iZWJj
+NThkMGY3MTEgMTAwNjQ0PGJyIC8+wqAtLS0gYS9kcml2ZXJzL3JlbW90ZXByb2MvaW14X3Jwcm9j
+LmM8YnIgLz7CoCsrKyBiL2RyaXZlcnMvcmVtb3RlcHJvYy9pbXhfcnByb2MuYzxiciAvPsKgQEAg
+LTQ1LDYgKzQ1LDggQEA8YnIgLz48YnIgLz7CoMKgI2RlZmluZSBJTVg3RF9SUFJPQ19NRU1fTUFY
+IDg8YnIgLz48YnIgLz7CoCsjZGVmaW5lIElNWF9CT09UX1BDIDB4NDxiciAvPsKgKzxiciAvPsKg
+wqAvKio8YnIgLz7CoMKgwqAqIHN0cnVjdCBpbXhfcnByb2NfbWVtIC0gc2xpbSBpbnRlcm5hbCBt
+ZW1vcnkgc3RydWN0dXJlPGJyIC8+wqDCoMKgKiBAY3B1X2FkZHI6IE1QVSB2aXJ0dWFsIGFkZHJl
+c3Mgb2YgdGhlIG1lbW9yeSByZWdpb248YnIgLz7CoEBAIC04NSw2ICs4Nyw3IEBAIHN0cnVjdCBp
+bXhfcnByb2MgezwhLS0gLS0+PGJyIC8+wqDCoMKgwqDCoMKgwqDCoMKgwqBjb25zdCBzdHJ1Y3Qg
+aW14X3Jwcm9jX2RjZmcgKmRjZmc7PGJyIC8+wqDCoMKgwqDCoMKgwqDCoMKgwqBzdHJ1Y3QgaW14
+X3Jwcm9jX21lbSBtZW1bSU1YN0RfUlBST0NfTUVNX01BWF07PGJyIC8+wqDCoMKgwqDCoMKgwqDC
+oMKgwqBzdHJ1Y3QgY2xrICpjbGs7PGJyIC8+wqArIHZvaWQgX19pb21lbSAqYm9vdHJlZzs8YnIg
+Lz7CoMKgfTs8YnIgLz48YnIgLz7CoMKgc3RhdGljIGNvbnN0IHN0cnVjdCBpbXhfcnByb2NfYXR0
+IGlteF9ycHJvY19hdHRfaW14N2RbXSA9IHs8IS0tIC0tPjxiciAvPsKgQEAgLTE2MiwxMSArMTY1
+LDE2IEBAIHN0YXRpYyBpbnQgaW14X3Jwcm9jX3N0YXJ0KHN0cnVjdCBycHJvYyAqcnByb2MpPGJy
+IC8+wqDCoMKgwqDCoMKgwqDCoMKgwqBzdHJ1Y3QgZGV2aWNlICpkZXYgPSBwcml2LSZndDtkZXY7
+PGJyIC8+wqDCoMKgwqDCoMKgwqDCoMKgwqBpbnQgcmV0OzxiciAvPjxiciAvPsKgKyAvKiB3cml0
+ZSBlbnRyeSBwb2ludCB0byBwcm9ncmFtIGNvdW50ZXIgKi88YnIgLz7CoCsgd3JpdGVsKHJwcm9j
+LSZndDtib290YWRkciwgcHJpdi0mZ3Q7Ym9vdHJlZyk7PC9ibG9ja3F1b3RlPjxwPjxiciAvPldo
+YXQgaGFwcGVucyBvbiBhbGwgdGhlIG90aGVyIElNWCBzeXN0ZW1zIHdoZXJlIHRoaXMgZml4IGlz
+IG5vdCBuZWVkZWQ/IFdpbGw8YnIgLz50aGV5IGNvbnRpbnVlIHRvIHdvcmsgcHJvcGVybHk/PC9w
+PjwvYmxvY2txdW90ZT48ZGl2PlllcywgbXkgYmFkLCBpdCBpcyBhbHNvIG5lZWRlZCBmb3IgSU1Y
+NiAoYnV0IGV2ZW4gc28gaSBuZWVkIHRvIHN0dWR5IHRoaXMgdG9waWMgbW9yZSBjYXJlZnVsbHkp
+LDwvZGl2PjxkaXY+dGhpcyBzaG91bGQgYmUgYXBwbGllZCBleGNsdXNpdmVseSBmb3IgaW14N2Qg
+Zm9yIG5vdywgYW5kIGlmIHdpbGwgYmUgbmVlZGVkIHNvbWVvbmU8L2Rpdj48ZGl2PndpdGggaW14
+NiBoYXJkd2FyZSB0byB0ZXN0IG9uIGNhbiBleHRlbmQgdGhpcyBvbiBpbXg2IGFsc28uPC9kaXY+
+PGRpdj7CoDwvZGl2PjxibG9ja3F1b3RlPjxwPsKgPC9wPjxibG9ja3F1b3RlPsKgKzxiciAvPsKg
+wqDCoMKgwqDCoMKgwqDCoMKgcmV0ID0gcmVnbWFwX3VwZGF0ZV9iaXRzKHByaXYtJmd0O3JlZ21h
+cCwgZGNmZy0mZ3Q7c3JjX3JlZyw8YnIgLz7CoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgZGNmZy0mZ3Q7c3JjX21hc2ss
+IGRjZmctJmd0O3NyY19zdGFydCk7PGJyIC8+wqDCoMKgwqDCoMKgwqDCoMKgwqBpZiAocmV0KTxi
+ciAvPsKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoGRldl9lcnIoZGV2LCAiRmFp
+bGVkIHRvIGVuYWJsZSBNNCFcbiIpOzxiciAvPjxiciAvPsKgKyBkZXZfaW5mbygmYW1wO3Jwcm9j
+LSZndDtkZXYsICJTdGFydGVkIGZyb20gMHgleFxuIiwgcnByb2MtJmd0O2Jvb3RhZGRyKTs8YnIg
+Lz7CoCs8YnIgLz7CoMKgwqDCoMKgwqDCoMKgwqDCoHJldHVybiByZXQ7PGJyIC8+wqDCoH08YnIg
+Lz48YnIgLz7CoEBAIC0xODIsNiArMTkwLDkgQEAgc3RhdGljIGludCBpbXhfcnByb2Nfc3RvcChz
+dHJ1Y3QgcnByb2MgKnJwcm9jKTxiciAvPsKgwqDCoMKgwqDCoMKgwqDCoMKgaWYgKHJldCk8YnIg
+Lz7CoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBkZXZfZXJyKGRldiwgIkZhaWxl
+ZCB0byBzdG9wIE00IVxuIik7PGJyIC8+PGJyIC8+wqArIC8qIGNsZWFyIGVudHJ5IHBvaW50cyAq
+LzxiciAvPsKgKyB3cml0ZWwoMCwgcHJpdi0mZ3Q7Ym9vdHJlZyk7PGJyIC8+wqArPGJyIC8+wqDC
+oMKgwqDCoMKgwqDCoMKgwqByZXR1cm4gcmV0OzxiciAvPsKgwqB9PGJyIC8+PGJyIC8+wqBAQCAt
+MjQzLDcgKzI1NCw4IEBAIHN0YXRpYyB2b2lkICppbXhfcnByb2NfZGFfdG9fdmEoc3RydWN0IHJw
+cm9jICpycHJvYywgdTY0IGRhLCBpbnQgbGVuKTxiciAvPsKgwqBzdGF0aWMgY29uc3Qgc3RydWN0
+IHJwcm9jX29wcyBpbXhfcnByb2Nfb3BzID0gezwhLS0gLS0+PGJyIC8+wqDCoMKgwqDCoMKgwqDC
+oMKgwqAuc3RhcnQgPSBpbXhfcnByb2Nfc3RhcnQsPGJyIC8+wqDCoMKgwqDCoMKgwqDCoMKgwqAu
+c3RvcCA9IGlteF9ycHJvY19zdG9wLDxiciAvPsKgLSAuZGFfdG9fdmEgPSBpbXhfcnByb2NfZGFf
+dG9fdmEsPGJyIC8+wqArIC5kYV90b192YSA9IGlteF9ycHJvY19kYV90b192YSw8YnIgLz7CoCsg
+LmdldF9ib290X2FkZHIgPSBycHJvY19lbGZfZ2V0X2Jvb3RfYWRkciw8L2Jsb2NrcXVvdGU+PHA+
+PGJyIC8+SG93IGlzIHRoaXMgdXNlZnVsPyBTdXJlIGl0IHdpbGwgc2V0IHJwcm9jLSZndDtib290
+YWRkciBpbiBycHJvY19md19ib290KCkgYnV0PGJyIC8+d2hhdCBnb29kIGRvZXMgdGhhdCBkbyB3
+aGVuIGl0IGlzIGludmFyaWFibHkgc2V0IGFnYWluIGluIGlteF9ycHJvY19zdGFydCgpID88L3A+
+PC9ibG9ja3F1b3RlPjxkaXY+VGhlIHByaXYtJmd0O2Jvb3RyZWcgaXMgdGhlIGFkZHJlc3Mgd2hl
+cmUgd2UgYXJlIHdyaXRpbmcgRW50cnkgUG9pbnQgYW5kIGl0IGlzIGZpeGVkLDwvZGl2PjxkaXY+
+MHgwNCBhZGRyZXNzIGlzIHRyYW5zbGF0ZWQgdG/CoDB4MDAxODAwMDQsIHNvIGRvbid0IHF1aXRl
+IHVuZGVyc3RhbmQgeW91IHdlPC9kaXY+PGRpdj5hcmUgd3JpdGluZyBycHJvYy0mZ3Q7Ym9vdGFk
+ZHIgaW50byBwcml2LSZndDtib290cmVnLCBub3Qgd2lzZXZlcnNhLjwvZGl2PjxkaXY+wqA8L2Rp
+dj48YmxvY2txdW90ZT48YmxvY2txdW90ZT7CoMKgfTs8YnIgLz48YnIgLz7CoMKgc3RhdGljIGlu
+dCBpbXhfcnByb2NfYWRkcl9pbml0KHN0cnVjdCBpbXhfcnByb2MgKnByaXYsPGJyIC8+wqBAQCAt
+MzYwLDYgKzM3Miw4IEBAIHN0YXRpYyBpbnQgaW14X3Jwcm9jX3Byb2JlKHN0cnVjdCBwbGF0Zm9y
+bV9kZXZpY2UgKnBkZXYpPGJyIC8+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+Z290byBlcnJfcHV0X3Jwcm9jOzxiciAvPsKgwqDCoMKgwqDCoMKgwqDCoMKgfTxiciAvPjxiciAv
+PsKgKyBwcml2LSZndDtib290cmVnID0gaW14X3Jwcm9jX2RhX3RvX3ZhKHJwcm9jLCBJTVhfQk9P
+VF9QQywgc2l6ZW9mKHUzMikpOzxiciAvPsKgKzxiciAvPsKgwqDCoMKgwqDCoMKgwqDCoMKgLyo8
+YnIgLz7CoMKgwqDCoMKgwqDCoMKgwqDCoMKgKiBjbGsgZm9yIE00IGJsb2NrIGluY2x1ZGluZyBt
+ZW1vcnkuIFNob3VsZCBiZTxiciAvPsKgwqDCoMKgwqDCoMKgwqDCoMKgwqAqIGVuYWJsZWQgYmVm
+b3JlIC5zdGFydCBmb3IgRlcgdHJhbnNmZXIuPGJyIC8+wqAtLTxiciAvPsKgMi4yNS4xPGJyIC8+
+wqA8L2Jsb2NrcXVvdGU+PC9ibG9ja3F1b3RlPg==
