@@ -1,195 +1,145 @@
-Return-Path: <arnaud.pouliquen@st.com>
-From: Arnaud Pouliquen <arnaud.pouliquen@st.com>
-Subject: [RFC 06/18] remoteproc: Add component in core for child devices synchronization
-Date: Thu, 16 Apr 2020 18:13:19 +0200
-Message-ID: <20200416161331.7606-7-arnaud.pouliquen@st.com>
-In-Reply-To: <20200416161331.7606-1-arnaud.pouliquen@st.com>
-References: <20200416161331.7606-1-arnaud.pouliquen@st.com>
+Return-Path: <michals@xilinx.com>
+Return-Path: michal.simek@xilinx.com
+Subject: Re: [PATCH v2 5/5] remoteproc: Add initial zynqmp R5 remoteproc
+ driver
+References: <1587074082-14836-1-git-send-email-ben.levinsky@xilinx.com>
+ <1587074082-14836-6-git-send-email-ben.levinsky@xilinx.com>
+From: Michal Simek <michal.simek@xilinx.com>
+Message-ID: <baaa1b13-6ea2-8ca5-6883-46fb9da4f7e8@xilinx.com>
+Date: Fri, 17 Apr 2020 08:32:42 +0200
 MIME-Version: 1.0
-Content-Type: text/plain
-To: Bjorn Andersson <bjorn.andersson@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>, Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, arnaud.pouliquen@st.com
+In-Reply-To: <1587074082-14836-6-git-send-email-ben.levinsky@xilinx.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+To: Ben Levinsky <ben.levinsky@xilinx.com>, ohad@wizery.com, bjorn.andersson@linaro.org, michal.simek@xilinx.com, jollys@xilinx.com, rajan.vaja@xilinx.com, robh+dt@kernel.org, mark.rutland@arm.com
+Cc: linux-remoteproc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Wendy Liang <wendy.liang@xilinx.com>, Ed Mooring <ed.mooring@xilinx.com>, Jason Wu <j.wu@xilinx.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-As virtio is now a platform device. We need to ensure that the virtio
-device is initialized before subdev ops are called.
-Add a rproc master component to synchronize child devices bind/unbind
-before the resource allocation and the firmware start.
+On 16. 04. 20 23:54, Ben Levinsky wrote:
+> R5 is included in Xilinx Zynq UltraScale MPSoC so by adding this
+> remotproc driver, we can boot the R5 sub-system in different
+> configurations.
+> 
+> Acked-by: Stefano Stabellini <stefano.stabellini@xilinx.com>
+> Acked-by: Ben Levinsky <ben.levinsky@xilinx.com>
+> Reviewed-by: Radhey Shyam Pandey <radhey.shyam.pandey@xilinx.com>
+> Signed-off-by: Ben Levinsky <ben.levinsky@xilinx.com>
+> Signed-off-by: Wendy Liang <wendy.liang@xilinx.com>
+> Signed-off-by: Michal Simek <michal.simek@xilinx.com>
+> Signed-off-by: Ed Mooring <ed.mooring@xilinx.com>
+> Signed-off-by: Jason Wu <j.wu@xilinx.com>
+> Tested-by: Ben Levinsky <ben.levinsky@xilinx.com>
+> ---
+> Changes since v1:
+> - remove domain struct as per review from Mathieu
+> ---
+>  drivers/remoteproc/Kconfig                |  10 +
+>  drivers/remoteproc/Makefile               |   1 +
+>  drivers/remoteproc/zynqmp_r5_remoteproc.c | 911 ++++++++++++++++++++++++++++++
+>  3 files changed, 922 insertions(+)
+>  create mode 100644 drivers/remoteproc/zynqmp_r5_remoteproc.c
+> 
+> diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
+> index fbaed07..f094c84 100644
+> --- a/drivers/remoteproc/Kconfig
+> +++ b/drivers/remoteproc/Kconfig
+> @@ -222,6 +222,16 @@ config ST_REMOTEPROC
+>  	  processor framework.
+>  	  This can be either built-in or a loadable module.
+>  
+> +config ZYNQMP_R5_REMOTEPROC
+> +	tristate "ZynqMP_r5 remoteproc support"
+> +	depends on ARM64 && PM && ARCH_ZYNQMP
+> +	select RPMSG_VIRTIO
+> +	select MAILBOX
+> +	select ZYNQMP_IPI_MBOX
+> +	help
+> +	  Say y here to support ZynqMP R5 remote processors via the remote
+> +	  processor framework.
+> +
+>  config ST_SLIM_REMOTEPROC
+>  	tristate
+>  
+> diff --git a/drivers/remoteproc/Makefile b/drivers/remoteproc/Makefile
+> index 0effd38..806ac3f 100644
+> --- a/drivers/remoteproc/Makefile
+> +++ b/drivers/remoteproc/Makefile
+> @@ -27,5 +27,6 @@ obj-$(CONFIG_QCOM_WCNSS_PIL)		+= qcom_wcnss_pil.o
+>  qcom_wcnss_pil-y			+= qcom_wcnss.o
+>  qcom_wcnss_pil-y			+= qcom_wcnss_iris.o
+>  obj-$(CONFIG_ST_REMOTEPROC)		+= st_remoteproc.o
+> +obj-$(CONFIG_ZYNQMP_R5_REMOTEPROC)	+= zynqmp_r5_remoteproc.o
+>  obj-$(CONFIG_ST_SLIM_REMOTEPROC)	+= st_slim_rproc.o
+>  obj-$(CONFIG_STM32_RPROC)		+= stm32_rproc.o
+> diff --git a/drivers/remoteproc/zynqmp_r5_remoteproc.c b/drivers/remoteproc/zynqmp_r5_remoteproc.c
+> new file mode 100644
+> index 0000000..2cfc6b6
+> --- /dev/null
+> +++ b/drivers/remoteproc/zynqmp_r5_remoteproc.c
+> @@ -0,0 +1,911 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Zynq R5 Remote Processor driver
+> + *
+> + * Copyright (C) 2015 - 2018 Xilinx Inc.
+> + * Copyright (C) 2015 Jason Wu <j.wu@xilinx.com>
+> + *
+> + * Based on origin OMAP and Zynq Remote Processor driver
+> + *
+> + * Copyright (C) 2012 Michal Simek <monstr@monstr.eu>
+> + * Copyright (C) 2012 PetaLogix
+> + * Copyright (C) 2011 Texas Instruments, Inc.
+> + * Copyright (C) 2011 Google, Inc.
+> + */
+> +
+> +#include <linux/atomic.h>
+> +#include <linux/cpu.h>
+> +#include <linux/dma-mapping.h>
+> +#include <linux/delay.h>
+> +#include <linux/err.h>
+> +#include <linux/firmware/xlnx-zynqmp.h>
+> +#include <linux/genalloc.h>
+> +#include <linux/idr.h>
+> +#include <linux/interrupt.h>
+> +#include <linux/kernel.h>
+> +#include <linux/list.h>
+> +#include <linux/mailbox_client.h>
+> +#include <linux/mailbox/zynqmp-ipi-message.h>
+> +#include <linux/module.h>
+> +#include <linux/of_address.h>
+> +#include <linux/of_irq.h>
+> +#include <linux/of_platform.h>
+> +#include <linux/of_reserved_mem.h>
+> +#include <linux/pfn.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/remoteproc.h>
+> +#include <linux/skbuff.h>
+> +#include <linux/slab.h>
+> +#include <linux/sysfs.h>
+> +
+> +#include "remoteproc_internal.h"
+> +
+> +#define MAX_RPROCS	2 /* Support up to 2 RPU */
+> +#define MAX_MEM_PNODES	4 /* Max power nodes for one RPU memory instance */
+> +
+> +#define DEFAULT_FIRMWARE_NAME	"rproc-rpu-fw"
+> +
+> +/* PM proc states */
+> +#define PM_PROC_STATE_ACTIVE 1U
+> +
+> +/* IPI buffer MAX length */
+> +#define IPI_BUF_LEN_MAX	32U
+> +/* RX mailbox client buffer max length */
+> +#define RX_MBOX_CLIENT_BUF_MAX	(IPI_BUF_LEN_MAX + \
+> +				 sizeof(struct zynqmp_ipi_message))
+> +
+> +static bool autoboot __read_mostly;
+> +
+> +static const struct zynqmp_eemi_ops *eemi_ops;
 
-Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@st.com>
----
- drivers/remoteproc/remoteproc_core.c | 96 +++++++++++++++++++++++++++-
- include/linux/remoteproc.h           |  4 ++
- 2 files changed, 98 insertions(+), 2 deletions(-)
+Take a look at Jolly's series which she sent recently and use the same
+style as was recommended by Greg.
 
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index 5dcef62d8d1d..cb40aae12b98 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -16,6 +16,7 @@
- 
- #define pr_fmt(fmt)    "%s: " fmt, __func__
- 
-+#include <linux/component.h>
- #include <linux/kernel.h>
- #include <linux/module.h>
- #include <linux/device.h>
-@@ -42,6 +43,8 @@
- 
- #define HIGH_BITS_MASK 0xFFFFFFFF00000000ULL
- 
-+#define BIND_TIMEOUT_MS 1000
-+
- static DEFINE_MUTEX(rproc_list_mutex);
- static LIST_HEAD(rproc_list);
- 
-@@ -410,6 +413,45 @@ void rproc_free_vring(struct rproc_vring *rvring)
- 	rsc->vring[idx].notifyid = -1;
- }
- 
-+static int rproc_compare_of(struct device *dev, void *data)
-+{
-+	if (dev->of_node)
-+		return dev->of_node == data;
-+	else
-+		return dev == data;
-+}
-+
-+static void rproc_release_of(struct device *dev, void *data)
-+{
-+	if (dev->of_node)
-+		of_node_put(data);
-+}
-+
-+static void rproc_unbind(struct device *dev)
-+{
-+	struct rproc *rproc = container_of(dev, struct rproc, dev);
-+
-+	/* undbind all child components */
-+	component_unbind_all(dev, NULL);
-+	complete(&rproc->completed);
-+}
-+
-+static int rproc_bind(struct device *dev)
-+{
-+	struct rproc *rproc = container_of(dev, struct rproc, dev);
-+
-+	/* bind all child components */
-+	rproc->bind_status = component_bind_all(dev, NULL);
-+	complete(&rproc->completed);
-+
-+	return rproc->bind_status;
-+}
-+
-+static const struct component_master_ops rproc_cmp_ops = {
-+	.bind = rproc_bind,
-+	.unbind = rproc_unbind,
-+};
-+
- /**
-  * rproc_handle_vdev() - handle a vdev fw resource
-  * @rproc: the remote processor
-@@ -475,6 +517,10 @@ static int rproc_handle_vdev(struct rproc *rproc, struct fw_rsc_vdev *rsc,
- 			"failed to create rproc-virtio device\n");
- 		return ret;
- 	}
-+	/* register a component associated to the virtio platform */
-+	component_match_add_release(&pdev->dev, &rproc->match,
-+				    rproc_release_of, rproc_compare_of,
-+				    &pdev->dev);
- 	rproc->nb_vdev++;
- 
- 	return  0;
-@@ -1318,20 +1364,51 @@ static int rproc_fw_boot(struct rproc *rproc, const struct firmware *fw)
- 		goto clean_up_resources;
- 	}
- 
-+	/*
-+	 * bind all the children associated to the resources before starting
-+	 * the remote processor. This synchro point ensures that everything is
-+	 * ready to run.
-+	 */
-+	init_completion(&rproc->completed);
-+	if (rproc->match) {
-+		ret = component_master_add_with_match(dev, &rproc_cmp_ops,
-+						      rproc->match);
-+		if (ret) {
-+			dev_err(dev, "failed to bind rproc\n");
-+			goto clean_up_resources;
-+		}
-+	}
-+	/* Wait for all children to be bound */
-+	if (!wait_for_completion_timeout(&rproc->completed,
-+					 msecs_to_jiffies(BIND_TIMEOUT_MS))) {
-+		dev_err(dev, "failed to bind child device(s)\n");
-+		ret = -ETIMEDOUT;
-+		goto clean_up_resources;
-+	}
-+
-+	ret = rproc->bind_status;
-+	if (ret) {
-+		dev_err(dev, "failed to bind\n");
-+		goto clean_up_resources;
-+	}
-+
- 	/* Allocate carveout resources associated to rproc */
- 	ret = rproc_alloc_registered_carveouts(rproc);
- 	if (ret) {
- 		dev_err(dev, "Failed to allocate associated carveouts: %d\n",
- 			ret);
--		goto clean_up_resources;
-+		goto unbind_comp;
- 	}
- 
- 	ret = rproc_start(rproc, fw);
- 	if (ret)
--		goto clean_up_resources;
-+		goto unbind_comp;
- 
- 	return 0;
- 
-+unbind_comp:
-+	component_master_del(dev, &rproc_cmp_ops);
-+	rproc->match = NULL;
- clean_up_resources:
- 	rproc_resource_cleanup(rproc);
- 	kfree(rproc->cached_table);
-@@ -1733,6 +1810,21 @@ void rproc_shutdown(struct rproc *rproc)
- 		goto out;
- 	}
- 
-+	/*
-+	 * Unbind all the children before cleaning resources. This synchro
-+	 * point ensures that everything has been released before resources are
-+	 * freed.
-+	 */
-+	init_completion(&rproc->completed);
-+
-+	component_master_del(dev, &rproc_cmp_ops);
-+	rproc->match = NULL;
-+
-+	if (!wait_for_completion_timeout(&rproc->completed,
-+					 msecs_to_jiffies(BIND_TIMEOUT_MS))) {
-+		dev_err(dev, "failed to unbind child device(s)\n");
-+	}
-+
- 	/* clean up all acquired resources */
- 	rproc_resource_cleanup(rproc);
- 
-diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-index eb5bd568f11e..d7235f7356e2 100644
---- a/include/linux/remoteproc.h
-+++ b/include/linux/remoteproc.h
-@@ -514,6 +514,10 @@ struct rproc {
- 	bool auto_boot;
- 	struct list_head dump_segments;
- 	int nb_vdev;
-+	struct component_match *match;
-+	struct completion completed;
-+	int bind_status;
-+
- };
- 
- /**
--- 
-2.17.1
+Thanks,
+Michal
