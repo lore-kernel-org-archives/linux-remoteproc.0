@@ -2,240 +2,146 @@ Return-Path: <SRS0=ybdg=6B=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_2
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38C98C2D0EF
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 17 Apr 2020 15:47:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 518EFC2D0EF
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 17 Apr 2020 15:48:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D900120857
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 17 Apr 2020 15:47:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 298D42054F
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 17 Apr 2020 15:48:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=maquefel.me header.i=@maquefel.me header.b="t4zbscD8"
+	dkim=pass (1024-bit key) header.d=web.de header.i=@web.de header.b="DrB1Mcgn"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729281AbgDQPrj (ORCPT
+        id S1729573AbgDQPs4 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 17 Apr 2020 11:47:39 -0400
-Received: from forward103j.mail.yandex.net ([5.45.198.246]:60787 "EHLO
-        forward103j.mail.yandex.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728593AbgDQPrj (ORCPT
+        Fri, 17 Apr 2020 11:48:56 -0400
+Received: from mout.web.de ([212.227.17.12]:34901 "EHLO mout.web.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728593AbgDQPs4 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 17 Apr 2020 11:47:39 -0400
-Received: from mxback5j.mail.yandex.net (mxback5j.mail.yandex.net [IPv6:2a02:6b8:0:1619::10e])
-        by forward103j.mail.yandex.net (Yandex) with ESMTP id A8E5D674067E;
-        Fri, 17 Apr 2020 18:47:35 +0300 (MSK)
-Received: from myt5-95c1fb78270f.qloud-c.yandex.net (myt5-95c1fb78270f.qloud-c.yandex.net [2a02:6b8:c12:1725:0:640:95c1:fb78])
-        by mxback5j.mail.yandex.net (mxback/Yandex) with ESMTP id zQhxuX0lGc-lZ0GrXhw;
-        Fri, 17 Apr 2020 18:47:35 +0300
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maquefel.me; s=mail; t=1587138455;
-        bh=eVjqG5u9j8b2zXtHBxXLWbpWQ20qTDLLjfd+HHxSLhI=;
-        h=In-Reply-To:Subject:Cc:To:From:References:Date:Message-ID;
-        b=t4zbscD8+tdjl730jMIAeghgThkWvEYn/2UMo23d57Ovd0Yj8m0I1pz16BJy6pRvf
-         Qdlbj2qAmwQMI3A7bwB6uOux3DMHu4pN7lzLn0Qbt0+Hni/kViXATniVHwG67eaqZM
-         u5iWDzN5d0e/3ATV39gkhVnIahMv/robo+TMC66I=
-Authentication-Results: mxback5j.mail.yandex.net; dkim=pass header.i=@maquefel.me
-Received: by myt5-95c1fb78270f.qloud-c.yandex.net (smtp/Yandex) with ESMTPSA id 3teiP5AzpD-lX2KZxKw;
-        Fri, 17 Apr 2020 18:47:33 +0300
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-        (Client certificate not present)
-Date:   Fri, 17 Apr 2020 18:46:52 +0300
-From:   Nikita Shubin <nikita.shubin@maquefel.me>
-To:     Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc:     Nikita Shubin <NShubin@topcon.com>,
-        Ohad Ben-Cohen <ohad@wizery.com>,
+        Fri, 17 Apr 2020 11:48:56 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
+        s=dbaedf251592; t=1587138530;
+        bh=uR9Ez3u/7GnvtnBI9nN/OKjFu21RjRLKSDicsZqRY3U=;
+        h=X-UI-Sender-Class:Subject:To:Cc:References:From:Date:In-Reply-To;
+        b=DrB1Mcgne/caxQXbrbYB2UKkQoeXq3ezMyPzrmS6QZ1ZKgaUnS/3D/3uHPoOBhAY+
+         dqMRyWMJg7hYLaN8A+r6CiHztjqWgHWfz8pZzHNxnbSpoilIk6uYI8AoJDwMqm5Bl5
+         jJF9MaPF01Fetizw0pL3tBWRwqpeoDM9vk6lPu3Y=
+X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
+Received: from [192.168.1.2] ([2.243.97.227]) by smtp.web.de (mrweb101
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 0LeLKb-1itCHf1nOn-00qBUu; Fri, 17
+ Apr 2020 17:48:50 +0200
+Subject: Re: [v2 5/7] remoteproc: Restructure firmware name allocation
+To:     Suman Anna <s-anna@ti.com>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        linux-remoteproc@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, Alex Elder <elder@linaro.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        linux-remoteproc <linux-remoteproc@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 1/3] remoteproc: imx_rproc: set pc on start
-Message-ID: <20200417184652.00002590@maquefel.me>
-In-Reply-To: <CANLsYkxeL+a43eDzwJjXyFBFSwRVXjiYd4TcTbEcuuj+wgEZdw@mail.gmail.com>
-References: <20200304142628.8471-1-NShubin@topcon.com>
-        <20200406113310.3041-1-nikita.shubin@maquefel.me>
-        <20200406113310.3041-2-nikita.shubin@maquefel.me>
-        <20200414164519.GA24061@xps15>
-        <20200417151132.00005f8c@maquefel.me>
-        <CANLsYkxeL+a43eDzwJjXyFBFSwRVXjiYd4TcTbEcuuj+wgEZdw@mail.gmail.com>
-X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; i686-w64-mingw32)
+        Ohad Ben-Cohen <ohad@wizery.com>
+References: <20200415204858.2448-1-mathieu.poirier@linaro.org>
+ <20200415204858.2448-6-mathieu.poirier@linaro.org>
+ <aa565fea-b1c4-9b5c-73ed-591244afee19@web.de>
+ <e887c990-8cba-62b0-0f47-3ea0c166d603@ti.com>
+From:   Markus Elfring <Markus.Elfring@web.de>
+Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
+ 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 FEE=
+Message-ID: <7a978c24-945d-8d39-3a0a-30e0678d569a@web.de>
+Date:   Fri, 17 Apr 2020 17:48:49 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <e887c990-8cba-62b0-0f47-3ea0c166d603@ti.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:V/6dhADAQ7uzeRvMgrEKzEC9uCndlCMfp54nMDIGD8OtskzlNmQ
+ jMqOaW2aYturyVDB04AnhqR7NBQyT9owiovvUKzhdC0XPlTBdu6oFuoz8xPmckedOci7gcc
+ 1obJAijCmgBqgLK+8zcTtsMlo+beiCzXGrPw8VfR2F9WHJbQjeS/IRIi1UrbL3g5rZLYWfV
+ BcHZsxFvC+crF49TXKUIQ==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:hLJf7nT6nXA=:f0sodW8Cn/RldVBY+9kWaN
+ fumjX39YA43Ph6mFqlidFMcHwXEqe++S0d7a7JBuHco/g2VsHbQKAfE2Cc7zjRLdNlTGBkaZg
+ oZAIWrWy/LrRwZBqn2LYyf6gmYt3lSRbw/8OEzTu8LRWfMSoK17rOALw7Z7rbnrBz+09IqQPE
+ 6TjlWo+c5d7AhgBbVg9dkECjBWF6N+YtsuZmxNuVsOu/KrCDbfdrmzgOZwpC6M6QB2pY42mbz
+ UtRBO5aCvBZfxm5s6i9nnj77LybwywISb1EVYOh+LW//xCVE5KzGG4mEfd4BGMYafYukgESjO
+ i4NBcNHM29fqyOI9+B2g1ymEl/Fiw8cTVJC03cySjdzI+nPMtcqUXaVosnxBtK9iPNky9NHik
+ E3sG3uYtruzeg6vnCqIdtKnawojfNIxvRgcL5hWOPSZcGQNnxG9339zAtywfBwJRBDb5JqP2Q
+ KmRUdckZf/depuLOOiJtgSiGp402Rz5H1IAmIJcNHysTOJAwtu7AaMTdXCCHe1FGTFakji9k/
+ 0TIwhb/ldlPg2oQrSxb+sKZnO0SBkqsMCmtbrBAIIBthO0CXayKKLfl++L8Ad0GJu87ILr0GN
+ l1mOTNK2yw0UX2AOpZeSDE4HeJawEhgDeOCQayVPU6lGeWwZ2rYqKtIK0UQzCMSbmS1cFMFZs
+ higZ5jXWZZzLERS28V2b8RCb365AugLkRlDk6/hscqjWw7Bz0t/9jvShemTQuNmajTjYnakGu
+ h0VVfAx8WPEBAwhG492sOlVJ5PfYzxX2VDBX5xRyql2BGArDrfFLmUJe4bPd6mdouuKWT/MBd
+ qCq4P/x8iKZdBvJAAl4wNZoypsoYsW0DUdiwLeFkHFL6gPonsfKtXEkIGh/Hi+3crGjcJ2j/P
+ fxvbm2qTLjFI3jfetIjFw4H2TixlaksmINQyAim1QAqAYjrtoz6oQNExDtAuYheLZUMUuBsLE
+ CrXZL4/0QnuxAB5q9AXKSy+pKjKqXUM/E9uD48sjBLrU5mfz/ypD3hwc1JWRJxa7QoxCdlO0L
+ yZI4TR9jyLU596RITkgY/kH9t8Y81GLhOfedf31hcyScRbqlMnOg+KUw9+HQu8eJXoDZ1ErYw
+ JA0kDflDhxAmSeNgN4P/DCspZtRLYN+6HTuWnilep8GxbEnc+2tcRAY0jZ607UsvJr5X01tqv
+ 8+j03ZUQa1jOIxRhcBGUYngheCwTZBzBO67WDWtiZKdl4JEB3Je/YSzhXszfjtx1s40ZtFa8N
+ t07n0Qk/mSWwDIOci
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
-Message-ID: <20200417154652.NV8pB6fW0RHwvJh1l_49wAR2_2dIm042lcaTCv4m56U@z>
+Message-ID: <20200417154849.mwkfAVjR3eqecJAj5iSyUJT0FuNkTZgujeLoo6fqnEs@z>
 
-On Fri, 17 Apr 2020 09:37:42 -0600
-Mathieu Poirier <mathieu.poirier@linaro.org> wrote:
+>> =C2=A0=C2=A0=C2=A0=C2=A0p =3D firmware ? kstrdup_const(=E2=80=A6) : kas=
+printf(=E2=80=A6);
+>
+> For simple assignments, I too prefer the ternary operator,
 
-> On Fri, 17 Apr 2020 at 06:12, Nikita Shubin
-> <nikita.shubin@maquefel.me> wrote:
-> >
-> > On Tue, 14 Apr 2020 10:45:19 -0600
-> > Mathieu Poirier <mathieu.poirier@linaro.org> wrote:
-> >
-> > > Hi Nikita,
-> > >
-> > > On Mon, Apr 06, 2020 at 02:33:08PM +0300,
-> > > nikita.shubin@maquefel.me wrote:
-> > > > In case elf file interrupt vector is not supposed to be at
-> > > > OCRAM_S, it is needed to write elf entry point to OCRAM_S +
-> > > > 0x4, to boot M4 firmware.
-> > > >
-> > > > Otherwise firmware located anywhere besides OCRAM_S won't boot.
-> > > >
-> > > > The firmware must set stack poiner as first instruction:
-> > > >
-> > > > Reset_Handler:
-> > > >     ldr   sp, = __stack      /* set stack pointer */
-> > > >
-> > > > Signed-off-by: Nikita Shubin <NShubin@topcon.com>
-> > >
-> > > The address in the SoB has to match what is found in the "From:"
-> > > field of the email header.  Checkpatch is complaining about that,
-> > > something I would have expected to be fixed before sending this
-> > > set out.
-> > >
-> > > > ---
-> > > >  drivers/remoteproc/imx_rproc.c | 16 +++++++++++++++-
-> > > >  1 file changed, 15 insertions(+), 1 deletion(-)
-> > > >
-> > > > diff --git a/drivers/remoteproc/imx_rproc.c
-> > > > b/drivers/remoteproc/imx_rproc.c index
-> > > > 3e72b6f38d4b..bebc58d0f711 100644 ---
-> > > > a/drivers/remoteproc/imx_rproc.c +++
-> > > > b/drivers/remoteproc/imx_rproc.c @@ -45,6 +45,8 @@
-> > > >
-> > > >  #define IMX7D_RPROC_MEM_MAX                8
-> > > >
-> > > > +#define IMX_BOOT_PC                        0x4
-> > > > +
-> > > >  /**
-> > > >   * struct imx_rproc_mem - slim internal memory structure
-> > > >   * @cpu_addr: MPU virtual address of the memory region
-> > > > @@ -85,6 +87,7 @@ struct imx_rproc {
-> > > >     const struct imx_rproc_dcfg     *dcfg;
-> > > >     struct imx_rproc_mem
-> > > > mem[IMX7D_RPROC_MEM_MAX]; struct clk
-> > > > *clk;
-> > > > +   void __iomem                    *bootreg;
-> > > >  };
-> > > >
-> > > >  static const struct imx_rproc_att imx_rproc_att_imx7d[] = {
-> > > > @@ -162,11 +165,16 @@ static int imx_rproc_start(struct rproc
-> > > > *rproc) struct device *dev = priv->dev;
-> > > >     int ret;
-> > > >
-> > > > +   /* write entry point to program counter */
-> > > > +   writel(rproc->bootaddr, priv->bootreg);
-> > >
-> > > What happens on all the other IMX systems where this fix is not
-> > > needed?  Will they continue to work properly?
-> >
-> > Mathieu you are totally correct imx6/imx7 use different addresses
-> > they boot.
-> >
-> > For imx7:
-> > | On i.MX 7Dual/7Solo, the boot vector for the Cortex-M4 core is
-> > located | at the start of the OCRAM_S (On Chip RAM - Secure) whose
-> > address is | 0x0018_0000 from Cortex-A7.
-> >
-> > For imx6:
-> > | The Boot vector for the Cortex-M4 core is located at the start of
-> > the | TCM_L whose address is 0x007F_8000 from the Cortex-A9. This
-> > is a | different location than on the i.MX 7Dual/7Solo
-> >
-> > But on imx7 0x0 is translated to 0x0018_0000 by imx_rproc_da_to_va,
-> > and on imx7 0x0 is translated to 0x007F_8000, using
-> > imx_rproc_att_imx7d and imx_rproc_att_imx6sx respectively.
-> 
-> My point here is that before your patch, this driver was running on
-> IMX platforms.  How does your work impact existing platforms that are
-> booting properly?
+Thanks for your feedback.
 
-Well it wasn't i am pretty sure it wasn't used at all or questions
-about boot process should have to be raised earlier.
 
-If we look into the first patch introduced by Oleksij Rempel
-https://lore.kernel.org/patchwork/cover/799614/
-we can that the program he used is located at 0x0018_0000 so he didn't
-have any problems with Entry Point and stack pointer being at
-0x0018_0000 and 0x0018_0004 respectively.
+> but in this case, I think it is better to leave the current code as is.
 
-But as i am trying to emphasize, IF elf is not supposed to be located
-starting at 0x0018_0000 it won't boot at all.
+Would you like to consider the use of the function =E2=80=9Ckvasprintf_con=
+st=E2=80=9D
+according to your review comment for the update step =E2=80=9C[PATCH v2 4/=
+7] remoteproc:
+Use kstrdup_const() rather than kstrup()=E2=80=9D?
 
-Citing Oleksij:
-
-| no, currently my priority is to provide basic functionality with easy 
-| understandable target code and dependencies.
-
-Moreover it seems not tested on IMX6 by anyone. 
-
-I can limit functionality only to IMX7, until i lay hands on IMX6
-with m4 co-proc - is this is what desired ?
-
-> 
-> >
-> > I have no information about IMX8 (i have found none available
-> > publicity), but should be the same as Cortex-M boots from 0x0.
-> >
-> > >
-> > > > +
-> > > >     ret = regmap_update_bits(priv->regmap, dcfg->src_reg,
-> > > >                              dcfg->src_mask, dcfg->src_start);
-> > > >     if (ret)
-> > > >             dev_err(dev, "Failed to enable M4!\n");
-> > > >
-> > > > +   dev_info(&rproc->dev, "Started from 0x%x\n",
-> > > > rproc->bootaddr); +
-> > > >     return ret;
-> > > >  }
-> > > >
-> > > > @@ -182,6 +190,9 @@ static int imx_rproc_stop(struct rproc
-> > > > *rproc) if (ret)
-> > > >             dev_err(dev, "Failed to stop M4!\n");
-> > > >
-> > > > +   /* clear entry points */
-> > > > +   writel(0, priv->bootreg);
-> > > > +
-> > > >     return ret;
-> > > >  }
-> > > >
-> > > > @@ -243,7 +254,8 @@ static void *imx_rproc_da_to_va(struct rproc
-> > > > *rproc, u64 da, int len) static const struct rproc_ops
-> > > > imx_rproc_ops = { .start            = imx_rproc_start,
-> > > >     .stop           = imx_rproc_stop,
-> > > > -   .da_to_va       = imx_rproc_da_to_va,
-> > > > +   .da_to_va       = imx_rproc_da_to_va,
-> > > > +   .get_boot_addr  = rproc_elf_get_boot_addr,
-> > >
-> > > How is this useful?  Sure it will set rproc->bootaddr in
-> > > rproc_fw_boot() but what good does that do when it is invariably
-> > > set again in imx_rproc_start() ?
-> > >
-> > > >  };
-> > > >
-> > > >  static int imx_rproc_addr_init(struct imx_rproc *priv,
-> > > > @@ -360,6 +372,8 @@ static int imx_rproc_probe(struct
-> > > > platform_device *pdev) goto err_put_rproc;
-> > > >     }
-> > > >
-> > > > +   priv->bootreg = imx_rproc_da_to_va(rproc, IMX_BOOT_PC,
-> > > > sizeof(u32)); +
-> > > >     /*
-> > > >      * clk for M4 block including memory. Should be
-> > > >      * enabled before .start for FW transfer.
-> > > > --
-> > > > 2.25.1
-> > > >
-> >
-
+Regards,
+Markus
