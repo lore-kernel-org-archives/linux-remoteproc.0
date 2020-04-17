@@ -1,88 +1,35 @@
-Return-Path: <arnaud.pouliquen@st.com>
-From: Arnaud Pouliquen <arnaud.pouliquen@st.com>
-Subject: [RFC 14/18] remoteproc: Add pa to da translation API
-Date: Thu, 16 Apr 2020 18:13:27 +0200
-Message-ID: <20200416161331.7606-15-arnaud.pouliquen@st.com>
-In-Reply-To: <20200416161331.7606-1-arnaud.pouliquen@st.com>
-References: <20200416161331.7606-1-arnaud.pouliquen@st.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Sibi Sankar <sibis@codeaurora.org>
+Subject: [PATCH 0/5] Add PAS and MSA based Modem support
+Date: Fri, 17 Apr 2020 19:56:00 +0530
+Message-Id: <20200417142605.28885-1-sibis@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-To: Bjorn Andersson <bjorn.andersson@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>, Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, arnaud.pouliquen@st.com
+Content-Transfer-Encoding: 8bit
+Sender: linux-kernel-owner@vger.kernel.org
+To: bjorn.andersson@linaro.org
+Cc: agross@kernel.org, robh+dt@kernel.org, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, evgreen@chromium.org, ohad@wizery.com, mka@chromium.org, dianders@chromium.org, devicetree@vger.kernel.org, Sibi Sankar <sibis@codeaurora.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Add remote proc API to allow IPC client to translate address from
-local to device paradigm.
+Add PAS based modem support on SC7180 SoCs and update the device node to
+support MSA based modem boot.
 
-Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@st.com>
----
- drivers/remoteproc/remoteproc_core.c | 24 ++++++++++++++++++++++++
- include/linux/remoteproc.h           |  4 ++++
- 2 files changed, 28 insertions(+)
+Patch [1,2] - Add PAS based modem support
+Patch [3] - Update reserved memory map
+Patch [4,5] - Add PAS/MSA modem nodes
 
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index f9d04e59081c..72fb97f28048 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -1939,6 +1939,30 @@ int rproc_add(struct rproc *rproc)
- }
- EXPORT_SYMBOL(rproc_add);
- 
-+/**
-+ * rproc_pa_to_da() - memory translation from local physical address to
-+ * remote device address
-+ * @rproc: the remote processor handle to register
-+ * @pa: local physical address
-+ * @da: remote device address
-+ *
-+ * Return the device address associated to the physical address
-+ * The translation is delegated to the platform driver if the ops is
-+ * implemented. By default this function returns the physical address.
-+ *
-+ * Returns 0 on success and an appropriate error code otherwise.
-+ */
-+int rproc_pa_to_da(struct rproc *rproc, phys_addr_t pa, u64 *da)
-+{
-+	if (!rproc->ops->pa_to_da) {
-+		*da = pa;
-+		return 0;
-+	}
-+
-+	return rproc->ops->pa_to_da(rproc, pa, da);
-+}
-+EXPORT_SYMBOL(rproc_pa_to_da);
-+
- /**
-  * rproc_type_release() - release a remote processor instance
-  * @dev: the rproc's device
-diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-index d7235f7356e2..7b8a6c3ef519 100644
---- a/include/linux/remoteproc.h
-+++ b/include/linux/remoteproc.h
-@@ -359,6 +359,7 @@ enum rsc_handling_status {
-  * @stop:	power off the device
-  * @kick:	kick a virtqueue (virtqueue id given as a parameter)
-  * @da_to_va:	optional platform hook to perform address translations
-+ * @pa_to_da:	optional platform hook to perform address translations
-  * @parse_fw:	parse firmware to extract information (e.g. resource table)
-  * @handle_rsc:	optional platform hook to handle vendor resources. Should return
-  * RSC_HANDLED if resource was handled, RSC_IGNORED if not handled and a
-@@ -375,6 +376,7 @@ struct rproc_ops {
- 	int (*stop)(struct rproc *rproc);
- 	void (*kick)(struct rproc *rproc, int vqid);
- 	void * (*da_to_va)(struct rproc *rproc, u64 da, int len);
-+	int (*pa_to_da)(struct rproc *rproc, phys_addr_t pa, u64 *da);
- 	int (*parse_fw)(struct rproc *rproc, const struct firmware *fw);
- 	int (*handle_rsc)(struct rproc *rproc, u32 rsc_type, void *rsc,
- 			  int offset, int avail);
-@@ -618,6 +620,8 @@ struct rproc_mem_entry *
- rproc_of_resm_mem_entry_init(struct device *dev, u32 of_resm_idx, int len,
- 			     u32 da, const char *name, ...);
- 
-+int rproc_pa_to_da(struct rproc *rproc, phys_addr_t pa, u64 *da);
-+
- int rproc_boot(struct rproc *rproc);
- void rproc_shutdown(struct rproc *rproc);
- void rproc_report_crash(struct rproc *rproc, enum rproc_crash_type type);
+Sibi Sankar (5):
+  dt-bindings: remoteproc: qcom: Add SC7180 MPSS support
+  remoteproc: qcom: pas: Add SC7180 Modem support
+  arm64: dts: qcom: sc7180: Update reserved memory map
+  arm64: dts: qcom: sc7180: Add Q6V5 MSS node
+  arm64: dts: qcom: sc7180: Update Q6V5 MSS node
+
+ .../bindings/remoteproc/qcom,adsp.txt         |   3 +
+ arch/arm64/boot/dts/qcom/sc7180-idp.dts       | 105 +++++++++++++++
+ arch/arm64/boot/dts/qcom/sc7180.dtsi          | 124 +++++++++++++++++-
+ drivers/remoteproc/qcom_q6v5_pas.c            |   1 +
+ 4 files changed, 231 insertions(+), 2 deletions(-)
+
 -- 
-2.17.1
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
