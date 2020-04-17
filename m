@@ -1,83 +1,39 @@
-Return-Path: <mathieu.poirier@linaro.org>
-Return-Path: <mathieu.poirier@linaro.org>
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-Subject: [PATCH v3 3/4] remoteproc: Split rproc_ops allocation from rproc_alloc()
-Date: Mon, 20 Apr 2020 17:16:00 -0600
-Message-Id: <20200420231601.16781-4-mathieu.poirier@linaro.org>
-In-Reply-To: <20200420231601.16781-1-mathieu.poirier@linaro.org>
-References: <20200420231601.16781-1-mathieu.poirier@linaro.org>
+Return-Path: <paul@crapouillou.net>
+From: Paul Cercueil <paul@crapouillou.net>
+Subject: [PATCH v6 5/5] MAINTAINERS: Add myself as reviewer for Ingenic rproc driver
+Date: Fri, 17 Apr 2020 19:00:40 +0200
+Message-Id: <20200417170040.174319-5-paul@crapouillou.net>
+In-Reply-To: <20200417170040.174319-1-paul@crapouillou.net>
+References: <20200417170040.174319-1-paul@crapouillou.net>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-To: bjorn.andersson@linaro.org, ohad@wizery.com
-Cc: elder@linaro.org, s-anna@ti.com, Markus.Elfring@web.de, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Arnaud Pouliquen <arnaud.pouliquen@st.com>
+Cc: od@zcrc.me, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Make the rproc_ops allocation a function on its own in an effort
-to clean up function rproc_alloc().
+Add myself as the reviewer for the Ingenic VPU remoteproc driver.
 
-Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-Reviewed-by: Alex Elder <elder@linaro.org>
+Signed-off-by: Paul Cercueil <paul@crapouillou.net>
 ---
- drivers/remoteproc/remoteproc_core.c | 33 ++++++++++++++++++----------
- 1 file changed, 21 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index 45529d40342f..15318507aedb 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -2028,6 +2028,26 @@ static int rproc_alloc_firmware(struct rproc *rproc,
- 	return 0;
- }
- 
-+static int rproc_alloc_ops(struct rproc *rproc, const struct rproc_ops *ops)
-+{
-+	rproc->ops = kmemdup(ops, sizeof(*ops), GFP_KERNEL);
-+	if (!rproc->ops)
-+		return -ENOMEM;
-+
-+	if (rproc->ops->load)
-+		return 0;
-+
-+	/* Default to ELF loader if no load function is specified */
-+	rproc->ops->load = rproc_elf_load_segments;
-+	rproc->ops->parse_fw = rproc_elf_load_rsc_table;
-+	rproc->ops->find_loaded_rsc_table = rproc_elf_find_loaded_rsc_table;
-+	if (!rproc->ops->sanity_check)
-+		rproc->ops->sanity_check = rproc_elf32_sanity_check;
-+	rproc->ops->get_boot_addr = rproc_elf_get_boot_addr;
-+
-+	return 0;
-+}
-+
- /**
-  * rproc_alloc() - allocate a remote processor handle
-  * @dev: the underlying device
-@@ -2067,8 +2087,7 @@ struct rproc *rproc_alloc(struct device *dev, const char *name,
- 	if (rproc_alloc_firmware(rproc, name, firmware))
- 		goto free_rproc;
- 
--	rproc->ops = kmemdup(ops, sizeof(*ops), GFP_KERNEL);
--	if (!rproc->ops)
-+	if (rproc_alloc_ops(rproc, ops))
- 		goto free_firmware;
- 
- 	rproc->name = name;
-@@ -2096,16 +2115,6 @@ struct rproc *rproc_alloc(struct device *dev, const char *name,
- 
- 	atomic_set(&rproc->power, 0);
- 
--	/* Default to ELF loader if no load function is specified */
--	if (!rproc->ops->load) {
--		rproc->ops->load = rproc_elf_load_segments;
--		rproc->ops->parse_fw = rproc_elf_load_rsc_table;
--		rproc->ops->find_loaded_rsc_table = rproc_elf_find_loaded_rsc_table;
--		if (!rproc->ops->sanity_check)
--			rproc->ops->sanity_check = rproc_elf32_sanity_check;
--		rproc->ops->get_boot_addr = rproc_elf_get_boot_addr;
--	}
--
- 	mutex_init(&rproc->lock);
- 
- 	INIT_LIST_HEAD(&rproc->carveouts);
+Notes:
+    v4: New patch
+    v5-v6: No change
+
+ MAINTAINERS | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index e64e5db31497..1677071197a0 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -8418,6 +8418,7 @@ F:	drivers/mtd/nand/raw/ingenic/
+ F:	drivers/pinctrl/pinctrl-ingenic.c
+ F:	drivers/power/supply/ingenic-battery.c
+ F:	drivers/pwm/pwm-jz4740.c
++F:	drivers/remoteproc/ingenic_rproc.c
+ F:	drivers/rtc/rtc-jz4740.c
+ F:	drivers/tty/serial/8250/8250_ingenic.c
+ F:	drivers/usb/musb/jz4740.c
 -- 
-2.20.1
+2.25.1
