@@ -1,39 +1,111 @@
-Return-Path: <bjorn.andersson@linaro.org>
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: [PATCH 0/4] rpmsg: Refactor Qualcomm glink_ssr
-Date: Wed, 22 Apr 2020 17:37:32 -0700
-Message-Id: <20200423003736.2027371-1-bjorn.andersson@linaro.org>
+Return-Path: <mathieu.poirier@linaro.org>
+Return-Path: <mathieu.poirier@linaro.org>
+Date: Fri, 17 Apr 2020 13:39:57 -0600
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+Subject: Re: [PATCH 2/2] remoteproc: use rproc_coredump_set_elf_info in
+ drivers
+Message-ID: <20200417193957.GC6797@xps15>
+References: <20200410102433.2672-1-cleger@kalray.eu>
+ <20200410102433.2672-3-cleger@kalray.eu>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To: Andy Gross <agross@kernel.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, Chris Lew <clew@codeaurora.org>, Sibi <sibis@codeaurora.org>, Siddharth Gupta <sidgup@codeaurora.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200410102433.2672-3-cleger@kalray.eu>
+To: Clement Leger <cleger@kalray.eu>
+Cc: Andy Gross <agross@kernel.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@st.com>, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-In order to allow for wider use of the SSR notifier in remoteproc's qcom_common
-this series internalizes the notifier chain used by glink_ssr. To simplify the
-Kconfig dependencies it also moves the glink_ssr implementation to rpmsg and
-merges it with qcom_glink_native, as these do go hand in hand.
+On Fri, Apr 10, 2020 at 12:24:33PM +0200, Clement Leger wrote:
+> Modify drivers which are using remoteproc coredump functionnality to use
 
-Bjorn Andersson (4):
-  remoteproc: qcom: Pass ssr_name to glink subdevice
-  soc: qcom: glink_ssr: Internalize ssr_notifiers
-  rpmsg: glink: Integrate glink_ssr in qcom_glink
-  arm64: defconfig: Remove QCOM_GLINK_SSR
+s/functionnality/functionality
 
- arch/arm64/configs/defconfig                  |  1 -
- drivers/remoteproc/qcom_common.c              | 17 ++++++++++-
- drivers/remoteproc/qcom_common.h              |  5 +++-
- drivers/remoteproc/qcom_q6v5_adsp.c           |  2 +-
- drivers/remoteproc/qcom_q6v5_mss.c            |  2 +-
- drivers/remoteproc/qcom_q6v5_pas.c            |  2 +-
- drivers/rpmsg/Kconfig                         |  6 ++--
- drivers/rpmsg/Makefile                        |  3 +-
- .../glink_ssr.c => rpmsg/qcom_glink_ssr.c}    | 28 +++++++++++++------
- drivers/soc/qcom/Kconfig                      |  9 ------
- drivers/soc/qcom/Makefile                     |  1 -
- include/linux/rpmsg/qcom_glink.h              |  3 +-
- 12 files changed, 49 insertions(+), 30 deletions(-)
- rename drivers/{soc/qcom/glink_ssr.c => rpmsg/qcom_glink_ssr.c} (83%)
+> rproc_coredump_set_elf_info in order to create correct elf coredump
+> format.
+> 
+> Signed-off-by: Clement Leger <cleger@kalray.eu>
+> ---
+>  drivers/remoteproc/qcom_q6v5_adsp.c | 1 +
+>  drivers/remoteproc/qcom_q6v5_mss.c  | 3 +++
+>  drivers/remoteproc/qcom_q6v5_pas.c  | 1 +
+>  drivers/remoteproc/qcom_wcnss.c     | 1 +
+>  drivers/remoteproc/stm32_rproc.c    | 1 +
+>  5 files changed, 7 insertions(+)
+> 
+> diff --git a/drivers/remoteproc/qcom_q6v5_adsp.c b/drivers/remoteproc/qcom_q6v5_adsp.c
+> index 2b01f2282062..8c3bd0954a13 100644
+> --- a/drivers/remoteproc/qcom_q6v5_adsp.c
+> +++ b/drivers/remoteproc/qcom_q6v5_adsp.c
+> @@ -423,6 +423,7 @@ static int adsp_probe(struct platform_device *pdev)
+>  		dev_err(&pdev->dev, "unable to allocate remoteproc\n");
+>  		return -ENOMEM;
+>  	}
+> +	rproc_coredump_set_elf_info(rproc, ELFCLASS32, EM_NONE);
+>  
+>  	adsp = (struct qcom_adsp *)rproc->priv;
+>  	adsp->dev = &pdev->dev;
+> diff --git a/drivers/remoteproc/qcom_q6v5_mss.c b/drivers/remoteproc/qcom_q6v5_mss.c
+> index 03ffc6db4c68..5a7ff1092362 100644
+> --- a/drivers/remoteproc/qcom_q6v5_mss.c
+> +++ b/drivers/remoteproc/qcom_q6v5_mss.c
+> @@ -1355,6 +1355,8 @@ static int qcom_q6v5_register_dump_segments(struct rproc *rproc,
+>  		return ret;
+>  	}
+>  
+> +	rproc_coredump_set_elf_info(rproc, ELFCLASS32, EM_NONE);
+> +
+>  	ehdr = (struct elf32_hdr *)fw->data;
+>  	phdrs = (struct elf32_phdr *)(ehdr + 1);
+>  	qproc->dump_complete_mask = 0;
+> @@ -1632,6 +1634,7 @@ static int q6v5_probe(struct platform_device *pdev)
+>  	}
+>  
+>  	rproc->auto_boot = false;
+> +	rproc_coredump_set_elf_info(rproc, ELFCLASS32, EM_NONE);
+>  
+>  	qproc = (struct q6v5 *)rproc->priv;
+>  	qproc->dev = &pdev->dev;
+> diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
+> index a41860d2243a..991f57e8e55b 100644
+> --- a/drivers/remoteproc/qcom_q6v5_pas.c
+> +++ b/drivers/remoteproc/qcom_q6v5_pas.c
+> @@ -390,6 +390,7 @@ static int adsp_probe(struct platform_device *pdev)
+>  	}
+>  
+>  	rproc->auto_boot = desc->auto_boot;
+> +	rproc_coredump_set_elf_info(rproc, ELFCLASS32, EM_NONE);
+>  
+>  	adsp = (struct qcom_adsp *)rproc->priv;
+>  	adsp->dev = &pdev->dev;
+> diff --git a/drivers/remoteproc/qcom_wcnss.c b/drivers/remoteproc/qcom_wcnss.c
+> index 0c7afd038f0d..5d65e1a9329a 100644
+> --- a/drivers/remoteproc/qcom_wcnss.c
+> +++ b/drivers/remoteproc/qcom_wcnss.c
+> @@ -480,6 +480,7 @@ static int wcnss_probe(struct platform_device *pdev)
+>  		dev_err(&pdev->dev, "unable to allocate remoteproc\n");
+>  		return -ENOMEM;
+>  	}
+> +	rproc_coredump_set_elf_info(rproc, ELFCLASS32, EM_NONE);
+>  
+>  	wcnss = (struct qcom_wcnss *)rproc->priv;
+>  	wcnss->dev = &pdev->dev;
+> diff --git a/drivers/remoteproc/stm32_rproc.c b/drivers/remoteproc/stm32_rproc.c
+> index 6a66dbf2df40..0f9d02ca4f5a 100644
+> --- a/drivers/remoteproc/stm32_rproc.c
+> +++ b/drivers/remoteproc/stm32_rproc.c
+> @@ -625,6 +625,7 @@ static int stm32_rproc_probe(struct platform_device *pdev)
+>  	if (!rproc)
+>  		return -ENOMEM;
+>  
+> +	rproc_coredump_set_elf_info(rproc, ELFCLASS32, EM_NONE);
 
--- 
-2.24.0
+With the above:
+
+Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+
+>  	rproc->has_iommu = false;
+>  	ddata = rproc->priv;
+>  	ddata->workqueue = create_workqueue(dev_name(dev));
+> -- 
+> 2.17.1
+> 
