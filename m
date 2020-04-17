@@ -7,133 +7,270 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9393C2D0EF
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 17 Apr 2020 17:04:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4AA2C2D0EF
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 17 Apr 2020 17:11:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A8CEE2078E
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 17 Apr 2020 17:04:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8CC8A2076D
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 17 Apr 2020 17:11:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cPLUpW8n"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qqkD47l8"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728015AbgDQRE1 (ORCPT
+        id S1728454AbgDQRLV (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 17 Apr 2020 13:04:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59442 "EHLO
+        Fri, 17 Apr 2020 13:11:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60540 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727986AbgDQRE0 (ORCPT
+        with ESMTP id S1728098AbgDQRLU (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 17 Apr 2020 13:04:26 -0400
-Received: from mail-io1-xd41.google.com (mail-io1-xd41.google.com [IPv6:2607:f8b0:4864:20::d41])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C4F81C061A0C
-        for <linux-remoteproc@vger.kernel.org>; Fri, 17 Apr 2020 10:04:26 -0700 (PDT)
-Received: by mail-io1-xd41.google.com with SMTP id e127so3055895iof.6
-        for <linux-remoteproc@vger.kernel.org>; Fri, 17 Apr 2020 10:04:26 -0700 (PDT)
+        Fri, 17 Apr 2020 13:11:20 -0400
+Received: from mail-pg1-x541.google.com (mail-pg1-x541.google.com [IPv6:2607:f8b0:4864:20::541])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A2C3EC061A0C
+        for <linux-remoteproc@vger.kernel.org>; Fri, 17 Apr 2020 10:11:20 -0700 (PDT)
+Received: by mail-pg1-x541.google.com with SMTP id 2so1391972pgp.11
+        for <linux-remoteproc@vger.kernel.org>; Fri, 17 Apr 2020 10:11:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=4lySji5eZr7vFRyXo+ccYCUZufUMHPBXSg6yDFBfT+0=;
-        b=cPLUpW8n3CrcKqGSdBWo2qZR4aSmpF9ftFZ+jW/FhLcZDtbjVnLrWPHldUq6G4q18R
-         uHnAt/ExkFHgTiWZyPw1571yLyTaII6dejTxO1K9JCbxeM4rqv4SazKR8NuHJLjOYdzh
-         RBLshabzlDr9UEeKGsxqNJ+P0RRLpuiotqQqqGi8h7H7dvW8PaQj2VemkHAu3ax8G3kp
-         L9iXqGPAwJ5s9wU4GsuRXfY/gnyEfkdQp5ipYFfRhsZhjpTRF1o3ygmDfSQ37Vffaw9h
-         2UCGbC0JZ+b0HoMmCC3/JnFdPYERkS63qAGXwqBwizdwz+W/+GaTp/M/QAJ7RHJuYv7G
-         9XdA==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=MwZ5r02j5DDu60b1Yf9fovCXLqb5sheQ6pTSo/D8kaw=;
+        b=qqkD47l8byHNt7HvcF2YWHI8Ln1OLaurWVoh8ZPaayTt3kJndV4E6vQECtjPzxFfSW
+         X7VJJs7Vk775xW4hvTcgl22hvwy/7iauD3LJcPpkWR5VXnAoPkk8eqqEXKXBOXGzSD4L
+         FEcy3aKLz8b5lt3JdCyLOLIQOuVDjGfyxfQNLRB4uco6lzfWJjRpSXle+6COvQd9GGPK
+         GnqcdTMAMYCycNXQdX3ugEUBcvwd2s5p9wyKqgoo4caxt2KLoYpIqkxap6uZZfR19ijO
+         AdF0H/bRlEkoh4fGxGwC8pSAMeKN1Mc8c42RcIvV9bkluBMJYUwC4Mtao9DYbS8dzpyC
+         h6Hg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=4lySji5eZr7vFRyXo+ccYCUZufUMHPBXSg6yDFBfT+0=;
-        b=nRcbJbeCvHfU1tIGjWQlD3vqWRmX5LfLhf6F2YZlRiFBwaUpCvPuKwxyv1pFBtljiu
-         OCuwPSvMtkQ2kQMCnP+QSARVe6SuZlRHMCePBcSn4MpEIQWprBK6y6RBWAOcAR1JmBMk
-         RpXzzqe42Tr+W87Rn7vLRFbM1CtCR4DGVc79ggM59PwGQXwWY42u58M03Kxai3ZBcg2i
-         gwu2g1c0KLifJrbwW/0wzA5TUJk+tLDVsaq1EKumPrPO5qIwBFVArpxZg1QEEjSqoclW
-         i1Fc9w/478tOQ71n6EDd66T50MRQO/z2zKwxTCOe/+xecnxniEsDI6W8a9RCeIXRabo8
-         m3+g==
-X-Gm-Message-State: AGi0PuaBDo36eExK3Gt5dCmUC/A9LeQY1q+9iWLBMlCYwzj7Zim5fDxn
-        pTLfpkHmGomSe1qGpuEOSOtUAB6FIxZKCxc0uuFvaSwL
-X-Google-Smtp-Source: APiQypI9r6/CwVn7ZGYRSPvTc4tAXquIPq+CygktIDWtI503IFDTNxMoO6h/tMkgcO8GaCXcGtosrwZ0ZCzspSiKM5c=
-X-Received: by 2002:a02:4445:: with SMTP id o66mr4093213jaa.36.1587143065543;
- Fri, 17 Apr 2020 10:04:25 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=MwZ5r02j5DDu60b1Yf9fovCXLqb5sheQ6pTSo/D8kaw=;
+        b=PTQVhFcR4Ny1JempuKV5TqQxflveBt9aCLbSFMeaLqZxnp4vCDtkYwHE1X6LoKjMOk
+         bX/9hg4Dh4NJwM3E5M4tDzwB85CCYmbRIKZPcETGJahoD8fpvOgUzNdzAOTt/UbqA+M+
+         oOvSrF0hNJrBhf674oakjY3e7o9teqQseUv6xUCMn4E8wxf4ESoUklUQGCvIZCNIv6Og
+         hz+TP/cv5qp9hOaTXPelRfuPGcUiERn2Lmyk62FUQPu177aHoxYqNedRk1fafm6ioKPf
+         xc6H1M/yBZch0EZwieGtsXlAp8L3p6/nBnprDfYDSeZbsvhMdJUgN6sVnKepPR/wunLx
+         y3nw==
+X-Gm-Message-State: AGi0PuYxu853+Ta1RWcLZLiFZ7oW+j7hFgOjKk1wT3D38APgvV1VKK1U
+        PIFeLYVTAHYrSknxkJqqNaUOVA==
+X-Google-Smtp-Source: APiQypIulTHG+RBBZXvWiEQM4Jv4FTSexWl0Z/vnVRTL12zNnihOWSGrnncl1pym0ocnUvjzdqetOw==
+X-Received: by 2002:a63:fc45:: with SMTP id r5mr2738667pgk.440.1587143479915;
+        Fri, 17 Apr 2020 10:11:19 -0700 (PDT)
+Received: from yoga (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id o99sm6186906pjo.8.2020.04.17.10.11.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 17 Apr 2020 10:11:19 -0700 (PDT)
+Date:   Fri, 17 Apr 2020 10:11:16 -0700
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Loic PALLARDY <loic.pallardy@st.com>
+Cc:     Rishabh Bhatnagar <rishabhb@codeaurora.org>,
+        "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "ohad@wizery.com" <ohad@wizery.com>,
+        "mathieu.poirier@linaro.org" <mathieu.poirier@linaro.org>,
+        "tsoni@codeaurora.org" <tsoni@codeaurora.org>,
+        "psodagud@codeaurora.org" <psodagud@codeaurora.org>,
+        "sidgup@codeaurora.org" <sidgup@codeaurora.org>
+Subject: Re: [PATCH 2/3] remoteproc: Add inline coredump functionality
+Message-ID: <20200417171116.GE987656@yoga>
+References: <1587062312-4939-1-git-send-email-rishabhb@codeaurora.org>
+ <1587062312-4939-2-git-send-email-rishabhb@codeaurora.org>
+ <1b85229632dd44f198b3e0ff9414b458@SFHDAG7NODE2.st.com>
 MIME-Version: 1.0
-References: <20200417002036.24359-1-s-anna@ti.com> <20200417002036.24359-3-s-anna@ti.com>
-In-Reply-To: <20200417002036.24359-3-s-anna@ti.com>
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-Date:   Fri, 17 Apr 2020 11:04:14 -0600
-Message-ID:
- <CANLsYkz1LF=stn1E1uBQzBrLvMxio6=UQxQ7=jN1cVNT7P3Dkg@mail.gmail.com>
-Subject: Re: [PATCH 2/2] remoteproc: Use a local copy for the name field
-To:     Suman Anna <s-anna@ti.com>
-Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        linux-remoteproc <linux-remoteproc@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1b85229632dd44f198b3e0ff9414b458@SFHDAG7NODE2.st.com>
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
-Message-ID: <20200417170414.tKL13rIz3WG3mBOmGDYc76U3oDTaMD_XIvDfK5z4h3c@z>
+Message-ID: <20200417171116.xqH_r9blT8AaKlouEx3-btM1HWyj03-hXyXlP2NrcvE@z>
 
-On Thu, 16 Apr 2020 at 18:20, Suman Anna <s-anna@ti.com> wrote:
->
-> The current name field used in the remoteproc structure is simply
-> a pointer to a name field supplied during the rproc_alloc() call.
-> The pointer passed in by remoteproc drivers during registration is
-> typically a dev_name pointer, but it is possible that the pointer
-> will no longer remain valid if the devices themselves were created
-> at runtime like in the case of of_platform_populate(), and were
-> deleted upon any failures within the respective remoteproc driver
-> probe function.
->
-> So, allocate and maintain a local copy for this name field to
-> keep it agnostic of the logic used in the remoteproc drivers.
->
-> Signed-off-by: Suman Anna <s-anna@ti.com>
-> ---
-> v1:
->  - Patch baselined on top of Mathieu's rproc_alloc() refactor
->    series, and so addresses Bjorn's simplified cleanup comments
->  - Switch to {kstrdup/kfree}_const variants
-> v0: https://patchwork.kernel.org/patch/11456385/
->
->  drivers/remoteproc/remoteproc_core.c | 6 +++++-
->  1 file changed, 5 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-> index e38f627059ac..3cebface3f26 100644
-> --- a/drivers/remoteproc/remoteproc_core.c
-> +++ b/drivers/remoteproc/remoteproc_core.c
-> @@ -1984,6 +1984,7 @@ static void rproc_type_release(struct device *dev)
->
->         kfree(rproc->firmware);
->         kfree(rproc->ops);
-> +       kfree_const(rproc->name);
->         kfree(rproc);
->  }
->
-> @@ -2069,7 +2070,6 @@ struct rproc *rproc_alloc(struct device *dev, const char *name,
->         if (!rproc)
->                 return NULL;
->
-> -       rproc->name = name;
->         rproc->priv = &rproc[1];
->         rproc->auto_boot = true;
->         rproc->elf_class = ELFCLASS32;
-> @@ -2081,6 +2081,10 @@ struct rproc *rproc_alloc(struct device *dev, const char *name,
->         rproc->dev.driver_data = rproc;
->         idr_init(&rproc->notifyids);
->
-> +       rproc->name = kstrdup_const(name, GFP_KERNEL);
-> +       if (!rproc->name)
-> +               goto put_device;
-> +
+On Fri 17 Apr 00:52 PDT 2020, Loic PALLARDY wrote:
 
-Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+> Hi Rishabh,
+> 
+> > -----Original Message-----
+> > From: linux-remoteproc-owner@vger.kernel.org <linux-remoteproc-
+> > owner@vger.kernel.org> On Behalf Of Rishabh Bhatnagar
+> > Sent: jeudi 16 avril 2020 20:39
+> > To: linux-remoteproc@vger.kernel.org; linux-kernel@vger.kernel.org
+> > Cc: bjorn.andersson@linaro.org; ohad@wizery.com;
+> > mathieu.poirier@linaro.org; tsoni@codeaurora.org;
+> > psodagud@codeaurora.org; sidgup@codeaurora.org; Rishabh Bhatnagar
+> > <rishabhb@codeaurora.org>
+> > Subject: [PATCH 2/3] remoteproc: Add inline coredump functionality
+> > 
+> > This patch adds the inline coredump functionality. The current
+> > coredump implementation uses vmalloc area to copy all the segments.
+> > But this might put a lot of strain on low memory targets as the
+> > firmware size sometimes is in ten's of MBs. The situation becomes
+> > worse if there are multiple remote processors  undergoing recovery
+> > at the same time. This patch directly copies the device memory to
+> > userspace buffer and avoids extra memory usage. This requires
+> > recovery to be halted until data is read by userspace and free
+> > function is called.
+> > 
+> > Signed-off-by: Rishabh Bhatnagar <rishabhb@codeaurora.org>
+> > ---
+> >  drivers/remoteproc/remoteproc_coredump.c | 130
+> > +++++++++++++++++++++++++++++++
+> >  drivers/remoteproc/remoteproc_internal.h |  23 +++++-
+> >  include/linux/remoteproc.h               |   2 +
+> >  3 files changed, 153 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/drivers/remoteproc/remoteproc_coredump.c
+> > b/drivers/remoteproc/remoteproc_coredump.c
+> > index 9de0467..888b7dec91 100644
+> > --- a/drivers/remoteproc/remoteproc_coredump.c
+> > +++ b/drivers/remoteproc/remoteproc_coredump.c
+> > @@ -12,6 +12,84 @@
+> >  #include <linux/remoteproc.h>
+> >  #include "remoteproc_internal.h"
+> > 
+> > +static void rproc_free_dump(void *data)
+> > +{
+> > +	struct rproc_coredump_state *dump_state = data;
+> > +
+> > +	complete(&dump_state->dump_done);
+> > +}
+> > +
+> > +static unsigned long resolve_addr(loff_t user_offset,
+> > +				   struct list_head *segments,
+> > +				   unsigned long *data_left)
+> > +{
+> > +	struct rproc_dump_segment *segment;
+> > +
+> > +	list_for_each_entry(segment, segments, node) {
+> > +		if (user_offset >= segment->size)
+> > +			user_offset -= segment->size;
+> > +		else
+> > +			break;
+> > +	}
+> > +
+> > +	if (&segment->node == segments) {
+> > +		*data_left = 0;
+> > +		return 0;
+> > +	}
+> > +
+> > +	*data_left = segment->size - user_offset;
+> > +
+> > +	return segment->da + user_offset;
+> > +}
+> > +
+> > +static ssize_t rproc_read_dump(char *buffer, loff_t offset, size_t count,
+> > +				void *data, size_t header_size)
+> > +{
+> > +	void *device_mem;
+> > +	size_t data_left, copy_size, bytes_left = count;
+> > +	unsigned long addr;
+> > +	struct rproc_coredump_state *dump_state = data;
+> > +	struct rproc *rproc = dump_state->rproc;
+> > +	void *elfcore = dump_state->header;
+> > +
+> > +	/* Copy the header first */
+> > +	if (offset < header_size) {
+> > +		copy_size = header_size - offset;
+> > +		copy_size = min(copy_size, bytes_left);
+> > +
+> > +		memcpy(buffer, elfcore + offset, copy_size);
+> > +		offset += copy_size;
+> > +		bytes_left -= copy_size;
+> > +		buffer += copy_size;
+> > +	}
+> > +
+> > +	while (bytes_left) {
+> > +		addr = resolve_addr(offset - header_size,
+> > +				    &rproc->dump_segments, &data_left);
+> > +		/* EOF check */
+> > +		if (data_left == 0) {
+> > +			pr_info("Ramdump complete %lld bytes read",
+> > offset);
+> > +			break;
+> > +		}
+> > +
+> > +		copy_size = min_t(size_t, bytes_left, data_left);
+> > +
+> > +		device_mem = rproc->ops->da_to_va(rproc, addr,
+> > copy_size);
+> > +		if (!device_mem) {
+> > +			pr_err("Address:%lx with size %zd out of remoteproc
+> > carveout\n",
+> > +				addr, copy_size);
+> > +			return -ENOMEM;
+> > +		}
+> > +		memcpy(buffer, device_mem, copy_size);
+> > +
+> > +		offset += copy_size;
+> > +		buffer += copy_size;
+> > +		bytes_left -= copy_size;
+> > +	}
+> > +
+> > +	return count - bytes_left;
+> > +}
+> > +
+> >  static void create_elf_header(void *data, int phnum, struct rproc *rproc)
+> >  {
+> >  	struct elf32_phdr *phdr;
+> > @@ -55,6 +133,58 @@ static void create_elf_header(void *data, int phnum,
+> > struct rproc *rproc)
+> >  }
+> > 
+> >  /**
+> > + * rproc_inline_coredump() - perform synchronized coredump
+> > + * @rproc:	rproc handle
+> > + *
+> > + * This function will generate an ELF header for the registered segments
+> > + * and create a devcoredump device associated with rproc. This function
+> > + * directly copies the segments from device memory to userspace. The
+> > + * recovery is stalled until the enitire coredump is read. This approach
+> Typo entire -> entire
+> > + * avoids using extra vmalloc memory(which can be really large).
+> > + */
+> > +void rproc_inline_coredump(struct rproc *rproc)
+> > +{
+> > +	struct rproc_dump_segment *segment;
+> > +	struct elf32_phdr *phdr;
+> > +	struct elf32_hdr *ehdr;
+> > +	struct rproc_coredump_state *dump_state;
+> > +	size_t header_size;
+> > +	void *data;
+> > +	int phnum = 0;
+> > +
+> > +	if (list_empty(&rproc->dump_segments))
+> > +		return;
+> > +
+> > +	header_size = sizeof(*ehdr);
+> > +	list_for_each_entry(segment, &rproc->dump_segments, node) {
+> > +		header_size += sizeof(*phdr);
+> > +
+> > +		phnum++;
+> > +	}
+> > +
+> > +	data = vmalloc(header_size);
+> > +	if (!data)
+> > +		return;
+> > +
+> > +	ehdr = data;
+> > +	create_elf_header(data, phnum, rproc);
+> > +
+> > +	dump_state = kzalloc(sizeof(*dump_state), GFP_KERNEL);
+> > +	dump_state->rproc = rproc;
+> > +	dump_state->header = data;
+> > +	init_completion(&dump_state->dump_done);
+> > +
+> > +	dev_coredumpm(&rproc->dev, NULL, dump_state, header_size,
+> > GFP_KERNEL,
+> > +		      rproc_read_dump, rproc_free_dump);
+> > +
+> > +	/* Wait until the dump is read and free is called */
+> > +	wait_for_completion(&dump_state->dump_done);
+> 
+> Maybe good to add a timeout with value programmable via debugfs?
+> 
 
->         if (rproc_alloc_firmware(rproc, name, firmware))
->                 goto put_device;
->
-> --
-> 2.26.0
->
+devcoredump provides a timeout already, although not configurable today.
+I believe this is sufficient, but a mentioning in the comment would be
+useful.
+
+Regards,
+Bjorn
