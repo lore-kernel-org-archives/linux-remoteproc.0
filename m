@@ -2,196 +2,114 @@ Return-Path: <SRS0=ybdg=6B=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BECFC38A2C
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 17 Apr 2020 19:43:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FA5DC38A29
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 17 Apr 2020 20:58:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 647A2206D9
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 17 Apr 2020 19:43:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7E81921841
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 17 Apr 2020 20:58:58 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="r8tARiBn"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730885AbgDQTnw convert rfc822-to-8bit (ORCPT
+        id S1726659AbgDQU65 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 17 Apr 2020 15:43:52 -0400
-Received: from zimbra2.kalray.eu ([92.103.151.219]:53434 "EHLO
-        zimbra2.kalray.eu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730449AbgDQTnv (ORCPT
+        Fri, 17 Apr 2020 16:58:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39310 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726277AbgDQU65 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 17 Apr 2020 15:43:51 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by zimbra2.kalray.eu (Postfix) with ESMTP id A116127E0309;
-        Fri, 17 Apr 2020 21:43:48 +0200 (CEST)
-Received: from zimbra2.kalray.eu ([127.0.0.1])
-        by localhost (zimbra2.kalray.eu [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id tV94W3F9OK5N; Fri, 17 Apr 2020 21:43:48 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-        by zimbra2.kalray.eu (Postfix) with ESMTP id 14D6027E1067;
-        Fri, 17 Apr 2020 21:43:48 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at zimbra2.kalray.eu
-Received: from zimbra2.kalray.eu ([127.0.0.1])
-        by localhost (zimbra2.kalray.eu [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id 61DbgYq2xx3I; Fri, 17 Apr 2020 21:43:47 +0200 (CEST)
-Received: from zimbra2.kalray.eu (localhost [127.0.0.1])
-        by zimbra2.kalray.eu (Postfix) with ESMTP id E9E3927E0309;
-        Fri, 17 Apr 2020 21:43:47 +0200 (CEST)
-Date:   Fri, 17 Apr 2020 21:43:47 +0200 (CEST)
-From:   =?utf-8?Q?Cl=C3=A9ment?= Leger <cleger@kalrayinc.com>
-To:     Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc:     Andy Gross <agross@kernel.org>,
+        Fri, 17 Apr 2020 16:58:57 -0400
+Received: from mail-pl1-x631.google.com (mail-pl1-x631.google.com [IPv6:2607:f8b0:4864:20::631])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D294CC061A0F
+        for <linux-remoteproc@vger.kernel.org>; Fri, 17 Apr 2020 13:58:55 -0700 (PDT)
+Received: by mail-pl1-x631.google.com with SMTP id f8so1401788plt.2
+        for <linux-remoteproc@vger.kernel.org>; Fri, 17 Apr 2020 13:58:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=IPeJXG06ZWSjID1ZSrk68zz6iipUS238/wcn3J1nBio=;
+        b=r8tARiBnDehpRMpjOnDPEGZJxST7s2t5Nm4jmrXcz4Lg+uS8bFIDERNgCLzQgXJ5hC
+         7vPPn7RLIio7Py2VMxGt0bbRmhnBK+EqvawRztLY4orZcpd3s020wG2vpVPv9GHGyVYS
+         4vSvuBbxRKwlrXtbsdSD64aYlh/ann3Xo/2VADYnAOGjkCRLEpstfET7SeR0YWeUnvAf
+         od9ix1eI0NH5bN9d7BcyZ902rUiQWAL9jk7q4pFT53jPfriTTPK6iN7jg+V8ax8QM9DA
+         RteUMabdDzbErzz4unTh4mG9GicUcv8jJKals9+oQkAGIoERu0JFFkRIZyux5URMoKi+
+         yjqA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=IPeJXG06ZWSjID1ZSrk68zz6iipUS238/wcn3J1nBio=;
+        b=bYTyIR2McO9IwP/Yy6i+Pc6+rFQesSk2R0EFVKgSm6JHQ8/QIXPM1JphHE2hqK9hne
+         lrfclH/rhbqc8stS/xOHPsa2SXfZp8y5SwVrpBoXW6sFp4uV3CvZBw56nYdmVmKrUNCx
+         tKwwYx3e5c+r8ciDBEi8BK/VP9itVxd2k/zXW0OoYTuiecXF+SCyieSuCOhnQ99E+lLY
+         v/XkaWa9j9Q0f3Nqxp6LeRykdxBgDMsOwMNimHHmyTdBds1KfQ9E/Zi+TPkPWm4DKMLf
+         BwtZvtHTTEnqPfsex+4xKEp5Xw+q9P1P1/ZmO3VQAHV90orh8e1RAnpS5j7QfCASdslZ
+         v3EQ==
+X-Gm-Message-State: AGi0PuYqOXOJwzAaTzecX+BJCawP9+q6PHxYsDwizsPyEeSseD46CvGA
+        8P0BW3i+bOnkJCUwhVc4TCiPkw==
+X-Google-Smtp-Source: APiQypLoltWczEfKnuHpDYUDGkgjfP5vNaxQfZtow0WTBt477E3OAVR2PBMnhJkeRmloh3H125zOrg==
+X-Received: by 2002:a17:90a:d3ca:: with SMTP id d10mr6932745pjw.24.1587157135366;
+        Fri, 17 Apr 2020 13:58:55 -0700 (PDT)
+Received: from xps15 (S0106002369de4dac.cg.shawcable.net. [68.147.8.254])
+        by smtp.gmail.com with ESMTPSA id i15sm8739514pfo.195.2020.04.17.13.58.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 17 Apr 2020 13:58:53 -0700 (PDT)
+Date:   Fri, 17 Apr 2020 14:58:51 -0600
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+To:     Markus Elfring <Markus.Elfring@web.de>
+Cc:     Suman Anna <s-anna@ti.com>, linux-remoteproc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Alex Elder <elder@linaro.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Ohad Ben-Cohen <ohad@wizery.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        linux-remoteproc <linux-remoteproc@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-stm32 <linux-stm32@st-md-mailman.stormreply.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Message-ID: <1280711269.16158926.1587152627279.JavaMail.zimbra@kalray.eu>
-In-Reply-To: <20200417193837.GB6797@xps15>
-References: <20200410102433.2672-1-cleger@kalray.eu> <20200410102433.2672-2-cleger@kalray.eu> <20200417193837.GB6797@xps15>
-Subject: Re: [PATCH 1/2] remoteproc: add rproc_coredump_set_elf_info
+        Ohad Ben-Cohen <ohad@wizery.com>
+Subject: Re: [v2 5/7] remoteproc: Restructure firmware name allocation
+Message-ID: <20200417205851.GA10372@xps15>
+References: <20200415204858.2448-1-mathieu.poirier@linaro.org>
+ <20200415204858.2448-6-mathieu.poirier@linaro.org>
+ <aa565fea-b1c4-9b5c-73ed-591244afee19@web.de>
+ <e887c990-8cba-62b0-0f47-3ea0c166d603@ti.com>
+ <7a978c24-945d-8d39-3a0a-30e0678d569a@web.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
-X-Originating-IP: [192.168.40.202]
-X-Mailer: Zimbra 8.8.15_GA_3895 (ZimbraWebClient - FF68 (Linux)/8.8.15_GA_3895)
-Thread-Topic: remoteproc: add rproc_coredump_set_elf_info
-Thread-Index: ZRVka9xHHsh5gxO0cyYKwOr1nrpnPA==
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <7a978c24-945d-8d39-3a0a-30e0678d569a@web.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
-Message-ID: <20200417194347.1WdX8CgRhAe1jNXGs_szHG8nwTPLNS4RPdI5bshwDPQ@z>
+Message-ID: <20200417205851.6lHjfWxfUmXmDMYkV2b3SYdqQG8oDdqlSonGEfRoum8@z>
 
------ On 17 Apr, 2020, at 21:38, Mathieu Poirier mathieu.poirier@linaro.org wrote:
+Hi Markus,
 
-> On Fri, Apr 10, 2020 at 12:24:32PM +0200, Clement Leger wrote:
->> This function allows drivers to correctly setup the coredump output
->> elf information.
->> 
->> Signed-off-by: Clement Leger <cleger@kalray.eu>
->> ---
->>  drivers/remoteproc/remoteproc_core.c       | 32 ++++++++++++++++++++--
->>  drivers/remoteproc/remoteproc_elf_loader.c |  3 --
->>  include/linux/remoteproc.h                 |  2 ++
->>  3 files changed, 32 insertions(+), 5 deletions(-)
->> 
->> diff --git a/drivers/remoteproc/remoteproc_core.c
->> b/drivers/remoteproc/remoteproc_core.c
->> index a9ac1d01e09b..382443bab583 100644
->> --- a/drivers/remoteproc/remoteproc_core.c
->> +++ b/drivers/remoteproc/remoteproc_core.c
->> @@ -1562,6 +1562,28 @@ int rproc_coredump_add_custom_segment(struct rproc
->> *rproc,
->>  }
->>  EXPORT_SYMBOL(rproc_coredump_add_custom_segment);
->>  
->> +/**
->> + * rproc_coredump_set_elf_info() - set coredump elf information
->> + * @rproc:	handle of a remote processor
->> + * @class:	elf class for coredump elf file
->> + * @size:	elf machine for coredump elf file
+On Fri, Apr 17, 2020 at 05:48:49PM +0200, Markus Elfring wrote:
+> >>     p = firmware ? kstrdup_const(…) : kasprintf(…);
+> >
+> > For simple assignments, I too prefer the ternary operator,
+> 
+> Thanks for your feedback.
+> 
+> 
+> > but in this case, I think it is better to leave the current code as is.
+> 
+> Would you like to consider the use of the function “kvasprintf_const”
+> according to your review comment for the update step “[PATCH v2 4/7] remoteproc:
+> Use kstrdup_const() rather than kstrup()”?
+> 
 
-I just noticed that there is a typo, this should be "machine" and not "size".
-Let me know if you'll fix it when applying.
+Looking at the implementation of kvasprintf_const(), using it here wouldn't give
+us anything.  Indeed allocation of duplicate memory is avoided only if the
+string is pre determined of if it is exactly %s, which isn't the case here.
+Otherwise things default to kvasprintf().
 
 Thanks,
+Mathieu 
 
-Clément
-
->> + *
->> + * Set elf information which will be used for coredump elf file.
->> + *
->> + * Return: 0 on success, negative errno on error.
->> + */
->> +int rproc_coredump_set_elf_info(struct rproc *rproc, u8 class, u16 machine)
->> +{
->> +	if (class != ELFCLASS64 && class != ELFCLASS32)
->> +		return -EINVAL;
->> +
->> +	rproc->elf_class = class;
->> +	rproc->elf_machine = machine;
->> +
->> +	return 0;
->> +}
->> +EXPORT_SYMBOL(rproc_coredump_set_elf_info);
->> +
->>  /**
->>   * rproc_coredump() - perform coredump
->>   * @rproc:	rproc handle
->> @@ -1584,6 +1606,11 @@ static void rproc_coredump(struct rproc *rproc)
->>  	if (list_empty(&rproc->dump_segments))
->>  		return;
->>  
->> +	if (class == ELFCLASSNONE) {
->> +		dev_err(&rproc->dev, "Elf class is not set\n");
->> +		return;
->> +	}
->> +
->>  	data_size = elf_size_of_hdr(class);
->>  	list_for_each_entry(segment, &rproc->dump_segments, node) {
->>  		data_size += elf_size_of_phdr(class) + segment->size;
->> @@ -1602,7 +1629,7 @@ static void rproc_coredump(struct rproc *rproc)
->>  	elf_hdr_init_ident(ehdr, class);
->>  
->>  	elf_hdr_set_e_type(class, ehdr, ET_CORE);
->> -	elf_hdr_set_e_machine(class, ehdr, EM_NONE);
->> +	elf_hdr_set_e_machine(class, ehdr, rproc->elf_machine);
->>  	elf_hdr_set_e_version(class, ehdr, EV_CURRENT);
->>  	elf_hdr_set_e_entry(class, ehdr, rproc->bootaddr);
->>  	elf_hdr_set_e_phoff(class, ehdr, elf_size_of_hdr(class));
->> @@ -2043,7 +2070,8 @@ struct rproc *rproc_alloc(struct device *dev, const char
->> *name,
->>  	rproc->name = name;
->>  	rproc->priv = &rproc[1];
->>  	rproc->auto_boot = true;
->> -	rproc->elf_class = ELFCLASS32;
->> +	rproc->elf_class = ELFCLASSNONE;
->> +	rproc->elf_machine = EM_NONE;
->>  
->>  	device_initialize(&rproc->dev);
->>  	rproc->dev.parent = dev;
->> diff --git a/drivers/remoteproc/remoteproc_elf_loader.c
->> b/drivers/remoteproc/remoteproc_elf_loader.c
->> index 16e2c496fd45..4869fb7d8fe4 100644
->> --- a/drivers/remoteproc/remoteproc_elf_loader.c
->> +++ b/drivers/remoteproc/remoteproc_elf_loader.c
->> @@ -248,9 +248,6 @@ int rproc_elf_load_segments(struct rproc *rproc, const
->> struct firmware *fw)
->>  			memset(ptr + filesz, 0, memsz - filesz);
->>  	}
->>  
->> -	if (ret == 0)
->> -		rproc->elf_class = class;
->> -
->>  	return ret;
->>  }
->>  EXPORT_SYMBOL(rproc_elf_load_segments);
->> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
->> index ed127b2d35ca..d67eb5a40476 100644
->> --- a/include/linux/remoteproc.h
->> +++ b/include/linux/remoteproc.h
->> @@ -515,6 +515,7 @@ struct rproc {
->>  	struct list_head dump_segments;
->>  	int nb_vdev;
->>  	u8 elf_class;
->> +	u16 elf_machine;
->>  };
-> 
-> Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-> 
->>  
->>  /**
->> @@ -619,6 +620,7 @@ int rproc_coredump_add_custom_segment(struct rproc *rproc,
->>  						     struct rproc_dump_segment *segment,
->>  						     void *dest),
->>  				      void *priv);
->> +int rproc_coredump_set_elf_info(struct rproc *rproc, u8 class, u16 machine);
->>  
->>  static inline struct rproc_vdev *vdev_to_rvdev(struct virtio_device *vdev)
->>  {
->> --
->> 2.17.1
+> Regards,
+> Markus
