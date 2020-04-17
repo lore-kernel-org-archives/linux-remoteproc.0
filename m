@@ -7,133 +7,197 @@ X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 213BDC2D0EF
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 17 Apr 2020 19:22:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 628E3C38A29
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 17 Apr 2020 19:38:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F3AAF2078E
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 17 Apr 2020 19:21:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3FD8A206D9
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 17 Apr 2020 19:38:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HOiEvn1C"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LMjWtbcz"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730368AbgDQTV7 (ORCPT
+        id S1730556AbgDQTin (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 17 Apr 2020 15:21:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52514 "EHLO
+        Fri, 17 Apr 2020 15:38:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55114 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728192AbgDQTV7 (ORCPT
+        with ESMTP id S1730546AbgDQTim (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 17 Apr 2020 15:21:59 -0400
-Received: from mail-pl1-x641.google.com (mail-pl1-x641.google.com [IPv6:2607:f8b0:4864:20::641])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 106B3C061A0C
-        for <linux-remoteproc@vger.kernel.org>; Fri, 17 Apr 2020 12:21:59 -0700 (PDT)
-Received: by mail-pl1-x641.google.com with SMTP id z6so1304255plk.10
-        for <linux-remoteproc@vger.kernel.org>; Fri, 17 Apr 2020 12:21:58 -0700 (PDT)
+        Fri, 17 Apr 2020 15:38:42 -0400
+Received: from mail-pg1-x544.google.com (mail-pg1-x544.google.com [IPv6:2607:f8b0:4864:20::544])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C0F2C061A10
+        for <linux-remoteproc@vger.kernel.org>; Fri, 17 Apr 2020 12:38:42 -0700 (PDT)
+Received: by mail-pg1-x544.google.com with SMTP id x26so1573834pgc.10
+        for <linux-remoteproc@vger.kernel.org>; Fri, 17 Apr 2020 12:38:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=zMiXOyiLL5u4PWujbjCmvRqsaMSoEDouVZ76G40OsaI=;
-        b=HOiEvn1CydEmRhsVyHkWxtwxyhRBVsz7FG8B3D11JoSSKOkTdYpUxLwVzX+cVt5lJz
-         NaNF3KChUSzVBLCGZkljHGR1IQ0eijL0VDieRE3Fp2vp1N7ISY//759ujAneqrpH8yrR
-         5ZO6ifVnydwKmU2A7i59lmaLzKI68y1+ko1vKsBwJ0J+0BPTOc32FSzercDDxGkdaIl0
-         d/a/9x89kuSakmVgjCmIQkVWTGg3NCuE3DPRsx9vqEAkurk8keqaPatIf0Xmmb5+U3S4
-         nkV2fovh4MJPftXgcSEMHaXwYVEafC4nBqtu+aUcR38/7kY8WYARpmJtvxlcZTC4ldQA
-         yRVg==
+        bh=L/KLniOfteFVMXQ71u7R1TBbbpgcRHaxIa69jNoCo+g=;
+        b=LMjWtbczjWK9xz25YpLOrWyVCpnAir+NmVNcSR8nqO5CYI6biyNRsEnQ6aVoBTtP91
+         /F5RQL0ngIcntGeQPodiL6reiF4Qp10P7ocREihvTve9R5doGnLaKhLAsMAkZ4vVHvCC
+         GQYmPzJK2tPnXdFllItkdEo+5Ky8Owl4qWbDJvYkJ6z1Wd+N4m4Y68cJSEL8RXFbdDtJ
+         ONNtyeDMX9inYr6A4BNsWHXIfh8XNLV+eEHOYIqdliD2gePqY7RrdJ/FpDYK2qONyozn
+         NDcLSjMlien/eI3eXb2aAiGv+0nadT/GsSm9Pb+vo2KYmZHuuMcR3sQQQfpGDbP/jFbs
+         GRkw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=zMiXOyiLL5u4PWujbjCmvRqsaMSoEDouVZ76G40OsaI=;
-        b=Boj2vHDjdfLhqQWCXxTFznqk+z6mRChWkgjjE3rb3AXl5SEB1LLv0dWyNjFjCsNQlO
-         hCT3mgStdy7mcDO48alYsAK63TYOndxfX6QoECo4N1h+1EFaTA1cTRRlEr4diPxA9bJw
-         WP97QwVTlEQRpCTEe97JGePYa6mjn4yWioE8AkeYLvZoa/zB1Y+Ry4iMncTAvKCEMjiu
-         KbYiTqbVIQR2svMupQDsLu79WTtsknhZ09HglE7e2jy6RYCz9Yq7vCBk6Z9hYH5tDXOj
-         Dle/WrnYG15eFErYdMydQa2ROJDQqJk/YahYyolJkYNhsDx0UmolZQRgaEJIVRNJX7Tl
-         eJEQ==
-X-Gm-Message-State: AGi0PuYwyENwfMsmYDCQtEfgWnMgIzDps459vhxkEMvarsWZ/zj7tOz5
-        ON1wQQIm9A76tQezZceOT12Nzw==
-X-Google-Smtp-Source: APiQypLCZ2gSD93SLEZLZ1nDN2rC1wWCt+YehOgoKcmEhMz8hMDxzJBnTZh3xOSbkmhbkcT/lDedfw==
-X-Received: by 2002:a17:902:6ac7:: with SMTP id i7mr4663865plt.116.1587151318406;
-        Fri, 17 Apr 2020 12:21:58 -0700 (PDT)
+        bh=L/KLniOfteFVMXQ71u7R1TBbbpgcRHaxIa69jNoCo+g=;
+        b=fh6Wgyhe6GSBvVuk2dfoZ1hws8Nb4yCei2LQEp6wH59Fv0EJ64PLxNMWq7b8Rop4g8
+         FeQ2xjdzUl7jp3qt+KkPQQZjBQibSNmIFkQpqFYWTiWNWX92yrTQp+w51pST0jYPcgfL
+         58hSuXQHX+Oz4Sn/a6+Gk5MB+Yue1Q1fvA0FYqLLNE1mwKTBe5eEIUDRgSNrIhBxO1m7
+         WUdTOSkx3IC/vkeAtnLbbt/gTXnftIXlo1ml93eo8o+/q4ji6AbUJqboNXB/CuB4zb9q
+         enWUj9OvhWteRyDpR5gD2Oe0vUzjG14WGF97wwAlnlJnNBjH/PP6UdunyAO/K7d08IGD
+         q2Vg==
+X-Gm-Message-State: AGi0PuYRSzAHbBksRA68nxHnu7KqnLHmRNx4GJwqz68+s5DVetowLwSt
+        y/Du8x8FEsrLIL/SjdN57NwpPg==
+X-Google-Smtp-Source: APiQypJOFDs95tWlt5OLSyjmZ2cFoGxRUCQJ62lFfPsxeWdusfOdDR/sAiJSgmQw7WF3uCywu/mX8Q==
+X-Received: by 2002:a63:40f:: with SMTP id 15mr4627154pge.57.1587152321367;
+        Fri, 17 Apr 2020 12:38:41 -0700 (PDT)
 Received: from xps15 (S0106002369de4dac.cg.shawcable.net. [68.147.8.254])
-        by smtp.gmail.com with ESMTPSA id nu13sm6551802pjb.22.2020.04.17.12.21.57
+        by smtp.gmail.com with ESMTPSA id c1sm2723546pfc.94.2020.04.17.12.38.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 Apr 2020 12:21:57 -0700 (PDT)
-Date:   Fri, 17 Apr 2020 13:21:55 -0600
+        Fri, 17 Apr 2020 12:38:39 -0700 (PDT)
+Date:   Fri, 17 Apr 2020 13:38:37 -0600
 From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Peng Fan <peng.fan@nxp.com>, ohad@wizery.com,
-        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-imx@nxp.com
-Subject: Re: [PATCH 2/2] remoteproc: use filesz as backup when translate
- memsz fail
-Message-ID: <20200417192155.GA6797@xps15>
-References: <1586420572-28353-1-git-send-email-peng.fan@nxp.com>
- <1586420572-28353-2-git-send-email-peng.fan@nxp.com>
- <20200410012226.GV20625@builder.lan>
+To:     Clement Leger <cleger@kalray.eu>
+Cc:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Ohad Ben-Cohen <ohad@wizery.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 1/2] remoteproc: add rproc_coredump_set_elf_info
+Message-ID: <20200417193837.GB6797@xps15>
+References: <20200410102433.2672-1-cleger@kalray.eu>
+ <20200410102433.2672-2-cleger@kalray.eu>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200410012226.GV20625@builder.lan>
+In-Reply-To: <20200410102433.2672-2-cleger@kalray.eu>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
-Message-ID: <20200417192155.izipvStwx-nMalE-7GT_iFBUNVGj6NjKA0p0M40xuRA@z>
+Message-ID: <20200417193837.VuPrEn76QMuiWXwhG3kvPR4_52t02r6GHuKWW65kTlk@z>
 
-On Thu, Apr 09, 2020 at 06:22:26PM -0700, Bjorn Andersson wrote:
-> On Thu 09 Apr 01:22 PDT 2020, Peng Fan wrote:
+On Fri, Apr 10, 2020 at 12:24:32PM +0200, Clement Leger wrote:
+> This function allows drivers to correctly setup the coredump output
+> elf information.
 > 
-> > Since we no need memset if memsz is larger than filesz, we could
-> > use filesz for the da to va translation when memsz translation fail.
-> > 
+> Signed-off-by: Clement Leger <cleger@kalray.eu>
+> ---
+>  drivers/remoteproc/remoteproc_core.c       | 32 ++++++++++++++++++++--
+>  drivers/remoteproc/remoteproc_elf_loader.c |  3 --
+>  include/linux/remoteproc.h                 |  2 ++
+>  3 files changed, 32 insertions(+), 5 deletions(-)
 > 
-> To me this implies that the firmware has a segment that's larger than
-> the memory that it's going to run in. I think even if we're not writing
-> to the entire memsz, asking da_to_va for the entire memsz provides a
-> valuable sanity check.
-> 
-> Regards,
-> Bjorn
-> 
-> > Signed-off-by: Peng Fan <peng.fan@nxp.com>
-> > ---
-> >  drivers/remoteproc/remoteproc_elf_loader.c | 12 ++++++++++--
-> >  1 file changed, 10 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/drivers/remoteproc/remoteproc_elf_loader.c b/drivers/remoteproc/remoteproc_elf_loader.c
-> > index cc50fe70d50c..74d425a4b34c 100644
-> > --- a/drivers/remoteproc/remoteproc_elf_loader.c
-> > +++ b/drivers/remoteproc/remoteproc_elf_loader.c
-> > @@ -229,8 +229,16 @@ int rproc_elf_load_segments(struct rproc *rproc, const struct firmware *fw)
-> >  		if (!ptr) {
-> >  			dev_err(dev, "bad phdr da 0x%llx mem 0x%llx\n", da,
-> >  				memsz);
-> > -			ret = -EINVAL;
-> > -			break;
-> > +
-> > +			ptr = rproc_da_to_va(rproc, da, filesz);
-> > +			if (!ptr) {
-> > +				dev_err(dev,
-> > +					"bad phdr da 0x%llx mem 0x%llx\n",
-> > +					da, filesz);
-> > +				ret = -EINVAL;
-> > +				break;
-> > +			}
-> > +
+> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+> index a9ac1d01e09b..382443bab583 100644
+> --- a/drivers/remoteproc/remoteproc_core.c
+> +++ b/drivers/remoteproc/remoteproc_core.c
+> @@ -1562,6 +1562,28 @@ int rproc_coredump_add_custom_segment(struct rproc *rproc,
+>  }
+>  EXPORT_SYMBOL(rproc_coredump_add_custom_segment);
+>  
+> +/**
+> + * rproc_coredump_set_elf_info() - set coredump elf information
+> + * @rproc:	handle of a remote processor
+> + * @class:	elf class for coredump elf file
+> + * @size:	elf machine for coredump elf file
+> + *
+> + * Set elf information which will be used for coredump elf file.
+> + *
+> + * Return: 0 on success, negative errno on error.
+> + */
+> +int rproc_coredump_set_elf_info(struct rproc *rproc, u8 class, u16 machine)
+> +{
+> +	if (class != ELFCLASS64 && class != ELFCLASS32)
+> +		return -EINVAL;
+> +
+> +	rproc->elf_class = class;
+> +	rproc->elf_machine = machine;
+> +
+> +	return 0;
+> +}
+> +EXPORT_SYMBOL(rproc_coredump_set_elf_info);
+> +
+>  /**
+>   * rproc_coredump() - perform coredump
+>   * @rproc:	rproc handle
+> @@ -1584,6 +1606,11 @@ static void rproc_coredump(struct rproc *rproc)
+>  	if (list_empty(&rproc->dump_segments))
+>  		return;
+>  
+> +	if (class == ELFCLASSNONE) {
+> +		dev_err(&rproc->dev, "Elf class is not set\n");
+> +		return;
+> +	}
+> +
+>  	data_size = elf_size_of_hdr(class);
+>  	list_for_each_entry(segment, &rproc->dump_segments, node) {
+>  		data_size += elf_size_of_phdr(class) + segment->size;
+> @@ -1602,7 +1629,7 @@ static void rproc_coredump(struct rproc *rproc)
+>  	elf_hdr_init_ident(ehdr, class);
+>  
+>  	elf_hdr_set_e_type(class, ehdr, ET_CORE);
+> -	elf_hdr_set_e_machine(class, ehdr, EM_NONE);
+> +	elf_hdr_set_e_machine(class, ehdr, rproc->elf_machine);
+>  	elf_hdr_set_e_version(class, ehdr, EV_CURRENT);
+>  	elf_hdr_set_e_entry(class, ehdr, rproc->bootaddr);
+>  	elf_hdr_set_e_phoff(class, ehdr, elf_size_of_hdr(class));
+> @@ -2043,7 +2070,8 @@ struct rproc *rproc_alloc(struct device *dev, const char *name,
+>  	rproc->name = name;
+>  	rproc->priv = &rproc[1];
+>  	rproc->auto_boot = true;
+> -	rproc->elf_class = ELFCLASS32;
+> +	rproc->elf_class = ELFCLASSNONE;
+> +	rproc->elf_machine = EM_NONE;
+>  
+>  	device_initialize(&rproc->dev);
+>  	rproc->dev.parent = dev;
+> diff --git a/drivers/remoteproc/remoteproc_elf_loader.c b/drivers/remoteproc/remoteproc_elf_loader.c
+> index 16e2c496fd45..4869fb7d8fe4 100644
+> --- a/drivers/remoteproc/remoteproc_elf_loader.c
+> +++ b/drivers/remoteproc/remoteproc_elf_loader.c
+> @@ -248,9 +248,6 @@ int rproc_elf_load_segments(struct rproc *rproc, const struct firmware *fw)
+>  			memset(ptr + filesz, 0, memsz - filesz);
+>  	}
+>  
+> -	if (ret == 0)
+> -		rproc->elf_class = class;
+> -
+>  	return ret;
+>  }
+>  EXPORT_SYMBOL(rproc_elf_load_segments);
+> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+> index ed127b2d35ca..d67eb5a40476 100644
+> --- a/include/linux/remoteproc.h
+> +++ b/include/linux/remoteproc.h
+> @@ -515,6 +515,7 @@ struct rproc {
+>  	struct list_head dump_segments;
+>  	int nb_vdev;
+>  	u8 elf_class;
+> +	u16 elf_machine;
+>  };
 
-Adding to Bjorn's comment, I think if rproc_da_to_va() fails with memsz but
-succeeds with filesz something went wrong with how memory was laid out in the
-DT or the ELF resources.  To me this patch offers the wrong solution - the
-focus should be on why rproc_da_to_va() fails.
+Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 
-Thanks,
-Mathieu  
-
-> >  		}
-> >  
-> >  		/* put the segment where the remote processor expects it */
-> > -- 
-> > 2.16.4
-> > 
+>  
+>  /**
+> @@ -619,6 +620,7 @@ int rproc_coredump_add_custom_segment(struct rproc *rproc,
+>  						     struct rproc_dump_segment *segment,
+>  						     void *dest),
+>  				      void *priv);
+> +int rproc_coredump_set_elf_info(struct rproc *rproc, u8 class, u16 machine);
+>  
+>  static inline struct rproc_vdev *vdev_to_rvdev(struct virtio_device *vdev)
+>  {
+> -- 
+> 2.17.1
+> 
