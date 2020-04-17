@@ -7,63 +7,66 @@ X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AADAC2D0EF
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 17 Apr 2020 16:28:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD758C2D0EF
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 17 Apr 2020 16:44:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D4413206E9
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 17 Apr 2020 16:28:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 769632078E
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 17 Apr 2020 16:44:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="wRo+tMLZ"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="I8TsQw5w"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725877AbgDQQ2n (ORCPT
+        id S1726105AbgDQQoG (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 17 Apr 2020 12:28:43 -0400
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:40448 "EHLO
+        Fri, 17 Apr 2020 12:44:06 -0400
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:42140 "EHLO
         fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726366AbgDQQ2n (ORCPT
+        with ESMTP id S1725964AbgDQQoF (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 17 Apr 2020 12:28:43 -0400
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 03HGSfU3065131;
-        Fri, 17 Apr 2020 11:28:41 -0500
+        Fri, 17 Apr 2020 12:44:05 -0400
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 03HGi2TM068609;
+        Fri, 17 Apr 2020 11:44:02 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1587140921;
-        bh=2z3mooA7/6Ocg3+WvkJvbFNngZHx4PdkcY5PQ8E+L84=;
+        s=ti-com-17Q1; t=1587141842;
+        bh=C5ZM4aWfGtnuHTTZhSX2+Ie3wR/ZWNt+wWMfl4WFyjA=;
         h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=wRo+tMLZHdlqPLNZIeRd/l5snCcojXUO4Dk815QnJFKe+m7FunSDmHTHKsi1TBkFV
-         JIMfTe3fIqRsOYNXwxBxto0TFkHfYDIXYlsATkg75J7owczFcdFYm4EW45vJ4Y1z2U
-         gq1cG0gmVVzm7VavbKmCFlH+BiL5KYmxc9wvNjMw=
-Received: from DLEE112.ent.ti.com (dlee112.ent.ti.com [157.170.170.23])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id 03HGSeAA015583;
-        Fri, 17 Apr 2020 11:28:40 -0500
-Received: from DLEE101.ent.ti.com (157.170.170.31) by DLEE112.ent.ti.com
- (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
+        b=I8TsQw5wscZJzhL59S3kv1u03/ko87NgrRv5Nv0IkzxyPIEVBvm+dB+rnjKVEbNFE
+         +eP8KgVWp1D6VHHrOP1/9a5ewGPTtcKCcU7giky1I3zj9fm4R8acYYpLMA6ahxJure
+         Da/JyVm797QdnsH0EhCwRLaf9hFZotdo8HveW7IM=
+Received: from DFLE104.ent.ti.com (dfle104.ent.ti.com [10.64.6.25])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 03HGi1SA056616
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 17 Apr 2020 11:44:02 -0500
+Received: from DFLE115.ent.ti.com (10.64.6.36) by DFLE104.ent.ti.com
+ (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Fri, 17
- Apr 2020 11:28:40 -0500
-Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE101.ent.ti.com
- (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
+ Apr 2020 11:44:01 -0500
+Received: from fllv0039.itg.ti.com (10.64.41.19) by DFLE115.ent.ti.com
+ (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Fri, 17 Apr 2020 11:28:40 -0500
+ Frontend Transport; Fri, 17 Apr 2020 11:44:01 -0500
 Received: from [10.250.48.148] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id 03HGSe1s073086;
-        Fri, 17 Apr 2020 11:28:40 -0500
-Subject: Re: [PATCH 3/3] remoteproc: qcom_q6v5_mss: fix q6v5_probe() error
- paths
-To:     Alex Elder <elder@linaro.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Ohad Ben-Cohen <ohad@wizery.com>,
-        Andy Gross <agross@kernel.org>
-CC:     <linux-remoteproc@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20200403175005.17130-1-elder@linaro.org>
- <20200403175005.17130-4-elder@linaro.org>
+        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id 03HGi14L095536;
+        Fri, 17 Apr 2020 11:44:01 -0500
+Subject: Re: [PATCH 1/2] remoteproc: drop memset when loading elf segments
+To:     Peng Fan <peng.fan@nxp.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>
+CC:     "ohad@wizery.com" <ohad@wizery.com>,
+        "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>
+References: <1586420572-28353-1-git-send-email-peng.fan@nxp.com>
+ <20200410012034.GU20625@builder.lan>
+ <AM0PR04MB44816C59A9BE84465AC8F2C388DE0@AM0PR04MB4481.eurprd04.prod.outlook.com>
+ <20200411015104.GJ576963@builder.lan>
+ <AM0PR04MB4481CF4ACD86C69B329D5F2188DD0@AM0PR04MB4481.eurprd04.prod.outlook.com>
 From:   Suman Anna <s-anna@ti.com>
-Message-ID: <0f0a9d92-bcd9-0fd0-8003-b93ae4d230b4@ti.com>
-Date:   Fri, 17 Apr 2020 11:28:40 -0500
+Message-ID: <07eb5b9f-60cd-6555-1904-7b348bdc43f2@ti.com>
+Date:   Fri, 17 Apr 2020 11:43:56 -0500
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.7.0
 MIME-Version: 1.0
-In-Reply-To: <20200403175005.17130-4-elder@linaro.org>
+In-Reply-To: <AM0PR04MB4481CF4ACD86C69B329D5F2188DD0@AM0PR04MB4481.eurprd04.prod.outlook.com>
 Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -72,117 +75,156 @@ Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
-Message-ID: <20200417162840.tKrAZa6v9UFEwLro3yraD2McLWDRlBLrZ9-hGLepCuY@z>
+Message-ID: <20200417164356.f51EpsVHkKOH0Y3dRE04Kae4XYboqgIvod1lfww_PWg@z>
 
-On 4/3/20 12:50 PM, Alex Elder wrote:
-> If an error occurs in q6v5_probe() after the proxy power domains
-> are attached, but before qcom_add_ipa_notify_subdev() is called,
-> qcom_remove_ipa_notify_subdev() is called in the error path, which
-> is a bug.  Fix this by having that call be reached through a
-> different label.
+On 4/13/20 4:05 AM, Peng Fan wrote:
 > 
-> Additionally, if qcom_add_sysmon_subdev() returns an error, the
-> subdevs that had already been added will not be properly removed.
-> Fix this by having the added subdevs (including the IPA notify one)
-> be removed in this case.
+>> Subject: Re: [PATCH 1/2] remoteproc: drop memset when loading elf
+>> segments
+>>
+>> On Thu 09 Apr 18:29 PDT 2020, Peng Fan wrote:
+>>
+>>> Hi Bjorn,
+>>>
+>>>> Subject: Re: [PATCH 1/2] remoteproc: drop memset when loading elf
+>>>> segments
+>>>>
+>>>> On Thu 09 Apr 01:22 PDT 2020, Peng Fan wrote:
+>>>>
+>>>>> To arm64, "dc      zva, dst" is used in memset.
+>>>>> Per ARM DDI 0487A.j, chapter C5.3.8 DC ZVA, Data Cache Zero by VA,
+>>>>>
+>>>>> "If the memory region being zeroed is any type of Device memory,
+>>>>> this instruction can give an alignment fault which is prioritized
+>>>>> in the same way as other alignment faults that are determined by
+>>>>> the memory type."
+>>>>>
+>>>>> On i.MX platforms, when elf is loaded to onchip TCM area, the
+>>>>> region is ioremapped, so "dc zva, dst" will trigger abort.
+>>>>>
+>>>>> Since memset is not strictly required, let's drop it.
+>>>>>
+>>>>
+>>>> This would imply that we trust that the firmware doesn't expect
+>>>> remoteproc to zero out the memory, which we've always done. So I
+>>>> don't think we can say that it's not required.
+>>>
+>>> Saying an image runs on a remote core needs Linux to help zero out BSS
+>>> section, this not make sense to me.
+>>
+>> Maybe not, but it has always done it, so if there's firmware out there that
+>> depends on it such change would break them..
 > 
-> Finally, arrange for the sysmon subdev to be removed before the rest
-> in the event rproc_add() returns an error.
+> Got it.
 > 
-> Have cleanup activity done in q6v5_remove() be done in the reverse
-> order they are set up in q6v5_probe() (the same order they're done
-> in the q6v5_probe() error path).  Use a local variable for the
-> remoteproc pointer, which is used repeatedly.
+>>
+>>> My case is as following, I need to load section 7 data.
+>>> I no need to let remoteproc to memset section 8/9/10/11/12, the
+>>> firmware itself could handle that. Just because the memsz is larger
+>>> than filesz, remoreproc must memset?
+>>
+>> By having a PT_LOAD segment covering these I think it's reasonable to
+>> assume that the ELF loader should be able to touch the associated memory.
+>>
+>>> Section Headers:
+>>>    [Nr] Name              Type            Addr     Off    Size
+>> ES Flg Lk Inf Al
+>>>    [ 0]                   NULL            00000000 000000
+>> 000000 00      0   0  0
+>>>    [ 1] .interrupts       PROGBITS        1ffe0000 010000 000240 00
+>> A  0   0  4
+>>>    [ 2] .resource_table   PROGBITS        1ffe0240 010240 000058 00
+>> A  0   0  1
+>>>    [ 3] .text             PROGBITS        1ffe02a0 0102a0 009ccc 00
+>> AX  0   0 16
+>>>    [ 4] .ARM              ARM_EXIDX       1ffe9f6c 019f6c 000008
+>> 00  AL  3   0  4
+>>>    [ 5] .init_array       INIT_ARRAY      1ffe9f74 019f74 000004 04
+>> WA  0   0  4
+>>>    [ 6] .fini_array       FINI_ARRAY      1ffe9f78 019f78 000004 04
+>> WA  0   0  4
+>>>    [ 7] .data             PROGBITS        1fff9240 029240 000084
+>> 00  WA  0   0  4
+>>>    [ 8] .ncache.init      PROGBITS        1fff92c4 0292c4 000000 00
+>> W  0   0  1
+>>>    [ 9] .ncache           NOBITS          1fff92c4 0292c4 000a80
+>> 00  WA  0   0  4
+>>>    [10] .bss              NOBITS          1fff9d44 0292c4 01f5c0
+>> 00  WA  0   0  4
+>>>    [11] .heap             NOBITS          20019304 0292c4 000404
+>> 00  WA  0   0  1
+>>>    [12] .stack            NOBITS          20019708 0292c4 000400
+>> 00  WA  0   0  1
+>>>
+>>>>
+>>>>> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+>>>>> ---
+>>>>>   drivers/remoteproc/remoteproc_elf_loader.c | 7 ++-----
+>>>>>   1 file changed, 2 insertions(+), 5 deletions(-)
+>>>>>
+>>>>> diff --git a/drivers/remoteproc/remoteproc_elf_loader.c
+>>>>> b/drivers/remoteproc/remoteproc_elf_loader.c
+>>>>> index 16e2c496fd45..cc50fe70d50c 100644
+>>>>> --- a/drivers/remoteproc/remoteproc_elf_loader.c
+>>>>> +++ b/drivers/remoteproc/remoteproc_elf_loader.c
+>>>>> @@ -238,14 +238,11 @@ int rproc_elf_load_segments(struct rproc
+>>>>> *rproc,
+>>>> const struct firmware *fw)
+>>>>>   			memcpy(ptr, elf_data + offset, filesz);
+>>>>>
+>>>>>   		/*
+>>>>> -		 * Zero out remaining memory for this segment.
+>>>>> +		 * No need zero out remaining memory for this segment.
+>>>>>   		 *
+>>>>>   		 * This isn't strictly required since dma_alloc_coherent already
+>>>>> -		 * did this for us. albeit harmless, we may consider removing
+>>>>> -		 * this.
+>>>>> +		 * did this for us.
+>>>>
+>>>> In the case of recovery this comment is wrong, we do not
+>>>> dma_alloc_coherent() the carveout during a recovery.
+>>>
+>>> Isn't the it the firmware's job to memset the region?
+>>>
+>>
+>> I'm not aware of this being a documented requirement, we've always done it
+>> here for them, so removing this call would be a change in behavior.
+>>
+>>>>
+>>>> And in your case you ioremapped existing TCM, so it's never true.
+>>>>
+>>>>>   		 */
+>>>>> -		if (memsz > filesz)
+>>>>> -			memset(ptr + filesz, 0, memsz - filesz);
+>>>>
+>>>> So I think you do want to zero out this region. Question is how we do it...
+>>>
+>>> I have contacted our M4 owners, we no need clear it from Linux side.
+>>
+>> And I think _most_ firmware out there, like yours, does clear BSS etc during
+>> initialization.
+>>
+>>> We also support booting m4 before booting Linux, at that case, Linux
+>>> has noting to do with memset. It is just I try loading m4 image with
+>>> Linux, and met the issue that memset trigger abort.
+>>>
+>>
+>> Please see the proposal for attaching to already running remoteproc's from
+>> Mathieu. I don't expect that you want to load your PROGBITS either in this
+>> case?
 > 
-> Remove errant semicolons at the end of two function blocks.
+> No need to load for early boot case. It is just userspace load trigger
+> kernel panic, because memset arm64 could not work for ioremapped memory.
 > 
+> How about adding ops hooks for memset and memcpy to let driver
+> have their own implementation?
 
-Same as Patch 2, Fixes: line would be good.
+Hi Peng,
+
+The trick is to use the ioremap_wc() variant instead of ioremap() in 
+your platform driver while mapping the TCMs. I know multiple folks have 
+run into this issue. This is what most of the remoteproc drivers use, 
+and mmio-sram driver also uses the same.
 
 regards
 Suman
-
-> Signed-off-by: Alex Elder <elder@linaro.org>
-> ---
->   drivers/remoteproc/qcom_q6v5_mss.c | 31 ++++++++++++++++++------------
->   1 file changed, 19 insertions(+), 12 deletions(-)
-> 
-> diff --git a/drivers/remoteproc/qcom_q6v5_mss.c b/drivers/remoteproc/qcom_q6v5_mss.c
-> index 60cdf699ea80..5475d4f808a8 100644
-> --- a/drivers/remoteproc/qcom_q6v5_mss.c
-> +++ b/drivers/remoteproc/qcom_q6v5_mss.c
-> @@ -367,7 +367,7 @@ static int q6v5_pds_enable(struct q6v5 *qproc, struct device **pds,
->   	}
->   
->   	return ret;
-> -};
-> +}
->   
->   static void q6v5_pds_disable(struct q6v5 *qproc, struct device **pds,
->   			     size_t pd_count)
-> @@ -1527,7 +1527,7 @@ static int q6v5_pds_attach(struct device *dev, struct device **devs,
->   		dev_pm_domain_detach(devs[i], false);
->   
->   	return ret;
-> -};
-> +}
->   
->   static void q6v5_pds_detach(struct q6v5 *qproc, struct device **pds,
->   			    size_t pd_count)
-> @@ -1766,17 +1766,23 @@ static int q6v5_probe(struct platform_device *pdev)
->   	qproc->sysmon = qcom_add_sysmon_subdev(rproc, "modem", 0x12);
->   	if (IS_ERR(qproc->sysmon)) {
->   		ret = PTR_ERR(qproc->sysmon);
-> -		goto detach_proxy_pds;
-> +		goto remove_subdevs;
->   	}
->   
->   	ret = rproc_add(rproc);
->   	if (ret)
-> -		goto detach_proxy_pds;
-> +		goto remove_sysmon_subdev;
->   
->   	return 0;
->   
-> +remove_sysmon_subdev:
-> +	qcom_remove_sysmon_subdev(qproc->sysmon);
-> +remove_subdevs:
-> +	qcom_remove_ipa_notify_subdev(qproc->rproc, &qproc->ipa_notify_subdev);
-> +	qcom_remove_ssr_subdev(rproc, &qproc->ssr_subdev);
-> +	qcom_remove_smd_subdev(rproc, &qproc->smd_subdev);
-> +	qcom_remove_glink_subdev(rproc, &qproc->glink_subdev);
->   detach_proxy_pds:
-> -	qcom_remove_ipa_notify_subdev(qproc->rproc, &qproc->ipa_notify_subdev);
->   	q6v5_pds_detach(qproc, qproc->proxy_pds, qproc->proxy_pd_count);
->   detach_active_pds:
->   	q6v5_pds_detach(qproc, qproc->active_pds, qproc->active_pd_count);
-> @@ -1789,19 +1795,20 @@ static int q6v5_probe(struct platform_device *pdev)
->   static int q6v5_remove(struct platform_device *pdev)
->   {
->   	struct q6v5 *qproc = platform_get_drvdata(pdev);
-> +	struct rproc *rproc = qproc->rproc;
->   
-> -	rproc_del(qproc->rproc);
-> +	rproc_del(rproc);
->   
->   	qcom_remove_sysmon_subdev(qproc->sysmon);
-> -	qcom_remove_ipa_notify_subdev(qproc->rproc, &qproc->ipa_notify_subdev);
-> -	qcom_remove_glink_subdev(qproc->rproc, &qproc->glink_subdev);
-> -	qcom_remove_smd_subdev(qproc->rproc, &qproc->smd_subdev);
-> -	qcom_remove_ssr_subdev(qproc->rproc, &qproc->ssr_subdev);
-> +	qcom_remove_ipa_notify_subdev(rproc, &qproc->ipa_notify_subdev);
-> +	qcom_remove_ssr_subdev(rproc, &qproc->ssr_subdev);
-> +	qcom_remove_smd_subdev(rproc, &qproc->smd_subdev);
-> +	qcom_remove_glink_subdev(rproc, &qproc->glink_subdev);
->   
-> -	q6v5_pds_detach(qproc, qproc->active_pds, qproc->active_pd_count);
->   	q6v5_pds_detach(qproc, qproc->proxy_pds, qproc->proxy_pd_count);
-> +	q6v5_pds_detach(qproc, qproc->active_pds, qproc->active_pd_count);
->   
-> -	rproc_free(qproc->rproc);
-> +	rproc_free(rproc);
->   
->   	return 0;
->   }
-> 
-
