@@ -1,35 +1,128 @@
-Return-Path: <christophe.jaillet@wanadoo.fr>
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] remoteproc: Add missing '\n' in log messages
-Date: Sat, 11 Apr 2020 18:07:50 +0200
-Message-Id: <20200411160750.32573-1-christophe.jaillet@wanadoo.fr>
+Return-Path: <s-anna@ti.com>
+Subject: Re: [PATCH 3/3] remoteproc: qcom_q6v5_mss: fix q6v5_probe() error
+ paths
+References: <20200403175005.17130-1-elder@linaro.org>
+ <20200403175005.17130-4-elder@linaro.org>
+From: Suman Anna <s-anna@ti.com>
+Message-ID: <0f0a9d92-bcd9-0fd0-8003-b93ae4d230b4@ti.com>
+Date: Fri, 17 Apr 2020 11:28:40 -0500
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To: ohad@wizery.com, bjorn.andersson@linaro.org, mathieu.poirier@linaro.org, NShubin@topcon.com
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20200403175005.17130-4-elder@linaro.org>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+To: Alex Elder <elder@linaro.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>, Andy Gross <agross@kernel.org>
+Cc: linux-remoteproc@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Message logged by 'dev_xxx()' or 'pr_xxx()' should end with a '\n'.
+On 4/3/20 12:50 PM, Alex Elder wrote:
+> If an error occurs in q6v5_probe() after the proxy power domains
+> are attached, but before qcom_add_ipa_notify_subdev() is called,
+> qcom_remove_ipa_notify_subdev() is called in the error path, which
+> is a bug.  Fix this by having that call be reached through a
+> different label.
+> 
+> Additionally, if qcom_add_sysmon_subdev() returns an error, the
+> subdevs that had already been added will not be properly removed.
+> Fix this by having the added subdevs (including the IPA notify one)
+> be removed in this case.
+> 
+> Finally, arrange for the sysmon subdev to be removed before the rest
+> in the event rproc_add() returns an error.
+> 
+> Have cleanup activity done in q6v5_remove() be done in the reverse
+> order they are set up in q6v5_probe() (the same order they're done
+> in the q6v5_probe() error path).  Use a local variable for the
+> remoteproc pointer, which is used repeatedly.
+> 
+> Remove errant semicolons at the end of two function blocks.
+> 
 
-Fixes: 791c13b709dd ("remoteproc: Fix NULL pointer dereference in rproc_virtio_notify")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/remoteproc/remoteproc_virtio.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+Same as Patch 2, Fixes: line would be good.
 
-diff --git a/drivers/remoteproc/remoteproc_virtio.c b/drivers/remoteproc/remoteproc_virtio.c
-index b48b78e00284..0d4cc0fc5858 100644
---- a/drivers/remoteproc/remoteproc_virtio.c
-+++ b/drivers/remoteproc/remoteproc_virtio.c
-@@ -337,8 +337,7 @@ int rproc_add_virtio_dev(struct rproc_vdev *rvdev, int id)
- 
- 	if (rproc->ops->kick == NULL) {
- 		ret = -EINVAL;
--		dev_err(dev, ".kick method not defined for %s",
--				rproc->name);
-+		dev_err(dev, ".kick method not defined for %s\n", rproc->name);
- 		goto out;
- 	}
- 
--- 
-2.20.1
+regards
+Suman
+
+> Signed-off-by: Alex Elder <elder@linaro.org>
+> ---
+>   drivers/remoteproc/qcom_q6v5_mss.c | 31 ++++++++++++++++++------------
+>   1 file changed, 19 insertions(+), 12 deletions(-)
+> 
+> diff --git a/drivers/remoteproc/qcom_q6v5_mss.c b/drivers/remoteproc/qcom_q6v5_mss.c
+> index 60cdf699ea80..5475d4f808a8 100644
+> --- a/drivers/remoteproc/qcom_q6v5_mss.c
+> +++ b/drivers/remoteproc/qcom_q6v5_mss.c
+> @@ -367,7 +367,7 @@ static int q6v5_pds_enable(struct q6v5 *qproc, struct device **pds,
+>   	}
+>   
+>   	return ret;
+> -};
+> +}
+>   
+>   static void q6v5_pds_disable(struct q6v5 *qproc, struct device **pds,
+>   			     size_t pd_count)
+> @@ -1527,7 +1527,7 @@ static int q6v5_pds_attach(struct device *dev, struct device **devs,
+>   		dev_pm_domain_detach(devs[i], false);
+>   
+>   	return ret;
+> -};
+> +}
+>   
+>   static void q6v5_pds_detach(struct q6v5 *qproc, struct device **pds,
+>   			    size_t pd_count)
+> @@ -1766,17 +1766,23 @@ static int q6v5_probe(struct platform_device *pdev)
+>   	qproc->sysmon = qcom_add_sysmon_subdev(rproc, "modem", 0x12);
+>   	if (IS_ERR(qproc->sysmon)) {
+>   		ret = PTR_ERR(qproc->sysmon);
+> -		goto detach_proxy_pds;
+> +		goto remove_subdevs;
+>   	}
+>   
+>   	ret = rproc_add(rproc);
+>   	if (ret)
+> -		goto detach_proxy_pds;
+> +		goto remove_sysmon_subdev;
+>   
+>   	return 0;
+>   
+> +remove_sysmon_subdev:
+> +	qcom_remove_sysmon_subdev(qproc->sysmon);
+> +remove_subdevs:
+> +	qcom_remove_ipa_notify_subdev(qproc->rproc, &qproc->ipa_notify_subdev);
+> +	qcom_remove_ssr_subdev(rproc, &qproc->ssr_subdev);
+> +	qcom_remove_smd_subdev(rproc, &qproc->smd_subdev);
+> +	qcom_remove_glink_subdev(rproc, &qproc->glink_subdev);
+>   detach_proxy_pds:
+> -	qcom_remove_ipa_notify_subdev(qproc->rproc, &qproc->ipa_notify_subdev);
+>   	q6v5_pds_detach(qproc, qproc->proxy_pds, qproc->proxy_pd_count);
+>   detach_active_pds:
+>   	q6v5_pds_detach(qproc, qproc->active_pds, qproc->active_pd_count);
+> @@ -1789,19 +1795,20 @@ static int q6v5_probe(struct platform_device *pdev)
+>   static int q6v5_remove(struct platform_device *pdev)
+>   {
+>   	struct q6v5 *qproc = platform_get_drvdata(pdev);
+> +	struct rproc *rproc = qproc->rproc;
+>   
+> -	rproc_del(qproc->rproc);
+> +	rproc_del(rproc);
+>   
+>   	qcom_remove_sysmon_subdev(qproc->sysmon);
+> -	qcom_remove_ipa_notify_subdev(qproc->rproc, &qproc->ipa_notify_subdev);
+> -	qcom_remove_glink_subdev(qproc->rproc, &qproc->glink_subdev);
+> -	qcom_remove_smd_subdev(qproc->rproc, &qproc->smd_subdev);
+> -	qcom_remove_ssr_subdev(qproc->rproc, &qproc->ssr_subdev);
+> +	qcom_remove_ipa_notify_subdev(rproc, &qproc->ipa_notify_subdev);
+> +	qcom_remove_ssr_subdev(rproc, &qproc->ssr_subdev);
+> +	qcom_remove_smd_subdev(rproc, &qproc->smd_subdev);
+> +	qcom_remove_glink_subdev(rproc, &qproc->glink_subdev);
+>   
+> -	q6v5_pds_detach(qproc, qproc->active_pds, qproc->active_pd_count);
+>   	q6v5_pds_detach(qproc, qproc->proxy_pds, qproc->proxy_pd_count);
+> +	q6v5_pds_detach(qproc, qproc->active_pds, qproc->active_pd_count);
+>   
+> -	rproc_free(qproc->rproc);
+> +	rproc_free(rproc);
+>   
+>   	return 0;
+>   }
+> 
