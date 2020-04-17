@@ -1,54 +1,51 @@
-Return-Path: <natechancellor@gmail.com>
-Return-Path: <natechancellor@gmail.com>
-From: Nathan Chancellor <natechancellor@gmail.com>
-Subject: [PATCH] remoteproc/omap: Fix set_load call in omap_rproc_request_timer
-Date: Thu,  2 Apr 2020 18:31:35 -0700
-Message-Id: <20200403013134.11407-1-natechancellor@gmail.com>
-In-Reply-To: <20200402010812.GA751391@yoga>
-References: <20200402010812.GA751391@yoga>
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Fri, 17 Apr 2020 11:13:50 -0500
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v2 4/5] dt-bindings: remoteproc: Add documentation for
+ ZynqMP R5 rproc bindings
+Message-ID: <20200417161350.GA24618@bogus>
+References: <1587074082-14836-1-git-send-email-ben.levinsky@xilinx.com>
+ <1587074082-14836-5-git-send-email-ben.levinsky@xilinx.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Nathan Chancellor <natechancellor@gmail.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1587074082-14836-5-git-send-email-ben.levinsky@xilinx.com>
+To: Ben Levinsky <ben.levinsky@xilinx.com>
+Cc: ohad@wizery.com, bjorn.andersson@linaro.org, michal.simek@xilinx.com, jollys@xilinx.com, rajan.vaja@xilinx.com, robh+dt@kernel.org, mark.rutland@arm.com, linux-remoteproc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Jason Wu <j.wu@xilinx.com>, Wendy Liang <jliang@xilinx.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-When building arm allyesconfig:
+On Thu, 16 Apr 2020 14:54:41 -0700, Ben Levinsky wrote:
+> Add binding for ZynqMP R5 OpenAMP.
+> 
+> Represent the RPU domain resources in one device node. Each RPU
+> processor is a subnode of the top RPU domain node.
+> 
+> Signed-off-by: Ben Levinsky <ben.levinsky@xilinx.com>
+> Signed-off-by: Jason Wu <j.wu@xilinx.com>
+> Signed-off-by: Wendy Liang <jliang@xilinx.com>
+> Signed-off-by: Michal Simek <michal.simek@xilinx.com>
+> ---
+>  .../remoteproc/xilinx,zynqmp-r5-remoteproc.yaml    | 119 +++++++++++++++++++++
+>  1 file changed, 119 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/remoteproc/xilinx,zynqmp-r5-remoteproc.yaml
+> 
 
-drivers/remoteproc/omap_remoteproc.c:174:44: error: too many arguments
-to function call, expected 2, have 3
-        timer->timer_ops->set_load(timer->odt, 0, 0);
-        ~~~~~~~~~~~~~~~~~~~~~~~~~~                ^
-1 error generated.
+My bot found errors running 'make dt_binding_check' on your patch:
 
-This is due to commit 02e6d546e3bd ("clocksource/drivers/timer-ti-dm:
-Enable autoreload in set_pwm") in the clockevents tree interacting with
-commit e28edc571925 ("remoteproc/omap: Request a timer(s) for remoteproc
-usage") from the rpmsg tree.
+Documentation/devicetree/bindings/remoteproc/xilinx,zynqmp-r5-remoteproc.example.dts:20.14-21: Warning (ranges_format): /example-0/reserved-memory:ranges: empty "ranges" property but its #address-cells (2) differs from /example-0 (1)
+Documentation/devicetree/bindings/remoteproc/xilinx,zynqmp-r5-remoteproc.example.dts:20.14-21: Warning (ranges_format): /example-0/reserved-memory:ranges: empty "ranges" property but its #size-cells (2) differs from /example-0 (1)
+Documentation/devicetree/bindings/remoteproc/xilinx,zynqmp-r5-remoteproc.example.dts:43.14-21: Warning (ranges_format): /example-0/zynqmp-rpu:ranges: empty "ranges" property but its #address-cells (2) differs from /example-0 (1)
+Documentation/devicetree/bindings/remoteproc/xilinx,zynqmp-r5-remoteproc.example.dts:43.14-21: Warning (ranges_format): /example-0/zynqmp-rpu:ranges: empty "ranges" property but its #size-cells (2) differs from /example-0 (1)
+Documentation/devicetree/bindings/remoteproc/xilinx,zynqmp-r5-remoteproc.example.dts:39.20-63.11: Warning (unit_address_vs_reg): /example-0/zynqmp-rpu: node has a reg or ranges property, but no unit name
+Documentation/devicetree/bindings/remoteproc/xilinx,zynqmp-r5-remoteproc.example.dts:46.25-62.16: Warning (unit_address_vs_reg): /example-0/zynqmp-rpu/r5@0: node has a unit name, but no reg or ranges property
+/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/remoteproc/xilinx,zynqmp-r5-remoteproc.example.dt.yaml: zynqmp-rpu: '#address-cells', '#size-cells', 'r5@0', 'ranges', 'reg' do not match any of the regexes: 'pinctrl-[0-9]+'
 
-This should have been fixed during the merge of the remoteproc tree
-since it happened after the clockevents tree merge; however, it does not
-look like my email was noticed by either maintainer and I did not pay
-attention when the pull was sent since I was on CC.
+See https://patchwork.ozlabs.org/patch/1271919
 
-Fixes: c6570114316f ("Merge tag 'rproc-v5.7' of git://git.kernel.org/pub/scm/linux/kernel/git/andersson/remoteproc")
-Link: https://lore.kernel.org/lkml/20200327185055.GA22438@ubuntu-m2-xlarge-x86/
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
----
- drivers/remoteproc/omap_remoteproc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure dt-schema is up to date:
 
-diff --git a/drivers/remoteproc/omap_remoteproc.c b/drivers/remoteproc/omap_remoteproc.c
-index cdb546f7232e..6955fab0a78b 100644
---- a/drivers/remoteproc/omap_remoteproc.c
-+++ b/drivers/remoteproc/omap_remoteproc.c
-@@ -171,7 +171,7 @@ static int omap_rproc_request_timer(struct device *dev, struct device_node *np,
- 	}
- 
- 	/* clean counter, remoteproc code will set the value */
--	timer->timer_ops->set_load(timer->odt, 0, 0);
-+	timer->timer_ops->set_load(timer->odt, 0);
- 
- 	return 0;
- }
--- 
-2.26.0
+pip3 install git+https://github.com/devicetree-org/dt-schema.git@master --upgrade
+
+Please check and re-submit.
