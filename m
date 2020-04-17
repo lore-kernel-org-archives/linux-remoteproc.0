@@ -2,252 +2,355 @@ Return-Path: <SRS0=ybdg=6B=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC213C2D0EF
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 17 Apr 2020 06:32:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B353FC2BB1D
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 17 Apr 2020 07:53:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B6C82221F7
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 17 Apr 2020 06:32:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5F8452137B
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 17 Apr 2020 07:53:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="Ky57WAfS"
+	dkim=pass (2048-bit key) header.d=st.com header.i=@st.com header.b="MFmB/hNU"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727861AbgDQGcy (ORCPT
+        id S1729096AbgDQHxB (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 17 Apr 2020 02:32:54 -0400
-Received: from mail-eopbgr690043.outbound.protection.outlook.com ([40.107.69.43]:53061
-        "EHLO NAM04-CO1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726065AbgDQGcy (ORCPT
+        Fri, 17 Apr 2020 03:53:01 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:36074 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1729042AbgDQHxA (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 17 Apr 2020 02:32:54 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=YxUI5yzvDGjyrDuafKz4OALdot32PD2dV8saqfq1W7D1VvCyTC11YyESu31d4Eak6ZHbyCGhunQkzmIeCCFTozhJ9zpNXKpXv1QaxBd3+yPvZv320Dmx0ZOjsls4LuwHUtrI0nXM4bxMU+7qNkRtih6drZJfQuXrVbJFlDAHwMel1k7PctCOewodnEOxXogk0xZ3vGcZDEEF22TmWQPrvCKBgka5pAW8xdZcdtO1ltleSO+fqhSVu0VQnubkZs7aTSl3JWtP9DGkDkhPiyV2N7OSDn08Ob7C1SD18hVKddOVGiT6o/Rm0LfgJ/umFvXg0eBcwvzGZRjFk5ZkkE0WWQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=TFcQjqvfssTMOVlxDWpiyK5CEhnTPeMxMDOSANQOMzo=;
- b=T6XzyJDxQKShZWA59mhq+HocbwmxR81+CzcNPp2tSKw+zDWb7AREQR88yeyA+C1hcy2IjxBFjIPtXW7u5D6iAtyrX9jp+Gri6VaVIeNCrunhxMZ5R/0MIyFh/ll1cEWWHBHaZmB1fy38Gh/Zns9OM69EDvlyCuYe5kgWUCURTD5ZhxMoFSLkfLSOtnmEAA4kKxPPo2Sqw682sLbTaaFbEtjizQpapzG6L8Lrx8deVtSE2uWes462qkhc6vwsb15A4IWHMR8MwLaHFf9e/rj5mFcHuLq+69xrAoMVig64hRGeuJ9FozKquzwehOll55jhRPu6mtI/psYcWLTak82qmA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 149.199.60.83) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=xilinx.com;
- dmarc=bestguesspass action=none header.from=xilinx.com; dkim=none (message
- not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=xilinx.onmicrosoft.com; s=selector2-xilinx-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=TFcQjqvfssTMOVlxDWpiyK5CEhnTPeMxMDOSANQOMzo=;
- b=Ky57WAfSJwHvdeNrjDdU7kVUyqH0j/WTMC2aSGGlV+hfnyKqYf2uHuVYKKBmnj5HMx3npse9rEkOOFAQcERRoLo6wUOgyuud3jb/M7DNeMvoYnNCToehaDQV2jqG4mA5F6sMNcA9Ji310bEAUlWkNDqlgvLNnMYsmaY2bZiKvFw=
-Received: from MN2PR02CA0018.namprd02.prod.outlook.com (2603:10b6:208:fc::31)
- by DM6PR02MB4905.namprd02.prod.outlook.com (2603:10b6:5:17::25) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2900.28; Fri, 17 Apr
- 2020 06:32:51 +0000
-Received: from BL2NAM02FT037.eop-nam02.prod.protection.outlook.com
- (2603:10b6:208:fc:cafe::e) by MN2PR02CA0018.outlook.office365.com
- (2603:10b6:208:fc::31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2921.25 via Frontend
- Transport; Fri, 17 Apr 2020 06:32:50 +0000
-Authentication-Results: spf=pass (sender IP is 149.199.60.83)
- smtp.mailfrom=xilinx.com; vger.kernel.org; dkim=none (message not signed)
- header.d=none;vger.kernel.org; dmarc=bestguesspass action=none
- header.from=xilinx.com;
-Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
- 149.199.60.83 as permitted sender) receiver=protection.outlook.com;
- client-ip=149.199.60.83; helo=xsj-pvapsmtpgw01;
-Received: from xsj-pvapsmtpgw01 (149.199.60.83) by
- BL2NAM02FT037.mail.protection.outlook.com (10.152.77.11) with Microsoft SMTP
- Server id 15.20.2921.25 via Frontend Transport; Fri, 17 Apr 2020 06:32:50
- +0000
-Received: from [149.199.38.66] (port=55572 helo=xsj-pvapsmtp01)
-        by xsj-pvapsmtpgw01 with esmtp (Exim 4.90)
-        (envelope-from <michal.simek@xilinx.com>)
-        id 1jPKXh-0002Co-Gt; Thu, 16 Apr 2020 23:32:01 -0700
-Received: from [127.0.0.1] (helo=localhost)
-        by xsj-pvapsmtp01 with smtp (Exim 4.63)
-        (envelope-from <michal.simek@xilinx.com>)
-        id 1jPKYT-0002aw-QK; Thu, 16 Apr 2020 23:32:49 -0700
-Received: from [172.30.17.109]
-        by xsj-pvapsmtp01 with esmtp (Exim 4.63)
-        (envelope-from <michals@xilinx.com>)
-        id 1jPKYQ-0002aS-0G; Thu, 16 Apr 2020 23:32:46 -0700
-Subject: Re: [PATCH v2 5/5] remoteproc: Add initial zynqmp R5 remoteproc
- driver
-To:     Ben Levinsky <ben.levinsky@xilinx.com>, ohad@wizery.com,
-        bjorn.andersson@linaro.org, michal.simek@xilinx.com,
-        jollys@xilinx.com, rajan.vaja@xilinx.com, robh+dt@kernel.org,
-        mark.rutland@arm.com
-Cc:     linux-remoteproc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Wendy Liang <wendy.liang@xilinx.com>,
-        Ed Mooring <ed.mooring@xilinx.com>, Jason Wu <j.wu@xilinx.com>
-References: <1587074082-14836-1-git-send-email-ben.levinsky@xilinx.com>
- <1587074082-14836-6-git-send-email-ben.levinsky@xilinx.com>
-From:   Michal Simek <michal.simek@xilinx.com>
-Message-ID: <baaa1b13-6ea2-8ca5-6883-46fb9da4f7e8@xilinx.com>
-Date:   Fri, 17 Apr 2020 08:32:42 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
-MIME-Version: 1.0
-In-Reply-To: <1587074082-14836-6-git-send-email-ben.levinsky@xilinx.com>
-Content-Type: text/plain; charset=utf-8
+        Fri, 17 Apr 2020 03:53:00 -0400
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 03H7pvVk017876;
+        Fri, 17 Apr 2020 09:52:52 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
+ : date : message-id : references : in-reply-to : content-type :
+ content-transfer-encoding : mime-version; s=STMicroelectronics;
+ bh=LnEZiGg0HawGS2IYhuq2ciadc1KDjWuAyQRSTEFNgp4=;
+ b=MFmB/hNUS57WzHXnZqLc8bIcGJWnEU3YJjmuB4Deo2XhBkm3TKiTNqO07qC5DDsTwtMq
+ MMYeHIYBS6AJCCwYGrFIRXwyvLRnGEFwva8/XDv3Nv7LEDOynzmjjvIYtdxWd6jq1zuy
+ yz80QslbnHCa232jgEcXn70uSKUAB5FhhzYf/n9+i3rnEasSLgvObD3+4Q94y2vbsH+3
+ 2CQmwEjGL71UYSmtkr0qfri6Io4g2Qp8n3SJu0SbLNmQYiZz0ot7Xpzulsd82233QBJs
+ plUVlBCyssul3Enus28FgHRrcceHZwef13ukZpt6fl1rqnjqY2i4oOTjoTdEtwSTroup IQ== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 30dn75yvku-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 17 Apr 2020 09:52:52 +0200
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 8119710002A;
+        Fri, 17 Apr 2020 09:52:51 +0200 (CEST)
+Received: from Webmail-eu.st.com (sfhdag7node3.st.com [10.75.127.21])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 5AA032A67B1;
+        Fri, 17 Apr 2020 09:52:51 +0200 (CEST)
+Received: from SFHDAG7NODE2.st.com (10.75.127.20) by SFHDAG7NODE3.st.com
+ (10.75.127.21) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 17 Apr
+ 2020 09:52:50 +0200
+Received: from SFHDAG7NODE2.st.com ([fe80::d548:6a8f:2ca4:2090]) by
+ SFHDAG7NODE2.st.com ([fe80::d548:6a8f:2ca4:2090%20]) with mapi id
+ 15.00.1473.003; Fri, 17 Apr 2020 09:52:50 +0200
+From:   Loic PALLARDY <loic.pallardy@st.com>
+To:     Rishabh Bhatnagar <rishabhb@codeaurora.org>,
+        "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+CC:     "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>,
+        "ohad@wizery.com" <ohad@wizery.com>,
+        "mathieu.poirier@linaro.org" <mathieu.poirier@linaro.org>,
+        "tsoni@codeaurora.org" <tsoni@codeaurora.org>,
+        "psodagud@codeaurora.org" <psodagud@codeaurora.org>,
+        "sidgup@codeaurora.org" <sidgup@codeaurora.org>
+Subject: RE: [PATCH 2/3] remoteproc: Add inline coredump functionality
+Thread-Topic: [PATCH 2/3] remoteproc: Add inline coredump functionality
+Thread-Index: AQHWFB6Px5XANSHAy0ChO/Yg4pxMuah88WJw
+Date:   Fri, 17 Apr 2020 07:52:50 +0000
+Message-ID: <1b85229632dd44f198b3e0ff9414b458@SFHDAG7NODE2.st.com>
+References: <1587062312-4939-1-git-send-email-rishabhb@codeaurora.org>
+ <1587062312-4939-2-git-send-email-rishabhb@codeaurora.org>
+In-Reply-To: <1587062312-4939-2-git-send-email-rishabhb@codeaurora.org>
+Accept-Language: fr-FR, en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-TM-AS-Product-Ver: IMSS-7.1.0.1224-8.2.0.1013-23620.005
-X-TM-AS-User-Approved-Sender: Yes;Yes
-X-EOPAttributedMessage: 0
-X-MS-Office365-Filtering-HT: Tenant
-X-Forefront-Antispam-Report: CIP:149.199.60.83;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:xsj-pvapsmtpgw01;PTR:unknown-60-83.xilinx.com;CAT:NONE;SFTY:;SFS:(10009020)(4636009)(39860400002)(136003)(346002)(396003)(376002)(46966005)(54906003)(5660300002)(2906002)(81166007)(356005)(478600001)(81156014)(8676002)(186003)(36756003)(6666004)(44832011)(426003)(336012)(9786002)(2616005)(31686004)(31696002)(26005)(70206006)(107886003)(8936002)(70586007)(4326008)(82740400003)(316002)(47076004);DIR:OUT;SFP:1101;
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: a931262f-04d4-490c-cd7c-08d7e299269f
-X-MS-TrafficTypeDiagnostic: DM6PR02MB4905:
-X-Microsoft-Antispam-PRVS: <DM6PR02MB490545614BC8CFC75E9C3A73C6D90@DM6PR02MB4905.namprd02.prod.outlook.com>
-X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
-X-MS-Oob-TLC-OOBClassifiers: OLM:9508;
-X-Forefront-PRVS: 0376ECF4DD
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: OhGnSocBWXgKf6li1If0l/qnt577LOLxN3y/DiRzf9+fdiwTJOg+PtD6AXT/hN9TcZRc4he8sUiQAtjEHB6SfoMJCQ/s1QRaLTw2NrpdC3IRQN01TDMuJakXQAVlqmBR2W/eU3GpqVzCIapu2MSJxj5g/QFrkp1ZsaymsCkAzL/071xJ1A9VkhMGflLepowOS1IP7H50WFf3IMZ9QcQgCUAP8158PmIdtd7Sfz6oTlZkXk0MJWiMtGqbJtaRv8IoMwWz27burmtvfIehMoiM6hOfdOZy9xg6xvxapTeZaOmHlFIOCXV2HmS0SP3YqhEXrVrY8hYilhfk5rYNSsw/cET6fAYxka8071ePbIJ0gseFWoIK9SktdDMOyTy8IrAJfxtV/9wPnSuZXwwDG6e04Pp8QWmxEnYBe81KLzYCagT0o6blyDr3Nys46pQQLKsM9JD5NF1iRKKC7KdCsMut0Hk7oTJHpfT8/I0x8Ta9rRRqGqRfZkM73HnA56szIKoZVTxJmTDbpmyTuqAc1V5b8Q==
-X-OriginatorOrg: xilinx.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Apr 2020 06:32:50.1975
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: a931262f-04d4-490c-cd7c-08d7e299269f
-X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.60.83];Helo=[xsj-pvapsmtpgw01]
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR02MB4905
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.75.127.49]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.676
+ definitions=2020-04-17_02:2020-04-14,2020-04-17 signatures=0
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
-Message-ID: <20200417063242.f4M-q8xMf56GwDjQYoVNowqso85ZlQ6LSDJMHxwpy1c@z>
+Message-ID: <20200417075250.sPR6qTAIEa4LTOBGG1OvX7AaF6V6JSIb44IKZEbnDL0@z>
 
-On 16. 04. 20 23:54, Ben Levinsky wrote:
-> R5 is included in Xilinx Zynq UltraScale MPSoC so by adding this
-> remotproc driver, we can boot the R5 sub-system in different
-> configurations.
-> 
-> Acked-by: Stefano Stabellini <stefano.stabellini@xilinx.com>
-> Acked-by: Ben Levinsky <ben.levinsky@xilinx.com>
-> Reviewed-by: Radhey Shyam Pandey <radhey.shyam.pandey@xilinx.com>
-> Signed-off-by: Ben Levinsky <ben.levinsky@xilinx.com>
-> Signed-off-by: Wendy Liang <wendy.liang@xilinx.com>
-> Signed-off-by: Michal Simek <michal.simek@xilinx.com>
-> Signed-off-by: Ed Mooring <ed.mooring@xilinx.com>
-> Signed-off-by: Jason Wu <j.wu@xilinx.com>
-> Tested-by: Ben Levinsky <ben.levinsky@xilinx.com>
+Hi Rishabh,
+
+> -----Original Message-----
+> From: linux-remoteproc-owner@vger.kernel.org <linux-remoteproc-
+> owner@vger.kernel.org> On Behalf Of Rishabh Bhatnagar
+> Sent: jeudi 16 avril 2020 20:39
+> To: linux-remoteproc@vger.kernel.org; linux-kernel@vger.kernel.org
+> Cc: bjorn.andersson@linaro.org; ohad@wizery.com;
+> mathieu.poirier@linaro.org; tsoni@codeaurora.org;
+> psodagud@codeaurora.org; sidgup@codeaurora.org; Rishabh Bhatnagar
+> <rishabhb@codeaurora.org>
+> Subject: [PATCH 2/3] remoteproc: Add inline coredump functionality
+>=20
+> This patch adds the inline coredump functionality. The current
+> coredump implementation uses vmalloc area to copy all the segments.
+> But this might put a lot of strain on low memory targets as the
+> firmware size sometimes is in ten's of MBs. The situation becomes
+> worse if there are multiple remote processors  undergoing recovery
+> at the same time. This patch directly copies the device memory to
+> userspace buffer and avoids extra memory usage. This requires
+> recovery to be halted until data is read by userspace and free
+> function is called.
+>=20
+> Signed-off-by: Rishabh Bhatnagar <rishabhb@codeaurora.org>
 > ---
-> Changes since v1:
-> - remove domain struct as per review from Mathieu
-> ---
->  drivers/remoteproc/Kconfig                |  10 +
->  drivers/remoteproc/Makefile               |   1 +
->  drivers/remoteproc/zynqmp_r5_remoteproc.c | 911 ++++++++++++++++++++++++++++++
->  3 files changed, 922 insertions(+)
->  create mode 100644 drivers/remoteproc/zynqmp_r5_remoteproc.c
-> 
-> diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
-> index fbaed07..f094c84 100644
-> --- a/drivers/remoteproc/Kconfig
-> +++ b/drivers/remoteproc/Kconfig
-> @@ -222,6 +222,16 @@ config ST_REMOTEPROC
->  	  processor framework.
->  	  This can be either built-in or a loadable module.
->  
-> +config ZYNQMP_R5_REMOTEPROC
-> +	tristate "ZynqMP_r5 remoteproc support"
-> +	depends on ARM64 && PM && ARCH_ZYNQMP
-> +	select RPMSG_VIRTIO
-> +	select MAILBOX
-> +	select ZYNQMP_IPI_MBOX
-> +	help
-> +	  Say y here to support ZynqMP R5 remote processors via the remote
-> +	  processor framework.
+>  drivers/remoteproc/remoteproc_coredump.c | 130
+> +++++++++++++++++++++++++++++++
+>  drivers/remoteproc/remoteproc_internal.h |  23 +++++-
+>  include/linux/remoteproc.h               |   2 +
+>  3 files changed, 153 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/drivers/remoteproc/remoteproc_coredump.c
+> b/drivers/remoteproc/remoteproc_coredump.c
+> index 9de0467..888b7dec91 100644
+> --- a/drivers/remoteproc/remoteproc_coredump.c
+> +++ b/drivers/remoteproc/remoteproc_coredump.c
+> @@ -12,6 +12,84 @@
+>  #include <linux/remoteproc.h>
+>  #include "remoteproc_internal.h"
+>=20
+> +static void rproc_free_dump(void *data)
+> +{
+> +	struct rproc_coredump_state *dump_state =3D data;
 > +
->  config ST_SLIM_REMOTEPROC
->  	tristate
->  
-> diff --git a/drivers/remoteproc/Makefile b/drivers/remoteproc/Makefile
-> index 0effd38..806ac3f 100644
-> --- a/drivers/remoteproc/Makefile
-> +++ b/drivers/remoteproc/Makefile
-> @@ -27,5 +27,6 @@ obj-$(CONFIG_QCOM_WCNSS_PIL)		+= qcom_wcnss_pil.o
->  qcom_wcnss_pil-y			+= qcom_wcnss.o
->  qcom_wcnss_pil-y			+= qcom_wcnss_iris.o
->  obj-$(CONFIG_ST_REMOTEPROC)		+= st_remoteproc.o
-> +obj-$(CONFIG_ZYNQMP_R5_REMOTEPROC)	+= zynqmp_r5_remoteproc.o
->  obj-$(CONFIG_ST_SLIM_REMOTEPROC)	+= st_slim_rproc.o
->  obj-$(CONFIG_STM32_RPROC)		+= stm32_rproc.o
-> diff --git a/drivers/remoteproc/zynqmp_r5_remoteproc.c b/drivers/remoteproc/zynqmp_r5_remoteproc.c
-> new file mode 100644
-> index 0000000..2cfc6b6
-> --- /dev/null
-> +++ b/drivers/remoteproc/zynqmp_r5_remoteproc.c
-> @@ -0,0 +1,911 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Zynq R5 Remote Processor driver
+> +	complete(&dump_state->dump_done);
+> +}
+> +
+> +static unsigned long resolve_addr(loff_t user_offset,
+> +				   struct list_head *segments,
+> +				   unsigned long *data_left)
+> +{
+> +	struct rproc_dump_segment *segment;
+> +
+> +	list_for_each_entry(segment, segments, node) {
+> +		if (user_offset >=3D segment->size)
+> +			user_offset -=3D segment->size;
+> +		else
+> +			break;
+> +	}
+> +
+> +	if (&segment->node =3D=3D segments) {
+> +		*data_left =3D 0;
+> +		return 0;
+> +	}
+> +
+> +	*data_left =3D segment->size - user_offset;
+> +
+> +	return segment->da + user_offset;
+> +}
+> +
+> +static ssize_t rproc_read_dump(char *buffer, loff_t offset, size_t count=
+,
+> +				void *data, size_t header_size)
+> +{
+> +	void *device_mem;
+> +	size_t data_left, copy_size, bytes_left =3D count;
+> +	unsigned long addr;
+> +	struct rproc_coredump_state *dump_state =3D data;
+> +	struct rproc *rproc =3D dump_state->rproc;
+> +	void *elfcore =3D dump_state->header;
+> +
+> +	/* Copy the header first */
+> +	if (offset < header_size) {
+> +		copy_size =3D header_size - offset;
+> +		copy_size =3D min(copy_size, bytes_left);
+> +
+> +		memcpy(buffer, elfcore + offset, copy_size);
+> +		offset +=3D copy_size;
+> +		bytes_left -=3D copy_size;
+> +		buffer +=3D copy_size;
+> +	}
+> +
+> +	while (bytes_left) {
+> +		addr =3D resolve_addr(offset - header_size,
+> +				    &rproc->dump_segments, &data_left);
+> +		/* EOF check */
+> +		if (data_left =3D=3D 0) {
+> +			pr_info("Ramdump complete %lld bytes read",
+> offset);
+> +			break;
+> +		}
+> +
+> +		copy_size =3D min_t(size_t, bytes_left, data_left);
+> +
+> +		device_mem =3D rproc->ops->da_to_va(rproc, addr,
+> copy_size);
+> +		if (!device_mem) {
+> +			pr_err("Address:%lx with size %zd out of remoteproc
+> carveout\n",
+> +				addr, copy_size);
+> +			return -ENOMEM;
+> +		}
+> +		memcpy(buffer, device_mem, copy_size);
+> +
+> +		offset +=3D copy_size;
+> +		buffer +=3D copy_size;
+> +		bytes_left -=3D copy_size;
+> +	}
+> +
+> +	return count - bytes_left;
+> +}
+> +
+>  static void create_elf_header(void *data, int phnum, struct rproc *rproc=
+)
+>  {
+>  	struct elf32_phdr *phdr;
+> @@ -55,6 +133,58 @@ static void create_elf_header(void *data, int phnum,
+> struct rproc *rproc)
+>  }
+>=20
+>  /**
+> + * rproc_inline_coredump() - perform synchronized coredump
+> + * @rproc:	rproc handle
 > + *
-> + * Copyright (C) 2015 - 2018 Xilinx Inc.
-> + * Copyright (C) 2015 Jason Wu <j.wu@xilinx.com>
-> + *
-> + * Based on origin OMAP and Zynq Remote Processor driver
-> + *
-> + * Copyright (C) 2012 Michal Simek <monstr@monstr.eu>
-> + * Copyright (C) 2012 PetaLogix
-> + * Copyright (C) 2011 Texas Instruments, Inc.
-> + * Copyright (C) 2011 Google, Inc.
+> + * This function will generate an ELF header for the registered segments
+> + * and create a devcoredump device associated with rproc. This function
+> + * directly copies the segments from device memory to userspace. The
+> + * recovery is stalled until the enitire coredump is read. This approach
+Typo entire -> entire
+> + * avoids using extra vmalloc memory(which can be really large).
 > + */
+> +void rproc_inline_coredump(struct rproc *rproc)
+> +{
+> +	struct rproc_dump_segment *segment;
+> +	struct elf32_phdr *phdr;
+> +	struct elf32_hdr *ehdr;
+> +	struct rproc_coredump_state *dump_state;
+> +	size_t header_size;
+> +	void *data;
+> +	int phnum =3D 0;
 > +
-> +#include <linux/atomic.h>
-> +#include <linux/cpu.h>
-> +#include <linux/dma-mapping.h>
-> +#include <linux/delay.h>
-> +#include <linux/err.h>
-> +#include <linux/firmware/xlnx-zynqmp.h>
-> +#include <linux/genalloc.h>
-> +#include <linux/idr.h>
-> +#include <linux/interrupt.h>
-> +#include <linux/kernel.h>
-> +#include <linux/list.h>
-> +#include <linux/mailbox_client.h>
-> +#include <linux/mailbox/zynqmp-ipi-message.h>
-> +#include <linux/module.h>
-> +#include <linux/of_address.h>
-> +#include <linux/of_irq.h>
-> +#include <linux/of_platform.h>
-> +#include <linux/of_reserved_mem.h>
-> +#include <linux/pfn.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/remoteproc.h>
-> +#include <linux/skbuff.h>
-> +#include <linux/slab.h>
-> +#include <linux/sysfs.h>
+> +	if (list_empty(&rproc->dump_segments))
+> +		return;
 > +
-> +#include "remoteproc_internal.h"
+> +	header_size =3D sizeof(*ehdr);
+> +	list_for_each_entry(segment, &rproc->dump_segments, node) {
+> +		header_size +=3D sizeof(*phdr);
 > +
-> +#define MAX_RPROCS	2 /* Support up to 2 RPU */
-> +#define MAX_MEM_PNODES	4 /* Max power nodes for one RPU memory instance */
+> +		phnum++;
+> +	}
 > +
-> +#define DEFAULT_FIRMWARE_NAME	"rproc-rpu-fw"
+> +	data =3D vmalloc(header_size);
+> +	if (!data)
+> +		return;
 > +
-> +/* PM proc states */
-> +#define PM_PROC_STATE_ACTIVE 1U
+> +	ehdr =3D data;
+> +	create_elf_header(data, phnum, rproc);
 > +
-> +/* IPI buffer MAX length */
-> +#define IPI_BUF_LEN_MAX	32U
-> +/* RX mailbox client buffer max length */
-> +#define RX_MBOX_CLIENT_BUF_MAX	(IPI_BUF_LEN_MAX + \
-> +				 sizeof(struct zynqmp_ipi_message))
+> +	dump_state =3D kzalloc(sizeof(*dump_state), GFP_KERNEL);
+> +	dump_state->rproc =3D rproc;
+> +	dump_state->header =3D data;
+> +	init_completion(&dump_state->dump_done);
 > +
-> +static bool autoboot __read_mostly;
+> +	dev_coredumpm(&rproc->dev, NULL, dump_state, header_size,
+> GFP_KERNEL,
+> +		      rproc_read_dump, rproc_free_dump);
 > +
-> +static const struct zynqmp_eemi_ops *eemi_ops;
+> +	/* Wait until the dump is read and free is called */
+> +	wait_for_completion(&dump_state->dump_done);
 
-Take a look at Jolly's series which she sent recently and use the same
-style as was recommended by Greg.
+Maybe good to add a timeout with value programmable via debugfs?
 
-Thanks,
-Michal
+Regards,
+Loic
+> +
+> +	kfree(dump_state);
+> +}
+> +EXPORT_SYMBOL(rproc_inline_coredump);
+> +
+> +/**
+>   * rproc_default_coredump() - perform coredump
+>   * @rproc:	rproc handle
+>   *
+> diff --git a/drivers/remoteproc/remoteproc_internal.h
+> b/drivers/remoteproc/remoteproc_internal.h
+> index 28b6af2..ea6146e 100644
+> --- a/drivers/remoteproc/remoteproc_internal.h
+> +++ b/drivers/remoteproc/remoteproc_internal.h
+> @@ -24,6 +24,18 @@ struct rproc_debug_trace {
+>  	struct rproc_mem_entry trace_mem;
+>  };
+>=20
+> +struct rproc_coredump_state {
+> +	struct rproc *rproc;
+> +	void *header;
+> +	struct completion dump_done;
+> +};
+> +
+> +enum rproc_coredump_conf {
+> +	COREDUMP_DEFAULT,
+> +	COREDUMP_INLINE,
+> +	COREDUMP_DISABLED,
+> +};
+> +
+>  /* from remoteproc_core.c */
+>  void rproc_release(struct kref *kref);
+>  irqreturn_t rproc_vq_interrupt(struct rproc *rproc, int vq_id);
+> @@ -49,6 +61,7 @@ struct dentry *rproc_create_trace_file(const char
+> *name, struct rproc *rproc,
+>=20
+>  /* from remoteproc_coredump.c */
+>  void rproc_default_coredump(struct rproc *rproc);
+> +void rproc_inline_coredump(struct rproc *rproc);
+>=20
+>  void rproc_free_vring(struct rproc_vring *rvring);
+>  int rproc_alloc_vring(struct rproc_vdev *rvdev, int i);
+> @@ -125,8 +138,14 @@ struct resource_table
+> *rproc_find_loaded_rsc_table(struct rproc *rproc,
+>  static inline
+>  void rproc_coredump(struct rproc *rproc)
+>  {
+> -	return rproc_default_coredump(rproc);
+> -
+> +	switch (rproc->coredump_conf) {
+> +	case COREDUMP_DEFAULT:
+> +		return rproc_default_coredump(rproc);
+> +	case COREDUMP_INLINE:
+> +		return rproc_inline_coredump(rproc);
+> +	default:
+> +		break;
+> +	}
+>  }
+>=20
+>  #endif /* REMOTEPROC_INTERNAL_H */
+> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+> index 16ad666..23298ce 100644
+> --- a/include/linux/remoteproc.h
+> +++ b/include/linux/remoteproc.h
+> @@ -459,6 +459,7 @@ struct rproc_dump_segment {
+>   * @dev: virtual device for refcounting and common remoteproc behavior
+>   * @power: refcount of users who need this rproc powered up
+>   * @state: state of the device
+> + * @coredump_conf: Currenlty selected coredump configuration
+>   * @lock: lock which protects concurrent manipulations of the rproc
+>   * @dbg_dir: debugfs directory of this rproc device
+>   * @traces: list of trace buffers
+> @@ -492,6 +493,7 @@ struct rproc {
+>  	struct device dev;
+>  	atomic_t power;
+>  	unsigned int state;
+> +	unsigned int coredump_conf;
+>  	struct mutex lock;
+>  	struct dentry *dbg_dir;
+>  	struct list_head traces;
+> --
+> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora
+> Forum,
+> a Linux Foundation Collaborative Project
