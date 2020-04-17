@@ -1,117 +1,68 @@
-Return-Path: <paul@crapouillou.net>
-From: Paul Cercueil <paul@crapouillou.net>
-Subject: [PATCH v6 1/5] dt-bindings: Document JZ47xx VPU auxiliary processor
-Date: Fri, 17 Apr 2020 19:00:36 +0200
-Message-Id: <20200417170040.174319-1-paul@crapouillou.net>
+Return-Path: <s-anna@ti.com>
+Subject: Re: [PATCH v2 0/7] remoteproc: Refactor function rproc_alloc()
+References: <20200415204858.2448-1-mathieu.poirier@linaro.org>
+From: Suman Anna <s-anna@ti.com>
+Message-ID: <b1a1d496-5ffa-95c1-0f06-7ea9f6b7e401@ti.com>
+Date: Fri, 17 Apr 2020 08:34:27 -0500
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Arnaud Pouliquen <arnaud.pouliquen@st.com>
-Cc: od@zcrc.me, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>, Rob Herring <robh@kernel.org>
+In-Reply-To: <20200415204858.2448-1-mathieu.poirier@linaro.org>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+To: Mathieu Poirier <mathieu.poirier@linaro.org>, bjorn.andersson@linaro.org, ohad@wizery.com
+Cc: elder@linaro.org, Markus.Elfring@web.de, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Inside the Video Processing Unit (VPU) of the recent JZ47xx SoCs from
-Ingenic is a second Xburst MIPS CPU very similar to the main core.
-This document describes the devicetree bindings for this auxiliary
-processor.
+Hi Mathieu,
+On 4/15/20 3:48 PM, Mathieu Poirier wrote:
+> Good afternoon,
+> 
+> This is the second installment in this series, the first one can be
+> found here[1].  The goal of the work is to consolidate modifications to
+> function rproc_alloc() that were made over the last weeks[2][3][4] to
+> provide a common foundation to work from and avoid merge conflicts.
+> 
+> Applies cleanly on v5.7-rc1
 
-Signed-off-by: Paul Cercueil <paul@crapouillou.net>
-Reviewed-by: Rob Herring <robh@kernel.org>
----
+Thanks for the patches. Overall looks good. I have couple of minor 
+comments, will post them in the respective patches.
 
-Notes:
-    v2: Update TCSM0 address in example
-    v3: Change node name to 'video-decoder'
-    v4: Convert to YAML. I didn't add Rob's Ack on v3 because of that (sorry Rob)
-    v5: - Fix 'reg' not in <addr, len> pairs
-    	- Add missing include to devicetree example
-    v6: No change
+> 
+> Thanks,
+> Mathieu
+> 
+> New for V2:
+> - Reworked title for patch 01.
+> - Added "Fixes" tag to patch 01.
+> - Using kasprintf() instead of complex memory allocation.
+> - Using kstrdup_const() instead of kstrdup().
+> - Reworked rproc_alloc_firmware() to use non-negative form.
+> 
+> [1]. https://patchwork.kernel.org/project/linux-remoteproc/list/?series=270239
+> [2]. https://patchwork.kernel.org/project/linux-remoteproc/list/?series=261069
+> [3]. https://patchwork.kernel.org/patch/11456385/
 
- .../bindings/remoteproc/ingenic,vpu.yaml      | 77 +++++++++++++++++++
- 1 file changed, 77 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/remoteproc/ingenic,vpu.yaml
+I have since reworked this and posted the next version on top of this 
+series.
+https://patchwork.kernel.org/patch/11493941/
 
-diff --git a/Documentation/devicetree/bindings/remoteproc/ingenic,vpu.yaml b/Documentation/devicetree/bindings/remoteproc/ingenic,vpu.yaml
-new file mode 100644
-index 000000000000..c019f9fbe916
---- /dev/null
-+++ b/Documentation/devicetree/bindings/remoteproc/ingenic,vpu.yaml
-@@ -0,0 +1,77 @@
-+# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: "http://devicetree.org/schemas/remoteproc/ingenic,vpu.yaml#"
-+$schema: "http://devicetree.org/meta-schemas/core.yaml#"
-+
-+title: Ingenic Video Processing Unit bindings
-+
-+description:
-+  Inside the Video Processing Unit (VPU) of the recent JZ47xx SoCs from
-+  Ingenic is a second Xburst MIPS CPU very similar to the main core.
-+  This document describes the devicetree bindings for this auxiliary
-+  processor.
-+
-+maintainers:
-+  - Paul Cercueil <paul@crapouillou.net>
-+
-+properties:
-+  compatible:
-+    const: ingenic,jz4770-vpu-rproc
-+
-+  reg:
-+    items:
-+      - description: aux registers
-+      - description: tcsm0 registers
-+      - description: tcsm1 registers
-+      - description: sram registers
-+
-+  reg-names:
-+    items:
-+      - const: aux
-+      - const: tcsm0
-+      - const: tcsm1
-+      - const: sram
-+
-+  clocks:
-+    items:
-+      - description: aux clock
-+      - description: vpu clock
-+
-+  clock-names:
-+    items:
-+      - const: aux
-+      - const: vpu
-+
-+  interrupts:
-+    description: VPU hardware interrupt
-+
-+required:
-+  - compatible
-+  - reg
-+  - reg-names
-+  - clocks
-+  - clock-names
-+  - interrupts
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/clock/jz4770-cgu.h>
-+
-+    vpu: video-decoder@132a0000 {
-+      compatible = "ingenic,jz4770-vpu-rproc";
-+
-+      reg = <0x132a0000 0x20>, /* AUX */
-+            <0x132b0000 0x4000>, /* TCSM0 */
-+            <0x132c0000 0xc000>, /* TCSM1 */
-+            <0x132f0000 0x7000>; /* SRAM */
-+      reg-names = "aux", "tcsm0", "tcsm1", "sram";
-+
-+      clocks = <&cgu JZ4770_CLK_AUX>, <&cgu JZ4770_CLK_VPU>;
-+      clock-names = "aux", "vpu";
-+
-+      interrupt-parent = <&cpuintc>;
-+      interrupts = <3>;
-+    };
--- 
-2.25.1
+regards
+Suman
+
+> [4]. https://patchwork.kernel.org/patch/11473241/
+> 
+> Alex Elder (1):
+>    remoteproc: Fix IDR initialisation in rproc_alloc()
+> 
+> Mathieu Poirier (6):
+>    remoteproc: Split firmware name allocation from rproc_alloc()
+>    remoteproc: Simplify default name allocation
+>    remoteproc: Use kstrdup_const() rather than kstrup()
+>    remoteproc: Restructure firmware name allocation
+>    remoteproc: Split rproc_ops allocation from rproc_alloc()
+>    remoteproc: Get rid of tedious error path
+> 
+>   drivers/remoteproc/remoteproc_core.c | 96 +++++++++++++++-------------
+>   include/linux/remoteproc.h           |  2 +-
+>   2 files changed, 54 insertions(+), 44 deletions(-)
+> 
