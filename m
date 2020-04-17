@@ -1,71 +1,40 @@
-Return-Path: <linux-arm-msm-owner@vger.kernel.org>
-From: Sibi Sankar <sibis@codeaurora.org>
-Subject: [PATCH 4/5] arm64: dts: qcom: sc7180: Add Q6V5 MSS node
-Date: Fri, 17 Apr 2020 19:56:04 +0530
-Message-Id: <20200417142605.28885-5-sibis@codeaurora.org>
-In-Reply-To: <20200417142605.28885-1-sibis@codeaurora.org>
-References: <20200417142605.28885-1-sibis@codeaurora.org>
+Return-Path: <s-anna@ti.com>
+From: Suman Anna <s-anna@ti.com>
+Subject: [PATCH 0/2] rproc core patches needed for TI K3 drivers
+Date: Thu, 16 Apr 2020 19:20:34 -0500
+Message-ID: <20200417002036.24359-1-s-anna@ti.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Sender: linux-arm-msm-owner@vger.kernel.org
-To: bjorn.andersson@linaro.org
-Cc: agross@kernel.org, robh+dt@kernel.org, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, evgreen@chromium.org, ohad@wizery.com, mka@chromium.org, dianders@chromium.org, devicetree@vger.kernel.org, Sibi Sankar <sibis@codeaurora.org>
+Content-Type: text/plain
+To: Bjorn Andersson <bjorn.andersson@linaro.org>, Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: linux-remoteproc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Suman Anna <s-anna@ti.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-This patch adds Q6V5 MSS PAS remoteproc node for SC7180 SoCs.
+Hi Bjorn, Mathieu,
 
-Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
----
- arch/arm64/boot/dts/qcom/sc7180.dtsi | 36 ++++++++++++++++++++++++++++
- 1 file changed, 36 insertions(+)
+The following 2 patches were a revised version and split out from the
+TI K3 R5F remoteproc support patch series [1]. The patches do use the
+cleanup logic from  Mathieu's "remoteproc: Refactor function rproc_alloc()"
+series. The patches address both of your comments.
 
-diff --git a/arch/arm64/boot/dts/qcom/sc7180.dtsi b/arch/arm64/boot/dts/qcom/sc7180.dtsi
-index f73ffd74d4fcd..e319762a0bffc 100644
---- a/arch/arm64/boot/dts/qcom/sc7180.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sc7180.dtsi
-@@ -1372,6 +1372,42 @@ sd-cd {
- 			};
- 		};
- 
-+		remoteproc_mpss: remoteproc@4080000 {
-+			compatible = "qcom,sc7180-mpss-pas";
-+			reg = <0x0 0x04080000 0x0 0x4040>;
-+
-+			interrupts-extended = <&intc GIC_SPI 266 IRQ_TYPE_EDGE_RISING>,
-+					      <&modem_smp2p_in 0 IRQ_TYPE_EDGE_RISING>,
-+					      <&modem_smp2p_in 1 IRQ_TYPE_EDGE_RISING>,
-+					      <&modem_smp2p_in 2 IRQ_TYPE_EDGE_RISING>,
-+					      <&modem_smp2p_in 3 IRQ_TYPE_EDGE_RISING>,
-+					      <&modem_smp2p_in 7 IRQ_TYPE_EDGE_RISING>;
-+			interrupt-names = "wdog", "fatal", "ready", "handover",
-+					  "stop-ack", "shutdown-ack";
-+
-+			clocks = <&rpmhcc RPMH_CXO_CLK>;
-+			clock-names = "xo";
-+
-+			power-domains = <&aoss_qmp AOSS_QMP_LS_MODEM>,
-+					<&rpmhpd SC7180_CX>,
-+					<&rpmhpd SC7180_MSS>;
-+			power-domain-names = "load_state", "cx", "mss";
-+
-+			memory-region = <&mpss_mem>;
-+
-+			qcom,smem-states = <&modem_smp2p_out 0>;
-+			qcom,smem-state-names = "stop";
-+
-+			status = "disabled";
-+
-+			glink-edge {
-+				interrupts = <GIC_SPI 449 IRQ_TYPE_EDGE_RISING>;
-+				label = "modem";
-+				qcom,remote-pid = <1>;
-+				mboxes = <&apss_shared 12>;
-+			};
-+		};
-+
- 		sdhc_2: sdhci@8804000 {
- 			compatible = "qcom,sc7180-sdhci", "qcom,sdhci-msm-v5";
- 			reg = <0 0x08804000 0 0x1000>;
+Delta changes in individual patches.
+
+regards
+Suman
+
+[1] https://patchwork.kernel.org/cover/11456367/
+[2] https://patchwork.kernel.org/cover/11492005/
+
+Loic Pallardy (1):
+  remoteproc: Add prepare and unprepare ops
+
+Suman Anna (1):
+  remoteproc: Use a local copy for the name field
+
+ drivers/remoteproc/remoteproc_core.c     | 21 +++++++++++++++++++--
+ drivers/remoteproc/remoteproc_internal.h | 16 ++++++++++++++++
+ include/linux/remoteproc.h               |  4 ++++
+ 3 files changed, 39 insertions(+), 2 deletions(-)
+
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.26.0
