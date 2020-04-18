@@ -1,4 +1,4 @@
-Return-Path: <SRS0=ybdg=6B=vger.kernel.org=linux-remoteproc-owner@kernel.org>
+Return-Path: <SRS0=o54j=6C=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
@@ -7,244 +7,171 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15966C2BB1D
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 17 Apr 2020 22:24:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5AEFC2D0EF
+	for <linux-remoteproc@archiver.kernel.org>; Sat, 18 Apr 2020 09:10:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DFC24221EA
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 17 Apr 2020 22:24:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BAA9E214D8
+	for <linux-remoteproc@archiver.kernel.org>; Sat, 18 Apr 2020 09:10:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Spf98Qg5"
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="rv7na1Kp"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728617AbgDQWYd (ORCPT
+        id S1725950AbgDRJKQ (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 17 Apr 2020 18:24:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52782 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728496AbgDQWYd (ORCPT
+        Sat, 18 Apr 2020 05:10:16 -0400
+Received: from mail-eopbgr70081.outbound.protection.outlook.com ([40.107.7.81]:49351
+        "EHLO EUR04-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725857AbgDRJKQ (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 17 Apr 2020 18:24:33 -0400
-Received: from mail-io1-xd42.google.com (mail-io1-xd42.google.com [IPv6:2607:f8b0:4864:20::d42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 263A9C061A0F
-        for <linux-remoteproc@vger.kernel.org>; Fri, 17 Apr 2020 15:24:33 -0700 (PDT)
-Received: by mail-io1-xd42.google.com with SMTP id e127so4096761iof.6
-        for <linux-remoteproc@vger.kernel.org>; Fri, 17 Apr 2020 15:24:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=9l7ReVXML5iC1lUXKjwrOgZKOV8ZzgKkL7y7FQ7TRC8=;
-        b=Spf98Qg5qFQCzvnqgZgRv9fmE2Syrwc7Gqbh4i98GT3U8W9nhHwgX5Fcoc//T54NMd
-         0uY892q8flmpGYSSbSgi5bH6fe3fDZ7klazcneNNR3pbC0X5zgLLwFCm4VfMXd5hZgos
-         +8SamfzzVfSj/m1igwp6sMozIYa9LWyURM0yc30+WMlTJP2dN2pZHnBWatc+oBu6HXyN
-         Eqfu5VFV6290Xm9etLyap+97UVMongeQ90ZfalwAGBQqKt0xKzYuiKRBxP5cBP4YiCx2
-         0LK61hzM0pcDfDj2SKcLvZxWrT+LWLhyCIUQUrftJOz0ZCi2pf8748pbsVL+kCKxU51d
-         9oXQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=9l7ReVXML5iC1lUXKjwrOgZKOV8ZzgKkL7y7FQ7TRC8=;
-        b=iJQJTFd3WXO8k56ejc8R9EuD+Ky4nA7BidrM/uuZfHT+SC5lrnxD9Im+4f/fla3XYq
-         jX1SZTTL+X5OEPG0P7vAB01t84lHUZa6m4N9d+dSUY/GEAknZ0FkJ2G6/jNLsgUyaD0s
-         6zPOlk2fa630URh3yIVJRLr5q2hHTza7xAZojYsT/36fLXXl0TCagELmEnS/1YxIWPco
-         IhjGn1pxvUUZBnPmCDEQ+t2bXQAoLlyRGI6aj/YrIswU0922WMiIPEF4X1l+aURdh0kE
-         BhVNHDH7JpzU7f9VrtW/80PWba263RkHRqLa+CTym51jp8EsDRfi8Tf9bf63cq1FoN66
-         1EpA==
-X-Gm-Message-State: AGi0PubzolX7/ZD1xWCUpZY5mP9ogfWbptxBlbEtrblOeweSOBU5Ubhh
-        dPrZ94QsLzyNLNNH5chqH2OSMVFmvmadsq2RtF0yew==
-X-Google-Smtp-Source: APiQypL6PL6+MLLIpNc0SmvY24c0Q4ez5CT8xBF/CqHav+Y7obUoOyXH/xedbXEuqARaRaw8L9lptDwOz6Nj/dxncHY=
-X-Received: by 2002:a6b:8bd2:: with SMTP id n201mr5392033iod.131.1587162272197;
- Fri, 17 Apr 2020 15:24:32 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200304142628.8471-1-NShubin@topcon.com> <20200406113310.3041-1-nikita.shubin@maquefel.me>
- <20200406113310.3041-2-nikita.shubin@maquefel.me> <20200414164519.GA24061@xps15>
- <45761587100993@mail.yandex.ru> <CANLsYkxvuwFdG3YnE7tTxQaD7uF0d_XnPjt1KS++FFe0W3fbdw@mail.gmail.com>
- <20200417202653.00002500@maquefel.me>
-In-Reply-To: <20200417202653.00002500@maquefel.me>
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-Date:   Fri, 17 Apr 2020 16:24:21 -0600
-Message-ID:
- <CANLsYkyUoG9fW7NoXMS1D7WjPGew7FT0jyOP1E0ipmwW-qEG7A@mail.gmail.com>
-Subject: Re: [PATCH v2 1/3] remoteproc: imx_rproc: set pc on start
-To:     Nikita Shubin <nikita.shubin@maquefel.me>
-Cc:     Nikita Shubin <nshubin@topcon.com>,
-        Ohad Ben-Cohen <ohad@wizery.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
+        Sat, 18 Apr 2020 05:10:16 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=deFECko1xrqyBPI5jy4xV+1sCzxpGMA9DsjYQ765lU/YoGo4wxXoziGCE91PElJdvFiPid1pwKpybhh0VjrP/xjHAedHEgphvPyNyPK8Xw85Yn7LJRnJECTiumEwo4QD4PTKxyCeOtAN2zauh74F8iA5TTdG0MfhRCW6suoP6jdNbbgVsecTsJYOAQdenlxSk7zg2mBwwHVo88fbXxlhm49hx5zPJp/NmDS2TnpFztKUCW4SrhI7rScVAHmFoDzI9D/fbPZn4Byb47M0irpPPmZnJx8UACJ5WeOkn/CQviok0VLEZPjBe9deelShAS1pdnDComsJNISfdHdlyvYiQA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=WXIvG1wj6s+aBHy7SheIEyaJstTIGN2nA6ALgwnvtVs=;
+ b=LH0bVZ9CcE723ViBy4pNff3lVf8ZL40EflepEEnRfPsvQNcHGyk+O1312tMuHwPRgCcv2gCDZDX9nwcUufRIMaXsc5ZaFRLI7odwgHkRRPohdQrEuBjoj22Eg8MciMa4R1MJdiWIkxbhZghdPguLh+bCHRW6qp848VhhXjEcLWMyKIdkJMYcy3mYpNu2JMJ0l+Jr3AQXzVs0Y5BPq/6HArLFpHJ4YDp7o22+4gETYmgnRdzRHRBR1IFDewWTxu1vNqD9PA0wkMkH68fqR2flyXTuaqAkak9MHjs7UNVlflHPWvIejnH8j5YiPFzhc6ynNGZJD50lrQfwAK4DXPxl5w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=WXIvG1wj6s+aBHy7SheIEyaJstTIGN2nA6ALgwnvtVs=;
+ b=rv7na1KpG6Ynz7+2nQEtpAdxzNzvdEBUJC2vCT548lxEsQu7wXGCkBebW7sZAtUqQhAfAyZt/5rPcO4o4oXtbVPIONxZwwb7rTatnFj4o0NtpzA2w7C47FbwDomrbgkYFGT08Xxrk94mYFQpEnib1pGG5kQnb3MsciL/KJPXtmE=
+Received: from DB6PR0402MB2760.eurprd04.prod.outlook.com (2603:10a6:4:a1::14)
+ by DB6PR0402MB2839.eurprd04.prod.outlook.com (2603:10a6:4:99::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2921.29; Sat, 18 Apr
+ 2020 09:10:11 +0000
+Received: from DB6PR0402MB2760.eurprd04.prod.outlook.com
+ ([fe80::d17b:d767:19c3:b871]) by DB6PR0402MB2760.eurprd04.prod.outlook.com
+ ([fe80::d17b:d767:19c3:b871%6]) with mapi id 15.20.2921.027; Sat, 18 Apr 2020
+ 09:10:11 +0000
+From:   Peng Fan <peng.fan@nxp.com>
+To:     Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>
+CC:     "ohad@wizery.com" <ohad@wizery.com>,
         "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>
+Subject: RE: [PATCH 2/2] remoteproc: use filesz as backup when translate memsz
+ fail
+Thread-Topic: [PATCH 2/2] remoteproc: use filesz as backup when translate
+ memsz fail
+Thread-Index: AQHWDkktpZBH/gJE+EqHoCmC5/cfIahxkGoAgAwt7ICAAOcL0A==
+Date:   Sat, 18 Apr 2020 09:10:11 +0000
+Message-ID:
+ <DB6PR0402MB2760C900A4838657D82023F088D60@DB6PR0402MB2760.eurprd04.prod.outlook.com>
+References: <1586420572-28353-1-git-send-email-peng.fan@nxp.com>
+ <1586420572-28353-2-git-send-email-peng.fan@nxp.com>
+ <20200410012226.GV20625@builder.lan> <20200417192155.GA6797@xps15>
+In-Reply-To: <20200417192155.GA6797@xps15>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=peng.fan@nxp.com; 
+x-originating-ip: [180.107.26.236]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: ac1c4c7b-bad3-4b2f-5eba-08d7e3784c5b
+x-ms-traffictypediagnostic: DB6PR0402MB2839:|DB6PR0402MB2839:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <DB6PR0402MB2839933E63F94D0A2B24E56988D60@DB6PR0402MB2839.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:10000;
+x-forefront-prvs: 0377802854
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB6PR0402MB2760.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFTY:;SFS:(10009020)(4636009)(136003)(366004)(346002)(376002)(39860400002)(396003)(76116006)(478600001)(26005)(55016002)(66946007)(86362001)(81156014)(8936002)(44832011)(71200400001)(66556008)(64756008)(66476007)(52536014)(66446008)(33656002)(54906003)(110136005)(316002)(4326008)(8676002)(9686003)(7696005)(186003)(6506007)(5660300002)(2906002);DIR:OUT;SFP:1101;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: VGfZCOWu6F+w6TSfxHt5wGrXd1p+6suHhXQC+yxiiI4t/reh8WEFWTrxK8x2zeIibxQ5wwhYYYsqpVmLVIBY0IVul+yY1Jfh9sl0nwAY65e7A9a/EkoCO+6TaJyAAss0dpnd2k+Of8hoSRn+EtXVaa7CqeD7bnqD4SGWZrVhCSjOuvhN58IddUXHkzaCyarQqFvAOa9JLGXu9hFxTmrcWnY+WVSx9Ohmoo99846/R0XcchsWVt5aiqHwj0xtmjRJuK0psJ7cT1B4CrlZiPX/JhPw/SUH3mfbah2LAchMlFNE2hb6WT5yN2uahrcp+SCYbW0cYdngTbMRUcea3kyEAJPeJKwv+kpPb3y0n/hUtmt3IOMyChKzpI+pauCyexgtur59Pw0+sxdg1xyG+vlfC8Yw40Rcn44nwlgWMWf6abgqBDZGfl4HLUpRO8mWlil6
+x-ms-exchange-antispam-messagedata: Rbg4QfhNCgo5gd618Wxx5hQ7ni5DMvnwqslcKKj47i7VuktIeVGXwQxuTdfCNVcB4lYNF0fwoALjX0NGdIzzhsq8q0cUu3p9pp6ybj0A/cxlmQcOt3wR11bXTCgNqq6YJNKkyGrmk4q3yMQy33USGg==
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ac1c4c7b-bad3-4b2f-5eba-08d7e3784c5b
+X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Apr 2020 09:10:11.1812
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 4OkXDVnswPHIIpYwjUIyYYj5VL4huPf0AAtrVMvXxyRM0CptHSeIvb69NVEA6AetgsoFMWMoXZRsksx6ftmHmw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB6PR0402MB2839
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
-Message-ID: <20200417222421.5l4qjD9nSazG4Y6OgSjRdNzjKwfgEW7uu4lotI9Q7zg@z>
+Message-ID: <20200418091011.TYZzODISXMv0Yvbayh2P7GmyaaPUGVzfXt1LNXUSk4w@z>
 
-On Fri, 17 Apr 2020 at 11:27, Nikita Shubin <nikita.shubin@maquefel.me> wrote:
->
-> On Fri, 17 Apr 2020 11:01:22 -0600
-> Mathieu Poirier <mathieu.poirier@linaro.org> wrote:
->
-> > On Thu, 16 Apr 2020 at 23:40, <nikita.shubin@maquefel.me> wrote:
-> > >
-> > > Hi Mathieue,
-> > >
-> > > Hi Nikita,
-> > >
-> > > On Mon, Apr 06, 2020 at 02:33:08PM +0300, nikita.shubin@maquefel.me
-> > > wrote:
-> > >
-> > >  In case elf file interrupt vector is not supposed to be at OCRAM_S,
-> > >  it is needed to write elf entry point to OCRAM_S + 0x4, to boot M4
-> > >  firmware.
-> > >
-> > >  Otherwise firmware located anywhere besides OCRAM_S won't boot.
-> > >
-> > >  The firmware must set stack poiner as first instruction:
-> > >
-> > >  Reset_Handler:
-> > >      ldr sp, = __stack /* set stack pointer */
-> > >
-> > >  Signed-off-by: Nikita Shubin <NShubin@topcon.com>
-> > >
-> > >
-> > > The address in the SoB has to match what is found in the "From:"
-> > > field of the email header. Checkpatch is complaining about that,
-> > > something I would have expected to be fixed before sending this set
-> > > out.
-> > >
-> > > Noted and will be fixed.
-> > >
-> > >  ---
-> > >   drivers/remoteproc/imx_rproc.c | 16 +++++++++++++++-
-> > >   1 file changed, 15 insertions(+), 1 deletion(-)
-> > >
-> > >  diff --git a/drivers/remoteproc/imx_rproc.c
-> > > b/drivers/remoteproc/imx_rproc.c index 3e72b6f38d4b..bebc58d0f711
-> > > 100644 --- a/drivers/remoteproc/imx_rproc.c
-> > >  +++ b/drivers/remoteproc/imx_rproc.c
-> > >  @@ -45,6 +45,8 @@
-> > >
-> > >   #define IMX7D_RPROC_MEM_MAX 8
-> > >
-> > >  +#define IMX_BOOT_PC 0x4
-> > >  +
-> > >   /**
-> > >    * struct imx_rproc_mem - slim internal memory structure
-> > >    * @cpu_addr: MPU virtual address of the memory region
-> > >  @@ -85,6 +87,7 @@ struct imx_rproc {
-> > >           const struct imx_rproc_dcfg *dcfg;
-> > >           struct imx_rproc_mem mem[IMX7D_RPROC_MEM_MAX];
-> > >           struct clk *clk;
-> > >  + void __iomem *bootreg;
-> > >   };
-> > >
-> > >   static const struct imx_rproc_att imx_rproc_att_imx7d[] = {
-> > >  @@ -162,11 +165,16 @@ static int imx_rproc_start(struct rproc
-> > > *rproc) struct device *dev = priv->dev;
-> > >           int ret;
-> > >
-> > >  + /* write entry point to program counter */
-> > >  + writel(rproc->bootaddr, priv->bootreg);
-> > >
-> > >
-> > > What happens on all the other IMX systems where this fix is not
-> > > needed? Will they continue to work properly?
-> > >
-> > > Yes, my bad, it is also needed for IMX6 (but even so i need to
-> > > study this topic more carefully), this should be applied
-> > > exclusively for imx7d for now, and if will be needed someone with
-> > > imx6 hardware to test on can extend this on imx6 also.
-> > >
-> > >
-> > >
-> > >
-> > >  +
-> > >           ret = regmap_update_bits(priv->regmap, dcfg->src_reg,
-> > >                                    dcfg->src_mask, dcfg->src_start);
-> > >           if (ret)
-> > >                   dev_err(dev, "Failed to enable M4!\n");
-> > >
-> > >  + dev_info(&rproc->dev, "Started from 0x%x\n", rproc->bootaddr);
-> > >  +
-> > >           return ret;
-> > >   }
-> > >
-> > >  @@ -182,6 +190,9 @@ static int imx_rproc_stop(struct rproc *rproc)
-> > >           if (ret)
-> > >                   dev_err(dev, "Failed to stop M4!\n");
-> > >
-> > >  + /* clear entry points */
-> > >  + writel(0, priv->bootreg);
-> > >  +
-> > >           return ret;
-> > >   }
-> > >
-> > >  @@ -243,7 +254,8 @@ static void *imx_rproc_da_to_va(struct rproc
-> > > *rproc, u64 da, int len) static const struct rproc_ops
-> > > imx_rproc_ops = { .start = imx_rproc_start,
-> > >           .stop = imx_rproc_stop,
-> > >  - .da_to_va = imx_rproc_da_to_va,
-> > >  + .da_to_va = imx_rproc_da_to_va,
-> > >  + .get_boot_addr = rproc_elf_get_boot_addr,
-> > >
-> > >
-> > > How is this useful? Sure it will set rproc->bootaddr in
-> > > rproc_fw_boot() but what good does that do when it is invariably
-> > > set again in imx_rproc_start() ?
-> > >
-> > > The priv->bootreg is the address where we are writing Entry Point
-> > > and it is fixed, 0x04 address is translated to 0x00180004, so don't
-> > > quite understand you we are writing rproc->bootaddr into
-> > > priv->bootreg, not wiseversa.
+> Subject: Re: [PATCH 2/2] remoteproc: use filesz as backup when translate
+> memsz fail
+>=20
+> On Thu, Apr 09, 2020 at 06:22:26PM -0700, Bjorn Andersson wrote:
+> > On Thu 09 Apr 01:22 PDT 2020, Peng Fan wrote:
+> >
+> > > Since we no need memset if memsz is larger than filesz, we could use
+> > > filesz for the da to va translation when memsz translation fail.
 > > >
 > >
-> > What is your reason to set ops->get_boot_addr ?  How does that help
-> > the work done in this patch?
->
-> The reason is the following :
->
-> remoteproc_core.c:
-> | rproc_fw_boot(struct rproc *rproc, const struct firmware *fw)
-> | rproc->bootaddr = rproc_get_boot_addr(rproc, fw);
->
-> remoteproc_internal.h
-> | static inline
-> | u32 rproc_get_boot_addr(struct rproc *rproc, const struct firmware
-> *fw) | {
-> |       if (rproc->ops->get_boot_addr)
-> |               return rproc->ops->get_boot_addr(rproc, fw);
-> |
-> |       return 0;
-> | }
-
-And as I said above the value of rproc->bootaddr is set to
-priv->bootreg in imx_rproc_stop().  What am I missing?  More over
-imx_rproc_ops doesn't have a ->load() function and as such rproc_alloc
-will set it to rproc_elf_get_boot_addr()
-
->
+> > To me this implies that the firmware has a segment that's larger than
+> > the memory that it's going to run in. I think even if we're not
+> > writing to the entire memsz, asking da_to_va for the entire memsz
+> > provides a valuable sanity check.
 > >
+> > Regards,
+> > Bjorn
+> >
+> > > Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> > > ---
+> > >  drivers/remoteproc/remoteproc_elf_loader.c | 12 ++++++++++--
+> > >  1 file changed, 10 insertions(+), 2 deletions(-)
 > > >
-> > >   };
+> > > diff --git a/drivers/remoteproc/remoteproc_elf_loader.c
+> > > b/drivers/remoteproc/remoteproc_elf_loader.c
+> > > index cc50fe70d50c..74d425a4b34c 100644
+> > > --- a/drivers/remoteproc/remoteproc_elf_loader.c
+> > > +++ b/drivers/remoteproc/remoteproc_elf_loader.c
+> > > @@ -229,8 +229,16 @@ int rproc_elf_load_segments(struct rproc *rproc,
+> const struct firmware *fw)
+> > >  		if (!ptr) {
+> > >  			dev_err(dev, "bad phdr da 0x%llx mem 0x%llx\n", da,
+> > >  				memsz);
+> > > -			ret =3D -EINVAL;
+> > > -			break;
+> > > +
+> > > +			ptr =3D rproc_da_to_va(rproc, da, filesz);
+> > > +			if (!ptr) {
+> > > +				dev_err(dev,
+> > > +					"bad phdr da 0x%llx mem 0x%llx\n",
+> > > +					da, filesz);
+> > > +				ret =3D -EINVAL;
+> > > +				break;
+> > > +			}
+> > > +
+>=20
+> Adding to Bjorn's comment, I think if rproc_da_to_va() fails with memsz b=
+ut
+> succeeds with filesz something went wrong with how memory was laid out in
+> the DT or the ELF resources.  To me this patch offers the wrong solution =
+- the
+> focus should be on why rproc_da_to_va() fails.
+
+ok, I'll send out patch to fix imx_rproc. It is TCML and TCMU are not mappe=
+d continusly.
+
+Thanks,
+Peng.
+
+>=20
+> Thanks,
+> Mathieu
+>=20
+> > >  		}
 > > >
-> > >   static int imx_rproc_addr_init(struct imx_rproc *priv,
-> > >  @@ -360,6 +372,8 @@ static int imx_rproc_probe(struct
-> > > platform_device *pdev) goto err_put_rproc;
-> > >           }
+> > >  		/* put the segment where the remote processor expects it */
+> > > --
+> > > 2.16.4
 > > >
-> > >  + priv->bootreg = imx_rproc_da_to_va(rproc, IMX_BOOT_PC,
-> > > sizeof(u32)); +
-> > >           /*
-> > >            * clk for M4 block including memory. Should be
-> > >            * enabled before .start for FW transfer.
-> > >  --
-> > >  2.25.1
-> > >
->
