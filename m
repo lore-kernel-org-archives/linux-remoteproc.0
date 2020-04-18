@@ -1,60 +1,88 @@
-Return-Path: <mst@redhat.com>
-Return-Path: <mst@redhat.com>
-Date: Mon, 6 Apr 2020 18:26:50 -0400
-From: "Michael S. Tsirkin" <mst@redhat.com>
-Subject: [PATCH v6 11/12] remoteproc: switch to virtio_legacy_init/size
-Message-ID: <20200406222507.281867-12-mst@redhat.com>
-References: <20200406222507.281867-1-mst@redhat.com>
-MIME-Version: 1.0
-In-Reply-To: <20200406222507.281867-1-mst@redhat.com>
-Content-Type: text/plain; charset=us-ascii
+Return-Path: <peng.fan@nxp.com>
+From: Peng Fan <peng.fan@nxp.com>
+Subject: RE: [PATCH 2/2] remoteproc: use filesz as backup when translate memsz
+ fail
+Date: Sat, 18 Apr 2020 09:10:11 +0000
+Message-ID: 
+ <DB6PR0402MB2760C900A4838657D82023F088D60@DB6PR0402MB2760.eurprd04.prod.outlook.com>
+References: <1586420572-28353-1-git-send-email-peng.fan@nxp.com>
+ <1586420572-28353-2-git-send-email-peng.fan@nxp.com>
+ <20200410012226.GV20625@builder.lan> <20200417192155.GA6797@xps15>
+In-Reply-To: <20200417192155.GA6797@xps15>
+Content-Language: en-US
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
-To: linux-kernel@vger.kernel.org
-Cc: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, linux-remoteproc@vger.kernel.org
+MIME-Version: 1.0
+To: Mathieu Poirier <mathieu.poirier@linaro.org>, Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: "ohad@wizery.com" <ohad@wizery.com>, "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, dl-linux-imx <linux-imx@nxp.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-These are used for legacy ring format, switch to APIs that make this
-explicit.
+> Subject: Re: [PATCH 2/2] remoteproc: use filesz as backup when translate
+> memsz fail
+>=20
+> On Thu, Apr 09, 2020 at 06:22:26PM -0700, Bjorn Andersson wrote:
+> > On Thu 09 Apr 01:22 PDT 2020, Peng Fan wrote:
+> >
+> > > Since we no need memset if memsz is larger than filesz, we could use
+> > > filesz for the da to va translation when memsz translation fail.
+> > >
+> >
+> > To me this implies that the firmware has a segment that's larger than
+> > the memory that it's going to run in. I think even if we're not
+> > writing to the entire memsz, asking da_to_va for the entire memsz
+> > provides a valuable sanity check.
+> >
+> > Regards,
+> > Bjorn
+> >
+> > > Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> > > ---
+> > >  drivers/remoteproc/remoteproc_elf_loader.c | 12 ++++++++++--
+> > >  1 file changed, 10 insertions(+), 2 deletions(-)
+> > >
+> > > diff --git a/drivers/remoteproc/remoteproc_elf_loader.c
+> > > b/drivers/remoteproc/remoteproc_elf_loader.c
+> > > index cc50fe70d50c..74d425a4b34c 100644
+> > > --- a/drivers/remoteproc/remoteproc_elf_loader.c
+> > > +++ b/drivers/remoteproc/remoteproc_elf_loader.c
+> > > @@ -229,8 +229,16 @@ int rproc_elf_load_segments(struct rproc *rproc,
+> const struct firmware *fw)
+> > >  		if (!ptr) {
+> > >  			dev_err(dev, "bad phdr da 0x%llx mem 0x%llx\n", da,
+> > >  				memsz);
+> > > -			ret =3D -EINVAL;
+> > > -			break;
+> > > +
+> > > +			ptr =3D rproc_da_to_va(rproc, da, filesz);
+> > > +			if (!ptr) {
+> > > +				dev_err(dev,
+> > > +					"bad phdr da 0x%llx mem 0x%llx\n",
+> > > +					da, filesz);
+> > > +				ret =3D -EINVAL;
+> > > +				break;
+> > > +			}
+> > > +
+>=20
+> Adding to Bjorn's comment, I think if rproc_da_to_va() fails with memsz b=
+ut
+> succeeds with filesz something went wrong with how memory was laid out in
+> the DT or the ELF resources.  To me this patch offers the wrong solution =
+- the
+> focus should be on why rproc_da_to_va() fails.
 
-Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
----
+ok, I'll send out patch to fix imx_rproc. It is TCML and TCMU are not mappe=
+d continusly.
 
-maintainers, pls ack merging this through virtio tree due to dependency
-on previous patches in the patchset.
+Thanks,
+Peng.
 
- drivers/remoteproc/remoteproc_core.c   | 2 +-
- drivers/remoteproc/remoteproc_virtio.c | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remo=
-teproc_core.c
-index 097f33e4f1f3..c350a01e6c4e 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -322,7 +322,7 @@ int rproc_alloc_vring(struct rproc_vdev *rvdev, int i)
- =09struct rproc_mem_entry *mem;
-=20
- =09/* actual size of vring (in bytes) */
--=09size =3D PAGE_ALIGN(vring_size(rvring->len, rvring->align));
-+=09size =3D PAGE_ALIGN(vring_legacy_size(rvring->len, rvring->align));
-=20
- =09rsc =3D (void *)rproc->table_ptr + rvdev->rsc_offset;
-=20
-diff --git a/drivers/remoteproc/remoteproc_virtio.c b/drivers/remoteproc/re=
-moteproc_virtio.c
-index 8c07cb2ca8ba..35b02468197a 100644
---- a/drivers/remoteproc/remoteproc_virtio.c
-+++ b/drivers/remoteproc/remoteproc_virtio.c
-@@ -95,7 +95,7 @@ static struct virtqueue *rp_find_vq(struct virtio_device =
-*vdev,
- =09len =3D rvring->len;
-=20
- =09/* zero vring */
--=09size =3D vring_size(len, rvring->align);
-+=09size =3D vring_legacy_size(len, rvring->align);
- =09memset(addr, 0, size);
-=20
- =09dev_dbg(dev, "vring%d: va %pK qsz %d notifyid %d\n",
---=20
-MST
+>=20
+> Thanks,
+> Mathieu
+>=20
+> > >  		}
+> > >
+> > >  		/* put the segment where the remote processor expects it */
+> > > --
+> > > 2.16.4
+> > >
