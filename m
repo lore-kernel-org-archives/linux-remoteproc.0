@@ -1,60 +1,68 @@
-Return-Path: <BLEVINSK@xilinx.com>
-Return-Path: ben.levinsky@xilinx.com
-From: Ben Levinsky <ben.levinsky@xilinx.com>
-Subject: [PATCH v3 1/5] firmware: xilinx: Add ZynqMP firmware ioctl enums for RPU configuration.
-Date: Mon, 20 Apr 2020 15:27:05 -0700
-Message-Id: <1587421629-914-2-git-send-email-ben.levinsky@xilinx.com>
-In-Reply-To: <1587421629-914-1-git-send-email-ben.levinsky@xilinx.com>
-References: <1587421629-914-1-git-send-email-ben.levinsky@xilinx.com>
+Date: Sun, 19 Apr 2020 22:00:54 -0700
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: [PATCH v2 1/7] remoteproc: Fix IDR initialisation in
+ rproc_alloc()
+Message-ID: <20200420050051.GB1516868@builder.lan>
+References: <20200415204858.2448-1-mathieu.poirier@linaro.org>
+ <20200415204858.2448-2-mathieu.poirier@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-To: ohad@wizery.com, bjorn.andersson@linaro.org, michal.simek@xilinx.com, jollys@xilinx.com, rajan.vaja@xilinx.com, robh+dt@kernel.org, mark.rutland@arm.com
-Cc: linux-remoteproc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200415204858.2448-2-mathieu.poirier@linaro.org>
+To: Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: ohad@wizery.com, s-anna@ti.com, elder@linaro.org, Markus.Elfring@web.de, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Add ZynqMP firmware ioctl enums for RPU configuration.
+On Wed 15 Apr 13:48 PDT 2020, Mathieu Poirier wrote:
 
-Signed-off-by: Ben Levinsky <ben.levinsky@xilinx.com>
----
- include/linux/firmware/xlnx-zynqmp.h | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
+> From: Alex Elder <elder@linaro.org>
+> 
+> If ida_simple_get() returns an error when called in rproc_alloc(),
+> put_device() is called to clean things up.  By this time the rproc
+> device type has been assigned, with rproc_type_release() as the
+> release function.
+> 
+> The first thing rproc_type_release() does is call:
+>     idr_destroy(&rproc->notifyids);
+> 
+> But at the time the ida_simple_get() call is made, the notifyids
+> field in the remoteproc structure has not been initialized.
+> 
+> I'm not actually sure this case causes an observable problem, but
+> it's incorrect.  Fix this by initializing the notifyids field before
+> calling ida_simple_get() in rproc_alloc().
+> 
+> Fixes: b5ab5e24e960 ("remoteproc: maintain a generic child device for each rproc")
+> Signed-off-by: Alex Elder <elder@linaro.org>
+> Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 
-diff --git a/include/linux/firmware/xlnx-zynqmp.h b/include/linux/firmware/xlnx-zynqmp.h
-index 5968df8..074ad71 100644
---- a/include/linux/firmware/xlnx-zynqmp.h
-+++ b/include/linux/firmware/xlnx-zynqmp.h
-@@ -104,6 +104,10 @@ enum pm_ret_status {
- };
- 
- enum pm_ioctl_id {
-+	IOCTL_GET_RPU_OPER_MODE = 0,
-+	IOCTL_SET_RPU_OPER_MODE,
-+	IOCTL_RPU_BOOT_ADDR_CONFIG,
-+	IOCTL_TCM_COMB_CONFIG,
- 	IOCTL_SD_DLL_RESET = 6,
- 	IOCTL_SET_SD_TAPDELAY,
- 	IOCTL_SET_PLL_FRAC_MODE,
-@@ -129,6 +133,21 @@ enum pm_query_id {
- 	PM_QID_CLOCK_GET_MAX_DIVISOR,
- };
- 
-+enum rpu_oper_mode {
-+	PM_RPU_MODE_LOCKSTEP,
-+	PM_RPU_MODE_SPLIT,
-+};
-+
-+enum rpu_boot_mem {
-+	PM_RPU_BOOTMEM_LOVEC,
-+	PM_RPU_BOOTMEM_HIVEC,
-+};
-+
-+enum rpu_tcm_comb {
-+	PM_RPU_TCM_SPLIT,
-+	PM_RPU_TCM_COMB,
-+};
-+
- enum zynqmp_pm_reset_action {
- 	PM_RESET_ACTION_RELEASE,
- 	PM_RESET_ACTION_ASSERT,
--- 
-2.7.4
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+
+> ---
+>  drivers/remoteproc/remoteproc_core.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+> 
+> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+> index e12a54e67588..80056513ae71 100644
+> --- a/drivers/remoteproc/remoteproc_core.c
+> +++ b/drivers/remoteproc/remoteproc_core.c
+> @@ -2053,6 +2053,7 @@ struct rproc *rproc_alloc(struct device *dev, const char *name,
+>  	rproc->dev.type = &rproc_type;
+>  	rproc->dev.class = &rproc_class;
+>  	rproc->dev.driver_data = rproc;
+> +	idr_init(&rproc->notifyids);
+>  
+>  	/* Assign a unique device index and name */
+>  	rproc->index = ida_simple_get(&rproc_dev_index, 0, 0, GFP_KERNEL);
+> @@ -2078,8 +2079,6 @@ struct rproc *rproc_alloc(struct device *dev, const char *name,
+>  
+>  	mutex_init(&rproc->lock);
+>  
+> -	idr_init(&rproc->notifyids);
+> -
+>  	INIT_LIST_HEAD(&rproc->carveouts);
+>  	INIT_LIST_HEAD(&rproc->mappings);
+>  	INIT_LIST_HEAD(&rproc->traces);
+> -- 
+> 2.20.1
+> 
