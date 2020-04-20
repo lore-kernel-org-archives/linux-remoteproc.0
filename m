@@ -1,4 +1,4 @@
-Return-Path: <SRS0=6QS6=6D=vger.kernel.org=linux-remoteproc-owner@kernel.org>
+Return-Path: <SRS0=FIV4=6E=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
@@ -7,282 +7,140 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3ED03C38A30
-	for <linux-remoteproc@archiver.kernel.org>; Sun, 19 Apr 2020 19:21:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E6A2C3815B
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 20 Apr 2020 04:59:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 16E5E21744
-	for <linux-remoteproc@archiver.kernel.org>; Sun, 19 Apr 2020 19:21:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 30B04206D4
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 20 Apr 2020 04:59:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YzeFIPgR"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qvZErNLW"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726262AbgDSTVl (ORCPT
+        id S1725872AbgDTE7G (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Sun, 19 Apr 2020 15:21:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42058 "EHLO
+        Mon, 20 Apr 2020 00:59:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45832 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726112AbgDSTVl (ORCPT
+        with ESMTP id S1725710AbgDTE7F (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Sun, 19 Apr 2020 15:21:41 -0400
-Received: from mail-pg1-x544.google.com (mail-pg1-x544.google.com [IPv6:2607:f8b0:4864:20::544])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 84C3EC061A0F
-        for <linux-remoteproc@vger.kernel.org>; Sun, 19 Apr 2020 12:21:41 -0700 (PDT)
-Received: by mail-pg1-x544.google.com with SMTP id q18so411304pgm.11
-        for <linux-remoteproc@vger.kernel.org>; Sun, 19 Apr 2020 12:21:41 -0700 (PDT)
+        Mon, 20 Apr 2020 00:59:05 -0400
+Received: from mail-pg1-x542.google.com (mail-pg1-x542.google.com [IPv6:2607:f8b0:4864:20::542])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5DB36C061A0C
+        for <linux-remoteproc@vger.kernel.org>; Sun, 19 Apr 2020 21:59:05 -0700 (PDT)
+Received: by mail-pg1-x542.google.com with SMTP id p8so4473838pgi.5
+        for <linux-remoteproc@vger.kernel.org>; Sun, 19 Apr 2020 21:59:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=RGMN6tbtT6za2or0wESO5PWSuHGgRvOO5vUg0g7tI/c=;
-        b=YzeFIPgR3xDhN7Clw6ZM8Aqizc6EXlVaPyg6cUMeTK5zjZ9wpu+8TOXbJvs8m17x2e
-         HD/72UoaLoPAw8JSrBJMCMqJWleXN08yQ7TBCyf6QwGJr+rmThs197DRTJhEWaiuxW+0
-         4RvhvXDLDrYR7kpKhWAqdZVjlXG1dSGidNRk1MVdMc+21ttu5wepnN5gj/aF9hA6isBE
-         nJeaeiows3eRK8RhpBI2zG12nTY8xpvPiQi9cm79+/Nme/dr/hmIGUExR4AePnyyd36F
-         5Y/cWYBWBrk0Oi27dBWPR3nvHijhFJO+W/UyF8d3awBO8UPmYG854Z/jxfnO1zKxlnRD
-         S1+g==
+        bh=wAPlRWgezwhMIxEulFfKKHAsUfPFwC0PHoMBzV+JlwI=;
+        b=qvZErNLWFA0MXJfaPogJoSFPlbsjkzOdKBcpC+dBEjVp/ttD4NrntsY2Bh67whd53Q
+         QZVuESc+tpPhztFQacvq89rHOoUZSP8b1y5dCfp5JqE434zmbJCRbGxtHxZ28xxGbWtA
+         vPkwmKU/ojlORtYLz+CKQnJig9d0kdFkA+Km2qnqKuQ13aCGl/RkE4pozk+zWwYAxvI9
+         8TwwzxNZM6RzxBjEsHU/oIB6Oi463KgbGsMKGk0ieiuh1h9trvYo+i7SjLVBSs6snd12
+         LMy5FfgTyuwkgO8iZz5T0d2TGNAQ/oTBnf08bsEmP8yrfqBxK9GRLJ83MGNVkaeDhmbE
+         ApwQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=RGMN6tbtT6za2or0wESO5PWSuHGgRvOO5vUg0g7tI/c=;
-        b=dtMvhNIv1XtCKsXS8G5RMgCurx8RlaLJ31tn9MdL/MD2uYbP+Cybb47bOuXiTKE0B1
-         pICCDqQ5EX8TcsH6WOZrNoSRNfFgCkPXrvfxzgMUs8WGCbyK8thlpxBj16lBJX8YIUMs
-         Ru/q+rWN0qkiCa7LwsRAZMjUg6GvBC933GEJ2tD1Ew9SBAtY2c+j0/nXYln4E6XyAvVg
-         wi+qM/tPY7TuZTyIE73hw9s1+Iw6DaWXQxW79O6ODeN9JGF6tC538mVWaLk049RH5cNw
-         LNArbrUIuN2Aw87jWVrTVnzdfm6der8wVbqdd0pjU59P0Y41ffN8KSvfkZslNdlHiEYR
-         at8Q==
-X-Gm-Message-State: AGi0Pub3cNix30EAiuNF/8IWcRdygd8B4Vcbc30lEARU4y8M6vXP8F8U
-        LZ6xRyqjypOclKGegCGKr87n9Q==
-X-Google-Smtp-Source: APiQypLIKEQgXhQvct1QrZGarkIuUOJr9obBhQy5yuCohrGWlylbu2HUorcgT0wcj/Y/BW9elhJ9NQ==
-X-Received: by 2002:a63:5d60:: with SMTP id o32mr12883753pgm.172.1587324100903;
-        Sun, 19 Apr 2020 12:21:40 -0700 (PDT)
-Received: from yoga (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id o99sm11880162pjo.8.2020.04.19.12.21.39
+        bh=wAPlRWgezwhMIxEulFfKKHAsUfPFwC0PHoMBzV+JlwI=;
+        b=d7Bqos67zIN3MPHfOaM5XdY6riIjS2CJDsJT6vKJZiDsSixsgrGhGucZRdx3jtu7Wx
+         1B8AzZHaBbW8Clzszl3cz0wK8y3xeOLoZEghpVtowD23w2RJSqRirZGGGaMGAmdaZ3Rm
+         BBu5d6oehJUkj/Q3FrFjmpNBx9jgrbe6Hm9eZZjNxJP4679mFMEnnPHp8xu/yvGLp563
+         v4UbTMJVu5dgTXhcCn1H4PpwJ5aidTNs9bwqGA7qK2aLUZJ/j1W8EOT8CuimiZDSAY6D
+         /QmbGiHF+PAXe308cAka0kBZLMnAMV/j18cexctOW9bpVpbUyIyuQ0C3ORmQI739u7+/
+         wWdQ==
+X-Gm-Message-State: AGi0PubiPiuE/RoUFQLnj3X50RnMqF6P7PkIqyffSn85cW4Cfuc1CfDb
+        9OltB0FbpPpTplZeVcb3PvxtwydkIak=
+X-Google-Smtp-Source: APiQypI+Xh29Tan/fCXAwKqqgM92mQvjPxDij3ZhoXScf9xhZvC1wYM79H9afYGS/FHuHt2MKQ2cug==
+X-Received: by 2002:a63:1562:: with SMTP id 34mr14547089pgv.150.1587358744684;
+        Sun, 19 Apr 2020 21:59:04 -0700 (PDT)
+Received: from builder.lan (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id fy21sm12601107pjb.25.2020.04.19.21.59.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 19 Apr 2020 12:21:40 -0700 (PDT)
-Date:   Sun, 19 Apr 2020 12:21:37 -0700
+        Sun, 19 Apr 2020 21:59:03 -0700 (PDT)
+Date:   Sun, 19 Apr 2020 21:59:27 -0700
 From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Sibi Sankar <sibis@codeaurora.org>
-Cc:     agross@kernel.org, robh+dt@kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, evgreen@chromium.org,
-        ohad@wizery.com, mka@chromium.org, dianders@chromium.org,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH 3/5] arm64: dts: qcom: sc7180: Update reserved memory map
-Message-ID: <20200419192137.GF987656@yoga>
-References: <20200417142605.28885-1-sibis@codeaurora.org>
- <20200417142605.28885-4-sibis@codeaurora.org>
+To:     Suman Anna <s-anna@ti.com>
+Cc:     Mathieu Poirier <mathieu.poirier@linaro.org>,
+        linux-remoteproc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] remoteproc: Use a local copy for the name field
+Message-ID: <20200420045927.GA1516868@builder.lan>
+References: <20200417002036.24359-1-s-anna@ti.com>
+ <20200417002036.24359-3-s-anna@ti.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200417142605.28885-4-sibis@codeaurora.org>
+In-Reply-To: <20200417002036.24359-3-s-anna@ti.com>
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
-Message-ID: <20200419192137.sVcF4w5d5TJ68zgZKbdxQHXMQ_ZWmwM8MgL5nEZGMz4@z>
+Message-ID: <20200420045927.a1I4dHPk0M1DxKTVJeiUFjRjpEC2zz_xXka0Z2aC7Ic@z>
 
-On Fri 17 Apr 07:26 PDT 2020, Sibi Sankar wrote:
+On Thu 16 Apr 17:20 PDT 2020, Suman Anna wrote:
 
-> Add missing regions and remove unused regions from the reserved memory
-> map, as described in version 5.
+> The current name field used in the remoteproc structure is simply
+> a pointer to a name field supplied during the rproc_alloc() call.
+> The pointer passed in by remoteproc drivers during registration is
+> typically a dev_name pointer, but it is possible that the pointer
+> will no longer remain valid if the devices themselves were created
+> at runtime like in the case of of_platform_populate(), and were
+> deleted upon any failures within the respective remoteproc driver
+> probe function.
 > 
+> So, allocate and maintain a local copy for this name field to
+> keep it agnostic of the logic used in the remoteproc drivers.
+> 
+> Signed-off-by: Suman Anna <s-anna@ti.com>
 
-Your patch looks good, but I'm quite unhappy with the way these turns
-out and we have been ignoring the fact that different devices on the
-same platform (with TZ) might come with different firmware versions and
-hence different layout of the peripheral memory region.
-
-So how about pushing out at least the peripheral regions to the device's
-dts (the others are pretty much static, except when using coreboot)?
-That should reduce your patch to 4(?) delete-nodes?
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 
 Regards,
 Bjorn
 
-> Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
 > ---
->  arch/arm64/boot/dts/qcom/sc7180-idp.dts | 63 +++++++++++++++++++
->  arch/arm64/boot/dts/qcom/sc7180.dtsi    | 83 ++++++++++++++++++++++++-
->  2 files changed, 144 insertions(+), 2 deletions(-)
+> v1:
+>  - Patch baselined on top of Mathieu's rproc_alloc() refactor
+>    series, and so addresses Bjorn's simplified cleanup comments
+>  - Switch to {kstrdup/kfree}_const variants
+> v0: https://patchwork.kernel.org/patch/11456385/
 > 
-> diff --git a/arch/arm64/boot/dts/qcom/sc7180-idp.dts b/arch/arm64/boot/dts/qcom/sc7180-idp.dts
-> index 17eadd80f15de..e613d70cc0198 100644
-> --- a/arch/arm64/boot/dts/qcom/sc7180-idp.dts
-> +++ b/arch/arm64/boot/dts/qcom/sc7180-idp.dts
-> @@ -28,6 +28,69 @@ chosen {
->  	};
->  };
+>  drivers/remoteproc/remoteproc_core.c | 6 +++++-
+>  1 file changed, 5 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+> index e38f627059ac..3cebface3f26 100644
+> --- a/drivers/remoteproc/remoteproc_core.c
+> +++ b/drivers/remoteproc/remoteproc_core.c
+> @@ -1984,6 +1984,7 @@ static void rproc_type_release(struct device *dev)
 >  
-> +/*
-> + * Reserved memory changes
-> + *
-> + * Keep all modifications to the memory map (from sc7180.dtsi) in one place.
-> + * Delete all unused memory nodes and re-create atf_mem/venus_mem/camera_mem
-> + * and wlan_mem memory nodes.
-> + *
-> + */
-> +
-> +/delete-node/ &hyp_mem;
-> +/delete-node/ &xbl_mem;
-> +/delete-node/ &aop_mem;
-> +/delete-node/ &sec_apps_mem;
-> +/delete-node/ &tz_mem;
-> +/delete-node/ &camera_mem;
-> +/delete-node/ &npu_mem;
-> +/delete-node/ &venus_mem;
-> +/delete-node/ &cdsp_mem;
-> +/delete-node/ &adsp_mem;
-> +/delete-node/ &wlan_mem;
-> +/delete-node/ &ipa_fw_mem;
-> +/delete-node/ &ipa_gsi_mem;
-> +/delete-node/ &gpu_mem;
-> +
-> +/* Increase the size from 132 MB to 140 MB */
-> +&mpss_mem {
-> +	reg = <0x0 0x86000000 0x0 0x8c00000>;
-> +};
-> +
-> +/* Increase the size from 2MB to 8MB */
-> +&rmtfs_mem {
-> +	reg = <0x0 0x84400000 0x0 0x800000>;
-> +};
-> +
-> +/ {
-> +	reserved-memory {
-> +		atf_mem: memory@80b00000 {
-> +			reg = <0x0 0x80b00000 0x0 0x100000>;
-> +			no-map;
-> +		};
-> +
-> +		camera_mem: memory@8ec00000 {
-> +			reg = <0x0 0x8ec00000 0x0 0x500000>;
-> +			no-map;
-> +		};
-> +
-> +		venus_mem: memory@8f600000 {
-> +			reg = <0 0x8f600000 0 0x500000>;
-> +			no-map;
-> +		};
-> +
-> +		wlan_mem: memory@94100000 {
-> +			reg = <0x0 0x94100000 0x0 0x200000>;
-> +			no-map;
-> +		};
-> +
-> +		mba_mem: memory@94400000 {
-> +			reg = <0x0 0x94400000 0x0 0x200000>;
-> +			no-map;
-> +		};
-> +	};
-> +};
-> +
->  &apps_rsc {
->  	pm6150-rpmh-regulators {
->  		compatible = "qcom,pm6150-rpmh-regulators";
-> diff --git a/arch/arm64/boot/dts/qcom/sc7180.dtsi b/arch/arm64/boot/dts/qcom/sc7180.dtsi
-> index 853ba6e8a53ca..f73ffd74d4fcd 100644
-> --- a/arch/arm64/boot/dts/qcom/sc7180.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/sc7180.dtsi
-> @@ -69,18 +69,97 @@ reserved_memory: reserved-memory {
->  		#size-cells = <2>;
->  		ranges;
+>  	kfree(rproc->firmware);
+>  	kfree(rproc->ops);
+> +	kfree_const(rproc->name);
+>  	kfree(rproc);
+>  }
 >  
-> +		hyp_mem: memory@80000000 {
-> +			reg = <0x0 0x80000000 0x0 0x600000>;
-> +			no-map;
-> +		};
-> +
-> +		xbl_mem: memory@80600000 {
-> +			reg = <0x0 0x80600000 0x0 0x200000>;
-> +			no-map;
-> +		};
-> +
-> +		aop_mem: memory@80800000 {
-> +			reg = <0x0 0x80800000 0x0 0x20000>;
-> +			no-map;
-> +		};
-> +
->  		aop_cmd_db_mem: memory@80820000 {
->  			reg = <0x0 0x80820000 0x0 0x20000>;
->  			compatible = "qcom,cmd-db";
->  		};
+> @@ -2069,7 +2070,6 @@ struct rproc *rproc_alloc(struct device *dev, const char *name,
+>  	if (!rproc)
+>  		return NULL;
 >  
-> +		sec_apps_mem: memory@808ff000 {
-> +			reg = <0x0 0x808ff000 0x0 0x1000>;
-> +			no-map;
-> +		};
-> +
->  		smem_mem: memory@80900000 {
->  			reg = <0x0 0x80900000 0x0 0x200000>;
->  			no-map;
->  		};
+> -	rproc->name = name;
+>  	rproc->priv = &rproc[1];
+>  	rproc->auto_boot = true;
+>  	rproc->elf_class = ELFCLASS32;
+> @@ -2081,6 +2081,10 @@ struct rproc *rproc_alloc(struct device *dev, const char *name,
+>  	rproc->dev.driver_data = rproc;
+>  	idr_init(&rproc->notifyids);
 >  
-> -		venus_mem: memory@8f600000 {
-> -			reg = <0 0x8f600000 0 0x500000>;
-> +		tz_mem: memory@80b00000 {
-> +			reg = <0x0 0x80b00000 0x0 0x3900000>;
-> +			no-map;
-> +		};
+> +	rproc->name = kstrdup_const(name, GFP_KERNEL);
+> +	if (!rproc->name)
+> +		goto put_device;
 > +
-> +		rmtfs_mem: memory@84400000 {
-> +			compatible = "qcom,rmtfs-mem";
-> +			reg = <0x0 0x84400000 0x0 0x200000>;
-> +			no-map;
-> +
-> +			qcom,client-id = <1>;
-> +			qcom,vmid = <15>;
-> +		};
-> +
-> +		mpss_mem: memory@86000000 {
-> +			reg = <0x0 0x86000000 0x0 0x8400000>;
-> +			no-map;
-> +		};
-> +
-> +		camera_mem: memory@8e400000 {
-> +			reg = <0x0 0x8e400000 0x0 0x500000>;
-> +			no-map;
-> +		};
-> +
-> +		npu_mem: memory@8e900000 {
-> +			reg = <0x0 0x8e900000 0x0 0x500000>;
-> +			no-map;
-> +		};
-> +
-> +		venus_mem: memory@8ee00000 {
-> +			reg = <0x0 0x8ee00000 0x0 0x500000>;
-> +			no-map;
-> +		};
-> +
-> +		cdsp_mem: memory@8f300000 {
-> +			reg = <0x0 0x8f300000 0x0 0x1e00000>;
-> +			no-map;
-> +		};
-> +
-> +		adsp_mem: memory@91100000 {
-> +			reg = <0x0 0x91100000 0x0 0x2800000>;
-> +			no-map;
-> +		};
-> +
-> +		wlan_mem: memory@93900000 {
-> +			reg = <0x0 0x93900000 0x0 0x200000>;
-> +			no-map;
-> +		};
-> +
-> +		ipa_fw_mem: memory@93b00000 {
-> +			reg = <0x0 0x93b00000 0x0 0x10000>;
-> +			no-map;
-> +		};
-> +
-> +		ipa_gsi_mem: memory@93b10000 {
-> +			reg = <0x0 0x93b10000 0x0 0x5000>;
-> +			no-map;
-> +		};
-> +
-> +		gpu_mem: memory@93b15000 {
-> +			reg = <0x0 0x93b15000 0x0 0x2000>;
->  			no-map;
->  		};
->  	};
+>  	if (rproc_alloc_firmware(rproc, name, firmware))
+>  		goto put_device;
+>  
 > -- 
-> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-> a Linux Foundation Collaborative Project
+> 2.26.0
+> 
