@@ -7,157 +7,124 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A73AC54FCC
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 20 Apr 2020 05:21:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C60B0C3815B
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 20 Apr 2020 05:38:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7A29A206F6
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 20 Apr 2020 05:21:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A28592078E
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 20 Apr 2020 05:38:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="g7vaHHtU"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QTdCHYpB"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726043AbgDTFV1 (ORCPT
+        id S1725379AbgDTFiK (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 20 Apr 2020 01:21:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49294 "EHLO
+        Mon, 20 Apr 2020 01:38:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51866 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725710AbgDTFV1 (ORCPT
+        with ESMTP id S1726049AbgDTFiK (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 20 Apr 2020 01:21:27 -0400
-Received: from mail-pg1-x543.google.com (mail-pg1-x543.google.com [IPv6:2607:f8b0:4864:20::543])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B09C1C061A0F
-        for <linux-remoteproc@vger.kernel.org>; Sun, 19 Apr 2020 22:21:25 -0700 (PDT)
-Received: by mail-pg1-x543.google.com with SMTP id d17so4513126pgo.0
-        for <linux-remoteproc@vger.kernel.org>; Sun, 19 Apr 2020 22:21:25 -0700 (PDT)
+        Mon, 20 Apr 2020 01:38:10 -0400
+Received: from mail-pf1-x442.google.com (mail-pf1-x442.google.com [IPv6:2607:f8b0:4864:20::442])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D0131C061A10
+        for <linux-remoteproc@vger.kernel.org>; Sun, 19 Apr 2020 22:38:09 -0700 (PDT)
+Received: by mail-pf1-x442.google.com with SMTP id w65so4405255pfc.12
+        for <linux-remoteproc@vger.kernel.org>; Sun, 19 Apr 2020 22:38:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=T7ZlRQYjsRe6mHtLpYYJwkxOYZeO5hK5F0hqEcUsNCc=;
-        b=g7vaHHtUVDqb5tqsxXssZqtVmcSUPX96xaP/OtoYqkuFQJOkmRuqP1IcxMifMvpMhz
-         F1eVkyFGq2sftEGjXTx+2MjT8c9n69ifZ7WBHuwrznDE1LcZ20mNIi8dY7mB2Q37qDLf
-         F5SokxBbQ1OF+P6vhP9Hms4//rVZoeKuB4kx1I0x2EXBCjr89LUkjKB+0C7xmpNMAn3P
-         JgxoJlDsxHs8um5RBefQrYGw/skoMrzzr9Y6oikjzRxSU4a6SHGj60IlA7HMpk8ebitQ
-         hyn8Xkc1RKIE12YphbwNUe5xDXBQ7zuaulVRRtjl6mUADH5e4Oh9pJ2WQzIDs42h0FKj
-         o8sA==
+        bh=vXuywTNcLCyXfTRCxE+/gbb1J166gbMzJgknZr7hvR8=;
+        b=QTdCHYpBWRjtP0C4ZMM3bnQLyxnOq96YEAJGGD0d78YRbQeZQT8OnZbNZjwnEzHua8
+         Vknv71fXdd2Qj/rQK+wRt2jNvPa+0uPEzUFlczgphZpuDNvlkG7/dplzSHE2CU69xi0m
+         bkQKbkS5Tzf8EOz35CSAlzVUmEhuOyaRiwsG4m+/8TzyHaxfZYNtaTaTfx95Vhrr9o4K
+         UHqadDGzSpBfM5Ovg60skbf0nxGNBNltrwpLNRqkmDU3jd8mEo7yUpfX7C+JxrX/d8Nl
+         sU1BQCPyQFK5NcKr0MmerpWTLfhcomYPEp1wvxvjU+vXG8+X49UAHFUA6vVH+eMdQHsf
+         YcgA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=T7ZlRQYjsRe6mHtLpYYJwkxOYZeO5hK5F0hqEcUsNCc=;
-        b=I3YUUJm2EGzxLlWppStaJkrcnJSFF6Gx+A64E3eVjOZsH601uTMkdvbaSJ+bMhC1yK
-         UiHdeFZa8mWQqPypX5JxsY9IE0TrRD1iEgsNN+W6e0zadxvyTzx+itEBpGBboJgkIl1N
-         miSaC+B3jOuBK80rVPD6WHeivPNJAI9vkEYLryNwpRWRkAa76DJwI27TcHuj0GsK/kre
-         62tLAtod9qAHg+rkhhSG7MBakrSRLVcXv+i5KNU32eLf9zUVFnBT8exhE+wPM4c8x8p3
-         +Iknm+Bx+lsk8HP6zH8VlKD25oN/aqV2dqFAX/nAR8DWTlYgRmdzTr6E0oNuObBUfroj
-         narQ==
-X-Gm-Message-State: AGi0PubKrAqiwpGdyKr15QyQRtJrSbiAB5ogspw5c/ayMVuvZ338Nl2D
-        Zq8QjTg/glkydepV7bBD8mKSag==
-X-Google-Smtp-Source: APiQypKJ85itZZbu2VlNkNAKuVimTOoYwZ/peC6RFa05nxUbOI31MtFmFUsQcQuQdMi48cd8ef1L+Q==
-X-Received: by 2002:a62:3287:: with SMTP id y129mr13122409pfy.167.1587360085116;
-        Sun, 19 Apr 2020 22:21:25 -0700 (PDT)
+        bh=vXuywTNcLCyXfTRCxE+/gbb1J166gbMzJgknZr7hvR8=;
+        b=oGMd2oFkYcc2D+pfKN2FfIxH0RUJTQGaeUuTsLdBscggeiMT4CsApuVQEqYt3gghrY
+         GETB21x8gPnh2eklZyPZEj2B9yfewaIIVS8sZpDN+W3IWdme4RWI6uG+07W6YsLLF9CQ
+         jYbPs0fxZxR+YW2pOMzeamQpc4Eg4LInOuOw7HjsUQ+po37vShBDRjywrTWJOiHDNJdg
+         vcoAClulYdCpVa4IqjztJucNAvi9yWC8ZusC/tQhRNsAISPW4PAduoYEHz0aRsHXaBVG
+         6p/oUJtuYjNgRMF2AlyweCdpUKjYmJzHXlct6kFgHkm+qTSi0QhWHtzwNQQfe8FyQP1L
+         mCVA==
+X-Gm-Message-State: AGi0PuajHvjBt9wi+KCXU3em4e2vzXWjPENIrap3AUyjgfFNNKrQF2zb
+        StjjM7qRfy/1vNqS/xz/9Sjz5Q==
+X-Google-Smtp-Source: APiQypKbM9MWn5psD/g3DSNrwZ2q4sHKh/sP1sgRu/OJZVr7IHFEztIdXYyLOc0WGGxhnqioUWIZ2w==
+X-Received: by 2002:aa7:9a84:: with SMTP id w4mr15363759pfi.111.1587361089160;
+        Sun, 19 Apr 2020 22:38:09 -0700 (PDT)
 Received: from builder.lan (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id s10sm12586974pjp.13.2020.04.19.22.21.23
+        by smtp.gmail.com with ESMTPSA id c80sm12136004pfb.82.2020.04.19.22.38.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 19 Apr 2020 22:21:24 -0700 (PDT)
-Date:   Sun, 19 Apr 2020 22:21:47 -0700
+        Sun, 19 Apr 2020 22:38:08 -0700 (PDT)
+Date:   Sun, 19 Apr 2020 22:38:31 -0700
 From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Suman Anna <s-anna@ti.com>
-Cc:     Alex Elder <elder@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>, ohad@wizery.com,
-        Markus.Elfring@web.de, linux-remoteproc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 4/7] remoteproc: Use kstrdup_const() rather than
- kstrup()
-Message-ID: <20200420052147.GF1516868@builder.lan>
-References: <20200415204858.2448-1-mathieu.poirier@linaro.org>
- <20200415204858.2448-5-mathieu.poirier@linaro.org>
- <14b12ca8-823b-8115-bafa-281180e92c70@linaro.org>
- <3f0a602a-64ff-8092-3cca-b63bab8a79f0@ti.com>
+To:     Sibi Sankar <sibis@codeaurora.org>
+Cc:     agross@kernel.org, robh+dt@kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, evgreen@chromium.org,
+        ohad@wizery.com, mka@chromium.org, dianders@chromium.org,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH 1/5] dt-bindings: remoteproc: qcom: Add SC7180 MPSS
+ support
+Message-ID: <20200420053831.GG1516868@builder.lan>
+References: <20200417142605.28885-1-sibis@codeaurora.org>
+ <20200417142605.28885-2-sibis@codeaurora.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <3f0a602a-64ff-8092-3cca-b63bab8a79f0@ti.com>
+In-Reply-To: <20200417142605.28885-2-sibis@codeaurora.org>
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
-Message-ID: <20200420052147.MF3hJibf9UdiFPEi1ZL5OK34w7eWFndD1mwXqdiYvP4@z>
+Message-ID: <20200420053831.f78L6sU8_WZFc0emLcKEx-gpSTVJrPSeF84ZvSSjIcc@z>
 
-On Fri 17 Apr 06:44 PDT 2020, Suman Anna wrote:
+On Fri 17 Apr 07:26 PDT 2020, Sibi Sankar wrote:
 
-> On 4/15/20 4:25 PM, Alex Elder wrote:
-> > On 4/15/20 3:48 PM, Mathieu Poirier wrote:
-> > > For cases where @firmware is declared "const char *", use function
-> > > kstrdup_const() to avoid needlessly creating another copy on the
-> > > heap.
-> > > 
-> > > Suggested-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> > > Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-> > 
-> > Looks good.
-> > 
-> > Reviewed-by: Alex Elder <elder@linaro.org>
-> > 
-> > > ---
-> > >   drivers/remoteproc/remoteproc_core.c | 4 ++--
-> > >   include/linux/remoteproc.h           | 2 +-
-> > >   2 files changed, 3 insertions(+), 3 deletions(-)
-> > > 
-> > > diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-> > > index 9899467fa1cf..ebaff496ef81 100644
-> > > --- a/drivers/remoteproc/remoteproc_core.c
-> > > +++ b/drivers/remoteproc/remoteproc_core.c
-> > > @@ -1982,7 +1982,7 @@ static const struct device_type rproc_type = {
-> > >   static int rproc_alloc_firmware(struct rproc *rproc,
-> > >   				const char *name, const char *firmware)
-> > >   {
-> > > -	char *p;
-> > > +	const char *p;
-> > >   	if (!firmware)
-> > >   		/*
-> > > @@ -1991,7 +1991,7 @@ static int rproc_alloc_firmware(struct rproc *rproc,
-> > >   		 */
-> > >   		p = kasprintf(GFP_KERNEL, "rproc-%s-fw", name);
+> Add MPSS PAS support for SC7180 SoCs.
 > 
-> So, to be consistent for both paths, should we be using kvasprintf_const()
-> here and kfree_const() in release.
+> Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
 
-Given that the second argument is a "proper" format string
-kvasprintf_const() is really just kasprintf() - but with the requirement
-that we set up a va_list. So I prefer that we stick with this.
-
-> The kfree_const() is needed to account
-> for the kstrdup_const below for sure.
-> 
-
-You are correct Suman, this patch needs to also change the kfree() to a
-kfree_const() or bad things will happen after a visit to
-rproc_type_release().
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 
 Regards,
 Bjorn
 
-> regards
-> Suman
+> ---
+>  Documentation/devicetree/bindings/remoteproc/qcom,adsp.txt | 3 +++
+>  1 file changed, 3 insertions(+)
 > 
-> > >   	else
-> > > -		p = kstrdup(firmware, GFP_KERNEL);
-> > > +		p = kstrdup_const(firmware, GFP_KERNEL);
-> > >   	if (!p)
-> > >   		return -ENOMEM;
-> > > diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-> > > index 9c07d7958c53..38607107b7cb 100644
-> > > --- a/include/linux/remoteproc.h
-> > > +++ b/include/linux/remoteproc.h
-> > > @@ -489,7 +489,7 @@ struct rproc {
-> > >   	struct list_head node;
-> > >   	struct iommu_domain *domain;
-> > >   	const char *name;
-> > > -	char *firmware;
-> > > +	const char *firmware;
-> > >   	void *priv;
-> > >   	struct rproc_ops *ops;
-> > >   	struct device dev;
-> > > 
-> > 
-> 
+> diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,adsp.txt b/Documentation/devicetree/bindings/remoteproc/qcom,adsp.txt
+> index 9938918b2fea3..22604d2cd3f87 100644
+> --- a/Documentation/devicetree/bindings/remoteproc/qcom,adsp.txt
+> +++ b/Documentation/devicetree/bindings/remoteproc/qcom,adsp.txt
+> @@ -15,6 +15,7 @@ on the Qualcomm ADSP Hexagon core.
+>  		    "qcom,qcs404-adsp-pas"
+>  		    "qcom,qcs404-cdsp-pas"
+>  		    "qcom,qcs404-wcss-pas"
+> +		    "qcom,sc7180-mpss-pas"
+>  		    "qcom,sdm845-adsp-pas"
+>  		    "qcom,sdm845-cdsp-pas"
+>  		    "qcom,sm8150-adsp-pas"
+> @@ -46,6 +47,7 @@ on the Qualcomm ADSP Hexagon core.
+>  	qcom,sm8150-slpi-pas:
+>  		    must be "wdog", "fatal", "ready", "handover", "stop-ack"
+>  	qcom,qcs404-wcss-pas:
+> +	qcom,sc7180-mpss-pas:
+>  	qcom,sm8150-mpss-pas:
+>  		    must be "wdog", "fatal", "ready", "handover", "stop-ack",
+>  		    "shutdown-ack"
+> @@ -106,6 +108,7 @@ on the Qualcomm ADSP Hexagon core.
+>  	qcom,sm8150-adsp-pas:
+>  	qcom,sm8150-cdsp-pas:
+>  		    must be "cx", "load_state"
+> +	qcom,sc7180-mpss-pas:
+>  	qcom,sm8150-mpss-pas:
+>  		    must be "cx", "load_state", "mss"
+>  	qcom,sm8150-slpi-pas:
+> -- 
+> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+> a Linux Foundation Collaborative Project
