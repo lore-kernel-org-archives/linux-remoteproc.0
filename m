@@ -2,200 +2,108 @@ Return-Path: <SRS0=FIV4=6E=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AFD5C3815B
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 20 Apr 2020 09:24:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B848C3815B
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 20 Apr 2020 16:07:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 656D620CC7
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 20 Apr 2020 09:24:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5FAEA20775
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 20 Apr 2020 16:07:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=st.com header.i=@st.com header.b="ygm2kM8Y"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="yj8Esauw"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726017AbgDTJY1 (ORCPT
+        id S1726036AbgDTQHG (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 20 Apr 2020 05:24:27 -0400
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:35115 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725773AbgDTJY1 (ORCPT
+        Mon, 20 Apr 2020 12:07:06 -0400
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:45830 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725958AbgDTQHF (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 20 Apr 2020 05:24:27 -0400
-Received: from pps.filterd (m0046037.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 03K9Mm8r004307;
-        Mon, 20 Apr 2020 11:24:21 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=STMicroelectronics;
- bh=s8K4dHG+7OIzZ7R9bQBGG4blMOhessXM8j6Dk6jooSY=;
- b=ygm2kM8YY9J+l7QLFg5ttmVA3ljCeD57Dza2EZukwBnG3fad2rlhUw1zqXcWOL5E7r9W
- vCHrnYjYfEJGbN5wTucgW6FCQurRm5zeuHaDQVg8o6RCNipCNe/l3o2SoDxCBDTRAD1l
- 2viqm6axHYztGeKH7Ahdr+lg4NeWDU/aSgEJmStSVtvYP9mtJCeUiOjuQXfCjxkRZCBL
- 2jSHr8mfEqp0UXeHD/0jyfWhKyGyxLB9i2olbZO5TcPNeAPFwJozSK7OczlGUGQibkeQ
- qde5R7pnvtVVFt/eXnVUJ/L9vvDA+kP19UMA0Pl9Zz7Q1gejlcIZGpwh3A2v2+txGCxd uA== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 30fqaw1ctx-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 20 Apr 2020 11:24:21 +0200
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 0613410002A;
-        Mon, 20 Apr 2020 11:24:21 +0200 (CEST)
-Received: from Webmail-eu.st.com (sfhdag3node1.st.com [10.75.127.7])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id E6A882BEC7A;
-        Mon, 20 Apr 2020 11:24:20 +0200 (CEST)
-Received: from lmecxl0889.tpe.st.com (10.75.127.48) by SFHDAG3NODE1.st.com
- (10.75.127.7) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 20 Apr
- 2020 11:24:19 +0200
-Subject: Re: [PATCH v2 2/7] remoteproc: Split firmware name allocation from
- rproc_alloc()
-To:     Mathieu Poirier <mathieu.poirier@linaro.org>,
-        <bjorn.andersson@linaro.org>, <ohad@wizery.com>
-CC:     <s-anna@ti.com>, <elder@linaro.org>, <Markus.Elfring@web.de>,
-        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20200415204858.2448-1-mathieu.poirier@linaro.org>
- <20200415204858.2448-3-mathieu.poirier@linaro.org>
-From:   Arnaud POULIQUEN <arnaud.pouliquen@st.com>
-Message-ID: <e980e9e6-04d6-60b8-c921-d2fb1f2b9a1b@st.com>
-Date:   Mon, 20 Apr 2020 11:24:12 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+        Mon, 20 Apr 2020 12:07:05 -0400
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 03KG71N7107479;
+        Mon, 20 Apr 2020 11:07:01 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1587398821;
+        bh=KciNRdiw2cw0KPXkQoCX8Mz1MevzdmPH0gBj3JA4anA=;
+        h=From:To:CC:Subject:Date;
+        b=yj8EsauwBRCyAyHIQ1OWLrQWIhhvNjbigTvsGfcU3/WdvTMGvQ+ufqa3QLfxfrFZq
+         PoiBsUmpU/DT62DvK4KVPvCi8oDcp2Sw/CPXGjdJy9Y+GBkvOTKe5WRrsmjfB6Mhkm
+         jBcR7fKK9Mx5ifCB4jlNpormjbpiNtY77jFVMS3M=
+Received: from DLEE107.ent.ti.com (dlee107.ent.ti.com [157.170.170.37])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 03KG71as065537
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 20 Apr 2020 11:07:01 -0500
+Received: from DLEE110.ent.ti.com (157.170.170.21) by DLEE107.ent.ti.com
+ (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Mon, 20
+ Apr 2020 11:06:06 -0500
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE110.ent.ti.com
+ (157.170.170.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Mon, 20 Apr 2020 11:06:06 -0500
+Received: from fllv0103.dal.design.ti.com (fllv0103.dal.design.ti.com [10.247.120.73])
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 03KG66f9024775;
+        Mon, 20 Apr 2020 11:06:06 -0500
+Received: from localhost ([10.250.70.56])
+        by fllv0103.dal.design.ti.com (8.14.7/8.14.7) with ESMTP id 03KG66sB128161;
+        Mon, 20 Apr 2020 11:06:06 -0500
+From:   Suman Anna <s-anna@ti.com>
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+CC:     Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Arnaud Pouliquen <arnaud.pouliquen@st.com>,
+        Loic Pallardy <loic.pallardy@st.com>,
+        Tero Kristo <t-kristo@ti.com>,
+        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Suman Anna <s-anna@ti.com>
+Subject: [PATCH v3 0/2] Misc. rproc fixes around fixed memory region support
+Date:   Mon, 20 Apr 2020 11:05:58 -0500
+Message-ID: <20200420160600.10467-1-s-anna@ti.com>
+X-Mailer: git-send-email 2.26.0
 MIME-Version: 1.0
-In-Reply-To: <20200415204858.2448-3-mathieu.poirier@linaro.org>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.75.127.48]
-X-ClientProxiedBy: SFHDAG1NODE2.st.com (10.75.127.2) To SFHDAG3NODE1.st.com
- (10.75.127.7)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.676
- definitions=2020-04-20_03:2020-04-17,2020-04-20 signatures=0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
-Message-ID: <20200420092412.7WfKmXn15pC5qlZOkTJCvCy8DQuvCXBa78Il3qp-DP4@z>
+Message-ID: <20200420160558.Wccywl7m6N4moXclwAaEebQ10LYYBLaZwjmPJrscciA@z>
 
-Hi Mathieu,
+Hi Bjorn,
 
-On 4/15/20 10:48 PM, Mathieu Poirier wrote:
-> Make the firmware name allocation a function on its own in an
-> effort to cleanup function rproc_alloc().
-> 
-> Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-> ---
->  drivers/remoteproc/remoteproc_core.c | 66 ++++++++++++++++------------
->  1 file changed, 39 insertions(+), 27 deletions(-)
-> 
-> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-> index 80056513ae71..4dee63f319ba 100644
-> --- a/drivers/remoteproc/remoteproc_core.c
-> +++ b/drivers/remoteproc/remoteproc_core.c
-> @@ -1979,6 +1979,33 @@ static const struct device_type rproc_type = {
->  	.release	= rproc_type_release,
->  };
->  
-> +static int rproc_alloc_firmware(struct rproc *rproc,
-> +				const char *name, const char *firmware)
+This is another minor revision of the fixes around fixed memory region
+support [1] series. Patch 1 is revised to go back to the logic used in v1
+after a long discussion on the v2 version [2]. The other suggestions can
+be future improvments as they would require corresponding platform driver
+changes. Please look through the discussion there and let us know your
+preference. Patches are based on v5.7-rc1.
 
-nitpicking: here you do not allocate memory for the firmware but for its name
-The name of the function seems to me quite confusing...
+I really appreciate it if you can target the series for the current 5.7 -rc's.
+The fixes would apply for all 5.1+ kernels.
 
-Else LGTM for the series
+Please see the v1 cover-letter [1] for the details on the issues.
 
-Thanks,
+regards
+Suman
 
-Arnaud
+[1] https://patchwork.kernel.org/cover/11422723/
+[2] https://patchwork.kernel.org/comment/23274389/
 
-> +{
-> +	char *p, *template = "rproc-%s-fw";
-> +	int name_len;
-> +
-> +	if (!firmware) {
-> +		/*
-> +		 * If the caller didn't pass in a firmware name then
-> +		 * construct a default name.
-> +		 */
-> +		name_len = strlen(name) + strlen(template) - 2 + 1;
-> +		p = kmalloc(name_len, GFP_KERNEL);
-> +		if (!p)
-> +			return -ENOMEM;
-> +		snprintf(p, name_len, template, name);
-> +	} else {
-> +		p = kstrdup(firmware, GFP_KERNEL);
-> +		if (!p)
-> +			return -ENOMEM;
-> +	}
-> +
-> +	rproc->firmware = p;
-> +
-> +	return 0;
-> +}
-> +
->  /**
->   * rproc_alloc() - allocate a remote processor handle
->   * @dev: the underlying device
-> @@ -2007,42 +2034,21 @@ struct rproc *rproc_alloc(struct device *dev, const char *name,
->  			  const char *firmware, int len)
->  {
->  	struct rproc *rproc;
-> -	char *p, *template = "rproc-%s-fw";
-> -	int name_len;
->  
->  	if (!dev || !name || !ops)
->  		return NULL;
->  
-> -	if (!firmware) {
-> -		/*
-> -		 * If the caller didn't pass in a firmware name then
-> -		 * construct a default name.
-> -		 */
-> -		name_len = strlen(name) + strlen(template) - 2 + 1;
-> -		p = kmalloc(name_len, GFP_KERNEL);
-> -		if (!p)
-> -			return NULL;
-> -		snprintf(p, name_len, template, name);
-> -	} else {
-> -		p = kstrdup(firmware, GFP_KERNEL);
-> -		if (!p)
-> -			return NULL;
-> -	}
-> -
->  	rproc = kzalloc(sizeof(struct rproc) + len, GFP_KERNEL);
-> -	if (!rproc) {
-> -		kfree(p);
-> +	if (!rproc)
->  		return NULL;
-> -	}
-> +
-> +	if (rproc_alloc_firmware(rproc, name, firmware))
-> +		goto free_rproc;
->  
->  	rproc->ops = kmemdup(ops, sizeof(*ops), GFP_KERNEL);
-> -	if (!rproc->ops) {
-> -		kfree(p);
-> -		kfree(rproc);
-> -		return NULL;
-> -	}
-> +	if (!rproc->ops)
-> +		goto free_firmware;
->  
-> -	rproc->firmware = p;
->  	rproc->name = name;
->  	rproc->priv = &rproc[1];
->  	rproc->auto_boot = true;
-> @@ -2091,6 +2097,12 @@ struct rproc *rproc_alloc(struct device *dev, const char *name,
->  	rproc->state = RPROC_OFFLINE;
->  
->  	return rproc;
-> +
-> +free_firmware:
-> +	kfree(rproc->firmware);
-> +free_rproc:
-> +	kfree(rproc);
-> +	return NULL;
->  }
->  EXPORT_SYMBOL(rproc_alloc);
->  
-> 
+Suman Anna (1):
+  remoteproc: Fix and restore the parenting hierarchy for vdev
+
+Tero Kristo (1):
+  remoteproc: Fall back to using parent memory pool if no dedicated
+    available
+
+ drivers/remoteproc/remoteproc_core.c   |  2 +-
+ drivers/remoteproc/remoteproc_virtio.c | 12 ++++++++++++
+ 2 files changed, 13 insertions(+), 1 deletion(-)
+
+-- 
+2.26.0
+
