@@ -1,40 +1,154 @@
-Return-Path: <s-anna@ti.com>
-From: Suman Anna <s-anna@ti.com>
-Subject: [PATCH 0/2] rproc core patches needed for TI K3 drivers
-Date: Thu, 16 Apr 2020 19:20:34 -0500
-Message-ID: <20200417002036.24359-1-s-anna@ti.com>
+Date: Sun, 19 Apr 2020 22:57:49 -0700
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: [PATCH 1/2] remoteproc: add rproc_coredump_set_elf_info
+Message-ID: <20200420055746.GJ1516868@builder.lan>
+References: <20200410102433.2672-1-cleger@kalray.eu>
+ <20200410102433.2672-2-cleger@kalray.eu>
+ <20200417193837.GB6797@xps15>
+ <1280711269.16158926.1587152627279.JavaMail.zimbra@kalray.eu>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-To: Bjorn Andersson <bjorn.andersson@linaro.org>, Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: linux-remoteproc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Suman Anna <s-anna@ti.com>
+In-Reply-To: <1280711269.16158926.1587152627279.JavaMail.zimbra@kalray.eu>
+To: Cl?ment Leger <cleger@kalrayinc.com>
+Cc: Mathieu Poirier <mathieu.poirier@linaro.org>, Andy Gross <agross@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@st.com>, linux-arm-msm <linux-arm-msm@vger.kernel.org>, linux-remoteproc <linux-remoteproc@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, linux-stm32 <linux-stm32@st-md-mailman.stormreply.com>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Hi Bjorn, Mathieu,
+On Fri 17 Apr 12:43 PDT 2020, Cl?ment Leger wrote:
 
-The following 2 patches were a revised version and split out from the
-TI K3 R5F remoteproc support patch series [1]. The patches do use the
-cleanup logic from  Mathieu's "remoteproc: Refactor function rproc_alloc()"
-series. The patches address both of your comments.
+> ----- On 17 Apr, 2020, at 21:38, Mathieu Poirier mathieu.poirier@linaro.org wrote:
+> 
+> > On Fri, Apr 10, 2020 at 12:24:32PM +0200, Clement Leger wrote:
+> >> This function allows drivers to correctly setup the coredump output
+> >> elf information.
+> >> 
+> >> Signed-off-by: Clement Leger <cleger@kalray.eu>
+> >> ---
+> >>  drivers/remoteproc/remoteproc_core.c       | 32 ++++++++++++++++++++--
+> >>  drivers/remoteproc/remoteproc_elf_loader.c |  3 --
+> >>  include/linux/remoteproc.h                 |  2 ++
+> >>  3 files changed, 32 insertions(+), 5 deletions(-)
+> >> 
+> >> diff --git a/drivers/remoteproc/remoteproc_core.c
+> >> b/drivers/remoteproc/remoteproc_core.c
+> >> index a9ac1d01e09b..382443bab583 100644
+> >> --- a/drivers/remoteproc/remoteproc_core.c
+> >> +++ b/drivers/remoteproc/remoteproc_core.c
+> >> @@ -1562,6 +1562,28 @@ int rproc_coredump_add_custom_segment(struct rproc
+> >> *rproc,
+> >>  }
+> >>  EXPORT_SYMBOL(rproc_coredump_add_custom_segment);
+> >>  
+> >> +/**
+> >> + * rproc_coredump_set_elf_info() - set coredump elf information
+> >> + * @rproc:	handle of a remote processor
+> >> + * @class:	elf class for coredump elf file
+> >> + * @size:	elf machine for coredump elf file
+> 
+> I just noticed that there is a typo, this should be "machine" and not "size".
+> Let me know if you'll fix it when applying.
+> 
 
-Delta changes in individual patches.
+Thanks for noticing, I fixed this up and applied the two patches.
 
-regards
-Suman
+Thanks,
+Bjorn
 
-[1] https://patchwork.kernel.org/cover/11456367/
-[2] https://patchwork.kernel.org/cover/11492005/
-
-Loic Pallardy (1):
-  remoteproc: Add prepare and unprepare ops
-
-Suman Anna (1):
-  remoteproc: Use a local copy for the name field
-
- drivers/remoteproc/remoteproc_core.c     | 21 +++++++++++++++++++--
- drivers/remoteproc/remoteproc_internal.h | 16 ++++++++++++++++
- include/linux/remoteproc.h               |  4 ++++
- 3 files changed, 39 insertions(+), 2 deletions(-)
-
--- 
-2.26.0
+> Thanks,
+> 
+> Cl�ment
+> 
+> >> + *
+> >> + * Set elf information which will be used for coredump elf file.
+> >> + *
+> >> + * Return: 0 on success, negative errno on error.
+> >> + */
+> >> +int rproc_coredump_set_elf_info(struct rproc *rproc, u8 class, u16 machine)
+> >> +{
+> >> +	if (class != ELFCLASS64 && class != ELFCLASS32)
+> >> +		return -EINVAL;
+> >> +
+> >> +	rproc->elf_class = class;
+> >> +	rproc->elf_machine = machine;
+> >> +
+> >> +	return 0;
+> >> +}
+> >> +EXPORT_SYMBOL(rproc_coredump_set_elf_info);
+> >> +
+> >>  /**
+> >>   * rproc_coredump() - perform coredump
+> >>   * @rproc:	rproc handle
+> >> @@ -1584,6 +1606,11 @@ static void rproc_coredump(struct rproc *rproc)
+> >>  	if (list_empty(&rproc->dump_segments))
+> >>  		return;
+> >>  
+> >> +	if (class == ELFCLASSNONE) {
+> >> +		dev_err(&rproc->dev, "Elf class is not set\n");
+> >> +		return;
+> >> +	}
+> >> +
+> >>  	data_size = elf_size_of_hdr(class);
+> >>  	list_for_each_entry(segment, &rproc->dump_segments, node) {
+> >>  		data_size += elf_size_of_phdr(class) + segment->size;
+> >> @@ -1602,7 +1629,7 @@ static void rproc_coredump(struct rproc *rproc)
+> >>  	elf_hdr_init_ident(ehdr, class);
+> >>  
+> >>  	elf_hdr_set_e_type(class, ehdr, ET_CORE);
+> >> -	elf_hdr_set_e_machine(class, ehdr, EM_NONE);
+> >> +	elf_hdr_set_e_machine(class, ehdr, rproc->elf_machine);
+> >>  	elf_hdr_set_e_version(class, ehdr, EV_CURRENT);
+> >>  	elf_hdr_set_e_entry(class, ehdr, rproc->bootaddr);
+> >>  	elf_hdr_set_e_phoff(class, ehdr, elf_size_of_hdr(class));
+> >> @@ -2043,7 +2070,8 @@ struct rproc *rproc_alloc(struct device *dev, const char
+> >> *name,
+> >>  	rproc->name = name;
+> >>  	rproc->priv = &rproc[1];
+> >>  	rproc->auto_boot = true;
+> >> -	rproc->elf_class = ELFCLASS32;
+> >> +	rproc->elf_class = ELFCLASSNONE;
+> >> +	rproc->elf_machine = EM_NONE;
+> >>  
+> >>  	device_initialize(&rproc->dev);
+> >>  	rproc->dev.parent = dev;
+> >> diff --git a/drivers/remoteproc/remoteproc_elf_loader.c
+> >> b/drivers/remoteproc/remoteproc_elf_loader.c
+> >> index 16e2c496fd45..4869fb7d8fe4 100644
+> >> --- a/drivers/remoteproc/remoteproc_elf_loader.c
+> >> +++ b/drivers/remoteproc/remoteproc_elf_loader.c
+> >> @@ -248,9 +248,6 @@ int rproc_elf_load_segments(struct rproc *rproc, const
+> >> struct firmware *fw)
+> >>  			memset(ptr + filesz, 0, memsz - filesz);
+> >>  	}
+> >>  
+> >> -	if (ret == 0)
+> >> -		rproc->elf_class = class;
+> >> -
+> >>  	return ret;
+> >>  }
+> >>  EXPORT_SYMBOL(rproc_elf_load_segments);
+> >> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+> >> index ed127b2d35ca..d67eb5a40476 100644
+> >> --- a/include/linux/remoteproc.h
+> >> +++ b/include/linux/remoteproc.h
+> >> @@ -515,6 +515,7 @@ struct rproc {
+> >>  	struct list_head dump_segments;
+> >>  	int nb_vdev;
+> >>  	u8 elf_class;
+> >> +	u16 elf_machine;
+> >>  };
+> > 
+> > Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+> > 
+> >>  
+> >>  /**
+> >> @@ -619,6 +620,7 @@ int rproc_coredump_add_custom_segment(struct rproc *rproc,
+> >>  						     struct rproc_dump_segment *segment,
+> >>  						     void *dest),
+> >>  				      void *priv);
+> >> +int rproc_coredump_set_elf_info(struct rproc *rproc, u8 class, u16 machine);
+> >>  
+> >>  static inline struct rproc_vdev *vdev_to_rvdev(struct virtio_device *vdev)
+> >>  {
+> >> --
+> >> 2.17.1
