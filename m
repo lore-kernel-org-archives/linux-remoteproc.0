@@ -2,152 +2,200 @@ Return-Path: <SRS0=FIV4=6E=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C1A2C3815B
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 20 Apr 2020 07:08:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AFD5C3815B
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 20 Apr 2020 09:24:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0B9F02073A
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 20 Apr 2020 07:08:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 656D620CC7
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 20 Apr 2020 09:24:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QKp98wB9"
+	dkim=pass (2048-bit key) header.d=st.com header.i=@st.com header.b="ygm2kM8Y"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726164AbgDTHIi (ORCPT
+        id S1726017AbgDTJY1 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 20 Apr 2020 03:08:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37618 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726063AbgDTHIi (ORCPT
+        Mon, 20 Apr 2020 05:24:27 -0400
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:35115 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725773AbgDTJY1 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 20 Apr 2020 03:08:38 -0400
-Received: from mail-pg1-x544.google.com (mail-pg1-x544.google.com [IPv6:2607:f8b0:4864:20::544])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6782DC061A10
-        for <linux-remoteproc@vger.kernel.org>; Mon, 20 Apr 2020 00:08:38 -0700 (PDT)
-Received: by mail-pg1-x544.google.com with SMTP id x26so4597119pgc.10
-        for <linux-remoteproc@vger.kernel.org>; Mon, 20 Apr 2020 00:08:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=ZFTvUBniMnOgkrRExu5askOEdn96R/KVp3qePoAVn6U=;
-        b=QKp98wB9GMSRtHLO5NspGdujoHvPoUeArRvvkQZr2iHLy5rnm4LVW8/987njYm9uhj
-         JdeZIF+IFQadILVdklQ34vEfxMxFRlZ+xsueOVmhrbOoFfl4h/38xxUBEMNv15CQ/lfc
-         0YcmiWPgfXx0hNh9lK6Xf/9jEaz3MNFxbRJaKE4g5CElwqlIlKTpG7FLmGbnX9y9HYGK
-         Q47tO0EXlEHxfHI5DISKBTyaVg7E8FZK8+JSMcmyB6aRIKDVxCUHGGeZovcZXj42zfPD
-         XcYHL/f1TZJLkNYj23KrDftSqzJLxjinXHWmiOqKjrQP6cYEzifWlPyeJCpmqu6as7Ek
-         GSjA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=ZFTvUBniMnOgkrRExu5askOEdn96R/KVp3qePoAVn6U=;
-        b=NCl7DFBaQpufYEEacT114+LDAF4rhRDEO1agfKauGmClEbydL7RMOex8N71i4t9r6b
-         Hui/KrLdkWsHCvGQZMf7HGQX/8s1KTU5qeS+KaAaoFLs/aDU+UXRWKM0xUxsDSnu3MY0
-         FhiFIxan3FNngQofe5XhIqMcidHLDl3s6m1Csc1S098YBplyACIpjdhOeIsLgToCt11O
-         3+bCIKbFCRIXNqtRxcdpwrf2QEq2/p1M7yRqbsYqkhhk/D3AM7O0en32YVIEXd8yn+h7
-         A+3wEJKCxOG7L4yFHume6Vl2eF7SrIkNVOW/S1lzNnzzGV3TnWP344IlnA9NSEs7bZ4j
-         6hVg==
-X-Gm-Message-State: AGi0PuYzR7Sr+1eeibRteVHJ2gJ24mtYHLb9WN4XgowhLvVI+UnKt6fk
-        1PYVjd5/HptK8zXZC1HSMnHyDQ==
-X-Google-Smtp-Source: APiQypJb89c9hh/371YTa+qpdFRvONkeP4flf7SsLuGDCOwnaS/cwCoXUnWr/fgyMSNCByoC6M5H4w==
-X-Received: by 2002:a05:6a00:a:: with SMTP id h10mr9544646pfk.160.1587366517818;
-        Mon, 20 Apr 2020 00:08:37 -0700 (PDT)
-Received: from builder.lan (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id x185sm166115pfx.155.2020.04.20.00.08.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Apr 2020 00:08:37 -0700 (PDT)
-Date:   Mon, 20 Apr 2020 00:09:00 -0700
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Siddharth Gupta <sidgup@codeaurora.org>
-Cc:     agross@kernel.org, ohad@wizery.com,
-        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, tsoni@codeaurora.org,
-        psodagud@codeaurora.org, rishabhb@codeaurora.org
-Subject: Re: [PATCH v2 3/6] remoteproc: sysmon: Inform current rproc about
- all active rprocs
-Message-ID: <20200420070900.GF1868936@builder.lan>
-References: <1586389003-26675-1-git-send-email-sidgup@codeaurora.org>
- <1586389003-26675-4-git-send-email-sidgup@codeaurora.org>
+        Mon, 20 Apr 2020 05:24:27 -0400
+Received: from pps.filterd (m0046037.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 03K9Mm8r004307;
+        Mon, 20 Apr 2020 11:24:21 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=STMicroelectronics;
+ bh=s8K4dHG+7OIzZ7R9bQBGG4blMOhessXM8j6Dk6jooSY=;
+ b=ygm2kM8YY9J+l7QLFg5ttmVA3ljCeD57Dza2EZukwBnG3fad2rlhUw1zqXcWOL5E7r9W
+ vCHrnYjYfEJGbN5wTucgW6FCQurRm5zeuHaDQVg8o6RCNipCNe/l3o2SoDxCBDTRAD1l
+ 2viqm6axHYztGeKH7Ahdr+lg4NeWDU/aSgEJmStSVtvYP9mtJCeUiOjuQXfCjxkRZCBL
+ 2jSHr8mfEqp0UXeHD/0jyfWhKyGyxLB9i2olbZO5TcPNeAPFwJozSK7OczlGUGQibkeQ
+ qde5R7pnvtVVFt/eXnVUJ/L9vvDA+kP19UMA0Pl9Zz7Q1gejlcIZGpwh3A2v2+txGCxd uA== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 30fqaw1ctx-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 20 Apr 2020 11:24:21 +0200
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 0613410002A;
+        Mon, 20 Apr 2020 11:24:21 +0200 (CEST)
+Received: from Webmail-eu.st.com (sfhdag3node1.st.com [10.75.127.7])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id E6A882BEC7A;
+        Mon, 20 Apr 2020 11:24:20 +0200 (CEST)
+Received: from lmecxl0889.tpe.st.com (10.75.127.48) by SFHDAG3NODE1.st.com
+ (10.75.127.7) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 20 Apr
+ 2020 11:24:19 +0200
+Subject: Re: [PATCH v2 2/7] remoteproc: Split firmware name allocation from
+ rproc_alloc()
+To:     Mathieu Poirier <mathieu.poirier@linaro.org>,
+        <bjorn.andersson@linaro.org>, <ohad@wizery.com>
+CC:     <s-anna@ti.com>, <elder@linaro.org>, <Markus.Elfring@web.de>,
+        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20200415204858.2448-1-mathieu.poirier@linaro.org>
+ <20200415204858.2448-3-mathieu.poirier@linaro.org>
+From:   Arnaud POULIQUEN <arnaud.pouliquen@st.com>
+Message-ID: <e980e9e6-04d6-60b8-c921-d2fb1f2b9a1b@st.com>
+Date:   Mon, 20 Apr 2020 11:24:12 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1586389003-26675-4-git-send-email-sidgup@codeaurora.org>
+In-Reply-To: <20200415204858.2448-3-mathieu.poirier@linaro.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.75.127.48]
+X-ClientProxiedBy: SFHDAG1NODE2.st.com (10.75.127.2) To SFHDAG3NODE1.st.com
+ (10.75.127.7)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.676
+ definitions=2020-04-20_03:2020-04-17,2020-04-20 signatures=0
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
-Message-ID: <20200420070900.ccV0mPZRomg6MTamTkIesDotl93DgZ9AcnN0laMWovs@z>
+Message-ID: <20200420092412.7WfKmXn15pC5qlZOkTJCvCy8DQuvCXBa78Il3qp-DP4@z>
 
-On Wed 08 Apr 16:36 PDT 2020, Siddharth Gupta wrote:
+Hi Mathieu,
 
-> Clients/services running on a remoteproc that booted up might need to be
-> aware of the state of already running remoteprocs. When a remoteproc boots
-> up (fresh or after recovery) it is not aware of the remoteprocs that booted
-> before it, i.e., the system state is incomplete. So to keep track of it we
-> send sysmon on behalf of all 'ONLINE' remoteprocs.
+On 4/15/20 10:48 PM, Mathieu Poirier wrote:
+> Make the firmware name allocation a function on its own in an
+> effort to cleanup function rproc_alloc().
 > 
-> Signed-off-by: Siddharth Gupta <sidgup@codeaurora.org>
-
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-
-Regards,
-Bjorn
-
+> Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 > ---
->  drivers/remoteproc/qcom_sysmon.c | 25 +++++++++++++++++++++++++
->  1 file changed, 25 insertions(+)
+>  drivers/remoteproc/remoteproc_core.c | 66 ++++++++++++++++------------
+>  1 file changed, 39 insertions(+), 27 deletions(-)
 > 
-> diff --git a/drivers/remoteproc/qcom_sysmon.c b/drivers/remoteproc/qcom_sysmon.c
-> index 851664e..8d8996d 100644
-> --- a/drivers/remoteproc/qcom_sysmon.c
-> +++ b/drivers/remoteproc/qcom_sysmon.c
-> @@ -453,10 +453,20 @@ static int sysmon_prepare(struct rproc_subdev *subdev)
->  	return 0;
->  }
+> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+> index 80056513ae71..4dee63f319ba 100644
+> --- a/drivers/remoteproc/remoteproc_core.c
+> +++ b/drivers/remoteproc/remoteproc_core.c
+> @@ -1979,6 +1979,33 @@ static const struct device_type rproc_type = {
+>  	.release	= rproc_type_release,
+>  };
 >  
-> +/**
-> + * sysmon_start() - start callback for the sysmon remoteproc subdevice
-> + * @subdev:	instance of the sysmon subdevice
-> + *
-> + * Inform all the listners of sysmon notifications that the rproc associated
-> + * to @subdev has booted up. The rproc that booted up also needs to know
-> + * which rprocs are already up and running, so send start notifications
-> + * on behalf of all the online rprocs.
-> + */
->  static int sysmon_start(struct rproc_subdev *subdev)
->  {
->  	struct qcom_sysmon *sysmon = container_of(subdev, struct qcom_sysmon,
->  						  subdev);
-> +	struct qcom_sysmon *target;
->  	struct sysmon_event event = {
->  		.subsys_name = sysmon->name,
->  		.ssr_event = SSCTL_SSR_EVENT_AFTER_POWERUP
-> @@ -464,6 +474,21 @@ static int sysmon_start(struct rproc_subdev *subdev)
->  
->  	blocking_notifier_call_chain(&sysmon_notifiers, 0, (void *)&event);
->  
-> +	mutex_lock(&sysmon_lock);
-> +	list_for_each_entry(target, &sysmon_list, node) {
-> +		if (target == sysmon ||
-> +		    target->rproc->state != RPROC_RUNNING)
-> +			continue;
+> +static int rproc_alloc_firmware(struct rproc *rproc,
+> +				const char *name, const char *firmware)
+
+nitpicking: here you do not allocate memory for the firmware but for its name
+The name of the function seems to me quite confusing...
+
+Else LGTM for the series
+
+Thanks,
+
+Arnaud
+
+> +{
+> +	char *p, *template = "rproc-%s-fw";
+> +	int name_len;
 > +
-> +		event.subsys_name = target->name;
-> +
-> +		if (sysmon->ssctl_version == 2)
-> +			ssctl_send_event(sysmon, &event);
-> +		else if (sysmon->ept)
-> +			sysmon_send_event(sysmon, &event);
+> +	if (!firmware) {
+> +		/*
+> +		 * If the caller didn't pass in a firmware name then
+> +		 * construct a default name.
+> +		 */
+> +		name_len = strlen(name) + strlen(template) - 2 + 1;
+> +		p = kmalloc(name_len, GFP_KERNEL);
+> +		if (!p)
+> +			return -ENOMEM;
+> +		snprintf(p, name_len, template, name);
+> +	} else {
+> +		p = kstrdup(firmware, GFP_KERNEL);
+> +		if (!p)
+> +			return -ENOMEM;
 > +	}
-> +	mutex_unlock(&sysmon_lock);
 > +
->  	return 0;
->  }
+> +	rproc->firmware = p;
+> +
+> +	return 0;
+> +}
+> +
+>  /**
+>   * rproc_alloc() - allocate a remote processor handle
+>   * @dev: the underlying device
+> @@ -2007,42 +2034,21 @@ struct rproc *rproc_alloc(struct device *dev, const char *name,
+>  			  const char *firmware, int len)
+>  {
+>  	struct rproc *rproc;
+> -	char *p, *template = "rproc-%s-fw";
+> -	int name_len;
 >  
-> -- 
-> Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-> a Linux Foundation Collaborative Project
+>  	if (!dev || !name || !ops)
+>  		return NULL;
+>  
+> -	if (!firmware) {
+> -		/*
+> -		 * If the caller didn't pass in a firmware name then
+> -		 * construct a default name.
+> -		 */
+> -		name_len = strlen(name) + strlen(template) - 2 + 1;
+> -		p = kmalloc(name_len, GFP_KERNEL);
+> -		if (!p)
+> -			return NULL;
+> -		snprintf(p, name_len, template, name);
+> -	} else {
+> -		p = kstrdup(firmware, GFP_KERNEL);
+> -		if (!p)
+> -			return NULL;
+> -	}
+> -
+>  	rproc = kzalloc(sizeof(struct rproc) + len, GFP_KERNEL);
+> -	if (!rproc) {
+> -		kfree(p);
+> +	if (!rproc)
+>  		return NULL;
+> -	}
+> +
+> +	if (rproc_alloc_firmware(rproc, name, firmware))
+> +		goto free_rproc;
+>  
+>  	rproc->ops = kmemdup(ops, sizeof(*ops), GFP_KERNEL);
+> -	if (!rproc->ops) {
+> -		kfree(p);
+> -		kfree(rproc);
+> -		return NULL;
+> -	}
+> +	if (!rproc->ops)
+> +		goto free_firmware;
+>  
+> -	rproc->firmware = p;
+>  	rproc->name = name;
+>  	rproc->priv = &rproc[1];
+>  	rproc->auto_boot = true;
+> @@ -2091,6 +2097,12 @@ struct rproc *rproc_alloc(struct device *dev, const char *name,
+>  	rproc->state = RPROC_OFFLINE;
+>  
+>  	return rproc;
+> +
+> +free_firmware:
+> +	kfree(rproc->firmware);
+> +free_rproc:
+> +	kfree(rproc);
+> +	return NULL;
+>  }
+>  EXPORT_SYMBOL(rproc_alloc);
+>  
+> 
