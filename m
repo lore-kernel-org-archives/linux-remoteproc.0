@@ -1,76 +1,57 @@
-Return-Path: <arnaud.pouliquen@st.com>
-Subject: Re: [PATCH v7 1/2] rpmsg: core: add API to get MTU
-References: <20200324170407.16470-1-arnaud.pouliquen@st.com>
- <20200324170407.16470-2-arnaud.pouliquen@st.com>
- <356fe539-6ec4-6000-1f68-23404fc5d373@suse.com>
- <9f302a19-e684-ffff-823a-02af7f90403c@suse.cz>
-From: Arnaud POULIQUEN <arnaud.pouliquen@st.com>
-Message-ID: <1edf98cf-dfb6-0e66-a58d-abba5d2a65c4@st.com>
-Date: Wed, 1 Apr 2020 13:34:19 +0200
+Return-Path: <wsa@the-dreams.de>
+Date: Mon, 20 Apr 2020 18:27:47 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+Subject: Re: [PATCH 1/2] dt-bindings: Clean-up schema indentation formatting
+Message-ID: <20200420162747.GA3721@ninjato>
+References: <20200416005549.9683-1-robh@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <9f302a19-e684-ffff-823a-02af7f90403c@suse.cz>
-Content-Type: text/plain; charset="iso-8859-2"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-To: Jiri Slaby <jslaby@suse.cz>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org, Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: Suman Anna <s-anna@ti.com>, Fabien DESSENNE <fabien.dessenne@st.com>, linux-stm32@st-md-mailman.stormreply.com, xiang xiao <xiaoxiang781216@gmail.com>
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="tKW2IUtsqtDRztdT"
+Content-Disposition: inline
+In-Reply-To: <20200416005549.9683-1-robh@kernel.org>
+To: Rob Herring <robh@kernel.org>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Maxime Ripard <mripard@kernel.org>, Stephen Boyd <sboyd@kernel.org>, Alexandre Torgue <alexandre.torgue@st.com>, Thierry Reding <thierry.reding@gmail.com>, Sam Ravnborg <sam@ravnborg.org>, Vinod Koul <vkoul@kernel.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Guenter Roeck <linux@roeck-us.net>, Jonathan Cameron <jic23@kernel.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Mauro Carvalho Chehab <mchehab@kernel.org>, Lee Jones <lee.jones@linaro.org>, Ulf Hansson <ulf.hansson@linaro.org>, Heiko Stuebner <heiko@sntech.de>, Andrew Lunn <andrew@lunn.ch>, Florian Fainelli <f.fainelli@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Fabio Estevam <festevam@gmail.com>, Mark Brown <broonie@kernel.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, Alexandre Belloni <alexandre.belloni@bootlin.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Amit Kucheria <amit.kucheria@linaro.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-i2c@vger.kernel.org, linux-hwmon@vger.kernel.org, linux-iio@vger.kernel.org, linux-input@vger.kernel.org, linux-leds@vger.kernel.org, linux-media@vger.kernel.org, linux-mmc@vger.kernel.org, linux-mtd@lists.infradead.org, linux-can@vger.kernel.org, netdev@vger.kernel.org, linux-pci@vger.kernel.org, linux-gpio@vger.kernel.org, linux-pwm@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-riscv@lists.infradead.org, linux-rtc@vger.kernel.org, linux-serial@vger.kernel.org, alsa-devel@alsa-project.org, linux-spi@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
 
-On 4/1/20 8:29 AM, Jiri Slaby wrote:
-> On 01. 04. 20, 8:28, Jiri Slaby wrote:
->> On 24. 03. 20, 18:04, Arnaud Pouliquen wrote:
->>> Return the rpmsg buffer MTU for sending message, so rpmsg users
->>> can split a long message in several sub rpmsg buffers.
->>>
->>> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@st.com>
->>> Acked-by: Suman Anna <s-anna@ti.com>
->>> ---
->>>  drivers/rpmsg/rpmsg_core.c       | 21 +++++++++++++++++++++
->>>  drivers/rpmsg/rpmsg_internal.h   |  2 ++
->>>  drivers/rpmsg/virtio_rpmsg_bus.c | 10 ++++++++++
->>>  include/linux/rpmsg.h            | 10 ++++++++++
->>>  4 files changed, 43 insertions(+)
->>>
->>> diff --git a/drivers/rpmsg/rpmsg_core.c b/drivers/rpmsg/rpmsg_core.c
->>> index e330ec4dfc33..a6ef54c4779a 100644
->>> --- a/drivers/rpmsg/rpmsg_core.c
->>> +++ b/drivers/rpmsg/rpmsg_core.c
->>> @@ -283,6 +283,27 @@ int rpmsg_trysend_offchannel(struct rpmsg_endpoint *ept, u32 src, u32 dst,
->>>  }
->>>  EXPORT_SYMBOL(rpmsg_trysend_offchannel);
->>>  
->>> +/**
->>> + * rpmsg_get_mtu() - get maximum transmission buffer size for sending message.
->>> + * @ept: the rpmsg endpoint
->>> + *
->>> + * This function returns maximum buffer size available for a single message.
->>> + *
->>> + * Return: the maximum transmission size on success and an appropriate error
->>> + * value on failure.
->>> + */
->>> +
->>> +ssize_t rpmsg_get_mtu(struct rpmsg_endpoint *ept)
->>> +{
->>> +	if (WARN_ON(!ept))
->>> +		return -EINVAL;
->>> +	if (!ept->ops->get_mtu)
->>> +		return -ENOTSUPP;
->>
->> Hmm, I don't think all callers of tty_write_room() handle negative values...
->>
->> But some drivers also return negative values. There is some work to be
->> done, adding to TODO.
->>
->> For the time being, I suggest returning 0 instead.
-> 
-> Or better, convert the negative to 0 in rpmsg_tty_write_room for now.
-> 
->> thanks,-- 
+--tKW2IUtsqtDRztdT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Right, seems that a negative return of tty_write_room seems not always handled
-so i will force to 0 in rpmsg_tty in case of error returned. I will also
-add a comment in code that explain the context.
-  
-Thanks,
-Arnaud
+On Wed, Apr 15, 2020 at 07:55:48PM -0500, Rob Herring wrote:
+> Fix various inconsistencies in schema indentation. Most of these are
+> list indentation which should be 2 spaces more than the start of the
+> enclosing keyword. This doesn't matter functionally, but affects running
+> scripts which do transforms on the schema files.
+>=20
+> Signed-off-by: Rob Herring <robh@kernel.org>
+
+I see that people had comments but I can't judge the topics raised. So,
+I trust you guys that you find out when it is good to go and for that,
+here is my ack:
+
+Acked-by: Wolfram Sang <wsa@the-dreams.de>
+
+
+--tKW2IUtsqtDRztdT
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAl6dzX8ACgkQFA3kzBSg
+KbauIw//UsNN3sTG1Vo4Bgtp5Vw0s3m8ojCBjku/VuI/dnL/nKMqOKViAqP/ihOW
+epD4QCANZZ0InnhrhnkpKlsCZ3/i+OME4nuCopTRpWH5TUrX4T0f+1NLegcwoxw/
+UZ1N+HIQrTXUqpkvVw677OEH4fd4qO2mulRZYu7EPi1zhsQs8tyc0spdKvLPg8IR
+Wi165b1RDDsH6+ZFy9+KMDjPmklcrXxWRF/Qc5ATOmaSGMEFc3BTb2uVzVO64Oh0
+dZXGDontJcsz+7KQSXatmu38Xwys1bGGxhG7nvkSS/DmaFwnbkLx2jBZFz9GzVNm
+QZz3tC7olD6edfkgyL76W7dGYQfeA03MZZ88Sgq304Cgv0QwbTM26C0MXhpG1LZR
+sIxf8ZSbwOVUAuXRtABR6Pqu4xm9qbIXtth68kmF8KGPPXIaInqZPOaL0T0ApXm8
+ggBIcp2KoH117WlUDqmLOWlvSjecvUh5WxegsaGpmzxU/XTs9YxYvWvLNG5tGBs7
+Se2LAoLynrGy7LuUQYtRfbYSULgv0cyhO3V6oRjeqNpgekKCqpzStLFWVdCniiuq
+z3guYyMgQ13m1XwXHpeXwhUaak/dp7MvZeg9YxXn1g5MGCVQBMKBAak4aBGnxPLR
+OZq32nBakfGpLUy17vQXKQ0FsM9g8+mMc0xbGgzyyjca0mQuJCs=
+=5aFH
+-----END PGP SIGNATURE-----
+
+--tKW2IUtsqtDRztdT--
