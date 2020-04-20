@@ -1,100 +1,109 @@
-Return-Path: <arnaud.pouliquen@st.com>
-From: Arnaud Pouliquen <arnaud.pouliquen@st.com>
-Subject: [RFC 12/18] remoteproc: Support of pre-registered virtio device
-Date: Thu, 16 Apr 2020 18:13:25 +0200
-Message-ID: <20200416161331.7606-13-arnaud.pouliquen@st.com>
-In-Reply-To: <20200416161331.7606-1-arnaud.pouliquen@st.com>
-References: <20200416161331.7606-1-arnaud.pouliquen@st.com>
+Date: Sun, 19 Apr 2020 23:49:53 -0700
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: [PATCH v6 3/5] remoteproc: Add support for runtime PM
+Message-ID: <20200420064950.GC1868936@builder.lan>
+References: <20200417170040.174319-1-paul@crapouillou.net>
+ <20200417170040.174319-3-paul@crapouillou.net>
 MIME-Version: 1.0
-Content-Type: text/plain
-To: Bjorn Andersson <bjorn.andersson@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>, Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, arnaud.pouliquen@st.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200417170040.174319-3-paul@crapouillou.net>
+To: Paul Cercueil <paul@crapouillou.net>
+Cc: Ohad Ben-Cohen <ohad@wizery.com>, Arnaud Pouliquen <arnaud.pouliquen@st.com>, od@zcrc.me, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Management of the virtio device declared in the devicetree as
-a sub device of the remoteproc.
-Instead of creating a new platform device, we parse first the
-rvdevs list to look for a pre-registered rvdev with an index, that
-matches with the vdev instance of the resource table.
-If no pre-registered vdev is found a new platform device is created.
+On Fri 17 Apr 10:00 PDT 2020, Paul Cercueil wrote:
 
-Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@st.com>
----
- drivers/remoteproc/remoteproc_core.c | 51 +++++++++++++++++-----------
- 1 file changed, 32 insertions(+), 19 deletions(-)
+> Call pm_runtime_get_sync() before the firmware is loaded, and
+> pm_runtime_put() after the remote processor has been stopped.
+> 
+> Even though the remoteproc device has no PM callbacks, this allows the
+> parent device's PM callbacks to be properly called.
+> 
+> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+> 
+> Notes:
+>     v2-v4: No change
+>     v5: Move calls to prepare/unprepare to rproc_fw_boot/rproc_shutdown
+>     v6: Instead of prepare/unprepare callbacks, use PM runtime callbacks
+> 
+>  drivers/remoteproc/remoteproc_core.c | 13 ++++++++++++-
+>  1 file changed, 12 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+> index a7f96bc98406..d391b054efd8 100644
+> --- a/drivers/remoteproc/remoteproc_core.c
+> +++ b/drivers/remoteproc/remoteproc_core.c
+> @@ -29,6 +29,7 @@
+>  #include <linux/devcoredump.h>
+>  #include <linux/rculist.h>
+>  #include <linux/remoteproc.h>
+> +#include <linux/pm_runtime.h>
+>  #include <linux/iommu.h>
+>  #include <linux/idr.h>
+>  #include <linux/elf.h>
+> @@ -1384,6 +1385,8 @@ static int rproc_fw_boot(struct rproc *rproc, const struct firmware *fw)
+>  
+>  	dev_info(dev, "Booting fw image %s, size %zd\n", name, fw->size);
+>  
+> +	pm_runtime_get_sync(dev);
 
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index ecb36f64b1a0..9238aa292644 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -383,8 +383,8 @@ static int rproc_handle_vdev(struct rproc *rproc, struct fw_rsc_vdev *rsc,
- {
- 	struct device *dev = &rproc->dev;
- 	struct rproc_vdev_data vdev_data;
-+	struct rproc_vdev *rvdev = NULL, *tmp_rvdev;
- 	struct platform_device *pdev;
--	int ret;
- 
- 	/* make sure resource isn't truncated */
- 	if (struct_size(rsc, vring, rsc->num_of_vrings) + rsc->config_len >
-@@ -399,27 +399,40 @@ static int rproc_handle_vdev(struct rproc *rproc, struct fw_rsc_vdev *rsc,
- 		return -EINVAL;
- 	}
- 
--	vdev_data.rsc_offset = offset;
--	vdev_data.rsc = rsc;
--	vdev_data.id  = rsc->id;
--	vdev_data.index  = rproc->nb_vdev;
-+	/* Try to find a pre-registered rproc virtio device  */
-+	list_for_each_entry(tmp_rvdev, &rproc->rvdevs, node) {
-+		if (tmp_rvdev->index == rproc->nb_vdev) {
-+			rvdev = tmp_rvdev;
-+			break;
-+		}
-+	}
- 
--	dev_dbg(dev, "%s: rsc_offset = %d rsc = %p id = %d\n",
--		__func__, vdev_data.rsc_offset, vdev_data.rsc, vdev_data.id);
-+	if (rvdev) {
-+		/* assign the resource offset */
-+		rvdev->rsc_offset = offset;
-+		rvdev->rsc = rsc;
-+		rvdev->id = rsc->id;
- 
--	pdev = platform_device_register_data(dev, "rproc-virtio",
--					     rproc->nb_vdev, &vdev_data,
--					     sizeof(vdev_data));
--	ret = PTR_ERR_OR_ZERO(pdev);
--	if (ret) {
--		dev_err(rproc->dev.parent,
--			"failed to create rproc-virtio device\n");
--		return ret;
-+	} else {
-+		/* no rproc vdev found, register one */
-+		vdev_data.rsc_offset = offset;
-+		vdev_data.rsc = rsc;
-+		vdev_data.id  = rsc->id;
-+		vdev_data.index  = rproc->nb_vdev;
-+
-+		pdev = platform_device_register_data(dev, "rproc-virtio",
-+						     rproc->nb_vdev, &vdev_data,
-+						     sizeof(vdev_data));
-+		if (PTR_ERR_OR_ZERO(pdev)) {
-+			dev_err(rproc->dev.parent,
-+				"failed to create rproc-virtio device\n");
-+			return PTR_ERR_OR_ZERO(pdev);
-+		}
-+		/* register a component associated to the virtio platform */
-+		component_match_add_release(&pdev->dev, &rproc->match,
-+					    rproc_release_of, rproc_compare_of,
-+					    &pdev->dev);
- 	}
--	/* register a component associated to the virtio platform */
--	component_match_add_release(&pdev->dev, &rproc->match,
--				    rproc_release_of, rproc_compare_of,
--				    &pdev->dev);
- 	rproc->nb_vdev++;
- 
- 	return  0;
--- 
-2.17.1
+This can return an error, should we ignore this?
+
+Apart from that this looks good.
+
+Regards,
+Bjorn
+
+> +
+>  	/*
+>  	 * if enabling an IOMMU isn't relevant for this rproc, this is
+>  	 * just a nop
+> @@ -1391,7 +1394,7 @@ static int rproc_fw_boot(struct rproc *rproc, const struct firmware *fw)
+>  	ret = rproc_enable_iommu(rproc);
+>  	if (ret) {
+>  		dev_err(dev, "can't enable iommu: %d\n", ret);
+> -		return ret;
+> +		goto put_pm_runtime;
+>  	}
+>  
+>  	rproc->bootaddr = rproc_get_boot_addr(rproc, fw);
+> @@ -1435,6 +1438,8 @@ static int rproc_fw_boot(struct rproc *rproc, const struct firmware *fw)
+>  	rproc->table_ptr = NULL;
+>  disable_iommu:
+>  	rproc_disable_iommu(rproc);
+> +put_pm_runtime:
+> +	pm_runtime_put(dev);
+>  	return ret;
+>  }
+>  
+> @@ -1840,6 +1845,8 @@ void rproc_shutdown(struct rproc *rproc)
+>  
+>  	rproc_disable_iommu(rproc);
+>  
+> +	pm_runtime_put(dev);
+> +
+>  	/* Free the copy of the resource table */
+>  	kfree(rproc->cached_table);
+>  	rproc->cached_table = NULL;
+> @@ -2118,6 +2125,9 @@ struct rproc *rproc_alloc(struct device *dev, const char *name,
+>  
+>  	rproc->state = RPROC_OFFLINE;
+>  
+> +	pm_runtime_no_callbacks(&rproc->dev);
+> +	pm_runtime_enable(&rproc->dev);
+> +
+>  	return rproc;
+>  }
+>  EXPORT_SYMBOL(rproc_alloc);
+> @@ -2133,6 +2143,7 @@ EXPORT_SYMBOL(rproc_alloc);
+>   */
+>  void rproc_free(struct rproc *rproc)
+>  {
+> +	pm_runtime_disable(&rproc->dev);
+>  	put_device(&rproc->dev);
+>  }
+>  EXPORT_SYMBOL(rproc_free);
+> -- 
+> 2.25.1
+> 
