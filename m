@@ -1,41 +1,66 @@
-Return-Path: <linux-remoteproc-owner@vger.kernel.org>
-Received: from mail26.static.mailgun.info ([104.130.122.26]:33628 "EHLO
-        mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727909AbgDQO0q (ORCPT
-        <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 17 Apr 2020 10:26:46 -0400
-From: Sibi Sankar <sibis@codeaurora.org>
-Subject: [PATCH 2/5] remoteproc: qcom: pas: Add SC7180 Modem support
-Date: Fri, 17 Apr 2020 19:56:02 +0530
-Message-Id: <20200417142605.28885-3-sibis@codeaurora.org>
-In-Reply-To: <20200417142605.28885-1-sibis@codeaurora.org>
-References: <20200417142605.28885-1-sibis@codeaurora.org>
+Date: Sun, 19 Apr 2020 22:17:23 -0700
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: [PATCH v2 5/7] remoteproc: Restructure firmware name allocation
+Message-ID: <20200420051720.GE1516868@builder.lan>
+References: <20200415204858.2448-1-mathieu.poirier@linaro.org>
+ <20200415204858.2448-6-mathieu.poirier@linaro.org>
+ <9a4b6342-750e-284a-2343-8151b478589b@linaro.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Sender: linux-remoteproc-owner@vger.kernel.org
-To: bjorn.andersson@linaro.org
-Cc: agross@kernel.org, robh+dt@kernel.org, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, evgreen@chromium.org, ohad@wizery.com, mka@chromium.org, dianders@chromium.org, devicetree@vger.kernel.org, Sibi Sankar <sibis@codeaurora.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <9a4b6342-750e-284a-2343-8151b478589b@linaro.org>
+To: Alex Elder <elder@linaro.org>
+Cc: Mathieu Poirier <mathieu.poirier@linaro.org>, ohad@wizery.com, s-anna@ti.com, Markus.Elfring@web.de, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Add support for booting the Modem DSP found on Qualcomm's SC7180 SoCs.
+On Wed 15 Apr 14:23 PDT 2020, Alex Elder wrote:
 
-Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
----
- drivers/remoteproc/qcom_q6v5_pas.c | 1 +
- 1 file changed, 1 insertion(+)
+> On 4/15/20 3:48 PM, Mathieu Poirier wrote:
+> > Improve the readability of function rproc_alloc_firmware() by using
+> > a non-negated condition.
+> > 
+> > Suggested-by: Alex Elder <elder@linaro.org>
+> > Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+> 
+> If it were me, I'd move the comment above the if statement and
+> perhaps reword it a little bit to describe what's happening.
+> But no matter, this looks good.
+> 
 
-diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
-index 7a63efb854052..33b0bff770a7f 100644
---- a/drivers/remoteproc/qcom_q6v5_pas.c
-+++ b/drivers/remoteproc/qcom_q6v5_pas.c
-@@ -637,6 +637,7 @@ static const struct of_device_id adsp_of_match[] = {
- 	{ .compatible = "qcom,qcs404-adsp-pas", .data = &adsp_resource_init },
- 	{ .compatible = "qcom,qcs404-cdsp-pas", .data = &cdsp_resource_init },
- 	{ .compatible = "qcom,qcs404-wcss-pas", .data = &wcss_resource_init },
-+	{ .compatible = "qcom,sc7180-mpss-pas", .data = &mpss_resource_init},
- 	{ .compatible = "qcom,sdm845-adsp-pas", .data = &adsp_resource_init},
- 	{ .compatible = "qcom,sdm845-cdsp-pas", .data = &cdsp_resource_init},
- 	{ .compatible = "qcom,sm8150-adsp-pas", .data = &sm8150_adsp_resource},
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+This would also avoid the fact that we have a multiline block without
+braces (which isn't needed, but looks odd to me). So that sounds like a
+good idea.
+
+Regards,
+Bjorn
+
+> Reviewed-by: Alex Elder <elder@linaro.org>
+> 
+> > ---
+> >  drivers/remoteproc/remoteproc_core.c | 6 +++---
+> >  1 file changed, 3 insertions(+), 3 deletions(-)
+> > 
+> > diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+> > index ebaff496ef81..0bfa6998705d 100644
+> > --- a/drivers/remoteproc/remoteproc_core.c
+> > +++ b/drivers/remoteproc/remoteproc_core.c
+> > @@ -1984,14 +1984,14 @@ static int rproc_alloc_firmware(struct rproc *rproc,
+> >  {
+> >  	const char *p;
+> >  
+> > -	if (!firmware)
+> > +	if (firmware)
+> > +		p = kstrdup_const(firmware, GFP_KERNEL);
+> > +	else
+> >  		/*
+> >  		 * If the caller didn't pass in a firmware name then
+> >  		 * construct a default name.
+> >  		 */
+> >  		p = kasprintf(GFP_KERNEL, "rproc-%s-fw", name);
+> > -	else
+> > -		p = kstrdup_const(firmware, GFP_KERNEL);
+> >  
+> >  	if (!p)
+> >  		return -ENOMEM;
+> > 
+> 
