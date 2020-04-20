@@ -2,115 +2,121 @@ Return-Path: <SRS0=FIV4=6E=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3244AC3815B
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 20 Apr 2020 16:07:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E593CC3815B
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 20 Apr 2020 18:54:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1194920857
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 20 Apr 2020 16:07:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C6E7F2084D
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 20 Apr 2020 18:54:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="J0/O3QfW"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Qf/ecC7L"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728073AbgDTQHj (ORCPT
+        id S1726816AbgDTSyT (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 20 Apr 2020 12:07:39 -0400
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:54354 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726036AbgDTQHg (ORCPT
+        Mon, 20 Apr 2020 14:54:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34796 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726328AbgDTSyT (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 20 Apr 2020 12:07:36 -0400
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 03KG7URC089894;
-        Mon, 20 Apr 2020 11:07:30 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1587398850;
-        bh=Dw9r3dYDe32eNopDitcAqNIpiN0el0jUX6kvW1sbYuc=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=J0/O3QfWwzL9EqpSzz2sqYku+9y3nbHvWrIDwiWFnfEkmn+jU8aqbVlGWw437L1Ko
-         yUfbiNrrxTlH1Br4hAZfSK+XrsololdoC7nonogcFiCB2YvmaIL1ObP7rScsQFuTuD
-         IYVK16v1E/1W5hpVk0NwuJDfo8K6uus/LfEeYNPQ=
-Received: from DLEE107.ent.ti.com (dlee107.ent.ti.com [157.170.170.37])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id 03KG7Uaj004069;
-        Mon, 20 Apr 2020 11:07:30 -0500
-Received: from DLEE104.ent.ti.com (157.170.170.34) by DLEE107.ent.ti.com
- (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Mon, 20
- Apr 2020 11:06:10 -0500
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE104.ent.ti.com
- (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Mon, 20 Apr 2020 11:06:10 -0500
-Received: from fllv0103.dal.design.ti.com (fllv0103.dal.design.ti.com [10.247.120.73])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 03KG6A7a093324;
-        Mon, 20 Apr 2020 11:06:10 -0500
-Received: from localhost ([10.250.70.56])
-        by fllv0103.dal.design.ti.com (8.14.7/8.14.7) with ESMTP id 03KG6A69128230;
-        Mon, 20 Apr 2020 11:06:10 -0500
-From:   Suman Anna <s-anna@ti.com>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-CC:     Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Arnaud Pouliquen <arnaud.pouliquen@st.com>,
-        Loic Pallardy <loic.pallardy@st.com>,
-        Tero Kristo <t-kristo@ti.com>,
-        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Suman Anna <s-anna@ti.com>
-Subject: [PATCH v3 2/2] remoteproc: Fix and restore the parenting hierarchy for vdev
-Date:   Mon, 20 Apr 2020 11:06:00 -0500
-Message-ID: <20200420160600.10467-3-s-anna@ti.com>
-X-Mailer: git-send-email 2.26.0
-In-Reply-To: <20200420160600.10467-1-s-anna@ti.com>
-References: <20200420160600.10467-1-s-anna@ti.com>
+        Mon, 20 Apr 2020 14:54:19 -0400
+Received: from mail-lj1-x242.google.com (mail-lj1-x242.google.com [IPv6:2a00:1450:4864:20::242])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A6F6CC061A0C
+        for <linux-remoteproc@vger.kernel.org>; Mon, 20 Apr 2020 11:54:17 -0700 (PDT)
+Received: by mail-lj1-x242.google.com with SMTP id w20so4957906ljj.0
+        for <linux-remoteproc@vger.kernel.org>; Mon, 20 Apr 2020 11:54:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=tFwuNr0TgSQRNNXpMtC3V2slHHf02xlAMZDjaN+7RAc=;
+        b=Qf/ecC7Lp+kohe1FrviknG4/IQqC/abCMx7cMJ8Qh/SH7PU6FDeUEAPzC0J/Du8RJZ
+         L080nkD48kiih0pnK6PLPLWsJGLm6S1RVXu/dcSHWNi9AViGgBDdLNWUx/C05aivFcZa
+         FUUpFkc0Q4n7UHOZTdTU+Tuts0aAXCfIAirO8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=tFwuNr0TgSQRNNXpMtC3V2slHHf02xlAMZDjaN+7RAc=;
+        b=Q1DqutE7ETWfxgZjBMAgnjVUnRC8m1V7IU+2cU5PW3BtWLj3ru5IvhupcCyxdrHwdj
+         M3knZLojs2WhURPq2wxdXcxHUeiez+3hEuakGLiLaiTn86BcJBkqT6dHDKg3XOPBbLVw
+         u3hwtdqM0afMuMdfOS9ysNAsPY5Xe+oYQvlzmHKnp5V5Jne4vCbnQfSCwex0Upl5kMPi
+         oFNQz1j5LZnWfB9cOyDaskcL6MsAM6FO8HDJt57RBIr2peJ8F/JYc1s7etwzDaaQ/PPc
+         wC9+SnCGHbp/FKOGJdQYG6or8tFVVSF/frkhRHanM3VbXICMi4Xue3RxMDqFtM3Doo70
+         t+MA==
+X-Gm-Message-State: AGi0PuYzmW8SpcNUaBqOm2RaPGLlFN2f+gFd8PnB3BPWJ6AIpjPnBVMb
+        3b4LNQfZJzwFddim3/DW1riyxRfWcL4=
+X-Google-Smtp-Source: APiQypLdBpSt8pKkCbRcWK/cTpS80nOILWDEIMs9CRLOlX9pPUCZQT66ZwJplISmKugu9uS63ILmPQ==
+X-Received: by 2002:a2e:8e98:: with SMTP id z24mr11353562ljk.134.1587408854927;
+        Mon, 20 Apr 2020 11:54:14 -0700 (PDT)
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com. [209.85.208.182])
+        by smtp.gmail.com with ESMTPSA id l7sm226235lja.32.2020.04.20.11.54.13
+        for <linux-remoteproc@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 20 Apr 2020 11:54:13 -0700 (PDT)
+Received: by mail-lj1-f182.google.com with SMTP id e25so11263548ljg.5
+        for <linux-remoteproc@vger.kernel.org>; Mon, 20 Apr 2020 11:54:13 -0700 (PDT)
+X-Received: by 2002:a2e:b0f5:: with SMTP id h21mr6912419ljl.3.1587408852757;
+ Mon, 20 Apr 2020 11:54:12 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+References: <20200415071619.6052-1-sibis@codeaurora.org> <20200415071619.6052-2-sibis@codeaurora.org>
+In-Reply-To: <20200415071619.6052-2-sibis@codeaurora.org>
+From:   Evan Green <evgreen@chromium.org>
+Date:   Mon, 20 Apr 2020 11:53:36 -0700
+X-Gmail-Original-Message-ID: <CAE=gft4NK8vXGwJFEtXwKroKfoSO8wPxq=fv35AVC6vSQk02ig@mail.gmail.com>
+Message-ID:
+ <CAE=gft4NK8vXGwJFEtXwKroKfoSO8wPxq=fv35AVC6vSQk02ig@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] remoteproc: qcom_q6v5_mss: Remove unused
+ q6v5_da_to_va function
+To:     Sibi Sankar <sibis@codeaurora.org>
+Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-remoteproc@vger.kernel.org, Ohad Ben Cohen <ohad@wizery.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
-Message-ID: <20200420160600.HTekNeq8O8VwtE51D1Ls841pnAAv1d8_RW_AF5cbcdA@z>
+Message-ID: <20200420185336.m7EphQGO-C6ISuieW3mQ9N0oNNHLSMf9sKAjIp-GVqA@z>
 
-The commit 086d08725d34 ("remoteproc: create vdev subdevice with specific
-dma memory pool") has introduced a new vdev subdevice for each vdev
-declared in the firmware resource table and made it as the parent for the
-created virtio rpmsg devices instead of the previous remoteproc device.
-This changed the overall parenting hierarchy for the rpmsg devices, which
-were children of virtio devices, and does not allow the corresponding
-rpmsg drivers to retrieve the parent rproc device through the
-rproc_get_by_child() API.
+On Wed, Apr 15, 2020 at 12:16 AM Sibi Sankar <sibis@codeaurora.org> wrote:
+>
+> Remove unsed q6v5_da_to_va function as the mss driver uses a per segment
+> dump function.
+>
+> Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
+> ---
+>  drivers/remoteproc/qcom_q6v5_mss.c | 14 --------------
+>  1 file changed, 14 deletions(-)
+>
+> diff --git a/drivers/remoteproc/qcom_q6v5_mss.c b/drivers/remoteproc/qcom_q6v5_mss.c
+> index b781fc8de3597..6a19e0e77236e 100644
+> --- a/drivers/remoteproc/qcom_q6v5_mss.c
+> +++ b/drivers/remoteproc/qcom_q6v5_mss.c
+> @@ -196,7 +196,6 @@ struct q6v5 {
+>
+>         phys_addr_t mpss_phys;
+>         phys_addr_t mpss_reloc;
+> -       void *mpss_region;
 
-Fix this by restoring the remoteproc device as the parent. The new vdev
-subdevice can continue to inherit the DMA attributes from the remoteproc's
-parent device (actual platform device).
+Hm, this doesn't build for me on our Chrome tree:
 
-Fixes: 086d08725d34 ("remoteproc: create vdev subdevice with specific dma memory pool")
-Signed-off-by: Suman Anna <s-anna@ti.com>
-Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-Acked-by: Arnaud Pouliquen <arnaud.pouliquen@st.com>
----
-v3: No changes
-v2: https://patchwork.kernel.org/patch/11447653/
-
- drivers/remoteproc/remoteproc_core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index e12a54e67588..be15aace9b3c 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -517,7 +517,7 @@ static int rproc_handle_vdev(struct rproc *rproc, struct fw_rsc_vdev *rsc,
- 
- 	/* Initialise vdev subdevice */
- 	snprintf(name, sizeof(name), "vdev%dbuffer", rvdev->index);
--	rvdev->dev.parent = rproc->dev.parent;
-+	rvdev->dev.parent = &rproc->dev;
- 	rvdev->dev.dma_pfn_offset = rproc->dev.parent->dma_pfn_offset;
- 	rvdev->dev.release = rproc_rvdev_release;
- 	dev_set_name(&rvdev->dev, "%s#%s", dev_name(rvdev->dev.parent), name);
--- 
-2.26.0
-
+  CC [M]  drivers/remoteproc/qcom_q6v5_mss.o
+/mnt/host/source/src/third_party/kernel/v5.4/drivers/remoteproc/qcom_q6v5_mss.c:1118:16:
+error: no member named 'mpss_region' in 'struct q6v5'
+                ptr = qproc->mpss_region + offset;
+                      ~~~~~  ^
+/mnt/host/source/src/third_party/kernel/v5.4/drivers/remoteproc/qcom_q6v5_mss.c:1520:9:
+error: no member named 'mpss_region' in 'struct q6v5'
+        qproc->mpss_region = devm_ioremap_wc(qproc->dev,
+qproc->mpss_phys, qproc->mpss_size);
+        ~~~~~  ^
+/mnt/host/source/src/third_party/kernel/v5.4/drivers/remoteproc/qcom_q6v5_mss.c:1521:14:
+error: no member named 'mpss_region' in 'struct q6v5'
+        if (!qproc->mpss_region) {
+             ~~~~~  ^
