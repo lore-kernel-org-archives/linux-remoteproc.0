@@ -7,65 +7,65 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83A15C54FCB
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 20 Apr 2020 23:16:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12435C55181
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 20 Apr 2020 23:16:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5856320B1F
+	by mail.kernel.org (Postfix) with ESMTP id E32E022202
 	for <linux-remoteproc@archiver.kernel.org>; Mon, 20 Apr 2020 23:16:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="b7QPcnci"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IG13ZSrT"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727082AbgDTXQR (ORCPT
+        id S1727787AbgDTXQS (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 20 Apr 2020 19:16:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48078 "EHLO
+        Mon, 20 Apr 2020 19:16:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48068 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728057AbgDTXQH (ORCPT
+        by vger.kernel.org with ESMTP id S1727050AbgDTXQF (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 20 Apr 2020 19:16:07 -0400
-Received: from mail-pj1-x1044.google.com (mail-pj1-x1044.google.com [IPv6:2607:f8b0:4864:20::1044])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C70E1C061A0E
-        for <linux-remoteproc@vger.kernel.org>; Mon, 20 Apr 2020 16:16:06 -0700 (PDT)
-Received: by mail-pj1-x1044.google.com with SMTP id y6so63653pjc.4
-        for <linux-remoteproc@vger.kernel.org>; Mon, 20 Apr 2020 16:16:06 -0700 (PDT)
+        Mon, 20 Apr 2020 19:16:05 -0400
+Received: from mail-pg1-x543.google.com (mail-pg1-x543.google.com [IPv6:2607:f8b0:4864:20::543])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C2B40C061A0E
+        for <linux-remoteproc@vger.kernel.org>; Mon, 20 Apr 2020 16:16:05 -0700 (PDT)
+Received: by mail-pg1-x543.google.com with SMTP id g6so5839037pgs.9
+        for <linux-remoteproc@vger.kernel.org>; Mon, 20 Apr 2020 16:16:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=dza4hzfaFmzh3Frpav4RG02VUoiCOrQpepiedtPNL7c=;
-        b=b7QPcncixOowdwF513j6U8tfP77Wo0PggKWFrKwbYZ+AZhIlNRMWMxvbjH9NTix8d1
-         VgiSGYX7jCL7iQwB41rdDoysn8OpMSMMyb6H8kY81Nc37HlxDcKr1vdq8xjk7FYtrvvg
-         NuClw43cR1SWUI3OhxNfgvAsoOaTNpcyU4JgbNdqZHAv181LAnFojOMsJpELoNsJtS8d
-         RW3sJ/qE0LQk4MbOd0vPS/55LrXM8oE34jhqJEMkiI8QN2pncle4A3hId46+R22aqFmm
-         qVLDzhdjfnMK8pq4h7HNLmUjdfovJjMcSfTVmxwAYMLvJTePO9TvZtj5ZJmJlHWxijke
-         pAYg==
+        bh=KASPutP8+Wt/2CivAD5BVxDPcY0aTKQ2tUjRHF1fuqg=;
+        b=IG13ZSrTS4xSdhY/QebJdMqrM/vT/5xW3to2DDrjBlMngXoczlq2XfhiQFBBCmotlF
+         Gyu7pZbJejO+Jr8yqmUwxTBj0EG6HOEU7mHsGotvbNYroOHdXzZt3dIEabZS6mjMDhdt
+         gUEL/Ek5qwWEoMwrV8rE3GuVb04skEngiDYAvdUg39+Lbxy2Z9A6lXkyHCmyZEdk7Fuo
+         aum/OwPdMFsI8TD/TnqdhJBdvrgRHZc+zHhSWI1MVb8k0M49nOC3ZgMmc4cRvXNVYEeZ
+         I6P8ZfkyIe+PaEQy3rMf92IvgclRCaaaTtAxHGNDmbCAE4XwrxfG1SMqlsO/nI/yKZQG
+         in9A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=dza4hzfaFmzh3Frpav4RG02VUoiCOrQpepiedtPNL7c=;
-        b=bWVUzuwmfsNBqoYf/x1Dl9B4JYl5IWnetQ612FeFRzy9muyrhGqsTdwgd94sNxL31w
-         9sfqnx4XQlWcglA3Sz6G0MZFcBudvJSPcrpl7/m4LMqNFeaXZEHyYZQYI5Md7bnolcyJ
-         sW5yhrPWmX1cNckBWobLJIFvYeYXsGq4bEHU+aKPN2ds4N7qapnbnMynlj+9KhIwFsnj
-         bgcsEhfUbpApMvrF3iUF522gBjTCdtNBAuhfCtNjD89e0kqBLqW03s8v9Tl2QH/5NGCn
-         thqXqAIC72CfplS1xlDqgurWhJeM3twBlq1pCHOja9M53+yw/HoQRldOdz3X+itgt+0T
-         iwGQ==
-X-Gm-Message-State: AGi0PuYmsA13NLxk3Wh5GrecdRxHW56d8Bdjx8AXweuO2RxGRTKvXqyo
-        hlTT/rqn+yencZUTJgjFR/jqhQ==
-X-Google-Smtp-Source: APiQypKzxNRdPzrHdiqjIdsTokoS2NTxm85nq87jtVQxHeiZu7I1gt5bgqxgTT5C4qCWWE8/gbk5dQ==
-X-Received: by 2002:a17:902:b108:: with SMTP id q8mr19688672plr.214.1587424566380;
-        Mon, 20 Apr 2020 16:16:06 -0700 (PDT)
-Received: from xps15.cg.shawcable.net (S0106002369de4dac.cg.shawcable.net. [68.147.8.254])
-        by smtp.gmail.com with ESMTPSA id l15sm435354pgk.59.2020.04.20.16.16.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        bh=KASPutP8+Wt/2CivAD5BVxDPcY0aTKQ2tUjRHF1fuqg=;
+        b=SWOsSNxcdXgibOOk2zMWZsrNXMUwCN5jLTw5KHAR5v7D7o/L+ogq8GfGoAq3ECYPkt
+         lvslyleYjt+Ex72Y+Nk5p2Ge++6O4ahj8yZTCUGaeToJWtCN3L3SmLfCu/YRLFU6+2ur
+         C5X97dgVnBwdkkqryw1I3XYQeA9GBlJd2s0hPi/DuMy/3Q2gaXbf6dWC/ja8kPGEEUFI
+         uizRIrRdT5z/iMd84Mb6NJimJz0qGY/etKWjbyM/X+3vuzQoBP+ypkNldhsm2+PXpkGh
+         WgQPSMRGZDRD8rspWTyFD6czYiORs1dbi4gHyF62f0yNwHwHTV1wIGmCIgwiLfMWSlkH
+         ZKtw==
+X-Gm-Message-State: AGi0Pub76aEPHDqunzQiUcFfkMUhjlL8m2XVIArW9UjQ9j2xGAVViqq6
+        p4XVv4yGxsHSw1GWnYgMttMclA==
+X-Google-Smtp-Source: APiQypJqbaUChBQV737Tz6wMqMVNrF6DfwFKPYnIC0lHRs1zJCJKHciybyFNgByZKuGHiZgmUHPmMg==
+X-Received: by 2002:a62:ea06:: with SMTP id t6mr19109437pfh.298.1587424565358;
         Mon, 20 Apr 2020 16:16:05 -0700 (PDT)
+Received: from xps15.cg.shawcable.net (S0106002369de4dac.cg.shawcable.net. [68.147.8.254])
+        by smtp.gmail.com with ESMTPSA id l15sm435354pgk.59.2020.04.20.16.16.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 20 Apr 2020 16:16:04 -0700 (PDT)
 From:   Mathieu Poirier <mathieu.poirier@linaro.org>
 To:     bjorn.andersson@linaro.org, ohad@wizery.com
 Cc:     elder@linaro.org, s-anna@ti.com, Markus.Elfring@web.de,
         linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v3 3/4] remoteproc: Split rproc_ops allocation from rproc_alloc()
-Date:   Mon, 20 Apr 2020 17:16:00 -0600
-Message-Id: <20200420231601.16781-4-mathieu.poirier@linaro.org>
+Subject: [PATCH v3 2/4] remoteproc: Restructure firmware name allocation
+Date:   Mon, 20 Apr 2020 17:15:59 -0600
+Message-Id: <20200420231601.16781-3-mathieu.poirier@linaro.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200420231601.16781-1-mathieu.poirier@linaro.org>
 References: <20200420231601.16781-1-mathieu.poirier@linaro.org>
@@ -75,75 +75,45 @@ Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
-Message-ID: <20200420231600.KvKgMqa0lOcu1nOhEzPgNnInTGiKPiLn2UEAdybX7ps@z>
+Message-ID: <20200420231559.IqzrY9AUzC5ILqho0DAbLnjpCeyyBPbda6EfaMxuEDA@z>
 
-Make the rproc_ops allocation a function on its own in an effort
-to clean up function rproc_alloc().
+Improve the readability of function rproc_alloc_firmware() by using
+a non-negated condition and moving the comment out of the conditional
+block
 
+Suggested-by: Alex Elder <elder@linaro.org>
 Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 Reviewed-by: Alex Elder <elder@linaro.org>
 ---
- drivers/remoteproc/remoteproc_core.c | 33 ++++++++++++++++++----------
- 1 file changed, 21 insertions(+), 12 deletions(-)
+ drivers/remoteproc/remoteproc_core.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
 diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index 45529d40342f..15318507aedb 100644
+index db8a15fc1e4a..45529d40342f 100644
 --- a/drivers/remoteproc/remoteproc_core.c
 +++ b/drivers/remoteproc/remoteproc_core.c
-@@ -2028,6 +2028,26 @@ static int rproc_alloc_firmware(struct rproc *rproc,
- 	return 0;
- }
+@@ -2011,14 +2011,14 @@ static int rproc_alloc_firmware(struct rproc *rproc,
+ {
+ 	const char *p;
  
-+static int rproc_alloc_ops(struct rproc *rproc, const struct rproc_ops *ops)
-+{
-+	rproc->ops = kmemdup(ops, sizeof(*ops), GFP_KERNEL);
-+	if (!rproc->ops)
-+		return -ENOMEM;
-+
-+	if (rproc->ops->load)
-+		return 0;
-+
-+	/* Default to ELF loader if no load function is specified */
-+	rproc->ops->load = rproc_elf_load_segments;
-+	rproc->ops->parse_fw = rproc_elf_load_rsc_table;
-+	rproc->ops->find_loaded_rsc_table = rproc_elf_find_loaded_rsc_table;
-+	if (!rproc->ops->sanity_check)
-+		rproc->ops->sanity_check = rproc_elf32_sanity_check;
-+	rproc->ops->get_boot_addr = rproc_elf_get_boot_addr;
-+
-+	return 0;
-+}
-+
- /**
-  * rproc_alloc() - allocate a remote processor handle
-  * @dev: the underlying device
-@@ -2067,8 +2087,7 @@ struct rproc *rproc_alloc(struct device *dev, const char *name,
- 	if (rproc_alloc_firmware(rproc, name, firmware))
- 		goto free_rproc;
+-	if (!firmware)
+-		/*
+-		 * If the caller didn't pass in a firmware name then
+-		 * construct a default name.
+-		 */
+-		p = kasprintf(GFP_KERNEL, "rproc-%s-fw", name);
+-	else
++	/*
++	 * Allocate a firmware name if the caller gave us one to work
++	 * with.  Otherwise construct a new one using a default pattern.
++	 */
++	if (firmware)
+ 		p = kstrdup_const(firmware, GFP_KERNEL);
++	else
++		p = kasprintf(GFP_KERNEL, "rproc-%s-fw", name);
  
--	rproc->ops = kmemdup(ops, sizeof(*ops), GFP_KERNEL);
--	if (!rproc->ops)
-+	if (rproc_alloc_ops(rproc, ops))
- 		goto free_firmware;
- 
- 	rproc->name = name;
-@@ -2096,16 +2115,6 @@ struct rproc *rproc_alloc(struct device *dev, const char *name,
- 
- 	atomic_set(&rproc->power, 0);
- 
--	/* Default to ELF loader if no load function is specified */
--	if (!rproc->ops->load) {
--		rproc->ops->load = rproc_elf_load_segments;
--		rproc->ops->parse_fw = rproc_elf_load_rsc_table;
--		rproc->ops->find_loaded_rsc_table = rproc_elf_find_loaded_rsc_table;
--		if (!rproc->ops->sanity_check)
--			rproc->ops->sanity_check = rproc_elf32_sanity_check;
--		rproc->ops->get_boot_addr = rproc_elf_get_boot_addr;
--	}
--
- 	mutex_init(&rproc->lock);
- 
- 	INIT_LIST_HEAD(&rproc->carveouts);
+ 	if (!p)
+ 		return -ENOMEM;
 -- 
 2.20.1
 
