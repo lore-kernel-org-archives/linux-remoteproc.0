@@ -1,52 +1,162 @@
-Return-Path: <bounce+9957f9.be9e4a-bjorn.andersson=linaro.org@mg.codeaurora.org>
-Sender: sibis=codeaurora.org@mg.codeaurora.org
-From: Sibi Sankar <sibis@codeaurora.org>
-Subject: [PATCH 1/5] dt-bindings: remoteproc: qcom: Add SC7180 MPSS support
-Date: Fri, 17 Apr 2020 19:56:01 +0530
-Message-Id: <20200417142605.28885-2-sibis@codeaurora.org>
-In-Reply-To: <20200417142605.28885-1-sibis@codeaurora.org>
-References: <20200417142605.28885-1-sibis@codeaurora.org>
+Date: Mon, 20 Apr 2020 00:05:10 -0700
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: [PATCH v2 1/6] remoteproc: sysmon: Add ability to send type of
+ notification
+Message-ID: <20200420070507.GD1868936@builder.lan>
+References: <1586389003-26675-1-git-send-email-sidgup@codeaurora.org>
+ <1586389003-26675-2-git-send-email-sidgup@codeaurora.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To: bjorn.andersson@linaro.org
-Cc: agross@kernel.org, robh+dt@kernel.org, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, evgreen@chromium.org, ohad@wizery.com, mka@chromium.org, dianders@chromium.org, devicetree@vger.kernel.org, Sibi Sankar <sibis@codeaurora.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1586389003-26675-2-git-send-email-sidgup@codeaurora.org>
+To: Siddharth Gupta <sidgup@codeaurora.org>
+Cc: agross@kernel.org, ohad@wizery.com, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, tsoni@codeaurora.org, psodagud@codeaurora.org, rishabhb@codeaurora.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Add MPSS PAS support for SC7180 SoCs.
+On Wed 08 Apr 16:36 PDT 2020, Siddharth Gupta wrote:
 
-Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
----
- Documentation/devicetree/bindings/remoteproc/qcom,adsp.txt | 3 +++
- 1 file changed, 3 insertions(+)
+> Current implementation of the sysmon driver does not support adding
+> notifications for other remoteproc events - prepare, start, unprepare.
+> Clients on the remoteproc side might be interested in knowing when a
+> remoteproc boots up. This change adds the ability to send the notification
+> type along with the name. For example, audio DSP is interested in knowing
+> when modem has crashed so that it can perform cleanup and wait for modem to
+> boot up before it starts processing data again.
+> 
+> Signed-off-by: Siddharth Gupta <sidgup@codeaurora.org>
 
-diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,adsp.txt b/Documentation/devicetree/bindings/remoteproc/qcom,adsp.txt
-index 9938918b2fea3..22604d2cd3f87 100644
---- a/Documentation/devicetree/bindings/remoteproc/qcom,adsp.txt
-+++ b/Documentation/devicetree/bindings/remoteproc/qcom,adsp.txt
-@@ -15,6 +15,7 @@ on the Qualcomm ADSP Hexagon core.
- 		    "qcom,qcs404-adsp-pas"
- 		    "qcom,qcs404-cdsp-pas"
- 		    "qcom,qcs404-wcss-pas"
-+		    "qcom,sc7180-mpss-pas"
- 		    "qcom,sdm845-adsp-pas"
- 		    "qcom,sdm845-cdsp-pas"
- 		    "qcom,sm8150-adsp-pas"
-@@ -46,6 +47,7 @@ on the Qualcomm ADSP Hexagon core.
- 	qcom,sm8150-slpi-pas:
- 		    must be "wdog", "fatal", "ready", "handover", "stop-ack"
- 	qcom,qcs404-wcss-pas:
-+	qcom,sc7180-mpss-pas:
- 	qcom,sm8150-mpss-pas:
- 		    must be "wdog", "fatal", "ready", "handover", "stop-ack",
- 		    "shutdown-ack"
-@@ -106,6 +108,7 @@ on the Qualcomm ADSP Hexagon core.
- 	qcom,sm8150-adsp-pas:
- 	qcom,sm8150-cdsp-pas:
- 		    must be "cx", "load_state"
-+	qcom,sc7180-mpss-pas:
- 	qcom,sm8150-mpss-pas:
- 		    must be "cx", "load_state", "mss"
- 	qcom,sm8150-slpi-pas:
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+
+Regards,
+Bjorn
+
+> ---
+>  drivers/remoteproc/qcom_sysmon.c | 54 +++++++++++++++++++++++++++-------------
+>  1 file changed, 37 insertions(+), 17 deletions(-)
+> 
+> diff --git a/drivers/remoteproc/qcom_sysmon.c b/drivers/remoteproc/qcom_sysmon.c
+> index faf3822..1366050 100644
+> --- a/drivers/remoteproc/qcom_sysmon.c
+> +++ b/drivers/remoteproc/qcom_sysmon.c
+> @@ -46,6 +46,25 @@ struct qcom_sysmon {
+>  	struct sockaddr_qrtr ssctl;
+>  };
+>  
+> +enum {
+> +	SSCTL_SSR_EVENT_BEFORE_POWERUP,
+> +	SSCTL_SSR_EVENT_AFTER_POWERUP,
+> +	SSCTL_SSR_EVENT_BEFORE_SHUTDOWN,
+> +	SSCTL_SSR_EVENT_AFTER_SHUTDOWN,
+> +};
+> +
+> +static const char * const sysmon_state_string[] = {
+> +	[SSCTL_SSR_EVENT_BEFORE_POWERUP]	= "before_powerup",
+> +	[SSCTL_SSR_EVENT_AFTER_POWERUP]		= "after_powerup",
+> +	[SSCTL_SSR_EVENT_BEFORE_SHUTDOWN]	= "before_shutdown",
+> +	[SSCTL_SSR_EVENT_AFTER_SHUTDOWN]	= "after_shutdown",
+> +};
+> +
+> +struct sysmon_event {
+> +	const char *subsys_name;
+> +	u32 ssr_event;
+> +};
+> +
+>  static DEFINE_MUTEX(sysmon_lock);
+>  static LIST_HEAD(sysmon_list);
+>  
+> @@ -54,13 +73,15 @@ static LIST_HEAD(sysmon_list);
+>   * @sysmon:	sysmon context
+>   * @name:	other remote's name
+>   */
+> -static void sysmon_send_event(struct qcom_sysmon *sysmon, const char *name)
+> +static void sysmon_send_event(struct qcom_sysmon *sysmon,
+> +			      const struct sysmon_event *event)
+>  {
+>  	char req[50];
+>  	int len;
+>  	int ret;
+>  
+> -	len = snprintf(req, sizeof(req), "ssr:%s:before_shutdown", name);
+> +	len = snprintf(req, sizeof(req), "ssr:%s:%s", event->subsys_name,
+> +		       sysmon_state_string[event->ssr_event]);
+>  	if (len >= sizeof(req))
+>  		return;
+>  
+> @@ -149,13 +170,6 @@ static int sysmon_callback(struct rpmsg_device *rpdev, void *data, int count,
+>  #define SSCTL_SUBSYS_NAME_LENGTH	15
+>  
+>  enum {
+> -	SSCTL_SSR_EVENT_BEFORE_POWERUP,
+> -	SSCTL_SSR_EVENT_AFTER_POWERUP,
+> -	SSCTL_SSR_EVENT_BEFORE_SHUTDOWN,
+> -	SSCTL_SSR_EVENT_AFTER_SHUTDOWN,
+> -};
+> -
+> -enum {
+>  	SSCTL_SSR_EVENT_FORCED,
+>  	SSCTL_SSR_EVENT_GRACEFUL,
+>  };
+> @@ -331,7 +345,8 @@ static void ssctl_request_shutdown(struct qcom_sysmon *sysmon)
+>   * @sysmon:	sysmon context
+>   * @name:	other remote's name
+>   */
+> -static void ssctl_send_event(struct qcom_sysmon *sysmon, const char *name)
+> +static void ssctl_send_event(struct qcom_sysmon *sysmon,
+> +			     const struct sysmon_event *event)
+>  {
+>  	struct ssctl_subsys_event_resp resp;
+>  	struct ssctl_subsys_event_req req;
+> @@ -346,9 +361,9 @@ static void ssctl_send_event(struct qcom_sysmon *sysmon, const char *name)
+>  	}
+>  
+>  	memset(&req, 0, sizeof(req));
+> -	strlcpy(req.subsys_name, name, sizeof(req.subsys_name));
+> +	strlcpy(req.subsys_name, event->subsys_name, sizeof(req.subsys_name));
+>  	req.subsys_name_len = strlen(req.subsys_name);
+> -	req.event = SSCTL_SSR_EVENT_BEFORE_SHUTDOWN;
+> +	req.event = event->ssr_event;
+>  	req.evt_driven_valid = true;
+>  	req.evt_driven = SSCTL_SSR_EVENT_FORCED;
+>  
+> @@ -432,8 +447,12 @@ static int sysmon_start(struct rproc_subdev *subdev)
+>  static void sysmon_stop(struct rproc_subdev *subdev, bool crashed)
+>  {
+>  	struct qcom_sysmon *sysmon = container_of(subdev, struct qcom_sysmon, subdev);
+> +	struct sysmon_event event = {
+> +		.subsys_name = sysmon->name,
+> +		.ssr_event = SSCTL_SSR_EVENT_BEFORE_SHUTDOWN
+> +	};
+>  
+> -	blocking_notifier_call_chain(&sysmon_notifiers, 0, (void *)sysmon->name);
+> +	blocking_notifier_call_chain(&sysmon_notifiers, 0, (void *)&event);
+>  
+>  	/* Don't request graceful shutdown if we've crashed */
+>  	if (crashed)
+> @@ -456,19 +475,20 @@ static int sysmon_notify(struct notifier_block *nb, unsigned long event,
+>  {
+>  	struct qcom_sysmon *sysmon = container_of(nb, struct qcom_sysmon, nb);
+>  	struct rproc *rproc = sysmon->rproc;
+> -	const char *ssr_name = data;
+> +	struct sysmon_event *sysmon_event = data;
+>  
+>  	/* Skip non-running rprocs and the originating instance */
+> -	if (rproc->state != RPROC_RUNNING || !strcmp(data, sysmon->name)) {
+> +	if (rproc->state != RPROC_RUNNING ||
+> +	    !strcmp(sysmon_event->subsys_name, sysmon->name)) {
+>  		dev_dbg(sysmon->dev, "not notifying %s\n", sysmon->name);
+>  		return NOTIFY_DONE;
+>  	}
+>  
+>  	/* Only SSCTL version 2 supports SSR events */
+>  	if (sysmon->ssctl_version == 2)
+> -		ssctl_send_event(sysmon, ssr_name);
+> +		ssctl_send_event(sysmon, sysmon_event);
+>  	else if (sysmon->ept)
+> -		sysmon_send_event(sysmon, ssr_name);
+> +		sysmon_send_event(sysmon, sysmon_event);
+>  
+>  	return NOTIFY_DONE;
+>  }
+> -- 
+> Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+> a Linux Foundation Collaborative Project
