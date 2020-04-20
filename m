@@ -7,216 +7,207 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E19AC3815B
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 20 Apr 2020 06:36:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1121C3A5A0
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 20 Apr 2020 06:46:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E43CC2073A
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 20 Apr 2020 06:36:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 916152072B
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 20 Apr 2020 06:46:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XEatlmJe"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ps9f6bBu"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725930AbgDTGgw (ORCPT
+        id S1726117AbgDTGqc (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 20 Apr 2020 02:36:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60914 "EHLO
+        Mon, 20 Apr 2020 02:46:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34162 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725865AbgDTGgw (ORCPT
+        by vger.kernel.org with ESMTP id S1726116AbgDTGqc (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 20 Apr 2020 02:36:52 -0400
-Received: from mail-pf1-x442.google.com (mail-pf1-x442.google.com [IPv6:2607:f8b0:4864:20::442])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4916BC061A0F
-        for <linux-remoteproc@vger.kernel.org>; Sun, 19 Apr 2020 23:36:52 -0700 (PDT)
-Received: by mail-pf1-x442.google.com with SMTP id w65so4464090pfc.12
-        for <linux-remoteproc@vger.kernel.org>; Sun, 19 Apr 2020 23:36:52 -0700 (PDT)
+        Mon, 20 Apr 2020 02:46:32 -0400
+Received: from mail-pl1-x642.google.com (mail-pl1-x642.google.com [IPv6:2607:f8b0:4864:20::642])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C6628C061A10
+        for <linux-remoteproc@vger.kernel.org>; Sun, 19 Apr 2020 23:46:30 -0700 (PDT)
+Received: by mail-pl1-x642.google.com with SMTP id d24so3591462pll.8
+        for <linux-remoteproc@vger.kernel.org>; Sun, 19 Apr 2020 23:46:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=L27HBU83hEal+N26VFwHycUX9XOfAyoXkB2huIPsA9k=;
-        b=XEatlmJeITPpwD3f0SlRiEBIQL07PhR1eF9mmHF/OhduyMH5V6X1Wn6a71K6iBByQx
-         HK60nJ8BGPYHQWgoZ09buq/ukO0+LJY/fabEE8x2W1HnykDWV61JUWBdy/AJsDfWZz+e
-         KIr2OC0fti5A4PxK6X+n4UwWOSiR6J9LYe5r9lmmUfwY7+rx17ImZsmMnUNgJUEN2fs7
-         gNbRmCztcAR+ox2Q9zFikSPdyd8Ytqo5ZqZojKUU0EnWwFjJ/QCQCaUds8MyM+uqLCjG
-         llSaH06R8wN18FFgBYinwz9/7HqCHuVcH4briVvomSNNW774Skr7R/pazfzRa+N0xLmX
-         xmMQ==
+        bh=1x1XSaiPurYlCacj5RFP4WLBzIU3d1tqW8IFDpUO5D0=;
+        b=Ps9f6bBu5mTmwfAPImPWi2frG9mYoSeSAIHWhtUCHA3oMOki215jiwryZD4jDwmDe+
+         ebap81b7B46JNvEfUH3xNakxRF3hJf/B8MWmK6wwD2R9kLzEpLKYBV4nXVltBaW2dGIh
+         4c6F1xetdO+lfqIUvk2teuIsgYFberHj6698Z82z01zn7AB6JwAUGBvLaDW1aYAp7R/a
+         CXsGQCSdP54n7eyh27Y3yv0yNXjhIdHQzaexDKOCVDLvKuAL8ZZJFxLkjz2xRM1/5ekl
+         epVsRCtgOspeL3TbUdbVV5aXOif2PKQU2RF0/NERP32+U3q8tZ407Ce8AA5sTSNquzc+
+         2EDg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=L27HBU83hEal+N26VFwHycUX9XOfAyoXkB2huIPsA9k=;
-        b=o+b6ZuPtrfGrc4vGPKjrzFeq7fRJRQcnSz2/w+GsbX9sS0KGep4lUZ94HQduVaaHKe
-         cQb2YXSFEO5gnxGuagzsxD0iRY7uI6JVSNwSW8FojgpmTXqxeoh5eWCT6laV574UJMCW
-         Zx6Y50UVoLjTekpPKJqE+PbF10VaBcyiHL+gqLzVm4gxdFM0vQO0OtAPt0mChSp7smRU
-         +7D69KVl4SuqKpfKVhoXMGeQGutwz9v5tOJMACwhipAzfYdfkLqOGXYsUbkqNDMZcQnx
-         e90x1odcqJBH09o0BinAEew9hNyfZXd0i0t2tFwoujlPoNk8MEJkHHlk+ER2+oRIvhvp
-         QfAg==
-X-Gm-Message-State: AGi0PubBurcyKBT9X5iONTKUD+n+fqQK0VASIdXPJJLhnS4pgCS0pm2Z
-        Hkj2QLNzJk/62rGPkMwB9C98SQ==
-X-Google-Smtp-Source: APiQypIyskZupogxs8R5S2FQG0PhO1AvaANwpsKWLHsPifS9+YKjOFR/4CCknIWpq8eAAm9OOA7gNA==
-X-Received: by 2002:aa7:96cf:: with SMTP id h15mr10987919pfq.319.1587364611618;
-        Sun, 19 Apr 2020 23:36:51 -0700 (PDT)
+        bh=1x1XSaiPurYlCacj5RFP4WLBzIU3d1tqW8IFDpUO5D0=;
+        b=VOQDD3X7jnBI3/JV7jsTGIrkKnABSNRuEpv5ff6kP4oCqTnA+jxsPjf6NJp+bwrnLM
+         W2c5JUKgP5hFutTd6cvl2EVBfW5eEYdXlIfBFFBuS4Pznx/t9hfS/QHAgkxOcw2NwRTj
+         MO2px9spDpwFv4eXiIjsr7uCQI82QdU/Yf6pn3C3l4aUTM5SsU+5vUWRkWbxIM3hGlt4
+         hfqvWDW8seW2BjC4IAot19E/Cpw++2yiJYp34LY9bhTjNox0SXrd9NH9qvXLA6F30NXE
+         BR5wbIujLlW+s6aIUEarN6FkcKNeG34+ahKtMoq87MZrRRm55qilLHsqpUWLFRnSM9fe
+         EGTQ==
+X-Gm-Message-State: AGi0PubC82ESQ6kouGJfSf/oDxfVKQZOw6ebih683Ke2s578Zktfznwn
+        6kT59HydMaXim475YHy/P/C5/9tscDs=
+X-Google-Smtp-Source: APiQypLMOs/8T1GaAL9VbDgmBkUI1Xt7yDt1bPf1mOGXHe5urocPeF+midMMcSdiNR+DtvRGM2tP5w==
+X-Received: by 2002:a17:90a:ad02:: with SMTP id r2mr19881379pjq.63.1587365189953;
+        Sun, 19 Apr 2020 23:46:29 -0700 (PDT)
 Received: from builder.lan (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id h9sm96070pfo.129.2020.04.19.23.36.50
+        by smtp.gmail.com with ESMTPSA id q11sm207934pgs.25.2020.04.19.23.46.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 19 Apr 2020 23:36:50 -0700 (PDT)
-Date:   Sun, 19 Apr 2020 23:37:14 -0700
+        Sun, 19 Apr 2020 23:46:29 -0700 (PDT)
+Date:   Sun, 19 Apr 2020 23:46:52 -0700
 From:   Bjorn Andersson <bjorn.andersson@linaro.org>
 To:     Paul Cercueil <paul@crapouillou.net>
 Cc:     Ohad Ben-Cohen <ohad@wizery.com>,
         Arnaud Pouliquen <arnaud.pouliquen@st.com>, od@zcrc.me,
         linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kbuild test robot <lkp@intel.com>,
-        Julia Lawall <julia.lawall@lip6.fr>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>
-Subject: Re: [PATCH v6 4/5] remoteproc: ingenic: Added remoteproc driver
-Message-ID: <20200420063714.GA1868936@builder.lan>
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 2/5] remoteproc: Add device-managed variants of
+ rproc_alloc/rproc_add
+Message-ID: <20200420064652.GB1868936@builder.lan>
 References: <20200417170040.174319-1-paul@crapouillou.net>
- <20200417170040.174319-4-paul@crapouillou.net>
+ <20200417170040.174319-2-paul@crapouillou.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200417170040.174319-4-paul@crapouillou.net>
+In-Reply-To: <20200417170040.174319-2-paul@crapouillou.net>
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
-Message-ID: <20200420063714.PC38t8f31eCW90PGR9dr_bK5GwX7EyNSnFjgdtCAVyw@z>
+Message-ID: <20200420064652.qr3UFmgjEjLFxscztV7Qh12HltK900000eXOiMHQIMc@z>
 
 On Fri 17 Apr 10:00 PDT 2020, Paul Cercueil wrote:
 
-> This driver is used to boot, communicate with and load firmwares to the
-> MIPS co-processor found in the VPU hardware of the JZ47xx SoCs from
-> Ingenic.
+> Add API functions devm_rproc_alloc() and devm_rproc_add(), which behave
+> like rproc_alloc() and rproc_add() respectively, but register their
+> respective cleanup function to be called on driver detach.
 > 
-> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
-> Signed-off-by: kbuild test robot <lkp@intel.com>
-> Signed-off-by: Julia Lawall <julia.lawall@lip6.fr>
 
-Please read Documentation/process/submitting-patches.rst about
-"Developer's Certificate of Origin".
-
-I suspect that you incorporated review feedback on previous revisions
-from kbuild and Julia, this is generally omitted from the actual commit
-message.
-
-> Acked-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-> ---
-> 
-> Notes:
->     v2: Remove exception for always-mapped memories
->     v3: - Use clk_bulk API
->     	- Move device-managed code to its own patch [3/4]
->     	- Move devicetree table right above ingenic_rproc_driver
->     	- Removed #ifdef CONFIG_OF around devicetree table
->     	- Removed .owner = THIS_MODULE in ingenic_rproc_driver
->     	- Removed useless platform_set_drvdata()
->     v4: - Add fix reported by Julia
->     	- Change Kconfig symbol to INGENIC_VPU_RPROC
->     	- Add documentation to struct vpu
->     	- disable_irq_nosync() -> disable_irq()
->     v5: No change
->     v6: Instead of prepare/unprepare callbacks, use PM runtime callbacks
-> 
->  drivers/remoteproc/Kconfig         |   8 +
->  drivers/remoteproc/Makefile        |   1 +
->  drivers/remoteproc/ingenic_rproc.c | 282 +++++++++++++++++++++++++++++
->  3 files changed, 291 insertions(+)
->  create mode 100644 drivers/remoteproc/ingenic_rproc.c
-> 
-> diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
-> index fbaed079b299..31da3e6c6281 100644
-> --- a/drivers/remoteproc/Kconfig
-> +++ b/drivers/remoteproc/Kconfig
-> @@ -240,6 +240,14 @@ config STM32_RPROC
->  
->  	  This can be either built-in or a loadable module.
->  
-> +config INGENIC_VPU_RPROC
-
-Please try to keep things alphabetically ordered.
-
-> +	tristate "Ingenic JZ47xx VPU remoteproc support"
-> +	depends on MIPS || COMPILE_TEST
-> +	help
-> +	  Say y or m here to support the VPU in the JZ47xx SoCs from Ingenic.
-> +	  This can be either built-in or a loadable module.
-> +	  If unsure say N.
-> +
->  endif # REMOTEPROC
->  
->  endmenu
-[..]
-> diff --git a/drivers/remoteproc/ingenic_rproc.c b/drivers/remoteproc/ingenic_rproc.c
-[..]
-> +/**
-> + * struct vpu - Ingenic VPU remoteproc private structure
-> + * @irq: interrupt number
-> + * @clks: pointers to the VPU and AUX clocks
-
-aux_base is missing
-
-> + * @mem_info: array of struct vpu_mem_info, which contain the mapping info of
-> + *            each of the external memories
-> + * @dev: private pointer to the device
-> + */
-> +struct vpu {
-> +	int irq;
-> +	struct clk_bulk_data clks[2];
-> +	void __iomem *aux_base;
-> +	struct vpu_mem_info mem_info[ARRAY_SIZE(vpu_mem_map)];
-> +	struct device *dev;
-> +};
-[..]
-> +static void *ingenic_rproc_da_to_va(struct rproc *rproc, u64 da, size_t len)
-> +{
-> +	struct vpu *vpu = rproc->priv;
-> +	void __iomem *va = NULL;
-> +	unsigned int i;
-> +
-> +	if (len <= 0)
-
-len can't be negative (also, does it add value to check for and fail len
-== 0?)
-
-> +		return NULL;
-> +
-> +	for (i = 0; i < ARRAY_SIZE(vpu_mem_map); i++) {
-> +		const struct vpu_mem_info *info = &vpu->mem_info[i];
-> +		const struct vpu_mem_map *map = info->map;
-> +
-> +		if (da >= map->da && (da + len) < (map->da + info->len)) {
-> +			va = info->base + (da - map->da);
-> +			break;
-> +		}
-> +	}
-> +
-> +	return (__force void *)va;
-> +}
-[..]
-> +static struct platform_driver ingenic_rproc_driver = {
-> +	.probe = ingenic_rproc_probe,
-> +	.driver = {
-> +		.name = "ingenic-vpu",
-> +#ifdef CONFIG_PM
-
-Please omit the #ifdef here.
-
-> +		.pm = &ingenic_rproc_pm,
-> +#endif
-> +		.of_match_table = of_match_ptr(ingenic_rproc_of_matches),
-
-Please omit the of_match_ptr()
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 
 Regards,
 Bjorn
 
-> +	},
-> +};
-> +module_platform_driver(ingenic_rproc_driver);
+> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+> ---
+> 
+> Notes:
+>     v3: New patch
+>     v4: No change
+>     v5: - Fix return value documentation
+>     	- Fix typo in documentation
+>     v6: No change
+> 
+>  drivers/remoteproc/remoteproc_core.c | 67 ++++++++++++++++++++++++++++
+>  include/linux/remoteproc.h           |  5 +++
+>  2 files changed, 72 insertions(+)
+> 
+> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+> index e12a54e67588..a7f96bc98406 100644
+> --- a/drivers/remoteproc/remoteproc_core.c
+> +++ b/drivers/remoteproc/remoteproc_core.c
+> @@ -1949,6 +1949,33 @@ int rproc_add(struct rproc *rproc)
+>  }
+>  EXPORT_SYMBOL(rproc_add);
+>  
+> +static void devm_rproc_remove(void *rproc)
+> +{
+> +	rproc_del(rproc);
+> +}
 > +
-> +MODULE_LICENSE("GPL");
-> +MODULE_AUTHOR("Paul Cercueil <paul@crapouillou.net>");
-> +MODULE_DESCRIPTION("Ingenic JZ47xx Remote Processor control driver");
+> +/**
+> + * devm_rproc_add() - resource managed rproc_add()
+> + * @dev: the underlying device
+> + * @rproc: the remote processor handle to register
+> + *
+> + * This function performs like rproc_add() but the registered rproc device will
+> + * automatically be removed on driver detach.
+> + *
+> + * Returns: 0 on success, negative errno on failure
+> + */
+> +int devm_rproc_add(struct device *dev, struct rproc *rproc)
+> +{
+> +	int err;
+> +
+> +	err = rproc_add(rproc);
+> +	if (err)
+> +		return err;
+> +
+> +	return devm_add_action_or_reset(dev, devm_rproc_remove, rproc);
+> +}
+> +EXPORT_SYMBOL(devm_rproc_add);
+> +
+>  /**
+>   * rproc_type_release() - release a remote processor instance
+>   * @dev: the rproc's device
+> @@ -2171,6 +2198,46 @@ int rproc_del(struct rproc *rproc)
+>  }
+>  EXPORT_SYMBOL(rproc_del);
+>  
+> +static void devm_rproc_free(struct device *dev, void *res)
+> +{
+> +	rproc_free(*(struct rproc **)res);
+> +}
+> +
+> +/**
+> + * devm_rproc_alloc() - resource managed rproc_alloc()
+> + * @dev: the underlying device
+> + * @name: name of this remote processor
+> + * @ops: platform-specific handlers (mainly start/stop)
+> + * @firmware: name of firmware file to load, can be NULL
+> + * @len: length of private data needed by the rproc driver (in bytes)
+> + *
+> + * This function performs like rproc_alloc() but the acquired rproc device will
+> + * automatically be released on driver detach.
+> + *
+> + * Returns: new rproc instance, or NULL on failure
+> + */
+> +struct rproc *devm_rproc_alloc(struct device *dev, const char *name,
+> +			       const struct rproc_ops *ops,
+> +			       const char *firmware, int len)
+> +{
+> +	struct rproc **ptr, *rproc;
+> +
+> +	ptr = devres_alloc(devm_rproc_free, sizeof(*ptr), GFP_KERNEL);
+> +	if (!ptr)
+> +		return ERR_PTR(-ENOMEM);
+> +
+> +	rproc = rproc_alloc(dev, name, ops, firmware, len);
+> +	if (rproc) {
+> +		*ptr = rproc;
+> +		devres_add(dev, ptr);
+> +	} else {
+> +		devres_free(ptr);
+> +	}
+> +
+> +	return rproc;
+> +}
+> +EXPORT_SYMBOL(devm_rproc_alloc);
+> +
+>  /**
+>   * rproc_add_subdev() - add a subdevice to a remoteproc
+>   * @rproc: rproc handle to add the subdevice to
+> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+> index 9c07d7958c53..8c9c0dda03c3 100644
+> --- a/include/linux/remoteproc.h
+> +++ b/include/linux/remoteproc.h
+> @@ -599,6 +599,11 @@ int rproc_add(struct rproc *rproc);
+>  int rproc_del(struct rproc *rproc);
+>  void rproc_free(struct rproc *rproc);
+>  
+> +struct rproc *devm_rproc_alloc(struct device *dev, const char *name,
+> +			       const struct rproc_ops *ops,
+> +			       const char *firmware, int len);
+> +int devm_rproc_add(struct device *dev, struct rproc *rproc);
+> +
+>  void rproc_add_carveout(struct rproc *rproc, struct rproc_mem_entry *mem);
+>  
+>  struct rproc_mem_entry *
 > -- 
 > 2.25.1
 > 
