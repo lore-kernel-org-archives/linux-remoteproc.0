@@ -1,27 +1,30 @@
-Return-Path: <arnaud.pouliquen@st.com>
+Date: Sun, 19 Apr 2020 22:09:07 -0700
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
 Subject: Re: [PATCH v2 2/7] remoteproc: Split firmware name allocation from
  rproc_alloc()
+Message-ID: <20200420050904.GC1516868@builder.lan>
 References: <20200415204858.2448-1-mathieu.poirier@linaro.org>
  <20200415204858.2448-3-mathieu.poirier@linaro.org>
-From: Arnaud POULIQUEN <arnaud.pouliquen@st.com>
-Message-ID: <e980e9e6-04d6-60b8-c921-d2fb1f2b9a1b@st.com>
-Date: Mon, 20 Apr 2020 11:24:12 +0200
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 In-Reply-To: <20200415204858.2448-3-mathieu.poirier@linaro.org>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-To: Mathieu Poirier <mathieu.poirier@linaro.org>, bjorn.andersson@linaro.org, ohad@wizery.com
-Cc: s-anna@ti.com, elder@linaro.org, Markus.Elfring@web.de, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: ohad@wizery.com, s-anna@ti.com, elder@linaro.org, Markus.Elfring@web.de, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Hi Mathieu,
+On Wed 15 Apr 13:48 PDT 2020, Mathieu Poirier wrote:
 
-On 4/15/20 10:48 PM, Mathieu Poirier wrote:
 > Make the firmware name allocation a function on its own in an
 > effort to cleanup function rproc_alloc().
 > 
 > Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+
+Regards,
+Bjorn
+
 > ---
 >  drivers/remoteproc/remoteproc_core.c | 66 ++++++++++++++++------------
 >  1 file changed, 39 insertions(+), 27 deletions(-)
@@ -36,16 +39,6 @@ On 4/15/20 10:48 PM, Mathieu Poirier wrote:
 >  
 > +static int rproc_alloc_firmware(struct rproc *rproc,
 > +				const char *name, const char *firmware)
-
-nitpicking: here you do not allocate memory for the firmware but for its name
-The name of the function seems to me quite confusing...
-
-Else LGTM for the series
-
-Thanks,
-
-Arnaud
-
 > +{
 > +	char *p, *template = "rproc-%s-fw";
 > +	int name_len;
@@ -136,4 +129,6 @@ Arnaud
 >  }
 >  EXPORT_SYMBOL(rproc_alloc);
 >  
+> -- 
+> 2.20.1
 > 
