@@ -1,53 +1,53 @@
-Return-Path: <bounce+9957f9.be9e4a-bjorn.andersson=linaro.org@mg.codeaurora.org>
-Sender: sibis=codeaurora.org@mg.codeaurora.org
-From: Sibi Sankar <sibis@codeaurora.org>
-Subject: [PATCH v2 1/7] dt-bindings: remoteproc: qcom: Add SC7180 MPSS support
-Date: Tue, 21 Apr 2020 20:02:22 +0530
-Message-Id: <20200421143228.8981-2-sibis@codeaurora.org>
-In-Reply-To: <20200421143228.8981-1-sibis@codeaurora.org>
-References: <20200421143228.8981-1-sibis@codeaurora.org>
+Return-Path: <s-anna@ti.com>
+From: Suman Anna <s-anna@ti.com>
+Subject: [PATCH v3 2/2] remoteproc: Fix and restore the parenting hierarchy for vdev
+Date: Mon, 20 Apr 2020 11:06:00 -0500
+Message-ID: <20200420160600.10467-3-s-anna@ti.com>
+In-Reply-To: <20200420160600.10467-1-s-anna@ti.com>
+References: <20200420160600.10467-1-s-anna@ti.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-To: bjorn.andersson@linaro.org, robh+dt@kernel.org
-Cc: agross@kernel.org, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, evgreen@chromium.org, ohad@wizery.com, mka@chromium.org, dianders@chromium.org, devicetree@vger.kernel.org, Sibi Sankar <sibis@codeaurora.org>
+Content-Type: text/plain
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Mathieu Poirier <mathieu.poirier@linaro.org>, Arnaud Pouliquen <arnaud.pouliquen@st.com>, Loic Pallardy <loic.pallardy@st.com>, Tero Kristo <t-kristo@ti.com>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Suman Anna <s-anna@ti.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Add MPSS PAS support for SC7180 SoCs.
+The commit 086d08725d34 ("remoteproc: create vdev subdevice with specific
+dma memory pool") has introduced a new vdev subdevice for each vdev
+declared in the firmware resource table and made it as the parent for the
+created virtio rpmsg devices instead of the previous remoteproc device.
+This changed the overall parenting hierarchy for the rpmsg devices, which
+were children of virtio devices, and does not allow the corresponding
+rpmsg drivers to retrieve the parent rproc device through the
+rproc_get_by_child() API.
 
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
+Fix this by restoring the remoteproc device as the parent. The new vdev
+subdevice can continue to inherit the DMA attributes from the remoteproc's
+parent device (actual platform device).
+
+Fixes: 086d08725d34 ("remoteproc: create vdev subdevice with specific dma memory pool")
+Signed-off-by: Suman Anna <s-anna@ti.com>
+Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+Acked-by: Arnaud Pouliquen <arnaud.pouliquen@st.com>
 ---
- Documentation/devicetree/bindings/remoteproc/qcom,adsp.txt | 3 +++
- 1 file changed, 3 insertions(+)
+v3: No changes
+v2: https://patchwork.kernel.org/patch/11447653/
 
-diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,adsp.txt b/Documentation/devicetree/bindings/remoteproc/qcom,adsp.txt
-index 9938918b2fea3..22604d2cd3f87 100644
---- a/Documentation/devicetree/bindings/remoteproc/qcom,adsp.txt
-+++ b/Documentation/devicetree/bindings/remoteproc/qcom,adsp.txt
-@@ -15,6 +15,7 @@ on the Qualcomm ADSP Hexagon core.
- 		    "qcom,qcs404-adsp-pas"
- 		    "qcom,qcs404-cdsp-pas"
- 		    "qcom,qcs404-wcss-pas"
-+		    "qcom,sc7180-mpss-pas"
- 		    "qcom,sdm845-adsp-pas"
- 		    "qcom,sdm845-cdsp-pas"
- 		    "qcom,sm8150-adsp-pas"
-@@ -46,6 +47,7 @@ on the Qualcomm ADSP Hexagon core.
- 	qcom,sm8150-slpi-pas:
- 		    must be "wdog", "fatal", "ready", "handover", "stop-ack"
- 	qcom,qcs404-wcss-pas:
-+	qcom,sc7180-mpss-pas:
- 	qcom,sm8150-mpss-pas:
- 		    must be "wdog", "fatal", "ready", "handover", "stop-ack",
- 		    "shutdown-ack"
-@@ -106,6 +108,7 @@ on the Qualcomm ADSP Hexagon core.
- 	qcom,sm8150-adsp-pas:
- 	qcom,sm8150-cdsp-pas:
- 		    must be "cx", "load_state"
-+	qcom,sc7180-mpss-pas:
- 	qcom,sm8150-mpss-pas:
- 		    must be "cx", "load_state", "mss"
- 	qcom,sm8150-slpi-pas:
+ drivers/remoteproc/remoteproc_core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index e12a54e67588..be15aace9b3c 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -517,7 +517,7 @@ static int rproc_handle_vdev(struct rproc *rproc, struct fw_rsc_vdev *rsc,
+ 
+ 	/* Initialise vdev subdevice */
+ 	snprintf(name, sizeof(name), "vdev%dbuffer", rvdev->index);
+-	rvdev->dev.parent = rproc->dev.parent;
++	rvdev->dev.parent = &rproc->dev;
+ 	rvdev->dev.dma_pfn_offset = rproc->dev.parent->dma_pfn_offset;
+ 	rvdev->dev.release = rproc_rvdev_release;
+ 	dev_set_name(&rvdev->dev, "%s#%s", dev_name(rvdev->dev.parent), name);
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.26.0
