@@ -1,134 +1,90 @@
-Return-Path: <paul@crapouillou.net>
-From: Paul Cercueil <paul@crapouillou.net>
-Subject: [PATCH v6 2/5] remoteproc: Add device-managed variants of rproc_alloc/rproc_add
-Date: Fri, 17 Apr 2020 19:00:37 +0200
-Message-Id: <20200417170040.174319-2-paul@crapouillou.net>
-In-Reply-To: <20200417170040.174319-1-paul@crapouillou.net>
-References: <20200417170040.174319-1-paul@crapouillou.net>
+Date: Mon, 20 Apr 2020 18:57:46 -0700
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: [PATCH v3 3/4] remoteproc: Split rproc_ops allocation from
+ rproc_alloc()
+Message-ID: <20200421015743.GI1868936@builder.lan>
+References: <20200420231601.16781-1-mathieu.poirier@linaro.org>
+ <20200420231601.16781-4-mathieu.poirier@linaro.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Arnaud Pouliquen <arnaud.pouliquen@st.com>
-Cc: od@zcrc.me, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200420231601.16781-4-mathieu.poirier@linaro.org>
+To: Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: ohad@wizery.com, elder@linaro.org, s-anna@ti.com, Markus.Elfring@web.de, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Add API functions devm_rproc_alloc() and devm_rproc_add(), which behave
-like rproc_alloc() and rproc_add() respectively, but register their
-respective cleanup function to be called on driver detach.
+On Mon 20 Apr 16:16 PDT 2020, Mathieu Poirier wrote:
 
-Signed-off-by: Paul Cercueil <paul@crapouillou.net>
----
+> Make the rproc_ops allocation a function on its own in an effort
+> to clean up function rproc_alloc().
+> 
+> Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+> Reviewed-by: Alex Elder <elder@linaro.org>
 
-Notes:
-    v3: New patch
-    v4: No change
-    v5: - Fix return value documentation
-    	- Fix typo in documentation
-    v6: No change
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 
- drivers/remoteproc/remoteproc_core.c | 67 ++++++++++++++++++++++++++++
- include/linux/remoteproc.h           |  5 +++
- 2 files changed, 72 insertions(+)
-
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index e12a54e67588..a7f96bc98406 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -1949,6 +1949,33 @@ int rproc_add(struct rproc *rproc)
- }
- EXPORT_SYMBOL(rproc_add);
- 
-+static void devm_rproc_remove(void *rproc)
-+{
-+	rproc_del(rproc);
-+}
-+
-+/**
-+ * devm_rproc_add() - resource managed rproc_add()
-+ * @dev: the underlying device
-+ * @rproc: the remote processor handle to register
-+ *
-+ * This function performs like rproc_add() but the registered rproc device will
-+ * automatically be removed on driver detach.
-+ *
-+ * Returns: 0 on success, negative errno on failure
-+ */
-+int devm_rproc_add(struct device *dev, struct rproc *rproc)
-+{
-+	int err;
-+
-+	err = rproc_add(rproc);
-+	if (err)
-+		return err;
-+
-+	return devm_add_action_or_reset(dev, devm_rproc_remove, rproc);
-+}
-+EXPORT_SYMBOL(devm_rproc_add);
-+
- /**
-  * rproc_type_release() - release a remote processor instance
-  * @dev: the rproc's device
-@@ -2171,6 +2198,46 @@ int rproc_del(struct rproc *rproc)
- }
- EXPORT_SYMBOL(rproc_del);
- 
-+static void devm_rproc_free(struct device *dev, void *res)
-+{
-+	rproc_free(*(struct rproc **)res);
-+}
-+
-+/**
-+ * devm_rproc_alloc() - resource managed rproc_alloc()
-+ * @dev: the underlying device
-+ * @name: name of this remote processor
-+ * @ops: platform-specific handlers (mainly start/stop)
-+ * @firmware: name of firmware file to load, can be NULL
-+ * @len: length of private data needed by the rproc driver (in bytes)
-+ *
-+ * This function performs like rproc_alloc() but the acquired rproc device will
-+ * automatically be released on driver detach.
-+ *
-+ * Returns: new rproc instance, or NULL on failure
-+ */
-+struct rproc *devm_rproc_alloc(struct device *dev, const char *name,
-+			       const struct rproc_ops *ops,
-+			       const char *firmware, int len)
-+{
-+	struct rproc **ptr, *rproc;
-+
-+	ptr = devres_alloc(devm_rproc_free, sizeof(*ptr), GFP_KERNEL);
-+	if (!ptr)
-+		return ERR_PTR(-ENOMEM);
-+
-+	rproc = rproc_alloc(dev, name, ops, firmware, len);
-+	if (rproc) {
-+		*ptr = rproc;
-+		devres_add(dev, ptr);
-+	} else {
-+		devres_free(ptr);
-+	}
-+
-+	return rproc;
-+}
-+EXPORT_SYMBOL(devm_rproc_alloc);
-+
- /**
-  * rproc_add_subdev() - add a subdevice to a remoteproc
-  * @rproc: rproc handle to add the subdevice to
-diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-index 9c07d7958c53..8c9c0dda03c3 100644
---- a/include/linux/remoteproc.h
-+++ b/include/linux/remoteproc.h
-@@ -599,6 +599,11 @@ int rproc_add(struct rproc *rproc);
- int rproc_del(struct rproc *rproc);
- void rproc_free(struct rproc *rproc);
- 
-+struct rproc *devm_rproc_alloc(struct device *dev, const char *name,
-+			       const struct rproc_ops *ops,
-+			       const char *firmware, int len);
-+int devm_rproc_add(struct device *dev, struct rproc *rproc);
-+
- void rproc_add_carveout(struct rproc *rproc, struct rproc_mem_entry *mem);
- 
- struct rproc_mem_entry *
--- 
-2.25.1
+> ---
+>  drivers/remoteproc/remoteproc_core.c | 33 ++++++++++++++++++----------
+>  1 file changed, 21 insertions(+), 12 deletions(-)
+> 
+> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+> index 45529d40342f..15318507aedb 100644
+> --- a/drivers/remoteproc/remoteproc_core.c
+> +++ b/drivers/remoteproc/remoteproc_core.c
+> @@ -2028,6 +2028,26 @@ static int rproc_alloc_firmware(struct rproc *rproc,
+>  	return 0;
+>  }
+>  
+> +static int rproc_alloc_ops(struct rproc *rproc, const struct rproc_ops *ops)
+> +{
+> +	rproc->ops = kmemdup(ops, sizeof(*ops), GFP_KERNEL);
+> +	if (!rproc->ops)
+> +		return -ENOMEM;
+> +
+> +	if (rproc->ops->load)
+> +		return 0;
+> +
+> +	/* Default to ELF loader if no load function is specified */
+> +	rproc->ops->load = rproc_elf_load_segments;
+> +	rproc->ops->parse_fw = rproc_elf_load_rsc_table;
+> +	rproc->ops->find_loaded_rsc_table = rproc_elf_find_loaded_rsc_table;
+> +	if (!rproc->ops->sanity_check)
+> +		rproc->ops->sanity_check = rproc_elf32_sanity_check;
+> +	rproc->ops->get_boot_addr = rproc_elf_get_boot_addr;
+> +
+> +	return 0;
+> +}
+> +
+>  /**
+>   * rproc_alloc() - allocate a remote processor handle
+>   * @dev: the underlying device
+> @@ -2067,8 +2087,7 @@ struct rproc *rproc_alloc(struct device *dev, const char *name,
+>  	if (rproc_alloc_firmware(rproc, name, firmware))
+>  		goto free_rproc;
+>  
+> -	rproc->ops = kmemdup(ops, sizeof(*ops), GFP_KERNEL);
+> -	if (!rproc->ops)
+> +	if (rproc_alloc_ops(rproc, ops))
+>  		goto free_firmware;
+>  
+>  	rproc->name = name;
+> @@ -2096,16 +2115,6 @@ struct rproc *rproc_alloc(struct device *dev, const char *name,
+>  
+>  	atomic_set(&rproc->power, 0);
+>  
+> -	/* Default to ELF loader if no load function is specified */
+> -	if (!rproc->ops->load) {
+> -		rproc->ops->load = rproc_elf_load_segments;
+> -		rproc->ops->parse_fw = rproc_elf_load_rsc_table;
+> -		rproc->ops->find_loaded_rsc_table = rproc_elf_find_loaded_rsc_table;
+> -		if (!rproc->ops->sanity_check)
+> -			rproc->ops->sanity_check = rproc_elf32_sanity_check;
+> -		rproc->ops->get_boot_addr = rproc_elf_get_boot_addr;
+> -	}
+> -
+>  	mutex_init(&rproc->lock);
+>  
+>  	INIT_LIST_HEAD(&rproc->carveouts);
+> -- 
+> 2.20.1
+> 
