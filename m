@@ -2,201 +2,103 @@ Return-Path: <SRS0=5S9b=6F=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EAAA4C55183
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 21 Apr 2020 17:04:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D92EC54FCC
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 21 Apr 2020 18:10:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CB9B0206F4
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 21 Apr 2020 17:04:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 46204206D5
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 21 Apr 2020 18:10:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="lTZzLCHe"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="j9piQE2N"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729324AbgDUREm (ORCPT
+        id S1729092AbgDUSKk (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 21 Apr 2020 13:04:42 -0400
-Received: from mail26.static.mailgun.info ([104.130.122.26]:27576 "EHLO
+        Tue, 21 Apr 2020 14:10:40 -0400
+Received: from mail26.static.mailgun.info ([104.130.122.26]:44053 "EHLO
         mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729182AbgDUREi (ORCPT
+        by vger.kernel.org with ESMTP id S1725870AbgDUSKj (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 21 Apr 2020 13:04:38 -0400
+        Tue, 21 Apr 2020 14:10:39 -0400
 DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1587488677; h=Message-ID: References: In-Reply-To: Subject:
- Cc: To: From: Date: Content-Transfer-Encoding: Content-Type:
- MIME-Version: Sender; bh=bb23re+70wL0pEeBHYk9nDh+mZGDDFOcSabU2dgzaNk=;
- b=lTZzLCHekbNYHJgNG3H7a5fd6zDSXnOarsUwMJq8KPOosUd++ejAJ+ZjYos8X0Q+oRCqTSQD
- hC17WdydhKOihTU3SQAPoNTlRi1GAks+cEcelZ7o+xnciXJQf5ILCRx0R94ZF8RG+kcvLsHS
- PhNHjSuzG/4qBKgLQwgk8DST1Y0=
+ s=smtp; t=1587492638; h=Message-Id: Date: Subject: Cc: To: From:
+ Sender; bh=QTZSt3g7x8XrxZ1LJxXx1Az1VtPSffKIiAQZK87VL34=; b=j9piQE2NeVb8HRZw2JtfzR5az7ZrDUsJS6f6IAiGxlzYAHxs6oq4UQxZs6TXu4cj2VwpdrpF
+ h3ceErxoAtqgbEyDGSo6A+22r5GUpE55PrD0wTERX4u7lo9hUP25ilN/qxpreZO0gBw4PIyB
+ uhYEzjLztAjVtWeHVJ5JlX4I1AQ=
 X-Mailgun-Sending-Ip: 104.130.122.26
 X-Mailgun-Sid: WyI4ZWZiZiIsICJsaW51eC1yZW1vdGVwcm9jQHZnZXIua2VybmVsLm9yZyIsICJiZTllNGEiXQ==
 Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5e9f2763.7f500d6ed730-smtp-out-n02;
- Tue, 21 Apr 2020 17:03:31 -0000 (UTC)
+ by mxa.mailgun.org with ESMTP id 5e9f3712.7f4b6bf29ed8-smtp-out-n02;
+ Tue, 21 Apr 2020 18:10:26 -0000 (UTC)
 Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 1210AC433BA; Tue, 21 Apr 2020 17:03:31 +0000 (UTC)
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
+        id 8E690C433BA; Tue, 21 Apr 2020 18:10:26 +0000 (UTC)
+Received: from rishabhb-linux.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
-        (Authenticated sender: sibis)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 4E281C433D2;
-        Tue, 21 Apr 2020 17:03:30 +0000 (UTC)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Tue, 21 Apr 2020 22:33:30 +0530
-From:   Sibi Sankar <sibis@codeaurora.org>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     agross@kernel.org, robh+dt@kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, evgreen@chromium.org,
-        ohad@wizery.com, mka@chromium.org, dianders@chromium.org,
-        devicetree@vger.kernel.org, linux-remoteproc-owner@vger.kernel.org
-Subject: Re: [PATCH 5/5] arm64: dts: qcom: sc7180: Update Q6V5 MSS node
-In-Reply-To: <20200420055005.GI1516868@builder.lan>
-References: <20200417142605.28885-1-sibis@codeaurora.org>
- <20200417142605.28885-6-sibis@codeaurora.org>
- <20200420055005.GI1516868@builder.lan>
-Message-ID: <e47383f6e4467610fc4623dc1f77dcd6@codeaurora.org>
-X-Sender: sibis@codeaurora.org
-User-Agent: Roundcube Webmail/1.3.9
+        (Authenticated sender: rishabhb)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 2FF91C433CB;
+        Tue, 21 Apr 2020 18:10:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 2FF91C433CB
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=rishabhb@codeaurora.org
+From:   Rishabh Bhatnagar <rishabhb@codeaurora.org>
+To:     linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     bjorn.andersson@linaro.org, mathieu.poirier@linaro.org,
+        ohad@wizery.com, tsoni@codeaurora.org, psodagud@codeaurora.org,
+        sidgup@codeaurora.org, Rishabh Bhatnagar <rishabhb@codeaurora.org>
+Subject: [PATCH v3 0/2] Add character device interface to remoteproc
+Date:   Tue, 21 Apr 2020 11:10:16 -0700
+Message-Id: <1587492618-15896-1-git-send-email-rishabhb@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
-Message-ID: <20200421170330.deLlCZnDD1Qcv8wIKc_I6WZmpOgSO9pMsWItlF6i1YM@z>
+Message-ID: <20200421181016.H9Q6biPdLAqPJHbtiNyBazi69SBkvP210ckc4bg4-X8@z>
 
-Hey Bjorn,
+This patch series adds a character device interface to remoteproc
+framework. Currently there is only a sysfs interface which the userspace
+clients can use. If a usersapce application crashes after booting
+the remote processor through the sysfs interface the remote processor
+does not get any indication about the crash. It might still assume
+that the  application is running.
+For example modem uses remotefs service to data from disk/flash memory.
+If the remotefs service crashes, modem still keeps on requesting data
+which might lead to crash on modem. Even if the service is restarted the
+file handles modem requested previously would become stale.
+Adding a character device interface makes the remote processor tightly
+coupled with the user space application. A crash of the application
+leads to a close on the file descriptors therefore shutting down the
+remoteproc.
 
-Thanks for reviewing the series!
-Addressed all the review comments
-in v3.
+Changelog:
 
-On 2020-04-20 11:20, Bjorn Andersson wrote:
-> On Fri 17 Apr 07:26 PDT 2020, Sibi Sankar wrote:
-> 
->> Add TCSR node and update MSS node to support MSA based Modem boot on
->> SC7180 SoCs.
->> 
->> Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
->> ---
->> 
->> Depends on the following bindings:
->> iommus: https://patchwork.kernel.org/patch/11443101/
->> spare-regs: https://patchwork.kernel.org/patch/11491425/
->> 
->>  arch/arm64/boot/dts/qcom/sc7180-idp.dts | 42 
->> +++++++++++++++++++++++++
->>  arch/arm64/boot/dts/qcom/sc7180.dtsi    |  5 +++
->>  2 files changed, 47 insertions(+)
->> 
->> diff --git a/arch/arm64/boot/dts/qcom/sc7180-idp.dts 
->> b/arch/arm64/boot/dts/qcom/sc7180-idp.dts
->> index e613d70cc0198..6f472872be1a3 100644
->> --- a/arch/arm64/boot/dts/qcom/sc7180-idp.dts
->> +++ b/arch/arm64/boot/dts/qcom/sc7180-idp.dts
->> @@ -319,6 +319,48 @@ &qupv3_id_1 {
->>  	status = "okay";
->>  };
->> 
->> +&remoteproc_mpss {
->> +	compatible = "qcom,sc7180-mss-pil";
->> +	reg = <0 0x04080000 0 0x410>, <0 0x04180000 0 0x48>;
-> 
-> I think we should overspecify the properties in the platform dtsi,
-> whenever possible - it shouldn't be a problem that the pas driver
-> doesn't use all the properties provided by the binding.
-> 
-> As such I think you should move the reg, clocks, resets, halt regs and
-> power-domains to the platform.
-> 
->> +	reg-names = "qdsp6", "rmb";
->> +
->> +	clocks = <&gcc GCC_MSS_CFG_AHB_CLK>,
->> +		 <&gcc GCC_MSS_Q6_MEMNOC_AXI_CLK>,
->> +		 <&gcc GCC_MSS_NAV_AXI_CLK>,
->> +		 <&gcc GCC_MSS_SNOC_AXI_CLK>,
->> +		 <&gcc GCC_MSS_MFAB_AXIS_CLK>,
->> +		 <&rpmhcc RPMH_CXO_CLK>;
->> +	clock-names = "iface", "bus", "nav", "snoc_axi",
->> +		      "mnoc_axi", "xo";
->> +
->> +	iommus = <&apps_smmu 0x460 0x1>, <&apps_smmu 0x444 0x2>;
->> +
->> +	resets = <&aoss_reset AOSS_CC_MSS_RESTART>,
->> +		 <&pdc_reset PDC_MODEM_SYNC_RESET>;
->> +	reset-names = "mss_restart", "pdc_reset";
->> +
->> +	qcom,halt-regs = <&tcsr_mutex_regs 0x23000 0x25000 0x24000>;
->> +	qcom,spare-regs = <&tcsr_regs 0xb3e4>;
->> +
->> +	power-domains = <&aoss_qmp AOSS_QMP_LS_MODEM>,
->> +			<&rpmhpd SC7180_CX>,
->> +			<&rpmhpd SC7180_MX>,
->> +			<&rpmhpd SC7180_MSS>;
->> +	power-domain-names = "load_state", "cx", "mx", "mss";
->> +
->> +	/delete-property/memory-region;
->> +
->> +	status = "okay";
->> +
->> +	mba {
->> +		memory-region = <&mba_mem>;
-> 
-> When I wrote this I was under the impression that memory-region wasn't
-> allowed to take an array of regions, perhaps we can make the mss 
-> binding
-> and driver support a multi-cell memory-region in the of_node directly
-> and drop these sub children.
-> 
-> Then it would be a cleaner update of the pas' memory-region.
-> 
-> But I'm fine with us putting this part on the todo list for the time
-> being...
+v2 -> v3:
+- Move booting of remoteproc from open to a write call.
+- Add ioctl interface for future functionality extension.
+- Add an ioctl call to default to rproc shutdown on release.
 
-I've switched to using memory-region
-in v3. I'll plan to convert the doc
-to yaml after the remaining bindings
-changes land.
+v2 -> v1:
+- Fixed comments from Bjorn and Matthew.
 
-> 
-> Regards,
-> Bjorn
-> 
->> +	};
->> +
->> +	mpss {
->> +		memory-region = <&mpss_mem>;
->> +	};
->> +};
->> +
->>  &uart3 {
->>  	status = "okay";
->> 
->> diff --git a/arch/arm64/boot/dts/qcom/sc7180.dtsi 
->> b/arch/arm64/boot/dts/qcom/sc7180.dtsi
->> index e319762a0bffc..c49801ddb9d70 100644
->> --- a/arch/arm64/boot/dts/qcom/sc7180.dtsi
->> +++ b/arch/arm64/boot/dts/qcom/sc7180.dtsi
->> @@ -981,6 +981,11 @@ tcsr_mutex_regs: syscon@1f40000 {
->>  			reg = <0 0x01f40000 0 0x40000>;
->>  		};
->> 
->> +		tcsr_regs: syscon@1fc0000 {
->> +			compatible = "syscon";
->> +			reg = <0 0x01fc0000 0 0x40000>;
->> +		};
->> +
->>  		tlmm: pinctrl@3500000 {
->>  			compatible = "qcom,sc7180-pinctrl";
->>  			reg = <0 0x03500000 0 0x300000>,
->> --
->> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora 
->> Forum,
->> a Linux Foundation Collaborative Project
+Rishabh Bhatnagar (2):
+  remoteproc: Add remoteproc character device interface
+  remoteproc: core: Register the character device interface
+
+ Documentation/userspace-api/ioctl/ioctl-number.rst |   1 +
+ drivers/remoteproc/Kconfig                         |   9 ++
+ drivers/remoteproc/Makefile                        |   1 +
+ drivers/remoteproc/remoteproc_cdev.c               | 142 +++++++++++++++++++++
+ drivers/remoteproc/remoteproc_core.c               |  10 ++
+ drivers/remoteproc/remoteproc_internal.h           |  21 +++
+ include/linux/remoteproc.h                         |   3 +
+ include/uapi/linux/remoteproc_cdev.h               |  21 +++
+ 8 files changed, 208 insertions(+)
+ create mode 100644 drivers/remoteproc/remoteproc_cdev.c
+ create mode 100644 include/uapi/linux/remoteproc_cdev.h
 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project.
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
