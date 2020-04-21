@@ -1,211 +1,136 @@
-Return-Path: <s-anna@ti.com>
-Subject: Re: [PATCH 1/2] remoteproc: drop memset when loading elf segments
+Return-Path: <peng.fan@nxp.com>
+From: Peng Fan <peng.fan@nxp.com>
+Subject: RE: [PATCH 1/2] remoteproc: drop memset when loading elf segments
+Date: Tue, 21 Apr 2020 07:42:41 +0000
+Message-ID: 
+ <DB6PR0402MB2760A0F6D7BC0F5AC7207E1188D50@DB6PR0402MB2760.eurprd04.prod.outlook.com>
 References: <1586420572-28353-1-git-send-email-peng.fan@nxp.com>
  <20200410012034.GU20625@builder.lan>
  <AM0PR04MB44816C59A9BE84465AC8F2C388DE0@AM0PR04MB4481.eurprd04.prod.outlook.com>
  <20200411015104.GJ576963@builder.lan>
  <AM0PR04MB4481CF4ACD86C69B329D5F2188DD0@AM0PR04MB4481.eurprd04.prod.outlook.com>
  <07eb5b9f-60cd-6555-1904-7b348bdc43f2@ti.com>
- <DB6PR0402MB2760A0F6D7BC0F5AC7207E1188D50@DB6PR0402MB2760.eurprd04.prod.outlook.com>
-From: Suman Anna <s-anna@ti.com>
-Message-ID: <aff9b0dc-12e0-18a3-ed67-e3bed0424662@ti.com>
-Date: Tue, 21 Apr 2020 13:25:43 -0500
-MIME-Version: 1.0
-In-Reply-To: <DB6PR0402MB2760A0F6D7BC0F5AC7207E1188D50@DB6PR0402MB2760.eurprd04.prod.outlook.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
+In-Reply-To: <07eb5b9f-60cd-6555-1904-7b348bdc43f2@ti.com>
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-To: Peng Fan <peng.fan@nxp.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+To: Suman Anna <s-anna@ti.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
 Cc: "ohad@wizery.com" <ohad@wizery.com>, "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, dl-linux-imx <linux-imx@nxp.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On 4/21/20 2:42 AM, Peng Fan wrote:
->> Subject: Re: [PATCH 1/2] remoteproc: drop memset when loading elf
->> segments
->>
->> On 4/13/20 4:05 AM, Peng Fan wrote:
->>>
->>>> Subject: Re: [PATCH 1/2] remoteproc: drop memset when loading elf
->>>> segments
->>>>
->>>> On Thu 09 Apr 18:29 PDT 2020, Peng Fan wrote:
->>>>
->>>>> Hi Bjorn,
->>>>>
->>>>>> Subject: Re: [PATCH 1/2] remoteproc: drop memset when loading elf
->>>>>> segments
->>>>>>
->>>>>> On Thu 09 Apr 01:22 PDT 2020, Peng Fan wrote:
->>>>>>
->>>>>>> To arm64, "dc      zva, dst" is used in memset.
->>>>>>> Per ARM DDI 0487A.j, chapter C5.3.8 DC ZVA, Data Cache Zero by VA,
->>>>>>>
->>>>>>> "If the memory region being zeroed is any type of Device memory,
->>>>>>> this instruction can give an alignment fault which is prioritized
->>>>>>> in the same way as other alignment faults that are determined by
->>>>>>> the memory type."
->>>>>>>
->>>>>>> On i.MX platforms, when elf is loaded to onchip TCM area, the
->>>>>>> region is ioremapped, so "dc zva, dst" will trigger abort.
->>>>>>>
->>>>>>> Since memset is not strictly required, let's drop it.
->>>>>>>
->>>>>>
->>>>>> This would imply that we trust that the firmware doesn't expect
->>>>>> remoteproc to zero out the memory, which we've always done. So I
->>>>>> don't think we can say that it's not required.
->>>>>
->>>>> Saying an image runs on a remote core needs Linux to help zero out
->>>>> BSS section, this not make sense to me.
->>>>
->>>> Maybe not, but it has always done it, so if there's firmware out
->>>> there that depends on it such change would break them..
->>>
->>> Got it.
->>>
->>>>
->>>>> My case is as following, I need to load section 7 data.
->>>>> I no need to let remoteproc to memset section 8/9/10/11/12, the
->>>>> firmware itself could handle that. Just because the memsz is larger
->>>>> than filesz, remoreproc must memset?
->>>>
->>>> By having a PT_LOAD segment covering these I think it's reasonable to
->>>> assume that the ELF loader should be able to touch the associated
->> memory.
->>>>
->>>>> Section Headers:
->>>>>     [Nr] Name              Type            Addr     Off
->> Size
->>>> ES Flg Lk Inf Al
->>>>>     [ 0]                   NULL            00000000 000000
->>>> 000000 00      0   0  0
->>>>>     [ 1] .interrupts       PROGBITS        1ffe0000 010000 000240
->> 00
->>>> A  0   0  4
->>>>>     [ 2] .resource_table   PROGBITS        1ffe0240 010240 000058
->> 00
->>>> A  0   0  1
->>>>>     [ 3] .text             PROGBITS        1ffe02a0 0102a0
->> 009ccc 00
->>>> AX  0   0 16
->>>>>     [ 4] .ARM              ARM_EXIDX       1ffe9f6c 019f6c
->> 000008
->>>> 00  AL  3   0  4
->>>>>     [ 5] .init_array       INIT_ARRAY      1ffe9f74 019f74 000004
->> 04
->>>> WA  0   0  4
->>>>>     [ 6] .fini_array       FINI_ARRAY      1ffe9f78 019f78 000004
->> 04
->>>> WA  0   0  4
->>>>>     [ 7] .data             PROGBITS        1fff9240 029240
->> 000084
->>>> 00  WA  0   0  4
->>>>>     [ 8] .ncache.init      PROGBITS        1fff92c4 0292c4 000000
->> 00
->>>> W  0   0  1
->>>>>     [ 9] .ncache           NOBITS          1fff92c4 0292c4
->> 000a80
->>>> 00  WA  0   0  4
->>>>>     [10] .bss              NOBITS          1fff9d44 0292c4
->> 01f5c0
->>>> 00  WA  0   0  4
->>>>>     [11] .heap             NOBITS          20019304 0292c4
->> 000404
->>>> 00  WA  0   0  1
->>>>>     [12] .stack            NOBITS          20019708 0292c4
->> 000400
->>>> 00  WA  0   0  1
->>>>>
->>>>>>
->>>>>>> Signed-off-by: Peng Fan <peng.fan@nxp.com>
->>>>>>> ---
->>>>>>>    drivers/remoteproc/remoteproc_elf_loader.c | 7 ++-----
->>>>>>>    1 file changed, 2 insertions(+), 5 deletions(-)
->>>>>>>
->>>>>>> diff --git a/drivers/remoteproc/remoteproc_elf_loader.c
->>>>>>> b/drivers/remoteproc/remoteproc_elf_loader.c
->>>>>>> index 16e2c496fd45..cc50fe70d50c 100644
->>>>>>> --- a/drivers/remoteproc/remoteproc_elf_loader.c
->>>>>>> +++ b/drivers/remoteproc/remoteproc_elf_loader.c
->>>>>>> @@ -238,14 +238,11 @@ int rproc_elf_load_segments(struct rproc
->>>>>>> *rproc,
->>>>>> const struct firmware *fw)
->>>>>>>    			memcpy(ptr, elf_data + offset, filesz);
->>>>>>>
->>>>>>>    		/*
->>>>>>> -		 * Zero out remaining memory for this segment.
->>>>>>> +		 * No need zero out remaining memory for this segment.
->>>>>>>    		 *
->>>>>>>    		 * This isn't strictly required since dma_alloc_coherent
->> already
->>>>>>> -		 * did this for us. albeit harmless, we may consider removing
->>>>>>> -		 * this.
->>>>>>> +		 * did this for us.
->>>>>>
->>>>>> In the case of recovery this comment is wrong, we do not
->>>>>> dma_alloc_coherent() the carveout during a recovery.
->>>>>
->>>>> Isn't the it the firmware's job to memset the region?
->>>>>
->>>>
->>>> I'm not aware of this being a documented requirement, we've always
->>>> done it here for them, so removing this call would be a change in behavior.
->>>>
->>>>>>
->>>>>> And in your case you ioremapped existing TCM, so it's never true.
->>>>>>
->>>>>>>    		 */
->>>>>>> -		if (memsz > filesz)
->>>>>>> -			memset(ptr + filesz, 0, memsz - filesz);
->>>>>>
->>>>>> So I think you do want to zero out this region. Question is how we do it...
->>>>>
->>>>> I have contacted our M4 owners, we no need clear it from Linux side.
->>>>
->>>> And I think _most_ firmware out there, like yours, does clear BSS etc
->>>> during initialization.
->>>>
->>>>> We also support booting m4 before booting Linux, at that case, Linux
->>>>> has noting to do with memset. It is just I try loading m4 image with
->>>>> Linux, and met the issue that memset trigger abort.
->>>>>
->>>>
->>>> Please see the proposal for attaching to already running remoteproc's
->>>> from Mathieu. I don't expect that you want to load your PROGBITS
->>>> either in this case?
->>>
->>> No need to load for early boot case. It is just userspace load trigger
->>> kernel panic, because memset arm64 could not work for ioremapped
->> memory.
->>>
->>> How about adding ops hooks for memset and memcpy to let driver have
->>> their own implementation?
->>
->> Hi Peng,
->>
->> The trick is to use the ioremap_wc() variant instead of ioremap() in your
->> platform driver while mapping the TCMs. I know multiple folks have run into
->> this issue. This is what most of the remoteproc drivers use, and mmio-sram
->> driver also uses the same.
-> 
-> TCM is different from OCRAM in i.MX chips.
-> ioremap_wc not work for TCM memory, I just tried that.
-
-What ARM core is this? Is it a standard ARM TCM memory? The TCM 
-interfaces from standard ARM cores in general are treated as normal 
-memory, so write combine should be ok on them. When you say it doesn't 
-work, whats not working - the memcpy/memset or the remoteproc doesn't boot?
-
-> I am thinking we change memset/memcpy to use
-> memset_io/memcpy_fromio/memcpy_toio for remoteproc common code,
-
-This has other implications. Not everything is IO memory to make this 
-change in the common core.
-
-If this is a custom memory interface requiring specific handling, then 
-one option is to provide and use your own ops->load function within the 
-driver. This is what I do for one of our remoteprocs that requires a 
-specific memcpy handling semantics.
-
-regards
-Suman
+PiBTdWJqZWN0OiBSZTogW1BBVENIIDEvMl0gcmVtb3RlcHJvYzogZHJvcCBtZW1zZXQgd2hlbiBs
+b2FkaW5nIGVsZg0KPiBzZWdtZW50cw0KPiANCj4gT24gNC8xMy8yMCA0OjA1IEFNLCBQZW5nIEZh
+biB3cm90ZToNCj4gPg0KPiA+PiBTdWJqZWN0OiBSZTogW1BBVENIIDEvMl0gcmVtb3RlcHJvYzog
+ZHJvcCBtZW1zZXQgd2hlbiBsb2FkaW5nIGVsZg0KPiA+PiBzZWdtZW50cw0KPiA+Pg0KPiA+PiBP
+biBUaHUgMDkgQXByIDE4OjI5IFBEVCAyMDIwLCBQZW5nIEZhbiB3cm90ZToNCj4gPj4NCj4gPj4+
+IEhpIEJqb3JuLA0KPiA+Pj4NCj4gPj4+PiBTdWJqZWN0OiBSZTogW1BBVENIIDEvMl0gcmVtb3Rl
+cHJvYzogZHJvcCBtZW1zZXQgd2hlbiBsb2FkaW5nIGVsZg0KPiA+Pj4+IHNlZ21lbnRzDQo+ID4+
+Pj4NCj4gPj4+PiBPbiBUaHUgMDkgQXByIDAxOjIyIFBEVCAyMDIwLCBQZW5nIEZhbiB3cm90ZToN
+Cj4gPj4+Pg0KPiA+Pj4+PiBUbyBhcm02NCwgImRjICAgICAgenZhLCBkc3QiIGlzIHVzZWQgaW4g
+bWVtc2V0Lg0KPiA+Pj4+PiBQZXIgQVJNIERESSAwNDg3QS5qLCBjaGFwdGVyIEM1LjMuOCBEQyBa
+VkEsIERhdGEgQ2FjaGUgWmVybyBieSBWQSwNCj4gPj4+Pj4NCj4gPj4+Pj4gIklmIHRoZSBtZW1v
+cnkgcmVnaW9uIGJlaW5nIHplcm9lZCBpcyBhbnkgdHlwZSBvZiBEZXZpY2UgbWVtb3J5LA0KPiA+
+Pj4+PiB0aGlzIGluc3RydWN0aW9uIGNhbiBnaXZlIGFuIGFsaWdubWVudCBmYXVsdCB3aGljaCBp
+cyBwcmlvcml0aXplZA0KPiA+Pj4+PiBpbiB0aGUgc2FtZSB3YXkgYXMgb3RoZXIgYWxpZ25tZW50
+IGZhdWx0cyB0aGF0IGFyZSBkZXRlcm1pbmVkIGJ5DQo+ID4+Pj4+IHRoZSBtZW1vcnkgdHlwZS4i
+DQo+ID4+Pj4+DQo+ID4+Pj4+IE9uIGkuTVggcGxhdGZvcm1zLCB3aGVuIGVsZiBpcyBsb2FkZWQg
+dG8gb25jaGlwIFRDTSBhcmVhLCB0aGUNCj4gPj4+Pj4gcmVnaW9uIGlzIGlvcmVtYXBwZWQsIHNv
+ICJkYyB6dmEsIGRzdCIgd2lsbCB0cmlnZ2VyIGFib3J0Lg0KPiA+Pj4+Pg0KPiA+Pj4+PiBTaW5j
+ZSBtZW1zZXQgaXMgbm90IHN0cmljdGx5IHJlcXVpcmVkLCBsZXQncyBkcm9wIGl0Lg0KPiA+Pj4+
+Pg0KPiA+Pj4+DQo+ID4+Pj4gVGhpcyB3b3VsZCBpbXBseSB0aGF0IHdlIHRydXN0IHRoYXQgdGhl
+IGZpcm13YXJlIGRvZXNuJ3QgZXhwZWN0DQo+ID4+Pj4gcmVtb3RlcHJvYyB0byB6ZXJvIG91dCB0
+aGUgbWVtb3J5LCB3aGljaCB3ZSd2ZSBhbHdheXMgZG9uZS4gU28gSQ0KPiA+Pj4+IGRvbid0IHRo
+aW5rIHdlIGNhbiBzYXkgdGhhdCBpdCdzIG5vdCByZXF1aXJlZC4NCj4gPj4+DQo+ID4+PiBTYXlp
+bmcgYW4gaW1hZ2UgcnVucyBvbiBhIHJlbW90ZSBjb3JlIG5lZWRzIExpbnV4IHRvIGhlbHAgemVy
+byBvdXQNCj4gPj4+IEJTUyBzZWN0aW9uLCB0aGlzIG5vdCBtYWtlIHNlbnNlIHRvIG1lLg0KPiA+
+Pg0KPiA+PiBNYXliZSBub3QsIGJ1dCBpdCBoYXMgYWx3YXlzIGRvbmUgaXQsIHNvIGlmIHRoZXJl
+J3MgZmlybXdhcmUgb3V0DQo+ID4+IHRoZXJlIHRoYXQgZGVwZW5kcyBvbiBpdCBzdWNoIGNoYW5n
+ZSB3b3VsZCBicmVhayB0aGVtLi4NCj4gPg0KPiA+IEdvdCBpdC4NCj4gPg0KPiA+Pg0KPiA+Pj4g
+TXkgY2FzZSBpcyBhcyBmb2xsb3dpbmcsIEkgbmVlZCB0byBsb2FkIHNlY3Rpb24gNyBkYXRhLg0K
+PiA+Pj4gSSBubyBuZWVkIHRvIGxldCByZW1vdGVwcm9jIHRvIG1lbXNldCBzZWN0aW9uIDgvOS8x
+MC8xMS8xMiwgdGhlDQo+ID4+PiBmaXJtd2FyZSBpdHNlbGYgY291bGQgaGFuZGxlIHRoYXQuIEp1
+c3QgYmVjYXVzZSB0aGUgbWVtc3ogaXMgbGFyZ2VyDQo+ID4+PiB0aGFuIGZpbGVzeiwgcmVtb3Jl
+cHJvYyBtdXN0IG1lbXNldD8NCj4gPj4NCj4gPj4gQnkgaGF2aW5nIGEgUFRfTE9BRCBzZWdtZW50
+IGNvdmVyaW5nIHRoZXNlIEkgdGhpbmsgaXQncyByZWFzb25hYmxlIHRvDQo+ID4+IGFzc3VtZSB0
+aGF0IHRoZSBFTEYgbG9hZGVyIHNob3VsZCBiZSBhYmxlIHRvIHRvdWNoIHRoZSBhc3NvY2lhdGVk
+DQo+IG1lbW9yeS4NCj4gPj4NCj4gPj4+IFNlY3Rpb24gSGVhZGVyczoNCj4gPj4+ICAgIFtOcl0g
+TmFtZSAgICAgICAgICAgICAgVHlwZSAgICAgICAgICAgIEFkZHIgICAgIE9mZg0KPiBTaXplDQo+
+ID4+IEVTIEZsZyBMayBJbmYgQWwNCj4gPj4+ICAgIFsgMF0gICAgICAgICAgICAgICAgICAgTlVM
+TCAgICAgICAgICAgIDAwMDAwMDAwIDAwMDAwMA0KPiA+PiAwMDAwMDAgMDAgICAgICAwICAgMCAg
+MA0KPiA+Pj4gICAgWyAxXSAuaW50ZXJydXB0cyAgICAgICBQUk9HQklUUyAgICAgICAgMWZmZTAw
+MDAgMDEwMDAwIDAwMDI0MA0KPiAwMA0KPiA+PiBBICAwICAgMCAgNA0KPiA+Pj4gICAgWyAyXSAu
+cmVzb3VyY2VfdGFibGUgICBQUk9HQklUUyAgICAgICAgMWZmZTAyNDAgMDEwMjQwIDAwMDA1OA0K
+PiAwMA0KPiA+PiBBICAwICAgMCAgMQ0KPiA+Pj4gICAgWyAzXSAudGV4dCAgICAgICAgICAgICBQ
+Uk9HQklUUyAgICAgICAgMWZmZTAyYTAgMDEwMmEwDQo+IDAwOWNjYyAwMA0KPiA+PiBBWCAgMCAg
+IDAgMTYNCj4gPj4+ICAgIFsgNF0gLkFSTSAgICAgICAgICAgICAgQVJNX0VYSURYICAgICAgIDFm
+ZmU5ZjZjIDAxOWY2Yw0KPiAwMDAwMDgNCj4gPj4gMDAgIEFMICAzICAgMCAgNA0KPiA+Pj4gICAg
+WyA1XSAuaW5pdF9hcnJheSAgICAgICBJTklUX0FSUkFZICAgICAgMWZmZTlmNzQgMDE5Zjc0IDAw
+MDAwNA0KPiAwNA0KPiA+PiBXQSAgMCAgIDAgIDQNCj4gPj4+ICAgIFsgNl0gLmZpbmlfYXJyYXkg
+ICAgICAgRklOSV9BUlJBWSAgICAgIDFmZmU5Zjc4IDAxOWY3OCAwMDAwMDQNCj4gMDQNCj4gPj4g
+V0EgIDAgICAwICA0DQo+ID4+PiAgICBbIDddIC5kYXRhICAgICAgICAgICAgIFBST0dCSVRTICAg
+ICAgICAxZmZmOTI0MCAwMjkyNDANCj4gMDAwMDg0DQo+ID4+IDAwICBXQSAgMCAgIDAgIDQNCj4g
+Pj4+ICAgIFsgOF0gLm5jYWNoZS5pbml0ICAgICAgUFJPR0JJVFMgICAgICAgIDFmZmY5MmM0IDAy
+OTJjNCAwMDAwMDANCj4gMDANCj4gPj4gVyAgMCAgIDAgIDENCj4gPj4+ICAgIFsgOV0gLm5jYWNo
+ZSAgICAgICAgICAgTk9CSVRTICAgICAgICAgIDFmZmY5MmM0IDAyOTJjNA0KPiAwMDBhODANCj4g
+Pj4gMDAgIFdBICAwICAgMCAgNA0KPiA+Pj4gICAgWzEwXSAuYnNzICAgICAgICAgICAgICBOT0JJ
+VFMgICAgICAgICAgMWZmZjlkNDQgMDI5MmM0DQo+IDAxZjVjMA0KPiA+PiAwMCAgV0EgIDAgICAw
+ICA0DQo+ID4+PiAgICBbMTFdIC5oZWFwICAgICAgICAgICAgIE5PQklUUyAgICAgICAgICAyMDAx
+OTMwNCAwMjkyYzQNCj4gMDAwNDA0DQo+ID4+IDAwICBXQSAgMCAgIDAgIDENCj4gPj4+ICAgIFsx
+Ml0gLnN0YWNrICAgICAgICAgICAgTk9CSVRTICAgICAgICAgIDIwMDE5NzA4IDAyOTJjNA0KPiAw
+MDA0MDANCj4gPj4gMDAgIFdBICAwICAgMCAgMQ0KPiA+Pj4NCj4gPj4+Pg0KPiA+Pj4+PiBTaWdu
+ZWQtb2ZmLWJ5OiBQZW5nIEZhbiA8cGVuZy5mYW5AbnhwLmNvbT4NCj4gPj4+Pj4gLS0tDQo+ID4+
+Pj4+ICAgZHJpdmVycy9yZW1vdGVwcm9jL3JlbW90ZXByb2NfZWxmX2xvYWRlci5jIHwgNyArKy0t
+LS0tDQo+ID4+Pj4+ICAgMSBmaWxlIGNoYW5nZWQsIDIgaW5zZXJ0aW9ucygrKSwgNSBkZWxldGlv
+bnMoLSkNCj4gPj4+Pj4NCj4gPj4+Pj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvcmVtb3RlcHJvYy9y
+ZW1vdGVwcm9jX2VsZl9sb2FkZXIuYw0KPiA+Pj4+PiBiL2RyaXZlcnMvcmVtb3RlcHJvYy9yZW1v
+dGVwcm9jX2VsZl9sb2FkZXIuYw0KPiA+Pj4+PiBpbmRleCAxNmUyYzQ5NmZkNDUuLmNjNTBmZTcw
+ZDUwYyAxMDA2NDQNCj4gPj4+Pj4gLS0tIGEvZHJpdmVycy9yZW1vdGVwcm9jL3JlbW90ZXByb2Nf
+ZWxmX2xvYWRlci5jDQo+ID4+Pj4+ICsrKyBiL2RyaXZlcnMvcmVtb3RlcHJvYy9yZW1vdGVwcm9j
+X2VsZl9sb2FkZXIuYw0KPiA+Pj4+PiBAQCAtMjM4LDE0ICsyMzgsMTEgQEAgaW50IHJwcm9jX2Vs
+Zl9sb2FkX3NlZ21lbnRzKHN0cnVjdCBycHJvYw0KPiA+Pj4+PiAqcnByb2MsDQo+ID4+Pj4gY29u
+c3Qgc3RydWN0IGZpcm13YXJlICpmdykNCj4gPj4+Pj4gICAJCQltZW1jcHkocHRyLCBlbGZfZGF0
+YSArIG9mZnNldCwgZmlsZXN6KTsNCj4gPj4+Pj4NCj4gPj4+Pj4gICAJCS8qDQo+ID4+Pj4+IC0J
+CSAqIFplcm8gb3V0IHJlbWFpbmluZyBtZW1vcnkgZm9yIHRoaXMgc2VnbWVudC4NCj4gPj4+Pj4g
+KwkJICogTm8gbmVlZCB6ZXJvIG91dCByZW1haW5pbmcgbWVtb3J5IGZvciB0aGlzIHNlZ21lbnQu
+DQo+ID4+Pj4+ICAgCQkgKg0KPiA+Pj4+PiAgIAkJICogVGhpcyBpc24ndCBzdHJpY3RseSByZXF1
+aXJlZCBzaW5jZSBkbWFfYWxsb2NfY29oZXJlbnQNCj4gYWxyZWFkeQ0KPiA+Pj4+PiAtCQkgKiBk
+aWQgdGhpcyBmb3IgdXMuIGFsYmVpdCBoYXJtbGVzcywgd2UgbWF5IGNvbnNpZGVyIHJlbW92aW5n
+DQo+ID4+Pj4+IC0JCSAqIHRoaXMuDQo+ID4+Pj4+ICsJCSAqIGRpZCB0aGlzIGZvciB1cy4NCj4g
+Pj4+Pg0KPiA+Pj4+IEluIHRoZSBjYXNlIG9mIHJlY292ZXJ5IHRoaXMgY29tbWVudCBpcyB3cm9u
+Zywgd2UgZG8gbm90DQo+ID4+Pj4gZG1hX2FsbG9jX2NvaGVyZW50KCkgdGhlIGNhcnZlb3V0IGR1
+cmluZyBhIHJlY292ZXJ5Lg0KPiA+Pj4NCj4gPj4+IElzbid0IHRoZSBpdCB0aGUgZmlybXdhcmUn
+cyBqb2IgdG8gbWVtc2V0IHRoZSByZWdpb24/DQo+ID4+Pg0KPiA+Pg0KPiA+PiBJJ20gbm90IGF3
+YXJlIG9mIHRoaXMgYmVpbmcgYSBkb2N1bWVudGVkIHJlcXVpcmVtZW50LCB3ZSd2ZSBhbHdheXMN
+Cj4gPj4gZG9uZSBpdCBoZXJlIGZvciB0aGVtLCBzbyByZW1vdmluZyB0aGlzIGNhbGwgd291bGQg
+YmUgYSBjaGFuZ2UgaW4gYmVoYXZpb3IuDQo+ID4+DQo+ID4+Pj4NCj4gPj4+PiBBbmQgaW4geW91
+ciBjYXNlIHlvdSBpb3JlbWFwcGVkIGV4aXN0aW5nIFRDTSwgc28gaXQncyBuZXZlciB0cnVlLg0K
+PiA+Pj4+DQo+ID4+Pj4+ICAgCQkgKi8NCj4gPj4+Pj4gLQkJaWYgKG1lbXN6ID4gZmlsZXN6KQ0K
+PiA+Pj4+PiAtCQkJbWVtc2V0KHB0ciArIGZpbGVzeiwgMCwgbWVtc3ogLSBmaWxlc3opOw0KPiA+
+Pj4+DQo+ID4+Pj4gU28gSSB0aGluayB5b3UgZG8gd2FudCB0byB6ZXJvIG91dCB0aGlzIHJlZ2lv
+bi4gUXVlc3Rpb24gaXMgaG93IHdlIGRvIGl0Li4uDQo+ID4+Pg0KPiA+Pj4gSSBoYXZlIGNvbnRh
+Y3RlZCBvdXIgTTQgb3duZXJzLCB3ZSBubyBuZWVkIGNsZWFyIGl0IGZyb20gTGludXggc2lkZS4N
+Cj4gPj4NCj4gPj4gQW5kIEkgdGhpbmsgX21vc3RfIGZpcm13YXJlIG91dCB0aGVyZSwgbGlrZSB5
+b3VycywgZG9lcyBjbGVhciBCU1MgZXRjDQo+ID4+IGR1cmluZyBpbml0aWFsaXphdGlvbi4NCj4g
+Pj4NCj4gPj4+IFdlIGFsc28gc3VwcG9ydCBib290aW5nIG00IGJlZm9yZSBib290aW5nIExpbnV4
+LCBhdCB0aGF0IGNhc2UsIExpbnV4DQo+ID4+PiBoYXMgbm90aW5nIHRvIGRvIHdpdGggbWVtc2V0
+LiBJdCBpcyBqdXN0IEkgdHJ5IGxvYWRpbmcgbTQgaW1hZ2Ugd2l0aA0KPiA+Pj4gTGludXgsIGFu
+ZCBtZXQgdGhlIGlzc3VlIHRoYXQgbWVtc2V0IHRyaWdnZXIgYWJvcnQuDQo+ID4+Pg0KPiA+Pg0K
+PiA+PiBQbGVhc2Ugc2VlIHRoZSBwcm9wb3NhbCBmb3IgYXR0YWNoaW5nIHRvIGFscmVhZHkgcnVu
+bmluZyByZW1vdGVwcm9jJ3MNCj4gPj4gZnJvbSBNYXRoaWV1LiBJIGRvbid0IGV4cGVjdCB0aGF0
+IHlvdSB3YW50IHRvIGxvYWQgeW91ciBQUk9HQklUUw0KPiA+PiBlaXRoZXIgaW4gdGhpcyBjYXNl
+Pw0KPiA+DQo+ID4gTm8gbmVlZCB0byBsb2FkIGZvciBlYXJseSBib290IGNhc2UuIEl0IGlzIGp1
+c3QgdXNlcnNwYWNlIGxvYWQgdHJpZ2dlcg0KPiA+IGtlcm5lbCBwYW5pYywgYmVjYXVzZSBtZW1z
+ZXQgYXJtNjQgY291bGQgbm90IHdvcmsgZm9yIGlvcmVtYXBwZWQNCj4gbWVtb3J5Lg0KPiA+DQo+
+ID4gSG93IGFib3V0IGFkZGluZyBvcHMgaG9va3MgZm9yIG1lbXNldCBhbmQgbWVtY3B5IHRvIGxl
+dCBkcml2ZXIgaGF2ZQ0KPiA+IHRoZWlyIG93biBpbXBsZW1lbnRhdGlvbj8NCj4gDQo+IEhpIFBl
+bmcsDQo+IA0KPiBUaGUgdHJpY2sgaXMgdG8gdXNlIHRoZSBpb3JlbWFwX3djKCkgdmFyaWFudCBp
+bnN0ZWFkIG9mIGlvcmVtYXAoKSBpbiB5b3VyDQo+IHBsYXRmb3JtIGRyaXZlciB3aGlsZSBtYXBw
+aW5nIHRoZSBUQ01zLiBJIGtub3cgbXVsdGlwbGUgZm9sa3MgaGF2ZSBydW4gaW50bw0KPiB0aGlz
+IGlzc3VlLiBUaGlzIGlzIHdoYXQgbW9zdCBvZiB0aGUgcmVtb3RlcHJvYyBkcml2ZXJzIHVzZSwg
+YW5kIG1taW8tc3JhbQ0KPiBkcml2ZXIgYWxzbyB1c2VzIHRoZSBzYW1lLg0KDQpUQ00gaXMgZGlm
+ZmVyZW50IGZyb20gT0NSQU0gaW4gaS5NWCBjaGlwcy4NCmlvcmVtYXBfd2Mgbm90IHdvcmsgZm9y
+IFRDTSBtZW1vcnksIEkganVzdCB0cmllZCB0aGF0Lg0KDQpJIGFtIHRoaW5raW5nIHdlIGNoYW5n
+ZSBtZW1zZXQvbWVtY3B5IHRvIHVzZQ0KbWVtc2V0X2lvL21lbWNweV9mcm9taW8vbWVtY3B5X3Rv
+aW8gZm9yIHJlbW90ZXByb2MgY29tbW9uIGNvZGUsDQoNClRoYW5rcywNClBlbmcuDQoNCj4gDQo+
+IHJlZ2FyZHMNCj4gU3VtYW4NCg==
