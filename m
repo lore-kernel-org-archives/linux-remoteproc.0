@@ -7,42 +7,42 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6DF5C54FD0
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 21 Apr 2020 14:33:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DC88C54FCC
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 21 Apr 2020 14:33:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 93E1C206D4
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 21 Apr 2020 14:33:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2AD68206D6
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 21 Apr 2020 14:33:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="J641w+go"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="RYCR8mL0"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729148AbgDUOc7 (ORCPT
+        id S1729335AbgDUOdK (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 21 Apr 2020 10:32:59 -0400
-Received: from mail26.static.mailgun.info ([104.130.122.26]:10368 "EHLO
+        Tue, 21 Apr 2020 10:33:10 -0400
+Received: from mail26.static.mailgun.info ([104.130.122.26]:11030 "EHLO
         mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729298AbgDUOc6 (ORCPT
+        by vger.kernel.org with ESMTP id S1729325AbgDUOdJ (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 21 Apr 2020 10:32:58 -0400
+        Tue, 21 Apr 2020 10:33:09 -0400
 DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1587479578; h=Content-Transfer-Encoding: MIME-Version:
+ s=smtp; t=1587479588; h=Content-Transfer-Encoding: MIME-Version:
  References: In-Reply-To: Message-Id: Date: Subject: Cc: To: From:
- Sender; bh=sqX+vw/JMt2d9YIaemJYxFNU3ZR/6minw4o+HGtf5Vk=; b=J641w+goKPyG2678kB5Bil8tLnJJL8t6EBTM6R9AvrPk2zfCAuppRheT2YPT2JnvO6ng7BqQ
- hVZ+ZOvkRleQ0hSnmbdWOBSDV+6skNrHyvTVnO6k2TrNS3QhH1zO+30w4mahpBOMkohqGZhO
- eVBCtZzJ7d7aqWOKfl9Bi1uM1Xk=
+ Sender; bh=zUIxul+MMPfsh12ei00AH3Nxsqj3xaya17Mo9j0h5rs=; b=RYCR8mL0e9Hm8SO6Lyte+hp9qDW9VxCMRcPQDfDQ+B7f8vW172F2Om5/KdEKvJC21B+sJ0lC
+ MgczprDmiVCwOMNYHva4p3zHjJFmJ+TfA3luxaN235tOnJzfdfpk/GXxl0pkwlUSfTnLYClq
+ 0YlICx8vnAysY7wUyBwxzQVwRKs=
 X-Mailgun-Sending-Ip: 104.130.122.26
 X-Mailgun-Sid: WyI4ZWZiZiIsICJsaW51eC1yZW1vdGVwcm9jQHZnZXIua2VybmVsLm9yZyIsICJiZTllNGEiXQ==
 Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5e9f0419.7f8d5ab9dd88-smtp-out-n02;
- Tue, 21 Apr 2020 14:32:57 -0000 (UTC)
+ by mxa.mailgun.org with ESMTP id 5e9f0424.7fe9faa7e110-smtp-out-n03;
+ Tue, 21 Apr 2020 14:33:08 -0000 (UTC)
 Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 57B07C44788; Tue, 21 Apr 2020 14:32:56 +0000 (UTC)
+        id 79424C44788; Tue, 21 Apr 2020 14:33:06 +0000 (UTC)
 Received: from blr-ubuntu-87.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
         (Authenticated sender: sibis)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 5D9EFC44798;
-        Tue, 21 Apr 2020 14:32:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5D9EFC44798
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 37789C44788;
+        Tue, 21 Apr 2020 14:32:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 37789C44788
 Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=sibis@codeaurora.org
 From:   Sibi Sankar <sibis@codeaurora.org>
@@ -52,9 +52,9 @@ Cc:     agross@kernel.org, linux-arm-msm@vger.kernel.org,
         evgreen@chromium.org, ohad@wizery.com, mka@chromium.org,
         dianders@chromium.org, devicetree@vger.kernel.org,
         Sibi Sankar <sibis@codeaurora.org>
-Subject: [PATCH v2 3/7] dt-bindings: remoteproc: qcom: Use memory-region to reference memory
-Date:   Tue, 21 Apr 2020 20:02:24 +0530
-Message-Id: <20200421143228.8981-4-sibis@codeaurora.org>
+Subject: [PATCH v2 5/7] arm64: dts: qcom: sc7180: Update reserved memory map
+Date:   Tue, 21 Apr 2020 20:02:26 +0530
+Message-Id: <20200421143228.8981-6-sibis@codeaurora.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200421143228.8981-1-sibis@codeaurora.org>
 References: <20200421143228.8981-1-sibis@codeaurora.org>
@@ -64,34 +64,141 @@ Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
-Message-ID: <20200421143224.FBa4dv4HuXQCWP1x3zehG4Yt-ACBao-AYVNp7iR0UjM@z>
+Message-ID: <20200421143226.TDj5IkQiLoJz49YAfi-8gtJ9XpYi4kqnu2fI1z2-yZA@z>
 
-Use memory-region property to reference mba and mpss memory regions.
+Add missing regions and remove unused regions from the reserved memory
+map, as described in version 5.
 
 Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
 ---
- .../devicetree/bindings/remoteproc/qcom,q6v5.txt          | 8 ++++++++
- 1 file changed, 8 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt b/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt
-index bffddd15eb910..1f9a62e13ebe0 100644
---- a/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt
-+++ b/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt
-@@ -102,6 +102,14 @@ on the Qualcomm Hexagon core.
- 		    must be "mss_restart", "pdc_reset" for the modem
- 		    sub-system on SC7180, SDM845 SoCs
+V2:
+ * move peripheral memory regions to the board dts [Bjorn]
+
+ arch/arm64/boot/dts/qcom/sc7180-idp.dts | 53 +++++++++++++++++++++++++
+ arch/arm64/boot/dts/qcom/sc7180.dtsi    | 33 ++++++++++++++-
+ 2 files changed, 84 insertions(+), 2 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/qcom/sc7180-idp.dts b/arch/arm64/boot/dts/qcom/sc7180-idp.dts
+index 043c9b9b50240..5405cde1a32ef 100644
+--- a/arch/arm64/boot/dts/qcom/sc7180-idp.dts
++++ b/arch/arm64/boot/dts/qcom/sc7180-idp.dts
+@@ -28,6 +28,59 @@ chosen {
+ 	};
+ };
  
-+For devices where the mba and mpss sub-nodes are not specified, mba/mpss region
-+should be referenced as follows:
-+- memory-region:
-+	Usage: required
-+	Value type: <phandle>
-+	Definition: reference to the reserved-memory for the mba region followed
-+		    by the mpss region
++/*
++ * Reserved memory changes
++ *
++ * Delete all unused memory nodes and define the peripheral memory regions
++ * required by the board dts.
++ *
++ */
 +
- For the compatible strings below the following supplies are required:
-   "qcom,q6v5-pil"
-   "qcom,msm8916-mss-pil",
++/delete-node/ &hyp_mem;
++/delete-node/ &xbl_mem;
++/delete-node/ &aop_mem;
++/delete-node/ &sec_apps_mem;
++/delete-node/ &tz_mem;
++
++/* Increase the size from 2MB to 8MB */
++&rmtfs_mem {
++	reg = <0x0 0x84400000 0x0 0x800000>;
++};
++
++/ {
++	reserved-memory {
++		atf_mem: memory@80b00000 {
++			reg = <0x0 0x80b00000 0x0 0x100000>;
++			no-map;
++		};
++
++		mpss_mem: memory@86000000 {
++			reg = <0x0 0x86000000 0x0 0x8c00000>;
++			no-map;
++		};
++
++		camera_mem: memory@8ec00000 {
++			reg = <0x0 0x8ec00000 0x0 0x500000>;
++			no-map;
++		};
++
++		venus_mem: memory@8f600000 {
++			reg = <0 0x8f600000 0 0x500000>;
++			no-map;
++		};
++
++		wlan_mem: memory@94100000 {
++			reg = <0x0 0x94100000 0x0 0x200000>;
++			no-map;
++		};
++
++		mba_mem: memory@94400000 {
++			reg = <0x0 0x94400000 0x0 0x200000>;
++			no-map;
++		};
++	};
++};
++
+ &apps_rsc {
+ 	pm6150-rpmh-regulators {
+ 		compatible = "qcom,pm6150-rpmh-regulators";
+diff --git a/arch/arm64/boot/dts/qcom/sc7180.dtsi b/arch/arm64/boot/dts/qcom/sc7180.dtsi
+index 998f101ad623b..65c14a6d13fef 100644
+--- a/arch/arm64/boot/dts/qcom/sc7180.dtsi
++++ b/arch/arm64/boot/dts/qcom/sc7180.dtsi
+@@ -69,20 +69,49 @@ reserved_memory: reserved-memory {
+ 		#size-cells = <2>;
+ 		ranges;
+ 
++		hyp_mem: memory@80000000 {
++			reg = <0x0 0x80000000 0x0 0x600000>;
++			no-map;
++		};
++
++		xbl_mem: memory@80600000 {
++			reg = <0x0 0x80600000 0x0 0x200000>;
++			no-map;
++		};
++
++		aop_mem: memory@80800000 {
++			reg = <0x0 0x80800000 0x0 0x20000>;
++			no-map;
++		};
++
+ 		aop_cmd_db_mem: memory@80820000 {
+ 			reg = <0x0 0x80820000 0x0 0x20000>;
+ 			compatible = "qcom,cmd-db";
+ 		};
+ 
++		sec_apps_mem: memory@808ff000 {
++			reg = <0x0 0x808ff000 0x0 0x1000>;
++			no-map;
++		};
++
+ 		smem_mem: memory@80900000 {
+ 			reg = <0x0 0x80900000 0x0 0x200000>;
+ 			no-map;
+ 		};
+ 
+-		venus_mem: memory@8f600000 {
+-			reg = <0 0x8f600000 0 0x500000>;
++		tz_mem: memory@80b00000 {
++			reg = <0x0 0x80b00000 0x0 0x3900000>;
+ 			no-map;
+ 		};
++
++		rmtfs_mem: memory@84400000 {
++			compatible = "qcom,rmtfs-mem";
++			reg = <0x0 0x84400000 0x0 0x200000>;
++			no-map;
++
++			qcom,client-id = <1>;
++			qcom,vmid = <15>;
++		};
+ 	};
+ 
+ 	cpus {
 -- 
 The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
 a Linux Foundation Collaborative Project
