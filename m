@@ -2,239 +2,229 @@ Return-Path: <SRS0=5S9b=6F=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 689B4C54FCC
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 21 Apr 2020 15:38:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97322C55183
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 21 Apr 2020 15:44:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3920E2070B
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 21 Apr 2020 15:38:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 723DC2071C
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 21 Apr 2020 15:44:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kalray.eu header.i=@kalray.eu header.b="WG5rI4ns"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="QpuIKuee"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725902AbgDUPiK (ORCPT
+        id S1726200AbgDUPn7 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 21 Apr 2020 11:38:10 -0400
-Received: from zimbra2.kalray.eu ([92.103.151.219]:59044 "EHLO
-        zimbra2.kalray.eu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725960AbgDUPiJ (ORCPT
+        Tue, 21 Apr 2020 11:43:59 -0400
+Received: from outils.crapouillou.net ([89.234.176.41]:32970 "EHLO
+        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725990AbgDUPn7 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 21 Apr 2020 11:38:09 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by zimbra2.kalray.eu (Postfix) with ESMTP id 49B5427E02FA;
-        Tue, 21 Apr 2020 17:38:07 +0200 (CEST)
-Received: from zimbra2.kalray.eu ([127.0.0.1])
-        by localhost (zimbra2.kalray.eu [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id NFeVXngl6t0K; Tue, 21 Apr 2020 17:38:06 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-        by zimbra2.kalray.eu (Postfix) with ESMTP id 56BCA27E0A7E;
-        Tue, 21 Apr 2020 17:38:06 +0200 (CEST)
-DKIM-Filter: OpenDKIM Filter v2.10.3 zimbra2.kalray.eu 56BCA27E0A7E
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kalray.eu;
-        s=32AE1B44-9502-11E5-BA35-3734643DEF29; t=1587483486;
-        bh=E8Ef7Y9juD0L2yAlkBR135rMMoMAmO27lR7T+Rur6Qs=;
-        h=Date:From:To:Message-ID:MIME-Version;
-        b=WG5rI4nsdyZ/n6I/DKusgV+iXVV+IPnkZ25CsrFG8CMWbSpcqpA2APdPsmewJfxSS
-         nHHhSmAIOVf+JEYh4cIqTM9KOfJcvgywN2R19TyeC6boSRDVpK26QVhmTbB6ncy//v
-         ebHQOSRZAuUEmg41DPI6+pDzXKq/NaViizxTWJkI=
-X-Virus-Scanned: amavisd-new at zimbra2.kalray.eu
-Received: from zimbra2.kalray.eu ([127.0.0.1])
-        by localhost (zimbra2.kalray.eu [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id UhMRJdWpDRmw; Tue, 21 Apr 2020 17:38:06 +0200 (CEST)
-Received: from zimbra2.kalray.eu (localhost [127.0.0.1])
-        by zimbra2.kalray.eu (Postfix) with ESMTP id 3765427E02FA;
-        Tue, 21 Apr 2020 17:38:06 +0200 (CEST)
-Date:   Tue, 21 Apr 2020 17:38:06 +0200 (CEST)
-From:   =?utf-8?Q?Cl=C3=A9ment?= Leger <cleger@kalray.eu>
-To:     s-anna <s-anna@ti.com>
+        Tue, 21 Apr 2020 11:43:59 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
+        s=mail; t=1587483836; h=from:from:sender:reply-to:subject:subject:date:date:
+         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+         content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=bHceis2+vNOIlN7295BKgbc3RLPfHPJQ+eTv/OC+9IQ=;
+        b=QpuIKueesZI4P4sWW1sIWSdpXUbxiN3H02M0g6ZzKABJLrnx0kWpTKAwNIkdQRdnG//d7A
+        Jzx8FJwDqKws+VKsKJeAhymgOM8RgffnwGXBBVI4tafXQzq7xiPA/ZaOd37L/EBpfK1Xur
+        XEr8WhaY6Wo7Qqsy1thhxE0t4eYRI7E=
+Date:   Tue, 21 Apr 2020 17:43:44 +0200
+From:   Paul Cercueil <paul@crapouillou.net>
+Subject: Re: [PATCH v6 4/5] remoteproc: ingenic: Added remoteproc driver
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
 Cc:     Ohad Ben-Cohen <ohad@wizery.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Patrice Chotard <patrice.chotard@st.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        linux-remoteproc <linux-remoteproc@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-stm32 <linux-stm32@st-md-mailman.stormreply.com>
-Message-ID: <777435415.16656480.1587483486065.JavaMail.zimbra@kalray.eu>
-In-Reply-To: <a7994631-7a63-5477-df70-e40b995fe14f@ti.com>
-References: <20200331083336.7459-1-cleger@kalray.eu> <0fc07250-c62c-cb10-58e5-04ccdd6ee176@ti.com> <a7994631-7a63-5477-df70-e40b995fe14f@ti.com>
-Subject: Re: [PATCH v2] remoteproc: remove rproc_elf32_sanity_check
+        Arnaud Pouliquen <arnaud.pouliquen@st.com>, od@zcrc.me,
+        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kbuild test robot <lkp@intel.com>,
+        Julia Lawall <julia.lawall@lip6.fr>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>
+Message-Id: <WCA59Q.IXGX82YOG4GI2@crapouillou.net>
+In-Reply-To: <20200420063714.GA1868936@builder.lan>
+References: <20200417170040.174319-1-paul@crapouillou.net>
+        <20200417170040.174319-4-paul@crapouillou.net>
+        <20200420063714.GA1868936@builder.lan>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-1; format=flowed
 Content-Transfer-Encoding: quoted-printable
-X-Originating-IP: [192.168.40.202]
-X-Mailer: Zimbra 8.8.15_GA_3895 (ZimbraWebClient - GC81 (Linux)/8.8.15_GA_3895)
-Thread-Topic: remoteproc: remove rproc_elf32_sanity_check
-Thread-Index: u5IOaZRLFAz0NztRXGyHwYidGzKInw==
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
-Message-ID: <20200421153806.hR-wqbFYyoojWrPxwGEyBhEt4XwNRigoi9n1IWCCKRM@z>
+Message-ID: <20200421154344.0DfIfrhRAtBTbtN7UXi-LJERZHfPxm0H8xUD3lAKEwA@z>
 
-Hi Anna,
+Hi Bjorn,
 
------ On 21 Apr, 2020, at 17:30, s-anna s-anna@ti.com wrote:
-
-> Hi Clement,
+Le dim. 19 avril 2020 =E0 23:37, Bjorn Andersson=20
+<bjorn.andersson@linaro.org> a =E9crit :
+> On Fri 17 Apr 10:00 PDT 2020, Paul Cercueil wrote:
 >=20
-> On 3/31/20 10:13 AM, Suman Anna wrote:
->> On 3/31/20 3:33 AM, Clement Leger wrote:
->>> Since checks are present in the remoteproc elf loader before calling
->>> da_to_va, loading a elf64 will work on 32bits flavors of kernel.
->>> Indeed, if a segment size is larger than what size_t can hold, the
->>> loader will return an error so the functionality is equivalent to
->>> what exists today.
->>>
->>> Signed-off-by: Clement Leger <cleger@kalray.eu>
+>>  This driver is used to boot, communicate with and load firmwares to=20
+>> the
+>>  MIPS co-processor found in the VPU hardware of the JZ47xx SoCs from
+>>  Ingenic.
 >>=20
->> Acked-by: Suman Anna <s-anna@ti.com>
+>>  Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+>>  Signed-off-by: kbuild test robot <lkp@intel.com>
+>>  Signed-off-by: Julia Lawall <julia.lawall@lip6.fr>
 >=20
-> Can you repost this after rebasing on top of the rproc-next branch
-> which has the rproc_alloc refactoring changes pushed now?
-
-Yes, I will do that.
-
-Regards,
-
-Cl=C3=A9ment
-
+> Please read Documentation/process/submitting-patches.rst about
+> "Developer's Certificate of Origin".
 >=20
-> regards
-> Suman
->=20
+> I suspect that you incorporated review feedback on previous revisions
+> from kbuild and Julia, this is generally omitted from the actual=20
+> commit
+> message.
+
+Julia / kbuild sent a patch to fix an error in the driver, so my patch=20
+now has code from Julia / kbuild. That document clearly says that I=20
+should add their signed-off-by. Or what do you mean?
+
+>>  Acked-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+>>  ---
 >>=20
->> regards
->> Suman
+>>  Notes:
+>>      v2: Remove exception for always-mapped memories
+>>      v3: - Use clk_bulk API
+>>      	- Move device-managed code to its own patch [3/4]
+>>      	- Move devicetree table right above ingenic_rproc_driver
+>>      	- Removed #ifdef CONFIG_OF around devicetree table
+>>      	- Removed .owner =3D THIS_MODULE in ingenic_rproc_driver
+>>      	- Removed useless platform_set_drvdata()
+>>      v4: - Add fix reported by Julia
+>>      	- Change Kconfig symbol to INGENIC_VPU_RPROC
+>>      	- Add documentation to struct vpu
+>>      	- disable_irq_nosync() -> disable_irq()
+>>      v5: No change
+>>      v6: Instead of prepare/unprepare callbacks, use PM runtime=20
+>> callbacks
 >>=20
->>> ---
->>> Changes from v1 -> v2:
->>>   - Remove possibity to override sanity_check operation
->>>
->>>   drivers/remoteproc/remoteproc_core.c       |  3 +--
->>>   drivers/remoteproc/remoteproc_elf_loader.c | 21 ---------------------
->>>   drivers/remoteproc/remoteproc_internal.h   |  1 -
->>>   drivers/remoteproc/st_remoteproc.c         |  2 +-
->>>   drivers/remoteproc/st_slim_rproc.c         |  2 +-
->>>   drivers/remoteproc/stm32_rproc.c           |  2 +-
->>>   6 files changed, 4 insertions(+), 27 deletions(-)
->>>
->>> diff --git a/drivers/remoteproc/remoteproc_core.c
->>> b/drivers/remoteproc/remoteproc_core.c
->>> index a9ac1d01e09b..191560048c1a 100644
->>> --- a/drivers/remoteproc/remoteproc_core.c
->>> +++ b/drivers/remoteproc/remoteproc_core.c
->>> @@ -2068,8 +2068,7 @@ struct rproc *rproc_alloc(struct device *dev, con=
-st char
->>> *name,
->>>   =09=09rproc->ops->load =3D rproc_elf_load_segments;
->>>   =09=09rproc->ops->parse_fw =3D rproc_elf_load_rsc_table;
->>>   =09=09rproc->ops->find_loaded_rsc_table =3D rproc_elf_find_loaded_rsc=
-_table;
->>> -=09=09if (!rproc->ops->sanity_check)
->>> -=09=09=09rproc->ops->sanity_check =3D rproc_elf32_sanity_check;
->>> +=09=09rproc->ops->sanity_check =3D rproc_elf_sanity_check;
->>>   =09=09rproc->ops->get_boot_addr =3D rproc_elf_get_boot_addr;
->>>   =09}
->>>  =20
->>> diff --git a/drivers/remoteproc/remoteproc_elf_loader.c
->>> b/drivers/remoteproc/remoteproc_elf_loader.c
->>> index 16e2c496fd45..29034f99898d 100644
->>> --- a/drivers/remoteproc/remoteproc_elf_loader.c
->>> +++ b/drivers/remoteproc/remoteproc_elf_loader.c
->>> @@ -112,27 +112,6 @@ int rproc_elf_sanity_check(struct rproc *rproc, co=
-nst
->>> struct firmware *fw)
->>>   }
->>>   EXPORT_SYMBOL(rproc_elf_sanity_check);
->>>  =20
->>> -/**
->>> - * rproc_elf_sanity_check() - Sanity Check ELF32 firmware image
->>> - * @rproc: the remote processor handle
->>> - * @fw: the ELF32 firmware image
->>> - *
->>> - * Make sure this fw image is sane.
->>> - */
->>> -int rproc_elf32_sanity_check(struct rproc *rproc, const struct firmwar=
-e *fw)
->>> -{
->>> -=09int ret =3D rproc_elf_sanity_check(rproc, fw);
->>> -
->>> -=09if (ret)
->>> -=09=09return ret;
->>> -
->>> -=09if (fw_elf_get_class(fw) =3D=3D ELFCLASS32)
->>> -=09=09return 0;
->>> -
->>> -=09return -EINVAL;
->>> -}
->>> -EXPORT_SYMBOL(rproc_elf32_sanity_check);
->>> -
->>>   /**
->>>    * rproc_elf_get_boot_addr() - Get rproc's boot address.
->>>    * @rproc: the remote processor handle
->>> diff --git a/drivers/remoteproc/remoteproc_internal.h
->>> b/drivers/remoteproc/remoteproc_internal.h
->>> index b389dc79da81..31994715fd43 100644
->>> --- a/drivers/remoteproc/remoteproc_internal.h
->>> +++ b/drivers/remoteproc/remoteproc_internal.h
->>> @@ -54,7 +54,6 @@ void *rproc_da_to_va(struct rproc *rproc, u64 da, siz=
-e_t len);
->>>   phys_addr_t rproc_va_to_pa(void *cpu_addr);
->>>   int rproc_trigger_recovery(struct rproc *rproc);
->>>  =20
->>> -int rproc_elf32_sanity_check(struct rproc *rproc, const struct firmwar=
-e *fw);
->>>   int rproc_elf_sanity_check(struct rproc *rproc, const struct firmware=
- *fw);
->>>   u64 rproc_elf_get_boot_addr(struct rproc *rproc, const struct firmwar=
-e *fw);
->>>   int rproc_elf_load_segments(struct rproc *rproc, const struct firmwar=
-e *fw);
->>> diff --git a/drivers/remoteproc/st_remoteproc.c
->>> b/drivers/remoteproc/st_remoteproc.c
->>> index a6cbfa452764..a3268d95a50e 100644
->>> --- a/drivers/remoteproc/st_remoteproc.c
->>> +++ b/drivers/remoteproc/st_remoteproc.c
->>> @@ -233,7 +233,7 @@ static const struct rproc_ops st_rproc_ops =3D {
->>>   =09.parse_fw=09=09=3D st_rproc_parse_fw,
->>>   =09.load=09=09=09=3D rproc_elf_load_segments,
->>>   =09.find_loaded_rsc_table=09=3D rproc_elf_find_loaded_rsc_table,
->>> -=09.sanity_check=09=09=3D rproc_elf32_sanity_check,
->>> +=09.sanity_check=09=09=3D rproc_elf_sanity_check,
->>>   =09.get_boot_addr=09=09=3D rproc_elf_get_boot_addr,
->>>   };
->>>  =20
->>> diff --git a/drivers/remoteproc/st_slim_rproc.c
->>> b/drivers/remoteproc/st_slim_rproc.c
->>> index 3cca8b65a8db..09bcb4d8b9e0 100644
->>> --- a/drivers/remoteproc/st_slim_rproc.c
->>> +++ b/drivers/remoteproc/st_slim_rproc.c
->>> @@ -203,7 +203,7 @@ static const struct rproc_ops slim_rproc_ops =3D {
->>>   =09.da_to_va       =3D slim_rproc_da_to_va,
->>>   =09.get_boot_addr=09=3D rproc_elf_get_boot_addr,
->>>   =09.load=09=09=3D rproc_elf_load_segments,
->>> -=09.sanity_check=09=3D rproc_elf32_sanity_check,
->>> +=09.sanity_check=09=3D rproc_elf_sanity_check,
->>>   };
->>>  =20
->>>   /**
->>> diff --git a/drivers/remoteproc/stm32_rproc.c b/drivers/remoteproc/stm3=
-2_rproc.c
->>> index 6a66dbf2df40..2e07a95439c8 100644
->>> --- a/drivers/remoteproc/stm32_rproc.c
->>> +++ b/drivers/remoteproc/stm32_rproc.c
->>> @@ -505,7 +505,7 @@ static struct rproc_ops st_rproc_ops =3D {
->>>   =09.load=09=09=3D rproc_elf_load_segments,
->>>   =09.parse_fw=09=3D stm32_rproc_parse_fw,
->>>   =09.find_loaded_rsc_table =3D rproc_elf_find_loaded_rsc_table,
->>> -=09.sanity_check=09=3D rproc_elf32_sanity_check,
->>> +=09.sanity_check=09=3D rproc_elf_sanity_check,
->>>   =09.get_boot_addr=09=3D rproc_elf_get_boot_addr,
->>>   };
->>>  =20
->>>
+>>   drivers/remoteproc/Kconfig         |   8 +
+>>   drivers/remoteproc/Makefile        |   1 +
+>>   drivers/remoteproc/ingenic_rproc.c | 282=20
+>> +++++++++++++++++++++++++++++
+>>   3 files changed, 291 insertions(+)
+>>   create mode 100644 drivers/remoteproc/ingenic_rproc.c
+>>=20
+>>  diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
+>>  index fbaed079b299..31da3e6c6281 100644
+>>  --- a/drivers/remoteproc/Kconfig
+>>  +++ b/drivers/remoteproc/Kconfig
+>>  @@ -240,6 +240,14 @@ config STM32_RPROC
+>>=20
+>>   	  This can be either built-in or a loadable module.
+>>=20
+>>  +config INGENIC_VPU_RPROC
+>=20
+> Please try to keep things alphabetically ordered.
+>=20
+>>  +	tristate "Ingenic JZ47xx VPU remoteproc support"
+>>  +	depends on MIPS || COMPILE_TEST
+>>  +	help
+>>  +	  Say y or m here to support the VPU in the JZ47xx SoCs from=20
+>> Ingenic.
+>>  +	  This can be either built-in or a loadable module.
+>>  +	  If unsure say N.
+>>  +
+>>   endif # REMOTEPROC
+>>=20
+>>   endmenu
+> [..]
+>>  diff --git a/drivers/remoteproc/ingenic_rproc.c=20
+>> b/drivers/remoteproc/ingenic_rproc.c
+> [..]
+>>  +/**
+>>  + * struct vpu - Ingenic VPU remoteproc private structure
+>>  + * @irq: interrupt number
+>>  + * @clks: pointers to the VPU and AUX clocks
+>=20
+> aux_base is missing
+>=20
+>>  + * @mem_info: array of struct vpu_mem_info, which contain the=20
+>> mapping info of
+>>  + *            each of the external memories
+>>  + * @dev: private pointer to the device
+>>  + */
+>>  +struct vpu {
+>>  +	int irq;
+>>  +	struct clk_bulk_data clks[2];
+>>  +	void __iomem *aux_base;
+>>  +	struct vpu_mem_info mem_info[ARRAY_SIZE(vpu_mem_map)];
+>>  +	struct device *dev;
+>>  +};
+> [..]
+>>  +static void *ingenic_rproc_da_to_va(struct rproc *rproc, u64 da,=20
+>> size_t len)
+>>  +{
+>>  +	struct vpu *vpu =3D rproc->priv;
+>>  +	void __iomem *va =3D NULL;
+>>  +	unsigned int i;
+>>  +
+>>  +	if (len <=3D 0)
+>=20
+> len can't be negative (also, does it add value to check for and fail=20
+> len
+> =3D=3D 0?)
+>=20
+>>  +		return NULL;
+>>  +
+>>  +	for (i =3D 0; i < ARRAY_SIZE(vpu_mem_map); i++) {
+>>  +		const struct vpu_mem_info *info =3D &vpu->mem_info[i];
+>>  +		const struct vpu_mem_map *map =3D info->map;
+>>  +
+>>  +		if (da >=3D map->da && (da + len) < (map->da + info->len)) {
+>>  +			va =3D info->base + (da - map->da);
+>>  +			break;
+>>  +		}
+>>  +	}
+>>  +
+>>  +	return (__force void *)va;
+>>  +}
+> [..]
+>>  +static struct platform_driver ingenic_rproc_driver =3D {
+>>  +	.probe =3D ingenic_rproc_probe,
+>>  +	.driver =3D {
+>>  +		.name =3D "ingenic-vpu",
+>>  +#ifdef CONFIG_PM
+>=20
+> Please omit the #ifdef here.
+
+If I do, then the PM callbacks will be compiled in even if CONFIG_PM is=20
+disabled. That means dead code and I see no reason why you would want=20
+that.
+
+If you don't mind, I'd like to keep the #ifdef CONFIG_PM for now, until=20
+this patchset is merged: https://lkml.org/lkml/2020/4/13/582
+
+Then it would become a one-liner:
+.pm =3D pm_ptr(&ingenic_rproc_pm),
+
+Cheers,
+-Paul
+
+>>  +		.pm =3D &ingenic_rproc_pm,
+>>  +#endif
+>>  +		.of_match_table =3D of_match_ptr(ingenic_rproc_of_matches),
+>=20
+> Please omit the of_match_ptr()
+>=20
+> Regards,
+> Bjorn
+>=20
+>>  +	},
+>>  +};
+>>  +module_platform_driver(ingenic_rproc_driver);
+>>  +
+>>  +MODULE_LICENSE("GPL");
+>>  +MODULE_AUTHOR("Paul Cercueil <paul@crapouillou.net>");
+>>  +MODULE_DESCRIPTION("Ingenic JZ47xx Remote Processor control=20
+>> driver");
+>>  --
+>>  2.25.1
+>>=20
+
+
