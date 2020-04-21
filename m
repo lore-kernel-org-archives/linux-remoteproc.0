@@ -1,84 +1,67 @@
-Return-Path: <ezequiel@collabora.com>
-From: Ezequiel Garcia <ezequiel@collabora.com>
-Subject: [PATCH] hwspinlock: Simplify Kconfig
-Date: Tue, 14 Apr 2020 19:09:43 -0300
-Message-Id: <20200414220943.6203-1-ezequiel@collabora.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To: linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org
-Cc: Baolin Wang <baolin.wang7@gmail.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>, kernel@collabora.com, Ezequiel Garcia <ezequiel@collabora.com>
+Return-Path: <bounce+9957f9.be9e4a-bjorn.andersson=linaro.org@mg.codeaurora.org>
+Sender: rishabhb=codeaurora.org@mg.codeaurora.org
+From: Rishabh Bhatnagar <rishabhb@codeaurora.org>
+Subject: [PATCH v3 2/2] remoteproc: core: Register the character device interface
+Date: Tue, 21 Apr 2020 11:10:18 -0700
+Message-Id: <1587492618-15896-3-git-send-email-rishabhb@codeaurora.org>
+In-Reply-To: <1587492618-15896-1-git-send-email-rishabhb@codeaurora.org>
+References: <1587492618-15896-1-git-send-email-rishabhb@codeaurora.org>
+To: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: bjorn.andersson@linaro.org, mathieu.poirier@linaro.org, ohad@wizery.com, tsoni@codeaurora.org, psodagud@codeaurora.org, sidgup@codeaurora.org, Rishabh Bhatnagar <rishabhb@codeaurora.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Every hwspinlock driver is expected to depend on the
-hwspinlock core, so it's possible to simplify the
-Kconfig, factoring out the HWSPINLOCK dependency.
+Add the character device during rproc_add. This would create
+a character device node at /dev/remoteproc<index>. Userspace
+applications can interact with the remote processor using this
+interface.
 
-Signed-off-by: Ezequiel Garcia <ezequiel@collabora.com>
+Signed-off-by: Rishabh Bhatnagar <rishabhb@codeaurora.org>
 ---
- drivers/hwspinlock/Kconfig | 10 ++++------
- 1 file changed, 4 insertions(+), 6 deletions(-)
+ drivers/remoteproc/remoteproc_core.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/drivers/hwspinlock/Kconfig b/drivers/hwspinlock/Kconfig
-index 826a1054100d..32cd26352f38 100644
---- a/drivers/hwspinlock/Kconfig
-+++ b/drivers/hwspinlock/Kconfig
-@@ -6,9 +6,10 @@
- menuconfig HWSPINLOCK
- 	bool "Hardware Spinlock drivers"
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index 097f33e..76ba171 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -1916,6 +1916,13 @@ int rproc_add(struct rproc *rproc)
+ 	/* create debugfs entries */
+ 	rproc_create_debug_dir(rproc);
  
-+if HWSPINLOCK
++	/* add char device for this remoteproc */
++	ret = rproc_char_device_add(rproc);
++	if (ret) {
++		dev_err(dev, "Failed to add char dev for %s\n", rproc->name);
++		return ret;
++	}
 +
- config HWSPINLOCK_OMAP
- 	tristate "OMAP Hardware Spinlock device"
--	depends on HWSPINLOCK
- 	depends on ARCH_OMAP4 || SOC_OMAP5 || SOC_DRA7XX || SOC_AM33XX || SOC_AM43XX || ARCH_K3 || COMPILE_TEST
- 	help
- 	  Say y here to support the OMAP Hardware Spinlock device (firstly
-@@ -18,7 +19,6 @@ config HWSPINLOCK_OMAP
+ 	/* if rproc is marked always-on, request it to boot */
+ 	if (rproc->auto_boot) {
+ 		ret = rproc_trigger_auto_boot(rproc);
+@@ -2137,6 +2144,7 @@ int rproc_del(struct rproc *rproc)
+ 	mutex_unlock(&rproc->lock);
  
- config HWSPINLOCK_QCOM
- 	tristate "Qualcomm Hardware Spinlock device"
--	depends on HWSPINLOCK
- 	depends on ARCH_QCOM || COMPILE_TEST
- 	select MFD_SYSCON
- 	help
-@@ -30,7 +30,6 @@ config HWSPINLOCK_QCOM
+ 	rproc_delete_debug_dir(rproc);
++	rproc_char_device_remove(rproc);
  
- config HWSPINLOCK_SIRF
- 	tristate "SIRF Hardware Spinlock device"
--	depends on HWSPINLOCK
- 	depends on ARCH_SIRF || COMPILE_TEST
- 	help
- 	  Say y here to support the SIRF Hardware Spinlock device, which
-@@ -43,7 +42,6 @@ config HWSPINLOCK_SIRF
- config HWSPINLOCK_SPRD
- 	tristate "SPRD Hardware Spinlock device"
- 	depends on ARCH_SPRD || COMPILE_TEST
--	depends on HWSPINLOCK
- 	help
- 	  Say y here to support the SPRD Hardware Spinlock device.
+ 	/* the rproc is downref'ed as soon as it's removed from the klist */
+ 	mutex_lock(&rproc_list_mutex);
+@@ -2220,6 +2228,7 @@ static int __init remoteproc_init(void)
+ {
+ 	rproc_init_sysfs();
+ 	rproc_init_debugfs();
++	rproc_init_cdev();
  
-@@ -52,7 +50,6 @@ config HWSPINLOCK_SPRD
- config HWSPINLOCK_STM32
- 	tristate "STM32 Hardware Spinlock device"
- 	depends on MACH_STM32MP157 || COMPILE_TEST
--	depends on HWSPINLOCK
- 	help
- 	  Say y here to support the STM32 Hardware Spinlock device.
+ 	return 0;
+ }
+@@ -2231,6 +2240,7 @@ static void __exit remoteproc_exit(void)
  
-@@ -60,7 +57,6 @@ config HWSPINLOCK_STM32
+ 	rproc_exit_debugfs();
+ 	rproc_exit_sysfs();
++	rproc_exit_cdev();
+ }
+ module_exit(remoteproc_exit);
  
- config HSEM_U8500
- 	tristate "STE Hardware Semaphore functionality"
--	depends on HWSPINLOCK
- 	depends on ARCH_U8500 || COMPILE_TEST
- 	help
- 	  Say y here to support the STE Hardware Semaphore functionality, which
-@@ -68,3 +64,5 @@ config HSEM_U8500
- 	  SoC.
- 
- 	  If unsure, say N.
-+
-+endif # HWSPINLOCK
 -- 
-2.26.0.rc2
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
