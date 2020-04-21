@@ -1,9 +1,9 @@
 Return-Path: <mathieu.poirier@linaro.org>
 Return-Path: <mathieu.poirier@linaro.org>
-Date: Wed, 22 Apr 2020 11:26:08 -0600
+Date: Tue, 21 Apr 2020 16:18:41 -0600
 From: Mathieu Poirier <mathieu.poirier@linaro.org>
 Subject: Re: [RFC 03/18] remoteproc: Move rvdev management in rproc_virtio
-Message-ID: <20200422172608.GB9283@xps15>
+Message-ID: <20200421221841.GB17676@xps15>
 References: <20200416161331.7606-1-arnaud.pouliquen@st.com>
  <20200416161331.7606-4-arnaud.pouliquen@st.com>
 MIME-Version: 1.0
@@ -229,6 +229,9 @@ On Thu, Apr 16, 2020 at 06:13:16PM +0200, Arnaud Pouliquen wrote:
 > - * rproc_add_virtio_dev() - register an rproc-induced virtio device
 > - * @rvdev: the remote vdev
 > + * rproc_vdev_start() - register an rproc-induced virtio device
+
+s/rproc_vdev_start/rproc_virtio_start
+
 > + * @subdev: the rproc virtio subdevice
 >   *
 >   * This function registers a virtio device. This vdev's partent is
@@ -238,6 +241,9 @@ On Thu, Apr 16, 2020 at 06:13:16PM +0200, Arnaud Pouliquen wrote:
 >   */
 > -int rproc_add_virtio_dev(struct rproc_vdev *rvdev, int id)
 > +static int rproc_vitio_start(struct rproc_subdev *subdev)
+
+s/rproc_vitio_start/rproc_virtio_start
+
 >  {
 > +	struct rproc_vdev *rvdev = container_of(subdev, struct rproc_vdev,
 > +						subdev);
@@ -278,6 +284,11 @@ On Thu, Apr 16, 2020 at 06:13:16PM +0200, Arnaud Pouliquen wrote:
 > +		rvring = &rvdev->vring[id];
 > +		rproc_free_vring(rvring);
 > +	}
+
+Why freeing the rings here and not in rproc_virtio_device_remove() as it was
+done in rproc_rvdev_remove_device()?  Renaming function and splitting them in
+the same patch is extremely difficult to follow.
+
 > +
 > +	return 0;
 > +}
@@ -293,6 +304,9 @@ On Thu, Apr 16, 2020 at 06:13:16PM +0200, Arnaud Pouliquen wrote:
 >   */
 > -int rproc_remove_virtio_dev(struct device *dev, void *data)
 > +static void rproc_vitio_stop(struct rproc_subdev *subdev, bool crashed)
+
+Same as above
+
 >  {
 > -	struct virtio_device *vdev = dev_to_virtio(dev);
 > +	struct rproc_vdev *rvdev = container_of(subdev, struct rproc_vdev,
@@ -381,15 +395,6 @@ On Thu, Apr 16, 2020 at 06:13:16PM +0200, Arnaud Pouliquen wrote:
 > +
 > +	rproc_remove_subdev(rproc, &rvdev->subdev);
 > +	device_unregister(&rvdev->dev);
-
-This used to be rproc_rvdev_remove_device(), and now it is
-rproc_virtio_device_remove()...  I would have expected
-rproc_virtio_remove_device() to be consistent.  At the very least, it will sure
-make it easier for me to connect the dots.
-
-Not only did the name flipped but freeing the vrings has been moved to
-rproc_remove_virtio_dev() without explanation.
-
 >  }
 > -- 
 > 2.17.1
