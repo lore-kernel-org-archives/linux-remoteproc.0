@@ -1,111 +1,71 @@
-Return-Path: <arnaud.pouliquen@st.com>
-From: Arnaud Pouliquen <arnaud.pouliquen@st.com>
-Subject: [RFC 08/18] remoteproc: Externalize carveout functions
-Date: Thu, 16 Apr 2020 18:13:21 +0200
-Message-ID: <20200416161331.7606-9-arnaud.pouliquen@st.com>
-In-Reply-To: <20200416161331.7606-1-arnaud.pouliquen@st.com>
-References: <20200416161331.7606-1-arnaud.pouliquen@st.com>
+Return-Path: <bounce+9957f9.be9e4a-bjorn.andersson=linaro.org@mg.codeaurora.org>
+Sender: sibis=codeaurora.org@mg.codeaurora.org
+From: Sibi Sankar <sibis@codeaurora.org>
+Subject: [PATCH v2 6/7] arm64: dts: qcom: sc7180: Add Q6V5 MSS node
+Date: Tue, 21 Apr 2020 20:02:27 +0530
+Message-Id: <20200421143228.8981-7-sibis@codeaurora.org>
+In-Reply-To: <20200421143228.8981-1-sibis@codeaurora.org>
+References: <20200421143228.8981-1-sibis@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-To: Bjorn Andersson <bjorn.andersson@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>, Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, arnaud.pouliquen@st.com
+Content-Transfer-Encoding: 8bit
+To: bjorn.andersson@linaro.org, robh+dt@kernel.org
+Cc: agross@kernel.org, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, evgreen@chromium.org, ohad@wizery.com, mka@chromium.org, dianders@chromium.org, devicetree@vger.kernel.org, Sibi Sankar <sibis@codeaurora.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-The carveout functions are also used for the vring memories.
-Externalize related functions to prepare migration of
-the vring management in rproc virtio.
+This patch adds Q6V5 MSS PAS remoteproc node for SC7180 SoCs.
 
-Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@st.com>
+Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
 ---
- drivers/remoteproc/remoteproc_core.c     | 18 +++++++-----------
- drivers/remoteproc/remoteproc_internal.h |  4 ++++
- 2 files changed, 11 insertions(+), 11 deletions(-)
+ arch/arm64/boot/dts/qcom/sc7180.dtsi | 36 ++++++++++++++++++++++++++++
+ 1 file changed, 36 insertions(+)
 
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index cb40aae12b98..ac57cd8016be 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -51,11 +51,6 @@ static LIST_HEAD(rproc_list);
- typedef int (*rproc_handle_resource_t)(struct rproc *rproc,
- 				 void *, int offset, int avail);
+diff --git a/arch/arm64/boot/dts/qcom/sc7180.dtsi b/arch/arm64/boot/dts/qcom/sc7180.dtsi
+index 65c14a6d13fef..94cead96eade0 100644
+--- a/arch/arm64/boot/dts/qcom/sc7180.dtsi
++++ b/arch/arm64/boot/dts/qcom/sc7180.dtsi
+@@ -1323,6 +1323,42 @@ pinconf-sd-cd {
+ 			};
+ 		};
  
--static int rproc_alloc_carveout(struct rproc *rproc,
--				struct rproc_mem_entry *mem);
--static int rproc_release_carveout(struct rproc *rproc,
--				  struct rproc_mem_entry *mem);
--
- /* Unique indices for remoteproc devices */
- static DEFINE_IDA(rproc_dev_index);
- 
-@@ -281,8 +276,8 @@ rproc_find_carveout_by_name(struct rproc *rproc, const char *name, ...)
-  *
-  * Return: 0 if carveout matches request else error
-  */
--static int rproc_check_carveout_da(struct rproc *rproc,
--				   struct rproc_mem_entry *mem, u32 da, u32 len)
-+int rproc_check_carveout_da(struct rproc *rproc,
-+			    struct rproc_mem_entry *mem, u32 da, u32 len)
- {
- 	struct device *dev = &rproc->dev;
- 	int delta;
-@@ -315,6 +310,7 @@ static int rproc_check_carveout_da(struct rproc *rproc,
- 
- 	return 0;
- }
-+EXPORT_SYMBOL(rproc_check_carveout_da);
- 
- int rproc_alloc_vring(struct rproc_vdev *rvdev, int i)
- {
-@@ -695,8 +691,7 @@ static int rproc_handle_devmem(struct rproc *rproc, struct fw_rsc_devmem *rsc,
-  * This function allocate specified memory entry @mem using
-  * dma_alloc_coherent() as default allocator
-  */
--static int rproc_alloc_carveout(struct rproc *rproc,
--				struct rproc_mem_entry *mem)
-+int rproc_alloc_carveout(struct rproc *rproc, struct rproc_mem_entry *mem)
- {
- 	struct rproc_mem_entry *mapping = NULL;
- 	struct device *dev = &rproc->dev;
-@@ -791,6 +786,7 @@ static int rproc_alloc_carveout(struct rproc *rproc,
- 	dma_free_coherent(dev->parent, mem->len, va, dma);
- 	return ret;
- }
-+EXPORT_SYMBOL(rproc_alloc_carveout);
- 
- /**
-  * rproc_release_carveout() - release acquired carveout
-@@ -800,8 +796,7 @@ static int rproc_alloc_carveout(struct rproc *rproc,
-  * This function releases specified memory entry @mem allocated via
-  * rproc_alloc_carveout() function by @rproc.
-  */
--static int rproc_release_carveout(struct rproc *rproc,
--				  struct rproc_mem_entry *mem)
-+int rproc_release_carveout(struct rproc *rproc, struct rproc_mem_entry *mem)
- {
- 	struct device *dev = &rproc->dev;
- 
-@@ -809,6 +804,7 @@ static int rproc_release_carveout(struct rproc *rproc,
- 	dma_free_coherent(dev->parent, mem->len, mem->va, mem->dma);
- 	return 0;
- }
-+EXPORT_SYMBOL(rproc_release_carveout);
- 
- /**
-  * rproc_handle_carveout() - handle phys contig memory allocation requests
-diff --git a/drivers/remoteproc/remoteproc_internal.h b/drivers/remoteproc/remoteproc_internal.h
-index f5eaffac2fcd..f230296908ac 100644
---- a/drivers/remoteproc/remoteproc_internal.h
-+++ b/drivers/remoteproc/remoteproc_internal.h
-@@ -71,6 +71,10 @@ struct resource_table *rproc_elf_find_loaded_rsc_table(struct rproc *rproc,
- 						       const struct firmware *fw);
- struct rproc_mem_entry *
- rproc_find_carveout_by_name(struct rproc *rproc, const char *name, ...);
-+int rproc_check_carveout_da(struct rproc *rproc, struct rproc_mem_entry *mem,
-+			    u32 da, u32 len);
-+int rproc_alloc_carveout(struct rproc *rproc, struct rproc_mem_entry *mem);
-+int rproc_release_carveout(struct rproc *rproc, struct rproc_mem_entry *mem);
- 
- static inline
- int rproc_fw_sanity_check(struct rproc *rproc, const struct firmware *fw)
++		remoteproc_mpss: remoteproc@4080000 {
++			compatible = "qcom,sc7180-mpss-pas";
++			reg = <0 0x04080000 0 0x4040>;
++
++			interrupts-extended = <&intc GIC_SPI 266 IRQ_TYPE_EDGE_RISING>,
++					      <&modem_smp2p_in 0 IRQ_TYPE_EDGE_RISING>,
++					      <&modem_smp2p_in 1 IRQ_TYPE_EDGE_RISING>,
++					      <&modem_smp2p_in 2 IRQ_TYPE_EDGE_RISING>,
++					      <&modem_smp2p_in 3 IRQ_TYPE_EDGE_RISING>,
++					      <&modem_smp2p_in 7 IRQ_TYPE_EDGE_RISING>;
++			interrupt-names = "wdog", "fatal", "ready", "handover",
++					  "stop-ack", "shutdown-ack";
++
++			clocks = <&rpmhcc RPMH_CXO_CLK>;
++			clock-names = "xo";
++
++			power-domains = <&aoss_qmp AOSS_QMP_LS_MODEM>,
++					<&rpmhpd SC7180_CX>,
++					<&rpmhpd SC7180_MSS>;
++			power-domain-names = "load_state", "cx", "mss";
++
++			memory-region = <&mpss_mem>;
++
++			qcom,smem-states = <&modem_smp2p_out 0>;
++			qcom,smem-state-names = "stop";
++
++			status = "disabled";
++
++			glink-edge {
++				interrupts = <GIC_SPI 449 IRQ_TYPE_EDGE_RISING>;
++				label = "modem";
++				qcom,remote-pid = <1>;
++				mboxes = <&apss_shared 12>;
++			};
++		};
++
+ 		sdhc_2: sdhci@8804000 {
+ 			compatible = "qcom,sc7180-sdhci", "qcom,sdhci-msm-v5";
+ 			reg = <0 0x08804000 0 0x1000>;
 -- 
-2.17.1
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
