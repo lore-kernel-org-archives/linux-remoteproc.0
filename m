@@ -1,61 +1,34 @@
-Return-Path: <mathieu.poirier@linaro.org>
-Return-Path: <mathieu.poirier@linaro.org>
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-Subject: [PATCH v2 1/7] remoteproc: Fix IDR initialisation in rproc_alloc()
-Date: Wed, 15 Apr 2020 14:48:52 -0600
-Message-Id: <20200415204858.2448-2-mathieu.poirier@linaro.org>
-In-Reply-To: <20200415204858.2448-1-mathieu.poirier@linaro.org>
-References: <20200415204858.2448-1-mathieu.poirier@linaro.org>
+Return-Path: <michals@xilinx.com>
+Return-Path: michal.simek@xilinx.com
+Subject: Re: [PATCH v3 0/5] remoteproc: Add zynqmp_r5 driver
+References: <1587421629-914-1-git-send-email-ben.levinsky@xilinx.com>
+From: Michal Simek <michal.simek@xilinx.com>
+Message-ID: <85e3cc84-47b7-dc33-0c6a-64638315ab26@xilinx.com>
+Date: Tue, 21 Apr 2020 07:57:25 +0200
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To: bjorn.andersson@linaro.org, ohad@wizery.com
-Cc: s-anna@ti.com, elder@linaro.org, Markus.Elfring@web.de, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <1587421629-914-1-git-send-email-ben.levinsky@xilinx.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+To: Ben Levinsky <ben.levinsky@xilinx.com>, ohad@wizery.com, bjorn.andersson@linaro.org, michal.simek@xilinx.com, jollys@xilinx.com, rajan.vaja@xilinx.com, robh+dt@kernel.org, mark.rutland@arm.com
+Cc: linux-remoteproc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-From: Alex Elder <elder@linaro.org>
+On 21. 04. 20 0:27, Ben Levinsky wrote:
+> There are Cortex-R5 processors on Xilinx ZynqMP UltraScale+
+> MPSoC.
+> This patch is to add an Xilinx ZynqMP R5 remoteproc driver to
+> enable Linux kernel to bringup R5, and enable communication
+> between Linux kernel and R5.
+> 
+> There are Cortex-R5 processors on the Xilinx ZynqMP UltraScale+ MPSoC.
+> This patch adds a Xilinx ZynqMP R5 remoteproc driver to enable the
+> Linux kernel to bring up the R5s, and to enable communication
+> between the Linux kernel and R5s.
+> 
 
-If ida_simple_get() returns an error when called in rproc_alloc(),
-put_device() is called to clean things up.  By this time the rproc
-device type has been assigned, with rproc_type_release() as the
-release function.
+This is based on any code which is not upstream. It means you need to
+say what it is your base here.
 
-The first thing rproc_type_release() does is call:
-    idr_destroy(&rproc->notifyids);
-
-But at the time the ida_simple_get() call is made, the notifyids
-field in the remoteproc structure has not been initialized.
-
-I'm not actually sure this case causes an observable problem, but
-it's incorrect.  Fix this by initializing the notifyids field before
-calling ida_simple_get() in rproc_alloc().
-
-Fixes: b5ab5e24e960 ("remoteproc: maintain a generic child device for each rproc")
-Signed-off-by: Alex Elder <elder@linaro.org>
-Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
----
- drivers/remoteproc/remoteproc_core.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index e12a54e67588..80056513ae71 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -2053,6 +2053,7 @@ struct rproc *rproc_alloc(struct device *dev, const char *name,
- 	rproc->dev.type = &rproc_type;
- 	rproc->dev.class = &rproc_class;
- 	rproc->dev.driver_data = rproc;
-+	idr_init(&rproc->notifyids);
- 
- 	/* Assign a unique device index and name */
- 	rproc->index = ida_simple_get(&rproc_dev_index, 0, 0, GFP_KERNEL);
-@@ -2078,8 +2079,6 @@ struct rproc *rproc_alloc(struct device *dev, const char *name,
- 
- 	mutex_init(&rproc->lock);
- 
--	idr_init(&rproc->notifyids);
--
- 	INIT_LIST_HEAD(&rproc->carveouts);
- 	INIT_LIST_HEAD(&rproc->mappings);
- 	INIT_LIST_HEAD(&rproc->traces);
--- 
-2.20.1
+Thanks,
+Michal
