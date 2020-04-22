@@ -2,201 +2,206 @@ Return-Path: <SRS0=pQ+L=6G=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B77ADC55185
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 22 Apr 2020 21:29:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09D50C54FCB
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 22 Apr 2020 22:49:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8C36920781
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 22 Apr 2020 21:29:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D892D2071C
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 22 Apr 2020 22:49:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Wgc1ULdG"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="W1EAICsv"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726189AbgDVV3b (ORCPT
+        id S1726056AbgDVWtP (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 22 Apr 2020 17:29:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54554 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726112AbgDVV3a (ORCPT
+        Wed, 22 Apr 2020 18:49:15 -0400
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:33276 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725779AbgDVWtP (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 22 Apr 2020 17:29:30 -0400
-Received: from mail-pg1-x542.google.com (mail-pg1-x542.google.com [IPv6:2607:f8b0:4864:20::542])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CD280C03C1A9
-        for <linux-remoteproc@vger.kernel.org>; Wed, 22 Apr 2020 14:29:30 -0700 (PDT)
-Received: by mail-pg1-x542.google.com with SMTP id j7so1735441pgj.13
-        for <linux-remoteproc@vger.kernel.org>; Wed, 22 Apr 2020 14:29:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=syYiAj+wu7MnicwmENUYjrI6RIjCwou9F8AP2RkW6sI=;
-        b=Wgc1ULdGKCEG/P7efZhcdY9Q/saIgpoMtqm85n2Sd21Cx8PU0x4BnlTMU+0U5ZmYzV
-         k94tla2zlZeoOiu9PpkpNQXiIwPymBrt5EHthb4Azg1sBVjYhocT+SosAbWqRODxHZQb
-         N0ATL48NYm1m5TAIOi+4wJ/sQ8i6dZQLHKa6gWeb189fcItgftM6GoByWHbCho52DNGD
-         /mKdiCog6jyIRNaTxETPxi8HDjKZyAMy527TqAI81NB71QFQ9J5e0DiRvr5T1XLbGvEp
-         QaqB494lMq5rEwvCb7z2UIlm5A1xQ7Yspbw7w0BQYg1cCheZPJg5hOjRnuNq4+4q1SFe
-         DOJA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=syYiAj+wu7MnicwmENUYjrI6RIjCwou9F8AP2RkW6sI=;
-        b=Ap+A2ITkRy9Xa4CI8JN3HfFgahmGl9nTXL9jFUrCGpiW1zNoaXCCM/GJlpxRUTdZi3
-         goLBWhT+V/gDW8YlxAyxwz96Sz8xY0PzRzU0w2UUPR/CwWsu2JaWQXn3R05UUTh5Q5+w
-         23xGZROXFtk9TzkeL9hnefhfBD9XMcGq/eo5XnE+8MlMP91vKjudrEMUdffPLBCkHXNN
-         j4Eck3XEH/92rv6mCrgOnCToDdIjOrI3BgYwNtMPB2tYfLX0A9wDywdT5c4sg518vRDs
-         fu1VYzMEho++Hk0Wg6qPoUR7YfC4W6RnARNg/izVZ0zpLC6ulIh5j9p4a3TU+WycRbgZ
-         d6EA==
-X-Gm-Message-State: AGi0Puas3NGGV/xJHM46Uek5WgOEtxLBkkjTL3kP01c6be37cQ/Ao+ZN
-        ICaRiHaxbK7vzGrtq76Ftgw4fA==
-X-Google-Smtp-Source: APiQypIU9cmsi3iVhb56UOiiPeEjoOyPWssj+fjMlgm4ECq8CTV3GLwivoKnvHhy9pX+DcH/pfIUTw==
-X-Received: by 2002:a63:e63:: with SMTP id 35mr1018854pgo.330.1587590970218;
-        Wed, 22 Apr 2020 14:29:30 -0700 (PDT)
-Received: from xps15 (S0106002369de4dac.cg.shawcable.net. [68.147.8.254])
-        by smtp.gmail.com with ESMTPSA id c15sm424951pfo.188.2020.04.22.14.29.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Apr 2020 14:29:29 -0700 (PDT)
-Date:   Wed, 22 Apr 2020 15:29:27 -0600
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-To:     Suman Anna <s-anna@ti.com>
-Cc:     Loic PALLARDY <loic.pallardy@st.com>,
-        "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>,
-        "ohad@wizery.com" <ohad@wizery.com>,
-        "peng.fan@nxp.com" <peng.fan@nxp.com>,
-        Arnaud POULIQUEN <arnaud.pouliquen@st.com>,
-        Fabien DESSENNE <fabien.dessenne@st.com>,
-        "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>
-Subject: Re: [PATCH v2 15/17] remoteproc: Correctly deal with MCU
- synchronisation when changing FW image
-Message-ID: <20200422212927.GA20503@xps15>
-References: <20200324214603.14979-1-mathieu.poirier@linaro.org>
- <20200324214603.14979-16-mathieu.poirier@linaro.org>
- <91d38ff6a39f4e07838d1e85c392eb8f@SFHDAG7NODE2.st.com>
- <20200330232139.GF31331@xps15>
- <f08ca2c3-d2de-2b3c-4134-950ef0107029@ti.com>
+        Wed, 22 Apr 2020 18:49:15 -0400
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 03MMmoTS102812;
+        Wed, 22 Apr 2020 17:48:50 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1587595730;
+        bh=jsrBvyKjoBsK7Qmp/aFfEnqPrRNBCyW5gwbg2tXfVtw=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=W1EAICsvSyxyQObunoinLfIA3bqsed6uzNJ0heuA2Qy/rNtJUNbVN2fp/VOgz2Vag
+         tpaVjNepeJ8cvBBife5/tLswhLfzeRqqhBmEMNChsOzzPz6EnPgdVuK8NsdP+a20FC
+         LL7s26/UnBkUgdIkgI5cC4RGc5BjJ6BL+KNPkgX0=
+Received: from DFLE104.ent.ti.com (dfle104.ent.ti.com [10.64.6.25])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id 03MMmoQx040209;
+        Wed, 22 Apr 2020 17:48:50 -0500
+Received: from DFLE100.ent.ti.com (10.64.6.21) by DFLE104.ent.ti.com
+ (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Wed, 22
+ Apr 2020 17:48:50 -0500
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE100.ent.ti.com
+ (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3 via
+ Frontend Transport; Wed, 22 Apr 2020 17:48:50 -0500
+Received: from [10.250.70.56] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 03MMmn2S080922;
+        Wed, 22 Apr 2020 17:48:49 -0500
+Subject: Re: [PATCH v3] remoteproc: remove rproc_elf32_sanity_check
+To:     Clement Leger <cleger@kalray.eu>, Ohad Ben-Cohen <ohad@wizery.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Patrice Chotard <patrice.chotard@st.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>
+CC:     <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>
+References: <20200422093017.10985-1-cleger@kalray.eu>
+From:   Suman Anna <s-anna@ti.com>
+Message-ID: <be2f9a6f-1588-832b-9fae-21629e6241e6@ti.com>
+Date:   Wed, 22 Apr 2020 17:48:49 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f08ca2c3-d2de-2b3c-4134-950ef0107029@ti.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20200422093017.10985-1-cleger@kalray.eu>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
-Message-ID: <20200422212927.qHUokZVC3VXUAXUXCYb1pvujRihq3l4y5hgdkpBHWxc@z>
+Message-ID: <20200422224849.TSL0ZKIn27rnxbcSG7t5oO1sYLta7wguhkC1E5zygKM@z>
 
-Hi Suman,
+On 4/22/20 4:30 AM, Clement Leger wrote:
+> Since checks are present in the remoteproc elf loader before calling
+> da_to_va, loading a elf64 will work on 32bits flavors of kernel.
+> Indeed, if a segment size is larger than what size_t can hold, the
+> loader will return an error so the functionality is equivalent to
+> what exists today.
+> 
+> Signed-off-by: Clement Leger <cleger@kalray.eu>
 
-On Tue, Mar 31, 2020 at 05:14:18PM -0500, Suman Anna wrote:
-> Hi Mathieu,
-> 
-> On 3/30/20 6:21 PM, Mathieu Poirier wrote:
-> > On Fri, Mar 27, 2020 at 01:50:18PM +0000, Loic PALLARDY wrote:
-> >>
-> >>> This patch prevents the firmware image from being displayed or changed
-> >>> when
-> >>> the remoteproc core is synchronising with an MCU. This is needed since
-> >>> there is no guarantee about the nature of the firmware image that is loaded
-> >>> by the external entity.
-> >>>
-> >>> Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-> >>> ---
-> >>>  drivers/remoteproc/remoteproc_sysfs.c | 25
-> >>> ++++++++++++++++++++++++-
-> >>>  1 file changed, 24 insertions(+), 1 deletion(-)
-> >>>
-> >>> diff --git a/drivers/remoteproc/remoteproc_sysfs.c
-> >>> b/drivers/remoteproc/remoteproc_sysfs.c
-> >>> index 7f8536b73295..4956577ad4b4 100644
-> >>> --- a/drivers/remoteproc/remoteproc_sysfs.c
-> >>> +++ b/drivers/remoteproc/remoteproc_sysfs.c
-> >>> @@ -13,9 +13,20 @@
-> >>>  static ssize_t firmware_show(struct device *dev, struct device_attribute
-> >>> *attr,
-> >>>  			  char *buf)
-> >>>  {
-> >>> +	ssize_t ret;
-> >>>  	struct rproc *rproc = to_rproc(dev);
-> >>>
-> >>> -	return sprintf(buf, "%s\n", rproc->firmware);
-> >>> +	/*
-> >>> +	 * In most instances there is no guarantee about the firmware
-> >>> +	 * that was loaded by the external entity.  As such simply don't
-> >>> +	 * print anything.
-> >>> +	 */
-> >>> +	if (rproc_sync_with_mcu(rproc))
-> >>> +		ret = sprintf(buf, "\n");
-> >> Is it enough to provide empty name, or should we add a message to indicate that's name is unkown/undefined ?
-> >>
-> > 
-> > Don't know... It is easy to find plenty of cases in sysfs where null values are
-> > represented with a "\n", and just as many where "unknown", "undefined" or "-1"
-> > are used. I know GKH prefers the least amount of information as possible, hence
-> > going with a "\n".
-> > 
-> > Again, no strong opinion...
-> > 
-> >> Regards,
-> >> Loic
-> >>> +	else
-> >>> +		ret = sprintf(buf, "%s\n", rproc->firmware);
-> >>> +
-> >>> +	return ret;
-> >>>  }
-> >>>
-> >>>  /* Change firmware name via sysfs */
-> >>> @@ -33,6 +44,18 @@ static ssize_t firmware_store(struct device *dev,
-> >>>  		return -EINVAL;
-> >>>  	}
-> >>>
-> >>> +	/*
-> >>> +	 * There is no point in trying to change the firmware if the MCU
-> >>> +	 * is currently running or if loading of the image is done by
-> >>> +	 * another entity.
-> >>> +	 */
-> >>> +	if (rproc_sync_with_mcu(rproc)) {
-> >>> +		dev_err(dev,
-> >>> +			"can't change firmware while synchronising with
-> >>> MCU\n");
-> >>> +		err = -EBUSY;
-> >>> +		goto out;
-> >>> +	}
-> >>> +
-> 
-> So, I have done a patch sometime back to deny sysfs operations [1] (the
-> primary usecase is for a rproc-client driver driven boot where auto-boot
-> is not set) which is still a need for me. Do you see that as orthogonal
-> to that, or can we leverage that here somehow. I cannot use the sync_
-> conditions for my cases since they are not already booted before.
+Acked-by: Suman Anna <s-anna@ti.com>
 
-No matter how much I try to fit the functionality provided by the
-"deny_sysfs_ops" flag in the patch you pointed out, I just can't come up with
-something I am happy with.
+With this patch, I can drop the specific assignment in my 64-bit C71 DSP 
+remoteproc driver.
 
-The only thing the topics of remote processor synchronisation and kernel
-initiated remote processor boot have in common is preventing sysfs access under
-specific circumstances.  As such it is probably best to keep their implemenation
-seperated for the time being.
+regards
+Suman
 
-Thanks,
-Mathieu
+> ---
+> Changes from v2 -> v3:
+>   - Rebase on rproc-next branch
+> 
+> Changes from v1 -> v2:
+>   - Remove possibity to override sanity_check operation
+> 
+>   drivers/remoteproc/remoteproc_core.c       |  3 +--
+>   drivers/remoteproc/remoteproc_elf_loader.c | 21 ---------------------
+>   drivers/remoteproc/remoteproc_internal.h   |  1 -
+>   drivers/remoteproc/st_remoteproc.c         |  2 +-
+>   drivers/remoteproc/st_slim_rproc.c         |  2 +-
+>   drivers/remoteproc/stm32_rproc.c           |  2 +-
+>   6 files changed, 4 insertions(+), 27 deletions(-)
+> 
+> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+> index 448262470fc7..206363723071 100644
+> --- a/drivers/remoteproc/remoteproc_core.c
+> +++ b/drivers/remoteproc/remoteproc_core.c
+> @@ -2069,8 +2069,7 @@ static int rproc_alloc_ops(struct rproc *rproc, const struct rproc_ops *ops)
+>   	rproc->ops->load = rproc_elf_load_segments;
+>   	rproc->ops->parse_fw = rproc_elf_load_rsc_table;
+>   	rproc->ops->find_loaded_rsc_table = rproc_elf_find_loaded_rsc_table;
+> -	if (!rproc->ops->sanity_check)
+> -		rproc->ops->sanity_check = rproc_elf32_sanity_check;
+> +	rproc->ops->sanity_check = rproc_elf_sanity_check;
+>   	rproc->ops->get_boot_addr = rproc_elf_get_boot_addr;
+>   
+>   	return 0;
+> diff --git a/drivers/remoteproc/remoteproc_elf_loader.c b/drivers/remoteproc/remoteproc_elf_loader.c
+> index 4869fb7d8fe4..df68d87752e4 100644
+> --- a/drivers/remoteproc/remoteproc_elf_loader.c
+> +++ b/drivers/remoteproc/remoteproc_elf_loader.c
+> @@ -112,27 +112,6 @@ int rproc_elf_sanity_check(struct rproc *rproc, const struct firmware *fw)
+>   }
+>   EXPORT_SYMBOL(rproc_elf_sanity_check);
+>   
+> -/**
+> - * rproc_elf_sanity_check() - Sanity Check ELF32 firmware image
+> - * @rproc: the remote processor handle
+> - * @fw: the ELF32 firmware image
+> - *
+> - * Make sure this fw image is sane.
+> - */
+> -int rproc_elf32_sanity_check(struct rproc *rproc, const struct firmware *fw)
+> -{
+> -	int ret = rproc_elf_sanity_check(rproc, fw);
+> -
+> -	if (ret)
+> -		return ret;
+> -
+> -	if (fw_elf_get_class(fw) == ELFCLASS32)
+> -		return 0;
+> -
+> -	return -EINVAL;
+> -}
+> -EXPORT_SYMBOL(rproc_elf32_sanity_check);
+> -
+>   /**
+>    * rproc_elf_get_boot_addr() - Get rproc's boot address.
+>    * @rproc: the remote processor handle
+> diff --git a/drivers/remoteproc/remoteproc_internal.h b/drivers/remoteproc/remoteproc_internal.h
+> index b389dc79da81..31994715fd43 100644
+> --- a/drivers/remoteproc/remoteproc_internal.h
+> +++ b/drivers/remoteproc/remoteproc_internal.h
+> @@ -54,7 +54,6 @@ void *rproc_da_to_va(struct rproc *rproc, u64 da, size_t len);
+>   phys_addr_t rproc_va_to_pa(void *cpu_addr);
+>   int rproc_trigger_recovery(struct rproc *rproc);
+>   
+> -int rproc_elf32_sanity_check(struct rproc *rproc, const struct firmware *fw);
+>   int rproc_elf_sanity_check(struct rproc *rproc, const struct firmware *fw);
+>   u64 rproc_elf_get_boot_addr(struct rproc *rproc, const struct firmware *fw);
+>   int rproc_elf_load_segments(struct rproc *rproc, const struct firmware *fw);
+> diff --git a/drivers/remoteproc/st_remoteproc.c b/drivers/remoteproc/st_remoteproc.c
+> index a6cbfa452764..a3268d95a50e 100644
+> --- a/drivers/remoteproc/st_remoteproc.c
+> +++ b/drivers/remoteproc/st_remoteproc.c
+> @@ -233,7 +233,7 @@ static const struct rproc_ops st_rproc_ops = {
+>   	.parse_fw		= st_rproc_parse_fw,
+>   	.load			= rproc_elf_load_segments,
+>   	.find_loaded_rsc_table	= rproc_elf_find_loaded_rsc_table,
+> -	.sanity_check		= rproc_elf32_sanity_check,
+> +	.sanity_check		= rproc_elf_sanity_check,
+>   	.get_boot_addr		= rproc_elf_get_boot_addr,
+>   };
+>   
+> diff --git a/drivers/remoteproc/st_slim_rproc.c b/drivers/remoteproc/st_slim_rproc.c
+> index 3cca8b65a8db..09bcb4d8b9e0 100644
+> --- a/drivers/remoteproc/st_slim_rproc.c
+> +++ b/drivers/remoteproc/st_slim_rproc.c
+> @@ -203,7 +203,7 @@ static const struct rproc_ops slim_rproc_ops = {
+>   	.da_to_va       = slim_rproc_da_to_va,
+>   	.get_boot_addr	= rproc_elf_get_boot_addr,
+>   	.load		= rproc_elf_load_segments,
+> -	.sanity_check	= rproc_elf32_sanity_check,
+> +	.sanity_check	= rproc_elf_sanity_check,
+>   };
+>   
+>   /**
+> diff --git a/drivers/remoteproc/stm32_rproc.c b/drivers/remoteproc/stm32_rproc.c
+> index 0f9d02ca4f5a..f45b8d597da0 100644
+> --- a/drivers/remoteproc/stm32_rproc.c
+> +++ b/drivers/remoteproc/stm32_rproc.c
+> @@ -505,7 +505,7 @@ static struct rproc_ops st_rproc_ops = {
+>   	.load		= rproc_elf_load_segments,
+>   	.parse_fw	= stm32_rproc_parse_fw,
+>   	.find_loaded_rsc_table = rproc_elf_find_loaded_rsc_table,
+> -	.sanity_check	= rproc_elf32_sanity_check,
+> +	.sanity_check	= rproc_elf_sanity_check,
+>   	.get_boot_addr	= rproc_elf_get_boot_addr,
+>   };
+>   
+> 
 
-> 
-> Also, any reason why you want to do this check before the rproc->state
-> unlike the logic around the 'state' file in the next patch?
-> 
-> [1] https://patchwork.kernel.org/patch/10601325/
-> 
-> regards
-> Suman
-> 
-> >>>  	if (rproc->state != RPROC_OFFLINE) {
-> >>>  		dev_err(dev, "can't change firmware while running\n");
-> >>>  		err = -EBUSY;
-> >>> --
-> >>> 2.20.1
-> >>
-> 
