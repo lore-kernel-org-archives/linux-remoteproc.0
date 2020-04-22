@@ -1,137 +1,42 @@
-Return-Path: <s-anna@ti.com>
-From: Suman Anna <s-anna@ti.com>
-Subject: [PATCH 1/2] remoteproc: Add prepare and unprepare ops
-Date: Thu, 16 Apr 2020 19:20:35 -0500
-Message-ID: <20200417002036.24359-2-s-anna@ti.com>
-In-Reply-To: <20200417002036.24359-1-s-anna@ti.com>
-References: <20200417002036.24359-1-s-anna@ti.com>
+Date: Wed, 22 Apr 2020 16:08:37 -0700
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: [GIT PULL] remoteproc fixes for v5.7
+Message-ID: <20200422230833.GA2112870@builder.lan>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-To: Bjorn Andersson <bjorn.andersson@linaro.org>, Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: linux-remoteproc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Loic Pallardy <loic.pallardy@st.com>, Suman Anna <s-anna@ti.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Alex Elder <elder@linaro.org>, Arnd Bergmann <arnd@arndb.de>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-From: Loic Pallardy <loic.pallardy@st.com>
+The following changes since commit 8f3d9f354286745c751374f5f1fcafee6b3f3136:
 
-On some SoC architecture, it is needed to enable HW like
-clock, bus, regulator, memory region... before loading
-co-processor firmware.
+  Linux 5.7-rc1 (2020-04-12 12:35:55 -0700)
 
-This patch introduces prepare and unprepare ops to execute
-platform specific function before firmware loading and after
-stop execution.
+are available in the Git repository at:
 
-Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
-Signed-off-by: Suman Anna <s-anna@ti.com>
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
----
-v1:
- - Make the direct ops into inline helper functions in line
-   with the comments on the MCU sync series (v1 comments).
-   No change in functionality.
- - Picked up the Reviewed-by tags
-v0: https://patchwork.kernel.org/patch/11456383/
+  https://git.kernel.org/pub/scm/linux/kernel/git/andersson/remoteproc.git tags/rproc-v5.7-fixes
 
- drivers/remoteproc/remoteproc_core.c     | 15 ++++++++++++++-
- drivers/remoteproc/remoteproc_internal.h | 16 ++++++++++++++++
- include/linux/remoteproc.h               |  4 ++++
- 3 files changed, 34 insertions(+), 1 deletion(-)
+for you to fetch changes up to c2781e4d9bc6d925dfc1ff833dfdaf12b69679de:
 
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index d681eeb962b6..e38f627059ac 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -1394,12 +1394,19 @@ static int rproc_fw_boot(struct rproc *rproc, const struct firmware *fw)
- 		return ret;
- 	}
- 
-+	/* Prepare rproc for firmware loading if needed */
-+	ret = rproc_prepare_device(rproc);
-+	if (ret) {
-+		dev_err(dev, "can't prepare rproc %s: %d\n", rproc->name, ret);
-+		goto disable_iommu;
-+	}
-+
- 	rproc->bootaddr = rproc_get_boot_addr(rproc, fw);
- 
- 	/* Load resource table, core dump segment list etc from the firmware */
- 	ret = rproc_parse_fw(rproc, fw);
- 	if (ret)
--		goto disable_iommu;
-+		goto unprepare_rproc;
- 
- 	/* reset max_notifyid */
- 	rproc->max_notifyid = -1;
-@@ -1433,6 +1440,9 @@ static int rproc_fw_boot(struct rproc *rproc, const struct firmware *fw)
- 	kfree(rproc->cached_table);
- 	rproc->cached_table = NULL;
- 	rproc->table_ptr = NULL;
-+unprepare_rproc:
-+	/* release HW resources if needed */
-+	rproc_unprepare_device(rproc);
- disable_iommu:
- 	rproc_disable_iommu(rproc);
- 	return ret;
-@@ -1838,6 +1848,9 @@ void rproc_shutdown(struct rproc *rproc)
- 	/* clean up all acquired resources */
- 	rproc_resource_cleanup(rproc);
- 
-+	/* release HW resources if needed */
-+	rproc_unprepare_device(rproc);
-+
- 	rproc_disable_iommu(rproc);
- 
- 	/* Free the copy of the resource table */
-diff --git a/drivers/remoteproc/remoteproc_internal.h b/drivers/remoteproc/remoteproc_internal.h
-index b389dc79da81..101e6be8d240 100644
---- a/drivers/remoteproc/remoteproc_internal.h
-+++ b/drivers/remoteproc/remoteproc_internal.h
-@@ -64,6 +64,22 @@ struct resource_table *rproc_elf_find_loaded_rsc_table(struct rproc *rproc,
- struct rproc_mem_entry *
- rproc_find_carveout_by_name(struct rproc *rproc, const char *name, ...);
- 
-+static inline int rproc_prepare_device(struct rproc *rproc)
-+{
-+	if (rproc->ops->prepare)
-+		return rproc->ops->prepare(rproc);
-+
-+	return 0;
-+}
-+
-+static inline int rproc_unprepare_device(struct rproc *rproc)
-+{
-+	if (rproc->ops->unprepare)
-+		return rproc->ops->unprepare(rproc);
-+
-+	return 0;
-+}
-+
- static inline
- int rproc_fw_sanity_check(struct rproc *rproc, const struct firmware *fw)
- {
-diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-index 38607107b7cb..b8481ac969f1 100644
---- a/include/linux/remoteproc.h
-+++ b/include/linux/remoteproc.h
-@@ -355,6 +355,8 @@ enum rsc_handling_status {
- 
- /**
-  * struct rproc_ops - platform-specific device handlers
-+ * @prepare:	prepare device for code loading
-+ * @unprepare:	unprepare device after stop
-  * @start:	power on the device and boot it
-  * @stop:	power off the device
-  * @kick:	kick a virtqueue (virtqueue id given as a parameter)
-@@ -373,6 +375,8 @@ enum rsc_handling_status {
-  *		panic at least the returned number of milliseconds
-  */
- struct rproc_ops {
-+	int (*prepare)(struct rproc *rproc);
-+	int (*unprepare)(struct rproc *rproc);
- 	int (*start)(struct rproc *rproc);
- 	int (*stop)(struct rproc *rproc);
- 	void (*kick)(struct rproc *rproc, int vqid);
--- 
-2.26.0
+  remoteproc: mtk_scp: use dma_addr_t for DMA API (2020-04-16 15:53:15 -0700)
+
+----------------------------------------------------------------
+remoteproc fixes for v5.7
+
+This fixes a regression in the probe error path of the Qualcomm modem
+remoteproc driver and a mix up of phy_addr_t and dma_addr_t in the
+Mediatek SCP control driver.
+
+----------------------------------------------------------------
+Alex Elder (2):
+      remoteproc: qcom_q6v5_mss: fix a bug in q6v5_probe()
+      remoteproc: qcom_q6v5_mss: fix q6v5_probe() error paths
+
+Arnd Bergmann (1):
+      remoteproc: mtk_scp: use dma_addr_t for DMA API
+
+ drivers/remoteproc/mtk_common.h    |  2 +-
+ drivers/remoteproc/mtk_scp.c       |  6 +++---
+ drivers/remoteproc/qcom_q6v5_mss.c | 33 ++++++++++++++++++++-------------
+ 3 files changed, 24 insertions(+), 17 deletions(-)
