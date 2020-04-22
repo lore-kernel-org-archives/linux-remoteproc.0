@@ -2,205 +2,107 @@ Return-Path: <SRS0=pQ+L=6G=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7D11C54FCB
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 22 Apr 2020 22:56:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FC50C55185
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 22 Apr 2020 23:08:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BFBB320724
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 22 Apr 2020 22:56:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 35E5E2076E
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 22 Apr 2020 23:08:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="rSaOQp9o"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gv89tcQP"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725846AbgDVW4v (ORCPT
+        id S1725968AbgDVXIK (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 22 Apr 2020 18:56:51 -0400
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:40786 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725839AbgDVW4v (ORCPT
+        Wed, 22 Apr 2020 19:08:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41676 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725839AbgDVXIJ (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 22 Apr 2020 18:56:51 -0400
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 03MMugWh025203;
-        Wed, 22 Apr 2020 17:56:42 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1587596202;
-        bh=KCkHU5OdRMwx9gM/UQCU65+MU5AihdIwIiSvQznQ9ck=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=rSaOQp9ovVvQ66i6x26RZfoDsF9Vr3nRMGtJHlLpIlZs3IaA0hGXb+3WYHSX7F2+O
-         vRZ7yhiX/orIj/nkQaR6MQKRux0ugKHIocf6Kg0HFvqi+MDeuLuB3AhWHORQDncD/k
-         MCq/HRZLK94w2fZF5XaFpKTwvK8zovZtRqveiQXE=
-Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 03MMug5e011612
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 22 Apr 2020 17:56:42 -0500
-Received: from DLEE103.ent.ti.com (157.170.170.33) by DLEE108.ent.ti.com
- (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3; Wed, 22
- Apr 2020 17:56:42 -0500
-Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE103.ent.ti.com
- (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3 via
- Frontend Transport; Wed, 22 Apr 2020 17:56:42 -0500
-Received: from [10.250.70.56] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id 03MMug3p085914;
-        Wed, 22 Apr 2020 17:56:42 -0500
-Subject: Re: [PATCH v2 15/17] remoteproc: Correctly deal with MCU
- synchronisation when changing FW image
-To:     Mathieu Poirier <mathieu.poirier@linaro.org>
-CC:     Loic PALLARDY <loic.pallardy@st.com>,
-        "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>,
-        "ohad@wizery.com" <ohad@wizery.com>,
-        "peng.fan@nxp.com" <peng.fan@nxp.com>,
-        Arnaud POULIQUEN <arnaud.pouliquen@st.com>,
-        Fabien DESSENNE <fabien.dessenne@st.com>,
-        "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>
-References: <20200324214603.14979-1-mathieu.poirier@linaro.org>
- <20200324214603.14979-16-mathieu.poirier@linaro.org>
- <91d38ff6a39f4e07838d1e85c392eb8f@SFHDAG7NODE2.st.com>
- <20200330232139.GF31331@xps15> <f08ca2c3-d2de-2b3c-4134-950ef0107029@ti.com>
- <20200422212927.GA20503@xps15>
-From:   Suman Anna <s-anna@ti.com>
-Message-ID: <88967ac7-a7bf-a63c-d20b-e8efef69685f@ti.com>
-Date:   Wed, 22 Apr 2020 17:56:42 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+        Wed, 22 Apr 2020 19:08:09 -0400
+Received: from mail-pj1-x1042.google.com (mail-pj1-x1042.google.com [IPv6:2607:f8b0:4864:20::1042])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 43885C03C1AA
+        for <linux-remoteproc@vger.kernel.org>; Wed, 22 Apr 2020 16:08:08 -0700 (PDT)
+Received: by mail-pj1-x1042.google.com with SMTP id np7so1649303pjb.1
+        for <linux-remoteproc@vger.kernel.org>; Wed, 22 Apr 2020 16:08:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
+        bh=ArROpAk6/OFm/ez5Uo9l28XbbULD17tF98w60ra2Vi8=;
+        b=gv89tcQPRXlNJNGrQiV+m2G9DKOjCc262kmlFxBszHuzeoiWhdWG4OCqmk/sedBKcg
+         JTzVVOWZbOaY8bT/G6OnfXSvcLYKs5A3bSrZ/AdqRQVLB/LOnnBIMWr8lFLF4T6+Xtn8
+         RxSEPKqBtxIHv8OLiqZ4JGP93yBKqwHslN7EUMUL9ee1a3ouosAeGCBYGi+t13BqJUaW
+         Si7dSAssE4mf94jaXp1Pe30gfv3zqOYXQOOlRd3DwPdS41y6/FfEyEaJWMA2Mih253m8
+         yR0JNTQN+r7PazhMj+GKXwXKXTrC5pG68j/Oqd7B4Ka2PxD5eDDoBDJ7MffPGVvK1nNf
+         THug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition;
+        bh=ArROpAk6/OFm/ez5Uo9l28XbbULD17tF98w60ra2Vi8=;
+        b=EABrljoaNcu5AbL9nCyFwdmk+0rsw9j4Z71ug78w7uQo1jIVzb8ep7KLmLgDq8W5SV
+         btTaMeDVgiZkYoGny+0D+f0k65c1/7VHFuj8O7Veq21o+jVH9HPVD5nYt3Bz0gjCdse4
+         l1bq6auKoDN+GGhWhgkLsOjIzejtdYRNs83iGjFlVF6MOVoDbn8s6NDaKJpd55c8gEZ8
+         v/WU+PB1dUWDpuENMhiC46ogbNhmHu54sVlcJ5Axz1wfT7ue2v7ojOyJTXKMjvhOGgOA
+         sb1xkOHRXjSYwmmcwT0v8Yum0mi9hPrzyeWtLHS8Ef7Lmsf7ZVbAT8nu4MUcU1nHZdTu
+         mcKw==
+X-Gm-Message-State: AGi0PubmJILy0ohf/ZX8Jsu1+pufZq/nfyFpviAjKHJ7RPNv96PIm+NQ
+        jVPzHiiUnKedrkyeEhRDDAn1Qg==
+X-Google-Smtp-Source: APiQypKdavy8VuGj9OPbA1SloQuWUfYm9s+txwLnuKWP2L4onHGFPWc6YXuPxnjY8GMYtNzb9G3Gqw==
+X-Received: by 2002:a17:902:784c:: with SMTP id e12mr984699pln.191.1587596887624;
+        Wed, 22 Apr 2020 16:08:07 -0700 (PDT)
+Received: from builder.lan (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id p62sm554472pfb.93.2020.04.22.16.08.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 22 Apr 2020 16:08:06 -0700 (PDT)
+Date:   Wed, 22 Apr 2020 16:08:33 -0700
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Alex Elder <elder@linaro.org>,
+        Arnd Bergmann <arnd@arndb.de>
+Subject: [GIT PULL] remoteproc fixes for v5.7
+Message-ID: <20200422230833.GA2112870@builder.lan>
 MIME-Version: 1.0
-In-Reply-To: <20200422212927.GA20503@xps15>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
-Message-ID: <20200422225642.ZCao5rvcr_udpGKWq0HG9jDyGFNUkIdxmUXsXgIlzIM@z>
+Message-ID: <20200422230833.daehd7Ea9o3GUOgIWZ-idV1sOFlJgVmc-kSqtIYAm78@z>
 
-On 4/22/20 4:29 PM, Mathieu Poirier wrote:
-> Hi Suman,
-> 
-> On Tue, Mar 31, 2020 at 05:14:18PM -0500, Suman Anna wrote:
->> Hi Mathieu,
->>
->> On 3/30/20 6:21 PM, Mathieu Poirier wrote:
->>> On Fri, Mar 27, 2020 at 01:50:18PM +0000, Loic PALLARDY wrote:
->>>>
->>>>> This patch prevents the firmware image from being displayed or changed
->>>>> when
->>>>> the remoteproc core is synchronising with an MCU. This is needed since
->>>>> there is no guarantee about the nature of the firmware image that is loaded
->>>>> by the external entity.
->>>>>
->>>>> Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
->>>>> ---
->>>>>   drivers/remoteproc/remoteproc_sysfs.c | 25
->>>>> ++++++++++++++++++++++++-
->>>>>   1 file changed, 24 insertions(+), 1 deletion(-)
->>>>>
->>>>> diff --git a/drivers/remoteproc/remoteproc_sysfs.c
->>>>> b/drivers/remoteproc/remoteproc_sysfs.c
->>>>> index 7f8536b73295..4956577ad4b4 100644
->>>>> --- a/drivers/remoteproc/remoteproc_sysfs.c
->>>>> +++ b/drivers/remoteproc/remoteproc_sysfs.c
->>>>> @@ -13,9 +13,20 @@
->>>>>   static ssize_t firmware_show(struct device *dev, struct device_attribute
->>>>> *attr,
->>>>>   			  char *buf)
->>>>>   {
->>>>> +	ssize_t ret;
->>>>>   	struct rproc *rproc = to_rproc(dev);
->>>>>
->>>>> -	return sprintf(buf, "%s\n", rproc->firmware);
->>>>> +	/*
->>>>> +	 * In most instances there is no guarantee about the firmware
->>>>> +	 * that was loaded by the external entity.  As such simply don't
->>>>> +	 * print anything.
->>>>> +	 */
->>>>> +	if (rproc_sync_with_mcu(rproc))
->>>>> +		ret = sprintf(buf, "\n");
->>>> Is it enough to provide empty name, or should we add a message to indicate that's name is unkown/undefined ?
->>>>
->>>
->>> Don't know... It is easy to find plenty of cases in sysfs where null values are
->>> represented with a "\n", and just as many where "unknown", "undefined" or "-1"
->>> are used. I know GKH prefers the least amount of information as possible, hence
->>> going with a "\n".
->>>
->>> Again, no strong opinion...
->>>
->>>> Regards,
->>>> Loic
->>>>> +	else
->>>>> +		ret = sprintf(buf, "%s\n", rproc->firmware);
->>>>> +
->>>>> +	return ret;
->>>>>   }
->>>>>
->>>>>   /* Change firmware name via sysfs */
->>>>> @@ -33,6 +44,18 @@ static ssize_t firmware_store(struct device *dev,
->>>>>   		return -EINVAL;
->>>>>   	}
->>>>>
->>>>> +	/*
->>>>> +	 * There is no point in trying to change the firmware if the MCU
->>>>> +	 * is currently running or if loading of the image is done by
->>>>> +	 * another entity.
->>>>> +	 */
->>>>> +	if (rproc_sync_with_mcu(rproc)) {
->>>>> +		dev_err(dev,
->>>>> +			"can't change firmware while synchronising with
->>>>> MCU\n");
->>>>> +		err = -EBUSY;
->>>>> +		goto out;
->>>>> +	}
->>>>> +
->>
->> So, I have done a patch sometime back to deny sysfs operations [1] (the
->> primary usecase is for a rproc-client driver driven boot where auto-boot
->> is not set) which is still a need for me. Do you see that as orthogonal
->> to that, or can we leverage that here somehow. I cannot use the sync_
->> conditions for my cases since they are not already booted before.
-> 
-> No matter how much I try to fit the functionality provided by the
-> "deny_sysfs_ops" flag in the patch you pointed out, I just can't come up with
-> something I am happy with.
-> 
-> The only thing the topics of remote processor synchronisation and kernel
-> initiated remote processor boot have in common is preventing sysfs access under
-> specific circumstances. As such it is probably best to keep their implemenation
-> seperated for the time being.
+The following changes since commit 8f3d9f354286745c751374f5f1fcafee6b3f3136:
 
-Yeah, OK, we can revisit this. We already have an in-kernel user 
-wkup_m3_ipc driver that controls the boot and shutdown of the wkup_m3 
-rproc driver, which is used for SoC Power Management, and so we really 
-do not want any control from userspace for that. I will have the same 
-need for the PRU remoteproc client usage perspective as well.
+  Linux 5.7-rc1 (2020-04-12 12:35:55 -0700)
 
-regards
-Suman
+are available in the Git repository at:
 
-> 
-> Thanks,
-> Mathieu
-> 
->>
->> Also, any reason why you want to do this check before the rproc->state
->> unlike the logic around the 'state' file in the next patch?
->>
->> [1] https://patchwork.kernel.org/patch/10601325/
->>
->> regards
->> Suman
->>
->>>>>   	if (rproc->state != RPROC_OFFLINE) {
->>>>>   		dev_err(dev, "can't change firmware while running\n");
->>>>>   		err = -EBUSY;
->>>>> --
->>>>> 2.20.1
->>>>
->>
+  https://git.kernel.org/pub/scm/linux/kernel/git/andersson/remoteproc.git tags/rproc-v5.7-fixes
 
+for you to fetch changes up to c2781e4d9bc6d925dfc1ff833dfdaf12b69679de:
+
+  remoteproc: mtk_scp: use dma_addr_t for DMA API (2020-04-16 15:53:15 -0700)
+
+----------------------------------------------------------------
+remoteproc fixes for v5.7
+
+This fixes a regression in the probe error path of the Qualcomm modem
+remoteproc driver and a mix up of phy_addr_t and dma_addr_t in the
+Mediatek SCP control driver.
+
+----------------------------------------------------------------
+Alex Elder (2):
+      remoteproc: qcom_q6v5_mss: fix a bug in q6v5_probe()
+      remoteproc: qcom_q6v5_mss: fix q6v5_probe() error paths
+
+Arnd Bergmann (1):
+      remoteproc: mtk_scp: use dma_addr_t for DMA API
+
+ drivers/remoteproc/mtk_common.h    |  2 +-
+ drivers/remoteproc/mtk_scp.c       |  6 +++---
+ drivers/remoteproc/qcom_q6v5_mss.c | 33 ++++++++++++++++++++-------------
+ 3 files changed, 24 insertions(+), 17 deletions(-)
