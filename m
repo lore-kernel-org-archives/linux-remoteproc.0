@@ -2,62 +2,63 @@ Return-Path: <SRS0=Z/7o=6H=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7615FC55185
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 23 Apr 2020 00:38:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5FFAC55185
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 23 Apr 2020 00:38:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 539082076C
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 23 Apr 2020 00:38:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C0EB62076C
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 23 Apr 2020 00:38:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Bt1mUO+l"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JY/6N9og"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726008AbgDWAiI (ORCPT
+        id S1726400AbgDWAiO (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 22 Apr 2020 20:38:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55574 "EHLO
+        Wed, 22 Apr 2020 20:38:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55596 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725846AbgDWAiH (ORCPT
+        by vger.kernel.org with ESMTP id S1726386AbgDWAiN (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 22 Apr 2020 20:38:07 -0400
-Received: from mail-pj1-x1043.google.com (mail-pj1-x1043.google.com [IPv6:2607:f8b0:4864:20::1043])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6788BC03C1AA
-        for <linux-remoteproc@vger.kernel.org>; Wed, 22 Apr 2020 17:38:07 -0700 (PDT)
-Received: by mail-pj1-x1043.google.com with SMTP id 7so3013577pjo.0
-        for <linux-remoteproc@vger.kernel.org>; Wed, 22 Apr 2020 17:38:07 -0700 (PDT)
+        Wed, 22 Apr 2020 20:38:13 -0400
+Received: from mail-pl1-x642.google.com (mail-pl1-x642.google.com [IPv6:2607:f8b0:4864:20::642])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5D202C03C1AE
+        for <linux-remoteproc@vger.kernel.org>; Wed, 22 Apr 2020 17:38:10 -0700 (PDT)
+Received: by mail-pl1-x642.google.com with SMTP id ay1so1649648plb.0
+        for <linux-remoteproc@vger.kernel.org>; Wed, 22 Apr 2020 17:38:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=75TUGWxKMG+i7tFa2VqXTsbczTpvn8gAWE0prn7/ZWo=;
-        b=Bt1mUO+l/1mVfkOUUYZ/vPLooOPPe2yy40kGK8VcjvtAzsSqTHrRzK2SrxdZfESL25
-         xIhyrTUVQOpkLdo2Cy3uiDoEjf3Jbz7eT1wgoK9POxngD3LR5FziEYCRZYgW6NJY6GGw
-         5Ud1iXBI0aLIgsvXnrO9Y8T07eEsOCqRd2cY1a3kpqOc34nnZoNmeVqri1MpehT38tTX
-         mKNE+EGdlZ3oySSoIghIScraOGmz/RuK4j20yUW7xf3Ip2aDehUuteE3XSC4Z0HMKw/L
-         IAasCCd0aLdN18dqDWj0SyEPxg+qjZvTRVmlS3aDZvHSjsTdPpuJqqGZxuROsUD9Fcjx
-         wvmA==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=GDaDftx9pwi4EUSlY8qCL60KLlRRULo9j/JV/6pOzBs=;
+        b=JY/6N9ogUg3Na7E4o/Gs1J+yR3hYo68G3PI+t2xqfgW+VV3KHBxOCsiHJaNpN9idK8
+         Itw8dlcqSBGk46ICsTQ0XXZQEwB4Tq0+5ZTedUDTCgSqaVp8tFtvF08s3fz1EV/UB06G
+         7i4/xovxmrJaqOB9fHaHCkM1cn+h/8dQHC/cCIQCE5fzlDVuIPGhSJrDwE2DXyxWD5ga
+         ybvYRxC7mdUv/F2B6XpahQRZujOp/WAbgF7fTxmEWi9l4SQnhnfyG2I8v7FxX+s4Qcmr
+         rDtevFhHIl+wP1RCJJ4ddSXSg6nT99tzrB5cAgVbrcpAxZPLvvZIYStZZNlQffSAW24u
+         CTWQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=75TUGWxKMG+i7tFa2VqXTsbczTpvn8gAWE0prn7/ZWo=;
-        b=aCVCcPx8txO6LE5YBfH/V2pYb0Pos7bL2CulmTZzlVNn1Hv6UfijjVejZUzhxDFjw2
-         Xt2NxEoe/2kDPA/4i3xzfiuFt62d2HMi0DVyBAArjuj9nza7fHMNuSNM6mJ5djmnoHef
-         09QTk0UxR3vwFDgiEdZaPlRAaACOf7plwFHAD5n3ocOWOfBcaaVG67t59SaHeYoK8/YB
-         K1/gUhIj4KjCZdxsmaEJ2R1XKC/Sw7RF7CO9RE1VLxyKQB7v9td7W3QUMuLlaUXD1Pl9
-         zLZWsw74c19R96N44uOvTcQFTAroGvZmSq20tMF5PJ0k3u8+ivNoqkm2ILvCesJUQxo7
-         pqlA==
-X-Gm-Message-State: AGi0PuaK58nnnduRlhuTRv1RXHbw3eMsqBFizFIwYsgRUHpDaSeaOQV0
-        GmBqj07iqTsKe30TRYFJgMFiPg==
-X-Google-Smtp-Source: APiQypKajNV82QXE5K2iKfsEJ0r4+uN55Qcwur5XRKTlxsgeo77a7Pr94QQHDYOrM+bNQLwFdLPljQ==
-X-Received: by 2002:a17:902:b187:: with SMTP id s7mr1435976plr.0.1587602286693;
-        Wed, 22 Apr 2020 17:38:06 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=GDaDftx9pwi4EUSlY8qCL60KLlRRULo9j/JV/6pOzBs=;
+        b=ptZTIVBy0G1MJOEXwMofyD0OMDO9gaId/SvnHvCdB6hdAsvtTty+UJfRwbncrrlIRt
+         3sDcGfott90wcHvUe+5vAffX3KwxLYAiTQ0YjSKg7xmm11j8Mqz6sRpFUKfBmy+gwMYj
+         9OKXRzV5RPNk2bigQKbz9wtTGluGdjEHLhcII+riAnl6vyezGWF6IUvOSesThYXIWk0t
+         xmyETv8Sal7XvxPLQvA7d+Bqu6W69uzwJcsFH1R4DNInHRgbSbvmDchXqA6mR61BU945
+         Fi5CSDrUUNWu71FvPkBeu0JRroLgVx2me8y2zSfYBJKaEvWCyWCem0hWsaoXWycKzCNu
+         AtOw==
+X-Gm-Message-State: AGi0PuabGCZ1HFlNT5yyLzeEv4/HA7xxTDm9jY6Y4qUtWO5itesIWNTs
+        4EHZ7b0hqIhCvsofGu/8zrCOFg==
+X-Google-Smtp-Source: APiQypK74j+wjl3/96ICF/g8NdVM3oydSs/h3oqULxaq3T8Q0f62TIbNZAmkn3UyYXZIFoRYP/wGFg==
+X-Received: by 2002:a17:902:b186:: with SMTP id s6mr1405856plr.16.1587602289841;
+        Wed, 22 Apr 2020 17:38:09 -0700 (PDT)
 Received: from localhost.localdomain (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id 6sm432225pgz.0.2020.04.22.17.38.05
+        by smtp.gmail.com with ESMTPSA id 6sm432225pgz.0.2020.04.22.17.38.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Apr 2020 17:38:05 -0700 (PDT)
+        Wed, 22 Apr 2020 17:38:09 -0700 (PDT)
 From:   Bjorn Andersson <bjorn.andersson@linaro.org>
 To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
@@ -66,44 +67,132 @@ Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
         Chris Lew <clew@codeaurora.org>, Sibi <sibis@codeaurora.org>,
         Siddharth Gupta <sidgup@codeaurora.org>
-Subject: [PATCH 0/4] rpmsg: Refactor Qualcomm glink_ssr
-Date:   Wed, 22 Apr 2020 17:37:32 -0700
-Message-Id: <20200423003736.2027371-1-bjorn.andersson@linaro.org>
+Subject: [PATCH 2/4] soc: qcom: glink_ssr: Internalize ssr_notifiers
+Date:   Wed, 22 Apr 2020 17:37:34 -0700
+Message-Id: <20200423003736.2027371-3-bjorn.andersson@linaro.org>
 X-Mailer: git-send-email 2.24.0
+In-Reply-To: <20200423003736.2027371-1-bjorn.andersson@linaro.org>
+References: <20200423003736.2027371-1-bjorn.andersson@linaro.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
-Message-ID: <20200423003732.zUif0srDeJ9WX-S_rMXH1OwpIusz5EP8Bi_xhK07fJc@z>
+Message-ID: <20200423003734.Jgm1FH9rhS1l_FXaWe25jDX_XMPpoq9GZyqQZHU0HiU@z>
 
-In order to allow for wider use of the SSR notifier in remoteproc's qcom_common
-this series internalizes the notifier chain used by glink_ssr. To simplify the
-Kconfig dependencies it also moves the glink_ssr implementation to rpmsg and
-merges it with qcom_glink_native, as these do go hand in hand.
+Rather than carrying a special purpose blocking notifier for glink_ssr
+in remoteproc's qcom_common.c, move it into glink_ssr so allow wider
+reuse of the common one.
 
-Bjorn Andersson (4):
-  remoteproc: qcom: Pass ssr_name to glink subdevice
-  soc: qcom: glink_ssr: Internalize ssr_notifiers
-  rpmsg: glink: Integrate glink_ssr in qcom_glink
-  arm64: defconfig: Remove QCOM_GLINK_SSR
+The rpmsg glink header file is used in preparation for the next patch.
 
- arch/arm64/configs/defconfig                  |  1 -
- drivers/remoteproc/qcom_common.c              | 17 ++++++++++-
- drivers/remoteproc/qcom_common.h              |  5 +++-
- drivers/remoteproc/qcom_q6v5_adsp.c           |  2 +-
- drivers/remoteproc/qcom_q6v5_mss.c            |  2 +-
- drivers/remoteproc/qcom_q6v5_pas.c            |  2 +-
- drivers/rpmsg/Kconfig                         |  6 ++--
- drivers/rpmsg/Makefile                        |  3 +-
- .../glink_ssr.c => rpmsg/qcom_glink_ssr.c}    | 28 +++++++++++++------
- drivers/soc/qcom/Kconfig                      |  9 ------
- drivers/soc/qcom/Makefile                     |  1 -
- include/linux/rpmsg/qcom_glink.h              |  3 +-
- 12 files changed, 49 insertions(+), 30 deletions(-)
- rename drivers/{soc/qcom/glink_ssr.c => rpmsg/qcom_glink_ssr.c} (83%)
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+---
+ drivers/remoteproc/qcom_common.c |  8 ++++++++
+ drivers/soc/qcom/glink_ssr.c     | 24 +++++++++++++++++++-----
+ include/linux/rpmsg/qcom_glink.h |  6 ++++++
+ 3 files changed, 33 insertions(+), 5 deletions(-)
 
+diff --git a/drivers/remoteproc/qcom_common.c b/drivers/remoteproc/qcom_common.c
+index ff26f2b68752..9028cea2d81e 100644
+--- a/drivers/remoteproc/qcom_common.c
++++ b/drivers/remoteproc/qcom_common.c
+@@ -42,6 +42,13 @@ static void glink_subdev_stop(struct rproc_subdev *subdev, bool crashed)
+ 	glink->edge = NULL;
+ }
+ 
++static void glink_subdev_unprepare(struct rproc_subdev *subdev)
++{
++	struct qcom_rproc_glink *glink = to_glink_subdev(subdev);
++
++	qcom_glink_ssr_notify(glink->ssr_name);
++}
++
+ /**
+  * qcom_add_glink_subdev() - try to add a GLINK subdevice to rproc
+  * @rproc:	rproc handle to parent the subdevice
+@@ -64,6 +71,7 @@ void qcom_add_glink_subdev(struct rproc *rproc, struct qcom_rproc_glink *glink,
+ 	glink->dev = dev;
+ 	glink->subdev.start = glink_subdev_start;
+ 	glink->subdev.stop = glink_subdev_stop;
++	glink->subdev.unprepare = glink_subdev_unprepare;
+ 
+ 	rproc_add_subdev(rproc, &glink->subdev);
+ }
+diff --git a/drivers/soc/qcom/glink_ssr.c b/drivers/soc/qcom/glink_ssr.c
+index d7babe3d67bc..847d79c935f1 100644
+--- a/drivers/soc/qcom/glink_ssr.c
++++ b/drivers/soc/qcom/glink_ssr.c
+@@ -54,6 +54,19 @@ struct glink_ssr {
+ 	struct completion completion;
+ };
+ 
++/* Notifier list for all registered glink_ssr instances */
++static BLOCKING_NOTIFIER_HEAD(ssr_notifiers);
++
++/**
++ * qcom_glink_ssr_notify() - notify GLINK SSR about stopped remoteproc
++ * @ssr_name:	name of the remoteproc that has been stopped
++ */
++void qcom_glink_ssr_notify(const char *ssr_name)
++{
++	blocking_notifier_call_chain(&ssr_notifiers, 0, (void *)ssr_name);
++}
++EXPORT_SYMBOL_GPL(qcom_glink_ssr_notify);
++
+ static int qcom_glink_ssr_callback(struct rpmsg_device *rpdev,
+ 				   void *data, int len, void *priv, u32 addr)
+ {
+@@ -81,8 +94,9 @@ static int qcom_glink_ssr_callback(struct rpmsg_device *rpdev,
+ 	return 0;
+ }
+ 
+-static int qcom_glink_ssr_notify(struct notifier_block *nb, unsigned long event,
+-				 void *data)
++static int qcom_glink_ssr_notifier_call(struct notifier_block *nb,
++					unsigned long event,
++					void *data)
+ {
+ 	struct glink_ssr *ssr = container_of(nb, struct glink_ssr, nb);
+ 	struct do_cleanup_msg msg;
+@@ -121,18 +135,18 @@ static int qcom_glink_ssr_probe(struct rpmsg_device *rpdev)
+ 
+ 	ssr->dev = &rpdev->dev;
+ 	ssr->ept = rpdev->ept;
+-	ssr->nb.notifier_call = qcom_glink_ssr_notify;
++	ssr->nb.notifier_call = qcom_glink_ssr_notifier_call;
+ 
+ 	dev_set_drvdata(&rpdev->dev, ssr);
+ 
+-	return qcom_register_ssr_notifier(&ssr->nb);
++	return blocking_notifier_chain_register(&ssr_notifiers, &ssr->nb);
+ }
+ 
+ static void qcom_glink_ssr_remove(struct rpmsg_device *rpdev)
+ {
+ 	struct glink_ssr *ssr = dev_get_drvdata(&rpdev->dev);
+ 
+-	qcom_unregister_ssr_notifier(&ssr->nb);
++	blocking_notifier_chain_unregister(&ssr_notifiers, &ssr->nb);
+ }
+ 
+ static const struct rpmsg_device_id qcom_glink_ssr_match[] = {
+diff --git a/include/linux/rpmsg/qcom_glink.h b/include/linux/rpmsg/qcom_glink.h
+index 96e26d94719f..09daa0acde2c 100644
+--- a/include/linux/rpmsg/qcom_glink.h
++++ b/include/linux/rpmsg/qcom_glink.h
+@@ -26,4 +26,10 @@ static inline void qcom_glink_smem_unregister(struct qcom_glink *glink) {}
+ 
+ #endif
+ 
++#if IS_ENABLED(CONFIG_RPMSG_QCOM_GLINK_SSR)
++void qcom_glink_ssr_notify(const char *ssr_name);
++#else
++static inline void qcom_glink_ssr_notify(const char *ssr_name) {}
++#endif
++
+ #endif
 -- 
 2.24.0
 
