@@ -2,75 +2,71 @@ Return-Path: <SRS0=Z/7o=6H=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83BD2C2BA19
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 23 Apr 2020 06:40:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C06DCC54FCB
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 23 Apr 2020 16:45:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 64787208E4
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 23 Apr 2020 06:40:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9E7E820767
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 23 Apr 2020 16:45:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1587624004;
-	bh=hno9FuYuasF96baWOAzPQ+mp9xXtel/hiXPtRkOmEa8=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:List-ID:From;
-	b=pgX9dSycs9YtW7u2aHHKznl/LvjpZKWtupBMNpQNetAL3Kp4tWr4fBXkggN75CAzH
-	 eHrXiC5SVfE+64vffyLnbCRQTkRMQxG68pOW8vzXOspo7dg5DpRPCJ9P+K/9Isvlo2
-	 D52ChQAbcGBG4r4NyOHa/wC/3fweuSPrfmHXDOQ4=
+	s=default; t=1587660329;
+	bh=YrMFeTdI3wX0lbT2CAoq1eX5P4/UmlD45Rj8jf9ucro=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:List-ID:From;
+	b=luhlqpyDMsJs3qUoa39DC0pTfJ4FxtUS1kqvhXRWc+KUiqLfUDo/jCA1U2Qn1lvCk
+	 NZdFTUVzRCfp37b5KVFG4jTwMHz1qpzsDkpW6YDUjcMKJi6PmTdb/4DeruOTEm0Jbr
+	 y9+U7+A7n543OYKgQERYpYLd4lCP4cs3O/KAETv4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725562AbgDWGkE (ORCPT
+        id S1729764AbgDWQpV (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 23 Apr 2020 02:40:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44142 "EHLO mail.kernel.org"
+        Thu, 23 Apr 2020 12:45:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42364 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726346AbgDWGkD (ORCPT
+        id S1729661AbgDWQpT (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 23 Apr 2020 02:40:03 -0400
-Content-Type: text/plain; charset="utf-8"
+        Thu, 23 Apr 2020 12:45:19 -0400
+Subject: Re: [GIT PULL] remoteproc fixes for v5.7
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1587624003;
-        bh=hno9FuYuasF96baWOAzPQ+mp9xXtel/hiXPtRkOmEa8=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=uKLVad+eEJthEjE9osEOlva0dktlQwD34Mqsk11sffevzhC3VMDeF95x664Pl/wVT
-         IXEZGxcwhs1L4lJJXEPsaAu1OrozokaBLRbNhBm0SNOzBGGld2/UXEzf35z8jR3brW
-         PvYKD1x6WdzaeOknF3xtzE/87jrYYZT/+VrxNZD4=
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] remoteproc: Add missing '\n' in log messages
-From:   patchwork-bot+linux-remoteproc@kernel.org
-Message-Id: <158762400335.14545.11398415899895245807.git-patchwork-notify@kernel.org>
-Date:   Thu, 23 Apr 2020 06:40:03 +0000
-References: <20200411160750.32573-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20200411160750.32573-1-christophe.jaillet@wanadoo.fr>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     linux-remoteproc@vger.kernel.org
+        s=default; t=1587660318;
+        bh=YrMFeTdI3wX0lbT2CAoq1eX5P4/UmlD45Rj8jf9ucro=;
+        h=From:In-Reply-To:References:Date:To:Cc:From;
+        b=V5AVlCs2Wcwpe7TWeRAq/aPA1m+HUvNz8roiSNKp+fpcqtiXYAN/jhwIRBQ052eHb
+         rA8D3o2CFPbNEZbF0a9/0ZRV20bvwb91uqpcpaJJw9CPJHsO2AYth4q1mVagbTPlE6
+         +bomwueb3Z33nu5C3V9x+yNVFovpQJDvolKoYwWA=
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <20200422230833.GA2112870@builder.lan>
+References: <20200422230833.GA2112870@builder.lan>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20200422230833.GA2112870@builder.lan>
+X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/andersson/remoteproc.git
+ tags/rproc-v5.7-fixes
+X-PR-Tracked-Commit-Id: c2781e4d9bc6d925dfc1ff833dfdaf12b69679de
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 3cda77991eb75aa0066065b7f352a4349ca1a3bc
+Message-Id: <158766031890.20212.5272714956436329155.pr-tracker-bot@kernel.org>
+Date:   Thu, 23 Apr 2020 16:45:18 +0000
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Ohad Ben-Cohen <ohad@wizery.com>,
+        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Alex Elder <elder@linaro.org>, Arnd Bergmann <arnd@arndb.de>
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hello:
+The pull request you sent on Wed, 22 Apr 2020 16:08:33 -0700:
 
-This patch was applied to andersson/remoteproc.git (refs/heads/for-next).
+> https://git.kernel.org/pub/scm/linux/kernel/git/andersson/remoteproc.git tags/rproc-v5.7-fixes
 
-On Sat, 11 Apr 2020 18:07:50 +0200 you wrote:
-> Message logged by 'dev_xxx()' or 'pr_xxx()' should end with a '\n'.
-> 
-> Fixes: 791c13b709dd ("remoteproc: Fix NULL pointer dereference in rproc_virtio_notify")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
->  drivers/remoteproc/remoteproc_virtio.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/3cda77991eb75aa0066065b7f352a4349ca1a3bc
 
-
-Here is a summary with links:
-  - remoteproc: Add missing '\n' in log messages
-    https://git.kernel.org/andersson/remoteproc/c/2fb75ceaf71a4a198fc67b984aa95527c993fa1a
-
-You are awesome, thank you!
+Thank you!
 
 -- 
 Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/pwbot
+https://korg.wiki.kernel.org/userdoc/prtracker
