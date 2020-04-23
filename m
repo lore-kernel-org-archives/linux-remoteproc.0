@@ -4,47 +4,47 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E7A4C2BA19
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83BD2C2BA19
 	for <linux-remoteproc@archiver.kernel.org>; Thu, 23 Apr 2020 06:40:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2D74F208E4
+	by mail.kernel.org (Postfix) with ESMTP id 64787208E4
 	for <linux-remoteproc@archiver.kernel.org>; Thu, 23 Apr 2020 06:40:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=default; t=1587624004;
-	bh=o7lVMWLd06E++HZlhmT6O+UhQrxTj7uc2+LQ+JF8hOc=;
+	bh=hno9FuYuasF96baWOAzPQ+mp9xXtel/hiXPtRkOmEa8=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:List-ID:From;
-	b=ryqXCpCNITTqgS4jcyg2mPmdtGu1t1K2ZnFleCUdP6UuFET9DYhd7HXRUOwXuLJKU
-	 ArS7lrrwJUaD6jAxQd8BARMe45KV0AkU3mldVWUHvx1MfsMIzNv4YpNEs3mlYJzTrX
-	 QPYl2izsExuEnegTeLwdA4qJO/JjRnVb2p1W/Bzc=
+	b=pgX9dSycs9YtW7u2aHHKznl/LvjpZKWtupBMNpQNetAL3Kp4tWr4fBXkggN75CAzH
+	 eHrXiC5SVfE+64vffyLnbCRQTkRMQxG68pOW8vzXOspo7dg5DpRPCJ9P+K/9Isvlo2
+	 D52ChQAbcGBG4r4NyOHa/wC/3fweuSPrfmHXDOQ4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726358AbgDWGkE (ORCPT
+        id S1725562AbgDWGkE (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
         Thu, 23 Apr 2020 02:40:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44136 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.99]:44142 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725562AbgDWGkD (ORCPT
+        id S1726346AbgDWGkD (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
         Thu, 23 Apr 2020 02:40:03 -0400
 Content-Type: text/plain; charset="utf-8"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1587624003;
-        bh=o7lVMWLd06E++HZlhmT6O+UhQrxTj7uc2+LQ+JF8hOc=;
+        bh=hno9FuYuasF96baWOAzPQ+mp9xXtel/hiXPtRkOmEa8=;
         h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=zeo8fTpLVb2WBHyS+ImvDxt21FuC4xAzhAkftyvXO1nD3iMRIupeDlhL1MuWU0Mdf
-         FeVJsqkzz6hP2LTLXwm47gV9dQe67KNxgGputjuUsXhM6LrU45jpI+lm34P2TDU2fG
-         CEm92JbgjdeNGyrYZGCwhHXJkitBuQ/OW8WfGyeU=
+        b=uKLVad+eEJthEjE9osEOlva0dktlQwD34Mqsk11sffevzhC3VMDeF95x664Pl/wVT
+         IXEZGxcwhs1L4lJJXEPsaAu1OrozokaBLRbNhBm0SNOzBGGld2/UXEzf35z8jR3brW
+         PvYKD1x6WdzaeOknF3xtzE/87jrYYZT/+VrxNZD4=
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH v3] remoteproc: remove rproc_elf32_sanity_check
+Subject: Re: [PATCH] remoteproc: Add missing '\n' in log messages
 From:   patchwork-bot+linux-remoteproc@kernel.org
-Message-Id: <158762400317.14545.10345691965160050179.git-patchwork-notify@kernel.org>
+Message-Id: <158762400335.14545.11398415899895245807.git-patchwork-notify@kernel.org>
 Date:   Thu, 23 Apr 2020 06:40:03 +0000
-References: <20200422093017.10985-1-cleger@kalray.eu>
-In-Reply-To: <20200422093017.10985-1-cleger@kalray.eu>
-To:     Clement Leger <cleger@kalray.eu>
+References: <20200411160750.32573-1-christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20200411160750.32573-1-christophe.jaillet@wanadoo.fr>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 Cc:     linux-remoteproc@vger.kernel.org
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
@@ -55,21 +55,19 @@ Hello:
 
 This patch was applied to andersson/remoteproc.git (refs/heads/for-next).
 
-On Wed, 22 Apr 2020 11:30:17 +0200 you wrote:
-> Since checks are present in the remoteproc elf loader before calling
-> da_to_va, loading a elf64 will work on 32bits flavors of kernel.
-> Indeed, if a segment size is larger than what size_t can hold, the
-> loader will return an error so the functionality is equivalent to
-> what exists today.
+On Sat, 11 Apr 2020 18:07:50 +0200 you wrote:
+> Message logged by 'dev_xxx()' or 'pr_xxx()' should end with a '\n'.
 > 
-> Signed-off-by: Clement Leger <cleger@kalray.eu>
-> 
-> [...]
+> Fixes: 791c13b709dd ("remoteproc: Fix NULL pointer dereference in rproc_virtio_notify")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+>  drivers/remoteproc/remoteproc_virtio.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
 
 
 Here is a summary with links:
-  - [v3] remoteproc: remove rproc_elf32_sanity_check
-    https://git.kernel.org/andersson/remoteproc/c/e29ff72b779426c7fe462ead93c7ad77fe562935
+  - remoteproc: Add missing '\n' in log messages
+    https://git.kernel.org/andersson/remoteproc/c/2fb75ceaf71a4a198fc67b984aa95527c993fa1a
 
 You are awesome, thank you!
 
