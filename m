@@ -1,108 +1,109 @@
-Return-Path: <SRS0=pQ+L=6G=vger.kernel.org=linux-remoteproc-owner@kernel.org>
+Return-Path: <SRS0=Z/7o=6H=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FC50C55185
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 22 Apr 2020 23:08:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7615FC55185
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 23 Apr 2020 00:38:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 35E5E2076E
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 22 Apr 2020 23:08:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 539082076C
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 23 Apr 2020 00:38:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gv89tcQP"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Bt1mUO+l"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725968AbgDVXIK (ORCPT
+        id S1726008AbgDWAiI (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 22 Apr 2020 19:08:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41676 "EHLO
+        Wed, 22 Apr 2020 20:38:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55574 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725839AbgDVXIJ (ORCPT
+        by vger.kernel.org with ESMTP id S1725846AbgDWAiH (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 22 Apr 2020 19:08:09 -0400
-Received: from mail-pj1-x1042.google.com (mail-pj1-x1042.google.com [IPv6:2607:f8b0:4864:20::1042])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 43885C03C1AA
-        for <linux-remoteproc@vger.kernel.org>; Wed, 22 Apr 2020 16:08:08 -0700 (PDT)
-Received: by mail-pj1-x1042.google.com with SMTP id np7so1649303pjb.1
-        for <linux-remoteproc@vger.kernel.org>; Wed, 22 Apr 2020 16:08:08 -0700 (PDT)
+        Wed, 22 Apr 2020 20:38:07 -0400
+Received: from mail-pj1-x1043.google.com (mail-pj1-x1043.google.com [IPv6:2607:f8b0:4864:20::1043])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6788BC03C1AA
+        for <linux-remoteproc@vger.kernel.org>; Wed, 22 Apr 2020 17:38:07 -0700 (PDT)
+Received: by mail-pj1-x1043.google.com with SMTP id 7so3013577pjo.0
+        for <linux-remoteproc@vger.kernel.org>; Wed, 22 Apr 2020 17:38:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
-        bh=ArROpAk6/OFm/ez5Uo9l28XbbULD17tF98w60ra2Vi8=;
-        b=gv89tcQPRXlNJNGrQiV+m2G9DKOjCc262kmlFxBszHuzeoiWhdWG4OCqmk/sedBKcg
-         JTzVVOWZbOaY8bT/G6OnfXSvcLYKs5A3bSrZ/AdqRQVLB/LOnnBIMWr8lFLF4T6+Xtn8
-         RxSEPKqBtxIHv8OLiqZ4JGP93yBKqwHslN7EUMUL9ee1a3ouosAeGCBYGi+t13BqJUaW
-         Si7dSAssE4mf94jaXp1Pe30gfv3zqOYXQOOlRd3DwPdS41y6/FfEyEaJWMA2Mih253m8
-         yR0JNTQN+r7PazhMj+GKXwXKXTrC5pG68j/Oqd7B4Ka2PxD5eDDoBDJ7MffPGVvK1nNf
-         THug==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=75TUGWxKMG+i7tFa2VqXTsbczTpvn8gAWE0prn7/ZWo=;
+        b=Bt1mUO+l/1mVfkOUUYZ/vPLooOPPe2yy40kGK8VcjvtAzsSqTHrRzK2SrxdZfESL25
+         xIhyrTUVQOpkLdo2Cy3uiDoEjf3Jbz7eT1wgoK9POxngD3LR5FziEYCRZYgW6NJY6GGw
+         5Ud1iXBI0aLIgsvXnrO9Y8T07eEsOCqRd2cY1a3kpqOc34nnZoNmeVqri1MpehT38tTX
+         mKNE+EGdlZ3oySSoIghIScraOGmz/RuK4j20yUW7xf3Ip2aDehUuteE3XSC4Z0HMKw/L
+         IAasCCd0aLdN18dqDWj0SyEPxg+qjZvTRVmlS3aDZvHSjsTdPpuJqqGZxuROsUD9Fcjx
+         wvmA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition;
-        bh=ArROpAk6/OFm/ez5Uo9l28XbbULD17tF98w60ra2Vi8=;
-        b=EABrljoaNcu5AbL9nCyFwdmk+0rsw9j4Z71ug78w7uQo1jIVzb8ep7KLmLgDq8W5SV
-         btTaMeDVgiZkYoGny+0D+f0k65c1/7VHFuj8O7Veq21o+jVH9HPVD5nYt3Bz0gjCdse4
-         l1bq6auKoDN+GGhWhgkLsOjIzejtdYRNs83iGjFlVF6MOVoDbn8s6NDaKJpd55c8gEZ8
-         v/WU+PB1dUWDpuENMhiC46ogbNhmHu54sVlcJ5Axz1wfT7ue2v7ojOyJTXKMjvhOGgOA
-         sb1xkOHRXjSYwmmcwT0v8Yum0mi9hPrzyeWtLHS8Ef7Lmsf7ZVbAT8nu4MUcU1nHZdTu
-         mcKw==
-X-Gm-Message-State: AGi0PubmJILy0ohf/ZX8Jsu1+pufZq/nfyFpviAjKHJ7RPNv96PIm+NQ
-        jVPzHiiUnKedrkyeEhRDDAn1Qg==
-X-Google-Smtp-Source: APiQypKdavy8VuGj9OPbA1SloQuWUfYm9s+txwLnuKWP2L4onHGFPWc6YXuPxnjY8GMYtNzb9G3Gqw==
-X-Received: by 2002:a17:902:784c:: with SMTP id e12mr984699pln.191.1587596887624;
-        Wed, 22 Apr 2020 16:08:07 -0700 (PDT)
-Received: from builder.lan (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id p62sm554472pfb.93.2020.04.22.16.08.06
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=75TUGWxKMG+i7tFa2VqXTsbczTpvn8gAWE0prn7/ZWo=;
+        b=aCVCcPx8txO6LE5YBfH/V2pYb0Pos7bL2CulmTZzlVNn1Hv6UfijjVejZUzhxDFjw2
+         Xt2NxEoe/2kDPA/4i3xzfiuFt62d2HMi0DVyBAArjuj9nza7fHMNuSNM6mJ5djmnoHef
+         09QTk0UxR3vwFDgiEdZaPlRAaACOf7plwFHAD5n3ocOWOfBcaaVG67t59SaHeYoK8/YB
+         K1/gUhIj4KjCZdxsmaEJ2R1XKC/Sw7RF7CO9RE1VLxyKQB7v9td7W3QUMuLlaUXD1Pl9
+         zLZWsw74c19R96N44uOvTcQFTAroGvZmSq20tMF5PJ0k3u8+ivNoqkm2ILvCesJUQxo7
+         pqlA==
+X-Gm-Message-State: AGi0PuaK58nnnduRlhuTRv1RXHbw3eMsqBFizFIwYsgRUHpDaSeaOQV0
+        GmBqj07iqTsKe30TRYFJgMFiPg==
+X-Google-Smtp-Source: APiQypKajNV82QXE5K2iKfsEJ0r4+uN55Qcwur5XRKTlxsgeo77a7Pr94QQHDYOrM+bNQLwFdLPljQ==
+X-Received: by 2002:a17:902:b187:: with SMTP id s7mr1435976plr.0.1587602286693;
+        Wed, 22 Apr 2020 17:38:06 -0700 (PDT)
+Received: from localhost.localdomain (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id 6sm432225pgz.0.2020.04.22.17.38.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Apr 2020 16:08:06 -0700 (PDT)
-Date:   Wed, 22 Apr 2020 16:08:33 -0700
+        Wed, 22 Apr 2020 17:38:05 -0700 (PDT)
 From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Alex Elder <elder@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>
-Subject: [GIT PULL] remoteproc fixes for v5.7
-Message-ID: <20200422230833.GA2112870@builder.lan>
+To:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Ohad Ben-Cohen <ohad@wizery.com>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        Chris Lew <clew@codeaurora.org>, Sibi <sibis@codeaurora.org>,
+        Siddharth Gupta <sidgup@codeaurora.org>
+Subject: [PATCH 0/4] rpmsg: Refactor Qualcomm glink_ssr
+Date:   Wed, 22 Apr 2020 17:37:32 -0700
+Message-Id: <20200423003736.2027371-1-bjorn.andersson@linaro.org>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
-Message-ID: <20200422230833.daehd7Ea9o3GUOgIWZ-idV1sOFlJgVmc-kSqtIYAm78@z>
+Message-ID: <20200423003732.zUif0srDeJ9WX-S_rMXH1OwpIusz5EP8Bi_xhK07fJc@z>
 
-The following changes since commit 8f3d9f354286745c751374f5f1fcafee6b3f3136:
+In order to allow for wider use of the SSR notifier in remoteproc's qcom_common
+this series internalizes the notifier chain used by glink_ssr. To simplify the
+Kconfig dependencies it also moves the glink_ssr implementation to rpmsg and
+merges it with qcom_glink_native, as these do go hand in hand.
 
-  Linux 5.7-rc1 (2020-04-12 12:35:55 -0700)
+Bjorn Andersson (4):
+  remoteproc: qcom: Pass ssr_name to glink subdevice
+  soc: qcom: glink_ssr: Internalize ssr_notifiers
+  rpmsg: glink: Integrate glink_ssr in qcom_glink
+  arm64: defconfig: Remove QCOM_GLINK_SSR
 
-are available in the Git repository at:
+ arch/arm64/configs/defconfig                  |  1 -
+ drivers/remoteproc/qcom_common.c              | 17 ++++++++++-
+ drivers/remoteproc/qcom_common.h              |  5 +++-
+ drivers/remoteproc/qcom_q6v5_adsp.c           |  2 +-
+ drivers/remoteproc/qcom_q6v5_mss.c            |  2 +-
+ drivers/remoteproc/qcom_q6v5_pas.c            |  2 +-
+ drivers/rpmsg/Kconfig                         |  6 ++--
+ drivers/rpmsg/Makefile                        |  3 +-
+ .../glink_ssr.c => rpmsg/qcom_glink_ssr.c}    | 28 +++++++++++++------
+ drivers/soc/qcom/Kconfig                      |  9 ------
+ drivers/soc/qcom/Makefile                     |  1 -
+ include/linux/rpmsg/qcom_glink.h              |  3 +-
+ 12 files changed, 49 insertions(+), 30 deletions(-)
+ rename drivers/{soc/qcom/glink_ssr.c => rpmsg/qcom_glink_ssr.c} (83%)
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/andersson/remoteproc.git tags/rproc-v5.7-fixes
+-- 
+2.24.0
 
-for you to fetch changes up to c2781e4d9bc6d925dfc1ff833dfdaf12b69679de:
-
-  remoteproc: mtk_scp: use dma_addr_t for DMA API (2020-04-16 15:53:15 -0700)
-
-----------------------------------------------------------------
-remoteproc fixes for v5.7
-
-This fixes a regression in the probe error path of the Qualcomm modem
-remoteproc driver and a mix up of phy_addr_t and dma_addr_t in the
-Mediatek SCP control driver.
-
-----------------------------------------------------------------
-Alex Elder (2):
-      remoteproc: qcom_q6v5_mss: fix a bug in q6v5_probe()
-      remoteproc: qcom_q6v5_mss: fix q6v5_probe() error paths
-
-Arnd Bergmann (1):
-      remoteproc: mtk_scp: use dma_addr_t for DMA API
-
- drivers/remoteproc/mtk_common.h    |  2 +-
- drivers/remoteproc/mtk_scp.c       |  6 +++---
- drivers/remoteproc/qcom_q6v5_mss.c | 33 ++++++++++++++++++++-------------
- 3 files changed, 24 insertions(+), 17 deletions(-)
