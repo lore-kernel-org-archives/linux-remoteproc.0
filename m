@@ -7,58 +7,58 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5FFAC55185
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 23 Apr 2020 00:38:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F692C55189
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 23 Apr 2020 00:38:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C0EB62076C
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 23 Apr 2020 00:38:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 489A120776
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 23 Apr 2020 00:38:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JY/6N9og"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="efBg576e"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726400AbgDWAiO (ORCPT
+        id S1726403AbgDWAiP (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 22 Apr 2020 20:38:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55596 "EHLO
+        Wed, 22 Apr 2020 20:38:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55602 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726386AbgDWAiN (ORCPT
+        by vger.kernel.org with ESMTP id S1726387AbgDWAiN (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
         Wed, 22 Apr 2020 20:38:13 -0400
-Received: from mail-pl1-x642.google.com (mail-pl1-x642.google.com [IPv6:2607:f8b0:4864:20::642])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5D202C03C1AE
-        for <linux-remoteproc@vger.kernel.org>; Wed, 22 Apr 2020 17:38:10 -0700 (PDT)
-Received: by mail-pl1-x642.google.com with SMTP id ay1so1649648plb.0
-        for <linux-remoteproc@vger.kernel.org>; Wed, 22 Apr 2020 17:38:10 -0700 (PDT)
+Received: from mail-pg1-x542.google.com (mail-pg1-x542.google.com [IPv6:2607:f8b0:4864:20::542])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DD32CC08E859
+        for <linux-remoteproc@vger.kernel.org>; Wed, 22 Apr 2020 17:38:11 -0700 (PDT)
+Received: by mail-pg1-x542.google.com with SMTP id f20so1975336pgl.12
+        for <linux-remoteproc@vger.kernel.org>; Wed, 22 Apr 2020 17:38:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=GDaDftx9pwi4EUSlY8qCL60KLlRRULo9j/JV/6pOzBs=;
-        b=JY/6N9ogUg3Na7E4o/Gs1J+yR3hYo68G3PI+t2xqfgW+VV3KHBxOCsiHJaNpN9idK8
-         Itw8dlcqSBGk46ICsTQ0XXZQEwB4Tq0+5ZTedUDTCgSqaVp8tFtvF08s3fz1EV/UB06G
-         7i4/xovxmrJaqOB9fHaHCkM1cn+h/8dQHC/cCIQCE5fzlDVuIPGhSJrDwE2DXyxWD5ga
-         ybvYRxC7mdUv/F2B6XpahQRZujOp/WAbgF7fTxmEWi9l4SQnhnfyG2I8v7FxX+s4Qcmr
-         rDtevFhHIl+wP1RCJJ4ddSXSg6nT99tzrB5cAgVbrcpAxZPLvvZIYStZZNlQffSAW24u
-         CTWQ==
+        bh=MGHZwN0LAtzrhReD8egvVxlgtUx+R63R7VOmTzodM+8=;
+        b=efBg576eZ3LUkjyh6JULzCvgRV6yCqC5mm4AgOB3N/VfTEEiHJimPGf8zeU1nm5wxM
+         ZA1vW/k9iqnx1GqD8FhQtgyeAEi2QhPzNlYobt2OVT2wYNL9VVLoWtwUNe1GhUuB4mlA
+         EJplX/hsPmC6c0fY009d2HbeAioIMxQPcTURTtSHZbrDjTVJ4Ta1TcG0xurKjpJvblsf
+         bPg/4P1FV+cJEGCMWKzQ37qXDVdi/72wEoLihvqgKZYNgx9g2Ml6vIug8aO5pH8YYzEn
+         ZYvSTCOXf+122Z+97YBazi0uVR4s/lMlcVW45nhgdgWZAG8sOVYZhXv9AxPp4WVqu+8t
+         boVg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=GDaDftx9pwi4EUSlY8qCL60KLlRRULo9j/JV/6pOzBs=;
-        b=ptZTIVBy0G1MJOEXwMofyD0OMDO9gaId/SvnHvCdB6hdAsvtTty+UJfRwbncrrlIRt
-         3sDcGfott90wcHvUe+5vAffX3KwxLYAiTQ0YjSKg7xmm11j8Mqz6sRpFUKfBmy+gwMYj
-         9OKXRzV5RPNk2bigQKbz9wtTGluGdjEHLhcII+riAnl6vyezGWF6IUvOSesThYXIWk0t
-         xmyETv8Sal7XvxPLQvA7d+Bqu6W69uzwJcsFH1R4DNInHRgbSbvmDchXqA6mR61BU945
-         Fi5CSDrUUNWu71FvPkBeu0JRroLgVx2me8y2zSfYBJKaEvWCyWCem0hWsaoXWycKzCNu
-         AtOw==
-X-Gm-Message-State: AGi0PuabGCZ1HFlNT5yyLzeEv4/HA7xxTDm9jY6Y4qUtWO5itesIWNTs
-        4EHZ7b0hqIhCvsofGu/8zrCOFg==
-X-Google-Smtp-Source: APiQypK74j+wjl3/96ICF/g8NdVM3oydSs/h3oqULxaq3T8Q0f62TIbNZAmkn3UyYXZIFoRYP/wGFg==
-X-Received: by 2002:a17:902:b186:: with SMTP id s6mr1405856plr.16.1587602289841;
-        Wed, 22 Apr 2020 17:38:09 -0700 (PDT)
+        bh=MGHZwN0LAtzrhReD8egvVxlgtUx+R63R7VOmTzodM+8=;
+        b=X7Cr+h6S/1oERFREb/UpjEedNf865bACSxO2W74eWIpO0kQWx7kepCes6Q/kWVmyH/
+         ENpNbHLceKjxmvvEgztxfuKgtkFj7qxQaX2+IinFsAc2odlZchmiow0KRO7bIP2XN5wH
+         kU2OX3XmohsbbfXRjfkHKjlQURI8Vze0gNVOTn336VcXEGXzGwZkusHTuiq9d/2wKC48
+         neKPKtkn/0cAaz2JZJ06cMAQY+cyD7UgxN8oVnue9FYgP7AjHE8nAor51D4wjW0BgmXk
+         0ot9dBiAgplDhSmZHKq6x1mflECmBX+81YbgejUfGVLvxFNf5x6fHP8mDAsScbZi1VkQ
+         TwNg==
+X-Gm-Message-State: AGi0PuYrGJ+KUKBLaX1E98WXOOiOj0q/lx6Op6sBEvMK70hO1Z9J6Z0+
+        NaVovg1dzLE4GSiBURxEC+1zNw==
+X-Google-Smtp-Source: APiQypLw7baTFhOiMTOokbF+ufVlwrh986MOwTUTryb0kDUEMg0FFP2DHqyjonVdeqr6H3GxSDFX8w==
+X-Received: by 2002:a62:6585:: with SMTP id z127mr1191227pfb.217.1587602291258;
+        Wed, 22 Apr 2020 17:38:11 -0700 (PDT)
 Received: from localhost.localdomain (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id 6sm432225pgz.0.2020.04.22.17.38.08
+        by smtp.gmail.com with ESMTPSA id 6sm432225pgz.0.2020.04.22.17.38.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Apr 2020 17:38:09 -0700 (PDT)
+        Wed, 22 Apr 2020 17:38:10 -0700 (PDT)
 From:   Bjorn Andersson <bjorn.andersson@linaro.org>
 To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
@@ -67,9 +67,9 @@ Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
         Chris Lew <clew@codeaurora.org>, Sibi <sibis@codeaurora.org>,
         Siddharth Gupta <sidgup@codeaurora.org>
-Subject: [PATCH 2/4] soc: qcom: glink_ssr: Internalize ssr_notifiers
-Date:   Wed, 22 Apr 2020 17:37:34 -0700
-Message-Id: <20200423003736.2027371-3-bjorn.andersson@linaro.org>
+Subject: [PATCH 3/4] rpmsg: glink: Integrate glink_ssr in qcom_glink
+Date:   Wed, 22 Apr 2020 17:37:35 -0700
+Message-Id: <20200423003736.2027371-4-bjorn.andersson@linaro.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20200423003736.2027371-1-bjorn.andersson@linaro.org>
 References: <20200423003736.2027371-1-bjorn.andersson@linaro.org>
@@ -79,120 +79,139 @@ Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
-Message-ID: <20200423003734.Jgm1FH9rhS1l_FXaWe25jDX_XMPpoq9GZyqQZHU0HiU@z>
+Message-ID: <20200423003735.2PayESMMDBlfXky2mrSlSkQZp6B5XZVAMBAYTQsJG6c@z>
 
-Rather than carrying a special purpose blocking notifier for glink_ssr
-in remoteproc's qcom_common.c, move it into glink_ssr so allow wider
-reuse of the common one.
-
-The rpmsg glink header file is used in preparation for the next patch.
+In all but the very special case of a system with _only_ glink_rpm,
+GLINK is dependent on glink_ssr, so move it to rpmsg and combine it with
+qcom_glink_native in the new qcom_glink kernel module.
 
 Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 ---
- drivers/remoteproc/qcom_common.c |  8 ++++++++
- drivers/soc/qcom/glink_ssr.c     | 24 +++++++++++++++++++-----
- include/linux/rpmsg/qcom_glink.h |  6 ++++++
- 3 files changed, 33 insertions(+), 5 deletions(-)
+ drivers/rpmsg/Kconfig                                    | 6 +++---
+ drivers/rpmsg/Makefile                                   | 3 ++-
+ drivers/{soc/qcom/glink_ssr.c => rpmsg/qcom_glink_ssr.c} | 4 ----
+ drivers/soc/qcom/Kconfig                                 | 9 ---------
+ drivers/soc/qcom/Makefile                                | 1 -
+ include/linux/rpmsg/qcom_glink.h                         | 7 +------
+ 6 files changed, 6 insertions(+), 24 deletions(-)
+ rename drivers/{soc/qcom/glink_ssr.c => rpmsg/qcom_glink_ssr.c} (97%)
 
-diff --git a/drivers/remoteproc/qcom_common.c b/drivers/remoteproc/qcom_common.c
-index ff26f2b68752..9028cea2d81e 100644
---- a/drivers/remoteproc/qcom_common.c
-+++ b/drivers/remoteproc/qcom_common.c
-@@ -42,6 +42,13 @@ static void glink_subdev_stop(struct rproc_subdev *subdev, bool crashed)
- 	glink->edge = NULL;
- }
+diff --git a/drivers/rpmsg/Kconfig b/drivers/rpmsg/Kconfig
+index a9108ff563dc..f96716893c2a 100644
+--- a/drivers/rpmsg/Kconfig
++++ b/drivers/rpmsg/Kconfig
+@@ -24,13 +24,13 @@ config RPMSG_MTK_SCP
+ 	  remote processors in MediaTek platforms.
+ 	  This use IPI and IPC to communicate with remote processors.
  
-+static void glink_subdev_unprepare(struct rproc_subdev *subdev)
-+{
-+	struct qcom_rproc_glink *glink = to_glink_subdev(subdev);
-+
-+	qcom_glink_ssr_notify(glink->ssr_name);
-+}
-+
- /**
-  * qcom_add_glink_subdev() - try to add a GLINK subdevice to rproc
-  * @rproc:	rproc handle to parent the subdevice
-@@ -64,6 +71,7 @@ void qcom_add_glink_subdev(struct rproc *rproc, struct qcom_rproc_glink *glink,
- 	glink->dev = dev;
- 	glink->subdev.start = glink_subdev_start;
- 	glink->subdev.stop = glink_subdev_stop;
-+	glink->subdev.unprepare = glink_subdev_unprepare;
+-config RPMSG_QCOM_GLINK_NATIVE
++config RPMSG_QCOM_GLINK
+ 	tristate
+ 	select RPMSG
  
- 	rproc_add_subdev(rproc, &glink->subdev);
- }
-diff --git a/drivers/soc/qcom/glink_ssr.c b/drivers/soc/qcom/glink_ssr.c
-index d7babe3d67bc..847d79c935f1 100644
+ config RPMSG_QCOM_GLINK_RPM
+ 	tristate "Qualcomm RPM Glink driver"
+-	select RPMSG_QCOM_GLINK_NATIVE
++	select RPMSG_QCOM_GLINK
+ 	depends on HAS_IOMEM
+ 	depends on MAILBOX
+ 	help
+@@ -40,7 +40,7 @@ config RPMSG_QCOM_GLINK_RPM
+ 
+ config RPMSG_QCOM_GLINK_SMEM
+ 	tristate "Qualcomm SMEM Glink driver"
+-	select RPMSG_QCOM_GLINK_NATIVE
++	select RPMSG_QCOM_GLINK
+ 	depends on MAILBOX
+ 	depends on QCOM_SMEM
+ 	help
+diff --git a/drivers/rpmsg/Makefile b/drivers/rpmsg/Makefile
+index ae92a7fb08f6..ffe932ef6050 100644
+--- a/drivers/rpmsg/Makefile
++++ b/drivers/rpmsg/Makefile
+@@ -2,8 +2,9 @@
+ obj-$(CONFIG_RPMSG)		+= rpmsg_core.o
+ obj-$(CONFIG_RPMSG_CHAR)	+= rpmsg_char.o
+ obj-$(CONFIG_RPMSG_MTK_SCP)	+= mtk_rpmsg.o
++qcom_glink-objs			:= qcom_glink_native.o qcom_glink_ssr.o
++obj-$(CONFIG_RPMSG_QCOM_GLINK) += qcom_glink.o
+ obj-$(CONFIG_RPMSG_QCOM_GLINK_RPM) += qcom_glink_rpm.o
+-obj-$(CONFIG_RPMSG_QCOM_GLINK_NATIVE) += qcom_glink_native.o
+ obj-$(CONFIG_RPMSG_QCOM_GLINK_SMEM) += qcom_glink_smem.o
+ obj-$(CONFIG_RPMSG_QCOM_SMD)	+= qcom_smd.o
+ obj-$(CONFIG_RPMSG_VIRTIO)	+= virtio_rpmsg_bus.o
+diff --git a/drivers/soc/qcom/glink_ssr.c b/drivers/rpmsg/qcom_glink_ssr.c
+similarity index 97%
+rename from drivers/soc/qcom/glink_ssr.c
+rename to drivers/rpmsg/qcom_glink_ssr.c
+index 847d79c935f1..dcd1ce616974 100644
 --- a/drivers/soc/qcom/glink_ssr.c
-+++ b/drivers/soc/qcom/glink_ssr.c
-@@ -54,6 +54,19 @@ struct glink_ssr {
- 	struct completion completion;
++++ b/drivers/rpmsg/qcom_glink_ssr.c
+@@ -164,7 +164,3 @@ static struct rpmsg_driver qcom_glink_ssr_driver = {
+ 	},
  };
+ module_rpmsg_driver(qcom_glink_ssr_driver);
+-
+-MODULE_ALIAS("rpmsg:glink_ssr");
+-MODULE_DESCRIPTION("Qualcomm GLINK SSR notifier");
+-MODULE_LICENSE("GPL v2");
+diff --git a/drivers/soc/qcom/Kconfig b/drivers/soc/qcom/Kconfig
+index 19332ea40234..5140bd82f1be 100644
+--- a/drivers/soc/qcom/Kconfig
++++ b/drivers/soc/qcom/Kconfig
+@@ -35,15 +35,6 @@ config QCOM_GENI_SE
+ 	  driver is also used to manage the common aspects of multiple Serial
+ 	  Engines present in the QUP.
  
-+/* Notifier list for all registered glink_ssr instances */
-+static BLOCKING_NOTIFIER_HEAD(ssr_notifiers);
-+
-+/**
-+ * qcom_glink_ssr_notify() - notify GLINK SSR about stopped remoteproc
-+ * @ssr_name:	name of the remoteproc that has been stopped
-+ */
-+void qcom_glink_ssr_notify(const char *ssr_name)
-+{
-+	blocking_notifier_call_chain(&ssr_notifiers, 0, (void *)ssr_name);
-+}
-+EXPORT_SYMBOL_GPL(qcom_glink_ssr_notify);
-+
- static int qcom_glink_ssr_callback(struct rpmsg_device *rpdev,
- 				   void *data, int len, void *priv, u32 addr)
- {
-@@ -81,8 +94,9 @@ static int qcom_glink_ssr_callback(struct rpmsg_device *rpdev,
- 	return 0;
- }
- 
--static int qcom_glink_ssr_notify(struct notifier_block *nb, unsigned long event,
--				 void *data)
-+static int qcom_glink_ssr_notifier_call(struct notifier_block *nb,
-+					unsigned long event,
-+					void *data)
- {
- 	struct glink_ssr *ssr = container_of(nb, struct glink_ssr, nb);
- 	struct do_cleanup_msg msg;
-@@ -121,18 +135,18 @@ static int qcom_glink_ssr_probe(struct rpmsg_device *rpdev)
- 
- 	ssr->dev = &rpdev->dev;
- 	ssr->ept = rpdev->ept;
--	ssr->nb.notifier_call = qcom_glink_ssr_notify;
-+	ssr->nb.notifier_call = qcom_glink_ssr_notifier_call;
- 
- 	dev_set_drvdata(&rpdev->dev, ssr);
- 
--	return qcom_register_ssr_notifier(&ssr->nb);
-+	return blocking_notifier_chain_register(&ssr_notifiers, &ssr->nb);
- }
- 
- static void qcom_glink_ssr_remove(struct rpmsg_device *rpdev)
- {
- 	struct glink_ssr *ssr = dev_get_drvdata(&rpdev->dev);
- 
--	qcom_unregister_ssr_notifier(&ssr->nb);
-+	blocking_notifier_chain_unregister(&ssr_notifiers, &ssr->nb);
- }
- 
- static const struct rpmsg_device_id qcom_glink_ssr_match[] = {
+-config QCOM_GLINK_SSR
+-	tristate "Qualcomm Glink SSR driver"
+-	depends on RPMSG
+-	depends on QCOM_RPROC_COMMON
+-	help
+-	  Say y here to enable GLINK SSR support. The GLINK SSR driver
+-	  implements the SSR protocol for notifying the remote processor about
+-	  neighboring subsystems going up or down.
+-
+ config QCOM_GSBI
+ 	tristate "QCOM General Serial Bus Interface"
+ 	depends on ARCH_QCOM || COMPILE_TEST
+diff --git a/drivers/soc/qcom/Makefile b/drivers/soc/qcom/Makefile
+index 5d6b83dc58e8..e9cacc9ad401 100644
+--- a/drivers/soc/qcom/Makefile
++++ b/drivers/soc/qcom/Makefile
+@@ -3,7 +3,6 @@ CFLAGS_rpmh-rsc.o := -I$(src)
+ obj-$(CONFIG_QCOM_AOSS_QMP) +=	qcom_aoss.o
+ obj-$(CONFIG_QCOM_GENI_SE) +=	qcom-geni-se.o
+ obj-$(CONFIG_QCOM_COMMAND_DB) += cmd-db.o
+-obj-$(CONFIG_QCOM_GLINK_SSR) +=	glink_ssr.o
+ obj-$(CONFIG_QCOM_GSBI)	+=	qcom_gsbi.o
+ obj-$(CONFIG_QCOM_MDT_LOADER)	+= mdt_loader.o
+ obj-$(CONFIG_QCOM_OCMEM)	+= ocmem.o
 diff --git a/include/linux/rpmsg/qcom_glink.h b/include/linux/rpmsg/qcom_glink.h
-index 96e26d94719f..09daa0acde2c 100644
+index 09daa0acde2c..daded9fddf36 100644
 --- a/include/linux/rpmsg/qcom_glink.h
 +++ b/include/linux/rpmsg/qcom_glink.h
-@@ -26,4 +26,10 @@ static inline void qcom_glink_smem_unregister(struct qcom_glink *glink) {}
- 
- #endif
- 
-+#if IS_ENABLED(CONFIG_RPMSG_QCOM_GLINK_SSR)
+@@ -12,6 +12,7 @@ struct qcom_glink;
+ struct qcom_glink *qcom_glink_smem_register(struct device *parent,
+ 					    struct device_node *node);
+ void qcom_glink_smem_unregister(struct qcom_glink *glink);
 +void qcom_glink_ssr_notify(const char *ssr_name);
-+#else
-+static inline void qcom_glink_ssr_notify(const char *ssr_name) {}
-+#endif
-+
+ 
+ #else
+ 
+@@ -23,12 +24,6 @@ qcom_glink_smem_register(struct device *parent,
+ }
+ 
+ static inline void qcom_glink_smem_unregister(struct qcom_glink *glink) {}
+-
+-#endif
+-
+-#if IS_ENABLED(CONFIG_RPMSG_QCOM_GLINK_SSR)
+-void qcom_glink_ssr_notify(const char *ssr_name);
+-#else
+ static inline void qcom_glink_ssr_notify(const char *ssr_name) {}
  #endif
+ 
 -- 
 2.24.0
 
