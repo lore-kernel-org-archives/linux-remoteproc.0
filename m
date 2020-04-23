@@ -1,243 +1,127 @@
-Return-Path: <nikita.shubin@maquefel.me>
-From: nikita.shubin@maquefel.me
-Subject: [PATCH v2 2/3] remoteproc: imx_rproc: mailbox support
-Date: Mon,  6 Apr 2020 14:33:09 +0300
-Message-Id: <20200406113310.3041-3-nikita.shubin@maquefel.me>
-In-Reply-To: <20200406113310.3041-1-nikita.shubin@maquefel.me>
-References: <20200304142628.8471-1-NShubin@topcon.com>
- <20200406113310.3041-1-nikita.shubin@maquefel.me>
+Return-Path: <bjorn.andersson@linaro.org>
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: [PATCH 2/4] soc: qcom: glink_ssr: Internalize ssr_notifiers
+Date: Wed, 22 Apr 2020 17:37:34 -0700
+Message-Id: <20200423003736.2027371-3-bjorn.andersson@linaro.org>
+In-Reply-To: <20200423003736.2027371-1-bjorn.andersson@linaro.org>
+References: <20200423003736.2027371-1-bjorn.andersson@linaro.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-To: nikita.shubin@maquefel.me
-Cc: Nikita Shubin <NShubin@topcon.com>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, NXP Linux Team <linux-imx@nxp.com>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Andy Gross <agross@kernel.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, Chris Lew <clew@codeaurora.org>, Sibi <sibis@codeaurora.org>, Siddharth Gupta <sidgup@codeaurora.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Add support for mailboxes to imx_rproc
+Rather than carrying a special purpose blocking notifier for glink_ssr
+in remoteproc's qcom_common.c, move it into glink_ssr so allow wider
+reuse of the common one.
 
-Signed-off-by: Nikita Shubin <NShubin@topcon.com>
+The rpmsg glink header file is used in preparation for the next patch.
+
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 ---
- drivers/remoteproc/Kconfig     |   2 +
- drivers/remoteproc/imx_rproc.c | 142 ++++++++++++++++++++++++++++++++-
- 2 files changed, 143 insertions(+), 1 deletion(-)
+ drivers/remoteproc/qcom_common.c |  8 ++++++++
+ drivers/soc/qcom/glink_ssr.c     | 24 +++++++++++++++++++-----
+ include/linux/rpmsg/qcom_glink.h |  6 ++++++
+ 3 files changed, 33 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
-index 94afdde4bc9f..02d23a54c9cf 100644
---- a/drivers/remoteproc/Kconfig
-+++ b/drivers/remoteproc/Kconfig
-@@ -17,6 +17,8 @@ if REMOTEPROC
- config IMX_REMOTEPROC
- 	tristate "IMX6/7 remoteproc support"
- 	depends on ARCH_MXC
-+	select MAILBOX
-+	select IMX_MBOX
- 	help
- 	  Say y here to support iMX's remote processors (Cortex M4
- 	  on iMX7D) via the remote processor framework.
-diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rproc.c
-index bebc58d0f711..d2bede4ccb70 100644
---- a/drivers/remoteproc/imx_rproc.c
-+++ b/drivers/remoteproc/imx_rproc.c
-@@ -14,6 +14,9 @@
- #include <linux/platform_device.h>
- #include <linux/regmap.h>
- #include <linux/remoteproc.h>
-+#include <linux/mailbox_client.h>
-+
-+#include "remoteproc_internal.h"
- 
- #define IMX7D_SRC_SCR			0x0C
- #define IMX7D_ENABLE_M4			BIT(3)
-@@ -47,6 +50,12 @@
- 
- #define IMX_BOOT_PC			0x4
- 
-+#define IMX_MBOX_NB_VQ			2
-+#define IMX_MBOX_NB_MBX		2
-+
-+#define IMX_MBX_VQ0		"vq0"
-+#define IMX_MBX_VQ1		"vq1"
-+
- /**
-  * struct imx_rproc_mem - slim internal memory structure
-  * @cpu_addr: MPU virtual address of the memory region
-@@ -80,6 +89,14 @@ struct imx_rproc_dcfg {
- 	size_t				att_size;
- };
- 
-+struct imx_mbox {
-+	const unsigned char name[10];
-+	struct mbox_chan *chan;
-+	struct mbox_client client;
-+	struct work_struct vq_work;
-+	int vq_id;
-+};
-+
- struct imx_rproc {
- 	struct device			*dev;
- 	struct regmap			*regmap;
-@@ -88,6 +105,8 @@ struct imx_rproc {
- 	struct imx_rproc_mem		mem[IMX7D_RPROC_MEM_MAX];
- 	struct clk			*clk;
- 	void __iomem			*bootreg;
-+	struct imx_mbox mb[IMX_MBOX_NB_MBX];
-+	struct workqueue_struct *workqueue;
- };
- 
- static const struct imx_rproc_att imx_rproc_att_imx7d[] = {
-@@ -251,10 +270,118 @@ static void *imx_rproc_da_to_va(struct rproc *rproc, u64 da, int len)
- 	return va;
+diff --git a/drivers/remoteproc/qcom_common.c b/drivers/remoteproc/qcom_common.c
+index ff26f2b68752..9028cea2d81e 100644
+--- a/drivers/remoteproc/qcom_common.c
++++ b/drivers/remoteproc/qcom_common.c
+@@ -42,6 +42,13 @@ static void glink_subdev_stop(struct rproc_subdev *subdev, bool crashed)
+ 	glink->edge = NULL;
  }
  
-+static void imx_rproc_mb_vq_work(struct work_struct *work)
++static void glink_subdev_unprepare(struct rproc_subdev *subdev)
 +{
-+	struct imx_mbox *mb = container_of(work, struct imx_mbox, vq_work);
-+	struct rproc *rproc = dev_get_drvdata(mb->client.dev);
++	struct qcom_rproc_glink *glink = to_glink_subdev(subdev);
 +
-+	if (rproc_vq_interrupt(rproc, mb->vq_id) == IRQ_NONE)
-+		dev_dbg(&rproc->dev, "no message found in vq%d\n", mb->vq_id);
++	qcom_glink_ssr_notify(glink->ssr_name);
 +}
 +
-+static void imx_rproc_mb_callback(struct mbox_client *cl, void *data)
-+{
-+	struct rproc *rproc = dev_get_drvdata(cl->dev);
-+	struct imx_mbox *mb = container_of(cl, struct imx_mbox, client);
-+	struct imx_rproc *ddata = rproc->priv;
-+
-+	queue_work(ddata->workqueue, &mb->vq_work);
-+}
-+
-+static const struct imx_mbox imx_rproc_mbox[IMX_MBOX_NB_MBX] = {
-+	{
-+		.name = IMX_MBX_VQ0,
-+		.vq_id = 0,
-+		.client = {
-+			.rx_callback = imx_rproc_mb_callback,
-+			.tx_block = false,
-+		},
-+	},
-+	{
-+		.name = IMX_MBX_VQ1,
-+		.vq_id = 1,
-+		.client = {
-+			.rx_callback = imx_rproc_mb_callback,
-+			.tx_block = false,
-+		},
-+	},
-+};
-+
-+static void imx_rproc_request_mbox(struct rproc *rproc)
-+{
-+	struct imx_rproc *ddata = rproc->priv;
-+	struct device *dev = &rproc->dev;
-+	unsigned int i;
-+	const unsigned char *name;
-+	struct mbox_client *cl;
-+
-+	/* Initialise mailbox structure table */
-+	memcpy(ddata->mb, imx_rproc_mbox, sizeof(imx_rproc_mbox));
-+
-+	for (i = 0; i < IMX_MBOX_NB_MBX; i++) {
-+		name = ddata->mb[i].name;
-+
-+		cl = &ddata->mb[i].client;
-+		cl->dev = dev->parent;
-+
-+		ddata->mb[i].chan = mbox_request_channel_byname(cl, name);
-+
-+		dev_dbg(dev, "%s: name=%s, idx=%u\n",
-+			__func__, name, ddata->mb[i].vq_id);
-+
-+		if (IS_ERR(ddata->mb[i].chan)) {
-+			dev_warn(dev, "cannot get %s mbox\n", name);
-+			ddata->mb[i].chan = NULL;
-+		}
-+
-+		if (ddata->mb[i].vq_id >= 0)
-+			INIT_WORK(&ddata->mb[i].vq_work, imx_rproc_mb_vq_work);
-+	}
-+}
-+
-+static void imx_rproc_free_mbox(struct rproc *rproc)
-+{
-+	struct imx_rproc *ddata = rproc->priv;
-+	unsigned int i;
-+
-+	dev_dbg(&rproc->dev, "%s: %d boxes\n",
-+		__func__, ARRAY_SIZE(ddata->mb));
-+
-+	for (i = 0; i < ARRAY_SIZE(ddata->mb); i++) {
-+		if (ddata->mb[i].chan)
-+			mbox_free_channel(ddata->mb[i].chan);
-+		ddata->mb[i].chan = NULL;
-+	}
-+}
-+
-+static void imx_rproc_kick(struct rproc *rproc, int vqid)
-+{
-+	struct imx_rproc *ddata = rproc->priv;
-+	unsigned int i;
-+	int err;
-+
-+	if (WARN_ON(vqid >= IMX_MBOX_NB_VQ))
-+		return;
-+
-+	for (i = 0; i < IMX_MBOX_NB_MBX; i++) {
-+		if (vqid != ddata->mb[i].vq_id)
-+			continue;
-+		if (!ddata->mb[i].chan)
-+			return;
-+		dev_dbg(&rproc->dev, "sending message : vqid = %d\n", vqid);
-+		err = mbox_send_message(ddata->mb[i].chan, &vqid);
-+		if (err < 0)
-+			dev_err(&rproc->dev, "%s: failed (%s, err:%d)\n",
-+					__func__, ddata->mb[i].name, err);
-+			return;
-+	}
-+}
-+
- static const struct rproc_ops imx_rproc_ops = {
- 	.start		= imx_rproc_start,
- 	.stop		= imx_rproc_stop,
- 	.da_to_va	= imx_rproc_da_to_va,
-+	.kick		= imx_rproc_kick,
- 	.get_boot_addr	= rproc_elf_get_boot_addr,
+ /**
+  * qcom_add_glink_subdev() - try to add a GLINK subdevice to rproc
+  * @rproc:	rproc handle to parent the subdevice
+@@ -64,6 +71,7 @@ void qcom_add_glink_subdev(struct rproc *rproc, struct qcom_rproc_glink *glink,
+ 	glink->dev = dev;
+ 	glink->subdev.start = glink_subdev_start;
+ 	glink->subdev.stop = glink_subdev_stop;
++	glink->subdev.unprepare = glink_subdev_unprepare;
+ 
+ 	rproc_add_subdev(rproc, &glink->subdev);
+ }
+diff --git a/drivers/soc/qcom/glink_ssr.c b/drivers/soc/qcom/glink_ssr.c
+index d7babe3d67bc..847d79c935f1 100644
+--- a/drivers/soc/qcom/glink_ssr.c
++++ b/drivers/soc/qcom/glink_ssr.c
+@@ -54,6 +54,19 @@ struct glink_ssr {
+ 	struct completion completion;
  };
  
-@@ -384,14 +511,26 @@ static int imx_rproc_probe(struct platform_device *pdev)
- 		goto err_put_rproc;
- 	}
- 
-+	priv->workqueue = create_workqueue(dev_name(dev));
-+	if (!priv->workqueue) {
-+		dev_err(dev, "cannot create workqueue\n");
-+		ret = -ENOMEM;
-+		goto err_put_clk;
-+	}
++/* Notifier list for all registered glink_ssr instances */
++static BLOCKING_NOTIFIER_HEAD(ssr_notifiers);
 +
-+	imx_rproc_request_mbox(rproc);
++/**
++ * qcom_glink_ssr_notify() - notify GLINK SSR about stopped remoteproc
++ * @ssr_name:	name of the remoteproc that has been stopped
++ */
++void qcom_glink_ssr_notify(const char *ssr_name)
++{
++	blocking_notifier_call_chain(&ssr_notifiers, 0, (void *)ssr_name);
++}
++EXPORT_SYMBOL_GPL(qcom_glink_ssr_notify);
 +
- 	ret = rproc_add(rproc);
- 	if (ret) {
- 		dev_err(dev, "rproc_add failed\n");
--		goto err_put_clk;
-+		goto err_free_mb;
- 	}
- 
+ static int qcom_glink_ssr_callback(struct rpmsg_device *rpdev,
+ 				   void *data, int len, void *priv, u32 addr)
+ {
+@@ -81,8 +94,9 @@ static int qcom_glink_ssr_callback(struct rpmsg_device *rpdev,
  	return 0;
+ }
  
-+err_free_mb:
-+	imx_rproc_free_mbox(rproc);
-+	destroy_workqueue(priv->workqueue);
- err_put_clk:
- 	clk_disable_unprepare(priv->clk);
- err_put_rproc:
-@@ -407,6 +546,7 @@ static int imx_rproc_remove(struct platform_device *pdev)
+-static int qcom_glink_ssr_notify(struct notifier_block *nb, unsigned long event,
+-				 void *data)
++static int qcom_glink_ssr_notifier_call(struct notifier_block *nb,
++					unsigned long event,
++					void *data)
+ {
+ 	struct glink_ssr *ssr = container_of(nb, struct glink_ssr, nb);
+ 	struct do_cleanup_msg msg;
+@@ -121,18 +135,18 @@ static int qcom_glink_ssr_probe(struct rpmsg_device *rpdev)
  
- 	clk_disable_unprepare(priv->clk);
- 	rproc_del(rproc);
-+	imx_rproc_free_mbox(rproc);
- 	rproc_free(rproc);
+ 	ssr->dev = &rpdev->dev;
+ 	ssr->ept = rpdev->ept;
+-	ssr->nb.notifier_call = qcom_glink_ssr_notify;
++	ssr->nb.notifier_call = qcom_glink_ssr_notifier_call;
  
- 	return 0;
+ 	dev_set_drvdata(&rpdev->dev, ssr);
+ 
+-	return qcom_register_ssr_notifier(&ssr->nb);
++	return blocking_notifier_chain_register(&ssr_notifiers, &ssr->nb);
+ }
+ 
+ static void qcom_glink_ssr_remove(struct rpmsg_device *rpdev)
+ {
+ 	struct glink_ssr *ssr = dev_get_drvdata(&rpdev->dev);
+ 
+-	qcom_unregister_ssr_notifier(&ssr->nb);
++	blocking_notifier_chain_unregister(&ssr_notifiers, &ssr->nb);
+ }
+ 
+ static const struct rpmsg_device_id qcom_glink_ssr_match[] = {
+diff --git a/include/linux/rpmsg/qcom_glink.h b/include/linux/rpmsg/qcom_glink.h
+index 96e26d94719f..09daa0acde2c 100644
+--- a/include/linux/rpmsg/qcom_glink.h
++++ b/include/linux/rpmsg/qcom_glink.h
+@@ -26,4 +26,10 @@ static inline void qcom_glink_smem_unregister(struct qcom_glink *glink) {}
+ 
+ #endif
+ 
++#if IS_ENABLED(CONFIG_RPMSG_QCOM_GLINK_SSR)
++void qcom_glink_ssr_notify(const char *ssr_name);
++#else
++static inline void qcom_glink_ssr_notify(const char *ssr_name) {}
++#endif
++
+ #endif
 -- 
-2.25.1
+2.24.0
