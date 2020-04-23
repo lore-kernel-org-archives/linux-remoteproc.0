@@ -1,47 +1,113 @@
-Return-Path: <linux-remoteproc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:51284 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726530AbgDPXH3 (ORCPT
-        <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 16 Apr 2020 19:07:29 -0400
-Content-Type: text/plain; charset="utf-8"
+Date: Wed, 22 Apr 2020 17:54:50 -0700
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: [PATCH v2 4/6] remoteproc: qcom: Add name field for every
+ subdevice
+Message-ID: <20200423005447.GM1868936@builder.lan>
+References: <1586389003-26675-1-git-send-email-sidgup@codeaurora.org>
+ <1586389003-26675-5-git-send-email-sidgup@codeaurora.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH v2] remoteproc: clean up notification config
-From: patchwork-bot+linux-remoteproc@kernel.org
-Message-Id: <158707844908.17838.9038914705270378769.git-patchwork-notify@kernel.org>
-Date: Thu, 16 Apr 2020 23:07:29 +0000
-References: <20200316225121.29905-1-elder@linaro.org>
-In-Reply-To: <20200316225121.29905-1-elder@linaro.org>
-Sender: linux-remoteproc-owner@vger.kernel.org
-To: Alex Elder <elder@linaro.org>
-Cc: linux-remoteproc@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1586389003-26675-5-git-send-email-sidgup@codeaurora.org>
+To: Siddharth Gupta <sidgup@codeaurora.org>
+Cc: agross@kernel.org, ohad@wizery.com, Rishabh Bhatnagar <rishabhb@codeaurora.org>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, tsoni@codeaurora.org, psodagud@codeaurora.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Hello:
+On Wed 08 Apr 16:36 PDT 2020, Siddharth Gupta wrote:
 
-This patch was applied to andersson/remoteproc.git (refs/heads/for-next).
-
-On Mon, 16 Mar 2020 17:51:21 -0500 you wrote:
-> Rearrange the config files for remoteproc and IPA to fix their
-> interdependencies.
+> From: Rishabh Bhatnagar <rishabhb@codeaurora.org>
 > 
-> First, have CONFIG_QCOM_Q6V5_MSS select QCOM_Q6V5_IPA_NOTIFY so the
-> notification code is built regardless of whether IPA needs it.
+> When a client driver wishes to utilize functionality from a particular
+> subdevice of a remoteproc, it cannot differentiate between the subdevices
+> that have been added. This patch allows the client driver to distinguish
+> between subdevices and thus utilize their functionality.
 > 
-> Next, represent QCOM_IPA as being dependent on QCOM_Q6V5_MSS rather
-> than setting its value to match QCOM_Q6V5_COMMON (which is selected
-> by QCOM_Q6V5_MSS).
+
+As noted in patch 5, this invites driver authors to traverse the rproc
+subdev list outside the remoteproc core. So I would like to avoid this.
+
+Regards,
+Bjorn
+
+> Signed-off-by: Rishabh Bhatnagar <rishabhb@codeaurora.org>
+> Signed-off-by: Siddharth Gupta <sidgup@codeaurora.org>
+> ---
+>  drivers/remoteproc/qcom_common.c | 6 ++++++
+>  include/linux/remoteproc.h       | 2 ++
+>  2 files changed, 8 insertions(+)
 > 
-> [...]
-
-
-Here is a summary with links:
-  - [v2] remoteproc: clean up notification config
-    https://git.kernel.org/andersson/remoteproc/c/5e0ef51b161c79e1c768d240b38837bdc06e0506
-
-You are awesome, thank you!
-
--- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/pwbot
+> diff --git a/drivers/remoteproc/qcom_common.c b/drivers/remoteproc/qcom_common.c
+> index 60650bc..1d2351b 100644
+> --- a/drivers/remoteproc/qcom_common.c
+> +++ b/drivers/remoteproc/qcom_common.c
+> @@ -56,6 +56,7 @@ void qcom_add_glink_subdev(struct rproc *rproc, struct qcom_rproc_glink *glink)
+>  		return;
+>  
+>  	glink->dev = dev;
+> +	glink->subdev.name = kstrdup("glink", GFP_KERNEL);
+>  	glink->subdev.start = glink_subdev_start;
+>  	glink->subdev.stop = glink_subdev_stop;
+>  
+> @@ -73,6 +74,7 @@ void qcom_remove_glink_subdev(struct rproc *rproc, struct qcom_rproc_glink *glin
+>  	if (!glink->node)
+>  		return;
+>  
+> +	kfree(glink->subdev.name);
+>  	rproc_remove_subdev(rproc, &glink->subdev);
+>  	of_node_put(glink->node);
+>  }
+> @@ -152,6 +154,7 @@ void qcom_add_smd_subdev(struct rproc *rproc, struct qcom_rproc_subdev *smd)
+>  		return;
+>  
+>  	smd->dev = dev;
+> +	smd->subdev.name = kstrdup("smd", GFP_KERNEL);
+>  	smd->subdev.start = smd_subdev_start;
+>  	smd->subdev.stop = smd_subdev_stop;
+>  
+> @@ -169,6 +172,7 @@ void qcom_remove_smd_subdev(struct rproc *rproc, struct qcom_rproc_subdev *smd)
+>  	if (!smd->node)
+>  		return;
+>  
+> +	kfree(smd->subdev.name);
+>  	rproc_remove_subdev(rproc, &smd->subdev);
+>  	of_node_put(smd->node);
+>  }
+> @@ -220,6 +224,7 @@ void qcom_add_ssr_subdev(struct rproc *rproc, struct qcom_rproc_ssr *ssr,
+>  			 const char *ssr_name)
+>  {
+>  	ssr->name = ssr_name;
+> +	ssr->subdev.name = kstrdup("ssr_notifs", GFP_KERNEL);
+>  	ssr->subdev.unprepare = ssr_notify_unprepare;
+>  
+>  	rproc_add_subdev(rproc, &ssr->subdev);
+> @@ -233,6 +238,7 @@ EXPORT_SYMBOL_GPL(qcom_add_ssr_subdev);
+>   */
+>  void qcom_remove_ssr_subdev(struct rproc *rproc, struct qcom_rproc_ssr *ssr)
+>  {
+> +	kfree(ssr->subdev.name);
+>  	rproc_remove_subdev(rproc, &ssr->subdev);
+>  }
+>  EXPORT_SYMBOL_GPL(qcom_remove_ssr_subdev);
+> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+> index c5d36e6..687e1eb 100644
+> --- a/include/linux/remoteproc.h
+> +++ b/include/linux/remoteproc.h
+> @@ -523,6 +523,7 @@ struct rproc {
+>  /**
+>   * struct rproc_subdev - subdevice tied to a remoteproc
+>   * @node: list node related to the rproc subdevs list
+> + * @name: name of the subdevice
+>   * @prepare: prepare function, called before the rproc is started
+>   * @start: start function, called after the rproc has been started
+>   * @stop: stop function, called before the rproc is stopped; the @crashed
+> @@ -531,6 +532,7 @@ struct rproc {
+>   */
+>  struct rproc_subdev {
+>  	struct list_head node;
+> +	char *name;
+>  
+>  	int (*prepare)(struct rproc_subdev *subdev);
+>  	int (*start)(struct rproc_subdev *subdev);
+> -- 
+> Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+> a Linux Foundation Collaborative Project
