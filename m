@@ -7,66 +7,66 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E852CC54FCB
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 24 Apr 2020 20:02:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29C7DC54FD0
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 24 Apr 2020 20:02:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C24FD214AF
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 24 Apr 2020 20:02:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 075502166E
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 24 Apr 2020 20:02:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Qszvw6G5"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bkgpsJhe"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729499AbgDXUCP (ORCPT
+        id S1729478AbgDXUCP (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
         Fri, 24 Apr 2020 16:02:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39268 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39280 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729478AbgDXUBw (ORCPT
+        with ESMTP id S1729457AbgDXUBv (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 24 Apr 2020 16:01:52 -0400
-Received: from mail-pj1-x1043.google.com (mail-pj1-x1043.google.com [IPv6:2607:f8b0:4864:20::1043])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6852FC09B04C
-        for <linux-remoteproc@vger.kernel.org>; Fri, 24 Apr 2020 13:01:52 -0700 (PDT)
-Received: by mail-pj1-x1043.google.com with SMTP id h12so2929747pjz.1
-        for <linux-remoteproc@vger.kernel.org>; Fri, 24 Apr 2020 13:01:52 -0700 (PDT)
+        Fri, 24 Apr 2020 16:01:51 -0400
+Received: from mail-pl1-x644.google.com (mail-pl1-x644.google.com [IPv6:2607:f8b0:4864:20::644])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2E1CCC09B04B
+        for <linux-remoteproc@vger.kernel.org>; Fri, 24 Apr 2020 13:01:51 -0700 (PDT)
+Received: by mail-pl1-x644.google.com with SMTP id t4so4111608plq.12
+        for <linux-remoteproc@vger.kernel.org>; Fri, 24 Apr 2020 13:01:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=x5AHzcS8sGC9RgEnYTkEdMtqDh+A4mE2SJWyouyzavc=;
-        b=Qszvw6G5hey/OgSVSi18emlbljJRMDrWac3iPQQrHxseohEWF+b/gOBuTe3FeI7Rdi
-         N70dW6ppXpbePUI7XLXYE6qv9No8YpF1Ny00lB2qULYDCzvKaofA/IW632rEAqAbS2lP
-         KuDNIbU6Rdf1A4AG2Z+UGWblwCigb/HunNdtWjlx9O69ntpyYF0M2UOlA/L9Duznq0TV
-         es9aiuHwxnHRCL5ovv90Er7EuA96nL6RsxDq2+St98vJuOpgiWwX3T3og+9O4ZWVCyqo
-         RecNKOO5in7OfsMy/oSIDBE60tOaS0WJpLc+NlQZmQVK+kHkLCNeCCQsNgcIOzWlsblK
-         9IKA==
+        bh=/8EQG22JXL8ro/80I28EMVnMy622Pquoagwe6M0KrVU=;
+        b=bkgpsJheMHUDzSTUosy/UAmwFCjhd6C93gLM9hF6tuH8HE0JtCUDwchMJgA4bHZwLP
+         4+f1x8+0v/848OOPExzbK2I3sunvdbo5trOn22INE8ZwrpXG0YsszY6YCNaTw1LFt4lY
+         XN72vfCJQTu+zmfwmIj5CHhW3OjXO2uMxf+/NdOGySfetVTtMhHgSzuchXCmesiwvz61
+         sctlSYlMaonWSsoBknhQ0UeQXNbWCA5tw9GbaJPOEjMemh924mF1FKK/BSqAELRs7mpc
+         1OLxUhPRlrtGb02Ieerk9XKr3T05xZzlamq5SxmhEy/mXhO79lDkbcb/RGM90w2y/YOM
+         te2A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=x5AHzcS8sGC9RgEnYTkEdMtqDh+A4mE2SJWyouyzavc=;
-        b=LP0P5imxcPioKrZiCLXrc2rsQBYVdU0OwDNJQopTpasFgQydF331RHaGK5WUQWwyV+
-         2iU62mpFIuqJLC5Sdnk5KEt1pLyBhce5I8PNHne5PhoPt6JcIQ/43hMcKrw4PF26GeWb
-         mSHxWvESiwRdxjcCxU384slbTQ3bndd9AJPa7ZVLKY83M2oYUilQ+DIwt1/rYQUX6LCD
-         05M8SdqCWBW6qAcvmY6kqgukC5bYEV2q8p4yUzJuZO940hroa0cbb5qwJLrbumTGrE8r
-         5KjdPYj8dwAXULJOSimAZs8jrYzRt2jiNX3ure9i4qy1Y0S7RFl6OdgyQdND3jGEMt0w
-         e6zg==
-X-Gm-Message-State: AGi0PuZccKgb1Z+a2Y0SXQCXbezEmDd1nXIkMu7sN/2vjelbrNPYpSAI
-        ycrTlRlGE04a8d/rmHvp724ovw==
-X-Google-Smtp-Source: APiQypIGm772GdNEbMZRG1Sl2BHW92OFtPhGXH1b/EFdq/5lG+DrWOi9wf3UyXMrfeaSEtc6o2N63A==
-X-Received: by 2002:a17:90a:5d02:: with SMTP id s2mr7992200pji.148.1587758511852;
-        Fri, 24 Apr 2020 13:01:51 -0700 (PDT)
+        bh=/8EQG22JXL8ro/80I28EMVnMy622Pquoagwe6M0KrVU=;
+        b=VDhX2+ht28jNob/ikrwobyea3FNhJuPiYgat4pQD0FV4wM8ZgrB+M4Fq5N+JKbwPnH
+         9WPHuA2gQvggIKogdd0x1hiYWXwtz5FmJ09I3E6bJS3OEpDlDkoLmCRG9+X17dAH9rmN
+         Yyelom/joRl5/cRb+xiTEGhdXHlA9p6KZwb6q3f3HXZev+2JEAENAjILrNXcN+yPILs9
+         tcasFWXTwxl6z0FA6YvuRuhKq+SDf0aJeRGLkxCnFml8tnMygMAgTLV1sADha5ExUjd1
+         9vDhwFpv0lg8UrEwttzx0GlYtVAbARV2Sz67yPfuI3IodqYX7ROiOmNY3Y2ZibpEYqYB
+         O5WQ==
+X-Gm-Message-State: AGi0Pubfk1cKFEGn0WqL5/aATUboi89S6GIIbxSgavz9qHtKUIOR9kmW
+        Gp/kXLOepM/R68a+B/5PvjHERw==
+X-Google-Smtp-Source: APiQypJUSxhtBMeJ7MpTSeNvVV+NwnzwtOy8Co1PRQCOAmo3YYA+dJdsE6uygCk7p+wHrej+onVEZg==
+X-Received: by 2002:a17:90a:c702:: with SMTP id o2mr8185535pjt.196.1587758510506;
+        Fri, 24 Apr 2020 13:01:50 -0700 (PDT)
 Received: from xps15.cg.shawcable.net (S0106002369de4dac.cg.shawcable.net. [68.147.8.254])
-        by smtp.gmail.com with ESMTPSA id o11sm5532224pgd.58.2020.04.24.13.01.50
+        by smtp.gmail.com with ESMTPSA id o11sm5532224pgd.58.2020.04.24.13.01.49
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 Apr 2020 13:01:51 -0700 (PDT)
+        Fri, 24 Apr 2020 13:01:49 -0700 (PDT)
 From:   Mathieu Poirier <mathieu.poirier@linaro.org>
 To:     bjorn.andersson@linaro.org, ohad@wizery.com
 Cc:     loic.pallardy@st.com, arnaud.pouliquen@st.com, s-anna@ti.com,
         linux-remoteproc@vger.kernel.org, corbet@lwn.net,
         linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v3 11/14] remoteproc: Deal with synchronisation when changing FW image
-Date:   Fri, 24 Apr 2020 14:01:32 -0600
-Message-Id: <20200424200135.28825-12-mathieu.poirier@linaro.org>
+Subject: [PATCH v3 10/14] remoteproc: Deal with synchronisation when shutting down
+Date:   Fri, 24 Apr 2020 14:01:31 -0600
+Message-Id: <20200424200135.28825-11-mathieu.poirier@linaro.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200424200135.28825-1-mathieu.poirier@linaro.org>
 References: <20200424200135.28825-1-mathieu.poirier@linaro.org>
@@ -77,60 +77,108 @@ Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-This patch prevents the firmware image from being displayed or changed
-when the remoteproc core is synchronising with a remote processor. This
-is needed since there is no guarantee about the nature of the firmware
-image that is loaded by the external entity.
+The remoteproc core must not allow function rproc_shutdown() to
+proceed if currently synchronising with a remote processor and
+the synchronisation operations of that remote processor does not
+support it.  Also part of the process is to set the synchronisation
+flag so that the remoteproc core can make the right decisions when
+restarting the system.
 
 Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 ---
- drivers/remoteproc/remoteproc_sysfs.c | 24 +++++++++++++++++++++++-
- 1 file changed, 23 insertions(+), 1 deletion(-)
+ drivers/remoteproc/remoteproc_core.c     | 32 ++++++++++++++++++++++++
+ drivers/remoteproc/remoteproc_internal.h |  7 ++++++
+ 2 files changed, 39 insertions(+)
 
-diff --git a/drivers/remoteproc/remoteproc_sysfs.c b/drivers/remoteproc/remoteproc_sysfs.c
-index 7f8536b73295..cdd322a6ecfa 100644
---- a/drivers/remoteproc/remoteproc_sysfs.c
-+++ b/drivers/remoteproc/remoteproc_sysfs.c
-@@ -13,9 +13,20 @@
- static ssize_t firmware_show(struct device *dev, struct device_attribute *attr,
- 			  char *buf)
- {
-+	ssize_t ret;
- 	struct rproc *rproc = to_rproc(dev);
- 
--	return sprintf(buf, "%s\n", rproc->firmware);
-+	/*
-+	 * In most instances there is no guarantee about the firmware
-+	 * that was loaded by the external entity.  As such simply don't
-+	 * print anything.
-+	 */
-+	if (rproc_needs_syncing(rproc))
-+		ret = sprintf(buf, "\n");
-+	else
-+		ret = sprintf(buf, "%s\n", rproc->firmware);
-+
-+	return ret;
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index 3a84a38ba37b..48afa1f80a8f 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -1849,6 +1849,27 @@ int rproc_boot(struct rproc *rproc)
  }
+ EXPORT_SYMBOL(rproc_boot);
  
- /* Change firmware name via sysfs */
-@@ -39,6 +50,17 @@ static ssize_t firmware_store(struct device *dev,
- 		goto out;
++static bool rproc_can_shutdown(struct rproc *rproc)
++{
++	/*
++	 * The remoteproc core is the lifecycle manager, no problem
++	 * calling for a shutdown.
++	 */
++	if (!rproc_needs_syncing(rproc))
++		return true;
++
++	/*
++	 * The remoteproc has been loaded by another entity (as per above
++	 * condition) and the platform code has given us the capability
++	 * of stopping it.
++	 */
++	if (rproc->sync_ops->stop)
++		return true;
++
++	/* Any other condition should not be allowed */
++	return false;
++}
++
+ /**
+  * rproc_shutdown() - power off the remote processor
+  * @rproc: the remote processor
+@@ -1879,6 +1900,9 @@ void rproc_shutdown(struct rproc *rproc)
+ 		return;
  	}
  
-+	/*
-+	 * There is no point in trying to change the firmware if loading the
-+	 * image of the remote processor is done by another entity.
-+	 */
-+	if (rproc_needs_syncing(rproc)) {
-+		dev_err(dev,
-+			"can't change firmware while synchronising with MCU\n");
-+		err = -EBUSY;
++	if (!rproc_can_shutdown(rproc))
 +		goto out;
-+	}
 +
- 	len = strcspn(buf, "\n");
- 	if (!len) {
- 		dev_err(dev, "can't provide a NULL firmware\n");
+ 	/* if the remote proc is still needed, bail out */
+ 	if (!atomic_dec_and_test(&rproc->power))
+ 		goto out;
+@@ -1898,6 +1922,14 @@ void rproc_shutdown(struct rproc *rproc)
+ 	kfree(rproc->cached_table);
+ 	rproc->cached_table = NULL;
+ 	rproc->table_ptr = NULL;
++
++	/*
++	 * The remote processor has been switched off - tell the core what
++	 * operation to use from hereon, i.e whether an external entity will
++	 * reboot the remote processor or it is now the remoteproc core's
++	 * responsability.
++	 */
++	rproc_set_sync_flag(rproc, RPROC_SYNC_STATE_SHUTDOWN);
+ out:
+ 	mutex_unlock(&rproc->lock);
+ }
+diff --git a/drivers/remoteproc/remoteproc_internal.h b/drivers/remoteproc/remoteproc_internal.h
+index 61500981155c..7dcc0a26892b 100644
+--- a/drivers/remoteproc/remoteproc_internal.h
++++ b/drivers/remoteproc/remoteproc_internal.h
+@@ -27,6 +27,9 @@ struct rproc_debug_trace {
+ /*
+  * enum rproc_sync_states - remote processsor sync states
+  *
++ * @RPROC_SYNC_STATE_SHUTDOWN	state to use after the remoteproc core
++ *				has shutdown (rproc_shutdown()) the
++ *				remote processor.
+  * @RPROC_SYNC_STATE_CRASHED	state to use after the remote processor
+  *				has crashed but has not been recovered by
+  *				the remoteproc core yet.
+@@ -36,6 +39,7 @@ struct rproc_debug_trace {
+  * operation to use.
+  */
+ enum rproc_sync_states {
++	RPROC_SYNC_STATE_SHUTDOWN,
+ 	RPROC_SYNC_STATE_CRASHED,
+ };
+ 
+@@ -43,6 +47,9 @@ static inline void rproc_set_sync_flag(struct rproc *rproc,
+ 				       enum rproc_sync_states state)
+ {
+ 	switch (state) {
++	case RPROC_SYNC_STATE_SHUTDOWN:
++		rproc->sync_with_rproc = rproc->sync_flags.after_stop;
++		break;
+ 	case RPROC_SYNC_STATE_CRASHED:
+ 		rproc->sync_with_rproc = rproc->sync_flags.after_crash;
+ 		break;
 -- 
 2.20.1
 
