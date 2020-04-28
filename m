@@ -2,63 +2,65 @@ Return-Path: <SRS0=Jgy+=6M=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0262FC83007
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 28 Apr 2020 10:25:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09D5BC83004
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 28 Apr 2020 10:31:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D612B206C0
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 28 Apr 2020 10:25:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D3B3D206F0
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 28 Apr 2020 10:31:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="r+NX3cUx"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="LxFM0NQo"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727117AbgD1KZo (ORCPT
+        id S1726307AbgD1Kbm (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 28 Apr 2020 06:25:44 -0400
-Received: from mail26.static.mailgun.info ([104.130.122.26]:21236 "EHLO
-        mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727025AbgD1KZo (ORCPT
+        Tue, 28 Apr 2020 06:31:42 -0400
+Received: from mail27.static.mailgun.info ([104.130.122.27]:59445 "EHLO
+        mail27.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726336AbgD1Kbk (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 28 Apr 2020 06:25:44 -0400
+        Tue, 28 Apr 2020 06:31:40 -0400
 DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1588069544; h=Message-ID: References: In-Reply-To: Subject:
+ s=smtp; t=1588069899; h=Message-ID: References: In-Reply-To: Subject:
  Cc: To: From: Date: Content-Transfer-Encoding: Content-Type:
- MIME-Version: Sender; bh=mt8ZKt7ekHYxZxwdLyFwpLcwX/dr8EXCmWDuLwuteJM=;
- b=r+NX3cUx2o4i7ttYzBxrJCu71jA/5sU6MNtAXLaTsvrFQSovsYBdzy5og37i0qhq7uPJtXPA
- 0H/6273i7BH/imROL0CDckxV+8XxLTu5u8zeIqTKudf17K7Rfh9biLOMAQfNzivjKUC3gb0k
- jYs44HRvEbVDfn10NjJkFdUzDGA=
-X-Mailgun-Sending-Ip: 104.130.122.26
+ MIME-Version: Sender; bh=C7Nzqo45CDsdOMCR2qiEOVSlhajdt6ea798XRj/Glxc=;
+ b=LxFM0NQo0lB4I5XuTqshmHuz512axnAgvMKy8uLvjHM6jmLeesS8U5YtEYc/e8NWEtjCSgcO
+ ERuXStEmvisNCnZA5cPpvIDj9K00jWAvcfpInVZF6J+3LlzxNzXfe5CHWBj50ZLznGRYF92D
+ JtZVfOqh00mThLdnQQZPrh9Bt2Y=
+X-Mailgun-Sending-Ip: 104.130.122.27
 X-Mailgun-Sid: WyI4ZWZiZiIsICJsaW51eC1yZW1vdGVwcm9jQHZnZXIua2VybmVsLm9yZyIsICJiZTllNGEiXQ==
 Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5ea804a5.7fbc61c1f688-smtp-out-n05;
- Tue, 28 Apr 2020 10:25:41 -0000 (UTC)
+ by mxa.mailgun.org with ESMTP id 5ea805f8.7f67d99ed6f8-smtp-out-n04;
+ Tue, 28 Apr 2020 10:31:20 -0000 (UTC)
 Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id C5E44C433F2; Tue, 28 Apr 2020 10:25:41 +0000 (UTC)
+        id DB608C433CB; Tue, 28 Apr 2020 10:31:19 +0000 (UTC)
 Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
         (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
         (No client certificate requested)
         (Authenticated sender: sibis)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 34211C433CB;
-        Tue, 28 Apr 2020 10:25:40 +0000 (UTC)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 652BAC433BA;
+        Tue, 28 Apr 2020 10:31:19 +0000 (UTC)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII;
  format=flowed
 Content-Transfer-Encoding: 7bit
-Date:   Tue, 28 Apr 2020 15:55:40 +0530
+Date:   Tue, 28 Apr 2020 16:01:19 +0530
 From:   Sibi Sankar <sibis@codeaurora.org>
 To:     Bjorn Andersson <bjorn.andersson@linaro.org>
 Cc:     Andy Gross <agross@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>,
         Rob Herring <robh+dt@kernel.org>,
         linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Rishabh Bhatnagar <rishabhb@codeaurora.org>
-Subject: Re: [PATCH 1/2] dt-bindings: remoteproc: qcom: pas: Add SM8250
- remoteprocs
-In-Reply-To: <20200428000110.2958704-1-bjorn.andersson@linaro.org>
+        Rishabh Bhatnagar <rishabhb@codeaurora.org>,
+        linux-kernel-owner@vger.kernel.org
+Subject: Re: [PATCH 2/2] remoteproc: qcom: pas: Add SM8250 PAS remoteprocs
+In-Reply-To: <20200428000110.2958704-2-bjorn.andersson@linaro.org>
 References: <20200428000110.2958704-1-bjorn.andersson@linaro.org>
-Message-ID: <e131cbd9e7e5971ead1e21f21d3eb2f1@codeaurora.org>
+ <20200428000110.2958704-2-bjorn.andersson@linaro.org>
+Message-ID: <67b0b2a8b9581ddafb48e7f808e47857@codeaurora.org>
 X-Sender: sibis@codeaurora.org
 User-Agent: Roundcube Webmail/1.3.9
 Sender: linux-remoteproc-owner@vger.kernel.org
@@ -69,60 +71,124 @@ X-Mailing-List: linux-remoteproc@vger.kernel.org
 Hey Bjorn,
 
 On 2020-04-28 05:31, Bjorn Andersson wrote:
-> Add the SM8250 audio, compute and sensor remoteprocs to the PAS DT
-> binding.
+> Add audio, compute and sensor DSP compatibles to the Qualcomm PAS
+> binding and driver.
 > 
 > Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 > ---
->  .../devicetree/bindings/remoteproc/qcom,adsp.txt         | 9 +++++++++
->  1 file changed, 9 insertions(+)
+>  drivers/remoteproc/qcom_q6v5_pas.c | 62 ++++++++++++++++++++++++++++++
+>  1 file changed, 62 insertions(+)
 > 
-> diff --git
-> a/Documentation/devicetree/bindings/remoteproc/qcom,adsp.txt
-> b/Documentation/devicetree/bindings/remoteproc/qcom,adsp.txt
-> index 9938918b2fea..49ec30454198 100644
-> --- a/Documentation/devicetree/bindings/remoteproc/qcom,adsp.txt
-> +++ b/Documentation/devicetree/bindings/remoteproc/qcom,adsp.txt
-> @@ -21,6 +21,9 @@ on the Qualcomm ADSP Hexagon core.
->  		    "qcom,sm8150-cdsp-pas"
->  		    "qcom,sm8150-mpss-pas"
->  		    "qcom,sm8150-slpi-pas"
-> +		    "qcom,sm8250-adsp-pas"
-> +		    "qcom,sm8250-cdsp-pas"
-> +		    "qcom,sm8250-slpi-pas"
+> diff --git a/drivers/remoteproc/qcom_q6v5_pas.c
+> b/drivers/remoteproc/qcom_q6v5_pas.c
+> index 8ecc157f1ed1..5f2266c74448 100644
+> --- a/drivers/remoteproc/qcom_q6v5_pas.c
+> +++ b/drivers/remoteproc/qcom_q6v5_pas.c
+> @@ -508,6 +508,26 @@ static const struct adsp_data sm8150_adsp_resource 
+> = {
+>  		.ssctl_id = 0x14,
+>  };
 > 
->  - interrupts-extended:
->  	Usage: required
-> @@ -44,6 +47,9 @@ on the Qualcomm ADSP Hexagon core.
->  	qcom,sm8150-adsp-pas:
->  	qcom,sm8150-cdsp-pas:
->  	qcom,sm8150-slpi-pas:
-> +	qcom,sm8250-adsp-pas:
-> +	qcom,sm8250-cdsp-pas:
-> +	qcom,sm8250-slpi-pas:
->  		    must be "wdog", "fatal", "ready", "handover", "stop-ack"
->  	qcom,qcs404-wcss-pas:
->  	qcom,sm8150-mpss-pas:
-> @@ -105,10 +111,13 @@ on the Qualcomm ADSP Hexagon core.
->  	qcom,sdm845-cdsp-pas:
->  	qcom,sm8150-adsp-pas:
->  	qcom,sm8150-cdsp-pas:
-> +	qcom,sm8250-adsp-pas:
+> +static const struct adsp_data sm8250_adsp_resource = {
+> +	.crash_reason_smem = 423,
+> +	.firmware_name = "adsp.mdt",
+> +	.pas_id = 1,
+> +	.has_aggre2_clk = false,
+> +	.auto_boot = true,
+> +	.active_pd_names = (char*[]){
+> +		"load_state",
+> +		NULL
+> +	},
+> +	.proxy_pd_names = (char*[]){
+> +		"cx",
+> +		"mx",
 
-Looks like adsp also uses lcx and lmx
-similar to slpi, the rest looks good
+you may want to name it as lcx, lmx.
+The remaining looks good!
 
 Reviewed-by: Sibi Sankar <sibis@codeaurora.org>
 
-> +	qcom,sm8250-cdsp-pas:
->  		    must be "cx", "load_state"
->  	qcom,sm8150-mpss-pas:
->  		    must be "cx", "load_state", "mss"
->  	qcom,sm8150-slpi-pas:
-> +	qcom,sm8250-slpi-pas:
->  		    must be "lcx", "lmx", "load_state"
+> +		NULL
+> +	},
+> +	.ssr_name = "lpass",
+> +	.sysmon_name = "adsp",
+> +	.ssctl_id = 0x14,
+> +};
+> +
+>  static const struct adsp_data msm8998_adsp_resource = {
+>  		.crash_reason_smem = 423,
+>  		.firmware_name = "adsp.mdt",
+> @@ -553,6 +573,25 @@ static const struct adsp_data sm8150_cdsp_resource 
+> = {
+>  	.ssctl_id = 0x17,
+>  };
 > 
->  - memory-region:
+> +static const struct adsp_data sm8250_cdsp_resource = {
+> +	.crash_reason_smem = 601,
+> +	.firmware_name = "cdsp.mdt",
+> +	.pas_id = 18,
+> +	.has_aggre2_clk = false,
+> +	.auto_boot = true,
+> +	.active_pd_names = (char*[]){
+> +		"load_state",
+> +		NULL
+> +	},
+> +	.proxy_pd_names = (char*[]){
+> +		"cx",
+> +		NULL
+> +	},
+> +	.ssr_name = "cdsp",
+> +	.sysmon_name = "cdsp",
+> +	.ssctl_id = 0x17,
+> +};
+> +
+>  static const struct adsp_data mpss_resource_init = {
+>  	.crash_reason_smem = 421,
+>  	.firmware_name = "modem.mdt",
+> @@ -604,6 +643,26 @@ static const struct adsp_data sm8150_slpi_resource 
+> = {
+>  		.ssctl_id = 0x16,
+>  };
+> 
+> +static const struct adsp_data sm8250_slpi_resource = {
+> +	.crash_reason_smem = 424,
+> +	.firmware_name = "slpi.mdt",
+> +	.pas_id = 12,
+> +	.has_aggre2_clk = false,
+> +	.auto_boot = true,
+> +	.active_pd_names = (char*[]){
+> +		"load_state",
+> +		NULL
+> +	},
+> +	.proxy_pd_names = (char*[]){
+> +		"lcx",
+> +		"lmx",
+> +		NULL
+> +	},
+> +	.ssr_name = "dsps",
+> +	.sysmon_name = "slpi",
+> +	.ssctl_id = 0x16,
+> +};
+> +
+>  static const struct adsp_data msm8998_slpi_resource = {
+>  		.crash_reason_smem = 424,
+>  		.firmware_name = "slpi.mdt",
+> @@ -644,6 +703,9 @@ static const struct of_device_id adsp_of_match[] = 
+> {
+>  	{ .compatible = "qcom,sm8150-cdsp-pas", .data = 
+> &sm8150_cdsp_resource},
+>  	{ .compatible = "qcom,sm8150-mpss-pas", .data = &mpss_resource_init},
+>  	{ .compatible = "qcom,sm8150-slpi-pas", .data = 
+> &sm8150_slpi_resource},
+> +	{ .compatible = "qcom,sm8250-adsp-pas", .data = 
+> &sm8250_adsp_resource},
+> +	{ .compatible = "qcom,sm8250-cdsp-pas", .data = 
+> &sm8250_cdsp_resource},
+> +	{ .compatible = "qcom,sm8250-slpi-pas", .data = 
+> &sm8250_slpi_resource},
+>  	{ },
+>  };
+>  MODULE_DEVICE_TABLE(of, adsp_of_match);
 
 -- 
 Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
