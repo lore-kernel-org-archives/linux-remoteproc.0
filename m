@@ -2,297 +2,157 @@ Return-Path: <SRS0=Jgy+=6M=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B047EC83006
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 28 Apr 2020 12:57:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B2FBC83001
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 28 Apr 2020 16:19:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 86B9A206D9
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 28 Apr 2020 12:57:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1588078639;
-	bh=BAeQTU0OgzmvlFIr927RAcq1shGoyB+kb7Hl2BhC50M=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=YBfr+TwMm5gc4Xe0wRYTCfvd0CH7uZYIcIwPijGHlaCFzpmrSD+kp0bE5KMvN15Wp
-	 UpuRKsYhMka7VvSQW+ZXJyTTaqd7ofx0qAiYWct8QPDjv2nF0WJydJe6sGLeR8aq3O
-	 IvMnOERy34f/l0iGuDUjNzYst2KjlKFZaevVfNo0=
+	by mail.kernel.org (Postfix) with ESMTP id 48C3120746
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 28 Apr 2020 16:19:17 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=st.com header.i=@st.com header.b="o5xNUOnn"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726785AbgD1M5T (ORCPT
+        id S1728129AbgD1QTN (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 28 Apr 2020 08:57:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42910 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726746AbgD1M5T (ORCPT
+        Tue, 28 Apr 2020 12:19:13 -0400
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:19090 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728035AbgD1QTN (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 28 Apr 2020 08:57:19 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 73DA6206D6;
-        Tue, 28 Apr 2020 12:57:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1588078637;
-        bh=BAeQTU0OgzmvlFIr927RAcq1shGoyB+kb7Hl2BhC50M=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=dur1TI9/mOUwXvaRoeEqnEJaG6GJNDfvIg6qZ7tsxQAm8mECDKfW1ys9AakN/vt5c
-         wXEc3FNNoa2nbDqGNC9mjvUZRJLgnrPQQ236qAUlftMUYTLSn3glS9uvJffMeAf3wu
-         EF5exq/FJLzpqeHWExcuKmUIV1vNHrE8JOIlCa2o=
-Date:   Tue, 28 Apr 2020 14:57:15 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Wang Wenhu <wenhu.wang@vivo.com>
-Cc:     linux-kernel@vger.kernel.org, rdunlap@infradead.org,
-        kernel@vivo.com, agross@kernel.org, bjorn.andersson@linaro.org,
-        ohad@wizery.com, linux-remoteproc@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH v3,1/3] driver: rpmon: new driver Remote Processor Monitor
-Message-ID: <20200428125715.GA1302692@kroah.com>
-References: <20200412112405.24116-1-wenhu.wang@vivo.com>
- <20200414035949.107225-1-wenhu.wang@vivo.com>
- <20200414035949.107225-2-wenhu.wang@vivo.com>
+        Tue, 28 Apr 2020 12:19:13 -0400
+Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 03SGITG3027589;
+        Tue, 28 Apr 2020 18:19:03 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=STMicroelectronics;
+ bh=bTVST/vGOCmW9bqsQcFABvpaPEN0vNzqWpWCEdlwQXI=;
+ b=o5xNUOnnP+HFLIMHhJf+r0D+yWKLgEeTptyByrWCw8QKDKw598JlqNeLWDC2Lm+aaUha
+ XXMOO3HsED0yZyDyRNjzkqTywML48r/AjC3fEtZPIposCqm5gn2lYY59JHirmiq0OSU/
+ g+iGDZAV4cjw2k1QbacNG8M6OGj1nQfTbVFODeFVlLtoufNujKGhFxE4mp9s/d6EIMoh
+ v3aEbGkRniNXFC1xzAj7SbQRWRu34cdjXScHKJPl2bJqroG1kmUEUfmLUFXKkdWnveTt
+ 9mFuJaXJltxdNfj8ol8vMFxrNSLkKPvMjiBJV3wpx7TnHFRHN8fbRNz4D8cguBfn/Dc1 rw== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 30n4j5w465-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 28 Apr 2020 18:19:03 +0200
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 27FE510002A;
+        Tue, 28 Apr 2020 18:19:02 +0200 (CEST)
+Received: from Webmail-eu.st.com (sfhdag3node1.st.com [10.75.127.7])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 102C02BF9CE;
+        Tue, 28 Apr 2020 18:19:02 +0200 (CEST)
+Received: from lmecxl0889.tpe.st.com (10.75.127.47) by SFHDAG3NODE1.st.com
+ (10.75.127.7) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 28 Apr
+ 2020 18:19:00 +0200
+Subject: Re: [PATCH v3 01/14] remoteproc: Make core operations optional
+To:     Mathieu Poirier <mathieu.poirier@linaro.org>,
+        <bjorn.andersson@linaro.org>, <ohad@wizery.com>
+CC:     <loic.pallardy@st.com>, <s-anna@ti.com>,
+        <linux-remoteproc@vger.kernel.org>, <corbet@lwn.net>,
+        <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20200424200135.28825-1-mathieu.poirier@linaro.org>
+ <20200424200135.28825-2-mathieu.poirier@linaro.org>
+From:   Arnaud POULIQUEN <arnaud.pouliquen@st.com>
+Message-ID: <ff9254d9-6a17-cae5-9f41-2c60303a38ec@st.com>
+Date:   Tue, 28 Apr 2020 18:18:59 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200414035949.107225-2-wenhu.wang@vivo.com>
+In-Reply-To: <20200424200135.28825-2-mathieu.poirier@linaro.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.75.127.47]
+X-ClientProxiedBy: SFHDAG5NODE1.st.com (10.75.127.13) To SFHDAG3NODE1.st.com
+ (10.75.127.7)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.676
+ definitions=2020-04-28_11:2020-04-28,2020-04-28 signatures=0
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Mon, Apr 13, 2020 at 08:59:47PM -0700, Wang Wenhu wrote:
-> RPMON is a driver framework. It supports remote processor monitor
-> from user level. The basic components are a character device
-> with sysfs interfaces for user space communication and different
-> kinds of message drivers introduced modularly, which are used to
-> communicate with remote processors.
+Hi Mathieu,
+
+On 4/24/20 10:01 PM, Mathieu Poirier wrote:
+> When synchronizing with a remote processor, it is entirely possible that
+> the remoteproc core is not the life cycle manager.  In such a case core
+> operations don't exist and should not be called.
+
+What about ops in remote_core.c?
+Applying the series, seems that at least rproc->ops->panic rproc->ops->da_to_va 
+can be called tested with undefined ops structure.
+
+Regards, 
+
+Arnaud
+
 > 
-> As for user space, one can get notifications of different events
-> of remote processors, like their registrations, through standard
-> file read operation of the file descriptors related to the exported
-> character devices. Actions can also be taken into account via
-> standard write operations to the devices. Besides, the sysfs class
-> attributes could be accessed conveniently.
-> 
-> Message drivers act as engines to communicate with remote processors.
-> Currently RPMON_QMI is available which uses QMI infrastructures
-> on Qualcomm SoC Platforms.
-> 
-> Cc: Andy Gross <agross@kernel.org>
-> Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
-> Cc: Ohad Ben-Cohen <ohad@wizery.com>
-> Cc: linux-remoteproc@vger.kernel.org
-> Cc: linux-arm-msm@vger.kernel.org
-> Signed-off-by: Wang Wenhu <wenhu.wang@vivo.com>
+> Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 > ---
-> Changes since v1:
->  - Addressed review comments from Randy
-> Changes since v2:
->  - Log message typo
->  - Added Cc list
-> ---
->  drivers/Kconfig        |   2 +
->  drivers/Makefile       |   1 +
->  drivers/rpmon/Kconfig  |  26 +++
->  drivers/rpmon/Makefile |   1 +
->  drivers/rpmon/rpmon.c  | 506 +++++++++++++++++++++++++++++++++++++++++
->  include/linux/rpmon.h  |  68 ++++++
->  6 files changed, 604 insertions(+)
->  create mode 100644 drivers/rpmon/Kconfig
->  create mode 100644 drivers/rpmon/Makefile
->  create mode 100644 drivers/rpmon/rpmon.c
->  create mode 100644 include/linux/rpmon.h
-
-You create a bunch of sysfs files, but you do not have any
-Documentation/ABI/ updates showing what those files are for?  Please fix
-that up.
-
-> +config RPMON
-> +	tristate "Remote Processor Monitor Core Framework"
-> +	help
-> +	  RPMON is a driver framework. It supports remote processor monitor
-> +	  from user level. The basic components are a character device
-> +	  with sysfs interfaces for user space communication and different
-> +	  kinds of message drivers introduced modularly, which are used to
-> +	  communicate with remote processors.
-> +
-> +	  As for user space, one can get notifications of different events
-> +	  of remote processors, like their registrations, through standard
-> +	  file read operation of the file descriptors related to the exported
-> +	  character devices. Actions can also be taken into account via
-> +	  standard write operations to the devices. Besides, the sysfs class
-> +	  attributes could be accessed conveniently.
-
-So you don't need the char dev node?  The sysfs files are sufficient?
-Or do they both do different things?
-
-How does the user/kernel api work for the char node?
-
-> +#define RPMON_MAX_DEVICES	(1U << MINORBITS)
-
-Why do you have a limit?
-
-Why not just make it dynamic?
-
-> +#define RPMON_NAME			"rpmon"
-> +
-> +static int rpmon_major;
-
-Why do you need a whole major for this?  Why not use a misc device?
-
-> +static struct cdev *rpmon_cdev;
-> +static DEFINE_IDR(rpmon_idr);
-> +static const struct file_operations rpmon_fops;
-> +
-> +/* Protect idr accesses */
-> +static DEFINE_MUTEX(minor_lock);
-
-Are you sure you need this?
-
-
-
-> +
-> +static ssize_t name_show(struct device *dev,
-> +			 struct device_attribute *attr, char *buf)
-> +{
-> +	struct rpmon_device *rpmondev = dev_get_drvdata(dev);
-> +	int ret;
-> +
-> +	mutex_lock(&rpmondev->info_lock);
-> +	if (!rpmondev->info) {
-> +		ret = -EINVAL;
-> +		dev_err(dev, "the device has been unregistered\n");
-
-How can that happen in your sysfs file?  Shouldn't the name be part of
-the structure itself?  And what's wrong with the default name in struct
-device?
-
-> +static ssize_t rpmon_read(struct file *filep, char __user *buf,
-> +			  size_t count, loff_t *ppos)
-> +{
-> +	struct rpmon_device *rpmondev = filep->private_data;
-> +	DECLARE_WAITQUEUE(wait, current);
-> +	ssize_t ret = 0;
-> +	u32 event;
-> +
-> +	if (count != sizeof(u32))
-> +		return -EINVAL;
-> +
-> +	add_wait_queue(&rpmondev->wait, &wait);
-> +
-> +	do {
-> +		mutex_lock(&rpmondev->info_lock);
-> +		if (!rpmondev->info) {
-> +			ret = -EIO;
-> +			mutex_unlock(&rpmondev->info_lock);
-> +			break;
-> +		}
-> +		mutex_unlock(&rpmondev->info_lock);
-> +
-> +		set_current_state(TASK_INTERRUPTIBLE);
-> +
-> +		event = atomic_read(&rpmondev->event);
-> +		if (event) {
-> +			__set_current_state(TASK_RUNNING);
-> +			if (copy_to_user(buf, &event, count))
-> +				ret = -EFAULT;
-> +			else {
-> +				atomic_set(&rpmondev->event, 0);
-> +				ret = count;
-> +			}
-> +			break;
-> +		}
-> +
-> +		if (filep->f_flags & O_NONBLOCK) {
-> +			ret = -EAGAIN;
-> +			break;
-> +		}
-> +
-> +		if (signal_pending(current)) {
-> +			ret = -ERESTARTSYS;
-> +			break;
-> +		}
-> +		schedule();
-> +	} while (1);
-> +
-> +	__set_current_state(TASK_RUNNING);
-
-Are you _sure_ that is the right way to do this???
-
-> +	remove_wait_queue(&rpmondev->wait, &wait);
-> +
-> +	return ret;
-> +}
-> +
-> +static ssize_t rpmon_write(struct file *filep, const char __user *buf,
-> +			   size_t count, loff_t *ppos)
-> +{
-> +	struct rpmon_device *rpmondev = filep->private_data;
-> +	ssize_t ret;
-> +	u32 action;
-> +
-> +	if (count != sizeof(u32))
-> +		return -EINVAL;
-
-That's rude, how can you enforce userspace doing this?  What about short
-writes?
-
-> +
-> +	if (copy_from_user(&action, buf, count))
-> +		return -EFAULT;
-> +
-> +	mutex_lock(&rpmondev->info_lock);
-> +	if (!rpmondev->info) {
-> +		ret = -EINVAL;
-> +		goto out;
-> +	}
-> +
-> +	if (!rpmondev->info->monitor) {
-> +		ret = -ENOTSUPP;
-> +		goto out;
-> +	}
-> +
-> +	if (rpmondev->info->monitor)
-> +		ret = rpmondev->info->monitor(rpmondev->info, action);
-> +out:
-> +	mutex_unlock(&rpmondev->info_lock);
-> +	return ret ? ret : sizeof(u32);
-> +}
-> +
-> +static const struct file_operations rpmon_fops = {
-> +	.owner		= THIS_MODULE,
-> +	.open		= rpmon_open,
-> +	.read		= rpmon_read,
-> +	.write		= rpmon_write,
-> +	.poll		= rpmon_poll,
-> +	.release	= rpmon_release,
-> +};
-> +
-> +static int rpmon_major_init(void)
-> +{
-> +	static const char name[] = RPMON_NAME;
-> +	struct cdev *cdev = NULL;
-> +	dev_t rpmon_dev = 0;
-> +	int ret;
-> +
-> +	ret = alloc_chrdev_region(&rpmon_dev, 0, RPMON_MAX_DEVICES, name);
-> +	if (ret)
-> +		goto out;
-> +
-> +	ret = -ENOMEM;
-> +	cdev = cdev_alloc();
-> +	if (!cdev)
-> +		goto out_unregister;
-> +
-> +	cdev->owner = THIS_MODULE;
-> +	cdev->ops = &rpmon_fops;
-> +	kobject_set_name(&cdev->kobj, "%s", name);
-
-That doesn't do what you think it does :)
-
-Just use a misc device please.
-
-thanks,
-
-greg k-h
+>  drivers/remoteproc/remoteproc_internal.h | 12 ++++++------
+>  1 file changed, 6 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/remoteproc/remoteproc_internal.h b/drivers/remoteproc/remoteproc_internal.h
+> index b389dc79da81..59fc871743c7 100644
+> --- a/drivers/remoteproc/remoteproc_internal.h
+> +++ b/drivers/remoteproc/remoteproc_internal.h
+> @@ -67,7 +67,7 @@ rproc_find_carveout_by_name(struct rproc *rproc, const char *name, ...);
+>  static inline
+>  int rproc_fw_sanity_check(struct rproc *rproc, const struct firmware *fw)
+>  {
+> -	if (rproc->ops->sanity_check)
+> +	if (rproc->ops && rproc->ops->sanity_check)
+>  		return rproc->ops->sanity_check(rproc, fw);
+>  
+>  	return 0;
+> @@ -76,7 +76,7 @@ int rproc_fw_sanity_check(struct rproc *rproc, const struct firmware *fw)
+>  static inline
+>  u64 rproc_get_boot_addr(struct rproc *rproc, const struct firmware *fw)
+>  {
+> -	if (rproc->ops->get_boot_addr)
+> +	if (rproc->ops && rproc->ops->get_boot_addr)
+>  		return rproc->ops->get_boot_addr(rproc, fw);
+>  
+>  	return 0;
+> @@ -85,7 +85,7 @@ u64 rproc_get_boot_addr(struct rproc *rproc, const struct firmware *fw)
+>  static inline
+>  int rproc_load_segments(struct rproc *rproc, const struct firmware *fw)
+>  {
+> -	if (rproc->ops->load)
+> +	if (rproc->ops && rproc->ops->load)
+>  		return rproc->ops->load(rproc, fw);
+>  
+>  	return -EINVAL;
+> @@ -93,7 +93,7 @@ int rproc_load_segments(struct rproc *rproc, const struct firmware *fw)
+>  
+>  static inline int rproc_parse_fw(struct rproc *rproc, const struct firmware *fw)
+>  {
+> -	if (rproc->ops->parse_fw)
+> +	if (rproc->ops && rproc->ops->parse_fw)
+>  		return rproc->ops->parse_fw(rproc, fw);
+>  
+>  	return 0;
+> @@ -103,7 +103,7 @@ static inline
+>  int rproc_handle_rsc(struct rproc *rproc, u32 rsc_type, void *rsc, int offset,
+>  		     int avail)
+>  {
+> -	if (rproc->ops->handle_rsc)
+> +	if (rproc->ops && rproc->ops->handle_rsc)
+>  		return rproc->ops->handle_rsc(rproc, rsc_type, rsc, offset,
+>  					      avail);
+>  
+> @@ -114,7 +114,7 @@ static inline
+>  struct resource_table *rproc_find_loaded_rsc_table(struct rproc *rproc,
+>  						   const struct firmware *fw)
+>  {
+> -	if (rproc->ops->find_loaded_rsc_table)
+> +	if (rproc->ops && rproc->ops->find_loaded_rsc_table)
+>  		return rproc->ops->find_loaded_rsc_table(rproc, fw);
+>  
+>  	return NULL;
+> 
