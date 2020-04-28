@@ -2,256 +2,300 @@ Return-Path: <SRS0=Jgy+=6M=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72AEFC83007
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 28 Apr 2020 20:10:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40649C83004
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 28 Apr 2020 22:18:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 511A6208E0
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 28 Apr 2020 20:10:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1A65E2072A
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 28 Apr 2020 22:18:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="d3Lktalo"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="BLbeNENp"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726350AbgD1UJm (ORCPT
+        id S1725934AbgD1WSf (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 28 Apr 2020 16:09:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59202 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726333AbgD1UJ0 (ORCPT
+        Tue, 28 Apr 2020 18:18:35 -0400
+Received: from mail26.static.mailgun.info ([104.130.122.26]:48189 "EHLO
+        mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726256AbgD1WSe (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 28 Apr 2020 16:09:26 -0400
-Received: from mail-io1-xd42.google.com (mail-io1-xd42.google.com [IPv6:2607:f8b0:4864:20::d42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C0F2BC03C1AD
-        for <linux-remoteproc@vger.kernel.org>; Tue, 28 Apr 2020 13:09:24 -0700 (PDT)
-Received: by mail-io1-xd42.google.com with SMTP id o127so24709471iof.0
-        for <linux-remoteproc@vger.kernel.org>; Tue, 28 Apr 2020 13:09:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=6b8JEdc86QQaLWgUONgVk5QnyKn0OwJfe4nUlQTwps0=;
-        b=d3LktalotbLI0rJhUPptVS5m6TeC3T7IVM9AmAJQcKzSqXkCYx4sHzfZBRXBWNrhJ9
-         nChBqVreBXCMxoNCEjAdTXCR1vRzfCytEZUtf13z9oltklrIDGVULrwgUMUto7+0T9eP
-         0tAKMU6ESdpJJtGA7/8moPsY9glywvT/o6LZIGOKLkAUj+DSnUNkiSLG/haa3Vu9JQSt
-         XZT9vMf6gbkocCwqFSitNVkd2Xqvyt4YOII+8CJDtXjmcZbbo2a9JtwVOsVq9az4EJs+
-         jOBj56RrVFe/Zh/Ev3wvJuYasVOlY0KYDQx3OsfEiC5t6GDwauOkY9EpJBKZdEGwt0Gx
-         EYUQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=6b8JEdc86QQaLWgUONgVk5QnyKn0OwJfe4nUlQTwps0=;
-        b=jrkn4X1qjFbj7y/gc8FSmR4W3QZS6V8UMCAN2B5y/6k5hPdN0kUifewtt1ZiunrmtQ
-         oAczrhQ4TLTOynQF7B7wvB9L80MTwfS9s6C+M9r2x1/+HefdFzeJDZ3x85PR41OFa/HW
-         3IBf2ZsJgFnPLfpP1CrF34KmSH51mTBF3eNhHOu3uTwhLrfOWKg7axUABQBvauVBYcAZ
-         EwZVDz62DBFpnGI6Soq0Qk5hpCXvzt4y0FeyCp1HZSJUnaYWyi5ag2KsPfVaFQi2irh3
-         le0xsBhzbDakyQj6F5njndok2kujvmDIGJnm0WUOHjC/i/iqSHlUZUHUhvn+P9Pke9x1
-         9C1g==
-X-Gm-Message-State: AGi0PubX4whT5HWsm3mMCYl0T2A0nyD2SxFFBw0T83zSfAmZbFIZ+qZt
-        0UMqDtSYajwx3ZRkJBglGnhIrrH9JYdRm6tS2vuKOA==
-X-Google-Smtp-Source: APiQypIQBpPQQkAuehJj3ca3UUx0zUIWzRrOwv/RHaXCYe3333MWUVd7I0T7xj4J5l8onxqQ42VCv8lSggS7jkyeOw8=
-X-Received: by 2002:a02:b88e:: with SMTP id p14mr25945179jam.36.1588104563944;
- Tue, 28 Apr 2020 13:09:23 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200325201839.15896-1-s-anna@ti.com> <20200325201839.15896-4-s-anna@ti.com>
- <20200428195855.GC10552@xps15>
-In-Reply-To: <20200428195855.GC10552@xps15>
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-Date:   Tue, 28 Apr 2020 14:09:13 -0600
-Message-ID: <CANLsYkwgCJrDu-Y5iyG0maCVqFqDXW_0vD4Sv2e+-dwryTNaRA@mail.gmail.com>
-Subject: Re: [PATCH 3/3] remoteproc/k3-dsp: Add support for L2RAM loading on
- C66x DSPs
-To:     Suman Anna <s-anna@ti.com>
-Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Lokesh Vutla <lokeshvutla@ti.com>,
-        linux-remoteproc <linux-remoteproc@vger.kernel.org>,
-        devicetree@vger.kernel.org,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 28 Apr 2020 18:18:34 -0400
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1588112313; h=References: In-Reply-To: Message-Id: Date:
+ Subject: Cc: To: From: Sender;
+ bh=af+dDB6m+8MufGAb4/mIx5aBUAtu88g4EjzmaZpijQs=; b=BLbeNENp7JzLhgr5E11tFzLxGBSZxs6oD8GOVRaCJdyS4d+cCtKQbMWgA7bmuGcyZnXoRKvA
+ MH/AeAOS5iyBVoNRAGWzvzRCf/FYVzObbajIf3JNwKmvfgBq9Pd+05klO9htieJ2rCcbH++6
+ LZkKBJlZyf0KGGsatJd+spX6lME=
+X-Mailgun-Sending-Ip: 104.130.122.26
+X-Mailgun-Sid: WyI4ZWZiZiIsICJsaW51eC1yZW1vdGVwcm9jQHZnZXIua2VybmVsLm9yZyIsICJiZTllNGEiXQ==
+Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
+ by mxa.mailgun.org with ESMTP id 5ea8abb8.7f5ff92048f0-smtp-out-n02;
+ Tue, 28 Apr 2020 22:18:32 -0000 (UTC)
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 244E1C43636; Tue, 28 Apr 2020 22:18:32 +0000 (UTC)
+Received: from rishabhb-linux.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: rishabhb)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 30F9DC433BA;
+        Tue, 28 Apr 2020 22:18:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 30F9DC433BA
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=rishabhb@codeaurora.org
+From:   Rishabh Bhatnagar <rishabhb@codeaurora.org>
+To:     linux-remoteproc@vger.kernel.org, bjorn.andersson@linaro.org
+Cc:     ohad@wizery.com, linux-kernel@vger.kernel.org,
+        tsoni@codeaurora.org, psodagud@codeaurora.org,
+        sidgup@codeaurora.org, Rishabh Bhatnagar <rishabhb@codeaurora.org>
+Subject: [PATCH v3 1/2] remoteproc: qcom: Add per subsystem SSR notification
+Date:   Tue, 28 Apr 2020 15:16:08 -0700
+Message-Id: <1588112169-29447-2-git-send-email-rishabhb@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1588112169-29447-1-git-send-email-rishabhb@codeaurora.org>
+References: <1588112169-29447-1-git-send-email-rishabhb@codeaurora.org>
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Tue, 28 Apr 2020 at 13:58, Mathieu Poirier
-<mathieu.poirier@linaro.org> wrote:
->
-> On Wed, Mar 25, 2020 at 03:18:39PM -0500, Suman Anna wrote:
-> > The resets for the DSP processors on K3 SoCs are managed through the
-> > Power and Sleep Controller (PSC) module. Each DSP typically has two
-> > resets - a global module reset for powering on the device, and a local
-> > reset that affects only the CPU while allowing access to the other
-> > sub-modules within the DSP processor sub-systems.
-> >
-> > The C66x DSPs have two levels of internal RAMs that can be used to
-> > boot from, and the firmware loading into these RAMs require the
-> > local reset to be asserted with the device powered on/enabled using
-> > the module reset. Enhance the K3 DSP remoteproc driver to add support
-> > for loading into the internal RAMs. The local reset is deasserted on
-> > SoC power-on-reset, so logic has to be added in probe in remoteproc
-> > mode to balance the remoteproc state-machine.
-> >
-> > Note that the local resets are a no-op on C71x cores, and the hardware
-> > does not supporting loading into its internal RAMs.
-> >
-> > Signed-off-by: Suman Anna <s-anna@ti.com>
-> > ---
-> >  drivers/remoteproc/ti_k3_dsp_remoteproc.c | 82 +++++++++++++++++++++++
-> >  1 file changed, 82 insertions(+)
-> >
-> > diff --git a/drivers/remoteproc/ti_k3_dsp_remoteproc.c b/drivers/remoteproc/ti_k3_dsp_remoteproc.c
-> > index fd0d84f46f90..7b712ef74611 100644
-> > --- a/drivers/remoteproc/ti_k3_dsp_remoteproc.c
-> > +++ b/drivers/remoteproc/ti_k3_dsp_remoteproc.c
-> > @@ -175,6 +175,9 @@ static int k3_dsp_rproc_reset(struct k3_dsp_rproc *kproc)
-> >               return ret;
-> >       }
-> >
-> > +     if (kproc->data->uses_lreset)
-> > +             return ret;
-> > +
-> >       ret = kproc->ti_sci->ops.dev_ops.put_device(kproc->ti_sci,
-> >                                                   kproc->ti_sci_id);
-> >       if (ret) {
-> > @@ -192,6 +195,9 @@ static int k3_dsp_rproc_release(struct k3_dsp_rproc *kproc)
-> >       struct device *dev = kproc->dev;
-> >       int ret;
-> >
-> > +     if (kproc->data->uses_lreset)
-> > +             goto lreset;
-> > +
-> >       ret = kproc->ti_sci->ops.dev_ops.get_device(kproc->ti_sci,
-> >                                                  kproc->ti_sci_id);
-> >       if (ret) {
-> > @@ -199,6 +205,7 @@ static int k3_dsp_rproc_release(struct k3_dsp_rproc *kproc)
-> >               return ret;
-> >       }
-> >
-> > +lreset:
-> >       ret = reset_control_deassert(kproc->reset);
-> >       if (ret) {
-> >               dev_err(dev, "local-reset deassert failed, ret = %d\n", ret);
-> > @@ -210,6 +217,63 @@ static int k3_dsp_rproc_release(struct k3_dsp_rproc *kproc)
-> >       return ret;
-> >  }
-> >
-> > +/*
-> > + * The C66x DSP cores have a local reset that affects only the CPU, and a
-> > + * generic module reset that powers on the device and allows the DSP internal
-> > + * memories to be accessed while the local reset is asserted. This function is
-> > + * used to release the global reset on C66x DSPs to allow loading into the DSP
-> > + * internal RAMs. The .prepare() ops is invoked by remoteproc core before any
-> > + * firmware loading, and is followed by the .start() ops after loading to
-> > + * actually let the C66x DSP cores run. The local reset on C71x cores is a
-> > + * no-op and the global reset cannot be released on C71x cores until after
-> > + * the firmware images are loaded, so this function does nothing for C71x cores.
-> > + */
-> > +static int k3_dsp_rproc_prepare(struct rproc *rproc)
-> > +{
-> > +     struct k3_dsp_rproc *kproc = rproc->priv;
-> > +     struct device *dev = kproc->dev;
-> > +     int ret;
-> > +
-> > +     /* local reset is no-op on C71x processors */
-> > +     if (!kproc->data->uses_lreset)
-> > +             return 0;
->
-> In k3_dsp_rproc_release() the condition is "if (kproc->data->uses_lreset)" and
-> here it is the opposite, which did a good job at getting me confused.
->
-> Taking a step back, I assume c71 DSPs will have their own k3_dsp_dev_data where
-> the users_lreset flag will be false.  In that case I think it would make the
-> code easier to understand if the k3_dsp_rproc_ops was declared without the
-> .prepare and .unprepare.  In probe(), if data->uses_lreset is true then
-> k3_dsp_rproc_prepare() and k3_dsp_rproc_unprepare() are set.
->
+Currently there is a single notification chain which is called whenever any
+remoteproc shuts down. This leads to all the listeners being notified, and
+is not an optimal design as kernel drivers might only be interested in
+listening to notifications from a particular remoteproc. Create a global
+list of remoteproc notification info data structures. This will hold the
+name and notifier_list information for a particular remoteproc. The API
+to register for notifications will use name argument to retrieve the
+notification info data structure and the notifier block will be added to
+that data structure's notification chain.
 
-I forgot... Since this is a C71 related change, was there a reason to
-lump it with the C66 set?  If not I would simply move that to the C71
-work.
+Signed-off-by: Siddharth Gupta <sidgup@codeaurora.org>
+Signed-off-by: Rishabh Bhatnagar <rishabhb@codeaurora.org>
+---
+ drivers/remoteproc/qcom_common.c      | 89 ++++++++++++++++++++++++++++++-----
+ drivers/remoteproc/qcom_common.h      | 10 +++-
+ include/linux/remoteproc/qcom_rproc.h | 20 ++++++--
+ 3 files changed, 99 insertions(+), 20 deletions(-)
 
-> I am done reviewing this set.
->
-> Thanks,
-> Mathieu
->
-> > +
-> > +     ret = kproc->ti_sci->ops.dev_ops.get_device(kproc->ti_sci,
-> > +                                                 kproc->ti_sci_id);
-> > +     if (ret)
-> > +             dev_err(dev, "module-reset deassert failed, cannot enable internal RAM loading, ret = %d\n",
-> > +                     ret);
-> > +
-> > +     return ret;
-> > +}
-> > +
-> > +/*
-> > + * This function implements the .unprepare() ops and performs the complimentary
-> > + * operations to that of the .prepare() ops. The function is used to assert the
-> > + * global reset on applicable C66x cores. This completes the second portion of
-> > + * powering down the C66x DSP cores. The cores themselves are only halted in the
-> > + * .stop() callback through the local reset, and the .unprepare() ops is invoked
-> > + * by the remoteproc core after the remoteproc is stopped to balance the global
-> > + * reset.
-> > + */
-> > +static int k3_dsp_rproc_unprepare(struct rproc *rproc)
-> > +{
-> > +     struct k3_dsp_rproc *kproc = rproc->priv;
-> > +     struct device *dev = kproc->dev;
-> > +     int ret;
-> > +
-> > +     /* local reset is no-op on C71x processors */
-> > +     if (!kproc->data->uses_lreset)
-> > +             return 0;
-> > +
-> > +     ret = kproc->ti_sci->ops.dev_ops.put_device(kproc->ti_sci,
-> > +                                                 kproc->ti_sci_id);
-> > +     if (ret)
-> > +             dev_err(dev, "module-reset assert failed, ret = %d\n", ret);
-> > +
-> > +     return ret;
-> > +}
-> > +
-> >  /*
-> >   * Power up the DSP remote processor.
-> >   *
-> > @@ -353,6 +417,8 @@ static void *k3_dsp_rproc_da_to_va(struct rproc *rproc, u64 da, size_t len)
-> >  }
-> >
-> >  static const struct rproc_ops k3_dsp_rproc_ops = {
-> > +     .prepare        = k3_dsp_rproc_prepare,
-> > +     .unprepare      = k3_dsp_rproc_unprepare,
-> >       .start          = k3_dsp_rproc_start,
-> >       .stop           = k3_dsp_rproc_stop,
-> >       .kick           = k3_dsp_rproc_kick,
-> > @@ -644,6 +710,22 @@ static int k3_dsp_rproc_probe(struct platform_device *pdev)
-> >               goto disable_clk;
-> >       }
-> >
-> > +     /*
-> > +      * ensure the DSP local reset is asserted to ensure the DSP doesn't
-> > +      * execute bogus code in .prepare() when the module reset is released.
-> > +      */
-> > +     if (data->uses_lreset) {
-> > +             ret = reset_control_status(kproc->reset);
-> > +             if (ret < 0) {
-> > +                     dev_err(dev, "failed to get reset status, status = %d\n",
-> > +                             ret);
-> > +                     goto release_mem;
-> > +             } else if (ret == 0) {
-> > +                     dev_warn(dev, "local reset is deasserted for device\n");
-> > +                     k3_dsp_rproc_reset(kproc);
-> > +             }
-> > +     }
-> > +
-> >       ret = rproc_add(rproc);
-> >       if (ret) {
-> >               dev_err(dev, "failed to add register device with remoteproc core, status = %d\n",
-> > --
-> > 2.23.0
-> >
+diff --git a/drivers/remoteproc/qcom_common.c b/drivers/remoteproc/qcom_common.c
+index 60650bc..7cd17be 100644
+--- a/drivers/remoteproc/qcom_common.c
++++ b/drivers/remoteproc/qcom_common.c
+@@ -15,16 +15,18 @@
+ #include <linux/rpmsg/qcom_glink.h>
+ #include <linux/rpmsg/qcom_smd.h>
+ #include <linux/soc/qcom/mdt_loader.h>
++#include <linux/remoteproc/qcom_rproc.h>
+ 
+ #include "remoteproc_internal.h"
+ #include "qcom_common.h"
+ 
++#define MAX_NAME_LEN	20
++DEFINE_MUTEX(rproc_notif_lock);
++
+ #define to_glink_subdev(d) container_of(d, struct qcom_rproc_glink, subdev)
+ #define to_smd_subdev(d) container_of(d, struct qcom_rproc_subdev, subdev)
+ #define to_ssr_subdev(d) container_of(d, struct qcom_rproc_ssr, subdev)
+ 
+-static BLOCKING_NOTIFIER_HEAD(ssr_notifiers);
+-
+ static int glink_subdev_start(struct rproc_subdev *subdev)
+ {
+ 	struct qcom_rproc_glink *glink = to_glink_subdev(subdev);
+@@ -174,39 +176,81 @@ void qcom_remove_smd_subdev(struct rproc *rproc, struct qcom_rproc_subdev *smd)
+ }
+ EXPORT_SYMBOL_GPL(qcom_remove_smd_subdev);
+ 
++struct rproc_notif_info *find_notif_info(const char *name)
++{
++	struct rproc_notif_info *info;
++
++	/* Match in the global rproc_notif_list with name */
++	list_for_each_entry(info, &rproc_notif_list, list) {
++		if (!strncmp(info->name, name, strlen(name)))
++			return info;
++	}
++	return NULL;
++}
++
+ /**
+  * qcom_register_ssr_notifier() - register SSR notification handler
++ * @name:	pointer to name which will be searched in the global notif_list
+  * @nb:		notifier_block to notify for restart notifications
+  *
+- * Returns 0 on success, negative errno on failure.
++ * Returns pointer to srcu notifier head on success, ERR_PTR on failure.
+  *
+- * This register the @notify function as handler for restart notifications. As
+- * remote processors are stopped this function will be called, with the SSR
+- * name passed as a parameter.
++ * This registers the @nb notifier block as part the notifier chain for a
++ * remoteproc associated with @name. The notifier block's callback
++ * will be invoked when the particular remote processor is stopped.
+  */
+-int qcom_register_ssr_notifier(struct notifier_block *nb)
++void *qcom_register_ssr_notifier(const char *name, struct notifier_block *nb)
+ {
+-	return blocking_notifier_chain_register(&ssr_notifiers, nb);
++	struct rproc_notif_info *info;
++
++	mutex_lock(&rproc_notif_lock);
++	info = find_notif_info(name);
++	if (!info) {
++		info = kzalloc(sizeof(*info), GFP_KERNEL);
++		if (!info) {
++			mutex_unlock(&rproc_notif_lock);
++			return ERR_PTR(-ENOMEM);
++		}
++		info->name = kstrndup(name, MAX_NAME_LEN, GFP_KERNEL);
++		srcu_init_notifier_head(&info->notifier_list);
++
++		/* Add to global notif list */
++		INIT_LIST_HEAD(&info->list);
++		list_add_tail(&info->list, &rproc_notif_list);
++	}
++
++	srcu_notifier_chain_register(&info->notifier_list, nb);
++	mutex_unlock(&rproc_notif_lock);
++	return &info->notifier_list;
+ }
+ EXPORT_SYMBOL_GPL(qcom_register_ssr_notifier);
+ 
+ /**
+  * qcom_unregister_ssr_notifier() - unregister SSR notification handler
++ * @notify:	pointer to srcu notifier head
+  * @nb:		notifier_block to unregister
+  */
+-void qcom_unregister_ssr_notifier(struct notifier_block *nb)
++int qcom_unregister_ssr_notifier(void *notify, struct notifier_block *nb)
+ {
+-	blocking_notifier_chain_unregister(&ssr_notifiers, nb);
++	if (!notify)
++		return -EINVAL;
++
++	return srcu_notifier_chain_unregister(notify, nb);
+ }
+ EXPORT_SYMBOL_GPL(qcom_unregister_ssr_notifier);
+ 
+ static void ssr_notify_unprepare(struct rproc_subdev *subdev)
+ {
+ 	struct qcom_rproc_ssr *ssr = to_ssr_subdev(subdev);
++	struct rproc_notif_data data = {
++		.name = ssr->info->name,
++		.crashed = false,
++	};
+ 
+-	blocking_notifier_call_chain(&ssr_notifiers, 0, (void *)ssr->name);
++	srcu_notifier_call_chain(&ssr->info->notifier_list, 0, &data);
+ }
+ 
++
+ /**
+  * qcom_add_ssr_subdev() - register subdevice as restart notification source
+  * @rproc:	rproc handle
+@@ -214,12 +258,30 @@ static void ssr_notify_unprepare(struct rproc_subdev *subdev)
+  * @ssr_name:	identifier to use for notifications originating from @rproc
+  *
+  * As the @ssr is registered with the @rproc SSR events will be sent to all
+- * registered listeners in the system as the remoteproc is shut down.
++ * registered listeners for the particular remoteproc when it is shutdown.
+  */
+ void qcom_add_ssr_subdev(struct rproc *rproc, struct qcom_rproc_ssr *ssr,
+ 			 const char *ssr_name)
+ {
+-	ssr->name = ssr_name;
++	struct rproc_notif_info *info;
++
++	mutex_lock(&rproc_notif_lock);
++	info = find_notif_info(ssr_name);
++	if (!info) {
++		info = kzalloc(sizeof(*info), GFP_KERNEL);
++		if (!info) {
++			mutex_unlock(&rproc_notif_lock);
++			return;
++		}
++		info->name = ssr_name;
++		srcu_init_notifier_head(&info->notifier_list);
++
++		/* Add to global notif_list */
++		INIT_LIST_HEAD(&info->list);
++		list_add_tail(&info->list, &rproc_notif_list);
++	}
++	mutex_unlock(&rproc_notif_lock);
++	ssr->info = info;
+ 	ssr->subdev.unprepare = ssr_notify_unprepare;
+ 
+ 	rproc_add_subdev(rproc, &ssr->subdev);
+@@ -233,6 +295,7 @@ void qcom_add_ssr_subdev(struct rproc *rproc, struct qcom_rproc_ssr *ssr,
+  */
+ void qcom_remove_ssr_subdev(struct rproc *rproc, struct qcom_rproc_ssr *ssr)
+ {
++	ssr->info = NULL;
+ 	rproc_remove_subdev(rproc, &ssr->subdev);
+ }
+ EXPORT_SYMBOL_GPL(qcom_remove_ssr_subdev);
+diff --git a/drivers/remoteproc/qcom_common.h b/drivers/remoteproc/qcom_common.h
+index 58de71e..0c1d288 100644
+--- a/drivers/remoteproc/qcom_common.h
++++ b/drivers/remoteproc/qcom_common.h
+@@ -24,10 +24,16 @@ struct qcom_rproc_subdev {
+ 	struct qcom_smd_edge *edge;
+ };
+ 
++struct rproc_notif_info {
++	const char *name;
++	struct srcu_notifier_head notifier_list;
++	struct list_head list;
++};
++static LIST_HEAD(rproc_notif_list);
++
+ struct qcom_rproc_ssr {
+ 	struct rproc_subdev subdev;
+-
+-	const char *name;
++	struct rproc_notif_info *info;
+ };
+ 
+ void qcom_add_glink_subdev(struct rproc *rproc, struct qcom_rproc_glink *glink);
+diff --git a/include/linux/remoteproc/qcom_rproc.h b/include/linux/remoteproc/qcom_rproc.h
+index fa8e386..3dc65c0 100644
+--- a/include/linux/remoteproc/qcom_rproc.h
++++ b/include/linux/remoteproc/qcom_rproc.h
+@@ -5,17 +5,27 @@
+ 
+ #if IS_ENABLED(CONFIG_QCOM_RPROC_COMMON)
+ 
+-int qcom_register_ssr_notifier(struct notifier_block *nb);
+-void qcom_unregister_ssr_notifier(struct notifier_block *nb);
++struct rproc_notif_data {
++	const char *name;
++	bool crashed;
++};
++
++void *qcom_register_ssr_notifier(const char *name, struct notifier_block *nb);
++int qcom_unregister_ssr_notifier(void *notify, struct notifier_block *nb);
+ 
+ #else
+ 
+-static inline int qcom_register_ssr_notifier(struct notifier_block *nb)
++static inline void *qcom_register_ssr_notifier(const char *name,
++						struct notifier_block *nb)
+ {
+-	return 0;
++	return NULL;
+ }
+ 
+-static inline void qcom_unregister_ssr_notifier(struct notifier_block *nb) {}
++static inline int qcom_unregister_ssr_notifier(void *notify,
++						struct notifier_block *nb)
++{
++	return 0;
++}
+ 
+ #endif
+ 
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
