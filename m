@@ -2,54 +2,54 @@ Return-Path: <SRS0=aZ5K=6N=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 570F7C83000
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 29 Apr 2020 14:52:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90B4BC83000
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 29 Apr 2020 15:08:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 32D2620B80
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 29 Apr 2020 14:52:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6D75D2074A
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 29 Apr 2020 15:08:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=st.com header.i=@st.com header.b="MOaili/s"
+	dkim=pass (2048-bit key) header.d=st.com header.i=@st.com header.b="WU/9l2NU"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726776AbgD2Ow1 (ORCPT
+        id S1726635AbgD2PIp (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 29 Apr 2020 10:52:27 -0400
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:42728 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726775AbgD2Ow1 (ORCPT
+        Wed, 29 Apr 2020 11:08:45 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:12606 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726618AbgD2PIo (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 29 Apr 2020 10:52:27 -0400
-Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 03TEqKrF025571;
-        Wed, 29 Apr 2020 16:52:20 +0200
+        Wed, 29 Apr 2020 11:08:44 -0400
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 03TF8PQB004369;
+        Wed, 29 Apr 2020 17:08:34 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=subject : to : cc :
  references : from : message-id : date : mime-version : in-reply-to :
  content-type : content-transfer-encoding; s=STMicroelectronics;
- bh=k4HHTwS+8Ljbwqtos9h637MEEsprgCn+OA+4OMP7vFM=;
- b=MOaili/s/VJ0fiUvGwJyitOHHjHTrw54nh0Chwl9+QzytQIlBGkcQzCavUDbaLCgtUqn
- 552MnWhqHPq9pZdFCBdi3KR5en+UQi8FaFqHh+q6f3mVuK/jhfHMhyg+wncyvR4XIZmd
- UlLJBdrW11H0bRqWyoLj9xUBGtPNeB0B69AgpyI/4VF6Ku9YfLIClRwpQsQdXttjtPDO
- di18l2lPdHUe+Qaq83dAJjNIOyAsYDp9keWtKqVXPf9k5TnsOhXRjX0Y87kUHsGle7lt
- LecV34D//WmmYfrJ+9FEdKajqgQlxd+oe/Oef6+XDTllvg2LzkOXWjxKewKfHzBGFiwZ Dg== 
+ bh=OrHsueskmIs43EdFBn1E0vUvKJn0/dh6AJ0xQ3uCkUU=;
+ b=WU/9l2NUHJH3flwUdt93RKlSOQmpi7VFr8JCg6CpOnWjmxuv0b7ar/GvhNXzDhytHw6O
+ bD9La1Beo83P0GFaqGWCOKMbllfsqlZwUQmfQqVEWZOqnGsECGZ5OwE0eKPy8MoiwS8l
+ hzEuVg5D9cWA1zgd6h/nGnyOBmZByzpgribLJrtwFUQK+1mCd2wiHhG9nqDvb4XQRwDG
+ nd7PUINXfID6uHt30ZPMQWW7a3x6XdTxL6GEsalwwGEaXz3v5V/QXkbaLsC27xc4TJaM
+ zH1s/QnOFs7NG/c775sAO6DcdcJqJ7PzUDVQ5Vi6yHZ915hYmedzryzE30fgHiVzuToJ IQ== 
 Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 30n4j6352n-1
+        by mx07-00178001.pphosted.com with ESMTP id 30mhq672ft-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 29 Apr 2020 16:52:20 +0200
+        Wed, 29 Apr 2020 17:08:34 +0200
 Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 6CAE710002A;
-        Wed, 29 Apr 2020 16:52:19 +0200 (CEST)
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 4F1E310003A;
+        Wed, 29 Apr 2020 17:08:34 +0200 (CEST)
 Received: from Webmail-eu.st.com (sfhdag3node1.st.com [10.75.127.7])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 5AA232AAF70;
-        Wed, 29 Apr 2020 16:52:19 +0200 (CEST)
-Received: from lmecxl0889.tpe.st.com (10.75.127.47) by SFHDAG3NODE1.st.com
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 3CE062AB39C;
+        Wed, 29 Apr 2020 17:08:34 +0200 (CEST)
+Received: from lmecxl0889.tpe.st.com (10.75.127.45) by SFHDAG3NODE1.st.com
  (10.75.127.7) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 29 Apr
- 2020 16:52:18 +0200
-Subject: Re: [PATCH v2 09/12] remoteproc: stm32: Update M4 state in
- stm32_rproc_stop()
+ 2020 17:08:33 +0200
+Subject: Re: [PATCH v2 00/12] remoteproc: stm32: Add support for synchronising
+ with M4
 To:     Mathieu Poirier <mathieu.poirier@linaro.org>,
         <bjorn.andersson@linaro.org>, <ohad@wizery.com>,
         <mcoquelin.stm32@gmail.com>, <alexandre.torgue@st.com>
@@ -58,19 +58,18 @@ CC:     <loic.pallardy@st.com>, <linux-remoteproc@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-kernel@vger.kernel.org>
 References: <20200424202505.29562-1-mathieu.poirier@linaro.org>
- <20200424202505.29562-10-mathieu.poirier@linaro.org>
 From:   Arnaud POULIQUEN <arnaud.pouliquen@st.com>
-Message-ID: <f4394e9d-2915-2e15-38e4-80b23baf678e@st.com>
-Date:   Wed, 29 Apr 2020 16:52:17 +0200
+Message-ID: <219771d3-b0a5-0ec7-7f20-d2055bcb0217@st.com>
+Date:   Wed, 29 Apr 2020 17:08:32 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.7.0
 MIME-Version: 1.0
-In-Reply-To: <20200424202505.29562-10-mathieu.poirier@linaro.org>
+In-Reply-To: <20200424202505.29562-1-mathieu.poirier@linaro.org>
 Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.75.127.47]
-X-ClientProxiedBy: SFHDAG7NODE1.st.com (10.75.127.19) To SFHDAG3NODE1.st.com
+X-Originating-IP: [10.75.127.45]
+X-ClientProxiedBy: SFHDAG7NODE3.st.com (10.75.127.21) To SFHDAG3NODE1.st.com
  (10.75.127.7)
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.676
  definitions=2020-04-29_07:2020-04-29,2020-04-29 signatures=0
@@ -79,56 +78,58 @@ Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
+Hi Mathieu,
 
-
-On 4/24/20 10:25 PM, Mathieu Poirier wrote:
-> Update the M4 co-processor state in function stm32_rproc_stop() so
-> that it can be used in synchronisation scenarios.
+On 4/24/20 10:24 PM, Mathieu Poirier wrote:
+> This patchset needs to be applied on top of this one [1].
 > 
-> Mainly based on the work published by Arnaud Pouliquen [1].
+> It refactors the STM32 platform code in order to introduce support for
+> synchronising with the M4 remote processor that would have been started by
+> the boot loader or another entity.
 > 
-> [1]. https://patchwork.kernel.org/project/linux-remoteproc/list/?series=239877
-> 
-> Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+> It carries the same functionatlity as the previeous revision but account
+> for changes in the remoteproc core to support synchronisation scenarios.
+> Some RB tags have been removed when the content of the patch has strayed 
+> too far from the original version. See patch 3, 8, 9 and 12 for more
+> details.
 
-Reviewed-by: Arnaud Pouliquen <arnaud.pouliquen@st.com>
+I reviewed the series, and made some tests on my side.
+FYI, I do not answer to patches when tagged "Reviewed-by: Loic Pallardy" 
+and with no extra remark. So consider them as Reviewed-by me but not
+necessary to add the tag in commit, Reviewed-by: loic in commit is sufficient. 
 
-Thanks,
+Concerning tests, it works find except the crash recovery from a sync start.
+But i suppose that you know the limitation, waiting Loic patches[1] update :)
+
+[1]: https://lkml.org/lkml/2020/3/11/403
+
+Thanks a lot for your work!
 Arnaud
+ 
 
-> ---
->  drivers/remoteproc/stm32_rproc.c | 13 +++++++++++++
->  1 file changed, 13 insertions(+)
 > 
-> diff --git a/drivers/remoteproc/stm32_rproc.c b/drivers/remoteproc/stm32_rproc.c
-> index 404f17a97095..86d23c35d805 100644
-> --- a/drivers/remoteproc/stm32_rproc.c
-> +++ b/drivers/remoteproc/stm32_rproc.c
-> @@ -493,6 +493,18 @@ static int stm32_rproc_stop(struct rproc *rproc)
->  		}
->  	}
->  
-> +	/* update coprocessor state to OFF if available */
-> +	if (ddata->m4_state.map) {
-> +		err = regmap_update_bits(ddata->m4_state.map,
-> +					 ddata->m4_state.reg,
-> +					 ddata->m4_state.mask,
-> +					 M4_STATE_OFF);
-> +		if (err) {
-> +			dev_err(&rproc->dev, "failed to set copro state\n");
-> +			return err;
-> +		}
-> +	}
-> +
->  	return 0;
->  }
->  
-> @@ -531,6 +543,7 @@ static struct rproc_ops st_rproc_ops = {
->  
->  static __maybe_unused struct rproc_ops st_rproc_sync_ops = {
->  	.start		= stm32_rproc_sync_start,
-> +	.stop		= stm32_rproc_stop,
->  };
->  
->  static const struct of_device_id stm32_rproc_match[] = {
+> Tested on ST's mp157c board.
+> 
+> Thanks,
+> Mathieu
+> 
+> [1]. https://patchwork.kernel.org/project/linux-remoteproc/list/?series=277049
+> [2]. https://patchwork.kernel.org/project/linux-remoteproc/list/?series=239877
+> 
+> Mathieu Poirier (12):
+>   remoteproc: stm32: Decouple rproc from memory translation
+>   remoteproc: stm32: Request IRQ with platform device
+>   remoteproc: stm32: Decouple rproc from DT parsing
+>   remoteproc: stm32: Remove memory translation from DT parsing
+>   remoteproc: stm32: Parse syscon that will manage M4 synchronisation
+>   remoteproc: stm32: Get coprocessor state
+>   remoteproc: stm32: Get loaded resource table for synchronisation
+>   remoteproc: stm32: Introduce new start ops for synchronisation
+>   remoteproc: stm32: Update M4 state in stm32_rproc_stop()
+>   remoteproc: stm32: Introduce new parse fw ops for synchronisation
+>   remoteproc: stm32: Introduce new loaded rsc ops for synchronisation
+>   remoteproc: stm32: Set synchronisation state machine if needed
+> 
+>  drivers/remoteproc/stm32_rproc.c | 262 ++++++++++++++++++++++++++++---
+>  1 file changed, 244 insertions(+), 18 deletions(-)
 > 
