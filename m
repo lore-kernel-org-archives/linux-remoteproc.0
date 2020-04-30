@@ -7,221 +7,208 @@ X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EDF3C4724C
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 30 Apr 2020 19:57:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F91BC4724C
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 30 Apr 2020 20:11:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7835020870
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 30 Apr 2020 19:57:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E008620870
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 30 Apr 2020 20:11:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="d1eBggrt"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dHJYH8V1"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726673AbgD3T5x (ORCPT
+        id S1726338AbgD3ULO (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 30 Apr 2020 15:57:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56270 "EHLO
+        Thu, 30 Apr 2020 16:11:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58380 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726366AbgD3T5w (ORCPT
+        with ESMTP id S1726375AbgD3ULO (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 30 Apr 2020 15:57:52 -0400
-Received: from mail-pl1-x642.google.com (mail-pl1-x642.google.com [IPv6:2607:f8b0:4864:20::642])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BDCFBC035494
-        for <linux-remoteproc@vger.kernel.org>; Thu, 30 Apr 2020 12:57:52 -0700 (PDT)
-Received: by mail-pl1-x642.google.com with SMTP id n24so2686653plp.13
-        for <linux-remoteproc@vger.kernel.org>; Thu, 30 Apr 2020 12:57:52 -0700 (PDT)
+        Thu, 30 Apr 2020 16:11:14 -0400
+Received: from mail-pl1-x641.google.com (mail-pl1-x641.google.com [IPv6:2607:f8b0:4864:20::641])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EC657C035495
+        for <linux-remoteproc@vger.kernel.org>; Thu, 30 Apr 2020 13:11:13 -0700 (PDT)
+Received: by mail-pl1-x641.google.com with SMTP id d24so2710641pll.8
+        for <linux-remoteproc@vger.kernel.org>; Thu, 30 Apr 2020 13:11:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=Ara67cN5iki3Ojktfn4ur4orVePchyu4PeOXIZf30Mg=;
-        b=d1eBggrtVzvxL+4jQ5qW1PCGyTkhmVC2jWhtfOxi09Fah64Hfo9QDWrK5wcaQL7kaS
-         VCY6nJVuOAnNMSPTrr3tfribxfPfH9zUEIKuhaZPyEtT+HEyXhSjOBqIB8+nAlbAZ0OJ
-         hPJGn5cvFnZgMLvwzuNfZ0dCiQhXwSwwg4GjxKSDgj7lGVg142DIRyRs3K0cJfmHqfAy
-         Vsb5eYy2v9doTOF02Spr+vxNEdYqzVTVGZRcToF7AfC6veZilcm7gp6Rbbc4uaZ3R/fS
-         0aMc1b3U5gcI85zHYom6rjYy/tXIKaYrvpXn0LxfHYmu2qd0FNa/WCil414gsv3OnfQZ
-         Y04Q==
+        bh=wQDXEDWulo/QimvcAuTek4hsKx1Ft5Eqi7DzlmxTYAE=;
+        b=dHJYH8V1KS7XMRkIk7UCjoCujABCzXT3VvBcthJLyCU32cSGH3S+9errkdNRwRTMEz
+         c5jpkn1t3F0VVYcnxcGgfDbIteaCAki9LCSBhJQzOUQE1HxR07CoJ8RYD3b6MTRO/jRj
+         AOsG3MGnzZ1MXS8W3IuGmKM/cK4WIN6ErR2fzaSP3VYbMMCnXS0CMwFSE7OewqbUIlyj
+         DGXcHLqrPgJyBn3wFO/jwykKiyFlOxEWRdbV+cYd9BztgE57iW9xoYVIRH2XGnWIAFG2
+         l0hfGHqrjn9jf0p7oGcqDf5snI4ZOONuq3t13WIE57re6nfAlplgqm5hmo9KxuL213FP
+         2f8g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Ara67cN5iki3Ojktfn4ur4orVePchyu4PeOXIZf30Mg=;
-        b=CFmSMa5uuFR3Aquq50f46nHXaXwe0adtCWxld62zlFz7mkbTi7ngiK56tQ9nqlk8P0
-         KNMxwq4Ju0TN6OF2aKBkB/qBa3vNcAPk7CYpjZlY8YkaZBACPoVb92CAwRgB7HTHvUc0
-         I8otggzxNwqOmrYKJy0Un4+OmujITFjnsC8CWPb6dDOPBI1olkQxXAzSrfgQhX6QAZXl
-         Y6iz/PyZF/6UjyXwBiJM6Q/cJUHRCoUgvZURkTNkK252A48tNdM9i46mlXdcGmUBYoy3
-         uvOjFrYV/rVZhwIb1xXV7DQth0ncS+Kadw77XJ+gT5g/pVhRLKSZSeMoo632f4q4KkCj
-         ahdw==
-X-Gm-Message-State: AGi0PuYmykyGa3RJ3Y6k3Ug+wjTf7C2GKQ9q1LUNZ5jP9txyqAk9Uwsg
-        PgCEeWl47Ld+XFlm0XE8CSjf2g==
-X-Google-Smtp-Source: APiQypL6jZ39gXeEW4b2DwBMoz5wCVMdp0O9pLgfSwbPCw/1uJ2G9zdRMWtd4H1ZLuSmHgVxyFGiNQ==
-X-Received: by 2002:a17:90a:718c:: with SMTP id i12mr565196pjk.58.1588276672231;
-        Thu, 30 Apr 2020 12:57:52 -0700 (PDT)
+        bh=wQDXEDWulo/QimvcAuTek4hsKx1Ft5Eqi7DzlmxTYAE=;
+        b=X81vC6HZsBCk+/iAasD+154G4gZTN0ATOYlzmDvuEO3MCKpso/XiaZUZz1HvWjyc4F
+         prsNmnjK+HD5omZFqBgZ1QgnxuQUMk8+sYHw6ubLAZ4tigshYg/IgnYE2fLfH6q2Mxxr
+         14TEdk+xSyNbYc/fgzwgmcY8WunkN/E9wUNoMkXNCteFLGxbyOhlioYzcNTk/BWPe8CM
+         t1qjkIucbD8uSKcLB0qy1iNgndmkkrPqp9Jrf1YfmNLYNyWX4NnfyggV+SUYVHvnAsVM
+         fYY7gg+uS4EM0yhza+uYhqR1+H7uAHdH8HH8tcwEy5w9ULl6o6+j4zommaFOCayhIlGc
+         n7QA==
+X-Gm-Message-State: AGi0PuaXqofMd3tEE0L+QLqyzs+r5MmFAw/JHnjMG5mkYj/JRGCogC4B
+        5HkAGotS680eEeoGInN4D9mPAg==
+X-Google-Smtp-Source: APiQypL6EqI9FZZIHPIXTfhE8LlwPrLFeY0DjiK4shgSSOuk2VEOSjMNEeufPu16gcaTJg5Uvbte0A==
+X-Received: by 2002:a17:90a:9f92:: with SMTP id o18mr600754pjp.180.1588277473266;
+        Thu, 30 Apr 2020 13:11:13 -0700 (PDT)
 Received: from xps15 (S0106002369de4dac.cg.shawcable.net. [68.147.8.254])
-        by smtp.gmail.com with ESMTPSA id z1sm503182pjn.43.2020.04.30.12.57.51
+        by smtp.gmail.com with ESMTPSA id w186sm529784pff.83.2020.04.30.13.11.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 Apr 2020 12:57:51 -0700 (PDT)
-Date:   Thu, 30 Apr 2020 13:57:49 -0600
+        Thu, 30 Apr 2020 13:11:12 -0700 (PDT)
+Date:   Thu, 30 Apr 2020 14:11:10 -0600
 From:   Mathieu Poirier <mathieu.poirier@linaro.org>
 To:     Arnaud POULIQUEN <arnaud.pouliquen@st.com>
 Cc:     bjorn.andersson@linaro.org, ohad@wizery.com, loic.pallardy@st.com,
         s-anna@ti.com, linux-remoteproc@vger.kernel.org, corbet@lwn.net,
         linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 08/14] remoteproc: Call core functions based on
- synchronisation flag
-Message-ID: <20200430195749.GC17031@xps15>
+Subject: Re: [PATCH v3 09/14] remoteproc: Deal with synchronisation when
+ crashing
+Message-ID: <20200430201110.GD17031@xps15>
 References: <20200424200135.28825-1-mathieu.poirier@linaro.org>
- <20200424200135.28825-9-mathieu.poirier@linaro.org>
- <a17d871a-3b3f-a462-9b2c-f9183f80a533@st.com>
+ <20200424200135.28825-10-mathieu.poirier@linaro.org>
+ <d9df5905-ad8b-881c-5950-481722bd0f3b@st.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <a17d871a-3b3f-a462-9b2c-f9183f80a533@st.com>
+In-Reply-To: <d9df5905-ad8b-881c-5950-481722bd0f3b@st.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Tue, Apr 28, 2020 at 07:27:27PM +0200, Arnaud POULIQUEN wrote:
-> 
+On Wed, Apr 29, 2020 at 09:44:02AM +0200, Arnaud POULIQUEN wrote:
+> Hi Mathieu,
 > 
 > On 4/24/20 10:01 PM, Mathieu Poirier wrote:
-> > Call the right core function based on whether we should synchronise
-> > with a remote processor or boot it from scratch.
+> > Refactor function rproc_trigger_recovery() in order to avoid
+> > reloading the firmware image when synchronising with a remote
+> > processor rather than booting it.  Also part of the process,
+> > properly set the synchronisation flag in order to properly
+> > recover the system.
 > > 
 > > Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 > > ---
-> >  drivers/remoteproc/remoteproc_internal.h | 50 ++++++++++++++++++++++++
-> >  1 file changed, 50 insertions(+)
+> >  drivers/remoteproc/remoteproc_core.c     | 23 ++++++++++++++------
+> >  drivers/remoteproc/remoteproc_internal.h | 27 ++++++++++++++++++++++++
+> >  2 files changed, 43 insertions(+), 7 deletions(-)
 > > 
+> > diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+> > index ef88d3e84bfb..3a84a38ba37b 100644
+> > --- a/drivers/remoteproc/remoteproc_core.c
+> > +++ b/drivers/remoteproc/remoteproc_core.c
+> > @@ -1697,7 +1697,7 @@ static void rproc_coredump(struct rproc *rproc)
+> >   */
+> >  int rproc_trigger_recovery(struct rproc *rproc)
+> >  {
+> > -	const struct firmware *firmware_p;
+> > +	const struct firmware *firmware_p = NULL;
+> >  	struct device *dev = &rproc->dev;
+> >  	int ret;
+> >  
+> > @@ -1718,14 +1718,16 @@ int rproc_trigger_recovery(struct rproc *rproc)
+> >  	/* generate coredump */
+> >  	rproc_coredump(rproc);
+> >  
+> > -	/* load firmware */
+> > -	ret = request_firmware(&firmware_p, rproc->firmware, dev);
+> > -	if (ret < 0) {
+> > -		dev_err(dev, "request_firmware failed: %d\n", ret);
+> > -		goto unlock_mutex;
+> > +	/* load firmware if need be */
+> > +	if (!rproc_needs_syncing(rproc)) {
+> > +		ret = request_firmware(&firmware_p, rproc->firmware, dev);
+> > +		if (ret < 0) {
+> > +			dev_err(dev, "request_firmware failed: %d\n", ret);
+> > +			goto unlock_mutex;
+> > +		}
+> 
+> If we started in syncing mode then rpoc->firmware is null
+> rproc_set_sync_flag(rproc, RPROC_SYNC_STATE_CRASHED) can make rproc_needs_syncing(rproc)
+> false. 
+
+You are correct, I will add an additional check in rproc_set_machine() to
+prevent a situation where rproc_alloc() has been called without an ops and any
+of the synchronisation flags are set to false.
+
+It is also possible that someone would call proc_alloc() without an ops and
+doesn't call rproc_set_state_machine(), in which case both ops and sync_ops
+would be NULL.  Adding a check in rproc_add() is probably the best location to
+catch such a condition.
+
+
+> In this case here we fail the recovery an leave in RPROC_STOP state.
+> As you proposed in Loic RFC[1], what about adding a more explicit message to inform that the recovery
+> failed. 
+
+Right, that's a different problem.
+
+> 
+> [1]https://lkml.org/lkml/2020/3/11/402
+> 
+> Regards,
+> Arnaud
+> >  	}
+> >  
+> > -	/* boot the remote processor up again */
+> > +	/* boot up or synchronise with the remote processor again */
+> >  	ret = rproc_start(rproc, firmware_p);
+> >  
+> >  	release_firmware(firmware_p);
+> > @@ -1761,6 +1763,13 @@ static void rproc_crash_handler_work(struct work_struct *work)
+> >  	dev_err(dev, "handling crash #%u in %s\n", ++rproc->crash_cnt,
+> >  		rproc->name);
+> >  
+> > +	/*
+> > +	 * The remote processor has crashed - tell the core what operation
+> > +	 * to use from hereon, i.e whether an external entity will reboot
+> > +	 * the MCU or it is now the remoteproc core's responsability.
+> > +	 */
+> > +	rproc_set_sync_flag(rproc, RPROC_SYNC_STATE_CRASHED);
+> > +
+> >  	mutex_unlock(&rproc->lock);
+> >  
+> >  	if (!rproc->recovery_disabled)
 > > diff --git a/drivers/remoteproc/remoteproc_internal.h b/drivers/remoteproc/remoteproc_internal.h
-> > index dda7044c4b3e..3985c084b184 100644
+> > index 3985c084b184..61500981155c 100644
 > > --- a/drivers/remoteproc/remoteproc_internal.h
 > > +++ b/drivers/remoteproc/remoteproc_internal.h
-> > @@ -72,6 +72,12 @@ static inline bool rproc_needs_syncing(struct rproc *rproc)
-> >  static inline
-> >  int rproc_fw_sanity_check(struct rproc *rproc, const struct firmware *fw)
-> >  {
-> > +	if (rproc_needs_syncing(rproc)) {
-> > +		if (rproc->sync_ops && rproc->sync_ops->sanity_check)
-> > +			return rproc->sync_ops->sanity_check(rproc, fw);
-> > +		return 0;
-> > +	}
+> > @@ -24,6 +24,33 @@ struct rproc_debug_trace {
+> >  	struct rproc_mem_entry trace_mem;
+> >  };
+> >  
+> > +/*
+> > + * enum rproc_sync_states - remote processsor sync states
+> > + *
+> > + * @RPROC_SYNC_STATE_CRASHED	state to use after the remote processor
+> > + *				has crashed but has not been recovered by
+> > + *				the remoteproc core yet.
+> > + *
+> > + * Keeping these separate from the enum rproc_state in order to avoid
+> > + * introducing coupling between the state of the MCU and the synchronisation
+> > + * operation to use.
+> > + */
+> > +enum rproc_sync_states {
+> > +	RPROC_SYNC_STATE_CRASHED,
+> > +};
 > > +
-> >  	if (rproc->ops && rproc->ops->sanity_check)
-> >  		return rproc->ops->sanity_check(rproc, fw);
-> 
-> Regarding this patch I'm trying to determine whether it makes sense to have ops or
-> sync_ops set to null. Your[v3 01/14]  patch commit explains that ops can be null in case of
-> synchronisation.
-> But it seems deprecated with the sync_ops introduction...
-
-Your comment made me go over the logic again...  If rproc_needs_syncing() is
-true then we necessarily have a sync_ops.  If rproc_needs_syncing() is false,
-there too we automatically have an ops.  As such and as you point out, checking
-for rproc->sync_ops and rproc-ops is probably useless.
-
-> 
-> And if sync_ops is null, is it still necessary to define a remoteproc device?
-
-Not sure I understand your point here but with the reasonning from above it
-is probably moot anyway. 
-
-> 
-> Regards
-> Arnad
-> 
-> >  
-> > @@ -81,6 +87,12 @@ int rproc_fw_sanity_check(struct rproc *rproc, const struct firmware *fw)
-> >  static inline
-> >  u64 rproc_get_boot_addr(struct rproc *rproc, const struct firmware *fw)
-> >  {
-> > +	if (rproc_needs_syncing(rproc)) {
-> > +		if (rproc->sync_ops && rproc->sync_ops->get_boot_addr)
-> > +			return rproc->sync_ops->get_boot_addr(rproc, fw);
-> > +		return 0;
+> > +static inline void rproc_set_sync_flag(struct rproc *rproc,
+> > +				       enum rproc_sync_states state)
+> > +{
+> > +	switch (state) {
+> > +	case RPROC_SYNC_STATE_CRASHED:
+> > +		rproc->sync_with_rproc = rproc->sync_flags.after_crash;
+> > +		break;
+> > +	default:
+> > +		break;
 > > +	}
+> > +}
 > > +
-> >  	if (rproc->ops && rproc->ops->get_boot_addr)
-> >  		return rproc->ops->get_boot_addr(rproc, fw);
-> >  
-> > @@ -90,6 +102,12 @@ u64 rproc_get_boot_addr(struct rproc *rproc, const struct firmware *fw)
-> >  static inline
-> >  int rproc_load_segments(struct rproc *rproc, const struct firmware *fw)
-> >  {
-> > +	if (rproc_needs_syncing(rproc)) {
-> > +		if (rproc->sync_ops && rproc->sync_ops->load)
-> > +			return rproc->sync_ops->load(rproc, fw);
-> > +		return 0;
-> > +	}
-> > +
-> >  	if (rproc->ops && rproc->ops->load)
-> >  		return rproc->ops->load(rproc, fw);
-> >  
-> > @@ -98,6 +116,12 @@ int rproc_load_segments(struct rproc *rproc, const struct firmware *fw)
-> >  
-> >  static inline int rproc_parse_fw(struct rproc *rproc, const struct firmware *fw)
-> >  {
-> > +	if (rproc_needs_syncing(rproc)) {
-> > +		if (rproc->sync_ops && rproc->sync_ops->parse_fw)
-> > +			return rproc->sync_ops->parse_fw(rproc, fw);
-> > +		return 0;
-> > +	}
-> > +
-> >  	if (rproc->ops && rproc->ops->parse_fw)
-> >  		return rproc->ops->parse_fw(rproc, fw);
-> >  
-> > @@ -108,6 +132,13 @@ static inline
-> >  int rproc_handle_rsc(struct rproc *rproc, u32 rsc_type, void *rsc, int offset,
-> >  		     int avail)
-> >  {
-> > +	if (rproc_needs_syncing(rproc)) {
-> > +		if (rproc->sync_ops && rproc->sync_ops->handle_rsc)
-> > +			return rproc->sync_ops->handle_rsc(rproc, rsc_type,
-> > +							   rsc, offset, avail);
-> > +		return 0;
-> > +	}
-> > +
-> >  	if (rproc->ops && rproc->ops->handle_rsc)
-> >  		return rproc->ops->handle_rsc(rproc, rsc_type, rsc, offset,
-> >  					      avail);
-> > @@ -119,6 +150,13 @@ static inline
-> >  struct resource_table *rproc_find_loaded_rsc_table(struct rproc *rproc,
-> >  						   const struct firmware *fw)
-> >  {
-> > +	if (rproc_needs_syncing(rproc)) {
-> > +		if (rproc->sync_ops && rproc->sync_ops->find_loaded_rsc_table)
-> > +			return rproc->sync_ops->find_loaded_rsc_table(rproc,
-> > +								      fw);
-> > +		return NULL;
-> > +	}
-> > +
-> >  	if (rproc->ops && rproc->ops->find_loaded_rsc_table)
-> >  		return rproc->ops->find_loaded_rsc_table(rproc, fw);
-> >  
-> > @@ -127,6 +165,12 @@ struct resource_table *rproc_find_loaded_rsc_table(struct rproc *rproc,
-> >  
-> >  static inline int rproc_start_device(struct rproc *rproc)
-> >  {
-> > +	if (rproc_needs_syncing(rproc)) {
-> > +		if (rproc->sync_ops && rproc->sync_ops->start)
-> > +			return rproc->sync_ops->start(rproc);
-> > +		return 0;
-> > +	}
-> > +
-> >  	if (rproc->ops && rproc->ops->start)
-> >  		return rproc->ops->start(rproc);
-> >  
-> > @@ -135,6 +179,12 @@ static inline int rproc_start_device(struct rproc *rproc)
-> >  
-> >  static inline int rproc_stop_device(struct rproc *rproc)
-> >  {
-> > +	if (rproc_needs_syncing(rproc)) {
-> > +		if (rproc->sync_ops && rproc->sync_ops->stop)
-> > +			return rproc->sync_ops->stop(rproc);
-> > +		return 0;
-> > +	}
-> > +
-> >  	if (rproc->ops && rproc->ops->stop)
-> >  		return rproc->ops->stop(rproc);
-> >  
+> >  /* from remoteproc_core.c */
+> >  void rproc_release(struct kref *kref);
+> >  irqreturn_t rproc_vq_interrupt(struct rproc *rproc, int vq_id);
 > > 
