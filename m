@@ -7,243 +7,195 @@ X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93C40C4724C
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 30 Apr 2020 20:51:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9857C4724C
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 30 Apr 2020 20:58:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6984B20836
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 30 Apr 2020 20:51:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A2CD920774
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 30 Apr 2020 20:58:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NP2qv5b+"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CsTBErZF"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726427AbgD3Uvr (ORCPT
+        id S1726338AbgD3U6Y (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 30 Apr 2020 16:51:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36476 "EHLO
+        Thu, 30 Apr 2020 16:58:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37532 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726307AbgD3Uvq (ORCPT
+        by vger.kernel.org with ESMTP id S1726045AbgD3U6X (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 30 Apr 2020 16:51:46 -0400
-Received: from mail-pg1-x541.google.com (mail-pg1-x541.google.com [IPv6:2607:f8b0:4864:20::541])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A8C7AC035494
-        for <linux-remoteproc@vger.kernel.org>; Thu, 30 Apr 2020 13:51:46 -0700 (PDT)
-Received: by mail-pg1-x541.google.com with SMTP id d17so3480822pgo.0
-        for <linux-remoteproc@vger.kernel.org>; Thu, 30 Apr 2020 13:51:46 -0700 (PDT)
+        Thu, 30 Apr 2020 16:58:23 -0400
+Received: from mail-pj1-x1043.google.com (mail-pj1-x1043.google.com [IPv6:2607:f8b0:4864:20::1043])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8C24DC035494
+        for <linux-remoteproc@vger.kernel.org>; Thu, 30 Apr 2020 13:58:22 -0700 (PDT)
+Received: by mail-pj1-x1043.google.com with SMTP id hi11so1385426pjb.3
+        for <linux-remoteproc@vger.kernel.org>; Thu, 30 Apr 2020 13:58:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=Z/T+sqjzriwApQPNZZiP/b1FdETZszA1CYwNdpGLAcw=;
-        b=NP2qv5b+jPWNia/NbPWik2u7QNt3CPH39cpq5jmaPXD5hlUnZTgj946oxqA0XZBcmT
-         Dd5AvKrs76qyF6sQNkqlTqLgTAhO6QrUJ1ySM+wuzaHfowQhvrbJfBFzFffjcxiqJuAL
-         x0eDANLjWuPqo5cySfLNcjAdGzQ3Kesulvrin4uoFOBGvsR2xNHSGvncJiG70chn84pN
-         pXeFekkfkuCwIl30ZuWITGr0o36iYOWxw4ubIvmxdlTa2rD8yEhCyiVhD1XEZbUZkUMn
-         /8+P6IPrcg4piPhOlP52LxjVpOxq6fXRXhAr6sjXtQVtHmElAwhu/XDWqhAaKWGRBjCD
-         v+qw==
+        bh=MX/gFKorFD3fJiz0waGi+R3fRw1GVFpupUsSX0SPyJY=;
+        b=CsTBErZFaAQkEbs5S+GlwA8kRzgyJRrcYYtemLqJ9WlfIPAhaq6G4rW9gc3uI8mECY
+         OMjpu0MqbtnrkkGBFU8c/hoxlzYOAoSNV2BdQCVF8lHP2UPvKSWGeIHDMTYDp8al261g
+         lV8Vh0nWV30oVczqakw539UDRjIKSR24bd1HFHrw8Gf7opTt4Vk+SSqj/xO2nokwhZw2
+         1OOJwQdoa+tqNpeiHYjzibN2xdFDXDes6gRUNiPGVnncDZywStP0554NDEfMabSOjeis
+         8vfPXauZSf0IR0nm3IJrCMbGs3o/HsvmL3H0ypxjyka1O616cT1vv/24yQwBFsHDsy91
+         9a3w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Z/T+sqjzriwApQPNZZiP/b1FdETZszA1CYwNdpGLAcw=;
-        b=mOjgNZOjIXbUWshSlHsBGaT0f2GekWcnm6+la7F5x8+HFKLjBk5vOB3PFZiEcqe19j
-         1gxC6O2nRmI9RJCuOguhUtjnssdZg8RSF8hOuuwQHGBlg0nqXK/pH6PsikDyLfWi/DBQ
-         9yXiVEXkoq0zk1D2tjiB8zsu402zJZ/m1XxNSOTtyyZCrtLNlrPqmx42L2ibT1zwuOZs
-         yA4UhBLEdc3iYrDWCU+Fikpzp5VyC4t0gbURcoRYjh4a4l9j+MkRAc74EMoDa8ZU63Rb
-         KYPw6rXSzdRW003pUX1sKHekBrnisV9jjsOS+K5Vyvpx7Ep7PUM9ZlYVxLKWVCBU/FLX
-         Y0bQ==
-X-Gm-Message-State: AGi0PuZwzytKFDkoDFecDWUYkyTUaZ5SRk+6k/1YmvoRuDy+6AtpY5CD
-        aOMo4xv3z3RtCIW59wOyo5ZY6A==
-X-Google-Smtp-Source: APiQypIt+nZ0EnewUCudryVsUwv9nKND70SWKh1DFcVyMYgdcQGYHTWepdgAJg+wXKWv/u59zo0Baw==
-X-Received: by 2002:a63:3d43:: with SMTP id k64mr825299pga.150.1588279905969;
-        Thu, 30 Apr 2020 13:51:45 -0700 (PDT)
+        bh=MX/gFKorFD3fJiz0waGi+R3fRw1GVFpupUsSX0SPyJY=;
+        b=YrZfBqWDRYWgQQRLrr7xfBCbxd0sgBWjRVfxVlqIYK3FsjK3TTGZhJNkJl8aPkrrDy
+         nBBiqrci1ytY6HAM8SknjxLnY1kN4k6HsNK98WExjiAZUs+UmMOzIyEm+pyg7Fc0SSeJ
+         Z4+lxC+RqFeWdAV6EdYRDpEK0m1ODY4l6hEdh3s5NGT18rz/NvcCw3sY+4Ovv4Gx46B6
+         S7EabgyJwADi5FsM1XiOFz0cBNQXV8y9DLSM84dDrYohVAjKyoTaa5lHEOZ+1FWlA0xJ
+         LBxqH2bZFtuaD1L3xvb5vn89Ch141eH6TliENRMxy+kVrya+CH9V0bNBrizp2kkTUuWs
+         AvJg==
+X-Gm-Message-State: AGi0PuZaCnJAnHawUgxP02ASDWyfWJ6CEQaPnGqisCTOr3ZB75vN1o3U
+        p83zeNIK21pl3hrdYumFu6rJiQ==
+X-Google-Smtp-Source: APiQypKe3OdI9QEW41vMal8UJb8GDAGm5V7tlJQS0ryzb463ValPrIAGP3jeUyn/S22VakZZUZ9faw==
+X-Received: by 2002:a17:90b:297:: with SMTP id az23mr762282pjb.85.1588280301989;
+        Thu, 30 Apr 2020 13:58:21 -0700 (PDT)
 Received: from xps15 (S0106002369de4dac.cg.shawcable.net. [68.147.8.254])
-        by smtp.gmail.com with ESMTPSA id fy21sm548254pjb.25.2020.04.30.13.51.44
+        by smtp.gmail.com with ESMTPSA id v7sm559509pfm.146.2020.04.30.13.58.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 Apr 2020 13:51:45 -0700 (PDT)
-Date:   Thu, 30 Apr 2020 14:51:43 -0600
+        Thu, 30 Apr 2020 13:58:21 -0700 (PDT)
+Date:   Thu, 30 Apr 2020 14:58:19 -0600
 From:   Mathieu Poirier <mathieu.poirier@linaro.org>
 To:     Arnaud POULIQUEN <arnaud.pouliquen@st.com>
-Cc:     bjorn.andersson@linaro.org, ohad@wizery.com, loic.pallardy@st.com,
-        s-anna@ti.com, linux-remoteproc@vger.kernel.org, corbet@lwn.net,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 12/14] remoteproc: Introducing function
- rproc_set_state_machine()
-Message-ID: <20200430205143.GC18004@xps15>
-References: <20200424200135.28825-1-mathieu.poirier@linaro.org>
- <20200424200135.28825-13-mathieu.poirier@linaro.org>
- <d297aeab-4f7e-95e0-04c0-266e0f08b2d0@st.com>
- <1438e3f6-3d8a-7edd-f552-b01f84316ec7@st.com>
+Cc:     bjorn.andersson@linaro.org, ohad@wizery.com,
+        mcoquelin.stm32@gmail.com, alexandre.torgue@st.com,
+        loic.pallardy@st.com, linux-remoteproc@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 03/12] remoteproc: stm32: Decouple rproc from DT
+ parsing
+Message-ID: <20200430205819.GD18004@xps15>
+References: <20200424202505.29562-1-mathieu.poirier@linaro.org>
+ <20200424202505.29562-4-mathieu.poirier@linaro.org>
+ <b68419a6-65a9-08d0-bed8-5f8195ae3d55@st.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1438e3f6-3d8a-7edd-f552-b01f84316ec7@st.com>
+In-Reply-To: <b68419a6-65a9-08d0-bed8-5f8195ae3d55@st.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Wed, Apr 29, 2020 at 04:38:54PM +0200, Arnaud POULIQUEN wrote:
+On Wed, Apr 29, 2020 at 03:37:58PM +0200, Arnaud POULIQUEN wrote:
+> Hi Mathieu,
 > 
-> 
-> On 4/29/20 11:22 AM, Arnaud POULIQUEN wrote:
+> On 4/24/20 10:24 PM, Mathieu Poirier wrote:
+> > Remove the remote processor from the process of parsing the device tree
+> > since (1) there is no correlation between them and (2) to use the
+> > information that was gathered to make a decision on whether to
+> > synchronise with the M4 or not.
 > > 
+> > Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+> > ---
+> >  drivers/remoteproc/stm32_rproc.c | 25 ++++++++++++++-----------
+> >  1 file changed, 14 insertions(+), 11 deletions(-)
 > > 
-> > On 4/24/20 10:01 PM, Mathieu Poirier wrote:
-> >> Introducting function rproc_set_state_machine() to add
-> >> operations and a set of flags to use when synchronising with
-> >> a remote processor.
-> >>
-> >> Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-> >> ---
-> >>  drivers/remoteproc/remoteproc_core.c     | 54 ++++++++++++++++++++++++
-> >>  drivers/remoteproc/remoteproc_internal.h |  6 +++
-> >>  include/linux/remoteproc.h               |  3 ++
-> >>  3 files changed, 63 insertions(+)
-> >>
-> >> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-> >> index 48afa1f80a8f..5c48714e8702 100644
-> >> --- a/drivers/remoteproc/remoteproc_core.c
-> >> +++ b/drivers/remoteproc/remoteproc_core.c
-> >> @@ -2065,6 +2065,59 @@ int devm_rproc_add(struct device *dev, struct rproc *rproc)
-> >>  }
-> >>  EXPORT_SYMBOL(devm_rproc_add);
-> >>  
-> >> +/**
-> >> + * rproc_set_state_machine() - Set a synchronisation ops and set of flags
-> >> + *			       to use with a remote processor
-> >> + * @rproc:	The remote processor to work with
-> >> + * @sync_ops:	The operations to use when synchronising with a remote
-> >> + *		processor
-> >> + * @sync_flags:	The flags to use when deciding if the remoteproc core
-> >> + *		should be synchronising with a remote processor
-> >> + *
-> >> + * Returns 0 on success, an error code otherwise.
-> >> + */
-> >> +int rproc_set_state_machine(struct rproc *rproc,
-> >> +			    const struct rproc_ops *sync_ops,
-> >> +			    struct rproc_sync_flags sync_flags)
-> > 
-> > So this API should be called by platform driver only in case of synchronization
-> > support, right?
-> > In this case i would rename it as there is also a state machine in "normal" boot
-> > proposal: rproc_set_sync_machine or rproc_set_sync_state_machine
-> > 
-> 
-> Reviewing the stm32 series, i wonder if sync_flags should be a pointer to a const structure
-> as the platform driver should not update it during the rproc live cycle.
-> Then IMO, using a pointer to the structure instead of the structure seems more 
-> in line with the rest of the remoteproc API.
-
-Humm... If we do make sync_flags constant then the platform drivers can't modify
-the values dynamically, as I did in the stm32 series.  This is something Loic
-had asked for.
-
-Moreover function rproc_set_state_machine() can't be called twice so updating
-the sync_flags can't happen.
-
-> 
-> >> +{
-> >> +	if (!rproc || !sync_ops)
-> >> +		return -EINVAL;
-> >> +
-> >> +	/*
-> >> +	 * No point in going further if we never have to synchronise with
-> >> +	 * the remote processor.
-> >> +	 */
-> >> +	if (!sync_flags.on_init &&
-> >> +	    !sync_flags.after_stop && !sync_flags.after_crash)
-> >> +		return 0;
-> >> +
-> >> +	/*
-> >> +	 * Refuse to go further if remoteproc operations have been allocated
-> >> +	 * but they will never be used.
-> >> +	 */
-> >> +	if (rproc->ops && sync_flags.on_init &&
-> >> +	    sync_flags.after_stop && sync_flags.after_crash)
-> >> +		return -EINVAL;
-> >> +
-> >> +	/*
-> >> +	 * Don't allow users to set this more than once to avoid situations
-> >> +	 * where the remote processor can't be recovered.
-> >> +	 */
-> >> +	if (rproc->sync_ops)
-> >> +		return -EINVAL;
-> >> +
-> >> +	rproc->sync_ops = kmemdup(sync_ops, sizeof(*sync_ops), GFP_KERNEL);
-> >> +	if (!rproc->sync_ops)
-> >> +		return -ENOMEM;
-> >> +
-> >> +	rproc->sync_flags = sync_flags;
-> >> +	/* Tell the core what to do when initialising */
-> >> +	rproc_set_sync_flag(rproc, RPROC_SYNC_STATE_INIT);
-> > 
-> > Is there a use case where sync_flags.on_init is false and other flags are true?
-> > 
-> > Look like on_init is useless and should not be exposed to the platform driver.
-> > Or comments are missing to explain the usage of it vs the other flags.
-> > 
-> > Regards,
-> > Arnaud
+> > diff --git a/drivers/remoteproc/stm32_rproc.c b/drivers/remoteproc/stm32_rproc.c
+> > index 1ac90adba9b1..57a426ea620b 100644
+> > --- a/drivers/remoteproc/stm32_rproc.c
+> > +++ b/drivers/remoteproc/stm32_rproc.c
+> > @@ -538,12 +538,11 @@ static int stm32_rproc_get_syscon(struct device_node *np, const char *prop,
+> >  	return err;
+> >  }
 > >  
-> >> +
-> >> +	return 0;
-> >> +}
-> >> +EXPORT_SYMBOL(rproc_set_state_machine);
-> >> +
-> >>  /**
-> >>   * rproc_type_release() - release a remote processor instance
-> >>   * @dev: the rproc's device
-> >> @@ -2088,6 +2141,7 @@ static void rproc_type_release(struct device *dev)
-> >>  	kfree_const(rproc->firmware);
-> >>  	kfree_const(rproc->name);
-> >>  	kfree(rproc->ops);
-> >> +	kfree(rproc->sync_ops);
-> >>  	kfree(rproc);
-> >>  }
-> >>  
-> >> diff --git a/drivers/remoteproc/remoteproc_internal.h b/drivers/remoteproc/remoteproc_internal.h
-> >> index 7dcc0a26892b..c1a293a37c78 100644
-> >> --- a/drivers/remoteproc/remoteproc_internal.h
-> >> +++ b/drivers/remoteproc/remoteproc_internal.h
-> >> @@ -27,6 +27,8 @@ struct rproc_debug_trace {
-> >>  /*
-> >>   * enum rproc_sync_states - remote processsor sync states
-> >>   *
-> >> + * @RPROC_SYNC_STATE_INIT	state to use when the remoteproc core
-> >> + *				is initialising.
-> >>   * @RPROC_SYNC_STATE_SHUTDOWN	state to use after the remoteproc core
-> >>   *				has shutdown (rproc_shutdown()) the
-> >>   *				remote processor.
-> >> @@ -39,6 +41,7 @@ struct rproc_debug_trace {
-> >>   * operation to use.
-> >>   */
-> >>  enum rproc_sync_states {
-> >> +	RPROC_SYNC_STATE_INIT,
-> >>  	RPROC_SYNC_STATE_SHUTDOWN,
-> >>  	RPROC_SYNC_STATE_CRASHED,
-> >>  };
-> >> @@ -47,6 +50,9 @@ static inline void rproc_set_sync_flag(struct rproc *rproc,
-> >>  				       enum rproc_sync_states state)
-> >>  {
-> >>  	switch (state) {
-> >> +	case RPROC_SYNC_STATE_INIT:
-> >> +		rproc->sync_with_rproc = rproc->sync_flags.on_init;
-> >> +		break;
-> >>  	case RPROC_SYNC_STATE_SHUTDOWN:
-> >>  		rproc->sync_with_rproc = rproc->sync_flags.after_stop;
-> >>  		break;
-> >> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-> >> index ceb3b2bba824..a75ed92b3de6 100644
-> >> --- a/include/linux/remoteproc.h
-> >> +++ b/include/linux/remoteproc.h
-> >> @@ -619,6 +619,9 @@ struct rproc *rproc_get_by_child(struct device *dev);
-> >>  struct rproc *rproc_alloc(struct device *dev, const char *name,
-> >>  			  const struct rproc_ops *ops,
-> >>  			  const char *firmware, int len);
-> >> +int rproc_set_state_machine(struct rproc *rproc,
-> >> +			    const struct rproc_ops *sync_ops,
-> >> +			    struct rproc_sync_flags sync_flags);
-> >>  void rproc_put(struct rproc *rproc);
-> >>  int rproc_add(struct rproc *rproc);
-> >>  int rproc_del(struct rproc *rproc);
-> >>
+> > -static int stm32_rproc_parse_dt(struct platform_device *pdev)
+> > +static int stm32_rproc_parse_dt(struct platform_device *pdev,
+> > +				struct stm32_rproc *ddata, bool *auto_boot)
+> >  {
+> >  	struct device *dev = &pdev->dev;
+> >  	struct device_node *np = dev->of_node;
+> > -	struct rproc *rproc = platform_get_drvdata(pdev);
+> > -	struct stm32_rproc *ddata = rproc->priv;
+> >  	struct stm32_syscon tz;
+> >  	unsigned int tzen;
+> >  	int err, irq;
+> > @@ -589,7 +588,7 @@ static int stm32_rproc_parse_dt(struct platform_device *pdev)
+> >  
+> >  	err = regmap_read(tz.map, tz.reg, &tzen);
+> >  	if (err) {
+> > -		dev_err(&rproc->dev, "failed to read tzen\n");
+> > +		dev_err(dev, "failed to read tzen\n");
+> >  		return err;
+> >  	}
+> >  	ddata->secured_soc = tzen & tz.mask;
+> > @@ -605,7 +604,7 @@ static int stm32_rproc_parse_dt(struct platform_device *pdev)
+> >  	if (err)
+> >  		dev_info(dev, "failed to get pdds\n");
+> >  
+> > -	rproc->auto_boot = of_property_read_bool(np, "st,auto-boot");
+> > +	*auto_boot = of_property_read_bool(np, "st,auto-boot");
+> >  
+> >  	return stm32_rproc_of_memory_translations(pdev, ddata);
+> >  }
+> > @@ -616,6 +615,7 @@ static int stm32_rproc_probe(struct platform_device *pdev)
+> >  	struct stm32_rproc *ddata;
+> >  	struct device_node *np = dev->of_node;
+> >  	struct rproc *rproc;
+> > +	bool auto_boot = false;
+> 
+> Nitpicking: Seems that you don't need to initialize it. 
+
+I think you are correct.
+
+> Perhaps you can simply suppress the local variable and directly use rproc->auto_boot.
+
+... and change the value of rproc->auto_boot if state == M4_STATE_CRUN?  Sure,
+that's possible.
+
+Thanks for all the comments, it really helps to have a different perspective.  I
+am out of time for today but will continue with the rest of your comments
+tomorrow.
+
+Mathieu
+
+> 
+> else LGTM
+> 
+> 
+> Thanks,
+> Arnaud
+> 
+> >  	int ret;
+> >  
+> >  	ret = dma_coerce_mask_and_coherent(dev, DMA_BIT_MASK(32));
+> > @@ -626,9 +626,16 @@ static int stm32_rproc_probe(struct platform_device *pdev)
+> >  	if (!rproc)
+> >  		return -ENOMEM;
+> >  
+> > +	ddata = rproc->priv;
+> > +
+> >  	rproc_coredump_set_elf_info(rproc, ELFCLASS32, EM_NONE);
+> > +
+> > +	ret = stm32_rproc_parse_dt(pdev, ddata, &auto_boot);
+> > +	if (ret)
+> > +		goto free_rproc;
+> > +
+> > +	rproc->auto_boot = auto_boot;
+> >  	rproc->has_iommu = false;
+> > -	ddata = rproc->priv;
+> >  	ddata->workqueue = create_workqueue(dev_name(dev));
+> >  	if (!ddata->workqueue) {
+> >  		dev_err(dev, "cannot create workqueue\n");
+> > @@ -638,13 +645,9 @@ static int stm32_rproc_probe(struct platform_device *pdev)
+> >  
+> >  	platform_set_drvdata(pdev, rproc);
+> >  
+> > -	ret = stm32_rproc_parse_dt(pdev);
+> > -	if (ret)
+> > -		goto free_wkq;
+> > -
+> >  	ret = stm32_rproc_request_mbox(rproc);
+> >  	if (ret)
+> > -		goto free_rproc;
+> > +		goto free_wkq;
+> >  
+> >  	ret = rproc_add(rproc);
+> >  	if (ret)
+> > 
