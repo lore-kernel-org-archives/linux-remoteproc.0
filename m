@@ -7,166 +7,244 @@ X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20D8AC47247
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 30 Apr 2020 20:32:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DC13C47247
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 30 Apr 2020 20:42:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EA953207DD
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 30 Apr 2020 20:32:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 58A1D207DD
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 30 Apr 2020 20:42:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="abCaj1x9"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QnwCazAp"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726799AbgD3UcJ (ORCPT
+        id S1726871AbgD3Umh (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 30 Apr 2020 16:32:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33436 "EHLO
+        Thu, 30 Apr 2020 16:42:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35058 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726338AbgD3UcJ (ORCPT
+        with ESMTP id S1726645AbgD3Umg (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 30 Apr 2020 16:32:09 -0400
-Received: from mail-pl1-x641.google.com (mail-pl1-x641.google.com [IPv6:2607:f8b0:4864:20::641])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 204B8C035495
-        for <linux-remoteproc@vger.kernel.org>; Thu, 30 Apr 2020 13:32:09 -0700 (PDT)
-Received: by mail-pl1-x641.google.com with SMTP id d24so2737859pll.8
-        for <linux-remoteproc@vger.kernel.org>; Thu, 30 Apr 2020 13:32:09 -0700 (PDT)
+        Thu, 30 Apr 2020 16:42:36 -0400
+Received: from mail-pf1-x443.google.com (mail-pf1-x443.google.com [IPv6:2607:f8b0:4864:20::443])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8785CC035495
+        for <linux-remoteproc@vger.kernel.org>; Thu, 30 Apr 2020 13:42:36 -0700 (PDT)
+Received: by mail-pf1-x443.google.com with SMTP id v63so450025pfb.10
+        for <linux-remoteproc@vger.kernel.org>; Thu, 30 Apr 2020 13:42:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=TRpun8ZJN69jp7jExSpIbQC8AtdvbGpEbLFXg6nKqKA=;
-        b=abCaj1x9F40mJBqI6LU0+ztZr1PTYB4rbdxMELvUtArwQtVRG2nQPiaW+lKmwwuDmC
-         r0eZJaQDVkXVuBEO3ODLsNGE/s7OzzoeQgodBRQekvXAXoiwCk7Rxi0v9n024EZXRi4P
-         C+T8jKR8CKk3PZVhRx6fGcHUis3rG+/YEetmB/YzT5fvZM3oqnWfMwrow/IXExKg5Itr
-         HGi3eduxCKubzqZqRCjuhLJ3ucIObmv+QlQVAoOkVnPMbahhjuM5nIbaSeNE+i7+rB87
-         wqnwDEyLNgGfaLWhMl+em5/RZ76rAgbybtAB3JV3x+5XymSEkgYodPJujkV/d/GfqJaB
-         kSeQ==
+        bh=evUox8r8uOfR78fNszPqbiwnmrlMrEI2BAyh4m9Yv54=;
+        b=QnwCazAp4MOubStUqIoXrdVbndInaGvYqm9yAaq+2LiIH7lUYJvFvWi1Ba/heC47yu
+         PfRRYw6MWYQzz7EQJ/5zhK2gMU8eyXOYUJRquyq2VdIzuwuvHJ0hvm8Fn4scql6CsgnK
+         9gcgwi3EAnpJCWQ59vqp2dqQi4jjJuPpvHsxE7tVate+P+qx2w5gHIAZj5ZJgMQa9Cck
+         EyVA8/A5pIG7rGnXJGm7THue8rw54QYlvteMEgHaAn3krbpyQknON++KmRwa9DoSciZl
+         umMmNps2ULLkKxdZ4PghSFurtJZjM4BMIr3S+cVNggThE0MjBlsQ6WOSEhFaIcTIYS/3
+         SGAA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=TRpun8ZJN69jp7jExSpIbQC8AtdvbGpEbLFXg6nKqKA=;
-        b=J2rrM0R0hV3fESaPDPLD0m9AfEyFSVWaM7txBtDcMaULaOoft4iP5sH/JGd4i66a/m
-         nxzWM9WuFSA/4yA0ZwlIlqFxuZRQ4oGz0sRXDNvxXpOPO0bUmMBj5UFCg43VIoVdokVZ
-         Fwu4TdW2PihXMaaYyGn6MEp65Y96WSOQbPVWYXiMHT2XOh43qxxWN9wPUek+y+a3i6ep
-         dn4x5r7atd+qmLKIg47g/gIhehK8HDS9NzWUiSE2PTg6tbeZhWNxy56UV/aBhEL7DOnR
-         L57CBNi12C/yfhufJq7QUlBEsMv5XWcuF5D/EpOntMY0oUMlxE8WXEjc7E3SdqbGJdtO
-         YEIQ==
-X-Gm-Message-State: AGi0PuZE+tM+VG4qaQMS/CWyRK+gI/VUnE1XjoL3eHI/4wx1bP00c4Xs
-        4z4rGBwJkQ/wSWYp1pnO2WJIMA==
-X-Google-Smtp-Source: APiQypLQoIE3bTRSGHvLe5+M0yUzy3eAJWtOQvwH/zmhNnO7FRVC8auK4g+f7zJmgvGu05/FK3CxgQ==
-X-Received: by 2002:a17:90b:46c2:: with SMTP id jx2mr659045pjb.67.1588278728464;
-        Thu, 30 Apr 2020 13:32:08 -0700 (PDT)
+        bh=evUox8r8uOfR78fNszPqbiwnmrlMrEI2BAyh4m9Yv54=;
+        b=hHtZzFuSBM+g55QeEGybJur2Ozt0LzWC0iYD4zBOH+M1i0hjzG4lo6nrnQobTRBD+T
+         iroVC8maH95ZLqezcSH1sz65JGnSFIG5TN2iLP6Alnc4uIHX8xrAVfU7ZZgwT8AizeZK
+         m2H87e7+5g/oo+teQk/GwdKQ76EBBteRRd3gSADhHvXT0A0qJK3v+0vLm3H5Lw/FOZk9
+         usw2qvm4xl3P2G6ycDdV6u430ZPHlTwJF4jO7ajfIKKrF3mQhUPkOD5y+1ssKfwvPJps
+         PTxsLS/4RZNJHScAaVPBaqYxx+KVa8suIsIpjqCaIiBT3pMphel7HAPf9RhGVTs5Tiaa
+         B45Q==
+X-Gm-Message-State: AGi0PuY8WEJz0XzinDfBoshA9v5beWQJeOdwvpm4IsXDgRD1zja/0opO
+        +xijJ+TM2HIzAW2iNYOYNh5XCQ==
+X-Google-Smtp-Source: APiQypIVxRDWynefJ2VPD1kCDmu4nsDPWzoEfoK7vamMy+pYmOBr2ZPqWddqsb9vSzzIhcLrnPtRcg==
+X-Received: by 2002:a63:175c:: with SMTP id 28mr764713pgx.44.1588279355955;
+        Thu, 30 Apr 2020 13:42:35 -0700 (PDT)
 Received: from xps15 (S0106002369de4dac.cg.shawcable.net. [68.147.8.254])
-        by smtp.gmail.com with ESMTPSA id t3sm542056pfq.110.2020.04.30.13.32.07
+        by smtp.gmail.com with ESMTPSA id i185sm564158pfg.14.2020.04.30.13.42.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 Apr 2020 13:32:07 -0700 (PDT)
-Date:   Thu, 30 Apr 2020 14:32:05 -0600
+        Thu, 30 Apr 2020 13:42:35 -0700 (PDT)
+Date:   Thu, 30 Apr 2020 14:42:33 -0600
 From:   Mathieu Poirier <mathieu.poirier@linaro.org>
 To:     Arnaud POULIQUEN <arnaud.pouliquen@st.com>
 Cc:     bjorn.andersson@linaro.org, ohad@wizery.com, loic.pallardy@st.com,
         s-anna@ti.com, linux-remoteproc@vger.kernel.org, corbet@lwn.net,
         linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 11/14] remoteproc: Deal with synchronisation when
- changing FW image
-Message-ID: <20200430203205.GA18004@xps15>
+Subject: Re: [PATCH v3 12/14] remoteproc: Introducing function
+ rproc_set_state_machine()
+Message-ID: <20200430204233.GB18004@xps15>
 References: <20200424200135.28825-1-mathieu.poirier@linaro.org>
- <20200424200135.28825-12-mathieu.poirier@linaro.org>
- <4ab6d7ac-905b-494e-cce7-cb8a697decb7@st.com>
+ <20200424200135.28825-13-mathieu.poirier@linaro.org>
+ <d297aeab-4f7e-95e0-04c0-266e0f08b2d0@st.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <4ab6d7ac-905b-494e-cce7-cb8a697decb7@st.com>
+In-Reply-To: <d297aeab-4f7e-95e0-04c0-266e0f08b2d0@st.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Wed, Apr 29, 2020 at 10:52:48AM +0200, Arnaud POULIQUEN wrote:
+On Wed, Apr 29, 2020 at 11:22:28AM +0200, Arnaud POULIQUEN wrote:
 > 
 > 
 > On 4/24/20 10:01 PM, Mathieu Poirier wrote:
-> > This patch prevents the firmware image from being displayed or changed
-> > when the remoteproc core is synchronising with a remote processor. This
-> > is needed since there is no guarantee about the nature of the firmware
-> > image that is loaded by the external entity.
+> > Introducting function rproc_set_state_machine() to add
+> > operations and a set of flags to use when synchronising with
+> > a remote processor.
 > > 
 > > Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 > > ---
-> >  drivers/remoteproc/remoteproc_sysfs.c | 24 +++++++++++++++++++++++-
-> >  1 file changed, 23 insertions(+), 1 deletion(-)
+> >  drivers/remoteproc/remoteproc_core.c     | 54 ++++++++++++++++++++++++
+> >  drivers/remoteproc/remoteproc_internal.h |  6 +++
+> >  include/linux/remoteproc.h               |  3 ++
+> >  3 files changed, 63 insertions(+)
 > > 
-> > diff --git a/drivers/remoteproc/remoteproc_sysfs.c b/drivers/remoteproc/remoteproc_sysfs.c
-> > index 7f8536b73295..cdd322a6ecfa 100644
-> > --- a/drivers/remoteproc/remoteproc_sysfs.c
-> > +++ b/drivers/remoteproc/remoteproc_sysfs.c
-> > @@ -13,9 +13,20 @@
-> >  static ssize_t firmware_show(struct device *dev, struct device_attribute *attr,
-> >  			  char *buf)
-> >  {
-> > +	ssize_t ret;
-> >  	struct rproc *rproc = to_rproc(dev);
+> > diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+> > index 48afa1f80a8f..5c48714e8702 100644
+> > --- a/drivers/remoteproc/remoteproc_core.c
+> > +++ b/drivers/remoteproc/remoteproc_core.c
+> > @@ -2065,6 +2065,59 @@ int devm_rproc_add(struct device *dev, struct rproc *rproc)
+> >  }
+> >  EXPORT_SYMBOL(devm_rproc_add);
 > >  
-> > -	return sprintf(buf, "%s\n", rproc->firmware);
-> > +	/*
-> > +	 * In most instances there is no guarantee about the firmware
-> > +	 * that was loaded by the external entity.  As such simply don't
-> > +	 * print anything.
-> > +	 */
-> > +	if (rproc_needs_syncing(rproc))
-> > +		ret = sprintf(buf, "\n");
+> > +/**
+> > + * rproc_set_state_machine() - Set a synchronisation ops and set of flags
+> > + *			       to use with a remote processor
+> > + * @rproc:	The remote processor to work with
+> > + * @sync_ops:	The operations to use when synchronising with a remote
+> > + *		processor
+> > + * @sync_flags:	The flags to use when deciding if the remoteproc core
+> > + *		should be synchronising with a remote processor
+> > + *
+> > + * Returns 0 on success, an error code otherwise.
+> > + */
+> > +int rproc_set_state_machine(struct rproc *rproc,
+> > +			    const struct rproc_ops *sync_ops,
+> > +			    struct rproc_sync_flags sync_flags)
 > 
-> A default name is provided in sysfs if no firmware is started/synchronised on boot.
-> 
-> IMO providing an empty name here could be confusing.
-> Perhaps a refactoring of this sysfs entry would be nice:
->  - Normal boot (no firmware loaded) : empty name instead of a default name
+> So this API should be called by platform driver only in case of synchronization
+> support, right?
 
-That is guaranteed to break user space so we can't proceed this way.
+Correct
 
->  - auto_boot: name provided by the platform driver or default name ( current implementation)
->  - synchronization: a predefined name such as Default, unknown, External, None,...   
+> In this case i would rename it as there is also a state machine in "normal" boot
+> proposal: rproc_set_sync_machine or rproc_set_sync_state_machine
 
-Loic had the same comment.  Usually it is best to provide sysfs output that
-don't need parsing, i.e 0/1 or nothing at all, but in the remoteproc subsystem
-we already have "state", "name" and "firmware" that need parsing.  As such my
-next revision will have "unknown", which I think is the best way to describe the
-situation.
+That is a valid observation - rproc_set_sync_state_machine() sounds descriptive
+enough for me.
 
 > 
-> > +	else
-> > +		ret = sprintf(buf, "%s\n", rproc->firmware);
+> > +{
+> > +	if (!rproc || !sync_ops)
+> > +		return -EINVAL;
 > > +
-> > +	return ret;
+> > +	/*
+> > +	 * No point in going further if we never have to synchronise with
+> > +	 * the remote processor.
+> > +	 */
+> > +	if (!sync_flags.on_init &&
+> > +	    !sync_flags.after_stop && !sync_flags.after_crash)
+> > +		return 0;
+> > +
+> > +	/*
+> > +	 * Refuse to go further if remoteproc operations have been allocated
+> > +	 * but they will never be used.
+> > +	 */
+> > +	if (rproc->ops && sync_flags.on_init &&
+> > +	    sync_flags.after_stop && sync_flags.after_crash)
+> > +		return -EINVAL;
+> > +
+> > +	/*
+> > +	 * Don't allow users to set this more than once to avoid situations
+> > +	 * where the remote processor can't be recovered.
+> > +	 */
+> > +	if (rproc->sync_ops)
+> > +		return -EINVAL;
+> > +
+> > +	rproc->sync_ops = kmemdup(sync_ops, sizeof(*sync_ops), GFP_KERNEL);
+> > +	if (!rproc->sync_ops)
+> > +		return -ENOMEM;
+> > +
+> > +	rproc->sync_flags = sync_flags;
+> > +	/* Tell the core what to do when initialising */
+> > +	rproc_set_sync_flag(rproc, RPROC_SYNC_STATE_INIT);
+> 
+> Is there a use case where sync_flags.on_init is false and other flags are true?
+
+I haven't seen one yet, which doesn't mean it doesn't exist or won't in the
+future.  I wanted to make this as flexible as possible.  I started with the idea
+of making synchronisation at initialisation time implicit if
+rproc_set_state_machine() is called but I know it is only a matter of time
+before people come up with some exotic use case where .on_init is false.
+
+> 
+> Look like on_init is useless and should not be exposed to the platform driver.
+> Or comments are missing to explain the usage of it vs the other flags.
+
+Comments added in remoteproc_internal.h and the new section in
+Documentation/remoteproc.txt aren't sufficient?  Can you give me a hint as to
+what you think is missing?
+
+> 
+> Regards,
+> Arnaud
+>  
+> > +
+> > +	return 0;
+> > +}
+> > +EXPORT_SYMBOL(rproc_set_state_machine);
+> > +
+> >  /**
+> >   * rproc_type_release() - release a remote processor instance
+> >   * @dev: the rproc's device
+> > @@ -2088,6 +2141,7 @@ static void rproc_type_release(struct device *dev)
+> >  	kfree_const(rproc->firmware);
+> >  	kfree_const(rproc->name);
+> >  	kfree(rproc->ops);
+> > +	kfree(rproc->sync_ops);
+> >  	kfree(rproc);
 > >  }
 > >  
-> >  /* Change firmware name via sysfs */
-> > @@ -39,6 +50,17 @@ static ssize_t firmware_store(struct device *dev,
-> >  		goto out;
-> >  	}
-> >  
-> > +	/*
-> > +	 * There is no point in trying to change the firmware if loading the
-> > +	 * image of the remote processor is done by another entity.
-> > +	 */
-> > +	if (rproc_needs_syncing(rproc)) {
-> > +		dev_err(dev,
-> > +			"can't change firmware while synchronising with MCU\n");
-> 
-> I don't know if you decide to keep "MCU" or not. If not the case
-> you have also some other instances in your patch 9/14.
-
-MCU should be long gone.  I thought I had spotted them all but was obviously
-wrong.
-
-> 
-> Regards
-> Arnaud
-> 
-> > +		err = -EBUSY;
-> > +		goto out;
-> > +	}
-> > +
-> >  	len = strcspn(buf, "\n");
-> >  	if (!len) {
-> >  		dev_err(dev, "can't provide a NULL firmware\n");
+> > diff --git a/drivers/remoteproc/remoteproc_internal.h b/drivers/remoteproc/remoteproc_internal.h
+> > index 7dcc0a26892b..c1a293a37c78 100644
+> > --- a/drivers/remoteproc/remoteproc_internal.h
+> > +++ b/drivers/remoteproc/remoteproc_internal.h
+> > @@ -27,6 +27,8 @@ struct rproc_debug_trace {
+> >  /*
+> >   * enum rproc_sync_states - remote processsor sync states
+> >   *
+> > + * @RPROC_SYNC_STATE_INIT	state to use when the remoteproc core
+> > + *				is initialising.
+> >   * @RPROC_SYNC_STATE_SHUTDOWN	state to use after the remoteproc core
+> >   *				has shutdown (rproc_shutdown()) the
+> >   *				remote processor.
+> > @@ -39,6 +41,7 @@ struct rproc_debug_trace {
+> >   * operation to use.
+> >   */
+> >  enum rproc_sync_states {
+> > +	RPROC_SYNC_STATE_INIT,
+> >  	RPROC_SYNC_STATE_SHUTDOWN,
+> >  	RPROC_SYNC_STATE_CRASHED,
+> >  };
+> > @@ -47,6 +50,9 @@ static inline void rproc_set_sync_flag(struct rproc *rproc,
+> >  				       enum rproc_sync_states state)
+> >  {
+> >  	switch (state) {
+> > +	case RPROC_SYNC_STATE_INIT:
+> > +		rproc->sync_with_rproc = rproc->sync_flags.on_init;
+> > +		break;
+> >  	case RPROC_SYNC_STATE_SHUTDOWN:
+> >  		rproc->sync_with_rproc = rproc->sync_flags.after_stop;
+> >  		break;
+> > diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+> > index ceb3b2bba824..a75ed92b3de6 100644
+> > --- a/include/linux/remoteproc.h
+> > +++ b/include/linux/remoteproc.h
+> > @@ -619,6 +619,9 @@ struct rproc *rproc_get_by_child(struct device *dev);
+> >  struct rproc *rproc_alloc(struct device *dev, const char *name,
+> >  			  const struct rproc_ops *ops,
+> >  			  const char *firmware, int len);
+> > +int rproc_set_state_machine(struct rproc *rproc,
+> > +			    const struct rproc_ops *sync_ops,
+> > +			    struct rproc_sync_flags sync_flags);
+> >  void rproc_put(struct rproc *rproc);
+> >  int rproc_add(struct rproc *rproc);
+> >  int rproc_del(struct rproc *rproc);
 > > 
