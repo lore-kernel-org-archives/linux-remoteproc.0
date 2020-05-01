@@ -7,211 +7,179 @@ X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B7E5C4724C
-	for <linux-remoteproc@archiver.kernel.org>; Fri,  1 May 2020 17:37:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EA1CC47253
+	for <linux-remoteproc@archiver.kernel.org>; Fri,  1 May 2020 17:40:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DC20B2173E
-	for <linux-remoteproc@archiver.kernel.org>; Fri,  1 May 2020 17:37:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2213D2166E
+	for <linux-remoteproc@archiver.kernel.org>; Fri,  1 May 2020 17:40:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hQ69sOZI"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="g2k1bwmw"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729807AbgEARhF (ORCPT
+        id S1729725AbgEARkd (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 1 May 2020 13:37:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33166 "EHLO
+        Fri, 1 May 2020 13:40:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33748 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729202AbgEARhE (ORCPT
+        by vger.kernel.org with ESMTP id S1729218AbgEARkd (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 1 May 2020 13:37:04 -0400
-Received: from mail-pf1-x443.google.com (mail-pf1-x443.google.com [IPv6:2607:f8b0:4864:20::443])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B4261C061A0C
-        for <linux-remoteproc@vger.kernel.org>; Fri,  1 May 2020 10:37:04 -0700 (PDT)
-Received: by mail-pf1-x443.google.com with SMTP id r14so1868442pfg.2
-        for <linux-remoteproc@vger.kernel.org>; Fri, 01 May 2020 10:37:04 -0700 (PDT)
+        Fri, 1 May 2020 13:40:33 -0400
+Received: from mail-pg1-x542.google.com (mail-pg1-x542.google.com [IPv6:2607:f8b0:4864:20::542])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7BB57C061A0C
+        for <linux-remoteproc@vger.kernel.org>; Fri,  1 May 2020 10:40:33 -0700 (PDT)
+Received: by mail-pg1-x542.google.com with SMTP id o185so4845197pgo.3
+        for <linux-remoteproc@vger.kernel.org>; Fri, 01 May 2020 10:40:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=8Ssb7zR045y0hQVLJADfxNoncBIqCoA1zZayMTSJOr0=;
-        b=hQ69sOZII3yUJZKvzqgTA8LlEb2W+x+4V2m+WK6WBI3Tv9Sz2Sa28ekYrPSz5DnTS6
-         RnyhEv/ii17kbsMDUKml+C2aO6VCaV7qqB6bGAZP6M6uCSKwmdUOk3xVW5ovXqsj4fe9
-         Ws/l7w4bPmqVcV8fKGJ+NoM6axcrB7Xp9DWboQsdYMiENlN1I1BuplWgP8rxdF5+A7T7
-         QVXsgNe+JOwwnNEPtJ81qhP7LfWJ+oDH5drm/r0uk33usOgQiN+qUebKHveh2uWiKuno
-         d2+TNZf1OCd5POX7yyQR1K45AzB7fzj4vv3GDTNScJ1V+r486i5ziz3URMRLDZ3x+FSS
-         QbIQ==
+        bh=8IP/WBu47pU6ouhN2oeGfSsgFnxkqGn0drzckoDk4hk=;
+        b=g2k1bwmwn9a1ALHurechtGzFhXxdRQbUhn9qt00gPUOW08JxjqCRX4zk9gIj28tb4f
+         94iRLJTuLlqeVyYta8Zoomyv4dNVAaULtz3vpVph3UxyyOopN58eA/BTJjA8QUjBxdlr
+         clw8OpJAGPHwc5M8nwIdrmheTQ5l3u788kaAT7k8VWTJZhM0wPm0C1XmCn68mFe3VAyM
+         jUrYUjYiNOQOlmOGHn5/KOicu4wTRYGBR5BcYEcYkpCz/vc/+NCBfkJHsyDuObzW/LVv
+         OU1nHwpDYH8N05YBvkypSM4970b4gk0TkZm+LIM00ewZgLTsYuibIHS6q7ZhJxxJ/I1o
+         9BeQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=8Ssb7zR045y0hQVLJADfxNoncBIqCoA1zZayMTSJOr0=;
-        b=pC4OXywrBsz8Ydm+MjOKHIkVEP++qOf9hvmmhHLJtBHiwaxhTEP7NxOu+EXV7dUTWp
-         T9knGdCNv8JaVwhiz5u3r+ihJ3iEVFURvoSEy4FnRrYg1dBWjIR30JO+5Sq3e7xF/yyf
-         uu77+himXi/vAwvW5i1wKwUvW9sVH7zoQyh2Q2aQ/fQnI7X1PgizSiqgL8TT/oDkUexP
-         sAeDIPTj0MF32l+JTfCnS/AciWTGKiOIUjio/1EL62gIqKbSTMvdbfOgUIjlwUU+kVMX
-         7Gbfx21oGSYqHAnngyX2QgAKy5uPMCfjxBfx9+hzVBwNP1WJpP799+ho0CI0hUEg2tcD
-         5+BA==
-X-Gm-Message-State: AGi0PuYLawAkmGyCBB8DG9lSBMKHobu3bmpnoQJhCsuCLWVox8erNSOX
-        iBNsj6O92QRO16yBpsIuD8m+Kw==
-X-Google-Smtp-Source: APiQypKsRiBbPiO5UhEvgJ1CHiMaz4G022mxednNbGE1FSP2xisXt1FHVOYEQLgrh2gez/w7Jv7UYQ==
-X-Received: by 2002:a63:b542:: with SMTP id u2mr5053271pgo.352.1588354624072;
-        Fri, 01 May 2020 10:37:04 -0700 (PDT)
+        bh=8IP/WBu47pU6ouhN2oeGfSsgFnxkqGn0drzckoDk4hk=;
+        b=t8CE0YH0oEzvtVTsJx+5d6eAJkNjuRvDKV1nn+hTADAWXxKZg+I4RmLxkK83+rT+MV
+         0gIeSxnnAi6JBJfKrPY3xQ95jQei/BSE7vI+DzZ5+/fczNYL+lMtkBh5JDLUZeryEF3E
+         u6jjMBcie4OuIXw/INjyPYr5K9i+1JHYHu1ShqSdQt2B04JIkEZC4uxEt7rysnIh0j6K
+         wxdBX18ZY2p2wwZZG2pSMLiAUGBRzEeWYzjtrlEjswmcjHzDHB03/9TFqewDoChghz8u
+         PFP71b5/uX5WDPSj7msUTa/ltwJCQlwWjynOl6hvRuz8A12itekHyH6bBGCQ5jENTHq4
+         LQ+g==
+X-Gm-Message-State: AGi0Pub+nufCmxkhg9nEUTqR/DeuWQjZa+BC4J/+p/iJKYDhHhPUnUey
+        s+Vle5rcQ4z7SRQSlGR/4VTZog==
+X-Google-Smtp-Source: APiQypL9HBkwlP+KAWPfkuqO0QiNUaR8CIOzODdIq3IXOkeBwGVMRk2Ak/cqUy/WU7qJdpA0gK/ErQ==
+X-Received: by 2002:a63:7e1b:: with SMTP id z27mr4928900pgc.19.1588354832991;
+        Fri, 01 May 2020 10:40:32 -0700 (PDT)
 Received: from xps15 (S0106002369de4dac.cg.shawcable.net. [68.147.8.254])
-        by smtp.gmail.com with ESMTPSA id a22sm2369969pga.28.2020.05.01.10.37.02
+        by smtp.gmail.com with ESMTPSA id fu12sm236152pjb.20.2020.05.01.10.40.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 01 May 2020 10:37:03 -0700 (PDT)
-Date:   Fri, 1 May 2020 11:37:01 -0600
+        Fri, 01 May 2020 10:40:32 -0700 (PDT)
+Date:   Fri, 1 May 2020 11:40:30 -0600
 From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Andy Gross <agross@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        Chris Lew <clew@codeaurora.org>, Sibi <sibis@codeaurora.org>,
-        Siddharth Gupta <sidgup@codeaurora.org>
-Subject: Re: [PATCH 2/4] soc: qcom: glink_ssr: Internalize ssr_notifiers
-Message-ID: <20200501173701.GB30509@xps15>
-References: <20200423003736.2027371-1-bjorn.andersson@linaro.org>
- <20200423003736.2027371-3-bjorn.andersson@linaro.org>
+To:     Arnaud POULIQUEN <arnaud.pouliquen@st.com>
+Cc:     bjorn.andersson@linaro.org, ohad@wizery.com,
+        mcoquelin.stm32@gmail.com, alexandre.torgue@st.com,
+        loic.pallardy@st.com, linux-remoteproc@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 06/12] remoteproc: stm32: Get coprocessor state
+Message-ID: <20200501174030.GE18004@xps15>
+References: <20200424202505.29562-1-mathieu.poirier@linaro.org>
+ <20200424202505.29562-7-mathieu.poirier@linaro.org>
+ <faa9b0e1-2e2f-609f-c436-2a58223f5f72@st.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200423003736.2027371-3-bjorn.andersson@linaro.org>
+In-Reply-To: <faa9b0e1-2e2f-609f-c436-2a58223f5f72@st.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Wed, Apr 22, 2020 at 05:37:34PM -0700, Bjorn Andersson wrote:
-> Rather than carrying a special purpose blocking notifier for glink_ssr
-> in remoteproc's qcom_common.c, move it into glink_ssr so allow wider
-> reuse of the common one.
+On Wed, Apr 29, 2020 at 03:38:24PM +0200, Arnaud POULIQUEN wrote:
+> 
+> 
+> On 4/24/20 10:24 PM, Mathieu Poirier wrote:
+> > Introduce the required mechanic to get the state of the M4 when the
+> > remoteproc core is initialising.
+> > 
+> > Mainly based on the work published by Arnaud Pouliquen [1].
+> > 
+> > [1]. https://patchwork.kernel.org/project/linux-remoteproc/list/?series=239877
+> > 
+> > Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+> > Reviewed-by: Loic Pallardy <loic.pallardy@st.com>
+> > ---
+> >  drivers/remoteproc/stm32_rproc.c | 29 +++++++++++++++++++++++++++++
+> >  1 file changed, 29 insertions(+)
+> > 
+> > diff --git a/drivers/remoteproc/stm32_rproc.c b/drivers/remoteproc/stm32_rproc.c
+> > index a285f338bed8..89fbd2ffac93 100644
+> > --- a/drivers/remoteproc/stm32_rproc.c
+> > +++ b/drivers/remoteproc/stm32_rproc.c
+> > @@ -38,6 +38,15 @@
+> >  #define STM32_MBX_VQ1_ID	1
+> >  #define STM32_MBX_SHUTDOWN	"shutdown"
+> >  
+> > +#define RSC_TBL_SIZE		(1024)
+> > +
+> > +#define M4_STATE_OFF		0
+> > +#define M4_STATE_INI		1
+> > +#define M4_STATE_CRUN		2
+> > +#define M4_STATE_CSTOP		3
+> > +#define M4_STATE_STANDBY	4
+> > +#define M4_STATE_CRASH		5
+> > +
+> >  struct stm32_syscon {
+> >  	struct regmap *map;
+> >  	u32 reg;
+> > @@ -635,12 +644,23 @@ static int stm32_rproc_parse_dt(struct platform_device *pdev,
+> >  	return 0;
+> >  }
+> >  
+> > +static int stm32_rproc_get_m4_status(struct stm32_rproc *ddata,
+> > +				     unsigned int *state)
+> > +{
+> > +	/* See stm32_rproc_parse_dt() */
+> > +	if (!ddata->m4_state.map)
+> > +		return -EINVAL;
+> > +
+> > +	return regmap_read(ddata->m4_state.map, ddata->m4_state.reg, state);
+> > +}
+> i would manage here the default state depending on the error types
+> if (!ddata->m4_state.map {
+> 	/* 
+> 	 * We couldn't get the coprocessor's state, assume
+> 	 * it is not running.
+> 	 */
+> 	state = M4_STATE_OFF;
+> 
+> 	return 0;
+> }
+> 
+> return regmap_read(ddata->m4_state.map, ddata->m4_state.reg, state);
+> 
+> 
+> 
+> > +
+> >  static int stm32_rproc_probe(struct platform_device *pdev)
+> >  {
+> >  	struct device *dev = &pdev->dev;
+> >  	struct stm32_rproc *ddata;
+> >  	struct device_node *np = dev->of_node;
+> >  	struct rproc *rproc;
+> > +	unsigned int state;
+> >  	bool auto_boot = false;
+> >  	int ret;
+> >  
+> > @@ -664,6 +684,15 @@ static int stm32_rproc_probe(struct platform_device *pdev)
+> >  	if (ret)
+> >  		goto free_rproc;
+> >  
+> > +	ret = stm32_rproc_get_m4_status(ddata, &state);
+> > +	if (ret) {
+> > +		/*
+> > +		 * We couldn't get the coprocessor's state, assume
+> > +		 * it is not running.
+> > +		 */
+> > +		state = M4_STATE_OFF;
+> 
+> So here just handle the error;
 
-After reading the changelog and the cover letter a few times along with thinking
-about the content of the patch, I decude that glink_ssr devices using the
-common ssr_notifiers in qcom_common.c was causing problems (having some details
-on what those problems are would be useful). 
-
-As such this patch is introducing a new notifier, also called ssr_notifiers,
-that only deals with glink ssr notification to narrow the nature of the
-notifications that are sent and received.  Is my understanding correct?  Also,
-how does that fit into what Siddharth was doing here[1]?
-
-It would be nice if Siddharth could ack the patch before moving forward.
-
-Thanks,
-Mathieu
-
-[1]. https://patchwork.kernel.org/patch/11481081/ 
+Ok
 
 > 
-> The rpmsg glink header file is used in preparation for the next patch.
-> 
-> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> ---
->  drivers/remoteproc/qcom_common.c |  8 ++++++++
->  drivers/soc/qcom/glink_ssr.c     | 24 +++++++++++++++++++-----
->  include/linux/rpmsg/qcom_glink.h |  6 ++++++
->  3 files changed, 33 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/remoteproc/qcom_common.c b/drivers/remoteproc/qcom_common.c
-> index ff26f2b68752..9028cea2d81e 100644
-> --- a/drivers/remoteproc/qcom_common.c
-> +++ b/drivers/remoteproc/qcom_common.c
-> @@ -42,6 +42,13 @@ static void glink_subdev_stop(struct rproc_subdev *subdev, bool crashed)
->  	glink->edge = NULL;
->  }
->  
-> +static void glink_subdev_unprepare(struct rproc_subdev *subdev)
-> +{
-> +	struct qcom_rproc_glink *glink = to_glink_subdev(subdev);
-> +
-> +	qcom_glink_ssr_notify(glink->ssr_name);
-> +}
-> +
->  /**
->   * qcom_add_glink_subdev() - try to add a GLINK subdevice to rproc
->   * @rproc:	rproc handle to parent the subdevice
-> @@ -64,6 +71,7 @@ void qcom_add_glink_subdev(struct rproc *rproc, struct qcom_rproc_glink *glink,
->  	glink->dev = dev;
->  	glink->subdev.start = glink_subdev_start;
->  	glink->subdev.stop = glink_subdev_stop;
-> +	glink->subdev.unprepare = glink_subdev_unprepare;
->  
->  	rproc_add_subdev(rproc, &glink->subdev);
->  }
-> diff --git a/drivers/soc/qcom/glink_ssr.c b/drivers/soc/qcom/glink_ssr.c
-> index d7babe3d67bc..847d79c935f1 100644
-> --- a/drivers/soc/qcom/glink_ssr.c
-> +++ b/drivers/soc/qcom/glink_ssr.c
-> @@ -54,6 +54,19 @@ struct glink_ssr {
->  	struct completion completion;
->  };
->  
-> +/* Notifier list for all registered glink_ssr instances */
-> +static BLOCKING_NOTIFIER_HEAD(ssr_notifiers);
-> +
-> +/**
-> + * qcom_glink_ssr_notify() - notify GLINK SSR about stopped remoteproc
-> + * @ssr_name:	name of the remoteproc that has been stopped
-> + */
-> +void qcom_glink_ssr_notify(const char *ssr_name)
-> +{
-> +	blocking_notifier_call_chain(&ssr_notifiers, 0, (void *)ssr_name);
-> +}
-> +EXPORT_SYMBOL_GPL(qcom_glink_ssr_notify);
-> +
->  static int qcom_glink_ssr_callback(struct rpmsg_device *rpdev,
->  				   void *data, int len, void *priv, u32 addr)
->  {
-> @@ -81,8 +94,9 @@ static int qcom_glink_ssr_callback(struct rpmsg_device *rpdev,
->  	return 0;
->  }
->  
-> -static int qcom_glink_ssr_notify(struct notifier_block *nb, unsigned long event,
-> -				 void *data)
-> +static int qcom_glink_ssr_notifier_call(struct notifier_block *nb,
-> +					unsigned long event,
-> +					void *data)
->  {
->  	struct glink_ssr *ssr = container_of(nb, struct glink_ssr, nb);
->  	struct do_cleanup_msg msg;
-> @@ -121,18 +135,18 @@ static int qcom_glink_ssr_probe(struct rpmsg_device *rpdev)
->  
->  	ssr->dev = &rpdev->dev;
->  	ssr->ept = rpdev->ept;
-> -	ssr->nb.notifier_call = qcom_glink_ssr_notify;
-> +	ssr->nb.notifier_call = qcom_glink_ssr_notifier_call;
->  
->  	dev_set_drvdata(&rpdev->dev, ssr);
->  
-> -	return qcom_register_ssr_notifier(&ssr->nb);
-> +	return blocking_notifier_chain_register(&ssr_notifiers, &ssr->nb);
->  }
->  
->  static void qcom_glink_ssr_remove(struct rpmsg_device *rpdev)
->  {
->  	struct glink_ssr *ssr = dev_get_drvdata(&rpdev->dev);
->  
-> -	qcom_unregister_ssr_notifier(&ssr->nb);
-> +	blocking_notifier_chain_unregister(&ssr_notifiers, &ssr->nb);
->  }
->  
->  static const struct rpmsg_device_id qcom_glink_ssr_match[] = {
-> diff --git a/include/linux/rpmsg/qcom_glink.h b/include/linux/rpmsg/qcom_glink.h
-> index 96e26d94719f..09daa0acde2c 100644
-> --- a/include/linux/rpmsg/qcom_glink.h
-> +++ b/include/linux/rpmsg/qcom_glink.h
-> @@ -26,4 +26,10 @@ static inline void qcom_glink_smem_unregister(struct qcom_glink *glink) {}
->  
->  #endif
->  
-> +#if IS_ENABLED(CONFIG_RPMSG_QCOM_GLINK_SSR)
-> +void qcom_glink_ssr_notify(const char *ssr_name);
-> +#else
-> +static inline void qcom_glink_ssr_notify(const char *ssr_name) {}
-> +#endif
-> +
->  #endif
-> -- 
-> 2.24.0
-> 
+> Regards
+> Arnaud
+> > +	}
+> > +
+> >  	rproc->auto_boot = auto_boot;
+> >  	rproc->has_iommu = false;
+> >  	ddata->workqueue = create_workqueue(dev_name(dev));
+> > 
