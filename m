@@ -2,92 +2,130 @@ Return-Path: <SRS0=vOkv=6S=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7238EC28CBC
-	for <linux-remoteproc@archiver.kernel.org>; Mon,  4 May 2020 00:47:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 312A1C3A5A9
+	for <linux-remoteproc@archiver.kernel.org>; Mon,  4 May 2020 09:53:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4A426206E6
-	for <linux-remoteproc@archiver.kernel.org>; Mon,  4 May 2020 00:47:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1A7F52073B
+	for <linux-remoteproc@archiver.kernel.org>; Mon,  4 May 2020 09:53:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726842AbgEDArS (ORCPT
+        id S1728421AbgEDJxJ convert rfc822-to-8bit (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Sun, 3 May 2020 20:47:18 -0400
-Received: from smtprelay0122.hostedemail.com ([216.40.44.122]:53038 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726549AbgEDArR (ORCPT
+        Mon, 4 May 2020 05:53:09 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:8288 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728339AbgEDJxJ (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Sun, 3 May 2020 20:47:17 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay06.hostedemail.com (Postfix) with ESMTP id 84CBB1800A695;
-        Mon,  4 May 2020 00:47:16 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-HE-Tag: pen33_21ed1a190575c
-X-Filterd-Recvd-Size: 2603
-Received: from XPS-9350.home (unknown [47.151.136.130])
-        (Authenticated sender: joe@perches.com)
-        by omf18.hostedemail.com (Postfix) with ESMTPA;
-        Mon,  4 May 2020 00:47:13 +0000 (UTC)
-Message-ID: <a88be1298aa1600f46e868dd45f83a6075c7162e.camel@perches.com>
+        Mon, 4 May 2020 05:53:09 -0400
+Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 0449Wevn154538;
+        Mon, 4 May 2020 05:52:01 -0400
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 30s50fcewg-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 04 May 2020 05:52:00 -0400
+Received: from m0098414.ppops.net (m0098414.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 0449Y0Fw161848;
+        Mon, 4 May 2020 05:51:59 -0400
+Received: from ppma03fra.de.ibm.com (6b.4a.5195.ip4.static.sl-reverse.com [149.81.74.107])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 30s50fcew4-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 04 May 2020 05:51:59 -0400
+Received: from pps.filterd (ppma03fra.de.ibm.com [127.0.0.1])
+        by ppma03fra.de.ibm.com (8.16.0.27/8.16.0.27) with SMTP id 0449ofx1028861;
+        Mon, 4 May 2020 09:51:57 GMT
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (d06relay09.portsmouth.uk.ibm.com [9.149.109.194])
+        by ppma03fra.de.ibm.com with ESMTP id 30s0g5ht3w-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 04 May 2020 09:51:57 +0000
+Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 0449ptPp10682730
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 4 May 2020 09:51:55 GMT
+Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 5B19B52050;
+        Mon,  4 May 2020 09:51:55 +0000 (GMT)
+Received: from localhost (unknown [9.85.127.4])
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id EE3F75204F;
+        Mon,  4 May 2020 09:51:54 +0000 (GMT)
+Date:   Mon, 04 May 2020 15:21:53 +0530
+From:   "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>
 Subject: Re: [PATCH 12/14] docs: move remaining stuff under
  Documentation/*.txt to Documentation/staging
-From:   Joe Perches <joe@perches.com>
-To:     Masami Hiramatsu <mhiramat@kernel.org>,
-        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Cc:     Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
-        Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Ohad Ben-Cohen <ohad@wizery.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Jens Wiklander <jens.wiklander@linaro.org>,
+To:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>
+Cc:     Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
         Arnd Bergmann <arnd@arndb.de>,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Lecopzer Chen <lecopzer.chen@mediatek.com>,
-        Sameer Rahmani <lxsameer@gnu.org>,
-        Rob Herring <robh@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
         Daniel Bristot de Oliveira <bristot@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-remoteproc@vger.kernel.org, tee-dev@lists.linaro.org,
-        linux-arch@vger.kernel.org
-Date:   Sun, 03 May 2020 17:47:11 -0700
-In-Reply-To: <20200504085415.db8e0e3b40e795f2fb4af009@kernel.org>
+        Jonathan Corbet <corbet@lwn.net>,
+        "David S. Miller" <davem@davemloft.net>,
+        =?iso-8859-1?q?Greg=0A?= Kroah-Hartman 
+        <gregkh@linuxfoundation.org>,
+        Jens Wiklander <jens.wiklander@linaro.org>,
+        Lecopzer Chen <lecopzer.chen@mediatek.com>,
+        linux-arch@vger.kernel.org,
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        =?iso-8859-1?q?Sameer=0A?= Rahmani <lxsameer@gnu.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Ohad Ben-Cohen <ohad@wizery.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Rob Herring <robh@kernel.org>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
+        tee-dev@lists.linaro.org, Thomas Gleixner <tglx@linutronix.de>
 References: <cover.1588345503.git.mchehab+huawei@kernel.org>
-         <28687056965ff46c0e6c81663a419bc59cfb94b4.1588345503.git.mchehab+huawei@kernel.org>
-         <20200504085415.db8e0e3b40e795f2fb4af009@kernel.org>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.36.1-2 
+        <28687056965ff46c0e6c81663a419bc59cfb94b4.1588345503.git.mchehab+huawei@kernel.org>
+        <20200504085415.db8e0e3b40e795f2fb4af009@kernel.org>
+In-Reply-To: <20200504085415.db8e0e3b40e795f2fb4af009@kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+User-Agent: astroid/v0.15-13-gb675b421
+ (https://github.com/astroidmail/astroid)
+Message-Id: <1588585777.904qzycqcn.naveen@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8BIT
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.676
+ definitions=2020-05-04_05:2020-05-01,2020-05-04 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ clxscore=1011 impostorscore=0 adultscore=0 priorityscore=1501
+ malwarescore=0 phishscore=0 mlxscore=0 spamscore=0 mlxlogscore=999
+ bulkscore=0 suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2003020000 definitions=main-2005040078
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Mon, 2020-05-04 at 08:54 +0900, Masami Hiramatsu wrote:
+Masami Hiramatsu wrote:
 > On Fri,  1 May 2020 17:37:56 +0200
 > Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
-[]
-> > diff --git a/MAINTAINERS b/MAINTAINERS
-[]
-> > @@ -9855,7 +9855,7 @@ L:	linux-kernel@vger.kernel.org
-> >  L:	linux-arch@vger.kernel.org
-> >  S:	Supported
-> >  T:	git git://git.kernel.org/pub/scm/linux/kernel/git/paulmck/linux-rcu.git dev
-> > -F:	Documentation/atomic_bitops.txt
-> > +F:	Documentation/staging/atomic_bitops.txt
+> 
+>> There are several files that I was unable to find a proper place
+>> for them, and 3 ones that are still in plain old text format.
+>> 
+>> Let's place those stuff behind the carpet, as we'd like to keep the
+>> root directory clean.
+>> 
+>> We can later discuss and move those into better places.
+> 
+> Hi Mauro,
+> 
+> Thanks for cleaning it up! Tentatively moving kprobes.txt under
+> staging/ is good to me.
+> 
+> Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
+> 
+> BTW, I think kprobes.txt is under trace/ or we may be better
+> making a new core-api/events/ directory and prepare other event
+> systems (PMU, uprobes, and hw_breakpoint.) 
 
-Can you please keep the file lists in alphabetic order
-and move this entry down appropriately?  Thanks.
+I think it would be good to move kprobes.txt under trace/ -- all other 
+tracing bits are already present there, including uprobes.
 
-> >  F:	Documentation/atomic_t.txt
-> >  F:	Documentation/core-api/atomic_ops.rst
-> >  F:	Documentation/core-api/refcount-vs-atomic.rst
 
+- Naveen
 
