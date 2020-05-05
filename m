@@ -2,248 +2,158 @@ Return-Path: <SRS0=+YGx=6T=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28ACCC47254
-	for <linux-remoteproc@archiver.kernel.org>; Tue,  5 May 2020 22:10:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16CE4C47247
+	for <linux-remoteproc@archiver.kernel.org>; Tue,  5 May 2020 22:15:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 04110206FA
-	for <linux-remoteproc@archiver.kernel.org>; Tue,  5 May 2020 22:10:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E2A4A20721
+	for <linux-remoteproc@archiver.kernel.org>; Tue,  5 May 2020 22:15:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="H4C/8Je6"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Vxdx7wlj"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729328AbgEEWKw (ORCPT
+        id S1729554AbgEEWP0 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 5 May 2020 18:10:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39002 "EHLO
+        Tue, 5 May 2020 18:15:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39718 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727089AbgEEWKv (ORCPT
+        with ESMTP id S1727089AbgEEWPY (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 5 May 2020 18:10:51 -0400
-Received: from mail-pf1-x442.google.com (mail-pf1-x442.google.com [IPv6:2607:f8b0:4864:20::442])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5CC86C061A10
-        for <linux-remoteproc@vger.kernel.org>; Tue,  5 May 2020 15:10:50 -0700 (PDT)
-Received: by mail-pf1-x442.google.com with SMTP id 145so1587467pfw.13
-        for <linux-remoteproc@vger.kernel.org>; Tue, 05 May 2020 15:10:50 -0700 (PDT)
+        Tue, 5 May 2020 18:15:24 -0400
+Received: from mail-pf1-x441.google.com (mail-pf1-x441.google.com [IPv6:2607:f8b0:4864:20::441])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 481F4C061A10
+        for <linux-remoteproc@vger.kernel.org>; Tue,  5 May 2020 15:15:24 -0700 (PDT)
+Received: by mail-pf1-x441.google.com with SMTP id z1so1619822pfn.3
+        for <linux-remoteproc@vger.kernel.org>; Tue, 05 May 2020 15:15:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=d+NhRWsLm2x5A30r1s+qBjiXMgEROv/YxDTJuQSoy+Y=;
-        b=H4C/8Je6JGlahL9mfnwrlCwDUUwCyIWJbrttwPRwkAtgaROaMfI5vPy18zTDRdyE00
-         qjQLnyChHmpeuRkV4tw578URIbKwbbVYjJaKEJ9R1mluxvyroz23cIZ2hz0DwJ1gEfDh
-         gqOoxYVmJzbT7LM0ipWGU/PRbMUXfkonPLM1GOXZ6pelPMczpl/oS4cHmht22IVBUdqU
-         jIpyH4lC4blb4Z5Y5KPQ2LcX1Wiv2sv5kfroCP3d38i3r0qmWg7nyOR1puW2ntb6tBrS
-         iUrjwqMvjEF+nSQ813yA3rtdpWrSU72zHMRcw9GOm8+vpXER18tO/8mQNQWBSjhzAUXq
-         Uquw==
+         :content-disposition:in-reply-to;
+        bh=WLWOsjOGJm6CWI5BnvgjlmmbJOBBrRgGgKS+2MfQM9U=;
+        b=Vxdx7wljo2iZmV2a9JAM7LwXbjka8TA+rAvlvo/SqoizmrdaVRELMhuRnmaMP6Ijbf
+         9HMPJyt1a1fGNolV2ClKHMXrJIPfRxjyykDd+k1enL7NbAe0JWXRk84m9F/l30U3vJLd
+         nVWfEmSKlkdHIDIgNqOUKUx/qZhSEKD2scRNY3j9KeX3WQHNTlaDwNHdu5GqVBeYmVTl
+         QO69ZpPgXs+ky9xzqO6kg/+oAAnIW13NOOGFTu3Olv1Tc6uvf/q0fq7JnpDTrtIAS/FN
+         ULwTApsgzBvdYGYsspx9Kgrcs1QoD/Ltu50Hcozu0p7b/GKTga304FcLA+CU1GprjzCh
+         0hRg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=d+NhRWsLm2x5A30r1s+qBjiXMgEROv/YxDTJuQSoy+Y=;
-        b=tvuclWdZ2OEmRPrLDKBS2j2fb8H1qHxYu/z+OpZLvAVL8VXsWDLIJE8JVYDfdUZtaM
-         9jl9dPMFEWCCxFR249P22eUHzsPjBcHhAaQetYEbwsAv+LOxYG41WDQROuRwn0pljCZU
-         NXVAmTaPTLaJh6N2Qc8nZIk4XfduSpcwnRleR7u2OOXiSba0pxGb/7MJb5wO6+JbBI7N
-         QT2tWsROvqrPGktUCPO2af2htkplNlWQ6Y4KTmzfDv9eHae2tiktgXcP5KBo8HtlO2Jf
-         NKs0WDZbKmnUsFpCKPEUCsnZjYrqLR57NJXWOaVWEUCerSpOYUuRL2FbD33/mKCq7E7F
-         HxIQ==
-X-Gm-Message-State: AGi0PuYCXzYjdQ/Ro8x/x1h0WdPtK4tFGSH2xaiwBw2CFMPI0WS9RgR7
-        RSW1+0wuFQ0OyQmnxzXWMAK2tM8XN+o=
-X-Google-Smtp-Source: APiQypKSwE5gLEiw1GKWGoeoiP/f2TNQCODhA/ksQA6kq3+8WbOjY6TgPPe4bbxzA3BCexdiRL6k9A==
-X-Received: by 2002:a63:150:: with SMTP id 77mr4386172pgb.136.1588716649770;
-        Tue, 05 May 2020 15:10:49 -0700 (PDT)
-Received: from xps15 (S0106002369de4dac.cg.shawcable.net. [68.147.8.254])
-        by smtp.gmail.com with ESMTPSA id f27sm97404pga.51.2020.05.05.15.10.48
+         :mime-version:content-disposition:in-reply-to;
+        bh=WLWOsjOGJm6CWI5BnvgjlmmbJOBBrRgGgKS+2MfQM9U=;
+        b=PinZosdrJ3Q3ob++OIKGg3bk0TayHhxctgLam2Rb8e3aHe47kavtdxgTidxgHFkf5D
+         FERlLoTRX8snROTAnB5B07NMHYQR2nubnUAj6yrIjPywOo8dzv3RYEXGnekHURSpMD2S
+         qNEn8PUv06M+8A9eh/RydGgXvpLpsJxUQkyrgbwXD4Epxu+b3UTxd+mBPgjmqMXIQwwd
+         HT7xsqY3Pwggp7dx2WVVOUvYr4XFiZtySn6PoWBRLNhf+J0m0ovXF8oXfhwfO6jsGReW
+         ybCZVrSwJ8EpSukeBbhIEFpKGv0IIlN0Sby+SH4XHnKvX3TNIdZuWOdw8MoEhs+OI513
+         Cncw==
+X-Gm-Message-State: AGi0PuaD/AnRISFekQjaBwQw2L0y6KI8x6hC04SoWAmK3EG3DmsIfUJa
+        08EIDLvCNZuj7cJilKlXDmikDg==
+X-Google-Smtp-Source: APiQypIkpgDKKbaVknUHuqijb1yDmklD4TRDh4hYEyL/2sFNqw/Z+p8e9Zuk8McZf8OUNCu1IbAFKg==
+X-Received: by 2002:a62:9211:: with SMTP id o17mr5184245pfd.234.1588716923511;
+        Tue, 05 May 2020 15:15:23 -0700 (PDT)
+Received: from builder.lan (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id y25sm106878pgc.63.2020.05.05.15.15.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 May 2020 15:10:49 -0700 (PDT)
-Date:   Tue, 5 May 2020 16:10:47 -0600
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-To:     Arnaud POULIQUEN <arnaud.pouliquen@st.com>
-Cc:     bjorn.andersson@linaro.org, ohad@wizery.com, loic.pallardy@st.com,
+        Tue, 05 May 2020 15:15:22 -0700 (PDT)
+Date:   Tue, 5 May 2020 15:16:08 -0700
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc:     ohad@wizery.com, loic.pallardy@st.com, arnaud.pouliquen@st.com,
         s-anna@ti.com, linux-remoteproc@vger.kernel.org, corbet@lwn.net,
         linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 08/14] remoteproc: Call core functions based on
- synchronisation flag
-Message-ID: <20200505221047.GC18333@xps15>
+Subject: Re: [PATCH v3 01/14] remoteproc: Make core operations optional
+Message-ID: <20200505221608.GA2329931@builder.lan>
 References: <20200424200135.28825-1-mathieu.poirier@linaro.org>
- <20200424200135.28825-9-mathieu.poirier@linaro.org>
- <a17d871a-3b3f-a462-9b2c-f9183f80a533@st.com>
- <20200430195749.GC17031@xps15>
- <6f85f227-e244-8136-b0f4-0b6ab167d852@st.com>
+ <20200424200135.28825-2-mathieu.poirier@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <6f85f227-e244-8136-b0f4-0b6ab167d852@st.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20200424200135.28825-2-mathieu.poirier@linaro.org>
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Mon, May 04, 2020 at 01:14:59PM +0200, Arnaud POULIQUEN wrote:
-> hi Mathieu,
+On Fri 24 Apr 13:01 PDT 2020, Mathieu Poirier wrote:
+
+> When synchronizing with a remote processor, it is entirely possible that
+> the remoteproc core is not the life cycle manager.  In such a case core
+> operations don't exist and should not be called.
 > 
-> On 4/30/20 9:57 PM, Mathieu Poirier wrote:
-> > On Tue, Apr 28, 2020 at 07:27:27PM +0200, Arnaud POULIQUEN wrote:
-> >>
-> >>
-> >> On 4/24/20 10:01 PM, Mathieu Poirier wrote:
-> >>> Call the right core function based on whether we should synchronise
-> >>> with a remote processor or boot it from scratch.
-> >>>
-> >>> Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-> >>> ---
-> >>>  drivers/remoteproc/remoteproc_internal.h | 50 ++++++++++++++++++++++++
-> >>>  1 file changed, 50 insertions(+)
-> >>>
-> >>> diff --git a/drivers/remoteproc/remoteproc_internal.h b/drivers/remoteproc/remoteproc_internal.h
-> >>> index dda7044c4b3e..3985c084b184 100644
-> >>> --- a/drivers/remoteproc/remoteproc_internal.h
-> >>> +++ b/drivers/remoteproc/remoteproc_internal.h
-> >>> @@ -72,6 +72,12 @@ static inline bool rproc_needs_syncing(struct rproc *rproc)
-> >>>  static inline
-> >>>  int rproc_fw_sanity_check(struct rproc *rproc, const struct firmware *fw)
-> >>>  {
-> >>> +	if (rproc_needs_syncing(rproc)) {
-> >>> +		if (rproc->sync_ops && rproc->sync_ops->sanity_check)
-> >>> +			return rproc->sync_ops->sanity_check(rproc, fw);
-> >>> +		return 0;
-> >>> +	}
-> >>> +
-> >>>  	if (rproc->ops && rproc->ops->sanity_check)
-> >>>  		return rproc->ops->sanity_check(rproc, fw);
-> >>
-> >> Regarding this patch I'm trying to determine whether it makes sense to have ops or
-> >> sync_ops set to null. Your[v3 01/14]  patch commit explains that ops can be null in case of
-> >> synchronisation.
-> >> But it seems deprecated with the sync_ops introduction...
-> > 
-> > Your comment made me go over the logic again...  If rproc_needs_syncing() is
-> > true then we necessarily have a sync_ops.  If rproc_needs_syncing() is false,
-> > there too we automatically have an ops.  As such and as you point out, checking
-> > for rproc->sync_ops and rproc-ops is probably useless.
-> An Additional test in rproc_set_state_machine should be sufficient, something like that: 
->  /* rproc->ops struct is mandatory if at least one sync flag is false */
->  if (!rproc->ops && !(sync_flags.on_init &&
-> 	    sync_flags.after_stop && sync_flags.after_crash))
-> 		return -EINVAL;
 
-Right, something like that. 
+Why would the core call these functions if it knows the remote is in a
+state where it doesn't need these?
 
+Regards,
+Bjorn
+
+> Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+> ---
+>  drivers/remoteproc/remoteproc_internal.h | 12 ++++++------
+>  1 file changed, 6 insertions(+), 6 deletions(-)
 > 
-> > 
-> >>
-> >> And if sync_ops is null, is it still necessary to define a remoteproc device?
-> > 
-> > Not sure I understand your point here but with the reasonning from above it
-> > is probably moot anyway. 
-> Just to mention that a platform device with ops and ops_sync null seems like nonsense 
-
-We agree.
-
+> diff --git a/drivers/remoteproc/remoteproc_internal.h b/drivers/remoteproc/remoteproc_internal.h
+> index b389dc79da81..59fc871743c7 100644
+> --- a/drivers/remoteproc/remoteproc_internal.h
+> +++ b/drivers/remoteproc/remoteproc_internal.h
+> @@ -67,7 +67,7 @@ rproc_find_carveout_by_name(struct rproc *rproc, const char *name, ...);
+>  static inline
+>  int rproc_fw_sanity_check(struct rproc *rproc, const struct firmware *fw)
+>  {
+> -	if (rproc->ops->sanity_check)
+> +	if (rproc->ops && rproc->ops->sanity_check)
+>  		return rproc->ops->sanity_check(rproc, fw);
+>  
+>  	return 0;
+> @@ -76,7 +76,7 @@ int rproc_fw_sanity_check(struct rproc *rproc, const struct firmware *fw)
+>  static inline
+>  u64 rproc_get_boot_addr(struct rproc *rproc, const struct firmware *fw)
+>  {
+> -	if (rproc->ops->get_boot_addr)
+> +	if (rproc->ops && rproc->ops->get_boot_addr)
+>  		return rproc->ops->get_boot_addr(rproc, fw);
+>  
+>  	return 0;
+> @@ -85,7 +85,7 @@ u64 rproc_get_boot_addr(struct rproc *rproc, const struct firmware *fw)
+>  static inline
+>  int rproc_load_segments(struct rproc *rproc, const struct firmware *fw)
+>  {
+> -	if (rproc->ops->load)
+> +	if (rproc->ops && rproc->ops->load)
+>  		return rproc->ops->load(rproc, fw);
+>  
+>  	return -EINVAL;
+> @@ -93,7 +93,7 @@ int rproc_load_segments(struct rproc *rproc, const struct firmware *fw)
+>  
+>  static inline int rproc_parse_fw(struct rproc *rproc, const struct firmware *fw)
+>  {
+> -	if (rproc->ops->parse_fw)
+> +	if (rproc->ops && rproc->ops->parse_fw)
+>  		return rproc->ops->parse_fw(rproc, fw);
+>  
+>  	return 0;
+> @@ -103,7 +103,7 @@ static inline
+>  int rproc_handle_rsc(struct rproc *rproc, u32 rsc_type, void *rsc, int offset,
+>  		     int avail)
+>  {
+> -	if (rproc->ops->handle_rsc)
+> +	if (rproc->ops && rproc->ops->handle_rsc)
+>  		return rproc->ops->handle_rsc(rproc, rsc_type, rsc, offset,
+>  					      avail);
+>  
+> @@ -114,7 +114,7 @@ static inline
+>  struct resource_table *rproc_find_loaded_rsc_table(struct rproc *rproc,
+>  						   const struct firmware *fw)
+>  {
+> -	if (rproc->ops->find_loaded_rsc_table)
+> +	if (rproc->ops && rproc->ops->find_loaded_rsc_table)
+>  		return rproc->ops->find_loaded_rsc_table(rproc, fw);
+>  
+>  	return NULL;
+> -- 
+> 2.20.1
 > 
-> Regards,
-> Arnaud
-> > 
-> >>
-> >> Regards
-> >> Arnad
-> >>
-> >>>  
-> >>> @@ -81,6 +87,12 @@ int rproc_fw_sanity_check(struct rproc *rproc, const struct firmware *fw)
-> >>>  static inline
-> >>>  u64 rproc_get_boot_addr(struct rproc *rproc, const struct firmware *fw)
-> >>>  {
-> >>> +	if (rproc_needs_syncing(rproc)) {
-> >>> +		if (rproc->sync_ops && rproc->sync_ops->get_boot_addr)
-> >>> +			return rproc->sync_ops->get_boot_addr(rproc, fw);
-> >>> +		return 0;
-> >>> +	}
-> >>> +
-> >>>  	if (rproc->ops && rproc->ops->get_boot_addr)
-> >>>  		return rproc->ops->get_boot_addr(rproc, fw);
-> >>>  
-> >>> @@ -90,6 +102,12 @@ u64 rproc_get_boot_addr(struct rproc *rproc, const struct firmware *fw)
-> >>>  static inline
-> >>>  int rproc_load_segments(struct rproc *rproc, const struct firmware *fw)
-> >>>  {
-> >>> +	if (rproc_needs_syncing(rproc)) {
-> >>> +		if (rproc->sync_ops && rproc->sync_ops->load)
-> >>> +			return rproc->sync_ops->load(rproc, fw);
-> >>> +		return 0;
-> >>> +	}
-> >>> +
-> >>>  	if (rproc->ops && rproc->ops->load)
-> >>>  		return rproc->ops->load(rproc, fw);
-> >>>  
-> >>> @@ -98,6 +116,12 @@ int rproc_load_segments(struct rproc *rproc, const struct firmware *fw)
-> >>>  
-> >>>  static inline int rproc_parse_fw(struct rproc *rproc, const struct firmware *fw)
-> >>>  {
-> >>> +	if (rproc_needs_syncing(rproc)) {
-> >>> +		if (rproc->sync_ops && rproc->sync_ops->parse_fw)
-> >>> +			return rproc->sync_ops->parse_fw(rproc, fw);
-> >>> +		return 0;
-> >>> +	}
-> >>> +
-> >>>  	if (rproc->ops && rproc->ops->parse_fw)
-> >>>  		return rproc->ops->parse_fw(rproc, fw);
-> >>>  
-> >>> @@ -108,6 +132,13 @@ static inline
-> >>>  int rproc_handle_rsc(struct rproc *rproc, u32 rsc_type, void *rsc, int offset,
-> >>>  		     int avail)
-> >>>  {
-> >>> +	if (rproc_needs_syncing(rproc)) {
-> >>> +		if (rproc->sync_ops && rproc->sync_ops->handle_rsc)
-> >>> +			return rproc->sync_ops->handle_rsc(rproc, rsc_type,
-> >>> +							   rsc, offset, avail);
-> >>> +		return 0;
-> >>> +	}
-> >>> +
-> >>>  	if (rproc->ops && rproc->ops->handle_rsc)
-> >>>  		return rproc->ops->handle_rsc(rproc, rsc_type, rsc, offset,
-> >>>  					      avail);
-> >>> @@ -119,6 +150,13 @@ static inline
-> >>>  struct resource_table *rproc_find_loaded_rsc_table(struct rproc *rproc,
-> >>>  						   const struct firmware *fw)
-> >>>  {
-> >>> +	if (rproc_needs_syncing(rproc)) {
-> >>> +		if (rproc->sync_ops && rproc->sync_ops->find_loaded_rsc_table)
-> >>> +			return rproc->sync_ops->find_loaded_rsc_table(rproc,
-> >>> +								      fw);
-> >>> +		return NULL;
-> >>> +	}
-> >>> +
-> >>>  	if (rproc->ops && rproc->ops->find_loaded_rsc_table)
-> >>>  		return rproc->ops->find_loaded_rsc_table(rproc, fw);
-> >>>  
-> >>> @@ -127,6 +165,12 @@ struct resource_table *rproc_find_loaded_rsc_table(struct rproc *rproc,
-> >>>  
-> >>>  static inline int rproc_start_device(struct rproc *rproc)
-> >>>  {
-> >>> +	if (rproc_needs_syncing(rproc)) {
-> >>> +		if (rproc->sync_ops && rproc->sync_ops->start)
-> >>> +			return rproc->sync_ops->start(rproc);
-> >>> +		return 0;
-> >>> +	}
-> >>> +
-> >>>  	if (rproc->ops && rproc->ops->start)
-> >>>  		return rproc->ops->start(rproc);
-> >>>  
-> >>> @@ -135,6 +179,12 @@ static inline int rproc_start_device(struct rproc *rproc)
-> >>>  
-> >>>  static inline int rproc_stop_device(struct rproc *rproc)
-> >>>  {
-> >>> +	if (rproc_needs_syncing(rproc)) {
-> >>> +		if (rproc->sync_ops && rproc->sync_ops->stop)
-> >>> +			return rproc->sync_ops->stop(rproc);
-> >>> +		return 0;
-> >>> +	}
-> >>> +
-> >>>  	if (rproc->ops && rproc->ops->stop)
-> >>>  		return rproc->ops->stop(rproc);
-> >>>  
-> >>>
