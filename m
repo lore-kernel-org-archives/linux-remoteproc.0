@@ -2,233 +2,252 @@ Return-Path: <SRS0=hf+e=6U=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3334C47254
-	for <linux-remoteproc@archiver.kernel.org>; Wed,  6 May 2020 02:54:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9276DC28CBC
+	for <linux-remoteproc@archiver.kernel.org>; Wed,  6 May 2020 07:51:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8BD2120757
-	for <linux-remoteproc@archiver.kernel.org>; Wed,  6 May 2020 02:54:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6EB7A206D5
+	for <linux-remoteproc@archiver.kernel.org>; Wed,  6 May 2020 07:51:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="aL5FzqiA"
+	dkim=pass (2048-bit key) header.d=st.com header.i=@st.com header.b="TmPt9OdW"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726638AbgEFCyK (ORCPT
+        id S1728456AbgEFHve (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 5 May 2020 22:54:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54702 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726477AbgEFCyK (ORCPT
+        Wed, 6 May 2020 03:51:34 -0400
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:16096 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728280AbgEFHvd (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 5 May 2020 22:54:10 -0400
-Received: from mail-pg1-x542.google.com (mail-pg1-x542.google.com [IPv6:2607:f8b0:4864:20::542])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2AF71C061A10
-        for <linux-remoteproc@vger.kernel.org>; Tue,  5 May 2020 19:54:09 -0700 (PDT)
-Received: by mail-pg1-x542.google.com with SMTP id b8so127626pgi.11
-        for <linux-remoteproc@vger.kernel.org>; Tue, 05 May 2020 19:54:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=iNwWeuzlGPXoXK4GNyvwbVYZ9LLoZChVLx7D4DsWylg=;
-        b=aL5FzqiABLNCmFvp+94bRF+U0Nlvn6CNStusRuSmKyM+HdmFua+oFccMrdt49/jOA8
-         8WMbmKPGv5OkUVtEsLkYMehr3w852ABWEPqmvETeGubdq8l+EYRjCaN5DUWYfbol1+LS
-         Q2lZKEYVrA0aw0VWmbmGuOpVGrivVsKuCzy8ED4fMDvAvdDa24wvp+DfJfYUn1hXAKlh
-         YFVCH8Ll9Xh04U2H7A4kWe/HxiIsNQpNeXumE/23MhVJUQdw/nrtDDb10gv3+A/pPHpD
-         K3DvxVj7itgSm4bQc3LiZJRgGjUXU2GWplLEpScXuBv4u5B8gMnPt2mwwdvfqhvEkK0B
-         6k0w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=iNwWeuzlGPXoXK4GNyvwbVYZ9LLoZChVLx7D4DsWylg=;
-        b=dXQxpbeUXQejrF00TeCYYny0RxcmXcGir4FYs4Nexl3FbXf+HVHZc5fz/Ao07FQcnC
-         YSpHFe9cpQ06oQfXYjWNDGsWQ3PO/4vkqn5j15A+qNvvRAgoPUKJ3PFB9Fz0Pkpg2h3+
-         vcOt5IxXeEQaSA+LVmbh9/PMcUG62rtdgbA2djfxGp4sO4azK1bTHgFIzeUJFQ2Qbx/R
-         Kz6HSyTP+a5bEDq90uTJax3HHXZ0SPw2q6Z161lpm4we9/ZLX/4n7Nt9MZFj7Y0kv8qx
-         xuHrPXYZBgofomOzRQQ8LVs4I+33vrhnilcBlPdCZ0B0WfUN3rpc1MCGxllogiwHz1XP
-         gRtg==
-X-Gm-Message-State: AGi0PuYuj+9wsLQb3S+FL6pkNMH+HPz44q9h+XbkJRx9pUCPQyOVf2xO
-        T1vRwdNZQg8n4hC8R4qizX+1+w==
-X-Google-Smtp-Source: APiQypKcyaPzuciLG7kJV3sDoFLAmtwbp6gkFuFyfiiecNEG178Y5T+SVdknhc1X4TVEHMFsx5bQJg==
-X-Received: by 2002:a63:c241:: with SMTP id l1mr5399240pgg.42.1588733648445;
-        Tue, 05 May 2020 19:54:08 -0700 (PDT)
-Received: from yoga (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id bo19sm3177345pjb.26.2020.05.05.19.54.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 May 2020 19:54:07 -0700 (PDT)
-Date:   Tue, 5 May 2020 19:54:04 -0700
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Arnaud POULIQUEN <arnaud.pouliquen@st.com>
-Cc:     Ohad Ben-Cohen <ohad@wizery.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>, linux-kernel@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Suman Anna <s-anna@ti.com>,
-        Fabien DESSENNE <fabien.dessenne@st.com>,
-        linux-stm32@st-md-mailman.stormreply.com,
-        xiang xiao <xiaoxiang781216@gmail.com>
-Subject: Re: [PATCH v7 2/2] tty: add rpmsg driver
-Message-ID: <20200506025404.GA1302550@yoga>
-References: <20200324170407.16470-1-arnaud.pouliquen@st.com>
- <20200324170407.16470-3-arnaud.pouliquen@st.com>
- <20200324205210.GE119913@minitux>
- <4f5e6dd0-5deb-8036-0a94-eb7055744f35@st.com>
+        Wed, 6 May 2020 03:51:33 -0400
+Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 0467lFIq007704;
+        Wed, 6 May 2020 09:51:23 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=STMicroelectronics;
+ bh=EbDaiplmg1Q7XCQNBmWnN701UTyThBLfH9pJeg2q7Xw=;
+ b=TmPt9OdWjeDx2Qy8hrSQ8t8yMu9/hqJ6WGYk47/V6GVLv/itHMS7cEqt27Tirk6ry9mc
+ dTMKumNGAGA6utdhiSGSrVlshNekl3Qavw2cssPaec5ujaLVGMjGz7/6BOkDzw/xqRZM
+ 9SEcNJ+n8qPoFxYt0Fk4bcQ8xmIz4RuwW8tNbvJZY9mh9NcpCaK29ZYc/WeLZcXebFZp
+ NbkG0hF53LniJlvELWcscLjLgKr3YF1/s7OTuOmwBYmkxZD4HAjwY/bdmYHMMATaGAGi
+ TwVMPQVAYTI/6u8B7H/mDHJvPNIb+0PKipw4al9BJdznWq2is7rya5q+Zk2wR9losiQd 6w== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 30rxb24mwf-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 06 May 2020 09:51:23 +0200
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 09EED10002A;
+        Wed,  6 May 2020 09:51:23 +0200 (CEST)
+Received: from Webmail-eu.st.com (sfhdag3node1.st.com [10.75.127.7])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id ED5FE2A6CD9;
+        Wed,  6 May 2020 09:51:22 +0200 (CEST)
+Received: from lmecxl0889.tpe.st.com (10.75.127.49) by SFHDAG3NODE1.st.com
+ (10.75.127.7) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 6 May
+ 2020 09:51:21 +0200
+Subject: Re: [PATCH v3 10/14] remoteproc: Deal with synchronisation when
+ shutting down
+To:     Mathieu Poirier <mathieu.poirier@linaro.org>
+CC:     <bjorn.andersson@linaro.org>, <ohad@wizery.com>,
+        <loic.pallardy@st.com>, <s-anna@ti.com>,
+        <linux-remoteproc@vger.kernel.org>, <corbet@lwn.net>,
+        <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20200424200135.28825-1-mathieu.poirier@linaro.org>
+ <20200424200135.28825-11-mathieu.poirier@linaro.org>
+ <d2eeb480-6ba1-de12-53ba-cdf9c61b94b0@st.com> <20200430202312.GE17031@xps15>
+ <04b8f860-2b01-7e4f-cdea-08a3cf8af26c@st.com> <20200505220327.GB18333@xps15>
+From:   Arnaud POULIQUEN <arnaud.pouliquen@st.com>
+Message-ID: <2aac2d9e-bd2f-d60a-a0ac-3b8541a9cde2@st.com>
+Date:   Wed, 6 May 2020 09:51:20 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4f5e6dd0-5deb-8036-0a94-eb7055744f35@st.com>
+In-Reply-To: <20200505220327.GB18333@xps15>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.75.127.49]
+X-ClientProxiedBy: SFHDAG3NODE2.st.com (10.75.127.8) To SFHDAG3NODE1.st.com
+ (10.75.127.7)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.676
+ definitions=2020-05-06_02:2020-05-04,2020-05-06 signatures=0
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Wed 25 Mar 09:57 PDT 2020, Arnaud POULIQUEN wrote:
 
-> Hi Bjorn,
-> 
-> On 3/24/20 9:52 PM, Bjorn Andersson wrote:
-> > On Tue 24 Mar 10:04 PDT 2020, Arnaud Pouliquen wrote:
-> > [..]
-> >> diff --git a/drivers/tty/Makefile b/drivers/tty/Makefile
-> >> index 020b1cd9294f..c2465e7ebc2a 100644
-> >> --- a/drivers/tty/Makefile
-> >> +++ b/drivers/tty/Makefile
-> >> @@ -34,5 +34,6 @@ obj-$(CONFIG_PPC_EPAPR_HV_BYTECHAN) += ehv_bytechan.o
-> >>  obj-$(CONFIG_GOLDFISH_TTY)	+= goldfish.o
-> >>  obj-$(CONFIG_MIPS_EJTAG_FDC_TTY) += mips_ejtag_fdc.o
-> >>  obj-$(CONFIG_VCC)		+= vcc.o
-> >> +obj-$(CONFIG_RPMSG_TTY)		+= rpmsg_tty.o
-> >>  
-> >>  obj-y += ipwireless/
-> >> diff --git a/drivers/tty/rpmsg_tty.c b/drivers/tty/rpmsg_tty.c
-> > [..]
-> >> +static struct rpmsg_device_id rpmsg_driver_tty_id_table[] = {
-> >> +	{ .name	= TTY_CH_NAME_RAW },
-> >> +	{ .name	= TTY_CH_NAME_WITH_CTS},
-> > 
-> > I still don't like the idea that the tty devices are tied to channels by
-> > fixed names.
-> 
-> This point has been discussed with Xiang, he has the same kind of requirement. 
-> My proposal here is to do this in two steps. First a fixed name, then
-> in a second step we can extend the naming using the implementation proposed
-> by Mathieu Poirier:
-> 
-> [1]https://lkml.org/lkml/2020/2/12/1083
-> 
-> Is this patch could answer to your requirement?
-> 
-> if requested i can I can integrate the Mathieu's patch in this patchset.
->  
-> > 
-> > This makes the driver unusable for communicating with any firmware out
-> > there that provides tty-like data over a channel with a different name -
-> > such as modems with channels providing an AT command interface (they are
-> > not named "rpmsg-tty-raw").
-> 
-> I'm not fixed on the naming, any proposal is welcome.
-> If we use the patch [1], could be renamed 
-> "rpmsg-tty". then for AT command could be something like "rpmsg-tty-at"
-> 
-> But here seems we are speaking about service over TTY and not over RPMsg.
-> 
-> > 
-> > I also fail to see how you would distinguish ttys when the firmware
-> > provides more than a single tty - e.g. say you have a modem-like device
-> > that provides an AT command channel and a NMEA stream.
-> 
-> Today it is a limitation. In fact this limitation is the same for all RPMsg
-> devices with multi instance.
-> The patch [1] will allow to retrieve the instance by identifying
-> the service device name in /sys/class/tty/ttyRPMSG<X>/device/name
-> 
-> > 
-> > 
-> > These are the reasons why drivers/rpmsg/rpmsg_char registers a "control
-> > device", from which you can spawn new char devices. As I've said before,
-> > I really think the same approach should be taken for ttys - perhaps by
-> > just extending the rpmsg_char to allow it to create tty devices in
-> > addition to the "packet based" char device?
-> > 
-> I'm not very familiar with the rpmsg_char so please correct me if i'm wrong:
-> 
-> The rpmsg_char exposes to userland an interface to manage rpmsg channels
-> (relying on a char device). This interface offers the  possibility to create
-> new channels/endpoints and send/received related messages. 
->  
-> Thus, the application declares the RPMsg channels which is bound if they matches
-> with the remote processor channel (similar behavior than a kernel rpmsg driver).
-> There is no constrain on the service once same service is advertised by remote
-> firmware.
-> 
-> In addition, a limitation of the rpmsg_char device is that it needs to be
-> associated with an existing device, as example the implementation in qcom_smd
-> driver.
-> 
 
-Correct, the rpmsg_char control device must be associated with a
-transport instance, e.g. a virtio rpmsg instance sitting on a
-remoteproc. This is necessary in order to be able to tie the dynamically
-created rpmsg_char endpoints (i.e. the thing that is similar to your tty
-devices) to a particular transport/remoteproc..
-
-The reason why qcom_smd needs to be involved is because of the problem
-that I want the control device to appear without depending on particular
-channels being exposed by the firmware.
-
-> If i try to figure out how to implement TTY using the rpmsg_char:
-> I should create a rpmsg_char dev in the rpmsg tty driver. Then application
-> will create channels related to its service. But in this case
-> how to ensure that channels created are related to the TTY service?  
+On 5/6/20 12:03 AM, Mathieu Poirier wrote:
+> On Mon, May 04, 2020 at 01:34:43PM +0200, Arnaud POULIQUEN wrote:
+>>
+>>
+>> On 4/30/20 10:23 PM, Mathieu Poirier wrote:
+>>> On Wed, Apr 29, 2020 at 10:19:49AM +0200, Arnaud POULIQUEN wrote:
+>>>>
+>>>>
+>>>> On 4/24/20 10:01 PM, Mathieu Poirier wrote:
+>>>>> The remoteproc core must not allow function rproc_shutdown() to
+>>>>> proceed if currently synchronising with a remote processor and
+>>>>> the synchronisation operations of that remote processor does not
+>>>>> support it.  Also part of the process is to set the synchronisation
+>>>>> flag so that the remoteproc core can make the right decisions when
+>>>>> restarting the system.
+>>>>>
+>>>>> Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+>>>>> ---
+>>>>>  drivers/remoteproc/remoteproc_core.c     | 32 ++++++++++++++++++++++++
+>>>>>  drivers/remoteproc/remoteproc_internal.h |  7 ++++++
+>>>>>  2 files changed, 39 insertions(+)
+>>>>>
+>>>>> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+>>>>> index 3a84a38ba37b..48afa1f80a8f 100644
+>>>>> --- a/drivers/remoteproc/remoteproc_core.c
+>>>>> +++ b/drivers/remoteproc/remoteproc_core.c
+>>>>> @@ -1849,6 +1849,27 @@ int rproc_boot(struct rproc *rproc)
+>>>>>  }
+>>>>>  EXPORT_SYMBOL(rproc_boot);
+>>>>>  
+>>>>> +static bool rproc_can_shutdown(struct rproc *rproc)
+>>>>> +{
+>>>>> +	/*
+>>>>> +	 * The remoteproc core is the lifecycle manager, no problem
+>>>>> +	 * calling for a shutdown.
+>>>>> +	 */
+>>>>> +	if (!rproc_needs_syncing(rproc))
+>>>>> +		return true;
+>>>>> +
+>>>>> +	/*
+>>>>> +	 * The remoteproc has been loaded by another entity (as per above
+>>>>> +	 * condition) and the platform code has given us the capability
+>>>>> +	 * of stopping it.
+>>>>> +	 */
+>>>>> +	if (rproc->sync_ops->stop)
+>>>>> +		return true;
+>>>>
+>>>> This means that if rproc->sync_ops->stop is null rproc_stop_subdevices will not
+>>>> be called? seems not symmetric with the start sequence.
+>>>
+>>> If rproc->sync_ops->stop is not provided then the remoteproc core can't stop the
+>>> remote processor at all after it has synchronised with it.  If a usecase
+>>> requires some kind of soft reset then a stop() function that uses a mailbox
+>>> notification or some other mechanism can be provided to tell the remote
+>>> processor to put itself back in startup mode again.
+>>>
+>>> Is this fine with you or there is still something I don't get?
+>>
+>> My point here is more around the subdevices. But perhaps i missed something...
+>>
+>> In rproc_start rproc_start_subdevices is called, even if sync_start is null.
 > 
-
-My proposal/wish is that 1) rpmsg_char is implemented for virtio/rpmsg,
-so that the control device is registered as virtio rpmsg is initiated
-and 2) that rpmsg_char is extended to allow creating tty devices in
-addition to the existing interface (if the existing read/write interface
-isn't enough).
-
+> Here I'll take that you mean sync_ops::start()
 > 
-> I would also expect to manage RPMsg TTY such as a generic TTY: without
-> extra interface and auto mounted as an USB TTY. this means that the
-> /dev/ttyRMPSGx are created automatically at remote firmware startup
-> (without any application action). For instance a generic application 
-> (e.g. minicom) could control an internal remote processor such as
-> an external processor through a TTY link. 
+>> But in rproc_shutdown rproc_stop is not called, if sync_ops->stop is null.
+>> So rproc_stop_subdevices is not called in this case.
 > 
-
-And that's not possible using the two-stage approach rpmsg_char takes,
-instead I use udev rules to invoke the ioctl on the control device.
-
-The benefit is that the design of the firmware is not tied to the design
-of the Linux system.
-
-> Then we have also similar RPMsg driver for I2C and SPI virtual link. So extend
-> the rpmsg_char to support TTY seems not a good solution for long terms. 
+> Correct.  I am pretty sure some people don't want the remoteproc core to be able
+> to do anything other than synchronise with a remote processor, be it at boot
+> time or when the remote processor has crashed.
 > 
-
-What do you mean with this? Are you saying that running tty over rpmsg
-over SPI is a bad idea?
-
-> For these reasons i would prefer to have a specific driver. And found a solution
-> to allow user to differentiate the TTY instances.
+> I can also see scenarios where people want to be able to start and stop
+> subdevices from the remoteproc core, but _not_ power cycle the remote processor.
+> In such cases the sync_ops::stop() should be some kind of notification telling
+> the remote processor to put itself back in initialisation mode and
+> sync_flags.after_stop should be set to true.
 > 
-> Anyway I am very interesting in having more details of an implementation relying
-> on rpmsg_char if you still thinking that is the good approach here.
+>> Then if sync_flags.after_stop is false, it looks like that something will go wrong
+>> at next start.
 > 
+> If sync_ops::stop is NULL then the value of sync_flags.after_stop becomes
+> irrelevant because that state can't be reached. Let me know if you found a
+> condition where this isn't the case and I will correct it. 
 
-I do think it's a good idea to decouple the system design on the Linux
-side from the naming of channels provided by the firmware.
+The only condition i have in mind is that the sync_ops::stop() can not implemented
+in platform driver, just because nothing to do. But i don't know if it is a realistic
+use case and having a dummy stop function looks to me acceptable in this particular
+use case.
+
+This triggers me another comment :)
+the rproc_ops struct description is relevant for the "normal" ops but not adapted
+for the sync_ops. For instance the start & stop are mandatory for ops, optional for sync_ops
+As this description is a reference (at least for me) to determine optional and mandatory ops
+would be useful to update  it.
 
 Regards,
-Bjorn
-
-> Thanks for your comments, 
-> Arnaud
+Arnaud
 > 
-> > Regards,
-> > Bjorn
-> > 
+>>
+>>>
+>>>> Probably not useful to test it here as condition is already handled in rproc_stop_device...
+>>>>
+>>>> Regards
+>>>> Arnaud
+>>>>> +
+>>>>> +	/* Any other condition should not be allowed */
+>>>>> +	return false;
+>>>>> +}
+>>>>> +
+>>>>>  /**
+>>>>>   * rproc_shutdown() - power off the remote processor
+>>>>>   * @rproc: the remote processor
+>>>>> @@ -1879,6 +1900,9 @@ void rproc_shutdown(struct rproc *rproc)
+>>>>>  		return;
+>>>>>  	}
+>>>>>  
+>>>>> +	if (!rproc_can_shutdown(rproc))
+>>>>> +		goto out;
+>>>>> +
+>>>>>  	/* if the remote proc is still needed, bail out */
+>>>>>  	if (!atomic_dec_and_test(&rproc->power))
+>>>>>  		goto out;
+>>>>> @@ -1898,6 +1922,14 @@ void rproc_shutdown(struct rproc *rproc)
+>>>>>  	kfree(rproc->cached_table);
+>>>>>  	rproc->cached_table = NULL;
+>>>>>  	rproc->table_ptr = NULL;
+>>>>> +
+>>>>> +	/*
+>>>>> +	 * The remote processor has been switched off - tell the core what
+>>>>> +	 * operation to use from hereon, i.e whether an external entity will
+>>>>> +	 * reboot the remote processor or it is now the remoteproc core's
+>>>>> +	 * responsability.
+>>>>> +	 */
+>>>>> +	rproc_set_sync_flag(rproc, RPROC_SYNC_STATE_SHUTDOWN);
+>>>>>  out:
+>>>>>  	mutex_unlock(&rproc->lock);
+>>>>>  }
+>>>>> diff --git a/drivers/remoteproc/remoteproc_internal.h b/drivers/remoteproc/remoteproc_internal.h
+>>>>> index 61500981155c..7dcc0a26892b 100644
+>>>>> --- a/drivers/remoteproc/remoteproc_internal.h
+>>>>> +++ b/drivers/remoteproc/remoteproc_internal.h
+>>>>> @@ -27,6 +27,9 @@ struct rproc_debug_trace {
+>>>>>  /*
+>>>>>   * enum rproc_sync_states - remote processsor sync states
+>>>>>   *
+>>>>> + * @RPROC_SYNC_STATE_SHUTDOWN	state to use after the remoteproc core
+>>>>> + *				has shutdown (rproc_shutdown()) the
+>>>>> + *				remote processor.
+>>>>>   * @RPROC_SYNC_STATE_CRASHED	state to use after the remote processor
+>>>>>   *				has crashed but has not been recovered by
+>>>>>   *				the remoteproc core yet.
+>>>>> @@ -36,6 +39,7 @@ struct rproc_debug_trace {
+>>>>>   * operation to use.
+>>>>>   */
+>>>>>  enum rproc_sync_states {
+>>>>> +	RPROC_SYNC_STATE_SHUTDOWN,
+>>>>>  	RPROC_SYNC_STATE_CRASHED,
+>>>>>  };
+>>>>>  
+>>>>> @@ -43,6 +47,9 @@ static inline void rproc_set_sync_flag(struct rproc *rproc,
+>>>>>  				       enum rproc_sync_states state)
+>>>>>  {
+>>>>>  	switch (state) {
+>>>>> +	case RPROC_SYNC_STATE_SHUTDOWN:
+>>>>> +		rproc->sync_with_rproc = rproc->sync_flags.after_stop;
+>>>>> +		break;
+>>>>>  	case RPROC_SYNC_STATE_CRASHED:
+>>>>>  		rproc->sync_with_rproc = rproc->sync_flags.after_crash;
+>>>>>  		break;
+>>>>>
