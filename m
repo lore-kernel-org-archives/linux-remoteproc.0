@@ -2,134 +2,195 @@ Return-Path: <SRS0=mWwD=6V=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DB08C38A24
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  7 May 2020 15:52:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D26EAC38A24
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  7 May 2020 18:00:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E53822082E
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  7 May 2020 15:52:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B182C207DD
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  7 May 2020 18:00:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=st.com header.i=@st.com header.b="NM0ilE1n"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="ICIrlQ85"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727896AbgEGPwS (ORCPT
+        id S1726515AbgEGSA6 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 7 May 2020 11:52:18 -0400
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:64074 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727794AbgEGPwS (ORCPT
+        Thu, 7 May 2020 14:00:58 -0400
+Received: from mail27.static.mailgun.info ([104.130.122.27]:27684 "EHLO
+        mail27.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728073AbgEGSA6 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 7 May 2020 11:52:18 -0400
-Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 047FlQ6J000799;
-        Thu, 7 May 2020 17:52:11 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=STMicroelectronics;
- bh=4nrPwlooEKXxqANt3eO2v41DucRALo8qLG3CN5HftvE=;
- b=NM0ilE1no1NYlwxIySPJ6mTfapJStGQ24UQ7AP+RE4opFUzTpis+BcupHtBmo8w1nwOF
- wkD5tejKTVn7iXMlI9s+7ZJL+Ta9U/RqPTUU6nhob0qp/54wDo8E16UriX6DXrZGhmNP
- rqCEPOSXJe5+5PbgJ6bqN3+YvaAtKh1lFShej5je5I58v2mMtOOV18F5AxSHO3FC790K
- /I2yr/8B2eUyggsC+ajdYb+1L2k3UgS/5/xfZmFq05CtoAi3WsO411aD3O/PZKU7xoEb
- uAf37BU1KzTt7PRgRjK4aFVwN2V7y17f5klA3iBGgLTuoq76yiziTW47OHvm/JdPewgR Og== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 30rxb2cnm1-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 07 May 2020 17:52:10 +0200
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 231B610002A;
-        Thu,  7 May 2020 17:52:10 +0200 (CEST)
-Received: from Webmail-eu.st.com (sfhdag3node1.st.com [10.75.127.7])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 0B83A2CB27F;
-        Thu,  7 May 2020 17:52:10 +0200 (CEST)
-Received: from lmecxl0889.tpe.st.com (10.75.127.51) by SFHDAG3NODE1.st.com
- (10.75.127.7) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 7 May
- 2020 17:52:09 +0200
-Subject: Re: [PATCH v3 1/2] remoteproc: Fall back to using parent memory pool
- if no dedicated available
-To:     Suman Anna <s-anna@ti.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>
-CC:     Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Loic Pallardy <loic.pallardy@st.com>,
-        Tero Kristo <t-kristo@ti.com>,
-        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20200420160600.10467-1-s-anna@ti.com>
- <20200420160600.10467-2-s-anna@ti.com>
-From:   Arnaud POULIQUEN <arnaud.pouliquen@st.com>
-Message-ID: <ee210c43-eeda-6980-2c74-6a8e4f4de7f6@st.com>
-Date:   Thu, 7 May 2020 17:52:08 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+        Thu, 7 May 2020 14:00:58 -0400
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1588874457; h=Message-ID: References: In-Reply-To: Subject:
+ Cc: To: From: Date: Content-Transfer-Encoding: Content-Type:
+ MIME-Version: Sender; bh=V2UzeczAOzuRzbcwtp57WQZkgmlbothElG0QWq0YFcc=;
+ b=ICIrlQ85zoYs4w1mHKC28PUnEp0SWaFGzCfO+lb8jt8DfmCW23EGFpiT512UZdiznp9DuobR
+ ZvZ77hxdP6BF+Snynu6vkdmlI2D/3Ic9r9Aci6EHXvIbtprxHDrF1rIni0akEDI8MWRrzkNk
+ JkFQXnt/8+QZOOUwLHXhqBMX64Q=
+X-Mailgun-Sending-Ip: 104.130.122.27
+X-Mailgun-Sid: WyI4ZWZiZiIsICJsaW51eC1yZW1vdGVwcm9jQHZnZXIua2VybmVsLm9yZyIsICJiZTllNGEiXQ==
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 8996FC433F2; Thu,  7 May 2020 18:00:21 +0000 (UTC)
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: rishabhb)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 0693FC433BA;
+        Thu,  7 May 2020 18:00:20 +0000 (UTC)
 MIME-Version: 1.0
-In-Reply-To: <20200420160600.10467-2-s-anna@ti.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.75.127.51]
-X-ClientProxiedBy: SFHDAG3NODE2.st.com (10.75.127.8) To SFHDAG3NODE1.st.com
- (10.75.127.7)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.216,18.0.676
- definitions=2020-05-07_10:2020-05-07,2020-05-07 signatures=0
+Date:   Thu, 07 May 2020 11:00:19 -0700
+From:   rishabhb@codeaurora.org
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Andy Gross <agross@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        Chris Lew <clew@codeaurora.org>, Sibi <sibis@codeaurora.org>,
+        Siddharth Gupta <sidgup@codeaurora.org>,
+        linux-remoteproc-owner@vger.kernel.org
+Subject: Re: [PATCH 1/4] remoteproc: qcom: Pass ssr_name to glink subdevice
+In-Reply-To: <20200423003736.2027371-2-bjorn.andersson@linaro.org>
+References: <20200423003736.2027371-1-bjorn.andersson@linaro.org>
+ <20200423003736.2027371-2-bjorn.andersson@linaro.org>
+Message-ID: <6138eb0490203f138e97baf9c3fdaf1a@codeaurora.org>
+X-Sender: rishabhb@codeaurora.org
+User-Agent: Roundcube Webmail/1.3.9
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi Suman
-
-On 4/20/20 6:05 PM, Suman Anna wrote:
-> From: Tero Kristo <t-kristo@ti.com>
+On 2020-04-22 17:37, Bjorn Andersson wrote:
+> Pass ssr_name to glink subdevice in preparation for tying glink_ssr to
+> the glink subdevice, rather than having its own "ssr subdevice".
 > 
-> In some cases, like with OMAP remoteproc, we are not creating dedicated
-> memory pool for the virtio device. Instead, we use the same memory pool
-> for all shared memories. The current virtio memory pool handling forces
-> a split between these two, as a separate device is created for it,
-> causing memory to be allocated from bad location if the dedicated pool
-> is not available. Fix this by falling back to using the parent device
-> memory pool if dedicated is not available.
-
-As it fixes the implementation of the legacy, that seems reasonable to me.
- 
-Acked-by: Arnaud Pouliquen <arnaud.pouliquen@st.com>
-
-> 
-> Fixes: 086d08725d34 ("remoteproc: create vdev subdevice with specific dma memory pool")
-> Signed-off-by: Tero Kristo <t-kristo@ti.com>
-> Signed-off-by: Suman Anna <s-anna@ti.com>
+> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 > ---
-> v3:
->  - Go back to v1 logic (removed the vdevbuf_mem_id variable added in v2)
->  - Revised the comment to remove references to vdevbuf_mem_id
->  - Capitalize the patch header
-> v2: https://patchwork.kernel.org/patch/11447651/
+
+Acked-by: Rishabh Bhatnagar <rishabhb@codeaurora.org>
+
+>  drivers/remoteproc/qcom_common.c    | 9 ++++++++-
+>  drivers/remoteproc/qcom_common.h    | 5 ++++-
+>  drivers/remoteproc/qcom_q6v5_adsp.c | 2 +-
+>  drivers/remoteproc/qcom_q6v5_mss.c  | 2 +-
+>  drivers/remoteproc/qcom_q6v5_pas.c  | 2 +-
+>  5 files changed, 15 insertions(+), 5 deletions(-)
 > 
->  drivers/remoteproc/remoteproc_virtio.c | 12 ++++++++++++
->  1 file changed, 12 insertions(+)
+> diff --git a/drivers/remoteproc/qcom_common.c 
+> b/drivers/remoteproc/qcom_common.c
+> index 60650bcc8c67..ff26f2b68752 100644
+> --- a/drivers/remoteproc/qcom_common.c
+> +++ b/drivers/remoteproc/qcom_common.c
+> @@ -46,8 +46,10 @@ static void glink_subdev_stop(struct rproc_subdev
+> *subdev, bool crashed)
+>   * qcom_add_glink_subdev() - try to add a GLINK subdevice to rproc
+>   * @rproc:	rproc handle to parent the subdevice
+>   * @glink:	reference to a GLINK subdev context
+> + * @ssr_name:	identifier of the associated remoteproc for ssr 
+> notifications
+>   */
+> -void qcom_add_glink_subdev(struct rproc *rproc, struct 
+> qcom_rproc_glink *glink)
+> +void qcom_add_glink_subdev(struct rproc *rproc, struct 
+> qcom_rproc_glink *glink,
+> +			   const char *ssr_name)
+>  {
+>  	struct device *dev = &rproc->dev;
 > 
-> diff --git a/drivers/remoteproc/remoteproc_virtio.c b/drivers/remoteproc/remoteproc_virtio.c
-> index e61d738d9b47..44187fe43677 100644
-> --- a/drivers/remoteproc/remoteproc_virtio.c
-> +++ b/drivers/remoteproc/remoteproc_virtio.c
-> @@ -376,6 +376,18 @@ int rproc_add_virtio_dev(struct rproc_vdev *rvdev, int id)
->  				goto out;
->  			}
->  		}
-> +	} else {
-> +		struct device_node *np = rproc->dev.parent->of_node;
+> @@ -55,6 +57,10 @@ void qcom_add_glink_subdev(struct rproc *rproc,
+> struct qcom_rproc_glink *glink)
+>  	if (!glink->node)
+>  		return;
+> 
+> +	glink->ssr_name = kstrdup_const(ssr_name, GFP_KERNEL);
+> +	if (!glink->ssr_name)
+> +		return;
 > +
-> +		/*
-> +		 * If we don't have dedicated buffer, just attempt to re-assign
-> +		 * the reserved memory from our parent. A default memory-region
-> +		 * at index 0 from the parent's memory-regions is assigned for
-> +		 * the rvdev dev to allocate from. Failure is non-critical and
-> +		 * the allocations will fall back to global pools, so don't
-> +		 * check return value either.
-> +		 */
-> +		of_reserved_mem_device_init_by_idx(dev, np, 0);
->  	}
->  
->  	/* Allocate virtio device */
+>  	glink->dev = dev;
+>  	glink->subdev.start = glink_subdev_start;
+>  	glink->subdev.stop = glink_subdev_stop;
+> @@ -74,6 +80,7 @@ void qcom_remove_glink_subdev(struct rproc *rproc,
+> struct qcom_rproc_glink *glin
+>  		return;
 > 
+>  	rproc_remove_subdev(rproc, &glink->subdev);
+> +	kfree_const(glink->ssr_name);
+>  	of_node_put(glink->node);
+>  }
+>  EXPORT_SYMBOL_GPL(qcom_remove_glink_subdev);
+> diff --git a/drivers/remoteproc/qcom_common.h 
+> b/drivers/remoteproc/qcom_common.h
+> index 58de71e4781c..34e5188187dc 100644
+> --- a/drivers/remoteproc/qcom_common.h
+> +++ b/drivers/remoteproc/qcom_common.h
+> @@ -11,6 +11,8 @@ struct qcom_sysmon;
+>  struct qcom_rproc_glink {
+>  	struct rproc_subdev subdev;
+> 
+> +	const char *ssr_name;
+> +
+>  	struct device *dev;
+>  	struct device_node *node;
+>  	struct qcom_glink *edge;
+> @@ -30,7 +32,8 @@ struct qcom_rproc_ssr {
+>  	const char *name;
+>  };
+> 
+> -void qcom_add_glink_subdev(struct rproc *rproc, struct
+> qcom_rproc_glink *glink);
+> +void qcom_add_glink_subdev(struct rproc *rproc, struct 
+> qcom_rproc_glink *glink,
+> +			   const char *ssr_name);
+>  void qcom_remove_glink_subdev(struct rproc *rproc, struct
+> qcom_rproc_glink *glink);
+> 
+>  int qcom_register_dump_segments(struct rproc *rproc, const struct
+> firmware *fw);
+> diff --git a/drivers/remoteproc/qcom_q6v5_adsp.c
+> b/drivers/remoteproc/qcom_q6v5_adsp.c
+> index c60dabc6939e..d2a2574dcf35 100644
+> --- a/drivers/remoteproc/qcom_q6v5_adsp.c
+> +++ b/drivers/remoteproc/qcom_q6v5_adsp.c
+> @@ -461,7 +461,7 @@ static int adsp_probe(struct platform_device *pdev)
+>  	if (ret)
+>  		goto disable_pm;
+> 
+> -	qcom_add_glink_subdev(rproc, &adsp->glink_subdev);
+> +	qcom_add_glink_subdev(rproc, &adsp->glink_subdev, desc->ssr_name);
+>  	qcom_add_ssr_subdev(rproc, &adsp->ssr_subdev, desc->ssr_name);
+>  	adsp->sysmon = qcom_add_sysmon_subdev(rproc,
+>  					      desc->sysmon_name,
+> diff --git a/drivers/remoteproc/qcom_q6v5_mss.c
+> b/drivers/remoteproc/qcom_q6v5_mss.c
+> index 7af1d0c987e0..b5dd36775b77 100644
+> --- a/drivers/remoteproc/qcom_q6v5_mss.c
+> +++ b/drivers/remoteproc/qcom_q6v5_mss.c
+> @@ -1762,7 +1762,7 @@ static int q6v5_probe(struct platform_device 
+> *pdev)
+> 
+>  	qproc->mpss_perm = BIT(QCOM_SCM_VMID_HLOS);
+>  	qproc->mba_perm = BIT(QCOM_SCM_VMID_HLOS);
+> -	qcom_add_glink_subdev(rproc, &qproc->glink_subdev);
+> +	qcom_add_glink_subdev(rproc, &qproc->glink_subdev, "mpss");
+>  	qcom_add_smd_subdev(rproc, &qproc->smd_subdev);
+>  	qcom_add_ssr_subdev(rproc, &qproc->ssr_subdev, "mpss");
+>  	qcom_add_ipa_notify_subdev(rproc, &qproc->ipa_notify_subdev);
+> diff --git a/drivers/remoteproc/qcom_q6v5_pas.c
+> b/drivers/remoteproc/qcom_q6v5_pas.c
+> index 8ecc157f1ed1..fc6658b523b6 100644
+> --- a/drivers/remoteproc/qcom_q6v5_pas.c
+> +++ b/drivers/remoteproc/qcom_q6v5_pas.c
+> @@ -436,7 +436,7 @@ static int adsp_probe(struct platform_device *pdev)
+>  	if (ret)
+>  		goto detach_proxy_pds;
+> 
+> -	qcom_add_glink_subdev(rproc, &adsp->glink_subdev);
+> +	qcom_add_glink_subdev(rproc, &adsp->glink_subdev, desc->ssr_name);
+>  	qcom_add_smd_subdev(rproc, &adsp->smd_subdev);
+>  	qcom_add_ssr_subdev(rproc, &adsp->ssr_subdev, desc->ssr_name);
+>  	adsp->sysmon = qcom_add_sysmon_subdev(rproc,
