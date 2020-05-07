@@ -5,48 +5,48 @@ X-Spam-Level:
 X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
 	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6693BC38A24
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  7 May 2020 19:15:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E909AC47257
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  7 May 2020 19:15:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 418B724953
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  7 May 2020 19:15:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BA970208E4
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  7 May 2020 19:15:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1588878922;
-	bh=dmkjYUSRjBOU9cIkMaN7hPDyFaInZqjL3fVGYpepZAY=;
+	s=default; t=1588878923;
+	bh=XgVvt1I6zgp7hLrKdR8zya9BZUOMROQtmE4xGkXj+ss=;
 	h=Date:From:To:Cc:Subject:List-ID:From;
-	b=0hZtTPMQZYA6NPk6VQ75LKibRCNuZsnYCNZWoj43HMHC05FJS20t9F8dYppUf/fzs
-	 16e4vkWVBTjn1baejAe+GIovFf+CQSACBgGTUFOpPB/IdnKwiQMik6ePpZl4Z02vVg
-	 YzDioIQKAL4klKgROkdseUtWlSqUpgc9F1pnIG3c=
+	b=qY9zHD76XjiqyaMcpJ0tT1YLDPaLNUy5uQ7JYmRwnueUE5A9J+IQoPDs2q2e+A5Ca
+	 QaWlOMrw9mBQqNtKudnbmAgC5rLyA8+74zfQIQd+wYAhNtB0phFBN/5Bml62hV+hS1
+	 yLpa0MJKJ0DVJs4BKw8QG21VfWfbhVRF6tbHR8DU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727891AbgEGTPS (ORCPT
+        id S1726860AbgEGTPX (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 7 May 2020 15:15:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38896 "EHLO mail.kernel.org"
+        Thu, 7 May 2020 15:15:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39048 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726320AbgEGTPR (ORCPT
+        id S1726320AbgEGTPW (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 7 May 2020 15:15:17 -0400
+        Thu, 7 May 2020 15:15:22 -0400
 Received: from embeddedor (unknown [189.207.59.248])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D16B2208E4;
-        Thu,  7 May 2020 19:15:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BA536208E4;
+        Thu,  7 May 2020 19:15:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1588878917;
-        bh=dmkjYUSRjBOU9cIkMaN7hPDyFaInZqjL3fVGYpepZAY=;
+        s=default; t=1588878922;
+        bh=XgVvt1I6zgp7hLrKdR8zya9BZUOMROQtmE4xGkXj+ss=;
         h=Date:From:To:Cc:Subject:From;
-        b=vDWIkb78pKi3Do4eX6sHoac2nBFhl0TvC8Bg1W7pkXVVWkLMNGuStpJvbPHZ5EE45
-         EsbLT7KX8Wxap4YE26VR7C8nh3j/jK+erlujs0+UyHn5XXnkbEyYtlLuhQTRQrxLm4
-         GKZE/vRe6vtniDmY6qeISUWHGeuIrP3Qehew8lOk=
-Date:   Thu, 7 May 2020 14:19:43 -0500
+        b=wLn2qSA4qpYqsA72eamB1zrIXEE6uFQx70pjJyUNZlsYUB5Xh+6Q9BNNHv3pGthwf
+         LKxFzO7YPbb5uelvKtb5IGuBejb38oM2LsuinYVvrSJRLy+rDc2fMk5HBefXqSJfOj
+         yTSbeRzKcLaOa6xgWLsmsywvdpnOzqaakoIpRsn8=
+Date:   Thu, 7 May 2020 14:19:48 -0500
 From:   "Gustavo A. R. Silva" <gustavoars@kernel.org>
 To:     Ohad Ben-Cohen <ohad@wizery.com>,
         Bjorn Andersson <bjorn.andersson@linaro.org>
 Cc:     linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] remoteproc: Replace zero-length array with flexible-array
-Message-ID: <20200507191943.GA16033@embeddedor>
+Subject: [PATCH] rpmsg: Replace zero-length array with flexible-array
+Message-ID: <20200507191948.GA16053@embeddedor>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -93,38 +93,20 @@ This issue was found with the help of Coccinelle.
 
 Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
 ---
- include/linux/remoteproc.h |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/rpmsg/virtio_rpmsg_bus.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-index 9c07d7958c53..e6267fba00e6 100644
---- a/include/linux/remoteproc.h
-+++ b/include/linux/remoteproc.h
-@@ -73,7 +73,7 @@ struct resource_table {
- 	u32 ver;
- 	u32 num;
- 	u32 reserved[2];
--	u32 offset[0];
-+	u32 offset[];
- } __packed;
- 
- /**
-@@ -87,7 +87,7 @@ struct resource_table {
-  */
- struct fw_rsc_hdr {
- 	u32 type;
+diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
+index 376ebbf880d6..07d4f3374098 100644
+--- a/drivers/rpmsg/virtio_rpmsg_bus.c
++++ b/drivers/rpmsg/virtio_rpmsg_bus.c
+@@ -89,7 +89,7 @@ struct rpmsg_hdr {
+ 	u32 reserved;
+ 	u16 len;
+ 	u16 flags;
 -	u8 data[0];
 +	u8 data[];
  } __packed;
  
  /**
-@@ -306,7 +306,7 @@ struct fw_rsc_vdev {
- 	u8 status;
- 	u8 num_of_vrings;
- 	u8 reserved[2];
--	struct fw_rsc_vdev_vring vring[0];
-+	struct fw_rsc_vdev_vring vring[];
- } __packed;
- 
- struct rproc;
 
