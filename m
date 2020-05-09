@@ -1,133 +1,80 @@
-Return-Path: <SRS0=iUhc=6W=vger.kernel.org=linux-remoteproc-owner@kernel.org>
+Return-Path: <SRS0=dsuy=6X=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 702FFC38A2A
-	for <linux-remoteproc@archiver.kernel.org>; Fri,  8 May 2020 22:27:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ADED4C28CBC
+	for <linux-remoteproc@archiver.kernel.org>; Sat,  9 May 2020 08:38:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 48891207DD
-	for <linux-remoteproc@archiver.kernel.org>; Fri,  8 May 2020 22:27:15 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="V843ea6E"
+	by mail.kernel.org (Postfix) with ESMTP id 954382495C
+	for <linux-remoteproc@archiver.kernel.org>; Sat,  9 May 2020 08:38:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727944AbgEHW1P (ORCPT
+        id S1727096AbgEIIiv (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 8 May 2020 18:27:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37940 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727787AbgEHW1O (ORCPT
+        Sat, 9 May 2020 04:38:51 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:4314 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725930AbgEIIiu (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 8 May 2020 18:27:14 -0400
-Received: from mail-io1-xd42.google.com (mail-io1-xd42.google.com [IPv6:2607:f8b0:4864:20::d42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 66E27C061A0C
-        for <linux-remoteproc@vger.kernel.org>; Fri,  8 May 2020 15:27:14 -0700 (PDT)
-Received: by mail-io1-xd42.google.com with SMTP id i19so3358177ioh.12
-        for <linux-remoteproc@vger.kernel.org>; Fri, 08 May 2020 15:27:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Vle6I6fdCR+MgLWGv8JrPtPNfXU53mZx6L1pAHaqj1g=;
-        b=V843ea6ESg1x21Y6+gTjFBY0MV989R+qKt+LdVEmhVpIz91aJMmiflg2BAp0S88GUV
-         1INgZt1g72jgtvnQvVSRKwpED9U1EFNWGHCFzWeQ3JaW+FAzuzDK9QhRMu8QMeXz7V95
-         wLeJmHkHf7c2u683yKlTCnJtRG01hbD3tYDO48cc6xXEawWUHduJXTmQ52nX2gx0z6xk
-         eJcv5XPytWPVGLE8VbxpzCwkSQ/CjiSZIkN3jqobql1mBAUPZ6HCYPOzU7wymQcGVt8W
-         4jcWsF+ZAtHJS49l1bmrg/yTkgNDrapQltT0g8NwpSz55x7nvYwPdvssUjq1AOSbMjYA
-         Lwgw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Vle6I6fdCR+MgLWGv8JrPtPNfXU53mZx6L1pAHaqj1g=;
-        b=mtOp5L9ygt5gg8FK785ICq/u6ck441FhJWlR+QZEZ5YvROAPFeSIDjvuR+ReQU0jEA
-         Ft0aMIGupgjUTN90AW1Fk/1j49sJ/GSqEsPScTk8sOva6J7FCWIBUYIByYtVlQd0ytCv
-         6r/kW2Mx6q07L0LbOZ/fAZFPOsWYf++ThCAvG9lxdUDDiqorWhrjmgHdRn2C2Z6PkusT
-         T5WmQj3gUIEh37L1Sc5E2Rvj7Alyt1mG7sUFySAMMfDS7/tBe6IbcVEfvHAjCcu7FDZ2
-         1qP68rdWD9PgJuMmrWyDW/xBLK3VArU4MitH2WXuMFw+/MOD+AcKJzR3/uC9vgJ9MA23
-         X0yQ==
-X-Gm-Message-State: AGi0PuZhEllzXOS39nhf7tFuzsWWWh5tKWzwXqaxeHEofuz93trI7WCn
-        vN/5C7rhEYoxHWBq8dDPsvo6VuhGe65Y20UkdzQKRw==
-X-Google-Smtp-Source: APiQypK80T14lZ+yTq0Yv7MsY9Tajr69Yl/r5H646/JxI/XctxB/azG3DHLQDj81TzoJNJvsCSSa+UKmKnxxaL1LRmg=
-X-Received: by 2002:a02:2708:: with SMTP id g8mr4935476jaa.52.1588976833756;
- Fri, 08 May 2020 15:27:13 -0700 (PDT)
+        Sat, 9 May 2020 04:38:50 -0400
+Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 5A748C4CB26369EF78C8;
+        Sat,  9 May 2020 16:38:48 +0800 (CST)
+Received: from localhost.localdomain.localdomain (10.175.113.25) by
+ DGGEMS402-HUB.china.huawei.com (10.3.19.202) with Microsoft SMTP Server id
+ 14.3.487.0; Sat, 9 May 2020 16:38:41 +0800
+From:   Wei Yongjun <weiyongjun1@huawei.com>
+To:     Ohad Ben-Cohen <ohad@wizery.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        "Erin Lo" <erin.lo@mediatek.com>
+CC:     Wei Yongjun <weiyongjun1@huawei.com>,
+        <linux-remoteproc@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <kernel-janitors@vger.kernel.org>, Hulk Robot <hulkci@huawei.com>
+Subject: [PATCH -next] remoteproc/mediatek: fix invalid use of sizeof in scp_ipi_init()
+Date:   Sat, 9 May 2020 08:42:37 +0000
+Message-ID: <20200509084237.36293-1-weiyongjun1@huawei.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-References: <20200420160600.10467-1-s-anna@ti.com> <20200420160600.10467-2-s-anna@ti.com>
-In-Reply-To: <20200420160600.10467-2-s-anna@ti.com>
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-Date:   Fri, 8 May 2020 16:27:02 -0600
-Message-ID: <CANLsYkwirm2SJoZM9T=VTZAG8iV77PC3ag0AkLbRwf1O84ai_A@mail.gmail.com>
-Subject: Re: [PATCH v3 1/2] remoteproc: Fall back to using parent memory pool
- if no dedicated available
-To:     Suman Anna <s-anna@ti.com>
-Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Arnaud Pouliquen <arnaud.pouliquen@st.com>,
-        Loic Pallardy <loic.pallardy@st.com>,
-        Tero Kristo <t-kristo@ti.com>,
-        linux-remoteproc <linux-remoteproc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type:   text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
+X-Originating-IP: [10.175.113.25]
+X-CFilter-Loop: Reflected
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Mon, 20 Apr 2020 at 10:07, Suman Anna <s-anna@ti.com> wrote:
->
-> From: Tero Kristo <t-kristo@ti.com>
->
-> In some cases, like with OMAP remoteproc, we are not creating dedicated
-> memory pool for the virtio device. Instead, we use the same memory pool
-> for all shared memories. The current virtio memory pool handling forces
-> a split between these two, as a separate device is created for it,
-> causing memory to be allocated from bad location if the dedicated pool
-> is not available. Fix this by falling back to using the parent device
-> memory pool if dedicated is not available.
->
-> Fixes: 086d08725d34 ("remoteproc: create vdev subdevice with specific dma memory pool")
-> Signed-off-by: Tero Kristo <t-kristo@ti.com>
-> Signed-off-by: Suman Anna <s-anna@ti.com>
+sizeof() when applied to a pointer typed expression gives the
+size of the pointer, not that of the pointed data.
 
-Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+Fixes: 63c13d61eafe ("remoteproc/mediatek: add SCP support for mt8183")
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/remoteproc/mtk_scp.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
->
-> ---
-> v3:
->  - Go back to v1 logic (removed the vdevbuf_mem_id variable added in v2)
->  - Revised the comment to remove references to vdevbuf_mem_id
->  - Capitalize the patch header
-> v2: https://patchwork.kernel.org/patch/11447651/
->
->  drivers/remoteproc/remoteproc_virtio.c | 12 ++++++++++++
->  1 file changed, 12 insertions(+)
->
-> diff --git a/drivers/remoteproc/remoteproc_virtio.c b/drivers/remoteproc/remoteproc_virtio.c
-> index e61d738d9b47..44187fe43677 100644
-> --- a/drivers/remoteproc/remoteproc_virtio.c
-> +++ b/drivers/remoteproc/remoteproc_virtio.c
-> @@ -376,6 +376,18 @@ int rproc_add_virtio_dev(struct rproc_vdev *rvdev, int id)
->                                 goto out;
->                         }
->                 }
-> +       } else {
-> +               struct device_node *np = rproc->dev.parent->of_node;
-> +
-> +               /*
-> +                * If we don't have dedicated buffer, just attempt to re-assign
-> +                * the reserved memory from our parent. A default memory-region
-> +                * at index 0 from the parent's memory-regions is assigned for
-> +                * the rvdev dev to allocate from. Failure is non-critical and
-> +                * the allocations will fall back to global pools, so don't
-> +                * check return value either.
-> +                */
-> +               of_reserved_mem_device_init_by_idx(dev, np, 0);
->         }
->
->         /* Allocate virtio device */
-> --
-> 2.26.0
->
+diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
+index 2bead57c9cf9..ac13e7b046a6 100644
+--- a/drivers/remoteproc/mtk_scp.c
++++ b/drivers/remoteproc/mtk_scp.c
+@@ -132,8 +132,8 @@ static int scp_ipi_init(struct mtk_scp *scp)
+ 		(struct mtk_share_obj __iomem *)(scp->sram_base + recv_offset);
+ 	scp->send_buf =
+ 		(struct mtk_share_obj __iomem *)(scp->sram_base + send_offset);
+-	memset_io(scp->recv_buf, 0, sizeof(scp->recv_buf));
+-	memset_io(scp->send_buf, 0, sizeof(scp->send_buf));
++	memset_io(scp->recv_buf, 0, sizeof(*scp->recv_buf));
++	memset_io(scp->send_buf, 0, sizeof(*scp->send_buf));
+ 
+ 	return 0;
+ }
+
+
+
