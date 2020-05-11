@@ -2,111 +2,87 @@ Return-Path: <SRS0=6wT4=6Z=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89672C47255
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 11 May 2020 17:45:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD4C6C54E8D
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 11 May 2020 19:00:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 61B03206D6
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 11 May 2020 17:45:17 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Nfb99L6T"
+	by mail.kernel.org (Postfix) with ESMTP id 87120206E6
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 11 May 2020 19:00:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1589223634;
+	bh=SasjN+JPfXbBLXkSZamO2r0yiruPSyMa7J37PwjhevI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=k+3CN3/hTuhoMJet2qRWvT+rmYM9qRpo9dFdN0Nv6ATIyB/U3H/sddBMAY9LmuRDs
+	 JT6yYym3pcLq5OAOiH3SqpN1qR11xgBGLWyusRApuI9KiPatD1z8VzZBwmkkkT1+YL
+	 LWGt/tALjjXj3fOK2c8v8zh6rBF23gV3zQrVYG1k=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728711AbgEKRpR (ORCPT
+        id S1731233AbgEKTAb (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 11 May 2020 13:45:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41828 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728046AbgEKRpR (ORCPT
+        Mon, 11 May 2020 15:00:31 -0400
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:44984 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729215AbgEKTAa (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 11 May 2020 13:45:17 -0400
-Received: from mail-io1-xd44.google.com (mail-io1-xd44.google.com [IPv6:2607:f8b0:4864:20::d44])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D39FFC061A0E
-        for <linux-remoteproc@vger.kernel.org>; Mon, 11 May 2020 10:45:16 -0700 (PDT)
-Received: by mail-io1-xd44.google.com with SMTP id s10so10736586iog.7
-        for <linux-remoteproc@vger.kernel.org>; Mon, 11 May 2020 10:45:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=OTMcsGbSNPLL7L+tUlyt0FenOS7bLLaekCh7ftl59gc=;
-        b=Nfb99L6TDVBBWvt/W0lqIjZKrLZDJ/LXYKTvX3IvTOiMFZN/A1DIPF051AUp+7tDkX
-         sVxPiC2nZH5U1Io2kW6fVGpMx0LndJCvV34Rtso3BcUX/uM3fh+Tn6Vv0dzctSr/Sr/h
-         oOigNR9VZNxYR7ovbguI2IiC8jqBsgoBPcFVnPRW3diKX5sGiDRwDwEVYlkUdYFKgJJo
-         a9K6d4sMtYVdzpts1rmuMGBOlg9MC0MDNS7lYCgvz8oZVIPDKCqPEbsSwSnIMt8JFDlO
-         wPJa+exWgkN4H31DKuofRThFklXX4KwpyrWMoDwOYrBrEAy19dk1llmjWrb2Y9/Yp/2u
-         xbzA==
+        Mon, 11 May 2020 15:00:30 -0400
+Received: by mail-oi1-f195.google.com with SMTP id a2so15856411oia.11;
+        Mon, 11 May 2020 12:00:28 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=OTMcsGbSNPLL7L+tUlyt0FenOS7bLLaekCh7ftl59gc=;
-        b=hU573yiV/gDHB2g2XqNzcAIaQorRWxe3WYclE12Ifrj8z4l1gW9I7v1AC042Q81xai
-         XuUjpWMbPHLFJnxr6ExJy1QKeRjh/Pug5KUBOjzaV4uIMCERcxcgun44bjaCOWLponAX
-         rcpSuX0qqrakWHDqjSoEwJjUEpfCBLcn5MOhH3XfmeJRBn7QEcxFij4sVY+dRTCLVp1R
-         +ebrQ5MnZXrZzqXcXk8NCfzCqF8jM6w3Lh1eaoWuGXVKsd32nKOUcYpufCEDHeKE/sHc
-         FyzdEn3/QC5nehLVjllZBddwUxC9pi18qCjaIU1nezWaJIvcfkCMp+MnsVO/Fq/LdG9C
-         pYeQ==
-X-Gm-Message-State: AGi0PuZmioOxtVTXjV9eHOkqD7U4G36TqYFLUTk/GlcyOS4Ck1fuM/rR
-        iNerOXovfLHy1+g+gsSmuT8Qr4seCICIaw7fwFJ37A==
-X-Google-Smtp-Source: APiQypL8QQIH8rAW3VdEhTJm19ncep/OtoyHj8sVIDxfQabUswS2mLh+6DC+2Nmsa/EfSAbxASZU982W9dmlWpW0JZE=
-X-Received: by 2002:a6b:dd06:: with SMTP id f6mr13132232ioc.90.1589219114664;
- Mon, 11 May 2020 10:45:14 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=aZMD3ItdlPXSVduXUBnanRL+x6fZ2m8A7BobRhNFhs0=;
+        b=W5tMx6Xr66HapZObboDaq2Af0Az2ZQgbf/mh6hPecejYSSYyRMXfqL0Hl65UR4CQbL
+         hNgNZu8JQ7DOXE0kln03UvidoctK5+fjSzjtIoWq2JAHcejFbxRV92YJDqXn6ytkMim8
+         gUOAw67006mI6hqe5zIo1SqHxrI+V5ed58cvBI5+qlqQCMz/vBnK0dWwXnPgY3GVTSnD
+         7noU4EVl7jBVJtU94URhEHqm4NmnIzlq2X8USIFylRJFiB45h6VAchGgzaqz0v7imVGW
+         xPBfOxwdWI8dYX+N7Ah1bbjKo7rUgyNx1m40oMOio0FOxoC9hjP/2ndYbjhcixd0QOfw
+         4zQQ==
+X-Gm-Message-State: AGi0PuZZsBJ5BOjmUEHSdJ/Wcb5TzgsUNz9KcuESvAj2DHaGfKyNG1IB
+        rlJ0tQCk+tRIgB+c9snUMQ==
+X-Google-Smtp-Source: APiQypKw94zjMY8P6RGUuqMA7iJdKp3NfRS6OATP4++4t5HzwUuOnVidMzEwb/topSN5gRb/3iL5DQ==
+X-Received: by 2002:a05:6808:3d1:: with SMTP id o17mr21394072oie.85.1589223628483;
+        Mon, 11 May 2020 12:00:28 -0700 (PDT)
+Received: from rob-hp-laptop (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id m16sm2984191oou.44.2020.05.11.12.00.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 11 May 2020 12:00:27 -0700 (PDT)
+Received: (nullmailer pid 8113 invoked by uid 1000);
+        Mon, 11 May 2020 19:00:27 -0000
+Date:   Mon, 11 May 2020 14:00:27 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Sibi Sankar <sibis@codeaurora.org>
+Cc:     linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        mka@chromium.org, agross@kernel.org, evgreen@chromium.org,
+        ohad@wizery.com, dianders@chromium.org,
+        linux-remoteproc@vger.kernel.org, robh+dt@kernel.org,
+        linux-kernel@vger.kernel.org, bjorn.andersson@linaro.org
+Subject: Re: [PATCH v2 1/7] dt-bindings: remoteproc: qcom: Add SC7180 MPSS
+ support
+Message-ID: <20200511190027.GA7985@bogus>
+References: <20200421143228.8981-1-sibis@codeaurora.org>
+ <20200421143228.8981-2-sibis@codeaurora.org>
 MIME-Version: 1.0
-References: <20200509084237.36293-1-weiyongjun1@huawei.com>
-In-Reply-To: <20200509084237.36293-1-weiyongjun1@huawei.com>
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-Date:   Mon, 11 May 2020 11:45:03 -0600
-Message-ID: <CANLsYkxn2QAHgGtmygbw4x-kmrzo2R5u3XDmDUz5EVAYg=SQyQ@mail.gmail.com>
-Subject: Re: [PATCH -next] remoteproc/mediatek: fix invalid use of sizeof in scp_ipi_init()
-To:     Wei Yongjun <weiyongjun1@huawei.com>
-Cc:     Ohad Ben-Cohen <ohad@wizery.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Erin Lo <erin.lo@mediatek.com>,
-        linux-remoteproc <linux-remoteproc@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-mediatek@lists.infradead.org,
-        kernel-janitors@vger.kernel.org, Hulk Robot <hulkci@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200421143228.8981-2-sibis@codeaurora.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Sat, 9 May 2020 at 02:38, Wei Yongjun <weiyongjun1@huawei.com> wrote:
->
-> sizeof() when applied to a pointer typed expression gives the
-> size of the pointer, not that of the pointed data.
->
-> Fixes: 63c13d61eafe ("remoteproc/mediatek: add SCP support for mt8183")
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+On Tue, 21 Apr 2020 20:02:22 +0530, Sibi Sankar wrote:
+> Add MPSS PAS support for SC7180 SoCs.
+> 
+> Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
 > ---
->  drivers/remoteproc/mtk_scp.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
-> index 2bead57c9cf9..ac13e7b046a6 100644
-> --- a/drivers/remoteproc/mtk_scp.c
-> +++ b/drivers/remoteproc/mtk_scp.c
-> @@ -132,8 +132,8 @@ static int scp_ipi_init(struct mtk_scp *scp)
->                 (struct mtk_share_obj __iomem *)(scp->sram_base + recv_offset);
->         scp->send_buf =
->                 (struct mtk_share_obj __iomem *)(scp->sram_base + send_offset);
-> -       memset_io(scp->recv_buf, 0, sizeof(scp->recv_buf));
-> -       memset_io(scp->send_buf, 0, sizeof(scp->send_buf));
-> +       memset_io(scp->recv_buf, 0, sizeof(*scp->recv_buf));
-> +       memset_io(scp->send_buf, 0, sizeof(*scp->send_buf));
+>  Documentation/devicetree/bindings/remoteproc/qcom,adsp.txt | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
 
-Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-
->
->         return 0;
->  }
->
->
->
+Acked-by: Rob Herring <robh@kernel.org>
