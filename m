@@ -1,258 +1,289 @@
-Return-Path: <SRS0=6wT4=6Z=vger.kernel.org=linux-remoteproc-owner@kernel.org>
+Return-Path: <SRS0=9zZj=62=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E328C54E4A
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 11 May 2020 22:18:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42D20C54E8D
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 12 May 2020 00:12:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7831D206E6
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 11 May 2020 22:18:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1589235482;
-	bh=MBHatxwDoIyD6uh00m5HuFdutrrX84YoaJnOUAb+G2w=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=MvV78ZxFcpwn+s1/4qhQPuxqj0xdjKOr0cOGv0ydwg/tUJ3z92+W13jq1rRs21K4G
-	 6WBEnEO1XFAW6Sd2B6KGbARh1Ub4SnR9KG2zErqNi0RWs7TCAs5M64oDi19ufxXlkM
-	 ZKyCorY4u5eKNwFWLeBgs2jc9Y5x2e0F8tdkUiHE=
+	by mail.kernel.org (Postfix) with ESMTP id 1BD1420714
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 12 May 2020 00:12:03 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="A3vS9Aan"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725877AbgEKWR7 (ORCPT
+        id S1728271AbgELAMA (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 11 May 2020 18:17:59 -0400
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:34596 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725828AbgEKWR7 (ORCPT
+        Mon, 11 May 2020 20:12:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45772 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728110AbgELAL7 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 11 May 2020 18:17:59 -0400
-Received: by mail-oi1-f195.google.com with SMTP id c12so15546950oic.1;
-        Mon, 11 May 2020 15:17:57 -0700 (PDT)
+        Mon, 11 May 2020 20:11:59 -0400
+Received: from mail-pj1-x1042.google.com (mail-pj1-x1042.google.com [IPv6:2607:f8b0:4864:20::1042])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7BA6DC061A0C
+        for <linux-remoteproc@vger.kernel.org>; Mon, 11 May 2020 17:11:58 -0700 (PDT)
+Received: by mail-pj1-x1042.google.com with SMTP id s69so347966pjb.4
+        for <linux-remoteproc@vger.kernel.org>; Mon, 11 May 2020 17:11:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=vD9bAWKm0TsbLrMap8l5gp1TwER8GEwlHBT3cJWURJ0=;
+        b=A3vS9AanzqTHedDnHkrlKHjJJPKbzJ481qfmYgNGQCT5/+iqlBJQ8sZHBLvmZMNlaD
+         U8SJxFmOP31XeFbpsNsvljK9W4vgwkNLuD5GGO5+4XEe+dkEBmfjgSxdQoVYasVbTbcS
+         2AwtXNhw9tdujY8v4Ka5SLlqc0Kb8TBgwMktWmcg+tsQgkPPzXv1JWqP6l5shhuk6rhh
+         CxECvWV+XGhzo3dUyY2fjuShqsCCl5GJNKpKigwNxdCC40PgsGNHu8qSPIUgCG28/9Kc
+         R+mCvUboHQWRekfz+AUgjpnhPf1yM8Y4oQfx1CWSaXT/gQLLI4BEMBvqFpYfTI0r8SGf
+         9XqQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=rzMFWA1ZnkRS4Q0DpZb1ZXl62uf9QCHFsi7YkKI8qTU=;
-        b=km+W7YWfycC8pxYRBgv6wEkz4Wyj6O7RG5MPn07qseLUQs0MVY2LdFYBIXlZJbAnZW
-         /96FjHaP0lDWbifuWaQQp95O+Sw9GLi+ubmFMGeEvTbBFwW7G7q9mjMjPPbHZmX+LZYi
-         zXWEX70wwZOK28I/NaeZYHuUrXuJMyFwcI50ZdyhlFDtn2OOzeJOuYflNqvHWZPoG/Ni
-         81TLCL7rsQ1Abh2B/X4dkbrvTNuX/HsstmXkcHZkQ9NhdcajeltXMk+HNURaMXodJ4q0
-         zbY94GorhSSQlpsWE85N5avxVB6JcThtwkAh9c3z3uj67elHQohNYT0xxXNTNgK57luF
-         YRqw==
-X-Gm-Message-State: AGi0PuaR05QfRhTwHe14B9fIbqYtCb9b9n9InwzOAw9oaC03vcBdhvi8
-        b5XzRDFK1F0it0CFxBM4cw==
-X-Google-Smtp-Source: APiQypK0TZHCKyJ3o83UAgu+4BaXew5kyfHBthWDWkDub8PJ/mLJuKeKeozKHpokZfteZCSegTZxMA==
-X-Received: by 2002:aca:cc15:: with SMTP id c21mr22407701oig.120.1589235477409;
-        Mon, 11 May 2020 15:17:57 -0700 (PDT)
-Received: from rob-hp-laptop (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id t13sm2995644otr.43.2020.05.11.15.17.56
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=vD9bAWKm0TsbLrMap8l5gp1TwER8GEwlHBT3cJWURJ0=;
+        b=DZyrFEvVJhGxvd1xa/zKZ5pRF53tLgfDhhPPG5x51EtSypweISwUAL69EG+wQoQ/FK
+         nPhqyQjY3RnNGtWpgQ8bSBgY5g6tR4na9V2Oa9IHfq/1FNeJOj2eNdukdHT4oZrZ02x6
+         mYys2hPQNkN4uTHAgNvT0ix/ZRGg5850N0pfOGO9AVhCNcMQYLoab/WqeIxGuvBV2pmr
+         rkaJ0d6VyJukH8R943qZbcAe5V1sZOABTHUS39tKv2DOTyMqcbVVYrGZP05XIvkeqq/U
+         VB8XA3IxVmhSD30G6ia9jF6xWFX0kfFQyGJotdMpbEqxir7Ff+OO1kt8Ef69AL7/9VGV
+         kxLQ==
+X-Gm-Message-State: AGi0PuZDvsaNCL4gBRlF7v2hq3JGSB5K2FFU5OQpRWgxiu7rWmuD9l8P
+        YWEhsMg7fNCb1tq4Su86g5iFnA==
+X-Google-Smtp-Source: APiQypLvk6MsGJTa1A0kGWCgqM1Q16u/OrBm7JPtAl8bp704ACdBitEEa1Efs7ZN7JLMElh0x+ew5g==
+X-Received: by 2002:a17:90a:8a09:: with SMTP id w9mr24099337pjn.95.1589242317883;
+        Mon, 11 May 2020 17:11:57 -0700 (PDT)
+Received: from builder.lan (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id c10sm10124975pfm.50.2020.05.11.17.11.56
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 May 2020 15:17:56 -0700 (PDT)
-Received: (nullmailer pid 14664 invoked by uid 1000);
-        Mon, 11 May 2020 22:17:55 -0000
-Date:   Mon, 11 May 2020 17:17:55 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Ben Levinsky <ben.levinsky@xilinx.com>
-Cc:     ohad@wizery.com, bjorn.andersson@linaro.org,
-        michal.simek@xilinx.com, jollys@xilinx.com, rajan.vaja@xilinx.com,
-        mark.rutland@arm.com, linux-remoteproc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Jason Wu <j.wu@xilinx.com>,
-        Wendy Liang <jliang@xilinx.com>
-Subject: Re: [PATCH v4 4/5] dt-bindings: remoteproc: Add documentation for
- ZynqMP R5 rproc bindings
-Message-ID: <20200511221755.GA13585@bogus>
-References: <1587749770-15082-1-git-send-email-ben.levinsky@xilinx.com>
- <1587749770-15082-5-git-send-email-ben.levinsky@xilinx.com>
+        Mon, 11 May 2020 17:11:57 -0700 (PDT)
+Date:   Mon, 11 May 2020 17:10:23 -0700
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Paul Cercueil <paul@crapouillou.net>
+Cc:     Ohad Ben-Cohen <ohad@wizery.com>,
+        Arnaud Pouliquen <arnaud.pouliquen@st.com>, od@zcrc.me,
+        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kbuild test robot <lkp@intel.com>,
+        Julia Lawall <julia.lawall@lip6.fr>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>
+Subject: Re: [PATCH v6 4/5] remoteproc: ingenic: Added remoteproc driver
+Message-ID: <20200512001023.GB5349@builder.lan>
+References: <20200417170040.174319-1-paul@crapouillou.net>
+ <20200417170040.174319-4-paul@crapouillou.net>
+ <20200420063714.GA1868936@builder.lan>
+ <WCA59Q.IXGX82YOG4GI2@crapouillou.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <1587749770-15082-5-git-send-email-ben.levinsky@xilinx.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <WCA59Q.IXGX82YOG4GI2@crapouillou.net>
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Fri, Apr 24, 2020 at 10:36:09AM -0700, Ben Levinsky wrote:
-> Add binding for ZynqMP R5 OpenAMP.
+On Tue 21 Apr 08:43 PDT 2020, Paul Cercueil wrote:
+
+> Hi Bjorn,
 > 
-> Represent the RPU domain resources in one device node. Each RPU
-> processor is a subnode of the top RPU domain node.
-
-This needs to be sorted out as part of the system DT effort that Xilinx 
-is working on. I can't see this binding co-existing with it.
-
+> Le dim. 19 avril 2020 à 23:37, Bjorn Andersson <bjorn.andersson@linaro.org>
+> a écrit :
+> > On Fri 17 Apr 10:00 PDT 2020, Paul Cercueil wrote:
+> > 
+> > >  This driver is used to boot, communicate with and load firmwares to
+> > > the
+> > >  MIPS co-processor found in the VPU hardware of the JZ47xx SoCs from
+> > >  Ingenic.
+> > > 
+> > >  Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+> > >  Signed-off-by: kbuild test robot <lkp@intel.com>
+> > >  Signed-off-by: Julia Lawall <julia.lawall@lip6.fr>
+> > 
+> > Please read Documentation/process/submitting-patches.rst about
+> > "Developer's Certificate of Origin".
+> > 
+> > I suspect that you incorporated review feedback on previous revisions
+> > from kbuild and Julia, this is generally omitted from the actual commit
+> > message.
 > 
-> Signed-off-by: Ben Levinsky <ben.levinsky@xilinx.com>
-> Signed-off-by: Jason Wu <j.wu@xilinx.com>
-> Signed-off-by: Wendy Liang <jliang@xilinx.com>
-> Signed-off-by: Michal Simek <michal.simek@xilinx.com>
-> ---
-> Changes since v2:
-> - update zynqmp_r5 yaml parsing to not raise warnings for extra
->   information in children of R5 node. The warning "node has a unit
->   name, but no reg or ranges property" will still be raised though 
->   as this particular node is needed to describe the
->   '#address-cells' and '#size-cells' information.
-> Changes since 3:
-> - remove warning '/example-0/rpu@ff9a0000/r5@0:
->   node has a unit name, but no reg or ranges property'
->   by adding reg to r5 node.
-> ---
+> Julia / kbuild sent a patch to fix an error in the driver, so my patch now
+> has code from Julia / kbuild. That document clearly says that I should add
+> their signed-off-by. Or what do you mean?
 > 
->  .../remoteproc/xilinx,zynqmp-r5-remoteproc.yaml    | 127 +++++++++++++++++++++
->  1 file changed, 127 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/remoteproc/xilinx,zynqmp-r5-remoteproc.yaml
+
+We generally don't attribute people whom through code review affected
+the outcome, unless perhaps it's significant.
+
+But a bigger problem is that per "Developer's Certificate of Origin 1.1"
+in submitting-patches.rst, what this says is:
+
+1) You wrote the patch, in whole or in part and have the right to
+   submit it to the public kernel. I.e. (a) and (d)
+
+2) Then "kbuild test robot" claims that either it based it's
+   contribution on your work, or that it forwards the unmodified work
+   ((b) or (c)) and (d).
+
+3) Then Julia again took the contribution from "kbuild test robot" and
+   is claiming to follow either (b) or (c) - and (d).
+
+Then somehow, after Julia stated that she dealt with the patch you
+emailed it to me.
+
+In order to claim that the three of you developed the patch together you
+should add all three as "Co-developed-by:", in addition to the signed
+off by.
+
+
+But again, my recommendation is that you consider their input as "review
+feedback" and just incorporate it in the patch without any additional
+tags. You're still fulfilling the certificate of origin.
+
+Regards,
+Bjorn
+
+> > >  Acked-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+> > >  ---
+> > > 
+> > >  Notes:
+> > >      v2: Remove exception for always-mapped memories
+> > >      v3: - Use clk_bulk API
+> > >      	- Move device-managed code to its own patch [3/4]
+> > >      	- Move devicetree table right above ingenic_rproc_driver
+> > >      	- Removed #ifdef CONFIG_OF around devicetree table
+> > >      	- Removed .owner = THIS_MODULE in ingenic_rproc_driver
+> > >      	- Removed useless platform_set_drvdata()
+> > >      v4: - Add fix reported by Julia
+> > >      	- Change Kconfig symbol to INGENIC_VPU_RPROC
+> > >      	- Add documentation to struct vpu
+> > >      	- disable_irq_nosync() -> disable_irq()
+> > >      v5: No change
+> > >      v6: Instead of prepare/unprepare callbacks, use PM runtime
+> > > callbacks
+> > > 
+> > >   drivers/remoteproc/Kconfig         |   8 +
+> > >   drivers/remoteproc/Makefile        |   1 +
+> > >   drivers/remoteproc/ingenic_rproc.c | 282
+> > > +++++++++++++++++++++++++++++
+> > >   3 files changed, 291 insertions(+)
+> > >   create mode 100644 drivers/remoteproc/ingenic_rproc.c
+> > > 
+> > >  diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
+> > >  index fbaed079b299..31da3e6c6281 100644
+> > >  --- a/drivers/remoteproc/Kconfig
+> > >  +++ b/drivers/remoteproc/Kconfig
+> > >  @@ -240,6 +240,14 @@ config STM32_RPROC
+> > > 
+> > >   	  This can be either built-in or a loadable module.
+> > > 
+> > >  +config INGENIC_VPU_RPROC
+> > 
+> > Please try to keep things alphabetically ordered.
+> > 
+> > >  +	tristate "Ingenic JZ47xx VPU remoteproc support"
+> > >  +	depends on MIPS || COMPILE_TEST
+> > >  +	help
+> > >  +	  Say y or m here to support the VPU in the JZ47xx SoCs from
+> > > Ingenic.
+> > >  +	  This can be either built-in or a loadable module.
+> > >  +	  If unsure say N.
+> > >  +
+> > >   endif # REMOTEPROC
+> > > 
+> > >   endmenu
+> > [..]
+> > >  diff --git a/drivers/remoteproc/ingenic_rproc.c
+> > > b/drivers/remoteproc/ingenic_rproc.c
+> > [..]
+> > >  +/**
+> > >  + * struct vpu - Ingenic VPU remoteproc private structure
+> > >  + * @irq: interrupt number
+> > >  + * @clks: pointers to the VPU and AUX clocks
+> > 
+> > aux_base is missing
+> > 
+> > >  + * @mem_info: array of struct vpu_mem_info, which contain the
+> > > mapping info of
+> > >  + *            each of the external memories
+> > >  + * @dev: private pointer to the device
+> > >  + */
+> > >  +struct vpu {
+> > >  +	int irq;
+> > >  +	struct clk_bulk_data clks[2];
+> > >  +	void __iomem *aux_base;
+> > >  +	struct vpu_mem_info mem_info[ARRAY_SIZE(vpu_mem_map)];
+> > >  +	struct device *dev;
+> > >  +};
+> > [..]
+> > >  +static void *ingenic_rproc_da_to_va(struct rproc *rproc, u64 da,
+> > > size_t len)
+> > >  +{
+> > >  +	struct vpu *vpu = rproc->priv;
+> > >  +	void __iomem *va = NULL;
+> > >  +	unsigned int i;
+> > >  +
+> > >  +	if (len <= 0)
+> > 
+> > len can't be negative (also, does it add value to check for and fail len
+> > == 0?)
+> > 
+> > >  +		return NULL;
+> > >  +
+> > >  +	for (i = 0; i < ARRAY_SIZE(vpu_mem_map); i++) {
+> > >  +		const struct vpu_mem_info *info = &vpu->mem_info[i];
+> > >  +		const struct vpu_mem_map *map = info->map;
+> > >  +
+> > >  +		if (da >= map->da && (da + len) < (map->da + info->len)) {
+> > >  +			va = info->base + (da - map->da);
+> > >  +			break;
+> > >  +		}
+> > >  +	}
+> > >  +
+> > >  +	return (__force void *)va;
+> > >  +}
+> > [..]
+> > >  +static struct platform_driver ingenic_rproc_driver = {
+> > >  +	.probe = ingenic_rproc_probe,
+> > >  +	.driver = {
+> > >  +		.name = "ingenic-vpu",
+> > >  +#ifdef CONFIG_PM
+> > 
+> > Please omit the #ifdef here.
 > 
-> diff --git a/Documentation/devicetree/bindings/remoteproc/xilinx,zynqmp-r5-remoteproc.yaml b/Documentation/devicetree/bindings/remoteproc/xilinx,zynqmp-r5-remoteproc.yaml
-> new file mode 100644
-> index 0000000..41520b6
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/remoteproc/xilinx,zynqmp-r5-remoteproc.yaml
-> @@ -0,0 +1,127 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: "http://devicetree.org/schemas/remoteproc/xilinx,zynqmp-r5-remoteproc.yaml#"
-> +$schema: "http://devicetree.org/meta-schemas/core.yaml#"
-> +
-> +title: Xilinx R5 remote processor controller bindings
-> +
-> +description:
-> +  This document defines the binding for the remoteproc component that loads and
-> +  boots firmwares on the Xilinx Zynqmp and Versal family chipset.
-> +
-> +maintainers:
-> +  - Ed Mooring <ed.mooring@xilinx.com>
-> +  - Ben Levinsky <ben.levinsky@xilinx.com>
-> +
-> +properties:
-> +  compatible:
-> +    const: "xlnx,zynqmp-r5-remoteproc-1.0"
-> +
-> +  core_conf:
-> +    description:
-> +      R5 core configuration (valid string - split or lock-step)
-> +    maxItems: 1
-> +
-> +  interrupts:
-> +    description:
-> +      Interrupt mapping for remoteproc IPI. It is required if the
-> +      user uses the remoteproc driver with the RPMsg kernel driver.
-> +    maxItems: 6
-> +
-> +  memory-region:
-> +    maxItems: 4
-> +    minItems: 4
-> +  pnode-id:
-> +    maxItems: 1
-
-What is this?
-
-> +  mboxes:
-> +    maxItems: 2
-> +  mbox-names:
-> +    maxItems: 2
-> +
-> +  r5@0:
-> +    type: object
-> +    required:
-> +        - '#address-cells'
-> +        - '#size-cells'
-> +        - pnode-id
-> +examples:
-> +  - |
-> +     reserved-memory {
-> +          #address-cells = <1>;
-> +          #size-cells = <1>;
-> +          ranges;
-> +          rpu0vdev0vring0: rpu0vdev0vring0@3ed40000 {
-> +               no-map;
-> +               reg = <0x3ed40000 0x4000>;
-> +          };
-> +          rpu0vdev0vring1: rpu0vdev0vring1@3ed44000 {
-> +               no-map;
-> +               reg = <0x3ed44000 0x4000>;
-> +          };
-> +          rpu0vdev0buffer: rpu0vdev0buffer@3ed48000 {
-> +               no-map;
-> +               reg = <0x3ed48000 0x100000>;
-> +          };
-> +          rproc_0_reserved: rproc@3ed000000 {
-> +               no-map;
-> +               reg = <0x3ed00000 0x40000>;
-> +          };
-> +     };
-> +     rpu: rpu@ff9a0000 {
-> +          compatible = "xlnx,zynqmp-r5-remoteproc-1.0";
-> +          #address-cells = <1>;
-> +          #size-cells = <1>;
-> +          ranges;
-> +          core_conf = "split";
-
-If split, then where is the 2nd core?
-
-> +          reg = <0xFF9A0000 0x10000>;
-> +          r5_0: r5@0 {
-
-Unit-addresses are based on 'reg' values.
-
-> +               ranges;
-> +               #address-cells = <1>;
-> +               #size-cells = <1>;
-> +               reg = <0xFF9A0100 0x1000>;
-> +               memory-region = <&rproc_0_reserved>, <&rpu0vdev0buffer>, <&rpu0vdev0vring0>, <&rpu0vdev0vring1>;
-> +               pnode-id = <0x7>;
-> +               mboxes = <&ipi_mailbox_rpu0 0>, <&ipi_mailbox_rpu0 1>;
-> +               mbox-names = "tx", "rx";
-> +               tcm_0_a: tcm_0@0 {
-> +                    #address-cells = <1>;
-> +                    #size-cells = <1>;
-> +                    reg = <0xFFE00000 0x10000>;
-> +                    pnode-id = <0xf>;
-
-These nodes probably need some sort of compatible. And don't the TCMs 
-have different addresses for R5 vs. the A cores?
-
-> +               };
-> +               tcm_0_b: tcm_0@1 {
-> +                    #address-cells = <2>;
-> +                    #size-cells = <2>;
-> +                    reg = <0xFFE20000 0x10000>;
-> +                    pnode-id = <0x10>;
-> +               };
-> +          };
-> +     };
-> +
-> +
-> +     zynqmp_ipi1 {
-> +          compatible = "xlnx,zynqmp-ipi-mailbox";
-> +          interrupt-parent = <&gic>;
-> +          interrupts = <0 29 4>;
-> +          xlnx,ipi-id = <7>;
-> +          #address-cells = <1>;
-> +          #size-cells = <1>;
-> +          ranges;
-> +
-> +          /* APU<->RPU0 IPI mailbox controller */
-> +          ipi_mailbox_rpu0: mailbox@ff90000 {
-> +               reg = <0xff990600 0x20>,
-> +                     <0xff990620 0x20>,
-> +                     <0xff9900c0 0x20>,
-> +                     <0xff9900e0 0x20>;
-> +               reg-names = "local_request_region",
-> +                        "local_response_region",
-> +                        "remote_request_region",
-> +                        "remote_response_region";
-> +               #mbox-cells = <1>;
-> +               xlnx,ipi-id = <1>;
-> +          };
-> +     };
-> +
-> +...
-> -- 
-> 2.7.4
+> If I do, then the PM callbacks will be compiled in even if CONFIG_PM is
+> disabled. That means dead code and I see no reason why you would want that.
+> 
+> If you don't mind, I'd like to keep the #ifdef CONFIG_PM for now, until this
+> patchset is merged: https://lkml.org/lkml/2020/4/13/582
+> 
+> Then it would become a one-liner:
+> .pm = pm_ptr(&ingenic_rproc_pm),
+> 
+> Cheers,
+> -Paul
+> 
+> > >  +		.pm = &ingenic_rproc_pm,
+> > >  +#endif
+> > >  +		.of_match_table = of_match_ptr(ingenic_rproc_of_matches),
+> > 
+> > Please omit the of_match_ptr()
+> > 
+> > Regards,
+> > Bjorn
+> > 
+> > >  +	},
+> > >  +};
+> > >  +module_platform_driver(ingenic_rproc_driver);
+> > >  +
+> > >  +MODULE_LICENSE("GPL");
+> > >  +MODULE_AUTHOR("Paul Cercueil <paul@crapouillou.net>");
+> > >  +MODULE_DESCRIPTION("Ingenic JZ47xx Remote Processor control
+> > > driver");
+> > >  --
+> > >  2.25.1
+> > > 
+> 
 > 
