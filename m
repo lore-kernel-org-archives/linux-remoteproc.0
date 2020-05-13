@@ -4,29 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80A3BC2D0FA
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 13 May 2020 09:31:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC79FCA90AF
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 13 May 2020 09:31:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6D24820675
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 13 May 2020 09:31:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A6B0C2078C
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 13 May 2020 09:31:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728000AbgEMJbk (ORCPT
+        id S1732506AbgEMJby (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 13 May 2020 05:31:40 -0400
-Received: from alexa-out-blr-02.qualcomm.com ([103.229.18.198]:57562 "EHLO
+        Wed, 13 May 2020 05:31:54 -0400
+Received: from alexa-out-blr-02.qualcomm.com ([103.229.18.198]:57574 "EHLO
         alexa-out-blr-02.qualcomm.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726492AbgEMJbk (ORCPT
+        by vger.kernel.org with ESMTP id S1727063AbgEMJbx (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 13 May 2020 05:31:40 -0400
+        Wed, 13 May 2020 05:31:53 -0400
 Received: from ironmsg01-blr.qualcomm.com ([10.86.208.130])
-  by alexa-out-blr-02.qualcomm.com with ESMTP/TLS/AES256-SHA; 13 May 2020 15:01:35 +0530
+  by alexa-out-blr-02.qualcomm.com with ESMTP/TLS/AES256-SHA; 13 May 2020 15:01:36 +0530
 Received: from gokulsri-linux.qualcomm.com ([10.201.2.207])
   by ironmsg01-blr.qualcomm.com with ESMTP; 13 May 2020 15:01:07 +0530
 Received: by gokulsri-linux.qualcomm.com (Postfix, from userid 432570)
-        id 361C021257; Wed, 13 May 2020 15:01:05 +0530 (IST)
+        id B5B4721770; Wed, 13 May 2020 15:01:06 +0530 (IST)
 From:   Gokul Sriram Palanisamy <gokulsri@codeaurora.org>
 To:     gokulsri@codeaurora.org, sboyd@kernel.org, agross@kernel.org,
         bjorn.andersson@linaro.org, david.brown@linaro.org,
@@ -36,9 +35,9 @@ To:     gokulsri@codeaurora.org, sboyd@kernel.org, agross@kernel.org,
         mark.rutland@arm.com, mturquette@baylibre.com, ohad@wizery.com,
         robh+dt@kernel.org, sricharan@codeaurora.org,
         nprakash@codeaurora.org
-Subject: [PATCH V5 01/10] remoteproc: qcom: Add PRNG proxy clock
-Date:   Wed, 13 May 2020 15:00:56 +0530
-Message-Id: <1589362265-22702-2-git-send-email-gokulsri@codeaurora.org>
+Subject: [PATCH V5 06/10] dt-bindings: clock: qcom: Add reset for WCSSAON
+Date:   Wed, 13 May 2020 15:01:01 +0530
+Message-Id: <1589362265-22702-7-git-send-email-gokulsri@codeaurora.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1589362265-22702-1-git-send-email-gokulsri@codeaurora.org>
 References: <1589362265-22702-1-git-send-email-gokulsri@codeaurora.org>
@@ -47,158 +46,28 @@ Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-PRNG clock is needed by the secure PIL, support for the same
-is added in subsequent patches.
+Add binding for WCSSAON reset required for Q6v5 reset on IPQ8074 SoC.
 
 Signed-off-by: Gokul Sriram Palanisamy <gokulsri@codeaurora.org>
 Signed-off-by: Sricharan R <sricharan@codeaurora.org>
 Signed-off-by: Nikhil Prakash V <nprakash@codeaurora.org>
+Acked-by: Rob Herring <robh@kernel.org>
+Acked-by: Stephen Boyd <sboyd@kernel.org>
 ---
- drivers/remoteproc/qcom_q6v5_wcss.c | 65 +++++++++++++++++++++++++++----------
- 1 file changed, 47 insertions(+), 18 deletions(-)
+ include/dt-bindings/clock/qcom,gcc-ipq8074.h | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/remoteproc/qcom_q6v5_wcss.c b/drivers/remoteproc/qcom_q6v5_wcss.c
-index fff681a..0700d68 100644
---- a/drivers/remoteproc/qcom_q6v5_wcss.c
-+++ b/drivers/remoteproc/qcom_q6v5_wcss.c
-@@ -91,19 +91,6 @@ enum {
- 	WCSS_QCS404,
- };
+diff --git a/include/dt-bindings/clock/qcom,gcc-ipq8074.h b/include/dt-bindings/clock/qcom,gcc-ipq8074.h
+index 4de4811..04e1f57 100644
+--- a/include/dt-bindings/clock/qcom,gcc-ipq8074.h
++++ b/include/dt-bindings/clock/qcom,gcc-ipq8074.h
+@@ -362,5 +362,6 @@
+ #define GCC_PCIE1_AXI_SLAVE_ARES		128
+ #define GCC_PCIE1_AHB_ARES			129
+ #define GCC_PCIE1_AXI_MASTER_STICKY_ARES	130
++#define GCC_WCSSAON_RESET			131
  
--struct wcss_data {
--	const char *firmware_name;
--	int crash_reason_smem;
--	u32 version;
--	bool aon_reset_required;
--	bool wcss_q6_reset_required;
--	const char *ssr_name;
--	const char *sysmon_name;
--	int ssctl_id;
--	const struct rproc_ops *ops;
--	bool requires_force_stop;
--};
--
- struct q6v5_wcss {
- 	struct device *dev;
- 
-@@ -128,6 +115,7 @@ struct q6v5_wcss {
- 	struct clk *qdsp6ss_xo_cbcr;
- 	struct clk *qdsp6ss_core_gfmux;
- 	struct clk *lcc_bcr_sleep;
-+	struct clk *prng_clk;
- 	struct regulator *cx_supply;
- 
- 	struct qcom_rproc_glink glink_subdev;
-@@ -151,6 +139,21 @@ struct q6v5_wcss {
- 	bool requires_force_stop;
- };
- 
-+struct wcss_data {
-+	int (*init_clock)(struct q6v5_wcss *wcss);
-+	int (*init_regulator)(struct q6v5_wcss *wcss);
-+	const char *firmware_name;
-+	int crash_reason_smem;
-+	u32 version;
-+	bool aon_reset_required;
-+	bool wcss_q6_reset_required;
-+	const char *ssr_name;
-+	const char *sysmon_name;
-+	int ssctl_id;
-+	const struct rproc_ops *ops;
-+	bool requires_force_stop;
-+};
-+
- static int q6v5_wcss_reset(struct q6v5_wcss *wcss)
- {
- 	int ret;
-@@ -240,6 +243,12 @@ static int q6v5_wcss_start(struct rproc *rproc)
- 	struct q6v5_wcss *wcss = rproc->priv;
- 	int ret;
- 
-+	ret = clk_prepare_enable(wcss->prng_clk);
-+	if (ret) {
-+		dev_err(wcss->dev, "prng clock enable failed\n");
-+		return ret;
-+	}
-+
- 	qcom_q6v5_prepare(&wcss->q6v5);
- 
- 	/* Release Q6 and WCSS reset */
-@@ -732,6 +741,7 @@ static int q6v5_wcss_stop(struct rproc *rproc)
- 			return ret;
- 	}
- 
-+	clk_disable_unprepare(wcss->prng_clk);
- 	qcom_q6v5_unprepare(&wcss->q6v5);
- 
- 	return 0;
-@@ -889,7 +899,21 @@ static int q6v5_alloc_memory_region(struct q6v5_wcss *wcss)
- 	return 0;
- }
- 
--static int q6v5_wcss_init_clock(struct q6v5_wcss *wcss)
-+static int ipq8074_init_clock(struct q6v5_wcss *wcss)
-+{
-+	int ret;
-+
-+	wcss->prng_clk = devm_clk_get(wcss->dev, "prng");
-+	if (IS_ERR(wcss->prng_clk)) {
-+		ret = PTR_ERR(wcss->prng_clk);
-+		if (ret != -EPROBE_DEFER)
-+			dev_err(wcss->dev, "Failed to get prng clock\n");
-+		return ret;
-+	}
-+	return 0;
-+}
-+
-+static int qcs404_init_clock(struct q6v5_wcss *wcss)
- {
- 	int ret;
- 
-@@ -979,7 +1003,7 @@ static int q6v5_wcss_init_clock(struct q6v5_wcss *wcss)
- 	return 0;
- }
- 
--static int q6v5_wcss_init_regulator(struct q6v5_wcss *wcss)
-+static int qcs404_init_regulator(struct q6v5_wcss *wcss)
- {
- 	wcss->cx_supply = devm_regulator_get(wcss->dev, "cx");
- 	if (IS_ERR(wcss->cx_supply))
-@@ -1023,12 +1047,14 @@ static int q6v5_wcss_probe(struct platform_device *pdev)
- 	if (ret)
- 		goto free_rproc;
- 
--	if (wcss->version == WCSS_QCS404) {
--		ret = q6v5_wcss_init_clock(wcss);
-+	if (desc->init_clock) {
-+		ret = desc->init_clock(wcss);
- 		if (ret)
- 			goto free_rproc;
-+	}
- 
--		ret = q6v5_wcss_init_regulator(wcss);
-+	if (desc->init_regulator) {
-+		ret = desc->init_regulator(wcss);
- 		if (ret)
- 			goto free_rproc;
- 	}
-@@ -1073,6 +1099,7 @@ static int q6v5_wcss_remove(struct platform_device *pdev)
- }
- 
- static const struct wcss_data wcss_ipq8074_res_init = {
-+	.init_clock = ipq8074_init_clock,
- 	.firmware_name = "IPQ8074/q6_fw.mdt",
- 	.crash_reason_smem = WCSS_CRASH_REASON,
- 	.aon_reset_required = true,
-@@ -1082,6 +1109,8 @@ static const struct wcss_data wcss_ipq8074_res_init = {
- };
- 
- static const struct wcss_data wcss_qcs404_res_init = {
-+	.init_clock = qcs404_init_clock,
-+	.init_regulator = qcs404_init_regulator,
- 	.crash_reason_smem = WCSS_CRASH_REASON,
- 	.firmware_name = "wcnss.mdt",
- 	.version = WCSS_QCS404,
+ #endif
 -- 
 2.7.4
 
