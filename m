@@ -2,136 +2,281 @@ Return-Path: <SRS0=SCme=63=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF843C433DF
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 13 May 2020 22:13:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FE2FC433E0
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 13 May 2020 22:32:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D63D420659
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 13 May 2020 22:13:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 22BB72054F
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 13 May 2020 22:32:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LGDhXSd0"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="kQe1A1lP"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730805AbgEMWNq (ORCPT
+        id S1731144AbgEMWcD (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 13 May 2020 18:13:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52818 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1730064AbgEMWNq (ORCPT
+        Wed, 13 May 2020 18:32:03 -0400
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:56562 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730745AbgEMWcC (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 13 May 2020 18:13:46 -0400
-Received: from mail-pj1-x1043.google.com (mail-pj1-x1043.google.com [IPv6:2607:f8b0:4864:20::1043])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DBD76C061A0C
-        for <linux-remoteproc@vger.kernel.org>; Wed, 13 May 2020 15:13:45 -0700 (PDT)
-Received: by mail-pj1-x1043.google.com with SMTP id l73so2101233pjb.1
-        for <linux-remoteproc@vger.kernel.org>; Wed, 13 May 2020 15:13:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=e6RXpgluKwXPp3KRCdiHCqL2rdUeYjnysCP7SSKxBOM=;
-        b=LGDhXSd0LFpWl0o4hxng7L0J/q4lMorH0G9DAzNLEG6GsWcHLUtoAH9bXfmTzMvKRa
-         MisrArcyuTh1Bsi5exkoTVN7yPz3JxQZ7ZmU2nWMe1VMvRBilgdpvx+CZ0zvuHMO0Ff5
-         NFroCGOcnA/3y1zhVVW/FjOG2/QonmXAuEaIRFDjjofin1chGunmrkyLBuz1/KgOVJmP
-         G0JVlbFeyvOhfPfxuEHvNmMd0b7BfVwAlbHyBl2Rqfh8LlvooW/O/KR4lZVNFGOhamDm
-         MSrZef83Fqmuwe5ckDlVz19PjhbP1SGvTVLwScfx/1jq9n4OQ4m0pp94Yi+2AxVEI2sa
-         U/xA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=e6RXpgluKwXPp3KRCdiHCqL2rdUeYjnysCP7SSKxBOM=;
-        b=XonSj4gI7NweliDPt77/8yiL0Nk2tdUly9oWxCWkQjr7DRt92Up/G8op7t6BoFh9r3
-         oRENCUPTeU+0Qgy9tcNcs5refNXCLgPwd9iSyR6d/DApWNXjsalDm60GfZKLPuF7U6pd
-         EAQ6SyD3bMnCB1ZL08gvVhl+FtVltugVmciHHF/hnzClYF9lMjQA01CnfOGZ8FDvH0+x
-         EduTFicBDKZSQTLR3UDsKFmqvBiJmgLsZeeVX34gAHNdRCVvd2jHlD2+FLuHj9sedCAT
-         o9GM1xhZ+JqqNIWUU0LBM6JkaR8inO+7v3MEGmY/ppys2htnY+P37SgZh0MOj1CoSYEC
-         ZcYQ==
-X-Gm-Message-State: AOAM533EdRXYjtN1BMhKF6YTvcCe9wI5BJU+081SbrpLtDG/TUDYM9rV
-        OXaNTXkHsaBRIcYvmsP5l9IACWXsHRM=
-X-Google-Smtp-Source: ABdhPJyplZyfECUA4JUBp4ymP477fQ0nX0LINWjlkQLJAuqkagunu2xqRi+StBi4BXbgxBkDbzGzgg==
-X-Received: by 2002:a17:902:fe8d:: with SMTP id x13mr1277189plm.198.1589408025407;
-        Wed, 13 May 2020 15:13:45 -0700 (PDT)
-Received: from xps15 (S0106002369de4dac.cg.shawcable.net. [68.147.8.254])
-        by smtp.gmail.com with ESMTPSA id y24sm456127pfn.211.2020.05.13.15.13.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 May 2020 15:13:44 -0700 (PDT)
-Date:   Wed, 13 May 2020 16:13:42 -0600
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-To:     Arun Kumar Neelakantam <aneela@codeaurora.org>
-Cc:     ohad@wizery.com, bjorn.andersson@linaro.org, clew@codeaurora.org,
-        sricharan@codeaurora.org, linux-remoteproc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Andy Gross <agross@kernel.org>,
-        "open list:ARM/QUALCOMM SUPPORT" <linux-arm-msm@vger.kernel.org>
-Subject: Re: [PATCH V5 5/5] rpmsg: glink: unregister rpmsg device during
- endpoint destroy
-Message-ID: <20200513221342.GC8328@xps15>
-References: <1589346606-15046-1-git-send-email-aneela@codeaurora.org>
- <1589346606-15046-6-git-send-email-aneela@codeaurora.org>
+        Wed, 13 May 2020 18:32:02 -0400
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 04DMVpi5022860;
+        Wed, 13 May 2020 17:31:51 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1589409111;
+        bh=wpC4NeO+HpUXSvG9zpusitUlas7P/Sa0nfDeG97/ReQ=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=kQe1A1lPTW7cz3S9FMQ4egy1jfAwoMPDZTDOYGLRrUrEA9YZTvdeqq52s42T67X3F
+         1v63wdd6nVBNdx937FZD45+wRoeyPzpFWXBLFCImcrbe8UqM6b3kZMYAhr7ggpj0yu
+         rnSgztxaYK7n/MWhk04LzVZ3+WCybYTF34w4/vZM=
+Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 04DMVpbk113101
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 13 May 2020 17:31:51 -0500
+Received: from DFLE115.ent.ti.com (10.64.6.36) by DFLE103.ent.ti.com
+ (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3; Wed, 13
+ May 2020 17:31:51 -0500
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE115.ent.ti.com
+ (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3 via
+ Frontend Transport; Wed, 13 May 2020 17:31:51 -0500
+Received: from [10.250.48.148] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 04DMVpjG127310;
+        Wed, 13 May 2020 17:31:51 -0500
+Subject: Re: [PATCH 3/3] remoteproc/k3-dsp: Add support for L2RAM loading on
+ C66x DSPs
+To:     Mathieu Poirier <mathieu.poirier@linaro.org>
+CC:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Lokesh Vutla <lokeshvutla@ti.com>,
+        linux-remoteproc <linux-remoteproc@vger.kernel.org>,
+        <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20200325201839.15896-1-s-anna@ti.com>
+ <20200325201839.15896-4-s-anna@ti.com> <20200428195855.GC10552@xps15>
+ <CANLsYkwgCJrDu-Y5iyG0maCVqFqDXW_0vD4Sv2e+-dwryTNaRA@mail.gmail.com>
+From:   Suman Anna <s-anna@ti.com>
+Message-ID: <23097792-5166-09f1-9343-0b5626a9cb03@ti.com>
+Date:   Wed, 13 May 2020 17:31:50 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1589346606-15046-6-git-send-email-aneela@codeaurora.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <CANLsYkwgCJrDu-Y5iyG0maCVqFqDXW_0vD4Sv2e+-dwryTNaRA@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Wed, May 13, 2020 at 10:40:06AM +0530, Arun Kumar Neelakantam wrote:
-> Rpmsg device unregister is not happening if channel close is triggered
-> from local side and causing re-registration of device failures.
-> 
-> Unregister rpmsg device for local close in endpoint destroy path.
-> 
-> Signed-off-by: Arun Kumar Neelakantam <aneela@codeaurora.org>
-> ---
->  drivers/rpmsg/qcom_glink_native.c | 9 +++++++++
->  1 file changed, 9 insertions(+)
-> 
-> diff --git a/drivers/rpmsg/qcom_glink_native.c b/drivers/rpmsg/qcom_glink_native.c
-> index 0e8a28c0..fc8ef66 100644
-> --- a/drivers/rpmsg/qcom_glink_native.c
-> +++ b/drivers/rpmsg/qcom_glink_native.c
-> @@ -1207,6 +1207,7 @@ static void qcom_glink_destroy_ept(struct rpmsg_endpoint *ept)
->  {
->  	struct glink_channel *channel = to_glink_channel(ept);
->  	struct qcom_glink *glink = channel->glink;
-> +	struct rpmsg_channel_info chinfo;
->  	unsigned long flags;
->  
->  	spin_lock_irqsave(&channel->recv_lock, flags);
-> @@ -1214,6 +1215,13 @@ static void qcom_glink_destroy_ept(struct rpmsg_endpoint *ept)
->  	spin_unlock_irqrestore(&channel->recv_lock, flags);
->  
->  	/* Decouple the potential rpdev from the channel */
-> +	if (channel->rpdev) {
+Hi Mathieu,
 
-If we proceed this way no other channel can have an rpdev.  I would hope that
-unregistration of rpdev would be more symetrical to what is done in patch 03.
+On 4/28/20 3:09 PM, Mathieu Poirier wrote:
+> On Tue, 28 Apr 2020 at 13:58, Mathieu Poirier
+> <mathieu.poirier@linaro.org> wrote:
+>>
+>> On Wed, Mar 25, 2020 at 03:18:39PM -0500, Suman Anna wrote:
+>>> The resets for the DSP processors on K3 SoCs are managed through the
+>>> Power and Sleep Controller (PSC) module. Each DSP typically has two
+>>> resets - a global module reset for powering on the device, and a local
+>>> reset that affects only the CPU while allowing access to the other
+>>> sub-modules within the DSP processor sub-systems.
+>>>
+>>> The C66x DSPs have two levels of internal RAMs that can be used to
+>>> boot from, and the firmware loading into these RAMs require the
+>>> local reset to be asserted with the device powered on/enabled using
+>>> the module reset. Enhance the K3 DSP remoteproc driver to add support
+>>> for loading into the internal RAMs. The local reset is deasserted on
+>>> SoC power-on-reset, so logic has to be added in probe in remoteproc
+>>> mode to balance the remoteproc state-machine.
+>>>
+>>> Note that the local resets are a no-op on C71x cores, and the hardware
+>>> does not supporting loading into its internal RAMs.
+>>>
+>>> Signed-off-by: Suman Anna <s-anna@ti.com>
+>>> ---
+>>>   drivers/remoteproc/ti_k3_dsp_remoteproc.c | 82 +++++++++++++++++++++++
+>>>   1 file changed, 82 insertions(+)
+>>>
+>>> diff --git a/drivers/remoteproc/ti_k3_dsp_remoteproc.c b/drivers/remoteproc/ti_k3_dsp_remoteproc.c
+>>> index fd0d84f46f90..7b712ef74611 100644
+>>> --- a/drivers/remoteproc/ti_k3_dsp_remoteproc.c
+>>> +++ b/drivers/remoteproc/ti_k3_dsp_remoteproc.c
+>>> @@ -175,6 +175,9 @@ static int k3_dsp_rproc_reset(struct k3_dsp_rproc *kproc)
+>>>                return ret;
+>>>        }
+>>>
+>>> +     if (kproc->data->uses_lreset)
+>>> +             return ret;
+>>> +
+>>>        ret = kproc->ti_sci->ops.dev_ops.put_device(kproc->ti_sci,
+>>>                                                    kproc->ti_sci_id);
+>>>        if (ret) {
+>>> @@ -192,6 +195,9 @@ static int k3_dsp_rproc_release(struct k3_dsp_rproc *kproc)
+>>>        struct device *dev = kproc->dev;
+>>>        int ret;
+>>>
+>>> +     if (kproc->data->uses_lreset)
+>>> +             goto lreset;
+>>> +
+>>>        ret = kproc->ti_sci->ops.dev_ops.get_device(kproc->ti_sci,
+>>>                                                   kproc->ti_sci_id);
+>>>        if (ret) {
+>>> @@ -199,6 +205,7 @@ static int k3_dsp_rproc_release(struct k3_dsp_rproc *kproc)
+>>>                return ret;
+>>>        }
+>>>
+>>> +lreset:
+>>>        ret = reset_control_deassert(kproc->reset);
+>>>        if (ret) {
+>>>                dev_err(dev, "local-reset deassert failed, ret = %d\n", ret);
+>>> @@ -210,6 +217,63 @@ static int k3_dsp_rproc_release(struct k3_dsp_rproc *kproc)
+>>>        return ret;
+>>>   }
+>>>
+>>> +/*
+>>> + * The C66x DSP cores have a local reset that affects only the CPU, and a
+>>> + * generic module reset that powers on the device and allows the DSP internal
+>>> + * memories to be accessed while the local reset is asserted. This function is
+>>> + * used to release the global reset on C66x DSPs to allow loading into the DSP
+>>> + * internal RAMs. The .prepare() ops is invoked by remoteproc core before any
+>>> + * firmware loading, and is followed by the .start() ops after loading to
+>>> + * actually let the C66x DSP cores run. The local reset on C71x cores is a
+>>> + * no-op and the global reset cannot be released on C71x cores until after
+>>> + * the firmware images are loaded, so this function does nothing for C71x cores.
+>>> + */
+>>> +static int k3_dsp_rproc_prepare(struct rproc *rproc)
+>>> +{
+>>> +     struct k3_dsp_rproc *kproc = rproc->priv;
+>>> +     struct device *dev = kproc->dev;
+>>> +     int ret;
+>>> +
+>>> +     /* local reset is no-op on C71x processors */
+>>> +     if (!kproc->data->uses_lreset)
+>>> +             return 0;
+>>
+>> In k3_dsp_rproc_release() the condition is "if (kproc->data->uses_lreset)" and
+>> here it is the opposite, which did a good job at getting me confused.
 
-Thanks,
-Mathieu
+Do you prefer I add a comment there? It needs to bail out there since 
+the get_device portion would be executed here.
 
-> +		strncpy(chinfo.name, channel->name, sizeof(chinfo.name));
-> +		chinfo.src = RPMSG_ADDR_ANY;
-> +		chinfo.dst = RPMSG_ADDR_ANY;
-> +
-> +		rpmsg_unregister_device(glink->dev, &chinfo);
-> +	}
->  	channel->rpdev = NULL;
->  
->  	qcom_glink_send_close_req(glink, channel);
-> @@ -1477,6 +1485,7 @@ static void qcom_glink_rx_close(struct qcom_glink *glink, unsigned int rcid)
->  
->  		rpmsg_unregister_device(glink->dev, &chinfo);
->  	}
-> +	channel->rpdev = NULL;
->  
->  	qcom_glink_send_close_ack(glink, channel->rcid);
->  
-> -- 
-> 2.7.4
+>>
+>> Taking a step back, I assume c71 DSPs will have their own k3_dsp_dev_data where
+>> the users_lreset flag will be false.  
+
+Yes.
+
+In that case I think it would make the
+>> code easier to understand if the k3_dsp_rproc_ops was declared without the
+>> .prepare and .unprepare.  In probe(), if data->uses_lreset is true then
+>> k3_dsp_rproc_prepare() and k3_dsp_rproc_unprepare() are set.
+
+Yeah, ok, that will avoid the confusion and limit the 
+prepare()/unprepare() only for C66 DSPs.
+
+>>
+> 
+> I forgot... Since this is a C71 related change, was there a reason to
+> lump it with the C66 set?  If not I would simply move that to the C71
+> work.
+
+OK, I can remove this logic here, and add the prepare()/unprepare() 
+conditionally for C66x in the C71 patch.
+
+> 
+>> I am done reviewing this set.
+
+Thanks for all the review comments.
+
+regards
+Suman
+
+>>
+>> Thanks,
+>> Mathieu
+>>
+>>> +
+>>> +     ret = kproc->ti_sci->ops.dev_ops.get_device(kproc->ti_sci,
+>>> +                                                 kproc->ti_sci_id);
+>>> +     if (ret)
+>>> +             dev_err(dev, "module-reset deassert failed, cannot enable internal RAM loading, ret = %d\n",
+>>> +                     ret);
+>>> +
+>>> +     return ret;
+>>> +}
+>>> +
+>>> +/*
+>>> + * This function implements the .unprepare() ops and performs the complimentary
+>>> + * operations to that of the .prepare() ops. The function is used to assert the
+>>> + * global reset on applicable C66x cores. This completes the second portion of
+>>> + * powering down the C66x DSP cores. The cores themselves are only halted in the
+>>> + * .stop() callback through the local reset, and the .unprepare() ops is invoked
+>>> + * by the remoteproc core after the remoteproc is stopped to balance the global
+>>> + * reset.
+>>> + */
+>>> +static int k3_dsp_rproc_unprepare(struct rproc *rproc)
+>>> +{
+>>> +     struct k3_dsp_rproc *kproc = rproc->priv;
+>>> +     struct device *dev = kproc->dev;
+>>> +     int ret;
+>>> +
+>>> +     /* local reset is no-op on C71x processors */
+>>> +     if (!kproc->data->uses_lreset)
+>>> +             return 0;
+>>> +
+>>> +     ret = kproc->ti_sci->ops.dev_ops.put_device(kproc->ti_sci,
+>>> +                                                 kproc->ti_sci_id);
+>>> +     if (ret)
+>>> +             dev_err(dev, "module-reset assert failed, ret = %d\n", ret);
+>>> +
+>>> +     return ret;
+>>> +}
+>>> +
+>>>   /*
+>>>    * Power up the DSP remote processor.
+>>>    *
+>>> @@ -353,6 +417,8 @@ static void *k3_dsp_rproc_da_to_va(struct rproc *rproc, u64 da, size_t len)
+>>>   }
+>>>
+>>>   static const struct rproc_ops k3_dsp_rproc_ops = {
+>>> +     .prepare        = k3_dsp_rproc_prepare,
+>>> +     .unprepare      = k3_dsp_rproc_unprepare,
+>>>        .start          = k3_dsp_rproc_start,
+>>>        .stop           = k3_dsp_rproc_stop,
+>>>        .kick           = k3_dsp_rproc_kick,
+>>> @@ -644,6 +710,22 @@ static int k3_dsp_rproc_probe(struct platform_device *pdev)
+>>>                goto disable_clk;
+>>>        }
+>>>
+>>> +     /*
+>>> +      * ensure the DSP local reset is asserted to ensure the DSP doesn't
+>>> +      * execute bogus code in .prepare() when the module reset is released.
+>>> +      */
+>>> +     if (data->uses_lreset) {
+>>> +             ret = reset_control_status(kproc->reset);
+>>> +             if (ret < 0) {
+>>> +                     dev_err(dev, "failed to get reset status, status = %d\n",
+>>> +                             ret);
+>>> +                     goto release_mem;
+>>> +             } else if (ret == 0) {
+>>> +                     dev_warn(dev, "local reset is deasserted for device\n");
+>>> +                     k3_dsp_rproc_reset(kproc);
+>>> +             }
+>>> +     }
+>>> +
+>>>        ret = rproc_add(rproc);
+>>>        if (ret) {
+>>>                dev_err(dev, "failed to add register device with remoteproc core, status = %d\n",
+>>> --
+>>> 2.23.0
+>>>
+
