@@ -2,138 +2,122 @@ Return-Path: <SRS0=9JvK=64=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0774C433E0
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 14 May 2020 05:17:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 384C7C433E1
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 14 May 2020 13:45:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9686F206DC
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 14 May 2020 05:17:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MkuhUNV2"
+	by mail.kernel.org (Postfix) with ESMTP id 170D82054F
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 14 May 2020 13:45:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1589463929;
+	bh=BiyP19s8ArH79tbowm7Md7c5VYSdaAeLlwmIsR16syE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=ids6TMClzos8KFwoQf0fVflYo13KowBqWRjYfpbXV1RoVPU1SsDQ7DktgbGj4Oo8V
+	 w3a0oMOhbeh7gcf5q74VcGqJ9hwSrKN+VS9muwg0mrcRRkRnlG/1s0qlNENAChBc57
+	 ltYDaWDlLD5/fdzdzEHmR9sWLkJKLU6K0Ygy4M28=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725838AbgENFRa (ORCPT
+        id S1726225AbgENNp0 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 14 May 2020 01:17:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33836 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725788AbgENFR3 (ORCPT
+        Thu, 14 May 2020 09:45:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43744 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726128AbgENNp0 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 14 May 2020 01:17:29 -0400
-Received: from mail-pj1-x1044.google.com (mail-pj1-x1044.google.com [IPv6:2607:f8b0:4864:20::1044])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B597C061A0E
-        for <linux-remoteproc@vger.kernel.org>; Wed, 13 May 2020 22:17:28 -0700 (PDT)
-Received: by mail-pj1-x1044.google.com with SMTP id a5so12056368pjh.2
-        for <linux-remoteproc@vger.kernel.org>; Wed, 13 May 2020 22:17:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=GjJPgwHAWLCdp+4b5y9We0V/4Ec6i8aFUo1gPxwMZ7w=;
-        b=MkuhUNV21I7fxjv4MrVDEcmFSHwUJ9lvNGa8cXCPIn1dx62l2uSsNsmmCeUQUAS43c
-         nSBL/PzySbiBqaxWXoaUqcFN4ADbjC3t4Xb9Lvu49f4EjFmeUeGrJ3izVna5vv3tvv3q
-         CulRTby5nRpPCy1ASOPVRug05M2Ky27e6fZQ+faMWY3rzOeXkdzbjf/QghV0sgzv9sfU
-         7TRQ58vGck02M+Wrm/1GoCQ0sdlvDSoFrEOmQo+bQB6vZ1gPEqYB4BwIA7+BHFNlhp/p
-         d6BqcGuXO/C2zmjGPLXrbWachYsg3NZ1dIU9EauzT7U0aS9REMPNzBRSGJZ10hk/BUJG
-         lOvg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=GjJPgwHAWLCdp+4b5y9We0V/4Ec6i8aFUo1gPxwMZ7w=;
-        b=rESEwO+SiJYEDIrBsCX3qXMdyFxx7GpWPClRBANYNQqx+k1YwfiNuD+0gtbG7lcM4r
-         rbpmvmRWPCPBStlT+XGFKsbsN67dS5TEDCn8KRAX2WnJ9EnPaYW+e82ZLYJ6PI3uEeYE
-         Z3R+/Zdo9SU6dGohL8GaWWACd0cJE0hgL3HaKAx80OaGKXm7xVzys3tj85ANhhkuvan7
-         5Behx83wRTxP5rz6/xSU6HqQrEtdRlvRKoGzY8KT1a9vTwsxIGSwjD5z3+AGEHF+p4zO
-         hinwkUyaXWnbTWX0/6kNHvXZYwG/JMsOai+A+oLEsI2Gdc1Fy8hBsfipwiKFBZVhWhPt
-         fwWg==
-X-Gm-Message-State: AOAM532FIXPDUfosMUy4KxUsxQcJ3BboxoMpcf6pw5nzIrqXOVbpPZ+w
-        V08/od82bzboXE9c1L44wj2Sew==
-X-Google-Smtp-Source: ABdhPJwPKu284FGW2y3JeQslHbE7FXQ0tLPsAtF5Z1Sd1/eTKJSL1+BfVYzPKbw4EN2fAafX5g9fYw==
-X-Received: by 2002:a17:902:c406:: with SMTP id k6mr2369370plk.203.1589433447383;
-        Wed, 13 May 2020 22:17:27 -0700 (PDT)
-Received: from builder.lan (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id a7sm1126526pfg.157.2020.05.13.22.17.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 May 2020 22:17:26 -0700 (PDT)
-Date:   Wed, 13 May 2020 22:15:56 -0700
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc:     ohad@wizery.com, mcoquelin.stm32@gmail.com,
-        alexandre.torgue@st.com, loic.pallardy@st.com,
-        arnaud.pouliquen@st.com, linux-remoteproc@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 11/12] remoteproc: stm32: Introduce new loaded rsc ops
- for synchronisation
-Message-ID: <20200514051556.GB396285@builder.lan>
-References: <20200424202505.29562-1-mathieu.poirier@linaro.org>
- <20200424202505.29562-12-mathieu.poirier@linaro.org>
+        Thu, 14 May 2020 09:45:26 -0400
+Received: from localhost (unknown [122.182.193.86])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0FC942054F;
+        Thu, 14 May 2020 13:45:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1589463925;
+        bh=BiyP19s8ArH79tbowm7Md7c5VYSdaAeLlwmIsR16syE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=KajdqBrH81XEVNYOh/a8PIo3/kb/e2owHgWHMPDdeB4GQ3X5E3E1phiTooLAkNa80
+         TLdxD64/QO/QMzEPLRauoyehamXgtHgTNmsGaEpOFgGQVGv0sMszopoXoDEdwZqieo
+         XnwCk/RnWwSTKrnoIiYrRrtX9NiRLcFfwXXkmUdM=
+Date:   Thu, 14 May 2020 19:15:21 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Ohad Ben-Cohen <ohad@wizery.com>, Rob Herring <robh+dt@kernel.org>,
+        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Sibi Sankar <sibis@codeaurora.org>
+Subject: Re: [PATCH v2 1/2] dt-bindings: remoteproc: qcom: pas: Add SM8250
+ remoteprocs
+Message-ID: <20200514134521.GU14092@vkoul-mobl>
+References: <20200430180051.3795305-1-bjorn.andersson@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200424202505.29562-12-mathieu.poirier@linaro.org>
+In-Reply-To: <20200430180051.3795305-1-bjorn.andersson@linaro.org>
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Fri 24 Apr 13:25 PDT 2020, Mathieu Poirier wrote:
+On 30-04-20, 11:00, Bjorn Andersson wrote:
+> Add the SM8250 audio, compute and sensor remoteprocs to the PAS DT
+> binding.
 
-> Introduce new elf find loaded resource table rproc_ops functions to be
-> used when synchonising with an MCU.
+
+Reviewed-by: Vinod Koul <vkoul@kernel.org>
+
 > 
-> Mainly based on the work published by Arnaud Pouliquen [1].
-> 
-> [1]. https://patchwork.kernel.org/project/linux-remoteproc/list/?series=239877
-> 
-> Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-> Reviewed-by: Loic Pallardy <loic.pallardy@st.com>
-
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-
-
-But I would have preferred if we during probe (when we discover rsc_va)
-could just set it on the rproc.
-
-Regards,
-Bjorn
-
+> Reviewed-by: Sibi Sankar <sibis@codeaurora.org>
+> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 > ---
->  drivers/remoteproc/stm32_rproc.c | 10 ++++++++++
->  1 file changed, 10 insertions(+)
 > 
-> diff --git a/drivers/remoteproc/stm32_rproc.c b/drivers/remoteproc/stm32_rproc.c
-> index b8ae8aed5585..dcae6103e3df 100644
-> --- a/drivers/remoteproc/stm32_rproc.c
-> +++ b/drivers/remoteproc/stm32_rproc.c
-> @@ -319,6 +319,15 @@ static int stm32_rproc_sync_parse_fw(struct rproc *rproc,
->  	return stm32_rproc_sync_elf_load_rsc_table(rproc, fw);
->  }
+> Changes since v1:
+> - Changed adsp power-domains to lcx and added missing lmx
+> 
+>  .../devicetree/bindings/remoteproc/qcom,adsp.txt         | 9 +++++++++
+>  1 file changed, 9 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,adsp.txt b/Documentation/devicetree/bindings/remoteproc/qcom,adsp.txt
+> index 9938918b2fea..c18c1b8d2869 100644
+> --- a/Documentation/devicetree/bindings/remoteproc/qcom,adsp.txt
+> +++ b/Documentation/devicetree/bindings/remoteproc/qcom,adsp.txt
+> @@ -21,6 +21,9 @@ on the Qualcomm ADSP Hexagon core.
+>  		    "qcom,sm8150-cdsp-pas"
+>  		    "qcom,sm8150-mpss-pas"
+>  		    "qcom,sm8150-slpi-pas"
+> +		    "qcom,sm8250-adsp-pas"
+> +		    "qcom,sm8250-cdsp-pas"
+> +		    "qcom,sm8250-slpi-pas"
 >  
-> +static struct resource_table *
-> +stm32_rproc_sync_elf_find_loaded_rsc_table(struct rproc *rproc,
-> +					   const struct firmware *fw)
-> +{
-> +	struct stm32_rproc *ddata = rproc->priv;
-> +
-> +	return (struct resource_table *)ddata->rsc_va;
-> +}
-> +
->  static irqreturn_t stm32_rproc_wdg(int irq, void *data)
->  {
->  	struct platform_device *pdev = data;
-> @@ -593,6 +602,7 @@ static __maybe_unused struct rproc_ops st_rproc_sync_ops = {
->  	.start		= stm32_rproc_sync_start,
->  	.stop		= stm32_rproc_stop,
->  	.parse_fw       = stm32_rproc_sync_parse_fw,
-> +	.find_loaded_rsc_table = stm32_rproc_sync_elf_find_loaded_rsc_table,
->  };
+>  - interrupts-extended:
+>  	Usage: required
+> @@ -44,6 +47,9 @@ on the Qualcomm ADSP Hexagon core.
+>  	qcom,sm8150-adsp-pas:
+>  	qcom,sm8150-cdsp-pas:
+>  	qcom,sm8150-slpi-pas:
+> +	qcom,sm8250-adsp-pas:
+> +	qcom,sm8250-cdsp-pas:
+> +	qcom,sm8250-slpi-pas:
+>  		    must be "wdog", "fatal", "ready", "handover", "stop-ack"
+>  	qcom,qcs404-wcss-pas:
+>  	qcom,sm8150-mpss-pas:
+> @@ -105,10 +111,13 @@ on the Qualcomm ADSP Hexagon core.
+>  	qcom,sdm845-cdsp-pas:
+>  	qcom,sm8150-adsp-pas:
+>  	qcom,sm8150-cdsp-pas:
+> +	qcom,sm8250-cdsp-pas:
+>  		    must be "cx", "load_state"
+>  	qcom,sm8150-mpss-pas:
+>  		    must be "cx", "load_state", "mss"
+> +	qcom,sm8250-adsp-pas:
+>  	qcom,sm8150-slpi-pas:
+> +	qcom,sm8250-slpi-pas:
+>  		    must be "lcx", "lmx", "load_state"
 >  
->  static const struct of_device_id stm32_rproc_match[] = {
+>  - memory-region:
 > -- 
-> 2.20.1
-> 
+> 2.24.0
+
+-- 
+~Vinod
