@@ -2,77 +2,93 @@ Return-Path: <SRS0=9JvK=64=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04313C433DF
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 14 May 2020 20:00:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 909BDC433DF
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 14 May 2020 20:08:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D2CC72065C
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 14 May 2020 20:00:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1589486403;
-	bh=S7WRz1CRNasPofXn/arL6alowhRnPMtESCTifv2vrtE=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:List-ID:From;
-	b=EqQMITGPBYzaOcMUQzF5T7eKMi/erfH0qf3LNIKJHpp9ss3Sxq9qmlz4j2AJadwYZ
-	 kXdJe+BNK6uY0XnbfuF6YUa4ruKLyzZnjpB8PHS++EB5erUIyxDgOVPSTyux7LgSjA
-	 ZoTSZaKVSxOrCN6VzZNA5GD++eQiQRztgta67xbI=
+	by mail.kernel.org (Postfix) with ESMTP id 6F5192065F
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 14 May 2020 20:08:25 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="ClPJZeER"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727930AbgENUAD (ORCPT
+        id S1728368AbgENUIZ (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 14 May 2020 16:00:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49970 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727918AbgENUAD (ORCPT
+        Thu, 14 May 2020 16:08:25 -0400
+Received: from mail27.static.mailgun.info ([104.130.122.27]:57804 "EHLO
+        mail27.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727832AbgENUIY (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 14 May 2020 16:00:03 -0400
-Content-Type: text/plain; charset="utf-8"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1589486403;
-        bh=S7WRz1CRNasPofXn/arL6alowhRnPMtESCTifv2vrtE=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=RKTy1MaaK5V6dF25DYL/eRRSNzmNi8nr+hs+RXyj6zVFDVEW+V05OV/rPaw66Ev2a
-         YmyPZK0tAgHU+RE8sYERxrpXbcfzeF/YELxfLrSQ+uHte+po3M7ZIpHu/p4he01V3u
-         iBou9q5NZuPQ+uQgQLXIeR+S9enIoSwAOOGkJqtU=
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] remoteproc: wcss: Fix arguments passed to qcom_add_glink_subdev()
-From:   patchwork-bot+linux-remoteproc@kernel.org
-Message-Id: <158948640306.5067.8723740663978599608.git-patchwork-notify@kernel.org>
-Date:   Thu, 14 May 2020 20:00:03 +0000
-References: <20200514185856.1598945-1-bjorn.andersson@linaro.org>
-In-Reply-To: <20200514185856.1598945-1-bjorn.andersson@linaro.org>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     linux-remoteproc@vger.kernel.org
+        Thu, 14 May 2020 16:08:24 -0400
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1589486904; h=Message-Id: Date: Subject: Cc: To: From:
+ Sender; bh=4YJ2XzG2JIi+LCwLrdlVxFzG02vS8JkhTTg9UN+mYy4=; b=ClPJZeERQVc4KP0tfj37bhukVwSr/53LYxeNfJp3ro4xMH1yYiGVBstHYUUImLzkKcN23gc5
+ E9hn3o/4iiGk8IaL5538577/hVNHAn+LkVL0h8r2xQCLJX2YNLCKnV0GGgOTg/w6yvDoBkJF
+ 7E9zQbTNQLJFgvsAJ9a+hJpJHFM=
+X-Mailgun-Sending-Ip: 104.130.122.27
+X-Mailgun-Sid: WyI4ZWZiZiIsICJsaW51eC1yZW1vdGVwcm9jQHZnZXIua2VybmVsLm9yZyIsICJiZTllNGEiXQ==
+Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
+ by mxa.mailgun.org with ESMTP id 5ebda537.7f793e833a08-smtp-out-n03;
+ Thu, 14 May 2020 20:08:23 -0000 (UTC)
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id B4F95C072B7; Thu, 14 May 2020 20:08:22 +0000 (UTC)
+Received: from rishabhb-linux.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: rishabhb)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 8AD8EC38561;
+        Thu, 14 May 2020 20:08:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8AD8EC38561
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=rishabhb@codeaurora.org
+From:   Rishabh Bhatnagar <rishabhb@codeaurora.org>
+To:     linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     bjorn.andersson@linaro.org, mathieu.poirier@linaro.org,
+        tsoni@codeaurora.org, psodagud@codeaurora.org,
+        sidgup@codeaurora.org, Rishabh Bhatnagar <rishabhb@codeaurora.org>
+Subject: [PATCH v3 0/3] Extend coredump functionality
+Date:   Thu, 14 May 2020 13:07:33 -0700
+Message-Id: <1589486856-23440-1-git-send-email-rishabhb@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hello:
+This patch series moves the coredump functionality to a separate
+file and adds "inline" coredump feature. Inline coredump directly
+copies segments from device memory during coredump to userspace.
+This avoids extra memory usage at the cost of speed. Recovery is
+stalled untill all data is read by userspace.
 
-This patch was applied to andersson/remoteproc.git (refs/heads/for-next).
+Changelog:
 
-On Thu, 14 May 2020 11:58:56 -0700 you wrote:
-> Recently qcom_add_glink_subdev() was extended to also take the glink_ssr
-> identifier as an argument and I missed this while applying '8a226e2c71bb
-> ("remoteproc: wcss: add support for rpmsg communication")'.
-> 
-> Fixes: 8a226e2c71bb ("remoteproc: wcss: add support for rpmsg communication")
-> Reported-by: kbuild test robot <lkp@intel.com>
-> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> 
-> [...]
+v3 -> v2:
+- Move entire coredump functionality to remoteproc_coredump.c
+- Modify rproc_coredump to perform dump according to conf. set by userspace
+- Move the userspace configuration to debugfs from sysfs.
+- Keep the default coredump implementation as is
 
+v2 -> v1:
+- Introduce new file for coredump.
+- Add userspace sysfs configuration for dump type.
 
-Here is a summary with links:
-  - remoteproc: wcss: Fix arguments passed to qcom_add_glink_subdev()
-    https://git.kernel.org/andersson/remoteproc/c/25f9f5a2107fdc6510463be4e55012d17d83ab2b
+Rishabh Bhatnagar (3):
+  remoteproc: Move coredump functionality to a new file
+  remoteproc: Add inline coredump functionality
+  remoteproc: Add coredump debugfs entry
 
-You are awesome, thank you!
+ drivers/remoteproc/Makefile              |   1 +
+ drivers/remoteproc/remoteproc_core.c     | 191 ------------------
+ drivers/remoteproc/remoteproc_coredump.c | 322 +++++++++++++++++++++++++++++++
+ drivers/remoteproc/remoteproc_debugfs.c  |  86 +++++++++
+ drivers/remoteproc/remoteproc_internal.h |   4 +
+ include/linux/remoteproc.h               |  15 ++
+ 6 files changed, 428 insertions(+), 191 deletions(-)
+ create mode 100644 drivers/remoteproc/remoteproc_coredump.c
 
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/pwbot
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
