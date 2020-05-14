@@ -1,282 +1,373 @@
-Return-Path: <SRS0=SCme=63=vger.kernel.org=linux-remoteproc-owner@kernel.org>
+Return-Path: <SRS0=9JvK=64=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FE2FC433E0
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 13 May 2020 22:32:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C92EC433E0
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 14 May 2020 01:33:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 22BB72054F
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 13 May 2020 22:32:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 34CBF205CB
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 14 May 2020 01:33:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="kQe1A1lP"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="H0p70ta2"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731144AbgEMWcD (ORCPT
+        id S1727033AbgENBd5 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 13 May 2020 18:32:03 -0400
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:56562 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730745AbgEMWcC (ORCPT
+        Wed, 13 May 2020 21:33:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55742 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725925AbgENBd4 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 13 May 2020 18:32:02 -0400
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 04DMVpi5022860;
-        Wed, 13 May 2020 17:31:51 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1589409111;
-        bh=wpC4NeO+HpUXSvG9zpusitUlas7P/Sa0nfDeG97/ReQ=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=kQe1A1lPTW7cz3S9FMQ4egy1jfAwoMPDZTDOYGLRrUrEA9YZTvdeqq52s42T67X3F
-         1v63wdd6nVBNdx937FZD45+wRoeyPzpFWXBLFCImcrbe8UqM6b3kZMYAhr7ggpj0yu
-         rnSgztxaYK7n/MWhk04LzVZ3+WCybYTF34w4/vZM=
-Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 04DMVpbk113101
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 13 May 2020 17:31:51 -0500
-Received: from DFLE115.ent.ti.com (10.64.6.36) by DFLE103.ent.ti.com
- (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3; Wed, 13
- May 2020 17:31:51 -0500
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE115.ent.ti.com
- (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3 via
- Frontend Transport; Wed, 13 May 2020 17:31:51 -0500
-Received: from [10.250.48.148] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 04DMVpjG127310;
-        Wed, 13 May 2020 17:31:51 -0500
-Subject: Re: [PATCH 3/3] remoteproc/k3-dsp: Add support for L2RAM loading on
- C66x DSPs
+        Wed, 13 May 2020 21:33:56 -0400
+Received: from mail-pl1-x644.google.com (mail-pl1-x644.google.com [IPv6:2607:f8b0:4864:20::644])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 940AEC061A0E
+        for <linux-remoteproc@vger.kernel.org>; Wed, 13 May 2020 18:33:56 -0700 (PDT)
+Received: by mail-pl1-x644.google.com with SMTP id u22so527756plq.12
+        for <linux-remoteproc@vger.kernel.org>; Wed, 13 May 2020 18:33:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=uPBv13YNIpnE01+FufDIxIvgCXATu26iJwo4yyFvn0Q=;
+        b=H0p70ta2nD/CM2VktcBAYj5W/87vh9d/jR7kSWR0Ns+CnQObtj6mvujb5YOmLzks+A
+         S/hLpWlf3NTnFD/DsKfCXW4hwT7HqOmESANJbkIKtqEPLKBBvG+/G+r/EiLm/ooSI9mG
+         Rcba8yR1zyQYKog1d1mW2pv0504zhUvB+W4CQuQ+CV4AZlVUwwfF1vUBJROvF13cPB/v
+         EYSkrsGTpnmxBC/9aDlShtha70OZiy0FU6ySYjD+xs/ePHk1eG/iqem6FLzQGEUQT+nf
+         jD7av9in8Xeo7kcWJUTZneUNS4KaI9IUkV+/uQawBb1FuO8x96pkSSypsVASX6girqId
+         moNg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=uPBv13YNIpnE01+FufDIxIvgCXATu26iJwo4yyFvn0Q=;
+        b=k8QwqDtBmffzB4I7YQG3GRUqUwT6tGUpxDOswZfafH0VPv0ehCWCFPY/HTEoy7kTF+
+         MIzsJ1kAKrcDIilsBIfLd6/e3Dm1iKpqNRRnY8ibRcl5UJWjSb+9RloY4lizYdH7rlD8
+         86yEJ4YxJM5/OTaGFSzTWnvYacVN4IwQLAhof6KOn4seNOP0N9eVqVf9OGsC7lcV2mYl
+         Pn0+MqQvc3aSAvhlchyi2+rNP7091Hp3LKFHsPd8/de246raje5siCAH94sj3aSHDH16
+         OhZYp1/lQatNTPsjfOGOYJiwFiymoXEvVzD5xDbdDOuLaClz8MzT1dkBBhb2zWsUUpVe
+         27Xg==
+X-Gm-Message-State: AGi0PuYqt7mv0wQvIGq29KrQ6kEkMVI5xlT6Q6HtRc1dahqxWZbRP9yi
+        IkIIvRZ7WGC0HFcMC3hgWg46GA==
+X-Google-Smtp-Source: APiQypKItvF68HLkOi+03zbaMK25OwHB3hndmE3AWEMAT0aJnkyQd/Qif7ujyHQkH172I/bkZVmdHg==
+X-Received: by 2002:a17:90a:fd8c:: with SMTP id cx12mr36950089pjb.211.1589420035718;
+        Wed, 13 May 2020 18:33:55 -0700 (PDT)
+Received: from builder.lan (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id c124sm677638pfb.187.2020.05.13.18.33.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 13 May 2020 18:33:54 -0700 (PDT)
+Date:   Wed, 13 May 2020 18:32:24 -0700
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
 To:     Mathieu Poirier <mathieu.poirier@linaro.org>
-CC:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Lokesh Vutla <lokeshvutla@ti.com>,
-        linux-remoteproc <linux-remoteproc@vger.kernel.org>,
-        <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20200325201839.15896-1-s-anna@ti.com>
- <20200325201839.15896-4-s-anna@ti.com> <20200428195855.GC10552@xps15>
- <CANLsYkwgCJrDu-Y5iyG0maCVqFqDXW_0vD4Sv2e+-dwryTNaRA@mail.gmail.com>
-From:   Suman Anna <s-anna@ti.com>
-Message-ID: <23097792-5166-09f1-9343-0b5626a9cb03@ti.com>
-Date:   Wed, 13 May 2020 17:31:50 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+Cc:     ohad@wizery.com, loic.pallardy@st.com, arnaud.pouliquen@st.com,
+        s-anna@ti.com, linux-remoteproc@vger.kernel.org, corbet@lwn.net,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 03/14] remoteproc: Add new operation and flags for
+ synchronistation
+Message-ID: <20200514013224.GE16107@builder.lan>
+References: <20200424200135.28825-1-mathieu.poirier@linaro.org>
+ <20200424200135.28825-4-mathieu.poirier@linaro.org>
+ <20200506002253.GC2329931@builder.lan>
+ <20200508210123.GA5650@xps15>
 MIME-Version: 1.0
-In-Reply-To: <CANLsYkwgCJrDu-Y5iyG0maCVqFqDXW_0vD4Sv2e+-dwryTNaRA@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200508210123.GA5650@xps15>
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi Mathieu,
+On Fri 08 May 14:01 PDT 2020, Mathieu Poirier wrote:
 
-On 4/28/20 3:09 PM, Mathieu Poirier wrote:
-> On Tue, 28 Apr 2020 at 13:58, Mathieu Poirier
-> <mathieu.poirier@linaro.org> wrote:
->>
->> On Wed, Mar 25, 2020 at 03:18:39PM -0500, Suman Anna wrote:
->>> The resets for the DSP processors on K3 SoCs are managed through the
->>> Power and Sleep Controller (PSC) module. Each DSP typically has two
->>> resets - a global module reset for powering on the device, and a local
->>> reset that affects only the CPU while allowing access to the other
->>> sub-modules within the DSP processor sub-systems.
->>>
->>> The C66x DSPs have two levels of internal RAMs that can be used to
->>> boot from, and the firmware loading into these RAMs require the
->>> local reset to be asserted with the device powered on/enabled using
->>> the module reset. Enhance the K3 DSP remoteproc driver to add support
->>> for loading into the internal RAMs. The local reset is deasserted on
->>> SoC power-on-reset, so logic has to be added in probe in remoteproc
->>> mode to balance the remoteproc state-machine.
->>>
->>> Note that the local resets are a no-op on C71x cores, and the hardware
->>> does not supporting loading into its internal RAMs.
->>>
->>> Signed-off-by: Suman Anna <s-anna@ti.com>
->>> ---
->>>   drivers/remoteproc/ti_k3_dsp_remoteproc.c | 82 +++++++++++++++++++++++
->>>   1 file changed, 82 insertions(+)
->>>
->>> diff --git a/drivers/remoteproc/ti_k3_dsp_remoteproc.c b/drivers/remoteproc/ti_k3_dsp_remoteproc.c
->>> index fd0d84f46f90..7b712ef74611 100644
->>> --- a/drivers/remoteproc/ti_k3_dsp_remoteproc.c
->>> +++ b/drivers/remoteproc/ti_k3_dsp_remoteproc.c
->>> @@ -175,6 +175,9 @@ static int k3_dsp_rproc_reset(struct k3_dsp_rproc *kproc)
->>>                return ret;
->>>        }
->>>
->>> +     if (kproc->data->uses_lreset)
->>> +             return ret;
->>> +
->>>        ret = kproc->ti_sci->ops.dev_ops.put_device(kproc->ti_sci,
->>>                                                    kproc->ti_sci_id);
->>>        if (ret) {
->>> @@ -192,6 +195,9 @@ static int k3_dsp_rproc_release(struct k3_dsp_rproc *kproc)
->>>        struct device *dev = kproc->dev;
->>>        int ret;
->>>
->>> +     if (kproc->data->uses_lreset)
->>> +             goto lreset;
->>> +
->>>        ret = kproc->ti_sci->ops.dev_ops.get_device(kproc->ti_sci,
->>>                                                   kproc->ti_sci_id);
->>>        if (ret) {
->>> @@ -199,6 +205,7 @@ static int k3_dsp_rproc_release(struct k3_dsp_rproc *kproc)
->>>                return ret;
->>>        }
->>>
->>> +lreset:
->>>        ret = reset_control_deassert(kproc->reset);
->>>        if (ret) {
->>>                dev_err(dev, "local-reset deassert failed, ret = %d\n", ret);
->>> @@ -210,6 +217,63 @@ static int k3_dsp_rproc_release(struct k3_dsp_rproc *kproc)
->>>        return ret;
->>>   }
->>>
->>> +/*
->>> + * The C66x DSP cores have a local reset that affects only the CPU, and a
->>> + * generic module reset that powers on the device and allows the DSP internal
->>> + * memories to be accessed while the local reset is asserted. This function is
->>> + * used to release the global reset on C66x DSPs to allow loading into the DSP
->>> + * internal RAMs. The .prepare() ops is invoked by remoteproc core before any
->>> + * firmware loading, and is followed by the .start() ops after loading to
->>> + * actually let the C66x DSP cores run. The local reset on C71x cores is a
->>> + * no-op and the global reset cannot be released on C71x cores until after
->>> + * the firmware images are loaded, so this function does nothing for C71x cores.
->>> + */
->>> +static int k3_dsp_rproc_prepare(struct rproc *rproc)
->>> +{
->>> +     struct k3_dsp_rproc *kproc = rproc->priv;
->>> +     struct device *dev = kproc->dev;
->>> +     int ret;
->>> +
->>> +     /* local reset is no-op on C71x processors */
->>> +     if (!kproc->data->uses_lreset)
->>> +             return 0;
->>
->> In k3_dsp_rproc_release() the condition is "if (kproc->data->uses_lreset)" and
->> here it is the opposite, which did a good job at getting me confused.
-
-Do you prefer I add a comment there? It needs to bail out there since 
-the get_device portion would be executed here.
-
->>
->> Taking a step back, I assume c71 DSPs will have their own k3_dsp_dev_data where
->> the users_lreset flag will be false.  
-
-Yes.
-
-In that case I think it would make the
->> code easier to understand if the k3_dsp_rproc_ops was declared without the
->> .prepare and .unprepare.  In probe(), if data->uses_lreset is true then
->> k3_dsp_rproc_prepare() and k3_dsp_rproc_unprepare() are set.
-
-Yeah, ok, that will avoid the confusion and limit the 
-prepare()/unprepare() only for C66 DSPs.
-
->>
+> On Tue, May 05, 2020 at 05:22:53PM -0700, Bjorn Andersson wrote:
+> > On Fri 24 Apr 13:01 PDT 2020, Mathieu Poirier wrote:
+> > 
+> > > Add a new sync_ops to support use cases where the remoteproc
+> > > core is synchronising with the remote processor.  Exactly when to use
+> > > the synchronisation operations is directed by the flags in structure
+> > > rproc_sync_flags.
+> > > 
+> > 
+> > I'm sorry, but no matter how many times I read these patches I have to
+> > translate "synchronising" to "remote controlled", and given the number
+> > of comments clarifying this makes me feel that we could perhaps come up
+> > with a better name?
 > 
-> I forgot... Since this is a C71 related change, was there a reason to
-> lump it with the C66 set?  If not I would simply move that to the C71
-> work.
-
-OK, I can remove this logic here, and add the prepare()/unprepare() 
-conditionally for C66x in the C71 patch.
-
+> "remote controlled" as in "someone else is managing the remote processor" ?
+> It could also mean the remoteproc core is "remote controlling" the
+> remote processor, exactly what it currently does today...
 > 
->> I am done reviewing this set.
 
-Thanks for all the review comments.
+You're right and this would certainly not help the confusion.
 
-regards
-Suman
+> How about "autonomous", as in the remote processor doesn't need us to boot or
+> switch it off.  I'm open to any other suggestions.
+> 
+> > 
+> > > Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+> > > ---
+> > >  include/linux/remoteproc.h | 24 ++++++++++++++++++++++++
+> > >  1 file changed, 24 insertions(+)
+> > > 
+> > > diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+> > > index ac4082f12e8b..ceb3b2bba824 100644
+> > > --- a/include/linux/remoteproc.h
+> > > +++ b/include/linux/remoteproc.h
+> > > @@ -353,6 +353,23 @@ enum rsc_handling_status {
+> > >  	RSC_IGNORED	= 1,
+> > >  };
+> > >  
+> > > +/**
+> > > + * struct rproc_sync_flags - platform specific flags indicating which
+> > > + *			      rproc_ops to use at specific times during
+> > > + *			      the rproc lifecycle.
+> > > + * @on_init: true if synchronising with the remote processor at
+> > > + *	     initialisation time
+> > > + * @after_stop: true if synchronising with the remote processor after it was
+> > > + *		stopped from the cmmand line
+> > > + * @after_crash: true if synchronising with the remote processor after
+> > > + *		 it has crashed
+> > > + */
+> > > +struct rproc_sync_flags {
+> > > +	bool on_init;
+> > 
+> > This indirectly splits the RPROC_OFFLINE state in an "offline" and
+> > "already-booted" state. Wouldn't it be clearer to represent this with a
+> > new RPROC_ALREADY_BOOTED state?
+> > 
+> 
+> I suggested that at some point in the past but it was in a different context.  I
+> will revisit to see how doing so could apply here.
+> 
 
->>
->> Thanks,
->> Mathieu
->>
->>> +
->>> +     ret = kproc->ti_sci->ops.dev_ops.get_device(kproc->ti_sci,
->>> +                                                 kproc->ti_sci_id);
->>> +     if (ret)
->>> +             dev_err(dev, "module-reset deassert failed, cannot enable internal RAM loading, ret = %d\n",
->>> +                     ret);
->>> +
->>> +     return ret;
->>> +}
->>> +
->>> +/*
->>> + * This function implements the .unprepare() ops and performs the complimentary
->>> + * operations to that of the .prepare() ops. The function is used to assert the
->>> + * global reset on applicable C66x cores. This completes the second portion of
->>> + * powering down the C66x DSP cores. The cores themselves are only halted in the
->>> + * .stop() callback through the local reset, and the .unprepare() ops is invoked
->>> + * by the remoteproc core after the remoteproc is stopped to balance the global
->>> + * reset.
->>> + */
->>> +static int k3_dsp_rproc_unprepare(struct rproc *rproc)
->>> +{
->>> +     struct k3_dsp_rproc *kproc = rproc->priv;
->>> +     struct device *dev = kproc->dev;
->>> +     int ret;
->>> +
->>> +     /* local reset is no-op on C71x processors */
->>> +     if (!kproc->data->uses_lreset)
->>> +             return 0;
->>> +
->>> +     ret = kproc->ti_sci->ops.dev_ops.put_device(kproc->ti_sci,
->>> +                                                 kproc->ti_sci_id);
->>> +     if (ret)
->>> +             dev_err(dev, "module-reset assert failed, ret = %d\n", ret);
->>> +
->>> +     return ret;
->>> +}
->>> +
->>>   /*
->>>    * Power up the DSP remote processor.
->>>    *
->>> @@ -353,6 +417,8 @@ static void *k3_dsp_rproc_da_to_va(struct rproc *rproc, u64 da, size_t len)
->>>   }
->>>
->>>   static const struct rproc_ops k3_dsp_rproc_ops = {
->>> +     .prepare        = k3_dsp_rproc_prepare,
->>> +     .unprepare      = k3_dsp_rproc_unprepare,
->>>        .start          = k3_dsp_rproc_start,
->>>        .stop           = k3_dsp_rproc_stop,
->>>        .kick           = k3_dsp_rproc_kick,
->>> @@ -644,6 +710,22 @@ static int k3_dsp_rproc_probe(struct platform_device *pdev)
->>>                goto disable_clk;
->>>        }
->>>
->>> +     /*
->>> +      * ensure the DSP local reset is asserted to ensure the DSP doesn't
->>> +      * execute bogus code in .prepare() when the module reset is released.
->>> +      */
->>> +     if (data->uses_lreset) {
->>> +             ret = reset_control_status(kproc->reset);
->>> +             if (ret < 0) {
->>> +                     dev_err(dev, "failed to get reset status, status = %d\n",
->>> +                             ret);
->>> +                     goto release_mem;
->>> +             } else if (ret == 0) {
->>> +                     dev_warn(dev, "local reset is deasserted for device\n");
->>> +                     k3_dsp_rproc_reset(kproc);
->>> +             }
->>> +     }
->>> +
->>>        ret = rproc_add(rproc);
->>>        if (ret) {
->>>                dev_err(dev, "failed to add register device with remoteproc core, status = %d\n",
->>> --
->>> 2.23.0
->>>
+How about we introduce a new state named DETACHED and make the platform
+drivers specify that the remote processor is in either OFFLINE (as
+today) or DETACHED during initialization.
 
+Then on_init = true would be the action of going from DETACHED to
+RUNNING, which would involve the following actions:
+
+1) find resource table
+2) prepare device (?)
+3) handle resources
+4) allocate carveouts (?)
+5) prepare subdevices
+6) "attach"
+7) start subdevices
+
+on_init = false would represent the transition from OFFLINE to RUNNING,
+which today involve the following actions:
+
+1) request firmware
+2) prepare device
+3) parse fw
+4) handle resources
+5) allocate carveouts
+6) load segments
+7) find resource table
+8) prepare subdevices
+9) "boot"
+10) start subdevices
+
+> > > +	bool after_stop;
+> > 
+> > What does it mean when this is true? That Linux can shut the remote core
+> > down, but someone else will start it?
+> 
+> It tells the remoteproc core how to interact with the remote processor after the
+> latter has been switched off.
+
+Understood.
+
+> For example, we could want to boot the remote
+> processor from the boot loader so that minimal functionality can be provided
+> while the kernel boots.  Once the kernel and user space are in place, the remote
+> processor is explicitly stopped and booted once again, but this time with a
+> firmware image that offers full functionality.
+> 
+
+This would be the { on_init = true, after_stop = false } use case, with
+the new state would relate to the journey of DETACHED -> RUNNING ->
+OFFLINE.
+
+As such the next boot would represent above OFFLINE -> RUNNING case,
+which we already support today.
+
+> It could also be that the remoteproc core can stop the remote processor, but the
+> remote processor will automatically reboot itself.  In that case the remoteproc
+> core will simply synchronise with the remote processor, as it does when .on_init
+> == true.
+> 
+
+I've not been able to come up with a reasonable use case for the {
+on_init = ture, after_stop = true } scenario.
+
+But Wendy previously talked about the need to "detach" Linux from a
+running remote processor, by somehow just letting it know that the
+communication is down - to allow Linux to be rebooted while the remote
+was running. So if we support a transition from RUNNING to DETACHED
+using a sequence of something like:
+
+1) stop subdevices
+2) "detach"
+3) unprepare subdevices
+4) release carveouts (?)
+5) unprepare device (?)
+
+Then perhaps the after_stop could naturally be the transition from
+DETACHED to RUNNING, either with or without a reboot of the system
+in between?
+
+> > 
+> > > +	bool after_crash;
+> > 
+> > Similarly what is the expected steps to be taken by the core when this
+> > is true? Should rproc_report_crash() simply stop/start the subdevices
+> > and upon one of the ops somehow tell the remote controller that it can
+> > proceed with the recovery?
+> 
+> The exact same sequence of steps will be carried out as they are today, except
+> that if after_crash == true, the remoteproc core won't be switching the remote
+> processor on, exactly as it would do when on_init == true.
+> 
+
+Just to make sure we're on the same page:
+
+after_crash = false is what we have today, and would mean:
+
+1) stop subdevices
+2) power off
+3) unprepare subdevices
+4) generate coredump
+5) request firmware
+6) load segments
+7) find resource table
+8) prepare subdevices
+9) "boot"
+10) start subdevices
+
+after_crash = true would mean:
+
+1) stop subdevices
+2) "detach"
+3) unprepare subdevices
+4) prepare subdevices
+5) "attach"
+6) start subdevices
+
+State diagram wise both of these would represent the transition RUNNING
+-> CRASHED -> RUNNING, but somehow the platform driver needs to be able
+to specify which of these sequences to perform. Per your naming
+suggestion above, this does sound like a "autonomous_recovery" boolean
+to me.
+
+> These flags are there to indicate how to set rproc::sync_with_rproc after
+> different events, that is when the remoteproc core boots, when the remoteproc
+> has been stopped or when it has crashed.
+> 
+
+Right, that was clear from your patches. Sorry that my reply didn't
+convey the information that I had understood this.
+
+> > 
+> > > +};
+> > > +
+> > >  /**
+> > >   * struct rproc_ops - platform-specific device handlers
+> > >   * @start:	power on the device and boot it
+> > > @@ -459,6 +476,9 @@ struct rproc_dump_segment {
+> > >   * @firmware: name of firmware file to be loaded
+> > >   * @priv: private data which belongs to the platform-specific rproc module
+> > >   * @ops: platform-specific start/stop rproc handlers
+> > > + * @sync_ops: platform-specific start/stop rproc handlers when
+> > > + *	      synchronising with a remote processor.
+> > > + * @sync_flags: Determine the rproc_ops to choose in specific states.
+> > >   * @dev: virtual device for refcounting and common remoteproc behavior
+> > >   * @power: refcount of users who need this rproc powered up
+> > >   * @state: state of the device
+> > > @@ -482,6 +502,7 @@ struct rproc_dump_segment {
+> > >   * @table_sz: size of @cached_table
+> > >   * @has_iommu: flag to indicate if remote processor is behind an MMU
+> > >   * @auto_boot: flag to indicate if remote processor should be auto-started
+> > > + * @sync_with_rproc: true if currently synchronising with the rproc
+> > >   * @dump_segments: list of segments in the firmware
+> > >   * @nb_vdev: number of vdev currently handled by rproc
+> > >   */
+> > > @@ -492,6 +513,8 @@ struct rproc {
+> > >  	const char *firmware;
+> > >  	void *priv;
+> > >  	struct rproc_ops *ops;
+> > > +	struct rproc_ops *sync_ops;
+> > 
+> > Do we really need two rproc_ops, given that both are coming from the
+> > platform driver and the sync_flags will define which one to look at?
+> > 
+> > Can't the platform driver just provide an ops table that works with the
+> > flags it passes?
+> 
+> That is the approach Loic took in a previous patchset [1] and that was rejected.
+> It also lead to all of the platform drivers testing rproc->flag before carring
+> different actions, something you indicated could be done in the core.  This
+> patch does exactly that, i.e move the testing of rproc->flag to the core and
+> calls the right function based on that.
+> 
+
+I think I see what you mean, as we use "start" for both syncing and
+starting the core, a { on_init = true, after_stop = false } setup either
+needs two tables or force conditionals on the platform driver.
+
+> The end result is the same and I'm happy with one or the other, I will need to
+> know which one.
+> 
+
+How about adding a new ops named "attach" to rproc_ops, which the
+platform driver can specify if it supports attaching an already running
+processor?
+
+> The advantage with the approach I'm proposing is that everything is controlled
+> in the core, i.e what ops is called and when to set rproc->flag based on
+> different states the remote processor transitions through.
+> 
+
+I still think keeping things in the core is the right thing to do.
+
+
+Please let me know what you think!
+
+PS. If we agree on this the three transitions becomes somewhat
+independent, so I think it makes sense to first land support for the
+DETACHED -> RUNNING transition (and the stm32 series), then follow up
+with RUNNING -> DETACHED and autonomous recovery separately.
+
+Regards,
+Bjorn
+
+> Thanks,
+> Mathieu
+> 
+> 
+> [1]. https://patchwork.kernel.org/patch/11265869/
+> 
+> > 
+> > Regards,
+> > Bjorn
+> > 
+> > > +	struct rproc_sync_flags sync_flags;
+> > >  	struct device dev;
+> > >  	atomic_t power;
+> > >  	unsigned int state;
+> > > @@ -515,6 +538,7 @@ struct rproc {
+> > >  	size_t table_sz;
+> > >  	bool has_iommu;
+> > >  	bool auto_boot;
+> > > +	bool sync_with_rproc;
+> > >  	struct list_head dump_segments;
+> > >  	int nb_vdev;
+> > >  	u8 elf_class;
+> > > -- 
+> > > 2.20.1
+> > > 
