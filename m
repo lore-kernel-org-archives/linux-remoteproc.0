@@ -2,180 +2,404 @@ Return-Path: <SRS0=9JvK=64=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 112FBC433E1
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 14 May 2020 17:32:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00AA7C433E0
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 14 May 2020 18:07:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DF58A20727
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 14 May 2020 17:32:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1589477555;
-	bh=Vq89tzkVrFPsfX5X2TnUxZ2kkQChVcmUNzfx+d4Mw8g=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=Ny/55elf0t2O2uyU4XnsSnjdRIaCQsU1gQqU1jqyTl3/NfVCVRJj8irAPtytJ8rKk
-	 shLf0t33oOv4dJ+irwBh0znWA8LLwH0Rg4p3sV3ptpja7dh85+SN9XvbZE96Ahm2Y+
-	 QWVuLVTCvNfBvjwlHRMS21HEljzX/PLTSeX0UN9g=
+	by mail.kernel.org (Postfix) with ESMTP id 9B7302065D
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 14 May 2020 18:07:31 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="upEYcgbe"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726201AbgENRcc (ORCPT
+        id S1726165AbgENSHb (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 14 May 2020 13:32:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44834 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725965AbgENRcc (ORCPT
+        Thu, 14 May 2020 14:07:31 -0400
+Received: from mail26.static.mailgun.info ([104.130.122.26]:22292 "EHLO
+        mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726084AbgENSHb (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 14 May 2020 13:32:32 -0400
-Received: from localhost (unknown [122.182.193.86])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Thu, 14 May 2020 14:07:31 -0400
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1589479650; h=Message-ID: References: In-Reply-To: Subject:
+ Cc: To: From: Date: Content-Transfer-Encoding: Content-Type:
+ MIME-Version: Sender; bh=6wufC1q1PWGnW7Xo8jtMrodA6oUDGMitfJhY/V2tKWg=;
+ b=upEYcgbeptGtr07TJ298V62KPfSycw7E85pCC8AvInxIf7G88DQs+3hjAkYj+SXtQ7hXNQjy
+ ifYES1cvPWPAlX3OTI2jBSiOAfBwa3wrmQaFSh6RVj4TDVhJpF+bUW8kdHjkmnPPrpk+ogz0
+ I9AgnRIJbu12+uWypVrefU4VrhU=
+X-Mailgun-Sending-Ip: 104.130.122.26
+X-Mailgun-Sid: WyI4ZWZiZiIsICJsaW51eC1yZW1vdGVwcm9jQHZnZXIua2VybmVsLm9yZyIsICJiZTllNGEiXQ==
+Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
+ by mxa.mailgun.org with ESMTP id 5ebd88e1.7f51434ca538-smtp-out-n04;
+ Thu, 14 May 2020 18:07:29 -0000 (UTC)
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 3C29CC432C2; Thu, 14 May 2020 18:07:28 +0000 (UTC)
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6E7F2206D8;
-        Thu, 14 May 2020 17:32:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1589477551;
-        bh=Vq89tzkVrFPsfX5X2TnUxZ2kkQChVcmUNzfx+d4Mw8g=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Ap7QRQnMNTnMXMSQXmMMVP1DyCOxHCUFWZmPQd7rJEFsYwzi3Ov0iktfqGcaTDUUx
-         ih05SPhm9WzuYCc/BCKHIL42XaK2NnXHx6PjZw2fs/0vLN5uCCcIorqDpU/V7ogWii
-         yypDh3sSMCLTT8wODeKCJEbneOzAJKaMo+PSgWpU=
-Date:   Thu, 14 May 2020 23:02:20 +0530
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Andy Gross <agross@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>,
-        Baolin Wang <baolin.wang7@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/4] hwspinlock: qcom: Allow mmio usage in addition to
- syscon
-Message-ID: <20200514173220.GH14092@vkoul-mobl>
-References: <20200513005441.1102586-1-bjorn.andersson@linaro.org>
- <20200513005441.1102586-4-bjorn.andersson@linaro.org>
- <20200514141523.GW14092@vkoul-mobl>
- <20200514170013.GX2165@builder.lan>
+        (Authenticated sender: rishabhb)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 7431BC433F2;
+        Thu, 14 May 2020 18:07:23 +0000 (UTC)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200514170013.GX2165@builder.lan>
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Thu, 14 May 2020 11:07:23 -0700
+From:   rishabhb@codeaurora.org
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ohad@wizery.com, mathieu.poirier@linaro.org, tsoni@codeaurora.org,
+        psodagud@codeaurora.org, sidgup@codeaurora.org,
+        linux-remoteproc-owner@vger.kernel.org
+Subject: Re: [PATCH 2/3] remoteproc: Add inline coredump functionality
+In-Reply-To: <20200507202121.GK2329931@builder.lan>
+References: <1587062312-4939-1-git-send-email-rishabhb@codeaurora.org>
+ <1587062312-4939-2-git-send-email-rishabhb@codeaurora.org>
+ <20200507202121.GK2329931@builder.lan>
+Message-ID: <1fd47d7b75472ce6e7967ef3a3f46bde@codeaurora.org>
+X-Sender: rishabhb@codeaurora.org
+User-Agent: Roundcube Webmail/1.3.9
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On 14-05-20, 10:00, Bjorn Andersson wrote:
-> On Thu 14 May 07:15 PDT 2020, Vinod Koul wrote:
+On 2020-05-07 13:21, Bjorn Andersson wrote:
+> On Thu 16 Apr 11:38 PDT 2020, Rishabh Bhatnagar wrote:
 > 
-> > On 12-05-20, 17:54, Bjorn Andersson wrote:
-> > > In all modern Qualcomm platforms the mutex region of the TCSR is forked
-> > > off into its own block, all with a offset of 0 and stride of 4096. So
-> > > add support for directly memory mapping this register space, to avoid
-> > > the need to represent this block using a syscon.
-> > > 
-> > > Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> > > ---
-> > >  drivers/hwspinlock/qcom_hwspinlock.c | 72 +++++++++++++++++++++-------
-> > >  1 file changed, 56 insertions(+), 16 deletions(-)
-> > > 
-> > > diff --git a/drivers/hwspinlock/qcom_hwspinlock.c b/drivers/hwspinlock/qcom_hwspinlock.c
-> > > index f0da544b14d2..d8d4d729816c 100644
-> > > --- a/drivers/hwspinlock/qcom_hwspinlock.c
-> > > +++ b/drivers/hwspinlock/qcom_hwspinlock.c
-> > > @@ -70,41 +70,81 @@ static const struct of_device_id qcom_hwspinlock_of_match[] = {
-> > >  };
-> > >  MODULE_DEVICE_TABLE(of, qcom_hwspinlock_of_match);
-> > >  
-> > > -static int qcom_hwspinlock_probe(struct platform_device *pdev)
-> > > +static struct regmap *qcom_hwspinlock_probe_syscon(struct platform_device *pdev,
-> > > +						   u32 *base, u32 *stride)
-> > >  {
-> > > -	struct hwspinlock_device *bank;
-> > >  	struct device_node *syscon;
-> > > -	struct reg_field field;
-> > >  	struct regmap *regmap;
-> > > -	size_t array_size;
-> > > -	u32 stride;
-> > > -	u32 base;
-> > >  	int ret;
-> > > -	int i;
-> > >  
-> > >  	syscon = of_parse_phandle(pdev->dev.of_node, "syscon", 0);
-> > > -	if (!syscon) {
-> > > -		dev_err(&pdev->dev, "no syscon property\n");
-> > 
-> > any reason to drop the log?
-> > 
+>> This patch adds the inline coredump functionality. The current
+>> coredump implementation uses vmalloc area to copy all the segments.
+>> But this might put a lot of strain on low memory targets as the
+>> firmware size sometimes is in ten's of MBs. The situation becomes
+>> worse if there are multiple remote processors  undergoing recovery
+>> at the same time. This patch directly copies the device memory to
+>> userspace buffer and avoids extra memory usage. This requires
+>> recovery to be halted until data is read by userspace and free
+>> function is called.
+>> 
+>> Signed-off-by: Rishabh Bhatnagar <rishabhb@codeaurora.org>
+>> ---
+>>  drivers/remoteproc/remoteproc_coredump.c | 130 
+>> +++++++++++++++++++++++++++++++
+>>  drivers/remoteproc/remoteproc_internal.h |  23 +++++-
+>>  include/linux/remoteproc.h               |   2 +
+>>  3 files changed, 153 insertions(+), 2 deletions(-)
+>> 
+>> diff --git a/drivers/remoteproc/remoteproc_coredump.c 
+>> b/drivers/remoteproc/remoteproc_coredump.c
+>> index 9de0467..888b7dec91 100644
+>> --- a/drivers/remoteproc/remoteproc_coredump.c
+>> +++ b/drivers/remoteproc/remoteproc_coredump.c
+>> @@ -12,6 +12,84 @@
+>>  #include <linux/remoteproc.h>
+>>  #include "remoteproc_internal.h"
+>> 
+>> +static void rproc_free_dump(void *data)
 > 
-> Given that we first check for the syscon and then fall back to trying to
-> use the reg, keeping this line would cause this log line to always show
-> up on targets putting this under /soc.
+> rproc_coredump_free()
 > 
-> So I think it's better to drop the line and then require the presence of
-> either syscon or reg using the DT schema.
-
-ok
-
-> > > -		return -ENODEV;
-> > > -	}
-> > > +	if (!syscon)
-> > > +		return ERR_PTR(-ENODEV);
-> > >  
-> > >  	regmap = syscon_node_to_regmap(syscon);
-> > >  	of_node_put(syscon);
-> > >  	if (IS_ERR(regmap))
-> > > -		return PTR_ERR(regmap);
-> > > +		return regmap;
-> > >  
-> > > -	ret = of_property_read_u32_index(pdev->dev.of_node, "syscon", 1, &base);
-> > > +	ret = of_property_read_u32_index(pdev->dev.of_node, "syscon", 1, base);
-> > >  	if (ret < 0) {
-> > >  		dev_err(&pdev->dev, "no offset in syscon\n");
-> > > -		return -EINVAL;
-> > > +		return ERR_PTR(-EINVAL);
-> > >  	}
-> > >  
-> > > -	ret = of_property_read_u32_index(pdev->dev.of_node, "syscon", 2, &stride);
-> > > +	ret = of_property_read_u32_index(pdev->dev.of_node, "syscon", 2, stride);
-> > >  	if (ret < 0) {
-> > >  		dev_err(&pdev->dev, "no stride syscon\n");
-> > > -		return -EINVAL;
-> > > +		return ERR_PTR(-EINVAL);
-> > >  	}
-> > >  
-> > > +	return regmap;
-> > > +}
-> > > +
-> > > +static const struct regmap_config tcsr_mutex_config = {
-> > > +	.reg_bits		= 32,
-> > > +	.reg_stride		= 4,
-> > > +	.val_bits		= 32,
-> > > +	.max_register		= 0x40000,
-> > > +	.fast_io		= true,
-> > > +};
-> > > +
-> > > +static struct regmap *qcom_hwspinlock_probe_mmio(struct platform_device *pdev,
-> > > +						 u32 *offset, u32 *stride)
-> > > +{
-> > > +	struct device *dev = &pdev->dev;
-> > > +	struct resource *res;
-> > > +	void __iomem *base;
-> > > +
-> > > +	/* All modern platform has offset 0 and stride of 4k */
-> > > +	*offset = 0;
-> > > +	*stride = 0x1000;
-> > 
-> > Wouldn't it make sense to read this from DT rather than code in kernel?
-> > 
+>> +{
+>> +	struct rproc_coredump_state *dump_state = data;
+>> +
+>> +	complete(&dump_state->dump_done);
 > 
-> I did consider this as well as platform specific compatibles, but
-> realized that pretty much all 64-bit targets have these values. So given
-> that we still can represent this using the syscon approach I don't think
-> we need to add yet another mechanism to specify these.
-
-Sounds good.
-
-Reviewed-by: Vinod Koul <vkoul@kernel.org>
-
--- 
-~Vinod
+> vfree(dump_state->header);
+> 
+>> +}
+>> +
+>> +static unsigned long resolve_addr(loff_t user_offset,
+> 
+> rproc_coredump_find_segment()
+> 
+>> +				   struct list_head *segments,
+>> +				   unsigned long *data_left)
+>> +{
+>> +	struct rproc_dump_segment *segment;
+>> +
+>> +	list_for_each_entry(segment, segments, node) {
+>> +		if (user_offset >= segment->size)
+>> +			user_offset -= segment->size;
+>> +		else
+>> +			break;
+> 
+> 		if (user_offset < segment->size) {
+> 			*data_left = segment->size - user_offset;
+> 			return segment->da + user_offset;
+> 		}
+> 
+> 		user_offset -= segment->size;
+>> +	}
+> 
+> 	*data_left = 0;
+> 	return 0;
+> 
+>> +
+>> +	if (&segment->node == segments) {
+>> +		*data_left = 0;
+>> +		return 0;
+>> +	}
+>> +
+>> +	*data_left = segment->size - user_offset;
+>> +
+>> +	return segment->da + user_offset;
+>> +}
+>> +
+>> +static ssize_t rproc_read_dump(char *buffer, loff_t offset, size_t 
+>> count,
+>> +				void *data, size_t header_size)
+>> +{
+>> +	void *device_mem;
+>> +	size_t data_left, copy_size, bytes_left = count;
+>> +	unsigned long addr;
+>> +	struct rproc_coredump_state *dump_state = data;
+>> +	struct rproc *rproc = dump_state->rproc;
+>> +	void *elfcore = dump_state->header;
+>> +
+>> +	/* Copy the header first */
+>> +	if (offset < header_size) {
+>> +		copy_size = header_size - offset;
+>> +		copy_size = min(copy_size, bytes_left);
+>> +
+>> +		memcpy(buffer, elfcore + offset, copy_size);
+>> +		offset += copy_size;
+>> +		bytes_left -= copy_size;
+>> +		buffer += copy_size;
+>> +	}
+> 
+> Perhaps you can take inspiration from devcd_readv() here?
+> 
+>> +
+>> +	while (bytes_left) {
+>> +		addr = resolve_addr(offset - header_size,
+>> +				    &rproc->dump_segments, &data_left);
+>> +		/* EOF check */
+>> +		if (data_left == 0) {
+> 
+> Afaict data_left denotes the amount of data left in this particular
+> segment, rather than in the entire core.
+> 
+> I think you should start by making bytes_left the minimum of the core
+> size and @count and then have this loop as long as bytes_left, copying
+> data to the buffer either from header or an appropriate segment based 
+> on
+> the current offset.
+> 
+>> +			pr_info("Ramdump complete %lld bytes read", offset);
+> 
+> dev_dbg(&rproc->dev, ...)
+> 
+>> +			break;
+>> +		}
+>> +
+>> +		copy_size = min_t(size_t, bytes_left, data_left);
+>> +
+>> +		device_mem = rproc->ops->da_to_va(rproc, addr, copy_size);
+> 
+> rproc_da_to_va()
+> 
+>> +		if (!device_mem) {
+>> +			pr_err("Address:%lx with size %zd out of remoteproc carveout\n",
+> 
+> dev_err(&rproc->dev, "coredump: %#lx size %#zx outside of carveouts\n",
+> ..);
+> 
+>> +				addr, copy_size);
+>> +			return -ENOMEM;
+>> +		}
+>> +		memcpy(buffer, device_mem, copy_size);
+>> +
+>> +		offset += copy_size;
+>> +		buffer += copy_size;
+>> +		bytes_left -= copy_size;
+>> +	}
+>> +
+>> +	return count - bytes_left;
+>> +}
+>> +
+>>  static void create_elf_header(void *data, int phnum, struct rproc 
+>> *rproc)
+>>  {
+>>  	struct elf32_phdr *phdr;
+>> @@ -55,6 +133,58 @@ static void create_elf_header(void *data, int 
+>> phnum, struct rproc *rproc)
+>>  }
+>> 
+>>  /**
+>> + * rproc_inline_coredump() - perform synchronized coredump
+>> + * @rproc:	rproc handle
+>> + *
+>> + * This function will generate an ELF header for the registered 
+>> segments
+>> + * and create a devcoredump device associated with rproc. This 
+>> function
+>> + * directly copies the segments from device memory to userspace. The
+>> + * recovery is stalled until the enitire coredump is read. This 
+>> approach
+>> + * avoids using extra vmalloc memory(which can be really large).
+>> + */
+>> +void rproc_inline_coredump(struct rproc *rproc)
+>> +{
+>> +	struct rproc_dump_segment *segment;
+>> +	struct elf32_phdr *phdr;
+>> +	struct elf32_hdr *ehdr;
+>> +	struct rproc_coredump_state *dump_state;
+> 
+> This can live on the stack, unless you follow my suggestion below...
+> 
+>> +	size_t header_size;
+>> +	void *data;
+>> +	int phnum = 0;
+>> +
+>> +	if (list_empty(&rproc->dump_segments))
+>> +		return;
+>> +
+>> +	header_size = sizeof(*ehdr);
+>> +	list_for_each_entry(segment, &rproc->dump_segments, node) {
+>> +		header_size += sizeof(*phdr);
+>> +
+>> +		phnum++;
+>> +	}
+>> +
+>> +	data = vmalloc(header_size);
+>> +	if (!data)
+>> +		return;
+>> +
+>> +	ehdr = data;
+> 
+> ehdr is unused.
+> 
+>> +	create_elf_header(data, phnum, rproc);
+>> +
+>> +	dump_state = kzalloc(sizeof(*dump_state), GFP_KERNEL);
+>> +	dump_state->rproc = rproc;
+>> +	dump_state->header = data;
+>> +	init_completion(&dump_state->dump_done);
+>> +
+>> +	dev_coredumpm(&rproc->dev, NULL, dump_state, header_size, 
+>> GFP_KERNEL,
+>> +		      rproc_read_dump, rproc_free_dump);
+> 
+> I can help feeling that if you vmalloc() either the header or the 
+> entire
+> thing depending on DEFAULT vs INLINE and populate it with either all
+> segments or just the header, then you should be able to use the same
+> (custom) read function to serve both cases.
+> 
+> You should by doing this be able to avoid some duplication, your two
+> code paths would not diverge and the main difference would be if you
+> wait or not below (the kfree would have to go in the rproc_free_dump).
+> 
+Moving the kfree to rproc_free_dump causes a problem as the data 
+structure
+might get freed before the thread waiting for completion(this thread) 
+gets a
+chance to run. So i will follow your above suggestion of having one 
+function
+but not all go all the way i.e. I'll call dev_coredumpv or dev_coredumpm 
+based on
+the dump configuration. This way dump_state can live on stack without 
+worrying
+about freeing it.
+>> +
+>> +	/* Wait until the dump is read and free is called */
+>> +	wait_for_completion(&dump_state->dump_done);
+>> +
+>> +	kfree(dump_state);
+>> +}
+>> +EXPORT_SYMBOL(rproc_inline_coredump);
+>> +
+>> +/**
+>>   * rproc_default_coredump() - perform coredump
+>>   * @rproc:	rproc handle
+>>   *
+>> diff --git a/drivers/remoteproc/remoteproc_internal.h 
+>> b/drivers/remoteproc/remoteproc_internal.h
+>> index 28b6af2..ea6146e 100644
+>> --- a/drivers/remoteproc/remoteproc_internal.h
+>> +++ b/drivers/remoteproc/remoteproc_internal.h
+>> @@ -24,6 +24,18 @@ struct rproc_debug_trace {
+>>  	struct rproc_mem_entry trace_mem;
+>>  };
+>> 
+>> +struct rproc_coredump_state {
+> 
+> This is only used within remoteproc_coredump.c, so please move it 
+> there.
+> 
+>> +	struct rproc *rproc;
+>> +	void *header;
+>> +	struct completion dump_done;
+>> +};
+>> +
+>> +enum rproc_coredump_conf {
+> 
+> How about rproc_coredump_mechanism?
+> 
+>> +	COREDUMP_DEFAULT,
+>> +	COREDUMP_INLINE,
+>> +	COREDUMP_DISABLED,
+>> +};
+>> +
+>>  /* from remoteproc_core.c */
+>>  void rproc_release(struct kref *kref);
+>>  irqreturn_t rproc_vq_interrupt(struct rproc *rproc, int vq_id);
+>> @@ -49,6 +61,7 @@ struct dentry *rproc_create_trace_file(const char 
+>> *name, struct rproc *rproc,
+>> 
+>>  /* from remoteproc_coredump.c */
+>>  void rproc_default_coredump(struct rproc *rproc);
+>> +void rproc_inline_coredump(struct rproc *rproc);
+>> 
+>>  void rproc_free_vring(struct rproc_vring *rvring);
+>>  int rproc_alloc_vring(struct rproc_vdev *rvdev, int i);
+>> @@ -125,8 +138,14 @@ struct resource_table 
+>> *rproc_find_loaded_rsc_table(struct rproc *rproc,
+>>  static inline
+>>  void rproc_coredump(struct rproc *rproc)
+>>  {
+>> -	return rproc_default_coredump(rproc);
+>> -
+>> +	switch (rproc->coredump_conf) {
+>> +	case COREDUMP_DEFAULT:
+>> +		return rproc_default_coredump(rproc);
+>> +	case COREDUMP_INLINE:
+>> +		return rproc_inline_coredump(rproc);
+>> +	default:
+>> +		break;
+>> +	}
+> 
+> I think this better belong inside remoteproc_coredump.c
+> 
+> Regards,
+> Bjorn
+> 
+>>  }
+>> 
+>>  #endif /* REMOTEPROC_INTERNAL_H */
+>> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+>> index 16ad666..23298ce 100644
+>> --- a/include/linux/remoteproc.h
+>> +++ b/include/linux/remoteproc.h
+>> @@ -459,6 +459,7 @@ struct rproc_dump_segment {
+>>   * @dev: virtual device for refcounting and common remoteproc 
+>> behavior
+>>   * @power: refcount of users who need this rproc powered up
+>>   * @state: state of the device
+>> + * @coredump_conf: Currenlty selected coredump configuration
+>>   * @lock: lock which protects concurrent manipulations of the rproc
+>>   * @dbg_dir: debugfs directory of this rproc device
+>>   * @traces: list of trace buffers
+>> @@ -492,6 +493,7 @@ struct rproc {
+>>  	struct device dev;
+>>  	atomic_t power;
+>>  	unsigned int state;
+>> +	unsigned int coredump_conf;
+>>  	struct mutex lock;
+>>  	struct dentry *dbg_dir;
+>>  	struct list_head traces;
+>> --
+>> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora 
+>> Forum,
+>> a Linux Foundation Collaborative Project
