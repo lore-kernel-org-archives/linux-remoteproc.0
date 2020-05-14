@@ -6,63 +6,61 @@ X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
 	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3EB4C433E2
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 14 May 2020 14:19:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4ED8FC433DF
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 14 May 2020 16:53:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C0C6520727
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 14 May 2020 14:19:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2E311206A5
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 14 May 2020 16:53:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1589465981;
-	bh=CqlOlSNj6xMgLkcVQs+wVSmgmeGRK1Di3OwNatOVBR4=;
+	s=default; t=1589475233;
+	bh=uLsNhapwCHDABTtF2A6EH6XG/RphfBmrqkR3vk1nbHM=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=jINvpikDouOHGAxpIgbfMR26Ei4ylUnshK7UTWV9zUc+5WV9sUvrkp4e5erqW+WIG
-	 vz9nqc1AyqTdK5iM4Ze/RsivVNYj2kdaHPyngee/9xCCRifexDJlTAL755Rrh2ZQWM
-	 hMXEJUFy4MBHjsOQtCH5pppnej/ghDchHRpatXC8=
+	b=uLzEJSDnSMGAKtFKu8qb9LX58uk/YyB9QGT5HhmRss4isc2vLyuSF7OY8GmAEgSB3
+	 +03byx4G39JELLb2nn0Ut+F9Y9YW5hrBCwKAxx/jf1s3yBLOF/2x7/G/CjClIiysS5
+	 pJdmim4Q8bNUFD97gCBGSrHEuhnQetBUqiW16KRU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726582AbgENOTl (ORCPT
+        id S1726332AbgENQxu (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 14 May 2020 10:19:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34554 "EHLO mail.kernel.org"
+        Thu, 14 May 2020 12:53:50 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59264 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726128AbgENOTl (ORCPT
+        id S1726038AbgENQxu (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 14 May 2020 10:19:41 -0400
+        Thu, 14 May 2020 12:53:50 -0400
 Received: from localhost (unknown [122.182.193.86])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 374B320671;
-        Thu, 14 May 2020 14:19:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BA9FE2065F;
+        Thu, 14 May 2020 16:53:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1589465981;
-        bh=CqlOlSNj6xMgLkcVQs+wVSmgmeGRK1Di3OwNatOVBR4=;
+        s=default; t=1589475229;
+        bh=uLsNhapwCHDABTtF2A6EH6XG/RphfBmrqkR3vk1nbHM=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=GhHYYP9NMzwqNwrdB6p0wbncrpkva/VTQ5PUnbmTN8yXJtRH1DWJrOPYYqPkzKqCR
-         J35xcLxvknxX1dmNXlrjOt+odbDymlLv7gvuwjATeKhxWW8wDoozWud5xDPO8oeoyu
-         Vpfgg2HTB7aP8aZY1zFWSg4NSdczSs/JBD+cn7D8=
-Date:   Thu, 14 May 2020 19:49:36 +0530
+        b=snFrfeWHib9cVGp/q9/42I5b4Qz43/1+9jJSArgjjz0VOLBE4BXbd1tSgo36qBgTl
+         TXlZF83pc90U+H0Rm126mgQz+LraJe46hpGQnwd0lkJWCos9PC9quXHb+1jd4fgaXZ
+         vVPvnjGuHV7qMyWQz4/OWmwNCx7BzQsXtdAsVRy4=
+Date:   Thu, 14 May 2020 22:23:38 +0530
 From:   Vinod Koul <vkoul@kernel.org>
 To:     Bjorn Andersson <bjorn.andersson@linaro.org>
 Cc:     Andy Gross <agross@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>,
-        Baolin Wang <baolin.wang7@gmail.com>,
         Rob Herring <robh+dt@kernel.org>,
         linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 4/4] arm64: dts: qcom: sm8250: Drop tcsr_mutex syscon
-Message-ID: <20200514141936.GZ14092@vkoul-mobl>
-References: <20200513005441.1102586-1-bjorn.andersson@linaro.org>
- <20200513005441.1102586-5-bjorn.andersson@linaro.org>
+Subject: Re: [PATCH v5 0/5] remoteproc: qcom: PIL info support
+Message-ID: <20200514165338.GA14092@vkoul-mobl>
+References: <20200513055641.1413100-1-bjorn.andersson@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200513005441.1102586-5-bjorn.andersson@linaro.org>
+In-Reply-To: <20200513055641.1413100-1-bjorn.andersson@linaro.org>
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On 12-05-20, 17:54, Bjorn Andersson wrote:
-> Now that we don't need the intermediate syscon to represent the TCSR
-> mutexes, update the dts to describe the TCSR mutex directly.
+On 12-05-20, 22:56, Bjorn Andersson wrote:
+> Introduce support for filling out the relocation information in IMEM, to aid
+> post mortem debug tools to locate the various remoteprocs.
 
 Reviewed-by: Vinod Koul <vkoul@kernel.org>
 
