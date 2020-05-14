@@ -4,201 +4,124 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1568C433E1
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 14 May 2020 02:12:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02BE0C433DF
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 14 May 2020 04:58:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9644E20659
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 14 May 2020 02:12:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DA8C8206C0
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 14 May 2020 04:58:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gBbWxf0s"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="q0CuyR16"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726239AbgENCM2 (ORCPT
+        id S1725967AbgENE6f (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 13 May 2020 22:12:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33486 "EHLO
+        Thu, 14 May 2020 00:58:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59140 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726161AbgENCM1 (ORCPT
+        by vger.kernel.org with ESMTP id S1725794AbgENE6f (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 13 May 2020 22:12:27 -0400
-Received: from mail-pf1-x443.google.com (mail-pf1-x443.google.com [IPv6:2607:f8b0:4864:20::443])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B6105C061A0E
-        for <linux-remoteproc@vger.kernel.org>; Wed, 13 May 2020 19:12:27 -0700 (PDT)
-Received: by mail-pf1-x443.google.com with SMTP id w65so597667pfc.12
-        for <linux-remoteproc@vger.kernel.org>; Wed, 13 May 2020 19:12:27 -0700 (PDT)
+        Thu, 14 May 2020 00:58:35 -0400
+Received: from mail-pg1-x544.google.com (mail-pg1-x544.google.com [IPv6:2607:f8b0:4864:20::544])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 011CAC061A0C
+        for <linux-remoteproc@vger.kernel.org>; Wed, 13 May 2020 21:58:35 -0700 (PDT)
+Received: by mail-pg1-x544.google.com with SMTP id f23so762653pgj.4
+        for <linux-remoteproc@vger.kernel.org>; Wed, 13 May 2020 21:58:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=w5HuC2pq36yj0OkTrV4K6iXdzhabf7/wAs9Khiu4wb4=;
-        b=gBbWxf0sxZXo/ojCfIKRh5Crbnb0sduNMc4aS36VfsexEAB6BjFzpOL3A8RBK3Ih9+
-         LZn3p7TpGawiclCva0F8oZ71qvI2WSkXVwt6MjRZOQb4jtXJ9kSu8NnZwOsB258fGLgP
-         R8cOCYAeKcgf40M7taQ8K96GBW2wDxNO3/YoMyYl/wPlbAI1+DxMiEq1ocbYmtY6p093
-         HG0oP9l9OYuUGnCDWswZnb90J8nCZXWVbSczRdT4kTPdiztuZr2o9wxCMJbRvfBWOM68
-         2PWOTI4lilmyPSVEDtzUpngM7Womxku+M393qHMmEBMG/OUmsIipi/Vpk87VuGE6c7hu
-         MKDg==
+        bh=Fy4YBkk4dKPrXz1Sz6in3rq8QZwklEzzdmUHwWz7Vts=;
+        b=q0CuyR167W+2BNBNi9zP/2Uo5HLrTYi02yqX2gsXiURJvGny1sZnBQuNVC6dB+Jenn
+         dZo0jdexaxmCbJxntzQ/rQy2sTYrHnzssTzyjed7H5gwHO623LSN8LsLakEmtj47rYRT
+         i1CDdwGC9jd5kU/aYeV0kVUSns/5vIOUKeo3yf/Bq6od7L5fq+tfAq6AT4tm5+Jc03xG
+         Hlo7QzEcyYCrZbt90ZrcrjBvV9d9kjnD+KPmpTwQpYOioy8QqwnkPf8ZPcuVwlEzw5I6
+         HACuCYW1LIqjhZh2oS5Rw+ibKfvsRuoFElx50bxhm7tFpljDv5VHFZdvXIttrYReFJRN
+         P8Ow==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=w5HuC2pq36yj0OkTrV4K6iXdzhabf7/wAs9Khiu4wb4=;
-        b=nGHqWufXq84reM6K1is2HuCNcC8/b5c2IrgyRHDKE0L4V9/IBlS1UVBrSJseM9wIAC
-         +vG6zB4shVG9k+ix+Mv/eknXKe+oYMD4z+sZ9v3DCE5FrJJXnWetg717oEnNj8d2dmLl
-         M8CraxSTURm151rmJUvGnxF1cLbSnafnLrZbjN+afw0Cqcn6O8f/frWw9YP8xUfIQPLk
-         aFnG93BSzY5jekqJodoBl+q29qFNhzgsOGNEu/rY5z56vyqAGKnmotHtv3xjk7ImVY+l
-         QkVDmF/8hx94ZWBR9bjUx5UmS4uWVpL4XMm3cwhhuAhM9Np/nFayoc9MVLYqNxjZXsfu
-         wMww==
-X-Gm-Message-State: AOAM532hmgVxjClQzEK3YtVkp84XnpZttGWXCgXmrTH2Ao7gK1msnZ+e
-        j5XQx2HsshUOg5o9ml+dwsgf5A==
-X-Google-Smtp-Source: ABdhPJxTVraityqx1KdWjBjcIoV6NWLKK7w8ftr0Z9ldOW4IGevBOpYjLS7GwNZJqdRINsqzVC/g1A==
-X-Received: by 2002:a62:a106:: with SMTP id b6mr2040127pff.23.1589422346892;
-        Wed, 13 May 2020 19:12:26 -0700 (PDT)
+        bh=Fy4YBkk4dKPrXz1Sz6in3rq8QZwklEzzdmUHwWz7Vts=;
+        b=Tny3e3rPklZA+5kXT/wiYKwI3IKDQgHFvSoJLIEgicI6vBONr4i32A7Xz1hpTKrAKX
+         OMkTOm2n1Gd03UbYfd9QzndihqGqmnf0tZMMOnP9//AZ4p6BNRZ/c2xDwTGKai0d23Vw
+         At4MVZhBDBaApX/q4rkW2IdCKsizopXCZCqgV89VXqejulvOOaIkGEpxsmMDg869lnFI
+         tee/33zUH7gwwz2X97TAgkF++AumyCMjfOpPj95+HpmCrR3VYtr74FWY6NerAuY/srVa
+         9zaQ7a3Norm2mElp6Fv7+qAFTjM+GREbSFeItjdXL4uAVBRQXKGKjC6l+KTmeSJjcdAN
+         qeaw==
+X-Gm-Message-State: AOAM531p/hDuxfySozS5sxl0lrvNiKua3d6SIV6TQfK7VhGHRZWf1G7y
+        zsGmByG4U4sxBsyh0i6s+Q5MWNdFYGs=
+X-Google-Smtp-Source: ABdhPJxyjBQaF0IbDv+oDp7VWgasXey2FK6oPgo+5su8LZ7HawcQevb3Y0t9Ukgg2sHbL3dWhdsSNg==
+X-Received: by 2002:a63:7d3:: with SMTP id 202mr2403501pgh.279.1589432314389;
+        Wed, 13 May 2020 21:58:34 -0700 (PDT)
 Received: from builder.lan (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id f64sm17020727pjd.5.2020.05.13.19.12.25
+        by smtp.gmail.com with ESMTPSA id x12sm1056388pfq.209.2020.05.13.21.58.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 May 2020 19:12:26 -0700 (PDT)
-Date:   Wed, 13 May 2020 19:10:55 -0700
+        Wed, 13 May 2020 21:58:33 -0700 (PDT)
+Date:   Wed, 13 May 2020 21:57:03 -0700
 From:   Bjorn Andersson <bjorn.andersson@linaro.org>
 To:     Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc:     ohad@wizery.com, loic.pallardy@st.com, arnaud.pouliquen@st.com,
-        s-anna@ti.com, linux-remoteproc@vger.kernel.org, corbet@lwn.net,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 05/14] remoteproc: Refactor function rproc_fw_boot()
-Message-ID: <20200514021055.GF16107@builder.lan>
-References: <20200424200135.28825-1-mathieu.poirier@linaro.org>
- <20200424200135.28825-6-mathieu.poirier@linaro.org>
- <20200506003341.GD2329931@builder.lan>
- <20200508212756.GB5650@xps15>
+Cc:     ohad@wizery.com, mcoquelin.stm32@gmail.com,
+        alexandre.torgue@st.com, loic.pallardy@st.com,
+        arnaud.pouliquen@st.com, linux-remoteproc@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 01/12] remoteproc: stm32: Decouple rproc from memory
+ translation
+Message-ID: <20200514045703.GG16107@builder.lan>
+References: <20200424202505.29562-1-mathieu.poirier@linaro.org>
+ <20200424202505.29562-2-mathieu.poirier@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200508212756.GB5650@xps15>
+In-Reply-To: <20200424202505.29562-2-mathieu.poirier@linaro.org>
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Fri 08 May 14:27 PDT 2020, Mathieu Poirier wrote:
+On Fri 24 Apr 13:24 PDT 2020, Mathieu Poirier wrote:
 
-> On Tue, May 05, 2020 at 05:33:41PM -0700, Bjorn Andersson wrote:
-> > On Fri 24 Apr 13:01 PDT 2020, Mathieu Poirier wrote:
-> > 
-> > > Refactor function rproc_fw_boot() in order to better reflect the work
-> > > that is done when supporting scenarios where the remoteproc core is
-> > > synchronising with a remote processor.
-> > > 
-> > > Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-> > > ---
-> > >  drivers/remoteproc/remoteproc_core.c | 10 ++++++----
-> > >  1 file changed, 6 insertions(+), 4 deletions(-)
-> > > 
-> > > diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-> > > index a02593b75bec..e90a21de9de1 100644
-> > > --- a/drivers/remoteproc/remoteproc_core.c
-> > > +++ b/drivers/remoteproc/remoteproc_core.c
-> > > @@ -1370,9 +1370,9 @@ static int rproc_start(struct rproc *rproc, const struct firmware *fw)
-> > >  }
-> > >  
-> > >  /*
-> > > - * take a firmware and boot a remote processor with it.
-> > > + * boot or synchronise with a remote processor.
-> > >   */
-> > > -static int rproc_fw_boot(struct rproc *rproc, const struct firmware *fw)
-> > > +static int rproc_actuate_device(struct rproc *rproc, const struct firmware *fw)
-> > 
-> > Per patch 4 this function will if rproc_needs_syncing() be called with
-> > fw == NULL, it's not obvious to me that the various operations on "fw"
-> > in this function are valid anymore.
+> Remove the remote processor from the process of parsing the memory
+> ranges since there is no correlation between them.
 > 
-> That is right, all firmware related operations in this function are found in
-> remoteproc_internal.h where the value of rproc->sync_with_mcu is checked before
-> moving forward. That allows us to avoid introducing a new function similar to
-> rproc_fw_boot() but without firmware operations or peppering the code with if
-> statements.
+> Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+> Reviewed-by: Loic Pallardy <loic.pallardy@st.com>
+
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+
+> ---
+>  drivers/remoteproc/stm32_rproc.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
 > 
-
-As I wrote in my other reply, the two mechanisms seems to consist of the
-following steps:
-
-boot the core:
-1) request firmware
-2) prepare device
-3) parse fw
-4) handle resources
-5) allocate carveouts
-6) load segments
-7) find resource table
-8) prepare subdevices
-9) power on
-10) start subdevices
-
-sync:
-1) prepare device (?)
-2) handle resources
-3) allocate carveouts (?)
-4) prepare subdevices
-5) attach
-6) start subdevices
-
-Rather than relying on the state flag and missing ops will turn the
-first list into the second list I conceptually prefer having two
-separate functions that are easy to reason about.
-
-But I haven't done any refactoring or implemented this, so in practice
-the two might just be a lot of duplication(?)
-
-> > 
-> > >  {
-> > >  	struct device *dev = &rproc->dev;
-> > >  	const char *name = rproc->firmware;
-> > > @@ -1382,7 +1382,9 @@ static int rproc_fw_boot(struct rproc *rproc, const struct firmware *fw)
-> > >  	if (ret)
-> > >  		return ret;
-> > >  
-> > > -	dev_info(dev, "Booting fw image %s, size %zd\n", name, fw->size);
-> > > +	if (!rproc_needs_syncing(rproc))
-> > 
-> > Can't we make this check on fw, to make the relationship "if we where
-> > passed a firmware object, we're going to load and boot that firmware"?
+> diff --git a/drivers/remoteproc/stm32_rproc.c b/drivers/remoteproc/stm32_rproc.c
+> index 0f9d02ca4f5a..91fd59af0ffe 100644
+> --- a/drivers/remoteproc/stm32_rproc.c
+> +++ b/drivers/remoteproc/stm32_rproc.c
+> @@ -127,10 +127,10 @@ static int stm32_rproc_mem_release(struct rproc *rproc,
+>  	return 0;
+>  }
+>  
+> -static int stm32_rproc_of_memory_translations(struct rproc *rproc)
+> +static int stm32_rproc_of_memory_translations(struct platform_device *pdev,
+> +					      struct stm32_rproc *ddata)
+>  {
+> -	struct device *parent, *dev = rproc->dev.parent;
+> -	struct stm32_rproc *ddata = rproc->priv;
+> +	struct device *parent, *dev = &pdev->dev;
+>  	struct device_node *np;
+>  	struct stm32_rproc_mem *p_mems;
+>  	struct stm32_rproc_mem_ranges *mem_range;
+> @@ -606,7 +606,7 @@ static int stm32_rproc_parse_dt(struct platform_device *pdev)
+>  
+>  	rproc->auto_boot = of_property_read_bool(np, "st,auto-boot");
+>  
+> -	return stm32_rproc_of_memory_translations(rproc);
+> +	return stm32_rproc_of_memory_translations(pdev, ddata);
+>  }
+>  
+>  static int stm32_rproc_probe(struct platform_device *pdev)
+> -- 
+> 2.20.1
 > 
-> It can but I specifically decided to use rproc_needs_syncing() to be consistent
-> with the rest of the patchset.  That way all we need to do is grep for
-> rproc_needs_syncing to get all the places where a decision about synchronising
-> with a remote processor is made.
-> 
-
-Conceptually we have a single "to sync or not to sync", but I think
-we're invoking rproc_needs_syncing() 8 times during rproc_fw_boot() and
-each of those operations may or may not do anything.
-
-There are certain operations where I see it makes sense for a driver to
-either implement or not, but I think that e.g. for a rproc in OFFLINE
-state we should just require ops->start to be specified - because it
-doesn't make sense to enter rproc_start() if ops->start is a nop.
-
-Regards,
-Bjorn
-
-> > 
-> > Regards,
-> > Bjorn
-> > 
-> > > +		dev_info(dev, "Booting fw image %s, size %zd\n",
-> > > +			 name, fw->size);
-> > >  
-> > >  	/*
-> > >  	 * if enabling an IOMMU isn't relevant for this rproc, this is
-> > > @@ -1818,7 +1820,7 @@ int rproc_boot(struct rproc *rproc)
-> > >  		}
-> > >  	}
-> > >  
-> > > -	ret = rproc_fw_boot(rproc, firmware_p);
-> > > +	ret = rproc_actuate_device(rproc, firmware_p);
-> > >  
-> > >  	release_firmware(firmware_p);
-> > >  
-> > > -- 
-> > > 2.20.1
-> > > 
