@@ -4,189 +4,123 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95858C433DF
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 14 May 2020 17:01:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E5B7C433E1
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 14 May 2020 17:08:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 682F42065F
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 14 May 2020 17:01:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4395C206A5
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 14 May 2020 17:08:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zQHEDIRO"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="m1/voEXy"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726122AbgENRBq (ORCPT
+        id S1726174AbgENRI0 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 14 May 2020 13:01:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59362 "EHLO
+        Thu, 14 May 2020 13:08:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60404 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725975AbgENRBp (ORCPT
+        with ESMTP id S1726032AbgENRI0 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 14 May 2020 13:01:45 -0400
-Received: from mail-pf1-x442.google.com (mail-pf1-x442.google.com [IPv6:2607:f8b0:4864:20::442])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 33535C061A0C
-        for <linux-remoteproc@vger.kernel.org>; Thu, 14 May 2020 10:01:45 -0700 (PDT)
-Received: by mail-pf1-x442.google.com with SMTP id y25so1570308pfn.5
-        for <linux-remoteproc@vger.kernel.org>; Thu, 14 May 2020 10:01:45 -0700 (PDT)
+        Thu, 14 May 2020 13:08:26 -0400
+Received: from mail-pg1-x543.google.com (mail-pg1-x543.google.com [IPv6:2607:f8b0:4864:20::543])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9982AC061A0E
+        for <linux-remoteproc@vger.kernel.org>; Thu, 14 May 2020 10:08:25 -0700 (PDT)
+Received: by mail-pg1-x543.google.com with SMTP id t11so1505679pgg.2
+        for <linux-remoteproc@vger.kernel.org>; Thu, 14 May 2020 10:08:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=ZuhsntYUMFZxRnUyqDlk5wRYaifNpo5JONkK2uBeMw8=;
-        b=zQHEDIROdy/6E8RJIS9Cu0voHf1MlMmv2SrYL7sos3L8Znnxs9ubcS/WOm9A0BPSZ0
-         n5av6qoxz4Gchfn1zFTLJqGT2eUZIh+KVILNxsPUJln6zB2yJQGtO2+3D2Exf6iFnETi
-         WR10howEZogi8LvD43gCSmWiXXCXKJuq0EdoJGbDHzR+XNDWR8NwZkL8QF07d2aYc9KA
-         P67louPdgP2Lt18Uxos2gKt/osQIwj8uafwgZr5CUo344bdxWThBaRUh+FVgJH5N1ibT
-         wTjyWN0/Gngn69v0jAn+mehd0GlVg4ESIFcOreXly739xl/C3hZ6ku0bXHOnXN9z7DpJ
-         du7A==
+        bh=uUcyf9NwOhWDSsoXsAafDnpXglCvcvKACjl1qcHNAFk=;
+        b=m1/voEXyUnijavkOQ2KcCoSjVH54gh9UOXPA7PAvf7E+8JFUn7g+xt6iYEALFHnLnA
+         QF2divI3/3Aldqgbubwmwyp+pXVy9GbeZAOV9LSANKIBjmYqK9sNAYffdkL1GzI0IDqU
+         LKofRS/Sz9SINnKubmGRLNW81UD9AqjrjY3Wm07fSjPTGjjJ77uHHyIQqeY4Itm+sc8e
+         lImgcyfqOZD4/XX1a3LdUnp5EscjmX1ByO20ve6PERtwuIefl5Bmj3qsjLsPdA8U7bZL
+         epydIx60tjNt9FI9WbTRy2EpfwUU92JbmjKT32P2o2JzzW9oAQiY0FS/wUhZYOorfpei
+         Tk2Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=ZuhsntYUMFZxRnUyqDlk5wRYaifNpo5JONkK2uBeMw8=;
-        b=US5/4ER+kj7kHT/papMwW86FQd+3OvrIBV1QJQoXhFexCzuWWAFQMAeqdWaLvYrF55
-         22OYkh7+9kXayXag8HdLhEduFPxAHttpvMKspn/r3lmbLs2eN0RBVqmixCSfVzKiGpYi
-         8C//xIr0cbRve+aE4Yckbyv7rxmQqMWn9aDlwDr2Jddl/5uycz3lakTPJ8NamqfT05CO
-         caOWToCJ1yh//bFktX1KaHhIuVdS2NeFfXLpVs5G1q/djhNYjmK9n7VMA17j2wMSEz64
-         LFTMbFSKyGGWvXfFO2tI21/ICWrTK7rTop1u7YNqTSB4jnOZ9KtTOo6w92dV5RADHYzs
-         m9Zg==
-X-Gm-Message-State: AOAM533/BZubfgJAfuNP7pFovhmQnYXpwlxg1ak584d8Pp+U5WTEUSoS
-        XfuT80xCOw3zGQFXfibahY9CQ9ap3MA=
-X-Google-Smtp-Source: ABdhPJyb1dz1psTKBYjcweFb9ar7rAG/ofRi7zGaZban+NrEY9U1EqPUAktGm/RqFNrqdHjdJ9qhUw==
-X-Received: by 2002:a62:dd8a:: with SMTP id w132mr5333762pff.309.1589475704560;
-        Thu, 14 May 2020 10:01:44 -0700 (PDT)
+        bh=uUcyf9NwOhWDSsoXsAafDnpXglCvcvKACjl1qcHNAFk=;
+        b=D+au0m2kAQstI+qHsb1NgP1sZyREvkUWun6Y+5PvGDPMqIdb1eX8WxUutvYEGfzuFG
+         rjpF5OuBaFAyqfLHZ6ouuaULhdx9JFRu4GaEMGTZFoGoJZdf77m/jg3L/qapztjSOpTv
+         f1IR7fb6ys5rjddj30OpabPL4H1oxRDScTf9g6mYANyNb+/iXgULsAa8Q1LnU8P1Vl1r
+         QWBO+mS/RBVr1G324Udw6F2TdTG6QoKcA7wKaPurbCVmkPWWLQF20Kodczd/ulmtvm78
+         EBDjo2WuH02fW+odCpkTpdyDV2p/t2ysONYG0h3BBWKa+ugCmqF6j+IJHDBduShrZyoC
+         sIRA==
+X-Gm-Message-State: AOAM532Pfmq7RR0W1d1fZDKtCYEJexHu9mDArRXKBtNVFTM5SuKnJz3O
+        dWZXMqaQlXCHIEecS91/ETDblQ==
+X-Google-Smtp-Source: ABdhPJzsIEv8c2T+CBe2MehVpzlYUEhQ5SEp4znGfWcviT0qA6+Uh7WohNI59SLjpioEdJ1m5ct7OQ==
+X-Received: by 2002:a65:6703:: with SMTP id u3mr4771334pgf.179.1589476105048;
+        Thu, 14 May 2020 10:08:25 -0700 (PDT)
 Received: from builder.lan (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id p1sm19197796pjf.15.2020.05.14.10.01.42
+        by smtp.gmail.com with ESMTPSA id j186sm2754328pfb.220.2020.05.14.10.08.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 May 2020 10:01:43 -0700 (PDT)
-Date:   Thu, 14 May 2020 10:00:13 -0700
+        Thu, 14 May 2020 10:08:24 -0700 (PDT)
+Date:   Thu, 14 May 2020 10:06:54 -0700
 From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Vinod Koul <vkoul@kernel.org>
+To:     Baolin Wang <baolin.wang7@gmail.com>
 Cc:     Andy Gross <agross@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>,
-        Baolin Wang <baolin.wang7@gmail.com>,
         Rob Herring <robh+dt@kernel.org>,
         linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+        Devicetree List <devicetree@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
 Subject: Re: [PATCH 3/4] hwspinlock: qcom: Allow mmio usage in addition to
  syscon
-Message-ID: <20200514170013.GX2165@builder.lan>
+Message-ID: <20200514170654.GY2165@builder.lan>
 References: <20200513005441.1102586-1-bjorn.andersson@linaro.org>
  <20200513005441.1102586-4-bjorn.andersson@linaro.org>
- <20200514141523.GW14092@vkoul-mobl>
+ <CADBw62oF=o4xxar8yO+xwhLa3h2oD_GD_tWhFo1DDTJGgFnEjg@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200514141523.GW14092@vkoul-mobl>
+In-Reply-To: <CADBw62oF=o4xxar8yO+xwhLa3h2oD_GD_tWhFo1DDTJGgFnEjg@mail.gmail.com>
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Thu 14 May 07:15 PDT 2020, Vinod Koul wrote:
+On Tue 12 May 20:57 PDT 2020, Baolin Wang wrote:
 
-> On 12-05-20, 17:54, Bjorn Andersson wrote:
+> On Wed, May 13, 2020 at 8:55 AM Bjorn Andersson
+> <bjorn.andersson@linaro.org> wrote:
+> >
 > > In all modern Qualcomm platforms the mutex region of the TCSR is forked
 > > off into its own block, all with a offset of 0 and stride of 4096. So
 > > add support for directly memory mapping this register space, to avoid
 > > the need to represent this block using a syscon.
-> > 
+> >
 > > Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 > > ---
 > >  drivers/hwspinlock/qcom_hwspinlock.c | 72 +++++++++++++++++++++-------
 > >  1 file changed, 56 insertions(+), 16 deletions(-)
-> > 
+> >
 > > diff --git a/drivers/hwspinlock/qcom_hwspinlock.c b/drivers/hwspinlock/qcom_hwspinlock.c
-> > index f0da544b14d2..d8d4d729816c 100644
-> > --- a/drivers/hwspinlock/qcom_hwspinlock.c
-> > +++ b/drivers/hwspinlock/qcom_hwspinlock.c
-> > @@ -70,41 +70,81 @@ static const struct of_device_id qcom_hwspinlock_of_match[] = {
-> >  };
-> >  MODULE_DEVICE_TABLE(of, qcom_hwspinlock_of_match);
-> >  
-> > -static int qcom_hwspinlock_probe(struct platform_device *pdev)
-> > +static struct regmap *qcom_hwspinlock_probe_syscon(struct platform_device *pdev,
-> > +						   u32 *base, u32 *stride)
-> >  {
-> > -	struct hwspinlock_device *bank;
-> >  	struct device_node *syscon;
-> > -	struct reg_field field;
-> >  	struct regmap *regmap;
-> > -	size_t array_size;
-> > -	u32 stride;
-> > -	u32 base;
-> >  	int ret;
-> > -	int i;
-> >  
-> >  	syscon = of_parse_phandle(pdev->dev.of_node, "syscon", 0);
-> > -	if (!syscon) {
-> > -		dev_err(&pdev->dev, "no syscon property\n");
-> 
-> any reason to drop the log?
-> 
-
-Given that we first check for the syscon and then fall back to trying to
-use the reg, keeping this line would cause this log line to always show
-up on targets putting this under /soc.
-
-So I think it's better to drop the line and then require the presence of
-either syscon or reg using the DT schema.
-
-> > -		return -ENODEV;
-> > -	}
-> > +	if (!syscon)
-> > +		return ERR_PTR(-ENODEV);
-> >  
-> >  	regmap = syscon_node_to_regmap(syscon);
-> >  	of_node_put(syscon);
-> >  	if (IS_ERR(regmap))
-> > -		return PTR_ERR(regmap);
-> > +		return regmap;
-> >  
-> > -	ret = of_property_read_u32_index(pdev->dev.of_node, "syscon", 1, &base);
-> > +	ret = of_property_read_u32_index(pdev->dev.of_node, "syscon", 1, base);
-> >  	if (ret < 0) {
-> >  		dev_err(&pdev->dev, "no offset in syscon\n");
-> > -		return -EINVAL;
-> > +		return ERR_PTR(-EINVAL);
-> >  	}
-> >  
-> > -	ret = of_property_read_u32_index(pdev->dev.of_node, "syscon", 2, &stride);
-> > +	ret = of_property_read_u32_index(pdev->dev.of_node, "syscon", 2, stride);
-> >  	if (ret < 0) {
-> >  		dev_err(&pdev->dev, "no stride syscon\n");
-> > -		return -EINVAL;
-> > +		return ERR_PTR(-EINVAL);
-> >  	}
-> >  
-> > +	return regmap;
-> > +}
-> > +
-> > +static const struct regmap_config tcsr_mutex_config = {
-> > +	.reg_bits		= 32,
-> > +	.reg_stride		= 4,
-> > +	.val_bits		= 32,
-> > +	.max_register		= 0x40000,
-> > +	.fast_io		= true,
-> > +};
-> > +
+[..]
 > > +static struct regmap *qcom_hwspinlock_probe_mmio(struct platform_device *pdev,
-> > +						 u32 *offset, u32 *stride)
+> > +                                                u32 *offset, u32 *stride)
 > > +{
-> > +	struct device *dev = &pdev->dev;
-> > +	struct resource *res;
-> > +	void __iomem *base;
+> > +       struct device *dev = &pdev->dev;
+> > +       struct resource *res;
+> > +       void __iomem *base;
 > > +
-> > +	/* All modern platform has offset 0 and stride of 4k */
-> > +	*offset = 0;
-> > +	*stride = 0x1000;
+> > +       /* All modern platform has offset 0 and stride of 4k */
+> > +       *offset = 0;
+> > +       *stride = 0x1000;
+> > +
+> > +       res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> > +       base = devm_ioremap_resource(&pdev->dev, res);
 > 
-> Wouldn't it make sense to read this from DT rather than code in kernel?
-> 
+> I think you can use devm_platform_ioremap_resource(pdev, 0) to
+> simplify your code, otherwise looks good to me.
 
-I did consider this as well as platform specific compatibles, but
-realized that pretty much all 64-bit targets have these values. So given
-that we still can represent this using the syscon approach I don't think
-we need to add yet another mechanism to specify these.
+You're right, I better fix this before someone with Coccinelle get the
+chance ;)
+
+> Reviewed-by: Baolin Wang <baolin.wang7@gmail.com>
+> 
 
 Thanks,
 Bjorn
