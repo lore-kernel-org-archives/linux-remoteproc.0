@@ -2,177 +2,130 @@ Return-Path: <SRS0=tiv6=65=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CBD43C433DF
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 15 May 2020 19:24:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DEFAC433E0
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 15 May 2020 19:46:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9505C2070A
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 15 May 2020 19:24:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C56D420709
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 15 May 2020 19:46:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="a0VhCxzu"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Q9Q88arg"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726610AbgEOTYs (ORCPT
+        id S1726223AbgEOTqz (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 15 May 2020 15:24:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52938 "EHLO
+        Fri, 15 May 2020 15:46:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56384 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726231AbgEOTYr (ORCPT
+        by vger.kernel.org with ESMTP id S1726204AbgEOTqy (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 15 May 2020 15:24:47 -0400
-Received: from mail-pl1-x641.google.com (mail-pl1-x641.google.com [IPv6:2607:f8b0:4864:20::641])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D2BBAC05BD0A
-        for <linux-remoteproc@vger.kernel.org>; Fri, 15 May 2020 12:24:47 -0700 (PDT)
-Received: by mail-pl1-x641.google.com with SMTP id b12so1278862plz.13
-        for <linux-remoteproc@vger.kernel.org>; Fri, 15 May 2020 12:24:47 -0700 (PDT)
+        Fri, 15 May 2020 15:46:54 -0400
+Received: from mail-pg1-x543.google.com (mail-pg1-x543.google.com [IPv6:2607:f8b0:4864:20::543])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9CB91C05BD09
+        for <linux-remoteproc@vger.kernel.org>; Fri, 15 May 2020 12:46:54 -0700 (PDT)
+Received: by mail-pg1-x543.google.com with SMTP id u5so1478632pgn.5
+        for <linux-remoteproc@vger.kernel.org>; Fri, 15 May 2020 12:46:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=0X/3u6xgTc64z4mbUPC5Tq8BsfZh50im1LnhaApPDfQ=;
-        b=a0VhCxzuyN9ezRnMWKcqic+hO3e4AQGqu4VSk5ZD9sCmItbLI8vjEa1FQ6RjgJ0Ctt
-         bJV2FLiY73HZw9SE3LgXQ+kSHPQfQpKiH96EZkTo6IzSpIYMdEHZgv5x2xa3JL31TGA9
-         L3GbIoDChOgbqkSeVdzLnVZdHzAAtPnN84XYK0HjwmistgV9xIGVddE1fJ4clMuUGPXq
-         ogZTCwbXj9RZ2iwRDPY3US4Cq/HiG3lkuSY/HZr9USrmgfxcKk0uNKDhJ4QNGYf8wGJY
-         gIcBntQTzms+FAHTX+QQlx3hibfYkRktz4D/5gf4k0e/73eod+JLnTBIf+O861qgiVqw
-         SeJw==
+        bh=qHFnsbgrSS4StOIenlkUVZXooyvIhnf9sBRBZNkUxwQ=;
+        b=Q9Q88argmmjbLp2fCN86SmyNT6CTlbnyCjllZlrZmXbFTt2I/vXcG0UiFQsfrdl2M6
+         omiB3E2tkak1x2S0KzduyTbK2fpc6aIVEiToqOSzO5Z+KGQ/ixVPmoCKgyyeY85ePBaZ
+         pR8MmAGbN98jOc7nK+pEDqmQRXPj+ectonE1N+8xP9A3vbhEGmTaW++SFt9o11+b6zFz
+         R5QI94xI/7RY7OYhrD62UfxNl7se7rr8oiNahRoy6nU2FrMvw39NlcvKMAWvIIuuFoOf
+         VtaK2gmWlYvf5m1f2PLZGb6SUOhU/0wS9q1JRZR3J5GSKc6msxjexbNnEYjjokWWaTZW
+         8ccg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=0X/3u6xgTc64z4mbUPC5Tq8BsfZh50im1LnhaApPDfQ=;
-        b=lKwdwejmfvfkhLcC759moVgxovMEdqNWUbmzSnF0oz1H7wlPJyxYsLbFmMkkpQTgzj
-         0wtcdilVjYyo2YaaqdBU7Ba12OC7J8emVYftobNpOtNhJqvtcFCHoI/x+PWG3vPoG3ni
-         jn6oWmTeD1lF2hExIz4rxRuWlu1KUzvmQz7xc70c1GrXMb3VJVT4lXp8D2W20KYZwORX
-         Lh6zYfHdfBt1jsuURgf8zKNZCxWXcMgasGYGvKcC41tmKiIWQ4tWBs3imYItKY2c2mD7
-         v1S9y4osJN+tHGTI9+mh4PhNNER/ExOz4OIqei9m1wHD0/1RJJvDrkL9LOoaHSxV3yVO
-         Kwlw==
-X-Gm-Message-State: AOAM532Oyb3eiarU8iREgBp4dEtqbEElaTBUp2CrY4eAjOTT/2XA2IGS
-        m59iuoQWGMps0Gle4Qsx0iukDw==
-X-Google-Smtp-Source: ABdhPJxDWnkf+1IwZWuleDAlLecH4wikfvXhjAefWd4/wJrq3PF6i1tr68qjz65bcp+XFKZuRHLyHQ==
-X-Received: by 2002:a17:90b:1045:: with SMTP id gq5mr5130721pjb.105.1589570687162;
-        Fri, 15 May 2020 12:24:47 -0700 (PDT)
+        bh=qHFnsbgrSS4StOIenlkUVZXooyvIhnf9sBRBZNkUxwQ=;
+        b=HDNyWs2GfUdIGfMVi72SnBx/vJWmQCs6fxNjrRuwZS1XVdKqKzuZTAA2IziC2sa8R9
+         QDIm2qbKlOkQ+Pm9Y9plrVjeo/N34Zm/hGNzrvi65aP+BwPBVQCePmvSmQs9d8yGXN0X
+         gUn9AOyKTt/rbRmEPPFS47arIWZaJviorSqGEjhIoPp1V6cRnpIRKQc/WMkXutbIj/iz
+         YCbWIwHavcLpRFe9ulVweMR2eY2xhJXDRXF9l/LgPSq6EmWg1TfNiuLU3AzzVHV/q8rQ
+         1Q0E5gJcyd0Zn1mCAlLodouGtVGxFy3MgeixdJN0DFljY6ojeol51pfqaAKjfNuqFAOu
+         TkKQ==
+X-Gm-Message-State: AOAM530+dKJ0IadZLFOWPD9cmJT/OOQQ8p4CQwlpKywJv5BFqMY3EDOK
+        wMv/ayj2qgbr/D6D3JFgvkq3CQ==
+X-Google-Smtp-Source: ABdhPJz2S4OKkT9pAG2qWpgs+3SZglys/JTnKn/Hb4Bpe0zcY3Mp9xBPg6TctMyMvSmt3IJ1aHxs8Q==
+X-Received: by 2002:a62:1b84:: with SMTP id b126mr5552921pfb.123.1589572013822;
+        Fri, 15 May 2020 12:46:53 -0700 (PDT)
 Received: from xps15 (S0106002369de4dac.cg.shawcable.net. [68.147.8.254])
-        by smtp.gmail.com with ESMTPSA id h193sm2582138pfe.30.2020.05.15.12.24.45
+        by smtp.gmail.com with ESMTPSA id lj12sm2169968pjb.21.2020.05.15.12.46.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 May 2020 12:24:45 -0700 (PDT)
-Date:   Fri, 15 May 2020 13:24:43 -0600
+        Fri, 15 May 2020 12:46:53 -0700 (PDT)
+Date:   Fri, 15 May 2020 13:46:51 -0600
 From:   Mathieu Poirier <mathieu.poirier@linaro.org>
 To:     Bjorn Andersson <bjorn.andersson@linaro.org>
 Cc:     ohad@wizery.com, loic.pallardy@st.com, arnaud.pouliquen@st.com,
         s-anna@ti.com, linux-remoteproc@vger.kernel.org, corbet@lwn.net,
         linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 03/14] remoteproc: Add new operation and flags for
- synchronistation
-Message-ID: <20200515192443.GA24201@xps15>
+Subject: Re: [PATCH v3 05/14] remoteproc: Refactor function rproc_fw_boot()
+Message-ID: <20200515194651.GB24201@xps15>
 References: <20200424200135.28825-1-mathieu.poirier@linaro.org>
- <20200424200135.28825-4-mathieu.poirier@linaro.org>
- <20200506002253.GC2329931@builder.lan>
- <20200508210123.GA5650@xps15>
- <20200514013224.GE16107@builder.lan>
+ <20200424200135.28825-6-mathieu.poirier@linaro.org>
+ <20200506003341.GD2329931@builder.lan>
+ <20200508212756.GB5650@xps15>
+ <20200514021055.GF16107@builder.lan>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200514013224.GE16107@builder.lan>
+In-Reply-To: <20200514021055.GF16107@builder.lan>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Good day Bjorn,
-
-On Wed, May 13, 2020 at 06:32:24PM -0700, Bjorn Andersson wrote:
-> On Fri 08 May 14:01 PDT 2020, Mathieu Poirier wrote:
+On Wed, May 13, 2020 at 07:10:55PM -0700, Bjorn Andersson wrote:
+> On Fri 08 May 14:27 PDT 2020, Mathieu Poirier wrote:
 > 
-> > On Tue, May 05, 2020 at 05:22:53PM -0700, Bjorn Andersson wrote:
+> > On Tue, May 05, 2020 at 05:33:41PM -0700, Bjorn Andersson wrote:
 > > > On Fri 24 Apr 13:01 PDT 2020, Mathieu Poirier wrote:
 > > > 
-> > > > Add a new sync_ops to support use cases where the remoteproc
-> > > > core is synchronising with the remote processor.  Exactly when to use
-> > > > the synchronisation operations is directed by the flags in structure
-> > > > rproc_sync_flags.
+> > > > Refactor function rproc_fw_boot() in order to better reflect the work
+> > > > that is done when supporting scenarios where the remoteproc core is
+> > > > synchronising with a remote processor.
 > > > > 
-> > > 
-> > > I'm sorry, but no matter how many times I read these patches I have to
-> > > translate "synchronising" to "remote controlled", and given the number
-> > > of comments clarifying this makes me feel that we could perhaps come up
-> > > with a better name?
-> > 
-> > "remote controlled" as in "someone else is managing the remote processor" ?
-> > It could also mean the remoteproc core is "remote controlling" the
-> > remote processor, exactly what it currently does today...
-> > 
-> 
-> You're right and this would certainly not help the confusion.
-> 
-> > How about "autonomous", as in the remote processor doesn't need us to boot or
-> > switch it off.  I'm open to any other suggestions.
-> > 
-> > > 
 > > > > Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 > > > > ---
-> > > >  include/linux/remoteproc.h | 24 ++++++++++++++++++++++++
-> > > >  1 file changed, 24 insertions(+)
+> > > >  drivers/remoteproc/remoteproc_core.c | 10 ++++++----
+> > > >  1 file changed, 6 insertions(+), 4 deletions(-)
 > > > > 
-> > > > diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-> > > > index ac4082f12e8b..ceb3b2bba824 100644
-> > > > --- a/include/linux/remoteproc.h
-> > > > +++ b/include/linux/remoteproc.h
-> > > > @@ -353,6 +353,23 @@ enum rsc_handling_status {
-> > > >  	RSC_IGNORED	= 1,
-> > > >  };
+> > > > diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+> > > > index a02593b75bec..e90a21de9de1 100644
+> > > > --- a/drivers/remoteproc/remoteproc_core.c
+> > > > +++ b/drivers/remoteproc/remoteproc_core.c
+> > > > @@ -1370,9 +1370,9 @@ static int rproc_start(struct rproc *rproc, const struct firmware *fw)
+> > > >  }
 > > > >  
-> > > > +/**
-> > > > + * struct rproc_sync_flags - platform specific flags indicating which
-> > > > + *			      rproc_ops to use at specific times during
-> > > > + *			      the rproc lifecycle.
-> > > > + * @on_init: true if synchronising with the remote processor at
-> > > > + *	     initialisation time
-> > > > + * @after_stop: true if synchronising with the remote processor after it was
-> > > > + *		stopped from the cmmand line
-> > > > + * @after_crash: true if synchronising with the remote processor after
-> > > > + *		 it has crashed
-> > > > + */
-> > > > +struct rproc_sync_flags {
-> > > > +	bool on_init;
+> > > >  /*
+> > > > - * take a firmware and boot a remote processor with it.
+> > > > + * boot or synchronise with a remote processor.
+> > > >   */
+> > > > -static int rproc_fw_boot(struct rproc *rproc, const struct firmware *fw)
+> > > > +static int rproc_actuate_device(struct rproc *rproc, const struct firmware *fw)
 > > > 
-> > > This indirectly splits the RPROC_OFFLINE state in an "offline" and
-> > > "already-booted" state. Wouldn't it be clearer to represent this with a
-> > > new RPROC_ALREADY_BOOTED state?
-> > > 
+> > > Per patch 4 this function will if rproc_needs_syncing() be called with
+> > > fw == NULL, it's not obvious to me that the various operations on "fw"
+> > > in this function are valid anymore.
 > > 
-> > I suggested that at some point in the past but it was in a different context.  I
-> > will revisit to see how doing so could apply here.
+> > That is right, all firmware related operations in this function are found in
+> > remoteproc_internal.h where the value of rproc->sync_with_mcu is checked before
+> > moving forward. That allows us to avoid introducing a new function similar to
+> > rproc_fw_boot() but without firmware operations or peppering the code with if
+> > statements.
 > > 
 > 
-> How about we introduce a new state named DETACHED and make the platform
-> drivers specify that the remote processor is in either OFFLINE (as
-> today) or DETACHED during initialization.
-
-That is certainly an idea that is growing on me.  Up to now I used the on_init
-flag to express duality in the OFFLINE state.  But based on the comments that came
-back from yourself, Arnaud and Suman it is clear that my approach is anything
-but clear.  As such I am eager to try something else.
-
+> As I wrote in my other reply, the two mechanisms seems to consist of the
+> following steps:
 > 
-> Then on_init = true would be the action of going from DETACHED to
-> RUNNING, which would involve the following actions:
-> 
-> 1) find resource table
-> 2) prepare device (?)
-> 3) handle resources
-> 4) allocate carveouts (?)
-> 5) prepare subdevices
-> 6) "attach"
-> 7) start subdevices
-> 
-> on_init = false would represent the transition from OFFLINE to RUNNING,
-> which today involve the following actions:
-> 
+> boot the core:
 > 1) request firmware
 > 2) prepare device
 > 3) parse fw
@@ -181,273 +134,103 @@ but clear.  As such I am eager to try something else.
 > 6) load segments
 > 7) find resource table
 > 8) prepare subdevices
-> 9) "boot"
+> 9) power on
 > 10) start subdevices
-
-If we add a DETACHED state I don't see a scenario where we need the on_init
-variable.  When DETACHED is set by the platform we know the MCU is running and
-it becomes a matter of when the core attach to it, i.e at initialisation time or
-once the kernel has finished booting, and that is already taken care of by the
-auto_boot variable.  
-
-The steps you have outlined above to describe the transitions are accurate.
-
 > 
-> > > > +	bool after_stop;
-> > > 
-> > > What does it mean when this is true? That Linux can shut the remote core
-> > > down, but someone else will start it?
-> > 
-> > It tells the remoteproc core how to interact with the remote processor after the
-> > latter has been switched off.
-> 
-> Understood.
-> 
-> > For example, we could want to boot the remote
-> > processor from the boot loader so that minimal functionality can be provided
-> > while the kernel boots.  Once the kernel and user space are in place, the remote
-> > processor is explicitly stopped and booted once again, but this time with a
-> > firmware image that offers full functionality.
-> > 
-> 
-> This would be the { on_init = true, after_stop = false } use case, with
-> the new state would relate to the journey of DETACHED -> RUNNING ->
-> OFFLINE.
-
-Yes
-
-> 
-> As such the next boot would represent above OFFLINE -> RUNNING case,
-> which we already support today.
-
-Correct.  This is the level of functionality sought by ST and TI.  Xilinx seems to
-have the same requirements as well.
-
-> 
-> > It could also be that the remoteproc core can stop the remote processor, but the
-> > remote processor will automatically reboot itself.  In that case the remoteproc
-> > core will simply synchronise with the remote processor, as it does when .on_init
-> > == true.
-> > 
-> 
-> I've not been able to come up with a reasonable use case for the {
-> on_init = ture, after_stop = true } scenario.
-
-That one is a little trickier - see the next comment.
-
-> 
-> But Wendy previously talked about the need to "detach" Linux from a
-> running remote processor, by somehow just letting it know that the
-> communication is down - to allow Linux to be rebooted while the remote
-> was running. So if we support a transition from RUNNING to DETACHED
-> using a sequence of something like:
-> 
-> 1) stop subdevices
-> 2) "detach"
-> 3) unprepare subdevices
-> 4) release carveouts (?)
-> 5) unprepare device (?)
-> 
-> Then perhaps the after_stop could naturally be the transition from
-> DETACHED to RUNNING, either with or without a reboot of the system
-> in between?
-
-I see two scenarios for after_stop == true:
-
-1) A "detach" scenario as you mentioned above.  In this case the stop() function
-would inform (using a mechanism that is platform specific) the MCU that the core
-is shutting down.  In this case the MCU would put itself back in "waiting mode",
-waiting for the core to show signs of life again.  On the core side this would
-be a DETACHED to RUNNING transition.  Wheter the application processor reboots
-or not should not be relevant to the MCU.
-
-2) An "MCU reboot in autonomous mode" scenario.  Here the stop() function would
-switch off the MCU.  From there the MCU could automatically restarts itself or
-be restarted by some other entity.  In this scenario I would expect the start()
-function to block until the MCU is ready to proceed with the rest of the
-remoteproc core initialisation steps.
-
-From a remoteproc core perspective, both are handled by a DETACHED -> RUNNING
-transition.  This is the functionality NXP is looking for.   
-
-> 
-> > > 
-> > > > +	bool after_crash;
-> > > 
-> > > Similarly what is the expected steps to be taken by the core when this
-> > > is true? Should rproc_report_crash() simply stop/start the subdevices
-> > > and upon one of the ops somehow tell the remote controller that it can
-> > > proceed with the recovery?
-> > 
-> > The exact same sequence of steps will be carried out as they are today, except
-> > that if after_crash == true, the remoteproc core won't be switching the remote
-> > processor on, exactly as it would do when on_init == true.
-> > 
-> 
-> Just to make sure we're on the same page:
-> 
-> after_crash = false is what we have today, and would mean:
-> 
-> 1) stop subdevices
-> 2) power off
-> 3) unprepare subdevices
-> 4) generate coredump
-> 5) request firmware
-> 6) load segments
-> 7) find resource table
-> 8) prepare subdevices
-> 9) "boot"
-> 10) start subdevices
-
-Exactly
-
-> 
-> after_crash = true would mean:
-> 
-> 1) stop subdevices
-> 2) "detach"
-> 3) unprepare subdevices
+> sync:
+> 1) prepare device (?)
+> 2) handle resources
+> 3) allocate carveouts (?)
 > 4) prepare subdevices
-> 5) "attach"
+> 5) attach
 > 6) start subdevices
->
+> 
+> Rather than relying on the state flag and missing ops will turn the
+> first list into the second list I conceptually prefer having two
+> separate functions that are easy to reason about.
 
-Yes
- 
-> State diagram wise both of these would represent the transition RUNNING
-> -> CRASHED -> RUNNING, but somehow the platform driver needs to be able
-> to specify which of these sequences to perform. Per your naming
-> suggestion above, this does sound like a "autonomous_recovery" boolean
-> to me.
-
-Right, semantically "rproc->autonomous" would apply quite well.
-
-In function rproc_crash_handler_work(), a call to rproc_set_sync_flag() has been
-strategically placed to set the value of rproc->autonomous based on
-"after_crash".  From there the core knows which rproc_ops to use.  Here too we
-have to rely on the rproc_ops provided by the platform to do the right thing
-based on the scenario to enact.
+I reflected long and hard about doing just that...
 
 > 
-> > These flags are there to indicate how to set rproc::sync_with_rproc after
-> > different events, that is when the remoteproc core boots, when the remoteproc
-> > has been stopped or when it has crashed.
-> > 
-> 
-> Right, that was clear from your patches. Sorry that my reply didn't
-> convey the information that I had understood this.
+> But I haven't done any refactoring or implemented this, so in practice
+> the two might just be a lot of duplication(?)
+
+Exactly - duplication and maintenance are my prime concern.  Right now some
+functions in the OFFLINE -> RUNNING are clearly not needed when dealing with a
+DETACHED -> RUNNING scenarios, but with I am convinced people will find ways to
+do something creative with the callbacks.  In the end I fear the new functions
+we spin off to deal with DETACHED -> RUNNING scenarios will end up looking very
+similar to the current implementation.
+
+With that in mind I simply did all the work in remoteproc_internal.h and left
+the core functions intact.
+
+We can try spinning off new functions in the next revision, just to test my
+theory and see how much gets duplicated.
+
 > 
 > > > 
-> > > > +};
-> > > > +
-> > > >  /**
-> > > >   * struct rproc_ops - platform-specific device handlers
-> > > >   * @start:	power on the device and boot it
-> > > > @@ -459,6 +476,9 @@ struct rproc_dump_segment {
-> > > >   * @firmware: name of firmware file to be loaded
-> > > >   * @priv: private data which belongs to the platform-specific rproc module
-> > > >   * @ops: platform-specific start/stop rproc handlers
-> > > > + * @sync_ops: platform-specific start/stop rproc handlers when
-> > > > + *	      synchronising with a remote processor.
-> > > > + * @sync_flags: Determine the rproc_ops to choose in specific states.
-> > > >   * @dev: virtual device for refcounting and common remoteproc behavior
-> > > >   * @power: refcount of users who need this rproc powered up
-> > > >   * @state: state of the device
-> > > > @@ -482,6 +502,7 @@ struct rproc_dump_segment {
-> > > >   * @table_sz: size of @cached_table
-> > > >   * @has_iommu: flag to indicate if remote processor is behind an MMU
-> > > >   * @auto_boot: flag to indicate if remote processor should be auto-started
-> > > > + * @sync_with_rproc: true if currently synchronising with the rproc
-> > > >   * @dump_segments: list of segments in the firmware
-> > > >   * @nb_vdev: number of vdev currently handled by rproc
-> > > >   */
-> > > > @@ -492,6 +513,8 @@ struct rproc {
-> > > >  	const char *firmware;
-> > > >  	void *priv;
-> > > >  	struct rproc_ops *ops;
-> > > > +	struct rproc_ops *sync_ops;
+> > > >  {
+> > > >  	struct device *dev = &rproc->dev;
+> > > >  	const char *name = rproc->firmware;
+> > > > @@ -1382,7 +1382,9 @@ static int rproc_fw_boot(struct rproc *rproc, const struct firmware *fw)
+> > > >  	if (ret)
+> > > >  		return ret;
+> > > >  
+> > > > -	dev_info(dev, "Booting fw image %s, size %zd\n", name, fw->size);
+> > > > +	if (!rproc_needs_syncing(rproc))
 > > > 
-> > > Do we really need two rproc_ops, given that both are coming from the
-> > > platform driver and the sync_flags will define which one to look at?
-> > > 
-> > > Can't the platform driver just provide an ops table that works with the
-> > > flags it passes?
+> > > Can't we make this check on fw, to make the relationship "if we where
+> > > passed a firmware object, we're going to load and boot that firmware"?
 > > 
-> > That is the approach Loic took in a previous patchset [1] and that was rejected.
-> > It also lead to all of the platform drivers testing rproc->flag before carring
-> > different actions, something you indicated could be done in the core.  This
-> > patch does exactly that, i.e move the testing of rproc->flag to the core and
-> > calls the right function based on that.
+> > It can but I specifically decided to use rproc_needs_syncing() to be consistent
+> > with the rest of the patchset.  That way all we need to do is grep for
+> > rproc_needs_syncing to get all the places where a decision about synchronising
+> > with a remote processor is made.
 > > 
 > 
-> I think I see what you mean, as we use "start" for both syncing and
-> starting the core, a { on_init = true, after_stop = false } setup either
-> needs two tables or force conditionals on the platform driver.
-> 
-> > The end result is the same and I'm happy with one or the other, I will need to
-> > know which one.
-> > 
-> 
-> How about adding a new ops named "attach" to rproc_ops, which the
-> platform driver can specify if it supports attaching an already running
-> processor?
+> Conceptually we have a single "to sync or not to sync", but I think
+> we're invoking rproc_needs_syncing() 8 times during rproc_fw_boot() and
+> each of those operations may or may not do anything.
 
-Using "attach_ops" works for me.  But would "autonomous_ops", to correlate with
-rproc::autonomous, add clarity?  Either way work equally well for me. 
+As I said above, I'll try spinning off new functions in the next revision.  From
+there we can decide how best to move forward.
 
 > 
-> > The advantage with the approach I'm proposing is that everything is controlled
-> > in the core, i.e what ops is called and when to set rproc->flag based on
-> > different states the remote processor transitions through.
-> > 
-> 
-> I still think keeping things in the core is the right thing to do.
->
+> There are certain operations where I see it makes sense for a driver to
+> either implement or not, but I think that e.g. for a rproc in OFFLINE
+> state we should just require ops->start to be specified - because it
+> doesn't make sense to enter rproc_start() if ops->start is a nop.
 
-Let's continue down that path then.
- 
-> 
-> Please let me know what you think!
+At this time ops->start() doesn't have to be specified... But as you say it
+won't do much good and this is something we can easily spot when reviewing
+patches.
 
-From the above conversion I believe our views are pretty much aligned.
-
-> 
-> PS. If we agree on this the three transitions becomes somewhat
-> independent, so I think it makes sense to first land support for the
-> DETACHED -> RUNNING transition (and the stm32 series), then follow up
-> with RUNNING -> DETACHED and autonomous recovery separately.
-
-We can certainly proceed that way.
-
-Thanks for the time,
+Thanks for the review,
 Mathieu
 
 > 
 > Regards,
 > Bjorn
 > 
-> > Thanks,
-> > Mathieu
-> > 
-> > 
-> > [1]. https://patchwork.kernel.org/patch/11265869/
-> > 
 > > > 
 > > > Regards,
 > > > Bjorn
 > > > 
-> > > > +	struct rproc_sync_flags sync_flags;
-> > > >  	struct device dev;
-> > > >  	atomic_t power;
-> > > >  	unsigned int state;
-> > > > @@ -515,6 +538,7 @@ struct rproc {
-> > > >  	size_t table_sz;
-> > > >  	bool has_iommu;
-> > > >  	bool auto_boot;
-> > > > +	bool sync_with_rproc;
-> > > >  	struct list_head dump_segments;
-> > > >  	int nb_vdev;
-> > > >  	u8 elf_class;
+> > > > +		dev_info(dev, "Booting fw image %s, size %zd\n",
+> > > > +			 name, fw->size);
+> > > >  
+> > > >  	/*
+> > > >  	 * if enabling an IOMMU isn't relevant for this rproc, this is
+> > > > @@ -1818,7 +1820,7 @@ int rproc_boot(struct rproc *rproc)
+> > > >  		}
+> > > >  	}
+> > > >  
+> > > > -	ret = rproc_fw_boot(rproc, firmware_p);
+> > > > +	ret = rproc_actuate_device(rproc, firmware_p);
+> > > >  
+> > > >  	release_firmware(firmware_p);
+> > > >  
 > > > > -- 
 > > > > 2.20.1
 > > > > 
