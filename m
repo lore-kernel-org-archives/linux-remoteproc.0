@@ -4,36 +4,35 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51952C433E2
-	for <linux-remoteproc@archiver.kernel.org>; Sat, 16 May 2020 10:11:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 423B8C433E3
+	for <linux-remoteproc@archiver.kernel.org>; Sat, 16 May 2020 10:11:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 334842074D
-	for <linux-remoteproc@archiver.kernel.org>; Sat, 16 May 2020 10:11:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2B3F82076A
+	for <linux-remoteproc@archiver.kernel.org>; Sat, 16 May 2020 10:11:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726299AbgEPKLU (ORCPT
+        id S1726328AbgEPKLX (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Sat, 16 May 2020 06:11:20 -0400
-Received: from mga12.intel.com ([192.55.52.136]:36845 "EHLO mga12.intel.com"
+        Sat, 16 May 2020 06:11:23 -0400
+Received: from mga12.intel.com ([192.55.52.136]:36854 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726313AbgEPKLT (ORCPT
+        id S1726297AbgEPKLX (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Sat, 16 May 2020 06:11:19 -0400
-IronPort-SDR: v81L85Yx3ys+Z0z3n6rw+j5ptI4oHvW4IpmUZyyPsF526Qm3JOjpKGpHkqU4eOtman1gDhb8P1
- TzJQlLqKoEAg==
+        Sat, 16 May 2020 06:11:23 -0400
+IronPort-SDR: j24N9k/zXf59IPwOv2k3gdDfMQDrtrBamy3lkMwEgALJR8W7psFbBTq4leUWQ+YE1k8D4e3uDN
+ kbwk6mU7Wobw==
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 May 2020 03:11:19 -0700
-IronPort-SDR: DGpy3Tqi52bkm/JmqEKrsnl8KC12m4PXkcHPNsj68zOpmluEXXtke5/Rfp/qVQ3k/W9B9KiO4T
- acqZ+yH5wCOQ==
+  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 May 2020 03:11:23 -0700
+IronPort-SDR: TNk+UMuSMDVjjh2YitQdFTVG7AgpGoifVcsx496qPMiJmSgfztrHYq0d/ZSgY6Q33aAfFWfSas
+ QZbPuban1IGw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.73,398,1583222400"; 
-   d="scan'208";a="281484338"
+   d="scan'208";a="281484351"
 Received: from gliakhov-mobl2.ger.corp.intel.com (HELO ubuntu.ger.corp.intel.com) ([10.249.40.45])
-  by orsmga002.jf.intel.com with ESMTP; 16 May 2020 03:11:17 -0700
+  by orsmga002.jf.intel.com with ESMTP; 16 May 2020 03:11:21 -0700
 From:   Guennadi Liakhovetski <guennadi.liakhovetski@linux.intel.com>
 To:     kvm@vger.kernel.org
 Cc:     linux-remoteproc@vger.kernel.org,
@@ -41,9 +40,9 @@ Cc:     linux-remoteproc@vger.kernel.org,
         sound-open-firmware@alsa-project.org,
         Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
         Liam Girdwood <liam.r.girdwood@linux.intel.com>
-Subject: [PATCH 4/6] rpmsg: update documentation
-Date:   Sat, 16 May 2020 12:11:07 +0200
-Message-Id: <20200516101109.2624-5-guennadi.liakhovetski@linux.intel.com>
+Subject: [PATCH 6/6] rpmsg: add a device ID to also bind to the ADSP device
+Date:   Sat, 16 May 2020 12:11:09 +0200
+Message-Id: <20200516101109.2624-7-guennadi.liakhovetski@linux.intel.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200516101109.2624-1-guennadi.liakhovetski@linux.intel.com>
 References: <20200516101109.2624-1-guennadi.liakhovetski@linux.intel.com>
@@ -54,27 +53,26 @@ Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-rpmsg_create_ept() takes struct rpmsg_channel_info chinfo as its last
-argument, not a u32 value.
+The ADSP device uses the RPMsg API to connect vhost and VirtIO SOF
+Audio DSP drivers on KVM host and guest.
 
 Signed-off-by: Guennadi Liakhovetski <guennadi.liakhovetski@linux.intel.com>
 ---
- Documentation/rpmsg.txt | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/rpmsg/virtio_rpmsg_bus.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/rpmsg.txt b/Documentation/rpmsg.txt
-index 24b7a9e..4f9bc4f 100644
---- a/Documentation/rpmsg.txt
-+++ b/Documentation/rpmsg.txt
-@@ -194,7 +194,7 @@ Returns 0 on success and an appropriate error value on failure.
+diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
+index f3bd050..ebe3f19 100644
+--- a/drivers/rpmsg/virtio_rpmsg_bus.c
++++ b/drivers/rpmsg/virtio_rpmsg_bus.c
+@@ -949,6 +949,7 @@ static void rpmsg_remove(struct virtio_device *vdev)
  
-   struct rpmsg_endpoint *rpmsg_create_ept(struct rpmsg_channel *rpdev,
- 		void (*cb)(struct rpmsg_channel *, void *, int, void *, u32),
--		void *priv, u32 addr);
-+		void *priv, struct rpmsg_channel_info chinfo);
+ static struct virtio_device_id id_table[] = {
+ 	{ VIRTIO_ID_RPMSG, VIRTIO_DEV_ANY_ID },
++	{ VIRTIO_ID_ADSP, VIRTIO_DEV_ANY_ID },
+ 	{ 0 },
+ };
  
- every rpmsg address in the system is bound to an rx callback (so when
- inbound messages arrive, they are dispatched by the rpmsg bus using the
 -- 
 1.9.3
 
