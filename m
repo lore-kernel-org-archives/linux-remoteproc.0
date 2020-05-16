@@ -1,115 +1,94 @@
-Return-Path: <SRS0=tiv6=65=vger.kernel.org=linux-remoteproc-owner@kernel.org>
+Return-Path: <SRS0=9ZXU=66=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 460D6C433DF
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 15 May 2020 21:10:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7CBBC433E0
+	for <linux-remoteproc@archiver.kernel.org>; Sat, 16 May 2020 10:11:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 228372065C
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 15 May 2020 21:10:44 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qfIyYrNn"
+	by mail.kernel.org (Postfix) with ESMTP id A40002076A
+	for <linux-remoteproc@archiver.kernel.org>; Sat, 16 May 2020 10:11:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726980AbgEOVKn (ORCPT
+        id S1726269AbgEPKLN (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 15 May 2020 17:10:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41198 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726183AbgEOVKn (ORCPT
+        Sat, 16 May 2020 06:11:13 -0400
+Received: from mga12.intel.com ([192.55.52.136]:36845 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725792AbgEPKLM (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 15 May 2020 17:10:43 -0400
-Received: from mail-pl1-x643.google.com (mail-pl1-x643.google.com [IPv6:2607:f8b0:4864:20::643])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6DE43C061A0C
-        for <linux-remoteproc@vger.kernel.org>; Fri, 15 May 2020 14:10:43 -0700 (PDT)
-Received: by mail-pl1-x643.google.com with SMTP id q16so1418578plr.2
-        for <linux-remoteproc@vger.kernel.org>; Fri, 15 May 2020 14:10:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=y1I+UKL+S9RIToBCTfDZkoeewbB2eUT2boKx9t2Bbw4=;
-        b=qfIyYrNnt5F1ERWHO/RjTURyMAmjIDaNeEnqrvy9nNQRINucfLSqSbVlDez082XVMd
-         h1wSiFEzcf9f5/5xvVB+byyPuhMp785Lf7EgE1BVrO2Sipxe0AnTE7N3Oj6HZRdGief0
-         FdMSQdZIopNnwL/8bYHlDPPse2Zmx/xCSb007AV+ouY/9EER+EMjTNlE1UsTQsRkgIuE
-         CDWxj1sC5xNLx7FEWXgkpj/oGf9KCLI9pDfvzyfkn5W/28N++7gt3AlRE/BQ/TFtObTT
-         Mb9j1N+ozbht3bpBUmcCT9drDP+LaBJwG4dq1OKyhTPxRf5c9xzgI9uyMv7TwIlaRJNS
-         SqCw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=y1I+UKL+S9RIToBCTfDZkoeewbB2eUT2boKx9t2Bbw4=;
-        b=SMv+9bcgb2X8loFRfddWVSIWucMcNBdyv7JlGw63F+2EOMaXIEXoi8MA7mg7IYLUHy
-         yKxHwuPWJVTlH5napenXdeejqWydWlZi9QQJKFb1gQHIvQ+zRF/BiisTPRr03rqri9Tx
-         qfK9NWLBNIJltYYDIDJdMWFGC9yWsbd1ymXLRVmfPHs0y8Mf48WJmbxeo95e/yF5FuDw
-         D69p/CfNEKkLCaIF1+J0sOYsf54KJuld4hbVco3nvqOlClDYB0uDO4GTMFGtU5Xa77Wp
-         jkOPzUF24W3EjjV8WRXEidam2d6hvPTtTjvz0wI6wbt0c/q5FTdG4H+Yodrn97vKi4za
-         /rHQ==
-X-Gm-Message-State: AOAM531BOUEVstxdmCVEfaO+f5b93cMNAfpjFr9HbEXTwy1H1/4vB/Wm
-        XqBW/7WeIT/cRvJwlr3WV6ah0g==
-X-Google-Smtp-Source: ABdhPJxM3uFamD7cT3IoJIFOJUgTBrJbOx0dOs+bvU643+PNKH5jhK1WEf+BioK/CwyCuY3G0/JEMw==
-X-Received: by 2002:a17:902:326:: with SMTP id 35mr4975654pld.188.1589577042796;
-        Fri, 15 May 2020 14:10:42 -0700 (PDT)
-Received: from builder.lan (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id a2sm2646525pfl.12.2020.05.15.14.10.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 May 2020 14:10:42 -0700 (PDT)
-Date:   Fri, 15 May 2020 14:09:14 -0700
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc:     ohad@wizery.com, arnaud.pouliquen@st.com, s-anna@ti.com,
-        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 0/3] rpmsg: core: Add support for name extension
-Message-ID: <20200515210914.GA408178@builder.lan>
-References: <20200515205642.13529-1-mathieu.poirier@linaro.org>
+        Sat, 16 May 2020 06:11:12 -0400
+IronPort-SDR: 0SRmrP/0Mpcx1779BeoB8gcYhmnBJfKz49nlAPjHO4RRvZS2l64UU/1k9U3PXl3pyq2ksZ+383
+ LikHoqsDmtQA==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 May 2020 03:11:11 -0700
+IronPort-SDR: 03dWaqsXdpDzWN7Oa9pHZFvzEXoel2BZjYmTkqM5J2N8WtgYMyReHi5yTPeYZmgzllhSVKj+Tp
+ UUy0h0BGJzRA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.73,398,1583222400"; 
+   d="scan'208";a="281484323"
+Received: from gliakhov-mobl2.ger.corp.intel.com (HELO ubuntu.ger.corp.intel.com) ([10.249.40.45])
+  by orsmga002.jf.intel.com with ESMTP; 16 May 2020 03:11:10 -0700
+From:   Guennadi Liakhovetski <guennadi.liakhovetski@linux.intel.com>
+To:     kvm@vger.kernel.org
+Cc:     linux-remoteproc@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        sound-open-firmware@alsa-project.org,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Liam Girdwood <liam.r.girdwood@linux.intel.com>
+Subject: [PATCH 0/6] Add a vhost RPMsg API
+Date:   Sat, 16 May 2020 12:11:03 +0200
+Message-Id: <20200516101109.2624-1-guennadi.liakhovetski@linux.intel.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200515205642.13529-1-mathieu.poirier@linaro.org>
+Content-Transfer-Encoding: 8bit
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Fri 15 May 13:56 PDT 2020, Mathieu Poirier wrote:
+Linux supports RPMsg over VirtIO for "remote processor" /AMP use
+cases. It can however also be used for virtualisation scenarios,
+e.g. when using KVM to run Linux on both the host and the guests.
+This patch set adds a wrapper API to facilitate writing vhost
+drivers for such RPMsg-based solutions. The first use case is an
+audio DSP virtualisation project, currently under development, ready
+for review and submission, available at
+https://github.com/thesofproject/linux/pull/1501/commits
+A further patch for the ADSP vhost RPMsg driver will be sent
+separately for review only since it cannot be merged without audio
+patches being upstreamed first.
 
-> This patchset adds the capability to supplement the base definition
-> published by an rpmsg_driver with a postfix description so that it
-> is easy to differentiate entities that use the same name service.
-> 
-> Applies cleanly on rpmsg-next (4f05fc33bebd).
-> 
+Thanks
+Guennadi
 
-Thanks Mathieu, this series does look good.
+Guennadi Liakhovetski (6):
+  vhost: convert VHOST_VSOCK_SET_RUNNING to a generic ioctl
+  vhost: (cosmetic) remove a superfluous variable initialisation
+  rpmsg: move common structures and defines to headers
+  rpmsg: update documentation
+  vhost: add an rpmsg API
+  rpmsg: add a device ID to also bind to the ADSP device
 
+ Documentation/rpmsg.txt          |   2 +-
+ drivers/rpmsg/virtio_rpmsg_bus.c |  79 +--------
+ drivers/vhost/Kconfig            |   8 +
+ drivers/vhost/Makefile           |   3 +
+ drivers/vhost/rpmsg.c            | 372 +++++++++++++++++++++++++++++++++++++++
+ drivers/vhost/vhost.c            |   2 +-
+ drivers/vhost/vhost_rpmsg.h      |  74 ++++++++
+ include/linux/virtio_rpmsg.h     |  81 +++++++++
+ include/uapi/linux/rpmsg.h       |   3 +
+ include/uapi/linux/vhost.h       |   4 +-
+ 10 files changed, 549 insertions(+), 79 deletions(-)
+ create mode 100644 drivers/vhost/rpmsg.c
+ create mode 100644 drivers/vhost/vhost_rpmsg.h
+ create mode 100644 include/linux/virtio_rpmsg.h
 
-But before merging this, can someone show me a real example where this
-is being/would be used? What are some real channel names and extensions?
+-- 
+1.9.3
 
-Regards,
-Bjorn
-
-> New for V6:
-> - Added example on how to use the new API.
-> 
-> Thanks,
-> Mathieu
-> 
-> 
-> Mathieu Poirier (3):
->   rpmsg: core: Add wildcard match for name service
->   rpmsg: core: Add support to retrieve name extension
->   sample/rpmsg: Print out RPMSG device name extension
-> 
->  drivers/rpmsg/rpmsg_core.c          | 115 +++++++++++++++++++++++++++-
->  include/linux/rpmsg.h               |  13 ++++
->  samples/rpmsg/rpmsg_client_sample.c |   5 ++
->  3 files changed, 132 insertions(+), 1 deletion(-)
-> 
-> -- 
-> 2.20.1
-> 
