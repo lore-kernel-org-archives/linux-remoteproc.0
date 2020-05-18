@@ -2,149 +2,107 @@ Return-Path: <SRS0=KI6G=7A=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 540A9C433E0
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 18 May 2020 16:29:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 090D9C433DF
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 18 May 2020 21:08:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2C13B207ED
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 18 May 2020 16:29:16 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bSPZNJ/+"
+	by mail.kernel.org (Postfix) with ESMTP id E24F7207C4
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 18 May 2020 21:08:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728142AbgERQ3Q (ORCPT
+        id S1728054AbgERVIf (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 18 May 2020 12:29:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48358 "EHLO
+        Mon, 18 May 2020 17:08:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35768 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728045AbgERQ3P (ORCPT
+        with ESMTP id S1726847AbgERVIf (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 18 May 2020 12:29:15 -0400
-Received: from mail-io1-xd44.google.com (mail-io1-xd44.google.com [IPv6:2607:f8b0:4864:20::d44])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 86E97C061A0C
-        for <linux-remoteproc@vger.kernel.org>; Mon, 18 May 2020 09:29:15 -0700 (PDT)
-Received: by mail-io1-xd44.google.com with SMTP id f3so11282505ioj.1
-        for <linux-remoteproc@vger.kernel.org>; Mon, 18 May 2020 09:29:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=wsQWTsWX2nHX19luhaDiip7r8CGCfrYXEJqyS+xYi/4=;
-        b=bSPZNJ/+RFq4gD7fvba2WfPjrN7uJ1zq1w02BSYWZKYEPt/dPqB4b+WVzCZJrIi4nk
-         zF1iLf6Y30e9ZEjEoza+2119f0YSs3e7TccHKRPO+w95GXhahxL2m7k7eAx+jgFrHePp
-         zSWxnBkWAPtAWHQ4W6AnAXC4JdK1paRaYXaTRqUKzE8PZS+UXgo1B/CVjmCs0fYb6ZvI
-         1MvnuXwousaFRSF0P4r/Wut/FQ3OsKp7KuHJeGko4uaTqBhhAUBDapIQ+hicvzLuYnZr
-         wyDqQrhO+jWo4AWF23p9rxYcrwBwU3tx9d9tjkhvqeIHgz0mhNcW+kNFWRsqgC7JVJRR
-         U+dQ==
+        Mon, 18 May 2020 17:08:35 -0400
+Received: from omr1.cc.vt.edu (omr1.cc.ipv6.vt.edu [IPv6:2607:b400:92:8300:0:c6:2117:b0e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2BBE3C05BD0A
+        for <linux-remoteproc@vger.kernel.org>; Mon, 18 May 2020 14:08:35 -0700 (PDT)
+Received: from mr6.cc.vt.edu (mr6.cc.ipv6.vt.edu [IPv6:2607:b400:92:8500:0:af:2d00:4488])
+        by omr1.cc.vt.edu (8.14.4/8.14.4) with ESMTP id 04IL8YXu008046
+        for <linux-remoteproc@vger.kernel.org>; Mon, 18 May 2020 17:08:34 -0400
+Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
+        by mr6.cc.vt.edu (8.14.7/8.14.7) with ESMTP id 04IL8T3E014804
+        for <linux-remoteproc@vger.kernel.org>; Mon, 18 May 2020 17:08:34 -0400
+Received: by mail-qt1-f198.google.com with SMTP id 19so3702260qtp.8
+        for <linux-remoteproc@vger.kernel.org>; Mon, 18 May 2020 14:08:34 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=wsQWTsWX2nHX19luhaDiip7r8CGCfrYXEJqyS+xYi/4=;
-        b=SnYoRpI2UIdE58fcBhx8RAV2oD7g5kJCHlDKXfKs6p+q6kpq1Of5yu/v+m8V/IpF6r
-         eA7Zk30xc//4SLXi2zamm/U4oOGbqV+ukeJ60G2aKEGuWYYbtFaJNlh8L6GocReBS5c9
-         cbkPAWYg6vF3CaXBUJsg8D4OApR1ynv+d1oOGyfvv1lqjuldd6yyYcUQsdg0G1drRR7D
-         bC1NobX1eMqdizGzM5bDwuLpjn9A+QGhdizXjOEBG94z5onPOO/6L9KmtyaSqSgddPFV
-         Nx6AWLBY8HVwCUaAVLh2J+DsaOtUy2CRWlc99h7iK5yK0KM63u4uw4ctPbUbqavUtT2p
-         OtTQ==
-X-Gm-Message-State: AOAM530jYTSZ8RAryHXvYRQ/SpB5zp6OopqW4rLGZgrLtYdyGrP4GI45
-        ozYXb8I+zh8iOC0N0BzrauK1a5QEhOAOtqH5ZwqMHg==
-X-Google-Smtp-Source: ABdhPJwTWrU223OxJ1S7Jka4xPxM5BduJ3BBeoknX5KQJj3Em1XW1bG2YaoM6S0FyuZtIXVzvDeiVOju1MNmBizB8LA=
-X-Received: by 2002:a5d:8257:: with SMTP id n23mr14198274ioo.165.1589819354158;
- Mon, 18 May 2020 09:29:14 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200424200135.28825-1-mathieu.poirier@linaro.org> <DB6PR0402MB2760B52EDFD1DB20AE0BDE3588B80@DB6PR0402MB2760.eurprd04.prod.outlook.com>
-In-Reply-To: <DB6PR0402MB2760B52EDFD1DB20AE0BDE3588B80@DB6PR0402MB2760.eurprd04.prod.outlook.com>
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-Date:   Mon, 18 May 2020 10:29:03 -0600
-Message-ID: <CANLsYkyMOxmM_4c-v1iiHfrrQ3HmbS2Yyr5PVWPRJcSULxrmxg@mail.gmail.com>
-Subject: Re: [PATCH v3 00/14] remoteproc: Add support for synchronisaton with rproc
-To:     Peng Fan <peng.fan@nxp.com>
-Cc:     "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>,
-        "ohad@wizery.com" <ohad@wizery.com>,
-        "loic.pallardy@st.com" <loic.pallardy@st.com>,
-        "arnaud.pouliquen@st.com" <arnaud.pouliquen@st.com>,
-        "s-anna@ti.com" <s-anna@ti.com>,
-        "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
-        "corbet@lwn.net" <corbet@lwn.net>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:sender:from:to:cc:subject:mime-version:date
+         :message-id;
+        bh=kM/2TLwbOWyz4JRQ8aP48mBwa+htNbB3MxdeeuZE8tM=;
+        b=JWNoxBQn8t0QXJ9RsSb9pgLaeXxhf7QaSavVH4OfqtyDG5gqrFSQJkppEB9bNPBRUW
+         L2dcDneUD6D/y0XZuyI2yCksPn2pVG0433xe7XRxl5ZsYQIEsEZRpLh9MGHC+Gu75eD2
+         CeyWfAlb6s3TT8HsVlrar9jG1TmV7PZGRkbpauJlTvAPxHFkDKQbR6kNOyg49ajrO7Iq
+         AqEot1fdbjdHFTt2RY0w4XYGhSAYHkeESKz61/ffrZVQW1ceblT9/6fZ/7IIDP8IFoAY
+         rMh2OBJJK9iz1vNLL8wVBP03VcFNRifOoc6wxdWBCXpP5JvjEGvWI2B/NC9VPPlKCde/
+         atDg==
+X-Gm-Message-State: AOAM5302oBsqq2N5RkWbk1LVsysVZybriHNbYYBYPtWX9tUMNXkbHN/4
+        qBpm0h30umixpLzV4PRFKssntX+johjXcmcCrL/+rLPaTZoIAVH7MCub6d2hQ8lIOvB9BOYBXmD
+        WSzQUAK1b9m3NV4dGevKpvg0LrDs8Jc9UvDTHGViu
+X-Received: by 2002:a05:620a:1e:: with SMTP id j30mr18210091qki.470.1589836108920;
+        Mon, 18 May 2020 14:08:28 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJwXD+xC5+XKAl2RVDYaqJrxN/4ysReFfKpWWyp/+kjyPqs4ASEt78jxmru36a7x0DnMQdTyWg==
+X-Received: by 2002:a05:620a:1e:: with SMTP id j30mr18210074qki.470.1589836108615;
+        Mon, 18 May 2020 14:08:28 -0700 (PDT)
+Received: from turing-police ([2601:5c0:c001:c9e1::359])
+        by smtp.gmail.com with ESMTPSA id o3sm10085708qtt.56.2020.05.18.14.08.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 18 May 2020 14:08:27 -0700 (PDT)
+From:   "Valdis =?utf-8?Q?Kl=c4=93tnieks?=" <valdis.kletnieks@vt.edu>
+X-Google-Original-From: "Valdis =?utf-8?Q?Kl=c4=93tnieks?=" <Valdis.Kletnieks@vt.edu>
+X-Mailer: exmh version 2.9.0 11/07/2018 with nmh-1.7+dev
+To:     Sivaprakash Murugesan <sivaprak@codeaurora.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Ohad Ben-Cohen <ohad@wizery.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>
+cc:     linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] remoteproc: wcss: Fix function call for new API
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Date:   Mon, 18 May 2020 17:08:26 -0400
+Message-ID: <77652.1589836106@turing-police>
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Mon, 18 May 2020 at 07:28, Peng Fan <peng.fan@nxp.com> wrote:
->
-> > Subject: [PATCH v3 00/14] remoteproc: Add support for synchronisaton with
-> > rproc
->
-> What's the status of this thread? Will this be applied or requires a new v4?
+commit 8a226e2c71: remoteproc: wcss: add support for rpmsg communication
 
-It will not be applied as more work needs to be done.  As one of the
-people this feature will benefit, it would be really nice if you could
-take the time to comment on the solution that is brought forward.
+throws a compile error:
 
->
-> Thanks,
-> Peng.
->
-> >
-> > This is the third revision of this series that tries to address the problem of
-> > synchronising with a remote processor with as much flexibility as possible.
-> >
-> > Two things to pay attention to:
-> >
-> > 1) Function rproc_actuate() has been abandoned to avoid creating another
-> >    way to start a remote processor from a kernel driver.  Arnaud expressed
-> >    the opinion that it is semantically questionnable to synchronise with a
-> >    remote processor when calling rproc_boot().  We could rename
-> >    rproc_boot() to rproc_actuate() but I'll wait to see what other people
-> >    think before doing so.
-> >
-> > 2) The allocation of the synchronisation states has been split from the
-> >    remote processor allocation.  A new function rproc_set_state_machine()
-> >    does all the work now.  Proceeding this way has made the patchset a
-> >    lot more simple.
-> >
-> > Other than the above I have tried to address all the comments made on the
-> > second revision.  If a comment was not addressed it simply fell through the
-> > cracks rather than ignored.  In such a case please reiterate your point
-> > of view and I'll be sure to address it.
-> >
-> > Applies cleanly on rproc-next (305ac5a766b1).
-> >
-> > Best regards,
-> > Mathieu
-> >
-> > Mathieu Poirier (14):
-> >   remoteproc: Make core operations optional
-> >   remoteproc: Introduce function rproc_alloc_internals()
-> >   remoteproc: Add new operation and flags for synchronistation
-> >   remoteproc: Refactor function rproc_boot()
-> >   remoteproc: Refactor function rproc_fw_boot()
-> >   remoteproc: Refactor function rproc_trigger_auto_boot()
-> >   remoteproc: Introducting new start and stop functions
-> >   remoteproc: Call core functions based on synchronisation flag
-> >   remoteproc: Deal with synchronisation when crashing
-> >   remoteproc: Deal with synchronisation when shutting down
-> >   remoteproc: Deal with synchronisation when changing FW image
-> >   remoteproc: Introducing function rproc_set_state_machine()
-> >   remoteproc: Document function rproc_set_state_machine()
-> >   remoteproc: Expose synchronisation flags via debugfs
-> >
-> >  Documentation/remoteproc.txt             |  17 ++
-> >  drivers/remoteproc/remoteproc_core.c     | 197
-> > +++++++++++++++++++----
-> >  drivers/remoteproc/remoteproc_debugfs.c  |  21 +++
-> > drivers/remoteproc/remoteproc_internal.h | 123 +++++++++++++-
-> >  drivers/remoteproc/remoteproc_sysfs.c    |  24 ++-
-> >  include/linux/remoteproc.h               |  27 ++++
-> >  6 files changed, 372 insertions(+), 37 deletions(-)
-> >
-> > --
-> > 2.20.1
->
+   CC [M]  drivers/remoteproc/qcom_q6v5_wcss.o
+drivers/remoteproc/qcom_q6v5_wcss.c: In function 'q6v5_wcss_probe':
+drivers/remoteproc/qcom_q6v5_wcss.c:563:2: error: too few arguments to function 'qcom_add_glink_subdev'
+  qcom_add_glink_subdev(rproc, &wcss->glink_subdev);
+  ^~~~~~~~~~~~~~~~~~~~~
+In file included from drivers/remoteproc/qcom_q6v5_wcss.c:16:
+drivers/remoteproc/qcom_common.h:35:6: note: declared here
+ void qcom_add_glink_subdev(struct rproc *rproc, struct qcom_rproc_glink *glink,
+      ^~~~~~~~~~~~~~~~~~~~~
+
+Update to API change from commit  cd9fc8f:  remoteproc: qcom: Pass ssr_name to glink subdevice
+
+Signed-off-by: Valdis Kletnieks <valdis.kletnieks@vt.edu>
+
+diff --git a/drivers/remoteproc/qcom_q6v5_wcss.c b/drivers/remoteproc/qcom_q6v5_wcss.c
+index 48d16d81f94d..99ecc0e6276e 100644
+--- a/drivers/remoteproc/qcom_q6v5_wcss.c
++++ b/drivers/remoteproc/qcom_q6v5_wcss.c
+@@ -560,7 +560,7 @@ static int q6v5_wcss_probe(struct platform_device *pdev)
+ 	if (ret)
+ 		goto free_rproc;
+ 
+-	qcom_add_glink_subdev(rproc, &wcss->glink_subdev);
++	qcom_add_glink_subdev(rproc, &wcss->glink_subdev,"q6wcss");
+ 	qcom_add_ssr_subdev(rproc, &wcss->ssr_subdev, "q6wcss");
+ 
+ 	ret = rproc_add(rproc);
+
