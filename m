@@ -2,500 +2,309 @@ Return-Path: <SRS0=V02Z=7B=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B1AAC433DF
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 19 May 2020 00:56:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96B29C433DF
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 19 May 2020 18:15:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D719420756
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 19 May 2020 00:56:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7830820674
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 19 May 2020 18:15:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OjC2Nawp"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="MR+DMcSz"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727911AbgESA41 (ORCPT
+        id S1729457AbgESSPF (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 18 May 2020 20:56:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42918 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727017AbgESA4Z (ORCPT
+        Tue, 19 May 2020 14:15:05 -0400
+Received: from mail26.static.mailgun.info ([104.130.122.26]:14871 "EHLO
+        mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726447AbgESSPE (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 18 May 2020 20:56:25 -0400
-Received: from mail-pj1-x1042.google.com (mail-pj1-x1042.google.com [IPv6:2607:f8b0:4864:20::1042])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0EEC3C05BD09
-        for <linux-remoteproc@vger.kernel.org>; Mon, 18 May 2020 17:56:24 -0700 (PDT)
-Received: by mail-pj1-x1042.google.com with SMTP id 5so621509pjd.0
-        for <linux-remoteproc@vger.kernel.org>; Mon, 18 May 2020 17:56:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=wKIwwyR+XpbAX9uY10qqjCviQ+EHlqzf+g/3qHT8EvU=;
-        b=OjC2NawpHq+B7OF/ohywZpUpF2aymqtP8LYnjueysz92Deyy2vcYNDDaC7lbFalKOC
-         zhz9R+xk4t5m0RQIvCxWW2klKKmSAqzZxNU+VvfkOcXO/dYxpqdPrya8G3PkW9lZVN2w
-         tTdW+gm1Wl2NVMxLNMkC7RLjX4ihorzNtvJ5j9PG+Z7tQkJD3UGsHDG885g3JOZWbkHT
-         SmeApPQKM0oGYG34trSaFFx5D2K7wLlhteVnHW5h7rpLg25uqqD5D6IqIouSB/bR9jZE
-         6eg5del4Sfa2CLNKj9aGgj55xzqZ5OMz+hsOs92Z1j5cwl4bow5xqzR/XQvt11Wcrx2I
-         lTfQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=wKIwwyR+XpbAX9uY10qqjCviQ+EHlqzf+g/3qHT8EvU=;
-        b=Vc43GNEWJuVEGL7VcpKnpyAxJ5d4tFDr5e+KqLgPq+U6DPfHhZJnvnNERSuxAPVKdc
-         R8dvqdV98Pa/DNhjOON8DX8ZAQ+Tc+8PAZWgyPaqMqpBwM9j7MOqK3I2slRjRCimMmk3
-         0HbnpR6X5qHhmpabMi58ba2HBDe0Zp/0QXR5biCaZJtvHoDQi92FF9f792Va6P29aqvg
-         8NqWiVcQKwH0hNbmndRkiTD1Dp6ACN96vYpYka4xPf+VcGWetdHZuJlgcUXK1q9onmON
-         zPHNrG8av5OQ3BWaaeFBiVinGJ1/Ay3jVhyflF8fV55RVF9RHdpnIcksvDEOG/9I9U5y
-         JKnQ==
-X-Gm-Message-State: AOAM533wPDOEJiZTIuPoViF+4Btc6rtimGpwTZfdfD+GyiHpd4D6Z+T+
-        3698a8w/GdUOTTVomdOpRapZsw==
-X-Google-Smtp-Source: ABdhPJzek+U23sM30oyK+zEdf66PpkETPGhlr6pEECp25LMSdgiqoFaU6RBEQB5/nHG3A/Ia+1gjvw==
-X-Received: by 2002:a17:902:bd95:: with SMTP id q21mr15000469pls.238.1589849783010;
-        Mon, 18 May 2020 17:56:23 -0700 (PDT)
-Received: from builder.lan (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id b1sm9613681pfa.202.2020.05.18.17.56.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 May 2020 17:56:22 -0700 (PDT)
-Date:   Mon, 18 May 2020 17:55:00 -0700
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc:     ohad@wizery.com, loic.pallardy@st.com, arnaud.pouliquen@st.com,
-        s-anna@ti.com, linux-remoteproc@vger.kernel.org, corbet@lwn.net,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 03/14] remoteproc: Add new operation and flags for
- synchronistation
-Message-ID: <20200519005500.GR2165@builder.lan>
-References: <20200424200135.28825-1-mathieu.poirier@linaro.org>
- <20200424200135.28825-4-mathieu.poirier@linaro.org>
- <20200506002253.GC2329931@builder.lan>
- <20200508210123.GA5650@xps15>
- <20200514013224.GE16107@builder.lan>
- <20200515192443.GA24201@xps15>
+        Tue, 19 May 2020 14:15:04 -0400
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1589912103; h=Message-ID: References: In-Reply-To: Subject:
+ Cc: To: From: Date: Content-Transfer-Encoding: Content-Type:
+ MIME-Version: Sender; bh=WbWK+XDpZ1EpeB30moGdfoWRLNL/z7wIz2LDeq0cfpU=;
+ b=MR+DMcSznsZuDYpDixyQTz2qO1fUdpLl/s7kMZnJso+ySirLx1+yflVEL1J8KEI3BBtlMFZ5
+ 2u1uAKWuFt4KG5feTt+uBYdi5XEzhL8OuDPPAnoGmEymdIkkaIoSU9TTM7o/w7QqdQn6CLv1
+ HtqA2RZGNLYdgoyI9BjeDDKJsl4=
+X-Mailgun-Sending-Ip: 104.130.122.26
+X-Mailgun-Sid: WyI4ZWZiZiIsICJsaW51eC1yZW1vdGVwcm9jQHZnZXIua2VybmVsLm9yZyIsICJiZTllNGEiXQ==
+Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
+ by mxa.mailgun.org with ESMTP id 5ec4220d.7fa2b94590a0-smtp-out-n05;
+ Tue, 19 May 2020 18:14:37 -0000 (UTC)
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id CF575C43636; Tue, 19 May 2020 18:14:36 +0000 (UTC)
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: rishabhb)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 3E60BC433D2;
+        Tue, 19 May 2020 18:14:36 +0000 (UTC)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200515192443.GA24201@xps15>
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Tue, 19 May 2020 11:14:36 -0700
+From:   rishabhb@codeaurora.org
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Andy Gross <agross@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-remoteproc-owner@vger.kernel.org
+Subject: Re: [PATCH v5 3/5] remoteproc: qcom: Update PIL relocation info on
+ load
+In-Reply-To: <20200513055641.1413100-4-bjorn.andersson@linaro.org>
+References: <20200513055641.1413100-1-bjorn.andersson@linaro.org>
+ <20200513055641.1413100-4-bjorn.andersson@linaro.org>
+Message-ID: <3ff29ccc94d3097fb39b7df377754af6@codeaurora.org>
+X-Sender: rishabhb@codeaurora.org
+User-Agent: Roundcube Webmail/1.3.9
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Fri 15 May 12:24 PDT 2020, Mathieu Poirier wrote:
-
-> Good day Bjorn,
+On 2020-05-12 22:56, Bjorn Andersson wrote:
+> Update the PIL relocation information in IMEM with information about
+> where the firmware for various remoteprocs are loaded.
 > 
-> On Wed, May 13, 2020 at 06:32:24PM -0700, Bjorn Andersson wrote:
-> > On Fri 08 May 14:01 PDT 2020, Mathieu Poirier wrote:
-> > 
-> > > On Tue, May 05, 2020 at 05:22:53PM -0700, Bjorn Andersson wrote:
-> > > > On Fri 24 Apr 13:01 PDT 2020, Mathieu Poirier wrote:
-> > > > 
-> > > > > Add a new sync_ops to support use cases where the remoteproc
-> > > > > core is synchronising with the remote processor.  Exactly when to use
-> > > > > the synchronisation operations is directed by the flags in structure
-> > > > > rproc_sync_flags.
-> > > > > 
-> > > > 
-> > > > I'm sorry, but no matter how many times I read these patches I have to
-> > > > translate "synchronising" to "remote controlled", and given the number
-> > > > of comments clarifying this makes me feel that we could perhaps come up
-> > > > with a better name?
-> > > 
-> > > "remote controlled" as in "someone else is managing the remote processor" ?
-> > > It could also mean the remoteproc core is "remote controlling" the
-> > > remote processor, exactly what it currently does today...
-> > > 
-> > 
-> > You're right and this would certainly not help the confusion.
-> > 
-> > > How about "autonomous", as in the remote processor doesn't need us to boot or
-> > > switch it off.  I'm open to any other suggestions.
-> > > 
-> > > > 
-> > > > > Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-> > > > > ---
-> > > > >  include/linux/remoteproc.h | 24 ++++++++++++++++++++++++
-> > > > >  1 file changed, 24 insertions(+)
-> > > > > 
-> > > > > diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-> > > > > index ac4082f12e8b..ceb3b2bba824 100644
-> > > > > --- a/include/linux/remoteproc.h
-> > > > > +++ b/include/linux/remoteproc.h
-> > > > > @@ -353,6 +353,23 @@ enum rsc_handling_status {
-> > > > >  	RSC_IGNORED	= 1,
-> > > > >  };
-> > > > >  
-> > > > > +/**
-> > > > > + * struct rproc_sync_flags - platform specific flags indicating which
-> > > > > + *			      rproc_ops to use at specific times during
-> > > > > + *			      the rproc lifecycle.
-> > > > > + * @on_init: true if synchronising with the remote processor at
-> > > > > + *	     initialisation time
-> > > > > + * @after_stop: true if synchronising with the remote processor after it was
-> > > > > + *		stopped from the cmmand line
-> > > > > + * @after_crash: true if synchronising with the remote processor after
-> > > > > + *		 it has crashed
-> > > > > + */
-> > > > > +struct rproc_sync_flags {
-> > > > > +	bool on_init;
-> > > > 
-> > > > This indirectly splits the RPROC_OFFLINE state in an "offline" and
-> > > > "already-booted" state. Wouldn't it be clearer to represent this with a
-> > > > new RPROC_ALREADY_BOOTED state?
-> > > > 
-> > > 
-> > > I suggested that at some point in the past but it was in a different context.  I
-> > > will revisit to see how doing so could apply here.
-> > > 
-> > 
-> > How about we introduce a new state named DETACHED and make the platform
-> > drivers specify that the remote processor is in either OFFLINE (as
-> > today) or DETACHED during initialization.
+> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> ---
 > 
-> That is certainly an idea that is growing on me.  Up to now I used the on_init
-> flag to express duality in the OFFLINE state.  But based on the comments that came
-> back from yourself, Arnaud and Suman it is clear that my approach is anything
-> but clear.  As such I am eager to try something else.
+> Changes since v4:
+> - Dropped unnecessary comment about ignoring return value.
 > 
-> > 
-> > Then on_init = true would be the action of going from DETACHED to
-> > RUNNING, which would involve the following actions:
-> > 
-> > 1) find resource table
-> > 2) prepare device (?)
-> > 3) handle resources
-> > 4) allocate carveouts (?)
-> > 5) prepare subdevices
-> > 6) "attach"
-> > 7) start subdevices
-> > 
-> > on_init = false would represent the transition from OFFLINE to RUNNING,
-> > which today involve the following actions:
-> > 
-> > 1) request firmware
-> > 2) prepare device
-> > 3) parse fw
-> > 4) handle resources
-> > 5) allocate carveouts
-> > 6) load segments
-> > 7) find resource table
-> > 8) prepare subdevices
-> > 9) "boot"
-> > 10) start subdevices
+>  drivers/remoteproc/Kconfig          |  3 +++
+>  drivers/remoteproc/qcom_q6v5_adsp.c | 16 +++++++++++++---
+>  drivers/remoteproc/qcom_q6v5_mss.c  |  3 +++
+>  drivers/remoteproc/qcom_q6v5_pas.c  | 15 ++++++++++++---
+>  drivers/remoteproc/qcom_q6v5_wcss.c | 14 +++++++++++---
+>  drivers/remoteproc/qcom_wcnss.c     | 14 +++++++++++---
+>  6 files changed, 53 insertions(+), 12 deletions(-)
 > 
-> If we add a DETACHED state I don't see a scenario where we need the on_init
-> variable.  When DETACHED is set by the platform we know the MCU is running and
-> it becomes a matter of when the core attach to it, i.e at initialisation time or
-> once the kernel has finished booting, and that is already taken care of by the
-> auto_boot variable.  
+> diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
+> index 8088ca4dd6dc..6bd42a411ca8 100644
+> --- a/drivers/remoteproc/Kconfig
+> +++ b/drivers/remoteproc/Kconfig
+> @@ -126,6 +126,7 @@ config QCOM_Q6V5_ADSP
+>  	depends on RPMSG_QCOM_GLINK_SMEM || RPMSG_QCOM_GLINK_SMEM=n
+>  	depends on QCOM_SYSMON || QCOM_SYSMON=n
+>  	select MFD_SYSCON
+> +	select QCOM_PIL_INFO
+>  	select QCOM_MDT_LOADER
+>  	select QCOM_Q6V5_COMMON
+>  	select QCOM_RPROC_COMMON
+> @@ -158,6 +159,7 @@ config QCOM_Q6V5_PAS
+>  	depends on RPMSG_QCOM_GLINK_SMEM || RPMSG_QCOM_GLINK_SMEM=n
+>  	depends on QCOM_SYSMON || QCOM_SYSMON=n
+>  	select MFD_SYSCON
+> +	select QCOM_PIL_INFO
+>  	select QCOM_MDT_LOADER
+>  	select QCOM_Q6V5_COMMON
+>  	select QCOM_RPROC_COMMON
+> @@ -209,6 +211,7 @@ config QCOM_WCNSS_PIL
+>  	depends on QCOM_SMEM
+>  	depends on QCOM_SYSMON || QCOM_SYSMON=n
+>  	select QCOM_MDT_LOADER
+> +	select QCOM_PIL_INFO
+>  	select QCOM_RPROC_COMMON
+>  	select QCOM_SCM
+>  	help
+> diff --git a/drivers/remoteproc/qcom_q6v5_adsp.c
+> b/drivers/remoteproc/qcom_q6v5_adsp.c
+> index d2a2574dcf35..c539e89664cb 100644
+> --- a/drivers/remoteproc/qcom_q6v5_adsp.c
+> +++ b/drivers/remoteproc/qcom_q6v5_adsp.c
+> @@ -26,6 +26,7 @@
+>  #include <linux/soc/qcom/smem_state.h>
 > 
-> The steps you have outlined above to describe the transitions are accurate.
+>  #include "qcom_common.h"
+> +#include "qcom_pil_info.h"
+>  #include "qcom_q6v5.h"
+>  #include "remoteproc_internal.h"
 > 
-
-Thanks for confirming.
-
-I think it would be helpful if we had this properly documented in the
-driver, to facilitate reasoning about the various transitions. I'll try
-to write down my notes in a patch and send it out.
-
-> > 
-> > > > > +	bool after_stop;
-> > > > 
-> > > > What does it mean when this is true? That Linux can shut the remote core
-> > > > down, but someone else will start it?
-> > > 
-> > > It tells the remoteproc core how to interact with the remote processor after the
-> > > latter has been switched off.
-> > 
-> > Understood.
-> > 
-> > > For example, we could want to boot the remote
-> > > processor from the boot loader so that minimal functionality can be provided
-> > > while the kernel boots.  Once the kernel and user space are in place, the remote
-> > > processor is explicitly stopped and booted once again, but this time with a
-> > > firmware image that offers full functionality.
-> > > 
-> > 
-> > This would be the { on_init = true, after_stop = false } use case, with
-> > the new state would relate to the journey of DETACHED -> RUNNING ->
-> > OFFLINE.
+> @@ -82,6 +83,7 @@ struct qcom_adsp {
+>  	unsigned int halt_lpass;
 > 
-> Yes
+>  	int crash_reason_smem;
+> +	const char *info_name;
 > 
-> > 
-> > As such the next boot would represent above OFFLINE -> RUNNING case,
-> > which we already support today.
+>  	struct completion start_done;
+>  	struct completion stop_done;
+> @@ -164,10 +166,17 @@ static int qcom_adsp_shutdown(struct qcom_adsp 
+> *adsp)
+>  static int adsp_load(struct rproc *rproc, const struct firmware *fw)
+>  {
+>  	struct qcom_adsp *adsp = (struct qcom_adsp *)rproc->priv;
+> +	int ret;
+> +
+> +	ret = qcom_mdt_load_no_init(adsp->dev, fw, rproc->firmware, 0,
+> +				    adsp->mem_region, adsp->mem_phys,
+> +				    adsp->mem_size, &adsp->mem_reloc);
+> +	if (ret)
+> +		return ret;
+> +
+> +	qcom_pil_info_store(adsp->info_name, adsp->mem_reloc, 
+> adsp->mem_size);
 > 
-> Correct.  This is the level of functionality sought by ST and TI.  Xilinx seems to
-> have the same requirements as well.
+> -	return qcom_mdt_load_no_init(adsp->dev, fw, rproc->firmware, 0,
+> -			     adsp->mem_region, adsp->mem_phys, adsp->mem_size,
+> -			     &adsp->mem_reloc);
+> +	return 0;
+>  }
 > 
-
-Good.
-
-> > 
-> > > It could also be that the remoteproc core can stop the remote processor, but the
-> > > remote processor will automatically reboot itself.  In that case the remoteproc
-> > > core will simply synchronise with the remote processor, as it does when .on_init
-> > > == true.
-> > > 
-> > 
-> > I've not been able to come up with a reasonable use case for the {
-> > on_init = ture, after_stop = true } scenario.
+>  static int adsp_start(struct rproc *rproc)
+> @@ -436,6 +445,7 @@ static int adsp_probe(struct platform_device *pdev)
+>  	adsp = (struct qcom_adsp *)rproc->priv;
+>  	adsp->dev = &pdev->dev;
+>  	adsp->rproc = rproc;
+> +	adsp->info_name = desc->sysmon_name;
+>  	platform_set_drvdata(pdev, adsp);
 > 
-> That one is a little trickier - see the next comment.
+>  	ret = adsp_alloc_memory_region(adsp);
+> diff --git a/drivers/remoteproc/qcom_q6v5_mss.c
+> b/drivers/remoteproc/qcom_q6v5_mss.c
+> index c4936f4d1e80..fdbcae11ae64 100644
+> --- a/drivers/remoteproc/qcom_q6v5_mss.c
+> +++ b/drivers/remoteproc/qcom_q6v5_mss.c
+> @@ -29,6 +29,7 @@
 > 
-> > 
-> > But Wendy previously talked about the need to "detach" Linux from a
-> > running remote processor, by somehow just letting it know that the
-> > communication is down - to allow Linux to be rebooted while the remote
-> > was running. So if we support a transition from RUNNING to DETACHED
-> > using a sequence of something like:
-> > 
-> > 1) stop subdevices
-> > 2) "detach"
-> > 3) unprepare subdevices
-> > 4) release carveouts (?)
-> > 5) unprepare device (?)
-> > 
-> > Then perhaps the after_stop could naturally be the transition from
-> > DETACHED to RUNNING, either with or without a reboot of the system
-> > in between?
+>  #include "remoteproc_internal.h"
+>  #include "qcom_common.h"
+> +#include "qcom_pil_info.h"
+>  #include "qcom_q6v5.h"
 > 
-> I see two scenarios for after_stop == true:
+>  #include <linux/qcom_scm.h>
+> @@ -1221,6 +1222,8 @@ static int q6v5_mpss_load(struct q6v5 *qproc)
+>  	else if (ret < 0)
+>  		dev_err(qproc->dev, "MPSS authentication failed: %d\n", ret);
 > 
-> 1) A "detach" scenario as you mentioned above.  In this case the stop() function
-> would inform (using a mechanism that is platform specific) the MCU that the core
-> is shutting down.  In this case the MCU would put itself back in "waiting mode",
-> waiting for the core to show signs of life again.  On the core side this would
-> be a DETACHED to RUNNING transition.  Wheter the application processor reboots
-> or not should not be relevant to the MCU.
+> +	qcom_pil_info_store("modem", mpss_reloc, qproc->mpss_size);
+> +
+>  release_firmware:
+>  	release_firmware(fw);
+>  out:
+> diff --git a/drivers/remoteproc/qcom_q6v5_pas.c
+> b/drivers/remoteproc/qcom_q6v5_pas.c
+> index 3bb69f58e086..84cb19231c35 100644
+> --- a/drivers/remoteproc/qcom_q6v5_pas.c
+> +++ b/drivers/remoteproc/qcom_q6v5_pas.c
+> @@ -25,6 +25,7 @@
+>  #include <linux/soc/qcom/smem_state.h>
 > 
-
-Right and after reading the stm32 patches, for drivers with a way to
-"detach" the remote, i.e. put it back in DETACHED state, a
-rmmod/modprobe should conceptually fit very well.
-
-> 2) An "MCU reboot in autonomous mode" scenario.  Here the stop() function would
-> switch off the MCU.  From there the MCU could automatically restarts itself or
-> be restarted by some other entity.  In this scenario I would expect the start()
-> function to block until the MCU is ready to proceed with the rest of the
-> remoteproc core initialisation steps.
+>  #include "qcom_common.h"
+> +#include "qcom_pil_info.h"
+>  #include "qcom_q6v5.h"
+>  #include "remoteproc_internal.h"
 > 
-
-Presumably though the NXP driver wouldn't have a mechanism to "start"
-the core, only to "attach" to it. And that would wait for it to be up
-and running again.
-
-> From a remoteproc core perspective, both are handled by a DETACHED -> RUNNING
-> transition.  This is the functionality NXP is looking for.   
+> @@ -64,6 +65,7 @@ struct qcom_adsp {
+>  	int pas_id;
+>  	int crash_reason_smem;
+>  	bool has_aggre2_clk;
+> +	const char *info_name;
 > 
-
-Agreed.
-
-> > 
-> > > > 
-> > > > > +	bool after_crash;
-> > > > 
-> > > > Similarly what is the expected steps to be taken by the core when this
-> > > > is true? Should rproc_report_crash() simply stop/start the subdevices
-> > > > and upon one of the ops somehow tell the remote controller that it can
-> > > > proceed with the recovery?
-> > > 
-> > > The exact same sequence of steps will be carried out as they are today, except
-> > > that if after_crash == true, the remoteproc core won't be switching the remote
-> > > processor on, exactly as it would do when on_init == true.
-> > > 
-> > 
-> > Just to make sure we're on the same page:
-> > 
-> > after_crash = false is what we have today, and would mean:
-> > 
-> > 1) stop subdevices
-> > 2) power off
-> > 3) unprepare subdevices
-> > 4) generate coredump
-> > 5) request firmware
-> > 6) load segments
-> > 7) find resource table
-> > 8) prepare subdevices
-> > 9) "boot"
-> > 10) start subdevices
+>  	struct completion start_done;
+>  	struct completion stop_done;
+> @@ -117,11 +119,17 @@ static void adsp_pds_disable(struct qcom_adsp
+> *adsp, struct device **pds,
+>  static int adsp_load(struct rproc *rproc, const struct firmware *fw)
+>  {
+>  	struct qcom_adsp *adsp = (struct qcom_adsp *)rproc->priv;
+> +	int ret;
 > 
-> Exactly
+> -	return qcom_mdt_load(adsp->dev, fw, rproc->firmware, adsp->pas_id,
+> -			     adsp->mem_region, adsp->mem_phys, adsp->mem_size,
+> -			     &adsp->mem_reloc);
+> +	ret = qcom_mdt_load(adsp->dev, fw, rproc->firmware, adsp->pas_id,
+> +			    adsp->mem_region, adsp->mem_phys, adsp->mem_size,
+> +			    &adsp->mem_reloc);
+> +	if (ret)
+> +		return ret;
 > 
-> > 
-> > after_crash = true would mean:
-> > 
-> > 1) stop subdevices
-> > 2) "detach"
-> > 3) unprepare subdevices
-> > 4) prepare subdevices
-> > 5) "attach"
-> > 6) start subdevices
-> >
+> +	qcom_pil_info_store(adsp->info_name, adsp->mem_reloc, 
+> adsp->mem_size);
+mem_reloc is used to calculate  offset and then we again add that offset 
+to the
+ioremapped region base. So we should pass adsp->mem_phys as start here?
+> +
+> +	return 0;
+>  }
 > 
-> Yes
->  
-> > State diagram wise both of these would represent the transition RUNNING
-> > -> CRASHED -> RUNNING, but somehow the platform driver needs to be able
-> > to specify which of these sequences to perform. Per your naming
-> > suggestion above, this does sound like a "autonomous_recovery" boolean
-> > to me.
+>  static int adsp_start(struct rproc *rproc)
+> @@ -405,6 +413,7 @@ static int adsp_probe(struct platform_device *pdev)
+>  	adsp->rproc = rproc;
+>  	adsp->pas_id = desc->pas_id;
+>  	adsp->has_aggre2_clk = desc->has_aggre2_clk;
+> +	adsp->info_name = desc->sysmon_name;
+>  	platform_set_drvdata(pdev, adsp);
 > 
-> Right, semantically "rproc->autonomous" would apply quite well.
+>  	ret = adsp_alloc_memory_region(adsp);
+> diff --git a/drivers/remoteproc/qcom_q6v5_wcss.c
+> b/drivers/remoteproc/qcom_q6v5_wcss.c
+> index f1924b740a10..962e37a86b8b 100644
+> --- a/drivers/remoteproc/qcom_q6v5_wcss.c
+> +++ b/drivers/remoteproc/qcom_q6v5_wcss.c
+> @@ -421,10 +421,18 @@ static void *q6v5_wcss_da_to_va(struct rproc
+> *rproc, u64 da, size_t len)
+>  static int q6v5_wcss_load(struct rproc *rproc, const struct firmware 
+> *fw)
+>  {
+>  	struct q6v5_wcss *wcss = rproc->priv;
+> +	int ret;
+> +
+> +	ret = qcom_mdt_load_no_init(wcss->dev, fw, rproc->firmware,
+> +				    0, wcss->mem_region, wcss->mem_phys,
+> +				    wcss->mem_size, &wcss->mem_reloc);
+> +	if (ret)
+> +		return ret;
+> +
+> +	/* Failures only affect post mortem debugging, so ignore return value 
+> */
+> +	qcom_pil_info_store("wcnss", wcss->mem_reloc, wcss->mem_size);
 > 
-> In function rproc_crash_handler_work(), a call to rproc_set_sync_flag() has been
-> strategically placed to set the value of rproc->autonomous based on
-> "after_crash".  From there the core knows which rproc_ops to use.  Here too we
-> have to rely on the rproc_ops provided by the platform to do the right thing
-> based on the scenario to enact.
+> -	return qcom_mdt_load_no_init(wcss->dev, fw, rproc->firmware,
+> -				     0, wcss->mem_region, wcss->mem_phys,
+> -				     wcss->mem_size, &wcss->mem_reloc);
+> +	return ret;
+>  }
 > 
-
-Do you think that autonomous_recovery would be something that changes
-for a given remoteproc instance? I envisioned it as something that you
-know at registration time, but perhaps I'm missing some details here.
-
-> > 
-> > > These flags are there to indicate how to set rproc::sync_with_rproc after
-> > > different events, that is when the remoteproc core boots, when the remoteproc
-> > > has been stopped or when it has crashed.
-> > > 
-> > 
-> > Right, that was clear from your patches. Sorry that my reply didn't
-> > convey the information that I had understood this.
-> > 
-> > > > 
-> > > > > +};
-> > > > > +
-> > > > >  /**
-> > > > >   * struct rproc_ops - platform-specific device handlers
-> > > > >   * @start:	power on the device and boot it
-> > > > > @@ -459,6 +476,9 @@ struct rproc_dump_segment {
-> > > > >   * @firmware: name of firmware file to be loaded
-> > > > >   * @priv: private data which belongs to the platform-specific rproc module
-> > > > >   * @ops: platform-specific start/stop rproc handlers
-> > > > > + * @sync_ops: platform-specific start/stop rproc handlers when
-> > > > > + *	      synchronising with a remote processor.
-> > > > > + * @sync_flags: Determine the rproc_ops to choose in specific states.
-> > > > >   * @dev: virtual device for refcounting and common remoteproc behavior
-> > > > >   * @power: refcount of users who need this rproc powered up
-> > > > >   * @state: state of the device
-> > > > > @@ -482,6 +502,7 @@ struct rproc_dump_segment {
-> > > > >   * @table_sz: size of @cached_table
-> > > > >   * @has_iommu: flag to indicate if remote processor is behind an MMU
-> > > > >   * @auto_boot: flag to indicate if remote processor should be auto-started
-> > > > > + * @sync_with_rproc: true if currently synchronising with the rproc
-> > > > >   * @dump_segments: list of segments in the firmware
-> > > > >   * @nb_vdev: number of vdev currently handled by rproc
-> > > > >   */
-> > > > > @@ -492,6 +513,8 @@ struct rproc {
-> > > > >  	const char *firmware;
-> > > > >  	void *priv;
-> > > > >  	struct rproc_ops *ops;
-> > > > > +	struct rproc_ops *sync_ops;
-> > > > 
-> > > > Do we really need two rproc_ops, given that both are coming from the
-> > > > platform driver and the sync_flags will define which one to look at?
-> > > > 
-> > > > Can't the platform driver just provide an ops table that works with the
-> > > > flags it passes?
-> > > 
-> > > That is the approach Loic took in a previous patchset [1] and that was rejected.
-> > > It also lead to all of the platform drivers testing rproc->flag before carring
-> > > different actions, something you indicated could be done in the core.  This
-> > > patch does exactly that, i.e move the testing of rproc->flag to the core and
-> > > calls the right function based on that.
-> > > 
-> > 
-> > I think I see what you mean, as we use "start" for both syncing and
-> > starting the core, a { on_init = true, after_stop = false } setup either
-> > needs two tables or force conditionals on the platform driver.
-> > 
-> > > The end result is the same and I'm happy with one or the other, I will need to
-> > > know which one.
-> > > 
-> > 
-> > How about adding a new ops named "attach" to rproc_ops, which the
-> > platform driver can specify if it supports attaching an already running
-> > processor?
+>  static const struct rproc_ops q6v5_wcss_ops = {
+> diff --git a/drivers/remoteproc/qcom_wcnss.c 
+> b/drivers/remoteproc/qcom_wcnss.c
+> index 5d65e1a9329a..229482b3231f 100644
+> --- a/drivers/remoteproc/qcom_wcnss.c
+> +++ b/drivers/remoteproc/qcom_wcnss.c
+> @@ -27,6 +27,7 @@
 > 
-> Using "attach_ops" works for me.  But would "autonomous_ops", to correlate with
-> rproc::autonomous, add clarity?  Either way work equally well for me. 
+>  #include "qcom_common.h"
+>  #include "remoteproc_internal.h"
+> +#include "qcom_pil_info.h"
+>  #include "qcom_wcnss.h"
 > 
-
-What I meant was that we add a function "attach" to the existing
-rproc_ops. In the case of OFFLINE->RUNNING we continue to call
-rproc->ops->start() and DETACHED->RUNNING we call this
-rproc->ops->attach().
-
-As I thought about this I saw that the "autonomous" part would only
-apply to the scenario where the remote recovers from crashes by itself
-(and we just need to be in sync with that). But I've not yet fully
-thought through the NXP case of a stopped remote processor restarting by
-itself.
-
-> > 
-> > > The advantage with the approach I'm proposing is that everything is controlled
-> > > in the core, i.e what ops is called and when to set rproc->flag based on
-> > > different states the remote processor transitions through.
-> > > 
-> > 
-> > I still think keeping things in the core is the right thing to do.
-> >
+>  #define WCNSS_CRASH_REASON_SMEM		422
+> @@ -145,10 +146,17 @@ void qcom_wcnss_assign_iris(struct qcom_wcnss 
+> *wcnss,
+>  static int wcnss_load(struct rproc *rproc, const struct firmware *fw)
+>  {
+>  	struct qcom_wcnss *wcnss = (struct qcom_wcnss *)rproc->priv;
+> +	int ret;
+> +
+> +	ret = qcom_mdt_load(wcnss->dev, fw, rproc->firmware, WCNSS_PAS_ID,
+> +			    wcnss->mem_region, wcnss->mem_phys,
+> +			    wcnss->mem_size, &wcnss->mem_reloc);
+> +	if (ret)
+> +		return ret;
+> +
+> +	qcom_pil_info_store("wcnss", wcnss->mem_reloc, wcnss->mem_size);
 > 
-> Let's continue down that path then.
->  
-> > 
-> > Please let me know what you think!
+> -	return qcom_mdt_load(wcnss->dev, fw, rproc->firmware, WCNSS_PAS_ID,
+> -			     wcnss->mem_region, wcnss->mem_phys,
+> -			     wcnss->mem_size, &wcnss->mem_reloc);
+> +	return 0;
+>  }
 > 
-> From the above conversion I believe our views are pretty much aligned.
-> 
-
-I share this belief and am looking forward to v4.
-
-Regards,
-Bjorn
-
-> > 
-> > PS. If we agree on this the three transitions becomes somewhat
-> > independent, so I think it makes sense to first land support for the
-> > DETACHED -> RUNNING transition (and the stm32 series), then follow up
-> > with RUNNING -> DETACHED and autonomous recovery separately.
-> 
-> We can certainly proceed that way.
-> 
-> Thanks for the time,
-> Mathieu
-> 
-> > 
-> > Regards,
-> > Bjorn
-> > 
-> > > Thanks,
-> > > Mathieu
-> > > 
-> > > 
-> > > [1]. https://patchwork.kernel.org/patch/11265869/
-> > > 
-> > > > 
-> > > > Regards,
-> > > > Bjorn
-> > > > 
-> > > > > +	struct rproc_sync_flags sync_flags;
-> > > > >  	struct device dev;
-> > > > >  	atomic_t power;
-> > > > >  	unsigned int state;
-> > > > > @@ -515,6 +538,7 @@ struct rproc {
-> > > > >  	size_t table_sz;
-> > > > >  	bool has_iommu;
-> > > > >  	bool auto_boot;
-> > > > > +	bool sync_with_rproc;
-> > > > >  	struct list_head dump_segments;
-> > > > >  	int nb_vdev;
-> > > > >  	u8 elf_class;
-> > > > > -- 
-> > > > > 2.20.1
-> > > > > 
+>  static void wcnss_indicate_nv_download(struct qcom_wcnss *wcnss)
