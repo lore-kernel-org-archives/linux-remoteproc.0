@@ -2,122 +2,250 @@ Return-Path: <SRS0=V02Z=7B=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45384C433E0
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 19 May 2020 22:49:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C743C433DF
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 19 May 2020 23:08:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 111FE207C4
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 19 May 2020 22:49:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2AF7620578
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 19 May 2020 23:08:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="t8dBf2Re"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="v5UbAXUn"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726898AbgESWtR (ORCPT
+        id S1727029AbgESXId (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 19 May 2020 18:49:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50660 "EHLO
+        Tue, 19 May 2020 19:08:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53708 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726535AbgESWtQ (ORCPT
+        with ESMTP id S1726064AbgESXId (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 19 May 2020 18:49:16 -0400
-Received: from mail-pf1-x441.google.com (mail-pf1-x441.google.com [IPv6:2607:f8b0:4864:20::441])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8D879C061A0F
-        for <linux-remoteproc@vger.kernel.org>; Tue, 19 May 2020 15:49:16 -0700 (PDT)
-Received: by mail-pf1-x441.google.com with SMTP id n18so615469pfa.2
-        for <linux-remoteproc@vger.kernel.org>; Tue, 19 May 2020 15:49:16 -0700 (PDT)
+        Tue, 19 May 2020 19:08:33 -0400
+Received: from mail-pg1-x542.google.com (mail-pg1-x542.google.com [IPv6:2607:f8b0:4864:20::542])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 647B4C08C5C2
+        for <linux-remoteproc@vger.kernel.org>; Tue, 19 May 2020 16:08:33 -0700 (PDT)
+Received: by mail-pg1-x542.google.com with SMTP id p21so524207pgm.13
+        for <linux-remoteproc@vger.kernel.org>; Tue, 19 May 2020 16:08:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=4Ty1uax6DhWGAFtgE02Vizy5V0zxupHIkWCZHfOEkhA=;
-        b=t8dBf2Re30D48kdWaxnWeg5qjnHBsSPjh8gl3yhU3/omM3rZox4QiSWEztEngqMnt7
-         TJ9KJ9Dk6HH/bIfagl0fdv1s/3aaysmvRj6eeG9OrsYQl27NhGIVFLEfv8mGRUqb6UTl
-         WGod58OPLLNcOrUZBVVgeF8ecKbVV2bKXPJT2OwjxTjrIje6Wp8RnjOx2p1udFNGb4bL
-         Y1lfYVjRlJAXESxTeaahmjF7k8LyJVBejv9EzcznGcLs6BlqpMydDPDqXGUQl3+BJg0L
-         tu0QKrN5lM/ydX1HxIfs7bV6nHOlx5jHnhxJnnwuAl2b1Ud1SKH0qz/gRpHIgJILyvUw
-         9EiQ==
+         :content-disposition:in-reply-to;
+        bh=ixiNo870L0O1tt3XKRzXP6CLMwM6qsLZGdg3orveJ2c=;
+        b=v5UbAXUn670k0FjId5F7YzbW0fcW5cn2gHPMS0Gj4Zk2ddoPIrDhWCG7BFXfHcji2d
+         9LX2nlqhy+empqSs9qr1M35ULuuyLPYvUYG7Tbf4PVaBY4Nu9i/W1gUlKp9Vwx/CBjec
+         iIWCw++l2BQz6VVpT3Xyl3dQM/XP0WROJLw+H1ij4R0yVTgAamijl2PiJCB4/zrDfRnP
+         geemSmsmxETLj6rBBVRrr/CRr1BMSZhlFKNotBYD1mhC83pJUYVWfSq3N2Z7MFlCj4Df
+         2IjyfPkGLOn0+otKJQg13e2mxEhOHEGItzW0N4V/cnGE+xihULDKasBxnz2PPBYl0cVc
+         +71g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=4Ty1uax6DhWGAFtgE02Vizy5V0zxupHIkWCZHfOEkhA=;
-        b=BSq8L7OEhHx9/DNQeWx6WlSTg+CznYJNK+o2fg9lTxUTdickvarDkR8ldCkk0fugDF
-         DvAmHnxCJCAW59fpsBsacrNmKzS5vJMc2UCU5vLfvUOZAzeNWn06tD/ZZeNs3aaBp0Hy
-         /OK/uCKNePMObtRA9q3kt/mvKXqK+xXYWSUi6bf9FtmGxP4TvMgxyw9ahIItNtBK0wIx
-         ADa3o75JjoBh1pUsYyDB5AeDkcYi9ZvAxY3UpRk2DhR9yTFqlHtfSH+Zu5nN1ghBuITd
-         uR4qYvTvINbj1RIvkib6to7nUtLOnp46rflEowipl5q1n0YK5NwRp7j/pqeH3/MEkzOF
-         gntg==
-X-Gm-Message-State: AOAM532VKTwNpoW8QnRiC9ANB7YaPzz/64tie3eUJlZtC2d/sdlnb5J/
-        LaC8TruJPEsS6Fhs7cB9SoOU2Q==
-X-Google-Smtp-Source: ABdhPJxrF0PPloT5L7c9LARzGBOK1gTA/drsLOH7U808yVpudmrjPQgxJ5DYlfOA1iS9t+A1KuDyCQ==
-X-Received: by 2002:aa7:9e90:: with SMTP id p16mr1341252pfq.38.1589928556006;
-        Tue, 19 May 2020 15:49:16 -0700 (PDT)
-Received: from xps15 (S0106002369de4dac.cg.shawcable.net. [68.147.8.254])
-        by smtp.gmail.com with ESMTPSA id l1sm447873pjr.17.2020.05.19.15.49.15
+         :mime-version:content-disposition:in-reply-to;
+        bh=ixiNo870L0O1tt3XKRzXP6CLMwM6qsLZGdg3orveJ2c=;
+        b=j2mAK/ZbC4xVKj+8+xxaZ/7vQPyrK3tLbNy0wd4ZhNUWx9lB18gz7tnUk22uY5N5mv
+         jaG1J+t4ZSUdt87ST6AE/gHklhX6HvGQR5+XcoAru2AoAShfBTVMqmlTGzat43hrqTDW
+         xAPP01nNmmS098uKP1dHRBOCxwi26oNCYQOUm2Lc7i9dmTzJzIqLGvKbnCqudhlWlTeI
+         hjX14yYSH9dAgG1FkPxA7LqpBM0/dNIRIJKyryFmcskho5xlSY1aKS7PGEYiFS5mMEYd
+         mwXOf8UdXIPDZxF3zfzpSZgSueJmd9rERL4SC8MWaypTfjY0PtjKN/VRb3RdqybeON9R
+         7uDA==
+X-Gm-Message-State: AOAM531k5EhSbRMiaqsT6lXkwwXYY9VkrAyEkv4NoEuvhGRbJgxcRSQ8
+        8T9JUY0T6u3COblLBHBcaUZQIwnNTb0=
+X-Google-Smtp-Source: ABdhPJy4iShtU5/wNSK+muUCjJJiWMFIu8UWIc2FJeUgJAW9SJxYJlBqTPoFYjHiqMJzayVauVdzWA==
+X-Received: by 2002:a65:68d2:: with SMTP id k18mr1413767pgt.110.1589929712508;
+        Tue, 19 May 2020 16:08:32 -0700 (PDT)
+Received: from ripper (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id p6sm391805pgl.26.2020.05.19.16.08.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 May 2020 15:49:15 -0700 (PDT)
-Date:   Tue, 19 May 2020 16:49:13 -0600
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-To:     Arun Kumar Neelakantam <aneela@codeaurora.org>
-Cc:     ohad@wizery.com, bjorn.andersson@linaro.org, clew@codeaurora.org,
-        sricharan@codeaurora.org, linux-remoteproc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [RESEND PATCH V4 0/4] Add TIOCM Signals support for RPMSG char
- devices
-Message-ID: <20200519224913.GD26832@xps15>
-References: <1589346671-15226-1-git-send-email-aneela@codeaurora.org>
+        Tue, 19 May 2020 16:08:31 -0700 (PDT)
+Date:   Tue, 19 May 2020 16:07:59 -0700
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     rishabhb@codeaurora.org
+Cc:     Andy Gross <agross@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-remoteproc-owner@vger.kernel.org
+Subject: Re: [PATCH v5 3/5] remoteproc: qcom: Update PIL relocation info on
+ load
+Message-ID: <20200519230759.GA3008945@ripper>
+References: <20200513055641.1413100-1-bjorn.andersson@linaro.org>
+ <20200513055641.1413100-4-bjorn.andersson@linaro.org>
+ <3ff29ccc94d3097fb39b7df377754af6@codeaurora.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1589346671-15226-1-git-send-email-aneela@codeaurora.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <3ff29ccc94d3097fb39b7df377754af6@codeaurora.org>
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Wed, May 13, 2020 at 10:41:07AM +0530, Arun Kumar Neelakantam wrote:
-> Glink transport support signals to exchange state notification between
-> local and remote side clients. Adding support to send/receive the signal
-> command and notify the clients through callback and POLL notification.
+On Tue 19 May 11:14 PDT 2020, rishabhb@codeaurora.org wrote:
 
-From a general point of view it is hard to have an understanding of what this
-patchset does and if it is the right solution due to a lack of context.
+> On 2020-05-12 22:56, Bjorn Andersson wrote:
+> > Update the PIL relocation information in IMEM with information about
+> > where the firmware for various remoteprocs are loaded.
+> > 
+> > Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> > ---
+> > 
+> > Changes since v4:
+> > - Dropped unnecessary comment about ignoring return value.
+> > 
+> >  drivers/remoteproc/Kconfig          |  3 +++
+> >  drivers/remoteproc/qcom_q6v5_adsp.c | 16 +++++++++++++---
+> >  drivers/remoteproc/qcom_q6v5_mss.c  |  3 +++
+> >  drivers/remoteproc/qcom_q6v5_pas.c  | 15 ++++++++++++---
+> >  drivers/remoteproc/qcom_q6v5_wcss.c | 14 +++++++++++---
+> >  drivers/remoteproc/qcom_wcnss.c     | 14 +++++++++++---
+> >  6 files changed, 53 insertions(+), 12 deletions(-)
+> > 
+> > diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
+> > index 8088ca4dd6dc..6bd42a411ca8 100644
+> > --- a/drivers/remoteproc/Kconfig
+> > +++ b/drivers/remoteproc/Kconfig
+> > @@ -126,6 +126,7 @@ config QCOM_Q6V5_ADSP
+> >  	depends on RPMSG_QCOM_GLINK_SMEM || RPMSG_QCOM_GLINK_SMEM=n
+> >  	depends on QCOM_SYSMON || QCOM_SYSMON=n
+> >  	select MFD_SYSCON
+> > +	select QCOM_PIL_INFO
+> >  	select QCOM_MDT_LOADER
+> >  	select QCOM_Q6V5_COMMON
+> >  	select QCOM_RPROC_COMMON
+> > @@ -158,6 +159,7 @@ config QCOM_Q6V5_PAS
+> >  	depends on RPMSG_QCOM_GLINK_SMEM || RPMSG_QCOM_GLINK_SMEM=n
+> >  	depends on QCOM_SYSMON || QCOM_SYSMON=n
+> >  	select MFD_SYSCON
+> > +	select QCOM_PIL_INFO
+> >  	select QCOM_MDT_LOADER
+> >  	select QCOM_Q6V5_COMMON
+> >  	select QCOM_RPROC_COMMON
+> > @@ -209,6 +211,7 @@ config QCOM_WCNSS_PIL
+> >  	depends on QCOM_SMEM
+> >  	depends on QCOM_SYSMON || QCOM_SYSMON=n
+> >  	select QCOM_MDT_LOADER
+> > +	select QCOM_PIL_INFO
+> >  	select QCOM_RPROC_COMMON
+> >  	select QCOM_SCM
+> >  	help
+> > diff --git a/drivers/remoteproc/qcom_q6v5_adsp.c
+> > b/drivers/remoteproc/qcom_q6v5_adsp.c
+> > index d2a2574dcf35..c539e89664cb 100644
+> > --- a/drivers/remoteproc/qcom_q6v5_adsp.c
+> > +++ b/drivers/remoteproc/qcom_q6v5_adsp.c
+> > @@ -26,6 +26,7 @@
+> >  #include <linux/soc/qcom/smem_state.h>
+> > 
+> >  #include "qcom_common.h"
+> > +#include "qcom_pil_info.h"
+> >  #include "qcom_q6v5.h"
+> >  #include "remoteproc_internal.h"
+> > 
+> > @@ -82,6 +83,7 @@ struct qcom_adsp {
+> >  	unsigned int halt_lpass;
+> > 
+> >  	int crash_reason_smem;
+> > +	const char *info_name;
+> > 
+> >  	struct completion start_done;
+> >  	struct completion stop_done;
+> > @@ -164,10 +166,17 @@ static int qcom_adsp_shutdown(struct qcom_adsp
+> > *adsp)
+> >  static int adsp_load(struct rproc *rproc, const struct firmware *fw)
+> >  {
+> >  	struct qcom_adsp *adsp = (struct qcom_adsp *)rproc->priv;
+> > +	int ret;
+> > +
+> > +	ret = qcom_mdt_load_no_init(adsp->dev, fw, rproc->firmware, 0,
+> > +				    adsp->mem_region, adsp->mem_phys,
+> > +				    adsp->mem_size, &adsp->mem_reloc);
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	qcom_pil_info_store(adsp->info_name, adsp->mem_reloc, adsp->mem_size);
+> > 
+> > -	return qcom_mdt_load_no_init(adsp->dev, fw, rproc->firmware, 0,
+> > -			     adsp->mem_region, adsp->mem_phys, adsp->mem_size,
+> > -			     &adsp->mem_reloc);
+> > +	return 0;
+> >  }
+> > 
+> >  static int adsp_start(struct rproc *rproc)
+> > @@ -436,6 +445,7 @@ static int adsp_probe(struct platform_device *pdev)
+> >  	adsp = (struct qcom_adsp *)rproc->priv;
+> >  	adsp->dev = &pdev->dev;
+> >  	adsp->rproc = rproc;
+> > +	adsp->info_name = desc->sysmon_name;
+> >  	platform_set_drvdata(pdev, adsp);
+> > 
+> >  	ret = adsp_alloc_memory_region(adsp);
+> > diff --git a/drivers/remoteproc/qcom_q6v5_mss.c
+> > b/drivers/remoteproc/qcom_q6v5_mss.c
+> > index c4936f4d1e80..fdbcae11ae64 100644
+> > --- a/drivers/remoteproc/qcom_q6v5_mss.c
+> > +++ b/drivers/remoteproc/qcom_q6v5_mss.c
+> > @@ -29,6 +29,7 @@
+> > 
+> >  #include "remoteproc_internal.h"
+> >  #include "qcom_common.h"
+> > +#include "qcom_pil_info.h"
+> >  #include "qcom_q6v5.h"
+> > 
+> >  #include <linux/qcom_scm.h>
+> > @@ -1221,6 +1222,8 @@ static int q6v5_mpss_load(struct q6v5 *qproc)
+> >  	else if (ret < 0)
+> >  		dev_err(qproc->dev, "MPSS authentication failed: %d\n", ret);
+> > 
+> > +	qcom_pil_info_store("modem", mpss_reloc, qproc->mpss_size);
+> > +
+> >  release_firmware:
+> >  	release_firmware(fw);
+> >  out:
+> > diff --git a/drivers/remoteproc/qcom_q6v5_pas.c
+> > b/drivers/remoteproc/qcom_q6v5_pas.c
+> > index 3bb69f58e086..84cb19231c35 100644
+> > --- a/drivers/remoteproc/qcom_q6v5_pas.c
+> > +++ b/drivers/remoteproc/qcom_q6v5_pas.c
+> > @@ -25,6 +25,7 @@
+> >  #include <linux/soc/qcom/smem_state.h>
+> > 
+> >  #include "qcom_common.h"
+> > +#include "qcom_pil_info.h"
+> >  #include "qcom_q6v5.h"
+> >  #include "remoteproc_internal.h"
+> > 
+> > @@ -64,6 +65,7 @@ struct qcom_adsp {
+> >  	int pas_id;
+> >  	int crash_reason_smem;
+> >  	bool has_aggre2_clk;
+> > +	const char *info_name;
+> > 
+> >  	struct completion start_done;
+> >  	struct completion stop_done;
+> > @@ -117,11 +119,17 @@ static void adsp_pds_disable(struct qcom_adsp
+> > *adsp, struct device **pds,
+> >  static int adsp_load(struct rproc *rproc, const struct firmware *fw)
+> >  {
+> >  	struct qcom_adsp *adsp = (struct qcom_adsp *)rproc->priv;
+> > +	int ret;
+> > 
+> > -	return qcom_mdt_load(adsp->dev, fw, rproc->firmware, adsp->pas_id,
+> > -			     adsp->mem_region, adsp->mem_phys, adsp->mem_size,
+> > -			     &adsp->mem_reloc);
+> > +	ret = qcom_mdt_load(adsp->dev, fw, rproc->firmware, adsp->pas_id,
+> > +			    adsp->mem_region, adsp->mem_phys, adsp->mem_size,
+> > +			    &adsp->mem_reloc);
+> > +	if (ret)
+> > +		return ret;
+> > 
+> > +	qcom_pil_info_store(adsp->info_name, adsp->mem_reloc, adsp->mem_size);
+> mem_reloc is used to calculate  offset and then we again add that offset to
+> the
+> ioremapped region base. So we should pass adsp->mem_phys as start here?
 
-The cover letter and changelogs are sparse to a point where a
-reviewer not familiar with the QC/Glink implementation can't offer much more
-than syntactic comments.
+You're correct, I will respin this.
 
 Thanks,
-Mathieu
-
-> 
-> Changes since v3:
-> - Correct the TICOMGET case handling as per new rpmsg_get_signals prototype
-> - Update the rpmsg_get_signals function header
-> 
-> Changes since v2:
-> - Modify the rpmsg_get_signals function prototype
-> 
-> Changes since v1:
-> - Split the patches as per functional areas like core, char, glink
-> - Add set, clear mask for TIOCMSET
-> - Merge the char signal callback and POLLPRI patches
-> 
-> Arun Kumar Neelakantam (4):
->   rpmsg: core: Add signal API support
->   rpmsg: glink: Add support to handle signals command
->   rpmsg: char: Add TIOCMGET/TIOCMSET ioctl support
->   rpmsg: char: Add signal callback and POLLPRI support
-> 
->  drivers/rpmsg/qcom_glink_native.c | 126 ++++++++++++++++++++++++++++++++++++++
->  drivers/rpmsg/rpmsg_char.c        |  75 ++++++++++++++++++++++-
->  drivers/rpmsg/rpmsg_core.c        |  41 +++++++++++++
->  drivers/rpmsg/rpmsg_internal.h    |   5 ++
->  include/linux/rpmsg.h             |  26 ++++++++
->  5 files changed, 270 insertions(+), 3 deletions(-)
-> 
-> -- 
-> 2.7.4
+Bjorn
