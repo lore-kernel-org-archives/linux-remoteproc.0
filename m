@@ -1,445 +1,264 @@
-Return-Path: <SRS0=KI6G=7A=vger.kernel.org=linux-remoteproc-owner@kernel.org>
+Return-Path: <SRS0=V02Z=7B=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55070C433DF
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 18 May 2020 23:58:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18197C433E1
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 19 May 2020 00:23:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 16C122067D
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 18 May 2020 23:58:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E441C20715
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 19 May 2020 00:23:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="J8sLOVoA"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="oIy/TJt+"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726053AbgERX6b (ORCPT
+        id S1727788AbgESAXs (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 18 May 2020 19:58:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33974 "EHLO
+        Mon, 18 May 2020 20:23:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37858 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726280AbgERX6b (ORCPT
+        with ESMTP id S1726284AbgESAXs (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 18 May 2020 19:58:31 -0400
-Received: from mail-pg1-x542.google.com (mail-pg1-x542.google.com [IPv6:2607:f8b0:4864:20::542])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 22010C05BD09
-        for <linux-remoteproc@vger.kernel.org>; Mon, 18 May 2020 16:58:31 -0700 (PDT)
-Received: by mail-pg1-x542.google.com with SMTP id u35so5563349pgk.6
-        for <linux-remoteproc@vger.kernel.org>; Mon, 18 May 2020 16:58:31 -0700 (PDT)
+        Mon, 18 May 2020 20:23:48 -0400
+Received: from mail-pg1-x541.google.com (mail-pg1-x541.google.com [IPv6:2607:f8b0:4864:20::541])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C3505C061A0C
+        for <linux-remoteproc@vger.kernel.org>; Mon, 18 May 2020 17:23:46 -0700 (PDT)
+Received: by mail-pg1-x541.google.com with SMTP id j21so5583164pgb.7
+        for <linux-remoteproc@vger.kernel.org>; Mon, 18 May 2020 17:23:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=3QEdZHx4F5+b8a8OM4Spb1XY9Bc+Yo04ozO5t93rxmY=;
-        b=J8sLOVoAtS+tgbObcQ6FZVClaUQOaRM6DvUJkz6fO1HhbjvIc3sf04XlrgbEmnjww1
-         biGwhb9jB4+vnGWZwyryUVUjWN+H3RPHzVs++WYQ+8IHWYjSFgJz2FMocSH9GJdb+MeZ
-         rXotVUEKGp4tnvKjhbNKJgg67UpWBPfnRjLzGvoejDPFXtiu3EeEAtWKlOusnr2AyUhd
-         qqTXHegIKzDqVCqTPpHokmAazZodYfJp2pnlkVlaG69dMQWZY8l7hgPzEkTMarQfWvpn
-         MGNzOCNSsOjifvgrxaz9xKxWlgkPJOGfi6V7XKp8vvVPslUrqZeBKyO2pxk3yTi2jgys
-         X8EA==
+        bh=76L2jmn/5xBiAGpfkucj0sHy1ATlbvKKmUWYpASrI6I=;
+        b=oIy/TJt+bfnFQKnMI5r16CijBX74deYXQhw5fq8MrnIPmL50zNhHDAx4kdlbapQWRG
+         NWFz39KpqcpEOuJg8qFDgj0uSSvL3IfUlH5EwOoRalYBEGcJvw7VnxlOC87L+LL6aVLu
+         U6Toa5cgG4xkkDeN7STuNDm1PfN/on+FDqqT76drktag20wIZKE2b7ZiJNxvwbkIvtkN
+         IDhrOt1gIHB/8MY/cUXrsbemF55nDHNbrgz5h9r/Pk89nykykvNvgzQQfxq9+53Kv+pD
+         jaFJBSJrjvn5lt2ITbAg90FjV2LJCMQBYa3bXfs+D73G//VWyvy121EYPasH9KisjSvP
+         feww==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=3QEdZHx4F5+b8a8OM4Spb1XY9Bc+Yo04ozO5t93rxmY=;
-        b=UaTijydbyeRE6Ba7kWxI0zIr0eNeBPZ/Xs+irfIbLYx6AQ1hfCa/GVrc7Ed9IFroX+
-         nKt9sdrmEumzOV4M9fmKbGfF+vCj+nn/CuQZwnCEehB7uL8MglysXksIo8Uqb+lfoJ/t
-         kgal4kZnHZblJrAG+xmXb35Rxtl+2NmaxhewlJZW4a689Q5IsY08uGGlP/hUq+JDxvis
-         tLTZ6TNfa/64OJObBwcRY7RlZL4yvd87RQNM8KSJaG5TMT/lq571+w5YvTsDQ12yCf9G
-         A3pBsBSdo/Q6h3Ha6FRbwHhVZNBveNTTNAIyrUI6zcfnwvSq2NujbkD/opzqSgCqEfon
-         0UnA==
-X-Gm-Message-State: AOAM5328RDyJp95lZWiwuiOKuSKcnR4ncSFSoBGzoAziXc1n3f77VwaO
-        914H8lrzVL5QSRnQzAoga+PK4Q==
-X-Google-Smtp-Source: ABdhPJxbxPVxhaBhOu75S1uyv1Qc3A/c6P33/C/mqzOd0axHFNFr6Ba4IwZNg/IiWO5AdGHqaBLq2g==
-X-Received: by 2002:a62:76cc:: with SMTP id r195mr8123751pfc.116.1589846310376;
-        Mon, 18 May 2020 16:58:30 -0700 (PDT)
+        bh=76L2jmn/5xBiAGpfkucj0sHy1ATlbvKKmUWYpASrI6I=;
+        b=qUsYrkT818LjkDm7eeboHE37Kw9tD+RPsaaQ/Ta5FPTgOWPqfzb+xpA0QaPHnlAnax
+         Q9zEi7/Hk+a1ouIAEfLcwgNNNM206g0px6SLHkmX7fK9W3uvuqF25KiZr/YJI1rZsi0g
+         ABX5WDr5FkLtwVX6uwRkhC2DeaAPa7JtppEiMluDLSxXrZnPsuc5QnPETywN25IVK4Km
+         B9GYZmvDcAMUXs+m2pUWSKE1H1oYup1b+AF5rnov73K49xuApBZG7FTif8ZEUABA3HRR
+         prigmjdJtCvWCZkRwySiGotiebqXHkzva8E1aMslxqJAfDKR8oDVJ0FGN5EKuanLkH7o
+         o7BQ==
+X-Gm-Message-State: AOAM530iaLtfcxJNO4mP1kN+UsNFjzmGMPO0M5D3M5bcn/oHLrlyBvqH
+        wgon5Bxfy8tddCp9vMNRoUilcw==
+X-Google-Smtp-Source: ABdhPJz00Q8eKtLYkOm4FQyR9Wtki5fSGV9CdEuLr/xwSqTX48yyqpQFLzzNsw+c3w7aDF6XqprS9w==
+X-Received: by 2002:a63:30c2:: with SMTP id w185mr16661378pgw.353.1589847826017;
+        Mon, 18 May 2020 17:23:46 -0700 (PDT)
 Received: from builder.lan (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id m63sm9750804pfb.101.2020.05.18.16.58.28
+        by smtp.gmail.com with ESMTPSA id k12sm6715222pfg.177.2020.05.18.17.23.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 May 2020 16:58:29 -0700 (PDT)
-Date:   Mon, 18 May 2020 16:57:07 -0700
+        Mon, 18 May 2020 17:23:45 -0700 (PDT)
+Date:   Mon, 18 May 2020 17:22:23 -0700
 From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Paul Cercueil <paul@crapouillou.net>
-Cc:     Ohad Ben-Cohen <ohad@wizery.com>,
-        Arnaud Pouliquen <arnaud.pouliquen@st.com>, od@zcrc.me,
-        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Mathieu Poirier <mathieu.poirier@linaro.org>
-Subject: Re: [PATCH v7 4/5] remoteproc: ingenic: Added remoteproc driver
-Message-ID: <20200518235707.GB408178@builder.lan>
-References: <20200515104340.10473-1-paul@crapouillou.net>
- <20200515104340.10473-4-paul@crapouillou.net>
+To:     Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc:     ohad@wizery.com, loic.pallardy@st.com, arnaud.pouliquen@st.com,
+        s-anna@ti.com, linux-remoteproc@vger.kernel.org, corbet@lwn.net,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 05/14] remoteproc: Refactor function rproc_fw_boot()
+Message-ID: <20200519002223.GQ2165@builder.lan>
+References: <20200424200135.28825-1-mathieu.poirier@linaro.org>
+ <20200424200135.28825-6-mathieu.poirier@linaro.org>
+ <20200506003341.GD2329931@builder.lan>
+ <20200508212756.GB5650@xps15>
+ <20200514021055.GF16107@builder.lan>
+ <20200515194651.GB24201@xps15>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200515104340.10473-4-paul@crapouillou.net>
+In-Reply-To: <20200515194651.GB24201@xps15>
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Fri 15 May 03:43 PDT 2020, Paul Cercueil wrote:
+On Fri 15 May 12:46 PDT 2020, Mathieu Poirier wrote:
 
-> This driver is used to boot, communicate with and load firmwares to the
-> MIPS co-processor found in the VPU hardware of the JZ47xx SoCs from
-> Ingenic.
+> On Wed, May 13, 2020 at 07:10:55PM -0700, Bjorn Andersson wrote:
+> > On Fri 08 May 14:27 PDT 2020, Mathieu Poirier wrote:
+> > 
+> > > On Tue, May 05, 2020 at 05:33:41PM -0700, Bjorn Andersson wrote:
+> > > > On Fri 24 Apr 13:01 PDT 2020, Mathieu Poirier wrote:
+> > > > 
+> > > > > Refactor function rproc_fw_boot() in order to better reflect the work
+> > > > > that is done when supporting scenarios where the remoteproc core is
+> > > > > synchronising with a remote processor.
+> > > > > 
+> > > > > Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+> > > > > ---
+> > > > >  drivers/remoteproc/remoteproc_core.c | 10 ++++++----
+> > > > >  1 file changed, 6 insertions(+), 4 deletions(-)
+> > > > > 
+> > > > > diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+> > > > > index a02593b75bec..e90a21de9de1 100644
+> > > > > --- a/drivers/remoteproc/remoteproc_core.c
+> > > > > +++ b/drivers/remoteproc/remoteproc_core.c
+> > > > > @@ -1370,9 +1370,9 @@ static int rproc_start(struct rproc *rproc, const struct firmware *fw)
+> > > > >  }
+> > > > >  
+> > > > >  /*
+> > > > > - * take a firmware and boot a remote processor with it.
+> > > > > + * boot or synchronise with a remote processor.
+> > > > >   */
+> > > > > -static int rproc_fw_boot(struct rproc *rproc, const struct firmware *fw)
+> > > > > +static int rproc_actuate_device(struct rproc *rproc, const struct firmware *fw)
+> > > > 
+> > > > Per patch 4 this function will if rproc_needs_syncing() be called with
+> > > > fw == NULL, it's not obvious to me that the various operations on "fw"
+> > > > in this function are valid anymore.
+> > > 
+> > > That is right, all firmware related operations in this function are found in
+> > > remoteproc_internal.h where the value of rproc->sync_with_mcu is checked before
+> > > moving forward. That allows us to avoid introducing a new function similar to
+> > > rproc_fw_boot() but without firmware operations or peppering the code with if
+> > > statements.
+> > > 
+> > 
+> > As I wrote in my other reply, the two mechanisms seems to consist of the
+> > following steps:
+> > 
+> > boot the core:
+> > 1) request firmware
+> > 2) prepare device
+> > 3) parse fw
+> > 4) handle resources
+> > 5) allocate carveouts
+> > 6) load segments
+> > 7) find resource table
+> > 8) prepare subdevices
+> > 9) power on
+> > 10) start subdevices
+> > 
+> > sync:
+> > 1) prepare device (?)
+> > 2) handle resources
+> > 3) allocate carveouts (?)
+> > 4) prepare subdevices
+> > 5) attach
+> > 6) start subdevices
+> > 
+> > Rather than relying on the state flag and missing ops will turn the
+> > first list into the second list I conceptually prefer having two
+> > separate functions that are easy to reason about.
 > 
-> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
-> Acked-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+> I reflected long and hard about doing just that...
+> 
+> > 
+> > But I haven't done any refactoring or implemented this, so in practice
+> > the two might just be a lot of duplication(?)
+> 
+> Exactly - duplication and maintenance are my prime concern.  Right now some
+> functions in the OFFLINE -> RUNNING are clearly not needed when dealing with a
+> DETACHED -> RUNNING scenarios, but with I am convinced people will find ways to
+> do something creative with the callbacks.
 
-Series applied
+I'm sure there are problems out there that will require creative
+solutions, but I would prefer that we keep things easy to reason about
+and ensure that as new problems arise we can evolve the framework.
 
-Thanks,
+> In the end I fear the new functions
+> we spin off to deal with DETACHED -> RUNNING scenarios will end up looking very
+> similar to the current implementation.
+> 
+
+In those scenarios I don't see a problem with the platform drivers
+having functions of common code shared between ops->start and
+ops->attach.
+
+> With that in mind I simply did all the work in remoteproc_internal.h and left
+> the core functions intact.
+> 
+> We can try spinning off new functions in the next revision, just to test my
+> theory and see how much gets duplicated.
+> 
+
+Looking forward to it!
+
+> > 
+> > > > 
+> > > > >  {
+> > > > >  	struct device *dev = &rproc->dev;
+> > > > >  	const char *name = rproc->firmware;
+> > > > > @@ -1382,7 +1382,9 @@ static int rproc_fw_boot(struct rproc *rproc, const struct firmware *fw)
+> > > > >  	if (ret)
+> > > > >  		return ret;
+> > > > >  
+> > > > > -	dev_info(dev, "Booting fw image %s, size %zd\n", name, fw->size);
+> > > > > +	if (!rproc_needs_syncing(rproc))
+> > > > 
+> > > > Can't we make this check on fw, to make the relationship "if we where
+> > > > passed a firmware object, we're going to load and boot that firmware"?
+> > > 
+> > > It can but I specifically decided to use rproc_needs_syncing() to be consistent
+> > > with the rest of the patchset.  That way all we need to do is grep for
+> > > rproc_needs_syncing to get all the places where a decision about synchronising
+> > > with a remote processor is made.
+> > > 
+> > 
+> > Conceptually we have a single "to sync or not to sync", but I think
+> > we're invoking rproc_needs_syncing() 8 times during rproc_fw_boot() and
+> > each of those operations may or may not do anything.
+> 
+> As I said above, I'll try spinning off new functions in the next revision.  From
+> there we can decide how best to move forward.
+> 
+> > 
+> > There are certain operations where I see it makes sense for a driver to
+> > either implement or not, but I think that e.g. for a rproc in OFFLINE
+> > state we should just require ops->start to be specified - because it
+> > doesn't make sense to enter rproc_start() if ops->start is a nop.
+> 
+> At this time ops->start() doesn't have to be specified... But as you say it
+> won't do much good and this is something we can easily spot when reviewing
+> patches.
+> 
+
+Presumably after implementing this support we should check during
+registration that there's either a start or an attach ops specified. And
+if there's no start we shouldn't allow the RUNNING->OFFLINE transition.
+
+> Thanks for the review,
+
+Thanks for working on this and sorry that it took me time really digest
+this.
+
+Regards,
 Bjorn
 
-> ---
+> Mathieu
 > 
-> Notes:
->     v2: Remove exception for always-mapped memories
->     v3: - Use clk_bulk API
->     	- Move device-managed code to its own patch [3/4]
->     	- Move devicetree table right above ingenic_rproc_driver
->     	- Removed #ifdef CONFIG_OF around devicetree table
->     	- Removed .owner = THIS_MODULE in ingenic_rproc_driver
->     	- Removed useless platform_set_drvdata()
->     v4: - Add fix reported by Julia
->     	- Change Kconfig symbol to INGENIC_VPU_RPROC
->     	- Add documentation to struct vpu
->     	- disable_irq_nosync() -> disable_irq()
->     v5: No change
->     v6: Instead of prepare/unprepare callbacks, use PM runtime callbacks
->     v7: - Remove use of of_match_ptr()
->     	- Move Kconfig symbol so that it's in alphabetical order
->     	- Add missing doc for private structure field aux_base
->     	- Don't check for (len <= 0) in da_to_va()
->     	- Add missing \n in dev_info/dev_err messages
-> 
->  drivers/remoteproc/Kconfig         |   9 +
->  drivers/remoteproc/Makefile        |   1 +
->  drivers/remoteproc/ingenic_rproc.c | 280 +++++++++++++++++++++++++++++
->  3 files changed, 290 insertions(+)
->  create mode 100644 drivers/remoteproc/ingenic_rproc.c
-> 
-> diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
-> index fbaed079b299..c4d1731295eb 100644
-> --- a/drivers/remoteproc/Kconfig
-> +++ b/drivers/remoteproc/Kconfig
-> @@ -23,6 +23,15 @@ config IMX_REMOTEPROC
->  
->  	  It's safe to say N here.
->  
-> +config INGENIC_VPU_RPROC
-> +	tristate "Ingenic JZ47xx VPU remoteproc support"
-> +	depends on MIPS || COMPILE_TEST
-> +	help
-> +	  Say y or m here to support the VPU in the JZ47xx SoCs from Ingenic.
-> +
-> +	  This can be either built-in or a loadable module.
-> +	  If unsure say N.
-> +
->  config MTK_SCP
->  	tristate "Mediatek SCP support"
->  	depends on ARCH_MEDIATEK
-> diff --git a/drivers/remoteproc/Makefile b/drivers/remoteproc/Makefile
-> index 0effd3825035..e8b886e511f0 100644
-> --- a/drivers/remoteproc/Makefile
-> +++ b/drivers/remoteproc/Makefile
-> @@ -10,6 +10,7 @@ remoteproc-y				+= remoteproc_sysfs.o
->  remoteproc-y				+= remoteproc_virtio.o
->  remoteproc-y				+= remoteproc_elf_loader.o
->  obj-$(CONFIG_IMX_REMOTEPROC)		+= imx_rproc.o
-> +obj-$(CONFIG_INGENIC_VPU_RPROC)		+= ingenic_rproc.o
->  obj-$(CONFIG_MTK_SCP)			+= mtk_scp.o mtk_scp_ipi.o
->  obj-$(CONFIG_OMAP_REMOTEPROC)		+= omap_remoteproc.o
->  obj-$(CONFIG_WKUP_M3_RPROC)		+= wkup_m3_rproc.o
-> diff --git a/drivers/remoteproc/ingenic_rproc.c b/drivers/remoteproc/ingenic_rproc.c
-> new file mode 100644
-> index 000000000000..189020d77b25
-> --- /dev/null
-> +++ b/drivers/remoteproc/ingenic_rproc.c
-> @@ -0,0 +1,280 @@
-> +// SPDX-License-Identifier: GPL-2.0+
-> +/*
-> + * Ingenic JZ47xx remoteproc driver
-> + * Copyright 2019, Paul Cercueil <paul@crapouillou.net>
-> + */
-> +
-> +#include <linux/bitops.h>
-> +#include <linux/clk.h>
-> +#include <linux/err.h>
-> +#include <linux/interrupt.h>
-> +#include <linux/io.h>
-> +#include <linux/module.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/pm_runtime.h>
-> +#include <linux/remoteproc.h>
-> +
-> +#include "remoteproc_internal.h"
-> +
-> +#define REG_AUX_CTRL		0x0
-> +#define REG_AUX_MSG_ACK		0x10
-> +#define REG_AUX_MSG		0x14
-> +#define REG_CORE_MSG_ACK	0x18
-> +#define REG_CORE_MSG		0x1C
-> +
-> +#define AUX_CTRL_SLEEP		BIT(31)
-> +#define AUX_CTRL_MSG_IRQ_EN	BIT(3)
-> +#define AUX_CTRL_NMI_RESETS	BIT(2)
-> +#define AUX_CTRL_NMI		BIT(1)
-> +#define AUX_CTRL_SW_RESET	BIT(0)
-> +
-> +struct vpu_mem_map {
-> +	const char *name;
-> +	unsigned int da;
-> +};
-> +
-> +struct vpu_mem_info {
-> +	const struct vpu_mem_map *map;
-> +	unsigned long len;
-> +	void __iomem *base;
-> +};
-> +
-> +static const struct vpu_mem_map vpu_mem_map[] = {
-> +	{ "tcsm0", 0x132b0000 },
-> +	{ "tcsm1", 0xf4000000 },
-> +	{ "sram",  0x132f0000 },
-> +};
-> +
-> +/**
-> + * struct vpu - Ingenic VPU remoteproc private structure
-> + * @irq: interrupt number
-> + * @clks: pointers to the VPU and AUX clocks
-> + * @aux_base: raw pointer to the AUX interface registers
-> + * @mem_info: array of struct vpu_mem_info, which contain the mapping info of
-> + *            each of the external memories
-> + * @dev: private pointer to the device
-> + */
-> +struct vpu {
-> +	int irq;
-> +	struct clk_bulk_data clks[2];
-> +	void __iomem *aux_base;
-> +	struct vpu_mem_info mem_info[ARRAY_SIZE(vpu_mem_map)];
-> +	struct device *dev;
-> +};
-> +
-> +static int ingenic_rproc_start(struct rproc *rproc)
-> +{
-> +	struct vpu *vpu = rproc->priv;
-> +	u32 ctrl;
-> +
-> +	enable_irq(vpu->irq);
-> +
-> +	/* Reset the AUX and enable message IRQ */
-> +	ctrl = AUX_CTRL_NMI_RESETS | AUX_CTRL_NMI | AUX_CTRL_MSG_IRQ_EN;
-> +	writel(ctrl, vpu->aux_base + REG_AUX_CTRL);
-> +
-> +	return 0;
-> +}
-> +
-> +static int ingenic_rproc_stop(struct rproc *rproc)
-> +{
-> +	struct vpu *vpu = rproc->priv;
-> +
-> +	disable_irq(vpu->irq);
-> +
-> +	/* Keep AUX in reset mode */
-> +	writel(AUX_CTRL_SW_RESET, vpu->aux_base + REG_AUX_CTRL);
-> +
-> +	return 0;
-> +}
-> +
-> +static void ingenic_rproc_kick(struct rproc *rproc, int vqid)
-> +{
-> +	struct vpu *vpu = rproc->priv;
-> +
-> +	writel(vqid, vpu->aux_base + REG_CORE_MSG);
-> +}
-> +
-> +static void *ingenic_rproc_da_to_va(struct rproc *rproc, u64 da, size_t len)
-> +{
-> +	struct vpu *vpu = rproc->priv;
-> +	void __iomem *va = NULL;
-> +	unsigned int i;
-> +
-> +	for (i = 0; i < ARRAY_SIZE(vpu_mem_map); i++) {
-> +		const struct vpu_mem_info *info = &vpu->mem_info[i];
-> +		const struct vpu_mem_map *map = info->map;
-> +
-> +		if (da >= map->da && (da + len) < (map->da + info->len)) {
-> +			va = info->base + (da - map->da);
-> +			break;
-> +		}
-> +	}
-> +
-> +	return (__force void *)va;
-> +}
-> +
-> +static struct rproc_ops ingenic_rproc_ops = {
-> +	.start = ingenic_rproc_start,
-> +	.stop = ingenic_rproc_stop,
-> +	.kick = ingenic_rproc_kick,
-> +	.da_to_va = ingenic_rproc_da_to_va,
-> +};
-> +
-> +static irqreturn_t vpu_interrupt(int irq, void *data)
-> +{
-> +	struct rproc *rproc = data;
-> +	struct vpu *vpu = rproc->priv;
-> +	u32 vring;
-> +
-> +	vring = readl(vpu->aux_base + REG_AUX_MSG);
-> +
-> +	/* Ack the interrupt */
-> +	writel(0, vpu->aux_base + REG_AUX_MSG_ACK);
-> +
-> +	return rproc_vq_interrupt(rproc, vring);
-> +}
-> +
-> +static void ingenic_rproc_disable_clks(void *data)
-> +{
-> +	struct vpu *vpu = data;
-> +
-> +	pm_runtime_resume(vpu->dev);
-> +	pm_runtime_disable(vpu->dev);
-> +
-> +	clk_bulk_disable_unprepare(ARRAY_SIZE(vpu->clks), vpu->clks);
-> +}
-> +
-> +static int ingenic_rproc_probe(struct platform_device *pdev)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	struct resource *mem;
-> +	struct rproc *rproc;
-> +	struct vpu *vpu;
-> +	unsigned int i;
-> +	int ret;
-> +
-> +	rproc = devm_rproc_alloc(dev, "ingenic-vpu",
-> +				 &ingenic_rproc_ops, NULL, sizeof(*vpu));
-> +	if (!rproc)
-> +		return -ENOMEM;
-> +
-> +	vpu = rproc->priv;
-> +	vpu->dev = &pdev->dev;
-> +	platform_set_drvdata(pdev, vpu);
-> +
-> +	mem = platform_get_resource_byname(pdev, IORESOURCE_MEM, "aux");
-> +	vpu->aux_base = devm_ioremap_resource(dev, mem);
-> +	if (IS_ERR(vpu->aux_base)) {
-> +		dev_err(dev, "Failed to ioremap\n");
-> +		return PTR_ERR(vpu->aux_base);
-> +	}
-> +
-> +	for (i = 0; i < ARRAY_SIZE(vpu_mem_map); i++) {
-> +		mem = platform_get_resource_byname(pdev, IORESOURCE_MEM,
-> +						   vpu_mem_map[i].name);
-> +
-> +		vpu->mem_info[i].base = devm_ioremap_resource(dev, mem);
-> +		if (IS_ERR(vpu->mem_info[i].base)) {
-> +			ret = PTR_ERR(vpu->mem_info[i].base);
-> +			dev_err(dev, "Failed to ioremap\n");
-> +			return ret;
-> +		}
-> +
-> +		vpu->mem_info[i].len = resource_size(mem);
-> +		vpu->mem_info[i].map = &vpu_mem_map[i];
-> +	}
-> +
-> +	vpu->clks[0].id = "vpu";
-> +	vpu->clks[1].id = "aux";
-> +
-> +	ret = devm_clk_bulk_get(dev, ARRAY_SIZE(vpu->clks), vpu->clks);
-> +	if (ret) {
-> +		dev_err(dev, "Failed to get clocks\n");
-> +		return ret;
-> +	}
-> +
-> +	vpu->irq = platform_get_irq(pdev, 0);
-> +	if (vpu->irq < 0)
-> +		return vpu->irq;
-> +
-> +	ret = devm_request_irq(dev, vpu->irq, vpu_interrupt, 0, "VPU", rproc);
-> +	if (ret < 0) {
-> +		dev_err(dev, "Failed to request IRQ\n");
-> +		return ret;
-> +	}
-> +
-> +	disable_irq(vpu->irq);
-> +
-> +	/* The clocks must be enabled for the firmware to be loaded in TCSM */
-> +	ret = clk_bulk_prepare_enable(ARRAY_SIZE(vpu->clks), vpu->clks);
-> +	if (ret) {
-> +		dev_err(dev, "Unable to start clocks\n");
-> +		return ret;
-> +	}
-> +
-> +	pm_runtime_irq_safe(dev);
-> +	pm_runtime_set_active(dev);
-> +	pm_runtime_enable(dev);
-> +	pm_runtime_get_sync(dev);
-> +	pm_runtime_use_autosuspend(dev);
-> +
-> +	ret = devm_add_action_or_reset(dev, ingenic_rproc_disable_clks, vpu);
-> +	if (ret) {
-> +		dev_err(dev, "Unable to register action\n");
-> +		goto out_pm_put;
-> +	}
-> +
-> +	ret = devm_rproc_add(dev, rproc);
-> +	if (ret) {
-> +		dev_err(dev, "Failed to register remote processor\n");
-> +		goto out_pm_put;
-> +	}
-> +
-> +out_pm_put:
-> +	pm_runtime_put_autosuspend(dev);
-> +
-> +	return ret;
-> +}
-> +
-> +static const struct of_device_id ingenic_rproc_of_matches[] = {
-> +	{ .compatible = "ingenic,jz4770-vpu-rproc", },
-> +	{}
-> +};
-> +MODULE_DEVICE_TABLE(of, ingenic_rproc_of_matches);
-> +
-> +static int __maybe_unused ingenic_rproc_suspend(struct device *dev)
-> +{
-> +	struct vpu *vpu = dev_get_drvdata(dev);
-> +
-> +	clk_bulk_disable(ARRAY_SIZE(vpu->clks), vpu->clks);
-> +
-> +	return 0;
-> +}
-> +
-> +static int __maybe_unused ingenic_rproc_resume(struct device *dev)
-> +{
-> +	struct vpu *vpu = dev_get_drvdata(dev);
-> +
-> +	return clk_bulk_enable(ARRAY_SIZE(vpu->clks), vpu->clks);
-> +}
-> +
-> +static const struct dev_pm_ops __maybe_unused ingenic_rproc_pm = {
-> +	SET_RUNTIME_PM_OPS(ingenic_rproc_suspend, ingenic_rproc_resume, NULL)
-> +};
-> +
-> +static struct platform_driver ingenic_rproc_driver = {
-> +	.probe = ingenic_rproc_probe,
-> +	.driver = {
-> +		.name = "ingenic-vpu",
-> +#ifdef CONFIG_PM
-> +		.pm = &ingenic_rproc_pm,
-> +#endif
-> +		.of_match_table = ingenic_rproc_of_matches,
-> +	},
-> +};
-> +module_platform_driver(ingenic_rproc_driver);
-> +
-> +MODULE_LICENSE("GPL");
-> +MODULE_AUTHOR("Paul Cercueil <paul@crapouillou.net>");
-> +MODULE_DESCRIPTION("Ingenic JZ47xx Remote Processor control driver");
-> -- 
-> 2.26.2
-> 
+> > 
+> > Regards,
+> > Bjorn
+> > 
+> > > > 
+> > > > Regards,
+> > > > Bjorn
+> > > > 
+> > > > > +		dev_info(dev, "Booting fw image %s, size %zd\n",
+> > > > > +			 name, fw->size);
+> > > > >  
+> > > > >  	/*
+> > > > >  	 * if enabling an IOMMU isn't relevant for this rproc, this is
+> > > > > @@ -1818,7 +1820,7 @@ int rproc_boot(struct rproc *rproc)
+> > > > >  		}
+> > > > >  	}
+> > > > >  
+> > > > > -	ret = rproc_fw_boot(rproc, firmware_p);
+> > > > > +	ret = rproc_actuate_device(rproc, firmware_p);
+> > > > >  
+> > > > >  	release_firmware(firmware_p);
+> > > > >  
+> > > > > -- 
+> > > > > 2.20.1
+> > > > > 
