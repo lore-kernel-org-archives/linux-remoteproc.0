@@ -7,54 +7,52 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EAA6C433E0
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 20 May 2020 09:40:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B73CCC433E0
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 20 May 2020 09:40:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 31CA6207ED
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 20 May 2020 09:40:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 974EB207ED
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 20 May 2020 09:40:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="hd0jmUKN"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="hMWXYIFb"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726914AbgETJkc (ORCPT
+        id S1726836AbgETJkT (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 20 May 2020 05:40:32 -0400
-Received: from mail26.static.mailgun.info ([104.130.122.26]:33382 "EHLO
-        mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726881AbgETJka (ORCPT
+        Wed, 20 May 2020 05:40:19 -0400
+Received: from mail27.static.mailgun.info ([104.130.122.27]:53180 "EHLO
+        mail27.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726819AbgETJkS (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 20 May 2020 05:40:30 -0400
+        Wed, 20 May 2020 05:40:18 -0400
 DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1589967629; h=References: In-Reply-To: Message-Id: Date:
+ s=smtp; t=1589967618; h=References: In-Reply-To: Message-Id: Date:
  Subject: Cc: To: From: Sender;
- bh=UIharH5fDzSd4i7jVCFkQvYdn49INIoNrfkHjTev/zw=; b=hd0jmUKNUEmXsfggmyjCETFFlo4kgvCI/BgBAU/PrJePJS6mwZHY2mFmU1nKvlFgrKdQEJoY
- VEPT6Iks2j3eDDLZ6law79wvlbCzKuErKZZWQZh2uyOIH31WczTXRbabcbK2ZfylrQU4lv3d
- gHSGXe94//2h9aObCMNfpTog2Qg=
-X-Mailgun-Sending-Ip: 104.130.122.26
+ bh=QvCnssNRyOaZbTIUEafb9UtFFPJxVfsGVnlMsbWACNk=; b=hMWXYIFbJe1nR1v8vh2PtNIA3HL1RMO2UcdfPb2pB9+5KW5ecB1lnIL/MM0oYLG+i+OJNNWF
+ 82CE8/lQ+rofaC5tjjKcmTt/5hYYaIzWqHkRJnav5jFcIT5+u5OeHPr3AcO9F7tauD60x5Zy
+ PTs/ojEG5fQG5B9YCbC138jkJfc=
+X-Mailgun-Sending-Ip: 104.130.122.27
 X-Mailgun-Sid: WyI4ZWZiZiIsICJsaW51eC1yZW1vdGVwcm9jQHZnZXIua2VybmVsLm9yZyIsICJiZTllNGEiXQ==
 Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5ec4fafe.7f84424289d0-smtp-out-n03;
- Wed, 20 May 2020 09:40:14 -0000 (UTC)
+ by mxa.mailgun.org with ESMTP id 5ec4faf3.7fa94ab3d848-smtp-out-n03;
+ Wed, 20 May 2020 09:40:03 -0000 (UTC)
 Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 11801C433AF; Wed, 20 May 2020 09:40:14 +0000 (UTC)
+        id 976B0C433C8; Wed, 20 May 2020 09:40:02 +0000 (UTC)
 Received: from aneelaka-linux.qualcomm.com (blr-c-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.19.19])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
         (Authenticated sender: aneela)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 8908FC433C6;
-        Wed, 20 May 2020 09:40:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8908FC433C6
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id E6D30C433C9;
+        Wed, 20 May 2020 09:39:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E6D30C433C9
 Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=aneela@codeaurora.org
 From:   Arun Kumar Neelakantam <aneela@codeaurora.org>
 To:     ohad@wizery.com, bjorn.andersson@linaro.org, clew@codeaurora.org,
         sricharan@codeaurora.org
 Cc:     linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Arun Kumar Neelakantam <aneela@codeaurora.org>,
-        Andy Gross <agross@kernel.org>,
-        linux-arm-msm@vger.kernel.org (open list:ARM/QUALCOMM SUPPORT)
-Subject: [PATCH V6 5/5] rpmsg: glink: unregister rpmsg device during endpoint destroy
-Date:   Wed, 20 May 2020 15:09:39 +0530
-Message-Id: <1589967579-15559-6-git-send-email-aneela@codeaurora.org>
+        Arun Kumar Neelakantam <aneela@codeaurora.org>
+Subject: [PATCH V6 2/5] rpmsg: Guard against null endpoint ops in destroy
+Date:   Wed, 20 May 2020 15:09:36 +0530
+Message-Id: <1589967579-15559-3-git-send-email-aneela@codeaurora.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1589967579-15559-1-git-send-email-aneela@codeaurora.org>
 References: <1589967579-15559-1-git-send-email-aneela@codeaurora.org>
@@ -63,49 +61,31 @@ Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Rpmsg device unregister is not happening if channel close is triggered
-from local side and causing re-registration of device failures.
+From: Chris Lew <clew@codeaurora.org>
 
-Unregister rpmsg device for local close in endpoint destroy path.
+In RPMSG GLINK the chrdev device will allocate an ept as part of the
+rpdev creation. This device will not register endpoint ops even though
+it has an allocated ept. Protect against the case where the device is
+being destroyed.
 
+Signed-off-by: Chris Lew <clew@codeaurora.org>
 Signed-off-by: Arun Kumar Neelakantam <aneela@codeaurora.org>
 ---
- drivers/rpmsg/qcom_glink_native.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ drivers/rpmsg/rpmsg_core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/rpmsg/qcom_glink_native.c b/drivers/rpmsg/qcom_glink_native.c
-index 2b5368b..53b90a1 100644
---- a/drivers/rpmsg/qcom_glink_native.c
-+++ b/drivers/rpmsg/qcom_glink_native.c
-@@ -1207,6 +1207,7 @@ static void qcom_glink_destroy_ept(struct rpmsg_endpoint *ept)
+diff --git a/drivers/rpmsg/rpmsg_core.c b/drivers/rpmsg/rpmsg_core.c
+index e330ec4..d6c3275 100644
+--- a/drivers/rpmsg/rpmsg_core.c
++++ b/drivers/rpmsg/rpmsg_core.c
+@@ -81,7 +81,7 @@ EXPORT_SYMBOL(rpmsg_create_ept);
+  */
+ void rpmsg_destroy_ept(struct rpmsg_endpoint *ept)
  {
- 	struct glink_channel *channel = to_glink_channel(ept);
- 	struct qcom_glink *glink = channel->glink;
-+	struct rpmsg_channel_info chinfo;
- 	unsigned long flags;
- 
- 	spin_lock_irqsave(&channel->recv_lock, flags);
-@@ -1214,6 +1215,13 @@ static void qcom_glink_destroy_ept(struct rpmsg_endpoint *ept)
- 	spin_unlock_irqrestore(&channel->recv_lock, flags);
- 
- 	/* Decouple the potential rpdev from the channel */
-+	if (channel->rpdev) {
-+		strncpy(chinfo.name, channel->name, sizeof(chinfo.name));
-+		chinfo.src = RPMSG_ADDR_ANY;
-+		chinfo.dst = RPMSG_ADDR_ANY;
-+
-+		rpmsg_unregister_device(glink->dev, &chinfo);
-+	}
- 	channel->rpdev = NULL;
- 
- 	qcom_glink_send_close_req(glink, channel);
-@@ -1477,6 +1485,7 @@ static void qcom_glink_rx_close(struct qcom_glink *glink, unsigned int rcid)
- 
- 		rpmsg_unregister_device(glink->dev, &chinfo);
- 	}
-+	channel->rpdev = NULL;
- 
- 	qcom_glink_send_close_ack(glink, channel->rcid);
- 
+-	if (ept)
++	if (ept && ept->ops)
+ 		ept->ops->destroy_ept(ept);
+ }
+ EXPORT_SYMBOL(rpmsg_destroy_ept);
 -- 
 2.7.4
