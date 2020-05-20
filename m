@@ -2,142 +2,154 @@ Return-Path: <SRS0=BznH=7C=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1861C433E0
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 20 May 2020 14:49:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 196C5C433E0
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 20 May 2020 17:59:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 91A2C207D4
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 20 May 2020 14:49:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E0C5B204EF
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 20 May 2020 17:59:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=st.com header.i=@st.com header.b="fdVcLj1o"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="D1y9kEmR"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726510AbgETOtk (ORCPT
+        id S1726688AbgETR7e (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 20 May 2020 10:49:40 -0400
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:51448 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726439AbgETOtk (ORCPT
+        Wed, 20 May 2020 13:59:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60982 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726596AbgETR7d (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 20 May 2020 10:49:40 -0400
-Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 04KEgDW0028385;
-        Wed, 20 May 2020 16:49:33 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=STMicroelectronics;
- bh=mF9hCf7Xk61Z6neQPdNS3sUzpshBFvjsTt55Bt0GOQQ=;
- b=fdVcLj1oCPsKC4aG1U8RGJ2JWpTune9Ufd4VVsdOLuWtcqjiXMMKS0fKZIzKYiq/CriI
- aLf5UuEaoaw83BUhGH7z2p1D+TpgAJdKnxPHAEhw0vaoxiiRHdfY9FwniGxx1Pev7Rck
- 0x+N1FZ3ztGI8ykbZLAGBH14VpBYdTGSG9mkIwvbK2Xo5UZxnuSJorfFmWy75I9V/pD8
- A3mvvUz0FDb73Qw8quPShJyOKC0ZRgXAsQehsjTIhIr99bVibEWzoKKzgYFJ/6BtB2mI
- AP/FAvy4LcgByRwBBsDOlgg8++LPqXnkzlq/+cQ7T0bBo+C8CikGr4OzB56ZjQz1HkUF zA== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 31272h8phx-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 20 May 2020 16:49:33 +0200
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id E289110002A;
-        Wed, 20 May 2020 16:49:32 +0200 (CEST)
-Received: from Webmail-eu.st.com (sfhdag3node1.st.com [10.75.127.7])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id D38652B7FD4;
-        Wed, 20 May 2020 16:49:32 +0200 (CEST)
-Received: from lmecxl0889.tpe.st.com (10.75.127.51) by SFHDAG3NODE1.st.com
- (10.75.127.7) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 20 May
- 2020 16:49:32 +0200
-Subject: Re: [PATCH v6 0/3] rpmsg: core: Add support for name extension
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>
-CC:     <ohad@wizery.com>, <s-anna@ti.com>,
-        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Xiang Xiao <xiaoxiang@xiaomi.com>
-References: <20200515205642.13529-1-mathieu.poirier@linaro.org>
- <20200515210914.GA408178@builder.lan>
-From:   Arnaud POULIQUEN <arnaud.pouliquen@st.com>
-Message-ID: <bbc97b0d-b36c-c088-a972-d1d10f7eed17@st.com>
-Date:   Wed, 20 May 2020 16:49:31 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+        Wed, 20 May 2020 13:59:33 -0400
+Received: from mail-pf1-x443.google.com (mail-pf1-x443.google.com [IPv6:2607:f8b0:4864:20::443])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 40F53C05BD43
+        for <linux-remoteproc@vger.kernel.org>; Wed, 20 May 2020 10:59:32 -0700 (PDT)
+Received: by mail-pf1-x443.google.com with SMTP id q8so1943246pfu.5
+        for <linux-remoteproc@vger.kernel.org>; Wed, 20 May 2020 10:59:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=/VG7JhWId2ggUAJ7+wRERmG2MSvueE8spDk60d1QW5U=;
+        b=D1y9kEmRagg+MkBHOCCpJNJssjKuv6p598q1CaQZUkvgjc7ZIuzl7HfeoyDriDdpf5
+         XUX858Macf+P23J0DBnD3K3EB6pZl+kLzAnY8pSEGszlAZStoppevWJKHyH8XI6c2Lkl
+         pY4LoZaKUgpdyv+oCVW/B14KdWllVyhNSlepCCTInD1fVNR7ArOON/gw7sy5ysf5bxLD
+         b7reSqM9I9C1mGAVsW2MCw2G9dZUYauaIZrLSRxO3fMtePQFyExDz+PQuO0YSNow7/zR
+         jCvmO25bQ1LLB2IIq2c5jGl9vBpSF3Rw43syAAXdfTV6PHDvgZQYpGJ0+bp92eDgYzPQ
+         JUYQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=/VG7JhWId2ggUAJ7+wRERmG2MSvueE8spDk60d1QW5U=;
+        b=Tmz08wy3gvxx0vU9HLYL4YrxSSKZQr5aGfak8I8myClJKBygKM1moifabMEwinmlW9
+         WB8MsAbbIpk8oJVYG8fCD3l6IUATjiUzCKf0M2u5lH2nJKCKijj60U7QOcSskn7KCsZV
+         b6U14fO5QBafNmW+r6AQqySBKsEqxAVIsYCGl0I1seIXz9dbvz1wsDWfGEyaQD7iqvFA
+         1IdaxW/YApr8KbrJCUguZq0JxKuiIASaZgoJa4P8EtD0Db5ctyoT7H02DHx5czzSErBp
+         IN5jLGkxUDk/zvXXjISJ0ILePGbksIqAF7z5YcQqB14EJphVRcjvC3AyEssetbMP6ku+
+         AYtQ==
+X-Gm-Message-State: AOAM532MjiAhZPnjAEW2zrwAGTw35cVXCc8fnWMSQO4HMyoivn6W1b2M
+        lCoN88iVKtDaseO0t0IBVlLNQg==
+X-Google-Smtp-Source: ABdhPJyLR9x0/4C/6Bal2oDegmfghyP17zolTT91rytHhpCpeg3nWC8M+crqbk74jIh7xZWVPXTlPw==
+X-Received: by 2002:a62:3642:: with SMTP id d63mr5499987pfa.222.1589997571579;
+        Wed, 20 May 2020 10:59:31 -0700 (PDT)
+Received: from xps15 (S0106002369de4dac.cg.shawcable.net. [68.147.8.254])
+        by smtp.gmail.com with ESMTPSA id n14sm2520666pjh.45.2020.05.20.10.59.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 20 May 2020 10:59:30 -0700 (PDT)
+Date:   Wed, 20 May 2020 11:59:28 -0600
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Andy Gross <agross@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Stephen Boyd <swboyd@chromium.org>
+Subject: Re: [PATCH v5 1/5] dt-bindings: remoteproc: Add Qualcomm PIL info
+ binding
+Message-ID: <20200520175928.GA13884@xps15>
+References: <20200513055641.1413100-1-bjorn.andersson@linaro.org>
+ <20200513055641.1413100-2-bjorn.andersson@linaro.org>
 MIME-Version: 1.0
-In-Reply-To: <20200515210914.GA408178@builder.lan>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.75.127.51]
-X-ClientProxiedBy: SFHDAG4NODE1.st.com (10.75.127.10) To SFHDAG3NODE1.st.com
- (10.75.127.7)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.216,18.0.676
- definitions=2020-05-20_10:2020-05-20,2020-05-20 signatures=0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200513055641.1413100-2-bjorn.andersson@linaro.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi Bjorn,
-
-On 5/15/20 11:09 PM, Bjorn Andersson wrote:
-> On Fri 15 May 13:56 PDT 2020, Mathieu Poirier wrote:
+On Tue, May 12, 2020 at 10:56:37PM -0700, Bjorn Andersson wrote:
+> Add a devicetree binding for the Qualcomm peripheral image loader
+> relocation information region found in the IMEM.
 > 
->> This patchset adds the capability to supplement the base definition
->> published by an rpmsg_driver with a postfix description so that it
->> is easy to differentiate entities that use the same name service.
->>
->> Applies cleanly on rpmsg-next (4f05fc33bebd).
->>
+> Reviewed-by: Stephen Boyd <swboyd@chromium.org>
+> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> ---
 > 
-> Thanks Mathieu, this series does look good.
+> Changes since v4:
+> - Fixed reg in example to make it compile
 > 
-> 
-> But before merging this, can someone show me a real example where this
-> is being/would be used? What are some real channel names and extensions?
+>  .../bindings/remoteproc/qcom,pil-info.yaml    | 44 +++++++++++++++++++
+>  1 file changed, 44 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/remoteproc/qcom,pil-info.yaml
 
-On ST side, This is something we plan to integrate in the TTY over RPMSG support.
-The use case is the support of multi-instances. We already provided to our
-customer a TTY service supporting it but without name extension. 
-Some feed-backs are: how can we know which TTY instances to use to communicate
-to the expected remote application in case of multi-instance.
-A concrete example would be one instance to control a remote processor
-application, the other instance to get the remote system logs.
-
-Then in rpmsg TTY proposed for upstream the extension could also been used to
-differentiate the data from the control channels, as discussed with Mathieu
-during reviews: https://lkml.org/lkml/2020/4/3/964. 
-Means the service is the TTY, the sub-services are the data and the control.
-
-An other usecase i have in mind is the management of the rpmsg flow control for
-the QOS.
-This could be reused to create a core flow control manager based on the
-service extension, which could be quite smooth in term of legacy support.
-
-Suman and Xiang(added in CC) have probably also some usecases as they 
-proposed similar patches...
-
-Regards,
-Arnaud
+Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 
 > 
-> Regards,
-> Bjorn
+> diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,pil-info.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,pil-info.yaml
+> new file mode 100644
+> index 000000000000..87c52316ddbd
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/remoteproc/qcom,pil-info.yaml
+> @@ -0,0 +1,44 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/remoteproc/qcom,pil-info.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Qualcomm peripheral image loader relocation info binding
+> +
+> +maintainers:
+> +  - Bjorn Andersson <bjorn.andersson@linaro.org>
+> +
+> +description:
+> +  The Qualcomm peripheral image loader relocation memory region, in IMEM, is
+> +  used for communicating remoteproc relocation information to post mortem
+> +  debugging tools.
+> +
+> +properties:
+> +  compatible:
+> +    const: qcom,pil-reloc-info
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +
+> +examples:
+> +  - |
+> +    imem@146bf000 {
+> +      compatible = "syscon", "simple-mfd";
+> +      reg = <0x146bf000 0x1000>;
+> +
+> +      #address-cells = <1>;
+> +      #size-cells = <1>;
+> +
+> +      ranges = <0 0x146bf000 0x1000>;
+> +
+> +      pil-reloc@94c {
+> +        compatible = "qcom,pil-reloc-info";
+> +        reg = <0x94c 0xc8>;
+> +      };
+> +    };
+> +...
+> -- 
+> 2.26.2
 > 
->> New for V6:
->> - Added example on how to use the new API.
->>
->> Thanks,
->> Mathieu
->>
->>
->> Mathieu Poirier (3):
->>   rpmsg: core: Add wildcard match for name service
->>   rpmsg: core: Add support to retrieve name extension
->>   sample/rpmsg: Print out RPMSG device name extension
->>
->>  drivers/rpmsg/rpmsg_core.c          | 115 +++++++++++++++++++++++++++-
->>  include/linux/rpmsg.h               |  13 ++++
->>  samples/rpmsg/rpmsg_client_sample.c |   5 ++
->>  3 files changed, 132 insertions(+), 1 deletion(-)
->>
->> -- 
->> 2.20.1
->>
