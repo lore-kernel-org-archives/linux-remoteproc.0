@@ -2,288 +2,106 @@ Return-Path: <SRS0=YNmX=7D=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59D1CC433E0
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 21 May 2020 05:22:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91E8BC433DF
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 21 May 2020 15:16:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 28DBB20738
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 21 May 2020 05:22:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5731D20748
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 21 May 2020 15:16:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="eAgGtVkd"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="XXN9tuUg"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726836AbgEUFWB (ORCPT
+        id S1729925AbgEUPQq (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 21 May 2020 01:22:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54524 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726790AbgEUFWA (ORCPT
+        Thu, 21 May 2020 11:16:46 -0400
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:38230 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729896AbgEUPQq (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 21 May 2020 01:22:00 -0400
-Received: from mail-pf1-x443.google.com (mail-pf1-x443.google.com [IPv6:2607:f8b0:4864:20::443])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7FA6BC061A0E
-        for <linux-remoteproc@vger.kernel.org>; Wed, 20 May 2020 22:22:00 -0700 (PDT)
-Received: by mail-pf1-x443.google.com with SMTP id z26so2760200pfk.12
-        for <linux-remoteproc@vger.kernel.org>; Wed, 20 May 2020 22:22:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=Cbk5lZhqlis2bxujLFznrj+UfeuImdmjl57S359SPKM=;
-        b=eAgGtVkdJ67nciA39cs7Yp+PyWJrz58wtO1dsmQm6jSARIVTwNLOCyIynXeWThDTAo
-         82dQwhRxqU1SHB3rDy5SiUKGrMCgS6NuMksvA5oFZ5LonY+4EkkQrH/Px6EP3cUtQG5p
-         LasLP+Aa+XWKKb0/aF97GMd6grIxoQ6NgGPPxc/Gg/Z+jRket13JseLV9GSvbfOROHht
-         R1tM0iBMb3HCb+7247q1Y3wcF08c4uZ2CgMhn1DWm6frgm32+Hcl5WRhfAAAbkZLbW2h
-         8RF4DZGqP8bQRoOjIBX1D0fmeubTW+7ZTY6hFlGco7hZ2iGuTD64UapIrvpMQvWtwykx
-         1QAA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=Cbk5lZhqlis2bxujLFznrj+UfeuImdmjl57S359SPKM=;
-        b=l5t05mPD6GaIg1mMC/57pbjkq97ia7ORXjcqPpawhwzhZT9RyY7ZpDzdld2EhX49wA
-         F8Q/xgFb9EtYuUZnQmCVT9qxwZvvTogXZ+PuIZPNx4xydpcakYMrXsYQfMfEx29xU/HL
-         xQJbB8aKqp1+FH1gFgcB+r7ZA/zbKDRGpNW7e1U7aszpkKjUTm60FDTV7/ve6jNapnhG
-         ued6Akh24gndKsC4EK/FwhI0Kkcah8AwDQJBN2uZOaXjOhw+xF43sbYlKekvgIVps6c0
-         J0VuzwAPHazXgfVk8pOniF1oS/QEkwxOueaNblhmgIpLlg56kcHRExQkqBoz8xWJNN2S
-         NpEA==
-X-Gm-Message-State: AOAM532DwvvCKWYA12HiGuZFY6OX4I8tlWas/DgZF2XKEBwEWemTNTlM
-        LLLohNteOcy58R1ckF1pbcHClQ==
-X-Google-Smtp-Source: ABdhPJz7tnpBAEZ9DxFPVHAAwuDfWN/hSeGwCJDIO1eltL+fVJ7Z5N370p19CthavsG5/ULZO1dSJg==
-X-Received: by 2002:a62:be0c:: with SMTP id l12mr7578503pff.95.1590038519568;
-        Wed, 20 May 2020 22:21:59 -0700 (PDT)
-Received: from yoga (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id 10sm3381218pfx.138.2020.05.20.22.21.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 May 2020 22:21:58 -0700 (PDT)
-Date:   Wed, 20 May 2020 22:21:55 -0700
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc:     ohad@wizery.com, loic.pallardy@st.com, arnaud.pouliquen@st.com,
-        s-anna@ti.com, linux-remoteproc@vger.kernel.org, corbet@lwn.net,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 03/14] remoteproc: Add new operation and flags for
- synchronistation
-Message-ID: <20200521052155.GE11847@yoga>
-References: <20200424200135.28825-1-mathieu.poirier@linaro.org>
- <20200424200135.28825-4-mathieu.poirier@linaro.org>
- <20200506002253.GC2329931@builder.lan>
- <20200508210123.GA5650@xps15>
- <20200514013224.GE16107@builder.lan>
- <20200515192443.GA24201@xps15>
- <20200519005500.GR2165@builder.lan>
- <20200520220653.GA23552@xps15>
+        Thu, 21 May 2020 11:16:46 -0400
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 04LFGdLd106510;
+        Thu, 21 May 2020 10:16:39 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1590074199;
+        bh=xeF3uqjn0PZozN4ybOvKTivNEawwwc9tj9QBVURFGSw=;
+        h=From:To:CC:Subject:Date;
+        b=XXN9tuUgbc6bCXffPyKNSpCBedUG9yoTCQEVzaclhTffN3bjEPpX7bmW7t1+GTQex
+         804iRou6Vpx+S/4WeKgV13HOICQ0TS59efUP3epwyNyOIleV8+EMHt3JInBp9UoDie
+         hpTcSCmnNFHt1D0NwuXAEPS/3HvoP2fm9LqmhvoE=
+Received: from DLEE106.ent.ti.com (dlee106.ent.ti.com [157.170.170.36])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 04LFGd7k036994
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 21 May 2020 10:16:39 -0500
+Received: from DLEE112.ent.ti.com (157.170.170.23) by DLEE106.ent.ti.com
+ (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3; Thu, 21
+ May 2020 10:16:39 -0500
+Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE112.ent.ti.com
+ (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3 via
+ Frontend Transport; Thu, 21 May 2020 10:16:39 -0500
+Received: from lelv0597.itg.ti.com (lelv0597.itg.ti.com [10.181.64.32])
+        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id 04LFGdTC071695;
+        Thu, 21 May 2020 10:16:39 -0500
+Received: from localhost ([10.250.48.148])
+        by lelv0597.itg.ti.com (8.14.7/8.14.7) with ESMTP id 04LFGciZ076170;
+        Thu, 21 May 2020 10:16:39 -0500
+From:   Suman Anna <s-anna@ti.com>
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>
+CC:     Lokesh Vutla <lokeshvutla@ti.com>,
+        <linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, Suman Anna <s-anna@ti.com>
+Subject: [PATCH v2 0/2] Update K3 DSP remoteproc driver for C71x DSPs
+Date:   Thu, 21 May 2020 10:16:34 -0500
+Message-ID: <20200521151636.28260-1-s-anna@ti.com>
+X-Mailer: git-send-email 2.26.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200520220653.GA23552@xps15>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Wed 20 May 15:06 PDT 2020, Mathieu Poirier wrote:
+Hi All,
 
-> On Mon, May 18, 2020 at 05:55:00PM -0700, Bjorn Andersson wrote:
-> > On Fri 15 May 12:24 PDT 2020, Mathieu Poirier wrote:
-> > 
-> > > Good day Bjorn,
-> > > 
-> > > On Wed, May 13, 2020 at 06:32:24PM -0700, Bjorn Andersson wrote:
-> > > > On Fri 08 May 14:01 PDT 2020, Mathieu Poirier wrote:
-> > > > 
-> > > > > On Tue, May 05, 2020 at 05:22:53PM -0700, Bjorn Andersson wrote:
-> > > > > > On Fri 24 Apr 13:01 PDT 2020, Mathieu Poirier wrote:
-[..]
-> > > > > > > +	bool after_crash;
-> > > > > > 
-> > > > > > Similarly what is the expected steps to be taken by the core when this
-> > > > > > is true? Should rproc_report_crash() simply stop/start the subdevices
-> > > > > > and upon one of the ops somehow tell the remote controller that it can
-> > > > > > proceed with the recovery?
-> > > > > 
-> > > > > The exact same sequence of steps will be carried out as they are today, except
-> > > > > that if after_crash == true, the remoteproc core won't be switching the remote
-> > > > > processor on, exactly as it would do when on_init == true.
-> > > > > 
-> > > > 
-> > > > Just to make sure we're on the same page:
-> > > > 
-> > > > after_crash = false is what we have today, and would mean:
-> > > > 
-> > > > 1) stop subdevices
-> > > > 2) power off
-> > > > 3) unprepare subdevices
-> > > > 4) generate coredump
-> > > > 5) request firmware
-> > > > 6) load segments
-> > > > 7) find resource table
-> > > > 8) prepare subdevices
-> > > > 9) "boot"
-> > > > 10) start subdevices
-> > > 
-> > > Exactly
-> > > 
-> > > > 
-> > > > after_crash = true would mean:
-> > > > 
-> > > > 1) stop subdevices
-> > > > 2) "detach"
-> > > > 3) unprepare subdevices
-> > > > 4) prepare subdevices
-> > > > 5) "attach"
-> > > > 6) start subdevices
-> > > >
-> > > 
-> > > Yes
-> > >  
-> > > > State diagram wise both of these would represent the transition RUNNING
-> > > > -> CRASHED -> RUNNING, but somehow the platform driver needs to be able
-> > > > to specify which of these sequences to perform. Per your naming
-> > > > suggestion above, this does sound like a "autonomous_recovery" boolean
-> > > > to me.
-> > > 
-> > > Right, semantically "rproc->autonomous" would apply quite well.
-> > > 
-> > > In function rproc_crash_handler_work(), a call to rproc_set_sync_flag() has been
-> > > strategically placed to set the value of rproc->autonomous based on
-> > > "after_crash".  From there the core knows which rproc_ops to use.  Here too we
-> > > have to rely on the rproc_ops provided by the platform to do the right thing
-> > > based on the scenario to enact.
-> > > 
-> > 
-> > Do you think that autonomous_recovery would be something that changes
-> > for a given remoteproc instance? I envisioned it as something that you
-> > know at registration time, but perhaps I'm missing some details here.
-> 
-> I don't envision any of the transision flags to change once they are set by the
-> platform.   The same applies to the new rproc_ops, it can be set only once.
-> Otherwise combination of possible scenarios becomes too hard to manage, leading
-> to situations where the core and MCU get out of sync and can't talk to each
-> other.
-> 
+This series is an updated version of the enhancements to the K3 DSP
+remoteproc driver to support the 64-bit TI DSP called C71x. The series
+is on top of the K3 DSP remoteproc driver v2 [1], and includes only
+the platform driver portions. Please see the v1 cover-letter [2] for
+a summary of supported features.
 
-Sounds good, I share this expectation, just wanted to check with you.
+The 64-bit resource type enhancements (patches 2 and 3 from v1 [3][4])
+can be reviewed and discussed separately. I can post the next versions
+just for those based on any review comments on those.
 
-> > 
-> > > > 
-> > > > > These flags are there to indicate how to set rproc::sync_with_rproc after
-> > > > > different events, that is when the remoteproc core boots, when the remoteproc
-> > > > > has been stopped or when it has crashed.
-> > > > > 
-> > > > 
-> > > > Right, that was clear from your patches. Sorry that my reply didn't
-> > > > convey the information that I had understood this.
-> > > > 
-> > > > > > 
-> > > > > > > +};
-> > > > > > > +
-> > > > > > >  /**
-> > > > > > >   * struct rproc_ops - platform-specific device handlers
-> > > > > > >   * @start:	power on the device and boot it
-> > > > > > > @@ -459,6 +476,9 @@ struct rproc_dump_segment {
-> > > > > > >   * @firmware: name of firmware file to be loaded
-> > > > > > >   * @priv: private data which belongs to the platform-specific rproc module
-> > > > > > >   * @ops: platform-specific start/stop rproc handlers
-> > > > > > > + * @sync_ops: platform-specific start/stop rproc handlers when
-> > > > > > > + *	      synchronising with a remote processor.
-> > > > > > > + * @sync_flags: Determine the rproc_ops to choose in specific states.
-> > > > > > >   * @dev: virtual device for refcounting and common remoteproc behavior
-> > > > > > >   * @power: refcount of users who need this rproc powered up
-> > > > > > >   * @state: state of the device
-> > > > > > > @@ -482,6 +502,7 @@ struct rproc_dump_segment {
-> > > > > > >   * @table_sz: size of @cached_table
-> > > > > > >   * @has_iommu: flag to indicate if remote processor is behind an MMU
-> > > > > > >   * @auto_boot: flag to indicate if remote processor should be auto-started
-> > > > > > > + * @sync_with_rproc: true if currently synchronising with the rproc
-> > > > > > >   * @dump_segments: list of segments in the firmware
-> > > > > > >   * @nb_vdev: number of vdev currently handled by rproc
-> > > > > > >   */
-> > > > > > > @@ -492,6 +513,8 @@ struct rproc {
-> > > > > > >  	const char *firmware;
-> > > > > > >  	void *priv;
-> > > > > > >  	struct rproc_ops *ops;
-> > > > > > > +	struct rproc_ops *sync_ops;
-> > > > > > 
-> > > > > > Do we really need two rproc_ops, given that both are coming from the
-> > > > > > platform driver and the sync_flags will define which one to look at?
-> > > > > > 
-> > > > > > Can't the platform driver just provide an ops table that works with the
-> > > > > > flags it passes?
-> > > > > 
-> > > > > That is the approach Loic took in a previous patchset [1] and that was rejected.
-> > > > > It also lead to all of the platform drivers testing rproc->flag before carring
-> > > > > different actions, something you indicated could be done in the core.  This
-> > > > > patch does exactly that, i.e move the testing of rproc->flag to the core and
-> > > > > calls the right function based on that.
-> > > > > 
-> > > > 
-> > > > I think I see what you mean, as we use "start" for both syncing and
-> > > > starting the core, a { on_init = true, after_stop = false } setup either
-> > > > needs two tables or force conditionals on the platform driver.
-> > > > 
-> > > > > The end result is the same and I'm happy with one or the other, I will need to
-> > > > > know which one.
-> > > > > 
-> > > > 
-> > > > How about adding a new ops named "attach" to rproc_ops, which the
-> > > > platform driver can specify if it supports attaching an already running
-> > > > processor?
-> > > 
-> > > Using "attach_ops" works for me.  But would "autonomous_ops", to correlate with
-> > > rproc::autonomous, add clarity?  Either way work equally well for me. 
-> > > 
-> > 
-> > What I meant was that we add a function "attach" to the existing
-> > rproc_ops. In the case of OFFLINE->RUNNING we continue to call
-> > rproc->ops->start() and DETACHED->RUNNING we call this
-> > rproc->ops->attach().
-> 
-> If I read the above properly we'd end up with:
-> 
-> struct rproc_ops {
-> 	int (*start)(struct rproc *rproc);
-> 	int (*stop)(struct rproc *rproc);
-> 	int (*attach)(struct rproc *rproc);
-> 	int (*detach)(struct rproc *rproc);
->         ...
->         ...
-> };
+Please see the individual patches for differences in v2.
 
-Yes, that's what I meant.
+regards
+Suman
 
-> 
-> But wed'd have to deal with other operations that are common to both scenarios
-> such as parse_fw() and find_loaded_rsc_table().  
-> 
+[1] https://patchwork.kernel.org/cover/11561787/
+[2] https://patchwork.kernel.org/cover/11458599/
+[3] https://patchwork.kernel.org/patch/11458593/
+[4] https://patchwork.kernel.org/patch/11458589/
 
-I would prefer that we don't parse_fw(NULL), perhaps we can turn that
-upside down and have the platform_driver just provide the information to
-the core as it learns about it during probe?
+Suman Anna (2):
+  dt-bindings: remoteproc: k3-dsp: Update bindings for C71x DSPs
+  remoteproc/k3-dsp: Add support for C71x DSPs
 
-> So far lot of improvement have already been suggested on this revision.  I
-> suggest to spin off a new patchset that only handles the DETACHED->RUNNING
-> scenario and split common functions such as rproc_fw_boot().  From there we can
-> see if other refinements (such as what you suggest above) are mandated.
-> 
+ .../bindings/remoteproc/ti,k3-dsp-rproc.yaml  | 76 +++++++++++++++++--
+ drivers/remoteproc/ti_k3_dsp_remoteproc.c     | 20 ++++-
+ 2 files changed, 86 insertions(+), 10 deletions(-)
 
-As far as I can see, if we take the approach of introducing the DETACHED
-state we can add the various transitions piecemeal. So I'm definitely in
-favour of starting off with DETACHED->RUNNING, then figure out
-"autonomous recovery" and RUNNING->DETACHED in two subsequent series.
+-- 
+2.26.0
 
-> One last thing...  Upon reflecting on all this I think using "attach" is better
-> than "autonomous", the latter is heavy to drag around.
-> 
-
-For the action of going from DETACHED->RUNNING I too find "attach" to
-better represent what's going on. The part where I think we need
-something more is to communicate if it's Linux that's in charge or not
-for taking the remote processor through RUNNING->CRASHED->RUNNING. For
-that the word "autonomous" makes sense to me, but let's bring that up
-again after landing this first piece(s).
-
-Regards,
-Bjorn
