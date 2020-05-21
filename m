@@ -2,141 +2,151 @@ Return-Path: <SRS0=YNmX=7D=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00781C433E1
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 21 May 2020 19:03:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DF17C433E1
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 21 May 2020 19:06:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D884120759
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 21 May 2020 19:03:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5794720759
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 21 May 2020 19:06:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XkJmPVs3"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="G6bkOMjE"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730074AbgEUTDB (ORCPT
+        id S1729679AbgEUTGW (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 21 May 2020 15:03:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41446 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729845AbgEUTDA (ORCPT
+        Thu, 21 May 2020 15:06:22 -0400
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:38346 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729548AbgEUTGV (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 21 May 2020 15:03:00 -0400
-Received: from mail-pl1-x643.google.com (mail-pl1-x643.google.com [IPv6:2607:f8b0:4864:20::643])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A4EA5C061A0F
-        for <linux-remoteproc@vger.kernel.org>; Thu, 21 May 2020 12:03:00 -0700 (PDT)
-Received: by mail-pl1-x643.google.com with SMTP id q16so3244809plr.2
-        for <linux-remoteproc@vger.kernel.org>; Thu, 21 May 2020 12:03:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=/Oo08/XEB/t5MK/WPQHIyt+1GD6u4ViIKAYuaTKsYvw=;
-        b=XkJmPVs3VBunWUwFGskv2JiizITJ/0FqmwEuyWiL8NuZIUNYppwgRbu7Rb+Hm2E4gs
-         zosM3pBZbXzLCKpPzbmtSikxf2DTarJCOmR/EEzPuNWeZ04nIMbSHznUGFdJFnENEFlf
-         UOsilid7Q6ES9KHq1GOGhq3MvG4hP4NSyBVQIWg3OLDQKQSgT+4YZYyNC3ZovBBupdqg
-         CZYux9oUnfoQj1hAK7jqeNM3agFwh72faQDUMnI1ZXd/OFahAbeq+eI2YelRmPKlJbAd
-         k0yE9a6XjMQVbrMoh8ahDd06I3eQ1jAv61dsNJECpeQH0yc1PxIUq2Lef+yZ8xG381Fj
-         mqXg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=/Oo08/XEB/t5MK/WPQHIyt+1GD6u4ViIKAYuaTKsYvw=;
-        b=dYvnZ1GOI4BmVp9XVkDgv5LRm082TlqiuCzJRmrZCPNzt/Aa0FKcf7Fi8ncoI1qOTG
-         Kk+l7Ij9wylPkckLjPMMfplTxcE1XIgKO14NW1GKXhZkQ4eHLNB7XGwlasWJz73MtyEJ
-         SF23DZIOQqo5BfCIdIK1sFYHJQaiajJqkMeAmnFK+P+AEM2WF6c0VfPpF2CwXro5J18f
-         mamxFwOs2aWCISAY2wbTUdgRVrXE8cJAJpPWhS8ilMC0WIDSra/zrRk8WGGUw7IMJZTb
-         rb7WrLJtaqVL9zkCLhEqX07Dn3WWjHo50W+Lop6R9varkDg0rVf68vKNOGSga64wQirU
-         f/pQ==
-X-Gm-Message-State: AOAM532/TNM3rSVwbejLkJ27cy7+HvT+Ddre7oJo9spEY7gtUIhHWKDI
-        +Sv8mld4Ss1q189cWWRF1Cw6KA==
-X-Google-Smtp-Source: ABdhPJyja0nFdONVA3qDYEMHATkp/ASlOhFKtHy2PMgx+Quj41sLMb+HVStRwpG6rKRlL3mto4oqhw==
-X-Received: by 2002:a17:90a:a590:: with SMTP id b16mr13125461pjq.177.1590087780086;
-        Thu, 21 May 2020 12:03:00 -0700 (PDT)
-Received: from builder.lan (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id q9sm4981223pff.62.2020.05.21.12.02.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 May 2020 12:02:59 -0700 (PDT)
-Date:   Thu, 21 May 2020 12:01:41 -0700
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Suman Anna <s-anna@ti.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
+        Thu, 21 May 2020 15:06:21 -0400
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 04LJ6An4026452;
+        Thu, 21 May 2020 14:06:10 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1590087970;
+        bh=TsE8Woh4zkRDEYdrJ4szky2f76HNP2vRTH83cKZFVYw=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=G6bkOMjEAsuxKVKPsCnDAuLxmCjCWKUiG33hlFw2mv7smJKWSjhixJX/8O+k5Io+t
+         NOoBOzAiaD4X/jVU3vX4XnezShs1pabJEG28E+RI4iL2A/g9xEwp0D7oHgf12ciX1D
+         gTf5Yz0CIcBg43CoNVB+6rMZkj2yX5f8DTVl+3/o=
+Received: from DLEE107.ent.ti.com (dlee107.ent.ti.com [157.170.170.37])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 04LJ6AQf067299
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 21 May 2020 14:06:10 -0500
+Received: from DLEE102.ent.ti.com (157.170.170.32) by DLEE107.ent.ti.com
+ (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3; Thu, 21
+ May 2020 14:06:09 -0500
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE102.ent.ti.com
+ (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3 via
+ Frontend Transport; Thu, 21 May 2020 14:06:09 -0500
+Received: from [10.250.48.148] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 04LJ6994034395;
+        Thu, 21 May 2020 14:06:09 -0500
+Subject: Re: [PATCH 2/4] remoteproc: introduce version element into resource
+ type field
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+CC:     Rob Herring <robh+dt@kernel.org>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Clement Leger <cleger@kalray.eu>,
+        Loic Pallardy <loic.pallardy@st.com>,
+        Arnaud Pouliquen <arnaud.pouliquen@st.com>,
         Lokesh Vutla <lokeshvutla@ti.com>,
-        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 0/4] TI K3 DSP remoteproc driver for C66x DSPs
-Message-ID: <20200521190141.GN408178@builder.lan>
-References: <20200521001006.2725-1-s-anna@ti.com>
- <5f84465e-8f63-51b4-4758-59c85d3ad597@ti.com>
+        <linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20200325204701.16862-1-s-anna@ti.com>
+ <20200325204701.16862-3-s-anna@ti.com> <20200521175421.GI408178@builder.lan>
+From:   Suman Anna <s-anna@ti.com>
+Message-ID: <b338480e-c586-f988-f5b6-784551b7beb6@ti.com>
+Date:   Thu, 21 May 2020 14:06:09 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5f84465e-8f63-51b4-4758-59c85d3ad597@ti.com>
+In-Reply-To: <20200521175421.GI408178@builder.lan>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Thu 21 May 11:59 PDT 2020, Suman Anna wrote:
+Hi Bjorn,
 
-> Hi Bjorn,
+On 5/21/20 12:54 PM, Bjorn Andersson wrote:
+> On Wed 25 Mar 13:46 PDT 2020, Suman Anna wrote:
 > 
-> On 5/20/20 7:10 PM, Suman Anna wrote:
-> > Hi All,
-> > 
-> > The following is v2 of the K3 DSP remoteproc driver supporting the C66x DSPs
-> > on the TI K3 J721E SoCs. The patches are based on the latest commit on the
-> > rproc-next branch, 7dcef3988eed ("remoteproc: Fix an error code in
-> > devm_rproc_alloc()").
+>> The current remoteproc core has supported only 32-bit remote
+>> processors and as such some of the current resource structures
+>> may not scale well for 64-bit remote processors, and would
+>> require new versions of resource types. Each resource is currently
+>> identified by a 32-bit type field. Introduce the concept of version
+>> for these resource types by overloading this 32-bit type field
+>> into two 16-bit version and type fields with the existing resources
+>> behaving as version 0 thereby providing backward compatibility.
+>>
+>> The version field is passed as an additional argument to each of
+>> the handler functions, and all the existing handlers are updated
+>> accordingly. Each specific handler will be updated on a need basis
+>> when a new version of the resource type is added.
+>>
 > 
-> I realized I also had the R5F patches on my branch, so the third patch won't
-> apply cleanly (conflict on Makefile). Let me know if you want a new revision
-> posted for you to pick up the series.
-> 
+> I really would prefer that we add additional types for the new
+> structures, neither side will be compatible with new versions without
+> enhancements to their respective implementations anyways.
 
-That should be fine, thanks for the heads up!
+OK.
 
-Will give Mathieu a day or two to take a look as well.
-
-Regards,
-Bjorn
-
-> regards
-> Suman
 > 
-> > 
-> > v2 includes a new remoteproc core patch (patch 1) that adds an OF helper
-> > for parsing the firmware-name property. This is refactored out to avoid
-> > replicating the code in various remoteproc drivers. Please see the
-> > individual patches for detailed changes.
-> > 
-> > The main dependent patches from the previous series are now staged in
-> > rproc-next branch. The only dependency for this series is the common
-> > ti-sci-proc helper between R5 and DSP drivers [1]. Please see the initial
-> > cover-letter [2] for v1 details.
-> > 
-> > regards
-> > Suman
-> > 
-> > [1] https://patchwork.kernel.org/patch/11456379/
-> > [2] https://patchwork.kernel.org/cover/11458573/
-> > 
-> > Suman Anna (4):
-> >    remoteproc: Introduce rproc_of_parse_firmware() helper
-> >    dt-bindings: remoteproc: Add bindings for C66x DSPs on TI K3 SoCs
-> >    remoteproc/k3-dsp: Add a remoteproc driver of K3 C66x DSPs
-> >    remoteproc/k3-dsp: Add support for L2RAM loading on C66x DSPs
-> > 
-> >   .../bindings/remoteproc/ti,k3-dsp-rproc.yaml  | 190 +++++
-> >   drivers/remoteproc/Kconfig                    |  13 +
-> >   drivers/remoteproc/Makefile                   |   1 +
-> >   drivers/remoteproc/remoteproc_core.c          |  23 +
-> >   drivers/remoteproc/remoteproc_internal.h      |   2 +
-> >   drivers/remoteproc/ti_k3_dsp_remoteproc.c     | 773 ++++++++++++++++++
-> >   6 files changed, 1002 insertions(+)
-> >   create mode 100644 Documentation/devicetree/bindings/remoteproc/ti,k3-dsp-rproc.yaml
-> >   create mode 100644 drivers/remoteproc/ti_k3_dsp_remoteproc.c
-> > 
+>> An alternate way would be to introduce the new types as completely
+>> new resource types which would require additional customization of
+>> the resource handlers based on the 32-bit or 64-bit mode of a remote
+>> processor, and introduction of an additional mode flag to the rproc
+>> structure.
+>>
 > 
+> What would this "mode" indicate? If it's version 0 or 1?
+
+No, for indicating if the remoteproc is 32-bit or 64-bit and adjust the 
+loading handlers if the resource types need to be segregated accordingly.
+
+> 
+>> Signed-off-by: Suman Anna <s-anna@ti.com>
+>> ---
+>>   drivers/remoteproc/remoteproc_core.c    | 25 +++++++++++++++----------
+>>   drivers/remoteproc/remoteproc_debugfs.c | 17 ++++++++++-------
+>>   include/linux/remoteproc.h              |  8 +++++++-
+>>   3 files changed, 32 insertions(+), 18 deletions(-)
+>>
+> [..]
+>> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+>> index 77788a4bb94e..526d3cb45e37 100644
+>> --- a/include/linux/remoteproc.h
+>> +++ b/include/linux/remoteproc.h
+>> @@ -86,7 +86,13 @@ struct resource_table {
+>>    * this header, and it should be parsed according to the resource type.
+>>    */
+>>   struct fw_rsc_hdr {
+>> -	u32 type;
+>> +	union {
+>> +		u32 type;
+>> +		struct {
+>> +			u16 t;
+>> +			u16 v;
+>> +		} st;
+> 
+> I see your "type" is little endian...
+
+Yeah, definitely a draw-back if we want to support big-endian rprocs. Do 
+you have any remoteprocs following big-endian? All TI remoteprocs are 
+little-endian except for really old ones.
+
+regards
+Suman
