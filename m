@@ -2,346 +2,294 @@ Return-Path: <SRS0=YNmX=7D=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 968DCC433DF
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 21 May 2020 21:35:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16525C433E0
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 21 May 2020 21:55:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 55640206B6
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 21 May 2020 21:35:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D749F207D3
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 21 May 2020 21:55:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="myL6BqKB"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="p4V+0rmw"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730017AbgEUVfN (ORCPT
+        id S1730405AbgEUVzs (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 21 May 2020 17:35:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37104 "EHLO
+        Thu, 21 May 2020 17:55:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40366 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726814AbgEUVfM (ORCPT
+        with ESMTP id S1730122AbgEUVzs (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 21 May 2020 17:35:12 -0400
-Received: from mail-pg1-x542.google.com (mail-pg1-x542.google.com [IPv6:2607:f8b0:4864:20::542])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6FC30C05BD43
-        for <linux-remoteproc@vger.kernel.org>; Thu, 21 May 2020 14:35:12 -0700 (PDT)
-Received: by mail-pg1-x542.google.com with SMTP id c75so3921962pga.3
-        for <linux-remoteproc@vger.kernel.org>; Thu, 21 May 2020 14:35:12 -0700 (PDT)
+        Thu, 21 May 2020 17:55:48 -0400
+Received: from mail-io1-xd43.google.com (mail-io1-xd43.google.com [IPv6:2607:f8b0:4864:20::d43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 15B8EC05BD43
+        for <linux-remoteproc@vger.kernel.org>; Thu, 21 May 2020 14:55:48 -0700 (PDT)
+Received: by mail-io1-xd43.google.com with SMTP id q8so7892165iow.7
+        for <linux-remoteproc@vger.kernel.org>; Thu, 21 May 2020 14:55:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=kutywKgnoHEl44XSBXIV43WOf+Rpg27NfL0U64rwzo4=;
-        b=myL6BqKBPIRKEpXY7jHwJY4QZNfCEJFdTC6DJWlOLmzM0Ahfzr4RgT9VwTkjmdobBM
-         gR1fJd6bbxuYZZ7TvaABmixuXMmZBOJWSEqmoKDTfK6aBwnU5GevjQJToLOejT848UnW
-         c2bUReDQYKvlKC1kfdQUw6Y1eYFL2F8Bwzxwh/1OpVRHQxIxvtJWZWD7486T+QPVg+Dt
-         yE5VWew0vwCLsNMtourmRme7/iufhctjwBxFGXMv+CWKLpxFu9BcGKvBxU0NjZtaGWdg
-         QHaTkjQ2c1mStHm2184wtHI1EqmgYl/GcBaKesw/8BE/TpkETtY8v58y1vRAMdo9Mo9p
-         m4jg==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=1ngJe4jgX7tR2LJh4cMj7e9asfe5LKoGFApN1LKGww8=;
+        b=p4V+0rmwPq3KhVZUwChMIXQPKtDe0SQs7+O9Sd6YkQIgZn6mYlzDCpTcarqISAWotX
+         Sl1hba+jjqEahAIIhy2SBeGNxltcjfVRPZYA3czLEUozn5oJFpwHPE7V5E5arOMeuL6h
+         rrdUsnWuXnmdt73Ly40tLugDSw4+XGpf/25nUDduHdsyAITd1Gbs6DwwFZwIYEVllpsL
+         Z7P6hOGiIgdpNSr77v0GK+ocagMhl5Q5ZFaWWBadUpFT1y5W12boGmmOUvMgSkpmyCMP
+         BEEt6DfZMcoq6IeMCofMxa1MWkxF4d800/nntHKrRVfDPS0uSjAra1Yf6n9TsxJHRcc+
+         Dl0A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=kutywKgnoHEl44XSBXIV43WOf+Rpg27NfL0U64rwzo4=;
-        b=UFr4lz4XjKQTVl8NDBeOb0NyLvIvw1pqZWCBAeVGpUMsBiryO6eeZLmBWSYCmbNTt0
-         wICNXy7bILS7VFb5kfgeCH36ngMyA/0db4P4B2UhqWGYaxLxRHJjurWUD2AUlTva+Eqr
-         0CqLQvckNsJwW0xPj9y3sdFzwVOmcsDqPFZNVgyGXv5+n4uKW5IUzIVfSnu1ovv+kpPa
-         Ly2cekX0Hk9vfE+Mmy9sFLTfeBUkJhNEdFDpP+Dtxp1v67XdD/zu2RfdzS1ouypuQjv8
-         +5OuNVetAfgtSL27xQPkBSS09Ar/0Ozgg3aAy9XAVCv/Spc9Gpv6RCp4mIUXUC9BIaQb
-         1lCw==
-X-Gm-Message-State: AOAM5321ADqVrue2G4cT5DaCyqOuo3czHdFsrSXcQFUu4pUI36GsqFSB
-        Q8IBmKIswYPSfHI8dzD0s95JQQ==
-X-Google-Smtp-Source: ABdhPJxA7+bepnDxnx+JGyGiJo97P7RK7l89HLEtpaF11y8rVBrgM27CSHpS1l4/vfzCsXZjrlyJKg==
-X-Received: by 2002:a63:ef09:: with SMTP id u9mr11243519pgh.406.1590096911719;
-        Thu, 21 May 2020 14:35:11 -0700 (PDT)
-Received: from xps15 (S0106002369de4dac.cg.shawcable.net. [68.147.8.254])
-        by smtp.gmail.com with ESMTPSA id w14sm4799374pgo.75.2020.05.21.14.35.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 May 2020 14:35:11 -0700 (PDT)
-Date:   Thu, 21 May 2020 15:35:09 -0600
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-To:     Rishabh Bhatnagar <rishabhb@codeaurora.org>
-Cc:     linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        bjorn.andersson@linaro.org, tsoni@codeaurora.org,
-        psodagud@codeaurora.org, sidgup@codeaurora.org
-Subject: Re: [PATCH v3 2/3] remoteproc: Add inline coredump functionality
-Message-ID: <20200521213509.GB10768@xps15>
-References: <1589486856-23440-1-git-send-email-rishabhb@codeaurora.org>
- <1589486856-23440-3-git-send-email-rishabhb@codeaurora.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=1ngJe4jgX7tR2LJh4cMj7e9asfe5LKoGFApN1LKGww8=;
+        b=p+m+fZwxTzt81X/7QILk8Hv//hk8SDHQO01nYJ55DNRWoKcUzQMPl7dKoejZUdsV04
+         e9AnaWvUOUFb1SJeAFSsG4B4mpWde2sE74CNwzAQAgg05IagjJuwSx+7RY/69iRUTLCj
+         icruNLnWtHsh62BF6ldSA2AZwd7bq3KzL9faxSVv0/g1zOfEyzFOwmU5a3ZUeqbPQEVl
+         bK+izc+tjeabUe4ppBRWC2/9t1JDFmUwwurrACwrJMZ2PvulDmRblglWNq23n7JJePDt
+         sfHHg0ovlKsvcQ31+1uXCiwyZydzlbVddLLc1Dj4I12NP90AQaU3BU/4XLVjAegpS/G4
+         bhcg==
+X-Gm-Message-State: AOAM531L/u8LIFrWrSeRvNI0dUnRPTtVwpncLTJ6KAo5NW/kCWZU2g/U
+        5iKLQXdsDxSGeleOkroFIYhnde5XdD0jW/VSkAWpJQ==
+X-Google-Smtp-Source: ABdhPJwp0141VZ2jQt2GFxHaft179Kbjsz1atVtDN1BhiNPjuMh66TxGz/mxw+JrjXxZLr/67DWL2oJ95sPfwROV350=
+X-Received: by 2002:a05:6602:2e96:: with SMTP id m22mr603283iow.165.1590098147218;
+ Thu, 21 May 2020 14:55:47 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1589486856-23440-3-git-send-email-rishabhb@codeaurora.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20200424200135.28825-1-mathieu.poirier@linaro.org>
+ <20200424200135.28825-4-mathieu.poirier@linaro.org> <20200506002253.GC2329931@builder.lan>
+ <20200508210123.GA5650@xps15> <20200514013224.GE16107@builder.lan>
+ <20200515192443.GA24201@xps15> <20200519005500.GR2165@builder.lan>
+ <20200520220653.GA23552@xps15> <20200521052155.GE11847@yoga>
+In-Reply-To: <20200521052155.GE11847@yoga>
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+Date:   Thu, 21 May 2020 15:55:35 -0600
+Message-ID: <CANLsYkyQJ30tyoKctsYyy8iSxwanampEmRX1Mkoc4RyUvhvQow@mail.gmail.com>
+Subject: Re: [PATCH v3 03/14] remoteproc: Add new operation and flags for synchronistation
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Ohad Ben-Cohen <ohad@wizery.com>,
+        Loic PALLARDY <loic.pallardy@st.com>,
+        Arnaud POULIQUEN <arnaud.pouliquen@st.com>,
+        Suman Anna <s-anna@ti.com>,
+        linux-remoteproc <linux-remoteproc@vger.kernel.org>,
+        Jon Corbet <corbet@lwn.net>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi Rishab,
+On Wed, 20 May 2020 at 23:22, Bjorn Andersson
+<bjorn.andersson@linaro.org> wrote:
+>
+> On Wed 20 May 15:06 PDT 2020, Mathieu Poirier wrote:
+>
+> > On Mon, May 18, 2020 at 05:55:00PM -0700, Bjorn Andersson wrote:
+> > > On Fri 15 May 12:24 PDT 2020, Mathieu Poirier wrote:
+> > >
+> > > > Good day Bjorn,
+> > > >
+> > > > On Wed, May 13, 2020 at 06:32:24PM -0700, Bjorn Andersson wrote:
+> > > > > On Fri 08 May 14:01 PDT 2020, Mathieu Poirier wrote:
+> > > > >
+> > > > > > On Tue, May 05, 2020 at 05:22:53PM -0700, Bjorn Andersson wrote:
+> > > > > > > On Fri 24 Apr 13:01 PDT 2020, Mathieu Poirier wrote:
+> [..]
+> > > > > > > > + bool after_crash;
+> > > > > > >
+> > > > > > > Similarly what is the expected steps to be taken by the core when this
+> > > > > > > is true? Should rproc_report_crash() simply stop/start the subdevices
+> > > > > > > and upon one of the ops somehow tell the remote controller that it can
+> > > > > > > proceed with the recovery?
+> > > > > >
+> > > > > > The exact same sequence of steps will be carried out as they are today, except
+> > > > > > that if after_crash == true, the remoteproc core won't be switching the remote
+> > > > > > processor on, exactly as it would do when on_init == true.
+> > > > > >
+> > > > >
+> > > > > Just to make sure we're on the same page:
+> > > > >
+> > > > > after_crash = false is what we have today, and would mean:
+> > > > >
+> > > > > 1) stop subdevices
+> > > > > 2) power off
+> > > > > 3) unprepare subdevices
+> > > > > 4) generate coredump
+> > > > > 5) request firmware
+> > > > > 6) load segments
+> > > > > 7) find resource table
+> > > > > 8) prepare subdevices
+> > > > > 9) "boot"
+> > > > > 10) start subdevices
+> > > >
+> > > > Exactly
+> > > >
+> > > > >
+> > > > > after_crash = true would mean:
+> > > > >
+> > > > > 1) stop subdevices
+> > > > > 2) "detach"
+> > > > > 3) unprepare subdevices
+> > > > > 4) prepare subdevices
+> > > > > 5) "attach"
+> > > > > 6) start subdevices
+> > > > >
+> > > >
+> > > > Yes
+> > > >
+> > > > > State diagram wise both of these would represent the transition RUNNING
+> > > > > -> CRASHED -> RUNNING, but somehow the platform driver needs to be able
+> > > > > to specify which of these sequences to perform. Per your naming
+> > > > > suggestion above, this does sound like a "autonomous_recovery" boolean
+> > > > > to me.
+> > > >
+> > > > Right, semantically "rproc->autonomous" would apply quite well.
+> > > >
+> > > > In function rproc_crash_handler_work(), a call to rproc_set_sync_flag() has been
+> > > > strategically placed to set the value of rproc->autonomous based on
+> > > > "after_crash".  From there the core knows which rproc_ops to use.  Here too we
+> > > > have to rely on the rproc_ops provided by the platform to do the right thing
+> > > > based on the scenario to enact.
+> > > >
+> > >
+> > > Do you think that autonomous_recovery would be something that changes
+> > > for a given remoteproc instance? I envisioned it as something that you
+> > > know at registration time, but perhaps I'm missing some details here.
+> >
+> > I don't envision any of the transision flags to change once they are set by the
+> > platform.   The same applies to the new rproc_ops, it can be set only once.
+> > Otherwise combination of possible scenarios becomes too hard to manage, leading
+> > to situations where the core and MCU get out of sync and can't talk to each
+> > other.
+> >
+>
+> Sounds good, I share this expectation, just wanted to check with you.
+>
+> > >
+> > > > >
+> > > > > > These flags are there to indicate how to set rproc::sync_with_rproc after
+> > > > > > different events, that is when the remoteproc core boots, when the remoteproc
+> > > > > > has been stopped or when it has crashed.
+> > > > > >
+> > > > >
+> > > > > Right, that was clear from your patches. Sorry that my reply didn't
+> > > > > convey the information that I had understood this.
+> > > > >
+> > > > > > >
+> > > > > > > > +};
+> > > > > > > > +
+> > > > > > > >  /**
+> > > > > > > >   * struct rproc_ops - platform-specific device handlers
+> > > > > > > >   * @start:       power on the device and boot it
+> > > > > > > > @@ -459,6 +476,9 @@ struct rproc_dump_segment {
+> > > > > > > >   * @firmware: name of firmware file to be loaded
+> > > > > > > >   * @priv: private data which belongs to the platform-specific rproc module
+> > > > > > > >   * @ops: platform-specific start/stop rproc handlers
+> > > > > > > > + * @sync_ops: platform-specific start/stop rproc handlers when
+> > > > > > > > + *             synchronising with a remote processor.
+> > > > > > > > + * @sync_flags: Determine the rproc_ops to choose in specific states.
+> > > > > > > >   * @dev: virtual device for refcounting and common remoteproc behavior
+> > > > > > > >   * @power: refcount of users who need this rproc powered up
+> > > > > > > >   * @state: state of the device
+> > > > > > > > @@ -482,6 +502,7 @@ struct rproc_dump_segment {
+> > > > > > > >   * @table_sz: size of @cached_table
+> > > > > > > >   * @has_iommu: flag to indicate if remote processor is behind an MMU
+> > > > > > > >   * @auto_boot: flag to indicate if remote processor should be auto-started
+> > > > > > > > + * @sync_with_rproc: true if currently synchronising with the rproc
+> > > > > > > >   * @dump_segments: list of segments in the firmware
+> > > > > > > >   * @nb_vdev: number of vdev currently handled by rproc
+> > > > > > > >   */
+> > > > > > > > @@ -492,6 +513,8 @@ struct rproc {
+> > > > > > > >   const char *firmware;
+> > > > > > > >   void *priv;
+> > > > > > > >   struct rproc_ops *ops;
+> > > > > > > > + struct rproc_ops *sync_ops;
+> > > > > > >
+> > > > > > > Do we really need two rproc_ops, given that both are coming from the
+> > > > > > > platform driver and the sync_flags will define which one to look at?
+> > > > > > >
+> > > > > > > Can't the platform driver just provide an ops table that works with the
+> > > > > > > flags it passes?
+> > > > > >
+> > > > > > That is the approach Loic took in a previous patchset [1] and that was rejected.
+> > > > > > It also lead to all of the platform drivers testing rproc->flag before carring
+> > > > > > different actions, something you indicated could be done in the core.  This
+> > > > > > patch does exactly that, i.e move the testing of rproc->flag to the core and
+> > > > > > calls the right function based on that.
+> > > > > >
+> > > > >
+> > > > > I think I see what you mean, as we use "start" for both syncing and
+> > > > > starting the core, a { on_init = true, after_stop = false } setup either
+> > > > > needs two tables or force conditionals on the platform driver.
+> > > > >
+> > > > > > The end result is the same and I'm happy with one or the other, I will need to
+> > > > > > know which one.
+> > > > > >
+> > > > >
+> > > > > How about adding a new ops named "attach" to rproc_ops, which the
+> > > > > platform driver can specify if it supports attaching an already running
+> > > > > processor?
+> > > >
+> > > > Using "attach_ops" works for me.  But would "autonomous_ops", to correlate with
+> > > > rproc::autonomous, add clarity?  Either way work equally well for me.
+> > > >
+> > >
+> > > What I meant was that we add a function "attach" to the existing
+> > > rproc_ops. In the case of OFFLINE->RUNNING we continue to call
+> > > rproc->ops->start() and DETACHED->RUNNING we call this
+> > > rproc->ops->attach().
+> >
+> > If I read the above properly we'd end up with:
+> >
+> > struct rproc_ops {
+> >       int (*start)(struct rproc *rproc);
+> >       int (*stop)(struct rproc *rproc);
+> >       int (*attach)(struct rproc *rproc);
+> >       int (*detach)(struct rproc *rproc);
+> >         ...
+> >         ...
+> > };
+>
+> Yes, that's what I meant.
+>
+> >
+> > But wed'd have to deal with other operations that are common to both scenarios
+> > such as parse_fw() and find_loaded_rsc_table().
+> >
+>
+> I would prefer that we don't parse_fw(NULL), perhaps we can turn that
+> upside down and have the platform_driver just provide the information to
+> the core as it learns about it during probe?
 
-On Thu, May 14, 2020 at 01:07:35PM -0700, Rishabh Bhatnagar wrote:
-> The current coredump implementation uses vmalloc area to copy
-> all the segments. But this might put strain on low memory targets
-> as the firmware size sometimes is in tens of MBs. The situation
-> becomes worse if there are multiple remote processors undergoing
-> recovery at the same time. This patch adds inline coredump
-> functionality that avoids extra memory usage. This requires
-> recovery to be halted until data is read by userspace and free
-> function is called.
-> 
-> Signed-off-by: Rishabh Bhatnagar <rishabhb@codeaurora.org>
-> ---
->  drivers/remoteproc/remoteproc_coredump.c | 129 +++++++++++++++++++++++++++++--
->  include/linux/remoteproc.h               |  15 ++++
->  2 files changed, 139 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/remoteproc/remoteproc_coredump.c b/drivers/remoteproc/remoteproc_coredump.c
-> index ded0244..de75e89 100644
-> --- a/drivers/remoteproc/remoteproc_coredump.c
-> +++ b/drivers/remoteproc/remoteproc_coredump.c
-> @@ -12,6 +12,12 @@
->  #include "remoteproc_internal.h"
->  #include "remoteproc_elf_helpers.h"
->  
-> +struct rproc_coredump_state {
-> +	struct rproc *rproc;
-> +	void *header;
-> +	struct completion dump_done;
-> +};
-> +
+I need to think about that...  We may have to discuss this again in a
+not so distant future.
 
-To use struct completion and related function linux/completion.h needs to be
-included.
+>
+> > So far lot of improvement have already been suggested on this revision.  I
+> > suggest to spin off a new patchset that only handles the DETACHED->RUNNING
+> > scenario and split common functions such as rproc_fw_boot().  From there we can
+> > see if other refinements (such as what you suggest above) are mandated.
+> >
+>
+> As far as I can see, if we take the approach of introducing the DETACHED
+> state we can add the various transitions piecemeal. So I'm definitely in
+> favour of starting off with DETACHED->RUNNING, then figure out
+> "autonomous recovery" and RUNNING->DETACHED in two subsequent series.
+>
+> > One last thing...  Upon reflecting on all this I think using "attach" is better
+> > than "autonomous", the latter is heavy to drag around.
+> >
+>
+> For the action of going from DETACHED->RUNNING I too find "attach" to
+> better represent what's going on. The part where I think we need
+> something more is to communicate if it's Linux that's in charge or not
+> for taking the remote processor through RUNNING->CRASHED->RUNNING. For
+> that the word "autonomous" makes sense to me, but let's bring that up
+> again after landing this first piece(s).
 
->  /**
->   * rproc_coredump_cleanup() - clean up dump_segments list
->   * @rproc: the remote processor handle
-> @@ -114,12 +120,96 @@ int rproc_coredump_set_elf_info(struct rproc *rproc, u8 class, u16 machine)
->  }
->  EXPORT_SYMBOL(rproc_coredump_set_elf_info);
->  
-> +static void rproc_coredump_free(void *data)
-> +{
-> +	struct rproc_coredump_state *dump_state = data;
-> +
-> +	complete(&dump_state->dump_done);
-> +	vfree(dump_state->header);
-> +}
-> +
-> +static unsigned long rproc_coredump_find_segment(loff_t user_offset,
-> +						  struct list_head *segments,
-> +						  size_t *data_left)
-> +{
-> +	struct rproc_dump_segment *segment;
-> +
-> +	list_for_each_entry(segment, segments, node) {
-> +		if (user_offset < segment->size) {
-> +			*data_left = segment->size - user_offset;
-> +			return segment->da + user_offset;
-> +		}
-> +		user_offset -= segment->size;
-> +	}
-> +
-> +	*data_left = 0;
-> +	return 0;
-> +}
-> +
-> +static ssize_t rproc_coredump_read(char *buffer, loff_t offset, size_t count,
-> +				    void *data, size_t header_sz)
-> +{
-> +	void *device_mem;
-> +	size_t seg_data;
-> +	size_t copy_sz, bytes_left = count;
-> +	unsigned long addr;
-> +	struct rproc_coredump_state *dump_state = data;
-> +	struct rproc *rproc = dump_state->rproc;
-> +	void *elfcore = dump_state->header;
-> +
-> +	/* Copy the vmalloc'ed header first. */
-> +	if (offset < header_sz) {
-> +		copy_sz = memory_read_from_buffer(buffer, count, &offset,
-> +						  elfcore, header_sz);
-> +		if (copy_sz < 0)
-> +			return -EINVAL;
-> +
-> +		return copy_sz;
-> +	}
-> +
-> +	/* Find out the segment memory chunk to be copied based on offset.
-> +	 * Keep copying data until count bytes are read.
-> +	 */
+I agree.
 
-Wrong format for multi-line comment, the following is the standard format:
-
-        /*
-         * Find out the segment memory chunk to be copied based on offset.
-         * Keep copying data until count bytes are read.
-         */
-
-> +	while (bytes_left) {
-> +		addr = rproc_coredump_find_segment(offset - header_sz,
-> +						   &rproc->dump_segments,
-> +						   &seg_data);
-> +		/* EOF check */
-> +		if (seg_data == 0) {
-> +			dev_info(&rproc->dev, "Ramdump done, %lld bytes read",
-> +				 offset);
-> +			break;
-> +		}
-> +
-> +		copy_sz = min_t(size_t, bytes_left, seg_data);
-> +
-> +		device_mem = rproc_da_to_va(rproc, addr, copy_sz);
-> +		if (!device_mem) {
-> +			dev_err(&rproc->dev, "Coredump: %lx with size %zd out of remoteproc carveout\n",
-> +				addr, copy_sz);
-> +			return -ENOMEM;
-> +		}
-> +		memcpy(buffer, device_mem, copy_sz);
-> +
-> +		offset += copy_sz;
-> +		buffer += copy_sz;
-> +		bytes_left -= copy_sz;
-> +	}
-> +
-> +	return count - bytes_left;
-> +}
-> +
->  /**
->   * rproc_coredump() - perform coredump
->   * @rproc:	rproc handle
->   *
->   * This function will generate an ELF header for the registered segments
-> - * and create a devcoredump device associated with rproc.
-> + * and create a devcoredump device associated with rproc. Based on the
-> + * coredump configuration this function will directly copy the segments
-> + * from device memory to userspace or copy segments from device memory to
-> + * a separate buffer, which can then be read by userspace.
-> + * The first approach avoids using extra vmalloc memory. But it will stall
-> + * recovery flow until dump is read by userspace.
->   */
->  void rproc_coredump(struct rproc *rproc)
->  {
-> @@ -132,8 +222,10 @@ void rproc_coredump(struct rproc *rproc)
->  	void *ptr;
->  	u8 class = rproc->elf_class;
->  	int phnum = 0;
-> +	struct rproc_coredump_state dump_state;
-> +	enum rproc_dump_mechanism dump_conf = rproc->dump_conf;
->  
-> -	if (list_empty(&rproc->dump_segments))
-> +	if (list_empty(&rproc->dump_segments) || dump_conf == COREDUMP_DISABLED)
->  		return;
->  
->  	if (class == ELFCLASSNONE) {
-> @@ -143,7 +235,14 @@ void rproc_coredump(struct rproc *rproc)
->  
->  	data_size = elf_size_of_hdr(class);
->  	list_for_each_entry(segment, &rproc->dump_segments, node) {
-> -		data_size += elf_size_of_phdr(class) + segment->size;
-> +
-> +		/* For default configuration buffer includes headers & segments.
-> +		 * For inline dump buffer just includes headers as segments are
-> +		 * directly read from device memory.
-> +		 */
-
-Same
-
-> +		data_size += elf_size_of_phdr(class);
-> +		if (dump_conf == COREDUMP_DEFAULT)
-> +			data_size += segment->size;
->  
->  		phnum++;
->  	}
-> @@ -182,6 +281,10 @@ void rproc_coredump(struct rproc *rproc)
->  		elf_phdr_set_p_flags(class, phdr, PF_R | PF_W | PF_X);
->  		elf_phdr_set_p_align(class, phdr, 0);
->  
-> +		/* No need to copy segments for inline dumps */
-> +		if (dump_conf == COREDUMP_INLINE)
-> +			goto next_seg;
-> +
->  		if (segment->dump) {
->  			segment->dump(rproc, segment, data + offset);
->  		} else {
-> @@ -195,10 +298,26 @@ void rproc_coredump(struct rproc *rproc)
->  				memcpy(data + offset, ptr, segment->size);
->  			}
->  		}
-> -
-> +next_seg:
->  		offset += elf_phdr_get_p_filesz(class, phdr);
->  		phdr += elf_size_of_phdr(class);
->  	}
->  
-> -	dev_coredumpv(&rproc->dev, data, data_size, GFP_KERNEL);
-> +	if (dump_conf == COREDUMP_DEFAULT) {
-> +		dev_coredumpv(&rproc->dev, data, data_size, GFP_KERNEL);
-> +		return;
-> +	}
-> +
-> +	/* Initialize the dump state struct to be used by rproc_coredump_read */
-> +	dump_state.rproc = rproc;
-> +	dump_state.header = data;
-> +	init_completion(&dump_state.dump_done);
-> +
-> +	dev_coredumpm(&rproc->dev, NULL, &dump_state, data_size, GFP_KERNEL,
-> +		      rproc_coredump_read, rproc_coredump_free);
-> +
-> +	/* Wait until the dump is read and free is called. Data is freed
-> +	 * by devcoredump framework automatically after 5 minutes.
-> +	 */
-
-Same
-
-With the above:
-
-Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-
-> +	wait_for_completion(&dump_state.dump_done);
->  }
-> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-> index 0468be4..ab2b9b7 100644
-> --- a/include/linux/remoteproc.h
-> +++ b/include/linux/remoteproc.h
-> @@ -435,6 +435,19 @@ enum rproc_crash_type {
->  };
->  
->  /**
-> + * enum rproc_dump_mechanism - Coredump options for core
-> + * @COREDUMP_DEFAULT:	Copy dump to separate buffer and carry on with recovery
-> + * @COREDUMP_INLINE:	Read segments directly from device memory. Stall
-> +			recovery until all segments are read
-> + * @COREDUMP_DISABLED:	Don't perform any dump
-> + */
-> +enum rproc_dump_mechanism {
-> +	COREDUMP_DEFAULT,
-> +	COREDUMP_INLINE,
-> +	COREDUMP_DISABLED,
-> +};
-> +
-> +/**
->   * struct rproc_dump_segment - segment info from ELF header
->   * @node:	list node related to the rproc segment list
->   * @da:		device address of the segment
-> @@ -466,6 +479,7 @@ struct rproc_dump_segment {
->   * @dev: virtual device for refcounting and common remoteproc behavior
->   * @power: refcount of users who need this rproc powered up
->   * @state: state of the device
-> + * @dump_conf: Currenlty selected coredump configuration
->   * @lock: lock which protects concurrent manipulations of the rproc
->   * @dbg_dir: debugfs directory of this rproc device
->   * @traces: list of trace buffers
-> @@ -499,6 +513,7 @@ struct rproc {
->  	struct device dev;
->  	atomic_t power;
->  	unsigned int state;
-> +	enum rproc_dump_mechanism dump_conf;
->  	struct mutex lock;
->  	struct dentry *dbg_dir;
->  	struct list_head traces;
-> -- 
-> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-> a Linux Foundation Collaborative Project
+>
+> Regards,
+> Bjorn
