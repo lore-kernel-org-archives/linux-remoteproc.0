@@ -2,55 +2,57 @@ Return-Path: <SRS0=6P03=7E=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC6ADC433E2
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 22 May 2020 18:10:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56150C433DF
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 22 May 2020 18:59:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 78947206F6
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 22 May 2020 18:10:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 21E9C2070A
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 22 May 2020 18:59:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kalray.eu header.i=@kalray.eu header.b="NVtj+Ij+"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="pni8T/B8"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730793AbgEVSKS (ORCPT
+        id S1730867AbgEVS7P (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 22 May 2020 14:10:18 -0400
-Received: from zimbra2.kalray.eu ([92.103.151.219]:51130 "EHLO
-        zimbra2.kalray.eu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726373AbgEVSKS (ORCPT
+        Fri, 22 May 2020 14:59:15 -0400
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:48958 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730840AbgEVS7P (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 22 May 2020 14:10:18 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by zimbra2.kalray.eu (Postfix) with ESMTP id 002A727E06AA;
-        Fri, 22 May 2020 20:10:16 +0200 (CEST)
-Received: from zimbra2.kalray.eu ([127.0.0.1])
-        by localhost (zimbra2.kalray.eu [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id R-U1f_76ElBJ; Fri, 22 May 2020 20:10:15 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-        by zimbra2.kalray.eu (Postfix) with ESMTP id 43C3A27E1552;
-        Fri, 22 May 2020 20:10:15 +0200 (CEST)
-DKIM-Filter: OpenDKIM Filter v2.10.3 zimbra2.kalray.eu 43C3A27E1552
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kalray.eu;
-        s=32AE1B44-9502-11E5-BA35-3734643DEF29; t=1590171015;
-        bh=bK83LII32CYIXyNdBCoJRVs5oREoCEW0+9bccKTq9hk=;
-        h=Date:From:To:Message-ID:MIME-Version;
-        b=NVtj+Ij+ss4G7UKccUqDpaqJ6k3alv4FFmlutBMH6TKECR4B9pdEfjUey3hS29asP
-         k4AzlgGLkGIHc7LSyAhWmtBYuCuO97RXvvmJInVeW9rkiPh625qIIX98U6vAdUaMxt
-         abGB0OGkTCP4INpZmk7pAhPs1rTMvOKkR1/ZqyWw=
-X-Virus-Scanned: amavisd-new at zimbra2.kalray.eu
-Received: from zimbra2.kalray.eu ([127.0.0.1])
-        by localhost (zimbra2.kalray.eu [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id efYqJTyB0HMQ; Fri, 22 May 2020 20:10:15 +0200 (CEST)
-Received: from zimbra2.kalray.eu (localhost [127.0.0.1])
-        by zimbra2.kalray.eu (Postfix) with ESMTP id 286DD27E06AA;
-        Fri, 22 May 2020 20:10:15 +0200 (CEST)
-Date:   Fri, 22 May 2020 20:10:14 +0200 (CEST)
-From:   =?utf-8?Q?Cl=C3=A9ment?= Leger <cleger@kalray.eu>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     s-anna <s-anna@ti.com>, Rob Herring <robh+dt@kernel.org>,
+        Fri, 22 May 2020 14:59:15 -0400
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 04MIx5tD018590;
+        Fri, 22 May 2020 13:59:05 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1590173945;
+        bh=cWQVyiUOGA6CdUt5XXyh7cFJsbmK3Mc23pxMgj5Hzmg=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=pni8T/B83UwO2WLa8S+nfay+6qWJQQptvGZT3X7n5c1MIJ+gmrNnuPD3C83kR6dh/
+         Xt6Bn01NtTd7CRym4xhSIj9g5lCr3TCZHr5w73XqHtXiuLIROFz2pTlK+qI/ZAYLnP
+         GnL/xnvtxdZ0Z5gtUC39tpxV77IHwSn/pXFHtiNk=
+Received: from DLEE102.ent.ti.com (dlee102.ent.ti.com [157.170.170.32])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 04MIx55t032460
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 22 May 2020 13:59:05 -0500
+Received: from DLEE104.ent.ti.com (157.170.170.34) by DLEE102.ent.ti.com
+ (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3; Fri, 22
+ May 2020 13:59:04 -0500
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE104.ent.ti.com
+ (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3 via
+ Frontend Transport; Fri, 22 May 2020 13:59:04 -0500
+Received: from [10.250.48.148] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id 04MIx414059462;
+        Fri, 22 May 2020 13:59:04 -0500
+Subject: Re: [PATCH 3/4] remoteproc: add support for a new 64-bit trace
+ version
+To:     =?UTF-8?Q?Cl=c3=a9ment_Leger?= <cleger@kalray.eu>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>
+CC:     Rob Herring <robh+dt@kernel.org>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
         Loic PALLARDY <loic.pallardy@st.com>,
         Arnaud Pouliquen <arnaud.pouliquen@st.com>,
@@ -59,102 +61,129 @@ Cc:     s-anna <s-anna@ti.com>, Rob Herring <robh+dt@kernel.org>,
         devicetree <devicetree@vger.kernel.org>,
         linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
         linux-kernel <linux-kernel@vger.kernel.org>
-Message-ID: <1334263091.4218509.1590171014972.JavaMail.zimbra@kalray.eu>
-In-Reply-To: <1739080680.4218297.1590170621467.JavaMail.zimbra@kalray.eu>
-References: <20200325204701.16862-1-s-anna@ti.com> <20200325204701.16862-4-s-anna@ti.com> <20200521180417.GJ408178@builder.lan> <997d6f9a-64ba-7a89-e909-9a5a474120b0@ti.com> <f15b0c6d-eee8-b839-0c79-a5316dbbfa7b@ti.com> <20200522173346.GJ11847@yoga> <1739080680.4218297.1590170621467.JavaMail.zimbra@kalray.eu>
-Subject: Re: [PATCH 3/4] remoteproc: add support for a new 64-bit trace
- version
+References: <20200325204701.16862-1-s-anna@ti.com>
+ <20200325204701.16862-4-s-anna@ti.com> <20200521180417.GJ408178@builder.lan>
+ <997d6f9a-64ba-7a89-e909-9a5a474120b0@ti.com>
+ <f15b0c6d-eee8-b839-0c79-a5316dbbfa7b@ti.com> <20200522173346.GJ11847@yoga>
+ <1739080680.4218297.1590170621467.JavaMail.zimbra@kalray.eu>
+ <1334263091.4218509.1590171014972.JavaMail.zimbra@kalray.eu>
+From:   Suman Anna <s-anna@ti.com>
+Message-ID: <4fab212b-a9d2-927e-d3d7-e591912fd6cf@ti.com>
+Date:   Fri, 22 May 2020 13:59:04 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Originating-IP: [192.168.40.202]
-X-Mailer: Zimbra 8.8.15_GA_3895 (ZimbraWebClient - GC81 (Linux)/8.8.15_GA_3895)
-Thread-Topic: remoteproc: add support for a new 64-bit trace version
-Thread-Index: L30XW51sgsk7NRKU7I+TV4VplJ8G6Xb707z7
+In-Reply-To: <1334263091.4218509.1590171014972.JavaMail.zimbra@kalray.eu>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
+Hi Clement,
 
+>  > ----- On 22 May, 2020, at 20:03, Clément Leger cleger@kalray.eu wrote:>
+>> Hi Suman,
+>>
+>> ----- On 22 May, 2020, at 19:33, Bjorn Andersson bjorn.andersson@linaro.org
+>> wrote:
+>>
+>>> On Fri 22 May 09:54 PDT 2020, Suman Anna wrote:
+>>>
+>>>> On 5/21/20 2:42 PM, Suman Anna wrote:
+>>>>> Hi Bjorn,
+>>>>>
+>>>>> On 5/21/20 1:04 PM, Bjorn Andersson wrote:
+>>>>>> On Wed 25 Mar 13:47 PDT 2020, Suman Anna wrote:
+>>> [..]
+>>>>>>> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+>>> [..]
+>>>>>>> +struct fw_rsc_trace2 {
+>>>>>>
+>>>>>> Sounds more like fw_rsc_trace64 to me - in particular since the version
+>>>>>> of trace2 is 1...
+>>>>>
+>>>>> Yeah, will rename this.
+>>>>>
+>>>>>>
+>>>>>>> +    u32 padding;
+>>>>>>> +    u64 da;
+>>>>>>> +    u32 len;
+>>>>>>> +    u32 reserved;
+>>>>>>
+>>>>>> What's the purpose of this reserved field?
+>>>>>
+>>>>> Partly to make sure the entire resource is aligned on an 8-byte, and
+>>>>> partly copied over from fw_rsc_trace entry. I guess 32-bits is already
+>>>>> large enough of a size for trace entries irrespective of 32-bit or
+>>>>> 64-bit traces, so I doubt if we want to make the len field also a u64.
+>>>>
+>>>> Looking at this again, I can drop both padding and reserved fields, if I
+>>>> move the len field before da. Any preferences/comments?
+>>
+> Sorry, my message went a bit too fast... So as I was saying:
+> 
+> Not only the in-structure alignment matters but also in the resource table.
+> Since the resource table is often packed (see [1] for instance), if a trace
+> resource is embedded in the resource table after another resource aligned
+> on 32 bits only, your 64 bits trace field will potentially end up
+> misaligned.
 
------ On 22 May, 2020, at 20:03, Cl=C3=A9ment Leger cleger@kalray.eu wrote:
+Right. Since one can mix and match the resources of different sizes and 
+include them in any order, the onus is going to be on the resource table 
+constructors to ensure the inter-resource alignments, if any are 
+required. The resource table format allows you to add padding fields in 
+between if needed, and the remoteproc core relies on the offsets.
 
-> Hi Suman,
->=20
-> ----- On 22 May, 2020, at 19:33, Bjorn Andersson bjorn.andersson@linaro.o=
-rg
-> wrote:
->=20
->> On Fri 22 May 09:54 PDT 2020, Suman Anna wrote:
->>=20
->>> On 5/21/20 2:42 PM, Suman Anna wrote:
->>> > Hi Bjorn,
->>> >=20
->>> > On 5/21/20 1:04 PM, Bjorn Andersson wrote:
->>> > > On Wed 25 Mar 13:47 PDT 2020, Suman Anna wrote:
->> [..]
->>> > > > diff --git a/include/linux/remoteproc.h b/include/linux/remotepro=
-c.h
->> [..]
->>> > > > +struct fw_rsc_trace2 {
->>> > >=20
->>> > > Sounds more like fw_rsc_trace64 to me - in particular since the ver=
-sion
->>> > > of trace2 is 1...
->>> >=20
->>> > Yeah, will rename this.
->>> >=20
->>> > >=20
->>> > > > +=C2=A0=C2=A0=C2=A0 u32 padding;
->>> > > > +=C2=A0=C2=A0=C2=A0 u64 da;
->>> > > > +=C2=A0=C2=A0=C2=A0 u32 len;
->>> > > > +=C2=A0=C2=A0=C2=A0 u32 reserved;
->>> > >=20
->>> > > What's the purpose of this reserved field?
->>> >=20
->>> > Partly to make sure the entire resource is aligned on an 8-byte, and
->>> > partly copied over from fw_rsc_trace entry. I guess 32-bits is alread=
-y
->>> > large enough of a size for trace entries irrespective of 32-bit or
->>> > 64-bit traces, so I doubt if we want to make the len field also a u64=
-.
->>>=20
->>> Looking at this again, I can drop both padding and reserved fields, if =
-I
->>> move the len field before da. Any preferences/comments?
->=20
-Sorry, my message went a bit too fast... So as I was saying:
+I can only ensure the alignment within this resource structure with 
+ready-available access and conversion to/from a 64-bit type, as long as 
+the resource is starting on a 64-bit boundary.
 
-Not only the in-structure alignment matters but also in the resource table.
-Since the resource table is often packed (see [1] for instance), if a trace
-resource is embedded in the resource table after another resource aligned
-on 32 bits only, your 64 bits trace field will potentially end up
-misaligned.
+> 
+> To overcome this, there is multiple solutions:
+> 
+> - Split the 64 bits fields into 32bits low and high parts:
+> Since all resources are aligned on 32bits, it will be ok
 
-To overcome this, there is multiple solutions:
+Yes, this is one solution. At the same time, this means you need 
+additional conversion logic for converting to and from 64-bit field. In 
+this particular case, da is the address of the trace buffer pointer on a 
+64-bit processor, so we can directly use the address of the trace 
+buffer. Guess it is a question of easier translation vs packing the 
+resource table as tight as possible.
 
-- Split the 64 bits fields into 32bits low and high parts:
-Since all resources are aligned on 32bits, it will be ok
+> 
+> - Use memcpy_from/to_io when reading/writing such fields
+> As I said in a previous message this should probably be used since
+> the memories that are accessed by rproc are io mem (ioremap in almost
+> all drivers).
 
-- Use memcpy_from/to_io when reading/writing such fields
-As I said in a previous message this should probably be used since
-the memories that are accessed by rproc are io mem (ioremap in almost
-all drivers).
+Anything running out of DDR actually doesn't need the io mem semantics, 
+so we actually need to be fixing the drivers. Blindly changing the 
+current memcpy to memcpy_to_io in the core loader is also not right. Any 
+internal memories properties will actually depend on the processor and 
+SoC. Eg: The R5 TCM interfaces in general can be treated as normal memories.
 
-Regards,
+regards
+Suman
 
-Cl=C3=A9ment
+> 
+> Regards,
+> 
+> Clément
+> 
+> [1]  https://github.com/OpenAMP/open-amp/blob/master/apps/machine/zynqmp_r5/rsc_table.h
+>>
+>>
+>>
+>>
+>>>>
+>>>
+>>> Sounds good to me.
+>>>
+>>> Thanks,
+>>> Bjorn
 
-[1]  https://github.com/OpenAMP/open-amp/blob/master/apps/machine/zynqmp_r5=
-/rsc_table.h
->=20
->=20
->=20
->=20
->>>=20
->>=20
->> Sounds good to me.
->>=20
->> Thanks,
-> > Bjorn
