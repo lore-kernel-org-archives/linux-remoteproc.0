@@ -2,126 +2,130 @@ Return-Path: <SRS0=6P03=7E=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_2 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 537FCC433E0
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 22 May 2020 00:03:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50CECC433E0
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 22 May 2020 04:40:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1DC34207D8
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 22 May 2020 00:03:47 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZG5OHkrz"
+	by mail.kernel.org (Postfix) with ESMTP id 1BEE420756
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 22 May 2020 04:40:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1590122406;
+	bh=t23ctuDSgz2OOgMg3dDJXiz8kK2YLj/V3oe4CBnrEqg=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
+	b=fvNlIZmw82X6eZDV/xa2RCXO5ghf4THVdwkq+tgHdl69QRrvNNHwh5iEPVPazmcU8
+	 sUw9YUsUcYg3hDJjSUx7NUPeMKNWU/4h77aYqytOURFc4hc7UuwB4j3pKRyJ06gSoA
+	 bEdo72XuzWrNQYVL75h6aklMnsEHOh1r74s80y8k=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729771AbgEVADq (ORCPT
+        id S1726338AbgEVEkF (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 21 May 2020 20:03:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60476 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730067AbgEVADq (ORCPT
+        Fri, 22 May 2020 00:40:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42420 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725956AbgEVEkF (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 21 May 2020 20:03:46 -0400
-Received: from mail-pl1-x642.google.com (mail-pl1-x642.google.com [IPv6:2607:f8b0:4864:20::642])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5F0D5C08C5C0
-        for <linux-remoteproc@vger.kernel.org>; Thu, 21 May 2020 17:03:46 -0700 (PDT)
-Received: by mail-pl1-x642.google.com with SMTP id q16so3688797plr.2
-        for <linux-remoteproc@vger.kernel.org>; Thu, 21 May 2020 17:03:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=aimWUItgOf1Mo4eNsHUlIg6Ef9QsJNRTVwtUqNdOH6M=;
-        b=ZG5OHkrzAxL75jV4jI9yyW41kOusvleLyaT+i8cXJZTdBo4cdW390NE0CHkuK+u3LO
-         fDKPFO2iZtkgAZiMCfDuY55LTfhIfRiRndLQAueqXhmcGEf39qGrCQ7t6E3ey/8iHkPB
-         u5b+B3Q/Qh9sjOAdFaqtjj5BmQm0OHNyWS1fCXnBZyGLeI4SJTkHHpHryB0jNrdpeTZr
-         o4T05BzrOHJeIyRDsXnJFDkfj/elgR+viOPFpX5fYs5ciwuhRwT+YsNaZGDIDqQ+npYl
-         dOA87DruowRnaDWivlA5TMnS2E9Zh3f3ipIFxpt7oCHj/kR6a56Fdex4r241Zevm+UmH
-         ABRA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=aimWUItgOf1Mo4eNsHUlIg6Ef9QsJNRTVwtUqNdOH6M=;
-        b=q0FmMGqKe8BaTGVFh9j53751erwROrKkVw9xhWILkCvy3hKREZXRpSat+Y0GHj7g94
-         gAqG7Zcfbxr60fJ/CwI8X+Lm+Dgjf2GdG4ZoPERr3nu75QmDNeiLWxjXhdUVLGmfUY0I
-         AzOrALQbL1ssWN51rYvg4huOQrDRV2//18IZ7gpZYxxB1MbLARLam6kjpc1Hqi9oNZze
-         zxxm5Za60ZhEiXFiv7TUgVevInAkBFOG57E4hKhEO8T746hxJkuX1tg7XntZSD/BC9rl
-         s8eE6JslwAk/hiL07P7vL9OJWE0FFHaV/yq2jlrW7+gwxKmbJVaV40bFxfyRQmet/S+8
-         CciA==
-X-Gm-Message-State: AOAM532k5ua5wikMh7PLf+s56cr4cAsG+ubJX86jLMobnhVq/arjWWnI
-        cSwi/Ih/m/CxAIZ5MKPRjqTKcA==
-X-Google-Smtp-Source: ABdhPJymXguid2RaAquptSVy3PCyyF4zQrru0krE8vDzueEdGjOYVT72JC4TiSto94bPhX23JXSexQ==
-X-Received: by 2002:a17:90b:10f:: with SMTP id p15mr1059980pjz.99.1590105825570;
-        Thu, 21 May 2020 17:03:45 -0700 (PDT)
-Received: from yoga (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id o11sm5259985pfd.195.2020.05.21.17.03.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 May 2020 17:03:44 -0700 (PDT)
-Date:   Thu, 21 May 2020 17:03:42 -0700
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc:     Suman Anna <s-anna@ti.com>, Rob Herring <robh+dt@kernel.org>,
-        Lokesh Vutla <lokeshvutla@ti.com>,
-        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 0/4] TI K3 DSP remoteproc driver for C66x DSPs
-Message-ID: <20200522000342.GG11847@yoga>
-References: <20200521001006.2725-1-s-anna@ti.com>
- <5f84465e-8f63-51b4-4758-59c85d3ad597@ti.com>
- <20200521190141.GN408178@builder.lan>
- <20200521222334.GA11366@xps15>
+        Fri, 22 May 2020 00:40:05 -0400
+Received: from coco.lan (ip5f5ad5c5.dynamic.kabel-deutschland.de [95.90.213.197])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D55D32068D;
+        Fri, 22 May 2020 04:40:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1590122405;
+        bh=t23ctuDSgz2OOgMg3dDJXiz8kK2YLj/V3oe4CBnrEqg=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=hSYLl4INY8Kb9Gacswopf9wkJZjdZLl/1YUqQOZcjjJtVJQwDvhugF53amC9B3zvF
+         5RO11pEuGGCZxDcfDVdFKERGc2DPus7SqENNfXrU+l2oElv8i+6qvO/YOX2J2pzd2i
+         yH/YZQTRyFif02eK8n1rfeqkh13sTIuT9WELXp9M=
+Date:   Fri, 22 May 2020 06:39:58 +0200
+From:   Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To:     Jonathan Corbet <corbet@lwn.net>
+Cc:     Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Darren Hart <dvhart@infradead.org>,
+        Will Deacon <will@kernel.org>,
+        Ohad Ben-Cohen <ohad@wizery.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Baolin Wang <baolin.wang7@gmail.com>,
+        Rob Herring <robh@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-remoteproc@vger.kernel.org
+Subject: Re: [PATCH 10/14] docs: move locking-specific documenta to locking/
+ directory
+Message-ID: <20200522063958.7e961a98@coco.lan>
+In-Reply-To: <20200515120607.73ee1278@lwn.net>
+References: <cover.1588345503.git.mchehab+huawei@kernel.org>
+        <dd833a10bbd0b2c1461d78913f5ec28a7e27f00b.1588345503.git.mchehab+huawei@kernel.org>
+        <20200515120607.73ee1278@lwn.net>
+X-Mailer: Claws Mail 3.17.5 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200521222334.GA11366@xps15>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Thu 21 May 15:23 PDT 2020, Mathieu Poirier wrote:
+Em Fri, 15 May 2020 12:06:07 -0600
+Jonathan Corbet <corbet@lwn.net> escreveu:
 
-> Gents,
-> 
-> On Thu, May 21, 2020 at 12:01:41PM -0700, Bjorn Andersson wrote:
-> > On Thu 21 May 11:59 PDT 2020, Suman Anna wrote:
-> > 
-> > > Hi Bjorn,
-> > > 
-> > > On 5/20/20 7:10 PM, Suman Anna wrote:
-> > > > Hi All,
-> > > > 
-> > > > The following is v2 of the K3 DSP remoteproc driver supporting the C66x DSPs
-> > > > on the TI K3 J721E SoCs. The patches are based on the latest commit on the
-> > > > rproc-next branch, 7dcef3988eed ("remoteproc: Fix an error code in
-> > > > devm_rproc_alloc()").
-> > > 
-> > > I realized I also had the R5F patches on my branch, so the third patch won't
-> > > apply cleanly (conflict on Makefile). Let me know if you want a new revision
-> > > posted for you to pick up the series.
-> > > 
-> > 
-> > That should be fine, thanks for the heads up!
-> > 
-> > Will give Mathieu a day or two to take a look as well.
-> 
-> I don't see having the time to review this set before the middle/end of next
-> week.  I also understand we are crunched by time if we want to get this in
-> for the upcoming merge window.
-> 
-> If memory serves me well there wasn't anything controversial about this work.
-> Under normal circumstances I'd give it a final look but I trust Suman to have
-> carried out what we agreed on.
-> 
-> Bjorn - if you are happy with this set then go ahead and queue it.
-> 
+> On Fri,  1 May 2020 17:37:54 +0200
+> Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
+>=20
+> > Several files under Documentation/*.txt describe some type of
+> > locking API. Move them to locking/ subdir and add to the
+> > locking/index.rst index file.
+> >=20
+> > Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org> =20
+>=20
+> I've applied this, but it really seems like this belongs in the core-api
+> manual someday.
 
-Thanks Mathieu.
+Makes sense.
 
-I looked through the patches again and saw that we're still waiting for
-a ack on the dt binding, so I guess I need to hold off on this a little
-bit longer.
+Well, right now, it is at the same level as core-api, just below it:
 
-Regards,
-Bjorn
+	Kernel API documentation
+	------------------------
+
+	These books get into the details of how specific kernel subsystems work
+	from the point of view of a kernel developer.  Much of the information here
+	is taken directly from the kernel source, with supplemental material added
+	as needed (or at least as we managed to add it =E2=80=94 probably *not* al=
+l that is
+	needed).
+=09
+	.. toctree::
+	   :maxdepth: 2
+=09
+	   driver-api/index
+	   core-api/index
+	   locking/index
+
+Not too bad.
+
+Btw, there are other doc sets that could also fit into the core-api, like:
+
+	...
+	   accounting/index
+	...
+	   security/index
+	...
+	   bpf/index
+	...
+	   scheduler/index
+
+while most of the rest should likely be inside driver-api.
+
+Some care should be taken when moving stuff, though: there is a
+reason why they weren't moved to driver-api in the first place:
+they may contain stuff for the admin guide mixed there.
+
+Thanks,
+Mauro
