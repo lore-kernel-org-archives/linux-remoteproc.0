@@ -2,130 +2,180 @@ Return-Path: <SRS0=6P03=7E=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_2 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50CECC433E0
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 22 May 2020 04:40:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36A7EC433DF
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 22 May 2020 16:47:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1BEE420756
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 22 May 2020 04:40:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1590122406;
-	bh=t23ctuDSgz2OOgMg3dDJXiz8kK2YLj/V3oe4CBnrEqg=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
-	b=fvNlIZmw82X6eZDV/xa2RCXO5ghf4THVdwkq+tgHdl69QRrvNNHwh5iEPVPazmcU8
-	 sUw9YUsUcYg3hDJjSUx7NUPeMKNWU/4h77aYqytOURFc4hc7UuwB4j3pKRyJ06gSoA
-	 bEdo72XuzWrNQYVL75h6aklMnsEHOh1r74s80y8k=
+	by mail.kernel.org (Postfix) with ESMTP id 0FFC120679
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 22 May 2020 16:47:43 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="SnJlPkD2"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726338AbgEVEkF (ORCPT
+        id S1730418AbgEVQrm (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 22 May 2020 00:40:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42420 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725956AbgEVEkF (ORCPT
+        Fri, 22 May 2020 12:47:42 -0400
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:54074 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726862AbgEVQrm (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 22 May 2020 00:40:05 -0400
-Received: from coco.lan (ip5f5ad5c5.dynamic.kabel-deutschland.de [95.90.213.197])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D55D32068D;
-        Fri, 22 May 2020 04:40:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1590122405;
-        bh=t23ctuDSgz2OOgMg3dDJXiz8kK2YLj/V3oe4CBnrEqg=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=hSYLl4INY8Kb9Gacswopf9wkJZjdZLl/1YUqQOZcjjJtVJQwDvhugF53amC9B3zvF
-         5RO11pEuGGCZxDcfDVdFKERGc2DPus7SqENNfXrU+l2oElv8i+6qvO/YOX2J2pzd2i
-         yH/YZQTRyFif02eK8n1rfeqkh13sTIuT9WELXp9M=
-Date:   Fri, 22 May 2020 06:39:58 +0200
-From:   Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To:     Jonathan Corbet <corbet@lwn.net>
-Cc:     Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Darren Hart <dvhart@infradead.org>,
-        Will Deacon <will@kernel.org>,
-        Ohad Ben-Cohen <ohad@wizery.com>,
+        Fri, 22 May 2020 12:47:42 -0400
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 04MGlZIb117219;
+        Fri, 22 May 2020 11:47:35 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1590166055;
+        bh=pYwktcJiAsM0iNsRKmiwzrjZxKYcIFGjM0IA3yskkG0=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=SnJlPkD2VYXbTIp2OEoYMhjFILCuu8JQs3uL+WUkjk7RBsr8VE/9CgBFKcIJNIVb+
+         IDtbXIUgQBwtqcOm1+76sh8n2nqC12pj65wlbyOt/RjOydWaycvQD+ShXo5aIzp7no
+         Rj7ILVB6SrfGg+E1gaOVpXrtULIKcjnP0ykN2Mlo=
+Received: from DLEE105.ent.ti.com (dlee105.ent.ti.com [157.170.170.35])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 04MGlYuN071450
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 22 May 2020 11:47:35 -0500
+Received: from DLEE115.ent.ti.com (157.170.170.26) by DLEE105.ent.ti.com
+ (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3; Fri, 22
+ May 2020 11:47:34 -0500
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE115.ent.ti.com
+ (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3 via
+ Frontend Transport; Fri, 22 May 2020 11:47:34 -0500
+Received: from [10.250.48.148] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 04MGlYXP095594;
+        Fri, 22 May 2020 11:47:34 -0500
+Subject: Re: [PATCH v7 3/5] remoteproc: Add support for runtime PM
+To:     Paul Cercueil <paul@crapouillou.net>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Baolin Wang <baolin.wang7@gmail.com>,
-        Rob Herring <robh@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-remoteproc@vger.kernel.org
-Subject: Re: [PATCH 10/14] docs: move locking-specific documenta to locking/
- directory
-Message-ID: <20200522063958.7e961a98@coco.lan>
-In-Reply-To: <20200515120607.73ee1278@lwn.net>
-References: <cover.1588345503.git.mchehab+huawei@kernel.org>
-        <dd833a10bbd0b2c1461d78913f5ec28a7e27f00b.1588345503.git.mchehab+huawei@kernel.org>
-        <20200515120607.73ee1278@lwn.net>
-X-Mailer: Claws Mail 3.17.5 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+        Ohad Ben-Cohen <ohad@wizery.com>,
+        Arnaud Pouliquen <arnaud.pouliquen@st.com>
+CC:     <od@zcrc.me>, <linux-remoteproc@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Tero Kristo <t-kristo@ti.com>
+References: <20200515104340.10473-1-paul@crapouillou.net>
+ <20200515104340.10473-3-paul@crapouillou.net>
+From:   Suman Anna <s-anna@ti.com>
+Message-ID: <035bf8ad-3ef0-8314-ae5c-a94a24c230c8@ti.com>
+Date:   Fri, 22 May 2020 11:47:34 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20200515104340.10473-3-paul@crapouillou.net>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Em Fri, 15 May 2020 12:06:07 -0600
-Jonathan Corbet <corbet@lwn.net> escreveu:
+Hi Paul,
 
-> On Fri,  1 May 2020 17:37:54 +0200
-> Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
->=20
-> > Several files under Documentation/*.txt describe some type of
-> > locking API. Move them to locking/ subdir and add to the
-> > locking/index.rst index file.
-> >=20
-> > Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org> =20
->=20
-> I've applied this, but it really seems like this belongs in the core-api
-> manual someday.
+On 5/15/20 5:43 AM, Paul Cercueil wrote:
+> Call pm_runtime_get_sync() before the firmware is loaded, and
+> pm_runtime_put() after the remote processor has been stopped.
+> 
+> Even though the remoteproc device has no PM callbacks, this allows the
+> parent device's PM callbacks to be properly called.
 
-Makes sense.
+I see this patch staged now for 5.8, and the latest -next branch has 
+broken the pm-runtime autosuspend feature we have in the OMAP remoteproc 
+driver. See commit 5f31b232c674 ("remoteproc/omap: Add support for 
+runtime auto-suspend/resume").
 
-Well, right now, it is at the same level as core-api, just below it:
+What was the original purpose of this patch, because there can be 
+differing backends across different SoCs.
 
-	Kernel API documentation
-	------------------------
+regards
+Suman
 
-	These books get into the details of how specific kernel subsystems work
-	from the point of view of a kernel developer.  Much of the information here
-	is taken directly from the kernel source, with supplemental material added
-	as needed (or at least as we managed to add it =E2=80=94 probably *not* al=
-l that is
-	needed).
-=09
-	.. toctree::
-	   :maxdepth: 2
-=09
-	   driver-api/index
-	   core-api/index
-	   locking/index
+> 
+> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+> ---
+> 
+> Notes:
+>      v2-v4: No change
+>      v5: Move calls to prepare/unprepare to rproc_fw_boot/rproc_shutdown
+>      v6: Instead of prepare/unprepare callbacks, use PM runtime callbacks
+>      v7: Check return value of pm_runtime_get_sync()
+> 
+>   drivers/remoteproc/remoteproc_core.c | 17 ++++++++++++++++-
+>   1 file changed, 16 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+> index a7f96bc98406..e33d1ef27981 100644
+> --- a/drivers/remoteproc/remoteproc_core.c
+> +++ b/drivers/remoteproc/remoteproc_core.c
+> @@ -29,6 +29,7 @@
+>   #include <linux/devcoredump.h>
+>   #include <linux/rculist.h>
+>   #include <linux/remoteproc.h>
+> +#include <linux/pm_runtime.h>
+>   #include <linux/iommu.h>
+>   #include <linux/idr.h>
+>   #include <linux/elf.h>
+> @@ -1382,6 +1383,12 @@ static int rproc_fw_boot(struct rproc *rproc, const struct firmware *fw)
+>   	if (ret)
+>   		return ret;
+>   
+> +	ret = pm_runtime_get_sync(dev);
+> +	if (ret < 0) {
+> +		dev_err(dev, "pm_runtime_get_sync failed: %d\n", ret);
+> +		return ret;
+> +	}
+> +
+>   	dev_info(dev, "Booting fw image %s, size %zd\n", name, fw->size);
+>   
+>   	/*
+> @@ -1391,7 +1398,7 @@ static int rproc_fw_boot(struct rproc *rproc, const struct firmware *fw)
+>   	ret = rproc_enable_iommu(rproc);
+>   	if (ret) {
+>   		dev_err(dev, "can't enable iommu: %d\n", ret);
+> -		return ret;
+> +		goto put_pm_runtime;
+>   	}
+>   
+>   	rproc->bootaddr = rproc_get_boot_addr(rproc, fw);
+> @@ -1435,6 +1442,8 @@ static int rproc_fw_boot(struct rproc *rproc, const struct firmware *fw)
+>   	rproc->table_ptr = NULL;
+>   disable_iommu:
+>   	rproc_disable_iommu(rproc);
+> +put_pm_runtime:
+> +	pm_runtime_put(dev);
+>   	return ret;
+>   }
+>   
+> @@ -1840,6 +1849,8 @@ void rproc_shutdown(struct rproc *rproc)
+>   
+>   	rproc_disable_iommu(rproc);
+>   
+> +	pm_runtime_put(dev);
+> +
+>   	/* Free the copy of the resource table */
+>   	kfree(rproc->cached_table);
+>   	rproc->cached_table = NULL;
+> @@ -2118,6 +2129,9 @@ struct rproc *rproc_alloc(struct device *dev, const char *name,
+>   
+>   	rproc->state = RPROC_OFFLINE;
+>   
+> +	pm_runtime_no_callbacks(&rproc->dev);
+> +	pm_runtime_enable(&rproc->dev);
+> +
+>   	return rproc;
+>   }
+>   EXPORT_SYMBOL(rproc_alloc);
+> @@ -2133,6 +2147,7 @@ EXPORT_SYMBOL(rproc_alloc);
+>    */
+>   void rproc_free(struct rproc *rproc)
+>   {
+> +	pm_runtime_disable(&rproc->dev);
+>   	put_device(&rproc->dev);
+>   }
+>   EXPORT_SYMBOL(rproc_free);
+> 
 
-Not too bad.
-
-Btw, there are other doc sets that could also fit into the core-api, like:
-
-	...
-	   accounting/index
-	...
-	   security/index
-	...
-	   bpf/index
-	...
-	   scheduler/index
-
-while most of the rest should likely be inside driver-api.
-
-Some care should be taken when moving stuff, though: there is a
-reason why they weren't moved to driver-api in the first place:
-they may contain stuff for the admin guide mixed there.
-
-Thanks,
-Mauro
