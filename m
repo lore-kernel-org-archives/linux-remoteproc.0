@@ -2,173 +2,127 @@ Return-Path: <SRS0=6P03=7E=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05D72C433DF
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 22 May 2020 17:11:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E8D6C433DF
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 22 May 2020 17:33:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D41D920723
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 22 May 2020 17:11:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 006E6206C3
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 22 May 2020 17:33:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="uH1Nu4HK"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xM7/kxVn"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730471AbgEVRL1 (ORCPT
+        id S1730636AbgEVRdu (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 22 May 2020 13:11:27 -0400
-Received: from outils.crapouillou.net ([89.234.176.41]:35740 "EHLO
-        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726862AbgEVRL1 (ORCPT
+        Fri, 22 May 2020 13:33:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54482 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730701AbgEVRdu (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 22 May 2020 13:11:27 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
-        s=mail; t=1590167484; h=from:from:sender:reply-to:subject:subject:date:date:
-         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-         content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=Gq9F8lTkEQt8HCBJpWq1zgbA3UBCjpb+tJXX07K3abw=;
-        b=uH1Nu4HKVUV+dQbqHI0J7ym58RSoZ7n9YQVSBw/B7bhKwwY0kLpT6qtzuvmi3oYIr16caq
-        8/hwvnUA8TuV921HAfmb82AWCBP2+/AfAughZNLK4EG80nkbndH/3SBgL6r5Md5xFt+KrP
-        28UPaHN1haC7FwP4u29+AfqnavXO17s=
-Date:   Fri, 22 May 2020 19:11:13 +0200
-From:   Paul Cercueil <paul@crapouillou.net>
-Subject: Re: [PATCH v7 3/5] remoteproc: Add support for runtime PM
+        Fri, 22 May 2020 13:33:50 -0400
+Received: from mail-pj1-x1042.google.com (mail-pj1-x1042.google.com [IPv6:2607:f8b0:4864:20::1042])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5B80BC08C5C0
+        for <linux-remoteproc@vger.kernel.org>; Fri, 22 May 2020 10:33:50 -0700 (PDT)
+Received: by mail-pj1-x1042.google.com with SMTP id ci21so5224015pjb.3
+        for <linux-remoteproc@vger.kernel.org>; Fri, 22 May 2020 10:33:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=2tZSSQp+Q6NkFkvGgoTM41d8a2brRtjrb60yXEtR4oc=;
+        b=xM7/kxVnNd5tkM3aD88kh404nBLGZ0PykMDKj1PajSxvbZKv5gN1DQN4908oXvpFkT
+         D5j4s7pQVcv3lluXjL5hsxnA5VxVZtG0VkOtyF+z/kqlbmj4mJwBQsl5vSglfKkcR8nn
+         hCubMPJ6ImS9MjzxWO29RgINWtO+wzHImrvVO8bqT+EgexwI4z0GvFjyJSQuvA0RU0kK
+         XlRnMSnPgLf+iGmebcMZntq3a8e1GSzPZl1G1vlmX5mofuMANElZbQzYDpVk5myzPSTI
+         AGp8GUBRrS5t+JdFrWN109JV1COJz5flF4tptKa4cikXYJEW3rP9B8NjoLN/dHAbj2yd
+         l8DQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=2tZSSQp+Q6NkFkvGgoTM41d8a2brRtjrb60yXEtR4oc=;
+        b=nQowCpoSqpfUurFCB8Zpr4ZZCwohfj/a18psWCZITW2JwgUykHahAqFRgi4RNsWNup
+         5f98jgr5DEL3j6YnHEwCg2zmKtIoWzZZGJjD/y5ReYELoU1Er9RIZvcIHBgSszXMUabA
+         IzDOceMGKlt+VKmPddp6mrZpgjXwE6C6P7oZ0feD2Ehvi0VQ5yV9FWulmruOxrDergCr
+         jpdpNco0tb5qCqEO5RuY7W4mJs7b4jxS+ksf9R6p7pMz2haHqY2aa60KNcJq+dDA5GWv
+         pfDOYSjaBHWJJs1CcCT/3ikkawNb2XpxkUmCTmCLNprJb9uLCMHvmGn1ilLuNN2ODfjz
+         ZI7Q==
+X-Gm-Message-State: AOAM5327AD8j3SZU5fp8exEhSumwQ6u+K6f+RoZSaHAT6g/Qh+YU77qa
+        ckukfQnA4reL5N8Gj00K/ZoyiQ==
+X-Google-Smtp-Source: ABdhPJxs9ytct9W3l8jqHigChSN52KDjrcdPVZee/8dxkQn+Y6KW9FWnWmyEjZpnERt5Wp6T0UgISg==
+X-Received: by 2002:a17:902:8509:: with SMTP id bj9mr15699226plb.151.1590168829712;
+        Fri, 22 May 2020 10:33:49 -0700 (PDT)
+Received: from yoga (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id t23sm7426330pji.32.2020.05.22.10.33.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 22 May 2020 10:33:49 -0700 (PDT)
+Date:   Fri, 22 May 2020 10:33:46 -0700
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
 To:     Suman Anna <s-anna@ti.com>
-Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Ohad Ben-Cohen <ohad@wizery.com>,
-        Arnaud Pouliquen <arnaud.pouliquen@st.com>, od@zcrc.me,
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Clement Leger <cleger@kalray.eu>,
+        Loic Pallardy <loic.pallardy@st.com>,
+        Arnaud Pouliquen <arnaud.pouliquen@st.com>,
+        Lokesh Vutla <lokeshvutla@ti.com>,
         linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Tero Kristo <t-kristo@ti.com>
-Message-Id: <P2TQAQ.3VDG3B8W2EPF3@crapouillou.net>
-In-Reply-To: <035bf8ad-3ef0-8314-ae5c-a94a24c230c8@ti.com>
-References: <20200515104340.10473-1-paul@crapouillou.net>
-        <20200515104340.10473-3-paul@crapouillou.net>
-        <035bf8ad-3ef0-8314-ae5c-a94a24c230c8@ti.com>
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/4] remoteproc: add support for a new 64-bit trace
+ version
+Message-ID: <20200522173346.GJ11847@yoga>
+References: <20200325204701.16862-1-s-anna@ti.com>
+ <20200325204701.16862-4-s-anna@ti.com>
+ <20200521180417.GJ408178@builder.lan>
+ <997d6f9a-64ba-7a89-e909-9a5a474120b0@ti.com>
+ <f15b0c6d-eee8-b839-0c79-a5316dbbfa7b@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1; format=flowed
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <f15b0c6d-eee8-b839-0c79-a5316dbbfa7b@ti.com>
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi Suman,
+On Fri 22 May 09:54 PDT 2020, Suman Anna wrote:
 
-Le ven. 22 mai 2020 =E0 11:47, Suman Anna <s-anna@ti.com> a =E9crit :
-> Hi Paul,
->=20
-> On 5/15/20 5:43 AM, Paul Cercueil wrote:
->> Call pm_runtime_get_sync() before the firmware is loaded, and
->> pm_runtime_put() after the remote processor has been stopped.
->>=20
->> Even though the remoteproc device has no PM callbacks, this allows=20
->> the
->> parent device's PM callbacks to be properly called.
->=20
-> I see this patch staged now for 5.8, and the latest -next branch has=20
-> broken the pm-runtime autosuspend feature we have in the OMAP=20
-> remoteproc driver. See commit 5f31b232c674 ("remoteproc/omap: Add=20
-> support for runtime auto-suspend/resume").
->=20
-> What was the original purpose of this patch, because there can be=20
-> differing backends across different SoCs.
+> On 5/21/20 2:42 PM, Suman Anna wrote:
+> > Hi Bjorn,
+> > 
+> > On 5/21/20 1:04 PM, Bjorn Andersson wrote:
+> > > On Wed 25 Mar 13:47 PDT 2020, Suman Anna wrote:
+[..]
+> > > > diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+[..]
+> > > > +struct fw_rsc_trace2 {
+> > > 
+> > > Sounds more like fw_rsc_trace64 to me - in particular since the version
+> > > of trace2 is 1...
+> > 
+> > Yeah, will rename this.
+> > 
+> > > 
+> > > > +    u32 padding;
+> > > > +    u64 da;
+> > > > +    u32 len;
+> > > > +    u32 reserved;
+> > > 
+> > > What's the purpose of this reserved field?
+> > 
+> > Partly to make sure the entire resource is aligned on an 8-byte, and
+> > partly copied over from fw_rsc_trace entry. I guess 32-bits is already
+> > large enough of a size for trace entries irrespective of 32-bit or
+> > 64-bit traces, so I doubt if we want to make the len field also a u64.
+> 
+> Looking at this again, I can drop both padding and reserved fields, if I
+> move the len field before da. Any preferences/comments?
+> 
 
-Did you try pm_suspend_ignore_children()? It looks like it was made for=20
-your use-case.
+Sounds good to me.
 
-Cheers,
--Paul
-
->=20
-> regards
-> Suman
->=20
->>=20
->> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
->> ---
->>=20
->> Notes:
->>      v2-v4: No change
->>      v5: Move calls to prepare/unprepare to=20
->> rproc_fw_boot/rproc_shutdown
->>      v6: Instead of prepare/unprepare callbacks, use PM runtime=20
->> callbacks
->>      v7: Check return value of pm_runtime_get_sync()
->>=20
->>   drivers/remoteproc/remoteproc_core.c | 17 ++++++++++++++++-
->>   1 file changed, 16 insertions(+), 1 deletion(-)
->>=20
->> diff --git a/drivers/remoteproc/remoteproc_core.c=20
->> b/drivers/remoteproc/remoteproc_core.c
->> index a7f96bc98406..e33d1ef27981 100644
->> --- a/drivers/remoteproc/remoteproc_core.c
->> +++ b/drivers/remoteproc/remoteproc_core.c
->> @@ -29,6 +29,7 @@
->>   #include <linux/devcoredump.h>
->>   #include <linux/rculist.h>
->>   #include <linux/remoteproc.h>
->> +#include <linux/pm_runtime.h>
->>   #include <linux/iommu.h>
->>   #include <linux/idr.h>
->>   #include <linux/elf.h>
->> @@ -1382,6 +1383,12 @@ static int rproc_fw_boot(struct rproc *rproc,=20
->> const struct firmware *fw)
->>   	if (ret)
->>   		return ret;
->>   =7F+	ret =3D pm_runtime_get_sync(dev);
->> +	if (ret < 0) {
->> +		dev_err(dev, "pm_runtime_get_sync failed: %d\n", ret);
->> +		return ret;
->> +	}
->> +
->>   	dev_info(dev, "Booting fw image %s, size %zd\n", name, fw->size);
->>   =7F  	/*
->> @@ -1391,7 +1398,7 @@ static int rproc_fw_boot(struct rproc *rproc,=20
->> const struct firmware *fw)
->>   	ret =3D rproc_enable_iommu(rproc);
->>   	if (ret) {
->>   		dev_err(dev, "can't enable iommu: %d\n", ret);
->> -		return ret;
->> +		goto put_pm_runtime;
->>   	}
->>   =7F  	rproc->bootaddr =3D rproc_get_boot_addr(rproc, fw);
->> @@ -1435,6 +1442,8 @@ static int rproc_fw_boot(struct rproc *rproc,=20
->> const struct firmware *fw)
->>   	rproc->table_ptr =3D NULL;
->>   disable_iommu:
->>   	rproc_disable_iommu(rproc);
->> +put_pm_runtime:
->> +	pm_runtime_put(dev);
->>   	return ret;
->>   }
->>   =7F@@ -1840,6 +1849,8 @@ void rproc_shutdown(struct rproc *rproc)
->>   =7F  	rproc_disable_iommu(rproc);
->>   =7F+	pm_runtime_put(dev);
->> +
->>   	/* Free the copy of the resource table */
->>   	kfree(rproc->cached_table);
->>   	rproc->cached_table =3D NULL;
->> @@ -2118,6 +2129,9 @@ struct rproc *rproc_alloc(struct device *dev,=20
->> const char *name,
->>   =7F  	rproc->state =3D RPROC_OFFLINE;
->>   =7F+	pm_runtime_no_callbacks(&rproc->dev);
->> +	pm_runtime_enable(&rproc->dev);
->> +
->>   	return rproc;
->>   }
->>   EXPORT_SYMBOL(rproc_alloc);
->> @@ -2133,6 +2147,7 @@ EXPORT_SYMBOL(rproc_alloc);
->>    */
->>   void rproc_free(struct rproc *rproc)
->>   {
->> +	pm_runtime_disable(&rproc->dev);
->>   	put_device(&rproc->dev);
->>   }
->>   EXPORT_SYMBOL(rproc_free);
->>=20
->=20
-
-
+Thanks,
+Bjorn
