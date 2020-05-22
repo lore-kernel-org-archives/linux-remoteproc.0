@@ -2,338 +2,173 @@ Return-Path: <SRS0=6P03=7E=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57B07C433DF
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 22 May 2020 16:54:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05D72C433DF
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 22 May 2020 17:11:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2FFCB206D5
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 22 May 2020 16:54:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D41D920723
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 22 May 2020 17:11:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="TOM3TO7F"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="uH1Nu4HK"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730710AbgEVQys (ORCPT
+        id S1730471AbgEVRL1 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 22 May 2020 12:54:48 -0400
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:36018 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730306AbgEVQys (ORCPT
+        Fri, 22 May 2020 13:11:27 -0400
+Received: from outils.crapouillou.net ([89.234.176.41]:35740 "EHLO
+        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726862AbgEVRL1 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 22 May 2020 12:54:48 -0400
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 04MGsX4f118967;
-        Fri, 22 May 2020 11:54:33 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1590166473;
-        bh=TxXfcp4NBZuZnip4wrTBwhcuqULHHZ7OaIVZVzP/oTc=;
-        h=Subject:From:To:CC:References:Date:In-Reply-To;
-        b=TOM3TO7FWuQthj/WT7i4tssoY69CjUrlIN7IHpBRxK+VB9EAUKL3/BAD1+1Px8Nu8
-         LmE29ezyzenEOk6Wvj4lSqvcVZH/Nf+5MH3kvZjImOoC6m40faFzryEpKViwIOmLu1
-         YrZlROKaO0mV/TuMJQMAod9uFVrqd37TneLXeWhM=
-Received: from DFLE104.ent.ti.com (dfle104.ent.ti.com [10.64.6.25])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 04MGsXWi006221
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 22 May 2020 11:54:33 -0500
-Received: from DFLE107.ent.ti.com (10.64.6.28) by DFLE104.ent.ti.com
- (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3; Fri, 22
- May 2020 11:54:32 -0500
-Received: from fllv0039.itg.ti.com (10.64.41.19) by DFLE107.ent.ti.com
- (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3 via
- Frontend Transport; Fri, 22 May 2020 11:54:32 -0500
-Received: from [10.250.48.148] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id 04MGsWik020018;
-        Fri, 22 May 2020 11:54:32 -0500
-Subject: Re: [PATCH 3/4] remoteproc: add support for a new 64-bit trace
- version
-From:   Suman Anna <s-anna@ti.com>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-CC:     Rob Herring <robh+dt@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Clement Leger <cleger@kalray.eu>,
-        Loic Pallardy <loic.pallardy@st.com>,
-        Arnaud Pouliquen <arnaud.pouliquen@st.com>,
-        Lokesh Vutla <lokeshvutla@ti.com>,
-        <linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20200325204701.16862-1-s-anna@ti.com>
- <20200325204701.16862-4-s-anna@ti.com> <20200521180417.GJ408178@builder.lan>
- <997d6f9a-64ba-7a89-e909-9a5a474120b0@ti.com>
-Message-ID: <f15b0c6d-eee8-b839-0c79-a5316dbbfa7b@ti.com>
-Date:   Fri, 22 May 2020 11:54:32 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+        Fri, 22 May 2020 13:11:27 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
+        s=mail; t=1590167484; h=from:from:sender:reply-to:subject:subject:date:date:
+         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+         content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=Gq9F8lTkEQt8HCBJpWq1zgbA3UBCjpb+tJXX07K3abw=;
+        b=uH1Nu4HKVUV+dQbqHI0J7ym58RSoZ7n9YQVSBw/B7bhKwwY0kLpT6qtzuvmi3oYIr16caq
+        8/hwvnUA8TuV921HAfmb82AWCBP2+/AfAughZNLK4EG80nkbndH/3SBgL6r5Md5xFt+KrP
+        28UPaHN1haC7FwP4u29+AfqnavXO17s=
+Date:   Fri, 22 May 2020 19:11:13 +0200
+From:   Paul Cercueil <paul@crapouillou.net>
+Subject: Re: [PATCH v7 3/5] remoteproc: Add support for runtime PM
+To:     Suman Anna <s-anna@ti.com>
+Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Ohad Ben-Cohen <ohad@wizery.com>,
+        Arnaud Pouliquen <arnaud.pouliquen@st.com>, od@zcrc.me,
+        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Tero Kristo <t-kristo@ti.com>
+Message-Id: <P2TQAQ.3VDG3B8W2EPF3@crapouillou.net>
+In-Reply-To: <035bf8ad-3ef0-8314-ae5c-a94a24c230c8@ti.com>
+References: <20200515104340.10473-1-paul@crapouillou.net>
+        <20200515104340.10473-3-paul@crapouillou.net>
+        <035bf8ad-3ef0-8314-ae5c-a94a24c230c8@ti.com>
 MIME-Version: 1.0
-In-Reply-To: <997d6f9a-64ba-7a89-e909-9a5a474120b0@ti.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=iso-8859-1; format=flowed
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On 5/21/20 2:42 PM, Suman Anna wrote:
-> Hi Bjorn,
-> 
-> On 5/21/20 1:04 PM, Bjorn Andersson wrote:
->> On Wed 25 Mar 13:47 PDT 2020, Suman Anna wrote:
->>
->>> Introduce a new trace entry resource structure that accommodates
->>> a 64-bit device address to support 64-bit processors. This is to
->>> be used using an overloaded version value of 1 in the upper 32-bits
->>> of the previous resource type field. The new resource still uses
->>> 32-bits for the length field (followed by a 32-bit reserved field,
->>> so can be updated in the future), which is a sufficiently large
->>> trace buffer size. A 32-bit padding field also had to be added
->>> to align the device address on a 64-bit boundary, and match the
->>> usage on the firmware side.
->>>
->>> The remoteproc debugfs logic also has been adjusted accordingly.
->>>
->>> Signed-off-by: Suman Anna <s-anna@ti.com>
->>> ---
->>>   drivers/remoteproc/remoteproc_core.c    | 40 ++++++++++++++++++++-----
->>>   drivers/remoteproc/remoteproc_debugfs.c | 37 ++++++++++++++++++-----
->>>   include/linux/remoteproc.h              | 26 ++++++++++++++++
->>>   3 files changed, 87 insertions(+), 16 deletions(-)
->>>
->>> diff --git a/drivers/remoteproc/remoteproc_core.c 
->>> b/drivers/remoteproc/remoteproc_core.c
->>> index 53bc37c508c6..b9a097990862 100644
->>> --- a/drivers/remoteproc/remoteproc_core.c
->>> +++ b/drivers/remoteproc/remoteproc_core.c
->>> @@ -609,21 +609,45 @@ void rproc_vdev_release(struct kref *ref)
->>>    *
->>>    * Returns 0 on success, or an appropriate error code otherwise
->>>    */
->>> -static int rproc_handle_trace(struct rproc *rproc, struct 
->>> fw_rsc_trace *rsc,
->>> +static int rproc_handle_trace(struct rproc *rproc, void *rsc,
->>>                     int offset, int avail, u16 ver)
->>>   {
->>>       struct rproc_debug_trace *trace;
->>>       struct device *dev = &rproc->dev;
->>> +    struct fw_rsc_trace *rsc1;
->>> +    struct fw_rsc_trace2 *rsc2;
->>>       char name[15];
->>> +    size_t rsc_size;
->>> +    u32 reserved;
->>> +    u64 da;
->>> +    u32 len;
->>> +
->>> +    if (!ver) {
->>
->> This looks like a switch to me, but I also do think this looks rather
->> crude, if you spin off the tail of this function and call it from a
->> rproc_handle_trace() and rproc_handle_trace64() I believe this would be
->> cleaner.
-> 
-> Yeah, ok. Will refactor for this in v2.
-> 
->>
->>> +        rsc1 = (struct fw_rsc_trace *)rsc;
->>> +        rsc_size = sizeof(*rsc1);
->>> +        reserved = rsc1->reserved;
->>> +        da = rsc1->da;
->>> +        len = rsc1->len;
->>> +    } else if (ver == 1) {
->>> +        rsc2 = (struct fw_rsc_trace2 *)rsc;
->>> +        rsc_size = sizeof(*rsc2);
->>> +        reserved = rsc2->reserved;
->>> +        da = rsc2->da;
->>> +        len = rsc2->len;
->>> +    } else {
->>> +        dev_err(dev, "unsupported trace rsc version %d\n", ver);
->>
->> If we use "type" to describe your 64-bit-da-trace then this sanity check
->> would have been taken care of by the core.
->>
->>> +        return -EINVAL;
->>> +    }
->>> -    if (sizeof(*rsc) > avail) {
->>> +    if (rsc_size > avail) {
->>>           dev_err(dev, "trace rsc is truncated\n");
->>>           return -EINVAL;
->>>       }
->>>       /* make sure reserved bytes are zeroes */
->>> -    if (rsc->reserved) {
->>> -        dev_err(dev, "trace rsc has non zero reserved bytes\n");
->>> +    if (reserved) {
->>> +        dev_err(dev, "trace rsc has non zero reserved bytes, value = 
->>> 0x%x\n",
->>> +            reserved);
->>>           return -EINVAL;
->>>       }
->>> @@ -632,8 +656,8 @@ static int rproc_handle_trace(struct rproc 
->>> *rproc, struct fw_rsc_trace *rsc,
->>>           return -ENOMEM;
->>>       /* set the trace buffer dma properties */
->>> -    trace->trace_mem.len = rsc->len;
->>> -    trace->trace_mem.da = rsc->da;
->>> +    trace->trace_mem.len = len;
->>> +    trace->trace_mem.da = da;
->>>       /* set pointer on rproc device */
->>>       trace->rproc = rproc;
->>> @@ -652,8 +676,8 @@ static int rproc_handle_trace(struct rproc 
->>> *rproc, struct fw_rsc_trace *rsc,
->>>       rproc->num_traces++;
->>> -    dev_dbg(dev, "%s added: da 0x%x, len 0x%x\n",
->>> -        name, rsc->da, rsc->len);
->>> +    dev_dbg(dev, "%s added: da 0x%llx, len 0x%x\n",
->>> +        name, da, len);
->>>       return 0;
->>>   }
->>> diff --git a/drivers/remoteproc/remoteproc_debugfs.c 
->>> b/drivers/remoteproc/remoteproc_debugfs.c
->>> index 3560eed7a360..ff43736db45a 100644
->>> --- a/drivers/remoteproc/remoteproc_debugfs.c
->>> +++ b/drivers/remoteproc/remoteproc_debugfs.c
->>> @@ -192,7 +192,8 @@ static int rproc_rsc_table_show(struct seq_file 
->>> *seq, void *p)
->>>       struct resource_table *table = rproc->table_ptr;
->>>       struct fw_rsc_carveout *c;
->>>       struct fw_rsc_devmem *d;
->>> -    struct fw_rsc_trace *t;
->>> +    struct fw_rsc_trace *t1;
->>> +    struct fw_rsc_trace2 *t2;
->>>       struct fw_rsc_vdev *v;
->>>       int i, j;
->>> @@ -205,6 +206,7 @@ static int rproc_rsc_table_show(struct seq_file 
->>> *seq, void *p)
->>>           int offset = table->offset[i];
->>>           struct fw_rsc_hdr *hdr = (void *)table + offset;
->>>           void *rsc = (void *)hdr + sizeof(*hdr);
->>> +        u16 ver = hdr->st.v;
->>>           switch (hdr->st.t) {
->>>           case RSC_CARVEOUT:
->>> @@ -230,13 +232,32 @@ static int rproc_rsc_table_show(struct seq_file 
->>> *seq, void *p)
->>>               seq_printf(seq, "  Name %s\n\n", d->name);
->>>               break;
->>>           case RSC_TRACE:
->>> -            t = rsc;
->>> -            seq_printf(seq, "Entry %d is of type %s\n",
->>> -                   i, types[hdr->st.t]);
->>> -            seq_printf(seq, "  Device Address 0x%x\n", t->da);
->>> -            seq_printf(seq, "  Length 0x%x Bytes\n", t->len);
->>> -            seq_printf(seq, "  Reserved (should be zero) [%d]\n", 
->>> t->reserved);
->>> -            seq_printf(seq, "  Name %s\n\n", t->name);
->>> +            if (ver == 0) {
->>
->> Again, this is a switch, here in a switch. Just defining a new
->> RSC_TRACE64 type would reduce the amount of code here...
-> 
-> OK.
-> 
->>
->>> +                t1 = rsc;
->>> +                seq_printf(seq, "Entry %d is version %d of type %s\n",
->>> +                       i, ver, types[hdr->st.t]);
->>> +                seq_printf(seq, "  Device Address 0x%x\n",
->>> +                       t1->da);
->>> +                seq_printf(seq, "  Length 0x%x Bytes\n",
->>> +                       t1->len);
->>> +                seq_printf(seq, "  Reserved (should be zero) [%d]\n",
->>> +                       t1->reserved);
->>> +                seq_printf(seq, "  Name %s\n\n", t1->name);
->>> +            } else if (ver == 1) {
->>> +                t2 = rsc;
->>> +                seq_printf(seq, "Entry %d is version %d of type %s\n",
->>> +                       i, ver, types[hdr->st.t]);
->>> +                seq_printf(seq, "  Device Address 0x%llx\n",
->>> +                       t2->da);
->>> +                seq_printf(seq, "  Length 0x%x Bytes\n",
->>> +                       t2->len);
->>> +                seq_printf(seq, "  Reserved (should be zero) [%d]\n",
->>> +                       t2->reserved);
->>> +                seq_printf(seq, "  Name %s\n\n", t2->name);
->>> +            } else {
->>> +                seq_printf(seq, "Entry %d is an unsupported version 
->>> %d of type %s\n",
->>> +                       i, ver, types[hdr->st.t]);
->>> +            }
->>>               break;
->>>           case RSC_VDEV:
->>>               v = rsc;
->>> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
->>> index 526d3cb45e37..3b3bea42f8b1 100644
->>> --- a/include/linux/remoteproc.h
->>> +++ b/include/linux/remoteproc.h
->>> @@ -243,6 +243,32 @@ struct fw_rsc_trace {
->>>       u8 name[32];
->>>   } __packed;
->>> +/**
->>> + * struct fw_rsc_trace2 - trace buffer declaration supporting 64-bits
->>> + * @padding: initial padding after type field for aligned 64-bit access
->>> + * @da: device address (64-bit)
->>> + * @len: length (in bytes)
->>> + * @reserved: reserved (must be zero)
->>> + * @name: human-readable name of the trace buffer
->>> + *
->>> + * This resource entry is an enhanced version of the fw_rsc_trace 
->>> resourec entry
->>> + * and the provides equivalent functionality but designed for 64-bit 
->>> remote
->>> + * processors.
->>> + *
->>> + * @da specifies the device address of the buffer, @len specifies
->>> + * its size, and @name may contain a human readable name of the 
->>> trace buffer.
->>> + *
->>> + * After booting the remote processor, the trace buffers are exposed 
->>> to the
->>> + * user via debugfs entries (called trace0, trace1, etc..).
->>> + */
->>> +struct fw_rsc_trace2 {
->>
->> Sounds more like fw_rsc_trace64 to me - in particular since the version
->> of trace2 is 1...
-> 
-> Yeah, will rename this.
-> 
->>
->>> +    u32 padding;
->>> +    u64 da;
->>> +    u32 len;
->>> +    u32 reserved;
->>
->> What's the purpose of this reserved field?
-> 
-> Partly to make sure the entire resource is aligned on an 8-byte, and 
-> partly copied over from fw_rsc_trace entry. I guess 32-bits is already 
-> large enough of a size for trace entries irrespective of 32-bit or 
-> 64-bit traces, so I doubt if we want to make the len field also a u64.
+Hi Suman,
 
-Looking at this again, I can drop both padding and reserved fields, if I 
-move the len field before da. Any preferences/comments?
+Le ven. 22 mai 2020 =E0 11:47, Suman Anna <s-anna@ti.com> a =E9crit :
+> Hi Paul,
+>=20
+> On 5/15/20 5:43 AM, Paul Cercueil wrote:
+>> Call pm_runtime_get_sync() before the firmware is loaded, and
+>> pm_runtime_put() after the remote processor has been stopped.
+>>=20
+>> Even though the remoteproc device has no PM callbacks, this allows=20
+>> the
+>> parent device's PM callbacks to be properly called.
+>=20
+> I see this patch staged now for 5.8, and the latest -next branch has=20
+> broken the pm-runtime autosuspend feature we have in the OMAP=20
+> remoteproc driver. See commit 5f31b232c674 ("remoteproc/omap: Add=20
+> support for runtime auto-suspend/resume").
+>=20
+> What was the original purpose of this patch, because there can be=20
+> differing backends across different SoCs.
 
-regards
-Suman
+Did you try pm_suspend_ignore_children()? It looks like it was made for=20
+your use-case.
 
-> 
+Cheers,
+-Paul
+
+>=20
 > regards
 > Suman
-> 
->>
->> Regards,
->> Bjorn
->>
->>> +    u8 name[32];
->>> +} __packed;
->>> +
->>>   /**
->>>    * struct fw_rsc_vdev_vring - vring descriptor entry
->>>    * @da: device address
->>> -- 
->>> 2.23.0
->>>
-> 
+>=20
+>>=20
+>> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+>> ---
+>>=20
+>> Notes:
+>>      v2-v4: No change
+>>      v5: Move calls to prepare/unprepare to=20
+>> rproc_fw_boot/rproc_shutdown
+>>      v6: Instead of prepare/unprepare callbacks, use PM runtime=20
+>> callbacks
+>>      v7: Check return value of pm_runtime_get_sync()
+>>=20
+>>   drivers/remoteproc/remoteproc_core.c | 17 ++++++++++++++++-
+>>   1 file changed, 16 insertions(+), 1 deletion(-)
+>>=20
+>> diff --git a/drivers/remoteproc/remoteproc_core.c=20
+>> b/drivers/remoteproc/remoteproc_core.c
+>> index a7f96bc98406..e33d1ef27981 100644
+>> --- a/drivers/remoteproc/remoteproc_core.c
+>> +++ b/drivers/remoteproc/remoteproc_core.c
+>> @@ -29,6 +29,7 @@
+>>   #include <linux/devcoredump.h>
+>>   #include <linux/rculist.h>
+>>   #include <linux/remoteproc.h>
+>> +#include <linux/pm_runtime.h>
+>>   #include <linux/iommu.h>
+>>   #include <linux/idr.h>
+>>   #include <linux/elf.h>
+>> @@ -1382,6 +1383,12 @@ static int rproc_fw_boot(struct rproc *rproc,=20
+>> const struct firmware *fw)
+>>   	if (ret)
+>>   		return ret;
+>>   =7F+	ret =3D pm_runtime_get_sync(dev);
+>> +	if (ret < 0) {
+>> +		dev_err(dev, "pm_runtime_get_sync failed: %d\n", ret);
+>> +		return ret;
+>> +	}
+>> +
+>>   	dev_info(dev, "Booting fw image %s, size %zd\n", name, fw->size);
+>>   =7F  	/*
+>> @@ -1391,7 +1398,7 @@ static int rproc_fw_boot(struct rproc *rproc,=20
+>> const struct firmware *fw)
+>>   	ret =3D rproc_enable_iommu(rproc);
+>>   	if (ret) {
+>>   		dev_err(dev, "can't enable iommu: %d\n", ret);
+>> -		return ret;
+>> +		goto put_pm_runtime;
+>>   	}
+>>   =7F  	rproc->bootaddr =3D rproc_get_boot_addr(rproc, fw);
+>> @@ -1435,6 +1442,8 @@ static int rproc_fw_boot(struct rproc *rproc,=20
+>> const struct firmware *fw)
+>>   	rproc->table_ptr =3D NULL;
+>>   disable_iommu:
+>>   	rproc_disable_iommu(rproc);
+>> +put_pm_runtime:
+>> +	pm_runtime_put(dev);
+>>   	return ret;
+>>   }
+>>   =7F@@ -1840,6 +1849,8 @@ void rproc_shutdown(struct rproc *rproc)
+>>   =7F  	rproc_disable_iommu(rproc);
+>>   =7F+	pm_runtime_put(dev);
+>> +
+>>   	/* Free the copy of the resource table */
+>>   	kfree(rproc->cached_table);
+>>   	rproc->cached_table =3D NULL;
+>> @@ -2118,6 +2129,9 @@ struct rproc *rproc_alloc(struct device *dev,=20
+>> const char *name,
+>>   =7F  	rproc->state =3D RPROC_OFFLINE;
+>>   =7F+	pm_runtime_no_callbacks(&rproc->dev);
+>> +	pm_runtime_enable(&rproc->dev);
+>> +
+>>   	return rproc;
+>>   }
+>>   EXPORT_SYMBOL(rproc_alloc);
+>> @@ -2133,6 +2147,7 @@ EXPORT_SYMBOL(rproc_alloc);
+>>    */
+>>   void rproc_free(struct rproc *rproc)
+>>   {
+>> +	pm_runtime_disable(&rproc->dev);
+>>   	put_device(&rproc->dev);
+>>   }
+>>   EXPORT_SYMBOL(rproc_free);
+>>=20
+>=20
+
 
