@@ -2,40 +2,67 @@ Return-Path: <SRS0=mdwO=7H=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5996FC433E0
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 25 May 2020 14:47:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 744D3C433E0
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 25 May 2020 20:06:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 33BD72073B
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 25 May 2020 14:47:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 518F22071C
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 25 May 2020 20:06:17 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KQUAnRX5"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391030AbgEYOrV (ORCPT
+        id S2390691AbgEYUGQ (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 25 May 2020 10:47:21 -0400
-Received: from mga04.intel.com ([192.55.52.120]:34259 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391015AbgEYOrU (ORCPT
+        Mon, 25 May 2020 16:06:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43256 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390378AbgEYUGP (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 25 May 2020 10:47:20 -0400
-IronPort-SDR: bVhLv7wx+Z3B2g5I+lrTpi45G8j9ErgmenNHzbNJZJb/heJ9zGMmMx+HW1zgaQcX9aquaABHhW
- m1q+4z/0OUtw==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 May 2020 07:45:15 -0700
-IronPort-SDR: 45GBlWjKE+iLC0mf/q5dc506LN2LwpN65oemyTWsoeUsmhOPnf53KEAw1ce9MOfB+9f+FxC8k5
- SeDe1wXO96CA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.73,433,1583222400"; 
-   d="scan'208";a="266165872"
-Received: from gliakhov-mobl2.ger.corp.intel.com (HELO ubuntu.ger.corp.intel.com) ([10.249.41.109])
-  by orsmga003.jf.intel.com with ESMTP; 25 May 2020 07:45:13 -0700
-From:   Guennadi Liakhovetski <guennadi.liakhovetski@linux.intel.com>
-To:     kvm@vger.kernel.org
-Cc:     linux-remoteproc@vger.kernel.org,
+        Mon, 25 May 2020 16:06:15 -0400
+Received: from mail-pj1-x1042.google.com (mail-pj1-x1042.google.com [IPv6:2607:f8b0:4864:20::1042])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 63676C05BD43
+        for <linux-remoteproc@vger.kernel.org>; Mon, 25 May 2020 13:06:15 -0700 (PDT)
+Received: by mail-pj1-x1042.google.com with SMTP id ci23so305737pjb.5
+        for <linux-remoteproc@vger.kernel.org>; Mon, 25 May 2020 13:06:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=MtyoTn4GYPt9dhv2arqER2mAYymrdcyONubk0zS7sZs=;
+        b=KQUAnRX5tzUnJy5PLyVuCGssXM6PJ3RqX2ASorhfrJRcENisw0xJNkMAr3LVTOYMjg
+         trlWL4ts2qnTKpdCqwyCeQh/fuehe8fMo4X++UJZyrRalwDVHI6ksQb8ryLn0vuzLf4j
+         7y9+l+2+Gkpp6gMy+G2F+hjoFPPtshHbyPL3isZRAHAl0RV/tuHiBB0kU0XjMwv7KiOt
+         Vlid4SnrTJWiqppbRIrKBjNnxW13VMGncsNFveqVkImLbXub7peRvsQSCwx4xLM8ARTQ
+         9ebfRDSXbpZUPNO+5envXfAAvcsyNKAPoiUeFytK7rTbv5t4N7Xe8xaKNwHRJ9oaA5+r
+         bHsg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=MtyoTn4GYPt9dhv2arqER2mAYymrdcyONubk0zS7sZs=;
+        b=tG+VsEKOhM+/m+uUCsQzn7CXm5dTYJxB1+Uzx2BDh0p41h9VQnA3I/Hu9LQZ7dTNyg
+         M/0hgvDkBchtUb5cd0Ikq5V8KlI+6Lr2vSUdMsmKJy+/TBQyTG+sZlaw+xsudsxDV2Hg
+         dYdbuD+tdlmBpsTS5w8jy6/Yg3hP7ZzqIB5lgQ4lKP0hqNunSIDmE1a/A1nI1yKI9L1N
+         XJXg9ovoFLTv15e+A8EJPKccYl7RnxDqUk9rGGthGBXwlhagVVwSK+XvD0HybYlI97O+
+         WlHPnNobj7iVpOneb4OV6O3BRpcPVupwPmwIW7DMbDiAioHqyhIJOnJpkQVzGz/bt577
+         8spg==
+X-Gm-Message-State: AOAM5324cFzMn6UQWqbn4cmWcR4NmjE4canCnX4q3SexvS/x3BCJc9vT
+        YDN6Uhs0PqpRPttM/G2PFrqpVM7v/io=
+X-Google-Smtp-Source: ABdhPJzITy55cXGM/nbPdssmr/oyWzB9WTj/InQn/OlL5vGnc0h7EzI+jbHfZlo87i+pt6msUn4cHw==
+X-Received: by 2002:a17:90b:3d4:: with SMTP id go20mr24212597pjb.208.1590437174421;
+        Mon, 25 May 2020 13:06:14 -0700 (PDT)
+Received: from xps15 (S0106002369de4dac.cg.shawcable.net. [68.147.8.254])
+        by smtp.gmail.com with ESMTPSA id b23sm4164876pgs.33.2020.05.25.13.06.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 25 May 2020 13:06:13 -0700 (PDT)
+Date:   Mon, 25 May 2020 14:06:11 -0600
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+To:     Guennadi Liakhovetski <guennadi.liakhovetski@linux.intel.com>
+Cc:     kvm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
         virtualization@lists.linux-foundation.org,
         sound-open-firmware@alsa-project.org,
         Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
@@ -44,524 +71,258 @@ Cc:     linux-remoteproc@vger.kernel.org,
         Jason Wang <jasowang@redhat.com>,
         Ohad Ben-Cohen <ohad@wizery.com>,
         Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: [PATCH v2 5/5] vhost: add an RPMsg API
-Date:   Mon, 25 May 2020 16:44:58 +0200
-Message-Id: <20200525144458.8413-6-guennadi.liakhovetski@linux.intel.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200525144458.8413-1-guennadi.liakhovetski@linux.intel.com>
+Subject: Re: [PATCH v2 3/5] rpmsg: move common structures and defines to
+ headers
+Message-ID: <20200525200611.GA9309@xps15>
 References: <20200525144458.8413-1-guennadi.liakhovetski@linux.intel.com>
+ <20200525144458.8413-4-guennadi.liakhovetski@linux.intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200525144458.8413-4-guennadi.liakhovetski@linux.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Linux supports running the RPMsg protocol over the VirtIO transport
-protocol, but currently there is only support for VirtIO clients and
-no support for a VirtIO server. This patch adds a vhost-based RPMsg
-server implementation.
+Hi Guennadi,
 
-Signed-off-by: Guennadi Liakhovetski <guennadi.liakhovetski@linux.intel.com>
----
- drivers/vhost/Kconfig       |   7 +
- drivers/vhost/Makefile      |   3 +
- drivers/vhost/rpmsg.c       | 372 ++++++++++++++++++++++++++++++++++++++++++++
- drivers/vhost/vhost_rpmsg.h |  74 +++++++++
- 4 files changed, 456 insertions(+)
- create mode 100644 drivers/vhost/rpmsg.c
- create mode 100644 drivers/vhost/vhost_rpmsg.h
+On Mon, May 25, 2020 at 04:44:56PM +0200, Guennadi Liakhovetski wrote:
+> virtio_rpmsg_bus.c keeps RPMsg protocol structure declarations and
+> common defines like the ones, needed for name-space announcements,
+> internal. Move them to common headers instead.
+> 
+> Signed-off-by: Guennadi Liakhovetski <guennadi.liakhovetski@linux.intel.com>
+> ---
+>  drivers/rpmsg/virtio_rpmsg_bus.c | 78 +-------------------------------------
+>  include/linux/virtio_rpmsg.h     | 81 ++++++++++++++++++++++++++++++++++++++++
+>  include/uapi/linux/rpmsg.h       |  3 ++
+>  3 files changed, 86 insertions(+), 76 deletions(-)
+>  create mode 100644 include/linux/virtio_rpmsg.h
+> 
+> diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
+> index 07d4f33..f3bd050 100644
+> --- a/drivers/rpmsg/virtio_rpmsg_bus.c
+> +++ b/drivers/rpmsg/virtio_rpmsg_bus.c
+> @@ -25,7 +25,9 @@
+>  #include <linux/virtio.h>
+>  #include <linux/virtio_ids.h>
+>  #include <linux/virtio_config.h>
+> +#include <linux/virtio_rpmsg.h>
+>  #include <linux/wait.h>
+> +#include <uapi/linux/rpmsg.h>
+>  
+>  #include "rpmsg_internal.h"
+>  
+> @@ -69,58 +71,6 @@ struct virtproc_info {
+>  	struct rpmsg_endpoint *ns_ept;
+>  };
+>  
+> -/* The feature bitmap for virtio rpmsg */
+> -#define VIRTIO_RPMSG_F_NS	0 /* RP supports name service notifications */
+> -
+> -/**
+> - * struct rpmsg_hdr - common header for all rpmsg messages
+> - * @src: source address
+> - * @dst: destination address
+> - * @reserved: reserved for future use
+> - * @len: length of payload (in bytes)
+> - * @flags: message flags
+> - * @data: @len bytes of message payload data
+> - *
+> - * Every message sent(/received) on the rpmsg bus begins with this header.
+> - */
+> -struct rpmsg_hdr {
+> -	u32 src;
+> -	u32 dst;
+> -	u32 reserved;
+> -	u16 len;
+> -	u16 flags;
+> -	u8 data[];
+> -} __packed;
+> -
+> -/**
+> - * struct rpmsg_ns_msg - dynamic name service announcement message
+> - * @name: name of remote service that is published
+> - * @addr: address of remote service that is published
+> - * @flags: indicates whether service is created or destroyed
+> - *
+> - * This message is sent across to publish a new service, or announce
+> - * about its removal. When we receive these messages, an appropriate
+> - * rpmsg channel (i.e device) is created/destroyed. In turn, the ->probe()
+> - * or ->remove() handler of the appropriate rpmsg driver will be invoked
+> - * (if/as-soon-as one is registered).
+> - */
+> -struct rpmsg_ns_msg {
+> -	char name[RPMSG_NAME_SIZE];
+> -	u32 addr;
+> -	u32 flags;
+> -} __packed;
+> -
+> -/**
+> - * enum rpmsg_ns_flags - dynamic name service announcement flags
+> - *
+> - * @RPMSG_NS_CREATE: a new remote service was just created
+> - * @RPMSG_NS_DESTROY: a known remote service was just destroyed
+> - */
+> -enum rpmsg_ns_flags {
+> -	RPMSG_NS_CREATE		= 0,
+> -	RPMSG_NS_DESTROY	= 1,
+> -};
+> -
+>  /**
+>   * @vrp: the remote processor this channel belongs to
+>   */
+> @@ -134,36 +84,12 @@ struct virtio_rpmsg_channel {
+>  	container_of(_rpdev, struct virtio_rpmsg_channel, rpdev)
+>  
+>  /*
+> - * We're allocating buffers of 512 bytes each for communications. The
+> - * number of buffers will be computed from the number of buffers supported
+> - * by the vring, upto a maximum of 512 buffers (256 in each direction).
+> - *
+> - * Each buffer will have 16 bytes for the msg header and 496 bytes for
+> - * the payload.
+> - *
+> - * This will utilize a maximum total space of 256KB for the buffers.
+> - *
+> - * We might also want to add support for user-provided buffers in time.
+> - * This will allow bigger buffer size flexibility, and can also be used
+> - * to achieve zero-copy messaging.
+> - *
+> - * Note that these numbers are purely a decision of this driver - we
+> - * can change this without changing anything in the firmware of the remote
+> - * processor.
+> - */
+> -#define MAX_RPMSG_NUM_BUFS	(512)
+> -#define MAX_RPMSG_BUF_SIZE	(512)
+> -
+> -/*
+>   * Local addresses are dynamically allocated on-demand.
+>   * We do not dynamically assign addresses from the low 1024 range,
+>   * in order to reserve that address range for predefined services.
+>   */
+>  #define RPMSG_RESERVED_ADDRESSES	(1024)
+>  
+> -/* Address 53 is reserved for advertising remote services */
+> -#define RPMSG_NS_ADDR			(53)
+> -
+>  static void virtio_rpmsg_destroy_ept(struct rpmsg_endpoint *ept);
+>  static int virtio_rpmsg_send(struct rpmsg_endpoint *ept, void *data, int len);
+>  static int virtio_rpmsg_sendto(struct rpmsg_endpoint *ept, void *data, int len,
+> diff --git a/include/linux/virtio_rpmsg.h b/include/linux/virtio_rpmsg.h
+> new file mode 100644
+> index 00000000..bf2fd69
+> --- /dev/null
+> +++ b/include/linux/virtio_rpmsg.h
+> @@ -0,0 +1,81 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +
+> +#ifndef _LINUX_VIRTIO_RPMSG_H
+> +#define _LINUX_VIRTIO_RPMSG_H
+> +
+> +#include <linux/mod_devicetable.h>
+> +
+> +/* Address 53 is reserved for advertising remote services */
+> +#define RPMSG_NS_ADDR			(53)
+> +
+> +/*
+> + * We're allocating buffers of 512 bytes each for communications. The
+> + * number of buffers will be computed from the number of buffers supported
+> + * by the vring, upto a maximum of 512 buffers (256 in each direction).
+> + *
+> + * Each buffer will have 16 bytes for the msg header and 496 bytes for
+> + * the payload.
+> + *
+> + * This will utilize a maximum total space of 256KB for the buffers.
+> + *
+> + * We might also want to add support for user-provided buffers in time.
+> + * This will allow bigger buffer size flexibility, and can also be used
+> + * to achieve zero-copy messaging.
+> + *
+> + * Note that these numbers are purely a decision of this driver - we
+> + * can change this without changing anything in the firmware of the remote
+> + * processor.
+> + */
+> +#define MAX_RPMSG_NUM_BUFS	512
+> +#define MAX_RPMSG_BUF_SIZE	512
+> +
+> +/**
+> + * struct rpmsg_hdr - common header for all rpmsg messages
+> + * @src: source address
+> + * @dst: destination address
+> + * @reserved: reserved for future use
+> + * @len: length of payload (in bytes)
+> + * @flags: message flags
+> + * @data: @len bytes of message payload data
+> + *
+> + * Every message sent(/received) on the rpmsg bus begins with this header.
+> + */
+> +struct rpmsg_hdr {
+> +	u32 src;
+> +	u32 dst;
+> +	u32 reserved;
+> +	u16 len;
+> +	u16 flags;
+> +	u8 data[];
+> +} __packed;
+> +
+> +/**
+> + * struct rpmsg_ns_msg - dynamic name service announcement message
+> + * @name: name of remote service that is published
+> + * @addr: address of remote service that is published
+> + * @flags: indicates whether service is created or destroyed
+> + *
+> + * This message is sent across to publish a new service, or announce
+> + * about its removal. When we receive these messages, an appropriate
+> + * rpmsg channel (i.e device) is created/destroyed. In turn, the ->probe()
+> + * or ->remove() handler of the appropriate rpmsg driver will be invoked
+> + * (if/as-soon-as one is registered).
+> + */
+> +struct rpmsg_ns_msg {
+> +	char name[RPMSG_NAME_SIZE];
+> +	u32 addr;
+> +	u32 flags;
+> +} __packed;
+> +
+> +/**
+> + * enum rpmsg_ns_flags - dynamic name service announcement flags
+> + *
+> + * @RPMSG_NS_CREATE: a new remote service was just created
+> + * @RPMSG_NS_DESTROY: a known remote service was just destroyed
+> + */
+> +enum rpmsg_ns_flags {
+> +	RPMSG_NS_CREATE		= 0,
+> +	RPMSG_NS_DESTROY	= 1,
+> +};
+> +
 
-diff --git a/drivers/vhost/Kconfig b/drivers/vhost/Kconfig
-index 2c75d16..c2113db 100644
---- a/drivers/vhost/Kconfig
-+++ b/drivers/vhost/Kconfig
-@@ -38,6 +38,13 @@ config VHOST_NET
- 	  To compile this driver as a module, choose M here: the module will
- 	  be called vhost_net.
- 
-+config VHOST_RPMSG
-+	tristate
-+	depends on VHOST
-+	---help---
-+	  Vhost RPMsg API allows vhost drivers to communicate with VirtIO
-+	  drivers, using the RPMsg over VirtIO protocol.
-+
- config VHOST_SCSI
- 	tristate "VHOST_SCSI TCM fabric driver"
- 	depends on TARGET_CORE && EVENTFD
-diff --git a/drivers/vhost/Makefile b/drivers/vhost/Makefile
-index f3e1897..9cf459d 100644
---- a/drivers/vhost/Makefile
-+++ b/drivers/vhost/Makefile
-@@ -2,6 +2,9 @@
- obj-$(CONFIG_VHOST_NET) += vhost_net.o
- vhost_net-y := net.o
- 
-+obj-$(CONFIG_VHOST_RPMSG) += vhost_rpmsg.o
-+vhost_rpmsg-y := rpmsg.o
-+
- obj-$(CONFIG_VHOST_SCSI) += vhost_scsi.o
- vhost_scsi-y := scsi.o
- 
-diff --git a/drivers/vhost/rpmsg.c b/drivers/vhost/rpmsg.c
-new file mode 100644
-index 00000000..609b9cf
---- /dev/null
-+++ b/drivers/vhost/rpmsg.c
-@@ -0,0 +1,372 @@
-+/* SPDX-License-Identifier: (GPL-2.0-only) */
-+/*
-+ * Copyright(c) 2020 Intel Corporation. All rights reserved.
-+ *
-+ * Author: Guennadi Liakhovetski <guennadi.liakhovetski@linux.intel.com>
-+ *
-+ * vhost-RPMsg VirtIO interface
-+ */
-+
-+#include <linux/compat.h>
-+#include <linux/file.h>
-+#include <linux/miscdevice.h>
-+#include <linux/module.h>
-+#include <linux/mutex.h>
-+#include <linux/vhost.h>
-+#include <linux/virtio_rpmsg.h>
-+#include <uapi/linux/rpmsg.h>
-+
-+#include "vhost.h"
-+#include "vhost_rpmsg.h"
-+
-+/*
-+ * All virtio-rpmsg virtual queue kicks always come with just one buffer -
-+ * either input or output
-+ */
-+static int vhost_rpmsg_get_single(struct vhost_virtqueue *vq)
-+{
-+	struct vhost_rpmsg *vr = container_of(vq->dev, struct vhost_rpmsg, dev);
-+	unsigned int out, in;
-+	int head = vhost_get_vq_desc(vq, vq->iov, ARRAY_SIZE(vq->iov),
-+				     &out, &in, NULL, NULL);
-+	if (head < 0) {
-+		vq_err(vq, "%s(): error %d getting buffer\n",
-+		       __func__, head);
-+		return head;
-+	}
-+
-+	/* Nothing new? */
-+	if (head == vq->num)
-+		return head;
-+
-+	if (vq == &vr->vq[VIRTIO_RPMSG_RESPONSE] && (out || in != 1)) {
-+		vq_err(vq,
-+		       "%s(): invalid %d input and %d output in response queue\n",
-+		       __func__, in, out);
-+		goto return_buf;
-+	}
-+
-+	if (vq == &vr->vq[VIRTIO_RPMSG_REQUEST] && (in || out != 1)) {
-+		vq_err(vq,
-+		       "%s(): invalid %d input and %d output in request queue\n",
-+		       __func__, in, out);
-+		goto return_buf;
-+	}
-+
-+	return head;
-+
-+return_buf:
-+	/*
-+	 * FIXME: might need to return the buffer using vhost_add_used()
-+	 * or vhost_discard_vq_desc(). vhost_discard_vq_desc() is
-+	 * described as "being useful for error handling," but it makes
-+	 * the thus discarded buffers "unseen," so next time we look we
-+	 * retrieve them again?
-+	 */
-+	return -EINVAL;
-+}
-+
-+static const struct vhost_rpmsg_ept *vhost_rpmsg_ept_find(struct vhost_rpmsg *vr,
-+							  int addr)
-+{
-+	unsigned int i;
-+
-+	for (i = 0; i < vr->n_epts; i++)
-+		if (vr->ept[i].addr == addr)
-+			return vr->ept + i;
-+
-+	return NULL;
-+}
-+
-+/*
-+ * if len < 0, then for reading a request, the complete virtual queue buffer
-+ * size is prepared, for sending a response, the length in the iterator is used
-+ */
-+int vhost_rpmsg_start_lock(struct vhost_rpmsg *vr,
-+			   struct vhost_rpmsg_iter *iter,
-+			   unsigned int qid, ssize_t len)
-+	__acquires(vq->mutex)
-+{
-+	struct vhost_virtqueue *vq = vr->vq + qid;
-+	size_t tmp;
-+
-+	if (qid >= VIRTIO_RPMSG_NUM_OF_VQS)
-+		return -EINVAL;
-+
-+	iter->vq = vq;
-+
-+	mutex_lock(&vq->mutex);
-+	vhost_disable_notify(&vr->dev, vq);
-+
-+	iter->head = vhost_rpmsg_get_single(vq);
-+	if (iter->head == vq->num)
-+		iter->head = -EAGAIN;
-+
-+	if (iter->head < 0)
-+		goto unlock;
-+
-+	tmp = vq->iov[0].iov_len;
-+	if (tmp < sizeof(iter->rhdr)) {
-+		vq_err(vq, "%s(): size %zu too small\n", __func__, tmp);
-+		iter->head = -ENOBUFS;
-+		goto return_buf;
-+	}
-+
-+	switch (qid) {
-+	case VIRTIO_RPMSG_REQUEST:
-+		if (len < 0) {
-+			len = tmp - sizeof(iter->rhdr);
-+		} else if (tmp < sizeof(iter->rhdr) + len) {
-+			iter->head = -ENOBUFS;
-+			goto return_buf;
-+		}
-+
-+		/* len is now the size of the payload */
-+		iov_iter_init(&iter->iov_iter, WRITE,
-+			      vq->iov, 1, sizeof(iter->rhdr) + len);
-+
-+		/* Read the RPMSG header with endpoint addresses */
-+		tmp = copy_from_iter(&iter->rhdr, sizeof(iter->rhdr),
-+				     &iter->iov_iter);
-+		if (tmp != sizeof(iter->rhdr)) {
-+			vq_err(vq, "%s(): got %zu instead of %zu\n", __func__,
-+			       tmp, sizeof(iter->rhdr));
-+			iter->head = -EIO;
-+			goto return_buf;
-+		}
-+
-+		iter->ept = vhost_rpmsg_ept_find(vr, iter->rhdr.dst);
-+		if (!iter->ept) {
-+			vq_err(vq, "%s(): no endpoint with address %d\n",
-+			       __func__, iter->rhdr.dst);
-+			iter->head = -ENOENT;
-+			goto return_buf;
-+		}
-+
-+		/* Let the endpoint read the payload */
-+		if (iter->ept->read) {
-+			ssize_t ret = iter->ept->read(vr, iter);
-+			if (ret < 0) {
-+				iter->head = ret;
-+				goto return_buf;
-+			}
-+
-+			iter->rhdr.len = ret;
-+		} else {
-+			iter->rhdr.len = 0;
-+		}
-+
-+		/* Prepare for the response phase */
-+		iter->rhdr.dst = iter->rhdr.src;
-+		iter->rhdr.src = iter->ept->addr;
-+
-+		break;
-+	case VIRTIO_RPMSG_RESPONSE:
-+		if (!iter->ept && iter->rhdr.dst != RPMSG_NS_ADDR) {
-+			/*
-+			 * Usually the iterator is configured when processing a
-+			 * message on the request queue, but it's also possible
-+			 * to send a message on the response queue without a
-+			 * preceding request, in that case the iterator must
-+			 * contain source and destination addresses.
-+			 */
-+			iter->ept = vhost_rpmsg_ept_find(vr, iter->rhdr.src);
-+			if (!iter->ept) {
-+				iter->head = -ENOENT;
-+				goto return_buf;
-+			}
-+		}
-+
-+		if (len < 0) {
-+			len = tmp - sizeof(iter->rhdr);
-+		} else if (tmp < sizeof(iter->rhdr) + len) {
-+			iter->head = -ENOBUFS;
-+			goto return_buf;
-+		} else {
-+			iter->rhdr.len = len;
-+		}
-+
-+		/* len is now the size of the payload */
-+		iov_iter_init(&iter->iov_iter, READ,
-+			      vq->iov, 1, sizeof(iter->rhdr) + len);
-+
-+		/* Write the RPMSG header with endpoint addresses */
-+		tmp = copy_to_iter(&iter->rhdr, sizeof(iter->rhdr),
-+				   &iter->iov_iter);
-+		if (tmp != sizeof(iter->rhdr)) {
-+			iter->head = -EIO;
-+			goto return_buf;
-+		}
-+
-+		/* Let the endpoint write the payload */
-+		if (iter->ept && iter->ept->write) {
-+			ssize_t ret = iter->ept->write(vr, iter);
-+			if (ret < 0) {
-+				iter->head = ret;
-+				goto return_buf;
-+			}
-+		}
-+
-+		break;
-+	}
-+
-+	return 0;
-+
-+return_buf:
-+	/*
-+	 * FIXME: vhost_discard_vq_desc() or vhost_add_used(), see comment in
-+	 * vhost_rpmsg_get_single()
-+	 */
-+unlock:
-+	vhost_enable_notify(&vr->dev, vq);
-+	mutex_unlock(&vq->mutex);
-+
-+	return iter->head;
-+}
-+EXPORT_SYMBOL_GPL(vhost_rpmsg_start_lock);
-+
-+size_t vhost_rpmsg_copy(struct vhost_rpmsg *vr, struct vhost_rpmsg_iter *iter,
-+			void *data, size_t size)
-+{
-+	/*
-+	 * We could check for excess data, but copy_{to,from}_iter() don't do
-+	 * that either
-+	 */
-+	if (iter->vq == vr->vq + VIRTIO_RPMSG_RESPONSE)
-+		return copy_to_iter(data, size, &iter->iov_iter);
-+
-+	return copy_from_iter(data, size, &iter->iov_iter);
-+}
-+EXPORT_SYMBOL_GPL(vhost_rpmsg_copy);
-+
-+int vhost_rpmsg_finish_unlock(struct vhost_rpmsg *vr,
-+			      struct vhost_rpmsg_iter *iter)
-+	__releases(vq->mutex)
-+{
-+	if (iter->head >= 0)
-+		vhost_add_used_and_signal(iter->vq->dev, iter->vq, iter->head,
-+					  iter->rhdr.len + sizeof(iter->rhdr));
-+
-+	vhost_enable_notify(&vr->dev, iter->vq);
-+	mutex_unlock(&iter->vq->mutex);
-+
-+	return iter->head;
-+}
-+EXPORT_SYMBOL_GPL(vhost_rpmsg_finish_unlock);
-+
-+/*
-+ * Return false to terminate the external loop only if we fail to obtain either
-+ * a request or a response buffer
-+ */
-+static bool handle_rpmsg_req_single(struct vhost_rpmsg *vr,
-+				    struct vhost_virtqueue *vq)
-+{
-+	struct vhost_rpmsg_iter iter;
-+	int ret = vhost_rpmsg_start_lock(vr, &iter, VIRTIO_RPMSG_REQUEST,
-+					 -EINVAL);
-+	if (!ret)
-+		ret = vhost_rpmsg_finish_unlock(vr, &iter);
-+	if (ret < 0) {
-+		if (ret != -EAGAIN)
-+			vq_err(vq, "%s(): RPMSG processing failed %d\n",
-+			       __func__, ret);
-+		return false;
-+	}
-+
-+	if (!iter.ept->write)
-+		return true;
-+
-+	ret = vhost_rpmsg_start_lock(vr, &iter, VIRTIO_RPMSG_RESPONSE,
-+				     -EINVAL);
-+	if (!ret)
-+		ret = vhost_rpmsg_finish_unlock(vr, &iter);
-+	if (ret < 0) {
-+		vq_err(vq, "%s(): RPMSG finalising failed %d\n", __func__, ret);
-+		return false;
-+	}
-+
-+	return true;
-+}
-+
-+static void handle_rpmsg_req_kick(struct vhost_work *work)
-+{
-+	struct vhost_virtqueue *vq = container_of(work, struct vhost_virtqueue,
-+						  poll.work);
-+	struct vhost_rpmsg *vr = container_of(vq->dev, struct vhost_rpmsg, dev);
-+
-+	while (handle_rpmsg_req_single(vr, vq))
-+		;
-+}
-+
-+/*
-+ * initialise two virtqueues with an array of endpoints,
-+ * request and response callbacks
-+ */
-+void vhost_rpmsg_init(struct vhost_rpmsg *vr, const struct vhost_rpmsg_ept *ept,
-+		      unsigned int n_epts)
-+{
-+	unsigned int i;
-+
-+	for (i = 0; i < ARRAY_SIZE(vr->vq); i++)
-+		vr->vq_p[i] = &vr->vq[i];
-+
-+	/* vq[0]: host -> guest, vq[1]: host <- guest */
-+	vr->vq[VIRTIO_RPMSG_REQUEST].handle_kick = handle_rpmsg_req_kick;
-+
-+	vr->ept = ept;
-+	vr->n_epts = n_epts;
-+
-+	vhost_dev_init(&vr->dev, vr->vq_p, VIRTIO_RPMSG_NUM_OF_VQS,
-+		       UIO_MAXIOV, 0, 0, NULL);
-+}
-+EXPORT_SYMBOL_GPL(vhost_rpmsg_init);
-+
-+void vhost_rpmsg_destroy(struct vhost_rpmsg *vr)
-+{
-+	if (vhost_dev_has_owner(&vr->dev))
-+		vhost_poll_flush(&vr->vq[VIRTIO_RPMSG_REQUEST].poll);
-+
-+	vhost_dev_cleanup(&vr->dev);
-+}
-+EXPORT_SYMBOL_GPL(vhost_rpmsg_destroy);
-+
-+/* send namespace */
-+int vhost_rpmsg_ns_announce(struct vhost_rpmsg *vr, const char *name,
-+			    unsigned int src)
-+{
-+	struct vhost_rpmsg_iter iter = {
-+		.rhdr = {
-+			.src = 0,
-+			.dst = RPMSG_NS_ADDR,
-+			.flags = RPMSG_NS_CREATE, /* rpmsg_recv_single() */
-+		},
-+	};
-+	struct rpmsg_ns_msg ns = {
-+		.addr = src,
-+		.flags = RPMSG_NS_CREATE, /* for rpmsg_ns_cb() */
-+	};
-+	int ret = vhost_rpmsg_start_lock(vr, &iter, VIRTIO_RPMSG_RESPONSE,
-+					 sizeof(ns));
-+
-+	if (ret < 0)
-+		return ret;
-+
-+	strlcpy(ns.name, name, sizeof(ns.name));
-+
-+	ret = vhost_rpmsg_copy(vr, &iter, &ns, sizeof(ns));
-+	if (ret != sizeof(ns))
-+		vq_err(iter.vq, "%s(): added %d instead of %zu bytes\n",
-+		       __func__, ret, sizeof(ns));
-+
-+	ret = vhost_rpmsg_finish_unlock(vr, &iter);
-+	if (ret < 0)
-+		vq_err(iter.vq, "%s(): namespace announcement failed: %d\n",
-+		       __func__, ret);
-+
-+	return ret;
-+}
-+EXPORT_SYMBOL_GPL(vhost_rpmsg_ns_announce);
-+
-+MODULE_LICENSE("GPL v2");
-+MODULE_AUTHOR("Intel, Inc.");
-+MODULE_DESCRIPTION("Vhost RPMsg API");
-diff --git a/drivers/vhost/vhost_rpmsg.h b/drivers/vhost/vhost_rpmsg.h
-new file mode 100644
-index 00000000..5248ac9
---- /dev/null
-+++ b/drivers/vhost/vhost_rpmsg.h
-@@ -0,0 +1,74 @@
-+/* SPDX-License-Identifier: (GPL-2.0) */
-+/*
-+ * Copyright(c) 2020 Intel Corporation. All rights reserved.
-+ *
-+ * Author: Guennadi Liakhovetski <guennadi.liakhovetski@linux.intel.com>
-+ */
-+
-+#ifndef VHOST_RPMSG_H
-+#define VHOST_RPMSG_H
-+
-+#include <linux/uio.h>
-+#include <linux/virtio_rpmsg.h>
-+
-+#include "vhost.h"
-+
-+/* RPMsg uses two VirtQueues: one for each direction */
-+enum {
-+	VIRTIO_RPMSG_RESPONSE,	/* RPMsg response (host->guest) buffers */
-+	VIRTIO_RPMSG_REQUEST,	/* RPMsg request (guest->host) buffers */
-+	/* Keep last */
-+	VIRTIO_RPMSG_NUM_OF_VQS,
-+};
-+
-+struct vhost_rpmsg_ept;
-+
-+struct vhost_rpmsg_iter {
-+	struct iov_iter iov_iter;
-+	struct rpmsg_hdr rhdr;
-+	struct vhost_virtqueue *vq;
-+	const struct vhost_rpmsg_ept *ept;
-+	int head;
-+	void *priv;
-+};
-+
-+struct vhost_rpmsg {
-+	struct vhost_dev dev;
-+	struct vhost_virtqueue vq[VIRTIO_RPMSG_NUM_OF_VQS];
-+	struct vhost_virtqueue *vq_p[VIRTIO_RPMSG_NUM_OF_VQS];
-+	const struct vhost_rpmsg_ept *ept;
-+	unsigned int n_epts;
-+};
-+
-+struct vhost_rpmsg_ept {
-+	ssize_t (*read)(struct vhost_rpmsg *, struct vhost_rpmsg_iter *);
-+	ssize_t (*write)(struct vhost_rpmsg *, struct vhost_rpmsg_iter *);
-+	int addr;
-+};
-+
-+static inline size_t vhost_rpmsg_iter_len(const struct vhost_rpmsg_iter *iter)
-+{
-+	return iter->rhdr.len;
-+}
-+
-+#define VHOST_RPMSG_ITER(_src, _dst) {	\
-+	.rhdr = {			\
-+			.src = _src,	\
-+			.dst = _dst,	\
-+		},			\
-+	}
-+
-+void vhost_rpmsg_init(struct vhost_rpmsg *vr, const struct vhost_rpmsg_ept *ept,
-+		      unsigned int n_epts);
-+void vhost_rpmsg_destroy(struct vhost_rpmsg *vr);
-+int vhost_rpmsg_ns_announce(struct vhost_rpmsg *vr, const char *name,
-+			    unsigned int src);
-+int vhost_rpmsg_start_lock(struct vhost_rpmsg *vr,
-+			   struct vhost_rpmsg_iter *iter,
-+			   unsigned int qid, ssize_t len);
-+size_t vhost_rpmsg_copy(struct vhost_rpmsg *vr, struct vhost_rpmsg_iter *iter,
-+			void *data, size_t size);
-+int vhost_rpmsg_finish_unlock(struct vhost_rpmsg *vr,
-+			      struct vhost_rpmsg_iter *iter);
-+
-+#endif
--- 
-1.9.3
+I have started reviewing this set and comments will (likely) come over a few
+days.
 
+For this file, I would have appreciated seeing the structure and defines laid
+out in the same order in this file as they were in virtio_rpmsg_bus.c.  That way
+I don't have to check every item to make sure nothing has been missed.  Not a
+big problem but something to consider for the next revivions.  
+
+The good thing is that it did not break my complation so with above:
+
+Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+
+> +#endif
+> diff --git a/include/uapi/linux/rpmsg.h b/include/uapi/linux/rpmsg.h
+> index e14c6da..d669c04 100644
+> --- a/include/uapi/linux/rpmsg.h
+> +++ b/include/uapi/linux/rpmsg.h
+> @@ -24,4 +24,7 @@ struct rpmsg_endpoint_info {
+>  #define RPMSG_CREATE_EPT_IOCTL	_IOW(0xb5, 0x1, struct rpmsg_endpoint_info)
+>  #define RPMSG_DESTROY_EPT_IOCTL	_IO(0xb5, 0x2)
+>  
+> +/* The feature bitmap for virtio rpmsg */
+> +#define VIRTIO_RPMSG_F_NS	0 /* RP supports name service notifications */
+> +
+>  #endif
+> -- 
+> 1.9.3
+> 
