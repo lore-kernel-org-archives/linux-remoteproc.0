@@ -1,602 +1,335 @@
-Return-Path: <SRS0=mdwO=7H=vger.kernel.org=linux-remoteproc-owner@kernel.org>
+Return-Path: <SRS0=poow=7I=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97D0AC433DF
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 25 May 2020 20:53:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4695BC433E1
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 26 May 2020 17:40:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 683DF206D5
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 25 May 2020 20:53:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0FD1B20704
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 26 May 2020 17:40:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="weUjoOkl"
+	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="Gm+VG3rq"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390798AbgEYUxe (ORCPT
+        id S2388622AbgEZRk2 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 25 May 2020 16:53:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50758 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390787AbgEYUxe (ORCPT
+        Tue, 26 May 2020 13:40:28 -0400
+Received: from mail-dm6nam11on2077.outbound.protection.outlook.com ([40.107.223.77]:6542
+        "EHLO NAM11-DM6-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2388061AbgEZRk0 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 25 May 2020 16:53:34 -0400
-Received: from mail-pl1-x644.google.com (mail-pl1-x644.google.com [IPv6:2607:f8b0:4864:20::644])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DABE0C05BD43
-        for <linux-remoteproc@vger.kernel.org>; Mon, 25 May 2020 13:53:32 -0700 (PDT)
-Received: by mail-pl1-x644.google.com with SMTP id x11so6826655plv.9
-        for <linux-remoteproc@vger.kernel.org>; Mon, 25 May 2020 13:53:32 -0700 (PDT)
+        Tue, 26 May 2020 13:40:26 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=G8/getJTX6mLGZiEPOzLrYezzfh7M2jgZVjEsE809FbNuegWdYkQpKQigYHONuOF2q/h3CafLZ+BpAug3pF7Jcq+PRUCF0MnI2o2yx5nnzoGoNpwsN8F3YD2NM8vOWn7ieL/JFe5x5p4sy+rZyt64fLkHnQ31HNT2M9GacCGIAWNy61fnBXOpMoOb7D9AvhmIVJNVnXWJ6k9r+3DnD7BDH4JoBp9ZuSa9niCz+k80wRB2aPdayR5Sc18e7mpioE2uf1yGszf3lXk+o1diEytVenikpvkLU1JFJK1KjsGPChRw3X6f9oqUDhAqxFeMon9xUtaZVPWI9pwJd2DNk4Ydw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=SwYb4Y44y+i3XjTnhjz5aBjKZXIWebNNANpekkBuUgg=;
+ b=ZyNXARXVEd5WW3162IwKMKHUat+1wdNXRFige+/rWgO7EgA9UAu5hggalE/pBalxXIMKwUsHkxZOU+a1jT0Ue1v9cR1JTN0jbXjPmkwPiguusJu3aL6+D/+YjyRkSj5Ya/dnymYBZHMmACmfpYM9MsqhWf5omrOx99I186lX4lOuJ0UJo4TkeXuLC8Msz5Tyx2oc4obeYbrzoH2eVDGRhROQbzdl2oecLizxCZCTl3iBC/CXZrxyu81Bo5C1K3rxG6MQadHeHNmMMu2XYSV2vw1FGx8URk223fe4ydND+tNI7AbQZ4eg7MaqsKNUwdvoqkJcpNMSQrlnxXzVkFc2AQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=xilinx.com; dmarc=pass action=none header.from=xilinx.com;
+ dkim=pass header.d=xilinx.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=sJUVPQ87Nnu8p32CcEXN8UTsYey2fuUZpEPdr0eQNCI=;
-        b=weUjoOklovNhe0CwPhAZo88kivzPCog/ABPcpUqx3igqjYWrUzTzeGHF4zVajbIlIp
-         reP7kyzNfWAZCk2XPvqcIxrYzg8onrzaRNgjpKf0jvC5oeA1S1GV6/iZ2nmQYRiuo6Lh
-         6dkMW9i1rPW2FkY0OYLFp8WzzCqg6YIKiIAqyulQZQvMHOBJD+s/hYqRgft3KxMjXfvB
-         9u3wd/IBbkJT2bMJMXEfA/PZGB2OTdwE8jG3Mpd55mVYknhn50W16Ij0WqqhUvtYxGyf
-         k0OH2HuKQFBzRISxgkjIA2PIiJeQP9rkQZr/y+hp9Hhdj8EkUxtiguVaQkpemI+eOfq0
-         bfMQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=sJUVPQ87Nnu8p32CcEXN8UTsYey2fuUZpEPdr0eQNCI=;
-        b=HluAiLwerzA+nFmwF4Qsnmh3T0JMxtpD4vpHmTeGR6qZYUXNsBTst+pbNJiHQuQULK
-         E7dzxKcPIhf/EoeVoVw0HVR8wRN9+J9jNpnz3CA46Yh9C4M1NRsGn4p/zjqBXLN1bhrl
-         KcwmL/pHTcfmOA4av9Ly7JzuOy0bTStSlDnYh+aDiNHcZKZXQhF/sbMHXkTob9JDpSIr
-         oFPMt0j+mY7EXDz15EYLM03Bb/YVjhzvndysJ2D0lkblGEPXn+LG8t4j54toegIeZB3P
-         n+9u/BkpRfR5UwwBvfSZZx4o1ZEEB8TkOrgXXLLir6CwCkjwX7vemr/a6jroQXHKVlk4
-         Ytew==
-X-Gm-Message-State: AOAM5334cjiBUagdgInpufs5brllfM5qwL7B3hw/aMpMCqJIgoEgjRd7
-        lwVfQQ5UfZZyF+QTiOUJWUmPlw==
-X-Google-Smtp-Source: ABdhPJwnWQkDjlkno00gL/KSqCjQjB9btNb2b1o4yEniAqSXALQDu2bRzNz9lqFMUXuC6rHzAE6G7A==
-X-Received: by 2002:a17:902:740b:: with SMTP id g11mr25691113pll.158.1590440012010;
-        Mon, 25 May 2020 13:53:32 -0700 (PDT)
-Received: from xps15 (S0106002369de4dac.cg.shawcable.net. [68.147.8.254])
-        by smtp.gmail.com with ESMTPSA id i29sm5829343pfk.38.2020.05.25.13.53.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 25 May 2020 13:53:31 -0700 (PDT)
-Date:   Mon, 25 May 2020 14:53:29 -0600
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-To:     Guennadi Liakhovetski <guennadi.liakhovetski@linux.intel.com>
-Cc:     kvm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        sound-open-firmware@alsa-project.org,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Liam Girdwood <liam.r.girdwood@linux.intel.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
-        Ohad Ben-Cohen <ohad@wizery.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: Re: [PATCH v2 5/5] vhost: add an RPMsg API
-Message-ID: <20200525205329.GC9309@xps15>
-References: <20200525144458.8413-1-guennadi.liakhovetski@linux.intel.com>
- <20200525144458.8413-6-guennadi.liakhovetski@linux.intel.com>
+ d=xilinx.onmicrosoft.com; s=selector2-xilinx-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=SwYb4Y44y+i3XjTnhjz5aBjKZXIWebNNANpekkBuUgg=;
+ b=Gm+VG3rqAOjd5sVbEYgvhtmBhwtZtudFQeSb7vmHNy5f8+c3RdLVIaigGLsGZ9c7snP1f0Rfa0p9x9OUBW5ZVUZE+bX6MV4Nc34rK18rUiq2LEn9zc3p+XODbPHYda1RywPd8nOdAEFezHit0Q22XhBheK9dG7QG2d9lCY482RY=
+Received: from BYAPR02MB4407.namprd02.prod.outlook.com (2603:10b6:a03:55::31)
+ by BYAPR02MB6437.namprd02.prod.outlook.com (2603:10b6:a03:120::32) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3045.17; Tue, 26 May
+ 2020 17:40:22 +0000
+Received: from BYAPR02MB4407.namprd02.prod.outlook.com
+ ([fe80::e59d:9815:461e:2a79]) by BYAPR02MB4407.namprd02.prod.outlook.com
+ ([fe80::e59d:9815:461e:2a79%6]) with mapi id 15.20.3021.027; Tue, 26 May 2020
+ 17:40:22 +0000
+From:   Ben Levinsky <BLEVINSK@xilinx.com>
+To:     Rob Herring <robh@kernel.org>
+CC:     "ohad@wizery.com" <ohad@wizery.com>,
+        "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>,
+        Michal Simek <michals@xilinx.com>,
+        Jolly Shah <JOLLYS@xilinx.com>, Rajan Vaja <RAJANV@xilinx.com>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Stefano Stabellini <stefanos@xilinx.com>
+Subject: RE: [PATCH v4 4/5] dt-bindings: remoteproc: Add documentation for
+ ZynqMP R5 rproc bindings
+Thread-Topic: [PATCH v4 4/5] dt-bindings: remoteproc: Add documentation for
+ ZynqMP R5 rproc bindings
+Thread-Index: AQHWGl7uxdGBAyULe0azD2FJNJZOnqijj0uAgBdEEWA=
+Date:   Tue, 26 May 2020 17:40:22 +0000
+Message-ID: <BYAPR02MB44077C8B7B7FD23FDE8E31B8B5B00@BYAPR02MB4407.namprd02.prod.outlook.com>
+References: <1587749770-15082-1-git-send-email-ben.levinsky@xilinx.com>
+ <1587749770-15082-5-git-send-email-ben.levinsky@xilinx.com>
+ <20200511221755.GA13585@bogus>
+In-Reply-To: <20200511221755.GA13585@bogus>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
+X-MS-TNEF-Correlator: 
+authentication-results: kernel.org; dkim=none (message not signed)
+ header.d=none;kernel.org; dmarc=none action=none header.from=xilinx.com;
+x-originating-ip: [98.207.156.201]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: 3aa5111d-c412-464e-ea9c-08d8019bdda8
+x-ms-traffictypediagnostic: BYAPR02MB6437:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <BYAPR02MB6437622D6531643C504DBA99B5B00@BYAPR02MB6437.namprd02.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:8882;
+x-forefront-prvs: 041517DFAB
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: 7+x4p9DsfGjY/tjNdjJ0Bz1evHfRlSPN2tgJtahXpHmaMI1ePAiNB6/zigJRhKxwq6vLmOiy8gTGi1EgN4j4xBlN9dMQC38lS6UT2CC+hCidbcO01NNYtX+yE/TOaeDax36bPJTWfZz8pmnhx4y6yHg5l67agL3DWtKuJ3049qtE6LdR/a+WuXQJcfO5wEtetJ9abgOO+RPJ+lvrj3Vuok9EGNo2Ut57sAeVS3yPHqXUIfbGuBfljpUAoIWgQwVQH6jSZCudrrv5JRQWzJTxe4YcIodGfdQQOapHu5s6fFPGsxMk+TkV0rlFxUvawYyx9OzP/ZgAH8fLyaJrP2kCXxeYg3WfOiL3k0pEoyZ8IM1NT+8sS0wQVbmvocSUulnmYcRV7/r3sQ1g3GccWMOosA==
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR02MB4407.namprd02.prod.outlook.com;PTR:;CAT:NONE;SFTY:;SFS:(346002)(376002)(136003)(396003)(366004)(39850400004)(55016002)(66946007)(9686003)(71200400001)(186003)(53546011)(6506007)(54906003)(86362001)(4326008)(316002)(52536014)(107886003)(7696005)(5660300002)(76116006)(64756008)(2906002)(66446008)(478600001)(6916009)(26005)(66476007)(66556008)(33656002)(8676002)(8936002);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata: M/QpV4u9rEjj49+P2Jml4U8nzD2hL2SfOE4Rip78JSXvXu7QNBBrTsDVo3Tq7/xkMbjhXgNsMw7xydS1fzeFXsTFbaO7n0JnJYLxA0zd73da8CnN+uiGw+9hTdTeaDt5ctxfCbdZfWz330szHDLkQW0hrMRQzF98zl+iHia9OPQOMl+kGy/kat9pbf7tQ+axUDmyd0pkw4qt4ttg6AkHDylTp4vXy/Z0COZk2WyKCfFD9YNhkmaSfbtO9hYq9R89PI0xOTInqBHVy47Q5qDNMIBAwkCu1yIeztQJlKT5xrVywRYZE2OhXq4EOOhu3RMkBdXb7++olOjHTEgRI5qz8heNlLQvjud8SVO0MDBhdgJbnRxmgIgycSNKWf9WUTmVJZe5MRoPk5NL9wWSpGSz1udwYU811vPRXYAdWDnSWEWP/dbcxyZ3kvSKj9pzft6tB+C1Y9rnsA4aIsOWGRRcknzxXCcev6NOiJGaO7WQ0hhgOO5krJeiYN6FMLcKNhOW
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200525144458.8413-6-guennadi.liakhovetski@linux.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-OriginatorOrg: xilinx.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3aa5111d-c412-464e-ea9c-08d8019bdda8
+X-MS-Exchange-CrossTenant-originalarrivaltime: 26 May 2020 17:40:22.1939
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 657af505-d5df-48d0-8300-c31994686c5c
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 3KaaheJxNzn1ZwL3tj7LkV/r1Mm73Tj5AvCfCAq8wzEKUAstNfHuvdutenTRxcgRL71HOEC14g0C7P07+XI0Vw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR02MB6437
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Mon, May 25, 2020 at 04:44:58PM +0200, Guennadi Liakhovetski wrote:
-> Linux supports running the RPMsg protocol over the VirtIO transport
-> protocol, but currently there is only support for VirtIO clients and
-> no support for a VirtIO server. This patch adds a vhost-based RPMsg
-> server implementation.
-> 
-> Signed-off-by: Guennadi Liakhovetski <guennadi.liakhovetski@linux.intel.com>
+Hi Rob,
+
+The Xilinx R5 Remoteproc driver has been around for a long time -- admitted=
+ly we should have upstreamed it long ago. The driver in the current form is=
+ using an "classic" remoteproc device tree node as described here.
+
+I am working with Stefano to come up with an appropriate System Device Tree=
+ representation but it is not going to be ready right away. Our preference =
+would be to upstream the remoteproc node and driver in their current forms =
+while system device tree is maturing.
+
+Will also update as per your below comments in a v5 too.
+
+Best Regards,
+Ben Levinsky
+
+-----Original Message-----
+From: Rob Herring <robh@kernel.org>=20
+Sent: Monday, May 11, 2020 3:18 PM
+To: Ben Levinsky <BLEVINSK@xilinx.com>
+Cc: ohad@wizery.com; bjorn.andersson@linaro.org; Michal Simek <michals@xili=
+nx.com>; Jolly Shah <JOLLYS@xilinx.com>; Rajan Vaja <RAJANV@xilinx.com>; ma=
+rk.rutland@arm.com; linux-remoteproc@vger.kernel.org; linux-arm-kernel@list=
+s.infradead.org; devicetree@vger.kernel.org; linux-kernel@vger.kernel.org; =
+Jason Wu <j.wu@xilinx.com>; Jiaying Liang <jliang@xilinx.com>
+Subject: Re: [PATCH v4 4/5] dt-bindings: remoteproc: Add documentation for =
+ZynqMP R5 rproc bindings
+
+On Fri, Apr 24, 2020 at 10:36:09AM -0700, Ben Levinsky wrote:
+> Add binding for ZynqMP R5 OpenAMP.
+>=20
+> Represent the RPU domain resources in one device node. Each RPU=20
+> processor is a subnode of the top RPU domain node.
+
+This needs to be sorted out as part of the system DT effort that Xilinx is =
+working on. I can't see this binding co-existing with it.
+
+>=20
+> Signed-off-by: Ben Levinsky <ben.levinsky@xilinx.com>
+> Signed-off-by: Jason Wu <j.wu@xilinx.com>
+> Signed-off-by: Wendy Liang <jliang@xilinx.com>
+> Signed-off-by: Michal Simek <michal.simek@xilinx.com>
 > ---
->  drivers/vhost/Kconfig       |   7 +
->  drivers/vhost/Makefile      |   3 +
->  drivers/vhost/rpmsg.c       | 372 ++++++++++++++++++++++++++++++++++++++++++++
->  drivers/vhost/vhost_rpmsg.h |  74 +++++++++
->  4 files changed, 456 insertions(+)
->  create mode 100644 drivers/vhost/rpmsg.c
->  create mode 100644 drivers/vhost/vhost_rpmsg.h
-
-This patch triggers several checkpatch warnings, and from what I see none of
-them helping with code readability.  Please consider addressing.
-
-More comments to follow tomorrow.
-
-> 
-> diff --git a/drivers/vhost/Kconfig b/drivers/vhost/Kconfig
-> index 2c75d16..c2113db 100644
-> --- a/drivers/vhost/Kconfig
-> +++ b/drivers/vhost/Kconfig
-> @@ -38,6 +38,13 @@ config VHOST_NET
->  	  To compile this driver as a module, choose M here: the module will
->  	  be called vhost_net.
->  
-> +config VHOST_RPMSG
-> +	tristate
-> +	depends on VHOST
-> +	---help---
-> +	  Vhost RPMsg API allows vhost drivers to communicate with VirtIO
-> +	  drivers, using the RPMsg over VirtIO protocol.
-> +
->  config VHOST_SCSI
->  	tristate "VHOST_SCSI TCM fabric driver"
->  	depends on TARGET_CORE && EVENTFD
-> diff --git a/drivers/vhost/Makefile b/drivers/vhost/Makefile
-> index f3e1897..9cf459d 100644
-> --- a/drivers/vhost/Makefile
-> +++ b/drivers/vhost/Makefile
-> @@ -2,6 +2,9 @@
->  obj-$(CONFIG_VHOST_NET) += vhost_net.o
->  vhost_net-y := net.o
->  
-> +obj-$(CONFIG_VHOST_RPMSG) += vhost_rpmsg.o
-> +vhost_rpmsg-y := rpmsg.o
-> +
->  obj-$(CONFIG_VHOST_SCSI) += vhost_scsi.o
->  vhost_scsi-y := scsi.o
->  
-> diff --git a/drivers/vhost/rpmsg.c b/drivers/vhost/rpmsg.c
+> Changes since v2:
+> - update zynqmp_r5 yaml parsing to not raise warnings for extra
+>   information in children of R5 node. The warning "node has a unit
+>   name, but no reg or ranges property" will still be raised though=20
+>   as this particular node is needed to describe the
+>   '#address-cells' and '#size-cells' information.
+> Changes since 3:
+> - remove warning '/example-0/rpu@ff9a0000/r5@0:
+>   node has a unit name, but no reg or ranges property'
+>   by adding reg to r5 node.
+> ---
+>=20
+>  .../remoteproc/xilinx,zynqmp-r5-remoteproc.yaml    | 127 +++++++++++++++=
+++++++
+>  1 file changed, 127 insertions(+)
+>  create mode 100644=20
+> Documentation/devicetree/bindings/remoteproc/xilinx,zynqmp-r5-remotepr
+> oc.yaml
+>=20
+> diff --git=20
+> a/Documentation/devicetree/bindings/remoteproc/xilinx,zynqmp-r5-remote
+> proc.yaml=20
+> b/Documentation/devicetree/bindings/remoteproc/xilinx,zynqmp-r5-remote
+> proc.yaml
 > new file mode 100644
-> index 00000000..609b9cf
+> index 0000000..41520b6
 > --- /dev/null
-> +++ b/drivers/vhost/rpmsg.c
-> @@ -0,0 +1,372 @@
-> +/* SPDX-License-Identifier: (GPL-2.0-only) */
-> +/*
-> + * Copyright(c) 2020 Intel Corporation. All rights reserved.
-> + *
-> + * Author: Guennadi Liakhovetski <guennadi.liakhovetski@linux.intel.com>
-> + *
-> + * vhost-RPMsg VirtIO interface
-> + */
-> +
-> +#include <linux/compat.h>
-> +#include <linux/file.h>
-> +#include <linux/miscdevice.h>
-> +#include <linux/module.h>
-> +#include <linux/mutex.h>
-> +#include <linux/vhost.h>
-> +#include <linux/virtio_rpmsg.h>
-> +#include <uapi/linux/rpmsg.h>
-> +
-> +#include "vhost.h"
-> +#include "vhost_rpmsg.h"
-> +
-> +/*
-> + * All virtio-rpmsg virtual queue kicks always come with just one buffer -
-> + * either input or output
-> + */
-> +static int vhost_rpmsg_get_single(struct vhost_virtqueue *vq)
-> +{
-> +	struct vhost_rpmsg *vr = container_of(vq->dev, struct vhost_rpmsg, dev);
-> +	unsigned int out, in;
-> +	int head = vhost_get_vq_desc(vq, vq->iov, ARRAY_SIZE(vq->iov),
-> +				     &out, &in, NULL, NULL);
-> +	if (head < 0) {
-> +		vq_err(vq, "%s(): error %d getting buffer\n",
-> +		       __func__, head);
-> +		return head;
-> +	}
-> +
-> +	/* Nothing new? */
-> +	if (head == vq->num)
-> +		return head;
-> +
-> +	if (vq == &vr->vq[VIRTIO_RPMSG_RESPONSE] && (out || in != 1)) {
-> +		vq_err(vq,
-> +		       "%s(): invalid %d input and %d output in response queue\n",
-> +		       __func__, in, out);
-> +		goto return_buf;
-> +	}
-> +
-> +	if (vq == &vr->vq[VIRTIO_RPMSG_REQUEST] && (in || out != 1)) {
-> +		vq_err(vq,
-> +		       "%s(): invalid %d input and %d output in request queue\n",
-> +		       __func__, in, out);
-> +		goto return_buf;
-> +	}
-> +
-> +	return head;
-> +
-> +return_buf:
-> +	/*
-> +	 * FIXME: might need to return the buffer using vhost_add_used()
-> +	 * or vhost_discard_vq_desc(). vhost_discard_vq_desc() is
-> +	 * described as "being useful for error handling," but it makes
-> +	 * the thus discarded buffers "unseen," so next time we look we
-> +	 * retrieve them again?
-> +	 */
-> +	return -EINVAL;
-> +}
-> +
-> +static const struct vhost_rpmsg_ept *vhost_rpmsg_ept_find(struct vhost_rpmsg *vr,
-> +							  int addr)
-> +{
-> +	unsigned int i;
-> +
-> +	for (i = 0; i < vr->n_epts; i++)
-> +		if (vr->ept[i].addr == addr)
-> +			return vr->ept + i;
-> +
-> +	return NULL;
-> +}
-> +
-> +/*
-> + * if len < 0, then for reading a request, the complete virtual queue buffer
-> + * size is prepared, for sending a response, the length in the iterator is used
-> + */
-> +int vhost_rpmsg_start_lock(struct vhost_rpmsg *vr,
-> +			   struct vhost_rpmsg_iter *iter,
-> +			   unsigned int qid, ssize_t len)
-> +	__acquires(vq->mutex)
-> +{
-> +	struct vhost_virtqueue *vq = vr->vq + qid;
-> +	size_t tmp;
-> +
-> +	if (qid >= VIRTIO_RPMSG_NUM_OF_VQS)
-> +		return -EINVAL;
-> +
-> +	iter->vq = vq;
-> +
-> +	mutex_lock(&vq->mutex);
-> +	vhost_disable_notify(&vr->dev, vq);
-> +
-> +	iter->head = vhost_rpmsg_get_single(vq);
-> +	if (iter->head == vq->num)
-> +		iter->head = -EAGAIN;
-> +
-> +	if (iter->head < 0)
-> +		goto unlock;
-> +
-> +	tmp = vq->iov[0].iov_len;
-> +	if (tmp < sizeof(iter->rhdr)) {
-> +		vq_err(vq, "%s(): size %zu too small\n", __func__, tmp);
-> +		iter->head = -ENOBUFS;
-> +		goto return_buf;
-> +	}
-> +
-> +	switch (qid) {
-> +	case VIRTIO_RPMSG_REQUEST:
-> +		if (len < 0) {
-> +			len = tmp - sizeof(iter->rhdr);
-> +		} else if (tmp < sizeof(iter->rhdr) + len) {
-> +			iter->head = -ENOBUFS;
-> +			goto return_buf;
-> +		}
-> +
-> +		/* len is now the size of the payload */
-> +		iov_iter_init(&iter->iov_iter, WRITE,
-> +			      vq->iov, 1, sizeof(iter->rhdr) + len);
-> +
-> +		/* Read the RPMSG header with endpoint addresses */
-> +		tmp = copy_from_iter(&iter->rhdr, sizeof(iter->rhdr),
-> +				     &iter->iov_iter);
-> +		if (tmp != sizeof(iter->rhdr)) {
-> +			vq_err(vq, "%s(): got %zu instead of %zu\n", __func__,
-> +			       tmp, sizeof(iter->rhdr));
-> +			iter->head = -EIO;
-> +			goto return_buf;
-> +		}
-> +
-> +		iter->ept = vhost_rpmsg_ept_find(vr, iter->rhdr.dst);
-> +		if (!iter->ept) {
-> +			vq_err(vq, "%s(): no endpoint with address %d\n",
-> +			       __func__, iter->rhdr.dst);
-> +			iter->head = -ENOENT;
-> +			goto return_buf;
-> +		}
-> +
-> +		/* Let the endpoint read the payload */
-> +		if (iter->ept->read) {
-> +			ssize_t ret = iter->ept->read(vr, iter);
-> +			if (ret < 0) {
-> +				iter->head = ret;
-> +				goto return_buf;
-> +			}
-> +
-> +			iter->rhdr.len = ret;
-> +		} else {
-> +			iter->rhdr.len = 0;
-> +		}
-> +
-> +		/* Prepare for the response phase */
-> +		iter->rhdr.dst = iter->rhdr.src;
-> +		iter->rhdr.src = iter->ept->addr;
-> +
-> +		break;
-> +	case VIRTIO_RPMSG_RESPONSE:
-> +		if (!iter->ept && iter->rhdr.dst != RPMSG_NS_ADDR) {
-> +			/*
-> +			 * Usually the iterator is configured when processing a
-> +			 * message on the request queue, but it's also possible
-> +			 * to send a message on the response queue without a
-> +			 * preceding request, in that case the iterator must
-> +			 * contain source and destination addresses.
-> +			 */
-> +			iter->ept = vhost_rpmsg_ept_find(vr, iter->rhdr.src);
-> +			if (!iter->ept) {
-> +				iter->head = -ENOENT;
-> +				goto return_buf;
-> +			}
-> +		}
-> +
-> +		if (len < 0) {
-> +			len = tmp - sizeof(iter->rhdr);
-> +		} else if (tmp < sizeof(iter->rhdr) + len) {
-> +			iter->head = -ENOBUFS;
-> +			goto return_buf;
-> +		} else {
-> +			iter->rhdr.len = len;
-> +		}
-> +
-> +		/* len is now the size of the payload */
-> +		iov_iter_init(&iter->iov_iter, READ,
-> +			      vq->iov, 1, sizeof(iter->rhdr) + len);
-> +
-> +		/* Write the RPMSG header with endpoint addresses */
-> +		tmp = copy_to_iter(&iter->rhdr, sizeof(iter->rhdr),
-> +				   &iter->iov_iter);
-> +		if (tmp != sizeof(iter->rhdr)) {
-> +			iter->head = -EIO;
-> +			goto return_buf;
-> +		}
-> +
-> +		/* Let the endpoint write the payload */
-> +		if (iter->ept && iter->ept->write) {
-> +			ssize_t ret = iter->ept->write(vr, iter);
-> +			if (ret < 0) {
-> +				iter->head = ret;
-> +				goto return_buf;
-> +			}
-> +		}
-> +
-> +		break;
-> +	}
-> +
-> +	return 0;
-> +
-> +return_buf:
-> +	/*
-> +	 * FIXME: vhost_discard_vq_desc() or vhost_add_used(), see comment in
-> +	 * vhost_rpmsg_get_single()
-> +	 */
-> +unlock:
-> +	vhost_enable_notify(&vr->dev, vq);
-> +	mutex_unlock(&vq->mutex);
-> +
-> +	return iter->head;
-> +}
-> +EXPORT_SYMBOL_GPL(vhost_rpmsg_start_lock);
-> +
-> +size_t vhost_rpmsg_copy(struct vhost_rpmsg *vr, struct vhost_rpmsg_iter *iter,
-> +			void *data, size_t size)
-> +{
-> +	/*
-> +	 * We could check for excess data, but copy_{to,from}_iter() don't do
-> +	 * that either
-> +	 */
-> +	if (iter->vq == vr->vq + VIRTIO_RPMSG_RESPONSE)
-> +		return copy_to_iter(data, size, &iter->iov_iter);
-> +
-> +	return copy_from_iter(data, size, &iter->iov_iter);
-> +}
-> +EXPORT_SYMBOL_GPL(vhost_rpmsg_copy);
-> +
-> +int vhost_rpmsg_finish_unlock(struct vhost_rpmsg *vr,
-> +			      struct vhost_rpmsg_iter *iter)
-> +	__releases(vq->mutex)
-> +{
-> +	if (iter->head >= 0)
-> +		vhost_add_used_and_signal(iter->vq->dev, iter->vq, iter->head,
-> +					  iter->rhdr.len + sizeof(iter->rhdr));
-> +
-> +	vhost_enable_notify(&vr->dev, iter->vq);
-> +	mutex_unlock(&iter->vq->mutex);
-> +
-> +	return iter->head;
-> +}
-> +EXPORT_SYMBOL_GPL(vhost_rpmsg_finish_unlock);
-> +
-> +/*
-> + * Return false to terminate the external loop only if we fail to obtain either
-> + * a request or a response buffer
-> + */
-> +static bool handle_rpmsg_req_single(struct vhost_rpmsg *vr,
-> +				    struct vhost_virtqueue *vq)
-> +{
-> +	struct vhost_rpmsg_iter iter;
-> +	int ret = vhost_rpmsg_start_lock(vr, &iter, VIRTIO_RPMSG_REQUEST,
-> +					 -EINVAL);
-> +	if (!ret)
-> +		ret = vhost_rpmsg_finish_unlock(vr, &iter);
-> +	if (ret < 0) {
-> +		if (ret != -EAGAIN)
-> +			vq_err(vq, "%s(): RPMSG processing failed %d\n",
-> +			       __func__, ret);
-> +		return false;
-> +	}
-> +
-> +	if (!iter.ept->write)
-> +		return true;
-> +
-> +	ret = vhost_rpmsg_start_lock(vr, &iter, VIRTIO_RPMSG_RESPONSE,
-> +				     -EINVAL);
-> +	if (!ret)
-> +		ret = vhost_rpmsg_finish_unlock(vr, &iter);
-> +	if (ret < 0) {
-> +		vq_err(vq, "%s(): RPMSG finalising failed %d\n", __func__, ret);
-> +		return false;
-> +	}
-> +
-> +	return true;
-> +}
-> +
-> +static void handle_rpmsg_req_kick(struct vhost_work *work)
-> +{
-> +	struct vhost_virtqueue *vq = container_of(work, struct vhost_virtqueue,
-> +						  poll.work);
-> +	struct vhost_rpmsg *vr = container_of(vq->dev, struct vhost_rpmsg, dev);
-> +
-> +	while (handle_rpmsg_req_single(vr, vq))
-> +		;
-> +}
-> +
-> +/*
-> + * initialise two virtqueues with an array of endpoints,
-> + * request and response callbacks
-> + */
-> +void vhost_rpmsg_init(struct vhost_rpmsg *vr, const struct vhost_rpmsg_ept *ept,
-> +		      unsigned int n_epts)
-> +{
-> +	unsigned int i;
-> +
-> +	for (i = 0; i < ARRAY_SIZE(vr->vq); i++)
-> +		vr->vq_p[i] = &vr->vq[i];
-> +
-> +	/* vq[0]: host -> guest, vq[1]: host <- guest */
-> +	vr->vq[VIRTIO_RPMSG_REQUEST].handle_kick = handle_rpmsg_req_kick;
-> +
-> +	vr->ept = ept;
-> +	vr->n_epts = n_epts;
-> +
-> +	vhost_dev_init(&vr->dev, vr->vq_p, VIRTIO_RPMSG_NUM_OF_VQS,
-> +		       UIO_MAXIOV, 0, 0, NULL);
-> +}
-> +EXPORT_SYMBOL_GPL(vhost_rpmsg_init);
-> +
-> +void vhost_rpmsg_destroy(struct vhost_rpmsg *vr)
-> +{
-> +	if (vhost_dev_has_owner(&vr->dev))
-> +		vhost_poll_flush(&vr->vq[VIRTIO_RPMSG_REQUEST].poll);
-> +
-> +	vhost_dev_cleanup(&vr->dev);
-> +}
-> +EXPORT_SYMBOL_GPL(vhost_rpmsg_destroy);
-> +
-> +/* send namespace */
-> +int vhost_rpmsg_ns_announce(struct vhost_rpmsg *vr, const char *name,
-> +			    unsigned int src)
-> +{
-> +	struct vhost_rpmsg_iter iter = {
-> +		.rhdr = {
-> +			.src = 0,
-> +			.dst = RPMSG_NS_ADDR,
-> +			.flags = RPMSG_NS_CREATE, /* rpmsg_recv_single() */
-> +		},
-> +	};
-> +	struct rpmsg_ns_msg ns = {
-> +		.addr = src,
-> +		.flags = RPMSG_NS_CREATE, /* for rpmsg_ns_cb() */
-> +	};
-> +	int ret = vhost_rpmsg_start_lock(vr, &iter, VIRTIO_RPMSG_RESPONSE,
-> +					 sizeof(ns));
-> +
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	strlcpy(ns.name, name, sizeof(ns.name));
-> +
-> +	ret = vhost_rpmsg_copy(vr, &iter, &ns, sizeof(ns));
-> +	if (ret != sizeof(ns))
-> +		vq_err(iter.vq, "%s(): added %d instead of %zu bytes\n",
-> +		       __func__, ret, sizeof(ns));
-> +
-> +	ret = vhost_rpmsg_finish_unlock(vr, &iter);
-> +	if (ret < 0)
-> +		vq_err(iter.vq, "%s(): namespace announcement failed: %d\n",
-> +		       __func__, ret);
-> +
-> +	return ret;
-> +}
-> +EXPORT_SYMBOL_GPL(vhost_rpmsg_ns_announce);
-> +
-> +MODULE_LICENSE("GPL v2");
-> +MODULE_AUTHOR("Intel, Inc.");
-> +MODULE_DESCRIPTION("Vhost RPMsg API");
-> diff --git a/drivers/vhost/vhost_rpmsg.h b/drivers/vhost/vhost_rpmsg.h
-> new file mode 100644
-> index 00000000..5248ac9
-> --- /dev/null
-> +++ b/drivers/vhost/vhost_rpmsg.h
-> @@ -0,0 +1,74 @@
-> +/* SPDX-License-Identifier: (GPL-2.0) */
-> +/*
-> + * Copyright(c) 2020 Intel Corporation. All rights reserved.
-> + *
-> + * Author: Guennadi Liakhovetski <guennadi.liakhovetski@linux.intel.com>
-> + */
-> +
-> +#ifndef VHOST_RPMSG_H
-> +#define VHOST_RPMSG_H
-> +
-> +#include <linux/uio.h>
-> +#include <linux/virtio_rpmsg.h>
-> +
-> +#include "vhost.h"
-> +
-> +/* RPMsg uses two VirtQueues: one for each direction */
-> +enum {
-> +	VIRTIO_RPMSG_RESPONSE,	/* RPMsg response (host->guest) buffers */
-> +	VIRTIO_RPMSG_REQUEST,	/* RPMsg request (guest->host) buffers */
-> +	/* Keep last */
-> +	VIRTIO_RPMSG_NUM_OF_VQS,
-> +};
-> +
-> +struct vhost_rpmsg_ept;
-> +
-> +struct vhost_rpmsg_iter {
-> +	struct iov_iter iov_iter;
-> +	struct rpmsg_hdr rhdr;
-> +	struct vhost_virtqueue *vq;
-> +	const struct vhost_rpmsg_ept *ept;
-> +	int head;
-> +	void *priv;
-> +};
-> +
-> +struct vhost_rpmsg {
-> +	struct vhost_dev dev;
-> +	struct vhost_virtqueue vq[VIRTIO_RPMSG_NUM_OF_VQS];
-> +	struct vhost_virtqueue *vq_p[VIRTIO_RPMSG_NUM_OF_VQS];
-> +	const struct vhost_rpmsg_ept *ept;
-> +	unsigned int n_epts;
-> +};
-> +
-> +struct vhost_rpmsg_ept {
-> +	ssize_t (*read)(struct vhost_rpmsg *, struct vhost_rpmsg_iter *);
-> +	ssize_t (*write)(struct vhost_rpmsg *, struct vhost_rpmsg_iter *);
-> +	int addr;
-> +};
-> +
-> +static inline size_t vhost_rpmsg_iter_len(const struct vhost_rpmsg_iter *iter)
-> +{
-> +	return iter->rhdr.len;
-> +}
-> +
-> +#define VHOST_RPMSG_ITER(_src, _dst) {	\
-> +	.rhdr = {			\
-> +			.src = _src,	\
-> +			.dst = _dst,	\
-> +		},			\
-> +	}
-> +
-> +void vhost_rpmsg_init(struct vhost_rpmsg *vr, const struct vhost_rpmsg_ept *ept,
-> +		      unsigned int n_epts);
-> +void vhost_rpmsg_destroy(struct vhost_rpmsg *vr);
-> +int vhost_rpmsg_ns_announce(struct vhost_rpmsg *vr, const char *name,
-> +			    unsigned int src);
-> +int vhost_rpmsg_start_lock(struct vhost_rpmsg *vr,
-> +			   struct vhost_rpmsg_iter *iter,
-> +			   unsigned int qid, ssize_t len);
-> +size_t vhost_rpmsg_copy(struct vhost_rpmsg *vr, struct vhost_rpmsg_iter *iter,
-> +			void *data, size_t size);
-> +int vhost_rpmsg_finish_unlock(struct vhost_rpmsg *vr,
-> +			      struct vhost_rpmsg_iter *iter);
-> +
-> +#endif
-> -- 
-> 1.9.3
-> 
+> +++ b/Documentation/devicetree/bindings/remoteproc/xilinx,zynqmp-r5-re
+> +++ moteproc.yaml
+> @@ -0,0 +1,127 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause) %YAML 1.2
+> +---
+> +$id: "http://devicetree.org/schemas/remoteproc/xilinx,zynqmp-r5-remotepr=
+oc.yaml#"
+> +$schema: "http://devicetree.org/meta-schemas/core.yaml#"
+> +
+> +title: Xilinx R5 remote processor controller bindings
+> +
+> +description:
+> +  This document defines the binding for the remoteproc component that=20
+> +loads and
+> +  boots firmwares on the Xilinx Zynqmp and Versal family chipset.
+> +
+> +maintainers:
+> +  - Ed Mooring <ed.mooring@xilinx.com>
+> +  - Ben Levinsky <ben.levinsky@xilinx.com>
+> +
+> +properties:
+> +  compatible:
+> +    const: "xlnx,zynqmp-r5-remoteproc-1.0"
+> +
+> +  core_conf:
+> +    description:
+> +      R5 core configuration (valid string - split or lock-step)
+> +    maxItems: 1
+> +
+> +  interrupts:
+> +    description:
+> +      Interrupt mapping for remoteproc IPI. It is required if the
+> +      user uses the remoteproc driver with the RPMsg kernel driver.
+> +    maxItems: 6
+> +
+> +  memory-region:
+> +    maxItems: 4
+> +    minItems: 4
+> +  pnode-id:
+> +    maxItems: 1
+
+What is this?=20
+[Ben Levinsky] I will description for this. This is used by the Xilinx powe=
+r management code later on when configuring the RPU.
+
+> +  mboxes:
+> +    maxItems: 2
+> +  mbox-names:
+> +    maxItems: 2
+> +
+> +  r5@0:
+> +    type: object
+> +    required:
+> +        - '#address-cells'
+> +        - '#size-cells'
+> +        - pnode-id
+> +examples:
+> +  - |
+> +     reserved-memory {
+> +          #address-cells =3D <1>;
+> +          #size-cells =3D <1>;
+> +          ranges;
+> +          rpu0vdev0vring0: rpu0vdev0vring0@3ed40000 {
+> +               no-map;
+> +               reg =3D <0x3ed40000 0x4000>;
+> +          };
+> +          rpu0vdev0vring1: rpu0vdev0vring1@3ed44000 {
+> +               no-map;
+> +               reg =3D <0x3ed44000 0x4000>;
+> +          };
+> +          rpu0vdev0buffer: rpu0vdev0buffer@3ed48000 {
+> +               no-map;
+> +               reg =3D <0x3ed48000 0x100000>;
+> +          };
+> +          rproc_0_reserved: rproc@3ed000000 {
+> +               no-map;
+> +               reg =3D <0x3ed00000 0x40000>;
+> +          };
+> +     };
+> +     rpu: rpu@ff9a0000 {
+> +          compatible =3D "xlnx,zynqmp-r5-remoteproc-1.0";
+> +          #address-cells =3D <1>;
+> +          #size-cells =3D <1>;
+> +          ranges;
+> +          core_conf =3D "split";
+
+If split, then where is the 2nd core?
+[Ben Levinsky] Will fix, I will add second core in v5.
+
+> +          reg =3D <0xFF9A0000 0x10000>;
+> +          r5_0: r5@0 {
+
+Unit-addresses are based on 'reg' values.
+[Ben Levinsky] Will fix this, thanks
+
+> +               ranges;
+> +               #address-cells =3D <1>;
+> +               #size-cells =3D <1>;
+> +               reg =3D <0xFF9A0100 0x1000>;
+> +               memory-region =3D <&rproc_0_reserved>, <&rpu0vdev0buffer>=
+, <&rpu0vdev0vring0>, <&rpu0vdev0vring1>;
+> +               pnode-id =3D <0x7>;
+> +               mboxes =3D <&ipi_mailbox_rpu0 0>, <&ipi_mailbox_rpu0 1>;
+> +               mbox-names =3D "tx", "rx";
+> +               tcm_0_a: tcm_0@0 {
+> +                    #address-cells =3D <1>;
+> +                    #size-cells =3D <1>;
+> +                    reg =3D <0xFFE00000 0x10000>;
+> +                    pnode-id =3D <0xf>;
+
+These nodes probably need some sort of compatible. And don't the TCMs have =
+different addresses for R5 vs. the A cores?
+[Ben Levinsky] I can add a compatible. The addressesing here is absolute (i=
+.e. 0xffex-xxxx ) as it is used from point of view of A core here.
+
+> +               };
+> +               tcm_0_b: tcm_0@1 {
+> +                    #address-cells =3D <2>;
+> +                    #size-cells =3D <2>;
+> +                    reg =3D <0xFFE20000 0x10000>;
+> +                    pnode-id =3D <0x10>;
+> +               };
+> +          };
+> +     };
+> +
+> +
+> +     zynqmp_ipi1 {
+> +          compatible =3D "xlnx,zynqmp-ipi-mailbox";
+> +          interrupt-parent =3D <&gic>;
+> +          interrupts =3D <0 29 4>;
+> +          xlnx,ipi-id =3D <7>;
+> +          #address-cells =3D <1>;
+> +          #size-cells =3D <1>;
+> +          ranges;
+> +
+> +          /* APU<->RPU0 IPI mailbox controller */
+> +          ipi_mailbox_rpu0: mailbox@ff90000 {
+> +               reg =3D <0xff990600 0x20>,
+> +                     <0xff990620 0x20>,
+> +                     <0xff9900c0 0x20>,
+> +                     <0xff9900e0 0x20>;
+> +               reg-names =3D "local_request_region",
+> +                        "local_response_region",
+> +                        "remote_request_region",
+> +                        "remote_response_region";
+> +               #mbox-cells =3D <1>;
+> +               xlnx,ipi-id =3D <1>;
+> +          };
+> +     };
+> +
+> +...
+> --
+> 2.7.4
+>=20
