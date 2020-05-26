@@ -2,334 +2,432 @@ Return-Path: <SRS0=poow=7I=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4695BC433E1
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 26 May 2020 17:40:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EA3AC433E0
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 26 May 2020 18:04:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0FD1B20704
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 26 May 2020 17:40:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0F07D20721
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 26 May 2020 18:04:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="Gm+VG3rq"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="kkY1cGBX"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388622AbgEZRk2 (ORCPT
+        id S1729459AbgEZSEb (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 26 May 2020 13:40:28 -0400
-Received: from mail-dm6nam11on2077.outbound.protection.outlook.com ([40.107.223.77]:6542
-        "EHLO NAM11-DM6-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2388061AbgEZRk0 (ORCPT
+        Tue, 26 May 2020 14:04:31 -0400
+Received: from mail27.static.mailgun.info ([104.130.122.27]:54758 "EHLO
+        mail27.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729450AbgEZSEb (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 26 May 2020 13:40:26 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=G8/getJTX6mLGZiEPOzLrYezzfh7M2jgZVjEsE809FbNuegWdYkQpKQigYHONuOF2q/h3CafLZ+BpAug3pF7Jcq+PRUCF0MnI2o2yx5nnzoGoNpwsN8F3YD2NM8vOWn7ieL/JFe5x5p4sy+rZyt64fLkHnQ31HNT2M9GacCGIAWNy61fnBXOpMoOb7D9AvhmIVJNVnXWJ6k9r+3DnD7BDH4JoBp9ZuSa9niCz+k80wRB2aPdayR5Sc18e7mpioE2uf1yGszf3lXk+o1diEytVenikpvkLU1JFJK1KjsGPChRw3X6f9oqUDhAqxFeMon9xUtaZVPWI9pwJd2DNk4Ydw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=SwYb4Y44y+i3XjTnhjz5aBjKZXIWebNNANpekkBuUgg=;
- b=ZyNXARXVEd5WW3162IwKMKHUat+1wdNXRFige+/rWgO7EgA9UAu5hggalE/pBalxXIMKwUsHkxZOU+a1jT0Ue1v9cR1JTN0jbXjPmkwPiguusJu3aL6+D/+YjyRkSj5Ya/dnymYBZHMmACmfpYM9MsqhWf5omrOx99I186lX4lOuJ0UJo4TkeXuLC8Msz5Tyx2oc4obeYbrzoH2eVDGRhROQbzdl2oecLizxCZCTl3iBC/CXZrxyu81Bo5C1K3rxG6MQadHeHNmMMu2XYSV2vw1FGx8URk223fe4ydND+tNI7AbQZ4eg7MaqsKNUwdvoqkJcpNMSQrlnxXzVkFc2AQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=xilinx.com; dmarc=pass action=none header.from=xilinx.com;
- dkim=pass header.d=xilinx.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=xilinx.onmicrosoft.com; s=selector2-xilinx-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=SwYb4Y44y+i3XjTnhjz5aBjKZXIWebNNANpekkBuUgg=;
- b=Gm+VG3rqAOjd5sVbEYgvhtmBhwtZtudFQeSb7vmHNy5f8+c3RdLVIaigGLsGZ9c7snP1f0Rfa0p9x9OUBW5ZVUZE+bX6MV4Nc34rK18rUiq2LEn9zc3p+XODbPHYda1RywPd8nOdAEFezHit0Q22XhBheK9dG7QG2d9lCY482RY=
-Received: from BYAPR02MB4407.namprd02.prod.outlook.com (2603:10b6:a03:55::31)
- by BYAPR02MB6437.namprd02.prod.outlook.com (2603:10b6:a03:120::32) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3045.17; Tue, 26 May
- 2020 17:40:22 +0000
-Received: from BYAPR02MB4407.namprd02.prod.outlook.com
- ([fe80::e59d:9815:461e:2a79]) by BYAPR02MB4407.namprd02.prod.outlook.com
- ([fe80::e59d:9815:461e:2a79%6]) with mapi id 15.20.3021.027; Tue, 26 May 2020
- 17:40:22 +0000
-From:   Ben Levinsky <BLEVINSK@xilinx.com>
-To:     Rob Herring <robh@kernel.org>
-CC:     "ohad@wizery.com" <ohad@wizery.com>,
-        "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>,
-        Michal Simek <michals@xilinx.com>,
-        Jolly Shah <JOLLYS@xilinx.com>, Rajan Vaja <RAJANV@xilinx.com>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Stefano Stabellini <stefanos@xilinx.com>
-Subject: RE: [PATCH v4 4/5] dt-bindings: remoteproc: Add documentation for
- ZynqMP R5 rproc bindings
-Thread-Topic: [PATCH v4 4/5] dt-bindings: remoteproc: Add documentation for
- ZynqMP R5 rproc bindings
-Thread-Index: AQHWGl7uxdGBAyULe0azD2FJNJZOnqijj0uAgBdEEWA=
-Date:   Tue, 26 May 2020 17:40:22 +0000
-Message-ID: <BYAPR02MB44077C8B7B7FD23FDE8E31B8B5B00@BYAPR02MB4407.namprd02.prod.outlook.com>
-References: <1587749770-15082-1-git-send-email-ben.levinsky@xilinx.com>
- <1587749770-15082-5-git-send-email-ben.levinsky@xilinx.com>
- <20200511221755.GA13585@bogus>
-In-Reply-To: <20200511221755.GA13585@bogus>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
-X-MS-TNEF-Correlator: 
-authentication-results: kernel.org; dkim=none (message not signed)
- header.d=none;kernel.org; dmarc=none action=none header.from=xilinx.com;
-x-originating-ip: [98.207.156.201]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 3aa5111d-c412-464e-ea9c-08d8019bdda8
-x-ms-traffictypediagnostic: BYAPR02MB6437:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <BYAPR02MB6437622D6531643C504DBA99B5B00@BYAPR02MB6437.namprd02.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:8882;
-x-forefront-prvs: 041517DFAB
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: 7+x4p9DsfGjY/tjNdjJ0Bz1evHfRlSPN2tgJtahXpHmaMI1ePAiNB6/zigJRhKxwq6vLmOiy8gTGi1EgN4j4xBlN9dMQC38lS6UT2CC+hCidbcO01NNYtX+yE/TOaeDax36bPJTWfZz8pmnhx4y6yHg5l67agL3DWtKuJ3049qtE6LdR/a+WuXQJcfO5wEtetJ9abgOO+RPJ+lvrj3Vuok9EGNo2Ut57sAeVS3yPHqXUIfbGuBfljpUAoIWgQwVQH6jSZCudrrv5JRQWzJTxe4YcIodGfdQQOapHu5s6fFPGsxMk+TkV0rlFxUvawYyx9OzP/ZgAH8fLyaJrP2kCXxeYg3WfOiL3k0pEoyZ8IM1NT+8sS0wQVbmvocSUulnmYcRV7/r3sQ1g3GccWMOosA==
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR02MB4407.namprd02.prod.outlook.com;PTR:;CAT:NONE;SFTY:;SFS:(346002)(376002)(136003)(396003)(366004)(39850400004)(55016002)(66946007)(9686003)(71200400001)(186003)(53546011)(6506007)(54906003)(86362001)(4326008)(316002)(52536014)(107886003)(7696005)(5660300002)(76116006)(64756008)(2906002)(66446008)(478600001)(6916009)(26005)(66476007)(66556008)(33656002)(8676002)(8936002);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata: M/QpV4u9rEjj49+P2Jml4U8nzD2hL2SfOE4Rip78JSXvXu7QNBBrTsDVo3Tq7/xkMbjhXgNsMw7xydS1fzeFXsTFbaO7n0JnJYLxA0zd73da8CnN+uiGw+9hTdTeaDt5ctxfCbdZfWz330szHDLkQW0hrMRQzF98zl+iHia9OPQOMl+kGy/kat9pbf7tQ+axUDmyd0pkw4qt4ttg6AkHDylTp4vXy/Z0COZk2WyKCfFD9YNhkmaSfbtO9hYq9R89PI0xOTInqBHVy47Q5qDNMIBAwkCu1yIeztQJlKT5xrVywRYZE2OhXq4EOOhu3RMkBdXb7++olOjHTEgRI5qz8heNlLQvjud8SVO0MDBhdgJbnRxmgIgycSNKWf9WUTmVJZe5MRoPk5NL9wWSpGSz1udwYU811vPRXYAdWDnSWEWP/dbcxyZ3kvSKj9pzft6tB+C1Y9rnsA4aIsOWGRRcknzxXCcev6NOiJGaO7WQ0hhgOO5krJeiYN6FMLcKNhOW
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Tue, 26 May 2020 14:04:31 -0400
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1590516270; h=Message-ID: References: In-Reply-To: Subject:
+ Cc: To: From: Date: Content-Transfer-Encoding: Content-Type:
+ MIME-Version: Sender; bh=Xfh1nNONwpAzYD81zM7p0TzUtQwDo5KiPS/i7BkyBVQ=;
+ b=kkY1cGBXPbUhfOWwXS9rx0jMKA96t6mxLafphqn2/8YuGnmtq3oPgWYd3kA9KO85vBrBY1Z8
+ 1nIxnJ/QhpAWcaLnhyW05Do+gb0KgZoprE5Sp7xdBIW/+WZrBxewAdUliqP03M2oHC2g3nnx
+ UojloMPIymng9ouva159xCkV9O0=
+X-Mailgun-Sending-Ip: 104.130.122.27
+X-Mailgun-Sid: WyI4ZWZiZiIsICJsaW51eC1yZW1vdGVwcm9jQHZnZXIua2VybmVsLm9yZyIsICJiZTllNGEiXQ==
+Received: from smtp.codeaurora.org
+ (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
+ smtp-out-n03.prod.us-west-2.postgun.com with SMTP id
+ 5ecd59f2bf0e32d25410c705 (version=TLS1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Tue, 26 May 2020 18:03:30
+ GMT
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id B74F3C43391; Tue, 26 May 2020 18:03:29 +0000 (UTC)
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: rishabhb)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 24A8DC433C6;
+        Tue, 26 May 2020 18:03:28 +0000 (UTC)
 MIME-Version: 1.0
-X-OriginatorOrg: xilinx.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3aa5111d-c412-464e-ea9c-08d8019bdda8
-X-MS-Exchange-CrossTenant-originalarrivaltime: 26 May 2020 17:40:22.1939
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 657af505-d5df-48d0-8300-c31994686c5c
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 3KaaheJxNzn1ZwL3tj7LkV/r1Mm73Tj5AvCfCAq8wzEKUAstNfHuvdutenTRxcgRL71HOEC14g0C7P07+XI0Vw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR02MB6437
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Tue, 26 May 2020 11:03:28 -0700
+From:   rishabhb@codeaurora.org
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     linux-remoteproc@vger.kernel.org, ohad@wizery.com,
+        linux-kernel@vger.kernel.org, tsoni@codeaurora.org,
+        psodagud@codeaurora.org, sidgup@codeaurora.org
+Subject: Re: [PATCH v3 1/2] remoteproc: qcom: Add per subsystem SSR
+ notification
+In-Reply-To: <20200519203852.GC408178@builder.lan>
+References: <1588112169-29447-1-git-send-email-rishabhb@codeaurora.org>
+ <1588112169-29447-2-git-send-email-rishabhb@codeaurora.org>
+ <20200519203852.GC408178@builder.lan>
+Message-ID: <d11d48031c90c400aaa3f70565362dfb@codeaurora.org>
+X-Sender: rishabhb@codeaurora.org
+User-Agent: Roundcube Webmail/1.3.9
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi Rob,
-
-The Xilinx R5 Remoteproc driver has been around for a long time -- admitted=
-ly we should have upstreamed it long ago. The driver in the current form is=
- using an "classic" remoteproc device tree node as described here.
-
-I am working with Stefano to come up with an appropriate System Device Tree=
- representation but it is not going to be ready right away. Our preference =
-would be to upstream the remoteproc node and driver in their current forms =
-while system device tree is maturing.
-
-Will also update as per your below comments in a v5 too.
-
-Best Regards,
-Ben Levinsky
-
------Original Message-----
-From: Rob Herring <robh@kernel.org>=20
-Sent: Monday, May 11, 2020 3:18 PM
-To: Ben Levinsky <BLEVINSK@xilinx.com>
-Cc: ohad@wizery.com; bjorn.andersson@linaro.org; Michal Simek <michals@xili=
-nx.com>; Jolly Shah <JOLLYS@xilinx.com>; Rajan Vaja <RAJANV@xilinx.com>; ma=
-rk.rutland@arm.com; linux-remoteproc@vger.kernel.org; linux-arm-kernel@list=
-s.infradead.org; devicetree@vger.kernel.org; linux-kernel@vger.kernel.org; =
-Jason Wu <j.wu@xilinx.com>; Jiaying Liang <jliang@xilinx.com>
-Subject: Re: [PATCH v4 4/5] dt-bindings: remoteproc: Add documentation for =
-ZynqMP R5 rproc bindings
-
-On Fri, Apr 24, 2020 at 10:36:09AM -0700, Ben Levinsky wrote:
-> Add binding for ZynqMP R5 OpenAMP.
->=20
-> Represent the RPU domain resources in one device node. Each RPU=20
-> processor is a subnode of the top RPU domain node.
-
-This needs to be sorted out as part of the system DT effort that Xilinx is =
-working on. I can't see this binding co-existing with it.
-
->=20
-> Signed-off-by: Ben Levinsky <ben.levinsky@xilinx.com>
-> Signed-off-by: Jason Wu <j.wu@xilinx.com>
-> Signed-off-by: Wendy Liang <jliang@xilinx.com>
-> Signed-off-by: Michal Simek <michal.simek@xilinx.com>
-> ---
-> Changes since v2:
-> - update zynqmp_r5 yaml parsing to not raise warnings for extra
->   information in children of R5 node. The warning "node has a unit
->   name, but no reg or ranges property" will still be raised though=20
->   as this particular node is needed to describe the
->   '#address-cells' and '#size-cells' information.
-> Changes since 3:
-> - remove warning '/example-0/rpu@ff9a0000/r5@0:
->   node has a unit name, but no reg or ranges property'
->   by adding reg to r5 node.
-> ---
->=20
->  .../remoteproc/xilinx,zynqmp-r5-remoteproc.yaml    | 127 +++++++++++++++=
-++++++
->  1 file changed, 127 insertions(+)
->  create mode 100644=20
-> Documentation/devicetree/bindings/remoteproc/xilinx,zynqmp-r5-remotepr
-> oc.yaml
->=20
-> diff --git=20
-> a/Documentation/devicetree/bindings/remoteproc/xilinx,zynqmp-r5-remote
-> proc.yaml=20
-> b/Documentation/devicetree/bindings/remoteproc/xilinx,zynqmp-r5-remote
-> proc.yaml
-> new file mode 100644
-> index 0000000..41520b6
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/remoteproc/xilinx,zynqmp-r5-re
-> +++ moteproc.yaml
-> @@ -0,0 +1,127 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause) %YAML 1.2
-> +---
-> +$id: "http://devicetree.org/schemas/remoteproc/xilinx,zynqmp-r5-remotepr=
-oc.yaml#"
-> +$schema: "http://devicetree.org/meta-schemas/core.yaml#"
-> +
-> +title: Xilinx R5 remote processor controller bindings
-> +
-> +description:
-> +  This document defines the binding for the remoteproc component that=20
-> +loads and
-> +  boots firmwares on the Xilinx Zynqmp and Versal family chipset.
-> +
-> +maintainers:
-> +  - Ed Mooring <ed.mooring@xilinx.com>
-> +  - Ben Levinsky <ben.levinsky@xilinx.com>
-> +
-> +properties:
-> +  compatible:
-> +    const: "xlnx,zynqmp-r5-remoteproc-1.0"
-> +
-> +  core_conf:
-> +    description:
-> +      R5 core configuration (valid string - split or lock-step)
-> +    maxItems: 1
-> +
-> +  interrupts:
-> +    description:
-> +      Interrupt mapping for remoteproc IPI. It is required if the
-> +      user uses the remoteproc driver with the RPMsg kernel driver.
-> +    maxItems: 6
-> +
-> +  memory-region:
-> +    maxItems: 4
-> +    minItems: 4
-> +  pnode-id:
-> +    maxItems: 1
-
-What is this?=20
-[Ben Levinsky] I will description for this. This is used by the Xilinx powe=
-r management code later on when configuring the RPU.
-
-> +  mboxes:
-> +    maxItems: 2
-> +  mbox-names:
-> +    maxItems: 2
-> +
-> +  r5@0:
-> +    type: object
-> +    required:
-> +        - '#address-cells'
-> +        - '#size-cells'
-> +        - pnode-id
-> +examples:
-> +  - |
-> +     reserved-memory {
-> +          #address-cells =3D <1>;
-> +          #size-cells =3D <1>;
-> +          ranges;
-> +          rpu0vdev0vring0: rpu0vdev0vring0@3ed40000 {
-> +               no-map;
-> +               reg =3D <0x3ed40000 0x4000>;
-> +          };
-> +          rpu0vdev0vring1: rpu0vdev0vring1@3ed44000 {
-> +               no-map;
-> +               reg =3D <0x3ed44000 0x4000>;
-> +          };
-> +          rpu0vdev0buffer: rpu0vdev0buffer@3ed48000 {
-> +               no-map;
-> +               reg =3D <0x3ed48000 0x100000>;
-> +          };
-> +          rproc_0_reserved: rproc@3ed000000 {
-> +               no-map;
-> +               reg =3D <0x3ed00000 0x40000>;
-> +          };
-> +     };
-> +     rpu: rpu@ff9a0000 {
-> +          compatible =3D "xlnx,zynqmp-r5-remoteproc-1.0";
-> +          #address-cells =3D <1>;
-> +          #size-cells =3D <1>;
-> +          ranges;
-> +          core_conf =3D "split";
-
-If split, then where is the 2nd core?
-[Ben Levinsky] Will fix, I will add second core in v5.
-
-> +          reg =3D <0xFF9A0000 0x10000>;
-> +          r5_0: r5@0 {
-
-Unit-addresses are based on 'reg' values.
-[Ben Levinsky] Will fix this, thanks
-
-> +               ranges;
-> +               #address-cells =3D <1>;
-> +               #size-cells =3D <1>;
-> +               reg =3D <0xFF9A0100 0x1000>;
-> +               memory-region =3D <&rproc_0_reserved>, <&rpu0vdev0buffer>=
-, <&rpu0vdev0vring0>, <&rpu0vdev0vring1>;
-> +               pnode-id =3D <0x7>;
-> +               mboxes =3D <&ipi_mailbox_rpu0 0>, <&ipi_mailbox_rpu0 1>;
-> +               mbox-names =3D "tx", "rx";
-> +               tcm_0_a: tcm_0@0 {
-> +                    #address-cells =3D <1>;
-> +                    #size-cells =3D <1>;
-> +                    reg =3D <0xFFE00000 0x10000>;
-> +                    pnode-id =3D <0xf>;
-
-These nodes probably need some sort of compatible. And don't the TCMs have =
-different addresses for R5 vs. the A cores?
-[Ben Levinsky] I can add a compatible. The addressesing here is absolute (i=
-.e. 0xffex-xxxx ) as it is used from point of view of A core here.
-
-> +               };
-> +               tcm_0_b: tcm_0@1 {
-> +                    #address-cells =3D <2>;
-> +                    #size-cells =3D <2>;
-> +                    reg =3D <0xFFE20000 0x10000>;
-> +                    pnode-id =3D <0x10>;
-> +               };
-> +          };
-> +     };
-> +
-> +
-> +     zynqmp_ipi1 {
-> +          compatible =3D "xlnx,zynqmp-ipi-mailbox";
-> +          interrupt-parent =3D <&gic>;
-> +          interrupts =3D <0 29 4>;
-> +          xlnx,ipi-id =3D <7>;
-> +          #address-cells =3D <1>;
-> +          #size-cells =3D <1>;
-> +          ranges;
-> +
-> +          /* APU<->RPU0 IPI mailbox controller */
-> +          ipi_mailbox_rpu0: mailbox@ff90000 {
-> +               reg =3D <0xff990600 0x20>,
-> +                     <0xff990620 0x20>,
-> +                     <0xff9900c0 0x20>,
-> +                     <0xff9900e0 0x20>;
-> +               reg-names =3D "local_request_region",
-> +                        "local_response_region",
-> +                        "remote_request_region",
-> +                        "remote_response_region";
-> +               #mbox-cells =3D <1>;
-> +               xlnx,ipi-id =3D <1>;
-> +          };
-> +     };
-> +
-> +...
-> --
-> 2.7.4
->=20
+On 2020-05-19 13:38, Bjorn Andersson wrote:
+> On Tue 28 Apr 15:16 PDT 2020, Rishabh Bhatnagar wrote:
+> 
+>> Currently there is a single notification chain which is called 
+>> whenever any
+>> remoteproc shuts down. This leads to all the listeners being notified, 
+>> and
+>> is not an optimal design as kernel drivers might only be interested in
+>> listening to notifications from a particular remoteproc. Create a 
+>> global
+>> list of remoteproc notification info data structures. This will hold 
+>> the
+>> name and notifier_list information for a particular remoteproc. The 
+>> API
+>> to register for notifications will use name argument to retrieve the
+>> notification info data structure and the notifier block will be added 
+>> to
+>> that data structure's notification chain.
+>> 
+>> Signed-off-by: Siddharth Gupta <sidgup@codeaurora.org>
+>> Signed-off-by: Rishabh Bhatnagar <rishabhb@codeaurora.org>
+> 
+> Thanks Rishabh, design wise I think this looks good now, just some code
+> style things below.
+> 
+>> ---
+>>  drivers/remoteproc/qcom_common.c      | 89 
+>> ++++++++++++++++++++++++++++++-----
+>>  drivers/remoteproc/qcom_common.h      | 10 +++-
+>>  include/linux/remoteproc/qcom_rproc.h | 20 ++++++--
+>>  3 files changed, 99 insertions(+), 20 deletions(-)
+>> 
+>> diff --git a/drivers/remoteproc/qcom_common.c 
+>> b/drivers/remoteproc/qcom_common.c
+>> index 60650bc..7cd17be 100644
+>> --- a/drivers/remoteproc/qcom_common.c
+>> +++ b/drivers/remoteproc/qcom_common.c
+>> @@ -15,16 +15,18 @@
+>>  #include <linux/rpmsg/qcom_glink.h>
+>>  #include <linux/rpmsg/qcom_smd.h>
+>>  #include <linux/soc/qcom/mdt_loader.h>
+>> +#include <linux/remoteproc/qcom_rproc.h>
+> 
+> Please maintain alphabetical sort order.
+> 
+>> 
+>>  #include "remoteproc_internal.h"
+>>  #include "qcom_common.h"
+>> 
+>> +#define MAX_NAME_LEN	20
+>> +DEFINE_MUTEX(rproc_notif_lock);
+> 
+> Please rename this qcom_ssr_subsystem_lock
+> 
+>> +
+>>  #define to_glink_subdev(d) container_of(d, struct qcom_rproc_glink, 
+>> subdev)
+>>  #define to_smd_subdev(d) container_of(d, struct qcom_rproc_subdev, 
+>> subdev)
+>>  #define to_ssr_subdev(d) container_of(d, struct qcom_rproc_ssr, 
+>> subdev)
+>> 
+>> -static BLOCKING_NOTIFIER_HEAD(ssr_notifiers);
+> 
+> Move the definition of rproc_notif_info, the new rproc_notif_info list
+> head and move the two lines above here as well.
+> 
+>> -
+>>  static int glink_subdev_start(struct rproc_subdev *subdev)
+>>  {
+>>  	struct qcom_rproc_glink *glink = to_glink_subdev(subdev);
+>> @@ -174,39 +176,81 @@ void qcom_remove_smd_subdev(struct rproc *rproc, 
+>> struct qcom_rproc_subdev *smd)
+>>  }
+>>  EXPORT_SYMBOL_GPL(qcom_remove_smd_subdev);
+>> 
+>> +struct rproc_notif_info *find_notif_info(const char *name)
+> 
+> Please make this qcom_ssr_get_subsystem(const char *name)
+> 
+>> +{
+>> +	struct rproc_notif_info *info;
+>> +
+>> +	/* Match in the global rproc_notif_list with name */
+>> +	list_for_each_entry(info, &rproc_notif_list, list) {
+>> +		if (!strncmp(info->name, name, strlen(name)))
+> 
+> strncmp(a, b, strlen(b)) is the same thing as strcmp(a, b), unless a is
+> shorted than b and not NUL terminated.
+> 
+>> +			return info;
+>> +	}
+>> +	return NULL;
+> 
+> Both callers of this function will if NULL is returned allocate a new
+> subsystem object and attach to the list. If you do that here you can
+> remove the duplication between these.
+> 
+>> +}
+>> +
+>>  /**
+>>   * qcom_register_ssr_notifier() - register SSR notification handler
+>> + * @name:	pointer to name which will be searched in the global 
+>> notif_list
+>>   * @nb:		notifier_block to notify for restart notifications
+>>   *
+>> - * Returns 0 on success, negative errno on failure.
+>> + * Returns pointer to srcu notifier head on success, ERR_PTR on 
+>> failure.
+> 
+> This shouldn't mention that the opaque pointer is of a type standard to
+> the kernel. Better just say that it returns a "subsystem cookie".
+> 
+>>   *
+>> - * This register the @notify function as handler for restart 
+>> notifications. As
+>> - * remote processors are stopped this function will be called, with 
+>> the SSR
+>> - * name passed as a parameter.
+>> + * This registers the @nb notifier block as part the notifier chain 
+>> for a
+>> + * remoteproc associated with @name. The notifier block's callback
+>> + * will be invoked when the particular remote processor is stopped.
+>>   */
+>> -int qcom_register_ssr_notifier(struct notifier_block *nb)
+>> +void *qcom_register_ssr_notifier(const char *name, struct 
+>> notifier_block *nb)
+>>  {
+>> -	return blocking_notifier_chain_register(&ssr_notifiers, nb);
+>> +	struct rproc_notif_info *info;
+>> +
+>> +	mutex_lock(&rproc_notif_lock);
+>> +	info = find_notif_info(name);
+>> +	if (!info) {
+>> +		info = kzalloc(sizeof(*info), GFP_KERNEL);
+>> +		if (!info) {
+>> +			mutex_unlock(&rproc_notif_lock);
+>> +			return ERR_PTR(-ENOMEM);
+>> +		}
+>> +		info->name = kstrndup(name, MAX_NAME_LEN, GFP_KERNEL);
+> 
+> This is going to be a constant in a lot of cases, so please use
+> kstrdup_const(). Also what's the purpose of limiting the length of 
+> this?
+> 
+>> +		srcu_init_notifier_head(&info->notifier_list);
+>> +
+>> +		/* Add to global notif list */
+>> +		INIT_LIST_HEAD(&info->list);
+>> +		list_add_tail(&info->list, &rproc_notif_list);
+>> +	}
+>> +
+>> +	srcu_notifier_chain_register(&info->notifier_list, nb);
+>> +	mutex_unlock(&rproc_notif_lock);
+>> +	return &info->notifier_list;
+>>  }
+>>  EXPORT_SYMBOL_GPL(qcom_register_ssr_notifier);
+>> 
+>>  /**
+>>   * qcom_unregister_ssr_notifier() - unregister SSR notification 
+>> handler
+>> + * @notify:	pointer to srcu notifier head
+> 
+>       @subsystem: subsystem cookie returned from 
+> qcom_register_ssr_notifier
+> 
+>>   * @nb:		notifier_block to unregister
+>>   */
+>> -void qcom_unregister_ssr_notifier(struct notifier_block *nb)
+>> +int qcom_unregister_ssr_notifier(void *notify, struct notifier_block 
+>> *nb)
+>>  {
+>> -	blocking_notifier_chain_unregister(&ssr_notifiers, nb);
+>> +	if (!notify)
+>> +		return -EINVAL;
+> 
+> qcom_register_ssr_notifier() will return a valid cookie or a ERR_PTR()
+> so if someone passes NULL here they did something wrong during
+> development...
+> 
+> So it's better to just remove this check and give the developer a nice
+> callstack directly pointing out their mistake, than forcing them to
+> chase where this -EINVAL comes from.
+> 
+>> +
+>> +	return srcu_notifier_chain_unregister(notify, nb);
+>>  }
+>>  EXPORT_SYMBOL_GPL(qcom_unregister_ssr_notifier);
+>> 
+>>  static void ssr_notify_unprepare(struct rproc_subdev *subdev)
+>>  {
+>>  	struct qcom_rproc_ssr *ssr = to_ssr_subdev(subdev);
+>> +	struct rproc_notif_data data = {
+>> +		.name = ssr->info->name,
+>> +		.crashed = false,
+>> +	};
+>> 
+>> -	blocking_notifier_call_chain(&ssr_notifiers, 0, (void *)ssr->name);
+>> +	srcu_notifier_call_chain(&ssr->info->notifier_list, 0, &data);
+> 
+> Did we conclude on why you change blocking to srcu? Can we do it in a
+> separate patch?
+> 
+Since the notifier list needs to be dynamically added for every 
+subsystem using srcu
+notifier makes sense. I'm not sure if we can use blocking notifier 
+dynamically here.
+>>  }
+>> 
+>> +
+>>  /**
+>>   * qcom_add_ssr_subdev() - register subdevice as restart notification 
+>> source
+>>   * @rproc:	rproc handle
+>> @@ -214,12 +258,30 @@ static void ssr_notify_unprepare(struct 
+>> rproc_subdev *subdev)
+>>   * @ssr_name:	identifier to use for notifications originating from 
+>> @rproc
+>>   *
+>>   * As the @ssr is registered with the @rproc SSR events will be sent 
+>> to all
+>> - * registered listeners in the system as the remoteproc is shut down.
+>> + * registered listeners for the particular remoteproc when it is 
+>> shutdown.
+>>   */
+>>  void qcom_add_ssr_subdev(struct rproc *rproc, struct qcom_rproc_ssr 
+>> *ssr,
+>>  			 const char *ssr_name)
+>>  {
+>> -	ssr->name = ssr_name;
+>> +	struct rproc_notif_info *info;
+>> +
+>> +	mutex_lock(&rproc_notif_lock);
+>> +	info = find_notif_info(ssr_name);
+>> +	if (!info) {
+>> +		info = kzalloc(sizeof(*info), GFP_KERNEL);
+>> +		if (!info) {
+>> +			mutex_unlock(&rproc_notif_lock);
+>> +			return;
+>> +		}
+>> +		info->name = ssr_name;
+>> +		srcu_init_notifier_head(&info->notifier_list);
+>> +
+>> +		/* Add to global notif_list */
+>> +		INIT_LIST_HEAD(&info->list);
+>> +		list_add_tail(&info->list, &rproc_notif_list);
+>> +	}
+>> +	mutex_unlock(&rproc_notif_lock);
+>> +	ssr->info = info;
+>>  	ssr->subdev.unprepare = ssr_notify_unprepare;
+>> 
+>>  	rproc_add_subdev(rproc, &ssr->subdev);
+>> @@ -233,6 +295,7 @@ void qcom_add_ssr_subdev(struct rproc *rproc, 
+>> struct qcom_rproc_ssr *ssr,
+>>   */
+>>  void qcom_remove_ssr_subdev(struct rproc *rproc, struct 
+>> qcom_rproc_ssr *ssr)
+>>  {
+>> +	ssr->info = NULL;
+> 
+> Move this after rproc_remove_subdev() and rely on the core for this not
+> to race with the ssr_notify_unprepare().
+> 
+>>  	rproc_remove_subdev(rproc, &ssr->subdev);
+>>  }
+>>  EXPORT_SYMBOL_GPL(qcom_remove_ssr_subdev);
+> 
+> It would be nice with a module_exit() that walks the rproc_notif_list
+> and free all the elements, if qcom_common.ko is rmmod'ed. Given that
+> this is uncommon I wouldn't mind to take that as a separate patch
+> though.
+> 
+Yes i can submit that as a separate patch.
+>> diff --git a/drivers/remoteproc/qcom_common.h 
+>> b/drivers/remoteproc/qcom_common.h
+>> index 58de71e..0c1d288 100644
+>> --- a/drivers/remoteproc/qcom_common.h
+>> +++ b/drivers/remoteproc/qcom_common.h
+>> @@ -24,10 +24,16 @@ struct qcom_rproc_subdev {
+>>  	struct qcom_smd_edge *edge;
+>>  };
+>> 
+>> +struct rproc_notif_info {
+> 
+> Please rename this struct qcom_ssr_subsystem
+> 
+>> +	const char *name;
+>> +	struct srcu_notifier_head notifier_list;
+>> +	struct list_head list;
+>> +};
+>> +static LIST_HEAD(rproc_notif_list);
+> 
+> Please rename this list qcom_ssr_subsystem_list and as stated above 
+> move
+> it into qcom_common.c.
+> 
+> 
+> To allow using qcom_ssr_subsystem in the struct below simply forward
+> declare it here as:
+> 
+> struct qcom_ssr_subsystem;
+> 
+>> +
+>>  struct qcom_rproc_ssr {
+>>  	struct rproc_subdev subdev;
+>> -
+>> -	const char *name;
+>> +	struct rproc_notif_info *info;
+>>  };
+>> 
+> 
+> Regards,
+> Bjorn
+> 
+>>  void qcom_add_glink_subdev(struct rproc *rproc, struct 
+>> qcom_rproc_glink *glink);
+>> diff --git a/include/linux/remoteproc/qcom_rproc.h 
+>> b/include/linux/remoteproc/qcom_rproc.h
+>> index fa8e386..3dc65c0 100644
+>> --- a/include/linux/remoteproc/qcom_rproc.h
+>> +++ b/include/linux/remoteproc/qcom_rproc.h
+>> @@ -5,17 +5,27 @@
+>> 
+>>  #if IS_ENABLED(CONFIG_QCOM_RPROC_COMMON)
+>> 
+>> -int qcom_register_ssr_notifier(struct notifier_block *nb);
+>> -void qcom_unregister_ssr_notifier(struct notifier_block *nb);
+>> +struct rproc_notif_data {
+>> +	const char *name;
+>> +	bool crashed;
+>> +};
+>> +
+>> +void *qcom_register_ssr_notifier(const char *name, struct 
+>> notifier_block *nb);
+>> +int qcom_unregister_ssr_notifier(void *notify, struct notifier_block 
+>> *nb);
+>> 
+>>  #else
+>> 
+>> -static inline int qcom_register_ssr_notifier(struct notifier_block 
+>> *nb)
+>> +static inline void *qcom_register_ssr_notifier(const char *name,
+>> +						struct notifier_block *nb)
+>>  {
+>> -	return 0;
+>> +	return NULL;
+>>  }
+>> 
+>> -static inline void qcom_unregister_ssr_notifier(struct notifier_block 
+>> *nb) {}
+>> +static inline int qcom_unregister_ssr_notifier(void *notify,
+>> +						struct notifier_block *nb)
+>> +{
+>> +	return 0;
+>> +}
+>> 
+>>  #endif
+>> 
+>> --
+>> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora 
+>> Forum,
+>> a Linux Foundation Collaborative Project
