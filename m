@@ -6,79 +6,88 @@ X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2577EC433DF
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 26 May 2020 18:31:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24F01C433E3
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 26 May 2020 19:34:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0631420776
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 26 May 2020 18:31:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 03C2D208B6
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 26 May 2020 19:34:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729430AbgEZSb5 (ORCPT
+        id S2390622AbgEZTeH (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 26 May 2020 14:31:57 -0400
-Received: from mga09.intel.com ([134.134.136.24]:31563 "EHLO mga09.intel.com"
+        Tue, 26 May 2020 15:34:07 -0400
+Received: from mga17.intel.com ([192.55.52.151]:57751 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728067AbgEZSb5 (ORCPT
+        id S2389491AbgEZSz1 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 26 May 2020 14:31:57 -0400
-IronPort-SDR: AXpHdYO/XrAgUfTMkoDo8Gl7dKnlIGUzzcTylW+1aRHItE7ye+mfEkjkXU00619ubn+Nd4DtXL
- iVgfDL6jklzA==
+        Tue, 26 May 2020 14:55:27 -0400
+IronPort-SDR: Vwz34E6wMnBKBOp0E6pFixQhKiLID71F5l6yT9VZJeLl2+Em+q0bGqGL5Ik5GOk+CN6EhTp2wC
+ fPdZJw+JoO3w==
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 May 2020 11:31:56 -0700
-IronPort-SDR: WKGtEgFz1w41CKC1ilVbwQvSEF62g3vwneSO9znE/8wX570rfy9zMN9hWtRhVy327Du+HAuFmq
- j434ocS2jn/Q==
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 May 2020 11:55:25 -0700
+IronPort-SDR: LM8Rw2civZIYcAzaibIqLsIxMtiExBEGRfS9EcMikWRkbrKkBBVxqfVFXBc89l2TIM4QIyNZcU
+ Pa09HC0Hu5KQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.73,437,1583222400"; 
-   d="scan'208";a="468403031"
-Received: from aprakasa-mobl.amr.corp.intel.com (HELO [10.254.67.245]) ([10.254.67.245])
-  by fmsmga005.fm.intel.com with ESMTP; 26 May 2020 11:31:55 -0700
-Subject: Re: [Sound-open-firmware] [PATCH 5/6] vhost: add an rpmsg API
-To:     Guennadi Liakhovetski <guennadi.liakhovetski@linux.intel.com>
+   d="scan'208";a="468453839"
+Received: from gliakhov-mobl2.ger.corp.intel.com (HELO ubuntu) ([10.249.45.66])
+  by fmsmga006.fm.intel.com with ESMTP; 26 May 2020 11:55:24 -0700
+Date:   Tue, 26 May 2020 20:55:22 +0200
+From:   Guennadi Liakhovetski <guennadi.liakhovetski@linux.intel.com>
+To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
 Cc:     kvm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
         virtualization@lists.linux-foundation.org,
         sound-open-firmware@alsa-project.org,
         Liam Girdwood <liam.r.girdwood@linux.intel.com>
+Subject: Re: [Sound-open-firmware] [PATCH 5/6] vhost: add an rpmsg API
+Message-ID: <20200526185522.GA6992@ubuntu>
 References: <20200516101109.2624-1-guennadi.liakhovetski@linux.intel.com>
  <20200516101109.2624-6-guennadi.liakhovetski@linux.intel.com>
  <9737e3f2-e59c-0174-9254-a2d8f29f30b7@linux.intel.com>
  <20200525135336.GB6761@ubuntu>
-From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Message-ID: <59029e07-f49b-8d1a-4eb4-2f6d5775cf54@linux.intel.com>
-Date:   Tue, 26 May 2020 13:30:24 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+ <59029e07-f49b-8d1a-4eb4-2f6d5775cf54@linux.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <20200525135336.GB6761@ubuntu>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <59029e07-f49b-8d1a-4eb4-2f6d5775cf54@linux.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
+Hi Pierre,
 
-
-On 5/25/20 8:53 AM, Guennadi Liakhovetski wrote:
-> Hi Pierre,
+On Tue, May 26, 2020 at 01:30:24PM -0500, Pierre-Louis Bossart wrote:
 > 
-> On Sat, May 16, 2020 at 12:00:35PM -0500, Pierre-Louis Bossart wrote:
->>
->>> +config VHOST_RPMSG
->>> +	tristate
->>> +	depends on VHOST
->>
->> depends on RPMSG_VIRTIO?
 > 
-> No, RPMSG_VIRTIO is used on the guest side, VHOST_RPMSG (as well as
-> all other vhost drivers) on the host side.
+> On 5/25/20 8:53 AM, Guennadi Liakhovetski wrote:
+> > Hi Pierre,
+> > 
+> > On Sat, May 16, 2020 at 12:00:35PM -0500, Pierre-Louis Bossart wrote:
+> > > 
+> > > > +config VHOST_RPMSG
+> > > > +	tristate
+> > > > +	depends on VHOST
+> > > 
+> > > depends on RPMSG_VIRTIO?
+> > 
+> > No, RPMSG_VIRTIO is used on the guest side, VHOST_RPMSG (as well as
+> > all other vhost drivers) on the host side.
+> 
+> I vaguely recalled something about sockets, and was wondering if there isn't
+> a dependency on this:
+> 
+> config VHOST_VSOCK
+> 	tristate "vhost virtio-vsock driver"
+> 	depends on VSOCKETS && EVENTFD && VHOST_DPN
+> 	select VHOST
 
-I vaguely recalled something about sockets, and was wondering if there 
-isn't a dependency on this:
+You probably are thinking about the first patch in the series "vhost: convert 
+VHOST_VSOCK_SET_RUNNING to a generic ioctl." But no, this RPMsg driver 
+doesn't depend on vsock, on the contrary, it takes a (albeit tiny) piece of 
+functionality from vsock and makes it global.
 
-config VHOST_VSOCK
-	tristate "vhost virtio-vsock driver"
-	depends on VSOCKETS && EVENTFD && VHOST_DPN
-	select VHOST
-
+Thanks
+Guennadi
