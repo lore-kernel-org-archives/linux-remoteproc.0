@@ -2,73 +2,77 @@ Return-Path: <SRS0=yUw9=7J=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF092C433E0
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 27 May 2020 05:49:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AFDA9C433DF
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 27 May 2020 05:50:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 98AC0208E4
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 27 May 2020 05:49:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8F47D2078C
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 27 May 2020 05:50:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BynqfQ+a"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="l2n9x9fZ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725267AbgE0Ftv (ORCPT
+        id S1726921AbgE0FuA (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 27 May 2020 01:49:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48528 "EHLO
+        Wed, 27 May 2020 01:50:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48584 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725710AbgE0Ftu (ORCPT
+        with ESMTP id S1726903AbgE0Ft6 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 27 May 2020 01:49:50 -0400
-Received: from mail-pl1-x643.google.com (mail-pl1-x643.google.com [IPv6:2607:f8b0:4864:20::643])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B7A5BC03E96F
-        for <linux-remoteproc@vger.kernel.org>; Tue, 26 May 2020 22:49:50 -0700 (PDT)
-Received: by mail-pl1-x643.google.com with SMTP id t7so9734825plr.0
-        for <linux-remoteproc@vger.kernel.org>; Tue, 26 May 2020 22:49:50 -0700 (PDT)
+        Wed, 27 May 2020 01:49:58 -0400
+Received: from mail-pj1-x1042.google.com (mail-pj1-x1042.google.com [IPv6:2607:f8b0:4864:20::1042])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A44CEC03E96E
+        for <linux-remoteproc@vger.kernel.org>; Tue, 26 May 2020 22:49:58 -0700 (PDT)
+Received: by mail-pj1-x1042.google.com with SMTP id n15so1036316pjt.4
+        for <linux-remoteproc@vger.kernel.org>; Tue, 26 May 2020 22:49:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=KVRQ/dG/ulblJ6XfEmveJlaTO6rV8wSk5XBgKB7R2z8=;
-        b=BynqfQ+a5CBlSg++kvXtdKorWt70nAbQ+AB4vsASLLrHpIBhbOhM6OAKRk2lZNj+kA
-         WljhD0oBMlc/5i9E1DkVKQJ8SlYlQI8ucYCGfJftn1M7eDYZVNv+eXnXqtfCdZVWoqrH
-         dwemZk680kcFLHibchlHCwPFcGGcic+56SbpnjYYqq48OyOGyXH1OsPAMTwr2Vv0EWRw
-         YqPozv5/lTy7+D/29KN9QuzT0GCdxf0Bq0dRR4uu+JpanFNmFH19PORWmbC+n9QnRSe2
-         S1wplBoDTWOL1CDlIbBl+Wa4YrUZcx6hx6repqVSqIFvYNCjR4n2EdmiO145otuDW/Ug
-         8FOA==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=ER99fZktJjShf0MQ65G5VWlR4BA86d/njxXiOdsbXAA=;
+        b=l2n9x9fZQq6lFM2StO3TKlqHflMR0ZV10I2KqkUI2RHFKxfB/D6E7edevg0JKu2N0L
+         4z93FI57rkyQz7GLT+AMTP2ayww+Dgx58V8kDNKxpQq2WG2lvDuBFS0gr8BzY+Cv0MwZ
+         CorHPgt9bIYh5X5uk1VRKocozwyj8265qUC2DrLPlsbSH+raY4wTONsUT2tcHHYdcvoZ
+         NBMeqEH+BA/7sr0D49XargHgn4W9OlnM8HLIkcx2lbq3vu4fdV+3bHx9ri+PcPs5jlun
+         c82o1yRCZXe8TBAYCYPU8z12ciDCaWRxi/PTe8ezgbqUcuB0AkQWTGr9InGCmtIYZcfN
+         vjNA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=KVRQ/dG/ulblJ6XfEmveJlaTO6rV8wSk5XBgKB7R2z8=;
-        b=YZkh0oPA/3Xrmxf9MkSQ3/SiOq5MZ2S5pJudJkMjurbnHyEgVKuVJZSL352UvZpM+0
-         VRkXx3E8cjsUvNv+XVI2zni/UlO8GOcbiWsSiVCiU77tGo1IienWSDv+Orl/qoQuuISa
-         4SVXFIY9J6gGgWikh42Ybhit0P32XVRprh9HXRZ7N8rRsiqCILXwmrJb0BqPDfYxscvp
-         IZWUUA+Zhj5KM+52uqGIIbg//OZ9Ptfu2fhdPHxYRbI+c8DkXloM+9UAkCR4uKutE1zt
-         5OVkUtcbGGjhcjRDwTbd5Ae8++KTI6vBFridnwtmqlogTrl0b/TzKG0XLZgxar6efEcA
-         Uxpw==
-X-Gm-Message-State: AOAM530pBchQj+aQYqEwIx6Vx09JneUJN4xOYRliXyalRWk72GHrYAnI
-        LGh4WR1YT3tcZH2x+SA7S4e0KA==
-X-Google-Smtp-Source: ABdhPJxxYTWCxpVs3/p7Y4l6Rw8F2L+7yqSTCrCkinr/sKBgmzP+kAYhcMGEhULY0IXMqrNttZJoMQ==
-X-Received: by 2002:a17:902:c004:: with SMTP id v4mr4526725plx.46.1590558590090;
-        Tue, 26 May 2020 22:49:50 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=ER99fZktJjShf0MQ65G5VWlR4BA86d/njxXiOdsbXAA=;
+        b=TZ85o4rBmRGngPt6rm4j+r0X+fuS53xLNYlrQbfnp5o6ccregS8/VHtZyLqViSgSPT
+         B1Ni28/hZeVbFi1+wuHuRWIvh7ETSUw7feGRETJbSIYakB97IlgqJMa2nDlItS86DzOo
+         N5hPm6hPdHGSn8Q8lB8IcWaMMJkbBxtW6FQHM3n0+5+c+VHTQNYgl8hrS20FGQt5R6Zd
+         2uwjJ+JBzDHLoakduYZODuOHyTGE/rS6qHahaOe45Srkh8Ae3RIevI1O2zCy7jExljwU
+         KxCod9PBUbBoqDVFMDKOlPxIYbLex1f8McmJvBMDPHsE53EMb1V4WzKSHHQyeqmqv3tj
+         zGWQ==
+X-Gm-Message-State: AOAM533/i6SE5WK52B8++7x9lJLQ3DHf8i8gS3UQyOyKeXmFN8avSVJX
+        TlG7wIU06eeINVU8SvdujCIP8w==
+X-Google-Smtp-Source: ABdhPJzNrDqnjvSB470UKYyek7GMQLoqmrKKNyfz6/R+lcRxAU/JyC+8Oni86bxpSgE3TUIN+aDuWQ==
+X-Received: by 2002:a17:90a:b883:: with SMTP id o3mr2855177pjr.81.1590558598114;
+        Tue, 26 May 2020 22:49:58 -0700 (PDT)
 Received: from localhost.localdomain (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id 206sm1015873pfy.97.2020.05.26.22.49.48
+        by smtp.gmail.com with ESMTPSA id 206sm1015873pfy.97.2020.05.26.22.49.56
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 26 May 2020 22:49:49 -0700 (PDT)
+        Tue, 26 May 2020 22:49:57 -0700 (PDT)
 From:   Bjorn Andersson <bjorn.andersson@linaro.org>
 To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
         Ohad Ben-Cohen <ohad@wizery.com>
 Cc:     Rob Herring <robh+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
         linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v6 0/5]  remoteproc: qcom: PIL info support
-Date:   Tue, 26 May 2020 22:48:44 -0700
-Message-Id: <20200527054850.2067032-1-bjorn.andersson@linaro.org>
+        linux-kernel@vger.kernel.org, Stephen Boyd <swboyd@chromium.org>,
+        Vinod Koul <vkoul@kernel.org>
+Subject: [PATCH v6 5/5] arm64: dts: qcom: sdm845: Add IMEM and PIL info region
+Date:   Tue, 26 May 2020 22:48:49 -0700
+Message-Id: <20200527054850.2067032-6-bjorn.andersson@linaro.org>
 X-Mailer: git-send-email 2.26.2
+In-Reply-To: <20200527054850.2067032-1-bjorn.andersson@linaro.org>
+References: <20200527054850.2067032-1-bjorn.andersson@linaro.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-remoteproc-owner@vger.kernel.org
@@ -76,33 +80,47 @@ Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Introduce support for filling out the relocation information in IMEM, to aid
-post mortem debug tools to locate the various remoteprocs.
+Add a simple-mfd representing IMEM on SDM845 and define the PIL
+relocation info region, so that post mortem tools will be able to locate
+the loaded remoteprocs.
 
-Bjorn Andersson (5):
-  dt-bindings: remoteproc: Add Qualcomm PIL info binding
-  remoteproc: qcom: Introduce helper to store pil info in IMEM
-  remoteproc: qcom: Update PIL relocation info on load
-  arm64: dts: qcom: qcs404: Add IMEM and PIL info region
-  arm64: dts: qcom: sdm845: Add IMEM and PIL info region
+Reviewed-by: Stephen Boyd <swboyd@chromium.org>
+Reviewed-by: Vinod Koul <vkoul@kernel.org>
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+---
 
- .../bindings/remoteproc/qcom,pil-info.yaml    |  44 +++++++
- arch/arm64/boot/dts/qcom/qcs404.dtsi          |  15 +++
- arch/arm64/boot/dts/qcom/sdm845.dtsi          |  15 +++
- drivers/remoteproc/Kconfig                    |   8 ++
- drivers/remoteproc/Makefile                   |   1 +
- drivers/remoteproc/qcom_pil_info.c            | 124 ++++++++++++++++++
- drivers/remoteproc/qcom_pil_info.h            |   7 +
- drivers/remoteproc/qcom_q6v5_adsp.c           |  16 ++-
- drivers/remoteproc/qcom_q6v5_mss.c            |   3 +
- drivers/remoteproc/qcom_q6v5_pas.c            |  15 ++-
- drivers/remoteproc/qcom_q6v5_wcss.c           |  14 +-
- drivers/remoteproc/qcom_wcnss.c               |  14 +-
- 12 files changed, 264 insertions(+), 12 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/remoteproc/qcom,pil-info.yaml
- create mode 100644 drivers/remoteproc/qcom_pil_info.c
- create mode 100644 drivers/remoteproc/qcom_pil_info.h
+Changes since v5:
+- Picked up reviewed-bys
 
+ arch/arm64/boot/dts/qcom/sdm845.dtsi | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+index 8eb5a31346d2..fee50d979dc3 100644
+--- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
++++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+@@ -3724,6 +3724,21 @@ spmi_bus: spmi@c440000 {
+ 			cell-index = <0>;
+ 		};
+ 
++		imem@146bf000 {
++			compatible = "simple-mfd";
++			reg = <0 0x146bf000 0 0x1000>;
++
++			#address-cells = <1>;
++			#size-cells = <1>;
++
++			ranges = <0 0 0x146bf000 0x1000>;
++
++			pil-reloc@94c {
++				compatible = "qcom,pil-reloc-info";
++				reg = <0x94c 0xc8>;
++			};
++		};
++
+ 		apps_smmu: iommu@15000000 {
+ 			compatible = "qcom,sdm845-smmu-500", "arm,mmu-500";
+ 			reg = <0 0x15000000 0 0x80000>;
 -- 
 2.26.2
 
