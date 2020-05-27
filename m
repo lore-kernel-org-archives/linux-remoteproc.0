@@ -2,88 +2,225 @@ Return-Path: <SRS0=yUw9=7J=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8A39C433E1
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 27 May 2020 06:31:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 920B4C433DF
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 27 May 2020 17:47:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BED2A20C56
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 27 May 2020 06:31:15 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="mgStlcTQ"
+	by mail.kernel.org (Postfix) with ESMTP id 798D920663
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 27 May 2020 17:47:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728483AbgE0GbN (ORCPT
+        id S2391581AbgE0Rr0 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 27 May 2020 02:31:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54948 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728553AbgE0GbM (ORCPT
+        Wed, 27 May 2020 13:47:26 -0400
+Received: from mga07.intel.com ([134.134.136.100]:43430 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2391538AbgE0RrZ (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 27 May 2020 02:31:12 -0400
-Received: from mail-pj1-x1041.google.com (mail-pj1-x1041.google.com [IPv6:2607:f8b0:4864:20::1041])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2A66DC03E96F
-        for <linux-remoteproc@vger.kernel.org>; Tue, 26 May 2020 23:31:11 -0700 (PDT)
-Received: by mail-pj1-x1041.google.com with SMTP id ci21so1118832pjb.3
-        for <linux-remoteproc@vger.kernel.org>; Tue, 26 May 2020 23:31:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:content-transfer-encoding:in-reply-to:references
-         :subject:from:cc:to:date:message-id:user-agent;
-        bh=GAeIH2kkVlgfDKNDvExkjEUjr7t+dLIV143r/wZ4ZCs=;
-        b=mgStlcTQb+C7oOeBQLtpopl4rDpEglFL8WNYy4ZKxaew9vLvMRyQeiWwvv4K6diVMw
-         RmJUO9lnsqfQiXz3gPyvtp11yp6ZgilsacHzxopa/QpbhHUWQ54qx+inj9qISvcrMqxl
-         wQCfE4E5kBgBRyzkVnnyXcZ+QUuerB0c1M7WY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:content-transfer-encoding
-         :in-reply-to:references:subject:from:cc:to:date:message-id
-         :user-agent;
-        bh=GAeIH2kkVlgfDKNDvExkjEUjr7t+dLIV143r/wZ4ZCs=;
-        b=Z9ZFxxioYEajBMqFZqVFgMdo8e3cA2MR/luurZbGUoCD0VjdAaQ6m0jF3rqTpBX+wb
-         Ao1exSJLWx8gbrz3kNtSXSEhVe0AR5boqSOajSL7vhD77i/JuMYjAqfyJT3rDuCergUF
-         XOhKv8FYpzq2blrdYraXr+NkqUMGYpIEugSbUFodr3o2mJZc+PGYMcSwT0wpphsYrnEA
-         IAeILfC0LaNc5TbGUK0THHJdcDEwhQzxzIedzlOqWU2GXya2kERgLTvuFDby7IrMCod4
-         JzIK9k+tkDXWjj5Oj58fZTBBlD0Hs17qP3cpi/EH0IaIDl/TyptN/8OM58MVMoKvagBj
-         2r1A==
-X-Gm-Message-State: AOAM531VLfhBnlr2RVRt/ITOpz6KaPmzlXiqBQJ/6OgwT8H+URN+nJ2/
-        zczNqiwlBfTLcRuFJA61iPL5J5h7Lrs=
-X-Google-Smtp-Source: ABdhPJworKi8wu5+vZmXaxlggXWpRcMSuQ5Qj06+Hg0Li/MDDPoRyyIhDaY2PmECBWrcKK3Cd2MvYQ==
-X-Received: by 2002:a17:90a:23e7:: with SMTP id g94mr3424943pje.210.1590561070701;
-        Tue, 26 May 2020 23:31:10 -0700 (PDT)
-Received: from chromium.org ([2620:15c:202:1:fa53:7765:582b:82b9])
-        by smtp.gmail.com with ESMTPSA id a7sm1193700pfa.187.2020.05.26.23.31.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 26 May 2020 23:31:10 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
+        Wed, 27 May 2020 13:47:25 -0400
+IronPort-SDR: siaeZtYU05vs7r/MS3AjfH0rZdZG6oJZcrfffxkrW+lsQL+phCW9mdxUV8UW2EBLMil9KZdVBn
+ fqfT5p6hmbrA==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 May 2020 10:47:23 -0700
+IronPort-SDR: cbARXuyMu88U02Fy3H2M/tcD0giSOJ6pFmBAG+1elt/OsAA3UlWF/LRVuP1RkN75VVoT32tuwJ
+ NQVGQXNycHcQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.73,442,1583222400"; 
+   d="scan'208";a="414291584"
+Received: from gliakhov-mobl2.ger.corp.intel.com (HELO ubuntu) ([10.252.42.249])
+  by orsmga004.jf.intel.com with ESMTP; 27 May 2020 10:47:21 -0700
+Date:   Wed, 27 May 2020 19:47:19 +0200
+From:   Guennadi Liakhovetski <guennadi.liakhovetski@linux.intel.com>
+To:     Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc:     kvm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        sound-open-firmware@alsa-project.org,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Liam Girdwood <liam.r.girdwood@linux.intel.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Ohad Ben-Cohen <ohad@wizery.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: [PATCH v2 5/5] vhost: add an RPMsg API
+Message-ID: <20200527174719.GA4846@ubuntu>
+References: <20200525144458.8413-1-guennadi.liakhovetski@linux.intel.com>
+ <20200525144458.8413-6-guennadi.liakhovetski@linux.intel.com>
+ <20200526205039.GA20104@xps15>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20200527054850.2067032-4-bjorn.andersson@linaro.org>
-References: <20200527054850.2067032-1-bjorn.andersson@linaro.org> <20200527054850.2067032-4-bjorn.andersson@linaro.org>
-Subject: Re: [PATCH v6 3/5] remoteproc: qcom: Update PIL relocation info on load
-From:   Stephen Boyd <swboyd@chromium.org>
-Cc:     Rob Herring <robh+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Vinod Koul <vkoul@kernel.org>
-To:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Ohad Ben-Cohen <ohad@wizery.com>
-Date:   Tue, 26 May 2020 23:31:09 -0700
-Message-ID: <159056106910.88029.925874171202462275@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.9
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200526205039.GA20104@xps15>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Quoting Bjorn Andersson (2020-05-26 22:48:47)
-> Update the PIL relocation information in IMEM with information about
-> where the firmware for various remoteprocs are loaded.
->=20
-> Reviewed-by: Vinod Koul <vkoul@kernel.org>
-> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> ---
+Hi Mathieu,
 
-Reviewed-by: Stephen Boyd <swboyd@chromium.org>
+On Tue, May 26, 2020 at 02:50:39PM -0600, Mathieu Poirier wrote:
+> Hi Guennadi,
+> 
+> On Mon, May 25, 2020 at 04:44:58PM +0200, Guennadi Liakhovetski wrote:
+> > Linux supports running the RPMsg protocol over the VirtIO transport
+> > protocol, but currently there is only support for VirtIO clients and
+> > no support for a VirtIO server. This patch adds a vhost-based RPMsg
+> > server implementation.
+> > 
+> > Signed-off-by: Guennadi Liakhovetski <guennadi.liakhovetski@linux.intel.com>
+> > ---
+> >  drivers/vhost/Kconfig       |   7 +
+> >  drivers/vhost/Makefile      |   3 +
+> >  drivers/vhost/rpmsg.c       | 372 ++++++++++++++++++++++++++++++++++++++++++++
+> >  drivers/vhost/vhost_rpmsg.h |  74 +++++++++
+> >  4 files changed, 456 insertions(+)
+> >  create mode 100644 drivers/vhost/rpmsg.c
+> >  create mode 100644 drivers/vhost/vhost_rpmsg.h
+
+[snip]
+
+> > +/* send namespace */
+> > +int vhost_rpmsg_ns_announce(struct vhost_rpmsg *vr, const char *name,
+> > +			    unsigned int src)
+> > +{
+> > +	struct vhost_rpmsg_iter iter = {
+> > +		.rhdr = {
+> > +			.src = 0,
+> > +			.dst = RPMSG_NS_ADDR,
+> > +			.flags = RPMSG_NS_CREATE, /* rpmsg_recv_single() */
+> > +		},
+> > +	};
+> > +	struct rpmsg_ns_msg ns = {
+> > +		.addr = src,
+> > +		.flags = RPMSG_NS_CREATE, /* for rpmsg_ns_cb() */
+> > +	};
+> 
+> I think it would be worth mentioning that someone on the guest side needs to
+> call register_virtio_device() with a vdev->id->device == VIRTIO_ID_RPMSG,
+> something that will match that device to the virtio_ipc_driver.  Otherwise the
+> connection between them is very difficult to establish.
+
+In fact you don't want to use just one ID, as you add more drivers, using RPMsg 
+over VirtIO, you'll add more IDs to the ID table in virtio_rpmsg_bus.c. I am 
+adding a comment at the top of this file to explain that.
+
+Thanks
+Guennadi
+
+> Aside from the checkpatch warning I already pointed out, I don't have much else.
+> 
+> Thanks,
+> Mathieu
+> 
+> > +	int ret = vhost_rpmsg_start_lock(vr, &iter, VIRTIO_RPMSG_RESPONSE,
+> > +					 sizeof(ns));
+> > +
+> > +	if (ret < 0)
+> > +		return ret;
+> > +
+> > +	strlcpy(ns.name, name, sizeof(ns.name));
+> > +
+> > +	ret = vhost_rpmsg_copy(vr, &iter, &ns, sizeof(ns));
+> > +	if (ret != sizeof(ns))
+> > +		vq_err(iter.vq, "%s(): added %d instead of %zu bytes\n",
+> > +		       __func__, ret, sizeof(ns));
+> > +
+> > +	ret = vhost_rpmsg_finish_unlock(vr, &iter);
+> > +	if (ret < 0)
+> > +		vq_err(iter.vq, "%s(): namespace announcement failed: %d\n",
+> > +		       __func__, ret);
+> > +
+> > +	return ret;
+> > +}
+> > +EXPORT_SYMBOL_GPL(vhost_rpmsg_ns_announce);
+> > +
+> > +MODULE_LICENSE("GPL v2");
+> > +MODULE_AUTHOR("Intel, Inc.");
+> > +MODULE_DESCRIPTION("Vhost RPMsg API");
+> > diff --git a/drivers/vhost/vhost_rpmsg.h b/drivers/vhost/vhost_rpmsg.h
+> > new file mode 100644
+> > index 00000000..5248ac9
+> > --- /dev/null
+> > +++ b/drivers/vhost/vhost_rpmsg.h
+> > @@ -0,0 +1,74 @@
+> > +/* SPDX-License-Identifier: (GPL-2.0) */
+> > +/*
+> > + * Copyright(c) 2020 Intel Corporation. All rights reserved.
+> > + *
+> > + * Author: Guennadi Liakhovetski <guennadi.liakhovetski@linux.intel.com>
+> > + */
+> > +
+> > +#ifndef VHOST_RPMSG_H
+> > +#define VHOST_RPMSG_H
+> > +
+> > +#include <linux/uio.h>
+> > +#include <linux/virtio_rpmsg.h>
+> > +
+> > +#include "vhost.h"
+> > +
+> > +/* RPMsg uses two VirtQueues: one for each direction */
+> > +enum {
+> > +	VIRTIO_RPMSG_RESPONSE,	/* RPMsg response (host->guest) buffers */
+> > +	VIRTIO_RPMSG_REQUEST,	/* RPMsg request (guest->host) buffers */
+> > +	/* Keep last */
+> > +	VIRTIO_RPMSG_NUM_OF_VQS,
+> > +};
+> > +
+> > +struct vhost_rpmsg_ept;
+> > +
+> > +struct vhost_rpmsg_iter {
+> > +	struct iov_iter iov_iter;
+> > +	struct rpmsg_hdr rhdr;
+> > +	struct vhost_virtqueue *vq;
+> > +	const struct vhost_rpmsg_ept *ept;
+> > +	int head;
+> > +	void *priv;
+> > +};
+> > +
+> > +struct vhost_rpmsg {
+> > +	struct vhost_dev dev;
+> > +	struct vhost_virtqueue vq[VIRTIO_RPMSG_NUM_OF_VQS];
+> > +	struct vhost_virtqueue *vq_p[VIRTIO_RPMSG_NUM_OF_VQS];
+> > +	const struct vhost_rpmsg_ept *ept;
+> > +	unsigned int n_epts;
+> > +};
+> > +
+> > +struct vhost_rpmsg_ept {
+> > +	ssize_t (*read)(struct vhost_rpmsg *, struct vhost_rpmsg_iter *);
+> > +	ssize_t (*write)(struct vhost_rpmsg *, struct vhost_rpmsg_iter *);
+> > +	int addr;
+> > +};
+> > +
+> > +static inline size_t vhost_rpmsg_iter_len(const struct vhost_rpmsg_iter *iter)
+> > +{
+> > +	return iter->rhdr.len;
+> > +}
+> > +
+> > +#define VHOST_RPMSG_ITER(_src, _dst) {	\
+> > +	.rhdr = {			\
+> > +			.src = _src,	\
+> > +			.dst = _dst,	\
+> > +		},			\
+> > +	}
+> > +
+> > +void vhost_rpmsg_init(struct vhost_rpmsg *vr, const struct vhost_rpmsg_ept *ept,
+> > +		      unsigned int n_epts);
+> > +void vhost_rpmsg_destroy(struct vhost_rpmsg *vr);
+> > +int vhost_rpmsg_ns_announce(struct vhost_rpmsg *vr, const char *name,
+> > +			    unsigned int src);
+> > +int vhost_rpmsg_start_lock(struct vhost_rpmsg *vr,
+> > +			   struct vhost_rpmsg_iter *iter,
+> > +			   unsigned int qid, ssize_t len);
+> > +size_t vhost_rpmsg_copy(struct vhost_rpmsg *vr, struct vhost_rpmsg_iter *iter,
+> > +			void *data, size_t size);
+> > +int vhost_rpmsg_finish_unlock(struct vhost_rpmsg *vr,
+> > +			      struct vhost_rpmsg_iter *iter);
+> > +
+> > +#endif
+> > -- 
+> > 1.9.3
+> > 
