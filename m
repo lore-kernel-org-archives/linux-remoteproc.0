@@ -2,154 +2,248 @@ Return-Path: <SRS0=yUw9=7J=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34F85C433E1
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 27 May 2020 05:50:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20082C433E0
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 27 May 2020 06:29:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 12109207E8
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 27 May 2020 05:50:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E81BF20787
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 27 May 2020 06:29:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="AinJ5BZd"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="YU6Jfn0I"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726733AbgE0Fty (ORCPT
+        id S1728431AbgE0G3k (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 27 May 2020 01:49:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48540 "EHLO
+        Wed, 27 May 2020 02:29:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54704 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726616AbgE0Ftx (ORCPT
+        with ESMTP id S1728139AbgE0G3k (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 27 May 2020 01:49:53 -0400
-Received: from mail-pl1-x642.google.com (mail-pl1-x642.google.com [IPv6:2607:f8b0:4864:20::642])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 51950C03E96F
-        for <linux-remoteproc@vger.kernel.org>; Tue, 26 May 2020 22:49:52 -0700 (PDT)
-Received: by mail-pl1-x642.google.com with SMTP id x18so8621085pll.6
-        for <linux-remoteproc@vger.kernel.org>; Tue, 26 May 2020 22:49:52 -0700 (PDT)
+        Wed, 27 May 2020 02:29:40 -0400
+Received: from mail-pf1-x443.google.com (mail-pf1-x443.google.com [IPv6:2607:f8b0:4864:20::443])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 98898C061A0F
+        for <linux-remoteproc@vger.kernel.org>; Tue, 26 May 2020 23:29:39 -0700 (PDT)
+Received: by mail-pf1-x443.google.com with SMTP id y198so11402718pfb.4
+        for <linux-remoteproc@vger.kernel.org>; Tue, 26 May 2020 23:29:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=6+dxUIMKQyAy42JBGRTdVZGwXErKP5C2qIWqyTzCWlw=;
-        b=AinJ5BZdSrzd+mqf3e3TrKJ/RNxB4EpQKs3USnJ4HMNONq6kXq+IHalLSvmSioC2n5
-         IOI30WTz7y4sjD8yg0VZecK93wmNY7SovmM5O+UwPjmndzMmELDVJXCXEJtIuzsf0NPz
-         iPN8iJ4ZZbawoSEE5M/BfN5RC25bt1lrdMI7L9zQJi7UrlJYkE9u7i3AX8w4pGAQZJE9
-         tFfNYCuA0NNZnlWO+cgPG5oQVEVCTK59WoxoRU0Q0qBD5j7wB7DhwgFHyfXoMRigEoTn
-         rQDEMIej3kdjwE/UFeaH1Taes8njY4ZhB1Y8P+6919JBNuKrloxXHdWDxZ68xPme6ZKQ
-         ZwkA==
+        d=chromium.org; s=google;
+        h=mime-version:content-transfer-encoding:in-reply-to:references
+         :subject:from:cc:to:date:message-id:user-agent;
+        bh=fxu5dk7RwUA8dpHbFW3pd+nyeTF1vd8Gc7FoHjS2Hsg=;
+        b=YU6Jfn0IShLyAgTnfgnKMV3lHdFpIbLyNsA7yG/oL+kJmPzMoEbI1SBG04cuw2sMtg
+         pSb8nDqJPl6TpiZOEgn3Guezb23/WRWb/EvKTR+lYVYGxh2te7bD6hwDEXnt8jR5HMWC
+         U865RObLU5LvQCy0/grgdrFP3jdGUpi6W24xM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=6+dxUIMKQyAy42JBGRTdVZGwXErKP5C2qIWqyTzCWlw=;
-        b=Y8YF64GALYUEPoAj64lh3Aluk2ry7toDR2Te91++SzjJwOnHLy2sJiXUIQsdCA5b03
-         Mz3GFOwX1Kr5+uyUtvTN2cmZjoPUwjtaKyVox4dscpTx4UqfbovJzA6PjQrg0l11jl3Q
-         CO5OBm9stTfmLUo7o2pgM6f/SE0aGukrHqazjvvZ95npfKo/uxWK3hUsU9P3PjjGYkIt
-         90s9pElZpxpEkr2QQl5nP1rfKVUwEQsuwrGhUAzfdGFoCRrQcB82/9YFRBbtIYP+RSlw
-         y3mOPZsG5G0X0MweG+Vd19YpXxu3L40Ar+6WiductLWmkOln9dYIb/2Gm5TvtoQQCC8i
-         V/Jw==
-X-Gm-Message-State: AOAM533G7DCK6Zpi6VyAlI9oSt9Lu7p1Xn3DObPOjC7OOx5rGAU/NLEK
-        3Ux2mX5gkfFll+91+Ndgipi4gw==
-X-Google-Smtp-Source: ABdhPJwHDrxBY9CDpCjhMdKuXpvS3HOC+JAK91j6QON6YO393fqoeurzBFq9A3gzs5voZpgS6sbQxg==
-X-Received: by 2002:a17:90a:c791:: with SMTP id gn17mr3183530pjb.46.1590558591829;
-        Tue, 26 May 2020 22:49:51 -0700 (PDT)
-Received: from localhost.localdomain (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id 206sm1015873pfy.97.2020.05.26.22.49.50
+        h=x-gm-message-state:mime-version:content-transfer-encoding
+         :in-reply-to:references:subject:from:cc:to:date:message-id
+         :user-agent;
+        bh=fxu5dk7RwUA8dpHbFW3pd+nyeTF1vd8Gc7FoHjS2Hsg=;
+        b=S71+vbA202yR7EkL8uA7gOJskWgGwbFIzjWx5Lke2mVHVdKUo2djuaq/nIqw0l1+gz
+         mdijI8F7KpZR+2+IA/8naNiRQpWCC3EMfoic3Mde8BTvFNDDuHEuapE3u8aHH2RLwgFV
+         kZO1niiVbMSnNm2f3hmuoPksZcubW+A6LMYESnl2q2yEUrcr1IWbRYGmXwBxyqvOM347
+         BzAS5TiHX8fzQ2aWba7GIkANmjerecp9IKoTNaIDzFP8VhsqfSE5XiUNndybCZdSF4J7
+         HRoxKFYUSd/GdBdbHopXG62jwTnL4xeRAcAsN7pCdF7lUa8wAcns4WcFFxaM9bjyK9fJ
+         XozA==
+X-Gm-Message-State: AOAM532MtU83GVnWRLFcE5LuN7L8L7zyjchQsCRWnn68qiF4NXm6F4yX
+        ah/MsI5IsMVccWw5W/x6Givuhg==
+X-Google-Smtp-Source: ABdhPJyhkfa5KlK1RTabR8GhRJivCy04mKqYuT1GUxseSgs3O4T4NkBUkhxqItF2iiDCVu8ltYliHA==
+X-Received: by 2002:a62:1407:: with SMTP id 7mr2536858pfu.103.1590560979100;
+        Tue, 26 May 2020 23:29:39 -0700 (PDT)
+Received: from chromium.org ([2620:15c:202:1:fa53:7765:582b:82b9])
+        by smtp.gmail.com with ESMTPSA id u69sm1290044pjb.40.2020.05.26.23.29.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 26 May 2020 22:49:51 -0700 (PDT)
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Ohad Ben-Cohen <ohad@wizery.com>
+        Tue, 26 May 2020 23:29:38 -0700 (PDT)
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20200527054850.2067032-3-bjorn.andersson@linaro.org>
+References: <20200527054850.2067032-1-bjorn.andersson@linaro.org> <20200527054850.2067032-3-bjorn.andersson@linaro.org>
+Subject: Re: [PATCH v6 2/5] remoteproc: qcom: Introduce helper to store pil info in IMEM
+From:   Stephen Boyd <swboyd@chromium.org>
 Cc:     Rob Herring <robh+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
         linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Rob Herring <robh@kernel.org>,
-        Stephen Boyd <swboyd@chromium.org>,
         Vinod Koul <vkoul@kernel.org>
-Subject: [PATCH v6 1/5] dt-bindings: remoteproc: Add Qualcomm PIL info binding
-Date:   Tue, 26 May 2020 22:48:45 -0700
-Message-Id: <20200527054850.2067032-2-bjorn.andersson@linaro.org>
-X-Mailer: git-send-email 2.26.2
-In-Reply-To: <20200527054850.2067032-1-bjorn.andersson@linaro.org>
-References: <20200527054850.2067032-1-bjorn.andersson@linaro.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+To:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Ohad Ben-Cohen <ohad@wizery.com>
+Date:   Tue, 26 May 2020 23:29:37 -0700
+Message-ID: <159056097743.88029.16084555679084078794@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.9
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Add a devicetree binding for the Qualcomm peripheral image loader
-relocation information region found in the IMEM.
+Quoting Bjorn Andersson (2020-05-26 22:48:46)
+> diff --git a/drivers/remoteproc/qcom_pil_info.c b/drivers/remoteproc/qcom=
+_pil_info.c
+> new file mode 100644
+> index 000000000000..0785c7cde2d3
+> --- /dev/null
+> +++ b/drivers/remoteproc/qcom_pil_info.c
+> @@ -0,0 +1,124 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * Copyright (c) 2019-2020 Linaro Ltd.
+> + */
+> +#include <linux/kernel.h>
+> +#include <linux/module.h>
+> +#include <linux/mutex.h>
+> +#include <linux/of_address.h>
+> +
+> +#define PIL_RELOC_NAME_LEN     8
+> +
+> +struct pil_reloc_entry {
+> +       char name[PIL_RELOC_NAME_LEN];
+> +       __le64 base;
+> +       __le32 size;
+> +} __packed;
+> +
+> +struct pil_reloc {
+> +       struct device *dev;
 
-Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-Reviewed-by: Rob Herring <robh@kernel.org>
-Reviewed-by: Stephen Boyd <swboyd@chromium.org>
-Reviewed-by: Vinod Koul <vkoul@kernel.org>
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
----
+This isn't assigned. Remove it?
 
-Changes since v5:
-- Picked up reviewed-bys
+> +       void __iomem *base;
+> +       size_t num_entries;
+> +};
+> +
+> +static struct pil_reloc _reloc __read_mostly;
+> +static DEFINE_MUTEX(reloc_mutex);
 
- .../bindings/remoteproc/qcom,pil-info.yaml    | 44 +++++++++++++++++++
- 1 file changed, 44 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/remoteproc/qcom,pil-info.yaml
+reloc_mutex is a little generic. Maybe pil_reloc_lock or
+qcom_pil_reloc_lock?
 
-diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,pil-info.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,pil-info.yaml
-new file mode 100644
-index 000000000000..87c52316ddbd
---- /dev/null
-+++ b/Documentation/devicetree/bindings/remoteproc/qcom,pil-info.yaml
-@@ -0,0 +1,44 @@
-+# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/remoteproc/qcom,pil-info.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Qualcomm peripheral image loader relocation info binding
-+
-+maintainers:
-+  - Bjorn Andersson <bjorn.andersson@linaro.org>
-+
-+description:
-+  The Qualcomm peripheral image loader relocation memory region, in IMEM, is
-+  used for communicating remoteproc relocation information to post mortem
-+  debugging tools.
-+
-+properties:
-+  compatible:
-+    const: qcom,pil-reloc-info
-+
-+  reg:
-+    maxItems: 1
-+
-+required:
-+  - compatible
-+  - reg
-+
-+examples:
-+  - |
-+    imem@146bf000 {
-+      compatible = "syscon", "simple-mfd";
-+      reg = <0x146bf000 0x1000>;
-+
-+      #address-cells = <1>;
-+      #size-cells = <1>;
-+
-+      ranges = <0 0x146bf000 0x1000>;
-+
-+      pil-reloc@94c {
-+        compatible = "qcom,pil-reloc-info";
-+        reg = <0x94c 0xc8>;
-+      };
-+    };
-+...
--- 
-2.26.2
+> +
+> +static int qcom_pil_info_init(void)
+> +{
+> +       struct device_node *np;
+> +       struct resource imem;
+> +       void __iomem *base;
+> +       int ret;
+> +
+> +       /* Already initialized? */
+> +       if (_reloc.base)
+> +               return 0;
+> +
+> +       np =3D of_find_compatible_node(NULL, NULL, "qcom,pil-reloc-info");
+> +       if (!np)
+> +               return -ENOENT;
+> +
+> +       ret =3D of_address_to_resource(np, 0, &imem);
+> +       of_node_put(np);
+> +       if (ret < 0)
+> +               return ret;
+> +
+> +       base =3D ioremap(imem.start, resource_size(&imem));
+> +       if (!base) {
+> +               pr_err("failed to map PIL relocation info region\n");
+> +               return -ENOMEM;
+> +       }
+> +
+> +       memset_io(base, 0, resource_size(&imem));
+> +
+> +       _reloc.base =3D base;
+> +       _reloc.num_entries =3D resource_size(&imem) / sizeof(struct pil_r=
+eloc_entry);
+> +
+> +       return 0;
+> +}
+> +
+> +/**
+> + * qcom_pil_info_store() - store PIL information of image in IMEM
+> + * @image:     name of the image
+> + * @base:      base address of the loaded image
+> + * @size:      size of the loaded image
+> + *
+> + * Return: 0 on success, negative errno on failure
+> + */
+> +int qcom_pil_info_store(const char *image, phys_addr_t base, size_t size)
+> +{
+> +       char buf[PIL_RELOC_NAME_LEN];
+> +       void __iomem *entry;
+> +       int ret;
+> +       int i;
+> +
+> +       mutex_lock(&reloc_mutex);
+> +       ret =3D qcom_pil_info_init();
+> +       if (ret < 0) {
+> +               mutex_unlock(&reloc_mutex);
+> +               return ret;
+> +       }
+> +
+> +       for (i =3D 0; i < _reloc.num_entries; i++) {
+> +               entry =3D _reloc.base + i * sizeof(struct pil_reloc_entry=
+);
+> +
+> +               memcpy_fromio(buf, entry, PIL_RELOC_NAME_LEN);
+> +
+> +               /*
+> +                * An empty record means we didn't find it, given that the
+> +                * records are packed.
+> +                */
+> +               if (!buf[0])
+> +                       goto found_unused;
+> +
+> +               if (!strncmp(buf, image, PIL_RELOC_NAME_LEN))
+> +                       goto found_existing;
+> +       }
+> +
+> +       pr_warn("insufficient PIL info slots\n");
+> +       mutex_unlock(&reloc_mutex);
+> +       return -ENOMEM;
+> +
+> +found_unused:
+> +       memcpy_toio(entry, image, PIL_RELOC_NAME_LEN);
+> +found_existing:
+> +       writel(base, entry + offsetof(struct pil_reloc_entry, base));
+> +       writel(size, entry + offsetof(struct pil_reloc_entry, size));
 
+It makes me nervous to see offsetof() used in the same line as writel()
+because who knows what the compiler does, even with __packed and stuff.
+I guess I tried and failed to convince you earlier to change this code
+to use fixed offsets instead of structs to describe the memory layout
+but that must have failed!
+
+> +       mutex_unlock(&reloc_mutex);
+> +
+> +       return 0;
+> +}
+> +EXPORT_SYMBOL_GPL(qcom_pil_info_store);
+> +
+> +static void __exit pil_reloc_exit(void)
+> +{
+> +       mutex_lock(&reloc_mutex);
+> +       iounmap(_reloc.base);
+> +       _reloc.base =3D NULL;
+> +       mutex_unlock(&reloc_mutex);
+> +}
+> +module_exit(pil_reloc_exit);
+> +
+> +MODULE_DESCRIPTION("Qualcomm PIL relocation info");
+> +MODULE_LICENSE("GPL v2");
+> diff --git a/drivers/remoteproc/qcom_pil_info.h b/drivers/remoteproc/qcom=
+_pil_info.h
+> new file mode 100644
+> index 000000000000..1b89a63ba82f
+> --- /dev/null
+> +++ b/drivers/remoteproc/qcom_pil_info.h
+> @@ -0,0 +1,7 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +#ifndef __QCOM_PIL_INFO_H__
+> +#define __QCOM_PIL_INFO_H__
+
+Probably need <linux/types.h> here for phys_addr_t definition to make
+this header self-contained.
+
+> +
+> +int qcom_pil_info_store(const char *image, phys_addr_t base, size_t size=
+);
+> +
+> +#endif
