@@ -2,335 +2,386 @@ Return-Path: <SRS0=ANKP=7K=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 355DDC433E0
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 28 May 2020 22:32:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA0EEC433DF
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 28 May 2020 22:48:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0A7B920B80
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 28 May 2020 22:32:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1590705155;
-	bh=hiIVcOB9zDMhtlOg+537fpD+ryBzyvkqlEjVqF+GA1Q=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=x50BlKHykJpVkjABBSq16IIg8SaQLabWiwz7aPZs/NK2x8utEEZOV7cMeG2sfErHi
-	 X241N0raqvzppAkrKeIvaAn6DkJPw0vP937af9Mcz0uFHAMTVAetJ3BKzGweGUlrnr
-	 sPKcJrA3uCRzWkyY28mRN7RiqppxJWls/oSkiG9Q=
+	by mail.kernel.org (Postfix) with ESMTP id 7B060207BC
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 28 May 2020 22:48:17 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="iPjFXLNY"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437105AbgE1Wce (ORCPT
+        id S2437244AbgE1WsN (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 28 May 2020 18:32:34 -0400
-Received: from mail-io1-f65.google.com ([209.85.166.65]:46066 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2436952AbgE1Wcc (ORCPT
+        Thu, 28 May 2020 18:48:13 -0400
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:55960 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2437209AbgE1WsM (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 28 May 2020 18:32:32 -0400
-Received: by mail-io1-f65.google.com with SMTP id y5so219088iob.12;
-        Thu, 28 May 2020 15:32:30 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=2iWkmtIIPdkQ7s2OlH5ICkwWkQE9JDegAoIkBuC4Mh8=;
-        b=Pt5qzLEk8u4Vj0eMPinhlr2fre6hqfndBnnQE8TuN1RhaC7YHBcotVmU59Y7rklB+L
-         wCvILnTlwERbB15GziQMWNsoytZKo9WPmRPjwbjEvAlQgxYEGqhQIeGNbb2MVNs7I4kT
-         iRsEr1udJF202Y9PAWZjPTVdGA3psMScd56PWK4wgZADYVE/TqSig0w3ZhlWLAyYD484
-         NMFj5VHXu3c0Q0oeDXcxsUaKZguww8ehoWaQE0wKiMPmFS6VfedEz5EGK/zkBuFrqJGV
-         TmotOR0WhWTDyURWD/J24tY4VOPyWclPBwBsETRrPCAjlQnUbQ7S1I11yNZPtSHf673T
-         R8lQ==
-X-Gm-Message-State: AOAM531PBuiWcSv4Tv4JIGOlIGIq3nPpCPvr+VsASzp1EYLfi9FMXyPc
-        TQgUWXDiSKBgOWWTm4xnug==
-X-Google-Smtp-Source: ABdhPJwgO1mB4nZ0UFl0QlAt68U8U2JNLntupIY0/f1e3wwkTyNZyAnbKB9gbovv/3kUpAWC6z7GTw==
-X-Received: by 2002:a5e:de03:: with SMTP id e3mr4247972iok.0.1590705150063;
-        Thu, 28 May 2020 15:32:30 -0700 (PDT)
-Received: from xps15 ([64.188.179.252])
-        by smtp.gmail.com with ESMTPSA id 4sm3980244ilc.34.2020.05.28.15.32.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 28 May 2020 15:32:29 -0700 (PDT)
-Received: (nullmailer pid 801318 invoked by uid 1000);
-        Thu, 28 May 2020 22:32:28 -0000
-Date:   Thu, 28 May 2020 16:32:28 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Suman Anna <s-anna@ti.com>
-Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Lokesh Vutla <lokeshvutla@ti.com>,
-        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+        Thu, 28 May 2020 18:48:12 -0400
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 04SMm1Ia005754;
+        Thu, 28 May 2020 17:48:01 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1590706081;
+        bh=x39oPaJDl+ZUFHxrbMEevXYzU0cRrJYQpFZWOXtqJZA=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=iPjFXLNYNCLSHYs0sfS5iGoy3U/WdjtL1/cWcIgNdPdAm9C2X+/l0L7hYc6Qtr4cr
+         YgaZAxrq/323O4FWs6Q1S0CHgE7cpJQoc8qztf85xlpsAeLCtHdLc9bCLyI07lbnzF
+         UGS60tmDjzIYUL+NLCXzsXSvqDQB4XvWsLuBfsAo=
+Received: from DLEE103.ent.ti.com (dlee103.ent.ti.com [157.170.170.33])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 04SMm1fN033075
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 28 May 2020 17:48:01 -0500
+Received: from DLEE104.ent.ti.com (157.170.170.34) by DLEE103.ent.ti.com
+ (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3; Thu, 28
+ May 2020 17:48:01 -0500
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE104.ent.ti.com
+ (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3 via
+ Frontend Transport; Thu, 28 May 2020 17:48:01 -0500
+Received: from [10.250.48.148] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id 04SMm0Qe064457;
+        Thu, 28 May 2020 17:48:00 -0500
 Subject: Re: [PATCH v2 2/4] dt-bindings: remoteproc: Add bindings for C66x
  DSPs on TI K3 SoCs
-Message-ID: <20200528223228.GA785633@bogus>
+To:     Rob Herring <robh@kernel.org>
+CC:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Lokesh Vutla <lokeshvutla@ti.com>,
+        <linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
 References: <20200521001006.2725-1-s-anna@ti.com>
- <20200521001006.2725-3-s-anna@ti.com>
+ <20200521001006.2725-3-s-anna@ti.com> <20200528223228.GA785633@bogus>
+From:   Suman Anna <s-anna@ti.com>
+Message-ID: <594b649d-eca6-1cd4-3621-c8297a6a9492@ti.com>
+Date:   Thu, 28 May 2020 17:47:55 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200521001006.2725-3-s-anna@ti.com>
+In-Reply-To: <20200528223228.GA785633@bogus>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Wed, May 20, 2020 at 07:10:04PM -0500, Suman Anna wrote:
-> Some Texas Instruments K3 family of SoCs have one of more Digital Signal
-> Processor (DSP) subsystems that are comprised of either a TMS320C66x
-> CorePac and/or a next-generation TMS320C71x CorePac processor subsystem.
-> Add the device tree bindings document for the C66x DSP devices on these
-> SoCs. The added example illustrates the DT nodes for the first C66x DSP
-> device present on the K3 J721E family of SoCs.
+Hi Rob,
+
+On 5/28/20 5:32 PM, Rob Herring wrote:
+> On Wed, May 20, 2020 at 07:10:04PM -0500, Suman Anna wrote:
+>> Some Texas Instruments K3 family of SoCs have one of more Digital Signal
+>> Processor (DSP) subsystems that are comprised of either a TMS320C66x
+>> CorePac and/or a next-generation TMS320C71x CorePac processor subsystem.
+>> Add the device tree bindings document for the C66x DSP devices on these
+>> SoCs. The added example illustrates the DT nodes for the first C66x DSP
+>> device present on the K3 J721E family of SoCs.
+>>
+>> Signed-off-by: Suman Anna <s-anna@ti.com>
+>> ---
+>> v2:
+>>   - Updated the example to include the root-node to fix the bot errors from v1
 > 
-> Signed-off-by: Suman Anna <s-anna@ti.com>
-> ---
-> v2:
->  - Updated the example to include the root-node to fix the bot errors from v1
+> Pretty sure that was not why you had errors.
 
-Pretty sure that was not why you had errors.
+It is because of the default values used for #address-cells and 
+#size-cells in the example_template and example_start variables used in 
+the dt-extract-example script. They are 1 by default, so the generated 
+template ended up with the root-node using 1, and the actual example 
+using 2 resulting in the mismatch.
 
->  - Added maxItems to resets, mboxes, memory-region, sram properties
->  - Changed the ti,sci-proc-ids $ref to uint-array from uint-matrix
->  - Addressed the minor review comments from Mathieu
-> v1: https://patchwork.kernel.org/patch/11458571/
+When I updated the script to use 2 for both #address-cells and 
+#size-cells, then the warnings go away. This is the reason, dtbs_check 
+on my actual dts files goes through fine.
+
 > 
->  .../bindings/remoteproc/ti,k3-dsp-rproc.yaml  | 190 ++++++++++++++++++
->  1 file changed, 190 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/remoteproc/ti,k3-dsp-rproc.yaml
+>>   - Added maxItems to resets, mboxes, memory-region, sram properties
+>>   - Changed the ti,sci-proc-ids $ref to uint-array from uint-matrix
+>>   - Addressed the minor review comments from Mathieu
+>> v1: https://patchwork.kernel.org/patch/11458571/
+>>
+>>   .../bindings/remoteproc/ti,k3-dsp-rproc.yaml  | 190 ++++++++++++++++++
+>>   1 file changed, 190 insertions(+)
+>>   create mode 100644 Documentation/devicetree/bindings/remoteproc/ti,k3-dsp-rproc.yaml
+>>
+>> diff --git a/Documentation/devicetree/bindings/remoteproc/ti,k3-dsp-rproc.yaml b/Documentation/devicetree/bindings/remoteproc/ti,k3-dsp-rproc.yaml
+>> new file mode 100644
+>> index 000000000000..cdf649655838
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/remoteproc/ti,k3-dsp-rproc.yaml
+>> @@ -0,0 +1,190 @@
+>> +# SPDX-License-Identifier: (GPL-2.0-only or BSD-2-Clause)
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/remoteproc/ti,k3-dsp-rproc.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: TI K3 DSP devices
+>> +
+>> +maintainers:
+>> +  - Suman Anna <s-anna@ti.com>
+>> +
+>> +description: |
+>> +  The TI K3 family of SoCs usually have one or more TI DSP Core sub-systems
+>> +  that are used to offload some of the processor-intensive tasks or algorithms,
+>> +  for achieving various system level goals.
+>> +
+>> +  These processor sub-systems usually contain additional sub-modules like
+>> +  L1 and/or L2 caches/SRAMs, an Interrupt Controller, an external memory
+>> +  controller, a dedicated local power/sleep controller etc. The DSP processor
+>> +  cores in the K3 SoCs are usually either a TMS320C66x CorePac processor or a
+>> +  TMS320C71x CorePac processor.
+>> +
+>> +  Each DSP Core sub-system is represented as a single DT node. Each node has a
+>> +  number of required or optional properties that enable the OS running on the
+>> +  host processor (Arm CorePac) to perform the device management of the remote
+>> +  processor and to communicate with the remote processor.
+>> +
+>> +properties:
+>> +  compatible:
+>> +    const: ti,j721e-c66-dsp
+>> +    description:
+>> +      Use "ti,j721e-c66-dsp" for C66x DSPs on K3 J721E SoCs
 > 
-> diff --git a/Documentation/devicetree/bindings/remoteproc/ti,k3-dsp-rproc.yaml b/Documentation/devicetree/bindings/remoteproc/ti,k3-dsp-rproc.yaml
-> new file mode 100644
-> index 000000000000..cdf649655838
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/remoteproc/ti,k3-dsp-rproc.yaml
-> @@ -0,0 +1,190 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only or BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/remoteproc/ti,k3-dsp-rproc.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: TI K3 DSP devices
-> +
-> +maintainers:
-> +  - Suman Anna <s-anna@ti.com>
-> +
-> +description: |
-> +  The TI K3 family of SoCs usually have one or more TI DSP Core sub-systems
-> +  that are used to offload some of the processor-intensive tasks or algorithms,
-> +  for achieving various system level goals.
-> +
-> +  These processor sub-systems usually contain additional sub-modules like
-> +  L1 and/or L2 caches/SRAMs, an Interrupt Controller, an external memory
-> +  controller, a dedicated local power/sleep controller etc. The DSP processor
-> +  cores in the K3 SoCs are usually either a TMS320C66x CorePac processor or a
-> +  TMS320C71x CorePac processor.
-> +
-> +  Each DSP Core sub-system is represented as a single DT node. Each node has a
-> +  number of required or optional properties that enable the OS running on the
-> +  host processor (Arm CorePac) to perform the device management of the remote
-> +  processor and to communicate with the remote processor.
-> +
-> +properties:
-> +  compatible:
-> +    const: ti,j721e-c66-dsp
-> +    description:
-> +      Use "ti,j721e-c66-dsp" for C66x DSPs on K3 J721E SoCs
+> What else are you going to use? There's only one compatible string. Drop
+> description.
 
-What else are you going to use? There's only one compatible string. Drop 
-description.
+Is updated in a subsequent binding update where I added the C71 support.
 
-> +
-> +  reg:
-> +    description: |
-> +      Should contain an entry for each value in 'reg-names'.
-> +      Each entry should have the memory region's start address
-> +      and the size of the region, the representation matching
-> +      the parent node's '#address-cells' and '#size-cells' values.
-
-Don't need generic descriptions. That's every 'reg'.
-
-What you can do is an 'items' list describing what each region is.
-
-> +    minItems: 3
-> +    maxItems: 3
-> +
-> +  reg-names:
-> +    description: |
-> +      Should contain strings with the names of the specific internal
-> +      memory regions, and should be defined in this order
-
-Again, drop.
-
-> +    maxItems: 3
-> +    items:
-> +      - const: l2sram
-> +      - const: l1pram
-> +      - const: l1dram
-> +
-> +  ti,sci:
-> +    $ref: /schemas/types.yaml#/definitions/phandle
-> +    description:
-> +      Should be a phandle to the TI-SCI System Controller node
-> +
-> +  ti,sci-dev-id:
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    description: |
-> +      Should contain the TI-SCI device id corresponding to the DSP core.
-> +      Please refer to the corresponding System Controller documentation
-> +      for valid values for the DSP cores.
-> +
-> +  ti,sci-proc-ids:
-> +    description: Should contain a single tuple of <proc_id host_id>.
-> +    allOf:
-> +      - $ref: /schemas/types.yaml#/definitions/uint32-array
-> +      - maxItems: 1
-> +        items:
-> +          items:
-> +            - description: TI-SCI processor id for the DSP core device
-> +            - description: TI-SCI host id to which processor control
-> +                           ownership should be transferred to
-
-I assume these properties appear in multiple TI nodes? We don't need 
-them defined multiple times. Create a schema for them that you can 
-include here.
-
-> +
-> +  resets:
-> +    description: |
-> +      Should contain the phandle to the reset controller node
-> +      managing the local resets for this device, and a reset
-> +      specifier. Please refer to the following reset bindings
-> +      for the reset argument specifier,
-> +      Documentation/devicetree/bindings/reset/ti,sci-reset.txt
-
-Drop.
-
-> +    maxItems: 1
-> +
-> +  firmware-name:
-> +    description: |
-> +      Should contain the name of the default firmware image
-> +      file located on the firmware search path
-> +
-> +  mboxes:
-> +    description: |
-> +      OMAP Mailbox specifier denoting the sub-mailbox, to be used for
-> +      communication with the remote processor. This property should match
-> +      with the sub-mailbox node used in the firmware image. The specifier
-> +      format is as per the bindings,
-> +      Documentation/devicetree/bindings/mailbox/omap-mailbox.txt
-
-Drop. What mailbox provider is used is outside the scope of this 
-binding.
-
-> +    maxItems: 1
-> +
-> +  memory-region:
-> +    minItems: 2
-> +    maxItems: 8
-> +    description: |
-> +      phandle to the reserved memory nodes to be associated with the remoteproc
-> +      device. There should be at least two reserved memory nodes defined - the
-> +      first one would be used for dynamic DMA allocations like vrings and vring
-> +      buffers, and the remaining ones used for the firmware image sections. The
-> +      reserved memory nodes should be carveout nodes, and should be defined as
-> +      per the bindings in
-> +      Documentation/devicetree/bindings/reserved-memory/reserved-memory.txt
-
-items:
-  - description: dynamic DMA allocations like vrings and vring buffers
-  - description: firmware image section ???
-  - description: firmware image section ???
-
-> +
-> +# Optional properties:
-> +# --------------------
-> +
-> +  sram:
-> +    $ref: /schemas/types.yaml#/definitions/phandle-array
-> +    minItems: 1
-> +    maxItems: 4
-> +    description: |
-> +      phandles to one or more reserved on-chip SRAM regions. The regions
-> +      should be defined as child nodes of the respective SRAM node, and
-> +      should be defined as per the generic bindings in,
-> +      Documentation/devicetree/bindings/sram/sram.yaml
-> +
-> +required:
-> + - compatible
-> + - reg
-> + - reg-names
-> + - ti,sci
-> + - ti,sci-dev-id
-> + - ti,sci-proc-ids
-> + - resets
-> + - firmware-name
-> + - mboxes
-> + - memory-region
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    / {
-> +        model = "Texas Instruments K3 J721E SoC";
-> +        compatible = "ti,j721e";
-> +        #address-cells = <2>;
-> +        #size-cells = <2>;
-> +
-> +        /* DSP Carveout reserved memory nodes */
-> +        reserved-memory {
-> +            #address-cells = <2>;
-> +            #size-cells = <2>;
-> +            ranges;
-> +
-> +            c66_0_dma_memory_region: c66-dma-memory@a6000000 {
-> +                compatible = "shared-dma-pool";
-> +                reg = <0x00 0xa6000000 0x00 0x100000>;
-> +                no-map;
-> +            };
-> +
-> +            c66_0_memory_region: c66-memory@a6100000 {
-> +                compatible = "shared-dma-pool";
-> +                reg = <0x00 0xa6100000 0x00 0xf00000>;
-> +                no-map;
-> +            };
-> +        };
-
-Drop all of this. Outside the scope of this binding. And will likely 
-start failing validation as schemas become more complete.
-
-> +
-> +        cbass_main: bus@100000 {
-
-Drop unused labels.
-
-> +            compatible = "simple-bus";
-> +            #address-cells = <2>;
-> +            #size-cells = <2>;
-> +            ranges = <0x00 0x00100000 0x00 0x00100000 0x00 0x00020000>, /* ctrl mmr */
-> +                     <0x4d 0x80800000 0x4d 0x80800000 0x00 0x00800000>, /* C66_0 */
-> +                     <0x4d 0x81800000 0x4d 0x81800000 0x00 0x00800000>; /* C66_1 */
-> +
-> +            /* J721E C66_0 DSP node */
-> +            c66_0: dsp@4d80800000 {
-> +                compatible = "ti,j721e-c66-dsp";
-> +                reg = <0x4d 0x80800000 0x00 0x00048000>,
-> +                      <0x4d 0x80e00000 0x00 0x00008000>,
-> +                      <0x4d 0x80f00000 0x00 0x00008000>;
-> +                reg-names = "l2sram", "l1pram", "l1dram";
-> +                ti,sci = <&dmsc>;
-> +                ti,sci-dev-id = <142>;
-> +                ti,sci-proc-ids = <0x03 0xFF>;
-> +                resets = <&k3_reset 142 1>;
-> +                firmware-name = "j7-c66_0-fw";
-> +                memory-region = <&c66_0_dma_memory_region>,
-> +                                <&c66_0_memory_region>;
-> +                mboxes = <&mailbox0_cluster3 &mbox_c66_0>;
-> +            };
-> +        };
-> +    };
-> -- 
-> 2.26.0
 > 
+>> +
+>> +  reg:
+>> +    description: |
+>> +      Should contain an entry for each value in 'reg-names'.
+>> +      Each entry should have the memory region's start address
+>> +      and the size of the region, the representation matching
+>> +      the parent node's '#address-cells' and '#size-cells' values.
+> 
+> Don't need generic descriptions. That's every 'reg'.
+> 
+> What you can do is an 'items' list describing what each region is.
+
+OK, I am bit confused here. I have listed the items under the reg-names, 
+while using just the minItems or maxItems here. What is the convention, 
+aren't reg and reg-names associative.
+
+> 
+>> +    minItems: 3
+>> +    maxItems: 3
+>> +
+>> +  reg-names:
+>> +    description: |
+>> +      Should contain strings with the names of the specific internal
+>> +      memory regions, and should be defined in this order
+> 
+> Again, drop.
+
+OK
+
+> 
+>> +    maxItems: 3
+>> +    items:
+>> +      - const: l2sram
+>> +      - const: l1pram
+>> +      - const: l1dram
+>> +
+>> +  ti,sci:
+>> +    $ref: /schemas/types.yaml#/definitions/phandle
+>> +    description:
+>> +      Should be a phandle to the TI-SCI System Controller node
+>> +
+>> +  ti,sci-dev-id:
+>> +    $ref: /schemas/types.yaml#/definitions/uint32
+>> +    description: |
+>> +      Should contain the TI-SCI device id corresponding to the DSP core.
+>> +      Please refer to the corresponding System Controller documentation
+>> +      for valid values for the DSP cores.
+>> +
+>> +  ti,sci-proc-ids:
+>> +    description: Should contain a single tuple of <proc_id host_id>.
+>> +    allOf:
+>> +      - $ref: /schemas/types.yaml#/definitions/uint32-array
+>> +      - maxItems: 1
+>> +        items:
+>> +          items:
+>> +            - description: TI-SCI processor id for the DSP core device
+>> +            - description: TI-SCI host id to which processor control
+>> +                           ownership should be transferred to
+> 
+> I assume these properties appear in multiple TI nodes? We don't need
+> them defined multiple times. Create a schema for them that you can
+> include here.
+
+Only the remoteprocs, so they are limited to this binding and one more 
+R5F remoteproc binding.
+
+> 
+>> +
+>> +  resets:
+>> +    description: |
+>> +      Should contain the phandle to the reset controller node
+>> +      managing the local resets for this device, and a reset
+>> +      specifier. Please refer to the following reset bindings
+>> +      for the reset argument specifier,
+>> +      Documentation/devicetree/bindings/reset/ti,sci-reset.txt
+> 
+> Drop.
+
+Entire description or just the reference to the reset bindings file?
+
+> 
+>> +    maxItems: 1
+>> +
+>> +  firmware-name:
+>> +    description: |
+>> +      Should contain the name of the default firmware image
+>> +      file located on the firmware search path
+>> +
+>> +  mboxes:
+>> +    description: |
+>> +      OMAP Mailbox specifier denoting the sub-mailbox, to be used for
+>> +      communication with the remote processor. This property should match
+>> +      with the sub-mailbox node used in the firmware image. The specifier
+>> +      format is as per the bindings,
+>> +      Documentation/devicetree/bindings/mailbox/omap-mailbox.txt
+> 
+> Drop. What mailbox provider is used is outside the scope of this
+> binding.
+
+OK.
+
+> 
+>> +    maxItems: 1
+>> +
+>> +  memory-region:
+>> +    minItems: 2
+>> +    maxItems: 8
+>> +    description: |
+>> +      phandle to the reserved memory nodes to be associated with the remoteproc
+>> +      device. There should be at least two reserved memory nodes defined - the
+>> +      first one would be used for dynamic DMA allocations like vrings and vring
+>> +      buffers, and the remaining ones used for the firmware image sections. The
+>> +      reserved memory nodes should be carveout nodes, and should be defined as
+>> +      per the bindings in
+>> +      Documentation/devicetree/bindings/reserved-memory/reserved-memory.txt
+> 
+> items:
+>    - description: dynamic DMA allocations like vrings and vring buffers
+>    - description: firmware image section ???
+>    - description: firmware image section ???
+
+Yeah, this is scalable if we will have multiple separate DDR regions. I 
+had to choose a decent maxItems value, so I chose 8. Wouldn't listing 
+the individual items override the number of minItems/maxItems?
+
+> 
+>> +
+>> +# Optional properties:
+>> +# --------------------
+>> +
+>> +  sram:
+>> +    $ref: /schemas/types.yaml#/definitions/phandle-array
+>> +    minItems: 1
+>> +    maxItems: 4
+>> +    description: |
+>> +      phandles to one or more reserved on-chip SRAM regions. The regions
+>> +      should be defined as child nodes of the respective SRAM node, and
+>> +      should be defined as per the generic bindings in,
+>> +      Documentation/devicetree/bindings/sram/sram.yaml
+>> +
+>> +required:
+>> + - compatible
+>> + - reg
+>> + - reg-names
+>> + - ti,sci
+>> + - ti,sci-dev-id
+>> + - ti,sci-proc-ids
+>> + - resets
+>> + - firmware-name
+>> + - mboxes
+>> + - memory-region
+>> +
+>> +additionalProperties: false
+>> +
+>> +examples:
+>> +  - |
+>> +    / {
+>> +        model = "Texas Instruments K3 J721E SoC";
+>> +        compatible = "ti,j721e";
+>> +        #address-cells = <2>;
+>> +        #size-cells = <2>;
+>> +
+>> +        /* DSP Carveout reserved memory nodes */
+>> +        reserved-memory {
+>> +            #address-cells = <2>;
+>> +            #size-cells = <2>;
+>> +            ranges;
+>> +
+>> +            c66_0_dma_memory_region: c66-dma-memory@a6000000 {
+>> +                compatible = "shared-dma-pool";
+>> +                reg = <0x00 0xa6000000 0x00 0x100000>;
+>> +                no-map;
+>> +            };
+>> +
+>> +            c66_0_memory_region: c66-memory@a6100000 {
+>> +                compatible = "shared-dma-pool";
+>> +                reg = <0x00 0xa6100000 0x00 0xf00000>;
+>> +                no-map;
+>> +            };
+>> +        };
+> 
+> Drop all of this. Outside the scope of this binding. And will likely
+> start failing validation as schemas become more complete.
+
+This is a complete example because of the memory-region references below.
+
+> 
+>> +
+>> +        cbass_main: bus@100000 {
+> 
+> Drop unused labels.
+
+OK.
+
+regards
+Suman
+
+> 
+>> +            compatible = "simple-bus";
+>> +            #address-cells = <2>;
+>> +            #size-cells = <2>;
+>> +            ranges = <0x00 0x00100000 0x00 0x00100000 0x00 0x00020000>, /* ctrl mmr */
+>> +                     <0x4d 0x80800000 0x4d 0x80800000 0x00 0x00800000>, /* C66_0 */
+>> +                     <0x4d 0x81800000 0x4d 0x81800000 0x00 0x00800000>; /* C66_1 */
+>> +
+>> +            /* J721E C66_0 DSP node */
+>> +            c66_0: dsp@4d80800000 {
+>> +                compatible = "ti,j721e-c66-dsp";
+>> +                reg = <0x4d 0x80800000 0x00 0x00048000>,
+>> +                      <0x4d 0x80e00000 0x00 0x00008000>,
+>> +                      <0x4d 0x80f00000 0x00 0x00008000>;
+>> +                reg-names = "l2sram", "l1pram", "l1dram";
+>> +                ti,sci = <&dmsc>;
+>> +                ti,sci-dev-id = <142>;
+>> +                ti,sci-proc-ids = <0x03 0xFF>;
+>> +                resets = <&k3_reset 142 1>;
+>> +                firmware-name = "j7-c66_0-fw";
+>> +                memory-region = <&c66_0_dma_memory_region>,
+>> +                                <&c66_0_memory_region>;
+>> +                mboxes = <&mailbox0_cluster3 &mbox_c66_0>;
+>> +            };
+>> +        };
+>> +    };
+>> -- 
+>> 2.26.0
+>>
+
