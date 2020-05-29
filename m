@@ -2,37 +2,37 @@ Return-Path: <SRS0=N1Fc=7L=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A174C433E0
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 29 May 2020 07:37:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68F0EC433DF
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 29 May 2020 07:37:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F2D8E20897
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 29 May 2020 07:37:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 48C342074D
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 29 May 2020 07:37:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726793AbgE2Hh1 (ORCPT
+        id S1726829AbgE2Hhe (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 29 May 2020 03:37:27 -0400
-Received: from mga07.intel.com ([134.134.136.100]:50710 "EHLO mga07.intel.com"
+        Fri, 29 May 2020 03:37:34 -0400
+Received: from mga07.intel.com ([134.134.136.100]:50716 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726774AbgE2Hh1 (ORCPT
+        id S1726774AbgE2Hhd (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 29 May 2020 03:37:27 -0400
-IronPort-SDR: 8XHlXtBxMELKDHXEYnoKaocDE2hOjoMxfSkaxEixGNJpEusGJ7PmCg3Q9B9SDr/b8CDy/aUDIB
- fIpTfQgBuA0g==
+        Fri, 29 May 2020 03:37:33 -0400
+IronPort-SDR: ZRmj8u5h4igSTU5VgMgii1lj5vIpItb5KZquJZRZ8C+UOeexEO2cqamE3irzRd1zxs7zDpYzC7
+ HMM5OP2WRxOg==
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 May 2020 00:37:26 -0700
-IronPort-SDR: HcCYIZYD/Z4CmmflZf6FQUC70P+hV24/JFkV51FSThkviFTiLcVQ44QuNUxtvENiDwXZD0muGY
- s8tcJ0WmV2/g==
+  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 May 2020 00:37:32 -0700
+IronPort-SDR: Yk5hmbix2fMfxV3erm00Pbe4bMGr30WTlAv0mbchHXijwBPUBPT7QG7/jIlqw+cfi+PqXZXl6D
+ AzJj4ueYlqyg==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.73,447,1583222400"; 
-   d="scan'208";a="414890362"
+   d="scan'208";a="414890374"
 Received: from gliakhov-mobl2.ger.corp.intel.com (HELO ubuntu.ger.corp.intel.com) ([10.252.45.157])
-  by orsmga004.jf.intel.com with ESMTP; 29 May 2020 00:37:23 -0700
+  by orsmga004.jf.intel.com with ESMTP; 29 May 2020 00:37:30 -0700
 From:   Guennadi Liakhovetski <guennadi.liakhovetski@linux.intel.com>
 To:     kvm@vger.kernel.org
 Cc:     linux-remoteproc@vger.kernel.org,
@@ -45,10 +45,12 @@ Cc:     linux-remoteproc@vger.kernel.org,
         Ohad Ben-Cohen <ohad@wizery.com>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
         Mathieu Poirier <mathieu.poirier@linaro.org>
-Subject: [RFC 00/12] Audio DSP VirtIO and vhost drivers
-Date:   Fri, 29 May 2020 09:37:10 +0200
-Message-Id: <20200529073722.8184-1-guennadi.liakhovetski@linux.intel.com>
+Subject: [RFC 02/12] ASoC: SOF: extract firmware-related operation into a function
+Date:   Fri, 29 May 2020 09:37:12 +0200
+Message-Id: <20200529073722.8184-3-guennadi.liakhovetski@linux.intel.com>
 X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20200529073722.8184-1-guennadi.liakhovetski@linux.intel.com>
+References: <20200529073722.8184-1-guennadi.liakhovetski@linux.intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-remoteproc-owner@vger.kernel.org
@@ -56,68 +58,126 @@ Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-This patch set is a follow up to "Add a vhost RPMsg API" [1], it is
-marked as an RFC because firstly it depends on the RPMsg API series
-and secondly it is currently being reviewed on ALSA and SOF mailing
-lists, but any early comments from virtualisation developers would be
-highly appreciated too!
+In the VirtIO guest case the SOF will not be dealing with the
+firmware directly. Extract related functionality into a function to
+make the separation easier.
 
-Thanks
-Guennadi
+Signed-off-by: Guennadi Liakhovetski <guennadi.liakhovetski@linux.intel.com>
+---
+ sound/soc/sof/core.c | 85 ++++++++++++++++++++++++++++++----------------------
+ 1 file changed, 49 insertions(+), 36 deletions(-)
 
-[1] https://mailman.alsa-project.org/pipermail/sound-open-firmware/2020-May/003879.html
-
-Guennadi Liakhovetski (12):
-  ASoC: add function parameters to enable forced path pruning
-  ASoC: SOF: extract firmware-related operation into a function
-  ASoC: SOF: support IPC with immediate response
-  ASoC: SOF: add a power status IPC
-  ASoC: SOF: add two helper lookup functions
-  ASoC: SOF: add an RPMsg VirtIO DSP driver
-  ASoC: SOF: use a macro instead of a hard-coded value
-  ASoC: SOF: add a vhost driver: sound part
-  ASoC: SOF: VirtIO: free guest pipelines upon termination
-  vhost: add an SOF Audio DSP driver
-  rpmsg: increase buffer size and reduce buffer number
-  rpmsg: add a device ID to also bind to the ADSP device
-
- drivers/rpmsg/virtio_rpmsg_bus.c |    1 +
- drivers/vhost/Kconfig            |   10 +
- drivers/vhost/Makefile           |    3 +
- drivers/vhost/adsp.c             |  618 +++++++++++++++++++
- include/linux/virtio_rpmsg.h     |    4 +-
- include/sound/soc-dpcm.h         |   28 +-
- include/sound/soc-topology.h     |    3 +
- include/sound/sof.h              |    4 +
- include/sound/sof/header.h       |    3 +
- include/sound/sof/rpmsg.h        |  196 ++++++
- include/sound/sof/topology.h     |    9 +-
- include/uapi/linux/vhost.h       |    5 +
- include/uapi/linux/vhost_types.h |    7 +
- include/uapi/linux/virtio_ids.h  |    1 +
- sound/soc/soc-compress.c         |    2 +-
- sound/soc/soc-dapm.c             |    8 +-
- sound/soc/soc-pcm.c              |   98 ++-
- sound/soc/sof/Kconfig            |    7 +
- sound/soc/sof/Makefile           |    2 +
- sound/soc/sof/core.c             |  114 ++--
- sound/soc/sof/ipc.c              |   34 +-
- sound/soc/sof/loader.c           |    4 +
- sound/soc/sof/ops.h              |   10 +-
- sound/soc/sof/pcm.c              |   13 +-
- sound/soc/sof/pm.c               |    6 +-
- sound/soc/sof/rpmsg-vfe.c        |  881 ++++++++++++++++++++++++++
- sound/soc/sof/sof-audio.c        |   33 +
- sound/soc/sof/sof-audio.h        |   21 +
- sound/soc/sof/sof-priv.h         |   48 ++
- sound/soc/sof/topology.c         |   71 ++-
- sound/soc/sof/vhost-vbe.c        | 1258 ++++++++++++++++++++++++++++++++++++++
- 31 files changed, 3391 insertions(+), 111 deletions(-)
- create mode 100644 drivers/vhost/adsp.c
- create mode 100644 include/sound/sof/rpmsg.h
- create mode 100644 sound/soc/sof/rpmsg-vfe.c
- create mode 100644 sound/soc/sof/vhost-vbe.c
-
+diff --git a/sound/soc/sof/core.c b/sound/soc/sof/core.c
+index 339c493..17f264f 100644
+--- a/sound/soc/sof/core.c
++++ b/sound/soc/sof/core.c
+@@ -135,6 +135,53 @@ void snd_sof_get_status(struct snd_sof_dev *sdev, u32 panic_code,
+  *	(System Suspend/Runtime Suspend)
+  */
+ 
++static int sof_load_and_run_firmware(struct snd_sof_dev *sdev)
++{
++	/* load the firmware */
++	int ret = snd_sof_load_firmware(sdev);
++	if (ret < 0) {
++		dev_err(sdev->dev, "error: failed to load DSP firmware %d\n",
++			ret);
++		return ret;
++	}
++
++	sdev->fw_state = SOF_FW_BOOT_IN_PROGRESS;
++
++	/*
++	 * Boot the firmware. The FW boot status will be modified
++	 * in snd_sof_run_firmware() depending on the outcome.
++	 */
++	ret = snd_sof_run_firmware(sdev);
++	if (ret < 0) {
++		dev_err(sdev->dev, "error: failed to boot DSP firmware %d\n",
++			ret);
++		goto fw_run_err;
++	}
++
++	if (IS_ENABLED(CONFIG_SND_SOC_SOF_DEBUG_ENABLE_FIRMWARE_TRACE) ||
++	    (sof_core_debug & SOF_DBG_ENABLE_TRACE)) {
++		sdev->dtrace_is_supported = true;
++
++		/* init DMA trace */
++		ret = snd_sof_init_trace(sdev);
++		if (ret < 0) {
++			/* non fatal */
++			dev_warn(sdev->dev,
++				 "warning: failed to initialize trace %d\n",
++				 ret);
++		}
++	} else {
++		dev_dbg(sdev->dev, "SOF firmware trace disabled\n");
++	}
++
++	return 0;
++
++fw_run_err:
++	snd_sof_fw_unload(sdev);
++
++	return ret;
++}
++
+ static int sof_probe_continue(struct snd_sof_dev *sdev)
+ {
+ 	struct snd_sof_pdata *plat_data = sdev->pdata;
+@@ -181,42 +228,9 @@ static int sof_probe_continue(struct snd_sof_dev *sdev)
+ 		goto ipc_err;
+ 	}
+ 
+-	/* load the firmware */
+-	ret = snd_sof_load_firmware(sdev);
+-	if (ret < 0) {
+-		dev_err(sdev->dev, "error: failed to load DSP firmware %d\n",
+-			ret);
++	ret = sof_load_and_run_firmware(sdev);
++	if (ret < 0)
+ 		goto fw_load_err;
+-	}
+-
+-	sdev->fw_state = SOF_FW_BOOT_IN_PROGRESS;
+-
+-	/*
+-	 * Boot the firmware. The FW boot status will be modified
+-	 * in snd_sof_run_firmware() depending on the outcome.
+-	 */
+-	ret = snd_sof_run_firmware(sdev);
+-	if (ret < 0) {
+-		dev_err(sdev->dev, "error: failed to boot DSP firmware %d\n",
+-			ret);
+-		goto fw_run_err;
+-	}
+-
+-	if (IS_ENABLED(CONFIG_SND_SOC_SOF_DEBUG_ENABLE_FIRMWARE_TRACE) ||
+-	    (sof_core_debug & SOF_DBG_ENABLE_TRACE)) {
+-		sdev->dtrace_is_supported = true;
+-
+-		/* init DMA trace */
+-		ret = snd_sof_init_trace(sdev);
+-		if (ret < 0) {
+-			/* non fatal */
+-			dev_warn(sdev->dev,
+-				 "warning: failed to initialize trace %d\n",
+-				 ret);
+-		}
+-	} else {
+-		dev_dbg(sdev->dev, "SOF firmware trace disabled\n");
+-	}
+ 
+ 	/* hereafter all FW boot flows are for PM reasons */
+ 	sdev->first_boot = false;
+@@ -250,7 +264,6 @@ static int sof_probe_continue(struct snd_sof_dev *sdev)
+ 
+ fw_trace_err:
+ 	snd_sof_free_trace(sdev);
+-fw_run_err:
+ 	snd_sof_fw_unload(sdev);
+ fw_load_err:
+ 	snd_sof_ipc_free(sdev);
 -- 
 1.9.3
 
