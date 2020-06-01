@@ -7,65 +7,65 @@ X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71195C433E1
-	for <linux-remoteproc@archiver.kernel.org>; Mon,  1 Jun 2020 17:51:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8DABC433E0
+	for <linux-remoteproc@archiver.kernel.org>; Mon,  1 Jun 2020 17:51:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 533452073B
-	for <linux-remoteproc@archiver.kernel.org>; Mon,  1 Jun 2020 17:51:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A680B206E2
+	for <linux-remoteproc@archiver.kernel.org>; Mon,  1 Jun 2020 17:51:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jsMA2JyG"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xV8yuXtw"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728118AbgFARvt (ORCPT
+        id S1728162AbgFARvw (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 1 Jun 2020 13:51:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35126 "EHLO
+        Mon, 1 Jun 2020 13:51:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35164 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728090AbgFARvs (ORCPT
+        with ESMTP id S1728144AbgFARvv (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 1 Jun 2020 13:51:48 -0400
-Received: from mail-pl1-x644.google.com (mail-pl1-x644.google.com [IPv6:2607:f8b0:4864:20::644])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 20547C05BD43
-        for <linux-remoteproc@vger.kernel.org>; Mon,  1 Jun 2020 10:51:48 -0700 (PDT)
-Received: by mail-pl1-x644.google.com with SMTP id n9so260041plk.1
-        for <linux-remoteproc@vger.kernel.org>; Mon, 01 Jun 2020 10:51:48 -0700 (PDT)
+        Mon, 1 Jun 2020 13:51:51 -0400
+Received: from mail-pl1-x641.google.com (mail-pl1-x641.google.com [IPv6:2607:f8b0:4864:20::641])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 51720C08C5CB
+        for <linux-remoteproc@vger.kernel.org>; Mon,  1 Jun 2020 10:51:51 -0700 (PDT)
+Received: by mail-pl1-x641.google.com with SMTP id m7so251442plt.5
+        for <linux-remoteproc@vger.kernel.org>; Mon, 01 Jun 2020 10:51:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=H4kQzqlSCAiGDPrwPoS10a6NS/WJiGKixInVwf23N/g=;
-        b=jsMA2JyGDIA2nuPm/U8Q8emjpcS27scT4vh7LMJR8IPXxQsLi1oUbUHzimNDNTqPIa
-         b1isEdpMDotZ0t9TLHTxyFpsHUX8Zf90IRJh6BKLJ9m5rgS7x5dFu3MnvbbD+ev0L+HQ
-         ZVYTUKwVibT61Pv5o1OT4DhH8GY3h8Ux6dlxSO26HZZGpNf2OLWdpvyFpzLMd3P1dO6r
-         ZvxhQirCPqo7fCWMMMZCGjhuPTgh3STIZwlyKSdVsosdrccbn0bZCxYBYQomYci+X08O
-         cAOrV/Smjbyqm34RyA+QlZbH9QQHsFUS+OfqYVNjqzcpPZMUgY93oj14gxO/Hso1Jv2e
-         4xyA==
+        bh=pqpjieqWzPdW4kzMNpwF5pnX0DXNGRCF4a9MybtJdT0=;
+        b=xV8yuXtwUh++8lV8BVnmVOMFKn53SmBmnp2YNZxGf8Trj+639nR8oSYo80GhJ9HoEM
+         Cyxq9yEixuV9BAacNnNlsgDlyNdb7ep1rEknCXcA6JL18jGHKKllU3mWDIOz5Q+QWLPR
+         CqcqTdHCs2ddxMFa+7kjz4tDJB7JBC/D9LbnPDLUh5+KBLCkz/birKGLRY4fyLXQaC+2
+         e0BzZyj+uFckAtUW4EPOfaiLudrq5/5K8qaepd4twB6/4f+pKxeUSQGYe9kXTlo5ZxSM
+         GoPCUnixn2Ad9tWPZYRUExGsMKJ1vQRnkwQJrz1avpfJRh5s6o8Lhi9VENgDu9QQy7Ls
+         fO4Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=H4kQzqlSCAiGDPrwPoS10a6NS/WJiGKixInVwf23N/g=;
-        b=EcBwiBw78dZOjsaTouvgVxwyS17BqsCrUSSZS4KLNPCDZCyrQdnIW9BkzvaR5ZeMQo
-         e2BvmcSKyk5RYnzLq0Y6DFB9XnmOY47cjc/YICV97Azw7EIE5dHdTxZCtQJ39h0sGpwQ
-         M9Aehu0Pv8hoQsILDVzSmr2ueUcS91FP7FwD4XRtTb4YKe6SOYb3ib8enS/Yvl4OGkn2
-         7iO3/PCbEG5djmOaMBuEgw5n6JSbBUL6dxRXaciHGwrI8PQ9gB0ZG4cJlMdohOaHY2T/
-         KdqvIRAFYFADV4OkhLj4pF0yBmMQqBEpLw7/jszqODosOwmq4LQhjz6pj9qPEcot/fke
-         BKjw==
-X-Gm-Message-State: AOAM533CiQrspx8fWjcnS3XGuzy7yZyEFM9lLjiAd3ORjCm4Trn0l7hK
-        euL1nfoTHsH9aSURDNxRjOj5xPANI88=
-X-Google-Smtp-Source: ABdhPJzgGKvoHRtBwkv2pzmRwy7lyhLJmxlvRmupu2umM7NcN6smBZrrcXePAmh3ySolMbCMraLA/Q==
-X-Received: by 2002:a17:902:6b0a:: with SMTP id o10mr19376036plk.121.1591033907658;
-        Mon, 01 Jun 2020 10:51:47 -0700 (PDT)
+        bh=pqpjieqWzPdW4kzMNpwF5pnX0DXNGRCF4a9MybtJdT0=;
+        b=PDE6QC5vskvOi5MHW1x5QvM4l18u39mpEIR5dMpYIMtUajsZx10H9ZRKKpgrqxVc+r
+         ABmlZdGHrQI4JZM117xlSESne1raz8tM9HznBHeqVmqz8shm/xyn50znU/Xih9G+8QZu
+         OreZEd18VI37A9rnJbJVgxUp6RKfOeE0rlWRuWh4fT4KCHSg2k7BXv5QlPAY+K/2KQvq
+         JsFnWs5jmd1ffZBmZhy2yDbQT+uaoU+Z8B5Uh2GUTbARPnNqiJzAWLMwd8Ffx1K6tEwe
+         tJTJQwA08CIxWTCFf+WijcAtsBVCmTamRNekG2u/oXyoURg6g6eCKKGcy7y9NlN4Pvg/
+         obAg==
+X-Gm-Message-State: AOAM530KNDFEdHG+pZVeiuyirMRz3woivTVBCLBRROnDDC/m13vqTY+U
+        UaPxNmRFt39/RQV7C/e9f8Y5tg==
+X-Google-Smtp-Source: ABdhPJzUdnArY7LUm+Nti3l1o/PEa4bBNpE6E6cm6T4db8FdE0WHvO5lbq7oqp2iucgX6qWRh5QGkA==
+X-Received: by 2002:a17:90b:3651:: with SMTP id nh17mr629350pjb.4.1591033910795;
+        Mon, 01 Jun 2020 10:51:50 -0700 (PDT)
 Received: from xps15.cg.shawcable.net (S0106002369de4dac.cg.shawcable.net. [68.147.8.254])
-        by smtp.gmail.com with ESMTPSA id k12sm58219pfg.177.2020.06.01.10.51.46
+        by smtp.gmail.com with ESMTPSA id k12sm58219pfg.177.2020.06.01.10.51.49
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 01 Jun 2020 10:51:47 -0700 (PDT)
+        Mon, 01 Jun 2020 10:51:50 -0700 (PDT)
 From:   Mathieu Poirier <mathieu.poirier@linaro.org>
 To:     bjorn.andersson@linaro.org, ohad@wizery.com
 Cc:     linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
         loic.pallardy@st.com, arnaud.pouliquen@st.com, s-anna@ti.com
-Subject: [PATCH v4 6/9] remoteproc: Refactor function rproc_boot()
-Date:   Mon,  1 Jun 2020 11:51:36 -0600
-Message-Id: <20200601175139.22097-7-mathieu.poirier@linaro.org>
+Subject: [PATCH v4 9/9] remoteproc: Properly handle firmware name when attaching
+Date:   Mon,  1 Jun 2020 11:51:39 -0600
+Message-Id: <20200601175139.22097-10-mathieu.poirier@linaro.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200601175139.22097-1-mathieu.poirier@linaro.org>
 References: <20200601175139.22097-1-mathieu.poirier@linaro.org>
@@ -76,69 +76,101 @@ Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Refactor function rproc_boot() to properly deal with scenarios
-where the remoteproc core needs to attach with a remote
-processor that has already been booted by an external entity.
+This patch prevents the firmware image name from being displayed when
+the remoteproc core is attaching to a remote processor. This is needed
+needed since there is no guarantee about the nature of the firmware
+image that is loaded by the external entity.
 
 Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 ---
- drivers/remoteproc/remoteproc_core.c | 28 +++++++++++++++++-----------
- 1 file changed, 17 insertions(+), 11 deletions(-)
+ drivers/remoteproc/remoteproc_core.c  | 18 ++++++++++++++++++
+ drivers/remoteproc/remoteproc_sysfs.c | 16 ++++++++++++++--
+ include/linux/remoteproc.h            |  2 ++
+ 3 files changed, 34 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index 0be8343dd851..48ddc29814be 100644
+index 0e23284fbd25..a8adc712e7f6 100644
 --- a/drivers/remoteproc/remoteproc_core.c
 +++ b/drivers/remoteproc/remoteproc_core.c
-@@ -1503,7 +1503,7 @@ static int rproc_fw_boot(struct rproc *rproc, const struct firmware *fw)
-  * Attach to remote processor - similar to rproc_fw_boot() but without
-  * the steps that deal with the firmware image.
-  */
--static int __maybe_unused rproc_actuate(struct rproc *rproc)
-+static int rproc_actuate(struct rproc *rproc)
- {
- 	struct device *dev = &rproc->dev;
- 	int ret;
-@@ -1923,24 +1923,30 @@ int rproc_boot(struct rproc *rproc)
- 		goto unlock_mutex;
- 	}
+@@ -1642,6 +1642,14 @@ static int rproc_stop(struct rproc *rproc, bool crashed)
  
--	/* skip the boot process if rproc is already powered up */
-+	/* skip the boot or attach process if rproc is already powered up */
- 	if (atomic_inc_return(&rproc->power) > 1) {
- 		ret = 0;
- 		goto unlock_mutex;
- 	}
+ 	rproc->state = RPROC_OFFLINE;
  
--	dev_info(dev, "powering up %s\n", rproc->name);
-+	if (rproc->state == RPROC_DETACHED) {
-+		dev_info(dev, "attaching to %s\n", rproc->name);
- 
--	/* load firmware */
--	ret = request_firmware(&firmware_p, rproc->firmware, dev);
--	if (ret < 0) {
--		dev_err(dev, "request_firmware failed: %d\n", ret);
--		goto downref_rproc;
--	}
-+		ret = rproc_actuate(rproc);
-+	} else {
-+		dev_info(dev, "powering up %s\n", rproc->name);
- 
--	ret = rproc_fw_boot(rproc, firmware_p);
-+		/* load firmware */
-+		ret = request_firmware(&firmware_p, rproc->firmware, dev);
-+		if (ret < 0) {
-+			dev_err(dev, "request_firmware failed: %d\n", ret);
-+			goto downref_rproc;
-+		}
- 
--	release_firmware(firmware_p);
-+		ret = rproc_fw_boot(rproc, firmware_p);
++	/*
++	 * The remote processor has been stopped and is now offline, which means
++	 * that the next time it is brought back online the remoteproc core will
++	 * be responsible to load its firmware.  As such it is no longer
++	 * autonomous.
++	 */
++	rproc->autonomous = false;
 +
-+		release_firmware(firmware_p);
-+	}
+ 	dev_info(dev, "stopped remote processor %s\n", rproc->name);
  
- downref_rproc:
- 	if (ret)
+ 	return 0;
+@@ -2166,6 +2174,16 @@ int rproc_add(struct rproc *rproc)
+ 	/* create debugfs entries */
+ 	rproc_create_debug_dir(rproc);
+ 
++	/*
++	 * Remind ourselves the remote processor has been attached to rather
++	 * than booted by the remoteproc core.  This is important because the
++	 * RPROC_DETACHED state will be lost as soon as the remote processor
++	 * has been attached to.  Used in firmware_show() and reset in
++	 * rproc_stop().
++	 */
++	if (rproc->state == RPROC_DETACHED)
++		rproc->autonomous = true;
++
+ 	/* if rproc is marked always-on, request it to boot */
+ 	if (rproc->auto_boot) {
+ 		ret = rproc_trigger_auto_boot(rproc);
+diff --git a/drivers/remoteproc/remoteproc_sysfs.c b/drivers/remoteproc/remoteproc_sysfs.c
+index 8b462c501465..4ee158431f67 100644
+--- a/drivers/remoteproc/remoteproc_sysfs.c
++++ b/drivers/remoteproc/remoteproc_sysfs.c
+@@ -14,8 +14,20 @@ static ssize_t firmware_show(struct device *dev, struct device_attribute *attr,
+ 			  char *buf)
+ {
+ 	struct rproc *rproc = to_rproc(dev);
+-
+-	return sprintf(buf, "%s\n", rproc->firmware);
++	const char *firmware = rproc->firmware;
++
++	/*
++	 * If the remote processor has been started by an external
++	 * entity we have no idea of what image it is running.  As such
++	 * simply display a generic string rather then rproc->firmware.
++	 *
++	 * Here we rely on the autonomous flag because a remote processor
++	 * may have been attached to and currently in a running state.
++	 */
++	if (rproc->autonomous)
++		firmware = "unknown";
++
++	return sprintf(buf, "%s\n", firmware);
+ }
+ 
+ /* Change firmware name via sysfs */
+diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+index bf6a310ba870..cf5e31556780 100644
+--- a/include/linux/remoteproc.h
++++ b/include/linux/remoteproc.h
+@@ -491,6 +491,7 @@ struct rproc_dump_segment {
+  * @table_sz: size of @cached_table
+  * @has_iommu: flag to indicate if remote processor is behind an MMU
+  * @auto_boot: flag to indicate if remote processor should be auto-started
++ * @autonomous: true if an external entity has booted the remote processor
+  * @dump_segments: list of segments in the firmware
+  * @nb_vdev: number of vdev currently handled by rproc
+  */
+@@ -524,6 +525,7 @@ struct rproc {
+ 	size_t table_sz;
+ 	bool has_iommu;
+ 	bool auto_boot;
++	bool autonomous;
+ 	struct list_head dump_segments;
+ 	int nb_vdev;
+ 	u8 elf_class;
 -- 
 2.20.1
 
