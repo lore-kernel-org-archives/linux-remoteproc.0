@@ -2,70 +2,143 @@ Return-Path: <SRS0=OrS8=7O=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	UNPARSEABLE_RELAY,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FA9AC433DF
-	for <linux-remoteproc@archiver.kernel.org>; Mon,  1 Jun 2020 06:06:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71195C433E1
+	for <linux-remoteproc@archiver.kernel.org>; Mon,  1 Jun 2020 17:51:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 489222073E
-	for <linux-remoteproc@archiver.kernel.org>; Mon,  1 Jun 2020 06:06:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 533452073B
+	for <linux-remoteproc@archiver.kernel.org>; Mon,  1 Jun 2020 17:51:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jsMA2JyG"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725952AbgFAGGO (ORCPT
+        id S1728118AbgFARvt (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 1 Jun 2020 02:06:14 -0400
-Received: from out30-54.freemail.mail.aliyun.com ([115.124.30.54]:43940 "EHLO
-        out30-54.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725965AbgFAGGO (ORCPT
+        Mon, 1 Jun 2020 13:51:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35126 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728090AbgFARvs (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 1 Jun 2020 02:06:14 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R521e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e01422;MF=baolin.wang@linux.alibaba.com;NM=1;PH=DS;RN=8;SR=0;TI=SMTPD_---0U-Ax0ff_1590991567;
-Received: from localhost(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0U-Ax0ff_1590991567)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Mon, 01 Jun 2020 14:06:07 +0800
-From:   Baolin Wang <baolin.wang@linux.alibaba.com>
-To:     ohad@wizery.com, bjorn.andersson@linaro.org, orsonzhai@gmail.com
-Cc:     zhang.lyra@gmail.com, baolin.wang7@gmail.com,
-        baolin.wang@linux.alibaba.com, linux-remoteproc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] hwspinlock: sprd: Remove redundant header files
-Date:   Mon,  1 Jun 2020 14:05:52 +0800
-Message-Id: <1590991552-93643-1-git-send-email-baolin.wang@linux.alibaba.com>
-X-Mailer: git-send-email 1.8.3.1
+        Mon, 1 Jun 2020 13:51:48 -0400
+Received: from mail-pl1-x644.google.com (mail-pl1-x644.google.com [IPv6:2607:f8b0:4864:20::644])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 20547C05BD43
+        for <linux-remoteproc@vger.kernel.org>; Mon,  1 Jun 2020 10:51:48 -0700 (PDT)
+Received: by mail-pl1-x644.google.com with SMTP id n9so260041plk.1
+        for <linux-remoteproc@vger.kernel.org>; Mon, 01 Jun 2020 10:51:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=H4kQzqlSCAiGDPrwPoS10a6NS/WJiGKixInVwf23N/g=;
+        b=jsMA2JyGDIA2nuPm/U8Q8emjpcS27scT4vh7LMJR8IPXxQsLi1oUbUHzimNDNTqPIa
+         b1isEdpMDotZ0t9TLHTxyFpsHUX8Zf90IRJh6BKLJ9m5rgS7x5dFu3MnvbbD+ev0L+HQ
+         ZVYTUKwVibT61Pv5o1OT4DhH8GY3h8Ux6dlxSO26HZZGpNf2OLWdpvyFpzLMd3P1dO6r
+         ZvxhQirCPqo7fCWMMMZCGjhuPTgh3STIZwlyKSdVsosdrccbn0bZCxYBYQomYci+X08O
+         cAOrV/Smjbyqm34RyA+QlZbH9QQHsFUS+OfqYVNjqzcpPZMUgY93oj14gxO/Hso1Jv2e
+         4xyA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=H4kQzqlSCAiGDPrwPoS10a6NS/WJiGKixInVwf23N/g=;
+        b=EcBwiBw78dZOjsaTouvgVxwyS17BqsCrUSSZS4KLNPCDZCyrQdnIW9BkzvaR5ZeMQo
+         e2BvmcSKyk5RYnzLq0Y6DFB9XnmOY47cjc/YICV97Azw7EIE5dHdTxZCtQJ39h0sGpwQ
+         M9Aehu0Pv8hoQsILDVzSmr2ueUcS91FP7FwD4XRtTb4YKe6SOYb3ib8enS/Yvl4OGkn2
+         7iO3/PCbEG5djmOaMBuEgw5n6JSbBUL6dxRXaciHGwrI8PQ9gB0ZG4cJlMdohOaHY2T/
+         KdqvIRAFYFADV4OkhLj4pF0yBmMQqBEpLw7/jszqODosOwmq4LQhjz6pj9qPEcot/fke
+         BKjw==
+X-Gm-Message-State: AOAM533CiQrspx8fWjcnS3XGuzy7yZyEFM9lLjiAd3ORjCm4Trn0l7hK
+        euL1nfoTHsH9aSURDNxRjOj5xPANI88=
+X-Google-Smtp-Source: ABdhPJzgGKvoHRtBwkv2pzmRwy7lyhLJmxlvRmupu2umM7NcN6smBZrrcXePAmh3ySolMbCMraLA/Q==
+X-Received: by 2002:a17:902:6b0a:: with SMTP id o10mr19376036plk.121.1591033907658;
+        Mon, 01 Jun 2020 10:51:47 -0700 (PDT)
+Received: from xps15.cg.shawcable.net (S0106002369de4dac.cg.shawcable.net. [68.147.8.254])
+        by smtp.gmail.com with ESMTPSA id k12sm58219pfg.177.2020.06.01.10.51.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 01 Jun 2020 10:51:47 -0700 (PDT)
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+To:     bjorn.andersson@linaro.org, ohad@wizery.com
+Cc:     linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        loic.pallardy@st.com, arnaud.pouliquen@st.com, s-anna@ti.com
+Subject: [PATCH v4 6/9] remoteproc: Refactor function rproc_boot()
+Date:   Mon,  1 Jun 2020 11:51:36 -0600
+Message-Id: <20200601175139.22097-7-mathieu.poirier@linaro.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20200601175139.22097-1-mathieu.poirier@linaro.org>
+References: <20200601175139.22097-1-mathieu.poirier@linaro.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Remove redundant header files.
+Refactor function rproc_boot() to properly deal with scenarios
+where the remoteproc core needs to attach with a remote
+processor that has already been booted by an external entity.
 
-Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
+Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 ---
- drivers/hwspinlock/sprd_hwspinlock.c | 2 --
- 1 file changed, 2 deletions(-)
+ drivers/remoteproc/remoteproc_core.c | 28 +++++++++++++++++-----------
+ 1 file changed, 17 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/hwspinlock/sprd_hwspinlock.c b/drivers/hwspinlock/sprd_hwspinlock.c
-index 36dc803..b157495 100644
---- a/drivers/hwspinlock/sprd_hwspinlock.c
-+++ b/drivers/hwspinlock/sprd_hwspinlock.c
-@@ -4,7 +4,6 @@
-  * Copyright (C) 2017 Spreadtrum  - http://www.spreadtrum.com
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index 0be8343dd851..48ddc29814be 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -1503,7 +1503,7 @@ static int rproc_fw_boot(struct rproc *rproc, const struct firmware *fw)
+  * Attach to remote processor - similar to rproc_fw_boot() but without
+  * the steps that deal with the firmware image.
   */
+-static int __maybe_unused rproc_actuate(struct rproc *rproc)
++static int rproc_actuate(struct rproc *rproc)
+ {
+ 	struct device *dev = &rproc->dev;
+ 	int ret;
+@@ -1923,24 +1923,30 @@ int rproc_boot(struct rproc *rproc)
+ 		goto unlock_mutex;
+ 	}
  
--#include <linux/bitops.h>
- #include <linux/clk.h>
- #include <linux/delay.h>
- #include <linux/device.h>
-@@ -15,7 +14,6 @@
- #include <linux/of.h>
- #include <linux/of_device.h>
- #include <linux/platform_device.h>
--#include <linux/slab.h>
+-	/* skip the boot process if rproc is already powered up */
++	/* skip the boot or attach process if rproc is already powered up */
+ 	if (atomic_inc_return(&rproc->power) > 1) {
+ 		ret = 0;
+ 		goto unlock_mutex;
+ 	}
  
- #include "hwspinlock_internal.h"
+-	dev_info(dev, "powering up %s\n", rproc->name);
++	if (rproc->state == RPROC_DETACHED) {
++		dev_info(dev, "attaching to %s\n", rproc->name);
  
+-	/* load firmware */
+-	ret = request_firmware(&firmware_p, rproc->firmware, dev);
+-	if (ret < 0) {
+-		dev_err(dev, "request_firmware failed: %d\n", ret);
+-		goto downref_rproc;
+-	}
++		ret = rproc_actuate(rproc);
++	} else {
++		dev_info(dev, "powering up %s\n", rproc->name);
+ 
+-	ret = rproc_fw_boot(rproc, firmware_p);
++		/* load firmware */
++		ret = request_firmware(&firmware_p, rproc->firmware, dev);
++		if (ret < 0) {
++			dev_err(dev, "request_firmware failed: %d\n", ret);
++			goto downref_rproc;
++		}
+ 
+-	release_firmware(firmware_p);
++		ret = rproc_fw_boot(rproc, firmware_p);
++
++		release_firmware(firmware_p);
++	}
+ 
+ downref_rproc:
+ 	if (ret)
 -- 
-1.8.3.1
+2.20.1
 
