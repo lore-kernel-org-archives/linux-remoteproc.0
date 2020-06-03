@@ -2,132 +2,173 @@ Return-Path: <SRS0=93g6=7Q=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4574FC433DF
-	for <linux-remoteproc@archiver.kernel.org>; Wed,  3 Jun 2020 05:30:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0110C433E0
+	for <linux-remoteproc@archiver.kernel.org>; Wed,  3 Jun 2020 14:49:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 22624206E6
-	for <linux-remoteproc@archiver.kernel.org>; Wed,  3 Jun 2020 05:30:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 876E2206A2
+	for <linux-remoteproc@archiver.kernel.org>; Wed,  3 Jun 2020 14:49:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="foFYH9mx"
+	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="m38bN+d8"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725905AbgFCFaB (ORCPT
+        id S1726106AbgFCOtv (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 3 Jun 2020 01:30:01 -0400
-Received: from mail27.static.mailgun.info ([104.130.122.27]:42739 "EHLO
-        mail27.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725867AbgFCFaA (ORCPT
+        Wed, 3 Jun 2020 10:49:51 -0400
+Received: from mail-mw2nam12on2074.outbound.protection.outlook.com ([40.107.244.74]:63529
+        "EHLO NAM12-MW2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726123AbgFCOtu (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 3 Jun 2020 01:30:00 -0400
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1591162200; h=Message-ID: References: In-Reply-To: Subject:
- Cc: To: From: Date: Content-Transfer-Encoding: Content-Type:
- MIME-Version: Sender; bh=zzTfxHouLE9jM7tdzGJeF4YIRqLBMDbYhT7bqTud5lA=;
- b=foFYH9mxgJH5eRypyOKBz60pHptcFua+IdgrbDubTB6dI29QDt9eaa5v6BVgbehnC+gMExHM
- 2zavCWQoeyZAPPxOvCShDsf+2QDhT2QdV992rl/nepCs+n8tKShuN4+ZtacLjI1KtexP4do6
- dLW/VtyTyV7npz+YFZ+W77hshjE=
-X-Mailgun-Sending-Ip: 104.130.122.27
-X-Mailgun-Sid: WyI4ZWZiZiIsICJsaW51eC1yZW1vdGVwcm9jQHZnZXIua2VybmVsLm9yZyIsICJiZTllNGEiXQ==
-Received: from smtp.codeaurora.org
- (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
- smtp-out-n12.prod.us-west-2.postgun.com with SMTP id
- 5ed7354746d39fc0a2950d7d (version=TLS1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Wed, 03 Jun 2020 05:29:43
- GMT
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id EA77CC433CB; Wed,  3 Jun 2020 05:29:42 +0000 (UTC)
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: sibis)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 5441DC433C6;
-        Wed,  3 Jun 2020 05:29:42 +0000 (UTC)
+        Wed, 3 Jun 2020 10:49:50 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=jV5MfEfz0vgQK8Bt7A3cs8LCglqsiTZJ/KYyEWQpY8ryGj1VryamrhRm2+Boo6NF+y8esY9RwKKk84Tj+D2/0hI9MIVvQ5AMdC+26tDtJmOSSCoXMeo7OEEY8foPfntGCLuKJRxS4zsM9EliOsv0JR0J9i4467Hm/+5wc34MkzTwaD0LfX1qReyacbw+S6xwXma+nSsPQrkuwwJq6nQW/QRjx9f0Hq1sbROwOawRAaT+/5Oyb8OJ4B3bgTKGGD4cKs7DKp6zIOgdvdqXxckv4ssL+Uoxhf8JxHixA7fqXXpeJ7ViY58Qk7vCg8eV/c3bHW0NCFHSshumDGVRPJu0Qg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Bb+7R98fZ7vwAKf08Y2Xz/ClgfG8ljyHxv7HG5gskQU=;
+ b=il05p7Aomc8fm3kJOjQMedVz5IpeSkKvQ8oj7SfDlybaANVSp/umVKfbT3rWja3A2qQk0/Eywg8hHlypr52QonsryiShglsxvSvQ8iJOihZevDWXYSVX184XJCA99fkl0f/3eI4oXaTqJbwoSjM+fqXOc2Qoa0alnj7qvzcnJDocJR262ZkZcU6xcNS9oNpAixkepOSGuWL0/B9bmsomvru/YnKLSXIdUlQsHEuXQR1pITQhhiDFAWsttoL1RjVqiFlS5V0UmlGZgnGRKpbtiSK+Mstn4IojqkVVPrRFQ+jyZ0jrxTdnxBqaFuS6GQSWg+NNfynL0sgR47nQEeUl4A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 149.199.60.83) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=xilinx.com;
+ dmarc=bestguesspass action=none header.from=xilinx.com; dkim=none (message
+ not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=xilinx.onmicrosoft.com; s=selector2-xilinx-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Bb+7R98fZ7vwAKf08Y2Xz/ClgfG8ljyHxv7HG5gskQU=;
+ b=m38bN+d8QCaoa6yuitMqd4zmpvv8oUcRNkE2JREp7Xj3HbivmA1/Qs5+QxNjXMdtTTy9N7JV6cqvBTRaZ0ZW+98v5MEflradzv3qv6cgV/CH1W01yvFFEen0dQBR78dnGRYCkQ6TxdXSbCG/AeIETV//Sc3XvGLmy3QRoXJENCc=
+Received: from DM6PR08CA0032.namprd08.prod.outlook.com (2603:10b6:5:80::45) by
+ DM6PR02MB4012.namprd02.prod.outlook.com (2603:10b6:5:9d::12) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.3066.18; Wed, 3 Jun 2020 14:49:48 +0000
+Received: from CY1NAM02FT009.eop-nam02.prod.protection.outlook.com
+ (2603:10b6:5:80:cafe::4c) by DM6PR08CA0032.outlook.office365.com
+ (2603:10b6:5:80::45) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3066.18 via Frontend
+ Transport; Wed, 3 Jun 2020 14:49:48 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 149.199.60.83)
+ smtp.mailfrom=xilinx.com; vger.kernel.org; dkim=none (message not signed)
+ header.d=none;vger.kernel.org; dmarc=bestguesspass action=none
+ header.from=xilinx.com;
+Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
+ 149.199.60.83 as permitted sender) receiver=protection.outlook.com;
+ client-ip=149.199.60.83; helo=xsj-pvapsmtpgw01;
+Received: from xsj-pvapsmtpgw01 (149.199.60.83) by
+ CY1NAM02FT009.mail.protection.outlook.com (10.152.75.12) with Microsoft SMTP
+ Server id 15.20.3045.17 via Frontend Transport; Wed, 3 Jun 2020 14:49:48
+ +0000
+Received: from [149.199.38.66] (port=60695 helo=xsj-pvapsmtp01)
+        by xsj-pvapsmtpgw01 with esmtp (Exim 4.90)
+        (envelope-from <ben.levinsky@xilinx.com>)
+        id 1jgUhR-0007G7-Qw; Wed, 03 Jun 2020 07:49:01 -0700
+Received: from [127.0.0.1] (helo=localhost)
+        by xsj-pvapsmtp01 with smtp (Exim 4.63)
+        (envelope-from <ben.levinsky@xilinx.com>)
+        id 1jgUiB-000515-KL; Wed, 03 Jun 2020 07:49:47 -0700
+Received: from xsj-pvapsmtp01 (maildrop.xilinx.com [149.199.38.66])
+        by xsj-smtp-dlp2.xlnx.xilinx.com (8.13.8/8.13.1) with ESMTP id 053EnhQ0017032;
+        Wed, 3 Jun 2020 07:49:43 -0700
+Received: from [172.19.2.206] (helo=xsjblevinsk50.xilinx.com)
+        by xsj-pvapsmtp01 with esmtp (Exim 4.63)
+        (envelope-from <ben.levinsky@xilinx.com>)
+        id 1jgUi7-00050a-82; Wed, 03 Jun 2020 07:49:43 -0700
+From:   Ben Levinsky <ben.levinsky@xilinx.com>
+To:     ohad@wizery.com, bjorn.andersson@linaro.org, michals@xilinx.com,
+        jollys@xilinx.com, rajanv@xilinx.com, robh+dt@kernel.org,
+        mark.rutland@arm.com
+Cc:     linux-remoteproc@vger.kernel.org,
+        linux-arm-kernell@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v5 1/5] firmware: xilinx: Add ZynqMP firmware ioctl enums for RPU configuration.
+Date:   Wed,  3 Jun 2020 07:49:39 -0700
+Message-Id: <1591195783-10290-2-git-send-email-ben.levinsky@xilinx.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1591195783-10290-1-git-send-email-ben.levinsky@xilinx.com>
+References: <1591195783-10290-1-git-send-email-ben.levinsky@xilinx.com>
+X-RCIS-Action: ALLOW
+X-TM-AS-Product-Ver: IMSS-7.1.0.1224-8.2.0.1013-23620.005
+X-TM-AS-User-Approved-Sender: Yes;Yes
+X-EOPAttributedMessage: 0
+X-MS-Office365-Filtering-HT: Tenant
+X-Forefront-Antispam-Report: CIP:149.199.60.83;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:xsj-pvapsmtpgw01;PTR:unknown-60-83.xilinx.com;CAT:NONE;SFTY:;SFS:(396003)(136003)(39860400002)(346002)(376002)(46966005)(478600001)(336012)(70206006)(2906002)(83380400001)(26005)(4326008)(316002)(8676002)(36756003)(82740400003)(8936002)(47076004)(81166007)(9786002)(5660300002)(186003)(7696005)(356005)(426003)(2616005)(82310400002)(6666004)(44832011)(70586007);DIR:OUT;SFP:1101;
+X-MS-PublicTrafficType: Email
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Wed, 03 Jun 2020 10:59:42 +0530
-From:   Sibi Sankar <sibis@codeaurora.org>
-To:     Evan Green <evgreen@chromium.org>
-Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        linux-remoteproc@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Ohad Ben Cohen <ohad@wizery.com>, rohitkr@codeaurora.org,
-        stable@vger.kernel.org, linux-kernel-owner@vger.kernel.org
-Subject: Re: [PATCH 1/2] remoteproc: qcom: q6v5: Update running state before
- requesting stop
-In-Reply-To: <CAE=gft7sbh_S_GiRohtMmdMN9JzQhG0m3bUerwrmzhjmXucGKw@mail.gmail.com>
-References: <20200602163257.26978-1-sibis@codeaurora.org>
- <CAE=gft7sbh_S_GiRohtMmdMN9JzQhG0m3bUerwrmzhjmXucGKw@mail.gmail.com>
-Message-ID: <6392c800b0be1cbabb8a241cf518ab4b@codeaurora.org>
-X-Sender: sibis@codeaurora.org
-User-Agent: Roundcube Webmail/1.3.9
+Content-Type: text/plain
+X-MS-Office365-Filtering-Correlation-Id: 5cba284b-1a48-4e2b-3df7-08d807cd5cda
+X-MS-TrafficTypeDiagnostic: DM6PR02MB4012:
+X-Microsoft-Antispam-PRVS: <DM6PR02MB40123EB816DECE48F0E85CFAB5880@DM6PR02MB4012.namprd02.prod.outlook.com>
+X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
+X-MS-Oob-TLC-OOBClassifiers: OLM:565;
+X-Forefront-PRVS: 04238CD941
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: MOLC08M0v/nwMYqTnGCjQUSRoquQ0hH0ziJl8YOzVngrzedpISIu6PTC7b/EWY3p6jYAhEgr1e94g4uJZym2q5/KEHhc9bcyCECbI9cfpvbL7WzKbAT9B3UpnXam3B+Q2tlngX7mv3Pwk3DyA0BAMxKMW07/uhtJeq3MWPragqM8Lww/MzkbTwgEK43OqnoJGeebW5bN7gu9MnTf8NFyp+r7ytVVsp7xfagzXzcVQGBho0S747KnAOa1jo4mW72rdwkI8H3PlejIETU7Bx++c4YfD+oHbx0PswJkaQ4WqczRFUcC5k4ECVVY1rmLjeX/dYbDy7SnXOoZ4kS7Z1s1UwFK4lO1/0tryepNgO08tPi5AaSMv6wPo162sKCpp+4ql/c/gZQ6nlGoVXgKDdOfxg==
+X-OriginatorOrg: xilinx.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Jun 2020 14:49:48.0291
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5cba284b-1a48-4e2b-3df7-08d807cd5cda
+X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.60.83];Helo=[xsj-pvapsmtpgw01]
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR02MB4012
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Evan,
-Thanks for taking time to review
-the series.
+Add ZynqMP firmware ioctl enums for RPU configuration.
 
-On 2020-06-02 23:14, Evan Green wrote:
-> On Tue, Jun 2, 2020 at 9:33 AM Sibi Sankar <sibis@codeaurora.org> 
-> wrote:
->> 
->> Sometimes the stop triggers a watchdog rather than a stop-ack. Update
->> the running state to false on requesting stop to skip the watchdog
->> instead.
->> 
->> Error Logs:
->> $ echo stop > /sys/class/remoteproc/remoteproc0/state
->> ipa 1e40000.ipa: received modem stopping event
->> remoteproc-modem: watchdog received: sys_m_smsm_mpss.c:291:APPS force 
->> stop
->> qcom-q6v5-mss 4080000.remoteproc-modem: port failed halt
->> ipa 1e40000.ipa: received modem offline event
->> remoteproc0: stopped remote processor 4080000.remoteproc-modem
->> 
->> Fixes: 3b415c8fb263 ("remoteproc: q6v5: Extract common resource 
->> handling")
->> Cc: stable@vger.kernel.org
->> Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
->> ---
-> 
-> Are you sure you want to tolerate this behavior from MSS? This is a
-> graceful shutdown, modem shouldn't have a problem completing the
-> proper handshake. If they do, isn't that a bug on the modem side?
+Signed-off-by: Ben Levinsky <ben.levinsky@xilinx.com>
+---
+v3:
+- add xilinx-related platform mgmt fn's instead of wrapping around
+  function pointer in xilinx eemi ops struct
+v4:
+- add default values for enums
+---
+ include/linux/firmware/xlnx-zynqmp.h | 19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
 
-The graceful shutdown is achieved
-though sysmon (enabled using
-CONFIG_QCOM_SYSMON). When sysmon is
-enabled we get a shutdown-ack when we
-try to stop the modem, post which
-request stop is a basically a nop.
-Request stop is done to force stop
-the modem during failure cases (like
-rmtfs is not running and so on) and
-we do want to mask the wdog that we get
-during this scenario ( The locking
-already prevents the servicing of the
-wdog during shutdown, the check just
-prevents the scheduling of crash handler
-and err messages associated with it).
-Also this check was always present and
-was missed during common q6v5 resource
-helper migration, hence the unused
-running state in mss driver.
-
-> 
-> I just worry this will mask real issues that happen during graceful 
-> shutdown.
-> -Evan
-
+diff --git a/include/linux/firmware/xlnx-zynqmp.h b/include/linux/firmware/xlnx-zynqmp.h
+index 5968df8..bb347df 100644
+--- a/include/linux/firmware/xlnx-zynqmp.h
++++ b/include/linux/firmware/xlnx-zynqmp.h
+@@ -104,6 +104,10 @@ enum pm_ret_status {
+ };
+ 
+ enum pm_ioctl_id {
++	IOCTL_GET_RPU_OPER_MODE = 0,
++	IOCTL_SET_RPU_OPER_MODE = 1,
++	IOCTL_RPU_BOOT_ADDR_CONFIG = 2,
++	IOCTL_TCM_COMB_CONFIG = 3,
+ 	IOCTL_SD_DLL_RESET = 6,
+ 	IOCTL_SET_SD_TAPDELAY,
+ 	IOCTL_SET_PLL_FRAC_MODE,
+@@ -129,6 +133,21 @@ enum pm_query_id {
+ 	PM_QID_CLOCK_GET_MAX_DIVISOR,
+ };
+ 
++enum rpu_oper_mode {
++	PM_RPU_MODE_LOCKSTEP = 0,
++	PM_RPU_MODE_SPLIT = 1,
++};
++
++enum rpu_boot_mem {
++	PM_RPU_BOOTMEM_LOVEC = 0,
++	PM_RPU_BOOTMEM_HIVEC = 1,
++};
++
++enum rpu_tcm_comb {
++	PM_RPU_TCM_SPLIT = 0,
++	PM_RPU_TCM_COMB = 1,
++};
++
+ enum zynqmp_pm_reset_action {
+ 	PM_RESET_ACTION_RELEASE,
+ 	PM_RESET_ACTION_ASSERT,
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project.
+2.7.4
+
