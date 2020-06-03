@@ -1,238 +1,133 @@
-Return-Path: <SRS0=fU6i=7P=vger.kernel.org=linux-remoteproc-owner@kernel.org>
+Return-Path: <SRS0=93g6=7Q=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AD2BC433E0
-	for <linux-remoteproc@archiver.kernel.org>; Tue,  2 Jun 2020 21:42:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4574FC433DF
+	for <linux-remoteproc@archiver.kernel.org>; Wed,  3 Jun 2020 05:30:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3B19920897
-	for <linux-remoteproc@archiver.kernel.org>; Tue,  2 Jun 2020 21:42:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 22624206E6
+	for <linux-remoteproc@archiver.kernel.org>; Wed,  3 Jun 2020 05:30:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="eQZUhilG"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="foFYH9mx"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728369AbgFBVmW (ORCPT
+        id S1725905AbgFCFaB (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 2 Jun 2020 17:42:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41706 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728226AbgFBVmV (ORCPT
+        Wed, 3 Jun 2020 01:30:01 -0400
+Received: from mail27.static.mailgun.info ([104.130.122.27]:42739 "EHLO
+        mail27.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725867AbgFCFaA (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 2 Jun 2020 17:42:21 -0400
-Received: from mail-pf1-x442.google.com (mail-pf1-x442.google.com [IPv6:2607:f8b0:4864:20::442])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 66CFAC08C5C1
-        for <linux-remoteproc@vger.kernel.org>; Tue,  2 Jun 2020 14:42:21 -0700 (PDT)
-Received: by mail-pf1-x442.google.com with SMTP id 64so65108pfg.8
-        for <linux-remoteproc@vger.kernel.org>; Tue, 02 Jun 2020 14:42:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=a+Tcybpto4JW668grhb7VyG9dc5AOW4PN39gIL/jU6c=;
-        b=eQZUhilGkaBHOOoh0h33kjW8acpHdskjmtnr8+p8u3+YcbEBAg1mnBMgsRYMZoUCe/
-         zjPfbkxvN+R0xfop0+txC9jk+HXsmmPsQAri/yT+qSiMp/zP4q8ZYuZeiXtIlmu0yy4V
-         3q80mdxcwijwNGit/BeIH9VP4K+Q4v83BqAb+AWyUQY6BMfAzGW2K4T7PlKqeDuY5iOV
-         nc/WN5BlMzRAznAnzRH0k6EZSMN7A+NuZHIjNSlQupvXIJixIiqAGS2H768o0KFPWoHI
-         V+2HWK7ARBBx0NMpK32joI9HR72nwqDdch3DyLjDpgabl65WF4kIlr1r6Ad/stVelagz
-         2jtg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=a+Tcybpto4JW668grhb7VyG9dc5AOW4PN39gIL/jU6c=;
-        b=PyUQ4+JXuLtpyhZP0ozi0aNVl8/+IpbgZJo4w9RGYuTzoXgi23Z5ICLiryxfrnVqSl
-         ElwWU3yImVM2leiCJU6mDliD5GMjZj3iMmd596fgQXLd7muhoSMUqyzIaWh+4XjLOH4v
-         V1E7Q6oAXjubMcdJFC0nDjcnNMhuqN18YbTTUGc5nHxS5OUP+fD9ohcZcNAh2C/fr2AS
-         ly7ipVTpyCmcEpGrFFrrq7dD+jhN1l9IyyqXwrtEAsYb9dkrkoWoD5nrhERCwz50LVht
-         XmpVGvTyiY0qhd/Bc7xNyaKmj+tGp4PvJpq2YXJWXSKSMrfu9U7ZWHcQ01dUPxshhxej
-         b9nQ==
-X-Gm-Message-State: AOAM530LFRjkTKqRJOiATXDI9YaTmVvOZVf2RutslQA8+uvqvwcrmyTw
-        ZJZlEJMT3l7ohcrsEw5r3OM7iA==
-X-Google-Smtp-Source: ABdhPJyqXHemvpCIKwQ9neFhznd2BQsaaQXX+YIDY6Y0U/tb+aUdp0BJUy4SV1Eo8wcOC7LdVW+xzA==
-X-Received: by 2002:a62:86cd:: with SMTP id x196mr19446924pfd.158.1591134140823;
-        Tue, 02 Jun 2020 14:42:20 -0700 (PDT)
-Received: from xps15 (S0106002369de4dac.cg.shawcable.net. [68.147.8.254])
-        by smtp.gmail.com with ESMTPSA id m5sm3086044pjn.56.2020.06.02.14.42.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Jun 2020 14:42:20 -0700 (PDT)
-Date:   Tue, 2 Jun 2020 15:42:18 -0600
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-To:     Suman Anna <s-anna@ti.com>
-Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Lokesh Vutla <lokeshvutla@ti.com>,
-        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 4/4] remoteproc/k3-dsp: Add support for L2RAM loading
- on C66x DSPs
-Message-ID: <20200602214218.GC29840@xps15>
-References: <20200521001006.2725-1-s-anna@ti.com>
- <20200521001006.2725-5-s-anna@ti.com>
+        Wed, 3 Jun 2020 01:30:00 -0400
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1591162200; h=Message-ID: References: In-Reply-To: Subject:
+ Cc: To: From: Date: Content-Transfer-Encoding: Content-Type:
+ MIME-Version: Sender; bh=zzTfxHouLE9jM7tdzGJeF4YIRqLBMDbYhT7bqTud5lA=;
+ b=foFYH9mxgJH5eRypyOKBz60pHptcFua+IdgrbDubTB6dI29QDt9eaa5v6BVgbehnC+gMExHM
+ 2zavCWQoeyZAPPxOvCShDsf+2QDhT2QdV992rl/nepCs+n8tKShuN4+ZtacLjI1KtexP4do6
+ dLW/VtyTyV7npz+YFZ+W77hshjE=
+X-Mailgun-Sending-Ip: 104.130.122.27
+X-Mailgun-Sid: WyI4ZWZiZiIsICJsaW51eC1yZW1vdGVwcm9jQHZnZXIua2VybmVsLm9yZyIsICJiZTllNGEiXQ==
+Received: from smtp.codeaurora.org
+ (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
+ smtp-out-n12.prod.us-west-2.postgun.com with SMTP id
+ 5ed7354746d39fc0a2950d7d (version=TLS1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Wed, 03 Jun 2020 05:29:43
+ GMT
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id EA77CC433CB; Wed,  3 Jun 2020 05:29:42 +0000 (UTC)
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: sibis)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 5441DC433C6;
+        Wed,  3 Jun 2020 05:29:42 +0000 (UTC)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200521001006.2725-5-s-anna@ti.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Wed, 03 Jun 2020 10:59:42 +0530
+From:   Sibi Sankar <sibis@codeaurora.org>
+To:     Evan Green <evgreen@chromium.org>
+Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        linux-remoteproc@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Ohad Ben Cohen <ohad@wizery.com>, rohitkr@codeaurora.org,
+        stable@vger.kernel.org, linux-kernel-owner@vger.kernel.org
+Subject: Re: [PATCH 1/2] remoteproc: qcom: q6v5: Update running state before
+ requesting stop
+In-Reply-To: <CAE=gft7sbh_S_GiRohtMmdMN9JzQhG0m3bUerwrmzhjmXucGKw@mail.gmail.com>
+References: <20200602163257.26978-1-sibis@codeaurora.org>
+ <CAE=gft7sbh_S_GiRohtMmdMN9JzQhG0m3bUerwrmzhjmXucGKw@mail.gmail.com>
+Message-ID: <6392c800b0be1cbabb8a241cf518ab4b@codeaurora.org>
+X-Sender: sibis@codeaurora.org
+User-Agent: Roundcube Webmail/1.3.9
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Wed, May 20, 2020 at 07:10:06PM -0500, Suman Anna wrote:
-> The resets for the DSP processors on K3 SoCs are managed through the
-> Power and Sleep Controller (PSC) module. Each DSP typically has two
-> resets - a global module reset for powering on the device, and a local
-> reset that affects only the CPU while allowing access to the other
-> sub-modules within the DSP processor sub-systems.
-> 
-> The C66x DSPs have two levels of internal RAMs that can be used to
-> boot from, and the firmware loading into these RAMs require the
-> local reset to be asserted with the device powered on/enabled using
-> the module reset. Enhance the K3 DSP remoteproc driver to add support
-> for loading into the internal RAMs. The local reset is deasserted on
-> SoC power-on-reset, so logic has to be added in probe in remoteproc
-> mode to balance the remoteproc state-machine.
-> 
-> Note that the local resets are a no-op on C71x cores, and the hardware
-> does not supporting loading into its internal RAMs.
-> 
-> Signed-off-by: Suman Anna <s-anna@ti.com>
-> ---
-> v2:
->  - Dropped the local-reset no-op checks from k3_dsp_rproc_prepare/unprepare()
->    callbacks. The logic will be adjusted back in the C71 patch series.
->  - The C71 local reset references are also removed from the comments for the
->    k3_dsp_rproc_prepare() function.
-> v1: https://patchwork.kernel.org/patch/11458579/
-> 
->  drivers/remoteproc/ti_k3_dsp_remoteproc.c | 72 +++++++++++++++++++++++
->  1 file changed, 72 insertions(+)
-> 
+Evan,
+Thanks for taking time to review
+the series.
 
-Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-
-> diff --git a/drivers/remoteproc/ti_k3_dsp_remoteproc.c b/drivers/remoteproc/ti_k3_dsp_remoteproc.c
-> index e4036f5992fe..610fbbf85ee6 100644
-> --- a/drivers/remoteproc/ti_k3_dsp_remoteproc.c
-> +++ b/drivers/remoteproc/ti_k3_dsp_remoteproc.c
-> @@ -174,6 +174,9 @@ static int k3_dsp_rproc_reset(struct k3_dsp_rproc *kproc)
->  		return ret;
->  	}
->  
-> +	if (kproc->data->uses_lreset)
-> +		return ret;
-> +
->  	ret = kproc->ti_sci->ops.dev_ops.put_device(kproc->ti_sci,
->  						    kproc->ti_sci_id);
->  	if (ret) {
-> @@ -191,6 +194,9 @@ static int k3_dsp_rproc_release(struct k3_dsp_rproc *kproc)
->  	struct device *dev = kproc->dev;
->  	int ret;
->  
-> +	if (kproc->data->uses_lreset)
-> +		goto lreset;
-> +
->  	ret = kproc->ti_sci->ops.dev_ops.get_device(kproc->ti_sci,
->  						    kproc->ti_sci_id);
->  	if (ret) {
-> @@ -198,6 +204,7 @@ static int k3_dsp_rproc_release(struct k3_dsp_rproc *kproc)
->  		return ret;
->  	}
->  
-> +lreset:
->  	ret = reset_control_deassert(kproc->reset);
->  	if (ret) {
->  		dev_err(dev, "local-reset deassert failed, ret = %d\n", ret);
-> @@ -209,6 +216,53 @@ static int k3_dsp_rproc_release(struct k3_dsp_rproc *kproc)
->  	return ret;
->  }
->  
-> +/*
-> + * The C66x DSP cores have a local reset that affects only the CPU, and a
-> + * generic module reset that powers on the device and allows the DSP internal
-> + * memories to be accessed while the local reset is asserted. This function is
-> + * used to release the global reset on C66x DSPs to allow loading into the DSP
-> + * internal RAMs. The .prepare() ops is invoked by remoteproc core before any
-> + * firmware loading, and is followed by the .start() ops after loading to
-> + * actually let the C66x DSP cores run.
-> + */
-> +static int k3_dsp_rproc_prepare(struct rproc *rproc)
-> +{
-> +	struct k3_dsp_rproc *kproc = rproc->priv;
-> +	struct device *dev = kproc->dev;
-> +	int ret;
-> +
-> +	ret = kproc->ti_sci->ops.dev_ops.get_device(kproc->ti_sci,
-> +						    kproc->ti_sci_id);
-> +	if (ret)
-> +		dev_err(dev, "module-reset deassert failed, cannot enable internal RAM loading, ret = %d\n",
-> +			ret);
-> +
-> +	return ret;
-> +}
-> +
-> +/*
-> + * This function implements the .unprepare() ops and performs the complimentary
-> + * operations to that of the .prepare() ops. The function is used to assert the
-> + * global reset on applicable C66x cores. This completes the second portion of
-> + * powering down the C66x DSP cores. The cores themselves are only halted in the
-> + * .stop() callback through the local reset, and the .unprepare() ops is invoked
-> + * by the remoteproc core after the remoteproc is stopped to balance the global
-> + * reset.
-> + */
-> +static int k3_dsp_rproc_unprepare(struct rproc *rproc)
-> +{
-> +	struct k3_dsp_rproc *kproc = rproc->priv;
-> +	struct device *dev = kproc->dev;
-> +	int ret;
-> +
-> +	ret = kproc->ti_sci->ops.dev_ops.put_device(kproc->ti_sci,
-> +						    kproc->ti_sci_id);
-> +	if (ret)
-> +		dev_err(dev, "module-reset assert failed, ret = %d\n", ret);
-> +
-> +	return ret;
-> +}
-> +
->  /*
->   * Power up the DSP remote processor.
->   *
-> @@ -352,6 +406,8 @@ static void *k3_dsp_rproc_da_to_va(struct rproc *rproc, u64 da, size_t len)
->  }
->  
->  static const struct rproc_ops k3_dsp_rproc_ops = {
-> +	.prepare	= k3_dsp_rproc_prepare,
-> +	.unprepare	= k3_dsp_rproc_unprepare,
->  	.start		= k3_dsp_rproc_start,
->  	.stop		= k3_dsp_rproc_stop,
->  	.kick		= k3_dsp_rproc_kick,
-> @@ -614,6 +670,22 @@ static int k3_dsp_rproc_probe(struct platform_device *pdev)
->  		goto release_tsp;
->  	}
->  
-> +	/*
-> +	 * ensure the DSP local reset is asserted to ensure the DSP doesn't
-> +	 * execute bogus code in .prepare() when the module reset is released.
-> +	 */
-> +	if (data->uses_lreset) {
-> +		ret = reset_control_status(kproc->reset);
-> +		if (ret < 0) {
-> +			dev_err(dev, "failed to get reset status, status = %d\n",
-> +				ret);
-> +			goto release_mem;
-> +		} else if (ret == 0) {
-> +			dev_warn(dev, "local reset is deasserted for device\n");
-> +			k3_dsp_rproc_reset(kproc);
-> +		}
-> +	}
-> +
->  	ret = rproc_add(rproc);
->  	if (ret) {
->  		dev_err(dev, "failed to add register device with remoteproc core, status = %d\n",
-> -- 
-> 2.26.0
+On 2020-06-02 23:14, Evan Green wrote:
+> On Tue, Jun 2, 2020 at 9:33 AM Sibi Sankar <sibis@codeaurora.org> 
+> wrote:
+>> 
+>> Sometimes the stop triggers a watchdog rather than a stop-ack. Update
+>> the running state to false on requesting stop to skip the watchdog
+>> instead.
+>> 
+>> Error Logs:
+>> $ echo stop > /sys/class/remoteproc/remoteproc0/state
+>> ipa 1e40000.ipa: received modem stopping event
+>> remoteproc-modem: watchdog received: sys_m_smsm_mpss.c:291:APPS force 
+>> stop
+>> qcom-q6v5-mss 4080000.remoteproc-modem: port failed halt
+>> ipa 1e40000.ipa: received modem offline event
+>> remoteproc0: stopped remote processor 4080000.remoteproc-modem
+>> 
+>> Fixes: 3b415c8fb263 ("remoteproc: q6v5: Extract common resource 
+>> handling")
+>> Cc: stable@vger.kernel.org
+>> Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
+>> ---
 > 
+> Are you sure you want to tolerate this behavior from MSS? This is a
+> graceful shutdown, modem shouldn't have a problem completing the
+> proper handshake. If they do, isn't that a bug on the modem side?
+
+The graceful shutdown is achieved
+though sysmon (enabled using
+CONFIG_QCOM_SYSMON). When sysmon is
+enabled we get a shutdown-ack when we
+try to stop the modem, post which
+request stop is a basically a nop.
+Request stop is done to force stop
+the modem during failure cases (like
+rmtfs is not running and so on) and
+we do want to mask the wdog that we get
+during this scenario ( The locking
+already prevents the servicing of the
+wdog during shutdown, the check just
+prevents the scheduling of crash handler
+and err messages associated with it).
+Also this check was always present and
+was missed during common q6v5 resource
+helper migration, hence the unused
+running state in mss driver.
+
+> 
+> I just worry this will mask real issues that happen during graceful 
+> shutdown.
+> -Evan
+
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project.
