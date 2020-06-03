@@ -2,294 +2,208 @@ Return-Path: <SRS0=93g6=7Q=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18D4AC433DF
-	for <linux-remoteproc@archiver.kernel.org>; Wed,  3 Jun 2020 14:51:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47BACC433E0
+	for <linux-remoteproc@archiver.kernel.org>; Wed,  3 Jun 2020 19:30:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E6247207DF
-	for <linux-remoteproc@archiver.kernel.org>; Wed,  3 Jun 2020 14:51:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 27066207ED
+	for <linux-remoteproc@archiver.kernel.org>; Wed,  3 Jun 2020 19:30:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="FyY6LHG+"
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="NtJkO7Me"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726026AbgFCOvd (ORCPT
+        id S1726186AbgFCTai (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 3 Jun 2020 10:51:33 -0400
-Received: from mail-bn8nam11on2089.outbound.protection.outlook.com ([40.107.236.89]:6177
-        "EHLO NAM11-BN8-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725930AbgFCOtw (ORCPT
+        Wed, 3 Jun 2020 15:30:38 -0400
+Received: from rnd-relay.smtp.broadcom.com ([192.19.229.170]:51242 "EHLO
+        rnd-relay.smtp.broadcom.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725821AbgFCTai (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 3 Jun 2020 10:49:52 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=ILrjO8DerIvxOmv+TTnnJMT5EAMIbX3yMVEaDZISWzUHj/AufnpwvhBhX1Vv7VFp1S7dPhfffzbHkmcMQ2ExjnfN9xYYzmkPiXiczXiG96KkNZ7CdW8QYpXnCJ5nC8qIt5kc/AANHVhmsxZYHo5Q93bY9BK7VkW2YDCcgxw7vqagLycqiAAlfMGX0kaRF88DHKd4t7nUTzRaWZzzzIVcr5D6KoHlCpi7urvWOAgMXUkTZBsGB2uHj89I3TXbOQ1KhmhJi3reQUTQz76WK5/+C5uRwdJGt0w4Wir+A8h6W75ypw/Zn2xZD22ozRYb5U0oXRKqthoymVCQCWQgmSAuMA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=h4x/CRxL8w+JvJdADGbcXIOuiE/HEnbKrtYJiAs2Njg=;
- b=Yyfys6cJ4IKm4YTIjJDqAFBYHKkLCxzCxbnipjXdusNOSdIwVObUIpWs+1Ei2Hwt1avCJ7Uo7iplKRao3/f1vtM7z+4/n7c/5LrHzta0i6MmKwbmocKzeHIa3EQE29Ylm2wbbhL5g4gmzmBNfMLEhFA29rPPYJafEayBAGRsy3pIXyRvN6asdDBHrSGkU7wsIk3gFKuPNvgRJqpSoNzwDuy1JZXwrCqtv4YcPVbS0xBBOJoglGLFYgITFEWW9KNEH/vK2py5XoiLRsC708fpkJt/xUGNfAES9JBVn7eZijYkMwN6xLi1K5O1sIrzOATrZ2O9He5G8rOXNcbx2zw00A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 149.199.60.83) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=xilinx.com;
- dmarc=bestguesspass action=none header.from=xilinx.com; dkim=none (message
- not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=xilinx.onmicrosoft.com; s=selector2-xilinx-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=h4x/CRxL8w+JvJdADGbcXIOuiE/HEnbKrtYJiAs2Njg=;
- b=FyY6LHG+YwBCFQGLMLANYXgNd6RCXJ0rXX6etVHce0Pl+FFl0fgHl2iUzOA4qrlzAdSUHkzDtnFl4mSmbYvZ5Wgskz2XquZkrBPqpsEs0V5VE1cmqZHTlIc7e7vR9POBXVYqYUG3Abpx8ZCgIlkQvrCSws8Mc1G5hGXsJH2hobw=
-Received: from SN6PR04CA0091.namprd04.prod.outlook.com (2603:10b6:805:f2::32)
- by CH2PR02MB6645.namprd02.prod.outlook.com (2603:10b6:610:7e::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3066.18; Wed, 3 Jun
- 2020 14:49:48 +0000
-Received: from SN1NAM02FT057.eop-nam02.prod.protection.outlook.com
- (2603:10b6:805:f2:cafe::c7) by SN6PR04CA0091.outlook.office365.com
- (2603:10b6:805:f2::32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3066.18 via Frontend
- Transport; Wed, 3 Jun 2020 14:49:48 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 149.199.60.83)
- smtp.mailfrom=xilinx.com; vger.kernel.org; dkim=none (message not signed)
- header.d=none;vger.kernel.org; dmarc=bestguesspass action=none
- header.from=xilinx.com;
-Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
- 149.199.60.83 as permitted sender) receiver=protection.outlook.com;
- client-ip=149.199.60.83; helo=xsj-pvapsmtpgw01;
-Received: from xsj-pvapsmtpgw01 (149.199.60.83) by
- SN1NAM02FT057.mail.protection.outlook.com (10.152.73.105) with Microsoft SMTP
- Server id 15.20.3045.17 via Frontend Transport; Wed, 3 Jun 2020 14:49:48
- +0000
-Received: from [149.199.38.66] (port=60709 helo=xsj-pvapsmtp01)
-        by xsj-pvapsmtpgw01 with esmtp (Exim 4.90)
-        (envelope-from <ben.levinsky@xilinx.com>)
-        id 1jgUhS-0007GC-0d; Wed, 03 Jun 2020 07:49:02 -0700
-Received: from [127.0.0.1] (helo=localhost)
-        by xsj-pvapsmtp01 with smtp (Exim 4.63)
-        (envelope-from <ben.levinsky@xilinx.com>)
-        id 1jgUiB-000515-QN; Wed, 03 Jun 2020 07:49:47 -0700
-Received: from xsj-pvapsmtp01 (smtp3.xilinx.com [149.199.38.66])
-        by xsj-smtp-dlp1.xlnx.xilinx.com (8.13.8/8.13.1) with ESMTP id 053EnhUi015307;
-        Wed, 3 Jun 2020 07:49:43 -0700
-Received: from [172.19.2.206] (helo=xsjblevinsk50.xilinx.com)
-        by xsj-pvapsmtp01 with esmtp (Exim 4.63)
-        (envelope-from <ben.levinsky@xilinx.com>)
-        id 1jgUi7-00050a-DW; Wed, 03 Jun 2020 07:49:43 -0700
-From:   Ben Levinsky <ben.levinsky@xilinx.com>
-To:     ohad@wizery.com, bjorn.andersson@linaro.org, michals@xilinx.com,
-        jollys@xilinx.com, rajanv@xilinx.com, robh+dt@kernel.org,
-        mark.rutland@arm.com
-Cc:     linux-remoteproc@vger.kernel.org,
-        linux-arm-kernell@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Jason Wu <j.wu@xilinx.com>,
-        Wendy Liang <jliang@xilinx.com>,
-        Michal Simek <michal.simek@xilinx.com>
-Subject: [PATCH v5 4/5] dt-bindings: remoteproc: Add documentation for ZynqMP R5 rproc bindings
-Date:   Wed,  3 Jun 2020 07:49:42 -0700
-Message-Id: <1591195783-10290-5-git-send-email-ben.levinsky@xilinx.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1591195783-10290-1-git-send-email-ben.levinsky@xilinx.com>
-References: <1591195783-10290-1-git-send-email-ben.levinsky@xilinx.com>
-X-RCIS-Action: ALLOW
-X-TM-AS-Product-Ver: IMSS-7.1.0.1224-8.2.0.1013-23620.005
-X-TM-AS-User-Approved-Sender: Yes;Yes
-X-EOPAttributedMessage: 0
-X-MS-Office365-Filtering-HT: Tenant
-X-Forefront-Antispam-Report: CIP:149.199.60.83;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:xsj-pvapsmtpgw01;PTR:unknown-60-83.xilinx.com;CAT:NONE;SFTY:;SFS:(396003)(39860400002)(376002)(136003)(346002)(46966005)(2906002)(316002)(8676002)(8936002)(7696005)(5660300002)(4326008)(70586007)(70206006)(426003)(2616005)(83380400001)(186003)(36756003)(336012)(107886003)(54906003)(47076004)(44832011)(82740400003)(26005)(478600001)(81166007)(9786002)(356005)(82310400002);DIR:OUT;SFP:1101;
-X-MS-PublicTrafficType: Email
-MIME-Version: 1.0
-Content-Type: text/plain
-X-MS-Office365-Filtering-Correlation-Id: 372259e1-a564-441d-d978-08d807cd5ce7
-X-MS-TrafficTypeDiagnostic: CH2PR02MB6645:
-X-Microsoft-Antispam-PRVS: <CH2PR02MB6645C75D1D391F9BF606BAF7B5880@CH2PR02MB6645.namprd02.prod.outlook.com>
-X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
-X-MS-Oob-TLC-OOBClassifiers: OLM:9508;
-X-Forefront-PRVS: 04238CD941
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: cKlLF+VSJBqgHwrovexytGCRL1E6cOeLodr8zf60UF2BbkbmZkLzBpq/kXuU/OvT1CVPcvh39vCCkHejvHoDLEWcr+xCYFC4zs/InH4bD7HhWG6pZmDSPELcbYr9rHUx5dzYubHq+KH0hI8fYRGEO3upWX2r5iVr946nrJHMhxGJtyZQJa1qpCDyiIrJT2RiYkU+9sp0VF9c9atJWXNPuuMwRZwSYAdIVAqB5GQr3JiqlNcGC2wPEkejvg4awz0XD51eHOJpjoFv2ybo8dR9OXnDwVKvR7fJZPLi05+97sLDkZzSunWRFu1Sybzb5JoHlfL7d7F3GEL6QN7bOnHHfWuprepD04mpYjuTBrdIKduNwwBfbiwL/7Ik/5jTk98mPxjQAbSMrHVRM+d7CgMWh3PBIbv8B287xypzJya1h/GZPEgwvJARqf4Qr7Fc1krFPqTBINoXI8HvJE0lo8nHs6oYwf6UafSnbAbDPVuZZuo=
-X-OriginatorOrg: xilinx.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Jun 2020 14:49:48.1183
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 372259e1-a564-441d-d978-08d807cd5ce7
-X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.60.83];Helo=[xsj-pvapsmtpgw01]
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR02MB6645
+        Wed, 3 Jun 2020 15:30:38 -0400
+X-Greylist: delayed 559 seconds by postgrey-1.27 at vger.kernel.org; Wed, 03 Jun 2020 15:30:37 EDT
+Received: from mail-irv-17.broadcom.com (mail-irv-17.lvn.broadcom.net [10.75.242.48])
+        by rnd-relay.smtp.broadcom.com (Postfix) with ESMTP id 840DD30DD7D;
+        Wed,  3 Jun 2020 12:21:15 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.10.3 rnd-relay.smtp.broadcom.com 840DD30DD7D
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=broadcom.com;
+        s=dkimrelay; t=1591212075;
+        bh=/AQzYy/Wi51ZHDd+ThnXKaeww1EEOqsroMbykkRvvq8=;
+        h=From:To:Cc:Subject:Date:From;
+        b=NtJkO7MeFX9UJlK8NUNrIV5R9Mx4cOS08pLbxG4NPk/I+q5/V9FpPpuH5/7NTn4h6
+         oXzIRd7IOw07qiMAAfQWzxBn0ktMI+2Y0HHNBVaAG6rqUobHv9JpcCr/2jYvZ/IP1F
+         NUugsjaWJwj9/B8MokjcNqcee5TK7Khm/EE80QP0=
+Received: from stbsrv-and-01.and.broadcom.net (stbsrv-and-01.and.broadcom.net [10.28.16.211])
+        by mail-irv-17.broadcom.com (Postfix) with ESMTP id 9DA8814008C;
+        Wed,  3 Jun 2020 12:21:11 -0700 (PDT)
+From:   Jim Quinlan <james.quinlan@broadcom.com>
+To:     linux-pci@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
+        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
+        bcm-kernel-feedback-list@broadcom.com, james.quinlan@broadcom.com
+Cc:     Alan Stern <stern@rowland.harvard.edu>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Arnd Bergmann <arnd@arndb.de>, Corey Minyard <minyard@acm.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        devel@driverdev.osuosl.org (open list:STAGING SUBSYSTEM),
+        devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
+        DEVICE TREE),
+        dri-devel@lists.freedesktop.org (open list:DRM DRIVERS FOR ALLWINNER
+        A10), Florian Fainelli <f.fainelli@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Hans de Goede <hdegoede@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        iommu@lists.linux-foundation.org (open list:IOMMU DRIVERS),
+        Jens Axboe <axboe@kernel.dk>, Joerg Roedel <jroedel@suse.de>,
+        Julien Grall <julien.grall@arm.com>,
+        linux-acpi@vger.kernel.org (open list:ACPI FOR ARM64 (ACPI/arm64)),
+        linux-arm-kernel@lists.infradead.org (moderated list:ARM PORT),
+        linux-ide@vger.kernel.org (open list:LIBATA SUBSYSTEM (Serial and
+        Parallel ATA drivers)), linux-kernel@vger.kernel.org (open list),
+        linux-media@vger.kernel.org (open list:ALLWINNER A10 CSI DRIVER),
+        linux-remoteproc@vger.kernel.org (open list:REMOTE PROCESSOR
+        (REMOTEPROC) SUBSYSTEM),
+        linux-rpi-kernel@lists.infradead.org (moderated list:BROADCOM
+        BCM2711/BCM2835 ARM ARCHITECTURE),
+        linux-sh@vger.kernel.org (open list:SUPERH),
+        linux-usb@vger.kernel.org (open list:USB SUBSYSTEM),
+        Mark Brown <broonie@kernel.org>,
+        Oliver Neukum <oneukum@suse.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Rob Herring <robh@kernel.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Saravana Kannan <saravanak@google.com>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Stefano Stabellini <sstabellini@kernel.org>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Subject: [PATCH v3 00/13] PCI: brcmstb: enable PCIe for STB chips
+Date:   Wed,  3 Jun 2020 15:20:32 -0400
+Message-Id: <20200603192058.35296-1-james.quinlan@broadcom.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Add binding for ZynqMP R5 OpenAMP.
-
-Represent the RPU domain resources in one device node. Each RPU
-processor is a subnode of the top RPU domain node.
-
-Signed-off-by: Ben Levinsky <ben.levinsky@xilinx.com>
-Signed-off-by: Jason Wu <j.wu@xilinx.com>
-Signed-off-by: Wendy Liang <jliang@xilinx.com>
-Signed-off-by: Michal Simek <michal.simek@xilinx.com>
----
 v3:
-- update zynqmp_r5 yaml parsing to not raise warnings for extra
-  information in children of R5 node. The warning "node has a unit
-  name, but no reg or ranges property" will still be raised though 
-  as this particular node is needed to describe the
-  '#address-cells' and '#size-cells' information.
-v4::
-- remove warning '/example-0/rpu@ff9a0000/r5@0: 
-  node has a unit name, but no reg or ranges property'
-  by adding reg to r5 node.
-v5:
-- update device tree sample and yaml parsing to not raise any warnings
-- description for memory-region in yaml parsing
-- compatible string in yaml parsing for TCM
+  Commit "device core: Introduce multiple dma pfn offsets"
+  Commit "arm: dma-mapping: Invoke dma offset func if needed"
+  -- The above two commits have been squashed.  More importantly,
+     the code has been modified so that the functionality for
+     multiple pfn offsets subsumes the use of dev->dma_pfn_offset.
+     In fact, dma_pfn_offset is removed and supplanted by
+     dma_pfn_offset_map, which is a pointer to an array.  The
+     more common case of a uniform offset is now handled as
+     a map with a single entry, while cases requiring multiple
+     pfn offsets use a map with multiple entries.  Code paths
+     that used to do this:
 
----
- .../remoteproc/xilinx,zynqmp-r5-remoteproc.yaml    | 132 +++++++++++++++++++++
- 1 file changed, 132 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/remoteproc/xilinx,zynqmp-r5-remoteproc.yaml
+         dev->dma_pfn_offset = mydrivers_pfn_offset;
 
-diff --git a/Documentation/devicetree/bindings/remoteproc/xilinx,zynqmp-r5-remoteproc.yaml b/Documentation/devicetree/bindings/remoteproc/xilinx,zynqmp-r5-remoteproc.yaml
-new file mode 100644
-index 0000000..23fbdce
---- /dev/null
-+++ b/Documentation/devicetree/bindings/remoteproc/xilinx,zynqmp-r5-remoteproc.yaml
-@@ -0,0 +1,132 @@
-+# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: "http://devicetree.org/schemas/remoteproc/xilinx,zynqmp-r5-remoteproc.yaml#"
-+$schema: "http://devicetree.org/meta-schemas/core.yaml#"
-+
-+title: Xilinx R5 remote processor controller bindings
-+
-+description:
-+  This document defines the binding for the remoteproc component that loads and
-+  boots firmwares on the Xilinx Zynqmp and Versal family chipset.
-+
-+  Note that the Linux has global addressing view of the R5-related memory (TCM)
-+  so the absolute address ranges are provided in TCM reg's.
-+maintainers:
-+  - Ed Mooring <ed.mooring@xilinx.com>
-+  - Ben Levinsky <ben.levinsky@xilinx.com>
-+
-+properties:
-+  compatible:
-+    const: "xlnx,zynqmp-r5-remoteproc-1.0"
-+
-+  core_conf:
-+    description:
-+      R5 core configuration (valid string - split or lock-step)
-+    maxItems: 1
-+
-+  interrupts:
-+    description:
-+      Interrupt mapping for remoteproc IPI. It is required if the
-+      user uses the remoteproc driver with the RPMsg kernel driver.
-+    maxItems: 6
-+
-+  memory-region:
-+    description:
-+      collection of memory carveouts used for elf-loading and inter-processor
-+      communication.
-+    maxItems: 4
-+    minItems: 4
-+  pnode-id:
-+    maxItems: 1
-+  mboxes:
-+    maxItems: 2
-+  mbox-names:
-+    maxItems: 2
-+if:
-+  properties:
-+    compatible:
-+      enum:
-+        - "xlnx,zynqmp-r5-tcm-1.0"
-+
-+
-+examples:
-+  - |
-+     reserved-memory {
-+          #address-cells = <1>;
-+          #size-cells = <1>;
-+          ranges;
-+          rpu0vdev0vring0: rpu0vdev0vring0@3ed40000 {
-+               no-map;
-+               reg = <0x3ed40000 0x4000>;
-+          };
-+          rpu0vdev0vring1: rpu0vdev0vring1@3ed44000 {
-+               no-map;
-+               reg = <0x3ed44000 0x4000>;
-+          };
-+          rpu0vdev0buffer: rpu0vdev0buffer@3ed48000 {
-+               no-map;
-+               reg = <0x3ed48000 0x100000>;
-+          };
-+          rproc_0_reserved: rproc@3ed000000 {
-+               no-map;
-+               reg = <0x3ed00000 0x40000>;
-+          };
-+     };
-+     rpu {
-+          compatible = "xlnx,zynqmp-r5-remoteproc-1.0";
-+          #address-cells = <1>;
-+          #size-cells = <1>;
-+          ranges;
-+          core_conf = "lock-step";
-+          r5_0 {
-+               ranges;
-+               #address-cells = <1>;
-+               #size-cells = <1>;
-+               memory-region = <&rproc_0_reserved>, <&rpu0vdev0buffer>, <&rpu0vdev0vring0>, <&rpu0vdev0vring1>;
-+               pnode-id = <0x7>;
-+               mboxes = <&ipi_mailbox_rpu0 0>, <&ipi_mailbox_rpu0 1>;
-+               mbox-names = "tx", "rx";
-+               tcm_0_a: tcm_0@0 {
-+                    #address-cells = <1>;
-+                    #size-cells = <1>;
-+                    reg = <0xFFE00000 0x10000>;
-+                    pnode-id = <0xf>;
-+                    compatible = "zynqmp-r5-tcm-1.0";
-+               };
-+               tcm_0_b: tcm_0@1 {
-+                    #address-cells = <2>;
-+                    #size-cells = <2>;
-+                    reg = <0xFFE20000 0x10000>;
-+                    pnode-id = <0x10>;
-+                    compatible = "zynqmp-r5-tcm-1.0";
-+               };
-+          };
-+     };
-+
-+
-+     zynqmp_ipi1 {
-+          compatible = "xlnx,zynqmp-ipi-mailbox";
-+          interrupt-parent = <&gic>;
-+          interrupts = <0 29 4>;
-+          xlnx,ipi-id = <7>;
-+          #address-cells = <1>;
-+          #size-cells = <1>;
-+          ranges;
-+
-+          /* APU<->RPU0 IPI mailbox controller */
-+          ipi_mailbox_rpu0: mailbox@ff90000 {
-+               reg = <0xff990600 0x20>,
-+                     <0xff990620 0x20>,
-+                     <0xff9900c0 0x20>,
-+                     <0xff9900e0 0x20>;
-+               reg-names = "local_request_region",
-+                        "local_response_region",
-+                        "remote_request_region",
-+                        "remote_response_region";
-+               #mbox-cells = <1>;
-+               xlnx,ipi-id = <1>;
-+          };
-+     };
-+
-+...
+     have been changed to do this:
+
+         attach_uniform_dma_pfn_offset(dev, pfn_offset);
+
+  Commit "dt-bindings: PCI: Add bindings for more Brcmstb chips"
+  -- Add if/then clause for required props: resets, reset-names (RobH)
+  -- Change compatible list from const to enum (RobH)
+  -- Change list of u32-tuples to u64 (RobH)
+
+  Commit "of: Include a dev param in of_dma_get_range()"
+  -- modify of/unittests.c to add NULL param in of_dma_get_range() call.
+
+  Commit "device core: Add ability to handle multiple dma offsets"
+  -- align comment in device.h (AndyS).
+  -- s/cpu_beg/cpu_start/ and s/dma_beg/dma_start/ in struct
+     dma_pfn_offset_region (AndyS).
+
+v2:
+Commit: "device core: Add ability to handle multiple dma offsets"
+  o Added helper func attach_dma_pfn_offset_map() in address.c (Chistoph)
+  o Helpers funcs added to __phys_to_dma() & __dma_to_phys() (Christoph)
+  o Added warning when multiple offsets are needed and !DMA_PFN_OFFSET_MAP
+  o dev->dma_pfn_map => dev->dma_pfn_offset_map
+  o s/frm/from/ for dma_pfn_offset_frm_{phys,dma}_addr() (Christoph)
+  o In device.h: s/const void */const struct dma_pfn_offset_region */
+  o removed 'unlikely' from unlikely(dev->dma_pfn_offset_map) since
+    guarded by CONFIG_DMA_PFN_OFFSET_MAP (Christoph)
+  o Since dev->dma_pfn_offset is copied in usb/core/{usb,message}.c, now
+    dev->dma_pfn_offset_map is copied as well.
+  o Merged two of the DMA commits into one (Christoph).
+
+Commit "arm: dma-mapping: Invoke dma offset func if needed":
+  o Use helper functions instead of #if CONFIG_DMA_PFN_OFFSET
+
+Other commits' changes:
+  o Removed need for carrying of_id var in priv (Nicolas)
+  o Commit message rewordings (Bjorn)
+  o Commit log messages filled to 75 chars (Bjorn)
+  o devm_reset_control_get_shared())
+    => devm_reset_control_get_optional_shared (Philipp)
+  o Add call to reset_control_assert() in PCIe remove routines (Philipp)
+
+v1:
+This patchset expands the usefulness of the Broadcom Settop Box PCIe
+controller by building upon the PCIe driver used currently by the
+Raspbery Pi.  Other forms of this patchset were submitted by me years
+ago and not accepted; the major sticking point was the code required
+for the DMA remapping needed for the PCIe driver to work [1].
+
+There have been many changes to the DMA and OF subsystems since that
+time, making a cleaner and less intrusive patchset possible.  This
+patchset implements a generalization of "dev->dma_pfn_offset", except
+that instead of a single scalar offset it provides for multiple
+offsets via a function which depends upon the "dma-ranges" property of
+the PCIe host controller.  This is required for proper functionality
+of the BrcmSTB PCIe controller and possibly some other devices.
+
+[1] https://lore.kernel.org/linux-arm-kernel/1516058925-46522-5-git-send-email-jim2101024@gmail.com/
+
+Jim Quinlan (13):
+  PCI: brcmstb: PCIE_BRCMSTB depends on ARCH_BRCMSTB
+  ata: ahci_brcm: Fix use of BCM7216 reset controller
+  dt-bindings: PCI: Add bindings for more Brcmstb chips
+  PCI: brcmstb: Add bcm7278 reigister info
+  PCI: brcmstb: Add suspend and resume pm_ops
+  PCI: brcmstb: Add bcm7278 PERST support
+  PCI: brcmstb: Add control of rescal reset
+  of: Include a dev param in of_dma_get_range()
+  device core: Introduce multiple dma pfn offsets
+  PCI: brcmstb: Set internal memory viewport sizes
+  PCI: brcmstb: Accommodate MSI for older chips
+  PCI: brcmstb: Set bus max burst size by chip type
+  PCI: brcmstb: Add bcm7211, bcm7216, bcm7445, bcm7278 to match list
+
+ .../bindings/pci/brcm,stb-pcie.yaml           |  58 ++-
+ arch/arm/include/asm/dma-mapping.h            |   9 +-
+ arch/arm/mach-keystone/keystone.c             |   9 +-
+ arch/sh/drivers/pci/pcie-sh7786.c             |   3 +-
+ arch/sh/kernel/dma-coherent.c                 |  17 +-
+ arch/x86/pci/sta2x11-fixup.c                  |   7 +-
+ drivers/acpi/arm64/iort.c                     |   5 +-
+ drivers/ata/ahci_brcm.c                       |  14 +-
+ drivers/gpu/drm/sun4i/sun4i_backend.c         |   7 +-
+ drivers/iommu/io-pgtable-arm.c                |   2 +-
+ .../platform/sunxi/sun4i-csi/sun4i_csi.c      |   5 +-
+ .../platform/sunxi/sun6i-csi/sun6i_csi.c      |   5 +-
+ drivers/of/address.c                          |  97 ++++-
+ drivers/of/device.c                           |  10 +-
+ drivers/of/of_private.h                       |   8 +-
+ drivers/of/unittest.c                         |   2 +-
+ drivers/pci/controller/Kconfig                |   3 +-
+ drivers/pci/controller/pcie-brcmstb.c         | 408 +++++++++++++++---
+ drivers/remoteproc/remoteproc_core.c          |   2 +-
+ .../staging/media/sunxi/cedrus/cedrus_hw.c    |   7 +-
+ drivers/usb/core/message.c                    |   4 +-
+ drivers/usb/core/usb.c                        |   2 +-
+ include/linux/device.h                        |   4 +-
+ include/linux/dma-direct.h                    |  16 +-
+ include/linux/dma-mapping.h                   |  45 ++
+ kernel/dma/coherent.c                         |  11 +-
+ 26 files changed, 631 insertions(+), 129 deletions(-)
+
 -- 
-2.7.4
+2.17.1
 
