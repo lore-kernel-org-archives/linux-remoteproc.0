@@ -5,61 +5,61 @@ X-Spam-Level:
 X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3608C433DF
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  4 Jun 2020 19:58:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D49E2C433E0
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  4 Jun 2020 20:02:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8F661206C3
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  4 Jun 2020 19:58:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B4A2A2075B
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  4 Jun 2020 20:02:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wD+ftdk8"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jI6tdSj8"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729293AbgFDT6n (ORCPT
+        id S1729653AbgFDUCB (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 4 Jun 2020 15:58:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48012 "EHLO
+        Thu, 4 Jun 2020 16:02:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48528 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726026AbgFDT6n (ORCPT
+        with ESMTP id S1729531AbgFDUCB (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 4 Jun 2020 15:58:43 -0400
-Received: from mail-pl1-x641.google.com (mail-pl1-x641.google.com [IPv6:2607:f8b0:4864:20::641])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F1220C08C5C0
-        for <linux-remoteproc@vger.kernel.org>; Thu,  4 Jun 2020 12:58:42 -0700 (PDT)
-Received: by mail-pl1-x641.google.com with SMTP id bg4so2648649plb.3
-        for <linux-remoteproc@vger.kernel.org>; Thu, 04 Jun 2020 12:58:42 -0700 (PDT)
+        Thu, 4 Jun 2020 16:02:01 -0400
+Received: from mail-pj1-x1042.google.com (mail-pj1-x1042.google.com [IPv6:2607:f8b0:4864:20::1042])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EBF68C08C5C1
+        for <linux-remoteproc@vger.kernel.org>; Thu,  4 Jun 2020 13:01:59 -0700 (PDT)
+Received: by mail-pj1-x1042.google.com with SMTP id fs4so1596330pjb.5
+        for <linux-remoteproc@vger.kernel.org>; Thu, 04 Jun 2020 13:01:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=Z2+bXPR2+Jym+qns9d2aby3e70oxsC4culu1OnVMUsc=;
-        b=wD+ftdk8XUzqbiPr8Na112Cu51DQPZBAxXC0+Gq5Pou9jDzhylTGDlTJT2m9B+UqRm
-         XLRCDyIXM/4fxkYCdCN74twd1cM5M9uFxoFAgHXY3oUEOotw0FMh6DKYw9IgT/peZqFP
-         G4ZpCGuZRnp+h430Dhu78bwSAcaumKCCvXihiDn9Kl4OqRXqJn0W87khAgZ3DABas9+0
-         Bp3g8Bnkj9/ViIGzHGJfh7ZG8tkYlmtrkTPD/tFXD290fxVbit26wQukNMtJkVEI3GTf
-         SrEEZ3vmqC3DgOnZPJsR1XXABv+m6NTssruyPjZPU9oskYL5G00RgRiYshFxtFQeeJc0
-         bTtQ==
+        bh=vAYGNTb54rsQSan6QyvRDltAW1eTpXoQKfLGpGvXROY=;
+        b=jI6tdSj8qHyfAq2jcopD2ZPb5rOPfxhbL47DfBnMOhg+TFPQmSppMn47Ir7Ki9W8N7
+         sDhvUPXDsASXCdFlhlIsE9iygAkNQjhCiS7YsLQZtTuqdGcKHsxh03no/aXi7DHrtChI
+         T79hsgsU/IkGieXLHURh3c8OR0aqDxwHdYvEZ9HRBLtYTgaTlRmKNCiiNdwUKr7UEby2
+         s1jdHNNbbZGcpI7vBpvs9yIy6tvx0ajc69a3QjnESQr9gD8d5u1r+B7lntY/ukO0mQFW
+         kdg6FSz21imjGF5xDfgt07+5gXM3RA9uvlsbtF9bNRIDWmNaHXxQKdsBhjDSSTEqEJJN
+         IWXQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Z2+bXPR2+Jym+qns9d2aby3e70oxsC4culu1OnVMUsc=;
-        b=ByBxlHEzuRnvNzZPjD47ZK9kjd+wo/JBfGxOXVioQMo5KEAW/pkHj4X9qSjAZGCQ+f
-         GE7UwGF00TeDWWBov8OWJdUek5yWQ4t1tZ4ZdPhpeduYcr7gSX0A0/OZvVzBDZFWuML3
-         eXhCv+r5P4fK3biJykUMStO4NoHqBOIYYg4k4L7vQY0fX0f/eB02CeWDnXzXQL8Uw9PZ
-         aPlL8E0/zZqiAVM/B5Rl3pEOKH3eGoaJZW6o/FHjC2YjczNJdlWeT1qw/x5nxz76ZFG+
-         pjEtdEO9Xj8U8fMKdyN9TUcMFXg4OUKccpYXYw+A3h4g1QX5m8/Hm3J3FmkUL7xqKehB
-         nmVw==
-X-Gm-Message-State: AOAM531JJTnwDvsSazmIxWWpIOvHo1tboiIdi89cBuK4hxe5gfoL6pb/
-        Da6b9bhnv1qHkfkZyAdCm706qg==
-X-Google-Smtp-Source: ABdhPJwoI6iZakaDayW86ZI5c9+SVK9lvsJys/UwZRIbOWOFopBEoOmESWc7kOBHjKXfZqSiTBFtTA==
-X-Received: by 2002:a17:90a:2070:: with SMTP id n103mr7951376pjc.109.1591300722401;
-        Thu, 04 Jun 2020 12:58:42 -0700 (PDT)
+        bh=vAYGNTb54rsQSan6QyvRDltAW1eTpXoQKfLGpGvXROY=;
+        b=T1JxLCKyP3nyEJgRCnVReXpeOYN+yRtoxDiaEW0qz9cm7GREsGPYoNWMKmt9E7Say/
+         8ufUQU4IeYq3chvB7JBobw7bQhzfj33aygdOtXYtt7+ujnJ4oompALUxUmkMz695HBw4
+         JtzZoBX6NPbJZuQc4/TPDE3n+86Rfbxcf5kJB/bzQmMmiRhX0+/Sm4slt/GQVxiqtVli
+         Qc7bxNCjQ4VJuy+0/TMkVZiHiWov0KBHBV8kimcKmZb3J8hQvBCfwYDiBuhWy+22TF4L
+         42hJNq5HBVTNrgQR07x+WBJrkAMnBkysBrhp4a7AMFTubUEItp1ssqHlkDGt2iU7auI3
+         emQQ==
+X-Gm-Message-State: AOAM532UjjFJmOf4ZZYgO5P29lNVBQrjtsrvCoMFuucRR6+tl456SOw7
+        kOdvwZS2E/8YP4l/+M4O1UDMdQ==
+X-Google-Smtp-Source: ABdhPJx18CWRe3LuIZZ9koaejNlwS+u01nv+CLYSJ8AbAMCUlvCSh27jxh8EasimXBKniTSXi1vkeA==
+X-Received: by 2002:a17:90a:3749:: with SMTP id u67mr7452340pjb.129.1591300919377;
+        Thu, 04 Jun 2020 13:01:59 -0700 (PDT)
 Received: from xps15 (S0106002369de4dac.cg.shawcable.net. [68.147.8.254])
-        by smtp.gmail.com with ESMTPSA id r1sm4695071pgb.37.2020.06.04.12.58.41
+        by smtp.gmail.com with ESMTPSA id x12sm5285603pfo.72.2020.06.04.13.01.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Jun 2020 12:58:41 -0700 (PDT)
-Date:   Thu, 4 Jun 2020 13:58:39 -0600
+        Thu, 04 Jun 2020 13:01:58 -0700 (PDT)
+Date:   Thu, 4 Jun 2020 14:01:56 -0600
 From:   Mathieu Poirier <mathieu.poirier@linaro.org>
 To:     Guennadi Liakhovetski <guennadi.liakhovetski@linux.intel.com>
 Cc:     kvm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
@@ -71,62 +71,50 @@ Cc:     kvm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
         Jason Wang <jasowang@redhat.com>,
         Ohad Ben-Cohen <ohad@wizery.com>,
         Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: Re: [RFC 11/12] rpmsg: increase buffer size and reduce buffer number
-Message-ID: <20200604195839.GA26734@xps15>
+Subject: Re: [RFC 12/12] rpmsg: add a device ID to also bind to the ADSP
+ device
+Message-ID: <20200604200156.GB26734@xps15>
 References: <20200529073722.8184-1-guennadi.liakhovetski@linux.intel.com>
- <20200529073722.8184-12-guennadi.liakhovetski@linux.intel.com>
+ <20200529073722.8184-13-guennadi.liakhovetski@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200529073722.8184-12-guennadi.liakhovetski@linux.intel.com>
+In-Reply-To: <20200529073722.8184-13-guennadi.liakhovetski@linux.intel.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi Guennadi,
-
-On Fri, May 29, 2020 at 09:37:21AM +0200, Guennadi Liakhovetski wrote:
-> It is hard to imagine use-cases where 512 buffers would really be
-> needed, whereas 512 bytes per buffer might be too little. Change this
-> to use 16 16KiB buffers instead.
+On Fri, May 29, 2020 at 09:37:22AM +0200, Guennadi Liakhovetski wrote:
+> The ADSP device uses the RPMsg API to connect vhost and VirtIO SOF
+> Audio DSP drivers on KVM host and guest.
 > 
 > Signed-off-by: Guennadi Liakhovetski <guennadi.liakhovetski@linux.intel.com>
 > ---
->  include/linux/virtio_rpmsg.h | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+>  drivers/rpmsg/virtio_rpmsg_bus.c | 1 +
+>  1 file changed, 1 insertion(+)
 > 
-> diff --git a/include/linux/virtio_rpmsg.h b/include/linux/virtio_rpmsg.h
-> index 679be8b..1add468 100644
-> --- a/include/linux/virtio_rpmsg.h
-> +++ b/include/linux/virtio_rpmsg.h
-> @@ -72,8 +72,8 @@ enum rpmsg_ns_flags {
->   * can change this without changing anything in the firmware of the remote
->   * processor.
->   */
-> -#define MAX_RPMSG_NUM_BUFS	512
-> -#define MAX_RPMSG_BUF_SIZE	512
-> +#define MAX_RPMSG_NUM_BUFS	(512 / 32)
-> +#define MAX_RPMSG_BUF_SIZE	(512 * 32)
+> diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
+> index f3bd050..ebe3f19 100644
+> --- a/drivers/rpmsg/virtio_rpmsg_bus.c
+> +++ b/drivers/rpmsg/virtio_rpmsg_bus.c
+> @@ -949,6 +949,7 @@ static void rpmsg_remove(struct virtio_device *vdev)
+>  
+>  static struct virtio_device_id id_table[] = {
+>  	{ VIRTIO_ID_RPMSG, VIRTIO_DEV_ANY_ID },
+> +	{ VIRTIO_ID_ADSP, VIRTIO_DEV_ANY_ID },
 
-These have been a standard in the rpmsg protocol since the inception of the
-subsystem 9 years ago and can't be changed without serious impact to existing
-implementations.
-
-I suggest to dynamically set the number and size of the buffers to use
-based on the value of virtio_device_id::device.  To do that please spin
-off a new function, something like rpmsg_get_buffer_size(), and in there use
-the device ID to fetch the numbers based on vdev->id->device.  That way the
-rpmsg driver can be used by multiple clients and the specifics of the buffers
-adjusted without impact to other users.
+I am fine with this patch but won't add an RB because of the (many) checkpatch
+errors.  Based on the comment I made on the previous set seeing those was
+unexpected.
 
 Thanks,
 Mathieu
 
+>  	{ 0 },
+>  };
 >  
->  /* Address 53 is reserved for advertising remote services */
->  #define RPMSG_NS_ADDR		53
 > -- 
 > 1.9.3
 > 
