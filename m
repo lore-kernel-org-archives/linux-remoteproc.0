@@ -2,162 +2,153 @@ Return-Path: <SRS0=l7X0=7R=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83F16C433E0
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  4 Jun 2020 18:50:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A79DC433E0
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  4 Jun 2020 19:23:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 657C2206C3
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  4 Jun 2020 18:50:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 79C37206E6
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  4 Jun 2020 19:23:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="MglHwX8m"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WRHBqhzv"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728833AbgFDSu0 (ORCPT
+        id S1728780AbgFDTXr (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 4 Jun 2020 14:50:26 -0400
-Received: from mail27.static.mailgun.info ([104.130.122.27]:46905 "EHLO
-        mail27.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728780AbgFDSuX (ORCPT
+        Thu, 4 Jun 2020 15:23:47 -0400
+Received: from us-smtp-1.mimecast.com ([205.139.110.61]:44838 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728758AbgFDTXr (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 4 Jun 2020 14:50:23 -0400
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1591296622; h=Message-ID: References: In-Reply-To: Subject:
- Cc: To: From: Date: Content-Transfer-Encoding: Content-Type:
- MIME-Version: Sender; bh=l6wlzfSYbJzkeSugvF6FSEks0oM2Zf6QKufmIi2dOJ8=;
- b=MglHwX8mPoTVrR6AByjV49hXMHl1S9n0yBcrEIZ7Qd7FyO2w3HvH1KvK3y+iN8d8FGYJl5Hj
- IRskhnqA11l9lWzHESp/OK2imh84FhPc9zXaZBHON5aKOqItxCsuZos/tMfeWQWP48Kl2QO6
- QfauAy2+n8Ksl+PdyJsf19rYSQ0=
-X-Mailgun-Sending-Ip: 104.130.122.27
-X-Mailgun-Sid: WyI4ZWZiZiIsICJsaW51eC1yZW1vdGVwcm9jQHZnZXIua2VybmVsLm9yZyIsICJiZTllNGEiXQ==
-Received: from smtp.codeaurora.org
- (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
- smtp-out-n03.prod.us-east-1.postgun.com with SMTP id
- 5ed9426076fccbb4c8f7e005 (version=TLS1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Thu, 04 Jun 2020 18:50:08
- GMT
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 3532FC43395; Thu,  4 Jun 2020 18:50:03 +0000 (UTC)
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: sibis)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 5E782C433CB;
-        Thu,  4 Jun 2020 18:50:02 +0000 (UTC)
+        Thu, 4 Jun 2020 15:23:47 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1591298625;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=RK7OUZgW5NorsDX1d7OO/eYBX7LBH2rL3jyqXLO1xAg=;
+        b=WRHBqhzvtnBiUmV2ty+J36YUH3f9qTLrGlc6oJm9pXiSRieRre7D52aD+lZLXX1NnYACOY
+        nLQpSkV+uMqb4r33gM4NOUZFinK3KLXnb74w2nur+faVmlbufb1juGBUOwozxBY6YcH0/U
+        A6dc8LFLknbFjM8gxGCUKhvCi5aR0KM=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-464-1KIv2yTNMyCJq_IZZ39FpA-1; Thu, 04 Jun 2020 15:23:42 -0400
+X-MC-Unique: 1KIv2yTNMyCJq_IZZ39FpA-1
+Received: by mail-wm1-f70.google.com with SMTP id k185so2073897wme.8
+        for <linux-remoteproc@vger.kernel.org>; Thu, 04 Jun 2020 12:23:42 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=RK7OUZgW5NorsDX1d7OO/eYBX7LBH2rL3jyqXLO1xAg=;
+        b=cJpvazxCW8dMB4vQq+KTs9NFS1vJQChHaveojnT2FG/IjHZxLPtLvjyNS48pr3djl8
+         g1TW98+/VaL+2rX8Z36e9I+5E+tRSOWH7LwZ7zLdheiLAuY6eb8RIn5fevchHKOOHq3Q
+         6oVcPlRjqUcJbxqoLZKfFYEHZm9SYGz/AL5r9efyCfVkmah7y4MMaJ6xxzJnc80NiRQ5
+         JZySPSnaebHacJFH1/DcmsDQ14EQmmx1RYNb+tUPkDKfb3qO1n5PBBnI/+rNWkg97A/U
+         +CtMfxy5DOVY1ns+djiEicUptPiiBuWGdkYdiXMm5f4Zxotgy8NRu29UkZ5SQMj6i21G
+         4yOQ==
+X-Gm-Message-State: AOAM530Rz/y/Wt5HmzGNYltmGRFtT+3gnFlxla+qddy9ZAq4A5ks9ChB
+        dM+w0gHHWmMGifFRx0ll8KvmG2NjVN6c79sQSp/fKcFEjc1WczUAQ1SXP4Hhuc5RLeizuW+eBhW
+        fIm4Olf1vBfqpw1OeAXd4lIJQnP/i1w==
+X-Received: by 2002:a5d:4c87:: with SMTP id z7mr5815818wrs.100.1591298621573;
+        Thu, 04 Jun 2020 12:23:41 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJxp0/pnnPfhicvkES2RGb4PHh4oHYIiCtpAgZ3EQrs+Ij/+qtfXjmNZZ+e/z1giKYaInwdODw==
+X-Received: by 2002:a5d:4c87:: with SMTP id z7mr5815767wrs.100.1591298620862;
+        Thu, 04 Jun 2020 12:23:40 -0700 (PDT)
+Received: from redhat.com (bzq-109-64-41-91.red.bezeqint.net. [109.64.41.91])
+        by smtp.gmail.com with ESMTPSA id e10sm9109099wrn.11.2020.06.04.12.23.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 04 Jun 2020 12:23:40 -0700 (PDT)
+Date:   Thu, 4 Jun 2020 15:23:37 -0400
+From:   "Michael S. Tsirkin" <mst@redhat.com>
+To:     Guennadi Liakhovetski <guennadi.liakhovetski@linux.intel.com>
+Cc:     kvm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        sound-open-firmware@alsa-project.org,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Liam Girdwood <liam.r.girdwood@linux.intel.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Ohad Ben-Cohen <ohad@wizery.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>
+Subject: Re: [PATCH v3 0/5] Add a vhost RPMsg API
+Message-ID: <20200604151917-mutt-send-email-mst@kernel.org>
+References: <20200527180541.5570-1-guennadi.liakhovetski@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Fri, 05 Jun 2020 00:20:02 +0530
-From:   Sibi Sankar <sibis@codeaurora.org>
-To:     Evan Green <evgreen@chromium.org>
-Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        linux-remoteproc@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Ohad Ben Cohen <ohad@wizery.com>, rohitkr@codeaurora.org,
-        stable@vger.kernel.org, linux-kernel-owner@vger.kernel.org
-Subject: Re: [PATCH 1/2] remoteproc: qcom: q6v5: Update running state before
- requesting stop
-In-Reply-To: <CAE=gft4v1iHAPJS13fLBXgjt8ZRhD7q894zF_7JvK9QbiTbwhA@mail.gmail.com>
-References: <20200602163257.26978-1-sibis@codeaurora.org>
- <CAE=gft7sbh_S_GiRohtMmdMN9JzQhG0m3bUerwrmzhjmXucGKw@mail.gmail.com>
- <6392c800b0be1cbabb8a241cf518ab4b@codeaurora.org>
- <CAE=gft4v1iHAPJS13fLBXgjt8ZRhD7q894zF_7JvK9QbiTbwhA@mail.gmail.com>
-Message-ID: <ebc56ab0bd61f5b33be976a6643880db@codeaurora.org>
-X-Sender: sibis@codeaurora.org
-User-Agent: Roundcube Webmail/1.3.9
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200527180541.5570-1-guennadi.liakhovetski@linux.intel.com>
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On 2020-06-04 04:03, Evan Green wrote:
-> On Tue, Jun 2, 2020 at 10:29 PM Sibi Sankar <sibis@codeaurora.org> 
-> wrote:
->> 
->> Evan,
->> Thanks for taking time to review
->> the series.
->> 
->> On 2020-06-02 23:14, Evan Green wrote:
->> > On Tue, Jun 2, 2020 at 9:33 AM Sibi Sankar <sibis@codeaurora.org>
->> > wrote:
->> >>
->> >> Sometimes the stop triggers a watchdog rather than a stop-ack. Update
->> >> the running state to false on requesting stop to skip the watchdog
->> >> instead.
->> >>
->> >> Error Logs:
->> >> $ echo stop > /sys/class/remoteproc/remoteproc0/state
->> >> ipa 1e40000.ipa: received modem stopping event
->> >> remoteproc-modem: watchdog received: sys_m_smsm_mpss.c:291:APPS force
->> >> stop
->> >> qcom-q6v5-mss 4080000.remoteproc-modem: port failed halt
->> >> ipa 1e40000.ipa: received modem offline event
->> >> remoteproc0: stopped remote processor 4080000.remoteproc-modem
->> >>
->> >> Fixes: 3b415c8fb263 ("remoteproc: q6v5: Extract common resource
->> >> handling")
->> >> Cc: stable@vger.kernel.org
->> >> Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
->> >> ---
->> >
->> > Are you sure you want to tolerate this behavior from MSS? This is a
->> > graceful shutdown, modem shouldn't have a problem completing the
->> > proper handshake. If they do, isn't that a bug on the modem side?
->> 
->> The graceful shutdown is achieved
->> though sysmon (enabled using
->> CONFIG_QCOM_SYSMON). When sysmon is
->> enabled we get a shutdown-ack when we
->> try to stop the modem, post which
->> request stop is a basically a nop.
->> Request stop is done to force stop
->> the modem during failure cases (like
->> rmtfs is not running and so on) and
->> we do want to mask the wdog that we get
->> during this scenario ( The locking
->> already prevents the servicing of the
->> wdog during shutdown, the check just
->> prevents the scheduling of crash handler
->> and err messages associated with it).
->> Also this check was always present and
->> was missed during common q6v5 resource
->> helper migration, hence the unused
->> running state in mss driver.
+On Wed, May 27, 2020 at 08:05:36PM +0200, Guennadi Liakhovetski wrote:
+> v3:
+> - address several checkpatch warnings
+> - address comments from Mathieu Poirier
 > 
-> So you're saying that the intention of the ->running check already in
-> q6v5_wdog_interrupt() was to allow either the stop-ack or wdog
-> interrupt to complete the stop. This patch just fixes a regression
-> introduced during the refactor.
-> This patch seems ok to me then. It still sort of seems like a bug that
-> the modem responds arbitrarily in one of two ways, even to a "harsh"
-> shutdown request.
+> v2:
+> - update patch #5 with a correct vhost_dev_init() prototype
+> - drop patch #6 - it depends on a different patch, that is currently
+>   an RFC
+> - address comments from Pierre-Louis Bossart:
+>   * remove "default n" from Kconfig
 > 
-> I wasn't aware of QCOM_SYSMON. Reading it now, It seems like kind of a
+> Linux supports RPMsg over VirtIO for "remote processor" /AMP use
+> cases. It can however also be used for virtualisation scenarios,
+> e.g. when using KVM to run Linux on both the host and the guests.
+> This patch set adds a wrapper API to facilitate writing vhost
+> drivers for such RPMsg-based solutions. The first use case is an
+> audio DSP virtualisation project, currently under development, ready
+> for review and submission, available at
+> https://github.com/thesofproject/linux/pull/1501/commits
+> A further patch for the ADSP vhost RPMsg driver will be sent
+> separately for review only since it cannot be merged without audio
+> patches being upstreamed first.
 
-TL;DR
-Sysmon when enabled adds a lookup
-for qmi service 43 (Subsystem
-control service). When we shutdown
-the modem, we send a SSCTL_SHUTDOWN_REQ
-to the service and the modem responds
-with a shutdown-ack interrupt. If you
-have rmtfs running with -v turned on
-you can notice pending efs transactions
-being completed followed by a bye I guess.
 
-> lot... do I really need all this? Can I get by with just remoteproc
-> stops?
-> Anyway, for this patch:
+RPMsg over virtio has several problems. One is that it's
+not specced at all. Before we add more stuff, I'd like so
+see at least an attempt at describing what it's supposed to do.
+
+Another it's out of line with 1.0 spec passing guest
+endian data around. Won't work if host and guest
+endian-ness do not match. Should pass eveything in LE and
+convert.
+
+It's great to see it's seeing active development finally.
+Do you think you will have time to address these?
+
+
+
+> Thanks
+> Guennadi
 > 
-> Reviewed-by: Evan Green <evgreen@chromium.org>
+> Guennadi Liakhovetski (5):
+>   vhost: convert VHOST_VSOCK_SET_RUNNING to a generic ioctl
+>   vhost: (cosmetic) remove a superfluous variable initialisation
+>   rpmsg: move common structures and defines to headers
+>   rpmsg: update documentation
+>   vhost: add an RPMsg API
+> 
+>  Documentation/rpmsg.txt          |   6 +-
+>  drivers/rpmsg/virtio_rpmsg_bus.c |  78 +-------
+>  drivers/vhost/Kconfig            |   7 +
+>  drivers/vhost/Makefile           |   3 +
+>  drivers/vhost/rpmsg.c            | 382 +++++++++++++++++++++++++++++++++++++++
+>  drivers/vhost/vhost.c            |   2 +-
+>  drivers/vhost/vhost_rpmsg.h      |  74 ++++++++
+>  include/linux/virtio_rpmsg.h     |  81 +++++++++
+>  include/uapi/linux/rpmsg.h       |   3 +
+>  include/uapi/linux/vhost.h       |   4 +-
+>  10 files changed, 559 insertions(+), 81 deletions(-)
+>  create mode 100644 drivers/vhost/rpmsg.c
+>  create mode 100644 drivers/vhost/vhost_rpmsg.h
+>  create mode 100644 include/linux/virtio_rpmsg.h
+> 
+> -- 
+> 1.9.3
 
-Thanks for the review!
-
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project.
