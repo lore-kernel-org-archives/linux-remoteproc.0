@@ -2,132 +2,162 @@ Return-Path: <SRS0=l7X0=7R=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C948C433E0
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  4 Jun 2020 14:24:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83F16C433E0
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  4 Jun 2020 18:50:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3D575206E6
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  4 Jun 2020 14:24:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 657C2206C3
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  4 Jun 2020 18:50:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=st.com header.i=@st.com header.b="RfoMZQjO"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="MglHwX8m"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728993AbgFDOYJ (ORCPT
+        id S1728833AbgFDSu0 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 4 Jun 2020 10:24:09 -0400
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:1655 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728881AbgFDOYJ (ORCPT
+        Thu, 4 Jun 2020 14:50:26 -0400
+Received: from mail27.static.mailgun.info ([104.130.122.27]:46905 "EHLO
+        mail27.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728780AbgFDSuX (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 4 Jun 2020 10:24:09 -0400
-Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 054EMikq009578;
-        Thu, 4 Jun 2020 16:24:04 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=STMicroelectronics;
- bh=UkmPnCEcRQC0JdajD5qa7MyPL9pxMsvhxlH+GUvo0sI=;
- b=RfoMZQjO+7nbuCmeQSa9AcEnmj0FlV23lpGsOqXivY/l3qr7tkbSTK12JEbhxvlLooou
- XqjfFXRzdSwxcjS9rIlqiN7D/WYTa6UtjTVez6YpOZxoYit9jqz620rEw2+i3HeN+H7H
- 9PbbEnvtZ8j6EKZ8ch/zPh1nNCEERepsLaO36iNMnIbnvLlLdtMrPtFwfbEJcRY5D/IE
- Ist1jftqdzJnHy/ULC+8CyDxCd27iWRq8i097ywDIVjQiSdeLHiCO0WqLj/CnFXalRwN
- NY9YPxEqrIypwqDPjkTDbL+yoOJMydLPyZ4YG59Nqp03FiSIiUWnU2acoMvTqH745f4m nQ== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 31ejxavamu-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 04 Jun 2020 16:24:04 +0200
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 0C9F6100038;
-        Thu,  4 Jun 2020 16:24:04 +0200 (CEST)
-Received: from Webmail-eu.st.com (sfhdag3node1.st.com [10.75.127.7])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id F051B2C50C8;
-        Thu,  4 Jun 2020 16:24:03 +0200 (CEST)
-Received: from lmecxl0889.tpe.st.com (10.75.127.51) by SFHDAG3NODE1.st.com
- (10.75.127.7) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 4 Jun
- 2020 16:24:03 +0200
-Subject: Re: [PATCH v4 0/9] remoteproc: Add support for attaching with rproc
-To:     Mathieu Poirier <mathieu.poirier@linaro.org>,
-        "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>,
-        "ohad@wizery.com" <ohad@wizery.com>
-CC:     "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Loic PALLARDY <loic.pallardy@st.com>,
-        "s-anna@ti.com" <s-anna@ti.com>
-References: <20200601175139.22097-1-mathieu.poirier@linaro.org>
-From:   Arnaud POULIQUEN <arnaud.pouliquen@st.com>
-Message-ID: <0780724c-4fc0-9f98-023e-aa1245b01888@st.com>
-Date:   Thu, 4 Jun 2020 16:24:01 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+        Thu, 4 Jun 2020 14:50:23 -0400
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1591296622; h=Message-ID: References: In-Reply-To: Subject:
+ Cc: To: From: Date: Content-Transfer-Encoding: Content-Type:
+ MIME-Version: Sender; bh=l6wlzfSYbJzkeSugvF6FSEks0oM2Zf6QKufmIi2dOJ8=;
+ b=MglHwX8mPoTVrR6AByjV49hXMHl1S9n0yBcrEIZ7Qd7FyO2w3HvH1KvK3y+iN8d8FGYJl5Hj
+ IRskhnqA11l9lWzHESp/OK2imh84FhPc9zXaZBHON5aKOqItxCsuZos/tMfeWQWP48Kl2QO6
+ QfauAy2+n8Ksl+PdyJsf19rYSQ0=
+X-Mailgun-Sending-Ip: 104.130.122.27
+X-Mailgun-Sid: WyI4ZWZiZiIsICJsaW51eC1yZW1vdGVwcm9jQHZnZXIua2VybmVsLm9yZyIsICJiZTllNGEiXQ==
+Received: from smtp.codeaurora.org
+ (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
+ smtp-out-n03.prod.us-east-1.postgun.com with SMTP id
+ 5ed9426076fccbb4c8f7e005 (version=TLS1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Thu, 04 Jun 2020 18:50:08
+ GMT
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 3532FC43395; Thu,  4 Jun 2020 18:50:03 +0000 (UTC)
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: sibis)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 5E782C433CB;
+        Thu,  4 Jun 2020 18:50:02 +0000 (UTC)
 MIME-Version: 1.0
-In-Reply-To: <20200601175139.22097-1-mathieu.poirier@linaro.org>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.75.127.51]
-X-ClientProxiedBy: SFHDAG7NODE2.st.com (10.75.127.20) To SFHDAG3NODE1.st.com
- (10.75.127.7)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.216,18.0.687
- definitions=2020-06-04_10:2020-06-02,2020-06-04 signatures=0
+Date:   Fri, 05 Jun 2020 00:20:02 +0530
+From:   Sibi Sankar <sibis@codeaurora.org>
+To:     Evan Green <evgreen@chromium.org>
+Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        linux-remoteproc@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Ohad Ben Cohen <ohad@wizery.com>, rohitkr@codeaurora.org,
+        stable@vger.kernel.org, linux-kernel-owner@vger.kernel.org
+Subject: Re: [PATCH 1/2] remoteproc: qcom: q6v5: Update running state before
+ requesting stop
+In-Reply-To: <CAE=gft4v1iHAPJS13fLBXgjt8ZRhD7q894zF_7JvK9QbiTbwhA@mail.gmail.com>
+References: <20200602163257.26978-1-sibis@codeaurora.org>
+ <CAE=gft7sbh_S_GiRohtMmdMN9JzQhG0m3bUerwrmzhjmXucGKw@mail.gmail.com>
+ <6392c800b0be1cbabb8a241cf518ab4b@codeaurora.org>
+ <CAE=gft4v1iHAPJS13fLBXgjt8ZRhD7q894zF_7JvK9QbiTbwhA@mail.gmail.com>
+Message-ID: <ebc56ab0bd61f5b33be976a6643880db@codeaurora.org>
+X-Sender: sibis@codeaurora.org
+User-Agent: Roundcube Webmail/1.3.9
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi Mathieu,
+On 2020-06-04 04:03, Evan Green wrote:
+> On Tue, Jun 2, 2020 at 10:29 PM Sibi Sankar <sibis@codeaurora.org> 
+> wrote:
+>> 
+>> Evan,
+>> Thanks for taking time to review
+>> the series.
+>> 
+>> On 2020-06-02 23:14, Evan Green wrote:
+>> > On Tue, Jun 2, 2020 at 9:33 AM Sibi Sankar <sibis@codeaurora.org>
+>> > wrote:
+>> >>
+>> >> Sometimes the stop triggers a watchdog rather than a stop-ack. Update
+>> >> the running state to false on requesting stop to skip the watchdog
+>> >> instead.
+>> >>
+>> >> Error Logs:
+>> >> $ echo stop > /sys/class/remoteproc/remoteproc0/state
+>> >> ipa 1e40000.ipa: received modem stopping event
+>> >> remoteproc-modem: watchdog received: sys_m_smsm_mpss.c:291:APPS force
+>> >> stop
+>> >> qcom-q6v5-mss 4080000.remoteproc-modem: port failed halt
+>> >> ipa 1e40000.ipa: received modem offline event
+>> >> remoteproc0: stopped remote processor 4080000.remoteproc-modem
+>> >>
+>> >> Fixes: 3b415c8fb263 ("remoteproc: q6v5: Extract common resource
+>> >> handling")
+>> >> Cc: stable@vger.kernel.org
+>> >> Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
+>> >> ---
+>> >
+>> > Are you sure you want to tolerate this behavior from MSS? This is a
+>> > graceful shutdown, modem shouldn't have a problem completing the
+>> > proper handshake. If they do, isn't that a bug on the modem side?
+>> 
+>> The graceful shutdown is achieved
+>> though sysmon (enabled using
+>> CONFIG_QCOM_SYSMON). When sysmon is
+>> enabled we get a shutdown-ack when we
+>> try to stop the modem, post which
+>> request stop is a basically a nop.
+>> Request stop is done to force stop
+>> the modem during failure cases (like
+>> rmtfs is not running and so on) and
+>> we do want to mask the wdog that we get
+>> during this scenario ( The locking
+>> already prevents the servicing of the
+>> wdog during shutdown, the check just
+>> prevents the scheduling of crash handler
+>> and err messages associated with it).
+>> Also this check was always present and
+>> was missed during common q6v5 resource
+>> helper migration, hence the unused
+>> running state in mss driver.
+> 
+> So you're saying that the intention of the ->running check already in
+> q6v5_wdog_interrupt() was to allow either the stop-ack or wdog
+> interrupt to complete the stop. This patch just fixes a regression
+> introduced during the refactor.
+> This patch seems ok to me then. It still sort of seems like a bug that
+> the modem responds arbitrarily in one of two ways, even to a "harsh"
+> shutdown request.
+> 
+> I wasn't aware of QCOM_SYSMON. Reading it now, It seems like kind of a
 
-On 6/1/20 7:51 PM, Mathieu Poirier wrote:
-> This fourth iteration implements a solution that is fairly different from
-> what was proposed in V3 and earlier versions.  Three aspects have been 
-> revisited:
-> 
-> 1) Only the scenario where the remoteproc core is attaching to the remote
->    processor is implemented.  Other scenarios where actions need to be 
->    taken when the remote processor is stopped or crashes will be
->    considered in subsequent versions.
-> 
-> 2) The introduction of a new RPROC_DETACHED state to be set by platform
->    drivers when needing to attach to an already running remote processor.
-> 
-> 3) New functions are introduced to replicate the functionality provided by
->    rproc_fw_boot() and rproc_start(), minus operations related to firmware
->    management. 
-> 
-> Enhancement to the documentation has been left out intentionally until it
-> is agreed to move forward with this implementation.
+TL;DR
+Sysmon when enabled adds a lookup
+for qmi service 43 (Subsystem
+control service). When we shutdown
+the modem, we send a SSCTL_SHUTDOWN_REQ
+to the service and the modem responds
+with a shutdown-ack interrupt. If you
+have rmtfs running with -v turned on
+you can notice pending efs transactions
+being completed followed by a bye I guess.
 
-Look good to me, i have only a minor concerns about the code duplication
-introduced by the point 3)
+> lot... do I really need all this? Can I get by with just remoteproc
+> stops?
+> Anyway, for this patch:
+> 
+> Reviewed-by: Evan Green <evgreen@chromium.org>
 
-If you are agree with that, I plan to do a new review on the stm32 series
-when you will start the documentation :-)
+Thanks for the review!
 
-Regards,
-Arnaud
-
-> 
-> Applies cleanly on rproc-next(7dcef3988eed) and will be rebased on v5.8-rc1
-> when it comes out in two weeks.
-> 
-> Thanks,
-> Mathieu
-> 
-> Mathieu Poirier (9):
->   remoteproc: Add new RPROC_DETACHED state
->   remoteproc: Add new attach() remoteproc operation
->   remoteproc: Introducing function rproc_attach()
->   remoteproc: Introducing function rproc_actuate()
->   remoteproc: Introducing function rproc_validate()
->   remoteproc: Refactor function rproc_boot()
->   remoteproc: Refactor function rproc_trigger_auto_boot()
->   remoteproc: Refactor function rproc_free_vring()
->   remoteproc: Properly handle firmware name when attaching
-> 
->  drivers/remoteproc/remoteproc_core.c     | 226 +++++++++++++++++++++--
->  drivers/remoteproc/remoteproc_internal.h |   8 +
->  drivers/remoteproc/remoteproc_sysfs.c    |  17 +-
->  include/linux/remoteproc.h               |   9 +-
->  4 files changed, 243 insertions(+), 17 deletions(-)
-> 
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project.
