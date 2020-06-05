@@ -2,179 +2,230 @@ Return-Path: <SRS0=Iyil=7S=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B35B8C433DF
-	for <linux-remoteproc@archiver.kernel.org>; Fri,  5 Jun 2020 10:01:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B3A9C433E2
+	for <linux-remoteproc@archiver.kernel.org>; Fri,  5 Jun 2020 21:28:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 953BC207D0
-	for <linux-remoteproc@archiver.kernel.org>; Fri,  5 Jun 2020 10:01:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CDE73206DB
+	for <linux-remoteproc@archiver.kernel.org>; Fri,  5 Jun 2020 21:28:07 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="Yb7tCCTq"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726343AbgFEKBa (ORCPT
+        id S1728451AbgFEV1S (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 5 Jun 2020 06:01:30 -0400
-Received: from mga04.intel.com ([192.55.52.120]:11568 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726173AbgFEKBa (ORCPT
+        Fri, 5 Jun 2020 17:27:18 -0400
+Received: from rnd-relay.smtp.broadcom.com ([192.19.229.170]:38280 "EHLO
+        rnd-relay.smtp.broadcom.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726664AbgFEV1Q (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 5 Jun 2020 06:01:30 -0400
-IronPort-SDR: XoqVkBIiGxTHo+wSZrgkx7HdREHvZohPklI7NKzTjb4TC8cTmVR/V3MV0yEii1AaaWhfp22a7J
- e2rg4hEeqzUQ==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Jun 2020 03:01:29 -0700
-IronPort-SDR: vWS/50et7xmFAg5r4IU3YsDOlNUuTrqgv+k1rQ0mALJtjpZI9lZqkhSgjDJqcjNJi54nfShBXf
- GeveydjtL6NA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.73,475,1583222400"; 
-   d="scan'208";a="305191033"
-Received: from rpurrx-mobl1.ger.corp.intel.com ([10.252.45.77])
-  by orsmga008.jf.intel.com with ESMTP; 05 Jun 2020 03:01:26 -0700
-Message-ID: <298489ce4ba4baeb4e3cc46345b4a9f573f59b76.camel@linux.intel.com>
-Subject: Re: [Sound-open-firmware] [PATCH v3 0/5] Add a vhost RPMsg API
-From:   Liam Girdwood <liam.r.girdwood@linux.intel.com>
-To:     "Michael S. Tsirkin" <mst@redhat.com>,
-        Guennadi Liakhovetski <guennadi.liakhovetski@linux.intel.com>
-Cc:     Ohad Ben-Cohen <ohad@wizery.com>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        kvm@vger.kernel.org, Jason Wang <jasowang@redhat.com>,
-        linux-remoteproc@vger.kernel.org,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        virtualization@lists.linux-foundation.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        sound-open-firmware@alsa-project.org
-Date:   Fri, 05 Jun 2020 11:01:29 +0100
-In-Reply-To: <20200604151917-mutt-send-email-mst@kernel.org>
-References: <20200527180541.5570-1-guennadi.liakhovetski@linux.intel.com>
-         <20200604151917-mutt-send-email-mst@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.36.2-0ubuntu1 
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Fri, 5 Jun 2020 17:27:16 -0400
+Received: from mail-irv-17.broadcom.com (mail-irv-17.lvn.broadcom.net [10.75.242.48])
+        by rnd-relay.smtp.broadcom.com (Postfix) with ESMTP id 6323F30D861;
+        Fri,  5 Jun 2020 14:27:15 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.10.3 rnd-relay.smtp.broadcom.com 6323F30D861
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=broadcom.com;
+        s=dkimrelay; t=1591392435;
+        bh=X1W5SBPglzGt+7ug7Z7PzaYs1FBERzpHlpxJDJ5NWW8=;
+        h=From:To:Cc:Subject:Date:From;
+        b=Yb7tCCTq3tEKqFK78fQleMf0F7oKo2GNKiGeJff4TJ8HjbO4U5hKMcBn5a/50b9QL
+         ASYiSDzdEAdFQtERUZgBWiULuxpC0aChlTLqu6cf55XS6z7yAfcc69QKiYMK0Af9yd
+         IC6UDRFn5YTpfAE57XQgz5wCaInS2sD8nKRoPv6w=
+Received: from stbsrv-and-01.and.broadcom.net (stbsrv-and-01.and.broadcom.net [10.28.16.211])
+        by mail-irv-17.broadcom.com (Postfix) with ESMTP id C1CD7140069;
+        Fri,  5 Jun 2020 14:27:11 -0700 (PDT)
+From:   Jim Quinlan <james.quinlan@broadcom.com>
+To:     linux-pci@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
+        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
+        bcm-kernel-feedback-list@broadcom.com, james.quinlan@broadcom.com
+Cc:     Alan Stern <stern@rowland.harvard.edu>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Dan Williams <dan.j.williams@intel.com>,
+        David Kershner <david.kershner@unisys.com>,
+        devel@driverdev.osuosl.org (open list:STAGING SUBSYSTEM),
+        devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
+        DEVICE TREE),
+        dri-devel@lists.freedesktop.org (open list:DRM DRIVERS FOR ALLWINNER
+        A10), Florian Fainelli <f.fainelli@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Hans de Goede <hdegoede@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        iommu@lists.linux-foundation.org (open list:IOMMU DRIVERS),
+        Jens Axboe <axboe@kernel.dk>,
+        Julien Grall <julien.grall@arm.com>,
+        linux-acpi@vger.kernel.org (open list:ACPI FOR ARM64 (ACPI/arm64)),
+        linux-arm-kernel@lists.infradead.org (moderated list:ARM PORT),
+        linux-ide@vger.kernel.org (open list:LIBATA SUBSYSTEM (Serial and
+        Parallel ATA drivers)), linux-kernel@vger.kernel.org (open list),
+        linux-media@vger.kernel.org (open list:ALLWINNER A10 CSI DRIVER),
+        linux-remoteproc@vger.kernel.org (open list:REMOTE PROCESSOR
+        (REMOTEPROC) SUBSYSTEM),
+        linux-rpi-kernel@lists.infradead.org (moderated list:BROADCOM
+        BCM2711/BCM2835 ARM ARCHITECTURE),
+        linux-sh@vger.kernel.org (open list:SUPERH),
+        linux-usb@vger.kernel.org (open list:USB SUBSYSTEM),
+        Mark Brown <broonie@kernel.org>,
+        Oliver Neukum <oneukum@suse.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Rob Herring <robh@kernel.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Saravana Kannan <saravanak@google.com>,
+        Stefano Stabellini <sstabellini@kernel.org>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Subject: [PATCH v4 00/12] PCI: brcmstb: enable PCIe for STB chips
+Date:   Fri,  5 Jun 2020 17:26:40 -0400
+Message-Id: <20200605212706.7361-1-james.quinlan@broadcom.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Thu, 2020-06-04 at 15:23 -0400, Michael S. Tsirkin wrote:
-> On Wed, May 27, 2020 at 08:05:36PM +0200, Guennadi Liakhovetski
-> wrote:
-> > v3:
-> > - address several checkpatch warnings
-> > - address comments from Mathieu Poirier
-> > 
-> > v2:
-> > - update patch #5 with a correct vhost_dev_init() prototype
-> > - drop patch #6 - it depends on a different patch, that is
-> > currently
-> >   an RFC
-> > - address comments from Pierre-Louis Bossart:
-> >   * remove "default n" from Kconfig
-> > 
-> > Linux supports RPMsg over VirtIO for "remote processor" /AMP use
-> > cases. It can however also be used for virtualisation scenarios,
-> > e.g. when using KVM to run Linux on both the host and the guests.
-> > This patch set adds a wrapper API to facilitate writing vhost
-> > drivers for such RPMsg-based solutions. The first use case is an
-> > audio DSP virtualisation project, currently under development,
-> > ready
-> > for review and submission, available at
-> > https://github.com/thesofproject/linux/pull/1501/commits
-> > A further patch for the ADSP vhost RPMsg driver will be sent
-> > separately for review only since it cannot be merged without audio
-> > patches being upstreamed first.
-> 
-> RPMsg over virtio has several problems. One is that it's
-> not specced at all. Before we add more stuff, I'd like so
-> see at least an attempt at describing what it's supposed to do.
-> 
 
-Sure, I'll add some more context here. The remote processor in this use
-case is any DSP (from any vendor) running SOF. The work from Guennadi
-virtualises the SOF mailbox and SOF doorbell mechanisms (which the
-platform driver abstracts) via rpmsg/virtio so the guest SOF drivers
-can send and receive SOF IPCs (just as the host SOF driver would do).
-It's 95% the same Linux driver on host or guest (for each feature).
+v4:
+  Commit "device core: Introduce multiple dma pfn offsets"
+  -- of_dma_get_range() does not take a dev param but instead
+     takes two "out" params: map and map_size.  We do this so
+     that the code that parses dma-ranges is separate from
+     the code that modifies 'dev'.   (Nicolas)
+  -- the separate case of having a single pfn offset has
+     been removed and is now processed by going through the
+     map array. (Nicolas)
+  -- move attach_uniform_dma_pfn_offset() from of/address.c to
+     dma/mapping.c so that it does not depend on CONFIG_OF. (Nicolas)
+  -- devm_kcalloc => devm_kzalloc (DanC)
+  -- add/fix assignment to dev->dma_pfn_offset_map for func
+     attach_uniform_dma_pfn_offset() (DanC, Nicolas)
+  -- s/struct dma_pfn_offset_region/struct bus_dma_region/ (Nicolas)
+  -- s/attach_uniform_dma_pfn_offset/dma_attach_uniform_pfn_offset/
+  -- s/attach_dma_pfn_offset_map/dma_attach_pfn_offset_map/
+  -- More use of PFN_{PHYS,DOWN,UP}. (AndyS)
+  Commit "of: Include a dev param in of_dma_get_range()"
+  -- this commit was sqaushed with "device core: Introduce ..."
 
-I would also add here (and it's maybe confusing in the SOF naming) that
-SOF is multi a feature FW, it's not just an audio FW, so we would also
-expect to see other guest drivers (e.g. sensing) that would use the
-same mechanism for IPC on guests. I would expect the feature driver
-count to increase as the FW features grow.
+v3:
+  Commit "device core: Introduce multiple dma pfn offsets"
+  Commit "arm: dma-mapping: Invoke dma offset func if needed"
+  -- The above two commits have been squashed.  More importantly,
+     the code has been modified so that the functionality for
+     multiple pfn offsets subsumes the use of dev->dma_pfn_offset.
+     In fact, dma_pfn_offset is removed and supplanted by
+     dma_pfn_offset_map, which is a pointer to an array.  The
+     more common case of a uniform offset is now handled as
+     a map with a single entry, while cases requiring multiple
+     pfn offsets use a map with multiple entries.  Code paths
+     that used to do this:
 
-The IPC ABI between the FW and host drivers continually evolves as
-features and new HW is added (not just from Intel, but from other SOF
-partners and external partners that supply proprietary audio
-processing). The only part of the interface that is specced is the
-rpmsg header, as the SOF message content will keep evolving (it's up to
-driver and FW to align on ABI version used - it does this already
-today). 
+         dev->dma_pfn_offset = mydrivers_pfn_offset;
 
-I guess it boils down to two goals here
+     have been changed to do this:
 
-1) virtualising the SOF features on any platform/guest/OS so that
-guests would be able to access any FW feature (provided guest was
-permitted) just as they would on host.
+         attach_uniform_dma_pfn_offset(dev, pfn_offset);
 
-2) Supporting FW features and use cases from multiple parties without
-having to change driver core or driver virtualisation core. i.e. all
-the changes (for new features) would be in the edge drivers e.g. new
-audio features would impact audio driver only.
+  Commit "dt-bindings: PCI: Add bindings for more Brcmstb chips"
+  -- Add if/then clause for required props: resets, reset-names (RobH)
+  -- Change compatible list from const to enum (RobH)
+  -- Change list of u32-tuples to u64 (RobH)
 
-> Another it's out of line with 1.0 spec passing guest
-> endian data around. Won't work if host and guest
-> endian-ness do not match. Should pass eveything in LE and
-> convert.
-> 
+  Commit "of: Include a dev param in of_dma_get_range()"
+  -- modify of/unittests.c to add NULL param in of_dma_get_range() call.
 
-I think Guennadi is working on this now.
+  Commit "device core: Add ability to handle multiple dma offsets"
+  -- align comment in device.h (AndyS).
+  -- s/cpu_beg/cpu_start/ and s/dma_beg/dma_start/ in struct
+     dma_pfn_offset_region (AndyS).
 
-> It's great to see it's seeing active development finally.
-> Do you think you will have time to address these?
-> 
+v2:
+Commit: "device core: Add ability to handle multiple dma offsets"
+  o Added helper func attach_dma_pfn_offset_map() in address.c (Chistoph)
+  o Helpers funcs added to __phys_to_dma() & __dma_to_phys() (Christoph)
+  o Added warning when multiple offsets are needed and !DMA_PFN_OFFSET_MAP
+  o dev->dma_pfn_map => dev->dma_pfn_offset_map
+  o s/frm/from/ for dma_pfn_offset_frm_{phys,dma}_addr() (Christoph)
+  o In device.h: s/const void */const struct dma_pfn_offset_region */
+  o removed 'unlikely' from unlikely(dev->dma_pfn_offset_map) since
+    guarded by CONFIG_DMA_PFN_OFFSET_MAP (Christoph)
+  o Since dev->dma_pfn_offset is copied in usb/core/{usb,message}.c, now
+    dev->dma_pfn_offset_map is copied as well.
+  o Merged two of the DMA commits into one (Christoph).
 
-Yes, of course. Let me know if you need any more background or context.
+Commit "arm: dma-mapping: Invoke dma offset func if needed":
+  o Use helper functions instead of #if CONFIG_DMA_PFN_OFFSET
 
-Thanks
+Other commits' changes:
+  o Removed need for carrying of_id var in priv (Nicolas)
+  o Commit message rewordings (Bjorn)
+  o Commit log messages filled to 75 chars (Bjorn)
+  o devm_reset_control_get_shared())
+    => devm_reset_control_get_optional_shared (Philipp)
+  o Add call to reset_control_assert() in PCIe remove routines (Philipp)
 
-Liam
+v1:
+This patchset expands the usefulness of the Broadcom Settop Box PCIe
+controller by building upon the PCIe driver used currently by the
+Raspbery Pi.  Other forms of this patchset were submitted by me years
+ago and not accepted; the major sticking point was the code required
+for the DMA remapping needed for the PCIe driver to work [1].
 
-> 
-> 
-> > Thanks
-> > Guennadi
-> > 
-> > Guennadi Liakhovetski (5):
-> >   vhost: convert VHOST_VSOCK_SET_RUNNING to a generic ioctl
-> >   vhost: (cosmetic) remove a superfluous variable initialisation
-> >   rpmsg: move common structures and defines to headers
-> >   rpmsg: update documentation
-> >   vhost: add an RPMsg API
-> > 
-> >  Documentation/rpmsg.txt          |   6 +-
-> >  drivers/rpmsg/virtio_rpmsg_bus.c |  78 +-------
-> >  drivers/vhost/Kconfig            |   7 +
-> >  drivers/vhost/Makefile           |   3 +
-> >  drivers/vhost/rpmsg.c            | 382
-> > +++++++++++++++++++++++++++++++++++++++
-> >  drivers/vhost/vhost.c            |   2 +-
-> >  drivers/vhost/vhost_rpmsg.h      |  74 ++++++++
-> >  include/linux/virtio_rpmsg.h     |  81 +++++++++
-> >  include/uapi/linux/rpmsg.h       |   3 +
-> >  include/uapi/linux/vhost.h       |   4 +-
-> >  10 files changed, 559 insertions(+), 81 deletions(-)
-> >  create mode 100644 drivers/vhost/rpmsg.c
-> >  create mode 100644 drivers/vhost/vhost_rpmsg.h
-> >  create mode 100644 include/linux/virtio_rpmsg.h
-> > 
-> > -- 
-> > 1.9.3
-> 
-> _______________________________________________
-> Sound-open-firmware mailing list
-> Sound-open-firmware@alsa-project.org
-> https://mailman.alsa-project.org/mailman/listinfo/sound-open-firmware
+There have been many changes to the DMA and OF subsystems since that
+time, making a cleaner and less intrusive patchset possible.  This
+patchset implements a generalization of "dev->dma_pfn_offset", except
+that instead of a single scalar offset it provides for multiple
+offsets via a function which depends upon the "dma-ranges" property of
+the PCIe host controller.  This is required for proper functionality
+of the BrcmSTB PCIe controller and possibly some other devices.
+
+[1] https://lore.kernel.org/linux-arm-kernel/1516058925-46522-5-git-send-email-jim2101024@gmail.com/
+
+Jim Quinlan (12):
+  PCI: brcmstb: PCIE_BRCMSTB depends on ARCH_BRCMSTB
+  ata: ahci_brcm: Fix use of BCM7216 reset controller
+  dt-bindings: PCI: Add bindings for more Brcmstb chips
+  PCI: brcmstb: Add bcm7278 register info
+  PCI: brcmstb: Add suspend and resume pm_ops
+  PCI: brcmstb: Add bcm7278 PERST support
+  PCI: brcmstb: Add control of rescal reset
+  device core: Introduce multiple dma pfn offsets
+  PCI: brcmstb: Set internal memory viewport sizes
+  PCI: brcmstb: Accommodate MSI for older chips
+  PCI: brcmstb: Set bus max burst size by chip type
+  PCI: brcmstb: Add bcm7211, bcm7216, bcm7445, bcm7278 to match list
+
+ .../bindings/pci/brcm,stb-pcie.yaml           |  58 ++-
+ arch/arm/include/asm/dma-mapping.h            |   9 +-
+ arch/arm/mach-keystone/keystone.c             |   9 +-
+ arch/sh/drivers/pci/pcie-sh7786.c             |   3 +-
+ arch/sh/kernel/dma-coherent.c                 |  14 +-
+ arch/x86/pci/sta2x11-fixup.c                  |   7 +-
+ drivers/acpi/arm64/iort.c                     |   5 +-
+ drivers/ata/ahci_brcm.c                       |  14 +-
+ drivers/gpu/drm/sun4i/sun4i_backend.c         |   5 +-
+ drivers/iommu/io-pgtable-arm.c                |   2 +-
+ .../platform/sunxi/sun4i-csi/sun4i_csi.c      |   5 +-
+ .../platform/sunxi/sun6i-csi/sun6i_csi.c      |   4 +-
+ drivers/of/address.c                          |  72 +++-
+ drivers/of/device.c                           |  19 +-
+ drivers/of/of_private.h                       |  11 +-
+ drivers/of/unittest.c                         |   8 +-
+ drivers/pci/controller/Kconfig                |   3 +-
+ drivers/pci/controller/pcie-brcmstb.c         | 408 +++++++++++++++---
+ drivers/remoteproc/remoteproc_core.c          |   2 +-
+ .../staging/media/sunxi/cedrus/cedrus_hw.c    |   7 +-
+ drivers/usb/core/message.c                    |   4 +-
+ drivers/usb/core/usb.c                        |   2 +-
+ include/linux/device.h                        |   4 +-
+ include/linux/dma-direct.h                    |  16 +-
+ include/linux/dma-mapping.h                   |  38 ++
+ kernel/dma/coherent.c                         |  11 +-
+ kernel/dma/mapping.c                          |  38 ++
+ 27 files changed, 647 insertions(+), 131 deletions(-)
+
+-- 
+2.17.1
 
