@@ -2,227 +2,137 @@ Return-Path: <SRS0=OpIw=7V=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F3DDC433DF
-	for <linux-remoteproc@archiver.kernel.org>; Mon,  8 Jun 2020 12:39:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CA80C433E0
+	for <linux-remoteproc@archiver.kernel.org>; Mon,  8 Jun 2020 13:01:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 133C92072F
-	for <linux-remoteproc@archiver.kernel.org>; Mon,  8 Jun 2020 12:39:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 36C00206C3
+	for <linux-remoteproc@archiver.kernel.org>; Mon,  8 Jun 2020 13:01:43 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="D6juwpCg"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727052AbgFHMji (ORCPT
+        id S1728245AbgFHNBm (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 8 Jun 2020 08:39:38 -0400
-Received: from mga01.intel.com ([192.55.52.88]:28440 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725965AbgFHMjh (ORCPT
+        Mon, 8 Jun 2020 09:01:42 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:41292 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1729272AbgFHNBm (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 8 Jun 2020 08:39:37 -0400
-IronPort-SDR: BKTZAfERdgStE/rPtvjev2S16WM5sTPqggyz9z2W4aWbYIiw3EFcQ59Y4GUSIizQtu+vfyJK4m
- NTizilkM/UyA==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jun 2020 05:39:36 -0700
-IronPort-SDR: W8zLtZIYRLHlc+ADwd5DKcd8F+ttu8Ry5yMSvsH35hgJQjchf4Oa2v9MWyskb33nEoOkxU3n8x
- ZSImkPLdLmyg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.73,487,1583222400"; 
-   d="scan'208";a="349157608"
-Received: from gliakhov-mobl2.ger.corp.intel.com (HELO ubuntu) ([10.249.46.212])
-  by orsmga001.jf.intel.com with ESMTP; 08 Jun 2020 05:39:34 -0700
-Date:   Mon, 8 Jun 2020 14:39:32 +0200
-From:   Guennadi Liakhovetski <guennadi.liakhovetski@linux.intel.com>
-To:     linux-remoteproc@vger.kernel.org
-Cc:     "Michael S. Tsirkin" <mst@redhat.com>,
+        Mon, 8 Jun 2020 09:01:42 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1591621301;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=N4tYRK/0WF4gJ3sPDYLn/EAB8Y9lZ28vccHh6mfdyZY=;
+        b=D6juwpCg6uKMuVCoYnLnLCvvpGQhGo/joXBH50rQm/b8OJMn+HOAvxlnfwzWl124SfDBBL
+        n6Oia9ckSzOneFyrcCrASLU5q9reW4EaZxdRuAm9kkGL9qMZRZ4I/9nttX55yGD9OExgnA
+        9cZxRplGWxWPJ1jUJt67+5+FnkZhIKA=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-420-fqiBYGSoNsaP_MLRpRiMtA-1; Mon, 08 Jun 2020 09:01:29 -0400
+X-MC-Unique: fqiBYGSoNsaP_MLRpRiMtA-1
+Received: by mail-wm1-f72.google.com with SMTP id a18so430838wmm.3
+        for <linux-remoteproc@vger.kernel.org>; Mon, 08 Jun 2020 06:01:29 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=N4tYRK/0WF4gJ3sPDYLn/EAB8Y9lZ28vccHh6mfdyZY=;
+        b=CutIhZ216eRAEMSmUM3FNjYNZQSV/uKE7lvVodF51hYHN17EXxFOcS7HNG0Ptd54gO
+         sLj9wcwtdJLpgg9YdXvI6IY1IlOXTv4xx4MxgkOksBJ0ca5mensYsMdvCYDIklkwttEc
+         7VGlxsTbB/Vn962mSVVZSOACypcyGkwas3AhsA1JjLJ8aV2/I0LLxkTv387voLv4wCIa
+         z/xQthpejpRBM6O3EUkF9na9SOpyQw2A+VYnKwEoj5BDp1HQALBi/7r7IoJStRQTWS4a
+         Wu21XhI6G7UojY5mVpOH1xyuh5fPm2qLstlr5YlSdHOLNKu0wwJYjsjTft6Dzf7J96Ar
+         mOKg==
+X-Gm-Message-State: AOAM53253s31J0h1U3gO7sVAmhNWpj1+gYiog0JyWyODuEpMQF7VzFxo
+        fpdRZiu1avHAjPbWjrIZrFQAga34ERx6zIQR11LMp2KymvetjKrdkAjv+RTQ59jpNmDDw/Oh8YX
+        LRDHnDCbw5l7vEAQ5DK/OY6XHThgZ9Q==
+X-Received: by 2002:adf:d851:: with SMTP id k17mr23165022wrl.30.1591621288325;
+        Mon, 08 Jun 2020 06:01:28 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJz+ZpeCIIHsXHsXp7F2is1vc7M7N6GxGrFprOEl+lRsTOD0+vtXz9a5XQCm3jC3ps0vzgeTJg==
+X-Received: by 2002:adf:d851:: with SMTP id k17mr23164991wrl.30.1591621288062;
+        Mon, 08 Jun 2020 06:01:28 -0700 (PDT)
+Received: from redhat.com (bzq-109-64-41-91.red.bezeqint.net. [109.64.41.91])
+        by smtp.gmail.com with ESMTPSA id z25sm22048079wmf.10.2020.06.08.06.01.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 08 Jun 2020 06:01:27 -0700 (PDT)
+Date:   Mon, 8 Jun 2020 09:01:24 -0400
+From:   "Michael S. Tsirkin" <mst@redhat.com>
+To:     Guennadi Liakhovetski <guennadi.liakhovetski@linux.intel.com>
+Cc:     kvm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        sound-open-firmware@alsa-project.org,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Liam Girdwood <liam.r.girdwood@linux.intel.com>,
+        Jason Wang <jasowang@redhat.com>,
         Ohad Ben-Cohen <ohad@wizery.com>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Liam Girdwood <liam.r.girdwood@linux.intel.com>
-Subject: [PATCH] rpmsg: virtio: add endianness conversions
-Message-ID: <20200608123932.GF10562@ubuntu>
+        Mathieu Poirier <mathieu.poirier@linaro.org>
+Subject: Re: [PATCH v3 0/5] Add a vhost RPMsg API
+Message-ID: <20200608090010-mutt-send-email-mst@kernel.org>
+References: <20200527180541.5570-1-guennadi.liakhovetski@linux.intel.com>
+ <20200604151917-mutt-send-email-mst@kernel.org>
+ <20200605063435.GA32302@ubuntu>
+ <20200608073715.GA10562@ubuntu>
+ <20200608091100.GC10562@ubuntu>
+ <20200608051358-mutt-send-email-mst@kernel.org>
+ <20200608101526.GD10562@ubuntu>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20200608101526.GD10562@ubuntu>
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-According to the VirtIO 1.0 spec data, sent over virtual queues must
-be in little-endian format. Update the RPMsg VirtIO implementation
-to enforce that.
+On Mon, Jun 08, 2020 at 12:15:27PM +0200, Guennadi Liakhovetski wrote:
+> On Mon, Jun 08, 2020 at 05:19:06AM -0400, Michael S. Tsirkin wrote:
+> > On Mon, Jun 08, 2020 at 11:11:00AM +0200, Guennadi Liakhovetski wrote:
+> > > Update: I looked through VirtIO 1.0 and 1.1 specs, data format their, 
+> > > including byte order, is defined on a per-device type basis. RPMsg is 
+> > > indeed included in the spec as device type 7, but that's the only 
+> > > mention of it in both versions. It seems RPMsg over VirtIO isn't 
+> > > standardised yet.
+> > 
+> > Yes. And it would be very good to have some standartization before we
+> > keep adding things. For example without any spec if host code breaks
+> > with some guests, how do we know which side should be fixed?
+> > 
+> > > Also it looks like newer interface definitions 
+> > > specify using "guest native endianness" for Virtual Queue data.
+> > 
+> > They really don't or shouldn't. That's limited to legacy chapters.
+> > Some definitions could have slipped through but it's not
+> > the norm. I just quickly looked through the 1.1 spec and could
+> > not find any instances that specify "guest native endianness"
+> > but feel free to point them out to me.
+> 
+> Oh, there you go. No, sorry, my fault, it's the other way round: "guest 
+> native" is for legacy and LE is for current / v1.0 and up.
+> 
+> > > So 
+> > > I think the same should be done for RPMsg instead of enforcing LE?
+> > 
+> > That makes hardware implementations as well as any cross-endian
+> > hypervisors tricky.
+> 
+> Yes, LE it is then. And we need to add some text to the spec.
+> 
+> In theory there could be a backward compatibility issue - in case someone 
+> was already using virtio_rpmsg_bus.c in BE mode, but I very much doubt 
+> that...
+> 
+> Thanks
+> Guennadi
 
-Suggested-by: Michael S. Tsirkin <mst@redhat.com>
-Signed-off-by: Guennadi Liakhovetski <guennadi.liakhovetski@linux.intel.com>
----
- drivers/rpmsg/virtio_rpmsg_bus.c | 61 ++++++++++++++++++++++------------------
- 1 file changed, 33 insertions(+), 28 deletions(-)
+It's probably easiest to use virtio wrappers and then we don't need to
+worry about it.
 
-diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
-index 07d4f33..b8ff42b 100644
---- a/drivers/rpmsg/virtio_rpmsg_bus.c
-+++ b/drivers/rpmsg/virtio_rpmsg_bus.c
-@@ -11,6 +11,8 @@
- 
- #define pr_fmt(fmt) "%s: " fmt, __func__
- 
-+#include <asm/byteorder.h>
-+
- #include <linux/dma-mapping.h>
- #include <linux/idr.h>
- #include <linux/jiffies.h>
-@@ -22,6 +24,7 @@
- #include <linux/scatterlist.h>
- #include <linux/slab.h>
- #include <linux/sched.h>
-+#include <linux/types.h>
- #include <linux/virtio.h>
- #include <linux/virtio_ids.h>
- #include <linux/virtio_config.h>
-@@ -84,11 +87,11 @@ struct virtproc_info {
-  * Every message sent(/received) on the rpmsg bus begins with this header.
-  */
- struct rpmsg_hdr {
--	u32 src;
--	u32 dst;
--	u32 reserved;
--	u16 len;
--	u16 flags;
-+	__le32 src;
-+	__le32 dst;
-+	__le32 reserved;
-+	__le16 len;
-+	__le16 flags;
- 	u8 data[];
- } __packed;
- 
-@@ -106,8 +109,8 @@ struct rpmsg_hdr {
-  */
- struct rpmsg_ns_msg {
- 	char name[RPMSG_NAME_SIZE];
--	u32 addr;
--	u32 flags;
-+	__le32 addr;
-+	__le32 flags;
- } __packed;
- 
- /**
-@@ -335,8 +338,8 @@ static int virtio_rpmsg_announce_create(struct rpmsg_device *rpdev)
- 		struct rpmsg_ns_msg nsm;
- 
- 		strncpy(nsm.name, rpdev->id.name, RPMSG_NAME_SIZE);
--		nsm.addr = rpdev->ept->addr;
--		nsm.flags = RPMSG_NS_CREATE;
-+		nsm.addr = cpu_to_le32(rpdev->ept->addr);
-+		nsm.flags = cpu_to_le32(RPMSG_NS_CREATE);
- 
- 		err = rpmsg_sendto(rpdev->ept, &nsm, sizeof(nsm), RPMSG_NS_ADDR);
- 		if (err)
-@@ -359,8 +362,8 @@ static int virtio_rpmsg_announce_destroy(struct rpmsg_device *rpdev)
- 		struct rpmsg_ns_msg nsm;
- 
- 		strncpy(nsm.name, rpdev->id.name, RPMSG_NAME_SIZE);
--		nsm.addr = rpdev->ept->addr;
--		nsm.flags = RPMSG_NS_DESTROY;
-+		nsm.addr = cpu_to_le32(rpdev->ept->addr);
-+		nsm.flags = cpu_to_le32(RPMSG_NS_DESTROY);
- 
- 		err = rpmsg_sendto(rpdev->ept, &nsm, sizeof(nsm), RPMSG_NS_ADDR);
- 		if (err)
-@@ -612,15 +615,15 @@ static int rpmsg_send_offchannel_raw(struct rpmsg_device *rpdev,
- 		}
- 	}
- 
--	msg->len = len;
-+	msg->len = cpu_to_le16(len);
- 	msg->flags = 0;
--	msg->src = src;
--	msg->dst = dst;
-+	msg->src = cpu_to_le32(src);
-+	msg->dst = cpu_to_le32(dst);
- 	msg->reserved = 0;
- 	memcpy(msg->data, data, len);
- 
- 	dev_dbg(dev, "TX From 0x%x, To 0x%x, Len %d, Flags %d, Reserved %d\n",
--		msg->src, msg->dst, msg->len, msg->flags, msg->reserved);
-+		src, dst, len, msg->flags, msg->reserved);
- #if defined(CONFIG_DYNAMIC_DEBUG)
- 	dynamic_hex_dump("rpmsg_virtio TX: ", DUMP_PREFIX_NONE, 16, 1,
- 			 msg, sizeof(*msg) + msg->len, true);
-@@ -704,13 +707,15 @@ static int rpmsg_recv_single(struct virtproc_info *vrp, struct device *dev,
- {
- 	struct rpmsg_endpoint *ept;
- 	struct scatterlist sg;
-+	unsigned int msg_len = le16_to_cpu(msg->len);
- 	int err;
- 
- 	dev_dbg(dev, "From: 0x%x, To: 0x%x, Len: %d, Flags: %d, Reserved: %d\n",
--		msg->src, msg->dst, msg->len, msg->flags, msg->reserved);
-+		le32_to_cpu(msg->src), le32_to_cpu(msg->dst), msg_len,
-+		le16_to_cpu(msg->flags), le32_to_cpu(msg->reserved));
- #if defined(CONFIG_DYNAMIC_DEBUG)
- 	dynamic_hex_dump("rpmsg_virtio RX: ", DUMP_PREFIX_NONE, 16, 1,
--			 msg, sizeof(*msg) + msg->len, true);
-+			 msg, sizeof(*msg) + msg_len, true);
- #endif
- 
- 	/*
-@@ -718,15 +723,15 @@ static int rpmsg_recv_single(struct virtproc_info *vrp, struct device *dev,
- 	 * the reported payload length.
- 	 */
- 	if (len > vrp->buf_size ||
--	    msg->len > (len - sizeof(struct rpmsg_hdr))) {
--		dev_warn(dev, "inbound msg too big: (%d, %d)\n", len, msg->len);
-+	    msg_len > (len - sizeof(struct rpmsg_hdr))) {
-+		dev_warn(dev, "inbound msg too big: (%d, %d)\n", len, msg_len);
- 		return -EINVAL;
- 	}
- 
- 	/* use the dst addr to fetch the callback of the appropriate user */
- 	mutex_lock(&vrp->endpoints_lock);
- 
--	ept = idr_find(&vrp->endpoints, msg->dst);
-+	ept = idr_find(&vrp->endpoints, le32_to_cpu(msg->dst));
- 
- 	/* let's make sure no one deallocates ept while we use it */
- 	if (ept)
-@@ -739,8 +744,8 @@ static int rpmsg_recv_single(struct virtproc_info *vrp, struct device *dev,
- 		mutex_lock(&ept->cb_lock);
- 
- 		if (ept->cb)
--			ept->cb(ept->rpdev, msg->data, msg->len, ept->priv,
--				msg->src);
-+			ept->cb(ept->rpdev, msg->data, msg_len, ept->priv,
-+				le32_to_cpu(msg->src));
- 
- 		mutex_unlock(&ept->cb_lock);
- 
-@@ -846,15 +851,15 @@ static int rpmsg_ns_cb(struct rpmsg_device *rpdev, void *data, int len,
- 	/* don't trust the remote processor for null terminating the name */
- 	msg->name[RPMSG_NAME_SIZE - 1] = '\0';
- 
--	dev_info(dev, "%sing channel %s addr 0x%x\n",
--		 msg->flags & RPMSG_NS_DESTROY ? "destroy" : "creat",
--		 msg->name, msg->addr);
--
- 	strncpy(chinfo.name, msg->name, sizeof(chinfo.name));
- 	chinfo.src = RPMSG_ADDR_ANY;
--	chinfo.dst = msg->addr;
-+	chinfo.dst = le32_to_cpu(msg->addr);
-+
-+	dev_info(dev, "%sing channel %s addr 0x%x\n",
-+		 le32_to_cpu(msg->flags) & RPMSG_NS_DESTROY ? "destroy" : "creat",
-+		 msg->name, chinfo.dst);
- 
--	if (msg->flags & RPMSG_NS_DESTROY) {
-+	if (le32_to_cpu(msg->flags) & RPMSG_NS_DESTROY) {
- 		ret = rpmsg_unregister_device(&vrp->vdev->dev, &chinfo);
- 		if (ret)
- 			dev_err(dev, "rpmsg_destroy_channel failed: %d\n", ret);
 -- 
-1.9.3
+MST
 
