@@ -6,93 +6,113 @@ X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
 	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA01BC433E0
-	for <linux-remoteproc@archiver.kernel.org>; Mon,  8 Jun 2020 09:07:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7142C433E0
+	for <linux-remoteproc@archiver.kernel.org>; Mon,  8 Jun 2020 09:09:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 87FE0206C3
-	for <linux-remoteproc@archiver.kernel.org>; Mon,  8 Jun 2020 09:07:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A729C206C3
+	for <linux-remoteproc@archiver.kernel.org>; Mon,  8 Jun 2020 09:09:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KHG7wDv1"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Uoy0/gCQ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726157AbgFHJHt (ORCPT
+        id S1725927AbgFHJJT (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 8 Jun 2020 05:07:49 -0400
-Received: from us-smtp-1.mimecast.com ([205.139.110.61]:59709 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725965AbgFHJHs (ORCPT
+        Mon, 8 Jun 2020 05:09:19 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:31990 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726038AbgFHJJS (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 8 Jun 2020 05:07:48 -0400
+        Mon, 8 Jun 2020 05:09:18 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1591607267;
+        s=mimecast20190719; t=1591607357;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=KW/u7+sIzl6SxOPTJDolQGOqqIlqXGa7CmHi/BcPCHs=;
-        b=KHG7wDv1ocJkPaSi0sFMpD5Ds2uC0wOr5i+4dkMfoZFcaHDL2jc0wUHgoovsLu9aoi1s5P
-        /k06XRxpSMJ0u5NT2PiLFBR9GTPQBwBjjt7pTfjawRz6ZSmaDg8mq85k4oLGsiiwXL8WHg
-        05KRHgpEuQH8g3wB5xetqr1frHALPX4=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-322-RaosTgxUOqmNMLpKNlmYdg-1; Mon, 08 Jun 2020 05:07:44 -0400
-X-MC-Unique: RaosTgxUOqmNMLpKNlmYdg-1
-Received: by mail-wr1-f70.google.com with SMTP id o1so6846854wrm.17
-        for <linux-remoteproc@vger.kernel.org>; Mon, 08 Jun 2020 02:07:44 -0700 (PDT)
+        bh=1qzz8q0RXIAT8maH8NVpFy7idcd6AVSk1M7/8bU7JLI=;
+        b=Uoy0/gCQcTsr6RVEwMJM6w50jlIV+0Z1PxYOcA2qh1phSlPna+aisHOWozXHM91V/Kgpld
+        KUG17yeJqGOYlNH5gsFTYMcSkU1lMEPaMJieQSvE4PvtR+WPBGDiYfI3ptrOz5GUW4Hg1z
+        UrYqusaAUIV61fTzqeSjkBW5Y7vRBhk=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-239-LGlwPgqePGe5PoY18t5Pww-1; Mon, 08 Jun 2020 05:09:15 -0400
+X-MC-Unique: LGlwPgqePGe5PoY18t5Pww-1
+Received: by mail-wm1-f69.google.com with SMTP id t145so5004241wmt.2
+        for <linux-remoteproc@vger.kernel.org>; Mon, 08 Jun 2020 02:09:15 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=KW/u7+sIzl6SxOPTJDolQGOqqIlqXGa7CmHi/BcPCHs=;
-        b=oOqCBH7Y3CKhNA+iLmzOxeX33DTc6RPNLC9Dzn2SU5L/+hF1UNhjW9yKkEmdBwP+89
-         scqrZjMO5ur0vaoZfsl2lTOLzt85QRMYt7WwFCuKAFJjPWRInv6UzvkH3mRFAdHq4vu9
-         T9WooaMNKbbfT/n+UVgboUaoZgNDKGV1TewNr6YpEz/CBpvhFQHhJriWtXP6GRKRIaML
-         cFhSXyEJPXV5yjo391cCxAGlr7sdSyRykllV1bfesj7kMaVBBKTx9cE4/jVtdIiooaV1
-         AX8cVrWPAnDJ/Ndzx4gpfY52GpuLdgVazbm47O1HYew4AI6Jej1PArz7Ml/pchCQT6bc
-         bdOg==
-X-Gm-Message-State: AOAM532l+mQjZYZk/CFYzxuoWOwlxZoUvAKHsVfwfzrt3rm5YdvLFLOb
-        aeO7W+ZtIyvGSGOawXra5APnzTRiKKOYQa6o9wmOUCLS1FLvgIBUYZ/kxiSBw39Sy5c5HnK2xAa
-        BQPqJSYxbPQzsbnEzQEZPWbZso0wgwg==
-X-Received: by 2002:a05:600c:2110:: with SMTP id u16mr15157980wml.26.1591607262900;
-        Mon, 08 Jun 2020 02:07:42 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJxClkOYf+0gRlqCWdbZ99+alT6bdzxfMX70igp8hM/UINwFM9C1OOBToQHPRrFrjggGQjepBg==
-X-Received: by 2002:a05:600c:2110:: with SMTP id u16mr15157968wml.26.1591607262749;
-        Mon, 08 Jun 2020 02:07:42 -0700 (PDT)
+        bh=1qzz8q0RXIAT8maH8NVpFy7idcd6AVSk1M7/8bU7JLI=;
+        b=E6aRUUXSG2a/dBY1PIbCI06Io146++N37R8XRBX+RHP8hDxBj0CTZMA8Or1VYvmmvF
+         i2laWG3RxmaDPL8w7Gq0HRs6f+vNcZm996E7ombpALW3I+a+PUgNpKOYNTGpnpPbDiDI
+         Iph88k3rsgUUXgt3pE02rE3GpHL5qiupvf8LBnaISrvhD01kqcNGjp2jVptsqKw1k4SK
+         J6zfx5wHOY5r79ms6babdNb+mrCaWbtKOFFIJTr6M/xmuJDKCNBZY9U/N5MzX/Q9s1TJ
+         o4Uy0ay97MXpo8W4QhWYpY0EgVCK1ahGm2eDDS7GeasSTdZ5BLrBvlg+3AWBxUZ8N+aF
+         I4dg==
+X-Gm-Message-State: AOAM532tTzoIqQGv8w5u4R5VrHmpSVu5X8+8A0FxHXAmGM1qwiqwKzA0
+        lLqfuUQv+4cn5qo7fY8PC0/F447ahiExC3KC5bu30WTrkT4QLW7NMEZLssrxAwu5fC/1kPJgvBa
+        TvyObtrE7/tU/ydpjevF7+JnyJE72WQ==
+X-Received: by 2002:adf:a41a:: with SMTP id d26mr23153877wra.324.1591607354005;
+        Mon, 08 Jun 2020 02:09:14 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJxk4C2kFKYGkG3pOjWAb4BdA7+bim0qD4WM5BHVhr/1qFiireNP/Iu0BJQYaiwNrt1nr7CEGA==
+X-Received: by 2002:adf:a41a:: with SMTP id d26mr23153862wra.324.1591607353853;
+        Mon, 08 Jun 2020 02:09:13 -0700 (PDT)
 Received: from redhat.com (bzq-109-64-41-91.red.bezeqint.net. [109.64.41.91])
-        by smtp.gmail.com with ESMTPSA id n204sm22406435wma.5.2020.06.08.02.07.41
+        by smtp.gmail.com with ESMTPSA id u12sm23301667wrq.90.2020.06.08.02.09.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 Jun 2020 02:07:42 -0700 (PDT)
-Date:   Mon, 8 Jun 2020 05:07:40 -0400
+        Mon, 08 Jun 2020 02:09:13 -0700 (PDT)
+Date:   Mon, 8 Jun 2020 05:09:10 -0400
 From:   "Michael S. Tsirkin" <mst@redhat.com>
 To:     Guennadi Liakhovetski <guennadi.liakhovetski@linux.intel.com>
-Cc:     Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org
-Subject: Re: VirtIO RPMsg VirtQ endianness
-Message-ID: <20200608050633-mutt-send-email-mst@kernel.org>
-References: <20200608075113.GB10562@ubuntu>
+Cc:     kvm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        sound-open-firmware@alsa-project.org,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Liam Girdwood <liam.r.girdwood@linux.intel.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Ohad Ben-Cohen <ohad@wizery.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>
+Subject: Re: [PATCH v3 0/5] Add a vhost RPMsg API
+Message-ID: <20200608050757-mutt-send-email-mst@kernel.org>
+References: <20200527180541.5570-1-guennadi.liakhovetski@linux.intel.com>
+ <20200604151917-mutt-send-email-mst@kernel.org>
+ <20200605063435.GA32302@ubuntu>
+ <20200608073715.GA10562@ubuntu>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200608075113.GB10562@ubuntu>
+In-Reply-To: <20200608073715.GA10562@ubuntu>
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Mon, Jun 08, 2020 at 09:51:13AM +0200, Guennadi Liakhovetski wrote:
-> Hi Ohad,
+On Mon, Jun 08, 2020 at 09:37:15AM +0200, Guennadi Liakhovetski wrote:
+> Hi Michael,
 > 
-> In his comments to my recent vhost RPMsg API patch-set update Michael 
-> Tsirkin commented [1], that messages in the RPMsg over VirtIO case 
-> should be sent in the LE format.
-
-At least when VIRTIO_F_VERSION_1 has been negotiated.
-
-
-> Could you please confirm that you agree 
-> with this comment? I'll then go ahead and patch virtio_rpmsg_bus.c firat 
-> and then also update my patch-set. In fact you can just reply to the 
-> original thread - you're on CC for it too.
+> On Fri, Jun 05, 2020 at 08:34:35AM +0200, Guennadi Liakhovetski wrote:
+> > 
+> > On Thu, Jun 04, 2020 at 03:23:37PM -0400, Michael S. Tsirkin wrote:
+> 
+> [snip]
+> 
+> > > Another it's out of line with 1.0 spec passing guest
+> > > endian data around. Won't work if host and guest
+> > > endian-ness do not match. Should pass eveything in LE and
+> > > convert.
+> > 
+> > Yes, I have to fix this, thanks.
+> 
+> Just to make sure my understanding is correct: this would involve also 
+> modifying the current virtio_rpmsg_bus.c implementation to add 
+> endianness conversions. That's what you meant, right?
 > 
 > Thanks
 > Guennadi
-> 
-> [1] https://www.spinics.net/lists/kvm/msg217704.html
+
+right and if there are legacy compat considerations, using _virtio16 and
+friends types, as well as virtio16_to_cpu and friends functions.
+
+-- 
+MST
 
