@@ -2,105 +2,102 @@ Return-Path: <SRS0=OpIw=7V=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9957C433DF
-	for <linux-remoteproc@archiver.kernel.org>; Mon,  8 Jun 2020 11:16:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D1E8C433DF
+	for <linux-remoteproc@archiver.kernel.org>; Mon,  8 Jun 2020 12:22:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BEBE72072F
-	for <linux-remoteproc@archiver.kernel.org>; Mon,  8 Jun 2020 11:16:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D3E0C2076A
+	for <linux-remoteproc@archiver.kernel.org>; Mon,  8 Jun 2020 12:22:02 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SW8D7gsA"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729529AbgFHLQn (ORCPT
+        id S1729713AbgFHMWC (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 8 Jun 2020 07:16:43 -0400
-Received: from mga07.intel.com ([134.134.136.100]:17355 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729371AbgFHLQm (ORCPT
+        Mon, 8 Jun 2020 08:22:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50794 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729628AbgFHMWC (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 8 Jun 2020 07:16:42 -0400
-IronPort-SDR: rpZr5W3iBMzAwoth/g9/KtgFcfqya2pIC9fN7f1xSNnE6woowbTWpa+9bcOdkrQc8infoDNCHU
- 4YZDyT9g8Icw==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jun 2020 04:16:42 -0700
-IronPort-SDR: dl0qMu7dTDv+wwShs4f6FCGDv2URJOMFnCoSpWPuwosIAU8FdJ3hB6cg3IQtAVv53P8j+CQP/X
- 1sto+gbPjG1Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.73,487,1583222400"; 
-   d="scan'208";a="288442494"
-Received: from gliakhov-mobl2.ger.corp.intel.com (HELO ubuntu) ([10.249.46.212])
-  by orsmga002.jf.intel.com with ESMTP; 08 Jun 2020 04:16:39 -0700
-Date:   Mon, 8 Jun 2020 13:16:38 +0200
-From:   Guennadi Liakhovetski <guennadi.liakhovetski@linux.intel.com>
-To:     "Michael S. Tsirkin" <mst@redhat.com>
-Cc:     kvm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        sound-open-firmware@alsa-project.org,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Liam Girdwood <liam.r.girdwood@linux.intel.com>,
-        Jason Wang <jasowang@redhat.com>,
-        Ohad Ben-Cohen <ohad@wizery.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>
-Subject: Re: [PATCH v3 0/5] Add a vhost RPMsg API
-Message-ID: <20200608111637.GE10562@ubuntu>
-References: <20200527180541.5570-1-guennadi.liakhovetski@linux.intel.com>
- <20200604151917-mutt-send-email-mst@kernel.org>
- <20200605063435.GA32302@ubuntu>
- <20200608073715.GA10562@ubuntu>
- <20200608091100.GC10562@ubuntu>
- <20200608051358-mutt-send-email-mst@kernel.org>
- <20200608101526.GD10562@ubuntu>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200608101526.GD10562@ubuntu>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Mon, 8 Jun 2020 08:22:02 -0400
+Received: from mail-pf1-x444.google.com (mail-pf1-x444.google.com [IPv6:2607:f8b0:4864:20::444])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B3E27C08C5C2;
+        Mon,  8 Jun 2020 05:22:01 -0700 (PDT)
+Received: by mail-pf1-x444.google.com with SMTP id 10so2604717pfx.8;
+        Mon, 08 Jun 2020 05:22:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=HDxho5qgH/ZNs1hwouSLFAzSS6Ya6IXAFD99ObdyT2U=;
+        b=SW8D7gsAlHDtxyd8A/lLyC0s9kXr1vPCLo4wGsWfQOgnAw2y0SomQpam6DVE20cx4G
+         pGClR37CIUCmo0HVoo1Aupipewj1E4JYe7uPjhf3wf6fgT9ugod8M3qShjyNg665Aqxl
+         xbwTktjbLIN5qbaoyRF4G5HfXrfDfVa19TZWErDO2pWWY8CY4AyUBlfePgjUH0HYOpji
+         hzcxlbSeQsmcZjRZ86qZAqeowtgrZYtWX8nHpl7AiN34tIeYpWfCFOu5tWbqWMGASZhK
+         dBPuJoDmiANdj2K/F4d4Rk/x4Scw5qBUEm9MyRdXwiLQnZejrRv80JPIjlZuslxF1k5o
+         AVWg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=HDxho5qgH/ZNs1hwouSLFAzSS6Ya6IXAFD99ObdyT2U=;
+        b=U3DGD5XKqkBXWPEawHTkrMnCDPLs4+mGvJVjYeQ4LXBu0rVWbzL5xa+E3oIiACIq28
+         fPdbaSlBAZJjNmIXrjUZ9IotjbS0XBfacm3Hoi1rAWSXg29zR/TNJBICMQCQWf5yGVk8
+         23ZKEbyiwpQ/Dbq0WqEk8GCoMORFgMuUK3V6mZ5mHDHeZ0pV0CkNlOSilIr1k/dwOgkJ
+         tvkCtd+Fb9+R11UbRwusQRbrt1fbX6p+PXFQyg2qD6f2JMM8kYmPMUWXF/AT+M4+W/tI
+         52sCErAdVXejTr8w/ZxaL2AWCDV4CoKDxTsq2vfhG0H559qA6LSH4FwEmWeqPn3ZMUVy
+         PUCw==
+X-Gm-Message-State: AOAM5300tPL9dJvt99mQxHC2ZcJmK+k0L6TpIcgDasrznkZS3z/mPPKn
+        BPCuYRSrF+tSP7PcRgxrQBoKWNrg
+X-Google-Smtp-Source: ABdhPJwMhWCzEK/UeGQzspWpga1Pqrnmfx1UaWD/aQi3RYJ9+jsb3BBeRs5aBHPb3r/reQoTC/L+5Q==
+X-Received: by 2002:a62:36c5:: with SMTP id d188mr3677066pfa.120.1591618920957;
+        Mon, 08 Jun 2020 05:22:00 -0700 (PDT)
+Received: from localhost.localdomain ([45.135.186.34])
+        by smtp.gmail.com with ESMTPSA id g29sm6975584pfr.47.2020.06.08.05.21.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 08 Jun 2020 05:22:00 -0700 (PDT)
+From:   Baolin Wang <baolin.wang7@gmail.com>
+To:     ohad@wizery.com, bjorn.andersson@linaro.org
+Cc:     baolin.wang7@gmail.com, baohua@kernel.org,
+        linux-remoteproc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] hwspinlock: sirf: Remove the redundant 'of_match_ptr'
+Date:   Mon,  8 Jun 2020 20:20:28 +0800
+Message-Id: <250d35cb489c3c4c066f7ce256d27f36712a1979.1591618255.git.baolin.wang7@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Mon, Jun 08, 2020 at 12:15:26PM +0200, Guennadi Liakhovetski wrote:
-> On Mon, Jun 08, 2020 at 05:19:06AM -0400, Michael S. Tsirkin wrote:
-> > On Mon, Jun 08, 2020 at 11:11:00AM +0200, Guennadi Liakhovetski wrote:
-> > > Update: I looked through VirtIO 1.0 and 1.1 specs, data format their, 
-> > > including byte order, is defined on a per-device type basis. RPMsg is 
-> > > indeed included in the spec as device type 7, but that's the only 
-> > > mention of it in both versions. It seems RPMsg over VirtIO isn't 
-> > > standardised yet.
-> > 
-> > Yes. And it would be very good to have some standartization before we
-> > keep adding things. For example without any spec if host code breaks
-> > with some guests, how do we know which side should be fixed?
-> > 
-> > > Also it looks like newer interface definitions 
-> > > specify using "guest native endianness" for Virtual Queue data.
-> > 
-> > They really don't or shouldn't. That's limited to legacy chapters.
-> > Some definitions could have slipped through but it's not
-> > the norm. I just quickly looked through the 1.1 spec and could
-> > not find any instances that specify "guest native endianness"
-> > but feel free to point them out to me.
-> 
-> Oh, there you go. No, sorry, my fault, it's the other way round: "guest 
-> native" is for legacy and LE is for current / v1.0 and up.
-> 
-> > > So 
-> > > I think the same should be done for RPMsg instead of enforcing LE?
-> > 
-> > That makes hardware implementations as well as any cross-endian
-> > hypervisors tricky.
-> 
-> Yes, LE it is then. And we need to add some text to the spec.
+Remove the the redundant 'of_match_ptr' macro to fix below warning
+when the CONFIG_OF is not selected.
 
-I found the protocol and the message format definition: 
-https://github.com/OpenAMP/open-amp/wiki/RPMsg-Messaging-Protocol#transport-layer---rpmsg 
-Don't know what the best way for referencing it in the VirtIO standard 
-would be: just a link to the source or a quote.
+All warnings:
+drivers/hwspinlock/sirf_hwspinlock.c:87:34: warning: unused variable
+'sirf_hwpinlock_ids' [-Wunused-const-variable]
 
-Thanks
-Guennadi
+Reported-by: kernel test robot <lkp@intel.com>
+Signed-off-by: Baolin Wang <baolin.wang7@gmail.com>
+---
+ drivers/hwspinlock/sirf_hwspinlock.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/hwspinlock/sirf_hwspinlock.c b/drivers/hwspinlock/sirf_hwspinlock.c
+index 823d3c4f621e..a3f77120bad7 100644
+--- a/drivers/hwspinlock/sirf_hwspinlock.c
++++ b/drivers/hwspinlock/sirf_hwspinlock.c
+@@ -94,7 +94,7 @@ static struct platform_driver sirf_hwspinlock_driver = {
+ 	.probe = sirf_hwspinlock_probe,
+ 	.driver = {
+ 		.name = "atlas7_hwspinlock",
+-		.of_match_table = of_match_ptr(sirf_hwpinlock_ids),
++		.of_match_table = sirf_hwpinlock_ids,
+ 	},
+ };
+ 
+-- 
+2.17.1
+
