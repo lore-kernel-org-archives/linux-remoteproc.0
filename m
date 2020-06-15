@@ -2,409 +2,269 @@ Return-Path: <SRS0=LqBZ=74=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 275BFC433DF
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 15 Jun 2020 16:18:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97CADC433E0
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 15 Jun 2020 20:47:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EB7CB207D4
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 15 Jun 2020 16:18:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 614632074D
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 15 Jun 2020 20:47:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Pw9OHAeb"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="u47lE5VS"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730811AbgFOQS1 (ORCPT
+        id S1731517AbgFOUrM (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 15 Jun 2020 12:18:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54928 "EHLO
+        Mon, 15 Jun 2020 16:47:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40058 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727785AbgFOQS0 (ORCPT
+        with ESMTP id S1731104AbgFOUrL (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 15 Jun 2020 12:18:26 -0400
-Received: from mail-il1-x143.google.com (mail-il1-x143.google.com [IPv6:2607:f8b0:4864:20::143])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 13BDAC05BD43
-        for <linux-remoteproc@vger.kernel.org>; Mon, 15 Jun 2020 09:18:26 -0700 (PDT)
-Received: by mail-il1-x143.google.com with SMTP id a13so15877920ilh.3
-        for <linux-remoteproc@vger.kernel.org>; Mon, 15 Jun 2020 09:18:26 -0700 (PDT)
+        Mon, 15 Jun 2020 16:47:11 -0400
+Received: from mail-pj1-x1044.google.com (mail-pj1-x1044.google.com [IPv6:2607:f8b0:4864:20::1044])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 745B3C061A0E
+        for <linux-remoteproc@vger.kernel.org>; Mon, 15 Jun 2020 13:47:11 -0700 (PDT)
+Received: by mail-pj1-x1044.google.com with SMTP id d6so400882pjs.3
+        for <linux-remoteproc@vger.kernel.org>; Mon, 15 Jun 2020 13:47:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=XKH1pFFT8fVLLE8wJVLgNv5/MLMQFH17bRtZ3CycmS4=;
-        b=Pw9OHAebA1N0FvHpjJwmZEwQvxIUVPKUU46IDt0hXJBY5QGYnIRmaZXNQdh14cvYtM
-         PbUzXwyKGkLQwALMlBo2ejTbAD7NzCGmtOkNt3sH4MiHnvlEOvqRBIXtmgUpvkD7OING
-         DmN12sARsa40E7oSbxgo/i1RwyEHEg7mBpFxIBVpMzmlU54s9uhEWhHsT81ToRuHpNBh
-         XTBq//VsSUTt/SuKnbJ3ujsN3pEC1W26a+yRSdC7Y8wXDyuF2ct7UahPiQu14eALmWDs
-         1RFce1GYqEfg8gUoaHO8OBoRCsqXlJgf/fHdYKNBhGMKuePsx/H/mLCOQRuJ3B3SZSUn
-         slag==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=sY3v9sYLdx+yJk7RQ9f5Do40iq7nVqH7E+Z0rb4YUUY=;
+        b=u47lE5VSuHjcXddFrSlbrFqfNA7V5UA/zItgY5njVoNcv2WLVVlXezPr7Odkjdf6+r
+         d+ZHVAHZ3uzoox0+qOpfNZxaCIp7ovzRn/acKAJUvQGxn1WfeUOE5OlK8mBXSKXYkyw3
+         HlkVackg2QuFJxuWZjhtBpKudBaG3QRQOjPQ6f9WcxQOEAel/GmpZzyKgfqG/a6t8KEl
+         uPT5Q5Xqf9vMDhygoaAFM0dHOrqn+Fw1uBKwZWTofogOkWY1PeIMpWjYAJWuYs4+Hee/
+         +ere7e95JGONp6lZaQ5U2AOqFJAg+K9tjFBhbMrbUD39PBvWRmLEQ70Pe46z1Ie3ZS37
+         l0zQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=XKH1pFFT8fVLLE8wJVLgNv5/MLMQFH17bRtZ3CycmS4=;
-        b=NT/oi85SBu/V9aQmFhXcFEmvkK5/yYjkdn24GsZgGDYL39ZeHy4Ed2OCavxeacjOdp
-         90TLOqPQeCmTuFOcITZ/g/RbXQL6WaTz8/1rWZTpcLnEulQsy0hAn+PGLLJHBpJJmlxT
-         ORCUEk6E13KBoGYWJDLkPQ05KvfnYLl5etNFYpGsHxZGNL498nBPFQ4pa3ttglvOpRIt
-         kCfzYYULG3iYDaJ7yHq2aGPhoMbkuUHD4oTAhnr0Fx/0mO88c8xy/4OtTlN2BsKw3meA
-         9N+gzMt1BzTJBmiCep6Q/F3Sl0L6NlpmjX8cE/MAjjPFaGfDHi1Jc5JGhha2Be6HRaA9
-         4mKw==
-X-Gm-Message-State: AOAM530+CrXUbpmYm2W8UR4+ligxvHgcEZ/I7bevVP/CyywdYTfQseYw
-        yjiItSYRcRVmSSvbRAxsQ7k4uf+evaDU/Yc8NSLt6g==
-X-Google-Smtp-Source: ABdhPJyXMBGatSHTzrYK8/qvM6Z4jlzZSMib+6mon2WmMLWv63Czwyscsai5qRgsUgx0tSdIE+ac9RWUMq0HFut88qc=
-X-Received: by 2002:a92:5856:: with SMTP id m83mr27403174ilb.72.1592237905055;
- Mon, 15 Jun 2020 09:18:25 -0700 (PDT)
-MIME-Version: 1.0
-References: <cover.1592203650.git.mchehab+huawei@kernel.org> <11bd0d75e65a874f7c276a0aeab0fe13f3376f5f.1592203650.git.mchehab+huawei@kernel.org>
-In-Reply-To: <11bd0d75e65a874f7c276a0aeab0fe13f3376f5f.1592203650.git.mchehab+huawei@kernel.org>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=sY3v9sYLdx+yJk7RQ9f5Do40iq7nVqH7E+Z0rb4YUUY=;
+        b=r9pMJBA+YVyPJLiz6JFdm+PwWymnpIFopQPIJe8hQ8+7EekiyVqFuGY7ZIGf5qXEfs
+         hVFmqA2bUh0OMHfKv8y3wyqJ71pLr0J+a8IV8VM4njiKX6ZOEomcvHcjERzNl+2RbZK1
+         GIyNtIHI7h9XatXbq/CL9znc008EjF3FBTmJ3TAsvjkfsIKpkltnmF6+sEHAyEgU8FrC
+         hk0pQungBfW/F0OExiKk9ZfILhBRUHM7Y02JX5fIdWzEJ6CnkexvWjAXsXH5uNGYW0Bn
+         0b5y2dOFgIkPrUhXL4ikN/D1thJM1Th222fEOVjRDwYILxgqDsao8kR1rJYZqX5RK+jc
+         b7Qg==
+X-Gm-Message-State: AOAM532gJwjrlVe/lnYyWu4go8FQPKncwwa1cu1KafymFWSMlsTi3EYB
+        tTEQgGvXh5UId6xiPdpvpb0xwA==
+X-Google-Smtp-Source: ABdhPJwvhKqg6sOt6jCj4iee4PeFWI/McO2ltONXXkIj15Ue8wC4AD8PVPKZhi89GhEbkR0rSz2h4A==
+X-Received: by 2002:a17:902:b493:: with SMTP id y19mr23118018plr.186.1592254030237;
+        Mon, 15 Jun 2020 13:47:10 -0700 (PDT)
+Received: from xps15 (S0106002369de4dac.cg.shawcable.net. [68.147.8.254])
+        by smtp.gmail.com with ESMTPSA id r4sm1953911pgp.60.2020.06.15.13.47.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 15 Jun 2020 13:47:09 -0700 (PDT)
+Date:   Mon, 15 Jun 2020 14:47:07 -0600
 From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-Date:   Mon, 15 Jun 2020 10:18:14 -0600
-Message-ID: <CANLsYkyGUL3uZEQJ9HuHgvuoGtq7kjELT_H=YGq6U_tUqz-kAQ@mail.gmail.com>
-Subject: Re: [PATCH 20/22] docs: move remaining stuff under
- Documentation/*.txt to Documentation/staging
-To:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Cc:     Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
-        Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
+To:     Guennadi Liakhovetski <guennadi.liakhovetski@linux.intel.com>
+Cc:     linux-remoteproc@vger.kernel.org,
+        "Michael S. Tsirkin" <mst@redhat.com>,
         Ohad Ben-Cohen <ohad@wizery.com>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Jens Wiklander <jens.wiklander@linaro.org>,
-        linux-remoteproc <linux-remoteproc@vger.kernel.org>,
-        tee-dev@lists.linaro.org
-Content-Type: text/plain; charset="UTF-8"
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Liam Girdwood <liam.r.girdwood@linux.intel.com>
+Subject: Re: [PATCH] rpmsg: virtio: add endianness conversions
+Message-ID: <20200615204707.GA231755@xps15>
+References: <20200608123932.GF10562@ubuntu>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200608123932.GF10562@ubuntu>
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi Mauro,
-
-On Mon, 15 Jun 2020 at 00:51, Mauro Carvalho Chehab
-<mchehab+huawei@kernel.org> wrote:
->
-> There are several files that I was unable to find a proper place
-> for them, and 3 ones that are still in plain old text format.
->
-> Let's place those stuff behind the carpet, as we'd like to keep the
-> root directory clean.
->
-> We can later discuss and move those into better places.
->
-> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+On Mon, Jun 08, 2020 at 02:39:32PM +0200, Guennadi Liakhovetski wrote:
+> According to the VirtIO 1.0 spec data, sent over virtual queues must
+> be in little-endian format. Update the RPMsg VirtIO implementation
+> to enforce that.
+> 
+> Suggested-by: Michael S. Tsirkin <mst@redhat.com>
+> Signed-off-by: Guennadi Liakhovetski <guennadi.liakhovetski@linux.intel.com>
 > ---
->  Documentation/index.rst                       | 13 ++++++++
->  .../{crc32.txt => staging/crc32.rst}          |  0
->  Documentation/staging/index.rst               | 32 +++++++++++++++++++
->  .../{kprobes.txt => staging/kprobes.rst}      |  0
->  Documentation/{lzo.txt => staging/lzo.rst}    |  0
->  .../remoteproc.rst}                           |  2 +-
->  .../{rpmsg.txt => staging/rpmsg.rst}          |  0
+>  drivers/rpmsg/virtio_rpmsg_bus.c | 61 ++++++++++++++++++++++------------------
+>  1 file changed, 33 insertions(+), 28 deletions(-)
+> 
+> diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
+> index 07d4f33..b8ff42b 100644
+> --- a/drivers/rpmsg/virtio_rpmsg_bus.c
+> +++ b/drivers/rpmsg/virtio_rpmsg_bus.c
+> @@ -11,6 +11,8 @@
+>  
+>  #define pr_fmt(fmt) "%s: " fmt, __func__
+>  
+> +#include <asm/byteorder.h>
+> +
+>  #include <linux/dma-mapping.h>
+>  #include <linux/idr.h>
+>  #include <linux/jiffies.h>
+> @@ -22,6 +24,7 @@
+>  #include <linux/scatterlist.h>
+>  #include <linux/slab.h>
+>  #include <linux/sched.h>
+> +#include <linux/types.h>
+>  #include <linux/virtio.h>
+>  #include <linux/virtio_ids.h>
+>  #include <linux/virtio_config.h>
+> @@ -84,11 +87,11 @@ struct virtproc_info {
+>   * Every message sent(/received) on the rpmsg bus begins with this header.
+>   */
+>  struct rpmsg_hdr {
+> -	u32 src;
+> -	u32 dst;
+> -	u32 reserved;
+> -	u16 len;
+> -	u16 flags;
+> +	__le32 src;
+> +	__le32 dst;
+> +	__le32 reserved;
+> +	__le16 len;
+> +	__le16 flags;
+>  	u8 data[];
+>  } __packed;
+>  
+> @@ -106,8 +109,8 @@ struct rpmsg_hdr {
+>   */
+>  struct rpmsg_ns_msg {
+>  	char name[RPMSG_NAME_SIZE];
+> -	u32 addr;
+> -	u32 flags;
+> +	__le32 addr;
+> +	__le32 flags;
+>  } __packed;
+>  
+>  /**
+> @@ -335,8 +338,8 @@ static int virtio_rpmsg_announce_create(struct rpmsg_device *rpdev)
+>  		struct rpmsg_ns_msg nsm;
+>  
+>  		strncpy(nsm.name, rpdev->id.name, RPMSG_NAME_SIZE);
+> -		nsm.addr = rpdev->ept->addr;
+> -		nsm.flags = RPMSG_NS_CREATE;
+> +		nsm.addr = cpu_to_le32(rpdev->ept->addr);
+> +		nsm.flags = cpu_to_le32(RPMSG_NS_CREATE);
 
-For remoteproc.rst and rpmsg.rst, I suggest moving them under a new
-"remoteproc" directory.
+So how will this work with existing firmware?  
+
+>  
+>  		err = rpmsg_sendto(rpdev->ept, &nsm, sizeof(nsm), RPMSG_NS_ADDR);
+>  		if (err)
+> @@ -359,8 +362,8 @@ static int virtio_rpmsg_announce_destroy(struct rpmsg_device *rpdev)
+>  		struct rpmsg_ns_msg nsm;
+>  
+>  		strncpy(nsm.name, rpdev->id.name, RPMSG_NAME_SIZE);
+> -		nsm.addr = rpdev->ept->addr;
+> -		nsm.flags = RPMSG_NS_DESTROY;
+> +		nsm.addr = cpu_to_le32(rpdev->ept->addr);
+> +		nsm.flags = cpu_to_le32(RPMSG_NS_DESTROY);
+>  
+>  		err = rpmsg_sendto(rpdev->ept, &nsm, sizeof(nsm), RPMSG_NS_ADDR);
+>  		if (err)
+> @@ -612,15 +615,15 @@ static int rpmsg_send_offchannel_raw(struct rpmsg_device *rpdev,
+>  		}
+>  	}
+>  
+> -	msg->len = len;
+> +	msg->len = cpu_to_le16(len);
+>  	msg->flags = 0;
+> -	msg->src = src;
+> -	msg->dst = dst;
+> +	msg->src = cpu_to_le32(src);
+> +	msg->dst = cpu_to_le32(dst);
+>  	msg->reserved = 0;
+>  	memcpy(msg->data, data, len);
+>  
+>  	dev_dbg(dev, "TX From 0x%x, To 0x%x, Len %d, Flags %d, Reserved %d\n",
+> -		msg->src, msg->dst, msg->len, msg->flags, msg->reserved);
+> +		src, dst, len, msg->flags, msg->reserved);
+>  #if defined(CONFIG_DYNAMIC_DEBUG)
+>  	dynamic_hex_dump("rpmsg_virtio TX: ", DUMP_PREFIX_NONE, 16, 1,
+>  			 msg, sizeof(*msg) + msg->len, true);
+> @@ -704,13 +707,15 @@ static int rpmsg_recv_single(struct virtproc_info *vrp, struct device *dev,
+>  {
+>  	struct rpmsg_endpoint *ept;
+>  	struct scatterlist sg;
+> +	unsigned int msg_len = le16_to_cpu(msg->len);
+
+And here too, along with everything else that follows?
+
+As Michael suggested using __virtioXY types would allow to use the
+virtioXY_to_cpu() and cpu_to_virtioXY() macros, which is definitely a step in
+the right direction.
 
 Thanks,
 Mathieu
 
->  .../speculation.rst}                          |  8 +++--
->  .../static-keys.rst}                          |  0
->  Documentation/{tee.txt => staging/tee.rst}    |  1 +
->  Documentation/{xz.txt => staging/xz.rst}      |  0
->  Documentation/trace/kprobetrace.rst           |  2 +-
->  MAINTAINERS                                   |  8 ++---
->  include/linux/jump_label.h                    |  2 +-
->  lib/crc32.c                                   |  2 +-
->  lib/lzo/lzo1x_decompress_safe.c               |  2 +-
->  lib/xz/Kconfig                                |  2 +-
->  samples/kprobes/kprobe_example.c              |  2 +-
->  samples/kprobes/kretprobe_example.c           |  2 +-
->  19 files changed, 63 insertions(+), 15 deletions(-)
->  rename Documentation/{crc32.txt => staging/crc32.rst} (100%)
->  create mode 100644 Documentation/staging/index.rst
->  rename Documentation/{kprobes.txt => staging/kprobes.rst} (100%)
->  rename Documentation/{lzo.txt => staging/lzo.rst} (100%)
->  rename Documentation/{remoteproc.txt => staging/remoteproc.rst} (99%)
->  rename Documentation/{rpmsg.txt => staging/rpmsg.rst} (100%)
->  rename Documentation/{speculation.txt => staging/speculation.rst} (97%)
->  rename Documentation/{static-keys.txt => staging/static-keys.rst} (100%)
->  rename Documentation/{tee.txt => staging/tee.rst} (99%)
->  rename Documentation/{xz.txt => staging/xz.rst} (100%)
->
-> diff --git a/Documentation/index.rst b/Documentation/index.rst
-> index 71eca3171574..3b491af0122d 100644
-> --- a/Documentation/index.rst
-> +++ b/Documentation/index.rst
-> @@ -182,6 +182,19 @@ subprojects.
->
->     filesystems/ext4/index
->
-> +Other documentation
-> +-------------------
+>  	int err;
+>  
+>  	dev_dbg(dev, "From: 0x%x, To: 0x%x, Len: %d, Flags: %d, Reserved: %d\n",
+> -		msg->src, msg->dst, msg->len, msg->flags, msg->reserved);
+> +		le32_to_cpu(msg->src), le32_to_cpu(msg->dst), msg_len,
+> +		le16_to_cpu(msg->flags), le32_to_cpu(msg->reserved));
+>  #if defined(CONFIG_DYNAMIC_DEBUG)
+>  	dynamic_hex_dump("rpmsg_virtio RX: ", DUMP_PREFIX_NONE, 16, 1,
+> -			 msg, sizeof(*msg) + msg->len, true);
+> +			 msg, sizeof(*msg) + msg_len, true);
+>  #endif
+>  
+>  	/*
+> @@ -718,15 +723,15 @@ static int rpmsg_recv_single(struct virtproc_info *vrp, struct device *dev,
+>  	 * the reported payload length.
+>  	 */
+>  	if (len > vrp->buf_size ||
+> -	    msg->len > (len - sizeof(struct rpmsg_hdr))) {
+> -		dev_warn(dev, "inbound msg too big: (%d, %d)\n", len, msg->len);
+> +	    msg_len > (len - sizeof(struct rpmsg_hdr))) {
+> +		dev_warn(dev, "inbound msg too big: (%d, %d)\n", len, msg_len);
+>  		return -EINVAL;
+>  	}
+>  
+>  	/* use the dst addr to fetch the callback of the appropriate user */
+>  	mutex_lock(&vrp->endpoints_lock);
+>  
+> -	ept = idr_find(&vrp->endpoints, msg->dst);
+> +	ept = idr_find(&vrp->endpoints, le32_to_cpu(msg->dst));
+>  
+>  	/* let's make sure no one deallocates ept while we use it */
+>  	if (ept)
+> @@ -739,8 +744,8 @@ static int rpmsg_recv_single(struct virtproc_info *vrp, struct device *dev,
+>  		mutex_lock(&ept->cb_lock);
+>  
+>  		if (ept->cb)
+> -			ept->cb(ept->rpdev, msg->data, msg->len, ept->priv,
+> -				msg->src);
+> +			ept->cb(ept->rpdev, msg->data, msg_len, ept->priv,
+> +				le32_to_cpu(msg->src));
+>  
+>  		mutex_unlock(&ept->cb_lock);
+>  
+> @@ -846,15 +851,15 @@ static int rpmsg_ns_cb(struct rpmsg_device *rpdev, void *data, int len,
+>  	/* don't trust the remote processor for null terminating the name */
+>  	msg->name[RPMSG_NAME_SIZE - 1] = '\0';
+>  
+> -	dev_info(dev, "%sing channel %s addr 0x%x\n",
+> -		 msg->flags & RPMSG_NS_DESTROY ? "destroy" : "creat",
+> -		 msg->name, msg->addr);
+> -
+>  	strncpy(chinfo.name, msg->name, sizeof(chinfo.name));
+>  	chinfo.src = RPMSG_ADDR_ANY;
+> -	chinfo.dst = msg->addr;
+> +	chinfo.dst = le32_to_cpu(msg->addr);
 > +
-> +There are several unsorted documents that don't seem to fit on other parts
-> +of the documentation body, or may require some adjustments and/or conversion
-> +to ReStructured Text format, or are simply too old.
-> +
-> +.. toctree::
-> +   :maxdepth: 2
-> +
-> +   staging/index
-> +
-> +
->  Translations
->  ------------
->
-> diff --git a/Documentation/crc32.txt b/Documentation/staging/crc32.rst
-> similarity index 100%
-> rename from Documentation/crc32.txt
-> rename to Documentation/staging/crc32.rst
-> diff --git a/Documentation/staging/index.rst b/Documentation/staging/index.rst
-> new file mode 100644
-> index 000000000000..8e98517675ca
-> --- /dev/null
-> +++ b/Documentation/staging/index.rst
-> @@ -0,0 +1,32 @@
-> +.. SPDX-License-Identifier: GPL-2.0
-> +
-> +Unsorted Documentation
-> +======================
-> +
-> +.. toctree::
-> +   :maxdepth: 2
-> +
-> +   crc32
-> +   kprobes
-> +   lzo
-> +   remoteproc
-> +   rpmsg
-> +   speculation
-> +   static-keys
-> +   tee
-> +   xz
-> +
-> +Atomic Types
-> +============
-> +
-> +.. literalinclude:: ../atomic_t.txt
-> +
-> +Atomic bitops
-> +=============
-> +
-> +.. literalinclude:: ../atomic_bitops.txt
-> +
-> +Memory Barriers
-> +===============
-> +
-> +.. literalinclude:: ../memory-barriers.txt
-> diff --git a/Documentation/kprobes.txt b/Documentation/staging/kprobes.rst
-> similarity index 100%
-> rename from Documentation/kprobes.txt
-> rename to Documentation/staging/kprobes.rst
-> diff --git a/Documentation/lzo.txt b/Documentation/staging/lzo.rst
-> similarity index 100%
-> rename from Documentation/lzo.txt
-> rename to Documentation/staging/lzo.rst
-> diff --git a/Documentation/remoteproc.txt b/Documentation/staging/remoteproc.rst
-> similarity index 99%
-> rename from Documentation/remoteproc.txt
-> rename to Documentation/staging/remoteproc.rst
-> index 2be1147256e0..9cccd3dd6a4b 100644
-> --- a/Documentation/remoteproc.txt
-> +++ b/Documentation/staging/remoteproc.rst
-> @@ -22,7 +22,7 @@ for remote processors that supports this kind of communication. This way,
->  platform-specific remoteproc drivers only need to provide a few low-level
->  handlers, and then all rpmsg drivers will then just work
->  (for more information about the virtio-based rpmsg bus and its drivers,
-> -please read Documentation/rpmsg.txt).
-> +please read Documentation/staging/rpmsg.rst).
->  Registration of other types of virtio devices is now also possible. Firmwares
->  just need to publish what kind of virtio devices do they support, and then
->  remoteproc will add those devices. This makes it possible to reuse the
-> diff --git a/Documentation/rpmsg.txt b/Documentation/staging/rpmsg.rst
-> similarity index 100%
-> rename from Documentation/rpmsg.txt
-> rename to Documentation/staging/rpmsg.rst
-> diff --git a/Documentation/speculation.txt b/Documentation/staging/speculation.rst
-> similarity index 97%
-> rename from Documentation/speculation.txt
-> rename to Documentation/staging/speculation.rst
-> index 50d7ea857cff..8045d99bcf12 100644
-> --- a/Documentation/speculation.txt
-> +++ b/Documentation/staging/speculation.rst
-> @@ -1,9 +1,11 @@
-> +===========
-> +Speculation
-> +===========
-> +
->  This document explains potential effects of speculation, and how undesirable
->  effects can be mitigated portably using common APIs.
->
-> -===========
-> -Speculation
-> -===========
-> +------------------------------------------------------------------------------
->
->  To improve performance and minimize average latencies, many contemporary CPUs
->  employ speculative execution techniques such as branch prediction, performing
-> diff --git a/Documentation/static-keys.txt b/Documentation/staging/static-keys.rst
-> similarity index 100%
-> rename from Documentation/static-keys.txt
-> rename to Documentation/staging/static-keys.rst
-> diff --git a/Documentation/tee.txt b/Documentation/staging/tee.rst
-> similarity index 99%
-> rename from Documentation/tee.txt
-> rename to Documentation/staging/tee.rst
-> index c8fad81c4563..324604a15d17 100644
-> --- a/Documentation/tee.txt
-> +++ b/Documentation/staging/tee.rst
-> @@ -162,6 +162,7 @@ The AMD-TEE driver packages the command buffer payload for processing in TEE.
->  The command buffer format for the different TEE commands can be found in [7].
->
->  The TEE commands supported by AMD-TEE Trusted OS are:
-> +
->  * TEE_CMD_ID_LOAD_TA          - loads a Trusted Application (TA) binary into
->                                  TEE environment.
->  * TEE_CMD_ID_UNLOAD_TA        - unloads TA binary from TEE environment.
-> diff --git a/Documentation/xz.txt b/Documentation/staging/xz.rst
-> similarity index 100%
-> rename from Documentation/xz.txt
-> rename to Documentation/staging/xz.rst
-> diff --git a/Documentation/trace/kprobetrace.rst b/Documentation/trace/kprobetrace.rst
-> index cc4c5fc313df..c1709165c553 100644
-> --- a/Documentation/trace/kprobetrace.rst
-> +++ b/Documentation/trace/kprobetrace.rst
-> @@ -40,7 +40,7 @@ Synopsis of kprobe_events
->   MEMADDR       : Address where the probe is inserted.
->   MAXACTIVE     : Maximum number of instances of the specified function that
->                   can be probed simultaneously, or 0 for the default value
-> -                 as defined in Documentation/kprobes.txt section 1.3.1.
-> +                 as defined in Documentation/staging/kprobes.rst section 1.3.1.
->
->   FETCHARGS     : Arguments. Each probe can have up to 128 args.
->    %REG         : Fetch register REG
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 805309399939..4c9814ee2fdb 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -9597,7 +9597,7 @@ M:        Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>
->  M:     "David S. Miller" <davem@davemloft.net>
->  M:     Masami Hiramatsu <mhiramat@kernel.org>
->  S:     Maintained
-> -F:     Documentation/kprobes.txt
-> +F:     Documentation/staging/kprobes.rst
->  F:     include/asm-generic/kprobes.h
->  F:     include/linux/kprobes.h
->  F:     kernel/kprobes.c
-> @@ -14500,7 +14500,7 @@ S:      Maintained
->  T:     git git://git.kernel.org/pub/scm/linux/kernel/git/andersson/remoteproc.git rproc-next
->  F:     Documentation/ABI/testing/sysfs-class-remoteproc
->  F:     Documentation/devicetree/bindings/remoteproc/
-> -F:     Documentation/remoteproc.txt
-> +F:     Documentation/staging/remoteproc.rst
->  F:     drivers/remoteproc/
->  F:     include/linux/remoteproc.h
->  F:     include/linux/remoteproc/
-> @@ -14512,7 +14512,7 @@ L:      linux-remoteproc@vger.kernel.org
->  S:     Maintained
->  T:     git git://git.kernel.org/pub/scm/linux/kernel/git/andersson/remoteproc.git rpmsg-next
->  F:     Documentation/ABI/testing/sysfs-bus-rpmsg
-> -F:     Documentation/rpmsg.txt
-> +F:     Documentation/staging/rpmsg.rst
->  F:     drivers/rpmsg/
->  F:     include/linux/rpmsg.h
->  F:     include/linux/rpmsg/
-> @@ -16761,7 +16761,7 @@ TEE SUBSYSTEM
->  M:     Jens Wiklander <jens.wiklander@linaro.org>
->  L:     tee-dev@lists.linaro.org
->  S:     Maintained
-> -F:     Documentation/tee.txt
-> +F:     Documentation/staging/tee.rst
->  F:     drivers/tee/
->  F:     include/linux/tee_drv.h
->  F:     include/uapi/linux/tee.h
-> diff --git a/include/linux/jump_label.h b/include/linux/jump_label.h
-> index 3526c0aee954..32809624d422 100644
-> --- a/include/linux/jump_label.h
-> +++ b/include/linux/jump_label.h
-> @@ -68,7 +68,7 @@
->   * Lacking toolchain and or architecture support, static keys fall back to a
->   * simple conditional branch.
->   *
-> - * Additional babbling in: Documentation/static-keys.txt
-> + * Additional babbling in: Documentation/staging/static-keys.rst
->   */
->
->  #ifndef __ASSEMBLY__
-> diff --git a/lib/crc32.c b/lib/crc32.c
-> index 4a20455d1f61..35a03d03f973 100644
-> --- a/lib/crc32.c
-> +++ b/lib/crc32.c
-> @@ -24,7 +24,7 @@
->   * Version 2.  See the file COPYING for more details.
->   */
->
-> -/* see: Documentation/crc32.txt for a description of algorithms */
-> +/* see: Documentation/staging/crc32.rst for a description of algorithms */
->
->  #include <linux/crc32.h>
->  #include <linux/crc32poly.h>
-> diff --git a/lib/lzo/lzo1x_decompress_safe.c b/lib/lzo/lzo1x_decompress_safe.c
-> index 2717c7963acd..7892a40cf765 100644
-> --- a/lib/lzo/lzo1x_decompress_safe.c
-> +++ b/lib/lzo/lzo1x_decompress_safe.c
-> @@ -32,7 +32,7 @@
->   * depending on the base count. Since the base count is taken from a u8
->   * and a few bits, it is safe to assume that it will always be lower than
->   * or equal to 2*255, thus we can always prevent any overflow by accepting
-> - * two less 255 steps. See Documentation/lzo.txt for more information.
-> + * two less 255 steps. See Documentation/staging/lzo.rst for more information.
->   */
->  #define MAX_255_COUNT      ((((size_t)~0) / 255) - 2)
->
-> diff --git a/lib/xz/Kconfig b/lib/xz/Kconfig
-> index 22528743d4ce..5cb50245a878 100644
-> --- a/lib/xz/Kconfig
-> +++ b/lib/xz/Kconfig
-> @@ -5,7 +5,7 @@ config XZ_DEC
->         help
->           LZMA2 compression algorithm and BCJ filters are supported using
->           the .xz file format as the container. For integrity checking,
-> -         CRC32 is supported. See Documentation/xz.txt for more information.
-> +         CRC32 is supported. See Documentation/staging/xz.rst for more information.
->
->  if XZ_DEC
->
-> diff --git a/samples/kprobes/kprobe_example.c b/samples/kprobes/kprobe_example.c
-> index 501911d1b327..240f2435ce6f 100644
-> --- a/samples/kprobes/kprobe_example.c
-> +++ b/samples/kprobes/kprobe_example.c
-> @@ -5,7 +5,7 @@
->   * stack trace and selected registers when _do_fork() is called.
->   *
->   * For more information on theory of operation of kprobes, see
-> - * Documentation/kprobes.txt
-> + * Documentation/staging/kprobes.rst
->   *
->   * You will see the trace data in /var/log/messages and on the console
->   * whenever _do_fork() is invoked to create a new process.
-> diff --git a/samples/kprobes/kretprobe_example.c b/samples/kprobes/kretprobe_example.c
-> index 013e8e6ebae9..78a2da6fb3cd 100644
-> --- a/samples/kprobes/kretprobe_example.c
-> +++ b/samples/kprobes/kretprobe_example.c
-> @@ -11,7 +11,7 @@
->   * If no func_name is specified, _do_fork is instrumented
->   *
->   * For more information on theory of operation of kretprobes, see
-> - * Documentation/kprobes.txt
-> + * Documentation/staging/kprobes.rst
->   *
->   * Build and insert the kernel module as done in the kprobe example.
->   * You will see the trace data in /var/log/messages and on the console
-> --
-> 2.26.2
->
+> +	dev_info(dev, "%sing channel %s addr 0x%x\n",
+> +		 le32_to_cpu(msg->flags) & RPMSG_NS_DESTROY ? "destroy" : "creat",
+> +		 msg->name, chinfo.dst);
+>  
+> -	if (msg->flags & RPMSG_NS_DESTROY) {
+> +	if (le32_to_cpu(msg->flags) & RPMSG_NS_DESTROY) {
+>  		ret = rpmsg_unregister_device(&vrp->vdev->dev, &chinfo);
+>  		if (ret)
+>  			dev_err(dev, "rpmsg_destroy_channel failed: %d\n", ret);
+> -- 
+> 1.9.3
+> 
