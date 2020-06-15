@@ -1,200 +1,384 @@
-Return-Path: <SRS0=pESM=7Z=vger.kernel.org=linux-remoteproc-owner@kernel.org>
+Return-Path: <SRS0=LqBZ=74=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C8B6C433DF
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 12 Jun 2020 22:54:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6288C433E3
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 15 Jun 2020 06:51:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DB01B2078E
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 12 Jun 2020 22:54:18 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Ao3O9O0U"
+	by mail.kernel.org (Postfix) with ESMTP id 75F2B2067B
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 15 Jun 2020 06:51:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1592203875;
+	bh=DFY5FpzrJgN81lmVCJ+Y6CWVQ+LEkXh6XxkoD221LIk=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=cWBzMTYyOjTTuXH3GFh6L4KzbJmwSIZ4oVfXr9dbRqLr8aiQK3532A8ylMVIiWXvm
+	 VTTA0h1smufGEsrHTI+OGQrFAKY013qJKfehvF0InKsDTiiudGSivIFW/gC0SeIzdn
+	 LxQ3B7UIRe2SSY2FwY/2vC04qLJNU1f/gGwVU69I=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726449AbgFLWyJ (ORCPT
+        id S1728654AbgFOGvO (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 12 Jun 2020 18:54:09 -0400
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:58112 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726309AbgFLWyH (ORCPT
+        Mon, 15 Jun 2020 02:51:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36804 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728866AbgFOGug (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 12 Jun 2020 18:54:07 -0400
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 05CMs3Ck122151;
-        Fri, 12 Jun 2020 17:54:03 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1592002443;
-        bh=4EvBtK/rfun7TTazLD264i1an7pFcd5qtvhAx6gjSkc=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=Ao3O9O0Ua7PlhJ8u+T/QqOahciZ5iT6mNrnBK0bVpqBoGe9/nY/QJiCDwIDNPwKuM
-         YYK5vKuiWlar0Bs11sy6khRZxEX7f6OJdG4EPZ5RuTsxCPqPTg7wM/xb3jhwxJ+qRQ
-         LRtBUjuJcVHcQ23YvY11zdPmLe3eI1Lyah2UsBBE=
-Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 05CMs2MG064443
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 12 Jun 2020 17:54:03 -0500
-Received: from DFLE109.ent.ti.com (10.64.6.30) by DFLE114.ent.ti.com
- (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3; Fri, 12
- Jun 2020 17:54:01 -0500
-Received: from fllv0039.itg.ti.com (10.64.41.19) by DFLE109.ent.ti.com
- (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3 via
- Frontend Transport; Fri, 12 Jun 2020 17:54:01 -0500
-Received: from fllv0103.dal.design.ti.com (fllv0103.dal.design.ti.com [10.247.120.73])
-        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id 05CMs1VI119270;
-        Fri, 12 Jun 2020 17:54:01 -0500
-Received: from localhost ([10.250.48.148])
-        by fllv0103.dal.design.ti.com (8.14.7/8.14.7) with ESMTP id 05CMs1vW063928;
-        Fri, 12 Jun 2020 17:54:01 -0500
-From:   Suman Anna <s-anna@ti.com>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>
-CC:     Lokesh Vutla <lokeshvutla@ti.com>,
-        <linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, Suman Anna <s-anna@ti.com>
-Subject: [PATCH v3 1/2] dt-bindings: remoteproc: k3-dsp: Update bindings for C71x DSPs
-Date:   Fri, 12 Jun 2020 17:53:56 -0500
-Message-ID: <20200612225357.8251-2-s-anna@ti.com>
-X-Mailer: git-send-email 2.26.0
-In-Reply-To: <20200612225357.8251-1-s-anna@ti.com>
-References: <20200612225357.8251-1-s-anna@ti.com>
+        Mon, 15 Jun 2020 02:50:36 -0400
+Received: from mail.kernel.org (ip5f5ad5c5.dynamic.kabel-deutschland.de [95.90.213.197])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id CDE9421475;
+        Mon, 15 Jun 2020 06:50:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1592203833;
+        bh=DFY5FpzrJgN81lmVCJ+Y6CWVQ+LEkXh6XxkoD221LIk=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=nAIC9RUb5a2TFAFCyXvp457Mnd2rdbwjEN39d8duXxTH86R+A9tfGD85wmAs7vPW6
+         pGDJRB2Pzye7o+uZAVY1mExESYAkuEkVjlfdiaMfJ76uPCBynIfbr+0OcZLzrgtFyC
+         zUTo0JKn48uY2TBeJahau1tVeXqans/L5vTCoTYI=
+Received: from mchehab by mail.kernel.org with local (Exim 4.93)
+        (envelope-from <mchehab@kernel.org>)
+        id 1jkiww-009o6y-O8; Mon, 15 Jun 2020 08:50:30 +0200
+From:   Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>
+Cc:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+        "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
+        Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Ohad Ben-Cohen <ohad@wizery.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Jens Wiklander <jens.wiklander@linaro.org>,
+        linux-remoteproc@vger.kernel.org, tee-dev@lists.linaro.org
+Subject: [PATCH 20/22] docs: move remaining stuff under Documentation/*.txt to Documentation/staging
+Date:   Mon, 15 Jun 2020 08:50:25 +0200
+Message-Id: <11bd0d75e65a874f7c276a0aeab0fe13f3376f5f.1592203650.git.mchehab+huawei@kernel.org>
+X-Mailer: git-send-email 2.26.2
+In-Reply-To: <cover.1592203650.git.mchehab+huawei@kernel.org>
+References: <cover.1592203650.git.mchehab+huawei@kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Some Texas Instruments K3 family of SoCs have one of more newer
-generation TMS320C71x CorePac processor subsystem in addition to
-the existing TMS320C66x CorePac processor subsystems. Update the
-device tree bindings document for the C71x DSP devices.
+There are several files that I was unable to find a proper place
+for them, and 3 ones that are still in plain old text format.
 
-The example is also updated to show the single C71 DSP present
-on J721E SoCs.
+Let's place those stuff behind the carpet, as we'd like to keep the
+root directory clean.
 
-Signed-off-by: Suman Anna <s-anna@ti.com>
+We can later discuss and move those into better places.
+
+Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 ---
-v3:
- - Dropped Rob's previous Reviewed-by tag due to decent changes in the
-   patch
- - Replaced the minItems and maxItems from reg with actual items list
- - Dropped C71 reserved memory nodes from example
-v2: https://patchwork.kernel.org/patch/11563231/
+ Documentation/index.rst                       | 13 ++++++++
+ .../{crc32.txt => staging/crc32.rst}          |  0
+ Documentation/staging/index.rst               | 32 +++++++++++++++++++
+ .../{kprobes.txt => staging/kprobes.rst}      |  0
+ Documentation/{lzo.txt => staging/lzo.rst}    |  0
+ .../remoteproc.rst}                           |  2 +-
+ .../{rpmsg.txt => staging/rpmsg.rst}          |  0
+ .../speculation.rst}                          |  8 +++--
+ .../static-keys.rst}                          |  0
+ Documentation/{tee.txt => staging/tee.rst}    |  1 +
+ Documentation/{xz.txt => staging/xz.rst}      |  0
+ Documentation/trace/kprobetrace.rst           |  2 +-
+ MAINTAINERS                                   |  8 ++---
+ include/linux/jump_label.h                    |  2 +-
+ lib/crc32.c                                   |  2 +-
+ lib/lzo/lzo1x_decompress_safe.c               |  2 +-
+ lib/xz/Kconfig                                |  2 +-
+ samples/kprobes/kprobe_example.c              |  2 +-
+ samples/kprobes/kretprobe_example.c           |  2 +-
+ 19 files changed, 63 insertions(+), 15 deletions(-)
+ rename Documentation/{crc32.txt => staging/crc32.rst} (100%)
+ create mode 100644 Documentation/staging/index.rst
+ rename Documentation/{kprobes.txt => staging/kprobes.rst} (100%)
+ rename Documentation/{lzo.txt => staging/lzo.rst} (100%)
+ rename Documentation/{remoteproc.txt => staging/remoteproc.rst} (99%)
+ rename Documentation/{rpmsg.txt => staging/rpmsg.rst} (100%)
+ rename Documentation/{speculation.txt => staging/speculation.rst} (97%)
+ rename Documentation/{static-keys.txt => staging/static-keys.rst} (100%)
+ rename Documentation/{tee.txt => staging/tee.rst} (99%)
+ rename Documentation/{xz.txt => staging/xz.rst} (100%)
 
- .../bindings/remoteproc/ti,k3-dsp-rproc.yaml  | 68 +++++++++++++++----
- 1 file changed, 55 insertions(+), 13 deletions(-)
-
-diff --git a/Documentation/devicetree/bindings/remoteproc/ti,k3-dsp-rproc.yaml b/Documentation/devicetree/bindings/remoteproc/ti,k3-dsp-rproc.yaml
-index f03e88c42a6e..8eaf326b5a7f 100644
---- a/Documentation/devicetree/bindings/remoteproc/ti,k3-dsp-rproc.yaml
-+++ b/Documentation/devicetree/bindings/remoteproc/ti,k3-dsp-rproc.yaml
-@@ -30,21 +30,12 @@ allOf:
+diff --git a/Documentation/index.rst b/Documentation/index.rst
+index 71eca3171574..3b491af0122d 100644
+--- a/Documentation/index.rst
++++ b/Documentation/index.rst
+@@ -182,6 +182,19 @@ subprojects.
  
- properties:
-   compatible:
--    const: ti,j721e-c66-dsp
-+    enum:
-+      - ti,j721e-c66-dsp
-+      - ti,j721e-c71-dsp
-     description:
-       Use "ti,j721e-c66-dsp" for C66x DSPs on K3 J721E SoCs
--
--  reg:
--    items:
--      - description: Address and Size of the L2 SRAM internal memory region
--      - description: Address and Size of the L1 PRAM internal memory region
--      - description: Address and Size of the L1 DRAM internal memory region
--
--  reg-names:
--    items:
--      - const: l2sram
--      - const: l1pram
--      - const: l1dram
-+      Use "ti,j721e-c71-dsp" for C71x DSPs on K3 J721E SoCs
+    filesystems/ext4/index
  
-   resets:
-     description: |
-@@ -92,6 +83,40 @@ properties:
-       should be defined as per the generic bindings in,
-       Documentation/devicetree/bindings/sram/sram.yaml
- 
-+if:
-+  properties:
-+    compatible:
-+      enum:
-+        - ti,j721e-c66-dsp
-+then:
-+  properties:
-+    reg:
-+      items:
-+        - description: Address and Size of the L2 SRAM internal memory region
-+        - description: Address and Size of the L1 PRAM internal memory region
-+        - description: Address and Size of the L1 DRAM internal memory region
-+    reg-names:
-+      items:
-+        - const: l2sram
-+        - const: l1pram
-+        - const: l1dram
-+else:
-+  if:
-+    properties:
-+      compatible:
-+        enum:
-+          - ti,j721e-c71-dsp
-+  then:
-+    properties:
-+      reg:
-+        items:
-+          - description: Address and Size of the L2 SRAM internal memory region
-+          - description: Address and Size of the L1 DRAM internal memory region
-+      reg-names:
-+        items:
-+          - const: l2sram
-+          - const: l1dram
++Other documentation
++-------------------
 +
- required:
-  - compatible
-  - reg
-@@ -116,6 +141,7 @@ examples:
-             #address-cells = <2>;
-             #size-cells = <2>;
-             ranges = <0x00 0x00100000 0x00 0x00100000 0x00 0x00020000>, /* ctrl mmr */
-+                     <0x00 0x64800000 0x00 0x64800000 0x00 0x00800000>, /* C71_0 */
-                      <0x4d 0x80800000 0x4d 0x80800000 0x00 0x00800000>, /* C66_0 */
-                      <0x4d 0x81800000 0x4d 0x81800000 0x00 0x00800000>; /* C66_1 */
- 
-@@ -135,5 +161,21 @@ examples:
-                                 <&c66_0_memory_region>;
-                 mboxes = <&mailbox0_cluster3 &mbox_c66_0>;
-             };
++There are several unsorted documents that don't seem to fit on other parts
++of the documentation body, or may require some adjustments and/or conversion
++to ReStructured Text format, or are simply too old.
 +
-+            /* J721E C71_0 DSP node */
-+            c71_0: dsp@64800000 {
-+                compatible = "ti,j721e-c71-dsp";
-+                reg = <0x00 0x64800000 0x00 0x00080000>,
-+                      <0x00 0x64e00000 0x00 0x0000c000>;
-+                reg-names = "l2sram", "l1dram";
-+                ti,sci = <&dmsc>;
-+                ti,sci-dev-id = <15>;
-+                ti,sci-proc-ids = <0x30 0xFF>;
-+                resets = <&k3_reset 15 1>;
-+                firmware-name = "j7-c71_0-fw";
-+                memory-region = <&c71_0_dma_memory_region>,
-+                                <&c71_0_memory_region>;
-+                mboxes = <&mailbox0_cluster4 &mbox_c71_0>;
-+            };
-         };
-     };
++.. toctree::
++   :maxdepth: 2
++
++   staging/index
++
++
+ Translations
+ ------------
+ 
+diff --git a/Documentation/crc32.txt b/Documentation/staging/crc32.rst
+similarity index 100%
+rename from Documentation/crc32.txt
+rename to Documentation/staging/crc32.rst
+diff --git a/Documentation/staging/index.rst b/Documentation/staging/index.rst
+new file mode 100644
+index 000000000000..8e98517675ca
+--- /dev/null
++++ b/Documentation/staging/index.rst
+@@ -0,0 +1,32 @@
++.. SPDX-License-Identifier: GPL-2.0
++
++Unsorted Documentation
++======================
++
++.. toctree::
++   :maxdepth: 2
++
++   crc32
++   kprobes
++   lzo
++   remoteproc
++   rpmsg
++   speculation
++   static-keys
++   tee
++   xz
++
++Atomic Types
++============
++
++.. literalinclude:: ../atomic_t.txt
++
++Atomic bitops
++=============
++
++.. literalinclude:: ../atomic_bitops.txt
++
++Memory Barriers
++===============
++
++.. literalinclude:: ../memory-barriers.txt
+diff --git a/Documentation/kprobes.txt b/Documentation/staging/kprobes.rst
+similarity index 100%
+rename from Documentation/kprobes.txt
+rename to Documentation/staging/kprobes.rst
+diff --git a/Documentation/lzo.txt b/Documentation/staging/lzo.rst
+similarity index 100%
+rename from Documentation/lzo.txt
+rename to Documentation/staging/lzo.rst
+diff --git a/Documentation/remoteproc.txt b/Documentation/staging/remoteproc.rst
+similarity index 99%
+rename from Documentation/remoteproc.txt
+rename to Documentation/staging/remoteproc.rst
+index 2be1147256e0..9cccd3dd6a4b 100644
+--- a/Documentation/remoteproc.txt
++++ b/Documentation/staging/remoteproc.rst
+@@ -22,7 +22,7 @@ for remote processors that supports this kind of communication. This way,
+ platform-specific remoteproc drivers only need to provide a few low-level
+ handlers, and then all rpmsg drivers will then just work
+ (for more information about the virtio-based rpmsg bus and its drivers,
+-please read Documentation/rpmsg.txt).
++please read Documentation/staging/rpmsg.rst).
+ Registration of other types of virtio devices is now also possible. Firmwares
+ just need to publish what kind of virtio devices do they support, and then
+ remoteproc will add those devices. This makes it possible to reuse the
+diff --git a/Documentation/rpmsg.txt b/Documentation/staging/rpmsg.rst
+similarity index 100%
+rename from Documentation/rpmsg.txt
+rename to Documentation/staging/rpmsg.rst
+diff --git a/Documentation/speculation.txt b/Documentation/staging/speculation.rst
+similarity index 97%
+rename from Documentation/speculation.txt
+rename to Documentation/staging/speculation.rst
+index 50d7ea857cff..8045d99bcf12 100644
+--- a/Documentation/speculation.txt
++++ b/Documentation/staging/speculation.rst
+@@ -1,9 +1,11 @@
++===========
++Speculation
++===========
++
+ This document explains potential effects of speculation, and how undesirable
+ effects can be mitigated portably using common APIs.
+ 
+-===========
+-Speculation
+-===========
++------------------------------------------------------------------------------
+ 
+ To improve performance and minimize average latencies, many contemporary CPUs
+ employ speculative execution techniques such as branch prediction, performing
+diff --git a/Documentation/static-keys.txt b/Documentation/staging/static-keys.rst
+similarity index 100%
+rename from Documentation/static-keys.txt
+rename to Documentation/staging/static-keys.rst
+diff --git a/Documentation/tee.txt b/Documentation/staging/tee.rst
+similarity index 99%
+rename from Documentation/tee.txt
+rename to Documentation/staging/tee.rst
+index c8fad81c4563..324604a15d17 100644
+--- a/Documentation/tee.txt
++++ b/Documentation/staging/tee.rst
+@@ -162,6 +162,7 @@ The AMD-TEE driver packages the command buffer payload for processing in TEE.
+ The command buffer format for the different TEE commands can be found in [7].
+ 
+ The TEE commands supported by AMD-TEE Trusted OS are:
++
+ * TEE_CMD_ID_LOAD_TA          - loads a Trusted Application (TA) binary into
+                                 TEE environment.
+ * TEE_CMD_ID_UNLOAD_TA        - unloads TA binary from TEE environment.
+diff --git a/Documentation/xz.txt b/Documentation/staging/xz.rst
+similarity index 100%
+rename from Documentation/xz.txt
+rename to Documentation/staging/xz.rst
+diff --git a/Documentation/trace/kprobetrace.rst b/Documentation/trace/kprobetrace.rst
+index cc4c5fc313df..c1709165c553 100644
+--- a/Documentation/trace/kprobetrace.rst
++++ b/Documentation/trace/kprobetrace.rst
+@@ -40,7 +40,7 @@ Synopsis of kprobe_events
+  MEMADDR	: Address where the probe is inserted.
+  MAXACTIVE	: Maximum number of instances of the specified function that
+ 		  can be probed simultaneously, or 0 for the default value
+-		  as defined in Documentation/kprobes.txt section 1.3.1.
++		  as defined in Documentation/staging/kprobes.rst section 1.3.1.
+ 
+  FETCHARGS	: Arguments. Each probe can have up to 128 args.
+   %REG		: Fetch register REG
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 805309399939..4c9814ee2fdb 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -9597,7 +9597,7 @@ M:	Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>
+ M:	"David S. Miller" <davem@davemloft.net>
+ M:	Masami Hiramatsu <mhiramat@kernel.org>
+ S:	Maintained
+-F:	Documentation/kprobes.txt
++F:	Documentation/staging/kprobes.rst
+ F:	include/asm-generic/kprobes.h
+ F:	include/linux/kprobes.h
+ F:	kernel/kprobes.c
+@@ -14500,7 +14500,7 @@ S:	Maintained
+ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/andersson/remoteproc.git rproc-next
+ F:	Documentation/ABI/testing/sysfs-class-remoteproc
+ F:	Documentation/devicetree/bindings/remoteproc/
+-F:	Documentation/remoteproc.txt
++F:	Documentation/staging/remoteproc.rst
+ F:	drivers/remoteproc/
+ F:	include/linux/remoteproc.h
+ F:	include/linux/remoteproc/
+@@ -14512,7 +14512,7 @@ L:	linux-remoteproc@vger.kernel.org
+ S:	Maintained
+ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/andersson/remoteproc.git rpmsg-next
+ F:	Documentation/ABI/testing/sysfs-bus-rpmsg
+-F:	Documentation/rpmsg.txt
++F:	Documentation/staging/rpmsg.rst
+ F:	drivers/rpmsg/
+ F:	include/linux/rpmsg.h
+ F:	include/linux/rpmsg/
+@@ -16761,7 +16761,7 @@ TEE SUBSYSTEM
+ M:	Jens Wiklander <jens.wiklander@linaro.org>
+ L:	tee-dev@lists.linaro.org
+ S:	Maintained
+-F:	Documentation/tee.txt
++F:	Documentation/staging/tee.rst
+ F:	drivers/tee/
+ F:	include/linux/tee_drv.h
+ F:	include/uapi/linux/tee.h
+diff --git a/include/linux/jump_label.h b/include/linux/jump_label.h
+index 3526c0aee954..32809624d422 100644
+--- a/include/linux/jump_label.h
++++ b/include/linux/jump_label.h
+@@ -68,7 +68,7 @@
+  * Lacking toolchain and or architecture support, static keys fall back to a
+  * simple conditional branch.
+  *
+- * Additional babbling in: Documentation/static-keys.txt
++ * Additional babbling in: Documentation/staging/static-keys.rst
+  */
+ 
+ #ifndef __ASSEMBLY__
+diff --git a/lib/crc32.c b/lib/crc32.c
+index 4a20455d1f61..35a03d03f973 100644
+--- a/lib/crc32.c
++++ b/lib/crc32.c
+@@ -24,7 +24,7 @@
+  * Version 2.  See the file COPYING for more details.
+  */
+ 
+-/* see: Documentation/crc32.txt for a description of algorithms */
++/* see: Documentation/staging/crc32.rst for a description of algorithms */
+ 
+ #include <linux/crc32.h>
+ #include <linux/crc32poly.h>
+diff --git a/lib/lzo/lzo1x_decompress_safe.c b/lib/lzo/lzo1x_decompress_safe.c
+index 2717c7963acd..7892a40cf765 100644
+--- a/lib/lzo/lzo1x_decompress_safe.c
++++ b/lib/lzo/lzo1x_decompress_safe.c
+@@ -32,7 +32,7 @@
+  * depending on the base count. Since the base count is taken from a u8
+  * and a few bits, it is safe to assume that it will always be lower than
+  * or equal to 2*255, thus we can always prevent any overflow by accepting
+- * two less 255 steps. See Documentation/lzo.txt for more information.
++ * two less 255 steps. See Documentation/staging/lzo.rst for more information.
+  */
+ #define MAX_255_COUNT      ((((size_t)~0) / 255) - 2)
+ 
+diff --git a/lib/xz/Kconfig b/lib/xz/Kconfig
+index 22528743d4ce..5cb50245a878 100644
+--- a/lib/xz/Kconfig
++++ b/lib/xz/Kconfig
+@@ -5,7 +5,7 @@ config XZ_DEC
+ 	help
+ 	  LZMA2 compression algorithm and BCJ filters are supported using
+ 	  the .xz file format as the container. For integrity checking,
+-	  CRC32 is supported. See Documentation/xz.txt for more information.
++	  CRC32 is supported. See Documentation/staging/xz.rst for more information.
+ 
+ if XZ_DEC
+ 
+diff --git a/samples/kprobes/kprobe_example.c b/samples/kprobes/kprobe_example.c
+index 501911d1b327..240f2435ce6f 100644
+--- a/samples/kprobes/kprobe_example.c
++++ b/samples/kprobes/kprobe_example.c
+@@ -5,7 +5,7 @@
+  * stack trace and selected registers when _do_fork() is called.
+  *
+  * For more information on theory of operation of kprobes, see
+- * Documentation/kprobes.txt
++ * Documentation/staging/kprobes.rst
+  *
+  * You will see the trace data in /var/log/messages and on the console
+  * whenever _do_fork() is invoked to create a new process.
+diff --git a/samples/kprobes/kretprobe_example.c b/samples/kprobes/kretprobe_example.c
+index 013e8e6ebae9..78a2da6fb3cd 100644
+--- a/samples/kprobes/kretprobe_example.c
++++ b/samples/kprobes/kretprobe_example.c
+@@ -11,7 +11,7 @@
+  * If no func_name is specified, _do_fork is instrumented
+  *
+  * For more information on theory of operation of kretprobes, see
+- * Documentation/kprobes.txt
++ * Documentation/staging/kprobes.rst
+  *
+  * Build and insert the kernel module as done in the kprobe example.
+  * You will see the trace data in /var/log/messages and on the console
 -- 
-2.26.0
+2.26.2
 
