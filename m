@@ -2,117 +2,87 @@ Return-Path: <SRS0=DmTc=76=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A4CEC433DF
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 17 Jun 2020 13:49:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24B8BC433E0
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 17 Jun 2020 19:24:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E7B1621548
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 17 Jun 2020 13:49:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ECEEE20884
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 17 Jun 2020 19:24:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WTmaZqP6"
+	dkim=pass (2048-bit key) header.d=axis.com header.i=@axis.com header.b="fLTT4ce6"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726355AbgFQNtU (ORCPT
+        id S1726558AbgFQTYy (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 17 Jun 2020 09:49:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52822 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726328AbgFQNtU (ORCPT
+        Wed, 17 Jun 2020 15:24:54 -0400
+Received: from smtp2.axis.com ([195.60.68.18]:13084 "EHLO smtp2.axis.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726496AbgFQTYy (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 17 Jun 2020 09:49:20 -0400
-Received: from mail-lj1-x242.google.com (mail-lj1-x242.google.com [IPv6:2a00:1450:4864:20::242])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 87B96C06174E
-        for <linux-remoteproc@vger.kernel.org>; Wed, 17 Jun 2020 06:49:18 -0700 (PDT)
-Received: by mail-lj1-x242.google.com with SMTP id 9so2946735ljv.5
-        for <linux-remoteproc@vger.kernel.org>; Wed, 17 Jun 2020 06:49:18 -0700 (PDT)
+        Wed, 17 Jun 2020 15:24:54 -0400
+X-Greylist: delayed 429 seconds by postgrey-1.27 at vger.kernel.org; Wed, 17 Jun 2020 15:24:53 EDT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=vC2m/NVOsMePL7cd05WEIx6qonlbpRgoDsdMvHqyOPM=;
-        b=WTmaZqP6UdEgLvq/OSB7yIjYV9nBX4EXBL9g7HIak/60g/87RpOi2miJaHBNwUgwkc
-         H+5ch+9xdNeq6Eykr1eRu0BWx/1ulGmSUqh1/BbrvYCcsDa1ZPbxrIxaLJdo7j0PSAEf
-         Q2vRfD29srze/fsC6mP9pcuSJLoSP+bUbVZD52WfQ5XBgdZNhxM5IfB+FQETiu071r9D
-         yqqdzmF224Y7++hl3mLT2AyQLSS2lj5jC+ljT3Y3pSQI4y4JZRU4mgyjc8noBbCTOb5V
-         mz+mmSeD5JGuL7JWtzL+dgLfJZ9QhZzrNtdSSQEV7PA5YZxk4W69Vw2Kfu3+YDF/LdKt
-         GTCA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=vC2m/NVOsMePL7cd05WEIx6qonlbpRgoDsdMvHqyOPM=;
-        b=aZ1Exyi0WA4iuDGn0omYtjzbvcdGDceLz9gYKLvcojPxbCC4MudXpZ6f4e4G8t+m+7
-         fEnSodyDVdG9n2mapdrVyzRx+dEKFQrW/knyu/G1FdgM6QwDUQ5yd5gHLYlLglTQ/Ptm
-         +VwhY+64BTzcrEBSq8AgVzlq9V3p8w8qlE2OEU5D9V/pNsKrAcxVIJQV2oVpR9iiC3ns
-         Wdepg4aJ6PJVprm8nlG+cNcHvdl/MYDA4N/4Of+cOXOhyEF29byEgduc+Rmv1N6uH/Sd
-         71HzXhPEXxDNeyEGG5u8mpE5Ik25beXR/v9Nz76V6fCNelvvqqCvlNNB+9MVS3Mp57Xj
-         tmSg==
-X-Gm-Message-State: AOAM530lODJ5AevE9nafyTVAWkDNuChDrmi8fY4vyqDcxmlcfhAf4Gcx
-        eZ+qU/37g19uEY38wecaYFuSj372o39KRZg+IEOWzg==
-X-Google-Smtp-Source: ABdhPJyvm7mXDGUIA1HB62LGReElqV+BhcGKmVz/LfVuEfkWC4MV5x1jr6gooo2ixzzp+Ijd7hPb38OMLUJtFoXFTqs=
-X-Received: by 2002:a2e:974e:: with SMTP id f14mr3960178ljj.102.1592401756905;
- Wed, 17 Jun 2020 06:49:16 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200617065658.27567-1-naresh.kamboju@linaro.org>
-In-Reply-To: <20200617065658.27567-1-naresh.kamboju@linaro.org>
-From:   Naresh Kamboju <naresh.kamboju@linaro.org>
-Date:   Wed, 17 Jun 2020 19:19:04 +0530
-Message-ID: <CA+G9fYuEojvbmvLPZ7JzY9bNh4f030sYGZOWQU1Rf=6rFUPuUw@mail.gmail.com>
-Subject: Re: [PATCH] remoteproc: qcom: q6v5-mss: Fix kfree build error
-To:     linux-arm-msm@vger.kernel.org,
-        open list <linux-kernel@vger.kernel.org>,
-        linux-remoteproc@vger.kernel.org
-Cc:     Sibi Sankar <sibis@codeaurora.org>,
-        Vinod Koul <vinod.koul@linaro.org>, agross@kernel.org,
-        Ohad Ben Cohen <ohad@wizery.com>,
+  d=axis.com; l=849; q=dns/txt; s=axis-central1;
+  t=1592421894; x=1623957894;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=CoUUOiZsKnhfZqKAoIVjBNqmCj7KbvkrBiiGm12QUvk=;
+  b=fLTT4ce6FvCdr7SPkTWjXKMxp0NGkXFnSbrFCtgWGAhxs06ODfRgqGhM
+   o77Mdo9PBopqbKgUTRcwFDe+7JBlSkIdd+sJgH6Lyrh1tmnw933HG6MP8
+   R3YEpJ6iBXHJYOvRttsyusgjLaF46pQ2NJV2WvDF+hLcZwPYyLx/3zwdI
+   EGEd4iTo6KThZLpxoebuFvqWWdt8G4sUOyggpcJCnQHbnLyfQ8q1hJBl8
+   rm11QmDc4f/J0p2YJQyiu+PDDfxpl3n6R11o/sCtQ1scBqIFDRJxE8kvO
+   BuHohtbGzOqqQTai7AT/dvgWTph83ArLizGjsAfQtzAgAjaLqctIzIjHJ
+   A==;
+IronPort-SDR: 50gvyFBNjMKUk/jDHf+ZW0rKM/PX94/QfJ2H/hQVUTkuOhRG7tSy1HEPaCQN8cGV3u0BQQf5yz
+ fnNsWYdK4cje1vxXsJJWOlkqkzQrolqA0EkbYD1VqeDnLBQMoq6zy3abPfLaGze7gIk8zsJvEd
+ +GXNNz64YbIU8/cF66x62jk94fPDL6KP3ZO37r28eTVj6WNHkUzZh9cZEi0luEdkaoGLcvGtjM
+ Cm3xOoFqdtXohCBzU8Gf/EwwXLmFGW1uVf+GdxOPJ0Xobup1pE7tNGtw091SdnZc3WmPOUXa1K
+ GkA=
+X-IronPort-AV: E=Sophos;i="5.73,523,1583190000"; 
+   d="scan'208";a="9645544"
+Date:   Wed, 17 Jun 2020 21:17:42 +0200
+From:   Vincent Whitchurch <vincent.whitchurch@axis.com>
+To:     Guennadi Liakhovetski <guennadi.liakhovetski@linux.intel.com>
+CC:     <kvm@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>,
+        <virtualization@lists.linux-foundation.org>,
+        <sound-open-firmware@alsa-project.org>,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Liam Girdwood <liam.r.girdwood@linux.intel.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Ohad Ben-Cohen <ohad@wizery.com>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Mathieu Poirier <mathieu.poirier@linaro.org>
+Subject: Re: [PATCH v3 5/5] vhost: add an RPMsg API
+Message-ID: <20200617191741.whnp7iteb36cjnia@axis.com>
+References: <20200527180541.5570-1-guennadi.liakhovetski@linux.intel.com>
+ <20200527180541.5570-6-guennadi.liakhovetski@linux.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20200527180541.5570-6-guennadi.liakhovetski@linux.intel.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-+ linux-remoteproc@vger.kernel.org
+On Wed, May 27, 2020 at 08:05:41PM +0200, Guennadi Liakhovetski wrote:
+> Linux supports running the RPMsg protocol over the VirtIO transport
+> protocol, but currently there is only support for VirtIO clients and
+> no support for a VirtIO server. This patch adds a vhost-based RPMsg
+> server implementation.
 
-On Wed, 17 Jun 2020 at 12:27, Naresh Kamboju <naresh.kamboju@linaro.org> wr=
-ote:
->
-> This patch adds linux/slab.h to fix build error in qcom_q6v5_mss.c
->
-> Build error:
->  ../drivers/remoteproc/qcom_q6v5_mss.c:
->   In function =E2=80=98q6v5_mpss_init_image=E2=80=99:
->  ../drivers/remoteproc/qcom_q6v5_mss.c:772:3:
->   error: implicit declaration of function =E2=80=98kfree=E2=80=99;
->   did you mean =E2=80=98vfree=E2=80=99? [-Werror=3Dimplicit-function-decl=
-aration]
->    772 |   kfree(metadata);
->        |   ^~~~~
->        |   vfree
->
-> Signed-off-by: Naresh Kamboju <naresh.kamboju@linaro.org>
-> ---
->  drivers/remoteproc/qcom_q6v5_mss.c | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/drivers/remoteproc/qcom_q6v5_mss.c b/drivers/remoteproc/qcom=
-_q6v5_mss.c
-> index feb70283b6a2..903b2bb97e12 100644
-> --- a/drivers/remoteproc/qcom_q6v5_mss.c
-> +++ b/drivers/remoteproc/qcom_q6v5_mss.c
-> @@ -26,6 +26,7 @@
->  #include <linux/reset.h>
->  #include <linux/soc/qcom/mdt_loader.h>
->  #include <linux/iopoll.h>
-> +#include <linux/slab.h>
->
->  #include "remoteproc_internal.h"
->  #include "qcom_common.h"
-> --
-> 2.17.1
->
+This looks really useful, but why is it implemented as an API and not as
+a real vhost driver which implements an rpmsg bus?  If you implement it
+as a vhost driver which implements rpmsg_device_ops and
+rpmsg_endpoint_ops, then wouldn't you be able to implement your
+vhost-sof driver using the normal rpmsg APIs?
+
+I tried quickly hooking up this code to such a vhost driver and I was
+able to communicate between host and guest systems with both
+rpmsg-client-sample and rpmsg-char which almost no modifications to
+those drivers.
