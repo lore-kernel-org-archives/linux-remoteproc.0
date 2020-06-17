@@ -1,245 +1,438 @@
-Return-Path: <SRS0=WJhg=75=vger.kernel.org=linux-remoteproc-owner@kernel.org>
+Return-Path: <SRS0=DmTc=76=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E10A3C433E1
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 16 Jun 2020 20:56:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E84F1C433E0
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 17 Jun 2020 08:45:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B6B722085B
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 16 Jun 2020 20:56:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 812B62073E
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 17 Jun 2020 08:45:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="PaTfaUqc"
+	dkim=pass (2048-bit key) header.d=st.com header.i=@st.com header.b="VbOQbuhJ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729256AbgFPUzu (ORCPT
+        id S1726494AbgFQIpE (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 16 Jun 2020 16:55:50 -0400
-Received: from rnd-relay.smtp.broadcom.com ([192.19.229.170]:33798 "EHLO
-        rnd-relay.smtp.broadcom.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726296AbgFPUzs (ORCPT
+        Wed, 17 Jun 2020 04:45:04 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:6956 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725554AbgFQIpD (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 16 Jun 2020 16:55:48 -0400
-Received: from mail-irv-17.broadcom.com (mail-irv-17.lvn.broadcom.net [10.75.242.48])
-        by rnd-relay.smtp.broadcom.com (Postfix) with ESMTP id E5B9C30D887;
-        Tue, 16 Jun 2020 13:55:46 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.10.3 rnd-relay.smtp.broadcom.com E5B9C30D887
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=broadcom.com;
-        s=dkimrelay; t=1592340946;
-        bh=rfno4F7HiS8LiAdPYLi+a1WYnEQJIb94Ut0WyA5KWcI=;
-        h=From:To:Cc:Subject:Date:From;
-        b=PaTfaUqcmDwD6JrrdtOJDGj9AieSbSy5n5dCRm4ofxbYKITAcKCxA9ctasj8YUusH
-         TyjbXiyk+Aq2DTfX53E9ixj4JZKhzXlPbmZxcTqfxrcVqnwhdP8sElx8kNXEY071cq
-         J6KOs/AtEwzC3fMmHmYu+sU+qanIY7yhUFU0Q2Ms=
-Received: from stbsrv-and-01.and.broadcom.net (stbsrv-and-01.and.broadcom.net [10.28.16.211])
-        by mail-irv-17.broadcom.com (Postfix) with ESMTP id 64A55140069;
-        Tue, 16 Jun 2020 13:55:43 -0700 (PDT)
-From:   Jim Quinlan <james.quinlan@broadcom.com>
-To:     linux-pci@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
-        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        bcm-kernel-feedback-list@broadcom.com, james.quinlan@broadcom.com
-Cc:     Alan Stern <stern@rowland.harvard.edu>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Arnd Bergmann <arnd@arndb.de>, Corey Minyard <minyard@acm.org>,
-        devel@driverdev.osuosl.org (open list:STAGING SUBSYSTEM),
-        devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
-        DEVICE TREE),
-        dri-devel@lists.freedesktop.org (open list:DRM DRIVERS FOR ALLWINNER
-        A10), Florian Fainelli <f.fainelli@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Hans de Goede <hdegoede@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        iommu@lists.linux-foundation.org (open list:IOMMU DRIVERS),
-        Jens Axboe <axboe@kernel.dk>,
-        Julien Grall <julien.grall@arm.com>,
-        linux-acpi@vger.kernel.org (open list:ACPI FOR ARM64 (ACPI/arm64)),
-        linux-arm-kernel@lists.infradead.org (moderated list:ARM PORT),
-        linux-ide@vger.kernel.org (open list:LIBATA SUBSYSTEM (Serial and
-        Parallel ATA drivers)), linux-kernel@vger.kernel.org (open list),
-        linux-media@vger.kernel.org (open list:ALLWINNER A10 CSI DRIVER),
-        linux-remoteproc@vger.kernel.org (open list:REMOTE PROCESSOR
-        (REMOTEPROC) SUBSYSTEM),
-        linux-rpi-kernel@lists.infradead.org (moderated list:BROADCOM
-        BCM2711/BCM2835 ARM ARCHITECTURE),
-        linux-sh@vger.kernel.org (open list:SUPERH),
-        linux-usb@vger.kernel.org (open list:USB SUBSYSTEM),
-        Oliver Neukum <oneukum@suse.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Rob Herring <robh@kernel.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Saravana Kannan <saravanak@google.com>,
-        Stefano Stabellini <sstabellini@kernel.org>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Wolfram Sang <wsa@kernel.org>
-Subject: [PATCH v5 00/12] PCI: brcmstb: enable PCIe for STB chips
-Date:   Tue, 16 Jun 2020 16:55:07 -0400
-Message-Id: <20200616205533.3513-1-james.quinlan@broadcom.com>
-X-Mailer: git-send-email 2.17.1
+        Wed, 17 Jun 2020 04:45:03 -0400
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 05H8YBSR030372;
+        Wed, 17 Jun 2020 10:44:56 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=STMicroelectronics;
+ bh=x12SY/XDG+4dx3erI6g9G/5aKC7XNj05I4xQVoxMOk4=;
+ b=VbOQbuhJ+ZF0GnY3wZwPSNYBpm81Ms4gaBXu6L2urq5VuS7b+SJTRtTieDXwJ9tU2w7U
+ Zl8uaNICYqo0Zp0DIoMwOd65l24VOvPyBQngXapDLWhCC0ZciPiwSeWoB+AUWYPwcSYe
+ wba8UUPBKJxd0QCj7IhVN6t/xYAi6RQU7TZw1yJuD7JG3VBaAlx7iasxM/SbjshRPiqD
+ uvhhLHcDZa4+jY0/pqewqU1JeLxbt4AfggeUHkulRKq4W2hlP5kjkPgbQZIiJKBw3vFl
+ oaPF7vyGKge7+YrA1SKqUCFBOyle+z9C1Q0id3+fjyLwzjKwkJg9hKiXYg7q2LDshycE NQ== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 31q64aatb1-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 17 Jun 2020 10:44:56 +0200
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 18D8D10002A;
+        Wed, 17 Jun 2020 10:44:55 +0200 (CEST)
+Received: from Webmail-eu.st.com (sfhdag3node1.st.com [10.75.127.7])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id E3AF22A8BC6;
+        Wed, 17 Jun 2020 10:44:54 +0200 (CEST)
+Received: from lmecxl0889.tpe.st.com (10.75.127.45) by SFHDAG3NODE1.st.com
+ (10.75.127.7) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 17 Jun
+ 2020 10:44:53 +0200
+Subject: Re: [PATCH v3 1/2] remoteproc: Add remoteproc character device
+ interface
+To:     "rishabhb@codeaurora.org" <rishabhb@codeaurora.org>
+CC:     "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>,
+        "mathieu.poirier@linaro.org" <mathieu.poirier@linaro.org>,
+        "ohad@wizery.com" <ohad@wizery.com>,
+        "tsoni@codeaurora.org" <tsoni@codeaurora.org>,
+        "psodagud@codeaurora.org" <psodagud@codeaurora.org>,
+        "sidgup@codeaurora.org" <sidgup@codeaurora.org>,
+        "linux-remoteproc-owner@vger.kernel.org" 
+        <linux-remoteproc-owner@vger.kernel.org>
+References: <1587492618-15896-1-git-send-email-rishabhb@codeaurora.org>
+ <1587492618-15896-2-git-send-email-rishabhb@codeaurora.org>
+ <d72ead5a-b25a-d4e2-4bbf-1790d2a64fb8@st.com>
+ <d9a477cbbf19ed50af49aee7c6699e09@codeaurora.org>
+From:   Arnaud POULIQUEN <arnaud.pouliquen@st.com>
+Message-ID: <3738198d-53d4-2fe6-a92b-2db0cd0afa68@st.com>
+Date:   Wed, 17 Jun 2020 10:44:41 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.8.0
+MIME-Version: 1.0
+In-Reply-To: <d9a477cbbf19ed50af49aee7c6699e09@codeaurora.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.75.127.45]
+X-ClientProxiedBy: SFHDAG8NODE2.st.com (10.75.127.23) To SFHDAG3NODE1.st.com
+ (10.75.127.7)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.216,18.0.687
+ definitions=2020-06-16_13:2020-06-16,2020-06-16 signatures=0
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Patchset Summary:
-  Enhance a PCIe host controller driver.  Because of its unusual design
-  we are foced to change dev->dma_pfn_offset into a more general role
-  allowing multiple offsets.
 
-v5:
-  Commit "device core: Introduce multiple dma pfn offsets"
-  -- in of/address.c: "map_size = 0" => "*map_size = 0"
-  -- use kcalloc instead of kzalloc (AndyS)
-  -- use PHYS_ADDR_MAX instead of "~(phys_addr_t)0"
-  Commit "PCI: brcmstb: Set internal memory viewport sizes"
-  -- now gives error on missing dma-ranges property.
-  Commit "dt-bindings: PCI: Add bindings for more Brcmstb chips"
-  -- removed "Allof:" from brcm,scb-sizes definition (RobH)
-  All Commits:
-  -- indentation style, use max chars 100 (AndyS)
-  -- rebased to torvalds master
 
-v4:
-  Commit "device core: Introduce multiple dma pfn offsets"
-  -- of_dma_get_range() does not take a dev param but instead
-     takes two "out" params: map and map_size.  We do this so
-     that the code that parses dma-ranges is separate from
-     the code that modifies 'dev'.   (Nicolas)
-  -- the separate case of having a single pfn offset has
-     been removed and is now processed by going through the
-     map array. (Nicolas)
-  -- move attach_uniform_dma_pfn_offset() from of/address.c to
-     dma/mapping.c so that it does not depend on CONFIG_OF. (Nicolas)
-  -- devm_kcalloc => devm_kzalloc (DanC)
-  -- add/fix assignment to dev->dma_pfn_offset_map for func
-     attach_uniform_dma_pfn_offset() (DanC, Nicolas)
-  -- s/struct dma_pfn_offset_region/struct bus_dma_region/ (Nicolas)
-  -- s/attach_uniform_dma_pfn_offset/dma_attach_uniform_pfn_offset/
-  -- s/attach_dma_pfn_offset_map/dma_attach_pfn_offset_map/
-  -- More use of PFN_{PHYS,DOWN,UP}. (AndyS)
-  Commit "of: Include a dev param in of_dma_get_range()"
-  -- this commit was sqaushed with "device core: Introduce ..."
+On 6/16/20 9:56 PM, rishabhb@codeaurora.org wrote:
+> On 2020-04-30 01:30, Arnaud POULIQUEN wrote:
+>> Hi Rishabh,
+>>
+>>
+>> On 4/21/20 8:10 PM, Rishabh Bhatnagar wrote:
+>>> Add the character device interface into remoteproc framework.
+>>> This interface can be used in order to boot/shutdown remote
+>>> subsystems and provides a basic ioctl based interface to implement
+>>> supplementary functionality. An ioctl call is implemented to enable
+>>> the shutdown on release feature which will allow remote processors to
+>>> be shutdown when the controlling userpsace application crashes or 
+>>> hangs.
+>>>
+>>
+>> Thanks for intruducing Ioctl, this will help for future evolutions.
+>>
+>>> Signed-off-by: Rishabh Bhatnagar <rishabhb@codeaurora.org>
+>>> ---
+>>>  Documentation/userspace-api/ioctl/ioctl-number.rst |   1 +
+>>>  drivers/remoteproc/Kconfig                         |   9 ++
+>>>  drivers/remoteproc/Makefile                        |   1 +
+>>>  drivers/remoteproc/remoteproc_cdev.c               | 143 
+>>> +++++++++++++++++++++
+>>>  drivers/remoteproc/remoteproc_internal.h           |  21 +++
+>>>  include/linux/remoteproc.h                         |   3 +
+>>>  include/uapi/linux/remoteproc_cdev.h               |  20 +++
+>>>  7 files changed, 198 insertions(+)
+>>>  create mode 100644 drivers/remoteproc/remoteproc_cdev.c
+>>>  create mode 100644 include/uapi/linux/remoteproc_cdev.h
+>>>
+>>> diff --git a/Documentation/userspace-api/ioctl/ioctl-number.rst 
+>>> b/Documentation/userspace-api/ioctl/ioctl-number.rst
+>>> index 2e91370..412b2a0 100644
+>>> --- a/Documentation/userspace-api/ioctl/ioctl-number.rst
+>>> +++ b/Documentation/userspace-api/ioctl/ioctl-number.rst
+>>> @@ -337,6 +337,7 @@ Code  Seq#    Include File                         
+>>>                   Comments
+>>>  0xB4  00-0F  linux/gpio.h                                            
+>>> <mailto:linux-gpio@vger.kernel.org>
+>>>  0xB5  00-0F  uapi/linux/rpmsg.h                                      
+>>> <mailto:linux-remoteproc@vger.kernel.org>
+>>>  0xB6  all    linux/fpga-dfl.h
+>>> +0xB7  all    uapi/linux/remoteproc_cdev.h			     
+>>> <mailto:linux-remoteproc@vger.kernel.org>
+>>>  0xC0  00-0F  linux/usb/iowarrior.h
+>>>  0xCA  00-0F  uapi/misc/cxl.h
+>>>  0xCA  10-2F  uapi/misc/ocxl.h
+>>> diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
+>>> index de3862c..6374b79 100644
+>>> --- a/drivers/remoteproc/Kconfig
+>>> +++ b/drivers/remoteproc/Kconfig
+>>> @@ -14,6 +14,15 @@ config REMOTEPROC
+>>>
+>>>  if REMOTEPROC
+>>>
+>>> +config REMOTEPROC_CDEV
+>>> +	bool "Remoteproc character device interface"
+>>> +	help
+>>> +	  Say y here to have a character device interface for Remoteproc
+>>> +	  framework. Userspace can boot/shutdown remote processors through
+>>> +	  this interface.
+>>> +
+>>> +	  It's safe to say N if you don't want to use this interface.
+>>> +
+>>>  config IMX_REMOTEPROC
+>>>  	tristate "IMX6/7 remoteproc support"
+>>>  	depends on ARCH_MXC
+>>> diff --git a/drivers/remoteproc/Makefile b/drivers/remoteproc/Makefile
+>>> index e30a1b1..b7d4f77 100644
+>>> --- a/drivers/remoteproc/Makefile
+>>> +++ b/drivers/remoteproc/Makefile
+>>> @@ -9,6 +9,7 @@ remoteproc-y				+= remoteproc_debugfs.o
+>>>  remoteproc-y				+= remoteproc_sysfs.o
+>>>  remoteproc-y				+= remoteproc_virtio.o
+>>>  remoteproc-y				+= remoteproc_elf_loader.o
+>>> +obj-$(CONFIG_REMOTEPROC_CDEV)		+= remoteproc_cdev.o
+>>>  obj-$(CONFIG_IMX_REMOTEPROC)		+= imx_rproc.o
+>>>  obj-$(CONFIG_MTK_SCP)			+= mtk_scp.o mtk_scp_ipi.o
+>>>  obj-$(CONFIG_OMAP_REMOTEPROC)		+= omap_remoteproc.o
+>>> diff --git a/drivers/remoteproc/remoteproc_cdev.c 
+>>> b/drivers/remoteproc/remoteproc_cdev.c
+>>> new file mode 100644
+>>> index 0000000..65142ec
+>>> --- /dev/null
+>>> +++ b/drivers/remoteproc/remoteproc_cdev.c
+>>> @@ -0,0 +1,143 @@
+>>> +// SPDX-License-Identifier: GPL-2.0-only
+>>> +/*
+>>> + * Character device interface driver for Remoteproc framework.
+>>> + *
+>>> + * Copyright (c) 2020, The Linux Foundation. All rights reserved.
+>>> + */
+>>> +
+>>> +#include <linux/cdev.h>
+>>> +#include <linux/fs.h>
+>>> +#include <linux/module.h>
+>>> +#include <linux/mutex.h>
+>>> +#include <linux/remoteproc.h>
+>>> +#include <uapi/linux/remoteproc_cdev.h>
+>>> +#include <linux/uaccess.h>
+>>> +
+>>> +#include "remoteproc_internal.h"
+>>> +
+>>> +#define NUM_RPROC_DEVICES	64
+>>> +static dev_t rproc_major;
+>>> +
+>>> +static ssize_t rproc_cdev_write(struct file *filp, const char __user 
+>>> *buf,
+>>> +				 size_t len, loff_t *pos)
+>>> +{
+>>> +	struct rproc *rproc = container_of(filp->f_inode->i_cdev,
+>>> +					   struct rproc, char_dev);
+>>> +	int ret = 0;
+>>> +	char cmd[10];
+>>> +
+>>> +	if (!len || len > sizeof(cmd))
+>>> +		return -EINVAL;
+>>> +
+>>> +	ret = copy_from_user(cmd, buf, sizeof(cmd));
+>>> +	if (ret)
+>>> +		return -EFAULT;
+>>> +
+>>> +	if (sysfs_streq(cmd, "start")) {
+>>> +		if (rproc->state == RPROC_RUNNING)
+>>> +			return -EBUSY;
+>>> +
+>>> +		ret = rproc_boot(rproc);
+>>> +		if (ret)
+>>> +			dev_err(&rproc->dev, "Boot failed:%d\n", ret);
+>>> +	} else if (sysfs_streq(cmd, "stop")) {
+>>> +		if (rproc->state == RPROC_OFFLINE)
+>>> +			return -ENXIO;
+>>
+>> returning ENXIO in this case seems to me no appropriate , what about 
+>> EPERM or
+>> EINVAL (rproc_sysfs) ?
+>>
+>>> +
+>>> +		rproc_shutdown(rproc);
+>>> +	} else {
+>>> +		dev_err(&rproc->dev, "Unrecognized option\n");
+>>> +		ret = -EINVAL;
+>>> +	}
+>>> +
+>>> +	return ret ? ret : len;
+>>> +}
+>>> +
+>>> +static long rproc_device_ioctl(struct file *filp, unsigned int ioctl,
+>>> +				unsigned long arg)
+>>> +{
+>>> +	struct rproc *rproc = container_of(filp->f_inode->i_cdev,
+>>> +					   struct rproc, char_dev);
+>>> +	void __user *argp = (void __user *)arg;
+>>> +	int ret;
+>>> +	bool param;
+>>> +
+>>> +	switch (ioctl) {
+>>> +	case RPROC_SET_SHUTDOWN_ON_RELEASE:
+>>> +		ret = copy_from_user(&param, argp, sizeof(bool));
+>>> +		if (ret) {
+>>> +			dev_err(&rproc->dev, "Data copy from userspace failed\n");
+>>> +			return -EINVAL;
+>>> +		}
+>>> +		rproc->cdev_put_on_release = param;
+>>
+>> argp is an void value, where cdev_put_on_release is a bool a check or
+>> a conversion  seems
+>> missing
+>>
+>>> +		break;
+>>> +	case RPROC_GET_SHUTDOWN_ON_RELEASE:
+>>> +		ret = copy_to_user(argp, &rproc->cdev_put_on_release,
+>>> +				   sizeof(bool));
+>>> +		if (ret) {
+>>> +			dev_err(&rproc->dev, "Data copy to userspace failed\n");
+>>> +			return -EINVAL;
+>>> +		}
+>>> +		break;
+>>> +	default:
+>>> +		dev_err(&rproc->dev, "Unsupported ioctl\n");
+>>> +		return -EINVAL;
+>>> +	}
+>>> +	return 0;
+>>> +}
+>>> +
+>>> +static int rproc_cdev_release(struct inode *inode, struct file *filp)
+>>> +{
+>>> +	struct rproc *rproc = container_of(inode->i_cdev, struct rproc,
+>>> +					   char_dev);
+>>> +
+>>> +	if (rproc->cdev_put_on_release && rproc->state != RPROC_OFFLINE)
+>>> +		rproc_shutdown(rproc);
+>>> +
+>>> +	return 0;
+>>> +}
+>>> +
+>>> +
+>>> +static const struct file_operations rproc_fops = {
+>>> +	.write = rproc_cdev_write,
+>>> +	.unlocked_ioctl = rproc_device_ioctl,
+>>> +	.release = rproc_cdev_release,
+>>> +};
+>>> +
+>>> +int rproc_char_device_add(struct rproc *rproc)
+>>> +{
+>>> +	int ret;
+>>> +	dev_t cdevt;
+>>> +
+>>> +	cdev_init(&rproc->char_dev, &rproc_fops);
+>>> +	rproc->char_dev.owner = THIS_MODULE;
+>>> +
+>>> +	cdevt = MKDEV(MAJOR(rproc_major), rproc->index);
+>>> +	ret = cdev_add(&rproc->char_dev, cdevt, 1);
+>>> +	if (ret < 0)
+>>> +		goto out;
+>>> +
+>>> +	rproc->dev.devt = cdevt;
+>>> +out:
+>>> +	return ret;
+>>> +}
+>>> +
+>>> +void rproc_char_device_remove(struct rproc *rproc)
+>>> +{
+>>> +	__unregister_chrdev(MAJOR(rproc->dev.devt), rproc->index, 1, 
+>>> "rproc");
+>>> +}
+>>> +
+>>> +void __init rproc_init_cdev(void)
+>>> +{
+>>> +	int ret;
+>>> +
+>>> +	ret = alloc_chrdev_region(&rproc_major, 0, NUM_RPROC_DEVICES, 
+>>> "rproc");
+>>
+>> "remoteproc"instead of "rproc" (in line with sysfs and debugfs naming) 
+>> .
+>>
+>>> +	if (ret < 0)
+>>> +		pr_err("Failed to alloc rproc_cdev region, err %d\n", ret);
+>>> +}
+>>> +
+>>> +void __exit rproc_exit_cdev(void)
+>>> +{
+>>> +	unregister_chrdev_region(MKDEV(MAJOR(rproc_major), 0),
+>>> +				 NUM_RPROC_DEVICES);
+>>> +}
+>>> diff --git a/drivers/remoteproc/remoteproc_internal.h 
+>>> b/drivers/remoteproc/remoteproc_internal.h
+>>> index 493ef92..fb9d891 100644
+>>> --- a/drivers/remoteproc/remoteproc_internal.h
+>>> +++ b/drivers/remoteproc/remoteproc_internal.h
+>>> @@ -47,6 +47,27 @@ struct dentry *rproc_create_trace_file(const char 
+>>> *name, struct rproc *rproc,
+>>>  int rproc_init_sysfs(void);
+>>>  void rproc_exit_sysfs(void);
+>>>
+>>> +#ifdef CONFIG_REMOTEPROC_CDEV
+>>> +void rproc_init_cdev(void);
+>>> +void rproc_exit_cdev(void);
+>>> +int rproc_char_device_add(struct rproc *rproc);
+>>> +void rproc_char_device_remove(struct rproc *rproc);
+>>> +#else
+>>> +static inline void rproc_init_cdev(void)
+>>> +{
+>>> +}
+>>> +static inline void rproc_exit_cdev(void)
+>>> +{
+>>> +}
+>>> +static inline int rproc_char_device_add(struct rproc *rproc)
+>>> +{
+>>> +	return 0;
+>>> +}
+>>> +static inline void  rproc_char_device_remove(struct rproc *rproc)
+>>> +{
+>>> +}
+>>> +#endif
+>>> +
+>>>  void rproc_free_vring(struct rproc_vring *rvring);
+>>>  int rproc_alloc_vring(struct rproc_vdev *rvdev, int i);
+>>>
+>>> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+>>> index 16ad666..9bd2ff5 100644
+>>> --- a/include/linux/remoteproc.h
+>>> +++ b/include/linux/remoteproc.h
+>>> @@ -40,6 +40,7 @@
+>>>  #include <linux/virtio.h>
+>>>  #include <linux/completion.h>
+>>>  #include <linux/idr.h>
+>>> +#include <linux/cdev.h>
+>>>  #include <linux/of.h>
+>>>
+>>>  /**
+>>> @@ -514,6 +515,8 @@ struct rproc {
+>>>  	bool auto_boot;
+>>>  	struct list_head dump_segments;
+>>>  	int nb_vdev;
+>>> +	struct cdev char_dev;
+>>> +	bool cdev_put_on_release;
+>>>  };
+>>
+>> These parameters are local variables of rproc_cdev. Could be defined
+>> in a separate structure.
+>> with a pointer in rproc to this structure.
+>>
+>>>
+>>>  /**
+>>> diff --git a/include/uapi/linux/remoteproc_cdev.h 
+>>> b/include/uapi/linux/remoteproc_cdev.h
+>>> new file mode 100644
+>>> index 0000000..3975120
+>>> --- /dev/null
+>>> +++ b/include/uapi/linux/remoteproc_cdev.h
+>>> @@ -0,0 +1,20 @@
+>>> +/* SPDX-License-Identifier: GPL-2.0-only WITH Linux-syscall-note */
+>>> +/*
+>>> + * IOCTLs for Remoteproc's character device interface.
+>>> + *
+>>> + * Copyright (c) 2020, The Linux Foundation. All rights reserved.
+>>> + */
+>>> +
+>>> +
+>>> +#ifndef _UAPI_REMOTEPROC_CDEV_H_
+>>> +#define _UAPI_REMOTEPROC_CDEV_H_
+>>> +
+>>> +#include <linux/ioctl.h>
+>>> +#include <linux/types.h>
+>>> +
+>>> +#define RPROC_MAGIC	0xB7
+>>> +
+>>> +#define RPROC_SET_SHUTDOWN_ON_RELEASE _IOW(RPROC_MAGIC, 1, int)
+>>> +#define RPROC_GET_SHUTDOWN_ON_RELEASE _IOR(RPROC_MAGIC, 2, int)
+>>> +
+>>> +#endif
+>>>
+>> IOCTLs should probaly be documented.
+> I have added documentation to 
+> Documentation/userspace-api/ioctl/ioctl-number.rst
+> Is there another place where I need to add documentation for this?
 
-v3:
-  Commit "device core: Introduce multiple dma pfn offsets"
-  Commit "arm: dma-mapping: Invoke dma offset func if needed"
-  -- The above two commits have been squashed.  More importantly,
-     the code has been modified so that the functionality for
-     multiple pfn offsets subsumes the use of dev->dma_pfn_offset.
-     In fact, dma_pfn_offset is removed and supplanted by
-     dma_pfn_offset_map, which is a pointer to an array.  The
-     more common case of a uniform offset is now handled as
-     a map with a single entry, while cases requiring multiple
-     pfn offsets use a map with multiple entries.  Code paths
-     that used to do this:
+Could you add in this file comments that describe
+the IOCTL usage and associated parameter?
 
-         dev->dma_pfn_offset = mydrivers_pfn_offset;
+Regards,
+Arnaud
 
-     have been changed to do this:
-
-         attach_uniform_dma_pfn_offset(dev, pfn_offset);
-
-  Commit "dt-bindings: PCI: Add bindings for more Brcmstb chips"
-  -- Add if/then clause for required props: resets, reset-names (RobH)
-  -- Change compatible list from const to enum (RobH)
-  -- Change list of u32-tuples to u64 (RobH)
-
-  Commit "of: Include a dev param in of_dma_get_range()"
-  -- modify of/unittests.c to add NULL param in of_dma_get_range() call.
-
-  Commit "device core: Add ability to handle multiple dma offsets"
-  -- align comment in device.h (AndyS).
-  -- s/cpu_beg/cpu_start/ and s/dma_beg/dma_start/ in struct
-     dma_pfn_offset_region (AndyS).
-
-v2:
-Commit: "device core: Add ability to handle multiple dma offsets"
-  o Added helper func attach_dma_pfn_offset_map() in address.c (Chistoph)
-  o Helpers funcs added to __phys_to_dma() & __dma_to_phys() (Christoph)
-  o Added warning when multiple offsets are needed and !DMA_PFN_OFFSET_MAP
-  o dev->dma_pfn_map => dev->dma_pfn_offset_map
-  o s/frm/from/ for dma_pfn_offset_frm_{phys,dma}_addr() (Christoph)
-  o In device.h: s/const void */const struct dma_pfn_offset_region */
-  o removed 'unlikely' from unlikely(dev->dma_pfn_offset_map) since
-    guarded by CONFIG_DMA_PFN_OFFSET_MAP (Christoph)
-  o Since dev->dma_pfn_offset is copied in usb/core/{usb,message}.c, now
-    dev->dma_pfn_offset_map is copied as well.
-  o Merged two of the DMA commits into one (Christoph).
-
-Commit "arm: dma-mapping: Invoke dma offset func if needed":
-  o Use helper functions instead of #if CONFIG_DMA_PFN_OFFSET
-
-Other commits' changes:
-  o Removed need for carrying of_id var in priv (Nicolas)
-  o Commit message rewordings (Bjorn)
-  o Commit log messages filled to 75 chars (Bjorn)
-  o devm_reset_control_get_shared())
-    => devm_reset_control_get_optional_shared (Philipp)
-  o Add call to reset_control_assert() in PCIe remove routines (Philipp)
-
-v1:
-This patchset expands the usefulness of the Broadcom Settop Box PCIe
-controller by building upon the PCIe driver used currently by the
-Raspbery Pi.  Other forms of this patchset were submitted by me years
-ago and not accepted; the major sticking point was the code required
-for the DMA remapping needed for the PCIe driver to work [1].
-
-There have been many changes to the DMA and OF subsystems since that
-time, making a cleaner and less intrusive patchset possible.  This
-patchset implements a generalization of "dev->dma_pfn_offset", except
-that instead of a single scalar offset it provides for multiple
-offsets via a function which depends upon the "dma-ranges" property of
-the PCIe host controller.  This is required for proper functionality
-of the BrcmSTB PCIe controller and possibly some other devices.
-
-[1] https://lore.kernel.org/linux-arm-kernel/1516058925-46522-5-git-send-email-jim2101024@gmail.com/
-
-Jim Quinlan (12):
-  PCI: brcmstb: PCIE_BRCMSTB depends on ARCH_BRCMSTB
-  ata: ahci_brcm: Fix use of BCM7216 reset controller
-  dt-bindings: PCI: Add bindings for more Brcmstb chips
-  PCI: brcmstb: Add bcm7278 register info
-  PCI: brcmstb: Add suspend and resume pm_ops
-  PCI: brcmstb: Add bcm7278 PERST support
-  PCI: brcmstb: Add control of rescal reset
-  device core: Introduce multiple dma pfn offsets
-  PCI: brcmstb: Set internal memory viewport sizes
-  PCI: brcmstb: Accommodate MSI for older chips
-  PCI: brcmstb: Set bus max burst size by chip type
-  PCI: brcmstb: Add bcm7211, bcm7216, bcm7445, bcm7278 to match list
-
- .../bindings/pci/brcm,stb-pcie.yaml           |  56 ++-
- arch/arm/include/asm/dma-mapping.h            |   9 +-
- arch/arm/mach-keystone/keystone.c             |   8 +-
- arch/sh/drivers/pci/pcie-sh7786.c             |   3 +-
- arch/sh/kernel/dma-coherent.c                 |  14 +-
- arch/x86/pci/sta2x11-fixup.c                  |   7 +-
- drivers/acpi/arm64/iort.c                     |   4 +-
- drivers/ata/ahci_brcm.c                       |  11 +-
- drivers/gpu/drm/sun4i/sun4i_backend.c         |   5 +-
- drivers/iommu/io-pgtable-arm.c                |   2 +-
- .../platform/sunxi/sun4i-csi/sun4i_csi.c      |   5 +-
- .../platform/sunxi/sun6i-csi/sun6i_csi.c      |   4 +-
- drivers/of/address.c                          |  71 ++-
- drivers/of/device.c                           |  19 +-
- drivers/of/of_private.h                       |  11 +-
- drivers/of/unittest.c                         |   8 +-
- drivers/pci/controller/Kconfig                |   3 +-
- drivers/pci/controller/pcie-brcmstb.c         | 403 +++++++++++++++---
- drivers/remoteproc/remoteproc_core.c          |   2 +-
- .../staging/media/sunxi/cedrus/cedrus_hw.c    |   7 +-
- drivers/usb/core/message.c                    |   4 +-
- drivers/usb/core/usb.c                        |   2 +-
- include/linux/device.h                        |   4 +-
- include/linux/dma-direct.h                    |  14 +-
- include/linux/dma-mapping.h                   |  38 ++
- kernel/dma/coherent.c                         |  11 +-
- kernel/dma/mapping.c                          |  39 ++
- 27 files changed, 632 insertions(+), 132 deletions(-)
-
--- 
-2.17.1
-
+>>
+>> Thanks,
+>> Arnaud
