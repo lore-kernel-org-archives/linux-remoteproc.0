@@ -7,52 +7,49 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F920C433E1
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 18 Jun 2020 02:42:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D8EFC433DF
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 18 Jun 2020 02:51:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5F36821927
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 18 Jun 2020 02:42:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5CE752083B
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 18 Jun 2020 02:51:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1592448145;
-	bh=lmsOjpJfu1F/07xtNKZqZw1bsoKKOBllErHB92ejtMc=;
+	s=default; t=1592448702;
+	bh=+vEkPhmzh426RGcTQdJbbQ/XsrAnTOgO/RTwQ9TiMLc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=N4noyijIo5YGvZiEN+mr29vuGb3uCkECEgYpl+IrzCViw6zLH/+rpUffw5+xJnlOp
-	 k2iHM7nvEg2UtAt4wHpESHDL5WQwvGodeBToSPhnVDLECAXE/HK3dfoihUu/OmucoI
-	 cKyc9bHJrODV04Sb/2zNOOl6lCmBFujqZSi/J+PI=
+	b=AtI668SIomnJ4m2L3svPwhn3BbBaCI0xrZO2UHLxAyTeJ2rk7NeGlaMAilRJIADnt
+	 fByw4cZd64L0FaOMPOworbfzizcEMznpK5KorYgjwz7M94nbJYl2vpc7Dmw77p/Iwf
+	 KfT6kk/0uKvfDh3oHcPQARqqj8Hxf5Ol78q/NK50=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728968AbgFRCmU (ORCPT
+        id S1728220AbgFRCvi (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 17 Jun 2020 22:42:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40572 "EHLO mail.kernel.org"
+        Wed, 17 Jun 2020 22:51:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34966 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728117AbgFRBMI (ORCPT
+        id S1727019AbgFRBI5 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 17 Jun 2020 21:12:08 -0400
+        Wed, 17 Jun 2020 21:08:57 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AF521214DB;
-        Thu, 18 Jun 2020 01:12:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 59CCF2193E;
+        Thu, 18 Jun 2020 01:08:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1592442727;
-        bh=lmsOjpJfu1F/07xtNKZqZw1bsoKKOBllErHB92ejtMc=;
+        s=default; t=1592442536;
+        bh=+vEkPhmzh426RGcTQdJbbQ/XsrAnTOgO/RTwQ9TiMLc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PZ6MzIOaugBA/g2Wf9m1vzM4ijJcm03pDC4uK7O2uWisbMydpPHo3Q/mJ+MDZC1D6
-         YJxu32lDkhGdgICn/zxdfDylij2Y02UQBmr4687lt5TyBu8Vmw02EH+4XvxWY5OMx/
-         nu8y/Liz7m9tt/gGBJuiHvXt0ZTSTvZFRCi9gsEI=
+        b=XB5VoAs5UDwYPA025H4ZEJmUKVi6o6hno/8pTsZsFauLC8L9yzgVyOkV/eAOXS0Pr
+         LBRmqFctnQ1ri5t4ASMhy9iLtytKwiEhF+4sX/YJwttgjpHKB1QyGO4W2vHALftICo
+         IdyMW9Hru6g8WXfJ9eZNoGv1VJiFyS0zjseJWphU=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Wei Yongjun <weiyongjun1@huawei.com>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Hulk Robot <hulkci@huawei.com>,
+Cc:     Sibi Sankar <sibis@codeaurora.org>,
+        Evan Green <evgreen@chromium.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-remoteproc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org
-Subject: [PATCH AUTOSEL 5.7 184/388] remoteproc/mediatek: fix invalid use of sizeof in scp_ipi_init()
-Date:   Wed, 17 Jun 2020 21:04:41 -0400
-Message-Id: <20200618010805.600873-184-sashal@kernel.org>
+        Sasha Levin <sashal@kernel.org>, linux-arm-msm@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.7 038/388] remoteproc: qcom_q6v5_mss: map/unmap mpss segments before/after use
+Date:   Wed, 17 Jun 2020 21:02:15 -0400
+Message-Id: <20200618010805.600873-38-sashal@kernel.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200618010805.600873-1-sashal@kernel.org>
 References: <20200618010805.600873-1-sashal@kernel.org>
@@ -65,36 +62,105 @@ Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-From: Wei Yongjun <weiyongjun1@huawei.com>
+From: Sibi Sankar <sibis@codeaurora.org>
 
-[ Upstream commit 8096f80a5c09b716be207eb042c4e40d6cdefbd2 ]
+[ Upstream commit be050a3429f46ecf13eb2b80f299479f8bb823fb ]
 
-sizeof() when applied to a pointer typed expression gives the
-size of the pointer, not that of the pointed data.
+The application processor accessing the mpss region when the Q6 modem is
+running will lead to an XPU violation. Fix this by un-mapping the mpss
+segments post copy during mpss authentication and coredumps.
 
-Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-Fixes: 63c13d61eafe ("remoteproc/mediatek: add SCP support for mt8183")
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-Link: https://lore.kernel.org/r/20200509084237.36293-1-weiyongjun1@huawei.com
+Tested-by: Evan Green <evgreen@chromium.org>
+Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
+Link: https://lore.kernel.org/r/20200415071619.6052-1-sibis@codeaurora.org
 Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/remoteproc/mtk_scp.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/remoteproc/qcom_q6v5_mss.c | 31 +++++++++++++++++++-----------
+ 1 file changed, 20 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
-index 2bead57c9cf9..ac13e7b046a6 100644
---- a/drivers/remoteproc/mtk_scp.c
-+++ b/drivers/remoteproc/mtk_scp.c
-@@ -132,8 +132,8 @@ static int scp_ipi_init(struct mtk_scp *scp)
- 		(struct mtk_share_obj __iomem *)(scp->sram_base + recv_offset);
- 	scp->send_buf =
- 		(struct mtk_share_obj __iomem *)(scp->sram_base + send_offset);
--	memset_io(scp->recv_buf, 0, sizeof(scp->recv_buf));
--	memset_io(scp->send_buf, 0, sizeof(scp->send_buf));
-+	memset_io(scp->recv_buf, 0, sizeof(*scp->recv_buf));
-+	memset_io(scp->send_buf, 0, sizeof(*scp->send_buf));
+diff --git a/drivers/remoteproc/qcom_q6v5_mss.c b/drivers/remoteproc/qcom_q6v5_mss.c
+index 5475d4f808a8..22416e86a174 100644
+--- a/drivers/remoteproc/qcom_q6v5_mss.c
++++ b/drivers/remoteproc/qcom_q6v5_mss.c
+@@ -1156,7 +1156,13 @@ static int q6v5_mpss_load(struct q6v5 *qproc)
+ 			goto release_firmware;
+ 		}
+ 
+-		ptr = qproc->mpss_region + offset;
++		ptr = ioremap_wc(qproc->mpss_phys + offset, phdr->p_memsz);
++		if (!ptr) {
++			dev_err(qproc->dev,
++				"unable to map memory region: %pa+%zx-%x\n",
++				&qproc->mpss_phys, offset, phdr->p_memsz);
++			goto release_firmware;
++		}
+ 
+ 		if (phdr->p_filesz && phdr->p_offset < fw->size) {
+ 			/* Firmware is large enough to be non-split */
+@@ -1165,6 +1171,7 @@ static int q6v5_mpss_load(struct q6v5 *qproc)
+ 					"failed to load segment %d from truncated file %s\n",
+ 					i, fw_name);
+ 				ret = -EINVAL;
++				iounmap(ptr);
+ 				goto release_firmware;
+ 			}
+ 
+@@ -1175,6 +1182,7 @@ static int q6v5_mpss_load(struct q6v5 *qproc)
+ 			ret = request_firmware(&seg_fw, fw_name, qproc->dev);
+ 			if (ret) {
+ 				dev_err(qproc->dev, "failed to load %s\n", fw_name);
++				iounmap(ptr);
+ 				goto release_firmware;
+ 			}
+ 
+@@ -1187,6 +1195,7 @@ static int q6v5_mpss_load(struct q6v5 *qproc)
+ 			memset(ptr + phdr->p_filesz, 0,
+ 			       phdr->p_memsz - phdr->p_filesz);
+ 		}
++		iounmap(ptr);
+ 		size += phdr->p_memsz;
+ 
+ 		code_length = readl(qproc->rmb_base + RMB_PMI_CODE_LENGTH_REG);
+@@ -1236,7 +1245,8 @@ static void qcom_q6v5_dump_segment(struct rproc *rproc,
+ 	int ret = 0;
+ 	struct q6v5 *qproc = rproc->priv;
+ 	unsigned long mask = BIT((unsigned long)segment->priv);
+-	void *ptr = rproc_da_to_va(rproc, segment->da, segment->size);
++	int offset = segment->da - qproc->mpss_reloc;
++	void *ptr = NULL;
+ 
+ 	/* Unlock mba before copying segments */
+ 	if (!qproc->dump_mba_loaded) {
+@@ -1250,10 +1260,15 @@ static void qcom_q6v5_dump_segment(struct rproc *rproc,
+ 		}
+ 	}
+ 
+-	if (!ptr || ret)
+-		memset(dest, 0xff, segment->size);
+-	else
++	if (!ret)
++		ptr = ioremap_wc(qproc->mpss_phys + offset, segment->size);
++
++	if (ptr) {
+ 		memcpy(dest, ptr, segment->size);
++		iounmap(ptr);
++	} else {
++		memset(dest, 0xff, segment->size);
++	}
+ 
+ 	qproc->dump_segment_mask |= mask;
+ 
+@@ -1595,12 +1610,6 @@ static int q6v5_alloc_memory_region(struct q6v5 *qproc)
+ 
+ 	qproc->mpss_phys = qproc->mpss_reloc = r.start;
+ 	qproc->mpss_size = resource_size(&r);
+-	qproc->mpss_region = devm_ioremap_wc(qproc->dev, qproc->mpss_phys, qproc->mpss_size);
+-	if (!qproc->mpss_region) {
+-		dev_err(qproc->dev, "unable to map memory region: %pa+%zx\n",
+-			&r.start, qproc->mpss_size);
+-		return -EBUSY;
+-	}
  
  	return 0;
  }
