@@ -2,119 +2,99 @@ Return-Path: <SRS0=+p7G=77=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6757C433E0
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 18 Jun 2020 02:52:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF3A2C433DF
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 18 Jun 2020 09:03:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9276220776
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 18 Jun 2020 02:52:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1592448768;
-	bh=dUtyJ0sPCHDAMrCFVYZk9Na/o7Im+6kdHi4WP4M/VJ0=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=o1YJiYHpAHBDwe72+gMF0vQKrioh09MNcdT2Qx60Zg4/K+MU4pQPjtb1N7hOLLc2V
-	 zoA215qmDZVir2hucIGLNZVsyHc8korl/4PH0Uea6cIgUweohtkTJW9EtjfXzOXrSP
-	 jThzB3ynZZGP0UU/PXuneCjz7Kh1bhSW0Licg59k=
+	by mail.kernel.org (Postfix) with ESMTP id 9B3AA21548
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 18 Jun 2020 09:03:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727773AbgFRBIV (ORCPT
+        id S1728971AbgFRJDu (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 17 Jun 2020 21:08:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33868 "EHLO mail.kernel.org"
+        Thu, 18 Jun 2020 05:03:50 -0400
+Received: from mga04.intel.com ([192.55.52.120]:51740 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727060AbgFRBIT (ORCPT
+        id S1728964AbgFRJDs (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 17 Jun 2020 21:08:19 -0400
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3133B2193E;
-        Thu, 18 Jun 2020 01:08:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1592442499;
-        bh=dUtyJ0sPCHDAMrCFVYZk9Na/o7Im+6kdHi4WP4M/VJ0=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=B5kHqYEx7ALMHmA1Q7w/SxOqgKu6OCo9zhGe5XRfSANQs3hpxKlnPpwclu62XYHb7
-         r8/EMgRUFE9MU2bAJUpDpyBPxj8G8WjkGkgZNcKJx6FHxxfNU6UCjVgNqh+hidnbnM
-         OTwMCTjDNkDb3Bfssj7sI5aV9AcDw+xNDkI2K65s=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Alex Elder <elder@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Suman Anna <s-anna@ti.com>,
+        Thu, 18 Jun 2020 05:03:48 -0400
+IronPort-SDR: Xp0RTI8c6kbb+VsF6d38iUSdr5kquLxg97SIyNTTT7P3S+uTP26bAc3+XLmr3lIefSfKJtzWq9
+ 2GyfNypcVv8w==
+X-IronPort-AV: E=McAfee;i="6000,8403,9655"; a="140002609"
+X-IronPort-AV: E=Sophos;i="5.73,526,1583222400"; 
+   d="scan'208";a="140002609"
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jun 2020 02:03:48 -0700
+IronPort-SDR: /6kHDHX7wY1CRf0e6PPCtYuooZMheWGl/tF42hkNHlSAubcrMt9WbD6cJYqo6V6SVrDIB93lxX
+ COgb867Ow9Cw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.73,526,1583222400"; 
+   d="scan'208";a="261966815"
+Received: from gliakhov-mobl2.ger.corp.intel.com (HELO ubuntu) ([10.252.48.152])
+  by fmsmga007.fm.intel.com with ESMTP; 18 Jun 2020 02:03:44 -0700
+Date:   Thu, 18 Jun 2020 11:03:42 +0200
+From:   Guennadi Liakhovetski <guennadi.liakhovetski@linux.intel.com>
+To:     Vincent Whitchurch <vincent.whitchurch@axis.com>
+Cc:     kvm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        sound-open-firmware@alsa-project.org,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Liam Girdwood <liam.r.girdwood@linux.intel.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Ohad Ben-Cohen <ohad@wizery.com>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-remoteproc@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.7 010/388] remoteproc: Fix IDR initialisation in rproc_alloc()
-Date:   Wed, 17 Jun 2020 21:01:47 -0400
-Message-Id: <20200618010805.600873-10-sashal@kernel.org>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200618010805.600873-1-sashal@kernel.org>
-References: <20200618010805.600873-1-sashal@kernel.org>
+        Mathieu Poirier <mathieu.poirier@linaro.org>
+Subject: Re: [PATCH v3 5/5] vhost: add an RPMsg API
+Message-ID: <20200618090341.GA4189@ubuntu>
+References: <20200527180541.5570-1-guennadi.liakhovetski@linux.intel.com>
+ <20200527180541.5570-6-guennadi.liakhovetski@linux.intel.com>
+ <20200617191741.whnp7iteb36cjnia@axis.com>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200617191741.whnp7iteb36cjnia@axis.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-From: Alex Elder <elder@linaro.org>
+Hi Vincent,
 
-[ Upstream commit 6442df49400b466431979e7634849a464a5f1861 ]
+On Wed, Jun 17, 2020 at 09:17:42PM +0200, Vincent Whitchurch wrote:
+> On Wed, May 27, 2020 at 08:05:41PM +0200, Guennadi Liakhovetski wrote:
+> > Linux supports running the RPMsg protocol over the VirtIO transport
+> > protocol, but currently there is only support for VirtIO clients and
+> > no support for a VirtIO server. This patch adds a vhost-based RPMsg
+> > server implementation.
+> 
+> This looks really useful, but why is it implemented as an API and not as
+> a real vhost driver which implements an rpmsg bus?  If you implement it
+> as a vhost driver which implements rpmsg_device_ops and
+> rpmsg_endpoint_ops, then wouldn't you be able to implement your
+> vhost-sof driver using the normal rpmsg APIs?
 
-If ida_simple_get() returns an error when called in rproc_alloc(),
-put_device() is called to clean things up.  By this time the rproc
-device type has been assigned, with rproc_type_release() as the
-release function.
+Sorry, not sure what you mean by the "normal rpmsg API?" Do you mean the 
+VirtIO RPMsg API? But that's the opposite side of the link - that's the 
+guest side in the VM case and the Linux side in the remoteproc case. What 
+this API is adding is a vhost RPMsg API. The kernel vhost framework 
+itself is essentially a library of functions. Kernel vhost drivers simply 
+create a misc device and use the vhost functions for some common 
+functionality. This RPMsg vhost API stays in the same concept and provides 
+further functions for RPMsg specific vhost operation.
 
-The first thing rproc_type_release() does is call:
-    idr_destroy(&rproc->notifyids);
+> I tried quickly hooking up this code to such a vhost driver and I was
+> able to communicate between host and guest systems with both
+> rpmsg-client-sample and rpmsg-char which almost no modifications to
+> those drivers.
 
-But at the time the ida_simple_get() call is made, the notifyids
-field in the remoteproc structure has not been initialized.
+You mean you used this patch to create RPMsg vhost drivers? Without 
+creating a vhost RPMsg bus? Nice, glad to hear that!
 
-I'm not actually sure this case causes an observable problem, but
-it's incorrect.  Fix this by initializing the notifyids field before
-calling ida_simple_get() in rproc_alloc().
-
-Fixes: b5ab5e24e960 ("remoteproc: maintain a generic child device for each rproc")
-Signed-off-by: Alex Elder <elder@linaro.org>
-Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-Reviewed-by: Suman Anna <s-anna@ti.com>
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-Link: https://lore.kernel.org/r/20200415204858.2448-2-mathieu.poirier@linaro.org
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/remoteproc/remoteproc_core.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index be15aace9b3c..8f79cfd2e467 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -2053,6 +2053,7 @@ struct rproc *rproc_alloc(struct device *dev, const char *name,
- 	rproc->dev.type = &rproc_type;
- 	rproc->dev.class = &rproc_class;
- 	rproc->dev.driver_data = rproc;
-+	idr_init(&rproc->notifyids);
- 
- 	/* Assign a unique device index and name */
- 	rproc->index = ida_simple_get(&rproc_dev_index, 0, 0, GFP_KERNEL);
-@@ -2078,8 +2079,6 @@ struct rproc *rproc_alloc(struct device *dev, const char *name,
- 
- 	mutex_init(&rproc->lock);
- 
--	idr_init(&rproc->notifyids);
--
- 	INIT_LIST_HEAD(&rproc->carveouts);
- 	INIT_LIST_HEAD(&rproc->mappings);
- 	INIT_LIST_HEAD(&rproc->traces);
--- 
-2.25.1
-
+Thanks
+Guennadi
