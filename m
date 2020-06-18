@@ -4,42 +4,42 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6043AC433E1
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 18 Jun 2020 01:16:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7A3CC433DF
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 18 Jun 2020 01:54:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3D29821D82
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 18 Jun 2020 01:16:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C262F22240
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 18 Jun 2020 01:54:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1592443008;
-	bh=uDvpw7ULi8z3A2hzCX2rJkjqppXEfkWzg0fjJI3OwDE=;
+	s=default; t=1592445250;
+	bh=PYgYh5EClCZLJSgI9EwuJGo8e/rRyeyZ+97SNn09/1c=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=qx8+ylD08qp1WSfY7e8TxCkCQNd26JWRjunmga0rpfmHttTdzzeFpH103lndImDbd
-	 nGoDKETXuqGsNYgD/D7g5CZKMbr/aaBroyg41ASEHpPoK3ErxPd8RNy/1YMX3zh8UK
-	 0SCpCJ/yk4rtGpv/IkF3vjO3AoFz5FjEWqFzmsaQ=
+	b=IuAbKzuooQ/zDj9JKwwKWOnLRsufGZlxLXLF6KqBNsxxcOZzD0uNvrgkORuQgXtei
+	 b8nZ3q82hVvr0lPfu0ZKvjkBEcw3LzvEs4DAO3FF/mK7NrbPThOjO6V1fjtOFqgQid
+	 ivmIFynTBuOPk3Huc20Zv/PFm4WmoXkLR9LtY++A=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729643AbgFRBQo (ORCPT
+        id S1729843AbgFRByI (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 17 Jun 2020 21:16:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47564 "EHLO mail.kernel.org"
+        Wed, 17 Jun 2020 21:54:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33446 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729632AbgFRBQm (ORCPT
+        id S1731599AbgFRB0I (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 17 Jun 2020 21:16:42 -0400
+        Wed, 17 Jun 2020 21:26:08 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7776821D79;
-        Thu, 18 Jun 2020 01:16:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9AE4021D7F;
+        Thu, 18 Jun 2020 01:26:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1592443002;
-        bh=uDvpw7ULi8z3A2hzCX2rJkjqppXEfkWzg0fjJI3OwDE=;
+        s=default; t=1592443568;
+        bh=PYgYh5EClCZLJSgI9EwuJGo8e/rRyeyZ+97SNn09/1c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=uh0nMF8UhSAaB6XztR0/u2M8fB6+LzX2mqDaFuDiWIrJZ2QP9BlaPzBEwTn7uA3Ym
-         PhtIMTIP9DgV1pj7G0LCXnyoEsTfRFgZ87tClB7NuTK5K6VNWmNkFjWNjKJOYonUV8
-         D5mnm/qpSD3J7jPR2ygimXOjR+YZZ1NEsSyArvKo=
+        b=mcWiJ3z3tVo1uV5mmprDD8oBu+41zhigyxTU7GStXh5GFnOpNM1Z9jbMRIF1J9Ne4
+         zjHLOTWuWKtxwV8wE2UAQ75qWD/hv7cFQ4T0e5bwqaAxMBeq1gh965J5iv8uF/GAEg
+         u/RuJw75UsBhHh5soCX7PtewYRz0oCLZAE/tUHZo=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Alex Elder <elder@linaro.org>,
@@ -48,12 +48,12 @@ Cc:     Alex Elder <elder@linaro.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
         Sasha Levin <sashal@kernel.org>,
         linux-remoteproc@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.4 008/266] remoteproc: Fix IDR initialisation in rproc_alloc()
-Date:   Wed, 17 Jun 2020 21:12:13 -0400
-Message-Id: <20200618011631.604574-8-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 006/108] remoteproc: Fix IDR initialisation in rproc_alloc()
+Date:   Wed, 17 Jun 2020 21:24:18 -0400
+Message-Id: <20200618012600.608744-6-sashal@kernel.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200618011631.604574-1-sashal@kernel.org>
-References: <20200618011631.604574-1-sashal@kernel.org>
+In-Reply-To: <20200618012600.608744-1-sashal@kernel.org>
+References: <20200618012600.608744-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -95,10 +95,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 1 insertion(+), 2 deletions(-)
 
 diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index 0896b3614eb1..ce92ae227aa1 100644
+index 8f4fa1a52f05..d6372470e5be 100644
 --- a/drivers/remoteproc/remoteproc_core.c
 +++ b/drivers/remoteproc/remoteproc_core.c
-@@ -2036,6 +2036,7 @@ struct rproc *rproc_alloc(struct device *dev, const char *name,
+@@ -1432,6 +1432,7 @@ struct rproc *rproc_alloc(struct device *dev, const char *name,
  	rproc->dev.type = &rproc_type;
  	rproc->dev.class = &rproc_class;
  	rproc->dev.driver_data = rproc;
@@ -106,7 +106,7 @@ index 0896b3614eb1..ce92ae227aa1 100644
  
  	/* Assign a unique device index and name */
  	rproc->index = ida_simple_get(&rproc_dev_index, 0, 0, GFP_KERNEL);
-@@ -2060,8 +2061,6 @@ struct rproc *rproc_alloc(struct device *dev, const char *name,
+@@ -1450,8 +1451,6 @@ struct rproc *rproc_alloc(struct device *dev, const char *name,
  
  	mutex_init(&rproc->lock);
  
