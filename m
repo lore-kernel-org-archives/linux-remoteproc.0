@@ -2,124 +2,122 @@ Return-Path: <SRS0=x/i3=AC=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F27D3C433E0
-	for <linux-remoteproc@archiver.kernel.org>; Sun, 21 Jun 2020 07:42:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4180C433E1
+	for <linux-remoteproc@archiver.kernel.org>; Sun, 21 Jun 2020 19:33:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C3A7124875
-	for <linux-remoteproc@archiver.kernel.org>; Sun, 21 Jun 2020 07:42:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8794A25259
+	for <linux-remoteproc@archiver.kernel.org>; Sun, 21 Jun 2020 19:33:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zGUghkd1"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="uZ3XMOQ4"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729450AbgFUHmw (ORCPT
+        id S1730671AbgFUTdK (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Sun, 21 Jun 2020 03:42:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55904 "EHLO
+        Sun, 21 Jun 2020 15:33:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51448 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729426AbgFUHmw (ORCPT
+        with ESMTP id S1729279AbgFUTdK (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Sun, 21 Jun 2020 03:42:52 -0400
-Received: from mail-pf1-x442.google.com (mail-pf1-x442.google.com [IPv6:2607:f8b0:4864:20::442])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 371B5C061797
-        for <linux-remoteproc@vger.kernel.org>; Sun, 21 Jun 2020 00:42:52 -0700 (PDT)
-Received: by mail-pf1-x442.google.com with SMTP id d66so6824059pfd.6
-        for <linux-remoteproc@vger.kernel.org>; Sun, 21 Jun 2020 00:42:52 -0700 (PDT)
+        Sun, 21 Jun 2020 15:33:10 -0400
+Received: from mail-pj1-x1042.google.com (mail-pj1-x1042.google.com [IPv6:2607:f8b0:4864:20::1042])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 20FA7C061794
+        for <linux-remoteproc@vger.kernel.org>; Sun, 21 Jun 2020 12:33:10 -0700 (PDT)
+Received: by mail-pj1-x1042.google.com with SMTP id u8so6990563pje.4
+        for <linux-remoteproc@vger.kernel.org>; Sun, 21 Jun 2020 12:33:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=frGpGD1gGEK1DdHYmVp70xVzhZtdl7uz6o/kq9Sz7lM=;
-        b=zGUghkd1g8cYCEAxLlIdjoC73QetExiHi8MofsyHfYXNepWTEYVE7RQNCJfo/wiNUt
-         vFBvABNe+ePYrhfEfWGQj4o7SfreOo4lml/10odlB/NJNgflW73Hxec7hRt3mD8weBmT
-         SqBAupQp97LO1uAYIzTB27DqiVL16O2NMr9ffqboWDTX8Bov/maXrhDUfDDLMDX3eA2N
-         hkbpRAPhlf7ffes/n+InDcVYRmsKwH4KyVbLrErLnYviK7OXZbiJW7FXgRVTouoCyeWT
-         PuPDm32dOB90Pxb+Chs9d8S9VINt59dZr3lSQVasT9LHr2/DPXoIdsSDkmd06hnLYhAQ
-         vGcg==
+        bh=8V6HFmLfGm9H0h60UuqXdO7H0Hr/Mksem7jzlgy8U7w=;
+        b=uZ3XMOQ4CZBG1jROGxZneTOAF/aHCdQeyVlB3ZvRPBwfRRELY87Zy/FrPPzIzbtjeh
+         ZSWzeilRJ+ltWjl6Wf8XjC9YNwgPUsO+ASAyoEpi37Hdt+3QAoXCC++PIZTbJa+8GGpT
+         ztxtBduTxsquEyTofbr7TcgqSWVtLd7onuIkpBAvohocO81okO6x/h7Iv1zDYrwdr0Z2
+         kJ0J4Pqwssy9Ok05g+TqqC9JqKfzAcE1Dj26Qt1C8YWblqqz3/BxVrgLkk6V9ppyP0Tm
+         U1HmZNDGhHKG9qiukpFLS4kOR8UXxsshrJCRpDGH0Gvo4YSruUMZxSH4zyFR1N0DauXC
+         3IPA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:content-transfer-encoding
          :in-reply-to;
-        bh=frGpGD1gGEK1DdHYmVp70xVzhZtdl7uz6o/kq9Sz7lM=;
-        b=XR2+uq0aOJ8JKIFI3aqJ7wBRIIHJ3tzsBuwxbcKyts4rnh64B6D2MT5xXYslt9yphD
-         mIHeEToPADS+qopXJQboY+bESbwTdSIIIrhjTyHlwZ2jAiHoUkRBQqCSMECWTd7KeNBZ
-         4Yy9UMUpqQfMPQEef1F8aeLi7aEGl/cSgaUn1khAPAbXAqooYVvmGU0NA9SAqOHNA15D
-         76caqedJDBdwvY5zOM1FVKjVTnEyKJ/9keCOEIe9NHy36+V73tZdKMIOgAp/Q98mGsrA
-         gh6zNqlAdJLNt60dB2JB5T3ZPpFFRrAaaGK8zGVuJb7qs/Hj0nku6cd4WGJppwLo2cIT
-         cSCg==
-X-Gm-Message-State: AOAM533iogf4SlZ3bvElXct+kfzyEmxQj+ZjxMcZ2h6SkO8eH9TxY/SE
-        4n0CtVwYh7rj9jRHEOe75OrYNQ==
-X-Google-Smtp-Source: ABdhPJxxeebxj+wAA384otLJPlzJxSWAx7g4IEHWU6NMCdV8vlU+PV9+X2lTtdMYH0dHRanxC9G62Q==
-X-Received: by 2002:a63:6d42:: with SMTP id i63mr8424330pgc.77.1592725371399;
-        Sun, 21 Jun 2020 00:42:51 -0700 (PDT)
+        bh=8V6HFmLfGm9H0h60UuqXdO7H0Hr/Mksem7jzlgy8U7w=;
+        b=DDtA5plIXEPMxaOUAbperu9s53RjYf4bQbM0f5ZRW+C/RwvRN5rjR52dIpikhITeBz
+         j98RAsMpqs+qEn8DsBWo0f1E5cYm6Pdu37KFjRS0ZfYauink7Cm84pfMTjNrUNmv29Zl
+         8QgzR4JeM1wY6wgbu9vRpOgPDKyasXB/uRZq3ufvpCiP2Q9SFUjIAHAG8jjz2y+L9bjc
+         +0FYzQBdcoggFWfhJ308pa1zRAb+sJVicapzgIEO8xzlTlq9MU97tVBGZ/cTDpWm5X8V
+         eKIY4Fw3N5v8HIqNWnNL4lYkV5AW9IWXzrtOBxBH3GMyBM+pfJWZtu6TroJHc3bD2SSu
+         s1RQ==
+X-Gm-Message-State: AOAM5334HOEe3FbhmMlOtR1z7SruLA98auDOkLS/tJq+bWS8vL54Tp2y
+        GnYq0i4HMz2EHz6qAHDWz42RXw==
+X-Google-Smtp-Source: ABdhPJx/yccrdZJLJQ925LbLp9rVL/mKCFCY/9xVs/BHknKusK+X01L1pvGaa2hA8nHDDt3N08i1SQ==
+X-Received: by 2002:a17:90a:c250:: with SMTP id d16mr14494880pjx.60.1592767989562;
+        Sun, 21 Jun 2020 12:33:09 -0700 (PDT)
 Received: from builder.lan (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id d4sm6092496pgf.9.2020.06.21.00.42.50
+        by smtp.gmail.com with ESMTPSA id q68sm11641137pjc.30.2020.06.21.12.33.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 21 Jun 2020 00:42:50 -0700 (PDT)
-Date:   Sun, 21 Jun 2020 00:40:03 -0700
+        Sun, 21 Jun 2020 12:33:08 -0700 (PDT)
+Date:   Sun, 21 Jun 2020 12:30:22 -0700
 From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Naresh Kamboju <naresh.kamboju@linaro.org>
-Cc:     linux-arm-msm@vger.kernel.org, inux-remoteproc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, sibis@codeaurora.org,
-        vinod.koul@linaro.org, agross@kernel.org, ohad@wizery.com,
-        p.zabel@pengutronix.de, linux-remoteproc@vger.kernel.org
-Subject: Re: [PATCH] remoteproc: qcom: q6v5-mss: Fix kfree build error
-Message-ID: <20200621074003.GJ128451@builder.lan>
-References: <20200617065658.27567-1-naresh.kamboju@linaro.org>
+To:     Paul Cercueil <paul@crapouillou.net>
+Cc:     Suman Anna <s-anna@ti.com>, Ohad Ben-Cohen <ohad@wizery.com>,
+        Arnaud Pouliquen <arnaud.pouliquen@st.com>, od@zcrc.me,
+        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Mathieu Poirier <mathieu.poirier@linaro.org>
+Subject: Re: [PATCH v7 4/5] remoteproc: ingenic: Added remoteproc driver
+Message-ID: <20200621193022.GA149351@builder.lan>
+References: <20200515104340.10473-1-paul@crapouillou.net>
+ <20200515104340.10473-4-paul@crapouillou.net>
+ <8cdcf5ef-1268-89f6-b229-ac711a80b790@ti.com>
+ <FR8SBQ.5WXNHNH8P2P7@crapouillou.net>
+ <fc1e14e7-4551-48c3-2820-f5889c50becb@ti.com>
+ <G3ATBQ.KJYAFROKKWDP1@crapouillou.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200617065658.27567-1-naresh.kamboju@linaro.org>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <G3ATBQ.KJYAFROKKWDP1@crapouillou.net>
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Tue 16 Jun 23:56 PDT 2020, Naresh Kamboju wrote:
+On Fri 12 Jun 04:47 PDT 2020, Paul Cercueil wrote:
+> Le jeu. 11 juin 2020 =E0 19:21, Suman Anna <s-anna@ti.com> a =E9crit :
+> > On 6/11/20 5:21 PM, Paul Cercueil wrote:
+> > > Le jeu. 11 juin 2020 =E0 16:47, Suman Anna <s-anna@ti.com> a =E9crit :
+> > > > On 5/15/20 5:43 AM, Paul Cercueil wrote:
+[..]
+> > > > > diff --git a/drivers/remoteproc/ingenic_rproc.c
+> > > > > =7F=7F=7Fb/drivers/remoteproc/ingenic_rproc.c
+[..]
+> > > > > +    /* The clocks must be enabled for the firmware to be
+> > > > > loaded in =7F=7F=7FTCSM */
+> > > > > +    ret =3D clk_bulk_prepare_enable(ARRAY_SIZE(vpu->clks),
+> > > > > vpu->clks);
+> > > > > +    if (ret) {
+> > > > > +        dev_err(dev, "Unable to start clocks\n");
+> > > > > +        return ret;
+> > > > > +    }
+> > > >=20
+> > > > You are enabling the clocks directly here and also trying to
+> > > > manage =7F=7Fthem through pm_runtime callbacks again.
+> > >=20
+> > > Yes. The clocks need to be enabled in the probe.
+> >=20
+> > For the preferred non CONFIG_PM case now and lack of
+> > prepare/unprepare().
+>=20
+> I want to make it clear that I'm not against having .prepare/.unprepare, =
+but
+> I want to see what maintainers have to say.
+>=20
 
-> This patch adds linux/slab.h to fix build error in qcom_q6v5_mss.c
-> 
-> Build error:
->  ../drivers/remoteproc/qcom_q6v5_mss.c:
->   In function ‘q6v5_mpss_init_image’:
->  ../drivers/remoteproc/qcom_q6v5_mss.c:772:3:
->   error: implicit declaration of function ‘kfree’;
->   did you mean ‘vfree’? [-Werror=implicit-function-declaration]
->    772 |   kfree(metadata);
->        |   ^~~~~
->        |   vfree
-> 
-> Signed-off-by: Naresh Kamboju <naresh.kamboju@linaro.org>
-
-Thanks for the patch Naresh, it looks correct but I've not seen this
-build error myself. Could you please let me know what you built to get
-this and if you have any suggestion on what caused it? (So we can add a
-Fixes: tag etc)
+I think it's perfectly reasonable to enable all the resources here and
+then if CONFIG_PM isn't set you just leave them enabled throughout.
 
 Regards,
 Bjorn
-
-> ---
->  drivers/remoteproc/qcom_q6v5_mss.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/remoteproc/qcom_q6v5_mss.c b/drivers/remoteproc/qcom_q6v5_mss.c
-> index feb70283b6a2..903b2bb97e12 100644
-> --- a/drivers/remoteproc/qcom_q6v5_mss.c
-> +++ b/drivers/remoteproc/qcom_q6v5_mss.c
-> @@ -26,6 +26,7 @@
->  #include <linux/reset.h>
->  #include <linux/soc/qcom/mdt_loader.h>
->  #include <linux/iopoll.h>
-> +#include <linux/slab.h>
->  
->  #include "remoteproc_internal.h"
->  #include "qcom_common.h"
-> -- 
-> 2.17.1
-> 
