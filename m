@@ -2,113 +2,135 @@ Return-Path: <SRS0=Lo8U=AD=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A843C433DF
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 22 Jun 2020 06:18:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3569CC433DF
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 22 Jun 2020 06:28:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 18A2625414
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 22 Jun 2020 06:18:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0E6B125208
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 22 Jun 2020 06:28:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="L680i4qL"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XpfBsbhe"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731243AbgFVGSv (ORCPT
+        id S1731265AbgFVG2I (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 22 Jun 2020 02:18:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37602 "EHLO
+        Mon, 22 Jun 2020 02:28:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39006 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731219AbgFVGSv (ORCPT
+        with ESMTP id S1731248AbgFVG2H (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 22 Jun 2020 02:18:51 -0400
-Received: from mail-lj1-x244.google.com (mail-lj1-x244.google.com [IPv6:2a00:1450:4864:20::244])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CD6ABC061797
-        for <linux-remoteproc@vger.kernel.org>; Sun, 21 Jun 2020 23:18:49 -0700 (PDT)
-Received: by mail-lj1-x244.google.com with SMTP id a9so17867354ljn.6
-        for <linux-remoteproc@vger.kernel.org>; Sun, 21 Jun 2020 23:18:49 -0700 (PDT)
+        Mon, 22 Jun 2020 02:28:07 -0400
+Received: from mail-oi1-x242.google.com (mail-oi1-x242.google.com [IPv6:2607:f8b0:4864:20::242])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DB29CC061795
+        for <linux-remoteproc@vger.kernel.org>; Sun, 21 Jun 2020 23:28:06 -0700 (PDT)
+Received: by mail-oi1-x242.google.com with SMTP id x202so14666342oix.11
+        for <linux-remoteproc@vger.kernel.org>; Sun, 21 Jun 2020 23:28:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=EwHajz3b3OzliZZ0iljg79Qo0FRnx6yIvPIMoMPNCF0=;
-        b=L680i4qLfffD6qOBHAVVNs/RTGmimhbH54HePc+aAEEFMZsU+KwUMLtg0o3/KjZxwi
-         AsJtSTQQ9TWWeiUXdQ6E95DBB6nBEu9Bw9RHmSduuUFi5efeqeK0TwchSwQmEm1b/LR9
-         guCuBfe2PDw3TrUU4GG5GeGv7DXpvHYmlHIldJ2LtIJ7sYX6q2DjQR1wjBtOZiQOZo0Z
-         c9Wg8EN9kOlCKoKR3DMaVb8rhfL6NJ6XMN3s8YaoUJrXHuvkQxL1kSCVF2HJjwP4WKbo
-         VBXH7bVYaJLr5EKRWY/wyAk5DctM3eO6l3XrzLPT9iajAEGxLTpci91ZvZNz83XG70eE
-         IcaA==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=bBeZtgAb2UNyQsPAk8bOgNUxMw9atU2V4z23o4bn6XI=;
+        b=XpfBsbheJAYZrbK/j5IY5yMhOIOhPfZ/M7slKgD99C+U30Bca2GdZYM+IgyjfZqOcz
+         NnjoH0pjO99FBV0xZt2hpJ7aRxXVxDTIW+I/CwUs+XoT78QKEuJHMD1dW753BAM+O6u+
+         kzxY2NsU0JUIoAYg1OgG8X1xz5Y+xs5dxq/KzRBIi2uUKzdTQZQkU++y4+yoGIvqWLqp
+         jwvlpBx0J6POiXhKB/tnBZvK3jfJholo08tKIVzSfuBLDMKH6BwO3p6Bb5X/VB6gEfFW
+         nnWEafuX5l10Fa5JUJrQJo0klSUaflvs5rptLLwNEgE8PWWxeRkPw54LIbvprajD3cbz
+         U3NA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=EwHajz3b3OzliZZ0iljg79Qo0FRnx6yIvPIMoMPNCF0=;
-        b=tnL5BV4mww9BGdu4sDM7rkdQxHQLIAoW4H66Sea6t5O5QUEE4sT7EP3dcjpz9lJqu0
-         vOjTaXZgYv0pf9areZvTeqCfmA0hSXsuwP0vjl1NeK3Wq8wD/WM3V8L53LHYQmA6XRU8
-         HfjuJl3IcbeObdUSXh4MJ6yS/nk/OQzGPtjfuuF+HEkrqnGS+Tf0d4nQsGQ8wFTr7o5k
-         Gopsh4rJYVY9/JwuBPhHqau5LDgCWrcRBhx6rjW/EkZ2EdttzAl/D2AeMAlalCzw3a2I
-         knqUu+FyvGhbuZvVakUMupC4MF1+V+lFsJ6qKZUFzD1AOj8llKadLQghK5mjcws0Z94p
-         KfkA==
-X-Gm-Message-State: AOAM5311N4T4w/z0o9h7gNq6sUZPFxAOjEJJ2EhBCERIDwiQZsqM9UOu
-        BjIg49P5xP+uG5JNRy9hFvoMt59vwxhGCK8oMrnfLQ==
-X-Google-Smtp-Source: ABdhPJzk1dBKVTKlDCM/pQw++y3L1fqg3Nln3xfdv33XwAIbfQ+dtjXOSdb7gqcWA/t3i5e0VbW2AJq+r8s5HIFRXi8=
-X-Received: by 2002:a2e:9116:: with SMTP id m22mr7607612ljg.431.1592806727377;
- Sun, 21 Jun 2020 23:18:47 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=bBeZtgAb2UNyQsPAk8bOgNUxMw9atU2V4z23o4bn6XI=;
+        b=XwIn7GcEzS9igaTMk7sIliRWw/zKFsUNYEZhuExHE8UTKXlYyhcpJhAlg1MVd0W+z/
+         BT0gceSZ5Nfpd7pdpgthKVw9r5KqdrGsnmqM5WrrDvtMRlgz+V8pnDFAzg5YAXJLWh6d
+         +vI8jDkTLQISrHy9rzT23C9Ac/fbToHU/WTWPU9dRqtEykFxrmKP+y2XuFzzkD/RCX7K
+         0MQgRFPKqu8+6DITqgefK9o+Ag9zmHIOKQZkwRMn7SMd2tpB6c0+56kgcaqH5+kuXVqD
+         QhoR/PDIinJA64XHFMOhObm9zh5EhqMOixuxj13tHQTfe0ZFYIOFfl5ssvRLXEEUzBwM
+         9wug==
+X-Gm-Message-State: AOAM532WPMkVH3DQtZq5xQJyVX/lvCMYymGBzv6F1eRuTShuxHVPJMNU
+        XS8JosHUpiC2AL7vOaUezUh6ng==
+X-Google-Smtp-Source: ABdhPJx9x//osLbnYbR5OAnNACxidGIX37VhvaHF67pUSeaNzIOWnZGZ+S4wjOC6Rbzpp5uBkUCKUQ==
+X-Received: by 2002:aca:c203:: with SMTP id s3mr11807861oif.95.1592807286045;
+        Sun, 21 Jun 2020 23:28:06 -0700 (PDT)
+Received: from builder.lan (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id w1sm3237052ooq.1.2020.06.21.23.28.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 21 Jun 2020 23:28:05 -0700 (PDT)
+Date:   Sun, 21 Jun 2020 23:25:19 -0700
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc:     ohad@wizery.com, linux-remoteproc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, loic.pallardy@st.com,
+        arnaud.pouliquen@st.com, s-anna@ti.com
+Subject: Re: [PATCH v4 1/9] remoteproc: Add new RPROC_DETACHED state
+Message-ID: <20200622062519.GB149351@builder.lan>
+References: <20200601175139.22097-1-mathieu.poirier@linaro.org>
+ <20200601175139.22097-2-mathieu.poirier@linaro.org>
 MIME-Version: 1.0
-References: <20200617065658.27567-1-naresh.kamboju@linaro.org> <20200621074003.GJ128451@builder.lan>
-In-Reply-To: <20200621074003.GJ128451@builder.lan>
-From:   Naresh Kamboju <naresh.kamboju@linaro.org>
-Date:   Mon, 22 Jun 2020 11:48:35 +0530
-Message-ID: <CA+G9fYvOSRL5WaU1tYTxe4Y16h_kBbNsOibsH6Od5dc1tcmK6Q@mail.gmail.com>
-Subject: Re: [PATCH] remoteproc: qcom: q6v5-mss: Fix kfree build error
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     linux-arm-msm@vger.kernel.org, inux-remoteproc@vger.kernel.org,
-        open list <linux-kernel@vger.kernel.org>,
-        Sibi Sankar <sibis@codeaurora.org>,
-        Vinod Koul <vinod.koul@linaro.org>, agross@kernel.org,
-        Ohad Ben Cohen <ohad@wizery.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        linux-remoteproc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200601175139.22097-2-mathieu.poirier@linaro.org>
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Sun, 21 Jun 2020 at 13:12, Bjorn Andersson
-<bjorn.andersson@linaro.org> wrote:
->
-> On Tue 16 Jun 23:56 PDT 2020, Naresh Kamboju wrote:
->
-> > This patch adds linux/slab.h to fix build error in qcom_q6v5_mss.c
-> >
-> > Build error:
-> >  ../drivers/remoteproc/qcom_q6v5_mss.c:
-> >   In function =E2=80=98q6v5_mpss_init_image=E2=80=99:
-> >  ../drivers/remoteproc/qcom_q6v5_mss.c:772:3:
-> >   error: implicit declaration of function =E2=80=98kfree=E2=80=99;
-> >   did you mean =E2=80=98vfree=E2=80=99? [-Werror=3Dimplicit-function-de=
-claration]
-> >    772 |   kfree(metadata);
-> >        |   ^~~~~
-> >        |   vfree
-> >
-> > Signed-off-by: Naresh Kamboju <naresh.kamboju@linaro.org>
->
-> Thanks for the patch Naresh, it looks correct but I've not seen this
-> build error myself. Could you please let me know what you built to get
-> this and if you have any suggestion on what caused it? (So we can add a
-> Fixes: tag etc)
+On Mon 01 Jun 10:51 PDT 2020, Mathieu Poirier wrote:
 
-Thanks for the review.
-This was an arm64 modules build failure on linux -next 20200616 tag.
-This fix has already been taken care of by
-Herbert Xu <herbert@gondor.apana.org.au> and got merged.
-Fixes: f0187db056dc ("iov_iter: Move unnecessary inclusion of...")
+> Add a new RPROC_DETACHED state to take into account scenarios
+> where the remoteproc core needs to attach to a remote processor
+> that is booted by another entity.
+> 
+> Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 
-ref:
-https://lore.kernel.org/lkml/20200616010502.GA28834@gondor.apana.org.au/
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 
-- Naresh
+Regards,
+Bjorn
+
+> ---
+>  drivers/remoteproc/remoteproc_sysfs.c | 1 +
+>  include/linux/remoteproc.h            | 5 ++++-
+>  2 files changed, 5 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/remoteproc/remoteproc_sysfs.c b/drivers/remoteproc/remoteproc_sysfs.c
+> index 7f8536b73295..8b462c501465 100644
+> --- a/drivers/remoteproc/remoteproc_sysfs.c
+> +++ b/drivers/remoteproc/remoteproc_sysfs.c
+> @@ -71,6 +71,7 @@ static const char * const rproc_state_string[] = {
+>  	[RPROC_RUNNING]		= "running",
+>  	[RPROC_CRASHED]		= "crashed",
+>  	[RPROC_DELETED]		= "deleted",
+> +	[RPROC_DETACHED]	= "detached",
+>  	[RPROC_LAST]		= "invalid",
+>  };
+>  
+> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+> index e7b7bab8b235..21182ad2d059 100644
+> --- a/include/linux/remoteproc.h
+> +++ b/include/linux/remoteproc.h
+> @@ -400,6 +400,8 @@ struct rproc_ops {
+>   * @RPROC_RUNNING:	device is up and running
+>   * @RPROC_CRASHED:	device has crashed; need to start recovery
+>   * @RPROC_DELETED:	device is deleted
+> + * @RPROC_DETACHED:	device has been booted by another entity and waiting
+> + *			for the core to attach to it
+>   * @RPROC_LAST:		just keep this one at the end
+>   *
+>   * Please note that the values of these states are used as indices
+> @@ -414,7 +416,8 @@ enum rproc_state {
+>  	RPROC_RUNNING	= 2,
+>  	RPROC_CRASHED	= 3,
+>  	RPROC_DELETED	= 4,
+> -	RPROC_LAST	= 5,
+> +	RPROC_DETACHED	= 5,
+> +	RPROC_LAST	= 6,
+>  };
+>  
+>  /**
+> -- 
+> 2.20.1
+> 
