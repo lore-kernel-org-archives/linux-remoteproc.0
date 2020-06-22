@@ -7,58 +7,58 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E14B5C433E1
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 22 Jun 2020 07:59:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FAA7C433E0
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 22 Jun 2020 08:00:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BC30A22267
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 22 Jun 2020 07:59:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5F99820857
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 22 Jun 2020 08:00:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="z7MEDIZW"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yK7BuJkf"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726118AbgFVH7t (ORCPT
+        id S1726065AbgFVIAC (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 22 Jun 2020 03:59:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53168 "EHLO
+        Mon, 22 Jun 2020 04:00:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53196 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725983AbgFVH7r (ORCPT
+        with ESMTP id S1727032AbgFVH7w (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 22 Jun 2020 03:59:47 -0400
-Received: from mail-oi1-x241.google.com (mail-oi1-x241.google.com [IPv6:2607:f8b0:4864:20::241])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 90457C061799
-        for <linux-remoteproc@vger.kernel.org>; Mon, 22 Jun 2020 00:59:47 -0700 (PDT)
-Received: by mail-oi1-x241.google.com with SMTP id x202so14843647oix.11
-        for <linux-remoteproc@vger.kernel.org>; Mon, 22 Jun 2020 00:59:47 -0700 (PDT)
+        Mon, 22 Jun 2020 03:59:52 -0400
+Received: from mail-oi1-x243.google.com (mail-oi1-x243.google.com [IPv6:2607:f8b0:4864:20::243])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DDA54C061796
+        for <linux-remoteproc@vger.kernel.org>; Mon, 22 Jun 2020 00:59:52 -0700 (PDT)
+Received: by mail-oi1-x243.google.com with SMTP id i74so14840817oib.0
+        for <linux-remoteproc@vger.kernel.org>; Mon, 22 Jun 2020 00:59:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=LJgqx0FElWYNHiKP6/azPu/efC7YRPz1t5jHiyjGX5I=;
-        b=z7MEDIZWSm4dSLKud1tvjbVwKfWltkWrCH4cI0Tkv27wR37A8L2ku475Fi3XjSdQvj
-         CeArAWZ4pkgSR63gpxUsc3v+ckNOEqxQvGSh1E8yLb1HfwlvU+W7IL0pBYfuefbu6Cmx
-         6rmcNEcfUBSwkBYwRTg1eEMYPTQPh6LNl+lzeu/YVxaOzOEnWKQ88XEvTlZR5fzRIJ6R
-         duHpT4zSmYtxBQB3VFWCXIKgNqGGrOVWDDYUp0lLkX5ZW/INsyNXxylmxAITP4xyzMGj
-         MfMujM7d9BFW957Np/8UfJQjdk0eabxbd8FTR4lPZ0U3n5cIv0OEEHbGImVH4P1Np+Kw
-         ZrpA==
+        bh=hzqoVDbQzZNmNPwLRsiHsWdrSJDCtl0FBiErUw9Lnwc=;
+        b=yK7BuJkfP85RyShC36Lhp2LQ9octtbXw0Kd/pRG6QS48O7IW3L8gb/gFfA0yf7sjwd
+         qQ8qPI4o3Ygkgw4i0odCiSvqAKMqVALqnXOOt7P9vk+2MaXZvyjxYqzUagMI2tVgkFoB
+         xOK9fZ1Gmv1MLfSlpkTKaWnZchLEmKA1x0bXIzzkFFfoTvOZj7feLHbSoa97l1QyQ5O9
+         0XxyCjm6upqXL3kR4YePhnZ84lZpjyM9GWyqRkzcrX7YNGPBLn8oHNGSwBOBzAuEz3u0
+         NnqlLLw9N8bE+vK2Rng5KMKZBlqZKftKhXFHYNXVvG/F9nHug00DqL4aiFpfgM0Orqzj
+         VbHg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=LJgqx0FElWYNHiKP6/azPu/efC7YRPz1t5jHiyjGX5I=;
-        b=r5d16eB4mcHYSZnUPAA9qL6VT+Epl2Gml/rPXZfnXmGFUVMYde1x0Iu8XlAUVoTYGH
-         YtpUrk19+o9meGczFYOpM2cstibnWmWo4w6u3hkaaINCFcyJFNAh6FpG8kGoaR0g+ltM
-         Th5ZALRYN/zoFmDQgBMjiBc1deOoiDhx1nJUSnRTX6Y+v5Y+gWOgDBYc31PSBwYYcVdz
-         qS9a+0ZdAN/pxCMzL03U7WM6eln/W1u7Lia13n9yrMH6kptrJ2sMuZ/8kxgMH1v1Q6zp
-         FdruaFEoSpWN5PwNM7LdM3lLQtsDLzOnZNW4bvmv7MzDXTv+6RmAAY67WwuUvQBgNr8u
-         RcgA==
-X-Gm-Message-State: AOAM5322Nr+Hssu2AK3XbTeHs+8h94tX8Sw75SGgT+iSBiX0htqVJoI5
-        pdDdUAzs/rNSoOfNpWIL077hv5Lxgv0=
-X-Google-Smtp-Source: ABdhPJwW08awvSrcBH/moxNLMZgjj2yqEijNnETVIOc23GGyh5ogpgmPd3z8sHprGv6P1VAq01Xuiw==
-X-Received: by 2002:aca:da44:: with SMTP id r65mr11144475oig.124.1592812786882;
-        Mon, 22 Jun 2020 00:59:46 -0700 (PDT)
+        bh=hzqoVDbQzZNmNPwLRsiHsWdrSJDCtl0FBiErUw9Lnwc=;
+        b=cD3Bi5vqol/gYw/AroCGNyt1CdWCiTDJiUGCjonaeFLtWAC6TX5TZ8+ID2IEsu+3xP
+         eReqNTB5FR70Nqje4Jw1GOp2syYa3A0MuaZUiCnWaH6CBbFp6E1MRzVcBZjrSrA2DQIb
+         ewPZjkNET7FcmUSo6t7Ez0fiIiuWjRKjbl3ZJ8OY7L/u0rfM9xO91Qs+LxJoKwEqkCT+
+         gyenMS4tVgci19NmjhwRaAquT5xym1Uz4f15Gm+k1vxZ/J6wO9q+Ocb9XK6FYj7mwwav
+         oZ3p5/If7zFjhvlaJCqknFDDqBr2p4yAzkt9jXiOWrClaU2zvNOJETCuTOERbpL0DbWd
+         NvkA==
+X-Gm-Message-State: AOAM533xP4sMCnMvQLYKSQa1JHlFqxuR7nTpof7FcKP7nDLbzuICajgS
+        +fQOswU7hMCb2d2zK85DQONARg==
+X-Google-Smtp-Source: ABdhPJw+bQnmJ6Pc0QpgUAdyiwiS7PZ0gYPWeLnYhVPGbWLGZYw7lGRZsHNPlC3mtT6i7n21MomKDQ==
+X-Received: by 2002:aca:51ca:: with SMTP id f193mr11618906oib.170.1592812791283;
+        Mon, 22 Jun 2020 00:59:51 -0700 (PDT)
 Received: from localhost.localdomain (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id f7sm3135396otl.60.2020.06.22.00.59.45
+        by smtp.gmail.com with ESMTPSA id f7sm3135396otl.60.2020.06.22.00.59.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 22 Jun 2020 00:59:46 -0700 (PDT)
+        Mon, 22 Jun 2020 00:59:50 -0700 (PDT)
 From:   Bjorn Andersson <bjorn.andersson@linaro.org>
 To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
@@ -66,11 +66,10 @@ To:     Andy Gross <agross@kernel.org>,
         Baolin Wang <baolin.wang7@gmail.com>,
         Rob Herring <robh+dt@kernel.org>
 Cc:     linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Vinod Koul <vkoul@kernel.org>
-Subject: [PATCH v2 1/4] dt-bindings: hwlock: qcom: Migrate binding to YAML
-Date:   Mon, 22 Jun 2020 00:59:53 -0700
-Message-Id: <20200622075956.171058-2-bjorn.andersson@linaro.org>
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 4/4] arm64: dts: qcom: sm8250: Drop tcsr_mutex syscon
+Date:   Mon, 22 Jun 2020 00:59:56 -0700
+Message-Id: <20200622075956.171058-5-bjorn.andersson@linaro.org>
 X-Mailer: git-send-email 2.26.2
 In-Reply-To: <20200622075956.171058-1-bjorn.andersson@linaro.org>
 References: <20200622075956.171058-1-bjorn.andersson@linaro.org>
@@ -81,123 +80,62 @@ Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Migrate the Qualcomm TCSR mutex binding to YAML to allow validation.
+Now that we don't need the intermediate syscon to represent the TCSR
+mutexes, update the dts to describe the TCSR mutex directly under /soc.
 
-Reviewed-by: Vinod Koul <vkoul@kernel.org>
+The change also fixes the sort order of the nodes.
+
 Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 ---
 
-Changes since v1:
-- Actually remove the old binding doc
+Changs since v1:
+- Adjusted sort order of the nodes
 
- .../bindings/hwlock/qcom-hwspinlock.txt       | 39 --------------
- .../bindings/hwlock/qcom-hwspinlock.yaml      | 51 +++++++++++++++++++
- 2 files changed, 51 insertions(+), 39 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/hwlock/qcom-hwspinlock.txt
- create mode 100644 Documentation/devicetree/bindings/hwlock/qcom-hwspinlock.yaml
+ arch/arm64/boot/dts/qcom/sm8250.dtsi | 17 ++++++-----------
+ 1 file changed, 6 insertions(+), 11 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/hwlock/qcom-hwspinlock.txt b/Documentation/devicetree/bindings/hwlock/qcom-hwspinlock.txt
-deleted file mode 100644
-index 4563f524556b..000000000000
---- a/Documentation/devicetree/bindings/hwlock/qcom-hwspinlock.txt
-+++ /dev/null
-@@ -1,39 +0,0 @@
--Qualcomm Hardware Mutex Block:
--
--The hardware block provides mutexes utilized between different processors on
--the SoC as part of the communication protocol used by these processors.
--
--- compatible:
--	Usage: required
--	Value type: <string>
--	Definition: must be one of:
--		    "qcom,sfpb-mutex",
--		    "qcom,tcsr-mutex"
--
--- syscon:
--	Usage: required
--	Value type: <prop-encoded-array>
--	Definition: one cell containing:
--		    syscon phandle
--		    offset of the hwmutex block within the syscon
--		    stride of the hwmutex registers
--
--- #hwlock-cells:
--	Usage: required
--	Value type: <u32>
--	Definition: must be 1, the specified cell represent the lock id
--		    (hwlock standard property, see hwlock.txt)
--
--Example:
--
--	tcsr_mutex_block: syscon@fd484000 {
--		compatible = "syscon";
--		reg = <0xfd484000 0x2000>;
--	};
--
--	hwlock@fd484000 {
+diff --git a/arch/arm64/boot/dts/qcom/sm8250.dtsi b/arch/arm64/boot/dts/qcom/sm8250.dtsi
+index 7050adba7995..67a1b6f3301b 100644
+--- a/arch/arm64/boot/dts/qcom/sm8250.dtsi
++++ b/arch/arm64/boot/dts/qcom/sm8250.dtsi
+@@ -144,12 +144,6 @@ scm: scm {
+ 		};
+ 	};
+ 
+-	tcsr_mutex: hwlock {
 -		compatible = "qcom,tcsr-mutex";
--		syscon = <&tcsr_mutex_block 0 0x80>;
--
+-		syscon = <&tcsr_mutex_regs 0 0x1000>;
 -		#hwlock-cells = <1>;
 -	};
-diff --git a/Documentation/devicetree/bindings/hwlock/qcom-hwspinlock.yaml b/Documentation/devicetree/bindings/hwlock/qcom-hwspinlock.yaml
-new file mode 100644
-index 000000000000..71e63b52edd5
---- /dev/null
-+++ b/Documentation/devicetree/bindings/hwlock/qcom-hwspinlock.yaml
-@@ -0,0 +1,51 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/hwlock/qcom-hwspinlock.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
+-
+ 	memory@80000000 {
+ 		device_type = "memory";
+ 		/* We expect the bootloader to fill in the size */
+@@ -376,6 +370,12 @@ ufs_mem_phy_lanes: lanes@1d87400 {
+ 			};
+ 		};
+ 
++		tcsr_mutex: hwlock@1f40000 {
++			compatible = "qcom,tcsr-mutex";
++			reg = <0x0 0x01f40000 0x0 0x40000>;
++			#hwlock-cells = <1>;
++		};
 +
-+title: Qualcomm Hardware Mutex Block
-+
-+maintainers:
-+  - Bjorn Andersson <bjorn.andersson@linaro.org>
-+
-+description:
-+  The hardware block provides mutexes utilized between different processors on
-+  the SoC as part of the communication protocol used by these processors.
-+
-+properties:
-+  compatible:
-+    enum:
-+      - qcom,sfpb-mutex
-+      - qcom,tcsr-mutex
-+
-+  '#hwlock-cells':
-+    const: 1
-+
-+  syscon:
-+    $ref: "/schemas/types.yaml#/definitions/phandle-array"
-+    description:
-+      Should be a triple of phandle referencing the TCSR mutex syscon, offset
-+      of first mutex within the syscon and stride between each mutex.
-+
-+required:
-+  - compatible
-+  - '#hwlock-cells'
-+  - syscon
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+        tcsr_mutex_block: syscon@fd484000 {
-+                compatible = "syscon";
-+                reg = <0xfd484000 0x2000>;
-+        };
-+
-+        hwlock {
-+                compatible = "qcom,tcsr-mutex";
-+                syscon = <&tcsr_mutex_block 0 0x80>;
-+
-+                #hwlock-cells = <1>;
-+        };
-+...
+ 		intc: interrupt-controller@17a00000 {
+ 			compatible = "arm,gic-v3";
+ 			#interrupt-cells = <3>;
+@@ -486,11 +486,6 @@ rpmhpd_opp_turbo_l1: opp10 {
+ 			};
+ 		};
+ 
+-		tcsr_mutex_regs: syscon@1f40000 {
+-			compatible = "syscon";
+-			reg = <0x0 0x01f40000 0x0 0x40000>;
+-		};
+-
+ 		timer@17c20000 {
+ 			#address-cells = <2>;
+ 			#size-cells = <2>;
 -- 
 2.26.2
 
