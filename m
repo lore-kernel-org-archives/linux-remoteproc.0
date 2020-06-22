@@ -2,255 +2,129 @@ Return-Path: <SRS0=Lo8U=AD=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93915C433E0
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 22 Jun 2020 20:24:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE999C433E0
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 22 Jun 2020 22:26:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 57A8620767
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 22 Jun 2020 20:24:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CDD3C2075A
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 22 Jun 2020 22:26:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="lse8lrrC"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="p7Qxqg5d"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728556AbgFVUYr (ORCPT
+        id S1730943AbgFVW0U (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 22 Jun 2020 16:24:47 -0400
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:52326 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728228AbgFVUYq (ORCPT
+        Mon, 22 Jun 2020 18:26:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46738 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730777AbgFVW0T (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 22 Jun 2020 16:24:46 -0400
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 05MKOcbu046999;
-        Mon, 22 Jun 2020 15:24:38 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1592857478;
-        bh=TLOmjnW8sOkYfjB1lvZvwzzA4gy5pYwNnSPTHqBMPzQ=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=lse8lrrCqtNndXqrWhq0MvVkyVnmSCZBB8zs1BAdmUHZ5M4zTVUjZ/sDC7Z8zwuez
-         9x1CcjMjKsaYryGDI3GY7c9c28ysTWud5pENiuLdGAjotEVUj/CoO1h1PRFvmLZ9FB
-         BzYT6pF2ka5onDNWnieM0WuX1cjA2R3rz6gVCdao=
-Received: from DFLE106.ent.ti.com (dfle106.ent.ti.com [10.64.6.27])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 05MKOcVB006502
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 22 Jun 2020 15:24:38 -0500
-Received: from DFLE102.ent.ti.com (10.64.6.23) by DFLE106.ent.ti.com
- (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3; Mon, 22
- Jun 2020 15:24:38 -0500
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE102.ent.ti.com
- (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3 via
- Frontend Transport; Mon, 22 Jun 2020 15:24:38 -0500
-Received: from [10.250.48.148] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 05MKOcaO049424;
-        Mon, 22 Jun 2020 15:24:38 -0500
-Subject: Re: [PATCH v3 2/6] remoteproc: k3: Add TI-SCI processor control
- helper functions
-To:     Mathieu Poirier <mathieu.poirier@linaro.org>
-CC:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Lokesh Vutla <lokeshvutla@ti.com>,
-        Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>,
-        <linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20200612224914.7634-1-s-anna@ti.com>
- <20200612224914.7634-3-s-anna@ti.com> <20200622173540.GA1820962@xps15>
-From:   Suman Anna <s-anna@ti.com>
-Message-ID: <39989eb0-8d3d-ad6c-6352-73d54b8876d9@ti.com>
-Date:   Mon, 22 Jun 2020 15:24:37 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.8.0
+        Mon, 22 Jun 2020 18:26:19 -0400
+Received: from mail-ot1-x343.google.com (mail-ot1-x343.google.com [IPv6:2607:f8b0:4864:20::343])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 358CAC061795
+        for <linux-remoteproc@vger.kernel.org>; Mon, 22 Jun 2020 15:26:16 -0700 (PDT)
+Received: by mail-ot1-x343.google.com with SMTP id n5so14607545otj.1
+        for <linux-remoteproc@vger.kernel.org>; Mon, 22 Jun 2020 15:26:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=Whj9pPjVdxqNoQPO3/j1uYot6iyKYAdZJXRmnTL5xO8=;
+        b=p7Qxqg5dSBmq2hSsNLlQ5+RQja1zy1WyYt7A69O13Qz64ge9PlX6tdodta5m1mOyoJ
+         fiN5mS59lG0/DHWLxyJ9fd6KgT+4T2u8M+Zym1mEOB2eT60Whl+ktEDA7Siy1kfUs+pT
+         RTJKTDghbBAAP0xM0ZAogIU5UbG7kBnbN5TOrz+IU39QodAFe3Z+JdLSeGMjAEOq3OX6
+         tpHADkHQ6kFosnXVXny6G1T41zqnx80pSGoiTAgGTdFI/7qsaJcMRNt3NjrppdPtcJvg
+         /5k3CS58NDCDoEPLweGzunQJ2GpmotulLtyhI5asWN0alRZp6X5DSbnYKp98UKA7wwgw
+         4ftw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=Whj9pPjVdxqNoQPO3/j1uYot6iyKYAdZJXRmnTL5xO8=;
+        b=a3jxu6OP4rDj8mQ24nb7qEv0iKwcQZh7e/NbTMKeiNOOUuPSdOiKF3Pj+iL5TbxN5y
+         OvgoM0pAIFOC4AX3clp5/6oLYZm3FdWwpwDudB4k+PdI7RB8DBjH8bFkCU+AIZE5xuFD
+         2JMLfxkQH9eaV+tlO8PhplHhO5KpNVqkgw71JuoaEwJrdK+YLgYO94sXBUvcsACKribb
+         zEidg6IT7pwF5+o7fHoGIFuJpwVC9He3vfhFKPL1HHyNQF4E0IvTJc/+htprdjknlvrU
+         7tQRH2FCatEIcu2lWgrveMwsfkv87qYLbYAHYekxmCgU090lnf172LXXpkuvj58SaOif
+         rBAg==
+X-Gm-Message-State: AOAM5336X8rvRrntixRnmCapB8wv3ergr5H5+UaRpSGF0HbX+o6kEz3F
+        Tx+0XYFtb7irfw3Hwkt+EQhqhQ==
+X-Google-Smtp-Source: ABdhPJwPN1WmV+udGRk+h9E1afL6SIOkLi8rjKfsh1tBIrwek2pmebCqB86B9yLovtcWMsgdL/vfnQ==
+X-Received: by 2002:a05:6830:1dbb:: with SMTP id z27mr15880575oti.340.1592864775362;
+        Mon, 22 Jun 2020 15:26:15 -0700 (PDT)
+Received: from builder.lan (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id p1sm3753330oot.34.2020.06.22.15.26.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 22 Jun 2020 15:26:14 -0700 (PDT)
+Date:   Mon, 22 Jun 2020 15:23:30 -0700
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Rishabh Bhatnagar <rishabhb@codeaurora.org>
+Cc:     linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        tsoni@codeaurora.org, psodagud@codeaurora.org,
+        sidgup@codeaurora.org, mathieu.poirier@linaro.org
+Subject: Re: [v4 PATCH 0/3] Extend coredump functionality
+Message-ID: <20200622222330.GN149351@builder.lan>
+References: <1590611177-15826-1-git-send-email-rishabhb@codeaurora.org>
 MIME-Version: 1.0
-In-Reply-To: <20200622173540.GA1820962@xps15>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1590611177-15826-1-git-send-email-rishabhb@codeaurora.org>
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi Mathieu,
+On Wed 27 May 13:26 PDT 2020, Rishabh Bhatnagar wrote:
 
-On 6/22/20 12:35 PM, Mathieu Poirier wrote:
-> Hi Suman,
+> This patch series moves the coredump functionality to a separate
+> file and adds "inline" coredump feature. Inline coredump directly
+> copies segments from device memory during coredump to userspace.
+> This avoids extra memory usage at the cost of speed. Recovery is
+> stalled until all data is read by userspace.
 > 
-> Apologies for the late reply, this one slipped through the cracks...
-
-No problem :)
-
+> Changelog:
 > 
+
+Hi Rishabh,
+
+This looks good to me, but it doesn't apply cleanly on linux-next. Can
+you please take a look?
+
+Regards,
+Bjorn
+
+> v4 -> v3:
+> - Write a helper function to copy segment memory for every dump format
+> - Change segment dump fn to add offset and size adn covert mss driver
 > 
-> On Fri, Jun 12, 2020 at 05:49:10PM -0500, Suman Anna wrote:
->> Texas Instruments' K3 generation SoCs have specific modules/register
->> spaces used for configuring the various aspects of a remote processor.
->> These include power, reset, boot vector and other configuration features
->> specific to each compute processor present on the SoC. These registers
->> are managed by the System Controller such as DMSC on K3 AM65x SoCs.
->>
->> The Texas Instrument's System Control Interface (TI-SCI) Message Protocol
->> is used to communicate to the System Controller from various compute
->> processors to invoke specific services provided by the firmware running
->> on the System Controller.
->>
->> Add a common processor control interface header file that can be used by
->> multiple remoteproc drivers. The helper functions within this header file
->> abstract the various TI SCI protocol ops for the remoteproc drivers, and
->> allow them to request the System Controller to be able to program and
->> manage various remote processors on the SoC. The remoteproc drivers are
->> expected to manage the life-cycle of their ti_sci_proc_dev local
->> structures.
->>
->> Signed-off-by: Suman Anna <s-anna@ti.com>
->> ---
->> v3: New to this series, but the patch is identical to the one from the
->>      K3 R5F series posted previously, with patch title adjusted
->>      https://patchwork.kernel.org/patch/11456379/
->>
->>   drivers/remoteproc/ti_sci_proc.h | 102 +++++++++++++++++++++++++++++++
->>   1 file changed, 102 insertions(+)
->>   create mode 100644 drivers/remoteproc/ti_sci_proc.h
->>
->> diff --git a/drivers/remoteproc/ti_sci_proc.h b/drivers/remoteproc/ti_sci_proc.h
->> new file mode 100644
->> index 000000000000..e42d8015b8e7
->> --- /dev/null
->> +++ b/drivers/remoteproc/ti_sci_proc.h
->> @@ -0,0 +1,102 @@
->> +/* SPDX-License-Identifier: GPL-2.0-only */
->> +/*
->> + * Texas Instruments TI-SCI Processor Controller Helper Functions
->> + *
->> + * Copyright (C) 2018-2020 Texas Instruments Incorporated - http://www.ti.com/
->> + *	Suman Anna
->> + */
->> +
->> +#ifndef REMOTEPROC_TI_SCI_PROC_H
->> +#define REMOTEPROC_TI_SCI_PROC_H
->> +
->> +/**
->> + * struct ti_sci_proc - structure representing a processor control client
->> + * @sci: cached TI-SCI protocol handle
->> + * @ops: cached TI-SCI proc ops
->> + * @dev: cached client device pointer
->> + * @proc_id: processor id for the consumer remoteproc device
->> + * @host_id: host id to pass the control over for this consumer remoteproc
->> + *	     device
->> + */
->> +struct ti_sci_proc {
->> +	const struct ti_sci_handle *sci;
->> +	const struct ti_sci_proc_ops *ops;
->> +	struct device *dev;
+> v3 -> v2:
+> - Move entire coredump functionality to remoteproc_coredump.c
+> - Modify rproc_coredump to perform dump according to conf. set by userspace
+> - Move the userspace configuration to debugfs from sysfs.
+> - Keep the default coredump implementation as is
 > 
-> Please include the proper header files for the above structures.  
-
-OK, I will move the #include <linux/soc/ti/ti_sci_protocol.h> from the 
-driver source files to here.
-
-I would also
-> have expected the name of the structure to be ti_sci_rproc but that choice is
-> entirely your.
-
-This follows the terminology used in the TI SCI protocol and firmware 
-code. I will leave it unchanged.
-
+> v2 -> v1:
+> - Introduce new file for coredump.
+> - Add userspace sysfs configuration for dump type.
 > 
-> With the proper header files included:
+> Rishabh Bhatnagar (3):
+>   remoteproc: Move coredump functionality to a new file
+>   remoteproc: Add inline coredump functionality
+>   remoteproc: Add coredump debugfs entry
 > 
-> Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-
-Thanks, I will await any comments from Rob on the bindings patch before 
-I refresh this series.
-
-regards
-Suman
-
+>  drivers/remoteproc/Makefile              |   1 +
+>  drivers/remoteproc/qcom_q6v5_mss.c       |   9 +-
+>  drivers/remoteproc/remoteproc_core.c     | 191 ------------------
+>  drivers/remoteproc/remoteproc_coredump.c | 328 +++++++++++++++++++++++++++++++
+>  drivers/remoteproc/remoteproc_debugfs.c  |  86 ++++++++
+>  drivers/remoteproc/remoteproc_internal.h |   4 +
+>  include/linux/remoteproc.h               |  21 +-
+>  7 files changed, 443 insertions(+), 197 deletions(-)
+>  create mode 100644 drivers/remoteproc/remoteproc_coredump.c
 > 
->> +	u8 proc_id;
->> +	u8 host_id;
->> +};
->> +
->> +static inline int ti_sci_proc_request(struct ti_sci_proc *tsp)
->> +{
->> +	int ret;
->> +
->> +	ret = tsp->ops->request(tsp->sci, tsp->proc_id);
->> +	if (ret)
->> +		dev_err(tsp->dev, "ti-sci processor request failed: %d\n",
->> +			ret);
->> +	return ret;
->> +}
->> +
->> +static inline int ti_sci_proc_release(struct ti_sci_proc *tsp)
->> +{
->> +	int ret;
->> +
->> +	ret = tsp->ops->release(tsp->sci, tsp->proc_id);
->> +	if (ret)
->> +		dev_err(tsp->dev, "ti-sci processor release failed: %d\n",
->> +			ret);
->> +	return ret;
->> +}
->> +
->> +static inline int ti_sci_proc_handover(struct ti_sci_proc *tsp)
->> +{
->> +	int ret;
->> +
->> +	ret = tsp->ops->handover(tsp->sci, tsp->proc_id, tsp->host_id);
->> +	if (ret)
->> +		dev_err(tsp->dev, "ti-sci processor handover of %d to %d failed: %d\n",
->> +			tsp->proc_id, tsp->host_id, ret);
->> +	return ret;
->> +}
->> +
->> +static inline int ti_sci_proc_set_config(struct ti_sci_proc *tsp,
->> +					 u64 boot_vector,
->> +					 u32 cfg_set, u32 cfg_clr)
->> +{
->> +	int ret;
->> +
->> +	ret = tsp->ops->set_config(tsp->sci, tsp->proc_id, boot_vector,
->> +				   cfg_set, cfg_clr);
->> +	if (ret)
->> +		dev_err(tsp->dev, "ti-sci processor set_config failed: %d\n",
->> +			ret);
->> +	return ret;
->> +}
->> +
->> +static inline int ti_sci_proc_set_control(struct ti_sci_proc *tsp,
->> +					  u32 ctrl_set, u32 ctrl_clr)
->> +{
->> +	int ret;
->> +
->> +	ret = tsp->ops->set_control(tsp->sci, tsp->proc_id, ctrl_set, ctrl_clr);
->> +	if (ret)
->> +		dev_err(tsp->dev, "ti-sci processor set_control failed: %d\n",
->> +			ret);
->> +	return ret;
->> +}
->> +
->> +static inline int ti_sci_proc_get_status(struct ti_sci_proc *tsp,
->> +					 u64 *boot_vector, u32 *cfg_flags,
->> +					 u32 *ctrl_flags, u32 *status_flags)
->> +{
->> +	int ret;
->> +
->> +	ret = tsp->ops->get_status(tsp->sci, tsp->proc_id, boot_vector,
->> +				   cfg_flags, ctrl_flags, status_flags);
->> +	if (ret)
->> +		dev_err(tsp->dev, "ti-sci processor get_status failed: %d\n",
->> +			ret);
->> +	return ret;
->> +}
->> +
->> +#endif /* REMOTEPROC_TI_SCI_PROC_H */
->> -- 
->> 2.26.0
->>
-
+> -- 
+> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+> a Linux Foundation Collaborative Project
+> 
