@@ -2,145 +2,238 @@ Return-Path: <SRS0=Lo8U=AD=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61859C433DF
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 22 Jun 2020 08:00:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62F5EC433DF
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 22 Jun 2020 17:35:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3AF84208E4
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 22 Jun 2020 08:00:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3F1FA20732
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 22 Jun 2020 17:35:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XAYvSU8H"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZLHgDfMA"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726976AbgFVIAG (ORCPT
+        id S1730058AbgFVRfo (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 22 Jun 2020 04:00:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53172 "EHLO
+        Mon, 22 Jun 2020 13:35:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57810 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726041AbgFVH7s (ORCPT
+        with ESMTP id S1729977AbgFVRfo (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 22 Jun 2020 03:59:48 -0400
-Received: from mail-oi1-x242.google.com (mail-oi1-x242.google.com [IPv6:2607:f8b0:4864:20::242])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D4029C061796
-        for <linux-remoteproc@vger.kernel.org>; Mon, 22 Jun 2020 00:59:48 -0700 (PDT)
-Received: by mail-oi1-x242.google.com with SMTP id k4so14849061oik.2
-        for <linux-remoteproc@vger.kernel.org>; Mon, 22 Jun 2020 00:59:48 -0700 (PDT)
+        Mon, 22 Jun 2020 13:35:44 -0400
+Received: from mail-pl1-x644.google.com (mail-pl1-x644.google.com [IPv6:2607:f8b0:4864:20::644])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 55A17C061795
+        for <linux-remoteproc@vger.kernel.org>; Mon, 22 Jun 2020 10:35:43 -0700 (PDT)
+Received: by mail-pl1-x644.google.com with SMTP id g12so7841689pll.10
+        for <linux-remoteproc@vger.kernel.org>; Mon, 22 Jun 2020 10:35:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=TTeC9Xi4qmQZeAOaphNZwsLRTSZ0LBevI66eeZFDnkA=;
-        b=XAYvSU8HN8yBlbKuHfbJtuSsGToPrd+zDmCC2oKtJ0VVy2zd3Jn71KkbOytQU1ODmg
-         ruspmVeLT8+Tyrahotyq7Atc4l436bDFnn2PqWXvxoU46ac9CTaYifRTXlxUB+z1D8C/
-         FLqwY696rMer/Pcdm04wr6bqxhYux28lS2p78XtJvZel+FS/4NsO25VjbzQXF33E0BaK
-         UvIMLYMXo1e6tNJMPqYB0PvzLQ/squz+fPeIueqQbhavDL7OFF+GgCiCjJvnVxWKF4Jz
-         ZPXNANkc+arm9j47j9LSicyc5ZBlReoPVFN7A8kRKywcs8DBn5PSpuZch68+/o/+unNZ
-         pN0g==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=L1g5xES3CpMTfmaxXXd6gYSv9IzAcINcj2uv/tgbG9Y=;
+        b=ZLHgDfMAYWXXWSfPXppNDYDfwV+JeYKEEMTRJtc0XT9yPcQHGZZ4zXHxbUW0x3qXFO
+         aW2DKF+9eKkb0m7Ky0j3c0XN4XCKs5xLhFxhTy6/FiXeoRyZsf6SXmnCFHxlByNj6XGl
+         3GVnnqf7wls7RVlESYlk040A83i1QGTUGHHF+2HK5/8ePZUR1SEv+lXB7xYd/rAUm2R9
+         2DbjgGumYL4PhI9p0FbsLXtcSyu7eB4k4/9MGdM2p/ZPs2jAQUhq4xMz+L8E8PDD8IJ8
+         5nu5vIhY4MwkyV/Myew4bZnsIPLRNj9Q10o4jycLaJY5awm1zUKy0xOlPTnQy8cVLDRy
+         CMSA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=TTeC9Xi4qmQZeAOaphNZwsLRTSZ0LBevI66eeZFDnkA=;
-        b=jOg24SFYl4Wws9k3AA9Gccftedif6UVHuBw6XTkGwxiDYGORvLMHBN7G9iz4dw4ear
-         4GhDU5awQbsIhpW8gfyl5m30+HGTgX0HpzC3UA6bEBVVHzrMfRY+8Bty/hed96hxW6ZF
-         e6LMUUx11Y5xp4zc8WY51xHslHvAsByPJchgCQpD9gVorlC/DRjfgcW2G6pXXTKk0H7J
-         cIZgE8ieDDC61MG34Hl1DHAZaCHHtHiAwZD44cN1RWyP2sgaCZ7tS1r7vJPxqV86i4K9
-         Xgi8SnZmP3Dw76IK743QKdD50hKS+rmIR488OgCX1LSqmd4e09hiNyrk8kuV8j/R4zBo
-         tfjA==
-X-Gm-Message-State: AOAM533IjbiLTn0OIdQ3FMEL6RSZYNjynuMadso8mamNQLqda4zmOwmx
-        58QaALeIFipEW3UyXy9YUhcMsA==
-X-Google-Smtp-Source: ABdhPJw8A7djz0qzGWjwrGnP2koCSgUdpHbwC8JC4UWp1TlKHu6Nj9ro9JvJV9lwB2MWoeXWGqyMRA==
-X-Received: by 2002:aca:5c43:: with SMTP id q64mr11118702oib.130.1592812788187;
-        Mon, 22 Jun 2020 00:59:48 -0700 (PDT)
-Received: from localhost.localdomain (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id f7sm3135396otl.60.2020.06.22.00.59.46
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=L1g5xES3CpMTfmaxXXd6gYSv9IzAcINcj2uv/tgbG9Y=;
+        b=Izdt88Tj6PQucSfNh+KI5UyzkEbb0JPkPXJjkBq4Uz8GvVxy4pcmEnHnmThQQIjufO
+         q5OjjVO1HLpivi/0Ma7HbGs0K16kTLvU84cncZ6KTo/J9AhmYcbukonrpHxdjsNiXkAh
+         ONL7xBMXh2avGzF2+EfX4IxZHRVSBc12JUjIbfEwzWSKsGCp/2v94D7IYzu6SYxcy0ln
+         7Ol2i9f7LdiBtd3tA1JXM1kbvoIRVTx7L2lLcbp90wnvzhJGuFbR3qXY2YQZvgf8Ingl
+         nRObT64zpXOJpgklX2x5/+uBT0/BUyOItnCsoR2gu/S156zlgFJhMZEx/YHDv2IEyHEv
+         YTYA==
+X-Gm-Message-State: AOAM530xy5zF8Qi81aKR8XtygI3zGlj9mBnbh1j8EpT+0KYd++hQF8fM
+        t3o5FocOyjSdk9qmLmk5qH58sQ==
+X-Google-Smtp-Source: ABdhPJwMVQv0naG5OOxhiKhTYMgSY9S0QaQjF3tJwVYat59w4ioGMRX8xTLHUto82LpsEk5KMDfYxQ==
+X-Received: by 2002:a17:90a:c250:: with SMTP id d16mr19234190pjx.60.1592847342715;
+        Mon, 22 Jun 2020 10:35:42 -0700 (PDT)
+Received: from xps15 (S0106002369de4dac.cg.shawcable.net. [68.147.8.254])
+        by smtp.gmail.com with ESMTPSA id n19sm10925109pgb.0.2020.06.22.10.35.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 22 Jun 2020 00:59:47 -0700 (PDT)
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Ohad Ben-Cohen <ohad@wizery.com>,
-        Baolin Wang <baolin.wang7@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>
-Cc:     linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Vinod Koul <vkoul@kernel.org>
-Subject: [PATCH v2 2/4] dt-bindings: hwlock: qcom: Allow device on mmio bus
-Date:   Mon, 22 Jun 2020 00:59:54 -0700
-Message-Id: <20200622075956.171058-3-bjorn.andersson@linaro.org>
-X-Mailer: git-send-email 2.26.2
-In-Reply-To: <20200622075956.171058-1-bjorn.andersson@linaro.org>
-References: <20200622075956.171058-1-bjorn.andersson@linaro.org>
+        Mon, 22 Jun 2020 10:35:42 -0700 (PDT)
+Date:   Mon, 22 Jun 2020 11:35:40 -0600
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+To:     Suman Anna <s-anna@ti.com>
+Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Lokesh Vutla <lokeshvutla@ti.com>,
+        Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>,
+        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 2/6] remoteproc: k3: Add TI-SCI processor control
+ helper functions
+Message-ID: <20200622173540.GA1820962@xps15>
+References: <20200612224914.7634-1-s-anna@ti.com>
+ <20200612224914.7634-3-s-anna@ti.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200612224914.7634-3-s-anna@ti.com>
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-In modern Qualcomm platforms the mutex region of the TCSR is forked off
-into its own block, all with a offset of 0 and stride of 4096, and in
-some of these platforms no other registers in this region is accessed
-from Linux.
+Hi Suman,
 
-Update the binding to allow the hardware block to be described directly
-on the mmio bus, in addition to allowing the existing syscon based
-definition for backwards compatibility.
+Apologies for the late reply, this one slipped through the cracks...
 
-Reviewed-by: Vinod Koul <vkoul@kernel.org>
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
----
 
-Changes since v1:
-- None
+On Fri, Jun 12, 2020 at 05:49:10PM -0500, Suman Anna wrote:
+> Texas Instruments' K3 generation SoCs have specific modules/register
+> spaces used for configuring the various aspects of a remote processor.
+> These include power, reset, boot vector and other configuration features
+> specific to each compute processor present on the SoC. These registers
+> are managed by the System Controller such as DMSC on K3 AM65x SoCs.
+> 
+> The Texas Instrument's System Control Interface (TI-SCI) Message Protocol
+> is used to communicate to the System Controller from various compute
+> processors to invoke specific services provided by the firmware running
+> on the System Controller.
+> 
+> Add a common processor control interface header file that can be used by
+> multiple remoteproc drivers. The helper functions within this header file
+> abstract the various TI SCI protocol ops for the remoteproc drivers, and
+> allow them to request the System Controller to be able to program and
+> manage various remote processors on the SoC. The remoteproc drivers are
+> expected to manage the life-cycle of their ti_sci_proc_dev local
+> structures.
+> 
+> Signed-off-by: Suman Anna <s-anna@ti.com>
+> ---
+> v3: New to this series, but the patch is identical to the one from the
+>     K3 R5F series posted previously, with patch title adjusted
+>     https://patchwork.kernel.org/patch/11456379/
+> 
+>  drivers/remoteproc/ti_sci_proc.h | 102 +++++++++++++++++++++++++++++++
+>  1 file changed, 102 insertions(+)
+>  create mode 100644 drivers/remoteproc/ti_sci_proc.h
+> 
+> diff --git a/drivers/remoteproc/ti_sci_proc.h b/drivers/remoteproc/ti_sci_proc.h
+> new file mode 100644
+> index 000000000000..e42d8015b8e7
+> --- /dev/null
+> +++ b/drivers/remoteproc/ti_sci_proc.h
+> @@ -0,0 +1,102 @@
+> +/* SPDX-License-Identifier: GPL-2.0-only */
+> +/*
+> + * Texas Instruments TI-SCI Processor Controller Helper Functions
+> + *
+> + * Copyright (C) 2018-2020 Texas Instruments Incorporated - http://www.ti.com/
+> + *	Suman Anna
+> + */
+> +
+> +#ifndef REMOTEPROC_TI_SCI_PROC_H
+> +#define REMOTEPROC_TI_SCI_PROC_H
+> +
+> +/**
+> + * struct ti_sci_proc - structure representing a processor control client
+> + * @sci: cached TI-SCI protocol handle
+> + * @ops: cached TI-SCI proc ops
+> + * @dev: cached client device pointer
+> + * @proc_id: processor id for the consumer remoteproc device
+> + * @host_id: host id to pass the control over for this consumer remoteproc
+> + *	     device
+> + */
+> +struct ti_sci_proc {
+> +	const struct ti_sci_handle *sci;
+> +	const struct ti_sci_proc_ops *ops;
+> +	struct device *dev;
 
- .../bindings/hwlock/qcom-hwspinlock.yaml         | 16 +++++++++++++++-
- 1 file changed, 15 insertions(+), 1 deletion(-)
+Please include the proper header files for the above structures.  I would also
+have expected the name of the structure to be ti_sci_rproc but that choice is
+entirely your.
 
-diff --git a/Documentation/devicetree/bindings/hwlock/qcom-hwspinlock.yaml b/Documentation/devicetree/bindings/hwlock/qcom-hwspinlock.yaml
-index 71e63b52edd5..88f975837588 100644
---- a/Documentation/devicetree/bindings/hwlock/qcom-hwspinlock.yaml
-+++ b/Documentation/devicetree/bindings/hwlock/qcom-hwspinlock.yaml
-@@ -19,6 +19,9 @@ properties:
-       - qcom,sfpb-mutex
-       - qcom,tcsr-mutex
- 
-+  reg:
-+    maxItems: 1
-+
-   '#hwlock-cells':
-     const: 1
- 
-@@ -31,7 +34,12 @@ properties:
- required:
-   - compatible
-   - '#hwlock-cells'
--  - syscon
-+
-+oneOf:
-+  - required:
-+    - reg
-+  - required:
-+    - syscon
- 
- additionalProperties: false
- 
-@@ -46,6 +54,12 @@ examples:
-                 compatible = "qcom,tcsr-mutex";
-                 syscon = <&tcsr_mutex_block 0 0x80>;
- 
-+                #hwlock-cells = <1>;
-+        };
-+  - |
-+        tcsr_mutex: hwlock@1f40000 {
-+                compatible = "qcom,tcsr-mutex";
-+                reg = <0x01f40000 0x40000>;
-                 #hwlock-cells = <1>;
-         };
- ...
--- 
-2.26.2
+With the proper header files included:
 
+Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+
+> +	u8 proc_id;
+> +	u8 host_id;
+> +};
+> +
+> +static inline int ti_sci_proc_request(struct ti_sci_proc *tsp)
+> +{
+> +	int ret;
+> +
+> +	ret = tsp->ops->request(tsp->sci, tsp->proc_id);
+> +	if (ret)
+> +		dev_err(tsp->dev, "ti-sci processor request failed: %d\n",
+> +			ret);
+> +	return ret;
+> +}
+> +
+> +static inline int ti_sci_proc_release(struct ti_sci_proc *tsp)
+> +{
+> +	int ret;
+> +
+> +	ret = tsp->ops->release(tsp->sci, tsp->proc_id);
+> +	if (ret)
+> +		dev_err(tsp->dev, "ti-sci processor release failed: %d\n",
+> +			ret);
+> +	return ret;
+> +}
+> +
+> +static inline int ti_sci_proc_handover(struct ti_sci_proc *tsp)
+> +{
+> +	int ret;
+> +
+> +	ret = tsp->ops->handover(tsp->sci, tsp->proc_id, tsp->host_id);
+> +	if (ret)
+> +		dev_err(tsp->dev, "ti-sci processor handover of %d to %d failed: %d\n",
+> +			tsp->proc_id, tsp->host_id, ret);
+> +	return ret;
+> +}
+> +
+> +static inline int ti_sci_proc_set_config(struct ti_sci_proc *tsp,
+> +					 u64 boot_vector,
+> +					 u32 cfg_set, u32 cfg_clr)
+> +{
+> +	int ret;
+> +
+> +	ret = tsp->ops->set_config(tsp->sci, tsp->proc_id, boot_vector,
+> +				   cfg_set, cfg_clr);
+> +	if (ret)
+> +		dev_err(tsp->dev, "ti-sci processor set_config failed: %d\n",
+> +			ret);
+> +	return ret;
+> +}
+> +
+> +static inline int ti_sci_proc_set_control(struct ti_sci_proc *tsp,
+> +					  u32 ctrl_set, u32 ctrl_clr)
+> +{
+> +	int ret;
+> +
+> +	ret = tsp->ops->set_control(tsp->sci, tsp->proc_id, ctrl_set, ctrl_clr);
+> +	if (ret)
+> +		dev_err(tsp->dev, "ti-sci processor set_control failed: %d\n",
+> +			ret);
+> +	return ret;
+> +}
+> +
+> +static inline int ti_sci_proc_get_status(struct ti_sci_proc *tsp,
+> +					 u64 *boot_vector, u32 *cfg_flags,
+> +					 u32 *ctrl_flags, u32 *status_flags)
+> +{
+> +	int ret;
+> +
+> +	ret = tsp->ops->get_status(tsp->sci, tsp->proc_id, boot_vector,
+> +				   cfg_flags, ctrl_flags, status_flags);
+> +	if (ret)
+> +		dev_err(tsp->dev, "ti-sci processor get_status failed: %d\n",
+> +			ret);
+> +	return ret;
+> +}
+> +
+> +#endif /* REMOTEPROC_TI_SCI_PROC_H */
+> -- 
+> 2.26.0
+> 
