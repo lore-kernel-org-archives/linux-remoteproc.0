@@ -2,178 +2,134 @@ Return-Path: <SRS0=kOch=AF=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09E24C433E0
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 24 Jun 2020 02:25:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D756C433E0
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 24 Jun 2020 05:30:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D76F120836
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 24 Jun 2020 02:25:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0710F20B1F
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 24 Jun 2020 05:30:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="LUaURi6j"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="oqtEbpKe"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388095AbgFXCZV (ORCPT
+        id S2388831AbgFXFap (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 23 Jun 2020 22:25:21 -0400
-Received: from mail29.static.mailgun.info ([104.130.122.29]:47528 "EHLO
-        mail29.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2388135AbgFXCZV (ORCPT
+        Wed, 24 Jun 2020 01:30:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52286 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727957AbgFXFap (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 23 Jun 2020 22:25:21 -0400
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1592965520; h=References: In-Reply-To: Message-Id: Date:
- Subject: Cc: To: From: Sender;
- bh=yKqRxzK5CgSW8RmcYWIU6RCr/r6LK8FTWdS99NGEJHw=; b=LUaURi6jBvN5RKXUeGmbZQj6LBiRo4RLJdVRUrKX+wr9Bij9BPd3YLOBdiVJCSGOHM9Lh50Z
- 4gAzj7/gsDUk0Toxj7U18s9kAMUEszTTreycBB7tGF7Ics+FwlKREg9kt/WlnyJsgvkEhLxD
- HbN8lMkQenDutBn+jZKnRaeb1Bc=
-X-Mailgun-Sending-Ip: 104.130.122.29
-X-Mailgun-Sid: WyI4ZWZiZiIsICJsaW51eC1yZW1vdGVwcm9jQHZnZXIua2VybmVsLm9yZyIsICJiZTllNGEiXQ==
-Received: from smtp.codeaurora.org
- (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
- smtp-out-n15.prod.us-west-2.postgun.com with SMTP id
- 5ef2b980117610c7ff5431fd (version=TLS1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Wed, 24 Jun 2020 02:25:04
- GMT
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id B63D8C433C6; Wed, 24 Jun 2020 02:25:04 +0000 (UTC)
-Received: from rishabhb-linux.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: rishabhb)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 77B97C43395;
-        Wed, 24 Jun 2020 02:25:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 77B97C43395
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=rishabhb@codeaurora.org
-From:   Rishabh Bhatnagar <rishabhb@codeaurora.org>
-To:     linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     bjorn.andersson@linaro.org, tsoni@codeaurora.org,
-        psodagud@codeaurora.org, sidgup@codeaurora.org, elder@ieee.org,
-        Rishabh Bhatnagar <rishabhb@codeaurora.org>
-Subject: [PATCH v6 2/2] remoteproc: qcom: Add notification types to SSR
-Date:   Tue, 23 Jun 2020 19:23:28 -0700
-Message-Id: <1592965408-16908-3-git-send-email-rishabhb@codeaurora.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1592965408-16908-1-git-send-email-rishabhb@codeaurora.org>
-References: <1592965408-16908-1-git-send-email-rishabhb@codeaurora.org>
+        Wed, 24 Jun 2020 01:30:45 -0400
+Received: from mail-pl1-x644.google.com (mail-pl1-x644.google.com [IPv6:2607:f8b0:4864:20::644])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E8CAAC061755
+        for <linux-remoteproc@vger.kernel.org>; Tue, 23 Jun 2020 22:30:44 -0700 (PDT)
+Received: by mail-pl1-x644.google.com with SMTP id d10so571320pls.5
+        for <linux-remoteproc@vger.kernel.org>; Tue, 23 Jun 2020 22:30:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=AblS5WrjyJMgnznkFBkF2GKSBo5MmuL1G6F8BwHXeHU=;
+        b=oqtEbpKemfXPO2FVCAZvOcjGa868wColw/w7N0/yn1PF29yObXn8tzs3OSrkgXiLpi
+         LcPeGnm4YkEzRAFbHhKXwuU3ULzEVIicC/I+gMx0QzQ6amybRVLjmTgycXMnj1rFx3o7
+         LQ/DPmnuFeIwg4eTFAsMbrfmc7Oj3NjYk0K5qMkebCw838Eaz8Ba5GkENK87fJTZmm8x
+         Y456j7fT9fg1TOA8hbMMBjcxXrjWa0C+n93sWs5LI9rk7UceWECyEGWoqDoWtADzHVjV
+         r0IpBYbuuoUKn76+TBnwvw5OxXNXelrJaddFFC8T342w/At3WuVGLzu9tOgPX+zBXbr0
+         2a0g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=AblS5WrjyJMgnznkFBkF2GKSBo5MmuL1G6F8BwHXeHU=;
+        b=EN8EIlm/HoxEI/KgiXmicgeAWgVZYkZ0LBDRE7yoBK1Ur9opncKx+FpK76YmcopgQJ
+         UNd6R+NH3j4muZQHSyayex9iTM1Pu5VmY40D6nTCWxULXEaf71+w+2rO8pXKE5mwvlUI
+         gGxu3ri2iC9spdDEPntnlFGg+o2mn0UYA0OqysBuh5SfCtesJsmH/Kjbnxktr6GyzZ82
+         1zRODw74W/N7zh8UEJD4YeRynd/wQKnrmAxYxRIlnlBGL8JmeX8f3mVVoY0Z5sWaialv
+         iFcZLKtN3kmX9gj/RoEbBOjEdtSnTwfiduUmgMqM4je84aeoRaXPnXJBGIetQ/v1QjuW
+         MHyQ==
+X-Gm-Message-State: AOAM532S6JeSt4ZPmFDyXCLUN0OoWLwXbDUAYuKF9KiRdFVyDLTmtjDX
+        pFlptlh+GS2SeLwJHqDxZdSGbg==
+X-Google-Smtp-Source: ABdhPJwUa5UccNgom3SX6tJgM3PGNd4oZV4WMtpb21CaWdbbeGvZlwQm1FwLDDx0gewj6Zuz8U+RzQ==
+X-Received: by 2002:a17:90b:23c8:: with SMTP id md8mr28079444pjb.72.1592976644282;
+        Tue, 23 Jun 2020 22:30:44 -0700 (PDT)
+Received: from builder.lan (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id d25sm15203124pgn.2.2020.06.23.22.30.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 23 Jun 2020 22:30:43 -0700 (PDT)
+Date:   Tue, 23 Jun 2020 22:28:01 -0700
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     rishabhb@codeaurora.org
+Cc:     Alex Elder <elder@ieee.org>, linux-remoteproc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, tsoni@codeaurora.org,
+        psodagud@codeaurora.org, sidgup@codeaurora.org,
+        linux-remoteproc-owner@vger.kernel.org
+Subject: Re: [PATCH v5 1/2] remoteproc: qcom: Add per subsystem SSR
+ notification
+Message-ID: <20200624052801.GB407764@builder.lan>
+References: <1592874271-26697-1-git-send-email-rishabhb@codeaurora.org>
+ <1592874271-26697-2-git-send-email-rishabhb@codeaurora.org>
+ <8ed72321-6f6a-1083-9af9-a80aa945edeb@ieee.org>
+ <cb31dfb50079a1377cf27807a7b2eb3e@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cb31dfb50079a1377cf27807a7b2eb3e@codeaurora.org>
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-The SSR subdevice only adds callback for the unprepare event. Add callbacks
-for prepare, start and prepare events. The client driver for a particular
-remoteproc might be interested in knowing the status of the remoteproc
-while undergoing SSR, not just when the remoteproc has finished shutting
-down.
+On Tue 23 Jun 18:41 PDT 2020, rishabhb@codeaurora.org wrote:
 
-Signed-off-by: Siddharth Gupta <sidgup@codeaurora.org>
-Signed-off-by: Rishabh Bhatnagar <rishabhb@codeaurora.org>
----
- drivers/remoteproc/qcom_common.c      | 44 ++++++++++++++++++++++++++++++++++-
- include/linux/remoteproc/qcom_rproc.h | 16 +++++++++++++
- 2 files changed, 59 insertions(+), 1 deletion(-)
+> On 2020-06-23 14:45, Alex Elder wrote:
+> > On 6/22/20 8:04 PM, Rishabh Bhatnagar wrote:
+> > > Currently there is a single notification chain which is called
+> > > whenever any
+> > > remoteproc shuts down. This leads to all the listeners being
+> > > notified, and
+> > > is not an optimal design as kernel drivers might only be interested in
+> > > listening to notifications from a particular remoteproc. Create a
+> > > global
+> > > list of remoteproc notification info data structures. This will hold
+> > > the
+> > > name and notifier_list information for a particular remoteproc. The
+> > > API
+> > > to register for notifications will use name argument to retrieve the
+> > > notification info data structure and the notifier block will be
+> > > added to
+> > > that data structure's notification chain. Also move from blocking
+> > > notifier
+> > > to srcu notifer based implementation to support dynamic notifier head
+> > > creation.
+> > > 
+> > > Signed-off-by: Siddharth Gupta <sidgup@codeaurora.org>
+> > > Signed-off-by: Rishabh Bhatnagar <rishabhb@codeaurora.org>
+> > 
+> > Sorry, a few more comments, but I think your next one will
+> > likely be fine.
+> > 
+> > General:
+> > - SSR subsystems are added but never removed.  Note that
+> >   "qcom_common.o" can be built as a module, and if that
+> >   module were ever removed, memory allocated for these
+> >   subsystems would be leaked.
+> Hi Alex,
+> Thank you for reviewing this patchset quickly. This point was
+> brought up by Bjorn and it was decided that I will push another patch on
+> top in which I'll do the cleanup during module exit.
+> > - Will a remoteproc subdev (and in particular, an SSR subdev)
+> >   ever be removed?  What happens to entities that have
+> >   registered for SSR notifications in that case?
+> In practice it should never be removed. If it is clients will
+> never get notification about subsystem shutdown/powerup.
 
-diff --git a/drivers/remoteproc/qcom_common.c b/drivers/remoteproc/qcom_common.c
-index 7a7384c..7ec4597 100644
---- a/drivers/remoteproc/qcom_common.c
-+++ b/drivers/remoteproc/qcom_common.c
-@@ -265,6 +265,44 @@ int qcom_unregister_ssr_notifier(void *notify, struct notifier_block *nb)
- }
- EXPORT_SYMBOL_GPL(qcom_unregister_ssr_notifier);
- 
-+static int ssr_notify_prepare(struct rproc_subdev *subdev)
-+{
-+	struct qcom_rproc_ssr *ssr = to_ssr_subdev(subdev);
-+	struct qcom_ssr_notify_data data = {
-+		.name = ssr->info->name,
-+		.crashed = false,
-+	};
-+
-+	srcu_notifier_call_chain(&ssr->info->notifier_list,
-+				 QCOM_SSR_BEFORE_POWERUP, &data);
-+	return 0;
-+}
-+
-+static int ssr_notify_start(struct rproc_subdev *subdev)
-+{
-+	struct qcom_rproc_ssr *ssr = to_ssr_subdev(subdev);
-+	struct qcom_ssr_notify_data data = {
-+		.name = ssr->info->name,
-+		.crashed = false,
-+	};
-+
-+	srcu_notifier_call_chain(&ssr->info->notifier_list,
-+				 QCOM_SSR_AFTER_POWERUP, &data);
-+	return 0;
-+}
-+
-+static void ssr_notify_stop(struct rproc_subdev *subdev, bool crashed)
-+{
-+	struct qcom_rproc_ssr *ssr = to_ssr_subdev(subdev);
-+	struct qcom_ssr_notify_data data = {
-+		.name = ssr->info->name,
-+		.crashed = crashed,
-+	};
-+
-+	srcu_notifier_call_chain(&ssr->info->notifier_list,
-+				 QCOM_SSR_BEFORE_SHUTDOWN, &data);
-+}
-+
- static void ssr_notify_unprepare(struct rproc_subdev *subdev)
- {
- 	struct qcom_rproc_ssr *ssr = to_ssr_subdev(subdev);
-@@ -273,7 +311,8 @@ static void ssr_notify_unprepare(struct rproc_subdev *subdev)
- 		.crashed = false,
- 	};
- 
--	srcu_notifier_call_chain(&ssr->info->notifier_list, 0, &data);
-+	srcu_notifier_call_chain(&ssr->info->notifier_list,
-+				 QCOM_SSR_AFTER_SHUTDOWN, &data);
- }
- 
- /**
-@@ -298,6 +337,9 @@ void qcom_add_ssr_subdev(struct rproc *rproc, struct qcom_rproc_ssr *ssr,
- 	}
- 
- 	ssr->info = info;
-+	ssr->subdev.prepare = ssr_notify_prepare;
-+	ssr->subdev.start = ssr_notify_start;
-+	ssr->subdev.stop = ssr_notify_stop;
- 	ssr->subdev.unprepare = ssr_notify_unprepare;
- 
- 	rproc_add_subdev(rproc, &ssr->subdev);
-diff --git a/include/linux/remoteproc/qcom_rproc.h b/include/linux/remoteproc/qcom_rproc.h
-index 2a1d6d0..6470516 100644
---- a/include/linux/remoteproc/qcom_rproc.h
-+++ b/include/linux/remoteproc/qcom_rproc.h
-@@ -5,6 +5,22 @@ struct notifier_block;
- 
- #if IS_ENABLED(CONFIG_QCOM_RPROC_COMMON)
- 
-+/**
-+ * enum qcom_ssr_notify_type - Startup/Shutdown events related to a remoteproc
-+ * processor.
-+ *
-+ * @QCOM_SSR_BEFORE_POWERUP:	Remoteproc about to start (prepare stage)
-+ * @QCOM_SSR_AFTER_POWERUP:	Remoteproc is running (start stage)
-+ * @QCOM_SSR_BEFORE_SHUTDOWN:	Remoteproc crashed or shutting down (stop stage)
-+ * @QCOM_SSR_AFTER_SHUTDOWN:	Remoteproc is down (unprepare stage)
-+ */
-+enum qcom_ssr_notify_type {
-+	QCOM_SSR_BEFORE_POWERUP,
-+	QCOM_SSR_AFTER_POWERUP,
-+	QCOM_SSR_BEFORE_SHUTDOWN,
-+	QCOM_SSR_AFTER_SHUTDOWN,
-+};
-+
- struct qcom_ssr_notify_data {
- 	const char *name;
- 	bool crashed;
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Given that clients make direct function calls into qcom_common.ko,
+qcom_common.ko would not be possible to rmmod until all clients has been
+rmmod'ed. As such there shouldn't be any remaining listeners, or
+subdevices, when this happens.
 
+Regards,
+Bjorn
