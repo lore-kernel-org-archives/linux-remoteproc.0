@@ -2,277 +2,264 @@ Return-Path: <SRS0=kOch=AF=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09052C433DF
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 24 Jun 2020 17:46:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB437C433E1
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 24 Jun 2020 21:08:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D542520738
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 24 Jun 2020 17:46:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A921E2081A
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 24 Jun 2020 21:08:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="xMqt5Z99"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="puGj3lyc"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405639AbgFXRpx (ORCPT
+        id S2389337AbgFXVIZ (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 24 Jun 2020 13:45:53 -0400
-Received: from mail29.static.mailgun.info ([104.130.122.29]:49955 "EHLO
-        mail29.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2405666AbgFXRpw (ORCPT
+        Wed, 24 Jun 2020 17:08:25 -0400
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:56132 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388453AbgFXVIY (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 24 Jun 2020 13:45:52 -0400
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1593020751; h=References: In-Reply-To: Message-Id: Date:
- Subject: Cc: To: From: Sender;
- bh=7uG15OZbR8iHbdbzqO2RJ2yNEv46krb5ANoHDAwOyLI=; b=xMqt5Z99HkixKEz76PYz4M7Ukst5svb9QmhQZHxn+GEx220b/Q/FcnumbpCjFo2DszgqBlw3
- GeOMNr31R4J/aRcsC1oK+90IVMUWNhMrEdZvKNoIwTF8b+jyOMotWzokMb72BYtt8O3evgLQ
- Ikvv8Dagcsk39fqamdTLloQxho8=
-X-Mailgun-Sending-Ip: 104.130.122.29
-X-Mailgun-Sid: WyI4ZWZiZiIsICJsaW51eC1yZW1vdGVwcm9jQHZnZXIua2VybmVsLm9yZyIsICJiZTllNGEiXQ==
-Received: from smtp.codeaurora.org
- (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
- smtp-out-n07.prod.us-east-1.postgun.com with SMTP id
- 5ef3913abfb34e631c8a5864 (version=TLS1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Wed, 24 Jun 2020 17:45:30
- GMT
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 4D935C433CA; Wed, 24 Jun 2020 17:45:29 +0000 (UTC)
-Received: from deesin-linux.qualcomm.com (blr-c-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: deesin)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 57F16C433C6;
-        Wed, 24 Jun 2020 17:45:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 57F16C433C6
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=deesin@codeaurora.org
-From:   Deepak Kumar Singh <deesin@codeaurora.org>
-To:     bjorn.andersson@linaro.org, clew@codeaurora.org,
-        mathieu.poirier@linaro.org
-Cc:     rampraka@codeaurora.org,
-        Arun Kumar Neelakantam <aneela@codeaurora.org>,
-        Deepak Kumar Singh <deesin@codeaurora.org>,
-        Andy Gross <agross@kernel.org>,
-        Ohad Ben-Cohen <ohad@wizery.com>,
-        linux-arm-msm@vger.kernel.org (open list:ARM/QUALCOMM SUPPORT),
-        linux-remoteproc@vger.kernel.org (open list:REMOTE PROCESSOR MESSAGING
-        (RPMSG) SUBSYSTEM), linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH V5 2/4] rpmsg: glink: Add support to handle signals command
-Date:   Wed, 24 Jun 2020 23:14:59 +0530
-Message-Id: <1593020701-23778-3-git-send-email-deesin@codeaurora.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1593020701-23778-1-git-send-email-deesin@codeaurora.org>
-References: <1593020701-23778-1-git-send-email-deesin@codeaurora.org>
+        Wed, 24 Jun 2020 17:08:24 -0400
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 05OL88Ht114055;
+        Wed, 24 Jun 2020 16:08:08 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1593032888;
+        bh=0hfApv4knRyVKaIA3g3GtdG0GI6yY99sLLLIR8z/lh0=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=puGj3lycI5nVlwfgXdUpm46TYi7Y/XBjGl7vIDnIWb6icFLiqN3WNgdfEdFWDcmMf
+         MM4oFCn5JjPH7VRDaj63a2x4n0zJcOu4O7oTiQoBKQn7/3Rir0+FPcxdigD1oswWUw
+         aLCKtbqIk1ebxola3Vj66BIKS/V0VLKe/+G2Ai6g=
+Received: from DLEE105.ent.ti.com (dlee105.ent.ti.com [157.170.170.35])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 05OL88tA028275
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 24 Jun 2020 16:08:08 -0500
+Received: from DLEE107.ent.ti.com (157.170.170.37) by DLEE105.ent.ti.com
+ (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3; Wed, 24
+ Jun 2020 16:08:08 -0500
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE107.ent.ti.com
+ (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3 via
+ Frontend Transport; Wed, 24 Jun 2020 16:08:08 -0500
+Received: from [10.250.70.56] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id 05OL87ic117344;
+        Wed, 24 Jun 2020 16:08:08 -0500
+Subject: Re: [PATCH v3 4/6] dt-bindings: remoteproc: Add bindings for C66x
+ DSPs on TI K3 SoCs
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>
+CC:     Lokesh Vutla <lokeshvutla@ti.com>,
+        Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>,
+        <linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20200612224914.7634-1-s-anna@ti.com>
+ <20200612224914.7634-5-s-anna@ti.com>
+From:   Suman Anna <s-anna@ti.com>
+Message-ID: <50a1abf6-ecb0-b130-67be-20364965a514@ti.com>
+Date:   Wed, 24 Jun 2020 16:08:07 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.8.0
+MIME-Version: 1.0
+In-Reply-To: <20200612224914.7634-5-s-anna@ti.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-From: Arun Kumar Neelakantam <aneela@codeaurora.org>
+Hi Rob,
 
-Remote peripherals send signal notifications over glink with commandID 15.
+On 6/12/20 5:49 PM, Suman Anna wrote:
+> Some Texas Instruments K3 family of SoCs have one of more Digital Signal
+> Processor (DSP) subsystems that are comprised of either a TMS320C66x
+> CorePac and/or a next-generation TMS320C71x CorePac processor subsystem.
+> Add the device tree bindings document for the C66x DSP devices on these
+> SoCs. The added example illustrates the DT nodes for the first C66x DSP
+> device present on the K3 J721E family of SoCs.
+> 
+> Signed-off-by: Suman Anna <s-anna@ti.com>
+> ---
+> v3:
+>   - Refactored the common ti-sci properties "ti,sci", "ti,sci-dev-id" and
+>     "ti,sci-proc-ids" into a separate binding ti,k3-sci-proc.yaml.
+>   - Dropped the general description and maxItems against reg and reg-names
+>   - Added items list under reg
+>   - Removed the other binding references from the description for resets
+>     and mboxes
+>   - Revised the memory-region description and listed the mandatory items
+>   - Updated example to drop reserved-memory nodes, unused node labels
 
-Add support to send and receive the signal command and convert the signals
-from NATIVE to TIOCM while receiving and vice versa while sending.
+Thanks for acking the corresponding C71x binding update [1] that is on 
+top of this patch.
 
-Signed-off-by: Chris Lew <clew@codeaurora.org>
-Signed-off-by: Deepak Kumar Singh <deesin@codeaurora.org>
-Signed-off-by: Arun Kumar Neelakantam <aneela@codeaurora.org>
----
- drivers/rpmsg/qcom_glink_native.c | 125 ++++++++++++++++++++++++++++++++++++++
- 1 file changed, 125 insertions(+)
+Can you provide your Ack for this updated patch and the refactored 
+ti,k3-sci-proc.yaml binding if you don't have any comments?
 
-diff --git a/drivers/rpmsg/qcom_glink_native.c b/drivers/rpmsg/qcom_glink_native.c
-index 0e8a28c0..1bf3235 100644
---- a/drivers/rpmsg/qcom_glink_native.c
-+++ b/drivers/rpmsg/qcom_glink_native.c
-@@ -17,6 +17,7 @@
- #include <linux/rpmsg.h>
- #include <linux/sizes.h>
- #include <linux/slab.h>
-+#include <linux/termios.h>
- #include <linux/workqueue.h>
- #include <linux/mailbox_client.h>
- 
-@@ -150,6 +151,8 @@ enum {
-  * @intent_req_lock: Synchronises multiple intent requests
-  * @intent_req_result: Result of intent request
-  * @intent_req_comp: Completion for intent_req signalling
-+ * @lsigs:	local side signals
-+ * @rsigs:	remote side signals
-  */
- struct glink_channel {
- 	struct rpmsg_endpoint ept;
-@@ -181,6 +184,10 @@ struct glink_channel {
- 	struct mutex intent_req_lock;
- 	bool intent_req_result;
- 	struct completion intent_req_comp;
-+
-+	unsigned int lsigs;
-+	unsigned int rsigs;
-+
- };
- 
- #define to_glink_channel(_ept) container_of(_ept, struct glink_channel, ept)
-@@ -201,9 +208,15 @@ static const struct rpmsg_endpoint_ops glink_endpoint_ops;
- #define RPM_CMD_TX_DATA_CONT		12
- #define RPM_CMD_READ_NOTIF		13
- #define RPM_CMD_RX_DONE_W_REUSE		14
-+#define RPM_CMD_SIGNALS			15
- 
- #define GLINK_FEATURE_INTENTLESS	BIT(1)
- 
-+#define NATIVE_DTR_SIG			BIT(31)
-+#define NATIVE_CTS_SIG			BIT(30)
-+#define NATIVE_CD_SIG			BIT(29)
-+#define NATIVE_RI_SIG			BIT(28)
-+
- static void qcom_glink_rx_done_work(struct work_struct *work);
- 
- static struct glink_channel *qcom_glink_alloc_channel(struct qcom_glink *glink,
-@@ -975,6 +988,76 @@ static int qcom_glink_rx_open_ack(struct qcom_glink *glink, unsigned int lcid)
- 	return 0;
- }
- 
-+/**
-+ * qcom_glink_send_signals() - convert a signal cmd to wire format and transmit
-+ * @glink:	The transport to transmit on.
-+ * @channel:	The glink channel
-+ * @sigs:	The signals to encode.
-+ *
-+ * Return: 0 on success or standard Linux error code.
-+ */
-+static int qcom_glink_send_signals(struct qcom_glink *glink,
-+				   struct glink_channel *channel,
-+				   u32 sigs)
-+{
-+	struct glink_msg msg;
-+
-+	/* convert signals from TIOCM to NATIVE */
-+	sigs &= 0x0fff;
-+	if (sigs & TIOCM_DTR)
-+		sigs |= NATIVE_DTR_SIG;
-+	if (sigs & TIOCM_RTS)
-+		sigs |= NATIVE_CTS_SIG;
-+	if (sigs & TIOCM_CD)
-+		sigs |= NATIVE_CD_SIG;
-+	if (sigs & TIOCM_RI)
-+		sigs |= NATIVE_RI_SIG;
-+
-+	msg.cmd = cpu_to_le16(RPM_CMD_SIGNALS);
-+	msg.param1 = cpu_to_le16(channel->lcid);
-+	msg.param2 = cpu_to_le32(sigs);
-+
-+	return qcom_glink_tx(glink, &msg, sizeof(msg), NULL, 0, true);
-+}
-+
-+static int qcom_glink_handle_signals(struct qcom_glink *glink,
-+				     unsigned int rcid, unsigned int signals)
-+{
-+	struct glink_channel *channel;
-+	unsigned long flags;
-+	u32 old;
-+
-+	spin_lock_irqsave(&glink->idr_lock, flags);
-+	channel = idr_find(&glink->rcids, rcid);
-+	spin_unlock_irqrestore(&glink->idr_lock, flags);
-+	if (!channel) {
-+		dev_err(glink->dev, "signal for non-existing channel\n");
-+		return -EINVAL;
-+	}
-+
-+	old = channel->rsigs;
-+
-+	/* convert signals from NATIVE to TIOCM */
-+	if (signals & NATIVE_DTR_SIG)
-+		signals |= TIOCM_DSR;
-+	if (signals & NATIVE_CTS_SIG)
-+		signals |= TIOCM_CTS;
-+	if (signals & NATIVE_CD_SIG)
-+		signals |= TIOCM_CD;
-+	if (signals & NATIVE_RI_SIG)
-+		signals |= TIOCM_RI;
-+	signals &= 0x0fff;
-+
-+	channel->rsigs = signals;
-+
-+	if (channel->ept.sig_cb) {
-+		channel->ept.sig_cb(channel->ept.rpdev, channel->ept.priv,
-+				    old, channel->rsigs);
-+	}
-+
-+	return 0;
-+}
-+
- static irqreturn_t qcom_glink_native_intr(int irq, void *data)
- {
- 	struct qcom_glink *glink = data;
-@@ -1036,6 +1119,10 @@ static irqreturn_t qcom_glink_native_intr(int irq, void *data)
- 			qcom_glink_handle_intent_req_ack(glink, param1, param2);
- 			qcom_glink_rx_advance(glink, ALIGN(sizeof(msg), 8));
- 			break;
-+		case RPM_CMD_SIGNALS:
-+			qcom_glink_handle_signals(glink, param1, param2);
-+			qcom_glink_rx_advance(glink, ALIGN(sizeof(msg), 8));
-+			break;
- 		default:
- 			dev_err(glink->dev, "unhandled rx cmd: %d\n", cmd);
- 			ret = -EINVAL;
-@@ -1332,6 +1419,42 @@ static int qcom_glink_trysend(struct rpmsg_endpoint *ept, void *data, int len)
- 	return __qcom_glink_send(channel, data, len, false);
- }
- 
-+static int qcom_glink_get_sigs(struct rpmsg_endpoint *ept)
-+{
-+	struct glink_channel *channel = to_glink_channel(ept);
-+
-+	return channel->rsigs;
-+}
-+
-+static int qcom_glink_set_sigs(struct rpmsg_endpoint *ept, u32 set, u32 clear)
-+{
-+	struct glink_channel *channel = to_glink_channel(ept);
-+	struct qcom_glink *glink = channel->glink;
-+	u32 sigs = channel->lsigs;
-+
-+	if (set & TIOCM_DTR)
-+		sigs |= TIOCM_DTR;
-+	if (set & TIOCM_RTS)
-+		sigs |= TIOCM_RTS;
-+	if (set & TIOCM_CD)
-+		sigs |= TIOCM_CD;
-+	if (set & TIOCM_RI)
-+		sigs |= TIOCM_RI;
-+
-+	if (clear & TIOCM_DTR)
-+		sigs &= ~TIOCM_DTR;
-+	if (clear & TIOCM_RTS)
-+		sigs &= ~TIOCM_RTS;
-+	if (clear & TIOCM_CD)
-+		sigs &= ~TIOCM_CD;
-+	if (clear & TIOCM_RI)
-+		sigs &= ~TIOCM_RI;
-+
-+	channel->lsigs = sigs;
-+
-+	return qcom_glink_send_signals(glink, channel, sigs);
-+}
-+
- /*
-  * Finds the device_node for the glink child interested in this channel.
-  */
-@@ -1365,6 +1488,8 @@ static const struct rpmsg_endpoint_ops glink_endpoint_ops = {
- 	.destroy_ept = qcom_glink_destroy_ept,
- 	.send = qcom_glink_send,
- 	.trysend = qcom_glink_trysend,
-+	.get_signals = qcom_glink_get_sigs,
-+	.set_signals = qcom_glink_set_sigs,
- };
- 
- static void qcom_glink_rpdev_release(struct device *dev)
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+regards
+Suman
+
+[1] https://patchwork.kernel.org/comment/23421509/
+
+
+> v2: https://patchwork.kernel.org/patch/11561781/
+> 
+>   .../bindings/remoteproc/ti,k3-dsp-rproc.yaml  | 139 ++++++++++++++++++
+>   1 file changed, 139 insertions(+)
+>   create mode 100644 Documentation/devicetree/bindings/remoteproc/ti,k3-dsp-rproc.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/remoteproc/ti,k3-dsp-rproc.yaml b/Documentation/devicetree/bindings/remoteproc/ti,k3-dsp-rproc.yaml
+> new file mode 100644
+> index 000000000000..f03e88c42a6e
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/remoteproc/ti,k3-dsp-rproc.yaml
+> @@ -0,0 +1,139 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only or BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/remoteproc/ti,k3-dsp-rproc.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: TI K3 DSP devices
+> +
+> +maintainers:
+> +  - Suman Anna <s-anna@ti.com>
+> +
+> +description: |
+> +  The TI K3 family of SoCs usually have one or more TI DSP Core sub-systems
+> +  that are used to offload some of the processor-intensive tasks or algorithms,
+> +  for achieving various system level goals.
+> +
+> +  These processor sub-systems usually contain additional sub-modules like
+> +  L1 and/or L2 caches/SRAMs, an Interrupt Controller, an external memory
+> +  controller, a dedicated local power/sleep controller etc. The DSP processor
+> +  cores in the K3 SoCs are usually either a TMS320C66x CorePac processor or a
+> +  TMS320C71x CorePac processor.
+> +
+> +  Each DSP Core sub-system is represented as a single DT node. Each node has a
+> +  number of required or optional properties that enable the OS running on the
+> +  host processor (Arm CorePac) to perform the device management of the remote
+> +  processor and to communicate with the remote processor.
+> +
+> +allOf:
+> +  - $ref: "ti,k3-sci-proc.yaml#"
+> +
+> +properties:
+> +  compatible:
+> +    const: ti,j721e-c66-dsp
+> +    description:
+> +      Use "ti,j721e-c66-dsp" for C66x DSPs on K3 J721E SoCs
+> +
+> +  reg:
+> +    items:
+> +      - description: Address and Size of the L2 SRAM internal memory region
+> +      - description: Address and Size of the L1 PRAM internal memory region
+> +      - description: Address and Size of the L1 DRAM internal memory region
+> +
+> +  reg-names:
+> +    items:
+> +      - const: l2sram
+> +      - const: l1pram
+> +      - const: l1dram
+> +
+> +  resets:
+> +    description: |
+> +      Should contain the phandle to the reset controller node managing the
+> +      local resets for this device, and a reset specifier.
+> +    maxItems: 1
+> +
+> +  firmware-name:
+> +    description: |
+> +      Should contain the name of the default firmware image
+> +      file located on the firmware search path
+> +
+> +  mboxes:
+> +    description: |
+> +      OMAP Mailbox specifier denoting the sub-mailbox, to be used for
+> +      communication with the remote processor. This property should match
+> +      with the sub-mailbox node used in the firmware image.
+> +    maxItems: 1
+> +
+> +  memory-region:
+> +    minItems: 2
+> +    maxItems: 8
+> +    description: |
+> +      phandle to the reserved memory nodes to be associated with the remoteproc
+> +      device. There should be at least two reserved memory nodes defined. The
+> +      reserved memory nodes should be carveout nodes, and should be defined as
+> +      per the bindings in
+> +      Documentation/devicetree/bindings/reserved-memory/reserved-memory.txt
+> +    items:
+> +      - description: region used for dynamic DMA allocations like vrings and
+> +                     vring buffers
+> +      - description: region reserved for firmware image sections
+> +    additionalItems: true
+> +
+> +# Optional properties:
+> +# --------------------
+> +
+> +  sram:
+> +    $ref: /schemas/types.yaml#/definitions/phandle-array
+> +    minItems: 1
+> +    maxItems: 4
+> +    description: |
+> +      phandles to one or more reserved on-chip SRAM regions. The regions
+> +      should be defined as child nodes of the respective SRAM node, and
+> +      should be defined as per the generic bindings in,
+> +      Documentation/devicetree/bindings/sram/sram.yaml
+> +
+> +required:
+> + - compatible
+> + - reg
+> + - reg-names
+> + - resets
+> + - firmware-name
+> + - mboxes
+> + - memory-region
+> +
+> +unevaluatedProperties: false
+> +
+> +examples:
+> +  - |
+> +    / {
+> +        model = "Texas Instruments K3 J721E SoC";
+> +        compatible = "ti,j721e";
+> +        #address-cells = <2>;
+> +        #size-cells = <2>;
+> +
+> +        bus@100000 {
+> +            compatible = "simple-bus";
+> +            #address-cells = <2>;
+> +            #size-cells = <2>;
+> +            ranges = <0x00 0x00100000 0x00 0x00100000 0x00 0x00020000>, /* ctrl mmr */
+> +                     <0x4d 0x80800000 0x4d 0x80800000 0x00 0x00800000>, /* C66_0 */
+> +                     <0x4d 0x81800000 0x4d 0x81800000 0x00 0x00800000>; /* C66_1 */
+> +
+> +            /* J721E C66_0 DSP node */
+> +            dsp@4d80800000 {
+> +                compatible = "ti,j721e-c66-dsp";
+> +                reg = <0x4d 0x80800000 0x00 0x00048000>,
+> +                      <0x4d 0x80e00000 0x00 0x00008000>,
+> +                      <0x4d 0x80f00000 0x00 0x00008000>;
+> +                reg-names = "l2sram", "l1pram", "l1dram";
+> +                ti,sci = <&dmsc>;
+> +                ti,sci-dev-id = <142>;
+> +                ti,sci-proc-ids = <0x03 0xFF>;
+> +                resets = <&k3_reset 142 1>;
+> +                firmware-name = "j7-c66_0-fw";
+> +                memory-region = <&c66_0_dma_memory_region>,
+> +                                <&c66_0_memory_region>;
+> +                mboxes = <&mailbox0_cluster3 &mbox_c66_0>;
+> +            };
+> +        };
+> +    };
+> 
 
