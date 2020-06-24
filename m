@@ -2,48 +2,50 @@ Return-Path: <SRS0=kOch=AF=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B15CAC433DF
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 24 Jun 2020 01:24:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3722EC433E0
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 24 Jun 2020 01:24:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8B1562098B
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 24 Jun 2020 01:24:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 15A062098B
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 24 Jun 2020 01:24:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="sB9c/+oZ"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="Ku2nceJm"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388126AbgFXBYq (ORCPT
+        id S2388387AbgFXBYt (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 23 Jun 2020 21:24:46 -0400
-Received: from mail29.static.mailgun.info ([104.130.122.29]:45620 "EHLO
+        Tue, 23 Jun 2020 21:24:49 -0400
+Received: from mail29.static.mailgun.info ([104.130.122.29]:34975 "EHLO
         mail29.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2387916AbgFXBYp (ORCPT
+        by vger.kernel.org with ESMTP id S2388326AbgFXBYs (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 23 Jun 2020 21:24:45 -0400
+        Tue, 23 Jun 2020 21:24:48 -0400
 DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1592961884; h=Message-Id: Date: Subject: Cc: To: From:
- Sender; bh=JJjGrFrEG/JFEkkCPMYT2rqeOIB/OZvmMXY1uqNm79Q=; b=sB9c/+oZoxn/USYKuxO2+0C1tPfaYfUvfM1c43ZXwtym0QZTjYBz5jiV1NqxhSRIV4jghyUh
- iRHnK17anLT+LRaV9hGt/NCFvBKg7SZ4TSMp6vRRpxCWId/vICEKGsgZNm/xK7U5ouTso6/b
- DAhMoy30RRZ12aZUhnwvE8p0zyM=
+ s=smtp; t=1592961887; h=References: In-Reply-To: Message-Id: Date:
+ Subject: Cc: To: From: Sender;
+ bh=r5Ps0ckSVMP7RdDIdPCozlpA1Q6xNvrvfOb891tsolA=; b=Ku2nceJm/2NN/ptFZ78UAzTxr7Q4vxANSasjyXWAciJKY+jxH2aWDwH7QkR/vfPKTZbK93Lo
+ 7FJvY+YwchWjJslBx6rChuGqYSD+jhKG5zL4YSrPzW2WPZRW5erqOHKnRvajHXGbPXw4kM3r
+ OjstA8P/pAZ8SHs9f+SSZ8tJf2M=
 X-Mailgun-Sending-Ip: 104.130.122.29
 X-Mailgun-Sid: WyI4ZWZiZiIsICJsaW51eC1yZW1vdGVwcm9jQHZnZXIua2VybmVsLm9yZyIsICJiZTllNGEiXQ==
 Received: from smtp.codeaurora.org
  (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
- smtp-out-n08.prod.us-east-1.postgun.com with SMTP id
- 5ef2ab5c356bcc26ab4f1efc (version=TLS1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Wed, 24 Jun 2020 01:24:44
+ smtp-out-n04.prod.us-east-1.postgun.com with SMTP id
+ 5ef2ab5f0206ad41d1e7e803 (version=TLS1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Wed, 24 Jun 2020 01:24:47
  GMT
 Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 8CA62C433CA; Wed, 24 Jun 2020 01:24:43 +0000 (UTC)
+        id 469A4C4339C; Wed, 24 Jun 2020 01:24:46 +0000 (UTC)
 Received: from rishabhb-linux.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
         (Authenticated sender: rishabhb)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id C44DAC433C8;
-        Wed, 24 Jun 2020 01:24:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C44DAC433C8
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 684B9C433C8;
+        Wed, 24 Jun 2020 01:24:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 684B9C433C8
 Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=rishabhb@codeaurora.org
 From:   Rishabh Bhatnagar <rishabhb@codeaurora.org>
@@ -51,55 +53,135 @@ To:     linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     bjorn.andersson@linaro.org, mathieu.poirier@linaro.org,
         tsoni@codeaurora.org, psodagud@codeaurora.org,
         sidgup@codeaurora.org, Rishabh Bhatnagar <rishabhb@codeaurora.org>
-Subject: [PATCH v5 0/3] Extend coredump functionality
-Date:   Tue, 23 Jun 2020 18:24:11 -0700
-Message-Id: <1592961854-634-1-git-send-email-rishabhb@codeaurora.org>
+Subject: [PATCH v5 3/3] remoteproc: Add coredump debugfs entry
+Date:   Tue, 23 Jun 2020 18:24:14 -0700
+Message-Id: <1592961854-634-4-git-send-email-rishabhb@codeaurora.org>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1592961854-634-1-git-send-email-rishabhb@codeaurora.org>
+References: <1592961854-634-1-git-send-email-rishabhb@codeaurora.org>
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-This patch series moves the coredump functionality to a separate
-file and adds "inline" coredump feature. Inline coredump directly
-copies segments from device memory during coredump to userspace.
-This avoids extra memory usage at the cost of speed. Recovery is
-stalled until all data is read by userspace.
+Add coredump debugfs entry to configure the type of dump that will
+be collected during recovery. User can select between default or
+inline coredump functionality. Also coredump collection can be
+disabled through this interface.
+This functionality can be configured differently for different
+remote processors.
 
-Changelog:
+Signed-off-by: Rishabh Bhatnagar <rishabhb@codeaurora.org>
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+---
+ drivers/remoteproc/remoteproc_debugfs.c | 86 +++++++++++++++++++++++++++++++++
+ 1 file changed, 86 insertions(+)
 
-v5 -> v4:
-- Rebase on top of linux-next
-
-v4 -> v3:
-- Write a helper function to copy segment memory for every dump format
-- Change segment dump fn to add offset and size adn covert mss driver
-
-v3 -> v2:
-- Move entire coredump functionality to remoteproc_coredump.c
-- Modify rproc_coredump to perform dump according to conf. set by userspace
-- Move the userspace configuration to debugfs from sysfs.
-- Keep the default coredump implementation as is
-
-v2 -> v1:
-- Introduce new file for coredump.
-- Add userspace sysfs configuration for dump type.
-
-Rishabh Bhatnagar (3):
-  remoteproc: Move coredump functionality to a new file
-  remoteproc: Add inline coredump functionality
-  remoteproc: Add coredump debugfs entry
-
- drivers/remoteproc/Makefile              |   1 +
- drivers/remoteproc/qcom_q6v5_mss.c       |   9 +-
- drivers/remoteproc/remoteproc_core.c     | 191 ------------------
- drivers/remoteproc/remoteproc_coredump.c | 328 +++++++++++++++++++++++++++++++
- drivers/remoteproc/remoteproc_debugfs.c  |  86 ++++++++
- drivers/remoteproc/remoteproc_internal.h |   4 +
- include/linux/remoteproc.h               |  21 +-
- 7 files changed, 443 insertions(+), 197 deletions(-)
- create mode 100644 drivers/remoteproc/remoteproc_coredump.c
-
+diff --git a/drivers/remoteproc/remoteproc_debugfs.c b/drivers/remoteproc/remoteproc_debugfs.c
+index 732770e..cca0a91 100644
+--- a/drivers/remoteproc/remoteproc_debugfs.c
++++ b/drivers/remoteproc/remoteproc_debugfs.c
+@@ -28,6 +28,90 @@
+ static struct dentry *rproc_dbg;
+ 
+ /*
++ * A coredump-configuration-to-string lookup table, for exposing a
++ * human readable configuration via debugfs. Always keep in sync with
++ * enum rproc_coredump_mechanism
++ */
++static const char * const rproc_coredump_str[] = {
++	[RPROC_COREDUMP_DEFAULT]	= "default",
++	[RPROC_COREDUMP_INLINE]	= "inline",
++	[RPROC_COREDUMP_DISABLED]	= "disabled",
++};
++
++/* Expose the current coredump configuration via debugfs */
++static ssize_t rproc_coredump_read(struct file *filp, char __user *userbuf,
++				   size_t count, loff_t *ppos)
++{
++	struct rproc *rproc = filp->private_data;
++	const char *buf = rproc_coredump_str[rproc->dump_conf];
++
++	return simple_read_from_buffer(userbuf, count, ppos, buf, strlen(buf));
++}
++
++/*
++ * By writing to the 'coredump' debugfs entry, we control the behavior of the
++ * coredump mechanism dynamically. The default value of this entry is "default".
++ *
++ * The 'coredump' debugfs entry supports these commands:
++ *
++ * default:	This is the default coredump mechanism. When the remoteproc
++ *		crashes the entire coredump will be copied to a separate buffer
++ *		and exposed to userspace.
++ *
++ * inline:	The coredump will not be copied to a separate buffer and the
++ *		recovery process will have to wait until data is read by
++ *		userspace. But this avoid usage of extra memory.
++ *
++ * disabled:	This will disable coredump. Recovery will proceed without
++ *		collecting any dump.
++ */
++static ssize_t rproc_coredump_write(struct file *filp,
++				    const char __user *user_buf, size_t count,
++				    loff_t *ppos)
++{
++	struct rproc *rproc = filp->private_data;
++	int ret, err = 0;
++	char buf[20];
++
++	if (count > sizeof(buf))
++		return -EINVAL;
++
++	ret = copy_from_user(buf, user_buf, count);
++	if (ret)
++		return -EFAULT;
++
++	/* remove end of line */
++	if (buf[count - 1] == '\n')
++		buf[count - 1] = '\0';
++
++	if (rproc->state == RPROC_CRASHED) {
++		dev_err(&rproc->dev, "can't change coredump configuration\n");
++		err = -EBUSY;
++		goto out;
++	}
++
++	if (!strncmp(buf, "disable", count)) {
++		rproc->dump_conf = RPROC_COREDUMP_DISABLED;
++	} else if (!strncmp(buf, "inline", count)) {
++		rproc->dump_conf = RPROC_COREDUMP_INLINE;
++	} else if (!strncmp(buf, "default", count)) {
++		rproc->dump_conf = RPROC_COREDUMP_DEFAULT;
++	} else {
++		dev_err(&rproc->dev, "Invalid coredump configuration\n");
++		err = -EINVAL;
++	}
++out:
++	return err ? err : count;
++}
++
++static const struct file_operations rproc_coredump_fops = {
++	.read = rproc_coredump_read,
++	.write = rproc_coredump_write,
++	.open = simple_open,
++	.llseek = generic_file_llseek,
++};
++
++/*
+  * Some remote processors may support dumping trace logs into a shared
+  * memory buffer. We expose this trace buffer using debugfs, so users
+  * can easily tell what's going on remotely.
+@@ -337,6 +421,8 @@ void rproc_create_debug_dir(struct rproc *rproc)
+ 			    rproc, &rproc_rsc_table_fops);
+ 	debugfs_create_file("carveout_memories", 0400, rproc->dbg_dir,
+ 			    rproc, &rproc_carveouts_fops);
++	debugfs_create_file("coredump", 0600, rproc->dbg_dir,
++			    rproc, &rproc_coredump_fops);
+ }
+ 
+ void __init rproc_init_debugfs(void)
 -- 
 The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
 a Linux Foundation Collaborative Project
