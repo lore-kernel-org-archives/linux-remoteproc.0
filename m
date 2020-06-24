@@ -4,48 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BCF97C433DF
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 24 Jun 2020 01:24:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6D5FC433E0
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 24 Jun 2020 01:25:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 85F282100A
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 24 Jun 2020 01:24:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7695D2100A
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 24 Jun 2020 01:25:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="aUmW3UVq"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="sz9yYDOQ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388421AbgFXBYw (ORCPT
+        id S2388377AbgFXBZE (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 23 Jun 2020 21:24:52 -0400
-Received: from mail29.static.mailgun.info ([104.130.122.29]:33832 "EHLO
-        mail29.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2388383AbgFXBYv (ORCPT
+        Tue, 23 Jun 2020 21:25:04 -0400
+Received: from m43-7.mailgun.net ([69.72.43.7]:61632 "EHLO m43-7.mailgun.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387842AbgFXBYt (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 23 Jun 2020 21:24:51 -0400
+        Tue, 23 Jun 2020 21:24:49 -0400
 DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1592961889; h=References: In-Reply-To: Message-Id: Date:
+ s=smtp; t=1592961887; h=References: In-Reply-To: Message-Id: Date:
  Subject: Cc: To: From: Sender;
- bh=o/deK5Viq/ZZeMACzlntldsVdkFeBDCWtcE6uXmkTlQ=; b=aUmW3UVqan5agm6Dns5FLa40oGqJL+atSmt2SambSmNkzqNkGvPQYcEz42jGT/gUGO/+8Mnp
- ar5C5cbX1qrSxYn8rn8NpxsZP+6C6YAOtHL+U7YJxY+4nMx/Xu/hIdJAXGiDBqFqty3NhHc4
- DEfnXDnlDmAQcCoVeeCtEtZ93Ts=
-X-Mailgun-Sending-Ip: 104.130.122.29
+ bh=SKSzpzlWaWDwPVGjTzVIpFVcBZIiFwZem0H+kbNnZcA=; b=sz9yYDOQVj1udZ35BuEc/w66G+T2whyPw71BaiXWqLAJsb8HfvO623luwf+Oq4GtkionpK6r
+ mTFTBkvevXTz7JTaQCclTpXT7dZa1RjfxEe6wdDDaZMu8B1HKmGs2vA/HHve6ukHPVRjruKP
+ Cx2Oj/JlaW038j3B93Z5BsAMuqM=
+X-Mailgun-Sending-Ip: 69.72.43.7
 X-Mailgun-Sid: WyI4ZWZiZiIsICJsaW51eC1yZW1vdGVwcm9jQHZnZXIua2VybmVsLm9yZyIsICJiZTllNGEiXQ==
 Received: from smtp.codeaurora.org
  (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
- smtp-out-n10.prod.us-east-1.postgun.com with SMTP id
- 5ef2ab5fa3d8a447432b14a6 (version=TLS1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Wed, 24 Jun 2020 01:24:47
+ smtp-out-n04.prod.us-east-1.postgun.com with SMTP id
+ 5ef2ab5ec4bb4f886df88262 (version=TLS1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Wed, 24 Jun 2020 01:24:46
  GMT
 Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 9BABFC433CA; Wed, 24 Jun 2020 01:24:46 +0000 (UTC)
+        id 54812C43395; Wed, 24 Jun 2020 01:24:45 +0000 (UTC)
 Received: from rishabhb-linux.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
         (Authenticated sender: rishabhb)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 4FFC4C433C6;
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id D521AC433A0;
         Wed, 24 Jun 2020 01:24:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4FFC4C433C6
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D521AC433A0
 Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=rishabhb@codeaurora.org
 From:   Rishabh Bhatnagar <rishabhb@codeaurora.org>
@@ -53,9 +53,9 @@ To:     linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     bjorn.andersson@linaro.org, mathieu.poirier@linaro.org,
         tsoni@codeaurora.org, psodagud@codeaurora.org,
         sidgup@codeaurora.org, Rishabh Bhatnagar <rishabhb@codeaurora.org>
-Subject: [PATCH v5 1/3] remoteproc: Move coredump functionality to a new file
-Date:   Tue, 23 Jun 2020 18:24:12 -0700
-Message-Id: <1592961854-634-2-git-send-email-rishabhb@codeaurora.org>
+Subject: [PATCH v5 2/3] remoteproc: Add inline coredump functionality
+Date:   Tue, 23 Jun 2020 18:24:13 -0700
+Message-Id: <1592961854-634-3-git-send-email-rishabhb@codeaurora.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1592961854-634-1-git-send-email-rishabhb@codeaurora.org>
 References: <1592961854-634-1-git-send-email-rishabhb@codeaurora.org>
@@ -64,233 +64,243 @@ Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Move all coredump functionality to an individual file. This is
-being done so that the current functionality can be extended
-in future patchsets.
+The current coredump implementation uses vmalloc area to copy
+all the segments. But this might put strain on low memory targets
+as the firmware size sometimes is in tens of MBs. The situation
+becomes worse if there are multiple remote processors undergoing
+recovery at the same time. This patch adds inline coredump
+functionality that avoids extra memory usage. This requires
+recovery to be halted until data is read by userspace and free
+function is called.
 
 Signed-off-by: Rishabh Bhatnagar <rishabhb@codeaurora.org>
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 ---
- drivers/remoteproc/Makefile              |   1 +
- drivers/remoteproc/remoteproc_core.c     | 191 -----------------------------
- drivers/remoteproc/remoteproc_coredump.c | 204 +++++++++++++++++++++++++++++++
- drivers/remoteproc/remoteproc_internal.h |   4 +
- 4 files changed, 209 insertions(+), 191 deletions(-)
- create mode 100644 drivers/remoteproc/remoteproc_coredump.c
+ drivers/remoteproc/qcom_q6v5_mss.c       |   9 +-
+ drivers/remoteproc/remoteproc_coredump.c | 162 +++++++++++++++++++++++++++----
+ include/linux/remoteproc.h               |  21 +++-
+ 3 files changed, 167 insertions(+), 25 deletions(-)
 
-diff --git a/drivers/remoteproc/Makefile b/drivers/remoteproc/Makefile
-index e8b886e..8702a4e 100644
---- a/drivers/remoteproc/Makefile
-+++ b/drivers/remoteproc/Makefile
+diff --git a/drivers/remoteproc/qcom_q6v5_mss.c b/drivers/remoteproc/qcom_q6v5_mss.c
+index 903b2bb..d4ff9b8 100644
+--- a/drivers/remoteproc/qcom_q6v5_mss.c
++++ b/drivers/remoteproc/qcom_q6v5_mss.c
+@@ -1200,12 +1200,13 @@ static int q6v5_mpss_load(struct q6v5 *qproc)
+ 
+ static void qcom_q6v5_dump_segment(struct rproc *rproc,
+ 				   struct rproc_dump_segment *segment,
+-				   void *dest)
++				   void *dest, size_t cp_offset, size_t size)
+ {
+ 	int ret = 0;
+ 	struct q6v5 *qproc = rproc->priv;
+ 	unsigned long mask = BIT((unsigned long)segment->priv);
+ 	int offset = segment->da - qproc->mpss_reloc;
++	size_t cp_size = size ? size : segment->size;
+ 	void *ptr = NULL;
+ 
+ 	/* Unlock mba before copying segments */
+@@ -1221,13 +1222,13 @@ static void qcom_q6v5_dump_segment(struct rproc *rproc,
+ 	}
+ 
+ 	if (!ret)
+-		ptr = ioremap_wc(qproc->mpss_phys + offset, segment->size);
++		ptr = ioremap_wc(qproc->mpss_phys + offset + cp_offset, cp_size);
+ 
+ 	if (ptr) {
+-		memcpy(dest, ptr, segment->size);
++		memcpy(dest, ptr, cp_size);
+ 		iounmap(ptr);
+ 	} else {
+-		memset(dest, 0xff, segment->size);
++		memset(dest, 0xff, cp_size);
+ 	}
+ 
+ 	qproc->dump_segment_mask |= mask;
+diff --git a/drivers/remoteproc/remoteproc_coredump.c b/drivers/remoteproc/remoteproc_coredump.c
+index ded0244..e643a66 100644
+--- a/drivers/remoteproc/remoteproc_coredump.c
++++ b/drivers/remoteproc/remoteproc_coredump.c
 @@ -5,6 +5,7 @@
+  * Copyright (c) 2020, The Linux Foundation. All rights reserved.
+  */
  
- obj-$(CONFIG_REMOTEPROC)		+= remoteproc.o
- remoteproc-y				:= remoteproc_core.o
-+remoteproc-y				+= remoteproc_coredump.o
- remoteproc-y				+= remoteproc_debugfs.o
- remoteproc-y				+= remoteproc_sysfs.o
- remoteproc-y				+= remoteproc_virtio.o
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index 9f04c30..57db042 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -26,7 +26,6 @@
- #include <linux/firmware.h>
- #include <linux/string.h>
- #include <linux/debugfs.h>
--#include <linux/devcoredump.h>
- #include <linux/rculist.h>
- #include <linux/remoteproc.h>
- #include <linux/pm_runtime.h>
-@@ -41,7 +40,6 @@
- #include <linux/platform_device.h>
- 
++#include <linux/completion.h>
+ #include <linux/devcoredump.h>
+ #include <linux/device.h>
+ #include <linux/kernel.h>
+@@ -12,6 +13,12 @@
  #include "remoteproc_internal.h"
--#include "remoteproc_elf_helpers.h"
+ #include "remoteproc_elf_helpers.h"
  
- #define HIGH_BITS_MASK 0xFFFFFFFF00000000ULL
- 
-@@ -1239,19 +1237,6 @@ static int rproc_alloc_registered_carveouts(struct rproc *rproc)
- 	return 0;
- }
- 
--/**
-- * rproc_coredump_cleanup() - clean up dump_segments list
-- * @rproc: the remote processor handle
-- */
--static void rproc_coredump_cleanup(struct rproc *rproc)
--{
--	struct rproc_dump_segment *entry, *tmp;
--
--	list_for_each_entry_safe(entry, tmp, &rproc->dump_segments, node) {
--		list_del(&entry->node);
--		kfree(entry);
--	}
--}
- 
++struct rproc_coredump_state {
++	struct rproc *rproc;
++	void *header;
++	struct completion dump_done;
++};
++
  /**
-  * rproc_resource_cleanup() - clean up and free all acquired resources
-@@ -1518,182 +1503,6 @@ static int rproc_stop(struct rproc *rproc, bool crashed)
- 	return 0;
- }
- 
--/**
-- * rproc_coredump_add_segment() - add segment of device memory to coredump
-- * @rproc:	handle of a remote processor
-- * @da:		device address
-- * @size:	size of segment
-- *
-- * Add device memory to the list of segments to be included in a coredump for
-- * the remoteproc.
-- *
-- * Return: 0 on success, negative errno on error.
-- */
--int rproc_coredump_add_segment(struct rproc *rproc, dma_addr_t da, size_t size)
--{
--	struct rproc_dump_segment *segment;
--
--	segment = kzalloc(sizeof(*segment), GFP_KERNEL);
--	if (!segment)
--		return -ENOMEM;
--
--	segment->da = da;
--	segment->size = size;
--
--	list_add_tail(&segment->node, &rproc->dump_segments);
--
--	return 0;
--}
--EXPORT_SYMBOL(rproc_coredump_add_segment);
--
--/**
-- * rproc_coredump_add_custom_segment() - add custom coredump segment
-- * @rproc:	handle of a remote processor
-- * @da:		device address
-- * @size:	size of segment
-- * @dumpfn:	custom dump function called for each segment during coredump
-- * @priv:	private data
-- *
-- * Add device memory to the list of segments to be included in the coredump
-- * and associate the segment with the given custom dump function and private
-- * data.
-- *
-- * Return: 0 on success, negative errno on error.
-- */
--int rproc_coredump_add_custom_segment(struct rproc *rproc,
--				      dma_addr_t da, size_t size,
--				      void (*dumpfn)(struct rproc *rproc,
--						     struct rproc_dump_segment *segment,
+  * rproc_coredump_cleanup() - clean up dump_segments list
+  * @rproc: the remote processor handle
+@@ -72,7 +79,8 @@ int rproc_coredump_add_custom_segment(struct rproc *rproc,
+ 				      dma_addr_t da, size_t size,
+ 				      void (*dumpfn)(struct rproc *rproc,
+ 						     struct rproc_dump_segment *segment,
 -						     void *dest),
--				      void *priv)
--{
--	struct rproc_dump_segment *segment;
--
--	segment = kzalloc(sizeof(*segment), GFP_KERNEL);
--	if (!segment)
--		return -ENOMEM;
--
--	segment->da = da;
--	segment->size = size;
--	segment->priv = priv;
--	segment->dump = dumpfn;
--
--	list_add_tail(&segment->node, &rproc->dump_segments);
--
--	return 0;
--}
--EXPORT_SYMBOL(rproc_coredump_add_custom_segment);
--
--/**
-- * rproc_coredump_set_elf_info() - set coredump elf information
-- * @rproc:	handle of a remote processor
-- * @class:	elf class for coredump elf file
-- * @machine:	elf machine for coredump elf file
-- *
-- * Set elf information which will be used for coredump elf file.
-- *
-- * Return: 0 on success, negative errno on error.
-- */
--int rproc_coredump_set_elf_info(struct rproc *rproc, u8 class, u16 machine)
--{
--	if (class != ELFCLASS64 && class != ELFCLASS32)
--		return -EINVAL;
--
--	rproc->elf_class = class;
--	rproc->elf_machine = machine;
--
--	return 0;
--}
--EXPORT_SYMBOL(rproc_coredump_set_elf_info);
--
--/**
-- * rproc_coredump() - perform coredump
-- * @rproc:	rproc handle
-- *
-- * This function will generate an ELF header for the registered segments
++						     void *dest, size_t offset,
++						     size_t size),
+ 				      void *priv)
+ {
+ 	struct rproc_dump_segment *segment;
+@@ -114,12 +122,112 @@ int rproc_coredump_set_elf_info(struct rproc *rproc, u8 class, u16 machine)
+ }
+ EXPORT_SYMBOL(rproc_coredump_set_elf_info);
+ 
++static void rproc_coredump_free(void *data)
++{
++	struct rproc_coredump_state *dump_state = data;
++
++	complete(&dump_state->dump_done);
++	vfree(dump_state->header);
++}
++
++static void *rproc_coredump_find_segment(loff_t user_offset,
++					 struct list_head *segments,
++					 size_t *data_left)
++{
++	struct rproc_dump_segment *segment;
++
++	list_for_each_entry(segment, segments, node) {
++		if (user_offset < segment->size) {
++			*data_left = segment->size - user_offset;
++			return segment;
++		}
++		user_offset -= segment->size;
++	}
++
++	*data_left = 0;
++	return NULL;
++}
++
++static void rproc_copy_segment(struct rproc *rproc, void *dest,
++			       struct rproc_dump_segment *segment,
++			       size_t offset, size_t size)
++{
++	void *ptr;
++
++	if (segment->dump) {
++		segment->dump(rproc, segment, dest, offset, size);
++	} else {
++		ptr = rproc_da_to_va(rproc, segment->da + offset, size);
++		if (!ptr) {
++			dev_err(&rproc->dev,
++				"invalid copy request (%zu, %zu)\n",
++				segment->da + offset, size);
++			memset(dest, 0xff, size);
++		} else {
++			memcpy(dest, ptr, size);
++		}
++	}
++}
++
++static ssize_t rproc_coredump_read(char *buffer, loff_t offset, size_t count,
++				   void *data, size_t header_sz)
++{
++	size_t seg_data;
++	size_t copy_sz, bytes_left = count;
++	struct rproc_dump_segment *seg;
++	struct rproc_coredump_state *dump_state = data;
++	struct rproc *rproc = dump_state->rproc;
++	void *elfcore = dump_state->header;
++
++	/* Copy the vmalloc'ed header first. */
++	if (offset < header_sz) {
++		copy_sz = memory_read_from_buffer(buffer, count, &offset,
++						  elfcore, header_sz);
++		if (copy_sz < 0)
++			return -EINVAL;
++
++		return copy_sz;
++	}
++
++	/*
++	 * Find out the segment memory chunk to be copied based on offset.
++	 * Keep copying data until count bytes are read.
++	 */
++	while (bytes_left) {
++		seg = rproc_coredump_find_segment(offset - header_sz,
++						  &rproc->dump_segments,
++						  &seg_data);
++		/* EOF check */
++		if (!seg) {
++			dev_info(&rproc->dev, "Ramdump done, %lld bytes read",
++				 offset);
++			break;
++		}
++
++		copy_sz = min_t(size_t, bytes_left, seg_data);
++
++		rproc_copy_segment(rproc, buffer, seg, seg->size - seg_data,
++				   copy_sz);
++
++		offset += copy_sz;
++		buffer += copy_sz;
++		bytes_left -= copy_sz;
++	}
++
++	return count - bytes_left;
++}
++
+ /**
+  * rproc_coredump() - perform coredump
+  * @rproc:	rproc handle
+  *
+  * This function will generate an ELF header for the registered segments
 - * and create a devcoredump device associated with rproc.
-- */
--static void rproc_coredump(struct rproc *rproc)
--{
--	struct rproc_dump_segment *segment;
--	void *phdr;
--	void *ehdr;
--	size_t data_size;
--	size_t offset;
--	void *data;
++ * and create a devcoredump device associated with rproc. Based on the
++ * coredump configuration this function will directly copy the segments
++ * from device memory to userspace or copy segments from device memory to
++ * a separate buffer, which can then be read by userspace.
++ * The first approach avoids using extra vmalloc memory. But it will stall
++ * recovery flow until dump is read by userspace.
+  */
+ void rproc_coredump(struct rproc *rproc)
+ {
+@@ -129,11 +237,13 @@ void rproc_coredump(struct rproc *rproc)
+ 	size_t data_size;
+ 	size_t offset;
+ 	void *data;
 -	void *ptr;
--	u8 class = rproc->elf_class;
--	int phnum = 0;
--
+ 	u8 class = rproc->elf_class;
+ 	int phnum = 0;
++	struct rproc_coredump_state dump_state;
++	enum rproc_dump_mechanism dump_conf = rproc->dump_conf;
+ 
 -	if (list_empty(&rproc->dump_segments))
--		return;
--
--	if (class == ELFCLASSNONE) {
--		dev_err(&rproc->dev, "Elf class is not set\n");
--		return;
--	}
--
--	data_size = elf_size_of_hdr(class);
--	list_for_each_entry(segment, &rproc->dump_segments, node) {
++	if (list_empty(&rproc->dump_segments) ||
++	    dump_conf == RPROC_COREDUMP_DISABLED)
+ 		return;
+ 
+ 	if (class == ELFCLASSNONE) {
+@@ -143,7 +253,14 @@ void rproc_coredump(struct rproc *rproc)
+ 
+ 	data_size = elf_size_of_hdr(class);
+ 	list_for_each_entry(segment, &rproc->dump_segments, node) {
 -		data_size += elf_size_of_phdr(class) + segment->size;
--
--		phnum++;
--	}
--
--	data = vmalloc(data_size);
--	if (!data)
--		return;
--
--	ehdr = data;
--
--	memset(ehdr, 0, elf_size_of_hdr(class));
--	/* e_ident field is common for both elf32 and elf64 */
--	elf_hdr_init_ident(ehdr, class);
--
--	elf_hdr_set_e_type(class, ehdr, ET_CORE);
--	elf_hdr_set_e_machine(class, ehdr, rproc->elf_machine);
--	elf_hdr_set_e_version(class, ehdr, EV_CURRENT);
--	elf_hdr_set_e_entry(class, ehdr, rproc->bootaddr);
--	elf_hdr_set_e_phoff(class, ehdr, elf_size_of_hdr(class));
--	elf_hdr_set_e_ehsize(class, ehdr, elf_size_of_hdr(class));
--	elf_hdr_set_e_phentsize(class, ehdr, elf_size_of_phdr(class));
--	elf_hdr_set_e_phnum(class, ehdr, phnum);
--
--	phdr = data + elf_hdr_get_e_phoff(class, ehdr);
--	offset = elf_hdr_get_e_phoff(class, ehdr);
--	offset += elf_size_of_phdr(class) * elf_hdr_get_e_phnum(class, ehdr);
--
--	list_for_each_entry(segment, &rproc->dump_segments, node) {
--		memset(phdr, 0, elf_size_of_phdr(class));
--		elf_phdr_set_p_type(class, phdr, PT_LOAD);
--		elf_phdr_set_p_offset(class, phdr, offset);
--		elf_phdr_set_p_vaddr(class, phdr, segment->da);
--		elf_phdr_set_p_paddr(class, phdr, segment->da);
--		elf_phdr_set_p_filesz(class, phdr, segment->size);
--		elf_phdr_set_p_memsz(class, phdr, segment->size);
--		elf_phdr_set_p_flags(class, phdr, PF_R | PF_W | PF_X);
--		elf_phdr_set_p_align(class, phdr, 0);
--
++		/*
++		 * For default configuration buffer includes headers & segments.
++		 * For inline dump buffer just includes headers as segments are
++		 * directly read from device memory.
++		 */
++		data_size += elf_size_of_phdr(class);
++		if (dump_conf == RPROC_COREDUMP_DEFAULT)
++			data_size += segment->size;
+ 
+ 		phnum++;
+ 	}
+@@ -182,23 +299,30 @@ void rproc_coredump(struct rproc *rproc)
+ 		elf_phdr_set_p_flags(class, phdr, PF_R | PF_W | PF_X);
+ 		elf_phdr_set_p_align(class, phdr, 0);
+ 
 -		if (segment->dump) {
 -			segment->dump(rproc, segment, data + offset);
 -		} else {
@@ -304,240 +314,93 @@ index 9f04c30..57db042 100644
 -				memcpy(data + offset, ptr, segment->size);
 -			}
 -		}
--
--		offset += elf_phdr_get_p_filesz(class, phdr);
--		phdr += elf_size_of_phdr(class);
--	}
--
++		if (dump_conf == RPROC_COREDUMP_DEFAULT)
++			rproc_copy_segment(rproc, data + offset, segment, 0,
++					   segment->size);
+ 
+ 		offset += elf_phdr_get_p_filesz(class, phdr);
+ 		phdr += elf_size_of_phdr(class);
+ 	}
+ 
 -	dev_coredumpv(&rproc->dev, data, data_size, GFP_KERNEL);
--}
++	if (dump_conf == RPROC_COREDUMP_DEFAULT) {
++		dev_coredumpv(&rproc->dev, data, data_size, GFP_KERNEL);
++		return;
++	}
++
++	/* Initialize the dump state struct to be used by rproc_coredump_read */
++	dump_state.rproc = rproc;
++	dump_state.header = data;
++	init_completion(&dump_state.dump_done);
++
++	dev_coredumpm(&rproc->dev, NULL, &dump_state, data_size, GFP_KERNEL,
++		      rproc_coredump_read, rproc_coredump_free);
++
++	/*
++	 * Wait until the dump is read and free is called. Data is freed
++	 * by devcoredump framework automatically after 5 minutes.
++	 */
++	wait_for_completion(&dump_state.dump_done);
+ }
+diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+index e7b7bab..43e45a3 100644
+--- a/include/linux/remoteproc.h
++++ b/include/linux/remoteproc.h
+@@ -435,6 +435,20 @@ enum rproc_crash_type {
+ };
  
  /**
-  * rproc_trigger_recovery() - recover a remoteproc
-diff --git a/drivers/remoteproc/remoteproc_coredump.c b/drivers/remoteproc/remoteproc_coredump.c
-new file mode 100644
-index 0000000..ded0244
---- /dev/null
-+++ b/drivers/remoteproc/remoteproc_coredump.c
-@@ -0,0 +1,204 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Coredump functionality for Remoteproc framework.
-+ *
-+ * Copyright (c) 2020, The Linux Foundation. All rights reserved.
++ * enum rproc_dump_mechanism - Coredump options for core
++ * @RPROC_COREDUMP_DEFAULT:	Copy dump to separate buffer and carry on with
++				recovery
++ * @RPROC_COREDUMP_INLINE:	Read segments directly from device memory. Stall
++				recovery until all segments are read
++ * @RPROC_COREDUMP_DISABLED:	Don't perform any dump
 + */
-+
-+#include <linux/devcoredump.h>
-+#include <linux/device.h>
-+#include <linux/kernel.h>
-+#include <linux/remoteproc.h>
-+#include "remoteproc_internal.h"
-+#include "remoteproc_elf_helpers.h"
++enum rproc_dump_mechanism {
++	RPROC_COREDUMP_DEFAULT,
++	RPROC_COREDUMP_INLINE,
++	RPROC_COREDUMP_DISABLED,
++};
 +
 +/**
-+ * rproc_coredump_cleanup() - clean up dump_segments list
-+ * @rproc: the remote processor handle
-+ */
-+void rproc_coredump_cleanup(struct rproc *rproc)
-+{
-+	struct rproc_dump_segment *entry, *tmp;
-+
-+	list_for_each_entry_safe(entry, tmp, &rproc->dump_segments, node) {
-+		list_del(&entry->node);
-+		kfree(entry);
-+	}
-+}
-+
-+/**
-+ * rproc_coredump_add_segment() - add segment of device memory to coredump
-+ * @rproc:	handle of a remote processor
-+ * @da:		device address
-+ * @size:	size of segment
-+ *
-+ * Add device memory to the list of segments to be included in a coredump for
-+ * the remoteproc.
-+ *
-+ * Return: 0 on success, negative errno on error.
-+ */
-+int rproc_coredump_add_segment(struct rproc *rproc, dma_addr_t da, size_t size)
-+{
-+	struct rproc_dump_segment *segment;
-+
-+	segment = kzalloc(sizeof(*segment), GFP_KERNEL);
-+	if (!segment)
-+		return -ENOMEM;
-+
-+	segment->da = da;
-+	segment->size = size;
-+
-+	list_add_tail(&segment->node, &rproc->dump_segments);
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL(rproc_coredump_add_segment);
-+
-+/**
-+ * rproc_coredump_add_custom_segment() - add custom coredump segment
-+ * @rproc:	handle of a remote processor
-+ * @da:		device address
-+ * @size:	size of segment
-+ * @dumpfn:	custom dump function called for each segment during coredump
-+ * @priv:	private data
-+ *
-+ * Add device memory to the list of segments to be included in the coredump
-+ * and associate the segment with the given custom dump function and private
-+ * data.
-+ *
-+ * Return: 0 on success, negative errno on error.
-+ */
-+int rproc_coredump_add_custom_segment(struct rproc *rproc,
-+				      dma_addr_t da, size_t size,
-+				      void (*dumpfn)(struct rproc *rproc,
-+						     struct rproc_dump_segment *segment,
-+						     void *dest),
-+				      void *priv)
-+{
-+	struct rproc_dump_segment *segment;
-+
-+	segment = kzalloc(sizeof(*segment), GFP_KERNEL);
-+	if (!segment)
-+		return -ENOMEM;
-+
-+	segment->da = da;
-+	segment->size = size;
-+	segment->priv = priv;
-+	segment->dump = dumpfn;
-+
-+	list_add_tail(&segment->node, &rproc->dump_segments);
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL(rproc_coredump_add_custom_segment);
-+
-+/**
-+ * rproc_coredump_set_elf_info() - set coredump elf information
-+ * @rproc:	handle of a remote processor
-+ * @class:	elf class for coredump elf file
-+ * @machine:	elf machine for coredump elf file
-+ *
-+ * Set elf information which will be used for coredump elf file.
-+ *
-+ * Return: 0 on success, negative errno on error.
-+ */
-+int rproc_coredump_set_elf_info(struct rproc *rproc, u8 class, u16 machine)
-+{
-+	if (class != ELFCLASS64 && class != ELFCLASS32)
-+		return -EINVAL;
-+
-+	rproc->elf_class = class;
-+	rproc->elf_machine = machine;
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL(rproc_coredump_set_elf_info);
-+
-+/**
-+ * rproc_coredump() - perform coredump
-+ * @rproc:	rproc handle
-+ *
-+ * This function will generate an ELF header for the registered segments
-+ * and create a devcoredump device associated with rproc.
-+ */
-+void rproc_coredump(struct rproc *rproc)
-+{
-+	struct rproc_dump_segment *segment;
-+	void *phdr;
-+	void *ehdr;
-+	size_t data_size;
-+	size_t offset;
-+	void *data;
-+	void *ptr;
-+	u8 class = rproc->elf_class;
-+	int phnum = 0;
-+
-+	if (list_empty(&rproc->dump_segments))
-+		return;
-+
-+	if (class == ELFCLASSNONE) {
-+		dev_err(&rproc->dev, "Elf class is not set\n");
-+		return;
-+	}
-+
-+	data_size = elf_size_of_hdr(class);
-+	list_for_each_entry(segment, &rproc->dump_segments, node) {
-+		data_size += elf_size_of_phdr(class) + segment->size;
-+
-+		phnum++;
-+	}
-+
-+	data = vmalloc(data_size);
-+	if (!data)
-+		return;
-+
-+	ehdr = data;
-+
-+	memset(ehdr, 0, elf_size_of_hdr(class));
-+	/* e_ident field is common for both elf32 and elf64 */
-+	elf_hdr_init_ident(ehdr, class);
-+
-+	elf_hdr_set_e_type(class, ehdr, ET_CORE);
-+	elf_hdr_set_e_machine(class, ehdr, rproc->elf_machine);
-+	elf_hdr_set_e_version(class, ehdr, EV_CURRENT);
-+	elf_hdr_set_e_entry(class, ehdr, rproc->bootaddr);
-+	elf_hdr_set_e_phoff(class, ehdr, elf_size_of_hdr(class));
-+	elf_hdr_set_e_ehsize(class, ehdr, elf_size_of_hdr(class));
-+	elf_hdr_set_e_phentsize(class, ehdr, elf_size_of_phdr(class));
-+	elf_hdr_set_e_phnum(class, ehdr, phnum);
-+
-+	phdr = data + elf_hdr_get_e_phoff(class, ehdr);
-+	offset = elf_hdr_get_e_phoff(class, ehdr);
-+	offset += elf_size_of_phdr(class) * elf_hdr_get_e_phnum(class, ehdr);
-+
-+	list_for_each_entry(segment, &rproc->dump_segments, node) {
-+		memset(phdr, 0, elf_size_of_phdr(class));
-+		elf_phdr_set_p_type(class, phdr, PT_LOAD);
-+		elf_phdr_set_p_offset(class, phdr, offset);
-+		elf_phdr_set_p_vaddr(class, phdr, segment->da);
-+		elf_phdr_set_p_paddr(class, phdr, segment->da);
-+		elf_phdr_set_p_filesz(class, phdr, segment->size);
-+		elf_phdr_set_p_memsz(class, phdr, segment->size);
-+		elf_phdr_set_p_flags(class, phdr, PF_R | PF_W | PF_X);
-+		elf_phdr_set_p_align(class, phdr, 0);
-+
-+		if (segment->dump) {
-+			segment->dump(rproc, segment, data + offset);
-+		} else {
-+			ptr = rproc_da_to_va(rproc, segment->da, segment->size);
-+			if (!ptr) {
-+				dev_err(&rproc->dev,
-+					"invalid coredump segment (%pad, %zu)\n",
-+					&segment->da, segment->size);
-+				memset(data + offset, 0xff, segment->size);
-+			} else {
-+				memcpy(data + offset, ptr, segment->size);
-+			}
-+		}
-+
-+		offset += elf_phdr_get_p_filesz(class, phdr);
-+		phdr += elf_size_of_phdr(class);
-+	}
-+
-+	dev_coredumpv(&rproc->dev, data, data_size, GFP_KERNEL);
-+}
-diff --git a/drivers/remoteproc/remoteproc_internal.h b/drivers/remoteproc/remoteproc_internal.h
-index 4ba7cb5..97d441b 100644
---- a/drivers/remoteproc/remoteproc_internal.h
-+++ b/drivers/remoteproc/remoteproc_internal.h
-@@ -47,6 +47,10 @@ extern struct class rproc_class;
- int rproc_init_sysfs(void);
- void rproc_exit_sysfs(void);
+  * struct rproc_dump_segment - segment info from ELF header
+  * @node:	list node related to the rproc segment list
+  * @da:		device address of the segment
+@@ -451,7 +465,7 @@ struct rproc_dump_segment {
  
-+/* from remoteproc_coredump.c */
-+void rproc_coredump_cleanup(struct rproc *rproc);
-+void rproc_coredump(struct rproc *rproc);
-+
- void rproc_free_vring(struct rproc_vring *rvring);
- int rproc_alloc_vring(struct rproc_vdev *rvdev, int i);
+ 	void *priv;
+ 	void (*dump)(struct rproc *rproc, struct rproc_dump_segment *segment,
+-		     void *dest);
++		     void *dest, size_t offset, size_t size);
+ 	loff_t offset;
+ };
+ 
+@@ -466,6 +480,7 @@ struct rproc_dump_segment {
+  * @dev: virtual device for refcounting and common remoteproc behavior
+  * @power: refcount of users who need this rproc powered up
+  * @state: state of the device
++ * @dump_conf: Currenlty selected coredump configuration
+  * @lock: lock which protects concurrent manipulations of the rproc
+  * @dbg_dir: debugfs directory of this rproc device
+  * @traces: list of trace buffers
+@@ -499,6 +514,7 @@ struct rproc {
+ 	struct device dev;
+ 	atomic_t power;
+ 	unsigned int state;
++	enum rproc_dump_mechanism dump_conf;
+ 	struct mutex lock;
+ 	struct dentry *dbg_dir;
+ 	struct list_head traces;
+@@ -630,7 +646,8 @@ int rproc_coredump_add_custom_segment(struct rproc *rproc,
+ 				      dma_addr_t da, size_t size,
+ 				      void (*dumpfn)(struct rproc *rproc,
+ 						     struct rproc_dump_segment *segment,
+-						     void *dest),
++						     void *dest, size_t offset,
++						     size_t size),
+ 				      void *priv);
+ int rproc_coredump_set_elf_info(struct rproc *rproc, u8 class, u16 machine);
  
 -- 
 The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
