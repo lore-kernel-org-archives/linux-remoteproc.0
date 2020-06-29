@@ -1,261 +1,187 @@
-Return-Path: <SRS0=KCin=AH=vger.kernel.org=linux-remoteproc-owner@kernel.org>
+Return-Path: <SRS0=4H9Y=AK=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF187C433E1
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 26 Jun 2020 14:47:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0136C433DF
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 29 Jun 2020 20:03:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 873CF2078D
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 26 Jun 2020 14:47:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AFE5B20672
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 29 Jun 2020 20:03:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="SnVqL1pF"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="q18yvraB"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729373AbgFZOrS (ORCPT
+        id S1732735AbgF2UD6 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 26 Jun 2020 10:47:18 -0400
-Received: from m43-7.mailgun.net ([69.72.43.7]:10894 "EHLO m43-7.mailgun.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729360AbgFZOrS (ORCPT
+        Mon, 29 Jun 2020 16:03:58 -0400
+Received: from mail29.static.mailgun.info ([104.130.122.29]:47737 "EHLO
+        mail29.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1732443AbgF2UD5 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 26 Jun 2020 10:47:18 -0400
+        Mon, 29 Jun 2020 16:03:57 -0400
 DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1593182837; h=References: In-Reply-To: Message-Id: Date:
+ s=smtp; t=1593461037; h=References: In-Reply-To: Message-Id: Date:
  Subject: Cc: To: From: Sender;
- bh=4TQpm94FFnC9T8iU8dgGUImT9296mkfIJH93h01Kalo=; b=SnVqL1pF5XfyTe2BHmBmxFl2/Qn49Rptx6UAlZKtUYPCaQwAdUvteLeDlpqS3wTzsz0S0hzx
- UONXcIQTJJ3xCPN7TygNOx4ODmAG62Ozv7Oyx/YWVLiHpLaHxEjbjdZCBZXA0aBoDk4mVJ30
- 1Awi70sAzJ36VqBiVfI2LKCQaIs=
-X-Mailgun-Sending-Ip: 69.72.43.7
+ bh=r5Ps0ckSVMP7RdDIdPCozlpA1Q6xNvrvfOb891tsolA=; b=q18yvraBWxH5Ad1L4UX21EkoGXVSZJoSs2oaxb55dzzFHfcToE+ZPqzpGzDn1U7ZHSSTV0tb
+ 9amCF/gF8FDA1JTUAJNlu4E+GOLp1R50gkqnpuDD4BRhmBUtihNFBs9anStHftqu8H9y4ulM
+ XyzORNfqqfLnPgrugHVPU0hVnyg=
+X-Mailgun-Sending-Ip: 104.130.122.29
 X-Mailgun-Sid: WyI4ZWZiZiIsICJsaW51eC1yZW1vdGVwcm9jQHZnZXIua2VybmVsLm9yZyIsICJiZTllNGEiXQ==
 Received: from smtp.codeaurora.org
  (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
- smtp-out-n04.prod.us-west-2.postgun.com with SMTP id
- 5ef60a736f2ee827da19dea7 (version=TLS1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Fri, 26 Jun 2020 14:47:15
+ smtp-out-n05.prod.us-west-2.postgun.com with SMTP id
+ 5efa49133a8a8b20b80cbe17 (version=TLS1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Mon, 29 Jun 2020 20:03:30
  GMT
 Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id CD397C4339C; Fri, 26 Jun 2020 14:47:14 +0000 (UTC)
-Received: from deesin-linux.qualcomm.com (blr-c-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.19.19])
+        id D693AC433AF; Mon, 29 Jun 2020 20:03:30 +0000 (UTC)
+Received: from rishabhb-linux.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
-        (Authenticated sender: deesin)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 0104FC433C8;
-        Fri, 26 Jun 2020 14:47:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 0104FC433C8
+        (Authenticated sender: rishabhb)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 10804C433AD;
+        Mon, 29 Jun 2020 20:03:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 10804C433AD
 Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=deesin@codeaurora.org
-From:   Deepak Kumar Singh <deesin@codeaurora.org>
-To:     bjorn.andersson@linaro.org, clew@codeaurora.org,
-        mathieu.poirier@linaro.org
-Cc:     linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Deepak Kumar Singh <deesin@codeaurora.org>
-Subject: [PATCH V6 1/4] rpmsg: core: Add signal API support
-Date:   Fri, 26 Jun 2020 20:16:56 +0530
-Message-Id: <1593182819-30747-2-git-send-email-deesin@codeaurora.org>
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=rishabhb@codeaurora.org
+From:   Rishabh Bhatnagar <rishabhb@codeaurora.org>
+To:     linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     bjorn.andersson@linaro.org, mathieu.poirier@linaro.org,
+        tsoni@codeaurora.org, psodagud@codeaurora.org,
+        sidgup@codeaurora.org, Rishabh Bhatnagar <rishabhb@codeaurora.org>
+Subject: [PATCH v6 3/3] remoteproc: Add coredump debugfs entry
+Date:   Mon, 29 Jun 2020 13:02:13 -0700
+Message-Id: <1593460933-4262-4-git-send-email-rishabhb@codeaurora.org>
 X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1593182819-30747-1-git-send-email-deesin@codeaurora.org>
-References: <1593182819-30747-1-git-send-email-deesin@codeaurora.org>
+In-Reply-To: <1593460933-4262-1-git-send-email-rishabhb@codeaurora.org>
+References: <1593460933-4262-1-git-send-email-rishabhb@codeaurora.org>
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Some transports like Glink support the state notifications between
-clients using signals similar to serial protocol signals.
-Local glink client drivers can send and receive signals to glink
-clients running on remote processors.
+Add coredump debugfs entry to configure the type of dump that will
+be collected during recovery. User can select between default or
+inline coredump functionality. Also coredump collection can be
+disabled through this interface.
+This functionality can be configured differently for different
+remote processors.
 
-Add apis to support sending and receiving of signals by rpmsg clients.
-
-Signed-off-by: Chris Lew <clew@codeaurora.org>
-Signed-off-by: Deepak Kumar Singh <deesin@codeaurora.org>
-Signed-off-by: Arun Kumar Neelakantam <aneela@codeaurora.org>
+Signed-off-by: Rishabh Bhatnagar <rishabhb@codeaurora.org>
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 ---
- drivers/rpmsg/rpmsg_core.c     | 40 ++++++++++++++++++++++++++++++++++++++++
- drivers/rpmsg/rpmsg_internal.h |  5 +++++
- include/linux/rpmsg.h          | 27 +++++++++++++++++++++++++++
- 3 files changed, 72 insertions(+)
+ drivers/remoteproc/remoteproc_debugfs.c | 86 +++++++++++++++++++++++++++++++++
+ 1 file changed, 86 insertions(+)
 
-diff --git a/drivers/rpmsg/rpmsg_core.c b/drivers/rpmsg/rpmsg_core.c
-index 91de940..e6eb5a1 100644
---- a/drivers/rpmsg/rpmsg_core.c
-+++ b/drivers/rpmsg/rpmsg_core.c
-@@ -283,6 +283,42 @@ int rpmsg_trysend_offchannel(struct rpmsg_endpoint *ept, u32 src, u32 dst,
- }
- EXPORT_SYMBOL(rpmsg_trysend_offchannel);
+diff --git a/drivers/remoteproc/remoteproc_debugfs.c b/drivers/remoteproc/remoteproc_debugfs.c
+index 732770e..cca0a91 100644
+--- a/drivers/remoteproc/remoteproc_debugfs.c
++++ b/drivers/remoteproc/remoteproc_debugfs.c
+@@ -28,6 +28,90 @@
+ static struct dentry *rproc_dbg;
  
-+/**
-+ * rpmsg_get_signals() - get the signals for this endpoint
-+ * @ept:	the rpmsg endpoint
-+ *
-+ * Returns signal bits on success and an appropriate error value on failure.
+ /*
++ * A coredump-configuration-to-string lookup table, for exposing a
++ * human readable configuration via debugfs. Always keep in sync with
++ * enum rproc_coredump_mechanism
 + */
-+int rpmsg_get_signals(struct rpmsg_endpoint *ept)
++static const char * const rproc_coredump_str[] = {
++	[RPROC_COREDUMP_DEFAULT]	= "default",
++	[RPROC_COREDUMP_INLINE]	= "inline",
++	[RPROC_COREDUMP_DISABLED]	= "disabled",
++};
++
++/* Expose the current coredump configuration via debugfs */
++static ssize_t rproc_coredump_read(struct file *filp, char __user *userbuf,
++				   size_t count, loff_t *ppos)
 +{
-+	if (WARN_ON(!ept))
-+		return -EINVAL;
-+	if (!ept->ops->get_signals)
-+		return -ENXIO;
++	struct rproc *rproc = filp->private_data;
++	const char *buf = rproc_coredump_str[rproc->dump_conf];
 +
-+	return ept->ops->get_signals(ept);
++	return simple_read_from_buffer(userbuf, count, ppos, buf, strlen(buf));
 +}
-+EXPORT_SYMBOL(rpmsg_get_signals);
 +
-+/**
-+ * rpmsg_set_signals() - set the remote signals for this endpoint
-+ * @ept:	the rpmsg endpoint
-+ * @set:	set mask for signals
-+ * @clear:	clear mask for signals
++/*
++ * By writing to the 'coredump' debugfs entry, we control the behavior of the
++ * coredump mechanism dynamically. The default value of this entry is "default".
 + *
-+ * Returns 0 on success and an appropriate error value on failure.
++ * The 'coredump' debugfs entry supports these commands:
++ *
++ * default:	This is the default coredump mechanism. When the remoteproc
++ *		crashes the entire coredump will be copied to a separate buffer
++ *		and exposed to userspace.
++ *
++ * inline:	The coredump will not be copied to a separate buffer and the
++ *		recovery process will have to wait until data is read by
++ *		userspace. But this avoid usage of extra memory.
++ *
++ * disabled:	This will disable coredump. Recovery will proceed without
++ *		collecting any dump.
 + */
-+int rpmsg_set_signals(struct rpmsg_endpoint *ept, u32 set, u32 clear)
++static ssize_t rproc_coredump_write(struct file *filp,
++				    const char __user *user_buf, size_t count,
++				    loff_t *ppos)
 +{
-+	if (WARN_ON(!ept))
++	struct rproc *rproc = filp->private_data;
++	int ret, err = 0;
++	char buf[20];
++
++	if (count > sizeof(buf))
 +		return -EINVAL;
-+	if (!ept->ops->set_signals)
-+		return -ENXIO;
 +
-+	return ept->ops->set_signals(ept, set, clear);
++	ret = copy_from_user(buf, user_buf, count);
++	if (ret)
++		return -EFAULT;
++
++	/* remove end of line */
++	if (buf[count - 1] == '\n')
++		buf[count - 1] = '\0';
++
++	if (rproc->state == RPROC_CRASHED) {
++		dev_err(&rproc->dev, "can't change coredump configuration\n");
++		err = -EBUSY;
++		goto out;
++	}
++
++	if (!strncmp(buf, "disable", count)) {
++		rproc->dump_conf = RPROC_COREDUMP_DISABLED;
++	} else if (!strncmp(buf, "inline", count)) {
++		rproc->dump_conf = RPROC_COREDUMP_INLINE;
++	} else if (!strncmp(buf, "default", count)) {
++		rproc->dump_conf = RPROC_COREDUMP_DEFAULT;
++	} else {
++		dev_err(&rproc->dev, "Invalid coredump configuration\n");
++		err = -EINVAL;
++	}
++out:
++	return err ? err : count;
 +}
-+EXPORT_SYMBOL(rpmsg_set_signals);
 +
- /*
-  * match a rpmsg channel with a channel info struct.
-  * this is used to make sure we're not creating rpmsg devices for channels
-@@ -468,6 +504,10 @@ static int rpmsg_dev_probe(struct device *dev)
- 
- 		rpdev->ept = ept;
- 		rpdev->src = ept->addr;
++static const struct file_operations rproc_coredump_fops = {
++	.read = rproc_coredump_read,
++	.write = rproc_coredump_write,
++	.open = simple_open,
++	.llseek = generic_file_llseek,
++};
 +
-+		if (rpdrv->signals)
-+			ept->sig_cb = rpdrv->signals;
-+
- 	}
- 
- 	err = rpdrv->probe(rpdev);
-diff --git a/drivers/rpmsg/rpmsg_internal.h b/drivers/rpmsg/rpmsg_internal.h
-index 3fc83cd..8958d6c 100644
---- a/drivers/rpmsg/rpmsg_internal.h
-+++ b/drivers/rpmsg/rpmsg_internal.h
-@@ -2,6 +2,7 @@
- /*
-  * remote processor messaging bus internals
-  *
-+ * Copyright (c) 2018, The Linux Foundation.
-  * Copyright (C) 2011 Texas Instruments, Inc.
-  * Copyright (C) 2011 Google, Inc.
-  *
-@@ -47,6 +48,8 @@ struct rpmsg_device_ops {
-  * @trysendto:		see @rpmsg_trysendto(), optional
-  * @trysend_offchannel:	see @rpmsg_trysend_offchannel(), optional
-  * @poll:		see @rpmsg_poll(), optional
-+ * @get_signals:	see @rpmsg_get_signals(), optional
-+ * @set_signals:	see @rpmsg_set_signals(), optional
-  *
-  * Indirection table for the operations that a rpmsg backend should implement.
-  * In addition to @destroy_ept, the backend must at least implement @send and
-@@ -66,6 +69,8 @@ struct rpmsg_endpoint_ops {
- 			     void *data, int len);
- 	__poll_t (*poll)(struct rpmsg_endpoint *ept, struct file *filp,
- 			     poll_table *wait);
-+	int (*get_signals)(struct rpmsg_endpoint *ept);
-+	int (*set_signals)(struct rpmsg_endpoint *ept, u32 set, u32 clear);
- };
- 
- int rpmsg_register_device(struct rpmsg_device *rpdev);
-diff --git a/include/linux/rpmsg.h b/include/linux/rpmsg.h
-index 9fe156d..c4dbb47 100644
---- a/include/linux/rpmsg.h
-+++ b/include/linux/rpmsg.h
-@@ -2,6 +2,7 @@
- /*
-  * Remote processor messaging
-  *
-+ * Copyright (c) 2018 The Linux Foundation.
-  * Copyright (C) 2011 Texas Instruments, Inc.
-  * Copyright (C) 2011 Google, Inc.
-  * All rights reserved.
-@@ -60,6 +61,7 @@ struct rpmsg_device {
- };
- 
- typedef int (*rpmsg_rx_cb_t)(struct rpmsg_device *, void *, int, void *, u32);
-+typedef int (*rpmsg_rx_sig_t)(struct rpmsg_device *, void *, u32, u32);
- 
- /**
-  * struct rpmsg_endpoint - binds a local rpmsg address to its user
-@@ -67,6 +69,7 @@ typedef int (*rpmsg_rx_cb_t)(struct rpmsg_device *, void *, int, void *, u32);
-  * @refcount: when this drops to zero, the ept is deallocated
-  * @cb: rx callback handler
-  * @cb_lock: must be taken before accessing/changing @cb
-+ * @sig_cb: rx serial signal handler
-  * @addr: local rpmsg address
-  * @priv: private data for the driver's use
-  *
-@@ -89,6 +92,7 @@ struct rpmsg_endpoint {
- 	struct kref refcount;
- 	rpmsg_rx_cb_t cb;
- 	struct mutex cb_lock;
-+	rpmsg_rx_sig_t sig_cb;
- 	u32 addr;
- 	void *priv;
- 
-@@ -102,6 +106,7 @@ struct rpmsg_endpoint {
-  * @probe: invoked when a matching rpmsg channel (i.e. device) is found
-  * @remove: invoked when the rpmsg channel is removed
-  * @callback: invoked when an inbound message is received on the channel
-+ * @signals: invoked when a serial signal change is received on the channel
-  */
- struct rpmsg_driver {
- 	struct device_driver drv;
-@@ -109,6 +114,8 @@ struct rpmsg_driver {
- 	int (*probe)(struct rpmsg_device *dev);
- 	void (*remove)(struct rpmsg_device *dev);
- 	int (*callback)(struct rpmsg_device *, void *, int, void *, u32);
-+	int (*signals)(struct rpmsg_device *rpdev,
-+		       void *priv, u32 old, u32 new);
- };
- 
- #if IS_ENABLED(CONFIG_RPMSG)
-@@ -135,6 +142,9 @@ int rpmsg_trysend_offchannel(struct rpmsg_endpoint *ept, u32 src, u32 dst,
- __poll_t rpmsg_poll(struct rpmsg_endpoint *ept, struct file *filp,
- 			poll_table *wait);
- 
-+int rpmsg_get_signals(struct rpmsg_endpoint *ept);
-+int rpmsg_set_signals(struct rpmsg_endpoint *ept, u32 set, u32 clear);
-+
- #else
- 
- static inline int register_rpmsg_device(struct rpmsg_device *dev)
-@@ -242,6 +252,23 @@ static inline __poll_t rpmsg_poll(struct rpmsg_endpoint *ept,
- 	return 0;
++/*
+  * Some remote processors may support dumping trace logs into a shared
+  * memory buffer. We expose this trace buffer using debugfs, so users
+  * can easily tell what's going on remotely.
+@@ -337,6 +421,8 @@ void rproc_create_debug_dir(struct rproc *rproc)
+ 			    rproc, &rproc_rsc_table_fops);
+ 	debugfs_create_file("carveout_memories", 0400, rproc->dbg_dir,
+ 			    rproc, &rproc_carveouts_fops);
++	debugfs_create_file("coredump", 0600, rproc->dbg_dir,
++			    rproc, &rproc_coredump_fops);
  }
  
-+static inline int rpmsg_get_signals(struct rpmsg_endpoint *ept)
-+{
-+	/* This shouldn't be possible */
-+	WARN_ON(1);
-+
-+	return -ENXIO;
-+}
-+
-+static inline int rpmsg_set_signals(struct rpmsg_endpoint *ept,
-+				    u32 set, u32 clear)
-+{
-+	/* This shouldn't be possible */
-+	WARN_ON(1);
-+
-+	return -ENXIO;
-+}
-+
- #endif /* IS_ENABLED(CONFIG_RPMSG) */
- 
- /* use a macro to avoid include chaining to get THIS_MODULE */
+ void __init rproc_init_debugfs(void)
 -- 
 The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
 a Linux Foundation Collaborative Project
