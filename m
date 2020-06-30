@@ -2,402 +2,437 @@ Return-Path: <SRS0=lk58=AL=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0D1AC433E3
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 30 Jun 2020 02:49:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F969C433E0
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 30 Jun 2020 05:38:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C6D7C20760
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 30 Jun 2020 02:49:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E8BCB206BE
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 30 Jun 2020 05:38:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="ybVhGWJ5"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="NJ0Ub3QA"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728697AbgF3Ctj (ORCPT
+        id S1726047AbgF3Fij (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 29 Jun 2020 22:49:39 -0400
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:53368 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728661AbgF3Cth (ORCPT
+        Tue, 30 Jun 2020 01:38:39 -0400
+Received: from mail29.static.mailgun.info ([104.130.122.29]:22060 "EHLO
+        mail29.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726010AbgF3Fij (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 29 Jun 2020 22:49:37 -0400
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 05U2nROc069929;
-        Mon, 29 Jun 2020 21:49:27 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1593485367;
-        bh=Kvx/TSoX1EIJW4nPPw6EZWnrOMo0sGA9WQcmutXR1HQ=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=ybVhGWJ55MjKuMECrL76LRXoncAVL1N9lOjVXY192Afko4ut1rLQ/XVrDj4HPBcnt
-         tf2nW4LvgbGmsw11DfSWN1csHWYV0n1PQ4ttCS3oYiLiXvyemc6txeZyYC63H4kMX4
-         aj02LMmsKESsRODBu9kXxMKAhKdJG6mE/FCFWcT8=
-Received: from DFLE101.ent.ti.com (dfle101.ent.ti.com [10.64.6.22])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id 05U2nRZs085761;
-        Mon, 29 Jun 2020 21:49:27 -0500
-Received: from DFLE106.ent.ti.com (10.64.6.27) by DFLE101.ent.ti.com
- (10.64.6.22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3; Mon, 29
- Jun 2020 21:49:26 -0500
-Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE106.ent.ti.com
- (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3 via
- Frontend Transport; Mon, 29 Jun 2020 21:49:26 -0500
-Received: from fllv0103.dal.design.ti.com (fllv0103.dal.design.ti.com [10.247.120.73])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id 05U2nQsA075199;
-        Mon, 29 Jun 2020 21:49:26 -0500
-Received: from localhost ([10.250.48.148])
-        by fllv0103.dal.design.ti.com (8.14.7/8.14.7) with ESMTP id 05U2nQPx029147;
-        Mon, 29 Jun 2020 21:49:26 -0500
-From:   Suman Anna <s-anna@ti.com>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>
-CC:     Lokesh Vutla <lokeshvutla@ti.com>,
-        <linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, Suman Anna <s-anna@ti.com>
-Subject: [PATCH v2 1/4] dt-bindings: remoteproc: Add bindings for R5F subsystem on TI K3 SoCs
-Date:   Mon, 29 Jun 2020 21:49:19 -0500
-Message-ID: <20200630024922.32491-2-s-anna@ti.com>
-X-Mailer: git-send-email 2.26.0
-In-Reply-To: <20200630024922.32491-1-s-anna@ti.com>
-References: <20200630024922.32491-1-s-anna@ti.com>
+        Tue, 30 Jun 2020 01:38:39 -0400
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1593495518; h=Content-Transfer-Encoding: Content-Type:
+ In-Reply-To: MIME-Version: Date: Message-ID: From: References: Cc: To:
+ Subject: Sender; bh=4V6Q0FFJcljBwQiJKxnJRcWq/1uVgChAvJRw5nP7aDg=; b=NJ0Ub3QAUog1OOmgDFVFEZR7kzz2DN2i6TAbo60zsaI7KIFoqVU+FtUzggZ/BPHfzy8kz9R1
+ 9gw6wUOq0zeRyE1ryVvdXJGLlySXIOWTOreTYrfOwyysZCXxYBVRQKsxU3RjvjMpatDr5HPm
+ Bu3+CPkSAB6TRgGlWx4pSSSryj8=
+X-Mailgun-Sending-Ip: 104.130.122.29
+X-Mailgun-Sid: WyI4ZWZiZiIsICJsaW51eC1yZW1vdGVwcm9jQHZnZXIua2VybmVsLm9yZyIsICJiZTllNGEiXQ==
+Received: from smtp.codeaurora.org
+ (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
+ smtp-out-n17.prod.us-east-1.postgun.com with SMTP id
+ 5efacfdac76a4e7a2a4172e2 (version=TLS1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Tue, 30 Jun 2020 05:38:34
+ GMT
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id A5412C433CB; Tue, 30 Jun 2020 05:38:33 +0000 (UTC)
+Received: from [192.168.1.10] (cpe-70-95-5-60.san.res.rr.com [70.95.5.60])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: sidgup)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 8478EC433C8;
+        Tue, 30 Jun 2020 05:38:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8478EC433C8
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=sidgup@codeaurora.org
+Subject: Re: [PATCH v3 1/2] remoteproc: Add remoteproc character device
+ interface
+To:     Arnaud POULIQUEN <arnaud.pouliquen@st.com>,
+        "rishabhb@codeaurora.org" <rishabhb@codeaurora.org>
+Cc:     "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>,
+        "mathieu.poirier@linaro.org" <mathieu.poirier@linaro.org>,
+        "ohad@wizery.com" <ohad@wizery.com>,
+        "tsoni@codeaurora.org" <tsoni@codeaurora.org>,
+        "psodagud@codeaurora.org" <psodagud@codeaurora.org>,
+        "linux-remoteproc-owner@vger.kernel.org" 
+        <linux-remoteproc-owner@vger.kernel.org>
+References: <1587492618-15896-1-git-send-email-rishabhb@codeaurora.org>
+ <1587492618-15896-2-git-send-email-rishabhb@codeaurora.org>
+ <d72ead5a-b25a-d4e2-4bbf-1790d2a64fb8@st.com>
+ <d9a477cbbf19ed50af49aee7c6699e09@codeaurora.org>
+ <3738198d-53d4-2fe6-a92b-2db0cd0afa68@st.com>
+From:   Siddharth Gupta <sidgup@codeaurora.org>
+Message-ID: <83c70517-32e4-9ce0-e1b4-2ed7a8b5c506@codeaurora.org>
+Date:   Mon, 29 Jun 2020 22:38:30 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.9.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+In-Reply-To: <3738198d-53d4-2fe6-a92b-2db0cd0afa68@st.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-The Texas Instruments K3 family of SoCs have one or more dual-core
-Arm Cortex R5F processor subsystems/clusters (R5FSS). The clusters
-can be split between multiple voltage domains as well. Add the device
-tree bindings document for these R5F subsystem devices. These R5F
-processors do not have an MMU, and so require fixed memory carveout
-regions matching the firmware image addresses. The nodes require more
-than one memory region, with the first memory region used for DMA
-allocations at runtime. The remaining memory regions are reserved
-and are used for the loading and running of the R5F remote processors.
-The R5F processors can also optionally use any internal on-chip SRAM
-memories either for executing code or using it as fast-access data.
 
-The added example illustrates the DT nodes for the single R5FSS device
-present on K3 AM65x family of SoCs.
+On 6/17/2020 1:44 AM, Arnaud POULIQUEN wrote:
+>
+> On 6/16/20 9:56 PM, rishabhb@codeaurora.org wrote:
+>> On 2020-04-30 01:30, Arnaud POULIQUEN wrote:
+>>> Hi Rishabh,
+>>>
+>>>
+>>> On 4/21/20 8:10 PM, Rishabh Bhatnagar wrote:
+>>>> Add the character device interface into remoteproc framework.
+>>>> This interface can be used in order to boot/shutdown remote
+>>>> subsystems and provides a basic ioctl based interface to implement
+>>>> supplementary functionality. An ioctl call is implemented to enable
+>>>> the shutdown on release feature which will allow remote processors to
+>>>> be shutdown when the controlling userpsace application crashes or
+>>>> hangs.
+>>>>
+>>> Thanks for intruducing Ioctl, this will help for future evolutions.
+>>>
+>>>> Signed-off-by: Rishabh Bhatnagar <rishabhb@codeaurora.org>
+>>>> ---
+>>>>   Documentation/userspace-api/ioctl/ioctl-number.rst |   1 +
+>>>>   drivers/remoteproc/Kconfig                         |   9 ++
+>>>>   drivers/remoteproc/Makefile                        |   1 +
+>>>>   drivers/remoteproc/remoteproc_cdev.c               | 143
+>>>> +++++++++++++++++++++
+>>>>   drivers/remoteproc/remoteproc_internal.h           |  21 +++
+>>>>   include/linux/remoteproc.h                         |   3 +
+>>>>   include/uapi/linux/remoteproc_cdev.h               |  20 +++
+>>>>   7 files changed, 198 insertions(+)
+>>>>   create mode 100644 drivers/remoteproc/remoteproc_cdev.c
+>>>>   create mode 100644 include/uapi/linux/remoteproc_cdev.h
+>>>>
+>>>> diff --git a/Documentation/userspace-api/ioctl/ioctl-number.rst
+>>>> b/Documentation/userspace-api/ioctl/ioctl-number.rst
+>>>> index 2e91370..412b2a0 100644
+>>>> --- a/Documentation/userspace-api/ioctl/ioctl-number.rst
+>>>> +++ b/Documentation/userspace-api/ioctl/ioctl-number.rst
+>>>> @@ -337,6 +337,7 @@ Code  Seq#    Include File
+>>>>                    Comments
+>>>>   0xB4  00-0F  linux/gpio.h
+>>>> <mailto:linux-gpio@vger.kernel.org>
+>>>>   0xB5  00-0F  uapi/linux/rpmsg.h
+>>>> <mailto:linux-remoteproc@vger.kernel.org>
+>>>>   0xB6  all    linux/fpga-dfl.h
+>>>> +0xB7  all    uapi/linux/remoteproc_cdev.h			
+>>>> <mailto:linux-remoteproc@vger.kernel.org>
+>>>>   0xC0  00-0F  linux/usb/iowarrior.h
+>>>>   0xCA  00-0F  uapi/misc/cxl.h
+>>>>   0xCA  10-2F  uapi/misc/ocxl.h
+>>>> diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
+>>>> index de3862c..6374b79 100644
+>>>> --- a/drivers/remoteproc/Kconfig
+>>>> +++ b/drivers/remoteproc/Kconfig
+>>>> @@ -14,6 +14,15 @@ config REMOTEPROC
+>>>>
+>>>>   if REMOTEPROC
+>>>>
+>>>> +config REMOTEPROC_CDEV
+>>>> +	bool "Remoteproc character device interface"
+>>>> +	help
+>>>> +	  Say y here to have a character device interface for Remoteproc
+>>>> +	  framework. Userspace can boot/shutdown remote processors through
+>>>> +	  this interface.
+>>>> +
+>>>> +	  It's safe to say N if you don't want to use this interface.
+>>>> +
+>>>>   config IMX_REMOTEPROC
+>>>>   	tristate "IMX6/7 remoteproc support"
+>>>>   	depends on ARCH_MXC
+>>>> diff --git a/drivers/remoteproc/Makefile b/drivers/remoteproc/Makefile
+>>>> index e30a1b1..b7d4f77 100644
+>>>> --- a/drivers/remoteproc/Makefile
+>>>> +++ b/drivers/remoteproc/Makefile
+>>>> @@ -9,6 +9,7 @@ remoteproc-y				+= remoteproc_debugfs.o
+>>>>   remoteproc-y				+= remoteproc_sysfs.o
+>>>>   remoteproc-y				+= remoteproc_virtio.o
+>>>>   remoteproc-y				+= remoteproc_elf_loader.o
+>>>> +obj-$(CONFIG_REMOTEPROC_CDEV)		+= remoteproc_cdev.o
+>>>>   obj-$(CONFIG_IMX_REMOTEPROC)		+= imx_rproc.o
+>>>>   obj-$(CONFIG_MTK_SCP)			+= mtk_scp.o mtk_scp_ipi.o
+>>>>   obj-$(CONFIG_OMAP_REMOTEPROC)		+= omap_remoteproc.o
+>>>> diff --git a/drivers/remoteproc/remoteproc_cdev.c
+>>>> b/drivers/remoteproc/remoteproc_cdev.c
+>>>> new file mode 100644
+>>>> index 0000000..65142ec
+>>>> --- /dev/null
+>>>> +++ b/drivers/remoteproc/remoteproc_cdev.c
+>>>> @@ -0,0 +1,143 @@
+>>>> +// SPDX-License-Identifier: GPL-2.0-only
+>>>> +/*
+>>>> + * Character device interface driver for Remoteproc framework.
+>>>> + *
+>>>> + * Copyright (c) 2020, The Linux Foundation. All rights reserved.
+>>>> + */
+>>>> +
+>>>> +#include <linux/cdev.h>
+>>>> +#include <linux/fs.h>
+>>>> +#include <linux/module.h>
+>>>> +#include <linux/mutex.h>
+>>>> +#include <linux/remoteproc.h>
+>>>> +#include <uapi/linux/remoteproc_cdev.h>
+>>>> +#include <linux/uaccess.h>
+>>>> +
+>>>> +#include "remoteproc_internal.h"
+>>>> +
+>>>> +#define NUM_RPROC_DEVICES	64
+>>>> +static dev_t rproc_major;
+>>>> +
+>>>> +static ssize_t rproc_cdev_write(struct file *filp, const char __user
+>>>> *buf,
+>>>> +				 size_t len, loff_t *pos)
+>>>> +{
+>>>> +	struct rproc *rproc = container_of(filp->f_inode->i_cdev,
+>>>> +					   struct rproc, char_dev);
+>>>> +	int ret = 0;
+>>>> +	char cmd[10];
+>>>> +
+>>>> +	if (!len || len > sizeof(cmd))
+>>>> +		return -EINVAL;
+>>>> +
+>>>> +	ret = copy_from_user(cmd, buf, sizeof(cmd));
+>>>> +	if (ret)
+>>>> +		return -EFAULT;
+>>>> +
+>>>> +	if (sysfs_streq(cmd, "start")) {
+>>>> +		if (rproc->state == RPROC_RUNNING)
+>>>> +			return -EBUSY;
+>>>> +
+>>>> +		ret = rproc_boot(rproc);
+>>>> +		if (ret)
+>>>> +			dev_err(&rproc->dev, "Boot failed:%d\n", ret);
+>>>> +	} else if (sysfs_streq(cmd, "stop")) {
+>>>> +		if (rproc->state == RPROC_OFFLINE)
+>>>> +			return -ENXIO;
+>>> returning ENXIO in this case seems to me no appropriate , what about
+>>> EPERM or
+>>> EINVAL (rproc_sysfs) ?
 
-Signed-off-by: Suman Anna <s-anna@ti.com>
----
-v2:
- - Renamed "lockstep-mode" property to "ti,cluster-mode"
- - Added 2 additional paragraphs to the R5F child node descriptions
- - Leverage the common ti,k3-sci-proc.yaml binding for "ti,sci", 
-   "ti,sci-dev-id" and "ti,sci-proc-ids" properties
- - Added ti, vendor prefix to "atcm-enable", "btcm-enable" and "loczrama"
-   properties. Revised the descriptions slightly for these properties
- - Dropped the general description and maxItems against reg and reg-names
- - Added items list under reg
- - Added maxItems to resets, mboxes, memory-region, sram properties
- - Revised the memory-region description and listed the mandatory items
- - Removed the other binding references from the description for "resets",
-   "power-domains" and "mboxes"
- - Updated the example to drop reserved-memory nodes and MCU SRAM node, use
-   new property names.
- - Updated the example to include a root-node to fix the bot errors around
-   ranges from v1
- - Cleaned up some commented out text
-v1: https://patchwork.kernel.org/patch/11456381/
+I think EPERM would indicate the operation is not permitted on the 
+device, and
+EINVAL would indicate that the command/string they wrote to the char device
+is not a valid command/string. I guess even ENXIO may not be appropriate?
 
- .../bindings/remoteproc/ti,k3-r5f-rproc.yaml  | 278 ++++++++++++++++++
- 1 file changed, 278 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/remoteproc/ti,k3-r5f-rproc.yaml
+In that case we could use EHOSTDOWN or ESHUTDOWN, thoughts?
 
-diff --git a/Documentation/devicetree/bindings/remoteproc/ti,k3-r5f-rproc.yaml b/Documentation/devicetree/bindings/remoteproc/ti,k3-r5f-rproc.yaml
-new file mode 100644
-index 000000000000..f4af0329f243
---- /dev/null
-+++ b/Documentation/devicetree/bindings/remoteproc/ti,k3-r5f-rproc.yaml
-@@ -0,0 +1,278 @@
-+# SPDX-License-Identifier: (GPL-2.0-only or BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/remoteproc/ti,k3-r5f-rproc.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: TI K3 R5F processor subsystems
-+
-+maintainers:
-+  - Suman Anna <s-anna@ti.com>
-+
-+description: |
-+  The TI K3 family of SoCs usually have one or more dual-core Arm Cortex R5F
-+  processor subsystems/clusters (R5FSS). The dual core cluster can be used
-+  either in a LockStep mode providing safety/fault tolerance features or in a
-+  Split mode providing two individual compute cores for doubling the compute
-+  capacity. These are used together with other processors present on the SoC
-+  to achieve various system level goals.
-+
-+  Each Dual-Core R5F sub-system is represented as a single DTS node
-+  representing the cluster, with a pair of child DT nodes representing
-+  the individual R5F cores. Each node has a number of required or optional
-+  properties that enable the OS running on the host processor to perform
-+  the device management of the remote processor and to communicate with the
-+  remote processor.
-+
-+properties:
-+  $nodename:
-+    pattern: "^r5fss(@.*)?"
-+
-+  compatible:
-+    enum:
-+      - ti,am654-r5fss
-+      - ti,j721e-r5fss
-+
-+  power-domains:
-+    description: |
-+      Should contain a phandle to a PM domain provider node and an args
-+      specifier containing the R5FSS device id value.
-+    maxItems: 1
-+
-+  "#address-cells":
-+    const: 1
-+
-+  "#size-cells":
-+    const: 1
-+
-+  ranges:
-+    description: |
-+      Standard ranges definition providing address translations for
-+      local R5F TCM address spaces to bus addresses.
-+
-+# Optional properties:
-+# --------------------
-+
-+  ti,cluster-mode:
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    enum: [0, 1]
-+    description: |
-+      Configuration Mode for the Dual R5F cores within the R5F cluster.
-+      Should be either a value of 1 (LockStep mode) or 0 (Split mode),
-+      default is LockStep mode if omitted.
-+
-+# R5F Processor Child Nodes:
-+# ==========================
-+
-+patternProperties:
-+  "^r5f@[a-f0-9]+$":
-+    type: object
-+    description: |
-+      The R5F Sub-System device node should define two R5F child nodes, each
-+      node representing a TI instantiation of the Arm Cortex R5F core. There
-+      are some specific integration differences for the IP like the usage of
-+      a Region Address Translator (RAT) for translating the larger SoC bus
-+      addresses into a 32-bit address space for the processor.
-+
-+      Each R5F core has an associated 64 KB of Tightly-Coupled Memory (TCM)
-+      internal memories split between two banks - TCMA and TCMB (further
-+      interleaved into two banks TCMB0 and TCMB1). These memories (also called
-+      ATCM and BTCM) provide read/write performance on par with the core's L1
-+      caches. Each of the TCMs can be enabled or disabled independently and
-+      either of them can be configured to appear at that R5F's address 0x0.
-+
-+      The cores do not use an MMU, but has a Region Address Translater
-+      (RAT) module that is accessible only from the R5Fs for providing
-+      translations between 32-bit CPU addresses into larger system bus
-+      addresses. Cache and memory access settings are provided through a
-+      Memory Protection Unit (MPU), programmable only from the R5Fs.
-+
-+    allOf:
-+      - $ref: "ti,k3-sci-proc.yaml#"
-+
-+    properties:
-+      compatible:
-+        enum:
-+          - ti,am654-r5f
-+          - ti,j721e-r5f
-+
-+      reg:
-+        items:
-+          - description: Address and Size of the ATCM internal memory region
-+          - description: Address and Size of the BTCM internal memory region
-+
-+      reg-names:
-+        items:
-+          - const: atcm
-+          - const: btcm
-+
-+      resets:
-+        description: |
-+          Should contain the phandle to the reset controller node managing the
-+          local resets for this device, and a reset specifier.
-+        maxItems: 1
-+
-+      firmware-name:
-+        description: |
-+          Should contain the name of the default firmware image
-+          file located on the firmware search path
-+
-+# The following properties are mandatory for R5F Core0 in both LockStep and Split
-+# modes, and are mandatory for R5F Core1 _only_ in Split mode. They are unused for
-+# R5F Core1 in LockStep mode:
-+
-+      mboxes:
-+        description: |
-+          OMAP Mailbox specifier denoting the sub-mailbox, to be used for
-+          communication with the remote processor. This property should match
-+          with the sub-mailbox node used in the firmware image.
-+        maxItems: 1
-+
-+      memory-region:
-+        description: |
-+          phandle to the reserved memory nodes to be associated with the
-+          remoteproc device. There should be at least two reserved memory nodes
-+          defined. The reserved memory nodes should be carveout nodes, and
-+          should be defined with a "no-map" property as per the bindings in
-+          Documentation/devicetree/bindings/reserved-memory/reserved-memory.txt
-+        minItems: 2
-+        maxItems: 8
-+        items:
-+          - description: region used for dynamic DMA allocations like vrings and
-+                         vring buffers
-+          - description: region reserved for firmware image sections
-+        additionalItems: true
-+
-+
-+# Optional properties:
-+# --------------------
-+# The following properties are optional properties for each of the R5F cores:
-+
-+      ti,atcm-enable:
-+        $ref: /schemas/types.yaml#/definitions/uint32
-+        enum: [0, 1]
-+        description: |
-+          R5F core configuration mode dictating if ATCM should be enabled. The
-+          R5F address of ATCM is dictated by ti,loczrama property. Should be
-+          either a value of 1 (enabled) or 0 (disabled), default is disabled
-+          if omitted. Recommended to enable it for maximizing TCMs.
-+
-+      ti,btcm-enable:
-+        $ref: /schemas/types.yaml#/definitions/uint32
-+        enum: [0, 1]
-+        description: |
-+          R5F core configuration mode dictating if BTCM should be enabled. The
-+          R5F address of BTCM is dictated by ti,loczrama property. Should be
-+          either a value of 1 (enabled) or 0 (disabled), default is enabled if
-+          omitted.
-+
-+      ti,loczrama:
-+        $ref: /schemas/types.yaml#/definitions/uint32
-+        enum: [0, 1]
-+        description: |
-+          R5F core configuration mode dictating which TCM should appear at
-+          address 0 (from core's view). Should be either a value of 1 (ATCM
-+          at 0x0) or 0 (BTCM at 0x0), default value is 1 if omitted.
-+
-+      sram:
-+        $ref: /schemas/types.yaml#/definitions/phandle-array
-+        minItems: 1
-+        maxItems: 4
-+        description: |
-+          phandles to one or more reserved on-chip SRAM regions. The regions
-+          should be defined as child nodes of the respective SRAM node, and
-+          should be defined as per the generic bindings in,
-+          Documentation/devicetree/bindings/sram/sram.yaml
-+
-+    required:
-+     - compatible
-+     - reg
-+     - reg-names
-+     - resets
-+     - firmware-name
-+
-+    unevaluatedProperties: false
-+
-+required:
-+ - compatible
-+ - power-domains
-+ - "#address-cells"
-+ - "#size-cells"
-+ - ranges
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    / {
-+        model = "Texas Instruments K3 AM654 SoC";
-+        compatible = "ti,am654";
-+        #address-cells = <2>;
-+        #size-cells = <2>;
-+
-+        bus@100000 {
-+            compatible = "simple-bus";
-+            #address-cells = <2>;
-+            #size-cells = <2>;
-+            ranges = <0x00 0x00100000 0x00 0x00100000 0x00 0x00020000>, /* ctrl mmr */
-+                     <0x00 0x41000000 0x00 0x41000000 0x00 0x00020000>,
-+                     <0x00 0x41400000 0x00 0x41400000 0x00 0x00020000>,
-+                     <0x00 0x41c00000 0x00 0x41c00000 0x00 0x00080000>;
-+
-+            bus@28380000 {
-+                compatible = "simple-bus";
-+                #address-cells = <2>;
-+                #size-cells = <2>;
-+                ranges = <0x00 0x28380000 0x00 0x28380000 0x00 0x03880000>, /* MCU NAVSS */
-+                         <0x00 0x41000000 0x00 0x41000000 0x00 0x00020000>, /* MCU R5F Core0 */
-+                         <0x00 0x41400000 0x00 0x41400000 0x00 0x00020000>, /* MCU R5F Core1 */
-+                         <0x00 0x41c00000 0x00 0x41c00000 0x00 0x00080000>; /* MCU SRAM */
-+
-+                /* AM65x MCU R5FSS node */
-+                mcu_r5fss0: r5fss@41000000 {
-+                    compatible = "ti,am654-r5fss";
-+                    power-domains = <&k3_pds 129>;
-+                    ti,cluster-mode = <1>;
-+                    #address-cells = <1>;
-+                    #size-cells = <1>;
-+                    ranges = <0x41000000 0x00 0x41000000 0x20000>,
-+                             <0x41400000 0x00 0x41400000 0x20000>;
-+
-+                    mcu_r5f0: r5f@41000000 {
-+                        compatible = "ti,am654-r5f";
-+                        reg = <0x41000000 0x00008000>,
-+                              <0x41010000 0x00008000>;
-+                        reg-names = "atcm", "btcm";
-+                        ti,sci = <&dmsc>;
-+                        ti,sci-dev-id = <159>;
-+                        ti,sci-proc-ids = <0x01 0xFF>;
-+                        resets = <&k3_reset 159 1>;
-+                        firmware-name = "am65x-mcu-r5f0_0-fw";
-+                        ti,atcm-enable = <1>;
-+                        ti,btcm-enable = <1>;
-+                        ti,loczrama = <1>;
-+                        mboxes = <&mailbox0 &mbox_mcu_r5fss0_core0>;
-+                        memory-region = <&mcu_r5fss0_core0_dma_memory_region>,
-+                                        <&mcu_r5fss0_core0_memory_region>;
-+                        sram = <&mcu_r5fss0_core0_sram>;
-+                    };
-+
-+                    mcu_r5f1: r5f@41400000 {
-+                        compatible = "ti,am654-r5f";
-+                        reg = <0x41400000 0x00008000>,
-+                              <0x41410000 0x00008000>;
-+                        reg-names = "atcm", "btcm";
-+                        ti,sci = <&dmsc>;
-+                        ti,sci-dev-id = <245>;
-+                        ti,sci-proc-ids = <0x02 0xFF>;
-+                        resets = <&k3_reset 245 1>;
-+                        firmware-name = "am65x-mcu-r5f0_1-fw";
-+                        ti,atcm-enable = <1>;
-+                        ti,btcm-enable = <1>;
-+                        ti,loczrama = <1>;
-+                        mboxes = <&mailbox1 &mbox_mcu_r5fss0_core1>;
-+                    };
-+                };
-+            };
-+        };
-+    };
--- 
-2.26.0
+Thanks,
+Sid
 
+>>>
+>>>> +
+>>>> +		rproc_shutdown(rproc);
+>>>> +	} else {
+>>>> +		dev_err(&rproc->dev, "Unrecognized option\n");
+>>>> +		ret = -EINVAL;
+>>>> +	}
+>>>> +
+>>>> +	return ret ? ret : len;
+>>>> +}
+>>>> +
+>>>> +static long rproc_device_ioctl(struct file *filp, unsigned int ioctl,
+>>>> +				unsigned long arg)
+>>>> +{
+>>>> +	struct rproc *rproc = container_of(filp->f_inode->i_cdev,
+>>>> +					   struct rproc, char_dev);
+>>>> +	void __user *argp = (void __user *)arg;
+>>>> +	int ret;
+>>>> +	bool param;
+>>>> +
+>>>> +	switch (ioctl) {
+>>>> +	case RPROC_SET_SHUTDOWN_ON_RELEASE:
+>>>> +		ret = copy_from_user(&param, argp, sizeof(bool));
+>>>> +		if (ret) {
+>>>> +			dev_err(&rproc->dev, "Data copy from userspace failed\n");
+>>>> +			return -EINVAL;
+>>>> +		}
+>>>> +		rproc->cdev_put_on_release = param;
+>>> argp is an void value, where cdev_put_on_release is a bool a check or
+>>> a conversion  seems
+>>> missing
+>>>
+>>>> +		break;
+>>>> +	case RPROC_GET_SHUTDOWN_ON_RELEASE:
+>>>> +		ret = copy_to_user(argp, &rproc->cdev_put_on_release,
+>>>> +				   sizeof(bool));
+>>>> +		if (ret) {
+>>>> +			dev_err(&rproc->dev, "Data copy to userspace failed\n");
+>>>> +			return -EINVAL;
+>>>> +		}
+>>>> +		break;
+>>>> +	default:
+>>>> +		dev_err(&rproc->dev, "Unsupported ioctl\n");
+>>>> +		return -EINVAL;
+>>>> +	}
+>>>> +	return 0;
+>>>> +}
+>>>> +
+>>>> +static int rproc_cdev_release(struct inode *inode, struct file *filp)
+>>>> +{
+>>>> +	struct rproc *rproc = container_of(inode->i_cdev, struct rproc,
+>>>> +					   char_dev);
+>>>> +
+>>>> +	if (rproc->cdev_put_on_release && rproc->state != RPROC_OFFLINE)
+>>>> +		rproc_shutdown(rproc);
+>>>> +
+>>>> +	return 0;
+>>>> +}
+>>>> +
+>>>> +
+>>>> +static const struct file_operations rproc_fops = {
+>>>> +	.write = rproc_cdev_write,
+>>>> +	.unlocked_ioctl = rproc_device_ioctl,
+>>>> +	.release = rproc_cdev_release,
+>>>> +};
+>>>> +
+>>>> +int rproc_char_device_add(struct rproc *rproc)
+>>>> +{
+>>>> +	int ret;
+>>>> +	dev_t cdevt;
+>>>> +
+>>>> +	cdev_init(&rproc->char_dev, &rproc_fops);
+>>>> +	rproc->char_dev.owner = THIS_MODULE;
+>>>> +
+>>>> +	cdevt = MKDEV(MAJOR(rproc_major), rproc->index);
+>>>> +	ret = cdev_add(&rproc->char_dev, cdevt, 1);
+>>>> +	if (ret < 0)
+>>>> +		goto out;
+>>>> +
+>>>> +	rproc->dev.devt = cdevt;
+>>>> +out:
+>>>> +	return ret;
+>>>> +}
+>>>> +
+>>>> +void rproc_char_device_remove(struct rproc *rproc)
+>>>> +{
+>>>> +	__unregister_chrdev(MAJOR(rproc->dev.devt), rproc->index, 1,
+>>>> "rproc");
+>>>> +}
+>>>> +
+>>>> +void __init rproc_init_cdev(void)
+>>>> +{
+>>>> +	int ret;
+>>>> +
+>>>> +	ret = alloc_chrdev_region(&rproc_major, 0, NUM_RPROC_DEVICES,
+>>>> "rproc");
+>>> "remoteproc"instead of "rproc" (in line with sysfs and debugfs naming)
+>>> .
+>>>
+>>>> +	if (ret < 0)
+>>>> +		pr_err("Failed to alloc rproc_cdev region, err %d\n", ret);
+>>>> +}
+>>>> +
+>>>> +void __exit rproc_exit_cdev(void)
+>>>> +{
+>>>> +	unregister_chrdev_region(MKDEV(MAJOR(rproc_major), 0),
+>>>> +				 NUM_RPROC_DEVICES);
+>>>> +}
+>>>> diff --git a/drivers/remoteproc/remoteproc_internal.h
+>>>> b/drivers/remoteproc/remoteproc_internal.h
+>>>> index 493ef92..fb9d891 100644
+>>>> --- a/drivers/remoteproc/remoteproc_internal.h
+>>>> +++ b/drivers/remoteproc/remoteproc_internal.h
+>>>> @@ -47,6 +47,27 @@ struct dentry *rproc_create_trace_file(const char
+>>>> *name, struct rproc *rproc,
+>>>>   int rproc_init_sysfs(void);
+>>>>   void rproc_exit_sysfs(void);
+>>>>
+>>>> +#ifdef CONFIG_REMOTEPROC_CDEV
+>>>> +void rproc_init_cdev(void);
+>>>> +void rproc_exit_cdev(void);
+>>>> +int rproc_char_device_add(struct rproc *rproc);
+>>>> +void rproc_char_device_remove(struct rproc *rproc);
+>>>> +#else
+>>>> +static inline void rproc_init_cdev(void)
+>>>> +{
+>>>> +}
+>>>> +static inline void rproc_exit_cdev(void)
+>>>> +{
+>>>> +}
+>>>> +static inline int rproc_char_device_add(struct rproc *rproc)
+>>>> +{
+>>>> +	return 0;
+>>>> +}
+>>>> +static inline void  rproc_char_device_remove(struct rproc *rproc)
+>>>> +{
+>>>> +}
+>>>> +#endif
+>>>> +
+>>>>   void rproc_free_vring(struct rproc_vring *rvring);
+>>>>   int rproc_alloc_vring(struct rproc_vdev *rvdev, int i);
+>>>>
+>>>> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+>>>> index 16ad666..9bd2ff5 100644
+>>>> --- a/include/linux/remoteproc.h
+>>>> +++ b/include/linux/remoteproc.h
+>>>> @@ -40,6 +40,7 @@
+>>>>   #include <linux/virtio.h>
+>>>>   #include <linux/completion.h>
+>>>>   #include <linux/idr.h>
+>>>> +#include <linux/cdev.h>
+>>>>   #include <linux/of.h>
+>>>>
+>>>>   /**
+>>>> @@ -514,6 +515,8 @@ struct rproc {
+>>>>   	bool auto_boot;
+>>>>   	struct list_head dump_segments;
+>>>>   	int nb_vdev;
+>>>> +	struct cdev char_dev;
+>>>> +	bool cdev_put_on_release;
+>>>>   };
+>>> These parameters are local variables of rproc_cdev. Could be defined
+>>> in a separate structure.
+>>> with a pointer in rproc to this structure.
+>>>
+>>>>   /**
+>>>> diff --git a/include/uapi/linux/remoteproc_cdev.h
+>>>> b/include/uapi/linux/remoteproc_cdev.h
+>>>> new file mode 100644
+>>>> index 0000000..3975120
+>>>> --- /dev/null
+>>>> +++ b/include/uapi/linux/remoteproc_cdev.h
+>>>> @@ -0,0 +1,20 @@
+>>>> +/* SPDX-License-Identifier: GPL-2.0-only WITH Linux-syscall-note */
+>>>> +/*
+>>>> + * IOCTLs for Remoteproc's character device interface.
+>>>> + *
+>>>> + * Copyright (c) 2020, The Linux Foundation. All rights reserved.
+>>>> + */
+>>>> +
+>>>> +
+>>>> +#ifndef _UAPI_REMOTEPROC_CDEV_H_
+>>>> +#define _UAPI_REMOTEPROC_CDEV_H_
+>>>> +
+>>>> +#include <linux/ioctl.h>
+>>>> +#include <linux/types.h>
+>>>> +
+>>>> +#define RPROC_MAGIC	0xB7
+>>>> +
+>>>> +#define RPROC_SET_SHUTDOWN_ON_RELEASE _IOW(RPROC_MAGIC, 1, int)
+>>>> +#define RPROC_GET_SHUTDOWN_ON_RELEASE _IOR(RPROC_MAGIC, 2, int)
+>>>> +
+>>>> +#endif
+>>>>
+>>> IOCTLs should probaly be documented.
+>> I have added documentation to
+>> Documentation/userspace-api/ioctl/ioctl-number.rst
+>> Is there another place where I need to add documentation for this?
+> Could you add in this file comments that describe
+> the IOCTL usage and associated parameter?
+>
+> Regards,
+> Arnaud
+>
+>>> Thanks,
+>>> Arnaud
