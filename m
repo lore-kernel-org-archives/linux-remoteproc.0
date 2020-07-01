@@ -2,263 +2,235 @@ Return-Path: <SRS0=eZwm=AM=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F4F6C433DF
-	for <linux-remoteproc@archiver.kernel.org>; Wed,  1 Jul 2020 21:22:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5818C433E0
+	for <linux-remoteproc@archiver.kernel.org>; Wed,  1 Jul 2020 21:27:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1C45B2085B
-	for <linux-remoteproc@archiver.kernel.org>; Wed,  1 Jul 2020 21:22:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 77EC5206B7
+	for <linux-remoteproc@archiver.kernel.org>; Wed,  1 Jul 2020 21:27:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="rWmjvfLu"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="O7jawF1c"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727797AbgGAVWJ (ORCPT
+        id S1726469AbgGAV1a (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 1 Jul 2020 17:22:09 -0400
-Received: from rnd-relay.smtp.broadcom.com ([192.19.229.170]:43036 "EHLO
-        rnd-relay.smtp.broadcom.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727124AbgGAVWI (ORCPT
+        Wed, 1 Jul 2020 17:27:30 -0400
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:33576 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726144AbgGAV1a (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 1 Jul 2020 17:22:08 -0400
-Received: from mail-irv-17.broadcom.com (mail-irv-17.lvn.broadcom.net [10.75.242.48])
-        by rnd-relay.smtp.broadcom.com (Postfix) with ESMTP id 8CF3430C0B2;
-        Wed,  1 Jul 2020 14:22:06 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.10.3 rnd-relay.smtp.broadcom.com 8CF3430C0B2
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=broadcom.com;
-        s=dkimrelay; t=1593638526;
-        bh=nhrK2RlYox51CSLhX6kAW8Tc5Nzfqg2aOArAqXmjQoM=;
-        h=From:To:Cc:Subject:Date:From;
-        b=rWmjvfLu2xdb5dBCSs2msmprlhJNkn8S5dVXenLzoHn34v3NkIG4LvR1NxJ8E4Yt0
-         GN0HE+FLpkmBfHttGAJUwKJJ5ofv2/RLGYZPDEwjVpSlvsq/WvDaLJfkA3eE8TTfFY
-         8fJtetnFJI2FqIGNf1NYqtVhOTROC88YoDWRlbEc=
-Received: from stbsrv-and-01.and.broadcom.net (stbsrv-and-01.and.broadcom.net [10.28.16.211])
-        by mail-irv-17.broadcom.com (Postfix) with ESMTP id 57535140096;
-        Wed,  1 Jul 2020 14:22:00 -0700 (PDT)
-From:   Jim Quinlan <james.quinlan@broadcom.com>
-To:     linux-pci@vger.kernel.org,
-        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        bcm-kernel-feedback-list@broadcom.com, james.quinlan@broadcom.com
-Cc:     Alan Stern <stern@rowland.harvard.edu>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        devel@driverdev.osuosl.org (open list:STAGING SUBSYSTEM),
-        devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
-        DEVICE TREE),
-        dri-devel@lists.freedesktop.org (open list:DRM DRIVERS FOR ALLWINNER
-        A10), Florian Fainelli <f.fainelli@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        iommu@lists.linux-foundation.org (open list:IOMMU DRIVERS),
-        Jens Axboe <axboe@kernel.dk>,
-        Julien Grall <julien.grall@arm.com>,
-        linux-acpi@vger.kernel.org (open list:ACPI FOR ARM64 (ACPI/arm64)),
-        linux-arm-kernel@lists.infradead.org (moderated list:ARM PORT),
-        linux-ide@vger.kernel.org (open list:LIBATA SUBSYSTEM (Serial and
-        Parallel ATA drivers)), linux-kernel@vger.kernel.org (open list),
-        linux-media@vger.kernel.org (open list:ALLWINNER A10 CSI DRIVER),
-        linux-remoteproc@vger.kernel.org (open list:REMOTE PROCESSOR
-        (REMOTEPROC) SUBSYSTEM),
-        linux-rpi-kernel@lists.infradead.org (moderated list:BROADCOM
-        BCM2711/BCM2835 ARM ARCHITECTURE),
-        linux-sh@vger.kernel.org (open list:SUPERH),
-        linux-usb@vger.kernel.org (open list:USB SUBSYSTEM),
-        Oliver Neukum <oneukum@suse.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Rob Herring <robh@kernel.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Saravana Kannan <saravanak@google.com>,
-        Stefano Stabellini <sstabellini@kernel.org>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [PATCH v6 00/12] PCI: brcmstb: enable PCIe for STB chips
-Date:   Wed,  1 Jul 2020 17:21:30 -0400
-Message-Id: <20200701212155.37830-1-james.quinlan@broadcom.com>
-X-Mailer: git-send-email 2.17.1
+        Wed, 1 Jul 2020 17:27:30 -0400
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 061LRP3M036911;
+        Wed, 1 Jul 2020 16:27:25 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1593638845;
+        bh=DE8CnC7FP5Y5OqDbKoA3A18OoqaSIir0VAtnrw0TWg0=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=O7jawF1cTxy7JuOAcSxI5kB+yWscyqAjMtP60MfTyv3ftaFiKXeyGvUbjHrtpkRVI
+         SU9DLoFysPhGrm9bqnHq1lotAYP/bVFmp60E9OvenV9avvIIj+yPdxUsRb69byfGiM
+         E55F3XYItd8W1B5SXOcUyrfFhj4bErnI60J6s2jc=
+Received: from DFLE108.ent.ti.com (dfle108.ent.ti.com [10.64.6.29])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 061LRPan005461
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 1 Jul 2020 16:27:25 -0500
+Received: from DFLE114.ent.ti.com (10.64.6.35) by DFLE108.ent.ti.com
+ (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3; Wed, 1 Jul
+ 2020 16:27:25 -0500
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE114.ent.ti.com
+ (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3 via
+ Frontend Transport; Wed, 1 Jul 2020 16:27:24 -0500
+Received: from [10.250.70.56] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 061LROhk011033;
+        Wed, 1 Jul 2020 16:27:24 -0500
+Subject: Re: [PATCH 1/2] remoteproc: ingenic: Move clock handling to
+ prepare/unprepare callbacks
+To:     Mathieu Poirier <mathieu.poirier@linaro.org>, <ohad@wizery.com>,
+        <bjorn.andersson@linaro.org>, <paul@crapouillou.net>
+CC:     <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20200630163118.3830422-1-mathieu.poirier@linaro.org>
+ <20200630163118.3830422-2-mathieu.poirier@linaro.org>
+From:   Suman Anna <s-anna@ti.com>
+Message-ID: <8d089532-19a7-d687-d087-a3a48df16407@ti.com>
+Date:   Wed, 1 Jul 2020 16:27:24 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.8.0
+MIME-Version: 1.0
+In-Reply-To: <20200630163118.3830422-2-mathieu.poirier@linaro.org>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Patchset Summary:
-  Enhance a PCIe host controller driver.  Because of its unusual design
-  we are foced to change dev->dma_pfn_offset into a more general role
-  allowing multiple offsets.  See the 'v1' notes below for more info.
+Hi Mathieu,
 
-v6:
-  Commit "device core: Introduce DMA range map":
-  -- of_dma_get_range() now takes a single argument and returns either
-     NULL, a valid map, or an ERR_PTR. (Robin)
-  -- offsets are no longer a PFN value but an actual address. (Robin)
-  -- the bus_dma_region struct stores the range size instead of
-     the cpu_end and pci_end values. (Robin)
-  -- devices that were setting a single offset with no boundaries
-     have been modified to have boundaries; in a few places
-     where this informatino was unavilable a /* FIXME: ... */
-     comment was added. (Robin)
-  -- dma_attach_offset_range() can be called when an offset
-     map already exists; if it's range is already present
-     nothing is done and success is returned. (Robin)
-  All commits:
-  -- Man name/style/corrections/etc changed (Bjorn)
-  -- rebase to Torvalds master
+On 6/30/20 11:31 AM, Mathieu Poirier wrote:
+> This patch moves clock related operations to the remoteproc prepare()
+> and unprepare() callbacks so that the PM runtime framework doesn't
+> have to be involved needlessly.  This provides a simpler approach and
+> requires less code.
+> 
+> Based on the work from Paul Cercueil published here:
+> https://lore.kernel.org/linux-remoteproc/20191116170846.67220-4-paul@crapouillou.net/
+> 
+> Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+> ---
+>   drivers/remoteproc/ingenic_rproc.c | 84 +++++++++---------------------
+>   1 file changed, 26 insertions(+), 58 deletions(-)
+> 
+> diff --git a/drivers/remoteproc/ingenic_rproc.c b/drivers/remoteproc/ingenic_rproc.c
+> index 189020d77b25..b0fc8eace6ec 100644
+> --- a/drivers/remoteproc/ingenic_rproc.c
+> +++ b/drivers/remoteproc/ingenic_rproc.c
+> @@ -11,7 +11,6 @@
+>   #include <linux/io.h>
+>   #include <linux/module.h>
+>   #include <linux/platform_device.h>
+> -#include <linux/pm_runtime.h>
+>   #include <linux/remoteproc.h>
+>   
+>   #include "remoteproc_internal.h"
+> @@ -62,6 +61,28 @@ struct vpu {
+>   	struct device *dev;
+>   };
+>   
+> +static int ingenic_rproc_prepare(struct rproc *rproc)
+> +{
+> +	struct vpu *vpu = rproc->priv;
+> +	int ret;
+> +
+> +	/* The clocks must be enabled for the firmware to be loaded in TCSM */
+> +	ret = clk_bulk_prepare_enable(ARRAY_SIZE(vpu->clks), vpu->clks);
+> +	if (ret)
+> +		dev_err(vpu->dev, "Unable to start clocks: %d", ret);
 
-v5:
-  Commit "device core: Introduce multiple dma pfn offsets"
-  -- in of/address.c: "map_size = 0" => "*map_size = 0"
-  -- use kcalloc instead of kzalloc (AndyS)
-  -- use PHYS_ADDR_MAX instead of "~(phys_addr_t)0"
-  Commit "PCI: brcmstb: Set internal memory viewport sizes"
-  -- now gives error on missing dma-ranges property.
-  Commit "dt-bindings: PCI: Add bindings for more Brcmstb chips"
-  -- removed "Allof:" from brcm,scb-sizes definition (RobH)
-  All Commits:
-  -- indentation style, use max chars 100 (AndyS)
-  -- rebased to torvalds master
+Minor nit, add a newline character at the end of the trace statement.
 
-v4:
-  Commit "device core: Introduce multiple dma pfn offsets"
-  -- of_dma_get_range() does not take a dev param but instead
-     takes two "out" params: map and map_size.  We do this so
-     that the code that parses dma-ranges is separate from
-     the code that modifies 'dev'.   (Nicolas)
-  -- the separate case of having a single pfn offset has
-     been removed and is now processed by going through the
-     map array. (Nicolas)
-  -- move attach_uniform_dma_pfn_offset() from of/address.c to
-     dma/mapping.c so that it does not depend on CONFIG_OF. (Nicolas)
-  -- devm_kcalloc => devm_kzalloc (DanC)
-  -- add/fix assignment to dev->dma_pfn_offset_map for func
-     attach_uniform_dma_pfn_offset() (DanC, Nicolas)
-  -- s/struct dma_pfn_offset_region/struct bus_dma_region/ (Nicolas)
-  -- s/attach_uniform_dma_pfn_offset/dma_attach_uniform_pfn_offset/
-  -- s/attach_dma_pfn_offset_map/dma_attach_pfn_offset_map/
-  -- More use of PFN_{PHYS,DOWN,UP}. (AndyS)
-  Commit "of: Include a dev param in of_dma_get_range()"
-  -- this commit was sqaushed with "device core: Introduce ..."
+With that,
+Reviewed-by: Suman Anna <s-anna@ti.com>
 
-v3:
-  Commit "device core: Introduce multiple dma pfn offsets"
-  Commit "arm: dma-mapping: Invoke dma offset func if needed"
-  -- The above two commits have been squashed.  More importantly,
-     the code has been modified so that the functionality for
-     multiple pfn offsets subsumes the use of dev->dma_pfn_offset.
-     In fact, dma_pfn_offset is removed and supplanted by
-     dma_pfn_offset_map, which is a pointer to an array.  The
-     more common case of a uniform offset is now handled as
-     a map with a single entry, while cases requiring multiple
-     pfn offsets use a map with multiple entries.  Code paths
-     that used to do this:
-
-         dev->dma_pfn_offset = mydrivers_pfn_offset;
-
-     have been changed to do this:
-
-         attach_uniform_dma_pfn_offset(dev, pfn_offset);
-
-  Commit "dt-bindings: PCI: Add bindings for more Brcmstb chips"
-  -- Add if/then clause for required props: resets, reset-names (RobH)
-  -- Change compatible list from const to enum (RobH)
-  -- Change list of u32-tuples to u64 (RobH)
-
-  Commit "of: Include a dev param in of_dma_get_range()"
-  -- modify of/unittests.c to add NULL param in of_dma_get_range() call.
-
-  Commit "device core: Add ability to handle multiple dma offsets"
-  -- align comment in device.h (AndyS).
-  -- s/cpu_beg/cpu_start/ and s/dma_beg/dma_start/ in struct
-     dma_pfn_offset_region (AndyS).
-
-v2:
-Commit: "device core: Add ability to handle multiple dma offsets"
-  o Added helper func attach_dma_pfn_offset_map() in address.c (Chistoph)
-  o Helpers funcs added to __phys_to_dma() & __dma_to_phys() (Christoph)
-  o Added warning when multiple offsets are needed and !DMA_PFN_OFFSET_MAP
-  o dev->dma_pfn_map => dev->dma_pfn_offset_map
-  o s/frm/from/ for dma_pfn_offset_frm_{phys,dma}_addr() (Christoph)
-  o In device.h: s/const void */const struct dma_pfn_offset_region */
-  o removed 'unlikely' from unlikely(dev->dma_pfn_offset_map) since
-    guarded by CONFIG_DMA_PFN_OFFSET_MAP (Christoph)
-  o Since dev->dma_pfn_offset is copied in usb/core/{usb,message}.c, now
-    dev->dma_pfn_offset_map is copied as well.
-  o Merged two of the DMA commits into one (Christoph).
-
-Commit "arm: dma-mapping: Invoke dma offset func if needed":
-  o Use helper functions instead of #if CONFIG_DMA_PFN_OFFSET
-
-Other commits' changes:
-  o Removed need for carrying of_id var in priv (Nicolas)
-  o Commit message rewordings (Bjorn)
-  o Commit log messages filled to 75 chars (Bjorn)
-  o devm_reset_control_get_shared())
-    => devm_reset_control_get_optional_shared (Philipp)
-  o Add call to reset_control_assert() in PCIe remove routines (Philipp)
-
-v1:
-This patchset expands the usefulness of the Broadcom Settop Box PCIe
-controller by building upon the PCIe driver used currently by the
-Raspbery Pi.  Other forms of this patchset were submitted by me years
-ago and not accepted; the major sticking point was the code required
-for the DMA remapping needed for the PCIe driver to work [1].
-
-There have been many changes to the DMA and OF subsystems since that
-time, making a cleaner and less intrusive patchset possible.  This
-patchset implements a generalization of "dev->dma_pfn_offset", except
-that instead of a single scalar offset it provides for multiple
-offsets via a function which depends upon the "dma-ranges" property of
-the PCIe host controller.  This is required for proper functionality
-of the BrcmSTB PCIe controller and possibly some other devices.
-
-[1] https://lore.kernel.org/linux-arm-kernel/1516058925-46522-5-git-send-email-jim2101024@gmail.com/
-
-
-Jim Quinlan (12):
-  PCI: brcmstb: PCIE_BRCMSTB depends on ARCH_BRCMSTB
-  ata: ahci_brcm: Fix use of BCM7216 reset controller
-  dt-bindings: PCI: Add bindings for more Brcmstb chips
-  PCI: brcmstb: Add bcm7278 register info
-  PCI: brcmstb: Add suspend and resume pm_ops
-  PCI: brcmstb: Add bcm7278 PERST# support
-  PCI: brcmstb: Add control of rescal reset
-  device core: Introduce DMA range map, supplanting dma_pfn_offset
-  PCI: brcmstb: Set additional internal memory DMA viewport sizes
-  PCI: brcmstb: Accommodate MSI for older chips
-  PCI: brcmstb: Set bus max burst size by chip type
-  PCI: brcmstb: Add bcm7211, bcm7216, bcm7445, bcm7278 to match list
-
- .../bindings/pci/brcm,stb-pcie.yaml           |  56 ++-
- arch/arm/include/asm/dma-mapping.h            |   9 +-
- arch/arm/mach-keystone/keystone.c             |  17 +-
- arch/sh/drivers/pci/pcie-sh7786.c             |   9 +-
- arch/sh/kernel/dma-coherent.c                 |  14 +-
- arch/x86/pci/sta2x11-fixup.c                  |   7 +-
- drivers/acpi/arm64/iort.c                     |   5 +-
- drivers/ata/ahci_brcm.c                       |  11 +-
- drivers/gpu/drm/sun4i/sun4i_backend.c         |   7 +-
- drivers/iommu/io-pgtable-arm.c                |   2 +-
- .../platform/sunxi/sun4i-csi/sun4i_csi.c      |   6 +-
- .../platform/sunxi/sun6i-csi/sun6i_csi.c      |   5 +-
- drivers/of/address.c                          |  95 ++--
- drivers/of/device.c                           |  50 ++-
- drivers/of/of_private.h                       |   9 +-
- drivers/of/unittest.c                         |  35 +-
- drivers/pci/controller/Kconfig                |   3 +-
- drivers/pci/controller/pcie-brcmstb.c         | 408 +++++++++++++++---
- drivers/remoteproc/remoteproc_core.c          |   2 +-
- .../staging/media/sunxi/cedrus/cedrus_hw.c    |   8 +-
- drivers/usb/core/message.c                    |   4 +-
- drivers/usb/core/usb.c                        |   2 +-
- include/linux/device.h                        |   4 +-
- include/linux/dma-direct.h                    |  10 +-
- include/linux/dma-mapping.h                   |  37 ++
- kernel/dma/coherent.c                         |  11 +-
- kernel/dma/mapping.c                          |  53 +++
- 27 files changed, 684 insertions(+), 195 deletions(-)
-
--- 
-2.17.1
+> +
+> +	return ret;
+> +}
+> +
+> +static int ingenic_rproc_unprepare(struct rproc *rproc)
+> +{
+> +	struct vpu *vpu = rproc->priv;
+> +
+> +	clk_bulk_disable_unprepare(ARRAY_SIZE(vpu->clks), vpu->clks);
+> +
+> +	return 0;
+> +}
+> +
+>   static int ingenic_rproc_start(struct rproc *rproc)
+>   {
+>   	struct vpu *vpu = rproc->priv;
+> @@ -115,6 +136,8 @@ static void *ingenic_rproc_da_to_va(struct rproc *rproc, u64 da, size_t len)
+>   }
+>   
+>   static struct rproc_ops ingenic_rproc_ops = {
+> +	.prepare = ingenic_rproc_prepare,
+> +	.unprepare = ingenic_rproc_unprepare,
+>   	.start = ingenic_rproc_start,
+>   	.stop = ingenic_rproc_stop,
+>   	.kick = ingenic_rproc_kick,
+> @@ -135,16 +158,6 @@ static irqreturn_t vpu_interrupt(int irq, void *data)
+>   	return rproc_vq_interrupt(rproc, vring);
+>   }
+>   
+> -static void ingenic_rproc_disable_clks(void *data)
+> -{
+> -	struct vpu *vpu = data;
+> -
+> -	pm_runtime_resume(vpu->dev);
+> -	pm_runtime_disable(vpu->dev);
+> -
+> -	clk_bulk_disable_unprepare(ARRAY_SIZE(vpu->clks), vpu->clks);
+> -}
+> -
+>   static int ingenic_rproc_probe(struct platform_device *pdev)
+>   {
+>   	struct device *dev = &pdev->dev;
+> @@ -206,35 +219,13 @@ static int ingenic_rproc_probe(struct platform_device *pdev)
+>   
+>   	disable_irq(vpu->irq);
+>   
+> -	/* The clocks must be enabled for the firmware to be loaded in TCSM */
+> -	ret = clk_bulk_prepare_enable(ARRAY_SIZE(vpu->clks), vpu->clks);
+> -	if (ret) {
+> -		dev_err(dev, "Unable to start clocks\n");
+> -		return ret;
+> -	}
+> -
+> -	pm_runtime_irq_safe(dev);
+> -	pm_runtime_set_active(dev);
+> -	pm_runtime_enable(dev);
+> -	pm_runtime_get_sync(dev);
+> -	pm_runtime_use_autosuspend(dev);
+> -
+> -	ret = devm_add_action_or_reset(dev, ingenic_rproc_disable_clks, vpu);
+> -	if (ret) {
+> -		dev_err(dev, "Unable to register action\n");
+> -		goto out_pm_put;
+> -	}
+> -
+>   	ret = devm_rproc_add(dev, rproc);
+>   	if (ret) {
+>   		dev_err(dev, "Failed to register remote processor\n");
+> -		goto out_pm_put;
+> +		return ret;
+>   	}
+>   
+> -out_pm_put:
+> -	pm_runtime_put_autosuspend(dev);
+> -
+> -	return ret;
+> +	return 0;
+>   }
+>   
+>   static const struct of_device_id ingenic_rproc_of_matches[] = {
+> @@ -243,33 +234,10 @@ static const struct of_device_id ingenic_rproc_of_matches[] = {
+>   };
+>   MODULE_DEVICE_TABLE(of, ingenic_rproc_of_matches);
+>   
+> -static int __maybe_unused ingenic_rproc_suspend(struct device *dev)
+> -{
+> -	struct vpu *vpu = dev_get_drvdata(dev);
+> -
+> -	clk_bulk_disable(ARRAY_SIZE(vpu->clks), vpu->clks);
+> -
+> -	return 0;
+> -}
+> -
+> -static int __maybe_unused ingenic_rproc_resume(struct device *dev)
+> -{
+> -	struct vpu *vpu = dev_get_drvdata(dev);
+> -
+> -	return clk_bulk_enable(ARRAY_SIZE(vpu->clks), vpu->clks);
+> -}
+> -
+> -static const struct dev_pm_ops __maybe_unused ingenic_rproc_pm = {
+> -	SET_RUNTIME_PM_OPS(ingenic_rproc_suspend, ingenic_rproc_resume, NULL)
+> -};
+> -
+>   static struct platform_driver ingenic_rproc_driver = {
+>   	.probe = ingenic_rproc_probe,
+>   	.driver = {
+>   		.name = "ingenic-vpu",
+> -#ifdef CONFIG_PM
+> -		.pm = &ingenic_rproc_pm,
+> -#endif
+>   		.of_match_table = ingenic_rproc_of_matches,
+>   	},
+>   };
+> 
 
