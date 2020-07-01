@@ -2,143 +2,99 @@ Return-Path: <SRS0=eZwm=AM=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D77EC433E0
-	for <linux-remoteproc@archiver.kernel.org>; Wed,  1 Jul 2020 19:50:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 982EEC433E0
+	for <linux-remoteproc@archiver.kernel.org>; Wed,  1 Jul 2020 20:10:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2A5F3208A7
-	for <linux-remoteproc@archiver.kernel.org>; Wed,  1 Jul 2020 19:50:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7CE8D20747
+	for <linux-remoteproc@archiver.kernel.org>; Wed,  1 Jul 2020 20:10:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="hpt5m2Rr"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="kJPepvyG"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726049AbgGATuP (ORCPT
+        id S1725771AbgGAUKj (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 1 Jul 2020 15:50:15 -0400
-Received: from m43-7.mailgun.net ([69.72.43.7]:57220 "EHLO m43-7.mailgun.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726441AbgGATuO (ORCPT
+        Wed, 1 Jul 2020 16:10:39 -0400
+Received: from mail29.static.mailgun.info ([104.130.122.29]:40699 "EHLO
+        mail29.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725915AbgGAUKj (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 1 Jul 2020 15:50:14 -0400
+        Wed, 1 Jul 2020 16:10:39 -0400
 DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1593633014; h=Content-Transfer-Encoding: MIME-Version:
- Message-Id: Date: Subject: Cc: To: From: Sender;
- bh=+jpfSIhI65OcrMw29hQYXe/ZbIGzERi4tItiMsp5xK8=; b=hpt5m2RrGhQOxsOu0gRoT+roysuUuzhSG1dXW4J4fVqO2IgOVlA0onbUan6s3BCmF/xeQYN4
- lHmYHJNJrY64AARiaYpesqEd7LG83Egy/Rj4TX275zvtk0P+ribtaB0guSO7iI41eTNyGH+h
- AU3hYvJ5cxwwjPie2gcAZdI/+uQ=
-X-Mailgun-Sending-Ip: 69.72.43.7
+ s=smtp; t=1593634238; h=Message-ID: References: In-Reply-To: Subject:
+ Cc: To: From: Date: Content-Transfer-Encoding: Content-Type:
+ MIME-Version: Sender; bh=FTeCKQGXFfOKKmEYSpjvJeelLTqTHx/vRZNpqPIrxno=;
+ b=kJPepvyGX3LsHbMlqjZhoYGIwiZ6UpPtjatlI0B2J0x22vAKnSE8Ax82Z2l0zmxFlPSw7vRa
+ cUO/K9Sp4CTAFrc6yrqf9d0FU+Xwekd6ONzwNMF4xK/nii+JcrXIwKyuq349wTZ/E5Fkkprd
+ lbmS4LQi1RZxoxlgfnSMDHifveQ=
+X-Mailgun-Sending-Ip: 104.130.122.29
 X-Mailgun-Sid: WyI4ZWZiZiIsICJsaW51eC1yZW1vdGVwcm9jQHZnZXIua2VybmVsLm9yZyIsICJiZTllNGEiXQ==
 Received: from smtp.codeaurora.org
  (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
- smtp-out-n16.prod.us-east-1.postgun.com with SMTP id
- 5efce8e50206ad41d197bb33 (version=TLS1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Wed, 01 Jul 2020 19:49:57
+ smtp-out-n12.prod.us-east-1.postgun.com with SMTP id
+ 5efcedb90206ad41d1a16650 (version=TLS1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Wed, 01 Jul 2020 20:10:33
  GMT
 Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id D045FC43391; Wed,  1 Jul 2020 19:49:56 +0000 (UTC)
-Received: from blr-ubuntu-253.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        id A88D3C433CB; Wed,  1 Jul 2020 20:10:32 +0000 (UTC)
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
         (No client certificate requested)
         (Authenticated sender: sibis)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 93698C433C6;
-        Wed,  1 Jul 2020 19:49:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 93698C433C6
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=sibis@codeaurora.org
-From:   Sibi Sankar <sibis@codeaurora.org>
-To:     bjorn.andersson@linaro.org
-Cc:     agross@kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, rishabhb@codeaurora.org,
-        sidgup@codeaurora.org, ohad@wizery.com,
-        linux-remoteproc@vger.kernel.org,
-        Sibi Sankar <sibis@codeaurora.org>
-Subject: [PATCH] remoteproc: qcom_q6v5_mss: Replace mask based tracking with size
-Date:   Thu,  2 Jul 2020 01:19:40 +0530
-Message-Id: <20200701194940.8808-1-sibis@codeaurora.org>
-X-Mailer: git-send-email 2.27.0
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 326B8C433C6;
+        Wed,  1 Jul 2020 20:10:32 +0000 (UTC)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Thu, 02 Jul 2020 01:40:32 +0530
+From:   Sibi Sankar <sibis@codeaurora.org>
+To:     Rishabh Bhatnagar <rishabhb@codeaurora.org>
+Cc:     linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        bjorn.andersson@linaro.org, mathieu.poirier@linaro.org,
+        tsoni@codeaurora.org, psodagud@codeaurora.org,
+        sidgup@codeaurora.org, linux-kernel-owner@vger.kernel.org
+Subject: Re: [PATCH v6 1/3] remoteproc: Move coredump functionality to a new
+ file
+In-Reply-To: <1593460933-4262-2-git-send-email-rishabhb@codeaurora.org>
+References: <1593460933-4262-1-git-send-email-rishabhb@codeaurora.org>
+ <1593460933-4262-2-git-send-email-rishabhb@codeaurora.org>
+Message-ID: <1690dbd5ba65e864ed70144393b32adb@codeaurora.org>
+X-Sender: sibis@codeaurora.org
+User-Agent: Roundcube Webmail/1.3.9
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-In order to land inline coredump support for mss, the dump_segment
-function would need to support granularities less than the segment
-size. This is achieved by replacing mask based tracking with size.
+Hey Rishabh,
+Thanks for the patch.
 
-Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
----
- drivers/remoteproc/qcom_q6v5_mss.c | 15 +++++++--------
- 1 file changed, 7 insertions(+), 8 deletions(-)
+On 2020-06-30 01:32, Rishabh Bhatnagar wrote:
+> Move all coredump functionality to an individual file. This is
+> being done so that the current functionality can be extended
+> in future patchsets.
+> 
+> Signed-off-by: Rishabh Bhatnagar <rishabhb@codeaurora.org>
+> Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 
-diff --git a/drivers/remoteproc/qcom_q6v5_mss.c b/drivers/remoteproc/qcom_q6v5_mss.c
-index 903b2bb97e122..1f5d7a83ccf31 100644
---- a/drivers/remoteproc/qcom_q6v5_mss.c
-+++ b/drivers/remoteproc/qcom_q6v5_mss.c
-@@ -182,8 +182,8 @@ struct q6v5 {
- 	bool running;
- 
- 	bool dump_mba_loaded;
--	unsigned long dump_segment_mask;
--	unsigned long dump_complete_mask;
-+	size_t current_dump_size;
-+	size_t total_dump_size;
- 
- 	phys_addr_t mba_phys;
- 	void *mba_region;
-@@ -1204,7 +1204,6 @@ static void qcom_q6v5_dump_segment(struct rproc *rproc,
- {
- 	int ret = 0;
- 	struct q6v5 *qproc = rproc->priv;
--	unsigned long mask = BIT((unsigned long)segment->priv);
- 	int offset = segment->da - qproc->mpss_reloc;
- 	void *ptr = NULL;
- 
-@@ -1230,10 +1229,10 @@ static void qcom_q6v5_dump_segment(struct rproc *rproc,
- 		memset(dest, 0xff, segment->size);
- 	}
- 
--	qproc->dump_segment_mask |= mask;
-+	qproc->current_dump_size += segment->size;
- 
- 	/* Reclaim mba after copying segments */
--	if (qproc->dump_segment_mask == qproc->dump_complete_mask) {
-+	if (qproc->current_dump_size == qproc->total_dump_size) {
- 		if (qproc->dump_mba_loaded) {
- 			/* Try to reset ownership back to Q6 */
- 			q6v5_xfer_mem_ownership(qproc, &qproc->mpss_perm,
-@@ -1275,7 +1274,7 @@ static int q6v5_start(struct rproc *rproc)
- 			"Failed to reclaim mba buffer system may become unstable\n");
- 
- 	/* Reset Dump Segment Mask */
--	qproc->dump_segment_mask = 0;
-+	qproc->current_dump_size = 0;
- 	qproc->running = true;
- 
- 	return 0;
-@@ -1324,7 +1323,7 @@ static int qcom_q6v5_register_dump_segments(struct rproc *rproc,
- 
- 	ehdr = (struct elf32_hdr *)fw->data;
- 	phdrs = (struct elf32_phdr *)(ehdr + 1);
--	qproc->dump_complete_mask = 0;
-+	qproc->total_dump_size = 0;
- 
- 	for (i = 0; i < ehdr->e_phnum; i++) {
- 		phdr = &phdrs[i];
-@@ -1339,7 +1338,7 @@ static int qcom_q6v5_register_dump_segments(struct rproc *rproc,
- 		if (ret)
- 			break;
- 
--		qproc->dump_complete_mask |= BIT(i);
-+		qproc->total_dump_size += phdr->p_memsz;
- 	}
- 
- 	release_firmware(fw);
+Reviewed-by: Sibi Sankar <sibis@codeaurora.org>
+Tested-by: Sibi Sankar <sibis@codeaurora.org>
+
+> ---
+>  drivers/remoteproc/Makefile              |   1 +
+>  drivers/remoteproc/remoteproc_core.c     | 191 
+> -----------------------------
+>  drivers/remoteproc/remoteproc_coredump.c | 204 
+> +++++++++++++++++++++++++++++++
+>  drivers/remoteproc/remoteproc_internal.h |   4 +
+>  4 files changed, 209 insertions(+), 191 deletions(-)
+>  create mode 100644 drivers/remoteproc/remoteproc_coredump.c
+> 
+
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
-
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project.
