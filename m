@@ -5,49 +5,49 @@ X-Spam-Level:
 X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 141FBC433DF
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  2 Jul 2020 08:23:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C48EC433E1
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  2 Jul 2020 08:23:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E474720874
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  2 Jul 2020 08:23:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4BCBF20899
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  2 Jul 2020 08:23:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="jsOM0ruA"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="NTB4WUvW"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728500AbgGBIXB (ORCPT
+        id S1728561AbgGBIXL (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 2 Jul 2020 04:23:01 -0400
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:53902 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728482AbgGBIW7 (ORCPT
+        Thu, 2 Jul 2020 04:23:11 -0400
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:55304 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728550AbgGBIXJ (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 2 Jul 2020 04:22:59 -0400
+        Thu, 2 Jul 2020 04:23:09 -0400
 Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 0628Mld5086485;
-        Thu, 2 Jul 2020 03:22:47 -0500
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 0628MwtA042318;
+        Thu, 2 Jul 2020 03:22:58 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1593678167;
-        bh=Am7wFkFFAaUQImlGyftO9CDeQuGJEcsN8HZMuWnBRcM=;
+        s=ti-com-17Q1; t=1593678178;
+        bh=JPB+vJhEmEbr7wwXfNji0ZXjBCp2o1x06a2a2R9o46s=;
         h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=jsOM0ruAXjlbAIoaWqeHn0vYI7vPtnQO8ZZCByx9EXiaxrRsrj8HzV2HMQUjKnmmV
-         9H/U5Z+caJrgOy2eZ+FUlCVoqCEAq6vW1qJoV7Qp4AIv9DJK4fPfBU2D4kVCtrbpRf
-         TH1Sk9aAPIkJNMMRQfOI0SHfv7DweInWkfkeUi2s=
-Received: from DLEE109.ent.ti.com (dlee109.ent.ti.com [157.170.170.41])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 0628MlJN031070
+        b=NTB4WUvWIwRjwR4PEyvNndWbHFmbpB3bHQ/bjfZA4D488oQ/PPwZMpG8QVgVEECfl
+         GirS8Zv5wtU6kWNfh8qRzOwRe3jDX36NKWLH6IAzNFElVyTE8WUhGN+Gh+6mDie4th
+         ehSVLDopPkGuaZZq1dslHla/kif2QjPpAYyNCWHw=
+Received: from DFLE110.ent.ti.com (dfle110.ent.ti.com [10.64.6.31])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 0628Mw7t031199
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 2 Jul 2020 03:22:47 -0500
-Received: from DLEE102.ent.ti.com (157.170.170.32) by DLEE109.ent.ti.com
- (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
+        Thu, 2 Jul 2020 03:22:58 -0500
+Received: from DFLE112.ent.ti.com (10.64.6.33) by DFLE110.ent.ti.com
+ (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3; Thu, 2 Jul
- 2020 03:22:47 -0500
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE102.ent.ti.com
- (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
+ 2020 03:22:58 -0500
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE112.ent.ti.com
+ (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3 via
- Frontend Transport; Thu, 2 Jul 2020 03:22:47 -0500
+ Frontend Transport; Thu, 2 Jul 2020 03:22:58 -0500
 Received: from a0393678ub.india.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 0628LiYM006145;
-        Thu, 2 Jul 2020 03:22:41 -0500
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 0628LiYO006145;
+        Thu, 2 Jul 2020 03:22:53 -0500
 From:   Kishon Vijay Abraham I <kishon@ti.com>
 To:     Ohad Ben-Cohen <ohad@wizery.com>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
@@ -66,9 +66,9 @@ CC:     <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <linux-pci@vger.kernel.org>, <kvm@vger.kernel.org>,
         <virtualization@lists.linux-foundation.org>,
         <netdev@vger.kernel.org>
-Subject: [RFC PATCH 10/22] rpmsg: virtio_rpmsg_bus: Add Address Service Notification support
-Date:   Thu, 2 Jul 2020 13:51:31 +0530
-Message-ID: <20200702082143.25259-11-kishon@ti.com>
+Subject: [RFC PATCH 12/22] virtio: Add ops to allocate and free buffer
+Date:   Thu, 2 Jul 2020 13:51:33 +0530
+Message-ID: <20200702082143.25259-13-kishon@ti.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200702082143.25259-1-kishon@ti.com>
 References: <20200702082143.25259-1-kishon@ti.com>
@@ -80,192 +80,91 @@ Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Add support to send address service notification message to the backend
-rpmsg device. This informs the backend rpmsg device about the address
-allocated to the channel that is created in response to the name service
-announce message from backend rpmsg device. This is in preparation to
-add backend rpmsg device using VHOST framework in Linux.
+Add ops to allocate and free buffer in struct virtio_config_ops.
+Certain vhost devices can have restriction on the range of memory
+it can access on the virtio. The virtio drivers attached to
+such vhost devices reserves memory that can be accessed by
+vhost. This function allocates buffer for such reserved region.
+
+For instance when virtio-vhost is used by two hosts connected to
+NTB, the vhost can access only memory exposed by memory windows
+and the size of the memory window can be limited. Here the NTB
+virtio driver can reserve a small region (few MBs) and provide
+buffer address from this pool whenever requested by virtio client
+driver.
 
 Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
 ---
- drivers/rpmsg/virtio_rpmsg_bus.c | 92 +++++++++++++++++++++++++++++---
- 1 file changed, 85 insertions(+), 7 deletions(-)
+ include/linux/virtio_config.h | 42 +++++++++++++++++++++++++++++++++++
+ 1 file changed, 42 insertions(+)
 
-diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
-index 2d0d42084ac0..19d930c9fc2c 100644
---- a/drivers/rpmsg/virtio_rpmsg_bus.c
-+++ b/drivers/rpmsg/virtio_rpmsg_bus.c
-@@ -71,6 +71,7 @@ struct virtproc_info {
- 
- /* The feature bitmap for virtio rpmsg */
- #define VIRTIO_RPMSG_F_NS	0 /* RP supports name service notifications */
-+#define VIRTIO_RPMSG_F_AS	1 /* RP supports address service notifications */
- 
- /**
-  * struct rpmsg_hdr - common header for all rpmsg messages
-@@ -110,6 +111,26 @@ struct rpmsg_ns_msg {
- 	u32 flags;
- } __packed;
- 
-+/**
-+ * struct rpmsg_as_msg - dynamic address service announcement message
-+ * @name: name of the created channel
-+ * @dst: destination address to be used by the backend rpdev
-+ * @src: source address of the backend rpdev (the one that sent name service
-+ * announcement message)
-+ * @flags: indicates whether service is created or destroyed
-+ *
-+ * This message is sent (by virtio_rpmsg_bus) when a new channel is created
-+ * in response to name service announcement message by backend rpdev to create
-+ * a new channel. This sends the allocated source address for the channel
-+ * (destination address for the backend rpdev) to the backend rpdev.
-+ */
-+struct rpmsg_as_msg {
-+	char name[RPMSG_NAME_SIZE];
-+	u32 dst;
-+	u32 src;
-+	u32 flags;
-+} __packed;
-+
- /**
-  * enum rpmsg_ns_flags - dynamic name service announcement flags
-  *
-@@ -119,6 +140,19 @@ struct rpmsg_ns_msg {
- enum rpmsg_ns_flags {
- 	RPMSG_NS_CREATE		= 0,
- 	RPMSG_NS_DESTROY	= 1,
-+	RPMSG_AS_ANNOUNCE	= 2,
-+};
-+
-+/**
-+ * enum rpmsg_as_flags - dynamic address service announcement flags
-+ *
-+ * @RPMSG_AS_ASSIGN: address has been assigned to the newly created channel
-+ * @RPMSG_AS_FREE: assigned address is freed from the channel and no longer can
-+ * be used
-+ */
-+enum rpmsg_as_flags {
-+	RPMSG_AS_ASSIGN		= 1,
-+	RPMSG_AS_FREE		= 2,
+diff --git a/include/linux/virtio_config.h b/include/linux/virtio_config.h
+index bb4cc4910750..419f733017c2 100644
+--- a/include/linux/virtio_config.h
++++ b/include/linux/virtio_config.h
+@@ -65,6 +65,9 @@ struct irq_affinity;
+  *      the caller can then copy.
+  * @set_vq_affinity: set the affinity for a virtqueue (optional).
+  * @get_vq_affinity: get the affinity for a virtqueue (optional).
++ * @alloc_buffer: Allocate and provide buffer addresses that can be
++ *      accessed by both virtio and vhost
++ * @free_buffer: Free the allocated buffer address
+  */
+ typedef void vq_callback_t(struct virtqueue *);
+ struct virtio_config_ops {
+@@ -88,6 +91,9 @@ struct virtio_config_ops {
+ 			       const struct cpumask *cpu_mask);
+ 	const struct cpumask *(*get_vq_affinity)(struct virtio_device *vdev,
+ 			int index);
++	void * (*alloc_buffer)(struct virtio_device *vdev, size_t size);
++	void (*free_buffer)(struct virtio_device *vdev, void *addr,
++			    size_t size);
  };
  
- /**
-@@ -164,6 +198,9 @@ struct virtio_rpmsg_channel {
- /* Address 53 is reserved for advertising remote services */
- #define RPMSG_NS_ADDR			(53)
- 
-+/* Address 54 is reserved for advertising address services */
-+#define RPMSG_AS_ADDR			(54)
-+
- static void virtio_rpmsg_destroy_ept(struct rpmsg_endpoint *ept);
- static int virtio_rpmsg_send(struct rpmsg_endpoint *ept, void *data, int len);
- static int virtio_rpmsg_sendto(struct rpmsg_endpoint *ept, void *data, int len,
-@@ -329,9 +366,11 @@ static int virtio_rpmsg_announce_create(struct rpmsg_device *rpdev)
- 	struct device *dev = &rpdev->dev;
- 	int err = 0;
- 
-+	if (!rpdev->ept || !rpdev->announce)
-+		return err;
-+
- 	/* need to tell remote processor's name service about this channel ? */
--	if (rpdev->announce && rpdev->ept &&
--	    virtio_has_feature(vrp->vdev, VIRTIO_RPMSG_F_NS)) {
-+	if (virtio_has_feature(vrp->vdev, VIRTIO_RPMSG_F_NS)) {
- 		struct rpmsg_ns_msg nsm;
- 
- 		strncpy(nsm.name, rpdev->id.name, RPMSG_NAME_SIZE);
-@@ -343,6 +382,23 @@ static int virtio_rpmsg_announce_create(struct rpmsg_device *rpdev)
- 			dev_err(dev, "failed to announce service %d\n", err);
- 	}
- 
-+	/*
-+	 * need to tell remote processor's address service about the address allocated
-+	 * to this channel
-+	 */
-+	if (virtio_has_feature(vrp->vdev, VIRTIO_RPMSG_F_AS)) {
-+		struct rpmsg_as_msg asmsg;
-+
-+		strncpy(asmsg.name, rpdev->id.name, RPMSG_NAME_SIZE);
-+		asmsg.dst = rpdev->src;
-+		asmsg.src = rpdev->dst;
-+		asmsg.flags = RPMSG_AS_ASSIGN;
-+
-+		err = rpmsg_sendto(rpdev->ept, &asmsg, sizeof(asmsg), RPMSG_AS_ADDR);
-+		if (err)
-+			dev_err(dev, "failed to announce service %d\n", err);
-+	}
-+
- 	return err;
+ /* If driver didn't advertise the feature, it will never appear. */
+@@ -232,6 +238,42 @@ const char *virtio_bus_name(struct virtio_device *vdev)
+ 	return vdev->config->bus_name(vdev);
  }
  
-@@ -353,9 +409,28 @@ static int virtio_rpmsg_announce_destroy(struct rpmsg_device *rpdev)
- 	struct device *dev = &rpdev->dev;
- 	int err = 0;
- 
-+	if (!rpdev->ept || !rpdev->announce)
-+		return err;
++/**
++ * virtio_alloc_buffer - Allocate buffer from the reserved memory
++ * @vdev: Virtio device which manages the reserved memory
++ * @size: Size of the buffer to be allocated
++ *
++ * Certain vhost devices can have restriction on the range of memory
++ * it can access on the virtio. The virtio drivers attached to
++ * such vhost devices reserves memory that can be accessed by
++ * vhost. This function allocates buffer for such reserved region.
++ */
++static inline void *
++virtio_alloc_buffer(struct virtio_device *vdev, size_t size)
++{
++	if (!vdev->config->alloc_buffer)
++		return NULL;
 +
-+	/*
-+	 * need to tell remote processor's address service that we're freeing
-+	 * the address allocated to this channel
-+	 */
-+	if (virtio_has_feature(vrp->vdev, VIRTIO_RPMSG_F_AS)) {
-+		struct rpmsg_as_msg asmsg;
++	return vdev->config->alloc_buffer(vdev, size);
++}
 +
-+		strncpy(asmsg.name, rpdev->id.name, RPMSG_NAME_SIZE);
-+		asmsg.dst = rpdev->src;
-+		asmsg.src = rpdev->dst;
-+		asmsg.flags = RPMSG_AS_FREE;
++/**
++ * virtio_free_buffer - Free the allocated buffer
++ * @vdev: Virtio device which manages the reserved memory
++ * @addr: Address returned by virtio_alloc_buffer()
++ * @size: Size of the buffer that has to be freed
++ *
++ * Free the allocated buffer address given by virtio_alloc_buffer().
++ */
++static inline void
++virtio_free_buffer(struct virtio_device *vdev, void *addr, size_t size)
++{
++	if (!vdev->config->free_buffer)
++		return;
 +
-+		err = rpmsg_sendto(rpdev->ept, &asmsg, sizeof(asmsg), RPMSG_AS_ADDR);
-+		if (err)
-+			dev_err(dev, "failed to announce service %d\n", err);
-+	}
++	return vdev->config->free_buffer(vdev, addr, size);
++}
 +
- 	/* tell remote processor's name service we're removing this channel */
--	if (rpdev->announce && rpdev->ept &&
--	    virtio_has_feature(vrp->vdev, VIRTIO_RPMSG_F_NS)) {
-+	if (virtio_has_feature(vrp->vdev, VIRTIO_RPMSG_F_NS)) {
- 		struct rpmsg_ns_msg nsm;
- 
- 		strncpy(nsm.name, rpdev->id.name, RPMSG_NAME_SIZE);
-@@ -390,7 +465,8 @@ static void virtio_rpmsg_release_device(struct device *dev)
-  * channels.
-  */
- static struct rpmsg_device *rpmsg_create_channel(struct virtproc_info *vrp,
--						 struct rpmsg_channel_info *chinfo)
-+						 struct rpmsg_channel_info *chinfo,
-+						 bool announce)
- {
- 	struct virtio_rpmsg_channel *vch;
- 	struct rpmsg_device *rpdev;
-@@ -424,7 +500,8 @@ static struct rpmsg_device *rpmsg_create_channel(struct virtproc_info *vrp,
- 	 * rpmsg server channels has predefined local address (for now),
- 	 * and their existence needs to be announced remotely
- 	 */
--	rpdev->announce = rpdev->src != RPMSG_ADDR_ANY;
-+	if (rpdev->src != RPMSG_ADDR_ANY || announce)
-+		rpdev->announce = true;
- 
- 	strncpy(rpdev->id.name, chinfo->name, RPMSG_NAME_SIZE);
- 
-@@ -873,7 +950,7 @@ static int rpmsg_ns_cb(struct rpmsg_device *rpdev, void *data, int len,
- 		if (ret)
- 			dev_err(dev, "rpmsg_destroy_channel failed: %d\n", ret);
- 	} else {
--		newch = rpmsg_create_channel(vrp, &chinfo);
-+		newch = rpmsg_create_channel(vrp, &chinfo, msg->flags & RPMSG_AS_ANNOUNCE);
- 		if (!newch)
- 			dev_err(dev, "rpmsg_create_channel failed\n");
- 	}
-@@ -1042,6 +1119,7 @@ static struct virtio_device_id id_table[] = {
- 
- static unsigned int features[] = {
- 	VIRTIO_RPMSG_F_NS,
-+	VIRTIO_RPMSG_F_AS,
- };
- 
- static struct virtio_driver virtio_ipc_driver = {
+ /**
+  * virtqueue_set_affinity - setting affinity for a virtqueue
+  * @vq: the virtqueue
 -- 
 2.17.1
 
