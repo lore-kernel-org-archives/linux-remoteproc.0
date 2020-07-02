@@ -4,49 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB7BEC433DF
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  2 Jul 2020 08:22:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 141FBC433DF
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  2 Jul 2020 08:23:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B0BF320B80
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  2 Jul 2020 08:22:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E474720874
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  2 Jul 2020 08:23:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="bvbPsKl3"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="jsOM0ruA"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728341AbgGBIWj (ORCPT
+        id S1728500AbgGBIXB (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 2 Jul 2020 04:22:39 -0400
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:34448 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726462AbgGBIWh (ORCPT
+        Thu, 2 Jul 2020 04:23:01 -0400
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:53902 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728482AbgGBIW7 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 2 Jul 2020 04:22:37 -0400
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 0628MOtF017106;
-        Thu, 2 Jul 2020 03:22:24 -0500
+        Thu, 2 Jul 2020 04:22:59 -0400
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 0628Mld5086485;
+        Thu, 2 Jul 2020 03:22:47 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1593678144;
-        bh=iPErWFbFZdjeoHTdwXdeAC7MLZFVAu9f66Iyz/tSVV8=;
+        s=ti-com-17Q1; t=1593678167;
+        bh=Am7wFkFFAaUQImlGyftO9CDeQuGJEcsN8HZMuWnBRcM=;
         h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=bvbPsKl3Fy2ybJ3UjcuU2C/Nd0bvujeA2Xeo0G9/qvyq7+suLiKN+nx1nFNE9Feq9
-         rpb3JtSG5MuOPWvII6iQgtvTkprIJLsRK2mYRx2ptoaHYus+eDZ30JbL8oYvTafOnv
-         iKPdWRCI5G0IITtNJwocmoHVna/71N5/5E0Z+BRk=
-Received: from DFLE104.ent.ti.com (dfle104.ent.ti.com [10.64.6.25])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id 0628MOYp086031;
-        Thu, 2 Jul 2020 03:22:24 -0500
-Received: from DFLE110.ent.ti.com (10.64.6.31) by DFLE104.ent.ti.com
- (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
+        b=jsOM0ruAXjlbAIoaWqeHn0vYI7vPtnQO8ZZCByx9EXiaxrRsrj8HzV2HMQUjKnmmV
+         9H/U5Z+caJrgOy2eZ+FUlCVoqCEAq6vW1qJoV7Qp4AIv9DJK4fPfBU2D4kVCtrbpRf
+         TH1Sk9aAPIkJNMMRQfOI0SHfv7DweInWkfkeUi2s=
+Received: from DLEE109.ent.ti.com (dlee109.ent.ti.com [157.170.170.41])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 0628MlJN031070
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 2 Jul 2020 03:22:47 -0500
+Received: from DLEE102.ent.ti.com (157.170.170.32) by DLEE109.ent.ti.com
+ (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3; Thu, 2 Jul
- 2020 03:22:24 -0500
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE110.ent.ti.com
- (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
+ 2020 03:22:47 -0500
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE102.ent.ti.com
+ (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3 via
- Frontend Transport; Thu, 2 Jul 2020 03:22:24 -0500
+ Frontend Transport; Thu, 2 Jul 2020 03:22:47 -0500
 Received: from a0393678ub.india.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 0628LiYI006145;
-        Thu, 2 Jul 2020 03:22:19 -0500
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 0628LiYM006145;
+        Thu, 2 Jul 2020 03:22:41 -0500
 From:   Kishon Vijay Abraham I <kishon@ti.com>
 To:     Ohad Ben-Cohen <ohad@wizery.com>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
@@ -65,9 +66,9 @@ CC:     <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <linux-pci@vger.kernel.org>, <kvm@vger.kernel.org>,
         <virtualization@lists.linux-foundation.org>,
         <netdev@vger.kernel.org>
-Subject: [RFC PATCH 06/22] vhost: Introduce configfs entry for configuring VHOST
-Date:   Thu, 2 Jul 2020 13:51:27 +0530
-Message-ID: <20200702082143.25259-7-kishon@ti.com>
+Subject: [RFC PATCH 10/22] rpmsg: virtio_rpmsg_bus: Add Address Service Notification support
+Date:   Thu, 2 Jul 2020 13:51:31 +0530
+Message-ID: <20200702082143.25259-11-kishon@ti.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200702082143.25259-1-kishon@ti.com>
 References: <20200702082143.25259-1-kishon@ti.com>
@@ -79,519 +80,192 @@ Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Create a configfs entry for each entry populated in
-"struct vhost_device_id" in the VHOST driver and create a configfs entry
-for each VHOST device. This is used to link VHOST driver to VHOST device
-(by assigning deviceID and vendorID to the VHOST device) and register
-VHOST device, thereby letting VHOST client driver to be selected in the
-userspace.
+Add support to send address service notification message to the backend
+rpmsg device. This informs the backend rpmsg device about the address
+allocated to the channel that is created in response to the name service
+announce message from backend rpmsg device. This is in preparation to
+add backend rpmsg device using VHOST framework in Linux.
 
 Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
 ---
- drivers/vhost/Makefile    |   2 +-
- drivers/vhost/vhost.c     |  63 +++++++
- drivers/vhost/vhost_cfs.c | 354 ++++++++++++++++++++++++++++++++++++++
- include/linux/vhost.h     |  11 ++
- 4 files changed, 429 insertions(+), 1 deletion(-)
- create mode 100644 drivers/vhost/vhost_cfs.c
+ drivers/rpmsg/virtio_rpmsg_bus.c | 92 +++++++++++++++++++++++++++++---
+ 1 file changed, 85 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/vhost/Makefile b/drivers/vhost/Makefile
-index f3e1897cce85..6520c820c896 100644
---- a/drivers/vhost/Makefile
-+++ b/drivers/vhost/Makefile
-@@ -13,7 +13,7 @@ obj-$(CONFIG_VHOST_RING) += vringh.o
- obj-$(CONFIG_VHOST_VDPA) += vhost_vdpa.o
- vhost_vdpa-y := vdpa.o
+diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
+index 2d0d42084ac0..19d930c9fc2c 100644
+--- a/drivers/rpmsg/virtio_rpmsg_bus.c
++++ b/drivers/rpmsg/virtio_rpmsg_bus.c
+@@ -71,6 +71,7 @@ struct virtproc_info {
  
--obj-$(CONFIG_VHOST)	+= vhost.o
-+obj-$(CONFIG_VHOST)	+= vhost.o vhost_cfs.o
+ /* The feature bitmap for virtio rpmsg */
+ #define VIRTIO_RPMSG_F_NS	0 /* RP supports name service notifications */
++#define VIRTIO_RPMSG_F_AS	1 /* RP supports address service notifications */
  
- obj-$(CONFIG_VHOST_IOTLB) += vhost_iotlb.o
- vhost_iotlb-y := iotlb.o
-diff --git a/drivers/vhost/vhost.c b/drivers/vhost/vhost.c
-index 8a3ad4698393..539619208783 100644
---- a/drivers/vhost/vhost.c
-+++ b/drivers/vhost/vhost.c
-@@ -3091,6 +3091,64 @@ static struct bus_type vhost_bus_type = {
- 	.remove = vhost_dev_remove,
- };
+ /**
+  * struct rpmsg_hdr - common header for all rpmsg messages
+@@ -110,6 +111,26 @@ struct rpmsg_ns_msg {
+ 	u32 flags;
+ } __packed;
  
 +/**
-+ * vhost_remove_cfs() - Remove configfs directory for vhost driver
-+ * @driver: Vhost driver for which configfs directory has to be removed
++ * struct rpmsg_as_msg - dynamic address service announcement message
++ * @name: name of the created channel
++ * @dst: destination address to be used by the backend rpdev
++ * @src: source address of the backend rpdev (the one that sent name service
++ * announcement message)
++ * @flags: indicates whether service is created or destroyed
 + *
-+ * Remove configfs directory for vhost driver.
++ * This message is sent (by virtio_rpmsg_bus) when a new channel is created
++ * in response to name service announcement message by backend rpdev to create
++ * a new channel. This sends the allocated source address for the channel
++ * (destination address for the backend rpdev) to the backend rpdev.
 + */
-+static void vhost_remove_cfs(struct vhost_driver *driver)
-+{
-+	struct config_group *driver_group, *group;
-+	struct config_item *item, *tmp;
-+
-+	driver_group = driver->group;
-+
-+	list_for_each_entry_safe(item, tmp, &driver_group->cg_children,
-+				 ci_entry) {
-+		group = to_config_group(item);
-+		vhost_cfs_remove_driver_item(group);
-+	}
-+
-+	vhost_cfs_remove_driver_group(driver_group);
-+}
-+
-+/**
-+ * vhost_add_cfs() - Add configfs directory for vhost driver
-+ * @driver: Vhost driver for which configfs directory has to be added
-+ *
-+ * Add configfs directory for vhost driver.
-+ */
-+static int vhost_add_cfs(struct vhost_driver *driver)
-+{
-+	struct config_group *driver_group, *group;
-+	const struct vhost_device_id *ids;
-+	int ret, i;
-+
-+	driver_group = vhost_cfs_add_driver_group(driver->driver.name);
-+	if (IS_ERR(driver_group))
-+		return PTR_ERR(driver_group);
-+
-+	driver->group = driver_group;
-+
-+	ids = driver->id_table;
-+	for (i = 0; ids[i].device; i++) {
-+		group = vhost_cfs_add_driver_item(driver_group, ids[i].vendor,
-+						  ids[i].device);
-+		if (IS_ERR(group)) {
-+			ret = PTR_ERR(driver_group);
-+			goto err;
-+		}
-+	}
-+
-+	return 0;
-+
-+err:
-+	vhost_remove_cfs(driver);
-+
-+	return ret;
-+}
++struct rpmsg_as_msg {
++	char name[RPMSG_NAME_SIZE];
++	u32 dst;
++	u32 src;
++	u32 flags;
++} __packed;
 +
  /**
-  * vhost_register_driver() - Register a vhost driver
-  * @driver: Vhost driver that has to be registered
-@@ -3107,6 +3165,10 @@ int vhost_register_driver(struct vhost_driver *driver)
- 	if (ret)
- 		return ret;
- 
-+	ret = vhost_add_cfs(driver);
-+	if (ret)
-+		return ret;
-+
- 	return 0;
- }
- EXPORT_SYMBOL_GPL(vhost_register_driver);
-@@ -3119,6 +3181,7 @@ EXPORT_SYMBOL_GPL(vhost_register_driver);
-  */
- void vhost_unregister_driver(struct vhost_driver *driver)
- {
-+	vhost_remove_cfs(driver);
- 	driver_unregister(&driver->driver);
- }
- EXPORT_SYMBOL_GPL(vhost_unregister_driver);
-diff --git a/drivers/vhost/vhost_cfs.c b/drivers/vhost/vhost_cfs.c
-new file mode 100644
-index 000000000000..ae46e71968f1
---- /dev/null
-+++ b/drivers/vhost/vhost_cfs.c
-@@ -0,0 +1,354 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/**
-+ * configfs to configure VHOST
-+ *
-+ * Copyright (C) 2020 Texas Instruments
-+ * Author: Kishon Vijay Abraham I <kishon@ti.com>
-+ */
-+
-+#include <linux/configfs.h>
-+#include <linux/device.h>
-+#include <linux/module.h>
-+#include <linux/vhost.h>
-+#include <linux/slab.h>
-+
-+/* VHOST driver like net, scsi etc., */
-+static struct config_group *vhost_driver_group;
-+
-+/* VHOST device like PCIe EP, NTB etc., */
-+static struct config_group *vhost_device_group;
-+
-+struct vhost_driver_item {
-+	struct config_group group;
-+	u32 vendor;
-+	u32 device;
-+};
-+
-+struct vhost_driver_group {
-+	struct config_group group;
-+};
-+
-+struct vhost_device_item {
-+	struct config_group group;
-+	struct vhost_dev *vdev;
-+};
-+
-+static inline
-+struct vhost_driver_item *to_vhost_driver_item(struct config_item *item)
-+{
-+	return container_of(to_config_group(item), struct vhost_driver_item,
-+			    group);
-+}
-+
-+static inline
-+struct vhost_device_item *to_vhost_device_item(struct config_item *item)
-+{
-+	return container_of(to_config_group(item), struct vhost_device_item,
-+			    group);
-+}
-+
-+/**
-+ * vhost_cfs_device_link() - Create softlink of driver directory to device
-+ *   directory
-+ * @device_item: Represents configfs entry of vhost_dev
-+ * @driver_item: Represents configfs of a particular entry of
-+ *   vhost_device_id table in vhost driver
-+ *
-+ * Bind a vhost driver to vhost device in order to assign a particular
-+ * device ID and vendor ID
-+ */
-+static int vhost_cfs_device_link(struct config_item *device_item,
-+				 struct config_item *driver_item)
-+{
-+	struct vhost_driver_item *vdriver_item;
-+	struct vhost_device_item *vdevice_item;
-+	struct vhost_dev *vdev;
-+	int ret;
-+
-+	vdriver_item = to_vhost_driver_item(driver_item);
-+	vdevice_item = to_vhost_device_item(device_item);
-+
-+	vdev = vdevice_item->vdev;
-+	vdev->id.device = vdriver_item->device;
-+	vdev->id.vendor = vdriver_item->vendor;
-+
-+	ret = vhost_register_device(vdev);
-+	if (ret)
-+		return ret;
-+
-+	return 0;
-+}
-+
-+/**
-+ * vhost_cfs_device_unlink() - Delete softlink of driver directory from device
-+ *   directory
-+ * @device_item: Represents configfs entry of vhost_dev
-+ * @driver_item: Represents configfs of a particular entry of
-+ *   vhost_device_id table in vhost driver
-+ *
-+ * Un-bind vhost driver from vhost device.
-+ */
-+static void vhost_cfs_device_unlink(struct config_item *device_item,
-+				    struct config_item *driver_item)
-+{
-+	struct vhost_driver_item *vdriver_item;
-+	struct vhost_device_item *vdevice_item;
-+	struct vhost_dev *vdev;
-+
-+	vdriver_item = to_vhost_driver_item(driver_item);
-+	vdevice_item = to_vhost_device_item(device_item);
-+
-+	vdev = vdevice_item->vdev;
-+	vhost_unregister_device(vdev);
-+}
-+
-+static struct configfs_item_operations vhost_cfs_device_item_ops = {
-+	.allow_link	= vhost_cfs_device_link,
-+	.drop_link	= vhost_cfs_device_unlink,
-+};
-+
-+static const struct config_item_type vhost_cfs_device_item_type = {
-+	.ct_item_ops	= &vhost_cfs_device_item_ops,
-+	.ct_owner	= THIS_MODULE,
+  * enum rpmsg_ns_flags - dynamic name service announcement flags
+  *
+@@ -119,6 +140,19 @@ struct rpmsg_ns_msg {
+ enum rpmsg_ns_flags {
+ 	RPMSG_NS_CREATE		= 0,
+ 	RPMSG_NS_DESTROY	= 1,
++	RPMSG_AS_ANNOUNCE	= 2,
 +};
 +
 +/**
-+ * vhost_cfs_add_device_item() - Create configfs directory for new vhost_dev
-+ * @vdev: vhost device for which configfs directory has to be created
++ * enum rpmsg_as_flags - dynamic address service announcement flags
 + *
-+ * Create configfs directory for new vhost device. Drivers that create
-+ * vhost device can invoke this API if they require the vhost device to
-+ * be assigned a device ID and vendorID by the user.
++ * @RPMSG_AS_ASSIGN: address has been assigned to the newly created channel
++ * @RPMSG_AS_FREE: assigned address is freed from the channel and no longer can
++ * be used
 + */
-+struct config_group *vhost_cfs_add_device_item(struct vhost_dev *vdev)
-+{
-+	struct device *dev = &vdev->dev;
-+	struct vhost_device_item *vdevice_item;
-+	struct config_group *group;
-+	const char *name;
-+	int ret;
-+
-+	vdevice_item = kzalloc(sizeof(*vdevice_item), GFP_KERNEL);
-+	if (!vdevice_item)
-+		return ERR_PTR(-ENOMEM);
-+
-+	name = dev_name(dev->parent);
-+	group = &vdevice_item->group;
-+	config_group_init_type_name(group, name, &vhost_cfs_device_item_type);
-+
-+	ret = configfs_register_group(vhost_device_group, group);
-+	if (ret)
-+		return ERR_PTR(ret);
-+
-+	vdevice_item->vdev = vdev;
-+
-+	return group;
-+}
-+EXPORT_SYMBOL(vhost_cfs_add_device_item);
-+
-+/**
-+ * vhost_cfs_remove_device_item() - Remove configfs directory for the vhost_dev
-+ * @vdev: vhost device for which configfs directory has to be removed
-+ *
-+ * Remove configfs directory for the vhost device.
-+ */
-+void vhost_cfs_remove_device_item(struct config_group *group)
-+{
-+	struct vhost_device_item *vdevice_item;
-+
-+	if (!group)
-+		return;
-+
-+	vdevice_item = container_of(group, struct vhost_device_item, group);
-+	configfs_unregister_group(&vdevice_item->group);
-+	kfree(vdevice_item);
-+}
-+EXPORT_SYMBOL(vhost_cfs_remove_device_item);
-+
-+static const struct config_item_type vhost_driver_item_type = {
-+	.ct_owner	= THIS_MODULE,
-+};
-+
-+/**
-+ * vhost_cfs_add_driver_item() - Add configfs directory for an entry in
-+ *   vhost_device_id
-+ * @driver_group: configfs directory corresponding to the vhost driver
-+ * @vendor: vendor ID populated in vhost_device_id table by vhost driver
-+ * @device: device ID populated in vhost_device_id table by vhost driver
-+ *
-+ * Add configfs directory for each entry in vhost_device_id populated by
-+ * vhost driver. Store the device ID and vendor ID in a local data structure
-+ * and use it when user links this directory with a vhost device configfs
-+ * directory.
-+ */
-+struct config_group *
-+vhost_cfs_add_driver_item(struct config_group *driver_group, u32 vendor,
-+			  u32 device)
-+{
-+	struct vhost_driver_item *vdriver_item;
-+	struct config_group *group;
-+	char name[20];
-+	int ret;
-+
-+	vdriver_item = kzalloc(sizeof(*vdriver_item), GFP_KERNEL);
-+	if (!vdriver_item)
-+		return ERR_PTR(-ENOMEM);
-+
-+	vdriver_item->vendor = vendor;
-+	vdriver_item->device = device;
-+
-+	snprintf(name, sizeof(name), "%08x:%08x", vendor, device);
-+	group = &vdriver_item->group;
-+
-+	config_group_init_type_name(group, name, &vhost_driver_item_type);
-+	ret = configfs_register_group(driver_group, group);
-+	if (ret)
-+		return ERR_PTR(ret);
-+
-+	return group;
-+}
-+EXPORT_SYMBOL(vhost_cfs_add_driver_item);
-+
-+/**
-+ * vhost_cfs_remove_driver_item() - Remove configfs directory corresponding
-+ *   to an entry in vhost_device_id
-+ * @group: Configfs group corresponding to an entry in vhost_device_id
-+ *
-+ * Remove configfs directory corresponding to an entry in vhost_device_id
-+ */
-+void vhost_cfs_remove_driver_item(struct config_group *group)
-+{
-+	struct vhost_driver_item *vdriver_item;
-+
-+	if (!group)
-+		return;
-+
-+	vdriver_item = container_of(group, struct vhost_driver_item, group);
-+	configfs_unregister_group(&vdriver_item->group);
-+	kfree(vdriver_item);
-+}
-+EXPORT_SYMBOL(vhost_cfs_remove_driver_item);
-+
-+static const struct config_item_type vhost_driver_group_type = {
-+	.ct_owner	= THIS_MODULE,
-+};
-+
-+/**
-+ * vhost_cfs_add_driver_group() - Add configfs directory for vhost driver
-+ * @name: Name of the vhost driver as populated in driver structure
-+ *
-+ * Add configfs directory for vhost driver.
-+ */
-+struct config_group *vhost_cfs_add_driver_group(const char *name)
-+{
-+	struct vhost_driver_group *vdriver_group;
-+	struct config_group *group;
-+
-+	vdriver_group = kzalloc(sizeof(*vdriver_group), GFP_KERNEL);
-+	if (!vdriver_group)
-+		return ERR_PTR(-ENOMEM);
-+
-+	group = &vdriver_group->group;
-+
-+	config_group_init_type_name(group, name, &vhost_driver_group_type);
-+	configfs_register_group(vhost_driver_group, group);
-+
-+	return group;
-+}
-+EXPORT_SYMBOL(vhost_cfs_add_driver_group);
-+
-+/**
-+ * vhost_cfs_remove_driver_group() - Remove configfs directory for vhost driver
-+ * @group: Configfs group corresponding to the vhost driver
-+ *
-+ * Remove configfs directory for vhost driver.
-+ */
-+void vhost_cfs_remove_driver_group(struct config_group *group)
-+{
-+	if (IS_ERR_OR_NULL(group))
-+		return;
-+
-+	configfs_unregister_default_group(group);
-+}
-+EXPORT_SYMBOL(vhost_cfs_remove_driver_group);
-+
-+static const struct config_item_type vhost_driver_type = {
-+	.ct_owner	= THIS_MODULE,
-+};
-+
-+static const struct config_item_type vhost_device_type = {
-+	.ct_owner	= THIS_MODULE,
-+};
-+
-+static const struct config_item_type vhost_type = {
-+	.ct_owner	= THIS_MODULE,
-+};
-+
-+static struct configfs_subsystem vhost_cfs_subsys = {
-+	.su_group = {
-+		.cg_item = {
-+			.ci_namebuf = "vhost",
-+			.ci_type = &vhost_type,
-+		},
-+	},
-+	.su_mutex = __MUTEX_INITIALIZER(vhost_cfs_subsys.su_mutex),
-+};
-+
-+static int __init vhost_cfs_init(void)
-+{
-+	int ret;
-+	struct config_group *root = &vhost_cfs_subsys.su_group;
-+
-+	config_group_init(root);
-+
-+	ret = configfs_register_subsystem(&vhost_cfs_subsys);
-+	if (ret) {
-+		pr_err("Error %d while registering subsystem %s\n",
-+		       ret, root->cg_item.ci_namebuf);
-+		goto err;
-+	}
-+
-+	vhost_driver_group =
-+		configfs_register_default_group(root, "vhost-client",
-+						&vhost_driver_type);
-+	if (IS_ERR(vhost_driver_group)) {
-+		ret = PTR_ERR(vhost_driver_group);
-+		pr_err("Error %d while registering channel group\n",
-+		       ret);
-+		goto err_vhost_driver_group;
-+	}
-+
-+	vhost_device_group =
-+		configfs_register_default_group(root, "vhost-transport",
-+						&vhost_device_type);
-+	if (IS_ERR(vhost_device_group)) {
-+		ret = PTR_ERR(vhost_device_group);
-+		pr_err("Error %d while registering virtproc group\n",
-+		       ret);
-+		goto err_vhost_device_group;
-+	}
-+
-+	return 0;
-+
-+err_vhost_device_group:
-+	configfs_unregister_default_group(vhost_driver_group);
-+
-+err_vhost_driver_group:
-+	configfs_unregister_subsystem(&vhost_cfs_subsys);
-+
-+err:
-+	return ret;
-+}
-+module_init(vhost_cfs_init);
-+
-+static void __exit vhost_cfs_exit(void)
-+{
-+	configfs_unregister_default_group(vhost_device_group);
-+	configfs_unregister_default_group(vhost_driver_group);
-+	configfs_unregister_subsystem(&vhost_cfs_subsys);
-+}
-+module_exit(vhost_cfs_exit);
-+
-+MODULE_DESCRIPTION("PCI VHOST CONFIGFS");
-+MODULE_AUTHOR("Kishon Vijay Abraham I <kishon@ti.com>");
-+MODULE_LICENSE("GPL v2");
-diff --git a/include/linux/vhost.h b/include/linux/vhost.h
-index 8efb9829c1b1..be9341ffd266 100644
---- a/include/linux/vhost.h
-+++ b/include/linux/vhost.h
-@@ -2,6 +2,7 @@
- #ifndef _VHOST_H
- #define _VHOST_H
- 
-+#include <linux/configfs.h>
- #include <linux/eventfd.h>
- #include <linux/mm.h>
- #include <linux/mutex.h>
-@@ -181,6 +182,7 @@ struct vhost_config_ops {
- struct vhost_driver {
- 	struct device_driver driver;
- 	struct vhost_device_id *id_table;
-+	struct config_group *group;
- 	int (*probe)(struct vhost_dev *dev);
- 	int (*remove)(struct vhost_dev *dev);
++enum rpmsg_as_flags {
++	RPMSG_AS_ASSIGN		= 1,
++	RPMSG_AS_FREE		= 2,
  };
-@@ -233,6 +235,15 @@ void vhost_unregister_driver(struct vhost_driver *driver);
- int vhost_register_device(struct vhost_dev *vdev);
- void vhost_unregister_device(struct vhost_dev *vdev);
  
-+struct config_group *vhost_cfs_add_driver_group(const char *name);
-+void vhost_cfs_remove_driver_group(struct config_group *group);
-+struct config_group *
-+vhost_cfs_add_driver_item(struct config_group *driver_group, u32 vendor,
-+			  u32 device);
-+void vhost_cfs_remove_driver_item(struct config_group *group);
-+struct config_group *vhost_cfs_add_device_item(struct vhost_dev *vdev);
-+void vhost_cfs_remove_device_item(struct config_group *group);
+ /**
+@@ -164,6 +198,9 @@ struct virtio_rpmsg_channel {
+ /* Address 53 is reserved for advertising remote services */
+ #define RPMSG_NS_ADDR			(53)
+ 
++/* Address 54 is reserved for advertising address services */
++#define RPMSG_AS_ADDR			(54)
 +
- int vhost_create_vqs(struct vhost_dev *vdev, unsigned int nvqs,
- 		     unsigned int num_bufs, struct vhost_virtqueue *vqs[],
- 		     vhost_vq_callback_t *callbacks[],
+ static void virtio_rpmsg_destroy_ept(struct rpmsg_endpoint *ept);
+ static int virtio_rpmsg_send(struct rpmsg_endpoint *ept, void *data, int len);
+ static int virtio_rpmsg_sendto(struct rpmsg_endpoint *ept, void *data, int len,
+@@ -329,9 +366,11 @@ static int virtio_rpmsg_announce_create(struct rpmsg_device *rpdev)
+ 	struct device *dev = &rpdev->dev;
+ 	int err = 0;
+ 
++	if (!rpdev->ept || !rpdev->announce)
++		return err;
++
+ 	/* need to tell remote processor's name service about this channel ? */
+-	if (rpdev->announce && rpdev->ept &&
+-	    virtio_has_feature(vrp->vdev, VIRTIO_RPMSG_F_NS)) {
++	if (virtio_has_feature(vrp->vdev, VIRTIO_RPMSG_F_NS)) {
+ 		struct rpmsg_ns_msg nsm;
+ 
+ 		strncpy(nsm.name, rpdev->id.name, RPMSG_NAME_SIZE);
+@@ -343,6 +382,23 @@ static int virtio_rpmsg_announce_create(struct rpmsg_device *rpdev)
+ 			dev_err(dev, "failed to announce service %d\n", err);
+ 	}
+ 
++	/*
++	 * need to tell remote processor's address service about the address allocated
++	 * to this channel
++	 */
++	if (virtio_has_feature(vrp->vdev, VIRTIO_RPMSG_F_AS)) {
++		struct rpmsg_as_msg asmsg;
++
++		strncpy(asmsg.name, rpdev->id.name, RPMSG_NAME_SIZE);
++		asmsg.dst = rpdev->src;
++		asmsg.src = rpdev->dst;
++		asmsg.flags = RPMSG_AS_ASSIGN;
++
++		err = rpmsg_sendto(rpdev->ept, &asmsg, sizeof(asmsg), RPMSG_AS_ADDR);
++		if (err)
++			dev_err(dev, "failed to announce service %d\n", err);
++	}
++
+ 	return err;
+ }
+ 
+@@ -353,9 +409,28 @@ static int virtio_rpmsg_announce_destroy(struct rpmsg_device *rpdev)
+ 	struct device *dev = &rpdev->dev;
+ 	int err = 0;
+ 
++	if (!rpdev->ept || !rpdev->announce)
++		return err;
++
++	/*
++	 * need to tell remote processor's address service that we're freeing
++	 * the address allocated to this channel
++	 */
++	if (virtio_has_feature(vrp->vdev, VIRTIO_RPMSG_F_AS)) {
++		struct rpmsg_as_msg asmsg;
++
++		strncpy(asmsg.name, rpdev->id.name, RPMSG_NAME_SIZE);
++		asmsg.dst = rpdev->src;
++		asmsg.src = rpdev->dst;
++		asmsg.flags = RPMSG_AS_FREE;
++
++		err = rpmsg_sendto(rpdev->ept, &asmsg, sizeof(asmsg), RPMSG_AS_ADDR);
++		if (err)
++			dev_err(dev, "failed to announce service %d\n", err);
++	}
++
+ 	/* tell remote processor's name service we're removing this channel */
+-	if (rpdev->announce && rpdev->ept &&
+-	    virtio_has_feature(vrp->vdev, VIRTIO_RPMSG_F_NS)) {
++	if (virtio_has_feature(vrp->vdev, VIRTIO_RPMSG_F_NS)) {
+ 		struct rpmsg_ns_msg nsm;
+ 
+ 		strncpy(nsm.name, rpdev->id.name, RPMSG_NAME_SIZE);
+@@ -390,7 +465,8 @@ static void virtio_rpmsg_release_device(struct device *dev)
+  * channels.
+  */
+ static struct rpmsg_device *rpmsg_create_channel(struct virtproc_info *vrp,
+-						 struct rpmsg_channel_info *chinfo)
++						 struct rpmsg_channel_info *chinfo,
++						 bool announce)
+ {
+ 	struct virtio_rpmsg_channel *vch;
+ 	struct rpmsg_device *rpdev;
+@@ -424,7 +500,8 @@ static struct rpmsg_device *rpmsg_create_channel(struct virtproc_info *vrp,
+ 	 * rpmsg server channels has predefined local address (for now),
+ 	 * and their existence needs to be announced remotely
+ 	 */
+-	rpdev->announce = rpdev->src != RPMSG_ADDR_ANY;
++	if (rpdev->src != RPMSG_ADDR_ANY || announce)
++		rpdev->announce = true;
+ 
+ 	strncpy(rpdev->id.name, chinfo->name, RPMSG_NAME_SIZE);
+ 
+@@ -873,7 +950,7 @@ static int rpmsg_ns_cb(struct rpmsg_device *rpdev, void *data, int len,
+ 		if (ret)
+ 			dev_err(dev, "rpmsg_destroy_channel failed: %d\n", ret);
+ 	} else {
+-		newch = rpmsg_create_channel(vrp, &chinfo);
++		newch = rpmsg_create_channel(vrp, &chinfo, msg->flags & RPMSG_AS_ANNOUNCE);
+ 		if (!newch)
+ 			dev_err(dev, "rpmsg_create_channel failed\n");
+ 	}
+@@ -1042,6 +1119,7 @@ static struct virtio_device_id id_table[] = {
+ 
+ static unsigned int features[] = {
+ 	VIRTIO_RPMSG_F_NS,
++	VIRTIO_RPMSG_F_AS,
+ };
+ 
+ static struct virtio_driver virtio_ipc_driver = {
 -- 
 2.17.1
 
