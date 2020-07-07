@@ -7,67 +7,67 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D02F0C433E1
-	for <linux-remoteproc@archiver.kernel.org>; Tue,  7 Jul 2020 21:31:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DC72C433E1
+	for <linux-remoteproc@archiver.kernel.org>; Tue,  7 Jul 2020 21:31:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AA9C52075B
-	for <linux-remoteproc@archiver.kernel.org>; Tue,  7 Jul 2020 21:31:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6B5A42075B
+	for <linux-remoteproc@archiver.kernel.org>; Tue,  7 Jul 2020 21:31:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jic4pcGQ"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ey7CtPdA"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729331AbgGGVbZ (ORCPT
+        id S1729355AbgGGVb3 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 7 Jul 2020 17:31:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33538 "EHLO
+        Tue, 7 Jul 2020 17:31:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33582 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729321AbgGGVbX (ORCPT
+        with ESMTP id S1729351AbgGGVb2 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 7 Jul 2020 17:31:23 -0400
-Received: from mail-pg1-x542.google.com (mail-pg1-x542.google.com [IPv6:2607:f8b0:4864:20::542])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 976EAC061755
-        for <linux-remoteproc@vger.kernel.org>; Tue,  7 Jul 2020 14:31:23 -0700 (PDT)
-Received: by mail-pg1-x542.google.com with SMTP id e18so20599820pgn.7
-        for <linux-remoteproc@vger.kernel.org>; Tue, 07 Jul 2020 14:31:23 -0700 (PDT)
+        Tue, 7 Jul 2020 17:31:28 -0400
+Received: from mail-pj1-x1043.google.com (mail-pj1-x1043.google.com [IPv6:2607:f8b0:4864:20::1043])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3CA23C061755
+        for <linux-remoteproc@vger.kernel.org>; Tue,  7 Jul 2020 14:31:28 -0700 (PDT)
+Received: by mail-pj1-x1043.google.com with SMTP id t15so227502pjq.5
+        for <linux-remoteproc@vger.kernel.org>; Tue, 07 Jul 2020 14:31:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=h12JhHvSO+bmX99ezv3yaLnOJmMzfHeXrbHb3WDJUWc=;
-        b=jic4pcGQoE5bbkcXOsIMdiKLSg+ok5snqmEkp5W4cedeKRPsSjWdR8qXyBYYMrKUF0
-         GLsR17gvZ6kXQCC0uXBiAtGOhoarH5KfTlv/VetDPfX5sRclATaqgwTDRKqMdXoUhtvm
-         mKDrD4/RJ0tTb8iUM4CvT7eh+5Ow7lvNFnioN78naLDRKOFpqSDhse86yKVoR/h2G2JZ
-         w1SQ1wm9HBVLvIeUDuRVjPkHwGmr7FTXvs5ki2MMdV8dGNPRIJv2aK2JsupuUCv16Fc2
-         /+ZcrQybwx6s/JU5QDnlzcmTtewaZoZuab1BP/DuJM6lJtAv+uLOUy7zdBLvGUDgWVXd
-         c+Lg==
+        bh=vHRO/0KjGNxIcLdu4Nprxq06C5XRM7DNFyiZUQDkaSQ=;
+        b=ey7CtPdAXBygQ5ue7SuxHQa8Oatdp7d/GiJ6UliPUKy1Vxnu6d7REZvKf42X4XJrc+
+         gY9p8DUab2i02whZGWnlgg7cj4kHgZ8572tSvVo7eqlourW1R7v6EL3PcWDYQKgR1WsV
+         PvV3BudNIq71bKku0JFVw6kjNUGKaPlzT3x5F5M6xzYnU8fOV1EXn36ARjOxE9dC2uQH
+         sCxFKe0sfIs03HaokbWOaXYGsIJDDGoRVZgufD3TwVZQNJxzIMdprZmjndWJsKqx7wyg
+         aDqN8xfSO50Kml6C3gTqgdIBucz3N9b4iQB8NeNk14+i+PTtMBYpaKkY0k5yoclOjuRM
+         jDCA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=h12JhHvSO+bmX99ezv3yaLnOJmMzfHeXrbHb3WDJUWc=;
-        b=R05X7sX08YFS3aTg1+HnDROWmwDGUlkU/oanqn1aYa8SDqZ0JA7XM4xn20govffU5M
-         FnwAdu0tdm1cOYTZszCthau0zi0dYMKX0VIOXpztPWJwJ1Jj1QIalXgOPfGvEn2AtohC
-         rH5HnTrW70WB9PHPzxCWLYkLgUkrK99OutcTvROgMfJPI9uMK8PUsV1FpiVxinXTmss2
-         hwJ1bWLE27KjEpySdXq+8pCjI97VTTxd8cB0EVwWOGfA5HqRGdsFNvZapL4+iylNIuMB
-         Fg8/0grv5g9/qZu6zfYY5KWGZEvSm5tsZ5CgwEuKkDtIDaz/jz5vVr7YSSFx9DjGBV1/
-         Sj1g==
-X-Gm-Message-State: AOAM533RYyroeL37ypFxD/ALOpDhFnkwUhnCTGG+1MqANkUky8KpSGoX
-        BItL+33l43LJ8z3Glka6Q/fzbg==
-X-Google-Smtp-Source: ABdhPJxgyaQh4mTEIOmvaKPyRLDgsJvLs8cVkBxus9NiBgbjD9jwfunvRpeoL0T5pYTI5kAYPoc2ow==
-X-Received: by 2002:a62:1d0b:: with SMTP id d11mr53080485pfd.1.1594157483189;
-        Tue, 07 Jul 2020 14:31:23 -0700 (PDT)
+        bh=vHRO/0KjGNxIcLdu4Nprxq06C5XRM7DNFyiZUQDkaSQ=;
+        b=ef2vBe07EHSBlcjF/E27/HRMdH+iq4Awj9plIv0/Cqi12GhrTDFjeWAoNi/vC/dVKk
+         78Mc7tmh3glgKolSqZbo7hyiZmStACnDSi9b9UC5gruZoYgOrQCfgqcAaE6i1IwvUUD3
+         wJRvnML1aOJ1pa8cGrb+FZ7soBbpNrQEg/O4KVf0C8aFO0JYv6EzB6s4ZMcq3sRy4GGl
+         EiEXrNWphBhTzfDkLezfJn+LI0dkbooRHBfhmupehOmVrYoCA4TK0jiWKGw5H75xPkxY
+         idjEUlo1XlNWbSvgCJY3KlT/b+WG4mhN8OukehuJAyyIm0ymoKSenQBb7JfklBWaLaSI
+         ZT6Q==
+X-Gm-Message-State: AOAM531mmkqXglSPTeGpK0q5U6SZh0UaN1k/IZ972EiDYG8Qhv/tJKU2
+        0MBMS2lb2aeki5LVwsbJQsyEtw==
+X-Google-Smtp-Source: ABdhPJwYd2Jg2XN/sDXvOil97+lxOhcMuirGZInRZuWanbK+jPdSPTrtzm7fd4Zhai9XJwwp1UAigA==
+X-Received: by 2002:a17:902:507:: with SMTP id 7mr46010520plf.186.1594157487779;
+        Tue, 07 Jul 2020 14:31:27 -0700 (PDT)
 Received: from xps15.cg.shawcable.net (S0106002369de4dac.cg.shawcable.net. [68.147.8.254])
-        by smtp.gmail.com with ESMTPSA id o128sm23560832pfg.127.2020.07.07.14.31.22
+        by smtp.gmail.com with ESMTPSA id o128sm23560832pfg.127.2020.07.07.14.31.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 Jul 2020 14:31:22 -0700 (PDT)
+        Tue, 07 Jul 2020 14:31:27 -0700 (PDT)
 From:   Mathieu Poirier <mathieu.poirier@linaro.org>
 To:     ohad@wizery.com, bjorn.andersson@linaro.org, loic.pallardy@st.com,
         arnaud.pouliquen@st.com, mcoquelin.stm32@gmail.com,
         alexandre.torgue@st.com
 Cc:     linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-stm32@st-md-mailman.stormreply.com
-Subject: [PATCH v5 07/11] remoteproc: Make function rproc_resource_cleanup() public
-Date:   Tue,  7 Jul 2020 15:31:08 -0600
-Message-Id: <20200707213112.928383-8-mathieu.poirier@linaro.org>
+Subject: [PATCH v5 11/11] remoteproc: stm32: Update M4 state in stm32_rproc_stop()
+Date:   Tue,  7 Jul 2020 15:31:12 -0600
+Message-Id: <20200707213112.928383-12-mathieu.poirier@linaro.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200707213112.928383-1-mathieu.poirier@linaro.org>
 References: <20200707213112.928383-1-mathieu.poirier@linaro.org>
@@ -78,49 +78,43 @@ Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Make function rproc_resource_cleanup() public so that it can be
-used by platform drivers when allocating resources to be used by
-a detached remote processor.
+Update the co-processor state in function stm32_rproc_stop() so that
+it can be used in scenarios where the remoteproc core is attaching
+to the M4.
+
+Mainly based on the work published by Arnaud Pouliquen [1].
+
+[1]. https://patchwork.kernel.org/project/linux-remoteproc/list/?series=239877
 
 Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+Reviewed-by: Arnaud Pouliquen <arnaud.pouliquen@st.com>
 ---
- drivers/remoteproc/remoteproc_core.c | 3 ++-
- include/linux/remoteproc.h           | 1 +
- 2 files changed, 3 insertions(+), 1 deletion(-)
+ drivers/remoteproc/stm32_rproc.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index 099c76ab198f..6e0f985e9c9a 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -1271,7 +1271,7 @@ static void rproc_coredump_cleanup(struct rproc *rproc)
-  * This function will free all resources acquired for @rproc, and it
-  * is called whenever @rproc either shuts down or fails to boot.
-  */
--static void rproc_resource_cleanup(struct rproc *rproc)
-+void rproc_resource_cleanup(struct rproc *rproc)
- {
- 	struct rproc_mem_entry *entry, *tmp;
- 	struct rproc_debug_trace *trace, *ttmp;
-@@ -1315,6 +1315,7 @@ static void rproc_resource_cleanup(struct rproc *rproc)
+diff --git a/drivers/remoteproc/stm32_rproc.c b/drivers/remoteproc/stm32_rproc.c
+index 7145cd49616e..f4da42fc0eeb 100644
+--- a/drivers/remoteproc/stm32_rproc.c
++++ b/drivers/remoteproc/stm32_rproc.c
+@@ -504,6 +504,18 @@ static int stm32_rproc_stop(struct rproc *rproc)
+ 		}
+ 	}
  
- 	rproc_coredump_cleanup(rproc);
++	/* update coprocessor state to OFF if available */
++	if (ddata->m4_state.map) {
++		err = regmap_update_bits(ddata->m4_state.map,
++					 ddata->m4_state.reg,
++					 ddata->m4_state.mask,
++					 M4_STATE_OFF);
++		if (err) {
++			dev_err(&rproc->dev, "failed to set copro state\n");
++			return err;
++		}
++	}
++
+ 	return 0;
  }
-+EXPORT_SYMBOL(rproc_resource_cleanup);
  
- static int rproc_start(struct rproc *rproc, const struct firmware *fw)
- {
-diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-index cf5e31556780..7c0567029f7c 100644
---- a/include/linux/remoteproc.h
-+++ b/include/linux/remoteproc.h
-@@ -610,6 +610,7 @@ void rproc_put(struct rproc *rproc);
- int rproc_add(struct rproc *rproc);
- int rproc_del(struct rproc *rproc);
- void rproc_free(struct rproc *rproc);
-+void rproc_resource_cleanup(struct rproc *rproc);
- 
- struct rproc *devm_rproc_alloc(struct device *dev, const char *name,
- 			       const struct rproc_ops *ops,
 -- 
 2.25.1
 
