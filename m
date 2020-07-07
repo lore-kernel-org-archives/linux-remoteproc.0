@@ -2,72 +2,72 @@ Return-Path: <SRS0=mmP+=AS=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C429C433E0
-	for <linux-remoteproc@archiver.kernel.org>; Tue,  7 Jul 2020 21:00:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BA66C433E0
+	for <linux-remoteproc@archiver.kernel.org>; Tue,  7 Jul 2020 21:31:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5F47020720
-	for <linux-remoteproc@archiver.kernel.org>; Tue,  7 Jul 2020 21:00:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EF9FD2075B
+	for <linux-remoteproc@archiver.kernel.org>; Tue,  7 Jul 2020 21:31:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="skhoYdka"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Uar/WVI5"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729184AbgGGVAq (ORCPT
+        id S1728517AbgGGVbP (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 7 Jul 2020 17:00:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56932 "EHLO
+        Tue, 7 Jul 2020 17:31:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33490 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728995AbgGGVAS (ORCPT
+        with ESMTP id S1728372AbgGGVbP (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 7 Jul 2020 17:00:18 -0400
-Received: from mail-pf1-x441.google.com (mail-pf1-x441.google.com [IPv6:2607:f8b0:4864:20::441])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CE730C061755
-        for <linux-remoteproc@vger.kernel.org>; Tue,  7 Jul 2020 14:00:17 -0700 (PDT)
-Received: by mail-pf1-x441.google.com with SMTP id u5so18952516pfn.7
-        for <linux-remoteproc@vger.kernel.org>; Tue, 07 Jul 2020 14:00:17 -0700 (PDT)
+        Tue, 7 Jul 2020 17:31:15 -0400
+Received: from mail-pj1-x1042.google.com (mail-pj1-x1042.google.com [IPv6:2607:f8b0:4864:20::1042])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2025DC061755
+        for <linux-remoteproc@vger.kernel.org>; Tue,  7 Jul 2020 14:31:15 -0700 (PDT)
+Received: by mail-pj1-x1042.google.com with SMTP id b92so228572pjc.4
+        for <linux-remoteproc@vger.kernel.org>; Tue, 07 Jul 2020 14:31:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=T4hkCqVCeOMZgcGJmCmeYT1tYbutzJigRMD38BY9+lY=;
-        b=skhoYdkaprvrrYvb7cLlxtvHSZIP1JXvNY5H59zSulwBZznsxe5PwG8/tb0EdKgMXu
-         R94Beq1AyHUthM/hUUGgdj0vn7WRz4eaX4yJI9s1/5YbSlJiwUE+a2QFdR9vpsUp9ux8
-         3Lbtf80MKp8IgIpbKsCnhLgJiX3gcjczj0XLmhxVFZPZJgMFVakumZg79o/Fr9i8bbxP
-         j43R8pBYDaGi8I7Mt4IxOcJX2X5XdUAsHZNL1BocEAB5z8K92AuwJC9GKQg5iKCPELJA
-         O3mET5jlADa1Ny58wEWUehDhyskXRwJfPf0fwq6kO5C4XjTzSSMfPrCecT6suDJ3hTcv
-         aomg==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=2x+L8FUv9bI+crByz6/Ejtn3DTdscAGUJ17rPzAIyTM=;
+        b=Uar/WVI5Uzn3sX7rG1DAuVylL5XgU7OFLcnSATfNdujh9l6dnFFSiueycjbskupllK
+         celMxqY20h+WdblDasjQ1F38BszhI2do0gEHIlktty4KSV0cOnRKxhIon51VNKznyIec
+         dfjSilPFBTh9IwRVFg7h+U0KJJNmXLwLR8y6O5q5t8M7D1nNA8n9EojU8azxptnVypny
+         fv4+hH3JNyOLDCE7T4FTrp4aEYsq9aKCeO71waT+yZ8tQKUjsnBdfCq7T1oxa8kdcdHx
+         +bophkIFyqn/1lEPOQBj6LzZix1MN8GBkXBH9dLEVXOIzFJ6CyTGtpVRVVpiQVnFTjMX
+         BWhQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=T4hkCqVCeOMZgcGJmCmeYT1tYbutzJigRMD38BY9+lY=;
-        b=lx6FU9tVC+lXOcqpfi5IxLIKRJYPg8BturfOsE7g2ILOUOVPjRDW1mGXbBO6y7VnZg
-         hgr8twBqJzc/wVnJtTIIyEEyuLIPNpVMGkFSi3aiWMN5fq6tG1s73cYh0mZC8wYogGgV
-         h6Qhof4wWkSQFHB+114KZ+8QUrKa8HEnD2txFJL8xSyj2LFgbj1Hl0969sBG1A2v6LBb
-         nMmEb/t0iw8d0NmpJEjngrbGZHnyQMgdQZTYLE319NRKvmAkEWaDEiagC5d2dd/CfrR0
-         UCVhBa438FjFe4j/PTXvqx7BcA3ieU8GSV9z4yFq/yQdzjaoC+9Biyw7bQZ1JCf7k1+5
-         BsSA==
-X-Gm-Message-State: AOAM532CfkmU4JDGiT6kMSPCYwzYzyx5B5f9hlcNGaneLZ5LrHKZUtJ7
-        +yoCPzYuTEslP/gRNXG5kCZ/IA==
-X-Google-Smtp-Source: ABdhPJxZWe4+LqvbhLX+FR1pDBbdohuGLXTvW36qakI87t3n/y2FTLbHFO0wsREYVkEZkji1GFPqHA==
-X-Received: by 2002:a63:5004:: with SMTP id e4mr24268596pgb.208.1594155617393;
-        Tue, 07 Jul 2020 14:00:17 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=2x+L8FUv9bI+crByz6/Ejtn3DTdscAGUJ17rPzAIyTM=;
+        b=YJNdDvemEX26n5MlQGmwYPEBF2Wu5w+Z4K6OSAjeXYrQuanujZseiCwLfAESr/U3PB
+         tkoCEVKOqBEBhGyCzTV/Y8c8KROE39vJioP7tahEVcboA9dIZ/rfS2umj8RExbCqG3KD
+         FpSS/aB6IKdDVfBA7RKZdPeW59rumpC4b6R2Zc95Pe1UVUTsx9IZ1PCv3MPvA5cfOmso
+         kinEM94mjRwsv8VrNu7Clh7o29EQ7eOz8mQG2B8c9CjimAohw2HHCP2MWl3hSkOcFUgX
+         3f15GOGOHbWBvzGpd7FrmvoxMGQCUsvM7dcuds2Bge9J3eeDAG976I6RKmxt7uWncr78
+         VglA==
+X-Gm-Message-State: AOAM532g6GhMOM+YqFlewp/w8wQwUvzNOVqIw0eye61G/Gd7CyigxQTi
+        bFT7OanI7DKfVTDan0J63ORcrQ==
+X-Google-Smtp-Source: ABdhPJxj36Ux6T1EDbfBl8b9cg/WZBuy2kEOSrmZQ9rkYWPCm3sFJTgo+Y9ZkjXG8JajBiUvgf4rxw==
+X-Received: by 2002:a17:902:a410:: with SMTP id p16mr46001431plq.283.1594157474673;
+        Tue, 07 Jul 2020 14:31:14 -0700 (PDT)
 Received: from xps15.cg.shawcable.net (S0106002369de4dac.cg.shawcable.net. [68.147.8.254])
-        by smtp.gmail.com with ESMTPSA id b21sm13738061pfb.45.2020.07.07.14.00.16
+        by smtp.gmail.com with ESMTPSA id o128sm23560832pfg.127.2020.07.07.14.31.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 Jul 2020 14:00:17 -0700 (PDT)
+        Tue, 07 Jul 2020 14:31:14 -0700 (PDT)
 From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-To:     ohad@wizery.com, bjorn.andersson@linaro.org
-Cc:     linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v5 1/9] remoteproc: Add new RPROC_DETACHED state
-Date:   Tue,  7 Jul 2020 15:00:06 -0600
-Message-Id: <20200707210014.927691-2-mathieu.poirier@linaro.org>
+To:     ohad@wizery.com, bjorn.andersson@linaro.org, loic.pallardy@st.com,
+        arnaud.pouliquen@st.com, mcoquelin.stm32@gmail.com,
+        alexandre.torgue@st.com
+Cc:     linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com
+Subject: [PATCH v5 00/11] remoteproc: stm32: Add support for attaching to M4
+Date:   Tue,  7 Jul 2020 15:31:01 -0600
+Message-Id: <20200707213112.928383-1-mathieu.poirier@linaro.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200707210014.927691-1-mathieu.poirier@linaro.org>
-References: <20200707210014.927691-1-mathieu.poirier@linaro.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-remoteproc-owner@vger.kernel.org
@@ -75,52 +75,41 @@ Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Add a new RPROC_DETACHED state to take into account scenarios
-where the remoteproc core needs to attach to a remote processor
-that is booted by another entity.
+This set applies on top of [1] and refactors the STM32 platform code in
+order to attach to the M4 remote processor when it has been started by the
+boot loader.
 
-Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
----
- drivers/remoteproc/remoteproc_sysfs.c | 1 +
- include/linux/remoteproc.h            | 5 ++++-
- 2 files changed, 5 insertions(+), 1 deletion(-)
+New to V5:
+1) Added Bjorn's reviewed-by to patch 06.
+2) Removed Loic's reviewed-by from patch 08, it has changed too much.
 
-diff --git a/drivers/remoteproc/remoteproc_sysfs.c b/drivers/remoteproc/remoteproc_sysfs.c
-index 52b871327b55..264759713934 100644
---- a/drivers/remoteproc/remoteproc_sysfs.c
-+++ b/drivers/remoteproc/remoteproc_sysfs.c
-@@ -72,6 +72,7 @@ static const char * const rproc_state_string[] = {
- 	[RPROC_RUNNING]		= "running",
- 	[RPROC_CRASHED]		= "crashed",
- 	[RPROC_DELETED]		= "deleted",
-+	[RPROC_DETACHED]	= "detached",
- 	[RPROC_LAST]		= "invalid",
- };
- 
-diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-index e7b7bab8b235..21182ad2d059 100644
---- a/include/linux/remoteproc.h
-+++ b/include/linux/remoteproc.h
-@@ -400,6 +400,8 @@ struct rproc_ops {
-  * @RPROC_RUNNING:	device is up and running
-  * @RPROC_CRASHED:	device has crashed; need to start recovery
-  * @RPROC_DELETED:	device is deleted
-+ * @RPROC_DETACHED:	device has been booted by another entity and waiting
-+ *			for the core to attach to it
-  * @RPROC_LAST:		just keep this one at the end
-  *
-  * Please note that the values of these states are used as indices
-@@ -414,7 +416,8 @@ enum rproc_state {
- 	RPROC_RUNNING	= 2,
- 	RPROC_CRASHED	= 3,
- 	RPROC_DELETED	= 4,
--	RPROC_LAST	= 5,
-+	RPROC_DETACHED	= 5,
-+	RPROC_LAST	= 6,
- };
- 
- /**
+Patches that need to be reviewed: 7, 8, 9 and 10.
+
+Tested on ST's mp157c development board.
+
+Thanks,
+Mathieu
+
+[1]. https://patchwork.kernel.org/project/linux-remoteproc/list/?series=314523
+
+Mathieu Poirier (11):
+  remoteproc: stm32: Decouple rproc from memory translation
+  remoteproc: stm32: Request IRQ with platform device
+  remoteproc: stm32: Decouple rproc from DT parsing
+  remoteproc: stm32: Remove memory translation from DT parsing
+  remoteproc: stm32: Parse syscon that will manage M4 synchronisation
+  remoteproc: stm32: Properly set co-processor state when attaching
+  remoteproc: Make function rproc_resource_cleanup() public
+  remoteproc: stm32: Split function stm32_rproc_parse_fw()
+  remoteproc: stm32: Properly handle the resource table when attaching
+  remoteproc: stm32: Introduce new attach() operation
+  remoteproc: stm32: Update M4 state in stm32_rproc_stop()
+
+ drivers/remoteproc/remoteproc_core.c |   3 +-
+ drivers/remoteproc/stm32_rproc.c     | 214 ++++++++++++++++++++++++---
+ include/linux/remoteproc.h           |   1 +
+ 3 files changed, 198 insertions(+), 20 deletions(-)
+
 -- 
 2.25.1
 
