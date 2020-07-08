@@ -5,63 +5,62 @@ X-Spam-Level:
 X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8ED8AC433E0
-	for <linux-remoteproc@archiver.kernel.org>; Wed,  8 Jul 2020 18:51:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 516F2C433E0
+	for <linux-remoteproc@archiver.kernel.org>; Wed,  8 Jul 2020 18:53:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 60B1E206E2
-	for <linux-remoteproc@archiver.kernel.org>; Wed,  8 Jul 2020 18:51:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3847320739
+	for <linux-remoteproc@archiver.kernel.org>; Wed,  8 Jul 2020 18:53:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="taJns0Jz"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="JK5i/SLo"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726072AbgGHSvT (ORCPT
+        id S1726183AbgGHSxk (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 8 Jul 2020 14:51:19 -0400
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:41878 "EHLO
+        Wed, 8 Jul 2020 14:53:40 -0400
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:42162 "EHLO
         lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726044AbgGHSvS (ORCPT
+        with ESMTP id S1726150AbgGHSxj (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 8 Jul 2020 14:51:18 -0400
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 068Ip801090673;
-        Wed, 8 Jul 2020 13:51:08 -0500
+        Wed, 8 Jul 2020 14:53:39 -0400
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 068Ira9O091203;
+        Wed, 8 Jul 2020 13:53:36 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1594234268;
-        bh=YsG/BJdDPnseIyIEYc1rtPIY9uAYMOtMWxEry2DdXs4=;
+        s=ti-com-17Q1; t=1594234416;
+        bh=nTomrXYkwRqq3jOOoD6vejCRSDO6/MCjKo32/i01cXo=;
         h=Subject:To:References:From:Date:In-Reply-To;
-        b=taJns0JzuccXHyzAK2SR9Ej7WBGaI1MX7nCOofGBZ7Ds9E/oksaVPkyqbaSB1iQtD
-         7GFt68NfPxF0R3YQXmxyy5pS58S651hIziKr6Uaim7ezh4cSgHgQ2APaY+AV5sXtMC
-         b3IjFq+mqtc3bdqDmuR/bfbpgvZlhpPLc4wpF428=
-Received: from DLEE105.ent.ti.com (dlee105.ent.ti.com [157.170.170.35])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 068Ip8fR066885
+        b=JK5i/SLoK5L69kSJpfRuE0tQwlUGgFvGwuO+jFTao6A5W7nxYKLWX+oEnek9yNHJd
+         7qRX60T51Vh2f5hY4OYiTi5TKy+siLQS8sRvUAnBvrt2him5fM6fhvYIaVW+Ht8qFW
+         h1WkezRfh7TGVVvpPkShxlHiYYNKyi5QFZq6SnDA=
+Received: from DFLE113.ent.ti.com (dfle113.ent.ti.com [10.64.6.34])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 068IraBB051835
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 8 Jul 2020 13:51:08 -0500
-Received: from DLEE111.ent.ti.com (157.170.170.22) by DLEE105.ent.ti.com
- (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
+        Wed, 8 Jul 2020 13:53:36 -0500
+Received: from DFLE103.ent.ti.com (10.64.6.24) by DFLE113.ent.ti.com
+ (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3; Wed, 8 Jul
- 2020 13:51:08 -0500
-Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE111.ent.ti.com
- (157.170.170.22) with Microsoft SMTP Server (version=TLS1_2,
+ 2020 13:53:36 -0500
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE103.ent.ti.com
+ (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3 via
- Frontend Transport; Wed, 8 Jul 2020 13:51:08 -0500
+ Frontend Transport; Wed, 8 Jul 2020 13:53:36 -0500
 Received: from [10.250.34.57] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id 068Ip7MY049138;
-        Wed, 8 Jul 2020 13:51:07 -0500
-Subject: Re: [PATCH] Replace HTTP links with HTTPS ones: hardware spinlock
- core
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 068IraWt111801;
+        Wed, 8 Jul 2020 13:53:36 -0500
+Subject: Re: [PATCH] Replace HTTP links with HTTPS ones: REMOTE PROCESSOR
+ (REMOTEPROC) SUBSYSTEM
 To:     "Alexander A. Klimov" <grandmaster@al2klimov.de>,
         <ohad@wizery.com>, <bjorn.andersson@linaro.org>,
-        <baolin.wang7@gmail.com>, <linux-remoteproc@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-omap@vger.kernel.org>
-References: <20200708033634.62197-1-grandmaster@al2klimov.de>
+        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20200708153822.15031-1-grandmaster@al2klimov.de>
 From:   Suman Anna <s-anna@ti.com>
-Message-ID: <d5b35655-ed7e-7a7c-c8ad-6fb4376af4fd@ti.com>
-Date:   Wed, 8 Jul 2020 13:51:07 -0500
+Message-ID: <f41ac867-e653-940d-374a-41e27f2697c3@ti.com>
+Date:   Wed, 8 Jul 2020 13:53:36 -0500
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.8.0
 MIME-Version: 1.0
-In-Reply-To: <20200708033634.62197-1-grandmaster@al2klimov.de>
+In-Reply-To: <20200708153822.15031-1-grandmaster@al2klimov.de>
 Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -71,7 +70,7 @@ Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On 7/7/20 10:36 PM, Alexander A. Klimov wrote:
+On 7/8/20 10:38 AM, Alexander A. Klimov wrote:
 > Rationale:
 > Reduces attack surface on kernel devs opening the links for MITM
 > as HTTPS traffic is much harder to manipulate.
@@ -82,17 +81,23 @@ On 7/7/20 10:36 PM, Alexander A. Klimov wrote:
 >      For each line:
 >        If doesn't contain `\bxmlns\b`:
 >          For each link, `\bhttp://[^# \t\r\n]*(?:\w|/)`:
->            If both the HTTP and HTTPS versions
->            return 200 OK and serve the same content:
->              Replace HTTP with HTTPS.
+> 	  If neither `\bgnu\.org/license`, nor `\bmozilla\.org/MPL\b`:
+>              If both the HTTP and HTTPS versions
+>              return 200 OK and serve the same content:
+>                Replace HTTP with HTTPS.
 > 
 > Signed-off-by: Alexander A. Klimov <grandmaster@al2klimov.de>
 
+Suggest a revision of patch title to
+"remoteproc: Replace HTTP links with HTTPS ones"
+
+With that,
 Acked-by: Suman Anna <s-anna@ti.com>
 
 > ---
 >   Continuing my work started at 93431e0607e5.
 >   See also: git log --oneline '--author=Alexander A. Klimov <grandmaster@al2klimov.de>' v5.7..master
+>   (Actually letting a shell for loop submit all this stuff for me.)
 > 
 >   If there are any URLs to be removed completely or at least not HTTPSified:
 >   Just clearly say so and I'll *undo my change*.
@@ -102,66 +107,51 @@ Acked-by: Suman Anna <s-anna@ti.com>
 >   See: https://lkml.org/lkml/2020/6/26/837
 > 
 >   If you apply the patch, please let me know.
->   Rationale:
->   I'd like not to submit patches much faster than you maintainers apply them.
 > 
->   drivers/hwspinlock/hwspinlock_core.c     | 2 +-
->   drivers/hwspinlock/hwspinlock_internal.h | 2 +-
->   drivers/hwspinlock/omap_hwspinlock.c     | 2 +-
->   include/linux/hwspinlock.h               | 2 +-
->   4 files changed, 4 insertions(+), 4 deletions(-)
 > 
-> diff --git a/drivers/hwspinlock/hwspinlock_core.c b/drivers/hwspinlock/hwspinlock_core.c
-> index fd5f5c5a5244..09568b9246e1 100644
-> --- a/drivers/hwspinlock/hwspinlock_core.c
-> +++ b/drivers/hwspinlock/hwspinlock_core.c
-> @@ -2,7 +2,7 @@
+>   drivers/remoteproc/da8xx_remoteproc.c    | 2 +-
+>   drivers/remoteproc/keystone_remoteproc.c | 2 +-
+>   drivers/remoteproc/omap_remoteproc.c     | 2 +-
+>   3 files changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/remoteproc/da8xx_remoteproc.c b/drivers/remoteproc/da8xx_remoteproc.c
+> index 98e0be9476a4..9a4938c3025f 100644
+> --- a/drivers/remoteproc/da8xx_remoteproc.c
+> +++ b/drivers/remoteproc/da8xx_remoteproc.c
+> @@ -27,7 +27,7 @@ MODULE_PARM_DESC(da8xx_fw_name,
+>   
 >   /*
->    * Hardware spinlock framework
->    *
-> - * Copyright (C) 2010 Texas Instruments Incorporated - http://www.ti.com
-> + * Copyright (C) 2010 Texas Instruments Incorporated - https://www.ti.com
->    *
->    * Contact: Ohad Ben-Cohen <ohad@wizery.com>
+>    * OMAP-L138 Technical References:
+> - * http://www.ti.com/product/omap-l138
+> + * https://www.ti.com/product/omap-l138
 >    */
-> diff --git a/drivers/hwspinlock/hwspinlock_internal.h b/drivers/hwspinlock/hwspinlock_internal.h
-> index 29892767bb7a..318e257bb4fb 100644
-> --- a/drivers/hwspinlock/hwspinlock_internal.h
-> +++ b/drivers/hwspinlock/hwspinlock_internal.h
+>   #define SYSCFG_CHIPSIG0 BIT(0)
+>   #define SYSCFG_CHIPSIG1 BIT(1)
+> diff --git a/drivers/remoteproc/keystone_remoteproc.c b/drivers/remoteproc/keystone_remoteproc.c
+> index cd266163a65f..252ac6e2f653 100644
+> --- a/drivers/remoteproc/keystone_remoteproc.c
+> +++ b/drivers/remoteproc/keystone_remoteproc.c
 > @@ -2,7 +2,7 @@
 >   /*
->    * Hardware spinlocks internal header
+>    * TI Keystone DSP remoteproc driver
 >    *
-> - * Copyright (C) 2010 Texas Instruments Incorporated - http://www.ti.com
-> + * Copyright (C) 2010 Texas Instruments Incorporated - https://www.ti.com
->    *
->    * Contact: Ohad Ben-Cohen <ohad@wizery.com>
+> - * Copyright (C) 2015-2017 Texas Instruments Incorporated - http://www.ti.com/
+> + * Copyright (C) 2015-2017 Texas Instruments Incorporated - https://www.ti.com/
 >    */
-> diff --git a/drivers/hwspinlock/omap_hwspinlock.c b/drivers/hwspinlock/omap_hwspinlock.c
-> index 3b05560456ea..d4491588a49b 100644
-> --- a/drivers/hwspinlock/omap_hwspinlock.c
-> +++ b/drivers/hwspinlock/omap_hwspinlock.c
+>   
+>   #include <linux/module.h>
+> diff --git a/drivers/remoteproc/omap_remoteproc.c b/drivers/remoteproc/omap_remoteproc.c
+> index 6955fab0a78b..d191610454d9 100644
+> --- a/drivers/remoteproc/omap_remoteproc.c
+> +++ b/drivers/remoteproc/omap_remoteproc.c
 > @@ -2,7 +2,7 @@
 >   /*
->    * OMAP hardware spinlock driver
+>    * OMAP Remote Processor driver
 >    *
-> - * Copyright (C) 2010-2015 Texas Instruments Incorporated - http://www.ti.com
-> + * Copyright (C) 2010-2015 Texas Instruments Incorporated - https://www.ti.com
+> - * Copyright (C) 2011-2020 Texas Instruments Incorporated - http://www.ti.com/
+> + * Copyright (C) 2011-2020 Texas Instruments Incorporated - https://www.ti.com/
+>    * Copyright (C) 2011 Google, Inc.
 >    *
->    * Contact: Simon Que <sque@ti.com>
->    *          Hari Kanigeri <h-kanigeri2@ti.com>
-> diff --git a/include/linux/hwspinlock.h b/include/linux/hwspinlock.h
-> index bfe7c1f1ac6d..690810acea7f 100644
-> --- a/include/linux/hwspinlock.h
-> +++ b/include/linux/hwspinlock.h
-> @@ -2,7 +2,7 @@
->   /*
->    * Hardware spinlock public header
->    *
-> - * Copyright (C) 2010 Texas Instruments Incorporated - http://www.ti.com
-> + * Copyright (C) 2010 Texas Instruments Incorporated - https://www.ti.com
->    *
->    * Contact: Ohad Ben-Cohen <ohad@wizery.com>
->    */
+>    * Ohad Ben-Cohen <ohad@wizery.com>
 > 
 
