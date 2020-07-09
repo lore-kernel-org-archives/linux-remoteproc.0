@@ -7,49 +7,49 @@ X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A35D6C433E0
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  9 Jul 2020 16:14:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C26C9C433E0
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  9 Jul 2020 16:15:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 55B5B2078B
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  9 Jul 2020 16:14:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9A92F2078B
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  9 Jul 2020 16:15:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=st.com header.i=@st.com header.b="SvDoD9IT"
+	dkim=pass (2048-bit key) header.d=st.com header.i=@st.com header.b="HkDX4rmZ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726890AbgGIQOH (ORCPT
+        id S1726890AbgGIQPN (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 9 Jul 2020 12:14:07 -0400
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:9032 "EHLO
+        Thu, 9 Jul 2020 12:15:13 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:43314 "EHLO
         mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726339AbgGIQOG (ORCPT
+        by vger.kernel.org with ESMTP id S1726357AbgGIQPN (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 9 Jul 2020 12:14:06 -0400
-Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 069G4Qqt005774;
-        Thu, 9 Jul 2020 18:14:02 +0200
+        Thu, 9 Jul 2020 12:15:13 -0400
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 069GEBCo008176;
+        Thu, 9 Jul 2020 18:15:09 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=subject : to : cc :
  references : from : message-id : date : mime-version : in-reply-to :
  content-type : content-transfer-encoding; s=STMicroelectronics;
- bh=0xSGilh0ludhB1OFskA9wbIbxe83I0mwt+UNuHXHO00=;
- b=SvDoD9ITrIN3zZ9X8LVOpreeTFPreuxGxy2czt+r/VRRl3Buz313opOpxMDEj5ZToxA6
- N78OysxGqRJTt5z3GAecT2ulNC8bUhZYKTMpSpu2d3H2rqPAoU3CDjxZ4SktP+KlBAyo
- 318p1g5Hk719gLU6MZEvv4zNhlHwDWiiszBpkBNWRQW6AJxD9yl/APGua8reAjCkTY0P
- I5U9ShytQsJLJsO+cKB+bFsVLxYI/fsYK0h8ZUuuHT83QFGCJba6+Jn+St2ruZQOw3IJ
- EeBBQabvul5CHKbizEplcv/sDvvgg/MUwwIV2MWqQBIxX3MsDr9kUozJToiLcot0oQPS EA== 
+ bh=PvTNGDZ0be+vJCmUKWvf45L2Y7bPIKD11ulb+yNAmMw=;
+ b=HkDX4rmZzFLeDS9Ggayis9LyciC0OW03baW3gF5qjMtrOT4U0bqf6/u/W1ud5Wwvq7JG
+ +rFdtIPTQ7f5htdykixP5By/O04+z+yykIS9rUfWoULOtF5VOPCP6TaD70IdVSdPcE7i
+ 4LlmZP9WnaVa69MDQ8ex9IJ6E8ziHunHEG0S6mvglFWYe+wranzmacpnRyeFZT8R50jV
+ m5zPgkCkJEg5wqz5YmysER7M2qS3YY3yR6rrkjcm7KewWFUH1Rxgj0jb8t7xBMnRE9An
+ iPEPZWYpNfOCo/T1ylKo/F1Hr6Y39zq7YkoGeegNypcZA4DpT8jky1dRtLZUjYhbAJxr gw== 
 Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 325k405ubb-1
+        by mx07-00178001.pphosted.com with ESMTP id 325k3wwudt-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 09 Jul 2020 18:14:02 +0200
+        Thu, 09 Jul 2020 18:15:09 +0200
 Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 53AB5100039;
-        Thu,  9 Jul 2020 18:14:01 +0200 (CEST)
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 1E33410002A;
+        Thu,  9 Jul 2020 18:15:09 +0200 (CEST)
 Received: from Webmail-eu.st.com (sfhdag3node1.st.com [10.75.127.7])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 44B802CA1C6;
-        Thu,  9 Jul 2020 18:14:01 +0200 (CEST)
-Received: from lmecxl0889.tpe.st.com (10.75.127.49) by SFHDAG3NODE1.st.com
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 127852CA1C7;
+        Thu,  9 Jul 2020 18:15:09 +0200 (CEST)
+Received: from lmecxl0889.tpe.st.com (10.75.127.50) by SFHDAG3NODE1.st.com
  (10.75.127.7) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 9 Jul
- 2020 18:14:00 +0200
-Subject: Re: [PATCH v5 06/11] remoteproc: stm32: Properly set co-processor
- state when attaching
+ 2020 18:15:07 +0200
+Subject: Re: [PATCH v5 08/11] remoteproc: stm32: Split function
+ stm32_rproc_parse_fw()
 To:     Mathieu Poirier <mathieu.poirier@linaro.org>,
         "ohad@wizery.com" <ohad@wizery.com>,
         "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>,
@@ -61,19 +61,19 @@ CC:     "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
         "linux-stm32@st-md-mailman.stormreply.com" 
         <linux-stm32@st-md-mailman.stormreply.com>
 References: <20200707213112.928383-1-mathieu.poirier@linaro.org>
- <20200707213112.928383-7-mathieu.poirier@linaro.org>
+ <20200707213112.928383-9-mathieu.poirier@linaro.org>
 From:   Arnaud POULIQUEN <arnaud.pouliquen@st.com>
-Message-ID: <12c083ce-1a49-e17c-8048-eb1b3f314836@st.com>
-Date:   Thu, 9 Jul 2020 18:13:59 +0200
+Message-ID: <c28c34be-6650-6a07-d7ed-9d6c5e673b0c@st.com>
+Date:   Thu, 9 Jul 2020 18:15:07 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.8.0
 MIME-Version: 1.0
-In-Reply-To: <20200707213112.928383-7-mathieu.poirier@linaro.org>
+In-Reply-To: <20200707213112.928383-9-mathieu.poirier@linaro.org>
 Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.75.127.49]
-X-ClientProxiedBy: SFHDAG8NODE3.st.com (10.75.127.24) To SFHDAG3NODE1.st.com
+X-Originating-IP: [10.75.127.50]
+X-ClientProxiedBy: SFHDAG2NODE1.st.com (10.75.127.4) To SFHDAG3NODE1.st.com
  (10.75.127.7)
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.235,18.0.687
  definitions=2020-07-09_08:2020-07-09,2020-07-09 signatures=0
@@ -82,86 +82,86 @@ Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi Mathieu,
+
 
 On 7/7/20 11:31 PM, Mathieu Poirier wrote:
-> Introduce the required mechanic to set the state of the M4 in order
-> to properly deal with scenarios where the co-processor has been
-> started by another entity.
+> Split function stm32_rproc_parse_fw() in two parts, the first one
+> to parse the memory regions and the second one to load the
+> resource table.  That way parsing of the memory regions can be
+> re-used when attaching to the remote processor.
 > 
 > Mainly based on the work published by Arnaud Pouliquen [1].
 > 
 > [1]. https://patchwork.kernel.org/project/linux-remoteproc/list/?series=239877
 > 
 > Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-> Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 > ---
->  drivers/remoteproc/stm32_rproc.c | 32 ++++++++++++++++++++++++++++++++
->  1 file changed, 32 insertions(+)
+>  drivers/remoteproc/stm32_rproc.c | 23 ++++++++++++++++++++---
+>  1 file changed, 20 insertions(+), 3 deletions(-)
 > 
 > diff --git a/drivers/remoteproc/stm32_rproc.c b/drivers/remoteproc/stm32_rproc.c
-> index 961a53f67ec5..cbeb5ceb15c5 100644
+> index cbeb5ceb15c5..9ab58fae252f 100644
 > --- a/drivers/remoteproc/stm32_rproc.c
 > +++ b/drivers/remoteproc/stm32_rproc.c
-> @@ -39,6 +39,13 @@
->  #define STM32_MBX_VQ1_ID	1
->  #define STM32_MBX_SHUTDOWN	"shutdown"
->  
-> +#define M4_STATE_OFF		0
-> +#define M4_STATE_INI		1
-> +#define M4_STATE_CRUN		2
-> +#define M4_STATE_CSTOP		3
-> +#define M4_STATE_STANDBY	4
-> +#define M4_STATE_CRASH		5
-> +
->  struct stm32_syscon {
->  	struct regmap *map;
->  	u32 reg;
-> @@ -636,12 +643,30 @@ static int stm32_rproc_parse_dt(struct platform_device *pdev,
+> @@ -213,7 +213,7 @@ static int stm32_rproc_elf_load_rsc_table(struct rproc *rproc,
 >  	return 0;
 >  }
 >  
-> +static int stm32_rproc_get_m4_status(struct stm32_rproc *ddata,
-> +				     unsigned int *state)
-> +{
-> +	/* See stm32_rproc_parse_dt() */
-> +	if (!ddata->m4_state.map) {
-> +		/*
-> +		 * We couldn't get the coprocessor's state, assume
-> +		 * it is not running.
-> +		 */
-> +		state = M4_STATE_OFF;
-> +		return 0;
-> +	}
-> +
-> +	return regmap_read(ddata->m4_state.map, ddata->m4_state.reg, state);
+> -static int stm32_rproc_parse_fw(struct rproc *rproc, const struct firmware *fw)
+> +static int stm32_rproc_parse_memory_regions(struct rproc *rproc)
+>  {
+>  	struct device *dev = rproc->dev.parent;
+>  	struct device_node *np = dev->of_node;
+> @@ -266,6 +266,16 @@ static int stm32_rproc_parse_fw(struct rproc *rproc, const struct firmware *fw)
+>  		index++;
+>  	}
+>  
+> +	return 0;
 > +}
 > +
+> +static int stm32_rproc_parse_fw(struct rproc *rproc, const struct firmware *fw)
+> +{
+> +	int ret = stm32_rproc_parse_memory_regions(rproc);
 > +
-nitpicking:  multiple blank lines here
-
->  static int stm32_rproc_probe(struct platform_device *pdev)
->  {
->  	struct device *dev = &pdev->dev;
->  	struct stm32_rproc *ddata;
->  	struct device_node *np = dev->of_node;
->  	struct rproc *rproc;
-> +	unsigned int state;
->  	int ret;
+> +	if (ret)
+> +		return ret;
+> +
+>  	return stm32_rproc_elf_load_rsc_table(rproc, fw);
+>  }
 >  
->  	ret = dma_coerce_mask_and_coherent(dev, DMA_BIT_MASK(32));
-> @@ -664,6 +689,13 @@ static int stm32_rproc_probe(struct platform_device *pdev)
+> @@ -693,15 +703,20 @@ static int stm32_rproc_probe(struct platform_device *pdev)
 >  	if (ret)
 >  		goto free_rproc;
 >  
-> +	ret = stm32_rproc_get_m4_status(ddata, &state);
-> +	if (ret)
-> +		goto free_rproc;
+> -	if (state == M4_STATE_CRUN)
+> +	if (state == M4_STATE_CRUN) {
+>  		rproc->state = RPROC_DETACHED;
+>  
+> +		ret = stm32_rproc_parse_memory_regions(rproc);
+> +		if (ret)
+> +			goto free_resources;
+> +	}
 > +
-> +	if (state == M4_STATE_CRUN)
-> +		rproc->state = RPROC_DETACHED;
-> +
+Here you do more than the split, you add the memory registration in the probe
+i think updating the commit title and message should be sufficient
+
 >  	rproc->has_iommu = false;
 >  	ddata->workqueue = create_workqueue(dev_name(dev));
 >  	if (!ddata->workqueue) {
+>  		dev_err(dev, "cannot create workqueue\n");
+>  		ret = -ENOMEM;
+> -		goto free_rproc;
+> +		goto free_resources;
+>  	}
+>  
+>  	platform_set_drvdata(pdev, rproc);
+> @@ -720,6 +735,8 @@ static int stm32_rproc_probe(struct platform_device *pdev)
+>  	stm32_rproc_free_mbox(rproc);
+>  free_wkq:
+>  	destroy_workqueue(ddata->workqueue);
+> +free_resources:
+> +	rproc_resource_cleanup(rproc);
+>  free_rproc:
+>  	if (device_may_wakeup(dev)) {
+>  		dev_pm_clear_wake_irq(dev);
 > 
