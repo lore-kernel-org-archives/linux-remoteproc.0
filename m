@@ -7,55 +7,56 @@ X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A05F1C433DF
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  9 Jul 2020 20:32:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4093C433DF
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  9 Jul 2020 20:32:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7DD9720720
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  9 Jul 2020 20:32:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AD3B220720
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  9 Jul 2020 20:32:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="BkOorkfv"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="u/NVIzGy"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726183AbgGIUcQ (ORCPT
+        id S1726222AbgGIUcM (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 9 Jul 2020 16:32:16 -0400
-Received: from mail29.static.mailgun.info ([104.130.122.29]:51377 "EHLO
-        mail29.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726729AbgGIUcO (ORCPT
+        Thu, 9 Jul 2020 16:32:12 -0400
+Received: from m43-7.mailgun.net ([69.72.43.7]:58980 "EHLO m43-7.mailgun.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726289AbgGIUcL (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 9 Jul 2020 16:32:14 -0400
+        Thu, 9 Jul 2020 16:32:11 -0400
 DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1594326734; h=References: In-Reply-To: Message-Id: Date:
+ s=smtp; t=1594326730; h=References: In-Reply-To: Message-Id: Date:
  Subject: Cc: To: From: Sender;
- bh=1rpXmEWvCJyqKMfiP9F5IHO6YCUM60TQpaCQg27rMa4=; b=BkOorkfvEwKNPvrBaNf6UKpJf23zixPDHyCLHUnwqtymfoOu0eUAPIVXGAsqhncuyt/6deDY
- +vGkuUF5jmF7v4CuQRUIAAwAZhBxEU0nRLxCN5xwQaL7nz9KZjzLrsc2+iFm2ObMeldLo/EB
- Dwy2rK79/FPmkF5ZMzw+WQlcDPg=
-X-Mailgun-Sending-Ip: 104.130.122.29
+ bh=y9AFQoYip2XeCXFE+gS+geLi4ZnXO6Utr/vSQ5yoJVs=; b=u/NVIzGykgKKrnaamZwMXzOSSAQrZx8KgZlEyevfGGG4tYTyKrvjXGx++Dtbq/HqA9KgWaU4
+ YvVZzfdJXgm43WOSZoqnIIvGRNNiIb0L5oZQ1PWkb6hvJu62YtbwE+LWOJRgsPu+fd3sOnkr
+ Zx/0g52+KFOePLn8Y1QK6phijNc=
+X-Mailgun-Sending-Ip: 69.72.43.7
 X-Mailgun-Sid: WyI4ZWZiZiIsICJsaW51eC1yZW1vdGVwcm9jQHZnZXIua2VybmVsLm9yZyIsICJiZTllNGEiXQ==
 Received: from smtp.codeaurora.org
  (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
- smtp-out-n10.prod.us-east-1.postgun.com with SMTP id
- 5f077eca78e7807b5e5defaf (version=TLS1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Thu, 09 Jul 2020 20:32:10
+ smtp-out-n01.prod.us-east-1.postgun.com with SMTP id
+ 5f077ec871d7ca1d3a52763c (version=TLS1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Thu, 09 Jul 2020 20:32:08
  GMT
 Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 43B83C43391; Thu,  9 Jul 2020 20:32:09 +0000 (UTC)
+        id 35785C433C8; Thu,  9 Jul 2020 20:32:08 +0000 (UTC)
 Received: from rishabhb-linux.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
         (Authenticated sender: rishabhb)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 61D2DC43395;
-        Thu,  9 Jul 2020 20:32:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 61D2DC43395
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 4ECADC433C6;
+        Thu,  9 Jul 2020 20:32:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4ECADC433C6
 Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=rishabhb@codeaurora.org
 From:   Rishabh Bhatnagar <rishabhb@codeaurora.org>
 To:     linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     bjorn.andersson@linaro.org, mathieu.poirier@linaro.org,
         tsoni@codeaurora.org, psodagud@codeaurora.org,
-        sidgup@codeaurora.org, Rishabh Bhatnagar <rishabhb@codeaurora.org>
-Subject: [PATCH v7 4/4] remoteproc: Add coredump debugfs entry
-Date:   Thu,  9 Jul 2020 13:31:56 -0700
-Message-Id: <1594326716-15474-5-git-send-email-rishabhb@codeaurora.org>
+        sidgup@codeaurora.org, Sibi Sankar <sibis@codeaurora.org>,
+        Rishabh Bhatnagar <rishabhb@codeaurora.org>
+Subject: [PATCH v1 2/4] remoteproc: qcom_q6v5_mss: Replace mask based tracking with size
+Date:   Thu,  9 Jul 2020 13:31:54 -0700
+Message-Id: <1594326716-15474-3-git-send-email-rishabhb@codeaurora.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1594326716-15474-1-git-send-email-rishabhb@codeaurora.org>
 References: <1594326716-15474-1-git-send-email-rishabhb@codeaurora.org>
@@ -64,130 +65,81 @@ Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Add coredump debugfs entry to configure the type of dump that will
-be collected during recovery. User can select between default or
-inline coredump functionality. Also coredump collection can be
-disabled through this interface.
-This functionality can be configured differently for different
-remote processors.
+From: Sibi Sankar <sibis@codeaurora.org>
 
+In order to land inline coredump support for mss, the dump_segment
+function would need to support granularities less than the segment
+size. This is achieved by replacing mask based tracking with size.
+
+Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
 Signed-off-by: Rishabh Bhatnagar <rishabhb@codeaurora.org>
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-Tested-by: Sibi Sankar <sibis@codeaurora.org>
-Reviewed-by: Sibi Sankar <sibis@codeaurora.org>
 ---
- drivers/remoteproc/remoteproc_debugfs.c | 90 +++++++++++++++++++++++++++++++++
- 1 file changed, 90 insertions(+)
+ drivers/remoteproc/qcom_q6v5_mss.c | 15 +++++++--------
+ 1 file changed, 7 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/remoteproc/remoteproc_debugfs.c b/drivers/remoteproc/remoteproc_debugfs.c
-index 732770e..16a4196 100644
---- a/drivers/remoteproc/remoteproc_debugfs.c
-+++ b/drivers/remoteproc/remoteproc_debugfs.c
-@@ -28,6 +28,94 @@
- static struct dentry *rproc_dbg;
+diff --git a/drivers/remoteproc/qcom_q6v5_mss.c b/drivers/remoteproc/qcom_q6v5_mss.c
+index feb70283b..c6ce032 100644
+--- a/drivers/remoteproc/qcom_q6v5_mss.c
++++ b/drivers/remoteproc/qcom_q6v5_mss.c
+@@ -181,8 +181,8 @@ struct q6v5 {
+ 	bool running;
  
- /*
-+ * A coredump-configuration-to-string lookup table, for exposing a
-+ * human readable configuration via debugfs. Always keep in sync with
-+ * enum rproc_coredump_mechanism
-+ */
-+static const char * const rproc_coredump_str[] = {
-+	[RPROC_COREDUMP_DEFAULT]	= "default",
-+	[RPROC_COREDUMP_INLINE]		= "inline",
-+	[RPROC_COREDUMP_DISABLED]	= "disabled",
-+};
-+
-+/* Expose the current coredump configuration via debugfs */
-+static ssize_t rproc_coredump_read(struct file *filp, char __user *userbuf,
-+				   size_t count, loff_t *ppos)
-+{
-+	struct rproc *rproc = filp->private_data;
-+	char buf[20];
-+	int len;
-+
-+	len = scnprintf(buf, sizeof(buf), "%s\n",
-+			rproc_coredump_str[rproc->dump_conf]);
-+
-+	return simple_read_from_buffer(userbuf, count, ppos, buf, len);
-+}
-+
-+/*
-+ * By writing to the 'coredump' debugfs entry, we control the behavior of the
-+ * coredump mechanism dynamically. The default value of this entry is "default".
-+ *
-+ * The 'coredump' debugfs entry supports these commands:
-+ *
-+ * default:	This is the default coredump mechanism. When the remoteproc
-+ *		crashes the entire coredump will be copied to a separate buffer
-+ *		and exposed to userspace.
-+ *
-+ * inline:	The coredump will not be copied to a separate buffer and the
-+ *		recovery process will have to wait until data is read by
-+ *		userspace. But this avoid usage of extra memory.
-+ *
-+ * disabled:	This will disable coredump. Recovery will proceed without
-+ *		collecting any dump.
-+ */
-+static ssize_t rproc_coredump_write(struct file *filp,
-+				    const char __user *user_buf, size_t count,
-+				    loff_t *ppos)
-+{
-+	struct rproc *rproc = filp->private_data;
-+	int ret, err = 0;
-+	char buf[20];
-+
-+	if (count > sizeof(buf))
-+		return -EINVAL;
-+
-+	ret = copy_from_user(buf, user_buf, count);
-+	if (ret)
-+		return -EFAULT;
-+
-+	/* remove end of line */
-+	if (buf[count - 1] == '\n')
-+		buf[count - 1] = '\0';
-+
-+	if (rproc->state == RPROC_CRASHED) {
-+		dev_err(&rproc->dev, "can't change coredump configuration\n");
-+		err = -EBUSY;
-+		goto out;
-+	}
-+
-+	if (!strncmp(buf, "disable", count)) {
-+		rproc->dump_conf = RPROC_COREDUMP_DISABLED;
-+	} else if (!strncmp(buf, "inline", count)) {
-+		rproc->dump_conf = RPROC_COREDUMP_INLINE;
-+	} else if (!strncmp(buf, "default", count)) {
-+		rproc->dump_conf = RPROC_COREDUMP_DEFAULT;
-+	} else {
-+		dev_err(&rproc->dev, "Invalid coredump configuration\n");
-+		err = -EINVAL;
-+	}
-+out:
-+	return err ? err : count;
-+}
-+
-+static const struct file_operations rproc_coredump_fops = {
-+	.read = rproc_coredump_read,
-+	.write = rproc_coredump_write,
-+	.open = simple_open,
-+	.llseek = generic_file_llseek,
-+};
-+
-+/*
-  * Some remote processors may support dumping trace logs into a shared
-  * memory buffer. We expose this trace buffer using debugfs, so users
-  * can easily tell what's going on remotely.
-@@ -337,6 +425,8 @@ void rproc_create_debug_dir(struct rproc *rproc)
- 			    rproc, &rproc_rsc_table_fops);
- 	debugfs_create_file("carveout_memories", 0400, rproc->dbg_dir,
- 			    rproc, &rproc_carveouts_fops);
-+	debugfs_create_file("coredump", 0600, rproc->dbg_dir,
-+			    rproc, &rproc_coredump_fops);
- }
+ 	bool dump_mba_loaded;
+-	unsigned long dump_segment_mask;
+-	unsigned long dump_complete_mask;
++	size_t current_dump_size;
++	size_t total_dump_size;
  
- void __init rproc_init_debugfs(void)
+ 	phys_addr_t mba_phys;
+ 	void *mba_region;
+@@ -1203,7 +1203,6 @@ static void qcom_q6v5_dump_segment(struct rproc *rproc,
+ {
+ 	int ret = 0;
+ 	struct q6v5 *qproc = rproc->priv;
+-	unsigned long mask = BIT((unsigned long)segment->priv);
+ 	int offset = segment->da - qproc->mpss_reloc;
+ 	void *ptr = NULL;
+ 
+@@ -1229,10 +1228,10 @@ static void qcom_q6v5_dump_segment(struct rproc *rproc,
+ 		memset(dest, 0xff, segment->size);
+ 	}
+ 
+-	qproc->dump_segment_mask |= mask;
++	qproc->current_dump_size += segment->size;
+ 
+ 	/* Reclaim mba after copying segments */
+-	if (qproc->dump_segment_mask == qproc->dump_complete_mask) {
++	if (qproc->current_dump_size == qproc->total_dump_size) {
+ 		if (qproc->dump_mba_loaded) {
+ 			/* Try to reset ownership back to Q6 */
+ 			q6v5_xfer_mem_ownership(qproc, &qproc->mpss_perm,
+@@ -1274,7 +1273,7 @@ static int q6v5_start(struct rproc *rproc)
+ 			"Failed to reclaim mba buffer system may become unstable\n");
+ 
+ 	/* Reset Dump Segment Mask */
+-	qproc->dump_segment_mask = 0;
++	qproc->current_dump_size = 0;
+ 	qproc->running = true;
+ 
+ 	return 0;
+@@ -1323,7 +1322,7 @@ static int qcom_q6v5_register_dump_segments(struct rproc *rproc,
+ 
+ 	ehdr = (struct elf32_hdr *)fw->data;
+ 	phdrs = (struct elf32_phdr *)(ehdr + 1);
+-	qproc->dump_complete_mask = 0;
++	qproc->total_dump_size = 0;
+ 
+ 	for (i = 0; i < ehdr->e_phnum; i++) {
+ 		phdr = &phdrs[i];
+@@ -1338,7 +1337,7 @@ static int qcom_q6v5_register_dump_segments(struct rproc *rproc,
+ 		if (ret)
+ 			break;
+ 
+-		qproc->dump_complete_mask |= BIT(i);
++		qproc->total_dump_size += phdr->p_memsz;
+ 	}
+ 
+ 	release_firmware(fw);
 -- 
 The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
 a Linux Foundation Collaborative Project
