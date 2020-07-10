@@ -2,110 +2,267 @@ Return-Path: <SRS0=jBU0=AV=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93ABCC433DF
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 10 Jul 2020 06:08:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FC7DC433DF
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 10 Jul 2020 06:20:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6621A2077D
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 10 Jul 2020 06:08:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1594361308;
-	bh=blnFmOCbcj7GlYVM5qLLg3maWpJyP/hMJGZDDez7ibI=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=LWHnR+kyJygWbHzzg/B9dJ65Ve9RI6bdXIYmbvbAVKnqzJcdUSZsuEvWbRueSmIYV
-	 9SCikz5gL+0Q47zwNdkP0GjmY5VoMDKZOgv2tMUQp1z8W1T4fe+xEX93pynWsskTZ0
-	 dLkrGmgBrai3vvL2hZ7qlqj/57bhediAcXUkqNe8=
+	by mail.kernel.org (Postfix) with ESMTP id 0F9F32072E
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 10 Jul 2020 06:20:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727121AbgGJGI1 convert rfc822-to-8bit (ORCPT
+        id S1727869AbgGJGUo (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 10 Jul 2020 02:08:27 -0400
-Received: from mail-ej1-f68.google.com ([209.85.218.68]:42725 "EHLO
-        mail-ej1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725851AbgGJGI1 (ORCPT
+        Fri, 10 Jul 2020 02:20:44 -0400
+Received: from mga11.intel.com ([192.55.52.93]:32800 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726796AbgGJGUo (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 10 Jul 2020 02:08:27 -0400
-Received: by mail-ej1-f68.google.com with SMTP id f12so4762562eja.9;
-        Thu, 09 Jul 2020 23:08:25 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=sZWbg5n4QuCPXZ3uCh/ygFqQbxWrFH3XWXvFripTxS8=;
-        b=KWmu6k0Ex4bXaHzUlouaUdzaRdqW9yI9AW3cUjQeNuRGsM2LLE0MBdXQOYzpDlS6YC
-         50MkrG+EWjW9RZgYlUa2SIMsnMm5alq2Mob3beWEpMlUZ2SiZxH9SuI+8iEdajKmF/pa
-         HA5GHpC6UN6s0rLla+og9aDHE731g0jA000PYcksHvVrUHhibKzDL/r9PwiIzOxSZ7AF
-         QaGnQWAktrzFfGgbMlATsT5RTsbqSdulk1wwu6dT64LpUz3woRPKENijBZFJkg3M89FO
-         rR5xabhLq4AAx0m5qlzP5odNCvJJT3XoiWGJNo8QSC+XqG+T/lnaIMEYih2I7LR1pZbd
-         lc6g==
-X-Gm-Message-State: AOAM531ZlKxnbFDfxwhAkiAJ9ulXxyPC2wyNCrto/Lw0lmGRihM+XThf
-        NFd/OrNbaRWaZG/MUlmYyZOlQocyTikt0Uf6FCI=
-X-Google-Smtp-Source: ABdhPJxdUrgp68rxovcdZIrJ5SI2MVqjC9OM5no2eX8hPvILncnfI9RiixNPMhVNOwVR+yxcWDbMzdf9vSFJ56vaUJU=
-X-Received: by 2002:a17:906:284e:: with SMTP id s14mr58791027ejc.498.1594361305183;
- Thu, 09 Jul 2020 23:08:25 -0700 (PDT)
+        Fri, 10 Jul 2020 02:20:44 -0400
+IronPort-SDR: AjbEdc9kv8GgG3+8f/xZy4uQjNw9D0IkguKUG/zPoS06iqj6dTn3OSz9HYCo+dhWOxU0ZCQ0xD
+ fODkgpHMz/yw==
+X-IronPort-AV: E=McAfee;i="6000,8403,9677"; a="146229098"
+X-IronPort-AV: E=Sophos;i="5.75,334,1589266800"; 
+   d="scan'208";a="146229098"
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jul 2020 23:20:36 -0700
+IronPort-SDR: IH9cyenQV5QMbOM6pTVQvsBG9o2E1A+V3SugopK7MJnKab34UhE/yNkehGad4ZmO2wdHhOMGUg
+ sUe+7AVkTIbw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.75,334,1589266800"; 
+   d="scan'208";a="298326935"
+Received: from hprosing-mobl1.ger.corp.intel.com (HELO ubuntu) ([10.252.43.115])
+  by orsmga002.jf.intel.com with ESMTP; 09 Jul 2020 23:20:34 -0700
+Date:   Fri, 10 Jul 2020 08:20:32 +0200
+From:   Guennadi Liakhovetski <guennadi.liakhovetski@linux.intel.com>
+To:     Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc:     Arnaud POULIQUEN <arnaud.pouliquen@st.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
+        Ohad Ben-Cohen <ohad@wizery.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Liam Girdwood <liam.r.girdwood@linux.intel.com>
+Subject: Re: [PATCH v4] rpmsg: virtio: add endianness conversions
+Message-ID: <20200710062031.GA8320@ubuntu>
+References: <20200616061456.GA2999@ubuntu>
+ <20200616073011.GB2999@ubuntu>
+ <20200630175057.GA3831001@xps15>
+ <20200701055912-mutt-send-email-mst@kernel.org>
+ <20200706124716.GA5457@ubuntu>
+ <20200706125657.GB5457@ubuntu>
+ <20200706133835.GC5457@ubuntu>
+ <c5a4b0c7-859e-24ad-cf1e-3f80a2f15f38@st.com>
+ <20200707153436.GA5970@ubuntu>
+ <CANLsYkwuPsm+5uCWc91NLF4oxANvxVvgQ9NcRnoPAoVRGk+H5w@mail.gmail.com>
 MIME-Version: 1.0
-References: <250d35cb489c3c4c066f7ce256d27f36712a1979.1591618255.git.baolin.wang7@gmail.com>
-In-Reply-To: <250d35cb489c3c4c066f7ce256d27f36712a1979.1591618255.git.baolin.wang7@gmail.com>
-From:   Barry Song <baohua@kernel.org>
-Date:   Fri, 10 Jul 2020 18:08:14 +1200
-Message-ID: <CAGsJ_4y25psj9vAyjstFQiGwAd_TfTdyeNt41YbXfphOXoFVig@mail.gmail.com>
-Subject: Re: [PATCH] hwspinlock: sirf: Remove the redundant 'of_match_ptr'
-To:     Baolin Wang <baolin.wang7@gmail.com>
-Cc:     Ohad Ben-Cohen <ohad@wizery.com>, bjorn.andersson@linaro.org,
-        linux-remoteproc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CANLsYkwuPsm+5uCWc91NLF4oxANvxVvgQ9NcRnoPAoVRGk+H5w@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Baolin Wang <baolin.wang7@gmail.com> 于2020年6月9日周二 上午12:22写道：
->
-> Remove the the redundant 'of_match_ptr' macro to fix below warning
-> when the CONFIG_OF is not selected.
->
-> All warnings:
-> drivers/hwspinlock/sirf_hwspinlock.c:87:34: warning: unused variable
-> 'sirf_hwpinlock_ids' [-Wunused-const-variable]
->
-> Reported-by: kernel test robot <lkp@intel.com>
-> Signed-off-by: Baolin Wang <baolin.wang7@gmail.com>
-> ---
->  drivers/hwspinlock/sirf_hwspinlock.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/hwspinlock/sirf_hwspinlock.c b/drivers/hwspinlock/sirf_hwspinlock.c
-> index 823d3c4f621e..a3f77120bad7 100644
-> --- a/drivers/hwspinlock/sirf_hwspinlock.c
-> +++ b/drivers/hwspinlock/sirf_hwspinlock.c
-> @@ -94,7 +94,7 @@ static struct platform_driver sirf_hwspinlock_driver = {
->         .probe = sirf_hwspinlock_probe,
->         .driver = {
->                 .name = "atlas7_hwspinlock",
-> -               .of_match_table = of_match_ptr(sirf_hwpinlock_ids),
-> +               .of_match_table = sirf_hwpinlock_ids,
+Bjorn, Ohad, is this one good to go? Can we proceed with the next step:
 
-is it better to do?
-
-#ifdef CONFIG_OF
-static const struct of_device_id sirf_hwpinlock_ids[] = {
-        { .compatible = "sirf,hwspinlock", },
-        {},
-};
-MODULE_DEVICE_TABLE(of, sirf_hwpinlock_ids);
-#endif
-
->         },
->  };
->
-> --
-> 2.17.1
+https://marc.info/?l=kvm&m=159060274705978&w=2
 
 Thanks
-barry
+Guennadi
+
+On Tue, Jul 07, 2020 at 09:38:37AM -0600, Mathieu Poirier wrote:
+> On Tue, 7 Jul 2020 at 09:34, Guennadi Liakhovetski
+> <guennadi.liakhovetski@linux.intel.com> wrote:
+> >
+> > According to the VirtIO 1.0 spec data, sent over virtual queues must
+> > be in little-endian format. Update the RPMsg VirtIO implementation
+> > to enforce that but let legacy configurations continue use native
+> > endianness.
+> >
+> > Signed-off-by: Guennadi Liakhovetski <guennadi.liakhovetski@linux.intel.com>
+> > Tested-by: Arnaud Pouliquen <arnaud.pouliquen@st.com>
+> > ---
+> >
+> > Mathieu, I had to remove your "Reviewed-by" because this is a modified version...
+> >
+> > v4: fix a left-over use of an LE value in calculation - thanks to Arnaud for catching!
+> 
+> It is indeed a good catch
+> 
+> Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+> 
+> >
+> > v3: use the virtio_byteorder.h header
+> >
+> > v2: Following suggestions from Michael and Mathieu switch to using virtio16/32
+> > types and conversion functions.
+> >
+> >  drivers/rpmsg/virtio_rpmsg_bus.c | 63 +++++++++++++++++---------------
+> >  1 file changed, 34 insertions(+), 29 deletions(-)
+> >
+> > diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
+> > index 07d4f3374098..9006fc7f73d0 100644
+> > --- a/drivers/rpmsg/virtio_rpmsg_bus.c
+> > +++ b/drivers/rpmsg/virtio_rpmsg_bus.c
+> > @@ -23,6 +23,7 @@
+> >  #include <linux/slab.h>
+> >  #include <linux/sched.h>
+> >  #include <linux/virtio.h>
+> > +#include <linux/virtio_byteorder.h>
+> >  #include <linux/virtio_ids.h>
+> >  #include <linux/virtio_config.h>
+> >  #include <linux/wait.h>
+> > @@ -84,11 +85,11 @@ struct virtproc_info {
+> >   * Every message sent(/received) on the rpmsg bus begins with this header.
+> >   */
+> >  struct rpmsg_hdr {
+> > -       u32 src;
+> > -       u32 dst;
+> > -       u32 reserved;
+> > -       u16 len;
+> > -       u16 flags;
+> > +       __virtio32 src;
+> > +       __virtio32 dst;
+> > +       __virtio32 reserved;
+> > +       __virtio16 len;
+> > +       __virtio16 flags;
+> >         u8 data[];
+> >  } __packed;
+> >
+> > @@ -106,8 +107,8 @@ struct rpmsg_hdr {
+> >   */
+> >  struct rpmsg_ns_msg {
+> >         char name[RPMSG_NAME_SIZE];
+> > -       u32 addr;
+> > -       u32 flags;
+> > +       __virtio32 addr;
+> > +       __virtio32 flags;
+> >  } __packed;
+> >
+> >  /**
+> > @@ -335,8 +336,8 @@ static int virtio_rpmsg_announce_create(struct rpmsg_device *rpdev)
+> >                 struct rpmsg_ns_msg nsm;
+> >
+> >                 strncpy(nsm.name, rpdev->id.name, RPMSG_NAME_SIZE);
+> > -               nsm.addr = rpdev->ept->addr;
+> > -               nsm.flags = RPMSG_NS_CREATE;
+> > +               nsm.addr = cpu_to_virtio32(vrp->vdev, rpdev->ept->addr);
+> > +               nsm.flags = cpu_to_virtio32(vrp->vdev, RPMSG_NS_CREATE);
+> >
+> >                 err = rpmsg_sendto(rpdev->ept, &nsm, sizeof(nsm), RPMSG_NS_ADDR);
+> >                 if (err)
+> > @@ -359,8 +360,8 @@ static int virtio_rpmsg_announce_destroy(struct rpmsg_device *rpdev)
+> >                 struct rpmsg_ns_msg nsm;
+> >
+> >                 strncpy(nsm.name, rpdev->id.name, RPMSG_NAME_SIZE);
+> > -               nsm.addr = rpdev->ept->addr;
+> > -               nsm.flags = RPMSG_NS_DESTROY;
+> > +               nsm.addr = cpu_to_virtio32(vrp->vdev, rpdev->ept->addr);
+> > +               nsm.flags = cpu_to_virtio32(vrp->vdev, RPMSG_NS_DESTROY);
+> >
+> >                 err = rpmsg_sendto(rpdev->ept, &nsm, sizeof(nsm), RPMSG_NS_ADDR);
+> >                 if (err)
+> > @@ -612,18 +613,18 @@ static int rpmsg_send_offchannel_raw(struct rpmsg_device *rpdev,
+> >                 }
+> >         }
+> >
+> > -       msg->len = len;
+> > +       msg->len = cpu_to_virtio16(vrp->vdev, len);
+> >         msg->flags = 0;
+> > -       msg->src = src;
+> > -       msg->dst = dst;
+> > +       msg->src = cpu_to_virtio32(vrp->vdev, src);
+> > +       msg->dst = cpu_to_virtio32(vrp->vdev, dst);
+> >         msg->reserved = 0;
+> >         memcpy(msg->data, data, len);
+> >
+> >         dev_dbg(dev, "TX From 0x%x, To 0x%x, Len %d, Flags %d, Reserved %d\n",
+> > -               msg->src, msg->dst, msg->len, msg->flags, msg->reserved);
+> > +               src, dst, len, msg->flags, msg->reserved);
+> >  #if defined(CONFIG_DYNAMIC_DEBUG)
+> >         dynamic_hex_dump("rpmsg_virtio TX: ", DUMP_PREFIX_NONE, 16, 1,
+> > -                        msg, sizeof(*msg) + msg->len, true);
+> > +                        msg, sizeof(*msg) + len, true);
+> >  #endif
+> >
+> >         rpmsg_sg_init(&sg, msg, sizeof(*msg) + len);
+> > @@ -704,13 +705,17 @@ static int rpmsg_recv_single(struct virtproc_info *vrp, struct device *dev,
+> >  {
+> >         struct rpmsg_endpoint *ept;
+> >         struct scatterlist sg;
+> > +       unsigned int msg_len = virtio16_to_cpu(vrp->vdev, msg->len);
+> >         int err;
+> >
+> >         dev_dbg(dev, "From: 0x%x, To: 0x%x, Len: %d, Flags: %d, Reserved: %d\n",
+> > -               msg->src, msg->dst, msg->len, msg->flags, msg->reserved);
+> > +               virtio32_to_cpu(vrp->vdev, msg->src),
+> > +               virtio32_to_cpu(vrp->vdev, msg->dst), msg_len,
+> > +               virtio16_to_cpu(vrp->vdev, msg->flags),
+> > +               virtio32_to_cpu(vrp->vdev, msg->reserved));
+> >  #if defined(CONFIG_DYNAMIC_DEBUG)
+> >         dynamic_hex_dump("rpmsg_virtio RX: ", DUMP_PREFIX_NONE, 16, 1,
+> > -                        msg, sizeof(*msg) + msg->len, true);
+> > +                        msg, sizeof(*msg) + msg_len, true);
+> >  #endif
+> >
+> >         /*
+> > @@ -718,15 +723,15 @@ static int rpmsg_recv_single(struct virtproc_info *vrp, struct device *dev,
+> >          * the reported payload length.
+> >          */
+> >         if (len > vrp->buf_size ||
+> > -           msg->len > (len - sizeof(struct rpmsg_hdr))) {
+> > -               dev_warn(dev, "inbound msg too big: (%d, %d)\n", len, msg->len);
+> > +           msg_len > (len - sizeof(struct rpmsg_hdr))) {
+> > +               dev_warn(dev, "inbound msg too big: (%d, %d)\n", len, msg_len);
+> >                 return -EINVAL;
+> >         }
+> >
+> >         /* use the dst addr to fetch the callback of the appropriate user */
+> >         mutex_lock(&vrp->endpoints_lock);
+> >
+> > -       ept = idr_find(&vrp->endpoints, msg->dst);
+> > +       ept = idr_find(&vrp->endpoints, virtio32_to_cpu(vrp->vdev, msg->dst));
+> >
+> >         /* let's make sure no one deallocates ept while we use it */
+> >         if (ept)
+> > @@ -739,8 +744,8 @@ static int rpmsg_recv_single(struct virtproc_info *vrp, struct device *dev,
+> >                 mutex_lock(&ept->cb_lock);
+> >
+> >                 if (ept->cb)
+> > -                       ept->cb(ept->rpdev, msg->data, msg->len, ept->priv,
+> > -                               msg->src);
+> > +                       ept->cb(ept->rpdev, msg->data, msg_len, ept->priv,
+> > +                               virtio32_to_cpu(vrp->vdev, msg->src));
+> >
+> >                 mutex_unlock(&ept->cb_lock);
+> >
+> > @@ -846,15 +851,15 @@ static int rpmsg_ns_cb(struct rpmsg_device *rpdev, void *data, int len,
+> >         /* don't trust the remote processor for null terminating the name */
+> >         msg->name[RPMSG_NAME_SIZE - 1] = '\0';
+> >
+> > -       dev_info(dev, "%sing channel %s addr 0x%x\n",
+> > -                msg->flags & RPMSG_NS_DESTROY ? "destroy" : "creat",
+> > -                msg->name, msg->addr);
+> > -
+> >         strncpy(chinfo.name, msg->name, sizeof(chinfo.name));
+> >         chinfo.src = RPMSG_ADDR_ANY;
+> > -       chinfo.dst = msg->addr;
+> > +       chinfo.dst = virtio32_to_cpu(vrp->vdev, msg->addr);
+> > +
+> > +       dev_info(dev, "%sing channel %s addr 0x%x\n",
+> > +                virtio32_to_cpu(vrp->vdev, msg->flags) & RPMSG_NS_DESTROY ?
+> > +                "destroy" : "creat", msg->name, chinfo.dst);
+> >
+> > -       if (msg->flags & RPMSG_NS_DESTROY) {
+> > +       if (virtio32_to_cpu(vrp->vdev, msg->flags) & RPMSG_NS_DESTROY) {
+> >                 ret = rpmsg_unregister_device(&vrp->vdev->dev, &chinfo);
+> >                 if (ret)
+> >                         dev_err(dev, "rpmsg_destroy_channel failed: %d\n", ret);
+> > --
+> > 2.27.0
+> >
