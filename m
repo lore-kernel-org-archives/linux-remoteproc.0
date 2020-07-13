@@ -2,87 +2,87 @@ Return-Path: <SRS0=6FrS=AY=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CD8BC433E0
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 13 Jul 2020 18:55:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01B1EC433E4
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 13 Jul 2020 19:03:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1209A2067D
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 13 Jul 2020 18:55:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D415220758
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 13 Jul 2020 19:03:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ieee.org header.i=@ieee.org header.b="PtgkL3+J"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="T/tDzBSf"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726356AbgGMSzm (ORCPT
+        id S1726801AbgGMTDQ (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 13 Jul 2020 14:55:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42670 "EHLO
+        Mon, 13 Jul 2020 15:03:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43848 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726321AbgGMSzm (ORCPT
+        with ESMTP id S1726796AbgGMTDP (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 13 Jul 2020 14:55:42 -0400
-Received: from mail-il1-x144.google.com (mail-il1-x144.google.com [IPv6:2607:f8b0:4864:20::144])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E66FC061755
-        for <linux-remoteproc@vger.kernel.org>; Mon, 13 Jul 2020 11:55:42 -0700 (PDT)
-Received: by mail-il1-x144.google.com with SMTP id t27so12097252ill.9
-        for <linux-remoteproc@vger.kernel.org>; Mon, 13 Jul 2020 11:55:42 -0700 (PDT)
+        Mon, 13 Jul 2020 15:03:15 -0400
+Received: from mail-pl1-x642.google.com (mail-pl1-x642.google.com [IPv6:2607:f8b0:4864:20::642])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 821CDC061794
+        for <linux-remoteproc@vger.kernel.org>; Mon, 13 Jul 2020 12:03:15 -0700 (PDT)
+Received: by mail-pl1-x642.google.com with SMTP id t6so2752049plo.3
+        for <linux-remoteproc@vger.kernel.org>; Mon, 13 Jul 2020 12:03:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ieee.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=XP/PixppecPyJeek74vVeXNv27GEoFsZpYZck+u8ljI=;
-        b=PtgkL3+JYH7+vY8lGekTR7/pacCYHGwLyTJZMyI9rsFk4j2tKX9G+bdKkplfI2iSGG
-         CMxgX1mdmZmhyPhJB9vcZfBBUq0xHj0xRMroXfhsVhnV5kjEouJMEbmFgYwQB6zyUM1U
-         oNIutMLpw8Yb6gADT0GnvW3rpPhrK55AHsW5E=
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=/OwblBkyUz9U0R8zbXyE33PVpwL2KrxM/SNh//IN4cg=;
+        b=T/tDzBSf1dlGGChdUJkNUHI8vqRPvUL5q6Gsr04CuMxTatssWeCfyiVk9U5RecA/qy
+         FWg9w814lsFZXlVZIuLenpZK/xioGTsnrBY/Vfi3oJbcnJRhLvdxbze/cRoaWaPS5Up9
+         OdyRIhkj7eQ6fsmn7Q8CBKB1yz1FpvKH3iBKSHgtMOdd5E3e2Vv+Zoi/MY8vnJ9+QVW7
+         jh904BgGE+HcgaIGVgTztKqaVdK9GQ+mbbtarb7xkMENf2bttvBfEL43YOd/r0f6ArxW
+         Ff6OT9fTmnP8rugEf9/5OZg0/oLF3paxKJkMqS3bN2WhcdNP6PrJ6bCcnJ3TOvpOb5M9
+         8b0g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=XP/PixppecPyJeek74vVeXNv27GEoFsZpYZck+u8ljI=;
-        b=iLatRtk6uo1YZka+LSUCvMgrtV2ubuXMMWH7A6dlRtTcQ7hO1l/o7qnAey+RlNr2jQ
-         xj5mHXe0r4g8yhGgh311CtXfxtVRNdU3tmGWe/YqcVsElRGvBpgp0W3Yi7/EaZerkmSv
-         AT89bnzUC7qTiX5XBfEiatc1nnNyTWpOOOb7F+PhYeUcMUQCPtOJ4oXMq/waW6FFjQ+H
-         DQh8tM2IRfN/bhhX+e9tU3NxiA2CDs6w/oS19/rjfrMOWomDXpLhvXkOYQDn/TKSDEpe
-         Zv6tC6Qzkx8ggrpOwByXsK9s69rE1m64sNY9V8/mF1ir0vCZnTnZmSQDttyA5n3iwpc8
-         DtVw==
-X-Gm-Message-State: AOAM530bM3SuWYYH+GoFFZ3R59ME5eL9Tcs0MFrlNfmdHki8kQGl/O4x
-        cCVaKoXBrtc4M/VsNkdeCfnx8g==
-X-Google-Smtp-Source: ABdhPJz5rYET9xdYZ11Fp4bKSMiHgHPuc7LkmFRIqrstQwCpKXO0XspSoREBkjI3IW7rPC8sO6jKqg==
-X-Received: by 2002:a05:6e02:f42:: with SMTP id y2mr1188594ilj.264.1594666541707;
-        Mon, 13 Jul 2020 11:55:41 -0700 (PDT)
-Received: from [172.22.22.26] (c-73-185-129-58.hsd1.mn.comcast.net. [73.185.129.58])
-        by smtp.googlemail.com with ESMTPSA id 13sm8805387ilj.81.2020.07.13.11.55.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 13 Jul 2020 11:55:40 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=/OwblBkyUz9U0R8zbXyE33PVpwL2KrxM/SNh//IN4cg=;
+        b=hTO7t18CcvIQ2NQkKlDZruQQbhs1lN6sZ8rmc6gwmK4nN6bIRWH2Shzbsg7spqLPyW
+         sgUBQiAUZhpqWTwx9pfrghWjF5crQOXSlcHuQkJHVo0HzF5/WnS82UmXpU+y4PlurBcF
+         C+WZlzEgKum8rpnR14pdswgPN4arM/u3tTKUY/5o30jyuL6QSNeOzoio5erkffdrsSJM
+         o/C+ojmPgvA0RwiismDTFfQy9oCIkVHJ5TxqxahT16ETLEyFjrGEaJGM3gz9Oc0IYnYN
+         Lu3Bh256C6M9tkTcBFLq8eX459XHY0D/j+29ZF4DY355dAzzy3Z2kQqTkulbQ6eX/wFO
+         9f1w==
+X-Gm-Message-State: AOAM531YvYtH63/ANZNIzRgVTZX6Zz3NApP5Vz0qtGJpVprEn76b+pMb
+        TscxSde7QxcJoN/JjAb2owtiFg==
+X-Google-Smtp-Source: ABdhPJzFfsedhaLX8n8bpSfxSbNRN3zzyxCHlaOIOS6tyKoZxnAuPBXgwGAGxjCR5kPFKzVVcR4THw==
+X-Received: by 2002:a17:902:a504:: with SMTP id s4mr847143plq.177.1594666994828;
+        Mon, 13 Jul 2020 12:03:14 -0700 (PDT)
+Received: from builder.lan (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id y198sm15123103pfg.116.2020.07.13.12.03.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 13 Jul 2020 12:03:14 -0700 (PDT)
+Date:   Mon, 13 Jul 2020 12:01:06 -0700
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Kefeng Wang <wangkefeng.wang@huawei.com>
+Cc:     Rishabh Bhatnagar <rishabhb@codeaurora.org>,
+        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Hulk Robot <hulkci@huawei.com>
 Subject: Re: [PATCH -next] remoteproc: qcom: Add missing slab.h
-To:     Kefeng Wang <wangkefeng.wang@huawei.com>,
-        Rishabh Bhatnagar <rishabhb@codeaurora.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Hulk Robot <hulkci@huawei.com>
+Message-ID: <20200713190106.GA2161373@builder.lan>
 References: <20200713020003.134039-1-wangkefeng.wang@huawei.com>
-From:   Alex Elder <elder@ieee.org>
-Message-ID: <1c40a878-bd3b-8364-3bc4-ef3f2b75edbf@ieee.org>
-Date:   Mon, 13 Jul 2020 13:55:39 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <20200713020003.134039-1-wangkefeng.wang@huawei.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset=windows-1252
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200713020003.134039-1-wangkefeng.wang@huawei.com>
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On 7/12/20 9:00 PM, Kefeng Wang wrote:
-> drivers/remoteproc/qcom_common.c: In function â€˜qcom_ssr_get_subsysâ€™:
-> drivers/remoteproc/qcom_common.c:210:9: error: implicit declaration of function â€˜kzallocâ€™; did you mean â€˜vzallocâ€™?
+On Sun 12 Jul 19:00 PDT 2020, Kefeng Wang wrote:
+
+> drivers/remoteproc/qcom_common.c: In function ‘qcom_ssr_get_subsys’:
+> drivers/remoteproc/qcom_common.c:210:9: error: implicit declaration of function ‘kzalloc’; did you mean ‘vzalloc’?
 > [-Werror=implicit-function-declaration]
 >   info = kzalloc(sizeof(*info), GFP_KERNEL);
 >          ^~~~~~~
@@ -92,6 +92,12 @@ On 7/12/20 9:00 PM, Kefeng Wang wrote:
 > 
 > Reported-by: Hulk Robot <hulkci@huawei.com>
 > Signed-off-by: Kefeng Wang <wangkefeng.wang@huawei.com>
+
+Thank Kefeng, patch applied.
+
+Regards,
+Bjorn
+
 > ---
 >  drivers/remoteproc/qcom_common.c | 1 +
 >  1 file changed, 1 insertion(+)
@@ -108,9 +114,6 @@ On 7/12/20 9:00 PM, Kefeng Wang wrote:
 >  #include <linux/soc/qcom/mdt_loader.h>
 >  
 >  #include "remoteproc_internal.h"
-
-You beat me to it.  I just build-tested this fix on linux-next/master
-and can confirm the build fails without it, succeeds with it.
-
-					-Alex
-
+> -- 
+> 2.26.2
+> 
