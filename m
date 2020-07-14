@@ -7,67 +7,67 @@ X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CAD38C43446
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 14 Jul 2020 20:05:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EC05C433FC
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 14 Jul 2020 20:05:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A8D7420720
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 14 Jul 2020 20:05:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 09E1420720
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 14 Jul 2020 20:05:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="miob1jqq"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WFvRYThJ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729898AbgGNUFa (ORCPT
+        id S1730026AbgGNUF0 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 14 Jul 2020 16:05:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50630 "EHLO
+        Tue, 14 Jul 2020 16:05:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50650 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729797AbgGNUEu (ORCPT
+        with ESMTP id S1729909AbgGNUEz (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 14 Jul 2020 16:04:50 -0400
-Received: from mail-pf1-x443.google.com (mail-pf1-x443.google.com [IPv6:2607:f8b0:4864:20::443])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C69F1C061794
-        for <linux-remoteproc@vger.kernel.org>; Tue, 14 Jul 2020 13:04:50 -0700 (PDT)
-Received: by mail-pf1-x443.google.com with SMTP id s26so8048098pfm.4
-        for <linux-remoteproc@vger.kernel.org>; Tue, 14 Jul 2020 13:04:50 -0700 (PDT)
+        Tue, 14 Jul 2020 16:04:55 -0400
+Received: from mail-pf1-x442.google.com (mail-pf1-x442.google.com [IPv6:2607:f8b0:4864:20::442])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EF84AC061755
+        for <linux-remoteproc@vger.kernel.org>; Tue, 14 Jul 2020 13:04:54 -0700 (PDT)
+Received: by mail-pf1-x442.google.com with SMTP id a14so8054870pfi.2
+        for <linux-remoteproc@vger.kernel.org>; Tue, 14 Jul 2020 13:04:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=UOLpDhUaI5YvggRlgo01SV+Tf6RdV3ahOTchedkHuLg=;
-        b=miob1jqq3uyJWDK9ehHABuSktDa5Dsm4+0451K6rGGo5B3KyWsNDs4e5X+wFRxTVeq
-         To5GMy0VfU2mFj7H8BeWp2p1pHYsb6ZtVxpCTupv7HY0xRWCgnekld6iDJwip0yq5y1y
-         aCStCoIiKicPpeHwSqWvOTKd1pQD1QTFRvZPlEMia/WO3oqWxceKUyWDrt2M4az+zwqm
-         wd+cXATvk3FyONmAIFkJaAIN3/1PpvpUKbK3nMvbVeBmIBtfB0NNA9ZAZRrXYWn5n+I+
-         fsGo79c6oOaV0L5pjzm0EIBAITNsPyFjht7r0mcoQCaDb+sUsEpSxWpghrI9gXmHW8U3
-         jrZA==
+        bh=SLaqUlqIXEKDw6i85lizbwO407gGhXi2WgUCdFT1Ou4=;
+        b=WFvRYThJYieMcZZcfrO7iKSQOtDiOIn11T8zg8cyTTY9mABDDOF4RU/XQKr+ZuWpRt
+         pM1LeWbR6MW4SR16los784+NTr9yNy8eV+cE9JwNNpu7ZVPM0d8WFJBkDkGyUva2rLE6
+         ELFE9UCIcL1bx5S0eqfJBslPX2Jeh4+U++df+fzjk/Axb/a5F3PxoCcrGva4F2RYfv+X
+         CuQSCSs+DCJBaL5Y+ZTh/CJ05T4dX+hatiWX11kTEZ3u/c0maPXpd6OyC4KBNmLbS71G
+         9fwODBOSaY4wl0fI6XmYygm+7rVsIgLaXsMxYbzn7w/O62WLhnJWZlI+w8AEJ2R2AODC
+         iuiA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=UOLpDhUaI5YvggRlgo01SV+Tf6RdV3ahOTchedkHuLg=;
-        b=LTJ8fmjg5Xc3D2xANC+JmjAqRVj+2AhtvHxK1GwAqA5+WXw9AZZ6zRb8XvhQnXvBB7
-         Gqv7SMi99/P/a8L+DfjrmlenvHUMN8okKXS8itflvwvpR2P9FMC4kRwZwB1wEIZ5QJ0z
-         zzGj0+lUDSl2ZhxnHbr4MK9aDgCXdG4pgDDUwK1ER1LeHISB07PxDPTe/z84hTdTvr3Z
-         vVRrQXh6ySltiGa76dFkzvPW1/aOlLl4R/ZzC/K4Evspbi06tbFK4BDad3sYhp3zAOfm
-         10rjfcDWxzvrCl0ox+2aq8IAtEgA88PNxrjqfO0jAJl8i+szlY+DLwbHPIh1QzdpNshy
-         mXMg==
-X-Gm-Message-State: AOAM530/SnJZTHdS8sLNE3OFGhwIernV5njP9i+BUPfgLvzFJbb4bizI
-        6Bn3ig8KRJBcWkic2/s20mZjGA==
-X-Google-Smtp-Source: ABdhPJz6mKLieZUUmXU9lcTrNEVXgWxB8eIfhND2OLgaJYj0xFmOUrJ3RIeo/P99+TTmJnFR5Te/IQ==
-X-Received: by 2002:a63:d806:: with SMTP id b6mr4287879pgh.403.1594757090379;
-        Tue, 14 Jul 2020 13:04:50 -0700 (PDT)
+        bh=SLaqUlqIXEKDw6i85lizbwO407gGhXi2WgUCdFT1Ou4=;
+        b=DRDEHkiUh4ls5Kj1OdL3/gMfx22BONWALIt+qjPzwCChkmworAWJVa9kMDTCRl96OX
+         Mj9r4xgX4Y53JTYTP1lCWGqAF/ybbhxHgOAJwBY33pA7hTuLtnD63SBhSiWgtZQomeDD
+         KCohySo9IwMMolMCPYqZMhB2vStR1VVRjAmfl/MDlzk+2aFx6Zrzsmm4YPqE/mski9J2
+         VouQiVg1hw1SfpzyoggJbQTSIdnVa7aqFdugks21fdD89ETYtxyfFYcKqvCpkegu77Y8
+         mcXuhpNwTVmozXiFu/a+TBtiK+pYj9O2H+2tehMBF06aTERb91S656aZT/QUeP8oogsH
+         kHQg==
+X-Gm-Message-State: AOAM533z3jM6EJLoK/OCCe/l26MO9/vQ2ESVVa65muIu8u2QoItreXXb
+        FgpjL6ZXiW6eRdz0Akt2kHDoHQ==
+X-Google-Smtp-Source: ABdhPJwNZcSXvJT1wtXgc68agE+YL1/Mrb+Az3kUVQCf8Y43dRW88sdoc4zonyyqrK61Li3XyFe5cQ==
+X-Received: by 2002:a63:541e:: with SMTP id i30mr4735003pgb.47.1594757094489;
+        Tue, 14 Jul 2020 13:04:54 -0700 (PDT)
 Received: from xps15.cg.shawcable.net (S0106002369de4dac.cg.shawcable.net. [68.147.8.254])
-        by smtp.gmail.com with ESMTPSA id t13sm3262959pjs.17.2020.07.14.13.04.49
+        by smtp.gmail.com with ESMTPSA id t13sm3262959pjs.17.2020.07.14.13.04.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Jul 2020 13:04:49 -0700 (PDT)
+        Tue, 14 Jul 2020 13:04:53 -0700 (PDT)
 From:   Mathieu Poirier <mathieu.poirier@linaro.org>
 To:     ohad@wizery.com, bjorn.andersson@linaro.org, loic.pallardy@st.com,
         arnaud.pouliquen@st.com, mcoquelin.stm32@gmail.com,
         alexandre.torgue@st.com
 Cc:     linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-stm32@st-md-mailman.stormreply.com
-Subject: [PATCH v6 02/11] remoteproc: stm32: Request IRQ with platform device
-Date:   Tue, 14 Jul 2020 14:04:36 -0600
-Message-Id: <20200714200445.1427257-3-mathieu.poirier@linaro.org>
+Subject: [PATCH v6 05/11] remoteproc: stm32: Parse syscon that will manage M4 synchronisation
+Date:   Tue, 14 Jul 2020 14:04:39 -0600
+Message-Id: <20200714200445.1427257-6-mathieu.poirier@linaro.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200714200445.1427257-1-mathieu.poirier@linaro.org>
 References: <20200714200445.1427257-1-mathieu.poirier@linaro.org>
@@ -78,40 +78,64 @@ Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Request IRQ with platform device rather than remote proc in order to
-call stm32_rproc_parse_dt() before rproc_alloc().  That way we can
-know whether we need to synchronise with the MCU or not.
+Get from the DT the syncon to probe the state of the remote processor
+and the location of the resource table.
+
+Mainly based on the work published by Arnaud Pouliquen [1].
+
+[1]. https://patchwork.kernel.org/project/linux-remoteproc/list/?series=239877
 
 Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 Reviewed-by: Loic Pallardy <loic.pallardy@st.com>
 Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 ---
- drivers/remoteproc/stm32_rproc.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/remoteproc/stm32_rproc.c | 26 ++++++++++++++++++++++++++
+ 1 file changed, 26 insertions(+)
 
 diff --git a/drivers/remoteproc/stm32_rproc.c b/drivers/remoteproc/stm32_rproc.c
-index 2973ba201c1d..c00f60d42ab6 100644
+index 986f34a336a7..961a53f67ec5 100644
 --- a/drivers/remoteproc/stm32_rproc.c
 +++ b/drivers/remoteproc/stm32_rproc.c
-@@ -262,7 +262,8 @@ static int stm32_rproc_parse_fw(struct rproc *rproc, const struct firmware *fw)
+@@ -71,6 +71,8 @@ struct stm32_rproc {
+ 	struct reset_control *rst;
+ 	struct stm32_syscon hold_boot;
+ 	struct stm32_syscon pdds;
++	struct stm32_syscon m4_state;
++	struct stm32_syscon rsctbl;
+ 	int wdg_irq;
+ 	u32 nb_rmems;
+ 	struct stm32_rproc_mem *rmems;
+@@ -607,6 +609,30 @@ static int stm32_rproc_parse_dt(struct platform_device *pdev,
  
- static irqreturn_t stm32_rproc_wdg(int irq, void *data)
- {
--	struct rproc *rproc = data;
-+	struct platform_device *pdev = data;
-+	struct rproc *rproc = platform_get_drvdata(pdev);
+ 	*auto_boot = of_property_read_bool(np, "st,auto-boot");
  
- 	rproc_report_crash(rproc, RPROC_WATCHDOG);
++	/*
++	 * See if we can check the M4 status, i.e if it was started
++	 * from the boot loader or not.
++	 */
++	err = stm32_rproc_get_syscon(np, "st,syscfg-m4-state",
++				     &ddata->m4_state);
++	if (err) {
++		/* remember this */
++		ddata->m4_state.map = NULL;
++		/* no coprocessor state syscon (optional) */
++		dev_warn(dev, "m4 state not supported\n");
++
++		/* no need to go further */
++		return 0;
++	}
++
++	/* See if we can get the resource table */
++	err = stm32_rproc_get_syscon(np, "st,syscfg-rsc-tbl",
++				     &ddata->rsctbl);
++	if (err) {
++		/* no rsc table syscon (optional) */
++		dev_warn(dev, "rsc tbl syscon not supported\n");
++	}
++
+ 	return 0;
+ }
  
-@@ -554,7 +555,7 @@ static int stm32_rproc_parse_dt(struct platform_device *pdev)
- 
- 	if (irq > 0) {
- 		err = devm_request_irq(dev, irq, stm32_rproc_wdg, 0,
--				       dev_name(dev), rproc);
-+				       dev_name(dev), pdev);
- 		if (err) {
- 			dev_err(dev, "failed to request wdg irq\n");
- 			return err;
 -- 
 2.25.1
 
