@@ -2,243 +2,437 @@ Return-Path: <SRS0=gNgS=AZ=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F78DC433E4
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 14 Jul 2020 17:22:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CAD0C433E2
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 14 Jul 2020 17:53:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6FECE22519
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 14 Jul 2020 17:22:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1594747338;
-	bh=m5SGCAj/F1LwjB4vaj3XG/lVPVHA3gnOWk7MlbYq2cc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=oVLtacdzNQ/YLEFmpCeHnsgttGuJPDzq7oVQxoKD/dxJjTyi4ConbYt6yLWe4gide
-	 ulEYqUp1iNdU0rz7HG+PLBVY/K6WhcaKnJqMuCXpe3THum40Bf2c8/YnC/AzCuvTz/
-	 zENjureL949B46MRI7Y0g01olXTTKM2jP283/bNQ=
+	by mail.kernel.org (Postfix) with ESMTP id 16DCE2256C
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 14 Jul 2020 17:53:39 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="n8ssphBa"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728186AbgGNRWO (ORCPT
+        id S1728733AbgGNRxg (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 14 Jul 2020 13:22:14 -0400
-Received: from mail-io1-f67.google.com ([209.85.166.67]:35005 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726169AbgGNRWO (ORCPT
+        Tue, 14 Jul 2020 13:53:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57712 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728312AbgGNRxf (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 14 Jul 2020 13:22:14 -0400
-Received: by mail-io1-f67.google.com with SMTP id v8so18132033iox.2;
-        Tue, 14 Jul 2020 10:22:13 -0700 (PDT)
+        Tue, 14 Jul 2020 13:53:35 -0400
+Received: from mail-pl1-x642.google.com (mail-pl1-x642.google.com [IPv6:2607:f8b0:4864:20::642])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B8EC2C061794
+        for <linux-remoteproc@vger.kernel.org>; Tue, 14 Jul 2020 10:53:35 -0700 (PDT)
+Received: by mail-pl1-x642.google.com with SMTP id 72so7341295ple.0
+        for <linux-remoteproc@vger.kernel.org>; Tue, 14 Jul 2020 10:53:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=vJdnKTcsCjh5QO5GupWte5Woq1VAaZ2abrJ7Fqafctk=;
+        b=n8ssphBafRFRW+BHtCZCL8DAUEtQTzFMUPpb64h9d1cBa5egHcsFEW/BS2e28D6bmN
+         lm0E26sCJbtI9MhFeuxCWGggK9N1s7dLs1bGeIfbG9rIO7h4lxaFKO6gq7eewDAQExzI
+         ln1gVNiUrt5IP3t/GTyUoadWGWCUzdoDNCORUu39k+jgR7VG5poRFgA6mZ7KqdkTfD8u
+         ED81EyrdEqVKijercS9WTClG6t2/Zz0ja+1B93gWNjVWr6sduR8rRQLpVaoiozgjU+y+
+         EyNA1K5yLJ4wnTCkpcJxxbBRd9+i4R9954S+3t90SzEBQ2c9ChlJg+vq0Uy4GILyxcaf
+         3Jng==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=zIt5OZfKObqlXbh9Y2BY80CKEiDpSojHfWV57lWnUjc=;
-        b=K7kXJkfIeVfGZHaCUqfdvyJ75SWPAx3mf95gHI7MWK62yDio07WDbWLpSOzBN96c7W
-         Nn+EU2k1IAvI3BKaz7zrxL4fZXri2m2BPcpavhg4SXul1V3BRdL7EJivsbiP1lKTfXtu
-         71lyhfQbq27+Z+D8M1j50G6c1iHeA0/NEEqAftaUfmj0rIm2p4neBU+RQ1Z16PpwSJb+
-         PWUP8Uru6Bg+vRftTf7qB/tWr/VwaWTQT6ac7jmTQAiNFkbElWu+/Ir/XcrSoZL8b5xf
-         Nn/9J4NPmRIhspl2Qilz2H2XJIR8lM7JchPL2qZroN7pBCQ6m3X1lBO2TFBWZR0nVnEh
-         dKmw==
-X-Gm-Message-State: AOAM532bD4Et09o3sz/Jp70AUfTRJSQBKNGPbUYVgrzdQr9FO+RMwZ+Q
-        +G7DtPb+YMfKObu7SCUChw==
-X-Google-Smtp-Source: ABdhPJzL0Eh1erToxXdqHVSulTFB+j8bwTNM76ArDHjnTAymGlqxWHZNJnvdzHTRcwcx65y6vf9Okg==
-X-Received: by 2002:a05:6602:2d03:: with SMTP id c3mr5933280iow.188.1594747333291;
-        Tue, 14 Jul 2020 10:22:13 -0700 (PDT)
-Received: from xps15 ([64.188.179.252])
-        by smtp.gmail.com with ESMTPSA id t12sm10207185ilo.80.2020.07.14.10.22.12
+        bh=vJdnKTcsCjh5QO5GupWte5Woq1VAaZ2abrJ7Fqafctk=;
+        b=U4E+pvw7fZALz8NldsfCafoLbryqGC4ju0OIzDdaN4NuKd3nWS62Q2anUFquP7m1eO
+         LTn4F1bCCxl/PevTAWghVIhtrWMgCzkTjLCo6KsDB/krTWjeX+t4zMduk4ExGpU+LDdd
+         Vu4mD+YOeAnHHi2vAFj/GZD6u7Tl1JB+fJG2Wgbn2oCeWUSS+Ob5cEb5RSASX3tC7N6g
+         i3EbMvzqmRaOxDPf8r/6+gaeELoWzmsdCt41vQVWDNXMTf4sNgm/ZdsY3242qEXP7Nmj
+         lfMIHSKYp6MOxPaZ8mkcLvwGzvHkhesgLF729wIDYewuYlxIWzU6c+38jYnVNkqfmU6P
+         +5YA==
+X-Gm-Message-State: AOAM532/10qleTE94zJkeBSzKLGIGrK0+ABZVib4x1HZnBBIQEaAzSGU
+        FihDlVvlJGQvfP/hQiaqvas8aw==
+X-Google-Smtp-Source: ABdhPJyn+4IQuvUWy6ivCDj/OQz6QLYX1//0++uzzmDLlZ9obEoE9oxO6/hr6MsKkKRgYAsDU0sOlg==
+X-Received: by 2002:a17:90a:db02:: with SMTP id g2mr5500535pjv.43.1594749214961;
+        Tue, 14 Jul 2020 10:53:34 -0700 (PDT)
+Received: from xps15 (S0106002369de4dac.cg.shawcable.net. [68.147.8.254])
+        by smtp.gmail.com with ESMTPSA id x23sm17407723pfn.4.2020.07.14.10.53.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Jul 2020 10:22:12 -0700 (PDT)
-Received: (nullmailer pid 2562210 invoked by uid 1000);
-        Tue, 14 Jul 2020 17:22:11 -0000
-Date:   Tue, 14 Jul 2020 11:22:11 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Alexandre Bailon <abailon@baylibre.com>
-Cc:     ohad@wizery.com, bjorn.andersson@linaro.org,
-        matthias.bgg@gmail.com, linux-remoteproc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/6] dt bindings: remoteproc: Add bindings for MT8183 APU
-Message-ID: <20200714172211.GB2551057@bogus>
-References: <20200713132927.24925-1-abailon@baylibre.com>
- <20200713132927.24925-2-abailon@baylibre.com>
+        Tue, 14 Jul 2020 10:53:34 -0700 (PDT)
+Date:   Tue, 14 Jul 2020 11:53:32 -0600
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+To:     Rishabh Bhatnagar <rishabhb@codeaurora.org>
+Cc:     linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        bjorn.andersson@linaro.org, tsoni@codeaurora.org,
+        psodagud@codeaurora.org, sidgup@codeaurora.org
+Subject: Re: [PATCH v7 3/4] remoteproc: Add inline coredump functionality
+Message-ID: <20200714175332.GB1407705@xps15>
+References: <1594326716-15474-1-git-send-email-rishabhb@codeaurora.org>
+ <1594326716-15474-4-git-send-email-rishabhb@codeaurora.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200713132927.24925-2-abailon@baylibre.com>
+In-Reply-To: <1594326716-15474-4-git-send-email-rishabhb@codeaurora.org>
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Mon, Jul 13, 2020 at 03:29:22PM +0200, Alexandre Bailon wrote:
-> This adds dt bindings for the APU present in the MT8183.
+On Thu, Jul 09, 2020 at 01:31:55PM -0700, Rishabh Bhatnagar wrote:
+> The current coredump implementation uses vmalloc area to copy
+> all the segments. But this might put strain on low memory targets
+> as the firmware size sometimes is in tens of MBs. The situation
+> becomes worse if there are multiple remote processors undergoing
+> recovery at the same time. This patch adds inline coredump
+> functionality that avoids extra memory usage. This requires
+> recovery to be halted until data is read by userspace and free
+> function is called. Also modify the qcom_q6v5_mss driver to include
+> size and offset in the segment dump function.
 > 
-> Signed-off-by: Alexandre Bailon <abailon@baylibre.com>
+> Signed-off-by: Rishabh Bhatnagar <rishabhb@codeaurora.org>
+> Reviewed-by: Sibi Sankar <sibis@codeaurora.org>
 > ---
->  .../bindings/remoteproc/mtk,apu.yaml          | 121 ++++++++++++++++++
->  1 file changed, 121 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/remoteproc/mtk,apu.yaml
+>  drivers/remoteproc/qcom_q6v5_mss.c       |  11 ++-
+>  drivers/remoteproc/remoteproc_coredump.c | 160 +++++++++++++++++++++++++++----
+>  include/linux/remoteproc.h               |  21 +++-
+>  3 files changed, 166 insertions(+), 26 deletions(-)
 > 
-> diff --git a/Documentation/devicetree/bindings/remoteproc/mtk,apu.yaml b/Documentation/devicetree/bindings/remoteproc/mtk,apu.yaml
-> new file mode 100644
-> index 000000000000..1d5fcc135617
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/remoteproc/mtk,apu.yaml
-> @@ -0,0 +1,121 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +
-> +---
-> +$id: "http://devicetree.org/schemas/remoteproc/mtk,apu.yaml#"
-> +$schema: "http://devicetree.org/meta-schemas/core.yaml#"
-> +
-> +title: MT8183 Vision Processor Unit (VPU) devices
+> diff --git a/drivers/remoteproc/qcom_q6v5_mss.c b/drivers/remoteproc/qcom_q6v5_mss.c
+> index c6ce032..79df354 100644
+> --- a/drivers/remoteproc/qcom_q6v5_mss.c
+> +++ b/drivers/remoteproc/qcom_q6v5_mss.c
+> @@ -1199,11 +1199,12 @@ static int q6v5_mpss_load(struct q6v5 *qproc)
+>  
+>  static void qcom_q6v5_dump_segment(struct rproc *rproc,
+>  				   struct rproc_dump_segment *segment,
+> -				   void *dest)
+> +				   void *dest, size_t cp_offset, size_t size)
 
-APU or VPU?
+Now that I'm taking another look at this, refactoring qcom_q6v5_dump_segment()
+should be in another patch - please split them.
 
-> +
-> +description:
-> +  This document defines the binding for the APU, a co-processor that could
-> +  offload the CPU for machine learning and neural network.
-> +
-> +maintainers:
-> +  - Alexandre Bailon <abailon@bayLibre.com>
-> +
-> +properties:
-> +  compatible:
-> +    const: mediatek,mt8183-apu
-> +
-> +  reg:
-> +    description:
-> +      Address ranges of the APU MMIO.
+>  {
+>  	int ret = 0;
+>  	struct q6v5 *qproc = rproc->priv;
+>  	int offset = segment->da - qproc->mpss_reloc;
+> +	size_t cp_size = size ? size : segment->size;
 
-Don't put generic descriptions for standard properties.
+I can't find a scenario where size is 0 - can you explain when 
+such condition occurs?
 
-> +    maxItems: 1
+Thanks,
+Mathieu 
+
+
+>  	void *ptr = NULL;
+>  
+>  	/* Unlock mba before copying segments */
+> @@ -1219,16 +1220,16 @@ static void qcom_q6v5_dump_segment(struct rproc *rproc,
+>  	}
+>  
+>  	if (!ret)
+> -		ptr = ioremap_wc(qproc->mpss_phys + offset, segment->size);
+> +		ptr = ioremap_wc(qproc->mpss_phys + offset + cp_offset, cp_size);
+>  
+>  	if (ptr) {
+> -		memcpy(dest, ptr, segment->size);
+> +		memcpy(dest, ptr, cp_size);
+>  		iounmap(ptr);
+>  	} else {
+> -		memset(dest, 0xff, segment->size);
+> +		memset(dest, 0xff, cp_size);
+>  	}
+>  
+> -	qproc->current_dump_size += segment->size;
+> +	qproc->current_dump_size += cp_size;
+>  
+>  	/* Reclaim mba after copying segments */
+>  	if (qproc->current_dump_size == qproc->total_dump_size) {
+> diff --git a/drivers/remoteproc/remoteproc_coredump.c b/drivers/remoteproc/remoteproc_coredump.c
+> index ded0244..646886f 100644
+> --- a/drivers/remoteproc/remoteproc_coredump.c
+> +++ b/drivers/remoteproc/remoteproc_coredump.c
+> @@ -5,6 +5,7 @@
+>   * Copyright (c) 2020, The Linux Foundation. All rights reserved.
+>   */
+>  
+> +#include <linux/completion.h>
+>  #include <linux/devcoredump.h>
+>  #include <linux/device.h>
+>  #include <linux/kernel.h>
+> @@ -12,6 +13,12 @@
+>  #include "remoteproc_internal.h"
+>  #include "remoteproc_elf_helpers.h"
+>  
+> +struct rproc_coredump_state {
+> +	struct rproc *rproc;
+> +	void *header;
+> +	struct completion dump_done;
+> +};
 > +
-> +  interrupts:
-> +    description:
-> +      The interrupt number used to receive the interrupts from the DSP.
-> +    maxItems: 1
+>  /**
+>   * rproc_coredump_cleanup() - clean up dump_segments list
+>   * @rproc: the remote processor handle
+> @@ -72,7 +79,8 @@ int rproc_coredump_add_custom_segment(struct rproc *rproc,
+>  				      dma_addr_t da, size_t size,
+>  				      void (*dumpfn)(struct rproc *rproc,
+>  						     struct rproc_dump_segment *segment,
+> -						     void *dest),
+> +						     void *dest, size_t offset,
+> +						     size_t size),
+>  				      void *priv)
+>  {
+>  	struct rproc_dump_segment *segment;
+> @@ -114,12 +122,110 @@ int rproc_coredump_set_elf_info(struct rproc *rproc, u8 class, u16 machine)
+>  }
+>  EXPORT_SYMBOL(rproc_coredump_set_elf_info);
+>  
+> +static void rproc_coredump_free(void *data)
+> +{
+> +	struct rproc_coredump_state *dump_state = data;
 > +
-> +  clocks:
-> +    description:
-> +      "Clocks for co-processor (See: ../clock/clock-bindings.txt)
-> +      Three clocks are expected for AXI, IPU and JTAG.
-> +      The JTAG clock seems to be required to run the DSP,
-> +      even when JTAG is not in use."
-> +    maxItems: 3
-
-blank line between properties please.
-
-> +  clock-names:
-> +    description:
-> +      The name of clocks, must be ipu, axi and jtag
-
-That's what the schema says...
-
-> +    items:
-> +      - const: ipu
-> +      - const: axi
-> +      - const: jtag
+> +	complete(&dump_state->dump_done);
+> +	vfree(dump_state->header);
+> +}
 > +
-> +  iommu:
-> +    description: "IOMMU (See: ../iommu/iommu.txt)"
-> +    maxItems: 3
+> +static void *rproc_coredump_find_segment(loff_t user_offset,
+> +					 struct list_head *segments,
+> +					 size_t *data_left)
+> +{
+> +	struct rproc_dump_segment *segment;
 > +
-> +  memory-region:
-> +    description: "Reserved memory (See: ../reserved-memory/reserved-memory.txt)"
-> +    maxItems: 1
+> +	list_for_each_entry(segment, segments, node) {
+> +		if (user_offset < segment->size) {
+> +			*data_left = segment->size - user_offset;
+> +			return segment;
+> +		}
+> +		user_offset -= segment->size;
+> +	}
 > +
-> +  power-domains:
-> +    description: "Power domain (see: ../power/power_domain.txt)"
-> +    maxItems: 1
+> +	*data_left = 0;
+> +	return NULL;
+> +}
 > +
-> +  pinctrl:
-> +    description: pinctrl handles, required to configure pins for JTAG.
-> +    maxItems: 2
+> +static void rproc_copy_segment(struct rproc *rproc, void *dest,
+> +			       struct rproc_dump_segment *segment,
+> +			       size_t offset, size_t size)
+> +{
+> +	void *ptr;
 > +
-> +  pinctrl-names:
-> +    description:
-> +      pinctrl name, must be "default", "jtag".
-> +      "default" must configure the pins when JTAG is disabled.
-> +      "jtag" must configure the pins for JTAG operations.
-> +    items:
-> +      - const: default
-> +      - const: jtag
-> +    maxItems: 2
-
-Don't need maxItems.
-
+> +	if (segment->dump) {
+> +		segment->dump(rproc, segment, dest, offset, size);
+> +	} else {
+> +		ptr = rproc_da_to_va(rproc, segment->da + offset, size);
+> +		if (!ptr) {
+> +			dev_err(&rproc->dev,
+> +				"invalid copy request for segment %pad with offset %zu and size %zu)\n",
+> +				&segment->da, offset, size);
+> +			memset(dest, 0xff, size);
+> +		} else {
+> +			memcpy(dest, ptr, size);
+> +		}
+> +	}
+> +}
 > +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - interrupts
-> +  - clocks
-> +  - clock-names
-> +  - iommu
-> +  - memory-region
-> +  - power-domains
-
-Add:
-
-additionalProperties: false
-
+> +static ssize_t rproc_coredump_read(char *buffer, loff_t offset, size_t count,
+> +				   void *data, size_t header_sz)
+> +{
+> +	size_t seg_data, bytes_left = count;
+> +	ssize_t copy_sz;
+> +	struct rproc_dump_segment *seg;
+> +	struct rproc_coredump_state *dump_state = data;
+> +	struct rproc *rproc = dump_state->rproc;
+> +	void *elfcore = dump_state->header;
 > +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/clock/mt8183-clk.h>
-> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> +    #include <dt-bindings/memory/mt8183-larb-port.h>
-> +    #include <dt-bindings/power/mt8183-power.h>
+> +	/* Copy the vmalloc'ed header first. */
+> +	if (offset < header_sz) {
+> +		copy_sz = memory_read_from_buffer(buffer, count, &offset,
+> +						  elfcore, header_sz);
 > +
-> +    reserved-memory {
-> +      #address-cells = <1>;
-> +      #size-cells = <1>;
-> +      ranges;
+> +		return copy_sz;
+> +	}
 > +
-> +      vpu_ram: vpu_ram@0x60000000 {
-> +        compatible = "shared-dma-pool";
-> +        reg = <0 0x60000000 0 0x040000000>;
-> +        no-map;
-> +        linux,cma-default;
-> +      };
-> +    };
+> +	/*
+> +	 * Find out the segment memory chunk to be copied based on offset.
+> +	 * Keep copying data until count bytes are read.
+> +	 */
+> +	while (bytes_left) {
+> +		seg = rproc_coredump_find_segment(offset - header_sz,
+> +						  &rproc->dump_segments,
+> +						  &seg_data);
+> +		/* EOF check */
+> +		if (!seg) {
+> +			dev_info(&rproc->dev, "Ramdump done, %lld bytes read",
+> +				 offset);
+> +			break;
+> +		}
 > +
-> +    vpu0: vpu@0x19100000 {
-
-vpu?
-
-Drop the '0x'
-
-> +      compatible = "mediatek,mt8183-apu";
-> +      reg = <0 0x19180000 0 0x14000>;
-
-The default cell size for examples is 1.
-
-> +      reg-names = "mmio";
-> +      interrupts = <GIC_SPI 292 IRQ_TYPE_LEVEL_LOW>;
+> +		copy_sz = min_t(size_t, bytes_left, seg_data);
 > +
-> +      iommus = <&iommu M4U_PORT_IMG_IPUO>,
-> +         <&iommu M4U_PORT_IMG_IPU3O>,
-> +         <&iommu M4U_PORT_IMG_IPUI>;
+> +		rproc_copy_segment(rproc, buffer, seg, seg->size - seg_data,
+> +				   copy_sz);
 > +
-> +      clocks = <&ipu_core0 CLK_IPU_CORE0_AXI>,
-> +         <&ipu_core0 CLK_IPU_CORE0_IPU>,
-> +         <&ipu_core0 CLK_IPU_CORE0_JTAG>;
+> +		offset += copy_sz;
+> +		buffer += copy_sz;
+> +		bytes_left -= copy_sz;
+> +	}
 > +
-> +      clock-names = "axi", "ipu", "jtag";
-
-Doesn't match the schema which 'make dt_binding_check' will tell you.
-
+> +	return count - bytes_left;
+> +}
 > +
-> +      power-domains = <&scpsys MT8183_POWER_DOMAIN_VPU_CORE0>;
-> +      memory-region = <&vpu_ram>;
-> +    };
-> +...
+>  /**
+>   * rproc_coredump() - perform coredump
+>   * @rproc:	rproc handle
+>   *
+>   * This function will generate an ELF header for the registered segments
+> - * and create a devcoredump device associated with rproc.
+> + * and create a devcoredump device associated with rproc. Based on the
+> + * coredump configuration this function will directly copy the segments
+> + * from device memory to userspace or copy segments from device memory to
+> + * a separate buffer, which can then be read by userspace.
+> + * The first approach avoids using extra vmalloc memory. But it will stall
+> + * recovery flow until dump is read by userspace.
+>   */
+>  void rproc_coredump(struct rproc *rproc)
+>  {
+> @@ -129,11 +235,13 @@ void rproc_coredump(struct rproc *rproc)
+>  	size_t data_size;
+>  	size_t offset;
+>  	void *data;
+> -	void *ptr;
+>  	u8 class = rproc->elf_class;
+>  	int phnum = 0;
+> +	struct rproc_coredump_state dump_state;
+> +	enum rproc_dump_mechanism dump_conf = rproc->dump_conf;
+>  
+> -	if (list_empty(&rproc->dump_segments))
+> +	if (list_empty(&rproc->dump_segments) ||
+> +	    dump_conf == RPROC_COREDUMP_DISABLED)
+>  		return;
+>  
+>  	if (class == ELFCLASSNONE) {
+> @@ -143,7 +251,14 @@ void rproc_coredump(struct rproc *rproc)
+>  
+>  	data_size = elf_size_of_hdr(class);
+>  	list_for_each_entry(segment, &rproc->dump_segments, node) {
+> -		data_size += elf_size_of_phdr(class) + segment->size;
+> +		/*
+> +		 * For default configuration buffer includes headers & segments.
+> +		 * For inline dump buffer just includes headers as segments are
+> +		 * directly read from device memory.
+> +		 */
+> +		data_size += elf_size_of_phdr(class);
+> +		if (dump_conf == RPROC_COREDUMP_DEFAULT)
+> +			data_size += segment->size;
+>  
+>  		phnum++;
+>  	}
+> @@ -182,23 +297,30 @@ void rproc_coredump(struct rproc *rproc)
+>  		elf_phdr_set_p_flags(class, phdr, PF_R | PF_W | PF_X);
+>  		elf_phdr_set_p_align(class, phdr, 0);
+>  
+> -		if (segment->dump) {
+> -			segment->dump(rproc, segment, data + offset);
+> -		} else {
+> -			ptr = rproc_da_to_va(rproc, segment->da, segment->size);
+> -			if (!ptr) {
+> -				dev_err(&rproc->dev,
+> -					"invalid coredump segment (%pad, %zu)\n",
+> -					&segment->da, segment->size);
+> -				memset(data + offset, 0xff, segment->size);
+> -			} else {
+> -				memcpy(data + offset, ptr, segment->size);
+> -			}
+> -		}
+> +		if (dump_conf == RPROC_COREDUMP_DEFAULT)
+> +			rproc_copy_segment(rproc, data + offset, segment, 0,
+> +					   segment->size);
+>  
+>  		offset += elf_phdr_get_p_filesz(class, phdr);
+>  		phdr += elf_size_of_phdr(class);
+>  	}
+>  
+> -	dev_coredumpv(&rproc->dev, data, data_size, GFP_KERNEL);
+> +	if (dump_conf == RPROC_COREDUMP_DEFAULT) {
+> +		dev_coredumpv(&rproc->dev, data, data_size, GFP_KERNEL);
+> +		return;
+> +	}
+> +
+> +	/* Initialize the dump state struct to be used by rproc_coredump_read */
+> +	dump_state.rproc = rproc;
+> +	dump_state.header = data;
+> +	init_completion(&dump_state.dump_done);
+> +
+> +	dev_coredumpm(&rproc->dev, NULL, &dump_state, data_size, GFP_KERNEL,
+> +		      rproc_coredump_read, rproc_coredump_free);
+> +
+> +	/*
+> +	 * Wait until the dump is read and free is called. Data is freed
+> +	 * by devcoredump framework automatically after 5 minutes.
+> +	 */
+> +	wait_for_completion(&dump_state.dump_done);
+>  }
+> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+> index e7b7bab..38d037d 100644
+> --- a/include/linux/remoteproc.h
+> +++ b/include/linux/remoteproc.h
+> @@ -435,6 +435,20 @@ enum rproc_crash_type {
+>  };
+>  
+>  /**
+> + * enum rproc_dump_mechanism - Coredump options for core
+> + * @RPROC_COREDUMP_DEFAULT:	Copy dump to separate buffer and carry on with
+> +				recovery
+> + * @RPROC_COREDUMP_INLINE:	Read segments directly from device memory. Stall
+> +				recovery until all segments are read
+> + * @RPROC_COREDUMP_DISABLED:	Don't perform any dump
+> + */
+> +enum rproc_dump_mechanism {
+> +	RPROC_COREDUMP_DEFAULT,
+> +	RPROC_COREDUMP_INLINE,
+> +	RPROC_COREDUMP_DISABLED,
+> +};
+> +
+> +/**
+>   * struct rproc_dump_segment - segment info from ELF header
+>   * @node:	list node related to the rproc segment list
+>   * @da:		device address of the segment
+> @@ -451,7 +465,7 @@ struct rproc_dump_segment {
+>  
+>  	void *priv;
+>  	void (*dump)(struct rproc *rproc, struct rproc_dump_segment *segment,
+> -		     void *dest);
+> +		     void *dest, size_t offset, size_t size);
+>  	loff_t offset;
+>  };
+>  
+> @@ -466,6 +480,7 @@ struct rproc_dump_segment {
+>   * @dev: virtual device for refcounting and common remoteproc behavior
+>   * @power: refcount of users who need this rproc powered up
+>   * @state: state of the device
+> + * @dump_conf: Currently selected coredump configuration
+>   * @lock: lock which protects concurrent manipulations of the rproc
+>   * @dbg_dir: debugfs directory of this rproc device
+>   * @traces: list of trace buffers
+> @@ -499,6 +514,7 @@ struct rproc {
+>  	struct device dev;
+>  	atomic_t power;
+>  	unsigned int state;
+> +	enum rproc_dump_mechanism dump_conf;
+>  	struct mutex lock;
+>  	struct dentry *dbg_dir;
+>  	struct list_head traces;
+> @@ -630,7 +646,8 @@ int rproc_coredump_add_custom_segment(struct rproc *rproc,
+>  				      dma_addr_t da, size_t size,
+>  				      void (*dumpfn)(struct rproc *rproc,
+>  						     struct rproc_dump_segment *segment,
+> -						     void *dest),
+> +						     void *dest, size_t offset,
+> +						     size_t size),
+>  				      void *priv);
+>  int rproc_coredump_set_elf_info(struct rproc *rproc, u8 class, u16 machine);
+>  
 > -- 
-> 2.26.2
+> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+> a Linux Foundation Collaborative Project
 > 
