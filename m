@@ -2,571 +2,460 @@ Return-Path: <SRS0=dXMc=A2=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2999C433E4
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 15 Jul 2020 17:15:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B87BFC433E0
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 15 Jul 2020 19:22:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8078F2072E
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 15 Jul 2020 17:15:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 914402065F
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 15 Jul 2020 19:22:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CiAqJK6Y"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="FzwAhmcD"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726101AbgGORPR (ORCPT
+        id S1726777AbgGOTWS (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 15 Jul 2020 13:15:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48954 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725867AbgGORPO (ORCPT
+        Wed, 15 Jul 2020 15:22:18 -0400
+Received: from m43-7.mailgun.net ([69.72.43.7]:39752 "EHLO m43-7.mailgun.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726472AbgGOTWR (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 15 Jul 2020 13:15:14 -0400
-Received: from mail-pl1-x644.google.com (mail-pl1-x644.google.com [IPv6:2607:f8b0:4864:20::644])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ED473C08C5DF
-        for <linux-remoteproc@vger.kernel.org>; Wed, 15 Jul 2020 10:15:13 -0700 (PDT)
-Received: by mail-pl1-x644.google.com with SMTP id l6so2647014plt.7
-        for <linux-remoteproc@vger.kernel.org>; Wed, 15 Jul 2020 10:15:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=aYLcR+u3Q7QAoRz2AVyYCCVVYa+EVxieuJWSO0Q6Dtg=;
-        b=CiAqJK6Yf33nCCk9NBQhOlJJB4SKzdxAlfOdZV+6D3tdWLqYglGUVbJd2vwySZKzfR
-         kiJw4pGgfhBKdRYdHx5CIOJykfU8PR+m5pFhj+Xp0vBBlgJWtPaGN+5duNo9zWsfFxcw
-         eCBLFRe/xshBxGgBfXCUST6KpVXVfQGb7C4kMfWqVcTIBECxyv8+zwzME89F6Xs1MyzS
-         MPke4Lqy3b3W+ufVffVpNew8usA47n+//lNfxe0VEmDS5FWi/mZRf9kLx0XP5L748WXO
-         +yt+STFs7zqToJV+XBKB0EDc16UB/5E6DdBnk3+nwPmDX3lp+ec1cGyNbFQ1zp9YZZIV
-         p0Sg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=aYLcR+u3Q7QAoRz2AVyYCCVVYa+EVxieuJWSO0Q6Dtg=;
-        b=IWfZZfPFnexYrnIwDUUAkbapX+nlxiQNFzAMmIc5Bxj3QJygIZ1qG2WIYJKTrgeGEq
-         0YnYkbflBEDPRGWyYaI9iTQ92fVA5b7K3yWjdlT/aif4fTF2FbTRQjb5npZEbQOrAqhy
-         3igTROYITP2OKrZ3i+8yUPXiJNskgVv5R5Vx1ihCmTTV8UgoHZjIrdwB5K0jzy7imrrm
-         1juq5TtOpJNGm6eo2XwjPlW8vf0MhUVQAsuVR5dHLt8evFMrQDkxeI3Mngulve79vqj/
-         JGIN5E2H0nniveq+hekkpNAPsJGnQ077LbHnxcfpxGTkFbxFCrEPx2QvK0ynb1JhlBTp
-         aQaA==
-X-Gm-Message-State: AOAM53112/UrKdTQsa3I6ZRh68c8leexQ1L8zp2F8hxJjGjAJGgcRSDy
-        t2MQqcrU2/wpMrJaasCPmrbM3w==
-X-Google-Smtp-Source: ABdhPJxR4JUPxaCFOFaKVD44GWmxbqkq9wdRYPBZr+hdrGwqSZmTDj3ddUwrYKn6CslRlKCDPKlyww==
-X-Received: by 2002:a17:90a:6983:: with SMTP id s3mr638857pjj.55.1594833312949;
-        Wed, 15 Jul 2020 10:15:12 -0700 (PDT)
-Received: from xps15 (S0106002369de4dac.cg.shawcable.net. [68.147.8.254])
-        by smtp.gmail.com with ESMTPSA id a2sm2780497pgf.53.2020.07.15.10.15.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Jul 2020 10:15:12 -0700 (PDT)
-Date:   Wed, 15 Jul 2020 11:15:09 -0600
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-To:     Kishon Vijay Abraham I <kishon@ti.com>
-Cc:     Jason Wang <jasowang@redhat.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Ohad Ben-Cohen <ohad@wizery.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Jon Mason <jdmason@kudzu.us>,
-        Dave Jiang <dave.jiang@intel.com>,
-        Allen Hubbe <allenbh@gmail.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        Stefano Garzarella <sgarzare@redhat.com>,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org, linux-ntb@googlegroups.com,
-        linux-pci@vger.kernel.org, kvm@vger.kernel.org,
-        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org
-Subject: Re: [RFC PATCH 00/22] Enhance VHOST to enable SoC-to-SoC
- communication
-Message-ID: <20200715171509.GA3185776@xps15>
-References: <20200702082143.25259-1-kishon@ti.com>
- <20200702055026-mutt-send-email-mst@kernel.org>
- <603970f5-3289-cd53-82a9-aa62b292c552@redhat.com>
- <14c6cad7-9361-7fa4-e1c6-715ccc7e5f6b@ti.com>
- <59fd6a0b-8566-44b7-3dae-bb52b468219b@redhat.com>
- <ce9eb6a5-cd3a-a390-5684-525827b30f64@ti.com>
- <da2b671c-b05d-a57f-7bdf-8b1043a41240@redhat.com>
- <fee8a0fb-f862-03bd-5ede-8f105b6af529@ti.com>
- <b2178e1d-2f5c-e8a3-72fb-70f2f8d6aa45@redhat.com>
- <45a8a97c-2061-13ee-5da8-9877a4a3b8aa@ti.com>
+        Wed, 15 Jul 2020 15:22:17 -0400
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1594840935; h=Message-ID: References: In-Reply-To: Subject:
+ Cc: To: From: Date: Content-Transfer-Encoding: Content-Type:
+ MIME-Version: Sender; bh=2z5LRodrOecq1ZtAuxzSe9IHQ09KLrLfgMk1Kvp295E=;
+ b=FzwAhmcDz8HBIFmgBA5FipARqotWfCMT5Xez/IptTkEqeBIiLc4KgYPADAbAGxA8sJW3Y1JW
+ q9qDVDqWRLHpbWwFEAQtX23Z+S8WN69NrdLdy/S1nfHdKXmqDaLpwvPwc1OnZ1ve2zSDJcif
+ Oh0oZIG9FOOPxyU2r1pcyRqRaLw=
+X-Mailgun-Sending-Ip: 69.72.43.7
+X-Mailgun-Sid: WyI4ZWZiZiIsICJsaW51eC1yZW1vdGVwcm9jQHZnZXIua2VybmVsLm9yZyIsICJiZTllNGEiXQ==
+Received: from smtp.codeaurora.org
+ (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
+ smtp-out-n13.prod.us-west-2.postgun.com with SMTP id
+ 5f0f5767ee6926bb4f828337 (version=TLS1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Wed, 15 Jul 2020 19:22:15
+ GMT
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id A176DC433C9; Wed, 15 Jul 2020 19:22:14 +0000 (UTC)
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: rishabhb)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 594F9C433C6;
+        Wed, 15 Jul 2020 19:22:13 +0000 (UTC)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <45a8a97c-2061-13ee-5da8-9877a4a3b8aa@ti.com>
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Wed, 15 Jul 2020 12:22:13 -0700
+From:   rishabhb@codeaurora.org
+To:     Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc:     linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        bjorn.andersson@linaro.org, tsoni@codeaurora.org,
+        psodagud@codeaurora.org, sidgup@codeaurora.org,
+        linux-remoteproc-owner@vger.kernel.org
+Subject: Re: [PATCH v7 3/4] remoteproc: Add inline coredump functionality
+In-Reply-To: <20200714175332.GB1407705@xps15>
+References: <1594326716-15474-1-git-send-email-rishabhb@codeaurora.org>
+ <1594326716-15474-4-git-send-email-rishabhb@codeaurora.org>
+ <20200714175332.GB1407705@xps15>
+Message-ID: <ab1003538546fddbdf2ee5f80e76b614@codeaurora.org>
+X-Sender: rishabhb@codeaurora.org
+User-Agent: Roundcube Webmail/1.3.9
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hey Kishon,
+On 2020-07-14 10:53, Mathieu Poirier wrote:
+> On Thu, Jul 09, 2020 at 01:31:55PM -0700, Rishabh Bhatnagar wrote:
+>> The current coredump implementation uses vmalloc area to copy
+>> all the segments. But this might put strain on low memory targets
+>> as the firmware size sometimes is in tens of MBs. The situation
+>> becomes worse if there are multiple remote processors undergoing
+>> recovery at the same time. This patch adds inline coredump
+>> functionality that avoids extra memory usage. This requires
+>> recovery to be halted until data is read by userspace and free
+>> function is called. Also modify the qcom_q6v5_mss driver to include
+>> size and offset in the segment dump function.
+>> 
+>> Signed-off-by: Rishabh Bhatnagar <rishabhb@codeaurora.org>
+>> Reviewed-by: Sibi Sankar <sibis@codeaurora.org>
+>> ---
+>>  drivers/remoteproc/qcom_q6v5_mss.c       |  11 ++-
+>>  drivers/remoteproc/remoteproc_coredump.c | 160 
+>> +++++++++++++++++++++++++++----
+>>  include/linux/remoteproc.h               |  21 +++-
+>>  3 files changed, 166 insertions(+), 26 deletions(-)
+>> 
+>> diff --git a/drivers/remoteproc/qcom_q6v5_mss.c 
+>> b/drivers/remoteproc/qcom_q6v5_mss.c
+>> index c6ce032..79df354 100644
+>> --- a/drivers/remoteproc/qcom_q6v5_mss.c
+>> +++ b/drivers/remoteproc/qcom_q6v5_mss.c
+>> @@ -1199,11 +1199,12 @@ static int q6v5_mpss_load(struct q6v5 *qproc)
+>> 
+>>  static void qcom_q6v5_dump_segment(struct rproc *rproc,
+>>  				   struct rproc_dump_segment *segment,
+>> -				   void *dest)
+>> +				   void *dest, size_t cp_offset, size_t size)
+> 
+> Now that I'm taking another look at this, refactoring 
+> qcom_q6v5_dump_segment()
+> should be in another patch - please split them.
+> 
+Hi Mathieu,
+Thanks for reviewing.
 
-On Wed, Jul 08, 2020 at 06:43:45PM +0530, Kishon Vijay Abraham I wrote:
-> Hi Jason,
+Since I'm changing the API signature if we just take this patch without 
+q6v5_mss
+changes (in a separate patch) it would cause compilation errors. Is that 
+ok?
+>>  {
+>>  	int ret = 0;
+>>  	struct q6v5 *qproc = rproc->priv;
+>>  	int offset = segment->da - qproc->mpss_reloc;
+>> +	size_t cp_size = size ? size : segment->size;
 > 
-> On 7/8/2020 4:52 PM, Jason Wang wrote:
-> > 
-> > On 2020/7/7 下午10:45, Kishon Vijay Abraham I wrote:
-> >> Hi Jason,
-> >>
-> >> On 7/7/2020 3:17 PM, Jason Wang wrote:
-> >>> On 2020/7/6 下午5:32, Kishon Vijay Abraham I wrote:
-> >>>> Hi Jason,
-> >>>>
-> >>>> On 7/3/2020 12:46 PM, Jason Wang wrote:
-> >>>>> On 2020/7/2 下午9:35, Kishon Vijay Abraham I wrote:
-> >>>>>> Hi Jason,
-> >>>>>>
-> >>>>>> On 7/2/2020 3:40 PM, Jason Wang wrote:
-> >>>>>>> On 2020/7/2 下午5:51, Michael S. Tsirkin wrote:
-> >>>>>>>> On Thu, Jul 02, 2020 at 01:51:21PM +0530, Kishon Vijay Abraham I wrote:
-> >>>>>>>>> This series enhances Linux Vhost support to enable SoC-to-SoC
-> >>>>>>>>> communication over MMIO. This series enables rpmsg communication between
-> >>>>>>>>> two SoCs using both PCIe RC<->EP and HOST1-NTB-HOST2
-> >>>>>>>>>
-> >>>>>>>>> 1) Modify vhost to use standard Linux driver model
-> >>>>>>>>> 2) Add support in vring to access virtqueue over MMIO
-> >>>>>>>>> 3) Add vhost client driver for rpmsg
-> >>>>>>>>> 4) Add PCIe RC driver (uses virtio) and PCIe EP driver (uses vhost) for
-> >>>>>>>>>        rpmsg communication between two SoCs connected to each other
-> >>>>>>>>> 5) Add NTB Virtio driver and NTB Vhost driver for rpmsg communication
-> >>>>>>>>>        between two SoCs connected via NTB
-> >>>>>>>>> 6) Add configfs to configure the components
-> >>>>>>>>>
-> >>>>>>>>> UseCase1 :
-> >>>>>>>>>
-> >>>>>>>>>      VHOST RPMSG                     VIRTIO RPMSG
-> >>>>>>>>>           +                               +
-> >>>>>>>>>           |                               |
-> >>>>>>>>>           |                               |
-> >>>>>>>>>           |                               |
-> >>>>>>>>>           |                               |
-> >>>>>>>>> +-----v------+                 +------v-------+
-> >>>>>>>>> |   Linux    |                 |     Linux    |
-> >>>>>>>>> |  Endpoint  |                 | Root Complex |
-> >>>>>>>>> |            <----------------->              |
-> >>>>>>>>> |            |                 |              |
-> >>>>>>>>> |    SOC1    |                 |     SOC2     |
-> >>>>>>>>> +------------+                 +--------------+
-> >>>>>>>>>
-> >>>>>>>>> UseCase 2:
-> >>>>>>>>>
-> >>>>>>>>>          VHOST RPMSG                                      VIRTIO RPMSG
-> >>>>>>>>>               +                                                 +
-> >>>>>>>>>               |                                                 |
-> >>>>>>>>>               |                                                 |
-> >>>>>>>>>               |                                                 |
-> >>>>>>>>>               |                                                 |
-> >>>>>>>>>        +------v------+                                   +------v------+
-> >>>>>>>>>        |             |                                   |             |
-> >>>>>>>>>        |    HOST1    |                                   |    HOST2    |
-> >>>>>>>>>        |             |                                   |             |
-> >>>>>>>>>        +------^------+                                   +------^------+
-> >>>>>>>>>               |                                                 |
-> >>>>>>>>>               |                                                 |
-> >>>>>>>>> +---------------------------------------------------------------------+
-> >>>>>>>>> |  +------v------+                                   +------v------+  |
-> >>>>>>>>> |  |             |                                   |             |  |
-> >>>>>>>>> |  |     EP      |                                   |     EP      |  |
-> >>>>>>>>> |  | CONTROLLER1 |                                   | CONTROLLER2 |  |
-> >>>>>>>>> |  |             <----------------------------------->             |  |
-> >>>>>>>>> |  |             |                                   |             |  |
-> >>>>>>>>> |  |             |                                   |             |  |
-> >>>>>>>>> |  |             |  SoC With Multiple EP Instances   |             |  |
-> >>>>>>>>> |  |             |  (Configured using NTB Function)  |             |  |
-> >>>>>>>>> |  +-------------+                                   +-------------+  |
-> >>>>>>>>> +---------------------------------------------------------------------+
-> >>>>>>>>>
-> >>>>>>>>> Software Layering:
-> >>>>>>>>>
-> >>>>>>>>> The high-level SW layering should look something like below. This series
-> >>>>>>>>> adds support only for RPMSG VHOST, however something similar should be
-> >>>>>>>>> done for net and scsi. With that any vhost device (PCI, NTB, Platform
-> >>>>>>>>> device, user) can use any of the vhost client driver.
-> >>>>>>>>>
-> >>>>>>>>>
-> >>>>>>>>>         +----------------+  +-----------+  +------------+  +----------+
-> >>>>>>>>>         |  RPMSG VHOST   |  | NET VHOST |  | SCSI VHOST |  |    X     |
-> >>>>>>>>>         +-------^--------+  +-----^-----+  +-----^------+  +----^-----+
-> >>>>>>>>>                 |                 |              |              |
-> >>>>>>>>>                 |                 |              |              |
-> >>>>>>>>>                 |                 |              |              |
-> >>>>>>>>> +-----------v-----------------v--------------v--------------v----------+
-> >>>>>>>>> |                            VHOST CORE                                |
-> >>>>>>>>> +--------^---------------^--------------------^------------------^-----+
-> >>>>>>>>>              |               |                    |                  |
-> >>>>>>>>>              |               |                    |                  |
-> >>>>>>>>>              |               |                    |                  |
-> >>>>>>>>> +--------v-------+  +----v------+  +----------v----------+  +----v-----+
-> >>>>>>>>> |  PCI EPF VHOST |  | NTB VHOST |  |PLATFORM DEVICE VHOST|  |    X     |
-> >>>>>>>>> +----------------+  +-----------+  +---------------------+  +----------+
-> >>>>>>>>>
-> >>>>>>>>> This was initially proposed here [1]
-> >>>>>>>>>
-> >>>>>>>>> [1] ->
-> >>>>>>>>> https://lore.kernel.org/r/2cf00ec4-1ed6-f66e-6897-006d1a5b6390@ti.com
-> >>>>>>>> I find this very interesting. A huge patchset so will take a bit
-> >>>>>>>> to review, but I certainly plan to do that. Thanks!
-> >>>>>>> Yes, it would be better if there's a git branch for us to have a look.
-> >>>>>> I've pushed the branch
-> >>>>>> https://github.com/kishon/linux-wip.git vhost_rpmsg_pci_ntb_rfc
-> >>>>> Thanks
-> >>>>>
-> >>>>>
-> >>>>>>> Btw, I'm not sure I get the big picture, but I vaguely feel some of the
-> >>>>>>> work is
-> >>>>>>> duplicated with vDPA (e.g the epf transport or vhost bus).
-> >>>>>> This is about connecting two different HW systems both running Linux and
-> >>>>>> doesn't necessarily involve virtualization.
-> >>>>> Right, this is something similar to VOP
-> >>>>> (Documentation/misc-devices/mic/mic_overview.rst). The different is the
-> >>>>> hardware I guess and VOP use userspace application to implement the device.
-> >>>> I'd also like to point out, this series tries to have communication between
-> >>>> two
-> >>>> SoCs in vendor agnostic way. Since this series solves for 2 usecases (PCIe
-> >>>> RC<->EP and NTB), for the NTB case it directly plugs into NTB framework and
-> >>>> any
-> >>>> of the HW in NTB below should be able to use a virtio-vhost communication
-> >>>>
-> >>>> #ls drivers/ntb/hw/
-> >>>> amd  epf  idt  intel  mscc
-> >>>>
-> >>>> And similarly for the PCIe RC<->EP communication, this adds a generic endpoint
-> >>>> function driver and hence any SoC that supports configurable PCIe endpoint can
-> >>>> use virtio-vhost communication
-> >>>>
-> >>>> # ls drivers/pci/controller/dwc/*ep*
-> >>>> drivers/pci/controller/dwc/pcie-designware-ep.c
-> >>>> drivers/pci/controller/dwc/pcie-uniphier-ep.c
-> >>>> drivers/pci/controller/dwc/pci-layerscape-ep.c
-> >>>
-> >>> Thanks for those backgrounds.
-> >>>
-> >>>
-> >>>>>>     So there is no guest or host as in
-> >>>>>> virtualization but two entirely different systems connected via PCIe cable,
-> >>>>>> one
-> >>>>>> acting as guest and one as host. So one system will provide virtio
-> >>>>>> functionality reserving memory for virtqueues and the other provides vhost
-> >>>>>> functionality providing a way to access the virtqueues in virtio memory.
-> >>>>>> One is
-> >>>>>> source and the other is sink and there is no intermediate entity. (vhost was
-> >>>>>> probably intermediate entity in virtualization?)
-> >>>>> (Not a native English speaker) but "vhost" could introduce some confusion for
-> >>>>> me since it was use for implementing virtio backend for userspace drivers. I
-> >>>>> guess "vringh" could be better.
-> >>>> Initially I had named this vringh but later decided to choose vhost instead of
-> >>>> vringh. vhost is still a virtio backend (not necessarily userspace) though it
-> >>>> now resides in an entirely different system. Whatever virtio is for a frontend
-> >>>> system, vhost can be that for a backend system. vring can be for accessing
-> >>>> virtqueue and can be used either in frontend or backend.
-> >>>
-> >>> Ok.
-> >>>
-> >>>
-> >>>>>>> Have you considered to implement these through vDPA?
-> >>>>>> IIUC vDPA only provides an interface to userspace and an in-kernel rpmsg
-> >>>>>> driver
-> >>>>>> or vhost net driver is not provided.
-> >>>>>>
-> >>>>>> The HW connection looks something like https://pasteboard.co/JfMVVHC.jpg
-> >>>>>> (usecase2 above),
-> >>>>> I see.
-> >>>>>
-> >>>>>
-> >>>>>>     all the boards run Linux. The middle board provides NTB
-> >>>>>> functionality and board on either side provides virtio/vhost
-> >>>>>> functionality and
-> >>>>>> transfer data using rpmsg.
-> >>>>> So I wonder whether it's worthwhile for a new bus. Can we use the existed
-> >>>>> virtio-bus/drivers? It might work as, except for the epf transport, we can
-> >>>>> introduce a epf "vhost" transport driver.
-> >>>> IMHO we'll need two buses one for frontend and other for backend because the
-> >>>> two components can then co-operate/interact with each other to provide a
-> >>>> functionality. Though both will seemingly provide similar callbacks, they are
-> >>>> both provide symmetrical or complimentary funcitonality and need not be
-> >>>> same or
-> >>>> identical.
-> >>>>
-> >>>> Having the same bus can also create sequencing issues.
-> >>>>
-> >>>> If you look at virtio_dev_probe() of virtio_bus
-> >>>>
-> >>>> device_features = dev->config->get_features(dev);
-> >>>>
-> >>>> Now if we use same bus for both front-end and back-end, both will try to
-> >>>> get_features when there has been no set_features. Ideally vhost device should
-> >>>> be initialized first with the set of features it supports. Vhost and virtio
-> >>>> should use "status" and "features" complimentarily and not identically.
-> >>>
-> >>> Yes, but there's no need for doing status/features passthrough in epf vhost
-> >>> drivers.b
-> >>>
-> >>>
-> >>>> virtio device (or frontend) cannot be initialized before vhost device (or
-> >>>> backend) gets initialized with data such as features. Similarly vhost
-> >>>> (backend)
-> >>>> cannot access virqueues or buffers before virtio (frontend) sets
-> >>>> VIRTIO_CONFIG_S_DRIVER_OK whereas that requirement is not there for virtio as
-> >>>> the physical memory for virtqueues are created by virtio (frontend).
-> >>>
-> >>> epf vhost drivers need to implement two devices: vhost(vringh) device and
-> >>> virtio device (which is a mediated device). The vhost(vringh) device is doing
-> >>> feature negotiation with the virtio device via RC/EP or NTB. The virtio device
-> >>> is doing feature negotiation with local virtio drivers. If there're feature
-> >>> mismatch, epf vhost drivers and do mediation between them.
-> >> Here epf vhost should be initialized with a set of features for it to negotiate
-> >> either as vhost device or virtio device no? Where should the initial feature
-> >> set for epf vhost come from?
-> > 
-> > 
-> > I think it can work as:
-> > 
-> > 1) Having an initial features (hard coded in the code) set X in epf vhost
-> > 2) Using this X for both virtio device and vhost(vringh) device
-> > 3) local virtio driver will negotiate with virtio device with feature set Y
-> > 4) remote virtio driver will negotiate with vringh device with feature set Z
-> > 5) mediate between feature Y and feature Z since both Y and Z are a subset of X
-> > 
-> > 
+> I can't find a scenario where size is 0 - can you explain when
+> such condition occurs?
 > 
-> okay. I'm also thinking if we could have configfs for configuring this. Anyways
-> we could find different approaches of configuring this.
-> >>>
-> >>>>> It will have virtqueues but only used for the communication between itself
-> >>>>> and
-> >>>>> uppter virtio driver. And it will have vringh queues which will be probe by
-> >>>>> virtio epf transport drivers. And it needs to do datacopy between
-> >>>>> virtqueue and
-> >>>>> vringh queues.
-> >>>>>
-> >>>>> It works like:
-> >>>>>
-> >>>>> virtio drivers <- virtqueue/virtio-bus -> epf vhost drivers <- vringh
-> >>>>> queue/epf>
-> >>>>>
-> >>>>> The advantages is that there's no need for writing new buses and drivers.
-> >>>> I think this will work however there is an addtional copy between vringh queue
-> >>>> and virtqueue,
-> >>>
-> >>> I think not? E.g in use case 1), if we stick to virtio bus, we will have:
-> >>>
-> >>> virtio-rpmsg (EP) <- virtio ring(1) -> epf vhost driver (EP) <- virtio ring(2)
-> >>> -> virtio pci (RC) <-> virtio rpmsg (RC)
-> >> IIUC epf vhost driver (EP) will access virtio ring(2) using vringh?
-> > 
-> > 
-> > Yes.
-> > 
-> > 
-> >> And virtio
-> >> ring(2) is created by virtio pci (RC).
-> > 
-> > 
-> > Yes.
-> > 
-> > 
-> >>> What epf vhost driver did is to read from virtio ring(1) about the buffer len
-> >>> and addr and them DMA to Linux(RC)?
-> >> okay, I made some optimization here where vhost-rpmsg using a helper writes a
-> >> buffer from rpmsg's upper layer directly to remote Linux (RC) as against here
-> >> were it has to be first written to virtio ring (1).
-> >>
-> >> Thinking how this would look for NTB
-> >> virtio-rpmsg (HOST1) <- virtio ring(1) -> NTB(HOST1) <-> NTB(HOST2)  <- virtio
-> >> ring(2) -> virtio-rpmsg (HOST2)
-> >>
-> >> Here the NTB(HOST1) will access the virtio ring(2) using vringh?
-> > 
-> > 
-> > Yes, I think so it needs to use vring to access virtio ring (1) as well.
+There is no such case right now. I can get rid of the check.
+> Thanks,
+> Mathieu
 > 
-> NTB(HOST1) and virtio ring(1) will be in the same system. So it doesn't have to
-> use vring. virtio ring(1) is by the virtio device the NTB(HOST1) creates.
-> > 
-> > 
-> >>
-> >> Do you also think this will work seamlessly with virtio_net.c, virtio_blk.c?
-> > 
-> > 
-> > Yes.
 > 
-> okay, I haven't looked at this but the backend of virtio_blk should access an
-> actual storage device no?
-> > 
-> > 
-> >>
-> >> I'd like to get clarity on two things in the approach you suggested, one is
-> >> features (since epf vhost should ideally be transparent to any virtio driver)
-> > 
-> > 
-> > We can have have an array of pre-defined features indexed by virtio device id
-> > in the code.
-> > 
-> > 
-> >> and the other is how certain inputs to virtio device such as number of buffers
-> >> be determined.
-> > 
-> > 
-> > We can start from hard coded the value like 256, or introduce some API for user
-> > to change the value.
-> > 
-> > 
-> >>
-> >> Thanks again for your suggestions!
-> > 
-> > 
-> > You're welcome.
-> > 
-> > Note that I just want to check whether or not we can reuse the virtio
-> > bus/driver. It's something similar to what you proposed in Software Layering
-> > but we just replace "vhost core" with "virtio bus" and move the vhost core
-> > below epf/ntb/platform transport.
-> 
-> Got it. My initial design was based on my understanding of your comments [1].
-> 
-> I'll try to create something based on your proposed design here.
-
-Based on the above conversation it seems like I should wait for another revision
-of this set before reviewing the RPMSG part.  Please confirm that my
-understanding is correct.
-
-Thanks,
-Mathieu
-
-> 
-> Regards
-> Kishon
-> 
-> [1] ->
-> https://lore.kernel.org/linux-pci/59982499-0fc1-2e39-9ff9-993fb4dd7dcc@redhat.com/
-> > 
-> > Thanks
-> > 
-> > 
-> >>
-> >> Regards
-> >> Kishon
-> >>
-> >>>
-> >>>> in some cases adds latency because of forwarding interrupts
-> >>>> between vhost and virtio driver, vhost drivers providing features (which means
-> >>>> it has to be aware of which virtio driver will be connected).
-> >>>> virtio drivers (front end) generally access the buffers from it's local memory
-> >>>> but when in backend it can access over MMIO (like PCI EPF or NTB) or
-> >>>> userspace.
-> >>>>> Does this make sense?
-> >>>> Two copies in my opinion is an issue but lets get others opinions as well.
-> >>>
-> >>> Sure.
-> >>>
-> >>>
-> >>>> Thanks for your suggestions!
-> >>>
-> >>> You're welcome.
-> >>>
-> >>> Thanks
-> >>>
-> >>>
-> >>>> Regards
-> >>>> Kishon
-> >>>>
-> >>>>> Thanks
-> >>>>>
-> >>>>>
-> >>>>>> Thanks
-> >>>>>> Kishon
-> >>>>>>
-> >>>>>>> Thanks
-> >>>>>>>
-> >>>>>>>
-> >>>>>>>>> Kishon Vijay Abraham I (22):
-> >>>>>>>>>       vhost: Make _feature_ bits a property of vhost device
-> >>>>>>>>>       vhost: Introduce standard Linux driver model in VHOST
-> >>>>>>>>>       vhost: Add ops for the VHOST driver to configure VHOST device
-> >>>>>>>>>       vringh: Add helpers to access vring in MMIO
-> >>>>>>>>>       vhost: Add MMIO helpers for operations on vhost virtqueue
-> >>>>>>>>>       vhost: Introduce configfs entry for configuring VHOST
-> >>>>>>>>>       virtio_pci: Use request_threaded_irq() instead of request_irq()
-> >>>>>>>>>       rpmsg: virtio_rpmsg_bus: Disable receive virtqueue callback when
-> >>>>>>>>>         reading messages
-> >>>>>>>>>       rpmsg: Introduce configfs entry for configuring rpmsg
-> >>>>>>>>>       rpmsg: virtio_rpmsg_bus: Add Address Service Notification support
-> >>>>>>>>>       rpmsg: virtio_rpmsg_bus: Move generic rpmsg structure to
-> >>>>>>>>>         rpmsg_internal.h
-> >>>>>>>>>       virtio: Add ops to allocate and free buffer
-> >>>>>>>>>       rpmsg: virtio_rpmsg_bus: Use virtio_alloc_buffer() and
-> >>>>>>>>>         virtio_free_buffer()
-> >>>>>>>>>       rpmsg: Add VHOST based remote processor messaging bus
-> >>>>>>>>>       samples/rpmsg: Setup delayed work to send message
-> >>>>>>>>>       samples/rpmsg: Wait for address to be bound to rpdev for sending
-> >>>>>>>>>         message
-> >>>>>>>>>       rpmsg.txt: Add Documentation to configure rpmsg using configfs
-> >>>>>>>>>       virtio_pci: Add VIRTIO driver for VHOST on Configurable PCIe
-> >>>>>>>>> Endpoint
-> >>>>>>>>>         device
-> >>>>>>>>>       PCI: endpoint: Add EP function driver to provide VHOST interface
-> >>>>>>>>>       NTB: Add a new NTB client driver to implement VIRTIO functionality
-> >>>>>>>>>       NTB: Add a new NTB client driver to implement VHOST functionality
-> >>>>>>>>>       NTB: Describe the ntb_virtio and ntb_vhost client in the
-> >>>>>>>>> documentation
-> >>>>>>>>>
-> >>>>>>>>>      Documentation/driver-api/ntb.rst              |   11 +
-> >>>>>>>>>      Documentation/rpmsg.txt                       |   56 +
-> >>>>>>>>>      drivers/ntb/Kconfig                           |   18 +
-> >>>>>>>>>      drivers/ntb/Makefile                          |    2 +
-> >>>>>>>>>      drivers/ntb/ntb_vhost.c                       |  776 +++++++++++
-> >>>>>>>>>      drivers/ntb/ntb_virtio.c                      |  853 ++++++++++++
-> >>>>>>>>>      drivers/ntb/ntb_virtio.h                      |   56 +
-> >>>>>>>>>      drivers/pci/endpoint/functions/Kconfig        |   11 +
-> >>>>>>>>>      drivers/pci/endpoint/functions/Makefile       |    1 +
-> >>>>>>>>>      .../pci/endpoint/functions/pci-epf-vhost.c    | 1144
-> >>>>>>>>> ++++++++++++++++
-> >>>>>>>>>      drivers/rpmsg/Kconfig                         |   10 +
-> >>>>>>>>>      drivers/rpmsg/Makefile                        |    3 +-
-> >>>>>>>>>      drivers/rpmsg/rpmsg_cfs.c                     |  394 ++++++
-> >>>>>>>>>      drivers/rpmsg/rpmsg_core.c                    |    7 +
-> >>>>>>>>>      drivers/rpmsg/rpmsg_internal.h                |  136 ++
-> >>>>>>>>>      drivers/rpmsg/vhost_rpmsg_bus.c               | 1151
-> >>>>>>>>> +++++++++++++++++
-> >>>>>>>>>      drivers/rpmsg/virtio_rpmsg_bus.c              |  184 ++-
-> >>>>>>>>>      drivers/vhost/Kconfig                         |    1 +
-> >>>>>>>>>      drivers/vhost/Makefile                        |    2 +-
-> >>>>>>>>>      drivers/vhost/net.c                           |   10 +-
-> >>>>>>>>>      drivers/vhost/scsi.c                          |   24 +-
-> >>>>>>>>>      drivers/vhost/test.c                          |   17 +-
-> >>>>>>>>>      drivers/vhost/vdpa.c                          |    2 +-
-> >>>>>>>>>      drivers/vhost/vhost.c                         |  730 ++++++++++-
-> >>>>>>>>>      drivers/vhost/vhost_cfs.c                     |  341 +++++
-> >>>>>>>>>      drivers/vhost/vringh.c                        |  332 +++++
-> >>>>>>>>>      drivers/vhost/vsock.c                         |   20 +-
-> >>>>>>>>>      drivers/virtio/Kconfig                        |    9 +
-> >>>>>>>>>      drivers/virtio/Makefile                       |    1 +
-> >>>>>>>>>      drivers/virtio/virtio_pci_common.c            |   25 +-
-> >>>>>>>>>      drivers/virtio/virtio_pci_epf.c               |  670 ++++++++++
-> >>>>>>>>>      include/linux/mod_devicetable.h               |    6 +
-> >>>>>>>>>      include/linux/rpmsg.h                         |    6 +
-> >>>>>>>>>      {drivers/vhost => include/linux}/vhost.h      |  132 +-
-> >>>>>>>>>      include/linux/virtio.h                        |    3 +
-> >>>>>>>>>      include/linux/virtio_config.h                 |   42 +
-> >>>>>>>>>      include/linux/vringh.h                        |   46 +
-> >>>>>>>>>      samples/rpmsg/rpmsg_client_sample.c           |   32 +-
-> >>>>>>>>>      tools/virtio/virtio_test.c                    |    2 +-
-> >>>>>>>>>      39 files changed, 7083 insertions(+), 183 deletions(-)
-> >>>>>>>>>      create mode 100644 drivers/ntb/ntb_vhost.c
-> >>>>>>>>>      create mode 100644 drivers/ntb/ntb_virtio.c
-> >>>>>>>>>      create mode 100644 drivers/ntb/ntb_virtio.h
-> >>>>>>>>>      create mode 100644 drivers/pci/endpoint/functions/pci-epf-vhost.c
-> >>>>>>>>>      create mode 100644 drivers/rpmsg/rpmsg_cfs.c
-> >>>>>>>>>      create mode 100644 drivers/rpmsg/vhost_rpmsg_bus.c
-> >>>>>>>>>      create mode 100644 drivers/vhost/vhost_cfs.c
-> >>>>>>>>>      create mode 100644 drivers/virtio/virtio_pci_epf.c
-> >>>>>>>>>      rename {drivers/vhost => include/linux}/vhost.h (66%)
-> >>>>>>>>>
-> >>>>>>>>> -- 
-> >>>>>>>>> 2.17.1
-> >>>>>>>>>
-> > 
+>>  	void *ptr = NULL;
+>> 
+>>  	/* Unlock mba before copying segments */
+>> @@ -1219,16 +1220,16 @@ static void qcom_q6v5_dump_segment(struct 
+>> rproc *rproc,
+>>  	}
+>> 
+>>  	if (!ret)
+>> -		ptr = ioremap_wc(qproc->mpss_phys + offset, segment->size);
+>> +		ptr = ioremap_wc(qproc->mpss_phys + offset + cp_offset, cp_size);
+>> 
+>>  	if (ptr) {
+>> -		memcpy(dest, ptr, segment->size);
+>> +		memcpy(dest, ptr, cp_size);
+>>  		iounmap(ptr);
+>>  	} else {
+>> -		memset(dest, 0xff, segment->size);
+>> +		memset(dest, 0xff, cp_size);
+>>  	}
+>> 
+>> -	qproc->current_dump_size += segment->size;
+>> +	qproc->current_dump_size += cp_size;
+>> 
+>>  	/* Reclaim mba after copying segments */
+>>  	if (qproc->current_dump_size == qproc->total_dump_size) {
+>> diff --git a/drivers/remoteproc/remoteproc_coredump.c 
+>> b/drivers/remoteproc/remoteproc_coredump.c
+>> index ded0244..646886f 100644
+>> --- a/drivers/remoteproc/remoteproc_coredump.c
+>> +++ b/drivers/remoteproc/remoteproc_coredump.c
+>> @@ -5,6 +5,7 @@
+>>   * Copyright (c) 2020, The Linux Foundation. All rights reserved.
+>>   */
+>> 
+>> +#include <linux/completion.h>
+>>  #include <linux/devcoredump.h>
+>>  #include <linux/device.h>
+>>  #include <linux/kernel.h>
+>> @@ -12,6 +13,12 @@
+>>  #include "remoteproc_internal.h"
+>>  #include "remoteproc_elf_helpers.h"
+>> 
+>> +struct rproc_coredump_state {
+>> +	struct rproc *rproc;
+>> +	void *header;
+>> +	struct completion dump_done;
+>> +};
+>> +
+>>  /**
+>>   * rproc_coredump_cleanup() - clean up dump_segments list
+>>   * @rproc: the remote processor handle
+>> @@ -72,7 +79,8 @@ int rproc_coredump_add_custom_segment(struct rproc 
+>> *rproc,
+>>  				      dma_addr_t da, size_t size,
+>>  				      void (*dumpfn)(struct rproc *rproc,
+>>  						     struct rproc_dump_segment *segment,
+>> -						     void *dest),
+>> +						     void *dest, size_t offset,
+>> +						     size_t size),
+>>  				      void *priv)
+>>  {
+>>  	struct rproc_dump_segment *segment;
+>> @@ -114,12 +122,110 @@ int rproc_coredump_set_elf_info(struct rproc 
+>> *rproc, u8 class, u16 machine)
+>>  }
+>>  EXPORT_SYMBOL(rproc_coredump_set_elf_info);
+>> 
+>> +static void rproc_coredump_free(void *data)
+>> +{
+>> +	struct rproc_coredump_state *dump_state = data;
+>> +
+>> +	complete(&dump_state->dump_done);
+>> +	vfree(dump_state->header);
+>> +}
+>> +
+>> +static void *rproc_coredump_find_segment(loff_t user_offset,
+>> +					 struct list_head *segments,
+>> +					 size_t *data_left)
+>> +{
+>> +	struct rproc_dump_segment *segment;
+>> +
+>> +	list_for_each_entry(segment, segments, node) {
+>> +		if (user_offset < segment->size) {
+>> +			*data_left = segment->size - user_offset;
+>> +			return segment;
+>> +		}
+>> +		user_offset -= segment->size;
+>> +	}
+>> +
+>> +	*data_left = 0;
+>> +	return NULL;
+>> +}
+>> +
+>> +static void rproc_copy_segment(struct rproc *rproc, void *dest,
+>> +			       struct rproc_dump_segment *segment,
+>> +			       size_t offset, size_t size)
+>> +{
+>> +	void *ptr;
+>> +
+>> +	if (segment->dump) {
+>> +		segment->dump(rproc, segment, dest, offset, size);
+>> +	} else {
+>> +		ptr = rproc_da_to_va(rproc, segment->da + offset, size);
+>> +		if (!ptr) {
+>> +			dev_err(&rproc->dev,
+>> +				"invalid copy request for segment %pad with offset %zu and size 
+>> %zu)\n",
+>> +				&segment->da, offset, size);
+>> +			memset(dest, 0xff, size);
+>> +		} else {
+>> +			memcpy(dest, ptr, size);
+>> +		}
+>> +	}
+>> +}
+>> +
+>> +static ssize_t rproc_coredump_read(char *buffer, loff_t offset, 
+>> size_t count,
+>> +				   void *data, size_t header_sz)
+>> +{
+>> +	size_t seg_data, bytes_left = count;
+>> +	ssize_t copy_sz;
+>> +	struct rproc_dump_segment *seg;
+>> +	struct rproc_coredump_state *dump_state = data;
+>> +	struct rproc *rproc = dump_state->rproc;
+>> +	void *elfcore = dump_state->header;
+>> +
+>> +	/* Copy the vmalloc'ed header first. */
+>> +	if (offset < header_sz) {
+>> +		copy_sz = memory_read_from_buffer(buffer, count, &offset,
+>> +						  elfcore, header_sz);
+>> +
+>> +		return copy_sz;
+>> +	}
+>> +
+>> +	/*
+>> +	 * Find out the segment memory chunk to be copied based on offset.
+>> +	 * Keep copying data until count bytes are read.
+>> +	 */
+>> +	while (bytes_left) {
+>> +		seg = rproc_coredump_find_segment(offset - header_sz,
+>> +						  &rproc->dump_segments,
+>> +						  &seg_data);
+>> +		/* EOF check */
+>> +		if (!seg) {
+>> +			dev_info(&rproc->dev, "Ramdump done, %lld bytes read",
+>> +				 offset);
+>> +			break;
+>> +		}
+>> +
+>> +		copy_sz = min_t(size_t, bytes_left, seg_data);
+>> +
+>> +		rproc_copy_segment(rproc, buffer, seg, seg->size - seg_data,
+>> +				   copy_sz);
+>> +
+>> +		offset += copy_sz;
+>> +		buffer += copy_sz;
+>> +		bytes_left -= copy_sz;
+>> +	}
+>> +
+>> +	return count - bytes_left;
+>> +}
+>> +
+>>  /**
+>>   * rproc_coredump() - perform coredump
+>>   * @rproc:	rproc handle
+>>   *
+>>   * This function will generate an ELF header for the registered 
+>> segments
+>> - * and create a devcoredump device associated with rproc.
+>> + * and create a devcoredump device associated with rproc. Based on 
+>> the
+>> + * coredump configuration this function will directly copy the 
+>> segments
+>> + * from device memory to userspace or copy segments from device 
+>> memory to
+>> + * a separate buffer, which can then be read by userspace.
+>> + * The first approach avoids using extra vmalloc memory. But it will 
+>> stall
+>> + * recovery flow until dump is read by userspace.
+>>   */
+>>  void rproc_coredump(struct rproc *rproc)
+>>  {
+>> @@ -129,11 +235,13 @@ void rproc_coredump(struct rproc *rproc)
+>>  	size_t data_size;
+>>  	size_t offset;
+>>  	void *data;
+>> -	void *ptr;
+>>  	u8 class = rproc->elf_class;
+>>  	int phnum = 0;
+>> +	struct rproc_coredump_state dump_state;
+>> +	enum rproc_dump_mechanism dump_conf = rproc->dump_conf;
+>> 
+>> -	if (list_empty(&rproc->dump_segments))
+>> +	if (list_empty(&rproc->dump_segments) ||
+>> +	    dump_conf == RPROC_COREDUMP_DISABLED)
+>>  		return;
+>> 
+>>  	if (class == ELFCLASSNONE) {
+>> @@ -143,7 +251,14 @@ void rproc_coredump(struct rproc *rproc)
+>> 
+>>  	data_size = elf_size_of_hdr(class);
+>>  	list_for_each_entry(segment, &rproc->dump_segments, node) {
+>> -		data_size += elf_size_of_phdr(class) + segment->size;
+>> +		/*
+>> +		 * For default configuration buffer includes headers & segments.
+>> +		 * For inline dump buffer just includes headers as segments are
+>> +		 * directly read from device memory.
+>> +		 */
+>> +		data_size += elf_size_of_phdr(class);
+>> +		if (dump_conf == RPROC_COREDUMP_DEFAULT)
+>> +			data_size += segment->size;
+>> 
+>>  		phnum++;
+>>  	}
+>> @@ -182,23 +297,30 @@ void rproc_coredump(struct rproc *rproc)
+>>  		elf_phdr_set_p_flags(class, phdr, PF_R | PF_W | PF_X);
+>>  		elf_phdr_set_p_align(class, phdr, 0);
+>> 
+>> -		if (segment->dump) {
+>> -			segment->dump(rproc, segment, data + offset);
+>> -		} else {
+>> -			ptr = rproc_da_to_va(rproc, segment->da, segment->size);
+>> -			if (!ptr) {
+>> -				dev_err(&rproc->dev,
+>> -					"invalid coredump segment (%pad, %zu)\n",
+>> -					&segment->da, segment->size);
+>> -				memset(data + offset, 0xff, segment->size);
+>> -			} else {
+>> -				memcpy(data + offset, ptr, segment->size);
+>> -			}
+>> -		}
+>> +		if (dump_conf == RPROC_COREDUMP_DEFAULT)
+>> +			rproc_copy_segment(rproc, data + offset, segment, 0,
+>> +					   segment->size);
+>> 
+>>  		offset += elf_phdr_get_p_filesz(class, phdr);
+>>  		phdr += elf_size_of_phdr(class);
+>>  	}
+>> 
+>> -	dev_coredumpv(&rproc->dev, data, data_size, GFP_KERNEL);
+>> +	if (dump_conf == RPROC_COREDUMP_DEFAULT) {
+>> +		dev_coredumpv(&rproc->dev, data, data_size, GFP_KERNEL);
+>> +		return;
+>> +	}
+>> +
+>> +	/* Initialize the dump state struct to be used by 
+>> rproc_coredump_read */
+>> +	dump_state.rproc = rproc;
+>> +	dump_state.header = data;
+>> +	init_completion(&dump_state.dump_done);
+>> +
+>> +	dev_coredumpm(&rproc->dev, NULL, &dump_state, data_size, GFP_KERNEL,
+>> +		      rproc_coredump_read, rproc_coredump_free);
+>> +
+>> +	/*
+>> +	 * Wait until the dump is read and free is called. Data is freed
+>> +	 * by devcoredump framework automatically after 5 minutes.
+>> +	 */
+>> +	wait_for_completion(&dump_state.dump_done);
+>>  }
+>> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+>> index e7b7bab..38d037d 100644
+>> --- a/include/linux/remoteproc.h
+>> +++ b/include/linux/remoteproc.h
+>> @@ -435,6 +435,20 @@ enum rproc_crash_type {
+>>  };
+>> 
+>>  /**
+>> + * enum rproc_dump_mechanism - Coredump options for core
+>> + * @RPROC_COREDUMP_DEFAULT:	Copy dump to separate buffer and carry on 
+>> with
+>> +				recovery
+>> + * @RPROC_COREDUMP_INLINE:	Read segments directly from device memory. 
+>> Stall
+>> +				recovery until all segments are read
+>> + * @RPROC_COREDUMP_DISABLED:	Don't perform any dump
+>> + */
+>> +enum rproc_dump_mechanism {
+>> +	RPROC_COREDUMP_DEFAULT,
+>> +	RPROC_COREDUMP_INLINE,
+>> +	RPROC_COREDUMP_DISABLED,
+>> +};
+>> +
+>> +/**
+>>   * struct rproc_dump_segment - segment info from ELF header
+>>   * @node:	list node related to the rproc segment list
+>>   * @da:		device address of the segment
+>> @@ -451,7 +465,7 @@ struct rproc_dump_segment {
+>> 
+>>  	void *priv;
+>>  	void (*dump)(struct rproc *rproc, struct rproc_dump_segment 
+>> *segment,
+>> -		     void *dest);
+>> +		     void *dest, size_t offset, size_t size);
+>>  	loff_t offset;
+>>  };
+>> 
+>> @@ -466,6 +480,7 @@ struct rproc_dump_segment {
+>>   * @dev: virtual device for refcounting and common remoteproc 
+>> behavior
+>>   * @power: refcount of users who need this rproc powered up
+>>   * @state: state of the device
+>> + * @dump_conf: Currently selected coredump configuration
+>>   * @lock: lock which protects concurrent manipulations of the rproc
+>>   * @dbg_dir: debugfs directory of this rproc device
+>>   * @traces: list of trace buffers
+>> @@ -499,6 +514,7 @@ struct rproc {
+>>  	struct device dev;
+>>  	atomic_t power;
+>>  	unsigned int state;
+>> +	enum rproc_dump_mechanism dump_conf;
+>>  	struct mutex lock;
+>>  	struct dentry *dbg_dir;
+>>  	struct list_head traces;
+>> @@ -630,7 +646,8 @@ int rproc_coredump_add_custom_segment(struct rproc 
+>> *rproc,
+>>  				      dma_addr_t da, size_t size,
+>>  				      void (*dumpfn)(struct rproc *rproc,
+>>  						     struct rproc_dump_segment *segment,
+>> -						     void *dest),
+>> +						     void *dest, size_t offset,
+>> +						     size_t size),
+>>  				      void *priv);
+>>  int rproc_coredump_set_elf_info(struct rproc *rproc, u8 class, u16 
+>> machine);
+>> 
+>> --
+>> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora 
+>> Forum,
+>> a Linux Foundation Collaborative Project
+>> 
