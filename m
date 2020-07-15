@@ -7,132 +7,116 @@ X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DD66C433E0
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 15 Jul 2020 12:35:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B5B2C433E2
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 15 Jul 2020 12:36:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6975C2071B
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 15 Jul 2020 12:35:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ED98F2071B
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 15 Jul 2020 12:36:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="L0uMl8Hb"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ve1r7nGP"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729633AbgGOMf4 (ORCPT
+        id S1730890AbgGOMf6 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 15 Jul 2020 08:35:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33782 "EHLO
+        Wed, 15 Jul 2020 08:35:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33790 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726396AbgGOMfz (ORCPT
+        with ESMTP id S1730650AbgGOMf5 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 15 Jul 2020 08:35:55 -0400
-Received: from mail-wr1-x444.google.com (mail-wr1-x444.google.com [IPv6:2a00:1450:4864:20::444])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 850E8C061755
-        for <linux-remoteproc@vger.kernel.org>; Wed, 15 Jul 2020 05:35:55 -0700 (PDT)
-Received: by mail-wr1-x444.google.com with SMTP id f18so2541101wrs.0
-        for <linux-remoteproc@vger.kernel.org>; Wed, 15 Jul 2020 05:35:55 -0700 (PDT)
+        Wed, 15 Jul 2020 08:35:57 -0400
+Received: from mail-wr1-x441.google.com (mail-wr1-x441.google.com [IPv6:2a00:1450:4864:20::441])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9EB19C08C5C1
+        for <linux-remoteproc@vger.kernel.org>; Wed, 15 Jul 2020 05:35:56 -0700 (PDT)
+Received: by mail-wr1-x441.google.com with SMTP id z2so2525880wrp.2
+        for <linux-remoteproc@vger.kernel.org>; Wed, 15 Jul 2020 05:35:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=DwZZAmt/+Jz9Ze538UBZf8fHuD08d99YrWh/wrfJAWU=;
-        b=L0uMl8HbXnpQfc9D0kHtJqKTEoYngjcolOXuOvBSeh0DbOwCcJUBau5Ul1Mupv7s48
-         TzyTfD0t9pvG2iozvCFa+dEAnPJRpDSraNA/UR2XjUIBv80yDwlAQSK4crN3lPK5Y/9F
-         VkECEIn8BsJU4kSAViBwnIix7A3wb2nf1X6o+VJrh5rAzu5miVylRlV34bAmqYJviWBQ
-         t4QPxGTuwAgku2AvuDsHFzaEpVvWqSFsWWxwnl8tFqr0LUzldQ7igT1gPVM2uQVVF2eo
-         ytNOcOrn/GH1LB38xJHnvxoOvz15d6Ib5BDcZkhidr51uXFp4vKeKi3vKEDwIxbf3ihr
-         UP/w==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=/nLZftJ21jew9/kEGtv8CWXpR9DUFRsrGq7tmpIdUY4=;
+        b=Ve1r7nGPBBEiMYQVujZ7qg7mSbRSHFW4Ztrfzm2LPTx16M+82GP/RHVovoCQv0ol28
+         BFXXss9yjRYgkeNGUVe/USz+SAWMau2sdERTYjWb8ZjqLNY7GLhJp4TgFb8AljxCFrwi
+         +P+m7mIDiJTpM0DaZ1yAx3H2cz3JpqN/NAxlZdETzweBJvzoaEvHnGhui7I0DkdZFMVk
+         N88t0wop/ylDjgIoo4aWmk3rxUUM2bi5XGLyKEyCD6hZSSWa++1nQF+Noh6StvJwu36w
+         WF6S7t8/lwJDeta1SsDLw2U71Ss0FlTVUGsZyReFZsHS9LnYfPmkiPQBZ/0T7yBX1M++
+         qKGg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=DwZZAmt/+Jz9Ze538UBZf8fHuD08d99YrWh/wrfJAWU=;
-        b=MCQ420E+wPdj3JvEv5vmgGr2/OLJb7Gu4+hC6WpaeSOscJRRN8SFsQVBdPzTn+RtFC
-         dFXLEgHto4XQx+54T1QvrQRtr5RPfR4WWggn2s+qUHId8bIJ9nhyrLc6S7BgUSvab42v
-         V+1GtRrLTc2XTcfD2U7CP0weBJHZ9J2OG5vyFZ///ErnddoahJMyhkQf9hpCYxSfu6qx
-         2Ocf4wJIAZ5B1hHFgv4DLKEDqLakG5+rnMBFRXZTX+REBl7eB9fmdCACGAGBpwjQRgHN
-         2Dkf6i9K2IzQYBbpWfsIpT9jN8UEBAF7lejmEZK0X0m2IkPiNTBlKTGJiT5si+AouF/e
-         bpcQ==
-X-Gm-Message-State: AOAM5300uS41ZhZSLf1iYMPpi+ZpCKC/Q3FqREOFoUPVL2cmLaIRFBj4
-        g5jfIOsqt5paeWfZ4Kcma47caw==
-X-Google-Smtp-Source: ABdhPJwrCFjQohsoalzLJDLPFkqYz+bRjaXZ9uDdPDSoUWAvn3wmzZKAnWLUqs4aEejfr8Gt+f4OpA==
-X-Received: by 2002:a5d:6651:: with SMTP id f17mr11991374wrw.29.1594816554292;
-        Wed, 15 Jul 2020 05:35:54 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=/nLZftJ21jew9/kEGtv8CWXpR9DUFRsrGq7tmpIdUY4=;
+        b=kWSAO8yLjLc/2Oa7Q3E3mrQs0ipkzmc0J9nYT2a4HMVP2WG0n8gEYr2EAsVzdHolyP
+         369fPdP2ShYXDuGYuhG44mpA2+tdvIoFnAEIgtmIbfw0bCygmA8aX61VomKsI9DFcktv
+         TA4c17lovoXyrueYD+fQrGfRkNKeCb45HBv1fhahjamJda6NQz13SMQArYB5lvcNCYUJ
+         qEjamX5blbZnjzAHl56focM4Hj6dY2QRXsn7PBaSRDONUvh1mAWYKcCFelS+pQN7jmnu
+         qASg+O/CCNM21ToqOtO7LC4Bitz6ubJ7IBZq6Ft8Wgm041y+zJFWFfzVPdLWaNbFDJom
+         1z0g==
+X-Gm-Message-State: AOAM5323woTb15bNOLjIhL1eePuawrXI7a8+l4UM4Fl4Odz1/Rm/FuQD
+        1s/OImFKjg7Iw6WYKDfk35rOIQ==
+X-Google-Smtp-Source: ABdhPJyIP3kH3V8I1GPMPgN/hVOqqIuII4i5MJ7c685HCY4SeeX7azeY70/maT4T0v/n6YAAHo90+w==
+X-Received: by 2002:adf:ff90:: with SMTP id j16mr11024189wrr.364.1594816555336;
+        Wed, 15 Jul 2020 05:35:55 -0700 (PDT)
 Received: from localhost.localdomain ([2.31.163.61])
-        by smtp.gmail.com with ESMTPSA id h14sm3298985wrt.36.2020.07.15.05.35.53
+        by smtp.gmail.com with ESMTPSA id h14sm3298985wrt.36.2020.07.15.05.35.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Jul 2020 05:35:53 -0700 (PDT)
+        Wed, 15 Jul 2020 05:35:54 -0700 (PDT)
 From:   Lee Jones <lee.jones@linaro.org>
 To:     bjorn.andersson@linaro.org, ohad@wizery.com
 Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-remoteproc@vger.kernel.org, Lee Jones <lee.jones@linaro.org>,
-        Brian Swetland <swetland@google.com>,
-        Mark Grosen <mgrosen@ti.com>,
-        Guzman Lugo <fernando.lugo@ti.com>, Suman Anna <s-anna@ti.com>,
-        Robert Tivy <rtivy@ti.com>, De Leon <x0095078@ti.com>
-Subject: [PATCH 1/2] remoteproc: remoteproc_core: Use 'gnu_printf' format notation
-Date:   Wed, 15 Jul 2020 13:35:50 +0100
-Message-Id: <20200715123551.4011154-1-lee.jones@linaro.org>
+        Andy Gross <agross@kernel.org>, linux-arm-msm@vger.kernel.org
+Subject: [PATCH 2/2] remoteproc: qcom_sysmon: Solve function header bitrot issues
+Date:   Wed, 15 Jul 2020 13:35:51 +0100
+Message-Id: <20200715123551.4011154-2-lee.jones@linaro.org>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20200715123551.4011154-1-lee.jones@linaro.org>
+References: <20200715123551.4011154-1-lee.jones@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
+Looks as though 'name' has now been moved into 'struct sysmod_event'
+which is passed in instead.  However, the parameter descriptions were
+not updated at the same time.  Let's do that now.
+
 Fixes the following W=1 kernel build warning(s):
 
- drivers/remoteproc/remoteproc_core.c: In function ‘rproc_find_carveout_by_name’:
- drivers/remoteproc/remoteproc_core.c:257:2: warning: function ‘rproc_find_carveout_by_name’ might be a candidate for ‘gnu_printf’ format attribute [-Wsuggest-attribute=format]
- 257 | vsnprintf(_name, sizeof(_name), name, args);
- | ^~~~~~~~~
- drivers/remoteproc/remoteproc_core.c: In function ‘rproc_mem_entry_init’:
- drivers/remoteproc/remoteproc_core.c:993:2: warning: function ‘rproc_mem_entry_init’ might be a candidate for ‘gnu_printf’ format attribute [-Wsuggest-attribute=format]
- 993 | vsnprintf(mem->name, sizeof(mem->name), name, args);
- | ^~~~~~~~~
- drivers/remoteproc/remoteproc_core.c: In function ‘rproc_of_resm_mem_entry_init’:
- drivers/remoteproc/remoteproc_core.c:1029:2: warning: function ‘rproc_of_resm_mem_entry_init’ might be a candidate for ‘gnu_printf’ format attribute [-Wsuggest-attribute=format]
- 1029 | vsnprintf(mem->name, sizeof(mem->name), name, args);
- | ^~~~~~~~~
+ drivers/remoteproc/qcom_sysmon.c:78: warning: Function parameter or member 'event' not described in 'sysmon_send_event'
+ drivers/remoteproc/qcom_sysmon.c:78: warning: Excess function parameter 'name' description in 'sysmon_send_event'
+ drivers/remoteproc/qcom_sysmon.c:350: warning: Function parameter or member 'event' not described in 'ssctl_send_event'
+ drivers/remoteproc/qcom_sysmon.c:350: warning: Excess function parameter 'name' description in 'ssctl_send_event'
 
-Cc: Brian Swetland <swetland@google.com>
-Cc: Mark Grosen <mgrosen@ti.com>
-Cc: Guzman Lugo <fernando.lugo@ti.com>
-Cc: Suman Anna <s-anna@ti.com>
-Cc: Robert Tivy <rtivy@ti.com>
-Cc: De Leon <x0095078@ti.com>
+Cc: Andy Gross <agross@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org
 Signed-off-by: Lee Jones <lee.jones@linaro.org>
 ---
- drivers/remoteproc/remoteproc_core.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/remoteproc/qcom_sysmon.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index 0f95e025ba030..e00dff425c96e 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -243,6 +243,7 @@ EXPORT_SYMBOL(rproc_da_to_va);
-  *
-  * Return: a valid pointer on carveout entry on success or NULL on failure.
+diff --git a/drivers/remoteproc/qcom_sysmon.c b/drivers/remoteproc/qcom_sysmon.c
+index 8d8996d714f07..9eb2f6bccea63 100644
+--- a/drivers/remoteproc/qcom_sysmon.c
++++ b/drivers/remoteproc/qcom_sysmon.c
+@@ -71,7 +71,7 @@ static LIST_HEAD(sysmon_list);
+ /**
+  * sysmon_send_event() - send notification of other remote's SSR event
+  * @sysmon:	sysmon context
+- * @name:	other remote's name
++ * @event:	sysmon event context
   */
-+__printf(2, 3)
- struct rproc_mem_entry *
- rproc_find_carveout_by_name(struct rproc *rproc, const char *name, ...)
- {
-@@ -966,6 +967,7 @@ EXPORT_SYMBOL(rproc_add_carveout);
-  * This function allocates a rproc_mem_entry struct and fill it with parameters
-  * provided by client.
+ static void sysmon_send_event(struct qcom_sysmon *sysmon,
+ 			      const struct sysmon_event *event)
+@@ -343,7 +343,7 @@ static void ssctl_request_shutdown(struct qcom_sysmon *sysmon)
+ /**
+  * ssctl_send_event() - send notification of other remote's SSR event
+  * @sysmon:	sysmon context
+- * @name:	other remote's name
++ * @event:	sysmon event context
   */
-+__printf(8, 9)
- struct rproc_mem_entry *
- rproc_mem_entry_init(struct device *dev,
- 		     void *va, dma_addr_t dma, size_t len, u32 da,
-@@ -1009,6 +1011,7 @@ EXPORT_SYMBOL(rproc_mem_entry_init);
-  * This function allocates a rproc_mem_entry struct and fill it with parameters
-  * provided by client.
-  */
-+__printf(5, 6)
- struct rproc_mem_entry *
- rproc_of_resm_mem_entry_init(struct device *dev, u32 of_resm_idx, size_t len,
- 			     u32 da, const char *name, ...)
+ static void ssctl_send_event(struct qcom_sysmon *sysmon,
+ 			     const struct sysmon_event *event)
 -- 
 2.25.1
 
