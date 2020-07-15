@@ -2,94 +2,85 @@ Return-Path: <SRS0=dXMc=A2=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85947C433DF
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 15 Jul 2020 19:36:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF067C433E0
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 15 Jul 2020 19:40:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5B38B20657
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 15 Jul 2020 19:36:45 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XY4/njUi"
+	by mail.kernel.org (Postfix) with ESMTP id A739120657
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 15 Jul 2020 19:40:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1594842003;
+	bh=MrSY03bTjh7xYACNpg/WhRc9O78b64kIlHzXCZlwai4=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:List-ID:From;
+	b=HLZP2Ot5+Iq0i0cV7Wk9C4loD3b9CYRSV6gt9nV7pGnfZZyxZKH9BqCy1kL1XFAUa
+	 +QnfCc5YG+1tgFR1RQ7AQx094UusTbLx9F2xXi6a9qIaFlAQKjn+MXh/7PiuCmLtjD
+	 6OQTiCr5+9WqX26oasThNpAieblsugIMUeitg6kk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726916AbgGOTgp (ORCPT
+        id S1726634AbgGOTkD (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 15 Jul 2020 15:36:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42476 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726670AbgGOTgo (ORCPT
+        Wed, 15 Jul 2020 15:40:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48910 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726491AbgGOTkD (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 15 Jul 2020 15:36:44 -0400
-Received: from mail-oi1-x242.google.com (mail-oi1-x242.google.com [IPv6:2607:f8b0:4864:20::242])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2FBF3C061755
-        for <linux-remoteproc@vger.kernel.org>; Wed, 15 Jul 2020 12:36:44 -0700 (PDT)
-Received: by mail-oi1-x242.google.com with SMTP id t4so3123868oij.9
-        for <linux-remoteproc@vger.kernel.org>; Wed, 15 Jul 2020 12:36:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=rR8gIS4VQXCjAcXSb96e3TYhEFgbcxFTF7+lqvB96Mc=;
-        b=XY4/njUigM9ia2/yktoamaYQAG98PZrAmqAG1v7JZXdzlb1/ESpHjDqq0eKQPM+lk8
-         G0WIhU2Kel+ShVX/qcF9VFrPlG9QsMhi3qrUJwtnoCYmIXofkDF2fvkINZFZSuQe7dt1
-         P9ZxduaVAGjWE9wZymXly/Z3FU2PN+wsDBdDT4lunmBJ+k3Nx2OpHNUQOndrWWrLouwG
-         vwpV9CrKs02HDW+u/UyVnAsaluvznfqwagXAOO5hsvufcOCSzZjnBLEVaHiJVRdmoDRi
-         X2xfLU1jJaTHx72bTzKBzoPAllsLUCBpwwpAUTstgE+urPI5/dylyUNXZvmtF3zL5Co4
-         AIkg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=rR8gIS4VQXCjAcXSb96e3TYhEFgbcxFTF7+lqvB96Mc=;
-        b=R1/z/nzibMQD1YyCS09hZqVa0ehVb/pxNaYmvvjObxLaVASYCxN+YJ+IvftN+NyZL4
-         uZBV1iNBX1wikacTVb11Di47r6dzaqkGRbIOE/y7JyH24srS1rmENoMHMUBkQdI6EhYh
-         pBURm2s1TTWZvWGslSks21rPPqJrjYRtyyUPJ5QhC2UzsmqgwcngVAIcCuLfe0ix813J
-         4mo4Py7XoUeYU7kZewxBCNHGM6mUPsrSxUYt8chw3njK/fP/ZR+70vHX6fIDDZ5mbkuM
-         kfbVcP+nQlDn4Y4roKMoYOLQoAjTTBmjKOSHuMLJa+1IgppcT1IHLwyPmMIW55NleocH
-         yVYg==
-X-Gm-Message-State: AOAM533+pPxX02O3AEUe4DQD/qpU6AS5rHSHNvOlQceOzTkq3Wqx9uzC
-        gPvkWYNgRNfAwb56TJiXtA6evZDLuS5wj9pLAs4MOQ==
-X-Google-Smtp-Source: ABdhPJxiRGfd0eoaoROgXUN9uWZUGskblIlhMLdmnnt1Ctbn9jndJMJXv2b3Wfretv7Kef+W1jIxo86dAC31T7EKRgs=
-X-Received: by 2002:a05:6808:8c4:: with SMTP id k4mr1126990oij.177.1594841803655;
- Wed, 15 Jul 2020 12:36:43 -0700 (PDT)
+        Wed, 15 Jul 2020 15:40:03 -0400
+Content-Type: text/plain; charset="utf-8"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1594842002;
+        bh=MrSY03bTjh7xYACNpg/WhRc9O78b64kIlHzXCZlwai4=;
+        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+        b=ZMrCjvE1P4kwvIAt5QK6yKdF7hVeqFdPqtYK5gtIXcrHnl7WXn9T94x+Z2ysaohAj
+         TaBcvUc2VrpKM6Fvcn5nDeHRdzWGBeHedDAx+liu3UGgb7x2Daw7SNynbqWO+jM9wK
+         +gQH/aTsIxqmbETfRUGDoc7+G7XtlBSKcavEeun4=
 MIME-Version: 1.0
-References: <20200622075956.171058-1-bjorn.andersson@linaro.org> <20200622075956.171058-5-bjorn.andersson@linaro.org>
-In-Reply-To: <20200622075956.171058-5-bjorn.andersson@linaro.org>
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date:   Wed, 15 Jul 2020 22:36:31 +0300
-Message-ID: <CAA8EJpqEXcb2DvA+pr=6PmoG1fVQ5kcH0k0VY_jC_Diu_SK=jw@mail.gmail.com>
-Subject: Re: [PATCH v2 4/4] arm64: dts: qcom: sm8250: Drop tcsr_mutex syscon
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Andy Gross <agross@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>,
-        Baolin Wang <baolin.wang7@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        "open list:DRM DRIVER FOR MSM ADRENO GPU" 
-        <linux-arm-msm@vger.kernel.org>, linux-remoteproc@vger.kernel.org,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH 1/2] remoteproc: remoteproc_core: Use 'gnu_printf' format notation
+From:   patchwork-bot+linux-remoteproc@kernel.org
+Message-Id: <159484200274.30575.12937428171208697619.git-patchwork-notify@kernel.org>
+Date:   Wed, 15 Jul 2020 19:40:02 +0000
+References: <20200715123551.4011154-1-lee.jones@linaro.org>
+In-Reply-To: <20200715123551.4011154-1-lee.jones@linaro.org>
+To:     Lee Jones <lee.jones@linaro.org>
+Cc:     linux-remoteproc@vger.kernel.org
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Mon, 22 Jun 2020 at 11:00, Bjorn Andersson
-<bjorn.andersson@linaro.org> wrote:
->
-> Now that we don't need the intermediate syscon to represent the TCSR
-> mutexes, update the dts to describe the TCSR mutex directly under /soc.
->
-> The change also fixes the sort order of the nodes.
->
-> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Hello:
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+This series was applied to andersson/remoteproc.git (refs/heads/for-next).
 
+On Wed, 15 Jul 2020 13:35:50 +0100 you wrote:
+> Fixes the following W=1 kernel build warning(s):
+> 
+>  drivers/remoteproc/remoteproc_core.c: In function ‘rproc_find_carveout_by_name’:
+>  drivers/remoteproc/remoteproc_core.c:257:2: warning: function ‘rproc_find_carveout_by_name’ might be a candidate for ‘gnu_printf’ format attribute [-Wsuggest-attribute=format]
+>  257 | vsnprintf(_name, sizeof(_name), name, args);
+>  | ^~~~~~~~~
+>  drivers/remoteproc/remoteproc_core.c: In function ‘rproc_mem_entry_init’:
+>  drivers/remoteproc/remoteproc_core.c:993:2: warning: function ‘rproc_mem_entry_init’ might be a candidate for ‘gnu_printf’ format attribute [-Wsuggest-attribute=format]
+>  993 | vsnprintf(mem->name, sizeof(mem->name), name, args);
+>  | ^~~~~~~~~
+>  drivers/remoteproc/remoteproc_core.c: In function ‘rproc_of_resm_mem_entry_init’:
+>  drivers/remoteproc/remoteproc_core.c:1029:2: warning: function ‘rproc_of_resm_mem_entry_init’ might be a candidate for ‘gnu_printf’ format attribute [-Wsuggest-attribute=format]
+>  1029 | vsnprintf(mem->name, sizeof(mem->name), name, args);
+>  | ^~~~~~~~~
+> 
+> [...]
+
+
+Here is a summary with links:
+  - [1/2] remoteproc: remoteproc_core: Use 'gnu_printf' format notation
+    https://git.kernel.org/andersson/remoteproc/c/7e05c8de132308da0c2a5b17842b808d99a00ca8
+  - [2/2] remoteproc: qcom_sysmon: Solve function header bitrot issues
+    https://git.kernel.org/andersson/remoteproc/c/5b435ca38b2ce785b60b4d3c230f0a21121d6728
+
+You are awesome, thank you!
 
 -- 
-With best wishes
-Dmitry
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/pwbot
