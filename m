@@ -2,175 +2,546 @@ Return-Path: <SRS0=In/V=A3=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EFB0C433E2
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 16 Jul 2020 19:43:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97FD2C433EC
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 16 Jul 2020 23:09:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0A6512074B
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 16 Jul 2020 19:43:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 69B7E212CC
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 16 Jul 2020 23:09:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="rxqKikns"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="v60dKRSM"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729376AbgGPTnU (ORCPT
+        id S1727815AbgGPXJF (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 16 Jul 2020 15:43:20 -0400
-Received: from mail-bn8nam12on2046.outbound.protection.outlook.com ([40.107.237.46]:20502
-        "EHLO NAM12-BN8-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728788AbgGPTnU (ORCPT
+        Thu, 16 Jul 2020 19:09:05 -0400
+Received: from m43-7.mailgun.net ([69.72.43.7]:38121 "EHLO m43-7.mailgun.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726189AbgGPXJE (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 16 Jul 2020 15:43:20 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=lCM3qDAU64QAzJQjBysztnDqKAMqvdfztEXUatHfXXo86WrWkh4LgnzsB0sctiC7HCSDfhutAaiKH3TvLN5Cx3zEjETYwG/J7pWGq/p75mrysH70/b02pU56kFLo1moKmbai+Lk8HammEnlPxMk84IAEioj25r/8tNadpiMraZRI+K5M5nkMdCMUEjaoYjCzAYMyUiaQNa/GDHazdHz1E6yLDi9cyYcsvfgphkp5UfH/BgosechJDuz47KsbzSii3HRU2aGXzbJGlRcR6PPWvgqdj5NW+BenwYshSwsPjFN+cqZixyI4Ka6VOq7iCgKO/Sgl2IP5K8IE8OisQZV8HQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=499bS4tL2p7jyXXVZ+T2pCyJIO7uNyzDjkyf6/7WISc=;
- b=dk4sWPfW6xYtENnXK4Lxmb5NVSsOEidC/ODS2l+lAD7BzUOw/OUFaGkRNXEAUPGptpXp6twcBWXWgjaNAaHZD0zdasvvHkqFnfpm9Ejieh4eb6+KFDcZCldT80zlYOP1XFJiZX70PO+CLanceQnae1TLMPd84C/V3zSFKjkwrHFTzMlH0yMuUE9lWteC0cY2dNDM5zLnyMErjWOE+2wZUedN7TQOV54LHHZpmj8VRaQuvjhZhIgt4N5/fKtb7DIk6auMXBSDZ7UCA9CfJC7vmMoJFPIW8gKK1oJS0y5OpnhNpwVGNyvsHiOn8IqAqFOvp9U5Zo+DlI5y/eTvCHmPPA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 149.199.60.83) smtp.rcpttodomain=linaro.org smtp.mailfrom=xilinx.com;
- dmarc=bestguesspass action=none header.from=xilinx.com; dkim=none (message
- not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=xilinx.onmicrosoft.com; s=selector2-xilinx-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=499bS4tL2p7jyXXVZ+T2pCyJIO7uNyzDjkyf6/7WISc=;
- b=rxqKikns8ZlEzeZ93I575YiFA9GH5yW/SX57cUZV4YhlUiTmL7MiKINK4eG3WT1uTD8ImH3gtQGrHM5USxq3WPU99ffH/qNez/ed97VXAScrUTSSEDyCKCkkbBdKlYMj7XhffRbxQZE8Gs3nUpEU7aYbQxVYzgeJNp1u3LUhYXk=
-Received: from MN2PR16CA0002.namprd16.prod.outlook.com (2603:10b6:208:134::15)
- by BYAPR02MB4885.namprd02.prod.outlook.com (2603:10b6:a03:49::23) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3174.20; Thu, 16 Jul
- 2020 19:43:15 +0000
-Received: from BL2NAM02FT026.eop-nam02.prod.protection.outlook.com
- (2603:10b6:208:134:cafe::a0) by MN2PR16CA0002.outlook.office365.com
- (2603:10b6:208:134::15) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3195.17 via Frontend
- Transport; Thu, 16 Jul 2020 19:43:15 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 149.199.60.83)
- smtp.mailfrom=xilinx.com; linaro.org; dkim=none (message not signed)
- header.d=none;linaro.org; dmarc=bestguesspass action=none
- header.from=xilinx.com;
-Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
- 149.199.60.83 as permitted sender) receiver=protection.outlook.com;
- client-ip=149.199.60.83; helo=xsj-pvapsmtpgw01;
-Received: from xsj-pvapsmtpgw01 (149.199.60.83) by
- BL2NAM02FT026.mail.protection.outlook.com (10.152.77.156) with Microsoft SMTP
- Server id 15.20.3195.18 via Frontend Transport; Thu, 16 Jul 2020 19:43:15
- +0000
-Received: from [149.199.38.66] (port=43023 helo=xsj-pvapsmtp01)
-        by xsj-pvapsmtpgw01 with esmtp (Exim 4.90)
-        (envelope-from <stefano.stabellini@xilinx.com>)
-        id 1jw9l4-0004N0-GY; Thu, 16 Jul 2020 12:41:30 -0700
-Received: from [127.0.0.1] (helo=localhost)
-        by xsj-pvapsmtp01 with smtp (Exim 4.63)
-        (envelope-from <stefano.stabellini@xilinx.com>)
-        id 1jw9mk-0005B9-W0; Thu, 16 Jul 2020 12:43:15 -0700
-Received: from [10.23.120.244] (helo=localhost)
-        by xsj-pvapsmtp01 with esmtp (Exim 4.63)
-        (envelope-from <stefanos@xilinx.com>)
-        id 1jw9mb-00053N-9i; Thu, 16 Jul 2020 12:43:05 -0700
-Date:   Thu, 16 Jul 2020 12:43:04 -0700 (PDT)
-From:   Stefano Stabellini <stefano.stabellini@xilinx.com>
-X-X-Sender: sstabellini@sstabellini-ThinkPad-T480s
-To:     Mathieu Poirier <mathieu.poirier@linaro.org>
-cc:     Rob Herring <robh@kernel.org>, Suman Anna <s-anna@ti.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Lokesh Vutla <lokeshvutla@ti.com>,
-        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        stefanos@xilinx.com, BLEVINSK@xilinx.com, tomase@xilinx.com
-Subject: Re: [PATCH v2 1/4] dt-bindings: remoteproc: Add bindings for R5F
- subsystem on TI K3 SoCs
-In-Reply-To: <20200716171903.GA3286345@xps15>
-Message-ID: <alpine.DEB.2.21.2007161232400.3886@sstabellini-ThinkPad-T480s>
-References: <20200630024922.32491-1-s-anna@ti.com> <20200630024922.32491-2-s-anna@ti.com> <20200714171553.GA2522956@bogus> <20200716171903.GA3286345@xps15>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-TM-AS-Product-Ver: IMSS-7.1.0.1224-8.2.0.1013-23620.005
-X-TM-AS-User-Approved-Sender: Yes;Yes
-X-EOPAttributedMessage: 0
-X-MS-Office365-Filtering-HT: Tenant
-X-Forefront-Antispam-Report: CIP:149.199.60.83;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:xsj-pvapsmtpgw01;PTR:unknown-60-83.xilinx.com;CAT:NONE;SFTY:;SFS:(6029001)(7916004)(136003)(396003)(346002)(39860400002)(376002)(46966005)(356005)(82740400003)(316002)(9786002)(426003)(33716001)(47076004)(44832011)(8936002)(107886003)(5660300002)(8676002)(336012)(83380400001)(82310400002)(6916009)(81166007)(54906003)(70206006)(26005)(9686003)(2906002)(186003)(478600001)(4326008)(70586007);DIR:OUT;SFP:1101;
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: edf69671-d444-428f-4dc4-08d829c07b6f
-X-MS-TrafficTypeDiagnostic: BYAPR02MB4885:
-X-Microsoft-Antispam-PRVS: <BYAPR02MB4885AB42EFB337EEF66DBB3FA07F0@BYAPR02MB4885.namprd02.prod.outlook.com>
-X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
-X-MS-Oob-TLC-OOBClassifiers: OLM:8882;
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: PivKsktWsdvqUBPEEJEd6J4IVhOBcxdhbUV60uevvmKRdR/v8HFWiT9VKFyZqyhrN/dmf0eXcDP1GD+XAgOiSqxKqx8fznJZexJDrfkaim3KJLENvJENczfHiuCwmfgFvMtYfM+/H4v3R8rqTd8KBEJ0xYb+P0/FVOIZXaURAOrJI1qMguah97Z9OEQm9PrDlX1w8BDg29O18gbHUeNLIsGD5QSkQCVZDGbyqlDW2fm9t66HI+EeI0u0jhybu1HGMNe+IXgqQpON1B1rUONbn5v4GsQC3eASWI7QfsqzCKghBJ+mlF+1apUrBwv+KJ/oO+xuFv8JADrGUCB0kL8KsHL6WI2ippXuBIrKk9m9r4okykRWaXFecaqsZ8Hs3YC+SLS5KiyBwhr8RouvuK2FLQ==
-X-OriginatorOrg: xilinx.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Jul 2020 19:43:15.4136
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: edf69671-d444-428f-4dc4-08d829c07b6f
-X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.60.83];Helo=[xsj-pvapsmtpgw01]
-X-MS-Exchange-CrossTenant-AuthSource: BL2NAM02FT026.eop-nam02.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR02MB4885
+        Thu, 16 Jul 2020 19:09:04 -0400
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1594940942; h=References: In-Reply-To: Message-Id: Date:
+ Subject: Cc: To: From: Sender;
+ bh=4gVsqE+YTWjIEmmI++cajGVBZ2to7Zul+XJMBjkNm1U=; b=v60dKRSMj6wZVexVWf2aC8EKd7Gs8dOK8PAx2kTS5SBJ2peZsoexDishx35YQVdwFfTvGqZH
+ dSwguTZVTNk5aSHCHJ7ISHNLxTecuLN0Q33t8hKOTkkrEju2neRqGp/kxZunsL0bnroPURgr
+ S7CgM6OUhUtW/wHDuLZz514UoQE=
+X-Mailgun-Sending-Ip: 69.72.43.7
+X-Mailgun-Sid: WyI4ZWZiZiIsICJsaW51eC1yZW1vdGVwcm9jQHZnZXIua2VybmVsLm9yZyIsICJiZTllNGEiXQ==
+Received: from smtp.codeaurora.org
+ (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
+ smtp-out-n12.prod.us-east-1.postgun.com with SMTP id
+ 5f10d31e427cd557667019e0 (version=TLS1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Thu, 16 Jul 2020 22:22:22
+ GMT
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 2D307C433C9; Thu, 16 Jul 2020 22:22:21 +0000 (UTC)
+Received: from rishabhb-linux.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: rishabhb)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 03B76C433CB;
+        Thu, 16 Jul 2020 22:22:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 03B76C433CB
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=rishabhb@codeaurora.org
+From:   Rishabh Bhatnagar <rishabhb@codeaurora.org>
+To:     linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     bjorn.andersson@linaro.org, mathieu.poirier@linaro.org,
+        sibis@codearora.org, tsoni@codeaurora.org, psodagud@codeaurora.org,
+        sidgup@codeaurora.org, Rishabh Bhatnagar <rishabhb@codeaurora.org>
+Subject: [PATCH v8 1/5] remoteproc: Move coredump functionality to a new file
+Date:   Thu, 16 Jul 2020 15:20:31 -0700
+Message-Id: <1594938035-7327-2-git-send-email-rishabhb@codeaurora.org>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1594938035-7327-1-git-send-email-rishabhb@codeaurora.org>
+References: <1594938035-7327-1-git-send-email-rishabhb@codeaurora.org>
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Thu, 16 Jul 2020, Mathieu Poirier wrote:
-> Hi Rob,
-> 
-> On Tue, Jul 14, 2020 at 11:15:53AM -0600, Rob Herring wrote:
-> > On Mon, Jun 29, 2020 at 09:49:19PM -0500, Suman Anna wrote:
-> > > The Texas Instruments K3 family of SoCs have one or more dual-core
-> > > Arm Cortex R5F processor subsystems/clusters (R5FSS). The clusters
-> > > can be split between multiple voltage domains as well. Add the device
-> > > tree bindings document for these R5F subsystem devices. These R5F
-> > > processors do not have an MMU, and so require fixed memory carveout
-> > > regions matching the firmware image addresses. The nodes require more
-> > > than one memory region, with the first memory region used for DMA
-> > > allocations at runtime. The remaining memory regions are reserved
-> > > and are used for the loading and running of the R5F remote processors.
-> > > The R5F processors can also optionally use any internal on-chip SRAM
-> > > memories either for executing code or using it as fast-access data.
-> > > 
-> > > The added example illustrates the DT nodes for the single R5FSS device
-> > > present on K3 AM65x family of SoCs.
-> > > 
-> > > Signed-off-by: Suman Anna <s-anna@ti.com>
-> > > ---
-> > > v2:
-> > >  - Renamed "lockstep-mode" property to "ti,cluster-mode"
-> > 
-> > I don't think that's a move in the right direction given this is at 
-> > least partially a standard feature.
-> > 
-> > As I said before, I'm very hesistant to accept anything here given I 
-> > know the desires and activity to define 'system Devicetrees' of which 
-> > TI is participating. While maybe an rproc node is sufficient for a 
-> > DSP, it seems multiple vendors have R cores and want to define them in 
-> > system DT.
-> > 
-> > Though the system DT effort has not yet given any thought to what is the 
-> > view of one processor or instance to another instance (which is what 
-> > this binding is). We'll still need something defined for that, but I'd 
-> > expect that to be dependent on what is defined for system DT.
-> 
-> Efforts related to the definition of the system DT are under way, something I
-> expect to keep going on for some time to come.  I agree with the need to use the
-> system DT to define remote processors and I look forward to the time we can do
-> so.
+Move all coredump functionality to an individual file. This is
+being done so that the current functionality can be extended
+in future patchsets.
 
-I'll take this opportunity to add that I should be able to publicly
-present a System Device Tree proposal for this during the next call (the
-next one after the call early next week that has already a full agenda.)
+Signed-off-by: Rishabh Bhatnagar <rishabhb@codeaurora.org>
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+Reviewed-by: Sibi Sankar <sibis@codeaurora.org>
+Tested-by: Sibi Sankar <sibis@codeaurora.org>
+---
+ drivers/remoteproc/Makefile              |   1 +
+ drivers/remoteproc/remoteproc_core.c     | 191 -----------------------------
+ drivers/remoteproc/remoteproc_coredump.c | 204 +++++++++++++++++++++++++++++++
+ drivers/remoteproc/remoteproc_internal.h |   4 +
+ 4 files changed, 209 insertions(+), 191 deletions(-)
+ create mode 100644 drivers/remoteproc/remoteproc_coredump.c
 
+diff --git a/drivers/remoteproc/Makefile b/drivers/remoteproc/Makefile
+index e8b886e..8702a4e 100644
+--- a/drivers/remoteproc/Makefile
++++ b/drivers/remoteproc/Makefile
+@@ -5,6 +5,7 @@
+ 
+ obj-$(CONFIG_REMOTEPROC)		+= remoteproc.o
+ remoteproc-y				:= remoteproc_core.o
++remoteproc-y				+= remoteproc_coredump.o
+ remoteproc-y				+= remoteproc_debugfs.o
+ remoteproc-y				+= remoteproc_sysfs.o
+ remoteproc-y				+= remoteproc_virtio.o
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index 9f04c30..57db042 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -26,7 +26,6 @@
+ #include <linux/firmware.h>
+ #include <linux/string.h>
+ #include <linux/debugfs.h>
+-#include <linux/devcoredump.h>
+ #include <linux/rculist.h>
+ #include <linux/remoteproc.h>
+ #include <linux/pm_runtime.h>
+@@ -41,7 +40,6 @@
+ #include <linux/platform_device.h>
+ 
+ #include "remoteproc_internal.h"
+-#include "remoteproc_elf_helpers.h"
+ 
+ #define HIGH_BITS_MASK 0xFFFFFFFF00000000ULL
+ 
+@@ -1239,19 +1237,6 @@ static int rproc_alloc_registered_carveouts(struct rproc *rproc)
+ 	return 0;
+ }
+ 
+-/**
+- * rproc_coredump_cleanup() - clean up dump_segments list
+- * @rproc: the remote processor handle
+- */
+-static void rproc_coredump_cleanup(struct rproc *rproc)
+-{
+-	struct rproc_dump_segment *entry, *tmp;
+-
+-	list_for_each_entry_safe(entry, tmp, &rproc->dump_segments, node) {
+-		list_del(&entry->node);
+-		kfree(entry);
+-	}
+-}
+ 
+ /**
+  * rproc_resource_cleanup() - clean up and free all acquired resources
+@@ -1518,182 +1503,6 @@ static int rproc_stop(struct rproc *rproc, bool crashed)
+ 	return 0;
+ }
+ 
+-/**
+- * rproc_coredump_add_segment() - add segment of device memory to coredump
+- * @rproc:	handle of a remote processor
+- * @da:		device address
+- * @size:	size of segment
+- *
+- * Add device memory to the list of segments to be included in a coredump for
+- * the remoteproc.
+- *
+- * Return: 0 on success, negative errno on error.
+- */
+-int rproc_coredump_add_segment(struct rproc *rproc, dma_addr_t da, size_t size)
+-{
+-	struct rproc_dump_segment *segment;
+-
+-	segment = kzalloc(sizeof(*segment), GFP_KERNEL);
+-	if (!segment)
+-		return -ENOMEM;
+-
+-	segment->da = da;
+-	segment->size = size;
+-
+-	list_add_tail(&segment->node, &rproc->dump_segments);
+-
+-	return 0;
+-}
+-EXPORT_SYMBOL(rproc_coredump_add_segment);
+-
+-/**
+- * rproc_coredump_add_custom_segment() - add custom coredump segment
+- * @rproc:	handle of a remote processor
+- * @da:		device address
+- * @size:	size of segment
+- * @dumpfn:	custom dump function called for each segment during coredump
+- * @priv:	private data
+- *
+- * Add device memory to the list of segments to be included in the coredump
+- * and associate the segment with the given custom dump function and private
+- * data.
+- *
+- * Return: 0 on success, negative errno on error.
+- */
+-int rproc_coredump_add_custom_segment(struct rproc *rproc,
+-				      dma_addr_t da, size_t size,
+-				      void (*dumpfn)(struct rproc *rproc,
+-						     struct rproc_dump_segment *segment,
+-						     void *dest),
+-				      void *priv)
+-{
+-	struct rproc_dump_segment *segment;
+-
+-	segment = kzalloc(sizeof(*segment), GFP_KERNEL);
+-	if (!segment)
+-		return -ENOMEM;
+-
+-	segment->da = da;
+-	segment->size = size;
+-	segment->priv = priv;
+-	segment->dump = dumpfn;
+-
+-	list_add_tail(&segment->node, &rproc->dump_segments);
+-
+-	return 0;
+-}
+-EXPORT_SYMBOL(rproc_coredump_add_custom_segment);
+-
+-/**
+- * rproc_coredump_set_elf_info() - set coredump elf information
+- * @rproc:	handle of a remote processor
+- * @class:	elf class for coredump elf file
+- * @machine:	elf machine for coredump elf file
+- *
+- * Set elf information which will be used for coredump elf file.
+- *
+- * Return: 0 on success, negative errno on error.
+- */
+-int rproc_coredump_set_elf_info(struct rproc *rproc, u8 class, u16 machine)
+-{
+-	if (class != ELFCLASS64 && class != ELFCLASS32)
+-		return -EINVAL;
+-
+-	rproc->elf_class = class;
+-	rproc->elf_machine = machine;
+-
+-	return 0;
+-}
+-EXPORT_SYMBOL(rproc_coredump_set_elf_info);
+-
+-/**
+- * rproc_coredump() - perform coredump
+- * @rproc:	rproc handle
+- *
+- * This function will generate an ELF header for the registered segments
+- * and create a devcoredump device associated with rproc.
+- */
+-static void rproc_coredump(struct rproc *rproc)
+-{
+-	struct rproc_dump_segment *segment;
+-	void *phdr;
+-	void *ehdr;
+-	size_t data_size;
+-	size_t offset;
+-	void *data;
+-	void *ptr;
+-	u8 class = rproc->elf_class;
+-	int phnum = 0;
+-
+-	if (list_empty(&rproc->dump_segments))
+-		return;
+-
+-	if (class == ELFCLASSNONE) {
+-		dev_err(&rproc->dev, "Elf class is not set\n");
+-		return;
+-	}
+-
+-	data_size = elf_size_of_hdr(class);
+-	list_for_each_entry(segment, &rproc->dump_segments, node) {
+-		data_size += elf_size_of_phdr(class) + segment->size;
+-
+-		phnum++;
+-	}
+-
+-	data = vmalloc(data_size);
+-	if (!data)
+-		return;
+-
+-	ehdr = data;
+-
+-	memset(ehdr, 0, elf_size_of_hdr(class));
+-	/* e_ident field is common for both elf32 and elf64 */
+-	elf_hdr_init_ident(ehdr, class);
+-
+-	elf_hdr_set_e_type(class, ehdr, ET_CORE);
+-	elf_hdr_set_e_machine(class, ehdr, rproc->elf_machine);
+-	elf_hdr_set_e_version(class, ehdr, EV_CURRENT);
+-	elf_hdr_set_e_entry(class, ehdr, rproc->bootaddr);
+-	elf_hdr_set_e_phoff(class, ehdr, elf_size_of_hdr(class));
+-	elf_hdr_set_e_ehsize(class, ehdr, elf_size_of_hdr(class));
+-	elf_hdr_set_e_phentsize(class, ehdr, elf_size_of_phdr(class));
+-	elf_hdr_set_e_phnum(class, ehdr, phnum);
+-
+-	phdr = data + elf_hdr_get_e_phoff(class, ehdr);
+-	offset = elf_hdr_get_e_phoff(class, ehdr);
+-	offset += elf_size_of_phdr(class) * elf_hdr_get_e_phnum(class, ehdr);
+-
+-	list_for_each_entry(segment, &rproc->dump_segments, node) {
+-		memset(phdr, 0, elf_size_of_phdr(class));
+-		elf_phdr_set_p_type(class, phdr, PT_LOAD);
+-		elf_phdr_set_p_offset(class, phdr, offset);
+-		elf_phdr_set_p_vaddr(class, phdr, segment->da);
+-		elf_phdr_set_p_paddr(class, phdr, segment->da);
+-		elf_phdr_set_p_filesz(class, phdr, segment->size);
+-		elf_phdr_set_p_memsz(class, phdr, segment->size);
+-		elf_phdr_set_p_flags(class, phdr, PF_R | PF_W | PF_X);
+-		elf_phdr_set_p_align(class, phdr, 0);
+-
+-		if (segment->dump) {
+-			segment->dump(rproc, segment, data + offset);
+-		} else {
+-			ptr = rproc_da_to_va(rproc, segment->da, segment->size);
+-			if (!ptr) {
+-				dev_err(&rproc->dev,
+-					"invalid coredump segment (%pad, %zu)\n",
+-					&segment->da, segment->size);
+-				memset(data + offset, 0xff, segment->size);
+-			} else {
+-				memcpy(data + offset, ptr, segment->size);
+-			}
+-		}
+-
+-		offset += elf_phdr_get_p_filesz(class, phdr);
+-		phdr += elf_size_of_phdr(class);
+-	}
+-
+-	dev_coredumpv(&rproc->dev, data, data_size, GFP_KERNEL);
+-}
+ 
+ /**
+  * rproc_trigger_recovery() - recover a remoteproc
+diff --git a/drivers/remoteproc/remoteproc_coredump.c b/drivers/remoteproc/remoteproc_coredump.c
+new file mode 100644
+index 0000000..ded0244
+--- /dev/null
++++ b/drivers/remoteproc/remoteproc_coredump.c
+@@ -0,0 +1,204 @@
++// SPDX-License-Identifier: GPL-2.0-only
++/*
++ * Coredump functionality for Remoteproc framework.
++ *
++ * Copyright (c) 2020, The Linux Foundation. All rights reserved.
++ */
++
++#include <linux/devcoredump.h>
++#include <linux/device.h>
++#include <linux/kernel.h>
++#include <linux/remoteproc.h>
++#include "remoteproc_internal.h"
++#include "remoteproc_elf_helpers.h"
++
++/**
++ * rproc_coredump_cleanup() - clean up dump_segments list
++ * @rproc: the remote processor handle
++ */
++void rproc_coredump_cleanup(struct rproc *rproc)
++{
++	struct rproc_dump_segment *entry, *tmp;
++
++	list_for_each_entry_safe(entry, tmp, &rproc->dump_segments, node) {
++		list_del(&entry->node);
++		kfree(entry);
++	}
++}
++
++/**
++ * rproc_coredump_add_segment() - add segment of device memory to coredump
++ * @rproc:	handle of a remote processor
++ * @da:		device address
++ * @size:	size of segment
++ *
++ * Add device memory to the list of segments to be included in a coredump for
++ * the remoteproc.
++ *
++ * Return: 0 on success, negative errno on error.
++ */
++int rproc_coredump_add_segment(struct rproc *rproc, dma_addr_t da, size_t size)
++{
++	struct rproc_dump_segment *segment;
++
++	segment = kzalloc(sizeof(*segment), GFP_KERNEL);
++	if (!segment)
++		return -ENOMEM;
++
++	segment->da = da;
++	segment->size = size;
++
++	list_add_tail(&segment->node, &rproc->dump_segments);
++
++	return 0;
++}
++EXPORT_SYMBOL(rproc_coredump_add_segment);
++
++/**
++ * rproc_coredump_add_custom_segment() - add custom coredump segment
++ * @rproc:	handle of a remote processor
++ * @da:		device address
++ * @size:	size of segment
++ * @dumpfn:	custom dump function called for each segment during coredump
++ * @priv:	private data
++ *
++ * Add device memory to the list of segments to be included in the coredump
++ * and associate the segment with the given custom dump function and private
++ * data.
++ *
++ * Return: 0 on success, negative errno on error.
++ */
++int rproc_coredump_add_custom_segment(struct rproc *rproc,
++				      dma_addr_t da, size_t size,
++				      void (*dumpfn)(struct rproc *rproc,
++						     struct rproc_dump_segment *segment,
++						     void *dest),
++				      void *priv)
++{
++	struct rproc_dump_segment *segment;
++
++	segment = kzalloc(sizeof(*segment), GFP_KERNEL);
++	if (!segment)
++		return -ENOMEM;
++
++	segment->da = da;
++	segment->size = size;
++	segment->priv = priv;
++	segment->dump = dumpfn;
++
++	list_add_tail(&segment->node, &rproc->dump_segments);
++
++	return 0;
++}
++EXPORT_SYMBOL(rproc_coredump_add_custom_segment);
++
++/**
++ * rproc_coredump_set_elf_info() - set coredump elf information
++ * @rproc:	handle of a remote processor
++ * @class:	elf class for coredump elf file
++ * @machine:	elf machine for coredump elf file
++ *
++ * Set elf information which will be used for coredump elf file.
++ *
++ * Return: 0 on success, negative errno on error.
++ */
++int rproc_coredump_set_elf_info(struct rproc *rproc, u8 class, u16 machine)
++{
++	if (class != ELFCLASS64 && class != ELFCLASS32)
++		return -EINVAL;
++
++	rproc->elf_class = class;
++	rproc->elf_machine = machine;
++
++	return 0;
++}
++EXPORT_SYMBOL(rproc_coredump_set_elf_info);
++
++/**
++ * rproc_coredump() - perform coredump
++ * @rproc:	rproc handle
++ *
++ * This function will generate an ELF header for the registered segments
++ * and create a devcoredump device associated with rproc.
++ */
++void rproc_coredump(struct rproc *rproc)
++{
++	struct rproc_dump_segment *segment;
++	void *phdr;
++	void *ehdr;
++	size_t data_size;
++	size_t offset;
++	void *data;
++	void *ptr;
++	u8 class = rproc->elf_class;
++	int phnum = 0;
++
++	if (list_empty(&rproc->dump_segments))
++		return;
++
++	if (class == ELFCLASSNONE) {
++		dev_err(&rproc->dev, "Elf class is not set\n");
++		return;
++	}
++
++	data_size = elf_size_of_hdr(class);
++	list_for_each_entry(segment, &rproc->dump_segments, node) {
++		data_size += elf_size_of_phdr(class) + segment->size;
++
++		phnum++;
++	}
++
++	data = vmalloc(data_size);
++	if (!data)
++		return;
++
++	ehdr = data;
++
++	memset(ehdr, 0, elf_size_of_hdr(class));
++	/* e_ident field is common for both elf32 and elf64 */
++	elf_hdr_init_ident(ehdr, class);
++
++	elf_hdr_set_e_type(class, ehdr, ET_CORE);
++	elf_hdr_set_e_machine(class, ehdr, rproc->elf_machine);
++	elf_hdr_set_e_version(class, ehdr, EV_CURRENT);
++	elf_hdr_set_e_entry(class, ehdr, rproc->bootaddr);
++	elf_hdr_set_e_phoff(class, ehdr, elf_size_of_hdr(class));
++	elf_hdr_set_e_ehsize(class, ehdr, elf_size_of_hdr(class));
++	elf_hdr_set_e_phentsize(class, ehdr, elf_size_of_phdr(class));
++	elf_hdr_set_e_phnum(class, ehdr, phnum);
++
++	phdr = data + elf_hdr_get_e_phoff(class, ehdr);
++	offset = elf_hdr_get_e_phoff(class, ehdr);
++	offset += elf_size_of_phdr(class) * elf_hdr_get_e_phnum(class, ehdr);
++
++	list_for_each_entry(segment, &rproc->dump_segments, node) {
++		memset(phdr, 0, elf_size_of_phdr(class));
++		elf_phdr_set_p_type(class, phdr, PT_LOAD);
++		elf_phdr_set_p_offset(class, phdr, offset);
++		elf_phdr_set_p_vaddr(class, phdr, segment->da);
++		elf_phdr_set_p_paddr(class, phdr, segment->da);
++		elf_phdr_set_p_filesz(class, phdr, segment->size);
++		elf_phdr_set_p_memsz(class, phdr, segment->size);
++		elf_phdr_set_p_flags(class, phdr, PF_R | PF_W | PF_X);
++		elf_phdr_set_p_align(class, phdr, 0);
++
++		if (segment->dump) {
++			segment->dump(rproc, segment, data + offset);
++		} else {
++			ptr = rproc_da_to_va(rproc, segment->da, segment->size);
++			if (!ptr) {
++				dev_err(&rproc->dev,
++					"invalid coredump segment (%pad, %zu)\n",
++					&segment->da, segment->size);
++				memset(data + offset, 0xff, segment->size);
++			} else {
++				memcpy(data + offset, ptr, segment->size);
++			}
++		}
++
++		offset += elf_phdr_get_p_filesz(class, phdr);
++		phdr += elf_size_of_phdr(class);
++	}
++
++	dev_coredumpv(&rproc->dev, data, data_size, GFP_KERNEL);
++}
+diff --git a/drivers/remoteproc/remoteproc_internal.h b/drivers/remoteproc/remoteproc_internal.h
+index 4ba7cb5..97d441b 100644
+--- a/drivers/remoteproc/remoteproc_internal.h
++++ b/drivers/remoteproc/remoteproc_internal.h
+@@ -47,6 +47,10 @@ extern struct class rproc_class;
+ int rproc_init_sysfs(void);
+ void rproc_exit_sysfs(void);
+ 
++/* from remoteproc_coredump.c */
++void rproc_coredump_cleanup(struct rproc *rproc);
++void rproc_coredump(struct rproc *rproc);
++
+ void rproc_free_vring(struct rproc_vring *rvring);
+ int rproc_alloc_vring(struct rproc_vdev *rvdev, int i);
+ 
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
 
-> That being said we need to find a concensus on how to move forward with patches
-> that are ready to be merged.  What is your opinion on that?
-
-In my opinion we don't have to necessarily wait for System Device Tree
-to make progress with those if they look OK.
