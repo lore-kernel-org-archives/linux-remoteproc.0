@@ -2,105 +2,178 @@ Return-Path: <SRS0=In/V=A3=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 141C0C433E0
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 16 Jul 2020 05:48:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3423C433E5
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 16 Jul 2020 08:10:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E0DBE2067D
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 16 Jul 2020 05:48:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AD704206F4
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 16 Jul 2020 08:10:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Y73DZiGC"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="rlzotqsD"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726059AbgGPFsT (ORCPT
+        id S1726755AbgGPIKo (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 16 Jul 2020 01:48:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51790 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725921AbgGPFsT (ORCPT
+        Thu, 16 Jul 2020 04:10:44 -0400
+Received: from mail29.static.mailgun.info ([104.130.122.29]:41121 "EHLO
+        mail29.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726547AbgGPIKn (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 16 Jul 2020 01:48:19 -0400
-Received: from mail-pl1-x641.google.com (mail-pl1-x641.google.com [IPv6:2607:f8b0:4864:20::641])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0DC28C08C5C0
-        for <linux-remoteproc@vger.kernel.org>; Wed, 15 Jul 2020 22:48:19 -0700 (PDT)
-Received: by mail-pl1-x641.google.com with SMTP id k4so3377125pld.12
-        for <linux-remoteproc@vger.kernel.org>; Wed, 15 Jul 2020 22:48:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=GcjGMlvxaLvf+5Qx9y70nhyWvIrGkWz3MBzmHdjFud4=;
-        b=Y73DZiGCNXSiY//N6sNgC0Yv9LqzR32T9dyDXTCVjQrypbaV0JpeZJAsu4K2MS/iA4
-         tVRE4rgZq3p+sKM19YapD+CGtv0fD/DxwQe94rgpGqHG+ZOtE8DRH5ue2hgEx6RvjZq9
-         Eac2HuNPK/go9BP0k3m2crj1jUADiUZKf/SrnENfyrHMFLBJBCSXGFkozGOxZjl/iyBA
-         KelrTBPlLFxTWKNTtRsPXEuVBTbuwIonBER9lQVad7DoZ543VttTXpnNVAoHJc2U1FST
-         z7PECvJpjoiHRVAtBuQpssgp38dzC1XrsrK3aGkFeMcUZZACKXMfk7y5gu5PtjBKUF1h
-         Op3Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=GcjGMlvxaLvf+5Qx9y70nhyWvIrGkWz3MBzmHdjFud4=;
-        b=QKgKsuLa6qkhOBcp8vFLakpmgfD2VmmS02QFX0NSgRrpINMz/8kouZwQZN+dEr5bdV
-         coxRntigvNpKNwfvNZXaBqa3nTuFF7O7/s6S8zuFpVZCzRRA32xxRlZ3KiOBPi73Yxhz
-         QytiZQU3j6IZQhoKG2Y2BVbZKhCz4892UPfi8P93rta7cObGm07FQ6BBOppOzBstyIfO
-         qSMoYMZ/nh0XaF21OW9BNM3wMc9h35C2EXl3ZcFWD+JzkANdeYEUVUDLpH78D4SmfaIM
-         UMftTZccggB2vjwopAtlxSmpo/6zwNIB/uwaRaKV6PESxmiCMH2E81Cxvv1jTqGdsHVZ
-         migg==
-X-Gm-Message-State: AOAM531CEQ7rVJb2/giNcqehiuKNQRRkAHzW/ZJ5yordty4Di93EhtuZ
-        CAwXZQzyL4HNHulTCgktAZOSdw==
-X-Google-Smtp-Source: ABdhPJxgSNsrdonyiZ4TpMu5c5IjfTLUQbvfXYif2dVLhugs3juB7O3pgeWaVE3XdMP26ZR+yCp79Q==
-X-Received: by 2002:a17:90b:8d7:: with SMTP id ds23mr3267380pjb.148.1594878498322;
-        Wed, 15 Jul 2020 22:48:18 -0700 (PDT)
-Received: from localhost.localdomain (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id o4sm3707657pjo.16.2020.07.15.22.48.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Jul 2020 22:48:17 -0700 (PDT)
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Ohad Ben-Cohen <ohad@wizery.com>
-Cc:     linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Lee Jones <lee.jones@linaro.org>,
-        Nathan Chancellor <natechancellor@gmail.com>
-Subject: [PATCH] remoteproc: qcom: pil-info: Fix shift overflow
-Date:   Wed, 15 Jul 2020 22:48:17 -0700
-Message-Id: <20200716054817.157608-1-bjorn.andersson@linaro.org>
-X-Mailer: git-send-email 2.26.2
+        Thu, 16 Jul 2020 04:10:43 -0400
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1594887042; h=Message-ID: References: In-Reply-To: Subject:
+ Cc: To: From: Date: Content-Transfer-Encoding: Content-Type:
+ MIME-Version: Sender; bh=OUndtw99GjuFdnvm3oihRnsk0PT6v/AS5DPedfQMp64=;
+ b=rlzotqsDzYmOXIPLrm0hXNBkdv+YI9BQvgCIDRWYDxRL4Hp7DszKO0W7CAdNZ1eGmJqyH9dG
+ 3i7bG3wZzmqWAwgYiI0YOqFHwV4xWDs101WcoV/T/zCihz8DD7Uab6SDtcHFpPS9Nr3EYrVz
+ QoZuqy6LJrrxnw16mwAxZeZAYTw=
+X-Mailgun-Sending-Ip: 104.130.122.29
+X-Mailgun-Sid: WyI4ZWZiZiIsICJsaW51eC1yZW1vdGVwcm9jQHZnZXIua2VybmVsLm9yZyIsICJiZTllNGEiXQ==
+Received: from smtp.codeaurora.org
+ (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
+ smtp-out-n05.prod.us-east-1.postgun.com with SMTP id
+ 5f100b811e603dbb44934c4c (version=TLS1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Thu, 16 Jul 2020 08:10:41
+ GMT
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 2A221C433C6; Thu, 16 Jul 2020 08:10:41 +0000 (UTC)
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: sibis)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 31ABDC433C9;
+        Thu, 16 Jul 2020 08:10:40 +0000 (UTC)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Thu, 16 Jul 2020 13:40:40 +0530
+From:   Sibi Sankar <sibis@codeaurora.org>
+To:     Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc:     Rishabh Bhatnagar <rishabhb@codeaurora.org>,
+        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        bjorn.andersson@linaro.org, tsoni@codeaurora.org,
+        psodagud@codeaurora.org, sidgup@codeaurora.org,
+        linux-kernel-owner@vger.kernel.org
+Subject: Re: [PATCH v1 2/4] remoteproc: qcom_q6v5_mss: Replace mask based
+ tracking with size
+In-Reply-To: <20200714171836.GA1407705@xps15>
+References: <1594326716-15474-1-git-send-email-rishabhb@codeaurora.org>
+ <1594326716-15474-3-git-send-email-rishabhb@codeaurora.org>
+ <20200714171836.GA1407705@xps15>
+Message-ID: <e1eb249d26e9b97e8438355fd1855ad8@codeaurora.org>
+X-Sender: sibis@codeaurora.org
+User-Agent: Roundcube Webmail/1.3.9
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On platforms with 32-bit phys_addr_t the shift to get the upper word of
-the base address of the memory region is invalid. Cast the base to 64
-bit to resolv this.
+On 2020-07-14 22:48, Mathieu Poirier wrote:
+> On Thu, Jul 09, 2020 at 01:31:54PM -0700, Rishabh Bhatnagar wrote:
+>> From: Sibi Sankar <sibis@codeaurora.org>
+>> 
+>> In order to land inline coredump support for mss, the dump_segment
+>> function would need to support granularities less than the segment
+>> size. This is achieved by replacing mask based tracking with size.
+>> 
+>> Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
+>> Signed-off-by: Rishabh Bhatnagar <rishabhb@codeaurora.org>
+>> ---
+>>  drivers/remoteproc/qcom_q6v5_mss.c | 15 +++++++--------
+>>  1 file changed, 7 insertions(+), 8 deletions(-)
+>> 
+>> diff --git a/drivers/remoteproc/qcom_q6v5_mss.c 
+>> b/drivers/remoteproc/qcom_q6v5_mss.c
+>> index feb70283b..c6ce032 100644
+>> --- a/drivers/remoteproc/qcom_q6v5_mss.c
+>> +++ b/drivers/remoteproc/qcom_q6v5_mss.c
+>> @@ -181,8 +181,8 @@ struct q6v5 {
+>>  	bool running;
+>> 
+>>  	bool dump_mba_loaded;
+>> -	unsigned long dump_segment_mask;
+>> -	unsigned long dump_complete_mask;
+>> +	size_t current_dump_size;
+>> +	size_t total_dump_size;
+>> 
+>>  	phys_addr_t mba_phys;
+>>  	void *mba_region;
+>> @@ -1203,7 +1203,6 @@ static void qcom_q6v5_dump_segment(struct rproc 
+>> *rproc,
+>>  {
+>>  	int ret = 0;
+>>  	struct q6v5 *qproc = rproc->priv;
+>> -	unsigned long mask = BIT((unsigned long)segment->priv);
+>>  	int offset = segment->da - qproc->mpss_reloc;
+>>  	void *ptr = NULL;
+>> 
+>> @@ -1229,10 +1228,10 @@ static void qcom_q6v5_dump_segment(struct 
+>> rproc *rproc,
+>>  		memset(dest, 0xff, segment->size);
+>>  	}
+>> 
+>> -	qproc->dump_segment_mask |= mask;
+>> +	qproc->current_dump_size += segment->size;
+>> 
+>>  	/* Reclaim mba after copying segments */
+>> -	if (qproc->dump_segment_mask == qproc->dump_complete_mask) {
+>> +	if (qproc->current_dump_size == qproc->total_dump_size) {
+>>  		if (qproc->dump_mba_loaded) {
+>>  			/* Try to reset ownership back to Q6 */
+>>  			q6v5_xfer_mem_ownership(qproc, &qproc->mpss_perm,
+>> @@ -1274,7 +1273,7 @@ static int q6v5_start(struct rproc *rproc)
+>>  			"Failed to reclaim mba buffer system may become unstable\n");
+>> 
+>>  	/* Reset Dump Segment Mask */
+>> -	qproc->dump_segment_mask = 0;
+>> +	qproc->current_dump_size = 0;
+>>  	qproc->running = true;
+>> 
+>>  	return 0;
+>> @@ -1323,7 +1322,7 @@ static int 
+>> qcom_q6v5_register_dump_segments(struct rproc *rproc,
+>> 
+>>  	ehdr = (struct elf32_hdr *)fw->data;
+>>  	phdrs = (struct elf32_phdr *)(ehdr + 1);
+>> -	qproc->dump_complete_mask = 0;
+>> +	qproc->total_dump_size = 0;
+>> 
+>>  	for (i = 0; i < ehdr->e_phnum; i++) {
+>>  		phdr = &phdrs[i];
+>> @@ -1338,7 +1337,7 @@ static int 
+>> qcom_q6v5_register_dump_segments(struct rproc *rproc,
+>>  		if (ret)
+>>  			break;
+> 
+> There is also no longer a need to carry the 'i' in:
+> 
+>                 ret = rproc_coredump_add_custom_segment(rproc, 
+> phdr->p_paddr,
+>                                                         phdr->p_memsz,
+>                                                         
+> qcom_q6v5_dump_segment,
+>                                                         (void *)i);
 
-Fixes: 549b67da660d ("remoteproc: qcom: Introduce helper to store pil info in IMEM")
-Reported-by: Lee Jones <lee.jones@linaro.org>
-Reported-by: Nathan Chancellor <natechancellor@gmail.com>
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
----
- drivers/remoteproc/qcom_pil_info.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I assume Rishabh will re-spin the
+series today and this will be taken
+care as well.
 
-diff --git a/drivers/remoteproc/qcom_pil_info.c b/drivers/remoteproc/qcom_pil_info.c
-index 0536e3904669..5521c4437ffa 100644
---- a/drivers/remoteproc/qcom_pil_info.c
-+++ b/drivers/remoteproc/qcom_pil_info.c
-@@ -108,7 +108,7 @@ int qcom_pil_info_store(const char *image, phys_addr_t base, size_t size)
- found_existing:
- 	/* Use two writel() as base is only aligned to 4 bytes on odd entries */
- 	writel(base, entry + PIL_RELOC_NAME_LEN);
--	writel(base >> 32, entry + PIL_RELOC_NAME_LEN + 4);
-+	writel((u64)base >> 32, entry + PIL_RELOC_NAME_LEN + 4);
- 	writel(size, entry + PIL_RELOC_NAME_LEN + sizeof(__le64));
- 	mutex_unlock(&pil_reloc_lock);
- 
+>> 
+>> -		qproc->dump_complete_mask |= BIT(i);
+>> +		qproc->total_dump_size += phdr->p_memsz;
+>>  	}
+>> 
+>>  	release_firmware(fw);
+>> --
+>> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora 
+>> Forum,
+>> a Linux Foundation Collaborative Project
+>> 
+
 -- 
-2.26.2
-
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project.
