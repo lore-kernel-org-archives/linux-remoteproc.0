@@ -2,304 +2,135 @@ Return-Path: <SRS0=In/V=A3=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F2AAC433E0
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 16 Jul 2020 14:59:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E695C3814C
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 16 Jul 2020 17:21:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2D8CA207CB
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 16 Jul 2020 14:59:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E813D2065E
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 16 Jul 2020 17:21:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="npKkXbb3"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gFZyKus1"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728418AbgGPO7K (ORCPT
+        id S1728937AbgGPRVV (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 16 Jul 2020 10:59:10 -0400
-Received: from mail29.static.mailgun.info ([104.130.122.29]:46253 "EHLO
-        mail29.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725867AbgGPO7J (ORCPT
+        Thu, 16 Jul 2020 13:21:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45762 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729444AbgGPRTH (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 16 Jul 2020 10:59:09 -0400
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1594911548; h=Message-ID: References: In-Reply-To: Subject:
- Cc: To: From: Date: Content-Transfer-Encoding: Content-Type:
- MIME-Version: Sender; bh=lviIp5N3o+U+RFbWg6NZAHu7oQNpiBl8ehCNV8kxfmk=;
- b=npKkXbb3nam3a1RKXWSczSMH3gv4k61ZZ2cuI19whHx1t47J0bhb1CbemgXqK96qkocnu+yj
- v+cjBR7QW89AIcCcUE2PMOfd7BZZw8zqQ7hlz5e2zN9fhTFdbsxn3TzPGg2CbtVBs2oD6Vus
- gIW8sTnytPWIbs1nVZjmz6Gyl2s=
-X-Mailgun-Sending-Ip: 104.130.122.29
-X-Mailgun-Sid: WyI4ZWZiZiIsICJsaW51eC1yZW1vdGVwcm9jQHZnZXIua2VybmVsLm9yZyIsICJiZTllNGEiXQ==
-Received: from smtp.codeaurora.org
- (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
- smtp-out-n05.prod.us-east-1.postgun.com with SMTP id
- 5f106b2c7c8ca473a8ce19a5 (version=TLS1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Thu, 16 Jul 2020 14:58:52
- GMT
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id D59A4C43395; Thu, 16 Jul 2020 14:58:51 +0000 (UTC)
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: sibis)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id E7FAFC433C6;
-        Thu, 16 Jul 2020 14:58:50 +0000 (UTC)
+        Thu, 16 Jul 2020 13:19:07 -0400
+Received: from mail-pf1-x444.google.com (mail-pf1-x444.google.com [IPv6:2607:f8b0:4864:20::444])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D3D5C08C5CE
+        for <linux-remoteproc@vger.kernel.org>; Thu, 16 Jul 2020 10:19:07 -0700 (PDT)
+Received: by mail-pf1-x444.google.com with SMTP id s26so3984202pfm.4
+        for <linux-remoteproc@vger.kernel.org>; Thu, 16 Jul 2020 10:19:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=PJplWTbP//JWBP6LiwpcydCLM3kpmqRCafKXQ2sO8HM=;
+        b=gFZyKus1CsQMXkTyfQNTl5O+0k7AWFHlIkYaZ/5TREymgAeyqVUDm/gqS0BV7rcrsu
+         82GmpCSlv26mJYkIfMbStCv9Qy8zBrSoJXare02pYn4LqPE5JgZo1T7UNIT+y5MJDzkg
+         61blOixw6uZPHNnqnZo0H1+brKdZsu0on9SNMnH42bxqRCxrCX/yAR8sXJJaheYfKIBL
+         mPKSk7Ve24sR4PhSPnJEgbd1z4rD0N4+dAMVEGsd25bCGZwVb5wm2SCKJH8MPXuO4LcS
+         7Y8N+rkP9A5ldAquSCD8DeT+G+eh7bmxGOX6VuRMyNnK+XEyu6RgnPXjjyNj+0f8Pmjo
+         ahSA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=PJplWTbP//JWBP6LiwpcydCLM3kpmqRCafKXQ2sO8HM=;
+        b=s9q3dq+dhseLsLlxtrIeUCzMOqqK/skoizRgPc0J2cOmZgs/881YfQ2X1CQA1hHaVo
+         pbEX0qUifp8+uGnEdQZ80OayHwzQ4dMDLpS9/NZ8HBAkmi97UYy4R1XMFP5ZBCXzuaTT
+         EuAgiWZY1BbWJoEoTSTkIX1CZdzWZD5UOAFL3FAtoQekJVY5RhjucsAsHPRdSybHoOXF
+         SsXEX8xcq67Pxlw9Mq1qj9VGhmkJONRkeXgCN05riOxmS8trU+CjqQ0DNfIxhfPbCosv
+         jd87UJNNi+4KkjavP0l85purDAPeWQRgykf7zLY0QFnfF+SyNzjE5fraIdpv63vwd9kC
+         Hgtw==
+X-Gm-Message-State: AOAM5304X2E3a2EYnDPA0QAIpYtYDhi2Jg53qAVw+oKOp9va+xjm3VCl
+        QJDcSLusO+6nLlhTkQqjGhGMIw==
+X-Google-Smtp-Source: ABdhPJwJiFSQcdB6omeWjkDHMF9mbOoLcdHIviL7+KHQY8vyEQkjrY3SKAm2f71bm739lOZkfFQVGw==
+X-Received: by 2002:a63:1a44:: with SMTP id a4mr5211817pgm.281.1594919946664;
+        Thu, 16 Jul 2020 10:19:06 -0700 (PDT)
+Received: from xps15 (S0106002369de4dac.cg.shawcable.net. [68.147.8.254])
+        by smtp.gmail.com with ESMTPSA id h7sm5551458pfq.15.2020.07.16.10.19.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 16 Jul 2020 10:19:05 -0700 (PDT)
+Date:   Thu, 16 Jul 2020 11:19:03 -0600
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+To:     Rob Herring <robh@kernel.org>
+Cc:     Suman Anna <s-anna@ti.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Lokesh Vutla <lokeshvutla@ti.com>,
+        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        stefanos@xilinx.com, BLEVINSK@xilinx.com
+Subject: Re: [PATCH v2 1/4] dt-bindings: remoteproc: Add bindings for R5F
+ subsystem on TI K3 SoCs
+Message-ID: <20200716171903.GA3286345@xps15>
+References: <20200630024922.32491-1-s-anna@ti.com>
+ <20200630024922.32491-2-s-anna@ti.com>
+ <20200714171553.GA2522956@bogus>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Thu, 16 Jul 2020 20:28:50 +0530
-From:   Sibi Sankar <sibis@codeaurora.org>
-To:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc:     bjorn.andersson@linaro.org, agross@kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, evgreen@chromium.org,
-        ohad@wizery.com, linux-arm-msm-owner@vger.kernel.org
-Subject: Re: [PATCH 2/3] remoteproc: qcom_q6v5_mss: Add MBA log extraction
- support
-In-Reply-To: <20200716134316.GI3271@Mani-XPS-13-9360>
-References: <20200716123630.21892-1-sibis@codeaurora.org>
- <20200716123630.21892-3-sibis@codeaurora.org>
- <20200716134316.GI3271@Mani-XPS-13-9360>
-Message-ID: <4f91a75852104dbeafea3af0c8673505@codeaurora.org>
-X-Sender: sibis@codeaurora.org
-User-Agent: Roundcube Webmail/1.3.9
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200714171553.GA2522956@bogus>
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On 2020-07-16 19:13, Manivannan Sadhasivam wrote:
-> Hi Sibi,
-> 
-> On Thu, Jul 16, 2020 at 06:06:29PM +0530, Sibi Sankar wrote:
->> On SC7180 the MBA firmware stores the bootup text logs in a 4K segment
->> at the beginning of the MBA region. Add support to extract the logs
->> which will be useful to debug mba boot/authentication issues.
->> 
->> Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
->> ---
->>  drivers/remoteproc/qcom_q6v5_mss.c | 41 
->> ++++++++++++++++++++++++++----
->>  1 file changed, 36 insertions(+), 5 deletions(-)
->> 
->> diff --git a/drivers/remoteproc/qcom_q6v5_mss.c 
->> b/drivers/remoteproc/qcom_q6v5_mss.c
->> index 95e21ed607cb9..4ddf084b2c6fc 100644
->> --- a/drivers/remoteproc/qcom_q6v5_mss.c
->> +++ b/drivers/remoteproc/qcom_q6v5_mss.c
->> @@ -9,6 +9,7 @@
->> 
->>  #include <linux/clk.h>
->>  #include <linux/delay.h>
->> +#include <linux/devcoredump.h>
->>  #include <linux/dma-mapping.h>
->>  #include <linux/interrupt.h>
->>  #include <linux/kernel.h>
->> @@ -37,6 +38,8 @@
->> 
->>  #define MPSS_CRASH_REASON_SMEM		421
->> 
->> +#define MBA_LOG_SIZE			SZ_4K
->> +
->>  /* RMB Status Register Values */
->>  #define RMB_PBL_SUCCESS			0x1
->> 
->> @@ -139,6 +142,7 @@ struct rproc_hexagon_res {
->>  	int version;
->>  	bool need_mem_protection;
->>  	bool has_alt_reset;
->> +	bool has_mba_logs;
->>  	bool has_spare_reg;
->>  };
->> 
->> @@ -200,6 +204,7 @@ struct q6v5 {
->>  	struct qcom_sysmon *sysmon;
->>  	bool need_mem_protection;
->>  	bool has_alt_reset;
->> +	bool has_mba_logs;
->>  	bool has_spare_reg;
->>  	int mpss_perm;
->>  	int mba_perm;
->> @@ -518,6 +523,19 @@ static int q6v5_rmb_mba_wait(struct q6v5 *qproc, 
->> u32 status, int ms)
->>  	return val;
->>  }
->> 
->> +static void q6v5_dump_mba_logs(struct q6v5 *qproc)
->> +{
->> +	struct rproc *rproc = qproc->rproc;
->> +	void *data;
->> +
->> +	data = vmalloc(MBA_LOG_SIZE);
-> 
-> Is there any specific reason to use vmalloc for the size of 4K?
+Hi Rob,
 
-data is passed onto dev_coredumpv
-which takes ownership of the memory
-and would eventually do a vfree of the
-data.
+On Tue, Jul 14, 2020 at 11:15:53AM -0600, Rob Herring wrote:
+> On Mon, Jun 29, 2020 at 09:49:19PM -0500, Suman Anna wrote:
+> > The Texas Instruments K3 family of SoCs have one or more dual-core
+> > Arm Cortex R5F processor subsystems/clusters (R5FSS). The clusters
+> > can be split between multiple voltage domains as well. Add the device
+> > tree bindings document for these R5F subsystem devices. These R5F
+> > processors do not have an MMU, and so require fixed memory carveout
+> > regions matching the firmware image addresses. The nodes require more
+> > than one memory region, with the first memory region used for DMA
+> > allocations at runtime. The remaining memory regions are reserved
+> > and are used for the loading and running of the R5F remote processors.
+> > The R5F processors can also optionally use any internal on-chip SRAM
+> > memories either for executing code or using it as fast-access data.
+> > 
+> > The added example illustrates the DT nodes for the single R5FSS device
+> > present on K3 AM65x family of SoCs.
+> > 
+> > Signed-off-by: Suman Anna <s-anna@ti.com>
+> > ---
+> > v2:
+> >  - Renamed "lockstep-mode" property to "ti,cluster-mode"
+> 
+> I don't think that's a move in the right direction given this is at 
+> least partially a standard feature.
+> 
+> As I said before, I'm very hesistant to accept anything here given I 
+> know the desires and activity to define 'system Devicetrees' of which 
+> TI is participating. While maybe an rproc node is sufficient for a 
+> DSP, it seems multiple vendors have R cores and want to define them in 
+> system DT.
+> 
+> Though the system DT effort has not yet given any thought to what is the 
+> view of one processor or instance to another instance (which is what 
+> this binding is). We'll still need something defined for that, but I'd 
+> expect that to be dependent on what is defined for system DT.
+
+Efforts related to the definition of the system DT are under way, something I
+expect to keep going on for some time to come.  I agree with the need to use the
+system DT to define remote processors and I look forward to the time we can do
+so.
+
+That being said we need to find a concensus on how to move forward with patches
+that are ready to be merged.  What is your opinion on that?
+
+Thanks,
+Mathieu 
 
 > 
-> Thanks,
-> Mani
-> 
->> +	if (!data)
->> +		return;
->> +
->> +	memcpy(data, qproc->mba_region, MBA_LOG_SIZE);
->> +	dev_coredumpv(&rproc->dev, data, MBA_LOG_SIZE, GFP_KERNEL);
->> +}
->> +
->>  static int q6v5proc_reset(struct q6v5 *qproc)
->>  {
->>  	u32 val;
->> @@ -838,6 +856,7 @@ static int q6v5_mba_load(struct q6v5 *qproc)
->>  {
->>  	int ret;
->>  	int xfermemop_ret;
->> +	bool mba_load_err = false;
->> 
->>  	qcom_q6v5_prepare(&qproc->q6v5);
->> 
->> @@ -931,7 +950,7 @@ static int q6v5_mba_load(struct q6v5 *qproc)
->>  	q6v5proc_halt_axi_port(qproc, qproc->halt_map, qproc->halt_q6);
->>  	q6v5proc_halt_axi_port(qproc, qproc->halt_map, qproc->halt_modem);
->>  	q6v5proc_halt_axi_port(qproc, qproc->halt_map, qproc->halt_nc);
->> -
->> +	mba_load_err = true;
->>  reclaim_mba:
->>  	xfermemop_ret = q6v5_xfer_mem_ownership(qproc, &qproc->mba_perm, 
->> true,
->>  						false, qproc->mba_phys,
->> @@ -939,6 +958,8 @@ static int q6v5_mba_load(struct q6v5 *qproc)
->>  	if (xfermemop_ret) {
->>  		dev_err(qproc->dev,
->>  			"Failed to reclaim mba buffer, system may become unstable\n");
->> +	} else if (qproc->has_mba_logs & mba_load_err) {
->> +		q6v5_dump_mba_logs(qproc);
->>  	}
->> 
->>  disable_active_clks:
->> @@ -968,7 +989,7 @@ static int q6v5_mba_load(struct q6v5 *qproc)
->>  	return ret;
->>  }
->> 
->> -static void q6v5_mba_reclaim(struct q6v5 *qproc)
->> +static void q6v5_mba_reclaim(struct q6v5 *qproc, bool err_path)
->>  {
->>  	int ret;
->>  	u32 val;
->> @@ -1006,6 +1027,9 @@ static void q6v5_mba_reclaim(struct q6v5 *qproc)
->>  				      qproc->mba_size);
->>  	WARN_ON(ret);
->> 
->> +	if (qproc->has_mba_logs && err_path && !ret)
->> +		q6v5_dump_mba_logs(qproc);
->> +
->>  	ret = qcom_q6v5_unprepare(&qproc->q6v5);
->>  	if (ret) {
->>  		q6v5_pds_disable(qproc, qproc->proxy_pds,
->> @@ -1255,7 +1279,7 @@ static void qcom_q6v5_dump_segment(struct rproc 
->> *rproc,
->>  						false, true,
->>  						qproc->mpss_phys,
->>  						qproc->mpss_size);
->> -			q6v5_mba_reclaim(qproc);
->> +			q6v5_mba_reclaim(qproc, false);
->>  		}
->>  	}
->>  }
->> @@ -1297,7 +1321,7 @@ static int q6v5_start(struct rproc *rproc)
->>  	return 0;
->> 
->>  reclaim_mpss:
->> -	q6v5_mba_reclaim(qproc);
->> +	q6v5_mba_reclaim(qproc, true);
->> 
->>  	return ret;
->>  }
->> @@ -1313,7 +1337,7 @@ static int q6v5_stop(struct rproc *rproc)
->>  	if (ret == -ETIMEDOUT)
->>  		dev_err(qproc->dev, "timed out on wait\n");
->> 
->> -	q6v5_mba_reclaim(qproc);
->> +	q6v5_mba_reclaim(qproc, false);
->> 
->>  	return 0;
->>  }
->> @@ -1717,6 +1741,7 @@ static int q6v5_probe(struct platform_device 
->> *pdev)
->> 
->>  	qproc->version = desc->version;
->>  	qproc->need_mem_protection = desc->need_mem_protection;
->> +	qproc->has_mba_logs = desc->has_mba_logs;
->> 
->>  	ret = qcom_q6v5_init(&qproc->q6v5, pdev, rproc, 
->> MPSS_CRASH_REASON_SMEM,
->>  			     qcom_msa_handover);
->> @@ -1808,6 +1833,7 @@ static const struct rproc_hexagon_res sc7180_mss 
->> = {
->>  	},
->>  	.need_mem_protection = true,
->>  	.has_alt_reset = false,
->> +	.has_mba_logs = true,
->>  	.has_spare_reg = true,
->>  	.version = MSS_SC7180,
->>  };
->> @@ -1843,6 +1869,7 @@ static const struct rproc_hexagon_res sdm845_mss 
->> = {
->>  	},
->>  	.need_mem_protection = true,
->>  	.has_alt_reset = true,
->> +	.has_mba_logs = true,
->>  	.has_spare_reg = false,
->>  	.version = MSS_SDM845,
->>  };
->> @@ -1870,6 +1897,7 @@ static const struct rproc_hexagon_res 
->> msm8998_mss = {
->>  	},
->>  	.need_mem_protection = true,
->>  	.has_alt_reset = false,
->> +	.has_mba_logs = false,
->>  	.has_spare_reg = false,
->>  	.version = MSS_MSM8998,
->>  };
->> @@ -1900,6 +1928,7 @@ static const struct rproc_hexagon_res 
->> msm8996_mss = {
->>  	},
->>  	.need_mem_protection = true,
->>  	.has_alt_reset = false,
->> +	.has_mba_logs = false,
->>  	.has_spare_reg = false,
->>  	.version = MSS_MSM8996,
->>  };
->> @@ -1933,6 +1962,7 @@ static const struct rproc_hexagon_res 
->> msm8916_mss = {
->>  	},
->>  	.need_mem_protection = false,
->>  	.has_alt_reset = false,
->> +	.has_mba_logs = false,
->>  	.has_spare_reg = false,
->>  	.version = MSS_MSM8916,
->>  };
->> @@ -1974,6 +2004,7 @@ static const struct rproc_hexagon_res 
->> msm8974_mss = {
->>  	},
->>  	.need_mem_protection = false,
->>  	.has_alt_reset = false,
->> +	.has_mba_logs = false,
->>  	.has_spare_reg = false,
->>  	.version = MSS_MSM8974,
->>  };
->> --
->> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora 
->> Forum,
->> a Linux Foundation Collaborative Project
->> 
-
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project.
+> Rob
