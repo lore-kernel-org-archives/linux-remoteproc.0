@@ -2,445 +2,175 @@ Return-Path: <SRS0=In/V=A3=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+X-Spam-Status: No, score=-8.5 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7453DC433E0
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 16 Jul 2020 18:25:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EFB0C433E2
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 16 Jul 2020 19:43:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3B3A92074B
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 16 Jul 2020 18:25:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0A6512074B
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 16 Jul 2020 19:43:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="s7op29L3"
+	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="rxqKikns"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728402AbgGPSZa (ORCPT
+        id S1729376AbgGPTnU (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 16 Jul 2020 14:25:30 -0400
-Received: from mail29.static.mailgun.info ([104.130.122.29]:45822 "EHLO
-        mail29.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728374AbgGPSZ3 (ORCPT
+        Thu, 16 Jul 2020 15:43:20 -0400
+Received: from mail-bn8nam12on2046.outbound.protection.outlook.com ([40.107.237.46]:20502
+        "EHLO NAM12-BN8-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728788AbgGPTnU (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 16 Jul 2020 14:25:29 -0400
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1594923928; h=Message-ID: References: In-Reply-To: Subject:
- Cc: To: From: Date: Content-Transfer-Encoding: Content-Type:
- MIME-Version: Sender; bh=/7d7d7eDzeq27O0/+/UOHv33sCUwJW0phlXRVXixepw=;
- b=s7op29L3W1bXwVhDfHW1t0fPT6PhNFzRwfL9yiKCWZZafcT7MC1RXMjiRzDzSHarzEoXOyQn
- XEW4+u5rm6+UO7/G85fJKgRjrYgySlEGPAeAG+M5iaVpvgDOyLMbaxpr2sBKPtcQmoYWy6GV
- aYs9uOhODlLYrbUCIdI72CtjcW4=
-X-Mailgun-Sending-Ip: 104.130.122.29
-X-Mailgun-Sid: WyI4ZWZiZiIsICJsaW51eC1yZW1vdGVwcm9jQHZnZXIua2VybmVsLm9yZyIsICJiZTllNGEiXQ==
-Received: from smtp.codeaurora.org
- (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
- smtp-out-n02.prod.us-east-1.postgun.com with SMTP id
- 5f109b8d8423214e13735563 (version=TLS1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Thu, 16 Jul 2020 18:25:17
- GMT
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 67458C433C9; Thu, 16 Jul 2020 18:25:16 +0000 (UTC)
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: rishabhb)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id B2FCFC433CA;
-        Thu, 16 Jul 2020 18:25:15 +0000 (UTC)
+        Thu, 16 Jul 2020 15:43:20 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=lCM3qDAU64QAzJQjBysztnDqKAMqvdfztEXUatHfXXo86WrWkh4LgnzsB0sctiC7HCSDfhutAaiKH3TvLN5Cx3zEjETYwG/J7pWGq/p75mrysH70/b02pU56kFLo1moKmbai+Lk8HammEnlPxMk84IAEioj25r/8tNadpiMraZRI+K5M5nkMdCMUEjaoYjCzAYMyUiaQNa/GDHazdHz1E6yLDi9cyYcsvfgphkp5UfH/BgosechJDuz47KsbzSii3HRU2aGXzbJGlRcR6PPWvgqdj5NW+BenwYshSwsPjFN+cqZixyI4Ka6VOq7iCgKO/Sgl2IP5K8IE8OisQZV8HQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=499bS4tL2p7jyXXVZ+T2pCyJIO7uNyzDjkyf6/7WISc=;
+ b=dk4sWPfW6xYtENnXK4Lxmb5NVSsOEidC/ODS2l+lAD7BzUOw/OUFaGkRNXEAUPGptpXp6twcBWXWgjaNAaHZD0zdasvvHkqFnfpm9Ejieh4eb6+KFDcZCldT80zlYOP1XFJiZX70PO+CLanceQnae1TLMPd84C/V3zSFKjkwrHFTzMlH0yMuUE9lWteC0cY2dNDM5zLnyMErjWOE+2wZUedN7TQOV54LHHZpmj8VRaQuvjhZhIgt4N5/fKtb7DIk6auMXBSDZ7UCA9CfJC7vmMoJFPIW8gKK1oJS0y5OpnhNpwVGNyvsHiOn8IqAqFOvp9U5Zo+DlI5y/eTvCHmPPA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 149.199.60.83) smtp.rcpttodomain=linaro.org smtp.mailfrom=xilinx.com;
+ dmarc=bestguesspass action=none header.from=xilinx.com; dkim=none (message
+ not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=xilinx.onmicrosoft.com; s=selector2-xilinx-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=499bS4tL2p7jyXXVZ+T2pCyJIO7uNyzDjkyf6/7WISc=;
+ b=rxqKikns8ZlEzeZ93I575YiFA9GH5yW/SX57cUZV4YhlUiTmL7MiKINK4eG3WT1uTD8ImH3gtQGrHM5USxq3WPU99ffH/qNez/ed97VXAScrUTSSEDyCKCkkbBdKlYMj7XhffRbxQZE8Gs3nUpEU7aYbQxVYzgeJNp1u3LUhYXk=
+Received: from MN2PR16CA0002.namprd16.prod.outlook.com (2603:10b6:208:134::15)
+ by BYAPR02MB4885.namprd02.prod.outlook.com (2603:10b6:a03:49::23) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3174.20; Thu, 16 Jul
+ 2020 19:43:15 +0000
+Received: from BL2NAM02FT026.eop-nam02.prod.protection.outlook.com
+ (2603:10b6:208:134:cafe::a0) by MN2PR16CA0002.outlook.office365.com
+ (2603:10b6:208:134::15) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3195.17 via Frontend
+ Transport; Thu, 16 Jul 2020 19:43:15 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 149.199.60.83)
+ smtp.mailfrom=xilinx.com; linaro.org; dkim=none (message not signed)
+ header.d=none;linaro.org; dmarc=bestguesspass action=none
+ header.from=xilinx.com;
+Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
+ 149.199.60.83 as permitted sender) receiver=protection.outlook.com;
+ client-ip=149.199.60.83; helo=xsj-pvapsmtpgw01;
+Received: from xsj-pvapsmtpgw01 (149.199.60.83) by
+ BL2NAM02FT026.mail.protection.outlook.com (10.152.77.156) with Microsoft SMTP
+ Server id 15.20.3195.18 via Frontend Transport; Thu, 16 Jul 2020 19:43:15
+ +0000
+Received: from [149.199.38.66] (port=43023 helo=xsj-pvapsmtp01)
+        by xsj-pvapsmtpgw01 with esmtp (Exim 4.90)
+        (envelope-from <stefano.stabellini@xilinx.com>)
+        id 1jw9l4-0004N0-GY; Thu, 16 Jul 2020 12:41:30 -0700
+Received: from [127.0.0.1] (helo=localhost)
+        by xsj-pvapsmtp01 with smtp (Exim 4.63)
+        (envelope-from <stefano.stabellini@xilinx.com>)
+        id 1jw9mk-0005B9-W0; Thu, 16 Jul 2020 12:43:15 -0700
+Received: from [10.23.120.244] (helo=localhost)
+        by xsj-pvapsmtp01 with esmtp (Exim 4.63)
+        (envelope-from <stefanos@xilinx.com>)
+        id 1jw9mb-00053N-9i; Thu, 16 Jul 2020 12:43:05 -0700
+Date:   Thu, 16 Jul 2020 12:43:04 -0700 (PDT)
+From:   Stefano Stabellini <stefano.stabellini@xilinx.com>
+X-X-Sender: sstabellini@sstabellini-ThinkPad-T480s
+To:     Mathieu Poirier <mathieu.poirier@linaro.org>
+cc:     Rob Herring <robh@kernel.org>, Suman Anna <s-anna@ti.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Lokesh Vutla <lokeshvutla@ti.com>,
+        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        stefanos@xilinx.com, BLEVINSK@xilinx.com, tomase@xilinx.com
+Subject: Re: [PATCH v2 1/4] dt-bindings: remoteproc: Add bindings for R5F
+ subsystem on TI K3 SoCs
+In-Reply-To: <20200716171903.GA3286345@xps15>
+Message-ID: <alpine.DEB.2.21.2007161232400.3886@sstabellini-ThinkPad-T480s>
+References: <20200630024922.32491-1-s-anna@ti.com> <20200630024922.32491-2-s-anna@ti.com> <20200714171553.GA2522956@bogus> <20200716171903.GA3286345@xps15>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Thu, 16 Jul 2020 11:25:15 -0700
-From:   rishabhb@codeaurora.org
-To:     Sibi Sankar <sibis@codeaurora.org>
-Cc:     linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        bjorn.andersson@linaro.org, mathieu.poirier@linaro.org,
-        tsoni@codeaurora.org, psodagud@codeaurora.org,
-        sidgup@codeaurora.org, linux-kernel-owner@vger.kernel.org
-Subject: Re: [PATCH v7 3/4] remoteproc: Add inline coredump functionality
-In-Reply-To: <3a7f78c9178a6fa02dc339c3507c5229@codeaurora.org>
-References: <1594326716-15474-1-git-send-email-rishabhb@codeaurora.org>
- <1594326716-15474-4-git-send-email-rishabhb@codeaurora.org>
- <3a7f78c9178a6fa02dc339c3507c5229@codeaurora.org>
-Message-ID: <f893f7df444b3782551e66dce819c25c@codeaurora.org>
-X-Sender: rishabhb@codeaurora.org
-User-Agent: Roundcube Webmail/1.3.9
+Content-Type: text/plain; charset=US-ASCII
+X-TM-AS-Product-Ver: IMSS-7.1.0.1224-8.2.0.1013-23620.005
+X-TM-AS-User-Approved-Sender: Yes;Yes
+X-EOPAttributedMessage: 0
+X-MS-Office365-Filtering-HT: Tenant
+X-Forefront-Antispam-Report: CIP:149.199.60.83;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:xsj-pvapsmtpgw01;PTR:unknown-60-83.xilinx.com;CAT:NONE;SFTY:;SFS:(6029001)(7916004)(136003)(396003)(346002)(39860400002)(376002)(46966005)(356005)(82740400003)(316002)(9786002)(426003)(33716001)(47076004)(44832011)(8936002)(107886003)(5660300002)(8676002)(336012)(83380400001)(82310400002)(6916009)(81166007)(54906003)(70206006)(26005)(9686003)(2906002)(186003)(478600001)(4326008)(70586007);DIR:OUT;SFP:1101;
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: edf69671-d444-428f-4dc4-08d829c07b6f
+X-MS-TrafficTypeDiagnostic: BYAPR02MB4885:
+X-Microsoft-Antispam-PRVS: <BYAPR02MB4885AB42EFB337EEF66DBB3FA07F0@BYAPR02MB4885.namprd02.prod.outlook.com>
+X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
+X-MS-Oob-TLC-OOBClassifiers: OLM:8882;
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: PivKsktWsdvqUBPEEJEd6J4IVhOBcxdhbUV60uevvmKRdR/v8HFWiT9VKFyZqyhrN/dmf0eXcDP1GD+XAgOiSqxKqx8fznJZexJDrfkaim3KJLENvJENczfHiuCwmfgFvMtYfM+/H4v3R8rqTd8KBEJ0xYb+P0/FVOIZXaURAOrJI1qMguah97Z9OEQm9PrDlX1w8BDg29O18gbHUeNLIsGD5QSkQCVZDGbyqlDW2fm9t66HI+EeI0u0jhybu1HGMNe+IXgqQpON1B1rUONbn5v4GsQC3eASWI7QfsqzCKghBJ+mlF+1apUrBwv+KJ/oO+xuFv8JADrGUCB0kL8KsHL6WI2ippXuBIrKk9m9r4okykRWaXFecaqsZ8Hs3YC+SLS5KiyBwhr8RouvuK2FLQ==
+X-OriginatorOrg: xilinx.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Jul 2020 19:43:15.4136
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: edf69671-d444-428f-4dc4-08d829c07b6f
+X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.60.83];Helo=[xsj-pvapsmtpgw01]
+X-MS-Exchange-CrossTenant-AuthSource: BL2NAM02FT026.eop-nam02.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR02MB4885
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On 2020-07-16 01:25, Sibi Sankar wrote:
-> On 2020-07-10 02:01, Rishabh Bhatnagar wrote:
->> The current coredump implementation uses vmalloc area to copy
->> all the segments. But this might put strain on low memory targets
->> as the firmware size sometimes is in tens of MBs. The situation
->> becomes worse if there are multiple remote processors undergoing
->> recovery at the same time. This patch adds inline coredump
->> functionality that avoids extra memory usage. This requires
->> recovery to be halted until data is read by userspace and free
->> function is called. Also modify the qcom_q6v5_mss driver to include
->> size and offset in the segment dump function.
->> 
->> Signed-off-by: Rishabh Bhatnagar <rishabhb@codeaurora.org>
->> Reviewed-by: Sibi Sankar <sibis@codeaurora.org>
->> ---
->>  drivers/remoteproc/qcom_q6v5_mss.c       |  11 ++-
->>  drivers/remoteproc/remoteproc_coredump.c | 160 
->> +++++++++++++++++++++++++++----
->>  include/linux/remoteproc.h               |  21 +++-
->>  3 files changed, 166 insertions(+), 26 deletions(-)
->> 
->> diff --git a/drivers/remoteproc/qcom_q6v5_mss.c
->> b/drivers/remoteproc/qcom_q6v5_mss.c
->> index c6ce032..79df354 100644
->> --- a/drivers/remoteproc/qcom_q6v5_mss.c
->> +++ b/drivers/remoteproc/qcom_q6v5_mss.c
->> @@ -1199,11 +1199,12 @@ static int q6v5_mpss_load(struct q6v5 *qproc)
->> 
->>  static void qcom_q6v5_dump_segment(struct rproc *rproc,
->>  				   struct rproc_dump_segment *segment,
->> -				   void *dest)
->> +				   void *dest, size_t cp_offset, size_t size)
->>  {
->>  	int ret = 0;
->>  	struct q6v5 *qproc = rproc->priv;
->>  	int offset = segment->da - qproc->mpss_reloc;
->> +	size_t cp_size = size ? size : segment->size;
->>  	void *ptr = NULL;
->> 
->>  	/* Unlock mba before copying segments */
->> @@ -1219,16 +1220,16 @@ static void qcom_q6v5_dump_segment(struct 
->> rproc *rproc,
->>  	}
->> 
->>  	if (!ret)
->> -		ptr = ioremap_wc(qproc->mpss_phys + offset, segment->size);
->> +		ptr = ioremap_wc(qproc->mpss_phys + offset + cp_offset, cp_size);
->> 
->>  	if (ptr) {
->> -		memcpy(dest, ptr, segment->size);
->> +		memcpy(dest, ptr, cp_size);
->>  		iounmap(ptr);
->>  	} else {
->> -		memset(dest, 0xff, segment->size);
->> +		memset(dest, 0xff, cp_size);
->>  	}
->> 
->> -	qproc->current_dump_size += segment->size;
->> +	qproc->current_dump_size += cp_size;
->> 
->>  	/* Reclaim mba after copying segments */
->>  	if (qproc->current_dump_size == qproc->total_dump_size) {
->> diff --git a/drivers/remoteproc/remoteproc_coredump.c
->> b/drivers/remoteproc/remoteproc_coredump.c
->> index ded0244..646886f 100644
->> --- a/drivers/remoteproc/remoteproc_coredump.c
->> +++ b/drivers/remoteproc/remoteproc_coredump.c
->> @@ -5,6 +5,7 @@
->>   * Copyright (c) 2020, The Linux Foundation. All rights reserved.
->>   */
->> 
->> +#include <linux/completion.h>
->>  #include <linux/devcoredump.h>
->>  #include <linux/device.h>
->>  #include <linux/kernel.h>
->> @@ -12,6 +13,12 @@
->>  #include "remoteproc_internal.h"
->>  #include "remoteproc_elf_helpers.h"
->> 
->> +struct rproc_coredump_state {
->> +	struct rproc *rproc;
->> +	void *header;
->> +	struct completion dump_done;
->> +};
->> +
->>  /**
->>   * rproc_coredump_cleanup() - clean up dump_segments list
->>   * @rproc: the remote processor handle
->> @@ -72,7 +79,8 @@ int rproc_coredump_add_custom_segment(struct rproc 
->> *rproc,
->>  				      dma_addr_t da, size_t size,
->>  				      void (*dumpfn)(struct rproc *rproc,
->>  						     struct rproc_dump_segment *segment,
->> -						     void *dest),
->> +						     void *dest, size_t offset,
->> +						     size_t size),
->>  				      void *priv)
->>  {
->>  	struct rproc_dump_segment *segment;
->> @@ -114,12 +122,110 @@ int rproc_coredump_set_elf_info(struct rproc
->> *rproc, u8 class, u16 machine)
->>  }
->>  EXPORT_SYMBOL(rproc_coredump_set_elf_info);
->> 
->> +static void rproc_coredump_free(void *data)
->> +{
->> +	struct rproc_coredump_state *dump_state = data;
->> +
->> +	complete(&dump_state->dump_done);
->> +	vfree(dump_state->header);
+On Thu, 16 Jul 2020, Mathieu Poirier wrote:
+> Hi Rob,
 > 
-> Rishabh,
+> On Tue, Jul 14, 2020 at 11:15:53AM -0600, Rob Herring wrote:
+> > On Mon, Jun 29, 2020 at 09:49:19PM -0500, Suman Anna wrote:
+> > > The Texas Instruments K3 family of SoCs have one or more dual-core
+> > > Arm Cortex R5F processor subsystems/clusters (R5FSS). The clusters
+> > > can be split between multiple voltage domains as well. Add the device
+> > > tree bindings document for these R5F subsystem devices. These R5F
+> > > processors do not have an MMU, and so require fixed memory carveout
+> > > regions matching the firmware image addresses. The nodes require more
+> > > than one memory region, with the first memory region used for DMA
+> > > allocations at runtime. The remaining memory regions are reserved
+> > > and are used for the loading and running of the R5F remote processors.
+> > > The R5F processors can also optionally use any internal on-chip SRAM
+> > > memories either for executing code or using it as fast-access data.
+> > > 
+> > > The added example illustrates the DT nodes for the single R5FSS device
+> > > present on K3 AM65x family of SoCs.
+> > > 
+> > > Signed-off-by: Suman Anna <s-anna@ti.com>
+> > > ---
+> > > v2:
+> > >  - Renamed "lockstep-mode" property to "ti,cluster-mode"
+> > 
+> > I don't think that's a move in the right direction given this is at 
+> > least partially a standard feature.
+> > 
+> > As I said before, I'm very hesistant to accept anything here given I 
+> > know the desires and activity to define 'system Devicetrees' of which 
+> > TI is participating. While maybe an rproc node is sufficient for a 
+> > DSP, it seems multiple vendors have R cores and want to define them in 
+> > system DT.
+> > 
+> > Though the system DT effort has not yet given any thought to what is the 
+> > view of one processor or instance to another instance (which is what 
+> > this binding is). We'll still need something defined for that, but I'd 
+> > expect that to be dependent on what is defined for system DT.
 > 
-> I observed a system hang when I trigger
-> recovery of a number of remoteproc
-> simultaneously (after a number of iterations
-> consistently). This goes away if I free the
-> header and  then issue the dump completion
-> and that does seem to be the right thing to
-> do.
-> 
-Makes sense i'll switch it in the next patchset.
->> +}
->> +
->> +static void *rproc_coredump_find_segment(loff_t user_offset,
->> +					 struct list_head *segments,
->> +					 size_t *data_left)
->> +{
->> +	struct rproc_dump_segment *segment;
->> +
->> +	list_for_each_entry(segment, segments, node) {
->> +		if (user_offset < segment->size) {
->> +			*data_left = segment->size - user_offset;
->> +			return segment;
->> +		}
->> +		user_offset -= segment->size;
->> +	}
->> +
->> +	*data_left = 0;
->> +	return NULL;
->> +}
->> +
->> +static void rproc_copy_segment(struct rproc *rproc, void *dest,
->> +			       struct rproc_dump_segment *segment,
->> +			       size_t offset, size_t size)
->> +{
->> +	void *ptr;
->> +
->> +	if (segment->dump) {
->> +		segment->dump(rproc, segment, dest, offset, size);
->> +	} else {
->> +		ptr = rproc_da_to_va(rproc, segment->da + offset, size);
->> +		if (!ptr) {
->> +			dev_err(&rproc->dev,
->> +				"invalid copy request for segment %pad with offset %zu and size 
->> %zu)\n",
->> +				&segment->da, offset, size);
->> +			memset(dest, 0xff, size);
->> +		} else {
->> +			memcpy(dest, ptr, size);
->> +		}
->> +	}
->> +}
->> +
->> +static ssize_t rproc_coredump_read(char *buffer, loff_t offset, 
->> size_t count,
->> +				   void *data, size_t header_sz)
->> +{
->> +	size_t seg_data, bytes_left = count;
->> +	ssize_t copy_sz;
->> +	struct rproc_dump_segment *seg;
->> +	struct rproc_coredump_state *dump_state = data;
->> +	struct rproc *rproc = dump_state->rproc;
->> +	void *elfcore = dump_state->header;
->> +
->> +	/* Copy the vmalloc'ed header first. */
->> +	if (offset < header_sz) {
->> +		copy_sz = memory_read_from_buffer(buffer, count, &offset,
->> +						  elfcore, header_sz);
->> +
->> +		return copy_sz;
->> +	}
->> +
->> +	/*
->> +	 * Find out the segment memory chunk to be copied based on offset.
->> +	 * Keep copying data until count bytes are read.
->> +	 */
->> +	while (bytes_left) {
->> +		seg = rproc_coredump_find_segment(offset - header_sz,
->> +						  &rproc->dump_segments,
->> +						  &seg_data);
->> +		/* EOF check */
->> +		if (!seg) {
->> +			dev_info(&rproc->dev, "Ramdump done, %lld bytes read",
->> +				 offset);
->> +			break;
->> +		}
->> +
->> +		copy_sz = min_t(size_t, bytes_left, seg_data);
->> +
->> +		rproc_copy_segment(rproc, buffer, seg, seg->size - seg_data,
->> +				   copy_sz);
->> +
->> +		offset += copy_sz;
->> +		buffer += copy_sz;
->> +		bytes_left -= copy_sz;
->> +	}
->> +
->> +	return count - bytes_left;
->> +}
->> +
->>  /**
->>   * rproc_coredump() - perform coredump
->>   * @rproc:	rproc handle
->>   *
->>   * This function will generate an ELF header for the registered 
->> segments
->> - * and create a devcoredump device associated with rproc.
->> + * and create a devcoredump device associated with rproc. Based on 
->> the
->> + * coredump configuration this function will directly copy the 
->> segments
->> + * from device memory to userspace or copy segments from device 
->> memory to
->> + * a separate buffer, which can then be read by userspace.
->> + * The first approach avoids using extra vmalloc memory. But it will 
->> stall
->> + * recovery flow until dump is read by userspace.
->>   */
->>  void rproc_coredump(struct rproc *rproc)
->>  {
->> @@ -129,11 +235,13 @@ void rproc_coredump(struct rproc *rproc)
->>  	size_t data_size;
->>  	size_t offset;
->>  	void *data;
->> -	void *ptr;
->>  	u8 class = rproc->elf_class;
->>  	int phnum = 0;
->> +	struct rproc_coredump_state dump_state;
->> +	enum rproc_dump_mechanism dump_conf = rproc->dump_conf;
->> 
->> -	if (list_empty(&rproc->dump_segments))
->> +	if (list_empty(&rproc->dump_segments) ||
->> +	    dump_conf == RPROC_COREDUMP_DISABLED)
->>  		return;
->> 
->>  	if (class == ELFCLASSNONE) {
->> @@ -143,7 +251,14 @@ void rproc_coredump(struct rproc *rproc)
->> 
->>  	data_size = elf_size_of_hdr(class);
->>  	list_for_each_entry(segment, &rproc->dump_segments, node) {
->> -		data_size += elf_size_of_phdr(class) + segment->size;
->> +		/*
->> +		 * For default configuration buffer includes headers & segments.
->> +		 * For inline dump buffer just includes headers as segments are
->> +		 * directly read from device memory.
->> +		 */
->> +		data_size += elf_size_of_phdr(class);
->> +		if (dump_conf == RPROC_COREDUMP_DEFAULT)
->> +			data_size += segment->size;
->> 
->>  		phnum++;
->>  	}
->> @@ -182,23 +297,30 @@ void rproc_coredump(struct rproc *rproc)
->>  		elf_phdr_set_p_flags(class, phdr, PF_R | PF_W | PF_X);
->>  		elf_phdr_set_p_align(class, phdr, 0);
->> 
->> -		if (segment->dump) {
->> -			segment->dump(rproc, segment, data + offset);
->> -		} else {
->> -			ptr = rproc_da_to_va(rproc, segment->da, segment->size);
->> -			if (!ptr) {
->> -				dev_err(&rproc->dev,
->> -					"invalid coredump segment (%pad, %zu)\n",
->> -					&segment->da, segment->size);
->> -				memset(data + offset, 0xff, segment->size);
->> -			} else {
->> -				memcpy(data + offset, ptr, segment->size);
->> -			}
->> -		}
->> +		if (dump_conf == RPROC_COREDUMP_DEFAULT)
->> +			rproc_copy_segment(rproc, data + offset, segment, 0,
->> +					   segment->size);
->> 
->>  		offset += elf_phdr_get_p_filesz(class, phdr);
->>  		phdr += elf_size_of_phdr(class);
->>  	}
->> 
->> -	dev_coredumpv(&rproc->dev, data, data_size, GFP_KERNEL);
->> +	if (dump_conf == RPROC_COREDUMP_DEFAULT) {
->> +		dev_coredumpv(&rproc->dev, data, data_size, GFP_KERNEL);
->> +		return;
->> +	}
->> +
->> +	/* Initialize the dump state struct to be used by 
->> rproc_coredump_read */
->> +	dump_state.rproc = rproc;
->> +	dump_state.header = data;
->> +	init_completion(&dump_state.dump_done);
->> +
->> +	dev_coredumpm(&rproc->dev, NULL, &dump_state, data_size, GFP_KERNEL,
->> +		      rproc_coredump_read, rproc_coredump_free);
->> +
->> +	/*
->> +	 * Wait until the dump is read and free is called. Data is freed
->> +	 * by devcoredump framework automatically after 5 minutes.
->> +	 */
->> +	wait_for_completion(&dump_state.dump_done);
->>  }
->> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
->> index e7b7bab..38d037d 100644
->> --- a/include/linux/remoteproc.h
->> +++ b/include/linux/remoteproc.h
->> @@ -435,6 +435,20 @@ enum rproc_crash_type {
->>  };
->> 
->>  /**
->> + * enum rproc_dump_mechanism - Coredump options for core
->> + * @RPROC_COREDUMP_DEFAULT:	Copy dump to separate buffer and carry on 
->> with
->> +				recovery
->> + * @RPROC_COREDUMP_INLINE:	Read segments directly from device memory. 
->> Stall
->> +				recovery until all segments are read
->> + * @RPROC_COREDUMP_DISABLED:	Don't perform any dump
->> + */
->> +enum rproc_dump_mechanism {
->> +	RPROC_COREDUMP_DEFAULT,
->> +	RPROC_COREDUMP_INLINE,
->> +	RPROC_COREDUMP_DISABLED,
->> +};
->> +
->> +/**
->>   * struct rproc_dump_segment - segment info from ELF header
->>   * @node:	list node related to the rproc segment list
->>   * @da:		device address of the segment
->> @@ -451,7 +465,7 @@ struct rproc_dump_segment {
->> 
->>  	void *priv;
->>  	void (*dump)(struct rproc *rproc, struct rproc_dump_segment 
->> *segment,
->> -		     void *dest);
->> +		     void *dest, size_t offset, size_t size);
->>  	loff_t offset;
->>  };
->> 
->> @@ -466,6 +480,7 @@ struct rproc_dump_segment {
->>   * @dev: virtual device for refcounting and common remoteproc 
->> behavior
->>   * @power: refcount of users who need this rproc powered up
->>   * @state: state of the device
->> + * @dump_conf: Currently selected coredump configuration
->>   * @lock: lock which protects concurrent manipulations of the rproc
->>   * @dbg_dir: debugfs directory of this rproc device
->>   * @traces: list of trace buffers
->> @@ -499,6 +514,7 @@ struct rproc {
->>  	struct device dev;
->>  	atomic_t power;
->>  	unsigned int state;
->> +	enum rproc_dump_mechanism dump_conf;
->>  	struct mutex lock;
->>  	struct dentry *dbg_dir;
->>  	struct list_head traces;
->> @@ -630,7 +646,8 @@ int rproc_coredump_add_custom_segment(struct rproc 
->> *rproc,
->>  				      dma_addr_t da, size_t size,
->>  				      void (*dumpfn)(struct rproc *rproc,
->>  						     struct rproc_dump_segment *segment,
->> -						     void *dest),
->> +						     void *dest, size_t offset,
->> +						     size_t size),
->>  				      void *priv);
->>  int rproc_coredump_set_elf_info(struct rproc *rproc, u8 class, u16 
->> machine);
+> Efforts related to the definition of the system DT are under way, something I
+> expect to keep going on for some time to come.  I agree with the need to use the
+> system DT to define remote processors and I look forward to the time we can do
+> so.
+
+I'll take this opportunity to add that I should be able to publicly
+present a System Device Tree proposal for this during the next call (the
+next one after the call early next week that has already a full agenda.)
+
+
+> That being said we need to find a concensus on how to move forward with patches
+> that are ready to be merged.  What is your opinion on that?
+
+In my opinion we don't have to necessarily wait for System Device Tree
+to make progress with those if they look OK.
