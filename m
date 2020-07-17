@@ -2,170 +2,176 @@ Return-Path: <SRS0=gAFD=A4=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A483C433DF
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 17 Jul 2020 05:03:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC18FC433E2
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 17 Jul 2020 05:07:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 23D7D20684
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 17 Jul 2020 05:03:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 970832070A
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 17 Jul 2020 05:07:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IkKpc2Jp"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="BdvqYu46"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726229AbgGQFDH (ORCPT
+        id S1725950AbgGQFHg (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 17 Jul 2020 01:03:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41538 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725909AbgGQFDG (ORCPT
+        Fri, 17 Jul 2020 01:07:36 -0400
+Received: from mail29.static.mailgun.info ([104.130.122.29]:60807 "EHLO
+        mail29.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725909AbgGQFHg (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 17 Jul 2020 01:03:06 -0400
-Received: from mail-pj1-x1043.google.com (mail-pj1-x1043.google.com [IPv6:2607:f8b0:4864:20::1043])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A1389C08C5C0
-        for <linux-remoteproc@vger.kernel.org>; Thu, 16 Jul 2020 22:03:06 -0700 (PDT)
-Received: by mail-pj1-x1043.google.com with SMTP id ls15so5966469pjb.1
-        for <linux-remoteproc@vger.kernel.org>; Thu, 16 Jul 2020 22:03:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=ShbI1+9lFcZEZwxlQ7fpYW/wdg7t2yDwfyw40puWmmo=;
-        b=IkKpc2JphzW2wnaE6/O9HYFekvdZrA0iZ9P0PDYTDnemYU6LlCFXReSqTEsKIpx7zt
-         jb2CEoCodqma8C5PC4okq1X3sstRApRCgtOXjcNmsb+H7cjgpJWnKtZJpYyJ90gS2Mqf
-         iBUFT3uzqOynWhiEQkQzdLfIyRmEb47JnsAeucVtxjBnkvzgaYrxjR0iu8vzzey9ZOt6
-         1Z+k3I+dktefrmg7ZozPhAz2DIiDaovAguOHJz4ON82Wh5deJsugqqcvtZi/N71MuJpk
-         rAz+Ror+W40jmw1HS0G7jTA8euBkiPtrmt358mXxS8+yxKxVqgjwcmuNjjU2Sllbij6D
-         1wxQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=ShbI1+9lFcZEZwxlQ7fpYW/wdg7t2yDwfyw40puWmmo=;
-        b=gs9YwGM3QTwVAR3pfncU9wsXBQ+548lUn2HfWquClYTk3efm5cf/9Kl/QecP+2PGD0
-         qn6QaSEZOXo9I4Wf1wxErG6rp0q3GZVV+qF37Aus1xd5HMCXEckOg5dyamayXVo+pP90
-         IeZfgHQEaZvxYOpYXPWN/QILDIAo4h35uGju+QW2PsRAgpJ5DKvzVufbFYTg75x59jvc
-         SvbABHBU6hf5gJt7WcbClg11VtLhMoWPm/gAIHH5zVBne4CTTPGLIMcgpl+Gw/SOAJWP
-         YdJi8SJNGT6bu00AQZvHMncqJO76pFhA4vnK6xdpbbIU8UzZvF1J9G1HLkeK0DJT3Ut2
-         H9Rw==
-X-Gm-Message-State: AOAM532oGlIK8tZticpZdqWN5stPEIYn02K/twKzcaqU7jHRnF9Dc2tX
-        IF3y80yA/ShipA5sWUHm4g1yDw==
-X-Google-Smtp-Source: ABdhPJztzCYHCYkLAFAxl3K4Tg9WLZ0pv0E/O9FIcB+RSoCIOMMF8eLTByvpqmi8C6ODLJefbXrXBA==
-X-Received: by 2002:a17:90a:3a81:: with SMTP id b1mr8405719pjc.217.1594962186100;
-        Thu, 16 Jul 2020 22:03:06 -0700 (PDT)
-Received: from builder.lan (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id e18sm6243326pff.37.2020.07.16.22.03.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Jul 2020 22:03:05 -0700 (PDT)
-Date:   Thu, 16 Jul 2020 22:01:03 -0700
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Rishabh Bhatnagar <rishabhb@codeaurora.org>
-Cc:     linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        mathieu.poirier@linaro.org, sibis@codearora.org,
-        tsoni@codeaurora.org, psodagud@codeaurora.org,
-        sidgup@codeaurora.org, Sibi Sankar <sibis@codeaurora.org>
-Subject: Re: [PATCH v8 2/5] remoteproc: qcom_q6v5_mss: Replace mask based
- tracking with size
-Message-ID: <20200717050103.GE2922385@builder.lan>
-References: <1594938035-7327-1-git-send-email-rishabhb@codeaurora.org>
- <1594938035-7327-3-git-send-email-rishabhb@codeaurora.org>
+        Fri, 17 Jul 2020 01:07:36 -0400
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1594962455; h=Message-ID: References: In-Reply-To: Subject:
+ Cc: To: From: Date: Content-Transfer-Encoding: Content-Type:
+ MIME-Version: Sender; bh=X5BaP4NyQfI2naFIt5otfZ99CC+9Jy2wAJD8Qo0dYTM=;
+ b=BdvqYu465btnKgbd1pczkeHKvlhgqcGXkJiEK8pdUxb0dZvrBX0Ti5/G1+8HgtyY/KLr93nB
+ ryIKcxW6cGm72Ch/UBuczupCxMDricad40iYQDWvNrx/VqJvjtE2/edDd4aMkTB0Pz5+7iga
+ B3uCmFpGPm82Kyg/dAeXeJ8hZQE=
+X-Mailgun-Sending-Ip: 104.130.122.29
+X-Mailgun-Sid: WyI4ZWZiZiIsICJsaW51eC1yZW1vdGVwcm9jQHZnZXIua2VybmVsLm9yZyIsICJiZTllNGEiXQ==
+Received: from smtp.codeaurora.org
+ (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
+ smtp-out-n17.prod.us-east-1.postgun.com with SMTP id
+ 5f113215e3bee1251055db26 (version=TLS1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Fri, 17 Jul 2020 05:07:33
+ GMT
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 8F70EC43391; Fri, 17 Jul 2020 05:07:32 +0000 (UTC)
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: sibis)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id E7876C433C9;
+        Fri, 17 Jul 2020 05:07:31 +0000 (UTC)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1594938035-7327-3-git-send-email-rishabhb@codeaurora.org>
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Fri, 17 Jul 2020 10:37:31 +0530
+From:   Sibi Sankar <sibis@codeaurora.org>
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     agross@kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        evgreen@chromium.org, ohad@wizery.com
+Subject: Re: [PATCH 1/3] remoteproc: qcom_q6v5_mss: Add modem debug policy
+ support
+In-Reply-To: <20200717044133.GB2922385@builder.lan>
+References: <20200716123630.21892-1-sibis@codeaurora.org>
+ <20200716123630.21892-2-sibis@codeaurora.org>
+ <20200717044133.GB2922385@builder.lan>
+Message-ID: <954fa575f198603b7d8846051d769c61@codeaurora.org>
+X-Sender: sibis@codeaurora.org
+User-Agent: Roundcube Webmail/1.3.9
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Thu 16 Jul 15:20 PDT 2020, Rishabh Bhatnagar wrote:
+Hey Bjorn,
+Thanks for taking time to review
+the series.
 
-> From: Sibi Sankar <sibis@codeaurora.org>
+On 2020-07-17 10:11, Bjorn Andersson wrote:
+> On Thu 16 Jul 05:36 PDT 2020, Sibi Sankar wrote:
 > 
-> In order to land inline coredump support for mss, the dump_segment
-> function would need to support granularities less than the segment
-> size. This is achieved by replacing mask based tracking with size.
+>> Add modem debug policy support which will enable coredumps and live
+>> debug support when the msadp firmware is present on secure devices.
+>> 
+>> Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
+>> ---
+>>  drivers/remoteproc/qcom_q6v5_mss.c | 15 ++++++++++++++-
+>>  1 file changed, 14 insertions(+), 1 deletion(-)
+>> 
+>> diff --git a/drivers/remoteproc/qcom_q6v5_mss.c 
+>> b/drivers/remoteproc/qcom_q6v5_mss.c
+>> index 13c6d5a72a831..95e21ed607cb9 100644
+>> --- a/drivers/remoteproc/qcom_q6v5_mss.c
+>> +++ b/drivers/remoteproc/qcom_q6v5_mss.c
+>> @@ -187,6 +187,7 @@ struct q6v5 {
+>>  	phys_addr_t mba_phys;
+>>  	void *mba_region;
+>>  	size_t mba_size;
+>> +	size_t dp_size;
+>> 
+>>  	phys_addr_t mpss_phys;
+>>  	phys_addr_t mpss_reloc;
+>> @@ -406,6 +407,13 @@ static int q6v5_xfer_mem_ownership(struct q6v5 
+>> *qproc, int *current_perm,
+>>  static int q6v5_load(struct rproc *rproc, const struct firmware *fw)
+>>  {
+>>  	struct q6v5 *qproc = rproc->priv;
+>> +	const struct firmware *dp_fw;
+>> +
+>> +	if (!request_firmware(&dp_fw, "msadp", qproc->dev) && fw->size <= 
+>> SZ_1M) {
 > 
-> Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
-> Signed-off-by: Rishabh Bhatnagar <rishabhb@codeaurora.org>
+> Can we change this to a request_firmware_direct() to avoid the fact 
+> that
+> as written here devices lacking this file will pause here for 60 
+> seconds
+> waiting for userspace to assist in loading it (which at least none of 
+> my
+> systems do).
+> 
+> I also think that while it's nice to check that fw->size <= SZ_1M, to
+> avoid overwriting the tail of it, you should check that SZ_1M +
+> dp_fw->size < mba_size. To ensure that the memcpy doesn't go out of
+> bounds.
 
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Sure I'll get ^^ done in the
+next re-spin.
 
-> ---
->  drivers/remoteproc/qcom_q6v5_mss.c | 17 ++++++++---------
->  1 file changed, 8 insertions(+), 9 deletions(-)
 > 
-> diff --git a/drivers/remoteproc/qcom_q6v5_mss.c b/drivers/remoteproc/qcom_q6v5_mss.c
-> index feb70283b..037cd45 100644
-> --- a/drivers/remoteproc/qcom_q6v5_mss.c
-> +++ b/drivers/remoteproc/qcom_q6v5_mss.c
-> @@ -181,8 +181,8 @@ struct q6v5 {
->  	bool running;
->  
->  	bool dump_mba_loaded;
-> -	unsigned long dump_segment_mask;
-> -	unsigned long dump_complete_mask;
-> +	size_t current_dump_size;
-> +	size_t total_dump_size;
->  
->  	phys_addr_t mba_phys;
->  	void *mba_region;
-> @@ -1203,7 +1203,6 @@ static void qcom_q6v5_dump_segment(struct rproc *rproc,
->  {
->  	int ret = 0;
->  	struct q6v5 *qproc = rproc->priv;
-> -	unsigned long mask = BIT((unsigned long)segment->priv);
->  	int offset = segment->da - qproc->mpss_reloc;
->  	void *ptr = NULL;
->  
-> @@ -1229,10 +1228,10 @@ static void qcom_q6v5_dump_segment(struct rproc *rproc,
->  		memset(dest, 0xff, segment->size);
->  	}
->  
-> -	qproc->dump_segment_mask |= mask;
-> +	qproc->current_dump_size += segment->size;
->  
->  	/* Reclaim mba after copying segments */
-> -	if (qproc->dump_segment_mask == qproc->dump_complete_mask) {
-> +	if (qproc->current_dump_size == qproc->total_dump_size) {
->  		if (qproc->dump_mba_loaded) {
->  			/* Try to reset ownership back to Q6 */
->  			q6v5_xfer_mem_ownership(qproc, &qproc->mpss_perm,
-> @@ -1274,7 +1273,7 @@ static int q6v5_start(struct rproc *rproc)
->  			"Failed to reclaim mba buffer system may become unstable\n");
->  
->  	/* Reset Dump Segment Mask */
-> -	qproc->dump_segment_mask = 0;
-> +	qproc->current_dump_size = 0;
->  	qproc->running = true;
->  
->  	return 0;
-> @@ -1323,7 +1322,7 @@ static int qcom_q6v5_register_dump_segments(struct rproc *rproc,
->  
->  	ehdr = (struct elf32_hdr *)fw->data;
->  	phdrs = (struct elf32_phdr *)(ehdr + 1);
-> -	qproc->dump_complete_mask = 0;
-> +	qproc->total_dump_size = 0;
->  
->  	for (i = 0; i < ehdr->e_phnum; i++) {
->  		phdr = &phdrs[i];
-> @@ -1334,11 +1333,11 @@ static int qcom_q6v5_register_dump_segments(struct rproc *rproc,
->  		ret = rproc_coredump_add_custom_segment(rproc, phdr->p_paddr,
->  							phdr->p_memsz,
->  							qcom_q6v5_dump_segment,
-> -							(void *)i);
-> +							NULL);
->  		if (ret)
->  			break;
->  
-> -		qproc->dump_complete_mask |= BIT(i);
-> +		qproc->total_dump_size += phdr->p_memsz;
->  	}
->  
->  	release_firmware(fw);
-> -- 
-> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-> a Linux Foundation Collaborative Project
+>> +		memcpy(qproc->mba_region + SZ_1M, dp_fw->data, dp_fw->size);
+>> +		qproc->dp_size = dp_fw->size;
+>> +		release_firmware(dp_fw);
+>> +	}
+>> 
+>>  	memcpy(qproc->mba_region, fw->data, fw->size);
+>> 
+>> @@ -896,6 +904,10 @@ static int q6v5_mba_load(struct q6v5 *qproc)
+>>  	}
+>> 
+>>  	writel(qproc->mba_phys, qproc->rmb_base + RMB_MBA_IMAGE_REG);
+>> +	if (qproc->dp_size) {
+>> +		writel(qproc->mba_phys + SZ_1M, qproc->rmb_base + 
+>> RMB_PMI_CODE_START_REG);
+>> +		writel(qproc->dp_size, qproc->rmb_base + RMB_PMI_CODE_LENGTH_REG);
+>> +	}
+>> 
+>>  	ret = q6v5proc_reset(qproc);
+>>  	if (ret)
+>> @@ -1258,7 +1270,8 @@ static int q6v5_start(struct rproc *rproc)
+>>  	if (ret)
+>>  		return ret;
+>> 
+>> -	dev_info(qproc->dev, "MBA booted, loading mpss\n");
+>> +	dev_info(qproc->dev, "MBA booted, debug policy %s, loading mpss\n",
+>> +		 qproc->dp_size ? "enabled" : "disabled");
 > 
+> "MBA booted with%s debug policy, loading mpss\n", qproc->dp_size ? "" : 
+> "out"
+> 
+> Please.
+
+Sure I'll use your template instead.
+
+> 
+> Regards,
+> Bjorn
+> 
+>> 
+>>  	ret = q6v5_mpss_load(qproc);
+>>  	if (ret)
+>> --
+>> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora 
+>> Forum,
+>> a Linux Foundation Collaborative Project
+>> 
+
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project.
