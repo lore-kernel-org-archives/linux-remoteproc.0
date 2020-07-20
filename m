@@ -7,59 +7,59 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4637C433E3
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 20 Jul 2020 22:17:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BEDFEC433E6
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 20 Jul 2020 22:20:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A371E20773
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 20 Jul 2020 22:17:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8D68822CBB
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 20 Jul 2020 22:20:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mQYNvdV6"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fA+kiPRz"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727033AbgGTWRa (ORCPT
+        id S1726952AbgGTWUE (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 20 Jul 2020 18:17:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43698 "EHLO
+        Mon, 20 Jul 2020 18:20:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44090 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726994AbgGTWR3 (ORCPT
+        with ESMTP id S1727107AbgGTWUB (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 20 Jul 2020 18:17:29 -0400
-Received: from mail-pl1-x643.google.com (mail-pl1-x643.google.com [IPv6:2607:f8b0:4864:20::643])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8B772C0619D2
-        for <linux-remoteproc@vger.kernel.org>; Mon, 20 Jul 2020 15:17:29 -0700 (PDT)
-Received: by mail-pl1-x643.google.com with SMTP id m16so9349041pls.5
-        for <linux-remoteproc@vger.kernel.org>; Mon, 20 Jul 2020 15:17:29 -0700 (PDT)
+        Mon, 20 Jul 2020 18:20:01 -0400
+Received: from mail-pj1-x1043.google.com (mail-pj1-x1043.google.com [IPv6:2607:f8b0:4864:20::1043])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6E8D3C0619D4
+        for <linux-remoteproc@vger.kernel.org>; Mon, 20 Jul 2020 15:20:01 -0700 (PDT)
+Received: by mail-pj1-x1043.google.com with SMTP id a9so573577pjd.3
+        for <linux-remoteproc@vger.kernel.org>; Mon, 20 Jul 2020 15:20:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=S9yHQrc+Grjytl2ICfVV8IIWajh+DoRcGnz0O824df8=;
-        b=mQYNvdV6P0yyUaue9TirPG5rWE2zJKJtvx3J6+47w9Xe4UzBCDZc7vHnqwGn87WAwz
-         8i8ikl7TVjBzPTz38xI6U6boUgPjLarRjJYb/Vy/+lvagJrffAUQuVJk9d98PXzDWsNG
-         UBguiocp4QBKFFH8k88siQQl01wqn/jIMqPr5QLS2l1+MC2FUqC/CUGb4IQJ/YecKamc
-         qztJLLQnFK5K1mQejqeEu75TSFmREUB6lMui81b+xuce+KTcqpgVNLymfo1zao2cep2d
-         VnVEbU52G7TPSYit4Jr+Do6z+tBV45BX0zJDl2eGnW+9zWIdrOPzyZgdEdOI8BdSsqnm
-         6qug==
+        bh=9jszjhz+NlIEMcsYPjEDY99gDeChZcLwFFimYQuARMc=;
+        b=fA+kiPRz0BeEjCAj8NYT5t+Px2fReryKsFrX6P/xl3oyDhUtHluigx4CH/gObq04UP
+         OpMwGxE2sALNvSJ221gPiQd37vNNFhrOgx+4zE1oPvnvFtEZn4BPGWO/fI+OpLnccFyU
+         PvpeKAoC+O9mrLPe9pP448RWacaBIVig/TG98phWMhC2hPARTQTQHZbj/Su/GyxAxSUC
+         7BhyzpcdceK90XVwTZA8jQeEo5F/9jA6oZEJdJ7eKpAf4CxjlJj9t1M3iupaSO5O9sRl
+         H+T33Qi1wMHEfynvfCz5+IL0ZMY8Y0tKRlHcUsaxW9N74Opc12SezicCsYfkX0quvA7I
+         /whg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=S9yHQrc+Grjytl2ICfVV8IIWajh+DoRcGnz0O824df8=;
-        b=DU4ys9/P2CU7rGz2lwWVDC+GRSC1SBSb0RWO8ecP5NLTEIYuK6oEXETRYNRQsCc4Fp
-         tfFvA2YqwnUfU61aAp0DILC0VaG7OornJncTh5lzye/Zv5J4x9MZNKM0n4oIs5PLF9jC
-         3VtxZX+Mp7BV78JUe1jHCV3j7FwocDCYxJKdK39OlUsos9501nuiNkixNgxgl2bpyUmf
-         HfBiXSWaqBqSHk3sxdPuCOX3gHTy2lHwT5cLVIcrUaa1gvLdOyuM8+QLdc5Ui0AToIhK
-         AwKL0D27QovxRgNwrvjQ05GUIx8MYEviC4Rz+2O5+BrXpEz5ToC893QpEk6qC+3LqGPJ
-         ur4g==
-X-Gm-Message-State: AOAM531c/yfuhvgeIINmYSjrXH5jdLDnW1sP6peIWmY+3OTk3UbHwbLH
-        KdaON4AHwR0rc4Du5jg+/6EAew==
-X-Google-Smtp-Source: ABdhPJxb1kIflxXR1Ew1LgJ1gLmAb+uzKaI3ucWpHPNcfZI7sMYxwBzIfJRfrevhw7Ig8WSDhh9pAg==
-X-Received: by 2002:a17:902:b706:: with SMTP id d6mr19735403pls.244.1595283448766;
-        Mon, 20 Jul 2020 15:17:28 -0700 (PDT)
+        bh=9jszjhz+NlIEMcsYPjEDY99gDeChZcLwFFimYQuARMc=;
+        b=Z+1MJIDt7MZ4DOZDKawjC9Bmbuq7WJ3fafa+p/NRg4LA/rUBaxqlH6lKOaxJFycOrv
+         t/dTexCHnYPBGh0F6jmC0IqfAqMi04NszLXB+3qSMn7y4F+ZPJzlIAu9fwmh0VPjbIyU
+         GiJQzOUlaEGPSZBaTRfjU4Tekz5JmLhdwsrOkL7mhsg6Cs1XAU3BmbtcsHm7b4SbHKAO
+         FikMkuF3GlvsNkdyc7abP9rEB0SeQ7WUXjuxldONwF1hn8ylKHlNTkMyMOW1BQ8+Hk/4
+         glCQMksLK7NwAksDxg9PzfXg2kf7mzvHruBpJGujIAE5ltGU8E2/UbA3NnC4fu5grbzk
+         AMSQ==
+X-Gm-Message-State: AOAM532QujGYMNvmu3tvix/+C0wjbWN+LJuNn6z/ZDr5Axh2bYyomdGO
+        LgZoVP0k3FTOOaT96neO1YwDMQ==
+X-Google-Smtp-Source: ABdhPJz74Mp0fsrigR6Dj0fSkYF1x1n5uPU+0vDzc/zgqU35a3aLMFkuToZTtmcfBeiGhzbCgl0d6g==
+X-Received: by 2002:a17:90b:3685:: with SMTP id mj5mr1477107pjb.123.1595283600821;
+        Mon, 20 Jul 2020 15:20:00 -0700 (PDT)
 Received: from xps15 (S0106002369de4dac.cg.shawcable.net. [68.147.8.254])
-        by smtp.gmail.com with ESMTPSA id q14sm15681971pgk.86.2020.07.20.15.17.27
+        by smtp.gmail.com with ESMTPSA id w18sm17820927pfi.89.2020.07.20.15.19.59
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Jul 2020 15:17:28 -0700 (PDT)
-Date:   Mon, 20 Jul 2020 16:17:26 -0600
+        Mon, 20 Jul 2020 15:20:00 -0700 (PDT)
+Date:   Mon, 20 Jul 2020 16:19:58 -0600
 From:   Mathieu Poirier <mathieu.poirier@linaro.org>
 To:     Alexandre Bailon <abailon@baylibre.com>
 Cc:     ohad@wizery.com, bjorn.andersson@linaro.org, robh+dt@kernel.org,
@@ -68,7 +68,7 @@ Cc:     ohad@wizery.com, bjorn.andersson@linaro.org, robh+dt@kernel.org,
         linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org
 Subject: Re: [PATCH 2/6] remoteproc: Add a remoteproc driver for the MT8183's
  APU
-Message-ID: <20200720221726.GD1113627@xps15>
+Message-ID: <20200720221958.GE1113627@xps15>
 References: <20200713132927.24925-1-abailon@baylibre.com>
  <20200713132927.24925-3-abailon@baylibre.com>
 MIME-Version: 1.0
@@ -89,9 +89,6 @@ On Mon, Jul 13, 2020 at 03:29:23PM +0200, Alexandre Bailon wrote:
 >  drivers/remoteproc/Kconfig         |  10 +
 >  drivers/remoteproc/Makefile        |   1 +
 >  drivers/remoteproc/mtk_apu_rproc.c | 308 +++++++++++++++++++++++++++++
-
-I would name the file mtk_apu.c to be consistent with the existing mtk_scp.c
-
 >  3 files changed, 319 insertions(+)
 >  create mode 100644 drivers/remoteproc/mtk_apu_rproc.c
 > 
@@ -148,9 +145,6 @@ I would name the file mtk_apu.c to be consistent with the existing mtk_scp.c
 > +#include <linux/irq.h>
 > +#include <linux/kernel.h>
 > +#include <linux/highmem.h>
-
-Move this below "delay.h"
-
 > +#include <linux/module.h>
 > +#include <linux/of_reserved_mem.h>
 > +#include <linux/platform_device.h>
@@ -163,9 +157,6 @@ Move this below "delay.h"
 > +#define  SW_RST_OCD_HALT_ON_RST			BIT(12)
 > +#define  SW_RST_IPU_D_RST			BIT(8)
 > +#define  SW_RST_IPU_B_RST			BIT(4)
-
-Please don't indent defines.
-
 > +#define CORE_CTRL				(0x00000110)
 > +#define  CORE_CTRL_PDEBUG_ENABLE		BIT(31)
 > +#define	 CORE_CTRL_SRAM_64K_iMEM		(0x00 << 27)
@@ -212,10 +203,6 @@ Please don't indent defines.
 > +{
 > +	writel(value, vpu_rproc->base + off);
 > +}
-
-Not sure that much is gained by adding the above two functions.  Just using
-readl/writel would suit me just fine.
-
 > +
 > +static int mtk_vpu_rproc_start(struct rproc *rproc)
 > +{
@@ -233,9 +220,6 @@ readl/writel would suit me just fine.
 > +	vpu_write32(vpu_rproc, SW_RST, SW_RST_OCD_HALT_ON_RST |
 > +				       SW_RST_IPU_B_RST | SW_RST_IPU_D_RST);
 > +	ndelay(27);
-
-What is this for?  The state of the VPU can't be polled?
-
 > +	vpu_write32(vpu_rproc, SW_RST, 0);
 > +
 > +	core_ctrl &= ~CORE_CTRL_PIF_GATED;
@@ -250,10 +234,6 @@ What is this for?  The state of the VPU can't be polled?
 > +
 > +	core_ctrl &= ~CORE_CTRL_RUN_STALL;
 > +	vpu_write32(vpu_rproc, CORE_CTRL, core_ctrl);
-
-I would certainly appreciate more comments that describe that is going on in
-this function.
-
 > +
 > +	return 0;
 > +}
@@ -285,10 +265,6 @@ this function.
 > +static irqreturn_t mtk_vpu_rproc_callback(int irq, void *data)
 > +{
 > +	struct rproc *rproc = (struct rproc *)data;
-
-There is no need to cast when working with a void pointer.  The same comment
-applies throughout.
-
 > +	struct mtk_vpu_rproc *vpu_rproc = (struct mtk_vpu_rproc *)rproc->priv;
 > +
 > +	vpu_write32(vpu_rproc, CORE_XTENSA_INT, 1);
@@ -316,14 +292,6 @@ applies throughout.
 > +
 > +	rproc = rproc_alloc(dev, "apu", &mtk_vpu_rproc_ops, NULL,
 > +			    sizeof(*vpu_rproc));
-
-The problem with hard coding the name of the remote process is that it work on
-only when there is a single processor.  Based on the DTS extention sent with
-this serie, there seems to be a possibility of having more the one.  As such
-both remote processor will be called "apu", mandating you to look at the
-platform resources to know which is which.  Consider using dev_name() or
-dev->of_node->name. 
-
 > +	if (!rproc)
 > +		return -ENOMEM;
 > +
@@ -348,10 +316,6 @@ dev->of_node->name.
 > +	vpu_rproc->base = devm_ioremap_resource(&pdev->dev, res);
 > +	if (IS_ERR(vpu_rproc->base)) {
 > +		dev_err(&pdev->dev, "Failed to map mmio\n");
-
-Above dev_err() is used with @dev while here @pdev->dev is.  Please pick one you
-like and stick with it. 
-
 > +		ret = PTR_ERR(vpu_rproc->base);
 > +		goto free_rproc;
 > +	}
@@ -366,13 +330,6 @@ like and stick with it.
 > +					mtk_vpu_rproc_callback, handle_event,
 > +					IRQF_SHARED | IRQF_ONESHOT,
 > +					"mtk_vpu-remoteproc", rproc);
-
-Same problem as above, i.e hard coding the name of the interrupt will be
-confusing when probing sysfs.  Here rproc->index holds the value that
-corresponds to 'X' in /sys/dev/class/remoteproc/remoteprocX.  Simply build a
-string using that and feed it to devm_request_threaded_ifq().
-
-
 > +	if (ret) {
 > +		dev_err(dev, "devm_request_threaded_irq error: %d\n", ret);
 > +		goto free_rproc;
@@ -402,17 +359,9 @@ string using that and feed it to devm_request_threaded_ifq().
 > +	if (ret) {
 > +		dev_err(dev, "Failed to enable axi clock\n");
 > +		goto clk_disable_ipu;
-> +	}a
-
-Please look at how Paul use the clock bulk API to deal with multiple clocs in
-ingenic_rproc.c and see if it is possible to use the same scheme.
-
+> +	}
 > +
 > +	vpu_rproc->jtag = devm_clk_get_optional(dev, "jtag");
-
-Why is the jtag clock optional when the binding document says that it "seems to
-be required to run the DSP, even when JTAG is not in use"?
-
 > +	if (IS_ERR(vpu_rproc->jtag)) {
 > +		dev_err(dev, "Failed to enable jtag clock\n");
 > +		ret = PTR_ERR(vpu_rproc->jtag);
@@ -424,6 +373,11 @@ be required to run the DSP, even when JTAG is not in use"?
 > +		dev_err(dev, "Failed to enable jtag clock\n");
 > +		goto clk_disable_axi;
 > +	}
+
+I forgot...  Clocks get enabled when the system is booted or the module loaded,
+something that is highly inefficient.  Please use rproc->prepare/unprepare() to
+deal with clocks at the appropriate time.
+
 > +
 > +	ret = of_reserved_mem_device_init(dev);
 > +	if (ret) {
@@ -472,13 +426,6 @@ be required to run the DSP, even when JTAG is not in use"?
 > +}
 > +
 > +static const struct of_device_id mtk_vpu_rproc_of_match[] __maybe_unused = {
-
-Why is "__maybe_unused" needed?
-
-Thanks,
-Mathieu
-
-
 > +	{ .compatible = "mediatek,mt8183-apu", },
 > +	{ /* sentinel */ },
 > +};
