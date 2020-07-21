@@ -1,110 +1,92 @@
-Return-Path: <SRS0=SQOW=A7=vger.kernel.org=linux-remoteproc-owner@kernel.org>
+Return-Path: <SRS0=TaqV=BA=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CD80C433DF
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 20 Jul 2020 23:26:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4B98C433DF
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 21 Jul 2020 02:32:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 088592080D
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 20 Jul 2020 23:26:34 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="HJ/gl9Wp"
+	by mail.kernel.org (Postfix) with ESMTP id 94D5520734
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 21 Jul 2020 02:32:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1595298730;
+	bh=tC7ehp08MOMj9TaRP1dvH3JDyvqSByFgcMTWuzYC18w=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=sE4PSslznDvZLngYrr/m4Mws3VYy6iXhi+o9NOcLJSqngjk9gGQL9uhUXw/VeYlty
+	 KWboCs1HFzbw3Mq1Pj7Jr0Jy7WSTk1plw2upGPQ5cip9Op/w9mt/zqQvjFXzDpHP+l
+	 i4zkxUkAwlbClU3fpJsqBj+ZOKEiSP5UWrQYCtwA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726521AbgGTX0d (ORCPT
+        id S1726161AbgGUCcK (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 20 Jul 2020 19:26:33 -0400
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:57030 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726021AbgGTX0d (ORCPT
+        Mon, 20 Jul 2020 22:32:10 -0400
+Received: from mail-io1-f68.google.com ([209.85.166.68]:40619 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726042AbgGUCcK (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 20 Jul 2020 19:26:33 -0400
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 06KNQQUp126401;
-        Mon, 20 Jul 2020 18:26:26 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1595287586;
-        bh=wF6WhftYpfnYBX0J8FroMAAxX2oGr5JH/Sy0gngDAQE=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=HJ/gl9WpBPKLP2N3e10x4sgs4qC19hCsqP5TkyS1yPl4i1u+BCf50ROad0S0312O/
-         JZ6aUKG+GeUx+tb+vaBoBG2heRPSQG6TkNlnq8Fb3DLxZHFbDNFGWNXtvBKJUeaOka
-         E3GJOpmAo2Qu+nqNaqCF8m4O2/6WFGN/gsNvUzOc=
-Received: from DFLE102.ent.ti.com (dfle102.ent.ti.com [10.64.6.23])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 06KNQQ6c046734
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 20 Jul 2020 18:26:26 -0500
-Received: from DFLE108.ent.ti.com (10.64.6.29) by DFLE102.ent.ti.com
- (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3; Mon, 20
- Jul 2020 18:26:26 -0500
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE108.ent.ti.com
- (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3 via
- Frontend Transport; Mon, 20 Jul 2020 18:26:26 -0500
-Received: from [10.250.34.248] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 06KNQQZX006261;
-        Mon, 20 Jul 2020 18:26:26 -0500
+        Mon, 20 Jul 2020 22:32:10 -0400
+Received: by mail-io1-f68.google.com with SMTP id l17so19739030iok.7;
+        Mon, 20 Jul 2020 19:32:09 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=Qrdcjj2nHxAqxaq8zMEhvLyNPJU48e0pDNvgfCYM2C0=;
+        b=t0shBt1KQFUdUfrYVnHmcl8nysld07EWt3sAOlsus9NKz+B25eO/OzFbvAk0B9h66L
+         I97fy+xLCH1m/3jUQvCx6ARZTTjC+1J2u/vDx1z6tnHfCrRZ7hPRdF1eY2EYGDxpvA5E
+         0G3MIdOjXzIyWyOSlRz/o0GwKaFJz6AiQJ0XX4YCvAIU5MxqZLVlBcOIvb7QciR87PXv
+         x2hHVW4Jcdli5v/mOtOrVbvwaQNlh17gOSRGl77XDaX0tpVJM1dkx9jKikpbYrFbG0Kl
+         6y2SfK/ZHd7+egGEgDYwVbAd0aKHshRTEeWtFdsC56tXPp0ZmlyjOp4CLuFWuPbzBhRo
+         vOTg==
+X-Gm-Message-State: AOAM532gQ95WliqSOYPbdJuXOFxnSXbBADRT1uB8/Ldb8Nx0tI2u7OpS
+        y5WyC1SqdeIfCuKgSC9c2A==
+X-Google-Smtp-Source: ABdhPJzd57MjAeiAqZutfR+baotVYeTni73NBMMTPgbv4b8i/902OmUHR6Giu4dozlXXNTJ2jlKWkw==
+X-Received: by 2002:a02:c88c:: with SMTP id m12mr15372105jao.2.1595298729038;
+        Mon, 20 Jul 2020 19:32:09 -0700 (PDT)
+Received: from xps15 ([64.188.179.252])
+        by smtp.gmail.com with ESMTPSA id u65sm9676595iod.45.2020.07.20.19.32.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 20 Jul 2020 19:32:08 -0700 (PDT)
+Received: (nullmailer pid 3418991 invoked by uid 1000);
+        Tue, 21 Jul 2020 02:32:07 -0000
+Date:   Mon, 20 Jul 2020 20:32:07 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Suman Anna <s-anna@ti.com>
+Cc:     Lokesh Vutla <lokeshvutla@ti.com>, linux-kernel@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        Bjorn Andersson <bjorn.andersson@linaro.org>
 Subject: Re: [PATCH v4 3/6] dt-bindings: remoteproc: Add common TI SCI rproc
  bindings
-To:     Rob Herring <robh@kernel.org>
-CC:     Lokesh Vutla <lokeshvutla@ti.com>, <linux-kernel@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>, <devicetree@vger.kernel.org>
+Message-ID: <20200721023207.GA3418873@bogus>
 References: <20200717234800.9423-1-s-anna@ti.com>
- <20200717234800.9423-4-s-anna@ti.com> <20200720221718.GA2899451@bogus>
-From:   Suman Anna <s-anna@ti.com>
-Message-ID: <4968835e-2ba5-dcd8-93b9-c3e33aabb0a9@ti.com>
-Date:   Mon, 20 Jul 2020 18:26:26 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+ <20200717234800.9423-4-s-anna@ti.com>
 MIME-Version: 1.0
-In-Reply-To: <20200720221718.GA2899451@bogus>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200717234800.9423-4-s-anna@ti.com>
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On 7/20/20 5:17 PM, Rob Herring wrote:
-> On Fri, 17 Jul 2020 18:47:57 -0500, Suman Anna wrote:
->> Add a bindings document that lists the common TI SCI properties
->> used by the K3 R5F and DSP remoteproc devices.
->>
->> Signed-off-by: Suman Anna <s-anna@ti.com>
->> ---
->> v4: Addressed both of Rob's review comments on ti,sci-proc-ids property
->> v3: https://patchwork.kernel.org/patch/11602317/
->>
->>   .../bindings/remoteproc/ti,k3-sci-proc.yaml   | 48 +++++++++++++++++++
->>   1 file changed, 48 insertions(+)
->>   create mode 100644 Documentation/devicetree/bindings/remoteproc/ti,k3-sci-proc.yaml
->>
+On Fri, 17 Jul 2020 18:47:57 -0500, Suman Anna wrote:
+> Add a bindings document that lists the common TI SCI properties
+> used by the K3 R5F and DSP remoteproc devices.
 > 
-> Please add Acked-by/Reviewed-by tags when posting new versions. However,
-> there's no need to repost patches *only* to add the tags. The upstream
-> maintainer will do that for acks received on the version they apply.
+> Signed-off-by: Suman Anna <s-anna@ti.com>
+> ---
+> v4: Addressed both of Rob's review comments on ti,sci-proc-ids property
+> v3: https://patchwork.kernel.org/patch/11602317/
 > 
-> If a tag was not added on purpose, please state why and what changed.
+>  .../bindings/remoteproc/ti,k3-sci-proc.yaml   | 48 +++++++++++++++++++
+>  1 file changed, 48 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/remoteproc/ti,k3-sci-proc.yaml
+> 
 
-Rob,
-
-You seem to have added your Reviewed-by tag by mistake on this 
-particular patch [1], that's why I actually dropped it.
-
-I do use pwclient, so the tags do get picked up automatically for my 
-newer versions.
-
-regards
-Suman
-
-[1] https://patchwork.kernel.org/comment/23484127/
+Reviewed-by: Rob Herring <robh@kernel.org>
