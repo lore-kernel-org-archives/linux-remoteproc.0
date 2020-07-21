@@ -2,193 +2,125 @@ Return-Path: <SRS0=TaqV=BA=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51BABC433E0
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 21 Jul 2020 20:58:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A481C433E2
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 21 Jul 2020 22:36:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2BE9620729
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 21 Jul 2020 20:58:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6734C206E3
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 21 Jul 2020 22:36:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mHdARhUT"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="C3Lu1WiJ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730488AbgGUU6c (ORCPT
+        id S1727771AbgGUWg1 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 21 Jul 2020 16:58:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58632 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728944AbgGUU6b (ORCPT
+        Tue, 21 Jul 2020 18:36:27 -0400
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:36016 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726555AbgGUWg0 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 21 Jul 2020 16:58:31 -0400
-Received: from mail-pf1-x443.google.com (mail-pf1-x443.google.com [IPv6:2607:f8b0:4864:20::443])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 201A4C0619DC
-        for <linux-remoteproc@vger.kernel.org>; Tue, 21 Jul 2020 13:58:31 -0700 (PDT)
-Received: by mail-pf1-x443.google.com with SMTP id u185so44831pfu.1
-        for <linux-remoteproc@vger.kernel.org>; Tue, 21 Jul 2020 13:58:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=X52qI9IuX8ehsLxlnySnmok7XL1KtNCuLE+99FuZBeI=;
-        b=mHdARhUTuiPaFxjw12aZ6Wa9+kLghKQ0fq8ZJpwVAledPTAoh2U3VGDsfsyr4CtWiS
-         NXuH7AFqDcCmAepHllRQ4Wq6geSc5R3h6YB/TWlMfokX4+eEHRFZKFDVxGqrMiu2MRku
-         91nIm/w9OxN3qHJykIwzJ//I2SrZPpLlqSXMiGkKwGrq7deQxUUahBBRIdBCDYalvXeO
-         RXkwNN69nSl3vRbDjY12ItnzNxSn54y5LrsKUYN1XwkelXZrn2ofOPGVf1/ffcUuaa7h
-         a83DRCCTf2xgI5VIfkzGeDM08SV43UCY0a72ArB/oCDawwpiJKf3+5B7lUPaBFF2NcE8
-         0C2Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=X52qI9IuX8ehsLxlnySnmok7XL1KtNCuLE+99FuZBeI=;
-        b=VEvi5sbqFg2oXHtbfCu+0CSbiivslW5j0fWRN/OM0S/hE5HRRa2pulOIGqD6JyUV89
-         giddP4frolO7pSaeuZnDbLFQmsC/S2IBdh5jDs9SnOsiVvjnw6IRM+FXWgIbBE7aYJ8R
-         fUn+uWYSLw694GNtps4ItG1ilJ16SdIDXwWNpLiCT02UHCj20njnrpazDD1sAShczHGR
-         rV6xt5Ai+YTHqQr3soLXw8M8/2UqLtqoEFs+mGbW+vD2O2iIT8SchOTktQPNmH/gnaMJ
-         IItFi9x261JBRD7esv6gZ6AYDhl8U7l2uSw1cL7lR/lxE9hB7pRn2GTlNZPQPbSinhH1
-         /j4Q==
-X-Gm-Message-State: AOAM532lSvHIzpaSMvjXasGktjWB/IcRd87CvTn0PRejJmh5NfZSs6ym
-        LbKc4nlR4jcF3Q563smq++D/4Q==
-X-Google-Smtp-Source: ABdhPJzipImp2FJDXR65FI4cQBfU1/ZWv6fskJvunQo3KeiwYFfoMSTrdro0BQYaNbHlwWG5ksZP1g==
-X-Received: by 2002:a63:c049:: with SMTP id z9mr19741380pgi.353.1595365110347;
-        Tue, 21 Jul 2020 13:58:30 -0700 (PDT)
-Received: from builder.lan (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id z25sm21277934pfg.140.2020.07.21.13.58.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 Jul 2020 13:58:29 -0700 (PDT)
-Date:   Tue, 21 Jul 2020 13:56:35 -0700
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Siddharth Gupta <sidgup@codeaurora.org>
-Cc:     Mathieu Poirier <mathieu.poirier@linaro.org>, agross@kernel.org,
-        ohad@wizery.com, corbet@lwn.net, linux-remoteproc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, tsoni@codeaurora.org,
-        psodagud@codeaurora.org, rishabhb@codeaurora.org,
-        linux-doc@vger.kernel.org
-Subject: Re: [PATCH v4 1/2] remoteproc: Add remoteproc character device
- interface
-Message-ID: <20200721205635.GM2922385@builder.lan>
-References: <1594148870-27276-1-git-send-email-sidgup@codeaurora.org>
- <1594148870-27276-2-git-send-email-sidgup@codeaurora.org>
- <20200715201839.GA3204081@xps15>
- <20200715215149.GA3267350@xps15>
- <81d7514c-727e-b4dc-e4ac-74a25966ccaf@codeaurora.org>
+        Tue, 21 Jul 2020 18:36:26 -0400
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 06LMaLNG108088;
+        Tue, 21 Jul 2020 17:36:21 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1595370981;
+        bh=3Sb6PrHGQGYKFrEVdSA8GaYuEwf+vL4h5BIJE8Zpo6k=;
+        h=From:To:CC:Subject:Date;
+        b=C3Lu1WiJ0sSay5h9zOT1yMJmfHMYoMNXmyoeU9WQcFiVBoJ55Fp8VLR56viwCNRtt
+         JVtC0nvljbmVgTEA57WgoTWyfzXy18MRCILBh4HWFPux8f7RN70qzsqzq40SJ73Ur1
+         AdNyCJ77Ot3zJaZyqCSU40lf8T9Tt7Ldd78WJr6c=
+Received: from DLEE104.ent.ti.com (dlee104.ent.ti.com [157.170.170.34])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id 06LMaL51023668;
+        Tue, 21 Jul 2020 17:36:21 -0500
+Received: from DLEE112.ent.ti.com (157.170.170.23) by DLEE104.ent.ti.com
+ (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3; Tue, 21
+ Jul 2020 17:36:21 -0500
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE112.ent.ti.com
+ (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3 via
+ Frontend Transport; Tue, 21 Jul 2020 17:36:21 -0500
+Received: from fllv0103.dal.design.ti.com (fllv0103.dal.design.ti.com [10.247.120.73])
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 06LMaLRo013887;
+        Tue, 21 Jul 2020 17:36:21 -0500
+Received: from localhost ([10.250.34.248])
+        by fllv0103.dal.design.ti.com (8.14.7/8.14.7) with ESMTP id 06LMaL2D080793;
+        Tue, 21 Jul 2020 17:36:21 -0500
+From:   Suman Anna <s-anna@ti.com>
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>
+CC:     Nishanth Menon <nm@ti.com>, Lokesh Vutla <lokeshvutla@ti.com>,
+        <linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, Suman Anna <s-anna@ti.com>
+Subject: [PATCH v5 0/6] TI K3 DSP remoteproc driver for C66x DSPs
+Date:   Tue, 21 Jul 2020 17:36:11 -0500
+Message-ID: <20200721223617.20312-1-s-anna@ti.com>
+X-Mailer: git-send-email 2.26.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <81d7514c-727e-b4dc-e4ac-74a25966ccaf@codeaurora.org>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Tue 21 Jul 12:16 PDT 2020, Siddharth Gupta wrote:
-> On 7/15/2020 2:51 PM, Mathieu Poirier wrote:
-> > On Wed, Jul 15, 2020 at 02:18:39PM -0600, Mathieu Poirier wrote:
-> > > On Tue, Jul 07, 2020 at 12:07:49PM -0700, Siddharth Gupta wrote:
-[..]
-> > > > diff --git a/drivers/remoteproc/remoteproc_cdev.c b/drivers/remoteproc/remoteproc_cdev.c
-[..]
-> > > > +int rproc_char_device_add(struct rproc *rproc)
-> > > > +{
-> > > > +	int ret;
-> > > > +	dev_t cdevt;
-> > > > +
-> > > > +	cdev_init(&rproc->char_dev, &rproc_fops);
-> > > > +	rproc->char_dev.owner = THIS_MODULE;
-> > > > +
-> > > > +	cdevt = MKDEV(rproc_major, rproc->index);
-> > > > +	ret = cdev_add(&rproc->char_dev, cdevt, 1);
-> > Trying this patchset on my side gave me the following splat[1].  After finding
-> > the root case I can't understand how you haven't see it on your side when you
-> > tested the feature.
-> > 
-> > [1]. https://pastebin.com/aYTUUCdQ
+Hi All,
 
-Mathieu, I've looked at this back and forth. Afaict this implies that
-rproc_major is still 0. Could it be that either alloc_chrdev_region()
-failed or somehow has yet to be called when you hit this point?
+The following is v5 of the K3 DSP remoteproc driver supporting the C66x DSPs
+on the TI K3 J721E SoCs. The patches apply cleanly both on v5.8-rc1 as well
+as on latest HEAD of rproc-next branch. The C71x v3 still applies cleanly on
+top of this series.
 
-> Hey Mathieu,
-> 
-> We aren't able to reproduce the error that you are seeing, the splat is
-> coming
-> from the check for whiteout device[1] - which shouldn't happen because of
-> the
-> find_dynamic_major call[2], right?
-> 
-> We are successfully seeing all our character device files and able to
-> successfully boot remoteprocs. From what I read and understood about
-> whiteout
-> devices they will be hidden in the fs.
-> 
-> Could you provide more details about your configuration and testing?
-> 
-> [1]: https://github.com/torvalds/linux/blob/master/fs/char_dev.c#L486
-> <https://github.com/torvalds/linux/blob/master/fs/char_dev.c#L123>
-> [2]: https://github.com/torvalds/linux/blob/master/fs/char_dev.c#L123
-> 
-> <https://github.com/torvalds/linux/blob/master/fs/char_dev.c#L486>
-> > > > +	if (ret < 0)
-> > > > +		goto out;
-> > > > +
-> > > > +	rproc->dev.devt = cdevt;
-> > > > +out:
-> > > > +	return ret;
-> > > > +}
-> > > > +
-> > > > +void rproc_char_device_remove(struct rproc *rproc)
-> > > > +{
-> > > > +	__unregister_chrdev(rproc_major, rproc->index, 1, "remoteproc");
-> > > > +}
-> > > > +
-> > > > +void __init rproc_init_cdev(void)
-> > > > +{
-> > > > +	int ret;
-> > > > +
-> > > > +	ret = alloc_chrdev_region(&rproc_major, 0, NUM_RPROC_DEVICES, "remoteproc");
-> > > > +	if (ret < 0)
-> > > > +		pr_err("Failed to alloc rproc_cdev region, err %d\n", ret);
-> > > > +}
-> > > > +
-> > > > +void __exit rproc_exit_cdev(void)
-> > > > +{
-> > > > +	unregister_chrdev_region(MKDEV(rproc_major, 0), NUM_RPROC_DEVICES);
-> > > Please go back to the comment I made on this during my last review and respin.
-> > After digging in the code while debugging the above problem, I don't see how
-> > unregistering the chrdev region the way it is done here would have worked.
-> Since this is compiled statically and not built as a module, we will never
-> exercise the code path, so I will remove it in the next patchset.
-> 
+The main changes are on the bindings. The previously added common 
+ti,k3-sci-rproc.yaml remoteproc binding (v4 patch#3) is replaced by an
+equivalent generic ti,k3-sci-common.yaml binding (patch #1) that can scale
+to other TI SCI controller nodes. As such, I have relocated the file to 
+Documentation/devicetree/bindings/arm/keystone folder instead of the
+remoteproc folder. Driver patches are unchanged.
 
-You're right Siddharth, since we changed CONFIG_REMOTEPROC to bool it's no longer
-possible to hit remoteproc_exit(), so you can omit this function
-entirely. (And we should clean up the rest of that as well)
+Please see the v4 cover-letter and individual patches for further delta
+differences.
 
-[..]
-> > > > diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-[..]
-> > > > @@ -488,6 +489,8 @@ struct rproc_dump_segment {
-> > > >    * @auto_boot: flag to indicate if remote processor should be auto-started
-> > > >    * @dump_segments: list of segments in the firmware
-> > > >    * @nb_vdev: number of vdev currently handled by rproc
-> > > > + * @char_dev: character device of the rproc
-> > > > + * @cdev_put_on_release: flag to indicate if remoteproc should be shutdown on @char_dev release
-> > > >    */
-> > > >   struct rproc {
-> > > >   	struct list_head node;
-> > > > @@ -523,6 +526,8 @@ struct rproc {
-> > > >   	int nb_vdev;
-> > > >   	u8 elf_class;
-> > > >   	u16 elf_machine;
-> > > > +	struct cdev char_dev;
+v4: https://patchwork.kernel.org/cover/11671459/
+v3: https://patchwork.kernel.org/cover/11602331/
+v2: https://patchwork.kernel.org/cover/11561787/
+v1: https://patchwork.kernel.org/cover/11458573/
 
-As stated privately, I assumed based on this name that this is a struct
-device related to that character device. So please rename this cdev to
-save me from doing this mistake again.
+C71x v3: https://patchwork.kernel.org/cover/11602345/
 
-Thanks,
-Bjorn
+regards
+Suman
+
+Suman Anna (6):
+  dt-bindings: arm: keystone: Add common TI SCI bindings
+  remoteproc: Introduce rproc_of_parse_firmware() helper
+  remoteproc: k3: Add TI-SCI processor control helper functions
+  dt-bindings: remoteproc: Add bindings for C66x DSPs on TI K3 SoCs
+  remoteproc: k3-dsp: Add a remoteproc driver of K3 C66x DSPs
+  remoteproc: k3-dsp: Add support for L2RAM loading on C66x DSPs
+
+ .../arm/keystone/ti,k3-sci-common.yaml        |  44 +
+ .../bindings/remoteproc/ti,k3-dsp-rproc.yaml  | 142 ++++
+ MAINTAINERS                                   |   1 +
+ drivers/remoteproc/Kconfig                    |  13 +
+ drivers/remoteproc/Makefile                   |   1 +
+ drivers/remoteproc/remoteproc_core.c          |  23 +
+ drivers/remoteproc/remoteproc_internal.h      |   2 +
+ drivers/remoteproc/ti_k3_dsp_remoteproc.c     | 771 ++++++++++++++++++
+ drivers/remoteproc/ti_sci_proc.h              | 104 +++
+ 9 files changed, 1101 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/arm/keystone/ti,k3-sci-common.yaml
+ create mode 100644 Documentation/devicetree/bindings/remoteproc/ti,k3-dsp-rproc.yaml
+ create mode 100644 drivers/remoteproc/ti_k3_dsp_remoteproc.c
+ create mode 100644 drivers/remoteproc/ti_sci_proc.h
+
+-- 
+2.26.0
+
