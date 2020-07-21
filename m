@@ -2,151 +2,193 @@ Return-Path: <SRS0=TaqV=BA=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-12.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 779D4C433E0
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 21 Jul 2020 20:43:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51BABC433E0
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 21 Jul 2020 20:58:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 549AB20717
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 21 Jul 2020 20:43:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2BE9620729
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 21 Jul 2020 20:58:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="aplCMKmL"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mHdARhUT"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728930AbgGUUng (ORCPT
+        id S1730488AbgGUU6c (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 21 Jul 2020 16:43:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56322 "EHLO
+        Tue, 21 Jul 2020 16:58:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58632 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728785AbgGUUng (ORCPT
+        with ESMTP id S1728944AbgGUU6b (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 21 Jul 2020 16:43:36 -0400
-Received: from mail-pg1-x544.google.com (mail-pg1-x544.google.com [IPv6:2607:f8b0:4864:20::544])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EFEC6C0619DC
-        for <linux-remoteproc@vger.kernel.org>; Tue, 21 Jul 2020 13:43:35 -0700 (PDT)
-Received: by mail-pg1-x544.google.com with SMTP id w2so7903pgg.10
-        for <linux-remoteproc@vger.kernel.org>; Tue, 21 Jul 2020 13:43:35 -0700 (PDT)
+        Tue, 21 Jul 2020 16:58:31 -0400
+Received: from mail-pf1-x443.google.com (mail-pf1-x443.google.com [IPv6:2607:f8b0:4864:20::443])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 201A4C0619DC
+        for <linux-remoteproc@vger.kernel.org>; Tue, 21 Jul 2020 13:58:31 -0700 (PDT)
+Received: by mail-pf1-x443.google.com with SMTP id u185so44831pfu.1
+        for <linux-remoteproc@vger.kernel.org>; Tue, 21 Jul 2020 13:58:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=6b3oA4UL1L2pl7xC9XCpGfPbFXbX6ZR3mQ/aH6nN3aM=;
-        b=aplCMKmLtk1FND72f9eTw2pW0XV235w2d7abx0+nAqdK+5QHFUZUtqiXP3Y/5NfWwQ
-         OP0koBCszYM3OjbRoWGb9J2n5jEHmqZ6iZvMjrdhubqs08gi7J2ZJm0AvaheIAChdgVe
-         7MEKxT+pv82gNj/QbYrQIrC+ws3wQQ1yxdP7oGdDW+0Vgl/fKppwh3+V150QjFW7B0sR
-         pfuiSebY5wKyIuGmulwut1717V7STCbyNn4pXsUhj1rO3Uw2IJGLCqE9RK2xBIl74F49
-         isMNRqNjvPF38ITyYEMgKk4pMSMMY5Hw3R+VLWqG+e65UZgP/9R7FHaVotrNczHhVufX
-         vhew==
+        bh=X52qI9IuX8ehsLxlnySnmok7XL1KtNCuLE+99FuZBeI=;
+        b=mHdARhUTuiPaFxjw12aZ6Wa9+kLghKQ0fq8ZJpwVAledPTAoh2U3VGDsfsyr4CtWiS
+         NXuH7AFqDcCmAepHllRQ4Wq6geSc5R3h6YB/TWlMfokX4+eEHRFZKFDVxGqrMiu2MRku
+         91nIm/w9OxN3qHJykIwzJ//I2SrZPpLlqSXMiGkKwGrq7deQxUUahBBRIdBCDYalvXeO
+         RXkwNN69nSl3vRbDjY12ItnzNxSn54y5LrsKUYN1XwkelXZrn2ofOPGVf1/ffcUuaa7h
+         a83DRCCTf2xgI5VIfkzGeDM08SV43UCY0a72ArB/oCDawwpiJKf3+5B7lUPaBFF2NcE8
+         0C2Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=6b3oA4UL1L2pl7xC9XCpGfPbFXbX6ZR3mQ/aH6nN3aM=;
-        b=Hs4vjowk/r9pvJyv1RRwaCbT+ta8CPqczUqyQIxWRO2rndflqB4FZxDbfrU2ePf/dR
-         eESKjoEJTP6LGSErdKferqVBc8bC6qm1oDxHphwbLE1xCGiSO3N8Ml7x1C+jrLTYSwu6
-         U154kg+sHg1ijVnvi5BKmQ+6pWLKAgiyl2IQVcPXawHy89R4mUcDLplk7C4hYPpkNeND
-         Na0WACLoiStygebOi3fQ7cyGHms6hLM2Y9+Pk2AmwNk2MXyDZkhQgUCkV6O82HSBNEk5
-         oiMJ8uPLoqkZvvTcilVoHXxiR0kJ/oCFoj17zC/XZF/32L0CWUos7xUtrcnzbNcukdkr
-         0vdw==
-X-Gm-Message-State: AOAM532TiEu54FStq4vUmGxq9OBWFw0T6iX5vShhBtbLSuz8z53vKVau
-        WyH2QTGNUSgFENh8u5Ona/yoDHqpfeQ=
-X-Google-Smtp-Source: ABdhPJwuyrOyVT4KOawwJEajBAoNJgJsEKfBbYSabaXT83Sv4Y4Gqw+HTJiZ3dzR4rMofwR9hrMHZA==
-X-Received: by 2002:aa7:9906:: with SMTP id z6mr26338877pff.60.1595364215284;
-        Tue, 21 Jul 2020 13:43:35 -0700 (PDT)
-Received: from xps15 (S0106002369de4dac.cg.shawcable.net. [68.147.8.254])
-        by smtp.gmail.com with ESMTPSA id z10sm21858949pfr.90.2020.07.21.13.43.34
+        bh=X52qI9IuX8ehsLxlnySnmok7XL1KtNCuLE+99FuZBeI=;
+        b=VEvi5sbqFg2oXHtbfCu+0CSbiivslW5j0fWRN/OM0S/hE5HRRa2pulOIGqD6JyUV89
+         giddP4frolO7pSaeuZnDbLFQmsC/S2IBdh5jDs9SnOsiVvjnw6IRM+FXWgIbBE7aYJ8R
+         fUn+uWYSLw694GNtps4ItG1ilJ16SdIDXwWNpLiCT02UHCj20njnrpazDD1sAShczHGR
+         rV6xt5Ai+YTHqQr3soLXw8M8/2UqLtqoEFs+mGbW+vD2O2iIT8SchOTktQPNmH/gnaMJ
+         IItFi9x261JBRD7esv6gZ6AYDhl8U7l2uSw1cL7lR/lxE9hB7pRn2GTlNZPQPbSinhH1
+         /j4Q==
+X-Gm-Message-State: AOAM532lSvHIzpaSMvjXasGktjWB/IcRd87CvTn0PRejJmh5NfZSs6ym
+        LbKc4nlR4jcF3Q563smq++D/4Q==
+X-Google-Smtp-Source: ABdhPJzipImp2FJDXR65FI4cQBfU1/ZWv6fskJvunQo3KeiwYFfoMSTrdro0BQYaNbHlwWG5ksZP1g==
+X-Received: by 2002:a63:c049:: with SMTP id z9mr19741380pgi.353.1595365110347;
+        Tue, 21 Jul 2020 13:58:30 -0700 (PDT)
+Received: from builder.lan (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id z25sm21277934pfg.140.2020.07.21.13.58.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 Jul 2020 13:43:34 -0700 (PDT)
-Date:   Tue, 21 Jul 2020 14:43:32 -0600
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-To:     Alexandre Bailon <abailon@baylibre.com>
-Cc:     ohad@wizery.com, bjorn.andersson@linaro.org, robh+dt@kernel.org,
-        matthias.bgg@gmail.com, linux-remoteproc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 5/6] remoteproc: mtk_apu: Don't try to use the APU local
- RAM
-Message-ID: <20200721204332.GC1227776@xps15>
-References: <20200713132927.24925-1-abailon@baylibre.com>
- <20200713132927.24925-6-abailon@baylibre.com>
+        Tue, 21 Jul 2020 13:58:29 -0700 (PDT)
+Date:   Tue, 21 Jul 2020 13:56:35 -0700
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Siddharth Gupta <sidgup@codeaurora.org>
+Cc:     Mathieu Poirier <mathieu.poirier@linaro.org>, agross@kernel.org,
+        ohad@wizery.com, corbet@lwn.net, linux-remoteproc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, tsoni@codeaurora.org,
+        psodagud@codeaurora.org, rishabhb@codeaurora.org,
+        linux-doc@vger.kernel.org
+Subject: Re: [PATCH v4 1/2] remoteproc: Add remoteproc character device
+ interface
+Message-ID: <20200721205635.GM2922385@builder.lan>
+References: <1594148870-27276-1-git-send-email-sidgup@codeaurora.org>
+ <1594148870-27276-2-git-send-email-sidgup@codeaurora.org>
+ <20200715201839.GA3204081@xps15>
+ <20200715215149.GA3267350@xps15>
+ <81d7514c-727e-b4dc-e4ac-74a25966ccaf@codeaurora.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200713132927.24925-6-abailon@baylibre.com>
+In-Reply-To: <81d7514c-727e-b4dc-e4ac-74a25966ccaf@codeaurora.org>
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Mon, Jul 13, 2020 at 03:29:26PM +0200, Alexandre Bailon wrote:
-> Currently, this local RAM is not accessible from the CPU.
-> If the CPU tries to access it, then the CPU will hang.
-> 
-> Remoteproc may try to use it when it load a firmware
-> that has some sections in the local RAM.
-> This workarounds the issue by skiping this section.
-> 
-> Signed-off-by: Alexandre Bailon <abailon@baylibre.com>
-> ---
->  drivers/remoteproc/mtk_apu_rproc.c | 14 ++++++++++++++
->  1 file changed, 14 insertions(+)
-> 
-> diff --git a/drivers/remoteproc/mtk_apu_rproc.c b/drivers/remoteproc/mtk_apu_rproc.c
-> index 565b3adca5de..e16d3258a785 100644
-> --- a/drivers/remoteproc/mtk_apu_rproc.c
-> +++ b/drivers/remoteproc/mtk_apu_rproc.c
-> @@ -57,6 +57,9 @@
->  #define CORE_DEFAULT2_SPIDEN			BIT(0)
->  #define CORE_XTENSA_ALTRESETVEC			(0x000001F8)
->  
-> +#define DRAM0_START				(0x7ff00000)
-> +#define IRAM0_END				(0x7ff80000)
-> +
->  struct mtk_vpu_rproc {
->  	struct device *dev;
->  	struct rproc *rproc;
-> @@ -139,6 +142,7 @@ static void mtk_vpu_rproc_kick(struct rproc *rproc, int vqid)
->  
->  int mtk_vpu_elf_sanity_check(struct rproc *rproc, const struct firmware *fw)
->  {
-> +	struct mtk_vpu_rproc *vpu_rproc = rproc->priv;
->  	const u8 *elf_data = fw->data;
->  	struct elf32_hdr *ehdr;
->  	struct elf32_phdr *phdr;
-> @@ -156,6 +160,16 @@ int mtk_vpu_elf_sanity_check(struct rproc *rproc, const struct firmware *fw)
->  		/* Remove empty PT_LOAD section */
->  		if (phdr->p_type == PT_LOAD && !phdr->p_paddr)
->  			phdr->p_type = PT_NULL;
-> +		/*
-> +		 * Workaround: Currently, the CPU can't access to the APU
-> +		 * local RAM. This removes the local RAM section from the
-> +		 * firmware. Please note that may cause some issues.
-> +		 */
-> +		if (phdr->p_paddr >= DRAM0_START && phdr->p_paddr < IRAM0_END) {
-> +			dev_warn_once(vpu_rproc->dev,
-> +				      "Skipping the APU local RAM section\n");
-> +			phdr->p_type = PT_NULL;
+On Tue 21 Jul 12:16 PDT 2020, Siddharth Gupta wrote:
+> On 7/15/2020 2:51 PM, Mathieu Poirier wrote:
+> > On Wed, Jul 15, 2020 at 02:18:39PM -0600, Mathieu Poirier wrote:
+> > > On Tue, Jul 07, 2020 at 12:07:49PM -0700, Siddharth Gupta wrote:
+[..]
+> > > > diff --git a/drivers/remoteproc/remoteproc_cdev.c b/drivers/remoteproc/remoteproc_cdev.c
+[..]
+> > > > +int rproc_char_device_add(struct rproc *rproc)
+> > > > +{
+> > > > +	int ret;
+> > > > +	dev_t cdevt;
+> > > > +
+> > > > +	cdev_init(&rproc->char_dev, &rproc_fops);
+> > > > +	rproc->char_dev.owner = THIS_MODULE;
+> > > > +
+> > > > +	cdevt = MKDEV(rproc_major, rproc->index);
+> > > > +	ret = cdev_add(&rproc->char_dev, cdevt, 1);
+> > Trying this patchset on my side gave me the following splat[1].  After finding
+> > the root case I can't understand how you haven't see it on your side when you
+> > tested the feature.
+> > 
+> > [1]. https://pastebin.com/aYTUUCdQ
 
-We can't selectively decide to not load sections of a program due to a platform
-driver shortcoming.  Either a real solution is found or booting the remote
-processor is interrupted, with a strong incline toward the former.
+Mathieu, I've looked at this back and forth. Afaict this implies that
+rproc_major is still 0. Could it be that either alloc_chrdev_region()
+failed or somehow has yet to be called when you hit this point?
 
-I guess you're dealing with tightly coupled memory or on-chip RAM areas -
-both are accessed on other platform using ioremap_wc() or devm_ioremap_wc().
-You might want to try doing what Suman has done in this patchset [1], with
-specific attention to TCMs and SRAM.
+> Hey Mathieu,
+> 
+> We aren't able to reproduce the error that you are seeing, the splat is
+> coming
+> from the check for whiteout device[1] - which shouldn't happen because of
+> the
+> find_dynamic_major call[2], right?
+> 
+> We are successfully seeing all our character device files and able to
+> successfully boot remoteprocs. From what I read and understood about
+> whiteout
+> devices they will be hidden in the fs.
+> 
+> Could you provide more details about your configuration and testing?
+> 
+> [1]: https://github.com/torvalds/linux/blob/master/fs/char_dev.c#L486
+> <https://github.com/torvalds/linux/blob/master/fs/char_dev.c#L123>
+> [2]: https://github.com/torvalds/linux/blob/master/fs/char_dev.c#L123
+> 
+> <https://github.com/torvalds/linux/blob/master/fs/char_dev.c#L486>
+> > > > +	if (ret < 0)
+> > > > +		goto out;
+> > > > +
+> > > > +	rproc->dev.devt = cdevt;
+> > > > +out:
+> > > > +	return ret;
+> > > > +}
+> > > > +
+> > > > +void rproc_char_device_remove(struct rproc *rproc)
+> > > > +{
+> > > > +	__unregister_chrdev(rproc_major, rproc->index, 1, "remoteproc");
+> > > > +}
+> > > > +
+> > > > +void __init rproc_init_cdev(void)
+> > > > +{
+> > > > +	int ret;
+> > > > +
+> > > > +	ret = alloc_chrdev_region(&rproc_major, 0, NUM_RPROC_DEVICES, "remoteproc");
+> > > > +	if (ret < 0)
+> > > > +		pr_err("Failed to alloc rproc_cdev region, err %d\n", ret);
+> > > > +}
+> > > > +
+> > > > +void __exit rproc_exit_cdev(void)
+> > > > +{
+> > > > +	unregister_chrdev_region(MKDEV(rproc_major, 0), NUM_RPROC_DEVICES);
+> > > Please go back to the comment I made on this during my last review and respin.
+> > After digging in the code while debugging the above problem, I don't see how
+> > unregistering the chrdev region the way it is done here would have worked.
+> Since this is compiled statically and not built as a module, we will never
+> exercise the code path, so I will remove it in the next patchset.
+> 
+
+You're right Siddharth, since we changed CONFIG_REMOTEPROC to bool it's no longer
+possible to hit remoteproc_exit(), so you can omit this function
+entirely. (And we should clean up the rest of that as well)
+
+[..]
+> > > > diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+[..]
+> > > > @@ -488,6 +489,8 @@ struct rproc_dump_segment {
+> > > >    * @auto_boot: flag to indicate if remote processor should be auto-started
+> > > >    * @dump_segments: list of segments in the firmware
+> > > >    * @nb_vdev: number of vdev currently handled by rproc
+> > > > + * @char_dev: character device of the rproc
+> > > > + * @cdev_put_on_release: flag to indicate if remoteproc should be shutdown on @char_dev release
+> > > >    */
+> > > >   struct rproc {
+> > > >   	struct list_head node;
+> > > > @@ -523,6 +526,8 @@ struct rproc {
+> > > >   	int nb_vdev;
+> > > >   	u8 elf_class;
+> > > >   	u16 elf_machine;
+> > > > +	struct cdev char_dev;
+
+As stated privately, I assumed based on this name that this is a struct
+device related to that character device. So please rename this cdev to
+save me from doing this mistake again.
 
 Thanks,
-Mathieu
-
-[1]. https://patchwork.kernel.org/project/linux-remoteproc/list/?series=310325
-
-> +		}
->  	}
->  
->  	return 0;
-> -- 
-> 2.26.2
-> 
+Bjorn
