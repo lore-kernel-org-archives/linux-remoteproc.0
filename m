@@ -2,286 +2,241 @@ Return-Path: <SRS0=TaqV=BA=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E825C433E7
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 21 Jul 2020 10:04:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1184DC433E7
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 21 Jul 2020 11:30:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 49CBD20729
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 21 Jul 2020 10:04:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E237E20658
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 21 Jul 2020 11:30:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="iCm8M3y7"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="pHC+pWoq"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728542AbgGUKEb (ORCPT
+        id S1729669AbgGULaD (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 21 Jul 2020 06:04:31 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:50760 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727942AbgGUKEa (ORCPT
+        Tue, 21 Jul 2020 07:30:03 -0400
+Received: from mail29.static.mailgun.info ([104.130.122.29]:32817 "EHLO
+        mail29.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729810AbgGULaC (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 21 Jul 2020 06:04:30 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1595325868;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=lKz9jWOGUhn5Eq4r8ogm3LGunjs1KqG0NenFG+hKWHM=;
-        b=iCm8M3y75S1pow2V1pdGf3wZvxpBhGwSxwWP2Sg+WgSELJEPWF7e5K7e1l57YnwbgYrY79
-        WTHVUooAqoOdJ1W6jEnv47hTU84ce6QHYkTf4j263qModbCyuBRXyWgQ3NKR2Eh1DaQYNL
-        HvXn/7A7/9dZrVr7fSn1P5vZcKm3R18=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-92-B45sj8gaNjW2t5TR8dpRQw-1; Tue, 21 Jul 2020 06:04:25 -0400
-X-MC-Unique: B45sj8gaNjW2t5TR8dpRQw-1
-Received: by mail-wm1-f69.google.com with SMTP id o13so807599wmh.9
-        for <linux-remoteproc@vger.kernel.org>; Tue, 21 Jul 2020 03:04:25 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=lKz9jWOGUhn5Eq4r8ogm3LGunjs1KqG0NenFG+hKWHM=;
-        b=DYJV5MAZ4FvK42AgOvG9Od39w8o7UaaKqbkhAfX7F945va+REY+d0r6FUaxPBC+1Bs
-         HaWpr57x5CVkkbHY4nn4/61JPdNucdM553cbmn+BkIho+8hUzgtQsdqfR6H7UT36/rub
-         2gBNL2g91MU7id3Y/ihCI+IrDm+GNsb0Zzejm3VKZN07gKYcBpUnJyZbtUDzMUQtHnyd
-         A8gP/tPIuIJwuElomHVkM6z/EoHDbXZsD6zcD4XKqfrdKPyMDSIPg5p+y/RsT3zDDEad
-         pSa2aq7YbaMaHHsFIsVBmQi8ZM7rpU1o6Jf62ve3bMCl7jyhJHL8ticZutesDhXasEug
-         HqJg==
-X-Gm-Message-State: AOAM53084zAQSMObn5GDSpEqn8xTPxLILk00YycMI+Cs33id1S+ms0zv
-        YGYtkRXJVcccYD2kIvlzf5bQIEHZQoRsFsW88ygQ+h1ZZLMFuIXyrSThIAxYXdYaa8JIftFGCNx
-        7L/z0K+4GvfZ3s+aYV9itKHlgND8Iag==
-X-Received: by 2002:a5d:5706:: with SMTP id a6mr24784186wrv.328.1595325864042;
-        Tue, 21 Jul 2020 03:04:24 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJx/Tq0YT8vkXNrziwkpXWnML6fxK9Bbvitkj/UV96VFN6XkX7iN917b33ZXpNF8ADJAZTwDTg==
-X-Received: by 2002:a5d:5706:: with SMTP id a6mr24784175wrv.328.1595325863721;
-        Tue, 21 Jul 2020 03:04:23 -0700 (PDT)
-Received: from redhat.com (bzq-79-182-82-99.red.bezeqint.net. [79.182.82.99])
-        by smtp.gmail.com with ESMTPSA id p8sm24985680wrq.9.2020.07.21.03.04.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 Jul 2020 03:04:22 -0700 (PDT)
-Date:   Tue, 21 Jul 2020 06:04:12 -0400
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     Guennadi Liakhovetski <guennadi.liakhovetski@linux.intel.com>
-Cc:     Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Arnaud POULIQUEN <arnaud.pouliquen@st.com>,
-        "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
-        Ohad Ben-Cohen <ohad@wizery.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Liam Girdwood <liam.r.girdwood@linux.intel.com>
-Subject: Re: [PATCH RESEND v4] rpmsg: virtio: add endianness conversions
-Message-ID: <20200721060305-mutt-send-email-mst@kernel.org>
-References: <20200616073011.GB2999@ubuntu>
- <20200630175057.GA3831001@xps15>
- <20200701055912-mutt-send-email-mst@kernel.org>
- <20200706124716.GA5457@ubuntu>
- <20200706125657.GB5457@ubuntu>
- <20200706133835.GC5457@ubuntu>
- <c5a4b0c7-859e-24ad-cf1e-3f80a2f15f38@st.com>
- <20200707153436.GA5970@ubuntu>
- <CANLsYkwuPsm+5uCWc91NLF4oxANvxVvgQ9NcRnoPAoVRGk+H5w@mail.gmail.com>
- <20200721085638.GA3815@ubuntu>
+        Tue, 21 Jul 2020 07:30:02 -0400
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1595331000; h=Content-Transfer-Encoding: MIME-Version:
+ References: In-Reply-To: Message-Id: Date: Subject: Cc: To: From:
+ Sender; bh=wosPSlwsBh5PjjklANk60w8OaWbCI+oq9TQCJekWQYw=; b=pHC+pWoqi7FpMZTItCoAFM6Olrcio1ZelZr7ahakuaCJn6XIMPjcsic9+VrrkZq18Wp9ehRV
+ +xicgcxFrMf+f84C1Wa24PqfPOWJwd5w2GWLcFQXHzTInrmv6X79z21yj/3mbGv4135ecFqP
+ AJhiAsW/L5/mZYW/neIck6xr9hE=
+X-Mailgun-Sending-Ip: 104.130.122.29
+X-Mailgun-Sid: WyI4ZWZiZiIsICJsaW51eC1yZW1vdGVwcm9jQHZnZXIua2VybmVsLm9yZyIsICJiZTllNGEiXQ==
+Received: from smtp.codeaurora.org
+ (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
+ smtp-out-n06.prod.us-east-1.postgun.com with SMTP id
+ 5f16d1b703c8596cdb6d2cc2 (version=TLS1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Tue, 21 Jul 2020 11:29:59
+ GMT
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 1E9CCC433CA; Tue, 21 Jul 2020 11:29:59 +0000 (UTC)
+Received: from blr-ubuntu-253.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: sibis)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id F3F88C433CA;
+        Tue, 21 Jul 2020 11:29:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org F3F88C433CA
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=sibis@codeaurora.org
+From:   Sibi Sankar <sibis@codeaurora.org>
+To:     bjorn.andersson@linaro.org
+Cc:     agross@kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        evgreen@chromium.org, ohad@wizery.com,
+        Sibi Sankar <sibis@codeaurora.org>
+Subject: [PATCH v2 2/2] remoteproc: qcom_q6v5_mss: Add MBA log extraction support
+Date:   Tue, 21 Jul 2020 16:59:35 +0530
+Message-Id: <20200721112935.25716-3-sibis@codeaurora.org>
+X-Mailer: git-send-email 2.27.0
+In-Reply-To: <20200721112935.25716-1-sibis@codeaurora.org>
+References: <20200721112935.25716-1-sibis@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200721085638.GA3815@ubuntu>
+Content-Transfer-Encoding: 8bit
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Tue, Jul 21, 2020 at 10:56:38AM +0200, Guennadi Liakhovetski wrote:
-> According to the VirtIO 1.0 spec data, sent over virtual queues must
-> be in little-endian format. Update the RPMsg VirtIO implementation
-> to enforce that but let legacy configurations continue use native
-> endianness.
-> 
-> Signed-off-by: Guennadi Liakhovetski <guennadi.liakhovetski@linux.intel.com>
-> Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-> Tested-by: Arnaud Pouliquen <arnaud.pouliquen@st.com>
+On SC7180 the MBA firmware stores the bootup text logs in a 4K segment
+at the beginning of the MBA region. Add support to extract the logs
+which will be useful to debug mba boot/authentication issues.
 
-Looks good to me
-Acked-by: Michael S. Tsirkin <mst@redhat.com>
+Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
+---
 
-Who's merging this? If me, could I get acks from maintainers on this please?
+V2:
+ * Don't dump logs in mba_reclaim path [Bjorn]
+ * Move has_mba_logs check to q6v5_dump_mba_logs [Bjorn]
+ * SDM845 mss was incorrectly marked to support mba logs
 
+ drivers/remoteproc/qcom_q6v5_mss.c | 38 +++++++++++++++++++++++++++++-
+ 1 file changed, 37 insertions(+), 1 deletion(-)
 
-> ---
-> 
-> Ping: 2 weeks since the original submission. Also added back the updated
-> "reviewed-by" tag.
-> 
-> v4: fix a left-over use of an LE value in calculation - thanks to Arnaud for
-> catching!
-> 
-> v3: use the virtio_byteorder.h header
-> 
-> v2: Following suggestions from Michael and Mathieu switch to using virtio16/32
-> types and conversion functions.
-> 
->  drivers/rpmsg/virtio_rpmsg_bus.c | 63 +++++++++++++++++---------------
->  1 file changed, 34 insertions(+), 29 deletions(-)
-> 
-> diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
-> index 07d4f3374098..9006fc7f73d0 100644
-> --- a/drivers/rpmsg/virtio_rpmsg_bus.c
-> +++ b/drivers/rpmsg/virtio_rpmsg_bus.c
-> @@ -23,6 +23,7 @@
->  #include <linux/slab.h>
->  #include <linux/sched.h>
->  #include <linux/virtio.h>
-> +#include <linux/virtio_byteorder.h>
->  #include <linux/virtio_ids.h>
->  #include <linux/virtio_config.h>
->  #include <linux/wait.h>
-> @@ -84,11 +85,11 @@ struct virtproc_info {
->   * Every message sent(/received) on the rpmsg bus begins with this header.
->   */
->  struct rpmsg_hdr {
-> -	u32 src;
-> -	u32 dst;
-> -	u32 reserved;
-> -	u16 len;
-> -	u16 flags;
-> +	__virtio32 src;
-> +	__virtio32 dst;
-> +	__virtio32 reserved;
-> +	__virtio16 len;
-> +	__virtio16 flags;
->  	u8 data[];
->  } __packed;
->  
-> @@ -106,8 +107,8 @@ struct rpmsg_hdr {
->   */
->  struct rpmsg_ns_msg {
->  	char name[RPMSG_NAME_SIZE];
-> -	u32 addr;
-> -	u32 flags;
-> +	__virtio32 addr;
-> +	__virtio32 flags;
->  } __packed;
->  
->  /**
-> @@ -335,8 +336,8 @@ static int virtio_rpmsg_announce_create(struct rpmsg_device *rpdev)
->  		struct rpmsg_ns_msg nsm;
->  
->  		strncpy(nsm.name, rpdev->id.name, RPMSG_NAME_SIZE);
-> -		nsm.addr = rpdev->ept->addr;
-> -		nsm.flags = RPMSG_NS_CREATE;
-> +		nsm.addr = cpu_to_virtio32(vrp->vdev, rpdev->ept->addr);
-> +		nsm.flags = cpu_to_virtio32(vrp->vdev, RPMSG_NS_CREATE);
->  
->  		err = rpmsg_sendto(rpdev->ept, &nsm, sizeof(nsm), RPMSG_NS_ADDR);
->  		if (err)
-> @@ -359,8 +360,8 @@ static int virtio_rpmsg_announce_destroy(struct rpmsg_device *rpdev)
->  		struct rpmsg_ns_msg nsm;
->  
->  		strncpy(nsm.name, rpdev->id.name, RPMSG_NAME_SIZE);
-> -		nsm.addr = rpdev->ept->addr;
-> -		nsm.flags = RPMSG_NS_DESTROY;
-> +		nsm.addr = cpu_to_virtio32(vrp->vdev, rpdev->ept->addr);
-> +		nsm.flags = cpu_to_virtio32(vrp->vdev, RPMSG_NS_DESTROY);
->  
->  		err = rpmsg_sendto(rpdev->ept, &nsm, sizeof(nsm), RPMSG_NS_ADDR);
->  		if (err)
-> @@ -612,18 +613,18 @@ static int rpmsg_send_offchannel_raw(struct rpmsg_device *rpdev,
->  		}
->  	}
->  
-> -	msg->len = len;
-> +	msg->len = cpu_to_virtio16(vrp->vdev, len);
->  	msg->flags = 0;
-> -	msg->src = src;
-> -	msg->dst = dst;
-> +	msg->src = cpu_to_virtio32(vrp->vdev, src);
-> +	msg->dst = cpu_to_virtio32(vrp->vdev, dst);
->  	msg->reserved = 0;
->  	memcpy(msg->data, data, len);
->  
->  	dev_dbg(dev, "TX From 0x%x, To 0x%x, Len %d, Flags %d, Reserved %d\n",
-> -		msg->src, msg->dst, msg->len, msg->flags, msg->reserved);
-> +		src, dst, len, msg->flags, msg->reserved);
->  #if defined(CONFIG_DYNAMIC_DEBUG)
->  	dynamic_hex_dump("rpmsg_virtio TX: ", DUMP_PREFIX_NONE, 16, 1,
-> -			 msg, sizeof(*msg) + msg->len, true);
-> +			 msg, sizeof(*msg) + len, true);
->  #endif
->  
->  	rpmsg_sg_init(&sg, msg, sizeof(*msg) + len);
-> @@ -704,13 +705,17 @@ static int rpmsg_recv_single(struct virtproc_info *vrp, struct device *dev,
->  {
->  	struct rpmsg_endpoint *ept;
->  	struct scatterlist sg;
-> +	unsigned int msg_len = virtio16_to_cpu(vrp->vdev, msg->len);
->  	int err;
->  
->  	dev_dbg(dev, "From: 0x%x, To: 0x%x, Len: %d, Flags: %d, Reserved: %d\n",
-> -		msg->src, msg->dst, msg->len, msg->flags, msg->reserved);
-> +		virtio32_to_cpu(vrp->vdev, msg->src),
-> +		virtio32_to_cpu(vrp->vdev, msg->dst), msg_len,
-> +		virtio16_to_cpu(vrp->vdev, msg->flags),
-> +		virtio32_to_cpu(vrp->vdev, msg->reserved));
->  #if defined(CONFIG_DYNAMIC_DEBUG)
->  	dynamic_hex_dump("rpmsg_virtio RX: ", DUMP_PREFIX_NONE, 16, 1,
-> -			 msg, sizeof(*msg) + msg->len, true);
-> +			 msg, sizeof(*msg) + msg_len, true);
->  #endif
->  
->  	/*
-> @@ -718,15 +723,15 @@ static int rpmsg_recv_single(struct virtproc_info *vrp, struct device *dev,
->  	 * the reported payload length.
->  	 */
->  	if (len > vrp->buf_size ||
-> -	    msg->len > (len - sizeof(struct rpmsg_hdr))) {
-> -		dev_warn(dev, "inbound msg too big: (%d, %d)\n", len, msg->len);
-> +	    msg_len > (len - sizeof(struct rpmsg_hdr))) {
-> +		dev_warn(dev, "inbound msg too big: (%d, %d)\n", len, msg_len);
->  		return -EINVAL;
->  	}
->  
->  	/* use the dst addr to fetch the callback of the appropriate user */
->  	mutex_lock(&vrp->endpoints_lock);
->  
-> -	ept = idr_find(&vrp->endpoints, msg->dst);
-> +	ept = idr_find(&vrp->endpoints, virtio32_to_cpu(vrp->vdev, msg->dst));
->  
->  	/* let's make sure no one deallocates ept while we use it */
->  	if (ept)
-> @@ -739,8 +744,8 @@ static int rpmsg_recv_single(struct virtproc_info *vrp, struct device *dev,
->  		mutex_lock(&ept->cb_lock);
->  
->  		if (ept->cb)
-> -			ept->cb(ept->rpdev, msg->data, msg->len, ept->priv,
-> -				msg->src);
-> +			ept->cb(ept->rpdev, msg->data, msg_len, ept->priv,
-> +				virtio32_to_cpu(vrp->vdev, msg->src));
->  
->  		mutex_unlock(&ept->cb_lock);
->  
-> @@ -846,15 +851,15 @@ static int rpmsg_ns_cb(struct rpmsg_device *rpdev, void *data, int len,
->  	/* don't trust the remote processor for null terminating the name */
->  	msg->name[RPMSG_NAME_SIZE - 1] = '\0';
->  
-> -	dev_info(dev, "%sing channel %s addr 0x%x\n",
-> -		 msg->flags & RPMSG_NS_DESTROY ? "destroy" : "creat",
-> -		 msg->name, msg->addr);
-> -
->  	strncpy(chinfo.name, msg->name, sizeof(chinfo.name));
->  	chinfo.src = RPMSG_ADDR_ANY;
-> -	chinfo.dst = msg->addr;
-> +	chinfo.dst = virtio32_to_cpu(vrp->vdev, msg->addr);
-> +
-> +	dev_info(dev, "%sing channel %s addr 0x%x\n",
-> +		 virtio32_to_cpu(vrp->vdev, msg->flags) & RPMSG_NS_DESTROY ?
-> +		 "destroy" : "creat", msg->name, chinfo.dst);
->  
-> -	if (msg->flags & RPMSG_NS_DESTROY) {
-> +	if (virtio32_to_cpu(vrp->vdev, msg->flags) & RPMSG_NS_DESTROY) {
->  		ret = rpmsg_unregister_device(&vrp->vdev->dev, &chinfo);
->  		if (ret)
->  			dev_err(dev, "rpmsg_destroy_channel failed: %d\n", ret);
-> -- 
-> 2.27.0
+diff --git a/drivers/remoteproc/qcom_q6v5_mss.c b/drivers/remoteproc/qcom_q6v5_mss.c
+index 49cd16e050533..945ca2652e7d6 100644
+--- a/drivers/remoteproc/qcom_q6v5_mss.c
++++ b/drivers/remoteproc/qcom_q6v5_mss.c
+@@ -9,6 +9,7 @@
+ 
+ #include <linux/clk.h>
+ #include <linux/delay.h>
++#include <linux/devcoredump.h>
+ #include <linux/dma-mapping.h>
+ #include <linux/interrupt.h>
+ #include <linux/kernel.h>
+@@ -37,6 +38,8 @@
+ 
+ #define MPSS_CRASH_REASON_SMEM		421
+ 
++#define MBA_LOG_SIZE			SZ_4K
++
+ /* RMB Status Register Values */
+ #define RMB_PBL_SUCCESS			0x1
+ 
+@@ -141,6 +144,7 @@ struct rproc_hexagon_res {
+ 	int version;
+ 	bool need_mem_protection;
+ 	bool has_alt_reset;
++	bool has_mba_logs;
+ 	bool has_spare_reg;
+ };
+ 
+@@ -202,6 +206,7 @@ struct q6v5 {
+ 	struct qcom_sysmon *sysmon;
+ 	bool need_mem_protection;
+ 	bool has_alt_reset;
++	bool has_mba_logs;
+ 	bool has_spare_reg;
+ 	int mpss_perm;
+ 	int mba_perm;
+@@ -521,6 +526,26 @@ static int q6v5_rmb_mba_wait(struct q6v5 *qproc, u32 status, int ms)
+ 	return val;
+ }
+ 
++static void q6v5_dump_mba_logs(struct q6v5 *qproc)
++{
++	struct rproc *rproc = qproc->rproc;
++	void *data;
++
++	if (!qproc->has_mba_logs)
++		return;
++
++	if (q6v5_xfer_mem_ownership(qproc, &qproc->mba_perm, true, false, qproc->mba_phys,
++				    qproc->mba_size))
++		return;
++
++	data = vmalloc(MBA_LOG_SIZE);
++	if (!data)
++		return;
++
++	memcpy(data, qproc->mba_region, MBA_LOG_SIZE);
++	dev_coredumpv(&rproc->dev, data, MBA_LOG_SIZE, GFP_KERNEL);
++}
++
+ static int q6v5proc_reset(struct q6v5 *qproc)
+ {
+ 	u32 val;
+@@ -839,6 +864,7 @@ static int q6v5_mba_load(struct q6v5 *qproc)
+ {
+ 	int ret;
+ 	int xfermemop_ret;
++	bool mba_load_err = false;
+ 
+ 	qcom_q6v5_prepare(&qproc->q6v5);
+ 
+@@ -932,7 +958,7 @@ static int q6v5_mba_load(struct q6v5 *qproc)
+ 	q6v5proc_halt_axi_port(qproc, qproc->halt_map, qproc->halt_q6);
+ 	q6v5proc_halt_axi_port(qproc, qproc->halt_map, qproc->halt_modem);
+ 	q6v5proc_halt_axi_port(qproc, qproc->halt_map, qproc->halt_nc);
+-
++	mba_load_err = true;
+ reclaim_mba:
+ 	xfermemop_ret = q6v5_xfer_mem_ownership(qproc, &qproc->mba_perm, true,
+ 						false, qproc->mba_phys,
+@@ -940,6 +966,8 @@ static int q6v5_mba_load(struct q6v5 *qproc)
+ 	if (xfermemop_ret) {
+ 		dev_err(qproc->dev,
+ 			"Failed to reclaim mba buffer, system may become unstable\n");
++	} else if (mba_load_err) {
++		q6v5_dump_mba_logs(qproc);
+ 	}
+ 
+ disable_active_clks:
+@@ -1298,6 +1326,7 @@ static int q6v5_start(struct rproc *rproc)
+ 
+ reclaim_mpss:
+ 	q6v5_mba_reclaim(qproc);
++	q6v5_dump_mba_logs(qproc);
+ 
+ 	return ret;
+ }
+@@ -1717,6 +1746,7 @@ static int q6v5_probe(struct platform_device *pdev)
+ 
+ 	qproc->version = desc->version;
+ 	qproc->need_mem_protection = desc->need_mem_protection;
++	qproc->has_mba_logs = desc->has_mba_logs;
+ 
+ 	ret = qcom_q6v5_init(&qproc->q6v5, pdev, rproc, MPSS_CRASH_REASON_SMEM,
+ 			     qcom_msa_handover);
+@@ -1808,6 +1838,7 @@ static const struct rproc_hexagon_res sc7180_mss = {
+ 	},
+ 	.need_mem_protection = true,
+ 	.has_alt_reset = false,
++	.has_mba_logs = true,
+ 	.has_spare_reg = true,
+ 	.version = MSS_SC7180,
+ };
+@@ -1843,6 +1874,7 @@ static const struct rproc_hexagon_res sdm845_mss = {
+ 	},
+ 	.need_mem_protection = true,
+ 	.has_alt_reset = true,
++	.has_mba_logs = false,
+ 	.has_spare_reg = false,
+ 	.version = MSS_SDM845,
+ };
+@@ -1870,6 +1902,7 @@ static const struct rproc_hexagon_res msm8998_mss = {
+ 	},
+ 	.need_mem_protection = true,
+ 	.has_alt_reset = false,
++	.has_mba_logs = false,
+ 	.has_spare_reg = false,
+ 	.version = MSS_MSM8998,
+ };
+@@ -1900,6 +1933,7 @@ static const struct rproc_hexagon_res msm8996_mss = {
+ 	},
+ 	.need_mem_protection = true,
+ 	.has_alt_reset = false,
++	.has_mba_logs = false,
+ 	.has_spare_reg = false,
+ 	.version = MSS_MSM8996,
+ };
+@@ -1933,6 +1967,7 @@ static const struct rproc_hexagon_res msm8916_mss = {
+ 	},
+ 	.need_mem_protection = false,
+ 	.has_alt_reset = false,
++	.has_mba_logs = false,
+ 	.has_spare_reg = false,
+ 	.version = MSS_MSM8916,
+ };
+@@ -1974,6 +2009,7 @@ static const struct rproc_hexagon_res msm8974_mss = {
+ 	},
+ 	.need_mem_protection = false,
+ 	.has_alt_reset = false,
++	.has_mba_logs = false,
+ 	.has_spare_reg = false,
+ 	.version = MSS_MSM8974,
+ };
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
 
