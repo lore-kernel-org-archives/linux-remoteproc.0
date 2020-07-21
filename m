@@ -7,147 +7,146 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0EDBC433E4
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 21 Jul 2020 20:21:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 779D4C433E0
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 21 Jul 2020 20:43:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D0D4120729
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 21 Jul 2020 20:21:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 549AB20717
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 21 Jul 2020 20:43:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tCHfjNfY"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="aplCMKmL"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730304AbgGUUVb (ORCPT
+        id S1728930AbgGUUng (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 21 Jul 2020 16:21:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52842 "EHLO
+        Tue, 21 Jul 2020 16:43:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56322 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730089AbgGUUVa (ORCPT
+        with ESMTP id S1728785AbgGUUng (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 21 Jul 2020 16:21:30 -0400
-Received: from mail-pj1-x1042.google.com (mail-pj1-x1042.google.com [IPv6:2607:f8b0:4864:20::1042])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 707A0C0619DB
-        for <linux-remoteproc@vger.kernel.org>; Tue, 21 Jul 2020 13:21:30 -0700 (PDT)
-Received: by mail-pj1-x1042.google.com with SMTP id gc15so1853222pjb.0
-        for <linux-remoteproc@vger.kernel.org>; Tue, 21 Jul 2020 13:21:30 -0700 (PDT)
+        Tue, 21 Jul 2020 16:43:36 -0400
+Received: from mail-pg1-x544.google.com (mail-pg1-x544.google.com [IPv6:2607:f8b0:4864:20::544])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EFEC6C0619DC
+        for <linux-remoteproc@vger.kernel.org>; Tue, 21 Jul 2020 13:43:35 -0700 (PDT)
+Received: by mail-pg1-x544.google.com with SMTP id w2so7903pgg.10
+        for <linux-remoteproc@vger.kernel.org>; Tue, 21 Jul 2020 13:43:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=yz8Pn1+0L8o3BW9wpfpvX9tjdPGaAfKllQBX5CrlbQA=;
-        b=tCHfjNfYorbKQEm370wu+jdtqr5TvIQgpuBB45Meg4+6fvhDoSy7tjjQ60WD2XSNa3
-         VAGHh2UdTa2UOJPsZ69yp3xCXwzso7pk7mtlf6iVxZwd0UkCe8sc1QItaFmzwclayQy4
-         /OP3wFrzmne7MneChKgBMj45sambaMnWKho/Tx3GUMzt2xp9UDVwYZIMR0bTlqDB/BhQ
-         4htZmZDIpFHd9nayV/wqx0K84Mm+EHMrjWGnwrMmW3Kl5KnSagx7zOeNzuG96jpcKRRg
-         gRcgYXztpjnImvOH+bttP99fbubzOEUGNg3OKwCh5wVDVwAE1TZyN3/TuzHsST3VtgdS
-         3nbw==
+        bh=6b3oA4UL1L2pl7xC9XCpGfPbFXbX6ZR3mQ/aH6nN3aM=;
+        b=aplCMKmLtk1FND72f9eTw2pW0XV235w2d7abx0+nAqdK+5QHFUZUtqiXP3Y/5NfWwQ
+         OP0koBCszYM3OjbRoWGb9J2n5jEHmqZ6iZvMjrdhubqs08gi7J2ZJm0AvaheIAChdgVe
+         7MEKxT+pv82gNj/QbYrQIrC+ws3wQQ1yxdP7oGdDW+0Vgl/fKppwh3+V150QjFW7B0sR
+         pfuiSebY5wKyIuGmulwut1717V7STCbyNn4pXsUhj1rO3Uw2IJGLCqE9RK2xBIl74F49
+         isMNRqNjvPF38ITyYEMgKk4pMSMMY5Hw3R+VLWqG+e65UZgP/9R7FHaVotrNczHhVufX
+         vhew==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=yz8Pn1+0L8o3BW9wpfpvX9tjdPGaAfKllQBX5CrlbQA=;
-        b=UxuJzFv3uCXaLeIGC9sTlTskOD6/SzA6hyAkPUYhTW9gwv6t9azcrxZz0roXffY2xa
-         YVFYg+fv/rWLjD4R6KeGfGIVdihlIclUncT/yMz4cp5WozJK88YCDO3I/QOxXXJepCKj
-         SDdWVcIeSyynd8oluOR0t7TwXwISP/GtxvWrQIjEm9ZWF5kXTdi3tzFgeNvrrHk/Kkfd
-         yi/4/9CUwjdwYbclV9TKGwTVfEtXkdyjzYLBG979wVKcXWo7DFLG2WW8+gTYG475Y/C3
-         c+NzRR0Qxdl7asZd9rpB8s8k6NY4sdykLUKPBqkQQR+ae3HNIEpNQsDYoOWMh1ni7LEI
-         Y+gA==
-X-Gm-Message-State: AOAM531Mjjq1bLQU7TZ86bu5pUIBmeshDaGRFJNqlfFigzG+m6t+bizu
-        zF0EB+tC8DurSGARAex9D0rAsg==
-X-Google-Smtp-Source: ABdhPJytqLVViBfMVx0NR9p31f2ZvvL3YV4+D+msQxUeUSoE+b4kNfAIQ8/jDFn0Tw3ueffWJro/wA==
-X-Received: by 2002:a17:90a:290e:: with SMTP id g14mr6723735pjd.85.1595362889850;
-        Tue, 21 Jul 2020 13:21:29 -0700 (PDT)
+        bh=6b3oA4UL1L2pl7xC9XCpGfPbFXbX6ZR3mQ/aH6nN3aM=;
+        b=Hs4vjowk/r9pvJyv1RRwaCbT+ta8CPqczUqyQIxWRO2rndflqB4FZxDbfrU2ePf/dR
+         eESKjoEJTP6LGSErdKferqVBc8bC6qm1oDxHphwbLE1xCGiSO3N8Ml7x1C+jrLTYSwu6
+         U154kg+sHg1ijVnvi5BKmQ+6pWLKAgiyl2IQVcPXawHy89R4mUcDLplk7C4hYPpkNeND
+         Na0WACLoiStygebOi3fQ7cyGHms6hLM2Y9+Pk2AmwNk2MXyDZkhQgUCkV6O82HSBNEk5
+         oiMJ8uPLoqkZvvTcilVoHXxiR0kJ/oCFoj17zC/XZF/32L0CWUos7xUtrcnzbNcukdkr
+         0vdw==
+X-Gm-Message-State: AOAM532TiEu54FStq4vUmGxq9OBWFw0T6iX5vShhBtbLSuz8z53vKVau
+        WyH2QTGNUSgFENh8u5Ona/yoDHqpfeQ=
+X-Google-Smtp-Source: ABdhPJwuyrOyVT4KOawwJEajBAoNJgJsEKfBbYSabaXT83Sv4Y4Gqw+HTJiZ3dzR4rMofwR9hrMHZA==
+X-Received: by 2002:aa7:9906:: with SMTP id z6mr26338877pff.60.1595364215284;
+        Tue, 21 Jul 2020 13:43:35 -0700 (PDT)
 Received: from xps15 (S0106002369de4dac.cg.shawcable.net. [68.147.8.254])
-        by smtp.gmail.com with ESMTPSA id t1sm19324221pgq.66.2020.07.21.13.21.28
+        by smtp.gmail.com with ESMTPSA id z10sm21858949pfr.90.2020.07.21.13.43.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 Jul 2020 13:21:29 -0700 (PDT)
-Date:   Tue, 21 Jul 2020 14:21:27 -0600
+        Tue, 21 Jul 2020 13:43:34 -0700 (PDT)
+Date:   Tue, 21 Jul 2020 14:43:32 -0600
 From:   Mathieu Poirier <mathieu.poirier@linaro.org>
 To:     Alexandre Bailon <abailon@baylibre.com>
 Cc:     ohad@wizery.com, bjorn.andersson@linaro.org, robh+dt@kernel.org,
         matthias.bgg@gmail.com, linux-remoteproc@vger.kernel.org,
         devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 4/6] remoteproc: mtk_vpu_rproc: Don't try to load empty
- PT_LOAD segment
-Message-ID: <20200721202127.GB1227776@xps15>
+Subject: Re: [PATCH 5/6] remoteproc: mtk_apu: Don't try to use the APU local
+ RAM
+Message-ID: <20200721204332.GC1227776@xps15>
 References: <20200713132927.24925-1-abailon@baylibre.com>
- <20200713132927.24925-5-abailon@baylibre.com>
+ <20200713132927.24925-6-abailon@baylibre.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200713132927.24925-5-abailon@baylibre.com>
+In-Reply-To: <20200713132927.24925-6-abailon@baylibre.com>
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Mon, Jul 13, 2020 at 03:29:25PM +0200, Alexandre Bailon wrote:
-> The firmware generated by our toolchain contains many empty PT_LOAD
-> segments. The elf loader don't manage it and will raise an error:
-> "bad phdr da 0x0 mem 0x0".
-> To workaround it, implement the sanity_check callback to detect the
-> empty PT_LOAD segment and change it to PT_NULL.
-> In that way, the elf load won't try to load the segment.
-
-This patch doesn't address the real problem, which are empty load segments.  In
-my opinion that should be dealt with rather than having to patch things up.  On
-the flip side I suspect that you don't control all the process and that systems
-are out there with faulty fw images.  As such:
-
-Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-
+On Mon, Jul 13, 2020 at 03:29:26PM +0200, Alexandre Bailon wrote:
+> Currently, this local RAM is not accessible from the CPU.
+> If the CPU tries to access it, then the CPU will hang.
+> 
+> Remoteproc may try to use it when it load a firmware
+> that has some sections in the local RAM.
+> This workarounds the issue by skiping this section.
 > 
 > Signed-off-by: Alexandre Bailon <abailon@baylibre.com>
 > ---
->  drivers/remoteproc/mtk_apu_rproc.c | 35 +++++++++++++++++++++++++++---
->  1 file changed, 32 insertions(+), 3 deletions(-)
+>  drivers/remoteproc/mtk_apu_rproc.c | 14 ++++++++++++++
+>  1 file changed, 14 insertions(+)
 > 
 > diff --git a/drivers/remoteproc/mtk_apu_rproc.c b/drivers/remoteproc/mtk_apu_rproc.c
-> index f2342b747a35..565b3adca5de 100644
+> index 565b3adca5de..e16d3258a785 100644
 > --- a/drivers/remoteproc/mtk_apu_rproc.c
 > +++ b/drivers/remoteproc/mtk_apu_rproc.c
-> @@ -137,10 +137,39 @@ static void mtk_vpu_rproc_kick(struct rproc *rproc, int vqid)
->  	vpu_write32(vpu_rproc, CORE_CTL_XTENSA_INT, 1 << vqid);
->  }
+> @@ -57,6 +57,9 @@
+>  #define CORE_DEFAULT2_SPIDEN			BIT(0)
+>  #define CORE_XTENSA_ALTRESETVEC			(0x000001F8)
 >  
-> +int mtk_vpu_elf_sanity_check(struct rproc *rproc, const struct firmware *fw)
-> +{
-> +	const u8 *elf_data = fw->data;
-> +	struct elf32_hdr *ehdr;
-> +	struct elf32_phdr *phdr;
-> +	int ret;
-> +	int i;
+> +#define DRAM0_START				(0x7ff00000)
+> +#define IRAM0_END				(0x7ff80000)
 > +
-> +	ret = rproc_elf_sanity_check(rproc, fw);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ehdr = (struct elf32_hdr *)elf_data;
-> +	phdr = (struct elf32_phdr *)(elf_data + ehdr->e_phoff);
-> +
-> +	for (i = 0; i < ehdr->e_phnum; i++, phdr++) {
-> +		/* Remove empty PT_LOAD section */
-> +		if (phdr->p_type == PT_LOAD && !phdr->p_paddr)
+>  struct mtk_vpu_rproc {
+>  	struct device *dev;
+>  	struct rproc *rproc;
+> @@ -139,6 +142,7 @@ static void mtk_vpu_rproc_kick(struct rproc *rproc, int vqid)
+>  
+>  int mtk_vpu_elf_sanity_check(struct rproc *rproc, const struct firmware *fw)
+>  {
+> +	struct mtk_vpu_rproc *vpu_rproc = rproc->priv;
+>  	const u8 *elf_data = fw->data;
+>  	struct elf32_hdr *ehdr;
+>  	struct elf32_phdr *phdr;
+> @@ -156,6 +160,16 @@ int mtk_vpu_elf_sanity_check(struct rproc *rproc, const struct firmware *fw)
+>  		/* Remove empty PT_LOAD section */
+>  		if (phdr->p_type == PT_LOAD && !phdr->p_paddr)
+>  			phdr->p_type = PT_NULL;
+> +		/*
+> +		 * Workaround: Currently, the CPU can't access to the APU
+> +		 * local RAM. This removes the local RAM section from the
+> +		 * firmware. Please note that may cause some issues.
+> +		 */
+> +		if (phdr->p_paddr >= DRAM0_START && phdr->p_paddr < IRAM0_END) {
+> +			dev_warn_once(vpu_rproc->dev,
+> +				      "Skipping the APU local RAM section\n");
 > +			phdr->p_type = PT_NULL;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
->  static const struct rproc_ops mtk_vpu_rproc_ops = {
-> -	.start		= mtk_vpu_rproc_start,
-> -	.stop		= mtk_vpu_rproc_stop,
-> -	.kick		= mtk_vpu_rproc_kick,
-> +	.start			= mtk_vpu_rproc_start,
-> +	.stop			= mtk_vpu_rproc_stop,
-> +	.kick			= mtk_vpu_rproc_kick,
-> +	.load			= rproc_elf_load_segments,
-> +	.parse_fw		= rproc_elf_load_rsc_table,
-> +	.find_loaded_rsc_table	= rproc_elf_find_loaded_rsc_table,
-> +	.sanity_check		= mtk_vpu_elf_sanity_check,
-> +	.get_boot_addr		= rproc_elf_get_boot_addr,
->  };
+
+We can't selectively decide to not load sections of a program due to a platform
+driver shortcoming.  Either a real solution is found or booting the remote
+processor is interrupted, with a strong incline toward the former.
+
+I guess you're dealing with tightly coupled memory or on-chip RAM areas -
+both are accessed on other platform using ioremap_wc() or devm_ioremap_wc().
+You might want to try doing what Suman has done in this patchset [1], with
+specific attention to TCMs and SRAM.
+
+Thanks,
+Mathieu
+
+[1]. https://patchwork.kernel.org/project/linux-remoteproc/list/?series=310325
+
+> +		}
+>  	}
 >  
->  static irqreturn_t mtk_vpu_rproc_callback(int irq, void *data)
+>  	return 0;
 > -- 
 > 2.26.2
 > 
