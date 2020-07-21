@@ -7,149 +7,140 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C813C433EA
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 21 Jul 2020 15:13:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80708C433E3
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 21 Jul 2020 15:54:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7BB17206E3
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 21 Jul 2020 15:13:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 622B12077D
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 21 Jul 2020 15:54:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1595344423;
-	bh=cJveZYxoa7dAdPqQanvrZZl4c8wbkUcvWDgkCaEe+Os=;
+	s=default; t=1595346856;
+	bh=7YwE6zmlolnXrIDvIovVwCoGjPItA6t4+svrJdYth50=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=tZYJvibow5T5/hzMgbh551YTLL6ANHwkt3AZX2havXdVT9LzdyoHDxETi3teEyiFU
-	 5LKH+YThPicPJuN8crhgkZ5FcbNtB/7thS64T+f5pZ/S9eNwYE/PnQ9odfb83qEE6M
-	 OHCVaOD1QOCWJyfVvQD1lxqSU+9f4MqxCagoOxV0=
+	b=fUFblYliGBM0A0p2wO82k3C7tUn7Xk+PePpBjovjH9cdkaWdgTX+d4BEnGYTStkF+
+	 P46mmZkFRJDmflJek+ZBzQR9kJs9ZW9zICxtE5gVQFvpIjcZfO2cDjoqnAoPxc+lJ0
+	 98oJmfIJBjMCF4jJfxYB3G4QJ5wVux4wHn6jFAhI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729871AbgGUPNk (ORCPT
+        id S1728064AbgGUPyN (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 21 Jul 2020 11:13:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49926 "EHLO mail.kernel.org"
+        Tue, 21 Jul 2020 11:54:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40768 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729831AbgGUPNk (ORCPT
+        id S1726029AbgGUPyM (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 21 Jul 2020 11:13:40 -0400
-Received: from mail-oi1-f171.google.com (mail-oi1-f171.google.com [209.85.167.171])
+        Tue, 21 Jul 2020 11:54:12 -0400
+Received: from mail-oo1-f43.google.com (mail-oo1-f43.google.com [209.85.161.43])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 813372073A;
-        Tue, 21 Jul 2020 15:13:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5CEED2077D;
+        Tue, 21 Jul 2020 15:54:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1595344419;
-        bh=cJveZYxoa7dAdPqQanvrZZl4c8wbkUcvWDgkCaEe+Os=;
+        s=default; t=1595346851;
+        bh=7YwE6zmlolnXrIDvIovVwCoGjPItA6t4+svrJdYth50=;
         h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=M34Xz+Pc5nQE/Ho21lGgohVu/PtpmhfIr6dhTZlnCUrQoHmKtmo1NkhpCjDpGTh0x
-         2065SHB4LCKQdIDH8xIeOacFUdrI/qxpE8EdHWbydd9PFpDvMl+oACZkyT0cpWVOXK
-         /lJOtx6+K9HNOzF9XLvLJ6cTh5/LUH7/vlhh/6SE=
-Received: by mail-oi1-f171.google.com with SMTP id e4so17514498oib.1;
-        Tue, 21 Jul 2020 08:13:39 -0700 (PDT)
-X-Gm-Message-State: AOAM531dzzPPnkvAKg3IIPvMfNJrQj/zp9gbek7NBqcfVSViGixK4EZG
-        VNILZp7cd3KJGd59ue65mkc9d+Tumew7tYAhAA==
-X-Google-Smtp-Source: ABdhPJx5usOUbuBPfOhR/huG6DuDsg8mCHNfxMXgiZDEHvwhavGmrHIBAxM6qwppEevA9KhIyFvg6dUqdvZHyzegRBI=
-X-Received: by 2002:aca:bb82:: with SMTP id l124mr3483290oif.106.1595344418842;
- Tue, 21 Jul 2020 08:13:38 -0700 (PDT)
+        b=Iz3vmYbwKAknWwvSnAsWrx+kKYjVj+9BXEirJaOU0WEd69APuiYoNgOWkdVL4dehx
+         7LyjiRy/IEXxM5doRoqtBesB4/Z/bt+j6izRV6hpBBYQKSEEuwmO+kh1kQDES/PGm1
+         yOkFs0ipS/hmz7seHC1GeZSZuABUhnhMy+FXvy2E=
+Received: by mail-oo1-f43.google.com with SMTP id t6so4004575ooh.4;
+        Tue, 21 Jul 2020 08:54:11 -0700 (PDT)
+X-Gm-Message-State: AOAM533I39dDrjEbqyNVQTOxwhLaRjTIJaF/pn8RNGVbWyqpTZNnazFW
+        qAAdq1vEEPNFUSt68h53fxGmjBqQM67siU30xw==
+X-Google-Smtp-Source: ABdhPJxAzM/2DwnEuB4r4A7OI1g6uyx9kfxGkiJ8IopPkvBszfpb9C0ul1jz71QKkma5Db/cDeh3Y6zvX2E0GJ+/ELE=
+X-Received: by 2002:a4a:ae07:: with SMTP id z7mr24532077oom.25.1595346850730;
+ Tue, 21 Jul 2020 08:54:10 -0700 (PDT)
 MIME-Version: 1.0
-References: <20200622075956.171058-1-bjorn.andersson@linaro.org> <20200622075956.171058-2-bjorn.andersson@linaro.org>
-In-Reply-To: <20200622075956.171058-2-bjorn.andersson@linaro.org>
+References: <20200717234800.9423-1-s-anna@ti.com> <20200717234800.9423-4-s-anna@ti.com>
+In-Reply-To: <20200717234800.9423-4-s-anna@ti.com>
 From:   Rob Herring <robh+dt@kernel.org>
-Date:   Tue, 21 Jul 2020 09:13:22 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqKW+R=rygii7N69o28h5780qx645RhPXGQZ4jw3kHadhw@mail.gmail.com>
-Message-ID: <CAL_JsqKW+R=rygii7N69o28h5780qx645RhPXGQZ4jw3kHadhw@mail.gmail.com>
-Subject: Re: [PATCH v2 1/4] dt-bindings: hwlock: qcom: Migrate binding to YAML
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Andy Gross <agross@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>,
-        Baolin Wang <baolin.wang7@gmail.com>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+Date:   Tue, 21 Jul 2020 09:53:58 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqLnPQNZ7KhqfPwiMCJESYrD9_UN2gwc_hj9=WOJM8NQQw@mail.gmail.com>
+Message-ID: <CAL_JsqLnPQNZ7KhqfPwiMCJESYrD9_UN2gwc_hj9=WOJM8NQQw@mail.gmail.com>
+Subject: Re: [PATCH v4 3/6] dt-bindings: remoteproc: Add common TI SCI rproc bindings
+To:     Suman Anna <s-anna@ti.com>, Lokesh Vutla <lokeshvutla@ti.com>
+Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
         "open list:REMOTE PROCESSOR (REMOTEPROC) SUBSYSTEM" 
         <linux-remoteproc@vger.kernel.org>, devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Vinod Koul <vkoul@kernel.org>
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Mon, Jun 22, 2020 at 1:59 AM Bjorn Andersson
-<bjorn.andersson@linaro.org> wrote:
+On Fri, Jul 17, 2020 at 5:48 PM Suman Anna <s-anna@ti.com> wrote:
 >
-> Migrate the Qualcomm TCSR mutex binding to YAML to allow validation.
+> Add a bindings document that lists the common TI SCI properties
+> used by the K3 R5F and DSP remoteproc devices.
 >
-> Reviewed-by: Vinod Koul <vkoul@kernel.org>
-> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> Signed-off-by: Suman Anna <s-anna@ti.com>
 > ---
+> v4: Addressed both of Rob's review comments on ti,sci-proc-ids property
+> v3: https://patchwork.kernel.org/patch/11602317/
 >
-> Changes since v1:
-> - Actually remove the old binding doc
+>  .../bindings/remoteproc/ti,k3-sci-proc.yaml   | 48 +++++++++++++++++++
+>  1 file changed, 48 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/remoteproc/ti,k3-sci-proc.yaml
 >
->  .../bindings/hwlock/qcom-hwspinlock.txt       | 39 --------------
->  .../bindings/hwlock/qcom-hwspinlock.yaml      | 51 +++++++++++++++++++
->  2 files changed, 51 insertions(+), 39 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/hwlock/qcom-hwspinlock.txt
->  create mode 100644 Documentation/devicetree/bindings/hwlock/qcom-hwspinlock.yaml
-
-[...]
-
-> diff --git a/Documentation/devicetree/bindings/hwlock/qcom-hwspinlock.yaml b/Documentation/devicetree/bindings/hwlock/qcom-hwspinlock.yaml
+> diff --git a/Documentation/devicetree/bindings/remoteproc/ti,k3-sci-proc.yaml b/Documentation/devicetree/bindings/remoteproc/ti,k3-sci-proc.yaml
 > new file mode 100644
-> index 000000000000..71e63b52edd5
+> index 000000000000..0dca2ffdbc48
 > --- /dev/null
-> +++ b/Documentation/devicetree/bindings/hwlock/qcom-hwspinlock.yaml
-> @@ -0,0 +1,51 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +++ b/Documentation/devicetree/bindings/remoteproc/ti,k3-sci-proc.yaml
+> @@ -0,0 +1,48 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only or BSD-2-Clause)
 > +%YAML 1.2
 > +---
-> +$id: http://devicetree.org/schemas/hwlock/qcom-hwspinlock.yaml#
+> +$id: http://devicetree.org/schemas/remoteproc/ti,k3-sci-proc.yaml#
 > +$schema: http://devicetree.org/meta-schemas/core.yaml#
 > +
-> +title: Qualcomm Hardware Mutex Block
+> +title: Common TI K3 remote processor device bindings
 > +
 > +maintainers:
-> +  - Bjorn Andersson <bjorn.andersson@linaro.org>
+> +  - Suman Anna <s-anna@ti.com>
 > +
-> +description:
-> +  The hardware block provides mutexes utilized between different processors on
-> +  the SoC as part of the communication protocol used by these processors.
+> +description: |
+> +  The TI K3 family of SoCs usually have one or more remote processor sub-systems
+> +  like the dual-core R5F sub-system or a C66x or C71x DSP processor subsystem.
+> +  The device management of these remote processors is managed by a dedicated
+> +  System Processor, and the communication with that processor is managed through
+> +  the TI-SCI protocol.
+> +
+> +  Each remote processor device node should define a common set of properties
+> +  that allows the System Processor firmware to perform the device management
+> +  such as powering the IPs, asserting/deasserting the resets for each of these
+> +  processors.
 > +
 > +properties:
-> +  compatible:
-> +    enum:
-> +      - qcom,sfpb-mutex
-> +      - qcom,tcsr-mutex
-> +
-> +  '#hwlock-cells':
-> +    const: 1
-> +
-> +  syscon:
-> +    $ref: "/schemas/types.yaml#/definitions/phandle-array"
+> +  ti,sci:
+> +    $ref: /schemas/types.yaml#/definitions/phandle
 > +    description:
-> +      Should be a triple of phandle referencing the TCSR mutex syscon, offset
-> +      of first mutex within the syscon and stride between each mutex.
+> +      Should be a phandle to the TI-SCI System Controller node
+> +
+> +  ti,sci-dev-id:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description: |
+> +      Should contain the TI-SCI device id corresponding to the remote processor
+> +      core. Please refer to the corresponding System Controller documentation
+> +      for valid values.
+
+These also apply on Lokesh's series converting ti,sci-int[ra]
+bindings. Please rework to use for both.
+
+> +
+> +  ti,sci-proc-ids:
+> +    description: Should contain a single tuple of <proc_id host_id>.
+> +    $ref: /schemas/types.yaml#/definitions/uint32-array
+> +    items:
+> +      - description: TI-SCI processor id for the remote processor device
+> +      - description: TI-SCI host id to which processor control ownership
+> +                     should be transferred to
 > +
 > +required:
-> +  - compatible
-> +  - '#hwlock-cells'
-> +  - syscon
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +        tcsr_mutex_block: syscon@fd484000 {
-> +                compatible = "syscon";
-
-'syscon' alone now generates warnings. Can you drop this node or add a
-specific compatible.
-
-> +                reg = <0xfd484000 0x2000>;
-> +        };
-> +
-> +        hwlock {
-> +                compatible = "qcom,tcsr-mutex";
-> +                syscon = <&tcsr_mutex_block 0 0x80>;
-> +
-> +                #hwlock-cells = <1>;
-> +        };
-> +...
+> +  - ti,sci
+> +  - ti,sci-dev-id
+> +  - ti,sci-proc-ids
 > --
-> 2.26.2
+> 2.26.0
 >
