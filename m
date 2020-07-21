@@ -8,50 +8,50 @@ X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB47FC433FB
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 21 Jul 2020 22:36:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 944F6C43445
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 21 Jul 2020 22:36:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9807C206E3
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 21 Jul 2020 22:36:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 71F4022CA0
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 21 Jul 2020 22:36:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="g5wsPeY5"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Q0ANpwLC"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731293AbgGUWg3 (ORCPT
+        id S1731283AbgGUWg2 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 21 Jul 2020 18:36:29 -0400
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:40902 "EHLO
+        Tue, 21 Jul 2020 18:36:28 -0400
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:40904 "EHLO
         lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726555AbgGUWg1 (ORCPT
+        with ESMTP id S1731280AbgGUWg1 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
         Tue, 21 Jul 2020 18:36:27 -0400
 Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 06LMaNQp125601;
-        Tue, 21 Jul 2020 17:36:23 -0500
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 06LMaODw125606;
+        Tue, 21 Jul 2020 17:36:24 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1595370983;
-        bh=E/a2DHAgAGqQNbUAF6yrH694iVBxAHRORpK7Cq1xHrc=;
+        s=ti-com-17Q1; t=1595370984;
+        bh=s5nArzbi77iI40z0qmThRJ4Wr6BYNYVROsCbbOGz3Ts=;
         h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=g5wsPeY5MeN4Ikaotf2R16czCJGERdMo98PULVACjv1NaogYn369a59+xcxCiFNhX
-         +QhDySGNRwLaU4QFWno0IISr3Q4UcxTUMOSEYRjUYDtP9MkM8kB+BZK21vU0/aIABs
-         ljQn8LCCt3fRXKWbwK9/h6sIn2X+XRD+41yO+vM4=
-Received: from DLEE107.ent.ti.com (dlee107.ent.ti.com [157.170.170.37])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 06LMaNDR047712
+        b=Q0ANpwLCXED47o6ByTWkpimvF3oJrioEeXfDys/ke1Q5BAQZ4bw97mBWGz9Id0OVB
+         Ppkhs1WEKtJLWpxRSJ7AUnBqY9xVP53pWVCjp/V9oU5bQBqHvv2p8AeYDM8Xy+cc29
+         Zi+AT/0qNCqzEoQGjJoejoDzncjuqancVMhNH/Go=
+Received: from DLEE103.ent.ti.com (dlee103.ent.ti.com [157.170.170.33])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 06LMaO6v047719
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 21 Jul 2020 17:36:23 -0500
-Received: from DLEE105.ent.ti.com (157.170.170.35) by DLEE107.ent.ti.com
- (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
+        Tue, 21 Jul 2020 17:36:24 -0500
+Received: from DLEE100.ent.ti.com (157.170.170.30) by DLEE103.ent.ti.com
+ (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3; Tue, 21
- Jul 2020 17:36:22 -0500
-Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE105.ent.ti.com
- (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
+ Jul 2020 17:36:23 -0500
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE100.ent.ti.com
+ (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3 via
- Frontend Transport; Tue, 21 Jul 2020 17:36:22 -0500
+ Frontend Transport; Tue, 21 Jul 2020 17:36:23 -0500
 Received: from fllv0103.dal.design.ti.com (fllv0103.dal.design.ti.com [10.247.120.73])
-        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id 06LMaMpT048621;
-        Tue, 21 Jul 2020 17:36:22 -0500
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 06LMaNSj081123;
+        Tue, 21 Jul 2020 17:36:23 -0500
 Received: from localhost ([10.250.34.248])
-        by fllv0103.dal.design.ti.com (8.14.7/8.14.7) with ESMTP id 06LMaMMb080802;
-        Tue, 21 Jul 2020 17:36:22 -0500
+        by fllv0103.dal.design.ti.com (8.14.7/8.14.7) with ESMTP id 06LMaNDj080806;
+        Tue, 21 Jul 2020 17:36:23 -0500
 From:   Suman Anna <s-anna@ti.com>
 To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
@@ -60,9 +60,9 @@ CC:     Nishanth Menon <nm@ti.com>, Lokesh Vutla <lokeshvutla@ti.com>,
         <linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-kernel@vger.kernel.org>, Suman Anna <s-anna@ti.com>
-Subject: [PATCH v5 2/6] remoteproc: Introduce rproc_of_parse_firmware() helper
-Date:   Tue, 21 Jul 2020 17:36:13 -0500
-Message-ID: <20200721223617.20312-3-s-anna@ti.com>
+Subject: [PATCH v5 3/6] remoteproc: k3: Add TI-SCI processor control helper functions
+Date:   Tue, 21 Jul 2020 17:36:14 -0500
+Message-ID: <20200721223617.20312-4-s-anna@ti.com>
 X-Mailer: git-send-email 2.26.0
 In-Reply-To: <20200721223617.20312-1-s-anna@ti.com>
 References: <20200721223617.20312-1-s-anna@ti.com>
@@ -75,72 +75,150 @@ Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Add a new helper function rproc_of_parse_firmware() to the remoteproc
-core that can be used by various remoteproc drivers to look up the
-the "firmware-name" property from a rproc device node. This property
-is already being used by multiple drivers, so this helper can avoid
-repeating equivalent code in remoteproc drivers.
+Texas Instruments' K3 generation SoCs have specific modules/register
+spaces used for configuring the various aspects of a remote processor.
+These include power, reset, boot vector and other configuration features
+specific to each compute processor present on the SoC. These registers
+are managed by the System Controller such as DMSC on K3 AM65x SoCs.
+
+The Texas Instrument's System Control Interface (TI-SCI) Message Protocol
+is used to communicate to the System Controller from various compute
+processors to invoke specific services provided by the firmware running
+on the System Controller.
+
+Add a common processor control interface header file that can be used by
+multiple remoteproc drivers. The helper functions within this header file
+abstract the various TI SCI protocol ops for the remoteproc drivers, and
+allow them to request the System Controller to be able to program and
+manage various remote processors on the SoC. The remoteproc drivers are
+expected to manage the life-cycle of their ti_sci_proc_dev local
+structures.
 
 Signed-off-by: Suman Anna <s-anna@ti.com>
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 ---
 v5: No changes, patch reordered
-v4: https://patchwork.kernel.org/patch/11671447/
- - No changes
-v3: https://patchwork.kernel.org/patch/11602327/
+v4: https://patchwork.kernel.org/patch/11671457/
+ Addressed minor comments from Mathieu and picked up his Reviewed-by tag
+ - Moved the ti_sci_protocol.h header file from driver to here
+ - Replaced http with https
+ - Appended my email address after the name
+v3: https://patchwork.kernel.org/patch/11602329/
 
- drivers/remoteproc/remoteproc_core.c     | 23 +++++++++++++++++++++++
- drivers/remoteproc/remoteproc_internal.h |  2 ++
- 2 files changed, 25 insertions(+)
+ drivers/remoteproc/ti_sci_proc.h | 104 +++++++++++++++++++++++++++++++
+ 1 file changed, 104 insertions(+)
+ create mode 100644 drivers/remoteproc/ti_sci_proc.h
 
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index 9f04c30c4aaf..c458b218d524 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -1034,6 +1034,29 @@ rproc_of_resm_mem_entry_init(struct device *dev, u32 of_resm_idx, size_t len,
- }
- EXPORT_SYMBOL(rproc_of_resm_mem_entry_init);
- 
-+/**
-+ * rproc_of_parse_firmware() - parse and return the firmware-name
-+ * @dev: pointer on device struct representing a rproc
-+ * @index: index to use for the firmware-name retrieval
-+ * @fw_name: pointer to a character string, in which the firmware
-+ *           name is returned on success and unmodified otherwise.
+diff --git a/drivers/remoteproc/ti_sci_proc.h b/drivers/remoteproc/ti_sci_proc.h
+new file mode 100644
+index 000000000000..778558abcdcc
+--- /dev/null
++++ b/drivers/remoteproc/ti_sci_proc.h
+@@ -0,0 +1,104 @@
++/* SPDX-License-Identifier: GPL-2.0-only */
++/*
++ * Texas Instruments TI-SCI Processor Controller Helper Functions
 + *
-+ * This is an OF helper function that parses a device's DT node for
-+ * the "firmware-name" property and returns the firmware name pointer
-+ * in @fw_name on success.
-+ *
-+ * Return: 0 on success, or an appropriate failure.
++ * Copyright (C) 2018-2020 Texas Instruments Incorporated - https://www.ti.com/
++ *	Suman Anna <s-anna@ti.com>
 + */
-+int rproc_of_parse_firmware(struct device *dev, int index, const char **fw_name)
++
++#ifndef REMOTEPROC_TI_SCI_PROC_H
++#define REMOTEPROC_TI_SCI_PROC_H
++
++#include <linux/soc/ti/ti_sci_protocol.h>
++
++/**
++ * struct ti_sci_proc - structure representing a processor control client
++ * @sci: cached TI-SCI protocol handle
++ * @ops: cached TI-SCI proc ops
++ * @dev: cached client device pointer
++ * @proc_id: processor id for the consumer remoteproc device
++ * @host_id: host id to pass the control over for this consumer remoteproc
++ *	     device
++ */
++struct ti_sci_proc {
++	const struct ti_sci_handle *sci;
++	const struct ti_sci_proc_ops *ops;
++	struct device *dev;
++	u8 proc_id;
++	u8 host_id;
++};
++
++static inline int ti_sci_proc_request(struct ti_sci_proc *tsp)
 +{
 +	int ret;
 +
-+	ret = of_property_read_string_index(dev->of_node, "firmware-name",
-+					    index, fw_name);
-+	return ret ? ret : 0;
++	ret = tsp->ops->request(tsp->sci, tsp->proc_id);
++	if (ret)
++		dev_err(tsp->dev, "ti-sci processor request failed: %d\n",
++			ret);
++	return ret;
 +}
-+EXPORT_SYMBOL(rproc_of_parse_firmware);
 +
- /*
-  * A lookup table for resource handlers. The indices are defined in
-  * enum fw_resource_type.
-diff --git a/drivers/remoteproc/remoteproc_internal.h b/drivers/remoteproc/remoteproc_internal.h
-index 4ba7cb59d3e8..e5341e91d2fc 100644
---- a/drivers/remoteproc/remoteproc_internal.h
-+++ b/drivers/remoteproc/remoteproc_internal.h
-@@ -28,6 +28,8 @@ struct rproc_debug_trace {
- void rproc_release(struct kref *kref);
- irqreturn_t rproc_vq_interrupt(struct rproc *rproc, int vq_id);
- void rproc_vdev_release(struct kref *ref);
-+int rproc_of_parse_firmware(struct device *dev, int index,
-+			    const char **fw_name);
- 
- /* from remoteproc_virtio.c */
- int rproc_add_virtio_dev(struct rproc_vdev *rvdev, int id);
++static inline int ti_sci_proc_release(struct ti_sci_proc *tsp)
++{
++	int ret;
++
++	ret = tsp->ops->release(tsp->sci, tsp->proc_id);
++	if (ret)
++		dev_err(tsp->dev, "ti-sci processor release failed: %d\n",
++			ret);
++	return ret;
++}
++
++static inline int ti_sci_proc_handover(struct ti_sci_proc *tsp)
++{
++	int ret;
++
++	ret = tsp->ops->handover(tsp->sci, tsp->proc_id, tsp->host_id);
++	if (ret)
++		dev_err(tsp->dev, "ti-sci processor handover of %d to %d failed: %d\n",
++			tsp->proc_id, tsp->host_id, ret);
++	return ret;
++}
++
++static inline int ti_sci_proc_set_config(struct ti_sci_proc *tsp,
++					 u64 boot_vector,
++					 u32 cfg_set, u32 cfg_clr)
++{
++	int ret;
++
++	ret = tsp->ops->set_config(tsp->sci, tsp->proc_id, boot_vector,
++				   cfg_set, cfg_clr);
++	if (ret)
++		dev_err(tsp->dev, "ti-sci processor set_config failed: %d\n",
++			ret);
++	return ret;
++}
++
++static inline int ti_sci_proc_set_control(struct ti_sci_proc *tsp,
++					  u32 ctrl_set, u32 ctrl_clr)
++{
++	int ret;
++
++	ret = tsp->ops->set_control(tsp->sci, tsp->proc_id, ctrl_set, ctrl_clr);
++	if (ret)
++		dev_err(tsp->dev, "ti-sci processor set_control failed: %d\n",
++			ret);
++	return ret;
++}
++
++static inline int ti_sci_proc_get_status(struct ti_sci_proc *tsp,
++					 u64 *boot_vector, u32 *cfg_flags,
++					 u32 *ctrl_flags, u32 *status_flags)
++{
++	int ret;
++
++	ret = tsp->ops->get_status(tsp->sci, tsp->proc_id, boot_vector,
++				   cfg_flags, ctrl_flags, status_flags);
++	if (ret)
++		dev_err(tsp->dev, "ti-sci processor get_status failed: %d\n",
++			ret);
++	return ret;
++}
++
++#endif /* REMOTEPROC_TI_SCI_PROC_H */
 -- 
 2.26.0
 
