@@ -2,141 +2,154 @@ Return-Path: <SRS0=TaqV=BA=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1415AC433E3
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 21 Jul 2020 14:43:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C813C433EA
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 21 Jul 2020 15:13:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E926920714
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 21 Jul 2020 14:43:16 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="eAe5vqIk"
+	by mail.kernel.org (Postfix) with ESMTP id 7BB17206E3
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 21 Jul 2020 15:13:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1595344423;
+	bh=cJveZYxoa7dAdPqQanvrZZl4c8wbkUcvWDgkCaEe+Os=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=tZYJvibow5T5/hzMgbh551YTLL6ANHwkt3AZX2havXdVT9LzdyoHDxETi3teEyiFU
+	 5LKH+YThPicPJuN8crhgkZ5FcbNtB/7thS64T+f5pZ/S9eNwYE/PnQ9odfb83qEE6M
+	 OHCVaOD1QOCWJyfVvQD1lxqSU+9f4MqxCagoOxV0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728934AbgGUOnO (ORCPT
+        id S1729871AbgGUPNk (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 21 Jul 2020 10:43:14 -0400
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:58382 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728631AbgGUOnO (ORCPT
+        Tue, 21 Jul 2020 11:13:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49926 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729831AbgGUPNk (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 21 Jul 2020 10:43:14 -0400
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 06LEh87R109282;
-        Tue, 21 Jul 2020 09:43:08 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1595342588;
-        bh=HNYHkecczzNXwFIOZjMIwvKU3JfW0AcUMrA1nFBYX+A=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=eAe5vqIkXb6e4u1Ca5a/7quPEW4G3mkU1FcVbyPVAPgHqQx2wS8QeY572+s9BeHaX
-         98hcylnHxqRoLoFIj9kt2Y/DhAikFQXmR4t2Xd6aAByVe4XYJSmDWj1FaWGuosum3f
-         soTwMR2LgqgSU3NDtJrWzGszDSDvNdlY8EHw2z98=
-Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 06LEh8Z8068511
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 21 Jul 2020 09:43:08 -0500
-Received: from DFLE101.ent.ti.com (10.64.6.22) by DFLE103.ent.ti.com
- (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3; Tue, 21
- Jul 2020 09:43:08 -0500
-Received: from fllv0039.itg.ti.com (10.64.41.19) by DFLE101.ent.ti.com
- (10.64.6.22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3 via
- Frontend Transport; Tue, 21 Jul 2020 09:43:08 -0500
-Received: from [10.250.34.248] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id 06LEh72A102848;
-        Tue, 21 Jul 2020 09:43:07 -0500
-Subject: Re: [PATCH v4 0/6] TI K3 DSP remoteproc driver for C66x DSPs
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>
-CC:     Lokesh Vutla <lokeshvutla@ti.com>,
-        <linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20200717234800.9423-1-s-anna@ti.com>
-From:   Suman Anna <s-anna@ti.com>
-Message-ID: <71b1c6c0-08eb-32fc-4183-6f350030e22d@ti.com>
-Date:   Tue, 21 Jul 2020 09:43:07 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Tue, 21 Jul 2020 11:13:40 -0400
+Received: from mail-oi1-f171.google.com (mail-oi1-f171.google.com [209.85.167.171])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 813372073A;
+        Tue, 21 Jul 2020 15:13:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1595344419;
+        bh=cJveZYxoa7dAdPqQanvrZZl4c8wbkUcvWDgkCaEe+Os=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=M34Xz+Pc5nQE/Ho21lGgohVu/PtpmhfIr6dhTZlnCUrQoHmKtmo1NkhpCjDpGTh0x
+         2065SHB4LCKQdIDH8xIeOacFUdrI/qxpE8EdHWbydd9PFpDvMl+oACZkyT0cpWVOXK
+         /lJOtx6+K9HNOzF9XLvLJ6cTh5/LUH7/vlhh/6SE=
+Received: by mail-oi1-f171.google.com with SMTP id e4so17514498oib.1;
+        Tue, 21 Jul 2020 08:13:39 -0700 (PDT)
+X-Gm-Message-State: AOAM531dzzPPnkvAKg3IIPvMfNJrQj/zp9gbek7NBqcfVSViGixK4EZG
+        VNILZp7cd3KJGd59ue65mkc9d+Tumew7tYAhAA==
+X-Google-Smtp-Source: ABdhPJx5usOUbuBPfOhR/huG6DuDsg8mCHNfxMXgiZDEHvwhavGmrHIBAxM6qwppEevA9KhIyFvg6dUqdvZHyzegRBI=
+X-Received: by 2002:aca:bb82:: with SMTP id l124mr3483290oif.106.1595344418842;
+ Tue, 21 Jul 2020 08:13:38 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20200717234800.9423-1-s-anna@ti.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+References: <20200622075956.171058-1-bjorn.andersson@linaro.org> <20200622075956.171058-2-bjorn.andersson@linaro.org>
+In-Reply-To: <20200622075956.171058-2-bjorn.andersson@linaro.org>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Tue, 21 Jul 2020 09:13:22 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqKW+R=rygii7N69o28h5780qx645RhPXGQZ4jw3kHadhw@mail.gmail.com>
+Message-ID: <CAL_JsqKW+R=rygii7N69o28h5780qx645RhPXGQZ4jw3kHadhw@mail.gmail.com>
+Subject: Re: [PATCH v2 1/4] dt-bindings: hwlock: qcom: Migrate binding to YAML
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Andy Gross <agross@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>,
+        Baolin Wang <baolin.wang7@gmail.com>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        "open list:REMOTE PROCESSOR (REMOTEPROC) SUBSYSTEM" 
+        <linux-remoteproc@vger.kernel.org>, devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Vinod Koul <vkoul@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi Bjorn,
+On Mon, Jun 22, 2020 at 1:59 AM Bjorn Andersson
+<bjorn.andersson@linaro.org> wrote:
+>
+> Migrate the Qualcomm TCSR mutex binding to YAML to allow validation.
+>
+> Reviewed-by: Vinod Koul <vkoul@kernel.org>
+> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> ---
+>
+> Changes since v1:
+> - Actually remove the old binding doc
+>
+>  .../bindings/hwlock/qcom-hwspinlock.txt       | 39 --------------
+>  .../bindings/hwlock/qcom-hwspinlock.yaml      | 51 +++++++++++++++++++
+>  2 files changed, 51 insertions(+), 39 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/hwlock/qcom-hwspinlock.txt
+>  create mode 100644 Documentation/devicetree/bindings/hwlock/qcom-hwspinlock.yaml
 
-On 7/17/20 6:47 PM, Suman Anna wrote:
-> Hi All,
-> 
-> The following is v4 of the K3 DSP remoteproc driver supporting the C66x DSPs
-> on the TI K3 J721E SoCs. The patches apply cleanly both on v5.8-rc1 as well
-> as laster commit on the master branch.
-> 
-> This series is largely unchanged, addressing various minor comments from
-> Mathieu and Rob. The ti,k3-sci-proc bindings patch (patch #3) is the only
-> patch without an Ack from v3.
-> 
-> Following are the changes in v4:
->   - Fixed Rob's review comments on ti,k3-sci-proc.yaml
->   - Moved the ti_sci_protocol.h header file from ti_k3_dsp_remoteproc.c
->     to ti_sci_proc.h
->   - Replaced the TI http link with https following similar changes
->     submitted recently
->   - Removed an unnecesary addr check before iounmap
-> 
-> Please see the individual patches for further delta differences.
-> 
-> v3: https://patchwork.kernel.org/cover/11602331/
-> v2: https://patchwork.kernel.org/cover/11561787/
-> v1: https://patchwork.kernel.org/cover/11458573/
-> 
-> C71x v3: https://patchwork.kernel.org/cover/11602345/
-> 
-> Hi Bjorn,
-> This series is ready to be picked up for 5.9 merge window. Please also
-> pick the C71x v3 series on top of this, there are no pending comments
-> on that one and is waiting for this series.
+[...]
 
-Can you pick up both the K3 DSP series for 5.9, the last pending 
-dt-bindings patch from this series has also been acked now.
+> diff --git a/Documentation/devicetree/bindings/hwlock/qcom-hwspinlock.yaml b/Documentation/devicetree/bindings/hwlock/qcom-hwspinlock.yaml
+> new file mode 100644
+> index 000000000000..71e63b52edd5
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/hwlock/qcom-hwspinlock.yaml
+> @@ -0,0 +1,51 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/hwlock/qcom-hwspinlock.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Qualcomm Hardware Mutex Block
+> +
+> +maintainers:
+> +  - Bjorn Andersson <bjorn.andersson@linaro.org>
+> +
+> +description:
+> +  The hardware block provides mutexes utilized between different processors on
+> +  the SoC as part of the communication protocol used by these processors.
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - qcom,sfpb-mutex
+> +      - qcom,tcsr-mutex
+> +
+> +  '#hwlock-cells':
+> +    const: 1
+> +
+> +  syscon:
+> +    $ref: "/schemas/types.yaml#/definitions/phandle-array"
+> +    description:
+> +      Should be a triple of phandle referencing the TCSR mutex syscon, offset
+> +      of first mutex within the syscon and stride between each mutex.
+> +
+> +required:
+> +  - compatible
+> +  - '#hwlock-cells'
+> +  - syscon
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +        tcsr_mutex_block: syscon@fd484000 {
+> +                compatible = "syscon";
 
-Thanks,
-Suman
+'syscon' alone now generates warnings. Can you drop this node or add a
+specific compatible.
 
-> 
-> regards
-> Suman
-> 
-> Suman Anna (6):
->    remoteproc: Introduce rproc_of_parse_firmware() helper
->    remoteproc: k3: Add TI-SCI processor control helper functions
->    dt-bindings: remoteproc: Add common TI SCI rproc bindings
->    dt-bindings: remoteproc: Add bindings for C66x DSPs on TI K3 SoCs
->    remoteproc: k3-dsp: Add a remoteproc driver of K3 C66x DSPs
->    remoteproc: k3-dsp: Add support for L2RAM loading on C66x DSPs
-> 
->   .../bindings/remoteproc/ti,k3-dsp-rproc.yaml  | 139 ++++
->   .../bindings/remoteproc/ti,k3-sci-proc.yaml   |  48 ++
->   drivers/remoteproc/Kconfig                    |  13 +
->   drivers/remoteproc/Makefile                   |   1 +
->   drivers/remoteproc/remoteproc_core.c          |  23 +
->   drivers/remoteproc/remoteproc_internal.h      |   2 +
->   drivers/remoteproc/ti_k3_dsp_remoteproc.c     | 771 ++++++++++++++++++
->   drivers/remoteproc/ti_sci_proc.h              | 104 +++
->   8 files changed, 1101 insertions(+)
->   create mode 100644 Documentation/devicetree/bindings/remoteproc/ti,k3-dsp-rproc.yaml
->   create mode 100644 Documentation/devicetree/bindings/remoteproc/ti,k3-sci-proc.yaml
->   create mode 100644 drivers/remoteproc/ti_k3_dsp_remoteproc.c
->   create mode 100644 drivers/remoteproc/ti_sci_proc.h
-> 
-
+> +                reg = <0xfd484000 0x2000>;
+> +        };
+> +
+> +        hwlock {
+> +                compatible = "qcom,tcsr-mutex";
+> +                syscon = <&tcsr_mutex_block 0 0x80>;
+> +
+> +                #hwlock-cells = <1>;
+> +        };
+> +...
+> --
+> 2.26.2
+>
