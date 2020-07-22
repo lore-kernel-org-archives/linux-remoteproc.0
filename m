@@ -2,240 +2,102 @@ Return-Path: <SRS0=Av4F=BB=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8286FC433E1
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 22 Jul 2020 18:03:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32FE2C433E4
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 22 Jul 2020 20:11:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5C0402084D
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 22 Jul 2020 18:03:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 002282086A
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 22 Jul 2020 20:11:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XMpS/yfU"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="R5I62ndg"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730896AbgGVSDe (ORCPT
+        id S1732359AbgGVULH (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 22 Jul 2020 14:03:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57026 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726535AbgGVSDd (ORCPT
+        Wed, 22 Jul 2020 16:11:07 -0400
+Received: from mail29.static.mailgun.info ([104.130.122.29]:36724 "EHLO
+        mail29.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1732324AbgGVULF (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 22 Jul 2020 14:03:33 -0400
-Received: from mail-pf1-x443.google.com (mail-pf1-x443.google.com [IPv6:2607:f8b0:4864:20::443])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8EBE7C0619E0
-        for <linux-remoteproc@vger.kernel.org>; Wed, 22 Jul 2020 11:03:33 -0700 (PDT)
-Received: by mail-pf1-x443.google.com with SMTP id s26so1692736pfm.4
-        for <linux-remoteproc@vger.kernel.org>; Wed, 22 Jul 2020 11:03:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=yWcfktADb3uPJbFkIiNC/fq9uZOsRANKyg7Yhrbd3tg=;
-        b=XMpS/yfUE5QvKTqgqHXr498QBJt1LtXUBTlBwABMTYg0Endz9kTZGsNVoItzCCJ8JZ
-         kBCM5saOtYxBLzG65jr1vE+X4/UzMu73f/A1NH+keySUjedHG6c6BI2LlBufsNrhATxN
-         bVH3baDqsU8Nh8OwoeDBGNIQ54aggROKqB9px+29u7Cy+lea4Oy56Z/axz1FhQ42Fgvq
-         +7ca24D4Qcfr83XGHgalFULZ9om5Fbfwf3QHAIAJB1cGJtn2M8oicM3DTaYflPkkDvWA
-         ClceWQu4Ql4Ons+Ct9bcqc602uKrNDtogEo0tlJaIvxjU9ZCUCDBz6Fkpmw0a+exYJUm
-         FN7A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=yWcfktADb3uPJbFkIiNC/fq9uZOsRANKyg7Yhrbd3tg=;
-        b=UjvQXF9LL8mPMMHFdiCEIP6Ucf03EfmAIMNSjhDO1IL9OHpC9xHnnDjgZVBBezsgZZ
-         ne/Og37Ml4SoOevR4JAhuqp4J9hAOlyaCgmyn8I1r+27+cRAcbddytbjBRoiOViNj38a
-         0rMDhBNTLTOk7w2UDrERWINopbOwDZ/j7s+yY6dmZFZeEAQ6UCEKouq0/fks840tFSi5
-         pG/Y2JvB+Vw+eqpGWvl/33wC06HIFQSLKJGArbNPh2b8aML0VjAmnf2C5yqEqBVvazl0
-         py+v2Uu1NHIw4gA9T7OXGXrvhV6uwlqCNPJMW5SlGCDA2YGFKeRs6hhLJ4s7mpasSf1v
-         0DrQ==
-X-Gm-Message-State: AOAM530Byj9/Vqxohp08syiazK66ejcIPeeSXFSq1Vew0XCYKUh7yqVb
-        x50zUTxkm7MtPNX0Br96P4enWQ==
-X-Google-Smtp-Source: ABdhPJw4CCh/JqUryfanhVXNO34PrKWEi7bBLUJ8EKXba3fX0MsU9Wcj2adh+VkHowSyvD3Dk78D3Q==
-X-Received: by 2002:a63:c509:: with SMTP id f9mr920841pgd.144.1595441012822;
-        Wed, 22 Jul 2020 11:03:32 -0700 (PDT)
-Received: from builder.lan (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id w9sm341994pja.39.2020.07.22.11.03.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Jul 2020 11:03:32 -0700 (PDT)
-Date:   Wed, 22 Jul 2020 11:01:39 -0700
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc:     Siddharth Gupta <sidgup@codeaurora.org>, agross@kernel.org,
-        ohad@wizery.com, corbet@lwn.net, linux-remoteproc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, tsoni@codeaurora.org,
-        psodagud@codeaurora.org, rishabhb@codeaurora.org,
-        linux-doc@vger.kernel.org
-Subject: Re: [PATCH v4 1/2] remoteproc: Add remoteproc character device
- interface
-Message-ID: <20200722180139.GA3700915@builder.lan>
-References: <1594148870-27276-1-git-send-email-sidgup@codeaurora.org>
- <1594148870-27276-2-git-send-email-sidgup@codeaurora.org>
- <20200715201839.GA3204081@xps15>
- <20200715215149.GA3267350@xps15>
- <81d7514c-727e-b4dc-e4ac-74a25966ccaf@codeaurora.org>
- <20200721205635.GM2922385@builder.lan>
- <20200722171841.GA1268891@xps15>
+        Wed, 22 Jul 2020 16:11:05 -0400
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1595448664; h=Content-Transfer-Encoding: MIME-Version:
+ Message-Id: Date: Subject: Cc: To: From: Sender;
+ bh=KZi1ETE3on/bhyAJfeRa2juKIYErBeITDTsM9mbpJA0=; b=R5I62ndgzqPI04fHwGURh33sLi2gFZqgStx4NKHtlx2SNO+nFQAiYcG6XDO0+QCUDR6sLoih
+ GMKBA0BUPdg0mEyzdCl3ymAjEuJmt9Qr9EWuoALqEjUqwo2OonyFoIrmtn1fxVEMrAv/roIC
+ nyuRw5THDzPY9aJIBneuHxjRogU=
+X-Mailgun-Sending-Ip: 104.130.122.29
+X-Mailgun-Sid: WyI4ZWZiZiIsICJsaW51eC1yZW1vdGVwcm9jQHZnZXIua2VybmVsLm9yZyIsICJiZTllNGEiXQ==
+Received: from smtp.codeaurora.org
+ (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
+ smtp-out-n18.prod.us-east-1.postgun.com with SMTP id
+ 5f189d5765270fa5953ad2a7 (version=TLS1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Wed, 22 Jul 2020 20:11:03
+ GMT
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 0A6A5C4339C; Wed, 22 Jul 2020 20:11:03 +0000 (UTC)
+Received: from blr-ubuntu-253.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: sibis)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 1736BC433C9;
+        Wed, 22 Jul 2020 20:10:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 1736BC433C9
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=sibis@codeaurora.org
+From:   Sibi Sankar <sibis@codeaurora.org>
+To:     bjorn.andersson@linaro.org
+Cc:     agross@kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        evgreen@chromium.org, ohad@wizery.com,
+        Sibi Sankar <sibis@codeaurora.org>
+Subject: [PATCH v3 0/3] Add modem debug features
+Date:   Thu, 23 Jul 2020 01:40:44 +0530
+Message-Id: <20200722201047.12975-1-sibis@codeaurora.org>
+X-Mailer: git-send-email 2.27.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200722171841.GA1268891@xps15>
+Content-Transfer-Encoding: 8bit
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Wed 22 Jul 10:18 PDT 2020, Mathieu Poirier wrote:
+The series adds support for the following modem debug features:
+ * Modem debug policy which enables coredumps/live debug on secure devices
+ * MBA text logs extraction on SC7180 SoCs
 
-> On Tue, Jul 21, 2020 at 01:56:35PM -0700, Bjorn Andersson wrote:
-> > On Tue 21 Jul 12:16 PDT 2020, Siddharth Gupta wrote:
-> > > On 7/15/2020 2:51 PM, Mathieu Poirier wrote:
-> > > > On Wed, Jul 15, 2020 at 02:18:39PM -0600, Mathieu Poirier wrote:
-> > > > > On Tue, Jul 07, 2020 at 12:07:49PM -0700, Siddharth Gupta wrote:
-> > [..]
-> > > > > > diff --git a/drivers/remoteproc/remoteproc_cdev.c b/drivers/remoteproc/remoteproc_cdev.c
-> > [..]
-> > > > > > +int rproc_char_device_add(struct rproc *rproc)
-> > > > > > +{
-> > > > > > +	int ret;
-> > > > > > +	dev_t cdevt;
-> > > > > > +
-> > > > > > +	cdev_init(&rproc->char_dev, &rproc_fops);
-> > > > > > +	rproc->char_dev.owner = THIS_MODULE;
-> > > > > > +
-> > > > > > +	cdevt = MKDEV(rproc_major, rproc->index);
-> > > > > > +	ret = cdev_add(&rproc->char_dev, cdevt, 1);
-> > > > Trying this patchset on my side gave me the following splat[1].  After finding
-> > > > the root case I can't understand how you haven't see it on your side when you
-> > > > tested the feature.
-> > > > 
-> > > > [1]. https://pastebin.com/aYTUUCdQ
-> > 
-> > Mathieu, I've looked at this back and forth. Afaict this implies that
-> > rproc_major is still 0. Could it be that either alloc_chrdev_region()
-> > failed or somehow has yet to be called when you hit this point?
-> 
-> That is exacly what I thought when I first stumbled on this but instrumenting
-> the code showed otherwise.
-> 
-> After function rproc_init_cdev() has been called @rproc_major contains the
-> dynamically allocated major number in the upper 12 bits and the base minor
-> number in the lower 20 bits.
-> 
+The series also includes fixes for a couple of mem aborts seen when
+mba/modem blob size exceeds mba/mpss regions respectively.
 
-Ahh, alloc_chrdev_region() actually returns the dev_t, not the major.
-Too bad that we all name this variable "major" to maximize the
-confusion.
+V3:
+ * Drop mba text log extraction support since its already
+   picked up by Bjorn
+ * Fix dp_fw leak and create a separate func for dp load [Bjorn]
+ * Reset dp_size on mba_reclaim
+ * 2 new patches are included and they validate mba/modem blob size
+   before load
 
-> In rproc_char_device_add() we find this line:
-> 
->         cdevt = MKDEV(rproc_major, rproc->index);
-> 
-> Macro MKDEV() builds a device number by shifting @rproc_major by 20 bits to the
-> left and OR'ing that with @rproc->index.  But the device's major number is
-> already occupying the upper 12bits, so shifthing another 20 bits to the left
-> makes the major portion of the device number '0'.  That is causing cdev_add() to
-> complain bitterly.
-> 
-> The right way to do this is:
-> 
->         cdevt = MKDEV(MAJOR(rproc_major), rproc->index);
-> 
+V2:
+ * Use request_firmware_direct [Bjorn]
+ * Use Bjorn's template to show if debug policy is present
+ * Add size check to prevent memcpy out of bounds [Bjorn]
+ * Don't dump logs in mba_reclaim path [Bjorn]
+ * Move has_mba_logs check to q6v5_dump_mba_logs [Bjorn]
+ * SDM845 mss was incorrectly marked to support mba logs
+ * Drop patch 3 where mba text logs are added to imem
 
-Agreed (and let's continue naming it rproc_major, in line with all other
-drivers - now I know better).
+Sibi Sankar (3):
+  remoteproc: qcom_q6v5_mss: Validate MBA firmware size before load
+  remoteproc: qcom_q6v5_mss: Validate modem blob firmware size before
+    load
+  remoteproc: qcom_q6v5_mss: Add modem debug policy support
 
-Thanks,
-Bjorn
+ drivers/remoteproc/qcom_q6v5_mss.c | 36 ++++++++++++++++++++++++++----
+ 1 file changed, 32 insertions(+), 4 deletions(-)
 
-> Once I found the problem I thought about 32/64 bit issues.  Since Siddharth is
-> using a 64bit application processor shifting another 20 bits would still have
-> yielded a non-zero value.  But that can't be since dev_t is a u32 in
-> linux/types.h.
-> 
-> As such I can't see how it is possible to not hit that problem on a 64bit
-> platform.
-> 
-> > 
-> > > Hey Mathieu,
-> > > 
-> > > We aren't able to reproduce the error that you are seeing, the splat is
-> > > coming
-> > > from the check for whiteout device[1] - which shouldn't happen because of
-> > > the
-> > > find_dynamic_major call[2], right?
-> > > 
-> > > We are successfully seeing all our character device files and able to
-> > > successfully boot remoteprocs. From what I read and understood about
-> > > whiteout
-> > > devices they will be hidden in the fs.
-> > > 
-> > > Could you provide more details about your configuration and testing?
-> > > 
-> > > [1]: https://github.com/torvalds/linux/blob/master/fs/char_dev.c#L486
-> > > <https://github.com/torvalds/linux/blob/master/fs/char_dev.c#L123>
-> > > [2]: https://github.com/torvalds/linux/blob/master/fs/char_dev.c#L123
-> > > 
-> > > <https://github.com/torvalds/linux/blob/master/fs/char_dev.c#L486>
-> > > > > > +	if (ret < 0)
-> > > > > > +		goto out;
-> > > > > > +
-> > > > > > +	rproc->dev.devt = cdevt;
-> > > > > > +out:
-> > > > > > +	return ret;
-> > > > > > +}
-> > > > > > +
-> > > > > > +void rproc_char_device_remove(struct rproc *rproc)
-> > > > > > +{
-> > > > > > +	__unregister_chrdev(rproc_major, rproc->index, 1, "remoteproc");
-> > > > > > +}
-> > > > > > +
-> > > > > > +void __init rproc_init_cdev(void)
-> > > > > > +{
-> > > > > > +	int ret;
-> > > > > > +
-> > > > > > +	ret = alloc_chrdev_region(&rproc_major, 0, NUM_RPROC_DEVICES, "remoteproc");
-> > > > > > +	if (ret < 0)
-> > > > > > +		pr_err("Failed to alloc rproc_cdev region, err %d\n", ret);
-> > > > > > +}
-> > > > > > +
-> > > > > > +void __exit rproc_exit_cdev(void)
-> > > > > > +{
-> > > > > > +	unregister_chrdev_region(MKDEV(rproc_major, 0), NUM_RPROC_DEVICES);
-> > > > > Please go back to the comment I made on this during my last review and respin.
-> > > > After digging in the code while debugging the above problem, I don't see how
-> > > > unregistering the chrdev region the way it is done here would have worked.
-> > > Since this is compiled statically and not built as a module, we will never
-> > > exercise the code path, so I will remove it in the next patchset.
-> > > 
-> > 
-> > You're right Siddharth, since we changed CONFIG_REMOTEPROC to bool it's no longer
-> > possible to hit remoteproc_exit(), so you can omit this function
-> > entirely. (And we should clean up the rest of that as well)
-> > 
-> > [..]
-> > > > > > diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-> > [..]
-> > > > > > @@ -488,6 +489,8 @@ struct rproc_dump_segment {
-> > > > > >    * @auto_boot: flag to indicate if remote processor should be auto-started
-> > > > > >    * @dump_segments: list of segments in the firmware
-> > > > > >    * @nb_vdev: number of vdev currently handled by rproc
-> > > > > > + * @char_dev: character device of the rproc
-> > > > > > + * @cdev_put_on_release: flag to indicate if remoteproc should be shutdown on @char_dev release
-> > > > > >    */
-> > > > > >   struct rproc {
-> > > > > >   	struct list_head node;
-> > > > > > @@ -523,6 +526,8 @@ struct rproc {
-> > > > > >   	int nb_vdev;
-> > > > > >   	u8 elf_class;
-> > > > > >   	u16 elf_machine;
-> > > > > > +	struct cdev char_dev;
-> > 
-> > As stated privately, I assumed based on this name that this is a struct
-> > device related to that character device. So please rename this cdev to
-> > save me from doing this mistake again.
-> > 
-> > Thanks,
-> > Bjorn
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
+
