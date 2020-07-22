@@ -2,172 +2,116 @@ Return-Path: <SRS0=Av4F=BB=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-12.0 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FB4CC433DF
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 22 Jul 2020 14:42:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C394FC433DF
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 22 Jul 2020 15:09:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1AC7120771
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 22 Jul 2020 14:42:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1595428948;
-	bh=wk9uc9EFeU1U4bZjuLI5oT7Ft4gFDxjC68gV7uHyIQU=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=KZvY93cZvik9maId9WfAGr1HPPCd5R3RuRZc7XIQ8WGSnhclnAZpIWlay9ypgwcdJ
-	 DQQwk/Mhrh1WSg49xwoN+XGh3L/8ENz9FdxbNf+N+KcQTHAPtKzQpsuGz70AHSBSX3
-	 jULjH7L5n1HHPBk5C8cHGCVIFwIBKkCZvyTRfEKQ=
+	by mail.kernel.org (Postfix) with ESMTP id 9D8B420717
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 22 Jul 2020 15:09:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732391AbgGVOm1 (ORCPT
+        id S1728046AbgGVPJd (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 22 Jul 2020 10:42:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50252 "EHLO mail.kernel.org"
+        Wed, 22 Jul 2020 11:09:33 -0400
+Received: from mga14.intel.com ([192.55.52.115]:33983 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730973AbgGVOm1 (ORCPT
+        id S1726717AbgGVPJd (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 22 Jul 2020 10:42:27 -0400
-Received: from mail-oo1-f41.google.com (mail-oo1-f41.google.com [209.85.161.41])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 98ABD20787;
-        Wed, 22 Jul 2020 14:42:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1595428946;
-        bh=wk9uc9EFeU1U4bZjuLI5oT7Ft4gFDxjC68gV7uHyIQU=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=R1rLrUiJOsu7Jts6Z0NU9U/t9UkTln7Iy+U9KrDK4pWNWUGAJ3q+e/6imP0mGETbl
-         KFjcPQUz+kR+c2XAyWPDQZrrACYdPKJSvD481tqUPAxzo8O59XknINk5F662atu6LQ
-         fnV85N6Mm7FSf8goxWEiQoE62PMEWGgIyV5Bky2U=
-Received: by mail-oo1-f41.google.com with SMTP id t6so461467ooh.4;
-        Wed, 22 Jul 2020 07:42:26 -0700 (PDT)
-X-Gm-Message-State: AOAM532K0Qx8WkH6nCpjDJvsoK4lUjZ5KzLGdhkgtiPX7NefUMPfauT0
-        /u/ht0drKVN6n2Ow0ipQftk93ZwuwX+EcVXkyA==
-X-Google-Smtp-Source: ABdhPJyQP1ZRMVJKJdH4QnM2k+ib1BqJI5c0CwiJkic3VdGrn99f7M/qMgn52dXNwA8FzcQBsfsiYcZtAdhuSLxTl7A=
-X-Received: by 2002:a4a:9c0f:: with SMTP id y15mr254900ooj.81.1595428945904;
- Wed, 22 Jul 2020 07:42:25 -0700 (PDT)
+        Wed, 22 Jul 2020 11:09:33 -0400
+IronPort-SDR: Ml1NjBay97GwnoP1wIeApPISk1NtazU+TINFB0U91IwPseki9ytL2LH4A0Kc3EuRJrVmlbXrPt
+ yjrUXZIgYniw==
+X-IronPort-AV: E=McAfee;i="6000,8403,9689"; a="149513597"
+X-IronPort-AV: E=Sophos;i="5.75,383,1589266800"; 
+   d="scan'208";a="149513597"
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Jul 2020 08:09:31 -0700
+IronPort-SDR: RlU5InFR7sDN5rcYvVgCLEpYmQ+Gd8aXOFnMbhPL0hxvuYvKnv3StrJqA1UIpEvc5pg372xPXs
+ tzqQod9sFYFg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.75,383,1589266800"; 
+   d="scan'208";a="432407239"
+Received: from gliakhov-mobl2.ger.corp.intel.com (HELO ubuntu.ger.corp.intel.com) ([10.252.58.190])
+  by orsmga004.jf.intel.com with ESMTP; 22 Jul 2020 08:09:28 -0700
+From:   Guennadi Liakhovetski <guennadi.liakhovetski@linux.intel.com>
+To:     kvm@vger.kernel.org
+Cc:     linux-remoteproc@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        sound-open-firmware@alsa-project.org,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Liam Girdwood <liam.r.girdwood@linux.intel.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Ohad Ben-Cohen <ohad@wizery.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Vincent Whitchurch <vincent.whitchurch@axis.com>
+Subject: [PATCH v4 0/4] Add a vhost RPMsg API
+Date:   Wed, 22 Jul 2020 17:09:23 +0200
+Message-Id: <20200722150927.15587-1-guennadi.liakhovetski@linux.intel.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-References: <20200622075956.171058-1-bjorn.andersson@linaro.org>
- <20200622075956.171058-2-bjorn.andersson@linaro.org> <CAL_JsqKW+R=rygii7N69o28h5780qx645RhPXGQZ4jw3kHadhw@mail.gmail.com>
- <20200722044615.GR388985@builder.lan>
-In-Reply-To: <20200722044615.GR388985@builder.lan>
-From:   Rob Herring <robh+dt@kernel.org>
-Date:   Wed, 22 Jul 2020 08:42:08 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqLa9GBtbgN6aL7AQ=A6V-YRtPgYqh6XgM2kpx532+r4Gg@mail.gmail.com>
-Message-ID: <CAL_JsqLa9GBtbgN6aL7AQ=A6V-YRtPgYqh6XgM2kpx532+r4Gg@mail.gmail.com>
-Subject: Re: [PATCH v2 1/4] dt-bindings: hwlock: qcom: Migrate binding to YAML
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Andy Gross <agross@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>,
-        Baolin Wang <baolin.wang7@gmail.com>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        "open list:REMOTE PROCESSOR (REMOTEPROC) SUBSYSTEM" 
-        <linux-remoteproc@vger.kernel.org>, devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Vinod Koul <vkoul@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Tue, Jul 21, 2020 at 10:48 PM Bjorn Andersson
-<bjorn.andersson@linaro.org> wrote:
->
-> On Tue 21 Jul 08:13 PDT 2020, Rob Herring wrote:
->
-> > On Mon, Jun 22, 2020 at 1:59 AM Bjorn Andersson
-> > <bjorn.andersson@linaro.org> wrote:
-> > >
-> > > Migrate the Qualcomm TCSR mutex binding to YAML to allow validation.
-> > >
-> > > Reviewed-by: Vinod Koul <vkoul@kernel.org>
-> > > Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> > > ---
-> > >
-> > > Changes since v1:
-> > > - Actually remove the old binding doc
-> > >
-> > >  .../bindings/hwlock/qcom-hwspinlock.txt       | 39 --------------
-> > >  .../bindings/hwlock/qcom-hwspinlock.yaml      | 51 +++++++++++++++++++
-> > >  2 files changed, 51 insertions(+), 39 deletions(-)
-> > >  delete mode 100644 Documentation/devicetree/bindings/hwlock/qcom-hwspinlock.txt
-> > >  create mode 100644 Documentation/devicetree/bindings/hwlock/qcom-hwspinlock.yaml
-> >
-> > [...]
-> >
-> > > diff --git a/Documentation/devicetree/bindings/hwlock/qcom-hwspinlock.yaml b/Documentation/devicetree/bindings/hwlock/qcom-hwspinlock.yaml
-> > > new file mode 100644
-> > > index 000000000000..71e63b52edd5
-> > > --- /dev/null
-> > > +++ b/Documentation/devicetree/bindings/hwlock/qcom-hwspinlock.yaml
-> > > @@ -0,0 +1,51 @@
-> > > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > > +%YAML 1.2
-> > > +---
-> > > +$id: http://devicetree.org/schemas/hwlock/qcom-hwspinlock.yaml#
-> > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > > +
-> > > +title: Qualcomm Hardware Mutex Block
-> > > +
-> > > +maintainers:
-> > > +  - Bjorn Andersson <bjorn.andersson@linaro.org>
-> > > +
-> > > +description:
-> > > +  The hardware block provides mutexes utilized between different processors on
-> > > +  the SoC as part of the communication protocol used by these processors.
-> > > +
-> > > +properties:
-> > > +  compatible:
-> > > +    enum:
-> > > +      - qcom,sfpb-mutex
-> > > +      - qcom,tcsr-mutex
-> > > +
-> > > +  '#hwlock-cells':
-> > > +    const: 1
-> > > +
-> > > +  syscon:
-> > > +    $ref: "/schemas/types.yaml#/definitions/phandle-array"
-> > > +    description:
-> > > +      Should be a triple of phandle referencing the TCSR mutex syscon, offset
-> > > +      of first mutex within the syscon and stride between each mutex.
-> > > +
-> > > +required:
-> > > +  - compatible
-> > > +  - '#hwlock-cells'
-> > > +  - syscon
-> > > +
-> > > +additionalProperties: false
-> > > +
-> > > +examples:
-> > > +  - |
-> > > +        tcsr_mutex_block: syscon@fd484000 {
-> > > +                compatible = "syscon";
-> >
-> > 'syscon' alone now generates warnings. Can you drop this node or add a
-> > specific compatible.
-> >
->
-> In the binding examples or in the dts files as well?
+Hi,
 
-Both, but only the examples need to be warning free at this point. So
-just dropping the node in the example is enough and you can solve this
-for dts files later if you wish.
+Now that virtio-rpmsg endianness fixes have been merged we can 
+proceed with the next step.
 
-> The hardware block here is named "TCSR_MUTEX", so the natural compatible
-> to add here would be "qcom,tcsr-mutex", but that already has a meaning -
-> and the syscon node here doesn't carry all required properties...
+v4:
+- add endianness conversions to comply with the VirtIO standard
 
-So you have 2 nodes pointing to the same h/w? Also a no-no...
+v3:
+- address several checkpatch warnings
+- address comments from Mathieu Poirier
 
-> Should we perhaps just remove the split model (syscon and
-> qcom,tcsr-mutex as different nodes) from the example and dts files?
-> (While maintaining backwards compatibility in the binding and driver)
->
-> For the platforms where we have other drivers that needs to poke in this
-> syscon it seems to work fine to say:
->         compatible = "qcom,tcsr-mutex", "syscon";
+v2:
+- update patch #5 with a correct vhost_dev_init() prototype
+- drop patch #6 - it depends on a different patch, that is currently
+  an RFC
+- address comments from Pierre-Louis Bossart:
+  * remove "default n" from Kconfig
 
-Yes. 'syscon' just means automagically create a regmap.
+Linux supports RPMsg over VirtIO for "remote processor" / AMP use
+cases. It can however also be used for virtualisation scenarios,
+e.g. when using KVM to run Linux on both the host and the guests.
+This patch set adds a wrapper API to facilitate writing vhost
+drivers for such RPMsg-based solutions. The first use case is an
+audio DSP virtualisation project, currently under development, ready
+for review and submission, available at
+https://github.com/thesofproject/linux/pull/1501/commits
 
-Rob
+Thanks
+Guennadi
+
+Guennadi Liakhovetski (4):
+  vhost: convert VHOST_VSOCK_SET_RUNNING to a generic ioctl
+  rpmsg: move common structures and defines to headers
+  rpmsg: update documentation
+  vhost: add an RPMsg API
+
+ Documentation/rpmsg.txt          |   6 +-
+ drivers/rpmsg/virtio_rpmsg_bus.c |  78 +------
+ drivers/vhost/Kconfig            |   7 +
+ drivers/vhost/Makefile           |   3 +
+ drivers/vhost/rpmsg.c            | 375 +++++++++++++++++++++++++++++++
+ drivers/vhost/vhost_rpmsg.h      |  74 ++++++
+ include/linux/virtio_rpmsg.h     |  83 +++++++
+ include/uapi/linux/rpmsg.h       |   3 +
+ include/uapi/linux/vhost.h       |   4 +-
+ 9 files changed, 553 insertions(+), 80 deletions(-)
+ create mode 100644 drivers/vhost/rpmsg.c
+ create mode 100644 drivers/vhost/vhost_rpmsg.h
+ create mode 100644 include/linux/virtio_rpmsg.h
+
+-- 
+2.27.0
+
