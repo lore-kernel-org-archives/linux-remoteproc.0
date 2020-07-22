@@ -7,260 +7,184 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46A9CC433DF
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 22 Jul 2020 04:25:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14DFBC433E0
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 22 Jul 2020 04:48:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2067A206E3
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 22 Jul 2020 04:25:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DF130207CD
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 22 Jul 2020 04:48:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="I/nH1rdU"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nG39IMDj"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726452AbgGVEZf (ORCPT
+        id S1726696AbgGVEsK (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 22 Jul 2020 00:25:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42958 "EHLO
+        Wed, 22 Jul 2020 00:48:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46476 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726349AbgGVEZe (ORCPT
+        with ESMTP id S1725862AbgGVEsK (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 22 Jul 2020 00:25:34 -0400
-Received: from mail-pl1-x644.google.com (mail-pl1-x644.google.com [IPv6:2607:f8b0:4864:20::644])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 44851C0619DB
-        for <linux-remoteproc@vger.kernel.org>; Tue, 21 Jul 2020 21:25:34 -0700 (PDT)
-Received: by mail-pl1-x644.google.com with SMTP id x8so323154plm.10
-        for <linux-remoteproc@vger.kernel.org>; Tue, 21 Jul 2020 21:25:34 -0700 (PDT)
+        Wed, 22 Jul 2020 00:48:10 -0400
+Received: from mail-pg1-x541.google.com (mail-pg1-x541.google.com [IPv6:2607:f8b0:4864:20::541])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EDDE7C0619DB
+        for <linux-remoteproc@vger.kernel.org>; Tue, 21 Jul 2020 21:48:09 -0700 (PDT)
+Received: by mail-pg1-x541.google.com with SMTP id j19so535459pgm.11
+        for <linux-remoteproc@vger.kernel.org>; Tue, 21 Jul 2020 21:48:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=JyfZs1fHQ/blLkrFQMU2v7JeeEiViiuzIwxf6ciMQ9I=;
-        b=I/nH1rdUUeezvq6ZwJWq4DyrdZI8DByuPbtlNnssIK6q6k2rpYikkIFiECE9U1yhsz
-         Kz4JOM6k9hfmQU7PLBpQt3WI6sLoju7etL0XGZBu2T3n2Cm5ac+HYBUx1uVhdqBn3fwF
-         KLQh5mUnVJTOmlW/fRckNHhtDDykqakfcdDeEqV/JO11FcRtReRITaD5FS/7xFkPDq3m
-         2h3voWOWhvl8yNNLIx76jwzXojeE9XHx7T31nOgnFx/BuJW8V3slWds/6FA5RU2ZXDdY
-         lzZ1MnjliX2KcmllKFgzJSLqsQyXGwzycA88UwKlRLClBlPXmKa+EVTFw0OhHY3/LQQV
-         a1eg==
+        bh=58zKMZOPt1u3jpGyc+egvpdxr0peyatL+Nyz70ratxs=;
+        b=nG39IMDjujMeRh/4sbcvRxIPQSNRe2DOZ6Nx2FVG6gFBmEZfpbR8IHnABB/ZFmmuYq
+         L9xik+zNqwLx6t9ltZtPjSlPzGwW8BnJ3U4QayiLDdViWAIAJtsky0WxIHPn26ocOqWy
+         goPjV8dCAOoFOA+8R4dlu0BP0LN9LKT5QfYZbL1Csgi59vmx1OEuQghm6E6wBeBB15Vz
+         UlJEiHxgOpMI29wi8Rh60WgwyBr33qFbpArVhR2gW4+hsSu0SntQMTQn8yTNYF78DY8o
+         AlyXxwIlq39XaWwhHYmo8npE5Bw4Lb0yEBUd0I9rhSUOKy+6rR2KbHStwZl1SRblTPt6
+         qjww==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=JyfZs1fHQ/blLkrFQMU2v7JeeEiViiuzIwxf6ciMQ9I=;
-        b=UlKbu4y0oZPPBsmdVvf1aLxRICMx7ULZ315P9RTjk7AKBtwGHi+l96UWcu/K2mT3/k
-         e3xsBzJne9K7eaQa7l4nPuNf64US7wYGxF+B1LgKnc35kngBGDRN9uuPMAdn88ZYPK4D
-         frg3Fr/e0nXXDorn5u1tlQdKmgfclNNAoZaFHZQh+oKEuIGS62CkkCuyF3XLgeKa7lY+
-         pi9Wln0PG9BPFco9Bdk8fv+BDYqdUhWTnzq4+ZNRr7Ty/GFR40BES9fYpKkNXgqL5rQ8
-         9cfPSdMMniIGPAYuQqB055CVaurB5HjA54a6MiXhBt8E9CF1B57AaE9oTPw0rhnRy9w7
-         mmrg==
-X-Gm-Message-State: AOAM531Rzcxmaj/aSkUuUAXM0ij69Uo9K37ab4KfS3VlnRr4yOYhI5Xb
-        IS72DgZWxGGutDQKzt/YGn7p3A==
-X-Google-Smtp-Source: ABdhPJywKGCqP7OKsj8nI23NT9BWESLDFyZ8piR4UWAnPiyIyq3Om8NCWNNqfh0AA1agHvT299UGpw==
-X-Received: by 2002:a17:90a:1a83:: with SMTP id p3mr7554984pjp.113.1595391933557;
-        Tue, 21 Jul 2020 21:25:33 -0700 (PDT)
+        bh=58zKMZOPt1u3jpGyc+egvpdxr0peyatL+Nyz70ratxs=;
+        b=oe+qQlpHJXlV0fN15Ya5L1u2FDCCE77xOcfasd/7bAA1jNLZUQKnrKzXb+qGQqLcLu
+         G2iI0T6p4bQm8+MBVqVC/L/AqUFd2RTi7GIKQqWLf0wxKO7p7pqL7gggbT3Bl2k1q3eD
+         KOh0teHqkTrGHIbp2Li8mhkf5PATGnTWA3Sf9nrie+G43CSBSJxe629OF8QnQfkgQRGe
+         vRXh05z/UVpdEOqLQ7OH7+EQX9IuPlsVo+jiswcxhUvL4RsCdkubtIVHYdNi1tJK/fyA
+         dSYSKQOmKpemes08984zl/DQDPZO2qpCh0bylr8rWfIVvZ7gIc/hSI1G2TbgWPk+0OoF
+         YYRw==
+X-Gm-Message-State: AOAM531n3rwC8ls2yQI+B38R+K52nbaJn+0pvXjy6RPpNQk7ac25iFCs
+        XxiQuL0GZkd8+cbf43OiGvIRag==
+X-Google-Smtp-Source: ABdhPJy06BZ1ClnCiS4rdd+DGQj+8rN/XzWayLoX5YI/eqUtY8HLfx6BNn8AsV/rf4BLpaE0sM22Nw==
+X-Received: by 2002:a63:f806:: with SMTP id n6mr24931192pgh.346.1595393289326;
+        Tue, 21 Jul 2020 21:48:09 -0700 (PDT)
 Received: from builder.lan (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id s14sm5048791pjl.14.2020.07.21.21.25.32
+        by smtp.gmail.com with ESMTPSA id w1sm22555353pfq.53.2020.07.21.21.48.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 Jul 2020 21:25:32 -0700 (PDT)
-Date:   Tue, 21 Jul 2020 21:23:39 -0700
+        Tue, 21 Jul 2020 21:48:08 -0700 (PDT)
+Date:   Tue, 21 Jul 2020 21:46:15 -0700
 From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Sibi Sankar <sibis@codeaurora.org>
-Cc:     agross@kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        evgreen@chromium.org, ohad@wizery.com
-Subject: Re: [PATCH v2 2/2] remoteproc: qcom_q6v5_mss: Add MBA log extraction
- support
-Message-ID: <20200722042339.GO2922385@builder.lan>
-References: <20200721112935.25716-1-sibis@codeaurora.org>
- <20200721112935.25716-3-sibis@codeaurora.org>
+To:     Rob Herring <robh+dt@kernel.org>
+Cc:     Andy Gross <agross@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>,
+        Baolin Wang <baolin.wang7@gmail.com>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        "open list:REMOTE PROCESSOR (REMOTEPROC) SUBSYSTEM" 
+        <linux-remoteproc@vger.kernel.org>, devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Vinod Koul <vkoul@kernel.org>
+Subject: Re: [PATCH v2 1/4] dt-bindings: hwlock: qcom: Migrate binding to YAML
+Message-ID: <20200722044615.GR388985@builder.lan>
+References: <20200622075956.171058-1-bjorn.andersson@linaro.org>
+ <20200622075956.171058-2-bjorn.andersson@linaro.org>
+ <CAL_JsqKW+R=rygii7N69o28h5780qx645RhPXGQZ4jw3kHadhw@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200721112935.25716-3-sibis@codeaurora.org>
+In-Reply-To: <CAL_JsqKW+R=rygii7N69o28h5780qx645RhPXGQZ4jw3kHadhw@mail.gmail.com>
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Tue 21 Jul 04:29 PDT 2020, Sibi Sankar wrote:
+On Tue 21 Jul 08:13 PDT 2020, Rob Herring wrote:
 
-> On SC7180 the MBA firmware stores the bootup text logs in a 4K segment
-> at the beginning of the MBA region. Add support to extract the logs
-> which will be useful to debug mba boot/authentication issues.
+> On Mon, Jun 22, 2020 at 1:59 AM Bjorn Andersson
+> <bjorn.andersson@linaro.org> wrote:
+> >
+> > Migrate the Qualcomm TCSR mutex binding to YAML to allow validation.
+> >
+> > Reviewed-by: Vinod Koul <vkoul@kernel.org>
+> > Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> > ---
+> >
+> > Changes since v1:
+> > - Actually remove the old binding doc
+> >
+> >  .../bindings/hwlock/qcom-hwspinlock.txt       | 39 --------------
+> >  .../bindings/hwlock/qcom-hwspinlock.yaml      | 51 +++++++++++++++++++
+> >  2 files changed, 51 insertions(+), 39 deletions(-)
+> >  delete mode 100644 Documentation/devicetree/bindings/hwlock/qcom-hwspinlock.txt
+> >  create mode 100644 Documentation/devicetree/bindings/hwlock/qcom-hwspinlock.yaml
 > 
-> Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
+> [...]
+> 
+> > diff --git a/Documentation/devicetree/bindings/hwlock/qcom-hwspinlock.yaml b/Documentation/devicetree/bindings/hwlock/qcom-hwspinlock.yaml
+> > new file mode 100644
+> > index 000000000000..71e63b52edd5
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/hwlock/qcom-hwspinlock.yaml
+> > @@ -0,0 +1,51 @@
+> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/hwlock/qcom-hwspinlock.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: Qualcomm Hardware Mutex Block
+> > +
+> > +maintainers:
+> > +  - Bjorn Andersson <bjorn.andersson@linaro.org>
+> > +
+> > +description:
+> > +  The hardware block provides mutexes utilized between different processors on
+> > +  the SoC as part of the communication protocol used by these processors.
+> > +
+> > +properties:
+> > +  compatible:
+> > +    enum:
+> > +      - qcom,sfpb-mutex
+> > +      - qcom,tcsr-mutex
+> > +
+> > +  '#hwlock-cells':
+> > +    const: 1
+> > +
+> > +  syscon:
+> > +    $ref: "/schemas/types.yaml#/definitions/phandle-array"
+> > +    description:
+> > +      Should be a triple of phandle referencing the TCSR mutex syscon, offset
+> > +      of first mutex within the syscon and stride between each mutex.
+> > +
+> > +required:
+> > +  - compatible
+> > +  - '#hwlock-cells'
+> > +  - syscon
+> > +
+> > +additionalProperties: false
+> > +
+> > +examples:
+> > +  - |
+> > +        tcsr_mutex_block: syscon@fd484000 {
+> > +                compatible = "syscon";
+> 
+> 'syscon' alone now generates warnings. Can you drop this node or add a
+> specific compatible.
+> 
 
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+In the binding examples or in the dts files as well?
+
+The hardware block here is named "TCSR_MUTEX", so the natural compatible
+to add here would be "qcom,tcsr-mutex", but that already has a meaning -
+and the syscon node here doesn't carry all required properties...
 
 
-Afaict this is completely independent from the other patch in the
-series, so I applied this.
+Should we perhaps just remove the split model (syscon and
+qcom,tcsr-mutex as different nodes) from the example and dts files?
+(While maintaining backwards compatibility in the binding and driver)
+
+For the platforms where we have other drivers that needs to poke in this
+syscon it seems to work fine to say:
+	compatible = "qcom,tcsr-mutex", "syscon";
 
 Regards,
 Bjorn
 
-> ---
-> 
-> V2:
->  * Don't dump logs in mba_reclaim path [Bjorn]
->  * Move has_mba_logs check to q6v5_dump_mba_logs [Bjorn]
->  * SDM845 mss was incorrectly marked to support mba logs
-> 
->  drivers/remoteproc/qcom_q6v5_mss.c | 38 +++++++++++++++++++++++++++++-
->  1 file changed, 37 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/remoteproc/qcom_q6v5_mss.c b/drivers/remoteproc/qcom_q6v5_mss.c
-> index 49cd16e050533..945ca2652e7d6 100644
-> --- a/drivers/remoteproc/qcom_q6v5_mss.c
-> +++ b/drivers/remoteproc/qcom_q6v5_mss.c
-> @@ -9,6 +9,7 @@
->  
->  #include <linux/clk.h>
->  #include <linux/delay.h>
-> +#include <linux/devcoredump.h>
->  #include <linux/dma-mapping.h>
->  #include <linux/interrupt.h>
->  #include <linux/kernel.h>
-> @@ -37,6 +38,8 @@
->  
->  #define MPSS_CRASH_REASON_SMEM		421
->  
-> +#define MBA_LOG_SIZE			SZ_4K
-> +
->  /* RMB Status Register Values */
->  #define RMB_PBL_SUCCESS			0x1
->  
-> @@ -141,6 +144,7 @@ struct rproc_hexagon_res {
->  	int version;
->  	bool need_mem_protection;
->  	bool has_alt_reset;
-> +	bool has_mba_logs;
->  	bool has_spare_reg;
->  };
->  
-> @@ -202,6 +206,7 @@ struct q6v5 {
->  	struct qcom_sysmon *sysmon;
->  	bool need_mem_protection;
->  	bool has_alt_reset;
-> +	bool has_mba_logs;
->  	bool has_spare_reg;
->  	int mpss_perm;
->  	int mba_perm;
-> @@ -521,6 +526,26 @@ static int q6v5_rmb_mba_wait(struct q6v5 *qproc, u32 status, int ms)
->  	return val;
->  }
->  
-> +static void q6v5_dump_mba_logs(struct q6v5 *qproc)
-> +{
-> +	struct rproc *rproc = qproc->rproc;
-> +	void *data;
-> +
-> +	if (!qproc->has_mba_logs)
-> +		return;
-> +
-> +	if (q6v5_xfer_mem_ownership(qproc, &qproc->mba_perm, true, false, qproc->mba_phys,
-> +				    qproc->mba_size))
-> +		return;
-> +
-> +	data = vmalloc(MBA_LOG_SIZE);
-> +	if (!data)
-> +		return;
-> +
-> +	memcpy(data, qproc->mba_region, MBA_LOG_SIZE);
-> +	dev_coredumpv(&rproc->dev, data, MBA_LOG_SIZE, GFP_KERNEL);
-> +}
-> +
->  static int q6v5proc_reset(struct q6v5 *qproc)
->  {
->  	u32 val;
-> @@ -839,6 +864,7 @@ static int q6v5_mba_load(struct q6v5 *qproc)
->  {
->  	int ret;
->  	int xfermemop_ret;
-> +	bool mba_load_err = false;
->  
->  	qcom_q6v5_prepare(&qproc->q6v5);
->  
-> @@ -932,7 +958,7 @@ static int q6v5_mba_load(struct q6v5 *qproc)
->  	q6v5proc_halt_axi_port(qproc, qproc->halt_map, qproc->halt_q6);
->  	q6v5proc_halt_axi_port(qproc, qproc->halt_map, qproc->halt_modem);
->  	q6v5proc_halt_axi_port(qproc, qproc->halt_map, qproc->halt_nc);
-> -
-> +	mba_load_err = true;
->  reclaim_mba:
->  	xfermemop_ret = q6v5_xfer_mem_ownership(qproc, &qproc->mba_perm, true,
->  						false, qproc->mba_phys,
-> @@ -940,6 +966,8 @@ static int q6v5_mba_load(struct q6v5 *qproc)
->  	if (xfermemop_ret) {
->  		dev_err(qproc->dev,
->  			"Failed to reclaim mba buffer, system may become unstable\n");
-> +	} else if (mba_load_err) {
-> +		q6v5_dump_mba_logs(qproc);
->  	}
->  
->  disable_active_clks:
-> @@ -1298,6 +1326,7 @@ static int q6v5_start(struct rproc *rproc)
->  
->  reclaim_mpss:
->  	q6v5_mba_reclaim(qproc);
-> +	q6v5_dump_mba_logs(qproc);
->  
->  	return ret;
->  }
-> @@ -1717,6 +1746,7 @@ static int q6v5_probe(struct platform_device *pdev)
->  
->  	qproc->version = desc->version;
->  	qproc->need_mem_protection = desc->need_mem_protection;
-> +	qproc->has_mba_logs = desc->has_mba_logs;
->  
->  	ret = qcom_q6v5_init(&qproc->q6v5, pdev, rproc, MPSS_CRASH_REASON_SMEM,
->  			     qcom_msa_handover);
-> @@ -1808,6 +1838,7 @@ static const struct rproc_hexagon_res sc7180_mss = {
->  	},
->  	.need_mem_protection = true,
->  	.has_alt_reset = false,
-> +	.has_mba_logs = true,
->  	.has_spare_reg = true,
->  	.version = MSS_SC7180,
->  };
-> @@ -1843,6 +1874,7 @@ static const struct rproc_hexagon_res sdm845_mss = {
->  	},
->  	.need_mem_protection = true,
->  	.has_alt_reset = true,
-> +	.has_mba_logs = false,
->  	.has_spare_reg = false,
->  	.version = MSS_SDM845,
->  };
-> @@ -1870,6 +1902,7 @@ static const struct rproc_hexagon_res msm8998_mss = {
->  	},
->  	.need_mem_protection = true,
->  	.has_alt_reset = false,
-> +	.has_mba_logs = false,
->  	.has_spare_reg = false,
->  	.version = MSS_MSM8998,
->  };
-> @@ -1900,6 +1933,7 @@ static const struct rproc_hexagon_res msm8996_mss = {
->  	},
->  	.need_mem_protection = true,
->  	.has_alt_reset = false,
-> +	.has_mba_logs = false,
->  	.has_spare_reg = false,
->  	.version = MSS_MSM8996,
->  };
-> @@ -1933,6 +1967,7 @@ static const struct rproc_hexagon_res msm8916_mss = {
->  	},
->  	.need_mem_protection = false,
->  	.has_alt_reset = false,
-> +	.has_mba_logs = false,
->  	.has_spare_reg = false,
->  	.version = MSS_MSM8916,
->  };
-> @@ -1974,6 +2009,7 @@ static const struct rproc_hexagon_res msm8974_mss = {
->  	},
->  	.need_mem_protection = false,
->  	.has_alt_reset = false,
-> +	.has_mba_logs = false,
->  	.has_spare_reg = false,
->  	.version = MSS_MSM8974,
->  };
-> -- 
-> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-> a Linux Foundation Collaborative Project
-> 
+> > +                reg = <0xfd484000 0x2000>;
+> > +        };
+> > +
+> > +        hwlock {
+> > +                compatible = "qcom,tcsr-mutex";
+> > +                syscon = <&tcsr_mutex_block 0 0x80>;
+> > +
+> > +                #hwlock-cells = <1>;
+> > +        };
+> > +...
+> > --
+> > 2.26.2
+> >
