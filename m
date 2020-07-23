@@ -1,135 +1,133 @@
-Return-Path: <SRS0=Av4F=BB=vger.kernel.org=linux-remoteproc-owner@kernel.org>
+Return-Path: <SRS0=VPet=BC=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D77BC433ED
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 22 Jul 2020 23:56:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CDE96C433EC
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 23 Jul 2020 08:34:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F1C6022C9E
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 22 Jul 2020 23:56:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AD0F52084D
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 23 Jul 2020 08:34:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="EjtEM9lb"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Ki/5frSu"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733220AbgGVX4O (ORCPT
+        id S1725846AbgGWIer (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 22 Jul 2020 19:56:14 -0400
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:43876 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728607AbgGVX4G (ORCPT
+        Thu, 23 Jul 2020 04:34:47 -0400
+Received: from us-smtp-1.mimecast.com ([207.211.31.81]:34699 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725858AbgGWIeq (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 22 Jul 2020 19:56:06 -0400
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 06MNu0Rl130855;
-        Wed, 22 Jul 2020 18:56:00 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1595462160;
-        bh=fWQBJMcOhOwMqLAapBQT17gbkERFg3VDFT1cSyVC6UU=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=EjtEM9lbC6a7uh0njJBynLTG+2UfcYkCyU00hMcAuGg/cR08vrBoHguIcxpAC5Du3
-         dgawjdOQzGveNYo+77IVKUvQOeNjUEvgs9JSAeZztvbnViBdboQzRbrFwIdkod653v
-         Yz382e2stFXHn3F2mg47YPMayWCEJGrSmkHIv8aA=
-Received: from DFLE109.ent.ti.com (dfle109.ent.ti.com [10.64.6.30])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 06MNu0Pe105549
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 22 Jul 2020 18:56:00 -0500
-Received: from DFLE111.ent.ti.com (10.64.6.32) by DFLE109.ent.ti.com
- (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3; Wed, 22
- Jul 2020 18:56:00 -0500
-Received: from fllv0039.itg.ti.com (10.64.41.19) by DFLE111.ent.ti.com
- (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3 via
- Frontend Transport; Wed, 22 Jul 2020 18:56:00 -0500
-Received: from lelv0597.itg.ti.com (lelv0597.itg.ti.com [10.181.64.32])
-        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id 06MNu0xI109437;
-        Wed, 22 Jul 2020 18:56:00 -0500
-Received: from localhost ([10.250.34.248])
-        by lelv0597.itg.ti.com (8.14.7/8.14.7) with ESMTP id 06MNu0ZX072349;
-        Wed, 22 Jul 2020 18:56:00 -0500
-From:   Suman Anna <s-anna@ti.com>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Thu, 23 Jul 2020 04:34:46 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1595493285;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=xGTIbgCx+rDVKvWTlEHAJATfxUUpkuPfnD7JMbYkQY8=;
+        b=Ki/5frSuIz9bZtDOAZpDQcd4zGzzmoEa99Dr6ePx3xvGUC3EaYT6zoJAJ4V5/WceE+hCJL
+        aawQBPwFfkKQ6xuZjjySxsuZJet+LwbK/aIEYVHrJKKo0YlHvSAfdiBYHoqsynyDTJc/fu
+        FOpKZ/6z4FdZj3ug+OhgC7Q2qYDqbxs=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-337-SgaDFDlzP6a-PRNU-JWZbg-1; Thu, 23 Jul 2020 04:34:43 -0400
+X-MC-Unique: SgaDFDlzP6a-PRNU-JWZbg-1
+Received: by mail-wr1-f69.google.com with SMTP id j5so1158567wro.6
+        for <linux-remoteproc@vger.kernel.org>; Thu, 23 Jul 2020 01:34:42 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=xGTIbgCx+rDVKvWTlEHAJATfxUUpkuPfnD7JMbYkQY8=;
+        b=tCj1RKXNDYX2bepA8Ulpbmni5ReKMQRNCJKLSJ/IkAVx/FXOsu+X7dAZpVGjMOjSc0
+         1uKus15wWnkqAqJG7O9MRDYLzfOjFWkPQzBIhjjUcCssgF+QEJPSKqfPcWVWCc7WwrNd
+         2CyXPquOxnM8LG3ugJrV/DNHBXUOsZccgPJ0Sw/ZvMrPQlUIJFfRb4fOFUrrxlcsyJzF
+         LOUVTjVTmJBKgQG4cABFE+sgnxqHQoMpTdLoijL42/dy0qI3ySuGVBvmx7qniLOtuL1a
+         JGWwJyKQFGoXpmqEDgf64mMyCrcoNARdYT5+qfPRIlhtxmhSHqWuSVEwATi7VW/5/ine
+         MIPg==
+X-Gm-Message-State: AOAM532O8u3N+FAHQZ2cmK8+Bt/gjhBJnGa0hDOZRLp1LnRMP8ZfS9vl
+        3x57RMcI+k4Ct00WsA+moTByK9Ds395Cvt7tmeRQV8al3XXZi2Vnew8QOBDkzSlIAooC7rZJ1MK
+        f6S/16sB8Y/477HL/6TrTI3wttuIjNQ==
+X-Received: by 2002:a7b:cb8d:: with SMTP id m13mr2650627wmi.120.1595493281556;
+        Thu, 23 Jul 2020 01:34:41 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJzXZi0KGyqccwK0YBH6EPSIFaT3xENgDnbzBhFqPmSY7XV5a91YqQHX0IHrfs3AUaL6q2mXag==
+X-Received: by 2002:a7b:cb8d:: with SMTP id m13mr2650615wmi.120.1595493281258;
+        Thu, 23 Jul 2020 01:34:41 -0700 (PDT)
+Received: from steredhat.lan ([5.180.207.22])
+        by smtp.gmail.com with ESMTPSA id o2sm2897806wrj.21.2020.07.23.01.34.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 23 Jul 2020 01:34:40 -0700 (PDT)
+Date:   Thu, 23 Jul 2020 10:34:35 +0200
+From:   Stefano Garzarella <sgarzare@redhat.com>
+To:     Guennadi Liakhovetski <guennadi.liakhovetski@linux.intel.com>
+Cc:     kvm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        sound-open-firmware@alsa-project.org,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Liam Girdwood <liam.r.girdwood@linux.intel.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Ohad Ben-Cohen <ohad@wizery.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>
-CC:     Lokesh Vutla <lokeshvutla@ti.com>,
-        <linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, Suman Anna <s-anna@ti.com>
-Subject: [PATCH v3 3/4] remoteproc: k3-r5: Initialize TCM memories for ECC
-Date:   Wed, 22 Jul 2020 18:55:53 -0500
-Message-ID: <20200722235554.7511-4-s-anna@ti.com>
-X-Mailer: git-send-email 2.26.0
-In-Reply-To: <20200722235554.7511-1-s-anna@ti.com>
-References: <20200722235554.7511-1-s-anna@ti.com>
+        Vincent Whitchurch <vincent.whitchurch@axis.com>
+Subject: Re: [PATCH v4 1/4] vhost: convert VHOST_VSOCK_SET_RUNNING to a
+ generic ioctl
+Message-ID: <20200723083435.3rjn5qiqhxcvxxwk@steredhat.lan>
+References: <20200722150927.15587-1-guennadi.liakhovetski@linux.intel.com>
+ <20200722150927.15587-2-guennadi.liakhovetski@linux.intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200722150927.15587-2-guennadi.liakhovetski@linux.intel.com>
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-The R5F processors on K3 SoCs all have two TCMs (ATCM and BTCM) that
-support 32-bit ECC. The TCMs are typically loaded with some boot-up
-code to initialize the R5 MPUs to further execute code out of DDR.
-The ECC for the TCMs is enabled by default on K3 SoCs due to internal
-default tie-off values, but the TCM memories are not initialized on
-device power up. Any read access without the corresponding TCM memory
-location initialized will generate an ECC error, and any such access
-from a A72 or A53 core will trigger a SError.
+On Wed, Jul 22, 2020 at 05:09:24PM +0200, Guennadi Liakhovetski wrote:
+> VHOST_VSOCK_SET_RUNNING is used by the vhost vsock driver to perform
+> crucial VirtQueue initialisation, like assigning .private fields and
+> calling vhost_vq_init_access(), and clean up. However, this ioctl is
+> actually extremely useful for any vhost driver, that doesn't have a
+> side channel to inform it of a status change, e.g. upon a guest
+> reboot. This patch makes that ioctl generic, while preserving its
+> numeric value and also keeping the original alias.
+> 
+> Signed-off-by: Guennadi Liakhovetski <guennadi.liakhovetski@linux.intel.com>
+> ---
+>  include/uapi/linux/vhost.h | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/include/uapi/linux/vhost.h b/include/uapi/linux/vhost.h
+> index 0c2349612e77..5d9254e2a6b6 100644
+> --- a/include/uapi/linux/vhost.h
+> +++ b/include/uapi/linux/vhost.h
+> @@ -95,6 +95,8 @@
+>  #define VHOST_SET_BACKEND_FEATURES _IOW(VHOST_VIRTIO, 0x25, __u64)
+>  #define VHOST_GET_BACKEND_FEATURES _IOR(VHOST_VIRTIO, 0x26, __u64)
+>  
+> +#define VHOST_SET_RUNNING _IOW(VHOST_VIRTIO, 0x61, int)
+> +
+>  /* VHOST_NET specific defines */
+>  
+>  /* Attach virtio net ring to a raw socket, or tap device.
+> @@ -116,7 +118,7 @@
+>  /* VHOST_VSOCK specific defines */
+>  
+>  #define VHOST_VSOCK_SET_GUEST_CID	_IOW(VHOST_VIRTIO, 0x60, __u64)
+> -#define VHOST_VSOCK_SET_RUNNING		_IOW(VHOST_VIRTIO, 0x61, int)
+> +#define VHOST_VSOCK_SET_RUNNING		VHOST_SET_RUNNING
+>  
+>  /* VHOST_VDPA specific defines */
+>  
+> -- 
+> 2.27.0
+> 
 
-So, zero initialize both the TCM memories before loading any firmware
-onto a R5F in remoteproc mode. Any R5F booted from U-Boot/SPL would
-require a similar initialization in the bootloader. Note that both
-the TCMs are initialized unconditionally as the TCM enable config bits
-only manage the access and visibility from R5.
-
-Signed-off-by: Suman Anna <s-anna@ti.com>
-Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
----
-v3: No code changes, picked up tags
-v2: https://patchwork.kernel.org/patch/11632989/
-v1: https://patchwork.kernel.org/patch/11456371/
-
- drivers/remoteproc/ti_k3_r5_remoteproc.c | 17 +++++++++++++++--
- 1 file changed, 15 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/remoteproc/ti_k3_r5_remoteproc.c b/drivers/remoteproc/ti_k3_r5_remoteproc.c
-index 2e3daec0b7ef..3a27fe881e30 100644
---- a/drivers/remoteproc/ti_k3_r5_remoteproc.c
-+++ b/drivers/remoteproc/ti_k3_r5_remoteproc.c
-@@ -362,11 +362,24 @@ static int k3_r5_rproc_prepare(struct rproc *rproc)
- 
- 	ret = (cluster->mode == CLUSTER_MODE_LOCKSTEP) ?
- 		k3_r5_lockstep_release(cluster) : k3_r5_split_release(core);
--	if (ret)
-+	if (ret) {
- 		dev_err(dev, "unable to enable cores for TCM loading, ret = %d\n",
- 			ret);
-+		return ret;
-+	}
- 
--	return ret;
-+	/*
-+	 * Zero out both TCMs unconditionally (access from v8 Arm core is not
-+	 * affected by ATCM & BTCM enable configuration values) so that ECC
-+	 * can be effective on all TCM addresses.
-+	 */
-+	dev_dbg(dev, "zeroing out ATCM memory\n");
-+	memset(core->mem[0].cpu_addr, 0x00, core->mem[0].size);
-+
-+	dev_dbg(dev, "zeroing out BTCM memory\n");
-+	memset(core->mem[1].cpu_addr, 0x00, core->mem[1].size);
-+
-+	return 0;
- }
- 
- /*
--- 
-2.26.0
+Reviewed-by: Stefano Garzarella <sgarzare@redhat.com>
 
