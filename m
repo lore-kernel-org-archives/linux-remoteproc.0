@@ -2,405 +2,300 @@ Return-Path: <SRS0=cRpd=BD=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33F2AC433E1
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 24 Jul 2020 20:10:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B775BC433F7
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 24 Jul 2020 20:46:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0337A2070B
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 24 Jul 2020 20:10:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8F98320737
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 24 Jul 2020 20:46:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="uQ0bZJAe"
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="lcGhd/wO"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726652AbgGXUKE (ORCPT
+        id S1726899AbgGXUpj (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 24 Jul 2020 16:10:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44216 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726512AbgGXUKE (ORCPT
+        Fri, 24 Jul 2020 16:45:39 -0400
+Received: from rnd-relay.smtp.broadcom.com ([192.19.232.150]:34338 "EHLO
+        rnd-relay.smtp.broadcom.com" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726811AbgGXUpi (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 24 Jul 2020 16:10:04 -0400
-Received: from mail-pf1-x441.google.com (mail-pf1-x441.google.com [IPv6:2607:f8b0:4864:20::441])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5BB6BC0619D3
-        for <linux-remoteproc@vger.kernel.org>; Fri, 24 Jul 2020 13:10:04 -0700 (PDT)
-Received: by mail-pf1-x441.google.com with SMTP id t11so5826377pfq.11
-        for <linux-remoteproc@vger.kernel.org>; Fri, 24 Jul 2020 13:10:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=MYlWBMpt4rf/LkTlxo7eahrrfbk1ItswPIyWr91nPXE=;
-        b=uQ0bZJAeKzBUM6OQB0/tZJZBOK3x0iuSMsjaxvC0dzDpG6idewEShnSTOQE41hhQt+
-         DSrRmCANcFP6kteBGuPHws5Ml17f9pb+/IYBBHtS+cRt9EFecD61OzdPTQUYf0YXfyGN
-         t00qkX3ScR8LRHQqxpMuCXcXJw0aiMBATg6ZKPLaQLcoH2EOYcyM12TPZDaG4lKTXduL
-         oAjjtGOEdoFQyI+EFFMTipFfTtO5wivyziMkA9ZvSF+iSsPcVscRQxp5/tOCQ9Lyhcm3
-         X2oOMtAVajv7qVbZZ43L2LEaZAn1KROaKXYpOY8KcvlGpILDskAJriCckH70JRXpQRRG
-         rYAA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=MYlWBMpt4rf/LkTlxo7eahrrfbk1ItswPIyWr91nPXE=;
-        b=Vu0wmsHfx0AGOY3f1RdJr0NBp40SdBO9mYSC9h6VF6ZVdG+Fwn3nkttZrXa3BEBq4j
-         0IUFgVsHuqu86alXksh/u0jPeDtMUFPLW2rr8ZIOfWtvT3Ojbe/88Lc85W7XzMKgZ9sw
-         JAFDGuz8W93LC2Nz6p/42piVo1ykw8GMAR+P6XbvHipuD28rcCO5U2VEcI83CNDM6WI5
-         lkLV6CAvPbOsxBy+3WHRi+PVJ3M0994IoBbMvXmJjenDoDUubJwIcztAYJhi2cCMGqbT
-         OUBSWSCrB2Aa7qi4b8WuE1mD8VddXGZ83QObEjs1XNSeUpt18TAbuGhvTAGja2cQ6jCp
-         M1NA==
-X-Gm-Message-State: AOAM533iEiyzgC76zH0U+4Efdn0YpMcEe6yeWNruR+tjmJkno7BzkW9e
-        H8K8Bxqy0oRitPul6c/liM0hqQ==
-X-Google-Smtp-Source: ABdhPJyLHceqQccncPeANqvRAYUJzK7QQRCQSVLw7sMumqK7F7T/rn/SAMkLc6l1y7CNRpy9I2Hexg==
-X-Received: by 2002:a63:d74c:: with SMTP id w12mr3792328pgi.260.1595621403680;
-        Fri, 24 Jul 2020 13:10:03 -0700 (PDT)
-Received: from builder.lan (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id w1sm6825609pfc.55.2020.07.24.13.10.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 Jul 2020 13:10:02 -0700 (PDT)
-Date:   Fri, 24 Jul 2020 13:06:24 -0700
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Alex Elder <elder@linaro.org>
-Cc:     ohad@wizery.com, agross@kernel.org,
-        linux-remoteproc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] remoteproc: kill IPA notify code
-Message-ID: <20200724200624.GC63496@builder.lan>
-References: <20200724181142.13581-1-elder@linaro.org>
- <20200724181142.13581-3-elder@linaro.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200724181142.13581-3-elder@linaro.org>
+        Fri, 24 Jul 2020 16:45:38 -0400
+X-Greylist: delayed 540 seconds by postgrey-1.27 at vger.kernel.org; Fri, 24 Jul 2020 16:45:35 EDT
+Received: from mail-irv-17.broadcom.com (mail-irv-17.lvn.broadcom.net [10.75.242.48])
+        by rnd-relay.smtp.broadcom.com (Postfix) with ESMTP id 895D71A03F9;
+        Fri, 24 Jul 2020 13:36:33 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.10.3 rnd-relay.smtp.broadcom.com 895D71A03F9
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=broadcom.com;
+        s=dkimrelay; t=1595622993;
+        bh=iROEOxL20fkN82DgSDT9xCh4bM04NvfKU+zpU572Jk4=;
+        h=From:To:Cc:Subject:Date:From;
+        b=lcGhd/wOCVZmX1uQE+GWSKEK2BWwEueoL+jv3N84yu0EAaCrPAl/nUVvi6rT8mOu9
+         rASCHru+AQAcyYZ3CEkqi5KUYyMSyTxVd5/uswShD7qMRV6WWL65xjb7TcWRYqTceP
+         pqpEUGBi0Jm0wPHubSaLmoIIGnS4t1bpm4q2u+GA=
+Received: from stbsrv-and-01.and.broadcom.net (stbsrv-and-01.and.broadcom.net [10.28.16.211])
+        by mail-irv-17.broadcom.com (Postfix) with ESMTP id A7441140208;
+        Fri, 24 Jul 2020 13:34:10 -0700 (PDT)
+From:   Jim Quinlan <james.quinlan@broadcom.com>
+To:     linux-pci@vger.kernel.org,
+        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
+        Christoph Hellwig <hch@lst.de>,
+        Robin Murphy <robin.murphy@arm.com>,
+        bcm-kernel-feedback-list@broadcom.com, james.quinlan@broadcom.com
+Cc:     Alan Stern <stern@rowland.harvard.edu>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        devel@driverdev.osuosl.org (open list:STAGING SUBSYSTEM),
+        devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
+        DEVICE TREE),
+        dri-devel@lists.freedesktop.org (open list:DRM DRIVERS FOR ALLWINNER
+        A10), Florian Fainelli <f.fainelli@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        iommu@lists.linux-foundation.org (open list:IOMMU DRIVERS),
+        Jean-Philippe Brucker <jean-philippe@linaro.org>,
+        Jens Axboe <axboe@kernel.dk>, Joerg Roedel <jroedel@suse.de>,
+        Julien Grall <julien.grall@arm.com>,
+        linux-acpi@vger.kernel.org (open list:ACPI FOR ARM64 (ACPI/arm64)),
+        linux-arm-kernel@lists.infradead.org (moderated list:ARM PORT),
+        linux-ide@vger.kernel.org (open list:LIBATA SUBSYSTEM (Serial and
+        Parallel ATA drivers)), linux-kernel@vger.kernel.org (open list),
+        linux-media@vger.kernel.org (open list:ALLWINNER A10 CSI DRIVER),
+        linux-remoteproc@vger.kernel.org (open list:REMOTE PROCESSOR
+        (REMOTEPROC) SUBSYSTEM),
+        linux-rpi-kernel@lists.infradead.org (moderated list:BROADCOM
+        BCM2711/BCM2835 ARM ARCHITECTURE),
+        linux-sh@vger.kernel.org (open list:SUPERH),
+        linux-usb@vger.kernel.org (open list:USB SUBSYSTEM),
+        Oliver Neukum <oneukum@suse.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Rob Herring <robh@kernel.org>,
+        Saravana Kannan <saravanak@google.com>,
+        Stefano Stabellini <sstabellini@kernel.org>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>
+Subject: [PATCH v9 00/12] PCI: brcmstb: enable PCIe for STB chips
+Date:   Fri, 24 Jul 2020 16:33:42 -0400
+Message-Id: <20200724203407.16972-1-james.quinlan@broadcom.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Fri 24 Jul 11:11 PDT 2020, Alex Elder wrote:
 
-> The IPA code now uses the generic remoteproc SSR notification
-> mechanism.  This makes the original IPA notification code unused
-> and unnecessary, so get rid of it.
-> 
-> This is effectively a revert of commit d7f5f3c89c1a ("remoteproc:
-> add IPA notification to q6v5 driver").
-> 
-> Signed-off-by: Alex Elder <elder@linaro.org>
+Patchset Summary:
+  Enhance a PCIe host controller driver.  Because of its unusual design
+  we are foced to change dev->dma_pfn_offset into a more general role
+  allowing multiple offsets.  See the 'v1' notes below for more info.
 
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+NOTE: ChristophH wanted the dma_set_offset_range() function
+      to have a range from [0...~(phys_addr_t)0], i.e. no specific
+      bounds.  RobinM requested this function to have specific bounds,
+      which has been implemented since v6.  If I do not hear from
+      Robin in the near future about this request, I will submit
+      v10 which will have no specific bounds.
 
-Regards,
-Bjorn
+v9:
+  Commit: "device core: Introduce DMA range map, supplanting ..."
+  -- A number of code improvements were implemented as suggested by
+     ChristophH.  Unfortunately, some of these changes reversed the
+     implemented suggestions of other reviewers; for example, the new
+     macros PFN_DMA_ADDR(), DMA_ADDR_PFN() have been pulled.
 
-> ---
->  drivers/remoteproc/Kconfig                    |  4 -
->  drivers/remoteproc/Makefile                   |  1 -
->  drivers/remoteproc/qcom_q6v5_ipa_notify.c     | 85 -------------------
->  drivers/remoteproc/qcom_q6v5_mss.c            | 38 ---------
->  .../linux/remoteproc/qcom_q6v5_ipa_notify.h   | 82 ------------------
->  5 files changed, 210 deletions(-)
->  delete mode 100644 drivers/remoteproc/qcom_q6v5_ipa_notify.c
->  delete mode 100644 include/linux/remoteproc/qcom_q6v5_ipa_notify.h
-> 
-> diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
-> index 3e8d5d1a2b9ee..45f1f1e728823 100644
-> --- a/drivers/remoteproc/Kconfig
-> +++ b/drivers/remoteproc/Kconfig
-> @@ -154,7 +154,6 @@ config QCOM_Q6V5_MSS
->  	select QCOM_MDT_LOADER
->  	select QCOM_PIL_INFO
->  	select QCOM_Q6V5_COMMON
-> -	select QCOM_Q6V5_IPA_NOTIFY
->  	select QCOM_RPROC_COMMON
->  	select QCOM_SCM
->  	help
-> @@ -196,9 +195,6 @@ config QCOM_Q6V5_WCSS
->  	  Say y here to support the Qualcomm Peripheral Image Loader for the
->  	  Hexagon V5 based WCSS remote processors.
->  
-> -config QCOM_Q6V5_IPA_NOTIFY
-> -	tristate
-> -
->  config QCOM_SYSMON
->  	tristate "Qualcomm sysmon driver"
->  	depends on RPMSG
-> diff --git a/drivers/remoteproc/Makefile b/drivers/remoteproc/Makefile
-> index a4c1397d63673..8c056920b4006 100644
-> --- a/drivers/remoteproc/Makefile
-> +++ b/drivers/remoteproc/Makefile
-> @@ -24,7 +24,6 @@ obj-$(CONFIG_QCOM_Q6V5_ADSP)		+= qcom_q6v5_adsp.o
->  obj-$(CONFIG_QCOM_Q6V5_MSS)		+= qcom_q6v5_mss.o
->  obj-$(CONFIG_QCOM_Q6V5_PAS)		+= qcom_q6v5_pas.o
->  obj-$(CONFIG_QCOM_Q6V5_WCSS)		+= qcom_q6v5_wcss.o
-> -obj-$(CONFIG_QCOM_Q6V5_IPA_NOTIFY)	+= qcom_q6v5_ipa_notify.o
->  obj-$(CONFIG_QCOM_SYSMON)		+= qcom_sysmon.o
->  obj-$(CONFIG_QCOM_WCNSS_PIL)		+= qcom_wcnss_pil.o
->  qcom_wcnss_pil-y			+= qcom_wcnss.o
-> diff --git a/drivers/remoteproc/qcom_q6v5_ipa_notify.c b/drivers/remoteproc/qcom_q6v5_ipa_notify.c
-> deleted file mode 100644
-> index e1c10a128bfdb..0000000000000
-> --- a/drivers/remoteproc/qcom_q6v5_ipa_notify.c
-> +++ /dev/null
-> @@ -1,85 +0,0 @@
-> -// SPDX-License-Identifier: GPL-2.0
-> -
-> -/*
-> - * Qualcomm IPA notification subdev support
-> - *
-> - * Copyright (C) 2019 Linaro Ltd.
-> - */
-> -
-> -#include <linux/kernel.h>
-> -#include <linux/module.h>
-> -#include <linux/remoteproc.h>
-> -#include <linux/remoteproc/qcom_q6v5_ipa_notify.h>
-> -
-> -static void
-> -ipa_notify_common(struct rproc_subdev *subdev, enum qcom_rproc_event event)
-> -{
-> -	struct qcom_rproc_ipa_notify *ipa_notify;
-> -	qcom_ipa_notify_t notify;
-> -
-> -	ipa_notify = container_of(subdev, struct qcom_rproc_ipa_notify, subdev);
-> -	notify = ipa_notify->notify;
-> -	if (notify)
-> -		notify(ipa_notify->data, event);
-> -}
-> -
-> -static int ipa_notify_prepare(struct rproc_subdev *subdev)
-> -{
-> -	ipa_notify_common(subdev, MODEM_STARTING);
-> -
-> -	return 0;
-> -}
-> -
-> -static int ipa_notify_start(struct rproc_subdev *subdev)
-> -{
-> -	ipa_notify_common(subdev, MODEM_RUNNING);
-> -
-> -	return 0;
-> -}
-> -
-> -static void ipa_notify_stop(struct rproc_subdev *subdev, bool crashed)
-> -
-> -{
-> -	ipa_notify_common(subdev, crashed ? MODEM_CRASHED : MODEM_STOPPING);
-> -}
-> -
-> -static void ipa_notify_unprepare(struct rproc_subdev *subdev)
-> -{
-> -	ipa_notify_common(subdev, MODEM_OFFLINE);
-> -}
-> -
-> -static void ipa_notify_removing(struct rproc_subdev *subdev)
-> -{
-> -	ipa_notify_common(subdev, MODEM_REMOVING);
-> -}
-> -
-> -/* Register the IPA notification subdevice with the Q6V5 MSS remoteproc */
-> -void qcom_add_ipa_notify_subdev(struct rproc *rproc,
-> -		struct qcom_rproc_ipa_notify *ipa_notify)
-> -{
-> -	ipa_notify->notify = NULL;
-> -	ipa_notify->data = NULL;
-> -	ipa_notify->subdev.prepare = ipa_notify_prepare;
-> -	ipa_notify->subdev.start = ipa_notify_start;
-> -	ipa_notify->subdev.stop = ipa_notify_stop;
-> -	ipa_notify->subdev.unprepare = ipa_notify_unprepare;
-> -
-> -	rproc_add_subdev(rproc, &ipa_notify->subdev);
-> -}
-> -EXPORT_SYMBOL_GPL(qcom_add_ipa_notify_subdev);
-> -
-> -/* Remove the IPA notification subdevice */
-> -void qcom_remove_ipa_notify_subdev(struct rproc *rproc,
-> -		struct qcom_rproc_ipa_notify *ipa_notify)
-> -{
-> -	struct rproc_subdev *subdev = &ipa_notify->subdev;
-> -
-> -	ipa_notify_removing(subdev);
-> -
-> -	rproc_remove_subdev(rproc, subdev);
-> -	ipa_notify->notify = NULL;	/* Make it obvious */
-> -}
-> -EXPORT_SYMBOL_GPL(qcom_remove_ipa_notify_subdev);
-> -
-> -MODULE_LICENSE("GPL v2");
-> -MODULE_DESCRIPTION("Qualcomm IPA notification remoteproc subdev");
-> diff --git a/drivers/remoteproc/qcom_q6v5_mss.c b/drivers/remoteproc/qcom_q6v5_mss.c
-> index 718acebae777f..eb2a0d7dea1c7 100644
-> --- a/drivers/remoteproc/qcom_q6v5_mss.c
-> +++ b/drivers/remoteproc/qcom_q6v5_mss.c
-> @@ -23,7 +23,6 @@
->  #include <linux/regmap.h>
->  #include <linux/regulator/consumer.h>
->  #include <linux/remoteproc.h>
-> -#include "linux/remoteproc/qcom_q6v5_ipa_notify.h"
->  #include <linux/reset.h>
->  #include <linux/soc/qcom/mdt_loader.h>
->  #include <linux/iopoll.h>
-> @@ -199,7 +198,6 @@ struct q6v5 {
->  	struct qcom_rproc_glink glink_subdev;
->  	struct qcom_rproc_subdev smd_subdev;
->  	struct qcom_rproc_ssr ssr_subdev;
-> -	struct qcom_rproc_ipa_notify ipa_notify_subdev;
->  	struct qcom_sysmon *sysmon;
->  	bool need_mem_protection;
->  	bool has_alt_reset;
-> @@ -1585,39 +1583,6 @@ static int q6v5_alloc_memory_region(struct q6v5 *qproc)
->  	return 0;
->  }
->  
-> -#if IS_ENABLED(CONFIG_QCOM_Q6V5_IPA_NOTIFY)
-> -
-> -/* Register IPA notification function */
-> -int qcom_register_ipa_notify(struct rproc *rproc, qcom_ipa_notify_t notify,
-> -			     void *data)
-> -{
-> -	struct qcom_rproc_ipa_notify *ipa_notify;
-> -	struct q6v5 *qproc = rproc->priv;
-> -
-> -	if (!notify)
-> -		return -EINVAL;
-> -
-> -	ipa_notify = &qproc->ipa_notify_subdev;
-> -	if (ipa_notify->notify)
-> -		return -EBUSY;
-> -
-> -	ipa_notify->notify = notify;
-> -	ipa_notify->data = data;
-> -
-> -	return 0;
-> -}
-> -EXPORT_SYMBOL_GPL(qcom_register_ipa_notify);
-> -
-> -/* Deregister IPA notification function */
-> -void qcom_deregister_ipa_notify(struct rproc *rproc)
-> -{
-> -	struct q6v5 *qproc = rproc->priv;
-> -
-> -	qproc->ipa_notify_subdev.notify = NULL;
-> -}
-> -EXPORT_SYMBOL_GPL(qcom_deregister_ipa_notify);
-> -#endif /* !IS_ENABLED(CONFIG_QCOM_Q6V5_IPA_NOTIFY) */
-> -
->  static int q6v5_probe(struct platform_device *pdev)
->  {
->  	const struct rproc_hexagon_res *desc;
-> @@ -1744,7 +1709,6 @@ static int q6v5_probe(struct platform_device *pdev)
->  	qcom_add_glink_subdev(rproc, &qproc->glink_subdev, "mpss");
->  	qcom_add_smd_subdev(rproc, &qproc->smd_subdev);
->  	qcom_add_ssr_subdev(rproc, &qproc->ssr_subdev, "mpss");
-> -	qcom_add_ipa_notify_subdev(rproc, &qproc->ipa_notify_subdev);
->  	qproc->sysmon = qcom_add_sysmon_subdev(rproc, "modem", 0x12);
->  	if (IS_ERR(qproc->sysmon)) {
->  		ret = PTR_ERR(qproc->sysmon);
-> @@ -1760,7 +1724,6 @@ static int q6v5_probe(struct platform_device *pdev)
->  remove_sysmon_subdev:
->  	qcom_remove_sysmon_subdev(qproc->sysmon);
->  remove_subdevs:
-> -	qcom_remove_ipa_notify_subdev(qproc->rproc, &qproc->ipa_notify_subdev);
->  	qcom_remove_ssr_subdev(rproc, &qproc->ssr_subdev);
->  	qcom_remove_smd_subdev(rproc, &qproc->smd_subdev);
->  	qcom_remove_glink_subdev(rproc, &qproc->glink_subdev);
-> @@ -1782,7 +1745,6 @@ static int q6v5_remove(struct platform_device *pdev)
->  	rproc_del(rproc);
->  
->  	qcom_remove_sysmon_subdev(qproc->sysmon);
-> -	qcom_remove_ipa_notify_subdev(rproc, &qproc->ipa_notify_subdev);
->  	qcom_remove_ssr_subdev(rproc, &qproc->ssr_subdev);
->  	qcom_remove_smd_subdev(rproc, &qproc->smd_subdev);
->  	qcom_remove_glink_subdev(rproc, &qproc->glink_subdev);
-> diff --git a/include/linux/remoteproc/qcom_q6v5_ipa_notify.h b/include/linux/remoteproc/qcom_q6v5_ipa_notify.h
-> deleted file mode 100644
-> index 0820edc0ab7df..0000000000000
-> --- a/include/linux/remoteproc/qcom_q6v5_ipa_notify.h
-> +++ /dev/null
-> @@ -1,82 +0,0 @@
-> -/* SPDX-License-Identifier: GPL-2.0 */
-> -
-> -/* Copyright (C) 2019 Linaro Ltd. */
-> -
-> -#ifndef __QCOM_Q6V5_IPA_NOTIFY_H__
-> -#define __QCOM_Q6V5_IPA_NOTIFY_H__
-> -
-> -#if IS_ENABLED(CONFIG_QCOM_Q6V5_IPA_NOTIFY)
-> -
-> -#include <linux/remoteproc.h>
-> -
-> -enum qcom_rproc_event {
-> -	MODEM_STARTING	= 0,	/* Modem is about to be started */
-> -	MODEM_RUNNING	= 1,	/* Startup complete; modem is operational */
-> -	MODEM_STOPPING	= 2,	/* Modem is about to shut down */
-> -	MODEM_CRASHED	= 3,	/* Modem has crashed (implies stopping) */
-> -	MODEM_OFFLINE	= 4,	/* Modem is now offline */
-> -	MODEM_REMOVING	= 5,	/* Modem is about to be removed */
-> -};
-> -
-> -typedef void (*qcom_ipa_notify_t)(void *data, enum qcom_rproc_event event);
-> -
-> -struct qcom_rproc_ipa_notify {
-> -	struct rproc_subdev subdev;
-> -
-> -	qcom_ipa_notify_t notify;
-> -	void *data;
-> -};
-> -
-> -/**
-> - * qcom_add_ipa_notify_subdev() - Register IPA notification subdevice
-> - * @rproc:	rproc handle
-> - * @ipa_notify:	IPA notification subdevice handle
-> - *
-> - * Register the @ipa_notify subdevice with the @rproc so modem events
-> - * can be sent to IPA when they occur.
-> - *
-> - * This is defined in "qcom_q6v5_ipa_notify.c".
-> - */
-> -void qcom_add_ipa_notify_subdev(struct rproc *rproc,
-> -		struct qcom_rproc_ipa_notify *ipa_notify);
-> -
-> -/**
-> - * qcom_remove_ipa_notify_subdev() - Remove IPA SSR subdevice
-> - * @rproc:	rproc handle
-> - * @ipa_notify:	IPA notification subdevice handle
-> - *
-> - * This is defined in "qcom_q6v5_ipa_notify.c".
-> - */
-> -void qcom_remove_ipa_notify_subdev(struct rproc *rproc,
-> -		struct qcom_rproc_ipa_notify *ipa_notify);
-> -
-> -/**
-> - * qcom_register_ipa_notify() - Register IPA notification function
-> - * @rproc:	Remote processor handle
-> - * @notify:	Non-null IPA notification callback function pointer
-> - * @data:	Data supplied to IPA notification callback function
-> - *
-> - * @Return: 0 if successful, or a negative error code otherwise
-> - *
-> - * This is defined in "qcom_q6v5_mss.c".
-> - */
-> -int qcom_register_ipa_notify(struct rproc *rproc, qcom_ipa_notify_t notify,
-> -			     void *data);
-> -/**
-> - * qcom_deregister_ipa_notify() - Deregister IPA notification function
-> - * @rproc:	Remote processor handle
-> - *
-> - * This is defined in "qcom_q6v5_mss.c".
-> - */
-> -void qcom_deregister_ipa_notify(struct rproc *rproc);
-> -
-> -#else /* !IS_ENABLED(CONFIG_QCOM_Q6V5_IPA_NOTIFY) */
-> -
-> -struct qcom_rproc_ipa_notify { /* empty */ };
-> -
-> -#define qcom_add_ipa_notify_subdev(rproc, ipa_notify)		/* no-op */
-> -#define qcom_remove_ipa_notify_subdev(rproc, ipa_notify)	/* no-op */
-> -
-> -#endif /* !IS_ENABLED(CONFIG_QCOM_Q6V5_IPA_NOTIFY) */
-> -
-> -#endif /* !__QCOM_Q6V5_IPA_NOTIFY_H__ */
-> -- 
-> 2.20.1
-> 
+v8:
+  Commit: "device core: Introduce DMA range map, supplanting ..."
+  -- To satisfy a specific m68 compile configuration, I moved the 'struct
+     bus_dma_region; definition out of #ifdef CONFIG_HAS_DMA and also defined
+     three inline functions for !CONFIG_HAS_DMA (kernel test robot).
+  -- The sunXi drivers -- suc4i_csi, sun6i_csi, cedrus_hw -- set
+     a pfn_offset outside of_dma_configure() but the code offers no 
+     insight on the size of the translation window.  V7 had me using
+     SIZE_MAX as the size.  I have since contacted the sunXi maintainer and
+     he said that using a size of SZ_4G would cover sunXi configurations.
+
+v7:
+  Commit: "device core: Introduce DMA range map, supplanting ..."
+  -- remove second kcalloc/copy in device.c (AndyS)
+  -- use PTR_ERR_OR_ZERO() and PHYS_PFN() (AndyS)
+  -- indentation, sizeof(struct ...) => sizeof(*r) (AndyS)
+  -- add pfn.h definitions: PFN_DMA_ADDR(), DMA_ADDR_PFN() (AndyS)
+  -- Fixed compile error in "sun6i_csi.c" (kernel test robot)
+  Commit "ata: ahci_brcm: Fix use of BCM7216 reset controller"
+  -- correct name of function in the commit msg (SergeiS)
+  
+v6:
+  Commit "device core: Introduce DMA range map":
+  -- of_dma_get_range() now takes a single argument and returns either
+     NULL, a valid map, or an ERR_PTR. (Robin)
+  -- offsets are no longer a PFN value but an actual address. (Robin)
+  -- the bus_dma_region struct stores the range size instead of
+     the cpu_end and pci_end values. (Robin)
+  -- devices that were setting a single offset with no boundaries
+     have been modified to have boundaries; in a few places
+     where this information was unavilable a /* FIXME: ... */
+     comment was added. (Robin)
+  -- dma_attach_offset_range() can be called when an offset
+     map already exists; if it's range is already present
+     nothing is done and success is returned. (Robin)
+  All commits:
+  -- Man name/style/corrections/etc changed (Bjorn)
+  -- rebase to Torvalds master
+
+v5:
+  Commit "device core: Introduce multiple dma pfn offsets"
+  -- in of/address.c: "map_size = 0" => "*map_size = 0"
+  -- use kcalloc instead of kzalloc (AndyS)
+  -- use PHYS_ADDR_MAX instead of "~(phys_addr_t)0"
+  Commit "PCI: brcmstb: Set internal memory viewport sizes"
+  -- now gives error on missing dma-ranges property.
+  Commit "dt-bindings: PCI: Add bindings for more Brcmstb chips"
+  -- removed "Allof:" from brcm,scb-sizes definition (RobH)
+  All Commits:
+  -- indentation style, use max chars 100 (AndyS)
+  -- rebased to torvalds master
+
+v4:
+  Commit "device core: Introduce multiple dma pfn offsets"
+  -- of_dma_get_range() does not take a dev param but instead
+     takes two "out" params: map and map_size.  We do this so
+     that the code that parses dma-ranges is separate from
+     the code that modifies 'dev'.   (Nicolas)
+  -- the separate case of having a single pfn offset has
+     been removed and is now processed by going through the
+     map array. (Nicolas)
+  -- move attach_uniform_dma_pfn_offset() from of/address.c to
+     dma/mapping.c so that it does not depend on CONFIG_OF. (Nicolas)
+  -- devm_kcalloc => devm_kzalloc (DanC)
+  -- add/fix assignment to dev->dma_pfn_offset_map for func
+     attach_uniform_dma_pfn_offset() (DanC, Nicolas)
+  -- s/struct dma_pfn_offset_region/struct bus_dma_region/ (Nicolas)
+  -- s/attach_uniform_dma_pfn_offset/dma_attach_uniform_pfn_offset/
+  -- s/attach_dma_pfn_offset_map/dma_attach_pfn_offset_map/
+  -- More use of PFN_{PHYS,DOWN,UP}. (AndyS)
+  Commit "of: Include a dev param in of_dma_get_range()"
+  -- this commit was sqaushed with "device core: Introduce ..."
+
+v3:
+  Commit "device core: Introduce multiple dma pfn offsets"
+  Commit "arm: dma-mapping: Invoke dma offset func if needed"
+  -- The above two commits have been squashed.  More importantly,
+     the code has been modified so that the functionality for
+     multiple pfn offsets subsumes the use of dev->dma_pfn_offset.
+     In fact, dma_pfn_offset is removed and supplanted by
+     dma_pfn_offset_map, which is a pointer to an array.  The
+     more common case of a uniform offset is now handled as
+     a map with a single entry, while cases requiring multiple
+     pfn offsets use a map with multiple entries.  Code paths
+     that used to do this:
+
+         dev->dma_pfn_offset = mydrivers_pfn_offset;
+
+     have been changed to do this:
+
+         attach_uniform_dma_pfn_offset(dev, pfn_offset);
+
+  Commit "dt-bindings: PCI: Add bindings for more Brcmstb chips"
+  -- Add if/then clause for required props: resets, reset-names (RobH)
+  -- Change compatible list from const to enum (RobH)
+  -- Change list of u32-tuples to u64 (RobH)
+
+  Commit "of: Include a dev param in of_dma_get_range()"
+  -- modify of/unittests.c to add NULL param in of_dma_get_range() call.
+
+  Commit "device core: Add ability to handle multiple dma offsets"
+  -- align comment in device.h (AndyS).
+  -- s/cpu_beg/cpu_start/ and s/dma_beg/dma_start/ in struct
+     dma_pfn_offset_region (AndyS).
+
+v2:
+Commit: "device core: Add ability to handle multiple dma offsets"
+  o Added helper func attach_dma_pfn_offset_map() in address.c (Chistoph)
+  o Helpers funcs added to __phys_to_dma() & __dma_to_phys() (Christoph)
+  o Added warning when multiple offsets are needed and !DMA_PFN_OFFSET_MAP
+  o dev->dma_pfn_map => dev->dma_pfn_offset_map
+  o s/frm/from/ for dma_pfn_offset_frm_{phys,dma}_addr() (Christoph)
+  o In device.h: s/const void */const struct dma_pfn_offset_region */
+  o removed 'unlikely' from unlikely(dev->dma_pfn_offset_map) since
+    guarded by CONFIG_DMA_PFN_OFFSET_MAP (Christoph)
+  o Since dev->dma_pfn_offset is copied in usb/core/{usb,message}.c, now
+    dev->dma_pfn_offset_map is copied as well.
+  o Merged two of the DMA commits into one (Christoph).
+
+Commit "arm: dma-mapping: Invoke dma offset func if needed":
+  o Use helper functions instead of #if CONFIG_DMA_PFN_OFFSET
+
+Other commits' changes:
+  o Removed need for carrying of_id var in priv (Nicolas)
+  o Commit message rewordings (Bjorn)
+  o Commit log messages filled to 75 chars (Bjorn)
+  o devm_reset_control_get_shared())
+    => devm_reset_control_get_optional_shared (Philipp)
+  o Add call to reset_control_assert() in PCIe remove routines (Philipp)
+
+v1:
+This patchset expands the usefulness of the Broadcom Settop Box PCIe
+controller by building upon the PCIe driver used currently by the
+Raspbery Pi.  Other forms of this patchset were submitted by me years
+ago and not accepted; the major sticking point was the code required
+for the DMA remapping needed for the PCIe driver to work [1].
+
+There have been many changes to the DMA and OF subsystems since that
+time, making a cleaner and less intrusive patchset possible.  This
+patchset implements a generalization of "dev->dma_pfn_offset", except
+that instead of a single scalar offset it provides for multiple
+offsets via a function which depends upon the "dma-ranges" property of
+the PCIe host controller.  This is required for proper functionality
+of the BrcmSTB PCIe controller and possibly some other devices.
+
+[1] https://lore.kernel.org/linux-arm-kernel/1516058925-46522-5-git-send-email-jim2101024@gmail.com/
+
+Jim Quinlan (12):
+  PCI: brcmstb: PCIE_BRCMSTB depends on ARCH_BRCMSTB
+  ata: ahci_brcm: Fix use of BCM7216 reset controller
+  dt-bindings: PCI: Add bindings for more Brcmstb chips
+  PCI: brcmstb: Add bcm7278 register info
+  PCI: brcmstb: Add suspend and resume pm_ops
+  PCI: brcmstb: Add bcm7278 PERST# support
+  PCI: brcmstb: Add control of rescal reset
+  device core: Introduce DMA range map, supplanting dma_pfn_offset
+  PCI: brcmstb: Set additional internal memory DMA viewport sizes
+  PCI: brcmstb: Accommodate MSI for older chips
+  PCI: brcmstb: Set bus max burst size by chip type
+  PCI: brcmstb: Add bcm7211, bcm7216, bcm7445, bcm7278 to match list
+
+ .../bindings/pci/brcm,stb-pcie.yaml           |  56 ++-
+ arch/arm/include/asm/dma-mapping.h            |  10 +-
+ arch/arm/mach-keystone/keystone.c             |  17 +-
+ arch/sh/drivers/pci/pcie-sh7786.c             |   9 +-
+ arch/sh/kernel/dma-coherent.c                 |  15 +-
+ arch/x86/pci/sta2x11-fixup.c                  |   7 +-
+ drivers/acpi/arm64/iort.c                     |   5 +-
+ drivers/ata/ahci_brcm.c                       |  11 +-
+ drivers/gpu/drm/sun4i/sun4i_backend.c         |   5 +-
+ drivers/iommu/io-pgtable-arm.c                |   2 +-
+ .../platform/sunxi/sun4i-csi/sun4i_csi.c      |   5 +-
+ .../platform/sunxi/sun6i-csi/sun6i_csi.c      |   4 +-
+ drivers/of/address.c                          |  71 ++-
+ drivers/of/device.c                           |  43 +-
+ drivers/of/of_private.h                       |  10 +-
+ drivers/of/unittest.c                         |  32 +-
+ drivers/pci/controller/Kconfig                |   3 +-
+ drivers/pci/controller/pcie-brcmstb.c         | 409 +++++++++++++++---
+ drivers/remoteproc/remoteproc_core.c          |   2 +-
+ .../staging/media/sunxi/cedrus/cedrus_hw.c    |   7 +-
+ drivers/usb/core/message.c                    |   4 +-
+ drivers/usb/core/usb.c                        |   2 +-
+ include/linux/device.h                        |   4 +-
+ include/linux/dma-direct.h                    |   8 +-
+ include/linux/dma-mapping.h                   |  34 ++
+ kernel/dma/coherent.c                         |  10 +-
+ kernel/dma/mapping.c                          |  63 +++
+ 27 files changed, 653 insertions(+), 195 deletions(-)
+
+-- 
+2.17.1
+
