@@ -6,67 +6,64 @@ X-Spam-Status: No, score=-5.5 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
 	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CABF2C433E1
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 27 Jul 2020 07:38:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BFADBC433E1
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 27 Jul 2020 07:54:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B06822072E
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 27 Jul 2020 07:38:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A7A2E20672
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 27 Jul 2020 07:54:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726213AbgG0HiE (ORCPT
+        id S1726901AbgG0Hyo (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 27 Jul 2020 03:38:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58784 "EHLO
+        Mon, 27 Jul 2020 03:54:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33140 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726211AbgG0HiD (ORCPT
+        with ESMTP id S1726211AbgG0Hyo (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 27 Jul 2020 03:38:03 -0400
+        Mon, 27 Jul 2020 03:54:44 -0400
 Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77B38C0619D2
-        for <linux-remoteproc@vger.kernel.org>; Mon, 27 Jul 2020 00:38:03 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0630FC0619D2
+        for <linux-remoteproc@vger.kernel.org>; Mon, 27 Jul 2020 00:54:44 -0700 (PDT)
 Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
         by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <ore@pengutronix.de>)
-        id 1jzxht-0002NO-VG; Mon, 27 Jul 2020 09:37:57 +0200
+        id 1jzxy5-0004EB-Nm; Mon, 27 Jul 2020 09:54:41 +0200
 Received: from ore by pty.hi.pengutronix.de with local (Exim 4.89)
         (envelope-from <ore@pengutronix.de>)
-        id 1jzxht-0007xt-1v; Mon, 27 Jul 2020 09:37:57 +0200
-Date:   Mon, 27 Jul 2020 09:37:57 +0200
+        id 1jzxy5-0008Pg-AP; Mon, 27 Jul 2020 09:54:41 +0200
+Date:   Mon, 27 Jul 2020 09:54:41 +0200
 From:   Oleksij Rempel <o.rempel@pengutronix.de>
 To:     Peng Fan <peng.fan@nxp.com>
 Cc:     "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>,
         "mathieu.poirier@linaro.org" <mathieu.poirier@linaro.org>,
         "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
         "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "festevam@gmail.com" <festevam@gmail.com>,
         dl-linux-imx <linux-imx@nxp.com>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
         "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Subject: Re: [PATCH 03/10] remoteproc: imx: use devm_ioremap
-Message-ID: <20200727073757.r2vq6djh3a4dyfp6@pengutronix.de>
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH 00/10] remoteproc: imx_rproc: support iMX8M and early boot
+Message-ID: <20200727075441.lgscydoj3txupeay@pengutronix.de>
 References: <20200724080813.24884-1-peng.fan@nxp.com>
- <20200724080813.24884-4-peng.fan@nxp.com>
- <20200727062335.v2pxgu6kr6ao2qmh@pengutronix.de>
- <DB6PR0402MB27601C875FF5F1E02DBF5C6488720@DB6PR0402MB2760.eurprd04.prod.outlook.com>
- <20200727064151.767kc7622tcqmqfs@pengutronix.de>
- <DB6PR0402MB276063FBE74FCF222CB00F8588720@DB6PR0402MB2760.eurprd04.prod.outlook.com>
+ <20200727063839.kfgrtperzkygvjr2@pengutronix.de>
+ <DB6PR0402MB2760FBC0109E98A447BB716588720@DB6PR0402MB2760.eurprd04.prod.outlook.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="lledsvdu3e7clex3"
+        protocol="application/pgp-signature"; boundary="ndwcthydipkpuzsn"
 Content-Disposition: inline
-In-Reply-To: <DB6PR0402MB276063FBE74FCF222CB00F8588720@DB6PR0402MB2760.eurprd04.prod.outlook.com>
+In-Reply-To: <DB6PR0402MB2760FBC0109E98A447BB716588720@DB6PR0402MB2760.eurprd04.prod.outlook.com>
 X-Sent-From: Pengutronix Hildesheim
 X-URL:  http://www.pengutronix.de/
 X-IRC:  #ptxdist @freenode
 X-Accept-Language: de,en
 X-Accept-Content-Type: text/plain
-X-Uptime: 09:08:39 up 254 days, 22:27, 241 users,  load average: 0.11, 0.11,
- 0.08
+X-Uptime: 09:38:11 up 254 days, 22:56, 250 users,  load average: 0.02, 0.06,
+ 0.03
 User-Agent: NeoMutt/20170113 (1.7.2)
 X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
 X-SA-Exim-Mail-From: ore@pengutronix.de
@@ -78,114 +75,130 @@ List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
 
---lledsvdu3e7clex3
+--ndwcthydipkpuzsn
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jul 27, 2020 at 06:51:00AM +0000, Peng Fan wrote:
-> > Subject: Re: [PATCH 03/10] remoteproc: imx: use devm_ioremap
+On Mon, Jul 27, 2020 at 06:44:32AM +0000, Peng Fan wrote:
+> Hi Oleksij,
+>=20
+> > Subject: Re: [PATCH 00/10] remoteproc: imx_rproc: support iMX8M and ear=
+ly
+> > boot
 > >=20
-> > On Mon, Jul 27, 2020 at 06:28:20AM +0000, Peng Fan wrote:
-> > > Hi Oleksij,
-> > >
-> > > > Subject: Re: [PATCH 03/10] remoteproc: imx: use devm_ioremap
-> > > >
-> > > > On Fri, Jul 24, 2020 at 04:08:06PM +0800, Peng Fan wrote:
-> > > > > We might need to map an region multiple times, becaue the region
-> > > > > might be shared between remote processors, such i.MX8QM with dual
-> > M4 cores.
-> > > > > So use devm_ioremap, not devm_ioremap_resource.
-> > > >
-> > > > Can you please give an example of this kind of shared resources and
-> > > > how they should be handled by two separate devices?
-> > >
-> > > This is to share vdevbuffer space, there is a vdevbuffer in device
-> > > tree, it will be shared between M4_0 and M4_1.
-> > >
-> > > For the buffer, it is Linux DMA API will handle the space.
+> > Hi,
 > >=20
-> > Why remoteproc need to care about it? If I see it correctly, from the l=
-inux
-> > perspective, it is one buffer and one driver is responsible for it. Or =
-do I missing
-> > some thing?
+> > On Fri, Jul 24, 2020 at 04:08:03PM +0800, Peng Fan wrote:
+> > > This patchset is to support i.MX8MQ/M coproc booted before linux.
+> > > Since i.MX8MQ/M was not supported, several patches are needed to first
+> > > support the platform, then support early boot case.
+> > >
+> > > I intended to included i.MX8QM/QXP, but that would introduce a large
+> > > patchset, so not included. But the clk/syscon optional patch for
+> > > i.MX8QM/QXP was still kept here to avoid rebase error.
+> >=20
+> > Thank you for your work.
+> >=20
+> > Can you please provide more information about big picture of this work.
+> >=20
+> > If I see it correctly, we have here support for i.MX8MM, which seems to=
+ be
+> > able to fully control Cortex M4 (enable CPU core, etc...).
 >=20
-> We not have the vdev buffer in resource table, so I added in device tree,=
- see below:
+> Yes.
 
-Hm.. if vdev is not in resource table and should not be controlled by
-remoteproc, why do we need remoteproc?
+In this case, I would recommend to mainline the i.MX8MM part
+first/separately.
 
->         imx8qm_cm40: imx8qm_cm4@0 {
->                 compatible =3D "fsl,imx8qm-cm4";
->                 rsc-da =3D <0x90000000>;
->                 mbox-names =3D "tx", "rx", "rxdb";
->                 mboxes =3D <&lsio_mu5 0 1
->                           &lsio_mu5 1 1
->                           &lsio_mu5 3 1>;
->                 mub-partition =3D <3>;
->                 memory-region =3D <&vdev0vring0>, <&vdev0vring1>, <&vdevb=
-uffer>,
->                                 <&vdev1vring0>, <&vdev1vring1>;
->                 core-index =3D <0>;
->                 core-id =3D <IMX_SC_R_M4_0_PID0>;
->                 status =3D "okay";
->                 power-domains =3D <&pd IMX_SC_R_M4_0_PID0>,
->                                 <&pd IMX_SC_R_M4_0_MU_1A>;
->         };
+> >=20
+> > And other case, where remoteproc is running on application processor and
+> > can't or should not touch M4 (i.MX7ULP, i.MX8QM/QXP..). Since M4 provid=
+es
+> > some functionality, you are trying to reuse remoteproc framework to get
+> > resource table present in ELF header and to dynamically load things. Fo=
+r some
+> > reasons this header provides more information then needed, so you are
+> > changing the ELF parser in the kernel to workaround it.
 >=20
->         imx8qm_cm41: imx8x_cm4@1 {
->                 compatible =3D "fsl,imx8qm-cm4";
->                 rsc-da =3D <0x90100000>;
->                 mbox-names =3D "tx", "rx", "rxdb";
->                 mboxes =3D <&lsio_mu6 0 1
->                           &lsio_mu6 1 1
->                           &lsio_mu6 3 1>;
->                 mub-partition =3D <4>;
->                 memory-region =3D <&vdev2vring0>, <&vdev2vring1>, <&vdevb=
-uffer>,
->                                 <&vdev3vring0>, <&vdev3vring1>;
->                 core-index =3D <1>;
->                 core-id =3D <IMX_SC_R_M4_1_PID0>;
->                 status =3D "okay";
->                 power-domains =3D <&pd IMX_SC_R_M4_1_PID0>,
->                                 <&pd IMX_SC_R_M4_1_MU_1A>;
->         };
+> Not exactly.
 >=20
->                 vdevbuffer: vdevbuffer {
->                         compatible =3D "shared-dma-pool";
->                         reg =3D <0 0x90400000 0 0x100000>;
->                         no-map;
->                 };
+> For i.MX8MM, we support two cases. M4 kicked by U-Boot, M4 kicked by Linu=
+x remoteproc.
+> For i.MX8QM/QXP, the typical usecase is M4 kicked by SCFW, but we will al=
+so add M4 kicked
+> by Linux remoteproc.
+> For i.MX7ULP, I would only support M4 dual boot case, M4 control everythi=
+ng.
+
+=46rom current state of discussion, i'm not sure what role plays
+remoteproc in the scenario where M4 is started before linux. Especially
+if we are not using resource table.
+
+> The reason the change the elf parser is that when M4 elf is loaded by Lin=
+ux remoteproc,
+> It use memset to clear area.
+
+The use of memset, depends on ELF format. Fix/change the linker script
+on your firmware and memset will be never called.
+
+> However we use ioremap, memset on ARM64 will report
+> crash to device nGnRE memory. And we could not use ioremap_wc to TCM area=
+, since
+> it could have data correctly written into TCM.
+
+I have strong feeling, that we are talking about badly or not properly
+formatted ELF binary. I would prefer to double check it, before we will
+apply fixes on wrong place.
+
+> Maintainer not wanna to drop memset in common code, and TI guys suggest
+> add i.MX specific elf stuff. So I add elf handler in i.MX code.
+
+I think, removing memset may damage current users of imx_rproc driver.
+Since, like I said: the use of memset depends on ELF format.
+
+> Thanks,
+> Peng.
 >=20
-> I have the upper vdevbuffer node shared between M40 and M41 node.
-> The vdevbuffer will be used as virtio data buffer.
->=20
-> And I have the following in rproc_add_virtio_dev to share vdevbuffer:
->         /* Try to find dedicated vdev buffer carveout */
->         mem =3D rproc_find_carveout_by_name(rproc, "vdev%dbuffer", rvdev-=
->index);
->         if (!mem)
->                 mem =3D rproc_find_carveout_by_name(rproc, "vdevbuffer");
-
-With kernel v5.8-rc7 i get following call chain:
-rproc_boot()
-  rproc_fw_boot()
-    rproc_handle_vdev
-      rproc_vdev_do_start()
-        rproc_add_virtio_dev()
-
-
-So, at the end, we will call rproc_add_virtio_dev() only if we boot
-firmware by linux, or if we get at least the resource table.
-
-Since none of this seems to be the case, i still do not understand how
-it should work.
-
-> Hope this is clear.
-
-:) i still need some time to understand it.
+> >=20
+> > Correct?
+> >=20
+> > > Peng Fan (10):
+> > >   dt-bindings: remoteproc: imx_rproc: add i.MX8MQ/M
+> > >   remoteproc: imx_rproc: correct err message
+> > >   remoteproc: imx: use devm_ioremap
+> > >   remoteproc: imx_rproc: make syscon optional
+> > >   remoteproc: imx_rproc: make clk optional
+> > >   remoteproc: imx_rproc: add load hook
+> > >   remoteproc: imx_rproc: add i.MX specific parse fw hook
+> > >   remoteproc: imx_rproc: support i.MX8MQ/M
+> > >   remoteproc: imx_proc: enable virtio/mailbox
+> > >   remoteproc: imx_rproc: support coproc booting before Linux
+> > >
+> > >  .../devicetree/bindings/remoteproc/imx-rproc.txt   |   3 +
+> > >  drivers/remoteproc/imx_rproc.c                     | 409
+> > ++++++++++++++++++++-
+> > >  2 files changed, 401 insertions(+), 11 deletions(-)
+> > >
+> > > --
+> > > 2.16.4
+> > >
+> > >
+> > > _______________________________________________
+> > > linux-arm-kernel mailing list
+> > > linux-arm-kernel@lists.infradead.org
+> > > http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+> > >
+> >=20
+> > --
+> > Pengutronix e.K.                           |
+> > |
+> > Steuerwalder Str. 21                       |
+> > http://www.pengutronix.de/  |
+> > 31137 Hildesheim, Germany                  | Phone:
+> > +49-5121-206917-0    |
+> > Amtsgericht Hildesheim, HRA 2686           | Fax:
+> > +49-5121-206917-5555 |
 
 --=20
 Pengutronix e.K.                           |                             |
@@ -193,24 +206,24 @@ Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
 31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
 Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
 
---lledsvdu3e7clex3
+--ndwcthydipkpuzsn
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEERBNZvwSgvmcMY/T74omh9DUaUbMFAl8ehFAACgkQ4omh9DUa
-UbNuvBAAzaHrZx+RWrM1K4wZ6lTlnlom0/YvoOHFJy6BFwR3G5839nr1109/x9Rg
-SBhifCjiIISDYSDl2MdlgAPxjjEcLfjIJH9PTCzk9YoXZOkBvCzTnxBxSePlXAol
-ezH+BJsu/Bfc9iva+cLflE3CAEAc80MESPXlMoQg6W7E7CS0CsvTh4MwuWWc0KDR
-a9lEI7axGKePILdQzK6r25cAerJwxH1YA4EWOg09Da9kwSnECMdcY+fI5Bp1aYxg
-zlpxbtcpwtLgeR3s+IzKSOEGkWeMQOOwumVJ5hEs2Rdl4GoPvWBt+YH34XYnziU3
-gTLCfpJkno5smfBOub49/6UA+wj8aDVzZaAWZj0/FwowFvmymgncl4RpSRtkqG1s
-k6xiBSBES+IIBHeZek7SINYI4UoA0rV4GnbzIFza6IzhB58mcv1a3i1S+TnNHEoi
-ZyR+tTyK7NdeuRoWO5W7dlgFa7pt1Y+pia1HGWiksnUY4xCsdaVm+Ugpm4OXY1KB
-9IneQA0QfggVk8BuXnP0i6qlQGc5abdLYhPM8SI71jzuRtMzt2O/yAKGt+mhHQTO
-VxNfoa+q7DVG/bce3Q3iRCK+BG92BznmYF7v+uiHEWuD/7tRcztXKjJkxxuu9MTc
-l+FN2vsU9w/tdeFrEivpA4yq/Lr5ExMvHYmjDzqnYj3NTlFdd88=
-=1uiY
+iQIzBAABCAAdFiEERBNZvwSgvmcMY/T74omh9DUaUbMFAl8eiDwACgkQ4omh9DUa
+UbPVKw//RiwTubWT5hjSS95taFOhrjklnCkKnNdNrx15w38fSGf1Gly5UtAfKTRo
+7svoNWtbHzPDT5TILc/NQpP2C86ug3kuhLRzwzppP2DB217lFIzqwRWZ1QBYbYko
+Ho8u4nHgR/++MiZs3KwgeJvlvKhISpvTxNKR1wmXj8MPw4lD6Vrq1L2GdKMiiaOb
+x1bziy2+IEp+/ntohTvvjrUHjD7mcTEW25LPgP28cgED1mnJJX+IRKJnymBCTQi9
+w+MHTgAGOPXkHeho3BFhg7S8T+Wj9JeiVewLOpryzosw96gGYmkRXE+QW75iIJRu
+L4+2b1wrb5O3VpuhK7oVxpQe5QhEYG1PIAizWNQSJV5jRbuN1Xct7i949d+a91FF
+8dcE4xOqsGVhQ7+IMf+6HMOk0m/FXXmjBZzpOs++RTsQR/cPAuD2QTLWHuaETb4v
+H6aRwgLZGDZzyBAyF6HnFYdZvLYY0XiINfi1b65+lSarCgaIrHWqPogNtsX8RGET
+PngXCMQ85XF4Bi/TR6vj0ym1jEd4fPBIHPSS/nCzwfDC5pkUUCdzdpEOdVPSKxf0
+YIStW+5krTiQwnp566EC4+fHH+pyzcV6W6BrpKrDsAwUk4KUIpyxr9I9eKkp8YVp
+xzYl92mLOq0vkp1Mv4WZFpKaH3LTWYqq4AwbryvEhpM29g9XXjQ=
+=Hp2H
 -----END PGP SIGNATURE-----
 
---lledsvdu3e7clex3--
+--ndwcthydipkpuzsn--
