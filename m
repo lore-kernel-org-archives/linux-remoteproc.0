@@ -2,193 +2,285 @@ Return-Path: <SRS0=9Kti=BG=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.0 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MSGID_FROM_MTA_HEADER,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS
+X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B9C1C433DF
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 27 Jul 2020 15:13:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE803C433E1
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 27 Jul 2020 16:07:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 432482070B
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 27 Jul 2020 15:13:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 94A9A2073E
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 27 Jul 2020 16:07:13 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Xxltoj9W"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730447AbgG0PN0 (ORCPT
+        id S1728272AbgG0QHN (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 27 Jul 2020 11:13:26 -0400
-Received: from m177126.mail.qiye.163.com ([123.58.177.126]:41503 "EHLO
-        m177126.mail.qiye.163.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729082AbgG0PNZ (ORCPT
+        Mon, 27 Jul 2020 12:07:13 -0400
+Received: from us-smtp-2.mimecast.com ([205.139.110.61]:51859 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726662AbgG0QHM (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 27 Jul 2020 11:13:25 -0400
-X-Greylist: delayed 602 seconds by postgrey-1.27 at vger.kernel.org; Mon, 27 Jul 2020 11:13:22 EDT
-Received: from vivo.com (wm-5 [127.0.0.1])
-        by m177126.mail.qiye.163.com (Hmail) with ESMTP id 2483C182188;
-        Mon, 27 Jul 2020 23:03:16 +0800 (CST)
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: base64
-Message-ID: <AMoAtwB9DXJsyd-1khUpzqq9.1.1595862196133.Hmail.wenhu.wang@vivo.com>
-To:     elder@kernel.org, davem@davemloft.net, kuba@kernel.org,
-        kvalo@codeaurora.org, agross@kernel.org,
-        bjorn.andersson@linaro.org, ohad@wizery.com,
-        linux-kernel@vger.kernel.org
-Cc:     linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        alsa-devel@alsa-project.org, ath11k@lists.infradead.org,
-        netdev@vger.kernel.org, ath10k@lists.infradead.org,
-        linux-wireless@vger.kernel.org, srinivas.kandagatla@linaro.org,
-        sibis@codeaurora.org, wenhu.wang@vivo.com
-Subject: =?UTF-8?B?W1BBVENIXSBzb2M6IHFtaTogYWxsb3cgdXNlciB0byBzZXQgaGFuZGxlIHdxIHRvIGhpcHJpbw==?=
-X-Priority: 3
-X-Mailer: HMail Webmail Server V2.0 Copyright (c) 2016-163.com
-X-Originating-IP: 58.251.74.226
+        Mon, 27 Jul 2020 12:07:12 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1595866030;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=eW3eLE0iFf8Xs+t23+k+mgl1kwD0+WYibRrTMDTp4KQ=;
+        b=Xxltoj9WyrQVH+y8TrxNCTnIuYBXdgxhnsHoYOhSVFLFWjl85v9/QBy3HHq0crCOabyEmX
+        5FjkNbuxdhYudpbpJQew6HUarHI5gTynLgrAVMOo4IzDpN/cAGJc2cs8Pplhp81dZBpjtO
+        YIcbMnqcgykcNk4PDFYIysVlbtTchF0=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-184-arjQ01AOOJOKvQ3oummTjg-1; Mon, 27 Jul 2020 12:07:07 -0400
+X-MC-Unique: arjQ01AOOJOKvQ3oummTjg-1
+Received: by mail-wm1-f69.google.com with SMTP id b13so7992240wme.9
+        for <linux-remoteproc@vger.kernel.org>; Mon, 27 Jul 2020 09:07:06 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=eW3eLE0iFf8Xs+t23+k+mgl1kwD0+WYibRrTMDTp4KQ=;
+        b=QMe9/XboybMyXqjD6+gvgo9lBkGuCbx25L2XvfTXdHYKwZaHS/r2uefiHtlx6BrbTw
+         FB0hkUwYVM3xMzMHdyPbY2cgMMSRBPlW9YKFPBbEgWujl7UJc73dc0CsCbb2InU2AChS
+         QWbjfH90WPjy9AjnG1EOac+kQB6Txgu6AUrcxhnsBkkKrC7yRmUSQq8kRVan6xLBkWZI
+         OhARPGHwO80xTMNT58HAqQE5VhiOllvEekZ4vghX56P3vnoCpORMwvp/mV+oNRm9hs8n
+         uTNIVhi5qZmItjk7NiY34gOdUckMWRI6S3LoEANw63F0OGYskuukeVzfIa6zE/5xEnd8
+         2eRQ==
+X-Gm-Message-State: AOAM532zQkN6jXmhJx+zO4udGVZVKVgFC5pvtxTPU+X5s/taXKrWk+kf
+        yaUBuYjVBZkThnhnbEL5s/VcOnvVzClcRQ7ejEZbC/xStck8QP5kwc6LMWxrjgniijXAVQzdGUU
+        zWVhnTOYquPpd5IfcNSyixgLkIjg80Q==
+X-Received: by 2002:a05:600c:514:: with SMTP id i20mr42255wmc.102.1595866025315;
+        Mon, 27 Jul 2020 09:07:05 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJwtl2Ylpw7i86WT+eT7vZB6WLMIlLQCLMd8k6RLq5clRpnkwturE6lhvFPSxMNgbZqWXR3rsw==
+X-Received: by 2002:a05:600c:514:: with SMTP id i20mr42224wmc.102.1595866025071;
+        Mon, 27 Jul 2020 09:07:05 -0700 (PDT)
+Received: from redhat.com ([192.117.173.58])
+        by smtp.gmail.com with ESMTPSA id v15sm12486866wrm.23.2020.07.27.09.07.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 27 Jul 2020 09:07:04 -0700 (PDT)
+Date:   Mon, 27 Jul 2020 12:07:01 -0400
+From:   "Michael S. Tsirkin" <mst@redhat.com>
+To:     Guennadi Liakhovetski <guennadi.liakhovetski@linux.intel.com>
+Cc:     Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Arnaud POULIQUEN <arnaud.pouliquen@st.com>,
+        "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
+        Ohad Ben-Cohen <ohad@wizery.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Liam Girdwood <liam.r.girdwood@linux.intel.com>
+Subject: Re: [PATCH RESEND v4] rpmsg: virtio: add endianness conversions
+Message-ID: <20200727120522-mutt-send-email-mst@kernel.org>
+References: <20200616073011.GB2999@ubuntu>
+ <20200630175057.GA3831001@xps15>
+ <20200701055912-mutt-send-email-mst@kernel.org>
+ <20200706124716.GA5457@ubuntu>
+ <20200706125657.GB5457@ubuntu>
+ <20200706133835.GC5457@ubuntu>
+ <c5a4b0c7-859e-24ad-cf1e-3f80a2f15f38@st.com>
+ <20200707153436.GA5970@ubuntu>
+ <CANLsYkwuPsm+5uCWc91NLF4oxANvxVvgQ9NcRnoPAoVRGk+H5w@mail.gmail.com>
+ <20200721085638.GA3815@ubuntu>
 MIME-Version: 1.0
-Received: from wenhu.wang@vivo.com( [58.251.74.226) ] by ajax-webmail ( [127.0.0.1] ) ; Mon, 27 Jul 2020 23:03:16 +0800 (GMT+08:00)
-From:   =?UTF-8?B?546L5paH6JmO?= <wenhu.wang@vivo.com>
-Date:   Mon, 27 Jul 2020 23:03:16 +0800 (GMT+08:00)
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgYFAkeWUFZS1VLWVdZKFlBSE83V1ktWUFJV1kPCR
-        oVCBIfWUFZGkIaSkgeSEtIHk1OVkpOQk5DTUlKQk1JS0NVEwETFhoSFyQUDg9ZV1kWGg8SFR0UWU
-        FZT0tIVUpKS0hKTFVKS0tZBg++
-X-HM-Sender-Digest: e1kMHhlZQQ8JDh5XWRIfHhUPWUFZRzo2FDoPDDlCPyMxCAIfVkoQEy4L
-        AQoKQlVKVUpOQk5DTUlKQk1NQ0NVMxYaEhdVDB4VEw5VDBoVHDsNEg0UVRgUFkVZV1kSC1lBWU5D
-        VUlOSlVMT1VJSU1ZV1kIAVlBSklOTUk3Bg++
-X-HM-Tid: 0a7390cc9fd56458kurs2483c182188
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200721085638.GA3815@ubuntu>
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Q3VycmVudGx5IHRoZSBxbWlfaGFuZGxlIGlzIGluaXRpYWxpemVkIHNpbmdsZSB0aHJlYWRlZCBh
-bmQgc3RyaWN0bHkKb3JkZXJlZCB3aXRoIHRoZSBhY3RpdmUgc2V0IHRvIDEuIFRoaXMgaXMgcHJl
-dHR5IHNpbXBsZSBhbmQgc2FmZSBidXQKc29tZXRpbWVzIGluZWZmZW5jeS4gU28gaXQgaXMgYmV0
-dGVyIHRvIGFsbG93IHVzZXIgdG8gZGVjaWRlIHdoZXRoZXIKYSBoaWdoIHByaW9yaXR5IHdvcmtx
-dWV1ZSBzaG91bGQgYmUgdXNlZC4KClNpZ25lZC1vZmYtYnk6IFdhbmcgV2VuaHUgPHdlbmh1Lndh
-bmdAdml2by5jb20+Ci0tLQogZHJpdmVycy9uZXQvaXBhL2lwYV9xbWkuYyAgICAgICAgICAgICB8
-IDQgKystLQogZHJpdmVycy9uZXQvd2lyZWxlc3MvYXRoL2F0aDEway9xbWkuYyB8IDIgKy0KIGRy
-aXZlcnMvbmV0L3dpcmVsZXNzL2F0aC9hdGgxMWsvcW1pLmMgfCAyICstCiBkcml2ZXJzL3JlbW90
-ZXByb2MvcWNvbV9zeXNtb24uYyAgICAgIHwgMiArLQogZHJpdmVycy9zbGltYnVzL3Fjb20tbmdk
-LWN0cmwuYyAgICAgICB8IDQgKystLQogZHJpdmVycy9zb2MvcWNvbS9wZHJfaW50ZXJmYWNlLmMg
-ICAgICB8IDQgKystLQogZHJpdmVycy9zb2MvcWNvbS9xbWlfaW50ZXJmYWNlLmMgICAgICB8IDkg
-KysrKysrKy0tCiBpbmNsdWRlL2xpbnV4L3NvYy9xY29tL3FtaS5oICAgICAgICAgIHwgMyArKy0K
-IHNhbXBsZXMvcW1pL3FtaV9zYW1wbGVfY2xpZW50LmMgICAgICAgfCA0ICsrLS0KIDkgZmlsZXMg
-Y2hhbmdlZCwgMjAgaW5zZXJ0aW9ucygrKSwgMTQgZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEv
-ZHJpdmVycy9uZXQvaXBhL2lwYV9xbWkuYyBiL2RyaXZlcnMvbmV0L2lwYS9pcGFfcW1pLmMKaW5k
-ZXggNTA5MGYwZjkyM2FkLi5kNzhiMGZlNmJkODMgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvbmV0L2lw
-YS9pcGFfcW1pLmMKKysrIGIvZHJpdmVycy9uZXQvaXBhL2lwYV9xbWkuYwpAQCAtNDg2LDcgKzQ4
-Niw3IEBAIGludCBpcGFfcW1pX3NldHVwKHN0cnVjdCBpcGEgKmlwYSkKIAkgKi8KIAlyZXQgPSBx
-bWlfaGFuZGxlX2luaXQoJmlwYV9xbWktPnNlcnZlcl9oYW5kbGUsCiAJCQkgICAgICBJUEFfUU1J
-X1NFUlZFUl9NQVhfUkNWX1NaLCAmaXBhX3NlcnZlcl9vcHMsCi0JCQkgICAgICBpcGFfc2VydmVy
-X21zZ19oYW5kbGVycyk7CisJCQkgICAgICBpcGFfc2VydmVyX21zZ19oYW5kbGVycywgMCk7CiAJ
-aWYgKHJldCkKIAkJcmV0dXJuIHJldDsKIApAQCAtNTAwLDcgKzUwMCw3IEBAIGludCBpcGFfcW1p
-X3NldHVwKHN0cnVjdCBpcGEgKmlwYSkKIAkgKi8KIAlyZXQgPSBxbWlfaGFuZGxlX2luaXQoJmlw
-YV9xbWktPmNsaWVudF9oYW5kbGUsCiAJCQkgICAgICBJUEFfUU1JX0NMSUVOVF9NQVhfUkNWX1Na
-LCAmaXBhX2NsaWVudF9vcHMsCi0JCQkgICAgICBpcGFfY2xpZW50X21zZ19oYW5kbGVycyk7CisJ
-CQkgICAgICBpcGFfY2xpZW50X21zZ19oYW5kbGVycywgMCk7CiAJaWYgKHJldCkKIAkJZ290byBl
-cnJfc2VydmVyX2hhbmRsZV9yZWxlYXNlOwogCmRpZmYgLS1naXQgYS9kcml2ZXJzL25ldC93aXJl
-bGVzcy9hdGgvYXRoMTBrL3FtaS5jIGIvZHJpdmVycy9uZXQvd2lyZWxlc3MvYXRoL2F0aDEway9x
-bWkuYwppbmRleCA1NDY4YTQxZTkyOGUuLjAyODgxODgyYjRkOSAxMDA2NDQKLS0tIGEvZHJpdmVy
-cy9uZXQvd2lyZWxlc3MvYXRoL2F0aDEway9xbWkuYworKysgYi9kcml2ZXJzL25ldC93aXJlbGVz
-cy9hdGgvYXRoMTBrL3FtaS5jCkBAIC0xMDM0LDcgKzEwMzQsNyBAQCBpbnQgYXRoMTBrX3FtaV9p
-bml0KHN0cnVjdCBhdGgxMGsgKmFyLCB1MzIgbXNhX3NpemUpCiAKIAlyZXQgPSBxbWlfaGFuZGxl
-X2luaXQoJnFtaS0+cW1pX2hkbCwKIAkJCSAgICAgIFdMRldfQkRGX0RPV05MT0FEX1JFUV9NU0df
-VjAxX01BWF9NU0dfTEVOLAotCQkJICAgICAgJmF0aDEwa19xbWlfb3BzLCBxbWlfbXNnX2hhbmRs
-ZXIpOworCQkJICAgICAgJmF0aDEwa19xbWlfb3BzLCBxbWlfbXNnX2hhbmRsZXIsIDApOwogCWlm
-IChyZXQpCiAJCWdvdG8gZXJyOwogCmRpZmYgLS1naXQgYS9kcml2ZXJzL25ldC93aXJlbGVzcy9h
-dGgvYXRoMTFrL3FtaS5jIGIvZHJpdmVycy9uZXQvd2lyZWxlc3MvYXRoL2F0aDExay9xbWkuYwpp
-bmRleCBjMDBhOTlhZDhkYmMuLjkxMzk0ZDU4ZDM2ZSAxMDA2NDQKLS0tIGEvZHJpdmVycy9uZXQv
-d2lyZWxlc3MvYXRoL2F0aDExay9xbWkuYworKysgYi9kcml2ZXJzL25ldC93aXJlbGVzcy9hdGgv
-YXRoMTFrL3FtaS5jCkBAIC0yMzk3LDcgKzIzOTcsNyBAQCBpbnQgYXRoMTFrX3FtaV9pbml0X3Nl
-cnZpY2Uoc3RydWN0IGF0aDExa19iYXNlICphYikKIAogCWFiLT5xbWkudGFyZ2V0X21lbV9tb2Rl
-ID0gQVRIMTFLX1FNSV9UQVJHRVRfTUVNX01PREVfREVGQVVMVDsKIAlyZXQgPSBxbWlfaGFuZGxl
-X2luaXQoJmFiLT5xbWkuaGFuZGxlLCBBVEgxMUtfUU1JX1JFU1BfTEVOX01BWCwKLQkJCSAgICAg
-ICZhdGgxMWtfcW1pX29wcywgYXRoMTFrX3FtaV9tc2dfaGFuZGxlcnMpOworCQkJICAgICAgJmF0
-aDExa19xbWlfb3BzLCBhdGgxMWtfcW1pX21zZ19oYW5kbGVycywgMCk7CiAJaWYgKHJldCA8IDAp
-IHsKIAkJYXRoMTFrX3dhcm4oYWIsICJmYWlsZWQgdG8gaW5pdGlhbGl6ZSBxbWkgaGFuZGxlXG4i
-KTsKIAkJcmV0dXJuIHJldDsKZGlmZiAtLWdpdCBhL2RyaXZlcnMvcmVtb3RlcHJvYy9xY29tX3N5
-c21vbi5jIGIvZHJpdmVycy9yZW1vdGVwcm9jL3Fjb21fc3lzbW9uLmMKaW5kZXggOGQ4OTk2ZDcx
-NGYwLi40ZWM0NzBlNDI0ZWYgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvcmVtb3RlcHJvYy9xY29tX3N5
-c21vbi5jCisrKyBiL2RyaXZlcnMvcmVtb3RlcHJvYy9xY29tX3N5c21vbi5jCkBAIC02MTQsNyAr
-NjE0LDcgQEAgc3RydWN0IHFjb21fc3lzbW9uICpxY29tX2FkZF9zeXNtb25fc3ViZGV2KHN0cnVj
-dCBycHJvYyAqcnByb2MsCiAJfQogCiAJcmV0ID0gcW1pX2hhbmRsZV9pbml0KCZzeXNtb24tPnFt
-aSwgU1NDVExfTUFYX01TR19MRU4sICZzc2N0bF9vcHMsCi0JCQkgICAgICBxbWlfaW5kaWNhdGlv
-bl9oYW5kbGVyKTsKKwkJCSAgICAgIHFtaV9pbmRpY2F0aW9uX2hhbmRsZXIsIDApOwogCWlmIChy
-ZXQgPCAwKSB7CiAJCWRldl9lcnIoc3lzbW9uLT5kZXYsICJmYWlsZWQgdG8gaW5pdGlhbGl6ZSBx
-bWkgaGFuZGxlXG4iKTsKIAkJa2ZyZWUoc3lzbW9uKTsKZGlmZiAtLWdpdCBhL2RyaXZlcnMvc2xp
-bWJ1cy9xY29tLW5nZC1jdHJsLmMgYi9kcml2ZXJzL3NsaW1idXMvcWNvbS1uZ2QtY3RybC5jCmlu
-ZGV4IDc0M2VlN2I0ZTYzZi4uYmE3NjY5MWZjNWE1IDEwMDY0NAotLS0gYS9kcml2ZXJzL3NsaW1i
-dXMvcWNvbS1uZ2QtY3RybC5jCisrKyBiL2RyaXZlcnMvc2xpbWJ1cy9xY29tLW5nZC1jdHJsLmMK
-QEAgLTQ0Niw3ICs0NDYsNyBAQCBzdGF0aWMgaW50IHFjb21fc2xpbV9xbWlfaW5pdChzdHJ1Y3Qg
-cWNvbV9zbGltX25nZF9jdHJsICpjdHJsLAogCQlyZXR1cm4gLUVOT01FTTsKIAogCXJjID0gcW1p
-X2hhbmRsZV9pbml0KGhhbmRsZSwgU0xJTUJVU19RTUlfUE9XRVJfUkVRX01BWF9NU0dfTEVOLAot
-CQkJCU5VTEwsIHFjb21fc2xpbV9xbWlfbXNnX2hhbmRsZXJzKTsKKwkJCQlOVUxMLCBxY29tX3Ns
-aW1fcW1pX21zZ19oYW5kbGVycywgMCk7CiAJaWYgKHJjIDwgMCkgewogCQlkZXZfZXJyKGN0cmwt
-PmRldiwgIlFNSSBjbGllbnQgaW5pdCBmYWlsZWQ6ICVkXG4iLCByYyk7CiAJCWdvdG8gcW1pX2hh
-bmRsZV9pbml0X2ZhaWxlZDsKQEAgLTEyOTMsNyArMTI5Myw3IEBAIHN0YXRpYyBpbnQgcWNvbV9z
-bGltX25nZF9xbWlfc3ZjX2V2ZW50X2luaXQoc3RydWN0IHFjb21fc2xpbV9uZ2RfY3RybCAqY3Ry
-bCkKIAlpbnQgcmV0OwogCiAJcmV0ID0gcW1pX2hhbmRsZV9pbml0KCZxbWktPnN2Y19ldmVudF9o
-ZGwsIDAsCi0JCQkJJnFjb21fc2xpbV9uZ2RfcW1pX3N2Y19ldmVudF9vcHMsIE5VTEwpOworCQkJ
-CSZxY29tX3NsaW1fbmdkX3FtaV9zdmNfZXZlbnRfb3BzLCBOVUxMLCAwKTsKIAlpZiAocmV0IDwg
-MCkgewogCQlkZXZfZXJyKGN0cmwtPmRldiwgInFtaV9oYW5kbGVfaW5pdCBmYWlsZWQ6ICVkXG4i
-LCByZXQpOwogCQlyZXR1cm4gcmV0OwpkaWZmIC0tZ2l0IGEvZHJpdmVycy9zb2MvcWNvbS9wZHJf
-aW50ZXJmYWNlLmMgYi9kcml2ZXJzL3NvYy9xY29tL3Bkcl9pbnRlcmZhY2UuYwppbmRleCBiZGNm
-MTZmODhhOTcuLmNjMWNiOTBjMTk2OCAxMDA2NDQKLS0tIGEvZHJpdmVycy9zb2MvcWNvbS9wZHJf
-aW50ZXJmYWNlLmMKKysrIGIvZHJpdmVycy9zb2MvcWNvbS9wZHJfaW50ZXJmYWNlLmMKQEAgLTY4
-NSw3ICs2ODUsNyBAQCBzdHJ1Y3QgcGRyX2hhbmRsZSAqcGRyX2hhbmRsZV9hbGxvYyh2b2lkICgq
-c3RhdHVzKShpbnQgc3RhdGUsCiAKIAlyZXQgPSBxbWlfaGFuZGxlX2luaXQoJnBkci0+bG9jYXRv
-cl9oZGwsCiAJCQkgICAgICBTRVJWUkVHX0dFVF9ET01BSU5fTElTVF9SRVNQX01BWF9MRU4sCi0J
-CQkgICAgICAmcGRyX2xvY2F0b3Jfb3BzLCBOVUxMKTsKKwkJCSAgICAgICZwZHJfbG9jYXRvcl9v
-cHMsIE5VTEwsIDApOwogCWlmIChyZXQgPCAwKQogCQlnb3RvIGRlc3Ryb3lfaW5kYWNrOwogCkBA
-IC02OTYsNyArNjk2LDcgQEAgc3RydWN0IHBkcl9oYW5kbGUgKnBkcl9oYW5kbGVfYWxsb2Modm9p
-ZCAoKnN0YXR1cykoaW50IHN0YXRlLAogCXJldCA9IHFtaV9oYW5kbGVfaW5pdCgmcGRyLT5ub3Rp
-Zmllcl9oZGwsCiAJCQkgICAgICBTRVJWUkVHX1NUQVRFX1VQREFURURfSU5EX01BWF9MRU4sCiAJ
-CQkgICAgICAmcGRyX25vdGlmaWVyX29wcywKLQkJCSAgICAgIHFtaV9pbmRpY2F0aW9uX2hhbmRs
-ZXIpOworCQkJICAgICAgcW1pX2luZGljYXRpb25faGFuZGxlciwgMCk7CiAJaWYgKHJldCA8IDAp
-CiAJCWdvdG8gcmVsZWFzZV9xbWlfaGFuZGxlOwogCmRpZmYgLS1naXQgYS9kcml2ZXJzL3NvYy9x
-Y29tL3FtaV9pbnRlcmZhY2UuYyBiL2RyaXZlcnMvc29jL3Fjb20vcW1pX2ludGVyZmFjZS5jCmlu
-ZGV4IDFhMDNlYWEzOGM0Ni4uMDExNjBkYmZjNGQwIDEwMDY0NAotLS0gYS9kcml2ZXJzL3NvYy9x
-Y29tL3FtaV9pbnRlcmZhY2UuYworKysgYi9kcml2ZXJzL3NvYy9xY29tL3FtaV9pbnRlcmZhY2Uu
-YwpAQCAtNjA5LDYgKzYwOSw3IEBAIHN0YXRpYyBzdHJ1Y3Qgc29ja2V0ICpxbWlfc29ja19jcmVh
-dGUoc3RydWN0IHFtaV9oYW5kbGUgKnFtaSwKICAqIEByZWN2X2J1Zl9zaXplOiBtYXhpbXVtIHNp
-emUgb2YgaW5jb21pbmcgbWVzc2FnZQogICogQG9wczoJcmVmZXJlbmNlIHRvIGNhbGxiYWNrcyBm
-b3IgUVJUUiBub3RpZmljYXRpb25zCiAgKiBAaGFuZGxlcnM6CU5VTEwtdGVybWluYXRlZCBsaXN0
-IG9mIFFNSSBtZXNzYWdlIGhhbmRsZXJzCisgKiBAaGlwcmlvOgl3aGV0aGVyIGhpZ2ggcHJpb3Jp
-dHkgd29ya2VyIGlzIHVzZWQgZm9yIHdvcmtxdWV1ZQogICoKICAqIFRoaXMgaW5pdGlhbGl6ZXMg
-dGhlIFFNSSBjbGllbnQgaGFuZGxlIHRvIGFsbG93IHNlbmRpbmcgYW5kIHJlY2VpdmluZyBRTUkK
-ICAqIG1lc3NhZ2VzLiBBcyBtZXNzYWdlcyBhcmUgcmVjZWl2ZWQgdGhlIGFwcHJvcHJpYXRlIGhh
-bmRsZXIgd2lsbCBiZSBpbnZva2VkLgpAQCAtNjE3LDkgKzYxOCwxMSBAQCBzdGF0aWMgc3RydWN0
-IHNvY2tldCAqcW1pX3NvY2tfY3JlYXRlKHN0cnVjdCBxbWlfaGFuZGxlICpxbWksCiAgKi8KIGlu
-dCBxbWlfaGFuZGxlX2luaXQoc3RydWN0IHFtaV9oYW5kbGUgKnFtaSwgc2l6ZV90IHJlY3ZfYnVm
-X3NpemUsCiAJCSAgICBjb25zdCBzdHJ1Y3QgcW1pX29wcyAqb3BzLAotCQkgICAgY29uc3Qgc3Ry
-dWN0IHFtaV9tc2dfaGFuZGxlciAqaGFuZGxlcnMpCisJCSAgICBjb25zdCBzdHJ1Y3QgcW1pX21z
-Z19oYW5kbGVyICpoYW5kbGVycywKKwkJICAgIHVuc2lnbmVkIGludCBoaXByaW8pCiB7CiAJaW50
-IHJldDsKKwl1bnNpZ25lZCBpbnQgZmxhZ3MgPSBXUV9VTkJPVU5EOwogCiAJbXV0ZXhfaW5pdCgm
-cW1pLT50eG5fbG9jayk7CiAJbXV0ZXhfaW5pdCgmcW1pLT5zb2NrX2xvY2spOwpAQCAtNjQ3LDcg
-KzY1MCw5IEBAIGludCBxbWlfaGFuZGxlX2luaXQoc3RydWN0IHFtaV9oYW5kbGUgKnFtaSwgc2l6
-ZV90IHJlY3ZfYnVmX3NpemUsCiAJaWYgKCFxbWktPnJlY3ZfYnVmKQogCQlyZXR1cm4gLUVOT01F
-TTsKIAotCXFtaS0+d3EgPSBhbGxvY193b3JrcXVldWUoInFtaV9tc2dfaGFuZGxlciIsIFdRX1VO
-Qk9VTkQsIDEpOworCWlmIChoaXByaW8pCisJCWZsYWdzIHw9IFdRX0hJR0hQUkk7CisJcW1pLT53
-cSA9IGFsbG9jX3dvcmtxdWV1ZSgicW1pX21zZ19oYW5kbGVyIiwgZmxhZ3MsIDEpOwogCWlmICgh
-cW1pLT53cSkgewogCQlyZXQgPSAtRU5PTUVNOwogCQlnb3RvIGVycl9mcmVlX3JlY3ZfYnVmOwpk
-aWZmIC0tZ2l0IGEvaW5jbHVkZS9saW51eC9zb2MvcWNvbS9xbWkuaCBiL2luY2x1ZGUvbGludXgv
-c29jL3Fjb20vcW1pLmgKaW5kZXggZTcxMmY5NGI4OWZjLi4yNDA2MmZkNzE2M2QgMTAwNjQ0Ci0t
-LSBhL2luY2x1ZGUvbGludXgvc29jL3Fjb20vcW1pLmgKKysrIGIvaW5jbHVkZS9saW51eC9zb2Mv
-cWNvbS9xbWkuaApAQCAtMjQ0LDcgKzI0NCw4IEBAIGludCBxbWlfYWRkX3NlcnZlcihzdHJ1Y3Qg
-cW1pX2hhbmRsZSAqcW1pLCB1bnNpZ25lZCBpbnQgc2VydmljZSwKIAogaW50IHFtaV9oYW5kbGVf
-aW5pdChzdHJ1Y3QgcW1pX2hhbmRsZSAqcW1pLCBzaXplX3QgbWF4X21zZ19sZW4sCiAJCSAgICBj
-b25zdCBzdHJ1Y3QgcW1pX29wcyAqb3BzLAotCQkgICAgY29uc3Qgc3RydWN0IHFtaV9tc2dfaGFu
-ZGxlciAqaGFuZGxlcnMpOworCQkgICAgY29uc3Qgc3RydWN0IHFtaV9tc2dfaGFuZGxlciAqaGFu
-ZGxlcnMsCisJCSAgICB1bnNpZ25lZCBpbnQgaGlwcmlvKTsKIHZvaWQgcW1pX2hhbmRsZV9yZWxl
-YXNlKHN0cnVjdCBxbWlfaGFuZGxlICpxbWkpOwogCiBzc2l6ZV90IHFtaV9zZW5kX3JlcXVlc3Qo
-c3RydWN0IHFtaV9oYW5kbGUgKnFtaSwgc3RydWN0IHNvY2thZGRyX3FydHIgKnNxLApkaWZmIC0t
-Z2l0IGEvc2FtcGxlcy9xbWkvcW1pX3NhbXBsZV9jbGllbnQuYyBiL3NhbXBsZXMvcW1pL3FtaV9z
-YW1wbGVfY2xpZW50LmMKaW5kZXggYzllNzI3NmMzZDgzLi5hOTFkMTYzM2VhMzggMTAwNjQ0Ci0t
-LSBhL3NhbXBsZXMvcW1pL3FtaV9zYW1wbGVfY2xpZW50LmMKKysrIGIvc2FtcGxlcy9xbWkvcW1p
-X3NhbXBsZV9jbGllbnQuYwpAQCAtNDYzLDcgKzQ2Myw3IEBAIHN0YXRpYyBpbnQgcW1pX3NhbXBs
-ZV9wcm9iZShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2KQogCiAJcmV0ID0gcW1pX2hhbmRs
-ZV9pbml0KCZzYW1wbGUtPnFtaSwgVEVTVF9EQVRBX1JFUV9NQVhfTVNHX0xFTl9WMDEsCiAJCQkg
-ICAgICBOVUxMLAotCQkJICAgICAgcW1pX3NhbXBsZV9oYW5kbGVycyk7CisJCQkgICAgICBxbWlf
-c2FtcGxlX2hhbmRsZXJzLCAwKTsKIAlpZiAocmV0IDwgMCkKIAkJcmV0dXJuIHJldDsKIApAQCAt
-NTkwLDcgKzU5MCw3IEBAIHN0YXRpYyBpbnQgcW1pX3NhbXBsZV9pbml0KHZvaWQpCiAJaWYgKHJl
-dCkKIAkJZ290byBlcnJfcmVtb3ZlX2RlYnVnX2RpcjsKIAotCXJldCA9IHFtaV9oYW5kbGVfaW5p
-dCgmbG9va3VwX2NsaWVudCwgMCwgJmxvb2t1cF9vcHMsIE5VTEwpOworCXJldCA9IHFtaV9oYW5k
-bGVfaW5pdCgmbG9va3VwX2NsaWVudCwgMCwgJmxvb2t1cF9vcHMsIE5VTEwsIDApOwogCWlmIChy
-ZXQgPCAwKQogCQlnb3RvIGVycl91bnJlZ2lzdGVyX2RyaXZlcjsKIAotLSAKMi4xNy4xCgoNCg0K
+On Tue, Jul 21, 2020 at 10:56:38AM +0200, Guennadi Liakhovetski wrote:
+> According to the VirtIO 1.0 spec data, sent over virtual queues must
+> be in little-endian format. Update the RPMsg VirtIO implementation
+> to enforce that but let legacy configurations continue use native
+> endianness.
+> 
+> Signed-off-by: Guennadi Liakhovetski <guennadi.liakhovetski@linux.intel.com>
+> Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+> Tested-by: Arnaud Pouliquen <arnaud.pouliquen@st.com>
+
+> ---
+> 
+> Ping: 2 weeks since the original submission. Also added back the updated
+> "reviewed-by" tag.
+> 
+> v4: fix a left-over use of an LE value in calculation - thanks to Arnaud for
+> catching!
+> 
+> v3: use the virtio_byteorder.h header
+> 
+> v2: Following suggestions from Michael and Mathieu switch to using virtio16/32
+> types and conversion functions.
+> 
+>  drivers/rpmsg/virtio_rpmsg_bus.c | 63 +++++++++++++++++---------------
+>  1 file changed, 34 insertions(+), 29 deletions(-)
+> 
+> diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
+> index 07d4f3374098..9006fc7f73d0 100644
+> --- a/drivers/rpmsg/virtio_rpmsg_bus.c
+> +++ b/drivers/rpmsg/virtio_rpmsg_bus.c
+> @@ -23,6 +23,7 @@
+>  #include <linux/slab.h>
+>  #include <linux/sched.h>
+>  #include <linux/virtio.h>
+> +#include <linux/virtio_byteorder.h>
+>  #include <linux/virtio_ids.h>
+>  #include <linux/virtio_config.h>
+>  #include <linux/wait.h>
+> @@ -84,11 +85,11 @@ struct virtproc_info {
+>   * Every message sent(/received) on the rpmsg bus begins with this header.
+>   */
+>  struct rpmsg_hdr {
+> -	u32 src;
+> -	u32 dst;
+> -	u32 reserved;
+> -	u16 len;
+> -	u16 flags;
+> +	__virtio32 src;
+> +	__virtio32 dst;
+> +	__virtio32 reserved;
+> +	__virtio16 len;
+> +	__virtio16 flags;
+>  	u8 data[];
+>  } __packed;
+>  
+> @@ -106,8 +107,8 @@ struct rpmsg_hdr {
+>   */
+>  struct rpmsg_ns_msg {
+>  	char name[RPMSG_NAME_SIZE];
+> -	u32 addr;
+> -	u32 flags;
+> +	__virtio32 addr;
+> +	__virtio32 flags;
+>  } __packed;
+>  
+>  /**
+> @@ -335,8 +336,8 @@ static int virtio_rpmsg_announce_create(struct rpmsg_device *rpdev)
+>  		struct rpmsg_ns_msg nsm;
+>  
+>  		strncpy(nsm.name, rpdev->id.name, RPMSG_NAME_SIZE);
+> -		nsm.addr = rpdev->ept->addr;
+> -		nsm.flags = RPMSG_NS_CREATE;
+> +		nsm.addr = cpu_to_virtio32(vrp->vdev, rpdev->ept->addr);
+> +		nsm.flags = cpu_to_virtio32(vrp->vdev, RPMSG_NS_CREATE);
+>  
+>  		err = rpmsg_sendto(rpdev->ept, &nsm, sizeof(nsm), RPMSG_NS_ADDR);
+>  		if (err)
+> @@ -359,8 +360,8 @@ static int virtio_rpmsg_announce_destroy(struct rpmsg_device *rpdev)
+>  		struct rpmsg_ns_msg nsm;
+>  
+>  		strncpy(nsm.name, rpdev->id.name, RPMSG_NAME_SIZE);
+> -		nsm.addr = rpdev->ept->addr;
+> -		nsm.flags = RPMSG_NS_DESTROY;
+> +		nsm.addr = cpu_to_virtio32(vrp->vdev, rpdev->ept->addr);
+> +		nsm.flags = cpu_to_virtio32(vrp->vdev, RPMSG_NS_DESTROY);
+>  
+>  		err = rpmsg_sendto(rpdev->ept, &nsm, sizeof(nsm), RPMSG_NS_ADDR);
+>  		if (err)
+> @@ -612,18 +613,18 @@ static int rpmsg_send_offchannel_raw(struct rpmsg_device *rpdev,
+>  		}
+>  	}
+>  
+> -	msg->len = len;
+> +	msg->len = cpu_to_virtio16(vrp->vdev, len);
+>  	msg->flags = 0;
+> -	msg->src = src;
+> -	msg->dst = dst;
+> +	msg->src = cpu_to_virtio32(vrp->vdev, src);
+> +	msg->dst = cpu_to_virtio32(vrp->vdev, dst);
+>  	msg->reserved = 0;
+>  	memcpy(msg->data, data, len);
+>  
+>  	dev_dbg(dev, "TX From 0x%x, To 0x%x, Len %d, Flags %d, Reserved %d\n",
+> -		msg->src, msg->dst, msg->len, msg->flags, msg->reserved);
+> +		src, dst, len, msg->flags, msg->reserved);
+>  #if defined(CONFIG_DYNAMIC_DEBUG)
+>  	dynamic_hex_dump("rpmsg_virtio TX: ", DUMP_PREFIX_NONE, 16, 1,
+> -			 msg, sizeof(*msg) + msg->len, true);
+> +			 msg, sizeof(*msg) + len, true);
+>  #endif
+>  
+>  	rpmsg_sg_init(&sg, msg, sizeof(*msg) + len);
+> @@ -704,13 +705,17 @@ static int rpmsg_recv_single(struct virtproc_info *vrp, struct device *dev,
+>  {
+>  	struct rpmsg_endpoint *ept;
+>  	struct scatterlist sg;
+> +	unsigned int msg_len = virtio16_to_cpu(vrp->vdev, msg->len);
+>  	int err;
+>  
+>  	dev_dbg(dev, "From: 0x%x, To: 0x%x, Len: %d, Flags: %d, Reserved: %d\n",
+> -		msg->src, msg->dst, msg->len, msg->flags, msg->reserved);
+> +		virtio32_to_cpu(vrp->vdev, msg->src),
+> +		virtio32_to_cpu(vrp->vdev, msg->dst), msg_len,
+> +		virtio16_to_cpu(vrp->vdev, msg->flags),
+> +		virtio32_to_cpu(vrp->vdev, msg->reserved));
+>  #if defined(CONFIG_DYNAMIC_DEBUG)
+>  	dynamic_hex_dump("rpmsg_virtio RX: ", DUMP_PREFIX_NONE, 16, 1,
+> -			 msg, sizeof(*msg) + msg->len, true);
+> +			 msg, sizeof(*msg) + msg_len, true);
+>  #endif
+>  
+>  	/*
+> @@ -718,15 +723,15 @@ static int rpmsg_recv_single(struct virtproc_info *vrp, struct device *dev,
+>  	 * the reported payload length.
+>  	 */
+>  	if (len > vrp->buf_size ||
+> -	    msg->len > (len - sizeof(struct rpmsg_hdr))) {
+> -		dev_warn(dev, "inbound msg too big: (%d, %d)\n", len, msg->len);
+> +	    msg_len > (len - sizeof(struct rpmsg_hdr))) {
+> +		dev_warn(dev, "inbound msg too big: (%d, %d)\n", len, msg_len);
+>  		return -EINVAL;
+>  	}
+>  
+>  	/* use the dst addr to fetch the callback of the appropriate user */
+>  	mutex_lock(&vrp->endpoints_lock);
+>  
+> -	ept = idr_find(&vrp->endpoints, msg->dst);
+> +	ept = idr_find(&vrp->endpoints, virtio32_to_cpu(vrp->vdev, msg->dst));
+>  
+>  	/* let's make sure no one deallocates ept while we use it */
+>  	if (ept)
+> @@ -739,8 +744,8 @@ static int rpmsg_recv_single(struct virtproc_info *vrp, struct device *dev,
+>  		mutex_lock(&ept->cb_lock);
+>  
+>  		if (ept->cb)
+> -			ept->cb(ept->rpdev, msg->data, msg->len, ept->priv,
+> -				msg->src);
+> +			ept->cb(ept->rpdev, msg->data, msg_len, ept->priv,
+> +				virtio32_to_cpu(vrp->vdev, msg->src));
+>  
+>  		mutex_unlock(&ept->cb_lock);
+>  
+> @@ -846,15 +851,15 @@ static int rpmsg_ns_cb(struct rpmsg_device *rpdev, void *data, int len,
+>  	/* don't trust the remote processor for null terminating the name */
+>  	msg->name[RPMSG_NAME_SIZE - 1] = '\0';
+>  
+> -	dev_info(dev, "%sing channel %s addr 0x%x\n",
+> -		 msg->flags & RPMSG_NS_DESTROY ? "destroy" : "creat",
+> -		 msg->name, msg->addr);
+> -
+>  	strncpy(chinfo.name, msg->name, sizeof(chinfo.name));
+>  	chinfo.src = RPMSG_ADDR_ANY;
+> -	chinfo.dst = msg->addr;
+> +	chinfo.dst = virtio32_to_cpu(vrp->vdev, msg->addr);
+> +
+> +	dev_info(dev, "%sing channel %s addr 0x%x\n",
+> +		 virtio32_to_cpu(vrp->vdev, msg->flags) & RPMSG_NS_DESTROY ?
+> +		 "destroy" : "creat", msg->name, chinfo.dst);
+>  
+> -	if (msg->flags & RPMSG_NS_DESTROY) {
+> +	if (virtio32_to_cpu(vrp->vdev, msg->flags) & RPMSG_NS_DESTROY) {
+>  		ret = rpmsg_unregister_device(&vrp->vdev->dev, &chinfo);
+>  		if (ret)
+>  			dev_err(dev, "rpmsg_destroy_channel failed: %d\n", ret);
+
+
+Question: are all these calls taking place *after* feature negotiation
+happened? Because virtio32_to_cpu will not DTRT before ...
+
+> -- 
+> 2.27.0
+
