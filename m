@@ -2,291 +2,157 @@ Return-Path: <SRS0=9Kti=BG=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC6B9C433E4
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 27 Jul 2020 20:48:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7240FC433E3
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 27 Jul 2020 22:39:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C142420786
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 27 Jul 2020 20:48:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5032120838
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 27 Jul 2020 22:39:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="iLaBtnq6"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="GEtTL4vJ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727062AbgG0Us4 (ORCPT
+        id S1727784AbgG0WjT (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 27 Jul 2020 16:48:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41174 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726313AbgG0Usz (ORCPT
+        Mon, 27 Jul 2020 18:39:19 -0400
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:50770 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726194AbgG0WjS (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 27 Jul 2020 16:48:55 -0400
-Received: from mail-pf1-x443.google.com (mail-pf1-x443.google.com [IPv6:2607:f8b0:4864:20::443])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6ABF6C061794
-        for <linux-remoteproc@vger.kernel.org>; Mon, 27 Jul 2020 13:48:55 -0700 (PDT)
-Received: by mail-pf1-x443.google.com with SMTP id k18so2516839pfp.7
-        for <linux-remoteproc@vger.kernel.org>; Mon, 27 Jul 2020 13:48:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=cl8j7GopTyZRJUUXdEXAzgEZa0nsCpMSIg/iqYNRNJI=;
-        b=iLaBtnq6xWHbjfS9QuQUioSxC170WYAeutNLBQNmsMY9Y5mX4ojCA5wgEOGVS8YKK9
-         Zhnmc63uw2QgH+kTs90etqDqnzopdR3s57ppLc/b3RXAl9YxGF4x5P9vW410qZyxeU2i
-         R+g6Sc76SziFatI+tH9MDVVyPtjHG+78wlE+8NCVMYjAnwkxd/aKj7o6Rt6VqK1KCHgF
-         At2PEyVi6sodJmb7NuOz8V4OBbZeHTxo5y6EW6OMyaRfqm0t3Oi722HGRLk2BkUdLW61
-         EQixGImDS8VRcz0HoTaUwecOxP0DX793COr0JYu0+mJVUGI+Lczxa3N7Ck35M4FfNScp
-         +kbw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=cl8j7GopTyZRJUUXdEXAzgEZa0nsCpMSIg/iqYNRNJI=;
-        b=OXSBo8aOvkQhvymy3eJjVViG6ZZLvxYPAfRgR6ZJPj8JhPopwJDg2X/+Vk/Didfw5W
-         x0LRCTZTCsR43p1qhrV6VAQTItYG8OwkMCu+wmSN7cfk3lmhiwBV3rDB3c/yut3RfQVS
-         oXrALGBPsaimZi5QX0PsF6Kf3kL7ltbfzbTv7xuStr4ZTs1CVt3MQMLND+JGLiOnW9vt
-         elRjqFph2MQpS3MdGBswIhYegOaK1hiKzWqn3Y7S+Gb2oEkAODtbyUWUQhFjvR/lzSLl
-         DCQ4nAXyeVXojYSKcllLdY0BXcEG0zvoQy2APsyL4JT1nbFrpeCGnx6iAqTSKboPt1Ro
-         6T9Q==
-X-Gm-Message-State: AOAM533nvS4UJtaqp5/d/zZt6eEaE7UziCLvR/p5OjEK90O9cqAMBTFV
-        oFTSpbkRwJT7PrWBUqvFv3v3mK9oP18=
-X-Google-Smtp-Source: ABdhPJzCJt3/kFYjKdCkjcIMaqcvuRRHbskkoYcAp1VnT157e73YyUuEdxYzSE508CB7pOpy9v5aTQ==
-X-Received: by 2002:aa7:9f46:: with SMTP id h6mr2443306pfr.321.1595882934807;
-        Mon, 27 Jul 2020 13:48:54 -0700 (PDT)
-Received: from builder.lan (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id n15sm535816pjf.12.2020.07.27.13.48.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 Jul 2020 13:48:54 -0700 (PDT)
-Date:   Mon, 27 Jul 2020 13:45:21 -0700
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     ????????? <wenhu.wang@vivo.com>
-Cc:     elder@kernel.org, davem@davemloft.net, kuba@kernel.org,
-        kvalo@codeaurora.org, agross@kernel.org, ohad@wizery.com,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org, alsa-devel@alsa-project.org,
-        ath11k@lists.infradead.org, netdev@vger.kernel.org,
-        ath10k@lists.infradead.org, linux-wireless@vger.kernel.org,
-        srinivas.kandagatla@linaro.org, sibis@codeaurora.org
-Subject: Re: [PATCH] soc: qmi: allow user to set handle wq to hiprio
-Message-ID: <20200727204521.GB229995@builder.lan>
-References: <AMoAtwB9DXJsyd-1khUpzqq9.1.1595862196133.Hmail.wenhu.wang@vivo.com>
+        Mon, 27 Jul 2020 18:39:18 -0400
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 06RMdCSp117118;
+        Mon, 27 Jul 2020 17:39:12 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1595889552;
+        bh=BvCgv2VkYscYUBrio/xCc/7/XZeeMfxy0YDyyGSGIo4=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=GEtTL4vJBR/HVnlMugvN7TlachHm/SgGkIZsvgQMGAQpS/BWl92b6CwoqdWh/p3eR
+         chjJNq4GlO0NOGmU50bfAXRJl5NXTk0r/5ZgLq3L/tMofRIRzodRA4ZGj0V3k/lAgs
+         g+SedXDNUP9HDI3TzHvv760aZhbCpmqDA3l65r/o=
+Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 06RMdCbb001847
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 27 Jul 2020 17:39:12 -0500
+Received: from DFLE115.ent.ti.com (10.64.6.36) by DFLE103.ent.ti.com
+ (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3; Mon, 27
+ Jul 2020 17:39:12 -0500
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE115.ent.ti.com
+ (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3 via
+ Frontend Transport; Mon, 27 Jul 2020 17:39:12 -0500
+Received: from [10.250.34.248] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 06RMdBwJ092701;
+        Mon, 27 Jul 2020 17:39:11 -0500
+Subject: Re: [PATCH v2 1/4] dt-bindings: remoteproc: Add bindings for R5F
+ subsystem on TI K3 SoCs
+To:     Stefano Stabellini <stefano.stabellini@xilinx.com>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Rob Herring <robh@kernel.org>
+CC:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Lokesh Vutla <lokeshvutla@ti.com>,
+        <linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <stefanos@xilinx.com>,
+        <BLEVINSK@xilinx.com>, <tomase@xilinx.com>
+References: <20200630024922.32491-1-s-anna@ti.com>
+ <20200630024922.32491-2-s-anna@ti.com> <20200714171553.GA2522956@bogus>
+ <20200716171903.GA3286345@xps15>
+ <alpine.DEB.2.21.2007161232400.3886@sstabellini-ThinkPad-T480s>
+From:   Suman Anna <s-anna@ti.com>
+Message-ID: <b7415d48-a354-5610-a657-08cdefc482a6@ti.com>
+Date:   Mon, 27 Jul 2020 17:39:11 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <AMoAtwB9DXJsyd-1khUpzqq9.1.1595862196133.Hmail.wenhu.wang@vivo.com>
+In-Reply-To: <alpine.DEB.2.21.2007161232400.3886@sstabellini-ThinkPad-T480s>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Mon 27 Jul 08:03 PDT 2020, ????????? wrote:
+Hi Rob,
 
-> Currently the qmi_handle is initialized single threaded and strictly
-> ordered with the active set to 1. This is pretty simple and safe but
-> sometimes ineffency. So it is better to allow user to decide whether
-> a high priority workqueue should be used.
+On 7/16/20 2:43 PM, Stefano Stabellini wrote:
+> On Thu, 16 Jul 2020, Mathieu Poirier wrote:
+>> Hi Rob,
+>>
+>> On Tue, Jul 14, 2020 at 11:15:53AM -0600, Rob Herring wrote:
+>>> On Mon, Jun 29, 2020 at 09:49:19PM -0500, Suman Anna wrote:
+>>>> The Texas Instruments K3 family of SoCs have one or more dual-core
+>>>> Arm Cortex R5F processor subsystems/clusters (R5FSS). The clusters
+>>>> can be split between multiple voltage domains as well. Add the device
+>>>> tree bindings document for these R5F subsystem devices. These R5F
+>>>> processors do not have an MMU, and so require fixed memory carveout
+>>>> regions matching the firmware image addresses. The nodes require more
+>>>> than one memory region, with the first memory region used for DMA
+>>>> allocations at runtime. The remaining memory regions are reserved
+>>>> and are used for the loading and running of the R5F remote processors.
+>>>> The R5F processors can also optionally use any internal on-chip SRAM
+>>>> memories either for executing code or using it as fast-access data.
+>>>>
+>>>> The added example illustrates the DT nodes for the single R5FSS device
+>>>> present on K3 AM65x family of SoCs.
+>>>>
+>>>> Signed-off-by: Suman Anna <s-anna@ti.com>
+>>>> ---
+>>>> v2:
+>>>>   - Renamed "lockstep-mode" property to "ti,cluster-mode"
+>>>
+>>> I don't think that's a move in the right direction given this is at
+>>> least partially a standard feature.
+>>>
+>>> As I said before, I'm very hesistant to accept anything here given I
+>>> know the desires and activity to define 'system Devicetrees' of which
+>>> TI is participating. While maybe an rproc node is sufficient for a
+>>> DSP, it seems multiple vendors have R cores and want to define them in
+>>> system DT.
 
-Can you please describe a scenario where this is needed/desired and
-perhaps also comment on why this is not always desired?
+Ping on this discussion. TI is participating on the System DT evolution 
+in general, but we don't have any plans to use DTS on our remote cores. 
+We have our own auto-generated Chip-Support-Library (CSL) code that gets 
+used on our firmwares.
 
-Regards,
-Bjorn
+Also, most of the properties I defined are rather standard properties. I 
+have posted a revised v3 [1] after the common ti,sci properties 
+refactoring. This series is only waiting on the bindings. I am happy to 
+change any ti, prefixed properties. I had one open question [2] that I 
+am waiting for a response from you for identifying the R5F Core.
 
+regards
+Suman
+
+[1] https://patchwork.kernel.org/patch/11679331/
+[2] https://patchwork.kernel.org/comment/23273441/
+
+>>>
+>>> Though the system DT effort has not yet given any thought to what is the
+>>> view of one processor or instance to another instance (which is what
+>>> this binding is). We'll still need something defined for that, but I'd
+>>> expect that to be dependent on what is defined for system DT.
+>>
+>> Efforts related to the definition of the system DT are under way, something I
+>> expect to keep going on for some time to come.  I agree with the need to use the
+>> system DT to define remote processors and I look forward to the time we can do
+>> so.
 > 
-> Signed-off-by: Wang Wenhu <wenhu.wang@vivo.com>
-> ---
->  drivers/net/ipa/ipa_qmi.c             | 4 ++--
->  drivers/net/wireless/ath/ath10k/qmi.c | 2 +-
->  drivers/net/wireless/ath/ath11k/qmi.c | 2 +-
->  drivers/remoteproc/qcom_sysmon.c      | 2 +-
->  drivers/slimbus/qcom-ngd-ctrl.c       | 4 ++--
->  drivers/soc/qcom/pdr_interface.c      | 4 ++--
->  drivers/soc/qcom/qmi_interface.c      | 9 +++++++--
->  include/linux/soc/qcom/qmi.h          | 3 ++-
->  samples/qmi/qmi_sample_client.c       | 4 ++--
->  9 files changed, 20 insertions(+), 14 deletions(-)
-> 
-> diff --git a/drivers/net/ipa/ipa_qmi.c b/drivers/net/ipa/ipa_qmi.c
-> index 5090f0f923ad..d78b0fe6bd83 100644
-> --- a/drivers/net/ipa/ipa_qmi.c
-> +++ b/drivers/net/ipa/ipa_qmi.c
-> @@ -486,7 +486,7 @@ int ipa_qmi_setup(struct ipa *ipa)
->  	 */
->  	ret = qmi_handle_init(&ipa_qmi->server_handle,
->  			      IPA_QMI_SERVER_MAX_RCV_SZ, &ipa_server_ops,
-> -			      ipa_server_msg_handlers);
-> +			      ipa_server_msg_handlers, 0);
->  	if (ret)
->  		return ret;
->  
-> @@ -500,7 +500,7 @@ int ipa_qmi_setup(struct ipa *ipa)
->  	 */
->  	ret = qmi_handle_init(&ipa_qmi->client_handle,
->  			      IPA_QMI_CLIENT_MAX_RCV_SZ, &ipa_client_ops,
-> -			      ipa_client_msg_handlers);
-> +			      ipa_client_msg_handlers, 0);
->  	if (ret)
->  		goto err_server_handle_release;
->  
-> diff --git a/drivers/net/wireless/ath/ath10k/qmi.c b/drivers/net/wireless/ath/ath10k/qmi.c
-> index 5468a41e928e..02881882b4d9 100644
-> --- a/drivers/net/wireless/ath/ath10k/qmi.c
-> +++ b/drivers/net/wireless/ath/ath10k/qmi.c
-> @@ -1034,7 +1034,7 @@ int ath10k_qmi_init(struct ath10k *ar, u32 msa_size)
->  
->  	ret = qmi_handle_init(&qmi->qmi_hdl,
->  			      WLFW_BDF_DOWNLOAD_REQ_MSG_V01_MAX_MSG_LEN,
-> -			      &ath10k_qmi_ops, qmi_msg_handler);
-> +			      &ath10k_qmi_ops, qmi_msg_handler, 0);
->  	if (ret)
->  		goto err;
->  
-> diff --git a/drivers/net/wireless/ath/ath11k/qmi.c b/drivers/net/wireless/ath/ath11k/qmi.c
-> index c00a99ad8dbc..91394d58d36e 100644
-> --- a/drivers/net/wireless/ath/ath11k/qmi.c
-> +++ b/drivers/net/wireless/ath/ath11k/qmi.c
-> @@ -2397,7 +2397,7 @@ int ath11k_qmi_init_service(struct ath11k_base *ab)
->  
->  	ab->qmi.target_mem_mode = ATH11K_QMI_TARGET_MEM_MODE_DEFAULT;
->  	ret = qmi_handle_init(&ab->qmi.handle, ATH11K_QMI_RESP_LEN_MAX,
-> -			      &ath11k_qmi_ops, ath11k_qmi_msg_handlers);
-> +			      &ath11k_qmi_ops, ath11k_qmi_msg_handlers, 0);
->  	if (ret < 0) {
->  		ath11k_warn(ab, "failed to initialize qmi handle\n");
->  		return ret;
-> diff --git a/drivers/remoteproc/qcom_sysmon.c b/drivers/remoteproc/qcom_sysmon.c
-> index 8d8996d714f0..4ec470e424ef 100644
-> --- a/drivers/remoteproc/qcom_sysmon.c
-> +++ b/drivers/remoteproc/qcom_sysmon.c
-> @@ -614,7 +614,7 @@ struct qcom_sysmon *qcom_add_sysmon_subdev(struct rproc *rproc,
->  	}
->  
->  	ret = qmi_handle_init(&sysmon->qmi, SSCTL_MAX_MSG_LEN, &ssctl_ops,
-> -			      qmi_indication_handler);
-> +			      qmi_indication_handler, 0);
->  	if (ret < 0) {
->  		dev_err(sysmon->dev, "failed to initialize qmi handle\n");
->  		kfree(sysmon);
-> diff --git a/drivers/slimbus/qcom-ngd-ctrl.c b/drivers/slimbus/qcom-ngd-ctrl.c
-> index 743ee7b4e63f..ba76691fc5a5 100644
-> --- a/drivers/slimbus/qcom-ngd-ctrl.c
-> +++ b/drivers/slimbus/qcom-ngd-ctrl.c
-> @@ -446,7 +446,7 @@ static int qcom_slim_qmi_init(struct qcom_slim_ngd_ctrl *ctrl,
->  		return -ENOMEM;
->  
->  	rc = qmi_handle_init(handle, SLIMBUS_QMI_POWER_REQ_MAX_MSG_LEN,
-> -				NULL, qcom_slim_qmi_msg_handlers);
-> +				NULL, qcom_slim_qmi_msg_handlers, 0);
->  	if (rc < 0) {
->  		dev_err(ctrl->dev, "QMI client init failed: %d\n", rc);
->  		goto qmi_handle_init_failed;
-> @@ -1293,7 +1293,7 @@ static int qcom_slim_ngd_qmi_svc_event_init(struct qcom_slim_ngd_ctrl *ctrl)
->  	int ret;
->  
->  	ret = qmi_handle_init(&qmi->svc_event_hdl, 0,
-> -				&qcom_slim_ngd_qmi_svc_event_ops, NULL);
-> +				&qcom_slim_ngd_qmi_svc_event_ops, NULL, 0);
->  	if (ret < 0) {
->  		dev_err(ctrl->dev, "qmi_handle_init failed: %d\n", ret);
->  		return ret;
-> diff --git a/drivers/soc/qcom/pdr_interface.c b/drivers/soc/qcom/pdr_interface.c
-> index bdcf16f88a97..cc1cb90c1968 100644
-> --- a/drivers/soc/qcom/pdr_interface.c
-> +++ b/drivers/soc/qcom/pdr_interface.c
-> @@ -685,7 +685,7 @@ struct pdr_handle *pdr_handle_alloc(void (*status)(int state,
->  
->  	ret = qmi_handle_init(&pdr->locator_hdl,
->  			      SERVREG_GET_DOMAIN_LIST_RESP_MAX_LEN,
-> -			      &pdr_locator_ops, NULL);
-> +			      &pdr_locator_ops, NULL, 0);
->  	if (ret < 0)
->  		goto destroy_indack;
->  
-> @@ -696,7 +696,7 @@ struct pdr_handle *pdr_handle_alloc(void (*status)(int state,
->  	ret = qmi_handle_init(&pdr->notifier_hdl,
->  			      SERVREG_STATE_UPDATED_IND_MAX_LEN,
->  			      &pdr_notifier_ops,
-> -			      qmi_indication_handler);
-> +			      qmi_indication_handler, 0);
->  	if (ret < 0)
->  		goto release_qmi_handle;
->  
-> diff --git a/drivers/soc/qcom/qmi_interface.c b/drivers/soc/qcom/qmi_interface.c
-> index 1a03eaa38c46..01160dbfc4d0 100644
-> --- a/drivers/soc/qcom/qmi_interface.c
-> +++ b/drivers/soc/qcom/qmi_interface.c
-> @@ -609,6 +609,7 @@ static struct socket *qmi_sock_create(struct qmi_handle *qmi,
->   * @recv_buf_size: maximum size of incoming message
->   * @ops:	reference to callbacks for QRTR notifications
->   * @handlers:	NULL-terminated list of QMI message handlers
-> + * @hiprio:	whether high priority worker is used for workqueue
->   *
->   * This initializes the QMI client handle to allow sending and receiving QMI
->   * messages. As messages are received the appropriate handler will be invoked.
-> @@ -617,9 +618,11 @@ static struct socket *qmi_sock_create(struct qmi_handle *qmi,
->   */
->  int qmi_handle_init(struct qmi_handle *qmi, size_t recv_buf_size,
->  		    const struct qmi_ops *ops,
-> -		    const struct qmi_msg_handler *handlers)
-> +		    const struct qmi_msg_handler *handlers,
-> +		    unsigned int hiprio)
->  {
->  	int ret;
-> +	unsigned int flags = WQ_UNBOUND;
->  
->  	mutex_init(&qmi->txn_lock);
->  	mutex_init(&qmi->sock_lock);
-> @@ -647,7 +650,9 @@ int qmi_handle_init(struct qmi_handle *qmi, size_t recv_buf_size,
->  	if (!qmi->recv_buf)
->  		return -ENOMEM;
->  
-> -	qmi->wq = alloc_workqueue("qmi_msg_handler", WQ_UNBOUND, 1);
-> +	if (hiprio)
-> +		flags |= WQ_HIGHPRI;
-> +	qmi->wq = alloc_workqueue("qmi_msg_handler", flags, 1);
->  	if (!qmi->wq) {
->  		ret = -ENOMEM;
->  		goto err_free_recv_buf;
-> diff --git a/include/linux/soc/qcom/qmi.h b/include/linux/soc/qcom/qmi.h
-> index e712f94b89fc..24062fd7163d 100644
-> --- a/include/linux/soc/qcom/qmi.h
-> +++ b/include/linux/soc/qcom/qmi.h
-> @@ -244,7 +244,8 @@ int qmi_add_server(struct qmi_handle *qmi, unsigned int service,
->  
->  int qmi_handle_init(struct qmi_handle *qmi, size_t max_msg_len,
->  		    const struct qmi_ops *ops,
-> -		    const struct qmi_msg_handler *handlers);
-> +		    const struct qmi_msg_handler *handlers,
-> +		    unsigned int hiprio);
->  void qmi_handle_release(struct qmi_handle *qmi);
->  
->  ssize_t qmi_send_request(struct qmi_handle *qmi, struct sockaddr_qrtr *sq,
-> diff --git a/samples/qmi/qmi_sample_client.c b/samples/qmi/qmi_sample_client.c
-> index c9e7276c3d83..a91d1633ea38 100644
-> --- a/samples/qmi/qmi_sample_client.c
-> +++ b/samples/qmi/qmi_sample_client.c
-> @@ -463,7 +463,7 @@ static int qmi_sample_probe(struct platform_device *pdev)
->  
->  	ret = qmi_handle_init(&sample->qmi, TEST_DATA_REQ_MAX_MSG_LEN_V01,
->  			      NULL,
-> -			      qmi_sample_handlers);
-> +			      qmi_sample_handlers, 0);
->  	if (ret < 0)
->  		return ret;
->  
-> @@ -590,7 +590,7 @@ static int qmi_sample_init(void)
->  	if (ret)
->  		goto err_remove_debug_dir;
->  
-> -	ret = qmi_handle_init(&lookup_client, 0, &lookup_ops, NULL);
-> +	ret = qmi_handle_init(&lookup_client, 0, &lookup_ops, NULL, 0);
->  	if (ret < 0)
->  		goto err_unregister_driver;
->  
-> -- 
-> 2.17.1
+> I'll take this opportunity to add that I should be able to publicly
+> present a System Device Tree proposal for this during the next call (the
+> next one after the call early next week that has already a full agenda.)
 > 
 > 
+>> That being said we need to find a concensus on how to move forward with patches
+>> that are ready to be merged.  What is your opinion on that?
 > 
+> In my opinion we don't have to necessarily wait for System Device Tree
+> to make progress with those if they look OK.
+> 
+
