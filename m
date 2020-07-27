@@ -2,140 +2,147 @@ Return-Path: <SRS0=9Kti=BG=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.5 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5A11C433E0
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 27 Jul 2020 06:23:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81AF1C433E1
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 27 Jul 2020 06:28:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A848F20714
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 27 Jul 2020 06:23:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5820420714
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 27 Jul 2020 06:28:26 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="CtqkSsjU"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726139AbgG0GXm (ORCPT
+        id S1726116AbgG0G20 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 27 Jul 2020 02:23:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47294 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726124AbgG0GXm (ORCPT
+        Mon, 27 Jul 2020 02:28:26 -0400
+Received: from mail-eopbgr70087.outbound.protection.outlook.com ([40.107.7.87]:47172
+        "EHLO EUR04-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726140AbgG0G2Z (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 27 Jul 2020 02:23:42 -0400
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0CC43C0619D2
-        for <linux-remoteproc@vger.kernel.org>; Sun, 26 Jul 2020 23:23:42 -0700 (PDT)
-Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ore@pengutronix.de>)
-        id 1jzwXw-0002of-IK; Mon, 27 Jul 2020 08:23:36 +0200
-Received: from ore by pty.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <ore@pengutronix.de>)
-        id 1jzwXv-0003o8-V4; Mon, 27 Jul 2020 08:23:35 +0200
-Date:   Mon, 27 Jul 2020 08:23:35 +0200
-From:   Oleksij Rempel <o.rempel@pengutronix.de>
-To:     Peng Fan <peng.fan@nxp.com>
-Cc:     bjorn.andersson@linaro.org, mathieu.poirier@linaro.org,
-        robh+dt@kernel.org, linux-remoteproc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, shawnguo@kernel.org,
-        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
-        linux-imx@nxp.com, linux-arm-kernel@lists.infradead.org,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH 03/10] remoteproc: imx: use devm_ioremap
-Message-ID: <20200727062335.v2pxgu6kr6ao2qmh@pengutronix.de>
+        Mon, 27 Jul 2020 02:28:25 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=YTZaeKR8g7RbTd9s4r5OFpMBzQgd+u6RmnEuFaLICB1HHFt5GzXw0uIJBJFS2AUy7OajIkdHVSNpyB4zxXnv0Ivq5rO1VjFyQVgUKay0y/8vPLEG1Q8dyVcV4+s1TkgFQocdMVjbvmJmzF1u4z3u8HukCRh3sqFy1Gh2Z0yHgNiQXxYJ9wiyzxnvjLRP0otNSN/rapi1Sm2dZBD5wUM4RMt+LrfKXO5vAiCzXlqWsYA8S1Lvtfmc9u5ncyx7ZkJxoUMyLl/ive9Jt13KR6eLVifRopk2S6BE+1b48J/tkJ69Sc9I4uFPz19jsurRt5Yuz7KwP1uOdEE8RGdtU2oLWw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=T1bGtu1I81KG2zjmMZaeQOPhN4wOHp+3b0hFNotK1tc=;
+ b=CD67xep2HRq4jJQvyvh3COk4DaWRQ77/g1vMhE1tnjJtowID6lOBjUEBd76HGLl0IF6I2r7/8VbVitqRVCxZsPptS7I9HKRmZcxnXbfeNHgZUOcOOO+hlWUR9r05EOJjZmtyzxX4RMS+0NLIJdT0lXK/bqVOcmA8hq7OZ82d/kJ0oYXvySqpZ4DHT1SW7hekHQ8p/PA2QM4B499+lo6dlvtcId/RdJWieqqN7h44YvLgIgaDHnvpC+ISSYVU5LFUELBpLbcuxmreLWjcBFvNyP4GdHxS0RsJ9z9XxeKrvfytAR2HuuZPZs23VDiwUDsqSFrbe9vMd5hVwIVNqdUDOw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=T1bGtu1I81KG2zjmMZaeQOPhN4wOHp+3b0hFNotK1tc=;
+ b=CtqkSsjUauYK5GTLg9uKnwr3uGo3IMPqFLFKsoqwRZbbBzA/ILfJyz5vjHv/Y0Y/DK73CBUq0TexEcIoMEuRvSge+cjDPfUTQFQlcRL8gflIfc5Jd7YV07OOFJ7miKqFWBN5s/AcG7CIF3c57fjhDDdAqg+REOQIigvTkxOOxNo=
+Received: from DB6PR0402MB2760.eurprd04.prod.outlook.com (2603:10a6:4:a1::14)
+ by DB7PR04MB5084.eurprd04.prod.outlook.com (2603:10a6:10:1c::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3216.24; Mon, 27 Jul
+ 2020 06:28:20 +0000
+Received: from DB6PR0402MB2760.eurprd04.prod.outlook.com
+ ([fe80::2d36:b569:17c:7701]) by DB6PR0402MB2760.eurprd04.prod.outlook.com
+ ([fe80::2d36:b569:17c:7701%4]) with mapi id 15.20.3216.033; Mon, 27 Jul 2020
+ 06:28:20 +0000
+From:   Peng Fan <peng.fan@nxp.com>
+To:     Oleksij Rempel <o.rempel@pengutronix.de>
+CC:     "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>,
+        "mathieu.poirier@linaro.org" <mathieu.poirier@linaro.org>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Subject: RE: [PATCH 03/10] remoteproc: imx: use devm_ioremap
+Thread-Topic: [PATCH 03/10] remoteproc: imx: use devm_ioremap
+Thread-Index: AQHWYY4mj2fkhyJv70m2EtieoGp7X6ka+c2AgAAA2pA=
+Date:   Mon, 27 Jul 2020 06:28:20 +0000
+Message-ID: <DB6PR0402MB27601C875FF5F1E02DBF5C6488720@DB6PR0402MB2760.eurprd04.prod.outlook.com>
 References: <20200724080813.24884-1-peng.fan@nxp.com>
  <20200724080813.24884-4-peng.fan@nxp.com>
+ <20200727062335.v2pxgu6kr6ao2qmh@pengutronix.de>
+In-Reply-To: <20200727062335.v2pxgu6kr6ao2qmh@pengutronix.de>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: pengutronix.de; dkim=none (message not signed)
+ header.d=none;pengutronix.de; dmarc=none action=none header.from=nxp.com;
+x-originating-ip: [119.31.174.71]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: 1f19ad30-6690-401a-f985-08d831f6417b
+x-ms-traffictypediagnostic: DB7PR04MB5084:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <DB7PR04MB5084B4C1C3F68E761C5E9BE488720@DB7PR04MB5084.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:8273;
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: Dog41px9w5VBTsDXwutOEjclDuKhX7qXb5BR8B5CLphNBmCBBvkmo6jgP4KUl/Lx8FqYBowecclKlR0+P8fX37UdacMHiH4RNo6zZSpy1zac1mGwfMO5cOwdAqKlTSh2ltJzTniS1hq/fuFDvm/z5fHuslUPHk8WVxakxp+xbZ3h0YRHA/MoLMhbdRtFDNSMA1uHE3UEt+XtDqdcPoh92Dn4hPYQCZ/n9/wZYTC37Uywmy2IFpc6GX4xuxH4/HMxgYdCGnAxHA1bFh56eQFsWe/t0GunfaNs4eJCtSGAHa4YUWJaXSqSDTBc1UVyBOnDGEAhdHRPnbtkZIjHcY3zDuoTl1QUq8rAX6YUjI3mr9DnVHvOiEtVl0WVmeGTsG7d2WV5bYwhVTMerVJws3fSOg==
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB6PR0402MB2760.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFTY:;SFS:(4636009)(136003)(39860400002)(346002)(396003)(376002)(366004)(6916009)(6506007)(9686003)(52536014)(8936002)(478600001)(26005)(5660300002)(316002)(4326008)(186003)(33656002)(54906003)(8676002)(66946007)(66476007)(66556008)(66446008)(64756008)(83080400001)(2906002)(76116006)(86362001)(83380400001)(44832011)(7416002)(7696005)(966005)(55016002)(71200400001);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata: hBl3GAZEAacVU4Asimb++hp6tt5Q5t5db+8ja0E9jyNgIvnbYIeq9sPsr/reeyfPhzsDngElGMc2QdNW0uf2vCHyJrhnnVFbQhJqpXqZIVtGBWq3LMuQri4g8y0XVyQOi1eY9pPcQiqkiOmZzsBmtPJQTKlndc7ISX0XB50cwVACu7TSluGKo+TM/fe4BcAPCsIU/2ZEIiWlkNRYMTLzx8X+sUTqFLkzn7u1b3YEL8C0RcotA3tey4MmaNnxTUIn1+E94ydOU2FalghwgnGAeI968ipHZbr0bagFZPgBR0MNlyOinH67rdCOjFVMyIKt85cRbQ2D546PeFWAsqwhXmxhfDZv5a1o1MvN3tPKm2Dljfn/cuY88KieuuZ/kB0jh5L2CETBgOJZYdg0p7ciqgnW2lfw7lGoagFG7ddKxffGhawE4pmuPMsxgBzgc8xChWbBCBhypC7lmyepSIVomJ4nQ9/yJKAPv/U+AFS3bCY=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="6tzlik4lnidne2ag"
-Content-Disposition: inline
-In-Reply-To: <20200724080813.24884-4-peng.fan@nxp.com>
-X-Sent-From: Pengutronix Hildesheim
-X-URL:  http://www.pengutronix.de/
-X-IRC:  #ptxdist @freenode
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-Uptime: 08:19:20 up 254 days, 21:37, 239 users,  load average: 0.12, 0.04,
- 0.01
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-remoteproc@vger.kernel.org
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: DB6PR0402MB2760.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1f19ad30-6690-401a-f985-08d831f6417b
+X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Jul 2020 06:28:20.2435
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: dNL4XnYNHxdpkj8hixsfnxTmlzehJJQaMFC21+CHmdZbBg7VecO0NbmeOG04HDhgpXDYzGk/Aq7BVe3Ohk+OVA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB7PR04MB5084
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-
---6tzlik4lnidne2ag
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Fri, Jul 24, 2020 at 04:08:06PM +0800, Peng Fan wrote:
-> We might need to map an region multiple times, becaue the region might
-> be shared between remote processors, such i.MX8QM with dual M4 cores.
-> So use devm_ioremap, not devm_ioremap_resource.
-
-Can you please give an example of this kind of shared resources and
-how they should be handled by two separate devices?
-
-> Reviewed-by: Richard Zhu <hongxing.zhu@nxp.com>
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
-> ---
->  drivers/remoteproc/imx_rproc.c | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
->=20
-> diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rpro=
-c.c
-> index 3b3904ebac75..82594a800a1b 100644
-> --- a/drivers/remoteproc/imx_rproc.c
-> +++ b/drivers/remoteproc/imx_rproc.c
-> @@ -296,9 +296,10 @@ static int imx_rproc_addr_init(struct imx_rproc *pri=
-v,
->  		if (b >=3D IMX7D_RPROC_MEM_MAX)
->  			break;
-> =20
-> -		priv->mem[b].cpu_addr =3D devm_ioremap_resource(&pdev->dev, &res);
-> +		/* Not use resource version, because we might share region*/
-> +		priv->mem[b].cpu_addr =3D devm_ioremap(&pdev->dev, res.start, resource=
-_size(&res));
->  		if (IS_ERR(priv->mem[b].cpu_addr)) {
-> -			dev_err(dev, "devm_ioremap_resource failed\n");
-> +			dev_err(dev, "devm_ioremap %pR failed\n", &res);
->  			err =3D PTR_ERR(priv->mem[b].cpu_addr);
->  			return err;
->  		}
-> --=20
-> 2.16.4
->=20
->=20
-
---=20
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
-
---6tzlik4lnidne2ag
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEERBNZvwSgvmcMY/T74omh9DUaUbMFAl8ectMACgkQ4omh9DUa
-UbMnEw//ZgH40i5qUwwFDcMh8LHIrxrRN0O+VsFoBQ1duEG9Q84k0FJNjigGtOUJ
-G7y0Dw8/ar+figjxswgcs/YpcQuR246wnR4eb8LLXKV3bvJ4mNdPjEbzzOnd6nMo
-RMho0UsR8L2gryGDGHv1xn5eRN7xZiXwjw01bSDlJavcSIY6g6341RFRlNMLOs7d
-z+2NnQGcGy6PVc/CFcR33+1HW10N6eGtbPthYVZIhQaDoA/imBgqXkUTxWoJJzi8
-Ke3jbRP3XoDreV0+1NrK+7otk6JtXXWQQDnUtDhqZh+/iqJNoMcCkwYFORNqCCym
-GQuhLHEnrACRXACj/QMZ2P7Jquh7e4YlDTafMtZCzqSMhRa5LDTF6M/NoInZPW+P
-i8eZqtpNfqAIDehNJ1rXJOQ8q5Sb5JuhtuEUPz9yJ6huou6ArsyuRSY10rGm7S1B
-WSmmpoXaPkj4qspjo0CJlajzojiVucyE1ta05xlmmMHw5dvo+Mr+LOFDQaHWYfip
-8wNFRybYIZxlEsHX7Vwepxis5XUATKm7GEsApr/vaQTAaufO1FmZfgNa0VjfzPi1
-ks6mi6HdCbzOl5n0ODyGuwO8FxJRSML7KJZlSWI878Bi8Es4UpOHoBNWb6UfMwYh
-4h9kEgxFjcWK0Th5q6jpBtUSIGmAdjB+xsLwoonUz/r4Tcw1yIg=
-=yeys
------END PGP SIGNATURE-----
-
---6tzlik4lnidne2ag--
+SGkgT2xla3NpaiwNCg0KPiBTdWJqZWN0OiBSZTogW1BBVENIIDAzLzEwXSByZW1vdGVwcm9jOiBp
+bXg6IHVzZSBkZXZtX2lvcmVtYXANCj4gDQo+IE9uIEZyaSwgSnVsIDI0LCAyMDIwIGF0IDA0OjA4
+OjA2UE0gKzA4MDAsIFBlbmcgRmFuIHdyb3RlOg0KPiA+IFdlIG1pZ2h0IG5lZWQgdG8gbWFwIGFu
+IHJlZ2lvbiBtdWx0aXBsZSB0aW1lcywgYmVjYXVlIHRoZSByZWdpb24gbWlnaHQNCj4gPiBiZSBz
+aGFyZWQgYmV0d2VlbiByZW1vdGUgcHJvY2Vzc29ycywgc3VjaCBpLk1YOFFNIHdpdGggZHVhbCBN
+NCBjb3Jlcy4NCj4gPiBTbyB1c2UgZGV2bV9pb3JlbWFwLCBub3QgZGV2bV9pb3JlbWFwX3Jlc291
+cmNlLg0KPiANCj4gQ2FuIHlvdSBwbGVhc2UgZ2l2ZSBhbiBleGFtcGxlIG9mIHRoaXMga2luZCBv
+ZiBzaGFyZWQgcmVzb3VyY2VzIGFuZCBob3cgdGhleQ0KPiBzaG91bGQgYmUgaGFuZGxlZCBieSB0
+d28gc2VwYXJhdGUgZGV2aWNlcz8NCg0KVGhpcyBpcyB0byBzaGFyZSB2ZGV2YnVmZmVyIHNwYWNl
+LCB0aGVyZSBpcyBhIHZkZXZidWZmZXIgaW4gZGV2aWNlIHRyZWUsIGl0IHdpbGwgYmUNCnNoYXJl
+ZCBiZXR3ZWVuIE00XzAgYW5kIE00XzEuDQoNCkZvciB0aGUgYnVmZmVyLCBpdCBpcyBMaW51eCBE
+TUEgQVBJIHdpbGwgaGFuZGxlIHRoZSBzcGFjZS4NCg0KVGhhbmtzLA0KUGVuZy4NCg0KPiANCj4g
+PiBSZXZpZXdlZC1ieTogUmljaGFyZCBaaHUgPGhvbmd4aW5nLnpodUBueHAuY29tPg0KPiA+IFNp
+Z25lZC1vZmYtYnk6IFBlbmcgRmFuIDxwZW5nLmZhbkBueHAuY29tPg0KPiA+IC0tLQ0KPiA+ICBk
+cml2ZXJzL3JlbW90ZXByb2MvaW14X3Jwcm9jLmMgfCA1ICsrKy0tDQo+ID4gIDEgZmlsZSBjaGFu
+Z2VkLCAzIGluc2VydGlvbnMoKyksIDIgZGVsZXRpb25zKC0pDQo+ID4NCj4gPiBkaWZmIC0tZ2l0
+IGEvZHJpdmVycy9yZW1vdGVwcm9jL2lteF9ycHJvYy5jDQo+ID4gYi9kcml2ZXJzL3JlbW90ZXBy
+b2MvaW14X3Jwcm9jLmMgaW5kZXggM2IzOTA0ZWJhYzc1Li44MjU5NGE4MDBhMWINCj4gPiAxMDA2
+NDQNCj4gPiAtLS0gYS9kcml2ZXJzL3JlbW90ZXByb2MvaW14X3Jwcm9jLmMNCj4gPiArKysgYi9k
+cml2ZXJzL3JlbW90ZXByb2MvaW14X3Jwcm9jLmMNCj4gPiBAQCAtMjk2LDkgKzI5NiwxMCBAQCBz
+dGF0aWMgaW50IGlteF9ycHJvY19hZGRyX2luaXQoc3RydWN0IGlteF9ycHJvYw0KPiAqcHJpdiwN
+Cj4gPiAgCQlpZiAoYiA+PSBJTVg3RF9SUFJPQ19NRU1fTUFYKQ0KPiA+ICAJCQlicmVhazsNCj4g
+Pg0KPiA+IC0JCXByaXYtPm1lbVtiXS5jcHVfYWRkciA9IGRldm1faW9yZW1hcF9yZXNvdXJjZSgm
+cGRldi0+ZGV2LA0KPiAmcmVzKTsNCj4gPiArCQkvKiBOb3QgdXNlIHJlc291cmNlIHZlcnNpb24s
+IGJlY2F1c2Ugd2UgbWlnaHQgc2hhcmUgcmVnaW9uKi8NCj4gPiArCQlwcml2LT5tZW1bYl0uY3B1
+X2FkZHIgPSBkZXZtX2lvcmVtYXAoJnBkZXYtPmRldiwgcmVzLnN0YXJ0LA0KPiA+ICtyZXNvdXJj
+ZV9zaXplKCZyZXMpKTsNCj4gPiAgCQlpZiAoSVNfRVJSKHByaXYtPm1lbVtiXS5jcHVfYWRkcikp
+IHsNCj4gPiAtCQkJZGV2X2VycihkZXYsICJkZXZtX2lvcmVtYXBfcmVzb3VyY2UgZmFpbGVkXG4i
+KTsNCj4gPiArCQkJZGV2X2VycihkZXYsICJkZXZtX2lvcmVtYXAgJXBSIGZhaWxlZFxuIiwgJnJl
+cyk7DQo+ID4gIAkJCWVyciA9IFBUUl9FUlIocHJpdi0+bWVtW2JdLmNwdV9hZGRyKTsNCj4gPiAg
+CQkJcmV0dXJuIGVycjsNCj4gPiAgCQl9DQo+ID4gLS0NCj4gPiAyLjE2LjQNCj4gPg0KPiA+DQo+
+IA0KPiAtLQ0KPiBQZW5ndXRyb25peCBlLksuICAgICAgICAgICAgICAgICAgICAgICAgICAgfA0K
+PiB8DQo+IFN0ZXVlcndhbGRlciBTdHIuIDIxICAgICAgICAgICAgICAgICAgICAgICB8DQo+IGh0
+dHA6Ly93d3cucGVuZ3V0cm9uaXguZGUvICB8DQo+IDMxMTM3IEhpbGRlc2hlaW0sIEdlcm1hbnkg
+ICAgICAgICAgICAgICAgICB8IFBob25lOg0KPiArNDktNTEyMS0yMDY5MTctMCAgICB8DQo+IEFt
+dHNnZXJpY2h0IEhpbGRlc2hlaW0sIEhSQSAyNjg2ICAgICAgICAgICB8IEZheDoNCj4gKzQ5LTUx
+MjEtMjA2OTE3LTU1NTUgfA0K
