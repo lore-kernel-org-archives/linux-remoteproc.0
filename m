@@ -2,228 +2,200 @@ Return-Path: <SRS0=9Kti=BG=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BFADBC433E1
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 27 Jul 2020 07:54:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 422A7C433E0
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 27 Jul 2020 08:11:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A7A2E20672
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 27 Jul 2020 07:54:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 148C52074F
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 27 Jul 2020 08:11:20 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="UcF1Zp7B"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726901AbgG0Hyo (ORCPT
+        id S1726451AbgG0ILQ (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 27 Jul 2020 03:54:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33140 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726211AbgG0Hyo (ORCPT
+        Mon, 27 Jul 2020 04:11:16 -0400
+Received: from mail-eopbgr10050.outbound.protection.outlook.com ([40.107.1.50]:63497
+        "EHLO EUR02-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726184AbgG0ILP (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 27 Jul 2020 03:54:44 -0400
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0630FC0619D2
-        for <linux-remoteproc@vger.kernel.org>; Mon, 27 Jul 2020 00:54:44 -0700 (PDT)
-Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ore@pengutronix.de>)
-        id 1jzxy5-0004EB-Nm; Mon, 27 Jul 2020 09:54:41 +0200
-Received: from ore by pty.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <ore@pengutronix.de>)
-        id 1jzxy5-0008Pg-AP; Mon, 27 Jul 2020 09:54:41 +0200
-Date:   Mon, 27 Jul 2020 09:54:41 +0200
-From:   Oleksij Rempel <o.rempel@pengutronix.de>
-To:     Peng Fan <peng.fan@nxp.com>
-Cc:     "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>,
+        Mon, 27 Jul 2020 04:11:15 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=dG3ZHALptKWSdTEmoRajtvNW10AehO04w0yKa55wER+h0i/e61YyFsXAnFVAr3KfA5gTudVmV1bq66pxjwkUtRTvcyqkwFMXIGl5x2ON4DReSSLunPc+DlqPwO7Jow3IxI2qjaq0WkpSHBVSgOWFnnduCpR3o7Snn7mBdht4FqQOSHbiZgYtnrQgdir+i1zzU14rlFz9scO8RjK/Vyc98MzutQWXyqK2oP5I37eCU2vB4pyLP+4Fe7Fba1Ha0l/RGqRXGBuvc0Zd4Cgb7D5OXrx7lfIx3J8XKh5VgQEQPENV8MyBFCdL541ec2O+dWYxdhYEEgNwwe3ycSxb9JEXWw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=fGN3rth0FYtngFjMY+KcVNEfvR1HUkwKPy3amW4ZcyM=;
+ b=B7S9jJ08p7todFnnlyCUzEZJ/yCZY8FFP0wukNL9N0lvZCDgG6XO795wfw0+GQYUVeH0w6WWUb11MBp0bA4Rue6mFjhOwq3ehhzRAJJ8EuZP9tHguhPSdacjiQKwEMkQa2izthdNwbdbaG2pA8MBifvXUOu2EuM8Dn8nIz3Jzg/oWWwnV4yXihI+J4q245dB6ODjTGWVS9EBM7Tdm3fUmouGih/kGyEeFsVQ7TO0HLAmsZ18TYmAmTXPGOz4l2ICmICwNYzT4H320alpK2RvMm7lke/QR8CBzFZG7SuS0j0XbXg+Cf2U4rhXEVcTwAVcMCzOB3uOIlv85VPnQXZkfA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=fGN3rth0FYtngFjMY+KcVNEfvR1HUkwKPy3amW4ZcyM=;
+ b=UcF1Zp7Bc3uZud7UqjVMLjb/1CMXYSYLiKDklLewD/gYvnaQHMGQ7w01ZAYysdL843vtA4y/7gwjESC/6jfU6dULv0VOZrbNptJr8O5V1f+4RSjjAdk4iwV7vIjD++6ssCTHR7aebHsZqPVPcnMp0hMAxcYWtDEm305s8VkH0qY=
+Received: from DB6PR0402MB2760.eurprd04.prod.outlook.com (2603:10a6:4:a1::14)
+ by DBBPR04MB6026.eurprd04.prod.outlook.com (2603:10a6:10:d2::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3216.24; Mon, 27 Jul
+ 2020 08:11:09 +0000
+Received: from DB6PR0402MB2760.eurprd04.prod.outlook.com
+ ([fe80::2d36:b569:17c:7701]) by DB6PR0402MB2760.eurprd04.prod.outlook.com
+ ([fe80::2d36:b569:17c:7701%4]) with mapi id 15.20.3216.033; Mon, 27 Jul 2020
+ 08:11:09 +0000
+From:   Peng Fan <peng.fan@nxp.com>
+To:     Oleksij Rempel <o.rempel@pengutronix.de>
+CC:     "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>,
         "mathieu.poirier@linaro.org" <mathieu.poirier@linaro.org>,
         "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
         "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
         "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        dl-linux-imx <linux-imx@nxp.com>,
         "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH 00/10] remoteproc: imx_rproc: support iMX8M and early boot
-Message-ID: <20200727075441.lgscydoj3txupeay@pengutronix.de>
+        <linux-arm-kernel@lists.infradead.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Subject: RE: [PATCH 03/10] remoteproc: imx: use devm_ioremap
+Thread-Topic: [PATCH 03/10] remoteproc: imx: use devm_ioremap
+Thread-Index: AQHWYY4mj2fkhyJv70m2EtieoGp7X6ka+c2AgAAA2pCAAARBgIAAAZOAgAAOGYCAAAhg0A==
+Date:   Mon, 27 Jul 2020 08:11:09 +0000
+Message-ID: <DB6PR0402MB2760EFCB8C91680DC719C82C88720@DB6PR0402MB2760.eurprd04.prod.outlook.com>
 References: <20200724080813.24884-1-peng.fan@nxp.com>
- <20200727063839.kfgrtperzkygvjr2@pengutronix.de>
- <DB6PR0402MB2760FBC0109E98A447BB716588720@DB6PR0402MB2760.eurprd04.prod.outlook.com>
+ <20200724080813.24884-4-peng.fan@nxp.com>
+ <20200727062335.v2pxgu6kr6ao2qmh@pengutronix.de>
+ <DB6PR0402MB27601C875FF5F1E02DBF5C6488720@DB6PR0402MB2760.eurprd04.prod.outlook.com>
+ <20200727064151.767kc7622tcqmqfs@pengutronix.de>
+ <DB6PR0402MB276063FBE74FCF222CB00F8588720@DB6PR0402MB2760.eurprd04.prod.outlook.com>
+ <20200727073757.r2vq6djh3a4dyfp6@pengutronix.de>
+In-Reply-To: <20200727073757.r2vq6djh3a4dyfp6@pengutronix.de>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: pengutronix.de; dkim=none (message not signed)
+ header.d=none;pengutronix.de; dmarc=none action=none header.from=nxp.com;
+x-originating-ip: [119.31.174.71]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: 7276eaf3-d69f-4ad5-f90d-08d832049ec9
+x-ms-traffictypediagnostic: DBBPR04MB6026:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <DBBPR04MB602654584962C742E5B4804E88720@DBBPR04MB6026.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:9508;
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: vspR35b8FwcQPVY/OQuIpD/2ot5YWNQeR+uC/We0lgc4U33FP+krYjxUFNtf28t0hB55PWN5zz07JKgL6RAx9lHV+Qbyu3BsUE1MdtoFgdAMrbMg2ybGr+V7zAO+B/ttNtqhM40lrI+O7tKFi3z1v7AJ04R1VXO5lc/kkHbFPA2iJ8h5XVBdTOmrmru9KF44kKJPp6d+BGG7vkYi7SORErrl8UQwoZT+Y3Wa/M43JZ3+pX+Mm/MV41ehO46ylX/ZyKsS3lLCGlpxg61A7rxekjl1N3/t5JQ9odSFPEHfEEaG7pksQCVAe/BvWQ4Hnx8GalSj9qIvCI+ChOy0fDKabkFMTS//k5BMfCe74H2VwrR4KYWorsOINlyNeooWMLDpzyKt4YwCCvEXA7cXs0sCwQ==
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB6PR0402MB2760.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFTY:;SFS:(4636009)(39860400002)(396003)(376002)(346002)(136003)(366004)(478600001)(26005)(6916009)(66946007)(5660300002)(186003)(44832011)(316002)(2906002)(9686003)(52536014)(54906003)(4326008)(76116006)(7696005)(83080400001)(6506007)(7416002)(33656002)(66446008)(8676002)(66556008)(64756008)(86362001)(71200400001)(55016002)(66476007)(966005)(8936002);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata: S1Pg0rW8FiSBi5FqAvVk+HZd27Tt14y/zi2LUBg29GuAyvB7/2o1TQPiLANUWnUygYLsxWFQSTM7Zx8t3AFUZYsL1PJKGhLfJqOidnV4+Xb+AGrLdHCw0IdFVeohFQR9QjkQFBLuAVYbPY//nTYN97f8YnGAmw2yVgkeP+nV7xgCZvOB3IZysISMINbMxNuV+bCouDh1BS6+9xJoWw2+Znpv9fjWGh0eUXRZxeeqq35d3HscvtgimFJyMH8i916TvNRv6s5q/nUC280S5uyHmSrLx+IybC0uDQ96y7j09xQlcJT+ebdM8lz2zOrTxcBgdyQ8NrJgocusa5HCreoVlNgJMCwOH8OKmlHec2aSCi6TimhhGJ4lqR+HYBscQw8CPRioW5P4WtuhlxWqEClrNgMO0rE9K8l8+eAzNtwUbMfWsDUCWj4BxxwU7gLYYxC9A20+U4Px1cIJZ5HV64MS2C1+/hAaqHkMtPeq6HbWkOY=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="ndwcthydipkpuzsn"
-Content-Disposition: inline
-In-Reply-To: <DB6PR0402MB2760FBC0109E98A447BB716588720@DB6PR0402MB2760.eurprd04.prod.outlook.com>
-X-Sent-From: Pengutronix Hildesheim
-X-URL:  http://www.pengutronix.de/
-X-IRC:  #ptxdist @freenode
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-Uptime: 09:38:11 up 254 days, 22:56, 250 users,  load average: 0.02, 0.06,
- 0.03
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-remoteproc@vger.kernel.org
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: DB6PR0402MB2760.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7276eaf3-d69f-4ad5-f90d-08d832049ec9
+X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Jul 2020 08:11:09.5990
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: bdovqEXkHA9+VuboaofHMbqN1Ub0IOFQcKxJQL5jLiuCB64rzwGRODEpfDaxXCxTvLAGJjFrtrOrats59ql39w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBBPR04MB6026
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-
---ndwcthydipkpuzsn
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Mon, Jul 27, 2020 at 06:44:32AM +0000, Peng Fan wrote:
-> Hi Oleksij,
->=20
-> > Subject: Re: [PATCH 00/10] remoteproc: imx_rproc: support iMX8M and ear=
-ly
-> > boot
-> >=20
-> > Hi,
-> >=20
-> > On Fri, Jul 24, 2020 at 04:08:03PM +0800, Peng Fan wrote:
-> > > This patchset is to support i.MX8MQ/M coproc booted before linux.
-> > > Since i.MX8MQ/M was not supported, several patches are needed to first
-> > > support the platform, then support early boot case.
-> > >
-> > > I intended to included i.MX8QM/QXP, but that would introduce a large
-> > > patchset, so not included. But the clk/syscon optional patch for
-> > > i.MX8QM/QXP was still kept here to avoid rebase error.
-> >=20
-> > Thank you for your work.
-> >=20
-> > Can you please provide more information about big picture of this work.
-> >=20
-> > If I see it correctly, we have here support for i.MX8MM, which seems to=
- be
-> > able to fully control Cortex M4 (enable CPU core, etc...).
->=20
-> Yes.
-
-In this case, I would recommend to mainline the i.MX8MM part
-first/separately.
-
-> >=20
-> > And other case, where remoteproc is running on application processor and
-> > can't or should not touch M4 (i.MX7ULP, i.MX8QM/QXP..). Since M4 provid=
-es
-> > some functionality, you are trying to reuse remoteproc framework to get
-> > resource table present in ELF header and to dynamically load things. Fo=
-r some
-> > reasons this header provides more information then needed, so you are
-> > changing the ELF parser in the kernel to workaround it.
->=20
-> Not exactly.
->=20
-> For i.MX8MM, we support two cases. M4 kicked by U-Boot, M4 kicked by Linu=
-x remoteproc.
-> For i.MX8QM/QXP, the typical usecase is M4 kicked by SCFW, but we will al=
-so add M4 kicked
-> by Linux remoteproc.
-> For i.MX7ULP, I would only support M4 dual boot case, M4 control everythi=
-ng.
-
-=46rom current state of discussion, i'm not sure what role plays
-remoteproc in the scenario where M4 is started before linux. Especially
-if we are not using resource table.
-
-> The reason the change the elf parser is that when M4 elf is loaded by Lin=
-ux remoteproc,
-> It use memset to clear area.
-
-The use of memset, depends on ELF format. Fix/change the linker script
-on your firmware and memset will be never called.
-
-> However we use ioremap, memset on ARM64 will report
-> crash to device nGnRE memory. And we could not use ioremap_wc to TCM area=
-, since
-> it could have data correctly written into TCM.
-
-I have strong feeling, that we are talking about badly or not properly
-formatted ELF binary. I would prefer to double check it, before we will
-apply fixes on wrong place.
-
-> Maintainer not wanna to drop memset in common code, and TI guys suggest
-> add i.MX specific elf stuff. So I add elf handler in i.MX code.
-
-I think, removing memset may damage current users of imx_rproc driver.
-Since, like I said: the use of memset depends on ELF format.
-
-> Thanks,
-> Peng.
->=20
-> >=20
-> > Correct?
-> >=20
-> > > Peng Fan (10):
-> > >   dt-bindings: remoteproc: imx_rproc: add i.MX8MQ/M
-> > >   remoteproc: imx_rproc: correct err message
-> > >   remoteproc: imx: use devm_ioremap
-> > >   remoteproc: imx_rproc: make syscon optional
-> > >   remoteproc: imx_rproc: make clk optional
-> > >   remoteproc: imx_rproc: add load hook
-> > >   remoteproc: imx_rproc: add i.MX specific parse fw hook
-> > >   remoteproc: imx_rproc: support i.MX8MQ/M
-> > >   remoteproc: imx_proc: enable virtio/mailbox
-> > >   remoteproc: imx_rproc: support coproc booting before Linux
-> > >
-> > >  .../devicetree/bindings/remoteproc/imx-rproc.txt   |   3 +
-> > >  drivers/remoteproc/imx_rproc.c                     | 409
-> > ++++++++++++++++++++-
-> > >  2 files changed, 401 insertions(+), 11 deletions(-)
-> > >
-> > > --
-> > > 2.16.4
-> > >
-> > >
-> > > _______________________________________________
-> > > linux-arm-kernel mailing list
-> > > linux-arm-kernel@lists.infradead.org
-> > > http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-> > >
-> >=20
-> > --
-> > Pengutronix e.K.                           |
-> > |
-> > Steuerwalder Str. 21                       |
-> > http://www.pengutronix.de/  |
-> > 31137 Hildesheim, Germany                  | Phone:
-> > +49-5121-206917-0    |
-> > Amtsgericht Hildesheim, HRA 2686           | Fax:
-> > +49-5121-206917-5555 |
-
---=20
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
-
---ndwcthydipkpuzsn
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEERBNZvwSgvmcMY/T74omh9DUaUbMFAl8eiDwACgkQ4omh9DUa
-UbPVKw//RiwTubWT5hjSS95taFOhrjklnCkKnNdNrx15w38fSGf1Gly5UtAfKTRo
-7svoNWtbHzPDT5TILc/NQpP2C86ug3kuhLRzwzppP2DB217lFIzqwRWZ1QBYbYko
-Ho8u4nHgR/++MiZs3KwgeJvlvKhISpvTxNKR1wmXj8MPw4lD6Vrq1L2GdKMiiaOb
-x1bziy2+IEp+/ntohTvvjrUHjD7mcTEW25LPgP28cgED1mnJJX+IRKJnymBCTQi9
-w+MHTgAGOPXkHeho3BFhg7S8T+Wj9JeiVewLOpryzosw96gGYmkRXE+QW75iIJRu
-L4+2b1wrb5O3VpuhK7oVxpQe5QhEYG1PIAizWNQSJV5jRbuN1Xct7i949d+a91FF
-8dcE4xOqsGVhQ7+IMf+6HMOk0m/FXXmjBZzpOs++RTsQR/cPAuD2QTLWHuaETb4v
-H6aRwgLZGDZzyBAyF6HnFYdZvLYY0XiINfi1b65+lSarCgaIrHWqPogNtsX8RGET
-PngXCMQ85XF4Bi/TR6vj0ym1jEd4fPBIHPSS/nCzwfDC5pkUUCdzdpEOdVPSKxf0
-YIStW+5krTiQwnp566EC4+fHH+pyzcV6W6BrpKrDsAwUk4KUIpyxr9I9eKkp8YVp
-xzYl92mLOq0vkp1Mv4WZFpKaH3LTWYqq4AwbryvEhpM29g9XXjQ=
-=Hp2H
------END PGP SIGNATURE-----
-
---ndwcthydipkpuzsn--
+PiBTdWJqZWN0OiBSZTogW1BBVENIIDAzLzEwXSByZW1vdGVwcm9jOiBpbXg6IHVzZSBkZXZtX2lv
+cmVtYXANCj4gDQo+IE9uIE1vbiwgSnVsIDI3LCAyMDIwIGF0IDA2OjUxOjAwQU0gKzAwMDAsIFBl
+bmcgRmFuIHdyb3RlOg0KPiA+ID4gU3ViamVjdDogUmU6IFtQQVRDSCAwMy8xMF0gcmVtb3RlcHJv
+YzogaW14OiB1c2UgZGV2bV9pb3JlbWFwDQo+ID4gPg0KPiA+ID4gT24gTW9uLCBKdWwgMjcsIDIw
+MjAgYXQgMDY6Mjg6MjBBTSArMDAwMCwgUGVuZyBGYW4gd3JvdGU6DQo+ID4gPiA+IEhpIE9sZWtz
+aWosDQo+ID4gPiA+DQo+ID4gPiA+ID4gU3ViamVjdDogUmU6IFtQQVRDSCAwMy8xMF0gcmVtb3Rl
+cHJvYzogaW14OiB1c2UgZGV2bV9pb3JlbWFwDQo+ID4gPiA+ID4NCj4gPiA+ID4gPiBPbiBGcmks
+IEp1bCAyNCwgMjAyMCBhdCAwNDowODowNlBNICswODAwLCBQZW5nIEZhbiB3cm90ZToNCj4gPiA+
+ID4gPiA+IFdlIG1pZ2h0IG5lZWQgdG8gbWFwIGFuIHJlZ2lvbiBtdWx0aXBsZSB0aW1lcywgYmVj
+YXVlIHRoZQ0KPiA+ID4gPiA+ID4gcmVnaW9uIG1pZ2h0IGJlIHNoYXJlZCBiZXR3ZWVuIHJlbW90
+ZSBwcm9jZXNzb3JzLCBzdWNoIGkuTVg4UU0NCj4gPiA+ID4gPiA+IHdpdGggZHVhbA0KPiA+ID4g
+TTQgY29yZXMuDQo+ID4gPiA+ID4gPiBTbyB1c2UgZGV2bV9pb3JlbWFwLCBub3QgZGV2bV9pb3Jl
+bWFwX3Jlc291cmNlLg0KPiA+ID4gPiA+DQo+ID4gPiA+ID4gQ2FuIHlvdSBwbGVhc2UgZ2l2ZSBh
+biBleGFtcGxlIG9mIHRoaXMga2luZCBvZiBzaGFyZWQgcmVzb3VyY2VzDQo+ID4gPiA+ID4gYW5k
+IGhvdyB0aGV5IHNob3VsZCBiZSBoYW5kbGVkIGJ5IHR3byBzZXBhcmF0ZSBkZXZpY2VzPw0KPiA+
+ID4gPg0KPiA+ID4gPiBUaGlzIGlzIHRvIHNoYXJlIHZkZXZidWZmZXIgc3BhY2UsIHRoZXJlIGlz
+IGEgdmRldmJ1ZmZlciBpbiBkZXZpY2UNCj4gPiA+ID4gdHJlZSwgaXQgd2lsbCBiZSBzaGFyZWQg
+YmV0d2VlbiBNNF8wIGFuZCBNNF8xLg0KPiA+ID4gPg0KPiA+ID4gPiBGb3IgdGhlIGJ1ZmZlciwg
+aXQgaXMgTGludXggRE1BIEFQSSB3aWxsIGhhbmRsZSB0aGUgc3BhY2UuDQo+ID4gPg0KPiA+ID4g
+V2h5IHJlbW90ZXByb2MgbmVlZCB0byBjYXJlIGFib3V0IGl0PyBJZiBJIHNlZSBpdCBjb3JyZWN0
+bHksIGZyb20NCj4gPiA+IHRoZSBsaW51eCBwZXJzcGVjdGl2ZSwgaXQgaXMgb25lIGJ1ZmZlciBh
+bmQgb25lIGRyaXZlciBpcw0KPiA+ID4gcmVzcG9uc2libGUgZm9yIGl0LiBPciBkbyBJIG1pc3Np
+bmcgc29tZSB0aGluZz8NCj4gPg0KPiA+IFdlIG5vdCBoYXZlIHRoZSB2ZGV2IGJ1ZmZlciBpbiBy
+ZXNvdXJjZSB0YWJsZSwgc28gSSBhZGRlZCBpbiBkZXZpY2UgdHJlZSwgc2VlDQo+IGJlbG93Og0K
+PiANCj4gSG0uLiBpZiB2ZGV2IGlzIG5vdCBpbiByZXNvdXJjZSB0YWJsZSBhbmQgc2hvdWxkIG5v
+dCBiZSBjb250cm9sbGVkIGJ5DQo+IHJlbW90ZXByb2MsIHdoeSBkbyB3ZSBuZWVkIHJlbW90ZXBy
+b2M/DQoNCkkgdXNlIHNhbWUgYXBwcm9hY2ggYXMgc3RtMzIgcnByb2MgZHJpdmVyLg0KDQpUaGUg
+cmVzb3VyY2UgdGFibGUgaGVyZSBvbmx5IHB1Ymxpc2ggdnJpbmcgYWRkcmVzcy4NCg0KPiANCj4g
+PiAgICAgICAgIGlteDhxbV9jbTQwOiBpbXg4cW1fY200QDAgew0KPiA+ICAgICAgICAgICAgICAg
+ICBjb21wYXRpYmxlID0gImZzbCxpbXg4cW0tY200IjsNCj4gPiAgICAgICAgICAgICAgICAgcnNj
+LWRhID0gPDB4OTAwMDAwMDA+Ow0KPiA+ICAgICAgICAgICAgICAgICBtYm94LW5hbWVzID0gInR4
+IiwgInJ4IiwgInJ4ZGIiOw0KPiA+ICAgICAgICAgICAgICAgICBtYm94ZXMgPSA8JmxzaW9fbXU1
+IDAgMQ0KPiA+ICAgICAgICAgICAgICAgICAgICAgICAgICAgJmxzaW9fbXU1IDEgMQ0KPiA+ICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgJmxzaW9fbXU1IDMgMT47DQo+ID4gICAgICAgICAgICAg
+ICAgIG11Yi1wYXJ0aXRpb24gPSA8Mz47DQo+ID4gICAgICAgICAgICAgICAgIG1lbW9yeS1yZWdp
+b24gPSA8JnZkZXYwdnJpbmcwPiwgPCZ2ZGV2MHZyaW5nMT4sDQo+IDwmdmRldmJ1ZmZlcj4sDQo+
+ID4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICA8JnZkZXYxdnJpbmcwPiwgPCZ2ZGV2
+MXZyaW5nMT47DQo+ID4gICAgICAgICAgICAgICAgIGNvcmUtaW5kZXggPSA8MD47DQo+ID4gICAg
+ICAgICAgICAgICAgIGNvcmUtaWQgPSA8SU1YX1NDX1JfTTRfMF9QSUQwPjsNCj4gPiAgICAgICAg
+ICAgICAgICAgc3RhdHVzID0gIm9rYXkiOw0KPiA+ICAgICAgICAgICAgICAgICBwb3dlci1kb21h
+aW5zID0gPCZwZCBJTVhfU0NfUl9NNF8wX1BJRDA+LA0KPiA+ICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgPCZwZCBJTVhfU0NfUl9NNF8wX01VXzFBPjsNCj4gPiAgICAgICAgIH07DQo+
+ID4NCj4gPiAgICAgICAgIGlteDhxbV9jbTQxOiBpbXg4eF9jbTRAMSB7DQo+ID4gICAgICAgICAg
+ICAgICAgIGNvbXBhdGlibGUgPSAiZnNsLGlteDhxbS1jbTQiOw0KPiA+ICAgICAgICAgICAgICAg
+ICByc2MtZGEgPSA8MHg5MDEwMDAwMD47DQo+ID4gICAgICAgICAgICAgICAgIG1ib3gtbmFtZXMg
+PSAidHgiLCAicngiLCAicnhkYiI7DQo+ID4gICAgICAgICAgICAgICAgIG1ib3hlcyA9IDwmbHNp
+b19tdTYgMCAxDQo+ID4gICAgICAgICAgICAgICAgICAgICAgICAgICAmbHNpb19tdTYgMSAxDQo+
+ID4gICAgICAgICAgICAgICAgICAgICAgICAgICAmbHNpb19tdTYgMyAxPjsNCj4gPiAgICAgICAg
+ICAgICAgICAgbXViLXBhcnRpdGlvbiA9IDw0PjsNCj4gPiAgICAgICAgICAgICAgICAgbWVtb3J5
+LXJlZ2lvbiA9IDwmdmRldjJ2cmluZzA+LCA8JnZkZXYydnJpbmcxPiwNCj4gPCZ2ZGV2YnVmZmVy
+PiwNCj4gPiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIDwmdmRldjN2cmluZzA+LCA8
+JnZkZXYzdnJpbmcxPjsNCj4gPiAgICAgICAgICAgICAgICAgY29yZS1pbmRleCA9IDwxPjsNCj4g
+PiAgICAgICAgICAgICAgICAgY29yZS1pZCA9IDxJTVhfU0NfUl9NNF8xX1BJRDA+Ow0KPiA+ICAg
+ICAgICAgICAgICAgICBzdGF0dXMgPSAib2theSI7DQo+ID4gICAgICAgICAgICAgICAgIHBvd2Vy
+LWRvbWFpbnMgPSA8JnBkIElNWF9TQ19SX000XzFfUElEMD4sDQo+ID4gICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICA8JnBkIElNWF9TQ19SX000XzFfTVVfMUE+Ow0KPiA+ICAgICAgICAg
+fTsNCj4gPg0KPiA+ICAgICAgICAgICAgICAgICB2ZGV2YnVmZmVyOiB2ZGV2YnVmZmVyIHsNCj4g
+PiAgICAgICAgICAgICAgICAgICAgICAgICBjb21wYXRpYmxlID0gInNoYXJlZC1kbWEtcG9vbCI7
+DQo+ID4gICAgICAgICAgICAgICAgICAgICAgICAgcmVnID0gPDAgMHg5MDQwMDAwMCAwIDB4MTAw
+MDAwPjsNCj4gPiAgICAgICAgICAgICAgICAgICAgICAgICBuby1tYXA7DQo+ID4gICAgICAgICAg
+ICAgICAgIH07DQo+ID4NCj4gPiBJIGhhdmUgdGhlIHVwcGVyIHZkZXZidWZmZXIgbm9kZSBzaGFy
+ZWQgYmV0d2VlbiBNNDAgYW5kIE00MSBub2RlLg0KPiA+IFRoZSB2ZGV2YnVmZmVyIHdpbGwgYmUg
+dXNlZCBhcyB2aXJ0aW8gZGF0YSBidWZmZXIuDQo+ID4NCj4gPiBBbmQgSSBoYXZlIHRoZSBmb2xs
+b3dpbmcgaW4gcnByb2NfYWRkX3ZpcnRpb19kZXYgdG8gc2hhcmUgdmRldmJ1ZmZlcjoNCj4gPiAg
+ICAgICAgIC8qIFRyeSB0byBmaW5kIGRlZGljYXRlZCB2ZGV2IGJ1ZmZlciBjYXJ2ZW91dCAqLw0K
+PiA+ICAgICAgICAgbWVtID0gcnByb2NfZmluZF9jYXJ2ZW91dF9ieV9uYW1lKHJwcm9jLCAidmRl
+diVkYnVmZmVyIiwNCj4gcnZkZXYtPmluZGV4KTsNCj4gPiAgICAgICAgIGlmICghbWVtKQ0KPiA+
+ICAgICAgICAgICAgICAgICBtZW0gPSBycHJvY19maW5kX2NhcnZlb3V0X2J5X25hbWUocnByb2Ms
+DQo+ID4gInZkZXZidWZmZXIiKTsNCj4gDQo+IFdpdGgga2VybmVsIHY1LjgtcmM3IGkgZ2V0IGZv
+bGxvd2luZyBjYWxsIGNoYWluOg0KDQpQbGVhc2UgdXNlIExpbnV4LW5leHQgd2hpY2ggaGFzIHN1
+cHBvcnQgb2YgTTQgYm9vdGVkIGJlZm9yZSBMaW51eCBpbg0KaW4gcmVtb3RlcHJvYy4NCg0KPiBy
+cHJvY19ib290KCkNCj4gICBycHJvY19md19ib290KCkNCj4gICAgIHJwcm9jX2hhbmRsZV92ZGV2
+DQo+ICAgICAgIHJwcm9jX3ZkZXZfZG9fc3RhcnQoKQ0KPiAgICAgICAgIHJwcm9jX2FkZF92aXJ0
+aW9fZGV2KCkNCj4gDQo+IA0KPiBTbywgYXQgdGhlIGVuZCwgd2Ugd2lsbCBjYWxsIHJwcm9jX2Fk
+ZF92aXJ0aW9fZGV2KCkgb25seSBpZiB3ZSBib290IGZpcm13YXJlIGJ5DQo+IGxpbnV4LCBvciBp
+ZiB3ZSBnZXQgYXQgbGVhc3QgdGhlIHJlc291cmNlIHRhYmxlLg0KDQoNClJlc291cmNlIHRhYmxl
+IGNvdWxkIGJlIGdvdCBmcm9tIGVsZiBmaWxlIGlmIGl0IGlzIGJvb3RlZCBieSBMaW51eCwgb3Ig
+Z290IGZyb20NCmFuIGFkZHJlc3MgaWYgTTQgaXMgYm9vdGVkIGJlZm9yZSBMaW51eC4NCg0KVGhh
+bmtzLA0KUGVuZy4NCg0KPiANCj4gU2luY2Ugbm9uZSBvZiB0aGlzIHNlZW1zIHRvIGJlIHRoZSBj
+YXNlLCBpIHN0aWxsIGRvIG5vdCB1bmRlcnN0YW5kIGhvdyBpdCBzaG91bGQNCj4gd29yay4NCj4g
+DQo+ID4gSG9wZSB0aGlzIGlzIGNsZWFyLg0KPiANCj4gOikgaSBzdGlsbCBuZWVkIHNvbWUgdGlt
+ZSB0byB1bmRlcnN0YW5kIGl0Lg0KPiANCj4gLS0NCj4gUGVuZ3V0cm9uaXggZS5LLiAgICAgICAg
+ICAgICAgICAgICAgICAgICAgIHwNCj4gfA0KPiBTdGV1ZXJ3YWxkZXIgU3RyLiAyMSAgICAgICAg
+ICAgICAgICAgICAgICAgfA0KPiBodHRwOi8vd3d3LnBlbmd1dHJvbml4LmRlLyAgfA0KPiAzMTEz
+NyBIaWxkZXNoZWltLCBHZXJtYW55ICAgICAgICAgICAgICAgICAgfCBQaG9uZToNCj4gKzQ5LTUx
+MjEtMjA2OTE3LTAgICAgfA0KPiBBbXRzZ2VyaWNodCBIaWxkZXNoZWltLCBIUkEgMjY4NiAgICAg
+ICAgICAgfCBGYXg6DQo+ICs0OS01MTIxLTIwNjkxNy01NTU1IHwNCg==
