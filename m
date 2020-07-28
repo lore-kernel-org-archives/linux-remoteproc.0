@@ -8,48 +8,48 @@ X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56304C433E0
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 28 Jul 2020 09:34:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54935C433EA
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 28 Jul 2020 09:34:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 28BAC20714
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 28 Jul 2020 09:34:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2C63E20714
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 28 Jul 2020 09:34:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="h3LbCeZi"
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="OksZnCYx"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728174AbgG1JeI (ORCPT
+        id S1728130AbgG1JeN (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 28 Jul 2020 05:34:08 -0400
-Received: from mail-eopbgr20081.outbound.protection.outlook.com ([40.107.2.81]:7395
-        "EHLO EUR02-VE1-obe.outbound.protection.outlook.com"
+        Tue, 28 Jul 2020 05:34:13 -0400
+Received: from mail-am6eur05on2069.outbound.protection.outlook.com ([40.107.22.69]:60082
+        "EHLO EUR05-AM6-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728099AbgG1JeI (ORCPT
+        id S1728294AbgG1JeM (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 28 Jul 2020 05:34:08 -0400
+        Tue, 28 Jul 2020 05:34:12 -0400
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=GhiYYzCI1q8AZ3AaqfPf/vOsEYsU9Szd6WDjwFMw7/UsIhwT5x1ck2n/MvA/2EE9WCre/MKLsvnrYUTxXx6ajHukxS/KYqvvXcIGy8H/IM2VrvKByDlQwPm+iVL7UZqUuhwjnI5h7xPlBgTPkUZg8bXeO6rW7TDaPg8Gl+/RBejMAI2jv96Fuv5qB9BAmpnB12GfZyTPKBRJ5zFrA0EAKyxEGFYl2hQUGYa91xxippt2rrz6s1X2dLmI/Q7K0QXttR//ehev6Bp+jjJrapecQGoaPaSwgs74EAHAdze4Lrrty+2xJPo/QxebI2TQM0AhZnoC/W50nY/L0XLzc4fMiw==
+ b=jirPceWluIC4Pv18YUnlYmIz8IE1I4mD0Nu3UkYZ+uy9kYObIGq7u7DM+agjV3u6Za8zGrz6/PTqLLXbGRiwNnKXwHAkA8HjRu0wJTnPggsxyqjQsnrnZ1ue3B53e97To6D8RsNI9bhZ4+4VSOb26MNNF8NByNzTNp8ZvO0eX9R5v9LVylO9FqITOd1ite7GRIMz1nkNcgyL1IfNsjXYoFlEq22M7Zr2nMhNV/g2WSY5OiR7XpkCsd81K+yAlb8gRfeiR+mrjJXQWqAGv00ArQJItb17oUPAubcbPC6R8bren+s+Gks1PbjGOBpY2QLP4cdtzgnhwVdgH8M/f2FGHw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=tfRm6nqee1zmGaYQWM9juc8qUzO05Kv9PEjJTwzzaOI=;
- b=eTA+2HsQRDty3+U/cEH5fhxafmOcMDzCizqeznO0+O3M2zjCrnb93owseEjHM8zPsaH5zpoc/sfLxVcPNum/UWzi1bEH+PgYqvd/NeEjAtwnJeP6/6u1hCUWnpv9dUOLHT2F3D4oTTEJ54r5m1oZ53tJZhC6r51RkS7aVWVpjN/kGDhpLEdVQAWXchwWIAf8NX2EM6EAt5LiHwZxm07VJq+UXNbMzcwtz3MLQT1GA3HyrSUdgKzUolI3taiWwqF1T/mvxM/KZw9hyHBq4YN61wdyu4U2OmwdUb3blKctucnIp6cB8yqqa6T55GBI4gqUSMvsfwa49F3g1J7nSloTAA==
+ bh=I28++d/kQ6HtgnqycqPFfPKEZZMNQRsSCBdMR+bXF/s=;
+ b=lQV1FLnW1RVbcO5IyWz+LPUQnt8h9q6Z7SVrGSf7jff4OQQ5UVrkAEBwdR+yPCN3NcKNP85gWz+nqXeQ4bFCaZPITNfKjly4Xf/S13j7oIzPwj2NWk0+lDB2aRUphDLpOtbMC4OwasW1/E5wA3GWPP444zwDyd64PvlVvGaKQmxJJjS4o5OKXY3ekyVwwap0/l+8vEUQpQv1bJ1RTCnDkUXpAZm4jM8ppDz0D56qzdoQn1pS6nlTNIyXA8eVqTR7/oR9We/LAV4k7LyeSd4m/NtpHMqHsJUJkbVv8kSZUpIHTtl442gRDS0DDUkv+T28mH7TPyb5oRMLKiMUNeSiGA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
  header.d=nxp.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=tfRm6nqee1zmGaYQWM9juc8qUzO05Kv9PEjJTwzzaOI=;
- b=h3LbCeZigU32klw1NPKlJ4JQxlCj+HhPEDyDht20hr8ccdaDD3fBp2A1LUzD/42tMhKeA5E2Md5rKqbz3uk4yg1bTTRr9Uojtt8aM3KJ/MqkRf3FLg8R2S8353qcxZJWdXTUd82cSVAyWFdBOUKQEqOUpmCnvsH/IHG2H1DN/EU=
+ bh=I28++d/kQ6HtgnqycqPFfPKEZZMNQRsSCBdMR+bXF/s=;
+ b=OksZnCYxKTDJVHWA/iUhBRO70PKBEfQiEj1y7O7/4pMwXUsONrbbM47Z0aHAWo9Hu0EbniqunXb7/GT/g9rSDap74VebxvGeZ4lb/1CuIBtj7klUu0f3y8x38ylLy+1emCMXqIl8sKBcxocbdjp5lxU2MDsNoOVsPhwD/ucWqfo=
 Authentication-Results: wizery.com; dkim=none (message not signed)
  header.d=none;wizery.com; dmarc=none action=none header.from=nxp.com;
 Received: from DB6PR0402MB2760.eurprd04.prod.outlook.com (2603:10a6:4:a1::14)
- by DB6PR0401MB2375.eurprd04.prod.outlook.com (2603:10a6:4:4a::14) with
+ by DB7PR04MB4490.eurprd04.prod.outlook.com (2603:10a6:5:36::22) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3216.22; Tue, 28 Jul
- 2020 09:34:04 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3216.23; Tue, 28 Jul
+ 2020 09:34:08 +0000
 Received: from DB6PR0402MB2760.eurprd04.prod.outlook.com
  ([fe80::2d36:b569:17c:7701]) by DB6PR0402MB2760.eurprd04.prod.outlook.com
  ([fe80::2d36:b569:17c:7701%4]) with mapi id 15.20.3216.033; Tue, 28 Jul 2020
- 09:34:04 +0000
+ 09:34:08 +0000
 From:   peng.fan@nxp.com
 To:     ohad@wizery.com, bjorn.andersson@linaro.org, robh+dt@kernel.org,
         shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
@@ -57,42 +57,44 @@ To:     ohad@wizery.com, bjorn.andersson@linaro.org, robh+dt@kernel.org,
 Cc:     linux-imx@nxp.com, linux-remoteproc@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Peng Fan <peng.fan@nxp.com>
-Subject: [PATCH 1/2] remoteproc: elf: support platform specific memory hook
-Date:   Tue, 28 Jul 2020 17:29:39 +0800
-Message-Id: <1595928580-26199-1-git-send-email-peng.fan@nxp.com>
+Subject: [PATCH 2/2] remoteproc: imx_rproc: add elf memory hooks
+Date:   Tue, 28 Jul 2020 17:29:40 +0800
+Message-Id: <1595928580-26199-2-git-send-email-peng.fan@nxp.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1595928580-26199-1-git-send-email-peng.fan@nxp.com>
+References: <1595928580-26199-1-git-send-email-peng.fan@nxp.com>
 Content-Type: text/plain
 X-ClientProxiedBy: SG2PR01CA0160.apcprd01.prod.exchangelabs.com
  (2603:1096:4:28::16) To DB6PR0402MB2760.eurprd04.prod.outlook.com
  (2603:10a6:4:a1::14)
 MIME-Version: 1.0
 X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from localhost.localdomain (119.31.174.67) by SG2PR01CA0160.apcprd01.prod.exchangelabs.com (2603:1096:4:28::16) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.20.3216.22 via Frontend Transport; Tue, 28 Jul 2020 09:34:00 +0000
+Received: from localhost.localdomain (119.31.174.67) by SG2PR01CA0160.apcprd01.prod.exchangelabs.com (2603:1096:4:28::16) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.20.3216.22 via Frontend Transport; Tue, 28 Jul 2020 09:34:04 +0000
 X-Mailer: git-send-email 2.7.4
 X-Originating-IP: [119.31.174.67]
 X-MS-PublicTrafficType: Email
 X-MS-Office365-Filtering-HT: Tenant
-X-MS-Office365-Filtering-Correlation-Id: 41692379-ad01-4311-642e-08d832d95e3a
-X-MS-TrafficTypeDiagnostic: DB6PR0401MB2375:
+X-MS-Office365-Filtering-Correlation-Id: 20c1ca2c-4761-4900-4363-08d832d960a2
+X-MS-TrafficTypeDiagnostic: DB7PR04MB4490:
 X-MS-Exchange-Transport-Forked: True
-X-Microsoft-Antispam-PRVS: <DB6PR0401MB2375338DAF30E2CA69D00D4D88730@DB6PR0401MB2375.eurprd04.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:2449;
+X-Microsoft-Antispam-PRVS: <DB7PR04MB4490655404213A0877EA425088730@DB7PR04MB4490.eurprd04.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:348;
 X-MS-Exchange-SenderADCheck: 1
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: UW6xaqhRDkfoLePyF372+Kxxr3yImEtwnjAWdYLJIlpNvqBW0uCYK411tDdEdEHI321RFWGBvjcW5QPx9RHF+4+qWPwckKq89xFj6EewyLYr/KhSKTnQjq0VcyBDZ1S/Yz2pBQXZ/sy7Hq9DT3kSt0RluajavdtHQJ1Nz0tQvvA80YNr2ctFR3DbHVlT0fK/PNLrt3XXsmT8FvRoGtZjJ/yne3V79UGXFynVnheu27P8OB0qJFdZkjQg6Y52i9bXDMOTTSLefzMhx+8Vu4xx6ha9N5/Inyd2EDivVRAJv+wY2h8Dsz/wlTwoFHKAL91B1aIBCAeyVJnLTVYFlzE9Dp9BaeVx112+sXIdO0q9Ngh1fc+zrZNB2N3qjfm5PvSD
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB6PR0402MB2760.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFTY:;SFS:(4636009)(136003)(396003)(376002)(346002)(39860400002)(366004)(2906002)(6486002)(8936002)(186003)(6506007)(2616005)(16526019)(956004)(6512007)(9686003)(66946007)(7416002)(66476007)(66556008)(316002)(6666004)(26005)(36756003)(478600001)(69590400007)(52116002)(8676002)(4326008)(5660300002)(86362001)(83380400001);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData: 0tHxOCi+iYWWb+MuZrVcWIfDPwWVVPlpOeHnzyCXQGkzCWdO776iKlfLY/zm2K7Pim/rYJaMtu3fo5S/4eRF6LTu8EMiYWVlrDk/p/E3Ya6wanjrqr0jwIard+fJzl7XCx0nvHgxgvDNZy5J1vadioSGZhaILMbICjFbkpXVwKdNuXNbOPNTVKrucA4f4MPQtRAfu+chIjEzn+SDScRckdRfRTTF++i4NCg8w/Tn2pOR1DBvdnmdNRRWslesdJ2c9+f/ep9yM6ohV39wTpVcQLj0r4ugWWW6HWMrRQrZB4XogLhOCkCWfRLOkCIV37J4ifJBIabwgWdh8FvKuYKSe/rDP961CdqnK/ZFC2yz3DJgDyq24F+BzCP6kGOdDmdnbTziI9/+ckPqd/wSazXBuEEO8kKymZIhvyT29JSgk230CrvzO1flsedP+buRZ1VEMX0O2iSw3ZXEO08M/gjrTIBJJVVnpeCPQgR9wsgJDOa15vNOQsIfaDUiSVOper0Y
+X-Microsoft-Antispam-Message-Info: 4/Dyr+//vyl5CZZhN4iPNFTTHs1zpvy4sqmhbEJrUYURow1As0/WfnVVo6bF4vvGdR42nyrp1gg+8szd+QFN/UyRk2zapi5vCIIBfJFFIUzdPwA5cnOXZ+2Zx+AkUmoEGYe5meyLW+xfwzKtdrL0SPJJv2PcsB2owF8aLDhtIE6+NF12wDBeEb5Vy6/jLA6gkx+uTXB8HwDJkfFGECOiRtTAk+0KzA8/XGUMXh+bVNfxWev4Htar9ZT6Idu54VlNrk2/NiD8kSn3M7Stg1D/DOQxZce3iY/DRFqBH2UKlRYOzNng2H3bHgl1PQwZ1pHT2T5Z+UH9cEwyi4rdaObMSKlSMcCPMBrd9y6R5s1v/BC3KKaVBGSM6EuWAA1HsfU3
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB6PR0402MB2760.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFTY:;SFS:(4636009)(136003)(376002)(346002)(366004)(396003)(39860400002)(186003)(956004)(478600001)(6666004)(16526019)(2616005)(36756003)(6486002)(5660300002)(4326008)(316002)(52116002)(6506007)(7416002)(26005)(8676002)(2906002)(86362001)(8936002)(69590400007)(9686003)(6512007)(66556008)(66476007)(66946007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData: CPg0CVnIyWU1fw6bt8IzM905aM82jBQNBrUJRjjqgsgawsuKMDPyEeR77fs0XQhlz/mHkpJr2ustuHnuqqkqYB9U5f+9c66OcUYcNnRIn2pZ5ZP/A7EZZo3g31IzEi1+xwYobSPHm2HdCasvf3nwOpu38DMRUsrmufvhRNtT+TKS/kCnI0tdmqTFUXtwHVJuaCSxsxf0WHstGvRInzf6kvDYoQvfu30Jtg18p357MC4EtLgaMoywbaGzlFDBZ2aY3vT45DkDsaSZTae03wO5VgoQm7Xa4hbDWPIEEI+awLVD1ViQ2ED2e92EnpMUP1TzFIlPhDvUSnVcYyAAk6pAiYw3yjMurb9iZP5cntHgkAYbHBveqqDTXzq7gam3xd8weTn3+7321vKbz2K+DwZkFOCFCMrESehXopgQ8+BeW1Rg3xtpU6E4DUtCzT2HyGo5CVRCzoIdKxws63QookmFtJ9OPH4BwKHJWbYFNYzj+sU3f5bYsjIfIpyMKOAej/wa
 X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 41692379-ad01-4311-642e-08d832d95e3a
+X-MS-Exchange-CrossTenant-Network-Message-Id: 20c1ca2c-4761-4900-4363-08d832d960a2
 X-MS-Exchange-CrossTenant-AuthSource: DB6PR0402MB2760.eurprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Jul 2020 09:34:04.6170
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Jul 2020 09:34:08.7262
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 5W7IoptmX5aKMWZcwmjKvoEKBM0xjrZqI2t0suKaWxdmlcMzUrCBcFY+v2S3daEXYrFnXcHPw07kXroy7VlTjg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB6PR0401MB2375
+X-MS-Exchange-CrossTenant-UserPrincipalName: GqKD2CiVqfI7RljaGojmaf2012upeEN1g/MU5Y7ebgQdQkD3mMdK02BIPVzY1lp9OiqQZJEi8NjkkBkflP/wpw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB7PR04MB4490
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
@@ -100,85 +102,49 @@ X-Mailing-List: linux-remoteproc@vger.kernel.org
 
 From: Peng Fan <peng.fan@nxp.com>
 
-To arm64, "dc      zva, dst" is used in memset.
-Per ARM DDI 0487A.j, chapter C5.3.8 DC ZVA, Data Cache Zero by VA,
-
-"If the memory region being zeroed is any type of Device memory,
-this instruction can give an alignment fault which is prioritized
-in the same way as other alignment faults that are determined
-by the memory type."
-
-On i.MX platforms, when elf is loaded to onchip TCM area, the region
-is ioremapped, so "dc zva, dst" will trigger abort. And ioremap_wc()
-on i.MX not able to write correct data to TCM area.
-
-So we need to use io helpers, and extend the elf loader to support
-platform specific memory functions.
+Please not apply 2/2 for now, this 2/2 has not gone through
+test on all i.MX8 platforms.
 
 Signed-off-by: Peng Fan <peng.fan@nxp.com>
 ---
- drivers/remoteproc/remoteproc_elf_loader.c | 20 ++++++++++++++++++--
- include/linux/remoteproc.h                 |  2 ++
- 2 files changed, 20 insertions(+), 2 deletions(-)
+ drivers/remoteproc/imx_rproc.c | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-diff --git a/drivers/remoteproc/remoteproc_elf_loader.c b/drivers/remoteproc/remoteproc_elf_loader.c
-index df68d87752e4..f442bac64432 100644
---- a/drivers/remoteproc/remoteproc_elf_loader.c
-+++ b/drivers/remoteproc/remoteproc_elf_loader.c
-@@ -129,6 +129,22 @@ u64 rproc_elf_get_boot_addr(struct rproc *rproc, const struct firmware *fw)
+diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rproc.c
+index 8957ed271d20..8ad860c65256 100644
+--- a/drivers/remoteproc/imx_rproc.c
++++ b/drivers/remoteproc/imx_rproc.c
+@@ -6,6 +6,7 @@
+ #include <linux/clk.h>
+ #include <linux/err.h>
+ #include <linux/interrupt.h>
++#include <linux/io.h>
+ #include <linux/kernel.h>
+ #include <linux/mfd/syscon.h>
+ #include <linux/module.h>
+@@ -241,10 +242,22 @@ static void *imx_rproc_da_to_va(struct rproc *rproc, u64 da, size_t len)
+ 	return va;
  }
- EXPORT_SYMBOL(rproc_elf_get_boot_addr);
  
-+static void *rproc_elf_memcpy(struct rproc *rproc, void *dest, const void *src, size_t count)
++static void *imx_rproc_memcpy(struct rproc *rproc, void *dest, const void *src, size_t count)
 +{
-+	if (!rproc->ops->memcpy)
-+		return memcpy(dest, src, count);
-+
-+	return rproc->ops->memcpy(rproc, dest, src, count);
++       memcpy_toio((void * __iomem)dest, src, count);
 +}
 +
-+static void *rproc_elf_memset(struct rproc *rproc, void *s, int c, size_t count)
++static void *imx_rproc_memset(struct rproc *rproc, void *s, int c, size_t count)
 +{
-+	if (!rproc->ops->memset)
-+		return memset(s, c, count);
-+
-+	return rproc->ops->memset(rproc, s, c, count);
++	memset_io((void * __iomem)s, c, count);
 +}
 +
- /**
-  * rproc_elf_load_segments() - load firmware segments to memory
-  * @rproc: remote processor which will be booted using these fw segments
-@@ -214,7 +230,7 @@ int rproc_elf_load_segments(struct rproc *rproc, const struct firmware *fw)
- 
- 		/* put the segment where the remote processor expects it */
- 		if (filesz)
--			memcpy(ptr, elf_data + offset, filesz);
-+			rproc_elf_memcpy(rproc, ptr, elf_data + offset, filesz);
- 
- 		/*
- 		 * Zero out remaining memory for this segment.
-@@ -224,7 +240,7 @@ int rproc_elf_load_segments(struct rproc *rproc, const struct firmware *fw)
- 		 * this.
- 		 */
- 		if (memsz > filesz)
--			memset(ptr + filesz, 0, memsz - filesz);
-+			rproc_elf_memset(rproc, ptr + filesz, 0, memsz - filesz);
- 	}
- 
- 	return ret;
-diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-index 0e8d2ff575b4..88fc9643c1a8 100644
---- a/include/linux/remoteproc.h
-+++ b/include/linux/remoteproc.h
-@@ -391,6 +391,8 @@ struct rproc_ops {
- 	int (*load)(struct rproc *rproc, const struct firmware *fw);
- 	int (*sanity_check)(struct rproc *rproc, const struct firmware *fw);
- 	u64 (*get_boot_addr)(struct rproc *rproc, const struct firmware *fw);
-+	void *(*memcpy)(struct rproc *rproc, void *dest, const void *src, size_t count);
-+	void *(*memset)(struct rproc *rproc, void *s, int c, size_t count);
- 	unsigned long (*panic)(struct rproc *rproc);
+ static const struct rproc_ops imx_rproc_ops = {
+ 	.start		= imx_rproc_start,
+ 	.stop		= imx_rproc_stop,
+ 	.da_to_va       = imx_rproc_da_to_va,
++	.memset		= imx_rproc_memset,
++	.memcpy		= imx_rproc_memcpy,
  };
  
+ static int imx_rproc_addr_init(struct imx_rproc *priv,
 -- 
 2.16.4
 
