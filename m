@@ -6,69 +6,66 @@ X-Spam-Status: No, score=-5.5 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09142C433DF
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 28 Jul 2020 07:20:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F30E5C433DF
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 28 Jul 2020 07:26:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DAD062065C
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 28 Jul 2020 07:20:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D13782070B
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 28 Jul 2020 07:26:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727801AbgG1HUN (ORCPT
+        id S1726990AbgG1H0y (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 28 Jul 2020 03:20:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53878 "EHLO
+        Tue, 28 Jul 2020 03:26:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54926 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727095AbgG1HUM (ORCPT
+        with ESMTP id S1727801AbgG1H0y (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 28 Jul 2020 03:20:12 -0400
+        Tue, 28 Jul 2020 03:26:54 -0400
 Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 491A8C061794
-        for <linux-remoteproc@vger.kernel.org>; Tue, 28 Jul 2020 00:20:12 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5F792C0619D2
+        for <linux-remoteproc@vger.kernel.org>; Tue, 28 Jul 2020 00:26:54 -0700 (PDT)
 Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
         by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <ore@pengutronix.de>)
-        id 1k0JuB-00052U-BM; Tue, 28 Jul 2020 09:20:07 +0200
+        id 1k0K0i-0005uh-0v; Tue, 28 Jul 2020 09:26:52 +0200
 Received: from ore by pty.hi.pengutronix.de with local (Exim 4.89)
         (envelope-from <ore@pengutronix.de>)
-        id 1k0JuA-0004oF-Cm; Tue, 28 Jul 2020 09:20:06 +0200
-Date:   Tue, 28 Jul 2020 09:20:06 +0200
+        id 1k0K0h-000544-3i; Tue, 28 Jul 2020 09:26:51 +0200
+Date:   Tue, 28 Jul 2020 09:26:51 +0200
 From:   Oleksij Rempel <o.rempel@pengutronix.de>
 To:     Peng Fan <peng.fan@nxp.com>
 Cc:     "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>,
         "mathieu.poirier@linaro.org" <mathieu.poirier@linaro.org>,
         "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
         "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "festevam@gmail.com" <festevam@gmail.com>,
         dl-linux-imx <linux-imx@nxp.com>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
         "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Subject: Re: [PATCH 03/10] remoteproc: imx: use devm_ioremap
-Message-ID: <20200728072006.6lqia5gssfepnpbq@pengutronix.de>
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH 00/10] remoteproc: imx_rproc: support iMX8M and early boot
+Message-ID: <20200728072651.zcflghll4wa7rm55@pengutronix.de>
 References: <20200724080813.24884-1-peng.fan@nxp.com>
- <20200724080813.24884-4-peng.fan@nxp.com>
- <20200727062335.v2pxgu6kr6ao2qmh@pengutronix.de>
- <DB6PR0402MB27601C875FF5F1E02DBF5C6488720@DB6PR0402MB2760.eurprd04.prod.outlook.com>
- <20200727064151.767kc7622tcqmqfs@pengutronix.de>
- <DB6PR0402MB276063FBE74FCF222CB00F8588720@DB6PR0402MB2760.eurprd04.prod.outlook.com>
- <20200727073757.r2vq6djh3a4dyfp6@pengutronix.de>
- <DB6PR0402MB2760EFCB8C91680DC719C82C88720@DB6PR0402MB2760.eurprd04.prod.outlook.com>
+ <20200727063839.kfgrtperzkygvjr2@pengutronix.de>
+ <DB6PR0402MB2760FBC0109E98A447BB716588720@DB6PR0402MB2760.eurprd04.prod.outlook.com>
+ <20200727075441.lgscydoj3txupeay@pengutronix.de>
+ <DB6PR0402MB27605640244CE751317E6DE888720@DB6PR0402MB2760.eurprd04.prod.outlook.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="i5eqgdj3pjiydqz6"
+        protocol="application/pgp-signature"; boundary="wxnuv5vf765geiib"
 Content-Disposition: inline
-In-Reply-To: <DB6PR0402MB2760EFCB8C91680DC719C82C88720@DB6PR0402MB2760.eurprd04.prod.outlook.com>
+In-Reply-To: <DB6PR0402MB27605640244CE751317E6DE888720@DB6PR0402MB2760.eurprd04.prod.outlook.com>
 X-Sent-From: Pengutronix Hildesheim
 X-URL:  http://www.pengutronix.de/
 X-IRC:  #ptxdist @freenode
 X-Accept-Language: de,en
 X-Accept-Content-Type: text/plain
-X-Uptime: 09:17:41 up 255 days, 22:36, 251 users,  load average: 0.03, 0.06,
- 0.07
+X-Uptime: 09:21:44 up 255 days, 22:40, 251 users,  load average: 0.03, 0.08,
+ 0.08
 User-Agent: NeoMutt/20170113 (1.7.2)
 X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
 X-SA-Exim-Mail-From: ore@pengutronix.de
@@ -80,155 +77,161 @@ List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
 
---i5eqgdj3pjiydqz6
+--wxnuv5vf765geiib
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jul 27, 2020 at 08:11:09AM +0000, Peng Fan wrote:
-> > Subject: Re: [PATCH 03/10] remoteproc: imx: use devm_ioremap
+On Mon, Jul 27, 2020 at 09:18:31AM +0000, Peng Fan wrote:
+> > Subject: Re: [PATCH 00/10] remoteproc: imx_rproc: support iMX8M and ear=
+ly
+> > boot
 > >=20
-> > On Mon, Jul 27, 2020 at 06:51:00AM +0000, Peng Fan wrote:
-> > > > Subject: Re: [PATCH 03/10] remoteproc: imx: use devm_ioremap
+> > On Mon, Jul 27, 2020 at 06:44:32AM +0000, Peng Fan wrote:
+> > > Hi Oleksij,
+> > >
+> > > > Subject: Re: [PATCH 00/10] remoteproc: imx_rproc: support iMX8M and
+> > > > early boot
 > > > >
-> > > > On Mon, Jul 27, 2020 at 06:28:20AM +0000, Peng Fan wrote:
-> > > > > Hi Oleksij,
-> > > > >
-> > > > > > Subject: Re: [PATCH 03/10] remoteproc: imx: use devm_ioremap
-> > > > > >
-> > > > > > On Fri, Jul 24, 2020 at 04:08:06PM +0800, Peng Fan wrote:
-> > > > > > > We might need to map an region multiple times, becaue the
-> > > > > > > region might be shared between remote processors, such i.MX8QM
-> > > > > > > with dual
-> > > > M4 cores.
-> > > > > > > So use devm_ioremap, not devm_ioremap_resource.
-> > > > > >
-> > > > > > Can you please give an example of this kind of shared resources
-> > > > > > and how they should be handled by two separate devices?
-> > > > >
-> > > > > This is to share vdevbuffer space, there is a vdevbuffer in device
-> > > > > tree, it will be shared between M4_0 and M4_1.
-> > > > >
-> > > > > For the buffer, it is Linux DMA API will handle the space.
+> > > > Hi,
 > > > >
-> > > > Why remoteproc need to care about it? If I see it correctly, from
-> > > > the linux perspective, it is one buffer and one driver is
-> > > > responsible for it. Or do I missing some thing?
+> > > > On Fri, Jul 24, 2020 at 04:08:03PM +0800, Peng Fan wrote:
+> > > > > This patchset is to support i.MX8MQ/M coproc booted before linux.
+> > > > > Since i.MX8MQ/M was not supported, several patches are needed to
+> > > > > first support the platform, then support early boot case.
+> > > > >
+> > > > > I intended to included i.MX8QM/QXP, but that would introduce a
+> > > > > large patchset, so not included. But the clk/syscon optional patch
+> > > > > for i.MX8QM/QXP was still kept here to avoid rebase error.
+> > > >
+> > > > Thank you for your work.
+> > > >
+> > > > Can you please provide more information about big picture of this w=
+ork.
+> > > >
+> > > > If I see it correctly, we have here support for i.MX8MM, which seems
+> > > > to be able to fully control Cortex M4 (enable CPU core, etc...).
 > > >
-> > > We not have the vdev buffer in resource table, so I added in device t=
-ree, see
-> > below:
+> > > Yes.
 > >=20
-> > Hm.. if vdev is not in resource table and should not be controlled by
-> > remoteproc, why do we need remoteproc?
+> > In this case, I would recommend to mainline the i.MX8MM part
+> > first/separately.
 >=20
-> I use same approach as stm32 rproc driver.
->=20
-> The resource table here only publish vring address.
->=20
-> >=20
-> > >         imx8qm_cm40: imx8qm_cm4@0 {
-> > >                 compatible =3D "fsl,imx8qm-cm4";
-> > >                 rsc-da =3D <0x90000000>;
-> > >                 mbox-names =3D "tx", "rx", "rxdb";
-> > >                 mboxes =3D <&lsio_mu5 0 1
-> > >                           &lsio_mu5 1 1
-> > >                           &lsio_mu5 3 1>;
-> > >                 mub-partition =3D <3>;
-> > >                 memory-region =3D <&vdev0vring0>, <&vdev0vring1>,
-> > <&vdevbuffer>,
-> > >                                 <&vdev1vring0>, <&vdev1vring1>;
-> > >                 core-index =3D <0>;
-> > >                 core-id =3D <IMX_SC_R_M4_0_PID0>;
-> > >                 status =3D "okay";
-> > >                 power-domains =3D <&pd IMX_SC_R_M4_0_PID0>,
-> > >                                 <&pd IMX_SC_R_M4_0_MU_1A>;
-> > >         };
-> > >
-> > >         imx8qm_cm41: imx8x_cm4@1 {
-> > >                 compatible =3D "fsl,imx8qm-cm4";
-> > >                 rsc-da =3D <0x90100000>;
-> > >                 mbox-names =3D "tx", "rx", "rxdb";
-> > >                 mboxes =3D <&lsio_mu6 0 1
-> > >                           &lsio_mu6 1 1
-> > >                           &lsio_mu6 3 1>;
-> > >                 mub-partition =3D <4>;
-> > >                 memory-region =3D <&vdev2vring0>, <&vdev2vring1>,
-> > <&vdevbuffer>,
-> > >                                 <&vdev3vring0>, <&vdev3vring1>;
-> > >                 core-index =3D <1>;
-> > >                 core-id =3D <IMX_SC_R_M4_1_PID0>;
-> > >                 status =3D "okay";
-> > >                 power-domains =3D <&pd IMX_SC_R_M4_1_PID0>,
-> > >                                 <&pd IMX_SC_R_M4_1_MU_1A>;
-> > >         };
-> > >
-> > >                 vdevbuffer: vdevbuffer {
-> > >                         compatible =3D "shared-dma-pool";
-> > >                         reg =3D <0 0x90400000 0 0x100000>;
-> > >                         no-map;
-> > >                 };
-> > >
-> > > I have the upper vdevbuffer node shared between M40 and M41 node.
-> > > The vdevbuffer will be used as virtio data buffer.
-> > >
-> > > And I have the following in rproc_add_virtio_dev to share vdevbuffer:
-> > >         /* Try to find dedicated vdev buffer carveout */
-> > >         mem =3D rproc_find_carveout_by_name(rproc, "vdev%dbuffer",
-> > rvdev->index);
-> > >         if (!mem)
-> > >                 mem =3D rproc_find_carveout_by_name(rproc,
-> > > "vdevbuffer");
-> >=20
-> > With kernel v5.8-rc7 i get following call chain:
->=20
-> Please use Linux-next which has support of M4 booted before Linux in
-> in remoteproc.
->=20
-> > rproc_boot()
-> >   rproc_fw_boot()
-> >     rproc_handle_vdev
-> >       rproc_vdev_do_start()
-> >         rproc_add_virtio_dev()
-> >=20
-> >=20
-> > So, at the end, we will call rproc_add_virtio_dev() only if we boot fir=
-mware by
-> > linux, or if we get at least the resource table.
->=20
->=20
-> Resource table could be got from elf file if it is booted by Linux, or go=
-t from
-> an address if M4 is booted before Linux.
+> Only the last patch is to support earlyboot, all others is imx8mm part.
 
-Ok, i see now. Thank you!
+ok
 
-Reviewed-by: Oleksij Rempel <o.rempel@pengutronix.de>
+> >=20
+> > > >
+> > > > And other case, where remoteproc is running on application processor
+> > > > and can't or should not touch M4 (i.MX7ULP, i.MX8QM/QXP..). Since M4
+> > > > provides some functionality, you are trying to reuse remoteproc
+> > > > framework to get resource table present in ELF header and to
+> > > > dynamically load things. For some reasons this header provides more
+> > > > information then needed, so you are changing the ELF parser in the =
+kernel
+> > to workaround it.
+> > >
+> > > Not exactly.
+> > >
+> > > For i.MX8MM, we support two cases. M4 kicked by U-Boot, M4 kicked by
+> > Linux remoteproc.
+> > > For i.MX8QM/QXP, the typical usecase is M4 kicked by SCFW, but we will
+> > > also add M4 kicked by Linux remoteproc.
+> > > For i.MX7ULP, I would only support M4 dual boot case, M4 control
+> > everything.
+> >=20
+> > From current state of discussion, i'm not sure what role plays remotepr=
+oc in
+> > the scenario where M4 is started before linux. Especially if we are not=
+ using
+> > resource table.
+>=20
+> We are using resource table from an address, not in elf file.
+> This is the new feature in Linux-next to support coproc booted early.
+>=20
+> >=20
+> > > The reason the change the elf parser is that when M4 elf is loaded by
+> > > Linux remoteproc, It use memset to clear area.
+> >=20
+> > The use of memset, depends on ELF format. Fix/change the linker script =
+on
+> > your firmware and memset will be never called.
+> >=20
+> > > However we use ioremap, memset on ARM64 will report crash to device
+> > > nGnRE memory. And we could not use ioremap_wc to TCM area, since it
+> > > could have data correctly written into TCM.
+> >=20
+> > I have strong feeling, that we are talking about badly or not properly
+> > formatted ELF binary. I would prefer to double check it, before we will=
+ apply
+> > fixes on wrong place.
+> >=20
+> > > Maintainer not wanna to drop memset in common code, and TI guys
+> > > suggest add i.MX specific elf stuff. So I add elf handler in i.MX cod=
+e.
+> >=20
+> > I think, removing memset may damage current users of imx_rproc driver.
+> > Since, like I said: the use of memset depends on ELF format.
+>=20
+> In my elf file, the last PT_LOAD contains data/bss/heap/stack. I'll check
+> with our MCU guys, we only need the specific data loaded.
+>=20
+> Elf file type is EXEC (Executable file)
+> Entry point 0x1ffe0355
+> There are 3 program headers, starting at offset 52
+>=20
+> Program Headers:
+>   Type           Offset   VirtAddr   PhysAddr   FileSiz MemSiz  Flg Align
+>   LOAD           0x010000 0x1ffe0000 0x1ffe0000 0x00240 0x00240 R   0x100=
+00
+>   LOAD           0x010240 0x1ffe0240 0x1ffe0240 0x03e90 0x03e90 RWE 0x100=
+00
+>   LOAD           0x020000 0x20000000 0x1ffe40d0 0x00068 0x0ad00 RW  0x100=
+00
+>=20
+>  Section to Segment mapping:
+>   Segment Sections...
+>    00     .interrupts
+>    01     .resource_table .text .ARM .init_array .fini_array
+>    02     .data .bss .heap .stack
 
+Here is an example of formatting ELF for remoteproc:
+https://git.pengutronix.de/cgit/ore/OSELAS.BSP-Pengutronix-DualKit/tree/loc=
+al_src/remoteproc-elf/linker.ld
+https://git.pengutronix.de/cgit/ore/OSELAS.BSP-Pengutronix-DualKit/tree/loc=
+al_src/remoteproc-elf/imx7m4.S
+
+In this example I pack linux in to remoteproc elf image and start linux
+on imx7d-m4 part.
+Will be interesting if you can do the same on imx8* SoCs ;)
+
+Regards,
+Oleksij
 --=20
 Pengutronix e.K.                           |                             |
 Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
 31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
 Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
 
---i5eqgdj3pjiydqz6
+--wxnuv5vf765geiib
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEERBNZvwSgvmcMY/T74omh9DUaUbMFAl8f0aEACgkQ4omh9DUa
-UbPAsQ//XBoFlYduiR5diPTVmdX6G5+l7hpLt+H0SBighq2rejKsHq/dH8w/MHT1
-OBlB8JEZJgJIY3VzYIvBwYs9M5qGYYQfLymZVORDi59RDuyYkBDI0LeIBVCxfSxb
-JnmOEXly2nGD/cVRQB2O2NLBCpE1SFiZ/LbQ21DCzm40gfaXFkO7/bxgpMz1r/XY
-Whr7fb3772f4NGOYOTRVUj7n5+jp48yFRoCwEnjeTC/fZ7Jpi1YzJpmfdFq5Hzjt
-9ZRhHITjac2FcicZjJ5Ac92JZvt7lII1tFhh7UGxt7tnkS1mOglehuhynst5RoGk
-NbrzCgozsbJenU6vfdgcsMFHO49Mjj1EP+hITKDClQVbImEgdU4ZmhW4sRY1cAO7
-3FeG9ZH7ru60PnEUR/SUt4e3dIAcGr4vjLdtY0kODpkfgyvYJfrssCzJIkCuboO2
-Xn7DWtoANixGZpr8g00VcBgEQL+zfEUrGcHS8pEIH/P9jippTsYnP7bX3EEDIkJR
-qwqQ/UUyiZ9yGGX2z/ShdUplEho9HaSz0DXl/C64kMikQAROAy/B+bk/Vs0rCgEY
-ESq82Ghy5FBdakZouPA1DfYvWmRTgolIiFALkZT/X1RyaVPjvf5vNG7Ceyb7upn3
-uB5KZu1T1i99l44Ff5yZR5/+hYp+YuO4CLaGYlNoXrtBIlH0iwU=
-=q0i1
+iQIzBAABCAAdFiEERBNZvwSgvmcMY/T74omh9DUaUbMFAl8f0zYACgkQ4omh9DUa
+UbOaNg/9GDt95BZraGTVvjG172AgwIpQpn4nLaR1y8fhPcANYIj+wb03/+N2sJMK
+jW2NDTHGovbzjaDpwpnFQCjVWKH2BdsDeuRyZWjVLtM5E038nPu5Jlz8nZLF+p1g
+NFbbze2ugHwfVc72i0wABbdc61vyL753WL2783zY0+6sFohc9pe1fbh+mBwf7/ai
+8gVyDJFlhYorXupOAUqag84H9UG36DoB/7fOm0Nq3y9SUo0c3DU+ryu1jykTZ3IX
+GnFE/0eR1X1B6juRXdBDNHMMwQX2wCQtdPsu+T5trlVc59fzWgm7GTa2o5DVO24r
+y8joWcRIXRCXIFqBNIjBmXLSTG+MKflKLoQij8tqT3BteSqdUpw/IIvsab2oRRpm
+seaQveN8xJZ2k72n3jgLJlyN5w7aylpHkDbqhwUp4Fv6D2n/vZvLBknCanjQ2GKB
+BHbOeIC7eqkkn2Xr2eVk7aLFS1BfCr0CT9iTNlNHJYoNgulRg/ccvL72Y/WLvEaS
+gr9GIe8eLQF7pIsK0LmqJoozUlD6z5sJ1cVbsjsgnZIRagFHHis8aRccxQkPAxHu
+ks5DQntOkVTi7rabBtV78p9EXUJCST4ZEmah4Wsv6tsmQIjgC7qLqojop1pYhbAF
+F1xrVdQDXYH3dhf7eoAOUEqUL2mRzH755Rjn0dIe9tPruF/8hgc=
+=5rSP
 -----END PGP SIGNATURE-----
 
---i5eqgdj3pjiydqz6--
+--wxnuv5vf765geiib--
