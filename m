@@ -2,261 +2,183 @@ Return-Path: <SRS0=BBTQ=BH=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,MSGID_FROM_MTA_HEADER,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8FF5C433E3
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 28 Jul 2020 07:55:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56304C433E0
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 28 Jul 2020 09:34:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 867EF2177B
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 28 Jul 2020 07:55:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 28BAC20714
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 28 Jul 2020 09:34:09 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="h3LbCeZi"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727906AbgG1Hzv (ORCPT
+        id S1728174AbgG1JeI (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 28 Jul 2020 03:55:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59440 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727866AbgG1Hzv (ORCPT
+        Tue, 28 Jul 2020 05:34:08 -0400
+Received: from mail-eopbgr20081.outbound.protection.outlook.com ([40.107.2.81]:7395
+        "EHLO EUR02-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728099AbgG1JeI (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 28 Jul 2020 03:55:51 -0400
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AB93EC0619D2
-        for <linux-remoteproc@vger.kernel.org>; Tue, 28 Jul 2020 00:55:50 -0700 (PDT)
-Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ore@pengutronix.de>)
-        id 1k0KSi-0000xu-DU; Tue, 28 Jul 2020 09:55:48 +0200
-Received: from ore by pty.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <ore@pengutronix.de>)
-        id 1k0KSi-0005rg-0A; Tue, 28 Jul 2020 09:55:48 +0200
-Date:   Tue, 28 Jul 2020 09:55:47 +0200
-From:   Oleksij Rempel <o.rempel@pengutronix.de>
-To:     Peng Fan <peng.fan@nxp.com>
-Cc:     "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>,
-        "mathieu.poirier@linaro.org" <mathieu.poirier@linaro.org>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH 00/10] remoteproc: imx_rproc: support iMX8M and early boot
-Message-ID: <20200728075547.u7bk22xnmu5jjpoo@pengutronix.de>
-References: <20200724080813.24884-1-peng.fan@nxp.com>
- <20200727063839.kfgrtperzkygvjr2@pengutronix.de>
- <DB6PR0402MB2760FBC0109E98A447BB716588720@DB6PR0402MB2760.eurprd04.prod.outlook.com>
- <20200727075441.lgscydoj3txupeay@pengutronix.de>
- <DB6PR0402MB27605640244CE751317E6DE888720@DB6PR0402MB2760.eurprd04.prod.outlook.com>
- <20200728072651.zcflghll4wa7rm55@pengutronix.de>
- <DB6PR0402MB27603441BEE037ECCB3F021088730@DB6PR0402MB2760.eurprd04.prod.outlook.com>
+        Tue, 28 Jul 2020 05:34:08 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=GhiYYzCI1q8AZ3AaqfPf/vOsEYsU9Szd6WDjwFMw7/UsIhwT5x1ck2n/MvA/2EE9WCre/MKLsvnrYUTxXx6ajHukxS/KYqvvXcIGy8H/IM2VrvKByDlQwPm+iVL7UZqUuhwjnI5h7xPlBgTPkUZg8bXeO6rW7TDaPg8Gl+/RBejMAI2jv96Fuv5qB9BAmpnB12GfZyTPKBRJ5zFrA0EAKyxEGFYl2hQUGYa91xxippt2rrz6s1X2dLmI/Q7K0QXttR//ehev6Bp+jjJrapecQGoaPaSwgs74EAHAdze4Lrrty+2xJPo/QxebI2TQM0AhZnoC/W50nY/L0XLzc4fMiw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=tfRm6nqee1zmGaYQWM9juc8qUzO05Kv9PEjJTwzzaOI=;
+ b=eTA+2HsQRDty3+U/cEH5fhxafmOcMDzCizqeznO0+O3M2zjCrnb93owseEjHM8zPsaH5zpoc/sfLxVcPNum/UWzi1bEH+PgYqvd/NeEjAtwnJeP6/6u1hCUWnpv9dUOLHT2F3D4oTTEJ54r5m1oZ53tJZhC6r51RkS7aVWVpjN/kGDhpLEdVQAWXchwWIAf8NX2EM6EAt5LiHwZxm07VJq+UXNbMzcwtz3MLQT1GA3HyrSUdgKzUolI3taiWwqF1T/mvxM/KZw9hyHBq4YN61wdyu4U2OmwdUb3blKctucnIp6cB8yqqa6T55GBI4gqUSMvsfwa49F3g1J7nSloTAA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=tfRm6nqee1zmGaYQWM9juc8qUzO05Kv9PEjJTwzzaOI=;
+ b=h3LbCeZigU32klw1NPKlJ4JQxlCj+HhPEDyDht20hr8ccdaDD3fBp2A1LUzD/42tMhKeA5E2Md5rKqbz3uk4yg1bTTRr9Uojtt8aM3KJ/MqkRf3FLg8R2S8353qcxZJWdXTUd82cSVAyWFdBOUKQEqOUpmCnvsH/IHG2H1DN/EU=
+Authentication-Results: wizery.com; dkim=none (message not signed)
+ header.d=none;wizery.com; dmarc=none action=none header.from=nxp.com;
+Received: from DB6PR0402MB2760.eurprd04.prod.outlook.com (2603:10a6:4:a1::14)
+ by DB6PR0401MB2375.eurprd04.prod.outlook.com (2603:10a6:4:4a::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3216.22; Tue, 28 Jul
+ 2020 09:34:04 +0000
+Received: from DB6PR0402MB2760.eurprd04.prod.outlook.com
+ ([fe80::2d36:b569:17c:7701]) by DB6PR0402MB2760.eurprd04.prod.outlook.com
+ ([fe80::2d36:b569:17c:7701%4]) with mapi id 15.20.3216.033; Tue, 28 Jul 2020
+ 09:34:04 +0000
+From:   peng.fan@nxp.com
+To:     ohad@wizery.com, bjorn.andersson@linaro.org, robh+dt@kernel.org,
+        shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
+        festevam@gmail.com
+Cc:     linux-imx@nxp.com, linux-remoteproc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Peng Fan <peng.fan@nxp.com>
+Subject: [PATCH 1/2] remoteproc: elf: support platform specific memory hook
+Date:   Tue, 28 Jul 2020 17:29:39 +0800
+Message-Id: <1595928580-26199-1-git-send-email-peng.fan@nxp.com>
+X-Mailer: git-send-email 2.7.4
+Content-Type: text/plain
+X-ClientProxiedBy: SG2PR01CA0160.apcprd01.prod.exchangelabs.com
+ (2603:1096:4:28::16) To DB6PR0402MB2760.eurprd04.prod.outlook.com
+ (2603:10a6:4:a1::14)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="zr56xg4gghcrtcpk"
-Content-Disposition: inline
-In-Reply-To: <DB6PR0402MB27603441BEE037ECCB3F021088730@DB6PR0402MB2760.eurprd04.prod.outlook.com>
-X-Sent-From: Pengutronix Hildesheim
-X-URL:  http://www.pengutronix.de/
-X-IRC:  #ptxdist @freenode
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-Uptime: 09:54:57 up 255 days, 23:13, 251 users,  load average: 0.05, 0.08,
- 0.04
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-remoteproc@vger.kernel.org
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from localhost.localdomain (119.31.174.67) by SG2PR01CA0160.apcprd01.prod.exchangelabs.com (2603:1096:4:28::16) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.20.3216.22 via Frontend Transport; Tue, 28 Jul 2020 09:34:00 +0000
+X-Mailer: git-send-email 2.7.4
+X-Originating-IP: [119.31.174.67]
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-HT: Tenant
+X-MS-Office365-Filtering-Correlation-Id: 41692379-ad01-4311-642e-08d832d95e3a
+X-MS-TrafficTypeDiagnostic: DB6PR0401MB2375:
+X-MS-Exchange-Transport-Forked: True
+X-Microsoft-Antispam-PRVS: <DB6PR0401MB2375338DAF30E2CA69D00D4D88730@DB6PR0401MB2375.eurprd04.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:2449;
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: UW6xaqhRDkfoLePyF372+Kxxr3yImEtwnjAWdYLJIlpNvqBW0uCYK411tDdEdEHI321RFWGBvjcW5QPx9RHF+4+qWPwckKq89xFj6EewyLYr/KhSKTnQjq0VcyBDZ1S/Yz2pBQXZ/sy7Hq9DT3kSt0RluajavdtHQJ1Nz0tQvvA80YNr2ctFR3DbHVlT0fK/PNLrt3XXsmT8FvRoGtZjJ/yne3V79UGXFynVnheu27P8OB0qJFdZkjQg6Y52i9bXDMOTTSLefzMhx+8Vu4xx6ha9N5/Inyd2EDivVRAJv+wY2h8Dsz/wlTwoFHKAL91B1aIBCAeyVJnLTVYFlzE9Dp9BaeVx112+sXIdO0q9Ngh1fc+zrZNB2N3qjfm5PvSD
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB6PR0402MB2760.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFTY:;SFS:(4636009)(136003)(396003)(376002)(346002)(39860400002)(366004)(2906002)(6486002)(8936002)(186003)(6506007)(2616005)(16526019)(956004)(6512007)(9686003)(66946007)(7416002)(66476007)(66556008)(316002)(6666004)(26005)(36756003)(478600001)(69590400007)(52116002)(8676002)(4326008)(5660300002)(86362001)(83380400001);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData: 0tHxOCi+iYWWb+MuZrVcWIfDPwWVVPlpOeHnzyCXQGkzCWdO776iKlfLY/zm2K7Pim/rYJaMtu3fo5S/4eRF6LTu8EMiYWVlrDk/p/E3Ya6wanjrqr0jwIard+fJzl7XCx0nvHgxgvDNZy5J1vadioSGZhaILMbICjFbkpXVwKdNuXNbOPNTVKrucA4f4MPQtRAfu+chIjEzn+SDScRckdRfRTTF++i4NCg8w/Tn2pOR1DBvdnmdNRRWslesdJ2c9+f/ep9yM6ohV39wTpVcQLj0r4ugWWW6HWMrRQrZB4XogLhOCkCWfRLOkCIV37J4ifJBIabwgWdh8FvKuYKSe/rDP961CdqnK/ZFC2yz3DJgDyq24F+BzCP6kGOdDmdnbTziI9/+ckPqd/wSazXBuEEO8kKymZIhvyT29JSgk230CrvzO1flsedP+buRZ1VEMX0O2iSw3ZXEO08M/gjrTIBJJVVnpeCPQgR9wsgJDOa15vNOQsIfaDUiSVOper0Y
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 41692379-ad01-4311-642e-08d832d95e3a
+X-MS-Exchange-CrossTenant-AuthSource: DB6PR0402MB2760.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Jul 2020 09:34:04.6170
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 5W7IoptmX5aKMWZcwmjKvoEKBM0xjrZqI2t0suKaWxdmlcMzUrCBcFY+v2S3daEXYrFnXcHPw07kXroy7VlTjg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB6PR0401MB2375
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
+From: Peng Fan <peng.fan@nxp.com>
 
---zr56xg4gghcrtcpk
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+To arm64, "dc      zva, dst" is used in memset.
+Per ARM DDI 0487A.j, chapter C5.3.8 DC ZVA, Data Cache Zero by VA,
 
-On Tue, Jul 28, 2020 at 07:50:04AM +0000, Peng Fan wrote:
-> > Subject: Re: [PATCH 00/10] remoteproc: imx_rproc: support iMX8M and ear=
-ly
-> > boot
-> >=20
-> > On Mon, Jul 27, 2020 at 09:18:31AM +0000, Peng Fan wrote:
-> > > > Subject: Re: [PATCH 00/10] remoteproc: imx_rproc: support iMX8M and
-> > > > early boot
-> > > >
-> > > > On Mon, Jul 27, 2020 at 06:44:32AM +0000, Peng Fan wrote:
-> > > > > Hi Oleksij,
-> > > > >
-> > > > > > Subject: Re: [PATCH 00/10] remoteproc: imx_rproc: support iMX8M
-> > > > > > and early boot
-> > > > > >
-> > > > > > Hi,
-> > > > > >
-> > > > > > On Fri, Jul 24, 2020 at 04:08:03PM +0800, Peng Fan wrote:
-> > > > > > > This patchset is to support i.MX8MQ/M coproc booted before li=
-nux.
-> > > > > > > Since i.MX8MQ/M was not supported, several patches are needed
-> > > > > > > to first support the platform, then support early boot case.
-> > > > > > >
-> > > > > > > I intended to included i.MX8QM/QXP, but that would introduce a
-> > > > > > > large patchset, so not included. But the clk/syscon optional
-> > > > > > > patch for i.MX8QM/QXP was still kept here to avoid rebase err=
-or.
-> > > > > >
-> > > > > > Thank you for your work.
-> > > > > >
-> > > > > > Can you please provide more information about big picture of th=
-is
-> > work.
-> > > > > >
-> > > > > > If I see it correctly, we have here support for i.MX8MM, which
-> > > > > > seems to be able to fully control Cortex M4 (enable CPU core, e=
-tc...).
-> > > > >
-> > > > > Yes.
-> > > >
-> > > > In this case, I would recommend to mainline the i.MX8MM part
-> > > > first/separately.
-> > >
-> > > Only the last patch is to support earlyboot, all others is imx8mm par=
-t.
-> >=20
-> > ok
-> >=20
-> > > >
-> > > > > >
-> > > > > > And other case, where remoteproc is running on application
-> > > > > > processor and can't or should not touch M4 (i.MX7ULP,
-> > > > > > i.MX8QM/QXP..). Since M4 provides some functionality, you are
-> > > > > > trying to reuse remoteproc framework to get resource table
-> > > > > > present in ELF header and to dynamically load things. For some
-> > > > > > reasons this header provides more information then needed, so
-> > > > > > you are changing the ELF parser in the kernel
-> > > > to workaround it.
-> > > > >
-> > > > > Not exactly.
-> > > > >
-> > > > > For i.MX8MM, we support two cases. M4 kicked by U-Boot, M4 kicked
-> > > > > by
-> > > > Linux remoteproc.
-> > > > > For i.MX8QM/QXP, the typical usecase is M4 kicked by SCFW, but we
-> > > > > will also add M4 kicked by Linux remoteproc.
-> > > > > For i.MX7ULP, I would only support M4 dual boot case, M4 control
-> > > > everything.
-> > > >
-> > > > From current state of discussion, i'm not sure what role plays
-> > > > remoteproc in the scenario where M4 is started before linux.
-> > > > Especially if we are not using resource table.
-> > >
-> > > We are using resource table from an address, not in elf file.
-> > > This is the new feature in Linux-next to support coproc booted early.
-> > >
-> > > >
-> > > > > The reason the change the elf parser is that when M4 elf is loaded
-> > > > > by Linux remoteproc, It use memset to clear area.
-> > > >
-> > > > The use of memset, depends on ELF format. Fix/change the linker
-> > > > script on your firmware and memset will be never called.
-> > > >
-> > > > > However we use ioremap, memset on ARM64 will report crash to
-> > > > > device nGnRE memory. And we could not use ioremap_wc to TCM area,
-> > > > > since it could have data correctly written into TCM.
-> > > >
-> > > > I have strong feeling, that we are talking about badly or not
-> > > > properly formatted ELF binary. I would prefer to double check it,
-> > > > before we will apply fixes on wrong place.
-> > > >
-> > > > > Maintainer not wanna to drop memset in common code, and TI guys
-> > > > > suggest add i.MX specific elf stuff. So I add elf handler in i.MX=
- code.
-> > > >
-> > > > I think, removing memset may damage current users of imx_rproc driv=
-er.
-> > > > Since, like I said: the use of memset depends on ELF format.
-> > >
-> > > In my elf file, the last PT_LOAD contains data/bss/heap/stack. I'll
-> > > check with our MCU guys, we only need the specific data loaded.
-> > >
-> > > Elf file type is EXEC (Executable file) Entry point 0x1ffe0355 There
-> > > are 3 program headers, starting at offset 52
-> > >
-> > > Program Headers:
-> > >   Type           Offset   VirtAddr   PhysAddr   FileSiz MemSiz
-> > Flg Align
-> > >   LOAD           0x010000 0x1ffe0000 0x1ffe0000 0x00240 0x00240
-> > R   0x10000
-> > >   LOAD           0x010240 0x1ffe0240 0x1ffe0240 0x03e90 0x03e90
-> > RWE 0x10000
-> > >   LOAD           0x020000 0x20000000 0x1ffe40d0 0x00068 0x0ad00
-> > RW  0x10000
-> > >
-> > >  Section to Segment mapping:
-> > >   Segment Sections...
-> > >    00     .interrupts
-> > >    01     .resource_table .text .ARM .init_array .fini_array
-> > >    02     .data .bss .heap .stack
-> >=20
-> > Here is an example of formatting ELF for remoteproc:
-> > https://git.pengutronix.de/cgit/ore/OSELAS.BSP-Pengutronix-DualKit/tree=
-/loc
-> > al_src/remoteproc-elf/linker.ld
-> > https://git.pengutronix.de/cgit/ore/OSELAS.BSP-Pengutronix-DualKit/tree=
-/loc
-> > al_src/remoteproc-elf/imx7m4.S
-> >=20
-> > In this example I pack linux in to remoteproc elf image and start linux=
- on
-> > imx7d-m4 part.
-> > Will be interesting if you can do the same on imx8* SoCs ;)
->=20
-> In NXP release, the m4 elf files have data/bss/heap/stack in the same
-> data area, so the linker merged them into one segment and cause
-> memsz > filesz.
->=20
-> I think I need to propose platform specific elf memset/memcpy,
-> such as rproc_elf_memcpy, rproc_elf_memset,
->=20
-> To i.MX, need use memset_io and memcpy_toio, taking TCM
-> as device memory.
->=20
-> Note: memset without io will cause abort when memsz>filesz.
-> So use memset_io is safe.
+"If the memory region being zeroed is any type of Device memory,
+this instruction can give an alignment fault which is prioritized
+in the same way as other alignment faults that are determined
+by the memory type."
 
-Sounds good, i would prefer this way.
+On i.MX platforms, when elf is loaded to onchip TCM area, the region
+is ioremapped, so "dc zva, dst" will trigger abort. And ioremap_wc()
+on i.MX not able to write correct data to TCM area.
 
---=20
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+So we need to use io helpers, and extend the elf loader to support
+platform specific memory functions.
 
---zr56xg4gghcrtcpk
-Content-Type: application/pgp-signature; name="signature.asc"
+Signed-off-by: Peng Fan <peng.fan@nxp.com>
+---
+ drivers/remoteproc/remoteproc_elf_loader.c | 20 ++++++++++++++++++--
+ include/linux/remoteproc.h                 |  2 ++
+ 2 files changed, 20 insertions(+), 2 deletions(-)
 
------BEGIN PGP SIGNATURE-----
+diff --git a/drivers/remoteproc/remoteproc_elf_loader.c b/drivers/remoteproc/remoteproc_elf_loader.c
+index df68d87752e4..f442bac64432 100644
+--- a/drivers/remoteproc/remoteproc_elf_loader.c
++++ b/drivers/remoteproc/remoteproc_elf_loader.c
+@@ -129,6 +129,22 @@ u64 rproc_elf_get_boot_addr(struct rproc *rproc, const struct firmware *fw)
+ }
+ EXPORT_SYMBOL(rproc_elf_get_boot_addr);
+ 
++static void *rproc_elf_memcpy(struct rproc *rproc, void *dest, const void *src, size_t count)
++{
++	if (!rproc->ops->memcpy)
++		return memcpy(dest, src, count);
++
++	return rproc->ops->memcpy(rproc, dest, src, count);
++}
++
++static void *rproc_elf_memset(struct rproc *rproc, void *s, int c, size_t count)
++{
++	if (!rproc->ops->memset)
++		return memset(s, c, count);
++
++	return rproc->ops->memset(rproc, s, c, count);
++}
++
+ /**
+  * rproc_elf_load_segments() - load firmware segments to memory
+  * @rproc: remote processor which will be booted using these fw segments
+@@ -214,7 +230,7 @@ int rproc_elf_load_segments(struct rproc *rproc, const struct firmware *fw)
+ 
+ 		/* put the segment where the remote processor expects it */
+ 		if (filesz)
+-			memcpy(ptr, elf_data + offset, filesz);
++			rproc_elf_memcpy(rproc, ptr, elf_data + offset, filesz);
+ 
+ 		/*
+ 		 * Zero out remaining memory for this segment.
+@@ -224,7 +240,7 @@ int rproc_elf_load_segments(struct rproc *rproc, const struct firmware *fw)
+ 		 * this.
+ 		 */
+ 		if (memsz > filesz)
+-			memset(ptr + filesz, 0, memsz - filesz);
++			rproc_elf_memset(rproc, ptr + filesz, 0, memsz - filesz);
+ 	}
+ 
+ 	return ret;
+diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+index 0e8d2ff575b4..88fc9643c1a8 100644
+--- a/include/linux/remoteproc.h
++++ b/include/linux/remoteproc.h
+@@ -391,6 +391,8 @@ struct rproc_ops {
+ 	int (*load)(struct rproc *rproc, const struct firmware *fw);
+ 	int (*sanity_check)(struct rproc *rproc, const struct firmware *fw);
+ 	u64 (*get_boot_addr)(struct rproc *rproc, const struct firmware *fw);
++	void *(*memcpy)(struct rproc *rproc, void *dest, const void *src, size_t count);
++	void *(*memset)(struct rproc *rproc, void *s, int c, size_t count);
+ 	unsigned long (*panic)(struct rproc *rproc);
+ };
+ 
+-- 
+2.16.4
 
-iQIzBAABCAAdFiEERBNZvwSgvmcMY/T74omh9DUaUbMFAl8f2f8ACgkQ4omh9DUa
-UbMiRA/9EtUGM3624lRjzYAxczQgqe2vYquaps9/MyZarnC3pL9V01Pu+vor7ac1
-WZRycoYC8kzhKuCLKykSaLda/Z7W/MUZ4kL4C7powYrPpxaRVh5cSIT/baYicR9F
-PNnJkSJrJ35bIYqg7aCGHmzcymZi1q8mJGQ4bycgDjgGwC7c3bbpUYhisWnLaHYt
-DdzR5G9XZ77mXq0pbHa5E9dodRVsTWzy78hHpt6ChR/AKDbQ0iNczdBUDdsUcZE/
-7itAkxsh8l0qBJHchBjmRh4J5W7a85zGte/DG5LKPbzkuIYHXGXCz2D1BLwiJibW
-WpwwU18J1ok7byCUZ3kOw0aanB4IQjpbuzL9YWRYi8Z4sIhLonuZred84I7FiKYq
-2YJ/pJZBdaSLRPlfly2KhoBB6bW0OKpsFY+dUuTMfyI6M3MEZLKUA3aElAC3epYA
-lVHEmiWo4amVELR5okS/XjyHVf/UuZ+KrTZZilI6hN8NU0n6YGWn6te2p26XryCo
-6all/0DGfnFsGhbEnwd+y/+8y7dSTC9yLWoaSWgql4Qyu2Ol2k8x+VOxyW17vt5D
-99n+noDbdCNjtmL6FZ/zXi8qEXITdMXvJ3UxzVy1aa5DxXCsOqNUtUykK/jKQiTq
-bPa8jhymbYw6x/pOXa/HyxmMa4jvlkuQURaDgmaIhgnifwfT+iY=
-=MHWV
------END PGP SIGNATURE-----
-
---zr56xg4gghcrtcpk--
