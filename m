@@ -2,145 +2,398 @@ Return-Path: <SRS0=xwos=BJ=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20E81C433DF
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 30 Jul 2020 16:08:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8D1DC433DF
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 30 Jul 2020 17:06:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EF01D20842
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 30 Jul 2020 16:08:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8A97722B3F
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 30 Jul 2020 17:06:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="P9Is4vT3"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gHpJtYbM"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729699AbgG3QIl (ORCPT
+        id S1730128AbgG3RGe (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 30 Jul 2020 12:08:41 -0400
-Received: from us-smtp-2.mimecast.com ([205.139.110.61]:41753 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727072AbgG3QIk (ORCPT
+        Thu, 30 Jul 2020 13:06:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51198 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728452AbgG3RGc (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 30 Jul 2020 12:08:40 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1596125319;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=qUqXLll+NefydSj//AgmT8C1K6WHp8sxKqjeN68cy/c=;
-        b=P9Is4vT31V72vfeftlCYxg4ElT/PZqdeIhRNrDLXfh12ZGmDjwWXEGz2bFayvoz6IyLLrw
-        UX5bpUYZD2XZ8xKTJnTJlLOf1x1lM5W24jXHBPk8Hr9huB6HdV2ObLTS+7GmJSUK95HFS/
-        AZ+sJEgX6i0uFXlFDP7kaRbEAGjOtMo=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-68-Q_zaOVRjOMKAtviL2GWKFg-1; Thu, 30 Jul 2020 12:08:35 -0400
-X-MC-Unique: Q_zaOVRjOMKAtviL2GWKFg-1
-Received: by mail-wm1-f69.google.com with SMTP id l5so2368991wml.7
-        for <linux-remoteproc@vger.kernel.org>; Thu, 30 Jul 2020 09:08:35 -0700 (PDT)
+        Thu, 30 Jul 2020 13:06:32 -0400
+Received: from mail-pl1-x642.google.com (mail-pl1-x642.google.com [IPv6:2607:f8b0:4864:20::642])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B6817C061574
+        for <linux-remoteproc@vger.kernel.org>; Thu, 30 Jul 2020 10:06:32 -0700 (PDT)
+Received: by mail-pl1-x642.google.com with SMTP id q17so14706644pls.9
+        for <linux-remoteproc@vger.kernel.org>; Thu, 30 Jul 2020 10:06:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=NRP/i8E9iVttma2V99oDfwGdycz8JLnBq+XIiaxP304=;
+        b=gHpJtYbMstELobOebm6WEYKPBlbjz0m5EBPYy6OxXNyWw8938kEPc2MFnOHI/il9yp
+         U9PmI77GeeBcEoNddh/Dw4nXDsimdRtDbM/hFQjX/IxQrGmel/yiavkqkHRe6DHs+DI/
+         solHrfJoNk6fn1U+DnCzlmpVYg+gwzbjyQQjJOyKOBmnwOxEbB6g3iomkTGLEnR0GkeK
+         HGjkxPc+LJz5+dayFzh6OhPSjNNx/Tj9wdNj0b7CjUOcjKzUX2V8AEYCijO2Ue8p8qK3
+         xcNbpLjiIH8tc3f1LbS0dkqLQqlt+pl7HuE98+rnkiUyCCSy7p+OcRkhMLvImjyQjXvl
+         dGQg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=qUqXLll+NefydSj//AgmT8C1K6WHp8sxKqjeN68cy/c=;
-        b=S8AHgzofYTFZQTsD+uGB9nSJ+GLSMTbzIWI9oMBbvXJ0WnBEEjLYTOpqCTKhbJc8y8
-         jWRYvFBQFfMlAeHdsrAudBx80RRvYmpxK9YNgHoP4nGw+2MLb5sFnyDRnUCgQTDUEB0t
-         4hhmuTP/54Cds93RI2ttdRlP1gH0gN4grkwr6mLOq0tOjfSXVhR85VjA4t/iUhNh3QNj
-         Mfte1B0gy6+f9gkJ2rR8ua41GWK0OenagD4icosa1Cxy64ir4X5bEPmmWGxVTT8x7n6w
-         +lhXPScS4869u/RtoxEmXFOv38k8xI/zv8oZ41tInum/PFL8iuZkltsgLvVD3qpXuwQP
-         ifDw==
-X-Gm-Message-State: AOAM533p42CIlE4VcIZdCHGIhHx6NZ+WBHdLUGRGstjiByA/rMq0ivY1
-        zIbybchxKwmET9BnXz9u+G31Ba4zLi8kRWmU49+6EkglWnf55S2PZBeW/9MSWWKhrVPL0wUADm4
-        2EqBvod5E8g44iLGTkAQdugRaTY6DcQ==
-X-Received: by 2002:a1c:2095:: with SMTP id g143mr36506wmg.78.1596125314310;
-        Thu, 30 Jul 2020 09:08:34 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJy8EEO1xnALZftyrn6Van6xavkoUdqm7ncbftjelxThfdJiLZtzyAchyb3bUf7eXUGwTaOiKg==
-X-Received: by 2002:a1c:2095:: with SMTP id g143mr36424wmg.78.1596125313141;
-        Thu, 30 Jul 2020 09:08:33 -0700 (PDT)
-Received: from redhat.com (bzq-79-179-105-63.red.bezeqint.net. [79.179.105.63])
-        by smtp.gmail.com with ESMTPSA id g7sm10167067wrv.82.2020.07.30.09.08.30
+        bh=NRP/i8E9iVttma2V99oDfwGdycz8JLnBq+XIiaxP304=;
+        b=sPZ6yDqED9virS50nVvkzKnXlvt8VEZf+88rn1gUeln1ffh6P2WSdiAy8bhQi2h9jM
+         zv3U/64rAfvgHsWtchrq0PVDEopRnRLaXb6br+BqdxTe9CwjdJo4S1Gf8iqvVI1eDOba
+         5HS5quD8pA+vMfpdeVn8uEwS3nyhI7si68Vl9SSW5kjfTQBsdG0otOI9syEjOQIaAuJJ
+         +qLIHG8YlrWbU7+P93EUuNmPGN6H8UsmYpWJVlHz1nY8ETEDhgHy2f1ewagjRkSHj+F9
+         HNLc0KgFCO3P25wUeZMQG7GwdxTzlA0W7ZmTpkfyxCJQeH4oi+012PvowrlePpXFgEfw
+         SX1g==
+X-Gm-Message-State: AOAM533deTaj2S2LO/5HjVf/4RlFtlRcY91f47ued595CwE4fTfwMAon
+        g1FcQVPrcfFlNCay+4uhqsjh6c3dvnQ=
+X-Google-Smtp-Source: ABdhPJznxRTTWWHTwuFGNnV8U/O+ShvfB4PcjVcLsQ2a1oFVrIfCmPgrY06x9/vND9Lx3qcHXWbYrg==
+X-Received: by 2002:a63:7e55:: with SMTP id o21mr8131125pgn.5.1596128791943;
+        Thu, 30 Jul 2020 10:06:31 -0700 (PDT)
+Received: from xps15 (S0106002369de4dac.cg.shawcable.net. [68.147.8.254])
+        by smtp.gmail.com with ESMTPSA id c27sm6508647pfj.163.2020.07.30.10.06.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 Jul 2020 09:08:32 -0700 (PDT)
-Date:   Thu, 30 Jul 2020 12:08:29 -0400
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     Guennadi Liakhovetski <guennadi.liakhovetski@linux.intel.com>
-Cc:     kvm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        sound-open-firmware@alsa-project.org,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Liam Girdwood <liam.r.girdwood@linux.intel.com>,
-        Jason Wang <jasowang@redhat.com>,
-        Ohad Ben-Cohen <ohad@wizery.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Vincent Whitchurch <vincent.whitchurch@axis.com>
-Subject: Re: [PATCH v4 0/4] Add a vhost RPMsg API
-Message-ID: <20200730120805-mutt-send-email-mst@kernel.org>
-References: <20200722150927.15587-1-guennadi.liakhovetski@linux.intel.com>
+        Thu, 30 Jul 2020 10:06:31 -0700 (PDT)
+Date:   Thu, 30 Jul 2020 11:06:28 -0600
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+To:     Siddharth Gupta <sidgup@codeaurora.org>
+Cc:     agross@kernel.org, bjorn.andersson@linaro.org, ohad@wizery.com,
+        corbet@lwn.net, linux-remoteproc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, tsoni@codeaurora.org,
+        psodagud@codeaurora.org, rishabhb@codeaurora.org,
+        linux-doc@vger.kernel.org
+Subject: Re: [PATCH v5 1/2] remoteproc: Add remoteproc character device
+ interface
+Message-ID: <20200730170628.GA3155400@xps15>
+References: <1596044401-22083-1-git-send-email-sidgup@codeaurora.org>
+ <1596044401-22083-2-git-send-email-sidgup@codeaurora.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200722150927.15587-1-guennadi.liakhovetski@linux.intel.com>
+In-Reply-To: <1596044401-22083-2-git-send-email-sidgup@codeaurora.org>
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Wed, Jul 22, 2020 at 05:09:23PM +0200, Guennadi Liakhovetski wrote:
-> Hi,
+On Wed, Jul 29, 2020 at 10:40:00AM -0700, Siddharth Gupta wrote:
+> Add the character device interface into remoteproc framework.
+> This interface can be used in order to boot/shutdown remote
+> subsystems and provides a basic ioctl based interface to implement
+> supplementary functionality. An ioctl call is implemented to enable
+> the shutdown on release feature which will allow remote processors to
+> be shutdown when the controlling userpsace application crashes or hangs.
 > 
-> Now that virtio-rpmsg endianness fixes have been merged we can 
-> proceed with the next step.
+> Signed-off-by: Rishabh Bhatnagar <rishabhb@codeaurora.org>
+> Signed-off-by: Siddharth Gupta <sidgup@codeaurora.org>
+> ---
 
-Which tree is this for?
+Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 
-
-> v4:
-> - add endianness conversions to comply with the VirtIO standard
+>  Documentation/userspace-api/ioctl/ioctl-number.rst |   1 +
+>  drivers/remoteproc/Kconfig                         |   9 ++
+>  drivers/remoteproc/Makefile                        |   1 +
+>  drivers/remoteproc/remoteproc_cdev.c               | 124 +++++++++++++++++++++
+>  drivers/remoteproc/remoteproc_internal.h           |  28 +++++
+>  include/linux/remoteproc.h                         |   5 +
+>  include/uapi/linux/remoteproc_cdev.h               |  37 ++++++
+>  7 files changed, 205 insertions(+)
+>  create mode 100644 drivers/remoteproc/remoteproc_cdev.c
+>  create mode 100644 include/uapi/linux/remoteproc_cdev.h
 > 
-> v3:
-> - address several checkpatch warnings
-> - address comments from Mathieu Poirier
-> 
-> v2:
-> - update patch #5 with a correct vhost_dev_init() prototype
-> - drop patch #6 - it depends on a different patch, that is currently
->   an RFC
-> - address comments from Pierre-Louis Bossart:
->   * remove "default n" from Kconfig
-> 
-> Linux supports RPMsg over VirtIO for "remote processor" / AMP use
-> cases. It can however also be used for virtualisation scenarios,
-> e.g. when using KVM to run Linux on both the host and the guests.
-> This patch set adds a wrapper API to facilitate writing vhost
-> drivers for such RPMsg-based solutions. The first use case is an
-> audio DSP virtualisation project, currently under development, ready
-> for review and submission, available at
-> https://github.com/thesofproject/linux/pull/1501/commits
-> 
-> Thanks
-> Guennadi
-> 
-> Guennadi Liakhovetski (4):
->   vhost: convert VHOST_VSOCK_SET_RUNNING to a generic ioctl
->   rpmsg: move common structures and defines to headers
->   rpmsg: update documentation
->   vhost: add an RPMsg API
-> 
->  Documentation/rpmsg.txt          |   6 +-
->  drivers/rpmsg/virtio_rpmsg_bus.c |  78 +------
->  drivers/vhost/Kconfig            |   7 +
->  drivers/vhost/Makefile           |   3 +
->  drivers/vhost/rpmsg.c            | 375 +++++++++++++++++++++++++++++++
->  drivers/vhost/vhost_rpmsg.h      |  74 ++++++
->  include/linux/virtio_rpmsg.h     |  83 +++++++
->  include/uapi/linux/rpmsg.h       |   3 +
->  include/uapi/linux/vhost.h       |   4 +-
->  9 files changed, 553 insertions(+), 80 deletions(-)
->  create mode 100644 drivers/vhost/rpmsg.c
->  create mode 100644 drivers/vhost/vhost_rpmsg.h
->  create mode 100644 include/linux/virtio_rpmsg.h
-> 
+> diff --git a/Documentation/userspace-api/ioctl/ioctl-number.rst b/Documentation/userspace-api/ioctl/ioctl-number.rst
+> index 59472cd..2a19883 100644
+> --- a/Documentation/userspace-api/ioctl/ioctl-number.rst
+> +++ b/Documentation/userspace-api/ioctl/ioctl-number.rst
+> @@ -339,6 +339,7 @@ Code  Seq#    Include File                                           Comments
+>  0xB4  00-0F  linux/gpio.h                                            <mailto:linux-gpio@vger.kernel.org>
+>  0xB5  00-0F  uapi/linux/rpmsg.h                                      <mailto:linux-remoteproc@vger.kernel.org>
+>  0xB6  all    linux/fpga-dfl.h
+> +0xB7  all    uapi/linux/remoteproc_cdev.h                            <mailto:linux-remoteproc@vger.kernel.org>
+>  0xC0  00-0F  linux/usb/iowarrior.h
+>  0xCA  00-0F  uapi/misc/cxl.h
+>  0xCA  10-2F  uapi/misc/ocxl.h
+> diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
+> index 48315dc..c6659dfe 100644
+> --- a/drivers/remoteproc/Kconfig
+> +++ b/drivers/remoteproc/Kconfig
+> @@ -14,6 +14,15 @@ config REMOTEPROC
+>  
+>  if REMOTEPROC
+>  
+> +config REMOTEPROC_CDEV
+> +	bool "Remoteproc character device interface"
+> +	help
+> +	  Say y here to have a character device interface for the remoteproc
+> +	  framework. Userspace can boot/shutdown remote processors through
+> +	  this interface.
+> +
+> +	  It's safe to say N if you don't want to use this interface.
+> +
+>  config IMX_REMOTEPROC
+>  	tristate "IMX6/7 remoteproc support"
+>  	depends on ARCH_MXC
+> diff --git a/drivers/remoteproc/Makefile b/drivers/remoteproc/Makefile
+> index 4d4307d..3dfa28e 100644
+> --- a/drivers/remoteproc/Makefile
+> +++ b/drivers/remoteproc/Makefile
+> @@ -10,6 +10,7 @@ remoteproc-y				+= remoteproc_debugfs.o
+>  remoteproc-y				+= remoteproc_sysfs.o
+>  remoteproc-y				+= remoteproc_virtio.o
+>  remoteproc-y				+= remoteproc_elf_loader.o
+> +obj-$(CONFIG_REMOTEPROC_CDEV)		+= remoteproc_cdev.o
+>  obj-$(CONFIG_IMX_REMOTEPROC)		+= imx_rproc.o
+>  obj-$(CONFIG_INGENIC_VPU_RPROC)		+= ingenic_rproc.o
+>  obj-$(CONFIG_MTK_SCP)			+= mtk_scp.o mtk_scp_ipi.o
+> diff --git a/drivers/remoteproc/remoteproc_cdev.c b/drivers/remoteproc/remoteproc_cdev.c
+> new file mode 100644
+> index 0000000..a7ac11c
+> --- /dev/null
+> +++ b/drivers/remoteproc/remoteproc_cdev.c
+> @@ -0,0 +1,124 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * Character device interface driver for Remoteproc framework.
+> + *
+> + * Copyright (c) 2020, The Linux Foundation. All rights reserved.
+> + */
+> +
+> +#include <linux/cdev.h>
+> +#include <linux/compat.h>
+> +#include <linux/fs.h>
+> +#include <linux/module.h>
+> +#include <linux/remoteproc.h>
+> +#include <linux/uaccess.h>
+> +#include <uapi/linux/remoteproc_cdev.h>
+> +
+> +#include "remoteproc_internal.h"
+> +
+> +#define NUM_RPROC_DEVICES	64
+> +static dev_t rproc_major;
+> +
+> +static ssize_t rproc_cdev_write(struct file *filp, const char __user *buf, size_t len, loff_t *pos)
+> +{
+> +	struct rproc *rproc = container_of(filp->f_inode->i_cdev, struct rproc, cdev);
+> +	int ret = 0;
+> +	char cmd[10];
+> +
+> +	if (!len || len > sizeof(cmd))
+> +		return -EINVAL;
+> +
+> +	ret = copy_from_user(cmd, buf, len);
+> +	if (ret)
+> +		return -EFAULT;
+> +
+> +	if (!strncmp(cmd, "start", len)) {
+> +		if (rproc->state == RPROC_RUNNING)
+> +			return -EBUSY;
+> +
+> +		ret = rproc_boot(rproc);
+> +	} else if (!strncmp(cmd, "stop", len)) {
+> +		if (rproc->state != RPROC_RUNNING)
+> +			return -EINVAL;
+> +
+> +		rproc_shutdown(rproc);
+> +	} else {
+> +		dev_err(&rproc->dev, "Unrecognized option\n");
+> +		ret = -EINVAL;
+> +	}
+> +
+> +	return ret ? ret : len;
+> +}
+> +
+> +static long rproc_device_ioctl(struct file *filp, unsigned int ioctl, unsigned long arg)
+> +{
+> +	struct rproc *rproc = container_of(filp->f_inode->i_cdev, struct rproc, cdev);
+> +	void __user *argp = (void __user *)arg;
+> +	int32_t param;
+> +
+> +	switch (ioctl) {
+> +	case RPROC_SET_SHUTDOWN_ON_RELEASE:
+> +		if (copy_from_user(&param, argp, sizeof(int32_t)))
+> +			return -EFAULT;
+> +
+> +		rproc->cdev_put_on_release = !!param;
+> +		break;
+> +	case RPROC_GET_SHUTDOWN_ON_RELEASE:
+> +		param = (int32_t)rproc->cdev_put_on_release;
+> +		if (copy_to_user(argp, &param, sizeof(int32_t)))
+> +			return -EFAULT;
+> +
+> +		break;
+> +	default:
+> +		dev_err(&rproc->dev, "Unsupported ioctl\n");
+> +		return -EINVAL;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int rproc_cdev_release(struct inode *inode, struct file *filp)
+> +{
+> +	struct rproc *rproc = container_of(inode->i_cdev, struct rproc, cdev);
+> +
+> +	if (rproc->cdev_put_on_release && rproc->state == RPROC_RUNNING)
+> +		rproc_shutdown(rproc);
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct file_operations rproc_fops = {
+> +	.write = rproc_cdev_write,
+> +	.unlocked_ioctl = rproc_device_ioctl,
+> +	.compat_ioctl = compat_ptr_ioctl,
+> +	.release = rproc_cdev_release,
+> +};
+> +
+> +int rproc_char_device_add(struct rproc *rproc)
+> +{
+> +	int ret;
+> +
+> +	cdev_init(&rproc->cdev, &rproc_fops);
+> +	rproc->cdev.owner = THIS_MODULE;
+> +
+> +	rproc->dev.devt = MKDEV(MAJOR(rproc_major), rproc->index);
+> +	cdev_set_parent(&rproc->cdev, &rproc->dev.kobj);
+> +	ret = cdev_add(&rproc->cdev, rproc->dev.devt, 1);
+> +	if (ret < 0)
+> +		dev_err(&rproc->dev, "Failed to add char dev for %s\n", rproc->name);
+> +
+> +	return ret;
+> +}
+> +
+> +void rproc_char_device_remove(struct rproc *rproc)
+> +{
+> +	__unregister_chrdev(MAJOR(rproc->dev.devt), rproc->index, 1, "remoteproc");
+> +}
+> +
+> +void __init rproc_init_cdev(void)
+> +{
+> +	int ret;
+> +
+> +	ret = alloc_chrdev_region(&rproc_major, 0, NUM_RPROC_DEVICES, "remoteproc");
+> +	if (ret < 0)
+> +		pr_err("Failed to alloc rproc_cdev region, err %d\n", ret);
+> +}
+> diff --git a/drivers/remoteproc/remoteproc_internal.h b/drivers/remoteproc/remoteproc_internal.h
+> index cd4176b..c340028 100644
+> --- a/drivers/remoteproc/remoteproc_internal.h
+> +++ b/drivers/remoteproc/remoteproc_internal.h
+> @@ -53,6 +53,34 @@ void rproc_exit_sysfs(void);
+>  void rproc_coredump_cleanup(struct rproc *rproc);
+>  void rproc_coredump(struct rproc *rproc);
+>  
+> +#ifdef CONFIG_REMOTEPROC_CDEV
+> +void rproc_init_cdev(void);
+> +void rproc_exit_cdev(void);
+> +int rproc_char_device_add(struct rproc *rproc);
+> +void rproc_char_device_remove(struct rproc *rproc);
+> +#else
+> +static inline void rproc_init_cdev(void)
+> +{
+> +}
+> +
+> +static inline void rproc_exit_cdev(void)
+> +{
+> +}
+> +
+> +/*
+> + * The character device interface is an optional feature, if it is not enabled
+> + * the function should not return an error.
+> + */
+> +static inline int rproc_char_device_add(struct rproc *rproc)
+> +{
+> +	return 0;
+> +}
+> +
+> +static inline void  rproc_char_device_remove(struct rproc *rproc)
+> +{
+> +}
+> +#endif
+> +
+>  void rproc_free_vring(struct rproc_vring *rvring);
+>  int rproc_alloc_vring(struct rproc_vdev *rvdev, int i);
+>  
+> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+> index 0e8d2ff..2fa68bf 100644
+> --- a/include/linux/remoteproc.h
+> +++ b/include/linux/remoteproc.h
+> @@ -38,6 +38,7 @@
+>  #include <linux/types.h>
+>  #include <linux/mutex.h>
+>  #include <linux/virtio.h>
+> +#include <linux/cdev.h>
+>  #include <linux/completion.h>
+>  #include <linux/idr.h>
+>  #include <linux/of.h>
+> @@ -509,6 +510,8 @@ struct rproc_dump_segment {
+>   * @autonomous: true if an external entity has booted the remote processor
+>   * @dump_segments: list of segments in the firmware
+>   * @nb_vdev: number of vdev currently handled by rproc
+> + * @char_dev: character device of the rproc
+> + * @cdev_put_on_release: flag to indicate if remoteproc should be shutdown on @char_dev release
+>   */
+>  struct rproc {
+>  	struct list_head node;
+> @@ -546,6 +549,8 @@ struct rproc {
+>  	int nb_vdev;
+>  	u8 elf_class;
+>  	u16 elf_machine;
+> +	struct cdev cdev;
+> +	bool cdev_put_on_release;
+>  };
+>  
+>  /**
+> diff --git a/include/uapi/linux/remoteproc_cdev.h b/include/uapi/linux/remoteproc_cdev.h
+> new file mode 100644
+> index 0000000..c43768e
+> --- /dev/null
+> +++ b/include/uapi/linux/remoteproc_cdev.h
+> @@ -0,0 +1,37 @@
+> +/* SPDX-License-Identifier: GPL-2.0-only WITH Linux-syscall-note */
+> +/*
+> + * IOCTLs for Remoteproc's character device interface.
+> + *
+> + * Copyright (c) 2020, The Linux Foundation. All rights reserved.
+> + */
+> +
+> +#ifndef _UAPI_REMOTEPROC_CDEV_H_
+> +#define _UAPI_REMOTEPROC_CDEV_H_
+> +
+> +#include <linux/ioctl.h>
+> +#include <linux/types.h>
+> +
+> +#define RPROC_MAGIC	0xB7
+> +
+> +/*
+> + * The RPROC_SET_SHUTDOWN_ON_RELEASE ioctl allows to enable/disable the shutdown of a remote
+> + * processor automatically when the controlling userpsace closes the char device interface.
+> + *
+> + * input parameter: integer
+> + *   0		: disable automatic shutdown
+> + *   other	: enable automatic shutdown
+> + */
+> +#define RPROC_SET_SHUTDOWN_ON_RELEASE _IOW(RPROC_MAGIC, 1, __s32)
+> +
+> +/*
+> + * The RPROC_GET_SHUTDOWN_ON_RELEASE ioctl gets information about whether the automatic shutdown of
+> + * a remote processor is enabled or disabled when the controlling userspace closes the char device
+> + * interface.
+> + *
+> + * output parameter: integer
+> + *   0		: automatic shutdown disable
+> + *   other	: automatic shutdown enable
+> + */
+> +#define RPROC_GET_SHUTDOWN_ON_RELEASE _IOR(RPROC_MAGIC, 2, __s32)
+> +
+> +#endif
 > -- 
-> 2.27.0
-
+> Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+> a Linux Foundation Collaborative Project
+> 
