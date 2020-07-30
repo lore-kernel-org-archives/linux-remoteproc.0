@@ -5,58 +5,57 @@ X-Spam-Level:
 X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67244C433E0
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 30 Jul 2020 05:19:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 369DDC433DF
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 30 Jul 2020 05:19:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 44E482084D
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 30 Jul 2020 05:19:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1546D2084D
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 30 Jul 2020 05:19:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="uHII1xs1"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="LXv3eEbM"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728621AbgG3FT0 (ORCPT
+        id S1728604AbgG3FTe (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 30 Jul 2020 01:19:26 -0400
+        Thu, 30 Jul 2020 01:19:34 -0400
 Received: from m43-7.mailgun.net ([69.72.43.7]:63314 "EHLO m43-7.mailgun.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728601AbgG3FTZ (ORCPT
+        id S1727838AbgG3FTe (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 30 Jul 2020 01:19:25 -0400
+        Thu, 30 Jul 2020 01:19:34 -0400
 DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1596086365; h=References: In-Reply-To: Message-Id: Date:
+ s=smtp; t=1596086374; h=References: In-Reply-To: Message-Id: Date:
  Subject: Cc: To: From: Sender;
- bh=WyvtVLlI6cmKVJj0jDe+724H+IlnfLJvsn+Fgvd0fRQ=; b=uHII1xs174bLPtUK9z7q5PQ1XV4iJ873q7hBlcpPp6ldvLol6Ky9kytenC3DGUmEA92QCVMa
- eldIF2C8AaQpYKso60Cd/YQ2rlc6dbxU61jtJEtEy2ZaOTUqtCGD9Tr19Mm4geoIpcDX7aiB
- YueiSUXXUJKyvcAcSEvOihrUTpI=
+ bh=n6BvqQlqsbw92yqH292If4A/hTTa7skYtfG4Onnd4nA=; b=LXv3eEbM9ASBTVDAr5YKw+i2J2N9EqkR+5pkYq22EP4mFfrHqXDnK35kQ2hxTu/G48ZTofN5
+ jTZmyFtnKjBUnGlRNHUuL0YhF1zVEHdv8bebI66XOGPOGRERGSmFo+Ri0Hx2GIe29TU62NKy
+ QAZ0ERGis8KT8lJ0LWMZZTetovc=
 X-Mailgun-Sending-Ip: 69.72.43.7
 X-Mailgun-Sid: WyI4ZWZiZiIsICJsaW51eC1yZW1vdGVwcm9jQHZnZXIua2VybmVsLm9yZyIsICJiZTllNGEiXQ==
 Received: from smtp.codeaurora.org
  (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
- smtp-out-n19.prod.us-east-1.postgun.com with SMTP id
- 5f22583c7186ea1ee1b7d4fa (version=TLS1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Thu, 30 Jul 2020 05:18:52
+ smtp-out-n02.prod.us-east-1.postgun.com with SMTP id
+ 5f22583f8db7256a95933ba4 (version=TLS1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Thu, 30 Jul 2020 05:18:55
  GMT
 Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 8077BC4339C; Thu, 30 Jul 2020 05:18:51 +0000 (UTC)
+        id 853D2C433CA; Thu, 30 Jul 2020 05:18:54 +0000 (UTC)
 Received: from deesin-linux.qualcomm.com (unknown [202.46.22.19])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
         (Authenticated sender: deesin)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 3EBD3C433AD;
-        Thu, 30 Jul 2020 05:18:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3EBD3C433AD
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 6951CC433CA;
+        Thu, 30 Jul 2020 05:18:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 6951CC433CA
 Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=deesin@codeaurora.org
 From:   Deepak Kumar Singh <deesin@codeaurora.org>
 To:     bjorn.andersson@linaro.org, clew@codeaurora.org
 Cc:     mathieu.poirier@linaro.org, linux-arm-msm@vger.kernel.org,
         linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Arun Kumar Neelakantam <aneela@codeaurora.org>,
         Deepak Kumar Singh <deesin@codeaurora.org>
-Subject: [PATCH V1 4/6] rpmsg: glink: Remove the rpmsg dev in close_ack
-Date:   Thu, 30 Jul 2020 10:48:14 +0530
-Message-Id: <1596086296-28529-5-git-send-email-deesin@codeaurora.org>
+Subject: [PATCH V1 5/6] rpmsg: glink: Remove channel decouple from rpdev release
+Date:   Thu, 30 Jul 2020 10:48:15 +0530
+Message-Id: <1596086296-28529-6-git-send-email-deesin@codeaurora.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1596086296-28529-1-git-send-email-deesin@codeaurora.org>
 References: <1596086296-28529-1-git-send-email-deesin@codeaurora.org>
@@ -65,55 +64,33 @@ Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-From: Arun Kumar Neelakantam <aneela@codeaurora.org>
+From: Chris Lew <clew@codeaurora.org>
 
-Un-register and register of rpmsg driver is sending invalid open_ack
-on closed channel.
+If a channel is being rapidly restarting and the kobj release worker
+is busy, there is a chance the the rpdev_release function will run
+after the channel struct itself has been released.
 
-To avoid sending invalid open_ack case unregister the rpmsg device
-after receiving the local_close_ack from remote side.
+There should not be a need to decouple the channel from rpdev in the
+rpdev release since that should only happen from the close commands.
 
+Signed-off-by: Chris Lew <clew@codeaurora.org>
 Signed-off-by: Deepak Kumar Singh <deesin@codeaurora.org>
-signed-off-by: Arun Kumar Neelakantam <aneela@codeaurora.org>
 ---
- drivers/rpmsg/qcom_glink_native.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ drivers/rpmsg/qcom_glink_native.c | 2 --
+ 1 file changed, 2 deletions(-)
 
 diff --git a/drivers/rpmsg/qcom_glink_native.c b/drivers/rpmsg/qcom_glink_native.c
-index ac179b1..031bc1d 100644
+index 031bc1d..efaf32d 100644
 --- a/drivers/rpmsg/qcom_glink_native.c
 +++ b/drivers/rpmsg/qcom_glink_native.c
-@@ -1526,6 +1526,7 @@ static void qcom_glink_rx_close(struct qcom_glink *glink, unsigned int rcid)
- 
- 		rpmsg_unregister_device(glink->dev, &chinfo);
- 	}
-+	channel->rpdev = NULL;
- 
- 	qcom_glink_send_close_ack(glink, channel->rcid);
- 
-@@ -1539,6 +1540,7 @@ static void qcom_glink_rx_close(struct qcom_glink *glink, unsigned int rcid)
- 
- static void qcom_glink_rx_close_ack(struct qcom_glink *glink, unsigned int lcid)
+@@ -1419,9 +1419,7 @@ static const struct rpmsg_endpoint_ops glink_endpoint_ops = {
+ static void qcom_glink_rpdev_release(struct device *dev)
  {
-+	struct rpmsg_channel_info chinfo;
- 	struct glink_channel *channel;
- 	unsigned long flags;
+ 	struct rpmsg_device *rpdev = to_rpmsg_device(dev);
+-	struct glink_channel *channel = to_glink_channel(rpdev->ept);
  
-@@ -1553,6 +1555,16 @@ static void qcom_glink_rx_close_ack(struct qcom_glink *glink, unsigned int lcid)
- 	channel->lcid = 0;
- 	spin_unlock_irqrestore(&glink->idr_lock, flags);
- 
-+	/* Decouple the potential rpdev from the channel */
-+	if (channel->rpdev) {
-+		strlcpy(chinfo.name, channel->name, sizeof(chinfo.name));
-+		chinfo.src = RPMSG_ADDR_ANY;
-+		chinfo.dst = RPMSG_ADDR_ANY;
-+
-+		rpmsg_unregister_device(glink->dev, &chinfo);
-+	}
-+	channel->rpdev = NULL;
-+
- 	kref_put(&channel->refcount, qcom_glink_channel_release);
+-	channel->rpdev = NULL;
+ 	kfree(rpdev);
  }
  
 -- 
