@@ -4,132 +4,144 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27ABAC433E0
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 30 Jul 2020 17:07:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4B2CC433DF
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 30 Jul 2020 21:54:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 04CAE22B3F
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 30 Jul 2020 17:07:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 978262083B
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 30 Jul 2020 21:54:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="upLJW/xo"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XXq4WTCP"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730194AbgG3RH1 (ORCPT
+        id S1730602AbgG3Vyy (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 30 Jul 2020 13:07:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51342 "EHLO
+        Thu, 30 Jul 2020 17:54:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39100 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726353AbgG3RH0 (ORCPT
+        with ESMTP id S1730552AbgG3Vyx (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 30 Jul 2020 13:07:26 -0400
-Received: from mail-pj1-x1044.google.com (mail-pj1-x1044.google.com [IPv6:2607:f8b0:4864:20::1044])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 86B88C061574
-        for <linux-remoteproc@vger.kernel.org>; Thu, 30 Jul 2020 10:07:26 -0700 (PDT)
-Received: by mail-pj1-x1044.google.com with SMTP id t15so5104892pjq.5
-        for <linux-remoteproc@vger.kernel.org>; Thu, 30 Jul 2020 10:07:26 -0700 (PDT)
+        Thu, 30 Jul 2020 17:54:53 -0400
+Received: from mail-io1-xd42.google.com (mail-io1-xd42.google.com [IPv6:2607:f8b0:4864:20::d42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BE3A7C061574
+        for <linux-remoteproc@vger.kernel.org>; Thu, 30 Jul 2020 14:54:53 -0700 (PDT)
+Received: by mail-io1-xd42.google.com with SMTP id e64so29790439iof.12
+        for <linux-remoteproc@vger.kernel.org>; Thu, 30 Jul 2020 14:54:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=BrrFi53izKwosuWkfkeFHip15csxCCcTUoGMUdNgzIE=;
-        b=upLJW/xoau1GH4gHQU9IpMBZeZOp3GkQWfyPRsOVW6ELiK775/dkgcSzKDDsBLUK00
-         VZTO5NQc4kOLT+ta1IDw7PBqMLmTMR2tTUfkTyyAavqcvf2GHe4nqloQdoYEjV7eYLmk
-         R1xXRoU+zmI65QO0iPp43p88hvcg7lKwbe1Qz3VEMOq+rsjFetVkNnbXXyt6do3+ZcBj
-         G4+IYg1SaBnZu6u/NwCorANwQ1++l+/nko7ytjQzwJOxXGYZ9OiLj8Ec1eUiABJvXvOX
-         TMeJm7a/jEjaUiSSmAHo+GfToUCssYizLmCNRVkwzZ0wT455H99++JzLQ5dAY2DA21XM
-         T9Ew==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Hz6qbfDEuhZyd0+x8odAvWpkuP8UaNczToSkFGvnkFk=;
+        b=XXq4WTCPC7+tz1SDKdUi3QhlL2AziVHW6ufg5IaUDVj/PPY8yId2LXr49FGP9QMHgA
+         +6PIbDXgPxiMnANJkkJWoHlf7V/xrVIHmtT7st/kjFLsxqbTDE12SlFu8/mv45+/i2uh
+         zjAYCIWQ/crNEhaXO8S3F11ceJLYqrX0aIiv9yOv9peKJS41mDA8lLL4SJyQ4tDydVC/
+         cTXNC8j6pyW9NPjfyA5TLM0yeCg0DOLPFWelNgtTbOrV2CoZ6XZd1miuCO/p9fIYoytu
+         x4o/sCU/1POFbzkWTvhcf2t00xeJ9dx3hYZofEnFBj4ijp68az1QMTdXuEp2KA0tFxCO
+         o6Xg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=BrrFi53izKwosuWkfkeFHip15csxCCcTUoGMUdNgzIE=;
-        b=JZCB23MQk38TX9/El3/blqqor5NRmeuvouiv0sOK7yFCjo9KsqtDOJVgshiqhPUonc
-         1QXvmuU/os+0z/+jaMl3CZ0dgvJYBaKdBpXh7wVd6abn9o70CARnPVBnoDBZSSWhu38z
-         +U5HH3L7g6VJC/z4WXxPSkANI81neYkehtWmsbURtyF/ZH2Zn4F51is4gsbeLKUoav74
-         Emjk+VMpyiB7bDy37zHPMFYz0chxVrl99cL3/K4NqVCfRR05tJDPMUt9QslDzdZzG5QP
-         Vz8MBDIHPYzWlK3KfFdnSxfRgJ8+LdxJodnWmymCsEAIKTkRVDqI/6HriblC1fYDEhjM
-         cC8Q==
-X-Gm-Message-State: AOAM531GBXR1sBO91Ajt9ieP7YDydx5WDL1NeM5Qgdav/MDP/GUPI5Pk
-        6pNU7mWi7NldbOpayU+x8WMbPw==
-X-Google-Smtp-Source: ABdhPJwvawgZdhNUFWl2ijm5c7x8BwzYl4UjT3262yWGEl9IresjaGvjO+BENkxYlNNrvWq61lPn1Q==
-X-Received: by 2002:aa7:9f46:: with SMTP id h6mr4273416pfr.321.1596128846055;
-        Thu, 30 Jul 2020 10:07:26 -0700 (PDT)
-Received: from xps15 (S0106002369de4dac.cg.shawcable.net. [68.147.8.254])
-        by smtp.gmail.com with ESMTPSA id 190sm227969pfe.174.2020.07.30.10.07.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 Jul 2020 10:07:25 -0700 (PDT)
-Date:   Thu, 30 Jul 2020 11:07:23 -0600
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-To:     Siddharth Gupta <sidgup@codeaurora.org>
-Cc:     agross@kernel.org, bjorn.andersson@linaro.org, ohad@wizery.com,
-        corbet@lwn.net, linux-remoteproc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, tsoni@codeaurora.org,
-        psodagud@codeaurora.org, rishabhb@codeaurora.org,
-        linux-doc@vger.kernel.org
-Subject: Re: [PATCH v5 2/2] remoteproc: core: Register the character device
- interface
-Message-ID: <20200730170723.GB3155400@xps15>
-References: <1596044401-22083-1-git-send-email-sidgup@codeaurora.org>
- <1596044401-22083-3-git-send-email-sidgup@codeaurora.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Hz6qbfDEuhZyd0+x8odAvWpkuP8UaNczToSkFGvnkFk=;
+        b=M4qEVrGq+REEjjsA/jx583tJGW5OKeuYQbKb6730W5iFh3VVvIExuRFN6thtc7D3tv
+         hGtYxX4EeJhCgYRnzrs7zb2L0AixRThyTOTwR7XL/KfHVqX+r6txqmMFXguhFEsv6r7B
+         ld+el9IbJdxWxR1b7emrj/UKzEyu3z44913FXlA3ZAECfvaBTKlSM9j93GwZzlXzQO4t
+         /lcgW3LJbYfkaZYt/A6X4iwnYsB1sqwcwiOW1LHJoBQ5qTYWJL4CeUSCFzNXrT0hFDGr
+         hahoG36uQ18jMr7b9oeRTYNeiXlV5xQtngfr8xvURdjk3yEBCwY//VY2EO2bAHqTx5wn
+         RalQ==
+X-Gm-Message-State: AOAM530bgNI9d25IwDlMqUjc3ktgp0klK2eZnf3b5Pq9BdVhw9pdNsP2
+        Y24Aknm35QkR2/UsZ7a016fxuoN6y4Cto8OwqM1HjzAn
+X-Google-Smtp-Source: ABdhPJxfaQq5HeiMdevqGMWqFwqGsny4Dy1qiomWJuQvLs0WDvh1gLD/SMeUG/RmSS335Pisek5x4JO4bpQQI0HhYSw=
+X-Received: by 2002:a05:6638:138a:: with SMTP id w10mr1466182jad.36.1596146093086;
+ Thu, 30 Jul 2020 14:54:53 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1596044401-22083-3-git-send-email-sidgup@codeaurora.org>
+References: <20200722131543.7024-1-peng.fan@nxp.com> <20200729170516.GA3059951@xps15>
+ <DB6PR0402MB2760BF33BCBFF1CD1F1C4EED88710@DB6PR0402MB2760.eurprd04.prod.outlook.com>
+In-Reply-To: <DB6PR0402MB2760BF33BCBFF1CD1F1C4EED88710@DB6PR0402MB2760.eurprd04.prod.outlook.com>
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+Date:   Thu, 30 Jul 2020 15:54:42 -0600
+Message-ID: <CANLsYkzOOs5999zD-1EPujpk9ZbfZwCHmNRvxE_cO+-zkZdzbA@mail.gmail.com>
+Subject: Re: [PATCH] remoteproc: virtio: support sharing vdev buffer
+To:     Peng Fan <peng.fan@nxp.com>
+Cc:     "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>,
+        "ohad@wizery.com" <ohad@wizery.com>,
+        "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Wed, Jul 29, 2020 at 10:40:01AM -0700, Siddharth Gupta wrote:
-> Add the character device during rproc_add. This would create
-> a character device node at /dev/remoteproc<index>. Userspace
-> applications can interact with the remote processor using this
-> interface.
-> 
-> Signed-off-by: Rishabh Bhatnagar <rishabhb@codeaurora.org>
-> Signed-off-by: Siddharth Gupta <sidgup@codeaurora.org>
+On Thu, 30 Jul 2020 at 00:22, Peng Fan <peng.fan@nxp.com> wrote:
+>
+> Hi Mathieu,
+>
+> > Subject: Re: [PATCH] remoteproc: virtio: support sharing vdev buffer
+> >
+> > Hi Peng,
+> >
+> > On Wed, Jul 22, 2020 at 09:15:43PM +0800, Peng Fan wrote:
+> > > Support sharing vdev buffer between multiple vdevs by using name
+> > > "vdevbuffer".
+> > >
+> > > Reviewed-by: Richard Zhu <hongxing.zhu@nxp.com>
+> > > Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> > > ---
+> > >  drivers/remoteproc/remoteproc_virtio.c | 2 ++
+> > >  1 file changed, 2 insertions(+)
+> > >
+> > > diff --git a/drivers/remoteproc/remoteproc_virtio.c
+> > > b/drivers/remoteproc/remoteproc_virtio.c
+> > > index dfd3808c34fd..5d78ebea111e 100644
+> > > --- a/drivers/remoteproc/remoteproc_virtio.c
+> > > +++ b/drivers/remoteproc/remoteproc_virtio.c
+> > > @@ -343,6 +343,8 @@ int rproc_add_virtio_dev(struct rproc_vdev *rvdev,
+> > > int id)
+> > >
+> > >     /* Try to find dedicated vdev buffer carveout */
+> > >     mem = rproc_find_carveout_by_name(rproc, "vdev%dbuffer",
+> > > rvdev->index);
+> > > +   if (!mem)
+> > > +           mem = rproc_find_carveout_by_name(rproc, "vdevbuffer");
+> >
+> > We already have a way to share buffers [1], do you think it would work for you?
+> > I would rather proceed that way to avoid introducing a 3rd way to deal with
+> > vdev buffers.
+>
+> That should work for me. I just need to move the vdevbuffer to the 1st one
+> inside the memory-region.
 
-Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+Perfect
 
-> ---
->  drivers/remoteproc/remoteproc_core.c | 7 +++++++
->  1 file changed, 7 insertions(+)
-> 
-> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-> index 277d3bf..7f90eee 100644
-> --- a/drivers/remoteproc/remoteproc_core.c
-> +++ b/drivers/remoteproc/remoteproc_core.c
-> @@ -1986,6 +1986,11 @@ int rproc_add(struct rproc *rproc)
->  	/* create debugfs entries */
->  	rproc_create_debug_dir(rproc);
->  
-> +	/* add char device for this remoteproc */
-> +	ret = rproc_char_device_add(rproc);
-> +	if (ret < 0)
-> +		return ret;
-> +
->  	/*
->  	 * Remind ourselves the remote processor has been attached to rather
->  	 * than booted by the remoteproc core.  This is important because the
-> @@ -2262,6 +2267,7 @@ int rproc_del(struct rproc *rproc)
->  	mutex_unlock(&rproc->lock);
->  
->  	rproc_delete_debug_dir(rproc);
-> +	rproc_char_device_remove(rproc);
->  
->  	/* the rproc is downref'ed as soon as it's removed from the klist */
->  	mutex_lock(&rproc_list_mutex);
-> @@ -2430,6 +2436,7 @@ static int __init remoteproc_init(void)
->  {
->  	rproc_init_sysfs();
->  	rproc_init_debugfs();
-> +	rproc_init_cdev();
->  	rproc_init_panic();
->  
->  	return 0;
-> -- 
-> Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-> a Linux Foundation Collaborative Project
-> 
+>
+> BTW: Do you have time to give a review for
+> https://patchwork.kernel.org/patch/11688751/
+>
+
+Unfortunately not in a little while.  There are a couple of beefy
+patchset in the queue ahead of yours and to make matters worse I am
+away next week.
+
+> Thanks,
+> Peng.
+>
+> >
+> > Thanks,
+> > Mathieu
+> >
+> > [1].
+> > https://eur01.safelinks.protection.outlook.com/?url=https%3A%2F%2Felixir.b
+> > ootlin.com%2Flinux%2Fv5.8-rc4%2Fsource%2Fdrivers%2Fremoteproc%2Frem
+> > oteproc_virtio.c%23L389&amp;data=02%7C01%7Cpeng.fan%40nxp.com%7C
+> > 760ae238005c49fe20db08d833e193ca%7C686ea1d3bc2b4c6fa92cd99c5c30
+> > 1635%7C0%7C0%7C637316391223184319&amp;sdata=UTN8YVaEynomrwFx
+> > 7aTCJ7fp0fjfIS8fscfGG67naKk%3D&amp;reserved=0
+> >
+> > >     if (mem) {
+> > >             phys_addr_t pa;
+> > >
+> > > --
+> > > 2.16.4
+> > >
