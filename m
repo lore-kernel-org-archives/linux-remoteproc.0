@@ -2,110 +2,121 @@ Return-Path: <SRS0=k3pH=BK=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7074EC433DF
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 31 Jul 2020 20:14:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EBBC3C433E0
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 31 Jul 2020 22:17:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 45AE322B3F
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 31 Jul 2020 20:14:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1596226452;
-	bh=BK5bIrnukLKfXYs7XZjdRdVVx0zk5ngy6XtEVYE2OxE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=zgCHnEVn6ZQc9U1K4ZZOpNEWNNkFfs4jrWi6Hfwc5GlXAxkYeFq4iyS3OInvEr72h
-	 lISvC3DObRzyxSlj14y4q5PS2lp4mgJjy3uB20aoBD3joAjj67Sk/ug6w/IrG8e9fy
-	 l74PnPBZhQ26DODi9F3UECHZIvgZ0eOo9PGFOzf0=
+	by mail.kernel.org (Postfix) with ESMTP id B48FB22B43
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 31 Jul 2020 22:17:37 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="WhNIr7eD"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726644AbgGaUOM (ORCPT
+        id S1726058AbgGaWRh (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 31 Jul 2020 16:14:12 -0400
-Received: from mail-io1-f66.google.com ([209.85.166.66]:41511 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726588AbgGaUOL (ORCPT
+        Fri, 31 Jul 2020 18:17:37 -0400
+Received: from m43-7.mailgun.net ([69.72.43.7]:54323 "EHLO m43-7.mailgun.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725767AbgGaWRh (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 31 Jul 2020 16:14:11 -0400
-Received: by mail-io1-f66.google.com with SMTP id g19so20792559ioh.8;
-        Fri, 31 Jul 2020 13:14:11 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=2eoSQj625bIp5Q6vig/9jlXLqZxlK+v1YHUTzUUaPhE=;
-        b=rMoU2If5jUMmRTovwSzQ9FKDNJu/DLNpXj2bpeeE57dUCST8pMDV3w4OBY7l6NMmqk
-         RtseV/RAcavQPe+e+5gEfbpufV/aCmwwnm6WUjOXWmk/GeGhrj4DRzyKZcHAq1eh9Z2r
-         mmYfC1wSFX6reTICxrKxNIPtZYdx5XtIFISdilq1L5NHbUQBL9N59bKaIopGUpL8ohvb
-         Aft4BoQbaEXEhyFeWwngZpBRqfDCszq6mg7oPxV0RgVB2w3A+tsDCRK6Uknzs4m7oXnv
-         in/6KPk58ZaBCYrCpikYOJ5dSPaxrIQdYi3h5jA2pUliWGO5LothLrj5PdrQyoG4OMUP
-         pylQ==
-X-Gm-Message-State: AOAM532tLEiObrv9YhhLhXr/Y2K1cfwp2aGUd8gNejqnTVmzWBoTk2wA
-        /CiXWiKRpgIbrKWSoZ+pAA==
-X-Google-Smtp-Source: ABdhPJyuHKIYYMl5aaAMjySke6zM39CpCRjQpRzG0uFldAkGKLpPXaVoxq7SBIyg9V5RmQif36m5CA==
-X-Received: by 2002:a05:6638:2493:: with SMTP id x19mr7074250jat.53.1596226450776;
-        Fri, 31 Jul 2020 13:14:10 -0700 (PDT)
-Received: from xps15 ([64.188.179.252])
-        by smtp.gmail.com with ESMTPSA id j5sm5319645ilq.30.2020.07.31.13.14.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 31 Jul 2020 13:14:10 -0700 (PDT)
-Received: (nullmailer pid 704032 invoked by uid 1000);
-        Fri, 31 Jul 2020 20:14:08 -0000
-Date:   Fri, 31 Jul 2020 14:14:08 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Peng Fan <peng.fan@nxp.com>
-Cc:     bjorn.andersson@linaro.org, mathieu.poirier@linaro.org,
-        o.rempel@pengutronix.de, linux-remoteproc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, shawnguo@kernel.org,
-        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
-        linux-imx@nxp.com, linux-arm-kernel@lists.infradead.org,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH 01/10] dt-bindings: remoteproc: imx_rproc: add i.MX8MQ/M
-Message-ID: <20200731201408.GA699580@bogus>
-References: <20200724080813.24884-1-peng.fan@nxp.com>
- <20200724080813.24884-2-peng.fan@nxp.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200724080813.24884-2-peng.fan@nxp.com>
+        Fri, 31 Jul 2020 18:17:37 -0400
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1596233856; h=Message-Id: Date: Subject: Cc: To: From:
+ Sender; bh=NpTfXolbL0lyqzMnsq42xtYh8Y23Uv9eM0QiVytiCZ4=; b=WhNIr7eDOY5FLHCfmjybkGKA2vEMMoosvJImdIiXljywz7lP4IXEOFl1FsYpmgvIdNfqlyLb
+ Fepu+2wmLkmBAnKuONYnDbL6VOBeMSwxOkUQ0utUJ5biwxvnb02P5WRLkaMoSfZjaxiqdmG5
+ WY1lOKtc/gCYQneY7p8PJzNPMzY=
+X-Mailgun-Sending-Ip: 69.72.43.7
+X-Mailgun-Sid: WyI4ZWZiZiIsICJsaW51eC1yZW1vdGVwcm9jQHZnZXIua2VybmVsLm9yZyIsICJiZTllNGEiXQ==
+Received: from smtp.codeaurora.org
+ (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
+ smtp-out-n08.prod.us-west-2.postgun.com with SMTP id
+ 5f249880498d610239f0e19f (version=TLS1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Fri, 31 Jul 2020 22:17:35
+ GMT
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 7B076C433CB; Fri, 31 Jul 2020 22:17:35 +0000 (UTC)
+Received: from sidgup-linux.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: sidgup)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id AD9EBC433C9;
+        Fri, 31 Jul 2020 22:17:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org AD9EBC433C9
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=sidgup@codeaurora.org
+From:   Siddharth Gupta <sidgup@codeaurora.org>
+To:     bjorn.andersson@linaro.org, ohad@wizery.com
+Cc:     Siddharth Gupta <sidgup@codeaurora.org>,
+        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] remoteproc: core: Add coredump ops to remoteproc
+Date:   Fri, 31 Jul 2020 15:17:23 -0700
+Message-Id: <1596233843-26576-1-git-send-email-sidgup@codeaurora.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Fri, Jul 24, 2020 at 04:08:04PM +0800, Peng Fan wrote:
-> Add i.MX8MQ/M compatible string
-> 
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
-> ---
->  Documentation/devicetree/bindings/remoteproc/imx-rproc.txt | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/remoteproc/imx-rproc.txt b/Documentation/devicetree/bindings/remoteproc/imx-rproc.txt
-> index fbcefd965dc4..46f7623512db 100644
-> --- a/Documentation/devicetree/bindings/remoteproc/imx-rproc.txt
-> +++ b/Documentation/devicetree/bindings/remoteproc/imx-rproc.txt
-> @@ -8,6 +8,8 @@ Required properties:
->  - compatible		Should be one of:
->  				"fsl,imx7d-cm4"
->  				"fsl,imx6sx-cm4"
-> +				"fsl,imx8mq-cm4"
-> +				"fsl,imx8mm-cm4"
->  - clocks		Clock for co-processor (See: ../clock/clock-bindings.txt)
->  - syscon		Phandle to syscon block which provide access to
->  			System Reset Controller
-> @@ -15,6 +17,7 @@ Required properties:
->  Optional properties:
->  - memory-region		list of phandels to the reserved memory regions.
->  			(See: ../reserved-memory/reserved-memory.txt)
-> +- rsc-da		address of resource table
+Each remoteproc might have different requirements for coredumps and might
+want to choose the type of dumps it wants to collect. This change allows
+remoteproc drivers to specify their own custom dump function to be executed
+in place of rproc_coredump. If the coredump op is not specified by the
+remoteproc driver it will be set to rproc_coredump by default.
 
-What's that? If in main memory, then should be part of memory-region.
+Signed-off-by: Siddharth Gupta <sidgup@codeaurora.org>
+---
+ drivers/remoteproc/remoteproc_core.c | 6 +++++-
+ include/linux/remoteproc.h           | 2 ++
+ 2 files changed, 7 insertions(+), 1 deletion(-)
 
->  
->  Example:
->  	m4_reserved_sysmem1: cm4@80000000 {
-> -- 
-> 2.16.4
-> 
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index 277d3bf..8ea61b0 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -1681,7 +1681,8 @@ int rproc_trigger_recovery(struct rproc *rproc)
+ 		goto unlock_mutex;
+ 
+ 	/* generate coredump */
+-	rproc_coredump(rproc);
++	if (rproc->ops->coredump)
++		rproc->ops->coredump(rproc);
+ 
+ 	/* load firmware */
+ 	ret = request_firmware(&firmware_p, rproc->firmware, dev);
+@@ -2098,6 +2099,9 @@ static int rproc_alloc_ops(struct rproc *rproc, const struct rproc_ops *ops)
+ 	if (!rproc->ops)
+ 		return -ENOMEM;
+ 
++	if (rproc->ops->coredump)
++		rproc->ops->coredump = rproc_coredump;
++
+ 	if (rproc->ops->load)
+ 		return 0;
+ 
+diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+index 0e8d2ff..d22c33d 100644
+--- a/include/linux/remoteproc.h
++++ b/include/linux/remoteproc.h
+@@ -374,6 +374,7 @@ enum rsc_handling_status {
+  * @get_boot_addr:	get boot address to entry point specified in firmware
+  * @panic:	optional callback to react to system panic, core will delay
+  *		panic at least the returned number of milliseconds
++ * @coredump:	do coredump for the specified remoteproc
+  */
+ struct rproc_ops {
+ 	int (*prepare)(struct rproc *rproc);
+@@ -392,6 +393,7 @@ struct rproc_ops {
+ 	int (*sanity_check)(struct rproc *rproc, const struct firmware *fw);
+ 	u64 (*get_boot_addr)(struct rproc *rproc, const struct firmware *fw);
+ 	unsigned long (*panic)(struct rproc *rproc);
++	void (*coredump)(struct rproc *rproc);
+ };
+ 
+ /**
+-- 
+Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
+
