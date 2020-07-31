@@ -2,121 +2,170 @@ Return-Path: <SRS0=k3pH=BK=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EBBC3C433E0
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 31 Jul 2020 22:17:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E105C433E0
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 31 Jul 2020 23:03:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B48FB22B43
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 31 Jul 2020 22:17:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2DB6E2072A
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 31 Jul 2020 23:03:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="WhNIr7eD"
+	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="kWBlJYhj"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726058AbgGaWRh (ORCPT
+        id S1726664AbgGaXDr (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 31 Jul 2020 18:17:37 -0400
-Received: from m43-7.mailgun.net ([69.72.43.7]:54323 "EHLO m43-7.mailgun.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725767AbgGaWRh (ORCPT
+        Fri, 31 Jul 2020 19:03:47 -0400
+Received: from mail-co1nam11on2056.outbound.protection.outlook.com ([40.107.220.56]:10369
+        "EHLO NAM11-CO1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726215AbgGaXDr (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 31 Jul 2020 18:17:37 -0400
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1596233856; h=Message-Id: Date: Subject: Cc: To: From:
- Sender; bh=NpTfXolbL0lyqzMnsq42xtYh8Y23Uv9eM0QiVytiCZ4=; b=WhNIr7eDOY5FLHCfmjybkGKA2vEMMoosvJImdIiXljywz7lP4IXEOFl1FsYpmgvIdNfqlyLb
- Fepu+2wmLkmBAnKuONYnDbL6VOBeMSwxOkUQ0utUJ5biwxvnb02P5WRLkaMoSfZjaxiqdmG5
- WY1lOKtc/gCYQneY7p8PJzNPMzY=
-X-Mailgun-Sending-Ip: 69.72.43.7
-X-Mailgun-Sid: WyI4ZWZiZiIsICJsaW51eC1yZW1vdGVwcm9jQHZnZXIua2VybmVsLm9yZyIsICJiZTllNGEiXQ==
-Received: from smtp.codeaurora.org
- (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
- smtp-out-n08.prod.us-west-2.postgun.com with SMTP id
- 5f249880498d610239f0e19f (version=TLS1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Fri, 31 Jul 2020 22:17:35
- GMT
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 7B076C433CB; Fri, 31 Jul 2020 22:17:35 +0000 (UTC)
-Received: from sidgup-linux.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: sidgup)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id AD9EBC433C9;
-        Fri, 31 Jul 2020 22:17:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org AD9EBC433C9
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=sidgup@codeaurora.org
-From:   Siddharth Gupta <sidgup@codeaurora.org>
-To:     bjorn.andersson@linaro.org, ohad@wizery.com
-Cc:     Siddharth Gupta <sidgup@codeaurora.org>,
-        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] remoteproc: core: Add coredump ops to remoteproc
-Date:   Fri, 31 Jul 2020 15:17:23 -0700
-Message-Id: <1596233843-26576-1-git-send-email-sidgup@codeaurora.org>
-X-Mailer: git-send-email 2.7.4
+        Fri, 31 Jul 2020 19:03:47 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=gKZhBwgKRACXJSXsygdiwBfB1RMUQ9/wc9PTSn3cRkYK9CDh/RW8nM/TtlBrxJ8gqmv0j6UuS3r07g2HZ8vDWVgQiBh8JnAb/w/unY8GjyOvYpcsuf2Qa1y+4YotcS1LszUOGvvC9udnOgYmTjnk2QR8WGg835tnX6IiTL6jhv0qnYWmAnuXJsyaFY83Kuto1DAoQKpUM8ndVm1BEqSSJtFUR3OMnbTbd3eO4pIIAHONxcFYBOpO7jhYH0A67K5LPIrdLGkiUzinGpNYpvgWYtB5pdtE+H99qL+ccmZmFU6GWH1s4DKlEyziK+3NBcYpBvpLsYKwB/h6B6JYl4OiDA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=alQ8S84XnD7wvc1d1fVM8KAP83Iy0kZJR2Zpg7Dq75I=;
+ b=mexvUkwkBZ/1vbWy1c1zppVCrHW26aqlPNSil5HF2XkwK0EHJcy9rAwUC2/uzcSR+uZtx24eokA8UaNJvLa+jy/st1Yb8br/6oiOpeAZzoIzSykf8ZfH2oJ1HEy2Y+zr3h1TRGpFp9LI2jc23NB2QlOym8s3ZPWS9SHHmLdn55rPptBUkvHKOzk+WuxeE9xQd9d3HQkM/7bnXKtwOQ3G7FX+a3I3Nc3qja4eMWoApFgCrNxa0dKVWaiYk3jIQyEcykNrThXeAfQEL59MkvqYpV9HwsSDpt00LHh+tt16M82egKHBPIRW4W85InrGdDw8TrNCce09aDkJPlNbpp1iGg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 149.199.60.83) smtp.rcpttodomain=linaro.org smtp.mailfrom=xilinx.com;
+ dmarc=bestguesspass action=none header.from=xilinx.com; dkim=none (message
+ not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=xilinx.onmicrosoft.com; s=selector2-xilinx-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=alQ8S84XnD7wvc1d1fVM8KAP83Iy0kZJR2Zpg7Dq75I=;
+ b=kWBlJYhjVa0g/Sjf2zi2qJnpKhoj6iFX0vcXEslsZTSd3albn3hYX9+SiJAs/dfQMO7cRnLEpBftbyiMG/BugxM0wbb8ILpy67SlRvt832Q0mih063MkSCHnThaJZ8LlzHAhTuX3yuHUhE269i3/lCYk7rpn1FUH5Jae1kejr80=
+Received: from DM5PR21CA0011.namprd21.prod.outlook.com (2603:10b6:3:ac::21) by
+ BYAPR02MB4822.namprd02.prod.outlook.com (2603:10b6:a03:48::18) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.3216.21; Fri, 31 Jul 2020 23:03:44 +0000
+Received: from CY1NAM02FT031.eop-nam02.prod.protection.outlook.com
+ (2603:10b6:3:ac:cafe::f8) by DM5PR21CA0011.outlook.office365.com
+ (2603:10b6:3:ac::21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3261.3 via Frontend
+ Transport; Fri, 31 Jul 2020 23:03:43 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 149.199.60.83)
+ smtp.mailfrom=xilinx.com; linaro.org; dkim=none (message not signed)
+ header.d=none;linaro.org; dmarc=bestguesspass action=none
+ header.from=xilinx.com;
+Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
+ 149.199.60.83 as permitted sender) receiver=protection.outlook.com;
+ client-ip=149.199.60.83; helo=xsj-pvapsmtpgw01;
+Received: from xsj-pvapsmtpgw01 (149.199.60.83) by
+ CY1NAM02FT031.mail.protection.outlook.com (10.152.75.180) with Microsoft SMTP
+ Server id 15.20.3239.17 via Frontend Transport; Fri, 31 Jul 2020 23:03:43
+ +0000
+Received: from [149.199.38.66] (port=37155 helo=smtp.xilinx.com)
+        by xsj-pvapsmtpgw01 with esmtp (Exim 4.90)
+        (envelope-from <stefano.stabellini@xilinx.com>)
+        id 1k1e1x-0000TN-I9; Fri, 31 Jul 2020 16:01:37 -0700
+Received: from [127.0.0.1] (helo=localhost)
+        by xsj-pvapsmtp01 with smtp (Exim 4.63)
+        (envelope-from <stefano.stabellini@xilinx.com>)
+        id 1k1e3z-0000Xe-HT; Fri, 31 Jul 2020 16:03:43 -0700
+Received: from [10.23.121.225] (helo=localhost)
+        by xsj-pvapsmtp01 with esmtp (Exim 4.63)
+        (envelope-from <stefanos@xilinx.com>)
+        id 1k1e3u-0000VV-4n; Fri, 31 Jul 2020 16:03:38 -0700
+Date:   Fri, 31 Jul 2020 16:03:37 -0700 (PDT)
+From:   Stefano Stabellini <stefano.stabellini@xilinx.com>
+X-X-Sender: sstabellini@sstabellini-ThinkPad-T480s
+To:     Mathieu Poirier <mathieu.poirier@linaro.org>
+cc:     Ben Levinsky <ben.levinsky@xilinx.com>, ohad@wizery.com,
+        bjorn.andersson@linaro.org, michals@xilinx.com, JOLLYS@xilinx.com,
+        RAJANV@xilinx.com, robh+dt@kernel.org, mark.rutland@arm.com,
+        linux-remoteproc@vger.kernel.org,
+        linux-arm-kernell@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, jliang@xilinx.com,
+        stefanos@xilinx.com, Wendy Liang <wendy.liang@xilinx.com>,
+        Michal Simek <michal.simek@xilinx.com>,
+        Ed Mooring <ed.mooring@xilinx.com>, Jason Wu <j.wu@xilinx.com>
+Subject: Re: [PATCH v6 5/5] remoteproc: Add initial zynqmp R5 remoteproc
+ driver
+In-Reply-To: <20200728210002.GA2413713@xps15>
+Message-ID: <alpine.DEB.2.21.2007311104400.1767@sstabellini-ThinkPad-T480s>
+References: <20200715153317.25643-1-ben.levinsky@xilinx.com> <20200715153317.25643-6-ben.levinsky@xilinx.com> <20200728210002.GA2413713@xps15>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+X-TM-AS-Product-Ver: IMSS-7.1.0.1224-8.2.0.1013-23620.005
+X-TM-AS-User-Approved-Sender: Yes;Yes
+X-EOPAttributedMessage: 0
+X-MS-Office365-Filtering-HT: Tenant
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 68154215-d20d-4532-309e-08d835a5f919
+X-MS-TrafficTypeDiagnostic: BYAPR02MB4822:
+X-Microsoft-Antispam-PRVS: <BYAPR02MB482247E9027BA7EC2E7486ACA04E0@BYAPR02MB4822.namprd02.prod.outlook.com>
+X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
+X-MS-Oob-TLC-OOBClassifiers: OLM:5236;
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: lkGHS6K758r/Ay/lFLjrc4t9ttMgDZsqbarGaMcPpD56kRCECEsC9FJzAqAClVrBZgVH2aS18moFaS5S3OCiXuRgD/6RTyPLF5Q4QLj+rv/PaZQYlA0RcPqDpouzxFXisb+xnSqg1RPWpDYFoVoim1P2tWCnhV7u0oLLr5hrUOcycrJ/qWqnHompPacLHtivbmPRv2xGtMXuS+FpJBv2ZWm18xyZlfVpyrmVLujBtrKKOVdL5uuGlqnRk5yfcVhpN0oW6+6Om4/bMXyug/6HDItng65xEwInxQMZyNfp80ejoUlp+ge6n58lnbdyo+WCAgvhD83vS8/36QWz9uW3pgerojYmd5ZIVLmwQcLtFaZgn5E9JX8C85Qrx0w8VQ8all0dONnTN4plyXBsLGKgsg==
+X-Forefront-Antispam-Report: CIP:149.199.60.83;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:xsj-pvapsmtpgw01;PTR:unknown-60-83.xilinx.com;CAT:NONE;SFTY:;SFS:(7916004)(39860400002)(376002)(136003)(346002)(396003)(46966005)(47076004)(70206006)(82740400003)(54906003)(316002)(82310400002)(26005)(5660300002)(70586007)(2906002)(4326008)(8936002)(426003)(44832011)(6916009)(107886003)(33716001)(8676002)(9786002)(356005)(83380400001)(186003)(81166007)(9686003)(478600001)(336012);DIR:OUT;SFP:1101;
+X-OriginatorOrg: xilinx.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Jul 2020 23:03:43.7858
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 68154215-d20d-4532-309e-08d835a5f919
+X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.60.83];Helo=[xsj-pvapsmtpgw01]
+X-MS-Exchange-CrossTenant-AuthSource: CY1NAM02FT031.eop-nam02.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR02MB4822
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Each remoteproc might have different requirements for coredumps and might
-want to choose the type of dumps it wants to collect. This change allows
-remoteproc drivers to specify their own custom dump function to be executed
-in place of rproc_coredump. If the coredump op is not specified by the
-remoteproc driver it will be set to rproc_coredump by default.
+On Tue, 28 Jul 2020, Mathieu Poirier wrote:
+> On Wed, Jul 15, 2020 at 08:33:17AM -0700, Ben Levinsky wrote:
+> > R5 is included in Xilinx Zynq UltraScale MPSoC so by adding this
+> > remotproc driver, we can boot the R5 sub-system in different
+> > configurations.
+> > 
+> > Acked-by: Stefano Stabellini <stefano.stabellini@xilinx.com>
+> > Acked-by: Ben Levinsky <ben.levinsky@xilinx.com>
+> > Reviewed-by: Radhey Shyam Pandey <radhey.shyam.pandey@xilinx.com>
+> > Signed-off-by: Ben Levinsky <ben.levinsky@xilinx.com>
+> > Signed-off-by: Wendy Liang <wendy.liang@xilinx.com>
+> > Signed-off-by: Michal Simek <michal.simek@xilinx.com>
+> > Signed-off-by: Ed Mooring <ed.mooring@xilinx.com>
+> > Signed-off-by: Jason Wu <j.wu@xilinx.com>
+> > Tested-by: Ben Levinsky <ben.levinsky@xilinx.com>
 
-Signed-off-by: Siddharth Gupta <sidgup@codeaurora.org>
----
- drivers/remoteproc/remoteproc_core.c | 6 +++++-
- include/linux/remoteproc.h           | 2 ++
- 2 files changed, 7 insertions(+), 1 deletion(-)
+[...]
 
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index 277d3bf..8ea61b0 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -1681,7 +1681,8 @@ int rproc_trigger_recovery(struct rproc *rproc)
- 		goto unlock_mutex;
- 
- 	/* generate coredump */
--	rproc_coredump(rproc);
-+	if (rproc->ops->coredump)
-+		rproc->ops->coredump(rproc);
- 
- 	/* load firmware */
- 	ret = request_firmware(&firmware_p, rproc->firmware, dev);
-@@ -2098,6 +2099,9 @@ static int rproc_alloc_ops(struct rproc *rproc, const struct rproc_ops *ops)
- 	if (!rproc->ops)
- 		return -ENOMEM;
- 
-+	if (rproc->ops->coredump)
-+		rproc->ops->coredump = rproc_coredump;
-+
- 	if (rproc->ops->load)
- 		return 0;
- 
-diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-index 0e8d2ff..d22c33d 100644
---- a/include/linux/remoteproc.h
-+++ b/include/linux/remoteproc.h
-@@ -374,6 +374,7 @@ enum rsc_handling_status {
-  * @get_boot_addr:	get boot address to entry point specified in firmware
-  * @panic:	optional callback to react to system panic, core will delay
-  *		panic at least the returned number of milliseconds
-+ * @coredump:	do coredump for the specified remoteproc
-  */
- struct rproc_ops {
- 	int (*prepare)(struct rproc *rproc);
-@@ -392,6 +393,7 @@ struct rproc_ops {
- 	int (*sanity_check)(struct rproc *rproc, const struct firmware *fw);
- 	u64 (*get_boot_addr)(struct rproc *rproc, const struct firmware *fw);
- 	unsigned long (*panic)(struct rproc *rproc);
-+	void (*coredump)(struct rproc *rproc);
- };
- 
- /**
--- 
-Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+> > +static int zynqmp_r5_remoteproc_probe(struct platform_device *pdev)
+> > +{
+> > +	int ret, i = 0;
+> > +	u32 *lockstep_mode;
+> > +	struct device *dev = &pdev->dev;
+> > +	struct device_node *nc;
+> > +	struct zynqmp_r5_pdata *pdata;
+> > +
+> > +	pdata = devm_kzalloc(dev, sizeof(*pdata), GFP_KERNEL);
+> > +	lockstep_mode = devm_kzalloc(dev, sizeof(u32 *), GFP_KERNEL);
+> > +	if (!pdata || !lockstep_mode)
+> > +		return -ENOMEM;
+> > +
+> > +	platform_set_drvdata(pdev, pdata);
+> 
+> As far as I can tell the above, along with allocating memory for @pdata, is not
+> needed since zynqmp_r5_remoteproc_remove() uses rpus[].
+> 
+> I have only reviewed the _probe() function and already encountered a fair amount
+> of fundemantal errors.  As such I will stop my review here. I will need to see a
+> reviewed-by tag (on the mailing list) by Stephano or Michal before reviewing the
+> next set. 
 
+Let me take this opportunity to say that my Acked-by on this version of
+the series was an unintentional miscommunication: I didn't give my
+Acked-by as I haven't even read the patches yet.
+
+I'll circle back with Michal and we'll make sure for either of us to do
+a round of public reviews on the next version.
