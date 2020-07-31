@@ -2,133 +2,104 @@ Return-Path: <SRS0=k3pH=BK=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.5 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C447C433DF
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 31 Jul 2020 05:47:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5C36C433E1
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 31 Jul 2020 08:19:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 324362074B
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 31 Jul 2020 05:47:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C155A20829
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 31 Jul 2020 08:19:25 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=st.com header.i=@st.com header.b="XQrP/KIh"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730170AbgGaFr6 (ORCPT
+        id S1731947AbgGaITZ (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 31 Jul 2020 01:47:58 -0400
-Received: from mga11.intel.com ([192.55.52.93]:43594 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726972AbgGaFr5 (ORCPT
+        Fri, 31 Jul 2020 04:19:25 -0400
+Received: from mx07-00178001.pphosted.com ([185.132.182.106]:24226 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1731875AbgGaITY (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 31 Jul 2020 01:47:57 -0400
-IronPort-SDR: GfinqARzCYAcKlQhy669qliiWt9aueHIWJ4UHfkdHNpRNMrcl/QnxuetuXdAPyPSE0X6FbXPRP
- FiyUDZMi0gQg==
-X-IronPort-AV: E=McAfee;i="6000,8403,9698"; a="149562587"
-X-IronPort-AV: E=Sophos;i="5.75,417,1589266800"; 
-   d="scan'208";a="149562587"
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Jul 2020 22:47:57 -0700
-IronPort-SDR: hbcNTevyAWMt+2nnPf0zbJbC725StjdyYUxsO/paaJPrS2V3HrM5T3aO4C+q/0gLZWkZqpdNfy
- 1PdHJnsVg+sA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.75,417,1589266800"; 
-   d="scan'208";a="287084802"
-Received: from gliakhov-mobl2.ger.corp.intel.com (HELO ubuntu) ([10.252.60.109])
-  by orsmga003.jf.intel.com with ESMTP; 30 Jul 2020 22:47:54 -0700
-Date:   Fri, 31 Jul 2020 07:47:53 +0200
-From:   Guennadi Liakhovetski <guennadi.liakhovetski@linux.intel.com>
-To:     "Michael S. Tsirkin" <mst@redhat.com>
-Cc:     kvm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        sound-open-firmware@alsa-project.org,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Liam Girdwood <liam.r.girdwood@linux.intel.com>,
-        Jason Wang <jasowang@redhat.com>,
+        Fri, 31 Jul 2020 04:19:24 -0400
+X-Greylist: delayed 1816 seconds by postgrey-1.27 at vger.kernel.org; Fri, 31 Jul 2020 04:19:23 EDT
+Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 06V7md51021645;
+        Fri, 31 Jul 2020 09:49:04 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-type; s=STMicroelectronics;
+ bh=1+U+fnjITJVBDho/9pxc8EjH2jCC5Fv7LCPjvJFXy28=;
+ b=XQrP/KIhunJR/9sCAfCl9PFOop+aF7KNHlAxGcyhNritGL+2sWt3a0PlCN8PR3tPVBuX
+ r6TPGvDaRmSTtLWXuS1R4KhUjvbAPohuS9q4rUr6y69MmDOL2mm1CQLTcm9sDtlLLC7q
+ QnmC5z/nTR5vvH9Z45kFOUY86HGMoqET6cT9WpbLeEP2BWO6VIZYploVU/qSOuX3lsI0
+ RFl9j9z5motnwkrJufIcjmAPYbyY9Lzhe/PWAwpx2rgsPn9odpSExJfWoGaephT0oC2w
+ 6MYKQIk4JUhEnYHLDt/2Vr2pFKsMkQKtTJ+wbLEhtJAcocOB4eZRDzrzYRcY0EtMXLEX Qg== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 32ga72cag9-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 31 Jul 2020 09:49:04 +0200
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id A09B910002A;
+        Fri, 31 Jul 2020 09:49:03 +0200 (CEST)
+Received: from Webmail-eu.st.com (sfhdag3node1.st.com [10.75.127.7])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 8DD4622108B;
+        Fri, 31 Jul 2020 09:49:03 +0200 (CEST)
+Received: from localhost (10.75.127.46) by SFHDAG3NODE1.st.com (10.75.127.7)
+ with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 31 Jul 2020 09:49:02
+ +0200
+From:   Arnaud Pouliquen <arnaud.pouliquen@st.com>
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
         Ohad Ben-Cohen <ohad@wizery.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Vincent Whitchurch <vincent.whitchurch@axis.com>
-Subject: Re: [PATCH v4 0/4] Add a vhost RPMsg API
-Message-ID: <20200731054752.GA28005@ubuntu>
-References: <20200722150927.15587-1-guennadi.liakhovetski@linux.intel.com>
- <20200730120805-mutt-send-email-mst@kernel.org>
+        Mathieu Poirier <mathieu.poirier@linaro.org>
+CC:     <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <arnaud.pouliquen@st.com>
+Subject: [PATCH] rpmsg: virtio: fix compilation warning for virtio_rpmsg_channel description
+Date:   Fri, 31 Jul 2020 09:48:50 +0200
+Message-ID: <20200731074850.3262-1-arnaud.pouliquen@st.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200730120805-mutt-send-email-mst@kernel.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
+X-Originating-IP: [10.75.127.46]
+X-ClientProxiedBy: SFHDAG2NODE2.st.com (10.75.127.5) To SFHDAG3NODE1.st.com
+ (10.75.127.7)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.235,18.0.687
+ definitions=2020-07-31_02:2020-07-31,2020-07-31 signatures=0
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi Michael,
+Complete the virtio_rpmsg_channel structure description to fix a
+compilation warning with W=1 option:
 
-On Thu, Jul 30, 2020 at 12:08:29PM -0400, Michael S. Tsirkin wrote:
-> On Wed, Jul 22, 2020 at 05:09:23PM +0200, Guennadi Liakhovetski wrote:
-> > Hi,
-> > 
-> > Now that virtio-rpmsg endianness fixes have been merged we can 
-> > proceed with the next step.
-> 
-> Which tree is this for?
+drivers/rpmsg/virtio_rpmsg_bus.c:95: warning: Cannot understand
+ * @vrp: the remote processor this channel belongs to
 
-The essential part of this series is for drivers/vhost, so, I presume 
-that should be the target tree as well. There is however a small part 
-for the drivers/rpmsg, should I split this series in two or shall we 
-first review is as a whole to make its goals clearer?
+Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@st.com>
+---
+ drivers/rpmsg/virtio_rpmsg_bus.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-Thanks
-Guennadi
+diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
+index 9006fc7f73d0..7d7ed4e5cce7 100644
+--- a/drivers/rpmsg/virtio_rpmsg_bus.c
++++ b/drivers/rpmsg/virtio_rpmsg_bus.c
+@@ -123,7 +123,12 @@ enum rpmsg_ns_flags {
+ };
+ 
+ /**
+- * @vrp: the remote processor this channel belongs to
++ * struct virtio_rpmsg_channel - rpmsg channel descriptor
++ * @rpdev: the rpmsg channel device
++ * @vrp: the virtio remote processor device this channel belongs to
++ *
++ * This structure stores the channel that links the rpmsg device to the virtio
++ * remote processor device.
+  */
+ struct virtio_rpmsg_channel {
+ 	struct rpmsg_device rpdev;
+-- 
+2.17.1
 
-> > v4:
-> > - add endianness conversions to comply with the VirtIO standard
-> > 
-> > v3:
-> > - address several checkpatch warnings
-> > - address comments from Mathieu Poirier
-> > 
-> > v2:
-> > - update patch #5 with a correct vhost_dev_init() prototype
-> > - drop patch #6 - it depends on a different patch, that is currently
-> >   an RFC
-> > - address comments from Pierre-Louis Bossart:
-> >   * remove "default n" from Kconfig
-> > 
-> > Linux supports RPMsg over VirtIO for "remote processor" / AMP use
-> > cases. It can however also be used for virtualisation scenarios,
-> > e.g. when using KVM to run Linux on both the host and the guests.
-> > This patch set adds a wrapper API to facilitate writing vhost
-> > drivers for such RPMsg-based solutions. The first use case is an
-> > audio DSP virtualisation project, currently under development, ready
-> > for review and submission, available at
-> > https://github.com/thesofproject/linux/pull/1501/commits
-> > 
-> > Thanks
-> > Guennadi
-> > 
-> > Guennadi Liakhovetski (4):
-> >   vhost: convert VHOST_VSOCK_SET_RUNNING to a generic ioctl
-> >   rpmsg: move common structures and defines to headers
-> >   rpmsg: update documentation
-> >   vhost: add an RPMsg API
-> > 
-> >  Documentation/rpmsg.txt          |   6 +-
-> >  drivers/rpmsg/virtio_rpmsg_bus.c |  78 +------
-> >  drivers/vhost/Kconfig            |   7 +
-> >  drivers/vhost/Makefile           |   3 +
-> >  drivers/vhost/rpmsg.c            | 375 +++++++++++++++++++++++++++++++
-> >  drivers/vhost/vhost_rpmsg.h      |  74 ++++++
-> >  include/linux/virtio_rpmsg.h     |  83 +++++++
-> >  include/uapi/linux/rpmsg.h       |   3 +
-> >  include/uapi/linux/vhost.h       |   4 +-
-> >  9 files changed, 553 insertions(+), 80 deletions(-)
-> >  create mode 100644 drivers/vhost/rpmsg.c
-> >  create mode 100644 drivers/vhost/vhost_rpmsg.h
-> >  create mode 100644 include/linux/virtio_rpmsg.h
-> > 
-> > -- 
-> > 2.27.0
-> 
