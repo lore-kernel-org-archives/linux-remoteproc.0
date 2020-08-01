@@ -1,171 +1,160 @@
-Return-Path: <SRS0=k3pH=BK=vger.kernel.org=linux-remoteproc-owner@kernel.org>
+Return-Path: <SRS0=nCkY=BL=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-11.5 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E105C433E0
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 31 Jul 2020 23:03:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A910FC433DF
+	for <linux-remoteproc@archiver.kernel.org>; Sat,  1 Aug 2020 04:38:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2DB6E2072A
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 31 Jul 2020 23:03:48 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="kWBlJYhj"
+	by mail.kernel.org (Postfix) with ESMTP id 8B5E7206DA
+	for <linux-remoteproc@archiver.kernel.org>; Sat,  1 Aug 2020 04:38:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726664AbgGaXDr (ORCPT
+        id S1725768AbgHAEiG (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 31 Jul 2020 19:03:47 -0400
-Received: from mail-co1nam11on2056.outbound.protection.outlook.com ([40.107.220.56]:10369
-        "EHLO NAM11-CO1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726215AbgGaXDr (ORCPT
+        Sat, 1 Aug 2020 00:38:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39556 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725601AbgHAEiG (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 31 Jul 2020 19:03:47 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=gKZhBwgKRACXJSXsygdiwBfB1RMUQ9/wc9PTSn3cRkYK9CDh/RW8nM/TtlBrxJ8gqmv0j6UuS3r07g2HZ8vDWVgQiBh8JnAb/w/unY8GjyOvYpcsuf2Qa1y+4YotcS1LszUOGvvC9udnOgYmTjnk2QR8WGg835tnX6IiTL6jhv0qnYWmAnuXJsyaFY83Kuto1DAoQKpUM8ndVm1BEqSSJtFUR3OMnbTbd3eO4pIIAHONxcFYBOpO7jhYH0A67K5LPIrdLGkiUzinGpNYpvgWYtB5pdtE+H99qL+ccmZmFU6GWH1s4DKlEyziK+3NBcYpBvpLsYKwB/h6B6JYl4OiDA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=alQ8S84XnD7wvc1d1fVM8KAP83Iy0kZJR2Zpg7Dq75I=;
- b=mexvUkwkBZ/1vbWy1c1zppVCrHW26aqlPNSil5HF2XkwK0EHJcy9rAwUC2/uzcSR+uZtx24eokA8UaNJvLa+jy/st1Yb8br/6oiOpeAZzoIzSykf8ZfH2oJ1HEy2Y+zr3h1TRGpFp9LI2jc23NB2QlOym8s3ZPWS9SHHmLdn55rPptBUkvHKOzk+WuxeE9xQd9d3HQkM/7bnXKtwOQ3G7FX+a3I3Nc3qja4eMWoApFgCrNxa0dKVWaiYk3jIQyEcykNrThXeAfQEL59MkvqYpV9HwsSDpt00LHh+tt16M82egKHBPIRW4W85InrGdDw8TrNCce09aDkJPlNbpp1iGg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 149.199.60.83) smtp.rcpttodomain=linaro.org smtp.mailfrom=xilinx.com;
- dmarc=bestguesspass action=none header.from=xilinx.com; dkim=none (message
- not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=xilinx.onmicrosoft.com; s=selector2-xilinx-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=alQ8S84XnD7wvc1d1fVM8KAP83Iy0kZJR2Zpg7Dq75I=;
- b=kWBlJYhjVa0g/Sjf2zi2qJnpKhoj6iFX0vcXEslsZTSd3albn3hYX9+SiJAs/dfQMO7cRnLEpBftbyiMG/BugxM0wbb8ILpy67SlRvt832Q0mih063MkSCHnThaJZ8LlzHAhTuX3yuHUhE269i3/lCYk7rpn1FUH5Jae1kejr80=
-Received: from DM5PR21CA0011.namprd21.prod.outlook.com (2603:10b6:3:ac::21) by
- BYAPR02MB4822.namprd02.prod.outlook.com (2603:10b6:a03:48::18) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.3216.21; Fri, 31 Jul 2020 23:03:44 +0000
-Received: from CY1NAM02FT031.eop-nam02.prod.protection.outlook.com
- (2603:10b6:3:ac:cafe::f8) by DM5PR21CA0011.outlook.office365.com
- (2603:10b6:3:ac::21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3261.3 via Frontend
- Transport; Fri, 31 Jul 2020 23:03:43 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 149.199.60.83)
- smtp.mailfrom=xilinx.com; linaro.org; dkim=none (message not signed)
- header.d=none;linaro.org; dmarc=bestguesspass action=none
- header.from=xilinx.com;
-Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
- 149.199.60.83 as permitted sender) receiver=protection.outlook.com;
- client-ip=149.199.60.83; helo=xsj-pvapsmtpgw01;
-Received: from xsj-pvapsmtpgw01 (149.199.60.83) by
- CY1NAM02FT031.mail.protection.outlook.com (10.152.75.180) with Microsoft SMTP
- Server id 15.20.3239.17 via Frontend Transport; Fri, 31 Jul 2020 23:03:43
- +0000
-Received: from [149.199.38.66] (port=37155 helo=smtp.xilinx.com)
-        by xsj-pvapsmtpgw01 with esmtp (Exim 4.90)
-        (envelope-from <stefano.stabellini@xilinx.com>)
-        id 1k1e1x-0000TN-I9; Fri, 31 Jul 2020 16:01:37 -0700
-Received: from [127.0.0.1] (helo=localhost)
-        by xsj-pvapsmtp01 with smtp (Exim 4.63)
-        (envelope-from <stefano.stabellini@xilinx.com>)
-        id 1k1e3z-0000Xe-HT; Fri, 31 Jul 2020 16:03:43 -0700
-Received: from [10.23.121.225] (helo=localhost)
-        by xsj-pvapsmtp01 with esmtp (Exim 4.63)
-        (envelope-from <stefanos@xilinx.com>)
-        id 1k1e3u-0000VV-4n; Fri, 31 Jul 2020 16:03:38 -0700
-Date:   Fri, 31 Jul 2020 16:03:37 -0700 (PDT)
-From:   Stefano Stabellini <stefano.stabellini@xilinx.com>
-X-X-Sender: sstabellini@sstabellini-ThinkPad-T480s
-To:     Mathieu Poirier <mathieu.poirier@linaro.org>
-cc:     Ben Levinsky <ben.levinsky@xilinx.com>, ohad@wizery.com,
-        bjorn.andersson@linaro.org, michals@xilinx.com, JOLLYS@xilinx.com,
-        RAJANV@xilinx.com, robh+dt@kernel.org, mark.rutland@arm.com,
+        Sat, 1 Aug 2020 00:38:06 -0400
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 02B84C06174A
+        for <linux-remoteproc@vger.kernel.org>; Fri, 31 Jul 2020 21:38:06 -0700 (PDT)
+Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ore@pengutronix.de>)
+        id 1k1jHS-0001AB-7S; Sat, 01 Aug 2020 06:37:58 +0200
+Received: from ore by pty.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <ore@pengutronix.de>)
+        id 1k1jHQ-00041z-Fr; Sat, 01 Aug 2020 06:37:56 +0200
+Date:   Sat, 1 Aug 2020 06:37:56 +0200
+From:   Oleksij Rempel <o.rempel@pengutronix.de>
+To:     peng.fan@nxp.com
+Cc:     ohad@wizery.com, bjorn.andersson@linaro.org, robh+dt@kernel.org,
+        shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
+        festevam@gmail.com, mathieu.poirier@linaro.org, linux-imx@nxp.com,
         linux-remoteproc@vger.kernel.org,
-        linux-arm-kernell@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, jliang@xilinx.com,
-        stefanos@xilinx.com, Wendy Liang <wendy.liang@xilinx.com>,
-        Michal Simek <michal.simek@xilinx.com>,
-        Ed Mooring <ed.mooring@xilinx.com>, Jason Wu <j.wu@xilinx.com>
-Subject: Re: [PATCH v6 5/5] remoteproc: Add initial zynqmp R5 remoteproc
- driver
-In-Reply-To: <20200728210002.GA2413713@xps15>
-Message-ID: <alpine.DEB.2.21.2007311104400.1767@sstabellini-ThinkPad-T480s>
-References: <20200715153317.25643-1-ben.levinsky@xilinx.com> <20200715153317.25643-6-ben.levinsky@xilinx.com> <20200728210002.GA2413713@xps15>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] remoteproc: imx_rproc: add elf memory hooks
+Message-ID: <20200801043756.eylyv4d2ymj6hzvr@pengutronix.de>
+References: <1595928673-26306-1-git-send-email-peng.fan@nxp.com>
+ <1595928673-26306-2-git-send-email-peng.fan@nxp.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-TM-AS-Product-Ver: IMSS-7.1.0.1224-8.2.0.1013-23620.005
-X-TM-AS-User-Approved-Sender: Yes;Yes
-X-EOPAttributedMessage: 0
-X-MS-Office365-Filtering-HT: Tenant
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 68154215-d20d-4532-309e-08d835a5f919
-X-MS-TrafficTypeDiagnostic: BYAPR02MB4822:
-X-Microsoft-Antispam-PRVS: <BYAPR02MB482247E9027BA7EC2E7486ACA04E0@BYAPR02MB4822.namprd02.prod.outlook.com>
-X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
-X-MS-Oob-TLC-OOBClassifiers: OLM:5236;
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: lkGHS6K758r/Ay/lFLjrc4t9ttMgDZsqbarGaMcPpD56kRCECEsC9FJzAqAClVrBZgVH2aS18moFaS5S3OCiXuRgD/6RTyPLF5Q4QLj+rv/PaZQYlA0RcPqDpouzxFXisb+xnSqg1RPWpDYFoVoim1P2tWCnhV7u0oLLr5hrUOcycrJ/qWqnHompPacLHtivbmPRv2xGtMXuS+FpJBv2ZWm18xyZlfVpyrmVLujBtrKKOVdL5uuGlqnRk5yfcVhpN0oW6+6Om4/bMXyug/6HDItng65xEwInxQMZyNfp80ejoUlp+ge6n58lnbdyo+WCAgvhD83vS8/36QWz9uW3pgerojYmd5ZIVLmwQcLtFaZgn5E9JX8C85Qrx0w8VQ8all0dONnTN4plyXBsLGKgsg==
-X-Forefront-Antispam-Report: CIP:149.199.60.83;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:xsj-pvapsmtpgw01;PTR:unknown-60-83.xilinx.com;CAT:NONE;SFTY:;SFS:(7916004)(39860400002)(376002)(136003)(346002)(396003)(46966005)(47076004)(70206006)(82740400003)(54906003)(316002)(82310400002)(26005)(5660300002)(70586007)(2906002)(4326008)(8936002)(426003)(44832011)(6916009)(107886003)(33716001)(8676002)(9786002)(356005)(83380400001)(186003)(81166007)(9686003)(478600001)(336012);DIR:OUT;SFP:1101;
-X-OriginatorOrg: xilinx.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Jul 2020 23:03:43.7858
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 68154215-d20d-4532-309e-08d835a5f919
-X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.60.83];Helo=[xsj-pvapsmtpgw01]
-X-MS-Exchange-CrossTenant-AuthSource: CY1NAM02FT031.eop-nam02.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR02MB4822
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="tntbww4ujgs3gjvq"
+Content-Disposition: inline
+In-Reply-To: <1595928673-26306-2-git-send-email-peng.fan@nxp.com>
+X-Sent-From: Pengutronix Hildesheim
+X-URL:  http://www.pengutronix.de/
+X-IRC:  #ptxdist @freenode
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-Uptime: 06:36:47 up 259 days, 19:55, 238 users,  load average: 0.15, 0.06,
+ 0.01
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
+X-SA-Exim-Mail-From: ore@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-remoteproc@vger.kernel.org
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Tue, 28 Jul 2020, Mathieu Poirier wrote:
-> On Wed, Jul 15, 2020 at 08:33:17AM -0700, Ben Levinsky wrote:
-> > R5 is included in Xilinx Zynq UltraScale MPSoC so by adding this
-> > remotproc driver, we can boot the R5 sub-system in different
-> > configurations.
-> > 
-> > Acked-by: Stefano Stabellini <stefano.stabellini@xilinx.com>
-> > Acked-by: Ben Levinsky <ben.levinsky@xilinx.com>
-> > Reviewed-by: Radhey Shyam Pandey <radhey.shyam.pandey@xilinx.com>
-> > Signed-off-by: Ben Levinsky <ben.levinsky@xilinx.com>
-> > Signed-off-by: Wendy Liang <wendy.liang@xilinx.com>
-> > Signed-off-by: Michal Simek <michal.simek@xilinx.com>
-> > Signed-off-by: Ed Mooring <ed.mooring@xilinx.com>
-> > Signed-off-by: Jason Wu <j.wu@xilinx.com>
-> > Tested-by: Ben Levinsky <ben.levinsky@xilinx.com>
 
-[...]
+--tntbww4ujgs3gjvq
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> > +static int zynqmp_r5_remoteproc_probe(struct platform_device *pdev)
-> > +{
-> > +	int ret, i = 0;
-> > +	u32 *lockstep_mode;
-> > +	struct device *dev = &pdev->dev;
-> > +	struct device_node *nc;
-> > +	struct zynqmp_r5_pdata *pdata;
-> > +
-> > +	pdata = devm_kzalloc(dev, sizeof(*pdata), GFP_KERNEL);
-> > +	lockstep_mode = devm_kzalloc(dev, sizeof(u32 *), GFP_KERNEL);
-> > +	if (!pdata || !lockstep_mode)
-> > +		return -ENOMEM;
-> > +
-> > +	platform_set_drvdata(pdev, pdata);
-> 
-> As far as I can tell the above, along with allocating memory for @pdata, is not
-> needed since zynqmp_r5_remoteproc_remove() uses rpus[].
-> 
-> I have only reviewed the _probe() function and already encountered a fair amount
-> of fundemantal errors.  As such I will stop my review here. I will need to see a
-> reviewed-by tag (on the mailing list) by Stephano or Michal before reviewing the
-> next set. 
+Hi,
 
-Let me take this opportunity to say that my Acked-by on this version of
-the series was an unintentional miscommunication: I didn't give my
-Acked-by as I haven't even read the patches yet.
+please fix errors reported by test robot.
 
-I'll circle back with Michal and we'll make sure for either of us to do
-a round of public reviews on the next version.
+On Tue, Jul 28, 2020 at 05:31:13PM +0800, peng.fan@nxp.com wrote:
+> From: Peng Fan <peng.fan@nxp.com>
+>=20
+> Please not apply 2/2 for now, this 2/2 has not gone through
+> test on all i.MX8 platforms.
+>=20
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> ---
+>  drivers/remoteproc/imx_rproc.c | 13 +++++++++++++
+>  1 file changed, 13 insertions(+)
+>=20
+> diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rpro=
+c.c
+> index 8957ed271d20..8ad860c65256 100644
+> --- a/drivers/remoteproc/imx_rproc.c
+> +++ b/drivers/remoteproc/imx_rproc.c
+> @@ -6,6 +6,7 @@
+>  #include <linux/clk.h>
+>  #include <linux/err.h>
+>  #include <linux/interrupt.h>
+> +#include <linux/io.h>
+>  #include <linux/kernel.h>
+>  #include <linux/mfd/syscon.h>
+>  #include <linux/module.h>
+> @@ -241,10 +242,22 @@ static void *imx_rproc_da_to_va(struct rproc *rproc=
+, u64 da, size_t len)
+>  	return va;
+>  }
+> =20
+> +static void *imx_rproc_memcpy(struct rproc *rproc, void *dest, const voi=
+d *src, size_t count)
+> +{
+> +       memcpy_toio((void * __iomem)dest, src, count);
+> +}
+> +
+> +static void *imx_rproc_memset(struct rproc *rproc, void *s, int c, size_=
+t count)
+> +{
+> +	memset_io((void * __iomem)s, c, count);
+> +}
+> +
+>  static const struct rproc_ops imx_rproc_ops =3D {
+>  	.start		=3D imx_rproc_start,
+>  	.stop		=3D imx_rproc_stop,
+>  	.da_to_va       =3D imx_rproc_da_to_va,
+> +	.memset		=3D imx_rproc_memset,
+> +	.memcpy		=3D imx_rproc_memcpy,
+>  };
+> =20
+>  static int imx_rproc_addr_init(struct imx_rproc *priv,
+> --=20
+> 2.16.4
+>=20
+>=20
+
+--=20
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+
+--tntbww4ujgs3gjvq
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEERBNZvwSgvmcMY/T74omh9DUaUbMFAl8k8Z8ACgkQ4omh9DUa
+UbPd2BAAx/k4TMCUaFJljdJS02U5zdAnW0/bkUSYZQq2mvh2IEwztSbMer5YKrz+
++LrZuzhrBu2aautziu5/M4kfWG/NvHbFSuIcDuB31cp69fc+UYv07hzM3gYIyFCO
+2oZ5GHQIjwY2sJQ+IFfWFx/u/2M0AUGJGikV2qseZaX8d0ZWHKZB+hreIG2oEP3u
+Brpv8ihZwCK2I1y+tSto9gWz5G7DRFWIaDy5AB6Lk+546Jlyb5vRFTWbdeIcM4vy
+90rrNqIL3Glc730SP4luWoNmyJ29DaOVCQ6QZGWoCTuhre1UXJArWO1pqLYjJJTL
+v9mXK/WEUlIoDDDuGHOF5X5AwAYyv4rCe4kXASWMTF4PbzP430+BXBb0CQqXSqvk
+T6vac01OxxIfJnYvG6rmUDBJ0iy0AuNGyyNMeDbxDQtleLVKx7xN/Izz+uzJSBgV
+QDC8xJVwcTKp+zMOrTM83lek2H2yXfcSGakhdIYu+24WExp1yN9s8OYis1wPsIOe
+RfsUvLVZFkyggtmjxLK0eNP8InK6qItLdhQ96QvQdBPPXE5raVRqyRZDFewNLHeg
+zLFtbXM0mcwzEi4x3cMMSDU98CFsf1xyjsBEoVVj6BE0U8Rt3xqWJ1uexDZizNE1
+Wfzo6FbbKZakKKXmdU8dK8pdcQPMSyBLUphzM4giAwpnqP6nk7M=
+=pBQs
+-----END PGP SIGNATURE-----
+
+--tntbww4ujgs3gjvq--
