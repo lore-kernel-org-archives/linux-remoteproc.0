@@ -1,160 +1,93 @@
-Return-Path: <SRS0=nCkY=BL=vger.kernel.org=linux-remoteproc-owner@kernel.org>
+Return-Path: <SRS0=vRZ6=BM=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.5 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MSGID_FROM_MTA_HEADER,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A910FC433DF
-	for <linux-remoteproc@archiver.kernel.org>; Sat,  1 Aug 2020 04:38:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44227C433E1
+	for <linux-remoteproc@archiver.kernel.org>; Sun,  2 Aug 2020 13:21:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8B5E7206DA
-	for <linux-remoteproc@archiver.kernel.org>; Sat,  1 Aug 2020 04:38:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2CBED2075A
+	for <linux-remoteproc@archiver.kernel.org>; Sun,  2 Aug 2020 13:21:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725768AbgHAEiG (ORCPT
+        id S1728385AbgHBNVx (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Sat, 1 Aug 2020 00:38:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39556 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725601AbgHAEiG (ORCPT
+        Sun, 2 Aug 2020 09:21:53 -0400
+Received: from mail-m127107.qiye.163.com ([115.236.127.107]:27654 "EHLO
+        mail-m127107.qiye.163.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728057AbgHBNVx (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Sat, 1 Aug 2020 00:38:06 -0400
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 02B84C06174A
-        for <linux-remoteproc@vger.kernel.org>; Fri, 31 Jul 2020 21:38:06 -0700 (PDT)
-Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ore@pengutronix.de>)
-        id 1k1jHS-0001AB-7S; Sat, 01 Aug 2020 06:37:58 +0200
-Received: from ore by pty.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <ore@pengutronix.de>)
-        id 1k1jHQ-00041z-Fr; Sat, 01 Aug 2020 06:37:56 +0200
-Date:   Sat, 1 Aug 2020 06:37:56 +0200
-From:   Oleksij Rempel <o.rempel@pengutronix.de>
-To:     peng.fan@nxp.com
-Cc:     ohad@wizery.com, bjorn.andersson@linaro.org, robh+dt@kernel.org,
-        shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
-        festevam@gmail.com, mathieu.poirier@linaro.org, linux-imx@nxp.com,
-        linux-remoteproc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] remoteproc: imx_rproc: add elf memory hooks
-Message-ID: <20200801043756.eylyv4d2ymj6hzvr@pengutronix.de>
-References: <1595928673-26306-1-git-send-email-peng.fan@nxp.com>
- <1595928673-26306-2-git-send-email-peng.fan@nxp.com>
+        Sun, 2 Aug 2020 09:21:53 -0400
+X-Greylist: delayed 400 seconds by postgrey-1.27 at vger.kernel.org; Sun, 02 Aug 2020 09:21:44 EDT
+Received: from vivo.com (wm-12.qy.internal [127.0.0.1])
+        by mail-m127107.qiye.163.com (Hmail) with ESMTP id 99F0281725;
+        Sun,  2 Aug 2020 21:14:48 +0800 (CST)
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: base64
+Message-ID: <ADUAnwD8DVByMMSsrG-r3Kri.3.1596374087585.Hmail.wenhu.wang@vivo.com>
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     elder@kernel.org, davem@davemloft.net, kuba@kernel.org,
+        kvalo@codeaurora.org, agross@kernel.org, ohad@wizery.com,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org, alsa-devel@alsa-project.org,
+        ath11k@lists.infradead.org, netdev@vger.kernel.org,
+        ath10k@lists.infradead.org, linux-wireless@vger.kernel.org,
+        srinivas.kandagatla@linaro.org, sibis@codeaurora.org
+Subject: =?UTF-8?B?UmU6UmU6IFtQQVRDSF0gc29jOiBxbWk6IGFsbG93IHVzZXIgdG8gc2V0IGhhbmRsZSB3cSB0byBoaXByaW8=?=
+X-Priority: 3
+X-Mailer: HMail Webmail Server V2.0 Copyright (c) 2016-163.com
+X-Originating-IP: 58.251.74.226
+In-Reply-To: <20200727204521.GB229995@builder.lan>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="tntbww4ujgs3gjvq"
-Content-Disposition: inline
-In-Reply-To: <1595928673-26306-2-git-send-email-peng.fan@nxp.com>
-X-Sent-From: Pengutronix Hildesheim
-X-URL:  http://www.pengutronix.de/
-X-IRC:  #ptxdist @freenode
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-Uptime: 06:36:47 up 259 days, 19:55, 238 users,  load average: 0.15, 0.06,
- 0.01
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-remoteproc@vger.kernel.org
+Received: from wenhu.wang@vivo.com( [58.251.74.226) ] by ajax-webmail ( [127.0.0.1] ) ; Sun, 2 Aug 2020 21:14:47 +0800 (GMT+08:00)
+From:   =?UTF-8?B?546L5paH6JmO?= <wenhu.wang@vivo.com>
+Date:   Sun, 2 Aug 2020 21:14:47 +0800 (GMT+08:00)
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgYFAkeWUFZS1VLWVdZKFlBSE83V1ktWUFJV1kPCR
+        oVCBIfWUFZTR1KTktOSx4aQkpOVkpOQk1ITE9LQ0JLSE5VEwETFhoSFyQUDg9ZV1kWGg8SFR0UWU
+        FZT0tIVUpKS0hKTFVKS0tZBg++
+X-HM-Sender-Digest: e1kJHlYWEh9ZQU5MTU1OSEpOS0tJN1dZDB4ZWUEPCQ4eV1kSHx4VD1lB
+        WUc6Py46FQw*Qz8tOQI2NigICTxWCUgwCRJVSFVKTkJNSExPS0NCQ0lDVTMWGhIXVQweFRMOVQwa
+        FRw7DRINFFUYFBZFWVdZEgtZQVlOQ1VJTkpVTE9VSUlNWVdZCAFZQU5LS0I3Bg++
+X-HM-Tid: 0a73af4f7bbb986bkuuu99f0281725
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-
---tntbww4ujgs3gjvq
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi,
-
-please fix errors reported by test robot.
-
-On Tue, Jul 28, 2020 at 05:31:13PM +0800, peng.fan@nxp.com wrote:
-> From: Peng Fan <peng.fan@nxp.com>
->=20
-> Please not apply 2/2 for now, this 2/2 has not gone through
-> test on all i.MX8 platforms.
->=20
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
-> ---
->  drivers/remoteproc/imx_rproc.c | 13 +++++++++++++
->  1 file changed, 13 insertions(+)
->=20
-> diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rpro=
-c.c
-> index 8957ed271d20..8ad860c65256 100644
-> --- a/drivers/remoteproc/imx_rproc.c
-> +++ b/drivers/remoteproc/imx_rproc.c
-> @@ -6,6 +6,7 @@
->  #include <linux/clk.h>
->  #include <linux/err.h>
->  #include <linux/interrupt.h>
-> +#include <linux/io.h>
->  #include <linux/kernel.h>
->  #include <linux/mfd/syscon.h>
->  #include <linux/module.h>
-> @@ -241,10 +242,22 @@ static void *imx_rproc_da_to_va(struct rproc *rproc=
-, u64 da, size_t len)
->  	return va;
->  }
-> =20
-> +static void *imx_rproc_memcpy(struct rproc *rproc, void *dest, const voi=
-d *src, size_t count)
-> +{
-> +       memcpy_toio((void * __iomem)dest, src, count);
-> +}
-> +
-> +static void *imx_rproc_memset(struct rproc *rproc, void *s, int c, size_=
-t count)
-> +{
-> +	memset_io((void * __iomem)s, c, count);
-> +}
-> +
->  static const struct rproc_ops imx_rproc_ops =3D {
->  	.start		=3D imx_rproc_start,
->  	.stop		=3D imx_rproc_stop,
->  	.da_to_va       =3D imx_rproc_da_to_va,
-> +	.memset		=3D imx_rproc_memset,
-> +	.memcpy		=3D imx_rproc_memcpy,
->  };
-> =20
->  static int imx_rproc_addr_init(struct imx_rproc *priv,
-> --=20
-> 2.16.4
->=20
->=20
-
---=20
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
-
---tntbww4ujgs3gjvq
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEERBNZvwSgvmcMY/T74omh9DUaUbMFAl8k8Z8ACgkQ4omh9DUa
-UbPd2BAAx/k4TMCUaFJljdJS02U5zdAnW0/bkUSYZQq2mvh2IEwztSbMer5YKrz+
-+LrZuzhrBu2aautziu5/M4kfWG/NvHbFSuIcDuB31cp69fc+UYv07hzM3gYIyFCO
-2oZ5GHQIjwY2sJQ+IFfWFx/u/2M0AUGJGikV2qseZaX8d0ZWHKZB+hreIG2oEP3u
-Brpv8ihZwCK2I1y+tSto9gWz5G7DRFWIaDy5AB6Lk+546Jlyb5vRFTWbdeIcM4vy
-90rrNqIL3Glc730SP4luWoNmyJ29DaOVCQ6QZGWoCTuhre1UXJArWO1pqLYjJJTL
-v9mXK/WEUlIoDDDuGHOF5X5AwAYyv4rCe4kXASWMTF4PbzP430+BXBb0CQqXSqvk
-T6vac01OxxIfJnYvG6rmUDBJ0iy0AuNGyyNMeDbxDQtleLVKx7xN/Izz+uzJSBgV
-QDC8xJVwcTKp+zMOrTM83lek2H2yXfcSGakhdIYu+24WExp1yN9s8OYis1wPsIOe
-RfsUvLVZFkyggtmjxLK0eNP8InK6qItLdhQ96QvQdBPPXE5raVRqyRZDFewNLHeg
-zLFtbXM0mcwzEi4x3cMMSDU98CFsf1xyjsBEoVVj6BE0U8Rt3xqWJ1uexDZizNE1
-Wfzo6FbbKZakKKXmdU8dK8pdcQPMSyBLUphzM4giAwpnqP6nk7M=
-=pBQs
------END PGP SIGNATURE-----
-
---tntbww4ujgs3gjvq--
+Cj4+IEN1cnJlbnRseSB0aGUgcW1pX2hhbmRsZSBpcyBpbml0aWFsaXplZCBzaW5nbGUgdGhyZWFk
+ZWQgYW5kIHN0cmljdGx5Cj4+IG9yZGVyZWQgd2l0aCB0aGUgYWN0aXZlIHNldCB0byAxLiBUaGlz
+IGlzIHByZXR0eSBzaW1wbGUgYW5kIHNhZmUgYnV0Cj4+IHNvbWV0aW1lcyBpbmVmZmVuY3kuIFNv
+IGl0IGlzIGJldHRlciB0byBhbGxvdyB1c2VyIHRvIGRlY2lkZSB3aGV0aGVyCj4+IGEgaGlnaCBw
+cmlvcml0eSB3b3JrcXVldWUgc2hvdWxkIGJlIHVzZWQuCj4KPkNhbiB5b3UgcGxlYXNlIGRlc2Ny
+aWJlIGEgc2NlbmFyaW8gd2hlcmUgdGhpcyBpcyBuZWVkZWQvZGVzaXJlZCBhbmQKPnBlcmhhcHMg
+YWxzbyBjb21tZW50IG9uIHdoeSB0aGlzIGlzIG5vdCBhbHdheXMgZGVzaXJlZD8KPgoKV2VsbCwg
+b25lIHNjZW5hcmlvIGlzIHRoYXQgd2hlbiB0aGUgQVAgd2FudHMgdG8gY2hlY2sgdGhlIHN0YXR1
+cyBvZiB0aGUKc3Vic3lzdGVtcyBhbmQgdGhlIHdob2xlIFFNSSBkYXRhIHBhdGguIEl0IGZpcnN0
+IHNlbmRzIG91dCBhbiBpbmRpY2F0aW9uCndoaWNoIGFza3MgdGhlIHN1YnN5c3RlbXMgdG8gcmVw
+b3J0IHRoZWlyIHN0YXR1cy4gQWZ0ZXIgdGhlIHN1YnN5c3RlbXMgc2VuZApyZXNwb25zZXMgdG8g
+dGhlIEFQLCB0aGUgcmVzcG9uc2VzIHRoZW4gYXJlIHF1ZXVlZCBvbiB0aGUgd29ya3F1ZXVlIG9m
+CnRoZSBRTUkgaGFuZGxlci4gQWN0dWFsbHkgdGhlIEFQIGlzIGNvbmZpZ3VyZWQgdG8gZG8gdGhl
+IGNoZWNrIGluIGEgc3BlY2lmaWMKaW50ZXJ2YWwgcmVndWxhcmx5LiBBbmQgaXQgY2hlY2sgdGhl
+IHJlcG9ydCBjb3VudHMgd2l0aGluIGEgc3BlY2lmaWMgZGVsYXkgYWZ0ZXIKaXQgc2VuZHMgb3V0
+IHRoZSByZWxhdGVkIGluZGljYXRpb24uIFdoZW4gdGhlIEFQIGhhcyBiZWVuIHVuZGVyIGEgaGVh
+dnkKbG9hZCBmb3IgbG9uZywgdGhlIHJlcG9ydHMgYXJlIHF1ZXVlIHRoZWlyIHdpdGhvdXQgQ1BV
+IHJlc291cmNlIHRvIHVwZGF0ZQp0aGUgcmVwb3J0IGNvdW50cyB3aXRoaW4gdGhlIHNwZWNpZmlj
+IGRlbGF5LiBBcyBhIHJlc3VsdCwgdGhlIHRocmVhZCB0aGF0IGNoZWNrcwp0aGUgcmVwb3J0IGNv
+dW50cyB0YWtlcyBpdCBtaXNsZWFkaW5nbHkgdGhhdCB0aGUgUU1JIGRhdGEgcGF0aCBvciB0aGUg
+c3Vic3lzdGVtcwphcmUgY3Jhc2hlZC4KClRoZSBwYXRjaCBjYW4gcmVhbGx5IHJlc29sdmUgdGhl
+IHByb2JsZW0gbWVudGlvbmVkIGFib2x2ZS4KCkZvciBuYXJtYWwgc2l0dWF0aW9ucywgaXQgaXMg
+ZW5vdWdoIHRvIGp1c3QgdXNlIG5vcm1hbCBwcmlvcml0eSBRTUkgd29ya3F1ZXVlLgoKPlJlZ2Fy
+ZHMsCj5Cam9ybgo+Cj4+IAo+PiBTaWduZWQtb2ZmLWJ5OiBXYW5nIFdlbmh1IDx3ZW5odS53YW5n
+QHZpdm8uY29tPgo+PiAtLS0KPj4gIGRyaXZlcnMvbmV0L2lwYS9pcGFfcW1pLmMgICAgICAgICAg
+ICAgfCA0ICsrLS0KPj4gIGRyaXZlcnMvbmV0L3dpcmVsZXNzL2F0aC9hdGgxMGsvcW1pLmMgfCAy
+ICstCj4+ICBkcml2ZXJzL25ldC93aXJlbGVzcy9hdGgvYXRoMTFrL3FtaS5jIHwgMiArLQo+PiAg
+ZHJpdmVycy9yZW1vdGVwcm9jL3Fjb21fc3lzbW9uLmMgICAgICB8IDIgKy0KPj4gIGRyaXZlcnMv
+c2xpbWJ1cy9xY29tLW5nZC1jdHJsLmMgICAgICAgfCA0ICsrLS0KPj4gIGRyaXZlcnMvc29jL3Fj
+b20vcGRyX2ludGVyZmFjZS5jICAgICAgfCA0ICsrLS0KPj4gIGRyaXZlcnMvc29jL3Fjb20vcW1p
+X2ludGVyZmFjZS5jICAgICAgfCA5ICsrKysrKystLQo+PiAgaW5jbHVkZS9saW51eC9zb2MvcWNv
+bS9xbWkuaCAgICAgICAgICB8IDMgKystCj4+ICBzYW1wbGVzL3FtaS9xbWlfc2FtcGxlX2NsaWVu
+dC5jICAgICAgIHwgNCArKy0tCj4+ICA5IGZpbGVzIGNoYW5nZWQsIDIwIGluc2VydGlvbnMoKyks
+IDE0IGRlbGV0aW9ucygtKQ0KDQo=
