@@ -2,203 +2,144 @@ Return-Path: <SRS0=bVwd=BP=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-8.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 323F9C433E0
-	for <linux-remoteproc@archiver.kernel.org>; Wed,  5 Aug 2020 19:26:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62298C433E0
+	for <linux-remoteproc@archiver.kernel.org>; Wed,  5 Aug 2020 19:49:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id ECB2C206F6
-	for <linux-remoteproc@archiver.kernel.org>; Wed,  5 Aug 2020 19:26:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2F60022CAE
+	for <linux-remoteproc@archiver.kernel.org>; Wed,  5 Aug 2020 19:49:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="c5feeV6i"
+	dkim=pass (1024-bit key) header.d=ieee.org header.i=@ieee.org header.b="DAhkOvAY"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728448AbgHET0H (ORCPT
+        id S1728412AbgHETt1 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 5 Aug 2020 15:26:07 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:27797 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1728749AbgHERO1 (ORCPT
+        Wed, 5 Aug 2020 15:49:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47250 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728023AbgHEQy7 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 5 Aug 2020 13:14:27 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1596647665;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=2J9LJah/aWCk57IzVK6fx/wEiWGV1AN7ftTN0d7Z7L0=;
-        b=c5feeV6isMViIGc3J1ZgfS21KWW2pTbSgL7fzaFO/Q8QFgQ/e6OGxG+qKfwjAM1zhXrKUr
-        IEOzkJ5BBsoa7emHL6h+NgeRYuZ8WbUuayVnGlzrv2vnDpKZDfY6YXAMRSh+OyA2u070pl
-        qTMl1ASZezCynPQdZ3l0ihcgzUfkVq8=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-223-A_JIQqAaNC2GJ-kjgmSxRQ-1; Wed, 05 Aug 2020 07:34:12 -0400
-X-MC-Unique: A_JIQqAaNC2GJ-kjgmSxRQ-1
-Received: by mail-wm1-f70.google.com with SMTP id a5so2607163wmj.5
-        for <linux-remoteproc@vger.kernel.org>; Wed, 05 Aug 2020 04:34:12 -0700 (PDT)
+        Wed, 5 Aug 2020 12:54:59 -0400
+Received: from mail-il1-x142.google.com (mail-il1-x142.google.com [IPv6:2607:f8b0:4864:20::142])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F23E3C0A8893
+        for <linux-remoteproc@vger.kernel.org>; Wed,  5 Aug 2020 06:55:33 -0700 (PDT)
+Received: by mail-il1-x142.google.com with SMTP id y18so28963910ilp.10
+        for <linux-remoteproc@vger.kernel.org>; Wed, 05 Aug 2020 06:55:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ieee.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=T0iHC5DzypW6poy3NDVtNkEOvm1za2UqY6n/ov5xw0A=;
+        b=DAhkOvAYaZ9UtoECfWC2gAqYzdQdZu4/OTZhHotTaCMraihBeTETAb2o+tdVB+R9c/
+         fgruEjKoM8VG+YdsLo4GUZF8VaCggzTi5h3uToTV2f2Sv1hwOpZ5HvtTKuXa2Y1A6q3O
+         zX5fNDo98uB0Sok2zX9/YQGJMJ6y+B1u0vCnk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=2J9LJah/aWCk57IzVK6fx/wEiWGV1AN7ftTN0d7Z7L0=;
-        b=hUZhWpFSUj8TJbBjMLCLPGwd3apcIV+Eq4pGfZjDWObIgFn99DlO7nUBOTTkI8f4NM
-         oo7I2lFsVkK653tD608u9ioKkyvxeObBDcuIsdr/tKk5SUdr8odw3M7hMxeHHMFpeMDL
-         QRLWWcY8Zj3oT0PPVx9lD5wOCnbHKhozkqaA3++FPzZqZfMzgVTvhgFAwNDO4+RBOJLj
-         02ofAVo+0ClMiX8kKnD01JKK6L6WiZ8q7wRfTfLbMG5cvIkGLWFYOmGG0h5uMeNBUv16
-         F1/cAD3DqL/oUwcn2ZzR9jGbA9AfD/EMLyXB2A0NImNbnvA5wg0YKt5JKMZGumq1IOcQ
-         XdQA==
-X-Gm-Message-State: AOAM530N1VvbUjP/+CfTivDOHMRN7dh1A0jNs9SJYhW6Y0nlrS9nKYkA
-        Z33FHqEQqgkZfmehIA9JOaFWJieHEFzPiUIK4NUhcq8NApJigtlK8fZaX6Ol3ZyCNXTFuyLztnW
-        RPBBIvUPsKFA90L7m3FTjHdoUoiaBLQ==
-X-Received: by 2002:a7b:c8cd:: with SMTP id f13mr2721062wml.29.1596627251689;
-        Wed, 05 Aug 2020 04:34:11 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJyUHoMIFdt/4QubWV9RKUWmzgFURf9uw07yiy0Uaimh1czYGUqufIiAYoZ9lh96it76IKA3Qg==
-X-Received: by 2002:a7b:c8cd:: with SMTP id f13mr2721038wml.29.1596627251392;
-        Wed, 05 Aug 2020 04:34:11 -0700 (PDT)
-Received: from redhat.com (bzq-79-178-123-8.red.bezeqint.net. [79.178.123.8])
-        by smtp.gmail.com with ESMTPSA id c10sm2340858wro.84.2020.08.05.04.34.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Aug 2020 04:34:10 -0700 (PDT)
-Date:   Wed, 5 Aug 2020 07:34:06 -0400
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc:     Guennadi Liakhovetski <guennadi.liakhovetski@linux.intel.com>,
-        kvm@vger.kernel.org,
-        linux-remoteproc <linux-remoteproc@vger.kernel.org>,
-        virtualization@lists.linux-foundation.org,
-        sound-open-firmware@alsa-project.org,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Liam Girdwood <liam.r.girdwood@linux.intel.com>,
-        Jason Wang <jasowang@redhat.com>,
-        Ohad Ben-Cohen <ohad@wizery.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Vincent Whitchurch <vincent.whitchurch@axis.com>
-Subject: Re: [PATCH v4 0/4] Add a vhost RPMsg API
-Message-ID: <20200805073253-mutt-send-email-mst@kernel.org>
-References: <20200722150927.15587-1-guennadi.liakhovetski@linux.intel.com>
- <20200730120805-mutt-send-email-mst@kernel.org>
- <20200731054752.GA28005@ubuntu>
- <CANLsYkxuCf6yeoqJ-T2x3LHvr9+DuxFdcsxJPmrh9A4H8yNr3w@mail.gmail.com>
- <20200803164605-mutt-send-email-mst@kernel.org>
- <CANLsYkx9e=-2dU26Lx5JFrtrbV07Vtwsi3gFphxKW5QRiwqoHg@mail.gmail.com>
- <20200804100640-mutt-send-email-mst@kernel.org>
- <CANLsYkzqvev1es_J-FYaBv02jkGHZwpn2cNwZKamAsZ_D=QB7g@mail.gmail.com>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=T0iHC5DzypW6poy3NDVtNkEOvm1za2UqY6n/ov5xw0A=;
+        b=oy7gC0cmN18ggIJqalygkLr3G3pEyiz7HVZ6q3v2Y5d0SCbn+/B1GtqgYDHQnp+6uT
+         CTpPrgpacrN7DM8d0wzcjXlMPm6CEZFk85XE+Wm8WWxo/ak2dT8lrcPaojyBPDAXjE9b
+         vWMi3O2wg6EvgFeQztbBZIMPMKRIngh+XoE3h7Wz7bYLpZ9jDb5EVJMpyOcPCmomS6Eu
+         slqV6l6AcJ6tkTP0pJIC8ZAzOo4Kms1HvLo6Vh6hGFrlPF7/Cn+KnOk07Xvv+o9HqkOu
+         VHknQ4xOHkEeRNOnFsO2myTeaax32p0yrjgDLps/rmx+NkrUCz1OCJJfWaTH9D/+V4tK
+         uqzg==
+X-Gm-Message-State: AOAM533MLP8EwzAdJOAX+dwtKMIOWhv0mNjPVZute2MSRijBPj+cm5W0
+        qpVQRGwvC8DYcsfTaZYQrSRHJA==
+X-Google-Smtp-Source: ABdhPJygRlU9l3OctXlmAVj+p1MKYQ+VT9ZvU9QPRbxWDqUzC6q+bEae4dy82QDhDGDE28iGtnJLqA==
+X-Received: by 2002:a92:c14d:: with SMTP id b13mr3548606ilh.269.1596635733090;
+        Wed, 05 Aug 2020 06:55:33 -0700 (PDT)
+Received: from [172.22.22.26] (c-73-185-129-58.hsd1.mn.comcast.net. [73.185.129.58])
+        by smtp.googlemail.com with ESMTPSA id c2sm1073796iow.6.2020.08.05.06.55.31
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 05 Aug 2020 06:55:32 -0700 (PDT)
+Subject: Re: [PATCH] soc: qmi: allow user to set handle wq to hiprio
+To:     =?UTF-8?B?546L5paH6JmO?= <wenhu.wang@vivo.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     elder@kernel.org, davem@davemloft.net, kuba@kernel.org,
+        kvalo@codeaurora.org, agross@kernel.org, ohad@wizery.com,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org, alsa-devel@alsa-project.org,
+        ath11k@lists.infradead.org, netdev@vger.kernel.org,
+        ath10k@lists.infradead.org, linux-wireless@vger.kernel.org,
+        srinivas.kandagatla@linaro.org, sibis@codeaurora.org
+References: <ADUAnwD8DVByMMSsrG-r3Kri.3.1596374087585.Hmail.wenhu.wang@vivo.com>
+From:   Alex Elder <elder@ieee.org>
+Message-ID: <5c6123f2-1a65-8615-9d5d-3bb1d25818b2@ieee.org>
+Date:   Wed, 5 Aug 2020 08:55:30 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CANLsYkzqvev1es_J-FYaBv02jkGHZwpn2cNwZKamAsZ_D=QB7g@mail.gmail.com>
+In-Reply-To: <ADUAnwD8DVByMMSsrG-r3Kri.3.1596374087585.Hmail.wenhu.wang@vivo.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Tue, Aug 04, 2020 at 01:30:32PM -0600, Mathieu Poirier wrote:
-> On Tue, 4 Aug 2020 at 08:07, Michael S. Tsirkin <mst@redhat.com> wrote:
-> >
-> > On Tue, Aug 04, 2020 at 07:37:49AM -0600, Mathieu Poirier wrote:
-> > > On Mon, 3 Aug 2020 at 14:47, Michael S. Tsirkin <mst@redhat.com> wrote:
-> > > >
-> > > > On Mon, Aug 03, 2020 at 07:25:24AM -0600, Mathieu Poirier wrote:
-> > > > > On Thu, 30 Jul 2020 at 23:47, Guennadi Liakhovetski
-> > > > > <guennadi.liakhovetski@linux.intel.com> wrote:
-> > > > > >
-> > > > > > Hi Michael,
-> > > > > >
-> > > > > > On Thu, Jul 30, 2020 at 12:08:29PM -0400, Michael S. Tsirkin wrote:
-> > > > > > > On Wed, Jul 22, 2020 at 05:09:23PM +0200, Guennadi Liakhovetski wrote:
-> > > > > > > > Hi,
-> > > > > > > >
-> > > > > > > > Now that virtio-rpmsg endianness fixes have been merged we can
-> > > > > > > > proceed with the next step.
-> > > > > > >
-> > > > > > > Which tree is this for?
-> > > > > >
-> > > > > > The essential part of this series is for drivers/vhost, so, I presume
-> > > > > > that should be the target tree as well. There is however a small part
-> > > > > > for the drivers/rpmsg, should I split this series in two or shall we
-> > > > > > first review is as a whole to make its goals clearer?
-> > > > >
-> > > > > I suggest to keep it whole for now.
-> > > >
-> > > >
-> > > > Ok can I get some acks please?
-> > >
-> > > Yes, as soon as I have the opportunity to review the work.  There is a
-> > > lot of volume on the linux-remoteproc mailing list lately and
-> > > patchsets are reviewed in the order they have been received.
-> >
-> > Well the merge window is open, I guess I'll merge this and
-> > any issues can be addressed later then?
+On 8/2/20 8:14 AM, 王文虎 wrote:
 > 
-> Please don't do that.  I prefer to miss a merge window than impacting
-> upstream consumers.  This patch will be reviewed, just not in time for
-> this merge window.
+>>> Currently the qmi_handle is initialized single threaded and strictly
+>>> ordered with the active set to 1. This is pretty simple and safe but
+>>> sometimes ineffency. So it is better to allow user to decide whether
+>>> a high priority workqueue should be used.
+>>
+>> Can you please describe a scenario where this is needed/desired and
+>> perhaps also comment on why this is not always desired?
+>>
+> 
+> Well, one scenario is that when the AP wants to check the status of the
+> subsystems and the whole QMI data path. It first sends out an indication
+> which asks the subsystems to report their status. After the subsystems send
+> responses to the AP, the responses then are queued on the workqueue of
+> the QMI handler. Actually the AP is configured to do the check in a specific
+> interval regularly. And it check the report counts within a specific delay after
+> it sends out the related indication. When the AP has been under a heavy
+> load for long, the reports are queue their without CPU resource to update
+> the report counts within the specific delay. As a result, the thread that checks
+> the report counts takes it misleadingly that the QMI data path or the subsystems
+> are crashed.
+> 
+> The patch can really resolve the problem mentioned abolve.
 
-OK then.
+Is it your intention to submit code that actually does what you describe
+above?  If so, then (as David said) you should propose this change at
+the time it will be needed--which is at the time you send that new
+code out for review.
 
+Even in that case, I don't believe using a high priority workqueue
+would guarantee the improved behavior you think this would provide.
 
-> >
-> > > > Also, I put this in my linux-next branch on
-> > > >
-> > > > https://git.kernel.org/pub/scm/linux/kernel/git/mst/vhost.git
-> > > >
-> > > > there were some conflicts - could you pls test and report it's ok?
-> > > >
-> > > > > >
-> > > > > > Thanks
-> > > > > > Guennadi
-> > > > > >
-> > > > > > > > v4:
-> > > > > > > > - add endianness conversions to comply with the VirtIO standard
-> > > > > > > >
-> > > > > > > > v3:
-> > > > > > > > - address several checkpatch warnings
-> > > > > > > > - address comments from Mathieu Poirier
-> > > > > > > >
-> > > > > > > > v2:
-> > > > > > > > - update patch #5 with a correct vhost_dev_init() prototype
-> > > > > > > > - drop patch #6 - it depends on a different patch, that is currently
-> > > > > > > >   an RFC
-> > > > > > > > - address comments from Pierre-Louis Bossart:
-> > > > > > > >   * remove "default n" from Kconfig
-> > > > > > > >
-> > > > > > > > Linux supports RPMsg over VirtIO for "remote processor" / AMP use
-> > > > > > > > cases. It can however also be used for virtualisation scenarios,
-> > > > > > > > e.g. when using KVM to run Linux on both the host and the guests.
-> > > > > > > > This patch set adds a wrapper API to facilitate writing vhost
-> > > > > > > > drivers for such RPMsg-based solutions. The first use case is an
-> > > > > > > > audio DSP virtualisation project, currently under development, ready
-> > > > > > > > for review and submission, available at
-> > > > > > > > https://github.com/thesofproject/linux/pull/1501/commits
-> > > > > > > >
-> > > > > > > > Thanks
-> > > > > > > > Guennadi
-> > > > > > > >
-> > > > > > > > Guennadi Liakhovetski (4):
-> > > > > > > >   vhost: convert VHOST_VSOCK_SET_RUNNING to a generic ioctl
-> > > > > > > >   rpmsg: move common structures and defines to headers
-> > > > > > > >   rpmsg: update documentation
-> > > > > > > >   vhost: add an RPMsg API
-> > > > > > > >
-> > > > > > > >  Documentation/rpmsg.txt          |   6 +-
-> > > > > > > >  drivers/rpmsg/virtio_rpmsg_bus.c |  78 +------
-> > > > > > > >  drivers/vhost/Kconfig            |   7 +
-> > > > > > > >  drivers/vhost/Makefile           |   3 +
-> > > > > > > >  drivers/vhost/rpmsg.c            | 375 +++++++++++++++++++++++++++++++
-> > > > > > > >  drivers/vhost/vhost_rpmsg.h      |  74 ++++++
-> > > > > > > >  include/linux/virtio_rpmsg.h     |  83 +++++++
-> > > > > > > >  include/uapi/linux/rpmsg.h       |   3 +
-> > > > > > > >  include/uapi/linux/vhost.h       |   4 +-
-> > > > > > > >  9 files changed, 553 insertions(+), 80 deletions(-)
-> > > > > > > >  create mode 100644 drivers/vhost/rpmsg.c
-> > > > > > > >  create mode 100644 drivers/vhost/vhost_rpmsg.h
-> > > > > > > >  create mode 100644 include/linux/virtio_rpmsg.h
-> > > > > > > >
-> > > > > > > > --
-> > > > > > > > 2.27.0
-> > > > > > >
-> > > >
-> >
+In case it wasn't clear already, this change won't be accepted
+at this time (despite your explanation above).
+
+						-Alex
+
+> 
+> For narmal situations, it is enough to just use normal priority QMI workqueue.
+> 
+>> Regards,
+>> Bjorn
+>>
+>>>
+>>> Signed-off-by: Wang Wenhu <wenhu.wang@vivo.com>
+>>> ---
+>>>  drivers/net/ipa/ipa_qmi.c             | 4 ++--
+>>>  drivers/net/wireless/ath/ath10k/qmi.c | 2 +-
+>>>  drivers/net/wireless/ath/ath11k/qmi.c | 2 +-
+>>>  drivers/remoteproc/qcom_sysmon.c      | 2 +-
+>>>  drivers/slimbus/qcom-ngd-ctrl.c       | 4 ++--
+>>>  drivers/soc/qcom/pdr_interface.c      | 4 ++--
+>>>  drivers/soc/qcom/qmi_interface.c      | 9 +++++++--
+>>>  include/linux/soc/qcom/qmi.h          | 3 ++-
+>>>  samples/qmi/qmi_sample_client.c       | 4 ++--
+>>>  9 files changed, 20 insertions(+), 14 deletions(-)
+> 
 
