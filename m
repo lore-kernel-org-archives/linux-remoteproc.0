@@ -4,78 +4,79 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-13.0 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49972C433E0
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  6 Aug 2020 17:24:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82B60C433E1
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  6 Aug 2020 17:24:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9B4C72311A
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  6 Aug 2020 17:24:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D880C2311A
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  6 Aug 2020 17:24:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="r5Rp1ZyQ"
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="Ygfsba48"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729132AbgHFRYn (ORCPT
+        id S1729733AbgHFRYn (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
         Thu, 6 Aug 2020 13:24:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44902 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44904 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729146AbgHFREC (ORCPT
+        with ESMTP id S1729874AbgHFRDf (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 6 Aug 2020 13:04:02 -0400
-Received: from mail-wm1-x344.google.com (mail-wm1-x344.google.com [IPv6:2a00:1450:4864:20::344])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4CE3BC0619C4
-        for <linux-remoteproc@vger.kernel.org>; Thu,  6 Aug 2020 06:49:53 -0700 (PDT)
-Received: by mail-wm1-x344.google.com with SMTP id 3so9772612wmi.1
-        for <linux-remoteproc@vger.kernel.org>; Thu, 06 Aug 2020 06:49:53 -0700 (PDT)
+        Thu, 6 Aug 2020 13:03:35 -0400
+Received: from mail-wr1-x442.google.com (mail-wr1-x442.google.com [IPv6:2a00:1450:4864:20::442])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 452A0C03461D
+        for <linux-remoteproc@vger.kernel.org>; Thu,  6 Aug 2020 06:25:40 -0700 (PDT)
+Received: by mail-wr1-x442.google.com with SMTP id r4so41020687wrx.9
+        for <linux-remoteproc@vger.kernel.org>; Thu, 06 Aug 2020 06:25:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=D2nPuh6+PfL0pW7ynAT+SzMECoPzN1zrqCQoSJsgD8I=;
-        b=r5Rp1ZyQLReNIQzLJnzNIwfTUQ2LL3PCoGanIuiyoHll/QnJXJrqFFw5jOcck2mM+v
-         L7IMLj4cPILDecQWjxOXKfxnlp37Rrn2Hkl6KflsSK+lZY8N1cipRb0fiPzy++JDQqt6
-         l8t8g1L6iwhDQjazMh+Ay4NJ6VNloCD+tdnAogxjSHEho40vqMhitBoJQcuxt7l/ONws
-         U0mzNbRE4E5OGJEnAawJUHfVaTTNL8KbpdA28hJ1IBahnFIug2GGzLTiXvRGiGlJf4Cu
-         cM+roV5Uvye60/uRXodWvu0Og3luLHWs9GmuZlcfs5drdGBkDLqBTI8QCwKifYnnshMK
-         JG5Q==
+        bh=57HL3Mhek2tPr4EHNczJ9yRHMOPu9jYI3Mibt+cFat8=;
+        b=Ygfsba48/5RguXx55Fy4DT6mPC2nit0tDjqGKYxagikf0yZ3StU3ryTf6RPDTM1Hq8
+         CUEa2GWqoHcIj89f5mBjDgLLSYHbJHSK6o0dffWzl2CBwN60qv3ZVD1JrgF3aTx2/Z/a
+         WaZJ+kF30wHbGLXbouRXiimf4C/xvYmtcXqejy5J1i5X3m1voxsIDC0v7BVByUh2q6NC
+         ZLOZaPCKNi5dXm72yQKqgqS4DBjQcdDklqp2TyRsljH2U2YK6M5RqljImEZuq0wJxcj9
+         ItkesKOAxa0KgImYv7gJOOoRy6M56PczFU5tqsc+qq3DtQlHgr6pO7XqvVd025q3jprx
+         QWHg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-transfer-encoding
          :content-language;
-        bh=D2nPuh6+PfL0pW7ynAT+SzMECoPzN1zrqCQoSJsgD8I=;
-        b=Zq1Pz/czS9I918VDs+pTZt2GzL1pZBP41YLzQRxieODfm+cU4p2wF2LnJ5P25ccSLr
-         l1Bchb9ogtW/GALPoNpN86/LSPvUwhqgUnrXCbjJGYJ3u11wP0eSQO1XBplhZI7dLIKZ
-         RrxoLPgurSEgIzIcE2jjmTSaDXc6+ip0RYU42dD8faTN8JVGW56D5OYzhmTm/1bmV8GJ
-         AQLYxTr9aT+v3V/cbCwWug/3Thu/lAqOP/J57dmRZ5RdFkmQQ4Ym+Ki3KU+GVNv7fQu/
-         Ts3uGKHbxyu+rX0KrCTRkwJ/RpjpIl+d0sk0vUdVjfOgJ72RG+32OLE75L1H5a3i7JCz
-         rrgg==
-X-Gm-Message-State: AOAM53232I88e9RkyHd0xaOlw3si0sfqGejJZZlxhCPBfN6GcDtCWdce
-        J4+Ta+fn9qVGapk/y5oWv0Q8wQ==
-X-Google-Smtp-Source: ABdhPJzCtC50wteJfCe1Z+M9Kc8c7ktFbmPycBp15RkNBzYTe4u5SEDG5ziRmdrOT3g3TUsL6szDNA==
-X-Received: by 2002:a1c:28c4:: with SMTP id o187mr7776064wmo.62.1596721788974;
-        Thu, 06 Aug 2020 06:49:48 -0700 (PDT)
+        bh=57HL3Mhek2tPr4EHNczJ9yRHMOPu9jYI3Mibt+cFat8=;
+        b=seW51kMHb12B+KmawAenlL0+LAQvKWWDADzHP2zwLMySG3wHpmy3XoNlMjF2HZnuQY
+         5W5cheNwxFWiZ8NZs4xCsN8ANTGNfVynt6k8EQuSK446kZmLX05COp6bw1R1U4k9cJLi
+         7lASQ+knOBq4eDloJc37x6uNYMu8W5SmdbNifFXIVZJc66rR4hJe9r23Z12nQocHqPhP
+         LCN5VIAhsW4dLtBnlczS10ru8W/5en2Fqp5PN6Zf72MtjaOXqBcV8T/CAC5u2pn7vmSI
+         KWRxmKvihqMK8TsTSP0vfk5UM4JN6+pERtKwp9YFX4TTllQb0V6t5pQNkHz6HKkfTlAb
+         c7Dw==
+X-Gm-Message-State: AOAM5321wuWLsC7zEHrImAXftM9pmyAYsf8oaiuBi6y53ocV/iJh2YCy
+        DutXEMhgi7Nw5btWSYQqNbrHIw==
+X-Google-Smtp-Source: ABdhPJyRXZkGjLDuIuKYo610OUx0FT6uueCMypc6l+mPGszPnxiow1UwkKF7kmNpjRP9XliwnJOwqQ==
+X-Received: by 2002:adf:ee51:: with SMTP id w17mr7779745wro.239.1596720338502;
+        Thu, 06 Aug 2020 06:25:38 -0700 (PDT)
 Received: from linux.local (laubervilliers-658-1-213-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id h11sm6535503wrb.68.2020.08.06.06.49.47
+        by smtp.gmail.com with ESMTPSA id v29sm6558153wrv.51.2020.08.06.06.25.37
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 06 Aug 2020 06:49:48 -0700 (PDT)
-Subject: Re: [PATCH 3/6] remoteproc: mtk_vpu_rproc: Add support of JTAG
+        Thu, 06 Aug 2020 06:25:37 -0700 (PDT)
+Subject: Re: [PATCH 2/6] remoteproc: Add a remoteproc driver for the MT8183's
+ APU
 To:     Mathieu Poirier <mathieu.poirier@linaro.org>
 Cc:     ohad@wizery.com, bjorn.andersson@linaro.org, robh+dt@kernel.org,
         matthias.bgg@gmail.com, linux-remoteproc@vger.kernel.org,
         devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org
 References: <20200713132927.24925-1-abailon@baylibre.com>
- <20200713132927.24925-4-abailon@baylibre.com>
- <20200721195231.GA1227776@xps15>
+ <20200713132927.24925-3-abailon@baylibre.com>
+ <20200720221726.GD1113627@xps15>
 From:   Alexandre Bailon <abailon@baylibre.com>
-Message-ID: <cc53a2c1-4349-e489-0087-a31a13edef8f@baylibre.com>
-Date:   Thu, 6 Aug 2020 15:49:49 +0200
+Message-ID: <0a3ce3bb-87aa-c1a7-6791-b4482117e3e2@baylibre.com>
+Date:   Thu, 6 Aug 2020 15:25:38 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.11.0
 MIME-Version: 1.0
-In-Reply-To: <20200721195231.GA1227776@xps15>
+In-Reply-To: <20200720221726.GD1113627@xps15>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Content-Language: en-US
@@ -84,306 +85,432 @@ Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
+Hi Mathieu,
 
-On 7/21/20 9:52 PM, Mathieu Poirier wrote:
-> On Mon, Jul 13, 2020 at 03:29:24PM +0200, Alexandre Bailon wrote:
->> The DSP could be debugged using JTAG.
->> The support of JTAG could enabled at build time and it could be enabled
->> using debugfs.
+On 7/21/20 12:17 AM, Mathieu Poirier wrote:
+> On Mon, Jul 13, 2020 at 03:29:23PM +0200, Alexandre Bailon wrote:
+>> This adds a driver to control the APU present in the MT8183.
+>> This loads the firmware and start the DSP.
 >>
 >> Signed-off-by: Alexandre Bailon <abailon@baylibre.com>
 >> ---
->>   drivers/remoteproc/Kconfig         |   9 ++
->>   drivers/remoteproc/mtk_apu_rproc.c | 156 ++++++++++++++++++++++++++++-
->>   2 files changed, 162 insertions(+), 3 deletions(-)
+>>   drivers/remoteproc/Kconfig         |  10 +
+>>   drivers/remoteproc/Makefile        |   1 +
+>>   drivers/remoteproc/mtk_apu_rproc.c | 308 +++++++++++++++++++++++++++++
+> I would name the file mtk_apu.c to be consistent with the existing mtk_scp.c
+I will rename it
+>
+>>   3 files changed, 319 insertions(+)
+>>   create mode 100644 drivers/remoteproc/mtk_apu_rproc.c
 >>
 >> diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
->> index e116d4a12ac3..e1158563e2e8 100644
+>> index c4d1731295eb..e116d4a12ac3 100644
 >> --- a/drivers/remoteproc/Kconfig
 >> +++ b/drivers/remoteproc/Kconfig
->> @@ -52,6 +52,15 @@ config MTK_APU
+>> @@ -42,6 +42,16 @@ config MTK_SCP
 >>   
 >>   	  It's safe to say N here.
 >>   
->> +config MTK_APU_JTAG
->> +	bool "Enable support of JTAG"
->> +	depends on MTK_APU
+>> +config MTK_APU
+>> +	tristate "Mediatek APU remoteproc support"
+>> +	depends on ARCH_MEDIATEK
+>> +	depends on MTK_IOMMU
 >> +	help
->> +	  Say y to enable support of JTAG.
->> +	  By default, JTAG will remain disabled until it is enabled using
->> +	  debugfs: remoteproc/remoteproc0/jtag. Write 1 to enable it and
->> +	  0 to disable it.
+>> +	  Say y to support the Mediatek's Accelerated Processing Unit (APU) via
+>> +	  the remote processor framework.
+>> +
+>> +	  It's safe to say N here.
 >> +
 >>   config OMAP_REMOTEPROC
 >>   	tristate "OMAP remoteproc support"
 >>   	depends on ARCH_OMAP4 || SOC_OMAP5 || SOC_DRA7XX
+>> diff --git a/drivers/remoteproc/Makefile b/drivers/remoteproc/Makefile
+>> index e8b886e511f0..2ea231b75fa6 100644
+>> --- a/drivers/remoteproc/Makefile
+>> +++ b/drivers/remoteproc/Makefile
+>> @@ -12,6 +12,7 @@ remoteproc-y				+= remoteproc_elf_loader.o
+>>   obj-$(CONFIG_IMX_REMOTEPROC)		+= imx_rproc.o
+>>   obj-$(CONFIG_INGENIC_VPU_RPROC)		+= ingenic_rproc.o
+>>   obj-$(CONFIG_MTK_SCP)			+= mtk_scp.o mtk_scp_ipi.o
+>> +obj-$(CONFIG_MTK_APU)			+= mtk_apu_rproc.o
+>>   obj-$(CONFIG_OMAP_REMOTEPROC)		+= omap_remoteproc.o
+>>   obj-$(CONFIG_WKUP_M3_RPROC)		+= wkup_m3_rproc.o
+>>   obj-$(CONFIG_DA8XX_REMOTEPROC)		+= da8xx_remoteproc.o
 >> diff --git a/drivers/remoteproc/mtk_apu_rproc.c b/drivers/remoteproc/mtk_apu_rproc.c
->> index fb416a817ef3..f2342b747a35 100644
->> --- a/drivers/remoteproc/mtk_apu_rproc.c
+>> new file mode 100644
+>> index 000000000000..fb416a817ef3
+>> --- /dev/null
 >> +++ b/drivers/remoteproc/mtk_apu_rproc.c
->> @@ -5,6 +5,7 @@
->>   
->>   #include <linux/bitops.h>
->>   #include <linux/clk.h>
->> +#include <linux/debugfs.h>
->>   #include <linux/delay.h>
->>   #include <linux/interrupt.h>
->>   #include <linux/io.h>
->> @@ -14,6 +15,7 @@
->>   #include <linux/highmem.h>
->>   #include <linux/module.h>
->>   #include <linux/of_reserved_mem.h>
->> +#include <linux/pinctrl/consumer.h>
->>   #include <linux/platform_device.h>
->>   #include <linux/remoteproc.h>
->>   
->> @@ -48,6 +50,11 @@
->>   #define CORE_DEFAULT1				(0x00000140)
->>   #define  CORE_DEFAULT0_ARUSER_IDMA_USE_IOMMU	(0x10 << 0)
->>   #define  CORE_DEFAULT0_AWUSER_IDMA_USE_IOMMU	(0x10 << 5)
->> +#define CORE_DEFAULT2				(0x00000144)
->> +#define CORE_DEFAULT2_DBG_EN			BIT(3)
->> +#define CORE_DEFAULT2_NIDEN			BIT(2)
->> +#define CORE_DEFAULT2_SPNIDEN			BIT(1)
->> +#define CORE_DEFAULT2_SPIDEN			BIT(0)
->>   #define CORE_XTENSA_ALTRESETVEC			(0x000001F8)
->>   
->>   struct mtk_vpu_rproc {
->> @@ -59,6 +66,13 @@ struct mtk_vpu_rproc {
->>   	struct clk *axi;
->>   	struct clk *ipu;
->>   	struct clk *jtag;
+>> @@ -0,0 +1,308 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +/*
+>> + * Copyright (C) 2020 BayLibre SAS
+>> + */
 >> +
->> +#ifdef CONFIG_MTK_APU_JTAG
->> +	struct pinctrl *pinctrl;
->> +	struct pinctrl_state *pinctrl_default;
->> +	struct pinctrl_state *pinctrl_jtag;
->> +	bool jtag_enabled;
->> +#endif
->>   };
->>   
->>   static u32 vpu_read32(struct mtk_vpu_rproc *vpu_rproc, u32 off)
->> @@ -149,6 +163,133 @@ static irqreturn_t handle_event(int irq, void *data)
->>   	return IRQ_HANDLED;
->>   }
->>   
->> +#ifdef CONFIG_MTK_APU_JTAG
->> +
->> +static int vpu_enable_jtag(struct mtk_vpu_rproc *vpu_rproc)
->> +{
->> +	int ret = 0;
->> +
->> +	if (vpu_rproc->jtag_enabled)
->> +		return -EINVAL;
->> +
->> +	ret = pinctrl_select_state(vpu_rproc->pinctrl,
->> +				   vpu_rproc->pinctrl_jtag);
->> +	if (ret < 0) {
->> +		dev_err(vpu_rproc->dev, "Failed to configure pins for JTAG\n");
->> +		return ret;
->> +	}
->> +
->> +	vpu_write32(vpu_rproc, CORE_DEFAULT2,
->> +		    CORE_DEFAULT2_SPNIDEN | CORE_DEFAULT2_SPIDEN |
->> +		    CORE_DEFAULT2_NIDEN | CORE_DEFAULT2_DBG_EN);
->> +
->> +	vpu_rproc->jtag_enabled = 1;
-> There should be mutex that gets taken at the beginning and released at the end of
-> this function.
+>> +#include <linux/bitops.h>
+>> +#include <linux/clk.h>
+>> +#include <linux/delay.h>
+>> +#include <linux/interrupt.h>
+>> +#include <linux/io.h>
+>> +#include <linux/iommu.h>
+>> +#include <linux/irq.h>
+>> +#include <linux/kernel.h>
+>> +#include <linux/highmem.h>
+> Move this below "delay.h"
 >
+>> +#include <linux/module.h>
+>> +#include <linux/of_reserved_mem.h>
+>> +#include <linux/platform_device.h>
+>> +#include <linux/remoteproc.h>
 >> +
->> +	return ret;
->> +}
+>> +#include "remoteproc_internal.h"
 >> +
->> +static int vpu_disable_jtag(struct mtk_vpu_rproc *vpu_rproc)
->> +{
->> +	int ret = 0;
->> +
->> +	if (!vpu_rproc->jtag_enabled)
->> +		return -EINVAL;
->> +
->> +	vpu_write32(vpu_rproc, CORE_DEFAULT2, 0);
->> +
->> +	ret = pinctrl_select_state(vpu_rproc->pinctrl,
->> +				   vpu_rproc->pinctrl_default);
->> +	if (ret < 0) {
->> +		dev_err(vpu_rproc->dev,
->> +			"Failed to configure pins to default\n");
->> +		return ret;
->> +	}
->> +
->> +	vpu_rproc->jtag_enabled = 0;
-> Same comment as above.
+>> +/* From MT8183 4.5 Vision Processor Unit (VPU).pdf datasheet */
+>> +#define SW_RST					(0x0000000C)
+>> +#define  SW_RST_OCD_HALT_ON_RST			BIT(12)
+>> +#define  SW_RST_IPU_D_RST			BIT(8)
+>> +#define  SW_RST_IPU_B_RST			BIT(4)
+> Please don't indent defines.
 >
+>> +#define CORE_CTRL				(0x00000110)
+>> +#define  CORE_CTRL_PDEBUG_ENABLE		BIT(31)
+>> +#define	 CORE_CTRL_SRAM_64K_iMEM		(0x00 << 27)
+>> +#define	 CORE_CTRL_SRAM_96K_iMEM		(0x01 << 27)
+>> +#define	 CORE_CTRL_SRAM_128K_iMEM		(0x02 << 27)
+>> +#define	 CORE_CTRL_SRAM_192K_iMEM		(0x03 << 27)
+>> +#define	 CORE_CTRL_SRAM_256K_iMEM		(0x04 << 27)
+>> +#define  CORE_CTRL_PBCLK_ENABLE			BIT(26)
+>> +#define  CORE_CTRL_RUN_STALL			BIT(23)
+>> +#define  CORE_CTRL_STATE_VECTOR_SELECT		BIT(19)
+>> +#define  CORE_CTRL_PIF_GATED			BIT(17)
+>> +#define  CORE_CTRL_NMI				BIT(0)
+>> +#define CORE_XTENSA_INT				(0x00000114)
+>> +#define CORE_CTL_XTENSA_INT			(0x00000118)
+>> +#define CORE_DEFAULT0				(0x0000013C)
+>> +#define  CORE_DEFAULT0_QOS_SWAP_0		(0x00 << 28)
+>> +#define  CORE_DEFAULT0_QOS_SWAP_1		(0x01 << 28)
+>> +#define  CORE_DEFAULT0_QOS_SWAP_2		(0x02 << 28)
+>> +#define  CORE_DEFAULT0_QOS_SWAP_3		(0x03 << 28)
+>> +#define  CORE_DEFAULT0_ARUSER_USE_IOMMU		(0x10 << 23)
+>> +#define  CORE_DEFAULT0_AWUSER_USE_IOMMU		(0x10 << 18)
+>> +#define CORE_DEFAULT1				(0x00000140)
+>> +#define  CORE_DEFAULT0_ARUSER_IDMA_USE_IOMMU	(0x10 << 0)
+>> +#define  CORE_DEFAULT0_AWUSER_IDMA_USE_IOMMU	(0x10 << 5)
+>> +#define CORE_XTENSA_ALTRESETVEC			(0x000001F8)
 >> +
->> +	return ret;
->> +}
+>> +struct mtk_vpu_rproc {
+>> +	struct device *dev;
+>> +	struct rproc *rproc;
 >> +
->> +static ssize_t rproc_jtag_read(struct file *filp, char __user *userbuf,
->> +			       size_t count, loff_t *ppos)
->> +{
->> +	struct rproc *rproc = filp->private_data;
->> +	struct mtk_vpu_rproc *vpu_rproc = (struct mtk_vpu_rproc *)rproc->priv;
->> +	char *buf = vpu_rproc->jtag_enabled ? "enabled\n" : "disabled\n";
->> +
->> +	return simple_read_from_buffer(userbuf, count, ppos, buf, strlen(buf));
->> +}
->> +
->> +static ssize_t rproc_jtag_write(struct file *filp, const char __user *user_buf,
->> +				size_t count, loff_t *ppos)
->> +{
->> +	struct rproc *rproc = filp->private_data;
->> +	struct mtk_vpu_rproc *vpu_rproc = (struct mtk_vpu_rproc *)rproc->priv;
->> +	char buf[10];
->> +	int ret;
->> +
->> +	if (count < 1 || count > sizeof(buf))
->> +		return -EINVAL;
->> +
->> +	ret = copy_from_user(buf, user_buf, count);
->> +	if (ret)
->> +		return -EFAULT;
->> +
->> +	/* remove end of line */
->> +	if (buf[count - 1] == '\n')
->> +		buf[count - 1] = '\0';
->> +
->> +	if (!strncmp(buf, "1", count) || !strncmp(buf, "enabled", count))
->> +		ret = vpu_enable_jtag(vpu_rproc);
->> +	else if (!strncmp(buf, "0", count) || !strncmp(buf, "disabled", count))
->> +		ret = vpu_disable_jtag(vpu_rproc);
->> +	else
->> +		return -EINVAL;
-> I think we should simply stick with "enabled" and "disabled" to be in line with
-> what is done in rproc_recovery_write().
->
->> +
->> +	return ret ? ret : count;
->> +}
->> +
->> +static const struct file_operations rproc_jtag_ops = {
->> +	.read = rproc_jtag_read,
->> +	.write = rproc_jtag_write,
->> +	.open = simple_open,
+>> +	void __iomem *base;
+>> +	int irq;
+>> +	struct clk *axi;
+>> +	struct clk *ipu;
+>> +	struct clk *jtag;
 >> +};
 >> +
->> +static int vpu_jtag_probe(struct mtk_vpu_rproc *vpu_rproc)
+>> +static u32 vpu_read32(struct mtk_vpu_rproc *vpu_rproc, u32 off)
 >> +{
->> +	int ret;
+>> +	return readl(vpu_rproc->base + off);
+>> +}
 >> +
->> +	if (!vpu_rproc->rproc->dbg_dir)
->> +		return -ENODEV;
+>> +static void vpu_write32(struct mtk_vpu_rproc *vpu_rproc, u32 off, u32 value)
+>> +{
+>> +	writel(value, vpu_rproc->base + off);
+>> +}
+> Not sure that much is gained by adding the above two functions.  Just using
+> readl/writel would suit me just fine.
+I though this was more convenient to use but using readl/writel is also 
+fine for me.
 >> +
->> +	vpu_rproc->pinctrl = devm_pinctrl_get(vpu_rproc->dev);
->> +	if (IS_ERR(vpu_rproc->pinctrl)) {
->> +		dev_warn(vpu_rproc->dev, "Failed to find JTAG pinctrl\n");
->> +		return PTR_ERR(vpu_rproc->pinctrl);
->> +	}
+>> +static int mtk_vpu_rproc_start(struct rproc *rproc)
+>> +{
+>> +	struct mtk_vpu_rproc *vpu_rproc = rproc->priv;
+>> +	u32 core_ctrl;
 >> +
->> +	vpu_rproc->pinctrl_default = pinctrl_lookup_state(vpu_rproc->pinctrl,
->> +							PINCTRL_STATE_DEFAULT);
-> Indentation problem.
->
->> +	if (IS_ERR(vpu_rproc->pinctrl_default))
->> +		return PTR_ERR(vpu_rproc->pinctrl_default);
+>> +	vpu_write32(vpu_rproc, CORE_XTENSA_ALTRESETVEC, rproc->bootaddr);
 >> +
->> +	vpu_rproc->pinctrl_jtag = pinctrl_lookup_state(vpu_rproc->pinctrl,
->> +						       "jtag");
->> +	if (IS_ERR(vpu_rproc->pinctrl_jtag))
->> +		return PTR_ERR(vpu_rproc->pinctrl_jtag);
+>> +	core_ctrl = vpu_read32(vpu_rproc, CORE_CTRL);
+>> +	core_ctrl |= CORE_CTRL_PDEBUG_ENABLE | CORE_CTRL_PBCLK_ENABLE |
+>> +		     CORE_CTRL_STATE_VECTOR_SELECT | CORE_CTRL_RUN_STALL |
+>> +		     CORE_CTRL_PIF_GATED;
+>> +	vpu_write32(vpu_rproc, CORE_CTRL, core_ctrl);
 >> +
->> +	ret = pinctrl_select_state(vpu_rproc->pinctrl,
->> +				   vpu_rproc->pinctrl_default);
-> What is the default configuration for?  It does not seem to be needed to
-> properly boot the remote processor since it is not part of the example in the
-> bindings or dts patch included in this set.   Moreover it is part of a
-> configuration option so I really don't understand what it does.
+>> +	vpu_write32(vpu_rproc, SW_RST, SW_RST_OCD_HALT_ON_RST |
+>> +				       SW_RST_IPU_B_RST | SW_RST_IPU_D_RST);
+>> +	ndelay(27);
+> What is this for?  The state of the VPU can't be polled?
 
-I have a poor knowledge of pinctrl framework so I may have done things 
-wrong here.
-This is not really needed for the remote processor.
-By default, I don't want pin to be configured for JTAG until we enable 
-it and
-I want to be able to revert it the default state.
-May be this is too much and I should assume that if we build the driver 
-with JTAG enabled
-then we want the pins to be configured for JTAG by default.
+TBH, I don't know. I got the programming model from Mediatek's kernel.
+
+I assumed that was the minimum time required to maintain reset asserted 
+to make it effective.
 
 >
->
->
->> +	if (ret < 0)
->> +		return ret;
+>> +	vpu_write32(vpu_rproc, SW_RST, 0);
 >> +
->> +	debugfs_create_file("jtag", 0600, vpu_rproc->rproc->dbg_dir,
->> +			    vpu_rproc->rproc, &rproc_jtag_ops);
+>> +	core_ctrl &= ~CORE_CTRL_PIF_GATED;
+>> +	vpu_write32(vpu_rproc, CORE_CTRL, core_ctrl);
+>> +
+>> +	vpu_write32(vpu_rproc, CORE_DEFAULT0, CORE_DEFAULT0_AWUSER_USE_IOMMU |
+>> +					      CORE_DEFAULT0_ARUSER_USE_IOMMU |
+>> +					      CORE_DEFAULT0_QOS_SWAP_1);
+>> +	vpu_write32(vpu_rproc, CORE_DEFAULT1,
+>> +		    CORE_DEFAULT0_AWUSER_IDMA_USE_IOMMU |
+>> +		    CORE_DEFAULT0_ARUSER_IDMA_USE_IOMMU);
+>> +
+>> +	core_ctrl &= ~CORE_CTRL_RUN_STALL;
+>> +	vpu_write32(vpu_rproc, CORE_CTRL, core_ctrl);
+> I would certainly appreciate more comments that describe that is going on in
+> this function.
+I will try to comment a little more but again, this come from Mediatek's 
+kernel.
+Even if I have access to the datasheet, there are no much details.
+>
 >> +
 >> +	return 0;
 >> +}
->> +#endif /* CONFIG_MTK_APU_JTAG */
 >> +
->>   static int mtk_vpu_rproc_probe(struct platform_device *pdev)
->>   {
->>   	struct device *dev = &pdev->dev;
->> @@ -228,16 +369,16 @@ static int mtk_vpu_rproc_probe(struct platform_device *pdev)
->>   		goto clk_disable_ipu;
->>   	}
->>   
->> -	vpu_rproc->jtag = devm_clk_get_optional(dev, "jtag");
->> +	vpu_rproc->jtag = devm_clk_get(vpu_rproc->dev, "jtag");
-> As I remarked in my comments on the previous patch, this should have been
-> devm_clk_get() from the start.  Either that or the bindings are wrong.
+>> +static int mtk_vpu_rproc_stop(struct rproc *rproc)
+>> +{
+>> +	struct mtk_vpu_rproc *vpu_rproc = rproc->priv;
+>> +	u32 core_ctrl;
+>> +
+>> +	core_ctrl = vpu_read32(vpu_rproc, CORE_CTRL);
+>> +	vpu_write32(vpu_rproc, CORE_CTRL, core_ctrl | CORE_CTRL_RUN_STALL);
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static void mtk_vpu_rproc_kick(struct rproc *rproc, int vqid)
+>> +{
+>> +	struct mtk_vpu_rproc *vpu_rproc = rproc->priv;
+>> +
+>> +	vpu_write32(vpu_rproc, CORE_CTL_XTENSA_INT, 1 << vqid);
+>> +}
+>> +
+>> +static const struct rproc_ops mtk_vpu_rproc_ops = {
+>> +	.start		= mtk_vpu_rproc_start,
+>> +	.stop		= mtk_vpu_rproc_stop,
+>> +	.kick		= mtk_vpu_rproc_kick,
+>> +};
+>> +
+>> +static irqreturn_t mtk_vpu_rproc_callback(int irq, void *data)
+>> +{
+>> +	struct rproc *rproc = (struct rproc *)data;
+> There is no need to cast when working with a void pointer.  The same comment
+> applies throughout.
+>
+>> +	struct mtk_vpu_rproc *vpu_rproc = (struct mtk_vpu_rproc *)rproc->priv;
+>> +
+>> +	vpu_write32(vpu_rproc, CORE_XTENSA_INT, 1);
+>> +
+>> +	return IRQ_WAKE_THREAD;
+>> +}
+>> +
+>> +static irqreturn_t handle_event(int irq, void *data)
+>> +{
+>> +	struct rproc *rproc = (struct rproc *)data;
+>> +
+>> +	rproc_vq_interrupt(rproc, 0);
+>> +	rproc_vq_interrupt(rproc, 1);
+>> +
+>> +	return IRQ_HANDLED;
+>> +}
+>> +
+>> +static int mtk_vpu_rproc_probe(struct platform_device *pdev)
+>> +{
+>> +	struct device *dev = &pdev->dev;
+>> +	struct mtk_vpu_rproc *vpu_rproc;
+>> +	struct rproc *rproc;
+>> +	struct resource *res;
+>> +	int ret;
+>> +
+>> +	rproc = rproc_alloc(dev, "apu", &mtk_vpu_rproc_ops, NULL,
+>> +			    sizeof(*vpu_rproc));
+> The problem with hard coding the name of the remote process is that it work on
+> only when there is a single processor.  Based on the DTS extention sent with
+> this serie, there seems to be a possibility of having more the one.  As such
+> both remote processor will be called "apu", mandating you to look at the
+> platform resources to know which is which.  Consider using dev_name() or
+> dev->of_node->name.
+>
+>> +	if (!rproc)
+>> +		return -ENOMEM;
+>> +
+>> +	rproc->recovery_disabled = true;
+>> +	rproc->has_iommu = false;
+>> +
+>> +	vpu_rproc = rproc->priv;
+>> +	vpu_rproc->rproc = rproc;
+>> +	vpu_rproc->dev = dev;
+>> +
+>> +	platform_set_drvdata(pdev, rproc);
+>> +
+>> +	rproc->domain = iommu_get_domain_for_dev(dev);
+>> +	if (!rproc->domain) {
+>> +		dev_err(dev, "Failed to get the IOMMU domain\n");
+>> +		ret = -EINVAL;
+>> +		goto free_rproc;
+>> +	}
+>> +
+>> +
+>> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+>> +	vpu_rproc->base = devm_ioremap_resource(&pdev->dev, res);
+>> +	if (IS_ERR(vpu_rproc->base)) {
+>> +		dev_err(&pdev->dev, "Failed to map mmio\n");
+> Above dev_err() is used with @dev while here @pdev->dev is.  Please pick one you
+> like and stick with it.
+>
+>> +		ret = PTR_ERR(vpu_rproc->base);
+>> +		goto free_rproc;
+>> +	}
+>> +
+>> +	vpu_rproc->irq = platform_get_irq(pdev, 0);
+>> +	if (vpu_rproc->irq < 0) {
+>> +		ret = vpu_rproc->irq;
+>> +		goto free_rproc;
+>> +	}
+>> +
+>> +	ret = devm_request_threaded_irq(dev, vpu_rproc->irq,
+>> +					mtk_vpu_rproc_callback, handle_event,
+>> +					IRQF_SHARED | IRQF_ONESHOT,
+>> +					"mtk_vpu-remoteproc", rproc);
+> Same problem as above, i.e hard coding the name of the interrupt will be
+> confusing when probing sysfs.  Here rproc->index holds the value that
+> corresponds to 'X' in /sys/dev/class/remoteproc/remoteprocX.  Simply build a
+> string using that and feed it to devm_request_threaded_ifq().
+>
+>
+>> +	if (ret) {
+>> +		dev_err(dev, "devm_request_threaded_irq error: %d\n", ret);
+>> +		goto free_rproc;
+>> +	}
+>> +
+>> +	vpu_rproc->ipu = devm_clk_get(dev, "ipu");
+>> +	if (IS_ERR(vpu_rproc->ipu)) {
+>> +		dev_err(dev, "Failed to get ipu clock\n");
+>> +		ret = PTR_ERR(vpu_rproc->ipu);
+>> +		goto free_rproc;
+>> +	}
+>> +
+>> +	ret = clk_prepare_enable(vpu_rproc->ipu);
+>> +	if (ret) {
+>> +		dev_err(dev, "Failed to enable ipu clock\n");
+>> +		goto free_rproc;
+>> +	}
+>> +
+>> +	vpu_rproc->axi = devm_clk_get(dev, "axi");
+>> +	if (IS_ERR(vpu_rproc->axi)) {
+>> +		dev_err(dev, "Failed to get axi clock\n");
+>> +		ret = PTR_ERR(vpu_rproc->axi);
+>> +		goto clk_disable_ipu;
+>> +	}
+>> +
+>> +	ret = clk_prepare_enable(vpu_rproc->axi);
+>> +	if (ret) {
+>> +		dev_err(dev, "Failed to enable axi clock\n");
+>> +		goto clk_disable_ipu;
+>> +	}a
+> Please look at how Paul use the clock bulk API to deal with multiple clocs in
+> ingenic_rproc.c and see if it is possible to use the same scheme.
+I did not knew the bulk API. I think it should work.
+>
+>> +
+>> +	vpu_rproc->jtag = devm_clk_get_optional(dev, "jtag");
+> Why is the jtag clock optional when the binding document says that it "seems to
+> be required to run the DSP, even when JTAG is not in use"?
 
-I should have not made the change in this patch. I will fix it.
+I forget to change it to devm_clk_get when I figured out this was 
+actually not optional.
 
 Thanks,
 Alexandre
 
 >
->>   	if (IS_ERR(vpu_rproc->jtag)) {
->> -		dev_err(dev, "Failed to enable jtag clock\n");
->> +		dev_err(vpu_rproc->dev, "Failed to get jtag clock\n");
-> Why go from dev to vpu_rproc->dev?
->
->>   		ret = PTR_ERR(vpu_rproc->jtag);
->>   		goto clk_disable_axi;
->>   	}
->>   
->>   	ret = clk_prepare_enable(vpu_rproc->jtag);
->>   	if (ret) {
->> -		dev_err(dev, "Failed to enable jtag clock\n");
->> +		dev_err(vpu_rproc->dev, "Failed to enable jtag clock\n");
-> Same here.
->
->>   		goto clk_disable_axi;
->>   	}
->>   
->> @@ -253,6 +394,12 @@ static int mtk_vpu_rproc_probe(struct platform_device *pdev)
->>   		goto free_mem;
->>   	}
->>   
->> +#ifdef CONFIG_MTK_APU_JTAG
->> +	ret = vpu_jtag_probe(vpu_rproc);
->> +	if (ret)
->> +		dev_warn(dev, "Failed to configure jtag\n");
->> +#endif
-> Please don't use #ifdefs in the code like that.  It is better to introduce a
-> #else (above) with stubs that don't do anything.
->
+>> +	if (IS_ERR(vpu_rproc->jtag)) {
+>> +		dev_err(dev, "Failed to enable jtag clock\n");
+>> +		ret = PTR_ERR(vpu_rproc->jtag);
+>> +		goto clk_disable_axi;
+>> +	}
 >> +
->>   	return 0;
->>   
->>   free_mem:
->> @@ -277,6 +424,9 @@ static int mtk_vpu_rproc_remove(struct platform_device *pdev)
->>   
->>   	disable_irq(vpu_rproc->irq);
->>   
->> +#ifdef CONFIG_MTK_APU_JTAG
->> +	vpu_disable_jtag(vpu_rproc);
->> +#endif
->>   	rproc_del(rproc);
->>   	of_reserved_mem_device_release(dev);
->>   	clk_disable_unprepare(vpu_rproc->jtag);
+>> +	ret = clk_prepare_enable(vpu_rproc->jtag);
+>> +	if (ret) {
+>> +		dev_err(dev, "Failed to enable jtag clock\n");
+>> +		goto clk_disable_axi;
+>> +	}
+>> +
+>> +	ret = of_reserved_mem_device_init(dev);
+>> +	if (ret) {
+>> +		dev_err(dev, "device does not have specific CMA pool\n");
+>> +		goto clk_disable_jtag;
+>> +	}
+>> +
+>> +	ret = rproc_add(rproc);
+>> +	if (ret) {
+>> +		dev_err(dev, "rproc_add failed: %d\n", ret);
+>> +		goto free_mem;
+>> +	}
+>> +
+>> +	return 0;
+>> +
+>> +free_mem:
+>> +	of_reserved_mem_device_release(dev);
+>> +clk_disable_jtag:
+>> +	clk_disable_unprepare(vpu_rproc->jtag);
+>> +clk_disable_axi:
+>> +	clk_disable_unprepare(vpu_rproc->axi);
+>> +clk_disable_ipu:
+>> +	clk_disable_unprepare(vpu_rproc->ipu);
+>> +free_rproc:
+>> +	rproc_free(rproc);
+>> +
+>> +	return ret;
+>> +}
+>> +
+>> +static int mtk_vpu_rproc_remove(struct platform_device *pdev)
+>> +{
+>> +	struct rproc *rproc = platform_get_drvdata(pdev);
+>> +	struct mtk_vpu_rproc *vpu_rproc = (struct mtk_vpu_rproc *)rproc->priv;
+>> +	struct device *dev = &pdev->dev;
+>> +
+>> +	disable_irq(vpu_rproc->irq);
+>> +
+>> +	rproc_del(rproc);
+>> +	of_reserved_mem_device_release(dev);
+>> +	clk_disable_unprepare(vpu_rproc->jtag);
+>> +	clk_disable_unprepare(vpu_rproc->axi);
+>> +	clk_disable_unprepare(vpu_rproc->ipu);
+>> +	rproc_free(rproc);
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static const struct of_device_id mtk_vpu_rproc_of_match[] __maybe_unused = {
+> Why is "__maybe_unused" needed?
+>
+> Thanks,
+> Mathieu
+>
+>
+>> +	{ .compatible = "mediatek,mt8183-apu", },
+>> +	{ /* sentinel */ },
+>> +};
+>> +MODULE_DEVICE_TABLE(of, mtk_vpu_rproc_of_match);
+>> +
+>> +static struct platform_driver mtk_vpu_rproc_driver = {
+>> +	.probe = mtk_vpu_rproc_probe,
+>> +	.remove = mtk_vpu_rproc_remove,
+>> +	.driver = {
+>> +		.name = "mtk_vpu-rproc",
+>> +		.of_match_table = of_match_ptr(mtk_vpu_rproc_of_match),
+>> +	},
+>> +};
+>> +module_platform_driver(mtk_vpu_rproc_driver);
+>> +
+>> +MODULE_LICENSE("GPL v2");
+>> +MODULE_AUTHOR("Alexandre Bailon");
+>> +MODULE_DESCRIPTION("Mt8183 VPU Remote Processor control driver");
 >> -- 
 >> 2.26.2
 >>
