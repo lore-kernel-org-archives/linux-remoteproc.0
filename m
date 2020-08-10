@@ -2,162 +2,116 @@ Return-Path: <SRS0=2sxO=BU=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E39FC433DF
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 10 Aug 2020 16:53:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 692BDC433DF
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 10 Aug 2020 22:43:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 31F452083B
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 10 Aug 2020 16:53:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4355D2075D
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 10 Aug 2020 22:43:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="tZU4MM/S"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="daq6B7hM"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727898AbgHJQxE (ORCPT
+        id S1726452AbgHJWnK (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 10 Aug 2020 12:53:04 -0400
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:35346 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726720AbgHJQxD (ORCPT
+        Mon, 10 Aug 2020 18:43:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46680 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726821AbgHJWnJ (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 10 Aug 2020 12:53:03 -0400
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 07AGqqfd104330;
-        Mon, 10 Aug 2020 11:52:52 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1597078372;
-        bh=YTBNSuZB1ViSASi+2W5j6KH0rLJ0ephtkfszy/zEjVg=;
-        h=Subject:From:To:CC:References:Date:In-Reply-To;
-        b=tZU4MM/StuZckikVJtsvPHNAs5WxAZEvCytqpDar+fxaCplcRREoRzF1ECr9WbcnD
-         Wvl1dqcEv4USEx8O9kXYXWA5NgO89WqYAIUqNH6bh9nPd7EwTwg78m45xpzBg4iVTo
-         a+zN/rqlFMP9W4l5BtdiFJC10mljni9qh7J9SiLI=
-Received: from DLEE100.ent.ti.com (dlee100.ent.ti.com [157.170.170.30])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 07AGqpUv107641
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 10 Aug 2020 11:52:51 -0500
-Received: from DLEE111.ent.ti.com (157.170.170.22) by DLEE100.ent.ti.com
- (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3; Mon, 10
- Aug 2020 11:52:51 -0500
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE111.ent.ti.com
- (157.170.170.22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3 via
- Frontend Transport; Mon, 10 Aug 2020 11:52:51 -0500
-Received: from [10.250.34.248] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 07AGqpNQ055556;
-        Mon, 10 Aug 2020 11:52:51 -0500
-Subject: Re: [PATCH v2 1/4] dt-bindings: remoteproc: Add bindings for R5F
- subsystem on TI K3 SoCs
-From:   Suman Anna <s-anna@ti.com>
-To:     Stefano Stabellini <stefano.stabellini@xilinx.com>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Rob Herring <robh@kernel.org>
-CC:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Lokesh Vutla <lokeshvutla@ti.com>,
-        <linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <stefanos@xilinx.com>,
-        <BLEVINSK@xilinx.com>, <tomase@xilinx.com>
-References: <20200630024922.32491-1-s-anna@ti.com>
- <20200630024922.32491-2-s-anna@ti.com> <20200714171553.GA2522956@bogus>
- <20200716171903.GA3286345@xps15>
- <alpine.DEB.2.21.2007161232400.3886@sstabellini-ThinkPad-T480s>
- <b7415d48-a354-5610-a657-08cdefc482a6@ti.com>
-Message-ID: <8ba1f240-df9a-d63e-5c05-1a4a13e03213@ti.com>
-Date:   Mon, 10 Aug 2020 11:52:51 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Mon, 10 Aug 2020 18:43:09 -0400
+Received: from mail-pj1-x1043.google.com (mail-pj1-x1043.google.com [IPv6:2607:f8b0:4864:20::1043])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F23DBC06174A
+        for <linux-remoteproc@vger.kernel.org>; Mon, 10 Aug 2020 15:43:08 -0700 (PDT)
+Received: by mail-pj1-x1043.google.com with SMTP id kr4so852725pjb.2
+        for <linux-remoteproc@vger.kernel.org>; Mon, 10 Aug 2020 15:43:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=BZRBvIO7zS3GhTZZrI/geBFN/+zTjp/Q6v4hCxIZSGU=;
+        b=daq6B7hM6pw3A1WyKOGbx+M1g7vfSG+6pGFUO6gK6OdyWuF8WvtalMocXoQovYw+p4
+         /lm0QHg1ntjX5+QWyibavky4SRbhmQbV4hGydqe2Qmio7rEB5pc/ag00xlNxHjFpv2dC
+         xrs1cJ0uj7kmtPRyhCtidP+Z6H3CA3a/tiw1Wm7S4isXIqf/cNgqrw5Zz/FwBcF3i4Zu
+         cY51BO8kT11zKzsPMLZ/fB9NF9vlJ3FgqED/v+VEvlFe7ICJno+UbXMFU5IJL9lMl+Tf
+         zZz4r3AS5sp9ShvgVisIrk8OT5UX/SnA/6pRmdK4PqPdLxeRBCZheUQqxDF/vhcRjbZU
+         yWhg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=BZRBvIO7zS3GhTZZrI/geBFN/+zTjp/Q6v4hCxIZSGU=;
+        b=qqztCQ89EFONFw1TOq8jmdpm/hx4cpX1r57Qu9+DsF5AzvaTYm0Mqj1BaDmoT05TAF
+         qyBy3RN4HX0HnVyv9VfZSko6V1GahTFoDh0Lfd2GIIxC1ip2Up6K0ZPrmc2jA6eOBAHR
+         5uMi+5RZNzWZXmQpsggGCyNyd4wPP8hfJoB5o2Cr0uP+zZSNMPhqlkklSiOXB1UJ76CR
+         /+IflZVDG40BOuVUVLQl3riAbfQdZoq8vAaIWLiVjHkrb7ovvJLnX3S3YiQKtGufH6AF
+         whC8R5wZFhandspg+cKuec62ThGEZDvqlcnjgIPylXrYld9UKS+6gGRQGExvANLLomLS
+         7O6Q==
+X-Gm-Message-State: AOAM532+abHEPeRzPN26s4ZorBt9myZMfRif8VRu93gnPV/2mZm0G8hC
+        tqv4y6D+CD5OzcgH1UOZfVaoBg==
+X-Google-Smtp-Source: ABdhPJx6LGHWc2IoBS8/ZZN9+hyr66SqoaSz21Ur3pvFiSPK0WIdZ54bOdnr9dDQdJnGUD6lUY5rig==
+X-Received: by 2002:a17:902:8609:: with SMTP id f9mr26697737plo.324.1597099388353;
+        Mon, 10 Aug 2020 15:43:08 -0700 (PDT)
+Received: from xps15 (S0106002369de4dac.cg.shawcable.net. [68.147.8.254])
+        by smtp.gmail.com with ESMTPSA id y10sm498949pjv.55.2020.08.10.15.43.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 10 Aug 2020 15:43:07 -0700 (PDT)
+Date:   Mon, 10 Aug 2020 16:43:06 -0600
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+To:     Arnaud Pouliquen <arnaud.pouliquen@st.com>
+Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Ohad Ben-Cohen <ohad@wizery.com>,
+        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com
+Subject: Re: [PATCH] rpmsg: virtio: fix compilation warning for
+ virtio_rpmsg_channel description
+Message-ID: <20200810224306.GF3223977@xps15>
+References: <20200731074850.3262-1-arnaud.pouliquen@st.com>
 MIME-Version: 1.0
-In-Reply-To: <b7415d48-a354-5610-a657-08cdefc482a6@ti.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200731074850.3262-1-arnaud.pouliquen@st.com>
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi Rob,
-
-On 7/27/20 5:39 PM, Suman Anna wrote:
-> Hi Rob,
+On Fri, Jul 31, 2020 at 09:48:50AM +0200, Arnaud Pouliquen wrote:
+> Complete the virtio_rpmsg_channel structure description to fix a
+> compilation warning with W=1 option:
 > 
-> On 7/16/20 2:43 PM, Stefano Stabellini wrote:
->> On Thu, 16 Jul 2020, Mathieu Poirier wrote:
->>> Hi Rob,
->>>
->>> On Tue, Jul 14, 2020 at 11:15:53AM -0600, Rob Herring wrote:
->>>> On Mon, Jun 29, 2020 at 09:49:19PM -0500, Suman Anna wrote:
->>>>> The Texas Instruments K3 family of SoCs have one or more dual-core
->>>>> Arm Cortex R5F processor subsystems/clusters (R5FSS). The clusters
->>>>> can be split between multiple voltage domains as well. Add the device
->>>>> tree bindings document for these R5F subsystem devices. These R5F
->>>>> processors do not have an MMU, and so require fixed memory carveout
->>>>> regions matching the firmware image addresses. The nodes require more
->>>>> than one memory region, with the first memory region used for DMA
->>>>> allocations at runtime. The remaining memory regions are reserved
->>>>> and are used for the loading and running of the R5F remote processors.
->>>>> The R5F processors can also optionally use any internal on-chip SRAM
->>>>> memories either for executing code or using it as fast-access data.
->>>>>
->>>>> The added example illustrates the DT nodes for the single R5FSS device
->>>>> present on K3 AM65x family of SoCs.
->>>>>
->>>>> Signed-off-by: Suman Anna <s-anna@ti.com>
->>>>> ---
->>>>> v2:
->>>>>   - Renamed "lockstep-mode" property to "ti,cluster-mode"
->>>>
->>>> I don't think that's a move in the right direction given this is at
->>>> least partially a standard feature.
->>>>
->>>> As I said before, I'm very hesistant to accept anything here given I
->>>> know the desires and activity to define 'system Devicetrees' of which
->>>> TI is participating. While maybe an rproc node is sufficient for a
->>>> DSP, it seems multiple vendors have R cores and want to define them in
->>>> system DT.
+> drivers/rpmsg/virtio_rpmsg_bus.c:95: warning: Cannot understand
+>  * @vrp: the remote processor this channel belongs to
 > 
-> Ping on this discussion. TI is participating on the System DT evolution in general, but we don't have any plans to use DTS on our remote cores. We have our own auto-generated Chip-Support-Library (CSL) code that gets used on our firmwares.
-> 
-> Also, most of the properties I defined are rather standard properties. I have posted a revised v3 [1] after the common ti,sci properties refactoring. This series is only waiting on the bindings. I am happy to change any ti, prefixed properties. I had one open question [2] that I am waiting for a response from you for identifying the R5F Core.
+> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@st.com>
+> ---
+>  drivers/rpmsg/virtio_rpmsg_bus.c | 7 ++++++-
+>  1 file changed, 6 insertions(+), 1 deletion(-)
 
-Ping on this. 
-
-regards
-Suman
+Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 
 > 
-> regards
-> Suman
+> diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
+> index 9006fc7f73d0..7d7ed4e5cce7 100644
+> --- a/drivers/rpmsg/virtio_rpmsg_bus.c
+> +++ b/drivers/rpmsg/virtio_rpmsg_bus.c
+> @@ -123,7 +123,12 @@ enum rpmsg_ns_flags {
+>  };
+>  
+>  /**
+> - * @vrp: the remote processor this channel belongs to
+> + * struct virtio_rpmsg_channel - rpmsg channel descriptor
+> + * @rpdev: the rpmsg channel device
+> + * @vrp: the virtio remote processor device this channel belongs to
+> + *
+> + * This structure stores the channel that links the rpmsg device to the virtio
+> + * remote processor device.
+>   */
+>  struct virtio_rpmsg_channel {
+>  	struct rpmsg_device rpdev;
+> -- 
+> 2.17.1
 > 
-> [1] https://patchwork.kernel.org/patch/11679331/
-> [2] https://patchwork.kernel.org/comment/23273441/
-> 
->>>>
->>>> Though the system DT effort has not yet given any thought to what is the
->>>> view of one processor or instance to another instance (which is what
->>>> this binding is). We'll still need something defined for that, but I'd
->>>> expect that to be dependent on what is defined for system DT.
->>>
->>> Efforts related to the definition of the system DT are under way, something I
->>> expect to keep going on for some time to come.  I agree with the need to use the
->>> system DT to define remote processors and I look forward to the time we can do
->>> so.
->>
->> I'll take this opportunity to add that I should be able to publicly
->> present a System Device Tree proposal for this during the next call (the
->> next one after the call early next week that has already a full agenda.)
->>
->>
->>> That being said we need to find a concensus on how to move forward with patches
->>> that are ready to be merged.  What is your opinion on that?
->>
->> In my opinion we don't have to necessarily wait for System Device Tree
->> to make progress with those if they look OK.
->>
-> 
-
