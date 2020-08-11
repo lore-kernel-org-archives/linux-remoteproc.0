@@ -4,62 +4,62 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF837C433E1
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 11 Aug 2020 21:56:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41264C433E0
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 11 Aug 2020 22:36:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AB0E220786
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 11 Aug 2020 21:56:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 177B0205CB
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 11 Aug 2020 22:36:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SZZwMK09"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="uVa1fQYk"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726402AbgHKV4a (ORCPT
+        id S1725901AbgHKWgK (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 11 Aug 2020 17:56:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35182 "EHLO
+        Tue, 11 Aug 2020 18:36:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41270 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726115AbgHKV4a (ORCPT
+        with ESMTP id S1726105AbgHKWgK (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 11 Aug 2020 17:56:30 -0400
-Received: from mail-pg1-x544.google.com (mail-pg1-x544.google.com [IPv6:2607:f8b0:4864:20::544])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DB9AFC06174A
-        for <linux-remoteproc@vger.kernel.org>; Tue, 11 Aug 2020 14:56:29 -0700 (PDT)
-Received: by mail-pg1-x544.google.com with SMTP id m34so7331481pgl.11
-        for <linux-remoteproc@vger.kernel.org>; Tue, 11 Aug 2020 14:56:29 -0700 (PDT)
+        Tue, 11 Aug 2020 18:36:10 -0400
+Received: from mail-pf1-x442.google.com (mail-pf1-x442.google.com [IPv6:2607:f8b0:4864:20::442])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 82088C061788
+        for <linux-remoteproc@vger.kernel.org>; Tue, 11 Aug 2020 15:36:10 -0700 (PDT)
+Received: by mail-pf1-x442.google.com with SMTP id f193so8374814pfa.12
+        for <linux-remoteproc@vger.kernel.org>; Tue, 11 Aug 2020 15:36:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=KSa7Y7IFmVv3mPo6BtUixp64hBItc6LRmW/hEtkBP/8=;
-        b=SZZwMK09c6YE5Th36KUSESm6urzpnMSjJjJf/Auw0TkpUO5rQYH0K8XSkYRhiFT7lY
-         lPISzrK3iNb3gFkzwdeSxMiAK+S23rl53XWiOEBk+G8sUNcqdTmHf/kDM+8N2zTXfNq9
-         RKlhu7LOX4psFqCzFZFSFQLlV8HrmhWa5WZd0KtFSgW89tSBXb5eqriSZuXY7DBkl97d
-         lGfdxkkJMGPnOZACgA4dv6QRJpyfvTGZ2uwADXfmSdaTcVL3UfpkdmD4usppwBIcuIbq
-         VkZrFWNeZ1flSFT1V4gXvEi1pFBIA/BpeuI1ouWOv1zl9OS3eUysNmq4C7bQ3F5SYRMy
-         NdJQ==
+        bh=NkYRx4/ZG2Q0QWAEpLU2Ox3xJdzy2ahB40sNIbmmTHc=;
+        b=uVa1fQYkZO9T9K/2sE4cHh8RUIwT1GD2ivEXRErDwZEzwC4vpUWLJ9YQ6LJXTTiVaN
+         9FZaTkolnEWSWV06eMYCeW9xAZKSlb0K49JRqSlvlKLNy7olJpF/yCiUd0QBwmmxu3GQ
+         DcHu0QGWOWaEHuvyCm/AYZCGfyjBXpG/N5sXis4RkaVHN4V3gX5p7FOJ23RHs4cMgSjT
+         G3lgXpDL4EKdiTOiTwnrR4YbdjLo1Ir9OG26K5qqGrXZHFLFvDk/MARaTym/4+R7+z3g
+         YRJ+JVoNHPq8fDbXAiZ58issriOmYUpHYh6fLGTpLDmpDXp5yFMhgilhsVNuwvgHC/iX
+         7LNg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=KSa7Y7IFmVv3mPo6BtUixp64hBItc6LRmW/hEtkBP/8=;
-        b=bgGqF2EUpFhEwgCJN6T7rtNEL4jmUsdVdDgCko/4KokB6739ALKeTXJdiV5zWk8xQs
-         Yfa84MyH42dp3n0QjeypKmhdFk8YAt1su0RWlkELFfAeaqvvA0zR/U4GQzafwFTWUJP0
-         HgMKhTbk0n1io+xQnwqXlfGj+eCG3vRWXRaE4EdOMT6ze7eTC+K4i/y/3YRf9dnaN9bz
-         r4EMJEXI4/HSngaBHigTW6Rsh+gq7KffXrAWwTNQOA8aoXsLCwkTneyE5KYaousotkSq
-         K3XfSOsVfioDqHBPRcE99reD2K9329fEkJqqP8jYne79gTIL2aHVnAAACSjgeWHuBPm9
-         tj4A==
-X-Gm-Message-State: AOAM5336I+FTzCyCEaPODacBS3wJypCDYMir2zC3rDF+rKg8CK70eDrb
-        Dz8xcuJdghTzAchkCVLKHvadQw==
-X-Google-Smtp-Source: ABdhPJyvL8LIxyAqmktGwUDTb/A1q9zRIJh0/tD9FsMiEl83jMA8jHoq+HMPDX6TYyR0Ax3YuFMwMQ==
-X-Received: by 2002:a63:db56:: with SMTP id x22mr2400831pgi.339.1597182988687;
-        Tue, 11 Aug 2020 14:56:28 -0700 (PDT)
+        bh=NkYRx4/ZG2Q0QWAEpLU2Ox3xJdzy2ahB40sNIbmmTHc=;
+        b=e4tTGeNvrb5Z8jtcPlnCG8jHZ2rpojrH2tENtwLHbDShZuKfHCjrFUWj1ZUKWo5gfb
+         1pVKscm2Z+j3xz8YrS55Ht4V3lmOPSkWxU3KSgVxCyPhSPV3IUCaJOiHr/YRYlGII4R+
+         TCUDJU/uu/a2ATKR2DEhf3A1K+NwEGgbkYYh+c1FU28RVAFn17rlFv+Lc0ikYEro5snC
+         TFKytUYK+A2ovGz4rBXsleLj1M+UEK8TuQpcNh1xkKPLD69GAs2VjAFfH5RVbsSyunlV
+         Ax+PRMRUAT/+u0jerNgui53C24QMtSM9rgfrPT0+YPbNGW5jB4NOL2sbadJqaTD70vE6
+         JSCQ==
+X-Gm-Message-State: AOAM532shphg9ks5ZU4FV23+TLus7xbozglDsm6jupAf9V6/DqoD/mZ3
+        kIjADYd2/CBekBPJDssmuLXtsw==
+X-Google-Smtp-Source: ABdhPJx1R+JFmJ8axTcy313Lfge8vVvJXrGuoAYojlYq2QVj/OdQRi/f7Nczs8GvglrXaHMtI2Ox8w==
+X-Received: by 2002:a63:4b5c:: with SMTP id k28mr2482194pgl.356.1597185369649;
+        Tue, 11 Aug 2020 15:36:09 -0700 (PDT)
 Received: from xps15 (S0106002369de4dac.cg.shawcable.net. [68.147.8.254])
-        by smtp.gmail.com with ESMTPSA id t25sm56197pfe.76.2020.08.11.14.56.27
+        by smtp.gmail.com with ESMTPSA id 3sm30153pjo.40.2020.08.11.15.36.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Aug 2020 14:56:27 -0700 (PDT)
-Date:   Tue, 11 Aug 2020 15:56:25 -0600
+        Tue, 11 Aug 2020 15:36:09 -0700 (PDT)
+Date:   Tue, 11 Aug 2020 16:36:06 -0600
 From:   Mathieu Poirier <mathieu.poirier@linaro.org>
 To:     Peng Fan <peng.fan@nxp.com>
 Cc:     bjorn.andersson@linaro.org, o.rempel@pengutronix.de,
@@ -68,151 +68,81 @@ Cc:     bjorn.andersson@linaro.org, o.rempel@pengutronix.de,
         s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
         linux-imx@nxp.com, linux-arm-kernel@lists.infradead.org,
         devicetree@vger.kernel.org
-Subject: Re: [PATCH 07/10] remoteproc: imx_rproc: add i.MX specific parse fw
- hook
-Message-ID: <20200811215625.GC3370567@xps15>
+Subject: Re: [PATCH 10/10] remoteproc: imx_rproc: support coproc booting
+ before Linux
+Message-ID: <20200811223606.GD3370567@xps15>
 References: <20200724080813.24884-1-peng.fan@nxp.com>
- <20200724080813.24884-8-peng.fan@nxp.com>
+ <20200724080813.24884-11-peng.fan@nxp.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200724080813.24884-8-peng.fan@nxp.com>
+In-Reply-To: <20200724080813.24884-11-peng.fan@nxp.com>
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Fri, Jul 24, 2020 at 04:08:10PM +0800, Peng Fan wrote:
-> The hook is used to parse memory-regions and load resource table
-> from the address the remote processor published.
+On Fri, Jul 24, 2020 at 04:08:13PM +0800, Peng Fan wrote:
+> Detect Coproc booted or not and Parse resource table
+> Set remoteproc state to RPROC_DETACHED when M4 is booted early
+> Add attach hook
 > 
 > Signed-off-by: Peng Fan <peng.fan@nxp.com>
 > ---
->  drivers/remoteproc/imx_rproc.c | 99 +++++++++++++++++++++++++++++++++++++++++-
->  1 file changed, 98 insertions(+), 1 deletion(-)
+>  drivers/remoteproc/imx_rproc.c | 75 ++++++++++++++++++++++++++++++++++++++++--
+>  1 file changed, 73 insertions(+), 2 deletions(-)
 > 
 > diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rproc.c
-> index c23726091228..43000a992455 100644
+> index a8ce97c04e1e..0863b3162777 100644
 > --- a/drivers/remoteproc/imx_rproc.c
 > +++ b/drivers/remoteproc/imx_rproc.c
-> @@ -11,6 +11,7 @@
->  #include <linux/mfd/syscon.h>
->  #include <linux/module.h>
->  #include <linux/of_address.h>
-> +#include <linux/of_reserved_mem.h>
->  #include <linux/of_device.h>
->  #include <linux/platform_device.h>
->  #include <linux/regmap.h>
-> @@ -89,6 +90,7 @@ struct imx_rproc {
+> @@ -91,6 +91,7 @@ struct imx_rproc {
 >  	const struct imx_rproc_dcfg	*dcfg;
 >  	struct imx_rproc_mem		mem[IMX7D_RPROC_MEM_MAX];
 >  	struct clk			*clk;
-> +	void				*rsc_va;
-
-Where is this used?
-
->  };
+> +	bool				early_boot;
+>  	void				*rsc_va;
+>  	struct mbox_client		cl;
+>  	struct mbox_chan		*tx_ch;
+> @@ -235,6 +236,8 @@ static int imx_rproc_stop(struct rproc *rproc)
+>  				 dcfg->src_mask, dcfg->src_stop);
+>  	if (ret)
+>  		dev_err(dev, "Failed to stop M4!\n");
+> +	else
+> +		priv->early_boot = false;
 >  
->  static const struct imx_rproc_att imx_rproc_att_imx7d[] = {
-> @@ -251,6 +253,101 @@ static void *imx_rproc_da_to_va(struct rproc *rproc, u64 da, size_t len)
->  	return va;
+>  	return ret;
+>  }
+> @@ -390,6 +393,32 @@ static int imx_rproc_parse_fw(struct rproc *rproc, const struct firmware *fw)
+>  	return 0;
 >  }
 >  
-> +static int imx_rproc_mem_alloc(struct rproc *rproc,
-> +			       struct rproc_mem_entry *mem)
-> +{
-> +	struct device *dev = rproc->dev.parent;
-> +	void *va;
-> +
-> +	dev_dbg(dev, "map memory: %p+%zx\n", &mem->dma, mem->len);
-> +	va = ioremap_wc(mem->dma, mem->len);
-> +	if (IS_ERR_OR_NULL(va)) {
-> +		dev_err(dev, "Unable to map memory region: %p+%zx\n",
-> +			&mem->dma, mem->len);
-> +		return -ENOMEM;
-> +	}
-> +
-> +	/* Update memory entry va */
-> +	mem->va = va;
-> +
-> +	return 0;
-> +}
-> +
-> +static int imx_rproc_mem_release(struct rproc *rproc,
-> +				 struct rproc_mem_entry *mem)
-> +{
-> +	dev_dbg(rproc->dev.parent, "unmap memory: %pa\n", &mem->dma);
-> +	iounmap(mem->va);
-> +
-> +	return 0;
-> +}
-> +
-> +static int imx_rproc_parse_memory_regions(struct rproc *rproc)
+> +static int imx_rproc_get_loaded_rsc_table(struct device *dev,
+> +					  struct rproc *rproc)
 > +{
 > +	struct imx_rproc *priv = rproc->priv;
-> +	struct device_node *np = priv->dev->of_node;
-> +	struct of_phandle_iterator it;
-> +	struct rproc_mem_entry *mem;
-> +	struct reserved_mem *rmem;
-> +	int index = 0;
+> +	struct device_node *np = dev->of_node;
 > +	u32 da;
+> +	int ret;
 > +
-> +	/* Register associated reserved memory regions */
-> +	of_phandle_iterator_init(&it, np, "memory-region", NULL, 0);
-> +	while (of_phandle_iterator_next(&it) == 0) {
-> +		rmem = of_reserved_mem_lookup(it.node);
-> +		if (!rmem) {
-> +			dev_err(priv->dev, "unable to acquire memory-region\n");
-> +			return -EINVAL;
-> +		}
-> +
-> +		/* No need to translate pa to da, i.MX use same map */
-> +		da = rmem->base;
-> +
-> +		if (strcmp(it.node->name, "vdev0buffer")) {
+> +	ret = of_property_read_u32(np, "rsc-da", &da);
 
-Are you sure you will _always_ have a single vdev?  From the example you have
-given to Oleksij it doesn't seem to be the case...
+As Rob pointed out I don't think there is a need to invent a new bindings for
+this.  It could simply be a memory region that is looked up with a name.
 
-> +			/* Register memory region */
-> +			mem = rproc_mem_entry_init(priv->dev, NULL,
-> +						   (dma_addr_t)rmem->base,
-> +						   rmem->size, da,
-> +						   imx_rproc_mem_alloc,
-> +						   imx_rproc_mem_release,
-> +						   it.node->name);
+> +	if (!ret)
+> +		priv->rsc_va = rproc_da_to_va(rproc, (u64)da, SZ_1K);
+> +	else
+> +		return 0;
 > +
-> +			if (mem)
-> +				rproc_coredump_add_segment(rproc, da,
-> +							   rmem->size);
-> +		} else {
-> +			/* Register reserved memory for vdev buffer alloc */
-> +			mem = rproc_of_resm_mem_entry_init(priv->dev, index,
-> +							   rmem->size,
-> +							   rmem->base,
-> +							   it.node->name);
-> +		}
-> +
-> +		if (!mem)
-> +			return -ENOMEM;
-> +
-> +		rproc_add_carveout(rproc, mem);
-> +		index++;
+> +	if (!priv->rsc_va) {
+> +		dev_err(priv->dev, "no map for rsc-da: %x\n", da);
+> +		return PTR_ERR(priv->rsc_va);
 > +	}
 > +
-> +	return  0;
-> +}
-> +
-> +static int imx_rproc_parse_fw(struct rproc *rproc, const struct firmware *fw)
-> +{
-> +	int ret = imx_rproc_parse_memory_regions(rproc);
-> +
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = rproc_elf_load_rsc_table(rproc, fw);
-> +	if (ret)
-> +		dev_info(&rproc->dev, "No resource table in elf\n");
+> +	rproc->table_ptr = (struct resource_table *)priv->rsc_va;
+> +	rproc->table_sz = SZ_1K;
+> +	rproc->cached_table = NULL;
 > +
 > +	return 0;
 > +}
@@ -220,15 +150,104 @@ given to Oleksij it doesn't seem to be the case...
 >  static int imx_rproc_elf_load_segments(struct rproc *rproc, const struct firmware *fw)
 >  {
 >  	struct device *dev = &rproc->dev;
-> @@ -323,7 +420,7 @@ static const struct rproc_ops imx_rproc_ops = {
+> @@ -472,9 +501,15 @@ static void imx_rproc_kick(struct rproc *rproc, int vqid)
+>  			__func__, vqid, err);
+>  }
+>  
+> +static int imx_rproc_attach(struct rproc *rproc)
+> +{
+> +	return 0;
+> +}
+> +
+>  static const struct rproc_ops imx_rproc_ops = {
+>  	.start		= imx_rproc_start,
 >  	.stop		= imx_rproc_stop,
+> +	.attach		= imx_rproc_attach,
+>  	.kick		= imx_rproc_kick,
 >  	.da_to_va       = imx_rproc_da_to_va,
 >  	.load		= imx_rproc_elf_load_segments,
-> -	.parse_fw	= rproc_elf_load_rsc_table,
-> +	.parse_fw	= imx_rproc_parse_fw,
->  	.find_loaded_rsc_table = rproc_elf_find_loaded_rsc_table,
->  	.sanity_check	= rproc_elf_sanity_check,
->  	.get_boot_addr	= rproc_elf_get_boot_addr,
+> @@ -609,6 +644,36 @@ static int imx_rproc_xtr_mbox_init(struct rproc *rproc)
+>  	return ret;
+>  }
+>  
+> +static int imx_rproc_detect_mode(struct imx_rproc *priv)
+> +{
+> +	const struct imx_rproc_dcfg *dcfg = priv->dcfg;
+> +	struct device *dev = priv->dev;
+> +	int ret;
+> +	u32 val;
+> +
+> +	ret = regmap_read(priv->regmap, dcfg->src_reg, &val);
+
+Patch 04 made it possible for priv->regmap to be NULL and as far as I can see
+there is no further check on the value of ->regmap before we get to this
+function.
+
+> +	if (ret) {
+> +		dev_err(dev, "Failed to read src\n");
+> +		return ret;
+> +	}
+> +
+> +	priv->early_boot = !(val & dcfg->src_stop);
+
+Please add a comment that describe the condition.  As much as I try guessing
+the relation between ->src_stop and an already booted co-processor I come out
+short. 
+
+> +
+> +	if (priv->early_boot) {
+
+I don't see a need for ->early_boot, please re-arrange the code in
+imx_rproc_probe() to avoid needing yet an extra variable. 
+
+> +		priv->rproc->state = RPROC_DETACHED;
+> +
+> +		ret = imx_rproc_parse_memory_regions(priv->rproc);
+> +		if (ret)
+> +			return ret;
+> +
+> +		ret = imx_rproc_get_loaded_rsc_table(dev, priv->rproc);
+> +		if (ret)
+> +			return ret;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+>  static int imx_rproc_probe(struct platform_device *pdev)
+>  {
+>  	struct device *dev = &pdev->dev;
+> @@ -661,6 +726,10 @@ static int imx_rproc_probe(struct platform_device *pdev)
+>  		goto err_put_mbox;
+>  	}
+>  
+> +	ret = imx_rproc_detect_mode(priv);
+> +	if (ret)
+> +		goto err_put_mbox;
+> +
+>  	priv->clk = devm_clk_get_optional(dev, NULL);
+>  	if (IS_ERR(priv->clk)) {
+>  		dev_err(dev, "Failed to get clock\n");
+> @@ -689,7 +758,8 @@ static int imx_rproc_probe(struct platform_device *pdev)
+>  	return 0;
+>  
+>  err_put_clk:
+> -	clk_disable_unprepare(priv->clk);
+> +	if (!priv->early_boot)
+> +		clk_disable_unprepare(priv->clk);
+>  err_put_mbox:
+>  	if (!IS_ERR(priv->tx_ch))
+>  		mbox_free_channel(priv->tx_ch);
+> @@ -706,7 +776,8 @@ static int imx_rproc_remove(struct platform_device *pdev)
+>  	struct rproc *rproc = platform_get_drvdata(pdev);
+>  	struct imx_rproc *priv = rproc->priv;
+>  
+> -	clk_disable_unprepare(priv->clk);
+> +	if (!priv->early_boot)
+> +		clk_disable_unprepare(priv->clk);
+>  	rproc_del(rproc);
+>  	rproc_free(rproc);
+>  
 > -- 
 > 2.16.4
 > 
