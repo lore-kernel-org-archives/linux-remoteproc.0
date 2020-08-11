@@ -1,144 +1,184 @@
-Return-Path: <SRS0=2sxO=BU=vger.kernel.org=linux-remoteproc-owner@kernel.org>
+Return-Path: <SRS0=cP4F=BV=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E0CBC433DF
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 10 Aug 2020 22:54:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CAC94C433E0
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 11 Aug 2020 03:32:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EA586206DA
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 10 Aug 2020 22:54:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A2DF32075F
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 11 Aug 2020 03:32:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="szlzA6BX"
+	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="JRL2z0J5"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726791AbgHJWyu (ORCPT
+        id S1728139AbgHKDcZ (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 10 Aug 2020 18:54:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48456 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726634AbgHJWyt (ORCPT
+        Mon, 10 Aug 2020 23:32:25 -0400
+Received: from mail-mw2nam12on2048.outbound.protection.outlook.com ([40.107.244.48]:60000
+        "EHLO NAM12-MW2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727819AbgHKDcY (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 10 Aug 2020 18:54:49 -0400
-Received: from mail-pg1-x542.google.com (mail-pg1-x542.google.com [IPv6:2607:f8b0:4864:20::542])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 80ABEC06174A
-        for <linux-remoteproc@vger.kernel.org>; Mon, 10 Aug 2020 15:54:49 -0700 (PDT)
-Received: by mail-pg1-x542.google.com with SMTP id d19so5751903pgl.10
-        for <linux-remoteproc@vger.kernel.org>; Mon, 10 Aug 2020 15:54:49 -0700 (PDT)
+        Mon, 10 Aug 2020 23:32:24 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=A8LO9E5XwfP2kBo41uVlkqEuB7DlJRrS5GqoNdXYrCt9gv+0VA+Q7vGKSUPj4kfK/7S4eO/450c5lKg/5zshI+el1cnHF4r8GjUd+Xk7G0nHIAeVR1lAzO1+lBmNVIQKYy4og8dlk6wnXD3HN8OMx5H+8C+II3xKL+Xr8d/PwJ8BQzich/qU4jg5NgmSSosMJi4du4XeTUBuZw79NUp5udYXyefRFYuheFpYuOV+cvETmQmIy39Te+9IvUQR0aZ0ALU/5szFOxRHphC5uKONIsu5oGUgZdLda1misMDnSPOXRB7jM1o1pXNbU8YHUIsSTM5T944sulTh+mv/yCyvfA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=APCF3OMAj9RRWuMkmuLW2pfOxQL5o9KQxoWV0lbzI7A=;
+ b=mvDqmPk3bJYUZNsOeLGnshPBET4/+BTnJv3yaQR3RZ9YaynLW3s/wqZmY5CSnBhzwrhRdIUZIbrOEaIucE1jt/hfQ7Rfpvq6YpUvR0CiyIlmX2OwBAw/9nKl1Or8OXi7bgmnd4W4PmkvCa3TDJ9OvSa7HZJawkPi1rTPx+kox7PQRpGg64sf+56coXa7ckZ4K1YgHZIZlEc2HKlOfKREYKD06oQ57YeR0NK9zkRGeuS9miiH7ARGt5YVC6aWza7OuOZYJb+RNgK0O0qCTGvHC1fudkPoLEHAFf9l3vKSbpl+x7OHn6NGGWKmbnEWgMSdiJ7PRMmjqP+XqqDUjxpIFA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 149.199.60.83) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=xilinx.com;
+ dmarc=bestguesspass action=none header.from=xilinx.com; dkim=none (message
+ not signed); arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=fKb1XDtHYo4y9AlyAa0W068lkmxD2lT16yayOu1K+QI=;
-        b=szlzA6BXPZZzYv7tgeeiBI/hmXhcZHAA8oH87hVJwjeA85Xg/l+ifQwGM4YQO05kYa
-         lVvi/JBybmOD6wA4PJc7d/UeaFDTMxI/IQt926VCum9UT7Hs3JeLA3UGyhycIoWHgwxk
-         BMu+OG3PffIKVMJRcsEfVqSVxjxqP6/GV0JZUyL3Dhh8cfE7wizpemJbiN7TFywWMGpl
-         U5zb4KuXamUDsq7moDAydYTNnjtpyCZCaQP8vf2PkKUlZnzhxtQZuKKMuqzo5lHbQH3d
-         96OYjaEvWw5d07CCxhnFlRC5Rl3JDgSau2idJy+DrIlSCsVZe1sVBgHrb4pNNcUyjfPA
-         75PQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=fKb1XDtHYo4y9AlyAa0W068lkmxD2lT16yayOu1K+QI=;
-        b=LVO32HAB7K7lhjUDI7n/bYIC3D+0c91vH/QUyCPVDEPUY6pEeBGw+XoajeSV0Yvmm+
-         9SmcdwIJ9Jwwq0muoYQc5Ak0h57BxRsKgW6liIQi5S0r1qkGWrQpIKx1oWbaftcp08Xc
-         pRcdHvmS9eRAn6tPeyC+NyiQ/qfMuizRXJsnLEI8KxHuHLTfsr20Ibf+GHvz+x29J8qG
-         nvvpliixV+96ny7lbrlcmSC7t+Zqkrxdc9JivOCdnkUsugj9Ng+wFHd9Nds/u8nP8JBI
-         7y9fXfbBoMREAGk6udLyi0PA/zb8OadmZDj8eCDct2eHr3eoDfMHYu2XmgUxojUtyo/W
-         W+pA==
-X-Gm-Message-State: AOAM530vlH1z0TKvzJAjwFt1d2xUArQtwQQI3qX8en84LDJihxp4qhz8
-        m5SzVdLWbSzsyEvLo3jjRpD3sBSeVqA=
-X-Google-Smtp-Source: ABdhPJz/gQKxkcJrWRzNaQSJ51fY2n1i6N2UjOuPLlsH6LfuPsWN8GZxDxhKTIjNyJ4Aabnv8C3/Ww==
-X-Received: by 2002:a63:545a:: with SMTP id e26mr18363900pgm.60.1597100088918;
-        Mon, 10 Aug 2020 15:54:48 -0700 (PDT)
-Received: from xps15 (S0106002369de4dac.cg.shawcable.net. [68.147.8.254])
-        by smtp.gmail.com with ESMTPSA id y1sm25234135pfr.207.2020.08.10.15.54.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Aug 2020 15:54:48 -0700 (PDT)
-Date:   Mon, 10 Aug 2020 16:54:46 -0600
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-To:     Gurbir Arora <gurbaror@codeaurora.org>
-Cc:     linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        bjorn.andersson@linaro.org, tsoni@codeaurora.org,
-        psodagud@codeaurora.org, sidgup@codeaurora.org,
-        rishabhb@codeaurora.org
-Subject: Re: [PATCH 1/3] remoteproc: core: Add coredump to remoteproc ops
-Message-ID: <20200810225446.GG3223977@xps15>
-References: <1596843121-82576-1-git-send-email-gurbaror@codeaurora.org>
- <1596843121-82576-2-git-send-email-gurbaror@codeaurora.org>
+ d=xilinx.onmicrosoft.com; s=selector2-xilinx-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=APCF3OMAj9RRWuMkmuLW2pfOxQL5o9KQxoWV0lbzI7A=;
+ b=JRL2z0J5xehJCxnx7KNUIYE2z2gSHmjLfuiimKHUN/D5Axe3RZOIr7fSgsmnTj8YbSXzjBFnIFz0SPsKKUS6ozj3YKCkiLDm5saO1da/YJNrmb20j4h7MjzaHQYL/Zfy/Bztyb3FrOdz0+30FD61RQ4fB/J1J5F6vL+H7aVMhU4=
+Received: from DM6PR01CA0030.prod.exchangelabs.com (2603:10b6:5:296::35) by
+ MW2PR02MB3868.namprd02.prod.outlook.com (2603:10b6:907:3::23) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.3261.20; Tue, 11 Aug 2020 03:32:21 +0000
+Received: from CY1NAM02FT023.eop-nam02.prod.protection.outlook.com
+ (2603:10b6:5:296:cafe::c9) by DM6PR01CA0030.outlook.office365.com
+ (2603:10b6:5:296::35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3261.19 via Frontend
+ Transport; Tue, 11 Aug 2020 03:32:21 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 149.199.60.83)
+ smtp.mailfrom=xilinx.com; vger.kernel.org; dkim=none (message not signed)
+ header.d=none;vger.kernel.org; dmarc=bestguesspass action=none
+ header.from=xilinx.com;
+Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
+ 149.199.60.83 as permitted sender) receiver=protection.outlook.com;
+ client-ip=149.199.60.83; helo=xsj-pvapsmtpgw01;
+Received: from xsj-pvapsmtpgw01 (149.199.60.83) by
+ CY1NAM02FT023.mail.protection.outlook.com (10.152.74.237) with Microsoft SMTP
+ Server id 15.20.3261.19 via Frontend Transport; Tue, 11 Aug 2020 03:32:21
+ +0000
+Received: from [149.199.38.66] (port=60897 helo=smtp.xilinx.com)
+        by xsj-pvapsmtpgw01 with esmtp (Exim 4.90)
+        (envelope-from <ben.levinsky@xilinx.com>)
+        id 1k5L1K-0000i5-Oc; Mon, 10 Aug 2020 20:32:14 -0700
+Received: from [127.0.0.1] (helo=localhost)
+        by xsj-pvapsmtp01 with smtp (Exim 4.63)
+        (envelope-from <ben.levinsky@xilinx.com>)
+        id 1k5L1R-0004hE-B4; Mon, 10 Aug 2020 20:32:21 -0700
+Received: from [172.19.2.206] (helo=xsjblevinsk50.xilinx.com)
+        by xsj-pvapsmtp01 with esmtp (Exim 4.63)
+        (envelope-from <ben.levinsky@xilinx.com>)
+        id 1k5L1J-0004gc-3x; Mon, 10 Aug 2020 20:32:13 -0700
+From:   Ben Levinsky <ben.levinsky@xilinx.com>
+To:     stefanos@xilinx.com, michals@xilinx.com
+Cc:     devicetree@vger.kernel.org, mathieu.poirier@linaro.org,
+        ed.mooring@xilinx.com, linux-remoteproc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, wendy.liang@xilinx.com,
+        robh+dt@kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v8 0/5] Provide basic driver to control Arm R5 co-processor found on Xilinx ZynqMP
+Date:   Mon, 10 Aug 2020 20:32:08 -0700
+Message-Id: <20200811033213.20088-1-ben.levinsky@xilinx.com>
+X-Mailer: git-send-email 2.17.1
+X-TM-AS-Product-Ver: IMSS-7.1.0.1224-8.2.0.1013-23620.005
+X-TM-AS-User-Approved-Sender: Yes;Yes
+X-EOPAttributedMessage: 0
+X-MS-Office365-Filtering-HT: Tenant
+X-MS-PublicTrafficType: Email
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1596843121-82576-2-git-send-email-gurbaror@codeaurora.org>
+Content-Type: text/plain
+X-MS-Office365-Filtering-Correlation-Id: fcdcddf3-4205-4094-ef8c-08d83da7282c
+X-MS-TrafficTypeDiagnostic: MW2PR02MB3868:
+X-Microsoft-Antispam-PRVS: <MW2PR02MB38687636206A5C9E73CBEF79B5450@MW2PR02MB3868.namprd02.prod.outlook.com>
+X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
+X-MS-Oob-TLC-OOBClassifiers: OLM:7219;
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: AEtZI5iU/mtsfie+mHRzznHBmblRHUy33hgJapcOad/fe8LIVdX5eNEi+mcCwq5oNRJsKKSnUL+TfR6zfE25KpzYCCFvlHKoE/tewT9CiHZm+nsT9EXWrXrTCS88yaetD+/AIk34yB0BoelR8pufu6J6OuiJFqRXZjCdkrrFgTVngt3IRfUFqyBGcGcMnZmpl3ICtvxY1yZ4vKJsTdVmX5i5cqNWID88H5vTawfvUh/8CyFhBi37rqDF00LUOHAJVV17sxFQ4cjZ4A/xNSqvw1g3NyIrDMef3IuU2bRGAanBTcAy6txscHwB9yFMmYxal2xXiqMPmTiKnJ71I0k7QyAF4alA703Cj0IsfmGofQZA4h/XYB1I89aHHXYs8IZAj9IsG92XxZYfPZ3WFZGnTA==
+X-Forefront-Antispam-Report: CIP:149.199.60.83;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:xsj-pvapsmtpgw01;PTR:unknown-60-83.xilinx.com;CAT:NONE;SFTY:;SFS:(396003)(39860400002)(346002)(136003)(376002)(46966005)(82310400002)(186003)(6666004)(2906002)(2616005)(26005)(426003)(356005)(9786002)(1076003)(81166007)(316002)(336012)(7696005)(83380400001)(8936002)(82740400003)(4326008)(36756003)(44832011)(5660300002)(70586007)(70206006)(6636002)(8676002)(478600001)(47076004);DIR:OUT;SFP:1101;
+X-OriginatorOrg: xilinx.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Aug 2020 03:32:21.5711
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: fcdcddf3-4205-4094-ef8c-08d83da7282c
+X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.60.83];Helo=[xsj-pvapsmtpgw01]
+X-MS-Exchange-CrossTenant-AuthSource: CY1NAM02FT023.eop-nam02.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW2PR02MB3868
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Fri, Aug 07, 2020 at 04:31:59PM -0700, Gurbir Arora wrote:
-> Each remoteproc might have different requirements for coredumps and might
-> want to choose the type of dumps it wants to collect. This change allows
-> remoteproc drivers to specify their own custom dump function to be executed
-> in place of rproc_coredump. If the coredump op is not specified by the
-> remoteproc driver it will be set to rproc_coredump by default.
-> 
-> Signed-off-by: Rishabh Bhatnagar <rishabhb@codeaurora.org>
-> Signed-off-by: Siddharth Gupta <sidgup@codeaurora.org>
-> Signed-off-by: Gurbir Arora <gurbaror@codeaurora.org>
-> ---
->  drivers/remoteproc/remoteproc_core.c | 6 +++++-
->  include/linux/remoteproc.h           | 1 +
->  2 files changed, 6 insertions(+), 1 deletion(-)
+The driver was tested on Xilinx ZynqMP and Versal.
 
-This is not the patch Siddharth sent.
+v2:
+- remove domain struct as per review from Mathieu
+v3:
+- add xilinx-related platform mgmt fn's instead of wrapping around
+  function pointer in xilinx eemi ops struct
+- update zynqmp_r5 yaml parsing to not raise warnings for extra
+  information in children of R5 node. The warning "node has a unit
+  name, but no reg or ranges property" will still be raised though 
+  as this particular node is needed to describe the
+  '#address-cells' and '#size-cells' information.
+v4:
+- add default values for enums
+- fix formatting as per checkpatch.pl --strict. Note that 1 warning and 1 check
+  are still raised as each is due to fixing the warning results in that
+particular line going over 80 characters.
+- remove warning '/example-0/rpu@ff9a0000/r5@0: 
+  node has a unit name, but no reg or ranges property'
+  by adding reg to r5 node.
+v5:
+- update device tree sample and yaml parsing to not raise any warnings
+- description for memory-region in yaml parsing
+- compatible string in yaml parsing for TCM
+- parse_fw change from use of rproc_of_resm_mem_entry_init to rproc_mem_entry_init and use of alloc/release
+- var's of type zynqmp_r5_pdata all have same local variable name
+- use dev_dbg instead of dev_info
+v6:
+- adding memory carveouts is handled much more similarly. All mem carveouts are
+  now described in reserved memory as needed. That is, TCM nodes are not
+  coupled to remoteproc anymore. This is reflected in the remoteproc R5 driver
+  and the device tree binding.
+- remove mailbox from device tree binding as it is not necessary for elf
+  loading 
+v7:
+- remove unused headers
+- zynqmp_r5_remoteproc_probe:lockstep_mode from u32* to u32
+- device-tree binding "lockstep-mode"  to "xlnx,cluster-mode"
+- remove zynqmp_r5_mem_probe and loop to Probe R5 memory devices at probe()
+- remove is_r5_mode_set from  zynqmp rpu remote processor private data
+- do not error out if no mailbox is provided since mailboxes are optional
+- remove zynqmp_r5_remoteproc_probe call of platform_set_drvdata as pdata is
+  handled in zynqmp_r5_remoteproc_remove
+v8:
+- remove old acks, reviewed-by's in commit message
 
-Please fix it problem along with the 3 kernel test robot warnings this set has
-generated and send again after 5.9-rc1 has been released.
 
-Thanks,
-Mathieu
+Ben Levinsky (5):
+  firmware: xilinx: Add ZynqMP firmware ioctl enums for RPU
+    configuration.
+  firmware: xilinx: Add shutdown/wakeup APIs
+  firmware: xilinx: Add RPU configuration APIs
+  dt-bindings: remoteproc: Add documentation for ZynqMP R5 rproc
+    bindings
+  remoteproc: Add initial zynqmp R5 remoteproc driver
 
-> 
-> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-> index 7f90eee..283ecb6 100644
-> --- a/drivers/remoteproc/remoteproc_core.c
-> +++ b/drivers/remoteproc/remoteproc_core.c
-> @@ -1681,7 +1681,7 @@ int rproc_trigger_recovery(struct rproc *rproc)
->  		goto unlock_mutex;
->  
->  	/* generate coredump */
-> -	rproc_coredump(rproc);
-> +	rproc->ops->coredump(rproc);
->  
->  	/* load firmware */
->  	ret = request_firmware(&firmware_p, rproc->firmware, dev);
-> @@ -2113,6 +2113,10 @@ static int rproc_alloc_ops(struct rproc *rproc, const struct rproc_ops *ops)
->  	rproc->ops->sanity_check = rproc_elf_sanity_check;
->  	rproc->ops->get_boot_addr = rproc_elf_get_boot_addr;
->  
-> +	/* Default to rproc_coredump if no coredump functions is specified */
-> +	if (!rproc->ops->coredump)
-> +		rproc->ops->coredump = rproc_coredump;
-> +
->  	return 0;
->  }
->  
-> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-> index 2fa68bf..0ed1a2b 100644
-> --- a/include/linux/remoteproc.h
-> +++ b/include/linux/remoteproc.h
-> @@ -392,6 +392,7 @@ struct rproc_ops {
->  	int (*load)(struct rproc *rproc, const struct firmware *fw);
->  	int (*sanity_check)(struct rproc *rproc, const struct firmware *fw);
->  	u64 (*get_boot_addr)(struct rproc *rproc, const struct firmware *fw);
-> +	void (*coredump)(struct rproc *rproc);
->  	unsigned long (*panic)(struct rproc *rproc);
->  };
->  
-> -- 
-> 1.9.1
-> 
+ .../xilinx,zynqmp-r5-remoteproc.yaml          |  73 ++
+ drivers/firmware/xilinx/zynqmp.c              | 134 +++
+ drivers/remoteproc/Kconfig                    |  10 +
+ drivers/remoteproc/Makefile                   |   1 +
+ drivers/remoteproc/zynqmp_r5_remoteproc.c     | 911 ++++++++++++++++++
+ include/linux/firmware/xlnx-zynqmp.h          |  75 ++
+ 6 files changed, 1204 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/remoteproc/xilinx,zynqmp-r5-remoteproc.yaml
+ create mode 100644 drivers/remoteproc/zynqmp_r5_remoteproc.c
+
+-- 
+2.17.1
+
