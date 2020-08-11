@@ -7,59 +7,59 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1948FC433E1
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 11 Aug 2020 21:41:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF837C433E1
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 11 Aug 2020 21:56:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E5B5B20756
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 11 Aug 2020 21:41:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AB0E220786
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 11 Aug 2020 21:56:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="oabY19Z8"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SZZwMK09"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726479AbgHKVlC (ORCPT
+        id S1726402AbgHKV4a (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 11 Aug 2020 17:41:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32788 "EHLO
+        Tue, 11 Aug 2020 17:56:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35182 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726420AbgHKVlA (ORCPT
+        with ESMTP id S1726115AbgHKV4a (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 11 Aug 2020 17:41:00 -0400
-Received: from mail-pg1-x542.google.com (mail-pg1-x542.google.com [IPv6:2607:f8b0:4864:20::542])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6C7BAC06174A
-        for <linux-remoteproc@vger.kernel.org>; Tue, 11 Aug 2020 14:41:00 -0700 (PDT)
-Received: by mail-pg1-x542.google.com with SMTP id m34so7313644pgl.11
-        for <linux-remoteproc@vger.kernel.org>; Tue, 11 Aug 2020 14:41:00 -0700 (PDT)
+        Tue, 11 Aug 2020 17:56:30 -0400
+Received: from mail-pg1-x544.google.com (mail-pg1-x544.google.com [IPv6:2607:f8b0:4864:20::544])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DB9AFC06174A
+        for <linux-remoteproc@vger.kernel.org>; Tue, 11 Aug 2020 14:56:29 -0700 (PDT)
+Received: by mail-pg1-x544.google.com with SMTP id m34so7331481pgl.11
+        for <linux-remoteproc@vger.kernel.org>; Tue, 11 Aug 2020 14:56:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=AJOup3ZxW54qYpiONuV0+CKv0qJfDDqSyRIaH9fvcgU=;
-        b=oabY19Z8jrN9tbam2Saghz+d5donMjhVeBr2VG0ucXKln8tacmJ6U2fHEXrbwClVfi
-         /XVS3onQtw4sRLzR2r/GUqnJSRhId+snFz5WAfTAKhhqQKwCQjfws1/PHUfj5Aw1SGsT
-         Z6D9H5RSNFgg8Ggkb3tfSlUE+vud7XnV1CdyXCaWBgb0HoIRLOKNOpoEliHa3Jpn243B
-         wtBRRT/RDcBuW0e5TVq6LJ+hRNEfJ4gRfVWtu+6Esx8VkoiCoHZ1iiFBf3q16KEmId4r
-         LLVIWomgmuIOBdhpqEKJHzJErvWC/pXlR7O4n69fpxp6x5PNulx1dGZboywDm/IDaoyx
-         n+9g==
+        bh=KSa7Y7IFmVv3mPo6BtUixp64hBItc6LRmW/hEtkBP/8=;
+        b=SZZwMK09c6YE5Th36KUSESm6urzpnMSjJjJf/Auw0TkpUO5rQYH0K8XSkYRhiFT7lY
+         lPISzrK3iNb3gFkzwdeSxMiAK+S23rl53XWiOEBk+G8sUNcqdTmHf/kDM+8N2zTXfNq9
+         RKlhu7LOX4psFqCzFZFSFQLlV8HrmhWa5WZd0KtFSgW89tSBXb5eqriSZuXY7DBkl97d
+         lGfdxkkJMGPnOZACgA4dv6QRJpyfvTGZ2uwADXfmSdaTcVL3UfpkdmD4usppwBIcuIbq
+         VkZrFWNeZ1flSFT1V4gXvEi1pFBIA/BpeuI1ouWOv1zl9OS3eUysNmq4C7bQ3F5SYRMy
+         NdJQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=AJOup3ZxW54qYpiONuV0+CKv0qJfDDqSyRIaH9fvcgU=;
-        b=RCQKUCq5r2OYjcn4iN/eezpu1t0MB+1TajtmbJs/RLWZ6IotgkS2JfxJVxJ3SaNws6
-         VSCN6VUtuMT4M1CD52AGaweNLvuGKbK1lr5/ZfWs7Bcvr6l3A05LbJvcuCHiD2FhpyUn
-         3O1ZeL0aAQDMkCYkW+CHMTI/XqdqzMDbx0STDvwBXI2u0OoVPxjBI2h0Y7xrqiF2T3hx
-         pBaygli1YHHdyIOaWXlFvLetAoDJIuFEIAOTIyEC1VkpQKeyMxJu08Sm+oczJEk5Cw34
-         7Iy9/ZGeMLxTjtxatTKmdQqVjcTBI3rkOg6jQxynZ/FsMJOSu9834kZLNuK4UQ+Ug5CN
-         RClA==
-X-Gm-Message-State: AOAM530SleSbqt1T+l9cMqCOJOV9198mWwYw5IE+isAOpAfzyL63K7lK
-        DN8gYOxRNyWZ2SCChLKnmeXNqA==
-X-Google-Smtp-Source: ABdhPJy6Xr/1mRIVs7VW6TlfxTPSMX2OXN4iKwfeu39RchR7ERZonklTRn+qTmONTxMzHGfC86pXlQ==
-X-Received: by 2002:a63:e118:: with SMTP id z24mr2321982pgh.230.1597182059092;
-        Tue, 11 Aug 2020 14:40:59 -0700 (PDT)
+        bh=KSa7Y7IFmVv3mPo6BtUixp64hBItc6LRmW/hEtkBP/8=;
+        b=bgGqF2EUpFhEwgCJN6T7rtNEL4jmUsdVdDgCko/4KokB6739ALKeTXJdiV5zWk8xQs
+         Yfa84MyH42dp3n0QjeypKmhdFk8YAt1su0RWlkELFfAeaqvvA0zR/U4GQzafwFTWUJP0
+         HgMKhTbk0n1io+xQnwqXlfGj+eCG3vRWXRaE4EdOMT6ze7eTC+K4i/y/3YRf9dnaN9bz
+         r4EMJEXI4/HSngaBHigTW6Rsh+gq7KffXrAWwTNQOA8aoXsLCwkTneyE5KYaousotkSq
+         K3XfSOsVfioDqHBPRcE99reD2K9329fEkJqqP8jYne79gTIL2aHVnAAACSjgeWHuBPm9
+         tj4A==
+X-Gm-Message-State: AOAM5336I+FTzCyCEaPODacBS3wJypCDYMir2zC3rDF+rKg8CK70eDrb
+        Dz8xcuJdghTzAchkCVLKHvadQw==
+X-Google-Smtp-Source: ABdhPJyvL8LIxyAqmktGwUDTb/A1q9zRIJh0/tD9FsMiEl83jMA8jHoq+HMPDX6TYyR0Ax3YuFMwMQ==
+X-Received: by 2002:a63:db56:: with SMTP id x22mr2400831pgi.339.1597182988687;
+        Tue, 11 Aug 2020 14:56:28 -0700 (PDT)
 Received: from xps15 (S0106002369de4dac.cg.shawcable.net. [68.147.8.254])
-        by smtp.gmail.com with ESMTPSA id c2sm104077pgb.52.2020.08.11.14.40.57
+        by smtp.gmail.com with ESMTPSA id t25sm56197pfe.76.2020.08.11.14.56.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Aug 2020 14:40:58 -0700 (PDT)
-Date:   Tue, 11 Aug 2020 15:40:56 -0600
+        Tue, 11 Aug 2020 14:56:27 -0700 (PDT)
+Date:   Tue, 11 Aug 2020 15:56:25 -0600
 From:   Mathieu Poirier <mathieu.poirier@linaro.org>
 To:     Peng Fan <peng.fan@nxp.com>
 Cc:     bjorn.andersson@linaro.org, o.rempel@pengutronix.de,
@@ -68,159 +68,167 @@ Cc:     bjorn.andersson@linaro.org, o.rempel@pengutronix.de,
         s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
         linux-imx@nxp.com, linux-arm-kernel@lists.infradead.org,
         devicetree@vger.kernel.org
-Subject: Re: [PATCH 06/10] remoteproc: imx_rproc: add load hook
-Message-ID: <20200811214056.GB3370567@xps15>
+Subject: Re: [PATCH 07/10] remoteproc: imx_rproc: add i.MX specific parse fw
+ hook
+Message-ID: <20200811215625.GC3370567@xps15>
 References: <20200724080813.24884-1-peng.fan@nxp.com>
- <20200724080813.24884-7-peng.fan@nxp.com>
+ <20200724080813.24884-8-peng.fan@nxp.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200724080813.24884-7-peng.fan@nxp.com>
+In-Reply-To: <20200724080813.24884-8-peng.fan@nxp.com>
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Fri, Jul 24, 2020 at 04:08:09PM +0800, Peng Fan wrote:
-> To i.MX8, we not able to see the correct data written into TCM when
-> using ioremap_wc, so use ioremap.
-> 
-> However common elf loader using memset.
-> 
-> To arm64, "dc      zva, dst" is used in memset.
-> Per ARM DDI 0487A.j, chapter C5.3.8 DC ZVA, Data Cache Zero by VA,
-> 
-> "If the memory region being zeroed is any type of Device memory,
-> this instruction can give an alignment fault which is prioritized
-> in the same way as other alignment faults that are determined
-> by the memory type."
-> 
-> On i.MX platforms, when elf is loaded to onchip TCM area, the region
-> is ioremapped, so "dc zva, dst" will trigger abort.
-> 
-> So add i.MX specific loader to address the TCM write issue.
-> 
-> The change not impact i.MX6/7 function.
+On Fri, Jul 24, 2020 at 04:08:10PM +0800, Peng Fan wrote:
+> The hook is used to parse memory-regions and load resource table
+> from the address the remote processor published.
 > 
 > Signed-off-by: Peng Fan <peng.fan@nxp.com>
 > ---
->  drivers/remoteproc/imx_rproc.c | 76 ++++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 76 insertions(+)
+>  drivers/remoteproc/imx_rproc.c | 99 +++++++++++++++++++++++++++++++++++++++++-
+>  1 file changed, 98 insertions(+), 1 deletion(-)
 > 
 > diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rproc.c
-> index aee790efbf7b..c23726091228 100644
+> index c23726091228..43000a992455 100644
 > --- a/drivers/remoteproc/imx_rproc.c
 > +++ b/drivers/remoteproc/imx_rproc.c
-> @@ -4,6 +4,7 @@
->   */
->  
->  #include <linux/clk.h>
-> +#include <linux/elf.h>
->  #include <linux/err.h>
->  #include <linux/interrupt.h>
->  #include <linux/kernel.h>
-> @@ -15,6 +16,9 @@
+> @@ -11,6 +11,7 @@
+>  #include <linux/mfd/syscon.h>
+>  #include <linux/module.h>
+>  #include <linux/of_address.h>
+> +#include <linux/of_reserved_mem.h>
+>  #include <linux/of_device.h>
+>  #include <linux/platform_device.h>
 >  #include <linux/regmap.h>
->  #include <linux/remoteproc.h>
+> @@ -89,6 +90,7 @@ struct imx_rproc {
+>  	const struct imx_rproc_dcfg	*dcfg;
+>  	struct imx_rproc_mem		mem[IMX7D_RPROC_MEM_MAX];
+>  	struct clk			*clk;
+> +	void				*rsc_va;
+
+Where is this used?
+
+>  };
 >  
-> +#include "remoteproc_internal.h"
-> +#include "remoteproc_elf_helpers.h"
-> +
->  #define IMX7D_SRC_SCR			0x0C
->  #define IMX7D_ENABLE_M4			BIT(3)
->  #define IMX7D_SW_M4P_RST		BIT(2)
-> @@ -247,10 +251,82 @@ static void *imx_rproc_da_to_va(struct rproc *rproc, u64 da, size_t len)
+>  static const struct imx_rproc_att imx_rproc_att_imx7d[] = {
+> @@ -251,6 +253,101 @@ static void *imx_rproc_da_to_va(struct rproc *rproc, u64 da, size_t len)
 >  	return va;
 >  }
 >  
-> +static int imx_rproc_elf_load_segments(struct rproc *rproc, const struct firmware *fw)
+> +static int imx_rproc_mem_alloc(struct rproc *rproc,
+> +			       struct rproc_mem_entry *mem)
 > +{
-> +	struct device *dev = &rproc->dev;
-> +	const void *ehdr, *phdr;
-> +	int i, ret = 0;
-> +	u16 phnum;
-> +	const u8 *elf_data = fw->data;
-> +	u8 class = fw_elf_get_class(fw);
-> +	u32 elf_phdr_get_size = elf_size_of_phdr(class);
+> +	struct device *dev = rproc->dev.parent;
+> +	void *va;
 > +
-> +	ehdr = elf_data;
-> +	phnum = elf_hdr_get_e_phnum(class, ehdr);
-> +	phdr = elf_data + elf_hdr_get_e_phoff(class, ehdr);
-> +
-> +	/* go through the available ELF segments */
-> +	for (i = 0; i < phnum; i++, phdr += elf_phdr_get_size) {
-> +		u64 da = elf_phdr_get_p_paddr(class, phdr);
-> +		u64 memsz = elf_phdr_get_p_memsz(class, phdr);
-> +		u64 filesz = elf_phdr_get_p_filesz(class, phdr);
-> +		u64 offset = elf_phdr_get_p_offset(class, phdr);
-> +		u32 type = elf_phdr_get_p_type(class, phdr);
-> +		void *ptr;
-> +
-> +		if (type != PT_LOAD)
-> +			continue;
-> +
-> +		dev_dbg(dev, "phdr: type %d da 0x%llx memsz 0x%llx filesz 0x%llx\n",
-> +			type, da, memsz, filesz);
-> +
-> +		if (filesz > memsz) {
-> +			dev_err(dev, "bad phdr filesz 0x%llx memsz 0x%llx\n",
-> +				filesz, memsz);
-> +			ret = -EINVAL;
-> +			break;
-> +		}
-> +
-> +		if (offset + filesz > fw->size) {
-> +			dev_err(dev, "truncated fw: need 0x%llx avail 0x%zx\n",
-> +				offset + filesz, fw->size);
-> +			ret = -EINVAL;
-> +			break;
-> +		}
-> +
-> +		if (!rproc_u64_fit_in_size_t(memsz)) {
-> +			dev_err(dev, "size (%llx) does not fit in size_t type\n",
-> +				memsz);
-> +			ret = -EOVERFLOW;
-> +			break;
-> +		}
-> +
-> +		/* grab the kernel address for this device address */
-> +		ptr = rproc_da_to_va(rproc, da, memsz);
-> +		if (!ptr) {
-> +			dev_err(dev, "bad phdr da 0x%llx mem 0x%llx\n", da,
-> +				memsz);
-> +			ret = -EINVAL;
-> +			break;
-> +		}
-> +
-> +		/* put the segment where the remote processor expects it */
-> +		if (filesz)
-> +			memcpy_toio(ptr, elf_data + offset, filesz);
+> +	dev_dbg(dev, "map memory: %p+%zx\n", &mem->dma, mem->len);
+> +	va = ioremap_wc(mem->dma, mem->len);
+> +	if (IS_ERR_OR_NULL(va)) {
+> +		dev_err(dev, "Unable to map memory region: %p+%zx\n",
+> +			&mem->dma, mem->len);
+> +		return -ENOMEM;
 > +	}
 > +
-> +	return ret;
-> +}
-
-This is clearly the wrong approach.  What you came up with in [1] is far better,
-though I would call the the operations elf_memcpy() and elf_memset().
-
-That being said I don't know how [1] fits with this patchset.  From where I
-stand a new revision is needed.
-
-[1]. https://patchwork.kernel.org/patch/11688751/
-
+> +	/* Update memory entry va */
+> +	mem->va = va;
 > +
->  static const struct rproc_ops imx_rproc_ops = {
->  	.start		= imx_rproc_start,
+> +	return 0;
+> +}
+> +
+> +static int imx_rproc_mem_release(struct rproc *rproc,
+> +				 struct rproc_mem_entry *mem)
+> +{
+> +	dev_dbg(rproc->dev.parent, "unmap memory: %pa\n", &mem->dma);
+> +	iounmap(mem->va);
+> +
+> +	return 0;
+> +}
+> +
+> +static int imx_rproc_parse_memory_regions(struct rproc *rproc)
+> +{
+> +	struct imx_rproc *priv = rproc->priv;
+> +	struct device_node *np = priv->dev->of_node;
+> +	struct of_phandle_iterator it;
+> +	struct rproc_mem_entry *mem;
+> +	struct reserved_mem *rmem;
+> +	int index = 0;
+> +	u32 da;
+> +
+> +	/* Register associated reserved memory regions */
+> +	of_phandle_iterator_init(&it, np, "memory-region", NULL, 0);
+> +	while (of_phandle_iterator_next(&it) == 0) {
+> +		rmem = of_reserved_mem_lookup(it.node);
+> +		if (!rmem) {
+> +			dev_err(priv->dev, "unable to acquire memory-region\n");
+> +			return -EINVAL;
+> +		}
+> +
+> +		/* No need to translate pa to da, i.MX use same map */
+> +		da = rmem->base;
+> +
+> +		if (strcmp(it.node->name, "vdev0buffer")) {
+
+Are you sure you will _always_ have a single vdev?  From the example you have
+given to Oleksij it doesn't seem to be the case...
+
+> +			/* Register memory region */
+> +			mem = rproc_mem_entry_init(priv->dev, NULL,
+> +						   (dma_addr_t)rmem->base,
+> +						   rmem->size, da,
+> +						   imx_rproc_mem_alloc,
+> +						   imx_rproc_mem_release,
+> +						   it.node->name);
+> +
+> +			if (mem)
+> +				rproc_coredump_add_segment(rproc, da,
+> +							   rmem->size);
+> +		} else {
+> +			/* Register reserved memory for vdev buffer alloc */
+> +			mem = rproc_of_resm_mem_entry_init(priv->dev, index,
+> +							   rmem->size,
+> +							   rmem->base,
+> +							   it.node->name);
+> +		}
+> +
+> +		if (!mem)
+> +			return -ENOMEM;
+> +
+> +		rproc_add_carveout(rproc, mem);
+> +		index++;
+> +	}
+> +
+> +	return  0;
+> +}
+> +
+> +static int imx_rproc_parse_fw(struct rproc *rproc, const struct firmware *fw)
+> +{
+> +	int ret = imx_rproc_parse_memory_regions(rproc);
+> +
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = rproc_elf_load_rsc_table(rproc, fw);
+> +	if (ret)
+> +		dev_info(&rproc->dev, "No resource table in elf\n");
+> +
+> +	return 0;
+> +}
+> +
+>  static int imx_rproc_elf_load_segments(struct rproc *rproc, const struct firmware *fw)
+>  {
+>  	struct device *dev = &rproc->dev;
+> @@ -323,7 +420,7 @@ static const struct rproc_ops imx_rproc_ops = {
 >  	.stop		= imx_rproc_stop,
 >  	.da_to_va       = imx_rproc_da_to_va,
-> +	.load		= imx_rproc_elf_load_segments,
-> +	.parse_fw	= rproc_elf_load_rsc_table,
-> +	.find_loaded_rsc_table = rproc_elf_find_loaded_rsc_table,
-> +	.sanity_check	= rproc_elf_sanity_check,
-> +	.get_boot_addr	= rproc_elf_get_boot_addr,
->  };
->  
->  static int imx_rproc_addr_init(struct imx_rproc *priv,
+>  	.load		= imx_rproc_elf_load_segments,
+> -	.parse_fw	= rproc_elf_load_rsc_table,
+> +	.parse_fw	= imx_rproc_parse_fw,
+>  	.find_loaded_rsc_table = rproc_elf_find_loaded_rsc_table,
+>  	.sanity_check	= rproc_elf_sanity_check,
+>  	.get_boot_addr	= rproc_elf_get_boot_addr,
 > -- 
 > 2.16.4
 > 
