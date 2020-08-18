@@ -7,206 +7,197 @@ X-Spam-Status: No, score=-9.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 091B2C433DF
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 18 Aug 2020 20:02:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B521C433DF
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 18 Aug 2020 20:13:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CBE4420772
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 18 Aug 2020 20:02:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0B3BC20786
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 18 Aug 2020 20:13:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FjSydDVS"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="t32hTEXZ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726786AbgHRUC6 (ORCPT
+        id S1725767AbgHRUNB (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 18 Aug 2020 16:02:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48230 "EHLO
+        Tue, 18 Aug 2020 16:13:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49804 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726675AbgHRUC4 (ORCPT
+        with ESMTP id S1725903AbgHRUM6 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 18 Aug 2020 16:02:56 -0400
-Received: from mail-pg1-x541.google.com (mail-pg1-x541.google.com [IPv6:2607:f8b0:4864:20::541])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 15208C061389
-        for <linux-remoteproc@vger.kernel.org>; Tue, 18 Aug 2020 13:02:56 -0700 (PDT)
-Received: by mail-pg1-x541.google.com with SMTP id m34so10241956pgl.11
-        for <linux-remoteproc@vger.kernel.org>; Tue, 18 Aug 2020 13:02:55 -0700 (PDT)
+        Tue, 18 Aug 2020 16:12:58 -0400
+Received: from mail-pj1-x1044.google.com (mail-pj1-x1044.google.com [IPv6:2607:f8b0:4864:20::1044])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D5746C061389
+        for <linux-remoteproc@vger.kernel.org>; Tue, 18 Aug 2020 13:12:58 -0700 (PDT)
+Received: by mail-pj1-x1044.google.com with SMTP id kr4so48754pjb.2
+        for <linux-remoteproc@vger.kernel.org>; Tue, 18 Aug 2020 13:12:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=8jIijHB6sar7pTz/JI8LLxm3Tt0t5ZJaB1tqV+AWNZ0=;
-        b=FjSydDVSGxDp3Cdqu+4zjKSFwnlVBvH/b/d6TdxJJ36fNPF4tcep8863rfolJlnGXE
-         RHkeQ27d4seBtz0XxEsKrGvt2PaJ/DD05Kxh39+CSTxVI5IwUXuuWLggKJX2tW3/2ZAM
-         MA736C87u9gNzsKlDMbyzbAZGhQhmgwHS9yenTuMBUsyZLOYzOCt8zFFnLt8yb/NnTZx
-         cSMq6fRzFpqrkfDAkCF0GTdJvtg404xiMUxwcQyawp1+bkoMP1O1FBdNCm4XTpvlQgIZ
-         VlSVZ1Uqzy1KdPoGKjVtQDFnu5NJvg6mN9y609DbkYnJwJjihu6ms8pliJkQE7bqEwOZ
-         uMxQ==
+        bh=p2yUnz09Iu1XrcEXbtkTyv2v4tIJD/opSkVWFBHYlhA=;
+        b=t32hTEXZvUaiQSGkDxEIzArY/zDEK8oIWAtd3/mdaedqX0E03d6ul1OxTH14+GdBep
+         WjHk2qcht9sZwwVpwBv3OJVeLVXsB0y7KHGuhxt2q+ruCBaE3yUxdR62I0cb0g8aymfj
+         hupDA9xjWocsHuqU9K7mL8/ehWHDOgCmKbMqhIcEr/9OZ3xrslaaCfPBfda8/+UgEAIW
+         Dm5YQeO8Q0VnXr0s7keAsjdfyQ2YK7ISyTzsXTTCcMCQTNsy7Vw+YtCYkqgCk6yKGEv2
+         VMq1i/hvJgZDwmg92796OrxJ2vIwGeJnjpUHG6u7Mo9sxbDF0J4X/ykqLLt379qa9HXZ
+         +phA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=8jIijHB6sar7pTz/JI8LLxm3Tt0t5ZJaB1tqV+AWNZ0=;
-        b=r4R/bC1njyws5UL09MFL01bc+52BFGh3DNkUlRTNmQHuR+9uX8Q7IwDgFycY2kbzFn
-         g/JnnGS0pOTOiDhSVhvbxCGf+LrLOEgWAqIqusZRF+HFz+OafO/CgCatZdmrXBYN/sia
-         IQjS8Ih6F2TQaTXZjEYIDQLTzawUKTwnpQqCGKkAI3AOcJ5GqMWFcrYRJ6fJLEjImc5k
-         oGd/8WRpzB90mE3OJc1O+UcnaeQ8Ctp+WmmWM7oN4URdlY5fOQRGYtMQ8x+4G4mz5gDQ
-         OodaxSNaIJqbrBQ/DZFoyFA5zB0Fs4OJUilFZNj+DPCgTZlm5UkooFaDn9mbSuWsJRzB
-         kIvw==
-X-Gm-Message-State: AOAM533jLj7AVnmo+MimxJnSjkKUdS5/g5KnEB2DM01OEsnRIYzCxIUG
-        faMeU1vufkapTUL2qTsuAdAyNXgHuxhTNg==
-X-Google-Smtp-Source: ABdhPJy2I9IXLnhtQ5iyOaCq0ASfSsanrSLVKKFOmJmChg0fqUBrOsSuuxbM2p3o9N3EqASScuzUhQ==
-X-Received: by 2002:a62:86ca:: with SMTP id x193mr16115050pfd.152.1597780975264;
-        Tue, 18 Aug 2020 13:02:55 -0700 (PDT)
+        bh=p2yUnz09Iu1XrcEXbtkTyv2v4tIJD/opSkVWFBHYlhA=;
+        b=dQgmTSRYno52O7Xt52u+G96Yoo+QD0gSE0ViV/UrdIUkywksc+cw4nVB1XeeHjj4up
+         I6nbE53b3DZq7f8QzfnJ9ZWSLr0A79DOlas85I4adNY4Vomg4xcxvbRPT52iVPLA8HSy
+         Bp2GKejEebvXG5/PnGWCdv/bMoQ/9sCl5AxZJv1/1GqbxW1IExkdQyStGOJEELudZBLz
+         kaY0BgJdt5jJ10VXDrLfbAXvD13zqw5DizyNlX+hf6rUD+OT4Fi/CcaTFXA1dTYkda2M
+         odww1KBn+fCF4Uwe7FfSAJQcIFrv1A3mnEIsUTeP99T0EA2e10Q6cFbjCmnYPtVMgIDo
+         zGDA==
+X-Gm-Message-State: AOAM533vsFeXJnjKedrKoW9Y3+DGOC3AvE4txXzRifMHPa7FGyfl50l9
+        qkTmtjyu8o5NDvjLV/eyNRmIEJEkWN0fXg==
+X-Google-Smtp-Source: ABdhPJzeIOxLZQIQJ8njZkaDqFACOs8d0sMU9nYCv2xuRrkzIq0jsYiCZm5zDIBFWrYXaAejgWDYYg==
+X-Received: by 2002:a17:90a:ca17:: with SMTP id x23mr1279571pjt.194.1597781578144;
+        Tue, 18 Aug 2020 13:12:58 -0700 (PDT)
 Received: from xps15 (S0106002369de4dac.cg.shawcable.net. [68.147.8.254])
-        by smtp.gmail.com with ESMTPSA id s20sm14537175pga.7.2020.08.18.13.02.54
+        by smtp.gmail.com with ESMTPSA id b78sm26087180pfb.144.2020.08.18.13.12.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Aug 2020 13:02:54 -0700 (PDT)
-Date:   Tue, 18 Aug 2020 14:02:52 -0600
+        Tue, 18 Aug 2020 13:12:57 -0700 (PDT)
+Date:   Tue, 18 Aug 2020 14:12:55 -0600
 From:   Mathieu Poirier <mathieu.poirier@linaro.org>
 To:     Rishabh Bhatnagar <rishabhb@codeaurora.org>
 Cc:     linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
         bjorn.andersson@linaro.org, tsoni@codeaurora.org,
         psodagud@codeaurora.org, sidgup@codeaurora.org
-Subject: Re: [PATCH 1/2] remoteproc: Move coredump entry from debugfs to
- sysfs.
-Message-ID: <20200818200252.GA3804229@xps15>
+Subject: Re: [PATCH 2/2] remoteproc: Move recovery debugfs entry to sysfs
+Message-ID: <20200818201255.GB3804229@xps15>
 References: <1595977697-15389-1-git-send-email-rishabhb@codeaurora.org>
- <1595977697-15389-2-git-send-email-rishabhb@codeaurora.org>
+ <1595977697-15389-3-git-send-email-rishabhb@codeaurora.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1595977697-15389-2-git-send-email-rishabhb@codeaurora.org>
+In-Reply-To: <1595977697-15389-3-git-send-email-rishabhb@codeaurora.org>
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Tue, Jul 28, 2020 at 04:08:16PM -0700, Rishabh Bhatnagar wrote:
-> Expose coredump configuration from sysfs instead of debugfs.
-> In some operating systems access to debugfs might be limited.
-> This restricts user from selecting the coredump configuration
-> at all, hence move this interface to sysfs.
+On Tue, Jul 28, 2020 at 04:08:17PM -0700, Rishabh Bhatnagar wrote:
+> Expose recovery mechanism through sysfs rather than exposing through
+> debugfs. Some operating systems may limit access to debugfs through
+> access policies. This restricts user access to recovery mechanism,
+> hence move it to sysfs.
 > 
 > Signed-off-by: Rishabh Bhatnagar <rishabhb@codeaurora.org>
 > ---
->  Documentation/ABI/testing/sysfs-class-remoteproc | 40 +++++++++++
+>  Documentation/ABI/testing/sysfs-class-remoteproc | 36 +++++++++++
 
-This needs to be a patch on its own.
+Please disregard my previous comment about making this a separate patch.  I
+initially thought Jon Corbet would have to take this but it is not the case, it
+can go through Bjorn's tree.
 
->  drivers/remoteproc/remoteproc_debugfs.c          | 90 ------------------------
->  drivers/remoteproc/remoteproc_sysfs.c            | 64 +++++++++++++++++
->  3 files changed, 104 insertions(+), 90 deletions(-)
+>  drivers/remoteproc/remoteproc_debugfs.c          | 77 ------------------------
+>  drivers/remoteproc/remoteproc_sysfs.c            | 57 ++++++++++++++++++
+>  3 files changed, 93 insertions(+), 77 deletions(-)
 > 
 > diff --git a/Documentation/ABI/testing/sysfs-class-remoteproc b/Documentation/ABI/testing/sysfs-class-remoteproc
-> index 36094fb..812582a 100644
+> index 812582a..16c5267 100644
 > --- a/Documentation/ABI/testing/sysfs-class-remoteproc
 > +++ b/Documentation/ABI/testing/sysfs-class-remoteproc
-> @@ -58,3 +58,43 @@ Description:	Remote processor name
->  		Reports the name of the remote processor. This can be used by
->  		userspace in exactly identifying a remote processor and ease
->  		up the usage in modifying the 'firmware' or 'state' files.
+> @@ -98,3 +98,39 @@ Description:	Remote processor coredump configuration
+>  
+>  		Writing "disable" will disable the coredump collection for
+>  		that remoteproc.
 > +
-> +What:		/sys/class/remoteproc/.../coredump
+> +What:		/sys/class/remoteproc/.../recovery
 > +Date:		July 2020
 > +Contact:	Rishabh Bhatnagar <rishabhb@codeaurora.org>
 
-This should be Bjorn and Ohad
+Same comment as the previous patch
 
-> +Description:	Remote processor coredump configuration
+> +Description:	Remote processor recovery mechanism
 > +
-> +		Reports the coredump configuration of the remote processor,
+> +		Reports the recovery mechanism of the remote processor,
 > +		which will be one of:
 > +
-> +		"default"
-> +		"inline"
+> +		"enabled"
 > +		"disabled"
 > +
-> +		"default" means when the remote processor's coredump is
-> +		collected it will be copied to a separate buffer and that
-> +		buffer is exposed to userspace.
+> +		"enabled" means, the remote processor will be automatically
+> +		recovered whenever it crashes. Moreover, if the remote
+> +		processor crashes while recovery is disabled, it will
+> +		be automatically recovered too as soon as recovery is enabled.
 > +
-> +		"inline" means when the remote processor's coredump is
-> +		collected userspace will directly read from the remote
-> +		processor's device memory. Extra buffer will not be used to
-> +		copy the dump. Also recovery process will not proceed until
-> +		all data is read by usersapce.
+> +		"disabled" means, a remote processor will remain in a crashed
+> +		state if it crashes. This is useful for debugging purposes;
+> +		without it, debugging a crash is substantially harder.
 > +
-> +		"disabled" means no dump will be collected.
+> +		Writing this file controls the recovery mechanism of the
+> +		remote processor. The following options can be written:
+> +
 
-Everything below should be removed.
+Same, I don't think we need to distinguish between reading and writing.  The
+above would do just fine.
 
+> +		"enabled"
+> +		"disabled"
+> +		"recover"
 > +
-> +		Writing this file controls the coredump configuration of the
-> +		remote processor. The following configurations can be written:
+> +		Writing "enabled" will enable recovery and recover the remote
+> +		processor if its crashed.
 > +
-> +		"default"
-> +		"inline"
-> +		"disable"
+> +		Writing "disabled" will disable recovery and if crashed the
+> +		remote processor will remain in crashed state.
 > +
-> +		Writing "default" will change the coredump configuration to
-> +		default option.
-> +
-> +		Writing "inline" will change the coredump configuration to
-> +		inline.
-> +
-> +		Writing "disable" will disable the coredump collection for
-> +		that remoteproc.
+> +		Writing "recover" will trigger an immediate recovery if the
+> +		remote processor is in crashed state.
 > diff --git a/drivers/remoteproc/remoteproc_debugfs.c b/drivers/remoteproc/remoteproc_debugfs.c
-> index 2e3b3e2..732770e 100644
+> index 732770e..71194a0 100644
 > --- a/drivers/remoteproc/remoteproc_debugfs.c
 > +++ b/drivers/remoteproc/remoteproc_debugfs.c
-> @@ -28,94 +28,6 @@
->  static struct dentry *rproc_dbg;
+> @@ -84,81 +84,6 @@ static const struct file_operations rproc_name_ops = {
+>  	.llseek	= generic_file_llseek,
+>  };
 >  
->  /*
-> - * A coredump-configuration-to-string lookup table, for exposing a
-> - * human readable configuration via debugfs. Always keep in sync with
-> - * enum rproc_coredump_mechanism
-> - */
-> -static const char * const rproc_coredump_str[] = {
-> -	[RPROC_COREDUMP_DEFAULT]	= "default",
-> -	[RPROC_COREDUMP_INLINE]		= "inline",
-> -	[RPROC_COREDUMP_DISABLED]	= "disabled",
-> -};
-> -
-> -/* Expose the current coredump configuration via debugfs */
-> -static ssize_t rproc_coredump_read(struct file *filp, char __user *userbuf,
+> -/* expose recovery flag via debugfs */
+> -static ssize_t rproc_recovery_read(struct file *filp, char __user *userbuf,
 > -				   size_t count, loff_t *ppos)
 > -{
 > -	struct rproc *rproc = filp->private_data;
-> -	char buf[20];
-> -	int len;
+> -	char *buf = rproc->recovery_disabled ? "disabled\n" : "enabled\n";
 > -
-> -	len = scnprintf(buf, sizeof(buf), "%s\n",
-> -			rproc_coredump_str[rproc->dump_conf]);
-> -
-> -	return simple_read_from_buffer(userbuf, count, ppos, buf, len);
+> -	return simple_read_from_buffer(userbuf, count, ppos, buf, strlen(buf));
 > -}
 > -
 > -/*
-> - * By writing to the 'coredump' debugfs entry, we control the behavior of the
-> - * coredump mechanism dynamically. The default value of this entry is "default".
+> - * By writing to the 'recovery' debugfs entry, we control the behavior of the
+> - * recovery mechanism dynamically. The default value of this entry is "enabled".
 > - *
-> - * The 'coredump' debugfs entry supports these commands:
+> - * The 'recovery' debugfs entry supports these commands:
 > - *
-> - * default:	This is the default coredump mechanism. When the remoteproc
-> - *		crashes the entire coredump will be copied to a separate buffer
-> - *		and exposed to userspace.
+> - * enabled:	When enabled, the remote processor will be automatically
+> - *		recovered whenever it crashes. Moreover, if the remote
+> - *		processor crashes while recovery is disabled, it will
+> - *		be automatically recovered too as soon as recovery is enabled.
 > - *
-> - * inline:	The coredump will not be copied to a separate buffer and the
-> - *		recovery process will have to wait until data is read by
-> - *		userspace. But this avoid usage of extra memory.
+> - * disabled:	When disabled, a remote processor will remain in a crashed
+> - *		state if it crashes. This is useful for debugging purposes;
+> - *		without it, debugging a crash is substantially harder.
 > - *
-> - * disabled:	This will disable coredump. Recovery will proceed without
-> - *		collecting any dump.
+> - * recover:	This function will trigger an immediate recovery if the
+> - *		remote processor is in a crashed state, without changing
+> - *		or checking the recovery state (enabled/disabled).
+> - *		This is useful during debugging sessions, when one expects
+> - *		additional crashes to happen after enabling recovery. In this
+> - *		case, enabling recovery will make it hard to debug subsequent
+> - *		crashes, so it's recommended to keep recovery disabled, and
+> - *		instead use the "recover" command as needed.
 > - */
-> -static ssize_t rproc_coredump_write(struct file *filp,
-> -				    const char __user *user_buf, size_t count,
-> -				    loff_t *ppos)
+> -static ssize_t
+> -rproc_recovery_write(struct file *filp, const char __user *user_buf,
+> -		     size_t count, loff_t *ppos)
 > -{
 > -	struct rproc *rproc = filp->private_data;
-> -	int ret, err = 0;
-> -	char buf[20];
+> -	char buf[10];
+> -	int ret;
 > -
-> -	if (count > sizeof(buf))
+> -	if (count < 1 || count > sizeof(buf))
 > -		return -EINVAL;
 > -
 > -	ret = copy_from_user(buf, user_buf, count);
@@ -217,135 +208,121 @@ Everything below should be removed.
 > -	if (buf[count - 1] == '\n')
 > -		buf[count - 1] = '\0';
 > -
-> -	if (rproc->state == RPROC_CRASHED) {
-> -		dev_err(&rproc->dev, "can't change coredump configuration\n");
-> -		err = -EBUSY;
-> -		goto out;
+> -	if (!strncmp(buf, "enabled", count)) {
+> -		/* change the flag and begin the recovery process if needed */
+> -		rproc->recovery_disabled = false;
+> -		rproc_trigger_recovery(rproc);
+> -	} else if (!strncmp(buf, "disabled", count)) {
+> -		rproc->recovery_disabled = true;
+> -	} else if (!strncmp(buf, "recover", count)) {
+> -		/* begin the recovery process without changing the flag */
+> -		rproc_trigger_recovery(rproc);
+> -	} else {
+> -		return -EINVAL;
 > -	}
 > -
-> -	if (!strncmp(buf, "disable", count)) {
-> -		rproc->dump_conf = RPROC_COREDUMP_DISABLED;
-> -	} else if (!strncmp(buf, "inline", count)) {
-> -		rproc->dump_conf = RPROC_COREDUMP_INLINE;
-> -	} else if (!strncmp(buf, "default", count)) {
-> -		rproc->dump_conf = RPROC_COREDUMP_DEFAULT;
-> -	} else {
-> -		dev_err(&rproc->dev, "Invalid coredump configuration\n");
-> -		err = -EINVAL;
-> -	}
-> -out:
-> -	return err ? err : count;
+> -	return count;
 > -}
 > -
-> -static const struct file_operations rproc_coredump_fops = {
-> -	.read = rproc_coredump_read,
-> -	.write = rproc_coredump_write,
+> -static const struct file_operations rproc_recovery_ops = {
+> -	.read = rproc_recovery_read,
+> -	.write = rproc_recovery_write,
 > -	.open = simple_open,
 > -	.llseek = generic_file_llseek,
 > -};
-> -
-> -/*
->   * Some remote processors may support dumping trace logs into a shared
->   * memory buffer. We expose this trace buffer using debugfs, so users
->   * can easily tell what's going on remotely.
-> @@ -425,8 +337,6 @@ void rproc_create_debug_dir(struct rproc *rproc)
->  			    rproc, &rproc_rsc_table_fops);
->  	debugfs_create_file("carveout_memories", 0400, rproc->dbg_dir,
->  			    rproc, &rproc_carveouts_fops);
-> -	debugfs_create_file("coredump", 0600, rproc->dbg_dir,
-> -			    rproc, &rproc_coredump_fops);
->  }
 >  
->  void __init rproc_init_debugfs(void)
+>  /* expose the crash trigger via debugfs */
+>  static ssize_t
+> @@ -329,8 +254,6 @@ void rproc_create_debug_dir(struct rproc *rproc)
+>  
+>  	debugfs_create_file("name", 0400, rproc->dbg_dir,
+>  			    rproc, &rproc_name_ops);
+> -	debugfs_create_file("recovery", 0600, rproc->dbg_dir,
+> -			    rproc, &rproc_recovery_ops);
+>  	debugfs_create_file("crash", 0200, rproc->dbg_dir,
+>  			    rproc, &rproc_crash_ops);
+>  	debugfs_create_file("resource_table", 0400, rproc->dbg_dir,
 > diff --git a/drivers/remoteproc/remoteproc_sysfs.c b/drivers/remoteproc/remoteproc_sysfs.c
-> index eea514c..40949a0 100644
+> index 40949a0..49b846e 100644
 > --- a/drivers/remoteproc/remoteproc_sysfs.c
 > +++ b/drivers/remoteproc/remoteproc_sysfs.c
-> @@ -10,6 +10,69 @@
+> @@ -10,6 +10,62 @@
 >  
 >  #define to_rproc(d) container_of(d, struct rproc, dev)
 >  
-> +/*
-> + * A coredump-configuration-to-string lookup table, for exposing a
-> + * human readable configuration via sysfs. Always keep in sync with
-> + * enum rproc_coredump_mechanism
-> + */
-> +static const char * const rproc_coredump_str[] = {
-> +	[RPROC_COREDUMP_DEFAULT]	= "default",
-> +	[RPROC_COREDUMP_INLINE]		= "inline",
-> +	[RPROC_COREDUMP_DISABLED]	= "disabled",
-> +};
-> +
-> +/* Expose the current coredump configuration via debugfs */
-> +static ssize_t coredump_show(struct device *dev,
+> +/* expose recovery flag via sysfs */
+> +static ssize_t recovery_show(struct device *dev,
 > +			     struct device_attribute *attr, char *buf)
 > +{
 > +	struct rproc *rproc = to_rproc(dev);
 > +
-> +	return sprintf(buf, "%s\n", rproc_coredump_str[rproc->dump_conf]);
+> +	return sprintf(buf, "%s", rproc->recovery_disabled ? "disabled\n" : "enabled\n");
 > +}
 > +
 > +/*
-> + * By writing to the 'coredump' sysfs entry, we control the behavior of the
-> + * coredump mechanism dynamically. The default value of this entry is "default".
+> + * By writing to the 'recovery' sysfs entry, we control the behavior of the
+> + * recovery mechanism dynamically. The default value of this entry is "enabled".
 > + *
-> + * The 'coredump' sysfs entry supports these commands:
+> + * The 'recovery' sysfs entry supports these commands:
 > + *
-> + * default:	This is the default coredump mechanism. When the remoteproc
-> + *		crashes the entire coredump will be copied to a separate buffer
-> + *		and exposed to userspace.
+> + * enabled:	When enabled, the remote processor will be automatically
+> + *		recovered whenever it crashes. Moreover, if the remote
+> + *		processor crashes while recovery is disabled, it will
+> + *		be automatically recovered too as soon as recovery is enabled.
 > + *
-> + * inline:	The coredump will not be copied to a separate buffer and the
-> + *		recovery process will have to wait until data is read by
-> + *		userspace. But this avoid usage of extra memory.
+> + * disabled:	When disabled, a remote processor will remain in a crashed
+> + *		state if it crashes. This is useful for debugging purposes;
+> + *		without it, debugging a crash is substantially harder.
 > + *
-> + * disabled:	This will disable coredump. Recovery will proceed without
-> + *		collecting any dump.
+> + * recover:	This function will trigger an immediate recovery if the
+> + *		remote processor is in a crashed state, without changing
+> + *		or checking the recovery state (enabled/disabled).
+> + *		This is useful during debugging sessions, when one expects
+> + *		additional crashes to happen after enabling recovery. In this
+> + *		case, enabling recovery will make it hard to debug subsequent
+> + *		crashes, so it's recommended to keep recovery disabled, and
+> + *		instead use the "recover" command as needed.
 > + */
-> +static ssize_t coredump_store(struct device *dev,
+> +static ssize_t recovery_store(struct device *dev,
 > +			      struct device_attribute *attr,
 > +			      const char *buf, size_t count)
 > +{
 > +	struct rproc *rproc = to_rproc(dev);
 > +
-> +	if (rproc->state == RPROC_CRASHED) {
-> +		dev_err(&rproc->dev, "can't change coredump configuration\n");
-> +		return -EBUSY;
-> +	}
-> +
-> +	if (sysfs_streq(buf, "disable")) {
-> +		rproc->dump_conf = RPROC_COREDUMP_DISABLED;
-> +	} else if (sysfs_streq(buf, "inline")) {
-> +		rproc->dump_conf = RPROC_COREDUMP_INLINE;
-> +	} else if (sysfs_streq(buf, "default")) {
-> +		rproc->dump_conf = RPROC_COREDUMP_DEFAULT;
+> +	if (sysfs_streq(buf, "enabled")) {
+> +		/* change the flag and begin the recovery process if needed */
+> +		rproc->recovery_disabled = false;
+> +		rproc_trigger_recovery(rproc);
+> +	} else if (sysfs_streq(buf, "disabled")) {
+> +		rproc->recovery_disabled = true;
+> +	} else if (sysfs_streq(buf, "recover")) {
+> +		/* begin the recovery process without changing the flag */
+> +		rproc_trigger_recovery(rproc);
 > +	} else {
-> +		dev_err(&rproc->dev, "Invalid coredump configuration\n");
 > +		return -EINVAL;
 > +	}
 > +
 > +	return count;
 > +}
-> +static DEVICE_ATTR_RW(coredump);
+> +static DEVICE_ATTR_RW(recovery);
 > +
->  /* Expose the loaded / running firmware name via sysfs */
->  static ssize_t firmware_show(struct device *dev, struct device_attribute *attr,
->  			  char *buf)
-> @@ -138,6 +201,7 @@ static ssize_t name_show(struct device *dev, struct device_attribute *attr,
+>  /*
+>   * A coredump-configuration-to-string lookup table, for exposing a
+>   * human readable configuration via sysfs. Always keep in sync with
+> @@ -201,6 +257,7 @@ static ssize_t name_show(struct device *dev, struct device_attribute *attr,
 >  static DEVICE_ATTR_RO(name);
 >  
 >  static struct attribute *rproc_attrs[] = {
-> +	&dev_attr_coredump.attr,
+> +	&dev_attr_recovery.attr,
 
-This patch it guaranteed to break someone's user space but I don't think debugfs
-is part of the ABI (other people may disagree with me).
+Here too I think it would be a good idea to make the feature configurable.
 
-Please make the feature configurable in order to give people the choice of
-making it available to users or not. 
+Thanks,
+Mathieu
 
+>  	&dev_attr_coredump.attr,
 >  	&dev_attr_firmware.attr,
 >  	&dev_attr_state.attr,
->  	&dev_attr_name.attr,
 > -- 
 > The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
 > a Linux Foundation Collaborative Project
