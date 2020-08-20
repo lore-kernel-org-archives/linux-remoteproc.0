@@ -2,401 +2,200 @@ Return-Path: <SRS0=D3M+=B6=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-9.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1640DC433E3
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 20 Aug 2020 21:23:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86F70C433E1
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 20 Aug 2020 21:53:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C8A9E20885
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 20 Aug 2020 21:23:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 597D720658
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 20 Aug 2020 21:53:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="s3ZMNOxt"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="PSHGnsUv"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727113AbgHTVXo (ORCPT
+        id S1728180AbgHTVx5 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 20 Aug 2020 17:23:44 -0400
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:55486 "EHLO
+        Thu, 20 Aug 2020 17:53:57 -0400
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:58684 "EHLO
         lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726976AbgHTVXl (ORCPT
+        with ESMTP id S1728121AbgHTVxz (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 20 Aug 2020 17:23:41 -0400
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 07KLNYF0059130;
-        Thu, 20 Aug 2020 16:23:34 -0500
+        Thu, 20 Aug 2020 17:53:55 -0400
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 07KLrpUk066344;
+        Thu, 20 Aug 2020 16:53:51 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1597958614;
-        bh=Oq2grRWFHQ/nwrs9YgMjvF/tRfnyle4hAikLzUN4/20=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=s3ZMNOxtAr4b8P/KIlFt1A17LI3vyte2nqqcx1Mgj2kb6uV21EPZ99mGkofxn+HfR
-         2kpK3WYOKLFsFSHoncI3LRSzm2OI87yg0cSWm7++MiGjwUgAqOU/SUQ/OyemtX327A
-         Dhlp15TNrtYBzdMj6CK/VDYSXnWYZuPYMOofjpIM=
-Received: from DLEE105.ent.ti.com (dlee105.ent.ti.com [157.170.170.35])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id 07KLNYNf130052;
-        Thu, 20 Aug 2020 16:23:34 -0500
-Received: from DLEE112.ent.ti.com (157.170.170.23) by DLEE105.ent.ti.com
- (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
+        s=ti-com-17Q1; t=1597960431;
+        bh=0EF0JtL6mcRJ2tR/2jpO3XDBQ1XUe4voliiNQAmlZ7E=;
+        h=Subject:From:To:CC:References:Date:In-Reply-To;
+        b=PSHGnsUvaSP3XcBuScKinyIYKtQSV7UR5XHLvBdjdHtD8Sqoa+v+sPTTsAbGOninv
+         yuNTFPV3OQSlREwvm4GzPcjMykxvvAaRSIdIev9OULJF3V3PLtLH9klh9db+/ujzcW
+         EbIcNMR50Y+ycCuQFrcqOWa6VEff3I8D5THUB4Ms=
+Received: from DLEE102.ent.ti.com (dlee102.ent.ti.com [157.170.170.32])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 07KLrpks009770
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 20 Aug 2020 16:53:51 -0500
+Received: from DLEE103.ent.ti.com (157.170.170.33) by DLEE102.ent.ti.com
+ (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3; Thu, 20
- Aug 2020 16:23:34 -0500
-Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE112.ent.ti.com
- (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
+ Aug 2020 16:53:50 -0500
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE103.ent.ti.com
+ (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3 via
- Frontend Transport; Thu, 20 Aug 2020 16:23:34 -0500
+ Frontend Transport; Thu, 20 Aug 2020 16:53:50 -0500
 Received: from [10.250.32.29] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id 07KLNX6n052890;
-        Thu, 20 Aug 2020 16:23:33 -0500
-Subject: Re: [PATCH v3 1/4] dt-bindings: remoteproc: Add bindings for R5F
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id 07KLrooR103491;
+        Thu, 20 Aug 2020 16:53:50 -0500
+Subject: Re: [PATCH v2 1/4] dt-bindings: remoteproc: Add bindings for R5F
  subsystem on TI K3 SoCs
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+From:   Suman Anna <s-anna@ti.com>
+To:     Stefano Stabellini <stefano.stabellini@xilinx.com>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>
-CC:     Lokesh Vutla <lokeshvutla@ti.com>,
+        Rob Herring <robh@kernel.org>, <stefanos@xilinx.com>,
+        <BLEVINSK@xilinx.com>
+CC:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Lokesh Vutla <lokeshvutla@ti.com>,
         <linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20200722235554.7511-1-s-anna@ti.com>
- <20200722235554.7511-2-s-anna@ti.com>
-From:   Suman Anna <s-anna@ti.com>
-Message-ID: <1c628d36-4f7b-6d3c-93b2-b9a7ca2f5ed8@ti.com>
-Date:   Thu, 20 Aug 2020 16:23:33 -0500
+        <linux-kernel@vger.kernel.org>, <tomase@xilinx.com>
+References: <20200630024922.32491-1-s-anna@ti.com>
+ <20200630024922.32491-2-s-anna@ti.com> <20200714171553.GA2522956@bogus>
+ <20200716171903.GA3286345@xps15>
+ <alpine.DEB.2.21.2007161232400.3886@sstabellini-ThinkPad-T480s>
+ <b7415d48-a354-5610-a657-08cdefc482a6@ti.com>
+ <8ba1f240-df9a-d63e-5c05-1a4a13e03213@ti.com>
+Message-ID: <d818fe7b-26d6-2b3f-3155-87fc58f5b273@ti.com>
+Date:   Thu, 20 Aug 2020 16:53:50 -0500
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <20200722235554.7511-2-s-anna@ti.com>
+In-Reply-To: <8ba1f240-df9a-d63e-5c05-1a4a13e03213@ti.com>
 Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On 7/22/20 6:55 PM, Suman Anna wrote:
-> The Texas Instruments K3 family of SoCs have one or more dual-core
-> Arm Cortex R5F processor subsystems/clusters (R5FSS). The clusters
-> can be split between multiple voltage domains as well. Add the device
-> tree bindings document for these R5F subsystem devices. These R5F
-> processors do not have an MMU, and so require fixed memory carveout
-> regions matching the firmware image addresses. The nodes require more
-> than one memory region, with the first memory region used for DMA
-> allocations at runtime. The remaining memory regions are reserved
-> and are used for the loading and running of the R5F remote processors.
-> The R5F processors can also optionally use any internal on-chip SRAM
-> memories either for executing code or using it as fast-access data.
-> 
-> The added example illustrates the DT nodes for the single R5FSS device
-> present on K3 AM65x family of SoCs.
-> 
-> Signed-off-by: Suman Anna <s-anna@ti.com>
-> ---
-> v3:
->  - Replaced ti,k3-sci-proc.yaml references with the new ti,k3-sci-common.yaml
->  - Updated required list to include the three ti,sci properties
-> v2: https://patchwork.kernel.org/patch/11632997/
-> v1: https://patchwork.kernel.org/patch/11456381/
-> 
->  .../bindings/remoteproc/ti,k3-r5f-rproc.yaml  | 281 ++++++++++++++++++
->  1 file changed, 281 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/remoteproc/ti,k3-r5f-rproc.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/remoteproc/ti,k3-r5f-rproc.yaml b/Documentation/devicetree/bindings/remoteproc/ti,k3-r5f-rproc.yaml
-> new file mode 100644
-> index 000000000000..2f4fb4a1a2cb
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/remoteproc/ti,k3-r5f-rproc.yaml
-> @@ -0,0 +1,281 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only or BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/remoteproc/ti,k3-r5f-rproc.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: TI K3 R5F processor subsystems
-> +
-> +maintainers:
-> +  - Suman Anna <s-anna@ti.com>
-> +
-> +description: |
-> +  The TI K3 family of SoCs usually have one or more dual-core Arm Cortex R5F
-> +  processor subsystems/clusters (R5FSS). The dual core cluster can be used
-> +  either in a LockStep mode providing safety/fault tolerance features or in a
-> +  Split mode providing two individual compute cores for doubling the compute
-> +  capacity. These are used together with other processors present on the SoC
-> +  to achieve various system level goals.
-> +
-> +  Each Dual-Core R5F sub-system is represented as a single DTS node
-> +  representing the cluster, with a pair of child DT nodes representing
-> +  the individual R5F cores. Each node has a number of required or optional
-> +  properties that enable the OS running on the host processor to perform
-> +  the device management of the remote processor and to communicate with the
-> +  remote processor.
-> +
-> +properties:
-> +  $nodename:
-> +    pattern: "^r5fss(@.*)?"
-> +
-> +  compatible:
-> +    enum:
-> +      - ti,am654-r5fss
-> +      - ti,j721e-r5fss
-> +
-> +  power-domains:
-> +    description: |
-> +      Should contain a phandle to a PM domain provider node and an args
-> +      specifier containing the R5FSS device id value.
-> +    maxItems: 1
-> +
-> +  "#address-cells":
-> +    const: 1
-> +
-> +  "#size-cells":
-> +    const: 1
-> +
-> +  ranges:
-> +    description: |
-> +      Standard ranges definition providing address translations for
-> +      local R5F TCM address spaces to bus addresses.
-> +
-> +# Optional properties:
-> +# --------------------
-> +
-> +  ti,cluster-mode:
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    enum: [0, 1]
-> +    description: |
-> +      Configuration Mode for the Dual R5F cores within the R5F cluster.
-> +      Should be either a value of 1 (LockStep mode) or 0 (Split mode),
-> +      default is LockStep mode if omitted.
-> +
-> +# R5F Processor Child Nodes:
-> +# ==========================
-> +
-> +patternProperties:
-> +  "^r5f@[a-f0-9]+$":
-> +    type: object
-> +    description: |
-> +      The R5F Sub-System device node should define two R5F child nodes, each
-> +      node representing a TI instantiation of the Arm Cortex R5F core. There
-> +      are some specific integration differences for the IP like the usage of
-> +      a Region Address Translator (RAT) for translating the larger SoC bus
-> +      addresses into a 32-bit address space for the processor.
-> +
-> +      Each R5F core has an associated 64 KB of Tightly-Coupled Memory (TCM)
-> +      internal memories split between two banks - TCMA and TCMB (further
-> +      interleaved into two banks TCMB0 and TCMB1). These memories (also called
-> +      ATCM and BTCM) provide read/write performance on par with the core's L1
-> +      caches. Each of the TCMs can be enabled or disabled independently and
-> +      either of them can be configured to appear at that R5F's address 0x0.
-> +
-> +      The cores do not use an MMU, but has a Region Address Translater
-> +      (RAT) module that is accessible only from the R5Fs for providing
-> +      translations between 32-bit CPU addresses into larger system bus
-> +      addresses. Cache and memory access settings are provided through a
-> +      Memory Protection Unit (MPU), programmable only from the R5Fs.
-> +
-> +    allOf:
-> +      - $ref: /schemas/arm/keystone/ti,k3-sci-common.yaml#
-> +
-> +    properties:
-> +      compatible:
-> +        enum:
-> +          - ti,am654-r5f
-> +          - ti,j721e-r5f
-> +
-> +      reg:
-> +        items:
-> +          - description: Address and Size of the ATCM internal memory region
-> +          - description: Address and Size of the BTCM internal memory region
-> +
-> +      reg-names:
-> +        items:
-> +          - const: atcm
-> +          - const: btcm
-> +
-> +      resets:
-> +        description: |
-> +          Should contain the phandle to the reset controller node managing the
-> +          local resets for this device, and a reset specifier.
-> +        maxItems: 1
-> +
-> +      firmware-name:
-> +        description: |
-> +          Should contain the name of the default firmware image
-> +          file located on the firmware search path
-> +
-> +# The following properties are mandatory for R5F Core0 in both LockStep and Split
-> +# modes, and are mandatory for R5F Core1 _only_ in Split mode. They are unused for
-> +# R5F Core1 in LockStep mode:
-> +
-> +      mboxes:
-> +        description: |
-> +          OMAP Mailbox specifier denoting the sub-mailbox, to be used for
-> +          communication with the remote processor. This property should match
-> +          with the sub-mailbox node used in the firmware image.
-> +        maxItems: 1
-> +
-> +      memory-region:
-> +        description: |
-> +          phandle to the reserved memory nodes to be associated with the
-> +          remoteproc device. There should be at least two reserved memory nodes
-> +          defined. The reserved memory nodes should be carveout nodes, and
-> +          should be defined with a "no-map" property as per the bindings in
-> +          Documentation/devicetree/bindings/reserved-memory/reserved-memory.txt
-> +        minItems: 2
-> +        maxItems: 8
-> +        items:
-> +          - description: region used for dynamic DMA allocations like vrings and
-> +                         vring buffers
-> +          - description: region reserved for firmware image sections
-> +        additionalItems: true
-> +
-> +
-> +# Optional properties:
-> +# --------------------
-> +# The following properties are optional properties for each of the R5F cores:
-> +
-> +      ti,atcm-enable:
-> +        $ref: /schemas/types.yaml#/definitions/uint32
-> +        enum: [0, 1]
-> +        description: |
-> +          R5F core configuration mode dictating if ATCM should be enabled. The
-> +          R5F address of ATCM is dictated by ti,loczrama property. Should be
-> +          either a value of 1 (enabled) or 0 (disabled), default is disabled
-> +          if omitted. Recommended to enable it for maximizing TCMs.
-> +
-> +      ti,btcm-enable:
-> +        $ref: /schemas/types.yaml#/definitions/uint32
-> +        enum: [0, 1]
-> +        description: |
-> +          R5F core configuration mode dictating if BTCM should be enabled. The
-> +          R5F address of BTCM is dictated by ti,loczrama property. Should be
-> +          either a value of 1 (enabled) or 0 (disabled), default is enabled if
-> +          omitted.
-> +
-> +      ti,loczrama:
-> +        $ref: /schemas/types.yaml#/definitions/uint32
-> +        enum: [0, 1]
-> +        description: |
-> +          R5F core configuration mode dictating which TCM should appear at
-> +          address 0 (from core's view). Should be either a value of 1 (ATCM
-> +          at 0x0) or 0 (BTCM at 0x0), default value is 1 if omitted.
-> +
-> +      sram:
-> +        $ref: /schemas/types.yaml#/definitions/phandle-array
-> +        minItems: 1
-> +        maxItems: 4
-> +        description: |
-> +          phandles to one or more reserved on-chip SRAM regions. The regions
-> +          should be defined as child nodes of the respective SRAM node, and
-> +          should be defined as per the generic bindings in,
-> +          Documentation/devicetree/bindings/sram/sram.yaml
-> +
-> +    required:
-> +     - compatible
-> +     - reg
-> +     - reg-names
-> +     - ti,sci
-> +     - ti,sci-dev-id
-> +     - ti,sci-proc-ids
-> +     - resets
-> +     - firmware-name
-> +
-> +    unevaluatedProperties: false
-> +
-> +required:
-> + - compatible
-> + - power-domains
-> + - "#address-cells"
-> + - "#size-cells"
-> + - ranges
+Hi Rob,
 
-I will update the indentation (add an extra space) as recently fixed by Rob on
-various bindings in 5.9-rc1 for the next version. Currently waiting on the
-response from the v2 discussion before I refresh this series.
+On 8/10/20 11:52 AM, Suman Anna wrote:
+> Hi Rob,
+> 
+> On 7/27/20 5:39 PM, Suman Anna wrote:
+>> Hi Rob,
+>>
+>> On 7/16/20 2:43 PM, Stefano Stabellini wrote:
+>>> On Thu, 16 Jul 2020, Mathieu Poirier wrote:
+>>>> Hi Rob,
+>>>>
+>>>> On Tue, Jul 14, 2020 at 11:15:53AM -0600, Rob Herring wrote:
+>>>>> On Mon, Jun 29, 2020 at 09:49:19PM -0500, Suman Anna wrote:
+>>>>>> The Texas Instruments K3 family of SoCs have one or more dual-core
+>>>>>> Arm Cortex R5F processor subsystems/clusters (R5FSS). The clusters
+>>>>>> can be split between multiple voltage domains as well. Add the device
+>>>>>> tree bindings document for these R5F subsystem devices. These R5F
+>>>>>> processors do not have an MMU, and so require fixed memory carveout
+>>>>>> regions matching the firmware image addresses. The nodes require more
+>>>>>> than one memory region, with the first memory region used for DMA
+>>>>>> allocations at runtime. The remaining memory regions are reserved
+>>>>>> and are used for the loading and running of the R5F remote processors.
+>>>>>> The R5F processors can also optionally use any internal on-chip SRAM
+>>>>>> memories either for executing code or using it as fast-access data.
+>>>>>>
+>>>>>> The added example illustrates the DT nodes for the single R5FSS device
+>>>>>> present on K3 AM65x family of SoCs.
+>>>>>>
+>>>>>> Signed-off-by: Suman Anna <s-anna@ti.com>
+>>>>>> ---
+>>>>>> v2:
+>>>>>>   - Renamed "lockstep-mode" property to "ti,cluster-mode"
+>>>>>
+>>>>> I don't think that's a move in the right direction given this is at
+>>>>> least partially a standard feature.
+>>>>>
+>>>>> As I said before, I'm very hesistant to accept anything here given I
+>>>>> know the desires and activity to define 'system Devicetrees' of which
+>>>>> TI is participating. While maybe an rproc node is sufficient for a
+>>>>> DSP, it seems multiple vendors have R cores and want to define them in
+>>>>> system DT.
+>>
+>> Ping on this discussion. TI is participating on the System DT evolution in general, but we don't have any plans to use DTS on our remote cores. We have our own auto-generated Chip-Support-Library (CSL) code that gets used on our firmwares.
+>>
+>> Also, most of the properties I defined are rather standard properties. I have posted a revised v3 [1] after the common ti,sci properties refactoring. This series is only waiting on the bindings. I am happy to change any ti, prefixed properties. I had one open question [2] that I am waiting for a response from you for identifying the R5F Core.
+> 
+> Ping on this.
+
+Any comments on this? This discussion is what's holding up this series from
+getting merged.
+
+Also, FWIW, I spent a bit of time looking at the R5s (called RPU) in the Xilinx
+ZynqMP, and the integration aspects are very different between the TI and Xilinx
+SoCs, so I do not think even a single binding is possible between the two SoCs.
+A few of them to cite:
+
+1. TI SoCs require the power/resets to be released for both the Cores in
+LockStep-mode, while it was enough to just release the Core0 resets on ZynqMP.
+So, our binding requires that both CPUs be defined for sure as the reset
+controls are defined per core, while you don't see them on the RPU.
+
+2. There are specific core reset sequences on TI SoCs in LockStep and
+Split-modes on TI SoCs, I am not sure if there are any with Xilinx SoCs.
+
+3. The TCMs are embedded within the R5F sub-system on TI SoCs, and are
+controlled by the same power and clock as the R5Fs. There is an additional CPU
+halt line that controls the core execution, and allows us to enable the access
+to these. The ZynqMP looks to have completely independent control to the TCMs.
+This is the reason why they are represented as individual mmio-sram nodes in the
+Xilinx binding.
+
+4. The TCMs and which one appears at the R5 address 0 are programmable on TI
+SoCs, I couldn't tell if this is the case with Xilinx SoCs.
+
+Ben and Stefano,
+Please do clarify, if I am off on any of the above differences.
 
 regards
 Suman
 
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    / {
-> +        model = "Texas Instruments K3 AM654 SoC";
-> +        compatible = "ti,am654";
-> +        #address-cells = <2>;
-> +        #size-cells = <2>;
-> +
-> +        bus@100000 {
-> +            compatible = "simple-bus";
-> +            #address-cells = <2>;
-> +            #size-cells = <2>;
-> +            ranges = <0x00 0x00100000 0x00 0x00100000 0x00 0x00020000>, /* ctrl mmr */
-> +                     <0x00 0x41000000 0x00 0x41000000 0x00 0x00020000>,
-> +                     <0x00 0x41400000 0x00 0x41400000 0x00 0x00020000>,
-> +                     <0x00 0x41c00000 0x00 0x41c00000 0x00 0x00080000>;
-> +
-> +            bus@28380000 {
-> +                compatible = "simple-bus";
-> +                #address-cells = <2>;
-> +                #size-cells = <2>;
-> +                ranges = <0x00 0x28380000 0x00 0x28380000 0x00 0x03880000>, /* MCU NAVSS */
-> +                         <0x00 0x41000000 0x00 0x41000000 0x00 0x00020000>, /* MCU R5F Core0 */
-> +                         <0x00 0x41400000 0x00 0x41400000 0x00 0x00020000>, /* MCU R5F Core1 */
-> +                         <0x00 0x41c00000 0x00 0x41c00000 0x00 0x00080000>; /* MCU SRAM */
-> +
-> +                /* AM65x MCU R5FSS node */
-> +                mcu_r5fss0: r5fss@41000000 {
-> +                    compatible = "ti,am654-r5fss";
-> +                    power-domains = <&k3_pds 129>;
-> +                    ti,cluster-mode = <1>;
-> +                    #address-cells = <1>;
-> +                    #size-cells = <1>;
-> +                    ranges = <0x41000000 0x00 0x41000000 0x20000>,
-> +                             <0x41400000 0x00 0x41400000 0x20000>;
-> +
-> +                    mcu_r5f0: r5f@41000000 {
-> +                        compatible = "ti,am654-r5f";
-> +                        reg = <0x41000000 0x00008000>,
-> +                              <0x41010000 0x00008000>;
-> +                        reg-names = "atcm", "btcm";
-> +                        ti,sci = <&dmsc>;
-> +                        ti,sci-dev-id = <159>;
-> +                        ti,sci-proc-ids = <0x01 0xFF>;
-> +                        resets = <&k3_reset 159 1>;
-> +                        firmware-name = "am65x-mcu-r5f0_0-fw";
-> +                        ti,atcm-enable = <1>;
-> +                        ti,btcm-enable = <1>;
-> +                        ti,loczrama = <1>;
-> +                        mboxes = <&mailbox0 &mbox_mcu_r5fss0_core0>;
-> +                        memory-region = <&mcu_r5fss0_core0_dma_memory_region>,
-> +                                        <&mcu_r5fss0_core0_memory_region>;
-> +                        sram = <&mcu_r5fss0_core0_sram>;
-> +                    };
-> +
-> +                    mcu_r5f1: r5f@41400000 {
-> +                        compatible = "ti,am654-r5f";
-> +                        reg = <0x41400000 0x00008000>,
-> +                              <0x41410000 0x00008000>;
-> +                        reg-names = "atcm", "btcm";
-> +                        ti,sci = <&dmsc>;
-> +                        ti,sci-dev-id = <245>;
-> +                        ti,sci-proc-ids = <0x02 0xFF>;
-> +                        resets = <&k3_reset 245 1>;
-> +                        firmware-name = "am65x-mcu-r5f0_1-fw";
-> +                        ti,atcm-enable = <1>;
-> +                        ti,btcm-enable = <1>;
-> +                        ti,loczrama = <1>;
-> +                        mboxes = <&mailbox1 &mbox_mcu_r5fss0_core1>;
-> +                    };
-> +                };
-> +            };
-> +        };
-> +    };
+
+> 
+> regards
+> Suman
+> 
+>>
+>> regards
+>> Suman
+>>
+>> [1] https://patchwork.kernel.org/patch/11679331/
+>> [2] https://patchwork.kernel.org/comment/23273441/
+>>
+>>>>>
+>>>>> Though the system DT effort has not yet given any thought to what is the
+>>>>> view of one processor or instance to another instance (which is what
+>>>>> this binding is). We'll still need something defined for that, but I'd
+>>>>> expect that to be dependent on what is defined for system DT.
+>>>>
+>>>> Efforts related to the definition of the system DT are under way, something I
+>>>> expect to keep going on for some time to come.  I agree with the need to use the
+>>>> system DT to define remote processors and I look forward to the time we can do
+>>>> so.
+>>>
+>>> I'll take this opportunity to add that I should be able to publicly
+>>> present a System Device Tree proposal for this during the next call (the
+>>> next one after the call early next week that has already a full agenda.)
+>>>
+>>>
+>>>> That being said we need to find a concensus on how to move forward with patches
+>>>> that are ready to be merged.  What is your opinion on that?
+>>>
+>>> In my opinion we don't have to necessarily wait for System Device Tree
+>>> to make progress with those if they look OK.
+>>>
+>>
 > 
 
