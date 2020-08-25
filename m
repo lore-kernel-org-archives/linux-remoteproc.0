@@ -2,123 +2,121 @@ Return-Path: <SRS0=CAUm=CD=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E218EC433E3
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 25 Aug 2020 12:04:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39BA5C433E1
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 25 Aug 2020 13:46:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BEEE120786
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 25 Aug 2020 12:04:28 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="OVnauy2Y"
+	by mail.kernel.org (Postfix) with ESMTP id 1C49120738
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 25 Aug 2020 13:46:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728964AbgHYMEY (ORCPT
+        id S1726090AbgHYNqv (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 25 Aug 2020 08:04:24 -0400
-Received: from mail29.static.mailgun.info ([104.130.122.29]:59786 "EHLO
-        mail29.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728932AbgHYMBE (ORCPT
+        Tue, 25 Aug 2020 09:46:51 -0400
+Received: from mga05.intel.com ([192.55.52.43]:6166 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725926AbgHYNlO (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 25 Aug 2020 08:01:04 -0400
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1598356863; h=Message-ID: References: In-Reply-To: Subject:
- Cc: To: From: Date: Content-Transfer-Encoding: Content-Type:
- MIME-Version: Sender; bh=RaE0nvM6498cSacjZ1LSCxECdE3SWE7NKgmJN9JMbME=;
- b=OVnauy2YM1gyInHy077RqEcFZdS0W5df0WtLrQN8LvJd0HNOeDemtYFa1IY7Rw18wbXzCpRo
- TY032glJX/wnl/3ol7ndL39rGF0TiU/Tsr1hC7hIl+xtJJYjojJrHaOWkNXtOq56O95hykG7
- ZxN/UeTaEuE/1/ENEjbeyig7RNA=
-X-Mailgun-Sending-Ip: 104.130.122.29
-X-Mailgun-Sid: WyI4ZWZiZiIsICJsaW51eC1yZW1vdGVwcm9jQHZnZXIua2VybmVsLm9yZyIsICJiZTllNGEiXQ==
-Received: from smtp.codeaurora.org
- (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
- smtp-out-n02.prod.us-west-2.postgun.com with SMTP id
- 5f44fd4476c283d04f086867 (version=TLS1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Tue, 25 Aug 2020 12:00:04
- GMT
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 87070C43387; Tue, 25 Aug 2020 12:00:03 +0000 (UTC)
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: gokulsri)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 0114EC433CB;
-        Tue, 25 Aug 2020 12:00:02 +0000 (UTC)
+        Tue, 25 Aug 2020 09:41:14 -0400
+IronPort-SDR: nZRc+bCrGYq3nfE/yaSjx1um1LnOQzfDM5DS6ELMHZJXWMUMhwo5/mh8WewR0QAypvQOcOOIU+
+ 01xDnWGB5bkg==
+X-IronPort-AV: E=McAfee;i="6000,8403,9723"; a="240925804"
+X-IronPort-AV: E=Sophos;i="5.76,352,1592895600"; 
+   d="scan'208";a="240925804"
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Aug 2020 06:41:13 -0700
+IronPort-SDR: 15vXcXLW0R3ZxvbOzXHfgHkl51eK0GaGcbh/iSVDLHo9hh998TBv28JBK9iB4gZg035GuYUmg+
+ H8EL31jZFJ3A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.76,352,1592895600"; 
+   d="scan'208";a="299093769"
+Received: from gliakhov-mobl2.ger.corp.intel.com (HELO ubuntu) ([10.252.54.8])
+  by orsmga006.jf.intel.com with ESMTP; 25 Aug 2020 06:41:10 -0700
+Date:   Tue, 25 Aug 2020 15:41:10 +0200
+From:   Guennadi Liakhovetski <guennadi.liakhovetski@linux.intel.com>
+To:     "Michael S. Tsirkin" <mst@redhat.com>
+Cc:     kvm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        sound-open-firmware@alsa-project.org,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Liam Girdwood <liam.r.girdwood@linux.intel.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Ohad Ben-Cohen <ohad@wizery.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Vincent Whitchurch <vincent.whitchurch@axis.com>
+Subject: Re: [PATCH v4 4/4] vhost: add an RPMsg API
+Message-ID: <20200825134109.GA9822@ubuntu>
+References: <20200722150927.15587-1-guennadi.liakhovetski@linux.intel.com>
+ <20200722150927.15587-5-guennadi.liakhovetski@linux.intel.com>
+ <20200804102132-mutt-send-email-mst@kernel.org>
+ <20200804151916.GC19025@ubuntu>
+ <20200810094013-mutt-send-email-mst@kernel.org>
+ <20200812123243.GA10218@ubuntu>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Tue, 25 Aug 2020 17:30:02 +0530
-From:   gokulsri@codeaurora.org
-To:     bjorn.andersson@linaro.org, linux-remoteproc@vger.kernel.org,
-        sboyd@kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org
-Cc:     agross@kernel.org, linux-soc@vger.kernel.org,
-        devicetree@vger.kernel.org, govinds@codeaurora.org,
-        sricharan@codeaurora.org
-Subject: Re: [PATCH v8 0/4] Add non PAS wcss Q6 support for QCS404
-In-Reply-To: <1596111244-28411-1-git-send-email-gokulsri@codeaurora.org>
-References: <1596111244-28411-1-git-send-email-gokulsri@codeaurora.org>
-Message-ID: <3476a019b5b847de979fb327183c3239@codeaurora.org>
-X-Sender: gokulsri@codeaurora.org
-User-Agent: Roundcube Webmail/1.3.9
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200812123243.GA10218@ubuntu>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Bjorn,
+Hi Michael,
 
-Awaiting your rewiew on this series [PATCH v8 0/4] Add non PAS wcss Q6 
-support for QCS404 and the dependant series [v7,0/9] remoteproc: qcom: 
-q6v5-wcss: Add support for secure pil 
-(https://patchwork.kernel.org/cover/11692941/)
+...back from holidays and still unsure what your preferred solution 
+for the message layout would be:
 
+On Wed, Aug 12, 2020 at 02:32:43PM +0200, Guennadi Liakhovetski wrote:
+> Hi Michael,
+> 
+> Thanks for a review.
+> 
+> On Mon, Aug 10, 2020 at 09:44:15AM -0400, Michael S. Tsirkin wrote:
+> > On Tue, Aug 04, 2020 at 05:19:17PM +0200, Guennadi Liakhovetski wrote:
 
-Thanks,
-Gokul
+[snip]
 
-On 2020-07-30 17:44, Gokul Sriram Palanisamy wrote:
-> Changes since v7:
->  Addressed review comments from	Stephen Boyd
+> > > > > +static int vhost_rpmsg_get_single(struct vhost_virtqueue *vq)
+> > > > > +{
+> > > > > +	struct vhost_rpmsg *vr = container_of(vq->dev, struct vhost_rpmsg, dev);
+> > > > > +	unsigned int out, in;
+> > > > > +	int head = vhost_get_vq_desc(vq, vq->iov, ARRAY_SIZE(vq->iov), &out, &in,
+> > > > > +				     NULL, NULL);
+> > > > > +	if (head < 0) {
+> > > > > +		vq_err(vq, "%s(): error %d getting buffer\n",
+> > > > > +		       __func__, head);
+> > > > > +		return head;
+> > > > > +	}
+> > > > > +
+> > > > > +	/* Nothing new? */
+> > > > > +	if (head == vq->num)
+> > > > > +		return head;
+> > > > > +
+> > > > > +	if (vq == &vr->vq[VIRTIO_RPMSG_RESPONSE] && (out || in != 1)) {
+> > > > 
+> > > > This in != 1 looks like a dependency on a specific message layout.
+> > > > virtio spec says to avoid these. Using iov iters it's not too hard to do
+> > > > ...
+> > > 
+> > > This is an RPMsg VirtIO implementation, and it has to match the virtio_rpmsg_bus.c 
+> > > driver, and that one has specific VirtIO queue and message usage patterns.
+> > 
+> > That could be fine for legacy virtio, but now you are claiming support
+> > for virtio 1, so need to fix these assumptions in the device.
 > 
-> Changes since v6:
->  Removed duplicate structure entry added during rebase in v5
-> 
-> Changes since v5:
->  Rebased all the unmerged patches on top of linux-5.8-rc3
->  Added dt-binding for qcom,qcs404-wcss-pil
->  Removed typo
-> 
-> Changes since v4:
->  removed QDSP6SS clock controls and moved to wcss rproc.
->  renamed wcsccc to q6sstopcc.
->  cleanup/refactoring.
-> 
-> Changes since v3:
->  dt binding cleanup.
->  Fixed remoteproc recovery.
->  Added remoteproc dump support.
->  wcsscc cleanup/refactoring.
-> 
-> Changes since v2:
->  Removed unused properties.
->  Refactored code to have common logic b/w ipq8074 and QCS404, wherever 
-> possible.
->  Added compatible example.
->  Removed wcss-protected bool.
-> 
-> Changes since v1:
->   Corrected clock names as per comments in v1 patch.
-> 
-> Govind Singh (4):
->   remoteproc: qcom: wcss: populate hardcoded param using driver data
->   dt-bindings: remoteproc: qcom: Add Q6V5 Modem PIL binding for QCS404
->   remoteproc: qcom: wcss: Add non pas wcss Q6 support for QCS404
->   remoteproc: qcom: wcss: explicitly request exclusive reset control
-> 
->  .../devicetree/bindings/remoteproc/qcom,q6v5.txt   |   9 +
->  drivers/remoteproc/qcom_q6v5_wcss.c                | 591 
-> +++++++++++++++++++--
->  2 files changed, 558 insertions(+), 42 deletions(-)
+> I can just deop these checks without changing anything else, that still would work. 
+> I could also make this work with "any" layout - either ignoring any left-over 
+> buffers or maybe even getting them one by one. But I wouldn't even be able to test 
+> those modes without modifying / breaking the current virtio-rpmsg driver. What's 
+> the preferred solution?
+
+Could you elaborate a bit please?
+
+Thanks
+Guennadi
