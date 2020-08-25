@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-12.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EF69C433E1
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 25 Aug 2020 16:52:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C567C433E3
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 25 Aug 2020 16:52:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 295B420782
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 25 Aug 2020 16:52:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 150BD2074D
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 25 Aug 2020 16:52:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=st.com header.i=@st.com header.b="mg8NEeHW"
+	dkim=pass (2048-bit key) header.d=st.com header.i=@st.com header.b="NowFBprX"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726541AbgHYQwa (ORCPT
+        id S1726580AbgHYQwb (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 25 Aug 2020 12:52:30 -0400
-Received: from mx07-00178001.pphosted.com ([185.132.182.106]:14880 "EHLO
+        Tue, 25 Aug 2020 12:52:31 -0400
+Received: from mx07-00178001.pphosted.com ([185.132.182.106]:38894 "EHLO
         mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726257AbgHYQwW (ORCPT
+        by vger.kernel.org with ESMTP id S1726483AbgHYQw0 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 25 Aug 2020 12:52:22 -0400
+        Tue, 25 Aug 2020 12:52:26 -0400
 Received: from pps.filterd (m0046037.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 07PGma4t019638;
-        Tue, 25 Aug 2020 18:52:17 +0200
+        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 07PGmZSc019634;
+        Tue, 25 Aug 2020 18:52:22 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
  : date : message-id : in-reply-to : references : mime-version :
  content-type; s=STMicroelectronics;
- bh=0GCBgslDZw0GYxmu1/0QyIojItqk9H/Ui6PIwaiTKBw=;
- b=mg8NEeHWeIDRhaYlBKOrdtT6jbEVUimzAHa2GzUgIJpxgEIndV1wt6cKtQrVEqgsrLQD
- Vc6WsdsxIidudWCXIb1HkomJPGPY9RRDEyfZvuKxcbGV6OyC6HimW6rkrE1z5seZxPBL
- gQQ7oIQ9wm4fGL2CCMKM4ptDCG4FxYgUGD3XDY4oENheEmk4+xnOIff7IMq2ivZZ15zk
- 52lQWN300HuMf+FihCjHSf/5nz70OSn0Bmjx03tmvBRnPfaBC7mMl1jfm44g6tl8ncQ0
- uMwNJEhV5uGp3y+UFtHZg8gTrIeSZpx+Y2sswwiHfSr92tTS1ti4MEplGXVNjbyjEWim Jw== 
+ bh=u6EYUC0xcRE70s9suBWPO0FSC0+bERZDODPG0q9BHrI=;
+ b=NowFBprX6iCB0n1vfOwFNf31Ug7be9tG+l5tyhKVx7FrYv0smpcSM3cFtcqFQCz57Bay
+ 6Bmmd9RnfGEfewXwAcptIVYrliaVr20HHNuYB2tQxVasd4GxwuCUfMB973duOqzG3GpA
+ voSbyt5so5Tg7qWKuKrysAf5KOj2IjrkrzGtze8RL2oKJ5hfCZpObYbBkviBOVGan6Ew
+ VihCtMMh5JEG9ryGpXjthvd5OpbfwQms9oAJek5OkcRfRsg9NqM6idhvOBApcBxgQrXK
+ W5N/LkK+qQBiAeSUoX2f+5thfH3Ep/1Xj/maTfhWMphWJ8NytY+baq/r7OGXd61emNFC OA== 
 Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 333b6x405v-1
+        by mx07-00178001.pphosted.com with ESMTP id 333b6x4067-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 25 Aug 2020 18:52:17 +0200
+        Tue, 25 Aug 2020 18:52:22 +0200
 Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 5CDBB10002A;
-        Tue, 25 Aug 2020 18:52:17 +0200 (CEST)
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 5CF8310002A;
+        Tue, 25 Aug 2020 18:52:22 +0200 (CEST)
 Received: from Webmail-eu.st.com (sfhdag3node1.st.com [10.75.127.7])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 4E9872AE6AA;
-        Tue, 25 Aug 2020 18:52:17 +0200 (CEST)
-Received: from localhost (10.75.127.47) by SFHDAG3NODE1.st.com (10.75.127.7)
- with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 25 Aug 2020 18:52:16
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 50F9C2AE6AA;
+        Tue, 25 Aug 2020 18:52:22 +0200 (CEST)
+Received: from localhost (10.75.127.45) by SFHDAG3NODE1.st.com (10.75.127.7)
+ with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 25 Aug 2020 18:52:21
  +0200
 From:   Arnaud Pouliquen <arnaud.pouliquen@st.com>
 To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
@@ -55,16 +55,16 @@ To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
 CC:     <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <linux-stm32@st-md-mailman.stormreply.com>,
         <arnaud.pouliquen@st.com>
-Subject: [PATCH v2 4/8] rpmsg: define the name service announcement as reserved address
-Date:   Tue, 25 Aug 2020 18:49:03 +0200
-Message-ID: <20200825164907.3642-5-arnaud.pouliquen@st.com>
+Subject: [PATCH v2 8/8] rpmsg: virtio: use rpmsg_ns driver to manage ns announcement
+Date:   Tue, 25 Aug 2020 18:49:07 +0200
+Message-ID: <20200825164907.3642-9-arnaud.pouliquen@st.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200825164907.3642-1-arnaud.pouliquen@st.com>
 References: <20200825164907.3642-1-arnaud.pouliquen@st.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-X-Originating-IP: [10.75.127.47]
-X-ClientProxiedBy: SFHDAG1NODE1.st.com (10.75.127.1) To SFHDAG3NODE1.st.com
+X-Originating-IP: [10.75.127.45]
+X-ClientProxiedBy: SFHDAG3NODE3.st.com (10.75.127.9) To SFHDAG3NODE1.st.com
  (10.75.127.7)
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.235,18.0.687
  definitions=2020-08-25_06:2020-08-25,2020-08-25 signatures=0
@@ -73,50 +73,144 @@ Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-The address 53 is reserved for the dynamic RPMsg device management
-on name service announcement.
-Define this address in a reserved enum list.
+Use the new rpmsg_ns API to send the name service announcements if
+the VIRTIO_RPMSG_F_NS is set, else just not implement the ops.
 
 Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@st.com>
 ---
- drivers/rpmsg/virtio_rpmsg_bus.c | 3 ---
- include/linux/rpmsg.h            | 9 +++++++++
- 2 files changed, 9 insertions(+), 3 deletions(-)
+ drivers/rpmsg/virtio_rpmsg_bus.c | 94 +++++---------------------------
+ 1 file changed, 13 insertions(+), 81 deletions(-)
 
 diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
-index 910d30818901..b2927661868c 100644
+index f771fdae150e..3c771a6392be 100644
 --- a/drivers/rpmsg/virtio_rpmsg_bus.c
 +++ b/drivers/rpmsg/virtio_rpmsg_bus.c
-@@ -162,9 +162,6 @@ struct virtio_rpmsg_channel {
-  */
- #define RPMSG_RESERVED_ADDRESSES	(1024)
+@@ -91,35 +91,6 @@ struct rpmsg_hdr {
+ 	u8 data[];
+ } __packed;
  
--/* Address 53 is reserved for advertising remote services */
--#define RPMSG_NS_ADDR			(53)
+-/**
+- * struct rpmsg_ns_msg - dynamic name service announcement message
+- * @name: name of remote service that is published
+- * @addr: address of remote service that is published
+- * @flags: indicates whether service is created or destroyed
+- *
+- * This message is sent across to publish a new service, or announce
+- * about its removal. When we receive these messages, an appropriate
+- * rpmsg channel (i.e device) is created/destroyed. In turn, the ->probe()
+- * or ->remove() handler of the appropriate rpmsg driver will be invoked
+- * (if/as-soon-as one is registered).
+- */
+-struct rpmsg_ns_msg {
+-	char name[RPMSG_NAME_SIZE];
+-	__virtio32 addr;
+-	__virtio32 flags;
+-} __packed;
 -
- static void virtio_rpmsg_destroy_ept(struct rpmsg_endpoint *ept);
- static int virtio_rpmsg_send(struct rpmsg_endpoint *ept, void *data, int len);
- static int virtio_rpmsg_sendto(struct rpmsg_endpoint *ept, void *data, int len,
-diff --git a/include/linux/rpmsg.h b/include/linux/rpmsg.h
-index 9fe156d1c018..5496d27c6f8c 100644
---- a/include/linux/rpmsg.h
-+++ b/include/linux/rpmsg.h
-@@ -20,6 +20,15 @@
+-/**
+- * enum rpmsg_ns_flags - dynamic name service announcement flags
+- *
+- * @RPMSG_NS_CREATE: a new remote service was just created
+- * @RPMSG_NS_DESTROY: a known remote service was just destroyed
+- */
+-enum rpmsg_ns_flags {
+-	RPMSG_NS_CREATE		= 0,
+-	RPMSG_NS_DESTROY	= 1,
+-};
+-
+ /**
+  * @vrp: the remote processor this channel belongs to
+  */
+@@ -324,60 +295,18 @@ static void virtio_rpmsg_destroy_ept(struct rpmsg_endpoint *ept)
+ 	__rpmsg_destroy_ept(vch->vrp, ept);
+ }
  
- #define RPMSG_ADDR_ANY		0xFFFFFFFF
- 
-+/**
-+ * enum rpmsg_ns_flags - List of reserved RPMsg addresses
-+ *
-+ * @RPMSG_NS_ADDR: remote services advertising for dynamic allocation
-+ */
-+enum rpmsg_reserved_addr {
-+	RPMSG_NS_ADDR		= 53,
+-static int virtio_rpmsg_announce_create(struct rpmsg_device *rpdev)
+-{
+-	struct virtio_rpmsg_channel *vch = to_virtio_rpmsg_channel(rpdev);
+-	struct virtproc_info *vrp = vch->vrp;
+-	struct device *dev = &rpdev->dev;
+-	int err = 0;
+-
+-	/* need to tell remote processor's name service about this channel ? */
+-	if (rpdev->announce && rpdev->ept &&
+-	    virtio_has_feature(vrp->vdev, VIRTIO_RPMSG_F_NS)) {
+-		struct rpmsg_ns_msg nsm;
+-
+-		strncpy(nsm.name, rpdev->id.name, RPMSG_NAME_SIZE);
+-		nsm.addr = cpu_to_virtio32(vrp->vdev, rpdev->ept->addr);
+-		nsm.flags = cpu_to_virtio32(vrp->vdev, RPMSG_NS_CREATE);
+-
+-		err = rpmsg_sendto(rpdev->ept, &nsm, sizeof(nsm), RPMSG_NS_ADDR);
+-		if (err)
+-			dev_err(dev, "failed to announce service %d\n", err);
+-	}
+-
+-	return err;
+-}
+-
+-static int virtio_rpmsg_announce_destroy(struct rpmsg_device *rpdev)
+-{
+-	struct virtio_rpmsg_channel *vch = to_virtio_rpmsg_channel(rpdev);
+-	struct virtproc_info *vrp = vch->vrp;
+-	struct device *dev = &rpdev->dev;
+-	int err = 0;
+-
+-	/* tell remote processor's name service we're removing this channel */
+-	if (rpdev->announce && rpdev->ept &&
+-	    virtio_has_feature(vrp->vdev, VIRTIO_RPMSG_F_NS)) {
+-		struct rpmsg_ns_msg nsm;
+-
+-		strncpy(nsm.name, rpdev->id.name, RPMSG_NAME_SIZE);
+-		nsm.addr = cpu_to_virtio32(vrp->vdev, rpdev->ept->addr);
+-		nsm.flags = cpu_to_virtio32(vrp->vdev, RPMSG_NS_DESTROY);
+-
+-		err = rpmsg_sendto(rpdev->ept, &nsm, sizeof(nsm), RPMSG_NS_ADDR);
+-		if (err)
+-			dev_err(dev, "failed to announce service %d\n", err);
+-	}
+-
+-	return err;
+-}
+-
+ static const struct rpmsg_device_ops virtio_rpmsg_ops = {
+ 	.create_channel = virtio_rpmsg_create_channel,
+ 	.release_channel = virtio_rpmsg_release_channel,
+ 	.create_ept = virtio_rpmsg_create_ept,
+-	.announce_create = virtio_rpmsg_announce_create,
+-	.announce_destroy = virtio_rpmsg_announce_destroy,
 +};
 +
- struct rpmsg_device;
- struct rpmsg_endpoint;
- struct rpmsg_device_ops;
++static const struct rpmsg_device_ops virtio_rpmsg_w_nsa_ops = {
++	.create_channel = virtio_rpmsg_create_channel,
++	.release_channel = virtio_rpmsg_release_channel,
++	.create_ept = virtio_rpmsg_create_ept,
++	.announce_create = rpmsg_ns_announce_create,
++	.announce_destroy = rpmsg_ns_announce_destroy,
+ };
+ 
+ static void virtio_rpmsg_release_device(struct device *dev)
+@@ -423,7 +352,10 @@ __rpmsg_create_channel(struct virtproc_info *vrp,
+ 	rpdev = &vch->rpdev;
+ 	rpdev->src = chinfo->src;
+ 	rpdev->dst = chinfo->dst;
+-	rpdev->ops = &virtio_rpmsg_ops;
++	if (virtio_has_feature(vrp->vdev, VIRTIO_RPMSG_F_NS))
++		rpdev->ops = &virtio_rpmsg_w_nsa_ops;
++	else
++		rpdev->ops = &virtio_rpmsg_ops;
+ 
+ 	/*
+ 	 * rpmsg server channels has predefined local address (for now),
+@@ -933,7 +865,7 @@ static int rpmsg_probe(struct virtio_device *vdev)
+ 
+ 		/* Assign public information to the rpmsg_device */
+ 		rpdev_ns = &vch->rpdev;
+-		rpdev_ns->ops = &virtio_rpmsg_ops;
++		rpdev_ns->ops = &virtio_rpmsg_w_nsa_ops;
+ 
+ 		rpdev_ns->dev.parent = &vrp->vdev->dev;
+ 		rpdev_ns->dev.release = virtio_rpmsg_release_device;
 -- 
 2.17.1
 
