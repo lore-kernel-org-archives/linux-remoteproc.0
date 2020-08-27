@@ -2,127 +2,152 @@ Return-Path: <SRS0=O6A6=CF=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MSGID_FROM_MTA_HEADER,RCVD_ILLEGAL_IP,SPF_HELO_NONE,SPF_PASS autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51890C433E1
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 27 Aug 2020 13:35:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA503C433E1
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 27 Aug 2020 14:48:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2D5AB22BF5
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 27 Aug 2020 13:35:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A1A5E2054F
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 27 Aug 2020 14:48:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="CUujgUZR"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=nio365.onmicrosoft.com header.i=@nio365.onmicrosoft.com header.b="EenSbI5i"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727999AbgH0Nfj (ORCPT
+        id S1728060AbgH0OsG (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 27 Aug 2020 09:35:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48732 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726894AbgH0Naf (ORCPT
+        Thu, 27 Aug 2020 10:48:06 -0400
+Received: from mx0a-00010702.pphosted.com ([148.163.156.75]:49520 "EHLO
+        mx0b-00010702.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728043AbgH0OsB (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 27 Aug 2020 09:30:35 -0400
-Received: from mail-wr1-x441.google.com (mail-wr1-x441.google.com [IPv6:2a00:1450:4864:20::441])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B14FAC061232
-        for <linux-remoteproc@vger.kernel.org>; Thu, 27 Aug 2020 06:30:12 -0700 (PDT)
-Received: by mail-wr1-x441.google.com with SMTP id x7so5413730wro.3
-        for <linux-remoteproc@vger.kernel.org>; Thu, 27 Aug 2020 06:30:12 -0700 (PDT)
+        Thu, 27 Aug 2020 10:48:01 -0400
+X-Greylist: delayed 3506 seconds by postgrey-1.27 at vger.kernel.org; Thu, 27 Aug 2020 10:47:52 EDT
+Received: from pps.filterd (m0098781.ppops.net [127.0.0.1])
+        by mx0a-00010702.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 07RDitBC012196;
+        Thu, 27 Aug 2020 08:47:45 -0500
+Received: from nam02-sn1-obe.outbound.protection.outlook.com (mail-sn1nam02lp2051.outbound.protection.outlook.com [104.47.36.51])
+        by mx0a-00010702.pphosted.com with ESMTP id 332yd26r2g-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 27 Aug 2020 08:47:45 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Ez6aI/WDLGWO4m0FyoH2ZPLStT9/1pZy7hasLUbIgc820KCUzVs/0cSvEBnhKuBc6aae4Fa9CeRJyNabk471UQCrZ+IVmPlNDrbWYD5oKch3VlY9qGb2UA5UlOY3H0A/MIHedkklioe5UsivkFIa+AwNcxq0evV67rEecTnUOtBgKNwEt+IXJbgH+MQCgDqGp04KYLMv+neF9hhNBv3t17p+iJCLO61nUPPOuGTpFEMTfaJGydJfM9MJ9WNAxiNP73iwicDZt88/s2/yBvKKk7kVjPhClVQjBJByo5UT6oiSQpDIIw0XSVOls4FUyQ4sQpn/MFIC+hwL/LYE+eIFEA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=KnzD30OSqbBlP3TKzzQR2rHtCNCizQB4pKMSVRPdM3Y=;
+ b=C7DnxnC6wWzWuRLABowfk+hJ95IEPXg0F+n/kOuLQLQgj+K6MQhQ+VViH7LHyjtdSg52kJ49SOluQ+9DLf7BIHZb7Fw/ZXD/yVJtGQ3ADrVxsZOOWbN2mqDxTV7waXqAGzNwxKtugDZraFLPmpNxe0+IPfWjoZMRdmbe3qOo4LTClwCo91xf9WE1revegTfe5734ImaUpSHNNJ9JiX//EbMZtMwa5Fi1HIOk1sqcilGrrK5ud8QReW0qHmDwawXBMemwtS9u+AMVesG2hqxVdls0o2zvHa4eqG3yLywzYFYmGN7RrqnMbfRPnI8tdkq/JPVZbbIm9QqNiHge6NGLOw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=ni.com; dmarc=pass action=none header.from=ni.com; dkim=pass
+ header.d=ni.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=p33Zl85F48xSFFwh9Fvb6fYwVy/Jt4DGVFmz86MHbko=;
-        b=CUujgUZRienGvENy9ZeNSE4OLq/gTozkw9vqhnndn3e+Pp27upZYxzcOy348qWT4x6
-         fZ9HzhrGd6ok0/lpV6XJMXIHbIrfSS3H2kc5d+JTd1lletPZjVOkUQ8WZMoDnSSylgRw
-         zOHH0JLxrQJsHR8v5+SGQOGgwwu7dIE6xp9Po=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=p33Zl85F48xSFFwh9Fvb6fYwVy/Jt4DGVFmz86MHbko=;
-        b=XGe/DJWoxWndGcPz8HFrVaA5pR/l2lIi67EKmcKlRswzn807CBNSyeUwUDxGaMD9X6
-         AMGTbK1h9ScuAJNwLT+WA3OlgyGcXmnidCosRaR09u9TwR4BauLBdKN8hEa0G93VisaP
-         ea5Nq37nOzHO000vbLDAyxSG03npFTMMM7aLzX1GwE8rWoSRjF8ADilv2oynx2Hvg27Y
-         AdW/8p/1KHGAziSsPUXyZPCtB5qHOnnjM+bRjBgWdalMtK3lk3U+CyCYvUd+OU7dbe6P
-         V0xc5eRLjkKQrYDki71VbQoTtDNs5UvaF+o1QWZmTjBxOWlL+JX93MKQYg5cbqtJxmoS
-         Ta5w==
-X-Gm-Message-State: AOAM530FIed9w61SrlyrYxe93rMdGhZoQWt8Lucnh5DvmEw79Gc+8uCk
-        Zy4vwP/vbrMIk7d7VadkptPxS8Yh2a5HM+Sfr4OBdQ==
-X-Google-Smtp-Source: ABdhPJyMtaFishcwtzNCj7DHN/faPMoK+tSF7O0vKJaBGS+gpAIRdF6geUez9pCQeleah1w6P5SJ7nzMgTS0KKpMqRI=
-X-Received: by 2002:adf:bb54:: with SMTP id x20mr19609148wrg.413.1598535011238;
- Thu, 27 Aug 2020 06:30:11 -0700 (PDT)
+ d=nio365.onmicrosoft.com; s=selector2-nio365-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=KnzD30OSqbBlP3TKzzQR2rHtCNCizQB4pKMSVRPdM3Y=;
+ b=EenSbI5igwG0DV2YbMoNxjrI6AXkRc2qhsprUisZELEjlWAjSF9AexR2VUfwPPO4fyB+/+olRlZvbz3Wv3SiEppZCMYlxs9aoEhE06IPYoEJ0atezP+hgjmdepEQ6YzwNaPrFzazALTn5PMgghRpye5+yiBAq65QGzjHDt4RGsQ=
+Authentication-Results: xilinx.com; dkim=none (message not signed)
+ header.d=none;xilinx.com; dmarc=none action=none header.from=ni.com;
+Received: from SN4PR0401MB3646.namprd04.prod.outlook.com
+ (2603:10b6:803:4b::29) by SN6PR04MB4829.namprd04.prod.outlook.com
+ (2603:10b6:805:b0::14) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3326.19; Thu, 27 Aug
+ 2020 13:47:43 +0000
+Received: from SN4PR0401MB3646.namprd04.prod.outlook.com
+ ([fe80::30f8:af2b:efff:2750]) by SN4PR0401MB3646.namprd04.prod.outlook.com
+ ([fe80::30f8:af2b:efff:2750%3]) with mapi id 15.20.3305.026; Thu, 27 Aug 2020
+ 13:47:43 +0000
+Date:   Thu, 27 Aug 2020 08:47:42 -0500
+From:   Michael Auchter <michael.auchter@ni.com>
+To:     Ben Levinsky <ben.levinsky@xilinx.com>
+Cc:     stefano.stabellini@xilinx.com, michals@xilinx.com,
+        devicetree@vger.kernel.org, mathieu.poirier@linaro.org,
+        emooring@xilinx.com, linux-remoteproc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, jliang@xilinx.com,
+        robh+dt@kernel.org, linux-arm-kernel@lists.infradead.org
+Message-ID: <20200827134742.GB404249@xaphan>
+References: <20200827015810.11157-1-ben.levinsky@xilinx.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200827015810.11157-1-ben.levinsky@xilinx.com>
+X-ClientProxiedBy: SA0PR11CA0016.namprd11.prod.outlook.com
+ (2603:10b6:806:d3::21) To SN4PR0401MB3646.namprd04.prod.outlook.com
+ (2603:10b6:803:4b::29)
 MIME-Version: 1.0
-References: <20200824193036.6033-1-james.quinlan@broadcom.com>
- <b19bc982-a0c4-c6ff-d8f5-650f2b3a83c8@gmail.com> <20200827063517.GA4637@lst.de>
-In-Reply-To: <20200827063517.GA4637@lst.de>
-From:   Jim Quinlan <james.quinlan@broadcom.com>
-Date:   Thu, 27 Aug 2020 09:29:59 -0400
-Message-ID: <CA+-6iNy3U9pO0Bykzgvb9n9fcsBi6FiatLdpA1s0HgQNWZ49mg@mail.gmail.com>
-Subject: Re: [PATCH v11 00/11] PCI: brcmstb: enable PCIe for STB chips
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Florian Fainelli <f.fainelli@gmail.com>,
-        "open list:PCI NATIVE HOST BRIDGE AND ENDPOINT DRIVERS" 
-        <linux-pci@vger.kernel.org>,
-        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        Robin Murphy <robin.murphy@arm.com>,
-        "maintainer:BROADCOM BCM7XXX ARM ARCHITECTURE" 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        "open list:STAGING SUBSYSTEM" <devel@driverdev.osuosl.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE" 
-        <devicetree@vger.kernel.org>,
-        "open list:DRM DRIVERS FOR ALLWINNER A10" 
-        <dri-devel@lists.freedesktop.org>, Felipe Balbi <balbi@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "open list:IOMMU DRIVERS" <iommu@lists.linux-foundation.org>,
-        Joerg Roedel <jroedel@suse.de>,
-        Julien Grall <julien.grall@arm.com>,
-        "open list:ACPI FOR ARM64 (ACPI/arm64)" <linux-acpi@vger.kernel.org>,
-        "moderated list:ARM PORT" <linux-arm-kernel@lists.infradead.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        "open list:ALLWINNER A10 CSI DRIVER" <linux-media@vger.kernel.org>,
-        "open list:REMOTE PROCESSOR (REMOTEPROC) SUBSYSTEM" 
-        <linux-remoteproc@vger.kernel.org>,
-        "moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" 
-        <linux-rpi-kernel@lists.infradead.org>,
-        "open list:SUPERH" <linux-sh@vger.kernel.org>,
-        "open list:USB SUBSYSTEM" <linux-usb@vger.kernel.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        Saravana Kannan <saravanak@google.com>,
-        Stefano Stabellini <sstabellini@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from 255.255.255.255 (255.255.255.255) by SA0PR11CA0016.namprd11.prod.outlook.com (2603:10b6:806:d3::21) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3326.19 via Frontend Transport; Thu, 27 Aug 2020 13:47:42 +0000
+X-Originating-IP: [2605:a601:ab6f:2000:2739:a39e:9b12:ab20]
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: cd5453c7-6bb2-460d-4803-08d84a8fc59a
+X-MS-TrafficTypeDiagnostic: SN6PR04MB4829:
+X-Microsoft-Antispam-PRVS: <SN6PR04MB48294F21CE7DF9312522F53B87550@SN6PR04MB4829.namprd04.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:7219;
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: oQ9m2qXaJu5z/mODUVbNUvWAmLxtHoGgut3rEi2EZHNiN3UN1X+Ib1icNvIEoV+wBZxewXtn05a07v7+65IXXmw++HES8M896cAkkzFuc7kFnxUF3IA4ccl9cfGcp/6J8PdMihlyS8nNhjhW9pNMTulD1yI792+u06i2/fimjEjf0L9Xxz+KvuiMGAJNZ4oTFiFIDrz9gdOXHpzHRFKHmK4two4c45/nklb6bYM+hiLnTB2AP2cya/Fn/+XCnD6i9AkS5hg3ucHCrVSFDSIYf1WGo608haWDV4fKCDmpW6H20DiglX3SWcjxnVf66IrQeAbSGVHKmISfQrp5jaWzuw==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN4PR0401MB3646.namprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(7916004)(346002)(396003)(366004)(376002)(136003)(39860400002)(5660300002)(86362001)(7416002)(478600001)(33656002)(44832011)(2906002)(6486002)(9686003)(316002)(186003)(8676002)(52116002)(1076003)(6916009)(66556008)(4326008)(66946007)(66476007)(83380400001)(16576012)(956004)(8936002)(33716001);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData: D6q8zs2YATuyC2VFWcOHTd5gszxC2DPvLPTkymqe6O2TlI84u/JKFfZYjMytjYx3EQsM2kAAn2ejHw5WDmUmn8vuzHRyMJyqZrvHrBR4K1ABKcOpu/h9dTLdgWz6VToWXvoatZ9KDOyPteNmxFdasoqB7iSiYkjLMXfpbsmdSzNXNvc7iJkPrM5Zv2E6pdbFwD5tGSsuOFNksH0Ww0ctHOMONLWUFYt3hWgQKCKQDz1FMtJTrUTX6vbbbwfcawjNirD4Un4I9j4UpsCiRP8UUsfPUHJ3+9zbcQ++Aq00mtzrN9T/Y67wRohyRUE5OuUC7KeOwcbOT1dTfi0bSeuy2H4EsyeNeOmuJpBACZD+zNlHGl/h6EVnPgJaAOEDSPGmnUZIa61DRrTSkymYOXroFgD6LPLyp3jFAGHd0EyVUIXiiLPOI4A5OMY8o9nNkmMDHSup0CY9qLJM0B1x5n9q+UnzBFmFfBvjELOjmfVotiLDfgM8FzKK4bQ/0rv5yzaL+WyrNpYonUFDqAR13+yvcT2vaLN/vbmpZsqcOX8bDE6Mv9gpPpnNrp7ajCOVQpgEMZU3Z+IzSo9gFIw843M8x8LrwP2w29NoXMNsp1KzEaQiPvy4hEk15Y5XmBUGNPZRQQWsPpeGH8W96eQn/k3Yf2P+8t7aXZXXi3kdS9b8hSeEZkPEIQbSoXj1jOvfw7lY0YxMqpDN5eq6rY05FLGLQQ==
+X-OriginatorOrg: ni.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: cd5453c7-6bb2-460d-4803-08d84a8fc59a
+X-MS-Exchange-CrossTenant-AuthSource: SN4PR0401MB3646.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Aug 2020 13:47:43.1654
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 87ba1f9a-44cd-43a6-b008-6fdb45a5204e
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: adb81k0fCiBBH+IGYajJWWI2eDQeUc0i1Dnnsa5ESW3HtUVBg6DLotRIa40qCBR+pZTVtAQ9ihNFqQGNwLGG9A==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR04MB4829
+Subject: Re: [PATCH v9 0/5] Provide basic driver to control Arm R5 co-processor
+ found on Xilinx ZynqMP
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.235,18.0.687
+ definitions=2020-08-27_07:2020-08-27,2020-08-27 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_policy_notspam policy=outbound_policy score=30 mlxscore=0
+ lowpriorityscore=0 spamscore=0 suspectscore=1 adultscore=0
+ priorityscore=1501 phishscore=0 clxscore=1015 malwarescore=0
+ impostorscore=0 mlxlogscore=634 bulkscore=0 classifier=spam adjust=30
+ reason=mlx scancount=1 engine=8.12.0-2006250000
+ definitions=main-2008270104
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Thu, Aug 27, 2020 at 2:35 AM Christoph Hellwig <hch@lst.de> wrote:
->
-> On Tue, Aug 25, 2020 at 10:40:27AM -0700, Florian Fainelli wrote:
-> > Hi,
-> >
-> > On 8/24/2020 12:30 PM, Jim Quinlan wrote:
-> >>
-> >> Patchset Summary:
-> >>    Enhance a PCIe host controller driver.  Because of its unusual design
-> >>    we are foced to change dev->dma_pfn_offset into a more general role
-> >>    allowing multiple offsets.  See the 'v1' notes below for more info.
-> >
-> > We are version 11 and counting, and it is not clear to me whether there is
-> > any chance of getting these patches reviewed and hopefully merged for the
-> > 5.10 merge window.
-> >
-> > There are a lot of different files being touched, so what would be the
-> > ideal way of routing those changes towards inclusion?
->
-> FYI, I offered to take the dma-mapping bits through the dma-mapping tree.
-> I have a bit of a backlog, but plan to review and if Jim is ok with that
-> apply the current version.
-Sounds good to me.
-Thanks, Jim
+Hey Ben,
+
+On Wed, Aug 26, 2020 at 06:58:05PM -0700, Ben Levinsky wrote:
+> v10:
+> - add include types.h to xlnx-zynqmp.h for compilation
+
+I appreciate the quick turnaround on v10, but it looks like much of my
+feedback on v9 went unacknowledged. 
+
+Most concerning is the fact that loading firmware on to R5 1 is _still_
+broken in v10 due to the incorrect TCM banks being used.
+
+Thanks,
+ Michael
+
+> 
+> Ben Levinsky (5):
+>   firmware: xilinx: Add ZynqMP firmware ioctl enums for RPU
+>     configuration.
+>   firmware: xilinx: Add shutdown/wakeup APIs
+>   firmware: xilinx: Add RPU configuration APIs
+>   dt-bindings: remoteproc: Add documentation for ZynqMP R5 rproc
+>     bindings
+>   remoteproc: Add initial zynqmp R5 remoteproc driver
+> 
+>  .../xilinx,zynqmp-r5-remoteproc.yaml          | 113 +++
+>  drivers/firmware/xilinx/zynqmp.c              |  86 ++
+>  drivers/remoteproc/Kconfig                    |  10 +
+>  drivers/remoteproc/Makefile                   |   1 +
+>  drivers/remoteproc/zynqmp_r5_remoteproc.c     | 898 ++++++++++++++++++
+>  include/linux/firmware/xlnx-zynqmp.h          |  63 ++
+>  6 files changed, 1171 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/remoteproc/xilinx,zynqmp-r5-remoteproc.yaml
+>  create mode 100644 drivers/remoteproc/zynqmp_r5_remoteproc.c
+> 
+> -- 
+> 2.17.1
+> 
