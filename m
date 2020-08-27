@@ -7,30 +7,30 @@ X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FEBEC433E1
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 27 Aug 2020 01:58:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EAA8C433E3
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 27 Aug 2020 01:58:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6F1602073A
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 27 Aug 2020 01:58:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 73F8F2087C
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 27 Aug 2020 01:58:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="acncFKpJ"
+	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="gLYJjGT4"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726845AbgH0B6Z (ORCPT
+        id S1727015AbgH0B60 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 26 Aug 2020 21:58:25 -0400
-Received: from mail-bn8nam11on2060.outbound.protection.outlook.com ([40.107.236.60]:14689
-        "EHLO NAM11-BN8-obe.outbound.protection.outlook.com"
+        Wed, 26 Aug 2020 21:58:26 -0400
+Received: from mail-bn8nam12on2048.outbound.protection.outlook.com ([40.107.237.48]:43169
+        "EHLO NAM12-BN8-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726798AbgH0B6U (ORCPT
+        id S1726828AbgH0B6V (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 26 Aug 2020 21:58:20 -0400
+        Wed, 26 Aug 2020 21:58:21 -0400
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=blHZaa6ysY8cIeH1KakjHEBNXLe77d7rUekkf80MKH8q8HmA8CI2x1YR6MuezjQDdU/+/TNOik0KsggMlppYBC1W3XOxTCbsMq1PHcQUkMcVsohVxtSAXNWSgjk6MH2OdxYoTdA1I3z3BvjWMnviZvZJ9ddvtkS5hfGRpwh2xomqhSPuXlEDM0yeena/LkvucY5Fr3MPCO/gzQHw+Xxc6g1I27KsvWesDNqD7BXUP0iQZGuN7q3glv7tAGsJMs5i2sSBVqR93kE1Zp7PZEDjmjqXWlbvuoKXsjxdWPWz94Dg16sTMuy3eAsb9IqhMTs0QHqFKOnfaedmtZFC5DMnLA==
+ b=c30J9ooyWpRHS6zBiF4EFH+jupE/n+2j4lHROLXEOlB1eSP3b1/byx+Cscmpfsje6knpiGKr5j1apqs2ZMMP04wmweDnyW6fezTkVHYl9y87yy9cTmBkjskR6xkzSAFBdA+F0mkyYaFBI3J8fiyP7135t6VCXaOnt5ezQaLgb2R+cIWuAFypTnh1gWHW8fhJVCIN7jaLhZyKK6tSP3YKNoJp6PqrjqyrNfbWWcM2isDGwa1+YXMR76Jppxint3nit6o7FD5+C+/5ulBQ6E3rMSvHXgQEKTPHnpZw/bZ0M96dEc+Q2Qx5OQEnLvGHW6MCCiJ/CskSwC1WpwqdPBd8yQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ACCp6JV+gTdHi5tkf1gwDE9thBTYm9bd6ENG4orHBfk=;
- b=ckd/6/PioS8P5Wc6tK0Czxcdfv93WZHWA/RlvOktg6lAiDXFjxvk5K3lQWTOKqiiPc2/iObid0V3XzjPcVYuRxSomMW20YNPC1x7Nl8MdNQRBtGnfrKzpWhEAWD0rARllMzCSNlKOAQnOVSq2rGL6dKh4dcxv8FfEyOCiZgy0a4+XDswF6IONVCKOi+MahcLCSMmxf85OsR8gtXVSS9FvKuyyPSA1FU36za/af7wP9BmA7SAP6/63N3O1x2PMGKJVOF5hPpo4OHQDADic90YCGePp7vgwkenwM3kkgvcDXwjEp2+XLpbUtwTuUK4bUKEd8Nf9we5YMaob+pzTeub6w==
+ bh=D8QxPMisC2+k/+yHudjuCuQoA5DHOOu3ciktYDpZmyQ=;
+ b=oAGYA5YcNXhDTq+b/hJQfuUJ1fhkTMJshJSTB9CuGOx2RloVFjKqpalIkIZ4Q0Nhdm3Oco0z0Z9JjYp7G+Sro3dC+7kDXujBx70F91J2HjRxk6Ui2nBB7qo1c7+PhAX+JEeaPghgxO8nRQbu8sEr8Uf2HyjoRtlLUtFjs8mnRUKotTDRiovxupnLUtRUMs33pdtqQx47w9SDk9zrK1bfv+QZcGezw9EdIDLHUzIzT/EZxVFP8NOq8YMdl0Ci9gQPvJg8yxc8U+Zkf98ifvob5ZvG+WF7PaxQh0opteFoPVAbrAiGzkGg3lyii5HmhbAQe+1cqYx4OOfqCSuM/gTLwQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  149.199.60.83) smtp.rcpttodomain=lists.infradead.org
  smtp.mailfrom=xilinx.com; dmarc=bestguesspass action=none
@@ -38,18 +38,18 @@ ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=xilinx.onmicrosoft.com; s=selector2-xilinx-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ACCp6JV+gTdHi5tkf1gwDE9thBTYm9bd6ENG4orHBfk=;
- b=acncFKpJ04zO8GRiGaj6wcsejts38S/CbYGAB8QPKvo1KxfrLIZKLf/NQVLTns/DtmiC2oDh+vescE2UIv+V2XuCUjmRuU3Ptj4FHC2KkP7NeQ1oUc9m46xUtKAVy6KTCDdOymPZvS8fRy2dTAf8SuDmZi2Zrv1sdlDsTGvMtKI=
-Received: from SA9PR11CA0025.namprd11.prod.outlook.com (2603:10b6:806:6e::30)
- by DM6PR02MB4972.namprd02.prod.outlook.com (2603:10b6:5:18::32) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3305.24; Thu, 27 Aug
- 2020 01:58:16 +0000
-Received: from SN1NAM02FT013.eop-nam02.prod.protection.outlook.com
- (2603:10b6:806:6e:cafe::de) by SA9PR11CA0025.outlook.office365.com
- (2603:10b6:806:6e::30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3326.19 via Frontend
- Transport; Thu, 27 Aug 2020 01:58:15 +0000
+ bh=D8QxPMisC2+k/+yHudjuCuQoA5DHOOu3ciktYDpZmyQ=;
+ b=gLYJjGT4mXLXAutMiD7Kjis3hfeVC96cvS/QAlKWV5GnV9ztdBsgRcNI5rHhWCb6KBRAv16DIx7DVyC+dAwLOpHniDQMvjQHd5jEorg0+Yl+8AhSYCGQa9B74OPl4fRh4I1UTk+SIuR8YCV0tnzXE/b4rdFCvKDbzUAi/nkD7LM=
+Received: from BL0PR1501CA0034.namprd15.prod.outlook.com
+ (2603:10b6:207:17::47) by BYAPR02MB5559.namprd02.prod.outlook.com
+ (2603:10b6:a03:a1::18) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3326.19; Thu, 27 Aug
+ 2020 01:58:17 +0000
+Received: from BL2NAM02FT051.eop-nam02.prod.protection.outlook.com
+ (2603:10b6:207:17:cafe::5) by BL0PR1501CA0034.outlook.office365.com
+ (2603:10b6:207:17::47) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3326.20 via Frontend
+ Transport; Thu, 27 Aug 2020 01:58:17 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 149.199.60.83)
  smtp.mailfrom=xilinx.com; lists.infradead.org; dkim=none (message not signed)
  header.d=none;lists.infradead.org; dmarc=bestguesspass action=none
@@ -58,24 +58,24 @@ Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
  149.199.60.83 as permitted sender) receiver=protection.outlook.com;
  client-ip=149.199.60.83; helo=xsj-pvapsmtpgw01;
 Received: from xsj-pvapsmtpgw01 (149.199.60.83) by
- SN1NAM02FT013.mail.protection.outlook.com (10.152.72.98) with Microsoft SMTP
+ BL2NAM02FT051.mail.protection.outlook.com (10.152.76.181) with Microsoft SMTP
  Server id 15.20.3326.19 via Frontend Transport; Thu, 27 Aug 2020 01:58:15
  +0000
-Received: from [149.199.38.66] (port=58670 helo=smtp.xilinx.com)
+Received: from [149.199.38.66] (port=58724 helo=smtp.xilinx.com)
         by xsj-pvapsmtpgw01 with esmtp (Exim 4.90)
         (envelope-from <ben.levinsky@xilinx.com>)
-        id 1kB7Ad-0002AF-9G; Wed, 26 Aug 2020 18:57:43 -0700
+        id 1kB7Ad-0002AS-OR; Wed, 26 Aug 2020 18:57:43 -0700
 Received: from [127.0.0.1] (helo=localhost)
         by smtp.xilinx.com with smtp (Exim 4.63)
         (envelope-from <ben.levinsky@xilinx.com>)
-        id 1kB7B8-000183-TU; Wed, 26 Aug 2020 18:58:14 -0700
-Received: from xsj-pvapsmtp01 (mailman.xilinx.com [149.199.38.66])
-        by xsj-smtp-dlp2.xlnx.xilinx.com (8.13.8/8.13.1) with ESMTP id 07R1wAe0007536;
+        id 1kB7B9-000183-CW; Wed, 26 Aug 2020 18:58:15 -0700
+Received: from xsj-pvapsmtp01 (mailhost.xilinx.com [149.199.38.66])
+        by xsj-smtp-dlp1.xlnx.xilinx.com (8.13.8/8.13.1) with ESMTP id 07R1wATw015256;
         Wed, 26 Aug 2020 18:58:11 -0700
 Received: from [172.19.2.206] (helo=xsjblevinsk50.xilinx.com)
         by xsj-pvapsmtp01 with esmtp (Exim 4.63)
         (envelope-from <ben.levinsky@xilinx.com>)
-        id 1kB7B4-000155-S8; Wed, 26 Aug 2020 18:58:10 -0700
+        id 1kB7B4-000155-Pw; Wed, 26 Aug 2020 18:58:10 -0700
 From:   Ben Levinsky <ben.levinsky@xilinx.com>
 To:     stefano.stabellini@xilinx.com, michals@xilinx.com,
         michael.auchter@ni.com
@@ -83,9 +83,9 @@ Cc:     devicetree@vger.kernel.org, mathieu.poirier@linaro.org,
         emooring@xilinx.com, linux-remoteproc@vger.kernel.org,
         linux-kernel@vger.kernel.org, jliang@xilinx.com,
         robh+dt@kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v10 3/5] firmware: xilinx: Add RPU configuration APIs
-Date:   Wed, 26 Aug 2020 18:58:08 -0700
-Message-Id: <20200827015810.11157-4-ben.levinsky@xilinx.com>
+Subject: [PATCH v10 1/5] firmware: xilinx: Add ZynqMP firmware ioctl enums for RPU configuration.
+Date:   Wed, 26 Aug 2020 18:58:06 -0700
+Message-Id: <20200827015810.11157-2-ben.levinsky@xilinx.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200827015810.11157-1-ben.levinsky@xilinx.com>
 References: <20200827015810.11157-1-ben.levinsky@xilinx.com>
@@ -97,36 +97,31 @@ X-MS-Office365-Filtering-HT: Tenant
 X-MS-PublicTrafficType: Email
 MIME-Version: 1.0
 Content-Type: text/plain
-X-MS-Office365-Filtering-Correlation-Id: d5b40feb-493b-421f-2623-08d84a2ca949
-X-MS-TrafficTypeDiagnostic: DM6PR02MB4972:
-X-Microsoft-Antispam-PRVS: <DM6PR02MB4972DE3A4C3467AADB2C8D7AB5550@DM6PR02MB4972.namprd02.prod.outlook.com>
+X-MS-Office365-Filtering-Correlation-Id: d32f913c-e99d-4747-47e2-08d84a2ca997
+X-MS-TrafficTypeDiagnostic: BYAPR02MB5559:
+X-Microsoft-Antispam-PRVS: <BYAPR02MB5559F6EB9AE226F3D2C809EFB5550@BYAPR02MB5559.namprd02.prod.outlook.com>
 X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
-X-MS-Oob-TLC-OOBClassifiers: OLM:114;
+X-MS-Oob-TLC-OOBClassifiers: OLM:565;
 X-MS-Exchange-SenderADCheck: 1
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: NgLce8ZOkY3vL1h4T53lHvNixDSpYHtcI4g8kHhDm10uuoCI3jZW9rRYQCq5UQxhZdFAG8JVyH4cGsm/tdqi5yo9hKmi6pyO8/aMA3y16jYtcZsGHCUMCRNHBFgqm7oL7C5gmzATUE2Z+6tjlrpyBklnprUebizSjld4ks2fH6nyQ40h4TXLLMnDWKySHTeA9EpBtO6pTD1AjoYC2lwmBAfNrlJQV6nIPi0oRSE2gzgC9HKWoH7SoTnz1qxOFLECdQgP1F61vxetb7CujieFsKSheAud0MT3zkhKCE6Qr2wYtRy0lF/aBnTro94lzZEScYTcHzdevl28+uHNlxnXGVV24NnLx6YbGYLRysmdvwUOSGXK9VfH3WP+HYj/MKjYLcWdtwNhyI74D68OIqPMrQ==
-X-Forefront-Antispam-Report: CIP:149.199.60.83;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:xsj-pvapsmtpgw01;PTR:unknown-60-83.xilinx.com;CAT:NONE;SFS:(376002)(136003)(346002)(396003)(39860400002)(46966005)(70586007)(70206006)(426003)(2906002)(336012)(5660300002)(4326008)(478600001)(9786002)(26005)(186003)(82310400002)(8676002)(82740400003)(81166007)(7696005)(356005)(83380400001)(47076004)(2616005)(316002)(44832011)(1076003)(8936002)(36756003);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam-Message-Info: woSdLsUuhd83tujIVQSoyGL+yvtLKkLuCjD1XvzRk8Z0SjuFgcRXIPounCk36+CyHCpMB73dkEFcvbW2GYrX6WhJf29wE4+txADqCDX5CzJQajvrkFDKRepDfvOY09M+ogXI8Gf6AHhDbEaZz/yGwdQGbyMRwz8pJlfH6zSL+oh+LWwHj4wSoVi+3isfifrt+ge32zImCjO1zt2ymGM2iccLER/H98wnJRYICYy6Vlot2lClG/zGt9SfOZDcP//ZHzz4Oo/2wdhzkzU+GVTFAOyx7PE+0IP1p57X2HUxGyBUd4ROV/aepS/WD33kBNMlfdXt6ll73vskDC13abC1axl1eldvXxG3mq5idbyJ9NylcUoS0hS7UFsL0V5Y87sTWBZ8wAgQundGwuEQ+LIiZQ==
+X-Forefront-Antispam-Report: CIP:149.199.60.83;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:xsj-pvapsmtpgw01;PTR:unknown-60-83.xilinx.com;CAT:NONE;SFS:(136003)(346002)(39860400002)(396003)(376002)(46966005)(336012)(8676002)(9786002)(82310400002)(356005)(478600001)(2906002)(316002)(81166007)(83380400001)(426003)(82740400003)(47076004)(70586007)(44832011)(8936002)(7696005)(2616005)(70206006)(1076003)(186003)(5660300002)(4326008)(6666004)(26005)(36756003);DIR:OUT;SFP:1101;
 X-OriginatorOrg: xilinx.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Aug 2020 01:58:15.1995
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Aug 2020 01:58:15.7115
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: d5b40feb-493b-421f-2623-08d84a2ca949
+X-MS-Exchange-CrossTenant-Network-Message-Id: d32f913c-e99d-4747-47e2-08d84a2ca997
 X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.60.83];Helo=[xsj-pvapsmtpgw01]
-X-MS-Exchange-CrossTenant-AuthSource: SN1NAM02FT013.eop-nam02.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthSource: BL2NAM02FT051.eop-nam02.prod.protection.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR02MB4972
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR02MB5559
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-This patch adds APIs to access to configure RPU and its
-processor-specific memory.
-
-That is query the run-time mode of RPU as either split or lockstep as well
-as API to set this mode. In addition add APIs to access configuration of
-the RPUs' tightly coupled memory (TCM).
+Add ZynqMP firmware ioctl enums for RPU configuration.
 
 Signed-off-by: Ben Levinsky <ben.levinsky@xilinx.com>
 ---
@@ -135,118 +130,48 @@ v3:
   function pointer in xilinx eemi ops struct
 v4:
 - add default values for enums
-v9:
-- update commit message
-- for zynqmp_pm_set_tcm_config and zynqmp_pm_get_rpu_mode update docs for
-  expected output, arguments as well removing unused args
-- remove unused fn zynqmp_pm_get_node_status
 ---
- drivers/firmware/xilinx/zynqmp.c     | 51 ++++++++++++++++++++++++++++
- include/linux/firmware/xlnx-zynqmp.h | 22 ++++++++++++
- 2 files changed, 73 insertions(+)
 
-diff --git a/drivers/firmware/xilinx/zynqmp.c b/drivers/firmware/xilinx/zynqmp.c
-index a966ee956573..6907abcaa981 100644
---- a/drivers/firmware/xilinx/zynqmp.c
-+++ b/drivers/firmware/xilinx/zynqmp.c
-@@ -846,6 +846,57 @@ int zynqmp_pm_release_node(const u32 node)
- }
- EXPORT_SYMBOL_GPL(zynqmp_pm_release_node);
- 
-+/**
-+ * zynqmp_pm_get_rpu_mode() - Get RPU mode
-+ * @node_id:	Node ID of the device
-+ * @out:	Returned output value
-+ *
-+ * Return: RPU mode. This is enum rpu_oper_mode
-+ */
-+int zynqmp_pm_get_rpu_mode(u32 node_id, u32 *out)
-+{
-+	return zynqmp_pm_invoke_fn(PM_IOCTL, node_id,
-+				   IOCTL_GET_RPU_OPER_MODE, 0, 0, out);
-+}
-+EXPORT_SYMBOL_GPL(zynqmp_pm_get_rpu_mode);
-+
-+/**
-+ * zynqmp_pm_set_rpu_mode() - Set RPU mode
-+ * @node_id:	Node ID of the device
-+ * @arg1:	Argument 1 to requested IOCTL call. This is expeted to
-+ *              to be value from enum rpu_oper_mode
-+ * @out:	Returned output value
-+ *
-+ * This function is used to set RPU mode to split or lockstep
-+ *
-+ * Return: Returns status, either success or error+reason
-+ */
-+int zynqmp_pm_set_rpu_mode(u32 node_id,
-+			   u32 arg1, u32 *out)
-+{
-+	return zynqmp_pm_invoke_fn(PM_IOCTL, node_id,
-+				   IOCTL_SET_RPU_OPER_MODE, arg1, 0, out);
-+}
-+EXPORT_SYMBOL_GPL(zynqmp_pm_set_rpu_mode);
-+
-+/**
-+ * zynqmp_pm_set_tcm_config - configure TCM
-+ * @arg1:	Argument 1 to requested IOCTL call
-+ *              either PM_RPU_TCM_COMB or PM_RPU_TCM_SPLIT
-+ * @out:	Returned output value
-+ *
-+ * This function is used to set RPU mode to split or combined
-+ *
-+ * Return: status: 0 for success, else failure
-+ */
-+int zynqmp_pm_set_tcm_config(u32 node_id,
-+			     u32 arg1, u32 *out)
-+{
-+	return zynqmp_pm_invoke_fn(PM_IOCTL, node_id,
-+				   IOCTL_TCM_COMB_CONFIG, arg1, 0, out);
-+}
-+EXPORT_SYMBOL_GPL(zynqmp_pm_set_tcm_config);
-+
- /**
-  * zynqmp_pm_force_pwrdwn - PM call to request for another PU or subsystem to
-  *             be powered down forcefully
+ include/linux/firmware/xlnx-zynqmp.h | 19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
+
 diff --git a/include/linux/firmware/xlnx-zynqmp.h b/include/linux/firmware/xlnx-zynqmp.h
-index 6241c5ac51b3..c9977d890095 100644
+index 5968df82b991..bb347dfe4ba4 100644
 --- a/include/linux/firmware/xlnx-zynqmp.h
 +++ b/include/linux/firmware/xlnx-zynqmp.h
-@@ -385,6 +385,11 @@ int zynqmp_pm_request_wake(const u32 node,
- 			   const bool set_addr,
- 			   const u64 address,
- 			   const enum zynqmp_pm_request_ack ack);
-+int zynqmp_pm_get_rpu_mode(u32 node_id, u32 *out);
-+int zynqmp_pm_set_rpu_mode(u32 node_id,
-+			   u32 arg1, u32 *out);
-+int zynqmp_pm_set_tcm_config(u32 node_id,
-+			     u32 arg1, u32 *out);
- #else
- static inline struct zynqmp_eemi_ops *zynqmp_pm_get_eemi_ops(void)
- {
-@@ -549,6 +554,23 @@ static inline int zynqmp_pm_request_wake(const u32 node,
- {
- 	return -ENODEV;
- }
-+
-+static inline int zynqmp_pm_get_rpu_mode(u32 node_id, u32 *out)
-+{
-+	return -ENODEV;
-+}
-+
-+static inline int zynqmp_pm_set_rpu_mode(u32 node_id,
-+					 u32 arg1, u32 *out)
-+{
-+	return -ENODEV;
-+}
-+
-+static inline int zynqmp_pm_set_tcm_config(u32 node_id,
-+					   u32 arg1, u32 *out)
-+{
-+	return -ENODEV;
-+}
- #endif
+@@ -104,6 +104,10 @@ enum pm_ret_status {
+ };
  
- #endif /* __FIRMWARE_ZYNQMP_H__ */
+ enum pm_ioctl_id {
++	IOCTL_GET_RPU_OPER_MODE = 0,
++	IOCTL_SET_RPU_OPER_MODE = 1,
++	IOCTL_RPU_BOOT_ADDR_CONFIG = 2,
++	IOCTL_TCM_COMB_CONFIG = 3,
+ 	IOCTL_SD_DLL_RESET = 6,
+ 	IOCTL_SET_SD_TAPDELAY,
+ 	IOCTL_SET_PLL_FRAC_MODE,
+@@ -129,6 +133,21 @@ enum pm_query_id {
+ 	PM_QID_CLOCK_GET_MAX_DIVISOR,
+ };
+ 
++enum rpu_oper_mode {
++	PM_RPU_MODE_LOCKSTEP = 0,
++	PM_RPU_MODE_SPLIT = 1,
++};
++
++enum rpu_boot_mem {
++	PM_RPU_BOOTMEM_LOVEC = 0,
++	PM_RPU_BOOTMEM_HIVEC = 1,
++};
++
++enum rpu_tcm_comb {
++	PM_RPU_TCM_SPLIT = 0,
++	PM_RPU_TCM_COMB = 1,
++};
++
+ enum zynqmp_pm_reset_action {
+ 	PM_RESET_ACTION_RELEASE,
+ 	PM_RESET_ACTION_ASSERT,
 -- 
 2.17.1
 
