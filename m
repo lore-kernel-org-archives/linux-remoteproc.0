@@ -2,152 +2,187 @@ Return-Path: <SRS0=O6A6=CF=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MSGID_FROM_MTA_HEADER,RCVD_ILLEGAL_IP,SPF_HELO_NONE,SPF_PASS autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA503C433E1
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 27 Aug 2020 14:48:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6ACEDC433E1
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 27 Aug 2020 15:34:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A1A5E2054F
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 27 Aug 2020 14:48:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 46EE52177B
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 27 Aug 2020 15:34:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=nio365.onmicrosoft.com header.i=@nio365.onmicrosoft.com header.b="EenSbI5i"
+	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="neA69P9O"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728060AbgH0OsG (ORCPT
+        id S1727783AbgH0Pep (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 27 Aug 2020 10:48:06 -0400
-Received: from mx0a-00010702.pphosted.com ([148.163.156.75]:49520 "EHLO
-        mx0b-00010702.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728043AbgH0OsB (ORCPT
+        Thu, 27 Aug 2020 11:34:45 -0400
+Received: from mail-bn8nam12on2071.outbound.protection.outlook.com ([40.107.237.71]:25568
+        "EHLO NAM12-BN8-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727001AbgH0Pek (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 27 Aug 2020 10:48:01 -0400
-X-Greylist: delayed 3506 seconds by postgrey-1.27 at vger.kernel.org; Thu, 27 Aug 2020 10:47:52 EDT
-Received: from pps.filterd (m0098781.ppops.net [127.0.0.1])
-        by mx0a-00010702.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 07RDitBC012196;
-        Thu, 27 Aug 2020 08:47:45 -0500
-Received: from nam02-sn1-obe.outbound.protection.outlook.com (mail-sn1nam02lp2051.outbound.protection.outlook.com [104.47.36.51])
-        by mx0a-00010702.pphosted.com with ESMTP id 332yd26r2g-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 27 Aug 2020 08:47:45 -0500
+        Thu, 27 Aug 2020 11:34:40 -0400
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Ez6aI/WDLGWO4m0FyoH2ZPLStT9/1pZy7hasLUbIgc820KCUzVs/0cSvEBnhKuBc6aae4Fa9CeRJyNabk471UQCrZ+IVmPlNDrbWYD5oKch3VlY9qGb2UA5UlOY3H0A/MIHedkklioe5UsivkFIa+AwNcxq0evV67rEecTnUOtBgKNwEt+IXJbgH+MQCgDqGp04KYLMv+neF9hhNBv3t17p+iJCLO61nUPPOuGTpFEMTfaJGydJfM9MJ9WNAxiNP73iwicDZt88/s2/yBvKKk7kVjPhClVQjBJByo5UT6oiSQpDIIw0XSVOls4FUyQ4sQpn/MFIC+hwL/LYE+eIFEA==
+ b=RSTqQh//tggO7uP0aogiHIzQVNObOpcXyNPpfIt13VZp7unHhzYtPXDRWJJCA4HeS4pTWKclJrUqGOGicsBxQRUZKFypVLqAvahBoYFwKMmoydngLjhoMW8I4wY8dn7NslUFt3zlNgMBRbQfh0uxTVugNfX/LCz0rDLR6kTmnGGXaEc/fmk7oaimhao9NarQdbal+iL8+RW/TMfqckQXG2Yn6wrJy01VrJUzL6IRxqhtgWCEz7yDs+unMJz1iBvNFgAHnMSR7NF+qSaDjxF8Jjr/cteUyOqi9WZ5n2FIhl0aQSIzlBmNlRNV9OQc2vyj7aXhmcRwL3q+dtYbqFaifg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=KnzD30OSqbBlP3TKzzQR2rHtCNCizQB4pKMSVRPdM3Y=;
- b=C7DnxnC6wWzWuRLABowfk+hJ95IEPXg0F+n/kOuLQLQgj+K6MQhQ+VViH7LHyjtdSg52kJ49SOluQ+9DLf7BIHZb7Fw/ZXD/yVJtGQ3ADrVxsZOOWbN2mqDxTV7waXqAGzNwxKtugDZraFLPmpNxe0+IPfWjoZMRdmbe3qOo4LTClwCo91xf9WE1revegTfe5734ImaUpSHNNJ9JiX//EbMZtMwa5Fi1HIOk1sqcilGrrK5ud8QReW0qHmDwawXBMemwtS9u+AMVesG2hqxVdls0o2zvHa4eqG3yLywzYFYmGN7RrqnMbfRPnI8tdkq/JPVZbbIm9QqNiHge6NGLOw==
+ bh=oLKHTR8GFieYm6kpeie2gE+lDHmzMMV7IrijqbNvjJc=;
+ b=F4tpocf9ojsLZii0zo00ECSYBHrzT1Ngudq7mFho4kglsGBlp9HfMVwOoPHoQ2Qu+ORRkrbQbcgaj6I+4FuU/9X/DPorE7ESZvCdKyEaBf24ZZDONweJIhIgXguvaIVwz+9wU53IOQrG4JHDPbwxQwtpfHh8Rx2vVxI2PguJFZp8N/eyWzT5inhw7aCFL1Sdxy7yPpQsShsaExKedThsUWtg8I1eCNnI5fobxIRbHwZna/90NommlnJtUqtCA0mEokDNdCp4J1wwgdt+anG20BtIqi/8iZx2Pv+t4CJmKGQ0CBUtIbDQ4F6+bXvY4DHWv23bdq7mbnAEUqCSsbDAOA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=ni.com; dmarc=pass action=none header.from=ni.com; dkim=pass
- header.d=ni.com; arc=none
+ smtp.mailfrom=xilinx.com; dmarc=pass action=none header.from=xilinx.com;
+ dkim=pass header.d=xilinx.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=nio365.onmicrosoft.com; s=selector2-nio365-onmicrosoft-com;
+ d=xilinx.onmicrosoft.com; s=selector2-xilinx-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=KnzD30OSqbBlP3TKzzQR2rHtCNCizQB4pKMSVRPdM3Y=;
- b=EenSbI5igwG0DV2YbMoNxjrI6AXkRc2qhsprUisZELEjlWAjSF9AexR2VUfwPPO4fyB+/+olRlZvbz3Wv3SiEppZCMYlxs9aoEhE06IPYoEJ0atezP+hgjmdepEQ6YzwNaPrFzazALTn5PMgghRpye5+yiBAq65QGzjHDt4RGsQ=
-Authentication-Results: xilinx.com; dkim=none (message not signed)
- header.d=none;xilinx.com; dmarc=none action=none header.from=ni.com;
-Received: from SN4PR0401MB3646.namprd04.prod.outlook.com
- (2603:10b6:803:4b::29) by SN6PR04MB4829.namprd04.prod.outlook.com
- (2603:10b6:805:b0::14) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3326.19; Thu, 27 Aug
- 2020 13:47:43 +0000
-Received: from SN4PR0401MB3646.namprd04.prod.outlook.com
- ([fe80::30f8:af2b:efff:2750]) by SN4PR0401MB3646.namprd04.prod.outlook.com
- ([fe80::30f8:af2b:efff:2750%3]) with mapi id 15.20.3305.026; Thu, 27 Aug 2020
- 13:47:43 +0000
-Date:   Thu, 27 Aug 2020 08:47:42 -0500
-From:   Michael Auchter <michael.auchter@ni.com>
-To:     Ben Levinsky <ben.levinsky@xilinx.com>
-Cc:     stefano.stabellini@xilinx.com, michals@xilinx.com,
-        devicetree@vger.kernel.org, mathieu.poirier@linaro.org,
-        emooring@xilinx.com, linux-remoteproc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, jliang@xilinx.com,
-        robh+dt@kernel.org, linux-arm-kernel@lists.infradead.org
-Message-ID: <20200827134742.GB404249@xaphan>
+ bh=oLKHTR8GFieYm6kpeie2gE+lDHmzMMV7IrijqbNvjJc=;
+ b=neA69P9OtWxq5VH/43XGQ1K6t8mHo9NDNDAlBJ+lrGgVEDYejHlH/IbB2xsQ9s24uR1FGbuAKOsfP7m2AI5P/gaUHydKotmHRA+D2ckKjH4/iUVB/w11ri/3n/DL8cb5q4++Ix8fg0LD7PSPUxhA5EqZ5Jz74gvO9rJryFpu5dg=
+Received: from BYAPR02MB4407.namprd02.prod.outlook.com (2603:10b6:a03:55::31)
+ by BYAPR02MB5029.namprd02.prod.outlook.com (2603:10b6:a03:61::24) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3305.26; Thu, 27 Aug
+ 2020 15:34:34 +0000
+Received: from BYAPR02MB4407.namprd02.prod.outlook.com
+ ([fe80::b0f6:b3a:6543:26f5]) by BYAPR02MB4407.namprd02.prod.outlook.com
+ ([fe80::b0f6:b3a:6543:26f5%5]) with mapi id 15.20.3305.032; Thu, 27 Aug 2020
+ 15:34:34 +0000
+From:   Ben Levinsky <BLEVINSK@xilinx.com>
+To:     Michael Auchter <michael.auchter@ni.com>
+CC:     "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>
+Subject: RE: [PATCH v9 0/5] Provide basic driver to control Arm R5
+ co-processor found on Xilinx ZynqMP
+Thread-Topic: [PATCH v9 0/5] Provide basic driver to control Arm R5
+ co-processor found on Xilinx ZynqMP
+Thread-Index: AQHWfBWgHhYT12VXOUuBHovnehXuc6lL+RkAgAAbSjA=
+Date:   Thu, 27 Aug 2020 15:34:33 +0000
+Message-ID: <BYAPR02MB440788CF3D35297D41DA385BB5550@BYAPR02MB4407.namprd02.prod.outlook.com>
 References: <20200827015810.11157-1-ben.levinsky@xilinx.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200827015810.11157-1-ben.levinsky@xilinx.com>
-X-ClientProxiedBy: SA0PR11CA0016.namprd11.prod.outlook.com
- (2603:10b6:806:d3::21) To SN4PR0401MB3646.namprd04.prod.outlook.com
- (2603:10b6:803:4b::29)
+ <20200827134742.GB404249@xaphan>
+In-Reply-To: <20200827134742.GB404249@xaphan>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
+X-MS-TNEF-Correlator: 
+authentication-results: ni.com; dkim=none (message not signed)
+ header.d=none;ni.com; dmarc=none action=none header.from=xilinx.com;
+x-originating-ip: [24.5.142.107]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: 8f66ff7e-1cf6-4169-3360-08d84a9eb2f6
+x-ms-traffictypediagnostic: BYAPR02MB5029:
+x-microsoft-antispam-prvs: <BYAPR02MB5029A35A35804D0A74A2E037B5550@BYAPR02MB5029.namprd02.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:6790;
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: sWBIlXyMr+5o8MQLbntU08Li7KMXyUjVBAkozVST0SJTkUt9fZsIfYTwzXYfp8n70k/xtkOSsTJ82xYtev3effZEl12u1vn/zJwf3MkEL9Um2AmqOip9Z/eKdYegjzHB7Rib1ml+cDLtWKLR1Fmwb447STlEY8qvnFWjKEvZU59moTlILfNSgeJ4tXaS/ZquLK3fxo7hM5HtwAbqzouPNzDkda7TOEpW6f12HEweP7re+RwWJwpSyvyPXWZZDXILcB+zQhMqbdhRwAzv1YNPYKCC7mndOpwMfAvDooqYl+3T4HJuhP8fJDda/sCWHwBsBDOpqB7ODj7nBEhJkdl6hw==
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR02MB4407.namprd02.prod.outlook.com;PTR:;CAT:NONE;SFS:(39860400002)(136003)(376002)(346002)(396003)(366004)(83380400001)(8676002)(8936002)(478600001)(5660300002)(2906002)(71200400001)(66446008)(66476007)(64756008)(66946007)(76116006)(7696005)(33656002)(66556008)(53546011)(316002)(55016002)(86362001)(6916009)(4326008)(54906003)(52536014)(9686003)(186003)(26005)(6506007);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata: v5Bls18pfYGrAzn7O6hkat4fXlQUJx9Nnbgflvto4TYi0kWAcBp476EGl6VkHLl+fW92/HWlhCN3RVWG3VSTtXvzOTtsUoe3Id6Qly67YDbT+DU/NV3hQAiHdkMevWkQWc8fo58zvMqtMPv9XVD4aAYQb4rTWBTIUrlF3VABbYja4X7C5rz+rHiDpimZ7uNyV7ufq9XLkVNKbHSW7PmUU40ikEYUY4hJhxCSQ0+meyZK3nZlXWjK9VFKOTwReJKmdc4VxlckyaZci2IlQp7pmP8hSrGVWRhA7bYuxhaTB9tm1HtqAF/Zm4Vp3xvJ3X2t1ckoGX1tu3cQtbwgM6fUwa+Pi3ohnvCLqqUuLXu/gJR7sSOTrXcL4AtKUYGTt6A+CeEBRCzHBbTAeZLQpoNCWjy1WSRYnot/9H81uNkx4J/9STtgk6XQO2Z9lB/gBtmGa1+un452XvB/G/yRoo3Yxrh789Ay6cfhEQcpKMXTqPtCIKyGsWnSUp9X0FNlQjkeWWjw51H4aZlEfDxpEPUCdumdiafMgyZhy0/WCgvIg0KzS6KVUCX0SHeGb/Q4lH8AbpQ2u6e5NIfw2D6NYHi/rc9yLM/c0IG8QsUd3vXgpENG8ka/qKFW/nMMhgLshkLa+idoEu8NB+aBRszgvK5IJQ==
+x-ms-exchange-transport-forked: True
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from 255.255.255.255 (255.255.255.255) by SA0PR11CA0016.namprd11.prod.outlook.com (2603:10b6:806:d3::21) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3326.19 via Frontend Transport; Thu, 27 Aug 2020 13:47:42 +0000
-X-Originating-IP: [2605:a601:ab6f:2000:2739:a39e:9b12:ab20]
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: cd5453c7-6bb2-460d-4803-08d84a8fc59a
-X-MS-TrafficTypeDiagnostic: SN6PR04MB4829:
-X-Microsoft-Antispam-PRVS: <SN6PR04MB48294F21CE7DF9312522F53B87550@SN6PR04MB4829.namprd04.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:7219;
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: oQ9m2qXaJu5z/mODUVbNUvWAmLxtHoGgut3rEi2EZHNiN3UN1X+Ib1icNvIEoV+wBZxewXtn05a07v7+65IXXmw++HES8M896cAkkzFuc7kFnxUF3IA4ccl9cfGcp/6J8PdMihlyS8nNhjhW9pNMTulD1yI792+u06i2/fimjEjf0L9Xxz+KvuiMGAJNZ4oTFiFIDrz9gdOXHpzHRFKHmK4two4c45/nklb6bYM+hiLnTB2AP2cya/Fn/+XCnD6i9AkS5hg3ucHCrVSFDSIYf1WGo608haWDV4fKCDmpW6H20DiglX3SWcjxnVf66IrQeAbSGVHKmISfQrp5jaWzuw==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN4PR0401MB3646.namprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(7916004)(346002)(396003)(366004)(376002)(136003)(39860400002)(5660300002)(86362001)(7416002)(478600001)(33656002)(44832011)(2906002)(6486002)(9686003)(316002)(186003)(8676002)(52116002)(1076003)(6916009)(66556008)(4326008)(66946007)(66476007)(83380400001)(16576012)(956004)(8936002)(33716001);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData: D6q8zs2YATuyC2VFWcOHTd5gszxC2DPvLPTkymqe6O2TlI84u/JKFfZYjMytjYx3EQsM2kAAn2ejHw5WDmUmn8vuzHRyMJyqZrvHrBR4K1ABKcOpu/h9dTLdgWz6VToWXvoatZ9KDOyPteNmxFdasoqB7iSiYkjLMXfpbsmdSzNXNvc7iJkPrM5Zv2E6pdbFwD5tGSsuOFNksH0Ww0ctHOMONLWUFYt3hWgQKCKQDz1FMtJTrUTX6vbbbwfcawjNirD4Un4I9j4UpsCiRP8UUsfPUHJ3+9zbcQ++Aq00mtzrN9T/Y67wRohyRUE5OuUC7KeOwcbOT1dTfi0bSeuy2H4EsyeNeOmuJpBACZD+zNlHGl/h6EVnPgJaAOEDSPGmnUZIa61DRrTSkymYOXroFgD6LPLyp3jFAGHd0EyVUIXiiLPOI4A5OMY8o9nNkmMDHSup0CY9qLJM0B1x5n9q+UnzBFmFfBvjELOjmfVotiLDfgM8FzKK4bQ/0rv5yzaL+WyrNpYonUFDqAR13+yvcT2vaLN/vbmpZsqcOX8bDE6Mv9gpPpnNrp7ajCOVQpgEMZU3Z+IzSo9gFIw843M8x8LrwP2w29NoXMNsp1KzEaQiPvy4hEk15Y5XmBUGNPZRQQWsPpeGH8W96eQn/k3Yf2P+8t7aXZXXi3kdS9b8hSeEZkPEIQbSoXj1jOvfw7lY0YxMqpDN5eq6rY05FLGLQQ==
-X-OriginatorOrg: ni.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: cd5453c7-6bb2-460d-4803-08d84a8fc59a
-X-MS-Exchange-CrossTenant-AuthSource: SN4PR0401MB3646.namprd04.prod.outlook.com
+X-OriginatorOrg: xilinx.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Aug 2020 13:47:43.1654
+X-MS-Exchange-CrossTenant-AuthSource: BYAPR02MB4407.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8f66ff7e-1cf6-4169-3360-08d84a9eb2f6
+X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Aug 2020 15:34:33.9763
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 87ba1f9a-44cd-43a6-b008-6fdb45a5204e
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: adb81k0fCiBBH+IGYajJWWI2eDQeUc0i1Dnnsa5ESW3HtUVBg6DLotRIa40qCBR+pZTVtAQ9ihNFqQGNwLGG9A==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR04MB4829
-Subject: Re: [PATCH v9 0/5] Provide basic driver to control Arm R5 co-processor
- found on Xilinx ZynqMP
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.235,18.0.687
- definitions=2020-08-27_07:2020-08-27,2020-08-27 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_policy_notspam policy=outbound_policy score=30 mlxscore=0
- lowpriorityscore=0 spamscore=0 suspectscore=1 adultscore=0
- priorityscore=1501 phishscore=0 clxscore=1015 malwarescore=0
- impostorscore=0 mlxlogscore=634 bulkscore=0 classifier=spam adjust=30
- reason=mlx scancount=1 engine=8.12.0-2006250000
- definitions=main-2008270104
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 657af505-d5df-48d0-8300-c31994686c5c
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: WECNRmMjI13LyCUKiSHc+vd5lZ3y6WOlxQssIukeaa6Xdyo222jUmhRPUh/NfaZGHj60z38+7UTK3jksPuvjlg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR02MB5029
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hey Ben,
+Hi Michael,
 
-On Wed, Aug 26, 2020 at 06:58:05PM -0700, Ben Levinsky wrote:
-> v10:
-> - add include types.h to xlnx-zynqmp.h for compilation
+Thanks for comment. Maybe I missed some of the comments then? I had thought=
+ that your comments were the following and that I had answered them in the =
+code:
+V8 3/5:
+- zynqmp_pm_set_rpu_mode: pass arg1 instead of 0 to zynqmp_pm_invoke_fn
+This should be reflected in v9 3/5
+- update kernel docs for zynqmp_pm_set_rpu_mode
+may have misunderstood the comment here. I updated the function and its com=
+ments above the function so that there is no obsolete iocl_id or arg2 menti=
+oned
+V8 5/5:
+-  " In the event that zynqmp_r5_probe() fails before zynqmp_r5_setup_mbox(=
+)
+has run, this will be called on an uninitialized skb_queue. (Also
+obviously an issue once mailboxes are made optional again)."
+To remedy this I added logic in v9 in the zynqmp_r5_release() function so t=
+hat the driver checks if a pointer field in the struct is NULL or no before=
+ discarding skb's
 
-I appreciate the quick turnaround on v10, but it looks like much of my
-feedback on v9 went unacknowledged. 
+Were there other comments?
 
-Most concerning is the fact that loading firmware on to R5 1 is _still_
-broken in v10 due to the incorrect TCM banks being used.
+With that being said, I will make sure the R51 case is more completely cove=
+red.
 
-Thanks,
- Michael
+Thanks
+Ben
 
-> 
-> Ben Levinsky (5):
->   firmware: xilinx: Add ZynqMP firmware ioctl enums for RPU
->     configuration.
->   firmware: xilinx: Add shutdown/wakeup APIs
->   firmware: xilinx: Add RPU configuration APIs
->   dt-bindings: remoteproc: Add documentation for ZynqMP R5 rproc
->     bindings
->   remoteproc: Add initial zynqmp R5 remoteproc driver
-> 
->  .../xilinx,zynqmp-r5-remoteproc.yaml          | 113 +++
->  drivers/firmware/xilinx/zynqmp.c              |  86 ++
->  drivers/remoteproc/Kconfig                    |  10 +
->  drivers/remoteproc/Makefile                   |   1 +
->  drivers/remoteproc/zynqmp_r5_remoteproc.c     | 898 ++++++++++++++++++
->  include/linux/firmware/xlnx-zynqmp.h          |  63 ++
->  6 files changed, 1171 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/remoteproc/xilinx,zynqmp-r5-remoteproc.yaml
->  create mode 100644 drivers/remoteproc/zynqmp_r5_remoteproc.c
-> 
-> -- 
-> 2.17.1
-> 
+
+> -----Original Message-----
+> From: Michael Auchter <michael.auchter@ni.com>
+> Sent: Thursday, August 27, 2020 6:48 AM
+> To: Ben Levinsky <BLEVINSK@xilinx.com>
+> Cc: Stefano Stabellini <stefanos@xilinx.com>; Michal Simek
+> <michals@xilinx.com>; devicetree@vger.kernel.org;
+> mathieu.poirier@linaro.org; Ed T. Mooring <emooring@xilinx.com>; linux-
+> remoteproc@vger.kernel.org; linux-kernel@vger.kernel.org; Jiaying Liang
+> <jliang@xilinx.com>; robh+dt@kernel.org; linux-arm-
+> kernel@lists.infradead.org
+> Subject: Re: [PATCH v9 0/5] Provide basic driver to control Arm R5 co-
+> processor found on Xilinx ZynqMP
+>=20
+> Hey Ben,
+>=20
+> On Wed, Aug 26, 2020 at 06:58:05PM -0700, Ben Levinsky wrote:
+> > v10:
+> > - add include types.h to xlnx-zynqmp.h for compilation
+>=20
+> I appreciate the quick turnaround on v10, but it looks like much of my
+> feedback on v9 went unacknowledged.
+>=20
+> Most concerning is the fact that loading firmware on to R5 1 is _still_
+> broken in v10 due to the incorrect TCM banks being used.
+>=20
+> Thanks,
+>  Michael
+>=20
+> >
+> > Ben Levinsky (5):
+> >   firmware: xilinx: Add ZynqMP firmware ioctl enums for RPU
+> >     configuration.
+> >   firmware: xilinx: Add shutdown/wakeup APIs
+> >   firmware: xilinx: Add RPU configuration APIs
+> >   dt-bindings: remoteproc: Add documentation for ZynqMP R5 rproc
+> >     bindings
+> >   remoteproc: Add initial zynqmp R5 remoteproc driver
+> >
+> >  .../xilinx,zynqmp-r5-remoteproc.yaml          | 113 +++
+> >  drivers/firmware/xilinx/zynqmp.c              |  86 ++
+> >  drivers/remoteproc/Kconfig                    |  10 +
+> >  drivers/remoteproc/Makefile                   |   1 +
+> >  drivers/remoteproc/zynqmp_r5_remoteproc.c     | 898
+> ++++++++++++++++++
+> >  include/linux/firmware/xlnx-zynqmp.h          |  63 ++
+> >  6 files changed, 1171 insertions(+)
+> >  create mode 100644
+> Documentation/devicetree/bindings/remoteproc/xilinx,zynqmp-r5-
+> remoteproc.yaml
+> >  create mode 100644 drivers/remoteproc/zynqmp_r5_remoteproc.c
+> >
+> > --
+> > 2.17.1
+> >
