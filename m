@@ -2,78 +2,74 @@ Return-Path: <SRS0=O6A6=CF=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C048C433DF
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 27 Aug 2020 07:03:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64252C433E3
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 27 Aug 2020 07:21:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3D09322B4E
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 27 Aug 2020 07:03:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3F14222CF8
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 27 Aug 2020 07:21:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=st.com header.i=@st.com header.b="xV3TfPG7"
+	dkim=pass (2048-bit key) header.d=st.com header.i=@st.com header.b="F29YgNNl"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727814AbgH0HDM (ORCPT
+        id S1728029AbgH0HVf (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 27 Aug 2020 03:03:12 -0400
-Received: from mx07-00178001.pphosted.com ([185.132.182.106]:51414 "EHLO
+        Thu, 27 Aug 2020 03:21:35 -0400
+Received: from mx07-00178001.pphosted.com ([185.132.182.106]:22030 "EHLO
         mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727105AbgH0HDL (ORCPT
+        by vger.kernel.org with ESMTP id S1727839AbgH0HVc (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 27 Aug 2020 03:03:11 -0400
-Received: from pps.filterd (m0046037.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 07R6qpS3005548;
-        Thu, 27 Aug 2020 09:03:07 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=STMicroelectronics;
- bh=zTYlE8txNi8j4pKHdQtyqm86ciy1hB6NNeBayyhFyv4=;
- b=xV3TfPG7sPs/B1knAi2ouMJEWOkWCF5gS+9SrVj7yy768JsEC/MzqsCy7iveMwiOYEXh
- y02iEJ98W+LP7wDoVEQfk1mLfyF864qv+os2OeGWLzN92TQCpnB3Z9BWWKkHKafjF6qD
- v1R/LtWed8EkW7go6YMNqKuYCTNJPK4k74Bkkju8z4KEaF2lgSS/EKfq87Sie9uLEV6g
- sc17+1BM8wLw30AvbNm2xiUHiIGLGDZxSOIBJ9NXB1H1htpoCplMc5WrsbjxL48UF2mH
- sJ2gJTfqPlBgkoIEyhLBE8Qa6iqUypwKRsglJbapCvcymDFTNcUTkT9qDpxSzR0AaKnI ow== 
+        Thu, 27 Aug 2020 03:21:32 -0400
+Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 07R7HlT7013427;
+        Thu, 27 Aug 2020 09:21:19 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
+ : date : message-id : in-reply-to : references : mime-version :
+ content-type; s=STMicroelectronics;
+ bh=KQ+9yJUzemMWVFCVMFRX7+xLDsvlII1rDD1EoRBdZsw=;
+ b=F29YgNNl3PbFfdfhnPmZPy3O97AqOiU6gnw1thd3npR26u+hmxW7+fuaYkyGH21oCPMM
+ T1dYz+o4fF9zxKtSM155dGj1OuoUmf2Eme5YLTiuYOMV27HH85/nDGsoxfuo2nEQJFKP
+ aSiNPwsoirxdpAupCBUa/ygF8cqmmXThgJUj/FFGJO6wvO/vz9/KlLewNoQvB2gdc2SP
+ 1/CcXA/Ft4s0vWbI/bMNFi6xJgwohLExE3+XMFX6jNEhG+zWEWQht6aljwTOdETPkoFp
+ wN4BEtNg+KmXoE1xpCB5FO0v6kFiBDkDgYp4yUhMRULHnF7X3BGsdZkU3AymzykWhOzF 3Q== 
 Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 333b6xccj6-1
+        by mx07-00178001.pphosted.com with ESMTP id 333b2mvfux-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 27 Aug 2020 09:03:07 +0200
+        Thu, 27 Aug 2020 09:21:19 +0200
 Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id D157410002A;
-        Thu, 27 Aug 2020 09:03:06 +0200 (CEST)
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 4DC20100034;
+        Thu, 27 Aug 2020 09:21:19 +0200 (CEST)
 Received: from Webmail-eu.st.com (sfhdag3node1.st.com [10.75.127.7])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id BFD28210F88;
-        Thu, 27 Aug 2020 09:03:06 +0200 (CEST)
-Received: from lmecxl0889.tpe.st.com (10.75.127.47) by SFHDAG3NODE1.st.com
- (10.75.127.7) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 27 Aug
- 2020 09:03:05 +0200
-Subject: Re: [PATCH 8/9] rpmsg: virtio: use rpmsg_ns driver to manage ns
- announcement
-To:     Mathieu Poirier <mathieu.poirier@linaro.org>
-CC:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 3D050212648;
+        Thu, 27 Aug 2020 09:21:19 +0200 (CEST)
+Received: from localhost (10.75.127.46) by SFHDAG3NODE1.st.com (10.75.127.7)
+ with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 27 Aug 2020 09:21:18
+ +0200
+From:   Arnaud Pouliquen <arnaud.pouliquen@st.com>
+To:     Rob Herring <robh@kernel.org>,
+        Alexandre Torgue <alexandre.torgue@st.com>
+CC:     <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Fabien Dessenne <fabien.dessenne@st.com>,
+        Arnaud Pouliquen <arnaud.pouliquen@st.com>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
         Ohad Ben-Cohen <ohad@wizery.com>,
-        "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-stm32@st-md-mailman.stormreply.com" 
-        <linux-stm32@st-md-mailman.stormreply.com>
-References: <20200731114732.12815-1-arnaud.pouliquen@st.com>
- <20200731114732.12815-9-arnaud.pouliquen@st.com>
- <20200825165433.GA4141387@xps15>
- <c1b81b38-c155-3183-ed67-822c4f87ec71@st.com>
- <20200826221030.GB4141387@xps15>
-From:   Arnaud POULIQUEN <arnaud.pouliquen@st.com>
-Message-ID: <c6dc8282-7c84-730b-2946-378078b1e514@st.com>
-Date:   Thu, 27 Aug 2020 09:03:04 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: [PATCH 1/3] dt-bindings: arm: stm32: Add compatible for syscon tamp node
+Date:   Thu, 27 Aug 2020 09:20:59 +0200
+Message-ID: <20200827072101.26588-2-arnaud.pouliquen@st.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20200827072101.26588-1-arnaud.pouliquen@st.com>
+References: <20200827072101.26588-1-arnaud.pouliquen@st.com>
 MIME-Version: 1.0
-In-Reply-To: <20200826221030.GB4141387@xps15>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.75.127.47]
-X-ClientProxiedBy: SFHDAG1NODE3.st.com (10.75.127.3) To SFHDAG3NODE1.st.com
+Content-Type: text/plain
+X-Originating-IP: [10.75.127.46]
+X-ClientProxiedBy: SFHDAG2NODE2.st.com (10.75.127.5) To SFHDAG3NODE1.st.com
  (10.75.127.7)
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.235,18.0.687
  definitions=2020-08-27_02:2020-08-27,2020-08-27 signatures=0
@@ -82,37 +78,29 @@ Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
+Since commit ad440432d1f9 ("dt-bindings: mfd: Ensure 'syscon' has a
+more specific compatible")
+It is required to provide at least 2 compatibles string for syscon node.
+This patch documents the new compatible for stm32 SoC to support
+TAMP registers access.
 
+Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@st.com>
+---
+ Documentation/devicetree/bindings/arm/stm32/st,stm32-syscon.yaml | 1 +
+ 1 file changed, 1 insertion(+)
 
-On 8/27/20 12:10 AM, Mathieu Poirier wrote:
-> I had another very long look at this...  I haven't had the time to look in your
-> next serie so the end result is not yet clear in my head.  But...
-> 
-> In __rpmsg_create_channel() the new code is testing for VIRTIO_RPMSG_F_NS in
-> order to allocate the ops, which means that the rpdev that is fed to
-> virtio_rpmsg_announce_create/destroy() are associated with a virtproc_info.
-> Moreover there is a test in virtio_rpmsg_announce_create/destroy() that checks 
-> for VIRTIO_RPMSG_F_NS already.  So if the rpdev was created from another
-> interface than the name announcement then no message would be sent.  
-> 
-> So it seems to me that the last two patches could be dropped and things would
-> still work properly.
+diff --git a/Documentation/devicetree/bindings/arm/stm32/st,stm32-syscon.yaml b/Documentation/devicetree/bindings/arm/stm32/st,stm32-syscon.yaml
+index 6f1cd0103c74..6634b3e0853e 100644
+--- a/Documentation/devicetree/bindings/arm/stm32/st,stm32-syscon.yaml
++++ b/Documentation/devicetree/bindings/arm/stm32/st,stm32-syscon.yaml
+@@ -19,6 +19,7 @@ properties:
+               - st,stm32mp151-pwr-mcu
+               - st,stm32-syscfg
+               - st,stm32-power-config
++              - st,stm32-tamp
+           - const: syscon
+ 
+   reg:
+-- 
+2.17.1
 
-Yes the last 2 patches concerns the TX part. Drop them could also be an option.
-  
-> 
-> The good news is that I reviewed V2 today and things look good.  I will wait to
-> review your next set before adding RB tags.  The down side is that having spent
-> a fair amount of time on your set, I need to look at other people's work if I
-> want to be fair to everyone.  As such I have to push back the review of your
-> other set to next week.
-
-That's fair! And this will give me time to have a look to the detach series. 
-
-Thanks,
-Arnaud
-
-> 
-> Thanks,
-> Mathieu
-> 
