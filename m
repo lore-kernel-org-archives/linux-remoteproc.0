@@ -2,108 +2,112 @@ Return-Path: <SRS0=aanV=CI=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA69FC433E2
-	for <linux-remoteproc@archiver.kernel.org>; Sun, 30 Aug 2020 10:56:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A743C433E2
+	for <linux-remoteproc@archiver.kernel.org>; Sun, 30 Aug 2020 14:39:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AE84D207DA
-	for <linux-remoteproc@archiver.kernel.org>; Sun, 30 Aug 2020 10:56:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1598784984;
-	bh=sDyP8wiayeZR0DcWXLBDe1i+k6BXoERi+SI05wLU1/E=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
-	b=m4EDdoq3Z936NHTxFvxTj7IXZN7JJ4E+8zFo+3ov/MjRHyBYpIXR3CLPTnURQm0Qx
-	 67RljgFQxjwGk6AcsOcvsE37qruhCnRTheS6UBlZKqLIn6Ih434VdkB+9TFXNKo5/F
-	 hVbnpzBCzzcvibQ6uCjjzUolsryya/pdpeRYnL9Y=
+	by mail.kernel.org (Postfix) with ESMTP id 06E5A20BED
+	for <linux-remoteproc@archiver.kernel.org>; Sun, 30 Aug 2020 14:39:30 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="iQ2lK9V5"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728779AbgH3K4S (ORCPT
+        id S1726955AbgH3Oj2 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Sun, 30 Aug 2020 06:56:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45772 "EHLO mail.kernel.org"
+        Sun, 30 Aug 2020 10:39:28 -0400
+Received: from m43-7.mailgun.net ([69.72.43.7]:18753 "EHLO m43-7.mailgun.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726406AbgH3K4P (ORCPT
+        id S1726255AbgH3OjW (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Sun, 30 Aug 2020 06:56:15 -0400
-Received: from coco.lan (ip5f5ad5b3.dynamic.kabel-deutschland.de [95.90.213.179])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Sun, 30 Aug 2020 10:39:22 -0400
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1598798361; h=References: In-Reply-To: Message-Id: Date:
+ Subject: Cc: To: From: Sender;
+ bh=BG5Bli+klgMbg2PSkB4G0lK79qcXpmQXHNwoceerTbI=; b=iQ2lK9V5u9Ekul1ZfLlNwstLftiQoSovAtoqfkT21SkEQMShR5JtmnLqWVoOfTqyCyX4Snsc
+ OLv6xPplRQptEKdp347ngHC7bUzIHs2eE5Cg4vNAkPbtxQewuRAvJIoOF0nnmY4knbEQ7I0p
+ qU/b6zzy3GX7/Eh86UnvOKfZ0Qo=
+X-Mailgun-Sending-Ip: 69.72.43.7
+X-Mailgun-Sid: WyI4ZWZiZiIsICJsaW51eC1yZW1vdGVwcm9jQHZnZXIua2VybmVsLm9yZyIsICJiZTllNGEiXQ==
+Received: from smtp.codeaurora.org
+ (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
+ smtp-out-n02.prod.us-east-1.postgun.com with SMTP id
+ 5f4bb9fe63431d1144a3fb03 (version=TLS1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Sun, 30 Aug 2020 14:38:54
+ GMT
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 65027C43387; Sun, 30 Aug 2020 14:38:53 +0000 (UTC)
+Received: from deesin-linux.qualcomm.com (unknown [202.46.22.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 75EEB207DA;
-        Sun, 30 Aug 2020 10:56:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1598784974;
-        bh=sDyP8wiayeZR0DcWXLBDe1i+k6BXoERi+SI05wLU1/E=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=Davr/tK53989y0mwAZ9+8YEHKNQCfFEXOMch1W5q6syHRskpVTvSF9LCiH2Z9MkYi
-         pJB0wajFSGa5y6CNN8Uw3yXBzBrLqS5GNSeQu5LST8HBjRfXCY899PbSj2KDViTIZV
-         S89fABLWMwqIQgFnBtIoe8gZTfo/vveR6EkTN/Zw=
-Date:   Sun, 30 Aug 2020 12:56:09 +0200
-From:   Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To:     Alexandre Courbot <acourbot@chromium.org>
-Cc:     Ohad Ben-Cohen <ohad@wizery.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        (Authenticated sender: deesin)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id B36ACC433C6;
+        Sun, 30 Aug 2020 14:38:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B36ACC433C6
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=deesin@codeaurora.org
+From:   Deepak Kumar Singh <deesin@codeaurora.org>
+To:     bjorn.andersson@linaro.org, clew@codeaurora.org
+Cc:     mathieu.poirier@linaro.org, linux-arm-msm@vger.kernel.org,
         linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Ezequiel Garcia <ezequiel@collabora.com>,
-        linux-media@vger.kernel.org, Hans Verkuil <hverkuil@xs4all.nl>
-Subject: Re: [PATCH] remoteproc: scp: add COMPILE_TEST dependency
-Message-ID: <20200830125601.468a24d8@coco.lan>
-In-Reply-To: <20200821115832.2893484-1-acourbot@chromium.org>
-References: <20200821115832.2893484-1-acourbot@chromium.org>
-X-Mailer: Claws Mail 3.17.6 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        Carl Huang <cjhuang@codeaurora.org>,
+        Necip Fazil Yildiran <necip@google.com>,
+        netdev@vger.kernel.org (open list:NETWORKING [GENERAL])
+Subject: [PATCH V1 3/4] net: qrtr: Change port allocation to use cyclic idr
+Date:   Sun, 30 Aug 2020 20:08:11 +0530
+Message-Id: <1598798292-5971-4-git-send-email-deesin@codeaurora.org>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1598798292-5971-1-git-send-email-deesin@codeaurora.org>
+References: <1598798292-5971-1-git-send-email-deesin@codeaurora.org>
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Em Fri, 21 Aug 2020 20:58:32 +0900
-Alexandre Courbot <acourbot@chromium.org> escreveu:
+From: Chris Lew <clew@codeaurora.org>
 
-> This will improve this driver's build coverage.
+There is a race for clients that open sockets before the control port
+is bound. If a client gets an idr that was allocated before the control
+port is bound, there is a chance the previous address owner sent lookup
+packets to the control port. The new address owner will get residual
+responses to this the lookup packets.
 
-There is a pending pull request for media which seems to depend
-on this patch. Without it, COMPILE_TEST breaks at linux-media
-git tree, if I pick it. See:
+Change the idr_alloc to idr_alloc_cyclic so new idr's are allocated
+instead of trying to reuse the freed idrs.
+---
+ net/qrtr/qrtr.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-	https://lore.kernel.org/linux-media/20200830104650.0dd4d751@coco.lan/T/#t
+diff --git a/net/qrtr/qrtr.c b/net/qrtr/qrtr.c
+index 4496b75..e2dd38e 100644
+--- a/net/qrtr/qrtr.c
++++ b/net/qrtr/qrtr.c
+@@ -744,7 +744,8 @@ static int qrtr_port_assign(struct qrtr_sock *ipc, int *port)
+ 	mutex_lock(&qrtr_port_lock);
+ 	if (!*port) {
+ 		min_port = QRTR_MIN_EPH_SOCKET;
+-		rc = idr_alloc_u32(&qrtr_ports, ipc, &min_port, QRTR_MAX_EPH_SOCKET, GFP_ATOMIC);
++		rc = idr_alloc_cyclic(&qrtr_ports, ipc, &min_port,
++				      QRTR_MAX_EPH_SOCKET, GFP_ATOMIC);
+ 		if (!rc)
+ 			*port = min_port;
+ 	} else if (*port < QRTR_MIN_EPH_SOCKET && !capable(CAP_NET_ADMIN)) {
+@@ -754,7 +755,8 @@ static int qrtr_port_assign(struct qrtr_sock *ipc, int *port)
+ 		rc = idr_alloc_u32(&qrtr_ports, ipc, &min_port, 0, GFP_ATOMIC);
+ 	} else {
+ 		min_port = *port;
+-		rc = idr_alloc_u32(&qrtr_ports, ipc, &min_port, *port, GFP_ATOMIC);
++		rc = idr_alloc_cyclic(&qrtr_ports, ipc, &min_port,
++				      *port, GFP_ATOMIC);
+ 		if (!rc)
+ 			*port = min_port;
+ 	}
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
 
-The best here would be to get an ack from the remoteproc
-maintainers to get this patch merged via the media tree.
-
-Alternatively, this patch could be applied on a stable topic branch
-at remoteproc tree, which would be merged at the media tree, or
-cherry-picked on media after being committed at remoteproc tree.
-
-Regards,
-Mauro
-
-> 
-> Reported-by: Ezequiel Garcia <ezequiel@collabora.com>
-> Signed-off-by: Alexandre Courbot <acourbot@chromium.org>
-> ---
->  drivers/remoteproc/Kconfig | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
-> index c6659dfea7c7..d1fcada71017 100644
-> --- a/drivers/remoteproc/Kconfig
-> +++ b/drivers/remoteproc/Kconfig
-> @@ -43,7 +43,7 @@ config INGENIC_VPU_RPROC
->  
->  config MTK_SCP
->  	tristate "Mediatek SCP support"
-> -	depends on ARCH_MEDIATEK
-> +	depends on ARCH_MEDIATEK || COMPILE_TEST
->  	select RPMSG_MTK_SCP
->  	help
->  	  Say y here to support Mediatek's System Companion Processor (SCP) via
-
-
-
-Thanks,
-Mauro
