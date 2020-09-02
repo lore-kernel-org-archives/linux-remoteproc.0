@@ -2,293 +2,354 @@ Return-Path: <SRS0=C6No=CL=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.0 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 976E4C43461
-	for <linux-remoteproc@archiver.kernel.org>; Wed,  2 Sep 2020 17:00:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC72DC433E7
+	for <linux-remoteproc@archiver.kernel.org>; Wed,  2 Sep 2020 17:24:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6D9E420C56
-	for <linux-remoteproc@archiver.kernel.org>; Wed,  2 Sep 2020 17:00:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 710CE20829
+	for <linux-remoteproc@archiver.kernel.org>; Wed,  2 Sep 2020 17:24:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="ap5wipzH"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SUhv304r"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728662AbgIBQ7w (ORCPT
+        id S1726937AbgIBRYp (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 2 Sep 2020 12:59:52 -0400
-Received: from mail-mw2nam10on2041.outbound.protection.outlook.com ([40.107.94.41]:24096
-        "EHLO NAM10-MW2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728505AbgIBQ6z (ORCPT
+        Wed, 2 Sep 2020 13:24:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39546 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726269AbgIBRYl (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 2 Sep 2020 12:58:55 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=WbH15QQ0QY/QxtNpWOwRjS+szNko/N8soPnWgdYkNjSKu4M4BJpuslRgOb985elCXqoziTu61b3ersEBjp8w4J+7IAi9aMZIk002JRz8XAu/H0yeELnoxoSBAL5i4nvhacs1AVnXqFnhFMhs/1QjNxLUR4yVs2+9vg6ZyIg5o8VhZi6ZaWG+wpKEiLS4DxA+N9NWHoGbgkUntLhJhrGlcGrvg/n2d6JThlxM3tguiy9Sk/cHsNkf8mQd2Oqy2c11I04YRAD2t65zbu1z+R57L4Ns7ujMux9REOxvM+tiMnHDne4jnjy+mCZpdVa7MjoPBt0OtWX9qL/HYmAn/mOl3w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=wwFVZeoZwiXl8ndkCyyjOAwNIPyMDdnbgovzZTgi0rw=;
- b=UX0YwGr3ZivCqPO/7xxFo4N8J6oG+ySHJWkLDIQeicgVLbeK9q/ELr6KaHhjbWaWqTASCRUZP0GIFOhRWhgIb/PSJmPWbIMSJIxWNMla0Ml+f/zLT/4NuptxF8YGlsDwTALrwSz/y6o3mDqg77+H/TfMyJjxtAPDbNsyHmVlFCxYobdHx4Tqv/X61f65AiTeu3x7HiULfwAllw4SQZJpBIemedld8XEA5NeNnyKIUwKtuXnUA9m/FVqWLFP3mqaDv/KHHfYm5Pnh8y0UWVRd0FkfLxYGO77Rh0Ti0Q1eT3WH9EWiUXWXxjtVmx4gZ5Y41CwqeyJYBsOejHsHme5pxw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 149.199.60.83) smtp.rcpttodomain=lists.infradead.org
- smtp.mailfrom=xilinx.com; dmarc=bestguesspass action=none
- header.from=xilinx.com; dkim=none (message not signed); arc=none
+        Wed, 2 Sep 2020 13:24:41 -0400
+Received: from mail-pj1-x1041.google.com (mail-pj1-x1041.google.com [IPv6:2607:f8b0:4864:20::1041])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3CDE3C061245
+        for <linux-remoteproc@vger.kernel.org>; Wed,  2 Sep 2020 10:24:41 -0700 (PDT)
+Received: by mail-pj1-x1041.google.com with SMTP id g6so134811pjl.0
+        for <linux-remoteproc@vger.kernel.org>; Wed, 02 Sep 2020 10:24:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=xilinx.onmicrosoft.com; s=selector2-xilinx-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=wwFVZeoZwiXl8ndkCyyjOAwNIPyMDdnbgovzZTgi0rw=;
- b=ap5wipzHAC6n8URCPw2+b1LN8F34MEC/+S0ZlBKF2fnGuoU4++6HZk3ZNaK5TD2OBUbNlWNT1ZXMSz5Qb/qzW+XkYqORj5EULx2JsPexLa1FsN/w8f9lJOmZOlaNdPXWrz6kA/16QjbNEqkabVTjSUu1ifqNKc9KWx07GiddmeI=
-Received: from MN2PR16CA0031.namprd16.prod.outlook.com (2603:10b6:208:134::44)
- by DM6PR02MB5596.namprd02.prod.outlook.com (2603:10b6:5:7b::27) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3326.19; Wed, 2 Sep
- 2020 16:58:51 +0000
-Received: from BL2NAM02FT005.eop-nam02.prod.protection.outlook.com
- (2603:10b6:208:134:cafe::db) by MN2PR16CA0031.outlook.office365.com
- (2603:10b6:208:134::44) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3326.20 via Frontend
- Transport; Wed, 2 Sep 2020 16:58:50 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 149.199.60.83)
- smtp.mailfrom=xilinx.com; lists.infradead.org; dkim=none (message not signed)
- header.d=none;lists.infradead.org; dmarc=bestguesspass action=none
- header.from=xilinx.com;
-Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
- 149.199.60.83 as permitted sender) receiver=protection.outlook.com;
- client-ip=149.199.60.83; helo=xsj-pvapsmtpgw01;
-Received: from xsj-pvapsmtpgw01 (149.199.60.83) by
- BL2NAM02FT005.mail.protection.outlook.com (10.152.76.252) with Microsoft SMTP
- Server id 15.20.3326.19 via Frontend Transport; Wed, 2 Sep 2020 16:58:50
- +0000
-Received: from [149.199.38.66] (port=52901 helo=smtp.xilinx.com)
-        by xsj-pvapsmtpgw01 with esmtp (Exim 4.90)
-        (envelope-from <ben.levinsky@xilinx.com>)
-        id 1kDW5t-0004kW-RE; Wed, 02 Sep 2020 09:58:45 -0700
-Received: from [127.0.0.1] (helo=localhost)
-        by smtp.xilinx.com with smtp (Exim 4.63)
-        (envelope-from <ben.levinsky@xilinx.com>)
-        id 1kDW5y-0004Hg-Dr; Wed, 02 Sep 2020 09:58:50 -0700
-Received: from xsj-pvapsmtp01 (smtp-fallback.xilinx.com [149.199.38.66] (may be forged))
-        by xsj-smtp-dlp1.xlnx.xilinx.com (8.13.8/8.13.1) with ESMTP id 082Gwk5n032480;
-        Wed, 2 Sep 2020 09:58:46 -0700
-Received: from [172.19.2.206] (helo=xsjblevinsk50.xilinx.com)
-        by xsj-pvapsmtp01 with esmtp (Exim 4.63)
-        (envelope-from <ben.levinsky@xilinx.com>)
-        id 1kDW5u-0004H9-F9; Wed, 02 Sep 2020 09:58:46 -0700
-From:   Ben Levinsky <ben.levinsky@xilinx.com>
-To:     stefanos@xilinx.com, michals@xilinx.com, michael.auchter@ni.com
-Cc:     devicetree@vger.kernel.org, mathieu.poirier@linaro.org,
-        emooring@xilinx.com, linux-remoteproc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, jliang@xilinx.com,
-        robh+dt@kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v11 4/5] dt-bindings: remoteproc: Add documentation for ZynqMP R5 rproc bindings
-Date:   Wed,  2 Sep 2020 09:58:45 -0700
-Message-Id: <20200902165846.3366-5-ben.levinsky@xilinx.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200902165846.3366-1-ben.levinsky@xilinx.com>
-References: <20200902165846.3366-1-ben.levinsky@xilinx.com>
-X-RCIS-Action: ALLOW
-X-TM-AS-Product-Ver: IMSS-7.1.0.1224-8.2.0.1013-23620.005
-X-TM-AS-User-Approved-Sender: Yes;Yes
-X-EOPAttributedMessage: 0
-X-MS-Office365-Filtering-HT: Tenant
-X-MS-PublicTrafficType: Email
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=3X8BRA44Z1hXBKYZDxJKPcka+vLO5PtfKxlyTCm9XOs=;
+        b=SUhv304rulALFwH7ruJb2ZyAiTwvOskac7EkzC5R6Ll7BWOjpM8aqLPUb1HvrZSiGP
+         IS8qZ6YcM9II4b4xS5LbtCo65K/dxQ8SPdS576eBRq0RTuIkLnhuuaOVmpA86pboVway
+         fzCgU8240dCfmLp2uZFArNGZ0XhT9j41eszTUOPwOKWfbQZvPpI26nOKxqaeEDeolxMc
+         MUbR3eE/zJAvN2tT1T193OMgUvucNruivMED/8WpRqV/UmTsN8a/c6DBsUGf34wr9dbB
+         lvEmJg8kSEw0Mun6U+kRvw494xMkDdCJkUCn+7wwDwiTAVn3SYSQMRXggEon5RXXK6n/
+         f3Qg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=3X8BRA44Z1hXBKYZDxJKPcka+vLO5PtfKxlyTCm9XOs=;
+        b=OICDHDQHfbK9nbYks3JHTuyvPrIKmAOxl8FbCccC9qTCgNmnco1uDmHROrY7yy/uoH
+         LklaOFfGIVC8vd+5ZVyr4bSfpYZG2QrqF6sok17mCoVjySfPGcNczoRJniVZI47wrHCE
+         mU/XuNiPFmTAZvhc3M9kIvhcZivpptbKTYwq2iWucyxY2tcndsSd6zAXuN6oDZvyzkrq
+         F2uNuMV+T+jp5v/B26ZgQaxO5Zwq+DNG6yoisfYr7Z7nXzOZme3YB4hVeEkBJ33gJz0C
+         enOnBwPPl+9/lt57gDUZRyrOSYwPxPnpuUDlR/vQVNPWfTaZwZlqOsjVCtSBRsVM5tiG
+         SI3g==
+X-Gm-Message-State: AOAM530X+viCkxD0aZyArt8U3Ns9J408qydN5XosgAOk9FmyN7mdqeDJ
+        tTZAzrvJn9blKx9lL8ZN+CVGLw==
+X-Google-Smtp-Source: ABdhPJwQ+XLL4h4msyJ+wnw3Lom+JwmeImVoURLMKAmeto3b+8ZMc0s/13WN6G+0UPVlAw5BQnTJQQ==
+X-Received: by 2002:a17:902:a607:: with SMTP id u7mr2923439plq.45.1599067480418;
+        Wed, 02 Sep 2020 10:24:40 -0700 (PDT)
+Received: from xps15 (S0106002369de4dac.cg.shawcable.net. [68.147.8.254])
+        by smtp.gmail.com with ESMTPSA id e7sm95740pfm.43.2020.09.02.10.24.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 02 Sep 2020 10:24:39 -0700 (PDT)
+Date:   Wed, 2 Sep 2020 11:24:37 -0600
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+To:     Guennadi Liakhovetski <guennadi.liakhovetski@linux.intel.com>
+Cc:     kvm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        sound-open-firmware@alsa-project.org,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Liam Girdwood <liam.r.girdwood@linux.intel.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Ohad Ben-Cohen <ohad@wizery.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Vincent Whitchurch <vincent.whitchurch@axis.com>
+Subject: Re: [PATCH v6 2/4] rpmsg: move common structures and defines to
+ headers
+Message-ID: <20200902172437.GC280378@xps15>
+References: <20200901151153.28111-1-guennadi.liakhovetski@linux.intel.com>
+ <20200901151153.28111-3-guennadi.liakhovetski@linux.intel.com>
+ <20200901172321.GC236120@xps15>
+ <20200902053527.GA31486@ubuntu>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MS-Office365-Filtering-Correlation-Id: 21792167-4a55-4078-c2e5-08d84f61777a
-X-MS-TrafficTypeDiagnostic: DM6PR02MB5596:
-X-Microsoft-Antispam-PRVS: <DM6PR02MB55968E4C71540EE954FF22E6B52F0@DM6PR02MB5596.namprd02.prod.outlook.com>
-X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
-X-MS-Oob-TLC-OOBClassifiers: OLM:9508;
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 22erLZDBheqHKdkQbmD7RudyZc4/E12GusBHjY8KRZu96ogQ2GuZnsAs5GZu1mZHwVBHv/Aa0y6o+q5J6A80WDZSLd86YqE2cd7i6HH8CX+VB5BGi+fQ3O35andf5K6++MnXbYsppkr23EhYjQWKYBjg8R0s4vDMZhYdrcLBEZ4BxVhyD9OgXpHjiEvC/CWH94ijiTue96Zjlr6j+L1Ov9WpmX7R3pDSooDHLq0pukuOv4U/Ch9cGgGbAUdTEsMZHfHhNDsd3PrN86UgHTJoXemtgL0R/YY7XknSxPznmzg0D7Kjsu4EKMOsZlWhsMsKPoXmc8PkaMBtLVfI+WJTfH3gTG4JbMpOpY6sH60Z/jl8eV2+3bt2+/jareLXsU2h2a3oCwMwl9oJUxA+k0L87Oo8Os02/jRTvEGOCd80s5xPH/qqlGZJHi6hn9ozM4oiAvHgQZ1VKC9+o1uXhXuyRRrd9yoaPHHQ+xNZ1O2ZbglV3Lw/IpAQINhNoqgcSZAl
-X-Forefront-Antispam-Report: CIP:149.199.60.83;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:xsj-pvapsmtpgw01;PTR:unknown-60-83.xilinx.com;CAT:NONE;SFS:(136003)(39860400002)(396003)(346002)(376002)(46966005)(426003)(70586007)(5660300002)(70206006)(4326008)(8936002)(186003)(26005)(9786002)(8676002)(44832011)(336012)(7696005)(81166007)(47076004)(83380400001)(316002)(2616005)(36756003)(478600001)(82310400003)(2906002)(1076003)(82740400003)(356005)(42866002);DIR:OUT;SFP:1101;
-X-OriginatorOrg: xilinx.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Sep 2020 16:58:50.7781
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 21792167-4a55-4078-c2e5-08d84f61777a
-X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.60.83];Helo=[xsj-pvapsmtpgw01]
-X-MS-Exchange-CrossTenant-AuthSource: BL2NAM02FT005.eop-nam02.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR02MB5596
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200902053527.GA31486@ubuntu>
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Add binding for ZynqMP R5 OpenAMP.
+On Wed, Sep 02, 2020 at 07:35:27AM +0200, Guennadi Liakhovetski wrote:
+> Hi Mathew,
+> 
+> On Tue, Sep 01, 2020 at 11:23:21AM -0600, Mathieu Poirier wrote:
+> > On Tue, Sep 01, 2020 at 05:11:51PM +0200, Guennadi Liakhovetski wrote:
+> > > virtio_rpmsg_bus.c keeps RPMsg protocol structure declarations and
+> > > common defines like the ones, needed for name-space announcements,
+> > > internal. Move them to common headers instead.
+> > > 
+> > > Signed-off-by: Guennadi Liakhovetski <guennadi.liakhovetski@linux.intel.com>
+> > 
+> > I already reviewed this patch and added my RB to it.  Please carry it in your
+> > next revision.
+> 
+> But only as long as the patch doesn't change, right? And in fact it did change 
+> this time - I renamed the header, moving it under include/linux/rpmsg, actually 
 
-Represent the RPU domain resources in one device node. Each RPU
-processor is a subnode of the top RPU domain node.
+Patch 2/4 in V5 was identical to what was submitted in V4 and my RB tag was not
+added, nor was the entry for virtio_rpmsg.h added to the MAINTAINERS file.
 
-Signed-off-by: Ben Levinsky <ben.levinsky@xilinx.com>
-Signed-off-by: Jason Wu <j.wu@xilinx.com>
-Signed-off-by: Wendy Liang <jliang@xilinx.com>
-Signed-off-by: Michal Simek <michal.simek@xilinx.com>
----
-v3:
-- update zynqmp_r5 yaml parsing to not raise warnings for extra
-  information in children of R5 node. The warning "node has a unit
-  name, but no reg or ranges property" will still be raised though 
-  as this particular node is needed to describe the
-  '#address-cells' and '#size-cells' information.
-v4::
-- remove warning '/example-0/rpu@ff9a0000/r5@0: 
-  node has a unit name, but no reg or ranges property'
-  by adding reg to r5 node.
-v5:
-- update device tree sample and yaml parsing to not raise any warnings
-- description for memory-region in yaml parsing
-- compatible string in yaml parsing for TCM
-v6:
-- remove coupling TCM nodes with remoteproc 
-- remove mailbox as it is optional not needed
-v7:
-- change lockstep-mode to xlnx,cluster-mode
-v9:
-- show example IPC nodes and tcm bank nodes
-v11:
-- add property meta-memory-regions to illustrate link
-  between r5 and TCM banks
-- update so no warnings from 'make dt_binding_check'
----
- .../xilinx,zynqmp-r5-remoteproc.yaml          | 123 ++++++++++++++++++
- 1 file changed, 123 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/remoteproc/xilinx,zynqmp-r5-remoteproc.yaml
+> also following your suggestion. Still, formally the patch has changed, so, I 
+> didn't include your "Reviewed-by" in this version. And you anyway would be 
 
-diff --git a/Documentation/devicetree/bindings/remoteproc/xilinx,zynqmp-r5-remoteproc.yaml b/Documentation/devicetree/bindings/remoteproc/xilinx,zynqmp-r5-remoteproc.yaml
-new file mode 100644
-index 000000000000..148374c61908
---- /dev/null
-+++ b/Documentation/devicetree/bindings/remoteproc/xilinx,zynqmp-r5-remoteproc.yaml
-@@ -0,0 +1,123 @@
-+# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: "http://devicetree.org/schemas/remoteproc/xilinx,zynqmp-r5-remoteproc.yaml#"
-+$schema: "http://devicetree.org/meta-schemas/core.yaml#"
-+
-+title: Xilinx R5 remote processor controller bindings
-+
-+description:
-+  This document defines the binding for the remoteproc component that loads and
-+  boots firmwares on the Xilinx Zynqmp and Versal family chipset.
-+
-+  Note that the Linux has global addressing view of the R5-related memory (TCM)
-+  so the absolute address ranges are provided in TCM reg's.
-+maintainers:
-+  - Ed Mooring <ed.mooring@xilinx.com>
-+  - Ben Levinsky <ben.levinsky@xilinx.com>
-+
-+properties:
-+  compatible:
-+    const: "xlnx,zynqmp-r5-remoteproc-1.0"
-+
-+  lockstep-mode:
-+    description:
-+      R5 core configuration (split is 0 or lock-step and 1)
-+    maxItems: 1
-+
-+  interrupts:
-+    description:
-+      Interrupt mapping for remoteproc IPI. It is required if the
-+      user uses the remoteproc driver with the RPMsg kernel driver.
-+    maxItems: 6
-+
-+  memory-region:
-+    description:
-+      collection of memory carveouts used for elf-loading and inter-processor
-+      communication.
-+    maxItems: 4
-+    minItems: 4
-+  meta-memory-regions:
-+    description:
-+      collection of memories that are not present in the top level memory
-+      nodes' mapping. For example, R5s' TCM banks. These banks are needed
-+      for R5 firmware meta data such as the R5 firmware's heap and stack
-+  pnode-id:
-+    maxItems: 1
-+  mboxes:
-+    maxItems: 2
-+  mbox-names:
-+    maxItems: 2
-+
-+examples:
-+  - |
-+     reserved-memory {
-+          #address-cells = <1>;
-+          #size-cells = <1>;
-+          ranges;
-+          elf_load: rproc@3ed000000 {
-+               no-map;
-+               reg = <0x3ed00000 0x40000>;
-+          };
-+     };
-+     rpu {
-+          compatible = "xlnx,zynqmp-r5-remoteproc-1.0";
-+          #address-cells = <1>;
-+          #size-cells = <1>;
-+          ranges;
-+          lockstep-mode = <0>;
-+          r5_0 {
-+               ranges;
-+               #address-cells = <1>;
-+               #size-cells = <1>;
-+               memory-region = <&elf_load>;
-+               meta-memory-regions = <0x40 0x41>;
-+               pnode-id = <0x7>;
-+          };
-+     };
-+
-+     /*
-+      * Below nodes are required if using TCM to load R5 firmware
-+      * if not, then either do not provide nodes are label as disabled in
-+      * status property
-+      */
-+     tcm_0a@ffe00000 {
-+         reg = <0xffe00000 0x10000>;
-+         pnode-id = <0xf>;
-+         no-map;
-+         status = "okay";
-+         phandle = <0x40>;
-+         compatible = "xlnx,tcm";
-+     };
-+     tcm_1a@ffe20000 {
-+         reg = <0xffe20000 0x10000>;
-+         pnode-id = <0x10>;
-+         no-map;
-+         status = "okay";
-+         compatible = "xlnx,tcm";
-+         phandle = <0x41>;
-+     };
-+
-+     /*
-+      * Below nodes are required for IPC, as Xilinx Kernel
-+      * can potentially have other applications that use CMA
-+      * and conflict from hardware design. With that in mind,
-+      * explicitly state the address spaces for the IPC remoteproc
-+      * mechanisms.
-+      *
-+      * If IPC not required and only elf-loading then these are not needed.
-+      */
-+     rpu0vdev0vring0: rpu0vdev0vring0@3ed40000 {
-+         no-map;
-+         reg = <0x3ed40000 0x4000>;
-+     };
-+     rpu0vdev0vring1: rpu0vdev0vring1@3ed44000 {
-+         no-map;
-+         reg = <0x3ed44000 0x4000>;
-+     };
-+     rpu0vdev0buffer: rpu0vdev0buffer@3ed48000 {
-+         no-map;
-+         reg = <0x3ed48000 0x100000>;
-+     };
-+
-+...
--- 
-2.17.1
+Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 
+> reviewing the other patches in this series to, right?
+
+As much as I'd like to reviewing the other patches in this series won't be
+possible at this time. 
+
+> 
+> Thanks
+> Guennadi
+> 
+> > Thanks,
+> > Mathieu
+> > 
+> > > ---
+> > >  drivers/rpmsg/virtio_rpmsg_bus.c | 78 +-----------------------------
+> > >  include/linux/rpmsg/virtio.h     | 83 ++++++++++++++++++++++++++++++++
+> > >  include/uapi/linux/rpmsg.h       |  3 ++
+> > >  3 files changed, 88 insertions(+), 76 deletions(-)
+> > >  create mode 100644 include/linux/rpmsg/virtio.h
+> > > 
+> > > diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
+> > > index 9006fc7f73d0..f39c426f9c5e 100644
+> > > --- a/drivers/rpmsg/virtio_rpmsg_bus.c
+> > > +++ b/drivers/rpmsg/virtio_rpmsg_bus.c
+> > > @@ -19,6 +19,7 @@
+> > >  #include <linux/mutex.h>
+> > >  #include <linux/of_device.h>
+> > >  #include <linux/rpmsg.h>
+> > > +#include <linux/rpmsg/virtio.h>
+> > >  #include <linux/scatterlist.h>
+> > >  #include <linux/slab.h>
+> > >  #include <linux/sched.h>
+> > > @@ -27,6 +28,7 @@
+> > >  #include <linux/virtio_ids.h>
+> > >  #include <linux/virtio_config.h>
+> > >  #include <linux/wait.h>
+> > > +#include <uapi/linux/rpmsg.h>
+> > >  
+> > >  #include "rpmsg_internal.h"
+> > >  
+> > > @@ -70,58 +72,6 @@ struct virtproc_info {
+> > >  	struct rpmsg_endpoint *ns_ept;
+> > >  };
+> > >  
+> > > -/* The feature bitmap for virtio rpmsg */
+> > > -#define VIRTIO_RPMSG_F_NS	0 /* RP supports name service notifications */
+> > > -
+> > > -/**
+> > > - * struct rpmsg_hdr - common header for all rpmsg messages
+> > > - * @src: source address
+> > > - * @dst: destination address
+> > > - * @reserved: reserved for future use
+> > > - * @len: length of payload (in bytes)
+> > > - * @flags: message flags
+> > > - * @data: @len bytes of message payload data
+> > > - *
+> > > - * Every message sent(/received) on the rpmsg bus begins with this header.
+> > > - */
+> > > -struct rpmsg_hdr {
+> > > -	__virtio32 src;
+> > > -	__virtio32 dst;
+> > > -	__virtio32 reserved;
+> > > -	__virtio16 len;
+> > > -	__virtio16 flags;
+> > > -	u8 data[];
+> > > -} __packed;
+> > > -
+> > > -/**
+> > > - * struct rpmsg_ns_msg - dynamic name service announcement message
+> > > - * @name: name of remote service that is published
+> > > - * @addr: address of remote service that is published
+> > > - * @flags: indicates whether service is created or destroyed
+> > > - *
+> > > - * This message is sent across to publish a new service, or announce
+> > > - * about its removal. When we receive these messages, an appropriate
+> > > - * rpmsg channel (i.e device) is created/destroyed. In turn, the ->probe()
+> > > - * or ->remove() handler of the appropriate rpmsg driver will be invoked
+> > > - * (if/as-soon-as one is registered).
+> > > - */
+> > > -struct rpmsg_ns_msg {
+> > > -	char name[RPMSG_NAME_SIZE];
+> > > -	__virtio32 addr;
+> > > -	__virtio32 flags;
+> > > -} __packed;
+> > > -
+> > > -/**
+> > > - * enum rpmsg_ns_flags - dynamic name service announcement flags
+> > > - *
+> > > - * @RPMSG_NS_CREATE: a new remote service was just created
+> > > - * @RPMSG_NS_DESTROY: a known remote service was just destroyed
+> > > - */
+> > > -enum rpmsg_ns_flags {
+> > > -	RPMSG_NS_CREATE		= 0,
+> > > -	RPMSG_NS_DESTROY	= 1,
+> > > -};
+> > > -
+> > >  /**
+> > >   * @vrp: the remote processor this channel belongs to
+> > >   */
+> > > @@ -134,27 +84,6 @@ struct virtio_rpmsg_channel {
+> > >  #define to_virtio_rpmsg_channel(_rpdev) \
+> > >  	container_of(_rpdev, struct virtio_rpmsg_channel, rpdev)
+> > >  
+> > > -/*
+> > > - * We're allocating buffers of 512 bytes each for communications. The
+> > > - * number of buffers will be computed from the number of buffers supported
+> > > - * by the vring, upto a maximum of 512 buffers (256 in each direction).
+> > > - *
+> > > - * Each buffer will have 16 bytes for the msg header and 496 bytes for
+> > > - * the payload.
+> > > - *
+> > > - * This will utilize a maximum total space of 256KB for the buffers.
+> > > - *
+> > > - * We might also want to add support for user-provided buffers in time.
+> > > - * This will allow bigger buffer size flexibility, and can also be used
+> > > - * to achieve zero-copy messaging.
+> > > - *
+> > > - * Note that these numbers are purely a decision of this driver - we
+> > > - * can change this without changing anything in the firmware of the remote
+> > > - * processor.
+> > > - */
+> > > -#define MAX_RPMSG_NUM_BUFS	(512)
+> > > -#define MAX_RPMSG_BUF_SIZE	(512)
+> > > -
+> > >  /*
+> > >   * Local addresses are dynamically allocated on-demand.
+> > >   * We do not dynamically assign addresses from the low 1024 range,
+> > > @@ -162,9 +91,6 @@ struct virtio_rpmsg_channel {
+> > >   */
+> > >  #define RPMSG_RESERVED_ADDRESSES	(1024)
+> > >  
+> > > -/* Address 53 is reserved for advertising remote services */
+> > > -#define RPMSG_NS_ADDR			(53)
+> > > -
+> > >  static void virtio_rpmsg_destroy_ept(struct rpmsg_endpoint *ept);
+> > >  static int virtio_rpmsg_send(struct rpmsg_endpoint *ept, void *data, int len);
+> > >  static int virtio_rpmsg_sendto(struct rpmsg_endpoint *ept, void *data, int len,
+> > > diff --git a/include/linux/rpmsg/virtio.h b/include/linux/rpmsg/virtio.h
+> > > new file mode 100644
+> > > index 000000000000..3ede1a4a68a3
+> > > --- /dev/null
+> > > +++ b/include/linux/rpmsg/virtio.h
+> > > @@ -0,0 +1,83 @@
+> > > +/* SPDX-License-Identifier: GPL-2.0 */
+> > > +
+> > > +#ifndef _LINUX_RPMSG_VIRTIO_H
+> > > +#define _LINUX_RPMSG_VIRTIO_H
+> > > +
+> > > +#include <linux/mod_devicetable.h>
+> > > +#include <linux/types.h>
+> > > +#include <linux/virtio_types.h>
+> > > +
+> > > +/**
+> > > + * struct rpmsg_hdr - common header for all rpmsg messages
+> > > + * @src: source address
+> > > + * @dst: destination address
+> > > + * @reserved: reserved for future use
+> > > + * @len: length of payload (in bytes)
+> > > + * @flags: message flags
+> > > + * @data: @len bytes of message payload data
+> > > + *
+> > > + * Every message sent(/received) on the rpmsg bus begins with this header.
+> > > + */
+> > > +struct rpmsg_hdr {
+> > > +	__virtio32 src;
+> > > +	__virtio32 dst;
+> > > +	__virtio32 reserved;
+> > > +	__virtio16 len;
+> > > +	__virtio16 flags;
+> > > +	u8 data[];
+> > > +} __packed;
+> > > +
+> > > +/**
+> > > + * struct rpmsg_ns_msg - dynamic name service announcement message
+> > > + * @name: name of remote service that is published
+> > > + * @addr: address of remote service that is published
+> > > + * @flags: indicates whether service is created or destroyed
+> > > + *
+> > > + * This message is sent across to publish a new service, or announce
+> > > + * about its removal. When we receive these messages, an appropriate
+> > > + * rpmsg channel (i.e device) is created/destroyed. In turn, the ->probe()
+> > > + * or ->remove() handler of the appropriate rpmsg driver will be invoked
+> > > + * (if/as-soon-as one is registered).
+> > > + */
+> > > +struct rpmsg_ns_msg {
+> > > +	char name[RPMSG_NAME_SIZE];
+> > > +	__virtio32 addr;
+> > > +	__virtio32 flags;
+> > > +} __packed;
+> > > +
+> > > +/**
+> > > + * enum rpmsg_ns_flags - dynamic name service announcement flags
+> > > + *
+> > > + * @RPMSG_NS_CREATE: a new remote service was just created
+> > > + * @RPMSG_NS_DESTROY: a known remote service was just destroyed
+> > > + */
+> > > +enum rpmsg_ns_flags {
+> > > +	RPMSG_NS_CREATE		= 0,
+> > > +	RPMSG_NS_DESTROY	= 1,
+> > > +};
+> > > +
+> > > +/*
+> > > + * We're allocating buffers of 512 bytes each for communications. The
+> > > + * number of buffers will be computed from the number of buffers supported
+> > > + * by the vring, upto a maximum of 512 buffers (256 in each direction).
+> > > + *
+> > > + * Each buffer will have 16 bytes for the msg header and 496 bytes for
+> > > + * the payload.
+> > > + *
+> > > + * This will utilize a maximum total space of 256KB for the buffers.
+> > > + *
+> > > + * We might also want to add support for user-provided buffers in time.
+> > > + * This will allow bigger buffer size flexibility, and can also be used
+> > > + * to achieve zero-copy messaging.
+> > > + *
+> > > + * Note that these numbers are purely a decision of this driver - we
+> > > + * can change this without changing anything in the firmware of the remote
+> > > + * processor.
+> > > + */
+> > > +#define MAX_RPMSG_NUM_BUFS	512
+> > > +#define MAX_RPMSG_BUF_SIZE	512
+> > > +
+> > > +/* Address 53 is reserved for advertising remote services */
+> > > +#define RPMSG_NS_ADDR		53
+> > > +
+> > > +#endif
+> > > diff --git a/include/uapi/linux/rpmsg.h b/include/uapi/linux/rpmsg.h
+> > > index e14c6dab4223..d669c04ef289 100644
+> > > --- a/include/uapi/linux/rpmsg.h
+> > > +++ b/include/uapi/linux/rpmsg.h
+> > > @@ -24,4 +24,7 @@ struct rpmsg_endpoint_info {
+> > >  #define RPMSG_CREATE_EPT_IOCTL	_IOW(0xb5, 0x1, struct rpmsg_endpoint_info)
+> > >  #define RPMSG_DESTROY_EPT_IOCTL	_IO(0xb5, 0x2)
+> > >  
+> > > +/* The feature bitmap for virtio rpmsg */
+> > > +#define VIRTIO_RPMSG_F_NS	0 /* RP supports name service notifications */
+> > > +
+> > >  #endif
+> > > -- 
+> > > 2.28.0
+> > > 
