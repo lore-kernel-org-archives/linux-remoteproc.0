@@ -7,68 +7,66 @@ X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53262C433E6
-	for <linux-remoteproc@archiver.kernel.org>; Wed,  2 Sep 2020 07:03:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62F41C433E6
+	for <linux-remoteproc@archiver.kernel.org>; Wed,  2 Sep 2020 08:52:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2626F20826
-	for <linux-remoteproc@archiver.kernel.org>; Wed,  2 Sep 2020 07:03:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 377B02078B
+	for <linux-remoteproc@archiver.kernel.org>; Wed,  2 Sep 2020 08:52:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="PpDkPIlb"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="bCBFH+rV"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726355AbgIBHDe (ORCPT
+        id S1726301AbgIBIwX (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 2 Sep 2020 03:03:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56830 "EHLO
+        Wed, 2 Sep 2020 04:52:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45286 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726130AbgIBHDd (ORCPT
+        with ESMTP id S1726183AbgIBIwV (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 2 Sep 2020 03:03:33 -0400
-Received: from mail-pg1-x544.google.com (mail-pg1-x544.google.com [IPv6:2607:f8b0:4864:20::544])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AB30CC061244
-        for <linux-remoteproc@vger.kernel.org>; Wed,  2 Sep 2020 00:03:32 -0700 (PDT)
-Received: by mail-pg1-x544.google.com with SMTP id p37so2078201pgl.3
-        for <linux-remoteproc@vger.kernel.org>; Wed, 02 Sep 2020 00:03:32 -0700 (PDT)
+        Wed, 2 Sep 2020 04:52:21 -0400
+Received: from mail-pl1-x634.google.com (mail-pl1-x634.google.com [IPv6:2607:f8b0:4864:20::634])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 04111C061245
+        for <linux-remoteproc@vger.kernel.org>; Wed,  2 Sep 2020 01:52:20 -0700 (PDT)
+Received: by mail-pl1-x634.google.com with SMTP id c15so1983559plq.4
+        for <linux-remoteproc@vger.kernel.org>; Wed, 02 Sep 2020 01:52:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=9d3dVKVv3rwmde4FZcFLfrQ3EuricDCMm/xx55xE2gw=;
-        b=PpDkPIlbI3pmSeX+Nukr4RIybsQe9cOsOhnwhF5LDJyHWHPXGd+rcWdCE7PnqnNlF5
-         W07tcwhKJuHPNdwfHafL5RLfRd/QgdzVfY/Wnj+zfAQQH0kjp3vo5rPIku2m+jV6+M13
-         B91XQmD+dEe4ydLr4NHu/OcRPp3UdjNHJ4nJc=
+        bh=w3VbD7LbrSIV+AJhlX9wGvBGH7WMn863FXViRRDiMM4=;
+        b=bCBFH+rVPID9ii0sH5CtTpsTmP3uO1pnii5mbbyYZCsdeRY9cVTRSgJ2SDfFbmBeFv
+         VoQ2HIF0sinQ2qjlxZCckhUePRL+hIUe0W0ZAqBqKC35HETCBYZTpFBasWVjYJMSll5y
+         Jik6wgaxs4frbjmWajns1AmZYL0HBhZpC9v2U=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=9d3dVKVv3rwmde4FZcFLfrQ3EuricDCMm/xx55xE2gw=;
-        b=CjdoZr7M/UQSJqcnmDRcFgjSVGeOfURbFt5xEzZCs3vKVE1hUqZyj0/ZO68Djg1189
-         QXmYLoyiNax8/OkHr/g8LyMUnju++aDIFWJEzciAaM5XIBNMgyC7Aa/lKwdy7ZW5Ld22
-         gCsQnx33cIkgNuqcQqaQXHIxYH99AYgTqzBMyqukk4focmVAl4XTt80cvOe5NGYzbuhS
-         FRt7iisHY+x3p9HAKTi5BcKPsDxA8SfgkHU/XopCHkOf6DEFm9QKtQMh5Yw2MZPwGEnc
-         u4eBBi52tYBB5VK1k6LDhuEcu2AQOCE4aas7poYieKKyrEGOi8T5TQhLgBRAGIrlfEtl
-         Uy/w==
-X-Gm-Message-State: AOAM531Pptf27kie65VwITUcNz15/J9UfvJqM22l+qJZwZeu+KFumzmS
-        sGs/7fS/RyTfl8ASSZFw/62FmVl8Jm3XYA==
-X-Google-Smtp-Source: ABdhPJynCCQ9d+vLlAgJ44e3oh8JI6xmdIbGo+8j27KwGUpeuqGpupWGerqTAEwhmi33venFduMCww==
-X-Received: by 2002:a63:c441:: with SMTP id m1mr865573pgg.2.1599030212255;
-        Wed, 02 Sep 2020 00:03:32 -0700 (PDT)
-Received: from drinkcat2.tpe.corp.google.com ([2401:fa00:1:b:7220:84ff:fe09:41dc])
-        by smtp.gmail.com with ESMTPSA id g9sm4525543pfo.144.2020.09.02.00.03.30
+        bh=w3VbD7LbrSIV+AJhlX9wGvBGH7WMn863FXViRRDiMM4=;
+        b=rT39e/CFQB5JenFf894hjXvNllOTm6sVO9bz9O3eBVOY6lzl5clH8S8HFRwJxUeLSx
+         /qTmQq3OHcieQypi1zXKBsFBm7espOZmFpG2CVaDTpXjBSo/WWgE7s0hI06CQl+4dCy4
+         3/pFmEgwSQiTgTvhQllfw083r62Rp7jtmWK9wEtYSM8zCCI/YVRg7iboqLIu2xfZT0Wx
+         MiybxVz48jXTHYSQuQs8WN17RLUGBUwMn85/05oIwIv6Htr/uoXnShSru/eWBdMNr2kL
+         W3ua9Mad7eEFKWD/jyDKWjVKdNS/jgfhUdDgiZvk8Sjx/jtfJWkfx/b1uVW/I1R8bWYO
+         Lfbw==
+X-Gm-Message-State: AOAM533cchknpwhd37tAu+jx+45v5kKRU4+BuMX2KNhmV1nTldtmhi+P
+        miwuVzfeYCTXDNPnGF0uPwtzTw==
+X-Google-Smtp-Source: ABdhPJxKqtFkU/U9HA+gDoFaweJo/+5PSsuycPrw6yluyFQdgQr0IsbJb68L4DRa/jf4kZLEuEiISw==
+X-Received: by 2002:a17:90b:796:: with SMTP id l22mr1381398pjz.199.1599036740488;
+        Wed, 02 Sep 2020 01:52:20 -0700 (PDT)
+Received: from acourbot.tok.corp.google.com ([2401:fa00:8f:203:eeb1:d7ff:fe57:b7e5])
+        by smtp.gmail.com with ESMTPSA id x22sm4698693pfn.41.2020.09.02.01.52.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Sep 2020 00:03:31 -0700 (PDT)
-From:   Nicolas Boichat <drinkcat@chromium.org>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Nicolas Boichat <drinkcat@chromium.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Ohad Ben-Cohen <ohad@wizery.com>,
-        Pi-Hsun Shih <pihsun@chromium.org>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-mediatek@lists.infradead.org,
-        linux-remoteproc@vger.kernel.org
-Subject: [PATCH] rpmsg: Avoid double-free in mtk_rpmsg_register_device
-Date:   Wed,  2 Sep 2020 15:03:19 +0800
-Message-Id: <20200902150309.1.I56cf27cd59f4013bd074dc622c8b8248b034a4cc@changeid>
-X-Mailer: git-send-email 2.28.0.402.g5ffc5be6b7-goog
+        Wed, 02 Sep 2020 01:52:19 -0700 (PDT)
+From:   Alexandre Courbot <acourbot@chromium.org>
+To:     Ohad Ben-Cohen <ohad@wizery.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Alexandre Courbot <acourbot@chromium.org>,
+        Ezequiel Garcia <ezequiel@collabora.com>
+Subject: [PATCH RESEND] remoteproc: scp: add COMPILE_TEST dependency
+Date:   Wed,  2 Sep 2020 17:51:59 +0900
+Message-Id: <20200902085159.1392703-1-acourbot@chromium.org>
+X-Mailer: git-send-email 2.28.0.526.ge36021eeef-goog
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-remoteproc-owner@vger.kernel.org
@@ -76,32 +74,35 @@ Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-If rpmsg_register_device fails, it will call
-mtk_rpmsg_release_device which already frees mdev.
+This will improve this driver's build coverage.
 
-Fixes: 7017996951fde84 ("rpmsg: add rpmsg support for mt8183 SCP.")
-Signed-off-by: Nicolas Boichat <drinkcat@chromium.org>
+Reported-by: Ezequiel Garcia <ezequiel@collabora.com>
+Signed-off-by: Alexandre Courbot <acourbot@chromium.org>
 ---
+Hi Ohad, Bjorn,
 
- drivers/rpmsg/mtk_rpmsg.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+As explained in
+https://www.spinics.net/lists/linux-media/msg175991.html, we need this
+patch in order to merge a driver series in the media tree. If that looks
+ok to you, can we pull it in the media tree along with the series that
+depends on it?
 
-diff --git a/drivers/rpmsg/mtk_rpmsg.c b/drivers/rpmsg/mtk_rpmsg.c
-index 83f2b8804ee989d..f43b69c00e8aa44 100644
---- a/drivers/rpmsg/mtk_rpmsg.c
-+++ b/drivers/rpmsg/mtk_rpmsg.c
-@@ -220,10 +220,8 @@ static int mtk_rpmsg_register_device(struct mtk_rpmsg_rproc_subdev *mtk_subdev,
- 	rpdev->dev.release = mtk_rpmsg_release_device;
+ drivers/remoteproc/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
+index c6659dfea7c7..d1fcada71017 100644
+--- a/drivers/remoteproc/Kconfig
++++ b/drivers/remoteproc/Kconfig
+@@ -43,7 +43,7 @@ config INGENIC_VPU_RPROC
  
- 	ret = rpmsg_register_device(rpdev);
--	if (ret) {
--		kfree(mdev);
-+	if (ret)
- 		return ret;
--	}
- 
- 	return 0;
- }
+ config MTK_SCP
+ 	tristate "Mediatek SCP support"
+-	depends on ARCH_MEDIATEK
++	depends on ARCH_MEDIATEK || COMPILE_TEST
+ 	select RPMSG_MTK_SCP
+ 	help
+ 	  Say y here to support Mediatek's System Companion Processor (SCP) via
 -- 
-2.28.0.402.g5ffc5be6b7-goog
+2.28.0.526.ge36021eeef-goog
 
