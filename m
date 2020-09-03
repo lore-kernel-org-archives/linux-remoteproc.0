@@ -2,518 +2,341 @@ Return-Path: <SRS0=MlSR=CM=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.0 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-11.5 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BFFBC2BBDB
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  3 Sep 2020 02:52:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C500C433E7
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  3 Sep 2020 05:52:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 74D7520758
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  3 Sep 2020 02:52:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D817A20758
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  3 Sep 2020 05:52:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726586AbgICCwO (ORCPT
+        id S1725943AbgICFwY (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 2 Sep 2020 22:52:14 -0400
-Received: from alexa-out-sd-02.qualcomm.com ([199.106.114.39]:34054 "EHLO
-        alexa-out-sd-02.qualcomm.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727996AbgICCwC (ORCPT
+        Thu, 3 Sep 2020 01:52:24 -0400
+Received: from mga12.intel.com ([192.55.52.136]:57685 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725851AbgICFwX (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 2 Sep 2020 22:52:02 -0400
-Received: from unknown (HELO ironmsg04-sd.qualcomm.com) ([10.53.140.144])
-  by alexa-out-sd-02.qualcomm.com with ESMTP; 02 Sep 2020 19:51:58 -0700
-Received: from th-lint-039.qualcomm.com ([10.63.179.124])
-  by ironmsg04-sd.qualcomm.com with ESMTP; 02 Sep 2020 19:51:58 -0700
-Received: by th-lint-039.qualcomm.com (Postfix, from userid 2383757)
-        id 58F2A1B6B; Wed,  2 Sep 2020 19:51:58 -0700 (PDT)
-From:   Gurbir Arora <gurbaror@codeaurora.org>
-To:     linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     bjorn.andersson@linaro.org, mathieu.poirier@linaro.org,
-        tsoni@codeaurora.org, psodagud@codeaurora.org,
-        sidgup@codeaurora.org, rishabhb@codeaurora.org,
-        Gurbir Arora <gurbaror@codeaurora.org>
-Subject: [PATCH v2 2/3] remoteproc: qcom: Add capability to collect minidumps
-Date:   Wed,  2 Sep 2020 19:51:55 -0700
-Message-Id: <1599101516-243760-3-git-send-email-gurbaror@codeaurora.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1599101516-243760-1-git-send-email-gurbaror@codeaurora.org>
-References: <1599101516-243760-1-git-send-email-gurbaror@codeaurora.org>
+        Thu, 3 Sep 2020 01:52:23 -0400
+IronPort-SDR: ajMthde+HWwCJMwmZ7fVkeXKWukE6W0h5hYKE5iKPNb1PryHQXFYyqbz1iok5Pf+4ejueV2hbp
+ OJibOA6ZCY4Q==
+X-IronPort-AV: E=McAfee;i="6000,8403,9732"; a="137042166"
+X-IronPort-AV: E=Sophos;i="5.76,385,1592895600"; 
+   d="scan'208";a="137042166"
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2020 22:51:52 -0700
+IronPort-SDR: mPuXkLFk1WWA/cEIsIVsDzv1uH/WmGbeWjT4VWMoPcNwaJrJF5e8FNwQmIkp9Cr77Yabt2YVsv
+ 7d0nquKeB13Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.76,385,1592895600"; 
+   d="scan'208";a="283977472"
+Received: from vmabille-mobl1.ger.corp.intel.com (HELO ubuntu) ([10.252.54.65])
+  by fmsmga008.fm.intel.com with ESMTP; 02 Sep 2020 22:51:49 -0700
+Date:   Thu, 3 Sep 2020 07:51:48 +0200
+From:   Guennadi Liakhovetski <guennadi.liakhovetski@linux.intel.com>
+To:     Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc:     kvm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        sound-open-firmware@alsa-project.org,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Liam Girdwood <liam.r.girdwood@linux.intel.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Ohad Ben-Cohen <ohad@wizery.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Vincent Whitchurch <vincent.whitchurch@axis.com>
+Subject: Re: [PATCH v6 2/4] rpmsg: move common structures and defines to
+ headers
+Message-ID: <20200903055148.GA7573@ubuntu>
+References: <20200901151153.28111-1-guennadi.liakhovetski@linux.intel.com>
+ <20200901151153.28111-3-guennadi.liakhovetski@linux.intel.com>
+ <20200901172321.GC236120@xps15>
+ <20200902053527.GA31486@ubuntu>
+ <20200902172437.GC280378@xps15>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200902172437.GC280378@xps15>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-This patch adds support for collecting minidump in the
-event of remoteproc crash. Parse the minidump table
-based on remoteproc's unique minidump-id, read all
-memory regions from the remoteproc's minidump table
-entry and expose the memory to userspace.
-The remoteproc platform driver can choose to collect
-a full/mini dump by specifying the coredump op.
+Hi Mathieu,
 
-Signed-off-by: Rishabh Bhatnagar <rishabhb@codeaurora.org>
-Signed-off-by: Gurbir Arora <gurbaror@codeaurora.org>
----
- drivers/remoteproc/qcom_minidump.h          |  64 +++++++++
- drivers/remoteproc/qcom_q6v5_pas.c          |  36 ++++-
- drivers/remoteproc/remoteproc_coredump.c    | 202 +++++++++++++++++++++++++++-
- drivers/remoteproc/remoteproc_elf_helpers.h |  27 ++++
- drivers/remoteproc/remoteproc_internal.h    |   1 +
- 5 files changed, 327 insertions(+), 3 deletions(-)
- create mode 100644 drivers/remoteproc/qcom_minidump.h
+On Wed, Sep 02, 2020 at 11:24:37AM -0600, Mathieu Poirier wrote:
+> On Wed, Sep 02, 2020 at 07:35:27AM +0200, Guennadi Liakhovetski wrote:
+> > Hi Mathew,
+> > 
+> > On Tue, Sep 01, 2020 at 11:23:21AM -0600, Mathieu Poirier wrote:
+> > > On Tue, Sep 01, 2020 at 05:11:51PM +0200, Guennadi Liakhovetski wrote:
+> > > > virtio_rpmsg_bus.c keeps RPMsg protocol structure declarations and
+> > > > common defines like the ones, needed for name-space announcements,
+> > > > internal. Move them to common headers instead.
+> > > > 
+> > > > Signed-off-by: Guennadi Liakhovetski <guennadi.liakhovetski@linux.intel.com>
+> > > 
+> > > I already reviewed this patch and added my RB to it.  Please carry it in your
+> > > next revision.
+> > 
+> > But only as long as the patch doesn't change, right? And in fact it did change 
+> > this time - I renamed the header, moving it under include/linux/rpmsg, actually 
+> 
+> Patch 2/4 in V5 was identical to what was submitted in V4 and my RB tag was not
+> added, nor was the entry for virtio_rpmsg.h added to the MAINTAINERS file.
 
-diff --git a/drivers/remoteproc/qcom_minidump.h b/drivers/remoteproc/qcom_minidump.h
-new file mode 100644
-index 0000000..437e030
---- /dev/null
-+++ b/drivers/remoteproc/qcom_minidump.h
-@@ -0,0 +1,64 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+/*
-+ * Copyright (c) 2020, The Linux Foundation. All rights reserved.
-+ */
-+
-+#ifndef __QCOM_MINIDUMP_H
-+#define __QCOM_MINIDUMP_H
-+
-+#define MAX_NUM_OF_SS           10
-+#define MAX_REGION_NAME_LENGTH  16
-+#define SBL_MINIDUMP_SMEM_ID	602
-+#define MD_REGION_VALID		('V' << 24 | 'A' << 16 | 'L' << 8 | 'I' << 0)
-+#define MD_SS_ENCR_DONE		('D' << 24 | 'O' << 16 | 'N' << 8 | 'E' << 0)
-+#define MD_SS_ENABLED		('E' << 24 | 'N' << 16 | 'B' << 8 | 'L' << 0)
-+
-+/**
-+ * md_ss_region - Minidump region
-+ * @name		: Name of the region to be dumped
-+ * @seq_num:		: Use to differentiate regions with same name.
-+ * @md_valid		: This entry to be dumped (if set to 1)
-+ * @region_base_address	: Physical address of region to be dumped
-+ * @region_size		: Size of the region
-+ */
-+struct md_ss_region {
-+	char	name[MAX_REGION_NAME_LENGTH];
-+	u32	seq_num;
-+	u32	md_valid;
-+	u64	region_base_address;
-+	u64	region_size;
-+};
-+
-+/**
-+ * md_ss_toc: Subsystem's SMEM Table of content
-+ * @md_ss_toc_init : Subsystem toc init status
-+ * @md_ss_enable_status : if set to 1, this region would be copied during coredump
-+ * @encryption_status: Encryption status for this subsystem
-+ * @encryption_required : Decides to encrypt the subsystem regions or not
-+ * @ss_region_count : Number of regions added in this subsystem toc
-+ * @md_ss_smem_regions_baseptr : regions base pointer of the subsystem
-+ */
-+struct md_ss_toc {
-+	u32			md_ss_toc_init;
-+	u32			md_ss_enable_status;
-+	u32			encryption_status;
-+	u32			encryption_required;
-+	u32			ss_region_count;
-+	u64			md_ss_smem_regions_baseptr;
-+};
-+
-+/**
-+ * md_global_toc: Global Table of Content
-+ * @md_toc_init : Global Minidump init status
-+ * @md_revision : Minidump revision
-+ * @md_enable_status : Minidump enable status
-+ * @md_ss_toc : Array of subsystems toc
-+ */
-+struct md_global_toc {
-+	u32			md_toc_init;
-+	u32			md_revision;
-+	u32			md_enable_status;
-+	struct md_ss_toc	md_ss_toc[MAX_NUM_OF_SS];
-+};
-+
-+#endif
-diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
-index 3837f23..19873d1 100644
---- a/drivers/remoteproc/qcom_q6v5_pas.c
-+++ b/drivers/remoteproc/qcom_q6v5_pas.c
-@@ -33,6 +33,7 @@ struct adsp_data {
- 	int crash_reason_smem;
- 	const char *firmware_name;
- 	int pas_id;
-+	unsigned int minidump_id;
- 	bool has_aggre2_clk;
- 	bool auto_boot;
- 
-@@ -63,6 +64,7 @@ struct qcom_adsp {
- 	int proxy_pd_count;
- 
- 	int pas_id;
-+	unsigned int minidump_id;
- 	int crash_reason_smem;
- 	bool has_aggre2_clk;
- 	const char *info_name;
-@@ -116,6 +118,21 @@ static void adsp_pds_disable(struct qcom_adsp *adsp, struct device **pds,
- 	}
- }
- 
-+static void adsp_dump(struct rproc *rproc)
-+{
-+	struct qcom_adsp *adsp = (struct qcom_adsp *)rproc->priv;
-+
-+	qcom_rproc_minidump(rproc, adsp->minidump_id);
-+}
-+
-+void adsp_priv_cleanup(struct rproc *rproc)
-+{
-+	struct rproc_dump_segment *segment;
-+
-+	list_for_each_entry(segment, &rproc->dump_segments, node)
-+		kfree(segment->priv);
-+}
-+
- static int adsp_load(struct rproc *rproc, const struct firmware *fw)
- {
- 	struct qcom_adsp *adsp = (struct qcom_adsp *)rproc->priv;
-@@ -258,6 +275,15 @@ static const struct rproc_ops adsp_ops = {
- 	.panic = adsp_panic,
- };
- 
-+static const struct rproc_ops adsp_minidump_ops = {
-+	.start = adsp_start,
-+	.stop = adsp_stop,
-+	.da_to_va = adsp_da_to_va,
-+	.load = adsp_load,
-+	.coredump = adsp_dump,
-+	.priv_cleanup = adsp_priv_cleanup,
-+};
-+
- static int adsp_init_clock(struct qcom_adsp *adsp)
- {
- 	int ret;
-@@ -398,8 +424,13 @@ static int adsp_probe(struct platform_device *pdev)
- 	if (ret < 0 && ret != -EINVAL)
- 		return ret;
- 
--	rproc = rproc_alloc(&pdev->dev, pdev->name, &adsp_ops,
--			    fw_name, sizeof(*adsp));
-+	if (desc->minidump_id)
-+		rproc = rproc_alloc(&pdev->dev, pdev->name, &adsp_minidump_ops, fw_name,
-+				    sizeof(*adsp));
-+	else
-+		rproc = rproc_alloc(&pdev->dev, pdev->name, &adsp_ops, fw_name,
-+				    sizeof(*adsp));
-+
- 	if (!rproc) {
- 		dev_err(&pdev->dev, "unable to allocate remoteproc\n");
- 		return -ENOMEM;
-@@ -411,6 +442,7 @@ static int adsp_probe(struct platform_device *pdev)
- 	adsp = (struct qcom_adsp *)rproc->priv;
- 	adsp->dev = &pdev->dev;
- 	adsp->rproc = rproc;
-+	adsp->minidump_id = desc->minidump_id;
- 	adsp->pas_id = desc->pas_id;
- 	adsp->has_aggre2_clk = desc->has_aggre2_clk;
- 	adsp->info_name = desc->sysmon_name;
-diff --git a/drivers/remoteproc/remoteproc_coredump.c b/drivers/remoteproc/remoteproc_coredump.c
-index bb15a29..c7b779b 100644
---- a/drivers/remoteproc/remoteproc_coredump.c
-+++ b/drivers/remoteproc/remoteproc_coredump.c
-@@ -12,6 +12,11 @@
- #include <linux/remoteproc.h>
- #include "remoteproc_internal.h"
- #include "remoteproc_elf_helpers.h"
-+#include <linux/soc/qcom/smem.h>
-+#include "qcom_minidump.h"
-+
-+static struct md_global_toc *g_md_toc;
-+#define MAX_STRTBL_SIZE 512
- 
- struct rproc_coredump_state {
- 	struct rproc *rproc;
-@@ -20,13 +25,15 @@ struct rproc_coredump_state {
- };
- 
- /**
-- * rproc_coredump_cleanup() - clean up dump_segments list
-  * @rproc: the remote processor handle
-  */
- void rproc_coredump_cleanup(struct rproc *rproc)
- {
- 	struct rproc_dump_segment *entry, *tmp;
- 
-+	if (rproc->ops->priv_cleanup)
-+		rproc->ops->priv_cleanup(rproc);
-+
- 	list_for_each_entry_safe(entry, tmp, &rproc->dump_segments, node) {
- 		list_del(&entry->node);
- 		kfree(entry);
-@@ -323,3 +330,196 @@ void rproc_coredump(struct rproc *rproc)
- 	 */
- 	wait_for_completion(&dump_state.dump_done);
- }
-+
-+static void do_rproc_minidump(struct rproc *rproc)
-+{
-+	struct rproc_dump_segment *segment;
-+	void *shdr;
-+	void *ehdr;
-+	size_t data_size;
-+	size_t offset;
-+	void *data;
-+	u8 class = rproc->elf_class;
-+	int shnum;
-+	struct rproc_coredump_state dump_state;
-+	unsigned int dump_conf = rproc->dump_conf;
-+	char *str_tbl = "STR_TBL";
-+
-+	if (list_empty(&rproc->dump_segments) ||
-+	    dump_conf == RPROC_COREDUMP_DISABLED)
-+		return;
-+
-+	if (class == ELFCLASSNONE) {
-+		dev_err(&rproc->dev, "Elf class is not set\n");
-+		return;
-+	}
-+
-+	/*
-+	 * We allocate two extra section headers. The first one is null.
-+	 * Second section header is for the string table. Also space is
-+	 * allocated for string table.
-+	 */
-+	data_size = elf_size_of_hdr(class) + 2 * elf_size_of_shdr(class) +
-+		    MAX_STRTBL_SIZE;
-+	shnum = 2;
-+
-+	list_for_each_entry(segment, &rproc->dump_segments, node) {
-+		data_size += elf_size_of_shdr(class);
-+		if (dump_conf == RPROC_COREDUMP_DEFAULT)
-+			data_size += segment->size;
-+		shnum++;
-+	}
-+
-+	data = vmalloc(data_size);
-+	if (!data)
-+		return;
-+
-+	ehdr = data;
-+	memset(ehdr, 0, elf_size_of_hdr(class));
-+	/* e_ident field is common for both elf32 and elf64 */
-+	elf_hdr_init_ident(ehdr, class);
-+
-+	elf_hdr_set_e_type(class, ehdr, ET_CORE);
-+	elf_hdr_set_e_machine(class, ehdr, rproc->elf_machine);
-+	elf_hdr_set_e_version(class, ehdr, EV_CURRENT);
-+	elf_hdr_set_e_entry(class, ehdr, rproc->bootaddr);
-+	elf_hdr_set_e_shoff(class, ehdr, elf_size_of_hdr(class));
-+	elf_hdr_set_e_ehsize(class, ehdr, elf_size_of_hdr(class));
-+	elf_hdr_set_e_shentsize(class, ehdr, elf_size_of_shdr(class));
-+	elf_hdr_set_e_shnum(class, ehdr, shnum);
-+	elf_hdr_set_e_shstrndx(class, ehdr, 1);
-+
-+	/* Set the first section header as null and move to the next one. */
-+	shdr = data + elf_hdr_get_e_shoff(class, ehdr);
-+	memset(shdr, 0, elf_size_of_shdr(class));
-+	shdr += elf_size_of_shdr(class);
-+
-+	/* Initialize the string table. */
-+	offset = elf_hdr_get_e_shoff(class, ehdr) +
-+		 elf_size_of_shdr(class) * elf_hdr_get_e_shnum(class, ehdr);
-+	memset(data + offset, 0, MAX_STRTBL_SIZE);
-+
-+	/* Fill in the string table section header. */
-+	memset(shdr, 0, elf_size_of_shdr(class));
-+	elf_shdr_set_sh_type(class, shdr, SHT_STRTAB);
-+	elf_shdr_set_sh_offset(class, shdr, offset);
-+	elf_shdr_set_sh_size(class, shdr, MAX_STRTBL_SIZE);
-+	elf_shdr_set_sh_entsize(class, shdr, 0);
-+	elf_shdr_set_sh_flags(class, shdr, 0);
-+	elf_shdr_set_sh_name(class, shdr, set_section_name(str_tbl, ehdr, class));
-+	offset += elf_shdr_get_sh_size(class, shdr);
-+	shdr += elf_size_of_shdr(class);
-+
-+	list_for_each_entry(segment, &rproc->dump_segments, node) {
-+		memset(shdr, 0, elf_size_of_shdr(class));
-+		elf_shdr_set_sh_type(class, shdr, SHT_PROGBITS);
-+		elf_shdr_set_sh_offset(class, shdr, offset);
-+		elf_shdr_set_sh_addr(class, shdr, segment->da);
-+		elf_shdr_set_sh_size(class, shdr, segment->size);
-+		elf_shdr_set_sh_entsize(class, shdr, 0);
-+		elf_shdr_set_sh_flags(class, shdr, SHF_WRITE);
-+		elf_shdr_set_sh_name(class, shdr,
-+				     set_section_name(segment->priv, ehdr, class));
-+
-+		/* No need to copy segments for inline dumps */
-+		if (dump_conf == RPROC_COREDUMP_DEFAULT)
-+			rproc_copy_segment(rproc, data + offset, segment, 0,
-+					   segment->size);
-+		offset += elf_shdr_get_sh_size(class, shdr);
-+		shdr += elf_size_of_shdr(class);
-+	}
-+
-+	if (dump_conf == RPROC_COREDUMP_DEFAULT) {
-+		dev_coredumpv(&rproc->dev, data, data_size, GFP_KERNEL);
-+		return;
-+	}
-+
-+	/* Initialize the dump state struct to be used by rproc_coredump_read */
-+	dump_state.rproc = rproc;
-+	dump_state.header = data;
-+	init_completion(&dump_state.dump_done);
-+
-+	dev_coredumpm(&rproc->dev, NULL, &dump_state, data_size, GFP_KERNEL,
-+		      rproc_coredump_read, rproc_coredump_free);
-+
-+	/* Wait until the dump is read and free is called. Data is freed
-+	 * by devcoredump framework automatically after 5 minutes.
-+	 */
-+	wait_for_completion(&dump_state.dump_done);
-+
-+	list_for_each_entry(segment, &rproc->dump_segments, node)
-+		kfree(segment->priv);
-+}
-+
-+static void add_minidump_segments(struct rproc *rproc, struct md_ss_toc *minidump_ss)
-+{
-+	struct md_ss_region __iomem *region_info;
-+	int seg_cnt = 0, i;
-+	void __iomem *ptr;
-+	dma_addr_t da;
-+	size_t size;
-+	char *name;
-+
-+	seg_cnt = minidump_ss->ss_region_count;
-+	ptr = ioremap((unsigned long)minidump_ss->md_ss_smem_regions_baseptr,
-+		      seg_cnt * sizeof(struct md_ss_region));
-+
-+	if (!ptr)
-+		return;
-+
-+	region_info = ptr;
-+
-+	if (!list_empty(&rproc->dump_segments)) {
-+		dev_err(&rproc->dev, "invalid minidump remoteproc table\n");
-+		return;
-+	}
-+
-+	for (i = 0; i < seg_cnt; i++) {
-+		if (__raw_readl(&region_info->md_valid) == MD_REGION_VALID) {
-+			name = kmalloc(MAX_REGION_NAME_LENGTH, GFP_KERNEL);
-+			memcpy(name, region_info->name, sizeof(region_info->name));
-+			da = region_info->region_base_address;
-+			size = region_info->region_size;
-+			rproc_coredump_add_custom_segment(rproc, da, size, NULL, name);
-+		}
-+		region_info++;
-+	}
-+
-+	iounmap(ptr);
-+}
-+
-+void qcom_rproc_minidump(struct rproc *rproc, unsigned int minidump_id)
-+{
-+	struct md_ss_toc *minidump_ss;
-+	size_t size;
-+
-+	/* Get Global minidump ToC*/
-+	if (!g_md_toc)
-+		g_md_toc = qcom_smem_get(QCOM_SMEM_HOST_ANY,
-+					 SBL_MINIDUMP_SMEM_ID, &size);
-+
-+	/* check if global table pointer exists and init is set */
-+	if (IS_ERR(g_md_toc) || !(g_md_toc->md_toc_init)) {
-+		dev_err(&rproc->dev, "SMEM is not initialized.\n");
-+		return;
-+	}
-+
-+	/* Get subsystem table of contents using the minidump id */
-+	minidump_ss = &g_md_toc->md_ss_toc[minidump_id];
-+
-+	/**
-+	 * Collect minidump if SS ToC is valid and segment table
-+	 * is initialized in memory and encryption status is set.
-+	 */
-+	if (minidump_ss->md_ss_smem_regions_baseptr != 0 &&
-+	    minidump_ss->md_ss_toc_init == 1 &&
-+	    minidump_ss->md_ss_enable_status == MD_SS_ENABLED &&
-+	    minidump_ss->encryption_status == MD_SS_ENCR_DONE)
-+		add_minidump_segments(rproc, minidump_ss);
-+
-+	dev_err(&rproc->dev, "Minidump not ready!! Aborting\n");
-+
-+minidump:
-+	do_rproc_minidump(rproc);
-+}
-+EXPORT_SYMBOL(qcom_rproc_minidump);
-diff --git a/drivers/remoteproc/remoteproc_elf_helpers.h b/drivers/remoteproc/remoteproc_elf_helpers.h
-index 4b6be7b..d83ebca 100644
---- a/drivers/remoteproc/remoteproc_elf_helpers.h
-+++ b/drivers/remoteproc/remoteproc_elf_helpers.h
-@@ -11,6 +11,7 @@
- #include <linux/elf.h>
- #include <linux/types.h>
- 
-+#define MAX_NAME_LENGTH 16
- /**
-  * fw_elf_get_class - Get elf class
-  * @fw: the ELF firmware image
-@@ -65,6 +66,7 @@ ELF_GEN_FIELD_GET_SET(hdr, e_type, u16)
- ELF_GEN_FIELD_GET_SET(hdr, e_version, u32)
- ELF_GEN_FIELD_GET_SET(hdr, e_ehsize, u32)
- ELF_GEN_FIELD_GET_SET(hdr, e_phentsize, u16)
-+ELF_GEN_FIELD_GET_SET(hdr, e_shentsize, u16)
- 
- ELF_GEN_FIELD_GET_SET(phdr, p_paddr, u64)
- ELF_GEN_FIELD_GET_SET(phdr, p_vaddr, u64)
-@@ -74,6 +76,9 @@ ELF_GEN_FIELD_GET_SET(phdr, p_type, u32)
- ELF_GEN_FIELD_GET_SET(phdr, p_offset, u64)
- ELF_GEN_FIELD_GET_SET(phdr, p_flags, u32)
- ELF_GEN_FIELD_GET_SET(phdr, p_align, u64)
-+ELF_GEN_FIELD_GET_SET(shdr, sh_type, u32)
-+ELF_GEN_FIELD_GET_SET(shdr, sh_flags, u32)
-+ELF_GEN_FIELD_GET_SET(shdr, sh_entsize, u16)
- 
- ELF_GEN_FIELD_GET_SET(shdr, sh_size, u64)
- ELF_GEN_FIELD_GET_SET(shdr, sh_offset, u64)
-@@ -93,4 +98,26 @@ ELF_STRUCT_SIZE(shdr)
- ELF_STRUCT_SIZE(phdr)
- ELF_STRUCT_SIZE(hdr)
- 
-+static inline unsigned int set_section_name(const char *name, void *ehdr,
-+					    u8 class)
-+{
-+	u16 shstrndx = elf_hdr_get_e_shstrndx(class, ehdr);
-+	void *shdr;
-+	char *strtab;
-+	static int strtable_idx = 1;
-+	int idx, ret = 0;
-+
-+	shdr = ehdr + elf_size_of_hdr(class) + shstrndx * elf_size_of_shdr(class);
-+	strtab = ehdr + elf_shdr_get_sh_offset(class, shdr);
-+	idx = strtable_idx;
-+	if (!strtab || !name)
-+		return 0;
-+
-+	ret = idx;
-+	idx += strlcpy((strtab + idx), name, MAX_NAME_LENGTH);
-+	strtable_idx = idx + 1;
-+
-+	return ret;
-+}
-+
- #endif /* REMOTEPROC_ELF_LOADER_H */
-diff --git a/drivers/remoteproc/remoteproc_internal.h b/drivers/remoteproc/remoteproc_internal.h
-index c340028..30dd2e7 100644
---- a/drivers/remoteproc/remoteproc_internal.h
-+++ b/drivers/remoteproc/remoteproc_internal.h
-@@ -52,6 +52,7 @@ void rproc_exit_sysfs(void);
- /* from remoteproc_coredump.c */
- void rproc_coredump_cleanup(struct rproc *rproc);
- void rproc_coredump(struct rproc *rproc);
-+void qcom_rproc_minidump(struct rproc *rproc, unsigned int minidump_id);
- 
- #ifdef CONFIG_REMOTEPROC_CDEV
- void rproc_init_cdev(void);
--- 
-2.7.4
+Right, yes, I forgot about that your request when creating v5, sorry about that, 
+that's why I made a v6 with the header moved to include/linux/rpmsg/.
 
+> > also following your suggestion. Still, formally the patch has changed, so, I 
+> > didn't include your "Reviewed-by" in this version. And you anyway would be 
+> 
+> Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+> 
+> > reviewing the other patches in this series to, right?
+> 
+> As much as I'd like to reviewing the other patches in this series won't be
+> possible at this time. 
+
+Ok, understand, I'm wondering then what the path to upstreaming would be then?
+
+Thanks
+Guennadi
+
+> > > Thanks,
+> > > Mathieu
+> > > 
+> > > > ---
+> > > >  drivers/rpmsg/virtio_rpmsg_bus.c | 78 +-----------------------------
+> > > >  include/linux/rpmsg/virtio.h     | 83 ++++++++++++++++++++++++++++++++
+> > > >  include/uapi/linux/rpmsg.h       |  3 ++
+> > > >  3 files changed, 88 insertions(+), 76 deletions(-)
+> > > >  create mode 100644 include/linux/rpmsg/virtio.h
+> > > > 
+> > > > diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
+> > > > index 9006fc7f73d0..f39c426f9c5e 100644
+> > > > --- a/drivers/rpmsg/virtio_rpmsg_bus.c
+> > > > +++ b/drivers/rpmsg/virtio_rpmsg_bus.c
+> > > > @@ -19,6 +19,7 @@
+> > > >  #include <linux/mutex.h>
+> > > >  #include <linux/of_device.h>
+> > > >  #include <linux/rpmsg.h>
+> > > > +#include <linux/rpmsg/virtio.h>
+> > > >  #include <linux/scatterlist.h>
+> > > >  #include <linux/slab.h>
+> > > >  #include <linux/sched.h>
+> > > > @@ -27,6 +28,7 @@
+> > > >  #include <linux/virtio_ids.h>
+> > > >  #include <linux/virtio_config.h>
+> > > >  #include <linux/wait.h>
+> > > > +#include <uapi/linux/rpmsg.h>
+> > > >  
+> > > >  #include "rpmsg_internal.h"
+> > > >  
+> > > > @@ -70,58 +72,6 @@ struct virtproc_info {
+> > > >  	struct rpmsg_endpoint *ns_ept;
+> > > >  };
+> > > >  
+> > > > -/* The feature bitmap for virtio rpmsg */
+> > > > -#define VIRTIO_RPMSG_F_NS	0 /* RP supports name service notifications */
+> > > > -
+> > > > -/**
+> > > > - * struct rpmsg_hdr - common header for all rpmsg messages
+> > > > - * @src: source address
+> > > > - * @dst: destination address
+> > > > - * @reserved: reserved for future use
+> > > > - * @len: length of payload (in bytes)
+> > > > - * @flags: message flags
+> > > > - * @data: @len bytes of message payload data
+> > > > - *
+> > > > - * Every message sent(/received) on the rpmsg bus begins with this header.
+> > > > - */
+> > > > -struct rpmsg_hdr {
+> > > > -	__virtio32 src;
+> > > > -	__virtio32 dst;
+> > > > -	__virtio32 reserved;
+> > > > -	__virtio16 len;
+> > > > -	__virtio16 flags;
+> > > > -	u8 data[];
+> > > > -} __packed;
+> > > > -
+> > > > -/**
+> > > > - * struct rpmsg_ns_msg - dynamic name service announcement message
+> > > > - * @name: name of remote service that is published
+> > > > - * @addr: address of remote service that is published
+> > > > - * @flags: indicates whether service is created or destroyed
+> > > > - *
+> > > > - * This message is sent across to publish a new service, or announce
+> > > > - * about its removal. When we receive these messages, an appropriate
+> > > > - * rpmsg channel (i.e device) is created/destroyed. In turn, the ->probe()
+> > > > - * or ->remove() handler of the appropriate rpmsg driver will be invoked
+> > > > - * (if/as-soon-as one is registered).
+> > > > - */
+> > > > -struct rpmsg_ns_msg {
+> > > > -	char name[RPMSG_NAME_SIZE];
+> > > > -	__virtio32 addr;
+> > > > -	__virtio32 flags;
+> > > > -} __packed;
+> > > > -
+> > > > -/**
+> > > > - * enum rpmsg_ns_flags - dynamic name service announcement flags
+> > > > - *
+> > > > - * @RPMSG_NS_CREATE: a new remote service was just created
+> > > > - * @RPMSG_NS_DESTROY: a known remote service was just destroyed
+> > > > - */
+> > > > -enum rpmsg_ns_flags {
+> > > > -	RPMSG_NS_CREATE		= 0,
+> > > > -	RPMSG_NS_DESTROY	= 1,
+> > > > -};
+> > > > -
+> > > >  /**
+> > > >   * @vrp: the remote processor this channel belongs to
+> > > >   */
+> > > > @@ -134,27 +84,6 @@ struct virtio_rpmsg_channel {
+> > > >  #define to_virtio_rpmsg_channel(_rpdev) \
+> > > >  	container_of(_rpdev, struct virtio_rpmsg_channel, rpdev)
+> > > >  
+> > > > -/*
+> > > > - * We're allocating buffers of 512 bytes each for communications. The
+> > > > - * number of buffers will be computed from the number of buffers supported
+> > > > - * by the vring, upto a maximum of 512 buffers (256 in each direction).
+> > > > - *
+> > > > - * Each buffer will have 16 bytes for the msg header and 496 bytes for
+> > > > - * the payload.
+> > > > - *
+> > > > - * This will utilize a maximum total space of 256KB for the buffers.
+> > > > - *
+> > > > - * We might also want to add support for user-provided buffers in time.
+> > > > - * This will allow bigger buffer size flexibility, and can also be used
+> > > > - * to achieve zero-copy messaging.
+> > > > - *
+> > > > - * Note that these numbers are purely a decision of this driver - we
+> > > > - * can change this without changing anything in the firmware of the remote
+> > > > - * processor.
+> > > > - */
+> > > > -#define MAX_RPMSG_NUM_BUFS	(512)
+> > > > -#define MAX_RPMSG_BUF_SIZE	(512)
+> > > > -
+> > > >  /*
+> > > >   * Local addresses are dynamically allocated on-demand.
+> > > >   * We do not dynamically assign addresses from the low 1024 range,
+> > > > @@ -162,9 +91,6 @@ struct virtio_rpmsg_channel {
+> > > >   */
+> > > >  #define RPMSG_RESERVED_ADDRESSES	(1024)
+> > > >  
+> > > > -/* Address 53 is reserved for advertising remote services */
+> > > > -#define RPMSG_NS_ADDR			(53)
+> > > > -
+> > > >  static void virtio_rpmsg_destroy_ept(struct rpmsg_endpoint *ept);
+> > > >  static int virtio_rpmsg_send(struct rpmsg_endpoint *ept, void *data, int len);
+> > > >  static int virtio_rpmsg_sendto(struct rpmsg_endpoint *ept, void *data, int len,
+> > > > diff --git a/include/linux/rpmsg/virtio.h b/include/linux/rpmsg/virtio.h
+> > > > new file mode 100644
+> > > > index 000000000000..3ede1a4a68a3
+> > > > --- /dev/null
+> > > > +++ b/include/linux/rpmsg/virtio.h
+> > > > @@ -0,0 +1,83 @@
+> > > > +/* SPDX-License-Identifier: GPL-2.0 */
+> > > > +
+> > > > +#ifndef _LINUX_RPMSG_VIRTIO_H
+> > > > +#define _LINUX_RPMSG_VIRTIO_H
+> > > > +
+> > > > +#include <linux/mod_devicetable.h>
+> > > > +#include <linux/types.h>
+> > > > +#include <linux/virtio_types.h>
+> > > > +
+> > > > +/**
+> > > > + * struct rpmsg_hdr - common header for all rpmsg messages
+> > > > + * @src: source address
+> > > > + * @dst: destination address
+> > > > + * @reserved: reserved for future use
+> > > > + * @len: length of payload (in bytes)
+> > > > + * @flags: message flags
+> > > > + * @data: @len bytes of message payload data
+> > > > + *
+> > > > + * Every message sent(/received) on the rpmsg bus begins with this header.
+> > > > + */
+> > > > +struct rpmsg_hdr {
+> > > > +	__virtio32 src;
+> > > > +	__virtio32 dst;
+> > > > +	__virtio32 reserved;
+> > > > +	__virtio16 len;
+> > > > +	__virtio16 flags;
+> > > > +	u8 data[];
+> > > > +} __packed;
+> > > > +
+> > > > +/**
+> > > > + * struct rpmsg_ns_msg - dynamic name service announcement message
+> > > > + * @name: name of remote service that is published
+> > > > + * @addr: address of remote service that is published
+> > > > + * @flags: indicates whether service is created or destroyed
+> > > > + *
+> > > > + * This message is sent across to publish a new service, or announce
+> > > > + * about its removal. When we receive these messages, an appropriate
+> > > > + * rpmsg channel (i.e device) is created/destroyed. In turn, the ->probe()
+> > > > + * or ->remove() handler of the appropriate rpmsg driver will be invoked
+> > > > + * (if/as-soon-as one is registered).
+> > > > + */
+> > > > +struct rpmsg_ns_msg {
+> > > > +	char name[RPMSG_NAME_SIZE];
+> > > > +	__virtio32 addr;
+> > > > +	__virtio32 flags;
+> > > > +} __packed;
+> > > > +
+> > > > +/**
+> > > > + * enum rpmsg_ns_flags - dynamic name service announcement flags
+> > > > + *
+> > > > + * @RPMSG_NS_CREATE: a new remote service was just created
+> > > > + * @RPMSG_NS_DESTROY: a known remote service was just destroyed
+> > > > + */
+> > > > +enum rpmsg_ns_flags {
+> > > > +	RPMSG_NS_CREATE		= 0,
+> > > > +	RPMSG_NS_DESTROY	= 1,
+> > > > +};
+> > > > +
+> > > > +/*
+> > > > + * We're allocating buffers of 512 bytes each for communications. The
+> > > > + * number of buffers will be computed from the number of buffers supported
+> > > > + * by the vring, upto a maximum of 512 buffers (256 in each direction).
+> > > > + *
+> > > > + * Each buffer will have 16 bytes for the msg header and 496 bytes for
+> > > > + * the payload.
+> > > > + *
+> > > > + * This will utilize a maximum total space of 256KB for the buffers.
+> > > > + *
+> > > > + * We might also want to add support for user-provided buffers in time.
+> > > > + * This will allow bigger buffer size flexibility, and can also be used
+> > > > + * to achieve zero-copy messaging.
+> > > > + *
+> > > > + * Note that these numbers are purely a decision of this driver - we
+> > > > + * can change this without changing anything in the firmware of the remote
+> > > > + * processor.
+> > > > + */
+> > > > +#define MAX_RPMSG_NUM_BUFS	512
+> > > > +#define MAX_RPMSG_BUF_SIZE	512
+> > > > +
+> > > > +/* Address 53 is reserved for advertising remote services */
+> > > > +#define RPMSG_NS_ADDR		53
+> > > > +
+> > > > +#endif
+> > > > diff --git a/include/uapi/linux/rpmsg.h b/include/uapi/linux/rpmsg.h
+> > > > index e14c6dab4223..d669c04ef289 100644
+> > > > --- a/include/uapi/linux/rpmsg.h
+> > > > +++ b/include/uapi/linux/rpmsg.h
+> > > > @@ -24,4 +24,7 @@ struct rpmsg_endpoint_info {
+> > > >  #define RPMSG_CREATE_EPT_IOCTL	_IOW(0xb5, 0x1, struct rpmsg_endpoint_info)
+> > > >  #define RPMSG_DESTROY_EPT_IOCTL	_IO(0xb5, 0x2)
+> > > >  
+> > > > +/* The feature bitmap for virtio rpmsg */
+> > > > +#define VIRTIO_RPMSG_F_NS	0 /* RP supports name service notifications */
+> > > > +
+> > > >  #endif
+> > > > -- 
+> > > > 2.28.0
+> > > > 
