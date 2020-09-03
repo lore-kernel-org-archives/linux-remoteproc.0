@@ -2,132 +2,113 @@ Return-Path: <SRS0=MlSR=CM=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.0 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0920DC433E2
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  3 Sep 2020 00:08:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14B9EC433E2
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  3 Sep 2020 02:52:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D2D9E20773
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  3 Sep 2020 00:08:16 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ZVPNUDXf"
+	by mail.kernel.org (Postfix) with ESMTP id D326020758
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  3 Sep 2020 02:52:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727784AbgICAIQ (ORCPT
+        id S1726586AbgICCv7 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 2 Sep 2020 20:08:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45158 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726594AbgICAIO (ORCPT
+        Wed, 2 Sep 2020 22:51:59 -0400
+Received: from alexa-out-sd-02.qualcomm.com ([199.106.114.39]:34054 "EHLO
+        alexa-out-sd-02.qualcomm.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726177AbgICCv7 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 2 Sep 2020 20:08:14 -0400
-Received: from mail-vs1-xe43.google.com (mail-vs1-xe43.google.com [IPv6:2607:f8b0:4864:20::e43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 55440C061245
-        for <linux-remoteproc@vger.kernel.org>; Wed,  2 Sep 2020 17:08:14 -0700 (PDT)
-Received: by mail-vs1-xe43.google.com with SMTP id y3so747528vsn.1
-        for <linux-remoteproc@vger.kernel.org>; Wed, 02 Sep 2020 17:08:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=vNGK0drLoWNgYFtnyo0bGiJC6OE4+o9KPc4VANTcGUU=;
-        b=ZVPNUDXf6tQVcgw8kkHHQyjEAOsLqycSIz1ehYZm+uVXTd9CN/j5btk5vfe+0MxcpN
-         z0MpYoLoq3SETJ9XNMrcemRwFcAyZQadJmVdpxOACzSkHQKavJzwtcVAxvf6+bGo337V
-         G47Y0VYQUWmV0mr4nvMqdD/QNGIE9tI4Bw3wQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=vNGK0drLoWNgYFtnyo0bGiJC6OE4+o9KPc4VANTcGUU=;
-        b=KAqw2d2IbSec2SzKI6DFCDDDb3/KkbXLz+aVuqb3hAcj3HEsayolXr20ko8Py+N9yc
-         SxdgvHdwr2J9IaNYcbnmG621sXmH/Pq15C9GqWOKtUUGaxqWuXB1W5uSXZFRGXjiuL3L
-         4+7XtO5YKjN0ugK3dozCK8U1v5UFvdHsp8EaXjC98Tb1fsB1tpda2LA3cWBiFGzocu3z
-         y9nlbUzOrA+fuqC0KJWCfF1JZcy7SdMHgXQhCqf5JR68Bj4QQ99hipZPMTezjQFt/LFe
-         IBsqdnmrq7WCtN2/lx41S1irig7yDK9viwI1xmWOf6ZA4bA/CfFvVQIMUgg27dIJikp2
-         cP5g==
-X-Gm-Message-State: AOAM531C/bmDHrB3+V8clVZJGmrk5Yu4eOvYCm0W/bjj+mFtuRU9sLqK
-        t2tHQ/Kb5d9RfpFFM9zPuuoerfNwRfyp9yqWlrdqRA==
-X-Google-Smtp-Source: ABdhPJyyh8r00V5dnzC7J663uWgsb6bIr45zqffFvMVOa7JwQMs1QHsDUIoUGvYd0l5Gb33OEKfuJA9HIJBcdXdIKco=
-X-Received: by 2002:a05:6102:3d7:: with SMTP id n23mr164533vsq.57.1599091690996;
- Wed, 02 Sep 2020 17:08:10 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200902190709.v2.1.I56cf27cd59f4013bd074dc622c8b8248b034a4cc@changeid>
- <20200902165505.GA280378@xps15>
-In-Reply-To: <20200902165505.GA280378@xps15>
-From:   Nicolas Boichat <drinkcat@chromium.org>
-Date:   Thu, 3 Sep 2020 08:08:00 +0800
-Message-ID: <CANMq1KDcYRKWxQ6+AQ=eTRcHdkiWyzH7BTahXdag5=FdnF7e1g@mail.gmail.com>
-Subject: Re: [PATCH v2] rpmsg: Avoid double-free in mtk_rpmsg_register_device
-To:     Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Ohad Ben-Cohen <ohad@wizery.com>,
-        Pi-Hsun Shih <pihsun@chromium.org>,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        "moderated list:ARM/Mediatek SoC support" 
-        <linux-mediatek@lists.infradead.org>,
-        "open list:REMOTE PROCESSOR (REMOTEPROC) SUBSYSTEM" 
-        <linux-remoteproc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 2 Sep 2020 22:51:59 -0400
+Received: from unknown (HELO ironmsg01-sd.qualcomm.com) ([10.53.140.141])
+  by alexa-out-sd-02.qualcomm.com with ESMTP; 02 Sep 2020 19:51:58 -0700
+Received: from th-lint-039.qualcomm.com ([10.63.179.124])
+  by ironmsg01-sd.qualcomm.com with ESMTP; 02 Sep 2020 19:51:58 -0700
+Received: by th-lint-039.qualcomm.com (Postfix, from userid 2383757)
+        id 532621B65; Wed,  2 Sep 2020 19:51:58 -0700 (PDT)
+From:   Gurbir Arora <gurbaror@codeaurora.org>
+To:     linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     bjorn.andersson@linaro.org, mathieu.poirier@linaro.org,
+        tsoni@codeaurora.org, psodagud@codeaurora.org,
+        sidgup@codeaurora.org, rishabhb@codeaurora.org,
+        Gurbir Arora <gurbaror@codeaurora.org>
+Subject: [PATCH v2 1/3] remoteproc: core: Add multiple components to remoteproc ops
+Date:   Wed,  2 Sep 2020 19:51:54 -0700
+Message-Id: <1599101516-243760-2-git-send-email-gurbaror@codeaurora.org>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1599101516-243760-1-git-send-email-gurbaror@codeaurora.org>
+References: <1599101516-243760-1-git-send-email-gurbaror@codeaurora.org>
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Thu, Sep 3, 2020 at 12:55 AM Mathieu Poirier
-<mathieu.poirier@linaro.org> wrote:
->
-> On Wed, Sep 02, 2020 at 07:07:15PM +0800, Nicolas Boichat wrote:
-> > If rpmsg_register_device fails, it will call
-> > mtk_rpmsg_release_device which already frees mdev.
-> >
-> > Fixes: 7017996951fde84 ("rpmsg: add rpmsg support for mt8183 SCP.")
->
-> The SHA should be 12 characters instead of 15.  With that:
+Each remoteproc might have different requirements for coredumps and might
+want to choose the type of dumps it wants to collect. This change allows
+remoteproc drivers to specify their own custom dump function to be executed
+in place of rproc_coredump. If the coredump op is not specified by the
+remoteproc driver it will be set to rproc_coredump by default.The
+priv_cleanup op cleans up the private resources used by the
+remoteproc.
 
-Done in v3, thanks (and fixed my process for next time).
+Signed-off-by: Rishabh Bhatnagar <rishabhb@codeaurora.org>
+Signed-off-by: Siddharth Gupta <sidgup@codeaurora.org>
+Signed-off-by: Gurbir Arora <gurbaror@codeaurora.org>
+---
+ drivers/remoteproc/remoteproc_core.c | 6 +++++-
+ include/linux/remoteproc.h           | 4 ++++
+ 2 files changed, 9 insertions(+), 1 deletion(-)
 
-> Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
->
-> > Signed-off-by: Nicolas Boichat <drinkcat@chromium.org>
-> > ---
-> >
-> > Changes in v2:
-> >  - Drop useless if and ret variable (Markus Elfring)
-> >
-> >  drivers/rpmsg/mtk_rpmsg.c | 9 +--------
-> >  1 file changed, 1 insertion(+), 8 deletions(-)
-> >
-> > diff --git a/drivers/rpmsg/mtk_rpmsg.c b/drivers/rpmsg/mtk_rpmsg.c
-> > index 83f2b8804ee989d..96a17ec2914011d 100644
-> > --- a/drivers/rpmsg/mtk_rpmsg.c
-> > +++ b/drivers/rpmsg/mtk_rpmsg.c
-> > @@ -200,7 +200,6 @@ static int mtk_rpmsg_register_device(struct mtk_rpmsg_rproc_subdev *mtk_subdev,
-> >       struct rpmsg_device *rpdev;
-> >       struct mtk_rpmsg_device *mdev;
-> >       struct platform_device *pdev = mtk_subdev->pdev;
-> > -     int ret;
-> >
-> >       mdev = kzalloc(sizeof(*mdev), GFP_KERNEL);
-> >       if (!mdev)
-> > @@ -219,13 +218,7 @@ static int mtk_rpmsg_register_device(struct mtk_rpmsg_rproc_subdev *mtk_subdev,
-> >       rpdev->dev.parent = &pdev->dev;
-> >       rpdev->dev.release = mtk_rpmsg_release_device;
-> >
-> > -     ret = rpmsg_register_device(rpdev);
-> > -     if (ret) {
-> > -             kfree(mdev);
-> > -             return ret;
-> > -     }
-> > -
-> > -     return 0;
-> > +     return rpmsg_register_device(rpdev);
-> >  }
-> >
-> >  static void mtk_register_device_work_function(struct work_struct *register_work)
-> > --
-> > 2.28.0.402.g5ffc5be6b7-goog
-> >
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index 7f90eee..dcc1341 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -1681,7 +1681,7 @@ int rproc_trigger_recovery(struct rproc *rproc)
+ 		goto unlock_mutex;
+ 
+ 	/* generate coredump */
+-	rproc_coredump(rproc);
++	rproc->ops->coredump(rproc);
+ 
+ 	/* load firmware */
+ 	ret = request_firmware(&firmware_p, rproc->firmware, dev);
+@@ -2103,6 +2103,10 @@ static int rproc_alloc_ops(struct rproc *rproc, const struct rproc_ops *ops)
+ 	if (!rproc->ops)
+ 		return -ENOMEM;
+ 
++	/* Default to rproc_coredump if no coredump function is specified */
++	if (!rproc->ops->coredump)
++		rproc->ops->coredump = rproc_coredump;
++
+ 	if (rproc->ops->load)
+ 		return 0;
+ 
+diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+index 2fa68bf..747d7e3 100644
+--- a/include/linux/remoteproc.h
++++ b/include/linux/remoteproc.h
+@@ -373,8 +373,10 @@ enum rsc_handling_status {
+  *			expects to find it
+  * @sanity_check:	sanity check the fw image
+  * @get_boot_addr:	get boot address to entry point specified in firmware
++ * @coredump:   collect firmware dump after the subsystem is shutdown
+  * @panic:	optional callback to react to system panic, core will delay
+  *		panic at least the returned number of milliseconds
++ * @priv_cleanup: cleans up the private resources used by the rproc
+  */
+ struct rproc_ops {
+ 	int (*prepare)(struct rproc *rproc);
+@@ -392,7 +394,9 @@ struct rproc_ops {
+ 	int (*load)(struct rproc *rproc, const struct firmware *fw);
+ 	int (*sanity_check)(struct rproc *rproc, const struct firmware *fw);
+ 	u64 (*get_boot_addr)(struct rproc *rproc, const struct firmware *fw);
++	void (*coredump)(struct rproc *rproc);
+ 	unsigned long (*panic)(struct rproc *rproc);
++	void (*priv_cleanup)(struct rproc *rproc);
+ };
+ 
+ /**
+-- 
+2.7.4
+
