@@ -2,131 +2,214 @@ Return-Path: <SRS0=up26=CN=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.0 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 110D5C433E2
-	for <linux-remoteproc@archiver.kernel.org>; Fri,  4 Sep 2020 00:05:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E10AAC433E2
+	for <linux-remoteproc@archiver.kernel.org>; Fri,  4 Sep 2020 05:24:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B24F420716
-	for <linux-remoteproc@archiver.kernel.org>; Fri,  4 Sep 2020 00:04:59 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="C4bSynyF"
+	by mail.kernel.org (Postfix) with ESMTP id BB281206C9
+	for <linux-remoteproc@archiver.kernel.org>; Fri,  4 Sep 2020 05:24:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728271AbgIDAE7 (ORCPT
+        id S1726032AbgIDFYE (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 3 Sep 2020 20:04:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40388 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728107AbgIDAE6 (ORCPT
+        Fri, 4 Sep 2020 01:24:04 -0400
+Received: from mo-csw1516.securemx.jp ([210.130.202.155]:36476 "EHLO
+        mo-csw.securemx.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725812AbgIDFYD (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 3 Sep 2020 20:04:58 -0400
-Received: from mail-ot1-x343.google.com (mail-ot1-x343.google.com [IPv6:2607:f8b0:4864:20::343])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 02E71C061244
-        for <linux-remoteproc@vger.kernel.org>; Thu,  3 Sep 2020 17:04:58 -0700 (PDT)
-Received: by mail-ot1-x343.google.com with SMTP id a2so4342482otr.11
-        for <linux-remoteproc@vger.kernel.org>; Thu, 03 Sep 2020 17:04:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=VSHHoRCPCCBCRo757gSOtAD/R8UuY2/X2C5k4cFW6xQ=;
-        b=C4bSynyFciaY6I7tRwoCutZmg7kRL2P8HhCRG9MJT0iA5tcng6AZegRFvFsCVTyRyl
-         IL7lbOa/hZBoVhC9wNGXLljZUZku0H0Qa90lmsfDN5keYetDvRRf1QGMjhiVXcxCJQOG
-         jNhZGv9ERf0FaZb2xfiBeL7Yvptj2TNUhZNxzCSpAU5XbHhJD7Z7IlTVH39MlhEKF/OL
-         tJM95UeqecPMSmbYBNkdxLwB0NM62ov6D4gW2h8c2yM1Xm6vcQqjWTZkNfWmoriSGQZe
-         5nUrZdR5adMqiUA6VxG+olA74hTNHSncFxlk67MqA0NEXawx0KkdGAebH4A2qUiRbxNs
-         IWKA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=VSHHoRCPCCBCRo757gSOtAD/R8UuY2/X2C5k4cFW6xQ=;
-        b=Z8a+lX3RGID455bk93XgLK3ZDU3jgLgEBF/xfHHg9hFCnvu0P+1yMRW4gfrXL7FZ0e
-         8eCtVn6fsMgg/QSlqXCxSPpRGxVdnFhtRpb94wSheS9KnFDMdNVYVqeYYsdJTrgVG/Yg
-         ew2f5S99tHjQaes6ACYzp/VA2CLTiZaDopc8LB2pYoAXYzsktGgGAeHVv5ItVh9CibAa
-         dEdY9aXiELktRgTMTCbckqCi4HxPXajiuNCfZN8hhQJmUbNmdMVV6T/i9EJKfItHJLrr
-         9BkEvxvIDUCZ1DE/XThoZSDCCra6zj5+VdK903x5AeIdNmaI4U013CfCLExFq+ljrz4T
-         EUIQ==
-X-Gm-Message-State: AOAM532WXxNHNXysBE39YaGhejVygJzvNcZEO/BHXEAnaItId349vDMA
-        OZi9VAJBgY2E4eWw3CDJPKtyLw==
-X-Google-Smtp-Source: ABdhPJxql8PSc86/6gHX0IL3TgXN6ryQG/9ZfnyydT7/gccfYkRb/wfacfkdyjQxVOEM0DMi+ihQEw==
-X-Received: by 2002:a9d:4d0:: with SMTP id 74mr3688274otm.119.1599177897280;
-        Thu, 03 Sep 2020 17:04:57 -0700 (PDT)
-Received: from yoga ([2605:6000:e5cb:c100:8898:14ff:fe6d:34e])
-        by smtp.gmail.com with ESMTPSA id t4sm864852otc.24.2020.09.03.17.04.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Sep 2020 17:04:56 -0700 (PDT)
-Date:   Thu, 3 Sep 2020 19:04:54 -0500
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Rishabh Bhatnagar <rishabhb@codeaurora.org>
-Cc:     linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        tsoni@codeaurora.org, psodagud@codeaurora.org,
-        sidgup@codeaurora.org
-Subject: Re: [PATCH v3 1/3] remoteproc: Expose remoteproc configuration
- through sysfs
-Message-ID: <20200904000454.GD3715@yoga>
-References: <1599174226-2307-1-git-send-email-rishabhb@codeaurora.org>
- <1599174226-2307-2-git-send-email-rishabhb@codeaurora.org>
+        Fri, 4 Sep 2020 01:24:03 -0400
+Received: by mo-csw.securemx.jp (mx-mo-csw1516) id 0845Nl96029789; Fri, 4 Sep 2020 14:23:48 +0900
+X-Iguazu-Qid: 34tKqQuZ1rIRQCAdQl
+X-Iguazu-QSIG: v=2; s=0; t=1599197027; q=34tKqQuZ1rIRQCAdQl; m=bHQnvnj8fj43z0qYHRT5DlNboUVTf+5Eg7zcdr7Odyo=
+Received: from imx2.toshiba.co.jp (imx2.toshiba.co.jp [106.186.93.51])
+        by relay.securemx.jp (mx-mr1510) id 0845Nk86011100;
+        Fri, 4 Sep 2020 14:23:46 +0900
+Received: from enc03.toshiba.co.jp ([106.186.93.13])
+        by imx2.toshiba.co.jp  with ESMTP id 0845NkFC025197;
+        Fri, 4 Sep 2020 14:23:46 +0900 (JST)
+Received: from hop001.toshiba.co.jp ([133.199.164.63])
+        by enc03.toshiba.co.jp  with ESMTP id 0845Njao027360;
+        Fri, 4 Sep 2020 14:23:45 +0900
+From:   Punit Agrawal <punit1.agrawal@toshiba.co.jp>
+To:     Ben Levinsky <ben.levinsky@xilinx.com>
+Cc:     stefanos@xilinx.com, michals@xilinx.com,
+        devicetree@vger.kernel.org, emooring@xilinx.com,
+        michael.auchter@ni.com, mathieu.poirier@linaro.org,
+        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        jliang@xilinx.com, robh+dt@kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v12 3/5] firmware: xilinx: Add RPU configuration APIs
+References: <20200903212310.17990-1-ben.levinsky@xilinx.com>
+        <20200903212310.17990-4-ben.levinsky@xilinx.com>
+Date:   Fri, 04 Sep 2020 14:23:44 +0900
+X-TSB-HOP: ON
+Message-ID: <87imcup127.fsf@kokedama.swc.toshiba.co.jp>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.3 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1599174226-2307-2-git-send-email-rishabhb@codeaurora.org>
+Content-Type: text/plain
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Thu 03 Sep 18:03 CDT 2020, Rishabh Bhatnagar wrote:
+Hi Ben,
 
-> Add a feature flag to expose some of the remoteproc configuration
-> through sysfs. This feature is helpful in systems where debugfs is
-> not available/mounted. Currently the recovery and coredump
-> configuration is exposed through sysfs rather than debugfs when
-> this feature is selected.
-> 
+Thanks for addressing the comments on the previous version. One comment
+below.
 
-This commit message gives me the feeling that it's about making a
-selection between debugfs vs sysfs. But the patches moves the code from
-debugfs to sysfs and then hide it behind this config option.
+Ben Levinsky <ben.levinsky@xilinx.com> writes:
 
-That said, I just commented on v2 questioning that this should be a
-compile time option at all - might be useful for some drivers to
-dynamically "hide" these sysfs attributes though.
-
-Regards,
-Bjorn
-
-> Signed-off-by: Rishabh Bhatnagar <rishabhb@codeaurora.org>
+> This patch adds APIs to access to configure RPU and its
+> processor-specific memory.
+>
+> That is query the run-time mode of RPU as either split or lockstep as well
+> as API to set this mode. In addition add APIs to access configuration of
+> the RPUs' tightly coupled memory (TCM).
+>
+> Signed-off-by: Ben Levinsky <ben.levinsky@xilinx.com>
 > ---
->  drivers/remoteproc/Kconfig | 11 +++++++++++
->  1 file changed, 11 insertions(+)
-> 
-> diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
-> index c6659dfe..98d52cbe 100644
-> --- a/drivers/remoteproc/Kconfig
-> +++ b/drivers/remoteproc/Kconfig
-> @@ -275,6 +275,17 @@ config TI_K3_DSP_REMOTEPROC
->  	  It's safe to say N here if you're not interested in utilizing
->  	  the DSP slave processors.
+> v3:
+> - add xilinx-related platform mgmt fn's instead of wrapping around
+>   function pointer in xilinx eemi ops struct
+> v4:
+> - add default values for enums
+> v9:
+> - update commit message
+> - for zynqmp_pm_set_tcm_config and zynqmp_pm_get_rpu_mode update docs for
+>   expected output, arguments as well removing unused args
+> - remove unused fn zynqmp_pm_get_node_status
+> v11:
+> - update usage of zynqmp_pm_get_rpu_mode to return rpu mode in enum
+> - update zynqmp_pm_set_tcm_config and zynqmp_pm_set_rpu_mode arguments to remove unused args
+> v12:
+> - in drivers/firmware/zynqmp.c, update zynqmp_pm_set_rpu_mode so rpu_mode
+>   is only set if no error
+> - update args for zynqmp_pm_set_rpu_mode, zynqmp_pm_set_tcm_config fn arg's to
+>   reflect what is expected in the function and the usage in
+>   zynqmp_r5_remoteproc accordingly
+> ---
+>  drivers/firmware/xilinx/zynqmp.c     | 60 ++++++++++++++++++++++++++++
+>  include/linux/firmware/xlnx-zynqmp.h | 18 +++++++++
+>  2 files changed, 78 insertions(+)
+>
+> diff --git a/drivers/firmware/xilinx/zynqmp.c b/drivers/firmware/xilinx/zynqmp.c
+> index a966ee956573..916a0b15ab33 100644
+> --- a/drivers/firmware/xilinx/zynqmp.c
+> +++ b/drivers/firmware/xilinx/zynqmp.c
+> @@ -846,6 +846,66 @@ int zynqmp_pm_release_node(const u32 node)
+>  }
+>  EXPORT_SYMBOL_GPL(zynqmp_pm_release_node);
 >  
-> +config RPROC_SYSFS_CONFIGURATION_SUPPORT
-> +	bool "Expose remoteproc configuration sysfs entries"
-> +	default y
-> +	help
-> +	  Say y here to expose recovery and coredump configuration sysfs
-> +	  entries. This is helpful in operating systems where debugfs is
-> +	  not available/mounted.
+> +/**
+> + * zynqmp_pm_get_rpu_mode() - Get RPU mode
+> + * @node_id:	Node ID of the device
+> + * @rpu_mode:	return by reference value
+> + *		either split or lockstep
+> + *
+> + * Return:	return 0 on success or error+reason.
+> + *		if success, then  rpu_mode will be set
+> + *		to current rpu mode.
+> + */
+> +int zynqmp_pm_get_rpu_mode(u32 node_id, enum rpu_oper_mode *rpu_mode)
+> +{
+> +	u32 ret_payload[PAYLOAD_ARG_CNT];
+> +	int ret;
 > +
-> +	  It's safe to say N here if you are not interested in accessing
-> +	  recovery and coredump configuration through sysfs.
+> +	ret = zynqmp_pm_invoke_fn(PM_IOCTL, node_id,
+> +				  IOCTL_GET_RPU_OPER_MODE, 0, 0, ret_payload);
 > +
->  endif # REMOTEPROC
+> +	/* only set rpu_mode if no error */
+> +	*rpu_mode = ret_payload[0];
+
+The comment and the statement do not match. rpu_mode is being
+un-conditionally set even if there is an error.
+
+It's not clear which is correct - the code or the comment?
+
+Other than that, the rest of the patch looks fine.
+
+Thanks,
+Punit
+
+> +
+> +	return ret;
+> +}
+> +EXPORT_SYMBOL_GPL(zynqmp_pm_get_rpu_mode);
+> +
+> +/**
+> + * zynqmp_pm_set_rpu_mode() - Set RPU mode
+> + * @node_id:	Node ID of the device
+> + * @rpu_mode:	Argument 1 to requested IOCTL call. either split or lockstep
+> + *
+> + *		This function is used to set RPU mode to split or
+> + *		lockstep
+> + *
+> + * Return:	Returns status, either success or error+reason
+> + */
+> +int zynqmp_pm_set_rpu_mode(u32 node_id, enum rpu_oper_mode rpu_mode)
+> +{
+> +	return zynqmp_pm_invoke_fn(PM_IOCTL, node_id,
+> +				   IOCTL_SET_RPU_OPER_MODE, (u32)rpu_mode,
+> +				   0, NULL);
+> +}
+> +EXPORT_SYMBOL_GPL(zynqmp_pm_set_rpu_mode);
+> +
+> +/**
+> + * zynqmp_pm_set_tcm_config - configure TCM
+> + * @tcm_mode:	Argument 1 to requested IOCTL call
+> + *              either PM_RPU_TCM_COMB or PM_RPU_TCM_SPLIT
+> + *
+> + * This function is used to set RPU mode to split or combined
+> + *
+> + * Return: status: 0 for success, else failure
+> + */
+> +int zynqmp_pm_set_tcm_config(u32 node_id, enum rpu_tcm_comb tcm_mode)
+> +{
+> +	return zynqmp_pm_invoke_fn(PM_IOCTL, node_id,
+> +				   IOCTL_TCM_COMB_CONFIG, (u32)tcm_mode, 0,
+> +				   NULL);
+> +}
+> +EXPORT_SYMBOL_GPL(zynqmp_pm_set_tcm_config);
+> +
+>  /**
+>   * zynqmp_pm_force_pwrdwn - PM call to request for another PU or subsystem to
+>   *             be powered down forcefully
+> diff --git a/include/linux/firmware/xlnx-zynqmp.h b/include/linux/firmware/xlnx-zynqmp.h
+> index 6241c5ac51b3..79aa2fcbcd54 100644
+> --- a/include/linux/firmware/xlnx-zynqmp.h
+> +++ b/include/linux/firmware/xlnx-zynqmp.h
+> @@ -385,6 +385,9 @@ int zynqmp_pm_request_wake(const u32 node,
+>  			   const bool set_addr,
+>  			   const u64 address,
+>  			   const enum zynqmp_pm_request_ack ack);
+> +int zynqmp_pm_get_rpu_mode(u32 node_id, enum rpu_oper_mode *rpu_mode);
+> +int zynqmp_pm_set_rpu_mode(u32 node_id, u32 arg1);
+> +int zynqmp_pm_set_tcm_config(u32 node_id, u32 arg1);
+>  #else
+>  static inline struct zynqmp_eemi_ops *zynqmp_pm_get_eemi_ops(void)
+>  {
+> @@ -549,6 +552,21 @@ static inline int zynqmp_pm_request_wake(const u32 node,
+>  {
+>  	return -ENODEV;
+>  }
+> +
+> +static inline int zynqmp_pm_get_rpu_mode(u32 node_id, enum rpu_oper_mode *rpu_mode)
+> +{
+> +	return -ENODEV;
+> +}
+> +
+> +static inline int zynqmp_pm_set_rpu_mode(u32 node_id, u32 arg1)
+> +{
+> +	return -ENODEV;
+> +}
+> +
+> +static inline int zynqmp_pm_set_tcm_config(u32 node_id, u32 arg1)
+> +{
+> +	return -ENODEV;
+> +}
+>  #endif
 >  
->  endmenu
-> -- 
-> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-> a Linux Foundation Collaborative Project
-> 
+>  #endif /* __FIRMWARE_ZYNQMP_H__ */
