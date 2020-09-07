@@ -2,66 +2,68 @@ Return-Path: <SRS0=uzT4=CQ=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B173C2D0A8
-	for <linux-remoteproc@archiver.kernel.org>; Mon,  7 Sep 2020 17:45:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18432C43461
+	for <linux-remoteproc@archiver.kernel.org>; Mon,  7 Sep 2020 18:29:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3EC242080A
-	for <linux-remoteproc@archiver.kernel.org>; Mon,  7 Sep 2020 17:45:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D50C02075A
+	for <linux-remoteproc@archiver.kernel.org>; Mon,  7 Sep 2020 18:29:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="A0Stn/cy"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pGJxdnPl"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729437AbgIGRpp (ORCPT
+        id S1729885AbgIGS3S (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 7 Sep 2020 13:45:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45200 "EHLO
+        Mon, 7 Sep 2020 14:29:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52126 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731266AbgIGRoK (ORCPT
+        with ESMTP id S1728867AbgIGS3M (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 7 Sep 2020 13:44:10 -0400
-Received: from mail-wm1-x341.google.com (mail-wm1-x341.google.com [IPv6:2a00:1450:4864:20::341])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EAA79C0613ED
-        for <linux-remoteproc@vger.kernel.org>; Mon,  7 Sep 2020 10:44:03 -0700 (PDT)
-Received: by mail-wm1-x341.google.com with SMTP id e17so15052847wme.0
-        for <linux-remoteproc@vger.kernel.org>; Mon, 07 Sep 2020 10:44:03 -0700 (PDT)
+        Mon, 7 Sep 2020 14:29:12 -0400
+Received: from mail-pg1-x543.google.com (mail-pg1-x543.google.com [IPv6:2607:f8b0:4864:20::543])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3032FC061573;
+        Mon,  7 Sep 2020 11:29:10 -0700 (PDT)
+Received: by mail-pg1-x543.google.com with SMTP id m5so8362113pgj.9;
+        Mon, 07 Sep 2020 11:29:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=TtLg9Y4dgEBmAcytToxU0LrQsMgfNF7OgoEHJZ2Q+vw=;
-        b=A0Stn/cyvojbDX7w3lzbvMIO7gTwe43sZAGbFpuAEdS5sHSClH8/IZ2AifZ+YY+VOX
-         UVwM/aA+6tWtgJSEoCDO1PW617SUSIQB8k6b0bPqqeB7dxfGKJQUxNBeFtcQo9e3Ascw
-         6zhcNnrpuccjT086HR4puL61ghnrcI3EOoQm8=
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=bmURCbMiaqKzzelpk/S2JynuuyDAIuukHKp0frES45k=;
+        b=pGJxdnPlnnjuVnEQiNNF8NPZ9N8cHRKSXuzhjcwyPpc1EErwzM0CyOU4oIwN4LS9Mw
+         1wC7EvuKj0Ax1z41J2Q3+FCDPwoQdUe7gPwjEhSmttF1uE8TKkr0ZeZZaCOYAlsTrSqs
+         1hDtsmCA12I0M7LfTaBMaahkp6lybABgSUqZ0T/SfYV2TIViz4H4Kf4gHzZu64C2mrWY
+         hdu86ghnR/J8FGXfGJpJFZ+boynxUUhjN2XGe9NwROXh85rZPnj3p6DBsKU/2NHGtf8x
+         ChhltHIi6E47BdFQF4Mbz+1aEHdsFzD7p965i8s22ViF4mXU7St3Cx+aCA3tXWJyqQQm
+         g1wQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=TtLg9Y4dgEBmAcytToxU0LrQsMgfNF7OgoEHJZ2Q+vw=;
-        b=nEnVR40Ovl5ZdhjUeiKFjFhlgD+CLO74Z41E6l6Nac92LkGr+p8qYM/U53yJmsJWAU
-         n8uDbUMfdCJovM9WuOir2aNBLqdqx1UT5mxf6bReZitk3Rg9BlCI/C+DD3210uYqFGBc
-         IIeCi0txWNgWSQ2zhBV7oiAwtLKrTzet/QfkJbhaKq0NMqTZupKHG85B4Z0aeuGQskGB
-         5jZeN2zdvbIz/kpADM7mzTiHpB/MX9ekPfz5rRshD8GRCXbMGSPsNZbOVr2wP5VT6UHL
-         nKXoQ5BEX1Mw8C2sAfr0hzsElPwy/lilO726UsfjFAdZv0t+Cem6mGlze334ID4QGUWK
-         9+hA==
-X-Gm-Message-State: AOAM533GuQRRCgto1FIw3+N2s6aYUvLE6+0rd+22ZeSwPudEmE43NaDb
-        037l4H+E0MmR6QuFXK9/gRU2F0kaPBkR1osD+BHyWg==
-X-Google-Smtp-Source: ABdhPJyNQsBm1Y3/ieHSfjO664M9CBhnY/ZnuJjayy1tYR+ob0ku/Wpd26F5nf8H2/xl9/84D4TcAGvzrj4IPjrxwfU=
-X-Received: by 2002:a1c:bad5:: with SMTP id k204mr408820wmf.111.1599500642170;
- Mon, 07 Sep 2020 10:44:02 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200824193036.6033-1-james.quinlan@broadcom.com>
- <b19bc982-a0c4-c6ff-d8f5-650f2b3a83c8@gmail.com> <20200827063517.GA4637@lst.de>
- <CA+-6iNy3U9pO0Bykzgvb9n9fcsBi6FiatLdpA1s0HgQNWZ49mg@mail.gmail.com> <20200907091649.GA6428@e121166-lin.cambridge.arm.com>
-In-Reply-To: <20200907091649.GA6428@e121166-lin.cambridge.arm.com>
-From:   Jim Quinlan <james.quinlan@broadcom.com>
-Date:   Mon, 7 Sep 2020 13:43:23 -0400
-Message-ID: <CA+-6iNzoz3pM2pJksXogeuou6wB9W-59rN-amCLERFLuY5zLMg@mail.gmail.com>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=bmURCbMiaqKzzelpk/S2JynuuyDAIuukHKp0frES45k=;
+        b=r+YR/hMs17+Wp1LrqAIskk5tJOvqdpvpSYTAc0W+RkC9xxnC6AtP5+mAu3cVNsA5y9
+         A4B2DyIGCKUN+dLKGlm57Ucc2aNXnr/EmifXUHM8TUOXtQFmlWT8R607CwDocfN0QGiB
+         X5iW6c/bHhXFRL7um1uEEn2nx0cMSnkFhGsU21lx0ed5Cr6nlzyPlF0pP+rZFheMXd5M
+         uQekP6EmCG+xDrDxnC2urVmV4D6d5039vN/WI6N7bb94SDFrEsB0f6yGqGwnjHnhPwFP
+         VOqx1xYvUqDcDoIvFSdPKYQ1B7TINkSRztOtB2gV9iR8h6B9q6iqYTmjp1Zbke/8k2ms
+         JUtA==
+X-Gm-Message-State: AOAM531cJcjA3PZbfxK80IV/o58HLixm0Qlw1lPldJAuuSa/YzerQA+F
+        iK6k/qyI/s9QKykGEWObwmE=
+X-Google-Smtp-Source: ABdhPJyh6g2rRcD6ogNPy2tapg1StlUEf/BdvWQy8jzaR475oJoKQT/NWFiUoNd1k6PiwSYe5VKk+A==
+X-Received: by 2002:a62:fb05:: with SMTP id x5mr21991954pfm.121.1599503349977;
+        Mon, 07 Sep 2020 11:29:09 -0700 (PDT)
+Received: from [192.168.1.3] (ip68-111-84-250.oc.oc.cox.net. [68.111.84.250])
+        by smtp.gmail.com with ESMTPSA id 13sm15823860pfp.3.2020.09.07.11.29.07
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 07 Sep 2020 11:29:09 -0700 (PDT)
 Subject: Re: [PATCH v11 00/11] PCI: brcmstb: enable PCIe for STB chips
-To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To:     Jim Quinlan <james.quinlan@broadcom.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
 Cc:     Christoph Hellwig <hch@lst.de>,
         Florian Fainelli <f.fainelli@gmail.com>,
         "open list:PCI NATIVE HOST BRIDGE AND ENDPOINT DRIVERS" 
@@ -98,54 +100,70 @@ Cc:     Christoph Hellwig <hch@lst.de>,
         Rob Herring <robh@kernel.org>,
         Saravana Kannan <saravanak@google.com>,
         Stefano Stabellini <sstabellini@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+References: <20200824193036.6033-1-james.quinlan@broadcom.com>
+ <b19bc982-a0c4-c6ff-d8f5-650f2b3a83c8@gmail.com>
+ <20200827063517.GA4637@lst.de>
+ <CA+-6iNy3U9pO0Bykzgvb9n9fcsBi6FiatLdpA1s0HgQNWZ49mg@mail.gmail.com>
+ <20200907091649.GA6428@e121166-lin.cambridge.arm.com>
+ <CA+-6iNzoz3pM2pJksXogeuou6wB9W-59rN-amCLERFLuY5zLMg@mail.gmail.com>
+From:   Florian Fainelli <f.fainelli@gmail.com>
+Message-ID: <00e49acb-c659-de10-3e87-76bfd82e4a76@gmail.com>
+Date:   Mon, 7 Sep 2020 11:29:06 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Firefox/78.0 Thunderbird/78.2.1
+MIME-Version: 1.0
+In-Reply-To: <CA+-6iNzoz3pM2pJksXogeuou6wB9W-59rN-amCLERFLuY5zLMg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Mon, Sep 7, 2020 at 5:16 AM Lorenzo Pieralisi
-<lorenzo.pieralisi@arm.com> wrote:
->
-> On Thu, Aug 27, 2020 at 09:29:59AM -0400, Jim Quinlan wrote:
-> > On Thu, Aug 27, 2020 at 2:35 AM Christoph Hellwig <hch@lst.de> wrote:
-> > >
-> > > On Tue, Aug 25, 2020 at 10:40:27AM -0700, Florian Fainelli wrote:
-> > > > Hi,
-> > > >
-> > > > On 8/24/2020 12:30 PM, Jim Quinlan wrote:
-> > > >>
-> > > >> Patchset Summary:
-> > > >>    Enhance a PCIe host controller driver.  Because of its unusual design
-> > > >>    we are foced to change dev->dma_pfn_offset into a more general role
-> > > >>    allowing multiple offsets.  See the 'v1' notes below for more info.
-> > > >
-> > > > We are version 11 and counting, and it is not clear to me whether there is
-> > > > any chance of getting these patches reviewed and hopefully merged for the
-> > > > 5.10 merge window.
-> > > >
-> > > > There are a lot of different files being touched, so what would be the
-> > > > ideal way of routing those changes towards inclusion?
-> > >
-> > > FYI, I offered to take the dma-mapping bits through the dma-mapping tree.
-> > > I have a bit of a backlog, but plan to review and if Jim is ok with that
-> > > apply the current version.
-> > Sounds good to me.
->
-> Hi Jim,
->
-> is the dependency now solved ? Should we review/take this series as
-> is for v5.10 through the PCI tree ?
-Hello Lorenzo,
 
-We are still working out a regression with the DMA offset commit on
-the RaspberryPi.  Nicolas has found the root cause and we are now
-devising a solution.
 
-Thanks,
-Jim Quinlan
-Broadcom STB
+On 9/7/2020 10:43 AM, Jim Quinlan wrote:
+> On Mon, Sep 7, 2020 at 5:16 AM Lorenzo Pieralisi
+> <lorenzo.pieralisi@arm.com> wrote:
+>>
+>> On Thu, Aug 27, 2020 at 09:29:59AM -0400, Jim Quinlan wrote:
+>>> On Thu, Aug 27, 2020 at 2:35 AM Christoph Hellwig <hch@lst.de> wrote:
+>>>>
+>>>> On Tue, Aug 25, 2020 at 10:40:27AM -0700, Florian Fainelli wrote:
+>>>>> Hi,
+>>>>>
+>>>>> On 8/24/2020 12:30 PM, Jim Quinlan wrote:
+>>>>>>
+>>>>>> Patchset Summary:
+>>>>>>     Enhance a PCIe host controller driver.  Because of its unusual design
+>>>>>>     we are foced to change dev->dma_pfn_offset into a more general role
+>>>>>>     allowing multiple offsets.  See the 'v1' notes below for more info.
+>>>>>
+>>>>> We are version 11 and counting, and it is not clear to me whether there is
+>>>>> any chance of getting these patches reviewed and hopefully merged for the
+>>>>> 5.10 merge window.
+>>>>>
+>>>>> There are a lot of different files being touched, so what would be the
+>>>>> ideal way of routing those changes towards inclusion?
+>>>>
+>>>> FYI, I offered to take the dma-mapping bits through the dma-mapping tree.
+>>>> I have a bit of a backlog, but plan to review and if Jim is ok with that
+>>>> apply the current version.
+>>> Sounds good to me.
+>>
+>> Hi Jim,
+>>
+>> is the dependency now solved ? Should we review/take this series as
+>> is for v5.10 through the PCI tree ?
+> Hello Lorenzo,
+> 
+> We are still working out a regression with the DMA offset commit on
+> the RaspberryPi.  Nicolas has found the root cause and we are now
+> devising a solution.
 
->
-> Thanks,
-> Lorenzo
+Maybe we can parallelize the PCIe driver review while the DMA changes 
+are being worked on in Christoph's branch. Lorenzo, are you fine with 
+the PCIe changes proper?
+-- 
+Florian
