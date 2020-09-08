@@ -2,137 +2,148 @@ Return-Path: <SRS0=P0cE=CR=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5452C433E2
-	for <linux-remoteproc@archiver.kernel.org>; Tue,  8 Sep 2020 10:42:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37C72C433E2
+	for <linux-remoteproc@archiver.kernel.org>; Tue,  8 Sep 2020 16:34:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9AECE2074B
-	for <linux-remoteproc@archiver.kernel.org>; Tue,  8 Sep 2020 10:42:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E1D15206DB
+	for <linux-remoteproc@archiver.kernel.org>; Tue,  8 Sep 2020 16:34:38 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PfcB/16p"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729603AbgIHKmu (ORCPT
+        id S1731822AbgIHQe0 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 8 Sep 2020 06:42:50 -0400
-Received: from foss.arm.com ([217.140.110.172]:51840 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728971AbgIHKmi (ORCPT
+        Tue, 8 Sep 2020 12:34:26 -0400
+Received: from us-smtp-2.mimecast.com ([207.211.31.81]:34686 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1731713AbgIHQeR (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 8 Sep 2020 06:42:38 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BE88931B;
-        Tue,  8 Sep 2020 03:42:32 -0700 (PDT)
-Received: from e121166-lin.cambridge.arm.com (e121166-lin.cambridge.arm.com [10.1.196.255])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0AEF13F66E;
-        Tue,  8 Sep 2020 03:42:28 -0700 (PDT)
-Date:   Tue, 8 Sep 2020 11:42:26 +0100
-From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To:     Florian Fainelli <f.fainelli@gmail.com>
-Cc:     Jim Quinlan <james.quinlan@broadcom.com>,
-        Christoph Hellwig <hch@lst.de>,
-        "open list:PCI NATIVE HOST BRIDGE AND ENDPOINT DRIVERS" 
-        <linux-pci@vger.kernel.org>,
-        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        Robin Murphy <robin.murphy@arm.com>,
-        "maintainer:BROADCOM BCM7XXX ARM ARCHITECTURE" 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        "open list:STAGING SUBSYSTEM" <devel@driverdev.osuosl.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE" 
-        <devicetree@vger.kernel.org>,
-        "open list:DRM DRIVERS FOR ALLWINNER A10" 
-        <dri-devel@lists.freedesktop.org>, Felipe Balbi <balbi@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "open list:IOMMU DRIVERS" <iommu@lists.linux-foundation.org>,
-        Joerg Roedel <jroedel@suse.de>,
-        Julien Grall <julien.grall@arm.com>,
-        "open list:ACPI FOR ARM64 (ACPI/arm64)" <linux-acpi@vger.kernel.org>,
-        "moderated list:ARM PORT" <linux-arm-kernel@lists.infradead.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        "open list:ALLWINNER A10 CSI DRIVER" <linux-media@vger.kernel.org>,
-        "open list:REMOTE PROCESSOR (REMOTEPROC) SUBSYSTEM" 
-        <linux-remoteproc@vger.kernel.org>,
-        "moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" 
-        <linux-rpi-kernel@lists.infradead.org>,
-        "open list:SUPERH" <linux-sh@vger.kernel.org>,
-        "open list:USB SUBSYSTEM" <linux-usb@vger.kernel.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        Saravana Kannan <saravanak@google.com>,
-        Stefano Stabellini <sstabellini@kernel.org>
-Subject: Re: [PATCH v11 00/11] PCI: brcmstb: enable PCIe for STB chips
-Message-ID: <20200908104226.GB22909@e121166-lin.cambridge.arm.com>
-References: <20200824193036.6033-1-james.quinlan@broadcom.com>
- <b19bc982-a0c4-c6ff-d8f5-650f2b3a83c8@gmail.com>
- <20200827063517.GA4637@lst.de>
- <CA+-6iNy3U9pO0Bykzgvb9n9fcsBi6FiatLdpA1s0HgQNWZ49mg@mail.gmail.com>
- <20200907091649.GA6428@e121166-lin.cambridge.arm.com>
- <CA+-6iNzoz3pM2pJksXogeuou6wB9W-59rN-amCLERFLuY5zLMg@mail.gmail.com>
- <00e49acb-c659-de10-3e87-76bfd82e4a76@gmail.com>
+        Tue, 8 Sep 2020 12:34:17 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1599582856;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=cGbsX/FJObXX4YBouoES7lf5iOTDE5vymSl8SE+mxG0=;
+        b=PfcB/16pTxs+cJe8E2hkpENRdRhrISFfH5+VrP8/jfa8mqVycVw4siIla5VUS//RnMXoHq
+        lHrk8QJAJIT+kfbf32HKITJ6Isa4faPPRQs/5A/5C8OhQGz234tUMZ6MutKIO6UPGKqMof
+        mi3ubvyiwLTP3NpFoxJ5v80UIeVumWg=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-105-GHpE4nbfO5iTo_cPmKzT9w-1; Tue, 08 Sep 2020 10:17:03 -0400
+X-MC-Unique: GHpE4nbfO5iTo_cPmKzT9w-1
+Received: by mail-wr1-f71.google.com with SMTP id 3so7067667wrm.4
+        for <linux-remoteproc@vger.kernel.org>; Tue, 08 Sep 2020 07:17:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=cGbsX/FJObXX4YBouoES7lf5iOTDE5vymSl8SE+mxG0=;
+        b=tIPhkcvvNchQyIZ66RklimWNRnMza4S0cX0OfHozt8eqv+USqpOa0gnhpQrbWg/bMt
+         AEpXDPSxAVXEnZZDocX4JHSJwUvd9fGLV3+bZlIewJDZ/UUkTBDkvX/Y40I/LNRxd+qI
+         ByrZj2wv+Qtzsz4gRGptRIB3HzDU8mCEb2qLjOwrrq06mmxJSuDzvXm3sgWd3eOiMNEE
+         Qqta/4fmXm1CUS7WEOb2/Ip687CPG2sB3tbbJ68y15yrgOWdMHK6g1Vx4xQaBfVwgx4N
+         ZpQWp+lL23BubXlH63APX7AKq1/+iLWSKozkkjaBvAXY45ElzzR0/e7u6nAxnbOHhyuf
+         s50w==
+X-Gm-Message-State: AOAM531KpDmASNDOEmThrANlfKV6NncMiLVuhkNbraAOQ8TbLo7X8OJJ
+        QBF7Bs3RJ54USOqIpqsEZFlI6BfukkJquoeGMv8IWYBYIr2M4qcIKWcbslO2xMg2qFWPaL++DJ0
+        0PC4Z9bXbrlDEEtZmNfHY+0deWbOsEw==
+X-Received: by 2002:a05:600c:2283:: with SMTP id 3mr4450617wmf.37.1599574622328;
+        Tue, 08 Sep 2020 07:17:02 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJxy7D775tAAMy+By64OwsXRHSGFwu87xaHXcz8utDT6nVrIQ1MHsq9D7+UOH4H77/ZKCANTdQ==
+X-Received: by 2002:a05:600c:2283:: with SMTP id 3mr4450590wmf.37.1599574622080;
+        Tue, 08 Sep 2020 07:17:02 -0700 (PDT)
+Received: from redhat.com (IGLD-80-230-218-236.inter.net.il. [80.230.218.236])
+        by smtp.gmail.com with ESMTPSA id w7sm34151611wrm.92.2020.09.08.07.16.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 08 Sep 2020 07:16:59 -0700 (PDT)
+Date:   Tue, 8 Sep 2020 10:16:52 -0400
+From:   "Michael S. Tsirkin" <mst@redhat.com>
+To:     Guennadi Liakhovetski <guennadi.liakhovetski@linux.intel.com>
+Cc:     kvm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        sound-open-firmware@alsa-project.org,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Liam Girdwood <liam.r.girdwood@linux.intel.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Ohad Ben-Cohen <ohad@wizery.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Vincent Whitchurch <vincent.whitchurch@axis.com>
+Subject: Re: [PATCH v5 0/4] Add a vhost RPMsg API
+Message-ID: <20200908101617-mutt-send-email-mst@kernel.org>
+References: <20200826174636.23873-1-guennadi.liakhovetski@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <00e49acb-c659-de10-3e87-76bfd82e4a76@gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20200826174636.23873-1-guennadi.liakhovetski@linux.intel.com>
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Mon, Sep 07, 2020 at 11:29:06AM -0700, Florian Fainelli wrote:
+On Wed, Aug 26, 2020 at 07:46:32PM +0200, Guennadi Liakhovetski wrote:
+> Hi,
 > 
-> 
-> On 9/7/2020 10:43 AM, Jim Quinlan wrote:
-> > On Mon, Sep 7, 2020 at 5:16 AM Lorenzo Pieralisi
-> > <lorenzo.pieralisi@arm.com> wrote:
-> > > 
-> > > On Thu, Aug 27, 2020 at 09:29:59AM -0400, Jim Quinlan wrote:
-> > > > On Thu, Aug 27, 2020 at 2:35 AM Christoph Hellwig <hch@lst.de> wrote:
-> > > > > 
-> > > > > On Tue, Aug 25, 2020 at 10:40:27AM -0700, Florian Fainelli wrote:
-> > > > > > Hi,
-> > > > > > 
-> > > > > > On 8/24/2020 12:30 PM, Jim Quinlan wrote:
-> > > > > > > 
-> > > > > > > Patchset Summary:
-> > > > > > >     Enhance a PCIe host controller driver.  Because of its unusual design
-> > > > > > >     we are foced to change dev->dma_pfn_offset into a more general role
-> > > > > > >     allowing multiple offsets.  See the 'v1' notes below for more info.
-> > > > > > 
-> > > > > > We are version 11 and counting, and it is not clear to me whether there is
-> > > > > > any chance of getting these patches reviewed and hopefully merged for the
-> > > > > > 5.10 merge window.
-> > > > > > 
-> > > > > > There are a lot of different files being touched, so what would be the
-> > > > > > ideal way of routing those changes towards inclusion?
-> > > > > 
-> > > > > FYI, I offered to take the dma-mapping bits through the dma-mapping tree.
-> > > > > I have a bit of a backlog, but plan to review and if Jim is ok with that
-> > > > > apply the current version.
-> > > > Sounds good to me.
-> > > 
-> > > Hi Jim,
-> > > 
-> > > is the dependency now solved ? Should we review/take this series as
-> > > is for v5.10 through the PCI tree ?
-> > Hello Lorenzo,
-> > 
-> > We are still working out a regression with the DMA offset commit on
-> > the RaspberryPi.  Nicolas has found the root cause and we are now
-> > devising a solution.
-> 
-> Maybe we can parallelize the PCIe driver review while the DMA changes
-> are being worked on in Christoph's branch. Lorenzo, are you fine with
-> the PCIe changes proper?
+> Next update:
 
-I will have a look - the main contentious point was about the DMA
-changes - if Christoph is happy with them I am OK with them
-too - I hope there is not anything controversial in the host
-bridge driver itself but I will look into it.
+OK could we get some acks from rpmsg folks on this please?
+It's been quite a while, patchset is not huge.
 
-Lorenzo
+
+> v5:
+> - don't hard-code message layout
+> 
+> v4:
+> - add endianness conversions to comply with the VirtIO standard
+> 
+> v3:
+> - address several checkpatch warnings
+> - address comments from Mathieu Poirier
+> 
+> v2:
+> - update patch #5 with a correct vhost_dev_init() prototype
+> - drop patch #6 - it depends on a different patch, that is currently
+>   an RFC
+> - address comments from Pierre-Louis Bossart:
+>   * remove "default n" from Kconfig
+> 
+> Linux supports RPMsg over VirtIO for "remote processor" / AMP use
+> cases. It can however also be used for virtualisation scenarios,
+> e.g. when using KVM to run Linux on both the host and the guests.
+> This patch set adds a wrapper API to facilitate writing vhost
+> drivers for such RPMsg-based solutions. The first use case is an
+> audio DSP virtualisation project, currently under development, ready
+> for review and submission, available at
+> https://github.com/thesofproject/linux/pull/1501/commits
+> 
+> Thanks
+> Guennadi
+> 
+> Guennadi Liakhovetski (4):
+>   vhost: convert VHOST_VSOCK_SET_RUNNING to a generic ioctl
+>   rpmsg: move common structures and defines to headers
+>   rpmsg: update documentation
+>   vhost: add an RPMsg API
+> 
+>  Documentation/rpmsg.txt          |   6 +-
+>  drivers/rpmsg/virtio_rpmsg_bus.c |  78 +------
+>  drivers/vhost/Kconfig            |   7 +
+>  drivers/vhost/Makefile           |   3 +
+>  drivers/vhost/rpmsg.c            | 373 +++++++++++++++++++++++++++++++
+>  drivers/vhost/vhost_rpmsg.h      |  74 ++++++
+>  include/linux/virtio_rpmsg.h     |  83 +++++++
+>  include/uapi/linux/rpmsg.h       |   3 +
+>  include/uapi/linux/vhost.h       |   4 +-
+>  9 files changed, 551 insertions(+), 80 deletions(-)
+>  create mode 100644 drivers/vhost/rpmsg.c
+>  create mode 100644 drivers/vhost/vhost_rpmsg.h
+>  create mode 100644 include/linux/virtio_rpmsg.h
+> 
+> -- 
+> 2.28.0
+
