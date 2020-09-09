@@ -2,129 +2,99 @@ Return-Path: <SRS0=QHCr=CS=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42DCEC433E2
-	for <linux-remoteproc@archiver.kernel.org>; Wed,  9 Sep 2020 20:23:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B42DC433E2
+	for <linux-remoteproc@archiver.kernel.org>; Wed,  9 Sep 2020 20:42:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F025C208CA
-	for <linux-remoteproc@archiver.kernel.org>; Wed,  9 Sep 2020 20:23:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 015C720665
+	for <linux-remoteproc@archiver.kernel.org>; Wed,  9 Sep 2020 20:42:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1599682984;
-	bh=jc3VPvB5TZlT+YYtZQzuhsZgdoL1rboz7nYCcLOvpPI=;
+	s=default; t=1599684165;
+	bh=DJ/ImWhZHVPUBVyZ+GdW3glTm6G3xyr0neGBD4MOrHY=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=ChOGbLWOjwUV+EbjFIAYPcWDwCw2iAOR3km8p3pka32DKBzrVHWhZc1hNlynZ7VkO
-	 YC/j7AZMSkV9hdVcFHB03A/jHlRwUEshaMalDDtOg7jl9JMRlwiqxdAlLRGUhhKM3O
-	 7o1nB5O8ZV9+v4NxtH3sqcdw6MxbgzuXGMMYDTlY=
+	b=He+6382qjzFzN2WSvkhaDWloX+Gl5aOTVY9coKX+02Zz96vsa4PlAsmElPOUB9srD
+	 79EFf0nM2/boeQPIfcwXLSbqOEkSfjtBl/E9zx4zlHekZldcr7djDpU2rwPnmd0h9b
+	 gt9eYwds17sDiD3omDR4nwNwMm7tNoLgUsQ62Sxc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726184AbgIIUXD (ORCPT
+        id S1727900AbgIIUmo (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 9 Sep 2020 16:23:03 -0400
-Received: from mail-il1-f195.google.com ([209.85.166.195]:42951 "EHLO
-        mail-il1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725772AbgIIUXC (ORCPT
+        Wed, 9 Sep 2020 16:42:44 -0400
+Received: from mail-io1-f65.google.com ([209.85.166.65]:36345 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726534AbgIIUmn (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 9 Sep 2020 16:23:02 -0400
-Received: by mail-il1-f195.google.com with SMTP id t13so3578823ile.9;
-        Wed, 09 Sep 2020 13:23:02 -0700 (PDT)
+        Wed, 9 Sep 2020 16:42:43 -0400
+Received: by mail-io1-f65.google.com with SMTP id d190so4705349iof.3;
+        Wed, 09 Sep 2020 13:42:42 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=p/XHmGhJiyARP/AywHLjGyFW+zNdKo78DZXJUs497vk=;
-        b=ZX+TvnhYF3bNbwGePW0r5LI+JdBTEnlcxKNGBykNK9hxONtbx0c+X2nOOT8cX5x1Y7
-         jJyB5zLK6s3n8TrKsQVpd1rDRIVzbn1f6jUMyyML9eXqVs2ew1wrh5AkEFYVM5QxKHJ9
-         9kvphNpHIR+TNHHpEtkkwFVarc7/915djha9xBduhEer9IwtA7afT/+sA0K9tyL9oXK2
-         NQPx6lOnCKb3DDOdJYGofFlKKUWjCNxHe5gfwyzmeaNAq9B4a6dt2EsXiLVgXIRY/bgt
-         OCH+/D9BEAjMt5aY26mPAkVmkyKPzCP5xLLn4/8Ctd5fSBCi9cq2ZB0mrRJ6DYwFohfr
-         g0Zg==
-X-Gm-Message-State: AOAM5333xli8KNdRUTufXlAxqXZDQXwPz0YQVjPu+AHjokAQYfe72AdK
-        DDVc5jaX/4//O4jdpYrMmg==
-X-Google-Smtp-Source: ABdhPJwGgJMfrg41VCSlFUyxeF4VEeQtHEzW/mNeG0zBjw9Qla8f2sLKD3BFKup9Yno/CdJR1OlO5Q==
-X-Received: by 2002:a92:bad9:: with SMTP id t86mr4991746ill.308.1599682981597;
-        Wed, 09 Sep 2020 13:23:01 -0700 (PDT)
+        bh=qS0iL/1BnDuiLSOJMzUJoul18U+vyJy2vxDhZrRHbiw=;
+        b=o5TBkD8XhrpXOL4c2+ihmXVQ0pyZ+a/e9jg9KsTDaZ6bVaMRFA/6XIB+jP+tjVSbos
+         0fWNcSn4gQ1CMregjC61Y7OXxa1O1nrz+61iiVdRkGI88q5dtg8tBgPpFSwlt7oC8PGP
+         W5ev/WFGmtHzszJ4DANUT1V02fGtdtN2G5CiRz1f/Rb6LIAAGB/aiPLIf19Je2sbVDt3
+         2y18SZzT2cDyYCc2OctDga6rVkTORS9Iuy003I7U6j8oQmsZAhZ9Xd4ZdTd9PhiF3mCh
+         3dRo/5ItsuI8LtTYEcYzznuueOdrTVbfvVopzye9gNaH8oVEomf+l+bKfrjLQ27DdAVH
+         Qksw==
+X-Gm-Message-State: AOAM533as84HqhPjbLfmlqLRDv8osiQ6XVv6lDM/W1jm5n4NHRRzLUKB
+        xEAv8gwEkgLg1fP/JSFcDw==
+X-Google-Smtp-Source: ABdhPJx6o/5NfjDTApFRgKU5kkVBxXf3w+Ug7nCqbe1SYMi9Dx3JvJETiYpXb5LiMV3hTnhmyfQWSA==
+X-Received: by 2002:a02:c8c6:: with SMTP id q6mr5690115jao.76.1599684162200;
+        Wed, 09 Sep 2020 13:42:42 -0700 (PDT)
 Received: from xps15 ([64.188.179.251])
-        by smtp.gmail.com with ESMTPSA id f83sm2024294ilg.9.2020.09.09.13.22.55
+        by smtp.gmail.com with ESMTPSA id z72sm1729029iof.29.2020.09.09.13.42.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Sep 2020 13:23:00 -0700 (PDT)
-Received: (nullmailer pid 3008103 invoked by uid 1000);
-        Wed, 09 Sep 2020 20:22:51 -0000
-Date:   Wed, 9 Sep 2020 14:22:51 -0600
+        Wed, 09 Sep 2020 13:42:41 -0700 (PDT)
+Received: (nullmailer pid 3043573 invoked by uid 1000);
+        Wed, 09 Sep 2020 20:42:33 -0000
+Date:   Wed, 9 Sep 2020 14:42:33 -0600
 From:   Rob Herring <robh@kernel.org>
-To:     Arnaud Pouliquen <arnaud.pouliquen@st.com>
-Cc:     Alexandre Torgue <alexandre.torgue@st.com>,
-        devicetree@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-kernel@lists.infradead.org,
-        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Fabien Dessenne <fabien.dessenne@st.com>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Ohad Ben-Cohen <ohad@wizery.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: Re: [PATCH 2/3] dt-bindings: remoteproc: stm32_rproc: update for
- firmware synchronization
-Message-ID: <20200909202251.GA2975092@bogus>
-References: <20200827072101.26588-1-arnaud.pouliquen@st.com>
- <20200827072101.26588-3-arnaud.pouliquen@st.com>
+To:     Suman Anna <s-anna@ti.com>
+Cc:     linux-remoteproc@vger.kernel.org, Tony Lindgren <tony@atomide.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        linux-omap@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] dt-bindings: hwlock: omap: Convert binding to YAML
+Message-ID: <20200909204233.GA3043505@bogus>
+References: <20200828041447.5900-1-s-anna@ti.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200827072101.26588-3-arnaud.pouliquen@st.com>
+In-Reply-To: <20200828041447.5900-1-s-anna@ti.com>
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Thu, Aug 27, 2020 at 09:21:00AM +0200, Arnaud Pouliquen wrote:
-> Add new properties description used to attach to a pre-loaded
-> firmware according to the commit 9276536f455b3
-> ("remoteproc: stm32: Parse syscon that will manage M4 synchronisation")
-> which updates the driver part.
+On Thu, 27 Aug 2020 23:14:47 -0500, Suman Anna wrote:
+> Convert the current OMAP hwspinlock binding from text format to YAML
+> format/DT schema, and delete the legacy text binding file.
 > 
-> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@st.com>
+> The new YAML binding conversion is a slightly updated version compared
+> to the original. The legacy "ti,hwmods" property is now obsolete and
+> is dropped altogether, and the K3 example is updated to showcase the
+> actual dts node usage.
+> 
+> Signed-off-by: Suman Anna <s-anna@ti.com>
 > ---
->  .../bindings/remoteproc/st,stm32-rproc.yaml   | 19 +++++++++++++++++++
->  1 file changed, 19 insertions(+)
+> Hi Tony,
 > 
-> diff --git a/Documentation/devicetree/bindings/remoteproc/st,stm32-rproc.yaml b/Documentation/devicetree/bindings/remoteproc/st,stm32-rproc.yaml
-> index 4ffa25268fcc..e50957d86b1c 100644
-> --- a/Documentation/devicetree/bindings/remoteproc/st,stm32-rproc.yaml
-> +++ b/Documentation/devicetree/bindings/remoteproc/st,stm32-rproc.yaml
-> @@ -96,6 +96,25 @@ properties:
->          3rd cell: register bitmask for the deep sleep bit
->      maxItems: 1
->  
-> +  st,syscfg-m4-state:
-> +    $ref: "/schemas/types.yaml#/definitions/phandle-array"
-> +    description: |
-> +      Reference to the tamp register which exposes the Cortex-M4 state.
-> +        1st cell: phandle to syscon block
-> +        2nd cell: register offset containing the Cortex-M4 state
-> +        3rd cell: register bitmask for the Cortex-M4 state
-> +    maxItems: 1
-> +
-> +  st,syscfg-rsc-tbl:
-> +    $ref: "/schemas/types.yaml#/definitions/phandle-array"
-> +    description: |
-> +      Reference to the tamp register which references the Cortex-M4
-> +      resource table address.
-> +        1st cell: phandle to syscon block
-> +        2nd cell: register offset containing the resource table address
-> +        3rd cell: register bitmask for the resource table address
-> +    maxItems: 1
-
-Why can't these be implied? You can lookup the tamp syscon by 
-compatible.
-
-Please add these to the example.
-
-> +
->    st,auto-boot:
->      $ref: /schemas/types.yaml#/definitions/flag
->      description:
-> -- 
-> 2.17.1
+> Only warning with dtbs_check is on dm816x. What's the plan for
+> converting that platform to ti,sysc?
 > 
+> regards
+> Suman
+> 
+>  .../bindings/hwlock/omap-hwspinlock.txt       | 41 ----------
+>  .../bindings/hwlock/ti,omap-hwspinlock.yaml   | 76 +++++++++++++++++++
+>  2 files changed, 76 insertions(+), 41 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/hwlock/omap-hwspinlock.txt
+>  create mode 100644 Documentation/devicetree/bindings/hwlock/ti,omap-hwspinlock.yaml
+> 
+
+Applied, thanks!
