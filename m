@@ -2,142 +2,189 @@ Return-Path: <SRS0=QHCr=CS=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06288C43461
-	for <linux-remoteproc@archiver.kernel.org>; Wed,  9 Sep 2020 08:42:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B584C433E2
+	for <linux-remoteproc@archiver.kernel.org>; Wed,  9 Sep 2020 17:27:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AFBC8207DE
-	for <linux-remoteproc@archiver.kernel.org>; Wed,  9 Sep 2020 08:42:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1AFE02166E
+	for <linux-remoteproc@archiver.kernel.org>; Wed,  9 Sep 2020 17:27:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HhfnWYxh"
+	dkim=pass (1024-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="LGv8YOJ+";
+	dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b="TMBUsllJ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729449AbgIIImU (ORCPT
+        id S1729251AbgIIR1s (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 9 Sep 2020 04:42:20 -0400
-Received: from us-smtp-2.mimecast.com ([207.211.31.81]:51828 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726726AbgIIImJ (ORCPT
+        Wed, 9 Sep 2020 13:27:48 -0400
+Received: from a27-10.smtp-out.us-west-2.amazonses.com ([54.240.27.10]:38312
+        "EHLO a27-10.smtp-out.us-west-2.amazonses.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729014AbgIIR1r (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 9 Sep 2020 04:42:09 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1599640927;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=DtMgeTKjCn17clYv2JEnI3ffDcOPCVRLd/V3CjCE3+4=;
-        b=HhfnWYxhpdT5yvSbuWlWoGg+iM3zrdzumz8Ij4gJIhXiweCs5ceaWjFFHJIt6gSpZHsmWM
-        0Gg3Al+czx3nG+0BDCsx6Yc6R7IWeizV5MbI6fcf9MprtPSetDdAafr17rCARoQO9Lo0ZF
-        cskJE+phvKFhPStLm2Kf4uc3qa5HK6A=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-23-_Ya4rfJ9P0yaQlRETl-ZPw-1; Wed, 09 Sep 2020 04:42:06 -0400
-X-MC-Unique: _Ya4rfJ9P0yaQlRETl-ZPw-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id D592981F02E;
-        Wed,  9 Sep 2020 08:42:03 +0000 (UTC)
-Received: from [10.72.12.24] (ovpn-12-24.pek2.redhat.com [10.72.12.24])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 9D6F760C15;
-        Wed,  9 Sep 2020 08:41:46 +0000 (UTC)
-Subject: Re: [RFC PATCH 00/22] Enhance VHOST to enable SoC-to-SoC
- communication
-To:     Cornelia Huck <cohuck@redhat.com>
-Cc:     Kishon Vijay Abraham I <kishon@ti.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Ohad Ben-Cohen <ohad@wizery.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Jon Mason <jdmason@kudzu.us>,
-        Dave Jiang <dave.jiang@intel.com>,
-        Allen Hubbe <allenbh@gmail.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        Stefano Garzarella <sgarzare@redhat.com>,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org, linux-ntb@googlegroups.com,
-        linux-pci@vger.kernel.org, kvm@vger.kernel.org,
-        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org
-References: <20200702082143.25259-1-kishon@ti.com>
- <20200702055026-mutt-send-email-mst@kernel.org>
- <603970f5-3289-cd53-82a9-aa62b292c552@redhat.com>
- <14c6cad7-9361-7fa4-e1c6-715ccc7e5f6b@ti.com>
- <59fd6a0b-8566-44b7-3dae-bb52b468219b@redhat.com>
- <ce9eb6a5-cd3a-a390-5684-525827b30f64@ti.com>
- <da2b671c-b05d-a57f-7bdf-8b1043a41240@redhat.com>
- <fee8a0fb-f862-03bd-5ede-8f105b6af529@ti.com>
- <b2178e1d-2f5c-e8a3-72fb-70f2f8d6aa45@redhat.com>
- <45a8a97c-2061-13ee-5da8-9877a4a3b8aa@ti.com>
- <c8739d7f-e12e-f6a2-7018-9eeaf6feb054@redhat.com>
- <20200828123409.4cd2a812.cohuck@redhat.com>
- <ac8f7e4f-9f46-919a-f5c2-89b07794f0ab@ti.com>
- <9cd58cd1-0041-3d98-baf7-6e5bc2e7e317@redhat.com>
- <20200908183701.60b93441.cohuck@redhat.com>
-From:   Jason Wang <jasowang@redhat.com>
-Message-ID: <d6e4be52-78d8-546c-20a4-23bdaea68ba5@redhat.com>
-Date:   Wed, 9 Sep 2020 16:41:44 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Wed, 9 Sep 2020 13:27:47 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
+        s=zsmsymrwgfyinv5wlfyidntwsjeeldzt; d=codeaurora.org; t=1599672466;
+        h=MIME-Version:Content-Type:Content-Transfer-Encoding:Date:From:To:Cc:Subject:In-Reply-To:References:Message-ID;
+        bh=5st0RDaC03w5ECvRoWQObucitG8ndSbU87ypht1Rn4g=;
+        b=LGv8YOJ+I/v6U418EsEuFW2k2EaGzAZ9AyDS8BFEfZofTdev/Y8GgH9wcLZayH0I
+        AhyOk0Y8mCGEeaNVRs8QGtziGPGbEuDd/JW3AkyvBWw5KKKJpWFQAav/tWLNq/VdEZ5
+        A+Jg0mEwkScaW4T23feyHCy2Hhqza71FOvmqO4U0=
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
+        s=hsbnp7p3ensaochzwyq5wwmceodymuwv; d=amazonses.com; t=1599672465;
+        h=MIME-Version:Content-Type:Content-Transfer-Encoding:Date:From:To:Cc:Subject:In-Reply-To:References:Message-ID:Feedback-ID;
+        bh=5st0RDaC03w5ECvRoWQObucitG8ndSbU87ypht1Rn4g=;
+        b=TMBUsllJv+4rcx6ozvKQjue4pEb/jQU2VRuOK0i4Q0xpejL6zt7b/ERggEre9TTr
+        PbukI6r38OIvknzglLCqeDNiFlp17/AtrsE4rkcUpKKYIlDOMBubTun0hErrp1UMczP
+        /Ezcr1mP43fGMnbNjWZ7m4bs85uAO0hX3WFNpRKk=
 MIME-Version: 1.0
-In-Reply-To: <20200908183701.60b93441.cohuck@redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Wed, 9 Sep 2020 17:27:45 +0000
+From:   rishabhb@codeaurora.org
+To:     Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        tsoni@codeaurora.org, psodagud@codeaurora.org,
+        sidgup@codeaurora.org, linux-remoteproc-owner@vger.kernel.org
+Subject: Re: [PATCH v2 0/3] Expose recovery/coredump configuration from sysfs
+In-Reply-To: <20200904220213.GA404035@xps15>
+References: <1598557731-1566-1-git-send-email-rishabhb@codeaurora.org>
+ <20200901220542.GA121362@xps15> <20200903235944.GC3715@yoga>
+ <20200904220213.GA404035@xps15>
+Message-ID: <0101017473e8b87b-d40d1102-822a-4791-9f49-5d8e0d5d9753-000000@us-west-2.amazonses.com>
+X-Sender: rishabhb@codeaurora.org
+User-Agent: Roundcube Webmail/1.3.9
+X-SES-Outgoing: 2020.09.09-54.240.27.10
+Feedback-ID: 1.us-west-2.CZuq2qbDmUIuT3qdvXlRHZZCpfZqZ4GtG9v3VKgRyF0=:AmazonSES
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-
-On 2020/9/9 上午12:37, Cornelia Huck wrote:
->> Then you need something that is functional equivalent to virtio PCI
->> which is actually the concept of vDPA (e.g vDPA provides alternatives if
->> the queue_sel is hard in the EP implementation).
-> It seems I really need to read up on vDPA more... do you have a pointer
-> for diving into this alternatives aspect?
-
-
-See vpda_config_ops in include/linux/vdpa.h
-
-Especially this part:
-
-     int (*set_vq_address)(struct vdpa_device *vdev,
-                   u16 idx, u64 desc_area, u64 driver_area,
-                   u64 device_area);
-
-This means for the devices (e.g endpoint device) that is hard to 
-implement virtio-pci layout, it can use any other register layout or 
-vendor specific way to configure the virtqueue.
-
-
->
->>> "Virtio Over NTB" should anyways be a new transport.
->>>> Does that make any sense?
->>> yeah, in the approach I used the initial features are hard-coded in
->>> vhost-rpmsg (inherent to the rpmsg) but when we have to use adapter
->>> layer (vhost only for accessing virtio ring and use virtio drivers on
->>> both front end and backend), based on the functionality (e.g, rpmsg),
->>> the vhost should be configured with features (to be presented to the
->>> virtio) and that's why additional layer or APIs will be required.
->> A question here, if we go with vhost bus approach, does it mean the
->> virtio device can only be implemented in EP's userspace?
-> Can we maybe implement an alternative bus as well that would allow us
-> to support different virtio device implementations (in addition to the
-> vhost bus + userspace combination)?
-
-
-That should be fine, but I'm not quite sure that implementing the device 
-in kerne (kthread) is the good approach.
-
-Thanks
-
-
->
-
+On 2020-09-04 15:02, Mathieu Poirier wrote:
+> On Thu, Sep 03, 2020 at 06:59:44PM -0500, Bjorn Andersson wrote:
+>> On Tue 01 Sep 17:05 CDT 2020, Mathieu Poirier wrote:
+>> 
+>> > Hi Rishabh,
+>> >
+>> > On Thu, Aug 27, 2020 at 12:48:48PM -0700, Rishabh Bhatnagar wrote:
+>> > > From Android R onwards Google has restricted access to debugfs in user
+>> > > and user-debug builds. This restricts access to most of the features
+>> > > exposed through debugfs. This patch series adds a configurable option
+>> > > to move the recovery/coredump interfaces to sysfs. If the feature
+>> > > flag is selected it would move these interfaces to sysfs and remove
+>> > > the equivalent debugfs interface.
+>> >
+>> > What I meant wast to move the coredump entry from debugfs to sysfs and from
+>> > there make it available to user space using a kernel config.
+>> 
+>> Why would we not always make this available in sysfs?
+> 
+> At this time the options are in debugfs and vendors can decide to make 
+> that
+> available on products if they want to.  The idea behind using a kernel
+> configuration once moved to sysfs was to give the same kind of options.
+> 
+>> 
+>> > But thinking further on this it may be better to simply provide an API
+>> > to set the coredump mode from the platform driver, the same way
+>> > rproc_coredump_set_elf_info() works.
+>> 
+>> Being able to invoke these from the platform drivers sounds like a new
+>> feature. What would trigger the platform drivers to call this? Or are
+>> you perhaps asking for the means of the drivers to be able to select 
+>> the
+>> default mode?
+> 
+> My ultimate goal is to avoid needlessly stuffing things in sysfs.  My 
+> hope in
+> suggesting a new API was that platform drivers could recognise the kind 
+> of
+> build/environment they operate in and setup the coredump mode 
+> accordingly.  That
+> would have allowed us to leave debugfs options alone.
+> 
+>> 
+>> Regarding the default mode, I think it would make sense to make the
+>> default "disabled", because this is the most sensible configuration in 
+>> a
+>> "production" environment. And the sysfs means we have a convenient
+>> mechanism to configure it, even on production environments.
+>> 
+> 
+> I am weary of changing something that hasn't been requested.
+> 
+>> > That will prevent breaking a fair amount of user space code...
+>> >
+>> 
+>> We typically don't guarantee that the debugfs interfaces are stable 
+>> and
+>> if I understand the beginning of you reply you still want to move it
+>> from debugfs to sysfs - which I presume would break such scripts in 
+>> the
+>> first place?
+> 
+> Correct - I am sure that moving coredump and recovery options to sysfs 
+> will
+> break user space scripts.  Even if debugfs is not part of the ABI it 
+> would be
+> nice to avoid disrupting people as much as possible.
+> 
+>> 
+>> 
+>> I would prefer to see that we don't introduce config options for every
+>> little thing, unless there's good reason for it.
+> 
+> I totally agree.  It is with great reluctance that I asked Rishab to 
+> proceed
+> the way he did in V3.  His usecase makes sense... On the flip side this 
+> is
+> pushed down on the kernel community and I really like Christoph's 
+> position about
+> fixing Android and leaving the kernel alone.
+> 
+Well, removing debugfs is conscious decision taken by android due to 
+security
+concerns and there is not we can fix there.
+Would it be a terrible idea to have recovery and coredump exposed from 
+both
+sysfs and debugfs instead of choosing one and breaking userspace code?
+>> 
+>> Regards,
+>> Bjorn
+>> 
+>> > Let me know if that can work for you.
+>> >
+>> > Thanks,
+>> > Mathieu
+>> >
+>> > > 'Coredump' and 'Recovery' are critical
+>> > > interfaces that are required for remoteproc to work on Qualcomm Chipsets.
+>> > > Coredump configuration needs to be set to "inline" in debug/test build
+>> > > and "disabled" in production builds. Whereas recovery needs to be
+>> > > "disabled" for debugging purposes and "enabled" on production builds.
+>> > >
+>> > > Changelog:
+>> > >
+>> > > v1 -> v2:
+>> > > - Correct the contact name in the sysfs documentation.
+>> > > - Remove the redundant write documentation for coredump/recovery sysfs
+>> > > - Add a feature flag to make this interface switch configurable.
+>> > >
+>> > > Rishabh Bhatnagar (3):
+>> > >   remoteproc: Expose remoteproc configuration through sysfs
+>> > >   remoteproc: Add coredump configuration to sysfs
+>> > >   remoteproc: Add recovery configuration to sysfs
+>> > >
+>> > >  Documentation/ABI/testing/sysfs-class-remoteproc |  44 ++++++++
+>> > >  drivers/remoteproc/Kconfig                       |  12 +++
+>> > >  drivers/remoteproc/remoteproc_debugfs.c          |  10 +-
+>> > >  drivers/remoteproc/remoteproc_sysfs.c            | 126 +++++++++++++++++++++++
+>> > >  4 files changed, 190 insertions(+), 2 deletions(-)
+>> > >
+>> > > --
+>> > > The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+>> > > a Linux Foundation Collaborative Project
+>> > >
