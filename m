@@ -2,88 +2,117 @@ Return-Path: <SRS0=MIpW=CT=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D762C2D0E1
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 10 Sep 2020 19:00:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F13FC2D0A7
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 10 Sep 2020 19:51:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B596420731
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 10 Sep 2020 19:00:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E814021D81
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 10 Sep 2020 19:51:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="h/kuxUk0";
-	dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b="krDjWDPL"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GMLrSwZm"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726837AbgIJS7c (ORCPT
+        id S1725616AbgIJTvI (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 10 Sep 2020 14:59:32 -0400
-Received: from a27-21.smtp-out.us-west-2.amazonses.com ([54.240.27.21]:55220
-        "EHLO a27-21.smtp-out.us-west-2.amazonses.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727101AbgIJS5e (ORCPT
+        Thu, 10 Sep 2020 15:51:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49992 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726969AbgIJTuh (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 10 Sep 2020 14:57:34 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
-        s=zsmsymrwgfyinv5wlfyidntwsjeeldzt; d=codeaurora.org; t=1599764254;
-        h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References;
-        bh=ioDx5B0toCoamwPqHgDugjYxi1Wnq03ayhiGirqdZvo=;
-        b=h/kuxUk0+mL1BLt1ZORF9ZJQDq6wQ8rTtrW1PIm6+qAL5iAaXFc2KHfG3HOSoq+L
-        kbJjlPq7IG7fVL3sDMZzp5dyAHMRL9sQcaZMe3dlp9F+tIfH++tmhKioMzgakQ1l/0W
-        8zXZqzv0XLxuWqfxcj7s1cea0GywR6x9IZy8fq+A=
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
-        s=hsbnp7p3ensaochzwyq5wwmceodymuwv; d=amazonses.com; t=1599764254;
-        h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:Feedback-ID;
-        bh=ioDx5B0toCoamwPqHgDugjYxi1Wnq03ayhiGirqdZvo=;
-        b=krDjWDPLLpbpLofBxuJQ3uv9J0IqZh2UX8Pb7HvA5h2tDSRNwltIlR6stoqkBINg
-        7C+DqgEjj/MSv1f6xOlw7CL4TzkFdWk5y4is1TaVLkjDmd+dTXq8HFCyvfA4gQXAWCv
-        pKKc4eI5tGOS/0nJRhLwC0wPJ28ig5qylcDjpIaU=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 78FE4C43387
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=sidgup@codeaurora.org
-From:   Siddharth Gupta <sidgup@codeaurora.org>
-To:     agross@kernel.org, bjorn.andersson@linaro.org, ohad@wizery.com
-Cc:     Siddharth Gupta <sidgup@codeaurora.org>,
-        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, tsoni@codeaurora.org,
-        psodagud@codeaurora.org, rishabhb@codeaurora.org,
-        linux-doc@vger.kernel.org, Gurbir Arora <gurbaror@codeaurora.org>
-Subject: [PATCH v4 3/3] remoteproc: qcom: Add minidump id for sm8150 modem remoteproc
-Date:   Thu, 10 Sep 2020 18:57:34 +0000
-Message-ID: <0101017479614db2-6fd70b02-38a7-44f2-9b34-2bb43832a330-000000@us-west-2.amazonses.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1599764242-690-1-git-send-email-sidgup@codeaurora.org>
-References: <1599764242-690-1-git-send-email-sidgup@codeaurora.org>
-X-SES-Outgoing: 2020.09.10-54.240.27.21
-Feedback-ID: 1.us-west-2.CZuq2qbDmUIuT3qdvXlRHZZCpfZqZ4GtG9v3VKgRyF0=:AmazonSES
+        Thu, 10 Sep 2020 15:50:37 -0400
+Received: from mail-pj1-x1043.google.com (mail-pj1-x1043.google.com [IPv6:2607:f8b0:4864:20::1043])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1BEF6C061757
+        for <linux-remoteproc@vger.kernel.org>; Thu, 10 Sep 2020 12:50:37 -0700 (PDT)
+Received: by mail-pj1-x1043.google.com with SMTP id mm21so537855pjb.4
+        for <linux-remoteproc@vger.kernel.org>; Thu, 10 Sep 2020 12:50:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=xDChIkAtb5Vukpnd8bJJRVf7fU2a+5XPgWV5S0nOt9o=;
+        b=GMLrSwZmHtAb7ckfKa7u7eqxr83FkDC1sG/gpb2HdAJ7QRD+yEt9AnrvUNRzaA9mSr
+         rsYXudCO+sEnI8MY+QRb6e87ZPH+k/EEssmqkNN8/ygzCn3nP/vi9P1wq+GB8iTl1O2L
+         xC/Nw1N4lLEdzCrTp+NZlBoguH2YonWZ+IwFSNlsXftiiq5/taPI3Yt9lfVYQywDGeFX
+         mQ8O9oLnHNJYcZaBpkb8+vndfLA7l4vpU4JTwhRa4k416jxLFL/qLesQLk0yDrkGfoVj
+         ctC/y+9Mo5VSiBvA9NDfWwnfAGhZmq+16PQG9a0IUTCptP+a+bWvtyH/iTJYlnJf4nX0
+         qNWg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=xDChIkAtb5Vukpnd8bJJRVf7fU2a+5XPgWV5S0nOt9o=;
+        b=cFg8NOpWRK5FG4H96NwUFxFgeNxopFf9/2kvYXOn7JLPoha4HvRhw5wZ0IcxJLYC2k
+         RoPy3uRhRZ6eOvHkuYSa8j5YUbu3bE6flvbYH6DxT3ccgyiGSogbLJsF4MDmfW0zF5oY
+         g9zttY/CcfVpzk6hy4ToPfSr3N5fWu3phspizvrxHdtC93pxVS88jrMhm2BJFsxppRRm
+         YJcwNvOCUYLKK9fd3bm0NmNzUB/1xBhL0JyNz4nno5TdH6LbbSnyGYB0PcCv/RVjK83z
+         xm2tQwsoNMq7Pchdpj8syPwypR7X+r6bzY6O4EFlKb5g9xn0qUS4HLgqrbj9gG9hagYy
+         a4Bw==
+X-Gm-Message-State: AOAM5338CWXr7OpotFMR7yax2ITUSIc0h+nBpu6EzkS5Apqg3SDk24zS
+        mr+90l+/iFo4uAhJfkLONVsMTA==
+X-Google-Smtp-Source: ABdhPJyZYiVntwdGvOTjgASZ9NTGbtmfntR5sx4R5k7O0XZpReyPmnbzTe4k88faDRcbkzb73sG2hg==
+X-Received: by 2002:a17:90a:2ec8:: with SMTP id h8mr1482436pjs.173.1599767436537;
+        Thu, 10 Sep 2020 12:50:36 -0700 (PDT)
+Received: from xps15 (S0106002369de4dac.cg.shawcable.net. [68.147.8.254])
+        by smtp.gmail.com with ESMTPSA id l1sm6732257pfc.164.2020.09.10.12.50.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 10 Sep 2020 12:50:36 -0700 (PDT)
+Date:   Thu, 10 Sep 2020 13:50:34 -0600
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+To:     YueHaibing <yuehaibing@huawei.com>
+Cc:     ohad@wizery.com, bjorn.andersson@linaro.org, s-anna@ti.com,
+        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 -next] remoteproc: k3-dsp: Fix return value check in
+ k3_dsp_rproc_of_get_memories()
+Message-ID: <20200910195034.GA586100@xps15>
+References: <20200902140614.28636-1-yuehaibing@huawei.com>
+ <20200905122503.17352-1-yuehaibing@huawei.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200905122503.17352-1-yuehaibing@huawei.com>
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Add minidump id for modem in sm8150 chipset.
+On Sat, Sep 05, 2020 at 08:25:03PM +0800, YueHaibing wrote:
+> In case of error, the function devm_ioremap_wc() returns NULL pointer
+> not ERR_PTR(). The IS_ERR() test in the return value check should be
+> replaced with NULL test.
+> 
+> Fixes: 6edbe024ba17 ("remoteproc: k3-dsp: Add a remoteproc driver of K3 C66x DSPs")
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+> Acked-by: Suman Anna <s-anna@ti.com>
 
-Signed-off-by: Rishabh Bhatnagar <rishabhb@codeaurora.org>
-Signed-off-by: Gurbir Arora <gurbaror@codeaurora.org>
-Signed-off-by: Siddharth Gupta <sidgup@codeaurora.org>
----
- drivers/remoteproc/qcom_q6v5_pas.c | 1 +
- 1 file changed, 1 insertion(+)
+Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 
-diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
-index c01e81e..5760995 100644
---- a/drivers/remoteproc/qcom_q6v5_pas.c
-+++ b/drivers/remoteproc/qcom_q6v5_pas.c
-@@ -709,6 +709,7 @@ static const struct adsp_data mpss_resource_init = {
- 	.crash_reason_smem = 421,
- 	.firmware_name = "modem.mdt",
- 	.pas_id = 4,
-+	.minidump_id = 3,
- 	.has_aggre2_clk = false,
- 	.auto_boot = false,
- 	.active_pd_names = (char*[]){
--- 
-Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
-
+> ---
+> v2: return ENOMEM instead of EBUSY, use corret Fixes tag
+> ---
+>  drivers/remoteproc/ti_k3_dsp_remoteproc.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/remoteproc/ti_k3_dsp_remoteproc.c b/drivers/remoteproc/ti_k3_dsp_remoteproc.c
+> index 9011e477290c..f373df35d7d0 100644
+> --- a/drivers/remoteproc/ti_k3_dsp_remoteproc.c
+> +++ b/drivers/remoteproc/ti_k3_dsp_remoteproc.c
+> @@ -445,10 +445,10 @@ static int k3_dsp_rproc_of_get_memories(struct platform_device *pdev,
+>  
+>  		kproc->mem[i].cpu_addr = devm_ioremap_wc(dev, res->start,
+>  							 resource_size(res));
+> -		if (IS_ERR(kproc->mem[i].cpu_addr)) {
+> +		if (!kproc->mem[i].cpu_addr) {
+>  			dev_err(dev, "failed to map %s memory\n",
+>  				data->mems[i].name);
+> -			return PTR_ERR(kproc->mem[i].cpu_addr);
+> +			return -ENOMEM;
+>  		}
+>  		kproc->mem[i].bus_addr = res->start;
+>  		kproc->mem[i].dev_addr = data->mems[i].dev_addr;
+> -- 
+> 2.17.1
+> 
+> 
