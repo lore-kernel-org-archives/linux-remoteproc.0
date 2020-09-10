@@ -2,128 +2,142 @@ Return-Path: <SRS0=MIpW=CT=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BCFE8C433E2
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 10 Sep 2020 18:09:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AA39C43461
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 10 Sep 2020 18:16:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6264921D40
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 10 Sep 2020 18:09:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3D607214F1
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 10 Sep 2020 18:16:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1599761381;
-	bh=c2tztsNpwyNu1D1MBTKVqE3luU/B7LUoBEm+xm+5A7o=;
+	s=default; t=1599761766;
+	bh=VCBPSyUtjbNcoRf4J44PyQ6FG6rWoS6ak/Ug1NqVxJs=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=pzHwBcA9ym9gxeq1bqGjy1Cb2tAWGsUHFDW5oU7pTeQG9Op1UvJACi1YtekVhYQCb
-	 L/PeUMHXw3IOEo05NkL39buvSepKJnn+7GGX+xVe7GtTcqoAd3KpqfCKmp9zSVe4Tj
-	 jeCz29yUI5AfUVg4E2e1Xma+R16WzGSqrDGqwQQ8=
+	b=OplhtNz5k/keH5BxL70cAk1t/pt9KcQSR+Zlfe9zL/ogj3Os1x9Jea0TWkB7ggxqt
+	 ub0eq78fjaEmBE17whFbdHCUX020gyCmYAw+CVp8TaBYHsk/g6Om4MLXnd/UXA5mzk
+	 6s48YHQnMWUWdyk73r6ffe+mNtMJQV2ybvEYhiy4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726847AbgIJSIj (ORCPT
+        id S1725866AbgIJSPw (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 10 Sep 2020 14:08:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36760 "EHLO mail.kernel.org"
+        Thu, 10 Sep 2020 14:15:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35006 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726800AbgIJR7Q (ORCPT
+        id S1725372AbgIJR6Q (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 10 Sep 2020 13:59:16 -0400
+        Thu, 10 Sep 2020 13:58:16 -0400
 Received: from localhost (83-86-74-64.cable.dynamic.v4.ziggo.nl [83.86.74.64])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2B0AE20BED;
-        Thu, 10 Sep 2020 17:59:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3F10221D90;
+        Thu, 10 Sep 2020 17:58:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1599760755;
-        bh=c2tztsNpwyNu1D1MBTKVqE3luU/B7LUoBEm+xm+5A7o=;
+        s=default; t=1599760694;
+        bh=VCBPSyUtjbNcoRf4J44PyQ6FG6rWoS6ak/Ug1NqVxJs=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=2E2+d3GeM49R0VN2KDJsfGVusvUohciSPnXQmvjkUOoKiwaFB8uKEqtoGErfm+O9B
-         tBeKn1rsXMX98zLwnXboGz9QXAMKfhuCRKONJIBRyHxoGpM1ZjggFrq0aht8xTr54w
-         1nOpQiWLxk4ryGTluyrIM2Mhee4w1PgJ0RZb4igI=
-Date:   Thu, 10 Sep 2020 19:59:23 +0200
+        b=b4lIIdryGSOiOdjFXgrchUn31gNVrIUZ/yD6jd5tZYZxKKdXPMbRaxqQcQuHqkvW9
+         RQplGLXdxIiCf8x0yEQpvNQHQ47aLF0+0z1EmFBucEEvTsmxv+8kRGPg6GxC59L7tP
+         e1Q1GfbaaJ8BHe2P7GAdqakJCFPOEFmu3tiSCNoA=
+Date:   Thu, 10 Sep 2020 19:58:21 +0200
 From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Rishabh Bhatnagar <rishabhb@codeaurora.org>,
-        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+To:     Rishabh Bhatnagar <rishabhb@codeaurora.org>
+Cc:     linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        bjorn.andersson@linaro.org, mathieu.poirier@linaro.org,
         tsoni@codeaurora.org, psodagud@codeaurora.org,
         sidgup@codeaurora.org
-Subject: Re: [PATCH v2 0/3] Expose recovery/coredump configuration from sysfs
-Message-ID: <20200910175923.GB3076593@kroah.com>
+Subject: Re: [PATCH v2 2/3] remoteproc: Add coredump configuration to sysfs
+Message-ID: <20200910175821.GA3076593@kroah.com>
 References: <1598557731-1566-1-git-send-email-rishabhb@codeaurora.org>
- <20200901220542.GA121362@xps15>
- <20200903235944.GC3715@yoga>
- <20200904220213.GA404035@xps15>
+ <1598557731-1566-3-git-send-email-rishabhb@codeaurora.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200904220213.GA404035@xps15>
+In-Reply-To: <1598557731-1566-3-git-send-email-rishabhb@codeaurora.org>
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Fri, Sep 04, 2020 at 04:02:13PM -0600, Mathieu Poirier wrote:
-> On Thu, Sep 03, 2020 at 06:59:44PM -0500, Bjorn Andersson wrote:
-> > On Tue 01 Sep 17:05 CDT 2020, Mathieu Poirier wrote:
-> > 
-> > > Hi Rishabh,
-> > > 
-> > > On Thu, Aug 27, 2020 at 12:48:48PM -0700, Rishabh Bhatnagar wrote:
-> > > > From Android R onwards Google has restricted access to debugfs in user
-> > > > and user-debug builds. This restricts access to most of the features
-> > > > exposed through debugfs. This patch series adds a configurable option
-> > > > to move the recovery/coredump interfaces to sysfs. If the feature
-> > > > flag is selected it would move these interfaces to sysfs and remove
-> > > > the equivalent debugfs interface.
-> > > 
-> > > What I meant wast to move the coredump entry from debugfs to sysfs and from
-> > > there make it available to user space using a kernel config.
-> > 
-> > Why would we not always make this available in sysfs?
+On Thu, Aug 27, 2020 at 12:48:50PM -0700, Rishabh Bhatnagar wrote:
+> Expose coredump configuration in sysfs under a feature
+> flag. This is useful for systems where access to
+> debugfs might be limited.
 > 
-> At this time the options are in debugfs and vendors can decide to make that
-> available on products if they want to.  The idea behind using a kernel
-> configuration once moved to sysfs was to give the same kind of options.
+> Signed-off-by: Rishabh Bhatnagar <rishabhb@codeaurora.org>
+> ---
+>  Documentation/ABI/testing/sysfs-class-remoteproc | 24 +++++++++
+>  drivers/remoteproc/remoteproc_debugfs.c          |  4 ++
+>  drivers/remoteproc/remoteproc_sysfs.c            | 68 ++++++++++++++++++++++++
+>  3 files changed, 96 insertions(+)
 > 
-> > 
-> > > But thinking further on this it may be better to simply provide an API
-> > > to set the coredump mode from the platform driver, the same way
-> > > rproc_coredump_set_elf_info() works.
-> > 
-> > Being able to invoke these from the platform drivers sounds like a new
-> > feature. What would trigger the platform drivers to call this? Or are
-> > you perhaps asking for the means of the drivers to be able to select the
-> > default mode?
-> 
-> My ultimate goal is to avoid needlessly stuffing things in sysfs.  My hope in
-> suggesting a new API was that platform drivers could recognise the kind of
-> build/environment they operate in and setup the coredump mode accordingly.  That
-> would have allowed us to leave debugfs options alone.
-> 
-> > 
-> > Regarding the default mode, I think it would make sense to make the
-> > default "disabled", because this is the most sensible configuration in a
-> > "production" environment. And the sysfs means we have a convenient
-> > mechanism to configure it, even on production environments.
-> >
-> 
-> I am weary of changing something that hasn't been requested.  
+> diff --git a/Documentation/ABI/testing/sysfs-class-remoteproc b/Documentation/ABI/testing/sysfs-class-remoteproc
+> index 36094fb..f6c44fa 100644
+> --- a/Documentation/ABI/testing/sysfs-class-remoteproc
+> +++ b/Documentation/ABI/testing/sysfs-class-remoteproc
+> @@ -58,3 +58,27 @@ Description:	Remote processor name
+>  		Reports the name of the remote processor. This can be used by
+>  		userspace in exactly identifying a remote processor and ease
+>  		up the usage in modifying the 'firmware' or 'state' files.
+> +
+> +What:		/sys/class/remoteproc/.../coredump
+> +Date:		July 2020
+> +Contact:	Bjorn Andersson <bjorn.andersson@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>
+> +Description:	Remote processor coredump configuration
+> +
+> +		Reports the coredump configuration of the remote processor,
+> +		which will be one of:
+> +
+> +		"default"
+> +		"inline"
+> +		"disabled"
+> +
+> +		"default" means when the remote processor's coredump is
+> +		collected it will be copied to a separate buffer and that
+> +		buffer is exposed to userspace.
+> +
+> +		"inline" means when the remote processor's coredump is
+> +		collected userspace will directly read from the remote
+> +		processor's device memory. Extra buffer will not be used to
+> +		copy the dump. Also recovery process will not proceed until
+> +		all data is read by usersapce.
+> +
+> +		"disabled" means no dump will be collected.
+> diff --git a/drivers/remoteproc/remoteproc_debugfs.c b/drivers/remoteproc/remoteproc_debugfs.c
+> index 2e3b3e2..48dfd0a 100644
+> --- a/drivers/remoteproc/remoteproc_debugfs.c
+> +++ b/drivers/remoteproc/remoteproc_debugfs.c
+> @@ -27,6 +27,7 @@
+>  /* remoteproc debugfs parent dir */
+>  static struct dentry *rproc_dbg;
 >  
-> > > That will prevent breaking a fair amount of user space code...
-> > > 
-> > 
-> > We typically don't guarantee that the debugfs interfaces are stable and
-> > if I understand the beginning of you reply you still want to move it
-> > from debugfs to sysfs - which I presume would break such scripts in the
-> > first place?
-> 
-> Correct - I am sure that moving coredump and recovery options to sysfs will
-> break user space scripts.  Even if debugfs is not part of the ABI it would be
-> nice to avoid disrupting people as much as possible.
+> +#if (!IS_ENABLED(CONFIG_RPROC_SYSFS_CONFIGURATION_SUPPORT))
+>  /*
+>   * A coredump-configuration-to-string lookup table, for exposing a
+>   * human readable configuration via debugfs. Always keep in sync with
+> @@ -114,6 +115,7 @@ static const struct file_operations rproc_coredump_fops = {
+>  	.open = simple_open,
+>  	.llseek = generic_file_llseek,
+>  };
+> +#endif
+>  
+>  /*
+>   * Some remote processors may support dumping trace logs into a shared
+> @@ -425,8 +427,10 @@ void rproc_create_debug_dir(struct rproc *rproc)
+>  			    rproc, &rproc_rsc_table_fops);
+>  	debugfs_create_file("carveout_memories", 0400, rproc->dbg_dir,
+>  			    rproc, &rproc_carveouts_fops);
+> +#if (!IS_ENABLED(CONFIG_RPROC_SYSFS_CONFIGURATION_SUPPORT))
+>  	debugfs_create_file("coredump", 0600, rproc->dbg_dir,
+>  			    rproc, &rproc_coredump_fops);
+> +#endif
 
-Don't move the files, keep them in both places.  Lots of systems
-restrict debugfs, so moving "stable" stuff like this into sysfs makes
-sense.
+Why does sysfs support for this have anything to do if you have a
+debugfs file present or not?  They should both work at the same time if
+needed, right?
+
+Same for patch 3/3 in this series...
 
 thanks,
 
