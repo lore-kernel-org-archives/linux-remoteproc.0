@@ -7,58 +7,58 @@ X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F34C3C43461
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 10 Sep 2020 21:42:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34EDBC43461
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 10 Sep 2020 21:55:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9478A221E2
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 10 Sep 2020 21:42:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F1A0120731
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 10 Sep 2020 21:55:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="PrxFIm+q"
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="KTLKPAFf"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728516AbgIJVmf (ORCPT
+        id S1728365AbgIJVmo (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 10 Sep 2020 17:42:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42166 "EHLO
+        Thu, 10 Sep 2020 17:42:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41842 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730696AbgIJNBo (ORCPT
+        with ESMTP id S1730726AbgIJNBv (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 10 Sep 2020 09:01:44 -0400
-Received: from mail-wr1-x441.google.com (mail-wr1-x441.google.com [IPv6:2a00:1450:4864:20::441])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B6E6FC0617A4
-        for <linux-remoteproc@vger.kernel.org>; Thu, 10 Sep 2020 06:01:42 -0700 (PDT)
-Received: by mail-wr1-x441.google.com with SMTP id o5so6559843wrn.13
-        for <linux-remoteproc@vger.kernel.org>; Thu, 10 Sep 2020 06:01:42 -0700 (PDT)
+        Thu, 10 Sep 2020 09:01:51 -0400
+Received: from mail-wr1-x442.google.com (mail-wr1-x442.google.com [IPv6:2a00:1450:4864:20::442])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0FA5AC0617A9
+        for <linux-remoteproc@vger.kernel.org>; Thu, 10 Sep 2020 06:01:44 -0700 (PDT)
+Received: by mail-wr1-x442.google.com with SMTP id k15so6583781wrn.10
+        for <linux-remoteproc@vger.kernel.org>; Thu, 10 Sep 2020 06:01:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=0sqmFv2eHfj0bGsGV6vzOEYNJHRHbaIrZSb1iBx+VKQ=;
-        b=PrxFIm+qcOE/pECnf7g0zilV+8j8fE3iImaK+uxbPgjn59kMBEZfMkdg4ORS781Smo
-         lYYl/sJgPqyCEaARQ2FuV8iZn4IkgLY8S5J6CGi9aDUeXATZp/+Q5eV6UQmP/miEogq8
-         ZQA/3HYv8K1ArxRnxNiB8N1yKMM6IgKO2ISHyOYHMYCR+oNFpwDb3i5YVB3oglVAacGM
-         bX+vw9VM/NL9SuURbUIO+L6oPO8ZswxA7VKZHmYZlSuBOjKPCPEjBIlNI6rP0ON+ouG6
-         D1QMY56UgRlfD3tqTVBPpsM3gfnf6I9NrDQVdAPKC5OJ6h8I5FV2JRfm6Ieo0VWAY7Vd
-         KB0A==
+        bh=HphHCPdJUs9HEUbW8jhDJPa14fS8feVjDMdm8pwKQX0=;
+        b=KTLKPAFfGEgTr2BImp+QKZGVPI0BzcHxU/2gi4Hz4aq6K/0m9lhzMmNEiW8wgtH2iJ
+         9mMpJYcT0vvo2wEb5v4jHjlftFwV7dVCl0Mszv4QdLfjxoQJ0psBeF6XCHqyLGq2iJGT
+         JG/RiC70ZixTF7vkGxFnCKBHpN8EYdTYJF8mpnSaVEfGQpo/ZvNn6b9KSpmSz6VQkZk8
+         hwwQIH7wRd612A+1kyQ9+Wo0SE/5kRVFTC+Feihkv7rQIanO+n8nGntYaPSdmWrgj1MD
+         7XrBCFG9+53zppoSdG3GdYpd3G32cYgfKwIU+0XDPXodzaDBsm1YhRNWsnb6pL+LeuLE
+         P0mg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=0sqmFv2eHfj0bGsGV6vzOEYNJHRHbaIrZSb1iBx+VKQ=;
-        b=V0Wi9WHmFIjJgziTrSMN+dogU0BtjI3ZOP+jghUTJGc2cuKQkASKvHy5odEpw+LWcK
-         RTagW90dtjG0yDzTOYYIJK1ttsO1hYCLON87oyMOZ4YYxcMDWJ4JE4VK+VnLcekyLaSc
-         uMsYLClWiM3a0PhWTjSPEbjZqlw/aX+i4caqrDZxc1wP44ugjPQrU3ZWCLLloy55jtza
-         b/jR43MHKU3jDoQ0EFKQSeHg7eC/ynBH3O3Pio/7JdkFyqur3F49v279g0xALWohQZfE
-         me0a4JdcAOclKK2fLQN6tzqgjluUbOu5nmK/wQQMt3XV+Qlb7peMw0V+W2tDOX0/1uxw
-         6zzg==
-X-Gm-Message-State: AOAM533mxeb2EuSLViCUvSEpGeeaBLwDLXu8R/N35Z4iehlNAY5u0kOT
-        c2bUHU8iNLH0BZOYkmupwStOmQ==
-X-Google-Smtp-Source: ABdhPJyYLi78UG6+M+KyTBE9epJZAgjW7K+uFBmHRxFPQFLB+d//S0LjdkoG9ek90bxop5qFrF9GSg==
-X-Received: by 2002:adf:db43:: with SMTP id f3mr9538768wrj.219.1599742901335;
-        Thu, 10 Sep 2020 06:01:41 -0700 (PDT)
+        bh=HphHCPdJUs9HEUbW8jhDJPa14fS8feVjDMdm8pwKQX0=;
+        b=d04dlj1u+yLJ8gvyAbGPTxEfpeqjYopy+zaULQdXVOhU1RXfXYDR+whH8ncd9wFBvQ
+         JX7QKtHW0tSwxg0mteU+l99iIv7rop6HOYW6I9Tnqov64Sl55DFW+Q5N+eHUUh1P0oB+
+         brtuTvPGofZk8XxTu5PJdNrDv3VNwL9aa30aYZVBRFMgNyNgU695mpxAtNtlw4ZxK0qY
+         yj4WgYRQpv+5SU7hibJv+epUF0vQndWH9FxPUaxN27a9lnB9bs/8DGiEIt+hP7TbcrC+
+         ZNnVaPEPeorxxVgrGsIjWyqRfcrTNAHlOT4DeMSdmNj+t00sVOREO4LeHBoUC9lA1JUx
+         57TA==
+X-Gm-Message-State: AOAM532rDFbG6bAJepT0/HnZq0LBhbvOe3CDvdaYeJfMLEW884Q/YCEX
+        16iGP4il3ZLHnngzX5q0Le0r5w==
+X-Google-Smtp-Source: ABdhPJxQ/7u8nEM7o5yIM0TqrL9dfyr46k2FRZOHqGju4TlGZTK0gY0DH16yhGiFzt+kO1B2bqgRGQ==
+X-Received: by 2002:adf:9f10:: with SMTP id l16mr9460647wrf.77.1599742902740;
+        Thu, 10 Sep 2020 06:01:42 -0700 (PDT)
 Received: from alex-xps13.baylibre.local (laubervilliers-658-1-213-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id y1sm9488269wru.87.2020.09.10.06.01.40
+        by smtp.gmail.com with ESMTPSA id y1sm9488269wru.87.2020.09.10.06.01.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Sep 2020 06:01:40 -0700 (PDT)
+        Thu, 10 Sep 2020 06:01:41 -0700 (PDT)
 From:   Alexandre Bailon <abailon@baylibre.com>
 To:     ohad@wizery.com, bjorn.andersson@linaro.org, robh+dt@kernel.org,
         matthias.bgg@gmail.com, mathieu.poirier@linaro.org
@@ -67,9 +67,9 @@ Cc:     linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
         linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
         stephane.leprovost@mediatek.com, gpain@baylibre.com,
         Alexandre Bailon <abailon@baylibre.com>
-Subject: [PATCH v2 3/4] remoteproc: mtk_vpu_rproc: Add support of JTAG
-Date:   Thu, 10 Sep 2020 15:01:47 +0200
-Message-Id: <20200910130148.8734-4-abailon@baylibre.com>
+Subject: [PATCH v2 4/4] ARM64: mt8183: Add support of APU to mt8183
+Date:   Thu, 10 Sep 2020 15:01:48 +0200
+Message-Id: <20200910130148.8734-5-abailon@baylibre.com>
 X-Mailer: git-send-email 2.26.2
 In-Reply-To: <20200910130148.8734-1-abailon@baylibre.com>
 References: <20200910130148.8734-1-abailon@baylibre.com>
@@ -80,240 +80,69 @@ Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-The DSP could be debugged using JTAG.
-The support of JTAG could enabled at build time and it could be enabled
-using debugfs.
+This adds the support of APU to mt8183.
 
 Signed-off-by: Alexandre Bailon <abailon@baylibre.com>
 ---
- drivers/remoteproc/Kconfig   |   9 +++
- drivers/remoteproc/mtk_apu.c | 151 ++++++++++++++++++++++++++++++++++-
- 2 files changed, 159 insertions(+), 1 deletion(-)
+ arch/arm64/boot/dts/mediatek/mt8183.dtsi | 39 ++++++++++++++++++++++++
+ 1 file changed, 39 insertions(+)
 
-diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
-index 4ebea57bf4c8..310462346bd8 100644
---- a/drivers/remoteproc/Kconfig
-+++ b/drivers/remoteproc/Kconfig
-@@ -61,6 +61,15 @@ config MTK_APU
+diff --git a/arch/arm64/boot/dts/mediatek/mt8183.dtsi b/arch/arm64/boot/dts/mediatek/mt8183.dtsi
+index e215f1eb3eb2..28f75452961c 100644
+--- a/arch/arm64/boot/dts/mediatek/mt8183.dtsi
++++ b/arch/arm64/boot/dts/mediatek/mt8183.dtsi
+@@ -967,12 +967,51 @@ ipu_adl: syscon@19010000 {
+ 			#clock-cells = <1>;
+ 		};
  
- 	  It's safe to say N here.
++		apu0: apu@0x19100000 {
++			compatible = "mediatek,mt8183-apu";
++			reg = <0 0x19180000 0 0x14000>;
++			interrupts = <GIC_SPI 292 IRQ_TYPE_LEVEL_LOW>;
++
++			iommus = <&iommu M4U_PORT_IMG_IPUO>,
++				 <&iommu M4U_PORT_IMG_IPU3O>,
++				 <&iommu M4U_PORT_IMG_IPUI>;
++
++			clocks = <&ipu_core0 CLK_IPU_CORE0_AXI>,
++				 <&ipu_core0 CLK_IPU_CORE0_IPU>,
++				 <&ipu_core0 CLK_IPU_CORE0_JTAG>;
++
++			clock-names = "axi", "ipu", "jtag";
++
++			power-domains = <&scpsys MT8183_POWER_DOMAIN_VPU_CORE0>;
++			status = "disabled";
++		};
++
+ 		ipu_core0: syscon@19180000 {
+ 			compatible = "mediatek,mt8183-ipu_core0", "syscon";
+ 			reg = <0 0x19180000 0 0x1000>;
+ 			#clock-cells = <1>;
+ 		};
  
-+config MTK_APU_JTAG
-+	bool "Enable support of JTAG"
-+	depends on MTK_APU
-+	help
-+	  Say y to enable support of JTAG.
-+	  By default, JTAG will remain disabled until it is enabled using
-+	  debugfs: remoteproc/remoteproc0/jtag. Write 1 to enable it and
-+	  0 to disable it.
++		apu1: apu@19200000 {
++			compatible = "mediatek,mt8183-apu";
++			reg = <0 0x19280000 0 0x14000>;
++			interrupts = <GIC_SPI 293 IRQ_TYPE_LEVEL_LOW>;
 +
- config OMAP_REMOTEPROC
- 	tristate "OMAP remoteproc support"
- 	depends on ARCH_OMAP4 || SOC_OMAP5 || SOC_DRA7XX
-diff --git a/drivers/remoteproc/mtk_apu.c b/drivers/remoteproc/mtk_apu.c
-index 6d2f577cfde5..07157fdc24ba 100644
---- a/drivers/remoteproc/mtk_apu.c
-+++ b/drivers/remoteproc/mtk_apu.c
-@@ -5,6 +5,7 @@
- 
- #include <linux/bitops.h>
- #include <linux/clk.h>
-+#include <linux/debugfs.h>
- #include <linux/delay.h>
- #include <linux/highmem.h>
- #include <linux/interrupt.h>
-@@ -14,6 +15,7 @@
- #include <linux/kernel.h>
- #include <linux/module.h>
- #include <linux/of_reserved_mem.h>
-+#include <linux/pinctrl/consumer.h>
- #include <linux/platform_device.h>
- #include <linux/remoteproc.h>
- 
-@@ -48,6 +50,11 @@
- #define CORE_DEFAULT1				(0x00000140)
- #define CORE_DEFAULT0_ARUSER_IDMA_USE_IOMMU	(0x10 << 0)
- #define CORE_DEFAULT0_AWUSER_IDMA_USE_IOMMU	(0x10 << 5)
-+#define CORE_DEFAULT2				(0x00000144)
-+#define CORE_DEFAULT2_DBG_EN			BIT(3)
-+#define CORE_DEFAULT2_NIDEN			BIT(2)
-+#define CORE_DEFAULT2_SPNIDEN			BIT(1)
-+#define CORE_DEFAULT2_SPIDEN			BIT(0)
- #define CORE_XTENSA_ALTRESETVEC			(0x000001F8)
- 
- struct mtk_apu_rproc {
-@@ -57,6 +64,13 @@ struct mtk_apu_rproc {
- 	void __iomem *base;
- 	int irq;
- 	struct clk_bulk_data clks[3];
++			iommus = <&iommu M4U_PORT_CAM_IPUO>,
++				 <&iommu M4U_PORT_CAM_IPU2O>,
++				 <&iommu M4U_PORT_CAM_IPU3O>,
++				 <&iommu M4U_PORT_CAM_IPUI>,
++				 <&iommu M4U_PORT_CAM_IPU2I>;
 +
-+#ifdef CONFIG_MTK_APU_JTAG
-+	struct pinctrl *pinctrl;
-+	struct pinctrl_state *pinctrl_jtag;
-+	bool jtag_enabled;
-+	struct mutex jtag_mutex;
-+#endif
- };
- 
- static int mtk_apu_rproc_prepare(struct rproc *rproc)
-@@ -166,6 +180,137 @@ static irqreturn_t handle_event(int irq, void *data)
- 	return IRQ_HANDLED;
- }
- 
-+#ifdef CONFIG_MTK_APU_JTAG
++			clocks = <&ipu_core0 CLK_IPU_CORE1_AXI>,
++				 <&ipu_core0 CLK_IPU_CORE1_IPU>,
++				 <&ipu_core0 CLK_IPU_CORE1_JTAG>;
 +
-+static int apu_enable_jtag(struct mtk_apu_rproc *apu_rproc)
-+{
-+	int ret = 0;
++			clock-names = "axi", "ipu", "jtag";
 +
-+	mutex_lock(&apu_rproc->jtag_mutex);
-+	if (apu_rproc->jtag_enabled) {
-+		ret = -EINVAL;
-+		goto err_mutex_unlock;
-+	}
++			power-domains = <&scpsys MT8183_POWER_DOMAIN_VPU_CORE1>;
++		};
 +
-+	writel(CORE_DEFAULT2_SPNIDEN | CORE_DEFAULT2_SPIDEN |
-+		CORE_DEFAULT2_NIDEN | CORE_DEFAULT2_DBG_EN,
-+		apu_rproc->base + CORE_DEFAULT2);
-+
-+	apu_rproc->jtag_enabled = 1;
-+
-+err_mutex_unlock:
-+	mutex_unlock(&apu_rproc->jtag_mutex);
-+
-+	return ret;
-+}
-+
-+static int apu_disable_jtag(struct mtk_apu_rproc *apu_rproc)
-+{
-+	int ret = 0;
-+
-+	mutex_lock(&apu_rproc->jtag_mutex);
-+	if (!apu_rproc->jtag_enabled) {
-+		ret = -EINVAL;
-+		goto err_mutex_unlock;
-+	}
-+
-+	writel(0, apu_rproc->base + CORE_DEFAULT2);
-+
-+	apu_rproc->jtag_enabled = 0;
-+
-+err_mutex_unlock:
-+	mutex_unlock(&apu_rproc->jtag_mutex);
-+
-+	return ret;
-+}
-+
-+static ssize_t rproc_jtag_read(struct file *filp, char __user *userbuf,
-+			       size_t count, loff_t *ppos)
-+{
-+	struct rproc *rproc = filp->private_data;
-+	struct mtk_apu_rproc *apu_rproc = (struct mtk_apu_rproc *)rproc->priv;
-+	char *buf = apu_rproc->jtag_enabled ? "enabled\n" : "disabled\n";
-+
-+	return simple_read_from_buffer(userbuf, count, ppos, buf, strlen(buf));
-+}
-+
-+static ssize_t rproc_jtag_write(struct file *filp, const char __user *user_buf,
-+				size_t count, loff_t *ppos)
-+{
-+	struct rproc *rproc = filp->private_data;
-+	struct mtk_apu_rproc *apu_rproc = (struct mtk_apu_rproc *)rproc->priv;
-+	char buf[10];
-+	int ret;
-+
-+	if (count < 1 || count > sizeof(buf))
-+		return -EINVAL;
-+
-+	ret = copy_from_user(buf, user_buf, count);
-+	if (ret)
-+		return -EFAULT;
-+
-+	/* remove end of line */
-+	if (buf[count - 1] == '\n')
-+		buf[count - 1] = '\0';
-+
-+	if (!strncmp(buf, "enabled", count))
-+		ret = apu_enable_jtag(apu_rproc);
-+	else if (!strncmp(buf, "disabled", count))
-+		ret = apu_disable_jtag(apu_rproc);
-+	else
-+		return -EINVAL;
-+
-+	return ret ? ret : count;
-+}
-+
-+static const struct file_operations rproc_jtag_ops = {
-+	.read = rproc_jtag_read,
-+	.write = rproc_jtag_write,
-+	.open = simple_open,
-+};
-+
-+static int apu_jtag_probe(struct mtk_apu_rproc *apu_rproc)
-+{
-+	int ret;
-+
-+	if (!apu_rproc->rproc->dbg_dir)
-+		return -ENODEV;
-+
-+	apu_rproc->pinctrl = devm_pinctrl_get(apu_rproc->dev);
-+	if (IS_ERR(apu_rproc->pinctrl)) {
-+		dev_warn(apu_rproc->dev, "Failed to find JTAG pinctrl\n");
-+		return PTR_ERR(apu_rproc->pinctrl);
-+	}
-+
-+	apu_rproc->pinctrl_jtag = pinctrl_lookup_state(apu_rproc->pinctrl,
-+						       "jtag");
-+	if (IS_ERR(apu_rproc->pinctrl_jtag))
-+		return PTR_ERR(apu_rproc->pinctrl_jtag);
-+
-+	ret = pinctrl_select_state(apu_rproc->pinctrl,
-+				   apu_rproc->pinctrl_jtag);
-+	if (ret < 0)
-+		return ret;
-+
-+	mutex_init(&apu_rproc->jtag_mutex);
-+
-+	debugfs_create_file("jtag", 0600, apu_rproc->rproc->dbg_dir,
-+			    apu_rproc->rproc, &rproc_jtag_ops);
-+
-+	return 0;
-+}
-+#else
-+static int apu_jtag_probe(struct mtk_apu_rproc *apu_rproc)
-+{
-+	return 0;
-+}
-+
-+static int apu_disable_jtag(struct mtk_apu_rproc *apu_rproc)
-+{
-+	return 0;
-+}
-+#endif /* CONFIG_MTK_APU_JTAG */
-+
- static int mtk_apu_rproc_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
-@@ -242,6 +387,10 @@ static int mtk_apu_rproc_probe(struct platform_device *pdev)
- 		goto free_mem;
- 	}
- 
-+	ret = apu_jtag_probe(apu_rproc);
-+	if (ret)
-+		dev_warn(dev, "Failed to configure jtag\n");
-+
- 	return 0;
- 
- free_mem:
-@@ -259,7 +408,7 @@ static int mtk_apu_rproc_remove(struct platform_device *pdev)
- 	struct device *dev = &pdev->dev;
- 
- 	disable_irq(apu_rproc->irq);
--
-+	apu_disable_jtag(apu_rproc);
- 	rproc_del(rproc);
- 	of_reserved_mem_device_release(dev);
- 	rproc_free(rproc);
+ 		ipu_core1: syscon@19280000 {
+ 			compatible = "mediatek,mt8183-ipu_core1", "syscon";
+ 			reg = <0 0x19280000 0 0x1000>;
 -- 
 2.26.2
 
