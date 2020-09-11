@@ -2,130 +2,161 @@ Return-Path: <SRS0=FKc4=CU=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.2 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5A09C433E2
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 11 Sep 2020 07:59:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A224CC433E2
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 11 Sep 2020 15:15:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7D680221E3
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 11 Sep 2020 07:59:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4F12220575
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 11 Sep 2020 15:15:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=st.com header.i=@st.com header.b="DqTcfhEO"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725786AbgIKH7V (ORCPT
+        id S1726214AbgIKPPS (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 11 Sep 2020 03:59:21 -0400
-Received: from mga07.intel.com ([134.134.136.100]:10020 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725780AbgIKH7U (ORCPT
+        Fri, 11 Sep 2020 11:15:18 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:50074 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726421AbgIKPM7 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 11 Sep 2020 03:59:20 -0400
-IronPort-SDR: Eot52ivqU66j5WiKoWJevrZIOrklfgn4EK7OzPVa0T3uq7II+Lzgsdpt4/yi+eXVet5qJqMKPT
- TCrVjg3MyhiA==
-X-IronPort-AV: E=McAfee;i="6000,8403,9740"; a="222913104"
-X-IronPort-AV: E=Sophos;i="5.76,414,1592895600"; 
-   d="scan'208";a="222913104"
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2020 00:59:18 -0700
-IronPort-SDR: iDT9vVAuH2W1PbzfD/zs+OjLyNdr4CigVukWNXDRllpKhMI7QnnLfYbitFQE61Jnlvi3krOJSk
- OlymXk/fwhSw==
-X-IronPort-AV: E=Sophos;i="5.76,414,1592895600"; 
-   d="scan'208";a="344563126"
-Received: from gliakhov-mobl2.ger.corp.intel.com (HELO ubuntu) ([10.252.38.203])
-  by orsmga007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2020 00:59:16 -0700
-Date:   Fri, 11 Sep 2020 09:59:12 +0200
-From:   Guennadi Liakhovetski <guennadi.liakhovetski@linux.intel.com>
-To:     Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc:     kvm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        sound-open-firmware@alsa-project.org,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Liam Girdwood <liam.r.girdwood@linux.intel.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
+        Fri, 11 Sep 2020 11:12:59 -0400
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 08BDlfdN016391;
+        Fri, 11 Sep 2020 15:50:04 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=STMicroelectronics;
+ bh=LedGIkihyb95sarwl6GH6FHkhiz/ZEZc+nrtI6/KHRQ=;
+ b=DqTcfhEOyT+mjya84EPGVrM1imjDeblcaBYwSTzOxQYWNd7Sxj+G2zkIvTMr27NXSkLH
+ YwCMK1oAw8clCxnrvtktuamiNqy3/2L5FGqPVJAKmXMtlLIAZkgL7Xb9lwNXt/zlwjj+
+ g/tXBi70Q0H/h5xkp10E1dsHKe9RbmMr4/IdRhqw+t7MhfiT3cbMIjPqJ3ATFTEH45l8
+ 8U1HEraZ7IV/4NAm8H2Pph2HvEftW9I5xblkFqbHCkuDZMdoIXPZV1JeKWL11M0eHx5i
+ AKn8VypoIsE50fhMd/ZeHzv7iv0OpJ0zhr4c1hWKq8Rbjx414URLPZsvqup0j/irA8Lf zg== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 33c1jfhyq1-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 11 Sep 2020 15:50:04 +0200
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id AA153100038;
+        Fri, 11 Sep 2020 15:50:02 +0200 (CEST)
+Received: from Webmail-eu.st.com (gpxdag3node4.st.com [10.75.127.71])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 8D99F2AD9FD;
+        Fri, 11 Sep 2020 15:50:02 +0200 (CEST)
+Received: from lmecxl0889.tpe.st.com (10.75.127.44) by GPXDAG3NODE4.st.com
+ (10.75.127.71) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 11 Sep
+ 2020 15:50:00 +0200
+Subject: Re: [PATCH 2/3] dt-bindings: remoteproc: stm32_rproc: update for
+ firmware synchronization
+To:     Rob Herring <robh@kernel.org>
+CC:     Alexandre TORGUE <alexandre.torgue@st.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-stm32@st-md-mailman.stormreply.com" 
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Fabien DESSENNE <fabien.dessenne@st.com>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
         Ohad Ben-Cohen <ohad@wizery.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Vincent Whitchurch <vincent.whitchurch@axis.com>
-Subject: Re: [PATCH v5 1/4] vhost: convert VHOST_VSOCK_SET_RUNNING to a
- generic ioctl
-Message-ID: <20200911075912.GB26801@ubuntu>
-References: <20200826174636.23873-1-guennadi.liakhovetski@linux.intel.com>
- <20200826174636.23873-2-guennadi.liakhovetski@linux.intel.com>
- <20200909224214.GB562265@xps15>
- <20200910062144.GA16802@ubuntu>
- <20200910164643.GA579940@xps15>
+        Bjorn Andersson <bjorn.andersson@linaro.org>
+References: <20200827072101.26588-1-arnaud.pouliquen@st.com>
+ <20200827072101.26588-3-arnaud.pouliquen@st.com>
+ <20200909202251.GA2975092@bogus>
+From:   Arnaud POULIQUEN <arnaud.pouliquen@st.com>
+Message-ID: <c9d45617-6de9-7e49-0c82-151e67fff61d@st.com>
+Date:   Fri, 11 Sep 2020 15:49:59 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200910164643.GA579940@xps15>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20200909202251.GA2975092@bogus>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.75.127.44]
+X-ClientProxiedBy: SFHDAG4NODE2.st.com (10.75.127.11) To GPXDAG3NODE4.st.com
+ (10.75.127.71)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.235,18.0.687
+ definitions=2020-09-11_05:2020-09-10,2020-09-11 signatures=0
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Thu, Sep 10, 2020 at 10:46:43AM -0600, Mathieu Poirier wrote:
-> On Thu, Sep 10, 2020 at 09:15:13AM +0200, Guennadi Liakhovetski wrote:
-> > Hi Mathieu,
-> > 
-> > On Wed, Sep 09, 2020 at 04:42:14PM -0600, Mathieu Poirier wrote:
-> > > On Wed, Aug 26, 2020 at 07:46:33PM +0200, Guennadi Liakhovetski wrote:
-> > > > VHOST_VSOCK_SET_RUNNING is used by the vhost vsock driver to perform
-> > > > crucial VirtQueue initialisation, like assigning .private fields and
-> > > > calling vhost_vq_init_access(), and clean up. However, this ioctl is
-> > > > actually extremely useful for any vhost driver, that doesn't have a
-> > > > side channel to inform it of a status change, e.g. upon a guest
-> > > > reboot. This patch makes that ioctl generic, while preserving its
-> > > > numeric value and also keeping the original alias.
-> > > > 
-> > > > Signed-off-by: Guennadi Liakhovetski <guennadi.liakhovetski@linux.intel.com>
-> > > > ---
-> > > >  include/uapi/linux/vhost.h | 4 +++-
-> > > >  1 file changed, 3 insertions(+), 1 deletion(-)
-> > > > 
-> > > > diff --git a/include/uapi/linux/vhost.h b/include/uapi/linux/vhost.h
-> > > > index 75232185324a..11a4948b6216 100644
-> > > > --- a/include/uapi/linux/vhost.h
-> > > > +++ b/include/uapi/linux/vhost.h
-> > > > @@ -97,6 +97,8 @@
-> > > >  #define VHOST_SET_BACKEND_FEATURES _IOW(VHOST_VIRTIO, 0x25, __u64)
-> > > >  #define VHOST_GET_BACKEND_FEATURES _IOR(VHOST_VIRTIO, 0x26, __u64)
-> > > >  
-> > > > +#define VHOST_SET_RUNNING _IOW(VHOST_VIRTIO, 0x61, int)
-> > > > +
-> > > 
-> > > I don't see it used in the next patches and as such should be part of another
-> > > series.
-> > 
-> > It isn't used in the next patches, it is used in this patch - see below.
-> >
+Hi Rob,
+
+On 9/9/20 10:22 PM, Rob Herring wrote:
+> On Thu, Aug 27, 2020 at 09:21:00AM +0200, Arnaud Pouliquen wrote:
+>> Add new properties description used to attach to a pre-loaded
+>> firmware according to the commit 9276536f455b3
+>> ("remoteproc: stm32: Parse syscon that will manage M4 synchronisation")
+>> which updates the driver part.
+>>
+>> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@st.com>
+>> ---
+>>  .../bindings/remoteproc/st,stm32-rproc.yaml   | 19 +++++++++++++++++++
+>>  1 file changed, 19 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/remoteproc/st,stm32-rproc.yaml b/Documentation/devicetree/bindings/remoteproc/st,stm32-rproc.yaml
+>> index 4ffa25268fcc..e50957d86b1c 100644
+>> --- a/Documentation/devicetree/bindings/remoteproc/st,stm32-rproc.yaml
+>> +++ b/Documentation/devicetree/bindings/remoteproc/st,stm32-rproc.yaml
+>> @@ -96,6 +96,25 @@ properties:
+>>          3rd cell: register bitmask for the deep sleep bit
+>>      maxItems: 1
+>>  
+>> +  st,syscfg-m4-state:
+>> +    $ref: "/schemas/types.yaml#/definitions/phandle-array"
+>> +    description: |
+>> +      Reference to the tamp register which exposes the Cortex-M4 state.
+>> +        1st cell: phandle to syscon block
+>> +        2nd cell: register offset containing the Cortex-M4 state
+>> +        3rd cell: register bitmask for the Cortex-M4 state
+>> +    maxItems: 1
+>> +
+>> +  st,syscfg-rsc-tbl:
+>> +    $ref: "/schemas/types.yaml#/definitions/phandle-array"
+>> +    description: |
+>> +      Reference to the tamp register which references the Cortex-M4
+>> +      resource table address.
+>> +        1st cell: phandle to syscon block
+>> +        2nd cell: register offset containing the resource table address
+>> +        3rd cell: register bitmask for the resource table address
+>> +    maxItems: 1
 > 
-> Right, but why is this part of this set?  What does it bring?  It should be part
-> of a patchset where "VHOST_SET_RUNNING" is used.
+> Why can't these be implied? You can lookup the tamp syscon by 
+> compatible.
 
-Ok, I can remove this patch from this series and make it a part of the series, 
-containing [1] "vhost: add an SOF Audio DSP driver"
+I just made a copy/past of the  "st,syscfg-pdds" syscon description available in the same file [1]
+  
+I can provide a shorter descriptions, something like this:
 
-Thanks
-Guennadi
+   description: |
+     Reference to the tamp syscon register and bitmask which contains the Cortex-M4
+      resource table address.
+   maxItems: 1
 
-[1] https://www.spinics.net/lists/linux-virtualization/msg43309.html
+Would this meet your expectations? If yes, I will also add in next version an extra patch to fix [1]
 
-> > > >  /* VHOST_NET specific defines */
-> > > >  
-> > > >  /* Attach virtio net ring to a raw socket, or tap device.
-> > > > @@ -118,7 +120,7 @@
-> > > >  /* VHOST_VSOCK specific defines */
-> > > >  
-> > > >  #define VHOST_VSOCK_SET_GUEST_CID	_IOW(VHOST_VIRTIO, 0x60, __u64)
-> > > > -#define VHOST_VSOCK_SET_RUNNING		_IOW(VHOST_VIRTIO, 0x61, int)
-> > > > +#define VHOST_VSOCK_SET_RUNNING		VHOST_SET_RUNNING
-> > > >  
-> > > >  /* VHOST_VDPA specific defines */
-> > > >  
-> > > > -- 
-> > > > 2.28.0
-> > > > 
+[1] https://elixir.bootlin.com/linux/v5.9-rc3/source/Documentation/devicetree/bindings/remoteproc/st,stm32-rproc.yaml#L90
+
+> 
+> Please add these to the example.
+
+I will extend the example with these properties
+
+Thanks,
+Arnaud
+
+> 
+>> +
+>>    st,auto-boot:
+>>      $ref: /schemas/types.yaml#/definitions/flag
+>>      description:
+>> -- 
+>> 2.17.1
+>>
