@@ -2,242 +2,130 @@ Return-Path: <SRS0=FKc4=CU=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.2 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8387C433E2
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 11 Sep 2020 00:32:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5A09C433E2
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 11 Sep 2020 07:59:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 64B63214F1
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 11 Sep 2020 00:32:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1599784329;
-	bh=UiJ+tjUwdN6I83bQ9lMpiASXNuSfegaRd4S0aUWadTU=;
-	h=Date:From:To:cc:Subject:In-Reply-To:References:List-ID:From;
-	b=0wqCpZxB4h6Xvd9N+TiS0ZIcJz8gNDkq5xtwlAlyCMC9ZUJVyvCZ4hGl0bQPEbn4Y
-	 nzkkfN9RU++2CRHPLmpH/1Xz2UF4dGBaNYEbIsyjSmZ3QjDxg/GgQINPLN3tOPini2
-	 OQTGxpVHZTw5m3BvRLkMvtFEA9Ke8uZnJ2GddVbU=
+	by mail.kernel.org (Postfix) with ESMTP id 7D680221E3
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 11 Sep 2020 07:59:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725774AbgIKAcF (ORCPT
+        id S1725786AbgIKH7V (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 10 Sep 2020 20:32:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35016 "EHLO mail.kernel.org"
+        Fri, 11 Sep 2020 03:59:21 -0400
+Received: from mga07.intel.com ([134.134.136.100]:10020 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725290AbgIKAcF (ORCPT
+        id S1725780AbgIKH7U (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 10 Sep 2020 20:32:05 -0400
-Received: from localhost (c-67-164-102-47.hsd1.ca.comcast.net [67.164.102.47])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B8D98208FE;
-        Fri, 11 Sep 2020 00:32:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1599784324;
-        bh=UiJ+tjUwdN6I83bQ9lMpiASXNuSfegaRd4S0aUWadTU=;
-        h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-        b=Eu+3wmxKLdizAwL0WtecMunAz7AMBTRx0ZYAsLft15R+arAc7TxeCxdThSIFanSM8
-         T2X8/ijD01PUwmgb9eyNyA9v0csJNtrEuFJBrat5ofOKaKNf61vRT+qD+mXQIKbfec
-         xVHBtdz4/AsKGZAkyBQeA00hNWXWVmE/dTqa11mA=
-Date:   Thu, 10 Sep 2020 17:32:02 -0700 (PDT)
-From:   Stefano Stabellini <sstabellini@kernel.org>
-X-X-Sender: sstabellini@sstabellini-ThinkPad-T480s
-To:     Ben Levinsky <ben.levinsky@xilinx.com>
-cc:     punit1.agrawal@toshiba.co.jp, stefanos@xilinx.com,
-        michals@xilinx.com, devicetree@vger.kernel.org,
-        emooring@xilinx.com, michael.auchter@ni.com,
-        mathieu.poirier@linaro.org, linux-remoteproc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, jliang@xilinx.com,
-        robh+dt@kernel.org, Jason Wu <j.wu@xilinx.com>,
-        Michal Simek <michal.simek@xilinx.com>,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v13 4/5] dt-bindings: remoteproc: Add documentation for
- ZynqMP R5 rproc bindings
-In-Reply-To: <20200904143209.31235-5-ben.levinsky@xilinx.com>
-Message-ID: <alpine.DEB.2.21.2009101725520.28991@sstabellini-ThinkPad-T480s>
-References: <20200904143209.31235-1-ben.levinsky@xilinx.com> <20200904143209.31235-5-ben.levinsky@xilinx.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Fri, 11 Sep 2020 03:59:20 -0400
+IronPort-SDR: Eot52ivqU66j5WiKoWJevrZIOrklfgn4EK7OzPVa0T3uq7II+Lzgsdpt4/yi+eXVet5qJqMKPT
+ TCrVjg3MyhiA==
+X-IronPort-AV: E=McAfee;i="6000,8403,9740"; a="222913104"
+X-IronPort-AV: E=Sophos;i="5.76,414,1592895600"; 
+   d="scan'208";a="222913104"
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2020 00:59:18 -0700
+IronPort-SDR: iDT9vVAuH2W1PbzfD/zs+OjLyNdr4CigVukWNXDRllpKhMI7QnnLfYbitFQE61Jnlvi3krOJSk
+ OlymXk/fwhSw==
+X-IronPort-AV: E=Sophos;i="5.76,414,1592895600"; 
+   d="scan'208";a="344563126"
+Received: from gliakhov-mobl2.ger.corp.intel.com (HELO ubuntu) ([10.252.38.203])
+  by orsmga007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2020 00:59:16 -0700
+Date:   Fri, 11 Sep 2020 09:59:12 +0200
+From:   Guennadi Liakhovetski <guennadi.liakhovetski@linux.intel.com>
+To:     Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc:     kvm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        sound-open-firmware@alsa-project.org,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Liam Girdwood <liam.r.girdwood@linux.intel.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Ohad Ben-Cohen <ohad@wizery.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Vincent Whitchurch <vincent.whitchurch@axis.com>
+Subject: Re: [PATCH v5 1/4] vhost: convert VHOST_VSOCK_SET_RUNNING to a
+ generic ioctl
+Message-ID: <20200911075912.GB26801@ubuntu>
+References: <20200826174636.23873-1-guennadi.liakhovetski@linux.intel.com>
+ <20200826174636.23873-2-guennadi.liakhovetski@linux.intel.com>
+ <20200909224214.GB562265@xps15>
+ <20200910062144.GA16802@ubuntu>
+ <20200910164643.GA579940@xps15>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200910164643.GA579940@xps15>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Fri, 4 Sep 2020, Ben Levinsky wrote:
-> Add binding for ZynqMP R5 OpenAMP.
+On Thu, Sep 10, 2020 at 10:46:43AM -0600, Mathieu Poirier wrote:
+> On Thu, Sep 10, 2020 at 09:15:13AM +0200, Guennadi Liakhovetski wrote:
+> > Hi Mathieu,
+> > 
+> > On Wed, Sep 09, 2020 at 04:42:14PM -0600, Mathieu Poirier wrote:
+> > > On Wed, Aug 26, 2020 at 07:46:33PM +0200, Guennadi Liakhovetski wrote:
+> > > > VHOST_VSOCK_SET_RUNNING is used by the vhost vsock driver to perform
+> > > > crucial VirtQueue initialisation, like assigning .private fields and
+> > > > calling vhost_vq_init_access(), and clean up. However, this ioctl is
+> > > > actually extremely useful for any vhost driver, that doesn't have a
+> > > > side channel to inform it of a status change, e.g. upon a guest
+> > > > reboot. This patch makes that ioctl generic, while preserving its
+> > > > numeric value and also keeping the original alias.
+> > > > 
+> > > > Signed-off-by: Guennadi Liakhovetski <guennadi.liakhovetski@linux.intel.com>
+> > > > ---
+> > > >  include/uapi/linux/vhost.h | 4 +++-
+> > > >  1 file changed, 3 insertions(+), 1 deletion(-)
+> > > > 
+> > > > diff --git a/include/uapi/linux/vhost.h b/include/uapi/linux/vhost.h
+> > > > index 75232185324a..11a4948b6216 100644
+> > > > --- a/include/uapi/linux/vhost.h
+> > > > +++ b/include/uapi/linux/vhost.h
+> > > > @@ -97,6 +97,8 @@
+> > > >  #define VHOST_SET_BACKEND_FEATURES _IOW(VHOST_VIRTIO, 0x25, __u64)
+> > > >  #define VHOST_GET_BACKEND_FEATURES _IOR(VHOST_VIRTIO, 0x26, __u64)
+> > > >  
+> > > > +#define VHOST_SET_RUNNING _IOW(VHOST_VIRTIO, 0x61, int)
+> > > > +
+> > > 
+> > > I don't see it used in the next patches and as such should be part of another
+> > > series.
+> > 
+> > It isn't used in the next patches, it is used in this patch - see below.
+> >
 > 
-> Represent the RPU domain resources in one device node. Each RPU
-> processor is a subnode of the top RPU domain node.
-> 
-> Signed-off-by: Jason Wu <j.wu@xilinx.com>
-> Signed-off-by: Wendy Liang <jliang@xilinx.com>
-> Signed-off-by: Michal Simek <michal.simek@xilinx.com>
-> 
-> Signed-off-by: Ben Levinsky <ben.levinsky@xilinx.com>
-> ---
-> v3:
-> - update zynqmp_r5 yaml parsing to not raise warnings for extra
->   information in children of R5 node. The warning "node has a unit
->   name, but no reg or ranges property" will still be raised though 
->   as this particular node is needed to describe the
->   '#address-cells' and '#size-cells' information.
-> v4::
-> - remove warning '/example-0/rpu@ff9a0000/r5@0: 
->   node has a unit name, but no reg or ranges property'
->   by adding reg to r5 node.
-> v5:
-> - update device tree sample and yaml parsing to not raise any warnings
-> - description for memory-region in yaml parsing
-> - compatible string in yaml parsing for TCM
-> v6:
-> - remove coupling TCM nodes with remoteproc 
-> - remove mailbox as it is optional not needed
-> v7:
-> - change lockstep-mode to xlnx,cluster-mode
-> v9:
-> - show example IPC nodes and tcm bank nodes
-> v11:
-> - add property meta-memory-regions to illustrate link
->   between r5 and TCM banks
-> - update so no warnings from 'make dt_binding_check'
-> ---
->  .../xilinx,zynqmp-r5-remoteproc.yaml          | 123 ++++++++++++++++++
->  1 file changed, 123 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/remoteproc/xilinx,zynqmp-r5-remoteproc.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/remoteproc/xilinx,zynqmp-r5-remoteproc.yaml b/Documentation/devicetree/bindings/remoteproc/xilinx,zynqmp-r5-remoteproc.yaml
-> new file mode 100644
-> index 000000000000..148374c61908
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/remoteproc/xilinx,zynqmp-r5-remoteproc.yaml
-> @@ -0,0 +1,123 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: "http://devicetree.org/schemas/remoteproc/xilinx,zynqmp-r5-remoteproc.yaml#"
-> +$schema: "http://devicetree.org/meta-schemas/core.yaml#"
-> +
-> +title: Xilinx R5 remote processor controller bindings
-> +
-> +description:
-> +  This document defines the binding for the remoteproc component that loads and
-> +  boots firmwares on the Xilinx Zynqmp and Versal family chipset.
-> +
-> +  Note that the Linux has global addressing view of the R5-related memory (TCM)
-> +  so the absolute address ranges are provided in TCM reg's.
-> +maintainers:
-> +  - Ed Mooring <ed.mooring@xilinx.com>
-> +  - Ben Levinsky <ben.levinsky@xilinx.com>
-> +
-> +properties:
-> +  compatible:
-> +    const: "xlnx,zynqmp-r5-remoteproc-1.0"
-> +
-> +  lockstep-mode:
-> +    description:
-> +      R5 core configuration (split is 0 or lock-step and 1)
-> +    maxItems: 1
-> +
-> +  interrupts:
-> +    description:
-> +      Interrupt mapping for remoteproc IPI. It is required if the
-> +      user uses the remoteproc driver with the RPMsg kernel driver.
-> +    maxItems: 6
-> +
-> +  memory-region:
-> +    description:
-> +      collection of memory carveouts used for elf-loading and inter-processor
-> +      communication.
-> +    maxItems: 4
-> +    minItems: 4
-> +  meta-memory-regions:
-> +    description:
-> +      collection of memories that are not present in the top level memory
-> +      nodes' mapping. For example, R5s' TCM banks. These banks are needed
-> +      for R5 firmware meta data such as the R5 firmware's heap and stack
-> +  pnode-id:
-> +    maxItems: 1
-> +  mboxes:
-> +    maxItems: 2
-> +  mbox-names:
-> +    maxItems: 2
-> +
-> +examples:
-> +  - |
-> +     reserved-memory {
-> +          #address-cells = <1>;
-> +          #size-cells = <1>;
-> +          ranges;
-> +          elf_load: rproc@3ed000000 {
-> +               no-map;
-> +               reg = <0x3ed00000 0x40000>;
-> +          };
-> +     };
-> +     rpu {
-> +          compatible = "xlnx,zynqmp-r5-remoteproc-1.0";
-> +          #address-cells = <1>;
-> +          #size-cells = <1>;
-> +          ranges;
-> +          lockstep-mode = <0>;
-> +          r5_0 {
-> +               ranges;
-> +               #address-cells = <1>;
-> +               #size-cells = <1>;
-> +               memory-region = <&elf_load>;
-> +               meta-memory-regions = <0x40 0x41>;
-> +               pnode-id = <0x7>;
+> Right, but why is this part of this set?  What does it bring?  It should be part
+> of a patchset where "VHOST_SET_RUNNING" is used.
 
-I can see you are expecting a link from this node to the tcm nodes in
-the driver, but I can't find such a link in this example.
+Ok, I can remove this patch from this series and make it a part of the series, 
+containing [1] "vhost: add an SOF Audio DSP driver"
 
+Thanks
+Guennadi
 
-> +          };
-> +     };
-> +
-> +     /*
-> +      * Below nodes are required if using TCM to load R5 firmware
-> +      * if not, then either do not provide nodes are label as disabled in
-> +      * status property
-> +      */
-> +     tcm_0a@ffe00000 {
-> +         reg = <0xffe00000 0x10000>;
-> +         pnode-id = <0xf>;
-> +         no-map;
-> +         status = "okay";
-> +         phandle = <0x40>;
-> +         compatible = "xlnx,tcm";
-> +     };
-> +     tcm_1a@ffe20000 {
-> +         reg = <0xffe20000 0x10000>;
-> +         pnode-id = <0x10>;
-> +         no-map;
-> +         status = "okay";
-> +         compatible = "xlnx,tcm";
-> +         phandle = <0x41>;
-> +     };
-> +
-> +     /*
-> +      * Below nodes are required for IPC, as Xilinx Kernel
-> +      * can potentially have other applications that use CMA
-> +      * and conflict from hardware design. With that in mind,
-> +      * explicitly state the address spaces for the IPC remoteproc
-> +      * mechanisms.
-> +      *
-> +      * If IPC not required and only elf-loading then these are not needed.
-> +      */
-> +     rpu0vdev0vring0: rpu0vdev0vring0@3ed40000 {
-> +         no-map;
-> +         reg = <0x3ed40000 0x4000>;
-> +     };
-> +     rpu0vdev0vring1: rpu0vdev0vring1@3ed44000 {
-> +         no-map;
-> +         reg = <0x3ed44000 0x4000>;
-> +     };
-> +     rpu0vdev0buffer: rpu0vdev0buffer@3ed48000 {
-> +         no-map;
-> +         reg = <0x3ed48000 0x100000>;
-> +     };
+[1] https://www.spinics.net/lists/linux-virtualization/msg43309.html
 
-Shouldn't they be under reserved-memory?
+> > > >  /* VHOST_NET specific defines */
+> > > >  
+> > > >  /* Attach virtio net ring to a raw socket, or tap device.
+> > > > @@ -118,7 +120,7 @@
+> > > >  /* VHOST_VSOCK specific defines */
+> > > >  
+> > > >  #define VHOST_VSOCK_SET_GUEST_CID	_IOW(VHOST_VIRTIO, 0x60, __u64)
+> > > > -#define VHOST_VSOCK_SET_RUNNING		_IOW(VHOST_VIRTIO, 0x61, int)
+> > > > +#define VHOST_VSOCK_SET_RUNNING		VHOST_SET_RUNNING
+> > > >  
+> > > >  /* VHOST_VDPA specific defines */
+> > > >  
+> > > > -- 
+> > > > 2.28.0
+> > > > 
