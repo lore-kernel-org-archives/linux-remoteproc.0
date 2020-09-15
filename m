@@ -2,74 +2,106 @@ Return-Path: <SRS0=rFSt=CY=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 379E6C433E2
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 15 Sep 2020 05:00:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80B5EC433E2
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 15 Sep 2020 05:41:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F3A41206E6
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 15 Sep 2020 05:00:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1600146015;
-	bh=dpfeGhhw8E/9dZS0MvWwuL5m52az18vuwqaiWQSCAGI=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:List-ID:From;
-	b=C2ZPxZXfb09Zwb1lf2kfWc8t/RJSHmR8O0v1um9raF6X8JmDoK0g4ro5iiDu4dqrv
-	 z34AWfZN8fwJt9A4pMW8uVISb0IYp/GLy5hZZdrS4LzrIZXBIV+n2WK7gFuVx5UH6t
-	 ViY3JkP3mf2LjtonsENKPDB1WaRVfxNTDKRs5fj8=
+	by mail.kernel.org (Postfix) with ESMTP id 3511A20829
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 15 Sep 2020 05:41:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726155AbgIOFAN (ORCPT
+        id S1726046AbgIOFl3 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 15 Sep 2020 01:00:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51108 "EHLO mail.kernel.org"
+        Tue, 15 Sep 2020 01:41:29 -0400
+Received: from verein.lst.de ([213.95.11.211]:46357 "EHLO verein.lst.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726156AbgIOFAI (ORCPT
+        id S1726089AbgIOFl2 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 15 Sep 2020 01:00:08 -0400
-Content-Type: text/plain; charset="utf-8"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1600146008;
-        bh=dpfeGhhw8E/9dZS0MvWwuL5m52az18vuwqaiWQSCAGI=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=Cd9pBZhZZoRiWx25Gq4MrCK2DY0s0nOQovpaQK224oB1MLUO9NkSev7Kg4fru4JDd
-         vmvWmllYBdidGMYeHuyd7TF06B+asPofd9+m1a2Wu4NXAdQyKvisBrJNwo9IvaAGXm
-         IWQ6Yrouw3qKVkKrG5OpXtKhpcfGcn8fa7fA+iRw=
+        Tue, 15 Sep 2020 01:41:28 -0400
+Received: by verein.lst.de (Postfix, from userid 2407)
+        id BC6A26736F; Tue, 15 Sep 2020 07:41:22 +0200 (CEST)
+Date:   Tue, 15 Sep 2020 07:41:22 +0200
+From:   Christoph Hellwig <hch@lst.de>
+To:     Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc:     Christoph Hellwig <hch@lst.de>, iommu@lists.linux-foundation.org,
+        Russell King <linux@armlinux.org.uk>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jim Quinlan <james.quinlan@broadcom.com>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Ohad Ben-Cohen <ohad@wizery.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        linux-remoteproc@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-sh@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-acpi@vger.kernel.org, devicetree@vger.kernel.org,
+        arnaud.pouliquen@st.com, loic.pallardy.st.com@lst.de
+Subject: Re: [PATCH 6/6] dma-mapping: introduce DMA range map, supplanting
+ dma_pfn_offset
+Message-ID: <20200915054122.GA18079@lst.de>
+References: <20200914073343.1579578-1-hch@lst.de> <20200914073343.1579578-7-hch@lst.de> <20200914230147.GA3251212@xps15>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] hwspinlock: sprd: Remove redundant header files
-From:   patchwork-bot+linux-remoteproc@kernel.org
-Message-Id: <160014600821.14763.5327215955557784659.git-patchwork-notify@kernel.org>
-Date:   Tue, 15 Sep 2020 05:00:08 +0000
-References: <1590991552-93643-1-git-send-email-baolin.wang@linux.alibaba.com>
-In-Reply-To: <1590991552-93643-1-git-send-email-baolin.wang@linux.alibaba.com>
-To:     Baolin Wang <baolin.wang@linux.alibaba.com>
-Cc:     linux-remoteproc@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200914230147.GA3251212@xps15>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hello:
+On Mon, Sep 14, 2020 at 05:01:47PM -0600, Mathieu Poirier wrote:
 
-This patch was applied to andersson/remoteproc.git (refs/heads/for-next).
+[700 lines of the fullquote deleted..]
 
-On Mon,  1 Jun 2020 14:05:52 +0800 you wrote:
-> Remove redundant header files.
+> > +	for (r = map; r->size; r++)
+> > +		num_ranges++;
+> > +
+> > +	new_map = kmemdup(map, array_size(num_ranges + 1, sizeof(*map)),
+> > +			  GFP_KERNEL);
+> > +	if (!new_map)
+> > +		return -ENOMEM;
+> > +	to->dma_range_map = new_map;
+> > +	return 0;
+> > +}
+> > +
 > 
-> Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
-> ---
->  drivers/hwspinlock/sprd_hwspinlock.c | 2 --
->  1 file changed, 2 deletions(-)
+> This patch seemed Ok to me but it broke the stm32 remoteproc implementation.  When
+> I tested things out function dma_coerce_mask_and_cohenrent() returns -5 and the
+> rest of the initialisation fails.  I isolated things to function dma_to_pfn()
+> [2].  In the original implementation __bus_to_pfn() returns 0xfffff and
+> dev->dma_pfn_offset is equal to 0x38000.  As such the function returns 0x137fff
+> and dma_supported() a non-zero value[3].
+> 
+> With this set function dma_to_pfn() received a face lift.  Function
+> __bus_to_pfn() still returns 0xfffff but translate_dma_to_phys() returns 0,
+> which forces dma_supported() to also return 0 and that is where the -5 (-EIO)
+> comes from.
+> 
+> Taking a futher look at translate_dma_to_phy(), @dma_addr never falls within the
+> bus_dma_region ranges and returns 0.
+> 
+> I'm suspecting an initialisation problem and if it occurred here, it will
+> likely show up elsewhere.
 
+Can you try this incremental patch?
 
-Here is a summary with links:
-  - hwspinlock: sprd: Remove redundant header files
-    https://git.kernel.org/andersson/remoteproc/c/870f1b23fa8e3defc985f6ee531834c548e4c30e
-
-You are awesome, thank you!
-
--- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/pwbot
+diff --git a/include/linux/dma-direct.h b/include/linux/dma-direct.h
+index 088c97181ab146..c6b21acba7a459 100644
+--- a/include/linux/dma-direct.h
++++ b/include/linux/dma-direct.h
+@@ -46,7 +46,7 @@ static inline phys_addr_t translate_dma_to_phys(struct device *dev,
+ 		if (dma_addr >= m->dma_start && dma_addr - m->dma_start < m->size)
+ 			return (phys_addr_t)dma_addr + m->offset;
+ 
+-	return 0;
++	return (phys_addr_t)-1;
+ }
+ 
+ #ifdef CONFIG_ARCH_HAS_PHYS_TO_DMA
