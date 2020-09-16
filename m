@@ -7,44 +7,45 @@ X-Spam-Status: No, score=-12.5 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87736C2BB84
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 16 Sep 2020 19:04:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DCDFC2BB84
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 16 Sep 2020 19:04:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2CC91206B2
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 16 Sep 2020 19:04:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 36987206DB
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 16 Sep 2020 19:04:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gerhold.net header.i=@gerhold.net header.b="gPzf3js/"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gerhold.net header.i=@gerhold.net header.b="LBpMMN11"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727472AbgIPTD6 (ORCPT
+        id S1727672AbgIPTD7 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 16 Sep 2020 15:03:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35678 "EHLO
+        Wed, 16 Sep 2020 15:03:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35680 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727407AbgIPRsG (ORCPT
+        with ESMTP id S1727468AbgIPRsG (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
         Wed, 16 Sep 2020 13:48:06 -0400
-Received: from mo6-p02-ob.smtp.rzone.de (mo6-p02-ob.smtp.rzone.de [IPv6:2a01:238:20a:202:5302::11])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C766C061A2B;
-        Wed, 16 Sep 2020 04:14:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1600254283;
+X-Greylist: delayed 625 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Wed, 16 Sep 2020 04:14:26 PDT
+Received: from mo6-p02-ob.smtp.rzone.de (mo6-p02-ob.smtp.rzone.de [IPv6:2a01:238:20a:202:5302::2])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 69643C0611BD;
+        Wed, 16 Sep 2020 04:14:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1600254260;
         s=strato-dkim-0002; d=gerhold.net;
         h=References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
         X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
-        bh=TFNXvKJwdtFzCefcgMtOvafQoeaSFyYS/u0KKD5oVW8=;
-        b=gPzf3js/HWVP5uFH/poWB0INhXvEnj87wp526vurWlxAnhwDpUl85re7xFY6QflPR8
-        J1Gp15d6gpsX2HOKAMsg2X2WaZqLoybYIm8zZVeNnnDvISw4a9Y4AzcLdP0Zw6OjjgKj
-        e1Kc54fsCsd/NdXbkLODNKhfdyfzDlre0Con7GVzwGq2VwsnAqRnU3jfvegzsqdkxPwC
-        XX+hUkdFbbGltaZ1TlfyDBmHO0dpbHtz9VbjSi8i0OQ+uzMXJART2ATh2E/yaVNU/34F
-        IN15OIKq8MoUdEN+P/EjjWPiG+yw/EN/6ZM4w65qg8I+3gJY2A0NRiQR+Sxz6cgeG9jy
-        riug==
+        bh=jiyYMYZZNIoZ7veBFmVpfgQHbhhTN+QDRt6ZYIRb/ZI=;
+        b=LBpMMN1198j+Utnu6y7plHoZ4aBh94yChIZh8LR9kAIH8UAZiJV+2uM6jFoiV9ivV1
+        S+O0nJwpwNqOWIpqF3eWc1krI73NiRzsJGKLDrZ1kQYCWAGj4xx1QhYPNZYfgXalsu8W
+        4oCLQDyLz3YShizg8RI4YN6bTzrQWXo11UEl7hxypXrI0KXfJmqTip3T9aQq/P51C9Ca
+        NpnYuZx9triBsNBQkx40UycgWSgvovTbqnlxlVaOayJlHDLJlHNhq5JUaVRRevSp8e23
+        ALgdHGloFbifrviwPDARe+HT3X1JK1S4zrUsFJC6ODBFiy8xdA4BROnqW4odnMfu8CP0
+        qSew==
 X-RZG-AUTH: ":P3gBZUipdd93FF5ZZvYFPugejmSTVR2nRPhVORvLd4SsytBXS7IYBkLahKxB4W6Nahc="
 X-RZG-CLASS-ID: mo00
 Received: from localhost.localdomain
         by smtp.strato.de (RZmta 46.10.7 DYNA|AUTH)
-        with ESMTPSA id g0b6c1w8GAfpzlQ
+        with ESMTPSA id g0b6c1w8GAfrzlU
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
         (Client did not present a certificate);
-        Wed, 16 Sep 2020 12:41:51 +0200 (CEST)
+        Wed, 16 Sep 2020 12:41:53 +0200 (CEST)
 From:   Stephan Gerhold <stephan@gerhold.net>
 To:     Bjorn Andersson <bjorn.andersson@linaro.org>
 Cc:     Andy Gross <agross@kernel.org>, Rob Herring <robh+dt@kernel.org>,
@@ -54,9 +55,9 @@ Cc:     Andy Gross <agross@kernel.org>, Rob Herring <robh+dt@kernel.org>,
         linux-remoteproc@vger.kernel.org,
         ~postmarketos/upstreaming@lists.sr.ht,
         Stephan Gerhold <stephan@gerhold.net>
-Subject: [PATCH 03/10] soc: qcom: rpmpd: Add MSM8916 power domains
-Date:   Wed, 16 Sep 2020 12:41:28 +0200
-Message-Id: <20200916104135.25085-4-stephan@gerhold.net>
+Subject: [PATCH 07/10] dt-bindings: remoteproc: qcom,wcnss: Deprecate regulators for PDs
+Date:   Wed, 16 Sep 2020 12:41:32 +0200
+Message-Id: <20200916104135.25085-8-stephan@gerhold.net>
 X-Mailer: git-send-email 2.28.0
 In-Reply-To: <20200916104135.25085-1-stephan@gerhold.net>
 References: <20200916104135.25085-1-stephan@gerhold.net>
@@ -67,53 +68,64 @@ Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-MSM8916 has two RPM power domains: VDDCX and VDDMX.
-Add the necessary definitions to manage them with rpmpd.
+So far we have been doing all proxy votes by voting for raw voltages/load
+through the regulator interface. But actually VDDCX and VDDMX represent
+power domains that should be preferably managed using corner votes
+through the power domain interface.
+
+Document that those should be specified as power domains for
+qcom,pronto-v1/2-pil and deprecate using them through the regulator
+interface.
 
 Signed-off-by: Stephan Gerhold <stephan@gerhold.net>
 ---
- drivers/soc/qcom/rpmpd.c | 21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
+ .../bindings/remoteproc/qcom,wcnss-pil.txt    | 20 +++++++++++++++----
+ 1 file changed, 16 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/soc/qcom/rpmpd.c b/drivers/soc/qcom/rpmpd.c
-index 88eb458b13d0..daeea119d48a 100644
---- a/drivers/soc/qcom/rpmpd.c
-+++ b/drivers/soc/qcom/rpmpd.c
-@@ -116,6 +116,26 @@ struct rpmpd_desc {
+diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,wcnss-pil.txt b/Documentation/devicetree/bindings/remoteproc/qcom,wcnss-pil.txt
+index d420f84ddfb0..cc0b7fc1c29b 100644
+--- a/Documentation/devicetree/bindings/remoteproc/qcom,wcnss-pil.txt
++++ b/Documentation/devicetree/bindings/remoteproc/qcom,wcnss-pil.txt
+@@ -34,14 +34,25 @@ on the Qualcomm WCNSS core.
+ 	Definition: should be "wdog", "fatal", optionally followed by "ready",
+ 		    "handover", "stop-ack"
  
- static DEFINE_MUTEX(rpmpd_lock);
+-- vddmx-supply:
+-- vddcx-supply:
++- vddmx-supply: (deprecated for qcom,pronto-v1/2-pil)
++- vddcx-supply: (deprecated for qcom,pronto-v1/2-pil)
+ - vddpx-supply:
+ 	Usage: required
+ 	Value type: <phandle>
+ 	Definition: reference to the regulators to be held on behalf of the
+ 		    booting of the WCNSS core
  
-+/* msm8916 RPM Power Domains */
-+DEFINE_RPMPD_PAIR(msm8916, vddcx, vddcx_ao, SMPA, CORNER, 1);
-+DEFINE_RPMPD_PAIR(msm8916, vddmx, vddmx_ao, LDOA, CORNER, 3);
++- power-domains:
++	Usage: required (for qcom,pronto-v1/2-pil)
++	Value type: <phandle>
++	Definition: reference to the power domains to be held on behalf of the
++		    booting of the WCNSS core
 +
-+DEFINE_RPMPD_VFC(msm8916, vddcx_vfc, SMPA, 1);
++- power-domain-names:
++	Usage: required (for qcom,pronto-v1/2-pil)
++	Value type: <stringlist>
++	Definition: must be "cx", "mx"
 +
-+static struct rpmpd *msm8916_rpmpds[] = {
-+	[MSM8916_VDDCX] =	&msm8916_vddcx,
-+	[MSM8916_VDDCX_AO] =	&msm8916_vddcx_ao,
-+	[MSM8916_VDDCX_VFC] =	&msm8916_vddcx_vfc,
-+	[MSM8916_VDDMX] =	&msm8916_vddmx,
-+	[MSM8916_VDDMX_AO] =	&msm8916_vddmx_ao,
-+};
-+
-+static const struct rpmpd_desc msm8916_desc = {
-+	.rpmpds = msm8916_rpmpds,
-+	.num_pds = ARRAY_SIZE(msm8916_rpmpds),
-+	.max_state = MAX_CORNER_RPMPD_STATE,
-+};
-+
- /* msm8976 RPM Power Domains */
- DEFINE_RPMPD_PAIR(msm8976, vddcx, vddcx_ao, SMPA, LEVEL, 2);
- DEFINE_RPMPD_PAIR(msm8976, vddmx, vddmx_ao, SMPA, LEVEL, 6);
-@@ -221,6 +241,7 @@ static const struct rpmpd_desc qcs404_desc = {
- };
+ - qcom,smem-states:
+ 	Usage: optional
+ 	Value type: <prop-encoded-array>
+@@ -111,8 +122,9 @@ pronto@fb204000 {
+ 			      <&wcnss_smp2p_slave 3 0>;
+ 	interrupt-names = "wdog", "fatal", "ready", "handover", "stop-ack";
  
- static const struct of_device_id rpmpd_match_table[] = {
-+	{ .compatible = "qcom,msm8916-rpmpd", .data = &msm8916_desc },
- 	{ .compatible = "qcom,msm8976-rpmpd", .data = &msm8976_desc },
- 	{ .compatible = "qcom,msm8996-rpmpd", .data = &msm8996_desc },
- 	{ .compatible = "qcom,msm8998-rpmpd", .data = &msm8998_desc },
+-	vddmx-supply = <&pm8841_s1>;
+-	vddcx-supply = <&pm8841_s2>;
++	power-domains = <&rpmpd MSM8974_VDDCX>, <&rpmpd MSM8974_VDDMX>;
++	power-domain-names = "cx", "mx";
++
+ 	vddpx-supply = <&pm8941_s3>;
+ 
+ 	qcom,smem-states = <&wcnss_smp2p_out 0>;
 -- 
 2.28.0
 
