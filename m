@@ -7,45 +7,44 @@ X-Spam-Status: No, score=-12.5 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DCDFC2BB84
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 16 Sep 2020 19:04:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E2AEC433E2
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 16 Sep 2020 19:04:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 36987206DB
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 16 Sep 2020 19:04:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B09C1206DB
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 16 Sep 2020 19:04:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gerhold.net header.i=@gerhold.net header.b="LBpMMN11"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gerhold.net header.i=@gerhold.net header.b="Z8sXD4e/"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727672AbgIPTD7 (ORCPT
+        id S1727555AbgIPTED (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 16 Sep 2020 15:03:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35680 "EHLO
+        Wed, 16 Sep 2020 15:04:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35646 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727468AbgIPRsG (ORCPT
+        with ESMTP id S1727466AbgIPRrx (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 16 Sep 2020 13:48:06 -0400
-X-Greylist: delayed 625 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Wed, 16 Sep 2020 04:14:26 PDT
-Received: from mo6-p02-ob.smtp.rzone.de (mo6-p02-ob.smtp.rzone.de [IPv6:2a01:238:20a:202:5302::2])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 69643C0611BD;
-        Wed, 16 Sep 2020 04:14:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1600254260;
+        Wed, 16 Sep 2020 13:47:53 -0400
+Received: from mo6-p03-ob.smtp.rzone.de (mo6-p03-ob.smtp.rzone.de [IPv6:2a01:238:20a:202:5303::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 40C39C061A10;
+        Wed, 16 Sep 2020 04:14:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1600254268;
         s=strato-dkim-0002; d=gerhold.net;
         h=References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
         X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
-        bh=jiyYMYZZNIoZ7veBFmVpfgQHbhhTN+QDRt6ZYIRb/ZI=;
-        b=LBpMMN1198j+Utnu6y7plHoZ4aBh94yChIZh8LR9kAIH8UAZiJV+2uM6jFoiV9ivV1
-        S+O0nJwpwNqOWIpqF3eWc1krI73NiRzsJGKLDrZ1kQYCWAGj4xx1QhYPNZYfgXalsu8W
-        4oCLQDyLz3YShizg8RI4YN6bTzrQWXo11UEl7hxypXrI0KXfJmqTip3T9aQq/P51C9Ca
-        NpnYuZx9triBsNBQkx40UycgWSgvovTbqnlxlVaOayJlHDLJlHNhq5JUaVRRevSp8e23
-        ALgdHGloFbifrviwPDARe+HT3X1JK1S4zrUsFJC6ODBFiy8xdA4BROnqW4odnMfu8CP0
-        qSew==
+        bh=zk1JgRCfGN8d0WVKK0yFWGZXo6snBrcRKo+H1BWj0g0=;
+        b=Z8sXD4e/9IrG0cR/8UdHcx/C8kHdCZr0rOT59UoEadsrNNHHkLMlPvtCfRbVxOPQle
+        UOBD/wwAnfXJIQPiG1L2ZSxUuMEU9JwFKmtan08tMPlWYwchXPyC6ObEgyA4L6WNOafi
+        E25fEDrHTaGt1cfYbsyHv6JiwZ294F7xPEabklI/9l2/acd8r2Zo3vrQ8d5CAfHGdWHi
+        oukDc07XKsXqoliFFXUtr97kyOiQzGlYE4nsCiE+hXBasVCsImLtfNBi2mjAs8K/vFMd
+        XEc6eDV3K2JqKRRolboIUDdI6Fiu/ldBFSPKM6UACk02BiA0VeFm880tcDNEI/jOCtZd
+        ECnA==
 X-RZG-AUTH: ":P3gBZUipdd93FF5ZZvYFPugejmSTVR2nRPhVORvLd4SsytBXS7IYBkLahKxB4W6Nahc="
 X-RZG-CLASS-ID: mo00
 Received: from localhost.localdomain
         by smtp.strato.de (RZmta 46.10.7 DYNA|AUTH)
-        with ESMTPSA id g0b6c1w8GAfrzlU
+        with ESMTPSA id g0b6c1w8GAftzlY
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
         (Client did not present a certificate);
-        Wed, 16 Sep 2020 12:41:53 +0200 (CEST)
+        Wed, 16 Sep 2020 12:41:55 +0200 (CEST)
 From:   Stephan Gerhold <stephan@gerhold.net>
 To:     Bjorn Andersson <bjorn.andersson@linaro.org>
 Cc:     Andy Gross <agross@kernel.org>, Rob Herring <robh+dt@kernel.org>,
@@ -55,9 +54,9 @@ Cc:     Andy Gross <agross@kernel.org>, Rob Herring <robh+dt@kernel.org>,
         linux-remoteproc@vger.kernel.org,
         ~postmarketos/upstreaming@lists.sr.ht,
         Stephan Gerhold <stephan@gerhold.net>
-Subject: [PATCH 07/10] dt-bindings: remoteproc: qcom,wcnss: Deprecate regulators for PDs
-Date:   Wed, 16 Sep 2020 12:41:32 +0200
-Message-Id: <20200916104135.25085-8-stephan@gerhold.net>
+Subject: [PATCH 10/10] arm64: dts: qcom: msm8916-pm8916: Stop using s1/l3 as regulators
+Date:   Wed, 16 Sep 2020 12:41:35 +0200
+Message-Id: <20200916104135.25085-11-stephan@gerhold.net>
 X-Mailer: git-send-email 2.28.0
 In-Reply-To: <20200916104135.25085-1-stephan@gerhold.net>
 References: <20200916104135.25085-1-stephan@gerhold.net>
@@ -68,64 +67,132 @@ Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-So far we have been doing all proxy votes by voting for raw voltages/load
-through the regulator interface. But actually VDDCX and VDDMX represent
-power domains that should be preferably managed using corner votes
-through the power domain interface.
+s1 (VDDCX) and l3 (VDDMX) are now managed by rpmpd as power domains.
+This allows us to vote for voltage corners instead of voting for raw
+voltages. But we cannot manage these as regulator and power domain at
+the same time: The votes by rpmpd would conflict with the ones from
+the regulator driver.
 
-Document that those should be specified as power domains for
-qcom,pronto-v1/2-pil and deprecate using them through the regulator
-interface.
+All users of these regulators have been converted to power domains.
+Make sure that no new users are added by removing s1 and l3 from
+the regulator definitions.
+
+This also allows us to remove the arbitrary voltage constraints
+we have been using for these regulators. Not all of the voltages
+listed there would actually have been safe for the boards.
 
 Signed-off-by: Stephan Gerhold <stephan@gerhold.net>
 ---
- .../bindings/remoteproc/qcom,wcnss-pil.txt    | 20 +++++++++++++++----
- 1 file changed, 16 insertions(+), 4 deletions(-)
+ arch/arm64/boot/dts/qcom/apq8016-sbc.dtsi              | 10 ----------
+ arch/arm64/boot/dts/qcom/msm8916-longcheer-l8150.dts   | 10 ----------
+ arch/arm64/boot/dts/qcom/msm8916-pm8916.dtsi           |  4 ++--
+ .../boot/dts/qcom/msm8916-samsung-a2015-common.dtsi    | 10 ----------
+ 4 files changed, 2 insertions(+), 32 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,wcnss-pil.txt b/Documentation/devicetree/bindings/remoteproc/qcom,wcnss-pil.txt
-index d420f84ddfb0..cc0b7fc1c29b 100644
---- a/Documentation/devicetree/bindings/remoteproc/qcom,wcnss-pil.txt
-+++ b/Documentation/devicetree/bindings/remoteproc/qcom,wcnss-pil.txt
-@@ -34,14 +34,25 @@ on the Qualcomm WCNSS core.
- 	Definition: should be "wdog", "fatal", optionally followed by "ready",
- 		    "handover", "stop-ack"
+diff --git a/arch/arm64/boot/dts/qcom/apq8016-sbc.dtsi b/arch/arm64/boot/dts/qcom/apq8016-sbc.dtsi
+index 3c7f97539390..3a9538e1ec97 100644
+--- a/arch/arm64/boot/dts/qcom/apq8016-sbc.dtsi
++++ b/arch/arm64/boot/dts/qcom/apq8016-sbc.dtsi
+@@ -417,11 +417,6 @@ &smd_rpm_regulators {
+ 	vdd_l4_l5_l6-supply = <&pm8916_s4>;
+ 	vdd_l7-supply = <&pm8916_s4>;
  
--- vddmx-supply:
--- vddcx-supply:
-+- vddmx-supply: (deprecated for qcom,pronto-v1/2-pil)
-+- vddcx-supply: (deprecated for qcom,pronto-v1/2-pil)
- - vddpx-supply:
- 	Usage: required
- 	Value type: <phandle>
- 	Definition: reference to the regulators to be held on behalf of the
- 		    booting of the WCNSS core
+-	s1 {
+-		regulator-min-microvolt = <375000>;
+-		regulator-max-microvolt = <1562000>;
+-	};
+-
+ 	s3 {
+ 		regulator-min-microvolt = <375000>;
+ 		regulator-max-microvolt = <1562000>;
+@@ -445,11 +440,6 @@ l2 {
+ 		regulator-max-microvolt = <1200000>;
+ 	};
  
-+- power-domains:
-+	Usage: required (for qcom,pronto-v1/2-pil)
-+	Value type: <phandle>
-+	Definition: reference to the power domains to be held on behalf of the
-+		    booting of the WCNSS core
-+
-+- power-domain-names:
-+	Usage: required (for qcom,pronto-v1/2-pil)
-+	Value type: <stringlist>
-+	Definition: must be "cx", "mx"
-+
- - qcom,smem-states:
- 	Usage: optional
- 	Value type: <prop-encoded-array>
-@@ -111,8 +122,9 @@ pronto@fb204000 {
- 			      <&wcnss_smp2p_slave 3 0>;
- 	interrupt-names = "wdog", "fatal", "ready", "handover", "stop-ack";
+-	l3 {
+-		regulator-min-microvolt = <375000>;
+-		regulator-max-microvolt = <1525000>;
+-	};
+-
+ 	l4 {
+ 		regulator-min-microvolt = <1750000>;
+ 		regulator-max-microvolt = <3337000>;
+diff --git a/arch/arm64/boot/dts/qcom/msm8916-longcheer-l8150.dts b/arch/arm64/boot/dts/qcom/msm8916-longcheer-l8150.dts
+index b9d3c5d98dd0..2c204d535d66 100644
+--- a/arch/arm64/boot/dts/qcom/msm8916-longcheer-l8150.dts
++++ b/arch/arm64/boot/dts/qcom/msm8916-longcheer-l8150.dts
+@@ -98,11 +98,6 @@ &smd_rpm_regulators {
+ 	vdd_l4_l5_l6-supply = <&pm8916_s4>;
+ 	vdd_l7-supply = <&pm8916_s4>;
  
--	vddmx-supply = <&pm8841_s1>;
--	vddcx-supply = <&pm8841_s2>;
-+	power-domains = <&rpmpd MSM8974_VDDCX>, <&rpmpd MSM8974_VDDMX>;
-+	power-domain-names = "cx", "mx";
-+
- 	vddpx-supply = <&pm8941_s3>;
+-	s1 {
+-		regulator-min-microvolt = <500000>;
+-		regulator-max-microvolt = <1300000>;
+-	};
+-
+ 	s3 {
+ 		regulator-min-microvolt = <1200000>;
+ 		regulator-max-microvolt = <1300000>;
+@@ -123,11 +118,6 @@ l2 {
+ 		regulator-max-microvolt = <1200000>;
+ 	};
  
- 	qcom,smem-states = <&wcnss_smp2p_out 0>;
+-	l3 {
+-		regulator-min-microvolt = <500000>;
+-		regulator-max-microvolt = <1287500>;
+-	};
+-
+ 	l4 {
+ 		regulator-min-microvolt = <2050000>;
+ 		regulator-max-microvolt = <2050000>;
+diff --git a/arch/arm64/boot/dts/qcom/msm8916-pm8916.dtsi b/arch/arm64/boot/dts/qcom/msm8916-pm8916.dtsi
+index 513e433aa5f3..539823b2c36e 100644
+--- a/arch/arm64/boot/dts/qcom/msm8916-pm8916.dtsi
++++ b/arch/arm64/boot/dts/qcom/msm8916-pm8916.dtsi
+@@ -50,13 +50,13 @@ &rpm_requests {
+ 	smd_rpm_regulators: pm8916-regulators {
+ 		compatible = "qcom,rpm-pm8916-regulators";
+ 
+-		pm8916_s1: s1 {};
++		/* pm8916_s1 is managed by rpmpd (MSM8916_VDDCX) */
+ 		pm8916_s3: s3 {};
+ 		pm8916_s4: s4 {};
+ 
+ 		pm8916_l1: l1 {};
+ 		pm8916_l2: l2 {};
+-		pm8916_l3: l3 {};
++		/* pm8916_l3 is managed by rpmpd (MSM8916_VDDMX) */
+ 		pm8916_l4: l4 {};
+ 		pm8916_l5: l5 {};
+ 		pm8916_l6: l6 {};
+diff --git a/arch/arm64/boot/dts/qcom/msm8916-samsung-a2015-common.dtsi b/arch/arm64/boot/dts/qcom/msm8916-samsung-a2015-common.dtsi
+index b18d21e42f59..0b0dfd3059de 100644
+--- a/arch/arm64/boot/dts/qcom/msm8916-samsung-a2015-common.dtsi
++++ b/arch/arm64/boot/dts/qcom/msm8916-samsung-a2015-common.dtsi
+@@ -164,11 +164,6 @@ &smd_rpm_regulators {
+ 	vdd_l4_l5_l6-supply = <&pm8916_s4>;
+ 	vdd_l7-supply = <&pm8916_s4>;
+ 
+-	s1 {
+-		regulator-min-microvolt = <500000>;
+-		regulator-max-microvolt = <1300000>;
+-	};
+-
+ 	s3 {
+ 		regulator-min-microvolt = <1200000>;
+ 		regulator-max-microvolt = <1300000>;
+@@ -189,11 +184,6 @@ l2 {
+ 		regulator-max-microvolt = <1200000>;
+ 	};
+ 
+-	l3 {
+-		regulator-min-microvolt = <500000>;
+-		regulator-max-microvolt = <1287500>;
+-	};
+-
+ 	l4 {
+ 		regulator-min-microvolt = <2050000>;
+ 		regulator-max-microvolt = <2050000>;
 -- 
 2.28.0
 
