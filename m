@@ -2,111 +2,104 @@ Return-Path: <SRS0=iWym=CZ=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.1 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2E08C43461
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 16 Sep 2020 21:09:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57DACC433E2
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 16 Sep 2020 21:09:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 657EE206DB
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 16 Sep 2020 21:09:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E5E50206D4
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 16 Sep 2020 21:09:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Tz+RF53j"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ti.com header.i=@ti.com header.b="IfP1zphg"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726199AbgIPVJM (ORCPT
+        id S1726625AbgIPVJc (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 16 Sep 2020 17:09:12 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:37318 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726362AbgIPPz5 (ORCPT
+        Wed, 16 Sep 2020 17:09:32 -0400
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:44348 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726139AbgIPPzc (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 16 Sep 2020 11:55:57 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 08GEiT4k096134;
-        Wed, 16 Sep 2020 14:54:33 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : mime-version : content-type; s=corp-2020-01-29;
- bh=kUI4IZFEXU8LhjHvtTI+xYA0MLMlnnK6G8kE4rYNmwU=;
- b=Tz+RF53jDGMnY2u9YzVEXE2Zs6Xv42GunbmPEWJPdPJ/2BxL6/0G0ff7ZtCpw2rbCsS7
- nBFXXBc2VT5go8OEbM75Ac6vkoptuxry0QdEdfqqgR0J3i/mpVNaciGFQK4w93wMsqOX
- +VKkwan9tzxVkvMOlX+ZwMHLs0OVxEsuop9nrlAzUAP99mmDWoVMKKkhjLRIdv1WRYpR
- m2qAHFXJ+vSBIDymHd/5icUjPxIW0MpmbSRypOHWPHF86VzxG1BvHr5VW4Kid81nNvYx
- 2K+7YklmgOrWUBhHXT+CvZ1EyZkxScC2XRTX7Ekml3SfyDaV2GVLHyErKaI+xaVsraxW Ww== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by userp2130.oracle.com with ESMTP id 33gnrr3mjs-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 16 Sep 2020 14:54:32 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 08GEilRZ148543;
-        Wed, 16 Sep 2020 14:54:32 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userp3030.oracle.com with ESMTP id 33h891sfph-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 16 Sep 2020 14:54:32 +0000
-Received: from abhmp0004.oracle.com (abhmp0004.oracle.com [141.146.116.10])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 08GEsVpw017360;
-        Wed, 16 Sep 2020 14:54:32 GMT
-Received: from mwanda (/41.57.98.10)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 16 Sep 2020 14:54:31 +0000
-Date:   Wed, 16 Sep 2020 17:54:25 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     erin.lo@mediatek.com
-Cc:     linux-remoteproc@vger.kernel.org
-Subject: [bug report] remoteproc/mediatek: add SCP support for mt8183
-Message-ID: <20200916145425.GA768671@mwanda>
+        Wed, 16 Sep 2020 11:55:32 -0400
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 08GBlfvq027172;
+        Wed, 16 Sep 2020 06:47:41 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1600256861;
+        bh=3AGiro3FnSBmxJs2uBGM1pA1oOZ6S/GI8y/Cm28nbw4=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=IfP1zphgUN6Zw2XJNKhMMVG/ylE5qbF4CVR+eQjef20EE7290yM6Ev4B5FFBMsmUF
+         rfNfsVNlbINmL9HkKfqTMRzWqWK2vxDVPch5F2rlPfFI1NZ3OrWXYFNS8daLeRbE2a
+         bTE2BrjGT8jdqaBADcJk3RiseeaORT6KKSxI2z5w=
+Received: from DLEE112.ent.ti.com (dlee112.ent.ti.com [157.170.170.23])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 08GBlfhS000950
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 16 Sep 2020 06:47:41 -0500
+Received: from DLEE114.ent.ti.com (157.170.170.25) by DLEE112.ent.ti.com
+ (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3; Wed, 16
+ Sep 2020 06:47:40 -0500
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE114.ent.ti.com
+ (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3 via
+ Frontend Transport; Wed, 16 Sep 2020 06:47:41 -0500
+Received: from [10.250.232.147] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id 08GBlXSA024715;
+        Wed, 16 Sep 2020 06:47:34 -0500
+Subject: Re: [RFC PATCH 00/22] Enhance VHOST to enable SoC-to-SoC
+ communication
+To:     Jason Wang <jasowang@redhat.com>, Cornelia Huck <cohuck@redhat.com>
+CC:     "Michael S. Tsirkin" <mst@redhat.com>,
+        Ohad Ben-Cohen <ohad@wizery.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Jon Mason <jdmason@kudzu.us>,
+        Dave Jiang <dave.jiang@intel.com>,
+        Allen Hubbe <allenbh@gmail.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        Stefano Garzarella <sgarzare@redhat.com>,
+        <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>, <linux-ntb@googlegroups.com>,
+        <linux-pci@vger.kernel.org>, <kvm@vger.kernel.org>,
+        <virtualization@lists.linux-foundation.org>,
+        <netdev@vger.kernel.org>
+References: <20200702082143.25259-1-kishon@ti.com>
+ <20200702055026-mutt-send-email-mst@kernel.org>
+ <603970f5-3289-cd53-82a9-aa62b292c552@redhat.com>
+ <14c6cad7-9361-7fa4-e1c6-715ccc7e5f6b@ti.com>
+ <59fd6a0b-8566-44b7-3dae-bb52b468219b@redhat.com>
+ <ce9eb6a5-cd3a-a390-5684-525827b30f64@ti.com>
+ <da2b671c-b05d-a57f-7bdf-8b1043a41240@redhat.com>
+ <fee8a0fb-f862-03bd-5ede-8f105b6af529@ti.com>
+ <b2178e1d-2f5c-e8a3-72fb-70f2f8d6aa45@redhat.com>
+ <45a8a97c-2061-13ee-5da8-9877a4a3b8aa@ti.com>
+ <c8739d7f-e12e-f6a2-7018-9eeaf6feb054@redhat.com>
+ <20200828123409.4cd2a812.cohuck@redhat.com>
+ <ac8f7e4f-9f46-919a-f5c2-89b07794f0ab@ti.com>
+ <9cd58cd1-0041-3d98-baf7-6e5bc2e7e317@redhat.com>
+ <edf25301-93c0-4ba6-aa85-5f04137d0906@ti.com>
+ <5733dbfc-76c1-45dc-6dce-ef5449eacc73@redhat.com>
+ <181ae83d-edeb-9406-27cc-1195fe29ae95@ti.com>
+ <ee0aa81d-064b-d7a7-86bb-79a3f4d3dd11@redhat.com>
+From:   Kishon Vijay Abraham I <kishon@ti.com>
+Message-ID: <67924594-c70e-390e-ce2e-dda41a94ada1@ti.com>
+Date:   Wed, 16 Sep 2020 17:17:32 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9746 signatures=668679
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 spamscore=0 adultscore=0
- suspectscore=3 mlxscore=0 bulkscore=0 mlxlogscore=962 malwarescore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2006250000
- definitions=main-2009160112
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9746 signatures=668679
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 spamscore=0
- lowpriorityscore=0 malwarescore=0 mlxscore=0 bulkscore=0 suspectscore=3
- clxscore=1011 mlxlogscore=977 adultscore=0 priorityscore=1501
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2006250000 definitions=main-2009160112
+In-Reply-To: <ee0aa81d-064b-d7a7-86bb-79a3f4d3dd11@redhat.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
+Message-ID: <20200916114732.KJB4WTnEaYC-25Yf6iCKgKSn2H_JAWu_pnvBxrn45hs@z>
 
-Hello Erin Lo,
 
-The patch 63c13d61eafe: "remoteproc/mediatek: add SCP support for
-mt8183" from Nov 12, 2019, leads to the following static checker
-warning:
-
-	drivers/remoteproc/mtk_scp_ipi.c:34 scp_ipi_register()
-	error: we previously assumed 'scp' could be null (see line 33)
-
-drivers/remoteproc/mtk_scp_ipi.c
-    28  int scp_ipi_register(struct mtk_scp *scp,
-    29                       u32 id,
-    30                       scp_ipi_handler_t handler,
-    31                       void *priv)
-    32  {
-    33          if (!scp) {
-                    ^^^^
-Check
-
-    34                  dev_err(scp->dev, "scp device is not ready\n");
-                                ^^^^^^^^
-NULL dereference
-
-    35                  return -EPROBE_DEFER;
-    36          }
-    37  
-    38          if (WARN_ON(id >= SCP_IPI_MAX) || WARN_ON(handler == NULL))
-    39                  return -EINVAL;
-    40  
-    41          scp_ipi_lock(scp, id);
-    42          scp->ipi_desc[id].handler = handler;
-
-regards,
-dan carpenter
