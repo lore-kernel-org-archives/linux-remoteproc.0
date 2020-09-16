@@ -5,59 +5,61 @@ X-Spam-Level:
 X-Spam-Status: No, score=-12.5 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74435C43461
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 16 Sep 2020 18:59:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE6ABC433E2
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 16 Sep 2020 19:03:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1168C20732
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 16 Sep 2020 18:59:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6B8D2206B2
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 16 Sep 2020 19:03:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="l0d3pTCW"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gerhold.net header.i=@gerhold.net header.b="TSC1fLne"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728280AbgIPS7u (ORCPT
+        id S1728325AbgIPTDK (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 16 Sep 2020 14:59:50 -0400
-Received: from m43-7.mailgun.net ([69.72.43.7]:62532 "EHLO m43-7.mailgun.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727751AbgIPS7t (ORCPT
+        Wed, 16 Sep 2020 15:03:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35712 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727404AbgIPRsf (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 16 Sep 2020 14:59:49 -0400
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1600282788; h=Content-Transfer-Encoding: MIME-Version:
- Message-Id: Date: Subject: Cc: To: From: Sender;
- bh=SSqTKliitikyhS2Hm4khYk3MaXTZpP0INBcLPuNG4D4=; b=l0d3pTCWnG3AtJMd50SHWOC7EUdq8tZ9vKHrDKccip513xR1oNUR4xVdT4ENrG+oJe2J+an2
- q34dlPSdc8qu4JhVGJbn0qA2z8Dwy4WdSHm0CwCmxPNN5dHoF3jYnKQl/PJSZrUTSQmVO7um
- SrH8IwCkHrVYcEgJnWcbeUov944=
-X-Mailgun-Sending-Ip: 69.72.43.7
-X-Mailgun-Sid: WyI4ZWZiZiIsICJsaW51eC1yZW1vdGVwcm9jQHZnZXIua2VybmVsLm9yZyIsICJiZTllNGEiXQ==
-Received: from smtp.codeaurora.org
- (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
- smtp-out-n05.prod.us-west-2.postgun.com with SMTP id
- 5f62266d9a5950f997bf30f4 (version=TLS1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Wed, 16 Sep 2020 14:51:25
- GMT
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id EB37DC433F1; Wed, 16 Sep 2020 14:51:24 +0000 (UTC)
-Received: from blr-ubuntu-253.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: sibis)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 5492BC433CA;
-        Wed, 16 Sep 2020 14:51:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5492BC433CA
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=sibis@codeaurora.org
-From:   Sibi Sankar <sibis@codeaurora.org>
-To:     bjorn.andersson@linaro.org, mathieu.poirier@linaro.org
-Cc:     agross@kernel.org, linux-arm-msm@vger.zkernel.org,
-        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ohad@wizery.com, rishabhb@codeaurora.org,
-        Sibi Sankar <sibis@codeaurora.org>, stable@vger.kernel.org
-Subject: [PATCH v2] remoteproc: Fixup coredump debugfs disable request
-Date:   Wed, 16 Sep 2020 20:21:00 +0530
-Message-Id: <20200916145100.15872-1-sibis@codeaurora.org>
-X-Mailer: git-send-email 2.27.0
+        Wed, 16 Sep 2020 13:48:35 -0400
+Received: from mo6-p02-ob.smtp.rzone.de (mo6-p02-ob.smtp.rzone.de [IPv6:2a01:238:20a:202:5302::9])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A2187C061A28;
+        Wed, 16 Sep 2020 04:14:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1600254281;
+        s=strato-dkim-0002; d=gerhold.net;
+        h=References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
+        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
+        bh=gViQdkst0VwAdrFW9lTsn+0Gd5Ffp1iW1Mb+zknUlnY=;
+        b=TSC1fLneDjnJi/tg8RASnh8doafU2b87wNNOp20q3qn/jrtfJ/8q3tfieRvV2kc9EM
+        R2/oAHPOQIp3NhowOA5Kdv0jl90h8scVjeLWb9ZHOEJ1XlanPhUb4UACHtc5lIK8MRp1
+        jq4O1kMsmd2wVHYJSdwEq2rbM+wCWP+Ahl/vBcxAiFBFhpTHM/7eDSnnGH1x+9Fi2Quw
+        EvozqLiBfEr56Y/0LmrR9yH2Dca4uNPnd9MWgYTE+ehqN60nTKScMkiI8IoCE3M/Vyv9
+        JbCkjblESVceuWEDUqNLxzROxfbzjpGcRnisUi7P+TWnDOvzCUvwSrql6dPG/XknuchO
+        UPVA==
+X-RZG-AUTH: ":P3gBZUipdd93FF5ZZvYFPugejmSTVR2nRPhVORvLd4SsytBXS7IYBkLahKxB4W6Nahc="
+X-RZG-CLASS-ID: mo00
+Received: from localhost.localdomain
+        by smtp.strato.de (RZmta 46.10.7 DYNA|AUTH)
+        with ESMTPSA id g0b6c1w8GAfqzlT
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
+        (Client did not present a certificate);
+        Wed, 16 Sep 2020 12:41:52 +0200 (CEST)
+From:   Stephan Gerhold <stephan@gerhold.net>
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Andy Gross <agross@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Ohad Ben-Cohen <ohad@wizery.com>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org,
+        ~postmarketos/upstreaming@lists.sr.ht,
+        Stephan Gerhold <stephan@gerhold.net>
+Subject: [PATCH 06/10] remoteproc: qcom_q6v5_mss: Allow replacing regulators with power domains
+Date:   Wed, 16 Sep 2020 12:41:31 +0200
+Message-Id: <20200916104135.25085-7-stephan@gerhold.net>
+X-Mailer: git-send-email 2.28.0
+In-Reply-To: <20200916104135.25085-1-stephan@gerhold.net>
+References: <20200916104135.25085-1-stephan@gerhold.net>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-remoteproc-owner@vger.kernel.org
@@ -65,34 +67,199 @@ Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Fix the discrepancy observed between accepted input and read back value
-while disabling remoteproc coredump through the coredump debugfs entry.
+Newer platforms vote for necessary power domains through the power
+domain subsystem. For historical reasons older platforms like MSM8916
+or MSM8974 still control these as regulators.
 
-Fixes: 3afdc59e4390 ("remoteproc: Add coredump debugfs entry")
-Cc: stable@vger.kernel.org
-Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
+Managing them as power domains is preferred since that allows us
+to vote for corners instead of raw voltages.
+
+Make it possible for MSM8916 and MSM8974 to manage these as power
+domains. For compatibility with old device trees we still need to
+support falling back to the regulators when necessary.
+
+The way this is implemented here is that the deprecated regulators
+are defined as "fallback_proxy_supply". Only if attaching the power
+domains fails because they are not specified (-ENODATA) we request
+and manage the fallback regulators instead.
+
+Signed-off-by: Stephan Gerhold <stephan@gerhold.net>
 ---
+ drivers/remoteproc/qcom_q6v5_mss.c | 68 ++++++++++++++++++++++++------
+ 1 file changed, 56 insertions(+), 12 deletions(-)
 
-V2:
- * Fixup commit message [Bjorn].
-
- drivers/remoteproc/remoteproc_debugfs.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/remoteproc/remoteproc_debugfs.c b/drivers/remoteproc/remoteproc_debugfs.c
-index 2e3b3e22e1d0..7ca823f6aa63 100644
---- a/drivers/remoteproc/remoteproc_debugfs.c
-+++ b/drivers/remoteproc/remoteproc_debugfs.c
-@@ -94,7 +94,7 @@ static ssize_t rproc_coredump_write(struct file *filp,
- 		goto out;
+diff --git a/drivers/remoteproc/qcom_q6v5_mss.c b/drivers/remoteproc/qcom_q6v5_mss.c
+index c401bcc263fa..98bf4230d8f4 100644
+--- a/drivers/remoteproc/qcom_q6v5_mss.c
++++ b/drivers/remoteproc/qcom_q6v5_mss.c
+@@ -132,6 +132,7 @@ struct qcom_mss_reg_res {
+ struct rproc_hexagon_res {
+ 	const char *hexagon_mba_image;
+ 	struct qcom_mss_reg_res *proxy_supply;
++	struct qcom_mss_reg_res *fallback_proxy_supply;
+ 	struct qcom_mss_reg_res *active_supply;
+ 	char **proxy_clk_names;
+ 	char **reset_clk_names;
+@@ -177,9 +178,11 @@ struct q6v5 {
+ 	int proxy_pd_count;
+ 
+ 	struct reg_info active_regs[1];
+-	struct reg_info proxy_regs[3];
++	struct reg_info proxy_regs[1];
++	struct reg_info fallback_proxy_regs[2];
+ 	int active_reg_count;
+ 	int proxy_reg_count;
++	int fallback_proxy_reg_count;
+ 
+ 	bool dump_mba_loaded;
+ 	size_t current_dump_size;
+@@ -890,11 +893,18 @@ static int q6v5_mba_load(struct q6v5 *qproc)
+ 		goto disable_active_pds;
  	}
  
--	if (!strncmp(buf, "disable", count)) {
-+	if (!strncmp(buf, "disabled", count)) {
- 		rproc->dump_conf = RPROC_COREDUMP_DISABLED;
- 	} else if (!strncmp(buf, "inline", count)) {
- 		rproc->dump_conf = RPROC_COREDUMP_INLINE;
++	ret = q6v5_regulator_enable(qproc, qproc->fallback_proxy_regs,
++				    qproc->fallback_proxy_reg_count);
++	if (ret) {
++		dev_err(qproc->dev, "failed to enable fallback proxy supplies\n");
++		goto disable_proxy_pds;
++	}
++
+ 	ret = q6v5_regulator_enable(qproc, qproc->proxy_regs,
+ 				    qproc->proxy_reg_count);
+ 	if (ret) {
+ 		dev_err(qproc->dev, "failed to enable proxy supplies\n");
+-		goto disable_proxy_pds;
++		goto disable_fallback_proxy_reg;
+ 	}
+ 
+ 	ret = q6v5_clk_enable(qproc->dev, qproc->proxy_clks,
+@@ -997,6 +1007,9 @@ static int q6v5_mba_load(struct q6v5 *qproc)
+ disable_proxy_reg:
+ 	q6v5_regulator_disable(qproc, qproc->proxy_regs,
+ 			       qproc->proxy_reg_count);
++disable_fallback_proxy_reg:
++	q6v5_regulator_disable(qproc, qproc->fallback_proxy_regs,
++			       qproc->fallback_proxy_reg_count);
+ disable_proxy_pds:
+ 	q6v5_pds_disable(qproc, qproc->proxy_pds, qproc->proxy_pd_count);
+ disable_active_pds:
+@@ -1052,6 +1065,8 @@ static void q6v5_mba_reclaim(struct q6v5 *qproc)
+ 				 qproc->proxy_pd_count);
+ 		q6v5_clk_disable(qproc->dev, qproc->proxy_clks,
+ 				 qproc->proxy_clk_count);
++		q6v5_regulator_disable(qproc, qproc->fallback_proxy_regs,
++				       qproc->fallback_proxy_reg_count);
+ 		q6v5_regulator_disable(qproc, qproc->proxy_regs,
+ 				       qproc->proxy_reg_count);
+ 	}
+@@ -1413,6 +1428,8 @@ static void qcom_msa_handover(struct qcom_q6v5 *q6v5)
+ 			 qproc->proxy_clk_count);
+ 	q6v5_regulator_disable(qproc, qproc->proxy_regs,
+ 			       qproc->proxy_reg_count);
++	q6v5_regulator_disable(qproc, qproc->fallback_proxy_regs,
++			       qproc->fallback_proxy_reg_count);
+ 	q6v5_pds_disable(qproc, qproc->proxy_pds, qproc->proxy_pd_count);
+ }
+ 
+@@ -1707,11 +1724,22 @@ static int q6v5_probe(struct platform_device *pdev)
+ 
+ 	ret = q6v5_pds_attach(&pdev->dev, qproc->proxy_pds,
+ 			      desc->proxy_pd_names);
+-	if (ret < 0) {
++	/* Fallback to regulators for old device trees */
++	if (ret == -ENODATA && desc->fallback_proxy_supply) {
++		ret = q6v5_regulator_init(&pdev->dev,
++					  qproc->fallback_proxy_regs,
++					  desc->fallback_proxy_supply);
++		if (ret < 0) {
++			dev_err(&pdev->dev, "Failed to get fallback proxy regulators.\n");
++			goto detach_active_pds;
++		}
++		qproc->fallback_proxy_reg_count = ret;
++	} else if (ret < 0) {
+ 		dev_err(&pdev->dev, "Failed to init power domains\n");
+ 		goto detach_active_pds;
++	} else {
++		qproc->proxy_pd_count = ret;
+ 	}
+-	qproc->proxy_pd_count = ret;
+ 
+ 	qproc->has_alt_reset = desc->has_alt_reset;
+ 	ret = q6v5_init_reset(qproc);
+@@ -1912,6 +1940,13 @@ static const struct rproc_hexagon_res msm8996_mss = {
+ static const struct rproc_hexagon_res msm8916_mss = {
+ 	.hexagon_mba_image = "mba.mbn",
+ 	.proxy_supply = (struct qcom_mss_reg_res[]) {
++		{
++			.supply = "pll",
++			.uA = 100000,
++		},
++		{}
++	},
++	.fallback_proxy_supply = (struct qcom_mss_reg_res[]) {
+ 		{
+ 			.supply = "mx",
+ 			.uV = 1050000,
+@@ -1920,10 +1955,6 @@ static const struct rproc_hexagon_res msm8916_mss = {
+ 			.supply = "cx",
+ 			.uA = 100000,
+ 		},
+-		{
+-			.supply = "pll",
+-			.uA = 100000,
+-		},
+ 		{}
+ 	},
+ 	.proxy_clk_names = (char*[]){
+@@ -1936,6 +1967,11 @@ static const struct rproc_hexagon_res msm8916_mss = {
+ 		"mem",
+ 		NULL
+ 	},
++	.proxy_pd_names = (char*[]){
++		"mx",
++		"cx",
++		NULL
++	},
+ 	.need_mem_protection = false,
+ 	.has_alt_reset = false,
+ 	.has_mba_logs = false,
+@@ -1946,6 +1982,13 @@ static const struct rproc_hexagon_res msm8916_mss = {
+ static const struct rproc_hexagon_res msm8974_mss = {
+ 	.hexagon_mba_image = "mba.b00",
+ 	.proxy_supply = (struct qcom_mss_reg_res[]) {
++		{
++			.supply = "pll",
++			.uA = 100000,
++		},
++		{}
++	},
++	.fallback_proxy_supply = (struct qcom_mss_reg_res[]) {
+ 		{
+ 			.supply = "mx",
+ 			.uV = 1050000,
+@@ -1954,10 +1997,6 @@ static const struct rproc_hexagon_res msm8974_mss = {
+ 			.supply = "cx",
+ 			.uA = 100000,
+ 		},
+-		{
+-			.supply = "pll",
+-			.uA = 100000,
+-		},
+ 		{}
+ 	},
+ 	.active_supply = (struct qcom_mss_reg_res[]) {
+@@ -1978,6 +2017,11 @@ static const struct rproc_hexagon_res msm8974_mss = {
+ 		"mem",
+ 		NULL
+ 	},
++	.proxy_pd_names = (char*[]){
++		"mx",
++		"cx",
++		NULL
++	},
+ 	.need_mem_protection = false,
+ 	.has_alt_reset = false,
+ 	.has_mba_logs = false,
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.28.0
 
