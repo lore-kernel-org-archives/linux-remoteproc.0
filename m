@@ -2,653 +2,218 @@ Return-Path: <SRS0=Or6o=C2=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96130C43464
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 17 Sep 2020 22:01:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47B0AC43465
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 17 Sep 2020 22:18:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3A62D20872
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 17 Sep 2020 22:01:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 03AE820874
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 17 Sep 2020 22:18:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hE7wdRX/"
+	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="mT+V+pD1"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726004AbgIQWBn (ORCPT
+        id S1725987AbgIQWSp (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 17 Sep 2020 18:01:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44410 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725858AbgIQWBm (ORCPT
+        Thu, 17 Sep 2020 18:18:45 -0400
+Received: from mail-dm6nam10on2042.outbound.protection.outlook.com ([40.107.93.42]:7680
+        "EHLO NAM10-DM6-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725858AbgIQWSp (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 17 Sep 2020 18:01:42 -0400
-Received: from mail-pg1-x541.google.com (mail-pg1-x541.google.com [IPv6:2607:f8b0:4864:20::541])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A7436C06174A
-        for <linux-remoteproc@vger.kernel.org>; Thu, 17 Sep 2020 15:01:42 -0700 (PDT)
-Received: by mail-pg1-x541.google.com with SMTP id j34so2158448pgi.7
-        for <linux-remoteproc@vger.kernel.org>; Thu, 17 Sep 2020 15:01:42 -0700 (PDT)
+        Thu, 17 Sep 2020 18:18:45 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=fBC3aM3p9d7bFPig7JEwDy45VknGqgQIdM36BgtIDQC3DSlZ9pfr7V53eoa2zHB+P7ZTUKHXUd1GSxVg8Y3c+V1nZqel1BRcPrNKh0ri5xtYbg/4vy1gQjL4u6+SpmCHl8EJWa/78aU2gLXrvj0VX3XYFs2G6pqvOuwV14TdABCH8HEvK2yXc013gCWKIxNR2ojrO9eJ+SHMWrUgS/FjwU49lphkiZ0ey3SmHBT/6nEDRU3f5rOSKApRvdIshmzA/bHLR+azJfo0Ths6j9rHNpguTwE7nTUNMVsss9+ls/O3eMsL6lHOtk591kG5b94zyeuM7eEDzrGxfnQUZerKkA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=yky8QWWp7nfqWOZYSaPa/RiXeDZ9Ao7IcTYvRPZn2YE=;
+ b=Ozj02uUoVVopaEkf1iW5iJtJsIjYkAs2NTsuTO5psMx11ecXamx1uYUDn/rSN57h9+Z9r1alcBa7FfRk3J+rAmYlU7Ks54+l4d49AJLQsQ68guc1ORt2cisBIrXMNRcopYPrIcRxXfgKcqZp8JyTVhlg/P34uEtIPEcdYPD4x6CZENPDyPF3IDVixTjyfVOXgbrJTxO+exd7U9cmAvfaPvS6ue1r+TrpQbuTsixVy4mLmmW8j91kpYxR80eDDlMzPm0d+hhG5Mv/4i7WRbf+XtJSnQx3OsTcb5YG4yeW1zGV0to8qNtIsKRYTZDq0D9x5myYdQrmKY3mGLRFn/IPMg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=xilinx.com; dmarc=pass action=none header.from=xilinx.com;
+ dkim=pass header.d=xilinx.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=WUk2s6IgQ3O/nMz1N5plHlQX5Hmzyr7B9aW743fkDus=;
-        b=hE7wdRX/LbuP0EbcOIXYFxK78Rwj72jAvfcnqIJbnpsm76ql9HNM3PAcm7I/qTa0Gm
-         o7QuyYP4bPExJBs7w1wCWI5RO4zObN8yDv65Zk+C5mYCgs7Y4YGFFrx+LWI0Asa84xas
-         wO9bxBU6GVKq+l76igoX+bxCxYAB7vIGVvYl3CHONNHvU/Zb1NYXEXH/XyeA4cqa9WXw
-         EZFjPp1WNvoi2M4CuFVPrjbarHA6MNDTC8sMN/YyTa5EGYxqTJAA2NVbdM0Bzx10jLc2
-         0QjTV30zQO9tp17E2vCuXHPeQ88aQ5ytVeVNuZd1Ishf6PXWJaDxi6mNumKHRG5JduoJ
-         Cq7w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=WUk2s6IgQ3O/nMz1N5plHlQX5Hmzyr7B9aW743fkDus=;
-        b=qqEseVq6wAc5I2spvIbMpjMITQTyro4qXwZLXM1p4ej4Wyh5cvRnofR3dyem93bARb
-         PdJtpT33h9HsfToxQum5BgnqWhSvCTLtd6SrGNOWsrS31ojgi+dC3k3VUmNWxPB+M6vQ
-         NlaUhPo9XPVbtfL5fSl2Id7JVSXFZBbMKbgZkgrDkNa4sTCiV/KVCFaRw10i9DvVP+zv
-         1TlqklPxN88tscMf368uQ16bSY7V3cdhT8wHrM/H9SdGsUttszKVI0itd44rkggvlbtY
-         f9LB4FgJdaRnAHtwzoaf7DKhmxsURKqNJfWJYRG67+q8ayV5/rN49ymw33wg0h0ZCevX
-         XzyA==
-X-Gm-Message-State: AOAM5320a1dyGkxKgSZt+R8WpQTxEN7QwwtqwkmNA+x3kLXFEG1hO1Pi
-        Ab2kQOxMuE7UTEh8Uf4i0m5SRw==
-X-Google-Smtp-Source: ABdhPJw1mvi9TUjgnEEM241506WwTixWtv5NGXqoWyBa7eXkhWl73TpE95tSkqWadCZS3zWrI6mn4A==
-X-Received: by 2002:a63:342:: with SMTP id 63mr25145747pgd.134.1600380101704;
-        Thu, 17 Sep 2020 15:01:41 -0700 (PDT)
-Received: from xps15 (S0106002369de4dac.cg.shawcable.net. [68.147.8.254])
-        by smtp.gmail.com with ESMTPSA id a3sm579715pfl.213.2020.09.17.15.01.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Sep 2020 15:01:40 -0700 (PDT)
-Date:   Thu, 17 Sep 2020 16:01:38 -0600
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-To:     Guennadi Liakhovetski <guennadi.liakhovetski@linux.intel.com>
-Cc:     kvm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        sound-open-firmware@alsa-project.org,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Liam Girdwood <liam.r.girdwood@linux.intel.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
-        Ohad Ben-Cohen <ohad@wizery.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Vincent Whitchurch <vincent.whitchurch@axis.com>
-Subject: Re: [PATCH v7 3/3] vhost: add an RPMsg API
-Message-ID: <20200917220138.GA97950@xps15>
-References: <20200910111351.20526-1-guennadi.liakhovetski@linux.intel.com>
- <20200910111351.20526-4-guennadi.liakhovetski@linux.intel.com>
+ d=xilinx.onmicrosoft.com; s=selector2-xilinx-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=yky8QWWp7nfqWOZYSaPa/RiXeDZ9Ao7IcTYvRPZn2YE=;
+ b=mT+V+pD1nT1ranxgCWd1DnDwm+MK4E7P4nxmGAnb+vnrfcs1nLEuU3ZedD6bvZJA9J2ni/4sAP2rzRIemBRRPO2mrLr7GiPi6vzL0djbO0xp/GJdlIbH19Gjb3WWNmyteGaEUb3//6fpvJ6iqO5UWJqXpAVBXHYFBt0y382WWdU=
+Received: from BYAPR02MB4407.namprd02.prod.outlook.com (2603:10b6:a03:55::31)
+ by BY5PR02MB6961.namprd02.prod.outlook.com (2603:10b6:a03:23b::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3391.14; Thu, 17 Sep
+ 2020 22:18:41 +0000
+Received: from BYAPR02MB4407.namprd02.prod.outlook.com
+ ([fe80::b0f6:b3a:6543:26f5]) by BYAPR02MB4407.namprd02.prod.outlook.com
+ ([fe80::b0f6:b3a:6543:26f5%5]) with mapi id 15.20.3391.011; Thu, 17 Sep 2020
+ 22:18:40 +0000
+From:   Ben Levinsky <BLEVINSK@xilinx.com>
+To:     Michael Auchter <michael.auchter@ni.com>
+CC:     "punit1.agrawal@toshiba.co.jp" <punit1.agrawal@toshiba.co.jp>,
+        Stefano Stabellini <stefanos@xilinx.com>,
+        Michal Simek <michals@xilinx.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "mathieu.poirier@linaro.org" <mathieu.poirier@linaro.org>,
+        "Ed T. Mooring" <emooring@xilinx.com>,
+        "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Jiaying Liang <jliang@xilinx.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        Jiaying Liang <jliang@xilinx.com>,
+        Michal Simek <michals@xilinx.com>,
+        "Ed T. Mooring" <emooring@xilinx.com>, Jason Wu <j.wu@xilinx.com>
+Subject: RE: [PATCH v14 5/5] remoteproc: Add initial zynqmp R5 remoteproc
+ driver
+Thread-Topic: [PATCH v14 5/5] remoteproc: Add initial zynqmp R5 remoteproc
+ driver
+Thread-Index: AQHWjSzx2v36zrUuJk25DA+tFuTaOqltZJcAgAAAbzA=
+Date:   Thu, 17 Sep 2020 22:18:39 +0000
+Message-ID: <BYAPR02MB44073E7A3BEA401FF4684E95B53E0@BYAPR02MB4407.namprd02.prod.outlook.com>
+References: <20200917194341.16272-1-ben.levinsky@xilinx.com>
+ <20200917194341.16272-6-ben.levinsky@xilinx.com>
+ <20200917221120.GA15530@xaphan>
+In-Reply-To: <20200917221120.GA15530@xaphan>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
+X-MS-TNEF-Correlator: 
+authentication-results: ni.com; dkim=none (message not signed)
+ header.d=none;ni.com; dmarc=none action=none header.from=xilinx.com;
+x-originating-ip: [24.5.142.107]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: 8e67a53f-924f-4740-2e4e-08d85b57a1ad
+x-ms-traffictypediagnostic: BY5PR02MB6961:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <BY5PR02MB6961056CEB70E85871EE8CE2B53E0@BY5PR02MB6961.namprd02.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:9508;
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: jrnYseDDknJUfzzWL0bCZntLNrhTIai/1R2gR4KPj8PEbc6YrnWij/jQZtH9ra0S5n0PdTY3WfyLNUgx4duq3v4lnOlBd4Y/YY/qTFUHdr5RMZrgma4is/iAGZuq1Xb6RU+lvV2p/gDY1E8ykg+OAX1Clfgz3OPOwY+q31rpy9Vtx0zpCkRV9+hyafuC2lTNxKJ0eO35Efp2iol7rPfNoUaxP7EQd/qnkBgFzlxhHGnXCtymqVcpJJIWcEI/yVrP93sk4gTAeZlN0ya+obDlseV+k6aofBewdOsD3xNGULoBXNL52sR+FbotkArEAUbi/FrSVKC4Ptl6dplu01S/Tw==
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR02MB4407.namprd02.prod.outlook.com;PTR:;CAT:NONE;SFS:(396003)(376002)(136003)(366004)(346002)(39860400002)(33656002)(4326008)(66946007)(107886003)(6916009)(478600001)(8936002)(71200400001)(66446008)(64756008)(316002)(66556008)(66476007)(186003)(86362001)(52536014)(5660300002)(8676002)(76116006)(83380400001)(2906002)(54906003)(55016002)(9686003)(26005)(6506007)(7696005)(53546011);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata: hFe+v4/ZUMZnG6GWl3d+iZzicro5+NrXsvu19Q+bK18KMqRIg5kki0KnRVtITCSGwX2GZ0Yz1LK39cMakHkcPppMLc0Irk/TXdbzjCbiHvJgpRdSrcf+9BhF9HlgH2wFcGE56svVgoSNOqFRNGr7XodxbGO5Xk3qUO4DP9tj4nQXI8FH+nFRtheepjtKRDN18gCDx9HKO8YiTqZYcrNf0P7qci417s5ATpcj1ATpP0B78nCAGRe0dO/OF5BJmLq+cchHRMJQzY1BWRf+ki2b/WNCIvJSkt+7yxe2jEz8FF0M+euW1qWv81JfGPQbYBNN1cZv+j2ydWg+M0fMXhHCW8ebnGRm8eC2pkNk70sRBXVJzL70yFoZi6dkwy/MRIhxU0bDD0nEuoxeBpfjb223UaR4XkOUM4Sb0raFX6x2fxAberTUHAikGeo8pYotA+FQdnwJj+FdarFxzLMFmPZpgwfrw18BkRS27K2rPgwv1MLRd96T2Zfkfkw689v5kN90PsbILzhAEqjYxGbRxJzrIsNIlsj6Rdj3dAmw5WMs68bIXvzJHNCRIIVZz/7Hmn8Sp7rMw8y4xOUzoExc/PiT0vFee1sacWLm+sMY7cILso2dqs0BPeWeR3cvS8ycygEiZzBW6hJpW31SGJFrds+VEA==
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200910111351.20526-4-guennadi.liakhovetski@linux.intel.com>
+X-OriginatorOrg: xilinx.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: BYAPR02MB4407.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8e67a53f-924f-4740-2e4e-08d85b57a1ad
+X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Sep 2020 22:18:40.3600
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 657af505-d5df-48d0-8300-c31994686c5c
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: ylBp/00vcBb9n0cdmGAABLmWnugt7g9WlHnhWNIGaWsrjSvNkTJgncdZYBdzi3rbDmTecUNEMDvyWO031tBDmA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR02MB6961
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Thu, Sep 10, 2020 at 01:13:51PM +0200, Guennadi Liakhovetski wrote:
-> Linux supports running the RPMsg protocol over the VirtIO transport
-> protocol, but currently there is only support for VirtIO clients and
-> no support for VirtIO servers. This patch adds a vhost-based RPMsg
-> server implementation, which makes it possible to use RPMsg over
-> VirtIO between guest VMs and the host.
+Hi Michael,
 
-I now get the client/server concept you are describing above but that happened
-only after a lot of mental gymnastics.  If you drop the whole client/server
-concept and concentrate on what this patch does, things will go better.  I would
-personally go with what you have in the Kconfig: 
+Thanks for the comments,
 
-> +	  Vhost RPMsg API allows vhost drivers to communicate with VirtIO
-> +	  drivers on guest VMs, using the RPMsg over VirtIO protocol.
+> -----Original Message-----
+> From: Michael Auchter <michael.auchter@ni.com>
+> Sent: Thursday, September 17, 2020 3:11 PM
+> To: Ben Levinsky <BLEVINSK@xilinx.com>
+> Cc: punit1.agrawal@toshiba.co.jp; Stefano Stabellini <stefanos@xilinx.com=
+>;
+> Michal Simek <michals@xilinx.com>; devicetree@vger.kernel.org;
+> mathieu.poirier@linaro.org; Ed T. Mooring <emooring@xilinx.com>; linux-
+> remoteproc@vger.kernel.org; linux-kernel@vger.kernel.org; Jiaying Liang
+> <jliang@xilinx.com>; robh+dt@kernel.org; linux-arm-
+> kernel@lists.infradead.org; Jiaying Liang <jliang@xilinx.com>; Michal Sim=
+ek
+> <michals@xilinx.com>; Ed T. Mooring <emooring@xilinx.com>; Jason Wu
+> <j.wu@xilinx.com>
+> Subject: Re: [PATCH v14 5/5] remoteproc: Add initial zynqmp R5 remoteproc
+> driver
+>=20
+> Hey Ben,
+>=20
+> Split mode is still not functional in this patch series (as was the case
+> with the last few revisions).
+>=20
+> Before sending out the next revision, can you _please_ ensure you're
+> testing all supported configurations?
+>=20
+[Ben Levinsky]  I will make sure to update in next revision.
+ As per review, I tested on QEMU and hardware firmware loading in split mod=
+e on R5 0 split, R5 1 split and R5 lockstep and  was  able to successfully =
+load, start and establish IPC links
 
-It is concise but describes exactly what this patch provide.
+That being said, I will update the to reflect the values between the enum f=
+or rpu operation mode and the documentation in the binding.
 
-> 
-> Signed-off-by: Guennadi Liakhovetski <guennadi.liakhovetski@linux.intel.com>
-> ---
->  drivers/vhost/Kconfig       |   7 +
->  drivers/vhost/Makefile      |   3 +
->  drivers/vhost/rpmsg.c       | 370 ++++++++++++++++++++++++++++++++++++
->  drivers/vhost/vhost_rpmsg.h |  74 ++++++++
->  4 files changed, 454 insertions(+)
->  create mode 100644 drivers/vhost/rpmsg.c
->  create mode 100644 drivers/vhost/vhost_rpmsg.h
-> 
-> diff --git a/drivers/vhost/Kconfig b/drivers/vhost/Kconfig
-> index 587fbae06182..ee1a19b7ab3d 100644
-> --- a/drivers/vhost/Kconfig
-> +++ b/drivers/vhost/Kconfig
-> @@ -38,6 +38,13 @@ config VHOST_NET
->  	  To compile this driver as a module, choose M here: the module will
->  	  be called vhost_net.
->  
-> +config VHOST_RPMSG
-> +	tristate
-> +	select VHOST
-> +	help
-> +	  Vhost RPMsg API allows vhost drivers to communicate with VirtIO
-> +	  drivers on guest VMs, using the RPMsg over VirtIO protocol.
-> +
+For testing, I can provide a pointer to a publicly available device tree I =
+am using if that helps. If not, can you expand on the testing of supported =
+configurations?
 
-I suppose you intend this to be selectable from another config option?
+> On Thu, Sep 17, 2020 at 12:43:41PM -0700, Ben Levinsky wrote:
+> > +/**
+> > + * RPU core configuration
+> > + */
+> > +static enum rpu_oper_mode rpu_mode;
+> > +
+>=20
+> <.. snip ..>
+>=20
+> > +static int zynqmp_r5_remoteproc_probe(struct platform_device *pdev)
+> > +{
+> > +	int ret, i =3D 0;
+> > +	u32 lockstep_mode;
+> > +	struct device *dev =3D &pdev->dev;
+> > +	struct device_node *nc;
+> > +
+> > +	ret =3D of_property_read_u32(dev->of_node,
+> > +				   "lockstep-mode",
+> > +				   &lockstep_mode);
+> > +	if (ret < 0) {
+> > +		return ret;
+> > +	} else if (lockstep_mode !=3D PM_RPU_MODE_LOCKSTEP &&
+> > +	    lockstep_mode !=3D PM_RPU_MODE_SPLIT) {
+> > +		dev_err(dev,
+> > +			"Invalid lockstep-mode %x in %pOF\n",
+> > +			lockstep_mode, dev->of_node);
+> > +		return -EINVAL;
+> > +	}
+> > +
+> > +	rpu_mode =3D lockstep_mode;
+> > +
+> > +	dev_dbg(dev, "RPU configuration: %s\n",
+> > +		lockstep_mode ? "lockstep" : "split");
+>=20
+> The binding documents lockstep-mode as:
+>=20
+> > +  lockstep-mode:
+> > +    description:
+> > +      R5 core configuration (split is 0 or lock-step and 1)
+> > +    maxItems: 1
+>=20
+will update this as you note so that lockstep and split mode are accurately=
+ reflected.=20
 
->  config VHOST_SCSI
->  	tristate "VHOST_SCSI TCM fabric driver"
->  	depends on TARGET_CORE && EVENTFD
-> diff --git a/drivers/vhost/Makefile b/drivers/vhost/Makefile
-> index f3e1897cce85..9cf459d59f97 100644
-> --- a/drivers/vhost/Makefile
-> +++ b/drivers/vhost/Makefile
-> @@ -2,6 +2,9 @@
->  obj-$(CONFIG_VHOST_NET) += vhost_net.o
->  vhost_net-y := net.o
->  
-> +obj-$(CONFIG_VHOST_RPMSG) += vhost_rpmsg.o
-> +vhost_rpmsg-y := rpmsg.o
-> +
->  obj-$(CONFIG_VHOST_SCSI) += vhost_scsi.o
->  vhost_scsi-y := scsi.o
->  
-> diff --git a/drivers/vhost/rpmsg.c b/drivers/vhost/rpmsg.c
-> new file mode 100644
-> index 000000000000..0ddee5b5f017
-> --- /dev/null
-> +++ b/drivers/vhost/rpmsg.c
-> @@ -0,0 +1,370 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * Copyright(c) 2020 Intel Corporation. All rights reserved.
-> + *
-> + * Author: Guennadi Liakhovetski <guennadi.liakhovetski@linux.intel.com>
-> + *
-> + * Vhost RPMsg VirtIO interface provides a set of functions to be used on the
-> + * host side as a counterpart to the guest side RPMsg VirtIO API, provided by
-> + * drivers/rpmsg/virtio_rpmsg_bus.c. This API can be used by any vhost driver to
-> + * handle RPMsg specific virtqueue processing.
-> + * Vhost drivers, using this API will use their own VirtIO device IDs, that
-> + * should then also be added to the ID table in virtio_rpmsg_bus.c
-> + */
-> +
-> +#include <linux/compat.h>
-> +#include <linux/file.h>
-> +#include <linux/miscdevice.h>
+> (Which needs to be reworded, but it looks like the intent was "split is
+> 0 and lock-step is 1")
+>=20
+> However, rpu_oper_mode is defined as:
+>=20
+> > +enum rpu_oper_mode {
+> > +       PM_RPU_MODE_LOCKSTEP =3D 0,
+> > +       PM_RPU_MODE_SPLIT =3D 1,
+> > +};
+>=20
+> so the assignment "rpu_mode =3D lockstep_mode" is incorrect.
+>=20
+once the binding is updated, why would this still be incorrect? Assuming th=
+e documentation is updated, the above line would be ok, right?
 
-As far as I can tell the above two are not needed.
+Thank you for the review
+Ben
 
-> +#include <linux/module.h>
-> +#include <linux/mutex.h>
-> +#include <linux/rpmsg/virtio.h>
-> +#include <linux/vhost.h>
-> +#include <uapi/linux/rpmsg.h>
-> +
-> +#include "vhost.h"
-> +#include "vhost_rpmsg.h"
-> +
-> +/*
-> + * All virtio-rpmsg virtual queue kicks always come with just one buffer -
-> + * either input or output, but we can also handle split messages
-> + */
-> +static int vhost_rpmsg_get_msg(struct vhost_virtqueue *vq, unsigned int *cnt)
-> +{
-> +	struct vhost_rpmsg *vr = container_of(vq->dev, struct vhost_rpmsg, dev);
-> +	unsigned int out, in;
-> +	int head = vhost_get_vq_desc(vq, vq->iov, ARRAY_SIZE(vq->iov), &out, &in,
-> +				     NULL, NULL);
-> +	if (head < 0) {
-> +		vq_err(vq, "%s(): error %d getting buffer\n",
-> +		       __func__, head);
-> +		return head;
-> +	}
-> +
-> +	/* Nothing new? */
-> +	if (head == vq->num)
-> +		return head;
-> +
-> +	if (vq == &vr->vq[VIRTIO_RPMSG_RESPONSE]) {
-> +		if (out) {
-> +			vq_err(vq, "%s(): invalid %d output in response queue\n",
-> +			       __func__, out);
-> +			goto return_buf;
-> +		}
-> +
-> +		*cnt = in;
-> +	}
-> +
-> +	if (vq == &vr->vq[VIRTIO_RPMSG_REQUEST]) {
-> +		if (in) {
-> +			vq_err(vq, "%s(): invalid %d input in request queue\n",
-> +		       __func__, in);
-> +			goto return_buf;
-> +		}
-> +
-> +		*cnt = out;
-> +	}
-> +
-> +	return head;
-> +
-> +return_buf:
-> +	vhost_add_used(vq, head, 0);
-> +
-> +	return -EINVAL;
-> +}
-> +
-> +static const struct vhost_rpmsg_ept *vhost_rpmsg_ept_find(struct vhost_rpmsg *vr, int addr)
-> +{
-> +	unsigned int i;
-> +
-> +	for (i = 0; i < vr->n_epts; i++)
-> +		if (vr->ept[i].addr == addr)
-> +			return vr->ept + i;
-> +
-> +	return NULL;
-> +}
-> +
-> +/*
-> + * if len < 0, then for reading a request, the complete virtual queue buffer
-> + * size is prepared, for sending a response, the length in the iterator is used
-> + */
-> +int vhost_rpmsg_start_lock(struct vhost_rpmsg *vr, struct vhost_rpmsg_iter *iter,
-> +			   unsigned int qid, ssize_t len)
-> +	__acquires(vq->mutex)
-> +{
-> +	struct vhost_virtqueue *vq = vr->vq + qid;
-> +	unsigned int cnt;
-> +	ssize_t ret;
-> +	size_t tmp;
-> +
-> +	if (qid >= VIRTIO_RPMSG_NUM_OF_VQS)
-> +		return -EINVAL;
-> +
-> +	iter->vq = vq;
-> +
-> +	mutex_lock(&vq->mutex);
-> +	vhost_disable_notify(&vr->dev, vq);
-> +
-> +	iter->head = vhost_rpmsg_get_msg(vq, &cnt);
-> +	if (iter->head == vq->num)
-> +		iter->head = -EAGAIN;
-> +
-> +	if (iter->head < 0) {
-> +		ret = iter->head;
-> +		goto unlock;
-> +	}
-> +
-> +	tmp = iov_length(vq->iov, cnt);
-> +	if (tmp < sizeof(iter->rhdr)) {
-> +		vq_err(vq, "%s(): size %zu too small\n", __func__, tmp);
-> +		ret = -ENOBUFS;
-> +		goto return_buf;
-> +	}
-> +
-> +	switch (qid) {
-> +	case VIRTIO_RPMSG_REQUEST:
-> +		if (len >= 0) {
-> +			if (tmp < sizeof(iter->rhdr) + len) {
-> +				ret = -ENOBUFS;
-> +				goto return_buf;
-> +			}
-> +
-> +			tmp = len + sizeof(iter->rhdr);
-> +		}
-> +
-> +		/* len is now the size of the payload */
-> +		iov_iter_init(&iter->iov_iter, WRITE, vq->iov, cnt, tmp);
-> +
-> +		/* Read the RPMSG header with endpoint addresses */
-> +		tmp = copy_from_iter(&iter->rhdr, sizeof(iter->rhdr), &iter->iov_iter);
-> +		if (tmp != sizeof(iter->rhdr)) {
-> +			vq_err(vq, "%s(): got %zu instead of %zu\n", __func__,
-> +			       tmp, sizeof(iter->rhdr));
-> +			ret = -EIO;
-> +			goto return_buf;
-> +		}
-> +
-> +		iter->ept = vhost_rpmsg_ept_find(vr, vhost32_to_cpu(vq, iter->rhdr.dst));
-> +		if (!iter->ept) {
-> +			vq_err(vq, "%s(): no endpoint with address %d\n",
-> +			       __func__, vhost32_to_cpu(vq, iter->rhdr.dst));
-> +			ret = -ENOENT;
-> +			goto return_buf;
-> +		}
-> +
-> +		/* Let the endpoint read the payload */
-> +		if (iter->ept->read) {
-> +			ret = iter->ept->read(vr, iter);
-> +			if (ret < 0)
-> +				goto return_buf;
-> +
-> +			iter->rhdr.len = cpu_to_vhost16(vq, ret);
-> +		} else {
-> +			iter->rhdr.len = 0;
-> +		}
-> +
-> +		/* Prepare for the response phase */
-> +		iter->rhdr.dst = iter->rhdr.src;
-> +		iter->rhdr.src = cpu_to_vhost32(vq, iter->ept->addr);
-
-I'm a little puzzled here - what will the response look like?  And why is it
-prepared here?  From what I can see doing so introduces coupling with function
-handle_rpmsg_req_single().  I think confirmation of reception should be handled
-by endpoints rather than in the core. 
-
-> +
-> +		break;
-> +	case VIRTIO_RPMSG_RESPONSE:
-> +		if (!iter->ept && iter->rhdr.dst != cpu_to_vhost32(vq, RPMSG_NS_ADDR)) {
-> +			/*
-> +			 * Usually the iterator is configured when processing a
-> +			 * message on the request queue, but it's also possible
-> +			 * to send a message on the response queue without a
-> +			 * preceding request, in that case the iterator must
-> +			 * contain source and destination addresses.
-> +			 */
-> +			iter->ept = vhost_rpmsg_ept_find(vr, vhost32_to_cpu(vq, iter->rhdr.src));
-> +			if (!iter->ept) {
-> +				ret = -ENOENT;
-> +				goto return_buf;
-> +			}
-> +		}
-> +
-> +		if (len >= 0) {
-> +			if (tmp < sizeof(iter->rhdr) + len) {
-> +				ret = -ENOBUFS;
-> +				goto return_buf;
-> +			}
-> +
-> +			iter->rhdr.len = cpu_to_vhost16(vq, len);
-> +			tmp = len + sizeof(iter->rhdr);
-> +		}
-> +
-> +		/* len is now the size of the payload */
-> +		iov_iter_init(&iter->iov_iter, READ, vq->iov, cnt, tmp);
-> +
-> +		/* Write the RPMSG header with endpoint addresses */
-> +		tmp = copy_to_iter(&iter->rhdr, sizeof(iter->rhdr), &iter->iov_iter);
-> +		if (tmp != sizeof(iter->rhdr)) {
-> +			ret = -EIO;
-> +			goto return_buf;
-> +		}
-> +
-> +		/* Let the endpoint write the payload */
-
-I would specifically mention that namespace payloads are taken care of by
-vhost_rpmsg_ns_announce().  That makes it easier for people to connect the dots. 
-
-> +		if (iter->ept && iter->ept->write) {
-> +			ret = iter->ept->write(vr, iter);
-> +			if (ret < 0)
-> +				goto return_buf;
-> +		}
-> +
-> +		break;
-> +	}
-> +
-> +	return 0;
-> +
-> +return_buf:
-> +	vhost_add_used(vq, iter->head, 0);
-> +unlock:
-> +	vhost_enable_notify(&vr->dev, vq);
-> +	mutex_unlock(&vq->mutex);
-> +
-> +	return ret;
-> +}
-> +EXPORT_SYMBOL_GPL(vhost_rpmsg_start_lock);
-> +
-> +size_t vhost_rpmsg_copy(struct vhost_rpmsg *vr, struct vhost_rpmsg_iter *iter,
-> +			void *data, size_t size)
-> +{
-> +	/*
-> +	 * We could check for excess data, but copy_{to,from}_iter() don't do
-> +	 * that either
-> +	 */
-> +	if (iter->vq == vr->vq + VIRTIO_RPMSG_RESPONSE)
-> +		return copy_to_iter(data, size, &iter->iov_iter);
-> +
-> +	return copy_from_iter(data, size, &iter->iov_iter);
-> +}
-> +EXPORT_SYMBOL_GPL(vhost_rpmsg_copy);
-> +
-> +int vhost_rpmsg_finish_unlock(struct vhost_rpmsg *vr,
-> +			      struct vhost_rpmsg_iter *iter)
-> +	__releases(vq->mutex)
-> +{
-> +	if (iter->head >= 0)
-> +		vhost_add_used_and_signal(iter->vq->dev, iter->vq, iter->head,
-> +					  vhost16_to_cpu(iter->vq, iter->rhdr.len) +
-> +					  sizeof(iter->rhdr));
-> +
-> +	vhost_enable_notify(&vr->dev, iter->vq);
-> +	mutex_unlock(&iter->vq->mutex);
-> +
-> +	return iter->head;
-> +}
-> +EXPORT_SYMBOL_GPL(vhost_rpmsg_finish_unlock);
-> +
-> +/*
-> + * Return false to terminate the external loop only if we fail to obtain either
-> + * a request or a response buffer
-> + */
-> +static bool handle_rpmsg_req_single(struct vhost_rpmsg *vr,
-> +				    struct vhost_virtqueue *vq)
-> +{
-> +	struct vhost_rpmsg_iter iter;
-> +	int ret = vhost_rpmsg_start_lock(vr, &iter, VIRTIO_RPMSG_REQUEST, -EINVAL);
-> +	if (!ret)
-> +		ret = vhost_rpmsg_finish_unlock(vr, &iter);
-> +	if (ret < 0) {
-> +		if (ret != -EAGAIN)
-> +			vq_err(vq, "%s(): RPMSG processing failed %d\n",
-> +			       __func__, ret);
-> +		return false;
-> +	}
-> +
-> +	if (!iter.ept->write)
-> +		return true;
-> +
-> +	ret = vhost_rpmsg_start_lock(vr, &iter, VIRTIO_RPMSG_RESPONSE, -EINVAL);
-> +	if (!ret)
-> +		ret = vhost_rpmsg_finish_unlock(vr, &iter);
-> +	if (ret < 0) {
-> +		vq_err(vq, "%s(): RPMSG finalising failed %d\n", __func__, ret);
-> +		return false;
-> +	}
-
-As I said before dealing with the "response" queue here seems to be introducing
-coupling with vhost_rpmsg_start_lock()...  Endpoints should be doing that.
-
-> +
-> +	return true;
-> +}
-> +
-> +static void handle_rpmsg_req_kick(struct vhost_work *work)
-> +{
-> +	struct vhost_virtqueue *vq = container_of(work, struct vhost_virtqueue,
-> +						  poll.work);
-> +	struct vhost_rpmsg *vr = container_of(vq->dev, struct vhost_rpmsg, dev);
-> +
-> +	while (handle_rpmsg_req_single(vr, vq))
-> +		;
-> +}
-> +
-> +/*
-> + * initialise two virtqueues with an array of endpoints,
-> + * request and response callbacks
-> + */
-> +void vhost_rpmsg_init(struct vhost_rpmsg *vr, const struct vhost_rpmsg_ept *ept,
-> +		      unsigned int n_epts)
-> +{
-> +	unsigned int i;
-> +
-> +	for (i = 0; i < ARRAY_SIZE(vr->vq); i++)
-> +		vr->vq_p[i] = &vr->vq[i];
-> +
-> +	/* vq[0]: host -> guest, vq[1]: host <- guest */
-> +	vr->vq[VIRTIO_RPMSG_REQUEST].handle_kick = handle_rpmsg_req_kick;
-> +	vr->vq[VIRTIO_RPMSG_RESPONSE].handle_kick = NULL;
-
-The comment depicts vq[0] followed by vq[1] but the code initialise vq[1] before
-vq[0], which is wildly confusing.  At the very least this should be: 
-
-	vr->vq[VIRTIO_RPMSG_RESPONSE].handle_kick = NULL;
-	vr->vq[VIRTIO_RPMSG_REQUEST].handle_kick = handle_rpmsg_req_kick;
-
-And even better:
-
-        /* See configuration of *vq_cbs[] in rpmsg_probe()  */
-	vr->vq[VIRTIO_RPMSG_TX].handle_kick = NULL;
-	vr->vq[VIRTIO_RPMSG_RX].handle_kick = handle_rpmsg_req_kick;
-
-> +
-> +	vr->ept = ept;
-> +	vr->n_epts = n_epts;
-> +
-> +	vhost_dev_init(&vr->dev, vr->vq_p, VIRTIO_RPMSG_NUM_OF_VQS,
-> +		       UIO_MAXIOV, 0, 0, true, NULL);
-> +}
-> +EXPORT_SYMBOL_GPL(vhost_rpmsg_init);
-> +
-> +void vhost_rpmsg_destroy(struct vhost_rpmsg *vr)
-> +{
-> +	if (vhost_dev_has_owner(&vr->dev))
-> +		vhost_poll_flush(&vr->vq[VIRTIO_RPMSG_REQUEST].poll);
-> +
-> +	vhost_dev_cleanup(&vr->dev);
-> +}
-> +EXPORT_SYMBOL_GPL(vhost_rpmsg_destroy);
-> +
-> +/* send namespace */
-> +int vhost_rpmsg_ns_announce(struct vhost_rpmsg *vr, const char *name, unsigned int src)
-> +{
-> +	struct vhost_virtqueue *vq = &vr->vq[VIRTIO_RPMSG_RESPONSE];
-> +	struct vhost_rpmsg_iter iter = {
-> +		.rhdr = {
-> +			.src = 0,
-> +			.dst = cpu_to_vhost32(vq, RPMSG_NS_ADDR),
-> +		},
-> +	};
-> +	struct rpmsg_ns_msg ns = {
-> +		.addr = cpu_to_vhost32(vq, src),
-> +		.flags = cpu_to_vhost32(vq, RPMSG_NS_CREATE), /* for rpmsg_ns_cb() */
-> +	};
-
-Here we have to assume the source can be found in the endpoints registered in
-vhost_rpmsg_init().  I would put a check to make sure that is the case and
-return an error otherwise. 
-
-> +	int ret = vhost_rpmsg_start_lock(vr, &iter, VIRTIO_RPMSG_RESPONSE, sizeof(ns));
-> +
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	strlcpy(ns.name, name, sizeof(ns.name));
-> +
-> +	ret = vhost_rpmsg_copy(vr, &iter, &ns, sizeof(ns));
-> +	if (ret != sizeof(ns))
-> +		vq_err(iter.vq, "%s(): added %d instead of %zu bytes\n",
-> +		       __func__, ret, sizeof(ns));
-> +
-> +	ret = vhost_rpmsg_finish_unlock(vr, &iter);
-> +	if (ret < 0)
-> +		vq_err(iter.vq, "%s(): namespace announcement failed: %d\n",
-> +		       __func__, ret);
-> +
-> +	return ret;
-> +}
-> +EXPORT_SYMBOL_GPL(vhost_rpmsg_ns_announce);
-> +
-> +MODULE_LICENSE("GPL v2");
-> +MODULE_AUTHOR("Intel, Inc.");
-> +MODULE_DESCRIPTION("Vhost RPMsg API");
-> diff --git a/drivers/vhost/vhost_rpmsg.h b/drivers/vhost/vhost_rpmsg.h
-> new file mode 100644
-> index 000000000000..c020ea14cd16
-> --- /dev/null
-> +++ b/drivers/vhost/vhost_rpmsg.h
-> @@ -0,0 +1,74 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +/*
-> + * Copyright(c) 2020 Intel Corporation. All rights reserved.
-> + *
-> + * Author: Guennadi Liakhovetski <guennadi.liakhovetski@linux.intel.com>
-> + */
-> +
-> +#ifndef VHOST_RPMSG_H
-> +#define VHOST_RPMSG_H
-> +
-> +#include <linux/rpmsg/virtio.h>
-> +#include <linux/uio.h>
-> +
-> +#include "vhost.h"
-> +
-> +/* RPMsg uses two VirtQueues: one for each direction */
-> +enum {
-> +	VIRTIO_RPMSG_RESPONSE,	/* RPMsg response (host->guest) buffers */
-> +	VIRTIO_RPMSG_REQUEST,	/* RPMsg request (guest->host) buffers */
-
-As I said above things would be much clearer if this was VIRTIO_RPMSG_TX and
-VIRTIO_RPMSG_RX.
-
-I won't be commenting on the mechanic needed to access and send information on
-the virtqueues as it is completely foreign to me.  Other than the above I think
-this is going somewhere. 
-
-Thanks,
-Mathieu
-
-> +	/* Keep last */
-> +	VIRTIO_RPMSG_NUM_OF_VQS,
-> +};
-> +
-> +struct vhost_rpmsg_ept;
-> +
-> +struct vhost_rpmsg_iter {
-> +	struct iov_iter iov_iter;
-> +	struct rpmsg_hdr rhdr;
-> +	struct vhost_virtqueue *vq;
-> +	const struct vhost_rpmsg_ept *ept;
-> +	int head;
-> +	void *priv;
-> +};
-> +
-> +struct vhost_rpmsg {
-> +	struct vhost_dev dev;
-> +	struct vhost_virtqueue vq[VIRTIO_RPMSG_NUM_OF_VQS];
-> +	struct vhost_virtqueue *vq_p[VIRTIO_RPMSG_NUM_OF_VQS];
-> +	const struct vhost_rpmsg_ept *ept;
-> +	unsigned int n_epts;
-> +};
-> +
-> +struct vhost_rpmsg_ept {
-> +	ssize_t (*read)(struct vhost_rpmsg *, struct vhost_rpmsg_iter *);
-> +	ssize_t (*write)(struct vhost_rpmsg *, struct vhost_rpmsg_iter *);
-> +	int addr;
-> +};
-> +
-> +static inline size_t vhost_rpmsg_iter_len(const struct vhost_rpmsg_iter *iter)
-> +{
-> +	return iter->rhdr.len;
-> +}
-> +
-> +#define VHOST_RPMSG_ITER(_vq, _src, _dst) {			\
-> +	.rhdr = {						\
-> +			.src = cpu_to_vhost32(_vq, _src),	\
-> +			.dst = cpu_to_vhost32(_vq, _dst),	\
-> +		},						\
-> +	}
-> +
-> +void vhost_rpmsg_init(struct vhost_rpmsg *vr, const struct vhost_rpmsg_ept *ept,
-> +		      unsigned int n_epts);
-> +void vhost_rpmsg_destroy(struct vhost_rpmsg *vr);
-> +int vhost_rpmsg_ns_announce(struct vhost_rpmsg *vr, const char *name,
-> +			    unsigned int src);
-> +int vhost_rpmsg_start_lock(struct vhost_rpmsg *vr,
-> +			   struct vhost_rpmsg_iter *iter,
-> +			   unsigned int qid, ssize_t len);
-> +size_t vhost_rpmsg_copy(struct vhost_rpmsg *vr, struct vhost_rpmsg_iter *iter,
-> +			void *data, size_t size);
-> +int vhost_rpmsg_finish_unlock(struct vhost_rpmsg *vr,
-> +			      struct vhost_rpmsg_iter *iter);
-> +
-> +#endif
-> -- 
-> 2.28.0
-> 
+> - Michael
