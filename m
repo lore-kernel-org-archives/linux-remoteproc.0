@@ -2,107 +2,139 @@ Return-Path: <SRS0=Or6o=C2=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-19.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_2 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7670C43461
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 17 Sep 2020 10:29:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6543BC433E2
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 17 Sep 2020 12:13:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A503D2087D
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 17 Sep 2020 10:29:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 26B52208DB
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 17 Sep 2020 12:13:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1600344833;
+	bh=Nbgs0z/6xv+x5U3xdgRyiH/6O+3c4uMDhu4Ye3gQrgo=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
+	b=zhP238WwrZjmqc17bG26v3FlOy3UUB9PNzYSVPf/SkOICZzfUoEoEpaL2IdPk6S5o
+	 KhfwjzSg1WwE5o9mqoFzlsC+e+8Rm9N+J7YnlopL5JppCdIY+0iR7piGIOzhynBGBH
+	 4tlgp26gbmN4Byn2dgoV/eCT4+4StAdGq5IUc+M4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726557AbgIQK3X (ORCPT
+        id S1726900AbgIQMNk (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 17 Sep 2020 06:29:23 -0400
-Received: from mga11.intel.com ([192.55.52.93]:34842 "EHLO mga11.intel.com"
+        Thu, 17 Sep 2020 08:13:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46358 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726217AbgIQK3X (ORCPT
+        id S1726792AbgIQMNi (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 17 Sep 2020 06:29:23 -0400
-IronPort-SDR: twmeOVqVFj0DbK2abVT28l8nuFRs5C9HbH3POwljOciphuQJ0jy0yDByE3u2GMZXBAbEDazwXW
- CNsMP2bHo0PA==
-X-IronPort-AV: E=McAfee;i="6000,8403,9746"; a="157072154"
-X-IronPort-AV: E=Sophos;i="5.76,436,1592895600"; 
-   d="scan'208";a="157072154"
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Sep 2020 03:29:19 -0700
-IronPort-SDR: Sae5zd9KD3dEUlzr7XHC+ou/WiCIYT/fy4ar77tPms92ndus9S0NHGRtSrZfHv78NzTX/r3Vyg
- wBd0kK2KM1Mg==
-X-IronPort-AV: E=Sophos;i="5.76,436,1592895600"; 
-   d="scan'208";a="483691895"
-Received: from gliakhov-mobl2.ger.corp.intel.com (HELO ubuntu) ([10.249.45.143])
-  by orsmga005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Sep 2020 03:29:15 -0700
-Date:   Thu, 17 Sep 2020 12:29:12 +0200
-From:   Guennadi Liakhovetski <guennadi.liakhovetski@linux.intel.com>
-To:     Vincent Whitchurch <vincent.whitchurch@axis.com>
-Cc:     Arnaud POULIQUEN <arnaud.pouliquen@st.com>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
-        "virtualization@lists.linux-foundation.org" 
-        <virtualization@lists.linux-foundation.org>,
-        "sound-open-firmware@alsa-project.org" 
-        <sound-open-firmware@alsa-project.org>,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Liam Girdwood <liam.r.girdwood@linux.intel.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
-        Ohad Ben-Cohen <ohad@wizery.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>, kishon@ti.com
-Subject: Re: [PATCH v6 0/4] Add a vhost RPMsg API
-Message-ID: <20200917102911.GB11491@ubuntu>
-References: <20200901151153.28111-1-guennadi.liakhovetski@linux.intel.com>
- <9433695b-5757-db73-bd8a-538fd1375e2a@st.com>
- <20200917054705.GA11491@ubuntu>
- <20200917083644.66yjer4zvoiftrk3@axis.com>
+        Thu, 17 Sep 2020 08:13:38 -0400
+Received: from coco.lan (ip5f5ad5d2.dynamic.kabel-deutschland.de [95.90.213.210])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5A033208DB;
+        Thu, 17 Sep 2020 12:13:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1600344804;
+        bh=Nbgs0z/6xv+x5U3xdgRyiH/6O+3c4uMDhu4Ye3gQrgo=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=Mf933PlCguinwSiUXc7C75dNyDg64TCRFNjAX5zAMEwxK8WVCc7DNZtfjvCGyyNzl
+         iCeE6Np2l4wCTHbeTsS9h7i5cxLDc/iSQD+5qqhB0iE1jzreC+oKX3c4+od0hqsenM
+         /79QkyIAlbpYTySkCL0y6eZvBqRZ7igl54drWmpU=
+Date:   Thu, 17 Sep 2020 14:13:20 +0200
+From:   Mauro Carvalho Chehab <mchehab@kernel.org>
+To:     Alexandre Courbot <acourbot@chromium.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Ohad Ben-Cohen <ohad@wizery.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        "open list:REMOTE PROCESSOR REMOTEPROC SUBSYSTEM" 
+        <linux-remoteproc@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Ezequiel Garcia <ezequiel@collabora.com>
+Subject: Re: [PATCH RESEND RESEND] remoteproc: scp: add COMPILE_TEST
+ dependency
+Message-ID: <20200917141320.1a1bb9df@coco.lan>
+In-Reply-To: <CAPBb6MXGGn-QGZvCycfMNO-PW_pBhi+B0QWoa=iESBp1P-eZrw@mail.gmail.com>
+References: <20200915012911.489820-1-acourbot@chromium.org>
+        <20200915032529.GA7762@uller>
+        <CAPBb6MXGGn-QGZvCycfMNO-PW_pBhi+B0QWoa=iESBp1P-eZrw@mail.gmail.com>
+X-Mailer: Claws Mail 3.17.6 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200917083644.66yjer4zvoiftrk3@axis.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi Vincent,
+Em Tue, 15 Sep 2020 12:43:26 +0900
+Alexandre Courbot <acourbot@chromium.org> escreveu:
 
-On Thu, Sep 17, 2020 at 10:36:44AM +0200, Vincent Whitchurch wrote:
-> On Thu, Sep 17, 2020 at 07:47:06AM +0200, Guennadi Liakhovetski wrote:
-> > On Tue, Sep 15, 2020 at 02:13:23PM +0200, Arnaud POULIQUEN wrote:
-> > > So i would be agree with Vincent[2] which proposed to switch on a RPMsg API
-> > > and creating a vhost rpmsg device. This is also proposed in the 
-> > > "Enhance VHOST to enable SoC-to-SoC communication" RFC[3].
-> > > Do you think that this alternative could match with your need?
-> > 
-> > As I replied to Vincent, I understand his proposal and the approach taken 
-> > in the series [3], but I'm not sure I agree, that adding yet another 
-> > virtual device / driver layer on the vhost side is a good idea. As far as 
-> > I understand adding new completely virtual devices isn't considered to be 
-> > a good practice in the kernel. Currently vhost is just a passive "library" 
-> > and my vhost-rpmsg support keeps it that way. Not sure I'm in favour of 
-> > converting vhost to a virtual device infrastructure.
+> On Tue, Sep 15, 2020 at 12:25 PM Bjorn Andersson
+> <bjorn.andersson@linaro.org> wrote:
+> >
+> > On Tue 15 Sep 01:29 UTC 2020, Alexandre Courbot wrote:
+> >  
+> > > This will improve this driver's build coverage.
+> > >
+> > > Reported-by: Ezequiel Garcia <ezequiel@collabora.com>
+> > > Signed-off-by: Alexandre Courbot <acourbot@chromium.org>
+> > > ---
+> > > Hi remoteproc maintainers,
+> > >
+> > > Second resend as I got no reaction for almost 1 month on this one-liner.  
+> >
+> > Sorry about that. I fell behind on my inbox and have missed your
+> > previous attempts.
+> >
+> > This has now been applied.  
 > 
-> I know it wasn't what you meant, but I noticed that the above paragraph
-> could be read as if my suggestion was to convert vhost to a virtual
-> device infrastructure, so I just want to clarify that that those are not
-> related.  The only similarity between what I suggested in the thread in
-> [2] and Kishon's RFC in [3] is that both involve creating a generic
-> vhost-rpmsg driver which would allow the RPMsg API to be used for both
-> sides of the link, instead of introducing a new API just for the server
-> side.  That can be done without rewriting drivers/vhost/.
+> No worries, thanks for the quick response.
+> 
+> Mauro, the patch is applied on
+> https://git.kernel.org/pub/scm/linux/kernel/git/andersson/remoteproc.git/commit/?id=5185e3a9dc2d68bb52e3e12400428aa060b87733,
+> will it work for you to merge this into the media tree and apply the
+> pull request on top?
+> 
+> >
+> > Regards,
+> > Bjorn
+> >  
+> > > Pretty please?
+> > >
+> > > As explained in
+> > > https://www.spinics.net/lists/linux-media/msg175991.html, we need this
+> > > patch in order to merge a driver series in the media tree. If that
+> > > looks ok to you, can we pull it in the media tree along with the series
+> > > that depends on it?
+> > >
+> > >  drivers/remoteproc/Kconfig | 2 +-
+> > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > >
+> > > diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
+> > > index c6659dfea7c7..d1fcada71017 100644
+> > > --- a/drivers/remoteproc/Kconfig
+> > > +++ b/drivers/remoteproc/Kconfig
+> > > @@ -43,7 +43,7 @@ config INGENIC_VPU_RPROC
+> > >
+> > >  config MTK_SCP
+> > >       tristate "Mediatek SCP support"
+> > > -     depends on ARCH_MEDIATEK
+> > > +     depends on ARCH_MEDIATEK || COMPILE_TEST
+> > >       select RPMSG_MTK_SCP
+> > >       help
+> > >         Say y here to support Mediatek's System Companion Processor (SCP) via
 
-Thanks for the clarification. Another flexibility, that I'm trying to preserve 
-with my approach is keeping direct access to iovec style data buffers for 
-cases where that's the structure, that's already used by the respective 
-driver on the host side. Since we already do packing and unpacking on the 
-guest / client side, we don't need the same on the host / server side again.
+Bjorn/Alexandre,
 
-Thanks
-Guennadi
+Can I just cherry-pick the patch from:
 
-> > > [1]. https://patchwork.kernel.org/project/linux-remoteproc/list/?series=338335 
-> > > [2]. https://www.spinics.net/lists/linux-virtualization/msg44195.html
-> > > [3]. https://www.spinics.net/lists/linux-remoteproc/msg06634.html  
+	https://git.kernel.org/pub/scm/linux/kernel/git/andersson/remoteproc.git/commit/?id=5185e3a9dc2d68bb52e3e12400428aa060b87733
+
+Adding it on my tree before the patches that require it?
+
+If aren't there any other changes for "config MTK_SCP",
+this is the easiest way for me, as I won't need to pull from
+a stable branch from your tree and wait for your patches to
+reach upstream, before sending a tree branch with such changes.
+
+Regards,
+Mauro
