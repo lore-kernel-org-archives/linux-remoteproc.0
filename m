@@ -2,51 +2,44 @@ Return-Path: <SRS0=Or6o=C2=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C538C43461
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 17 Sep 2020 08:56:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7670C43461
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 17 Sep 2020 10:29:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8743020872
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 17 Sep 2020 08:56:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=axis.com header.i=@axis.com header.b="Xb6szjsK"
+	by mail.kernel.org (Postfix) with ESMTP id A503D2087D
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 17 Sep 2020 10:29:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726298AbgIQI4D (ORCPT
+        id S1726557AbgIQK3X (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 17 Sep 2020 04:56:03 -0400
-Received: from smtp1.axis.com ([195.60.68.17]:59502 "EHLO smtp1.axis.com"
+        Thu, 17 Sep 2020 06:29:23 -0400
+Received: from mga11.intel.com ([192.55.52.93]:34842 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726153AbgIQI4C (ORCPT
+        id S1726217AbgIQK3X (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 17 Sep 2020 04:56:02 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=axis.com; l=2275; q=dns/txt; s=axis-central1;
-  t=1600332961; x=1631868961;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=7NfOGX/GL1UDMwdZ9k07i7ou/GGUBIMx7JAJVjygZ7I=;
-  b=Xb6szjsK8rHIGlEDX/QQulgoUe29IAnOl89ryhoxvWXgQesMajCev6Qy
-   bxfSAfWw7xNGORVfNUXJYflrqtRaSeh+xjPaU95t4De8kw0oZsDPAu/+B
-   e5Nzr0ryWyupZMxsIeCKA0eCMTgfx8HAHZrZJzs8aGM9hKfh0me10sJl4
-   EReO6dxc3j/JjkBS8uBr82fpZN/3UUs899R/NeCMK3+vHNQqQctdROoqE
-   JLYessc8f/ekhu7qLZ9I/6A4+vpLnpjHJBAtKs1sYJxd+WxjDXs0+nNzB
-   b25HrTwvqnaRUPcgNnggnP5LfwVohKyxvmWzexS4RW6E6P6nxZ4HmiMbq
-   w==;
-IronPort-SDR: 6MqQxFg+KYlYJphHffimUhmitKEWQPSswtENyoQ91Ovj6pMX7T6qnNokxLq4K1YYqIKW+8XOXr
- 8QxFFxVrBt4TANYJEnUU/zc/mxdRg7mGqCOauW90Ho32mryhm8H3Sw595FtOFZ6oJaimDN+N8J
- /MMYYZq38yqB6MUsXNxl3vZ0hOpba2p7rXyfh8R3zXjBcn8VmYaWDrPOptWGXktOddOp6rPiKd
- y1daRMgtUItqjCYrg2WJQQYJ0Fya8TEg1mGxkPnANvFXWBSKn3ItgMDLGHghqOeRJc0uwK3AgP
- Yq0=
-X-IronPort-AV: E=Sophos;i="5.76,436,1592863200"; 
-   d="scan'208";a="13045882"
-Date:   Thu, 17 Sep 2020 10:55:59 +0200
-From:   Vincent Whitchurch <vincent.whitchurch@axis.com>
-To:     Guennadi Liakhovetski <guennadi.liakhovetski@linux.intel.com>
-CC:     "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        Thu, 17 Sep 2020 06:29:23 -0400
+IronPort-SDR: twmeOVqVFj0DbK2abVT28l8nuFRs5C9HbH3POwljOciphuQJ0jy0yDByE3u2GMZXBAbEDazwXW
+ CNsMP2bHo0PA==
+X-IronPort-AV: E=McAfee;i="6000,8403,9746"; a="157072154"
+X-IronPort-AV: E=Sophos;i="5.76,436,1592895600"; 
+   d="scan'208";a="157072154"
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Sep 2020 03:29:19 -0700
+IronPort-SDR: Sae5zd9KD3dEUlzr7XHC+ou/WiCIYT/fy4ar77tPms92ndus9S0NHGRtSrZfHv78NzTX/r3Vyg
+ wBd0kK2KM1Mg==
+X-IronPort-AV: E=Sophos;i="5.76,436,1592895600"; 
+   d="scan'208";a="483691895"
+Received: from gliakhov-mobl2.ger.corp.intel.com (HELO ubuntu) ([10.249.45.143])
+  by orsmga005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Sep 2020 03:29:15 -0700
+Date:   Thu, 17 Sep 2020 12:29:12 +0200
+From:   Guennadi Liakhovetski <guennadi.liakhovetski@linux.intel.com>
+To:     Vincent Whitchurch <vincent.whitchurch@axis.com>
+Cc:     Arnaud POULIQUEN <arnaud.pouliquen@st.com>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
         "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
         "virtualization@lists.linux-foundation.org" 
         <virtualization@lists.linux-foundation.org>,
@@ -58,86 +51,58 @@ CC:     "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
         Jason Wang <jasowang@redhat.com>,
         Ohad Ben-Cohen <ohad@wizery.com>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>
-Subject: Re: [PATCH v7 3/3] vhost: add an RPMsg API
-Message-ID: <20200917085559.kxxjrortmhbwpd22@axis.com>
-References: <20200910111351.20526-1-guennadi.liakhovetski@linux.intel.com>
- <20200910111351.20526-4-guennadi.liakhovetski@linux.intel.com>
+        Mathieu Poirier <mathieu.poirier@linaro.org>, kishon@ti.com
+Subject: Re: [PATCH v6 0/4] Add a vhost RPMsg API
+Message-ID: <20200917102911.GB11491@ubuntu>
+References: <20200901151153.28111-1-guennadi.liakhovetski@linux.intel.com>
+ <9433695b-5757-db73-bd8a-538fd1375e2a@st.com>
+ <20200917054705.GA11491@ubuntu>
+ <20200917083644.66yjer4zvoiftrk3@axis.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200910111351.20526-4-guennadi.liakhovetski@linux.intel.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20200917083644.66yjer4zvoiftrk3@axis.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Thu, Sep 10, 2020 at 01:13:51PM +0200, Guennadi Liakhovetski wrote:
-> +int vhost_rpmsg_start_lock(struct vhost_rpmsg *vr, struct vhost_rpmsg_iter *iter,
-> +			   unsigned int qid, ssize_t len)
-> +	__acquires(vq->mutex)
-> +{
-> +	struct vhost_virtqueue *vq = vr->vq + qid;
-> +	unsigned int cnt;
-> +	ssize_t ret;
-> +	size_t tmp;
-> +
-> +	if (qid >= VIRTIO_RPMSG_NUM_OF_VQS)
-> +		return -EINVAL;
-> +
-> +	iter->vq = vq;
-> +
-> +	mutex_lock(&vq->mutex);
-> +	vhost_disable_notify(&vr->dev, vq);
-> +
-> +	iter->head = vhost_rpmsg_get_msg(vq, &cnt);
-> +	if (iter->head == vq->num)
-> +		iter->head = -EAGAIN;
-> +
-> +	if (iter->head < 0) {
-> +		ret = iter->head;
-> +		goto unlock;
-> +	}
-> +
-[...]
-> +
-> +return_buf:
-> +	vhost_add_used(vq, iter->head, 0);
-> +unlock:
-> +	vhost_enable_notify(&vr->dev, vq);
-> +	mutex_unlock(&vq->mutex);
-> +
-> +	return ret;
-> +}
+Hi Vincent,
 
-There is a race condition here.  New buffers could have been added while
-notifications were disabled (between vhost_disable_notify() and
-vhost_enable_notify()), so the other vhost drivers check the return
-value of vhost_enable_notify() and rerun their work loops if it returns
-true.  This driver doesn't do that so it stops processing requests if
-that condition hits.
+On Thu, Sep 17, 2020 at 10:36:44AM +0200, Vincent Whitchurch wrote:
+> On Thu, Sep 17, 2020 at 07:47:06AM +0200, Guennadi Liakhovetski wrote:
+> > On Tue, Sep 15, 2020 at 02:13:23PM +0200, Arnaud POULIQUEN wrote:
+> > > So i would be agree with Vincent[2] which proposed to switch on a RPMsg API
+> > > and creating a vhost rpmsg device. This is also proposed in the 
+> > > "Enhance VHOST to enable SoC-to-SoC communication" RFC[3].
+> > > Do you think that this alternative could match with your need?
+> > 
+> > As I replied to Vincent, I understand his proposal and the approach taken 
+> > in the series [3], but I'm not sure I agree, that adding yet another 
+> > virtual device / driver layer on the vhost side is a good idea. As far as 
+> > I understand adding new completely virtual devices isn't considered to be 
+> > a good practice in the kernel. Currently vhost is just a passive "library" 
+> > and my vhost-rpmsg support keeps it that way. Not sure I'm in favour of 
+> > converting vhost to a virtual device infrastructure.
+> 
+> I know it wasn't what you meant, but I noticed that the above paragraph
+> could be read as if my suggestion was to convert vhost to a virtual
+> device infrastructure, so I just want to clarify that that those are not
+> related.  The only similarity between what I suggested in the thread in
+> [2] and Kishon's RFC in [3] is that both involve creating a generic
+> vhost-rpmsg driver which would allow the RPMsg API to be used for both
+> sides of the link, instead of introducing a new API just for the server
+> side.  That can be done without rewriting drivers/vhost/.
 
-Something like the below seems to fix it but the correct fix could maybe
-involve changing this API to account for this case so that it looks more
-like the code in other vhost drivers.
+Thanks for the clarification. Another flexibility, that I'm trying to preserve 
+with my approach is keeping direct access to iovec style data buffers for 
+cases where that's the structure, that's already used by the respective 
+driver on the host side. Since we already do packing and unpacking on the 
+guest / client side, we don't need the same on the host / server side again.
 
-diff --git a/drivers/vhost/rpmsg.c b/drivers/vhost/rpmsg.c
-index 7c753258d42..673dd4ec865 100644
---- a/drivers/vhost/rpmsg.c
-+++ b/drivers/vhost/rpmsg.c
-@@ -302,8 +302,14 @@ static void handle_rpmsg_req_kick(struct vhost_work *work)
- 	struct vhost_virtqueue *vq = container_of(work, struct vhost_virtqueue,
- 						  poll.work);
- 	struct vhost_rpmsg *vr = container_of(vq->dev, struct vhost_rpmsg, dev);
-+	struct vhost_virtqueue *reqvq = vr->vq + VIRTIO_RPMSG_REQUEST;
- 
--	while (handle_rpmsg_req_single(vr, vq))
-+	/*
-+	 * The !vhost_vq_avail_empty() check is needed since the vhost_rpmsg*
-+	 * APIs don't check the return value of vhost_enable_notify() and retry
-+	 * if there were buffers added while notifications were disabled.
-+	 */
-+	while (handle_rpmsg_req_single(vr, vq) || !vhost_vq_avail_empty(reqvq->dev, reqvq))
- 		;
- }
- 
+Thanks
+Guennadi
+
+> > > [1]. https://patchwork.kernel.org/project/linux-remoteproc/list/?series=338335 
+> > > [2]. https://www.spinics.net/lists/linux-virtualization/msg44195.html
+> > > [3]. https://www.spinics.net/lists/linux-remoteproc/msg06634.html  
