@@ -2,128 +2,83 @@ Return-Path: <SRS0=3tFr=C3=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.2 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
+X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88DE3C43463
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 18 Sep 2020 11:02:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04FB3C43464
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 18 Sep 2020 15:42:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3B37420795
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 18 Sep 2020 11:02:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 204422084C
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 18 Sep 2020 15:42:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726379AbgIRLC5 (ORCPT
+        id S1726115AbgIRPmG (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 18 Sep 2020 07:02:57 -0400
-Received: from mga05.intel.com ([192.55.52.43]:49694 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725941AbgIRLC5 (ORCPT
+        Fri, 18 Sep 2020 11:42:06 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:42896 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725955AbgIRPmG (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 18 Sep 2020 07:02:57 -0400
-IronPort-SDR: jjCDr+maZNDKIXetgqn/rigqn9qa/8607VSPlkmn005FVTIGY1OoTikwE1CUfgiVJOJY9h7uvt
- VNow3wIS+qVw==
-X-IronPort-AV: E=McAfee;i="6000,8403,9747"; a="244747340"
-X-IronPort-AV: E=Sophos;i="5.77,274,1596524400"; 
-   d="scan'208";a="244747340"
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Sep 2020 04:02:56 -0700
-IronPort-SDR: ANgmBiMH9bh15obHmD8XQ3qCqsitwOIFKhgNW7hROftwZgR5AEhieAUlH7er5ha3sYmCr3+3U8
- Ifq3CH6H+TxQ==
-X-IronPort-AV: E=Sophos;i="5.77,274,1596524400"; 
-   d="scan'208";a="452712594"
-Received: from gliakhov-mobl2.ger.corp.intel.com (HELO ubuntu) ([10.252.42.33])
-  by orsmga004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Sep 2020 04:02:53 -0700
-Date:   Fri, 18 Sep 2020 13:02:49 +0200
-From:   Guennadi Liakhovetski <guennadi.liakhovetski@linux.intel.com>
-To:     Vincent Whitchurch <vincent.whitchurch@axis.com>
-Cc:     Arnaud POULIQUEN <arnaud.pouliquen@st.com>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
-        "virtualization@lists.linux-foundation.org" 
-        <virtualization@lists.linux-foundation.org>,
-        "sound-open-firmware@alsa-project.org" 
-        <sound-open-firmware@alsa-project.org>,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Liam Girdwood <liam.r.girdwood@linux.intel.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
-        Ohad Ben-Cohen <ohad@wizery.com>,
+        Fri, 18 Sep 2020 11:42:06 -0400
+X-Greylist: delayed 1051 seconds by postgrey-1.27 at vger.kernel.org; Fri, 18 Sep 2020 11:42:06 EDT
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <colin.king@canonical.com>)
+        id 1kJIFQ-000436-Jm; Fri, 18 Sep 2020 15:24:28 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Ohad Ben-Cohen <ohad@wizery.com>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>
-Subject: Re: [PATCH v6 0/4] Add a vhost RPMsg API
-Message-ID: <20200918110249.GE19246@ubuntu>
-References: <20200901151153.28111-1-guennadi.liakhovetski@linux.intel.com>
- <9433695b-5757-db73-bd8a-538fd1375e2a@st.com>
- <20200917054705.GA11491@ubuntu>
- <47a9ad01-c922-3b1c-84de-433f229ffba3@st.com>
- <20200918054420.GA19246@ubuntu>
- <0b7d9004-d71b-8b9a-eaed-f92833ce113f@st.com>
- <20200918094719.GD19246@ubuntu>
- <20200918103907.2ts4l5xiwm4542rs@axis.com>
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Pi-Hsun Shih <pihsun@chromium.org>,
+        Erin Lo <erin.lo@mediatek.com>,
+        Nicolas Boichat <drinkcat@chromium.org>,
+        linux-remoteproc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] remoteproc/mediatek: fix null pointer dereference on null scp pointer
+Date:   Fri, 18 Sep 2020 16:24:28 +0100
+Message-Id: <20200918152428.27258-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.27.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200918103907.2ts4l5xiwm4542rs@axis.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Fri, Sep 18, 2020 at 12:39:07PM +0200, Vincent Whitchurch wrote:
-> On Fri, Sep 18, 2020 at 11:47:20AM +0200, Guennadi Liakhovetski wrote:
-> > On Fri, Sep 18, 2020 at 09:47:45AM +0200, Arnaud POULIQUEN wrote:
-> > > IMO, as this API is defined in the Linux documentation [5] we should respect it, to ensure
-> > > one generic implementation. The RPMsg sample client[4] uses this user API, so seems to me
-> > > a good candidate to verify this. 
-> > > 
-> > > That's said, shall we multiple the RPMsg implementations in Linux with several APIs,
-> > > With the risk to make the RPMsg clients devices dependent on these implementations?
-> > > That could lead to complex code or duplications...
-> > 
-> > So, no, in my understanding there aren't two competing alternative APIs, you'd never have 
-> > to choose between them. If you're writing a driver for Linux to communicate with remote 
-> > processors or to run on VMs, you use the existing API. If you're writing a driver for 
-> > Linux to communicate with those VMs, you use the vhost API and whatever help is available 
-> > for RPMsg processing.
-> > 
-> > However, I can in principle imagine a single driver, written to work on both sides. 
-> > Something like the rpmsg_char.c or maybe some networking driver. Is that what you're 
-> > referring to? I can see that as a fun exercise, but are there any real uses for that? 
-> 
-> I hinted at a real use case for this in the previous mail thread[0].
-> I'm exploring using rpmsg-char to allow communication between two chips,
-> both running Linux.  rpmsg-char can be used pretty much as-is for both
-> sides of the userspace-to-userspace communication and (the userspace
-> side of the) userspace-to-kernel communication between the two chips.
-> 
-> > You could do the same with VirtIO, however, it has been decided to go with two 
-> > distinct APIs: virtio for guests and vhost for the host, noone bothered to create a 
-> > single API for both and nobody seems to miss one. Why would we want one with RPMsg?
-> 
-> I think I answered this question in the previous mail thread as well[1]:
-> | virtio has distinct driver and device roles so the completely different
-> | APIs on each side are understandable.  But I don't see that distinction
-> | in the rpmsg API which is why it seems like a good idea to me to make it
-> | work from both sides of the link and allow the reuse of drivers like
-> | rpmsg-char, instead of imposing virtio's distinction on rpmsg.
+From: Colin Ian King <colin.king@canonical.com>
 
-I think RPMsg is lacking real established documentation... Quating from [2]:
+Currently when pointer scp is null a dev_err is being called that
+references the pointer which is the very thing we are trying to
+avoid doing. Remove the extraneous error message to avoid this
+issue.
 
-<quote>
-In the current protocol, at startup, the master sends notification to remote to let it 
-know that it can receive name service announcement.
-</quote>
+Addresses-Coverity: ("Dereference after null check")
+Fixes: 63c13d61eafe ("remoteproc/mediatek: add SCP support for mt8183")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/remoteproc/mtk_scp_ipi.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-Isn't that a sufficient asymnetry?
+diff --git a/drivers/remoteproc/mtk_scp_ipi.c b/drivers/remoteproc/mtk_scp_ipi.c
+index 3d3d87210ef2..58d1d7e571d6 100644
+--- a/drivers/remoteproc/mtk_scp_ipi.c
++++ b/drivers/remoteproc/mtk_scp_ipi.c
+@@ -30,10 +30,8 @@ int scp_ipi_register(struct mtk_scp *scp,
+ 		     scp_ipi_handler_t handler,
+ 		     void *priv)
+ {
+-	if (!scp) {
+-		dev_err(scp->dev, "scp device is not ready\n");
++	if (!scp)
+ 		return -EPROBE_DEFER;
+-	}
+ 
+ 	if (WARN_ON(id >= SCP_IPI_MAX) || WARN_ON(handler == NULL))
+ 		return -EINVAL;
+-- 
+2.27.0
 
-Thanks
-Guennadi
-
-[2] https://github.com/OpenAMP/open-amp/wiki/RPMsg-Messaging-Protocol
-
-> 
-> [0] https://www.spinics.net/lists/linux-virtualization/msg43799.html
-> [1] https://www.spinics.net/lists/linux-virtualization/msg43802.html
