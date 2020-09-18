@@ -2,220 +2,259 @@ Return-Path: <SRS0=3tFr=C3=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-12.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E39CDC43463
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 18 Sep 2020 06:45:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27B3FC43465
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 18 Sep 2020 07:48:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A66762100A
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 18 Sep 2020 06:45:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B83CC208DB
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 18 Sep 2020 07:48:25 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=st.com header.i=@st.com header.b="HPWv/mcC"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726427AbgIRGpM (ORCPT
+        id S1726739AbgIRHsZ (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 18 Sep 2020 02:45:12 -0400
-Received: from mo-csw-fb1515.securemx.jp ([210.130.202.171]:52538 "EHLO
-        mo-csw-fb.securemx.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726424AbgIRGpM (ORCPT
+        Fri, 18 Sep 2020 03:48:25 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:26748 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726649AbgIRHsZ (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 18 Sep 2020 02:45:12 -0400
-X-Greylist: delayed 961 seconds by postgrey-1.27 at vger.kernel.org; Fri, 18 Sep 2020 02:45:10 EDT
-Received: by mo-csw-fb.securemx.jp (mx-mo-csw-fb1515) id 08I6TAq1023727; Fri, 18 Sep 2020 15:29:10 +0900
-Received: by mo-csw.securemx.jp (mx-mo-csw1516) id 08I6StZl003562; Fri, 18 Sep 2020 15:28:55 +0900
-X-Iguazu-Qid: 34trFrx2pqNWq2MYnj
-X-Iguazu-QSIG: v=2; s=0; t=1600410535; q=34trFrx2pqNWq2MYnj; m=XWOMKSutyKBJnyIaL4q4wThvZCfnOaUx8ba8QIcGqvo=
-Received: from imx2.toshiba.co.jp (imx2.toshiba.co.jp [106.186.93.51])
-        by relay.securemx.jp (mx-mr1510) id 08I6Srbq032718;
-        Fri, 18 Sep 2020 15:28:53 +0900
-Received: from enc01.toshiba.co.jp ([106.186.93.100])
-        by imx2.toshiba.co.jp  with ESMTP id 08I6Srv6006057;
-        Fri, 18 Sep 2020 15:28:53 +0900 (JST)
-Received: from hop001.toshiba.co.jp ([133.199.164.63])
-        by enc01.toshiba.co.jp  with ESMTP id 08I6Sq6W005477;
-        Fri, 18 Sep 2020 15:28:53 +0900
-From:   Punit Agrawal <punit1.agrawal@toshiba.co.jp>
-To:     Ben Levinsky <ben.levinsky@xilinx.com>
-Cc:     stefanos@xilinx.com, michals@xilinx.com, michael.auchter@ni.com,
-        devicetree@vger.kernel.org, emooring@xilinx.com,
-        mathieu.poirier@linaro.org, linux-remoteproc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, jliang@xilinx.com,
-        robh+dt@kernel.org, Jason Wu <j.wu@xilinx.com>,
-        Michal Simek <michal.simek@xilinx.com>,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v14 4/5] dt-bindings: remoteproc: Add documentation for ZynqMP R5 rproc bindings
-References: <20200917194341.16272-1-ben.levinsky@xilinx.com>
-        <20200917194341.16272-5-ben.levinsky@xilinx.com>
-Date:   Fri, 18 Sep 2020 15:28:50 +0900
-In-Reply-To: <20200917194341.16272-5-ben.levinsky@xilinx.com> (Ben Levinsky's
-        message of "Thu, 17 Sep 2020 12:43:40 -0700")
-X-TSB-HOP: ON
-Message-ID: <87r1qzlhst.fsf@kokedama.swc.toshiba.co.jp>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.3 (gnu/linux)
+        Fri, 18 Sep 2020 03:48:25 -0400
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 08I7kr6B002419;
+        Fri, 18 Sep 2020 09:47:47 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=STMicroelectronics;
+ bh=giXbDKgSiyCtqbTZJ17PIshG64TA8eKB36koF1fFacg=;
+ b=HPWv/mcCMbOzwHEj/XPWfi+30GIrLlxb1CaIKk9sL+HZrmkAgh07Yxg32h1uqy3pyFNZ
+ sOocKO6kH/q+jnwEGmDtYSyvGu0qpk9bDMzNX7ly0QimxWRs38BpvB93UJ8nY/+1ctxe
+ OTE7mLf0F+iDPC9oW80NzmHqM1wRDP28IMB8yhgR4FHVSO3E0KoSDwhzEFlg1cZ+9a64
+ wX8Cky2hm9l+iO6ZVycyZdjeu4uiHF08uLXEVLG2HATntpRtv797hEK2rhN88wptXLKp
+ fmA67UG12a1a1M2BZmkhVy5z8ldXZsQnFXfIefKnlUWKpLQOknAktcFTyQiB0wMrVzax aA== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 33k67bygy6-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 18 Sep 2020 09:47:47 +0200
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id B690610002A;
+        Fri, 18 Sep 2020 09:47:45 +0200 (CEST)
+Received: from Webmail-eu.st.com (sfhdag3node1.st.com [10.75.127.7])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 8A2C620FA52;
+        Fri, 18 Sep 2020 09:47:45 +0200 (CEST)
+Received: from lmecxl0889.tpe.st.com (10.75.127.47) by SFHDAG3NODE1.st.com
+ (10.75.127.7) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 18 Sep
+ 2020 09:47:44 +0200
+Subject: Re: [PATCH v6 0/4] Add a vhost RPMsg API
+To:     Guennadi Liakhovetski <guennadi.liakhovetski@linux.intel.com>
+CC:     "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
+        "virtualization@lists.linux-foundation.org" 
+        <virtualization@lists.linux-foundation.org>,
+        "sound-open-firmware@alsa-project.org" 
+        <sound-open-firmware@alsa-project.org>,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Liam Girdwood <liam.r.girdwood@linux.intel.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Ohad Ben-Cohen <ohad@wizery.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Vincent Whitchurch <vincent.whitchurch@axis.com>
+References: <20200901151153.28111-1-guennadi.liakhovetski@linux.intel.com>
+ <9433695b-5757-db73-bd8a-538fd1375e2a@st.com> <20200917054705.GA11491@ubuntu>
+ <47a9ad01-c922-3b1c-84de-433f229ffba3@st.com> <20200918054420.GA19246@ubuntu>
+From:   Arnaud POULIQUEN <arnaud.pouliquen@st.com>
+Message-ID: <0b7d9004-d71b-8b9a-eaed-f92833ce113f@st.com>
+Date:   Fri, 18 Sep 2020 09:47:45 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <20200918054420.GA19246@ubuntu>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.75.127.47]
+X-ClientProxiedBy: SFHDAG5NODE1.st.com (10.75.127.13) To SFHDAG3NODE1.st.com
+ (10.75.127.7)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.235,18.0.687
+ definitions=2020-09-18_06:2020-09-16,2020-09-18 signatures=0
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi Ben,
+Hi Guennadi,
 
-One query below -
+On 9/18/20 7:44 AM, Guennadi Liakhovetski wrote:
+> Hi Arnaud,
+> 
+> On Thu, Sep 17, 2020 at 05:21:02PM +0200, Arnaud POULIQUEN wrote:
+>> Hi Guennadi,
+>>
+>>> -----Original Message-----
+>>> From: Guennadi Liakhovetski <guennadi.liakhovetski@linux.intel.com>
+>>> Sent: jeudi 17 septembre 2020 07:47
+>>> To: Arnaud POULIQUEN <arnaud.pouliquen@st.com>
+>>> Cc: kvm@vger.kernel.org; linux-remoteproc@vger.kernel.org;
+>>> virtualization@lists.linux-foundation.org; sound-open-firmware@alsa-
+>>> project.org; Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>; Liam
+>>> Girdwood <liam.r.girdwood@linux.intel.com>; Michael S. Tsirkin
+>>> <mst@redhat.com>; Jason Wang <jasowang@redhat.com>; Ohad Ben-Cohen
+>>> <ohad@wizery.com>; Bjorn Andersson <bjorn.andersson@linaro.org>; Mathieu
+>>> Poirier <mathieu.poirier@linaro.org>; Vincent Whitchurch
+>>> <vincent.whitchurch@axis.com>
+>>> Subject: Re: [PATCH v6 0/4] Add a vhost RPMsg API
+>>>
+>>> Hi Arnaud,
+>>>
+>>> On Tue, Sep 15, 2020 at 02:13:23PM +0200, Arnaud POULIQUEN wrote:
+>>>> Hi  Guennadi,
+>>>>
+>>>> On 9/1/20 5:11 PM, Guennadi Liakhovetski wrote:
+>>>>> Hi,
+>>>>>
+>>>>> Next update:
+>>>>>
+>>>>> v6:
+>>>>> - rename include/linux/virtio_rpmsg.h ->
+>>>>> include/linux/rpmsg/virtio.h
+>>>>>
+>>>>> v5:
+>>>>> - don't hard-code message layout
+>>>>>
+>>>>> v4:
+>>>>> - add endianness conversions to comply with the VirtIO standard
+>>>>>
+>>>>> v3:
+>>>>> - address several checkpatch warnings
+>>>>> - address comments from Mathieu Poirier
+>>>>>
+>>>>> v2:
+>>>>> - update patch #5 with a correct vhost_dev_init() prototype
+>>>>> - drop patch #6 - it depends on a different patch, that is currently
+>>>>>   an RFC
+>>>>> - address comments from Pierre-Louis Bossart:
+>>>>>   * remove "default n" from Kconfig
+>>>>>
+>>>>> Linux supports RPMsg over VirtIO for "remote processor" / AMP use
+>>>>> cases. It can however also be used for virtualisation scenarios,
+>>>>> e.g. when using KVM to run Linux on both the host and the guests.
+>>>>> This patch set adds a wrapper API to facilitate writing vhost
+>>>>> drivers for such RPMsg-based solutions. The first use case is an
+>>>>> audio DSP virtualisation project, currently under development, ready
+>>>>> for review and submission, available at
+>>>>> https://github.com/thesofproject/linux/pull/1501/commits
+>>>>
+>>>> Mathieu pointed me your series. On my side i proposed the rpmsg_ns_msg
+>>>> service[1] that does not match with your implementation.
+>>>> As i come late, i hope that i did not miss something in the history...
+>>>> Don't hesitate to point me the discussions, if it is the case.
+>>>
+>>> Well, as you see, this is a v6 only of this patch set, and apart from it there have
+>>> been several side discussions and patch sets.
+>>>
+>>>> Regarding your patchset, it is quite confusing for me. It seems that
+>>>> you implement your own protocol on top of vhost forked from the RPMsg
+>>> one.
+>>>> But look to me that it is not the RPMsg protocol.
+>>>
+>>> I'm implementing a counterpart to the rpmsg protocol over VirtIO as initially
+>>> implemented by drivers/rpmsg/virtio_rpmsg_bus.c for the "main CPU" (in case
+>>> of remoteproc over VirtIO) or the guest side in case of Linux virtualisation.
+>>> Since my implementation can talk to that driver, I don't think, that I'm inventing
+>>> a new protocol. I'm adding support for the same protocol for the opposite side
+>>> of the VirtIO divide.
+>>
+>> The main point I would like to highlight here is related to the use of the name "RPMsg"
+>> more than how you implement your IPC protocol.
+>> If It is a counterpart, it probably does not respect interface for RPMsg clients.
+>> A good way to answer this, might be to respond to this question:
+>> Is the rpmsg sample client[4] can be used on top of your vhost RPMsg implementation?
+>> If the response is no, describe it as a RPMsg implementation could lead to confusion...
+> 
+> Sorry, I don't quite understand your logic. RPMsg is a communication protocol, not an 
+> API. An RPMsg implementation has to be able to communicate with other compliant RPMsg 
+> implementations, it doesn't have to provide any specific API. Am I missing anything?
 
-Ben Levinsky <ben.levinsky@xilinx.com> writes:
+You are right nothing is written in stone that compliance with the user RPMsg API defined
+in the Linux Documentation [5] is mandatory.
+IMO, as this API is defined in the Linux documentation [5] we should respect it, to ensure
+one generic implementation. The RPMsg sample client[4] uses this user API, so seems to me
+a good candidate to verify this. 
 
-> Add binding for ZynqMP R5 OpenAMP.
->
-> Represent the RPU domain resources in one device node. Each RPU
-> processor is a subnode of the top RPU domain node.
->
-> Signed-off-by: Jason Wu <j.wu@xilinx.com>
-> Signed-off-by: Wendy Liang <jliang@xilinx.com>
-> Signed-off-by: Michal Simek <michal.simek@xilinx.com>
->
-> Signed-off-by: Ben Levinsky <ben.levinsky@xilinx.com>
-> ---
+That's said, shall we multiple the RPMsg implementations in Linux with several APIs,
+With the risk to make the RPMsg clients devices dependent on these implementations?
+That could lead to complex code or duplications...
 
-[...]
+I'm not the right person to answer, Bjorn and Mathieu are.
 
->  .../xilinx,zynqmp-r5-remoteproc.yaml          | 119 ++++++++++++++++++
->  1 file changed, 119 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/remoteproc/xilinx,zynqmp-r5-remoteproc.yaml
->
-> diff --git a/Documentation/devicetree/bindings/remoteproc/xilinx,zynqmp-r5-remoteproc.yaml b/Documentation/devicetree/bindings/remoteproc/xilinx,zynqmp-r5-remoteproc.yaml
-> new file mode 100644
-> index 000000000000..cd2406b4dc24
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/remoteproc/xilinx,zynqmp-r5-remoteproc.yaml
-> @@ -0,0 +1,119 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: "http://devicetree.org/schemas/remoteproc/xilinx,zynqmp-r5-remoteproc.yaml#"
-> +$schema: "http://devicetree.org/meta-schemas/core.yaml#"
-> +
-> +title: Xilinx R5 remote processor controller bindings
-> +
-> +description:
-> +  This document defines the binding for the remoteproc component that loads and
-> +  boots firmwares on the Xilinx Zynqmp and Versal family chipset.
-> +
-> +  Note that the Linux has global addressing view of the R5-related memory (TCM)
-> +  so the absolute address ranges are provided in TCM reg's.
-> +maintainers:
-> +  - Ed Mooring <ed.mooring@xilinx.com>
-> +  - Ben Levinsky <ben.levinsky@xilinx.com>
-> +
-> +properties:
-> +  compatible:
-> +    const: "xlnx,zynqmp-r5-remoteproc-1.0"
-> +
-> +  lockstep-mode:
-> +    description:
-> +      R5 core configuration (split is 0 or lock-step and 1)
-> +    maxItems: 1
-
-Looking at the driver, it seems that it is possible to set the R5s to
-operate in split or lock-step mode dynamically.
-
-If so, the device tree shouldn't really contain this property. Wouldn't
-it be better to give the users flexibility to choose the mode at run
-time?
+[5] https://elixir.bootlin.com/linux/v5.8.10/source/Documentation/rpmsg.txt#L66
 
 Thanks,
-Punit
+Arnaud
 
-> +
-> +  interrupts:
-> +    description:
-> +      Interrupt mapping for remoteproc IPI. It is required if the
-> +      user uses the remoteproc driver with the RPMsg kernel driver.
-> +    maxItems: 6
-> +
-> +  memory-region:
-> +    description:
-> +      collection of memory carveouts used for elf-loading and inter-processor
-> +      communication.
-> +    maxItems: 4
-> +    minItems: 4
-> +  meta-memory-regions:
-> +    description:
-> +      collection of memories that are not present in the top level memory
-> +      nodes' mapping. For example, R5s' TCM banks. These banks are needed
-> +      for R5 firmware meta data such as the R5 firmware's heap and stack
-> +  pnode-id:
-> +    maxItems: 1
-> +  mboxes:
-> +    maxItems: 2
-> +  mbox-names:
-> +    maxItems: 2
-> +
-> +examples:
-> +  - |
-> +     reserved-memory {
-> +          #address-cells = <1>;
-> +          #size-cells = <1>;
-> +          ranges;
-> +          elf_load: rproc@3ed000000 {
-> +               no-map;
-> +               reg = <0x3ed00000 0x40000>;
-> +          };
-> +
-> +          rpu0vdev0vring0: rpu0vdev0vring0@3ed40000 {
-> +               no-map;
-> +               reg = <0x3ed40000 0x4000>;
-> +          };
-> +          rpu0vdev0vring1: rpu0vdev0vring1@3ed44000 {
-> +               no-map;
-> +               reg = <0x3ed44000 0x4000>;
-> +          };
-> +          rpu0vdev0buffer: rpu0vdev0buffer@3ed48000 {
-> +               no-map;
-> +               reg = <0x3ed48000 0x100000>;
-> +          };
-> +
-> +     };
-> +
-> +     /*
-> +      * Below nodes are required if using TCM to load R5 firmware
-> +      * if not, then either do not provide nodes are label as disabled in
-> +      * status property
-> +      */
-> +     tcm0a: tcm_0a@ffe00000 {
-> +         reg = <0xffe00000 0x10000>;
-> +         pnode-id = <0xf>;
-> +         no-map;
-> +         status = "okay";
-> +         phandle = <0x40>;
-> +         compatible = "xlnx,tcm";
-> +     };
-> +     tcm0b: tcm_1a@ffe20000 {
-> +         reg = <0xffe20000 0x10000>;
-> +         pnode-id = <0x10>;
-> +         no-map;
-> +         status = "okay";
-> +         compatible = "xlnx,tcm";
-> +         phandle = <0x41>;
-> +     };
-> +
-> +     rpu {
-> +          compatible = "xlnx,zynqmp-r5-remoteproc-1.0";
-> +          #address-cells = <1>;
-> +          #size-cells = <1>;
-> +          ranges;
-> +          lockstep-mode = <1>;
-> +          r5_0 {
-> +               ranges;
-> +               #address-cells = <1>;
-> +               #size-cells = <1>;
-> +               memory-region = <&elf_load>,
-> +                               <&rpu0vdev0vring0>,
-> +                               <&rpu0vdev0vring1>,
-> +                               <&rpu0vdev0buffer>;
-> +               meta-memory-regions = <&tcm_0a>, <&tcm_0b>;
-> +               pnode-id = <0x7>;
-> +          };
-> +     };
-> +
-> +...
+  
+> 
+> Thanks
+> Guennadi
+> 
+>> [4] https://elixir.bootlin.com/linux/v5.9-rc5/source/samples/rpmsg/rpmsg_client_sample.c
+>>
+>> Regards,
+>> Arnaud
+>>
+>>>
+>>>> So i would be agree with Vincent[2] which proposed to switch on a
+>>>> RPMsg API and creating a vhost rpmsg device. This is also proposed in
+>>>> the "Enhance VHOST to enable SoC-to-SoC communication" RFC[3].
+>>>> Do you think that this alternative could match with your need?
+>>>
+>>> As I replied to Vincent, I understand his proposal and the approach taken in the
+>>> series [3], but I'm not sure I agree, that adding yet another virtual device /
+>>> driver layer on the vhost side is a good idea. As far as I understand adding new
+>>> completely virtual devices isn't considered to be a good practice in the kernel.
+>>> Currently vhost is just a passive "library"
+>>> and my vhost-rpmsg support keeps it that way. Not sure I'm in favour of
+>>> converting vhost to a virtual device infrastructure.
+>>>
+>>> Thanks for pointing me out at [3], I should have a better look at it.
+>>>
+>>> Thanks
+>>> Guennadi
+>>>
+>>>> [1].
+>>>> https://patchwork.kernel.org/project/linux-remoteproc/list/?series=338
+>>>> 335 [2].
+>>>> https://www.spinics.net/lists/linux-virtualization/msg44195.html
+>>>> [3]. https://www.spinics.net/lists/linux-remoteproc/msg06634.html
+>>>>
+>>>> Thanks,
+>>>> Arnaud
+>>>>
+>>>>>
+>>>>> Thanks
+>>>>> Guennadi
+>>>>>
+>>>>> Guennadi Liakhovetski (4):
+>>>>>   vhost: convert VHOST_VSOCK_SET_RUNNING to a generic ioctl
+>>>>>   rpmsg: move common structures and defines to headers
+>>>>>   rpmsg: update documentation
+>>>>>   vhost: add an RPMsg API
+>>>>>
+>>>>>  Documentation/rpmsg.txt          |   6 +-
+>>>>>  drivers/rpmsg/virtio_rpmsg_bus.c |  78 +------
+>>>>>  drivers/vhost/Kconfig            |   7 +
+>>>>>  drivers/vhost/Makefile           |   3 +
+>>>>>  drivers/vhost/rpmsg.c            | 373 +++++++++++++++++++++++++++++++
+>>>>>  drivers/vhost/vhost_rpmsg.h      |  74 ++++++
+>>>>>  include/linux/rpmsg/virtio.h     |  83 +++++++
+>>>>>  include/uapi/linux/rpmsg.h       |   3 +
+>>>>>  include/uapi/linux/vhost.h       |   4 +-
+>>>>>  9 files changed, 551 insertions(+), 80 deletions(-)  create mode
+>>>>> 100644 drivers/vhost/rpmsg.c  create mode 100644
+>>>>> drivers/vhost/vhost_rpmsg.h  create mode 100644
+>>>>> include/linux/rpmsg/virtio.h
+>>>>>
