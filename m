@@ -1,700 +1,183 @@
-Return-Path: <SRS0=3tFr=C3=vger.kernel.org=linux-remoteproc-owner@kernel.org>
+Return-Path: <SRS0=EX6n=C4=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69C68C43463
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 18 Sep 2020 23:16:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AC0CC43464
+	for <linux-remoteproc@archiver.kernel.org>; Sat, 19 Sep 2020 01:53:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0B8CB21707
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 18 Sep 2020 23:16:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D5CCE21707
+	for <linux-remoteproc@archiver.kernel.org>; Sat, 19 Sep 2020 01:53:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CGbT7+hC"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ElXRHU20"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726022AbgIRXQU (ORCPT
+        id S1726174AbgISBxV (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 18 Sep 2020 19:16:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52704 "EHLO
+        Fri, 18 Sep 2020 21:53:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48412 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725945AbgIRXQU (ORCPT
+        with ESMTP id S1726054AbgISBxV (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 18 Sep 2020 19:16:20 -0400
-Received: from mail-pf1-x444.google.com (mail-pf1-x444.google.com [IPv6:2607:f8b0:4864:20::444])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 38BA7C0613CE
-        for <linux-remoteproc@vger.kernel.org>; Fri, 18 Sep 2020 16:16:20 -0700 (PDT)
-Received: by mail-pf1-x444.google.com with SMTP id n14so4402040pff.6
-        for <linux-remoteproc@vger.kernel.org>; Fri, 18 Sep 2020 16:16:20 -0700 (PDT)
+        Fri, 18 Sep 2020 21:53:21 -0400
+Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0C0F0C0613CE;
+        Fri, 18 Sep 2020 18:53:21 -0700 (PDT)
+Received: by mail-wr1-x42b.google.com with SMTP id g4so7299361wrs.5;
+        Fri, 18 Sep 2020 18:53:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=EDS+mWuAPeRZAnIkM+Uzh0XpjR4cSYNrWpSSjj20/bQ=;
-        b=CGbT7+hCFaLImgIPGgTeipHH/+kvXf0dqBW9ASJh1a1KW8O8g1ThcA0UeDbnXzTouf
-         jWIzU4S5SkE0l4ru3bUrJ2h7CBZfb3frr0acdD4LWl0j3Z5hxqsqONhIxE1Q8HgAgNbg
-         4f8HKuu66wokLYnPnK7JA/t4nl5M78zeqHlb7fAGZzYphXvEx7Uf7JXpZFC5nS73u+dp
-         L/mIMOCp1rJLjO70Reh+QVIYjbRcVlRH9vp/x+TJxel28CEKFfi4iARLuDj36Td3lUaA
-         ev1r47PiIOj567FvLYU24FKcmoypXmDjjBBD65hU/QEaiVe/rTTC053fbJuRyCd0Bcs7
-         8bzQ==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=BxV6YGRn23jRpo6op9QJZovwE6L/PxsHN1kxycYIod4=;
+        b=ElXRHU20aWE1PWPA/D+5qpVStqagYgvtf1FxaVCo6JH1Wj/H3+MZLB/f9fWAXXTDt/
+         2evWkfNea/Dp91Nx84SV6fWcinqRzj46XSQoB7gsJoClyixCjrZh6MM/9M+hKrWiXj92
+         BJ5zccx8L8KkjpzHUBJEpMABmiYweQS3qVKnq7pxETOhj5mY0285xV94E+wADGScOtfc
+         iYxofYQFOkXj8rFaYe1TT1FTbM60KzN6+Ei0nKHaWT5i+uLsHwPX8+Rc25tvr70iEnQr
+         leJmv/IiosoD8NZi/006e4Gsz0Ojqaov4FxIXGLYhzbNRV/R9sQLxvG0PBkuF/hS+oBO
+         VSyQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=EDS+mWuAPeRZAnIkM+Uzh0XpjR4cSYNrWpSSjj20/bQ=;
-        b=ZEy/90LozUEfwsV4cZ7pem/hpWn9n+84vYrXb/SAgPWeiVmy+dAYP/93n+WI0kDZ+6
-         hnh1kq1iYPjdTbUMNkEhyatedjBQk9CIuZDHYv7DbHZZPssBHGdcwaWI8GVRYuFMuHzR
-         3mLTjfmn8l94rS7ZmjLoXoeRNc0gXFi7nDVeNd9+tQ5WyEonDN7KQZqvtDtZdwdhRyih
-         yxJ/gsiIng2+l0KvTfmNR6wepgReT9y8VCrzO87DFatVvP8kwjiETODK0hdNA/31s71M
-         OzGaeD2Nyl+lHhRNzt9BxB54Ep/Ja+lgL51KTt66iHUOPZVK1J9ivgpOEZEg5f/f1VEi
-         iU1w==
-X-Gm-Message-State: AOAM530pZKuGyJj8hfv7TTbBn1DZL/zCL9Z0Ia+gUo7SfLvvvOFYcVun
-        h0iDC4uA6M3h6fzecdA04jEpmw==
-X-Google-Smtp-Source: ABdhPJxvNBYfPLtFLuwvVA3Es+0ITuxh9H/KV+7APkjRLGU9PEXuuyg0FwVSeJ/0uVsrhyt8WakAFw==
-X-Received: by 2002:a62:7696:0:b029:142:44d5:ab62 with SMTP id r144-20020a6276960000b029014244d5ab62mr14289350pfc.59.1600470979423;
-        Fri, 18 Sep 2020 16:16:19 -0700 (PDT)
-Received: from xps15 (S0106002369de4dac.cg.shawcable.net. [68.147.8.254])
-        by smtp.gmail.com with ESMTPSA id m188sm4762718pfd.56.2020.09.18.16.16.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Sep 2020 16:16:18 -0700 (PDT)
-Date:   Fri, 18 Sep 2020 17:16:16 -0600
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-To:     Guennadi Liakhovetski <guennadi.liakhovetski@linux.intel.com>
-Cc:     kvm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        sound-open-firmware@alsa-project.org,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Liam Girdwood <liam.r.girdwood@linux.intel.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
-        Ohad Ben-Cohen <ohad@wizery.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Vincent Whitchurch <vincent.whitchurch@axis.com>
-Subject: Re: [PATCH v7 3/3] vhost: add an RPMsg API
-Message-ID: <20200918231616.GB209991@xps15>
-References: <20200910111351.20526-1-guennadi.liakhovetski@linux.intel.com>
- <20200910111351.20526-4-guennadi.liakhovetski@linux.intel.com>
- <20200917220138.GA97950@xps15>
- <20200918090229.GC19246@ubuntu>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=BxV6YGRn23jRpo6op9QJZovwE6L/PxsHN1kxycYIod4=;
+        b=UZ+FUTZIKcDCXf3lnyWqor5k2RUlWkQCAbkxIRR/nIVn/iOT5bp1bNqO7Qeqx/KhJ1
+         rz8GYQ+e1EHBbnBye7V9+r0+ZRSlhbPOOCZ8szDV3aCExS9VlwtjTL6SesZrE6Ob4eQl
+         08Xq3umHY/Ki418X6bgyBcufHE1ZLQmqI+GJ+Kzm4G8SaytMpP9zncc1Uek9hhFRp+Wp
+         lUhE5cLtTck1/Hf8f0YXqKdgzuq2ciGRBeXtg11qPjAHfTfefvRZxT4pmcRVVIRp0lii
+         BYdHQTHf2IM/v1ZkcuTyZsTG07/FtcSpEgOoNP8JknnP67MSY1fmyuzbFf1i7JZXnSle
+         D6/A==
+X-Gm-Message-State: AOAM532dQuh+70vmtkkMulKhGanRHm8abKd1ZywWeX55OLlx00L5rgcN
+        q+Jmyi0sf8nPyKA1ItUIHZljsVVS5kDjag9yzIo=
+X-Google-Smtp-Source: ABdhPJyCFcqoSk2NBgKEAJSgMUY7AkkpPKgmjJGmNPK7HZGvl7zbyjnfZgchpSMfxiQU3eBKEimZ7Ko2gR5TQPxaFZ4=
+X-Received: by 2002:a5d:4a0e:: with SMTP id m14mr42994703wrq.313.1600480399563;
+ Fri, 18 Sep 2020 18:53:19 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200918090229.GC19246@ubuntu>
+References: <20200917194341.16272-1-ben.levinsky@xilinx.com>
+ <20200917194341.16272-6-ben.levinsky@xilinx.com> <20200917221120.GA15530@xaphan>
+ <BYAPR02MB44073E7A3BEA401FF4684E95B53E0@BYAPR02MB4407.namprd02.prod.outlook.com>
+ <BYAPR02MB4407A552ECBA907DFC3CEC91B53E0@BYAPR02MB4407.namprd02.prod.outlook.com>
+ <20200918160721.GD15530@xaphan> <BYAPR02MB44073FBEF86F4AA2379D8A11B53F0@BYAPR02MB4407.namprd02.prod.outlook.com>
+ <20200918190643.GA172254@xaphan>
+In-Reply-To: <20200918190643.GA172254@xaphan>
+From:   Wendy Liang <sunnyliangjy@gmail.com>
+Date:   Fri, 18 Sep 2020 18:53:08 -0700
+Message-ID: <CAA07jV9WfTTLRwh3kmy1985p4C1m37wQJQAHzLdK2cn4f8HENw@mail.gmail.com>
+Subject: Re: RE: RE: [PATCH v14 5/5] remoteproc: Add initial zynqmp R5
+ remoteproc driver
+To:     Michael Auchter <michael.auchter@ni.com>
+Cc:     Ben Levinsky <BLEVINSK@xilinx.com>,
+        "punit1.agrawal@toshiba.co.jp" <punit1.agrawal@toshiba.co.jp>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Fri, Sep 18, 2020 at 11:02:29AM +0200, Guennadi Liakhovetski wrote:
-> Hi Mathieu,
-> 
-> On Thu, Sep 17, 2020 at 04:01:38PM -0600, Mathieu Poirier wrote:
-> > On Thu, Sep 10, 2020 at 01:13:51PM +0200, Guennadi Liakhovetski wrote:
-> > > Linux supports running the RPMsg protocol over the VirtIO transport
-> > > protocol, but currently there is only support for VirtIO clients and
-> > > no support for VirtIO servers. This patch adds a vhost-based RPMsg
-> > > server implementation, which makes it possible to use RPMsg over
-> > > VirtIO between guest VMs and the host.
-> > 
-> > I now get the client/server concept you are describing above but that happened
-> > only after a lot of mental gymnastics.  If you drop the whole client/server
-> > concept and concentrate on what this patch does, things will go better.  I would
-> > personally go with what you have in the Kconfig: 
-> > 
-> > > +	  Vhost RPMsg API allows vhost drivers to communicate with VirtIO
-> > > +	  drivers on guest VMs, using the RPMsg over VirtIO protocol.
-> > 
-> > It is concise but describes exactly what this patch provide.
-> 
-> Ok, thanks, will try to improve.
-> 
-> > > Signed-off-by: Guennadi Liakhovetski <guennadi.liakhovetski@linux.intel.com>
-> > > ---
-> > >  drivers/vhost/Kconfig       |   7 +
-> > >  drivers/vhost/Makefile      |   3 +
-> > >  drivers/vhost/rpmsg.c       | 370 ++++++++++++++++++++++++++++++++++++
-> > >  drivers/vhost/vhost_rpmsg.h |  74 ++++++++
-> > >  4 files changed, 454 insertions(+)
-> > >  create mode 100644 drivers/vhost/rpmsg.c
-> > >  create mode 100644 drivers/vhost/vhost_rpmsg.h
-> > > 
-> > > diff --git a/drivers/vhost/Kconfig b/drivers/vhost/Kconfig
-> > > index 587fbae06182..ee1a19b7ab3d 100644
-> > > --- a/drivers/vhost/Kconfig
-> > > +++ b/drivers/vhost/Kconfig
-> > > @@ -38,6 +38,13 @@ config VHOST_NET
-> > >  	  To compile this driver as a module, choose M here: the module will
-> > >  	  be called vhost_net.
-> > >  
-> > > +config VHOST_RPMSG
-> > > +	tristate
-> > > +	select VHOST
-> > > +	help
-> > > +	  Vhost RPMsg API allows vhost drivers to communicate with VirtIO
-> > > +	  drivers on guest VMs, using the RPMsg over VirtIO protocol.
-> > > +
-> > 
-> > I suppose you intend this to be selectable from another config option?
-> 
-> yes.
-> 
-> > >  config VHOST_SCSI
-> > >  	tristate "VHOST_SCSI TCM fabric driver"
-> > >  	depends on TARGET_CORE && EVENTFD
-> > > diff --git a/drivers/vhost/Makefile b/drivers/vhost/Makefile
-> > > index f3e1897cce85..9cf459d59f97 100644
-> > > --- a/drivers/vhost/Makefile
-> > > +++ b/drivers/vhost/Makefile
-> > > @@ -2,6 +2,9 @@
-> > >  obj-$(CONFIG_VHOST_NET) += vhost_net.o
-> > >  vhost_net-y := net.o
-> > >  
-> > > +obj-$(CONFIG_VHOST_RPMSG) += vhost_rpmsg.o
-> > > +vhost_rpmsg-y := rpmsg.o
-> > > +
-> > >  obj-$(CONFIG_VHOST_SCSI) += vhost_scsi.o
-> > >  vhost_scsi-y := scsi.o
-> > >  
-> > > diff --git a/drivers/vhost/rpmsg.c b/drivers/vhost/rpmsg.c
-> > > new file mode 100644
-> > > index 000000000000..0ddee5b5f017
-> > > --- /dev/null
-> > > +++ b/drivers/vhost/rpmsg.c
-> > > @@ -0,0 +1,370 @@
-> > > +// SPDX-License-Identifier: GPL-2.0-only
-> > > +/*
-> > > + * Copyright(c) 2020 Intel Corporation. All rights reserved.
-> > > + *
-> > > + * Author: Guennadi Liakhovetski <guennadi.liakhovetski@linux.intel.com>
-> > > + *
-> > > + * Vhost RPMsg VirtIO interface provides a set of functions to be used on the
-> > > + * host side as a counterpart to the guest side RPMsg VirtIO API, provided by
-> > > + * drivers/rpmsg/virtio_rpmsg_bus.c. This API can be used by any vhost driver to
-> > > + * handle RPMsg specific virtqueue processing.
-> > > + * Vhost drivers, using this API will use their own VirtIO device IDs, that
-> > > + * should then also be added to the ID table in virtio_rpmsg_bus.c
-> > > + */
-> > > +
-> > > +#include <linux/compat.h>
-> > > +#include <linux/file.h>
-> > > +#include <linux/miscdevice.h>
-> > 
-> > As far as I can tell the above two are not needed.
-> 
-> Look like left-over, will remove.
-> 
-> > > +#include <linux/module.h>
-> > > +#include <linux/mutex.h>
-> > > +#include <linux/rpmsg/virtio.h>
-> > > +#include <linux/vhost.h>
-> > > +#include <uapi/linux/rpmsg.h>
-> > > +
-> > > +#include "vhost.h"
-> > > +#include "vhost_rpmsg.h"
-> > > +
-> > > +/*
-> > > + * All virtio-rpmsg virtual queue kicks always come with just one buffer -
-> > > + * either input or output, but we can also handle split messages
-> > > + */
-> > > +static int vhost_rpmsg_get_msg(struct vhost_virtqueue *vq, unsigned int *cnt)
-> > > +{
-> > > +	struct vhost_rpmsg *vr = container_of(vq->dev, struct vhost_rpmsg, dev);
-> > > +	unsigned int out, in;
-> > > +	int head = vhost_get_vq_desc(vq, vq->iov, ARRAY_SIZE(vq->iov), &out, &in,
-> > > +				     NULL, NULL);
-> > > +	if (head < 0) {
-> > > +		vq_err(vq, "%s(): error %d getting buffer\n",
-> > > +		       __func__, head);
-> > > +		return head;
-> > > +	}
-> > > +
-> > > +	/* Nothing new? */
-> > > +	if (head == vq->num)
-> > > +		return head;
-> > > +
-> > > +	if (vq == &vr->vq[VIRTIO_RPMSG_RESPONSE]) {
-> > > +		if (out) {
-> > > +			vq_err(vq, "%s(): invalid %d output in response queue\n",
-> > > +			       __func__, out);
-> > > +			goto return_buf;
-> > > +		}
-> > > +
-> > > +		*cnt = in;
-> > > +	}
-> > > +
-> > > +	if (vq == &vr->vq[VIRTIO_RPMSG_REQUEST]) {
-> > > +		if (in) {
-> > > +			vq_err(vq, "%s(): invalid %d input in request queue\n",
-> > > +		       __func__, in);
-> > > +			goto return_buf;
-> > > +		}
-> > > +
-> > > +		*cnt = out;
-> > > +	}
-> > > +
-> > > +	return head;
-> > > +
-> > > +return_buf:
-> > > +	vhost_add_used(vq, head, 0);
-> > > +
-> > > +	return -EINVAL;
-> > > +}
-> > > +
-> > > +static const struct vhost_rpmsg_ept *vhost_rpmsg_ept_find(struct vhost_rpmsg *vr, int addr)
-> > > +{
-> > > +	unsigned int i;
-> > > +
-> > > +	for (i = 0; i < vr->n_epts; i++)
-> > > +		if (vr->ept[i].addr == addr)
-> > > +			return vr->ept + i;
-> > > +
-> > > +	return NULL;
-> > > +}
-> > > +
-> > > +/*
-> > > + * if len < 0, then for reading a request, the complete virtual queue buffer
-> > > + * size is prepared, for sending a response, the length in the iterator is used
-> > > + */
-> > > +int vhost_rpmsg_start_lock(struct vhost_rpmsg *vr, struct vhost_rpmsg_iter *iter,
-> > > +			   unsigned int qid, ssize_t len)
-> > > +	__acquires(vq->mutex)
-> > > +{
-> > > +	struct vhost_virtqueue *vq = vr->vq + qid;
-> > > +	unsigned int cnt;
-> > > +	ssize_t ret;
-> > > +	size_t tmp;
-> > > +
-> > > +	if (qid >= VIRTIO_RPMSG_NUM_OF_VQS)
-> > > +		return -EINVAL;
-> > > +
-> > > +	iter->vq = vq;
-> > > +
-> > > +	mutex_lock(&vq->mutex);
-> > > +	vhost_disable_notify(&vr->dev, vq);
-> > > +
-> > > +	iter->head = vhost_rpmsg_get_msg(vq, &cnt);
-> > > +	if (iter->head == vq->num)
-> > > +		iter->head = -EAGAIN;
-> > > +
-> > > +	if (iter->head < 0) {
-> > > +		ret = iter->head;
-> > > +		goto unlock;
-> > > +	}
-> > > +
-> > > +	tmp = iov_length(vq->iov, cnt);
-> > > +	if (tmp < sizeof(iter->rhdr)) {
-> > > +		vq_err(vq, "%s(): size %zu too small\n", __func__, tmp);
-> > > +		ret = -ENOBUFS;
-> > > +		goto return_buf;
-> > > +	}
-> > > +
-> > > +	switch (qid) {
-> > > +	case VIRTIO_RPMSG_REQUEST:
-> > > +		if (len >= 0) {
-> > > +			if (tmp < sizeof(iter->rhdr) + len) {
-> > > +				ret = -ENOBUFS;
-> > > +				goto return_buf;
-> > > +			}
-> > > +
-> > > +			tmp = len + sizeof(iter->rhdr);
-> > > +		}
-> > > +
-> > > +		/* len is now the size of the payload */
-> > > +		iov_iter_init(&iter->iov_iter, WRITE, vq->iov, cnt, tmp);
-> > > +
-> > > +		/* Read the RPMSG header with endpoint addresses */
-> > > +		tmp = copy_from_iter(&iter->rhdr, sizeof(iter->rhdr), &iter->iov_iter);
-> > > +		if (tmp != sizeof(iter->rhdr)) {
-> > > +			vq_err(vq, "%s(): got %zu instead of %zu\n", __func__,
-> > > +			       tmp, sizeof(iter->rhdr));
-> > > +			ret = -EIO;
-> > > +			goto return_buf;
-> > > +		}
-> > > +
-> > > +		iter->ept = vhost_rpmsg_ept_find(vr, vhost32_to_cpu(vq, iter->rhdr.dst));
-> > > +		if (!iter->ept) {
-> > > +			vq_err(vq, "%s(): no endpoint with address %d\n",
-> > > +			       __func__, vhost32_to_cpu(vq, iter->rhdr.dst));
-> > > +			ret = -ENOENT;
-> > > +			goto return_buf;
-> > > +		}
-> > > +
-> > > +		/* Let the endpoint read the payload */
-> > > +		if (iter->ept->read) {
-> > > +			ret = iter->ept->read(vr, iter);
-> > > +			if (ret < 0)
-> > > +				goto return_buf;
-> > > +
-> > > +			iter->rhdr.len = cpu_to_vhost16(vq, ret);
-> > > +		} else {
-> > > +			iter->rhdr.len = 0;
-> > > +		}
-> > > +
-> > > +		/* Prepare for the response phase */
-> > > +		iter->rhdr.dst = iter->rhdr.src;
-> > > +		iter->rhdr.src = cpu_to_vhost32(vq, iter->ept->addr);
-> > 
-> > I'm a little puzzled here - what will the response look like?  And why is it
-> > prepared here?  From what I can see doing so introduces coupling with function
-> > handle_rpmsg_req_single().  I think confirmation of reception should be handled
-> > by endpoints rather than in the core. 
-> 
-> RPMsg always contain a header, so we keep the header in the iterator. If the 
-> caller wants to reply to the request, the easiest way to do that is to reuse the 
-> iterator. In that case obviously you have to swap source and destination 
-> addresses. This can be done either in the request handler of the API, or by the 
-> caller, or in the API response handler. It would be silly to have the user do 
-> that, that would be repeated code. But I agree, it's a bit unclean to modify the 
-> header before returning it to the user, without knowing, whether the user will 
-> use it, in which case it might be surprised to see most fields from the request 
-> unchanged and only addresses swapped. I'll move this to response with a check 
-> for a reused iterator.
-> 
-> > > +
-> > > +		break;
-> > > +	case VIRTIO_RPMSG_RESPONSE:
-> > > +		if (!iter->ept && iter->rhdr.dst != cpu_to_vhost32(vq, RPMSG_NS_ADDR)) {
-> > > +			/*
-> > > +			 * Usually the iterator is configured when processing a
-> > > +			 * message on the request queue, but it's also possible
-> > > +			 * to send a message on the response queue without a
-> > > +			 * preceding request, in that case the iterator must
-> > > +			 * contain source and destination addresses.
-> > > +			 */
-> > > +			iter->ept = vhost_rpmsg_ept_find(vr, vhost32_to_cpu(vq, iter->rhdr.src));
-> > > +			if (!iter->ept) {
-> > > +				ret = -ENOENT;
-> > > +				goto return_buf;
-> > > +			}
-> > > +		}
-> > > +
-> > > +		if (len >= 0) {
-> > > +			if (tmp < sizeof(iter->rhdr) + len) {
-> > > +				ret = -ENOBUFS;
-> > > +				goto return_buf;
-> > > +			}
-> > > +
-> > > +			iter->rhdr.len = cpu_to_vhost16(vq, len);
-> > > +			tmp = len + sizeof(iter->rhdr);
-> > > +		}
-> > > +
-> > > +		/* len is now the size of the payload */
-> > > +		iov_iter_init(&iter->iov_iter, READ, vq->iov, cnt, tmp);
-> > > +
-> > > +		/* Write the RPMSG header with endpoint addresses */
-> > > +		tmp = copy_to_iter(&iter->rhdr, sizeof(iter->rhdr), &iter->iov_iter);
-> > > +		if (tmp != sizeof(iter->rhdr)) {
-> > > +			ret = -EIO;
-> > > +			goto return_buf;
-> > > +		}
-> > > +
-> > > +		/* Let the endpoint write the payload */
-> > 
-> > I would specifically mention that namespace payloads are taken care of by
-> > vhost_rpmsg_ns_announce().  That makes it easier for people to connect the dots. 
-> 
-> Ok
-> 
-> > > +		if (iter->ept && iter->ept->write) {
-> > > +			ret = iter->ept->write(vr, iter);
-> > > +			if (ret < 0)
-> > > +				goto return_buf;
-> > > +		}
-> > > +
-> > > +		break;
-> > > +	}
-> > > +
-> > > +	return 0;
-> > > +
-> > > +return_buf:
-> > > +	vhost_add_used(vq, iter->head, 0);
-> > > +unlock:
-> > > +	vhost_enable_notify(&vr->dev, vq);
-> > > +	mutex_unlock(&vq->mutex);
-> > > +
-> > > +	return ret;
-> > > +}
-> > > +EXPORT_SYMBOL_GPL(vhost_rpmsg_start_lock);
-> > > +
-> > > +size_t vhost_rpmsg_copy(struct vhost_rpmsg *vr, struct vhost_rpmsg_iter *iter,
-> > > +			void *data, size_t size)
-> > > +{
-> > > +	/*
-> > > +	 * We could check for excess data, but copy_{to,from}_iter() don't do
-> > > +	 * that either
-> > > +	 */
-> > > +	if (iter->vq == vr->vq + VIRTIO_RPMSG_RESPONSE)
-> > > +		return copy_to_iter(data, size, &iter->iov_iter);
-> > > +
-> > > +	return copy_from_iter(data, size, &iter->iov_iter);
-> > > +}
-> > > +EXPORT_SYMBOL_GPL(vhost_rpmsg_copy);
-> > > +
-> > > +int vhost_rpmsg_finish_unlock(struct vhost_rpmsg *vr,
-> > > +			      struct vhost_rpmsg_iter *iter)
-> > > +	__releases(vq->mutex)
-> > > +{
-> > > +	if (iter->head >= 0)
-> > > +		vhost_add_used_and_signal(iter->vq->dev, iter->vq, iter->head,
-> > > +					  vhost16_to_cpu(iter->vq, iter->rhdr.len) +
-> > > +					  sizeof(iter->rhdr));
-> > > +
-> > > +	vhost_enable_notify(&vr->dev, iter->vq);
-> > > +	mutex_unlock(&iter->vq->mutex);
-> > > +
-> > > +	return iter->head;
-> > > +}
-> > > +EXPORT_SYMBOL_GPL(vhost_rpmsg_finish_unlock);
-> > > +
-> > > +/*
-> > > + * Return false to terminate the external loop only if we fail to obtain either
-> > > + * a request or a response buffer
-> > > + */
-> > > +static bool handle_rpmsg_req_single(struct vhost_rpmsg *vr,
-> > > +				    struct vhost_virtqueue *vq)
-> > > +{
-> > > +	struct vhost_rpmsg_iter iter;
-> > > +	int ret = vhost_rpmsg_start_lock(vr, &iter, VIRTIO_RPMSG_REQUEST, -EINVAL);
-> > > +	if (!ret)
-> > > +		ret = vhost_rpmsg_finish_unlock(vr, &iter);
-> > > +	if (ret < 0) {
-> > > +		if (ret != -EAGAIN)
-> > > +			vq_err(vq, "%s(): RPMSG processing failed %d\n",
-> > > +			       __func__, ret);
-> > > +		return false;
-> > > +	}
-> > > +
-> > > +	if (!iter.ept->write)
-> > > +		return true;
-> > > +
-> > > +	ret = vhost_rpmsg_start_lock(vr, &iter, VIRTIO_RPMSG_RESPONSE, -EINVAL);
-> > > +	if (!ret)
-> > > +		ret = vhost_rpmsg_finish_unlock(vr, &iter);
-> > > +	if (ret < 0) {
-> > > +		vq_err(vq, "%s(): RPMSG finalising failed %d\n", __func__, ret);
-> > > +		return false;
-> > > +	}
-> > 
-> > As I said before dealing with the "response" queue here seems to be introducing
-> > coupling with vhost_rpmsg_start_lock()...  Endpoints should be doing that.
-> 
-> Sorry, could you elaborate a bit, what do you mean by coupling?
-> 
-> > > +
-> > > +	return true;
-> > > +}
-> > > +
-> > > +static void handle_rpmsg_req_kick(struct vhost_work *work)
-> > > +{
-> > > +	struct vhost_virtqueue *vq = container_of(work, struct vhost_virtqueue,
-> > > +						  poll.work);
-> > > +	struct vhost_rpmsg *vr = container_of(vq->dev, struct vhost_rpmsg, dev);
-> > > +
-> > > +	while (handle_rpmsg_req_single(vr, vq))
-> > > +		;
-> > > +}
-> > > +
-> > > +/*
-> > > + * initialise two virtqueues with an array of endpoints,
-> > > + * request and response callbacks
-> > > + */
-> > > +void vhost_rpmsg_init(struct vhost_rpmsg *vr, const struct vhost_rpmsg_ept *ept,
-> > > +		      unsigned int n_epts)
-> > > +{
-> > > +	unsigned int i;
-> > > +
-> > > +	for (i = 0; i < ARRAY_SIZE(vr->vq); i++)
-> > > +		vr->vq_p[i] = &vr->vq[i];
-> > > +
-> > > +	/* vq[0]: host -> guest, vq[1]: host <- guest */
-> > > +	vr->vq[VIRTIO_RPMSG_REQUEST].handle_kick = handle_rpmsg_req_kick;
-> > > +	vr->vq[VIRTIO_RPMSG_RESPONSE].handle_kick = NULL;
-> > 
-> > The comment depicts vq[0] followed by vq[1] but the code initialise vq[1] before
-> > vq[0], which is wildly confusing.  At the very least this should be: 
-> 
-> Nobody should care which of those is 0 and which is 1 :-) But indeed you have a point, 
-> that the protocol isn't strictly request-response based, the host can also send 
-> messages to the guest without preceding requests. So, TX / RX should be a better fit.
-> 
-> > 
-> > 	vr->vq[VIRTIO_RPMSG_RESPONSE].handle_kick = NULL;
-> > 	vr->vq[VIRTIO_RPMSG_REQUEST].handle_kick = handle_rpmsg_req_kick;
-> > 
-> > And even better:
-> > 
-> >         /* See configuration of *vq_cbs[] in rpmsg_probe()  */
-> > 	vr->vq[VIRTIO_RPMSG_TX].handle_kick = NULL;
-> > 	vr->vq[VIRTIO_RPMSG_RX].handle_kick = handle_rpmsg_req_kick;
-> > 
-> > > +
-> > > +	vr->ept = ept;
-> > > +	vr->n_epts = n_epts;
-> > > +
-> > > +	vhost_dev_init(&vr->dev, vr->vq_p, VIRTIO_RPMSG_NUM_OF_VQS,
-> > > +		       UIO_MAXIOV, 0, 0, true, NULL);
-> > > +}
-> > > +EXPORT_SYMBOL_GPL(vhost_rpmsg_init);
-> > > +
-> > > +void vhost_rpmsg_destroy(struct vhost_rpmsg *vr)
-> > > +{
-> > > +	if (vhost_dev_has_owner(&vr->dev))
-> > > +		vhost_poll_flush(&vr->vq[VIRTIO_RPMSG_REQUEST].poll);
-> > > +
-> > > +	vhost_dev_cleanup(&vr->dev);
-> > > +}
-> > > +EXPORT_SYMBOL_GPL(vhost_rpmsg_destroy);
-> > > +
-> > > +/* send namespace */
-> > > +int vhost_rpmsg_ns_announce(struct vhost_rpmsg *vr, const char *name, unsigned int src)
-> > > +{
-> > > +	struct vhost_virtqueue *vq = &vr->vq[VIRTIO_RPMSG_RESPONSE];
-> > > +	struct vhost_rpmsg_iter iter = {
-> > > +		.rhdr = {
-> > > +			.src = 0,
-> > > +			.dst = cpu_to_vhost32(vq, RPMSG_NS_ADDR),
-> > > +		},
-> > > +	};
-> > > +	struct rpmsg_ns_msg ns = {
-> > > +		.addr = cpu_to_vhost32(vq, src),
-> > > +		.flags = cpu_to_vhost32(vq, RPMSG_NS_CREATE), /* for rpmsg_ns_cb() */
-> > > +	};
-> > 
-> > Here we have to assume the source can be found in the endpoints registered in
-> > vhost_rpmsg_init().  I would put a check to make sure that is the case and
-> > return an error otherwise. 
-> 
-> Ok, will do.
-> 
-> > > +	int ret = vhost_rpmsg_start_lock(vr, &iter, VIRTIO_RPMSG_RESPONSE, sizeof(ns));
-> > > +
-> > > +	if (ret < 0)
-> > > +		return ret;
-> > > +
-> > > +	strlcpy(ns.name, name, sizeof(ns.name));
-> > > +
-> > > +	ret = vhost_rpmsg_copy(vr, &iter, &ns, sizeof(ns));
-> > > +	if (ret != sizeof(ns))
-> > > +		vq_err(iter.vq, "%s(): added %d instead of %zu bytes\n",
-> > > +		       __func__, ret, sizeof(ns));
-> > > +
-> > > +	ret = vhost_rpmsg_finish_unlock(vr, &iter);
-> > > +	if (ret < 0)
-> > > +		vq_err(iter.vq, "%s(): namespace announcement failed: %d\n",
-> > > +		       __func__, ret);
-> > > +
-> > > +	return ret;
-> > > +}
-> > > +EXPORT_SYMBOL_GPL(vhost_rpmsg_ns_announce);
-> > > +
-> > > +MODULE_LICENSE("GPL v2");
-> > > +MODULE_AUTHOR("Intel, Inc.");
-> > > +MODULE_DESCRIPTION("Vhost RPMsg API");
-> > > diff --git a/drivers/vhost/vhost_rpmsg.h b/drivers/vhost/vhost_rpmsg.h
-> > > new file mode 100644
-> > > index 000000000000..c020ea14cd16
-> > > --- /dev/null
-> > > +++ b/drivers/vhost/vhost_rpmsg.h
-> > > @@ -0,0 +1,74 @@
-> > > +/* SPDX-License-Identifier: GPL-2.0 */
-> > > +/*
-> > > + * Copyright(c) 2020 Intel Corporation. All rights reserved.
-> > > + *
-> > > + * Author: Guennadi Liakhovetski <guennadi.liakhovetski@linux.intel.com>
-> > > + */
-> > > +
-> > > +#ifndef VHOST_RPMSG_H
-> > > +#define VHOST_RPMSG_H
-> > > +
-> > > +#include <linux/rpmsg/virtio.h>
-> > > +#include <linux/uio.h>
-> > > +
-> > > +#include "vhost.h"
-> > > +
-> > > +/* RPMsg uses two VirtQueues: one for each direction */
-> > > +enum {
-> > > +	VIRTIO_RPMSG_RESPONSE,	/* RPMsg response (host->guest) buffers */
-> > > +	VIRTIO_RPMSG_REQUEST,	/* RPMsg request (guest->host) buffers */
-> > 
-> > As I said above things would be much clearer if this was VIRTIO_RPMSG_TX and
-> > VIRTIO_RPMSG_RX.
-> 
-> Ack.
-> 
-> > I won't be commenting on the mechanic needed to access and send information on
-> > the virtqueues as it is completely foreign to me.  Other than the above I think
-> > this is going somewhere. 
-> 
-> I'll wait for your clarifications about "coupling" and send a v8.
+HI Michael, Ben, Punit,
+
+On Fri, Sep 18, 2020 at 12:08 PM Michael Auchter <michael.auchter@ni.com> wrote:
 >
+> Hey Ben,
+>
+> On Fri, Sep 18, 2020 at 06:01:19PM +0000, Ben Levinsky wrote:
+> > Hi Michael, Punit,
+> >
+> > > -----Original Message-----
+> > > From: Michael Auchter <michael.auchter@ni.com>
+> > > Sent: Friday, September 18, 2020 9:07 AM
+> > > To: Ben Levinsky <BLEVINSK@xilinx.com>
+> > > Cc: devicetree@vger.kernel.org; linux-remoteproc@vger.kernel.org; linux-
+> > > kernel@vger.kernel.org; linux-arm-kernel@lists.infradead.org
+> > > Subject: Re: RE: [PATCH v14 5/5] remoteproc: Add initial zynqmp R5
+> > > remoteproc driver
+> > >
+> > > On Thu, Sep 17, 2020 at 10:50:42PM +0000, Ben Levinsky wrote:
+> > > > In addition to device tree, is there particular linker script you use
+> > > > for your R5 application? For example with OCM? As presently this
+> > > > driver only has DDR and TCM as supported regions to load into
+> > >
+> > > The firmware is being loaded to TCM.
+> > >
+> > > I'm able to use this driver to load and run my firmware on both R5
+> > > cores, but only after I change the incorrect:
+> > >
+> > >     rpu_mode = lockstep_mode
+> > >
+> > > assignment to:
+> > >
+> > >     rpu_mode = lockstep_mode ? PM_RPU_MODE_LOCKSTEP
+> > >                              : PM_RPU_MODE_SPLIT;
+> > There was a point raised by Punit that as "it is possible to set R5 to
+> > operatore in split or lock-step mode dynamically" which is true and
+> > can be done via sysfs and the Xilinx firmware kernel code.
+>
+> I'm not familiar with this, and don't see an obvious way to do this
+> (from looking at drivers/firmware/xilinx/). Can you point me to this
+> code?
+>
+> > A suggestion that might clean up the driver so that the whole
+> > rpu_mode, tcm_mode configuration can be simplified and pulled out of
+> > the driver:
+> > - as Punit suggested, remove the lockstep-mode property
+> > - the zynqmp_remoteproc_r5 driver ONLY loads firmware and does start/stop.
+> > - the zynqmp_remoteproc_r5 driver does not configure and memory regions or the RPU. Let the Xilinx firmware sysfs interface handle this.
+>
+> I don't think this is a good approach.
+[Wendy] The TCMs are presented differently in the system depending on
+if RPU is in
+lockstep or split mode.
 
-Please hold off on sending another revision.  We need to find a solution to keep
-rpmsg_hdr and rpmsg_ns_msg generic (see my reply to Arnaud).
+Not sure if it is allowed to list TCMs registers properties for both
+split mode and lockstep
+mode in the same device node.
 
-Mathieu
- 
-> Thanks for the comments so far
-> Guennadi
-> 
-> > Thanks,
-> > Mathieu
-> > 
-> > > +	/* Keep last */
-> > > +	VIRTIO_RPMSG_NUM_OF_VQS,
-> > > +};
-> > > +
-> > > +struct vhost_rpmsg_ept;
-> > > +
-> > > +struct vhost_rpmsg_iter {
-> > > +	struct iov_iter iov_iter;
-> > > +	struct rpmsg_hdr rhdr;
-> > > +	struct vhost_virtqueue *vq;
-> > > +	const struct vhost_rpmsg_ept *ept;
-> > > +	int head;
-> > > +	void *priv;
-> > > +};
-> > > +
-> > > +struct vhost_rpmsg {
-> > > +	struct vhost_dev dev;
-> > > +	struct vhost_virtqueue vq[VIRTIO_RPMSG_NUM_OF_VQS];
-> > > +	struct vhost_virtqueue *vq_p[VIRTIO_RPMSG_NUM_OF_VQS];
-> > > +	const struct vhost_rpmsg_ept *ept;
-> > > +	unsigned int n_epts;
-> > > +};
-> > > +
-> > > +struct vhost_rpmsg_ept {
-> > > +	ssize_t (*read)(struct vhost_rpmsg *, struct vhost_rpmsg_iter *);
-> > > +	ssize_t (*write)(struct vhost_rpmsg *, struct vhost_rpmsg_iter *);
-> > > +	int addr;
-> > > +};
-> > > +
-> > > +static inline size_t vhost_rpmsg_iter_len(const struct vhost_rpmsg_iter *iter)
-> > > +{
-> > > +	return iter->rhdr.len;
-> > > +}
-> > > +
-> > > +#define VHOST_RPMSG_ITER(_vq, _src, _dst) {			\
-> > > +	.rhdr = {						\
-> > > +			.src = cpu_to_vhost32(_vq, _src),	\
-> > > +			.dst = cpu_to_vhost32(_vq, _dst),	\
-> > > +		},						\
-> > > +	}
-> > > +
-> > > +void vhost_rpmsg_init(struct vhost_rpmsg *vr, const struct vhost_rpmsg_ept *ept,
-> > > +		      unsigned int n_epts);
-> > > +void vhost_rpmsg_destroy(struct vhost_rpmsg *vr);
-> > > +int vhost_rpmsg_ns_announce(struct vhost_rpmsg *vr, const char *name,
-> > > +			    unsigned int src);
-> > > +int vhost_rpmsg_start_lock(struct vhost_rpmsg *vr,
-> > > +			   struct vhost_rpmsg_iter *iter,
-> > > +			   unsigned int qid, ssize_t len);
-> > > +size_t vhost_rpmsg_copy(struct vhost_rpmsg *vr, struct vhost_rpmsg_iter *iter,
-> > > +			void *data, size_t size);
-> > > +int vhost_rpmsg_finish_unlock(struct vhost_rpmsg *vr,
-> > > +			      struct vhost_rpmsg_iter *iter);
-> > > +
-> > > +#endif
-> > > -- 
-> > > 2.28.0
-> > > 
+Even though, driver can have this information in the code, but I feel
+the device tree is a
+better place for this information.
+And also for predefined shared memories, you will need to know the RPU
+op mode ahead,
+so that you can specify which shared memories belong to which RPU.
+
+To dynamic setup the RPU mode, besides sysfs, setup, if remoteproc can support
+device tree overlay, the RPUs can be described with dtbo and loaded at runtime.
+
+Just want to understand the case which needs to set  RPU mode at runtime?
+I think testing can be one case.
+
+Best Regards,
+Wendy
+
+> - How will someone know to configure the RPU mode and TCM mode via sysfs?
+> - What happens when someone changes the RPU mode after remoteproc has
+>   already booted some firmware on it?
+> - What if the kernel is the one booting the R5, not the user?
+>
+> Split vs. lockstep, IMO, needs to be specified as part of the device
+> tree, and this driver needs to handle configuring the RPU mode and TCM
+> modes appropriately.
+>
+> Split vs. lockstep already necessitates different entries in the device
+> tree:
+> - In the binding, each core references its TCMs via the
+>   meta-memory-regions phandles, and the referenced nodes necessarily
+>   encode this size. In split mode, each core has access to 64K of
+>   TCMA/TCMB, while in lockstep R5 0 has access to 128K of TCMA/TCMB. So,
+>   the "xlnx,tcm" nodes' reg entries need to differ between lockstep and
+>   split.
+> - In lockstep mode, it does not make sense to have both r5@0 and r5@1
+>   child nodes: only r5@0 makes sense. Though, I just realized that I
+>   think this driver will currently permit that, and register two
+>   remoteprocs even in lockstep mode... What happens if someone tries to
+>   load firmware on to r5_1 when they're in lockstep mode? This should
+>   probably be prevented.
+>
+> Thanks,
+>  Michael
