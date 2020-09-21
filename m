@@ -2,260 +2,177 @@ Return-Path: <SRS0=DqHI=C6=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.2 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1D0AC43464
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 21 Sep 2020 05:11:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E80CBC43463
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 21 Sep 2020 06:23:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 82A23207D3
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 21 Sep 2020 05:11:24 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CHT9cqwY"
+	by mail.kernel.org (Postfix) with ESMTP id B3C0B20719
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 21 Sep 2020 06:23:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726339AbgIUFLY (ORCPT
+        id S1726360AbgIUGXH (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 21 Sep 2020 01:11:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39670 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726186AbgIUFLY (ORCPT
+        Mon, 21 Sep 2020 02:23:07 -0400
+Received: from mga18.intel.com ([134.134.136.126]:12786 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726244AbgIUGXH (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 21 Sep 2020 01:11:24 -0400
-Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 918E7C061755;
-        Sun, 20 Sep 2020 22:11:23 -0700 (PDT)
-Received: by mail-wr1-x432.google.com with SMTP id z4so11262868wrr.4;
-        Sun, 20 Sep 2020 22:11:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=05ns352SOrrVFAHyev2BbDOaiF0T0xpSQqopABvWeIE=;
-        b=CHT9cqwY/wwWgjjUAftQ2LXqv+tIdJiNSL743W4XVqiEJFV4keFyZhWpLTr86Nx9Q6
-         50pjuaTxW+P5gCNXH24RrOC9/H4+sbVWhe8cuisYoLGxERe7sIJAgr6U+n66msYElY/+
-         KhrY3eyWREMfTqYh5zdam7+l0p1KDB8Je+ENB+u+L6O6fQVb/eUAzfkTkJgntoOFvmrb
-         PaL0IncS3ALswc7+IT48x3YbKIHYIVqY3ghHbaR/DX0yyUXTtxnYreLzepGLwb8hkaAb
-         y5GCDWhWOzn0qmB2d0LVtUBpFLuIvnUjOooQtm8nUJ9HrVV7qpOwMGerlc/PtiNsSgCO
-         hOoA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=05ns352SOrrVFAHyev2BbDOaiF0T0xpSQqopABvWeIE=;
-        b=nsRoo/l8mH3KUvg0UShywlD0P8IjKpTnthrVFaPu8BF87N8bj1EYPQYZ+GO2tZvzkW
-         FUnHU7CN582kxzRTY/bzx64V8EVcMeAUUz2tfPFAzmW+mHsHwlxCDncgHdr7BL7PKM+R
-         Q0DzyodXecWyMNMJYJhNlQDuRsRoJ1xGLGtVj4hI/jUGoGhOrVSNTlzEzuExq1s660Rp
-         /kdGBx4fPRjPchRs7PhdK4VEBZ74ZC8lJpF81e3Hw3+63ficXlrHtjy7fIKVDJXvOU07
-         dTdYPNki+/YuTaIdnTIRkPjwS63U4BJGcz2IZZUPq2qeM5SQq/mGR1rwS68iXkECoV/K
-         1hPw==
-X-Gm-Message-State: AOAM531lMQ1GqqUfj1x1ziZwPLxr4TtvRzvgzaQG8FnHg5NhbJZUXyXv
-        vw1fIAZPX63wkeEjrq+xQdjXrtqJR5Q5McFmwME=
-X-Google-Smtp-Source: ABdhPJyqXrT5bV8lr4wUwNbGvZ+Vxmm2v8GZ3UpXEsjExaqhw0ahbIg+bwDl0ZnGv/Pm9EzzrImHlIbM79DRxdefmYI=
-X-Received: by 2002:a5d:43cf:: with SMTP id v15mr51505782wrr.269.1600665081222;
- Sun, 20 Sep 2020 22:11:21 -0700 (PDT)
+        Mon, 21 Sep 2020 02:23:07 -0400
+IronPort-SDR: +Dc4TAoDwkfA2FOkEwKv+4dkxEUoGYDuVpB69LTQsgnkD+ZrZCqZs/pp7DfrswqVp9vUoRL/Ui
+ iAy6AYZ0UCRA==
+X-IronPort-AV: E=McAfee;i="6000,8403,9750"; a="148070034"
+X-IronPort-AV: E=Sophos;i="5.77,285,1596524400"; 
+   d="scan'208";a="148070034"
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Sep 2020 23:23:04 -0700
+IronPort-SDR: USb2UDAwyWhLJQWxChZgxFvSXc5aD8EZKTgGEeQPUMLqRDIxK9gy3tRuyDpL1OOMSR9aEqeLGv
+ UdRLeyUYUhDg==
+X-IronPort-AV: E=Sophos;i="5.77,285,1596524400"; 
+   d="scan'208";a="485292430"
+Received: from fjanoscz-mobl1.ger.corp.intel.com (HELO ubuntu) ([10.249.45.119])
+  by orsmga005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Sep 2020 23:23:01 -0700
+Date:   Mon, 21 Sep 2020 08:22:52 +0200
+From:   Guennadi Liakhovetski <guennadi.liakhovetski@linux.intel.com>
+To:     Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc:     kvm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        sound-open-firmware@alsa-project.org,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Liam Girdwood <liam.r.girdwood@linux.intel.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Ohad Ben-Cohen <ohad@wizery.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Vincent Whitchurch <vincent.whitchurch@axis.com>
+Subject: Re: [PATCH v7 3/3] vhost: add an RPMsg API
+Message-ID: <20200921062251.GA27773@ubuntu>
+References: <20200910111351.20526-1-guennadi.liakhovetski@linux.intel.com>
+ <20200910111351.20526-4-guennadi.liakhovetski@linux.intel.com>
+ <20200917220138.GA97950@xps15>
+ <20200918090229.GC19246@ubuntu>
+ <20200918155249.GA200851@xps15>
 MIME-Version: 1.0
-References: <20200917194341.16272-1-ben.levinsky@xilinx.com>
- <20200917194341.16272-6-ben.levinsky@xilinx.com> <20200917221120.GA15530@xaphan>
- <BYAPR02MB44073E7A3BEA401FF4684E95B53E0@BYAPR02MB4407.namprd02.prod.outlook.com>
- <BYAPR02MB4407A552ECBA907DFC3CEC91B53E0@BYAPR02MB4407.namprd02.prod.outlook.com>
- <20200918160721.GD15530@xaphan> <BYAPR02MB44073FBEF86F4AA2379D8A11B53F0@BYAPR02MB4407.namprd02.prod.outlook.com>
- <20200918190643.GA172254@xaphan> <CAA07jV9WfTTLRwh3kmy1985p4C1m37wQJQAHzLdK2cn4f8HENw@mail.gmail.com>
- <BYAPR02MB4407AA5D63EBAC7BEC93CB62B53D0@BYAPR02MB4407.namprd02.prod.outlook.com>
-In-Reply-To: <BYAPR02MB4407AA5D63EBAC7BEC93CB62B53D0@BYAPR02MB4407.namprd02.prod.outlook.com>
-From:   Wendy Liang <sunnyliangjy@gmail.com>
-Date:   Sun, 20 Sep 2020 22:11:10 -0700
-Message-ID: <CAA07jV-CUvOqDne8Y9HRWaGCpAjKePt_yYedZVAxNGXeUogy-Q@mail.gmail.com>
-Subject: Re: RE: RE: [PATCH v14 5/5] remoteproc: Add initial zynqmp R5
- remoteproc driver
-To:     Ben Levinsky <BLEVINSK@xilinx.com>
-Cc:     Michael Auchter <michael.auchter@ni.com>,
-        "punit1.agrawal@toshiba.co.jp" <punit1.agrawal@toshiba.co.jp>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200918155249.GA200851@xps15>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi Ben
+Hi Mathieu,
 
-On Sun, Sep 20, 2020 at 4:16 PM Ben Levinsky <BLEVINSK@xilinx.com> wrote:
->
-> Hi All,
->
-> > -----Original Message-----
-> > From: Wendy Liang <sunnyliangjy@gmail.com>
-> > Sent: Friday, September 18, 2020 6:53 PM
-> > To: Michael Auchter <michael.auchter@ni.com>
-> > Cc: Ben Levinsky <BLEVINSK@xilinx.com>; punit1.agrawal@toshiba.co.jp;
-> > devicetree@vger.kernel.org; linux-remoteproc@vger.kernel.org; linux-
-> > kernel@vger.kernel.org; linux-arm-kernel@lists.infradead.org
-> > Subject: Re: RE: RE: [PATCH v14 5/5] remoteproc: Add initial zynqmp R5
-> > remoteproc driver
-> >
-> > HI Michael, Ben, Punit,
-> >
-> > On Fri, Sep 18, 2020 at 12:08 PM Michael Auchter <michael.auchter@ni.co=
-m>
-> > wrote:
-> > >
-> > > Hey Ben,
-> > >
-> > > On Fri, Sep 18, 2020 at 06:01:19PM +0000, Ben Levinsky wrote:
-> > > > Hi Michael, Punit,
-> > > >
-> > > > > -----Original Message-----
-> > > > > From: Michael Auchter <michael.auchter@ni.com>
-> > > > > Sent: Friday, September 18, 2020 9:07 AM
-> > > > > To: Ben Levinsky <BLEVINSK@xilinx.com>
-> > > > > Cc: devicetree@vger.kernel.org; linux-remoteproc@vger.kernel.org;
-> > linux-
-> > > > > kernel@vger.kernel.org; linux-arm-kernel@lists.infradead.org
-> > > > > Subject: Re: RE: [PATCH v14 5/5] remoteproc: Add initial zynqmp R=
-5
-> > > > > remoteproc driver
-> > > > >
-> > > > > On Thu, Sep 17, 2020 at 10:50:42PM +0000, Ben Levinsky wrote:
-> > > > > > In addition to device tree, is there particular linker script y=
-ou use
-> > > > > > for your R5 application? For example with OCM? As presently thi=
-s
-> > > > > > driver only has DDR and TCM as supported regions to load into
-> > > > >
-> > > > > The firmware is being loaded to TCM.
-> > > > >
-> > > > > I'm able to use this driver to load and run my firmware on both R=
-5
-> > > > > cores, but only after I change the incorrect:
-> > > > >
-> > > > >     rpu_mode =3D lockstep_mode
-> > > > >
-> > > > > assignment to:
-> > > > >
-> > > > >     rpu_mode =3D lockstep_mode ? PM_RPU_MODE_LOCKSTEP
-> > > > >                              : PM_RPU_MODE_SPLIT;
-> > > > There was a point raised by Punit that as "it is possible to set R5=
- to
-> > > > operatore in split or lock-step mode dynamically" which is true and
-> > > > can be done via sysfs and the Xilinx firmware kernel code.
-> > >
-> > > I'm not familiar with this, and don't see an obvious way to do this
-> > > (from looking at drivers/firmware/xilinx/). Can you point me to this
-> > > code?
-> > >
-> [Ben Levinsky] A way to do this, though it seems later comments show it i=
-s not an implementation to pursue, is use the RPU configuration API and pre=
-sent it via sysfs interface a la https://xilinx-wiki.atlassian.net/wiki/spa=
-ces/A/pages/18842232/Zynq+UltraScale+MPSoC+Power+Management+-+Linux+Kernel#=
-ZynqUltraScale%EF%BC%8BMPSoCPowerManagement-LinuxKernel-EnableClock
-> > > > A suggestion that might clean up the driver so that the whole
-> > > > rpu_mode, tcm_mode configuration can be simplified and pulled out o=
-f
-> > > > the driver:
-> > > > - as Punit suggested, remove the lockstep-mode property
-> > > > - the zynqmp_remoteproc_r5 driver ONLY loads firmware and does
-> > start/stop.
-> > > > - the zynqmp_remoteproc_r5 driver does not configure and memory
-> > regions or the RPU. Let the Xilinx firmware sysfs interface handle this=
-.
-> > >
-> > > I don't think this is a good approach.
-> [Ben Levinsky] ok, noted. Can keep the configuration but still as wendy s=
-aid just have lockstep property to denote lockstep mode in RPU and otherwis=
-e be split, for simplicity?
-> > [Wendy] The TCMs are presented differently in the system depending on
-> > if RPU is in
-> > lockstep or split mode.
-> >
-> > Not sure if it is allowed to list TCMs registers properties for both
-> > split mode and lockstep
-> > mode in the same device node.
-> >
-> > Even though, driver can have this information in the code, but I feel
-> > the device tree is a
-> > better place for this information.
-> > And also for predefined shared memories, you will need to know the RPU
-> > op mode ahead,
-> > so that you can specify which shared memories belong to which RPU.
-> >
-> > To dynamic setup the RPU mode, besides sysfs, setup, if remoteproc can
-> > support
-> > device tree overlay, the RPUs can be described with dtbo and loaded at
-> > runtime.
-> >
-> > Just want to understand the case which needs to set  RPU mode at runtim=
-e?
-> > I think testing can be one case.
-> >
-> [Ben Levinsky] for testing, so far it has been r50/1 split and r5 lockste=
-p
-[Wendy] I tried to understand the need to change the RPU mode at runtime.
-What I can think of is for testing purposes.
+On Fri, Sep 18, 2020 at 09:52:49AM -0600, Mathieu Poirier wrote:
+> Good morning,
+> 
+> On Fri, Sep 18, 2020 at 11:02:29AM +0200, Guennadi Liakhovetski wrote:
+> > Hi Mathieu,
+> > 
+> > On Thu, Sep 17, 2020 at 04:01:38PM -0600, Mathieu Poirier wrote:
+> > > On Thu, Sep 10, 2020 at 01:13:51PM +0200, Guennadi Liakhovetski wrote:
+> > > > Linux supports running the RPMsg protocol over the VirtIO transport
+> > > > protocol, but currently there is only support for VirtIO clients and
+> > > > no support for VirtIO servers. This patch adds a vhost-based RPMsg
+> > > > server implementation, which makes it possible to use RPMsg over
+> > > > VirtIO between guest VMs and the host.
+> > > 
+> > > I now get the client/server concept you are describing above but that happened
+> > > only after a lot of mental gymnastics.  If you drop the whole client/server
+> > > concept and concentrate on what this patch does, things will go better.  I would
+> > > personally go with what you have in the Kconfig: 
+> > > 
+> > > > +	  Vhost RPMsg API allows vhost drivers to communicate with VirtIO
+> > > > +	  drivers on guest VMs, using the RPMsg over VirtIO protocol.
+> > > 
+> > > It is concise but describes exactly what this patch provide.
+> > 
+> > Ok, thanks, will try to improve.
+> > 
+> > > > Signed-off-by: Guennadi Liakhovetski <guennadi.liakhovetski@linux.intel.com>
+> > > > ---
+> > > >  drivers/vhost/Kconfig       |   7 +
+> > > >  drivers/vhost/Makefile      |   3 +
+> > > >  drivers/vhost/rpmsg.c       | 370 ++++++++++++++++++++++++++++++++++++
+> > > >  drivers/vhost/vhost_rpmsg.h |  74 ++++++++
+> > > >  4 files changed, 454 insertions(+)
+> > > >  create mode 100644 drivers/vhost/rpmsg.c
+> > > >  create mode 100644 drivers/vhost/vhost_rpmsg.h
 
-Thanks,
-Wendy
+[snip]
 
-> > Best Regards,
-> > Wendy
-> >
-> > > - How will someone know to configure the RPU mode and TCM mode via
-> > sysfs?
-> > > - What happens when someone changes the RPU mode after remoteproc
-> > has
-> > >   already booted some firmware on it?
-> > > - What if the kernel is the one booting the R5, not the user?
-> > >
-> > > Split vs. lockstep, IMO, needs to be specified as part of the device
-> > > tree, and this driver needs to handle configuring the RPU mode and TC=
-M
-> > > modes appropriately.
-> > >
-> [Ben Levinsky] Ok, as Wendy suggested would instead the presence of a "lo=
-ckstep=3Dmode" property indicate lockstep mode and otherwise imply split mo=
-de?
-> > > Split vs. lockstep already necessitates different entries in the devi=
-ce
-> > > tree:
-> > > - In the binding, each core references its TCMs via the
-> > >   meta-memory-regions phandles, and the referenced nodes necessarily
-> > >   encode this size. In split mode, each core has access to 64K of
-> > >   TCMA/TCMB, while in lockstep R5 0 has access to 128K of TCMA/TCMB. =
-So,
-> > >   the "xlnx,tcm" nodes' reg entries need to differ between lockstep a=
-nd
-> > >   split.
-> > > - In lockstep mode, it does not make sense to have both r5@0 and r5@1
-> > >   child nodes: only r5@0 makes sense. Though, I just realized that I
-> > >   think this driver will currently permit that, and register two
-> > >   remoteprocs even in lockstep mode... What happens if someone tries =
-to
-> > >   load firmware on to r5_1 when they're in lockstep mode? This should
-> > >   probably be prevented.
-> > >
-> [Ben Levinsky] Good Point. the loading of R5 1 while in lockstep is an un=
-covered corner case.. for this, before loading/starting or requesting memor=
-y the state of global rpu mode can be checked and this can act as a guard f=
-or probing a remoteproc instance for r5-1 if either is in lockstep and simi=
-lar safeguard for firmware loading for R5-1 if in lockstep mode
->
-> That is, add the lockstep property only if in lockstep mode and use the p=
-resence of it or lack thereof for subsequent, single R5-specific driver rem=
-oteproc R5 probes or firmware loading
->
-> In addition to the above property and its behavior, would correcting the =
-inconsistencies of the Documentation vs the split/lockstep code in the remo=
-teproc r5 device tree binding, its corresponding remoteproc r5 driver addre=
-ss the above concerns as well as the memory handling as you noted earlier?
->
-> Also in the next series I can point to a sample R5 application and device=
- trees for the split mode and lockstep cases I used for testing in the cove=
-r letter.
->
-> > > Thanks,
-> > >  Michael
+> > > > diff --git a/drivers/vhost/rpmsg.c b/drivers/vhost/rpmsg.c
+> > > > new file mode 100644
+> > > > index 000000000000..0ddee5b5f017
+> > > > --- /dev/null
+> > > > +++ b/drivers/vhost/rpmsg.c
+> > > > @@ -0,0 +1,370 @@
+
+[snip]
+
+> > > > +/*
+> > > > + * Return false to terminate the external loop only if we fail to obtain either
+> > > > + * a request or a response buffer
+> > > > + */
+> > > > +static bool handle_rpmsg_req_single(struct vhost_rpmsg *vr,
+> > > > +				    struct vhost_virtqueue *vq)
+> > > > +{
+> > > > +	struct vhost_rpmsg_iter iter;
+> > > > +	int ret = vhost_rpmsg_start_lock(vr, &iter, VIRTIO_RPMSG_REQUEST, -EINVAL);
+> > > > +	if (!ret)
+> > > > +		ret = vhost_rpmsg_finish_unlock(vr, &iter);
+> > > > +	if (ret < 0) {
+> > > > +		if (ret != -EAGAIN)
+> > > > +			vq_err(vq, "%s(): RPMSG processing failed %d\n",
+> > > > +			       __func__, ret);
+> > > > +		return false;
+> > > > +	}
+> > > > +
+> > > > +	if (!iter.ept->write)
+> > > > +		return true;
+> > > > +
+> > > > +	ret = vhost_rpmsg_start_lock(vr, &iter, VIRTIO_RPMSG_RESPONSE, -EINVAL);
+> > > > +	if (!ret)
+> > > > +		ret = vhost_rpmsg_finish_unlock(vr, &iter);
+> > > > +	if (ret < 0) {
+> > > > +		vq_err(vq, "%s(): RPMSG finalising failed %d\n", __func__, ret);
+> > > > +		return false;
+> > > > +	}
+> > > 
+> > > As I said before dealing with the "response" queue here seems to be introducing
+> > > coupling with vhost_rpmsg_start_lock()...  Endpoints should be doing that.
+> > 
+> > Sorry, could you elaborate a bit, what do you mean by coupling?
+> 
+> In function vhost_rpmsg_start_lock() the rpmsg header is prepared for a response
+> at the end of the processing associated with the reception of a
+> VIRTIO_RPMSG_REQUEST.  I assumed (perhaps wrongly) that such as response was
+> sent here.  In that case preparing the response and sending the response should
+> be done at the same place.
+
+This will change in the next version, in it I'll remove response preparation from 
+request handling.
+
+> But my assumption may be completely wrong... A better question should probably
+> be why is the VIRTIO_RPMSG_RESPONSE probed in handle_rpmsg_req_single()?
+> Shouldn't this be solely concerned with handling requests from the guest?  If
+> I'm wondering what is going on I expect other people will also do the same,
+> something that could be alleviated with more comments.
+
+My RPMsg implementation supports two modes for sending data from the host (in 
+VM terms) to guests: as responses to their requests and as asynchronous 
+messages. If there isn't a strict request-response pattern on a certain endpont, 
+you leave the .write callback NULL and then you send your messages as you please 
+independent of requests. But you can also specify a .write pointer in which case 
+after each request to generate a response.
+
+In principle this response handling could be removed, but then drivers, that do 
+need to respond to requests would have to schedule an asynchronous action in 
+their .read callbacks to be triggered after request processing has completed.
+
+Thanks
+Guennadi
