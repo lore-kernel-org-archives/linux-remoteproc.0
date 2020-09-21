@@ -7,54 +7,54 @@ X-Spam-Status: No, score=-3.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
 	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F86BC43463
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 21 Sep 2020 05:09:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1D0AC43464
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 21 Sep 2020 05:11:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 133F920739
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 21 Sep 2020 05:09:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 82A23207D3
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 21 Sep 2020 05:11:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cvy4LKeJ"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CHT9cqwY"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726211AbgIUFJP (ORCPT
+        id S1726339AbgIUFLY (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 21 Sep 2020 01:09:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39346 "EHLO
+        Mon, 21 Sep 2020 01:11:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39670 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726186AbgIUFJP (ORCPT
+        with ESMTP id S1726186AbgIUFLY (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 21 Sep 2020 01:09:15 -0400
-Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4B45AC061755;
-        Sun, 20 Sep 2020 22:09:15 -0700 (PDT)
-Received: by mail-wr1-x42d.google.com with SMTP id g4so11255204wrs.5;
-        Sun, 20 Sep 2020 22:09:15 -0700 (PDT)
+        Mon, 21 Sep 2020 01:11:24 -0400
+Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 918E7C061755;
+        Sun, 20 Sep 2020 22:11:23 -0700 (PDT)
+Received: by mail-wr1-x432.google.com with SMTP id z4so11262868wrr.4;
+        Sun, 20 Sep 2020 22:11:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc:content-transfer-encoding;
-        bh=YyUsC659D0QZp8PCniNjlLYmNDGwZ7vpKOsOehvIvyA=;
-        b=cvy4LKeJFHfO8B6kkbI1TFe7hRIafMOWfoEVEUUzk97Vr8Ll9wayRSgUedem2uugvL
-         mB21ba17/qJ0Az1RBVZvQpmTU+afyouU29J4szaaBW2MlJsHIP31KGr0cTf+30Sc1aU/
-         ATZ+l8Z6ntA+FB05mmI+gChpeJLxiEFCfCzd0xf50GMbaGAdrmPGa/ahsy3aFfyWafj+
-         EZdH3UL92+w2TOthKepeNVUf0ZcngHDtOJ5xhKwoiKD+vaITcQ1zEQP0GEk31CDTxepN
-         1YGaHDwRChCIZNfMLnQep+aqvtBZvX0NAh/YXzgaXPSFjV/nRKBcdVvnjjzV8gQn7jKv
-         qVpw==
+        bh=05ns352SOrrVFAHyev2BbDOaiF0T0xpSQqopABvWeIE=;
+        b=CHT9cqwY/wwWgjjUAftQ2LXqv+tIdJiNSL743W4XVqiEJFV4keFyZhWpLTr86Nx9Q6
+         50pjuaTxW+P5gCNXH24RrOC9/H4+sbVWhe8cuisYoLGxERe7sIJAgr6U+n66msYElY/+
+         KhrY3eyWREMfTqYh5zdam7+l0p1KDB8Je+ENB+u+L6O6fQVb/eUAzfkTkJgntoOFvmrb
+         PaL0IncS3ALswc7+IT48x3YbKIHYIVqY3ghHbaR/DX0yyUXTtxnYreLzepGLwb8hkaAb
+         y5GCDWhWOzn0qmB2d0LVtUBpFLuIvnUjOooQtm8nUJ9HrVV7qpOwMGerlc/PtiNsSgCO
+         hOoA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc:content-transfer-encoding;
-        bh=YyUsC659D0QZp8PCniNjlLYmNDGwZ7vpKOsOehvIvyA=;
-        b=qEhzYUNaNgwTZUZeq4/rk8UlrwzrqyghateJq/9cpdASOkKDqx6t0H2ZtlSWpnTS8k
-         JT1V+LsGUUzNvXNJuccNNKde1P0cQxuyhwEjZ6oSJTydIACiP3wp6tGH+QEUkpgWvLjn
-         /4aU/nEY57DLVCfXGylyAXjpr0pJAPWdPSkQWVRnva3/r7VR1+fiIMJl/TKIy1NpOEfF
-         jUXQgAN/ttggK1gm+ap83YWkUNSNkTRfrB/GEyKrsp1pgLFB8qf4WXzsXe0r+yTjPuOx
-         /m1z09qzYIPaPrr2jwBtMju0hgO3zc+ITpKis+dCCH5T0GvGZ5g6p0o+71gscFPFfGKV
-         iCdA==
-X-Gm-Message-State: AOAM530IqYW4TmQlgLfrdZMF4p6o24ac38jkubA53OmBMVtXdfisYS4k
-        QI4L7sRIjrBQEvP0MXqqVx/i64DwgdWm845xvNs=
-X-Google-Smtp-Source: ABdhPJyYG+ZNF2X6zrZmaZX9NLjjzBxx0+kSIQf71+HilUTdDGRx1t62ei3S+FCPGRmjSQ/yCXSztxBe76AFdZUDF+g=
-X-Received: by 2002:adf:e8ce:: with SMTP id k14mr53930785wrn.394.1600664953814;
- Sun, 20 Sep 2020 22:09:13 -0700 (PDT)
+        bh=05ns352SOrrVFAHyev2BbDOaiF0T0xpSQqopABvWeIE=;
+        b=nsRoo/l8mH3KUvg0UShywlD0P8IjKpTnthrVFaPu8BF87N8bj1EYPQYZ+GO2tZvzkW
+         FUnHU7CN582kxzRTY/bzx64V8EVcMeAUUz2tfPFAzmW+mHsHwlxCDncgHdr7BL7PKM+R
+         Q0DzyodXecWyMNMJYJhNlQDuRsRoJ1xGLGtVj4hI/jUGoGhOrVSNTlzEzuExq1s660Rp
+         /kdGBx4fPRjPchRs7PhdK4VEBZ74ZC8lJpF81e3Hw3+63ficXlrHtjy7fIKVDJXvOU07
+         dTdYPNki+/YuTaIdnTIRkPjwS63U4BJGcz2IZZUPq2qeM5SQq/mGR1rwS68iXkECoV/K
+         1hPw==
+X-Gm-Message-State: AOAM531lMQ1GqqUfj1x1ziZwPLxr4TtvRzvgzaQG8FnHg5NhbJZUXyXv
+        vw1fIAZPX63wkeEjrq+xQdjXrtqJR5Q5McFmwME=
+X-Google-Smtp-Source: ABdhPJyqXrT5bV8lr4wUwNbGvZ+Vxmm2v8GZ3UpXEsjExaqhw0ahbIg+bwDl0ZnGv/Pm9EzzrImHlIbM79DRxdefmYI=
+X-Received: by 2002:a5d:43cf:: with SMTP id v15mr51505782wrr.269.1600665081222;
+ Sun, 20 Sep 2020 22:11:21 -0700 (PDT)
 MIME-Version: 1.0
 References: <20200917194341.16272-1-ben.levinsky@xilinx.com>
  <20200917194341.16272-6-ben.levinsky@xilinx.com> <20200917221120.GA15530@xaphan>
@@ -65,8 +65,8 @@ References: <20200917194341.16272-1-ben.levinsky@xilinx.com>
  <BYAPR02MB4407AA5D63EBAC7BEC93CB62B53D0@BYAPR02MB4407.namprd02.prod.outlook.com>
 In-Reply-To: <BYAPR02MB4407AA5D63EBAC7BEC93CB62B53D0@BYAPR02MB4407.namprd02.prod.outlook.com>
 From:   Wendy Liang <sunnyliangjy@gmail.com>
-Date:   Sun, 20 Sep 2020 22:09:02 -0700
-Message-ID: <CAA07jV-4q5ifdqGkVQSKTCsErcx9oK9vPx0+yyN_8piXY0w9Fg@mail.gmail.com>
+Date:   Sun, 20 Sep 2020 22:11:10 -0700
+Message-ID: <CAA07jV-CUvOqDne8Y9HRWaGCpAjKePt_yYedZVAxNGXeUogy-Q@mail.gmail.com>
 Subject: Re: RE: RE: [PATCH v14 5/5] remoteproc: Add initial zynqmp R5
  remoteproc driver
 To:     Ben Levinsky <BLEVINSK@xilinx.com>
@@ -76,15 +76,14 @@ Cc:     Michael Auchter <michael.auchter@ni.com>,
         "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        Wendy Liang <wendy.liang@xilinx.com>
+        <linux-arm-kernel@lists.infradead.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi Ben,
+Hi Ben
 
 On Sun, Sep 20, 2020 at 4:16 PM Ben Levinsky <BLEVINSK@xilinx.com> wrote:
 >
@@ -196,6 +195,12 @@ e?
 > >
 > [Ben Levinsky] for testing, so far it has been r50/1 split and r5 lockste=
 p
+[Wendy] I tried to understand the need to change the RPU mode at runtime.
+What I can think of is for testing purposes.
+
+Thanks,
+Wendy
+
 > > Best Regards,
 > > Wendy
 > >
@@ -238,12 +243,6 @@ covered corner case.. for this, before loading/starting or requesting memor=
 y the state of global rpu mode can be checked and this can act as a guard f=
 or probing a remoteproc instance for r5-1 if either is in lockstep and simi=
 lar safeguard for firmware loading for R5-1 if in lockstep mode
-[Wendy] As op mode is described in the device tree, in lockstep mode,
-r5-1 doesn't need to show in the sysfs.
-
-Thanks,
-Wendy
-
 >
 > That is, add the lockstep property only if in lockstep mode and use the p=
 resence of it or lack thereof for subsequent, single R5-specific driver rem=
