@@ -2,513 +2,217 @@ Return-Path: <SRS0=DqHI=C6=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8525C43463
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 21 Sep 2020 09:48:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF737C43465
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 21 Sep 2020 10:05:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5950F21789
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 21 Sep 2020 09:48:57 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="hurd03lR"
+	by mail.kernel.org (Postfix) with ESMTP id 9351B21D91
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 21 Sep 2020 10:05:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726358AbgIUJs4 (ORCPT
+        id S1726479AbgIUKFH (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 21 Sep 2020 05:48:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54136 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726326AbgIUJs4 (ORCPT
+        Mon, 21 Sep 2020 06:05:07 -0400
+Received: from mo-csw1115.securemx.jp ([210.130.202.157]:45178 "EHLO
+        mo-csw.securemx.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726353AbgIUKFG (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 21 Sep 2020 05:48:56 -0400
-Received: from mail-pj1-x1041.google.com (mail-pj1-x1041.google.com [IPv6:2607:f8b0:4864:20::1041])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 847EAC061755
-        for <linux-remoteproc@vger.kernel.org>; Mon, 21 Sep 2020 02:48:56 -0700 (PDT)
-Received: by mail-pj1-x1041.google.com with SMTP id v14so6848691pjd.4
-        for <linux-remoteproc@vger.kernel.org>; Mon, 21 Sep 2020 02:48:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=p3XENv1+h9V5WAoUC7KZBcKbh9s7ypUROXUzNiOQTlI=;
-        b=hurd03lR/MrTHv7nZkI5bggPMT0reLwNWIZkH7xKuntL+e9dYDSyPADZZabfyl5Cgr
-         QMFdGQkBEf0EGeK3+UwwZhvKcWdKODOW3TEII4rV4RiFyR5LpECBAwuM32Y1cluH5xUl
-         wUDUJvpXHRdY5e//nHdQxOoWGcoDR5XLXFhXM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=p3XENv1+h9V5WAoUC7KZBcKbh9s7ypUROXUzNiOQTlI=;
-        b=BLHi+iMZaS3GeD4athfJbwPfBrCDJJSenIw7HAx5oF3zrS/pXjKYgNXDQkRkjlat9K
-         XDypq80pvI0WOeeQikJZElHkN0aIlaSqGdRMzH4etxhx56Uz6sjr6i/EIemNbVbl2zMe
-         moeeduaYfm3Fc2EtE78wSWjhZSgEsdVNTClz8FTJ8hSuL8vofJkEQDVONDA5JRIqw1US
-         PaKQOZUw3E881XO19iUvHBrHMC1INjsuyfgeImu/8S3KO6Sh8EmcwaGiayXNa0LworyV
-         Esyzz7r5nkD/jK3c8uHuw8wa4EUFZp4AKfEx8iMdY7tb7lbV3qvRLm6KfTHG3zp/j2NE
-         4L+g==
-X-Gm-Message-State: AOAM533+BDUyOZZ+WI6v6sPMv7ow0LvGVYYG75/BbIP4euIEkcIicPom
-        CCAErEEtcV9tEcF+jeCC9ANoLA==
-X-Google-Smtp-Source: ABdhPJxOX19RNUKY2boPhTdJ9zUlDgNP5hb5j8U067R4LZrSvFZByveK7XY61khVhWVH+SnW0N6sLA==
-X-Received: by 2002:a17:90b:70e:: with SMTP id s14mr25497120pjz.206.1600681735840;
-        Mon, 21 Sep 2020 02:48:55 -0700 (PDT)
-Received: from kafuu-chino.c.googlers.com.com (105.219.229.35.bc.googleusercontent.com. [35.229.219.105])
-        by smtp.googlemail.com with ESMTPSA id d6sm10708189pjw.0.2020.09.21.02.48.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Sep 2020 02:48:55 -0700 (PDT)
-From:   Pi-Hsun Shih <pihsun@chromium.org>
-Cc:     Pi-Hsun Shih <pihsun@chromium.org>,
-        Tzung-Bi Shih <tzungbi@chromium.org>,
-        Tzung-Bi Shih <tzungbi@google.com>,
-        Ohad Ben-Cohen <ohad@wizery.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        linux-remoteproc@vger.kernel.org (open list:REMOTE PROCESSOR
-        (REMOTEPROC) SUBSYSTEM),
-        linux-arm-kernel@lists.infradead.org (moderated list:ARM/Mediatek SoC
-        support),
-        linux-mediatek@lists.infradead.org (moderated list:ARM/Mediatek SoC
-        support), linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v3] remoteproc/mediatek: Add support for mt8192 SCP
-Date:   Mon, 21 Sep 2020 17:48:46 +0800
-Message-Id: <20200921094847.2112399-1-pihsun@chromium.org>
-X-Mailer: git-send-email 2.28.0.681.g6f77f65b4e-goog
+        Mon, 21 Sep 2020 06:05:06 -0400
+Received: by mo-csw.securemx.jp (mx-mo-csw1115) id 08LA4sWI014703; Mon, 21 Sep 2020 19:04:54 +0900
+X-Iguazu-Qid: 2wHHyicD2oUdXY0YBE
+X-Iguazu-QSIG: v=2; s=0; t=1600682694; q=2wHHyicD2oUdXY0YBE; m=jZGzzKb8LDRHKxB/VJLPNU+bvoPiRXNtmpMfOk08RqM=
+Received: from imx2.toshiba.co.jp (imx2.toshiba.co.jp [106.186.93.51])
+        by relay.securemx.jp (mx-mr1110) id 08LA4rMK036855;
+        Mon, 21 Sep 2020 19:04:53 +0900
+Received: from enc01.toshiba.co.jp ([106.186.93.100])
+        by imx2.toshiba.co.jp  with ESMTP id 08LA4qDr021134;
+        Mon, 21 Sep 2020 19:04:52 +0900 (JST)
+Received: from hop001.toshiba.co.jp ([133.199.164.63])
+        by enc01.toshiba.co.jp  with ESMTP id 08LA4q2j030893;
+        Mon, 21 Sep 2020 19:04:52 +0900
+From:   Punit Agrawal <punit1.agrawal@toshiba.co.jp>
+To:     Ben Levinsky <BLEVINSK@xilinx.com>
+Cc:     Wendy Liang <sunnyliangjy@gmail.com>,
+        Michael Auchter <michael.auchter@ni.com>,
+        "devicetree\@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-remoteproc\@vger.kernel.org" 
+        <linux-remoteproc@vger.kernel.org>,
+        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel\@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v14 5/5] remoteproc: Add initial zynqmp R5 remoteproc driver
+References: <20200917194341.16272-1-ben.levinsky@xilinx.com>
+        <20200917194341.16272-6-ben.levinsky@xilinx.com>
+        <20200917221120.GA15530@xaphan>
+        <BYAPR02MB44073E7A3BEA401FF4684E95B53E0@BYAPR02MB4407.namprd02.prod.outlook.com>
+        <BYAPR02MB4407A552ECBA907DFC3CEC91B53E0@BYAPR02MB4407.namprd02.prod.outlook.com>
+        <20200918160721.GD15530@xaphan>
+        <BYAPR02MB44073FBEF86F4AA2379D8A11B53F0@BYAPR02MB4407.namprd02.prod.outlook.com>
+        <20200918190643.GA172254@xaphan>
+        <CAA07jV9WfTTLRwh3kmy1985p4C1m37wQJQAHzLdK2cn4f8HENw@mail.gmail.com>
+        <BYAPR02MB4407AA5D63EBAC7BEC93CB62B53D0@BYAPR02MB4407.namprd02.prod.outlook.com>
+Date:   Mon, 21 Sep 2020 19:04:51 +0900
+In-Reply-To: <BYAPR02MB4407AA5D63EBAC7BEC93CB62B53D0@BYAPR02MB4407.namprd02.prod.outlook.com>
+        (Ben Levinsky's message of "Sun, 20 Sep 2020 23:16:25 +0000")
+X-TSB-HOP: ON
+Message-ID: <87k0wnjvi4.fsf@kokedama.swc.toshiba.co.jp>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.3 (gnu/linux)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To:     unlisted-recipients:; (no To-header on input)
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Add support for mt8192 SCP.
+Ben Levinsky <BLEVINSK@xilinx.com> writes:
 
-Signed-off-by: Pi-Hsun Shih <pihsun@chromium.org>
-Reviewed-by: Tzung-Bi Shih <tzungbi@google.com>
----
+> Hi All,
+>
+>> -----Original Message-----
+>> From: Wendy Liang <sunnyliangjy@gmail.com>
+>> Sent: Friday, September 18, 2020 6:53 PM
+>> To: Michael Auchter <michael.auchter@ni.com>
+>> Cc: Ben Levinsky <BLEVINSK@xilinx.com>; punit1.agrawal@toshiba.co.jp;
+>> devicetree@vger.kernel.org; linux-remoteproc@vger.kernel.org; linux-
+>> kernel@vger.kernel.org; linux-arm-kernel@lists.infradead.org
+>> Subject: Re: RE: RE: [PATCH v14 5/5] remoteproc: Add initial zynqmp R5
+>> remoteproc driver
+>> 
+>> HI Michael, Ben, Punit,
+>> 
+>> On Fri, Sep 18, 2020 at 12:08 PM Michael Auchter <michael.auchter@ni.com>
+>> wrote:
+>> >
+>> > Hey Ben,
+>> >
+>> > On Fri, Sep 18, 2020 at 06:01:19PM +0000, Ben Levinsky wrote:
+>> > > Hi Michael, Punit,
+>> > >
+>> > > > -----Original Message-----
+>> > > > From: Michael Auchter <michael.auchter@ni.com>
+>> > > > Sent: Friday, September 18, 2020 9:07 AM
+>> > > > To: Ben Levinsky <BLEVINSK@xilinx.com>
+>> > > > Cc: devicetree@vger.kernel.org; linux-remoteproc@vger.kernel.org;
+>> linux-
+>> > > > kernel@vger.kernel.org; linux-arm-kernel@lists.infradead.org
+>> > > > Subject: Re: RE: [PATCH v14 5/5] remoteproc: Add initial zynqmp R5
+>> > > > remoteproc driver
+>> > > >
+>> > > > On Thu, Sep 17, 2020 at 10:50:42PM +0000, Ben Levinsky wrote:
 
-Change since v2:
-* Inline scp_reset_assert / scp_reset_deassert.
+[...]
 
-Change since v1:
-* Remove unused register definitions.
+>> > > A suggestion that might clean up the driver so that the whole
+>> > > rpu_mode, tcm_mode configuration can be simplified and pulled out of
+>> > > the driver:
+>> > > - as Punit suggested, remove the lockstep-mode property
+>> > > - the zynqmp_remoteproc_r5 driver ONLY loads firmware and does
+>> start/stop.
+>> > > - the zynqmp_remoteproc_r5 driver does not configure and memory
+>> regions or the RPU. Let the Xilinx firmware sysfs interface handle this.
+>> >
+>> > I don't think this is a good approach.
 
----
- drivers/remoteproc/mtk_common.h  |  32 +++++
- drivers/remoteproc/mtk_scp.c     | 203 +++++++++++++++++++++++++------
- drivers/remoteproc/mtk_scp_ipi.c |   5 +-
- 3 files changed, 204 insertions(+), 36 deletions(-)
+> [Ben Levinsky] ok, noted. Can keep the configuration but still as
+> wendy said just have lockstep property to denote lockstep mode in RPU
+> and otherwise be split, for simplicity?
 
-diff --git a/drivers/remoteproc/mtk_common.h b/drivers/remoteproc/mtk_common.h
-index 0066c83636d0..47b4561443a9 100644
---- a/drivers/remoteproc/mtk_common.h
-+++ b/drivers/remoteproc/mtk_common.h
-@@ -32,6 +32,23 @@
- #define MT8183_SCP_CACHESIZE_8KB	BIT(8)
- #define MT8183_SCP_CACHE_CON_WAYEN	BIT(10)
- 
-+#define MT8192_L2TCM_SRAM_PD_0		0x210C0
-+#define MT8192_L2TCM_SRAM_PD_1		0x210C4
-+#define MT8192_L2TCM_SRAM_PD_2		0x210C8
-+#define MT8192_L1TCM_SRAM_PDN		0x2102C
-+#define MT8192_CPU0_SRAM_PD		0x21080
-+
-+#define MT8192_SCP2APMCU_IPC_SET	0x24080
-+#define MT8192_SCP2APMCU_IPC_CLR	0x24084
-+#define MT8192_SCP_IPC_INT_BIT		BIT(0)
-+#define MT8192_SCP2SPM_IPC_CLR		0x24094
-+#define MT8192_GIPC_IN_SET		0x24098
-+#define MT8192_HOST_IPC_INT_BIT		BIT(0)
-+
-+#define MT8192_CORE0_SW_RSTN_CLR	0x30000
-+#define MT8192_CORE0_SW_RSTN_SET	0x30004
-+#define MT8192_CORE0_WDT_CFG		0x30034
-+
- #define SCP_FW_VER_LEN			32
- #define SCP_SHARE_BUFFER_SIZE		288
- 
-@@ -50,6 +67,19 @@ struct scp_ipi_desc {
- 	void *priv;
- };
- 
-+struct mtk_scp;
-+
-+struct mtk_scp_of_data {
-+	int (*scp_before_load)(struct mtk_scp *scp);
-+	void (*scp_irq_handler)(struct mtk_scp *scp);
-+	void (*scp_reset_assert)(struct mtk_scp *scp);
-+	void (*scp_reset_deassert)(struct mtk_scp *scp);
-+	void (*scp_stop)(struct mtk_scp *scp);
-+
-+	u32 host_to_scp_reg;
-+	u32 host_to_scp_int_bit;
-+};
-+
- struct mtk_scp {
- 	struct device *dev;
- 	struct rproc *rproc;
-@@ -58,6 +88,8 @@ struct mtk_scp {
- 	void __iomem *sram_base;
- 	size_t sram_size;
- 
-+	const struct mtk_scp_of_data *data;
-+
- 	struct mtk_share_obj __iomem *recv_buf;
- 	struct mtk_share_obj __iomem *send_buf;
- 	struct scp_run run;
-diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
-index ac13e7b046a6..78d7905366fd 100644
---- a/drivers/remoteproc/mtk_scp.c
-+++ b/drivers/remoteproc/mtk_scp.c
-@@ -124,9 +124,6 @@ static int scp_ipi_init(struct mtk_scp *scp)
- 	size_t send_offset = SCP_FW_END - sizeof(struct mtk_share_obj);
- 	size_t recv_offset = send_offset - sizeof(struct mtk_share_obj);
- 
--	/* Disable SCP to host interrupt */
--	writel(MT8183_SCP_IPC_INT_BIT, scp->reg_base + MT8183_SCP_TO_HOST);
--
- 	/* shared buffer initialization */
- 	scp->recv_buf =
- 		(struct mtk_share_obj __iomem *)(scp->sram_base + recv_offset);
-@@ -138,7 +135,7 @@ static int scp_ipi_init(struct mtk_scp *scp)
- 	return 0;
- }
- 
--static void scp_reset_assert(const struct mtk_scp *scp)
-+static void mt8183_scp_reset_assert(struct mtk_scp *scp)
- {
- 	u32 val;
- 
-@@ -147,7 +144,7 @@ static void scp_reset_assert(const struct mtk_scp *scp)
- 	writel(val, scp->reg_base + MT8183_SW_RSTN);
- }
- 
--static void scp_reset_deassert(const struct mtk_scp *scp)
-+static void mt8183_scp_reset_deassert(struct mtk_scp *scp)
- {
- 	u32 val;
- 
-@@ -156,17 +153,19 @@ static void scp_reset_deassert(const struct mtk_scp *scp)
- 	writel(val, scp->reg_base + MT8183_SW_RSTN);
- }
- 
--static irqreturn_t scp_irq_handler(int irq, void *priv)
-+static void mt8192_scp_reset_assert(struct mtk_scp *scp)
- {
--	struct mtk_scp *scp = priv;
--	u32 scp_to_host;
--	int ret;
-+	writel(1, scp->reg_base + MT8192_CORE0_SW_RSTN_SET);
-+}
- 
--	ret = clk_prepare_enable(scp->clk);
--	if (ret) {
--		dev_err(scp->dev, "failed to enable clocks\n");
--		return IRQ_NONE;
--	}
-+static void mt8192_scp_reset_deassert(struct mtk_scp *scp)
-+{
-+	writel(1, scp->reg_base + MT8192_CORE0_SW_RSTN_CLR);
-+}
-+
-+static void mt8183_scp_irq_handler(struct mtk_scp *scp)
-+{
-+	u32 scp_to_host;
- 
- 	scp_to_host = readl(scp->reg_base + MT8183_SCP_TO_HOST);
- 	if (scp_to_host & MT8183_SCP_IPC_INT_BIT)
-@@ -177,6 +176,40 @@ static irqreturn_t scp_irq_handler(int irq, void *priv)
- 	/* SCP won't send another interrupt until we set SCP_TO_HOST to 0. */
- 	writel(MT8183_SCP_IPC_INT_BIT | MT8183_SCP_WDT_INT_BIT,
- 	       scp->reg_base + MT8183_SCP_TO_HOST);
-+}
-+
-+static void mt8192_scp_irq_handler(struct mtk_scp *scp)
-+{
-+	u32 scp_to_host;
-+
-+	scp_to_host = readl(scp->reg_base + MT8192_SCP2APMCU_IPC_SET);
-+
-+	if (scp_to_host & MT8192_SCP_IPC_INT_BIT)
-+		scp_ipi_handler(scp);
-+	else
-+		scp_wdt_handler(scp, scp_to_host);
-+
-+	/*
-+	 * SCP won't send another interrupt until we clear
-+	 * MT8192_SCP2APMCU_IPC.
-+	 */
-+	writel(MT8192_SCP_IPC_INT_BIT,
-+	       scp->reg_base + MT8192_SCP2APMCU_IPC_CLR);
-+}
-+
-+static irqreturn_t scp_irq_handler(int irq, void *priv)
-+{
-+	struct mtk_scp *scp = priv;
-+	int ret;
-+
-+	ret = clk_prepare_enable(scp->clk);
-+	if (ret) {
-+		dev_err(scp->dev, "failed to enable clocks\n");
-+		return IRQ_NONE;
-+	}
-+
-+	scp->data->scp_irq_handler(scp);
-+
- 	clk_disable_unprepare(scp->clk);
- 
- 	return IRQ_HANDLED;
-@@ -238,20 +271,10 @@ static int scp_elf_load_segments(struct rproc *rproc, const struct firmware *fw)
- 	return ret;
- }
- 
--static int scp_load(struct rproc *rproc, const struct firmware *fw)
-+static int mt8183_scp_before_load(struct mtk_scp *scp)
- {
--	const struct mtk_scp *scp = rproc->priv;
--	struct device *dev = scp->dev;
--	int ret;
--
--	ret = clk_prepare_enable(scp->clk);
--	if (ret) {
--		dev_err(dev, "failed to enable clocks\n");
--		return ret;
--	}
--
--	/* Hold SCP in reset while loading FW. */
--	scp_reset_assert(scp);
-+	/* Clear SCP to host interrupt */
-+	writel(MT8183_SCP_IPC_INT_BIT, scp->reg_base + MT8183_SCP_TO_HOST);
- 
- 	/* Reset clocks before loading FW */
- 	writel(0x0, scp->reg_base + MT8183_SCP_CLK_SW_SEL);
-@@ -272,6 +295,67 @@ static int scp_load(struct rproc *rproc, const struct firmware *fw)
- 	       scp->reg_base + MT8183_SCP_CACHE_CON);
- 	writel(MT8183_SCP_CACHESIZE_8KB, scp->reg_base + MT8183_SCP_DCACHE_CON);
- 
-+	return 0;
-+}
-+
-+static void mt8192_power_on_sram(void *addr)
-+{
-+	int i;
-+
-+	for (i = 31; i >= 0; i--)
-+		writel(GENMASK(i, 0), addr);
-+	writel(0, addr);
-+}
-+
-+static void mt8192_power_off_sram(void *addr)
-+{
-+	int i;
-+
-+	writel(0, addr);
-+	for (i = 0; i < 32; i++)
-+		writel(GENMASK(i, 0), addr);
-+}
-+
-+static int mt8192_scp_before_load(struct mtk_scp *scp)
-+{
-+	/* clear SPM interrupt, SCP2SPM_IPC_CLR */
-+	writel(0xff, scp->reg_base + MT8192_SCP2SPM_IPC_CLR);
-+
-+	writel(1, scp->reg_base + MT8192_CORE0_SW_RSTN_SET);
-+
-+	dsb(sy);
-+
-+	readl(scp->reg_base + MT8192_CORE0_SW_RSTN_SET);
-+
-+	/* enable SRAM clock */
-+	mt8192_power_on_sram(scp->reg_base + MT8192_L2TCM_SRAM_PD_0);
-+	mt8192_power_on_sram(scp->reg_base + MT8192_L2TCM_SRAM_PD_1);
-+	mt8192_power_on_sram(scp->reg_base + MT8192_L2TCM_SRAM_PD_2);
-+	mt8192_power_on_sram(scp->reg_base + MT8192_L1TCM_SRAM_PDN);
-+	mt8192_power_on_sram(scp->reg_base + MT8192_CPU0_SRAM_PD);
-+
-+	return 0;
-+}
-+
-+static int scp_load(struct rproc *rproc, const struct firmware *fw)
-+{
-+	struct mtk_scp *scp = rproc->priv;
-+	struct device *dev = scp->dev;
-+	int ret;
-+
-+	ret = clk_prepare_enable(scp->clk);
-+	if (ret) {
-+		dev_err(dev, "failed to enable clocks\n");
-+		return ret;
-+	}
-+
-+	/* Hold SCP in reset while loading FW. */
-+	scp->data->scp_reset_assert(scp);
-+
-+	ret = scp->data->scp_before_load(scp);
-+	if (ret < 0)
-+		return ret;
-+
- 	ret = scp_elf_load_segments(rproc, fw);
- 	clk_disable_unprepare(scp->clk);
- 
-@@ -293,7 +377,7 @@ static int scp_start(struct rproc *rproc)
- 
- 	run->signaled = false;
- 
--	scp_reset_deassert(scp);
-+	scp->data->scp_reset_deassert(scp);
- 
- 	ret = wait_event_interruptible_timeout(
- 					run->wq,
-@@ -309,13 +393,14 @@ static int scp_start(struct rproc *rproc)
- 		dev_err(dev, "wait SCP interrupted by a signal!\n");
- 		goto stop;
- 	}
-+
- 	clk_disable_unprepare(scp->clk);
- 	dev_info(dev, "SCP is ready. FW version %s\n", run->fw_ver);
- 
- 	return 0;
- 
- stop:
--	scp_reset_assert(scp);
-+	scp->data->scp_reset_assert(scp);
- 	clk_disable_unprepare(scp->clk);
- 	return ret;
- }
-@@ -329,7 +414,7 @@ static void *scp_da_to_va(struct rproc *rproc, u64 da, size_t len)
- 		offset = da;
- 		if (offset >= 0 && (offset + len) < scp->sram_size)
- 			return (void __force *)scp->sram_base + offset;
--	} else {
-+	} else if (scp->dram_size) {
- 		offset = da - scp->dma_addr;
- 		if (offset >= 0 && (offset + len) < scp->dram_size)
- 			return (void __force *)scp->cpu_addr + offset;
-@@ -338,6 +423,25 @@ static void *scp_da_to_va(struct rproc *rproc, u64 da, size_t len)
- 	return NULL;
- }
- 
-+static void mt8183_scp_stop(struct mtk_scp *scp)
-+{
-+	/* Disable SCP watchdog */
-+	writel(0, scp->reg_base + MT8183_WDT_CFG);
-+}
-+
-+static void mt8192_scp_stop(struct mtk_scp *scp)
-+{
-+	/* Disable SRAM clock */
-+	mt8192_power_off_sram(scp->reg_base + MT8192_L2TCM_SRAM_PD_0);
-+	mt8192_power_off_sram(scp->reg_base + MT8192_L2TCM_SRAM_PD_1);
-+	mt8192_power_off_sram(scp->reg_base + MT8192_L2TCM_SRAM_PD_2);
-+	mt8192_power_off_sram(scp->reg_base + MT8192_L1TCM_SRAM_PDN);
-+	mt8192_power_off_sram(scp->reg_base + MT8192_CPU0_SRAM_PD);
-+
-+	/* Disable SCP watchdog */
-+	writel(0, scp->reg_base + MT8192_CORE0_WDT_CFG);
-+}
-+
- static int scp_stop(struct rproc *rproc)
- {
- 	struct mtk_scp *scp = (struct mtk_scp *)rproc->priv;
-@@ -349,9 +453,8 @@ static int scp_stop(struct rproc *rproc)
- 		return ret;
- 	}
- 
--	scp_reset_assert(scp);
--	/* Disable SCP watchdog */
--	writel(0, scp->reg_base + MT8183_WDT_CFG);
-+	scp->data->scp_reset_assert(scp);
-+	scp->data->scp_stop(scp);
- 	clk_disable_unprepare(scp->clk);
- 
- 	return 0;
-@@ -443,6 +546,13 @@ static int scp_map_memory_region(struct mtk_scp *scp)
- 	int ret;
- 
- 	ret = of_reserved_mem_device_init(scp->dev);
-+
-+	/* reserved memory is optional. */
-+	if (ret == -ENODEV) {
-+		dev_info(scp->dev, "skipping reserved memory initialization.");
-+		return 0;
-+	}
-+
- 	if (ret) {
- 		dev_err(scp->dev, "failed to assign memory-region: %d\n", ret);
- 		return -ENOMEM;
-@@ -460,6 +570,9 @@ static int scp_map_memory_region(struct mtk_scp *scp)
- 
- static void scp_unmap_memory_region(struct mtk_scp *scp)
- {
-+	if (scp->dram_size == 0)
-+		return;
-+
- 	dma_free_coherent(scp->dev, scp->dram_size, scp->cpu_addr,
- 			  scp->dma_addr);
- 	of_reserved_mem_device_release(scp->dev);
-@@ -536,6 +649,7 @@ static int scp_probe(struct platform_device *pdev)
- 	scp = (struct mtk_scp *)rproc->priv;
- 	scp->rproc = rproc;
- 	scp->dev = dev;
-+	scp->data = of_device_get_match_data(dev);
- 	platform_set_drvdata(pdev, scp);
- 
- 	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "sram");
-@@ -642,8 +756,29 @@ static int scp_remove(struct platform_device *pdev)
- 	return 0;
- }
- 
-+static const struct mtk_scp_of_data mt8183_of_data = {
-+	.scp_before_load = mt8183_scp_before_load,
-+	.scp_irq_handler = mt8183_scp_irq_handler,
-+	.scp_reset_assert = mt8183_scp_reset_assert,
-+	.scp_reset_deassert = mt8183_scp_reset_deassert,
-+	.scp_stop = mt8183_scp_stop,
-+	.host_to_scp_reg = MT8183_HOST_TO_SCP,
-+	.host_to_scp_int_bit = MT8183_HOST_IPC_INT_BIT,
-+};
-+
-+static const struct mtk_scp_of_data mt8192_of_data = {
-+	.scp_before_load = mt8192_scp_before_load,
-+	.scp_irq_handler = mt8192_scp_irq_handler,
-+	.scp_reset_assert = mt8192_scp_reset_assert,
-+	.scp_reset_deassert = mt8192_scp_reset_deassert,
-+	.scp_stop = mt8192_scp_stop,
-+	.host_to_scp_reg = MT8192_GIPC_IN_SET,
-+	.host_to_scp_int_bit = MT8192_HOST_IPC_INT_BIT,
-+};
-+
- static const struct of_device_id mtk_scp_of_match[] = {
--	{ .compatible = "mediatek,mt8183-scp"},
-+	{ .compatible = "mediatek,mt8183-scp", .data = &mt8183_of_data },
-+	{ .compatible = "mediatek,mt8192-scp", .data = &mt8192_of_data },
- 	{},
- };
- MODULE_DEVICE_TABLE(of, mtk_scp_of_match);
-diff --git a/drivers/remoteproc/mtk_scp_ipi.c b/drivers/remoteproc/mtk_scp_ipi.c
-index 3d3d87210ef2..fb81df973566 100644
---- a/drivers/remoteproc/mtk_scp_ipi.c
-+++ b/drivers/remoteproc/mtk_scp_ipi.c
-@@ -182,7 +182,7 @@ int scp_ipi_send(struct mtk_scp *scp, u32 id, void *buf, unsigned int len,
- 			ret = -ETIMEDOUT;
- 			goto clock_disable;
- 		}
--	} while (readl(scp->reg_base + MT8183_HOST_TO_SCP));
-+	} while (readl(scp->reg_base + scp->data->host_to_scp_reg));
- 
- 	scp_memcpy_aligned(send_obj->share_buf, buf, len);
- 
-@@ -191,7 +191,8 @@ int scp_ipi_send(struct mtk_scp *scp, u32 id, void *buf, unsigned int len,
- 
- 	scp->ipi_id_ack[id] = false;
- 	/* send the command to SCP */
--	writel(MT8183_HOST_IPC_INT_BIT, scp->reg_base + MT8183_HOST_TO_SCP);
-+	writel(scp->data->host_to_scp_int_bit,
-+	       scp->reg_base + scp->data->host_to_scp_reg);
- 
- 	if (wait) {
- 		/* wait for SCP's ACK */
+That would be a better approach than the current proposal.
 
-base-commit: 5925fa68fe8244651b3f78a88c4af99190a88f0d
--- 
-2.28.0.681.g6f77f65b4e-goog
+>> [Wendy] The TCMs are presented differently in the system depending on
+>> if RPU is in
+>> lockstep or split mode.
+>> 
+>> Not sure if it is allowed to list TCMs registers properties for both
+>> split mode and lockstep
+>> mode in the same device node.
+>> 
+>> Even though, driver can have this information in the code, but I feel
+>> the device tree is a
+>> better place for this information.
+>> And also for predefined shared memories, you will need to know the RPU
+>> op mode ahead,
+>> so that you can specify which shared memories belong to which RPU.
+>> 
+>> To dynamic setup the RPU mode, besides sysfs, setup, if remoteproc can
+>> support
+>> device tree overlay, the RPUs can be described with dtbo and loaded at
+>> runtime.
+>> 
+>> Just want to understand the case which needs to set  RPU mode at runtime?
+>> I think testing can be one case.
+> [Ben Levinsky] for testing, so far it has been r50/1 split and r5
+> lockstep
+
+>> Best Regards,
+>> Wendy
+>> 
+>> > - How will someone know to configure the RPU mode and TCM mode via
+>> sysfs?
+>> > - What happens when someone changes the RPU mode after remoteproc
+>> has
+>> >   already booted some firmware on it?
+>> > - What if the kernel is the one booting the R5, not the user?
+>> >
+>> > Split vs. lockstep, IMO, needs to be specified as part of the device
+>> > tree, and this driver needs to handle configuring the RPU mode and TCM
+>> > modes appropriately.
+>> >
+
+Typically, the device tree is expected to describe the hardware to the
+kernel rather than telling it what the hardware should look like. More
+below.
+
+> [Ben Levinsky] Ok, as Wendy suggested would instead the presence of a
+> "lockstep=mode" property indicate lockstep mode and otherwise imply
+> split mode?
+
+>> > Split vs. lockstep already necessitates different entries in the device
+>> > tree:
+>> > - In the binding, each core references its TCMs via the
+>> >   meta-memory-regions phandles, and the referenced nodes necessarily
+>> >   encode this size. In split mode, each core has access to 64K of
+>> >   TCMA/TCMB, while in lockstep R5 0 has access to 128K of TCMA/TCMB. So,
+>> >   the "xlnx,tcm" nodes' reg entries need to differ between lockstep and
+>> >   split.
+
+But considering the dependency between split/lockstep mode and available
+memory sizes as described here it maybe OK to have the firmware (via DT)
+specify the configured mode. Though IMO it is overloading the device
+tree functionality (not the first time) because that's the hammer we've
+got.
+
+Even in this scenario, ideally it would be the boot firmware's
+responsibility to configure the RPU in the desired mode and communicate
+the mode to the kernel. The driver can use the mode information to
+verify that the system is in the expected state during probe and error
+out if not.
+
+Though taking this approach will not help the "testing" usecase
+mentioned by Wendy.
+
+>> > - In lockstep mode, it does not make sense to have both r5@0 and r5@1
+>> >   child nodes: only r5@0 makes sense. Though, I just realized that I
+>> >   think this driver will currently permit that, and register two
+>> >   remoteprocs even in lockstep mode... What happens if someone tries to
+>> >   load firmware on to r5_1 when they're in lockstep mode? This should
+>> >   probably be prevented.
+>> >
+
+> [Ben Levinsky] Good Point. the loading of R5 1 while in lockstep is an
+> uncovered corner case.. for this, before loading/starting or
+> requesting memory the state of global rpu mode can be checked and this
+> can act as a guard for probing a remoteproc instance for r5-1 if
+> either is in lockstep and similar safeguard for firmware loading for
+> R5-1 if in lockstep mode
+
+IIUC, if the second R5 is not registered with remoteproc, it is not
+possible to request loading firmware to it from userspace. So no special
+case guards should be needed.
+
+Thanks,
+Punit
+
+[...]
 
