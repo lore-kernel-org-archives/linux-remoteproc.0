@@ -2,127 +2,87 @@ Return-Path: <SRS0=ZH1X=C7=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E02CC2D0E2
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 22 Sep 2020 08:09:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 054FBC2D0E2
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 22 Sep 2020 09:10:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5E1DD239E5
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 22 Sep 2020 08:09:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C2177239D4
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 22 Sep 2020 09:10:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726489AbgIVIJ6 (ORCPT
+        id S1726613AbgIVJKC (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 22 Sep 2020 04:09:58 -0400
-Received: from mga07.intel.com ([134.134.136.100]:22403 "EHLO mga07.intel.com"
+        Tue, 22 Sep 2020 05:10:02 -0400
+Received: from mga03.intel.com ([134.134.136.65]:2427 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726442AbgIVIJ5 (ORCPT
+        id S1726612AbgIVJKC (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 22 Sep 2020 04:09:57 -0400
-IronPort-SDR: gx0SszusU5X9CekBflUEIRUmoJdGgK7s5mrLR+5Dd8PiergPhI1MAVAzlo/SYz5LPqV1ugqkys
- q+Ik942d/lug==
-X-IronPort-AV: E=McAfee;i="6000,8403,9751"; a="224705439"
-X-IronPort-AV: E=Sophos;i="5.77,289,1596524400"; 
-   d="scan'208";a="224705439"
+        Tue, 22 Sep 2020 05:10:02 -0400
+IronPort-SDR: lLl1m99uckNl/OYCb2pC6PwHUFaz/e7KIfwaSOssbUmOtLqTGbCWjQARvwm9DVIsA6cFAXXEXp
+ QJm3aghbaSlQ==
+X-IronPort-AV: E=McAfee;i="6000,8403,9751"; a="160635717"
+X-IronPort-AV: E=Sophos;i="5.77,290,1596524400"; 
+   d="scan'208";a="160635717"
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Sep 2020 01:09:56 -0700
-IronPort-SDR: i7DFCMZeT46WErhKpRsRnSZs2581l90UwkFPUCZJVstwMaNBYaW9dVKes7AlufRBPwHUVMqVIT
- JypBlKYcV8NQ==
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Sep 2020 02:10:02 -0700
+IronPort-SDR: RJNMPlR6Jlk1zF38cbRBOPbHpsS6NW67JNCd+RQOqJCtr6Xnrx5ty0wnzfF1oeLGk73qBQQYbe
+ 5CrsvK0MewIg==
+X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.77,290,1596524400"; 
-   d="scan'208";a="485857398"
-Received: from gliakhov-mobl2.ger.corp.intel.com (HELO ubuntu) ([10.252.49.176])
-  by orsmga005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Sep 2020 01:09:47 -0700
-Date:   Tue, 22 Sep 2020 10:09:44 +0200
-From:   Guennadi Liakhovetski <guennadi.liakhovetski@linux.intel.com>
-To:     Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc:     ohad@wizery.com, bjorn.andersson@linaro.org, loic.pallardy@st.com,
-        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 00/10] rpmsg: Make RPMSG name service modular
-Message-ID: <20200922080944.GB4648@ubuntu>
-References: <20200922001000.899956-1-mathieu.poirier@linaro.org>
+   d="scan'208";a="338222449"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
+  by orsmga008.jf.intel.com with ESMTP; 22 Sep 2020 02:10:00 -0700
+Received: from andy by smile with local (Exim 4.94)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1kKeJA-0013FU-Kq; Tue, 22 Sep 2020 12:09:56 +0300
+Date:   Tue, 22 Sep 2020 12:09:56 +0300
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Tomer Maimon <tmaimon77@gmail.com>
+Cc:     wsa@kernel.org, linux-i2c@vger.kernel.org, ohad@wizery.com,
+        bjorn.andersson@linaro.org, linux-remoteproc@vger.kernel.org,
+        avi.fishman@nuvoton.com, eyal.cohen@nuvoton.com
+Subject: Re: Upstream I2C driver that designed for rpmsg
+Message-ID: <20200922090956.GK3956970@smile.fi.intel.com>
+References: <CAP6Zq1jrT-AmNT2J11OEk80=qL04=jCKTBoM-FLEt1na6d00kQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200922001000.899956-1-mathieu.poirier@linaro.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <CAP6Zq1jrT-AmNT2J11OEk80=qL04=jCKTBoM-FLEt1na6d00kQ@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi Mathieu,
+On Tue, Sep 22, 2020 at 12:41:35AM +0300, Tomer Maimon wrote:
+> Hello all,
+> 
+> Our BMC have two processors
+> 
+>    1. main processors  - A35
+>    2. Coprocessor(CP) - M4.
+> 
+> The BMC handles more than 30 I2C buses.
+> 
+> We like to handle the I2C module in the Coprocessor for offload the i2c
+> transaction from main processor.
+> 
+> The main processor is running Linux,
+> 
+> The main processor and the CP communicate through rpmsg.
+> 
+>  Is an I2C driver that designed for rpmsg will be up-streamed to Linux.Org?
 
-Thanks for the patches. I'm trying to understand the concept of 
-this approach and I'm probably failing at that. It seems to me 
-that this patch set is making the NS announcement service to a 
-separate RPMsg device and I don't understand the reasoning for 
-doing this. As far as I understand namespace announcements 
-belong to RPMsg devices / channels, they create a dedicated 
-endpoint on them with a fixed pre-defined address. But they 
-don't form a separate RPMsg device. I think the current 
-virtio_rpmsg_bus.c has that correctly: for each rpmsg device / 
-channel multiple endpoints can be created, where the NS 
-service is one of them. It's just an endpoing of an rpmsg 
-device, not a complete separate device. Have I misunderstood 
-anything?
+There are examples in the kernel of indirect access to I2C host controllers
+which are parts of auxiliary micro controllers. I guess in principle it's okay
+and most of the success of the submission depends on implementation.
 
-Thanks
-Guennadi
 
-On Mon, Sep 21, 2020 at 06:09:50PM -0600, Mathieu Poirier wrote:
-> Hi all,
-> 
-> After looking at Guennadi[1] and Arnaud's patchsets[2] it became
-> clear that we need to go back to a generic rpmsg_ns_msg structure
-> if we wanted to make progress.  To do that some of the work from
-> Arnaud had to be modified in a way that common name service
-> functionality was transport agnostic.
-> 
-> This patchset is based on Arnaud's work but also include a patch
-> from Guennadi and some input from me.  It should serve as a
-> foundation for the next revision of [1].
-> 
-> Applies on rpmsg-next (4e3dda0bc603) and tested on stm32mp157. I
-> did not test the modularisation.   
-> 
-> Comments and feedback would be greatly appreciated.
-> 
-> Thanks,
-> Mathieu 
-> 
-> [1]. https://patchwork.kernel.org/project/linux-remoteproc/list/?series=346593
-> [2]. https://patchwork.kernel.org/project/linux-remoteproc/list/?series=338335
-> 
-> Arnaud Pouliquen (5):
->   rpmsg: virtio: rename rpmsg_create_channel
->   rpmsg: core: Add channel creation internal API
->   rpmsg: virtio: Add rpmsg channel device ops
->   rpmsg: Turn name service into a stand alone driver
->   rpmsg: virtio: use rpmsg ns device for the ns announcement
-> 
-> Guennadi Liakhovetski (1):
->   rpmsg: Move common structures and defines to headers
-> 
-> Mathieu Poirier (4):
->   rpmsg: virtio: Move virtio RPMSG structures to private header
->   rpmsg: core: Add RPMSG byte conversion operations
->   rpmsg: virtio: Make endianness conversion virtIO specific
->   rpmsg: ns: Make Name service module transport agnostic
-> 
->  drivers/rpmsg/Kconfig            |   9 +
->  drivers/rpmsg/Makefile           |   1 +
->  drivers/rpmsg/rpmsg_core.c       |  96 +++++++++++
->  drivers/rpmsg/rpmsg_internal.h   | 102 +++++++++++
->  drivers/rpmsg/rpmsg_ns.c         | 108 ++++++++++++
->  drivers/rpmsg/virtio_rpmsg_bus.c | 284 +++++++++----------------------
->  include/linux/rpmsg_ns.h         |  83 +++++++++
->  include/uapi/linux/rpmsg.h       |   3 +
->  8 files changed, 487 insertions(+), 199 deletions(-)
->  create mode 100644 drivers/rpmsg/rpmsg_ns.c
->  create mode 100644 include/linux/rpmsg_ns.h
-> 
-> -- 
-> 2.25.1
-> 
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
