@@ -2,203 +2,298 @@ Return-Path: <SRS0=ZH1X=C7=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.4 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 627C6C4363D
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 22 Sep 2020 14:35:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 386EAC47425
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 22 Sep 2020 16:26:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F1F5C2395C
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 22 Sep 2020 14:35:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D426923A1B
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 22 Sep 2020 16:26:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=st.com header.i=@st.com header.b="C5xv+lDK"
+	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="kedWL/zX"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726606AbgIVOfN (ORCPT
+        id S1726623AbgIVQ0n (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 22 Sep 2020 10:35:13 -0400
-Received: from mx07-00178001.pphosted.com ([185.132.182.106]:33930 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726566AbgIVOfM (ORCPT
+        Tue, 22 Sep 2020 12:26:43 -0400
+Received: from mail-eopbgr760084.outbound.protection.outlook.com ([40.107.76.84]:4871
+        "EHLO NAM02-CY1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726526AbgIVQ0m (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 22 Sep 2020 10:35:12 -0400
-Received: from pps.filterd (m0046037.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 08MEWKQS006543;
-        Tue, 22 Sep 2020 16:35:06 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=STMicroelectronics;
- bh=PzamxX9AJN7aRceX5qriwq4t1qCx7NwJJtMpaOT6rAk=;
- b=C5xv+lDKe2DXsZmN5movbx1KVIec2VS0KwGUbdbIV6WQPZD/EybvChk+HKcZIpqwhaR0
- nJGnxHhZ8ee5IGbQfJbb9vYooh3xXXSAtP5+4mDDXIlRXkm7zmcSa9JTye5rmO3lOG+B
- mxCcNkA2l3cT5zrgVKQDnc1Nb+cxrK2zZh3NjUi5c5x7Devs2mGmpmcPBnEHAHGxhUPA
- DnfYPqHtDswfnsK5lK3gPuocBIEKwadR8Tp4+EVSMUKvHHucTk/UvjqBq8dWmsYlwSaj
- agEwzRA7bZ5NH+Ay1TzIXYEI0yYmYzlGnvO+ONA2gYYRjPlnwUJvf4zGXsfwqDZVPihi fw== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 33n7rvqg4q-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 22 Sep 2020 16:35:06 +0200
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 4BB9D10002A;
-        Tue, 22 Sep 2020 16:35:06 +0200 (CEST)
-Received: from Webmail-eu.st.com (sfhdag3node1.st.com [10.75.127.7])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 3F7AF2B8A36;
-        Tue, 22 Sep 2020 16:35:06 +0200 (CEST)
-Received: from lmecxl0889.tpe.st.com (10.75.127.45) by SFHDAG3NODE1.st.com
- (10.75.127.7) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 22 Sep
- 2020 16:34:54 +0200
-Subject: Re: [PATCH 08/10] rpmsg: core: Add RPMSG byte conversion operations
-To:     Mathieu Poirier <mathieu.poirier@linaro.org>,
-        "ohad@wizery.com" <ohad@wizery.com>,
-        "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>,
-        "guennadi.liakhovetski@linux.intel.com" 
-        <guennadi.liakhovetski@linux.intel.com>
-CC:     Loic PALLARDY <loic.pallardy@st.com>,
+        Tue, 22 Sep 2020 12:26:42 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=RpD9G7Y0tyhJ3z3wmViirY63HmLAAiHqwCAZ/z+tu+fpdbGaOo6aO5FigwC49qW+zvbGPebVQZGVTTPZl92Jr+lH3Dhn3sumj/Sgci82m6k08LREG4v9Tj11v+7Yeo0L96P+NHl+IuaUSMgwtvwIpHNMdHduGiCtlNb7BHEOPzJ3YPwbZPW7jJtrwOihUqIV20f/jvHCtcHwRFavRpzJH27FktLSGmeHB6xUtVKjfEjEmqwZZGvkFLw0lBkwqz7PTRk+5qOn5RkD+h5mp1ur489dql6UPzOwZ4h5ZEqdzZ5CdE3QCor7p971rH/mJjQHs1xGXWO6Nfvu+r27bUMdGw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=JaLLL6vWVzpXuO/YauJAYNbzOfqa7e1t4rkEL6LrmCc=;
+ b=PYadQI2vPiz7XfXRmVJvCJJXIi35/c0NX945xNilgw711etYSD2a4tb6aRGGAaYg5E8ZZWKuycvFugdoP6hVRgww9PiR2CWUH9g12qaeFFeu2ndbxkMh5uf6FE11kt5+iJAT0qekJuhw38x1h7vc3XCXJhaHJyIaFpxXDz6CqLqcAutph0QJPYtMz7xejpdLKRwPywDEOGEBsmiIN+It6l35bNW5CZ6lISsWzyIjn2h6mBk38+/tb2myXtdSNzPYWXzpEQvezLMYwOawvRZiqGzqOqgbMbtsbv61nLtl0Xxb9u7yDgaSUV1c1IWcbM2TLiO0IKxHNT1Mnj9r+IZ/ug==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=xilinx.com; dmarc=pass action=none header.from=xilinx.com;
+ dkim=pass header.d=xilinx.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=xilinx.onmicrosoft.com; s=selector2-xilinx-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=JaLLL6vWVzpXuO/YauJAYNbzOfqa7e1t4rkEL6LrmCc=;
+ b=kedWL/zXQWuaZVqs6O2j0ak4SlQvAS5OoNeS1T3U0HeozvUho3MM6xhBl67kzmzrwXXYAR6PWegHHKAci2Em798sJJ0DQRYLou3sw2dNEAV/mYqA3AQWlADqnHQLB5ls3mAZr88nOxhN6EFl7Q6ix4HD1RKDCZ7rRZaY+T9ejWc=
+Received: from BYAPR02MB4407.namprd02.prod.outlook.com (2603:10b6:a03:55::31)
+ by BYAPR02MB5832.namprd02.prod.outlook.com (2603:10b6:a03:123::30) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3391.11; Tue, 22 Sep
+ 2020 16:26:38 +0000
+Received: from BYAPR02MB4407.namprd02.prod.outlook.com
+ ([fe80::b0f6:b3a:6543:26f5]) by BYAPR02MB4407.namprd02.prod.outlook.com
+ ([fe80::b0f6:b3a:6543:26f5%5]) with mapi id 15.20.3391.026; Tue, 22 Sep 2020
+ 16:26:38 +0000
+From:   Ben Levinsky <BLEVINSK@xilinx.com>
+To:     Michael Auchter <michael.auchter@ni.com>
+CC:     "sunnyliangjy@gmail.com" <sunnyliangjy@gmail.com>,
+        "punit1.agrawal@toshiba.co.jp" <punit1.agrawal@toshiba.co.jp>,
+        Stefano Stabellini <stefanos@xilinx.com>,
+        Michal Simek <michals@xilinx.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "mathieu.poirier@linaro.org" <mathieu.poirier@linaro.org>,
+        "Ed T. Mooring" <emooring@xilinx.com>,
         "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20200922001000.899956-1-mathieu.poirier@linaro.org>
- <20200922001000.899956-9-mathieu.poirier@linaro.org>
-From:   Arnaud POULIQUEN <arnaud.pouliquen@st.com>
-Message-ID: <90c14e71-4c2b-9089-93d4-685b075873a9@st.com>
-Date:   Tue, 22 Sep 2020 16:34:53 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
-MIME-Version: 1.0
-In-Reply-To: <20200922001000.899956-9-mathieu.poirier@linaro.org>
-Content-Type: text/plain; charset="utf-8"
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        Jiaying Liang <jliang@xilinx.com>,
+        Michal Simek <michals@xilinx.com>,
+        "Ed T. Mooring" <emooring@xilinx.com>, Jason Wu <j.wu@xilinx.com>
+Subject: RE: [PATCH v15 5/5] remoteproc: Add initial zynqmp R5 remoteproc
+ driver
+Thread-Topic: [PATCH v15 5/5] remoteproc: Add initial zynqmp R5 remoteproc
+ driver
+Thread-Index: AQHWkDJngWvzltWQj0Sewo+kA395+KlzqBYAgAEgZiA=
+Date:   Tue, 22 Sep 2020 16:26:38 +0000
+Message-ID: <BYAPR02MB440714F437CB532171B9667EB53B0@BYAPR02MB4407.namprd02.prod.outlook.com>
+References: <20200921161406.11929-1-ben.levinsky@xilinx.com>
+ <20200921161406.11929-6-ben.levinsky@xilinx.com>
+ <20200921221206.GA296714@xaphan>
+In-Reply-To: <20200921221206.GA296714@xaphan>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.75.127.45]
-X-ClientProxiedBy: SFHDAG3NODE3.st.com (10.75.127.9) To SFHDAG3NODE1.st.com
- (10.75.127.7)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.235,18.0.687
- definitions=2020-09-22_13:2020-09-21,2020-09-22 signatures=0
+X-MS-Has-Attach: 
+X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
+X-MS-TNEF-Correlator: 
+authentication-results: ni.com; dkim=none (message not signed)
+ header.d=none;ni.com; dmarc=none action=none header.from=xilinx.com;
+x-originating-ip: [149.199.62.133]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: c28f67be-f652-4f5b-86d8-08d85f144810
+x-ms-traffictypediagnostic: BYAPR02MB5832:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <BYAPR02MB5832779E84AF681AC43062C1B53B0@BYAPR02MB5832.namprd02.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:2331;
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: JyeguAXj5qP1Dx8xq1lq8Aiww7POFz5eOloFhteHj6+Vkm8+KkTzf4v46xVFR/aImT5x8QkOAdUifXmLhaAyqW9YGjPdkTsge/efr6OAGaGMv5NpMNFGQ2cNJpMuMZRkHV/Y3GOFLHZs/tSrbVCY6tQ7CDed8kTzZqdm8DWpM7mUWvy9KCQO7T/i3RId5pDNt8lDvMg8IPLS2tTRDcFVDHwxFxXT317pdKo16vo1eE/TuS1vQ7siT5qI4xEZr74+zCOOlcqsepWmf/x6GrOH7kDrszlLTHZ4jfaeKragqYeGjj0Tkqj+cPpi6Esz4cNYBnLi6l5y0AKAfTMISHsQiTAniH3QVz+4cdonSjFe6ciHtt1TPXFi63AtSVo40Dmkh3LIVsGOgQWA4+YXFTkV0yUCpdvcxzzCIeH8Z0aa8X1IyGWTgD1c4ueb9njtZnXK1aqtTZeb6kmYdyBjevf4Zw==
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR02MB4407.namprd02.prod.outlook.com;PTR:;CAT:NONE;SFS:(396003)(346002)(136003)(376002)(39850400004)(366004)(66946007)(83380400001)(966005)(6916009)(54906003)(2906002)(9686003)(316002)(33656002)(52536014)(55016002)(66476007)(71200400001)(5660300002)(7696005)(76116006)(478600001)(8936002)(66446008)(64756008)(66556008)(4326008)(6506007)(53546011)(8676002)(186003)(107886003)(86362001)(26005);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata: X/TG42aijFpSLdNkVOVB/tf3MAMhHlQtOrAt1zGSzHWS92QQcaJsZN0OTe5c0UuZBiG/QxFMR7IhGP0OqgElmCIet296sERnxowk0t0PkELwAWYeJkPaqjm+leZFaUq9DKq4kryFoHcEgXc1dAjYofwAOHAwOCOaiQRW9rV7LskPdCi0iT36iNzBf6PwoLwJEcZToD2TQgVAqXMJjUBHJc3j3051ByQIBHKkRYUhOiJXiYdysUkWZpPdeoG48qBWss4FB4FZ72XADs1zphyB7FDZM1/lD7sQfhV0SiQ/MB+abi+0WfMqFpwG9IKzDQL0enSiKZEsijMSxPSs4pQySbpv63gbh2YFI+KK1SPl/9hesD8d0D9SHmynHp6IjQCqGrNT4qqN7IeFZPGdqkmudXr9UIFGIzF8XR1M5k+KDCHCQS5nPYvLHoX5NPFIoczSQG2xgQEnIh1CLoGQPFKJqnGOinOW9VbUA6nG601X77o4qS7NXgS2nN+1wlsx8q83MHsO+XMLfaELkU09bIbFTU8hureXDb66cY6jOG1nGna2yUeNVtUJj45MnPDO3Fw/61wzK2QoSIZUdrBJtECRPFudC9rpYHVHVhfUEDxU8vwYfoQYxXrQ8cQrx0xM2lF0tBhBlyLsP4Cpf9wuuUGEag==
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: xilinx.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: BYAPR02MB4407.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c28f67be-f652-4f5b-86d8-08d85f144810
+X-MS-Exchange-CrossTenant-originalarrivaltime: 22 Sep 2020 16:26:38.3973
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 657af505-d5df-48d0-8300-c31994686c5c
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: j8nPMoA5eHEOwBqWw69MYb3oQ+RBaTA7V2O93klQb9xPfaYYSfXt1ND3BHhjEUoxsE7lRaIj7XF2deAJEkvhMA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR02MB5832
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
+Hi Michael,
 
+> -----Original Message-----
+> From: Michael Auchter <michael.auchter@ni.com>
+> Sent: Monday, September 21, 2020 3:12 PM
+> To: Ben Levinsky <BLEVINSK@xilinx.com>
+> Cc: sunnyliangjy@gmail.com; punit1.agrawal@toshiba.co.jp; Stefano Stabell=
+ini
+> <stefanos@xilinx.com>; Michal Simek <michals@xilinx.com>;
+> devicetree@vger.kernel.org; mathieu.poirier@linaro.org; Ed T. Mooring
+> <emooring@xilinx.com>; linux-remoteproc@vger.kernel.org; linux-
+> kernel@vger.kernel.org; robh+dt@kernel.org; linux-arm-
+> kernel@lists.infradead.org; Jiaying Liang <jliang@xilinx.com>; Michal Sim=
+ek
+> <michals@xilinx.com>; Ed T. Mooring <emooring@xilinx.com>; Jason Wu
+> <j.wu@xilinx.com>
+> Subject: Re: [PATCH v15 5/5] remoteproc: Add initial zynqmp R5 remoteproc
+> driver
+>=20
+> Hey Ben,
+>=20
+> Thanks for sending out the new series, this patchset is functional for
+> booting both R5 0 and R5 1 in split mode.
+>=20
+> A few comments below, still working my way through the rest of the code
+> though now that this works.
+>=20
+> On Mon, Sep 21, 2020 at 09:14:06AM -0700, Ben Levinsky wrote:
+> <...>
+> > +static int zynqmp_r5_remoteproc_probe(struct platform_device *pdev)
+> > +{
+> > +	int ret, i =3D 0;
+> > +	struct device *dev =3D &pdev->dev;
+> > +	struct device_node *nc;
+> > +
+> > +	rpu_mode =3D  of_get_property(dev->of_node, "lockstep-mode", NULL)
+> ?
+> > +		    PM_RPU_MODE_LOCKSTEP : PM_RPU_MODE_SPLIT;
+>=20
+> Extra whitespace, and of_property_read_bool would read a bit nicer here
+> (does the same thing in the end, though).
+>=20
+> Since rpu_mode is only used here and in r5_set_mode, I think it'd be
+> better to plumb it through zynqmp_r5_probe instead of making it global
+> in this file.
+>=20
+[Ben Levinsky] will do
+> > +
+> > +	dev_dbg(dev, "RPU configuration: %s\n",
+> > +		rpu_mode =3D=3D PM_RPU_MODE_LOCKSTEP ? "lockstep" :
+> "split");
+> > +
+> > +	for_each_available_child_of_node(dev->of_node, nc) {
+> > +		/*
+> > +		 * if 2 RPUs provided but one is lockstep, then we have an
+> > +		 * invalid configuration.
+> > +		 */
+> > +		if (i > 0 && rpu_mode =3D=3D PM_RPU_MODE_LOCKSTEP)
+> > +			return -EINVAL;
+> > +
+> > +		/* only call zynqmp_r5_probe if proper # of rpu's */
+> > +		ret =3D (i < MAX_RPROCS) ? zynqmp_r5_probe(&rpus[i], pdev,
+> nc) :
+> > +					 -EINVAL;
+> > +		dev_dbg(dev, "%s to probe rpu %pOF\n",
+> > +			ret ? "Failed" : "Able",
+> > +			nc);
+>=20
+> It'd be cleaner to check the child node count before the loop:
+>=20
+> 	rpu_nodes =3D of_get_available_child_count(nc)
+> 	if ((rpu_mode =3D=3D PM_RPU_MODE_LOCKSTEP && rpu_nodes !=3D 1) ||
+> rpu_nodes > 2)
+> 		return -EINVAL;
+>=20
+[Ben Levinsky] will do
+> > +
+> > +		if (ret)
+> > +			return ret;
+> > +
+> > +		i++;
+> > +	}
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > +static int zynqmp_r5_remoteproc_remove(struct platform_device *pdev)
+> > +{
+> > +	int i;
+> > +
+> > +	for (i =3D 0; i < MAX_RPROCS; i++) {
+> > +		struct zynqmp_r5_pdata *pdata =3D &rpus[i];
+> > +		struct rproc *rproc;
+> > +
+> > +		/* only do clean up for pdata with active rpu */
+> > +		if (pdata->pnode_id =3D=3D 0)
+> > +			continue;
+>=20
+> This seems like a bit of a hack, resulting from the use of a static
+> array for holding the zynqmp_r5_pdata for each rpu.
+>=20
+> Consider allocating zynqmp_r5_pdata in zynqmp_r5_probe, and adding each
+> instance to a linked-list at file scope.
+> 	- memory is only allocated RPUs actually in use
+> 	- no need for this pnode_id =3D=3D 0 hack
+> 	- MAX_RPROCS can be eliminated, just traverse that list in
+> 	  remove
+> 	- No reuse of the pdata across probe/removes, so all of the e.g.
+> 	  condtionals below ("if (rproc)") and NULL assignments can be
+> 	  eliminated.
+>=20
+[Ben Levinsky] so parts of this I can do..=20
+- can make the rpus a static list of ptr's which I think is equivalent
+To what you are describing
+- can eliminate the pnode_id =3D=3D 0 hack
 
-On 9/22/20 2:09 AM, Mathieu Poirier wrote:
-> Add RPMSG device specific byte conversion operations as a first
-> step to separate the RPMSG name space service from the virtIO
-> transport layer.
-> 
-> Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-> ---
->  drivers/rpmsg/rpmsg_core.c     | 51 ++++++++++++++++++++++++++++++++++
->  drivers/rpmsg/rpmsg_internal.h | 12 ++++++++
->  2 files changed, 63 insertions(+)
-> 
-> diff --git a/drivers/rpmsg/rpmsg_core.c b/drivers/rpmsg/rpmsg_core.c
-> index 50a835eaf1ba..66ad5b5f1e87 100644
-> --- a/drivers/rpmsg/rpmsg_core.c
-> +++ b/drivers/rpmsg/rpmsg_core.c
-> @@ -20,6 +20,57 @@
->  
->  #include "rpmsg_internal.h"
->  
-> +/**
-> + * rpmsg{16|32}_to_cpu()
-> + * cpu_to_rpmsg[16|32}() - rpmsg device specific byte conversion functions to
-> + *			   perform byte conversion between rpmsg device and the
-> + *			   transport layer it is operating on.
-> + */
-> +
-> +u16 rpmsg16_to_cpu(struct rpmsg_device *rpdev, u16 val)
-> +{
-> +	if (WARN_ON(!rpdev))
-> +		return -EINVAL;
-> +	if (!rpdev->ops || !rpdev->ops->transport16_to_cpu)
-> +		return -EPERM;
-> +
-> +	return rpdev->ops->transport16_to_cpu(rpdev, val);
-> +}
-> +EXPORT_SYMBOL(rpmsg16_to_cpu);
-> +
-> +u16 cpu_to_rpmsg16(struct rpmsg_device *rpdev, u16 val)
-> +{
-> +	if (WARN_ON(!rpdev))
-> +		return -EINVAL;
-> +	if (!rpdev->ops || !rpdev->ops->cpu_to_transport16)
-> +		return -EPERM;
-> +
-> +	return rpdev->ops->cpu_to_transport16(rpdev, val);
-> +}
-> +EXPORT_SYMBOL(cpu_to_rpmsg16);
-> +
-> +u32 rpmsg32_to_cpu(struct rpmsg_device *rpdev, u32 val)
-> +{
-> +	if (WARN_ON(!rpdev))
-> +		return -EINVAL;
-> +	if (!rpdev->ops || !rpdev->ops->transport32_to_cpu)
-> +		return -EPERM;
-> +
-> +	return rpdev->ops->transport32_to_cpu(rpdev, val);
-> +}
-> +EXPORT_SYMBOL(rpmsg32_to_cpu);
-> +
-> +u32 cpu_to_rpmsg32(struct rpmsg_device *rpdev, u32 val)
-> +{
-> +	if (WARN_ON(!rpdev))
-> +		return -EINVAL;
-> +	if (!rpdev->ops || !rpdev->ops->cpu_to_transport32)
-> +		return -EPERM;
+For the rproc_del, rproc_free fn calls, these should stay. Just as other up=
+stream remoteproc drivers do, this is being done similarly.
 
-Alternative could be to choice the processor endianness ( it was the case
-before the virtio patch to set the endianness
+For mbox handling, I am mimic'ing upstream ST and TI drivers https://github=
+.com/torvalds/linux/blob/v5.9-rc3/drivers/remoteproc/stm32_rproc.c=20
+they similarly check if the mbox channel is not NULL, and if so call mbox_f=
+ree_channel. This is similar for Xilinx remoteproc R5 use case as the mbox =
+ can be unused in 1 remoteproc node. Also, similar to TI and ST driver, htt=
+ps://github.com/torvalds/linux/blob/v5.9-rc3/drivers/remoteproc/stm32_rproc=
+.c#L321 , I am setting the mbox to NULL at remove=20
+> > +
+> > +		rproc =3D pdata->rproc;
+> > +		if (rproc) {
+> > +			rproc_del(rproc);
+> > +			rproc_free(rproc);
+> > +			pdata->rproc =3D NULL;
+> > +		}
+> > +		if (pdata->tx_chan) {
+> > +			mbox_free_channel(pdata->tx_chan);
+> > +			pdata->tx_chan =3D NULL;
+> > +		}
+> > +		if (pdata->rx_chan) {
+> > +			mbox_free_channel(pdata->rx_chan);
+> > +			pdata->rx_chan =3D NULL;
+> > +		}
+> > +		if (&(&pdata->dev)->dma_pools)
+> > +			device_unregister(&pdata->dev);
+>=20
+> The condition here looks very wrong to me, as it will always be true.
+> What is this trying to achieve?
+>=20
+This was originally because of the static rpu declaration. By instead using=
+ ptr's this can be removed as the zynqmp_r5_pdata ptr will be NULL so I can=
+ check that instead. So will remove this.
 
-> +
-> +	return rpdev->ops->cpu_to_transport32(rpdev, val);
-> +}
-> +EXPORT_SYMBOL(cpu_to_rpmsg32);
-> +
->  /**
->   * rpmsg_create_channel() - create a new rpmsg channel
->   * using its name and address info.
-> diff --git a/drivers/rpmsg/rpmsg_internal.h b/drivers/rpmsg/rpmsg_internal.h
-> index 2e65386f191e..2f0ad1a52698 100644
-> --- a/drivers/rpmsg/rpmsg_internal.h
-> +++ b/drivers/rpmsg/rpmsg_internal.h
-> @@ -81,6 +81,8 @@ struct virtio_rpmsg_channel {
->  
->  /**
->   * struct rpmsg_device_ops - indirection table for the rpmsg_device operations
-> + * @transport{16|32}_to_cpu: byte conversion from rpmsg device to transport layer
-> + * @cpu_to_transport{16|32}: byte conversion from transport layer to rpmsg device
->   * @create_channel:	create backend-specific channel, optional
->   * @release_channel:	release backend-specific channel, optional
->   * @create_ept:		create backend-specific endpoint, required
-> @@ -92,6 +94,10 @@ struct virtio_rpmsg_channel {
->   * advertise new channels implicitly by creating the endpoints.
->   */
->  struct rpmsg_device_ops {
-> +	u16 (*transport16_to_cpu)(struct rpmsg_device *rpdev, u16 val);
-> +	u16 (*cpu_to_transport16)(struct rpmsg_device *rpdev, u16 val);
-> +	u32 (*transport32_to_cpu)(struct rpmsg_device *rpdev, u32 val);
-> +	u32 (*cpu_to_transport32)(struct rpmsg_device *rpdev, u32 val);
-
-This trigg me a suggestion. Perhaps it would be simpler to have only on ops
-to get the endianness.
-
-Regards
-Arnaud
-
->  	struct rpmsg_device *(*create_channel)(struct rpmsg_device *rpdev,
->  					     struct rpmsg_channel_info *chinfo);
->  	int (*release_channel)(struct rpmsg_device *rpdev,
-> @@ -148,6 +154,12 @@ rpmsg_create_channel(struct rpmsg_device *rpdev,
->  		     struct rpmsg_channel_info *chinfo);
->  int rpmsg_release_channel(struct rpmsg_device *rpdev,
->  			  struct rpmsg_channel_info *chinfo);
-> +
-> +u16 rpmsg16_to_cpu(struct rpmsg_device *rpdev, u16 val);
-> +u16 cpu_to_rpmsg16(struct rpmsg_device *rpdev, u16 val);
-> +u32 rpmsg32_to_cpu(struct rpmsg_device *rpdev, u32 val);
-> +u32 cpu_to_rpmsg32(struct rpmsg_device *rpdev, u32 val);
-> +
->  /**
->   * rpmsg_chrdev_register_device() - register chrdev device based on rpdev
->   * @rpdev:	prepared rpdev to be used for creating endpoints
-> 
+Thank you for the review
+Ben
+> > +	}
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > +/* Match table for OF platform binding */
+> > +static const struct of_device_id zynqmp_r5_remoteproc_match[] =3D {
+> > +	{ .compatible =3D "xlnx,zynqmp-r5-remoteproc-1.0", },
+> > +	{ /* end of list */ },
+> > +};
+> > +MODULE_DEVICE_TABLE(of, zynqmp_r5_remoteproc_match);
+> > +
+> > +static struct platform_driver zynqmp_r5_remoteproc_driver =3D {
+> > +	.probe =3D zynqmp_r5_remoteproc_probe,
+> > +	.remove =3D zynqmp_r5_remoteproc_remove,
+> > +	.driver =3D {
+> > +		.name =3D "zynqmp_r5_remoteproc",
+> > +		.of_match_table =3D zynqmp_r5_remoteproc_match,
+> > +	},
+> > +};
+> > +module_platform_driver(zynqmp_r5_remoteproc_driver);
+> > +
+> > +MODULE_AUTHOR("Ben Levinsky <ben.levinsky@xilinx.com>");
+> > +MODULE_LICENSE("GPL v2");
+> > --
+> > 2.17.1
+> >
+>=20
+> Thanks,
+>  Michael
