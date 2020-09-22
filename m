@@ -2,129 +2,115 @@ Return-Path: <SRS0=ZH1X=C7=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C7A0C4727D
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 22 Sep 2020 00:10:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FC6AC4727F
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 22 Sep 2020 00:10:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 13CF523A6C
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 22 Sep 2020 00:10:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5888E23A74
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 22 Sep 2020 00:10:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VksqWvA/"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="iLTt1Smx"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728497AbgIVAKC (ORCPT
+        id S1728881AbgIVAKE (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 21 Sep 2020 20:10:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46386 "EHLO
+        Mon, 21 Sep 2020 20:10:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46394 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727407AbgIVAKC (ORCPT
+        with ESMTP id S1727390AbgIVAKD (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 21 Sep 2020 20:10:02 -0400
-Received: from mail-pf1-x443.google.com (mail-pf1-x443.google.com [IPv6:2607:f8b0:4864:20::443])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 53FC7C0613CF
-        for <linux-remoteproc@vger.kernel.org>; Mon, 21 Sep 2020 17:10:02 -0700 (PDT)
-Received: by mail-pf1-x443.google.com with SMTP id b124so10758474pfg.13
-        for <linux-remoteproc@vger.kernel.org>; Mon, 21 Sep 2020 17:10:02 -0700 (PDT)
+        Mon, 21 Sep 2020 20:10:03 -0400
+Received: from mail-pf1-x442.google.com (mail-pf1-x442.google.com [IPv6:2607:f8b0:4864:20::442])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7415EC061755
+        for <linux-remoteproc@vger.kernel.org>; Mon, 21 Sep 2020 17:10:03 -0700 (PDT)
+Received: by mail-pf1-x442.google.com with SMTP id b124so10758512pfg.13
+        for <linux-remoteproc@vger.kernel.org>; Mon, 21 Sep 2020 17:10:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=pplI8lBFdqylD+9AB3kyxEb1yGakx0V/9od+sbt5zHA=;
-        b=VksqWvA/jtwTVb3pd4p2bpDzqb5GG5Cqe1SKMbq1w3xn22KN/e4wonpFslbspRSxKX
-         G/BS/H0xhhE2HScngb6aDAAQLR+9hmVJ/2ncacKOFXNKvM/Yf4tlYKgJsmGL0Y6IJSej
-         UOlSn9PqA7k4rQSwp1UhkI9VrGl8ezyMnqehv3B2ZHGGdKN2yDNGwXaS9SxFUte6PBMy
-         J3Uua4vTQzz/JWhlUcP8+2EqNMquj6eh+rPCCfkCdlWdB0FGj5jGFcEjPGQhf6HGtsK7
-         Vq8qlOWo9qbc5p28kkt1c92eu8qj04wGoRO2OmA1ENxEmILcBVlRqfdQ3JqeTuiBRit3
-         uhhg==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=pbzzrbDhZx0uwATrkyhoLM+A2nR9L970PZGfpM6TTB0=;
+        b=iLTt1Smx7uFfhdTUhKzZxeN8wtr6uy46RYMNIjhtQ3bDtc68W1BwCuFibdvTkwEJug
+         XF+5zdjbf18nXVXpu9A9qP3gf8apyvHwkjM57nGIjy49PCwvm3hwDuDfwNYxtL3t0Mmn
+         izcEWc8TWIdeWjr1jnkAQklTnCsfbdP6F6lNYcoJhsAZZIQ4UahHpJkpQQGpe5AZJ4SL
+         mv4Lp23DVrlkj/FSRxCqlbf6Nv8tKBW7jr8W/Mdf0GWxXaQQY/YlnEEJrSNW47Nt7729
+         w0oFej/PBzAi62lkTNiKF+r2njj1iIKwYcUSjrfQlX1LNQyw9aTnKGj29PZmZgYWN9xI
+         8r3g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=pplI8lBFdqylD+9AB3kyxEb1yGakx0V/9od+sbt5zHA=;
-        b=TwMk0HT/MpvoSZ7P5nOFvKzabWpNbTE72zpLntbukFGvSqDG2FSqFtTojMCNPU7VO/
-         GE+IHVtOAEHk63r7aMBumRW6mPVsNoUFNOKIzwbyix3goX/0SH1T1EjFkemZYjvmMLYe
-         pX9j68DNVZuwV++V9CWZ7mM+I7mPaixhf08FOkNuNFnEnq7AQBfWidCZHB8Y9xoCx7la
-         hsRWCFhS0TAKXRKXnomd2YpQmJyN/TpFltbp+zNr4/UTDQqeW4ERzfW/oNvo6VcEdLSb
-         U85oHxsU4M+WzmgSZZuZI+3z+9GnX0X59UGmjdgiNuqkQB56O+rdX1PpXcKoY9yF0XPU
-         c9NQ==
-X-Gm-Message-State: AOAM5309+WHtVvKSWwyVeMqFQXnp7xFDPiEH/kUytCXXZocotm8K0Esg
-        9I+y1olACCsbLfYHjXG91XNLbw==
-X-Google-Smtp-Source: ABdhPJw5x3351y0RIzkxGyGNg4O6s7LFFkcabpH6zjb4HSBoqXG4rJMLX3u3+qi8aAVG5gWfb3n5Qw==
-X-Received: by 2002:a63:29c8:: with SMTP id p191mr1509418pgp.45.1600733401833;
-        Mon, 21 Sep 2020 17:10:01 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=pbzzrbDhZx0uwATrkyhoLM+A2nR9L970PZGfpM6TTB0=;
+        b=bOejWKYrrcZwMb9NNYnzdT5Z2qHhCFINKwp/etiQBiQ8ffGI1yPHrs0xvh56GxY7/I
+         CxQEA2FlExh3PyqIksM2r5HFHP/zbYOYKvblZepD5S2uxder0t4+sd3kbdrnloEBoOZn
+         B9HSwZM1cCeU5h+VO8c+hNx6cTHV6qdnDad+KO9+00dEn9TcHM/+koRgJ9Z0GKfuyeDZ
+         fk18VXmpkn7u2mhD/Ym3ob/3J3VbCwCqRVfvn3ej7OSoDlwjbelNS5tOjs2H73M6DyY9
+         b36IJC0DHpTvNr26Hf1y/YX5eiNiLfAVDnGLrf4FjPGxrfhTQg7TR0mcVguEiHtDXiGV
+         LH8A==
+X-Gm-Message-State: AOAM531/0W7FlrmBvYt+V7ykaprUHafyCSkhLhmBGK7OidW/qHdoEdU5
+        GYI8ipG9OR/1eYUptRE4kcZQk6AnizitoA==
+X-Google-Smtp-Source: ABdhPJwWRwcrPfvgvFCP11lvXOSs/9uM+0kqDcOin22KRsPJDvt+AWNRKrEPKCZDZ33UblhdqVG1wg==
+X-Received: by 2002:a62:fb1a:0:b029:142:2501:39f9 with SMTP id x26-20020a62fb1a0000b0290142250139f9mr1796480pfm.72.1600733403024;
+        Mon, 21 Sep 2020 17:10:03 -0700 (PDT)
 Received: from xps15.cg.shawcable.net (S0106002369de4dac.cg.shawcable.net. [68.147.8.254])
-        by smtp.gmail.com with ESMTPSA id c9sm12807953pfn.78.2020.09.21.17.10.00
+        by smtp.gmail.com with ESMTPSA id c9sm12807953pfn.78.2020.09.21.17.10.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Sep 2020 17:10:01 -0700 (PDT)
+        Mon, 21 Sep 2020 17:10:02 -0700 (PDT)
 From:   Mathieu Poirier <mathieu.poirier@linaro.org>
 To:     ohad@wizery.com, bjorn.andersson@linaro.org,
         guennadi.liakhovetski@linux.intel.com
 Cc:     loic.pallardy@st.com, linux-remoteproc@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 00/10] rpmsg: Make RPMSG name service modular 
-Date:   Mon, 21 Sep 2020 18:09:50 -0600
-Message-Id: <20200922001000.899956-1-mathieu.poirier@linaro.org>
+Subject: [PATCH 01/10] rpmsg: virtio: rename rpmsg_create_channel
+Date:   Mon, 21 Sep 2020 18:09:51 -0600
+Message-Id: <20200922001000.899956-2-mathieu.poirier@linaro.org>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20200922001000.899956-1-mathieu.poirier@linaro.org>
+References: <20200922001000.899956-1-mathieu.poirier@linaro.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi all,
+From: Arnaud Pouliquen <arnaud.pouliquen@st.com>
 
-After looking at Guennadi[1] and Arnaud's patchsets[2] it became
-clear that we need to go back to a generic rpmsg_ns_msg structure
-if we wanted to make progress.  To do that some of the work from
-Arnaud had to be modified in a way that common name service
-functionality was transport agnostic.
+Rename the internal function as it is internal, and as
+the name will be used in rpmsg_core.
 
-This patchset is based on Arnaud's work but also include a patch
-from Guennadi and some input from me.  It should serve as a
-foundation for the next revision of [1].
+Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@st.com>
+---
+ drivers/rpmsg/virtio_rpmsg_bus.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-Applies on rpmsg-next (4e3dda0bc603) and tested on stm32mp157. I
-did not test the modularisation.   
-
-Comments and feedback would be greatly appreciated.
-
-Thanks,
-Mathieu 
-
-[1]. https://patchwork.kernel.org/project/linux-remoteproc/list/?series=346593
-[2]. https://patchwork.kernel.org/project/linux-remoteproc/list/?series=338335
-
-Arnaud Pouliquen (5):
-  rpmsg: virtio: rename rpmsg_create_channel
-  rpmsg: core: Add channel creation internal API
-  rpmsg: virtio: Add rpmsg channel device ops
-  rpmsg: Turn name service into a stand alone driver
-  rpmsg: virtio: use rpmsg ns device for the ns announcement
-
-Guennadi Liakhovetski (1):
-  rpmsg: Move common structures and defines to headers
-
-Mathieu Poirier (4):
-  rpmsg: virtio: Move virtio RPMSG structures to private header
-  rpmsg: core: Add RPMSG byte conversion operations
-  rpmsg: virtio: Make endianness conversion virtIO specific
-  rpmsg: ns: Make Name service module transport agnostic
-
- drivers/rpmsg/Kconfig            |   9 +
- drivers/rpmsg/Makefile           |   1 +
- drivers/rpmsg/rpmsg_core.c       |  96 +++++++++++
- drivers/rpmsg/rpmsg_internal.h   | 102 +++++++++++
- drivers/rpmsg/rpmsg_ns.c         | 108 ++++++++++++
- drivers/rpmsg/virtio_rpmsg_bus.c | 284 +++++++++----------------------
- include/linux/rpmsg_ns.h         |  83 +++++++++
- include/uapi/linux/rpmsg.h       |   3 +
- 8 files changed, 487 insertions(+), 199 deletions(-)
- create mode 100644 drivers/rpmsg/rpmsg_ns.c
- create mode 100644 include/linux/rpmsg_ns.h
-
+diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
+index 7d7ed4e5cce7..e8d55c8b9cbf 100644
+--- a/drivers/rpmsg/virtio_rpmsg_bus.c
++++ b/drivers/rpmsg/virtio_rpmsg_bus.c
+@@ -395,8 +395,9 @@ static void virtio_rpmsg_release_device(struct device *dev)
+  * this function will be used to create both static and dynamic
+  * channels.
+  */
+-static struct rpmsg_device *rpmsg_create_channel(struct virtproc_info *vrp,
+-						 struct rpmsg_channel_info *chinfo)
++static struct rpmsg_device *
++__rpmsg_create_channel(struct virtproc_info *vrp,
++		       struct rpmsg_channel_info *chinfo)
+ {
+ 	struct virtio_rpmsg_channel *vch;
+ 	struct rpmsg_device *rpdev;
+@@ -869,7 +870,7 @@ static int rpmsg_ns_cb(struct rpmsg_device *rpdev, void *data, int len,
+ 		if (ret)
+ 			dev_err(dev, "rpmsg_destroy_channel failed: %d\n", ret);
+ 	} else {
+-		newch = rpmsg_create_channel(vrp, &chinfo);
++		newch = __rpmsg_create_channel(vrp, &chinfo);
+ 		if (!newch)
+ 			dev_err(dev, "rpmsg_create_channel failed\n");
+ 	}
 -- 
 2.25.1
 
