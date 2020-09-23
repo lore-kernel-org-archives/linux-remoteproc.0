@@ -2,88 +2,139 @@ Return-Path: <SRS0=+12+=DA=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-11.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF62BC4727E
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 23 Sep 2020 15:33:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C438C2D0A8
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 23 Sep 2020 15:35:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A1A802137B
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 23 Sep 2020 15:33:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 231D620758
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 23 Sep 2020 15:35:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1600875188;
-	bh=O2Nr8LX72IDctCCfntCyzIeebH0/JUiqovfw+jmSMZk=;
+	s=default; t=1600875352;
+	bh=fCeAMsVgDqs35YWvkFP+YyuRAT2MUyy2gqs1FrS+wMk=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=lK1A/tbXXzMv8h/dEXcQ/U86qqH9hnD8v1tkys5K22WG6IV3Tp2aEreG62wtjoUwQ
-	 woeJW9d7SlH0NgsbuztoiLyj62DTWI/2JQCy8j1jNBfj+w00rmN9lsfCgMYVY3I0fu
-	 G8dGoa67pMpUyyqXVf/YaBTYTdOcwXDIfVynPcI8=
+	b=1QhJXvLxYZdLWC87NSyFMY8NqoPZRSZNYTu8msTVdsVMPStVeqMUVYJelmBaHuweS
+	 6thBkV3FC3J5CQI66R7ytAy1jVFe7mZp8raE67uidsQWpBB6fTW7H8dicMJFKRnCO0
+	 niAYV+xJ4jzuAzjQ7hUzklQOQstQJOWuZSpLNcp8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726572AbgIWPdI (ORCPT
+        id S1726405AbgIWPfv (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 23 Sep 2020 11:33:08 -0400
-Received: from mail-il1-f194.google.com ([209.85.166.194]:36688 "EHLO
-        mail-il1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726265AbgIWPdI (ORCPT
+        Wed, 23 Sep 2020 11:35:51 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:39224 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726156AbgIWPfv (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 23 Sep 2020 11:33:08 -0400
-Received: by mail-il1-f194.google.com with SMTP id t12so19850ilh.3;
-        Wed, 23 Sep 2020 08:33:07 -0700 (PDT)
+        Wed, 23 Sep 2020 11:35:51 -0400
+Received: by mail-io1-f67.google.com with SMTP id v8so17436836iom.6;
+        Wed, 23 Sep 2020 08:35:50 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=w5w8Uvn8McZjjgkjEWVA++4pmoYoDvxFECyptYJKqC0=;
-        b=PlKl991zxVPtbGs6ziDNBBVamf2KZfJSINqcekd3Txcs80qyr4U4sNFBCj3Tno5NMR
-         JWtTTLOm4EuXky/gRlXVXd9xkMOU3YIMP8B14nBqjlaHanXCXw3m49m/ydYEfMYgHQ6r
-         roQxB2sI3fdFZULBNf1qEC7QSlxa17x/WHltq+GgAgdmXfMjmkt7Q42uctfOtnNgbl1N
-         pZZF+sXcvjKQyjGuOVJ7WR5R6DMCn+cI4CY0RDHu9y+fT7uOsmVn2YiiMyUY9TgqH/k1
-         mIMLXS+EAdey9NZmi1IhpZmz37YxpmQcyV74JvWUvCVub2OzS4sRN9kEkA4tgwKKPbGq
-         IyEw==
-X-Gm-Message-State: AOAM5309p4UYStuBRBzgMLC+wHtdCb3BXvEbjG42faVbx5pPZSt3SBSy
-        osSneRHvw3oZMI1HBcLFmQ==
-X-Google-Smtp-Source: ABdhPJxbVblo1SqKfxuo6P8z/VT/DbqU+Fmlgz8qI7+aeXmQ6bBTgFNGVWwbrry3rmmdgnLCi0iZyg==
-X-Received: by 2002:a05:6e02:13ae:: with SMTP id h14mr319531ilo.208.1600875187319;
-        Wed, 23 Sep 2020 08:33:07 -0700 (PDT)
+        bh=SFNrQMIkZSGzSXfxSnz2HMSRbPyQR0/tk0QCtxV27LQ=;
+        b=huw7CxTzba4vieE2rddHa3ilfnuZscE/WHBAiSlZ8rzQUse6D/cJ+lgV9NKeIj5+KH
+         8irfGfkC55U3drYXNiWc7MQNfwHkvXsZTvzAr0Vk+UzF52Gp1TYCaqja9cV6JltEF447
+         2FZHJL/iHcs11vIb/6g0/JvRMsy5BBmH43FRQ6mu11Yzksj4T9oS42yYAwgmD7c+A3Vb
+         07bpukjdWZkJKf2qG4SlvyAPJtSFyDk5LtjbDnDl2yBjy6XSSr8yhTi7acLwx9ibUOyM
+         EA2HNwdAR87cEffLsf4Zbl4xCWVAyNSkEZvA29obdao14oZSRSkPnr/ICshO1IewDjW7
+         mZfg==
+X-Gm-Message-State: AOAM533TKZJ6J4vVaPpcl59KCKxo+cwaF/YFvrIu64v+M8rAP+WOUCY5
+        pocjk874admrfSGmpThpCA==
+X-Google-Smtp-Source: ABdhPJz4NDi2DPM7aMlx9HsGKp74UHvyZ9evLNEx9Eielqsipyamdybieeul0nPsIEzZpC1EMaYyDg==
+X-Received: by 2002:a05:6638:220c:: with SMTP id l12mr8608241jas.139.1600875350509;
+        Wed, 23 Sep 2020 08:35:50 -0700 (PDT)
 Received: from xps15 ([64.188.179.253])
-        by smtp.gmail.com with ESMTPSA id a23sm79204ioc.54.2020.09.23.08.33.05
+        by smtp.gmail.com with ESMTPSA id q2sm8042280ils.81.2020.09.23.08.35.49
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Sep 2020 08:33:06 -0700 (PDT)
-Received: (nullmailer pid 787842 invoked by uid 1000);
-        Wed, 23 Sep 2020 15:33:05 -0000
-Date:   Wed, 23 Sep 2020 09:33:05 -0600
+        Wed, 23 Sep 2020 08:35:49 -0700 (PDT)
+Received: (nullmailer pid 792167 invoked by uid 1000);
+        Wed, 23 Sep 2020 15:35:48 -0000
+Date:   Wed, 23 Sep 2020 09:35:48 -0600
 From:   Rob Herring <robh@kernel.org>
 To:     Stephan Gerhold <stephan@gerhold.net>
-Cc:     Andy Gross <agross@kernel.org>, devicetree@vger.kernel.org,
-        ~postmarketos/upstreaming@lists.sr.ht,
+Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Andy Gross <agross@kernel.org>,
         Ohad Ben-Cohen <ohad@wizery.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        linux-remoteproc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>
-Subject: Re: [PATCH 02/10] dt-bindings: power: rpmpd: Add MSM8916 RPM power
- domains
-Message-ID: <20200923153305.GA787788@bogus>
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org,
+        ~postmarketos/upstreaming@lists.sr.ht
+Subject: Re: [PATCH 05/10] dt-bindings: remoteproc: qcom,q6v5: Deprecate
+ regulators for PDs
+Message-ID: <20200923153548.GA789614@bogus>
 References: <20200916104135.25085-1-stephan@gerhold.net>
- <20200916104135.25085-3-stephan@gerhold.net>
+ <20200916104135.25085-6-stephan@gerhold.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200916104135.25085-3-stephan@gerhold.net>
+In-Reply-To: <20200916104135.25085-6-stephan@gerhold.net>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Wed, 16 Sep 2020 12:41:27 +0200, Stephan Gerhold wrote:
-> MSM8916 has two RPM power domains: VDDCX and VDDMX.
-> Add the device tree bindings to manage them through rpmpd.
+On Wed, Sep 16, 2020 at 12:41:30PM +0200, Stephan Gerhold wrote:
+> Newer platforms vote for necessary power domains through the power
+> domain subsystem. For historical reasons older platforms like MSM8916
+> or MSM8974 still control these as regulators.
+
+Do you plan to change these platforms? If not then I wouldn't really 
+call this deprecated.
+
+> 
+> Managing them as power domains is preferred since that allows us
+> to vote for corners instead of raw voltages. Document that those
+> should be specified as power domains and deprecate using them
+> through the regulator interface.
 > 
 > Signed-off-by: Stephan Gerhold <stephan@gerhold.net>
 > ---
->  Documentation/devicetree/bindings/power/qcom,rpmpd.yaml | 1 +
->  include/dt-bindings/power/qcom-rpmpd.h                  | 7 +++++++
->  2 files changed, 8 insertions(+)
+>  .../devicetree/bindings/remoteproc/qcom,q6v5.txt     | 12 ++++++------
+>  1 file changed, 6 insertions(+), 6 deletions(-)
 > 
-
-Reviewed-by: Rob Herring <robh@kernel.org>
+> diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt b/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt
+> index 1f9a62e13ebe..7ccd5534b0ae 100644
+> --- a/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt
+> +++ b/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt
+> @@ -113,8 +113,8 @@ should be referenced as follows:
+>  For the compatible strings below the following supplies are required:
+>    "qcom,q6v5-pil"
+>    "qcom,msm8916-mss-pil",
+> -- cx-supply:
+> -- mx-supply:
+> +- cx-supply: (deprecated, use power domain instead)
+> +- mx-supply: (deprecated, use power domain instead)
+>  - pll-supply:
+>  	Usage: required
+>  	Value type: <phandle>
+> @@ -123,9 +123,9 @@ For the compatible strings below the following supplies are required:
+>  
+>  For the compatible string below the following supplies are required:
+>    "qcom,msm8974-mss-pil"
+> -- cx-supply:
+> +- cx-supply: (deprecated, use power domain instead)
+>  - mss-supply:
+> -- mx-supply:
+> +- mx-supply: (deprecated, use power domain instead)
+>  - pll-supply:
+>  	Usage: required
+>  	Value type: <phandle>
+> @@ -149,11 +149,11 @@ For the compatible string below the following supplies are required:
+>  	Usage: required
+>  	Value type: <stringlist>
+>  	Definition: The power-domains needed depend on the compatible string:
+> -	qcom,q6v5-pil:
+>  	qcom,ipq8074-wcss-pil:
+> +		    no power-domain names required
+> +	qcom,q6v5-pil:
+>  	qcom,msm8916-mss-pil:
+>  	qcom,msm8974-mss-pil:
+> -		    no power-domain names required
+>  	qcom,msm8996-mss-pil:
+>  	qcom,msm8998-mss-pil:
+>  		    must be "cx", "mx"
+> -- 
+> 2.28.0
+> 
