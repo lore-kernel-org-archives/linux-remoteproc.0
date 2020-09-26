@@ -1,554 +1,148 @@
-Return-Path: <SRS0=drqN=DB=vger.kernel.org=linux-remoteproc-owner@kernel.org>
+Return-Path: <SRS0=ZQLr=DD=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 561F9C47427
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 24 Sep 2020 23:52:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 517D0C4727C
+	for <linux-remoteproc@archiver.kernel.org>; Sat, 26 Sep 2020 03:35:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 18C94239EC
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 24 Sep 2020 23:52:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 07FA720838
+	for <linux-remoteproc@archiver.kernel.org>; Sat, 26 Sep 2020 03:35:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="g2ftA2j7"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="H5Ew1dx9"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726825AbgIXXwZ (ORCPT
+        id S1728935AbgIZDfo (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 24 Sep 2020 19:52:25 -0400
-Received: from m42-4.mailgun.net ([69.72.42.4]:24276 "EHLO m42-4.mailgun.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726738AbgIXXwY (ORCPT
+        Fri, 25 Sep 2020 23:35:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34596 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726149AbgIZDfo (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 24 Sep 2020 19:52:24 -0400
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1600991543; h=References: In-Reply-To: Message-Id: Date:
- Subject: Cc: To: From: Sender;
- bh=NQlc4DoUUx2KC3+v2worccrWHwbu79JQY7cs9SZf/sA=; b=g2ftA2j7ttwQJn/HCBawivezMazJ2+cRaZcF7d+pMauUSa2fCaOfY+WDa8dW0lpnB7Lni8aP
- bmX4+jc1tnW7RZMkhDjJ9SUdGOFFi2Ty8OEsPLWdnD5z1Sduh/xSPWVLCLoGqT2ICJ/hqqa8
- zo5ILR326t23v2Za+S+pTyObkN8=
-X-Mailgun-Sending-Ip: 69.72.42.4
-X-Mailgun-Sid: WyI4ZWZiZiIsICJsaW51eC1yZW1vdGVwcm9jQHZnZXIua2VybmVsLm9yZyIsICJiZTllNGEiXQ==
-Received: from smtp.codeaurora.org
- (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
- smtp-out-n01.prod.us-east-1.postgun.com with SMTP id
- 5f6d310ea7eb63c698b24955 (version=TLS1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Thu, 24 Sep 2020 23:51:42
- GMT
-Sender: sidgup=codeaurora.org@mg.codeaurora.org
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 68230C43387; Thu, 24 Sep 2020 23:51:41 +0000 (UTC)
-Received: from sidgup-linux.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: sidgup)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id DEAA5C433FF;
-        Thu, 24 Sep 2020 23:51:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org DEAA5C433FF
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=sidgup@codeaurora.org
-From:   Siddharth Gupta <sidgup@codeaurora.org>
-To:     agross@kernel.org, bjorn.andersson@linaro.org, ohad@wizery.com,
-        linux-remoteproc@vger.kernel.org
-Cc:     Siddharth Gupta <sidgup@codeaurora.org>,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, tsoni@codeaurora.org,
-        psodagud@codeaurora.org, rishabhb@codeaurora.org,
-        linux-doc@vger.kernel.org, Gurbir Arora <gurbaror@codeaurora.org>
-Subject: [PATCH v5 2/3] remoteproc: qcom: Add capability to collect minidumps
-Date:   Thu, 24 Sep 2020 16:51:27 -0700
-Message-Id: <1600991488-17877-3-git-send-email-sidgup@codeaurora.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1600991488-17877-1-git-send-email-sidgup@codeaurora.org>
-References: <1600991488-17877-1-git-send-email-sidgup@codeaurora.org>
+        Fri, 25 Sep 2020 23:35:44 -0400
+Received: from mail-ot1-x343.google.com (mail-ot1-x343.google.com [IPv6:2607:f8b0:4864:20::343])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 21555C0613CE
+        for <linux-remoteproc@vger.kernel.org>; Fri, 25 Sep 2020 20:35:44 -0700 (PDT)
+Received: by mail-ot1-x343.google.com with SMTP id h17so4273405otr.1
+        for <linux-remoteproc@vger.kernel.org>; Fri, 25 Sep 2020 20:35:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=r41cvb1N5LxHmvk4/Z1u+DVLxLHsiY0eJOMeFd/1FUI=;
+        b=H5Ew1dx9RWLp2Zv3wrDGwnWJ9kvtovj/or5SuxWG5TW34gvkP1WCt38X0STzwaQApU
+         GKIaAcgUbc9S4lHb9nOf889CwIuOKJOqT/pKmtmDVU6d/IznJ0qhGPtt73jl4KZcWqG3
+         wg3392eGxhSA0yu4/NnqKGS9Dm8qg4tcbOaMof9vZpTWjIW/Ps6wT2W7EWq5XIHg+b1V
+         hycKIor7N599PF/QigzHhsI2clYn1/SbwHkBorQeZExOShoxPuizepodAY0E6CL6/SE7
+         XHfiBtHiD+MmTIXfeJLKzgiaLRmNmqrNQ+F5gZSV9PAk4+aRZ87p5S06Jx7vzLMJqg9H
+         IrQQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=r41cvb1N5LxHmvk4/Z1u+DVLxLHsiY0eJOMeFd/1FUI=;
+        b=PG+M2zyhrbXt8vBtemcKqFJwGZCA5Vcle8Wv375DaQw4Tv2Z26xUEU1StE7wBwmzJq
+         DMc52uxNOZyEAt3DJcsOOy7PHBY/ICae+bi7l/Njj1fLxDooLPjN+jToRF9dWkt9k38b
+         nUOZcwKtpzfKyA6ziJGHt5O31V052yztipuLuz7StIksp2rYqVir8GP8/w3IweVJyc2i
+         MKRmpyEV+Uoa8mTYYHKzyaX6LhDLXmAiuPOJMlKSoAIL6q8WiI0T4SzRZOQakE1yfKJn
+         sFax3CqU7AJyL7XKwmBIOZedX/Knw6LWgi9kPZ+exgn/pLq9FFP8ITzH02vIe4RVtmbZ
+         cwLw==
+X-Gm-Message-State: AOAM532+mYU4LIrRWyui2aYB6A6VtSZyXya6BXWzq023WcUF6fnuw+hO
+        y4ZTn7fNHJcfic8Ttrlc4s7B7BPMdZPoLvm/
+X-Google-Smtp-Source: ABdhPJxELpmDLw4ZXIMOtwbj8cask50ql1SmQRWsp4jnor195OOSpBobecmfpIme80ehkBSEJrmehw==
+X-Received: by 2002:a9d:6a8b:: with SMTP id l11mr2433175otq.273.1601091343437;
+        Fri, 25 Sep 2020 20:35:43 -0700 (PDT)
+Received: from builder.lan (99-135-181-32.lightspeed.austtx.sbcglobal.net. [99.135.181.32])
+        by smtp.gmail.com with ESMTPSA id z20sm333543oor.3.2020.09.25.20.35.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 25 Sep 2020 20:35:42 -0700 (PDT)
+Date:   Fri, 25 Sep 2020 20:31:09 -0700
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Arnaud POULIQUEN <arnaud.pouliquen@st.com>
+Cc:     Rishabh Bhatnagar <rishabhb@codeaurora.org>,
+        "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "mathieu.poirier@linaro.org" <mathieu.poirier@linaro.org>,
+        "tsoni@codeaurora.org" <tsoni@codeaurora.org>,
+        "psodagud@codeaurora.org" <psodagud@codeaurora.org>,
+        "sidgup@codeaurora.org" <sidgup@codeaurora.org>
+Subject: Re: [PATCH v2 0/3] Expose recovery/coredump configuration from sysfs
+Message-ID: <20200926033109.GA10036@builder.lan>
+References: <1598557731-1566-1-git-send-email-rishabhb@codeaurora.org>
+ <7ad40d80-5ac4-97a5-5e05-c83dc08896a2@st.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <7ad40d80-5ac4-97a5-5e05-c83dc08896a2@st.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-This patch adds support for collecting minidump in the event of remoteproc
-crash. Parse the minidump table based on remoteproc's unique minidump-id,
-read all memory regions from the remoteproc's minidump table entry and
-expose the memory to userspace. The remoteproc platform driver can choose
-to collect a full/mini dump by specifying the coredump op.
+On Tue 15 Sep 02:51 PDT 2020, Arnaud POULIQUEN wrote:
 
-Signed-off-by: Rishabh Bhatnagar <rishabhb@codeaurora.org>
-Signed-off-by: Gurbir Arora <gurbaror@codeaurora.org>
-Signed-off-by: Siddharth Gupta <sidgup@codeaurora.org>
----
- drivers/remoteproc/qcom_minidump.h          |  64 +++++++++++++
- drivers/remoteproc/qcom_q6v5_pas.c          | 106 ++++++++++++++++++++-
- drivers/remoteproc/remoteproc_coredump.c    | 138 ++++++++++++++++++++++++++++
- drivers/remoteproc/remoteproc_elf_helpers.h |  27 ++++++
- include/linux/remoteproc.h                  |   1 +
- 5 files changed, 334 insertions(+), 2 deletions(-)
- create mode 100644 drivers/remoteproc/qcom_minidump.h
+> Hi Rishabh,
+> 
+> On 8/27/20 9:48 PM, Rishabh Bhatnagar wrote:
+> > From Android R onwards Google has restricted access to debugfs in user
+> > and user-debug builds. This restricts access to most of the features
+> > exposed through debugfs. This patch series adds a configurable option
+> > to move the recovery/coredump interfaces to sysfs. If the feature
+> > flag is selected it would move these interfaces to sysfs and remove
+> > the equivalent debugfs interface. 'Coredump' and 'Recovery' are critical
+> > interfaces that are required for remoteproc to work on Qualcomm Chipsets.
+> > Coredump configuration needs to be set to "inline" in debug/test build
+> > and "disabled" in production builds. Whereas recovery needs to be
+> > "disabled" for debugging purposes and "enabled" on production builds.
+> 
+> The remoteproc_cdev had been created to respond to some sysfs limitations.
 
-diff --git a/drivers/remoteproc/qcom_minidump.h b/drivers/remoteproc/qcom_minidump.h
-new file mode 100644
-index 0000000..437e030
---- /dev/null
-+++ b/drivers/remoteproc/qcom_minidump.h
-@@ -0,0 +1,64 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+/*
-+ * Copyright (c) 2020, The Linux Foundation. All rights reserved.
-+ */
-+
-+#ifndef __QCOM_MINIDUMP_H
-+#define __QCOM_MINIDUMP_H
-+
-+#define MAX_NUM_OF_SS           10
-+#define MAX_REGION_NAME_LENGTH  16
-+#define SBL_MINIDUMP_SMEM_ID	602
-+#define MD_REGION_VALID		('V' << 24 | 'A' << 16 | 'L' << 8 | 'I' << 0)
-+#define MD_SS_ENCR_DONE		('D' << 24 | 'O' << 16 | 'N' << 8 | 'E' << 0)
-+#define MD_SS_ENABLED		('E' << 24 | 'N' << 16 | 'B' << 8 | 'L' << 0)
-+
-+/**
-+ * md_ss_region - Minidump region
-+ * @name		: Name of the region to be dumped
-+ * @seq_num:		: Use to differentiate regions with same name.
-+ * @md_valid		: This entry to be dumped (if set to 1)
-+ * @region_base_address	: Physical address of region to be dumped
-+ * @region_size		: Size of the region
-+ */
-+struct md_ss_region {
-+	char	name[MAX_REGION_NAME_LENGTH];
-+	u32	seq_num;
-+	u32	md_valid;
-+	u64	region_base_address;
-+	u64	region_size;
-+};
-+
-+/**
-+ * md_ss_toc: Subsystem's SMEM Table of content
-+ * @md_ss_toc_init : Subsystem toc init status
-+ * @md_ss_enable_status : if set to 1, this region would be copied during coredump
-+ * @encryption_status: Encryption status for this subsystem
-+ * @encryption_required : Decides to encrypt the subsystem regions or not
-+ * @ss_region_count : Number of regions added in this subsystem toc
-+ * @md_ss_smem_regions_baseptr : regions base pointer of the subsystem
-+ */
-+struct md_ss_toc {
-+	u32			md_ss_toc_init;
-+	u32			md_ss_enable_status;
-+	u32			encryption_status;
-+	u32			encryption_required;
-+	u32			ss_region_count;
-+	u64			md_ss_smem_regions_baseptr;
-+};
-+
-+/**
-+ * md_global_toc: Global Table of Content
-+ * @md_toc_init : Global Minidump init status
-+ * @md_revision : Minidump revision
-+ * @md_enable_status : Minidump enable status
-+ * @md_ss_toc : Array of subsystems toc
-+ */
-+struct md_global_toc {
-+	u32			md_toc_init;
-+	u32			md_revision;
-+	u32			md_enable_status;
-+	struct md_ss_toc	md_ss_toc[MAX_NUM_OF_SS];
-+};
-+
-+#endif
-diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
-index 3837f23..752c862 100644
---- a/drivers/remoteproc/qcom_q6v5_pas.c
-+++ b/drivers/remoteproc/qcom_q6v5_pas.c
-@@ -28,11 +28,13 @@
- #include "qcom_pil_info.h"
- #include "qcom_q6v5.h"
- #include "remoteproc_internal.h"
-+#include "qcom_minidump.h"
- 
- struct adsp_data {
- 	int crash_reason_smem;
- 	const char *firmware_name;
- 	int pas_id;
-+	unsigned int minidump_id;
- 	bool has_aggre2_clk;
- 	bool auto_boot;
- 
-@@ -63,6 +65,7 @@ struct qcom_adsp {
- 	int proxy_pd_count;
- 
- 	int pas_id;
-+	unsigned int minidump_id;
- 	int crash_reason_smem;
- 	bool has_aggre2_clk;
- 	const char *info_name;
-@@ -81,6 +84,8 @@ struct qcom_adsp {
- 	struct qcom_sysmon *sysmon;
- };
- 
-+static struct md_global_toc *g_md_toc;
-+
- static int adsp_pds_enable(struct qcom_adsp *adsp, struct device **pds,
- 			   size_t pd_count)
- {
-@@ -116,6 +121,88 @@ static void adsp_pds_disable(struct qcom_adsp *adsp, struct device **pds,
- 	}
- }
- 
-+static void adsp_add_minidump_segments(struct rproc *rproc, struct md_ss_toc *minidump_ss)
-+{
-+	struct md_ss_region __iomem *region_info;
-+	int seg_cnt = 0, i;
-+	void __iomem *ptr;
-+	dma_addr_t da;
-+	size_t size;
-+	char *name;
-+
-+	seg_cnt = minidump_ss->ss_region_count;
-+	ptr = ioremap((unsigned long)minidump_ss->md_ss_smem_regions_baseptr,
-+		      seg_cnt * sizeof(struct md_ss_region));
-+
-+	if (!ptr)
-+		return;
-+
-+	region_info = ptr;
-+
-+	if (!list_empty(&rproc->dump_segments)) {
-+		dev_info(&rproc->dev, "dump segment list already populated\n");
-+		goto unmap_iomem;
-+	}
-+
-+	for (i = 0; i < seg_cnt; i++) {
-+		if (__raw_readl(&region_info->md_valid) == MD_REGION_VALID) {
-+			name = kmalloc(MAX_REGION_NAME_LENGTH, GFP_KERNEL);
-+			memcpy_fromio(name, region_info->name, sizeof(region_info->name));
-+			da = __raw_readq(&region_info->region_base_address);
-+			size = __raw_readq(&region_info->region_size);
-+			rproc_coredump_add_custom_segment(rproc, da, size, NULL, name);
-+		}
-+		region_info++;
-+	}
-+
-+unmap_iomem:
-+	iounmap(ptr);
-+}
-+
-+static void adsp_dump(struct rproc *rproc)
-+{
-+	struct qcom_adsp *adsp = (struct qcom_adsp *)rproc->priv;
-+	struct md_ss_toc *minidump_ss;
-+	size_t size;
-+
-+	/* Get Global minidump ToC*/
-+	if (!g_md_toc)
-+		g_md_toc = qcom_smem_get(QCOM_SMEM_HOST_ANY,
-+					 SBL_MINIDUMP_SMEM_ID, &size);
-+
-+	/* check if global table pointer exists and init is set */
-+	if (IS_ERR(g_md_toc) || !(g_md_toc->md_toc_init)) {
-+		dev_err(&rproc->dev, "SMEM is not initialized.\n");
-+		return;
-+	}
-+
-+	/* Get subsystem table of contents using the minidump id */
-+	minidump_ss = &g_md_toc->md_ss_toc[adsp->minidump_id];
-+
-+	/**
-+	 * Collect minidump if SS ToC is valid and segment table
-+	 * is initialized in memory and encryption status is set.
-+	 */
-+	if (minidump_ss->md_ss_smem_regions_baseptr == 0 ||
-+	    minidump_ss->md_ss_toc_init != 1 ||
-+	    minidump_ss->md_ss_enable_status != MD_SS_ENABLED ||
-+	    minidump_ss->encryption_status != MD_SS_ENCR_DONE) {
-+		dev_err(&rproc->dev, "Minidump not ready!! Aborting\n");
-+		return;
-+	}
-+
-+	adsp_add_minidump_segments(rproc, minidump_ss);
-+	rproc_minidump(rproc);
-+}
-+
-+static void adsp_priv_cleanup(struct rproc *rproc)
-+{
-+	struct rproc_dump_segment *segment;
-+
-+	list_for_each_entry(segment, &rproc->dump_segments, node)
-+		kfree(segment->priv);
-+}
-+
- static int adsp_load(struct rproc *rproc, const struct firmware *fw)
- {
- 	struct qcom_adsp *adsp = (struct qcom_adsp *)rproc->priv;
-@@ -258,6 +345,15 @@ static const struct rproc_ops adsp_ops = {
- 	.panic = adsp_panic,
- };
- 
-+static const struct rproc_ops adsp_minidump_ops = {
-+	.start = adsp_start,
-+	.stop = adsp_stop,
-+	.da_to_va = adsp_da_to_va,
-+	.load = adsp_load,
-+	.coredump = adsp_dump,
-+	.priv_cleanup = adsp_priv_cleanup,
-+};
-+
- static int adsp_init_clock(struct qcom_adsp *adsp)
- {
- 	int ret;
-@@ -398,8 +494,13 @@ static int adsp_probe(struct platform_device *pdev)
- 	if (ret < 0 && ret != -EINVAL)
- 		return ret;
- 
--	rproc = rproc_alloc(&pdev->dev, pdev->name, &adsp_ops,
--			    fw_name, sizeof(*adsp));
-+	if (desc->minidump_id)
-+		rproc = rproc_alloc(&pdev->dev, pdev->name, &adsp_minidump_ops, fw_name,
-+				    sizeof(*adsp));
-+	else
-+		rproc = rproc_alloc(&pdev->dev, pdev->name, &adsp_ops, fw_name,
-+				    sizeof(*adsp));
-+
- 	if (!rproc) {
- 		dev_err(&pdev->dev, "unable to allocate remoteproc\n");
- 		return -ENOMEM;
-@@ -411,6 +512,7 @@ static int adsp_probe(struct platform_device *pdev)
- 	adsp = (struct qcom_adsp *)rproc->priv;
- 	adsp->dev = &pdev->dev;
- 	adsp->rproc = rproc;
-+	adsp->minidump_id = desc->minidump_id;
- 	adsp->pas_id = desc->pas_id;
- 	adsp->has_aggre2_clk = desc->has_aggre2_clk;
- 	adsp->info_name = desc->sysmon_name;
-diff --git a/drivers/remoteproc/remoteproc_coredump.c b/drivers/remoteproc/remoteproc_coredump.c
-index bb15a29..0495389 100644
---- a/drivers/remoteproc/remoteproc_coredump.c
-+++ b/drivers/remoteproc/remoteproc_coredump.c
-@@ -13,6 +13,8 @@
- #include "remoteproc_internal.h"
- #include "remoteproc_elf_helpers.h"
- 
-+#define MAX_STRTBL_SIZE 512
-+
- struct rproc_coredump_state {
- 	struct rproc *rproc;
- 	void *header;
-@@ -27,6 +29,9 @@ void rproc_coredump_cleanup(struct rproc *rproc)
- {
- 	struct rproc_dump_segment *entry, *tmp;
- 
-+	if (rproc->ops->priv_cleanup)
-+		rproc->ops->priv_cleanup(rproc);
-+
- 	list_for_each_entry_safe(entry, tmp, &rproc->dump_segments, node) {
- 		list_del(&entry->node);
- 		kfree(entry);
-@@ -323,3 +328,136 @@ void rproc_coredump(struct rproc *rproc)
- 	 */
- 	wait_for_completion(&dump_state.dump_done);
- }
-+
-+/**
-+ * rproc_minidump() - perform minidump
-+ * @rproc:	rproc handle
-+ *
-+ * This function will generate an ELF header for the registered sections of
-+ * segments and create a devcoredump device associated with rproc. Based on
-+ * the coredump configuration this function will directly copy the segments
-+ * from device memory to userspace or copy segments from device memory to
-+ * a separate buffer, which can then be read by userspace.
-+ * The first approach avoids using extra vmalloc memory. But it will stall
-+ * recovery flow until dump is read by userspace.
-+ */
-+void rproc_minidump(struct rproc *rproc)
-+{
-+	struct rproc_dump_segment *segment;
-+	void *shdr;
-+	void *ehdr;
-+	size_t data_size;
-+	size_t offset;
-+	void *data;
-+	u8 class = rproc->elf_class;
-+	int shnum;
-+	struct rproc_coredump_state dump_state;
-+	unsigned int dump_conf = rproc->dump_conf;
-+	char *str_tbl = "STR_TBL";
-+
-+	if (list_empty(&rproc->dump_segments) ||
-+	    dump_conf == RPROC_COREDUMP_DISABLED)
-+		return;
-+
-+	if (class == ELFCLASSNONE) {
-+		dev_err(&rproc->dev, "Elf class is not set\n");
-+		return;
-+	}
-+
-+	/*
-+	 * We allocate two extra section headers. The first one is null.
-+	 * Second section header is for the string table. Also space is
-+	 * allocated for string table.
-+	 */
-+	data_size = elf_size_of_hdr(class) + 2 * elf_size_of_shdr(class) +
-+		    MAX_STRTBL_SIZE;
-+	shnum = 2;
-+
-+	list_for_each_entry(segment, &rproc->dump_segments, node) {
-+		data_size += elf_size_of_shdr(class);
-+		if (dump_conf == RPROC_COREDUMP_DEFAULT)
-+			data_size += segment->size;
-+		shnum++;
-+	}
-+
-+	data = vmalloc(data_size);
-+	if (!data)
-+		return;
-+
-+	ehdr = data;
-+	memset(ehdr, 0, elf_size_of_hdr(class));
-+	/* e_ident field is common for both elf32 and elf64 */
-+	elf_hdr_init_ident(ehdr, class);
-+
-+	elf_hdr_set_e_type(class, ehdr, ET_CORE);
-+	elf_hdr_set_e_machine(class, ehdr, rproc->elf_machine);
-+	elf_hdr_set_e_version(class, ehdr, EV_CURRENT);
-+	elf_hdr_set_e_entry(class, ehdr, rproc->bootaddr);
-+	elf_hdr_set_e_shoff(class, ehdr, elf_size_of_hdr(class));
-+	elf_hdr_set_e_ehsize(class, ehdr, elf_size_of_hdr(class));
-+	elf_hdr_set_e_shentsize(class, ehdr, elf_size_of_shdr(class));
-+	elf_hdr_set_e_shnum(class, ehdr, shnum);
-+	elf_hdr_set_e_shstrndx(class, ehdr, 1);
-+
-+	/* Set the first section header as null and move to the next one. */
-+	shdr = data + elf_hdr_get_e_shoff(class, ehdr);
-+	memset(shdr, 0, elf_size_of_shdr(class));
-+	shdr += elf_size_of_shdr(class);
-+
-+	/* Initialize the string table. */
-+	offset = elf_hdr_get_e_shoff(class, ehdr) +
-+		 elf_size_of_shdr(class) * elf_hdr_get_e_shnum(class, ehdr);
-+	memset(data + offset, 0, MAX_STRTBL_SIZE);
-+
-+	/* Fill in the string table section header. */
-+	memset(shdr, 0, elf_size_of_shdr(class));
-+	elf_shdr_set_sh_type(class, shdr, SHT_STRTAB);
-+	elf_shdr_set_sh_offset(class, shdr, offset);
-+	elf_shdr_set_sh_size(class, shdr, MAX_STRTBL_SIZE);
-+	elf_shdr_set_sh_entsize(class, shdr, 0);
-+	elf_shdr_set_sh_flags(class, shdr, 0);
-+	elf_shdr_set_sh_name(class, shdr, set_section_name(str_tbl, ehdr, class));
-+	offset += elf_shdr_get_sh_size(class, shdr);
-+	shdr += elf_size_of_shdr(class);
-+
-+	list_for_each_entry(segment, &rproc->dump_segments, node) {
-+		memset(shdr, 0, elf_size_of_shdr(class));
-+		elf_shdr_set_sh_type(class, shdr, SHT_PROGBITS);
-+		elf_shdr_set_sh_offset(class, shdr, offset);
-+		elf_shdr_set_sh_addr(class, shdr, segment->da);
-+		elf_shdr_set_sh_size(class, shdr, segment->size);
-+		elf_shdr_set_sh_entsize(class, shdr, 0);
-+		elf_shdr_set_sh_flags(class, shdr, SHF_WRITE);
-+		elf_shdr_set_sh_name(class, shdr,
-+				     set_section_name(segment->priv, ehdr, class));
-+
-+		/* No need to copy segments for inline dumps */
-+		if (dump_conf == RPROC_COREDUMP_DEFAULT)
-+			rproc_copy_segment(rproc, data + offset, segment, 0,
-+					   segment->size);
-+		offset += elf_shdr_get_sh_size(class, shdr);
-+		shdr += elf_size_of_shdr(class);
-+	}
-+
-+	if (dump_conf == RPROC_COREDUMP_DEFAULT) {
-+		dev_coredumpv(&rproc->dev, data, data_size, GFP_KERNEL);
-+		return;
-+	}
-+
-+	/* Initialize the dump state struct to be used by rproc_coredump_read */
-+	dump_state.rproc = rproc;
-+	dump_state.header = data;
-+	init_completion(&dump_state.dump_done);
-+
-+	dev_coredumpm(&rproc->dev, NULL, &dump_state, data_size, GFP_KERNEL,
-+		      rproc_coredump_read, rproc_coredump_free);
-+
-+	/* Wait until the dump is read and free is called. Data is freed
-+	 * by devcoredump framework automatically after 5 minutes.
-+	 */
-+	wait_for_completion(&dump_state.dump_done);
-+
-+	list_for_each_entry(segment, &rproc->dump_segments, node)
-+		kfree(segment->priv);
-+}
-+EXPORT_SYMBOL(rproc_minidump);
-diff --git a/drivers/remoteproc/remoteproc_elf_helpers.h b/drivers/remoteproc/remoteproc_elf_helpers.h
-index 4b6be7b..d83ebca 100644
---- a/drivers/remoteproc/remoteproc_elf_helpers.h
-+++ b/drivers/remoteproc/remoteproc_elf_helpers.h
-@@ -11,6 +11,7 @@
- #include <linux/elf.h>
- #include <linux/types.h>
- 
-+#define MAX_NAME_LENGTH 16
- /**
-  * fw_elf_get_class - Get elf class
-  * @fw: the ELF firmware image
-@@ -65,6 +66,7 @@ ELF_GEN_FIELD_GET_SET(hdr, e_type, u16)
- ELF_GEN_FIELD_GET_SET(hdr, e_version, u32)
- ELF_GEN_FIELD_GET_SET(hdr, e_ehsize, u32)
- ELF_GEN_FIELD_GET_SET(hdr, e_phentsize, u16)
-+ELF_GEN_FIELD_GET_SET(hdr, e_shentsize, u16)
- 
- ELF_GEN_FIELD_GET_SET(phdr, p_paddr, u64)
- ELF_GEN_FIELD_GET_SET(phdr, p_vaddr, u64)
-@@ -74,6 +76,9 @@ ELF_GEN_FIELD_GET_SET(phdr, p_type, u32)
- ELF_GEN_FIELD_GET_SET(phdr, p_offset, u64)
- ELF_GEN_FIELD_GET_SET(phdr, p_flags, u32)
- ELF_GEN_FIELD_GET_SET(phdr, p_align, u64)
-+ELF_GEN_FIELD_GET_SET(shdr, sh_type, u32)
-+ELF_GEN_FIELD_GET_SET(shdr, sh_flags, u32)
-+ELF_GEN_FIELD_GET_SET(shdr, sh_entsize, u16)
- 
- ELF_GEN_FIELD_GET_SET(shdr, sh_size, u64)
- ELF_GEN_FIELD_GET_SET(shdr, sh_offset, u64)
-@@ -93,4 +98,26 @@ ELF_STRUCT_SIZE(shdr)
- ELF_STRUCT_SIZE(phdr)
- ELF_STRUCT_SIZE(hdr)
- 
-+static inline unsigned int set_section_name(const char *name, void *ehdr,
-+					    u8 class)
-+{
-+	u16 shstrndx = elf_hdr_get_e_shstrndx(class, ehdr);
-+	void *shdr;
-+	char *strtab;
-+	static int strtable_idx = 1;
-+	int idx, ret = 0;
-+
-+	shdr = ehdr + elf_size_of_hdr(class) + shstrndx * elf_size_of_shdr(class);
-+	strtab = ehdr + elf_shdr_get_sh_offset(class, shdr);
-+	idx = strtable_idx;
-+	if (!strtab || !name)
-+		return 0;
-+
-+	ret = idx;
-+	idx += strlcpy((strtab + idx), name, MAX_NAME_LENGTH);
-+	strtable_idx = idx + 1;
-+
-+	return ret;
-+}
-+
- #endif /* REMOTEPROC_ELF_LOADER_H */
-diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-index a489aec..b7a5f93 100644
---- a/include/linux/remoteproc.h
-+++ b/include/linux/remoteproc.h
-@@ -658,6 +658,7 @@ rproc_of_resm_mem_entry_init(struct device *dev, u32 of_resm_idx, size_t len,
- int rproc_boot(struct rproc *rproc);
- void rproc_shutdown(struct rproc *rproc);
- void rproc_report_crash(struct rproc *rproc, enum rproc_crash_type type);
-+void rproc_minidump(struct rproc *rproc);
- int rproc_coredump_add_segment(struct rproc *rproc, dma_addr_t da, size_t size);
- int rproc_coredump_add_custom_segment(struct rproc *rproc,
- 				      dma_addr_t da, size_t size,
--- 
-Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+The limitation here is in debugfs not being available on all systems,
+sysfs is present and I really do like the idea of being able to change
+these things without having to compile a tool to invoke the ioctl...
 
+> I wonder if this evolution should not also be implemented in the cdev.
+> In this case an additional event could be addedd to inform the application
+> that a crash occurred and that a core dump is available.
+> 
+
+Specifically for userspace to know when a coredump is present there's
+already uevents being sent when the devcoredump is ready. That said,
+having some means to getting notified about remoteproc state changes
+does sounds reasonable. If there is a use case we should discuss that.
+
+> Of course it's only a suggestion... As it would be a redesign.
+
+A very valid suggestion. I don't think it's a redesign, but more of an
+extension of what we have today.
+
+Regards,
+Bjorn
+
+> I let Björn and Mathieu comment.
+> 
+> Regards,
+> Arnaud
+> 
+> > 
+> > Changelog:
+> > 
+> > v1 -> v2:
+> > - Correct the contact name in the sysfs documentation.
+> > - Remove the redundant write documentation for coredump/recovery sysfs
+> > - Add a feature flag to make this interface switch configurable.
+> > 
+> > Rishabh Bhatnagar (3):
+> >   remoteproc: Expose remoteproc configuration through sysfs
+> >   remoteproc: Add coredump configuration to sysfs
+> >   remoteproc: Add recovery configuration to sysfs
+> > 
+> >  Documentation/ABI/testing/sysfs-class-remoteproc |  44 ++++++++
+> >  drivers/remoteproc/Kconfig                       |  12 +++
+> >  drivers/remoteproc/remoteproc_debugfs.c          |  10 +-
+> >  drivers/remoteproc/remoteproc_sysfs.c            | 126 +++++++++++++++++++++++
+> >  4 files changed, 190 insertions(+), 2 deletions(-)
+> > 
