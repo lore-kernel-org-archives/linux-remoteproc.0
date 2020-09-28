@@ -1,300 +1,269 @@
-Return-Path: <SRS0=lozc=DE=vger.kernel.org=linux-remoteproc-owner@kernel.org>
+Return-Path: <SRS0=pvyB=DF=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.0 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MSGID_FROM_MTA_HEADER,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85F95C4346E
-	for <linux-remoteproc@archiver.kernel.org>; Sun, 27 Sep 2020 06:16:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E65FC4741F
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 28 Sep 2020 19:33:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 442AF221E5
-	for <linux-remoteproc@archiver.kernel.org>; Sun, 27 Sep 2020 06:16:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 15DDF2074B
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 28 Sep 2020 19:33:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="nElZ73hH"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gM+1zEKG"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730355AbgI0GQA (ORCPT
+        id S1726621AbgI1TdO (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Sun, 27 Sep 2020 02:16:00 -0400
-Received: from mail-eopbgr30056.outbound.protection.outlook.com ([40.107.3.56]:25733
-        "EHLO EUR03-AM5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726382AbgI0GQA (ORCPT
+        Mon, 28 Sep 2020 15:33:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58776 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726424AbgI1TdN (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Sun, 27 Sep 2020 02:16:00 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=ElayPiuHMXZFMzytIVsrBxlMafjGJY9oJR8s2LMDdBIuULukjP2RoWvZiEFa7EHwPtisMKyOjqGf/Y0R1IAlpZgm9TWjy9SWmFrxT4wDG4Rr+cFpVCMjczy8meurlhNw+OkuwOdY4S75Kb3v2rTje44yLghyyhnlexEd3ocyXO3ofU0wRfX98J37Ao3hFWq25Ea+IfDPE2hM6rfPq6knJrJlxE+eenvtubFFLXP471HyYIHbFJfgFOtwqzlfjdtvyvGzOr7CIftSx1l1Q2aeS3GAWN6f/hL27pUMXIiM93YeW/9kcRCxcupMTgATJv42Mzf/Z9psxnVgBMIhDFDNww==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=xavbuV6lIwJY5oDAI7hT6YynOQprNT52DhNUM80TqUM=;
- b=Qqlgs4k6W7vU1oYSSH0o2G3r08tHhVgzqVLvUGT6coac25jRNy3WLsSzH8vT23KdQeb+zbHVy4AER5emBCo/y3KqgpQ4OxbLLEYIGAmE5qAAng4cWIYwEwFts4w816ektdUD6iSTw+7t234WFY2MvLqdpcZHt+w7DAYfqv/jaT1NgB31MdMym+Qihv2H5xDPwrFeVC+Z8Utw8cBUcmDgmrFsjsdPFpXj14OlNFqSTGN8dE2niPpp4AqlGHymLURjn2qEjn8zoGEUwjBTjklcDTW3aCXvQscQ4kdEO/Tmv1b6eZwsMCDcVEKpbHWouCdn414blsaL1D93t8bwLzs8+A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=xavbuV6lIwJY5oDAI7hT6YynOQprNT52DhNUM80TqUM=;
- b=nElZ73hHd9hUK3NY+qZIuvmBBs9y80J3yPumHmc5X+8aqNFkFAQdRM2KT1KvdnlCiL96LEJ/faHjb1/yoDc8KRi9nPmkFlkl3v0lrlnGjQcG4/Q9tYestmVNPfpQlHJOngesy1Td8ZllFNrIY4b47/vaFI5gvM6hiO3RGDvhrVY=
-Authentication-Results: linaro.org; dkim=none (message not signed)
- header.d=none;linaro.org; dmarc=none action=none header.from=nxp.com;
-Received: from DB6PR0402MB2760.eurprd04.prod.outlook.com (2603:10a6:4:a1::14)
- by DB7PR04MB4633.eurprd04.prod.outlook.com (2603:10a6:5:36::27) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3412.20; Sun, 27 Sep
- 2020 06:15:55 +0000
-Received: from DB6PR0402MB2760.eurprd04.prod.outlook.com
- ([fe80::35c5:8c71:91f3:6bc6]) by DB6PR0402MB2760.eurprd04.prod.outlook.com
- ([fe80::35c5:8c71:91f3:6bc6%12]) with mapi id 15.20.3412.028; Sun, 27 Sep
- 2020 06:15:55 +0000
-From:   Peng Fan <peng.fan@nxp.com>
-To:     bjorn.andersson@linaro.org, mathieu.poirier@linaro.org,
-        o.rempel@pengutronix.de, robh+dt@kernel.org
-Cc:     linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
-        festevam@gmail.com, linux-imx@nxp.com,
-        linux-arm-kernel@lists.infradead.org, Peng Fan <peng.fan@nxp.com>,
-        Richard Zhu <hongxing.zhu@nxp.com>
-Subject: [PATCH V2 7/7] remoteproc: imx_proc: enable virtio/mailbox
-Date:   Sun, 27 Sep 2020 14:41:31 +0800
-Message-Id: <20200927064131.24101-8-peng.fan@nxp.com>
-X-Mailer: git-send-email 2.28.0
-In-Reply-To: <20200927064131.24101-1-peng.fan@nxp.com>
-References: <20200927064131.24101-1-peng.fan@nxp.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SG2PR04CA0178.apcprd04.prod.outlook.com
- (2603:1096:4:14::16) To DB6PR0402MB2760.eurprd04.prod.outlook.com
- (2603:10a6:4:a1::14)
+        Mon, 28 Sep 2020 15:33:13 -0400
+Received: from mail-pg1-x542.google.com (mail-pg1-x542.google.com [IPv6:2607:f8b0:4864:20::542])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E6C33C061755
+        for <linux-remoteproc@vger.kernel.org>; Mon, 28 Sep 2020 12:33:11 -0700 (PDT)
+Received: by mail-pg1-x542.google.com with SMTP id 5so1762502pgf.5
+        for <linux-remoteproc@vger.kernel.org>; Mon, 28 Sep 2020 12:33:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=xGmHAT5QSIshHXwp7YID51MvJx+onGGMtyezVB0R6Ng=;
+        b=gM+1zEKGDWb8wTk5KkBYaUZpOp7ebv776xpvu0zHj9ly4WCEPlt1llMF+eb59a5jwK
+         8qBELP76Ay8flh1DeSBlj4oJqnNiNPrHBaEJJnJ2RFI0hLVuxEuYj1U/aTw9C6SRfm5B
+         AENBdyETa9hiqHeHMwNet1UOtTlnU8harBniFmHbhT1WAML8NW/kNr+qCZYMNqX/gR5L
+         fce7N+xKkxETMmXRPFGqy6slxFQi8mbfZJT9XtF9Zx800R19UV8l7HC3qU7H5xvxi3kX
+         wRtRUMIb1kCl0lQUey1rurC/tWUMn304dxtAOosGXicHKMQ5dRiMXAYvVx6KgDcSxEdB
+         Zg/w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=xGmHAT5QSIshHXwp7YID51MvJx+onGGMtyezVB0R6Ng=;
+        b=fed4AEPC7Zot5OLU2thPrWhgqlJm3W588JeK3nxD2MwH1EAiWQhhyyN+0FtfpsrlVV
+         ole40HwSPw9V3CYw94iOgymdC+ja3eYYO8d/7GQw8cybcJ9syZ8P/YrV8JTfDUf8Kti5
+         CuVwCVsNRAVghrIdsv4wfS2S+v9g0ZY/JD8w8TIKcTWx71TmPIOR19WrUaXm9hbujHCA
+         2jhd66zn2tkBxWbJiMk8RUE8WEzaoG1KD4bBI23cJiCrWSlQnCx6lqxv5VHZmp+7HDQO
+         T8UZg5G74PMHgaauiM1vLXSXCznRPE8tyaPFf+zoms89lrRQVIqpC9AA9/SEFwNIE0ua
+         5lWw==
+X-Gm-Message-State: AOAM531ShAeL2ET2WNY9rwZxYqQodxNJ0uNp22vppN8LuM9X9rGbrd7T
+        xtg5LALPX5ZD3grH2ho7bkhN/63LrlkA6w==
+X-Google-Smtp-Source: ABdhPJy4ybQGQxac1vDgAAYLrzMcGkVFJ9RWXgExQXY+uEuehtapWlxlAMRGYI2nHqneJ40dDXIM9w==
+X-Received: by 2002:a17:902:a987:b029:d2:8a38:5bbe with SMTP id bh7-20020a170902a987b02900d28a385bbemr957552plb.60.1601321591154;
+        Mon, 28 Sep 2020 12:33:11 -0700 (PDT)
+Received: from xps15 (S0106002369de4dac.cg.shawcable.net. [68.147.8.254])
+        by smtp.gmail.com with ESMTPSA id i17sm2488529pfa.29.2020.09.28.12.33.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 28 Sep 2020 12:33:10 -0700 (PDT)
+Date:   Mon, 28 Sep 2020 13:33:08 -0600
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+To:     Guennadi Liakhovetski <guennadi.liakhovetski@linux.intel.com>
+Cc:     Ohad Ben-Cohen <ohad@wizery.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Loic PALLARDY <loic.pallardy@st.com>,
+        linux-remoteproc <linux-remoteproc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 00/10] rpmsg: Make RPMSG name service modular
+Message-ID: <20200928193308.GA85087@xps15>
+References: <20200928094941.GA4848@ubuntu>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from linux-1xn6.ap.freescale.net (119.31.174.71) by SG2PR04CA0178.apcprd04.prod.outlook.com (2603:1096:4:14::16) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3412.20 via Frontend Transport; Sun, 27 Sep 2020 06:15:50 +0000
-X-Mailer: git-send-email 2.28.0
-X-Originating-IP: [119.31.174.71]
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-HT: Tenant
-X-MS-Office365-Filtering-Correlation-Id: 44220112-fcd6-4ce3-481a-08d862accaa9
-X-MS-TrafficTypeDiagnostic: DB7PR04MB4633:
-X-MS-Exchange-Transport-Forked: True
-X-Microsoft-Antispam-PRVS: <DB7PR04MB4633318EC2CC7FA54592F5B788340@DB7PR04MB4633.eurprd04.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:114;
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: taS8xliWKdWVYmmH9sIajY9fp/DERE3ERYPv3kFZ5phnJ+6TvVSIakbdQkn9UH8kXeNQ5gxZ/k/Jt6BbZBDna5Fv8rkUJOFlSAIKIdmAyhGQkn58Fyiyi11sqOuWOc+k4mrbj182hQaWYVBMPeyRlD39czuOo6WiOe9O8Ss6I0WNWeB+OUFP6/Ru1+KiHrtBxkTX6YgkgmAjUyprGEllNY8q1dBvPdhrsPwaDvUe58TwKqC9kUOIOd9prTTEXnK8PPxBCKupM4EGLxSWboI/XGhIRSXZxEVNjJJFwvsyu+CRUw11gVsGpwdiDdMYBlxfWpZSVGOgu4iAvJdTdG24KQsQqIqIJyy8bqkHQY8XaVsPfHLCtpmGD0a9WuLkXtDv
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB6PR0402MB2760.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(366004)(376002)(346002)(39860400002)(136003)(396003)(16526019)(186003)(52116002)(7416002)(6666004)(6486002)(54906003)(316002)(36756003)(1076003)(44832011)(5660300002)(4326008)(8676002)(2906002)(86362001)(26005)(956004)(15650500001)(478600001)(8936002)(66946007)(6506007)(6512007)(2616005)(66556008)(83380400001)(66476007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData: WGmmeUrHI0B4iwTy5iVQlsfsk+KPcxoqmcTeUgyHqjtPdM6psVjT4USDYjhLTJHT4PNENmQVhS+LbIRAeCW4vdlrRgRU7HfbR7Rk39Mh4pfYMwrdgYeqPwwb83LWDPeXpdiG40PI0rR0IIz2T2XcT1cyWwa7VPnEovOkyMNsuCpjvb1CP94V/kBwnZU051EK2QX0gRmWN7kkbTtfZMYwxQvEq/BoUjf/AP4phzXC21KYTNhu9bYYtF/sm49LbPpFxToEctkMnDNYNc0blal+2csuySJS8EhO5Eu8k/1flr3C9o4RkEpJAUrnaj3YzGnSAvQ0sef5FBporssmnlrIXIIsnC1f9e8G/iRubWDWYuc6M7oz60q5a8/DRkKeiOI0jQmF5pK5NPqR8rI1sJyqCA3aiI78bsoha7z5AwuKF9YO6le3jjzA4HiNTKqevAbfPKbvpF95eUha83zvO+7JCrvt42uiCgmvLwcRx+3KThLYv46rT2S80TukzfOwEIZnMvIFAh/3DC8DH1o6YR/MApNw2dzTg5hVMNgo/xiTd9lmklvao0cHCxzPZ6eNCM1r8rN9+ZFhm945cntNRJi7MB/WqsFUTsM7A+pWURVyuULQZywpKGgEcF/3SXJtUT6xeV/rMBnwFBP3B1k8cPGMYg==
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 44220112-fcd6-4ce3-481a-08d862accaa9
-X-MS-Exchange-CrossTenant-AuthSource: DB6PR0402MB2760.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Sep 2020 06:15:54.9132
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: lbIvmLNX9QLrtmM6XEhDCbLHZvzOT1EwHEKC+rIgJrOabf1sOM/G3tHHdE6f2vJlsh2/8mLW6uMj5YEEa0TYJg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB7PR04MB4633
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200928094941.GA4848@ubuntu>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Use virtio/mailbox to build connection between Remote Proccessors
-and Linux. Add delayed work to handle incoming messages.
+Hey Guennadi,
 
-Reviewed-by: Richard Zhu <hongxing.zhu@nxp.com>
-Signed-off-by: Peng Fan <peng.fan@nxp.com>
----
- drivers/remoteproc/imx_rproc.c | 112 ++++++++++++++++++++++++++++++++-
- 1 file changed, 109 insertions(+), 3 deletions(-)
+On Mon, Sep 28, 2020 at 11:49:42AM +0200, Guennadi Liakhovetski wrote:
+> (re-sending, mailing list delivery attempts last Friday failed)
+> 
 
-diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rproc.c
-index 0f69f3f745ab..c514d7ca7c81 100644
---- a/drivers/remoteproc/imx_rproc.c
-+++ b/drivers/remoteproc/imx_rproc.c
-@@ -8,6 +8,7 @@
- #include <linux/interrupt.h>
- #include <linux/io.h>
- #include <linux/kernel.h>
-+#include <linux/mailbox_client.h>
- #include <linux/mfd/syscon.h>
- #include <linux/module.h>
- #include <linux/of_address.h>
-@@ -17,6 +18,8 @@
- #include <linux/regmap.h>
- #include <linux/remoteproc.h>
- 
-+#include "remoteproc_internal.h"
-+
- #define IMX7D_SRC_SCR			0x0C
- #define IMX7D_ENABLE_M4			BIT(3)
- #define IMX7D_SW_M4P_RST		BIT(2)
-@@ -88,6 +91,10 @@ struct imx_rproc {
- 	const struct imx_rproc_dcfg	*dcfg;
- 	struct imx_rproc_mem		mem[IMX7D_RPROC_MEM_MAX];
- 	struct clk			*clk;
-+	struct mbox_client		cl;
-+	struct mbox_chan		*tx_ch;
-+	struct mbox_chan		*rx_ch;
-+	struct delayed_work		rproc_work;
- };
- 
- static const struct imx_rproc_att imx_rproc_att_imx8mq[] = {
-@@ -373,9 +380,30 @@ static int imx_rproc_parse_fw(struct rproc *rproc, const struct firmware *fw)
- 	return 0;
- }
- 
-+static void imx_rproc_kick(struct rproc *rproc, int vqid)
-+{
-+	struct imx_rproc *priv = rproc->priv;
-+	int err;
-+	__u32 mmsg;
-+
-+	if (!priv->tx_ch) {
-+		dev_err(priv->dev, "No initialized mbox tx channel\n");
-+		return;
-+	}
-+
-+	mmsg = vqid << 16;
-+
-+	priv->cl.tx_tout = 100;
-+	err = mbox_send_message(priv->tx_ch, (void *)&mmsg);
-+	if (err < 0)
-+		dev_err(priv->dev, "%s: failed (%d, err:%d)\n",
-+			__func__, vqid, err);
-+}
-+
- static const struct rproc_ops imx_rproc_ops = {
- 	.start		= imx_rproc_start,
- 	.stop		= imx_rproc_stop,
-+	.kick		= imx_rproc_kick,
- 	.da_to_va       = imx_rproc_da_to_va,
- 	.load		= rproc_elf_load_segments,
- 	.parse_fw	= imx_rproc_parse_fw,
-@@ -458,6 +486,70 @@ static void imx_rproc_memset(struct rproc *rproc, void *s, int c, size_t count)
- 	memset_io((void * __iomem)s, c, count);
- }
- 
-+static void imx_rproc_vq_work(struct work_struct *work)
-+{
-+	struct delayed_work *dwork = to_delayed_work(work);
-+	struct imx_rproc *priv = container_of(dwork, struct imx_rproc,
-+					      rproc_work);
-+
-+	rproc_vq_interrupt(priv->rproc, 0);
-+	rproc_vq_interrupt(priv->rproc, 1);
-+}
-+
-+static void imx_rproc_rx_callback(struct mbox_client *cl, void *msg)
-+{
-+	struct rproc *rproc = dev_get_drvdata(cl->dev);
-+	struct imx_rproc *priv = rproc->priv;
-+
-+	schedule_delayed_work(&(priv->rproc_work), 0);
-+}
-+
-+static int imx_rproc_xtr_mbox_init(struct rproc *rproc)
-+{
-+	struct imx_rproc *priv = rproc->priv;
-+	struct device *dev = priv->dev;
-+	struct mbox_client *cl;
-+	int ret = 0;
-+
-+	if (!of_get_property(dev->of_node, "mbox-names", NULL))
-+		return 0;
-+
-+	cl = &priv->cl;
-+	cl->dev = dev;
-+	cl->tx_block = true;
-+	cl->tx_tout = 20;
-+	cl->knows_txdone = false;
-+	cl->rx_callback = imx_rproc_rx_callback;
-+
-+	priv->tx_ch = mbox_request_channel_byname(cl, "tx");
-+	if (IS_ERR(priv->tx_ch)) {
-+		if (PTR_ERR(priv->tx_ch) == -EPROBE_DEFER)
-+			return -EPROBE_DEFER;
-+		ret = PTR_ERR(priv->tx_ch);
-+		dev_dbg(cl->dev, "failed to request mbox tx chan, ret %d\n",
-+			ret);
-+		goto err_out;
-+	}
-+
-+	priv->rx_ch = mbox_request_channel_byname(cl, "rx");
-+	if (IS_ERR(priv->rx_ch)) {
-+		ret = PTR_ERR(priv->rx_ch);
-+		dev_dbg(cl->dev, "failed to request mbox rx chan, ret %d\n",
-+			ret);
-+		goto err_out;
-+	}
-+
-+	return ret;
-+
-+err_out:
-+	if (!IS_ERR(priv->tx_ch))
-+		mbox_free_channel(priv->tx_ch);
-+	if (!IS_ERR(priv->rx_ch))
-+		mbox_free_channel(priv->rx_ch);
-+
-+	return ret;
-+}
-+
- static int imx_rproc_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
-@@ -501,17 +593,24 @@ static int imx_rproc_probe(struct platform_device *pdev)
- 
- 	dev_set_drvdata(dev, rproc);
- 
-+	ret = imx_rproc_xtr_mbox_init(rproc);
-+	if (ret) {
-+		if (ret == -EPROBE_DEFER)
-+			goto err_put_rproc;
-+		/* mbox is optional, so not fail here */
-+	}
-+
- 	ret = imx_rproc_addr_init(priv, pdev);
- 	if (ret) {
- 		dev_err(dev, "failed on imx_rproc_addr_init\n");
--		goto err_put_rproc;
-+		goto err_put_mbox;
- 	}
- 
- 	priv->clk = devm_clk_get(dev, NULL);
- 	if (IS_ERR(priv->clk)) {
- 		dev_err(dev, "Failed to get clock\n");
- 		ret = PTR_ERR(priv->clk);
--		goto err_put_rproc;
-+		goto err_put_mbox;
- 	}
- 
- 	/*
-@@ -521,9 +620,11 @@ static int imx_rproc_probe(struct platform_device *pdev)
- 	ret = clk_prepare_enable(priv->clk);
- 	if (ret) {
- 		dev_err(&rproc->dev, "Failed to enable clock\n");
--		goto err_put_rproc;
-+		goto err_put_mbox;
- 	}
- 
-+	INIT_DELAYED_WORK(&(priv->rproc_work), imx_rproc_vq_work);
-+
- 	ret = rproc_add(rproc);
- 	if (ret) {
- 		dev_err(dev, "rproc_add failed\n");
-@@ -534,6 +635,11 @@ static int imx_rproc_probe(struct platform_device *pdev)
- 
- err_put_clk:
- 	clk_disable_unprepare(priv->clk);
-+err_put_mbox:
-+	if (!IS_ERR(priv->tx_ch))
-+		mbox_free_channel(priv->tx_ch);
-+	if (!IS_ERR(priv->rx_ch))
-+		mbox_free_channel(priv->rx_ch);
- err_put_rproc:
- 	rproc_free(rproc);
- 
--- 
-2.28.0
+I got your email on Friday but had to tend to other things.
 
+> Hi Mathieu,
+> 
+> On Thu, Sep 24, 2020 at 12:18:53PM -0600, Mathieu Poirier wrote:
+> > On Thu, Sep 24, 2020 at 08:53:56AM +0200, Guennadi Liakhovetski wrote:
+> 
+> [snip]
+> 
+> > > Yes, the current rpmsg-virtio code does create *one* rpmsg device when 
+> > > an NS announcement arrives.
+> > 
+> > Currently an rpmsg_device is created each time a NS announcement is received.  
+> 
+> Are there really cases when an NS announcement is sent multiple times by a 
+> remote? But not for the same name-space, at least in virtio_rpmsg_bus.c 
+> there's a check for a duplicate announcement in rpmsg_create_channel().
+> 
+> > > Whereas with this patch set the first rpmsg 
+> > > device would be created to probe the NS service driver and the next one 
+> > > would still be created following the code borrowed from rpmsg-virtio 
+> > > when an NS announcement arrives. And I don't see how those two devices 
+> > > now make sense, sorry. I understand one device per channel, but two, of 
+> > > which one is for a certain endpoing only, whereas other endpoints don't 
+> > > create their devices, don't seem very logical to me.
+> > 
+> > In the current implementation the NS service channel is created automatically
+> > when instantiating an rproc_vdev.
+> 
+> I think the terminology is slightly incorrect above. It isn't a channel, it's 
+> an endpoint. A channel is a synonym of a device in RPMsg (from rpmsg.txt):
+> 
+> "Every rpmsg device is a communication channel with a remote processor (thus
+> rpmsg devices are called channels)."
+> 
+> > An official rpmsg_device is not needed since
+> > it is implicit.
+> 
+> Agree.
+> 
+> > With this set (and as you noted above) an rpmsg_device to
+> > represent the NS service is registered, the same way other services such as
+> > rpmsg_chrdev are.
+> 
+> Oh, I think I'm getting it now. I think now I understand where the 
+> disagreement lies. If I understand correctly in your model each remote 
+> processor can provide multiple *devices* / *channels*. E.g. a remote
+
+That is correct
+ 
+> processor can provide a character device, a network device etc. Each of 
+> those devices / channels would send a namespace announcement to the 
+> main processor, which then would create a respective device and probe 
+> the respective driver - all with the same remote processor over the same 
+> RPMsg bus. I understand this concept and in fact I find it logical.
+> 
+
+Ok
+
+> However, since I have no experience with real life RPMsg implementations 
+> I am basing my understanding of RPMsg on the little and scarce and 
+> non-conclusive documentation that I can find online. E.g. on
+> 
+> https://github.com/OpenAMP/open-amp/wiki/RPMsg-Messaging-Protocol
+> 
+> which says:
+> 
+> "Every remote core in RPMsg component is represented by RPMsg device that 
+> provides a communication channel between master and remote, hence RPMsg 
+> devices are also known as channels"
+> 
+> So, according to that definition you cannot have a remote processor, 
+> doing both a character and a network devices. However, in kernel's 
+> rpmsg.txt an *almost exact* copy of that sentence is the quote, that 
+> I've already provided above, with a subtle but important difference:
+> 
+> "Every rpmsg device is a communication channel with a remote processor 
+> (thus rpmsg devices are called channels)."
+
+The documentation isn't easy to follow and personally got very confused when I
+started getting involved with the remoteproc/rpmsg subsystems.  I have the
+intention of doing a good revamp but there is never enough time. 
+
+> 
+> It doesn't explicitly say, that there can be multiple devices per 
+> remote processor, but it doesn't specify, that there can be only one 
+> (TM) either, so, implicitly there can be many :-/ So, with this model, 
+> yes, I can understand, how a single instance of the RPMsg bus (in 
+> VirtIO case a pair of virtual queues) can have just *one* namespace 
+> service and serve *multiple* devices channels. In that case yes, the 
+> namespace service can be a separate device.
+
+I will spin off a V2 of this set and we'll go from there.  I also want to get a
+look at Kishon's patchset that Arnaud and Vincent were referring to before
+making up my mind about how to move foward with your vhost RPMSG API patchset.
+
+This is certainly taking longer than expected but I'd rather take the time to
+explore all aspects of the question rather than having to live with a solution
+that is not adequate.
+
+Thanks for the patience,
+Mathieu
+
+> 
+> Thanks
+> Guennadi
+> 
+> > After that nothing else changes and no other rpmgs_device
+> > are created until NS request come in.  When an NS request does come in an
+> > rpmsg_device is created, and that for each request that is received.
+> > 
+> > > 
+> > > Thanks
+> > > Guennadi
+> > > 
+> > > > To prove my theory I ran the rpmsg_client_sample.c and it just worked,
+> > > > no changes to client code needed.
+> > > > 
+> > > > Let's keep talking, it's the only way we'll get through this.
+> > > > 
+> > > > Mathieu
+> > > > 
+> > > > >
+> > > > > Thanks
+> > > > > Guennadi
+> > > > >
+> > > > > On Mon, Sep 21, 2020 at 06:09:50PM -0600, Mathieu Poirier wrote:
+> > > > > > Hi all,
+> > > > > >
+> > > > > > After looking at Guennadi[1] and Arnaud's patchsets[2] it became
+> > > > > > clear that we need to go back to a generic rpmsg_ns_msg structure
+> > > > > > if we wanted to make progress.  To do that some of the work from
+> > > > > > Arnaud had to be modified in a way that common name service
+> > > > > > functionality was transport agnostic.
+> > > > > >
+> > > > > > This patchset is based on Arnaud's work but also include a patch
+> > > > > > from Guennadi and some input from me.  It should serve as a
+> > > > > > foundation for the next revision of [1].
+> > > > > >
+> > > > > > Applies on rpmsg-next (4e3dda0bc603) and tested on stm32mp157. I
+> > > > > > did not test the modularisation.
+> > > > > >
+> > > > > > Comments and feedback would be greatly appreciated.
+> > > > > >
+> > > > > > Thanks,
+> > > > > > Mathieu
+> > > > > >
+> > > > > > [1]. https://patchwork.kernel.org/project/linux-remoteproc/list/?series=346593
+> > > > > > [2]. https://patchwork.kernel.org/project/linux-remoteproc/list/?series=338335
+> > > > > >
+> > > > > > Arnaud Pouliquen (5):
+> > > > > >   rpmsg: virtio: rename rpmsg_create_channel
+> > > > > >   rpmsg: core: Add channel creation internal API
+> > > > > >   rpmsg: virtio: Add rpmsg channel device ops
+> > > > > >   rpmsg: Turn name service into a stand alone driver
+> > > > > >   rpmsg: virtio: use rpmsg ns device for the ns announcement
+> > > > > >
+> > > > > > Guennadi Liakhovetski (1):
+> > > > > >   rpmsg: Move common structures and defines to headers
+> > > > > >
+> > > > > > Mathieu Poirier (4):
+> > > > > >   rpmsg: virtio: Move virtio RPMSG structures to private header
+> > > > > >   rpmsg: core: Add RPMSG byte conversion operations
+> > > > > >   rpmsg: virtio: Make endianness conversion virtIO specific
+> > > > > >   rpmsg: ns: Make Name service module transport agnostic
+> > > > > >
+> > > > > >  drivers/rpmsg/Kconfig            |   9 +
+> > > > > >  drivers/rpmsg/Makefile           |   1 +
+> > > > > >  drivers/rpmsg/rpmsg_core.c       |  96 +++++++++++
+> > > > > >  drivers/rpmsg/rpmsg_internal.h   | 102 +++++++++++
+> > > > > >  drivers/rpmsg/rpmsg_ns.c         | 108 ++++++++++++
+> > > > > >  drivers/rpmsg/virtio_rpmsg_bus.c | 284 +++++++++----------------------
+> > > > > >  include/linux/rpmsg_ns.h         |  83 +++++++++
+> > > > > >  include/uapi/linux/rpmsg.h       |   3 +
+> > > > > >  8 files changed, 487 insertions(+), 199 deletions(-)
+> > > > > >  create mode 100644 drivers/rpmsg/rpmsg_ns.c
+> > > > > >  create mode 100644 include/linux/rpmsg_ns.h
+> > > > > >
+> > > > > > --
+> > > > > > 2.25.1
+> > > > > >
+> 
+> ----- End forwarded message -----
