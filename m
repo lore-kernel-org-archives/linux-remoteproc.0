@@ -2,180 +2,209 @@ Return-Path: <SRS0=9bPA=DG=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.4 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE9C8C4727C
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 29 Sep 2020 17:18:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE7D1C4727C
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 29 Sep 2020 17:30:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 42B0A20757
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 29 Sep 2020 17:18:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 648B42075E
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 29 Sep 2020 17:30:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=st.com header.i=@st.com header.b="dxsnGq8K"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="aeynrkEn"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728401AbgI2RSl (ORCPT
+        id S1725776AbgI2RaL (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 29 Sep 2020 13:18:41 -0400
-Received: from mx07-00178001.pphosted.com ([185.132.182.106]:55004 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725554AbgI2RSk (ORCPT
+        Tue, 29 Sep 2020 13:30:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36628 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725554AbgI2RaK (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 29 Sep 2020 13:18:40 -0400
-Received: from pps.filterd (m0046037.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 08THHOmW010687;
-        Tue, 29 Sep 2020 19:18:34 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=STMicroelectronics;
- bh=KLsmjKeGsfFqyL6scwWy2f2Tm9641An3TKilO0TJJY0=;
- b=dxsnGq8Kfk9KZqvg/n54r74Rp4v8YZUIVsXRk2pV1FgEeHXL/YJVgG13jRo8RzZLBv1h
- SEM4zHrUpgCTFvPZBGCQHUSWTBu263EFkDG19w3lm8+7UbZ3HQ0QOaQIa2iU5yU06oVT
- /YnWvzdHiJKsMyN6RQ7hBWQp+mD6iBmNtF/GqTVB6RmCy5Ik2iRI4kqTlWDERLp+SlVJ
- q53d+cSPufDcs5Z2L5Aaw/2Ag6cvDS81c82h+1BnkP3+4mthgL+dtcMaSwd3lj8ixR04
- ft7L8RaCheurd7zjy5p02WvVBdUxO2JFLeF201ROsbw3QGZzPAqtWHu+i35IhwnYYTFj lA== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 33v0dgu1n8-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 29 Sep 2020 19:18:34 +0200
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 41BB510002A;
-        Tue, 29 Sep 2020 19:18:34 +0200 (CEST)
-Received: from Webmail-eu.st.com (sfhdag3node1.st.com [10.75.127.7])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 2EA752BE253;
-        Tue, 29 Sep 2020 19:18:34 +0200 (CEST)
-Received: from lmecxl0889.tpe.st.com (10.75.127.49) by SFHDAG3NODE1.st.com
- (10.75.127.7) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 29 Sep
- 2020 19:18:32 +0200
-Subject: Re: [PATCH v6 0/3] Move recovery/coredump configuration to sysfs
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-CC:     Rishabh Bhatnagar <rishabhb@codeaurora.org>,
-        "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "tsoni@codeaurora.org" <tsoni@codeaurora.org>,
-        "psodagud@codeaurora.org" <psodagud@codeaurora.org>,
-        "sidgup@codeaurora.org" <sidgup@codeaurora.org>
-References: <1601331456-20432-1-git-send-email-rishabhb@codeaurora.org>
- <8222f5fa-2acc-a765-a728-6aad9ed88068@st.com>
- <20200929143357.GE10036@builder.lan>
-From:   Arnaud POULIQUEN <arnaud.pouliquen@st.com>
-Message-ID: <69aecefd-b8c9-ff99-ab91-f0dde5fcf3d5@st.com>
-Date:   Tue, 29 Sep 2020 19:18:31 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Tue, 29 Sep 2020 13:30:10 -0400
+Received: from mail-pg1-x541.google.com (mail-pg1-x541.google.com [IPv6:2607:f8b0:4864:20::541])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CDE8CC0613D0
+        for <linux-remoteproc@vger.kernel.org>; Tue, 29 Sep 2020 10:30:06 -0700 (PDT)
+Received: by mail-pg1-x541.google.com with SMTP id s31so4407932pga.7
+        for <linux-remoteproc@vger.kernel.org>; Tue, 29 Sep 2020 10:30:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=fFztEzSJ2rV1rMZN9OkJojf3DIgVoZo3w4SHkm4pQyk=;
+        b=aeynrkEnHlUKQBiPgnMNPHfg0Nz/g4+4y8462gVE1P3bPzk3sGsp1nXqWgmTcx537r
+         K7NYa5MGpJxLWQ/ElST1A5ZqgN+GdxSQwLJiXt3UDJIVJdAR/ChP3fkVCrpIRP+IdFXy
+         8Yjieyth0CDInMoo2PGaIxgNGd8tsKCbAjF6QurEsgKr5SrrhLO5GkOZgn/9ePtPy+Q4
+         /FAckVwJnbOUDfuknKlAEctofIK3BQaIJOd8FlKw0yn2dIZi0km/l7eBAEuvVvGSyBg7
+         FeCjLtaeZjT2Zy52Sjl4EUXfOEO1I6G6g0x3Wkq7HI+szuz9JNYZsByWB7AwNGc+Qz8Q
+         hmyQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=fFztEzSJ2rV1rMZN9OkJojf3DIgVoZo3w4SHkm4pQyk=;
+        b=jsNsc/PgCr3uTHUtuRjW49A5y1D7JWfhk0l1w2HMqqhO//h6dQG7vtmIZcyEjmlYrc
+         qiGhyIJtNgad77I8axb1834Ay1AOGOakLIrUACxirAiPPrmqvmY+QQR7mymddgzqUhAV
+         CjkCLFTzbMMg8sQE6J+gG1rGoB1Ncn9r7lFre2ouCMXdB5yD+tDnXnuIVXB986lHQxMT
+         gdAW2hcU7Yqu9LX/lGovEvmFaX/EP7UAybpzecyEm2iMjL5zv/7nHurSdBdV/0YSWJXk
+         pCXk9ydjylzTeFkjzZJ/c1gQfwA4G8h6I37P+/MWea1HuWkK0B+FlSLUj15UwuTX1Qnw
+         TYRQ==
+X-Gm-Message-State: AOAM53037MJGgomrYo10hc2HcddRqbifcmpcXDWUBTIuEhcpTfFfgI2U
+        jmXVvAIWjW+CWyXEgaJBR0vz7A==
+X-Google-Smtp-Source: ABdhPJwYRq0qr3kl6y4PgVWlwBb8KVS0Fu4JKWsnWScQjJaKTexwp1yZHfnEDT2p1jBCWeNI6lFv2A==
+X-Received: by 2002:a62:26c1:0:b029:142:2501:35ef with SMTP id m184-20020a6226c10000b0290142250135efmr4783468pfm.79.1601400606139;
+        Tue, 29 Sep 2020 10:30:06 -0700 (PDT)
+Received: from xps15 (S0106002369de4dac.cg.shawcable.net. [68.147.8.254])
+        by smtp.gmail.com with ESMTPSA id n72sm6976829pfd.27.2020.09.29.10.30.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 29 Sep 2020 10:30:05 -0700 (PDT)
+Date:   Tue, 29 Sep 2020 11:30:03 -0600
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+To:     Alexandre Bailon <abailon@baylibre.com>
+Cc:     ohad@wizery.com, bjorn.andersson@linaro.org, robh+dt@kernel.org,
+        matthias.bgg@gmail.com, linux-remoteproc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
+        stephane.leprovost@mediatek.com, gpain@baylibre.com
+Subject: Re: [PATCH v2 1/4] dt bindings: remoteproc: Add bindings for MT8183
+ APU
+Message-ID: <20200929173003.GA124290@xps15>
+References: <20200910130148.8734-1-abailon@baylibre.com>
+ <20200910130148.8734-2-abailon@baylibre.com>
 MIME-Version: 1.0
-In-Reply-To: <20200929143357.GE10036@builder.lan>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.75.127.49]
-X-ClientProxiedBy: SFHDAG4NODE3.st.com (10.75.127.12) To SFHDAG3NODE1.st.com
- (10.75.127.7)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.235,18.0.687
- definitions=2020-09-29_11:2020-09-29,2020-09-29 signatures=0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200910130148.8734-2-abailon@baylibre.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
+On Thu, Sep 10, 2020 at 03:01:45PM +0200, Alexandre Bailon wrote:
+> This adds dt bindings for the APU present in the MT8183.
+> 
+> Signed-off-by: Alexandre Bailon <abailon@baylibre.com>
+> ---
+>  .../bindings/remoteproc/mtk,apu.yaml          | 107 ++++++++++++++++++
+>  1 file changed, 107 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/remoteproc/mtk,apu.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/remoteproc/mtk,apu.yaml b/Documentation/devicetree/bindings/remoteproc/mtk,apu.yaml
+> new file mode 100644
+> index 000000000000..7a71d2f5c4e6
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/remoteproc/mtk,apu.yaml
+> @@ -0,0 +1,107 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +
+> +---
+> +$id: "http://devicetree.org/schemas/remoteproc/mtk,apu.yaml#"
+> +$schema: "http://devicetree.org/meta-schemas/core.yaml#"
+> +
+> +title: MT8183 AI Processor Unit (APU) a.k.a. Vision Processor Unit (VPU)
+> +
+> +description:
+> +  This document defines the binding for the APU, a co-processor that could
+> +  offload the CPU for machine learning and neural network.
+> +
+> +maintainers:
+> +  - Alexandre Bailon <abailon@bayLibre.com>
+> +
+> +properties:
+> +  compatible:
+> +    const: mediatek,mt8183-apu
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    description:
+> +      Three clocks are expected for AXI, IPU and JTAG.
+> +      The JTAG clock seems to be required to run the DSP,
+> +      even when JTAG is not in use."
+> +    maxItems: 3
+> +
+> +  clock-names:
+> +    items:
+> +      - const: axi
+> +      - const: ipu
+> +      - const: jtag
+> +
+> +  iommus:
+> +    maxItems: 3
+> +
+> +  memory-region:
+> +    maxItems: 1
+> +
+> +  power-domains:
+> +    maxItems: 1
+> +
+> +  pinctrl:
+> +    description: pinctrl handles, required to configure pins for JTAG.
+> +
+> +  pinctrl-names:
+> +    items:
+> +      - const: jtag
+> +    maxItems: 1
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - interrupts
+> +  - clocks
+> +  - clock-names
+> +  - iommus
+> +  - memory-region
+> +  - power-domains
+> +
+> +additionalProperties: false
+> +
 
+What about the pintctrl for the JTAG part?
 
-On 9/29/20 4:33 PM, Bjorn Andersson wrote:
-> On Tue 29 Sep 03:44 CDT 2020, Arnaud POULIQUEN wrote:
+> +examples:
+> +  - |
+> +    #include <dt-bindings/clock/mt8183-clk.h>
+> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +    #include <dt-bindings/memory/mt8183-larb-port.h>
+> +    #include <dt-bindings/power/mt8183-power.h>
+> +
+> +    reserved-memory {
+> +      #address-cells = <1>;
+> +      #size-cells = <1>;
+> +      ranges;
+> +
+> +      apu_ram: apu_ram@0x60000000 {
+> +        compatible = "shared-dma-pool";
+> +        reg = <0x60000000 0x040000000>;
+> +        no-map;
+> +        linux,cma-default;
+> +      };
+> +    };
+> +
+> +    apu0: apu@19100000 {
+> +      compatible = "mediatek,mt8183-apu";
+> +      reg = <0x19180000 0x14000>;
+> +      interrupts = <GIC_SPI 292 IRQ_TYPE_LEVEL_LOW>;
+> +
+> +      iommus = <&iommu M4U_PORT_IMG_IPUO>,
+> +         <&iommu M4U_PORT_IMG_IPU3O>,
+> +         <&iommu M4U_PORT_IMG_IPUI>;
+> +
+> +      clocks = <&ipu_core0 CLK_IPU_CORE0_AXI>,
+> +         <&ipu_core0 CLK_IPU_CORE0_IPU>,
+> +         <&ipu_core0 CLK_IPU_CORE0_JTAG>;
+> +
+> +      clock-names = "axi", "ipu", "jtag";
+> +
+> +      power-domains = <&scpsys MT8183_POWER_DOMAIN_VPU_CORE0>;
+> +      memory-region = <&apu_ram>;
+> +    };
+> +...
+> -- 
+> 2.26.2
 > 
->>
->>
->> On 9/29/20 12:17 AM, Rishabh Bhatnagar wrote:
->>> From Android R onwards Google has restricted access to debugfs in user
->>> and user-debug builds. This restricts access to most of the features
->>> exposed through debugfs. 'Coredump' and 'Recovery' are critical
->>> interfaces that are required for remoteproc to work on Qualcomm Chipsets. 
->>> Coredump configuration needs to be set to "inline" in debug/test builds
->>> and "disabled" in production builds. Whereas recovery needs to be
->>> "disabled" for debugging purposes and "enabled" on production builds.
->>> This patch series removes the recovery/coredump entries from debugfs
->>> and moves them to sysfs. Also, this disables the coredump collection
->>> by default as this is a requirement for production devices.
->>>
->>> Changelog:
->>>
->>> v6 -> v5:
->>> - Disable coredump collection by default
->>> - Rename the "default" configuration to "enabled" to avoid confusion
->>>
->>> v5 -> v4:
->>> - Fix the cover-letter of tha patch series.
->>>
->>> v4 -> v3:
->>> - Remove the feature flag to expose recovery/coredump
->>>
->>> v3 -> v2:
->>> - Remove the coredump/recovery entries from debugfs
->>
->> Sorry i missed this and some associated discussion in V2...
->>
->> I have also some concerns about the ABI breaks.
-> 
-> Debugfs is not an ABI...
-> 
->> In ST and I suppose in several companies we have some 
->> test environments that use the debugfs to generate and/or get
->> the core dump.
->>
-> 
-> I do however acknowledge the inconvenience you're facing...
-> 
->> Even if the stability of the debugfs is not guaranteed it would
->> be nice to keep both interface.
->>
-> 
-> ...and I wouldn't mind keeping the debugfs interface around, at least
-> for some time to allow people to transition their tools/muscle memory.
-> 
->> It seems that it is possible to create symbolic link in the debugfs
->> thanks to the "debugfs_create_symlink" function.
->> This seems allowing to keep files in both place without duplicating the code.
->> To be honest i have never used this function so I'm not 100% sure that this
->> would do the job...
->> But if you think that this could be a good compromise, i can test it.
->>
-> 
-> The duplicated code is rather simple, so I don't mind the duplication -
-> for now.
-> 
-> 
-> So, how about we add the sysfs pieces of Rishabh's patches, leave out
-> the debugfs and then in a while (e.g. one LTS) we remove the debugfs
-> code?
-
-This smooth transition seems to me a very good compromise.
-
-Thanks,
-Arnaud
-
-> 
-> Regards,
-> Bjorn
-> 
->> Regards,
->> Arnaud
->>
->>> - Expose recovery/coredump from sysfs under a feature flag
->>>
->>> v1 -> v2:
->>> - Correct the contact name in the sysfs documentation.
->>> - Remove the redundant write documentation for coredump/recovery sysfs
->>> - Add a feature flag to make this interface switch configurable.
->>>
->>> Rishabh Bhatnagar (3):
->>>   remoteproc: Move coredump configuration to sysfs
->>>   remoteproc: Move recovery configuration to sysfs
->>>   remoteproc: Change default dump configuration to "disabled"
->>>
->>>  Documentation/ABI/testing/sysfs-class-remoteproc |  46 +++++++
->>>  drivers/remoteproc/remoteproc_coredump.c         |   6 +-
->>>  drivers/remoteproc/remoteproc_debugfs.c          | 168 -----------------------
->>>  drivers/remoteproc/remoteproc_sysfs.c            | 120 ++++++++++++++++
->>>  include/linux/remoteproc.h                       |   8 +-
->>>  5 files changed, 173 insertions(+), 175 deletions(-)
->>>
