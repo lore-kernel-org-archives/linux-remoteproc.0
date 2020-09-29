@@ -2,145 +2,172 @@ Return-Path: <SRS0=9bPA=DG=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.4 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-3.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FC9DC4346E
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 29 Sep 2020 08:44:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08E49C4727C
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 29 Sep 2020 14:38:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F307C206A2
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 29 Sep 2020 08:44:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7E9662074F
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 29 Sep 2020 14:38:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=st.com header.i=@st.com header.b="flWHTWDX"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="iUhmU0GR"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726064AbgI2Iop (ORCPT
+        id S1730123AbgI2Oi0 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 29 Sep 2020 04:44:45 -0400
-Received: from mx07-00178001.pphosted.com ([185.132.182.106]:55479 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725826AbgI2Iop (ORCPT
+        Tue, 29 Sep 2020 10:38:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38410 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729934AbgI2Oi0 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 29 Sep 2020 04:44:45 -0400
-Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 08T8hJN1012901;
-        Tue, 29 Sep 2020 10:44:38 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=STMicroelectronics;
- bh=KqUvozA/JR3y08fUfkqMtKFt3RT984BzYpCu5n3nbFw=;
- b=flWHTWDX3xXKaG8D7S5up2Ky9noBdO5mwetG9HgbDwWIuciIp2T9BAdWn1QII6ZdNpZV
- /Mo918Wx8+dKiSZpb00jcgHxAkxKm3gacW9M6/U6EJJ9vLBYBhnqbKDFOHQ4VAHUgAIU
- jIYCQIfVqPUa7TmYUj6qJEVjwMqVJOBuSRjGgH5z03HhgPoDCsgwlYkMqksoPDsIX0CK
- 4+ZeiRlDljZ/WaNBDpcNi0f2W46mVnrnOwdLZma/aOMlFqSJ7hv+tycQSxnUntmh/83/
- gPqUzV/3Gd9/TcA+unNfc8j2MWQnF9LkgE6BFaRsarxYOH+yMXnVNoTHlo1va9uQqMqW 9w== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 33su3yqkkt-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 29 Sep 2020 10:44:38 +0200
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 224DF100034;
-        Tue, 29 Sep 2020 10:44:38 +0200 (CEST)
-Received: from Webmail-eu.st.com (sfhdag3node1.st.com [10.75.127.7])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 0711221E67E;
-        Tue, 29 Sep 2020 10:44:38 +0200 (CEST)
-Received: from lmecxl0889.tpe.st.com (10.75.127.46) by SFHDAG3NODE1.st.com
- (10.75.127.7) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 29 Sep
- 2020 10:44:20 +0200
-Subject: Re: [PATCH v6 0/3] Move recovery/coredump configuration to sysfs
-To:     Rishabh Bhatnagar <rishabhb@codeaurora.org>,
+        Tue, 29 Sep 2020 10:38:26 -0400
+Received: from mail-ot1-x341.google.com (mail-ot1-x341.google.com [IPv6:2607:f8b0:4864:20::341])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DE105C0613D0
+        for <linux-remoteproc@vger.kernel.org>; Tue, 29 Sep 2020 07:38:25 -0700 (PDT)
+Received: by mail-ot1-x341.google.com with SMTP id s66so4664707otb.2
+        for <linux-remoteproc@vger.kernel.org>; Tue, 29 Sep 2020 07:38:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=zibFhjEW+WLnSL0ei2CrzONpzhgPG74isgsMjUmZmfw=;
+        b=iUhmU0GRhiOl+AeQuyPz21nFofYLKi0E9pXLJRGU33L4LmxpTcsA+UEe79zvUEJgPn
+         Y/0mJ+LZZHPLzUE3oZcEUQuJzkfeqx9ReRVXNtww6Io/Re6YG5Kq6ojfFJimi7s1wce9
+         cDER+doujAO1EigbshPz9ih4VAjR4TqPELu39f7a9S2km59gvoprMQa+62VUylz+eDiQ
+         YScXPCBLYQQ7llSYgNgtV937wGqE0eh20SDRpTmk0pcseweqRME2Q4JfEMsJ0dQ0/XuX
+         VZgzTQPfWXx400ShPrneFR61mJgHuWfTgwu7v+K9ycyyDtZQX8r3T0BNSNpZxlupcQ98
+         B5qg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=zibFhjEW+WLnSL0ei2CrzONpzhgPG74isgsMjUmZmfw=;
+        b=lUzdcQapZUU9Fpr86vIMc5S2JBCKkRWSjvGD1nmb2yG+M6EgSoVmmecPVuVSR9VN0D
+         p2p9SaOmmyxJY2vmHGIjk42iiMvS5qk90ZomAfqYJRsgH3nJR/OAkJmex1cNcFqUoQkQ
+         qZQLoeYAFWKD4QCWhqyrwFtPXRQeNt2n3IZcpKVzR3Tu9BDiCriSLSWAADMg3Qma4WdY
+         Y4UL5kgkPPwnpjlJdIAexDap0q92XFJiJN9X7/0XiFZBMydYtkDqJnYr7FAktNrfmhoJ
+         vPPb/HlHycU14I9v4750tRu7sEbwDajfqYdg2d2SoDlnE717GQ2zzwUScUt8n2AVEm+z
+         Dqog==
+X-Gm-Message-State: AOAM533oOyb8vYcLItxjxt+c4DEbjSfHPOwRoEkHnJhSK3OWNZ5YJJFe
+        YSffY2QFEonWuZKhIo5q5aV/GA==
+X-Google-Smtp-Source: ABdhPJwMpQcgBCj3FnEYTCgI8hLMNY6ggO/B/xnKVEsHnMugEnuYF7ONsaz1QGquIAohGZzPGat5Uw==
+X-Received: by 2002:a9d:32a1:: with SMTP id u30mr2957796otb.55.1601390305140;
+        Tue, 29 Sep 2020 07:38:25 -0700 (PDT)
+Received: from builder.lan (99-135-181-32.lightspeed.austtx.sbcglobal.net. [99.135.181.32])
+        by smtp.gmail.com with ESMTPSA id c25sm2978185oot.42.2020.09.29.07.38.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 29 Sep 2020 07:38:24 -0700 (PDT)
+Date:   Tue, 29 Sep 2020 09:33:57 -0500
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Arnaud POULIQUEN <arnaud.pouliquen@st.com>
+Cc:     Rishabh Bhatnagar <rishabhb@codeaurora.org>,
         "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>
-CC:     "tsoni@codeaurora.org" <tsoni@codeaurora.org>,
+        "tsoni@codeaurora.org" <tsoni@codeaurora.org>,
         "psodagud@codeaurora.org" <psodagud@codeaurora.org>,
         "sidgup@codeaurora.org" <sidgup@codeaurora.org>
+Subject: Re: [PATCH v6 0/3] Move recovery/coredump configuration to sysfs
+Message-ID: <20200929143357.GE10036@builder.lan>
 References: <1601331456-20432-1-git-send-email-rishabhb@codeaurora.org>
-From:   Arnaud POULIQUEN <arnaud.pouliquen@st.com>
-Message-ID: <8222f5fa-2acc-a765-a728-6aad9ed88068@st.com>
-Date:   Tue, 29 Sep 2020 10:44:18 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+ <8222f5fa-2acc-a765-a728-6aad9ed88068@st.com>
 MIME-Version: 1.0
-In-Reply-To: <1601331456-20432-1-git-send-email-rishabhb@codeaurora.org>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.75.127.46]
-X-ClientProxiedBy: SFHDAG7NODE1.st.com (10.75.127.19) To SFHDAG3NODE1.st.com
- (10.75.127.7)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.235,18.0.687
- definitions=2020-09-29_01:2020-09-29,2020-09-29 signatures=0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8222f5fa-2acc-a765-a728-6aad9ed88068@st.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
+On Tue 29 Sep 03:44 CDT 2020, Arnaud POULIQUEN wrote:
 
-
-On 9/29/20 12:17 AM, Rishabh Bhatnagar wrote:
-> From Android R onwards Google has restricted access to debugfs in user
-> and user-debug builds. This restricts access to most of the features
-> exposed through debugfs. 'Coredump' and 'Recovery' are critical
-> interfaces that are required for remoteproc to work on Qualcomm Chipsets. 
-> Coredump configuration needs to be set to "inline" in debug/test builds
-> and "disabled" in production builds. Whereas recovery needs to be
-> "disabled" for debugging purposes and "enabled" on production builds.
-> This patch series removes the recovery/coredump entries from debugfs
-> and moves them to sysfs. Also, this disables the coredump collection
-> by default as this is a requirement for production devices.
 > 
-> Changelog:
 > 
-> v6 -> v5:
-> - Disable coredump collection by default
-> - Rename the "default" configuration to "enabled" to avoid confusion
+> On 9/29/20 12:17 AM, Rishabh Bhatnagar wrote:
+> > From Android R onwards Google has restricted access to debugfs in user
+> > and user-debug builds. This restricts access to most of the features
+> > exposed through debugfs. 'Coredump' and 'Recovery' are critical
+> > interfaces that are required for remoteproc to work on Qualcomm Chipsets. 
+> > Coredump configuration needs to be set to "inline" in debug/test builds
+> > and "disabled" in production builds. Whereas recovery needs to be
+> > "disabled" for debugging purposes and "enabled" on production builds.
+> > This patch series removes the recovery/coredump entries from debugfs
+> > and moves them to sysfs. Also, this disables the coredump collection
+> > by default as this is a requirement for production devices.
+> > 
+> > Changelog:
+> > 
+> > v6 -> v5:
+> > - Disable coredump collection by default
+> > - Rename the "default" configuration to "enabled" to avoid confusion
+> > 
+> > v5 -> v4:
+> > - Fix the cover-letter of tha patch series.
+> > 
+> > v4 -> v3:
+> > - Remove the feature flag to expose recovery/coredump
+> > 
+> > v3 -> v2:
+> > - Remove the coredump/recovery entries from debugfs
 > 
-> v5 -> v4:
-> - Fix the cover-letter of tha patch series.
+> Sorry i missed this and some associated discussion in V2...
 > 
-> v4 -> v3:
-> - Remove the feature flag to expose recovery/coredump
+> I have also some concerns about the ABI breaks.
+
+Debugfs is not an ABI...
+
+> In ST and I suppose in several companies we have some 
+> test environments that use the debugfs to generate and/or get
+> the core dump.
 > 
-> v3 -> v2:
-> - Remove the coredump/recovery entries from debugfs
 
-Sorry i missed this and some associated discussion in V2...
+I do however acknowledge the inconvenience you're facing...
 
-I have also some concerns about the ABI breaks.
-In ST and I suppose in several companies we have some 
-test environments that use the debugfs to generate and/or get
-the core dump.
+> Even if the stability of the debugfs is not guaranteed it would
+> be nice to keep both interface.
+> 
 
-Even if the stability of the debugfs is not guaranteed it would
-be nice to keep both interface.
+...and I wouldn't mind keeping the debugfs interface around, at least
+for some time to allow people to transition their tools/muscle memory.
 
-It seems that it is possible to create symbolic link in the debugfs
-thanks to the "debugfs_create_symlink" function.
-This seems allowing to keep files in both place without duplicating the code.
-To be honest i have never used this function so I'm not 100% sure that this
-would do the job...
-But if you think that this could be a good compromise, i can test it.
+> It seems that it is possible to create symbolic link in the debugfs
+> thanks to the "debugfs_create_symlink" function.
+> This seems allowing to keep files in both place without duplicating the code.
+> To be honest i have never used this function so I'm not 100% sure that this
+> would do the job...
+> But if you think that this could be a good compromise, i can test it.
+> 
+
+The duplicated code is rather simple, so I don't mind the duplication -
+for now.
+
+
+So, how about we add the sysfs pieces of Rishabh's patches, leave out
+the debugfs and then in a while (e.g. one LTS) we remove the debugfs
+code?
 
 Regards,
-Arnaud
+Bjorn
 
-> - Expose recovery/coredump from sysfs under a feature flag
+> Regards,
+> Arnaud
 > 
-> v1 -> v2:
-> - Correct the contact name in the sysfs documentation.
-> - Remove the redundant write documentation for coredump/recovery sysfs
-> - Add a feature flag to make this interface switch configurable.
-> 
-> Rishabh Bhatnagar (3):
->   remoteproc: Move coredump configuration to sysfs
->   remoteproc: Move recovery configuration to sysfs
->   remoteproc: Change default dump configuration to "disabled"
-> 
->  Documentation/ABI/testing/sysfs-class-remoteproc |  46 +++++++
->  drivers/remoteproc/remoteproc_coredump.c         |   6 +-
->  drivers/remoteproc/remoteproc_debugfs.c          | 168 -----------------------
->  drivers/remoteproc/remoteproc_sysfs.c            | 120 ++++++++++++++++
->  include/linux/remoteproc.h                       |   8 +-
->  5 files changed, 173 insertions(+), 175 deletions(-)
-> 
+> > - Expose recovery/coredump from sysfs under a feature flag
+> > 
+> > v1 -> v2:
+> > - Correct the contact name in the sysfs documentation.
+> > - Remove the redundant write documentation for coredump/recovery sysfs
+> > - Add a feature flag to make this interface switch configurable.
+> > 
+> > Rishabh Bhatnagar (3):
+> >   remoteproc: Move coredump configuration to sysfs
+> >   remoteproc: Move recovery configuration to sysfs
+> >   remoteproc: Change default dump configuration to "disabled"
+> > 
+> >  Documentation/ABI/testing/sysfs-class-remoteproc |  46 +++++++
+> >  drivers/remoteproc/remoteproc_coredump.c         |   6 +-
+> >  drivers/remoteproc/remoteproc_debugfs.c          | 168 -----------------------
+> >  drivers/remoteproc/remoteproc_sysfs.c            | 120 ++++++++++++++++
+> >  include/linux/remoteproc.h                       |   8 +-
+> >  5 files changed, 173 insertions(+), 175 deletions(-)
+> > 
