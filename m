@@ -2,315 +2,111 @@ Return-Path: <SRS0=H4uj=DH=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.0 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 575A4C4727F
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 30 Sep 2020 08:58:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA4CCC4727F
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 30 Sep 2020 11:53:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C215720738
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 30 Sep 2020 08:58:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ACC8120888
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 30 Sep 2020 11:53:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=st.com header.i=@st.com header.b="DzWPtbF2"
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="TCiL/Ow2"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728169AbgI3I6k (ORCPT
+        id S1729578AbgI3Lxe (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 30 Sep 2020 04:58:40 -0400
-Received: from mx07-00178001.pphosted.com ([185.132.182.106]:54699 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728126AbgI3I6k (ORCPT
+        Wed, 30 Sep 2020 07:53:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37248 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725776AbgI3Lxd (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 30 Sep 2020 04:58:40 -0400
-Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 08U8vcLS027288;
-        Wed, 30 Sep 2020 10:58:33 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=subject : from : to : cc
- : references : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=STMicroelectronics;
- bh=dnVcq0/nTUkT0tamJ0weTNzngZJq0FRzYq9kMsA6ZCw=;
- b=DzWPtbF2p7NpjVjFPgh3qmU8qQlCKjqenzt2rYMGpF3KUgb3QvchmN4GKVODQtE94lEP
- h5ohjsOi/q/gWFz3fyzMEIiN90dgBfOZf4r7nnY7D7Uy3XfdpXCPtDBxD3N4clMA+nyQ
- 1DGxvgwmdWSGaBAFOZpkXU7Ac1mNdzNojjKeypDfJgdsYwfruNBW4edcfp94iLJD+8qd
- bYobqqA8EfTEwl5uUW0QlDwNUC8HwGEc4C1NtZPO2AJbiCH1L0e0Uz4xoCON0bRoMCpD
- v4xru6x7/80HeTJAXt9r0t9k4WsPhS6WWU5uDMMmajKn8pLJHF0/0LR3jGfEd2dMUsXx Sw== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 33su3ywser-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 30 Sep 2020 10:58:32 +0200
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 42DCB100034;
-        Wed, 30 Sep 2020 10:58:31 +0200 (CEST)
-Received: from Webmail-eu.st.com (sfhdag3node1.st.com [10.75.127.7])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 2A72321FEB1;
-        Wed, 30 Sep 2020 10:58:31 +0200 (CEST)
-Received: from lmecxl0889.tpe.st.com (10.75.127.50) by SFHDAG3NODE1.st.com
- (10.75.127.7) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 30 Sep
- 2020 10:58:02 +0200
-Subject: Re: [PATCH v6 2/3] remoteproc: Move recovery configuration to sysfs
-From:   Arnaud POULIQUEN <arnaud.pouliquen@st.com>
-To:     Rishabh Bhatnagar <rishabhb@codeaurora.org>,
-        "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>
-CC:     "tsoni@codeaurora.org" <tsoni@codeaurora.org>,
-        "psodagud@codeaurora.org" <psodagud@codeaurora.org>,
-        "sidgup@codeaurora.org" <sidgup@codeaurora.org>
-References: <1601331456-20432-1-git-send-email-rishabhb@codeaurora.org>
- <1601331456-20432-3-git-send-email-rishabhb@codeaurora.org>
- <8a9dee56-b204-6160-1e69-60286543379e@st.com>
-Message-ID: <70911f14-b76d-515d-fcd8-ea38166454ba@st.com>
-Date:   Wed, 30 Sep 2020 10:58:01 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Wed, 30 Sep 2020 07:53:33 -0400
+Received: from mail-wr1-x442.google.com (mail-wr1-x442.google.com [IPv6:2a00:1450:4864:20::442])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 82F0CC0613D1
+        for <linux-remoteproc@vger.kernel.org>; Wed, 30 Sep 2020 04:53:33 -0700 (PDT)
+Received: by mail-wr1-x442.google.com with SMTP id z4so1467157wrr.4
+        for <linux-remoteproc@vger.kernel.org>; Wed, 30 Sep 2020 04:53:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=3zdVvKUiJ3XeC/vkqQQH/4KWS4wblWtvBCpqUTc2vCY=;
+        b=TCiL/Ow2l394SQAIf9E+NXOjWbI+WiUZG7czSxAutmvCNiJtnVGmyAKFcrIxA3P6TG
+         iem9fGPWkXCjpFIzTsrLgfR626HY6Dh7O/ew2TTQLIy2ZNIHCeNp9b7Wl+HJk1EWv1Gj
+         vqmTiip3ypcHhHa8hHcZCjbold9Ay6FWuC+t710keQKAnwnO7wWEs1lWQMUfMxNLsT/Z
+         4mqvNWl0iEMvmKTsL/IRlRGh3Vl5KqJVxNjhMsOf2+m8p6v6ks5w4zXOyQaTezHxih6U
+         Tgca1XosUIDPyHpReL6b1b1BJyH95NW2xkoyok6wGBC3xiSwPzTDPZH8AQSERNh9bCe2
+         Gj4Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=3zdVvKUiJ3XeC/vkqQQH/4KWS4wblWtvBCpqUTc2vCY=;
+        b=a9QxWXbQngNPSFt4EwYIkyDFA2arDF4SzgZ2R0Erj1VnLHvW1ELtbZ38rbEKf/r1B0
+         NIxGImgIVjPJQBO/QSJr+2uEOIZab5K9qGvwjDOA4XVhNbjtmV8V3V7aQys+ZwPIm5u2
+         yzkLp+BUN0hIOgijDXD4tlykTJGJc/y2479DZnCAjA6fOVcfcX3pPoxUefMkVf1a6wqi
+         hdBZ4w3gXsDb+J5knHiC5HXAaUhm/FFGUBDqjRTzVjQwW0wmCuWZSU4OfYQTrmo4QA/o
+         fv48kqKxuTI64bOAVcllMfe9Fxq5Y1QLPoS3F2i0EBZZ7BLS8nGNQvEHQOcZyKcIBYny
+         sHUw==
+X-Gm-Message-State: AOAM533j7KiuqNp8bRZlQAhzA9p8gVOFhbgm5IzjJJQBgL67sLCYFMnS
+        1K5AzhDlbu+Vebv+vXZNZDgTm9O4e545wK7n
+X-Google-Smtp-Source: ABdhPJynAyzrltVOO76tuR2J6MDfUIbi/vTOpYZLQJ7fsMqXMDV/uBFWBXb2toRs7bpZsX3qQln9GA==
+X-Received: by 2002:a5d:554c:: with SMTP id g12mr2743183wrw.294.1601466811718;
+        Wed, 30 Sep 2020 04:53:31 -0700 (PDT)
+Received: from alex-xps13.baylibre.local (laubervilliers-658-1-213-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
+        by smtp.gmail.com with ESMTPSA id s12sm2222353wmd.20.2020.09.30.04.53.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 30 Sep 2020 04:53:30 -0700 (PDT)
+From:   Alexandre Bailon <abailon@baylibre.com>
+To:     linux-remoteproc@vger.kernel.org
+Cc:     ohad@wizery.com, bjorn.andersson@linaro.org,
+        sumit.semwal@linaro.org, christian.koenig@amd.com,
+        linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org,
+        jstephan@baylibre.com, stephane.leprovost@mediatek.com,
+        gpain@baylibre.com, mturquette@baylibre.com,
+        Alexandre Bailon <abailon@baylibre.com>
+Subject: [RFC PATCH 0/4] Add a RPMsg driver to support AI Processing Unit (APU)
+Date:   Wed, 30 Sep 2020 13:53:46 +0200
+Message-Id: <20200930115350.5272-1-abailon@baylibre.com>
+X-Mailer: git-send-email 2.26.2
 MIME-Version: 1.0
-In-Reply-To: <8a9dee56-b204-6160-1e69-60286543379e@st.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.75.127.50]
-X-ClientProxiedBy: SFHDAG7NODE2.st.com (10.75.127.20) To SFHDAG3NODE1.st.com
- (10.75.127.7)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.235,18.0.687
- definitions=2020-09-30_05:2020-09-29,2020-09-30 signatures=0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
+This adds a RPMsg driver that implements communication between the CPU and an
+APU.
+This uses VirtIO buffer to exchange messages but for sharing data, this uses
+a dmabuf, mapped to be shared between CPU (userspace) and APU.
+The driver is relatively generic, and should work with any SoC implementing
+hardware accelerator for AI if they use support remoteproc and VirtIO.
 
+For the people interested by the firmware or userspace library,
+the sources are available here:
+https://github.com/BayLibre/open-amp/tree/v2020.01-mtk/apps/examples/apu
 
-On 9/30/20 10:11 AM, Arnaud POULIQUEN wrote:
-> 
-> 
-> On 9/29/20 12:17 AM, Rishabh Bhatnagar wrote:
->> Move recovery configuration from debugfs to sysfs.This will
->> allow usage of this configuration feature in production
->> devices where access to debugfs might be limited.
->>
->> Signed-off-by: Rishabh Bhatnagar <rishabhb@codeaurora.org>
->> ---
->>  Documentation/ABI/testing/sysfs-class-remoteproc | 20 ++++++
->>  drivers/remoteproc/remoteproc_debugfs.c          | 78 ------------------------
->>  drivers/remoteproc/remoteproc_sysfs.c            | 56 +++++++++++++++++
->>  3 files changed, 76 insertions(+), 78 deletions(-)
->>
->> diff --git a/Documentation/ABI/testing/sysfs-class-remoteproc b/Documentation/ABI/testing/sysfs-class-remoteproc
->> index f6c44fa..7368b50 100644
->> --- a/Documentation/ABI/testing/sysfs-class-remoteproc
->> +++ b/Documentation/ABI/testing/sysfs-class-remoteproc
->> @@ -82,3 +82,23 @@ Description:	Remote processor coredump configuration
->>  		all data is read by usersapce.
->>  
->>  		"disabled" means no dump will be collected.
->> +
->> +What:		/sys/class/remoteproc/.../recovery
->> +Date:		July 2020
->> +Contact:	Bjorn Andersson <bjorn.andersson@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>
->> +Description:	Remote processor recovery mechanism
->> +
->> +		Reports the recovery mechanism of the remote processor,
->> +		which will be one of:
->> +
->> +		"enabled"
->> +		"disabled"
->> +
->> +		"enabled" means, the remote processor will be automatically
->> +		recovered whenever it crashes. Moreover, if the remote
->> +		processor crashes while recovery is disabled, it will
->> +		be automatically recovered too as soon as recovery is enabled.
->> +
->> +		"disabled" means, a remote processor will remain in a crashed
->> +		state if it crashes. This is useful for debugging purposes;
->> +		without it, debugging a crash is substantially harder.
->> diff --git a/drivers/remoteproc/remoteproc_debugfs.c b/drivers/remoteproc/remoteproc_debugfs.c
->> index 732770e..c505f0e 100644
->> --- a/drivers/remoteproc/remoteproc_debugfs.c
->> +++ b/drivers/remoteproc/remoteproc_debugfs.c
->> @@ -84,82 +84,6 @@ static const struct file_operations rproc_name_ops = {
->>  	.llseek	= generic_file_llseek,
->>  };
->>  
->> -/* expose recovery flag via debugfs */
->> -static ssize_t rproc_recovery_read(struct file *filp, char __user *userbuf,
->> -				   size_t count, loff_t *ppos)
->> -{
->> -	struct rproc *rproc = filp->private_data;
->> -	char *buf = rproc->recovery_disabled ? "disabled\n" : "enabled\n";
->> -
->> -	return simple_read_from_buffer(userbuf, count, ppos, buf, strlen(buf));
->> -}
->> -
->> -/*
->> - * By writing to the 'recovery' debugfs entry, we control the behavior of the
->> - * recovery mechanism dynamically. The default value of this entry is "enabled".
->> - *
->> - * The 'recovery' debugfs entry supports these commands:
->> - *
->> - * enabled:	When enabled, the remote processor will be automatically
->> - *		recovered whenever it crashes. Moreover, if the remote
->> - *		processor crashes while recovery is disabled, it will
->> - *		be automatically recovered too as soon as recovery is enabled.
->> - *
->> - * disabled:	When disabled, a remote processor will remain in a crashed
->> - *		state if it crashes. This is useful for debugging purposes;
->> - *		without it, debugging a crash is substantially harder.
->> - *
->> - * recover:	This function will trigger an immediate recovery if the
->> - *		remote processor is in a crashed state, without changing
->> - *		or checking the recovery state (enabled/disabled).
->> - *		This is useful during debugging sessions, when one expects
->> - *		additional crashes to happen after enabling recovery. In this
->> - *		case, enabling recovery will make it hard to debug subsequent
->> - *		crashes, so it's recommended to keep recovery disabled, and
->> - *		instead use the "recover" command as needed.
->> - */
->> -static ssize_t
->> -rproc_recovery_write(struct file *filp, const char __user *user_buf,
->> -		     size_t count, loff_t *ppos)
->> -{
->> -	struct rproc *rproc = filp->private_data;
->> -	char buf[10];
->> -	int ret;
->> -
->> -	if (count < 1 || count > sizeof(buf))
->> -		return -EINVAL;
->> -
->> -	ret = copy_from_user(buf, user_buf, count);
->> -	if (ret)
->> -		return -EFAULT;
->> -
->> -	/* remove end of line */
->> -	if (buf[count - 1] == '\n')
->> -		buf[count - 1] = '\0';
->> -
->> -	if (!strncmp(buf, "enabled", count)) {
->> -		/* change the flag and begin the recovery process if needed */
->> -		rproc->recovery_disabled = false;
->> -		rproc_trigger_recovery(rproc);
->> -	} else if (!strncmp(buf, "disabled", count)) {
->> -		rproc->recovery_disabled = true;
->> -	} else if (!strncmp(buf, "recover", count)) {
->> -		/* begin the recovery process without changing the flag */
->> -		rproc_trigger_recovery(rproc);
->> -	} else {
->> -		return -EINVAL;
->> -	}
->> -
->> -	return count;
->> -}
->> -
->> -static const struct file_operations rproc_recovery_ops = {
->> -	.read = rproc_recovery_read,
->> -	.write = rproc_recovery_write,
->> -	.open = simple_open,
->> -	.llseek = generic_file_llseek,
->> -};
->> -
->>  /* expose the crash trigger via debugfs */
->>  static ssize_t
->>  rproc_crash_write(struct file *filp, const char __user *user_buf,
->> @@ -329,8 +253,6 @@ void rproc_create_debug_dir(struct rproc *rproc)
->>  
->>  	debugfs_create_file("name", 0400, rproc->dbg_dir,
->>  			    rproc, &rproc_name_ops);
->> -	debugfs_create_file("recovery", 0600, rproc->dbg_dir,
->> -			    rproc, &rproc_recovery_ops);
->>  	debugfs_create_file("crash", 0200, rproc->dbg_dir,
->>  			    rproc, &rproc_crash_ops);
->>  	debugfs_create_file("resource_table", 0400, rproc->dbg_dir,
->> diff --git a/drivers/remoteproc/remoteproc_sysfs.c b/drivers/remoteproc/remoteproc_sysfs.c
->> index 2a44571..e60a014 100644
->> --- a/drivers/remoteproc/remoteproc_sysfs.c
->> +++ b/drivers/remoteproc/remoteproc_sysfs.c
->> @@ -10,6 +10,61 @@
->>  
->>  #define to_rproc(d) container_of(d, struct rproc, dev)
->>  
->> +static ssize_t recovery_show(struct device *dev,
->> +			     struct device_attribute *attr, char *buf)
->> +{
->> +	struct rproc *rproc = to_rproc(dev);
->> +
->> +	return sprintf(buf, "%s", rproc->recovery_disabled ? "disabled\n" : "enabled\n");
->> +}
->> +
->> +/*
->> + * By writing to the 'recovery' sysfs entry, we control the behavior of the
->> + * recovery mechanism dynamically. The default value of this entry is "enabled".
->> + *
->> + * The 'recovery' sysfs entry supports these commands:
->> + *
->> + * enabled:	When enabled, the remote processor will be automatically
->> + *		recovered whenever it crashes. Moreover, if the remote
->> + *		processor crashes while recovery is disabled, it will
->> + *		be automatically recovered too as soon as recovery is enabled.
->> + *
->> + * disabled:	When disabled, a remote processor will remain in a crashed
->> + *		state if it crashes. This is useful for debugging purposes;
->> + *		without it, debugging a crash is substantially harder.
->> + *
->> + * recover:	This function will trigger an immediate recovery if the
->> + *		remote processor is in a crashed state, without changing
->> + *		or checking the recovery state (enabled/disabled).
->> + *		This is useful during debugging sessions, when one expects
-> 
-> Recovery seems to be related to debugging, is it wise to expose it in sysfs?
-> This would allow the user space to restart remote processor and generate core
-> dumps at any time...Is this the expected behavior?
+Alexandre Bailon (3):
+  Add a RPMSG driver for the APU in the mt8183
+  rpmsg: apu_rpmsg: update the way to store IOMMU mapping
+  rpmsg: apu_rpmsg: Add an IOCTL to request IOMMU mapping
 
-This comment is wrong, please forget it. I mixed with some code from last Kernel LTS.
-The state is checked in rproc_trigger_recovery, so no issue.
+Julien STEPHAN (1):
+  rpmsg: apu_rpmsg: Add support for async apu request
 
-My apologize for this stupid comment. 
+ drivers/rpmsg/Kconfig          |   9 +
+ drivers/rpmsg/Makefile         |   1 +
+ drivers/rpmsg/apu_rpmsg.c      | 752 +++++++++++++++++++++++++++++++++
+ drivers/rpmsg/apu_rpmsg.h      |  52 +++
+ include/uapi/linux/apu_rpmsg.h |  47 +++
+ 5 files changed, 861 insertions(+)
+ create mode 100644 drivers/rpmsg/apu_rpmsg.c
+ create mode 100644 drivers/rpmsg/apu_rpmsg.h
+ create mode 100644 include/uapi/linux/apu_rpmsg.h
 
-Regards
-Arnaud
+-- 
+2.26.2
 
-> 
-> For your information, in the ST test suite, we use this mechanism also to simulate a
-> proc crash. This is useful for testing the recovery of RPMsg channels...
-> 
-> Regards
-> Arnaud
-> 
->> + *		additional crashes to happen after enabling recovery. In this
->> + *		case, enabling recovery will make it hard to debug subsequent
->> + *		crashes, so it's recommended to keep recovery disabled, and
->> + *		instead use the "recover" command as needed.
->> + */
->> +static ssize_t recovery_store(struct device *dev,
->> +			      struct device_attribute *attr,
->> +			      const char *buf, size_t count)
->> +{
->> +	struct rproc *rproc = to_rproc(dev);
->> +
->> +	if (sysfs_streq(buf, "enabled")) {
->> +		/* change the flag and begin the recovery process if needed */
->> +		rproc->recovery_disabled = false;
->> +		rproc_trigger_recovery(rproc);
->> +	} else if (sysfs_streq(buf, "disabled")) {
->> +		rproc->recovery_disabled = true;
->> +	} else if (sysfs_streq(buf, "recover")) {
->> +		/* begin the recovery process without changing the flag */
->> +		rproc_trigger_recovery(rproc);
->> +	} else {
->> +		return -EINVAL;
->> +	}
->> +
->> +	return count;
->> +}
->> +static DEVICE_ATTR_RW(recovery);
->> +
->>  /*
->>   * A coredump-configuration-to-string lookup table, for exposing a
->>   * human readable configuration via sysfs. Always keep in sync with
->> @@ -202,6 +257,7 @@ static DEVICE_ATTR_RO(name);
->>  
->>  static struct attribute *rproc_attrs[] = {
->>  	&dev_attr_coredump.attr,
->> +	&dev_attr_recovery.attr,
->>  	&dev_attr_firmware.attr,
->>  	&dev_attr_state.attr,
->>  	&dev_attr_name.attr,
->>
