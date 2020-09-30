@@ -7,223 +7,264 @@ X-Spam-Status: No, score=-11.5 required=3.0 tests=BAYES_00,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18080C2D0A8
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 30 Sep 2020 07:03:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06759C2D0A8
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 30 Sep 2020 07:09:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C86DF207C3
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 30 Sep 2020 07:03:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BD9AD20789
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 30 Sep 2020 07:09:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725554AbgI3HDx (ORCPT
+        id S1728275AbgI3HJY (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 30 Sep 2020 03:03:53 -0400
-Received: from mga11.intel.com ([192.55.52.93]:57638 "EHLO mga11.intel.com"
+        Wed, 30 Sep 2020 03:09:24 -0400
+Received: from mga12.intel.com ([192.55.52.136]:41627 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725535AbgI3HDx (ORCPT
+        id S1725440AbgI3HJY (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 30 Sep 2020 03:03:53 -0400
-IronPort-SDR: 2Jc76T9mMbLYd1mM/HHYYOCNqWzw/3Pcrxh3HUxYB9YaFmSO++C13T1LFn1GAfGiMABN+GiNHh
- eBbajRqV78WQ==
-X-IronPort-AV: E=McAfee;i="6000,8403,9759"; a="159716103"
+        Wed, 30 Sep 2020 03:09:24 -0400
+IronPort-SDR: IAV6NAZpxwMt9GovZYThk7H2HY429OwMtMKlpVkAEg8oVLnK9ujXf5LI2E/ZepuyEF6vRVYb5s
+ fAHTfvoxp8iA==
+X-IronPort-AV: E=McAfee;i="6000,8403,9759"; a="141786246"
 X-IronPort-AV: E=Sophos;i="5.77,321,1596524400"; 
-   d="scan'208";a="159716103"
+   d="scan'208";a="141786246"
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Sep 2020 00:03:52 -0700
-IronPort-SDR: hFa+CCle1o2YtDp6k8YhnmRjAtjVzeyCzmNEPglJjYq6RfZAMBI7rUUp6NuagthWPANtz0QPPQ
- whbLoIeRwFNQ==
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Sep 2020 00:09:19 -0700
+IronPort-SDR: kS6rc5SqgKCxyH60P9d0p0u3A6McXmc/nzGFsSJHzhg2t0mDQgUvnepD8UiF3ql5XbrpF6VCUx
+ J8UfQYjLcytQ==
 X-IronPort-AV: E=Sophos;i="5.77,321,1596524400"; 
-   d="scan'208";a="294520650"
+   d="scan'208";a="496021344"
 Received: from gliakhov-mobl2.ger.corp.intel.com (HELO ubuntu) ([10.252.32.32])
-  by fmsmga008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Sep 2020 00:03:50 -0700
-Date:   Wed, 30 Sep 2020 09:03:45 +0200
+  by orsmga005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Sep 2020 00:09:16 -0700
+Date:   Wed, 30 Sep 2020 09:09:13 +0200
 From:   Guennadi Liakhovetski <guennadi.liakhovetski@linux.intel.com>
 To:     Mathieu Poirier <mathieu.poirier@linaro.org>
 Cc:     ohad@wizery.com, bjorn.andersson@linaro.org, loic.pallardy@st.com,
         linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 05/10] rpmsg: virtio: Move virtio RPMSG structures to
- private header
-Message-ID: <20200930070345.GD20683@ubuntu>
+Subject: Re: [PATCH 06/10] rpmsg: Turn name service into a stand alone driver
+Message-ID: <20200930070912.GE20683@ubuntu>
 References: <20200922001000.899956-1-mathieu.poirier@linaro.org>
- <20200922001000.899956-6-mathieu.poirier@linaro.org>
+ <20200922001000.899956-7-mathieu.poirier@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200922001000.899956-6-mathieu.poirier@linaro.org>
+In-Reply-To: <20200922001000.899956-7-mathieu.poirier@linaro.org>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Mon, Sep 21, 2020 at 06:09:55PM -0600, Mathieu Poirier wrote:
-> Move structure virtiproc_info and virtio_rpmsg_channel to rpmsg_internal.h
-> so that they can be used by rpmsg_ns.c
+On Mon, Sep 21, 2020 at 06:09:56PM -0600, Mathieu Poirier wrote:
+> From: Arnaud Pouliquen <arnaud.pouliquen@st.com>
 > 
+> Make the RPMSG name service announcement a stand alone driver so that it
+> can be reused by other subsystems.  It is also the first step in making the
+> functionatlity transport independent, i.e that is not tied to virtIO.
+> 
+> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@st.com>
 > Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 > ---
->  drivers/rpmsg/rpmsg_internal.h   | 62 ++++++++++++++++++++++++++++++++
->  drivers/rpmsg/virtio_rpmsg_bus.c | 57 -----------------------------
->  2 files changed, 62 insertions(+), 57 deletions(-)
+>  drivers/rpmsg/Kconfig          |   8 +++
+>  drivers/rpmsg/Makefile         |   1 +
+>  drivers/rpmsg/rpmsg_internal.h |  18 ++++++
+>  drivers/rpmsg/rpmsg_ns.c       | 110 +++++++++++++++++++++++++++++++++
+>  4 files changed, 137 insertions(+)
+>  create mode 100644 drivers/rpmsg/rpmsg_ns.c
 > 
+> diff --git a/drivers/rpmsg/Kconfig b/drivers/rpmsg/Kconfig
+> index f96716893c2a..c3fc75e6514b 100644
+> --- a/drivers/rpmsg/Kconfig
+> +++ b/drivers/rpmsg/Kconfig
+> @@ -15,6 +15,14 @@ config RPMSG_CHAR
+>  	  in /dev. They make it possible for user-space programs to send and
+>  	  receive rpmsg packets.
+>  
+> +config RPMSG_NS
+> +	tristate "RPMSG name service announcement"
+> +	depends on RPMSG
+> +	help
+> +	  Say Y here to enable the support of the name service announcement
+> +	  channel that probes the associated RPMsg device on remote endpoint
+> +	  service announcement.
+> +
+>  config RPMSG_MTK_SCP
+>  	tristate "MediaTek SCP"
+>  	depends on MTK_SCP
+> diff --git a/drivers/rpmsg/Makefile b/drivers/rpmsg/Makefile
+> index ffe932ef6050..8d452656f0ee 100644
+> --- a/drivers/rpmsg/Makefile
+> +++ b/drivers/rpmsg/Makefile
+> @@ -1,6 +1,7 @@
+>  # SPDX-License-Identifier: GPL-2.0
+>  obj-$(CONFIG_RPMSG)		+= rpmsg_core.o
+>  obj-$(CONFIG_RPMSG_CHAR)	+= rpmsg_char.o
+> +obj-$(CONFIG_RPMSG_NS)		+= rpmsg_ns.o
+>  obj-$(CONFIG_RPMSG_MTK_SCP)	+= mtk_rpmsg.o
+>  qcom_glink-objs			:= qcom_glink_native.o qcom_glink_ssr.o
+>  obj-$(CONFIG_RPMSG_QCOM_GLINK) += qcom_glink.o
 > diff --git a/drivers/rpmsg/rpmsg_internal.h b/drivers/rpmsg/rpmsg_internal.h
-> index 587f723757d4..3ea9cec26fc0 100644
+> index 3ea9cec26fc0..04e6cb287e18 100644
 > --- a/drivers/rpmsg/rpmsg_internal.h
 > +++ b/drivers/rpmsg/rpmsg_internal.h
-> @@ -12,12 +12,74 @@
->  #ifndef __RPMSG_INTERNAL_H__
->  #define __RPMSG_INTERNAL_H__
->  
-> +#include <linux/idr.h>
-> +#include <linux/mutex.h>
+> @@ -15,6 +15,7 @@
+>  #include <linux/idr.h>
+>  #include <linux/mutex.h>
 >  #include <linux/rpmsg.h>
-> +#include <linux/types.h>
-> +#include <linux/virtio.h>
-
-I think it would be better to not add any VirtIO dependencies here even 
-temporarily.
-
-> +#include <linux/wait.h>
->  #include <linux/poll.h>
->  
->  #define to_rpmsg_device(d) container_of(d, struct rpmsg_device, dev)
->  #define to_rpmsg_driver(d) container_of(d, struct rpmsg_driver, drv)
+> +#include <linux/rpmsg_ns.h>
+>  #include <linux/types.h>
+>  #include <linux/virtio.h>
+>  #include <linux/wait.h>
+> @@ -164,4 +165,21 @@ static inline int rpmsg_chrdev_register_device(struct rpmsg_device *rpdev)
+>  	return rpmsg_register_device(rpdev);
+>  }
 >  
 > +/**
-> + * struct virtproc_info - virtual remote processor state
+> + * rpmsg_ns_register_device() - register name service device based on rpdev
+> + * @rpdev: prepared rpdev to be used for creating endpoints
+> + *
+> + * This function wraps rpmsg_register_device() preparing the rpdev for use as
+> + * basis for the rpmsg name service device.
+> + */
+> +static inline int rpmsg_ns_register_device(struct rpmsg_device *rpdev)
+> +{
+> +	strcpy(rpdev->id.name, "rpmsg_ns");
+> +	rpdev->driver_override = "rpmsg_ns";
+> +	rpdev->src = RPMSG_NS_ADDR;
+> +	rpdev->dst = RPMSG_NS_ADDR;
+> +
+> +	return rpmsg_register_device(rpdev);
+> +}
+> +
+>  #endif
+> diff --git a/drivers/rpmsg/rpmsg_ns.c b/drivers/rpmsg/rpmsg_ns.c
+> new file mode 100644
+> index 000000000000..b3318bf84433
+> --- /dev/null
+> +++ b/drivers/rpmsg/rpmsg_ns.c
+> @@ -0,0 +1,110 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (C) STMicroelectronics 2020 - All Rights Reserved
+> + */
+> +#include <linux/device.h>
+> +#include <linux/kernel.h>
+> +#include <linux/module.h>
+> +#include <linux/slab.h>
+> +#include <linux/rpmsg.h>
+> +#include <linux/rpmsg_ns.h>
+> +#include <linux/virtio_config.h>
+> +#include "rpmsg_internal.h"
+> +
+> +/* Invoked when a name service announcement arrives */
+> +static int rpmsg_ns_cb(struct rpmsg_device *rpdev, void *data, int len,
+> +		       void *priv, u32 src)
+> +{
+> +	struct rpmsg_ns_msg *msg = data;
+> +	struct rpmsg_device *newch;
+> +	struct rpmsg_channel_info chinfo;
+> +	struct virtio_rpmsg_channel *vch = to_virtio_rpmsg_channel(rpdev);
 
-This struct shouldn't be here, let's first prepare the NS callback by 
-removing any VirtIO dependencies and only then move it to the generic 
-driver.
+Let's not do this, non-VirtIO RPMsg drivers shouldn't need this struct.
+
+> +	struct virtproc_info *vrp = vch->vrp;
+> +	struct device *dev = &vrp->vdev->dev;
+> +	int ret;
+> +
+> +#if defined(CONFIG_DYNAMIC_DEBUG)
+> +	dynamic_hex_dump("NS announcement: ", DUMP_PREFIX_NONE, 16, 1,
+> +			 data, len, true);
+> +#endif
+> +
+> +	if (len != sizeof(*msg)) {
+> +		dev_err(dev, "malformed ns msg (%d)\n", len);
+> +		return -EINVAL;
+> +	}
+> +
+> +	/* Don't trust the remote processor for null terminating the name */
+> +	msg->name[RPMSG_NAME_SIZE - 1] = '\0';
+> +
+> +	strncpy(chinfo.name, msg->name, sizeof(chinfo.name));
+> +	chinfo.src = RPMSG_ADDR_ANY;
+> +	chinfo.dst = virtio32_to_cpu(vrp->vdev, msg->addr);
+> +
+> +	dev_info(dev, "%sing channel %s addr 0x%x\n",
+> +		 virtio32_to_cpu(vrp->vdev, msg->flags) & RPMSG_NS_DESTROY ?
+> +		 "destroy" : "creat", msg->name, chinfo.dst);
+> +
+> +	if (virtio32_to_cpu(vrp->vdev, msg->flags) & RPMSG_NS_DESTROY) {
+> +		ret = rpmsg_release_channel(rpdev, &chinfo);
+> +		if (ret)
+> +			dev_err(dev, "rpmsg_destroy_channel failed: %d\n", ret);
+> +	} else {
+> +		newch = rpmsg_create_channel(rpdev, &chinfo);
+> +		if (!newch)
+> +			dev_err(dev, "rpmsg_create_channel failed\n");
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int rpmsg_ns_probe(struct rpmsg_device *rpdev)
+> +{
+> +	struct rpmsg_channel_info ns_chinfo;
+
++	struct rpmsg_channel_info ns_chinfo = {
++		.src = RPMSG_NS_ADDR,
++		.dst = RPMSG_NS_ADDR,
++		.name = "name_service",
++	};
 
 Thanks
 Guennadi
 
-> + * @vdev:	the virtio device
-> + * @rvq:	rx virtqueue
-> + * @svq:	tx virtqueue
-> + * @rbufs:	kernel address of rx buffers
-> + * @sbufs:	kernel address of tx buffers
-> + * @num_bufs:	total number of buffers for rx and tx
-> + * @buf_size:   size of one rx or tx buffer
-> + * @last_sbuf:	index of last tx buffer used
-> + * @bufs_dma:	dma base addr of the buffers
-> + * @tx_lock:	protects svq, sbufs and sleepers, to allow concurrent senders.
-> + *		sending a message might require waking up a dozing remote
-> + *		processor, which involves sleeping, hence the mutex.
-> + * @endpoints:	idr of local endpoints, allows fast retrieval
-> + * @endpoints_lock: lock of the endpoints set
-> + * @sendq:	wait queue of sending contexts waiting for a tx buffers
-> + * @sleepers:	number of senders that are waiting for a tx buffer
-> + * @ns_ept:	the bus's name service endpoint
-> + *
-> + * This structure stores the rpmsg state of a given virtio remote processor
-> + * device (there might be several virtio proc devices for each physical
-> + * remote processor).
-> + */
-> +struct virtproc_info {
-> +	struct virtio_device *vdev;
-> +	struct virtqueue *rvq, *svq;
-> +	void *rbufs, *sbufs;
-> +	unsigned int num_bufs;
-> +	unsigned int buf_size;
-> +	int last_sbuf;
-> +	dma_addr_t bufs_dma;
-> +	struct mutex tx_lock;
-> +	struct idr endpoints;
-> +	struct mutex endpoints_lock;
-> +	wait_queue_head_t sendq;
-> +	atomic_t sleepers;
 > +	struct rpmsg_endpoint *ns_ept;
+> +
+> +	ns_chinfo.src = RPMSG_NS_ADDR;
+> +	ns_chinfo.dst = RPMSG_NS_ADDR;
+> +	strcpy(ns_chinfo.name, "name_service");
+> +
+> +	/*
+> +	 * Create the NS announcement service endpoint associated to the RPMsg
+> +	 * device. The endpoint will be automatically destroyed when the RPMsg
+> +	 * device will be deleted.
+> +	 */
+> +	ns_ept = rpmsg_create_ept(rpdev, rpmsg_ns_cb, NULL, ns_chinfo);
+> +	if (!ns_ept) {
+> +		dev_err(&rpdev->dev, "failed to create the ns ept\n");
+> +		return -ENOMEM;
+> +	}
+> +	rpdev->ept = ns_ept;
+> +
+> +	return 0;
+> +}
+> +
+> +static struct rpmsg_driver rpmsg_ns_driver = {
+> +	.drv.name = "rpmsg_ns",
+> +	.probe = rpmsg_ns_probe,
 > +};
 > +
-> +/**
-> + * struct virtio_rpmsg_channel - rpmsg channel descriptor
-> + * @rpdev: the rpmsg channel device
-> + * @vrp: the virtio remote processor device this channel belongs to
-> + *
-> + * This structure stores the channel that links the rpmsg device to the virtio
-> + * remote processor device.
-> + */
-> +struct virtio_rpmsg_channel {
-> +	struct rpmsg_device rpdev;
+> +static int rpmsg_ns_init(void)
+> +{
+> +	int ret;
 > +
-> +	struct virtproc_info *vrp;
-> +};
+> +	ret = register_rpmsg_driver(&rpmsg_ns_driver);
+> +	if (ret < 0)
+> +		pr_err("%s: Failed to register rpmsg driver\n", __func__);
 > +
-> +#define to_virtio_rpmsg_channel(_rpdev) \
-> +	container_of(_rpdev, struct virtio_rpmsg_channel, rpdev)
+> +	return ret;
+> +}
+> +postcore_initcall(rpmsg_ns_init);
 > +
->  /**
->   * struct rpmsg_device_ops - indirection table for the rpmsg_device operations
->   * @create_channel:	create backend-specific channel, optional
-> diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
-> index eaf3b2c012c8..0635d86d490f 100644
-> --- a/drivers/rpmsg/virtio_rpmsg_bus.c
-> +++ b/drivers/rpmsg/virtio_rpmsg_bus.c
-> @@ -32,63 +32,6 @@
->  
->  #include "rpmsg_internal.h"
->  
-> -/**
-> - * struct virtproc_info - virtual remote processor state
-> - * @vdev:	the virtio device
-> - * @rvq:	rx virtqueue
-> - * @svq:	tx virtqueue
-> - * @rbufs:	kernel address of rx buffers
-> - * @sbufs:	kernel address of tx buffers
-> - * @num_bufs:	total number of buffers for rx and tx
-> - * @buf_size:   size of one rx or tx buffer
-> - * @last_sbuf:	index of last tx buffer used
-> - * @bufs_dma:	dma base addr of the buffers
-> - * @tx_lock:	protects svq, sbufs and sleepers, to allow concurrent senders.
-> - *		sending a message might require waking up a dozing remote
-> - *		processor, which involves sleeping, hence the mutex.
-> - * @endpoints:	idr of local endpoints, allows fast retrieval
-> - * @endpoints_lock: lock of the endpoints set
-> - * @sendq:	wait queue of sending contexts waiting for a tx buffers
-> - * @sleepers:	number of senders that are waiting for a tx buffer
-> - * @ns_ept:	the bus's name service endpoint
-> - *
-> - * This structure stores the rpmsg state of a given virtio remote processor
-> - * device (there might be several virtio proc devices for each physical
-> - * remote processor).
-> - */
-> -struct virtproc_info {
-> -	struct virtio_device *vdev;
-> -	struct virtqueue *rvq, *svq;
-> -	void *rbufs, *sbufs;
-> -	unsigned int num_bufs;
-> -	unsigned int buf_size;
-> -	int last_sbuf;
-> -	dma_addr_t bufs_dma;
-> -	struct mutex tx_lock;
-> -	struct idr endpoints;
-> -	struct mutex endpoints_lock;
-> -	wait_queue_head_t sendq;
-> -	atomic_t sleepers;
-> -	struct rpmsg_endpoint *ns_ept;
-> -};
-> -
-> -/**
-> - * struct virtio_rpmsg_channel - rpmsg channel descriptor
-> - * @rpdev: the rpmsg channel device
-> - * @vrp: the virtio remote processor device this channel belongs to
-> - *
-> - * This structure stores the channel that links the rpmsg device to the virtio
-> - * remote processor device.
-> - */
-> -struct virtio_rpmsg_channel {
-> -	struct rpmsg_device rpdev;
-> -
-> -	struct virtproc_info *vrp;
-> -};
-> -
-> -#define to_virtio_rpmsg_channel(_rpdev) \
-> -	container_of(_rpdev, struct virtio_rpmsg_channel, rpdev)
-> -
->  /*
->   * Local addresses are dynamically allocated on-demand.
->   * We do not dynamically assign addresses from the low 1024 range,
+> +static void rpmsg_ns_exit(void)
+> +{
+> +	unregister_rpmsg_driver(&rpmsg_ns_driver);
+> +}
+> +module_exit(rpmsg_ns_exit);
+> +
+> +MODULE_DESCRIPTION("Name service announcement rpmsg Driver");
+> +MODULE_AUTHOR("Arnaud Pouliquen <arnaud.pouliquen@st.com>");
+> +MODULE_ALIAS("rpmsg_ns");
+> +MODULE_LICENSE("GPL v2");
 > -- 
 > 2.25.1
 > 
