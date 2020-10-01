@@ -2,370 +2,266 @@ Return-Path: <SRS0=A3Cg=DI=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66F5BC4741F
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  1 Oct 2020 17:57:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1ED59C4741F
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  1 Oct 2020 21:06:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2549423447
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  1 Oct 2020 17:57:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9214A20848
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  1 Oct 2020 21:06:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="uGNSA88Q"
+	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="SLAHpPs3"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733007AbgJAR53 (ORCPT
+        id S1726606AbgJAVGN (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 1 Oct 2020 13:57:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33618 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733004AbgJAR52 (ORCPT
+        Thu, 1 Oct 2020 17:06:13 -0400
+Received: from mail-bn8nam12on2077.outbound.protection.outlook.com ([40.107.237.77]:33184
+        "EHLO NAM12-BN8-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1730045AbgJAVF7 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 1 Oct 2020 13:57:28 -0400
-Received: from mail-pg1-x543.google.com (mail-pg1-x543.google.com [IPv6:2607:f8b0:4864:20::543])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9F012C0613E2
-        for <linux-remoteproc@vger.kernel.org>; Thu,  1 Oct 2020 10:57:28 -0700 (PDT)
-Received: by mail-pg1-x543.google.com with SMTP id 5so4612618pgf.5
-        for <linux-remoteproc@vger.kernel.org>; Thu, 01 Oct 2020 10:57:28 -0700 (PDT)
+        Thu, 1 Oct 2020 17:05:59 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=SvAY8P0KPK45ZRJ0de60l4ewy3WSp+KVUhF4KIJNQNEskUqdXv328EkzkryWwwY1eCCHA+4TPZZlW1ZCJaOp9e+VyqK++nU+cgBd38Y1xkDIm8esN5NPL3t8DfW4gPubyeLmhqrIB7scuQdfpRRvE4O5xebF8BkakBkPxkYi4HBSPz4GXZar+rEynuBSvotE7G+46hcuM5dGHXq+jXe1Qoy+jLAWn3nJoIVyhOXDf+2LFTTeu0rDSWfHBgENTOvtgvDlevUArmbl3FKZsAZCSJwI7LOKyYUT/K3+leAkYKNwpVVRl6q9V8tGyjJfL02xCBL1ItqeLFx01sZZAeKgSQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ogHvixDvPvbJmCfm9PXktN6mt2iU69iG4kwJAU8l84s=;
+ b=Bn5W25+SbDuaBR5ggjhcPFykWy1IqZoEx5zXc1FaeZosG0Xx2ywHj8joeJ12xokigG4jews+I35qBqe9l5rzUPhu1Xo3w4knOuXX7kBt14cBj6eijLKFoNzD5iMST7XqZCtAKRkbnyRsMu6XXHygBhn8bh62+T2sSEREMmVvoNe1WISt8PDfDImDDWFMY8/ul9BsmKopj9NmumAaicvQttvVvT+7prhKe4zFdgqHMmTFvls/Xiz+7GZfr4b6dKUf/di/76gfrRcd59N4tvME63NAvx9fJa3RAXHdoY3eREXyRJ6hwOoyFlHfg3B2/f1+UvQGIXo62vbLSuVyusxJhA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 149.199.60.83) smtp.rcpttodomain=lists.infradead.org
+ smtp.mailfrom=xilinx.com; dmarc=bestguesspass action=none
+ header.from=xilinx.com; dkim=none (message not signed); arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=epOrrz4kKiqmzu4J7cp47FloQ3io83Jz4uKs6hd3fz0=;
-        b=uGNSA88Q/UROgLtV2zok8DH57ntohCYkuXElcPqKMURtdJi2FlAfVCmxsaH07rWfI+
-         rMnW9DdZzRksbRjWcumZGf/eLqu5aHtqNoMbVYk/Gi+Cqlu6c3LRsbFfbMXD73DJxULe
-         PtkkkeaZdfdJ6OSNOR5GIPbaVXokC0nHdnHJscHNMrcupVQJLFqkCWwGdvoY4YvlSQJi
-         YABDLPX3SnLmS5HuJnjSswKVIGQ+IwcTEuPEZw5f0F+18Sf0RMhNuF9Y+rmUCeNtjBql
-         cHQBKxLLJm7f/Y+fxsqkKHryAiglhimI/jTS2GHL8qG4uys0yZyfz92o/72scXAnrhgb
-         kDeg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=epOrrz4kKiqmzu4J7cp47FloQ3io83Jz4uKs6hd3fz0=;
-        b=F5mVJCln3zfmbuQWfF8iqP8bc/OZONh0GwXIlmCmYvZ7tiLM4T9isquAKkpgnUVffO
-         hWlBu6WjQNzQlaIU92VAEuVCd4+JhsEG1bDieXxIlFS1b+30MqIib+W2KgZnQwsPsmoK
-         YOOK/0Qrb+SoQw0mt40Ru6KfLekdgr3yq+HcMUHNvF3wbBS3/yo3v7hWEyJsSzRnszu+
-         kzfBiJwNMvLFUKbaZis8akXztzcReR+Ine16iPyLvcZatBJWsZI5VZq6Y73CiVKz6ibT
-         gLCkrz+jYd9SRr3nbq2XPk2PVIQsG9sDNr8pMS59dIcEkc6UzEYIFjRAaGsBGd2hvRIj
-         QGjQ==
-X-Gm-Message-State: AOAM533CH3p8/h8FKlfe+I5oxM7alsRADcstYhHEDumVD6MT3DOSjyvl
-        WOn1RlQPMDisG+pobERb3ENRnw==
-X-Google-Smtp-Source: ABdhPJzqAiSfYpf8Hk8KchDt1VsrFJ+6qJZ45BJ+NQuvKJH7ix53aH5X/0Alpm7Fiuw4X4dhQwa3mg==
-X-Received: by 2002:a17:902:21:b029:d2:564a:5dc6 with SMTP id 30-20020a1709020021b02900d2564a5dc6mr8610275pla.14.1601575047982;
-        Thu, 01 Oct 2020 10:57:27 -0700 (PDT)
-Received: from xps15 (S0106002369de4dac.cg.shawcable.net. [68.147.8.254])
-        by smtp.gmail.com with ESMTPSA id c201sm7317111pfb.216.2020.10.01.10.57.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 01 Oct 2020 10:57:27 -0700 (PDT)
-Date:   Thu, 1 Oct 2020 11:57:25 -0600
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-To:     Arnaud POULIQUEN <arnaud.pouliquen@st.com>
-Cc:     Guennadi Liakhovetski <guennadi.liakhovetski@linux.intel.com>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
-        "virtualization@lists.linux-foundation.org" 
-        <virtualization@lists.linux-foundation.org>,
-        "sound-open-firmware@alsa-project.org" 
-        <sound-open-firmware@alsa-project.org>,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Liam Girdwood <liam.r.girdwood@linux.intel.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
-        Ohad Ben-Cohen <ohad@wizery.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Vincent Whitchurch <vincent.whitchurch@axis.com>,
-        Kishon Vijay Abraham I <kishon@ti.com>
-Subject: Re: [PATCH v6 0/4] Add a vhost RPMsg API
-Message-ID: <20201001175725.GA396662@xps15>
-References: <20200901151153.28111-1-guennadi.liakhovetski@linux.intel.com>
- <9433695b-5757-db73-bd8a-538fd1375e2a@st.com>
- <20200917054705.GA11491@ubuntu>
- <47a9ad01-c922-3b1c-84de-433f229ffba3@st.com>
- <20200918054420.GA19246@ubuntu>
- <0b7d9004-d71b-8b9a-eaed-f92833ce113f@st.com>
- <20200918094719.GD19246@ubuntu>
- <f1d98e33-a349-678a-4a4c-3598c0371fd4@st.com>
+ d=xilinx.onmicrosoft.com; s=selector2-xilinx-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ogHvixDvPvbJmCfm9PXktN6mt2iU69iG4kwJAU8l84s=;
+ b=SLAHpPs3R4cUF2gbMs4dO1PZB1H4fp/esMtoaz7lSgqn1se9ntyilIxpE8qKbRmjXDSveJSRydqfBQfhYalS1UzD80hOvmIDR8Jgkt1Y1IytTrc0Nc3mpJL5V1euLfUQ2TJDXTx1rtVG+ZN9fvhQwxrgilN4ETwtnBEWoyDh77Q=
+Received: from MN2PR16CA0016.namprd16.prod.outlook.com (2603:10b6:208:134::29)
+ by CY4PR02MB2872.namprd02.prod.outlook.com (2603:10b6:903:127::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3433.38; Thu, 1 Oct
+ 2020 21:05:55 +0000
+Received: from BL2NAM02FT022.eop-nam02.prod.protection.outlook.com
+ (2603:10b6:208:134:cafe::43) by MN2PR16CA0016.outlook.office365.com
+ (2603:10b6:208:134::29) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3433.36 via Frontend
+ Transport; Thu, 1 Oct 2020 21:05:55 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 149.199.60.83)
+ smtp.mailfrom=xilinx.com; lists.infradead.org; dkim=none (message not signed)
+ header.d=none;lists.infradead.org; dmarc=bestguesspass action=none
+ header.from=xilinx.com;
+Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
+ 149.199.60.83 as permitted sender) receiver=protection.outlook.com;
+ client-ip=149.199.60.83; helo=xsj-pvapsmtpgw01;
+Received: from xsj-pvapsmtpgw01 (149.199.60.83) by
+ BL2NAM02FT022.mail.protection.outlook.com (10.152.77.153) with Microsoft SMTP
+ Server id 15.20.3412.21 via Frontend Transport; Thu, 1 Oct 2020 21:05:55
+ +0000
+Received: from [149.199.38.66] (port=60945 helo=smtp.xilinx.com)
+        by xsj-pvapsmtpgw01 with esmtp (Exim 4.90)
+        (envelope-from <ben.levinsky@xilinx.com>)
+        id 1kO5lW-0005ZT-ST; Thu, 01 Oct 2020 14:05:26 -0700
+Received: from [127.0.0.1] (helo=localhost)
+        by smtp.xilinx.com with smtp (Exim 4.63)
+        (envelope-from <ben.levinsky@xilinx.com>)
+        id 1kO5ly-0000KR-LC; Thu, 01 Oct 2020 14:05:54 -0700
+Received: from xsj-pvapsmtp01 (xsj-mail.xilinx.com [149.199.38.66])
+        by xsj-smtp-dlp2.xlnx.xilinx.com (8.13.8/8.13.1) with ESMTP id 091L5f5T030076;
+        Thu, 1 Oct 2020 14:05:41 -0700
+Received: from [172.19.2.206] (helo=xsjblevinsk50.xilinx.com)
+        by xsj-pvapsmtp01 with esmtp (Exim 4.63)
+        (envelope-from <ben.levinsky@xilinx.com>)
+        id 1kO5ll-0000Id-Bo; Thu, 01 Oct 2020 14:05:41 -0700
+From:   Ben Levinsky <ben.levinsky@xilinx.com>
+To:     sunnyliangjy@gmail.com, punit1.agrawal@toshiba.co.jp,
+        stefanos@xilinx.com, michals@xilinx.com, michael.auchter@ni.com
+Cc:     devicetree@vger.kernel.org, mathieu.poirier@linaro.org,
+        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        robh+dt@kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v17 3/5] firmware: xilinx: Add RPU configuration APIs
+Date:   Thu,  1 Oct 2020 14:05:39 -0700
+Message-Id: <20201001210541.32042-4-ben.levinsky@xilinx.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20201001210541.32042-1-ben.levinsky@xilinx.com>
+References: <20201001210541.32042-1-ben.levinsky@xilinx.com>
+X-RCIS-Action: ALLOW
+X-TM-AS-Product-Ver: IMSS-7.1.0.1224-8.2.0.1013-23620.005
+X-TM-AS-User-Approved-Sender: Yes;Yes
+X-EOPAttributedMessage: 0
+X-MS-Office365-Filtering-HT: Tenant
+X-MS-PublicTrafficType: Email
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f1d98e33-a349-678a-4a4c-3598c0371fd4@st.com>
+Content-Type: text/plain
+X-MS-Office365-Filtering-Correlation-Id: 6ec68435-46fe-4c5e-cdce-08d8664dc963
+X-MS-TrafficTypeDiagnostic: CY4PR02MB2872:
+X-Microsoft-Antispam-PRVS: <CY4PR02MB2872F70088DCB9C7CF5FA1B8B5300@CY4PR02MB2872.namprd02.prod.outlook.com>
+X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
+X-MS-Oob-TLC-OOBClassifiers: OLM:179;
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: v4/K1+393dZ1QywN1BBvCrkFoe8QTvvpX9F1S7wwUNpwf5rvpLQEQrY55jyD6xhy3PSysrQjxSWOx9LrkMGVgR1b8hlYz2lze+hx2klF8NGAgePfeZHS1Y9MEDKUMWzop/QgM+wtRXguf1Lqk1jvfnjwVVCtyL4cgatid14+e/o1uuYh+a6s9waUGC9j3o5SQnsUEj+odRnsBhYrN907iZYdZQX3vpDAL9t74ztecopgkGPJqIHZ2aEoam9uhSCskyug9/iKu++JXe0ZyCqcU29mdVWxpChgpQ5VUWb7Muwv5disEDICDznhH4tgMD66WOS8mBM1QezWU+hIHwbqKpgr5HMjeu2LXFp5gZOK7xpysSIBdwkK66sqIPhFLzrQQe2FEkw4aspIPApc20aXKQ==
+X-Forefront-Antispam-Report: CIP:149.199.60.83;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:xsj-pvapsmtpgw01;PTR:unknown-60-83.xilinx.com;CAT:NONE;SFS:(39860400002)(396003)(346002)(376002)(136003)(46966005)(4326008)(44832011)(36756003)(70586007)(70206006)(7696005)(8676002)(2906002)(8936002)(2616005)(9786002)(83380400001)(26005)(186003)(478600001)(336012)(1076003)(5660300002)(426003)(81166007)(356005)(82740400003)(47076004)(82310400003)(316002);DIR:OUT;SFP:1101;
+X-OriginatorOrg: xilinx.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Oct 2020 21:05:55.0071
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6ec68435-46fe-4c5e-cdce-08d8664dc963
+X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.60.83];Helo=[xsj-pvapsmtpgw01]
+X-MS-Exchange-CrossTenant-AuthSource: BL2NAM02FT022.eop-nam02.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR02MB2872
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi all,
+This patch adds APIs to access to configure RPU and its
+processor-specific memory.
 
-On Fri, Sep 18, 2020 at 07:26:50PM +0200, Arnaud POULIQUEN wrote:
-> Hi Guennadi,
-> 
-> 
-> On 9/18/20 11:47 AM, Guennadi Liakhovetski wrote:
-> > Hi Arnaud,
-> > 
-> > On Fri, Sep 18, 2020 at 09:47:45AM +0200, Arnaud POULIQUEN wrote:
-> >> Hi Guennadi,
-> >>
-> >> On 9/18/20 7:44 AM, Guennadi Liakhovetski wrote:
-> >>> Hi Arnaud,
-> >>>
-> >>> On Thu, Sep 17, 2020 at 05:21:02PM +0200, Arnaud POULIQUEN wrote:
-> >>>> Hi Guennadi,
-> >>>>
-> >>>>> -----Original Message-----
-> >>>>> From: Guennadi Liakhovetski <guennadi.liakhovetski@linux.intel.com>
-> >>>>> Sent: jeudi 17 septembre 2020 07:47
-> >>>>> To: Arnaud POULIQUEN <arnaud.pouliquen@st.com>
-> >>>>> Cc: kvm@vger.kernel.org; linux-remoteproc@vger.kernel.org;
-> >>>>> virtualization@lists.linux-foundation.org; sound-open-firmware@alsa-
-> >>>>> project.org; Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>; Liam
-> >>>>> Girdwood <liam.r.girdwood@linux.intel.com>; Michael S. Tsirkin
-> >>>>> <mst@redhat.com>; Jason Wang <jasowang@redhat.com>; Ohad Ben-Cohen
-> >>>>> <ohad@wizery.com>; Bjorn Andersson <bjorn.andersson@linaro.org>; Mathieu
-> >>>>> Poirier <mathieu.poirier@linaro.org>; Vincent Whitchurch
-> >>>>> <vincent.whitchurch@axis.com>
-> >>>>> Subject: Re: [PATCH v6 0/4] Add a vhost RPMsg API
-> >>>>>
-> >>>>> Hi Arnaud,
-> >>>>>
-> >>>>> On Tue, Sep 15, 2020 at 02:13:23PM +0200, Arnaud POULIQUEN wrote:
-> >>>>>> Hi  Guennadi,
-> >>>>>>
-> >>>>>> On 9/1/20 5:11 PM, Guennadi Liakhovetski wrote:
-> >>>>>>> Hi,
-> >>>>>>>
-> >>>>>>> Next update:
-> >>>>>>>
-> >>>>>>> v6:
-> >>>>>>> - rename include/linux/virtio_rpmsg.h ->
-> >>>>>>> include/linux/rpmsg/virtio.h
-> >>>>>>>
-> >>>>>>> v5:
-> >>>>>>> - don't hard-code message layout
-> >>>>>>>
-> >>>>>>> v4:
-> >>>>>>> - add endianness conversions to comply with the VirtIO standard
-> >>>>>>>
-> >>>>>>> v3:
-> >>>>>>> - address several checkpatch warnings
-> >>>>>>> - address comments from Mathieu Poirier
-> >>>>>>>
-> >>>>>>> v2:
-> >>>>>>> - update patch #5 with a correct vhost_dev_init() prototype
-> >>>>>>> - drop patch #6 - it depends on a different patch, that is currently
-> >>>>>>>   an RFC
-> >>>>>>> - address comments from Pierre-Louis Bossart:
-> >>>>>>>   * remove "default n" from Kconfig
-> >>>>>>>
-> >>>>>>> Linux supports RPMsg over VirtIO for "remote processor" / AMP use
-> >>>>>>> cases. It can however also be used for virtualisation scenarios,
-> >>>>>>> e.g. when using KVM to run Linux on both the host and the guests.
-> >>>>>>> This patch set adds a wrapper API to facilitate writing vhost
-> >>>>>>> drivers for such RPMsg-based solutions. The first use case is an
-> >>>>>>> audio DSP virtualisation project, currently under development, ready
-> >>>>>>> for review and submission, available at
-> >>>>>>> https://github.com/thesofproject/linux/pull/1501/commits
-> >>>>>>
-> >>>>>> Mathieu pointed me your series. On my side i proposed the rpmsg_ns_msg
-> >>>>>> service[1] that does not match with your implementation.
-> >>>>>> As i come late, i hope that i did not miss something in the history...
-> >>>>>> Don't hesitate to point me the discussions, if it is the case.
-> >>>>>
-> >>>>> Well, as you see, this is a v6 only of this patch set, and apart from it there have
-> >>>>> been several side discussions and patch sets.
-> >>>>>
-> >>>>>> Regarding your patchset, it is quite confusing for me. It seems that
-> >>>>>> you implement your own protocol on top of vhost forked from the RPMsg
-> >>>>> one.
-> >>>>>> But look to me that it is not the RPMsg protocol.
-> >>>>>
-> >>>>> I'm implementing a counterpart to the rpmsg protocol over VirtIO as initially
-> >>>>> implemented by drivers/rpmsg/virtio_rpmsg_bus.c for the "main CPU" (in case
-> >>>>> of remoteproc over VirtIO) or the guest side in case of Linux virtualisation.
-> >>>>> Since my implementation can talk to that driver, I don't think, that I'm inventing
-> >>>>> a new protocol. I'm adding support for the same protocol for the opposite side
-> >>>>> of the VirtIO divide.
-> >>>>
-> >>>> The main point I would like to highlight here is related to the use of the name "RPMsg"
-> >>>> more than how you implement your IPC protocol.
-> >>>> If It is a counterpart, it probably does not respect interface for RPMsg clients.
-> >>>> A good way to answer this, might be to respond to this question:
-> >>>> Is the rpmsg sample client[4] can be used on top of your vhost RPMsg implementation?
-> >>>> If the response is no, describe it as a RPMsg implementation could lead to confusion...
-> >>>
-> >>> Sorry, I don't quite understand your logic. RPMsg is a communication protocol, not an 
-> >>> API. An RPMsg implementation has to be able to communicate with other compliant RPMsg 
-> >>> implementations, it doesn't have to provide any specific API. Am I missing anything?
-> >>
-> >> You are right nothing is written in stone that compliance with the user RPMsg API defined
-> >> in the Linux Documentation [5] is mandatory.
-> > 
-> > A quote from [5]:
-> > 
-> > <quote>
-> > Rpmsg is a virtio-based messaging bus that allows kernel drivers to communicate
-> > with remote processors available on the system.
-> > </quote>
-> > 
-> > So, that document describes the API used by Linux drivers to talk to remote processors. 
-> > It says nothing about VMs. What my patches do, they add a capability to the Linux RPMsg 
-> > implementation to also be used with VMs. Moreover, this is a particularly good fit, 
-> > because both cases can use VirtIO, so, the "VirtIO side" of the communication doesn't 
-> > have to change, and indeed it remains unchanged and uses the API in [5]. But what I do, 
-> > is I also add RPMsg support to the host side.
-> 
-> The feature you propose is very interesting and using RPMsg for this is clearly,
-> for me, a good approach.
-> 
-> But I'm not sure that we are speaking about the same things...
->   
-> Perhaps, I need to clarify my view with a new approach describing RPMsg layers. 
-> 
-> in next part I'm focusing only on Linux local side (I'm ignoring the remote side for now).
-> We can divide RPMsg implementation in layers.
-> 
-> 1) Rpmsg service layer:
->   This layer implements a service on top of the RPMsg protocol.
->   It uses the RPMSG user API to:
->     - register/unregister a device
->     - create destroy endpoints
->     - send/receive messages
->   This layer is independent from the ways the message is sent (virtio, vhost,...)	 
->   In Linux kernel as example we can find the RPMsg sample device and rpmsg_char device 
-> 
-> 2) The RPMsg core layer:
->   This is the transport layer. It implements the RPMsg API
->   It a kind of message mixer/router layer based on local and distant addresses.
->   This layer is independent from the ways the message is sent ( virtio, vhost,...)	 
-> 
-> 3) The RPMsg bus layer:
->   This backend layer implements the RPMsg protocol over an IPC layer.
->   This layer depends on the platform.
->   Some exemples are :
->     - drivers/rpmsg/mtk_rpmsg.c
->     - drivers/rpmsg/qcom_glink_native.c
->     - drivers/rpmsg/virtio_rpmsg_bus.c
-> 
-> Regarding your implementation your drivers/vhost/rpmsg.c replaces the layers 2)
-> and 3) and define a new "Vhost RPMsg" API, right?
-> As consequence the layer 1) has to by modified or duplicated to support the
-> "Vhost RPMsg" API.
-> 
-> What Vincent an I proposed (please tell me Vincent if i'm wrong) is that only the
-> layer 3) is implemented for portability on vhost. This as been proposed in the
-> "RFC patch 14/22" [6] from Kishon.
-> 
-> But I'm not a vhost expert, So perhaps it is not adapted...?
-> 
-> [6] https://www.mail-archive.com/linux-kernel@vger.kernel.org/msg2219863.html 
-> 
-> > 
-> >> IMO, as this API is defined in the Linux documentation [5] we should respect it, to ensure
-> >> one generic implementation. The RPMsg sample client[4] uses this user API, so seems to me
-> >> a good candidate to verify this. 
-> >>
-> >> That's said, shall we multiple the RPMsg implementations in Linux with several APIs,
-> >> With the risk to make the RPMsg clients devices dependent on these implementations?
-> >> That could lead to complex code or duplications...
-> > 
-> > So, no, in my understanding there aren't two competing alternative APIs, you'd never have 
-> > to choose between them. If you're writing a driver for Linux to communicate with remote 
-> > processors or to run on VMs, you use the existing API. If you're writing a driver for 
-> > Linux to communicate with those VMs, you use the vhost API and whatever help is available 
-> > for RPMsg processing.
-> 
-> This is what I would have expect here. To have only one driver per service, not
-> to instantiate it for each type of type of communication.
-> 
-> > 
-> > However, I can in principle imagine a single driver, written to work on both sides. 
-> > Something like the rpmsg_char.c or maybe some networking driver. Is that what you're 
-> > referring to? I can see that as a fun exercise, but are there any real uses for that? 
-> > You could do the same with VirtIO, however, it has been decided to go with two 
-> > distinct APIs: virtio for guests and vhost for the host, noone bothered to create a 
-> > single API for both and nobody seems to miss one. Why would we want one with RPMsg?
-> 
-> Regarding the RFC [3] mentioned in a previous mail, perhaps this requirement
-> exists. I added Kishon in copy. 
-> 
-> In ST, we have such requirement but not concerning vhost.Our need is to
-> facilitate the services porting between an internal coprocessor (virtio) and an
-> external coprocessor(serial link) using RPMsg.
-> 
-> The Sound open firmware project could also takes benefit of an uniformization of
-> the communication with the audio DSP, using the RPMsg API to address in a same
-> way an internal coprocessor, an external coprocessor or a virtual machine for
-> the control part...
->    
-> And of course to simplify the maintenance and evolution of the RPMsg protocol in
-> Linux.
-> 
-> That's said our approach seems to me also valid as it respects the RPMsg protocol.
-> 
-> Now there are 2 different patch series with 2 different approaches sent to
-> the mailing list. So i guess that maintainers will have to decide whether
-> they will get the both or only one.
-> 
+That is query the run-time mode of RPU as either split or lockstep as well
+as API to set this mode. In addition add APIs to access configuration of
+the RPUs' tightly coupled memory (TCM).
 
-I finally had the time to look at Kishon's pathset yesterday.  If we skim out
-the parts that deal with the realities of the NTB his solution is quite
-simple.  It also provides an implementation for both side of the channel, that
-is host and guest.  Lastly current implementation such as rpmsg-char and
-rpmsg-sample-client.c can run on it seamlessly.  
+Signed-off-by: Ben Levinsky <ben.levinsky@xilinx.com>
+---
+v3:
+- add xilinx-related platform mgmt fn's instead of wrapping around
+  function pointer in xilinx eemi ops struct
+v4:
+- add default values for enums
+v9:
+- update commit message
+- for zynqmp_pm_set_tcm_config and zynqmp_pm_get_rpu_mode update docs for
+  expected output, arguments as well removing unused args
+- remove unused fn zynqmp_pm_get_node_status
+v11:
+- update usage of zynqmp_pm_get_rpu_mode to return rpu mode in enum
+- update zynqmp_pm_set_tcm_config and zynqmp_pm_set_rpu_mode arguments to remove unused args
+v12:
+- in drivers/firmware/zynqmp.c, update zynqmp_pm_set_rpu_mode so rpu_mode
+  is only set if no error
+- update args for zynqmp_pm_set_rpu_mode, zynqmp_pm_set_tcm_config fn arg's to
+  reflect what is expected in the function and the usage in
+  zynqmp_r5_remoteproc accordingly
+- zynqmp_pm_get_rpu_mode argument zynqmp_pm_get_rpu_mode is
+  only set if no error
+---
+ drivers/firmware/xilinx/zynqmp.c     | 61 ++++++++++++++++++++++++++++
+ include/linux/firmware/xlnx-zynqmp.h | 18 ++++++++
+ 2 files changed, 79 insertions(+)
 
-Based on the above and the use case described by Vincent I think following
-Kishon's approach is the best way to move forward. 
+diff --git a/drivers/firmware/xilinx/zynqmp.c b/drivers/firmware/xilinx/zynqmp.c
+index a966ee956573..b390a00338d0 100644
+--- a/drivers/firmware/xilinx/zynqmp.c
++++ b/drivers/firmware/xilinx/zynqmp.c
+@@ -846,6 +846,67 @@ int zynqmp_pm_release_node(const u32 node)
+ }
+ EXPORT_SYMBOL_GPL(zynqmp_pm_release_node);
+ 
++/**
++ * zynqmp_pm_get_rpu_mode() - Get RPU mode
++ * @node_id:	Node ID of the device
++ * @rpu_mode:	return by reference value
++ *		either split or lockstep
++ *
++ * Return:	return 0 on success or error+reason.
++ *		if success, then  rpu_mode will be set
++ *		to current rpu mode.
++ */
++int zynqmp_pm_get_rpu_mode(u32 node_id, enum rpu_oper_mode *rpu_mode)
++{
++	u32 ret_payload[PAYLOAD_ARG_CNT];
++	int ret;
++
++	ret = zynqmp_pm_invoke_fn(PM_IOCTL, node_id,
++				  IOCTL_GET_RPU_OPER_MODE, 0, 0, ret_payload);
++
++	/* only set rpu_mode if no error */
++	if (ret == XST_PM_SUCCESS)
++		*rpu_mode = ret_payload[0];
++
++	return ret;
++}
++EXPORT_SYMBOL_GPL(zynqmp_pm_get_rpu_mode);
++
++/**
++ * zynqmp_pm_set_rpu_mode() - Set RPU mode
++ * @node_id:	Node ID of the device
++ * @rpu_mode:	Argument 1 to requested IOCTL call. either split or lockstep
++ *
++ *		This function is used to set RPU mode to split or
++ *		lockstep
++ *
++ * Return:	Returns status, either success or error+reason
++ */
++int zynqmp_pm_set_rpu_mode(u32 node_id, enum rpu_oper_mode rpu_mode)
++{
++	return zynqmp_pm_invoke_fn(PM_IOCTL, node_id,
++				   IOCTL_SET_RPU_OPER_MODE, (u32)rpu_mode,
++				   0, NULL);
++}
++EXPORT_SYMBOL_GPL(zynqmp_pm_set_rpu_mode);
++
++/**
++ * zynqmp_pm_set_tcm_config - configure TCM
++ * @tcm_mode:	Argument 1 to requested IOCTL call
++ *              either PM_RPU_TCM_COMB or PM_RPU_TCM_SPLIT
++ *
++ * This function is used to set RPU mode to split or combined
++ *
++ * Return: status: 0 for success, else failure
++ */
++int zynqmp_pm_set_tcm_config(u32 node_id, enum rpu_tcm_comb tcm_mode)
++{
++	return zynqmp_pm_invoke_fn(PM_IOCTL, node_id,
++				   IOCTL_TCM_COMB_CONFIG, (u32)tcm_mode, 0,
++				   NULL);
++}
++EXPORT_SYMBOL_GPL(zynqmp_pm_set_tcm_config);
++
+ /**
+  * zynqmp_pm_force_pwrdwn - PM call to request for another PU or subsystem to
+  *             be powered down forcefully
+diff --git a/include/linux/firmware/xlnx-zynqmp.h b/include/linux/firmware/xlnx-zynqmp.h
+index 6241c5ac51b3..79aa2fcbcd54 100644
+--- a/include/linux/firmware/xlnx-zynqmp.h
++++ b/include/linux/firmware/xlnx-zynqmp.h
+@@ -385,6 +385,9 @@ int zynqmp_pm_request_wake(const u32 node,
+ 			   const bool set_addr,
+ 			   const u64 address,
+ 			   const enum zynqmp_pm_request_ack ack);
++int zynqmp_pm_get_rpu_mode(u32 node_id, enum rpu_oper_mode *rpu_mode);
++int zynqmp_pm_set_rpu_mode(u32 node_id, u32 arg1);
++int zynqmp_pm_set_tcm_config(u32 node_id, u32 arg1);
+ #else
+ static inline struct zynqmp_eemi_ops *zynqmp_pm_get_eemi_ops(void)
+ {
+@@ -549,6 +552,21 @@ static inline int zynqmp_pm_request_wake(const u32 node,
+ {
+ 	return -ENODEV;
+ }
++
++static inline int zynqmp_pm_get_rpu_mode(u32 node_id, enum rpu_oper_mode *rpu_mode)
++{
++	return -ENODEV;
++}
++
++static inline int zynqmp_pm_set_rpu_mode(u32 node_id, u32 arg1)
++{
++	return -ENODEV;
++}
++
++static inline int zynqmp_pm_set_tcm_config(u32 node_id, u32 arg1)
++{
++	return -ENODEV;
++}
+ #endif
+ 
+ #endif /* __FIRMWARE_ZYNQMP_H__ */
+-- 
+2.17.1
 
-> Thanks,
-> Arnaud
-> 
-> > 
-> > Thanks
-> > Guennadi
-> >> [5] https://elixir.bootlin.com/linux/v5.8.10/source/Documentation/rpmsg.txt#L66
-> >>
-> >> Thanks,
-> >> Arnaud
-> >>
-> >>   
-> >>>
-> >>> Thanks
-> >>> Guennadi
-> >>>
-> >>>> [4] https://elixir.bootlin.com/linux/v5.9-rc5/source/samples/rpmsg/rpmsg_client_sample.c
-> >>>>
-> >>>> Regards,
-> >>>> Arnaud
-> >>>>
-> >>>>>
-> >>>>>> So i would be agree with Vincent[2] which proposed to switch on a
-> >>>>>> RPMsg API and creating a vhost rpmsg device. This is also proposed in
-> >>>>>> the "Enhance VHOST to enable SoC-to-SoC communication" RFC[3].
-> >>>>>> Do you think that this alternative could match with your need?
-> >>>>>
-> >>>>> As I replied to Vincent, I understand his proposal and the approach taken in the
-> >>>>> series [3], but I'm not sure I agree, that adding yet another virtual device /
-> >>>>> driver layer on the vhost side is a good idea. As far as I understand adding new
-> >>>>> completely virtual devices isn't considered to be a good practice in the kernel.
-> >>>>> Currently vhost is just a passive "library"
-> >>>>> and my vhost-rpmsg support keeps it that way. Not sure I'm in favour of
-> >>>>> converting vhost to a virtual device infrastructure.
-> >>>>>
-> >>>>> Thanks for pointing me out at [3], I should have a better look at it.
-> >>>>>
-> >>>>> Thanks
-> >>>>> Guennadi
-> >>>>>
-> >>>>>> [1].
-> >>>>>> https://patchwork.kernel.org/project/linux-remoteproc/list/?series=338
-> >>>>>> 335 [2].
-> >>>>>> https://www.spinics.net/lists/linux-virtualization/msg44195.html
-> >>>>>> [3]. https://www.spinics.net/lists/linux-remoteproc/msg06634.html
-> >>>>>>
-> >>>>>> Thanks,
-> >>>>>> Arnaud
-> >>>>>>
-> >>>>>>>
-> >>>>>>> Thanks
-> >>>>>>> Guennadi
