@@ -2,137 +2,370 @@ Return-Path: <SRS0=A3Cg=DI=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.5 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 213ABC4727E
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  1 Oct 2020 17:28:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66F5BC4741F
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  1 Oct 2020 17:57:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D47F32085B
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  1 Oct 2020 17:28:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2549423447
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  1 Oct 2020 17:57:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="of5jzw3P"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="uGNSA88Q"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732920AbgJAR2N (ORCPT
+        id S1733007AbgJAR53 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 1 Oct 2020 13:28:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57286 "EHLO
+        Thu, 1 Oct 2020 13:57:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33618 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732287AbgJAR2K (ORCPT
+        with ESMTP id S1733004AbgJAR52 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 1 Oct 2020 13:28:10 -0400
-Received: from mail-wm1-x344.google.com (mail-wm1-x344.google.com [IPv6:2a00:1450:4864:20::344])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A45EC0613D0
-        for <linux-remoteproc@vger.kernel.org>; Thu,  1 Oct 2020 10:28:08 -0700 (PDT)
-Received: by mail-wm1-x344.google.com with SMTP id y15so4014095wmi.0
-        for <linux-remoteproc@vger.kernel.org>; Thu, 01 Oct 2020 10:28:08 -0700 (PDT)
+        Thu, 1 Oct 2020 13:57:28 -0400
+Received: from mail-pg1-x543.google.com (mail-pg1-x543.google.com [IPv6:2607:f8b0:4864:20::543])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9F012C0613E2
+        for <linux-remoteproc@vger.kernel.org>; Thu,  1 Oct 2020 10:57:28 -0700 (PDT)
+Received: by mail-pg1-x543.google.com with SMTP id 5so4612618pgf.5
+        for <linux-remoteproc@vger.kernel.org>; Thu, 01 Oct 2020 10:57:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-transfer-encoding:content-language;
-        bh=1M4RAfm7Ka56hTVARaFbgr0VJN7Hux9S4garFliWQrQ=;
-        b=of5jzw3PMgufI53qBrC2IN+3pkDwsZMmS8MapDtIqs/jRJVAtRNIK5NaDLJTzFRu6O
-         EYphTukdKvGCSmMzQwdDNTvjyg55U1+uhs4sZ7UDsqRMrfW+bdIRVAeso5kctUQ3PPmO
-         fTtG7v30wu0HPu+/UspUI3agEHuhSkt+y6qOQYSr+8OqjcVQUHBPsPKO3GDsih2xLp+r
-         VXbby1N/7G0XvD+/BVHbNUwjJVhsoHD5W33pcDGbhV709XEYe5Bn4+eqeuSsh6lRVOlm
-         ntz4ZoUrHhH02HsIwi2Gu/8kiNiJqlqJvyX8lRrJG5U4Ab2lfTUwML+OwasgOQzqTn3E
-         f6jg==
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=epOrrz4kKiqmzu4J7cp47FloQ3io83Jz4uKs6hd3fz0=;
+        b=uGNSA88Q/UROgLtV2zok8DH57ntohCYkuXElcPqKMURtdJi2FlAfVCmxsaH07rWfI+
+         rMnW9DdZzRksbRjWcumZGf/eLqu5aHtqNoMbVYk/Gi+Cqlu6c3LRsbFfbMXD73DJxULe
+         PtkkkeaZdfdJ6OSNOR5GIPbaVXokC0nHdnHJscHNMrcupVQJLFqkCWwGdvoY4YvlSQJi
+         YABDLPX3SnLmS5HuJnjSswKVIGQ+IwcTEuPEZw5f0F+18Sf0RMhNuF9Y+rmUCeNtjBql
+         cHQBKxLLJm7f/Y+fxsqkKHryAiglhimI/jTS2GHL8qG4uys0yZyfz92o/72scXAnrhgb
+         kDeg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=1M4RAfm7Ka56hTVARaFbgr0VJN7Hux9S4garFliWQrQ=;
-        b=kML6k8HEqIzP+JDDzOFU821j8hzi0vJdS0txQzinC8rYtoIoRssDZdiyK/sZtMVk6a
-         5jD9t7gMgDSz1OJjV0PO6TJONWWPurLUQd6VLb5CEgDGnck0JO/B5GZgY6D+i2n0/1DU
-         Q45wiBoSkbuxt0TD6j7UiLhwK5ezz1Aki4xGh95pbygPhCqB0QhMJm8cUUS+PHpOjRlE
-         Ts9vTq7y1c1hl1BnELQw19184XsEsszVqHnHvyh8mlnjgNrKwzZSY0PiKRNj/qk76Fs4
-         XXQEcTaqxWSYKR85b6SM6qsTKTDosKyV+iSnLIRekKooL7YqlmZH530ihpYVvw+DhtUT
-         C9zw==
-X-Gm-Message-State: AOAM531NQysbx/jffUCwhw+wUX+Hd/MU0JTpKU/4A3z08JYZXv0SKTgS
-        gpxevK+VDDZNsBHRb/J6V3VorA==
-X-Google-Smtp-Source: ABdhPJwyVDVxYje8TjchORDThAw8Nf2lyrEVVWCNGUtzSKY/wsPFwtKzJsKQK/RU/wWZQIwlAkVZlA==
-X-Received: by 2002:a7b:ce89:: with SMTP id q9mr1060628wmj.65.1601573286992;
-        Thu, 01 Oct 2020 10:28:06 -0700 (PDT)
-Received: from ?IPv6:2001:861:3a81:3690:b885:8dcf:f8c6:7841? ([2001:861:3a81:3690:b885:8dcf:f8c6:7841])
-        by smtp.gmail.com with ESMTPSA id k6sm827843wmf.30.2020.10.01.10.28.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 01 Oct 2020 10:28:06 -0700 (PDT)
-Subject: Re: [RFC PATCH 0/4] Add a RPMsg driver to support AI Processing Unit
- (APU)
-To:     linux-remoteproc@vger.kernel.org, ohad@wizery.com,
-        gpain@baylibre.com, stephane.leprovost@mediatek.com,
-        jstephan@baylibre.com, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org,
-        mturquette@baylibre.com, bjorn.andersson@linaro.org,
-        christian.koenig@amd.com, linux-media@vger.kernel.org
-References: <20200930115350.5272-1-abailon@baylibre.com>
- <20201001084856.GC438822@phenom.ffwll.local>
-From:   Alexandre Bailon <abailon@baylibre.com>
-Message-ID: <8e4bb739-c3b3-d790-e8e3-dd5df2d6f869@baylibre.com>
-Date:   Thu, 1 Oct 2020 19:28:27 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.12.0
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=epOrrz4kKiqmzu4J7cp47FloQ3io83Jz4uKs6hd3fz0=;
+        b=F5mVJCln3zfmbuQWfF8iqP8bc/OZONh0GwXIlmCmYvZ7tiLM4T9isquAKkpgnUVffO
+         hWlBu6WjQNzQlaIU92VAEuVCd4+JhsEG1bDieXxIlFS1b+30MqIib+W2KgZnQwsPsmoK
+         YOOK/0Qrb+SoQw0mt40Ru6KfLekdgr3yq+HcMUHNvF3wbBS3/yo3v7hWEyJsSzRnszu+
+         kzfBiJwNMvLFUKbaZis8akXztzcReR+Ine16iPyLvcZatBJWsZI5VZq6Y73CiVKz6ibT
+         gLCkrz+jYd9SRr3nbq2XPk2PVIQsG9sDNr8pMS59dIcEkc6UzEYIFjRAaGsBGd2hvRIj
+         QGjQ==
+X-Gm-Message-State: AOAM533CH3p8/h8FKlfe+I5oxM7alsRADcstYhHEDumVD6MT3DOSjyvl
+        WOn1RlQPMDisG+pobERb3ENRnw==
+X-Google-Smtp-Source: ABdhPJzqAiSfYpf8Hk8KchDt1VsrFJ+6qJZ45BJ+NQuvKJH7ix53aH5X/0Alpm7Fiuw4X4dhQwa3mg==
+X-Received: by 2002:a17:902:21:b029:d2:564a:5dc6 with SMTP id 30-20020a1709020021b02900d2564a5dc6mr8610275pla.14.1601575047982;
+        Thu, 01 Oct 2020 10:57:27 -0700 (PDT)
+Received: from xps15 (S0106002369de4dac.cg.shawcable.net. [68.147.8.254])
+        by smtp.gmail.com with ESMTPSA id c201sm7317111pfb.216.2020.10.01.10.57.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 01 Oct 2020 10:57:27 -0700 (PDT)
+Date:   Thu, 1 Oct 2020 11:57:25 -0600
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+To:     Arnaud POULIQUEN <arnaud.pouliquen@st.com>
+Cc:     Guennadi Liakhovetski <guennadi.liakhovetski@linux.intel.com>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
+        "virtualization@lists.linux-foundation.org" 
+        <virtualization@lists.linux-foundation.org>,
+        "sound-open-firmware@alsa-project.org" 
+        <sound-open-firmware@alsa-project.org>,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Liam Girdwood <liam.r.girdwood@linux.intel.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Ohad Ben-Cohen <ohad@wizery.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Vincent Whitchurch <vincent.whitchurch@axis.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>
+Subject: Re: [PATCH v6 0/4] Add a vhost RPMsg API
+Message-ID: <20201001175725.GA396662@xps15>
+References: <20200901151153.28111-1-guennadi.liakhovetski@linux.intel.com>
+ <9433695b-5757-db73-bd8a-538fd1375e2a@st.com>
+ <20200917054705.GA11491@ubuntu>
+ <47a9ad01-c922-3b1c-84de-433f229ffba3@st.com>
+ <20200918054420.GA19246@ubuntu>
+ <0b7d9004-d71b-8b9a-eaed-f92833ce113f@st.com>
+ <20200918094719.GD19246@ubuntu>
+ <f1d98e33-a349-678a-4a4c-3598c0371fd4@st.com>
 MIME-Version: 1.0
-In-Reply-To: <20201001084856.GC438822@phenom.ffwll.local>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f1d98e33-a349-678a-4a4c-3598c0371fd4@st.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi Daniel,
+Hi all,
 
-On 10/1/20 10:48 AM, Daniel Vetter wrote:
-> On Wed, Sep 30, 2020 at 01:53:46PM +0200, Alexandre Bailon wrote:
->> This adds a RPMsg driver that implements communication between the CPU and an
->> APU.
->> This uses VirtIO buffer to exchange messages but for sharing data, this uses
->> a dmabuf, mapped to be shared between CPU (userspace) and APU.
->> The driver is relatively generic, and should work with any SoC implementing
->> hardware accelerator for AI if they use support remoteproc and VirtIO.
->>
->> For the people interested by the firmware or userspace library,
->> the sources are available here:
->> https://github.com/BayLibre/open-amp/tree/v2020.01-mtk/apps/examples/apu
-> Since this has open userspace (from a very cursory look), and smells very
-> much like an acceleration driver, and seems to use dma-buf for memory
-> management: Why is this not just a drm driver?
+On Fri, Sep 18, 2020 at 07:26:50PM +0200, Arnaud POULIQUEN wrote:
+> Hi Guennadi,
+> 
+> 
+> On 9/18/20 11:47 AM, Guennadi Liakhovetski wrote:
+> > Hi Arnaud,
+> > 
+> > On Fri, Sep 18, 2020 at 09:47:45AM +0200, Arnaud POULIQUEN wrote:
+> >> Hi Guennadi,
+> >>
+> >> On 9/18/20 7:44 AM, Guennadi Liakhovetski wrote:
+> >>> Hi Arnaud,
+> >>>
+> >>> On Thu, Sep 17, 2020 at 05:21:02PM +0200, Arnaud POULIQUEN wrote:
+> >>>> Hi Guennadi,
+> >>>>
+> >>>>> -----Original Message-----
+> >>>>> From: Guennadi Liakhovetski <guennadi.liakhovetski@linux.intel.com>
+> >>>>> Sent: jeudi 17 septembre 2020 07:47
+> >>>>> To: Arnaud POULIQUEN <arnaud.pouliquen@st.com>
+> >>>>> Cc: kvm@vger.kernel.org; linux-remoteproc@vger.kernel.org;
+> >>>>> virtualization@lists.linux-foundation.org; sound-open-firmware@alsa-
+> >>>>> project.org; Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>; Liam
+> >>>>> Girdwood <liam.r.girdwood@linux.intel.com>; Michael S. Tsirkin
+> >>>>> <mst@redhat.com>; Jason Wang <jasowang@redhat.com>; Ohad Ben-Cohen
+> >>>>> <ohad@wizery.com>; Bjorn Andersson <bjorn.andersson@linaro.org>; Mathieu
+> >>>>> Poirier <mathieu.poirier@linaro.org>; Vincent Whitchurch
+> >>>>> <vincent.whitchurch@axis.com>
+> >>>>> Subject: Re: [PATCH v6 0/4] Add a vhost RPMsg API
+> >>>>>
+> >>>>> Hi Arnaud,
+> >>>>>
+> >>>>> On Tue, Sep 15, 2020 at 02:13:23PM +0200, Arnaud POULIQUEN wrote:
+> >>>>>> Hi  Guennadi,
+> >>>>>>
+> >>>>>> On 9/1/20 5:11 PM, Guennadi Liakhovetski wrote:
+> >>>>>>> Hi,
+> >>>>>>>
+> >>>>>>> Next update:
+> >>>>>>>
+> >>>>>>> v6:
+> >>>>>>> - rename include/linux/virtio_rpmsg.h ->
+> >>>>>>> include/linux/rpmsg/virtio.h
+> >>>>>>>
+> >>>>>>> v5:
+> >>>>>>> - don't hard-code message layout
+> >>>>>>>
+> >>>>>>> v4:
+> >>>>>>> - add endianness conversions to comply with the VirtIO standard
+> >>>>>>>
+> >>>>>>> v3:
+> >>>>>>> - address several checkpatch warnings
+> >>>>>>> - address comments from Mathieu Poirier
+> >>>>>>>
+> >>>>>>> v2:
+> >>>>>>> - update patch #5 with a correct vhost_dev_init() prototype
+> >>>>>>> - drop patch #6 - it depends on a different patch, that is currently
+> >>>>>>>   an RFC
+> >>>>>>> - address comments from Pierre-Louis Bossart:
+> >>>>>>>   * remove "default n" from Kconfig
+> >>>>>>>
+> >>>>>>> Linux supports RPMsg over VirtIO for "remote processor" / AMP use
+> >>>>>>> cases. It can however also be used for virtualisation scenarios,
+> >>>>>>> e.g. when using KVM to run Linux on both the host and the guests.
+> >>>>>>> This patch set adds a wrapper API to facilitate writing vhost
+> >>>>>>> drivers for such RPMsg-based solutions. The first use case is an
+> >>>>>>> audio DSP virtualisation project, currently under development, ready
+> >>>>>>> for review and submission, available at
+> >>>>>>> https://github.com/thesofproject/linux/pull/1501/commits
+> >>>>>>
+> >>>>>> Mathieu pointed me your series. On my side i proposed the rpmsg_ns_msg
+> >>>>>> service[1] that does not match with your implementation.
+> >>>>>> As i come late, i hope that i did not miss something in the history...
+> >>>>>> Don't hesitate to point me the discussions, if it is the case.
+> >>>>>
+> >>>>> Well, as you see, this is a v6 only of this patch set, and apart from it there have
+> >>>>> been several side discussions and patch sets.
+> >>>>>
+> >>>>>> Regarding your patchset, it is quite confusing for me. It seems that
+> >>>>>> you implement your own protocol on top of vhost forked from the RPMsg
+> >>>>> one.
+> >>>>>> But look to me that it is not the RPMsg protocol.
+> >>>>>
+> >>>>> I'm implementing a counterpart to the rpmsg protocol over VirtIO as initially
+> >>>>> implemented by drivers/rpmsg/virtio_rpmsg_bus.c for the "main CPU" (in case
+> >>>>> of remoteproc over VirtIO) or the guest side in case of Linux virtualisation.
+> >>>>> Since my implementation can talk to that driver, I don't think, that I'm inventing
+> >>>>> a new protocol. I'm adding support for the same protocol for the opposite side
+> >>>>> of the VirtIO divide.
+> >>>>
+> >>>> The main point I would like to highlight here is related to the use of the name "RPMsg"
+> >>>> more than how you implement your IPC protocol.
+> >>>> If It is a counterpart, it probably does not respect interface for RPMsg clients.
+> >>>> A good way to answer this, might be to respond to this question:
+> >>>> Is the rpmsg sample client[4] can be used on top of your vhost RPMsg implementation?
+> >>>> If the response is no, describe it as a RPMsg implementation could lead to confusion...
+> >>>
+> >>> Sorry, I don't quite understand your logic. RPMsg is a communication protocol, not an 
+> >>> API. An RPMsg implementation has to be able to communicate with other compliant RPMsg 
+> >>> implementations, it doesn't have to provide any specific API. Am I missing anything?
+> >>
+> >> You are right nothing is written in stone that compliance with the user RPMsg API defined
+> >> in the Linux Documentation [5] is mandatory.
+> > 
+> > A quote from [5]:
+> > 
+> > <quote>
+> > Rpmsg is a virtio-based messaging bus that allows kernel drivers to communicate
+> > with remote processors available on the system.
+> > </quote>
+> > 
+> > So, that document describes the API used by Linux drivers to talk to remote processors. 
+> > It says nothing about VMs. What my patches do, they add a capability to the Linux RPMsg 
+> > implementation to also be used with VMs. Moreover, this is a particularly good fit, 
+> > because both cases can use VirtIO, so, the "VirtIO side" of the communication doesn't 
+> > have to change, and indeed it remains unchanged and uses the API in [5]. But what I do, 
+> > is I also add RPMsg support to the host side.
+> 
+> The feature you propose is very interesting and using RPMsg for this is clearly,
+> for me, a good approach.
+> 
+> But I'm not sure that we are speaking about the same things...
+>   
+> Perhaps, I need to clarify my view with a new approach describing RPMsg layers. 
+> 
+> in next part I'm focusing only on Linux local side (I'm ignoring the remote side for now).
+> We can divide RPMsg implementation in layers.
+> 
+> 1) Rpmsg service layer:
+>   This layer implements a service on top of the RPMsg protocol.
+>   It uses the RPMSG user API to:
+>     - register/unregister a device
+>     - create destroy endpoints
+>     - send/receive messages
+>   This layer is independent from the ways the message is sent (virtio, vhost,...)	 
+>   In Linux kernel as example we can find the RPMsg sample device and rpmsg_char device 
+> 
+> 2) The RPMsg core layer:
+>   This is the transport layer. It implements the RPMsg API
+>   It a kind of message mixer/router layer based on local and distant addresses.
+>   This layer is independent from the ways the message is sent ( virtio, vhost,...)	 
+> 
+> 3) The RPMsg bus layer:
+>   This backend layer implements the RPMsg protocol over an IPC layer.
+>   This layer depends on the platform.
+>   Some exemples are :
+>     - drivers/rpmsg/mtk_rpmsg.c
+>     - drivers/rpmsg/qcom_glink_native.c
+>     - drivers/rpmsg/virtio_rpmsg_bus.c
+> 
+> Regarding your implementation your drivers/vhost/rpmsg.c replaces the layers 2)
+> and 3) and define a new "Vhost RPMsg" API, right?
+> As consequence the layer 1) has to by modified or duplicated to support the
+> "Vhost RPMsg" API.
+> 
+> What Vincent an I proposed (please tell me Vincent if i'm wrong) is that only the
+> layer 3) is implemented for portability on vhost. This as been proposed in the
+> "RFC patch 14/22" [6] from Kishon.
+> 
+> But I'm not a vhost expert, So perhaps it is not adapted...?
+> 
+> [6] https://www.mail-archive.com/linux-kernel@vger.kernel.org/msg2219863.html 
+> 
+> > 
+> >> IMO, as this API is defined in the Linux documentation [5] we should respect it, to ensure
+> >> one generic implementation. The RPMsg sample client[4] uses this user API, so seems to me
+> >> a good candidate to verify this. 
+> >>
+> >> That's said, shall we multiple the RPMsg implementations in Linux with several APIs,
+> >> With the risk to make the RPMsg clients devices dependent on these implementations?
+> >> That could lead to complex code or duplications...
+> > 
+> > So, no, in my understanding there aren't two competing alternative APIs, you'd never have 
+> > to choose between them. If you're writing a driver for Linux to communicate with remote 
+> > processors or to run on VMs, you use the existing API. If you're writing a driver for 
+> > Linux to communicate with those VMs, you use the vhost API and whatever help is available 
+> > for RPMsg processing.
+> 
+> This is what I would have expect here. To have only one driver per service, not
+> to instantiate it for each type of type of communication.
+> 
+> > 
+> > However, I can in principle imagine a single driver, written to work on both sides. 
+> > Something like the rpmsg_char.c or maybe some networking driver. Is that what you're 
+> > referring to? I can see that as a fun exercise, but are there any real uses for that? 
+> > You could do the same with VirtIO, however, it has been decided to go with two 
+> > distinct APIs: virtio for guests and vhost for the host, noone bothered to create a 
+> > single API for both and nobody seems to miss one. Why would we want one with RPMsg?
+> 
+> Regarding the RFC [3] mentioned in a previous mail, perhaps this requirement
+> exists. I added Kishon in copy. 
+> 
+> In ST, we have such requirement but not concerning vhost.Our need is to
+> facilitate the services porting between an internal coprocessor (virtio) and an
+> external coprocessor(serial link) using RPMsg.
+> 
+> The Sound open firmware project could also takes benefit of an uniformization of
+> the communication with the audio DSP, using the RPMsg API to address in a same
+> way an internal coprocessor, an external coprocessor or a virtual machine for
+> the control part...
+>    
+> And of course to simplify the maintenance and evolution of the RPMsg protocol in
+> Linux.
+> 
+> That's said our approach seems to me also valid as it respects the RPMsg protocol.
+> 
+> Now there are 2 different patch series with 2 different approaches sent to
+> the mailing list. So i guess that maintainers will have to decide whether
+> they will get the both or only one.
+> 
 
-I have never though to DRM since for me it was only a RPMsg driver.
-I don't know well DRM. Could you tell me how you would do it so I could 
-have a look ?
+I finally had the time to look at Kishon's pathset yesterday.  If we skim out
+the parts that deal with the realities of the NTB his solution is quite
+simple.  It also provides an implementation for both side of the channel, that
+is host and guest.  Lastly current implementation such as rpmsg-char and
+rpmsg-sample-client.c can run on it seamlessly.  
 
-Thanks,
-Alexandre
+Based on the above and the use case described by Vincent I think following
+Kishon's approach is the best way to move forward. 
 
-> -Daniel
->
->> Alexandre Bailon (3):
->>    Add a RPMSG driver for the APU in the mt8183
->>    rpmsg: apu_rpmsg: update the way to store IOMMU mapping
->>    rpmsg: apu_rpmsg: Add an IOCTL to request IOMMU mapping
->>
->> Julien STEPHAN (1):
->>    rpmsg: apu_rpmsg: Add support for async apu request
->>
->>   drivers/rpmsg/Kconfig          |   9 +
->>   drivers/rpmsg/Makefile         |   1 +
->>   drivers/rpmsg/apu_rpmsg.c      | 752 +++++++++++++++++++++++++++++++++
->>   drivers/rpmsg/apu_rpmsg.h      |  52 +++
->>   include/uapi/linux/apu_rpmsg.h |  47 +++
->>   5 files changed, 861 insertions(+)
->>   create mode 100644 drivers/rpmsg/apu_rpmsg.c
->>   create mode 100644 drivers/rpmsg/apu_rpmsg.h
->>   create mode 100644 include/uapi/linux/apu_rpmsg.h
->>
->> -- 
->> 2.26.2
->>
->> _______________________________________________
->> dri-devel mailing list
->> dri-devel@lists.freedesktop.org
->> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+> Thanks,
+> Arnaud
+> 
+> > 
+> > Thanks
+> > Guennadi
+> >> [5] https://elixir.bootlin.com/linux/v5.8.10/source/Documentation/rpmsg.txt#L66
+> >>
+> >> Thanks,
+> >> Arnaud
+> >>
+> >>   
+> >>>
+> >>> Thanks
+> >>> Guennadi
+> >>>
+> >>>> [4] https://elixir.bootlin.com/linux/v5.9-rc5/source/samples/rpmsg/rpmsg_client_sample.c
+> >>>>
+> >>>> Regards,
+> >>>> Arnaud
+> >>>>
+> >>>>>
+> >>>>>> So i would be agree with Vincent[2] which proposed to switch on a
+> >>>>>> RPMsg API and creating a vhost rpmsg device. This is also proposed in
+> >>>>>> the "Enhance VHOST to enable SoC-to-SoC communication" RFC[3].
+> >>>>>> Do you think that this alternative could match with your need?
+> >>>>>
+> >>>>> As I replied to Vincent, I understand his proposal and the approach taken in the
+> >>>>> series [3], but I'm not sure I agree, that adding yet another virtual device /
+> >>>>> driver layer on the vhost side is a good idea. As far as I understand adding new
+> >>>>> completely virtual devices isn't considered to be a good practice in the kernel.
+> >>>>> Currently vhost is just a passive "library"
+> >>>>> and my vhost-rpmsg support keeps it that way. Not sure I'm in favour of
+> >>>>> converting vhost to a virtual device infrastructure.
+> >>>>>
+> >>>>> Thanks for pointing me out at [3], I should have a better look at it.
+> >>>>>
+> >>>>> Thanks
+> >>>>> Guennadi
+> >>>>>
+> >>>>>> [1].
+> >>>>>> https://patchwork.kernel.org/project/linux-remoteproc/list/?series=338
+> >>>>>> 335 [2].
+> >>>>>> https://www.spinics.net/lists/linux-virtualization/msg44195.html
+> >>>>>> [3]. https://www.spinics.net/lists/linux-remoteproc/msg06634.html
+> >>>>>>
+> >>>>>> Thanks,
+> >>>>>> Arnaud
+> >>>>>>
+> >>>>>>>
+> >>>>>>> Thanks
+> >>>>>>> Guennadi
