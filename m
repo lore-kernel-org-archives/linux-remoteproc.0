@@ -2,303 +2,137 @@ Return-Path: <SRS0=A3Cg=DI=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.5 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9CEBC4727E
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  1 Oct 2020 16:14:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 213ABC4727E
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  1 Oct 2020 17:28:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 940EF20759
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  1 Oct 2020 16:14:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D47F32085B
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  1 Oct 2020 17:28:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=st.com header.i=@st.com header.b="XzW3ok3B"
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="of5jzw3P"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732342AbgJAQO5 (ORCPT
+        id S1732920AbgJAR2N (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 1 Oct 2020 12:14:57 -0400
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:42124 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1730534AbgJAQO5 (ORCPT
+        Thu, 1 Oct 2020 13:28:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57286 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732287AbgJAR2K (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 1 Oct 2020 12:14:57 -0400
-Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 091GD1x4004237;
-        Thu, 1 Oct 2020 18:14:50 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=STMicroelectronics;
- bh=gnZRMgovLNyZarhwmANpBM90CFjwCVSsIi+p1+jKpwE=;
- b=XzW3ok3BCVoGdAHVZW5bUFrLhX7uMCmqyazjstkgjQ6JSMGnQsTz4khi1d8MpQRU8ESe
- 8LHMN70n5e8Ee3TX4WOseblxw5kzUEyKGLXzuzxWxdJQNWk87S5M0TDuXgO27AObg4C4
- ogc+Qx7ICbasY2/6B1M6NU26RMYPYNb0CCMsF4LfmJKyhHvPUgZ5d9b2RwtcISx3cQ2s
- aZlvtMHac2T1P7eVVhgQc4kCwdgeAbQWbooJHbPiKK75kPT08Ms5zJcTPUAePoRoMPGL
- 3mxF6FgCjPQVFxnvigXt3r/eQi7hpCJFlGxIK6NlmdfcmBktMWbTOmt3ODgPAl6MvAiG UA== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 33svhexed7-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 01 Oct 2020 18:14:50 +0200
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 9F48710002A;
-        Thu,  1 Oct 2020 18:14:49 +0200 (CEST)
-Received: from Webmail-eu.st.com (sfhdag3node1.st.com [10.75.127.7])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 90BE62B4D0D;
-        Thu,  1 Oct 2020 18:14:49 +0200 (CEST)
-Received: from lmecxl0889.tpe.st.com (10.75.127.50) by SFHDAG3NODE1.st.com
- (10.75.127.7) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 1 Oct
- 2020 18:14:20 +0200
-Subject: Re: [PATCH 06/10] rpmsg: Turn name service into a stand alone driver
-To:     Guennadi Liakhovetski <guennadi.liakhovetski@linux.intel.com>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>
-CC:     "ohad@wizery.com" <ohad@wizery.com>,
-        "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>,
-        Loic PALLARDY <loic.pallardy@st.com>,
-        "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20200922001000.899956-1-mathieu.poirier@linaro.org>
- <20200922001000.899956-7-mathieu.poirier@linaro.org>
- <20200930070912.GE20683@ubuntu>
-From:   Arnaud POULIQUEN <arnaud.pouliquen@st.com>
-Message-ID: <4d6c79d5-b98e-52ab-4114-d7441e83ed76@st.com>
-Date:   Thu, 1 Oct 2020 18:14:19 +0200
+        Thu, 1 Oct 2020 13:28:10 -0400
+Received: from mail-wm1-x344.google.com (mail-wm1-x344.google.com [IPv6:2a00:1450:4864:20::344])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A45EC0613D0
+        for <linux-remoteproc@vger.kernel.org>; Thu,  1 Oct 2020 10:28:08 -0700 (PDT)
+Received: by mail-wm1-x344.google.com with SMTP id y15so4014095wmi.0
+        for <linux-remoteproc@vger.kernel.org>; Thu, 01 Oct 2020 10:28:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-transfer-encoding:content-language;
+        bh=1M4RAfm7Ka56hTVARaFbgr0VJN7Hux9S4garFliWQrQ=;
+        b=of5jzw3PMgufI53qBrC2IN+3pkDwsZMmS8MapDtIqs/jRJVAtRNIK5NaDLJTzFRu6O
+         EYphTukdKvGCSmMzQwdDNTvjyg55U1+uhs4sZ7UDsqRMrfW+bdIRVAeso5kctUQ3PPmO
+         fTtG7v30wu0HPu+/UspUI3agEHuhSkt+y6qOQYSr+8OqjcVQUHBPsPKO3GDsih2xLp+r
+         VXbby1N/7G0XvD+/BVHbNUwjJVhsoHD5W33pcDGbhV709XEYe5Bn4+eqeuSsh6lRVOlm
+         ntz4ZoUrHhH02HsIwi2Gu/8kiNiJqlqJvyX8lRrJG5U4Ab2lfTUwML+OwasgOQzqTn3E
+         f6jg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=1M4RAfm7Ka56hTVARaFbgr0VJN7Hux9S4garFliWQrQ=;
+        b=kML6k8HEqIzP+JDDzOFU821j8hzi0vJdS0txQzinC8rYtoIoRssDZdiyK/sZtMVk6a
+         5jD9t7gMgDSz1OJjV0PO6TJONWWPurLUQd6VLb5CEgDGnck0JO/B5GZgY6D+i2n0/1DU
+         Q45wiBoSkbuxt0TD6j7UiLhwK5ezz1Aki4xGh95pbygPhCqB0QhMJm8cUUS+PHpOjRlE
+         Ts9vTq7y1c1hl1BnELQw19184XsEsszVqHnHvyh8mlnjgNrKwzZSY0PiKRNj/qk76Fs4
+         XXQEcTaqxWSYKR85b6SM6qsTKTDosKyV+iSnLIRekKooL7YqlmZH530ihpYVvw+DhtUT
+         C9zw==
+X-Gm-Message-State: AOAM531NQysbx/jffUCwhw+wUX+Hd/MU0JTpKU/4A3z08JYZXv0SKTgS
+        gpxevK+VDDZNsBHRb/J6V3VorA==
+X-Google-Smtp-Source: ABdhPJwyVDVxYje8TjchORDThAw8Nf2lyrEVVWCNGUtzSKY/wsPFwtKzJsKQK/RU/wWZQIwlAkVZlA==
+X-Received: by 2002:a7b:ce89:: with SMTP id q9mr1060628wmj.65.1601573286992;
+        Thu, 01 Oct 2020 10:28:06 -0700 (PDT)
+Received: from ?IPv6:2001:861:3a81:3690:b885:8dcf:f8c6:7841? ([2001:861:3a81:3690:b885:8dcf:f8c6:7841])
+        by smtp.gmail.com with ESMTPSA id k6sm827843wmf.30.2020.10.01.10.28.05
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 01 Oct 2020 10:28:06 -0700 (PDT)
+Subject: Re: [RFC PATCH 0/4] Add a RPMsg driver to support AI Processing Unit
+ (APU)
+To:     linux-remoteproc@vger.kernel.org, ohad@wizery.com,
+        gpain@baylibre.com, stephane.leprovost@mediatek.com,
+        jstephan@baylibre.com, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org,
+        mturquette@baylibre.com, bjorn.andersson@linaro.org,
+        christian.koenig@amd.com, linux-media@vger.kernel.org
+References: <20200930115350.5272-1-abailon@baylibre.com>
+ <20201001084856.GC438822@phenom.ffwll.local>
+From:   Alexandre Bailon <abailon@baylibre.com>
+Message-ID: <8e4bb739-c3b3-d790-e8e3-dd5df2d6f869@baylibre.com>
+Date:   Thu, 1 Oct 2020 19:28:27 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+ Thunderbird/68.12.0
 MIME-Version: 1.0
-In-Reply-To: <20200930070912.GE20683@ubuntu>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
+In-Reply-To: <20201001084856.GC438822@phenom.ffwll.local>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.75.127.50]
-X-ClientProxiedBy: SFHDAG5NODE2.st.com (10.75.127.14) To SFHDAG3NODE1.st.com
- (10.75.127.7)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.235,18.0.687
- definitions=2020-10-01_05:2020-10-01,2020-10-01 signatures=0
+Content-Language: en-US
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
+Hi Daniel,
 
-
-On 9/30/20 9:09 AM, Guennadi Liakhovetski wrote:
-> On Mon, Sep 21, 2020 at 06:09:56PM -0600, Mathieu Poirier wrote:
->> From: Arnaud Pouliquen <arnaud.pouliquen@st.com>
+On 10/1/20 10:48 AM, Daniel Vetter wrote:
+> On Wed, Sep 30, 2020 at 01:53:46PM +0200, Alexandre Bailon wrote:
+>> This adds a RPMsg driver that implements communication between the CPU and an
+>> APU.
+>> This uses VirtIO buffer to exchange messages but for sharing data, this uses
+>> a dmabuf, mapped to be shared between CPU (userspace) and APU.
+>> The driver is relatively generic, and should work with any SoC implementing
+>> hardware accelerator for AI if they use support remoteproc and VirtIO.
 >>
->> Make the RPMSG name service announcement a stand alone driver so that it
->> can be reused by other subsystems.  It is also the first step in making the
->> functionatlity transport independent, i.e that is not tied to virtIO.
+>> For the people interested by the firmware or userspace library,
+>> the sources are available here:
+>> https://github.com/BayLibre/open-amp/tree/v2020.01-mtk/apps/examples/apu
+> Since this has open userspace (from a very cursory look), and smells very
+> much like an acceleration driver, and seems to use dma-buf for memory
+> management: Why is this not just a drm driver?
+
+I have never though to DRM since for me it was only a RPMsg driver.
+I don't know well DRM. Could you tell me how you would do it so I could 
+have a look ?
+
+Thanks,
+Alexandre
+
+> -Daniel
+>
+>> Alexandre Bailon (3):
+>>    Add a RPMSG driver for the APU in the mt8183
+>>    rpmsg: apu_rpmsg: update the way to store IOMMU mapping
+>>    rpmsg: apu_rpmsg: Add an IOCTL to request IOMMU mapping
 >>
->> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@st.com>
->> Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
->> ---
->>  drivers/rpmsg/Kconfig          |   8 +++
->>  drivers/rpmsg/Makefile         |   1 +
->>  drivers/rpmsg/rpmsg_internal.h |  18 ++++++
->>  drivers/rpmsg/rpmsg_ns.c       | 110 +++++++++++++++++++++++++++++++++
->>  4 files changed, 137 insertions(+)
->>  create mode 100644 drivers/rpmsg/rpmsg_ns.c
+>> Julien STEPHAN (1):
+>>    rpmsg: apu_rpmsg: Add support for async apu request
 >>
->> diff --git a/drivers/rpmsg/Kconfig b/drivers/rpmsg/Kconfig
->> index f96716893c2a..c3fc75e6514b 100644
->> --- a/drivers/rpmsg/Kconfig
->> +++ b/drivers/rpmsg/Kconfig
->> @@ -15,6 +15,14 @@ config RPMSG_CHAR
->>  	  in /dev. They make it possible for user-space programs to send and
->>  	  receive rpmsg packets.
->>  
->> +config RPMSG_NS
->> +	tristate "RPMSG name service announcement"
->> +	depends on RPMSG
->> +	help
->> +	  Say Y here to enable the support of the name service announcement
->> +	  channel that probes the associated RPMsg device on remote endpoint
->> +	  service announcement.
->> +
->>  config RPMSG_MTK_SCP
->>  	tristate "MediaTek SCP"
->>  	depends on MTK_SCP
->> diff --git a/drivers/rpmsg/Makefile b/drivers/rpmsg/Makefile
->> index ffe932ef6050..8d452656f0ee 100644
->> --- a/drivers/rpmsg/Makefile
->> +++ b/drivers/rpmsg/Makefile
->> @@ -1,6 +1,7 @@
->>  # SPDX-License-Identifier: GPL-2.0
->>  obj-$(CONFIG_RPMSG)		+= rpmsg_core.o
->>  obj-$(CONFIG_RPMSG_CHAR)	+= rpmsg_char.o
->> +obj-$(CONFIG_RPMSG_NS)		+= rpmsg_ns.o
->>  obj-$(CONFIG_RPMSG_MTK_SCP)	+= mtk_rpmsg.o
->>  qcom_glink-objs			:= qcom_glink_native.o qcom_glink_ssr.o
->>  obj-$(CONFIG_RPMSG_QCOM_GLINK) += qcom_glink.o
->> diff --git a/drivers/rpmsg/rpmsg_internal.h b/drivers/rpmsg/rpmsg_internal.h
->> index 3ea9cec26fc0..04e6cb287e18 100644
->> --- a/drivers/rpmsg/rpmsg_internal.h
->> +++ b/drivers/rpmsg/rpmsg_internal.h
->> @@ -15,6 +15,7 @@
->>  #include <linux/idr.h>
->>  #include <linux/mutex.h>
->>  #include <linux/rpmsg.h>
->> +#include <linux/rpmsg_ns.h>
->>  #include <linux/types.h>
->>  #include <linux/virtio.h>
->>  #include <linux/wait.h>
->> @@ -164,4 +165,21 @@ static inline int rpmsg_chrdev_register_device(struct rpmsg_device *rpdev)
->>  	return rpmsg_register_device(rpdev);
->>  }
->>  
->> +/**
->> + * rpmsg_ns_register_device() - register name service device based on rpdev
->> + * @rpdev: prepared rpdev to be used for creating endpoints
->> + *
->> + * This function wraps rpmsg_register_device() preparing the rpdev for use as
->> + * basis for the rpmsg name service device.
->> + */
->> +static inline int rpmsg_ns_register_device(struct rpmsg_device *rpdev)
->> +{
->> +	strcpy(rpdev->id.name, "rpmsg_ns");
->> +	rpdev->driver_override = "rpmsg_ns";
->> +	rpdev->src = RPMSG_NS_ADDR;
->> +	rpdev->dst = RPMSG_NS_ADDR;
->> +
->> +	return rpmsg_register_device(rpdev);
->> +}
->> +
->>  #endif
->> diff --git a/drivers/rpmsg/rpmsg_ns.c b/drivers/rpmsg/rpmsg_ns.c
->> new file mode 100644
->> index 000000000000..b3318bf84433
->> --- /dev/null
->> +++ b/drivers/rpmsg/rpmsg_ns.c
->> @@ -0,0 +1,110 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +/*
->> + * Copyright (C) STMicroelectronics 2020 - All Rights Reserved
->> + */
->> +#include <linux/device.h>
->> +#include <linux/kernel.h>
->> +#include <linux/module.h>
->> +#include <linux/slab.h>
->> +#include <linux/rpmsg.h>
->> +#include <linux/rpmsg_ns.h>
->> +#include <linux/virtio_config.h>
->> +#include "rpmsg_internal.h"
->> +
->> +/* Invoked when a name service announcement arrives */
->> +static int rpmsg_ns_cb(struct rpmsg_device *rpdev, void *data, int len,
->> +		       void *priv, u32 src)
->> +{
->> +	struct rpmsg_ns_msg *msg = data;
->> +	struct rpmsg_device *newch;
->> +	struct rpmsg_channel_info chinfo;
->> +	struct virtio_rpmsg_channel *vch = to_virtio_rpmsg_channel(rpdev);
-> 
-> Let's not do this, non-VirtIO RPMsg drivers shouldn't need this struct.
-
-Is this patch could be merged with the patch 10/10 to avoid this
-temporay implementation?
-
-Regards,
-Arnaud
-
-> 
->> +	struct virtproc_info *vrp = vch->vrp;
->> +	struct device *dev = &vrp->vdev->dev;
->> +	int ret;
->> +
->> +#if defined(CONFIG_DYNAMIC_DEBUG)
->> +	dynamic_hex_dump("NS announcement: ", DUMP_PREFIX_NONE, 16, 1,
->> +			 data, len, true);
->> +#endif
->> +
->> +	if (len != sizeof(*msg)) {
->> +		dev_err(dev, "malformed ns msg (%d)\n", len);
->> +		return -EINVAL;
->> +	}
->> +
->> +	/* Don't trust the remote processor for null terminating the name */
->> +	msg->name[RPMSG_NAME_SIZE - 1] = '\0';
->> +
->> +	strncpy(chinfo.name, msg->name, sizeof(chinfo.name));
->> +	chinfo.src = RPMSG_ADDR_ANY;
->> +	chinfo.dst = virtio32_to_cpu(vrp->vdev, msg->addr);
->> +
->> +	dev_info(dev, "%sing channel %s addr 0x%x\n",
->> +		 virtio32_to_cpu(vrp->vdev, msg->flags) & RPMSG_NS_DESTROY ?
->> +		 "destroy" : "creat", msg->name, chinfo.dst);
->> +
->> +	if (virtio32_to_cpu(vrp->vdev, msg->flags) & RPMSG_NS_DESTROY) {
->> +		ret = rpmsg_release_channel(rpdev, &chinfo);
->> +		if (ret)
->> +			dev_err(dev, "rpmsg_destroy_channel failed: %d\n", ret);
->> +	} else {
->> +		newch = rpmsg_create_channel(rpdev, &chinfo);
->> +		if (!newch)
->> +			dev_err(dev, "rpmsg_create_channel failed\n");
->> +	}
->> +
->> +	return 0;
->> +}
->> +
->> +static int rpmsg_ns_probe(struct rpmsg_device *rpdev)
->> +{
->> +	struct rpmsg_channel_info ns_chinfo;
-> 
-> +	struct rpmsg_channel_info ns_chinfo = {
-> +		.src = RPMSG_NS_ADDR,
-> +		.dst = RPMSG_NS_ADDR,
-> +		.name = "name_service",
-> +	};
-> 
-> Thanks
-> Guennadi
-> 
->> +	struct rpmsg_endpoint *ns_ept;
->> +
->> +	ns_chinfo.src = RPMSG_NS_ADDR;
->> +	ns_chinfo.dst = RPMSG_NS_ADDR;
->> +	strcpy(ns_chinfo.name, "name_service");
->> +
->> +	/*
->> +	 * Create the NS announcement service endpoint associated to the RPMsg
->> +	 * device. The endpoint will be automatically destroyed when the RPMsg
->> +	 * device will be deleted.
->> +	 */
->> +	ns_ept = rpmsg_create_ept(rpdev, rpmsg_ns_cb, NULL, ns_chinfo);
->> +	if (!ns_ept) {
->> +		dev_err(&rpdev->dev, "failed to create the ns ept\n");
->> +		return -ENOMEM;
->> +	}
->> +	rpdev->ept = ns_ept;
->> +
->> +	return 0;
->> +}
->> +
->> +static struct rpmsg_driver rpmsg_ns_driver = {
->> +	.drv.name = "rpmsg_ns",
->> +	.probe = rpmsg_ns_probe,
->> +};
->> +
->> +static int rpmsg_ns_init(void)
->> +{
->> +	int ret;
->> +
->> +	ret = register_rpmsg_driver(&rpmsg_ns_driver);
->> +	if (ret < 0)
->> +		pr_err("%s: Failed to register rpmsg driver\n", __func__);
->> +
->> +	return ret;
->> +}
->> +postcore_initcall(rpmsg_ns_init);
->> +
->> +static void rpmsg_ns_exit(void)
->> +{
->> +	unregister_rpmsg_driver(&rpmsg_ns_driver);
->> +}
->> +module_exit(rpmsg_ns_exit);
->> +
->> +MODULE_DESCRIPTION("Name service announcement rpmsg Driver");
->> +MODULE_AUTHOR("Arnaud Pouliquen <arnaud.pouliquen@st.com>");
->> +MODULE_ALIAS("rpmsg_ns");
->> +MODULE_LICENSE("GPL v2");
+>>   drivers/rpmsg/Kconfig          |   9 +
+>>   drivers/rpmsg/Makefile         |   1 +
+>>   drivers/rpmsg/apu_rpmsg.c      | 752 +++++++++++++++++++++++++++++++++
+>>   drivers/rpmsg/apu_rpmsg.h      |  52 +++
+>>   include/uapi/linux/apu_rpmsg.h |  47 +++
+>>   5 files changed, 861 insertions(+)
+>>   create mode 100644 drivers/rpmsg/apu_rpmsg.c
+>>   create mode 100644 drivers/rpmsg/apu_rpmsg.h
+>>   create mode 100644 include/uapi/linux/apu_rpmsg.h
+>>
 >> -- 
->> 2.25.1
+>> 2.26.2
 >>
+>> _______________________________________________
+>> dri-devel mailing list
+>> dri-devel@lists.freedesktop.org
+>> https://lists.freedesktop.org/mailman/listinfo/dri-devel
