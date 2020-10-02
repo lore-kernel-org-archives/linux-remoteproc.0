@@ -2,171 +2,192 @@ Return-Path: <SRS0=nrb/=DJ=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1127C4363D
-	for <linux-remoteproc@archiver.kernel.org>; Fri,  2 Oct 2020 09:35:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F08FC4363D
+	for <linux-remoteproc@archiver.kernel.org>; Fri,  2 Oct 2020 18:09:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 553F5206A5
-	for <linux-remoteproc@archiver.kernel.org>; Fri,  2 Oct 2020 09:35:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C1A9820795
+	for <linux-remoteproc@archiver.kernel.org>; Fri,  2 Oct 2020 18:09:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="gQQEDT22"
+	dkim=pass (1024-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="Ner4IU/n"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726464AbgJBJfO (ORCPT
+        id S2388364AbgJBSJd (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 2 Oct 2020 05:35:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37548 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725993AbgJBJfN (ORCPT
+        Fri, 2 Oct 2020 14:09:33 -0400
+Received: from m42-4.mailgun.net ([69.72.42.4]:27933 "EHLO m42-4.mailgun.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726224AbgJBSJc (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 2 Oct 2020 05:35:13 -0400
-Received: from mail-wr1-x441.google.com (mail-wr1-x441.google.com [IPv6:2a00:1450:4864:20::441])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8FD32C0613D0
-        for <linux-remoteproc@vger.kernel.org>; Fri,  2 Oct 2020 02:35:13 -0700 (PDT)
-Received: by mail-wr1-x441.google.com with SMTP id x14so1010705wrl.12
-        for <linux-remoteproc@vger.kernel.org>; Fri, 02 Oct 2020 02:35:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=date:from:to:cc:subject:message-id:mail-followup-to:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=BpK88C7pHVfm7Xd/YUZRAsUp3EAae6LbRjsv8dXA5cw=;
-        b=gQQEDT2273zbnMI2K24GO8wWvlqW3PZ1C69DxD3QXe13a8vepyBWPq91HKvGAUtIGb
-         TfIFxI8tFBj49Vq+1JGBekM/EcVXfEe59Xz7jBfiqoy5W908ZY36o7Lo3BEIdoGFl+9G
-         Ka+rpz38Ga5EZEKxwD2urFUg/D1mRPbHLczHM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to;
-        bh=BpK88C7pHVfm7Xd/YUZRAsUp3EAae6LbRjsv8dXA5cw=;
-        b=L/a/AURy8mOqvXph+kC64Pc1hNOGfTwF8TieieWlyCIjO5elZUPJnpCz6idNrDi3Vs
-         g86yVUROjjXpv9DCy6uPNnEusTaj76FzgrRN1hGFm0udWQtDM5AexCF//FT8HcDWR36S
-         PCvFNxGmP0oOJOiwhInWpQ+vwNiAhlMb6FMWAAk1WELeJ+zgWSJCI7xF9NdJ2k5Z/35B
-         Mq223Qvlop0I1nxPFFYcIgNwobBZldmSOs5Pi7FCOwlEITrLynXDPve6acxoWh64VGgY
-         y09DqTOPtgT+DpdQaMs2pw6FueWRBN1r0craJ5YQsHj8YmLVgKcwaCiH421jyatm4Zvg
-         qhYA==
-X-Gm-Message-State: AOAM531eOOkYKXuwChr39kUa581gt+1n8MZ4F5xFYjVdg2yZ7SBfT3Z/
-        OymNpECDAWDct7IC4hDSNxKi3h1nOHw1M8ia
-X-Google-Smtp-Source: ABdhPJykrhwgDQ+Cfh4cqZgcNZxoClfD6BLD+KFpVIbHeTXbxtjIEdx893xAoQyqCspb1vNoEtkdFA==
-X-Received: by 2002:adf:8285:: with SMTP id 5mr1892288wrc.97.1601631312192;
-        Fri, 02 Oct 2020 02:35:12 -0700 (PDT)
-Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
-        by smtp.gmail.com with ESMTPSA id u66sm1121105wme.12.2020.10.02.02.35.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 02 Oct 2020 02:35:10 -0700 (PDT)
-Date:   Fri, 2 Oct 2020 11:35:08 +0200
-From:   Daniel Vetter <daniel@ffwll.ch>
-To:     Alexandre Bailon <abailon@baylibre.com>
-Cc:     linux-remoteproc@vger.kernel.org, ohad@wizery.com,
-        gpain@baylibre.com, stephane.leprovost@mediatek.com,
-        jstephan@baylibre.com, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org,
-        mturquette@baylibre.com, bjorn.andersson@linaro.org,
-        christian.koenig@amd.com, linux-media@vger.kernel.org
-Subject: Re: [RFC PATCH 0/4] Add a RPMsg driver to support AI Processing Unit
- (APU)
-Message-ID: <20201002093508.GF438822@phenom.ffwll.local>
-Mail-Followup-To: Alexandre Bailon <abailon@baylibre.com>,
-        linux-remoteproc@vger.kernel.org, ohad@wizery.com,
-        gpain@baylibre.com, stephane.leprovost@mediatek.com,
-        jstephan@baylibre.com, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org,
-        mturquette@baylibre.com, bjorn.andersson@linaro.org,
-        christian.koenig@amd.com, linux-media@vger.kernel.org
-References: <20200930115350.5272-1-abailon@baylibre.com>
- <20201001084856.GC438822@phenom.ffwll.local>
- <8e4bb739-c3b3-d790-e8e3-dd5df2d6f869@baylibre.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8e4bb739-c3b3-d790-e8e3-dd5df2d6f869@baylibre.com>
-X-Operating-System: Linux phenom 5.7.0-1-amd64 
+        Fri, 2 Oct 2020 14:09:32 -0400
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1601662171; h=References: In-Reply-To: Message-Id: Date:
+ Subject: Cc: To: From: Sender;
+ bh=wOU3KRfuJdAjV10EUMTzMmHkchPDGV4cm34qR2QS/Jg=; b=Ner4IU/nEP4e1e6KRBxFEWPU+Znir7lH9eVk18PP7lXt+CLhW6xmK8CD+UVQFwhmkOcR006T
+ wAtGIh4Gfir9ggS5vYTaqqoFexFzOq1jAkghmpD5DcRZh5BaVSpLS4WPzyMbEVuhASJXG7Ug
+ bBgyQcvFj/ULDQjIQpT8GeWDsZg=
+X-Mailgun-Sending-Ip: 69.72.42.4
+X-Mailgun-Sid: WyI4ZWZiZiIsICJsaW51eC1yZW1vdGVwcm9jQHZnZXIua2VybmVsLm9yZyIsICJiZTllNGEiXQ==
+Received: from smtp.codeaurora.org
+ (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
+ smtp-out-n05.prod.us-west-2.postgun.com with SMTP id
+ 5f776cdad6d00c7a9ebb32cb (version=TLS1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Fri, 02 Oct 2020 18:09:30
+ GMT
+Sender: rishabhb=codeaurora.org@mg.codeaurora.org
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id ACBC2C43385; Fri,  2 Oct 2020 18:09:30 +0000 (UTC)
+Received: from rishabhb-linux.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: rishabhb)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 98A15C433F1;
+        Fri,  2 Oct 2020 18:09:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 98A15C433F1
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=rishabhb@codeaurora.org
+From:   Rishabh Bhatnagar <rishabhb@codeaurora.org>
+To:     linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        bjorn.andersson@linaro.org
+Cc:     tsoni@codeaurora.org, psodagud@codeaurora.org,
+        sidgup@codeaurora.org, Rishabh Bhatnagar <rishabhb@codeaurora.org>
+Subject: [PATCH v7 2/3] remoteproc: Add coredump as part of sysfs interface
+Date:   Fri,  2 Oct 2020 11:09:03 -0700
+Message-Id: <1601662144-5964-3-git-send-email-rishabhb@codeaurora.org>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1601662144-5964-1-git-send-email-rishabhb@codeaurora.org>
+References: <1601662144-5964-1-git-send-email-rishabhb@codeaurora.org>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Thu, Oct 01, 2020 at 07:28:27PM +0200, Alexandre Bailon wrote:
-> Hi Daniel,
-> 
-> On 10/1/20 10:48 AM, Daniel Vetter wrote:
-> > On Wed, Sep 30, 2020 at 01:53:46PM +0200, Alexandre Bailon wrote:
-> > > This adds a RPMsg driver that implements communication between the CPU and an
-> > > APU.
-> > > This uses VirtIO buffer to exchange messages but for sharing data, this uses
-> > > a dmabuf, mapped to be shared between CPU (userspace) and APU.
-> > > The driver is relatively generic, and should work with any SoC implementing
-> > > hardware accelerator for AI if they use support remoteproc and VirtIO.
-> > > 
-> > > For the people interested by the firmware or userspace library,
-> > > the sources are available here:
-> > > https://github.com/BayLibre/open-amp/tree/v2020.01-mtk/apps/examples/apu
-> > Since this has open userspace (from a very cursory look), and smells very
-> > much like an acceleration driver, and seems to use dma-buf for memory
-> > management: Why is this not just a drm driver?
-> 
-> I have never though to DRM since for me it was only a RPMsg driver.
-> I don't know well DRM. Could you tell me how you would do it so I could have
-> a look ?
+Add coredump as part of the sysfs interface. This will
+allow usage of this configuration feature in production
+devices where access to debugfs might be limited.
 
-Well internally it would still be an rpmsg driver ... I'm assuming that's
-kinda similar to how most gpu drivers sit on top of a pci_device or a
-platform_device, it's just a means to get at your "device"?
+Signed-off-by: Rishabh Bhatnagar <rishabhb@codeaurora.org>
+---
+ Documentation/ABI/testing/sysfs-class-remoteproc | 24 +++++++++
+ drivers/remoteproc/remoteproc_sysfs.c            | 63 ++++++++++++++++++++++++
+ 2 files changed, 87 insertions(+)
 
-The part I'm talking about here is the userspace api. You're creating an
-entirely new chardev interface, which at least from a quick look seems to
-be based on dma-buf buffers and used to submit commands to your device to
-do some kind of computing/processing. That's exactly what drivers/gpu/drm
-does (if you ignore the display/modeset side of things) - at the kernel
-level gpus have nothing to do with graphics, but all with handling buffer
-objects and throwing workloads at some kind of accelerator thing.
-
-Of course that's just my guess of what's going on, after scrolling through
-your driver and userspace a bit, I might be completely off. But if my
-guess is roughly right, then your driver is internally an rpmsg
-driver, but towards userspace it should be a drm driver.
-
-Cheers, Daniel
-
-> 
-> Thanks,
-> Alexandre
-> 
-> > -Daniel
-> > 
-> > > Alexandre Bailon (3):
-> > >    Add a RPMSG driver for the APU in the mt8183
-> > >    rpmsg: apu_rpmsg: update the way to store IOMMU mapping
-> > >    rpmsg: apu_rpmsg: Add an IOCTL to request IOMMU mapping
-> > > 
-> > > Julien STEPHAN (1):
-> > >    rpmsg: apu_rpmsg: Add support for async apu request
-> > > 
-> > >   drivers/rpmsg/Kconfig          |   9 +
-> > >   drivers/rpmsg/Makefile         |   1 +
-> > >   drivers/rpmsg/apu_rpmsg.c      | 752 +++++++++++++++++++++++++++++++++
-> > >   drivers/rpmsg/apu_rpmsg.h      |  52 +++
-> > >   include/uapi/linux/apu_rpmsg.h |  47 +++
-> > >   5 files changed, 861 insertions(+)
-> > >   create mode 100644 drivers/rpmsg/apu_rpmsg.c
-> > >   create mode 100644 drivers/rpmsg/apu_rpmsg.h
-> > >   create mode 100644 include/uapi/linux/apu_rpmsg.h
-> > > 
-> > > -- 
-> > > 2.26.2
-> > > 
-> > > _______________________________________________
-> > > dri-devel mailing list
-> > > dri-devel@lists.freedesktop.org
-> > > https://lists.freedesktop.org/mailman/listinfo/dri-devel
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
-
+diff --git a/Documentation/ABI/testing/sysfs-class-remoteproc b/Documentation/ABI/testing/sysfs-class-remoteproc
+index 36094fb..050bd25 100644
+--- a/Documentation/ABI/testing/sysfs-class-remoteproc
++++ b/Documentation/ABI/testing/sysfs-class-remoteproc
+@@ -58,3 +58,27 @@ Description:	Remote processor name
+ 		Reports the name of the remote processor. This can be used by
+ 		userspace in exactly identifying a remote processor and ease
+ 		up the usage in modifying the 'firmware' or 'state' files.
++
++What:		/sys/class/remoteproc/.../coredump
++Date:		July 2020
++Contact:	Bjorn Andersson <bjorn.andersson@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>
++Description:	Remote processor coredump configuration
++
++		Reports the coredump configuration of the remote processor,
++		which will be one of:
++
++		"disabled"
++		"enabled"
++		"inline"
++
++		"disabled" means no dump will be collected.
++
++		"enabled" means when the remote processor's coredump is
++		collected it will be copied to a separate buffer and that
++		buffer is exposed to userspace.
++
++		"inline" means when the remote processor's coredump is
++		collected userspace will directly read from the remote
++		processor's device memory. Extra buffer will not be used to
++		copy the dump. Also recovery process will not proceed until
++		all data is read by usersapce.
+diff --git a/drivers/remoteproc/remoteproc_sysfs.c b/drivers/remoteproc/remoteproc_sysfs.c
+index eea514c..8500271 100644
+--- a/drivers/remoteproc/remoteproc_sysfs.c
++++ b/drivers/remoteproc/remoteproc_sysfs.c
+@@ -10,6 +10,68 @@
+ 
+ #define to_rproc(d) container_of(d, struct rproc, dev)
+ 
++/*
++ * A coredump-configuration-to-string lookup table, for exposing a
++ * human readable configuration via sysfs. Always keep in sync with
++ * enum rproc_coredump_mechanism
++ */
++static const char * const rproc_coredump_str[] = {
++	[RPROC_COREDUMP_DISABLED]	= "disabled",
++	[RPROC_COREDUMP_ENABLED]	= "enabled",
++	[RPROC_COREDUMP_INLINE]		= "inline",
++};
++
++/* Expose the current coredump configuration via debugfs */
++static ssize_t coredump_show(struct device *dev,
++			     struct device_attribute *attr, char *buf)
++{
++	struct rproc *rproc = to_rproc(dev);
++
++	return sprintf(buf, "%s\n", rproc_coredump_str[rproc->dump_conf]);
++}
++
++/*
++ * By writing to the 'coredump' sysfs entry, we control the behavior of the
++ * coredump mechanism dynamically. The default value of this entry is "default".
++ *
++ * The 'coredump' sysfs entry supports these commands:
++ *
++ * disabled:	This is the default coredump mechanism. Recovery will proceed
++ *		without collecting any dump.
++ *
++ * default:	When the remoteproc crashes the entire coredump will be
++ *		copied to a separate buffer and exposed to userspace.
++ *
++ * inline:	The coredump will not be copied to a separate buffer and the
++ *		recovery process will have to wait until data is read by
++ *		userspace. But this avoid usage of extra memory.
++ */
++static ssize_t coredump_store(struct device *dev,
++			      struct device_attribute *attr,
++			      const char *buf, size_t count)
++{
++	struct rproc *rproc = to_rproc(dev);
++
++	if (rproc->state == RPROC_CRASHED) {
++		dev_err(&rproc->dev, "can't change coredump configuration\n");
++		return -EBUSY;
++	}
++
++	if (sysfs_streq(buf, "disabled")) {
++		rproc->dump_conf = RPROC_COREDUMP_DISABLED;
++	} else if (sysfs_streq(buf, "enabled")) {
++		rproc->dump_conf = RPROC_COREDUMP_ENABLED;
++	} else if (sysfs_streq(buf, "inline")) {
++		rproc->dump_conf = RPROC_COREDUMP_INLINE;
++	} else {
++		dev_err(&rproc->dev, "Invalid coredump configuration\n");
++		return -EINVAL;
++	}
++
++	return count;
++}
++static DEVICE_ATTR_RW(coredump);
++
+ /* Expose the loaded / running firmware name via sysfs */
+ static ssize_t firmware_show(struct device *dev, struct device_attribute *attr,
+ 			  char *buf)
+@@ -138,6 +200,7 @@ static ssize_t name_show(struct device *dev, struct device_attribute *attr,
+ static DEVICE_ATTR_RO(name);
+ 
+ static struct attribute *rproc_attrs[] = {
++	&dev_attr_coredump.attr,
+ 	&dev_attr_firmware.attr,
+ 	&dev_attr_state.attr,
+ 	&dev_attr_name.attr,
 -- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
+
