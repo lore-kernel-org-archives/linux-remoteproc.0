@@ -1,175 +1,172 @@
-Return-Path: <SRS0=A3Cg=DI=vger.kernel.org=linux-remoteproc-owner@kernel.org>
+Return-Path: <SRS0=nrb/=DJ=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ECA27C47428
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  1 Oct 2020 21:06:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1127C4363D
+	for <linux-remoteproc@archiver.kernel.org>; Fri,  2 Oct 2020 09:35:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A6CBA207FB
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  1 Oct 2020 21:06:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 553F5206A5
+	for <linux-remoteproc@archiver.kernel.org>; Fri,  2 Oct 2020 09:35:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="iULkf2OP"
+	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="gQQEDT22"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726606AbgJAVGf (ORCPT
+        id S1726464AbgJBJfO (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 1 Oct 2020 17:06:35 -0400
-Received: from mail-eopbgr690076.outbound.protection.outlook.com ([40.107.69.76]:32838
-        "EHLO NAM04-CO1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727244AbgJAVF6 (ORCPT
+        Fri, 2 Oct 2020 05:35:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37548 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725993AbgJBJfN (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 1 Oct 2020 17:05:58 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Y23EVpEgJ94DAErs7MsMJ2FgUW6fKWq3NxoBCjWkCrm0YweoSgwFVQ0J7xrvLTNP6S7zaUJvmIU6Q+B37bovesIILzXmc4ic25xohvrB6udaeU5Bgcu0yq7U7d/qkf2sXYvhuZhIVR4/BxMD9wU+w+eWZpQ0sjszQf61oWx83dK/+0hSNGwMx0pbFbPj5RbGGKytwswuajz+VWOoAZXVr1ZZP2s1F+h0DcHjHgCjlRHSpLIG1eGCBO7HVBsAXOOxpSbumT8MzaI8DVctdrDuDZ2FVaSGxUJR4QcMj8BiUZB9TARb4koMYnky03QhtFUj2L2Q7HR7G4SzSMR6ZjTilw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=D8QxPMisC2+k/+yHudjuCuQoA5DHOOu3ciktYDpZmyQ=;
- b=KCFdKtIAlS+1lpfnDpUIw2JMCuZTlaRaT5hmcCScePfXe2tRNYAE1fFbdKtXHe49T7US7//fYRMMU3X1pvezBNLsLafgNT4gMfEaxbunNxg6x2DmKPkXcoy3KSgpHWBbnivxHNgvPYp+87O3g3cjFYXRzoDg0r3Ur0XpZYLoGeOXuXfKXOZrMs7q0uWcg2IpLyCYpvP0OnTBOjtPMqgWoyTVyYfZiJ7HuLHJPmefR5GqFzV8oEMPYpWvvxNyHLgfoZ37RMTN4UnGHzrrvKZgD+3dQny7auHQWOyeAhwg3foepFHFMYtaqvlN/FAS9J50Zmlpm9D4wiVyynFA+suxCg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 149.199.60.83) smtp.rcpttodomain=lists.infradead.org
- smtp.mailfrom=xilinx.com; dmarc=bestguesspass action=none
- header.from=xilinx.com; dkim=none (message not signed); arc=none
+        Fri, 2 Oct 2020 05:35:13 -0400
+Received: from mail-wr1-x441.google.com (mail-wr1-x441.google.com [IPv6:2a00:1450:4864:20::441])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8FD32C0613D0
+        for <linux-remoteproc@vger.kernel.org>; Fri,  2 Oct 2020 02:35:13 -0700 (PDT)
+Received: by mail-wr1-x441.google.com with SMTP id x14so1010705wrl.12
+        for <linux-remoteproc@vger.kernel.org>; Fri, 02 Oct 2020 02:35:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=xilinx.onmicrosoft.com; s=selector2-xilinx-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=D8QxPMisC2+k/+yHudjuCuQoA5DHOOu3ciktYDpZmyQ=;
- b=iULkf2OPKR3W2IEbj525jS2y5td061YIR8AjdGnwGRofYuyVr/PcTNj+JFLyYB8Jv44i+oiUvTur0AQo3Jd3+ZOka2TafeGI1weZzLNzGPdFNImxHSlgWk6f1JCLRQITMsZC2FWASTbe52B4IpbHNA3SbCWEIisW3TJyT2BUm2M=
-Received: from CY4PR1201CA0018.namprd12.prod.outlook.com
- (2603:10b6:910:16::28) by DM5PR02MB2233.namprd02.prod.outlook.com
- (2603:10b6:3:5a::11) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3433.38; Thu, 1 Oct
- 2020 21:05:54 +0000
-Received: from CY1NAM02FT005.eop-nam02.prod.protection.outlook.com
- (2603:10b6:910:16:cafe::c) by CY4PR1201CA0018.outlook.office365.com
- (2603:10b6:910:16::28) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3433.32 via Frontend
- Transport; Thu, 1 Oct 2020 21:05:54 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 149.199.60.83)
- smtp.mailfrom=xilinx.com; lists.infradead.org; dkim=none (message not signed)
- header.d=none;lists.infradead.org; dmarc=bestguesspass action=none
- header.from=xilinx.com;
-Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
- 149.199.60.83 as permitted sender) receiver=protection.outlook.com;
- client-ip=149.199.60.83; helo=xsj-pvapsmtpgw01;
-Received: from xsj-pvapsmtpgw01 (149.199.60.83) by
- CY1NAM02FT005.mail.protection.outlook.com (10.152.74.117) with Microsoft SMTP
- Server id 15.20.3412.21 via Frontend Transport; Thu, 1 Oct 2020 21:05:54
- +0000
-Received: from [149.199.38.66] (port=60931 helo=smtp.xilinx.com)
-        by xsj-pvapsmtpgw01 with esmtp (Exim 4.90)
-        (envelope-from <ben.levinsky@xilinx.com>)
-        id 1kO5lW-0005ZK-Kr; Thu, 01 Oct 2020 14:05:26 -0700
-Received: from [127.0.0.1] (helo=localhost)
-        by smtp.xilinx.com with smtp (Exim 4.63)
-        (envelope-from <ben.levinsky@xilinx.com>)
-        id 1kO5ly-0000KR-Da; Thu, 01 Oct 2020 14:05:54 -0700
-Received: from xsj-pvapsmtp01 (mailman.xilinx.com [149.199.38.66])
-        by xsj-smtp-dlp2.xlnx.xilinx.com (8.13.8/8.13.1) with ESMTP id 091L5fab030070;
-        Thu, 1 Oct 2020 14:05:41 -0700
-Received: from [172.19.2.206] (helo=xsjblevinsk50.xilinx.com)
-        by xsj-pvapsmtp01 with esmtp (Exim 4.63)
-        (envelope-from <ben.levinsky@xilinx.com>)
-        id 1kO5ll-0000Id-8N; Thu, 01 Oct 2020 14:05:41 -0700
-From:   Ben Levinsky <ben.levinsky@xilinx.com>
-To:     sunnyliangjy@gmail.com, punit1.agrawal@toshiba.co.jp,
-        stefanos@xilinx.com, michals@xilinx.com, michael.auchter@ni.com
-Cc:     devicetree@vger.kernel.org, mathieu.poirier@linaro.org,
-        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        robh+dt@kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v17 1/5] firmware: xilinx: Add ZynqMP firmware ioctl enums for RPU configuration.
-Date:   Thu,  1 Oct 2020 14:05:37 -0700
-Message-Id: <20201001210541.32042-2-ben.levinsky@xilinx.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20201001210541.32042-1-ben.levinsky@xilinx.com>
-References: <20201001210541.32042-1-ben.levinsky@xilinx.com>
-X-RCIS-Action: ALLOW
-X-TM-AS-Product-Ver: IMSS-7.1.0.1224-8.2.0.1013-23620.005
-X-TM-AS-User-Approved-Sender: Yes;Yes
-X-EOPAttributedMessage: 0
-X-MS-Office365-Filtering-HT: Tenant
-X-MS-PublicTrafficType: Email
+        d=ffwll.ch; s=google;
+        h=date:from:to:cc:subject:message-id:mail-followup-to:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=BpK88C7pHVfm7Xd/YUZRAsUp3EAae6LbRjsv8dXA5cw=;
+        b=gQQEDT2273zbnMI2K24GO8wWvlqW3PZ1C69DxD3QXe13a8vepyBWPq91HKvGAUtIGb
+         TfIFxI8tFBj49Vq+1JGBekM/EcVXfEe59Xz7jBfiqoy5W908ZY36o7Lo3BEIdoGFl+9G
+         Ka+rpz38Ga5EZEKxwD2urFUg/D1mRPbHLczHM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to;
+        bh=BpK88C7pHVfm7Xd/YUZRAsUp3EAae6LbRjsv8dXA5cw=;
+        b=L/a/AURy8mOqvXph+kC64Pc1hNOGfTwF8TieieWlyCIjO5elZUPJnpCz6idNrDi3Vs
+         g86yVUROjjXpv9DCy6uPNnEusTaj76FzgrRN1hGFm0udWQtDM5AexCF//FT8HcDWR36S
+         PCvFNxGmP0oOJOiwhInWpQ+vwNiAhlMb6FMWAAk1WELeJ+zgWSJCI7xF9NdJ2k5Z/35B
+         Mq223Qvlop0I1nxPFFYcIgNwobBZldmSOs5Pi7FCOwlEITrLynXDPve6acxoWh64VGgY
+         y09DqTOPtgT+DpdQaMs2pw6FueWRBN1r0craJ5YQsHj8YmLVgKcwaCiH421jyatm4Zvg
+         qhYA==
+X-Gm-Message-State: AOAM531eOOkYKXuwChr39kUa581gt+1n8MZ4F5xFYjVdg2yZ7SBfT3Z/
+        OymNpECDAWDct7IC4hDSNxKi3h1nOHw1M8ia
+X-Google-Smtp-Source: ABdhPJykrhwgDQ+Cfh4cqZgcNZxoClfD6BLD+KFpVIbHeTXbxtjIEdx893xAoQyqCspb1vNoEtkdFA==
+X-Received: by 2002:adf:8285:: with SMTP id 5mr1892288wrc.97.1601631312192;
+        Fri, 02 Oct 2020 02:35:12 -0700 (PDT)
+Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
+        by smtp.gmail.com with ESMTPSA id u66sm1121105wme.12.2020.10.02.02.35.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 02 Oct 2020 02:35:10 -0700 (PDT)
+Date:   Fri, 2 Oct 2020 11:35:08 +0200
+From:   Daniel Vetter <daniel@ffwll.ch>
+To:     Alexandre Bailon <abailon@baylibre.com>
+Cc:     linux-remoteproc@vger.kernel.org, ohad@wizery.com,
+        gpain@baylibre.com, stephane.leprovost@mediatek.com,
+        jstephan@baylibre.com, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org,
+        mturquette@baylibre.com, bjorn.andersson@linaro.org,
+        christian.koenig@amd.com, linux-media@vger.kernel.org
+Subject: Re: [RFC PATCH 0/4] Add a RPMsg driver to support AI Processing Unit
+ (APU)
+Message-ID: <20201002093508.GF438822@phenom.ffwll.local>
+Mail-Followup-To: Alexandre Bailon <abailon@baylibre.com>,
+        linux-remoteproc@vger.kernel.org, ohad@wizery.com,
+        gpain@baylibre.com, stephane.leprovost@mediatek.com,
+        jstephan@baylibre.com, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org,
+        mturquette@baylibre.com, bjorn.andersson@linaro.org,
+        christian.koenig@amd.com, linux-media@vger.kernel.org
+References: <20200930115350.5272-1-abailon@baylibre.com>
+ <20201001084856.GC438822@phenom.ffwll.local>
+ <8e4bb739-c3b3-d790-e8e3-dd5df2d6f869@baylibre.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MS-Office365-Filtering-Correlation-Id: 2c78bfdf-c8f0-4db7-04a4-08d8664dc93c
-X-MS-TrafficTypeDiagnostic: DM5PR02MB2233:
-X-Microsoft-Antispam-PRVS: <DM5PR02MB2233FDB55AD80661947C3FACB5300@DM5PR02MB2233.namprd02.prod.outlook.com>
-X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
-X-MS-Oob-TLC-OOBClassifiers: OLM:565;
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: XOK4s7H9W1VS6t/WH12BH3zFTcNgB2UCDgqpYvkL+yGDcyvJSlrn+++8FAPaAIHrhTZatVQSfazcZJntWh5vQ0rjCo2aDk0GjXFzelSAPdEKI/QKy0oBl2YiWeEDzdlwICToDQZvpzLE6RetkykPToNJgKYaUSzwqrj2ckUi76NCHhFOjYQO2rcRvRCuyeU4RgtVA8EeuTo85Kl5dmv4CiopFfmZFVv7kZjoV5GYSPDCGABeqCt3740bs/hswfHg0AZK7G8AFXhY9dAvdkXGR9rGQ5IY6Y5bVJCf3ow6618siuYc8Lle4snhYxjymDO6nOUHQ3tdsA2TYhhsdgtRpz+Df+GvHBlubT3tj542i595GepkHX2mx/ZzwK0C3EMGUc+ztNpNgEAq3VYUG4eaHQ==
-X-Forefront-Antispam-Report: CIP:149.199.60.83;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:xsj-pvapsmtpgw01;PTR:unknown-60-83.xilinx.com;CAT:NONE;SFS:(396003)(346002)(136003)(376002)(39860400002)(46966005)(5660300002)(47076004)(82740400003)(356005)(83380400001)(26005)(7696005)(6666004)(82310400003)(70586007)(4326008)(478600001)(9786002)(2906002)(70206006)(44832011)(36756003)(1076003)(8936002)(186003)(81166007)(8676002)(316002)(2616005)(426003)(336012);DIR:OUT;SFP:1101;
-X-OriginatorOrg: xilinx.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Oct 2020 21:05:54.7463
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2c78bfdf-c8f0-4db7-04a4-08d8664dc93c
-X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.60.83];Helo=[xsj-pvapsmtpgw01]
-X-MS-Exchange-CrossTenant-AuthSource: CY1NAM02FT005.eop-nam02.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR02MB2233
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8e4bb739-c3b3-d790-e8e3-dd5df2d6f869@baylibre.com>
+X-Operating-System: Linux phenom 5.7.0-1-amd64 
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Add ZynqMP firmware ioctl enums for RPU configuration.
+On Thu, Oct 01, 2020 at 07:28:27PM +0200, Alexandre Bailon wrote:
+> Hi Daniel,
+> 
+> On 10/1/20 10:48 AM, Daniel Vetter wrote:
+> > On Wed, Sep 30, 2020 at 01:53:46PM +0200, Alexandre Bailon wrote:
+> > > This adds a RPMsg driver that implements communication between the CPU and an
+> > > APU.
+> > > This uses VirtIO buffer to exchange messages but for sharing data, this uses
+> > > a dmabuf, mapped to be shared between CPU (userspace) and APU.
+> > > The driver is relatively generic, and should work with any SoC implementing
+> > > hardware accelerator for AI if they use support remoteproc and VirtIO.
+> > > 
+> > > For the people interested by the firmware or userspace library,
+> > > the sources are available here:
+> > > https://github.com/BayLibre/open-amp/tree/v2020.01-mtk/apps/examples/apu
+> > Since this has open userspace (from a very cursory look), and smells very
+> > much like an acceleration driver, and seems to use dma-buf for memory
+> > management: Why is this not just a drm driver?
+> 
+> I have never though to DRM since for me it was only a RPMsg driver.
+> I don't know well DRM. Could you tell me how you would do it so I could have
+> a look ?
 
-Signed-off-by: Ben Levinsky <ben.levinsky@xilinx.com>
----
-v3:
-- add xilinx-related platform mgmt fn's instead of wrapping around
-  function pointer in xilinx eemi ops struct
-v4:
-- add default values for enums
----
+Well internally it would still be an rpmsg driver ... I'm assuming that's
+kinda similar to how most gpu drivers sit on top of a pci_device or a
+platform_device, it's just a means to get at your "device"?
 
- include/linux/firmware/xlnx-zynqmp.h | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
+The part I'm talking about here is the userspace api. You're creating an
+entirely new chardev interface, which at least from a quick look seems to
+be based on dma-buf buffers and used to submit commands to your device to
+do some kind of computing/processing. That's exactly what drivers/gpu/drm
+does (if you ignore the display/modeset side of things) - at the kernel
+level gpus have nothing to do with graphics, but all with handling buffer
+objects and throwing workloads at some kind of accelerator thing.
 
-diff --git a/include/linux/firmware/xlnx-zynqmp.h b/include/linux/firmware/xlnx-zynqmp.h
-index 5968df82b991..bb347dfe4ba4 100644
---- a/include/linux/firmware/xlnx-zynqmp.h
-+++ b/include/linux/firmware/xlnx-zynqmp.h
-@@ -104,6 +104,10 @@ enum pm_ret_status {
- };
- 
- enum pm_ioctl_id {
-+	IOCTL_GET_RPU_OPER_MODE = 0,
-+	IOCTL_SET_RPU_OPER_MODE = 1,
-+	IOCTL_RPU_BOOT_ADDR_CONFIG = 2,
-+	IOCTL_TCM_COMB_CONFIG = 3,
- 	IOCTL_SD_DLL_RESET = 6,
- 	IOCTL_SET_SD_TAPDELAY,
- 	IOCTL_SET_PLL_FRAC_MODE,
-@@ -129,6 +133,21 @@ enum pm_query_id {
- 	PM_QID_CLOCK_GET_MAX_DIVISOR,
- };
- 
-+enum rpu_oper_mode {
-+	PM_RPU_MODE_LOCKSTEP = 0,
-+	PM_RPU_MODE_SPLIT = 1,
-+};
-+
-+enum rpu_boot_mem {
-+	PM_RPU_BOOTMEM_LOVEC = 0,
-+	PM_RPU_BOOTMEM_HIVEC = 1,
-+};
-+
-+enum rpu_tcm_comb {
-+	PM_RPU_TCM_SPLIT = 0,
-+	PM_RPU_TCM_COMB = 1,
-+};
-+
- enum zynqmp_pm_reset_action {
- 	PM_RESET_ACTION_RELEASE,
- 	PM_RESET_ACTION_ASSERT,
+Of course that's just my guess of what's going on, after scrolling through
+your driver and userspace a bit, I might be completely off. But if my
+guess is roughly right, then your driver is internally an rpmsg
+driver, but towards userspace it should be a drm driver.
+
+Cheers, Daniel
+
+> 
+> Thanks,
+> Alexandre
+> 
+> > -Daniel
+> > 
+> > > Alexandre Bailon (3):
+> > >    Add a RPMSG driver for the APU in the mt8183
+> > >    rpmsg: apu_rpmsg: update the way to store IOMMU mapping
+> > >    rpmsg: apu_rpmsg: Add an IOCTL to request IOMMU mapping
+> > > 
+> > > Julien STEPHAN (1):
+> > >    rpmsg: apu_rpmsg: Add support for async apu request
+> > > 
+> > >   drivers/rpmsg/Kconfig          |   9 +
+> > >   drivers/rpmsg/Makefile         |   1 +
+> > >   drivers/rpmsg/apu_rpmsg.c      | 752 +++++++++++++++++++++++++++++++++
+> > >   drivers/rpmsg/apu_rpmsg.h      |  52 +++
+> > >   include/uapi/linux/apu_rpmsg.h |  47 +++
+> > >   5 files changed, 861 insertions(+)
+> > >   create mode 100644 drivers/rpmsg/apu_rpmsg.c
+> > >   create mode 100644 drivers/rpmsg/apu_rpmsg.h
+> > >   create mode 100644 include/uapi/linux/apu_rpmsg.h
+> > > 
+> > > -- 
+> > > 2.26.2
+> > > 
+> > > _______________________________________________
+> > > dri-devel mailing list
+> > > dri-devel@lists.freedesktop.org
+> > > https://lists.freedesktop.org/mailman/listinfo/dri-devel
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+
 -- 
-2.17.1
-
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
