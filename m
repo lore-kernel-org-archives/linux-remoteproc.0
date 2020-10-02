@@ -2,1215 +2,1827 @@ Return-Path: <SRS0=nrb/=DJ=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64D0FC4363D
-	for <linux-remoteproc@archiver.kernel.org>; Fri,  2 Oct 2020 19:07:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0A12C47425
+	for <linux-remoteproc@archiver.kernel.org>; Fri,  2 Oct 2020 23:42:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0887A20795
-	for <linux-remoteproc@archiver.kernel.org>; Fri,  2 Oct 2020 19:07:59 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="bnw9q30B"
+	by mail.kernel.org (Postfix) with ESMTP id B026C20796
+	for <linux-remoteproc@archiver.kernel.org>; Fri,  2 Oct 2020 23:42:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1601682120;
+	bh=Xe280qlIexeqbxR4Q7xP7HiCiJ5qmhiwLkz3uf4rtVk=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=Pd5qZDbRpNrrsmlRlSXBvV8DzZEBN6a2agZNdGM2biGPnFYv19sjWFspj5YudADXk
+	 WovNYrfzY7xkpWgZ7hfgB7yl02QiTv+MIDTSsFEpPQupSELgEVnPoS7R/9i2g2CLh2
+	 9Nti2yGpZLK5imWDOzn8tjOBd0HRaSrHae7xJRdk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726813AbgJBTH6 (ORCPT
+        id S1725775AbgJBXlw (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 2 Oct 2020 15:07:58 -0400
-Received: from mail-eopbgr750074.outbound.protection.outlook.com ([40.107.75.74]:32131
-        "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725991AbgJBTH6 (ORCPT
+        Fri, 2 Oct 2020 19:41:52 -0400
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:43285 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725283AbgJBXlv (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 2 Oct 2020 15:07:58 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=F1py0wT9YCHfEEJtOWM6Qj/u8ts+02FP4+W0jhcnoFe9vXsO3ENF3Hg3iez7Hvljj6PSmaglzIcP9XZAYcm7XIysWpS8KpVm7X5bYi4BVpUTfk9RVQEslLEZ+GtVS3kAksw3v8tTc6qAKQYhxiDGydnab3rOc7AQXXU3XIRIGUFRkCV9qyRynWvfvBCvY7RZnnPbV2BJm86eVMQhDvW1iiEBrLhEAAU4rPiRghG0IW5ohvIEQTaX8XV3+fGv6VDpOW8YOJtr3hnRmRgvje3Tj4ECjPjzQ9hh98YMCC4wTqnGzibuJGpd3Vky2dH35tqhHdofYEGSR1MwzEFao+JIuw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=5aPzaZ16KgB/0OGYZeTjTpAN0dD5KID4cWpumsOZi6c=;
- b=eW8ZxXU/4JO/qfCb+d7Rd/wnEPOiGF+/p+x2anXLho0GGe/WoSDrhoIkwqBqZyc80wJDaBbsD1YTm3N/bBMB7ZZtkiyFJNFB8A8RtOkszkj8U/lD91+2wkZr9geZMbvyvCnsLg22D1f5or2zvRD8Ht+od7Fu7Tf99S6+t9LVQaohMk+S9XafdtGsIZ/AAFaHuKicAn2ZF1Lpo+lF7Qy7eOCN++guos8Zm64wX/5SmR61yJz1QBOwR4AjCVrfVW8S+0J7yDrNu3kBuNBcXcRxtTgiB6SFr2kn2V3dO4LztyZuPnBDzKbzMBA6hKicqvZueKR+vX8aT4S0/Exvd/hLzg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=xilinx.com; dmarc=pass action=none header.from=xilinx.com;
- dkim=pass header.d=xilinx.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=xilinx.onmicrosoft.com; s=selector2-xilinx-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=5aPzaZ16KgB/0OGYZeTjTpAN0dD5KID4cWpumsOZi6c=;
- b=bnw9q30Bb2QOglM9HvFs2PGC1qK2I4oOP0ziGQn8KgswWE6piItpwPUCeUTiodU5gK1NYzDdhbCuuVXo1o0mDGp0oOzKFSUC9CWTcTUAIFOxW16DFCvytc0i/NutenwukHxhszAen8wYPOxrbEnu/LD2ptj8jrAXBl9QUcm/fiI=
-Received: from BYAPR02MB4407.namprd02.prod.outlook.com (2603:10b6:a03:55::31)
- by BYAPR02MB5991.namprd02.prod.outlook.com (2603:10b6:a03:118::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3433.32; Fri, 2 Oct
- 2020 19:07:50 +0000
-Received: from BYAPR02MB4407.namprd02.prod.outlook.com
- ([fe80::113d:722:5f93:d29e]) by BYAPR02MB4407.namprd02.prod.outlook.com
- ([fe80::113d:722:5f93:d29e%6]) with mapi id 15.20.3433.038; Fri, 2 Oct 2020
- 19:07:50 +0000
-From:   Ben Levinsky <BLEVINSK@xilinx.com>
-To:     Michael Auchter <michael.auchter@ni.com>
-CC:     "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-Subject: RE: [PATCH v17 5/5] remoteproc: Add initial zynqmp R5 remoteproc
- driver
-Thread-Topic: [PATCH v17 5/5] remoteproc: Add initial zynqmp R5 remoteproc
- driver
-Thread-Index: AQHWmDbDpqn2QjgPZEiEnqxkV3l5xKmEq9iAgAABhEA=
-Date:   Fri, 2 Oct 2020 19:07:49 +0000
-Message-ID: <BYAPR02MB4407F1C2E54353F74E1FD952B5310@BYAPR02MB4407.namprd02.prod.outlook.com>
-References: <20201001210541.32042-1-ben.levinsky@xilinx.com>
- <20201001210541.32042-6-ben.levinsky@xilinx.com>
- <20201002185921.GA489187@xaphan>
-In-Reply-To: <20201002185921.GA489187@xaphan>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
-X-MS-TNEF-Correlator: 
-authentication-results: ni.com; dkim=none (message not signed)
- header.d=none;ni.com; dmarc=none action=none header.from=xilinx.com;
-x-originating-ip: [149.199.62.133]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 30d9dae0-d15c-42f1-19f5-08d8670674d0
-x-ms-traffictypediagnostic: BYAPR02MB5991:
-x-microsoft-antispam-prvs: <BYAPR02MB5991827E04756B1F128A064BB5310@BYAPR02MB5991.namprd02.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:390;
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: NSHGevdve7ewMmMhmiVcYie01XaAdEWOV9d8Tawce24ZHSel5LKfzw2DwbSVI/qoYhPSCY1nqjmSvHiLsTHcQ5eu4DwgOUmYVaKasHrHmQtog0zs1qdUKFxgPMmwcd2BMES/HoHtPwwAj3iSlbd43IfugeHpFJaU2O1OxIksr6Nql++evkhx/TsPFGyfc8xvwRYSR9wadbuyqxCbZQbm8WpS84FLo2QIfbljukt15X6MlKuh8LnxU5P33j9ppG7xkONChM7rYkAP7amz9DBvzztzqbKmEb/aUiX+EXf9L0toztO4ZcILD3VPXIE/MiOD
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR02MB4407.namprd02.prod.outlook.com;PTR:;CAT:NONE;SFS:(39860400002)(366004)(376002)(396003)(346002)(136003)(54906003)(316002)(6506007)(6916009)(83380400001)(8936002)(8676002)(186003)(7696005)(5660300002)(26005)(478600001)(4326008)(66446008)(86362001)(55016002)(9686003)(76116006)(33656002)(71200400001)(52536014)(66556008)(2906002)(30864003)(66946007)(53546011)(66476007)(64756008)(579004)(559001);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata: TXzUFlaHQT3+iiH3xSHhXcEH+XGVo8KfRfDhgajHyv5LbpAyKvOOJ7XU6GcJLiKlHq3UW/FOIbVhNZ4vkkgfOvLTE9jZ0CWWAZbabWzeij9suM9+e3CCMt0MbDtQ0tzeHaWZ5BUp/zmHlmexm4rk2Xf3y0eEJ5aRiNA6thmq3ILX926ky0EXK1vrxI166vvZhbnDppzgG1wR2m+ryvUnxb+/QAS08lpzHBPbEbok4lUkjNRTrKmPOIiaR8d+LAfuFXog7fVvtDQgx9OaFEGkcQKc5288eQ1Arefh5XIXS4pts7pKJQipK7P9T6f11VirACb2ea7hmUoYarBZ6Dw7W8B8Bc2OJHaPnu0I5d3fkafkIdx5IjuApgskofBZj/kpdQA1kEWaTNJ58cPzw5XZV6imKffbngIPGAurqcVDIBXPqmv8HNjEbotN35/mGlkUfg545ypk/uaSO8I/ktgOqo1iGKG1CgOAzTmdBIvVDWEzL/Ztt65gI2jvS7K3rOZY5eiLMhfbfZ3btlqTbOtVkN6XftQCAk+BCsvGTez1SLS7u611RgT4+Is0j9mGtklFoMnkwXzRN09m1eZ/EtjQ3lyoiFCWHq6Yr6Y21h/W1LKKBLwoXC362KdPQR5G2Ca0xn6ClJD224WM/2rHKig+Ew==
-x-ms-exchange-transport-forked: True
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Fri, 2 Oct 2020 19:41:51 -0400
+Received: by mail-oi1-f195.google.com with SMTP id l85so2946889oih.10;
+        Fri, 02 Oct 2020 16:41:46 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=HGc7tX7DLeaaUChrgI7l/BhbcwzVObNLbwQw2dIgtv8=;
+        b=AvLalkfXuJDIKDaL677hzOe6YqJN0YE4pumJp+BRMrgQB10bfuMsVXS4BGlJMfPjH8
+         XNB5LwyPrDh7CDfbOzOW4fruDEl5FjtKzay4f2QSEdmlUg2K4wRE1MtWnx8NIZEdy4/h
+         qO9vkMNiRml5NhaN/8q+AnnBJuw73GOM9IS3Kys/0k3Qeli88FWz8bTu1aF8Jvj/sVbm
+         aLdLcvj63bnZfG3fIr3GDoSqpoVwcS9mwYbrsUIBJ58XgXWew1E1r5dWAC4ZIUlX0Yuf
+         gtjmXu5ohbngboqnOQShn+nfAry/4JGPR6sEJaFFvtK8CK2ggaAogNQFEwAVwi0PxkTH
+         mZzA==
+X-Gm-Message-State: AOAM5336tGpEnHmH7cNhpC8+HryPDueuVa4hMRG95qeWGtp60IzFYhA0
+        3Ngzlr8JkAcL8K38WJ2bsMGQxahmjgQC
+X-Google-Smtp-Source: ABdhPJzm2FhW0WKDCCbe+0lxpte6bDO6N7mGeO59MGmHqLeq6TPdCpOqLBACOE9kczRzrWmAGIoVWQ==
+X-Received: by 2002:aca:4d44:: with SMTP id a65mr592615oib.144.1601682105817;
+        Fri, 02 Oct 2020 16:41:45 -0700 (PDT)
+Received: from xps15.herring.priv (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.googlemail.com with ESMTPSA id b17sm828728oog.25.2020.10.02.16.41.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 02 Oct 2020 16:41:45 -0700 (PDT)
+From:   Rob Herring <robh@kernel.org>
+To:     devicetree@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Baolin Wang <baolin.wang7@gmail.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Vinod Koul <vkoul@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-spi@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-hwmon@vger.kernel.org, linux-iio@vger.kernel.org,
+        openipmi-developer@lists.sourceforge.net,
+        linux-leds@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-rockchip@lists.infradead.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-mips@vger.kernel.org, linux-mmc@vger.kernel.org,
+        netdev@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        linux-serial@vger.kernel.org, alsa-devel@alsa-project.org,
+        linux-usb@vger.kernel.org
+Subject: [PATCH] dt-bindings: Another round of adding missing 'additionalProperties'
+Date:   Fri,  2 Oct 2020 18:41:43 -0500
+Message-Id: <20201002234143.3570746-1-robh@kernel.org>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-X-OriginatorOrg: xilinx.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: BYAPR02MB4407.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 30d9dae0-d15c-42f1-19f5-08d8670674d0
-X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Oct 2020 19:07:49.7556
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 657af505-d5df-48d0-8300-c31994686c5c
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: jeY45tID+l9E4zPoNiJlefMKV4nUILJ7ZhZVOztARWiGxG6sVbH2I9gKQn/0Na2umUBb/ZZrDjZKzjMYK6cLGQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR02MB5991
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi Michael,=20
+Another round of wack-a-mole. The json-schema default is additional
+unknown properties are allowed, but for DT all properties should be
+defined.
 
-Thanks for the review. With the numerous sets of review, I think a few thin=
-gs got lost along the way that I will make sure to get encompassed in the n=
-ext revision
+Cc: Thierry Reding <thierry.reding@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Cc: Stephen Boyd <sboyd@kernel.org>
+Cc: Shawn Guo <shawnguo@kernel.org>
+Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Baolin Wang <baolin.wang7@gmail.com>
+Cc: Guenter Roeck <linux@roeck-us.net>
+Cc: Jonathan Cameron <jic23@kernel.org>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Cc: Lee Jones <lee.jones@linaro.org>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: "David S. Miller" <davem@davemloft.net>
+Cc: Bjorn Helgaas <bhelgaas@google.com>
+Cc: Vinod Koul <vkoul@kernel.org>
+Cc: Liam Girdwood <lgirdwood@gmail.com>
+Cc: Mark Brown <broonie@kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: linux-clk@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org
+Cc: linux-spi@vger.kernel.org
+Cc: linux-gpio@vger.kernel.org
+Cc: linux-hwmon@vger.kernel.org
+Cc: linux-iio@vger.kernel.org
+Cc: openipmi-developer@lists.sourceforge.net
+Cc: linux-leds@vger.kernel.org
+Cc: linux-media@vger.kernel.org
+Cc: linux-rockchip@lists.infradead.org
+Cc: linux-stm32@st-md-mailman.stormreply.com
+Cc: linux-mips@vger.kernel.org
+Cc: linux-mmc@vger.kernel.org
+Cc: netdev@vger.kernel.org
+Cc: linux-pci@vger.kernel.org
+Cc: linux-pm@vger.kernel.org
+Cc: linux-remoteproc@vger.kernel.org
+Cc: linux-serial@vger.kernel.org
+Cc: alsa-devel@alsa-project.org
+Cc: linux-usb@vger.kernel.org
+Signed-off-by: Rob Herring <robh@kernel.org>
+---
 
-- in bindings example, remove the '-1.0'
-- remove the global rpu_mode var
-	^ the above I had thought was in v16 so sorry about that...
+I'll take this thru the DT tree.
 
-Otherwise I will fix up the memory management that is occurring in the driv=
-er as you describe.
+ .../arm/bcm/raspberrypi,bcm2835-firmware.yaml |  2 ++
+ .../arm/mediatek/mediatek,pericfg.yaml        |  2 ++
+ .../devicetree/bindings/arm/pmu.yaml          |  2 ++
+ .../devicetree/bindings/arm/primecell.yaml    |  3 +++
+ .../bindings/arm/samsung/sysreg.yaml          |  2 ++
+ .../arm/tegra/nvidia,tegra20-pmc.yaml         |  2 ++
+ .../bindings/bus/mti,mips-cdmm.yaml           |  2 ++
+ .../bus/socionext,uniphier-system-bus.yaml    |  7 +++++++
+ .../bindings/clock/arm,syscon-icst.yaml       |  2 ++
+ .../bindings/clock/idt,versaclock5.yaml       | 20 ++++++++++---------
+ .../bindings/clock/imx6q-clock.yaml           |  2 ++
+ .../bindings/clock/imx6sl-clock.yaml          |  2 ++
+ .../bindings/clock/imx6sll-clock.yaml         |  2 ++
+ .../bindings/clock/imx6sx-clock.yaml          |  2 ++
+ .../bindings/clock/imx6ul-clock.yaml          |  2 ++
+ .../bindings/clock/intel,cgu-lgm.yaml         |  2 ++
+ .../bindings/clock/qcom,gcc-sm8250.yaml       |  2 ++
+ .../bindings/clock/sprd,sc9863a-clk.yaml      |  2 ++
+ .../bindings/clock/ti,am654-ehrpwm-tbclk.yaml |  2 ++
+ .../bindings/display/bridge/ite,it6505.yaml   |  5 +++++
+ .../bindings/display/bridge/lvds-codec.yaml   |  3 +++
+ .../devicetree/bindings/display/msm/gmu.yaml  |  2 ++
+ .../devicetree/bindings/edac/dmc-520.yaml     |  2 ++
+ .../devicetree/bindings/fsi/ibm,fsi2spi.yaml  |  2 ++
+ .../gpio/socionext,uniphier-gpio.yaml         |  2 ++
+ .../bindings/hwmon/adi,axi-fan-control.yaml   |  2 ++
+ .../devicetree/bindings/hwmon/adt7475.yaml    |  2 ++
+ .../bindings/iio/accel/kionix,kxsd9.yaml      |  4 ++++
+ .../bindings/iio/adc/maxim,max1238.yaml       |  2 ++
+ .../bindings/iio/adc/maxim,max1363.yaml       |  2 ++
+ .../bindings/iio/adc/qcom,spmi-vadc.yaml      |  4 ++++
+ .../bindings/iio/adc/samsung,exynos-adc.yaml  |  2 ++
+ .../bindings/iio/adc/ti,ads8688.yaml          |  4 ++++
+ .../bindings/iio/amplifiers/adi,hmc425a.yaml  |  2 ++
+ .../bindings/iio/imu/invensense,icm42600.yaml |  6 ++++++
+ .../bindings/iio/light/amstaos,tsl2563.yaml   |  2 ++
+ .../bindings/iio/light/dynaimage,al3010.yaml  |  2 ++
+ .../bindings/iio/light/dynaimage,al3320a.yaml |  2 ++
+ .../bindings/iio/light/sharp,gp2ap002.yaml    |  2 ++
+ .../iio/magnetometer/asahi-kasei,ak8975.yaml  |  2 ++
+ .../iio/proximity/vishay,vcnl3020.yaml        |  2 ++
+ .../interrupt-controller/ingenic,intc.yaml    |  2 ++
+ .../loongson,pch-msi.yaml                     |  2 ++
+ .../loongson,pch-pic.yaml                     |  2 ++
+ .../devicetree/bindings/ipmi/ipmi-smic.yaml   |  2 ++
+ .../devicetree/bindings/leds/leds-lp55xx.yaml |  8 ++++++++
+ .../bindings/media/i2c/chrontel,ch7322.yaml   |  2 ++
+ .../bindings/media/i2c/imi,rdacm2x-gmsl.yaml  |  2 ++
+ .../bindings/media/nxp,imx8mq-vpu.yaml        |  2 ++
+ .../bindings/media/qcom,msm8916-venus.yaml    |  2 ++
+ .../bindings/media/qcom,msm8996-venus.yaml    |  2 ++
+ .../bindings/media/qcom,sc7180-venus.yaml     |  2 ++
+ .../bindings/media/qcom,sdm845-venus-v2.yaml  |  2 ++
+ .../bindings/media/qcom,sdm845-venus.yaml     |  2 ++
+ .../bindings/memory-controllers/fsl/mmdc.yaml |  2 ++
+ .../memory-controllers/st,stm32-fmc2-ebi.yaml |  2 ++
+ .../bindings/mfd/gateworks-gsc.yaml           |  2 ++
+ .../bindings/mfd/xylon,logicvc.yaml           | 14 +++++++++++--
+ .../bindings/mips/ingenic/ingenic,cpu.yaml    |  6 ++++--
+ .../bindings/mips/loongson/rs780e-acpi.yaml   |  2 ++
+ .../bindings/mmc/mmc-pwrseq-emmc.yaml         |  2 ++
+ .../bindings/mmc/mmc-pwrseq-sd8787.yaml       |  2 ++
+ .../bindings/mmc/mmc-pwrseq-simple.yaml       |  2 ++
+ .../devicetree/bindings/net/qcom,ipa.yaml     |  2 ++
+ .../bindings/net/realtek-bluetooth.yaml       |  4 +++-
+ .../net/wireless/microchip,wilc1000.yaml      |  4 ++++
+ .../devicetree/bindings/pci/rcar-pci-ep.yaml  |  2 ++
+ .../phy/amlogic,meson-g12a-usb2-phy.yaml      |  2 ++
+ .../bindings/phy/qcom,ipq806x-usb-phy-hs.yaml |  2 ++
+ .../bindings/phy/qcom,ipq806x-usb-phy-ss.yaml |  2 ++
+ .../bindings/phy/qcom,qusb2-phy.yaml          |  1 +
+ .../bindings/phy/qcom-usb-ipq4019-phy.yaml    |  2 ++
+ .../bindings/pinctrl/cirrus,lochnagar.yaml    |  2 ++
+ .../pinctrl/socionext,uniphier-pinctrl.yaml   |  2 ++
+ .../power/amlogic,meson-sec-pwrc.yaml         |  2 ++
+ .../bindings/power/domain-idle-state.yaml     |  2 ++
+ .../bindings/power/mti,mips-cpc.yaml          |  2 ++
+ .../bindings/power/supply/cw2015_battery.yaml |  2 ++
+ .../bindings/power/supply/rohm,bd99954.yaml   |  8 ++++++++
+ .../bindings/regulator/silergy,sy8827n.yaml   |  2 ++
+ .../bindings/remoteproc/qcom,pil-info.yaml    |  2 ++
+ .../bindings/serial/samsung_uart.yaml         |  2 ++
+ .../serial/socionext,uniphier-uart.yaml       |  2 ++
+ .../devicetree/bindings/serial/sprd-uart.yaml |  2 ++
+ .../bindings/soc/qcom/qcom,geni-se.yaml       |  1 +
+ .../bindings/sound/amlogic,g12a-toacodec.yaml |  2 ++
+ .../bindings/sound/amlogic,gx-sound-card.yaml |  2 ++
+ .../bindings/sound/amlogic,t9015.yaml         |  2 ++
+ .../bindings/sound/cirrus,cs42l51.yaml        |  2 ++
+ .../devicetree/bindings/sound/fsl,easrc.yaml  |  2 ++
+ .../bindings/sound/intel,keembay-i2s.yaml     |  2 ++
+ .../bindings/sound/nvidia,tegra186-dspk.yaml  |  2 ++
+ .../sound/nvidia,tegra210-admaif.yaml         |  2 ++
+ .../bindings/sound/nvidia,tegra210-dmic.yaml  |  2 ++
+ .../bindings/sound/nvidia,tegra210-i2s.yaml   |  2 ++
+ .../bindings/sound/rockchip,rk3328-codec.yaml |  2 ++
+ .../bindings/sound/tlv320adcx140.yaml         |  2 ++
+ .../bindings/thermal/rcar-thermal.yaml        |  5 +++++
+ .../bindings/thermal/sprd-thermal.yaml        |  4 ++++
+ .../bindings/thermal/thermal-idle.yaml        |  2 ++
+ .../bindings/thermal/thermal-zones.yaml       |  2 ++
+ .../devicetree/bindings/timer/cdns,ttc.yaml   |  2 ++
+ .../bindings/usb/nvidia,tegra-xudc.yaml       |  2 ++
+ .../devicetree/bindings/usb/qcom,dwc3.yaml    |  2 ++
+ .../devicetree/bindings/usb/ti,j721e-usb.yaml | 18 +++++++++++++++++
+ 105 files changed, 285 insertions(+), 14 deletions(-)
 
-Again thank you!
-Ben
+diff --git a/Documentation/devicetree/bindings/arm/bcm/raspberrypi,bcm2835-firmware.yaml b/Documentation/devicetree/bindings/arm/bcm/raspberrypi,bcm2835-firmware.yaml
+index 6834f5e8df5f..9fdb319dcf19 100644
+--- a/Documentation/devicetree/bindings/arm/bcm/raspberrypi,bcm2835-firmware.yaml
++++ b/Documentation/devicetree/bindings/arm/bcm/raspberrypi,bcm2835-firmware.yaml
+@@ -54,6 +54,8 @@ required:
+   - compatible
+   - mboxes
+ 
++additionalProperties: false
++
+ examples:
+   - |
+     firmware {
+diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,pericfg.yaml b/Documentation/devicetree/bindings/arm/mediatek/mediatek,pericfg.yaml
+index 1af30174b2d0..8723dfe34bab 100644
+--- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,pericfg.yaml
++++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,pericfg.yaml
+@@ -47,6 +47,8 @@ required:
+   - compatible
+   - reg
+ 
++additionalProperties: false
++
+ examples:
+   - |
+     pericfg@10003000 {
+diff --git a/Documentation/devicetree/bindings/arm/pmu.yaml b/Documentation/devicetree/bindings/arm/pmu.yaml
+index 97df36d301c9..693ef3f185a8 100644
+--- a/Documentation/devicetree/bindings/arm/pmu.yaml
++++ b/Documentation/devicetree/bindings/arm/pmu.yaml
+@@ -93,4 +93,6 @@ properties:
+ required:
+   - compatible
+ 
++additionalProperties: false
++
+ ...
+diff --git a/Documentation/devicetree/bindings/arm/primecell.yaml b/Documentation/devicetree/bindings/arm/primecell.yaml
+index 5aae37f1c563..e15fe00aafb2 100644
+--- a/Documentation/devicetree/bindings/arm/primecell.yaml
++++ b/Documentation/devicetree/bindings/arm/primecell.yaml
+@@ -33,4 +33,7 @@ properties:
+     contains:
+       const: apb_pclk
+     additionalItems: true
++
++additionalProperties: true
++
+ ...
+diff --git a/Documentation/devicetree/bindings/arm/samsung/sysreg.yaml b/Documentation/devicetree/bindings/arm/samsung/sysreg.yaml
+index 3b7811804cb4..2ac789058eee 100644
+--- a/Documentation/devicetree/bindings/arm/samsung/sysreg.yaml
++++ b/Documentation/devicetree/bindings/arm/samsung/sysreg.yaml
+@@ -32,6 +32,8 @@ properties:
+   reg:
+     maxItems: 1
+ 
++additionalProperties: false
++
+ examples:
+   - |
+     syscon@10010000 {
+diff --git a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.yaml b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.yaml
+index b71a20af5f70..43fd2f8927d0 100644
+--- a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.yaml
++++ b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.yaml
+@@ -308,6 +308,8 @@ required:
+   - clocks
+   - '#clock-cells'
+ 
++additionalProperties: false
++
+ dependencies:
+   "nvidia,suspend-mode": ["nvidia,core-pwr-off-time", "nvidia,cpu-pwr-off-time"]
+   "nvidia,core-pwr-off-time": ["nvidia,core-pwr-good-time"]
+diff --git a/Documentation/devicetree/bindings/bus/mti,mips-cdmm.yaml b/Documentation/devicetree/bindings/bus/mti,mips-cdmm.yaml
+index 9cc2d5f1beef..6a7b26b049f1 100644
+--- a/Documentation/devicetree/bindings/bus/mti,mips-cdmm.yaml
++++ b/Documentation/devicetree/bindings/bus/mti,mips-cdmm.yaml
+@@ -26,6 +26,8 @@ required:
+   - compatible
+   - reg
+ 
++additionalProperties: false
++
+ examples:
+   - |
+     cdmm@1bde8000 {
+diff --git a/Documentation/devicetree/bindings/bus/socionext,uniphier-system-bus.yaml b/Documentation/devicetree/bindings/bus/socionext,uniphier-system-bus.yaml
+index a0c6c5d2b70f..49df13fc2f89 100644
+--- a/Documentation/devicetree/bindings/bus/socionext,uniphier-system-bus.yaml
++++ b/Documentation/devicetree/bindings/bus/socionext,uniphier-system-bus.yaml
+@@ -57,6 +57,11 @@ properties:
+       "ranges" property should provide a "reasonable" default that is known to
+       work. The software should initialize the bus controller according to it.
+ 
++patternProperties:
++  "^.*@[1-5],[1-9a-f][0-9a-f]+$":
++    description: Devices attached to chip selects
++    type: object
++
+ required:
+   - compatible
+   - reg
+@@ -64,6 +69,8 @@ required:
+   - "#size-cells"
+   - ranges
+ 
++additionalProperties: false
++
+ examples:
+   - |
+     // In this example,
+diff --git a/Documentation/devicetree/bindings/clock/arm,syscon-icst.yaml b/Documentation/devicetree/bindings/clock/arm,syscon-icst.yaml
+index 444aeea27db8..eb241587efd1 100644
+--- a/Documentation/devicetree/bindings/clock/arm,syscon-icst.yaml
++++ b/Documentation/devicetree/bindings/clock/arm,syscon-icst.yaml
+@@ -89,6 +89,8 @@ required:
+   - compatible
+   - clocks
+ 
++additionalProperties: false
++
+ examples:
+   - |
+     vco1: clock {
+diff --git a/Documentation/devicetree/bindings/clock/idt,versaclock5.yaml b/Documentation/devicetree/bindings/clock/idt,versaclock5.yaml
+index 28c6461b9a9a..2ac1131fd922 100644
+--- a/Documentation/devicetree/bindings/clock/idt,versaclock5.yaml
++++ b/Documentation/devicetree/bindings/clock/idt,versaclock5.yaml
+@@ -50,6 +50,15 @@ properties:
+   '#clock-cells':
+     const: 1
+ 
++  clock-names:
++    minItems: 1
++    maxItems: 2
++    items:
++      enum: [ xin, clkin ]
++  clocks:
++    minItems: 1
++    maxItems: 2
++
+ patternProperties:
+   "^OUT[1-4]$":
+     type: object
+@@ -93,19 +102,12 @@ allOf:
+           maxItems: 1
+     else:
+       # Devices without builtin crystal
+-      properties:
+-        clock-names:
+-          minItems: 1
+-          maxItems: 2
+-          items:
+-            enum: [ xin, clkin ]
+-        clocks:
+-          minItems: 1
+-          maxItems: 2
+       required:
+         - clock-names
+         - clocks
+ 
++additionalProperties: false
++
+ examples:
+   - |
+     #include <dt-bindings/clk/versaclock.h>
+diff --git a/Documentation/devicetree/bindings/clock/imx6q-clock.yaml b/Documentation/devicetree/bindings/clock/imx6q-clock.yaml
+index 92a8e545e212..4f4637eddb8b 100644
+--- a/Documentation/devicetree/bindings/clock/imx6q-clock.yaml
++++ b/Documentation/devicetree/bindings/clock/imx6q-clock.yaml
+@@ -57,6 +57,8 @@ required:
+   - interrupts
+   - '#clock-cells'
+ 
++additionalProperties: false
++
+ examples:
+   # Clock Control Module node:
+   - |
+diff --git a/Documentation/devicetree/bindings/clock/imx6sl-clock.yaml b/Documentation/devicetree/bindings/clock/imx6sl-clock.yaml
+index c97bf95b4150..b83c8f43d664 100644
+--- a/Documentation/devicetree/bindings/clock/imx6sl-clock.yaml
++++ b/Documentation/devicetree/bindings/clock/imx6sl-clock.yaml
+@@ -33,6 +33,8 @@ required:
+   - interrupts
+   - '#clock-cells'
+ 
++additionalProperties: false
++
+ examples:
+   # Clock Control Module node:
+   - |
+diff --git a/Documentation/devicetree/bindings/clock/imx6sll-clock.yaml b/Documentation/devicetree/bindings/clock/imx6sll-clock.yaml
+index de48924be191..484894a4b23f 100644
+--- a/Documentation/devicetree/bindings/clock/imx6sll-clock.yaml
++++ b/Documentation/devicetree/bindings/clock/imx6sll-clock.yaml
+@@ -49,6 +49,8 @@ required:
+   - clocks
+   - clock-names
+ 
++additionalProperties: false
++
+ examples:
+   # Clock Control Module node:
+   - |
+diff --git a/Documentation/devicetree/bindings/clock/imx6sx-clock.yaml b/Documentation/devicetree/bindings/clock/imx6sx-clock.yaml
+index e50cddee43c3..e6c795657c24 100644
+--- a/Documentation/devicetree/bindings/clock/imx6sx-clock.yaml
++++ b/Documentation/devicetree/bindings/clock/imx6sx-clock.yaml
+@@ -53,6 +53,8 @@ required:
+   - clocks
+   - clock-names
+ 
++additionalProperties: false
++
+ examples:
+   # Clock Control Module node:
+   - |
+diff --git a/Documentation/devicetree/bindings/clock/imx6ul-clock.yaml b/Documentation/devicetree/bindings/clock/imx6ul-clock.yaml
+index 36ce7667c972..6a51a3f51cd9 100644
+--- a/Documentation/devicetree/bindings/clock/imx6ul-clock.yaml
++++ b/Documentation/devicetree/bindings/clock/imx6ul-clock.yaml
+@@ -49,6 +49,8 @@ required:
+   - clocks
+   - clock-names
+ 
++additionalProperties: false
++
+ examples:
+   # Clock Control Module node:
+   - |
+diff --git a/Documentation/devicetree/bindings/clock/intel,cgu-lgm.yaml b/Documentation/devicetree/bindings/clock/intel,cgu-lgm.yaml
+index 6dc1414bfb7f..f3e1a700a2ca 100644
+--- a/Documentation/devicetree/bindings/clock/intel,cgu-lgm.yaml
++++ b/Documentation/devicetree/bindings/clock/intel,cgu-lgm.yaml
+@@ -33,6 +33,8 @@ required:
+   - reg
+   - '#clock-cells'
+ 
++additionalProperties: false
++
+ examples:
+   - |
+     cgu: clock-controller@e0200000 {
+diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc-sm8250.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc-sm8250.yaml
+index a5766ff89082..80bd6caf5bc9 100644
+--- a/Documentation/devicetree/bindings/clock/qcom,gcc-sm8250.yaml
++++ b/Documentation/devicetree/bindings/clock/qcom,gcc-sm8250.yaml
+@@ -56,6 +56,8 @@ required:
+   - '#reset-cells'
+   - '#power-domain-cells'
+ 
++additionalProperties: false
++
+ examples:
+   - |
+     #include <dt-bindings/clock/qcom,rpmh.h>
+diff --git a/Documentation/devicetree/bindings/clock/sprd,sc9863a-clk.yaml b/Documentation/devicetree/bindings/clock/sprd,sc9863a-clk.yaml
+index c6d091518650..4069e09cb62d 100644
+--- a/Documentation/devicetree/bindings/clock/sprd,sc9863a-clk.yaml
++++ b/Documentation/devicetree/bindings/clock/sprd,sc9863a-clk.yaml
+@@ -73,6 +73,8 @@ else:
+     The 'reg' property for the clock node is also required if there is a sub
+     range of registers for the clocks.
+ 
++additionalProperties: false
++
+ examples:
+   - |
+     ap_clk: clock-controller@21500000 {
+diff --git a/Documentation/devicetree/bindings/clock/ti,am654-ehrpwm-tbclk.yaml b/Documentation/devicetree/bindings/clock/ti,am654-ehrpwm-tbclk.yaml
+index 869b18ac88d7..6b419a9878f3 100644
+--- a/Documentation/devicetree/bindings/clock/ti,am654-ehrpwm-tbclk.yaml
++++ b/Documentation/devicetree/bindings/clock/ti,am654-ehrpwm-tbclk.yaml
+@@ -26,6 +26,8 @@ required:
+   - "#clock-cells"
+   - reg
+ 
++additionalProperties: false
++
+ examples:
+   - |
+     ehrpwm_tbclk: syscon@4140 {
+diff --git a/Documentation/devicetree/bindings/display/bridge/ite,it6505.yaml b/Documentation/devicetree/bindings/display/bridge/ite,it6505.yaml
+index 2c500166c65d..efbb3d0117dc 100644
+--- a/Documentation/devicetree/bindings/display/bridge/ite,it6505.yaml
++++ b/Documentation/devicetree/bindings/display/bridge/ite,it6505.yaml
+@@ -31,6 +31,9 @@ properties:
+   compatible:
+     const: ite,it6505
+ 
++  reg:
++    maxItems: 1
++
+   ovdd-supply:
+     maxItems: 1
+     description: I/O voltage
+@@ -63,6 +66,8 @@ required:
+   - reset-gpios
+   - extcon
+ 
++additionalProperties: false
++
+ examples:
+   - |
+     #include <dt-bindings/interrupt-controller/irq.h>
+diff --git a/Documentation/devicetree/bindings/display/bridge/lvds-codec.yaml b/Documentation/devicetree/bindings/display/bridge/lvds-codec.yaml
+index 68951d56ebba..e8fa8e901c9f 100644
+--- a/Documentation/devicetree/bindings/display/bridge/lvds-codec.yaml
++++ b/Documentation/devicetree/bindings/display/bridge/lvds-codec.yaml
+@@ -83,6 +83,9 @@ required:
+   - compatible
+   - ports
+ 
++additionalProperties: false
++
++
+ examples:
+   - |
+     lvds-encoder {
+diff --git a/Documentation/devicetree/bindings/display/msm/gmu.yaml b/Documentation/devicetree/bindings/display/msm/gmu.yaml
+index 53056dd02597..fe55611d2603 100644
+--- a/Documentation/devicetree/bindings/display/msm/gmu.yaml
++++ b/Documentation/devicetree/bindings/display/msm/gmu.yaml
+@@ -89,6 +89,8 @@ required:
+   - iommus
+   - operating-points-v2
+ 
++additionalProperties: false
++
+ examples:
+   - |
+     #include <dt-bindings/clock/qcom,gpucc-sdm845.h>
+diff --git a/Documentation/devicetree/bindings/edac/dmc-520.yaml b/Documentation/devicetree/bindings/edac/dmc-520.yaml
+index 9272d2bd8634..3b6842e92d1b 100644
+--- a/Documentation/devicetree/bindings/edac/dmc-520.yaml
++++ b/Documentation/devicetree/bindings/edac/dmc-520.yaml
+@@ -49,6 +49,8 @@ required:
+   - interrupts
+   - interrupt-names
+ 
++additionalProperties: false
++
+ examples:
+   - |
+     dmc0: dmc@200000 {
+diff --git a/Documentation/devicetree/bindings/fsi/ibm,fsi2spi.yaml b/Documentation/devicetree/bindings/fsi/ibm,fsi2spi.yaml
+index b26d4b4be743..e2ca0b000471 100644
+--- a/Documentation/devicetree/bindings/fsi/ibm,fsi2spi.yaml
++++ b/Documentation/devicetree/bindings/fsi/ibm,fsi2spi.yaml
+@@ -28,6 +28,8 @@ required:
+   - compatible
+   - reg
+ 
++additionalProperties: false
++
+ examples:
+   - |
+     fsi2spi@1c00 {
+diff --git a/Documentation/devicetree/bindings/gpio/socionext,uniphier-gpio.yaml b/Documentation/devicetree/bindings/gpio/socionext,uniphier-gpio.yaml
+index c58ff9a94f45..1a54db04f29d 100644
+--- a/Documentation/devicetree/bindings/gpio/socionext,uniphier-gpio.yaml
++++ b/Documentation/devicetree/bindings/gpio/socionext,uniphier-gpio.yaml
+@@ -64,6 +64,8 @@ required:
+   - gpio-ranges
+   - socionext,interrupt-ranges
+ 
++additionalProperties: false
++
+ examples:
+   - |
+     #include <dt-bindings/gpio/gpio.h>
+diff --git a/Documentation/devicetree/bindings/hwmon/adi,axi-fan-control.yaml b/Documentation/devicetree/bindings/hwmon/adi,axi-fan-control.yaml
+index 7898b9dba5a5..6747b870f297 100644
+--- a/Documentation/devicetree/bindings/hwmon/adi,axi-fan-control.yaml
++++ b/Documentation/devicetree/bindings/hwmon/adi,axi-fan-control.yaml
+@@ -44,6 +44,8 @@ required:
+   - interrupts
+   - pulses-per-revolution
+ 
++additionalProperties: false
++
+ examples:
+   - |
+     fpga_axi: fpga-axi {
+diff --git a/Documentation/devicetree/bindings/hwmon/adt7475.yaml b/Documentation/devicetree/bindings/hwmon/adt7475.yaml
+index dfa821c0aacc..ad0ec9f35bd8 100644
+--- a/Documentation/devicetree/bindings/hwmon/adt7475.yaml
++++ b/Documentation/devicetree/bindings/hwmon/adt7475.yaml
+@@ -65,6 +65,8 @@ required:
+   - compatible
+   - reg
+ 
++additionalProperties: false
++
+ examples:
+   - |
+     i2c {
+diff --git a/Documentation/devicetree/bindings/iio/accel/kionix,kxsd9.yaml b/Documentation/devicetree/bindings/iio/accel/kionix,kxsd9.yaml
+index d61ab4fa3d71..390b87242fcb 100644
+--- a/Documentation/devicetree/bindings/iio/accel/kionix,kxsd9.yaml
++++ b/Documentation/devicetree/bindings/iio/accel/kionix,kxsd9.yaml
+@@ -29,10 +29,14 @@ properties:
+   mount-matrix:
+     description: an optional 3x3 mounting rotation matrix.
+ 
++  spi-max-frequency: true
++
+ required:
+   - compatible
+   - reg
+ 
++additionalProperties: false
++
+ examples:
+   - |
+     # include <dt-bindings/interrupt-controller/irq.h>
+diff --git a/Documentation/devicetree/bindings/iio/adc/maxim,max1238.yaml b/Documentation/devicetree/bindings/iio/adc/maxim,max1238.yaml
+index cccd3033a55b..50bcd72ac9d6 100644
+--- a/Documentation/devicetree/bindings/iio/adc/maxim,max1238.yaml
++++ b/Documentation/devicetree/bindings/iio/adc/maxim,max1238.yaml
+@@ -62,6 +62,8 @@ required:
+   - compatible
+   - reg
+ 
++additionalProperties: false
++
+ examples:
+   - |
+     i2c {
+diff --git a/Documentation/devicetree/bindings/iio/adc/maxim,max1363.yaml b/Documentation/devicetree/bindings/iio/adc/maxim,max1363.yaml
+index 48377549c39a..e04f09f35601 100644
+--- a/Documentation/devicetree/bindings/iio/adc/maxim,max1363.yaml
++++ b/Documentation/devicetree/bindings/iio/adc/maxim,max1363.yaml
+@@ -36,6 +36,8 @@ required:
+   - compatible
+   - reg
+ 
++additionalProperties: false
++
+ examples:
+   - |
+     i2c {
+diff --git a/Documentation/devicetree/bindings/iio/adc/qcom,spmi-vadc.yaml b/Documentation/devicetree/bindings/iio/adc/qcom,spmi-vadc.yaml
+index 0ca992465a21..7f4f827c57a7 100644
+--- a/Documentation/devicetree/bindings/iio/adc/qcom,spmi-vadc.yaml
++++ b/Documentation/devicetree/bindings/iio/adc/qcom,spmi-vadc.yaml
+@@ -48,6 +48,8 @@ properties:
+     description:
+       End of conversion interrupt.
+ 
++  io-channel-ranges: true
++
+ required:
+   - compatible
+   - reg
+@@ -232,6 +234,8 @@ allOf:
+               enum: [ 1, 2, 4, 8, 16 ]
+               default: 1
+ 
++additionalProperties: false
++
+ examples:
+   - |
+     spmi_bus {
+diff --git a/Documentation/devicetree/bindings/iio/adc/samsung,exynos-adc.yaml b/Documentation/devicetree/bindings/iio/adc/samsung,exynos-adc.yaml
+index cc3c8ea6a894..16d76482b4ff 100644
+--- a/Documentation/devicetree/bindings/iio/adc/samsung,exynos-adc.yaml
++++ b/Documentation/devicetree/bindings/iio/adc/samsung,exynos-adc.yaml
+@@ -107,6 +107,8 @@ allOf:
+           items:
+             - const: adc
+ 
++additionalProperties: false
++
+ examples:
+   - |
+     adc: adc@12d10000 {
+diff --git a/Documentation/devicetree/bindings/iio/adc/ti,ads8688.yaml b/Documentation/devicetree/bindings/iio/adc/ti,ads8688.yaml
+index 97fe6cbb2efa..a0af4b24877f 100644
+--- a/Documentation/devicetree/bindings/iio/adc/ti,ads8688.yaml
++++ b/Documentation/devicetree/bindings/iio/adc/ti,ads8688.yaml
+@@ -25,10 +25,14 @@ properties:
+     description: Optional external reference.  If not supplied, assume
+       REFSEL input tied low to enable the internal reference.
+ 
++  spi-max-frequency: true
++
+ required:
+   - compatible
+   - reg
+ 
++additionalProperties: false
++
+ examples:
+   - |
+     spi {
+diff --git a/Documentation/devicetree/bindings/iio/amplifiers/adi,hmc425a.yaml b/Documentation/devicetree/bindings/iio/amplifiers/adi,hmc425a.yaml
+index 5342360e96b1..a557761d8016 100644
+--- a/Documentation/devicetree/bindings/iio/amplifiers/adi,hmc425a.yaml
++++ b/Documentation/devicetree/bindings/iio/amplifiers/adi,hmc425a.yaml
+@@ -33,6 +33,8 @@ required:
+   - compatible
+   - ctrl-gpios
+ 
++additionalProperties: false
++
+ examples:
+   - |
+     #include <dt-bindings/gpio/gpio.h>
+diff --git a/Documentation/devicetree/bindings/iio/imu/invensense,icm42600.yaml b/Documentation/devicetree/bindings/iio/imu/invensense,icm42600.yaml
+index abd8d25e1136..4c1c083d0e92 100644
+--- a/Documentation/devicetree/bindings/iio/imu/invensense,icm42600.yaml
++++ b/Documentation/devicetree/bindings/iio/imu/invensense,icm42600.yaml
+@@ -47,11 +47,17 @@ properties:
+   vddio-supply:
+     description: Regulator that provides power to the bus
+ 
++  spi-max-frequency: true
++  spi-cpha: true
++  spi-cpol: true
++
+ required:
+   - compatible
+   - reg
+   - interrupts
+ 
++additionalProperties: false
++
+ examples:
+   - |
+     #include <dt-bindings/gpio/gpio.h>
+diff --git a/Documentation/devicetree/bindings/iio/light/amstaos,tsl2563.yaml b/Documentation/devicetree/bindings/iio/light/amstaos,tsl2563.yaml
+index e201a06d8fdc..60e76bc035a5 100644
+--- a/Documentation/devicetree/bindings/iio/light/amstaos,tsl2563.yaml
++++ b/Documentation/devicetree/bindings/iio/light/amstaos,tsl2563.yaml
+@@ -32,6 +32,8 @@ required:
+   - compatible
+   - reg
+ 
++additionalProperties: false
++
+ examples:
+   - |
+     i2c {
+diff --git a/Documentation/devicetree/bindings/iio/light/dynaimage,al3010.yaml b/Documentation/devicetree/bindings/iio/light/dynaimage,al3010.yaml
+index f671edda6641..a3a979553e32 100644
+--- a/Documentation/devicetree/bindings/iio/light/dynaimage,al3010.yaml
++++ b/Documentation/devicetree/bindings/iio/light/dynaimage,al3010.yaml
+@@ -26,6 +26,8 @@ required:
+   - compatible
+   - reg
+ 
++additionalProperties: false
++
+ examples:
+   - |
+     #include <dt-bindings/interrupt-controller/irq.h>
+diff --git a/Documentation/devicetree/bindings/iio/light/dynaimage,al3320a.yaml b/Documentation/devicetree/bindings/iio/light/dynaimage,al3320a.yaml
+index 497300239d93..8249be99cff9 100644
+--- a/Documentation/devicetree/bindings/iio/light/dynaimage,al3320a.yaml
++++ b/Documentation/devicetree/bindings/iio/light/dynaimage,al3320a.yaml
+@@ -26,6 +26,8 @@ required:
+   - compatible
+   - reg
+ 
++additionalProperties: false
++
+ examples:
+   - |
+     #include <dt-bindings/interrupt-controller/irq.h>
+diff --git a/Documentation/devicetree/bindings/iio/light/sharp,gp2ap002.yaml b/Documentation/devicetree/bindings/iio/light/sharp,gp2ap002.yaml
+index 12aa16f24772..f8a932be0d10 100644
+--- a/Documentation/devicetree/bindings/iio/light/sharp,gp2ap002.yaml
++++ b/Documentation/devicetree/bindings/iio/light/sharp,gp2ap002.yaml
+@@ -61,6 +61,8 @@ required:
+   - sharp,proximity-far-hysteresis
+   - sharp,proximity-close-hysteresis
+ 
++additionalProperties: false
++
+ examples:
+   - |
+     #include <dt-bindings/interrupt-controller/irq.h>
+diff --git a/Documentation/devicetree/bindings/iio/magnetometer/asahi-kasei,ak8975.yaml b/Documentation/devicetree/bindings/iio/magnetometer/asahi-kasei,ak8975.yaml
+index f0b336ac39c9..a25590a16ba7 100644
+--- a/Documentation/devicetree/bindings/iio/magnetometer/asahi-kasei,ak8975.yaml
++++ b/Documentation/devicetree/bindings/iio/magnetometer/asahi-kasei,ak8975.yaml
+@@ -55,6 +55,8 @@ required:
+   - compatible
+   - reg
+ 
++additionalProperties: false
++
+ examples:
+   - |
+     #include <dt-bindings/interrupt-controller/irq.h>
+diff --git a/Documentation/devicetree/bindings/iio/proximity/vishay,vcnl3020.yaml b/Documentation/devicetree/bindings/iio/proximity/vishay,vcnl3020.yaml
+index 51dba64037f6..fbd3a2e32280 100644
+--- a/Documentation/devicetree/bindings/iio/proximity/vishay,vcnl3020.yaml
++++ b/Documentation/devicetree/bindings/iio/proximity/vishay,vcnl3020.yaml
+@@ -47,6 +47,8 @@ required:
+   - compatible
+   - reg
+ 
++additionalProperties: false
++
+ examples:
+   - |
+     i2c {
+diff --git a/Documentation/devicetree/bindings/interrupt-controller/ingenic,intc.yaml b/Documentation/devicetree/bindings/interrupt-controller/ingenic,intc.yaml
+index 02a3cf470518..0a046be8d1cd 100644
+--- a/Documentation/devicetree/bindings/interrupt-controller/ingenic,intc.yaml
++++ b/Documentation/devicetree/bindings/interrupt-controller/ingenic,intc.yaml
+@@ -49,6 +49,8 @@ required:
+   - "#interrupt-cells"
+   - interrupt-controller
+ 
++additionalProperties: false
++
+ examples:
+   - |
+     intc: interrupt-controller@10001000 {
+diff --git a/Documentation/devicetree/bindings/interrupt-controller/loongson,pch-msi.yaml b/Documentation/devicetree/bindings/interrupt-controller/loongson,pch-msi.yaml
+index 1b256d9dd92a..1f6fd73d4624 100644
+--- a/Documentation/devicetree/bindings/interrupt-controller/loongson,pch-msi.yaml
++++ b/Documentation/devicetree/bindings/interrupt-controller/loongson,pch-msi.yaml
+@@ -46,6 +46,8 @@ required:
+   - loongson,msi-base-vec
+   - loongson,msi-num-vecs
+ 
++additionalProperties: true #fixme
++
+ examples:
+   - |
+     #include <dt-bindings/interrupt-controller/irq.h>
+diff --git a/Documentation/devicetree/bindings/interrupt-controller/loongson,pch-pic.yaml b/Documentation/devicetree/bindings/interrupt-controller/loongson,pch-pic.yaml
+index a6dcbb2971a9..fdd6a38a31db 100644
+--- a/Documentation/devicetree/bindings/interrupt-controller/loongson,pch-pic.yaml
++++ b/Documentation/devicetree/bindings/interrupt-controller/loongson,pch-pic.yaml
+@@ -41,6 +41,8 @@ required:
+   - interrupt-controller
+   - '#interrupt-cells'
+ 
++additionalProperties: false
++
+ examples:
+   - |
+     #include <dt-bindings/interrupt-controller/irq.h>
+diff --git a/Documentation/devicetree/bindings/ipmi/ipmi-smic.yaml b/Documentation/devicetree/bindings/ipmi/ipmi-smic.yaml
+index 58fa76ee6176..898e3267893a 100644
+--- a/Documentation/devicetree/bindings/ipmi/ipmi-smic.yaml
++++ b/Documentation/devicetree/bindings/ipmi/ipmi-smic.yaml
+@@ -49,6 +49,8 @@ required:
+   - compatible
+   - reg
+ 
++additionalProperties: false
++
+ examples:
+   - |
+     smic@fff3a000 {
+diff --git a/Documentation/devicetree/bindings/leds/leds-lp55xx.yaml b/Documentation/devicetree/bindings/leds/leds-lp55xx.yaml
+index b1bb3feb0f4d..cd877e817ad1 100644
+--- a/Documentation/devicetree/bindings/leds/leds-lp55xx.yaml
++++ b/Documentation/devicetree/bindings/leds/leds-lp55xx.yaml
+@@ -58,6 +58,12 @@ properties:
+       - 2 # D1~6 with VOUT, D7~9 with VDD
+       - 3 # D1~9 are connected to VOUT
+ 
++  '#address-cells':
++    const: 1
++
++  '#size-cells':
++    const: 0
++
+ patternProperties:
+   "(^led@[0-9a-f]$|led)":
+     type: object
+@@ -98,6 +104,8 @@ required:
+   - compatible
+   - reg
+ 
++additionalProperties: false
++
+ examples:
+   - |
+    #include <dt-bindings/leds/common.h>
+diff --git a/Documentation/devicetree/bindings/media/i2c/chrontel,ch7322.yaml b/Documentation/devicetree/bindings/media/i2c/chrontel,ch7322.yaml
+index daa2869377c5..63e5b89d2e0b 100644
+--- a/Documentation/devicetree/bindings/media/i2c/chrontel,ch7322.yaml
++++ b/Documentation/devicetree/bindings/media/i2c/chrontel,ch7322.yaml
+@@ -49,6 +49,8 @@ required:
+   - reg
+   - interrupts
+ 
++additionalProperties: false
++
+ examples:
+   - |
+     #include <dt-bindings/gpio/gpio.h>
+diff --git a/Documentation/devicetree/bindings/media/i2c/imi,rdacm2x-gmsl.yaml b/Documentation/devicetree/bindings/media/i2c/imi,rdacm2x-gmsl.yaml
+index 107c862a7fc7..3dc06c628e64 100644
+--- a/Documentation/devicetree/bindings/media/i2c/imi,rdacm2x-gmsl.yaml
++++ b/Documentation/devicetree/bindings/media/i2c/imi,rdacm2x-gmsl.yaml
+@@ -119,6 +119,8 @@ required:
+   - reg
+   - port
+ 
++additionalProperties: false
++
+ examples:
+   - |
+     i2c@e66d8000 {
+diff --git a/Documentation/devicetree/bindings/media/nxp,imx8mq-vpu.yaml b/Documentation/devicetree/bindings/media/nxp,imx8mq-vpu.yaml
+index a2d1cd77c1e2..762be3f96ce9 100644
+--- a/Documentation/devicetree/bindings/media/nxp,imx8mq-vpu.yaml
++++ b/Documentation/devicetree/bindings/media/nxp,imx8mq-vpu.yaml
+@@ -55,6 +55,8 @@ required:
+   - clocks
+   - clock-names
+ 
++additionalProperties: false
++
+ examples:
+   - |
+         #include <dt-bindings/clock/imx8mq-clock.h>
+diff --git a/Documentation/devicetree/bindings/media/qcom,msm8916-venus.yaml b/Documentation/devicetree/bindings/media/qcom,msm8916-venus.yaml
+index f9606df02d70..59ab16ad12f1 100644
+--- a/Documentation/devicetree/bindings/media/qcom,msm8916-venus.yaml
++++ b/Documentation/devicetree/bindings/media/qcom,msm8916-venus.yaml
+@@ -92,6 +92,8 @@ required:
+   - video-decoder
+   - video-encoder
+ 
++additionalProperties: false
++
+ examples:
+   - |
+         #include <dt-bindings/interrupt-controller/arm-gic.h>
+diff --git a/Documentation/devicetree/bindings/media/qcom,msm8996-venus.yaml b/Documentation/devicetree/bindings/media/qcom,msm8996-venus.yaml
+index fa0dc6c47f1d..199f45217b4a 100644
+--- a/Documentation/devicetree/bindings/media/qcom,msm8996-venus.yaml
++++ b/Documentation/devicetree/bindings/media/qcom,msm8996-venus.yaml
+@@ -119,6 +119,8 @@ required:
+   - video-decoder
+   - video-encoder
+ 
++additionalProperties: false
++
+ examples:
+   - |
+         #include <dt-bindings/interrupt-controller/arm-gic.h>
+diff --git a/Documentation/devicetree/bindings/media/qcom,sc7180-venus.yaml b/Documentation/devicetree/bindings/media/qcom,sc7180-venus.yaml
+index 55f2d67ae34e..3cec6dae1139 100644
+--- a/Documentation/devicetree/bindings/media/qcom,sc7180-venus.yaml
++++ b/Documentation/devicetree/bindings/media/qcom,sc7180-venus.yaml
+@@ -108,6 +108,8 @@ required:
+   - video-decoder
+   - video-encoder
+ 
++additionalProperties: false
++
+ examples:
+   - |
+         #include <dt-bindings/interrupt-controller/arm-gic.h>
+diff --git a/Documentation/devicetree/bindings/media/qcom,sdm845-venus-v2.yaml b/Documentation/devicetree/bindings/media/qcom,sdm845-venus-v2.yaml
+index 157dff8057e9..55f5d439fa61 100644
+--- a/Documentation/devicetree/bindings/media/qcom,sdm845-venus-v2.yaml
++++ b/Documentation/devicetree/bindings/media/qcom,sdm845-venus-v2.yaml
+@@ -103,6 +103,8 @@ required:
+   - video-core0
+   - video-core1
+ 
++additionalProperties: false
++
+ examples:
+   - |
+         #include <dt-bindings/interrupt-controller/arm-gic.h>
+diff --git a/Documentation/devicetree/bindings/media/qcom,sdm845-venus.yaml b/Documentation/devicetree/bindings/media/qcom,sdm845-venus.yaml
+index 084e45e2df62..680f37726fdf 100644
+--- a/Documentation/devicetree/bindings/media/qcom,sdm845-venus.yaml
++++ b/Documentation/devicetree/bindings/media/qcom,sdm845-venus.yaml
+@@ -120,6 +120,8 @@ required:
+   - video-core0
+   - video-core1
+ 
++additionalProperties: false
++
+ examples:
+   - |
+         #include <dt-bindings/interrupt-controller/arm-gic.h>
+diff --git a/Documentation/devicetree/bindings/memory-controllers/fsl/mmdc.yaml b/Documentation/devicetree/bindings/memory-controllers/fsl/mmdc.yaml
+index 68484136a510..71547eee9919 100644
+--- a/Documentation/devicetree/bindings/memory-controllers/fsl/mmdc.yaml
++++ b/Documentation/devicetree/bindings/memory-controllers/fsl/mmdc.yaml
+@@ -33,6 +33,8 @@ required:
+   - compatible
+   - reg
+ 
++additionalProperties: false
++
+ examples:
+   - |
+     #include <dt-bindings/clock/imx6qdl-clock.h>
+diff --git a/Documentation/devicetree/bindings/memory-controllers/st,stm32-fmc2-ebi.yaml b/Documentation/devicetree/bindings/memory-controllers/st,stm32-fmc2-ebi.yaml
+index 70eaf739036b..cba74205846a 100644
+--- a/Documentation/devicetree/bindings/memory-controllers/st,stm32-fmc2-ebi.yaml
++++ b/Documentation/devicetree/bindings/memory-controllers/st,stm32-fmc2-ebi.yaml
+@@ -194,6 +194,8 @@ required:
+   - clocks
+   - ranges
+ 
++additionalProperties: false
++
+ examples:
+   - |
+     #include <dt-bindings/interrupt-controller/arm-gic.h>
+diff --git a/Documentation/devicetree/bindings/mfd/gateworks-gsc.yaml b/Documentation/devicetree/bindings/mfd/gateworks-gsc.yaml
+index 9b6eb50606e8..95e47f317ed2 100644
+--- a/Documentation/devicetree/bindings/mfd/gateworks-gsc.yaml
++++ b/Documentation/devicetree/bindings/mfd/gateworks-gsc.yaml
+@@ -144,6 +144,8 @@ required:
+   - "#address-cells"
+   - "#size-cells"
+ 
++additionalProperties: false
++
+ examples:
+   - |
+     #include <dt-bindings/gpio/gpio.h>
+diff --git a/Documentation/devicetree/bindings/mfd/xylon,logicvc.yaml b/Documentation/devicetree/bindings/mfd/xylon,logicvc.yaml
+index abc9937506e0..8a1a6625c782 100644
+--- a/Documentation/devicetree/bindings/mfd/xylon,logicvc.yaml
++++ b/Documentation/devicetree/bindings/mfd/xylon,logicvc.yaml
+@@ -26,6 +26,12 @@ properties:
+   reg:
+     maxItems: 1
+ 
++  '#address-cells':
++    const: 1
++
++  '#size-cells':
++    const: 1
++
+ select:
+   properties:
+     compatible:
+@@ -36,15 +42,19 @@ select:
+   required:
+     - compatible
+ 
++patternProperties:
++  "^gpio@[0-9a-f]+$":
++    $ref: /schemas/gpio/xylon,logicvc-gpio.yaml#
++
+ required:
+   - compatible
+   - reg
+ 
++additionalProperties: false
++
+ examples:
+   - |
+     logicvc: logicvc@43c00000 {
+       compatible = "xylon,logicvc-3.02.a", "syscon", "simple-mfd";
+       reg = <0x43c00000 0x6000>;
+-      #address-cells = <1>;
+-      #size-cells = <1>;
+     };
+diff --git a/Documentation/devicetree/bindings/mips/ingenic/ingenic,cpu.yaml b/Documentation/devicetree/bindings/mips/ingenic/ingenic,cpu.yaml
+index 16fa03d65ad5..6df1a9470d8f 100644
+--- a/Documentation/devicetree/bindings/mips/ingenic/ingenic,cpu.yaml
++++ b/Documentation/devicetree/bindings/mips/ingenic/ingenic,cpu.yaml
+@@ -32,12 +32,16 @@ properties:
+   clocks:
+     maxItems: 1
+ 
++  device_type: true
++
+ required:
+   - device_type
+   - compatible
+   - reg
+   - clocks
+ 
++additionalProperties: false
++
+ examples:
+   - |
+     #include <dt-bindings/clock/jz4780-cgu.h>
+@@ -52,7 +56,6 @@ examples:
+                 reg = <0>;
+ 
+                 clocks = <&cgu JZ4780_CLK_CPU>;
+-                clock-names = "cpu";
+         };
+ 
+         cpu1: cpu@1 {
+@@ -61,7 +64,6 @@ examples:
+                 reg = <1>;
+ 
+                 clocks = <&cgu JZ4780_CLK_CORE1>;
+-                clock-names = "cpu";
+         };
+     };
+ ...
+diff --git a/Documentation/devicetree/bindings/mips/loongson/rs780e-acpi.yaml b/Documentation/devicetree/bindings/mips/loongson/rs780e-acpi.yaml
+index d317897e1115..7c0f9022202c 100644
+--- a/Documentation/devicetree/bindings/mips/loongson/rs780e-acpi.yaml
++++ b/Documentation/devicetree/bindings/mips/loongson/rs780e-acpi.yaml
+@@ -23,6 +23,8 @@ required:
+   - compatible
+   - reg
+ 
++additionalProperties: false
++
+ examples:
+   - |
+     isa@0 {
+diff --git a/Documentation/devicetree/bindings/mmc/mmc-pwrseq-emmc.yaml b/Documentation/devicetree/bindings/mmc/mmc-pwrseq-emmc.yaml
+index 77f746f57284..1fc7e620f328 100644
+--- a/Documentation/devicetree/bindings/mmc/mmc-pwrseq-emmc.yaml
++++ b/Documentation/devicetree/bindings/mmc/mmc-pwrseq-emmc.yaml
+@@ -36,6 +36,8 @@ required:
+   - compatible
+   - reset-gpios
+ 
++additionalProperties: false
++
+ examples:
+   - |
+     #include <dt-bindings/gpio/gpio.h>
+diff --git a/Documentation/devicetree/bindings/mmc/mmc-pwrseq-sd8787.yaml b/Documentation/devicetree/bindings/mmc/mmc-pwrseq-sd8787.yaml
+index a68820d31d50..e0169a285aa2 100644
+--- a/Documentation/devicetree/bindings/mmc/mmc-pwrseq-sd8787.yaml
++++ b/Documentation/devicetree/bindings/mmc/mmc-pwrseq-sd8787.yaml
+@@ -28,6 +28,8 @@ required:
+   - powerdown-gpios
+   - reset-gpios
+ 
++additionalProperties: false
++
+ examples:
+   - |
+     #include <dt-bindings/gpio/gpio.h>
+diff --git a/Documentation/devicetree/bindings/mmc/mmc-pwrseq-simple.yaml b/Documentation/devicetree/bindings/mmc/mmc-pwrseq-simple.yaml
+index 449215444723..06bbd8590544 100644
+--- a/Documentation/devicetree/bindings/mmc/mmc-pwrseq-simple.yaml
++++ b/Documentation/devicetree/bindings/mmc/mmc-pwrseq-simple.yaml
+@@ -50,6 +50,8 @@ properties:
+ required:
+   - compatible
+ 
++additionalProperties: false
++
+ examples:
+   - |
+     #include <dt-bindings/gpio/gpio.h>
+diff --git a/Documentation/devicetree/bindings/net/qcom,ipa.yaml b/Documentation/devicetree/bindings/net/qcom,ipa.yaml
+index 8594f114f016..4d8464b2676d 100644
+--- a/Documentation/devicetree/bindings/net/qcom,ipa.yaml
++++ b/Documentation/devicetree/bindings/net/qcom,ipa.yaml
+@@ -144,6 +144,8 @@ oneOf:
+   - required:
+       - memory-region
+ 
++additionalProperties: false
++
+ examples:
+   - |
+         #include <dt-bindings/interrupt-controller/irq.h>
+diff --git a/Documentation/devicetree/bindings/net/realtek-bluetooth.yaml b/Documentation/devicetree/bindings/net/realtek-bluetooth.yaml
+index c488f24ed38f..4f485df69ac3 100644
+--- a/Documentation/devicetree/bindings/net/realtek-bluetooth.yaml
++++ b/Documentation/devicetree/bindings/net/realtek-bluetooth.yaml
+@@ -37,6 +37,8 @@ properties:
+ required:
+   - compatible
+ 
++additionalProperties: false
++
+ examples:
+   - |
+     #include <dt-bindings/gpio/gpio.h>
+@@ -49,6 +51,6 @@ examples:
+         bluetooth {
+             compatible = "realtek,rtl8723bs-bt";
+             device-wake-gpios = <&r_pio 0 5 GPIO_ACTIVE_HIGH>; /* PL5 */
+-            host-wakeup-gpios = <&r_pio 0 6 GPIO_ACTIVE_HIGH>; /* PL6 */
++            host-wake-gpios = <&r_pio 0 6 GPIO_ACTIVE_HIGH>; /* PL6 */
+         };
+     };
+diff --git a/Documentation/devicetree/bindings/net/wireless/microchip,wilc1000.yaml b/Documentation/devicetree/bindings/net/wireless/microchip,wilc1000.yaml
+index 2c320eb2a8c4..6c35682377e6 100644
+--- a/Documentation/devicetree/bindings/net/wireless/microchip,wilc1000.yaml
++++ b/Documentation/devicetree/bindings/net/wireless/microchip,wilc1000.yaml
+@@ -18,6 +18,8 @@ properties:
+   compatible:
+     const: microchip,wilc1000
+ 
++  reg: true
++
+   spi-max-frequency: true
+ 
+   interrupts:
+@@ -34,6 +36,8 @@ required:
+   - compatible
+   - interrupts
+ 
++additionalProperties: false
++
+ examples:
+   - |
+     spi {
+diff --git a/Documentation/devicetree/bindings/pci/rcar-pci-ep.yaml b/Documentation/devicetree/bindings/pci/rcar-pci-ep.yaml
+index aa483c7f27fd..53d5952b7e57 100644
+--- a/Documentation/devicetree/bindings/pci/rcar-pci-ep.yaml
++++ b/Documentation/devicetree/bindings/pci/rcar-pci-ep.yaml
+@@ -55,6 +55,8 @@ required:
+   - clock-names
+   - max-functions
+ 
++additionalProperties: false
++
+ examples:
+   - |
+     #include <dt-bindings/clock/r8a774c0-cpg-mssr.h>
+diff --git a/Documentation/devicetree/bindings/phy/amlogic,meson-g12a-usb2-phy.yaml b/Documentation/devicetree/bindings/phy/amlogic,meson-g12a-usb2-phy.yaml
+index 0d2557bb0bcc..399ebde45409 100644
+--- a/Documentation/devicetree/bindings/phy/amlogic,meson-g12a-usb2-phy.yaml
++++ b/Documentation/devicetree/bindings/phy/amlogic,meson-g12a-usb2-phy.yaml
+@@ -63,6 +63,8 @@ then:
+   required:
+     - power-domains
+ 
++additionalProperties: false
++
+ examples:
+   - |
+     phy@36000 {
+diff --git a/Documentation/devicetree/bindings/phy/qcom,ipq806x-usb-phy-hs.yaml b/Documentation/devicetree/bindings/phy/qcom,ipq806x-usb-phy-hs.yaml
+index 23887ebe08fd..17f132ce5516 100644
+--- a/Documentation/devicetree/bindings/phy/qcom,ipq806x-usb-phy-hs.yaml
++++ b/Documentation/devicetree/bindings/phy/qcom,ipq806x-usb-phy-hs.yaml
+@@ -42,6 +42,8 @@ required:
+   - clocks
+   - clock-names
+ 
++additionalProperties: false
++
+ examples:
+   - |
+     #include <dt-bindings/clock/qcom,gcc-ipq806x.h>
+diff --git a/Documentation/devicetree/bindings/phy/qcom,ipq806x-usb-phy-ss.yaml b/Documentation/devicetree/bindings/phy/qcom,ipq806x-usb-phy-ss.yaml
+index fa30c24b4405..17fd7f6b83bb 100644
+--- a/Documentation/devicetree/bindings/phy/qcom,ipq806x-usb-phy-ss.yaml
++++ b/Documentation/devicetree/bindings/phy/qcom,ipq806x-usb-phy-ss.yaml
+@@ -60,6 +60,8 @@ required:
+   - clocks
+   - clock-names
+ 
++additionalProperties: false
++
+ examples:
+   - |
+     #include <dt-bindings/clock/qcom,gcc-ipq806x.h>
+diff --git a/Documentation/devicetree/bindings/phy/qcom,qusb2-phy.yaml b/Documentation/devicetree/bindings/phy/qcom,qusb2-phy.yaml
+index ccda92859eca..d457fb6a4779 100644
+--- a/Documentation/devicetree/bindings/phy/qcom,qusb2-phy.yaml
++++ b/Documentation/devicetree/bindings/phy/qcom,qusb2-phy.yaml
+@@ -158,6 +158,7 @@ required:
+   - vdda-phy-dpdm-supply
+   - resets
+ 
++additionalProperties: false
+ 
+ examples:
+   - |
+diff --git a/Documentation/devicetree/bindings/phy/qcom-usb-ipq4019-phy.yaml b/Documentation/devicetree/bindings/phy/qcom-usb-ipq4019-phy.yaml
+index 1118fe69b611..3e7191b168fb 100644
+--- a/Documentation/devicetree/bindings/phy/qcom-usb-ipq4019-phy.yaml
++++ b/Documentation/devicetree/bindings/phy/qcom-usb-ipq4019-phy.yaml
+@@ -36,6 +36,8 @@ required:
+   - reset-names
+   - "#phy-cells"
+ 
++additionalProperties: false
++
+ examples:
+   - |
+     #include <dt-bindings/clock/qcom,gcc-ipq4019.h>
+diff --git a/Documentation/devicetree/bindings/pinctrl/cirrus,lochnagar.yaml b/Documentation/devicetree/bindings/pinctrl/cirrus,lochnagar.yaml
+index 420d74856032..a07dd197176a 100644
+--- a/Documentation/devicetree/bindings/pinctrl/cirrus,lochnagar.yaml
++++ b/Documentation/devicetree/bindings/pinctrl/cirrus,lochnagar.yaml
+@@ -188,3 +188,5 @@ required:
+   - gpio-ranges
+   - pinctrl-0
+   - pinctrl-names
++
++additionalProperties: false
+diff --git a/Documentation/devicetree/bindings/pinctrl/socionext,uniphier-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/socionext,uniphier-pinctrl.yaml
+index f8a93d8680f9..502480a19f49 100644
+--- a/Documentation/devicetree/bindings/pinctrl/socionext,uniphier-pinctrl.yaml
++++ b/Documentation/devicetree/bindings/pinctrl/socionext,uniphier-pinctrl.yaml
+@@ -28,6 +28,8 @@ properties:
+ required:
+   - compatible
+ 
++additionalProperties: false
++
+ examples:
+   - |
+     // The UniPhier pinctrl should be a subnode of a "syscon" compatible node.
+diff --git a/Documentation/devicetree/bindings/power/amlogic,meson-sec-pwrc.yaml b/Documentation/devicetree/bindings/power/amlogic,meson-sec-pwrc.yaml
+index bc4e037f3f73..5dae04d2936c 100644
+--- a/Documentation/devicetree/bindings/power/amlogic,meson-sec-pwrc.yaml
++++ b/Documentation/devicetree/bindings/power/amlogic,meson-sec-pwrc.yaml
+@@ -27,6 +27,8 @@ required:
+   - compatible
+   - "#power-domain-cells"
+ 
++additionalProperties: false
++
+ examples:
+   - |
+     secure-monitor {
+diff --git a/Documentation/devicetree/bindings/power/domain-idle-state.yaml b/Documentation/devicetree/bindings/power/domain-idle-state.yaml
+index dfba1af9abe5..6a12efdf436a 100644
+--- a/Documentation/devicetree/bindings/power/domain-idle-state.yaml
++++ b/Documentation/devicetree/bindings/power/domain-idle-state.yaml
+@@ -50,6 +50,8 @@ patternProperties:
+       - exit-latency-us
+       - min-residency-us
+ 
++additionalProperties: false
++
+ examples:
+   - |
+ 
+diff --git a/Documentation/devicetree/bindings/power/mti,mips-cpc.yaml b/Documentation/devicetree/bindings/power/mti,mips-cpc.yaml
+index ccdeaece169e..be447ccfdcb8 100644
+--- a/Documentation/devicetree/bindings/power/mti,mips-cpc.yaml
++++ b/Documentation/devicetree/bindings/power/mti,mips-cpc.yaml
+@@ -26,6 +26,8 @@ required:
+   - compatible
+   - reg
+ 
++additionalProperties: false
++
+ examples:
+   - |
+     cpc@1bde0000 {
+diff --git a/Documentation/devicetree/bindings/power/supply/cw2015_battery.yaml b/Documentation/devicetree/bindings/power/supply/cw2015_battery.yaml
+index 2036977ecc2f..ee92e6a076ac 100644
+--- a/Documentation/devicetree/bindings/power/supply/cw2015_battery.yaml
++++ b/Documentation/devicetree/bindings/power/supply/cw2015_battery.yaml
+@@ -52,6 +52,8 @@ required:
+   - compatible
+   - reg
+ 
++additionalProperties: false
++
+ examples:
+   - |
+     i2c {
+diff --git a/Documentation/devicetree/bindings/power/supply/rohm,bd99954.yaml b/Documentation/devicetree/bindings/power/supply/rohm,bd99954.yaml
+index 7e0f73a898c7..9852d2febf65 100644
+--- a/Documentation/devicetree/bindings/power/supply/rohm,bd99954.yaml
++++ b/Documentation/devicetree/bindings/power/supply/rohm,bd99954.yaml
+@@ -112,6 +112,12 @@ properties:
+ #     threshold, and the current is below this setting (7 in above chart)
+ #   See also Documentation/devicetree/bindings/power/supply/battery.txt
+ 
++  reg:
++    maxItems: 1
++
++  interrupts:
++    maxItems: 1
++
+   monitored-battery:
+     description:
+       phandle of battery characteristics devicetree node
+@@ -137,6 +143,8 @@ properties:
+ required:
+   - compatible
+ 
++additionalProperties: false
++
+ examples:
+   - |
+     i2c {
+diff --git a/Documentation/devicetree/bindings/regulator/silergy,sy8827n.yaml b/Documentation/devicetree/bindings/regulator/silergy,sy8827n.yaml
+index 15983cdc7c28..b222adabc7b4 100644
+--- a/Documentation/devicetree/bindings/regulator/silergy,sy8827n.yaml
++++ b/Documentation/devicetree/bindings/regulator/silergy,sy8827n.yaml
+@@ -31,6 +31,8 @@ required:
+   - compatible
+   - reg
+ 
++additionalProperties: false
++
+ examples:
+   - |
+     i2c {
+diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,pil-info.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,pil-info.yaml
+index 87c52316ddbd..9282837d64ba 100644
+--- a/Documentation/devicetree/bindings/remoteproc/qcom,pil-info.yaml
++++ b/Documentation/devicetree/bindings/remoteproc/qcom,pil-info.yaml
+@@ -25,6 +25,8 @@ required:
+   - compatible
+   - reg
+ 
++additionalProperties: false
++
+ examples:
+   - |
+     imem@146bf000 {
+diff --git a/Documentation/devicetree/bindings/serial/samsung_uart.yaml b/Documentation/devicetree/bindings/serial/samsung_uart.yaml
+index 96414ac65d06..21ee627b2ced 100644
+--- a/Documentation/devicetree/bindings/serial/samsung_uart.yaml
++++ b/Documentation/devicetree/bindings/serial/samsung_uart.yaml
+@@ -68,6 +68,8 @@ required:
+   - interrupts
+   - reg
+ 
++additionalProperties: false
++
+ allOf:
+   - if:
+       properties:
+diff --git a/Documentation/devicetree/bindings/serial/socionext,uniphier-uart.yaml b/Documentation/devicetree/bindings/serial/socionext,uniphier-uart.yaml
+index 09a30300850c..d490c7c4b967 100644
+--- a/Documentation/devicetree/bindings/serial/socionext,uniphier-uart.yaml
++++ b/Documentation/devicetree/bindings/serial/socionext,uniphier-uart.yaml
+@@ -32,6 +32,8 @@ required:
+   - interrupts
+   - clocks
+ 
++additionalProperties: false
++
+ examples:
+   - |
+     aliases {
+diff --git a/Documentation/devicetree/bindings/serial/sprd-uart.yaml b/Documentation/devicetree/bindings/serial/sprd-uart.yaml
+index e66b2e92a7fc..09f6283f3cae 100644
+--- a/Documentation/devicetree/bindings/serial/sprd-uart.yaml
++++ b/Documentation/devicetree/bindings/serial/sprd-uart.yaml
+@@ -56,6 +56,8 @@ required:
+   - reg
+   - interrupts
+ 
++additionalProperties: false
++
+ examples:
+   - |
+     #include <dt-bindings/interrupt-controller/arm-gic.h>
+diff --git a/Documentation/devicetree/bindings/soc/qcom/qcom,geni-se.yaml b/Documentation/devicetree/bindings/soc/qcom/qcom,geni-se.yaml
+index bd04fdb57414..84671950ca0d 100644
+--- a/Documentation/devicetree/bindings/soc/qcom/qcom,geni-se.yaml
++++ b/Documentation/devicetree/bindings/soc/qcom/qcom,geni-se.yaml
+@@ -173,6 +173,7 @@ patternProperties:
+       - compatible
+       - interrupts
+ 
++additionalProperties: false
+ 
+ examples:
+   - |
+diff --git a/Documentation/devicetree/bindings/sound/amlogic,g12a-toacodec.yaml b/Documentation/devicetree/bindings/sound/amlogic,g12a-toacodec.yaml
+index b4b3828c40af..3c3891d17238 100644
+--- a/Documentation/devicetree/bindings/sound/amlogic,g12a-toacodec.yaml
++++ b/Documentation/devicetree/bindings/sound/amlogic,g12a-toacodec.yaml
+@@ -37,6 +37,8 @@ required:
+   - reg
+   - resets
+ 
++additionalProperties: false
++
+ examples:
+   - |
+     #include <dt-bindings/reset/amlogic,meson-g12a-audio-reset.h>
+diff --git a/Documentation/devicetree/bindings/sound/amlogic,gx-sound-card.yaml b/Documentation/devicetree/bindings/sound/amlogic,gx-sound-card.yaml
+index fb374c659be1..db61f0731a20 100644
+--- a/Documentation/devicetree/bindings/sound/amlogic,gx-sound-card.yaml
++++ b/Documentation/devicetree/bindings/sound/amlogic,gx-sound-card.yaml
+@@ -84,6 +84,8 @@ required:
+   - model
+   - dai-link-0
+ 
++additionalProperties: false
++
+ examples:
+   - |
+     sound {
+diff --git a/Documentation/devicetree/bindings/sound/amlogic,t9015.yaml b/Documentation/devicetree/bindings/sound/amlogic,t9015.yaml
+index 04014e658c90..c7613ea728d4 100644
+--- a/Documentation/devicetree/bindings/sound/amlogic,t9015.yaml
++++ b/Documentation/devicetree/bindings/sound/amlogic,t9015.yaml
+@@ -42,6 +42,8 @@ required:
+   - clock-names
+   - resets
+ 
++additionalProperties: false
++
+ examples:
+   - |
+     #include <dt-bindings/clock/g12a-clkc.h>
+diff --git a/Documentation/devicetree/bindings/sound/cirrus,cs42l51.yaml b/Documentation/devicetree/bindings/sound/cirrus,cs42l51.yaml
+index 5bcb643c288f..0d87e2c86a42 100644
+--- a/Documentation/devicetree/bindings/sound/cirrus,cs42l51.yaml
++++ b/Documentation/devicetree/bindings/sound/cirrus,cs42l51.yaml
+@@ -46,6 +46,8 @@ required:
+   - reg
+   - "#sound-dai-cells"
+ 
++additionalProperties: false
++
+ examples:
+   - |
+     #include <dt-bindings/gpio/gpio.h>
+diff --git a/Documentation/devicetree/bindings/sound/fsl,easrc.yaml b/Documentation/devicetree/bindings/sound/fsl,easrc.yaml
+index 32d547af9ce7..bdde68a1059c 100644
+--- a/Documentation/devicetree/bindings/sound/fsl,easrc.yaml
++++ b/Documentation/devicetree/bindings/sound/fsl,easrc.yaml
+@@ -74,6 +74,8 @@ required:
+   - fsl,asrc-rate
+   - fsl,asrc-format
+ 
++additionalProperties: false
++
+ examples:
+   - |
+     #include <dt-bindings/clock/imx8mn-clock.h>
+diff --git a/Documentation/devicetree/bindings/sound/intel,keembay-i2s.yaml b/Documentation/devicetree/bindings/sound/intel,keembay-i2s.yaml
+index 2e0bbc1c868a..6cbdd8857ea2 100644
+--- a/Documentation/devicetree/bindings/sound/intel,keembay-i2s.yaml
++++ b/Documentation/devicetree/bindings/sound/intel,keembay-i2s.yaml
+@@ -52,6 +52,8 @@ required:
+   - clock-names
+   - interrupts
+ 
++additionalProperties: false
++
+ examples:
+   - |
+      #include <dt-bindings/interrupt-controller/arm-gic.h>
+diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra186-dspk.yaml b/Documentation/devicetree/bindings/sound/nvidia,tegra186-dspk.yaml
+index 2f2fcffa65cb..ed2fb32fcdd4 100644
+--- a/Documentation/devicetree/bindings/sound/nvidia,tegra186-dspk.yaml
++++ b/Documentation/devicetree/bindings/sound/nvidia,tegra186-dspk.yaml
+@@ -64,6 +64,8 @@ required:
+   - assigned-clock-parents
+   - sound-name-prefix
+ 
++additionalProperties: false
++
+ examples:
+   - |
+     #include<dt-bindings/clock/tegra186-clock.h>
+diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra210-admaif.yaml b/Documentation/devicetree/bindings/sound/nvidia,tegra210-admaif.yaml
+index 41c77f45d2fd..c028b259e822 100644
+--- a/Documentation/devicetree/bindings/sound/nvidia,tegra210-admaif.yaml
++++ b/Documentation/devicetree/bindings/sound/nvidia,tegra210-admaif.yaml
+@@ -81,6 +81,8 @@ required:
+   - dmas
+   - dma-names
+ 
++additionalProperties: false
++
+ examples:
+   - |
+     admaif@702d0000 {
+diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra210-dmic.yaml b/Documentation/devicetree/bindings/sound/nvidia,tegra210-dmic.yaml
+index 8689d9f18c11..2a3207b550e7 100644
+--- a/Documentation/devicetree/bindings/sound/nvidia,tegra210-dmic.yaml
++++ b/Documentation/devicetree/bindings/sound/nvidia,tegra210-dmic.yaml
+@@ -64,6 +64,8 @@ required:
+   - assigned-clocks
+   - assigned-clock-parents
+ 
++additionalProperties: false
++
+ examples:
+   - |
+     #include<dt-bindings/clock/tegra210-car.h>
+diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra210-i2s.yaml b/Documentation/devicetree/bindings/sound/nvidia,tegra210-i2s.yaml
+index 9bbf18153d63..dfc1bf7b7722 100644
+--- a/Documentation/devicetree/bindings/sound/nvidia,tegra210-i2s.yaml
++++ b/Documentation/devicetree/bindings/sound/nvidia,tegra210-i2s.yaml
+@@ -82,6 +82,8 @@ required:
+   - assigned-clocks
+   - assigned-clock-parents
+ 
++additionalProperties: false
++
+ examples:
+   - |
+     #include<dt-bindings/clock/tegra210-car.h>
+diff --git a/Documentation/devicetree/bindings/sound/rockchip,rk3328-codec.yaml b/Documentation/devicetree/bindings/sound/rockchip,rk3328-codec.yaml
+index 5b85ad5e4834..75b3b33b5f1f 100644
+--- a/Documentation/devicetree/bindings/sound/rockchip,rk3328-codec.yaml
++++ b/Documentation/devicetree/bindings/sound/rockchip,rk3328-codec.yaml
+@@ -53,6 +53,8 @@ required:
+   - rockchip,grf
+   - "#sound-dai-cells"
+ 
++additionalProperties: false
++
+ examples:
+   - |
+     #include <dt-bindings/gpio/gpio.h>
+diff --git a/Documentation/devicetree/bindings/sound/tlv320adcx140.yaml b/Documentation/devicetree/bindings/sound/tlv320adcx140.yaml
+index f578f17f3e04..1bff53d37118 100644
+--- a/Documentation/devicetree/bindings/sound/tlv320adcx140.yaml
++++ b/Documentation/devicetree/bindings/sound/tlv320adcx140.yaml
+@@ -138,6 +138,8 @@ required:
+   - compatible
+   - reg
+ 
++additionalProperties: false
++
+ examples:
+   - |
+     #include <dt-bindings/gpio/gpio.h>
+diff --git a/Documentation/devicetree/bindings/thermal/rcar-thermal.yaml b/Documentation/devicetree/bindings/thermal/rcar-thermal.yaml
+index 0994693d240f..7e9557ac0e4a 100644
+--- a/Documentation/devicetree/bindings/thermal/rcar-thermal.yaml
++++ b/Documentation/devicetree/bindings/thermal/rcar-thermal.yaml
+@@ -59,6 +59,9 @@ properties:
+   resets:
+     maxItems: 1
+ 
++  "#thermal-sensor-cells":
++    const: 0
++
+ if:
+   properties:
+     compatible:
+@@ -79,6 +82,8 @@ else:
+     - power-domains
+     - resets
+ 
++additionalProperties: false
++
+ examples:
+   # Example (non interrupt support)
+   - |
+diff --git a/Documentation/devicetree/bindings/thermal/sprd-thermal.yaml b/Documentation/devicetree/bindings/thermal/sprd-thermal.yaml
+index af2ff930646a..6d65a3cf2af2 100644
+--- a/Documentation/devicetree/bindings/thermal/sprd-thermal.yaml
++++ b/Documentation/devicetree/bindings/thermal/sprd-thermal.yaml
+@@ -68,6 +68,8 @@ patternProperties:
+       - nvmem-cells
+       - nvmem-cell-names
+ 
++    additionalProperties: false
++
+ required:
+   - compatible
+   - reg
+@@ -79,6 +81,8 @@ required:
+   - "#address-cells"
+   - "#size-cells"
+ 
++additionalProperties: false
++
+ examples:
+   - |
+         ap_thm0: thermal@32200000 {
+diff --git a/Documentation/devicetree/bindings/thermal/thermal-idle.yaml b/Documentation/devicetree/bindings/thermal/thermal-idle.yaml
+index a832d427e9d5..6278ccf16f3f 100644
+--- a/Documentation/devicetree/bindings/thermal/thermal-idle.yaml
++++ b/Documentation/devicetree/bindings/thermal/thermal-idle.yaml
+@@ -44,6 +44,8 @@ properties:
+ required:
+   - '#cooling-cells'
+ 
++additionalProperties: false
++
+ examples:
+   - |
+     #include <dt-bindings/thermal/thermal.h>
+diff --git a/Documentation/devicetree/bindings/thermal/thermal-zones.yaml b/Documentation/devicetree/bindings/thermal/thermal-zones.yaml
+index 3ec9cc87ec50..164f71598c59 100644
+--- a/Documentation/devicetree/bindings/thermal/thermal-zones.yaml
++++ b/Documentation/devicetree/bindings/thermal/thermal-zones.yaml
+@@ -218,6 +218,8 @@ patternProperties:
+       - trips
+     additionalProperties: false
+ 
++additionalProperties: false
++
+ examples:
+   - |
+     #include <dt-bindings/interrupt-controller/arm-gic.h>
+diff --git a/Documentation/devicetree/bindings/timer/cdns,ttc.yaml b/Documentation/devicetree/bindings/timer/cdns,ttc.yaml
+index c532b60b9c63..8615353f69b4 100644
+--- a/Documentation/devicetree/bindings/timer/cdns,ttc.yaml
++++ b/Documentation/devicetree/bindings/timer/cdns,ttc.yaml
+@@ -36,6 +36,8 @@ required:
+   - interrupts
+   - clocks
+ 
++additionalProperties: false
++
+ examples:
+   - |
+     ttc0: ttc0@f8001000 {
+diff --git a/Documentation/devicetree/bindings/usb/nvidia,tegra-xudc.yaml b/Documentation/devicetree/bindings/usb/nvidia,tegra-xudc.yaml
+index 196589c93373..e60e590dbe12 100644
+--- a/Documentation/devicetree/bindings/usb/nvidia,tegra-xudc.yaml
++++ b/Documentation/devicetree/bindings/usb/nvidia,tegra-xudc.yaml
+@@ -155,6 +155,8 @@ allOf:
+         clock-names:
+           maxItems: 4
+ 
++additionalProperties: false
++
+ examples:
+   - |
+     #include <dt-bindings/clock/tegra210-car.h>
+diff --git a/Documentation/devicetree/bindings/usb/qcom,dwc3.yaml b/Documentation/devicetree/bindings/usb/qcom,dwc3.yaml
+index dac10848dd7f..2cf525d21e05 100644
+--- a/Documentation/devicetree/bindings/usb/qcom,dwc3.yaml
++++ b/Documentation/devicetree/bindings/usb/qcom,dwc3.yaml
+@@ -121,6 +121,8 @@ required:
+   - interrupts
+   - interrupt-names
+ 
++additionalProperties: false
++
+ examples:
+   - |
+     #include <dt-bindings/clock/qcom,gcc-sdm845.h>
+diff --git a/Documentation/devicetree/bindings/usb/ti,j721e-usb.yaml b/Documentation/devicetree/bindings/usb/ti,j721e-usb.yaml
+index 484fc1091d7c..388245b91a55 100644
+--- a/Documentation/devicetree/bindings/usb/ti,j721e-usb.yaml
++++ b/Documentation/devicetree/bindings/usb/ti,j721e-usb.yaml
+@@ -46,6 +46,22 @@ properties:
+       VBUS pin of the SoC via a 1/3 voltage divider.
+     type: boolean
+ 
++  assigned-clocks:
++    maxItems: 1
++
++  assigned-clock-parents:
++    maxItems: 1
++
++  '#address-cells':
++    const: 2
++
++  '#size-cells':
++    const: 2
++
++patternProperties:
++  "^usb@":
++    type: object
++
+ required:
+   - compatible
+   - reg
+@@ -53,6 +69,8 @@ required:
+   - clocks
+   - clock-names
+ 
++additionalProperties: false
++
+ examples:
+   - |
+     #include <dt-bindings/soc/ti,sci_pm_domain.h>
+-- 
+2.25.1
 
-> -----Original Message-----
-> From: Michael Auchter <michael.auchter@ni.com>
-> Sent: Friday, October 2, 2020 11:59 AM
-> To: Ben Levinsky <BLEVINSK@xilinx.com>
-> Cc: sunnyliangjy@gmail.com; punit1.agrawal@toshiba.co.jp; Stefano Stabell=
-ini
-> <stefanos@xilinx.com>; Michal Simek <michals@xilinx.com>;
-> devicetree@vger.kernel.org; mathieu.poirier@linaro.org; linux-
-> remoteproc@vger.kernel.org; linux-kernel@vger.kernel.org;
-> robh+dt@kernel.org; linux-arm-kernel@lists.infradead.org
-> Subject: Re: [PATCH v17 5/5] remoteproc: Add initial zynqmp R5 remoteproc
-> driver
->=20
-> Hey Ben,
->=20
-> On Thu, Oct 01, 2020 at 02:05:41PM -0700, Ben Levinsky wrote:
-> > R5 is included in Xilinx Zynq UltraScale MPSoC so by adding this
-> > remotproc driver, we can boot the R5 sub-system in different 2
-> > configurations -
-> > 	* split
-> > 	* lock-step
-> >
-> > The Xilinx R5 Remoteproc Driver boots the R5's via calls to the Xilinx
-> > Platform Management Unit that handles the R5 configuration, memory
-> access
-> > and R5 lifecycle management. The interface to this manager is done in t=
-his
-> > driver via zynqmp_pm_* function calls.
-> >
-> > Signed-off-by: Wendy Liang <wendy.liang@xilinx.com>
-> > Signed-off-by: Michal Simek <michal.simek@xilinx.com>
-> > Signed-off-by: Ed Mooring <ed.mooring@xilinx.com>
-> > Signed-off-by: Jason Wu <j.wu@xilinx.com>
-> > Signed-off-by: Ben Levinsky <ben.levinsky@xilinx.com>
-> > Reported-by: kernel test robot <lkp@intel.com>
-> > ---
-> > v2:
-> >  - remove domain struct as per review from Mathieu
-> >  v3:
-> >  - add xilinx-related platform mgmt fn's instead of wrapping around
-> >    function pointer in xilinx eemi ops struct
-> >  v4:
-> >  - add default values for enums
-> >  - fix formatting as per checkpatch.pl --strict. Note that 1 warning an=
-d 1
-> check
-> >    are still raised as each is due to fixing the warning results in tha=
-t
-> >  particular line going over 80 characters.
-> >  v5:
-> >  - parse_fw change from use of rproc_of_resm_mem_entry_init to
-> >  rproc_mem_entry_init and use of alloc/release
-> >  - var's of type zynqmp_r5_pdata all have same local variable name
-> >  - use dev_dbg instead of dev_info
-> >  v6:
-> >  - adding memory carveouts is handled much more similarly. All mem
-> >  carveouts are
-> >    now described in reserved memory as needed. That is, TCM nodes are n=
-ot
-> >    coupled to remoteproc anymore. This is reflected in the remoteproc R=
-5
-> >  driver
-> >    and the device tree binding.
-> >  - remove mailbox from device tree binding as it is not necessary for e=
-lf
-> >    loading
-> >  - use lockstep-mode property for configuring RPU
-> >  v7:
-> >  - remove unused headers
-> >  - change  u32 *lockstep_mode ->  u32 lockstep_mode;
-> >  - change device-tree binding "lockstep-mode"  to xlnx,cluster-mode
-> >  - remove zynqmp_r5_mem_probe and loop to Probe R5 memory devices at
-> >    remoteproc-probe time
-> >  - remove is_r5_mode_set from  zynqmp rpu remote processor private data
-> >  - do not error out if no mailbox is provided
-> >  - remove zynqmp_r5_remoteproc_probe call of platform_set_drvdata as
-> >  pdata is
-> >    handled in zynqmp_r5_remoteproc_remove
-> > v8:
-> >  - remove old acks, reviewed-by's in commit message
-> > v9:
-> > - as mboxes are now optional, if pdata->tx_mc_skbs not initialized then
-> >   do not call skb_queue_empty
-> > - update usage for zynqmp_pm_set_rpu_mode,
-> zynqmp_pm_set_tcm_config and
-> >   zynqmp_pm_get_rpu_mode
-> > - update 5/5 patch commit message to document supported configurations
-> >   and how they are booted by the driver.
-> > - remove copyrights other than SPDX from zynqmp_r5_remoteproc.c
-> > - compilation warnings no longer raised
-> > - remove unused includes from zynqmp_r5_remoteproc.c
-> > - remove unused  var autoboot from zynqmp_r5_remoteproc.c
-> > - reorder zynqmp_r5_pdata fpr small mem savings due to alignment
-> > - use of zynqmp_pm_set_tcm_config now does not have
-> >   output arg
-> > - in tcm handling, unconditionally use &=3D 0x000fffff mask since all n=
-odes
-> >   in this fn are for tcm
-> > - update comments for translating dma field in tcm handling to device
-> >   address
-> > - update calls to rproc_mem_entry_init in parse_mem_regions so that the=
-re
-> >   are only 2 cases for types of carveouts instead of 3
-> > - in parse_mem_regions, check if device tree node is null before using =
-it
-> > - add example device tree nodes used in parse_mem_regions and tcm
-> parsing
-> > - add comment for vring id node length
-> > - add check for string length so that vring id is at least min length
-> > - move tcm nodes from reserved mem to instead own device tree nodes
-> >    and only use them if enabled in device tree
-> > - add comment for explaining handling of rproc_elf_load_rsc_table
-> > - remove obsolete check for "if (vqid < 0)" in zynqmp_r5_rproc_kick
-> > - remove unused field mems in struct zynqmp_r5_pdata
-> > - remove call to zynqmp_r5_mem_probe and the fn itself as tcm handling
-> >   is done by zyqmp_r5_pm_request_tcm
-> > - remove obsolete setting of dma_ops and parent device dma_mask
-> > - remove obsolete use of of_dma_configure
-> > - add comment for call to r5_set_mode fn
-> > - make mbox usage optional and gracefully inform user via dev_dbg if no=
-t
-> >   present
-> > - change var lockstep_mode from u32* to u32
-> > v11:
-> > - use enums instead of u32 where possible in zynqmp_r5_remoteproc
-> > - update usage of zynqmp_pm_set/get_rpu_mode and
-> zynqmp_pm_set_tcm_config
-> > - update prints to not use carriage return, just newline
-> > - look up tcm banks via property in r5 node instead of string name
-> > - print device tree nodes with %pOF instead of %s with node name field
-> > - update tcm release to unmap VA
-> > - handle r5-1 use case
-> > v12:
-> > - update signed off by so that latest developer name is last
-> > - do not cast enums to u32s for zynqmp_pm* functions
-> > v14:
-> > - change zynqmp_r5_remoteproc::rpus and rpu_mode to static
-> > - fix typo
-> > - zynqmp_r5_remoteproc::r5_set_mode set rpu mode from
-> >   property specified in device tree
-> > - use u32 instead of u32* to store in remoteproc memory entry private d=
-ata
-> >   for pnode_id information
-> > - always call r5_set_mode on probe
-> > - remove alloc of zynqmp_r5_pdata in
-> >   zynqmp_r5_remoteproc::zynqmp_r5_remoteproc_probe as there is static
-> >   allocation already
-> > - error at probe time if lockstep-mode property not present in device t=
-ree
-> > - update commit message as per review
-> > - remove dependency on MAILBOX in makefile as ZYNQMP_IPI_MBOX is
-> present
-> > - remove unused macros
-> > - update comment ordering of zynqmp_r5_pdata to match struct definition
-> > - zynqmp_r5_remoteproc::tcm_mem_release error if pnode id is invalid
-> > - remove obsolete TODOs
-> > - only call zynqmp_r5_remoteproc::zynqmp_r5_probe if the index is valid
-> > - remove uneven dev_dbg/dev_err fn calls
-> > v15:
-> > - if lockstep mode prop is present, then RPU cluster is in lockstep mod=
-e.
-> >   if not present, cluster is in split mode.
-> > - if 2 RPUs provided but one is lockstep then error out as this is inva=
-lid
-> >   configuration
-> > v16:
-> > - replace of_get_property(dev->of_node, "lockstep-mode" with
-> >   of_property_read_bool
-> > - propagate rpu mode specified in device tree through functions instead
-> >   of holding a global, static var
-> > - check child remoteproc nodes via of_get_available_child_count before
-> >   looping through children
-> > - replace check of "pdata->pnode_id =3D=3D 0" instead by checking rpu's
-> >   zynqmp_r5_pdata* if NULL
-> > - remove old, obsolete checks for dma_pools in
-> zynqmp_r5_remoteproc_remove
-> > - change rpus from zynqmp_r5_pdata[] to zynqmp_r5_pdata*[] so that
-> >   check for pdata->pnode_id =3D=3D 0 is not needed
-> > v17:
-> > - fix style as per kernel test bot
-> > ---
-> >  drivers/remoteproc/Kconfig                |   8 +
-> >  drivers/remoteproc/Makefile               |   1 +
-> >  drivers/remoteproc/zynqmp_r5_remoteproc.c | 778
-> ++++++++++++++++++++++
-> >  3 files changed, 787 insertions(+)
-> >  create mode 100644 drivers/remoteproc/zynqmp_r5_remoteproc.c
-> >
-> > diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
-> > index c6659dfea7c7..68e567c5375c 100644
-> > --- a/drivers/remoteproc/Kconfig
-> > +++ b/drivers/remoteproc/Kconfig
-> > @@ -275,6 +275,14 @@ config TI_K3_DSP_REMOTEPROC
-> >  	  It's safe to say N here if you're not interested in utilizing
-> >  	  the DSP slave processors.
-> >
-> > +config ZYNQMP_R5_REMOTEPROC
-> > +	tristate "ZynqMP_R5 remoteproc support"
-> > +	depends on PM && ARCH_ZYNQMP
-> > +	select RPMSG_VIRTIO
-> > +	select ZYNQMP_IPI_MBOX
-> > +	help
-> > +	  Say y or m here to support ZynqMP R5 remote processors via the
-> remote
-> > +	  processor framework.
-> >  endif # REMOTEPROC
-> >
-> >  endmenu
-> > diff --git a/drivers/remoteproc/Makefile b/drivers/remoteproc/Makefile
-> > index 3dfa28e6c701..ef1abff654c2 100644
-> > --- a/drivers/remoteproc/Makefile
-> > +++ b/drivers/remoteproc/Makefile
-> > @@ -33,3 +33,4 @@ obj-$(CONFIG_ST_REMOTEPROC)		+=3D
-> st_remoteproc.o
-> >  obj-$(CONFIG_ST_SLIM_REMOTEPROC)	+=3D st_slim_rproc.o
-> >  obj-$(CONFIG_STM32_RPROC)		+=3D stm32_rproc.o
-> >  obj-$(CONFIG_TI_K3_DSP_REMOTEPROC)	+=3D ti_k3_dsp_remoteproc.o
-> > +obj-$(CONFIG_ZYNQMP_R5_REMOTEPROC)	+=3D zynqmp_r5_remoteproc.o
-> > diff --git a/drivers/remoteproc/zynqmp_r5_remoteproc.c
-> b/drivers/remoteproc/zynqmp_r5_remoteproc.c
-> > new file mode 100644
-> > index 000000000000..eacda5b3bbe7
-> > --- /dev/null
-> > +++ b/drivers/remoteproc/zynqmp_r5_remoteproc.c
-> > @@ -0,0 +1,778 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +/*
-> > + * Zynq R5 Remote Processor driver
-> > + *
-> > + * Based on origin OMAP and Zynq Remote Processor driver
-> > + *
-> > + */
-> > +
-> > +#include <linux/firmware/xlnx-zynqmp.h>
-> > +#include <linux/interrupt.h>
-> > +#include <linux/kernel.h>
-> > +#include <linux/list.h>
-> > +#include <linux/mailbox_client.h>
-> > +#include <linux/mailbox/zynqmp-ipi-message.h>
-> > +#include <linux/module.h>
-> > +#include <linux/of_address.h>
-> > +#include <linux/of_platform.h>
-> > +#include <linux/of_reserved_mem.h>
-> > +#include <linux/platform_device.h>
-> > +#include <linux/remoteproc.h>
-> > +#include <linux/skbuff.h>
-> > +#include <linux/sysfs.h>
-> > +
-> > +#include "remoteproc_internal.h"
-> > +
-> > +#define MAX_RPROCS	2 /* Support up to 2 RPU */
-> > +#define MAX_MEM_PNODES	4 /* Max power nodes for one RPU memory
-> instance */
-> > +
-> > +#define BANK_LIST_PROP "meta-memory-regions"
-> > +
-> > +/* IPI buffer MAX length */
-> > +#define IPI_BUF_LEN_MAX	32U
-> > +/* RX mailbox client buffer max length */
-> > +#define RX_MBOX_CLIENT_BUF_MAX	(IPI_BUF_LEN_MAX + \
-> > +				 sizeof(struct zynqmp_ipi_message))
-> > +
-> > +/**
-> > + * struct zynqmp_r5_mem - zynqmp rpu memory data
-> > + * @pnode_id: TCM power domain ids
-> > + * @res: memory resource
-> > + * @node: list node
-> > + */
-> > +struct zynqmp_r5_mem {
-> > +	u32 pnode_id[MAX_MEM_PNODES];
-> > +	struct resource res;
-> > +	struct list_head node;
-> > +};
-> > +
-> > +/**
-> > + * struct zynqmp_r5_pdata - zynqmp rpu remote processor private data
-> > + * @rx_mc_buf: rx mailbox client buffer to save the rx message
-> > + * @tx_mc: tx mailbox client
-> > + * @rx_mc: rx mailbox client * @dev: device of RPU instance
-> > + * @mbox_work: mbox_work for the RPU remoteproc
-> > + * @tx_mc_skbs: socket buffers for tx mailbox client
-> > + * @dev: device of RPU instance
-> > + * @rproc: rproc handle
-> > + * @tx_chan: tx mailbox channel
-> > + * @rx_chan: rx mailbox channel
-> > + * @pnode_id: RPU CPU power domain id
-> > + */
-> > +struct zynqmp_r5_pdata {
-> > +	unsigned char rx_mc_buf[RX_MBOX_CLIENT_BUF_MAX];
-> > +	struct mbox_client tx_mc;
-> > +	struct mbox_client rx_mc;
-> > +	struct work_struct mbox_work;
-> > +	struct sk_buff_head tx_mc_skbs;
-> > +	struct device dev;
-> > +	struct rproc *rproc;
-> > +	struct mbox_chan *tx_chan;
-> > +	struct mbox_chan *rx_chan;
-> > +	u32 pnode_id;
-> > +};
-> > +
-> > +/**
-> > + * table of RPUs
-> > + */
-> > +static struct zynqmp_r5_pdata *rpus[MAX_RPROCS];
-> > +/**
-> > + * RPU core configuration
-> > + */
-> > +static enum rpu_oper_mode rpu_mode;
->=20
-> Hm, the changelog says: "propagate rpu mode specified in device tree
-> through functions instead of holding a global, static var" but it looks
-> like that wasn't done.
->=20
-> > +
-> > +/*
-> > + * r5_set_mode - set RPU operation mode
-> > + * @pdata: Remote processor private data
-> > + *
-> > + * set RPU operation mode
-> > + *
-> > + * Return: 0 for success, negative value for failure
-> > + */
-> > +static int r5_set_mode(struct zynqmp_r5_pdata *pdata)
-> > +{
-> > +	enum rpu_tcm_comb tcm_mode;
-> > +	enum rpu_oper_mode cur_rpu_mode;
-> > +	int ret;
-> > +
-> > +	ret =3D zynqmp_pm_get_rpu_mode(pdata->pnode_id, &cur_rpu_mode);
-> > +	if (ret < 0)
-> > +		return ret;
-> > +
-> > +	if (rpu_mode !=3D cur_rpu_mode) {
-> > +		ret =3D zynqmp_pm_set_rpu_mode(pdata->pnode_id,
-> > +					     rpu_mode);
-> > +		if (ret < 0)
-> > +			return ret;
-> > +	}
-> > +
-> > +	tcm_mode =3D (rpu_mode =3D=3D PM_RPU_MODE_LOCKSTEP) ?
-> > +		    PM_RPU_TCM_COMB : PM_RPU_TCM_SPLIT;
-> > +	return zynqmp_pm_set_tcm_config(pdata->pnode_id, tcm_mode);
-> > +}
-> > +
-> > +/*
-> > + * ZynqMP R5 remoteproc memory release function
-> > + */
-> > +static int tcm_mem_release(struct rproc *rproc, struct rproc_mem_entry
-> *mem)
-> > +{
-> > +	u32 pnode_id =3D (u64)mem->priv;
-> > +
-> > +	if (pnode_id <=3D 0)
-> > +		return -EINVAL;
-> > +
-> > +	iounmap(mem->va);
-> > +	return zynqmp_pm_release_node(pnode_id);
-> > +}
-> > +
-> > +/*
-> > + * ZynqMP R5 remoteproc operations
-> > + */
-> > +static int zynqmp_r5_rproc_start(struct rproc *rproc)
-> > +{
-> > +	struct device *dev =3D rproc->dev.parent;
-> > +	struct zynqmp_r5_pdata *pdata =3D rproc->priv;
-> > +	enum rpu_boot_mem bootmem;
-> > +
-> > +	bootmem =3D (rproc->bootaddr & 0xF0000000) =3D=3D 0xF0000000 ?
-> > +		  PM_RPU_BOOTMEM_HIVEC : PM_RPU_BOOTMEM_LOVEC;
-> > +
-> > +	dev_dbg(dev, "RPU boot from %s.",
-> > +		bootmem =3D=3D PM_RPU_BOOTMEM_HIVEC ? "OCM" : "TCM");
-> > +
-> > +	return zynqmp_pm_request_wake(pdata->pnode_id, 1,
-> > +				     bootmem,
-> ZYNQMP_PM_REQUEST_ACK_NO);
-> > +}
-> > +
-> > +static int zynqmp_r5_rproc_stop(struct rproc *rproc)
-> > +{
-> > +	struct zynqmp_r5_pdata *pdata =3D rproc->priv;
-> > +
-> > +	return zynqmp_pm_force_pwrdwn(pdata->pnode_id,
-> > +				     ZYNQMP_PM_REQUEST_ACK_BLOCKING);
-> > +}
-> > +
-> > +static int zynqmp_r5_rproc_mem_alloc(struct rproc *rproc,
-> > +				     struct rproc_mem_entry *mem)
-> > +{
-> > +	void *va;
-> > +
-> > +	va =3D ioremap_wc(mem->dma, mem->len);
-> > +	if (IS_ERR_OR_NULL(va))
-> > +		return -ENOMEM;
-> > +
-> > +	/* Update memory entry va */
-> > +	mem->va =3D va;
-> > +
-> > +	return 0;
-> > +}
-> > +
-> > +static int zynqmp_r5_rproc_mem_release(struct rproc *rproc,
-> > +				       struct rproc_mem_entry *mem)
-> > +{
-> > +	iounmap(mem->va);
-> > +	return 0;
-> > +}
-> > +
-> > +static int parse_mem_regions(struct rproc *rproc)
-> > +{
-> > +	int num_mems, i;
-> > +	struct zynqmp_r5_pdata *pdata =3D rproc->priv;
-> > +	struct device *dev =3D  &pdata->dev;
-> > +	struct device_node *np =3D dev->of_node;
-> > +	struct rproc_mem_entry *mem;
-> > +
-> > +	num_mems =3D of_count_phandle_with_args(np, "memory-region",
-> NULL);
-> > +	if (num_mems <=3D 0)
-> > +		return 0;
-> > +
-> > +	for (i =3D 0; i < num_mems; i++) {
-> > +		struct device_node *node;
-> > +		struct reserved_mem *rmem;
-> > +
-> > +		node =3D of_parse_phandle(np, "memory-region", i);
-> > +		if (!node)
-> > +			return -EINVAL;
-> > +
-> > +		rmem =3D of_reserved_mem_lookup(node);
-> > +		if (!rmem)
-> > +			return -EINVAL;
-> > +
-> > +		if (strstr(node->name, "vdev0vring")) {
-> > +			int vring_id;
-> > +			char name[16];
-> > +
-> > +			/*
-> > +			 * expecting form of "rpuXvdev0vringX as documented
-> > +			 * in xilinx remoteproc device tree binding
-> > +			 */
-> > +			if (strlen(node->name) < 14) {
-> > +				dev_err(dev, "%pOF is less than 14 chars",
-> > +					node);
-> > +				return -EINVAL;
-> > +			}
-> > +
-> > +			/*
-> > +			 * can be 1 of multiple vring IDs per IPC channel
-> > +			 * e.g. 'vdev0vring0' and 'vdev0vring1'
-> > +			 */
-> > +			vring_id =3D node->name[14] - '0';
-> > +			snprintf(name, sizeof(name), "vdev0vring%d",
-> vring_id);
-> > +			/* Register vring */
-> > +			mem =3D rproc_mem_entry_init(dev, NULL,
-> > +						   (dma_addr_t)rmem->base,
-> > +						   rmem->size, rmem->base,
-> > +
-> zynqmp_r5_rproc_mem_alloc,
-> > +
-> zynqmp_r5_rproc_mem_release,
-> > +						   name);
-> > +		} else {
-> > +			/* Register DMA region */
-> > +			int (*alloc)(struct rproc *r,
-> > +				     struct rproc_mem_entry *rme);
-> > +			int (*release)(struct rproc *r,
-> > +				       struct rproc_mem_entry *rme);
-> > +			char name[20];
-> > +
-> > +			if (strstr(node->name, "vdev0buffer")) {
-> > +				alloc =3D NULL;
-> > +				release =3D NULL;
-> > +				strcpy(name, "vdev0buffer");
-> > +			} else {
-> > +				alloc =3D zynqmp_r5_rproc_mem_alloc;
-> > +				release =3D zynqmp_r5_rproc_mem_release;
-> > +				strcpy(name, node->name);
-> > +			}
-> > +
-> > +			mem =3D rproc_mem_entry_init(dev, NULL,
-> > +						   (dma_addr_t)rmem->base,
-> > +						   rmem->size, rmem->base,
-> > +						   alloc, release, name);
-> > +		}
-> > +		if (!mem)
-> > +			return -ENOMEM;
-> > +
-> > +		rproc_add_carveout(rproc, mem);
-> > +	}
-> > +
-> > +	return 0;
-> > +}
-> > +
-> > +/* call Xilix Platform manager to request access to TCM bank */
->=20
-> Xilinx
->=20
-> > +static int zyqmp_r5_pm_request_tcm(struct device_node *tcm_node,
->=20
-> zynqmp_r5_pm_request_tcm
->=20
-> > +				   struct device *dev,
-> > +				   u32 *pnode_id)
-> > +{
-> > +	int ret;
-> > +
-> > +	ret =3D of_property_read_u32(tcm_node, "pnode-id", pnode_id);
-> > +	if (ret)
-> > +		return ret;
-> > +
-> > +	return zynqmp_pm_request_node(*pnode_id,
-> ZYNQMP_PM_CAPABILITY_ACCESS, 0,
-> > +				     ZYNQMP_PM_REQUEST_ACK_BLOCKING);
-> > +}
-> > +
-> > +/* Given tcm bank entry,
-> > + * this callback will set device address for R5 running on TCM
-> > + * and also setup virtual address for tcm bank remoteproc carveout
-> > + */
-> > +static int tcm_mem_alloc(struct rproc *rproc,
-> > +			 struct rproc_mem_entry *mem)
-> > +{
-> > +	void *va;
-> > +	struct device *dev =3D rproc->dev.parent;
-> > +
-> > +	va =3D ioremap_wc(mem->dma, mem->len);
-> > +	if (IS_ERR_OR_NULL(va))
-> > +		return -ENOMEM;
-> > +
-> > +	/* Update memory entry va */
-> > +	mem->va =3D va;
-> > +
-> > +	va =3D devm_ioremap_wc(dev, mem->da, mem->len);
-> > +	if (!va)
-> > +		return -ENOMEM;
-> > +	/* As R5 is 32 bit, wipe out extra high bits */
-> > +	mem->da &=3D 0x000fffff;
-> > +	/*
-> > +	 * handle tcm banks 1 a and b (0xffe90000 and oxffeb0000)
-> > +	 * As both of these the only common bit found not in tcm bank0 a or
-> b
-> > +	 * is at 0x80000 use this mask to suss it out
-> > +	 */
-> > +	if (mem->da & 0x80000)
-> > +		/*
-> > +		 * need to do more to further translate
-> > +		 * tcm banks 1a and 1b at 0xffe90000 and oxffeb0000
-> > +		 * respectively to 0x0 and 0x20000
-> > +		 */
-> > +		mem->da -=3D 0x90000;
-> > +
-> > +	return 0;
-> > +}
-> > +
-> > +/*
-> > + * Given R5 node in remoteproc instance,
-> > + * allocate remoteproc carveout for TCM memory
-> > + * needed for firmware to be loaded
-> > + */
-> > +static int parse_tcm_banks(struct rproc *rproc)
-> > +{
-> > +	int i, num_banks;
-> > +	struct zynqmp_r5_pdata *pdata =3D rproc->priv;
-> > +	struct device *dev =3D &pdata->dev;
-> > +	struct device_node *r5_node =3D dev->of_node;
-> > +
-> > +	/* go through tcm banks for r5 node */
-> > +	num_banks =3D of_count_phandle_with_args(r5_node,
-> BANK_LIST_PROP, NULL);
-> > +	if (num_banks <=3D 0) {
-> > +		dev_err(dev, "need to specify TCM banks\n");
-> > +		return -EINVAL;
-> > +	}
-> > +
-> > +	for (i =3D 0; i < num_banks; i++) {
-> > +		struct resource rsc;
-> > +		resource_size_t size;
-> > +		struct device_node *dt_node;
-> > +		struct rproc_mem_entry *mem;
-> > +		int ret;
-> > +		u32 pnode_id; /* zynqmp_pm* fn's expect u32 */
-> > +
-> > +		dt_node =3D of_parse_phandle(r5_node, BANK_LIST_PROP, i);
-> > +		if (!dt_node)
-> > +			return -EINVAL;
-> > +
-> > +		if (of_device_is_available(dt_node)) {
-> > +			ret =3D of_address_to_resource(dt_node, 0, &rsc);
-> > +			if (ret < 0)
-> > +				return ret;
-> > +
-> > +			ret =3D zyqmp_r5_pm_request_tcm(dt_node, dev,
-> &pnode_id);
-> > +			if (ret < 0)
-> > +				return ret;
-> > +
-> > +			/* add carveout */
-> > +			size =3D resource_size(&rsc);
-> > +			mem =3D rproc_mem_entry_init(dev, NULL, rsc.start,
-> > +						   (int)size, rsc.start,
-> > +						   tcm_mem_alloc,
-> > +						   tcm_mem_release,
-> > +						   rsc.name);
-> > +			if (!mem)
-> > +				return -ENOMEM;
-> > +
-> > +			mem->priv =3D (void *)(u64)pnode_id;
-> > +			rproc_add_carveout(rproc, mem);
-> > +		}
-> > +	}
-> > +
-> > +	return 0;
-> > +}
-> > +
-> > +static int zynqmp_r5_parse_fw(struct rproc *rproc, const struct firmwa=
-re
-> *fw)
-> > +{
-> > +	int ret;
-> > +	struct zynqmp_r5_pdata *pdata =3D rproc->priv;
-> > +	struct device *dev =3D &pdata->dev;
-> > +
-> > +	ret =3D parse_tcm_banks(rproc);
-> > +	if (ret)
-> > +		return ret;
-> > +
-> > +	ret =3D parse_mem_regions(rproc);
-> > +	if (ret)
-> > +		return ret;
-> > +
-> > +	ret =3D rproc_elf_load_rsc_table(rproc, fw);
-> > +	if (ret =3D=3D -EINVAL) {
-> > +		/*
-> > +		 * resource table only required for IPC.
-> > +		 * if not present, this is not necessarily an error;
-> > +		 * for example, loading r5 hello world application
-> > +		 * so simply inform user and keep going.
-> > +		 */
-> > +		dev_info(dev, "no resource table found.\n");
-> > +		ret =3D 0;
-> > +	}
-> > +	return ret;
-> > +}
-> > +
-> > +/* kick a firmware */
-> > +static void zynqmp_r5_rproc_kick(struct rproc *rproc, int vqid)
-> > +{
-> > +	struct sk_buff *skb;
-> > +	unsigned int skb_len;
-> > +	struct zynqmp_ipi_message *mb_msg;
-> > +	int ret;
-> > +
-> > +	struct device *dev =3D rproc->dev.parent;
-> > +	struct zynqmp_r5_pdata *pdata =3D rproc->priv;
-> > +
-> > +	skb_len =3D (unsigned int)(sizeof(vqid) + sizeof(mb_msg));
-> > +	skb =3D alloc_skb(skb_len, GFP_ATOMIC);
-> > +	if (!skb)
-> > +		return;
-> > +
-> > +	mb_msg =3D (struct zynqmp_ipi_message *)skb_put(skb, skb_len);
-> > +	mb_msg->len =3D sizeof(vqid);
-> > +	memcpy(mb_msg->data, &vqid, sizeof(vqid));
-> > +	skb_queue_tail(&pdata->tx_mc_skbs, skb);
-> > +	ret =3D mbox_send_message(pdata->tx_chan, mb_msg);
-> > +	if (ret < 0) {
-> > +		dev_warn(dev, "Failed to kick remote.\n");
-> > +		skb_dequeue_tail(&pdata->tx_mc_skbs);
-> > +		kfree_skb(skb);
-> > +	}
-> > +}
-> > +
-> > +static struct rproc_ops zynqmp_r5_rproc_ops =3D {
-> > +	.start		=3D zynqmp_r5_rproc_start,
-> > +	.stop		=3D zynqmp_r5_rproc_stop,
-> > +	.load		=3D rproc_elf_load_segments,
-> > +	.parse_fw	=3D zynqmp_r5_parse_fw,
-> > +	.find_loaded_rsc_table =3D rproc_elf_find_loaded_rsc_table,
-> > +	.sanity_check	=3D rproc_elf_sanity_check,
-> > +	.get_boot_addr	=3D rproc_elf_get_boot_addr,
-> > +	.kick		=3D zynqmp_r5_rproc_kick,
-> > +};
-> > +
-> > +/**
-> > + * zynqmp_r5_release() - ZynqMP R5 device release function
-> > + * @dev: pointer to the device struct of ZynqMP R5
-> > + *
-> > + * Function to release ZynqMP R5 device.
-> > + */
-> > +static void zynqmp_r5_release(struct device *dev)
-> > +{
-> > +	struct zynqmp_r5_pdata *pdata;
-> > +	struct rproc *rproc;
-> > +	struct sk_buff *skb;
-> > +
-> > +	pdata =3D dev_get_drvdata(dev);
-> > +	rproc =3D pdata->rproc;
-> > +	if (rproc) {
-> > +		rproc_del(rproc);
-> > +		rproc_free(rproc);
-> > +	}
-> > +	if (pdata->tx_chan)
-> > +		mbox_free_channel(pdata->tx_chan);
-> > +	if (pdata->rx_chan)
-> > +		mbox_free_channel(pdata->rx_chan);
-> > +
-> > +	/* Discard all SKBs if tx_mc_skbs is initialized */
-> > +	if (&pdata->tx_mc_skbs.prev) {
->=20
-> This will always be true: it's taking the address of the prev member of
-> tx_mc_skbs...
->=20
-> > +		while (!skb_queue_empty(&pdata->tx_mc_skbs)) {
-> > +			skb =3D skb_dequeue(&pdata->tx_mc_skbs);
-> > +			kfree_skb(skb);
-> > +		}
-> > +	}
-> > +
-> > +	device_unregister(dev);
->=20
-> If zynqmp_r5_release is called, the refcount for dev has already dropped
-> to 0... so this looks pretty suspicious.
->=20
-> > +}
-> > +
-> > +/**
-> > + * event_notified_idr_cb() - event notified idr callback
-> > + * @id: idr id
-> > + * @ptr: pointer to idr private data
-> > + * @data: data passed to idr_for_each callback
-> > + *
-> > + * Pass notification to remoteproc virtio
-> > + *
-> > + * Return: 0. having return is to satisfy the idr_for_each() function
-> > + *          pointer input argument requirement.
-> > + **/
-> > +static int event_notified_idr_cb(int id, void *ptr, void *data)
-> > +{
-> > +	struct rproc *rproc =3D data;
-> > +
-> > +	(void)rproc_vq_interrupt(rproc, id);
-> > +	return 0;
-> > +}
-> > +
-> > +/**
-> > + * handle_event_notified() - remoteproc notification work funciton
-> > + * @work: pointer to the work structure
-> > + *
-> > + * It checks each registered remoteproc notify IDs.
-> > + */
-> > +static void handle_event_notified(struct work_struct *work)
-> > +{
-> > +	struct rproc *rproc;
-> > +	struct zynqmp_r5_pdata *pdata;
-> > +
-> > +	pdata =3D container_of(work, struct zynqmp_r5_pdata, mbox_work);
-> > +
-> > +	(void)mbox_send_message(pdata->rx_chan, NULL);
-> > +	rproc =3D pdata->rproc;
-> > +	/*
-> > +	 * We only use IPI for interrupt. The firmware side may or may
-> > +	 * not write the notifyid when it trigger IPI.
-> > +	 * And thus, we scan through all the registered notifyids.
-> > +	 */
-> > +	idr_for_each(&rproc->notifyids, event_notified_idr_cb, rproc);
-> > +}
-> > +
-> > +/**
-> > + * zynqmp_r5_mb_rx_cb() - Receive channel mailbox callback
-> > + * @cl: mailbox client
-> > + * @mssg: message pointer
-> > + *
-> > + * It will schedule the R5 notification work.
-> > + */
-> > +static void zynqmp_r5_mb_rx_cb(struct mbox_client *cl, void *mssg)
-> > +{
-> > +	struct zynqmp_r5_pdata *pdata;
-> > +
-> > +	pdata =3D container_of(cl, struct zynqmp_r5_pdata, rx_mc);
-> > +	if (mssg) {
-> > +		struct zynqmp_ipi_message *ipi_msg, *buf_msg;
-> > +		size_t len;
-> > +
-> > +		ipi_msg =3D (struct zynqmp_ipi_message *)mssg;
-> > +		buf_msg =3D (struct zynqmp_ipi_message *)pdata->rx_mc_buf;
-> > +		len =3D (ipi_msg->len >=3D IPI_BUF_LEN_MAX) ?
-> > +		      IPI_BUF_LEN_MAX : ipi_msg->len;
-> > +		buf_msg->len =3D len;
-> > +		memcpy(buf_msg->data, ipi_msg->data, len);
-> > +	}
-> > +	schedule_work(&pdata->mbox_work);
-> > +}
-> > +
-> > +/**
-> > + * zynqmp_r5_mb_tx_done() - Request has been sent to the remote
-> > + * @cl: mailbox client
-> > + * @mssg: pointer to the message which has been sent
-> > + * @r: status of last TX - OK or error
-> > + *
-> > + * It will be called by the mailbox framework when the last TX has don=
-e.
-> > + */
-> > +static void zynqmp_r5_mb_tx_done(struct mbox_client *cl, void *mssg, i=
-nt
-> r)
-> > +{
-> > +	struct zynqmp_r5_pdata *pdata;
-> > +	struct sk_buff *skb;
-> > +
-> > +	if (!mssg)
-> > +		return;
-> > +	pdata =3D container_of(cl, struct zynqmp_r5_pdata, tx_mc);
-> > +	skb =3D skb_dequeue(&pdata->tx_mc_skbs);
-> > +	kfree_skb(skb);
-> > +}
-> > +
-> > +/**
-> > + * zynqmp_r5_setup_mbox() - Setup mailboxes
-> > + *
-> > + * @pdata: pointer to the ZynqMP R5 processor platform data
-> > + * @node: pointer of the device node
-> > + *
-> > + * Function to setup mailboxes to talk to RPU.
-> > + *
-> > + * Return: 0 for success, negative value for failure.
-> > + */
-> > +static int zynqmp_r5_setup_mbox(struct zynqmp_r5_pdata *pdata,
-> > +				struct device_node *node)
-> > +{
-> > +	struct device *dev =3D &pdata->dev;
-> > +	struct mbox_client *mclient;
-> > +
-> > +	/* Setup TX mailbox channel client */
-> > +	mclient =3D &pdata->tx_mc;
-> > +	mclient->dev =3D dev;
-> > +	mclient->rx_callback =3D NULL;
-> > +	mclient->tx_block =3D false;
-> > +	mclient->knows_txdone =3D false;
-> > +	mclient->tx_done =3D zynqmp_r5_mb_tx_done;
-> > +
-> > +	/* Setup TX mailbox channel client */
-> > +	mclient =3D &pdata->rx_mc;
-> > +	mclient->dev =3D dev;
-> > +	mclient->rx_callback =3D zynqmp_r5_mb_rx_cb;
-> > +	mclient->tx_block =3D false;
-> > +	mclient->knows_txdone =3D false;
-> > +
-> > +	INIT_WORK(&pdata->mbox_work, handle_event_notified);
-> > +
-> > +	/* Request TX and RX channels */
-> > +	pdata->tx_chan =3D mbox_request_channel_byname(&pdata->tx_mc,
-> "tx");
-> > +	if (IS_ERR(pdata->tx_chan)) {
-> > +		dev_err(dev, "failed to request mbox tx channel.\n");
-> > +		pdata->tx_chan =3D NULL;
-> > +		return -EINVAL;
-> > +	}
-> > +	pdata->rx_chan =3D mbox_request_channel_byname(&pdata->rx_mc,
-> "rx");
-> > +	if (IS_ERR(pdata->rx_chan)) {
-> > +		dev_err(dev, "failed to request mbox rx channel.\n");
-> > +		pdata->rx_chan =3D NULL;
-> > +		return -EINVAL;
-> > +	}
-> > +	skb_queue_head_init(&pdata->tx_mc_skbs);
-> > +
-> > +	return 0;
-> > +}
-> > +
-> > +/**
-> > + * zynqmp_r5_probe() - Probes ZynqMP R5 processor device node
-> > + * @pdata: pointer to the ZynqMP R5 processor platform data
-> > + * @pdev: parent RPU domain platform device
-> > + * @node: pointer of the device node
-> > + *
-> > + * Function to retrieve the information of the ZynqMP R5 device node.
-> > + *
-> > + * Return: 0 for success, negative value for failure.
-> > + */
-> > +static int zynqmp_r5_probe(struct zynqmp_r5_pdata *pdata,
-> > +			   struct platform_device *pdev,
-> > +			   struct device_node *node)
-> > +{
-> > +	struct rproc *rproc;
-> > +	int ret;
-> > +	struct device *dev =3D NULL;
-> > +
-> > +	pdata =3D kzalloc(sizeof(*pdata), GFP_KERNEL);
->=20
-> It doesn't look like this is freed anywhere. But, see the comments
-> below around rproc_alloc.
->=20
-> > +	if (!pdata) {
-> > +		ret =3D -ENOMEM;
-> > +		goto error;
-> > +	}
-> > +	dev =3D &pdata->dev;
-> > +
-> > +	/* Create device for ZynqMP R5 device */
-> > +	dev->parent =3D &pdev->dev;
-> > +	dev->release =3D zynqmp_r5_release;
-> > +	dev->of_node =3D node;
-> > +	dev_set_name(dev, "%pOF", node);
-> > +	dev_set_drvdata(dev, pdata);
-> > +	ret =3D device_register(dev);
-> > +	if (ret)
-> > +		goto error;
->=20
-> Somehow I missed this in previous reviews: why is a new device being
-> created?
->=20
-> > +
-> > +	/* Allocate remoteproc instance */
-> > +	rproc =3D rproc_alloc(dev, dev_name(dev), &zynqmp_r5_rproc_ops,
-> NULL, sizeof(*pdata));
->=20
-> Passing sizeof(*pdata) will cause rproc_alloc to allocate that much
-> additional space and set the rproc->priv pointer to the start of this
-> additional space, but you're not using this: below, you assign pdata to
-> rproc->priv.
->=20
-> I'd suggest using the space allocated by rproc_alloc, and dropping the
-> kzalloc above.
->=20
-> > +	if (!rproc) {
-> > +		ret =3D -ENOMEM;
-> > +		goto error;
-> > +	}
-> > +	pdata->rproc =3D rproc;
-> > +	rproc->priv =3D pdata;
-> > +
-> > +	/* Set up DMA mask */
-> > +	ret =3D dma_set_coherent_mask(dev, DMA_BIT_MASK(32));
-> > +	if (ret)
-> > +		goto error;
-> > +
-> > +	/* Get R5 power domain node */
-> > +	ret =3D of_property_read_u32(node, "pnode-id", &pdata->pnode_id);
-> > +	if (ret)
-> > +		goto error;
-> > +
-> > +	ret =3D r5_set_mode(pdata);
-> > +	if (ret)
-> > +		goto error;
-> > +
-> > +	if (of_property_read_bool(node, "mboxes")) {
-> > +		ret =3D zynqmp_r5_setup_mbox(pdata, node);
-> > +		if (ret)
-> > +			goto error;
-> > +	}
-> > +
-> > +	/* Add R5 remoteproc */
-> > +	ret =3D rproc_add(rproc);
-> > +	if (ret)
-> > +		goto error;
-> > +
-> > +	platform_set_drvdata(pdev, rproc);
->=20
-> This isn't used anywhere (and doesn't seem to make sense, since it will
-> either point at the only rproc (for lockstep) or the second rproc
-> (split)).
->=20
-> > +	return 0;
-> > +error:
-> > +	if (pdata->rproc)
-> > +		rproc_free(pdata->rproc);
-> > +	pdata->rproc =3D NULL;
-> > +	if (dev)
-> > +		device_unregister(dev);
-> > +	return ret;
-> > +}
-> > +
-> > +static int zynqmp_r5_remoteproc_probe(struct platform_device *pdev)
-> > +{
-> > +	int ret, i;
-> > +	struct device *dev =3D &pdev->dev;
-> > +	struct device_node *nc;
-> > +
-> > +	rpu_mode =3D of_property_read_bool(dev->of_node, "lockstep-mode")
-> ?
-> > +		    PM_RPU_MODE_LOCKSTEP : PM_RPU_MODE_SPLIT;
-> > +
-> > +	dev_dbg(dev, "RPU configuration: %s\n",
-> > +		rpu_mode =3D=3D PM_RPU_MODE_LOCKSTEP ? "lockstep" :
-> "split");
-> > +
-> > +	/*
-> > +	 * if 2 RPUs provided but one is lockstep, then we have an
-> > +	 * invalid configuration.
-> > +	 */
-> > +	i =3D of_get_available_child_count(dev->of_node);
-> > +	if ((rpu_mode =3D=3D PM_RPU_MODE_LOCKSTEP && i !=3D 1) || i >
-> MAX_RPROCS)
-> > +		return -EINVAL;
-> > +	i =3D 0;
-> > +	for_each_available_child_of_node(dev->of_node, nc) {
-> > +		/* only call zynqmp_r5_probe if proper # of rpu's */
-> > +		ret =3D (i < MAX_RPROCS) ? zynqmp_r5_probe(rpus[i], pdev, nc)
-> :
-> > +					 -EINVAL;
->=20
-> It looks like you want to store the allocated zynqmp_r5_pdata instance
-> in rpus[i], but that's not happening here... So, rpus[i] will _always_
-> be NULL, and the cleanup in zynqmp_r5_remoteproc_remove will never
-> happen.
->=20
-> The conditional here isn't necessary either, as you've already checked
-> the number of child nodes above.
->=20
-> > +		dev_dbg(dev, "%s to probe rpu %pOF\n",
-> > +			ret ? "Failed" : "Able",
-> > +			nc);
-> > +
-> > +		if (ret)
-> > +			return ret;
-> > +
-> > +		i++;
-> > +	}
-> > +
-> > +	return 0;
-> > +}
-> > +
-> > +static int zynqmp_r5_remoteproc_remove(struct platform_device *pdev)
-> > +{
-> > +	int i;
-> > +
-> > +	for (i =3D 0; i < MAX_RPROCS; i++) {
-> > +		struct rproc *rproc;
-> > +		struct zynqmp_r5_pdata *pdata =3D rpus[i];
-> > +
-> > +		if (!pdata)
-> > +			continue;
-> > +
-> > +		rproc =3D pdata->rproc;
-> > +		if (rproc) {
-> > +			rproc_del(rproc);
-> > +			rproc_free(rproc);
-> > +			pdata->rproc =3D NULL;
-> > +		}
-> > +		if (pdata->tx_chan) {
-> > +			mbox_free_channel(pdata->tx_chan);
-> > +			pdata->tx_chan =3D NULL;
-> > +		}
-> > +		if (pdata->rx_chan) {
-> > +			mbox_free_channel(pdata->rx_chan);
-> > +			pdata->rx_chan =3D NULL;
-> > +		}
-> > +
-> > +		device_unregister(&pdev->dev);
-> > +	}
-> > +
-> > +	return 0;
-> > +}
->=20
-> zynqmp_r5_remoteproc_remove looks like it performs many of the same
-> operations as zynqmp_r5_release. This duplication look incorrect: the
-> appropriate cleanup should really be done in only one place.
->=20
-> > +
-> > +/* Match table for OF platform binding */
-> > +static const struct of_device_id zynqmp_r5_remoteproc_match[] =3D {
-> > +	{ .compatible =3D "xlnx,zynqmp-r5-remoteproc", },
->=20
-> This used to be "xlnx,zynqmp-r5-remoteproc-1.0"; in the binding patch,
-> the example still shows "xlnx,zynqmp-r5-remoteproc-1.0", but the
-> documentation for "compatible" shows "xlnx,zynqmp-r5-remoteproc".
->=20
-> Which one should it be?
->=20
-> > +	{ /* end of list */ },
-> > +};
-> > +MODULE_DEVICE_TABLE(of, zynqmp_r5_remoteproc_match);
-> > +
-> > +static struct platform_driver zynqmp_r5_remoteproc_driver =3D {
-> > +	.probe =3D zynqmp_r5_remoteproc_probe,
-> > +	.remove =3D zynqmp_r5_remoteproc_remove,
-> > +	.driver =3D {
-> > +		.name =3D "zynqmp_r5_remoteproc",
-> > +		.of_match_table =3D zynqmp_r5_remoteproc_match,
-> > +	},
-> > +};
-> > +module_platform_driver(zynqmp_r5_remoteproc_driver);
-> > +
-> > +MODULE_AUTHOR("Ben Levinsky <ben.levinsky@xilinx.com>");
-> > +MODULE_LICENSE("GPL v2");
-> > --
-> > 2.17.1
-> >
->=20
-> Thanks,
->  Michael
