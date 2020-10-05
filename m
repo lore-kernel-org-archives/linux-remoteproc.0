@@ -2,127 +2,174 @@ Return-Path: <SRS0=OhS6=DM=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.2 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A871FC4363A
-	for <linux-remoteproc@archiver.kernel.org>; Mon,  5 Oct 2020 15:49:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FCB5C4363A
+	for <linux-remoteproc@archiver.kernel.org>; Mon,  5 Oct 2020 16:06:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7061920639
-	for <linux-remoteproc@archiver.kernel.org>; Mon,  5 Oct 2020 15:49:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A91EC207F7
+	for <linux-remoteproc@archiver.kernel.org>; Mon,  5 Oct 2020 16:06:20 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="hjbZvQ79"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727247AbgJEPtB (ORCPT
+        id S1727426AbgJEQGU (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 5 Oct 2020 11:49:01 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:51234 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726057AbgJEPtA (ORCPT
+        Mon, 5 Oct 2020 12:06:20 -0400
+Received: from mail-dm6nam12on2056.outbound.protection.outlook.com ([40.107.243.56]:36961
+        "EHLO NAM12-DM6-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727127AbgJEQGU (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 5 Oct 2020 11:49:00 -0400
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: eballetbo)
-        with ESMTPSA id E5AE928F6CC
-Subject: Re: [PATCH 3/3] dt-bindings: mfd: google,cros-ec: add missing
- properties
-To:     Rob Herring <robh@kernel.org>,
-        =?UTF-8?Q?Ricardo_Ca=c3=b1uelo?= <ricardo.canuelo@collabora.com>
-Cc:     Collabora Kernel ML <kernel@collabora.com>,
-        Benson Leung <bleung@chromium.org>,
-        Guenter Roeck <groeck@chromium.org>,
-        Simon Glass <sjg@chromium.org>,
-        Doug Anderson <dianders@chromium.org>,
-        devicetree@vger.kernel.org, Pi-Hsun Shih <pihsun@chromium.org>,
-        ohad@wizery.com, bjorn.andersson@linaro.org,
-        linux-remoteproc@vger.kernel.org,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Nicolas Boichat <drinkcat@google.com>
-References: <20201005071403.17450-1-ricardo.canuelo@collabora.com>
- <20201005071403.17450-4-ricardo.canuelo@collabora.com>
- <CAL_JsqJ5E6LSis1LzgEGPN6aEktkFamRn19v0s-x_OZ+8yMTiA@mail.gmail.com>
-From:   Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Message-ID: <7080db15-35d5-8a38-4663-4e30126085c5@collabora.com>
-Date:   Mon, 5 Oct 2020 17:48:55 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.12.0
+        Mon, 5 Oct 2020 12:06:20 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Tdn1KSklG7IJx3fVuZrqDv4g74xMfdK30b9aoSRRqj5OMUkiegvp1uXcfRnLchAJQ2H1miHyn8FuDLBDshdq036DmYMqj9LoAT0W8Qv4h4zZhkPVeX1MAWL6cTHaw0BAXWTmp/w5gMyj9QZOOWpU927W73RiRGRS5PssYGLaUc/nj6hNci4wDg6k7HdrRxOltnSgPE7f7kdsnPp9R4aW5Io3X5qWi5BgIm6YzpuNj/DD9g0aAHOaWX/me9Dhk85/ytlSrN0Sgu7v4Fu8BSzJXvqmfbESgjsVSEfkWs3UllvkemGzf8zBsV2+VS6NcSxi5RWip07KwCxbA3BqpbGusg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=p5xh2iMbOUuYykH3VtoEpRrVeANMsj9APMUlrpsyzW0=;
+ b=IqnWPhDq9RlTow57pNCbGW63Sn3PnMm4QR7oTeJ34Ecx9TqWWUFtn/PJfIvb8WF1b/KfAXhV8OVTMS+3NwP7MfzjGO0kuJ+yb3djhmMl5ESpEQfcX02UKMbf48Sz7p6qzI/mHfD5kaywDDevuFW/X7DW4elZB0bMpLop6Lu+B1Z/OP6WpinhCWrGzt0MwnqZZyQMSG6M/qpXLb493AfYE/SWqKLmf/JOTTwROplfeNq0vckc78kw1WHahwGSL7ZZz8WZyqvi4Bv/EjvEDwF5GJrG4y67y6I+bS7ZbISayLDHiq/ioGv43vMtBYveTfuS4/e5XW+IZTz09V4GOGdkVA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 149.199.60.83) smtp.rcpttodomain=lists.infradead.org
+ smtp.mailfrom=xilinx.com; dmarc=bestguesspass action=none
+ header.from=xilinx.com; dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=xilinx.onmicrosoft.com; s=selector2-xilinx-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=p5xh2iMbOUuYykH3VtoEpRrVeANMsj9APMUlrpsyzW0=;
+ b=hjbZvQ79GjffKfXzQRJUmcUGq7pUf0MNinxAYMDxig55Qte7iFKhhWQk3G1K+gFmOp/KR6v7rCilov9dRMckPaeiIpzNIn+kvlTbvSJKA9NVkryehlHDfM+vCrAov4dHWv3zPGbRBkakxXvESnIOEhwSxYTgGrQcis/aMzI0x70=
+Received: from DM5PR07CA0033.namprd07.prod.outlook.com (2603:10b6:3:16::19) by
+ BY5PR02MB6419.namprd02.prod.outlook.com (2603:10b6:a03:1f8::23) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3433.32; Mon, 5 Oct
+ 2020 16:06:16 +0000
+Received: from CY1NAM02FT027.eop-nam02.prod.protection.outlook.com
+ (2603:10b6:3:16:cafe::fc) by DM5PR07CA0033.outlook.office365.com
+ (2603:10b6:3:16::19) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3433.36 via Frontend
+ Transport; Mon, 5 Oct 2020 16:06:16 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 149.199.60.83)
+ smtp.mailfrom=xilinx.com; lists.infradead.org; dkim=none (message not signed)
+ header.d=none;lists.infradead.org; dmarc=bestguesspass action=none
+ header.from=xilinx.com;
+Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
+ 149.199.60.83 as permitted sender) receiver=protection.outlook.com;
+ client-ip=149.199.60.83; helo=xsj-pvapsmtpgw01;
+Received: from xsj-pvapsmtpgw01 (149.199.60.83) by
+ CY1NAM02FT027.mail.protection.outlook.com (10.152.75.159) with Microsoft SMTP
+ Server id 15.20.3433.39 via Frontend Transport; Mon, 5 Oct 2020 16:06:16
+ +0000
+Received: from [149.199.38.66] (port=36685 helo=smtp.xilinx.com)
+        by xsj-pvapsmtpgw01 with esmtp (Exim 4.90)
+        (envelope-from <ben.levinsky@xilinx.com>)
+        id 1kPSzf-0001tl-1N; Mon, 05 Oct 2020 09:05:43 -0700
+Received: from [127.0.0.1] (helo=localhost)
+        by smtp.xilinx.com with smtp (Exim 4.63)
+        (envelope-from <ben.levinsky@xilinx.com>)
+        id 1kPT0C-00026i-B5; Mon, 05 Oct 2020 09:06:16 -0700
+Received: from xsj-pvapsmtp01 (maildrop.xilinx.com [149.199.38.66])
+        by xsj-smtp-dlp1.xlnx.xilinx.com (8.13.8/8.13.1) with ESMTP id 095G6EA9027459;
+        Mon, 5 Oct 2020 09:06:14 -0700
+Received: from [172.19.2.206] (helo=xsjblevinsk50.xilinx.com)
+        by xsj-pvapsmtp01 with esmtp (Exim 4.63)
+        (envelope-from <ben.levinsky@xilinx.com>)
+        id 1kPT0A-000260-BX; Mon, 05 Oct 2020 09:06:14 -0700
+From:   Ben Levinsky <ben.levinsky@xilinx.com>
+To:     ed.mooring@xilinx.com, sunnyliangjy@gmail.com,
+        punit1.agrawal@toshiba.co.jp, stefanos@xilinx.com,
+        michals@xilinx.com, michael.auchter@ni.com
+Cc:     devicetree@vger.kernel.org, mathieu.poirier@linaro.org,
+        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        robh+dt@kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v18 1/5] firmware: xilinx: Add ZynqMP firmware ioctl enums for RPU configuration.
+Date:   Mon,  5 Oct 2020 09:06:10 -0700
+Message-Id: <20201005160614.3749-2-ben.levinsky@xilinx.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20201005160614.3749-1-ben.levinsky@xilinx.com>
+References: <20201005160614.3749-1-ben.levinsky@xilinx.com>
+X-RCIS-Action: ALLOW
+X-TM-AS-Product-Ver: IMSS-7.1.0.1224-8.2.0.1013-23620.005
+X-TM-AS-User-Approved-Sender: Yes;Yes
+X-EOPAttributedMessage: 0
+X-MS-Office365-Filtering-HT: Tenant
+X-MS-PublicTrafficType: Email
 MIME-Version: 1.0
-In-Reply-To: <CAL_JsqJ5E6LSis1LzgEGPN6aEktkFamRn19v0s-x_OZ+8yMTiA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-MS-Office365-Filtering-Correlation-Id: fbe53d41-58af-4220-3d1f-08d86948970f
+X-MS-TrafficTypeDiagnostic: BY5PR02MB6419:
+X-Microsoft-Antispam-PRVS: <BY5PR02MB641976B9E57D8F27A3B8FB1CB50C0@BY5PR02MB6419.namprd02.prod.outlook.com>
+X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
+X-MS-Oob-TLC-OOBClassifiers: OLM:565;
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: /heGMoLeU2DZ6iUwNU3YDBudT0JViB0ltS2+Nrdwsi5qrUVSgzSxRxm0+gPoYLtS5BDzfDtu6ebs2iiP2MEoe7QBN7gWZgih1bwWqyYC17EcqYyjdpDmSrfPfRoE9yRN3z8LuHgDtoeXCVvIYSRZxHAg/FcJ9VmMdWk8r1fCLceZC+tXV96A54Zbuas31BDXDeF+V7ZqV6m6ym7KDfrVsC8gf7BcP1/tpVe+8X7BKu0FVbLk+kah+tJ8KBrefjS6lluVnEu6YNXJwYSwtFCrBfaaSjSpyyCjnozNFfX2XApUMh9AGd/cOf4C1XiQQWGlYuJs9hQa5tbChMox4tZ1FRR7ATbVtKUf3r07bE1QE3BKDp6MA3mxTkwQGuabv5+2lYvSeZbB6Qimt5f4UvV+8w==
+X-Forefront-Antispam-Report: CIP:149.199.60.83;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:xsj-pvapsmtpgw01;PTR:unknown-60-83.xilinx.com;CAT:NONE;SFS:(376002)(346002)(396003)(39860400002)(136003)(46966005)(6666004)(82740400003)(478600001)(47076004)(186003)(9786002)(44832011)(70586007)(7696005)(70206006)(5660300002)(26005)(81166007)(8936002)(1076003)(8676002)(4326008)(83380400001)(36756003)(316002)(82310400003)(2906002)(2616005)(336012)(356005)(426003);DIR:OUT;SFP:1101;
+X-OriginatorOrg: xilinx.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Oct 2020 16:06:16.5715
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: fbe53d41-58af-4220-3d1f-08d86948970f
+X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.60.83];Helo=[xsj-pvapsmtpgw01]
+X-MS-Exchange-CrossTenant-AuthSource: CY1NAM02FT027.eop-nam02.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR02MB6419
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi,
+Add ZynqMP firmware ioctl enums for RPU configuration.
 
-On 5/10/20 17:37, Rob Herring wrote:
-> On Mon, Oct 5, 2020 at 2:14 AM Ricardo Cañuelo
-> <ricardo.canuelo@collabora.com> wrote:
->>
->> Add missing properties that are currently used in the examples of
->> subnode bindings and in many DTs.
->> This fixes all current dt_binding_check and dtbs_check warnings related
->> to this binding.
->>
->> Signed-off-by: Ricardo Cañuelo <ricardo.canuelo@collabora.com>
->> ---
->>  .../bindings/mfd/google,cros-ec.yaml          | 40 +++++++++++++++++++
->>  1 file changed, 40 insertions(+)
->>
->> diff --git a/Documentation/devicetree/bindings/mfd/google,cros-ec.yaml b/Documentation/devicetree/bindings/mfd/google,cros-ec.yaml
->> index f49c0d5d31ad..c2dc05cdef9f 100644
->> --- a/Documentation/devicetree/bindings/mfd/google,cros-ec.yaml
->> +++ b/Documentation/devicetree/bindings/mfd/google,cros-ec.yaml
->> @@ -59,18 +59,58 @@ properties:
->>        whether this nvram is present or not.
->>      type: boolean
->>
->> +  mtk,rpmsg-name:
-> 
-> This should have been mediatek,rpmsg-name, but I guess we're stuck with it.
-> 
+Signed-off-by: Ben Levinsky <ben.levinsky@xilinx.com>
+---
+v3:
+- add xilinx-related platform mgmt fn's instead of wrapping around
+  function pointer in xilinx eemi ops struct
+v4:
+- add default values for enums
+---
+ include/linux/firmware/xlnx-zynqmp.h | 19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
 
-cc'ing the remote-proc maintainers and some ChromeOS people to be aware.
+diff --git a/include/linux/firmware/xlnx-zynqmp.h b/include/linux/firmware/xlnx-zynqmp.h
+index 5968df82b991..bb347dfe4ba4 100644
+--- a/include/linux/firmware/xlnx-zynqmp.h
++++ b/include/linux/firmware/xlnx-zynqmp.h
+@@ -104,6 +104,10 @@ enum pm_ret_status {
+ };
+ 
+ enum pm_ioctl_id {
++	IOCTL_GET_RPU_OPER_MODE = 0,
++	IOCTL_SET_RPU_OPER_MODE = 1,
++	IOCTL_RPU_BOOT_ADDR_CONFIG = 2,
++	IOCTL_TCM_COMB_CONFIG = 3,
+ 	IOCTL_SD_DLL_RESET = 6,
+ 	IOCTL_SET_SD_TAPDELAY,
+ 	IOCTL_SET_PLL_FRAC_MODE,
+@@ -129,6 +133,21 @@ enum pm_query_id {
+ 	PM_QID_CLOCK_GET_MAX_DIVISOR,
+ };
+ 
++enum rpu_oper_mode {
++	PM_RPU_MODE_LOCKSTEP = 0,
++	PM_RPU_MODE_SPLIT = 1,
++};
++
++enum rpu_boot_mem {
++	PM_RPU_BOOTMEM_LOVEC = 0,
++	PM_RPU_BOOTMEM_HIVEC = 1,
++};
++
++enum rpu_tcm_comb {
++	PM_RPU_TCM_SPLIT = 0,
++	PM_RPU_TCM_COMB = 1,
++};
++
+ enum zynqmp_pm_reset_action {
+ 	PM_RESET_ACTION_RELEASE,
+ 	PM_RESET_ACTION_ASSERT,
+-- 
+2.17.1
 
-Seems that the patches that introduce the use of this propietry in the bindings
-are still in linux-next, so maybe we're on time to fix it?
-
-In such case, Ricardo can you take care of it and send patches fixing it?
-
-Thanks,
- Enric
-
->> +    description:
->> +      Must be defined if the cros-ec is a rpmsg device for a Mediatek
->> +      ARM Cortex M4 Co-processor. Contains the name pf the rpmsg
->> +      device. Used to match the subnode to the rpmsg device announced by
->> +      the SCP.
->> +    $ref: /schemas/types.yaml#/definitions/string
->> +
->>    spi-max-frequency:
->>      description: Maximum SPI frequency of the device in Hz.
->>
->>    reg:
->>      maxItems: 1
->>
->> +  '#address-cells':
->> +    enum: [1, 2]
->> +
->> +  '#size-cells':
->> +    enum: [0, 1]
-> 
-> This doesn't really make sense. Either there's a size or there isn't.
-> 
-> [...]
-> 
->> +  "^regulator@[a-f0-9]+$":
->> +  "^ec-codec@[a-f0-9]+$":
-> 
-> What does the number space represent and is it the same for each of
-> these? If not, then this is kind of broken. There's only 1 number
-> space at a given level.
-> 
-> Rob
-> 
