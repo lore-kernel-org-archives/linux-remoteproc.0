@@ -2,121 +2,96 @@ Return-Path: <SRS0=oRpn=DN=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+X-Spam-Status: No, score=-7.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5775EC47425
-	for <linux-remoteproc@archiver.kernel.org>; Tue,  6 Oct 2020 07:00:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FA9AC4727D
+	for <linux-remoteproc@archiver.kernel.org>; Tue,  6 Oct 2020 15:52:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1130B20760
-	for <linux-remoteproc@archiver.kernel.org>; Tue,  6 Oct 2020 07:00:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="duVae73q"
+	by mail.kernel.org (Postfix) with ESMTP id D0774206D4
+	for <linux-remoteproc@archiver.kernel.org>; Tue,  6 Oct 2020 15:52:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1601999530;
+	bh=NGNo9FsLZL4TtFEsS3Yz6r8ig9ZBjS0thsPYMbPHUoA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=PFIdlt13AyYqad6JZYLix4mBbDuegvYIUOr3QdYvv65J7xnL9FyMZY+5F4AlG+Z8x
+	 skIqMmuVGHu3CU4UA+eLNmk1LlZ9KXBjMylhDA5sxtGvsVUtlw5DyGLT7y4AzGSbPM
+	 bDVMQKYw/htHrivhiOBr6uYexgTBU1Ji6dOPjfkM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727222AbgJFHAY (ORCPT
+        id S1725995AbgJFPwK (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 6 Oct 2020 03:00:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51154 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727176AbgJFHAX (ORCPT
+        Tue, 6 Oct 2020 11:52:10 -0400
+Received: from mail-oo1-f65.google.com ([209.85.161.65]:35206 "EHLO
+        mail-oo1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725769AbgJFPwK (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 6 Oct 2020 03:00:23 -0400
-Received: from mail-wr1-x443.google.com (mail-wr1-x443.google.com [IPv6:2a00:1450:4864:20::443])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45058C0613DA
-        for <linux-remoteproc@vger.kernel.org>; Tue,  6 Oct 2020 00:00:23 -0700 (PDT)
-Received: by mail-wr1-x443.google.com with SMTP id t10so12150626wrv.1
-        for <linux-remoteproc@vger.kernel.org>; Tue, 06 Oct 2020 00:00:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=Oe7zU6gzISKBUmakEze1jPjt4AoCrxJWUb32hirWtf4=;
-        b=duVae73qGXrIWn0dA9Y2ba0eTvLVJldQbfNGMJhbCGq9paoehFS47xcK9OLpCkH4WF
-         NqBrFaENJwbrU/th8XmIkh1VS1vd2oH1s1pXzDf2b99Cb/bAZ5mIsHV6ptmyF1OBtQBy
-         GT9rg4w2n4Isj8jXnTNnLi+Aw/L7SFWFx72v0bNTNomBvhPxjgr+pR8su7g3MDB9LEtn
-         /vLB/qwXlI19SAUsjJySvCczuoNdnCBTeLhRqUeV/ScZadUIhYWFwLaiDoYkjoSe+gXj
-         C3HqfoAXjTKslZ5dKtYyztKJYZ9eX7NM47nSfo4FbYcgGC7bh2R2dMJAzlKCSNaNoWRF
-         iUUA==
+        Tue, 6 Oct 2020 11:52:10 -0400
+Received: by mail-oo1-f65.google.com with SMTP id k13so3312004oor.2;
+        Tue, 06 Oct 2020 08:52:09 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=Oe7zU6gzISKBUmakEze1jPjt4AoCrxJWUb32hirWtf4=;
-        b=iUGszNl1AcUvbU+3Y2bRJXIabs2+y6ltZ7uVFO7Jf/YnqjYfTZJenOt2q4BWTKT4rs
-         dQUpGTl5sW7spmk/Lhn2E7TLtpueCl2vHsz5A1RVl29Mf0bH1XOFsgarnTkSXhVTESCS
-         +m3yVdV2rICKcVvvgHnubybMBbPHs3bJ0F5lzvyYSsBu63EQsi4Hms/gvq3DxMuE5W0e
-         PeJRWzNWqsynAU6Kh4kpdjfPQ93o7F315jRDPJCtT5PBR3fuOUbI0LDzApl1k9nPObFv
-         +bWw+d4v6sfgOTK+wbQTS/NTykt267kicSOXgn9G+0xgfWoGJU4FhSQGNjDK3PU2xxpE
-         WP0g==
-X-Gm-Message-State: AOAM5318+0lT/+eFlwBc8HdJa8Y1HKjaojiHSCpbpVNy190kGwao1vUg
-        gDuzg1PLR+p5B4e+alDGbBdjJQ==
-X-Google-Smtp-Source: ABdhPJzRpE6n88xNVq3Fk+xQSff8QQNC8n1c0b7ajSoy19OwpevLFHK5HQwgX5M07UqJkIIa/Io0cQ==
-X-Received: by 2002:adf:bb43:: with SMTP id x3mr3174885wrg.250.1601967621811;
-        Tue, 06 Oct 2020 00:00:21 -0700 (PDT)
-Received: from dell ([91.110.221.236])
-        by smtp.gmail.com with ESMTPSA id o186sm2537036wmb.12.2020.10.06.00.00.15
+         :mime-version:content-disposition:in-reply-to;
+        bh=qd2VWenNdkoUjW4mVARFepP+CTuJeNLfpPg/bf3IFww=;
+        b=Lm27kBN3GyYPmYxaJgj5RcKgQNIcIRUnrXwAJEBSn3qjm64TUAcq2pvCMjTyD5rNYC
+         yKwWvmXxmw6Ey/KMvtt3WYTKDi3xeRSq4Mapelx2X842wG4X/IUX/3EjIRYND1nw5cdC
+         ekjqXbRN0leTxnWJxwh9zPTbWgRQA71lhGWp+MgDFmOk8T5ZQmcEZnbyjIQV+iIe4RjY
+         DoP0BS70arbguHApYKCoqEunwZNsPv7ifIdBKnRaHPfvg0naRrVmeHrzXtavXrhbz7c8
+         46zqdFmCgvAvhIYIhXlLS2UQ2V5l/g3fP3eqz3/hLhLauBDm5OcYslI52BCJmDqiY9AA
+         omtg==
+X-Gm-Message-State: AOAM531LqQFRrdSI6Q2TVHMOk0dgr3yV0NkMxfnL9o/LwI0SpzTgX9ui
+        rGPAcM84yXMpOChB7gROiQ==
+X-Google-Smtp-Source: ABdhPJz8EXSC07kVYkTQT+Sh7oV75DTlrmp8dNTXcgtbweAOCz5IdvNkMV5EXhVsUv5/T3qA8KtREg==
+X-Received: by 2002:a4a:b443:: with SMTP id h3mr3538017ooo.45.1601999528859;
+        Tue, 06 Oct 2020 08:52:08 -0700 (PDT)
+Received: from xps15 (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id s1sm1062547otp.14.2020.10.06.08.52.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 Oct 2020 00:00:21 -0700 (PDT)
-Date:   Tue, 6 Oct 2020 08:00:13 +0100
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Rob Herring <robh@kernel.org>
-Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
+        Tue, 06 Oct 2020 08:52:08 -0700 (PDT)
+Received: (nullmailer pid 2298950 invoked by uid 1000);
+        Tue, 06 Oct 2020 15:52:07 -0000
+Date:   Tue, 6 Oct 2020 10:52:07 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Suman Anna <s-anna@ti.com>
+Cc:     Nishanth Menon <nm@ti.com>, devicetree@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Baolin Wang <baolin.wang7@gmail.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-spi@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-hwmon@vger.kernel.org, linux-iio@vger.kernel.org,
-        openipmi-developer@lists.sourceforge.net,
-        linux-leds@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-rockchip@lists.infradead.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-mips@vger.kernel.org, linux-mmc@vger.kernel.org,
-        netdev@vger.kernel.org, linux-pci@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        linux-serial@vger.kernel.org, alsa-devel@alsa-project.org,
-        linux-usb@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: Another round of adding missing
- 'additionalProperties'
-Message-ID: <20201006070013.GA6148@dell>
-References: <20201002234143.3570746-1-robh@kernel.org>
+        linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH -next] dt-bindings: hwlock: omap: Fix warnings with
+ k3.yaml
+Message-ID: <20201006155207.GA2297951@bogus>
+References: <20200928225155.12432-1-s-anna@ti.com>
+ <20200930145537.GA2851296@bogus>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20201002234143.3570746-1-robh@kernel.org>
+In-Reply-To: <20200930145537.GA2851296@bogus>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Fri, 02 Oct 2020, Rob Herring wrote:
+On Wed, Sep 30, 2020 at 09:55:37AM -0500, Rob Herring wrote:
+> On Mon, Sep 28, 2020 at 05:51:55PM -0500, Suman Anna wrote:
+> > Update the AM65x HwSpinlock example to fix couple of warnings
+> > that started showing up after the conversion of K3 bindings to
+> > YAML format in commit 66e06509aa37 ("dt-bindings: arm: ti:
+> > Convert K3 board/soc bindings to DT schema").
+> > 
+> >  compatible: ['ti,am654'] is not valid under any of the given schemas (Possible causes of the failure):
+> >  compatible: ['ti,am654'] is too short
+> >  compatible:0: 'ti,am654' is not one of ['ti,am654-evm']
+> > 
+> > Also, fix one of the node names while at this.
+> > 
+> > Signed-off-by: Suman Anna <s-anna@ti.com>
+> > ---
+> >  .../devicetree/bindings/hwlock/ti,omap-hwspinlock.yaml        | 4 ++--
+> >  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> Reviewed-by: Rob Herring <robh@kernel.org>
 
-> Another round of wack-a-mole. The json-schema default is additional
-> unknown properties are allowed, but for DT all properties should be
-> defined.
+I guess this isn't dependent on k3.yaml, so I've applied it.
 
-Acked-by: Lee Jones <lee.jones@linaro.org>
-
--- 
-Lee Jones [李琼斯]
-Senior Technical Lead - Developer Services
-Linaro.org │ Open source software for Arm SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Rob
