@@ -2,96 +2,103 @@ Return-Path: <SRS0=oRpn=DN=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+X-Spam-Status: No, score=-9.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FA9AC4727D
-	for <linux-remoteproc@archiver.kernel.org>; Tue,  6 Oct 2020 15:52:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B1D9C41604
+	for <linux-remoteproc@archiver.kernel.org>; Tue,  6 Oct 2020 16:16:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D0774206D4
-	for <linux-remoteproc@archiver.kernel.org>; Tue,  6 Oct 2020 15:52:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1601999530;
-	bh=NGNo9FsLZL4TtFEsS3Yz6r8ig9ZBjS0thsPYMbPHUoA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=PFIdlt13AyYqad6JZYLix4mBbDuegvYIUOr3QdYvv65J7xnL9FyMZY+5F4AlG+Z8x
-	 skIqMmuVGHu3CU4UA+eLNmk1LlZ9KXBjMylhDA5sxtGvsVUtlw5DyGLT7y4AzGSbPM
-	 bDVMQKYw/htHrivhiOBr6uYexgTBU1Ji6dOPjfkM=
+	by mail.kernel.org (Postfix) with ESMTP id BAC76206D4
+	for <linux-remoteproc@archiver.kernel.org>; Tue,  6 Oct 2020 16:16:52 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="fFzvViNR"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725995AbgJFPwK (ORCPT
+        id S1726469AbgJFQQw (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 6 Oct 2020 11:52:10 -0400
-Received: from mail-oo1-f65.google.com ([209.85.161.65]:35206 "EHLO
-        mail-oo1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725769AbgJFPwK (ORCPT
+        Tue, 6 Oct 2020 12:16:52 -0400
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:53480 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726459AbgJFQQw (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 6 Oct 2020 11:52:10 -0400
-Received: by mail-oo1-f65.google.com with SMTP id k13so3312004oor.2;
-        Tue, 06 Oct 2020 08:52:09 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=qd2VWenNdkoUjW4mVARFepP+CTuJeNLfpPg/bf3IFww=;
-        b=Lm27kBN3GyYPmYxaJgj5RcKgQNIcIRUnrXwAJEBSn3qjm64TUAcq2pvCMjTyD5rNYC
-         yKwWvmXxmw6Ey/KMvtt3WYTKDi3xeRSq4Mapelx2X842wG4X/IUX/3EjIRYND1nw5cdC
-         ekjqXbRN0leTxnWJxwh9zPTbWgRQA71lhGWp+MgDFmOk8T5ZQmcEZnbyjIQV+iIe4RjY
-         DoP0BS70arbguHApYKCoqEunwZNsPv7ifIdBKnRaHPfvg0naRrVmeHrzXtavXrhbz7c8
-         46zqdFmCgvAvhIYIhXlLS2UQ2V5l/g3fP3eqz3/hLhLauBDm5OcYslI52BCJmDqiY9AA
-         omtg==
-X-Gm-Message-State: AOAM531LqQFRrdSI6Q2TVHMOk0dgr3yV0NkMxfnL9o/LwI0SpzTgX9ui
-        rGPAcM84yXMpOChB7gROiQ==
-X-Google-Smtp-Source: ABdhPJz8EXSC07kVYkTQT+Sh7oV75DTlrmp8dNTXcgtbweAOCz5IdvNkMV5EXhVsUv5/T3qA8KtREg==
-X-Received: by 2002:a4a:b443:: with SMTP id h3mr3538017ooo.45.1601999528859;
-        Tue, 06 Oct 2020 08:52:08 -0700 (PDT)
-Received: from xps15 (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id s1sm1062547otp.14.2020.10.06.08.52.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 Oct 2020 08:52:08 -0700 (PDT)
-Received: (nullmailer pid 2298950 invoked by uid 1000);
-        Tue, 06 Oct 2020 15:52:07 -0000
-Date:   Tue, 6 Oct 2020 10:52:07 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Suman Anna <s-anna@ti.com>
-Cc:     Nishanth Menon <nm@ti.com>, devicetree@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+        Tue, 6 Oct 2020 12:16:52 -0400
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 096GGgaC011030;
+        Tue, 6 Oct 2020 11:16:42 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1602001002;
+        bh=UFFmMIjsLbkm6u1Nw+fPjP2rCdOt20uSXmfcBGEy3GM=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=fFzvViNR9eLL1iv24zzCKEwq2HC/S6PAbDrnuPvDQ+6rq6jy51aiI7vTJHBiWUQ6p
+         TIKsK7Dq66FtNRtq+207B1jAINJBtGoQ0ZzYQUN4W9OS7K9HVMUB+wlFvsP9DOCqN0
+         mmGeVB2ivnDhO4rtkdcL6JojPd4nBrU3M1CzbjsI=
+Received: from DLEE106.ent.ti.com (dlee106.ent.ti.com [157.170.170.36])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 096GGgVj109613
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 6 Oct 2020 11:16:42 -0500
+Received: from DLEE114.ent.ti.com (157.170.170.25) by DLEE106.ent.ti.com
+ (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3; Tue, 6 Oct
+ 2020 11:16:41 -0500
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE114.ent.ti.com
+ (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3 via
+ Frontend Transport; Tue, 6 Oct 2020 11:16:41 -0500
+Received: from [10.250.37.92] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 096GGfA0117729;
+        Tue, 6 Oct 2020 11:16:41 -0500
 Subject: Re: [PATCH -next] dt-bindings: hwlock: omap: Fix warnings with
  k3.yaml
-Message-ID: <20201006155207.GA2297951@bogus>
+To:     Rob Herring <robh@kernel.org>
+CC:     Nishanth Menon <nm@ti.com>, <devicetree@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        <linux-omap@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>
 References: <20200928225155.12432-1-s-anna@ti.com>
- <20200930145537.GA2851296@bogus>
+ <20200930145537.GA2851296@bogus> <20201006155207.GA2297951@bogus>
+From:   Suman Anna <s-anna@ti.com>
+Message-ID: <8250838c-21fd-1e1a-2a8f-fec0cd363e7f@ti.com>
+Date:   Tue, 6 Oct 2020 11:16:41 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200930145537.GA2851296@bogus>
+In-Reply-To: <20201006155207.GA2297951@bogus>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Wed, Sep 30, 2020 at 09:55:37AM -0500, Rob Herring wrote:
-> On Mon, Sep 28, 2020 at 05:51:55PM -0500, Suman Anna wrote:
-> > Update the AM65x HwSpinlock example to fix couple of warnings
-> > that started showing up after the conversion of K3 bindings to
-> > YAML format in commit 66e06509aa37 ("dt-bindings: arm: ti:
-> > Convert K3 board/soc bindings to DT schema").
-> > 
-> >  compatible: ['ti,am654'] is not valid under any of the given schemas (Possible causes of the failure):
-> >  compatible: ['ti,am654'] is too short
-> >  compatible:0: 'ti,am654' is not one of ['ti,am654-evm']
-> > 
-> > Also, fix one of the node names while at this.
-> > 
-> > Signed-off-by: Suman Anna <s-anna@ti.com>
-> > ---
-> >  .../devicetree/bindings/hwlock/ti,omap-hwspinlock.yaml        | 4 ++--
-> >  1 file changed, 2 insertions(+), 2 deletions(-)
+On 10/6/20 10:52 AM, Rob Herring wrote:
+> On Wed, Sep 30, 2020 at 09:55:37AM -0500, Rob Herring wrote:
+>> On Mon, Sep 28, 2020 at 05:51:55PM -0500, Suman Anna wrote:
+>>> Update the AM65x HwSpinlock example to fix couple of warnings
+>>> that started showing up after the conversion of K3 bindings to
+>>> YAML format in commit 66e06509aa37 ("dt-bindings: arm: ti:
+>>> Convert K3 board/soc bindings to DT schema").
+>>>
+>>>  compatible: ['ti,am654'] is not valid under any of the given schemas (Possible causes of the failure):
+>>>  compatible: ['ti,am654'] is too short
+>>>  compatible:0: 'ti,am654' is not one of ['ti,am654-evm']
+>>>
+>>> Also, fix one of the node names while at this.
+>>>
+>>> Signed-off-by: Suman Anna <s-anna@ti.com>
+>>> ---
+>>>  .../devicetree/bindings/hwlock/ti,omap-hwspinlock.yaml        | 4 ++--
+>>>  1 file changed, 2 insertions(+), 2 deletions(-)
+>>
+>> Reviewed-by: Rob Herring <robh@kernel.org>
 > 
-> Reviewed-by: Rob Herring <robh@kernel.org>
+> I guess this isn't dependent on k3.yaml, so I've applied it.
 
-I guess this isn't dependent on k3.yaml, so I've applied it.
+Yes, it is independent. Thanks Rob.
 
-Rob
+regards
+Suman
+
