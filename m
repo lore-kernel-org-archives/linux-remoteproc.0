@@ -7,254 +7,147 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E027C41604
-	for <linux-remoteproc@archiver.kernel.org>; Wed,  7 Oct 2020 17:14:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 065F5C41604
+	for <linux-remoteproc@archiver.kernel.org>; Wed,  7 Oct 2020 17:26:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AA24E2168B
-	for <linux-remoteproc@archiver.kernel.org>; Wed,  7 Oct 2020 17:14:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9DC3C2168B
+	for <linux-remoteproc@archiver.kernel.org>; Wed,  7 Oct 2020 17:26:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LwU8bt3f"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hK7cH4Hi"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728002AbgJGROg (ORCPT
+        id S1728207AbgJGR0j (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 7 Oct 2020 13:14:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57412 "EHLO
+        Wed, 7 Oct 2020 13:26:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59320 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727677AbgJGROg (ORCPT
+        with ESMTP id S1726348AbgJGR0j (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 7 Oct 2020 13:14:36 -0400
-Received: from mail-pj1-x1042.google.com (mail-pj1-x1042.google.com [IPv6:2607:f8b0:4864:20::1042])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DD364C0613D2
-        for <linux-remoteproc@vger.kernel.org>; Wed,  7 Oct 2020 10:14:35 -0700 (PDT)
-Received: by mail-pj1-x1042.google.com with SMTP id az3so1353005pjb.4
-        for <linux-remoteproc@vger.kernel.org>; Wed, 07 Oct 2020 10:14:35 -0700 (PDT)
+        Wed, 7 Oct 2020 13:26:39 -0400
+Received: from mail-pj1-x1041.google.com (mail-pj1-x1041.google.com [IPv6:2607:f8b0:4864:20::1041])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 22FE9C0613D2
+        for <linux-remoteproc@vger.kernel.org>; Wed,  7 Oct 2020 10:26:39 -0700 (PDT)
+Received: by mail-pj1-x1041.google.com with SMTP id kk9so1384615pjb.2
+        for <linux-remoteproc@vger.kernel.org>; Wed, 07 Oct 2020 10:26:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=ngTNhBdwg4ML3tx8e2m5/vrdhNYtA8qbO6q+aFl2lR4=;
-        b=LwU8bt3fbJWCo6GXKkq85FSUtoenv4zNqNFSrLv38FB8VFkzwbtx6KRiX9KQzxnftY
-         ANMcyGLdMuf5eqayf0fBriEvgLwwVr+eLZWcw7OqNdZuZgTmZq2eExTH7NCTXfs9nB2n
-         XW83+5hD19U+/aKv7Q+PE9+uKuo+b0LsKI21VrB/Sa0Bvt+qsm37tSTHs3DZdeZnrvpD
-         Ac8aoJE9sd/Q3SjHLmxIi5uyrnDe3uaq/TPQcSu6FkGAM4XNS/2S48EOviELcKUXxSrt
-         kjRpTXzvuegNvZYvJZF3so8sI/VSiicXuSNatRc7WVao/ZMuSjCjGnwGQbVjyzPR4Srh
-         vmSw==
+        bh=M9ybGiqHvrypTyZEXdLpGDsphUXlCmQ4dG3V5WiWP+c=;
+        b=hK7cH4Hi/OTAsATuPSF/XTD9n996EpRc1h5H9Pu2cn2i7W3Y+I4BuZKeYlUo/w/b35
+         G8hDlilW3027XJeXWFviuDHG/IxcqdevZB5JAjXLBko1923w4dHEhrw2WvDAggSeOVDU
+         ub2O0fqDEL0LnhcIR2eUu2t2lEj93U5R4f6zJNm6jP9hGMJVf50Cr6lgpylN9mtJnCyv
+         V1mF1wjni/OjVuTplflycI62WIaI0l2df2ngb6Z5NURHxBuyRRBicvxsXhjgTI1+X0IH
+         z+yjEQOEXq/y+oRUTpEe0BRM+g+WuThiuZp0NGeGZK04wVxbkDF0Cl+pmy8t7bfHhqz7
+         x9gg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=ngTNhBdwg4ML3tx8e2m5/vrdhNYtA8qbO6q+aFl2lR4=;
-        b=SmCnWE2bEGFSsQ+shuzZUFCzif60/mmuG+xO0cDFO5XlYfH/3ZWdHUhoxk+pvuZPzm
-         hMZUpX0prkO/UVjUij2vlQ//5IehZe3Iq+gWnt2BztDPQdpEv+hVKkAP+GfpWls0Tuen
-         Y3ukxYru4CbnNaXV1szABDnh5WulsgHSTYKMC8hhgTs31TPKvnY5KgmFo9sG5EJr689Q
-         AtZvTL5pkGm1KL7f8gnlNw466oFjH+KBaUrrDpZhumNV6yDKbuYa9A4anWBfx/saxyX/
-         r9VVpYR2JP8MzO9tp4NvTH0dE6lE+VNGfevi9mUVea90oPegA+J4anie8/n7acYH5+uP
-         sqIg==
-X-Gm-Message-State: AOAM531lpGHn8hSWcsAvOCWKLPMewWjztFMiOLyNyyCdnVJMrhsjv4IF
-        TUdCeMoMAln3UOF5M8AKJIU7Vg==
-X-Google-Smtp-Source: ABdhPJzzPakDPZnxLM3K/Z4pmYwAyHmd/7Ka6tfBRMvFRJSyKavAwEQ7++SMI0NSNElYtrSChc2dUw==
-X-Received: by 2002:a17:902:a9cc:b029:d3:77f7:3ca9 with SMTP id b12-20020a170902a9ccb02900d377f73ca9mr3789799plr.75.1602090875341;
-        Wed, 07 Oct 2020 10:14:35 -0700 (PDT)
+        bh=M9ybGiqHvrypTyZEXdLpGDsphUXlCmQ4dG3V5WiWP+c=;
+        b=jLqQGdQU5Hxd48+pQ8gTd5HyfivIsJH2Ywzo11OZbcJwUrZlYu8ScDfe1NbdTFhyWD
+         xiKQuMJG29NwsUM3ZxC/xKEsWU70jLCbY2kn6N0lln31BoniUtKFlW27UBV3Zd9fH5g9
+         eOQUp4X1CJi86YVFPqfZRTszFICUzWd2T3EuSInxMbVaA//3byQCcU0tQ+VUdLjAku4b
+         VB7Xw628lV1LI9h5zoQfzlF4Jda5w/WnpUmzSfUzlQ9snYeGsx1pNNXnxvr8+tD78XAf
+         GV5hZIABU6JSFHeS3/FstMc0gi4R0xiT3wKFI2eU6TFuBX6UxL5raMwQY/AgM+IlLoKO
+         IvCg==
+X-Gm-Message-State: AOAM531lZ+EHzeulVbSKMMJvCe6j0efPRpTP+3x6BmgY0WHUgyddPgvR
+        pHzeo94dZ718BG6MJqBUtoPUsQ==
+X-Google-Smtp-Source: ABdhPJxqdvCkHlZoZkrWmICIoJ7mRQH5Pym1nz8GkT6xy1fjzmpTNgxS0CG1uZPwNv+aiPcbo5lW0w==
+X-Received: by 2002:a17:902:6b44:b029:d3:e78a:8ab6 with SMTP id g4-20020a1709026b44b02900d3e78a8ab6mr3747407plt.72.1602091598549;
+        Wed, 07 Oct 2020 10:26:38 -0700 (PDT)
 Received: from xps15 (S0106002369de4dac.cg.shawcable.net. [68.147.8.254])
-        by smtp.gmail.com with ESMTPSA id 63sm3739031pfw.42.2020.10.07.10.14.34
+        by smtp.gmail.com with ESMTPSA id e19sm4193538pfl.135.2020.10.07.10.26.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 Oct 2020 10:14:34 -0700 (PDT)
-Date:   Wed, 7 Oct 2020 11:14:32 -0600
+        Wed, 07 Oct 2020 10:26:37 -0700 (PDT)
+Date:   Wed, 7 Oct 2020 11:26:36 -0600
 From:   Mathieu Poirier <mathieu.poirier@linaro.org>
 To:     Guennadi Liakhovetski <guennadi.liakhovetski@linux.intel.com>
 Cc:     ohad@wizery.com, bjorn.andersson@linaro.org, loic.pallardy@st.com,
         linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 05/10] rpmsg: virtio: Move virtio RPMSG structures to
- private header
-Message-ID: <20201007171432.GA575646@xps15>
+Subject: Re: [PATCH 10/10] rpmsg: ns: Make Name service module transport
+ agnostic
+Message-ID: <20201007172636.GB575646@xps15>
 References: <20200922001000.899956-1-mathieu.poirier@linaro.org>
- <20200922001000.899956-6-mathieu.poirier@linaro.org>
- <20200930070345.GD20683@ubuntu>
+ <20200922001000.899956-11-mathieu.poirier@linaro.org>
+ <20200930071327.GG20683@ubuntu>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200930070345.GD20683@ubuntu>
+In-Reply-To: <20200930071327.GG20683@ubuntu>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi Guennadi,
-
-Apologies for the late reply, I've been away.
-
-On Wed, Sep 30, 2020 at 09:03:45AM +0200, Guennadi Liakhovetski wrote:
-> On Mon, Sep 21, 2020 at 06:09:55PM -0600, Mathieu Poirier wrote:
-> > Move structure virtiproc_info and virtio_rpmsg_channel to rpmsg_internal.h
-> > so that they can be used by rpmsg_ns.c
+On Wed, Sep 30, 2020 at 09:13:27AM +0200, Guennadi Liakhovetski wrote:
+> On Mon, Sep 21, 2020 at 06:10:00PM -0600, Mathieu Poirier wrote:
+> > Make name service module transport agnostic by using the rpmsg
+> > device specific byte conversion routine.
 > > 
 > > Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 > > ---
-> >  drivers/rpmsg/rpmsg_internal.h   | 62 ++++++++++++++++++++++++++++++++
-> >  drivers/rpmsg/virtio_rpmsg_bus.c | 57 -----------------------------
-> >  2 files changed, 62 insertions(+), 57 deletions(-)
+> >  drivers/rpmsg/rpmsg_ns.c | 10 ++++------
+> >  include/linux/rpmsg_ns.h |  4 ++--
+> >  2 files changed, 6 insertions(+), 8 deletions(-)
 > > 
-> > diff --git a/drivers/rpmsg/rpmsg_internal.h b/drivers/rpmsg/rpmsg_internal.h
-> > index 587f723757d4..3ea9cec26fc0 100644
-> > --- a/drivers/rpmsg/rpmsg_internal.h
-> > +++ b/drivers/rpmsg/rpmsg_internal.h
-> > @@ -12,12 +12,74 @@
-> >  #ifndef __RPMSG_INTERNAL_H__
-> >  #define __RPMSG_INTERNAL_H__
+> > diff --git a/drivers/rpmsg/rpmsg_ns.c b/drivers/rpmsg/rpmsg_ns.c
+> > index b3318bf84433..1df3aaadfe10 100644
+> > --- a/drivers/rpmsg/rpmsg_ns.c
+> > +++ b/drivers/rpmsg/rpmsg_ns.c
+> > @@ -18,9 +18,7 @@ static int rpmsg_ns_cb(struct rpmsg_device *rpdev, void *data, int len,
+> >  	struct rpmsg_ns_msg *msg = data;
+> >  	struct rpmsg_device *newch;
+> >  	struct rpmsg_channel_info chinfo;
+> > -	struct virtio_rpmsg_channel *vch = to_virtio_rpmsg_channel(rpdev);
+> > -	struct virtproc_info *vrp = vch->vrp;
+> > -	struct device *dev = &vrp->vdev->dev;
+> > +	struct device *dev = &rpdev->dev;
+> >  	int ret;
 > >  
-> > +#include <linux/idr.h>
-> > +#include <linux/mutex.h>
-> >  #include <linux/rpmsg.h>
-> > +#include <linux/types.h>
-> > +#include <linux/virtio.h>
-> 
-> I think it would be better to not add any VirtIO dependencies here even 
-> temporarily.
-> 
-> > +#include <linux/wait.h>
-> >  #include <linux/poll.h>
+> >  #if defined(CONFIG_DYNAMIC_DEBUG)
+> > @@ -38,13 +36,13 @@ static int rpmsg_ns_cb(struct rpmsg_device *rpdev, void *data, int len,
 > >  
-> >  #define to_rpmsg_device(d) container_of(d, struct rpmsg_device, dev)
-> >  #define to_rpmsg_driver(d) container_of(d, struct rpmsg_driver, drv)
+> >  	strncpy(chinfo.name, msg->name, sizeof(chinfo.name));
+> >  	chinfo.src = RPMSG_ADDR_ANY;
+> > -	chinfo.dst = virtio32_to_cpu(vrp->vdev, msg->addr);
+> > +	chinfo.dst = rpmsg32_to_cpu(rpdev, msg->addr);
 > >  
-> > +/**
-> > + * struct virtproc_info - virtual remote processor state
+> >  	dev_info(dev, "%sing channel %s addr 0x%x\n",
+> > -		 virtio32_to_cpu(vrp->vdev, msg->flags) & RPMSG_NS_DESTROY ?
+> > +		 rpmsg32_to_cpu(rpdev, msg->flags) & RPMSG_NS_DESTROY ?
+> >  		 "destroy" : "creat", msg->name, chinfo.dst);
+> >  
+> > -	if (virtio32_to_cpu(vrp->vdev, msg->flags) & RPMSG_NS_DESTROY) {
+> > +	if (rpmsg32_to_cpu(rpdev, msg->flags) & RPMSG_NS_DESTROY) {
+> >  		ret = rpmsg_release_channel(rpdev, &chinfo);
+> >  		if (ret)
+> >  			dev_err(dev, "rpmsg_destroy_channel failed: %d\n", ret);
+> > diff --git a/include/linux/rpmsg_ns.h b/include/linux/rpmsg_ns.h
+> > index aabc6c3c0d6d..9f3030b2145b 100644
+> > --- a/include/linux/rpmsg_ns.h
+> > +++ b/include/linux/rpmsg_ns.h
+> > @@ -41,8 +41,8 @@ struct rpmsg_hdr {
+> >   */
+> >  struct rpmsg_ns_msg {
+> >  	char name[RPMSG_NAME_SIZE];
+> > -	__virtio32 addr;
+> > -	__virtio32 flags;
+> > +	u32 addr;
+> > +	u32 flags;
 > 
-> This struct shouldn't be here, let's first prepare the NS callback by 
-> removing any VirtIO dependencies and only then move it to the generic 
-> driver.
+> These aren't (necessarily) native endianness, right? Don't they deserve a 
+> separate type? __rpmsg32?
+> 
 
-I agree... I will proceed differently in the next revision.
+I kept them as u32 type to be as generic as possible and let the endianness
+conversion callback do the work.  Making them a __rpmsg32 is a good idea, it
+would force a proper implementation. 
 
-> 
 > Thanks
 > Guennadi
 > 
-> > + * @vdev:	the virtio device
-> > + * @rvq:	rx virtqueue
-> > + * @svq:	tx virtqueue
-> > + * @rbufs:	kernel address of rx buffers
-> > + * @sbufs:	kernel address of tx buffers
-> > + * @num_bufs:	total number of buffers for rx and tx
-> > + * @buf_size:   size of one rx or tx buffer
-> > + * @last_sbuf:	index of last tx buffer used
-> > + * @bufs_dma:	dma base addr of the buffers
-> > + * @tx_lock:	protects svq, sbufs and sleepers, to allow concurrent senders.
-> > + *		sending a message might require waking up a dozing remote
-> > + *		processor, which involves sleeping, hence the mutex.
-> > + * @endpoints:	idr of local endpoints, allows fast retrieval
-> > + * @endpoints_lock: lock of the endpoints set
-> > + * @sendq:	wait queue of sending contexts waiting for a tx buffers
-> > + * @sleepers:	number of senders that are waiting for a tx buffer
-> > + * @ns_ept:	the bus's name service endpoint
-> > + *
-> > + * This structure stores the rpmsg state of a given virtio remote processor
-> > + * device (there might be several virtio proc devices for each physical
-> > + * remote processor).
-> > + */
-> > +struct virtproc_info {
-> > +	struct virtio_device *vdev;
-> > +	struct virtqueue *rvq, *svq;
-> > +	void *rbufs, *sbufs;
-> > +	unsigned int num_bufs;
-> > +	unsigned int buf_size;
-> > +	int last_sbuf;
-> > +	dma_addr_t bufs_dma;
-> > +	struct mutex tx_lock;
-> > +	struct idr endpoints;
-> > +	struct mutex endpoints_lock;
-> > +	wait_queue_head_t sendq;
-> > +	atomic_t sleepers;
-> > +	struct rpmsg_endpoint *ns_ept;
-> > +};
-> > +
-> > +/**
-> > + * struct virtio_rpmsg_channel - rpmsg channel descriptor
-> > + * @rpdev: the rpmsg channel device
-> > + * @vrp: the virtio remote processor device this channel belongs to
-> > + *
-> > + * This structure stores the channel that links the rpmsg device to the virtio
-> > + * remote processor device.
-> > + */
-> > +struct virtio_rpmsg_channel {
-> > +	struct rpmsg_device rpdev;
-> > +
-> > +	struct virtproc_info *vrp;
-> > +};
-> > +
-> > +#define to_virtio_rpmsg_channel(_rpdev) \
-> > +	container_of(_rpdev, struct virtio_rpmsg_channel, rpdev)
-> > +
+> >  } __packed;
+> >  
 > >  /**
-> >   * struct rpmsg_device_ops - indirection table for the rpmsg_device operations
-> >   * @create_channel:	create backend-specific channel, optional
-> > diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
-> > index eaf3b2c012c8..0635d86d490f 100644
-> > --- a/drivers/rpmsg/virtio_rpmsg_bus.c
-> > +++ b/drivers/rpmsg/virtio_rpmsg_bus.c
-> > @@ -32,63 +32,6 @@
-> >  
-> >  #include "rpmsg_internal.h"
-> >  
-> > -/**
-> > - * struct virtproc_info - virtual remote processor state
-> > - * @vdev:	the virtio device
-> > - * @rvq:	rx virtqueue
-> > - * @svq:	tx virtqueue
-> > - * @rbufs:	kernel address of rx buffers
-> > - * @sbufs:	kernel address of tx buffers
-> > - * @num_bufs:	total number of buffers for rx and tx
-> > - * @buf_size:   size of one rx or tx buffer
-> > - * @last_sbuf:	index of last tx buffer used
-> > - * @bufs_dma:	dma base addr of the buffers
-> > - * @tx_lock:	protects svq, sbufs and sleepers, to allow concurrent senders.
-> > - *		sending a message might require waking up a dozing remote
-> > - *		processor, which involves sleeping, hence the mutex.
-> > - * @endpoints:	idr of local endpoints, allows fast retrieval
-> > - * @endpoints_lock: lock of the endpoints set
-> > - * @sendq:	wait queue of sending contexts waiting for a tx buffers
-> > - * @sleepers:	number of senders that are waiting for a tx buffer
-> > - * @ns_ept:	the bus's name service endpoint
-> > - *
-> > - * This structure stores the rpmsg state of a given virtio remote processor
-> > - * device (there might be several virtio proc devices for each physical
-> > - * remote processor).
-> > - */
-> > -struct virtproc_info {
-> > -	struct virtio_device *vdev;
-> > -	struct virtqueue *rvq, *svq;
-> > -	void *rbufs, *sbufs;
-> > -	unsigned int num_bufs;
-> > -	unsigned int buf_size;
-> > -	int last_sbuf;
-> > -	dma_addr_t bufs_dma;
-> > -	struct mutex tx_lock;
-> > -	struct idr endpoints;
-> > -	struct mutex endpoints_lock;
-> > -	wait_queue_head_t sendq;
-> > -	atomic_t sleepers;
-> > -	struct rpmsg_endpoint *ns_ept;
-> > -};
-> > -
-> > -/**
-> > - * struct virtio_rpmsg_channel - rpmsg channel descriptor
-> > - * @rpdev: the rpmsg channel device
-> > - * @vrp: the virtio remote processor device this channel belongs to
-> > - *
-> > - * This structure stores the channel that links the rpmsg device to the virtio
-> > - * remote processor device.
-> > - */
-> > -struct virtio_rpmsg_channel {
-> > -	struct rpmsg_device rpdev;
-> > -
-> > -	struct virtproc_info *vrp;
-> > -};
-> > -
-> > -#define to_virtio_rpmsg_channel(_rpdev) \
-> > -	container_of(_rpdev, struct virtio_rpmsg_channel, rpdev)
-> > -
-> >  /*
-> >   * Local addresses are dynamically allocated on-demand.
-> >   * We do not dynamically assign addresses from the low 1024 range,
 > > -- 
 > > 2.25.1
 > > 
