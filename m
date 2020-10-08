@@ -1,153 +1,149 @@
-Return-Path: <SRS0=blvA=DO=vger.kernel.org=linux-remoteproc-owner@kernel.org>
+Return-Path: <SRS0=dp89=DP=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 065F5C41604
-	for <linux-remoteproc@archiver.kernel.org>; Wed,  7 Oct 2020 17:26:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62C29C4363D
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  8 Oct 2020 00:52:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9DC3C2168B
-	for <linux-remoteproc@archiver.kernel.org>; Wed,  7 Oct 2020 17:26:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BFB0420872
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  8 Oct 2020 00:52:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hK7cH4Hi"
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="g5HKEdzF"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728207AbgJGR0j (ORCPT
+        id S1727430AbgJHAwk (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 7 Oct 2020 13:26:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59320 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726348AbgJGR0j (ORCPT
+        Wed, 7 Oct 2020 20:52:40 -0400
+Received: from mail-eopbgr20087.outbound.protection.outlook.com ([40.107.2.87]:43726
+        "EHLO EUR02-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726323AbgJHAwk (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 7 Oct 2020 13:26:39 -0400
-Received: from mail-pj1-x1041.google.com (mail-pj1-x1041.google.com [IPv6:2607:f8b0:4864:20::1041])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 22FE9C0613D2
-        for <linux-remoteproc@vger.kernel.org>; Wed,  7 Oct 2020 10:26:39 -0700 (PDT)
-Received: by mail-pj1-x1041.google.com with SMTP id kk9so1384615pjb.2
-        for <linux-remoteproc@vger.kernel.org>; Wed, 07 Oct 2020 10:26:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=M9ybGiqHvrypTyZEXdLpGDsphUXlCmQ4dG3V5WiWP+c=;
-        b=hK7cH4Hi/OTAsATuPSF/XTD9n996EpRc1h5H9Pu2cn2i7W3Y+I4BuZKeYlUo/w/b35
-         G8hDlilW3027XJeXWFviuDHG/IxcqdevZB5JAjXLBko1923w4dHEhrw2WvDAggSeOVDU
-         ub2O0fqDEL0LnhcIR2eUu2t2lEj93U5R4f6zJNm6jP9hGMJVf50Cr6lgpylN9mtJnCyv
-         V1mF1wjni/OjVuTplflycI62WIaI0l2df2ngb6Z5NURHxBuyRRBicvxsXhjgTI1+X0IH
-         z+yjEQOEXq/y+oRUTpEe0BRM+g+WuThiuZp0NGeGZK04wVxbkDF0Cl+pmy8t7bfHhqz7
-         x9gg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=M9ybGiqHvrypTyZEXdLpGDsphUXlCmQ4dG3V5WiWP+c=;
-        b=jLqQGdQU5Hxd48+pQ8gTd5HyfivIsJH2Ywzo11OZbcJwUrZlYu8ScDfe1NbdTFhyWD
-         xiKQuMJG29NwsUM3ZxC/xKEsWU70jLCbY2kn6N0lln31BoniUtKFlW27UBV3Zd9fH5g9
-         eOQUp4X1CJi86YVFPqfZRTszFICUzWd2T3EuSInxMbVaA//3byQCcU0tQ+VUdLjAku4b
-         VB7Xw628lV1LI9h5zoQfzlF4Jda5w/WnpUmzSfUzlQ9snYeGsx1pNNXnxvr8+tD78XAf
-         GV5hZIABU6JSFHeS3/FstMc0gi4R0xiT3wKFI2eU6TFuBX6UxL5raMwQY/AgM+IlLoKO
-         IvCg==
-X-Gm-Message-State: AOAM531lZ+EHzeulVbSKMMJvCe6j0efPRpTP+3x6BmgY0WHUgyddPgvR
-        pHzeo94dZ718BG6MJqBUtoPUsQ==
-X-Google-Smtp-Source: ABdhPJxqdvCkHlZoZkrWmICIoJ7mRQH5Pym1nz8GkT6xy1fjzmpTNgxS0CG1uZPwNv+aiPcbo5lW0w==
-X-Received: by 2002:a17:902:6b44:b029:d3:e78a:8ab6 with SMTP id g4-20020a1709026b44b02900d3e78a8ab6mr3747407plt.72.1602091598549;
-        Wed, 07 Oct 2020 10:26:38 -0700 (PDT)
-Received: from xps15 (S0106002369de4dac.cg.shawcable.net. [68.147.8.254])
-        by smtp.gmail.com with ESMTPSA id e19sm4193538pfl.135.2020.10.07.10.26.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 Oct 2020 10:26:37 -0700 (PDT)
-Date:   Wed, 7 Oct 2020 11:26:36 -0600
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-To:     Guennadi Liakhovetski <guennadi.liakhovetski@linux.intel.com>
-Cc:     ohad@wizery.com, bjorn.andersson@linaro.org, loic.pallardy@st.com,
-        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 10/10] rpmsg: ns: Make Name service module transport
- agnostic
-Message-ID: <20201007172636.GB575646@xps15>
-References: <20200922001000.899956-1-mathieu.poirier@linaro.org>
- <20200922001000.899956-11-mathieu.poirier@linaro.org>
- <20200930071327.GG20683@ubuntu>
+        Wed, 7 Oct 2020 20:52:40 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=RGocGGHBj6KTI7mtUTxk9pyDs9KFu05wDcdUn8d2DB8hLxxPvERHMbg6VOSf99EbB9guWvdeB65J/5X/AgeFq5EVmYw93dVVfKBnKQc+bFiz1aCbFNm3pp8jX9uhmJKnYs/Bc05mHRBPtdvJbByu11L+SfzL5j2iGkNikLt5XPCeFm4RGJHlT8ORkuGcdTyaIdPx3P8zldDEeQX+OEu18tDg0y/vErbCYoay+k41+6lW9KrE7VkCGDkO+7W7GrY+Ojd4eht7kqLxRVpVPcoVbbdnfU5GrSs+Tcf/hSuk57xO0TOL5P0284U1vy77AVVN9UIGMJZTnF+ON6Hyx99uug==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=rGv+rPvkTGNhfBYCbgpwoJ8mFdNBMcj2M9noLTx0UAQ=;
+ b=McnQVi/gLhlgSG2f8qrc+gbqrXOuNkPvT7oJv+udeHiB7xZM6qVpdyrN1k9R0VhvQBEhe8cnwbOgC529lt8TDPlwEInOMBJ9y/7o5IlDJJPHt+NNHIQlfeHMhBjklq0fnN8uXbaLS000hKNKaVzrjObDFPrVTW6XHLEZb6+iGIFi2VvyFyNXact/YUP2bzIj74DIrl/VV2tIDYzyIs35hEuvk4rqWmomFl1cdBzUIyPvwe/SiXERE+UDE/lpEvMZosj7TFshR7E0dgVYOPLPkTBEvSBP5XjZ2tlj15a4LeV791lB5gh7umuN31h51n8jYokwEjbahLywDEZpxCAYEg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=rGv+rPvkTGNhfBYCbgpwoJ8mFdNBMcj2M9noLTx0UAQ=;
+ b=g5HKEdzFGXOAuAGS1W1dwsf6oBjicdPqWcuidyO5BdA/X4Fui6QvV59uxWh4YcEh9yH9KB5kPe7eBUSQ+pq+HjKb22javt08zROJ56ZdQaCNXSOYpz1e0NgVe0uV0BaWXAbg4RO+6S6cs+NPfj+PAkkwCPZ+CXNMqDgIFC/snOA=
+Received: from DB6PR0402MB2760.eurprd04.prod.outlook.com (2603:10a6:4:a1::14)
+ by DBAPR04MB7350.eurprd04.prod.outlook.com (2603:10a6:10:1a9::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3455.21; Thu, 8 Oct
+ 2020 00:52:34 +0000
+Received: from DB6PR0402MB2760.eurprd04.prod.outlook.com
+ ([fe80::35c5:8c71:91f3:6bc6]) by DB6PR0402MB2760.eurprd04.prod.outlook.com
+ ([fe80::35c5:8c71:91f3:6bc6%12]) with mapi id 15.20.3455.022; Thu, 8 Oct 2020
+ 00:52:34 +0000
+From:   Peng Fan <peng.fan@nxp.com>
+To:     "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>,
+        "mathieu.poirier@linaro.org" <mathieu.poirier@linaro.org>,
+        "o.rempel@pengutronix.de" <o.rempel@pengutronix.de>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>
+CC:     "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>
+Subject: RE: [PATCH V2 0/7] remoteproc: imx_rproc: support iMX8MQ/M
+Thread-Topic: [PATCH V2 0/7] remoteproc: imx_rproc: support iMX8MQ/M
+Thread-Index: AQHWlJWVukYQqBZsrEmEkGtIBsfyNqmM8R8Q
+Date:   Thu, 8 Oct 2020 00:52:34 +0000
+Message-ID: <DB6PR0402MB2760EA531095AADAA1B967D9880B0@DB6PR0402MB2760.eurprd04.prod.outlook.com>
+References: <20200927064131.24101-1-peng.fan@nxp.com>
+In-Reply-To: <20200927064131.24101-1-peng.fan@nxp.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: linaro.org; dkim=none (message not signed)
+ header.d=none;linaro.org; dmarc=none action=none header.from=nxp.com;
+x-originating-ip: [92.121.68.129]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: 8705cbff-ce30-4011-b720-08d86b2471ff
+x-ms-traffictypediagnostic: DBAPR04MB7350:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <DBAPR04MB73500B12B952A3AF9187A9BD880B0@DBAPR04MB7350.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:6108;
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: FNyZd+Lw45kXVc4IrsWnmKuN3QoT5lZykuUFQOMv12BH1ILGkK6UznZSlNvMGI1bwqCoDrfNY2Uf08ZVPBR/CnbBT6W4jwix+JuSNgiJ2eqmpj7p47TfkdrvDIIUQbsPmf7Y1AkzS9hKN16LsXvqd4g4BIFUlLAtpjkPSw5fx9DZqO4ZRGuC6IeDZTMnHY9E4yFPpBjmxXBqQRyOtEnxvmlh3Hpo+ewId008UtVEzJipiasxzqbiYVon8aG+QOqVoGD2HXdv2eotAEpaM++Hw3Kw0uAjzfTqlesNssdelOmjsAGfThxN0g7KRGpwJ364twn3isi+LXXul8R6TTUJc/7wFJ6eiyOGuZ59FOI3QVfYpp2inNq/8kzYa9pADLNC9gjHMvNDZ1pc4D7hGOd4kI83Le0TEu0CGcG5+0ewBacgsz9RcNVtqWjsD0xZBZOWstrVEiqrXxtkgfZyLjxoJQ==
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB6PR0402MB2760.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(39860400002)(346002)(376002)(136003)(366004)(396003)(86362001)(316002)(8936002)(4326008)(33656002)(478600001)(966005)(9686003)(8676002)(110136005)(44832011)(7416002)(186003)(26005)(54906003)(83080400001)(5660300002)(7696005)(55016002)(6506007)(2906002)(66446008)(64756008)(66556008)(66476007)(66946007)(52536014)(76116006)(71200400001)(83380400001)(32563001);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata: A5ug0p8laqC19WlCL6TrxIfgFuGoXZ8/N8mN1z8AdmL1IUf43UrBEsaoMNc99jCnI0ROdB6xZ0JFj3VrwG01pBhs1ADPQ1Q9OTwQB714GqzDuiXaIt15DwKo1Pf8FQzmGP+WR4cdbEbRdaCYDO8oXMqKP630OsNGPBG1t5EpWGpDK3Epc9cyfyM94/B4BFWkDJF0oz0BnRU9BoD2m4p3O5T9m0Y10jmNM43H4n1VsUfixnBkhXik0Di77MLfDi+7KcDb15O57cg7YZYba3fzJPJP0urq6mIjrJdBcromqqBtLZrVj9azvKhd2iwcgKI5Ha2ScmpN8KlcUEZGxnAHIyOofNADtI/sDt4Oj3pHf884HIKpAsU0z43hJOiddyf1ply/8tnAs8alzvSmJ5eNnxo34MAVhesWEbPLD+sprgdgAcF1qIPiwQw1tcorTpSlJ4s/kP9ndwn5NDlk2OisIa6es3xFwPSdPk8IbMn/6WsuYUPv03pMSyz0rlCDmY1dgKPDrzgdhT7sB1yhS2BNNXGakq0gya0cBwzBV7piKbX6/4GeITY71GhSjVlwEFkX7skS9u+wrgrNxXQT5gI81LCLek4nYpXtGqlgKUxcftEPpeZLBPvZaskUvxjqsSq9RiYDrIj6e+tnkMJC1x27Og==
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200930071327.GG20683@ubuntu>
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: DB6PR0402MB2760.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8705cbff-ce30-4011-b720-08d86b2471ff
+X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Oct 2020 00:52:34.6974
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: vLQgzx+WgRe5erm/G5Xzq8J9fowHrVZfwMaN2LASjEdikPYuFbEUC4qpvUfvbixIk3IklOV1bqRtT4KpbpSGCg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBAPR04MB7350
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Wed, Sep 30, 2020 at 09:13:27AM +0200, Guennadi Liakhovetski wrote:
-> On Mon, Sep 21, 2020 at 06:10:00PM -0600, Mathieu Poirier wrote:
-> > Make name service module transport agnostic by using the rpmsg
-> > device specific byte conversion routine.
-> > 
-> > Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-> > ---
-> >  drivers/rpmsg/rpmsg_ns.c | 10 ++++------
-> >  include/linux/rpmsg_ns.h |  4 ++--
-> >  2 files changed, 6 insertions(+), 8 deletions(-)
-> > 
-> > diff --git a/drivers/rpmsg/rpmsg_ns.c b/drivers/rpmsg/rpmsg_ns.c
-> > index b3318bf84433..1df3aaadfe10 100644
-> > --- a/drivers/rpmsg/rpmsg_ns.c
-> > +++ b/drivers/rpmsg/rpmsg_ns.c
-> > @@ -18,9 +18,7 @@ static int rpmsg_ns_cb(struct rpmsg_device *rpdev, void *data, int len,
-> >  	struct rpmsg_ns_msg *msg = data;
-> >  	struct rpmsg_device *newch;
-> >  	struct rpmsg_channel_info chinfo;
-> > -	struct virtio_rpmsg_channel *vch = to_virtio_rpmsg_channel(rpdev);
-> > -	struct virtproc_info *vrp = vch->vrp;
-> > -	struct device *dev = &vrp->vdev->dev;
-> > +	struct device *dev = &rpdev->dev;
-> >  	int ret;
-> >  
-> >  #if defined(CONFIG_DYNAMIC_DEBUG)
-> > @@ -38,13 +36,13 @@ static int rpmsg_ns_cb(struct rpmsg_device *rpdev, void *data, int len,
-> >  
-> >  	strncpy(chinfo.name, msg->name, sizeof(chinfo.name));
-> >  	chinfo.src = RPMSG_ADDR_ANY;
-> > -	chinfo.dst = virtio32_to_cpu(vrp->vdev, msg->addr);
-> > +	chinfo.dst = rpmsg32_to_cpu(rpdev, msg->addr);
-> >  
-> >  	dev_info(dev, "%sing channel %s addr 0x%x\n",
-> > -		 virtio32_to_cpu(vrp->vdev, msg->flags) & RPMSG_NS_DESTROY ?
-> > +		 rpmsg32_to_cpu(rpdev, msg->flags) & RPMSG_NS_DESTROY ?
-> >  		 "destroy" : "creat", msg->name, chinfo.dst);
-> >  
-> > -	if (virtio32_to_cpu(vrp->vdev, msg->flags) & RPMSG_NS_DESTROY) {
-> > +	if (rpmsg32_to_cpu(rpdev, msg->flags) & RPMSG_NS_DESTROY) {
-> >  		ret = rpmsg_release_channel(rpdev, &chinfo);
-> >  		if (ret)
-> >  			dev_err(dev, "rpmsg_destroy_channel failed: %d\n", ret);
-> > diff --git a/include/linux/rpmsg_ns.h b/include/linux/rpmsg_ns.h
-> > index aabc6c3c0d6d..9f3030b2145b 100644
-> > --- a/include/linux/rpmsg_ns.h
-> > +++ b/include/linux/rpmsg_ns.h
-> > @@ -41,8 +41,8 @@ struct rpmsg_hdr {
-> >   */
-> >  struct rpmsg_ns_msg {
-> >  	char name[RPMSG_NAME_SIZE];
-> > -	__virtio32 addr;
-> > -	__virtio32 flags;
-> > +	u32 addr;
-> > +	u32 flags;
-> 
-> These aren't (necessarily) native endianness, right? Don't they deserve a 
-> separate type? __rpmsg32?
-> 
+Mathieu, Oleksij
 
-I kept them as u32 type to be as generic as possible and let the endianness
-conversion callback do the work.  Making them a __rpmsg32 is a good idea, it
-would force a proper implementation. 
+> Subject: [PATCH V2 0/7] remoteproc: imx_rproc: support iMX8MQ/M
 
-> Thanks
-> Guennadi
-> 
-> >  } __packed;
-> >  
-> >  /**
-> > -- 
-> > 2.25.1
-> > 
+Do you have time to give a look at this patchset?
+
+Thanks,
+Peng.
+
+>=20
+> V2:
+>  Rebased on linux-next
+>  Dropped early boot feature to make patchset simple.
+>  Drop rsc-da
+>=20
+> V1:
+>  https://patchwork.kernel.org/cover/11682461/
+>=20
+> This patchset is to support i.MX8MQ/M coproc.
+> The early boot feature was dropped to make the patchset small in V2.
+>=20
+> Since i.MX specific TCM memory requirement, add elf platform hook.
+> Several patches have got reviewed by Oleksij and Mathieu in v1.
+>=20
+> Peng Fan (7):
+>   remoteproc: elf: support platform specific memory hook
+>   remoteproc: imx_rproc: add elf memory hooks
+>   remoteproc: imx_rproc: correct err message
+>   remoteproc: imx_rproc: use devm_ioremap
+>   remoteproc: imx_rproc: add i.MX specific parse fw hook
+>   remoteproc: imx_rproc: support i.MX8MQ/M
+>   remoteproc: imx_proc: enable virtio/mailbox
+>=20
+>  drivers/remoteproc/imx_rproc.c             | 273
+> ++++++++++++++++++++-
+>  drivers/remoteproc/remoteproc_elf_loader.c |  20 +-
+>  include/linux/remoteproc.h                 |   2 +
+>  3 files changed, 287 insertions(+), 8 deletions(-)
+>=20
+> --
+> 2.28.0
+
