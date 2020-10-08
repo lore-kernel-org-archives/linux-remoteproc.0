@@ -2,215 +2,243 @@ Return-Path: <SRS0=dp89=DP=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 623B6C43467
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  8 Oct 2020 12:37:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93B01C4363C
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  8 Oct 2020 14:21:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F02F6217BA
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  8 Oct 2020 12:37:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3486D2184D
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  8 Oct 2020 14:21:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="i7gYIYyu"
+	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="pR6kr663"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729829AbgJHMh3 (ORCPT
+        id S1730541AbgJHOV3 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 8 Oct 2020 08:37:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39278 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729807AbgJHMh3 (ORCPT
+        Thu, 8 Oct 2020 10:21:29 -0400
+Received: from mail-bn8nam11on2047.outbound.protection.outlook.com ([40.107.236.47]:27648
+        "EHLO NAM11-BN8-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1730538AbgJHOV3 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 8 Oct 2020 08:37:29 -0400
-Received: from mail-lj1-x243.google.com (mail-lj1-x243.google.com [IPv6:2a00:1450:4864:20::243])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BDE83C0613D3
-        for <linux-remoteproc@vger.kernel.org>; Thu,  8 Oct 2020 05:37:28 -0700 (PDT)
-Received: by mail-lj1-x243.google.com with SMTP id p15so5543896ljj.8
-        for <linux-remoteproc@vger.kernel.org>; Thu, 08 Oct 2020 05:37:28 -0700 (PDT)
+        Thu, 8 Oct 2020 10:21:29 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=G5WdZY7i5HSBiqM3qf8jWfhCS9fqygNrf8Q2XQZSFX7w82x+5EEDowjaoxdnw3CPmTN8To6gplNdFLB3IT0DwHwqKFOSNvXOGawtvsaQ5+1UOO1b438G3nJE8KgJ1Ly5TZWPasKoJesFMRr9Wq35Z8dA7MFZLmhkaiPgL0zhsHiikqTxhXyZKCdt0OpyDDvIh4ertKp34mSRprAoJXLtk7kqjvTKcb7vLYPSaKdy5tmi+RwV6MOEs99GTZxTJHCJg6FmV81EnfwSTSi/d3hFrju4fOJc34XEgMYfaNsOrTvxkt0EitO3QZwJrLZx7beQSWh/QYk7LK1g6D/ewAhaXQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=1h7kOShZfdK37JtQLl92/Rq1EaQKgAW1lb2njM95GlA=;
+ b=avddfCaWBNT+LuetSfE1e/kdLO3dKOM+n9/ZX7SOx2w8owtQW9sUQBbo8E99yqIGoLUFwWoISu2A851krbPd6A8o36MrA1tfVu0Y7CFslzT6Z6mC3dri6R978MbA/b/9Q3SwL5awYKg1o5tOuoOfgnRkoFnjSwzGKDjF7n6jx2RjI19q+BPfGmSDjhIYg5914QDwbyCSN2o26h4BOrJ2T/994/k/SNtMaPP+yN+NOr1P4wRcS3B+ROGNBOFPgU/vNwgcHB2gisY2Aaz/D50X2JkK4XreeiJma5S4YswVx6EQHXuefwNisw5263VoV7Aco4EGxn9FbzRpJWd+OylfJg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=xilinx.com; dmarc=pass action=none header.from=xilinx.com;
+ dkim=pass header.d=xilinx.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=JV0JTqeznufs6Lca8I5W/rgwI4Aj9l9UXOO8/m8VgzQ=;
-        b=i7gYIYyuRdlxNVuz9vcXkV/Faf0L0KBdU5GK3wDfAtUNYmTZO9btIgKr4RTie1oJR6
-         eabKiu2D1SeoAbNZQXmv8uGq/Lq7oUahLzsMPAUmnbF2QIkGWxAWhBm/RGJuavYD4gZF
-         LykLQSkiBf7hlFrdjd4n3vC4SvjXyrN3v/RCU6JhTPsWQK8GugPqEPEiwV5+fn8R+yZg
-         S0IncXNb0YKS/I+mHW3huwkj/dpKwaEj6JvKbhmZM7DkYU8HhU17PErUYQvilfrr5gIp
-         lxTCdPsz6u0mYN4exaLYk3WV223onu6dzZLw6roKZHDFJr9eLE6fgYLTW8x+UrDaptzN
-         2/QA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=JV0JTqeznufs6Lca8I5W/rgwI4Aj9l9UXOO8/m8VgzQ=;
-        b=ACU69wuw4vhylYuat/7CrvvQou5TL9jXNDh8/CljfuN1DE7YydZxoY6cqTpW7b41lO
-         10XhQNqjXcUGX7EOq32AHK7JDQ9JzqRHPWzse9GcbxDNa+fvcR0d5s4thJQt2fgakEfO
-         xdw/nDYCuWjHCVtINWcuI512NmMn1jog+G+UqSjBpAn8qBCSCh3JLQ6+6FEH9bESkJXG
-         qqWf+Kf+sTsI+hQpfFp6hGxDJ+nvbRnm4N7qrGJiMhrDppLai3sh0G0J3c2AViqD/t8q
-         sKBSfwwah4kS6nyOrt/YKhfD62ki3mroFx3TxfZ2/Ig+8/CtCTVW9XYI2PUhbs452gx6
-         ddSA==
-X-Gm-Message-State: AOAM533Hu+FEqEMy8hBRIXv3McT8IwzQ6BcsR1F1NZOMq1DoiqxOpvtp
-        btdGCJtAG3uglq/77U2yswTdqSCqS5ss2JJ+CfmlvQ==
-X-Google-Smtp-Source: ABdhPJz3YUsYWniThIU2Vaw6C0IjjNUAjrxB49uXHpts1m5Cv34LreV1JkBiWhogxLov5d903ZJmZZg+Xzny/FL0+AE=
-X-Received: by 2002:a2e:a549:: with SMTP id e9mr614746ljn.293.1602160646098;
- Thu, 08 Oct 2020 05:37:26 -0700 (PDT)
-MIME-Version: 1.0
-References: <20201005160614.3749-1-ben.levinsky@xilinx.com> <20201005160614.3749-5-ben.levinsky@xilinx.com>
-In-Reply-To: <20201005160614.3749-5-ben.levinsky@xilinx.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Thu, 8 Oct 2020 14:37:14 +0200
-Message-ID: <CACRpkdb1x=U28VWZGDJh6gJSzaqeNxx0m+WtnUQZJKGvXjvXYQ@mail.gmail.com>
-Subject: Re: [PATCH v18 4/5] dt-bindings: remoteproc: Add documentation for
- ZynqMP R5 rproc bindings
-To:     Ben Levinsky <ben.levinsky@xilinx.com>,
-        Catalin Marinas <catalin.marinas@arm.com>
-Cc:     ed.mooring@xilinx.com, sunnyliangjy@gmail.com,
+ d=xilinx.onmicrosoft.com; s=selector2-xilinx-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=1h7kOShZfdK37JtQLl92/Rq1EaQKgAW1lb2njM95GlA=;
+ b=pR6kr663GZ/x3ffFaQutvHZlLeymy9lsuytgK5a8nAkKB/hjMnxuvoReoIliv8YChckfCY4Jir/6dF02MV7jQe1cG26OJvcz2ztbaYbwDoVyhMaCOkpEFQi2b4zccODHs9O5UvvStqj8lWYCkGJDRZ8AbotilTfuER7K/R3CD4I=
+Received: from BYAPR02MB4407.namprd02.prod.outlook.com (2603:10b6:a03:55::31)
+ by BY5PR02MB6533.namprd02.prod.outlook.com (2603:10b6:a03:1d5::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3455.24; Thu, 8 Oct
+ 2020 14:21:25 +0000
+Received: from BYAPR02MB4407.namprd02.prod.outlook.com
+ ([fe80::113d:722:5f93:d29e]) by BYAPR02MB4407.namprd02.prod.outlook.com
+ ([fe80::113d:722:5f93:d29e%6]) with mapi id 15.20.3433.046; Thu, 8 Oct 2020
+ 14:21:25 +0000
+From:   Ben Levinsky <BLEVINSK@xilinx.com>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Stefano Stabellini <stefanos@xilinx.com>,
+        "Ed T. Mooring" <emooring@xilinx.com>
+CC:     "Ed T. Mooring" <emooring@xilinx.com>,
+        "sunnyliangjy@gmail.com" <sunnyliangjy@gmail.com>,
         Punit Agrawal <punit1.agrawal@toshiba.co.jp>,
-        stefanos@xilinx.com, michals@xilinx.com, michael.auchter@ni.com,
+        Michal Simek <michals@xilinx.com>,
+        "michael.auchter@ni.com" <michael.auchter@ni.com>,
         "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
         <devicetree@vger.kernel.org>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
-        linux-remoteproc@vger.kernel.org,
+        "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
         Linux ARM <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Subject: RE: [PATCH v18 4/5] dt-bindings: remoteproc: Add documentation for
+ ZynqMP R5 rproc bindings
+Thread-Topic: [PATCH v18 4/5] dt-bindings: remoteproc: Add documentation for
+ ZynqMP R5 rproc bindings
+Thread-Index: AQHWmzGGFAANaYM31kabNhvSxn7sOqmNqRwAgAAZLiA=
+Date:   Thu, 8 Oct 2020 14:21:25 +0000
+Message-ID: <BYAPR02MB4407F9D8A60519D00F317D27B50B0@BYAPR02MB4407.namprd02.prod.outlook.com>
+References: <20201005160614.3749-1-ben.levinsky@xilinx.com>
+ <20201005160614.3749-5-ben.levinsky@xilinx.com>
+ <CACRpkdb1x=U28VWZGDJh6gJSzaqeNxx0m+WtnUQZJKGvXjvXYQ@mail.gmail.com>
+In-Reply-To: <CACRpkdb1x=U28VWZGDJh6gJSzaqeNxx0m+WtnUQZJKGvXjvXYQ@mail.gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-Mentions: stefano.stabellini@xilinx.com
+X-MS-Has-Attach: 
+X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
+X-MS-TNEF-Correlator: 
+authentication-results: linaro.org; dkim=none (message not signed)
+ header.d=none;linaro.org; dmarc=none action=none header.from=xilinx.com;
+x-originating-ip: [149.199.62.133]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: e15022cd-778a-4aeb-d15e-08d86b957069
+x-ms-traffictypediagnostic: BY5PR02MB6533:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <BY5PR02MB6533ED620AFEB23EB75FEDB2B50B0@BY5PR02MB6533.namprd02.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:10000;
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: nR7C0aXT9To7m2bodINnzVi8h33YPT8uRYkmH6wDv9Fgbg12XAhbP9wmlJLZPqKRTX0xb9bG5dh4buyFqobL4L5vdGKsBkV6o6N97LT3rbQTZ9aiEzfAo3D7iR3N5dDwj4vEBmYN2ZPm4x7mQN+7RWgVuUL2tvnoq9Vv8QeP3XPFYS9nKAHkp8zBEslhxwB17xdLb0Tl8imWN05Z8YycgX1OBxJraZ2gZWlBRYmvzS+GU5lTow7wTaShoHc1rRoRyQZgQ4WE+5o5F/zfdDtHjyLlDvZRUloc3yKYyw8AYBJttOxDE/HIeQs8a/Lu7KByP9QURsarYliGeEpL0fwbvvf0c7Yg+hOYb4c5TWvMe+ZCkSBLKGQSKhEO6K14M/aFzwsl/Jy6v7C80Ds9M589Hg==
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR02MB4407.namprd02.prod.outlook.com;PTR:;CAT:NONE;SFS:(39860400002)(366004)(396003)(376002)(346002)(136003)(8936002)(4326008)(54906003)(316002)(6636002)(9686003)(86362001)(2906002)(110136005)(66476007)(66556008)(64756008)(66446008)(66946007)(76116006)(8676002)(52536014)(33656002)(5660300002)(55016002)(71200400001)(186003)(966005)(7416002)(83080400001)(83380400001)(478600001)(6506007)(53546011)(26005)(7696005);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata: 0ctw8E+FDJ5427Tyrvjrf3Skn4zO0/gpFeT7Xrhk4E1zGweIg3bID0ilzDkwou1daVxg1nsCazALGNLBtCbZLA+0kxbNs09RixSwKFX/rR7s40FSGMhnsUKFxNL1cPYcwUBnE38eHxrje7Ii18x/pC23K83pHQqJyB/dwihD41b/D61QYJKo485DCmRw0hjKK466EkV5RRDYj+XpqnuvTAMh8Py4119o4Mk0/RP353H+IT5cXKuxAMLL3FPilIZpsnn4XLqzHsyuGIXKYYMBwxuSqPCSDH2Fv4o2PqkVCObeEY9qlA8KSfnRVB3eR/DyCLitKnybRBXqPXvvF2BiYkER0AF1eXR5I9T7+xBW3JBbKeHDicSXhLpKwtTosTZ1BJislNBh9rHehIqRRmiGskoEJlMrDV8CjotMRohgL6/GlSC6ix1vX5VZp9SSfe/HAghvAZg1cGI1200LqgchVnf2driTocDrk87JuxfoI7UONRlmDhuyOR1Fv/C83sCiSfHN8uaU9J7Xiiwtf+7tXndPSeU2547aZLgGH+gCWpSnSjXF60838F2iN1r/w3AkK62dzthk4NTN8icu/0PBOGG0oR/CuGhHt8puQWipABSAjTsSioFXXzAEWolwc7v7wP1zGgAOo1LMoBP06DHO2A==
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: xilinx.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: BYAPR02MB4407.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e15022cd-778a-4aeb-d15e-08d86b957069
+X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Oct 2020 14:21:25.1568
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 657af505-d5df-48d0-8300-c31994686c5c
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: tOHplayHvPe4XMR2nTMExHVdQIBnFs9ACBjEH09MzYvRcjZRTHkEzYa1FVFIQMCk8ieccEWyY+i3vDzvUUGFzg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR02MB6533
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi Ben,
-
-thanks for your patch! I noticed this today  and pay some interest
-because in the past I used with implementing the support for
-TCM memory on ARM32.
-
-On Mon, Oct 5, 2020 at 6:06 PM Ben Levinsky <ben.levinsky@xilinx.com> wrote:
-
-> Add binding for ZynqMP R5 OpenAMP.
->
-> Represent the RPU domain resources in one device node. Each RPU
-> processor is a subnode of the top RPU domain node.
->
-> Signed-off-by: Jason Wu <j.wu@xilinx.com>
-> Signed-off-by: Wendy Liang <jliang@xilinx.com>
-> Signed-off-by: Michal Simek <michal.simek@xilinx.com>
-> Signed-off-by: Ben Levinsky <ben.levinsky@xilinx.com>
-(...)
-
-> +title: Xilinx R5 remote processor controller bindings
-> +
-> +description:
-> +  This document defines the binding for the remoteproc component that loads and
-> +  boots firmwares on the Xilinx Zynqmp and Versal family chipset.
-
-... firmwares for the on-board Cortex R5 of the Zynqmp .. (etc)
-
-> +
-> +  Note that the Linux has global addressing view of the R5-related memory (TCM)
-> +  so the absolute address ranges are provided in TCM reg's.
-
-Please do not refer to Linux in bindings, they are also for other
-operating systems.
-
-Isn't that spelled out "Tightly Coupled Memory" (please expand the acronym).
-
-I had a hard time to parse this description, do you mean:
-
-"The Tightly Coupled Memory (an on-chip SRAM) used by the Cortex R5
-is double-ported and visible in both the physical memory space of the
-Cortex A5 and the memory space of the main ZynqMP processor
-cluster. This is visible in the address space of the ZynqMP processor
-at the address indicated here."
-
-That would make sense, but please confirm/update.
-
-> +  memory-region:
-> +    description:
-> +      collection of memory carveouts used for elf-loading and inter-processor
-> +      communication. each carveout in this case should be in DDR, not
-> +      chip-specific memory. In Xilinx case, this is TCM, OCM, BRAM, etc.
-> +    $ref: /schemas/types.yaml#/definitions/phandle-array
-
-This is nice, you're reusing the infrastructure we already
-have for these carveouts, good design!
-
-> +  meta-memory-regions:
-> +    description:
-> +      collection of memories that are not present in the top level memory
-> +      nodes' mapping. For example, R5s' TCM banks. These banks are needed
-> +      for R5 firmware meta data such as the R5 firmware's heap and stack.
-> +      To be more precise, this is on-chip reserved SRAM regions, e.g. TCM,
-> +      BRAM, OCM, etc.
-> +    $ref: /schemas/types.yaml#/definitions/phandle-array
-
-Is this in the memory space of the main CPU cluster?
-
-It sure looks like that.
-
-> +     /*
-> +      * Below nodes are required if using TCM to load R5 firmware
-> +      * if not, then either do not provide nodes are label as disabled in
-> +      * status property
-> +      */
-> +     tcm0a: tcm_0a@ffe00000 {
-> +         reg = <0xffe00000 0x10000>;
-> +         pnode-id = <0xf>;
-> +         no-map;
-> +         status = "okay";
-> +         phandle = <0x40>;
-> +     };
-> +     tcm0b: tcm_1a@ffe20000 {
-> +         reg = <0xffe20000 0x10000>;
-> +         pnode-id = <0x10>;
-> +         no-map;
-> +         status = "okay";
-> +         phandle = <0x41>;
-> +     };
-
-All right so this looks suspicious to me. Please explain
-what we are seeing in those reg entries? Is this the address
-seen by the main CPU cluster?
-
-Does it mean that the main CPU see the memory of the
-R5 as "some kind of TCM" and that TCM is physically
-mapped at 0xffe00000 (ITCM) and 0xffe20000 (DTCM)?
-
-If the first is ITCM and the second DTCM that is pretty
-important to point out, since this reflects the harvard
-architecture properties of these two memory areas.
-
-The phandle = thing I do not understand at all, but
-maybe there is generic documentation for it that
-I've missed?
-
-Last time I checked (which was on the ARM32) the physical
-address of the ITCM and DTCM could be changed at
-runtime with CP15 instructions. I might be wrong
-about this, but if that (or something similar) is still the case
-you can't just say hardcode these addresses here, the
-CPU can move that physical address somewhere else.
-See the code in
-arch/arm/kernel/tcm.c
-
-It appears the ARM64 Linux kernel does not have any
-TCM handling today, but that could change.
-
-So is this just regular ARM TCM memory (as seen by
-the main ARM64 cluster)?
-
-If this is the case, you should probably add back the
-compatible string, add a separate device tree binding
-for TCM memories along the lines of
-compatible = "arm,itcm";
-compatible = "arm,dtcm";
-The reg address should then ideally be interpreted by
-the ARM64 kernel and assigned to the I/DTCM.
-
-I'm paging Catalin on this because I do not know if
-ARM64 really has [I|D]TCM or if this is some invention
-of Xilinx's.
-
-Yours,
-Linus Walleij
+SGkgTGludXMsIA0KDQpUaGFua3MgZm9yIHRoZSByZXZpZXcNCg0KUGxlYXNlIHNlZSBteSBjb21t
+ZW50cyBpbmxpbmUNCg0KPiANCj4gSGkgQmVuLA0KPiANCj4gdGhhbmtzIGZvciB5b3VyIHBhdGNo
+ISBJIG5vdGljZWQgdGhpcyB0b2RheSAgYW5kIHBheSBzb21lIGludGVyZXN0DQo+IGJlY2F1c2Ug
+aW4gdGhlIHBhc3QgSSB1c2VkIHdpdGggaW1wbGVtZW50aW5nIHRoZSBzdXBwb3J0IGZvcg0KPiBU
+Q00gbWVtb3J5IG9uIEFSTTMyLg0KPiANCj4gT24gTW9uLCBPY3QgNSwgMjAyMCBhdCA2OjA2IFBN
+IEJlbiBMZXZpbnNreSA8YmVuLmxldmluc2t5QHhpbGlueC5jb20+DQo+IHdyb3RlOg0KPiANCj4g
+PiBBZGQgYmluZGluZyBmb3IgWnlucU1QIFI1IE9wZW5BTVAuDQo+ID4NCj4gPiBSZXByZXNlbnQg
+dGhlIFJQVSBkb21haW4gcmVzb3VyY2VzIGluIG9uZSBkZXZpY2Ugbm9kZS4gRWFjaCBSUFUNCj4g
+PiBwcm9jZXNzb3IgaXMgYSBzdWJub2RlIG9mIHRoZSB0b3AgUlBVIGRvbWFpbiBub2RlLg0KPiA+
+DQo+ID4gU2lnbmVkLW9mZi1ieTogSmFzb24gV3UgPGoud3VAeGlsaW54LmNvbT4NCj4gPiBTaWdu
+ZWQtb2ZmLWJ5OiBXZW5keSBMaWFuZyA8amxpYW5nQHhpbGlueC5jb20+DQo+ID4gU2lnbmVkLW9m
+Zi1ieTogTWljaGFsIFNpbWVrIDxtaWNoYWwuc2ltZWtAeGlsaW54LmNvbT4NCj4gPiBTaWduZWQt
+b2ZmLWJ5OiBCZW4gTGV2aW5za3kgPGJlbi5sZXZpbnNreUB4aWxpbnguY29tPg0KPiAoLi4uKQ0K
+PiANCj4gPiArdGl0bGU6IFhpbGlueCBSNSByZW1vdGUgcHJvY2Vzc29yIGNvbnRyb2xsZXIgYmlu
+ZGluZ3MNCj4gPiArDQo+ID4gK2Rlc2NyaXB0aW9uOg0KPiA+ICsgIFRoaXMgZG9jdW1lbnQgZGVm
+aW5lcyB0aGUgYmluZGluZyBmb3IgdGhlIHJlbW90ZXByb2MgY29tcG9uZW50IHRoYXQNCj4gbG9h
+ZHMgYW5kDQo+ID4gKyAgYm9vdHMgZmlybXdhcmVzIG9uIHRoZSBYaWxpbnggWnlucW1wIGFuZCBW
+ZXJzYWwgZmFtaWx5IGNoaXBzZXQuDQo+IA0KPiAuLi4gZmlybXdhcmVzIGZvciB0aGUgb24tYm9h
+cmQgQ29ydGV4IFI1IG9mIHRoZSBaeW5xbXAgLi4gKGV0YykNCj4gDQpXaWxsIGZpeA0KPiA+ICsN
+Cj4gPiArICBOb3RlIHRoYXQgdGhlIExpbnV4IGhhcyBnbG9iYWwgYWRkcmVzc2luZyB2aWV3IG9m
+IHRoZSBSNS1yZWxhdGVkIG1lbW9yeQ0KPiAoVENNKQ0KPiA+ICsgIHNvIHRoZSBhYnNvbHV0ZSBh
+ZGRyZXNzIHJhbmdlcyBhcmUgcHJvdmlkZWQgaW4gVENNIHJlZydzLg0KPiANCj4gUGxlYXNlIGRv
+IG5vdCByZWZlciB0byBMaW51eCBpbiBiaW5kaW5ncywgdGhleSBhcmUgYWxzbyBmb3Igb3RoZXIN
+Cj4gb3BlcmF0aW5nIHN5c3RlbXMuDQo+IA0KPiBJc24ndCB0aGF0IHNwZWxsZWQgb3V0ICJUaWdo
+dGx5IENvdXBsZWQgTWVtb3J5IiAocGxlYXNlIGV4cGFuZCB0aGUgYWNyb255bSkuDQo+IA0KPiBJ
+IGhhZCBhIGhhcmQgdGltZSB0byBwYXJzZSB0aGlzIGRlc2NyaXB0aW9uLCBkbyB5b3UgbWVhbjoN
+Cj4gDQo+ICJUaGUgVGlnaHRseSBDb3VwbGVkIE1lbW9yeSAoYW4gb24tY2hpcCBTUkFNKSB1c2Vk
+IGJ5IHRoZSBDb3J0ZXggUjUNCj4gaXMgZG91YmxlLXBvcnRlZCBhbmQgdmlzaWJsZSBpbiBib3Ro
+IHRoZSBwaHlzaWNhbCBtZW1vcnkgc3BhY2Ugb2YgdGhlDQo+IENvcnRleCBBNSBhbmQgdGhlIG1l
+bW9yeSBzcGFjZSBvZiB0aGUgbWFpbiBaeW5xTVAgcHJvY2Vzc29yDQo+IGNsdXN0ZXIuIFRoaXMg
+aXMgdmlzaWJsZSBpbiB0aGUgYWRkcmVzcyBzcGFjZSBvZiB0aGUgWnlucU1QIHByb2Nlc3Nvcg0K
+PiBhdCB0aGUgYWRkcmVzcyBpbmRpY2F0ZWQgaGVyZS4iDQo+IA0KPiBUaGF0IHdvdWxkIG1ha2Ug
+c2Vuc2UsIGJ1dCBwbGVhc2UgY29uZmlybS91cGRhdGUuDQo+IA0KDQpZZXMgdGhlIFRDTSBhZGRy
+ZXNzIHNwYWNlIGFzIG5vdGVkIGluIHRoZSBUQ00gZGV2aWNlIHRyZWUgbm9kZXMgKGUuZy4gMHhm
+ZmUwMDAwMCkgaXMgdmlzaWJsZSBhdCB0aGF0IGFkZHJlc3Mgb24gdGhlIEE1MyBjbHVzdGVyLiAg
+V2lsbCBmaXgNCg0KPiA+ICsgIG1lbW9yeS1yZWdpb246DQo+ID4gKyAgICBkZXNjcmlwdGlvbjoN
+Cj4gPiArICAgICAgY29sbGVjdGlvbiBvZiBtZW1vcnkgY2FydmVvdXRzIHVzZWQgZm9yIGVsZi1s
+b2FkaW5nIGFuZCBpbnRlci1wcm9jZXNzb3INCj4gPiArICAgICAgY29tbXVuaWNhdGlvbi4gZWFj
+aCBjYXJ2ZW91dCBpbiB0aGlzIGNhc2Ugc2hvdWxkIGJlIGluIEREUiwgbm90DQo+ID4gKyAgICAg
+IGNoaXAtc3BlY2lmaWMgbWVtb3J5LiBJbiBYaWxpbnggY2FzZSwgdGhpcyBpcyBUQ00sIE9DTSwg
+QlJBTSwgZXRjLg0KPiA+ICsgICAgJHJlZjogL3NjaGVtYXMvdHlwZXMueWFtbCMvZGVmaW5pdGlv
+bnMvcGhhbmRsZS1hcnJheQ0KPiANCj4gVGhpcyBpcyBuaWNlLCB5b3UncmUgcmV1c2luZyB0aGUg
+aW5mcmFzdHJ1Y3R1cmUgd2UgYWxyZWFkeQ0KPiBoYXZlIGZvciB0aGVzZSBjYXJ2ZW91dHMsIGdv
+b2QgZGVzaWduIQ0KPiANCj4gPiArICBtZXRhLW1lbW9yeS1yZWdpb25zOg0KPiA+ICsgICAgZGVz
+Y3JpcHRpb246DQo+ID4gKyAgICAgIGNvbGxlY3Rpb24gb2YgbWVtb3JpZXMgdGhhdCBhcmUgbm90
+IHByZXNlbnQgaW4gdGhlIHRvcCBsZXZlbCBtZW1vcnkNCj4gPiArICAgICAgbm9kZXMnIG1hcHBp
+bmcuIEZvciBleGFtcGxlLCBSNXMnIFRDTSBiYW5rcy4gVGhlc2UgYmFua3MgYXJlIG5lZWRlZA0K
+PiA+ICsgICAgICBmb3IgUjUgZmlybXdhcmUgbWV0YSBkYXRhIHN1Y2ggYXMgdGhlIFI1IGZpcm13
+YXJlJ3MgaGVhcCBhbmQgc3RhY2suDQo+ID4gKyAgICAgIFRvIGJlIG1vcmUgcHJlY2lzZSwgdGhp
+cyBpcyBvbi1jaGlwIHJlc2VydmVkIFNSQU0gcmVnaW9ucywgZS5nLiBUQ00sDQo+ID4gKyAgICAg
+IEJSQU0sIE9DTSwgZXRjLg0KPiA+ICsgICAgJHJlZjogL3NjaGVtYXMvdHlwZXMueWFtbCMvZGVm
+aW5pdGlvbnMvcGhhbmRsZS1hcnJheQ0KPiANCj4gSXMgdGhpcyBpbiB0aGUgbWVtb3J5IHNwYWNl
+IG9mIHRoZSBtYWluIENQVSBjbHVzdGVyPw0KPiANCj4gSXQgc3VyZSBsb29rcyBsaWtlIHRoYXQu
+DQo+IA0KDQpZZXMgdGhpcyBpcyBpbiB0aGUgbWVtb3J5IHNwYWNlIG9mIHRoZSBBNTMgY2x1c3Rl
+cg0KDQpXaWxsIGZpeCB0byBjb21tZW50IGFzIHN1Y2guIFRoYW5rIHlvdQ0KDQo+ID4gKyAgICAg
+LyoNCj4gPiArICAgICAgKiBCZWxvdyBub2RlcyBhcmUgcmVxdWlyZWQgaWYgdXNpbmcgVENNIHRv
+IGxvYWQgUjUgZmlybXdhcmUNCj4gPiArICAgICAgKiBpZiBub3QsIHRoZW4gZWl0aGVyIGRvIG5v
+dCBwcm92aWRlIG5vZGVzIGFyZSBsYWJlbCBhcyBkaXNhYmxlZCBpbg0KPiA+ICsgICAgICAqIHN0
+YXR1cyBwcm9wZXJ0eQ0KPiA+ICsgICAgICAqLw0KPiA+ICsgICAgIHRjbTBhOiB0Y21fMGFAZmZl
+MDAwMDAgew0KPiA+ICsgICAgICAgICByZWcgPSA8MHhmZmUwMDAwMCAweDEwMDAwPjsNCj4gPiAr
+ICAgICAgICAgcG5vZGUtaWQgPSA8MHhmPjsNCj4gPiArICAgICAgICAgbm8tbWFwOw0KPiA+ICsg
+ICAgICAgICBzdGF0dXMgPSAib2theSI7DQo+ID4gKyAgICAgICAgIHBoYW5kbGUgPSA8MHg0MD47
+DQo+ID4gKyAgICAgfTsNCj4gPiArICAgICB0Y20wYjogdGNtXzFhQGZmZTIwMDAwIHsNCj4gPiAr
+ICAgICAgICAgcmVnID0gPDB4ZmZlMjAwMDAgMHgxMDAwMD47DQo+ID4gKyAgICAgICAgIHBub2Rl
+LWlkID0gPDB4MTA+Ow0KPiA+ICsgICAgICAgICBuby1tYXA7DQo+ID4gKyAgICAgICAgIHN0YXR1
+cyA9ICJva2F5IjsNCj4gPiArICAgICAgICAgcGhhbmRsZSA9IDwweDQxPjsNCj4gPiArICAgICB9
+Ow0KPiANCj4gQWxsIHJpZ2h0IHNvIHRoaXMgbG9va3Mgc3VzcGljaW91cyB0byBtZS4gUGxlYXNl
+IGV4cGxhaW4NCj4gd2hhdCB3ZSBhcmUgc2VlaW5nIGluIHRob3NlIHJlZyBlbnRyaWVzPyBJcyB0
+aGlzIHRoZSBhZGRyZXNzDQo+IHNlZW4gYnkgdGhlIG1haW4gQ1BVIGNsdXN0ZXI/DQo+IA0KPiBE
+b2VzIGl0IG1lYW4gdGhhdCB0aGUgbWFpbiBDUFUgc2VlIHRoZSBtZW1vcnkgb2YgdGhlDQo+IFI1
+IGFzICJzb21lIGtpbmQgb2YgVENNIiBhbmQgdGhhdCBUQ00gaXMgcGh5c2ljYWxseQ0KPiBtYXBw
+ZWQgYXQgMHhmZmUwMDAwMCAoSVRDTSkgYW5kIDB4ZmZlMjAwMDAgKERUQ00pPw0KPiANCj4gSWYg
+dGhlIGZpcnN0IGlzIElUQ00gYW5kIHRoZSBzZWNvbmQgRFRDTSB0aGF0IGlzIHByZXR0eQ0KPiBp
+bXBvcnRhbnQgdG8gcG9pbnQgb3V0LCBzaW5jZSB0aGlzIHJlZmxlY3RzIHRoZSBoYXJ2YXJkDQo+
+IGFyY2hpdGVjdHVyZSBwcm9wZXJ0aWVzIG9mIHRoZXNlIHR3byBtZW1vcnkgYXJlYXMuDQo+IA0K
+PiBUaGUgcGhhbmRsZSA9IHRoaW5nIEkgZG8gbm90IHVuZGVyc3RhbmQgYXQgYWxsLCBidXQNCj4g
+bWF5YmUgdGhlcmUgaXMgZ2VuZXJpYyBkb2N1bWVudGF0aW9uIGZvciBpdCB0aGF0DQo+IEkndmUg
+bWlzc2VkPw0KPiANCj4gTGFzdCB0aW1lIEkgY2hlY2tlZCAod2hpY2ggd2FzIG9uIHRoZSBBUk0z
+MikgdGhlIHBoeXNpY2FsDQo+IGFkZHJlc3Mgb2YgdGhlIElUQ00gYW5kIERUQ00gY291bGQgYmUg
+Y2hhbmdlZCBhdA0KPiBydW50aW1lIHdpdGggQ1AxNSBpbnN0cnVjdGlvbnMuIEkgbWlnaHQgYmUg
+d3JvbmcNCj4gYWJvdXQgdGhpcywgYnV0IGlmIHRoYXQgKG9yIHNvbWV0aGluZyBzaW1pbGFyKSBp
+cyBzdGlsbCB0aGUgY2FzZQ0KPiB5b3UgY2FuJ3QganVzdCBzYXkgaGFyZGNvZGUgdGhlc2UgYWRk
+cmVzc2VzIGhlcmUsIHRoZQ0KPiBDUFUgY2FuIG1vdmUgdGhhdCBwaHlzaWNhbCBhZGRyZXNzIHNv
+bWV3aGVyZSBlbHNlLg0KPiBTZWUgdGhlIGNvZGUgaW4NCj4gYXJjaC9hcm0va2VybmVsL3RjbS5j
+DQo+IA0KPiBJdCBhcHBlYXJzIHRoZSBBUk02NCBMaW51eCBrZXJuZWwgZG9lcyBub3QgaGF2ZSBh
+bnkNCj4gVENNIGhhbmRsaW5nIHRvZGF5LCBidXQgdGhhdCBjb3VsZCBjaGFuZ2UuDQo+IA0KPiBT
+byBpcyB0aGlzIGp1c3QgcmVndWxhciBBUk0gVENNIG1lbW9yeSAoYXMgc2VlbiBieQ0KPiB0aGUg
+bWFpbiBBUk02NCBjbHVzdGVyKT8NCj4gDQo+IElmIHRoaXMgaXMgdGhlIGNhc2UsIHlvdSBzaG91
+bGQgcHJvYmFibHkgYWRkIGJhY2sgdGhlDQo+IGNvbXBhdGlibGUgc3RyaW5nLCBhZGQgYSBzZXBh
+cmF0ZSBkZXZpY2UgdHJlZSBiaW5kaW5nDQo+IGZvciBUQ00gbWVtb3JpZXMgYWxvbmcgdGhlIGxp
+bmVzIG9mDQo+IGNvbXBhdGlibGUgPSAiYXJtLGl0Y20iOw0KPiBjb21wYXRpYmxlID0gImFybSxk
+dGNtIjsNCj4gVGhlIHJlZyBhZGRyZXNzIHNob3VsZCB0aGVuIGlkZWFsbHkgYmUgaW50ZXJwcmV0
+ZWQgYnkNCj4gdGhlIEFSTTY0IGtlcm5lbCBhbmQgYXNzaWduZWQgdG8gdGhlIEkvRFRDTS4NCj4g
+DQo+IEknbSBwYWdpbmcgQ2F0YWxpbiBvbiB0aGlzIGJlY2F1c2UgSSBkbyBub3Qga25vdyBpZg0K
+PiBBUk02NCByZWFsbHkgaGFzIFtJfERdVENNIG9yIGlmIHRoaXMgaXMgc29tZSBpbnZlbnRpb24N
+Cj4gb2YgWGlsaW54J3MuDQo+IA0KPiBZb3VycywNCj4gTGludXMgV2FsbGVpag0KDQpBcyB5b3Ug
+c2FpZCwgdGhpcyBpcyAganVzdCByZWd1bGFyIEFSTSBUQ00gbWVtb3J5IChhcyBzZWVuIGJ5IHRo
+ZSBtYWluIEFSTTY0IGNsdXN0ZXIpLiBZZXMgSSBjYW4gYWRkIGJhY2sgdGhlIGNvbXBhdGlibGUg
+c3RyaW5nLCB0aG91Z2ggbWF5YmUganVzdCAidGNtIiBvciAieGxueCx0Y20iIHRob3VnaCB0aGVy
+ZSBpcyBhbHNvIHRjbSBjb21wYXQgc3RyaW5nIGZvciB0aGUgVEkgcmVtb3RlcHJvYyBkcml2ZXIg
+bGF0ZXIgbGlzdGVkIGJlbG93DQoNClNvIEkgdGhpbmsgSSBhbnN3ZXJlZCB0aGlzIGFib3ZlLCBi
+dXQgdGhlIEFQVSAoYTUzIGNsdXN0ZXIpIHNlZXMgdGhlIFRDTSBiYW5rcyAocmVmZXJyZWQgdG8g
+b24gWnlucSBVbHRyYVNjYWxlKykgYXQgVENNIGJhbmtzIDBBIGFuZCAwQiBhcyAweGZmZTAwMDAw
+IGFuZCAweGZmZTIwMDAwIHJlc3BlY3RpdmVseSBhbmQgVENNIGJhbmtzIDFBIGFuZCAxQiBhdCAw
+eGZmZTkwMDAwIGFuZCAweGZmZWIwMDAwLiBBbHNvIGl0IGlzIHNpbWlsYXIgdG8gdGhlIFRJIGsz
+IFI1IFJlbW90ZXByb2MgZHJpdmVyIGJpbmRpbmcgZm9yIHJlZmVyZW5jZToNCi0gaHR0cHM6Ly9w
+YXRjaHdvcmsua2VybmVsLm9yZy9jb3Zlci8xMTc2Mzc4My8gDQoNClRoZSBwaGFuZGxlIGFycmF5
+IGhlcmUgaXMgdG8gc2VydmUgYXMgYSBsYXRlciBmb3IgdGhlc2Ugbm9kZXMgc28gdGhhdCBsYXRl
+ciBvbiwgaW4gdGhlIFJlbW90ZXByb2MgUjUgZHJpdmVyLCB0aGVzZSBjYW4gYmUgcmVmZXJlbmNl
+ZCB0byBnZXQgc29tZSBpbmZvcm1hdGlvbiB2aWEgdGhlIHBub2RlLWlkIHByb3BlcnR5Lg0KDQpU
+aGUgcmVhc29uIHdlIGhhdmUgdGhlIGNvbXBhdGlibGUsIHJlZywgZXRjLiBpcyBmb3IgU3lzdGVt
+IERUIGVmZm9ydCArIEBTdGVmYW5vIFN0YWJlbGxpbmkgDQoNClRoYXQgYmVpbmcgc2FpZCwgd2Ug
+Y2FuIGNoYW5nZSB0aGlzIGFyb3VuZCB0byBjb3VwbGUgdGhlIFRDTSBiYW5rIG5vZGVzIGludG8g
+dGhlIFI1IGFzIHdlIGhhdmUgSW4gb3VyIHByZXNlbnQsIGludGVybmFsIGltcGxlbWVudGF0aW9u
+IGF0IA0KLSBodHRwczovL2dpdGh1Yi5jb20vWGlsaW54L2xpbnV4LXhsbngvYmxvYi9tYXN0ZXIv
+RG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL3JlbW90ZXByb2MveGlsaW54JTJDenlu
+cW1wLXI1LXJlbW90ZXByb2MudHh0IA0KLSBodHRwczovL2dpdGh1Yi5jb20vWGlsaW54L2xpbnV4
+LXhsbngvYmxvYi9tYXN0ZXIvZHJpdmVycy9yZW1vdGVwcm9jL3p5bnFtcF9yNV9yZW1vdGVwcm9j
+LmMgDQp0aGUgVENNIG5vZGVzIGFyZSBjb3VwbGVkIGluIHRoZSBSNSBidXQgYWZ0ZXIgc29tZSBw
+cmV2aW91cyByZXZpZXcgb24gdGhpcyBsaXN0LCBpdCB3YXMgbW92ZWQgdG8gaGF2ZSB0aGUgVENN
+IG5vZGVzIGRlY291cGxlZCBmcm9tIHRoZSBSNSBub2RlDQoNCkkgYW0gbm90IHN1cmUgd2hhdCB5
+b3UgbWVhbiBvbiB0aGUgQXJtNjQgaGFuZGxpbmcgb2YgVENNIG1lbW9yeS4gVmlhIHRoZSBhcmNo
+aXRlY3R1cmUgb2YgdGhlIFNvQyBodHRwczovL3d3dy54aWxpbnguY29tL3N1cHBvcnQvZG9jdW1l
+bnRhdGlvbi91c2VyX2d1aWRlcy91ZzEwODUtenlucS11bHRyYXNjYWxlLXRybS5wZGYgSSBrbm93
+IHRoYXQgdGhlIEE1MyBjbHVzdGVyIGNhbiBzZWUgdGhlIGFic29sdXRlIGFkZHJlc3NlcyBvZiB0
+aGUgUjUgY2x1c3RlciBzbyB0aGUgdHJhbnNsYXRpb24gaXMgKkkgdGhpbmsqIGRvbmUgYXMgeW91
+IGRlc2NyaWJlIHdpdGggdGhlIENQMTUgaW5zdHJ1Y3Rpb25zIHlvdSBsaXN0ZWQuDQoNCg0K
