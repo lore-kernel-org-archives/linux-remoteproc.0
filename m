@@ -2,276 +2,302 @@ Return-Path: <SRS0=Nf08=DW=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69A2FC433DF
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 15 Oct 2020 18:31:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2ACA9C433DF
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 15 Oct 2020 19:32:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D139E2076D
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 15 Oct 2020 18:31:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C2B90206DD
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 15 Oct 2020 19:32:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="o0c2Mvxb"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="iviUzr7N"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728884AbgJOSb0 (ORCPT
+        id S1730276AbgJOTcq (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 15 Oct 2020 14:31:26 -0400
-Received: from mail-bn8nam12on2046.outbound.protection.outlook.com ([40.107.237.46]:46351
-        "EHLO NAM12-BN8-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728820AbgJOSbZ (ORCPT
+        Thu, 15 Oct 2020 15:32:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47914 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730192AbgJOTcq (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 15 Oct 2020 14:31:25 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Xfx84NtruvB24oZId+tAn98MDCd2hMQFZMU5aXCDAtmFOHmTwkRg+/90Djg4E2RM+/YdDX742TWMzN1LjvNWbGjVGrSp+NQkxuC+Y8OMQqG8eg2OoLnzSd6ZOaMbHJgShG3uYg5y63e1N+PnKTzXAgyfGpndyANb67dk11ZLuCeh2RyMtVUCoXthuCKNbzgtJYPRv8FvTJfFE7VzSxvFQMOPxD3LFlAcVPfQVSXLt5mIl6cdQUCKjVoWYdgmvcOR7rTcNMO6mZuZi0fDr/ncNPGJ9PflODgx0Z1UkJqVaHVkAhFcy17aneeEZvbu+FEWsw/zfwIyH0KOY/hRZ6ICYw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=D6JGVnlDhpWUuddY/MgZ0kLygQiHA/ZjLmKOOngw3D8=;
- b=Vg+1nAcPkZQIRyQbqiYnvT1jJYgg4l8tH+s7J93IFOHUl9V2PEHl1/buoiZdqiKwB8y/ldt78QpLbmJYYOOYawvQA2YOcByuhAFFd8+1UJMWG6ahnw5adJmsoRDG9masfqOifoOmkFXrzkZAbbcr+1CPCCszNSS+8UI+sMKM/4VV/3fvCrmWD4GWo0eRb7VfhCQPFziIu5L3Ch8YsD3pR5wuF6v7who6EL0LLLjSALvS1ddp1dEVq2m/ljo6bAMSJJAC5KRiibeE7FZhaaD/CLeY8CeRroXjiLWeU+dtt4NL+jcX09mNOyB5Q53Xut6SmS2TtrV7HE+vDrSj0ecjmQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=xilinx.com; dmarc=pass action=none header.from=xilinx.com;
- dkim=pass header.d=xilinx.com; arc=none
+        Thu, 15 Oct 2020 15:32:46 -0400
+Received: from mail-pj1-x1043.google.com (mail-pj1-x1043.google.com [IPv6:2607:f8b0:4864:20::1043])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 30A67C0613D2
+        for <linux-remoteproc@vger.kernel.org>; Thu, 15 Oct 2020 12:32:46 -0700 (PDT)
+Received: by mail-pj1-x1043.google.com with SMTP id gv6so189864pjb.4
+        for <linux-remoteproc@vger.kernel.org>; Thu, 15 Oct 2020 12:32:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=xilinx.onmicrosoft.com; s=selector2-xilinx-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=D6JGVnlDhpWUuddY/MgZ0kLygQiHA/ZjLmKOOngw3D8=;
- b=o0c2Mvxb+/3UxXQwMChmZ3zZxTyw7FPcOeeVBuBuGDXGZRbbP+eZA+5QS8FBdmg9mnfwt2cb1zgqK3Y25t2kpOuklODv9YdtcxV7mN9wqhw8ogCW3V+r1sHa+lt99ErxdAWQHTER2QY5nUjAPtc3YbrN8YBx33GmCsDJ4ZkLlD4=
-Received: from BYAPR02MB4407.namprd02.prod.outlook.com (2603:10b6:a03:55::31)
- by BY5PR02MB6420.namprd02.prod.outlook.com (2603:10b6:a03:1b2::32) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3477.22; Thu, 15 Oct
- 2020 18:31:21 +0000
-Received: from BYAPR02MB4407.namprd02.prod.outlook.com
- ([fe80::113d:722:5f93:d29e]) by BYAPR02MB4407.namprd02.prod.outlook.com
- ([fe80::113d:722:5f93:d29e%6]) with mapi id 15.20.3477.021; Thu, 15 Oct 2020
- 18:31:21 +0000
-From:   Ben Levinsky <BLEVINSK@xilinx.com>
-To:     "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>
-CC:     "Ed T. Mooring" <emooring@xilinx.com>,
-        Stefano Stabellini <stefanos@xilinx.com>,
-        Michal Simek <michals@xilinx.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "michael.auchter@ni.com" <michael.auchter@ni.com>,
-        "mathieu.poirier@linaro.org" <mathieu.poirier@linaro.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-Subject: RE: RE: RE: [PATCH v18 5/5] remoteproc: Add initial zynqmp R5
- remoteproc driver
-Thread-Topic: RE: RE: [PATCH v18 5/5] remoteproc: Add initial zynqmp R5
- remoteproc driver
-Thread-Index: AQHWmzGLZdXOwIwjxE6bV2X+UlYToKmJZsqAgAGMKFCAACbWgIAAAZmggAAMCYCADeKZ4A==
-Date:   Thu, 15 Oct 2020 18:31:20 +0000
-Message-ID: <BYAPR02MB44072A6C1ACAA0C459390895B5020@BYAPR02MB4407.namprd02.prod.outlook.com>
-References: <20201005160614.3749-1-ben.levinsky@xilinx.com>
- <20201005160614.3749-6-ben.levinsky@xilinx.com>
- <20201005193449.GA701433@xaphan>
- <BYAPR02MB4407B7F06962DB30ED90761FB50D0@BYAPR02MB4407.namprd02.prod.outlook.com>
- <20201006213143.GD701433@xaphan>
- <BYAPR02MB4407B356B56B9A1D561950B7B50D0@BYAPR02MB4407.namprd02.prod.outlook.com>
- <20201006222031.GA809209@xaphan>
-In-Reply-To: <20201006222031.GA809209@xaphan>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
-X-MS-TNEF-Correlator: 
-authentication-results: vger.kernel.org; dkim=none (message not signed)
- header.d=none;vger.kernel.org; dmarc=none action=none header.from=xilinx.com;
-x-originating-ip: [149.199.62.133]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: de157a34-4a40-47ae-c7fb-08d871388393
-x-ms-traffictypediagnostic: BY5PR02MB6420:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <BY5PR02MB64208AB10B762EC4E731C60FB5020@BY5PR02MB6420.namprd02.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:10000;
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: I1TWjhW+62in+FO6J9xp5GyHCOnmG/Zt8CogH3q5N7IZeY9nwTKKBiJEhQeLpmlTYzLAWRSVObBgKydbp9oaVKmYFW8u1WqeLB2XxShfw0gKyrO87YmODAu256EZUUKrtbwx1mGFSCcLRZlaxeq+Xc7+x77jRIRwDKV7FDddagyyA72GMiiE/0wE3iBiG9g7Ss3sDbedo+FhAKbCXqFHnBgf+YAh1+i6qExZkJntUifw+G3wJ/MD0V39wuGnwPh8GXyeUJyQ2fSe/6mEwDHeuss+3YeChvr0EUnysBweNZI4/XMbgQl2PER/5f4/c7GbWraq4UgDLD6otguZfOJlKg==
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR02MB4407.namprd02.prod.outlook.com;PTR:;CAT:NONE;SFS:(346002)(136003)(39860400002)(366004)(376002)(396003)(4326008)(9686003)(478600001)(2906002)(7696005)(86362001)(8676002)(186003)(26005)(54906003)(53546011)(6506007)(76116006)(8936002)(64756008)(316002)(66476007)(66556008)(66946007)(66446008)(83380400001)(52536014)(5660300002)(33656002)(55016002)(71200400001)(6916009);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata: JEMWLCRRr3jpinI463v41MfWMQEC2cJKRL+wKuRL9u7eUOIqde5lSSGNW1FoxgKexlsZep2+3g5uZeFgxW1uu1q0JcAUKMLiHJzCP93Fataqzx8ef/qnGPtwfA5eeWM3Q7yPS0gjCDXwCFE3Lcx4REqptAkS29anbDYPZdSCalSkIdLgVPx277I1L4s3Xma/bGK90YYmtQVfUJbP8rahUygbVcGlqbW1OWOqorZkZV8NFseGqQOtJWqQ01ZLkPIy3TqmUoup2TwNdjJUQXxxwliRhNw7a0zabd/WWG2pk3PSDwrRst6U6cIEovftZXzmGWlgBM9XvT0UcS2JLLxxhlCYyFgFeEK02QukR+FWn+WOqLc/bRU2rg0wr6BhtgWX9PEJHvRQHorZnvfu5bLH8jJ/mLX9Gv+3Gi3jRXFQNuIM7ySPDRv+RL+lfxonEQaB16j+EPDQJi9FSapEQ/BwtjC/OGmZNHrYVPJWnGDgLn38TWDRsHwPClqJeJV+DZQO4HYI7OWT6RWEtj0ypo/41ZEn4s+J+YdV7MA8VckGEPSuQ8GyMDlhrLCpgGOR0UCrDCZc1OEehqTGH62JpXUMGKoEUOpFBjWKNZrxuyFE83g2+ut2cSsiW21v78zhWA+kbI1hfUCcAXRDUBVMfM1vsA==
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=w1x73aeVF4EkLTSqICXzgDqIALvOgzawfcc3sqn6vPQ=;
+        b=iviUzr7NZRtKUH3I6clYxSnWDP6+48L0qnDd46FIK30VhIEJjHqJQne9FNJYEHsn7O
+         TewtMVUsg+Ssl6JnP7FiofbkOEzSYoaRcSqCEnW1rTSUEAKsGNUWYV0/bvDtaWX9RdtS
+         YgbZOlDNDLzHl0VZtOjGm3phQdXgDm+4h4ldnP6Anp46fn+kOa/zXzCrgGe0wFBUjkHQ
+         +9gTo7EOWBYLLW/tcTVQRpazvgNYJCG39GTzM7+9j6UD/zCqIatn6jEivDXtNL4IGgje
+         MaFRJ+RnmqiCv1NWiwAV5Cp/hmeCrJTEvHwCOJNQNzCM1YZY9hOs8Eqqo01rk/PhFZeZ
+         +8zw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=w1x73aeVF4EkLTSqICXzgDqIALvOgzawfcc3sqn6vPQ=;
+        b=PZ5i60pt6lIvKYr6yGtCWnW8JGNeJe76sRL3YKaDSueYvZTGCg223Oy47MlagyKM/X
+         xEbFtR+DJTOLe/IznaJHEU0JPemPm3SQqABifd3OUS/H8OgL3eBiHAGffr03HL+ZegKu
+         69Hf9bpen7++y1Z4kc1anN6DLRFsGTTkWmStWTZFi8SHYkQEXtPScqpzLg+npNPNxhFM
+         F2+KD6H1jkWt0v75z/NmvTx0hbiXFjeCdWG2Oy/B04tQ38xxth0exbiFWStoSoYLMxbe
+         ARdlLgx2uW3dZbF14eOhMV3fgfErHAmY1/TzCBBCPuq5k8m82zap/J1pE+9ykQxaqX7l
+         tGgg==
+X-Gm-Message-State: AOAM530JUuMypX4svMfwSlKL/Kp7lrnZ5VI9Sbz4GivrwuNVSmwI5PEK
+        YomzmvWbcc4K3loGq+tCn6iPVg==
+X-Google-Smtp-Source: ABdhPJxwqd+LeNqpUUpKqYt+aCk43M6SKGHruqF+l60sOzOWsXKGKKWn/dKM2kWjLIwJ4RYtN6BoMw==
+X-Received: by 2002:a17:902:b7c3:b029:d4:bc6e:8aae with SMTP id v3-20020a170902b7c3b02900d4bc6e8aaemr296093plz.12.1602790365641;
+        Thu, 15 Oct 2020 12:32:45 -0700 (PDT)
+Received: from xps15 (S0106002369de4dac.cg.shawcable.net. [68.147.8.254])
+        by smtp.gmail.com with ESMTPSA id y137sm54277pfc.77.2020.10.15.12.32.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 15 Oct 2020 12:32:45 -0700 (PDT)
+Date:   Thu, 15 Oct 2020 13:32:43 -0600
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+To:     Arnaud POULIQUEN <arnaud.pouliquen@st.com>
+Cc:     "ohad@wizery.com" <ohad@wizery.com>,
+        "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>,
+        "guennadi.liakhovetski@linux.intel.com" 
+        <guennadi.liakhovetski@linux.intel.com>,
+        "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 2/9] rpmsg: Introduce __rpmsg{16|32|64} types
+Message-ID: <20201015193243.GD1450102@xps15>
+References: <20201013232519.1367542-1-mathieu.poirier@linaro.org>
+ <20201013232519.1367542-3-mathieu.poirier@linaro.org>
+ <03448851-b959-3f56-5618-d31a7b712392@st.com>
 MIME-Version: 1.0
-X-OriginatorOrg: xilinx.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: BYAPR02MB4407.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: de157a34-4a40-47ae-c7fb-08d871388393
-X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Oct 2020 18:31:21.0044
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 657af505-d5df-48d0-8300-c31994686c5c
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 9M+XqgW7tPzgBGMxzFhG5jG/fZDIWaQbo+Zg+DTVnEhpQW5JuV6Zf3pb0AKfxwEU2t14z5Ndl2RJ5+qYYKy9MA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR02MB6420
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <03448851-b959-3f56-5618-d31a7b712392@st.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi All,
+Good day,
 
-> -----Original Message-----
-> From: Michael Auchter <michael.auchter@ni.com>
-> Sent: Tuesday, October 6, 2020 3:21 PM
-> To: Ben Levinsky <BLEVINSK@xilinx.com>
-> Cc: Ed T. Mooring <emooring@xilinx.com>; Stefano Stabellini
-> <stefanos@xilinx.com>; Michal Simek <michals@xilinx.com>;
-> devicetree@vger.kernel.org; mathieu.poirier@linaro.org; linux-
-> remoteproc@vger.kernel.org; linux-kernel@vger.kernel.org;
-> robh+dt@kernel.org; linux-arm-kernel@lists.infradead.org
-> Subject: Re: RE: RE: [PATCH v18 5/5] remoteproc: Add initial zynqmp R5
-> remoteproc driver
->=20
-> On Tue, Oct 06, 2020 at 09:46:38PM +0000, Ben Levinsky wrote:
-> >
-> >
-> > > -----Original Message-----
-> > > From: Michael Auchter <michael.auchter@ni.com>
-> > > Sent: Tuesday, October 6, 2020 2:32 PM
-> > > To: Ben Levinsky <BLEVINSK@xilinx.com>
-> > > Cc: Ed T. Mooring <emooring@xilinx.com>; sunnyliangjy@gmail.com;
-> > > punit1.agrawal@toshiba.co.jp; Stefano Stabellini <stefanos@xilinx.com=
->;
-> > > Michal Simek <michals@xilinx.com>; devicetree@vger.kernel.org;
-> > > mathieu.poirier@linaro.org; linux-remoteproc@vger.kernel.org; linux-
-> > > kernel@vger.kernel.org; robh+dt@kernel.org; linux-arm-
-> > > kernel@lists.infradead.org
-> > > Subject: Re: RE: [PATCH v18 5/5] remoteproc: Add initial zynqmp R5
-> > > remoteproc driver
-> > >
-> > > On Tue, Oct 06, 2020 at 07:15:49PM +0000, Ben Levinsky wrote:
-> > > >
-> > > > Hi Michael,
-> > > >
-> > > > Thanks for the review
-> > > >
-> > >
-> > > < ... snip ... >
-> > >
-> > > > > > +	z_rproc =3D rproc->priv;
-> > > > > > +	z_rproc->dev.release =3D zynqmp_r5_release;
-> > > > >
-> > > > > This is the only field of z_rproc->dev that's actually initialize=
-d, and
-> > > > > this device is not registered with the core at all, so zynqmp_r5_=
-release
-> > > > > will never be called.
-> > > > >
-> > > > > Since it doesn't look like there's a need to create this addition=
-al
-> > > > > device, I'd suggest:
-> > > > > 	- Dropping the struct device from struct zynqmp_r5_rproc
-> > > > > 	- Performing the necessary cleanup in the driver remove
-> > > > > 	  callback instead of trying to tie it to device release
-> > > >
-> > > > For the most part I agree. I believe the device is still needed for
-> > > > the mailbox client setup.
-> > > >
-> > > > As the call to mbox_request_channel_byname() requires its own devic=
-e
-> > > > that has the corresponding child node with the corresponding
-> > > > mbox-related properties.
-> > > >
-> > > > With that in mind, is it still ok to keep the device node?
-> > >
-> > > Ah, I see. Thanks for the clarification!
-> > >
-> > > Instead of manually dealing with the device node creation for the
-> > > individual processors, perhaps it makes more sense to use
-> > > devm_of_platform_populate() to create them. This is also consistent w=
-ith
-> > > the way the TI K3 R5F remoteproc driver does things.
-> > >
-> > > Cheers,
-> > >  Michael
-> >
-> > I've been working on this today for a way around it and found one that =
-I
-> think works with your initial suggestion,
-> > - in z_rproc, change dev from struct device to struct device*
-> > 	^ the above is shown the usage thereof below. It is there for the
-> mailbox setup.
-> > - in driver probe:
-> > 	- add list_head to keep track of each core's z_rproc and for the drive=
-r
-> remove clean up
-> > 	- in each core's probe (zynqmp_r5_probe) dothe following:
-> >
-> >
-> >        rproc_ptr =3D rproc_alloc(dev, dev_name(dev), &zynqmp_r5_rproc_o=
-ps,
-> >                                                   NULL, sizeof(struct z=
-ynqmp_r5_rproc));
-> >         if (!rproc_ptr)
-> >                 return -ENOMEM;
-> >         z_rproc =3D rproc_ptr->priv;
-> >         z_rproc->dt_node =3D node;
-> >         z_rproc->rproc =3D rproc_ptr;
-> >         z_rproc->dev =3D &rproc_ptr->dev;
-> >         z_rproc->dev->of_node =3D node;
-> > where node is the specific R5 core's of_node/ Device tree node.
-> >
-> > the above preserves most of the mailbox setup code.
->=20
-> I see how this works, but it feels a bit weird to me to be overriding
-> the remoteproc dev's of_node ptr. Personally I find the
-> devm_of_platform_populate() approach a bit less confusing.
->=20
-> But, it's also not my call to make ;). Perhaps a remoteproc maintainer
-> can chime in here.
->=20
-> >
+On Wed, Oct 14, 2020 at 06:31:49PM +0200, Arnaud POULIQUEN wrote:
+> Hi Mathieu,
+> 
+> On 10/14/20 1:25 AM, Mathieu Poirier wrote:
+> > Introduce __rpmsg{16|32|64} types along with byte order conversion
+> > functions based on an rpmsg_device operation as a foundation to
+> > make RPMSG modular and transport agnostic.
+> > 
+> > Suggested-by: Guennadi Liakhovetski <guennadi.liakhovetski@linux.intel.com>
+> > Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+> > ---
+> >  include/linux/rpmsg.h            | 51 ++++++++++++++++++++++++
+> >  include/linux/rpmsg_byteorder.h  | 67 ++++++++++++++++++++++++++++++++
+> >  include/uapi/linux/rpmsg_types.h | 11 ++++++
+> >  3 files changed, 129 insertions(+)
+> >  create mode 100644 include/linux/rpmsg_byteorder.h
+> >  create mode 100644 include/uapi/linux/rpmsg_types.h
+> > 
+> > diff --git a/include/linux/rpmsg.h b/include/linux/rpmsg.h
+> > index 9fe1c54ae995..165e4c6d4cd3 100644
+> > --- a/include/linux/rpmsg.h
+> > +++ b/include/linux/rpmsg.h
+> > @@ -17,6 +17,7 @@
+> >  #include <linux/kref.h>
+> >  #include <linux/mutex.h>
+> >  #include <linux/poll.h>
+> > +#include <linux/rpmsg_byteorder.h>
+> >  
+> >  #define RPMSG_ADDR_ANY		0xFFFFFFFF
+> >  
+> > @@ -40,6 +41,7 @@ typedef int (*rpmsg_rx_cb_t)(struct rpmsg_device *, void *, int, void *, u32);
+> >  
+> >  /**
+> >   * struct rpmsg_device_ops - indirection table for the rpmsg_device operations
+> > + * @is_little_endian:	returns true if using little endian byte ordering
+> >   * @create_ept:		create backend-specific endpoint, required
+> >   * @announce_create:	announce presence of new channel, optional
+> >   * @announce_destroy:	announce destruction of channel, optional
+> > @@ -49,6 +51,7 @@ typedef int (*rpmsg_rx_cb_t)(struct rpmsg_device *, void *, int, void *, u32);
+> >   * advertise new channels implicitly by creating the endpoints.
+> >   */
+> >  struct rpmsg_device_ops {
+> > +	bool (*is_little_endian)(struct rpmsg_device *rpdev);
+> >  	struct rpmsg_endpoint *(*create_ept)(struct rpmsg_device *rpdev,
+> >  					    rpmsg_rx_cb_t cb, void *priv,
+> >  					    struct rpmsg_channel_info chinfo);
+> > @@ -129,6 +132,54 @@ struct rpmsg_driver {
+> >  	int (*callback)(struct rpmsg_device *, void *, int, void *, u32);
+> >  };
+> >  
+> > +static inline u16 rpmsg16_to_cpu(struct rpmsg_device *rpdev, __rpmsg16 val)
+> > +{
+> > +	if (!rpdev || !rpdev->ops || !rpdev->ops->is_little_endian)
+> > +		return __rpmsg16_to_cpu(rpmsg_is_little_endian(), val);
+> > +	else
+> > +		return __rpmsg16_to_cpu(rpdev->ops->is_little_endian(rpdev), val);
+> > +}
+> > +
+> > +static inline __rpmsg16 cpu_to_rpmsg16(struct rpmsg_device *rpdev, u16 val)
+> > +{
+> > +	if (!rpdev || !rpdev->ops || !rpdev->ops->is_little_endian)
+> > +		return __cpu_to_rpmsg16(rpmsg_is_little_endian(), val);
+> > +	else
+> > +		return __cpu_to_rpmsg16(rpdev->ops->is_little_endian(rpdev), val);
+> > +}
+> > +
+> > +static inline u32 rpmsg32_to_cpu(struct rpmsg_device *rpdev, __rpmsg32 val)
+> > +{
+> > +	if (!rpdev || !rpdev->ops || !rpdev->ops->is_little_endian)
+> > +		return __rpmsg32_to_cpu(rpmsg_is_little_endian(), val);
+> > +	else
+> > +		return __rpmsg32_to_cpu(rpdev->ops->is_little_endian(rpdev), val);
+> > +}
+> > +
+> > +static inline __rpmsg32 cpu_to_rpmsg32(struct rpmsg_device *rpdev, u32 val)
+> > +{
+> > +	if (!rpdev || !rpdev->ops || !rpdev->ops->is_little_endian)
+> > +		return __cpu_to_rpmsg32(rpmsg_is_little_endian(), val);
+> > +	else
+> > +		return __cpu_to_rpmsg32(rpdev->ops->is_little_endian(rpdev), val);
+> > +}
+> > +
+> > +static inline u64 rpmsg64_to_cpu(struct rpmsg_device *rpdev, __rpmsg64 val)
+> > +{
+> > +	if (!rpdev || !rpdev->ops || !rpdev->ops->is_little_endian)
+> > +		return __rpmsg64_to_cpu(rpmsg_is_little_endian(), val);
+> > +	else
+> > +		return __rpmsg64_to_cpu(rpdev->ops->is_little_endian(rpdev), val);
+> > +}
+> > +
+> > +static inline __rpmsg64 cpu_to_rpmsg64(struct rpmsg_device *rpdev, u64 val)
+> > +{
+> > +	if (!rpdev || !rpdev->ops || !rpdev->ops->is_little_endian)
+> > +		return __cpu_to_rpmsg64(rpmsg_is_little_endian(), val);
+> > +	else
+> > +		return __cpu_to_rpmsg64(rpdev->ops->is_little_endian(rpdev), val);
+> > +}
+> > +
+> >  #if IS_ENABLED(CONFIG_RPMSG)
+> >  
+> >  int register_rpmsg_device(struct rpmsg_device *dev);
+> > diff --git a/include/linux/rpmsg_byteorder.h b/include/linux/rpmsg_byteorder.h
+> > new file mode 100644
+> > index 000000000000..c0f565dbad6d
+> > --- /dev/null
+> > +++ b/include/linux/rpmsg_byteorder.h
+> > @@ -0,0 +1,67 @@
+> > +/* SPDX-License-Identifier: GPL-2.0 */
+> > +/*
+> > + * Follows implementation found in linux/virtio_byteorder.h
+> > + */
+> > +#ifndef _LINUX_RPMSG_BYTEORDER_H
+> > +#define _LINUX_RPMSG_BYTEORDER_H
+> > +#include <linux/types.h>
+> > +#include <uapi/linux/rpmsg_types.h>
+> > +
+> > +static inline bool rpmsg_is_little_endian(void)
+> > +{
+> > +#ifdef __LITTLE_ENDIAN
+> > +	return true;
+> > +#else
+> > +	return false;
+> > +#endif
+> > +}
+> 
+> A suggestion:
+> 
+> static inline bool rpmsg_is_little_endian(void)
+> #if defined(__BYTE_ORDER)
+> #  if __BYTE_ORDER == __BIG_ENDIAN
+> 	return true;
+> #  elif __BYTE_ORDER == __LITTLE_ENDIAN
+> 	return false;
+> #  else
+> #    warning "unknown endianess, set to little by default"
+> 	return true;
+> #  endif
+> #endif
+> }
 
-Ping for comments here.
+I found that __BYTE_ORDER is not defined stm32mp157 - have you used it before? 
 
-I looked at the TI R5 remoteproc driver and from what I can see, it seems t=
-he crux of the line:=20
-z_rproc->dev->of_node =3D node;=20
-is as follows:
-
-the TI driver only has 1 R5-related remoteproc node. But in this it has inf=
-ormation for both cores so
-the rproc_alloc's device that is passed in is sufficient for subsequent mai=
-lbox calls. This is because the device
-here also has a device_node that has the mbox information.
-
-The Xilinx driver differs in that while there is a cluster device tree node=
- that has the remoteproc-related
-Information, it ALSO has child R5 cores that have their own TCM bank and mb=
-ox information.=20
-
-As a result of this difference the use of devm_of_populate would not remove=
- the use of the line of code in question because the mailbox setup calls la=
-ter on still require the device field to have a corresponding device tree n=
-ode that
-Has the mailbox information.
-
-If it is desired to see the use of devm_of_populate and more close alignmen=
-t to the TI driver that has been merged then the Xilinx R5 driver bindings =
-can instead have the TCM bank info, memory-regions, meta-memory-regions int=
-o R5 core-specific lists which resembles how the TI R5 driver has R5 core-s=
-pecific properties. At this point just trying to suss out some direction in=
- this patch series.
-
-Your feedback and review is much appreciated,
-Ben
-
-
-> >
-> > With this, I have already successfully done the following in a v19 patc=
-h
-> > - move all the previous driver release code to remove
-> > - able to probe, start/stop r5, driver remove repeatedly
-> >
-> > Also, this mimics the TI R5 driver code as each core's rproc has a list=
-_head
-> and they have a structure for the cluster which among other things mainta=
-ins
-> a linked list of the cores' specific rproc information.
-> >
-> > Thanks
-> > Ben
+> 
+> Otherwise
+> 
+> Reviewed-by:  Arnaud Pouliquen <arnaud.pouliquen@st.com>
+> 
+> Thanks,
+> Arnaud
+> 
+> > +
+> > +static inline u16 __rpmsg16_to_cpu(bool little_endian, __rpmsg16 val)
+> > +{
+> > +	if (little_endian)
+> > +		return le16_to_cpu((__force __le16)val);
+> > +	else
+> > +		return be16_to_cpu((__force __be16)val);
+> > +}
+> > +
+> > +static inline __rpmsg16 __cpu_to_rpmsg16(bool little_endian, u16 val)
+> > +{
+> > +	if (little_endian)
+> > +		return (__force __rpmsg16)cpu_to_le16(val);
+> > +	else
+> > +		return (__force __rpmsg16)cpu_to_be16(val);
+> > +}
+> > +
+> > +static inline u32 __rpmsg32_to_cpu(bool little_endian, __rpmsg32 val)
+> > +{
+> > +	if (little_endian)
+> > +		return le32_to_cpu((__force __le32)val);
+> > +	else
+> > +		return be32_to_cpu((__force __be32)val);
+> > +}
+> > +
+> > +static inline __rpmsg32 __cpu_to_rpmsg32(bool little_endian, u32 val)
+> > +{
+> > +	if (little_endian)
+> > +		return (__force __rpmsg32)cpu_to_le32(val);
+> > +	else
+> > +		return (__force __rpmsg32)cpu_to_be32(val);
+> > +}
+> > +
+> > +static inline u64 __rpmsg64_to_cpu(bool little_endian, __rpmsg64 val)
+> > +{
+> > +	if (little_endian)
+> > +		return le64_to_cpu((__force __le64)val);
+> > +	else
+> > +		return be64_to_cpu((__force __be64)val);
+> > +}
+> > +
+> > +static inline __rpmsg64 __cpu_to_rpmsg64(bool little_endian, u64 val)
+> > +{
+> > +	if (little_endian)
+> > +		return (__force __rpmsg64)cpu_to_le64(val);
+> > +	else
+> > +		return (__force __rpmsg64)cpu_to_be64(val);
+> > +}
+> > +
+> > +#endif /* _LINUX_RPMSG_BYTEORDER_H */
+> > diff --git a/include/uapi/linux/rpmsg_types.h b/include/uapi/linux/rpmsg_types.h
+> > new file mode 100644
+> > index 000000000000..36e3b9404391
+> > --- /dev/null
+> > +++ b/include/uapi/linux/rpmsg_types.h
+> > @@ -0,0 +1,11 @@
+> > +/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+> > +#ifndef _UAPI_LINUX_RPMSG_TYPES_H
+> > +#define _UAPI_LINUX_RPMSG_TYPES_H
+> > +
+> > +#include <linux/types.h>
+> > +
+> > +typedef __u16 __bitwise __rpmsg16;
+> > +typedef __u32 __bitwise __rpmsg32;
+> > +typedef __u64 __bitwise __rpmsg64;
+> > +
+> > +#endif /* _UAPI_LINUX_RPMSG_TYPES_H */
+> > 
