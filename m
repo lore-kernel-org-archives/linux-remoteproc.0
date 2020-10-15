@@ -7,62 +7,60 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 639CCC433DF
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 15 Oct 2020 02:29:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32091C433E7
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 15 Oct 2020 02:30:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DC60122257
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 15 Oct 2020 02:29:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BAFF220757
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 15 Oct 2020 02:30:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="GX8ioI7u"
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="FCZv8toE"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726867AbgJOC31 (ORCPT
+        id S1727489AbgJOCaO (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 14 Oct 2020 22:29:27 -0400
-Received: from mail-eopbgr60043.outbound.protection.outlook.com ([40.107.6.43]:13121
+        Wed, 14 Oct 2020 22:30:14 -0400
+Received: from mail-eopbgr60089.outbound.protection.outlook.com ([40.107.6.89]:48357
         "EHLO EUR04-DB3-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725977AbgJOC31 (ORCPT
+        id S1725977AbgJOCaO (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 14 Oct 2020 22:29:27 -0400
+        Wed, 14 Oct 2020 22:30:14 -0400
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=BJhK/44ukMYeyF53Ml4UBz3C/lvBJUy7HyiFkl0trCP+2AmtnLyFqo+5DSA9shgTffVDjNZfx5O/L1BkMtvLC2RGXi4zE8PbVEzFF7Lb8PHA3PBhjV3EgveYfw4V2Gq0RDTALNbhCbgl7/jOPaYT2V8ama1JKepUx0YgM4Vci/M93+QLV2yMZLOIl9E0evBDi595BpwMKDa+GoWoP6EeJQIXTbqyEvYzB+u+eIMWnllWc+mxUC+I3vzcFBy/kTjUhbfNcMLYjcp/p6qULaYwLRezWkoUSjiYb130eb4+Mc/dsU0dELFEIXhlSOylZdO3OWUMUrS2KVGMy53qqQswGw==
+ b=HVGjNNCYxmKFmMMvh0cn9hEZmiUiDWX1pb6t/ZRqIcVxMPjdNaT17Calm9jdWzGXR+I2ED5/XC6N5tUCxyu4yeqrHVq5C/Px3DTzYT14nRdT8JIrTEXTO4O/8034MUwma8rCMztmIo6QY8sZ00PKJd2xr6nYzQGLrp8NhDOH27hDyeD60ip5cNcrW3TNJGvBgDvVefTRbMG1P7eutBeXGUwKViXw9eOPohLuukhnkufbAG5kdAhSuPmFIIUipG2pZLLn3+clX91RXpgStBZn7KRydEhe/9H9e+NaJ7mjrjGiMRH7zBANjUywa+n8zBieywJTZ7uGWEqoJ4aJhSZ9EA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=/a2x1IjZobOUYJo1TSzoOIMVygW8LWHqSC1FqWTIYhg=;
- b=XSYUbclKLJgKzxUSzm0vQgmSQ5GA4v6QfrrThnb4iIJCwilkilvsq99y/rL8K7hw1/B+TbwNY9xS71wzz6omUxxufeTXoqs1FD7apjNugLYj3mIXYDXQ+dcWCNH3vgX4zGEO44zMKDM+BQp73VgVXvxJ1/GvNkQsJ7HWk8NGJVRjmrtY3PMSx6de46qacgzvhQtuwg4C4v5KsZuK4zmjlHVgn6Ez4ZhQP0X9WAm2Dl1e5L9QGnat3yUSZ7/aiwwQMo3u+7NJWgJr/g978EWvNMh7aNY06KuSsKBMUV9pOLA0eZl7EzehQNqIIhpntJ856pivElMoC/FQovZB5N7qag==
+ bh=E7MWCW+PRYv9kN3lH03G0SQ0znIVkiG3VrVLh5HUKUM=;
+ b=nK5Wbu7ygTR+tbjqHgTGwmSFbbellPPEMFem1/1mk0UbRv4/qIDAajNYq2VE2MV0QA1yLwA/4TKc4hz0mnStDQ/DVVOWXhivEzazPbipk1YwgXlYVSIer37cSM9wHtFrso5zgZNgsrwppgn4hkUMFFJJcStNSdEpdWpZ3EE7DnSuIW83A+GHQiK9wwKn5Rjm/5HWvt2VlmuvCmrm3u3mnB2SpPvJ40/J+K8FTxe7VDZSb+R0d1NHmMnJOMuOz4Mg217I6DwCaEaGCUK32qBh7P3tKgo/KCWV36oDxBcVyj9WdAEuQj6WmrTc3wsu+VtTZ1e8qyaGXkLBH4D4RhZ4Lw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
  header.d=nxp.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=/a2x1IjZobOUYJo1TSzoOIMVygW8LWHqSC1FqWTIYhg=;
- b=GX8ioI7u6P1NlOn8/pbb28Hc+WLFXbYiQPFUYLXQG9jLscWPgokPR7LscWyBcBEcbMovTpop04/5wNSobNwpVy5lCzVDqDNNhieJW6pJ7W8a4w8OZ9anx+ZE7i7fOSA+7qBSLdJNkdBjuB7sZ60kQyo+j3VrzgpNzmX++n4k/O4=
+ bh=E7MWCW+PRYv9kN3lH03G0SQ0znIVkiG3VrVLh5HUKUM=;
+ b=FCZv8toEqKNfxViR06+XK2WDULPs/KswuTRTjjoczOSJEzGHnusr5dQ/f8gORbiuTaAmlD4YDtCQJnWkT9sidjiR/Y+hgGwswih//t7I62X8co0LnBg+peoDil9HY+rsxjGH03oV1xDIPMmCunAtNFzsjAEQ+DB2+oBgxFF9LWI=
 Received: from DB6PR0402MB2760.eurprd04.prod.outlook.com (2603:10a6:4:a1::14)
  by DB8PR04MB6618.eurprd04.prod.outlook.com (2603:10a6:10:10e::21) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3477.21; Thu, 15 Oct
- 2020 02:29:24 +0000
+ 2020 02:30:11 +0000
 Received: from DB6PR0402MB2760.eurprd04.prod.outlook.com
  ([fe80::35c5:8c71:91f3:6bc6]) by DB6PR0402MB2760.eurprd04.prod.outlook.com
  ([fe80::35c5:8c71:91f3:6bc6%12]) with mapi id 15.20.3455.031; Thu, 15 Oct
- 2020 02:29:24 +0000
+ 2020 02:30:11 +0000
 From:   Peng Fan <peng.fan@nxp.com>
 To:     Mathieu Poirier <mathieu.poirier@linaro.org>,
         "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>,
         "ohad@wizery.com" <ohad@wizery.com>
 CC:     "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH 10/13] remoteproc: Properly deal with a stop request when
- attached
-Thread-Topic: [PATCH 10/13] remoteproc: Properly deal with a stop request when
- attached
-Thread-Index: AQHWe8i11hJitluPOE2eW7GIU2JGu6mYPk/A
-Date:   Thu, 15 Oct 2020 02:29:24 +0000
-Message-ID: <DB6PR0402MB276006E781EF4EAEA3C242D088020@DB6PR0402MB2760.eurprd04.prod.outlook.com>
+Subject: RE: [PATCH 11/13] remoteproc: Properly deal with detach request
+Thread-Topic: [PATCH 11/13] remoteproc: Properly deal with detach request
+Thread-Index: AQHWe8ilgzet8FtReUWF3NILfcsyS6mYPobw
+Date:   Thu, 15 Oct 2020 02:30:11 +0000
+Message-ID: <DB6PR0402MB27608C80AA68CFB8DAB3C6F088020@DB6PR0402MB2760.eurprd04.prod.outlook.com>
 References: <20200826164529.224476-1-mathieu.poirier@linaro.org>
- <20200826164529.224476-11-mathieu.poirier@linaro.org>
-In-Reply-To: <20200826164529.224476-11-mathieu.poirier@linaro.org>
+ <20200826164529.224476-12-mathieu.poirier@linaro.org>
+In-Reply-To: <20200826164529.224476-12-mathieu.poirier@linaro.org>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
@@ -72,15 +70,15 @@ authentication-results: linaro.org; dkim=none (message not signed)
 x-originating-ip: [119.31.174.71]
 x-ms-publictraffictype: Email
 x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 0ee6c7b7-af5e-4cb4-2b1f-08d870b221e4
+x-ms-office365-filtering-correlation-id: fce2cb08-7692-4a5c-44c8-08d870b23d8a
 x-ms-traffictypediagnostic: DB8PR04MB6618:
-x-microsoft-antispam-prvs: <DB8PR04MB66185B573B047C55E36F463688020@DB8PR04MB6618.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:4714;
+x-microsoft-antispam-prvs: <DB8PR04MB66184FAD2052A3E6619D5F0588020@DB8PR04MB6618.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:3173;
 x-ms-exchange-senderadcheck: 1
 x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: oaZ1m7kzYZ2LY25igoIxrj8zWvRS1SpT55cZPMuFlm4WvHpfq2XDcbTDz9jP6PB8VDhw9AVpFOyAoqJs1Hj954ee4KdO6iPIDiIGLUgk1wwA0v7GVfAUHnwxwupf7vFNzUDKm17rD3rl+Fxvx/WuutCQpiULRvcLIKiXOrU/K4uuEFbzy/nT7bGwCxXFf+QQpwP9BhpenKFncHJuQLUiGxSx7nVDJi9spJI7ZfAskbcp5I8mjhkD5/lLaSdSvxsg8MJfF1pafrSGo+f+4LkgXUSLtLUVes7al2p3oeNYj0gl6b+pItLw3KX3ehHY/m12FkLaob0pzuZN7CDEXtjsXA==
+x-microsoft-antispam-message-info: 2jXffkwQJAoYtylqYLuimiRaptP8vc6PaXY6yTYQkqkT69A+LP5oEvqihdyUSEfSm5jPWR2JpbK/ykNaVtgIN9mq2cVZETc4W72OhHab4J+D9RtBW5dS8dFvGjMGx+bKdykQQ7oIUOFKWgUDlWQMrPnxdUgFxRi7NBlEH2OJ2/vjfiuO6TPC4wxLFyKi8DFE8FL/iyanvVVuoAPhKmTAJpoJFKhQSbihAetqqkpSIPC8Ysx/FP5ZSp1h0hlLWyrEwANNDPptb74/SiWnFRTbrLJvWpFK8PrHsHanZbr4i/KVtbY4QGu6b8D/FkZTtvj51fFkOSb9mYtpa0XQcjujkQ==
 x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB6PR0402MB2760.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(136003)(39860400002)(346002)(376002)(396003)(366004)(66476007)(66556008)(66446008)(5660300002)(64756008)(71200400001)(52536014)(186003)(26005)(2906002)(83380400001)(8676002)(8936002)(76116006)(4326008)(6506007)(9686003)(44832011)(54906003)(110136005)(55016002)(33656002)(478600001)(7696005)(66946007)(86362001)(316002);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata: bv55HqTxDOTXmRIzLuz2Hgzc8d3UzEiq0J25c9MS3qkpU9B7eS5gqarotBMDk5G28qKYjWsONRiM2OIKModfNYKLGRZSaY1Q3QT9An+S0Ne/ZegdfYBsU1s311V9yKSBt6vcQxLGeV1GkdIjXPzCtwT41F7wHtVoHaPiMC6Dad7ocRFGFC2HtBR99RXsz4RkkBjKmMYy/igpkXqYAdSMh4IrqHwdq1cdiZvMo2YUrsnIJVtk8jQNMGLQwasiCOA/1G65B7aAc/C/JHewqMJn1FrC1Re/cNns8irdkG0NBKQQ2HH4OrKUexqC62muRWzKvTsvo3B0Lx1G3MVHgHi/WSHDeSJLuO0Hyt3lyXedn7jldF3igzkuiCZdmGedAktc+0shZes7XdM3XrytvILpogc6odx8o8hmxWL/vacixeTfzPB//IsiX+8Fyl6+ncgUjEmtMdRprhlnuUKpwzqjs6O5cQTHA2638j7FFcuy/yuOmfqou0eJKA2+QKVTVMjj0wchDXNouQcaonMVDLO6SgV1ipf+SVRlHCrCPJTjyn8ejZFBbOtpbFavkf8qlC8MinoJIEfEFyA2CKWe6YY3QmwfiWYioLob45W72bKxvX84ECSVqXAHnqqydxOTgT6yyIWVt6EITkk8mAxj6hpHmA==
+x-ms-exchange-antispam-messagedata: OTlzxCp2cFMpzGpCtwqbCzED/QJI5P5/7xwd9pMATQJ+bzLPI7CRcJdf78L9/yLKrCmxptxy67orY0gfPDB+pxllU59VkAafM/688j197Z1BSzONNbl9hsRkGiAAD8Zfeul0e5+eP3XcqgbhRFxvzEKLIapXy3kL+3tqdOlQ6kqbg+lZcGaBDBzLNUmMVL67iQB4DIEbPZ6EdQRlSu6gB/qmOPhATWF4Qpvw1QTAHfk4eaO+MQZbV4BDDKsUlaX/jRoKm+wVp+kEAabzSKcpp4O5cwcLjOfx7jGQ8EMHQfLk9dTo4vzw8b0fkxArMVMAlGfvfnEmUL/dw04Mdkn793HupgaakXgz5Ai4HHgXTV6JmZCL9jyU+wMSULjE63ugGU2lp4dS81BFqmt/tRw9GPxBoQn6J4abv1ZwCOuYOLiEfhIYFwkyuRIwcLOrN8nOu7+H72HMr96KXPw5C8SB7dz3uqC2wRaoTU+dsXbRAVsw2mToEmoko5LBLxsT49S3bEY41gSYaWdrlo5z4zRA5b8Pn7vuCf8/Fwpl8bkonGG8Btkrzf8MGv9mWSZFWcCgcq7CxUMYbWbtof5v3IAfrj2SQlhdE6xebVRn+7BHP0AO9imwCwHzEstFqEoNpiUGKkkx0BwRQOcU+x5i1V1irQ==
 x-ms-exchange-transport-forked: True
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
@@ -88,98 +86,66 @@ MIME-Version: 1.0
 X-OriginatorOrg: nxp.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
 X-MS-Exchange-CrossTenant-AuthSource: DB6PR0402MB2760.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0ee6c7b7-af5e-4cb4-2b1f-08d870b221e4
-X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Oct 2020 02:29:24.6426
+X-MS-Exchange-CrossTenant-Network-Message-Id: fce2cb08-7692-4a5c-44c8-08d870b23d8a
+X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Oct 2020 02:30:11.1276
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: I5PjI81lAGvLoNZvbGdDMdfCi5BSDdcss3KNYnf8j5xLc8+YFD0+nM08aIateXwgv4/PI7j4bLkPcMjs3mVVRA==
+X-MS-Exchange-CrossTenant-userprincipalname: ljxV2C3GYFvrPfKoGKnmFBGJhV7+Jb0zI36dSDSxOD103gWQySawSEm00U1h1cRKbvDWPb8wLg4JjNhWj832AA==
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB8PR04MB6618
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-> Subject: [PATCH 10/13] remoteproc: Properly deal with a stop request when
-> attached
+> Subject: [PATCH 11/13] remoteproc: Properly deal with detach request
 >=20
-> This patch introduces the capability to stop a remote processor that has =
-been
-> attached to by the remoteproc core.  For that to happen a rproc::ops::sto=
-p()
-> operation need to be available.
+> This patch introduces the capability to detach a remote processor that ha=
+s
+> been attached to or booted by the remoteproc core.  For that to happen a
+> rproc::ops::detach() operation need to be available.
 >=20
 > Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 > ---
->  drivers/remoteproc/remoteproc_cdev.c  | 5 +++--
-> drivers/remoteproc/remoteproc_core.c  | 6 +++++-
-> drivers/remoteproc/remoteproc_sysfs.c | 5 +++--
->  3 files changed, 11 insertions(+), 5 deletions(-)
+>  drivers/remoteproc/remoteproc_cdev.c  | 6 ++++++
+> drivers/remoteproc/remoteproc_sysfs.c | 6 ++++++
+>  2 files changed, 12 insertions(+)
 >=20
 > diff --git a/drivers/remoteproc/remoteproc_cdev.c
 > b/drivers/remoteproc/remoteproc_cdev.c
-> index b19ea3057bde..d06f8d4919c7 100644
+> index d06f8d4919c7..3a3830e27050 100644
 > --- a/drivers/remoteproc/remoteproc_cdev.c
 > +++ b/drivers/remoteproc/remoteproc_cdev.c
-> @@ -37,10 +37,11 @@ static ssize_t rproc_cdev_write(struct file *filp, co=
-nst
+> @@ -42,6 +42,12 @@ static ssize_t rproc_cdev_write(struct file *filp, con=
+st
 > char __user *buf, size_
->=20
->  		ret =3D rproc_boot(rproc);
->  	} else if (!strncmp(cmd, "stop", len)) {
-> -		if (rproc->state !=3D RPROC_RUNNING)
-> +		if (rproc->state !=3D RPROC_RUNNING &&
-> +		    rproc->state !=3D RPROC_ATTACHED)
 >  			return -EINVAL;
 >=20
-> -		rproc_shutdown(rproc);
-> +		ret =3D rproc_shutdown(rproc);
+>  		ret =3D rproc_shutdown(rproc);
+> +	} else if (!strncmp(cmd, "detach", len)) {
+> +		if (rproc->state !=3D RPROC_RUNNING &&
+> +		    rproc->state !=3D RPROC_ATTACHED)
+> +			return -EINVAL;
+> +
+> +		ret =3D rproc_detach(rproc);
 >  	} else {
 >  		dev_err(&rproc->dev, "Unrecognized option\n");
 >  		ret =3D -EINVAL;
-> diff --git a/drivers/remoteproc/remoteproc_core.c
-> b/drivers/remoteproc/remoteproc_core.c
-> index c6c6aba66098..95bb40b4ebb3 100644
-> --- a/drivers/remoteproc/remoteproc_core.c
-> +++ b/drivers/remoteproc/remoteproc_core.c
-> @@ -1619,6 +1619,10 @@ static int rproc_stop(struct rproc *rproc, bool
-> crashed)
->  	struct device *dev =3D &rproc->dev;
->  	int ret;
->=20
-> +	/* No need to continue if a stop() operation has not been provided */
-> +	if (!rproc->ops->stop)
-> +		return -EINVAL;
-> +
->  	/* Stop any subdevices for the remote processor */
->  	rproc_stop_subdevices(rproc, crashed);
->=20
-> @@ -1857,7 +1861,7 @@ int rproc_shutdown(struct rproc *rproc)
->  		return ret;
->  	}
->=20
-> -	if (rproc->state !=3D RPROC_RUNNING) {
-> +	if (rproc->state !=3D RPROC_RUNNING && rproc->state !=3D
-> RPROC_ATTACHED) {
->  		ret =3D -EPERM;
->  		goto out;
->  	}
 > diff --git a/drivers/remoteproc/remoteproc_sysfs.c
 > b/drivers/remoteproc/remoteproc_sysfs.c
-> index c152d11a4d3c..6134d2f083ce 100644
+> index 6134d2f083ce..013231f69837 100644
 > --- a/drivers/remoteproc/remoteproc_sysfs.c
 > +++ b/drivers/remoteproc/remoteproc_sysfs.c
-> @@ -113,10 +113,11 @@ static ssize_t state_store(struct device *dev,
->  		if (ret)
->  			dev_err(&rproc->dev, "Boot failed: %d\n", ret);
->  	} else if (sysfs_streq(buf, "stop")) {
-> -		if (rproc->state !=3D RPROC_RUNNING)
-> +		if (rproc->state !=3D RPROC_RUNNING &&
-> +		    rproc->state !=3D RPROC_ATTACHED)
+> @@ -118,6 +118,12 @@ static ssize_t state_store(struct device *dev,
 >  			return -EINVAL;
 >=20
-> -		rproc_shutdown(rproc);
-> +		ret =3D rproc_shutdown(rproc);
+>  		ret =3D rproc_shutdown(rproc);
+> +	} else if (sysfs_streq(buf, "detach")) {
+> +		if (rproc->state !=3D RPROC_RUNNING &&
+> +		    rproc->state !=3D RPROC_ATTACHED)
+> +			return -EINVAL;
+> +
+> +		ret =3D rproc_detach(rproc);
 >  	} else {
 >  		dev_err(&rproc->dev, "Unrecognised option: %s\n", buf);
 >  		ret =3D -EINVAL;
