@@ -1,326 +1,176 @@
-Return-Path: <SRS0=qugf=DX=vger.kernel.org=linux-remoteproc-owner@kernel.org>
+Return-Path: <SRS0=uUKq=D2=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC7C6C433DF
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 16 Oct 2020 09:46:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB23DC433DF
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 19 Oct 2020 16:58:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4D2CF20872
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 16 Oct 2020 09:46:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6C1CA222EA
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 19 Oct 2020 16:58:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=st.com header.i=@st.com header.b="gZpVo3DU"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LwtsdkSt"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406363AbgJPJqW (ORCPT
+        id S1730645AbgJSQ6k (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 16 Oct 2020 05:46:22 -0400
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:1863 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2406361AbgJPJqW (ORCPT
+        Mon, 19 Oct 2020 12:58:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37052 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730356AbgJSQ6j (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 16 Oct 2020 05:46:22 -0400
-Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 09G9QYaV032671;
-        Fri, 16 Oct 2020 11:45:14 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=STMicroelectronics;
- bh=AZSaXji1dnZDbN7da3PpIqXn7e1Xkr4GWsefjZcToVA=;
- b=gZpVo3DUUkpNDS3fitIGVcbK80+7Dm5QaT2XEY6ysdFaVDRNPhpI8bAPYKvUvbCpXUhG
- X4cVsjg1e0NoNOrvqPv8U2yBKbSq6fTsB2u3wOF2k5ep1Cqwit9MvfTIhA7pmlsFoC1u
- 41muJm8AwkbyI9sCgjJhPxWzc8CHrc0USWIYnF8lh9KnP5sOI3Y0T6zopJu3DyvBO/GC
- WpbQQF1oyIl8Cd937qr1iIDHXUi62wSxzCR/3FlE71eku7c41CAJkzio/Ye2FVc6Fggk
- x360f207AdZ/X03vtz3uKvs3fklTXwKjgy7zAmNggKjU0s7j3iursvkdA1z/KnIwzjTX OA== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 34353wv6f2-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 16 Oct 2020 11:45:14 +0200
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 5C9D110002A;
-        Fri, 16 Oct 2020 11:45:13 +0200 (CEST)
-Received: from Webmail-eu.st.com (sfhdag3node1.st.com [10.75.127.7])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 4A4CD2AF318;
-        Fri, 16 Oct 2020 11:45:13 +0200 (CEST)
-Received: from lmecxl0889.lme.st.com (10.75.127.51) by SFHDAG3NODE1.st.com
- (10.75.127.7) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 16 Oct
- 2020 11:45:12 +0200
-Subject: Re: [PATCH v2 4/9] rpmsg: Move rpmsg_hr and rpmsg_ns_msg to header
- file
-To:     Mathieu Poirier <mathieu.poirier@linaro.org>
-CC:     "ohad@wizery.com" <ohad@wizery.com>,
-        "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>,
-        "guennadi.liakhovetski@linux.intel.com" 
-        <guennadi.liakhovetski@linux.intel.com>,
-        "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20201013232519.1367542-1-mathieu.poirier@linaro.org>
- <20201013232519.1367542-5-mathieu.poirier@linaro.org>
- <61c25983-a339-e5de-eaf7-d608a9b9771b@st.com>
- <20201015201926.GF1450102@xps15>
-From:   Arnaud POULIQUEN <arnaud.pouliquen@st.com>
-Message-ID: <cce4b049-a210-7c1b-a842-5f238ef89fc0@st.com>
-Date:   Fri, 16 Oct 2020 11:45:11 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Mon, 19 Oct 2020 12:58:39 -0400
+Received: from mail-pg1-x542.google.com (mail-pg1-x542.google.com [IPv6:2607:f8b0:4864:20::542])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B3BD8C0613D0
+        for <linux-remoteproc@vger.kernel.org>; Mon, 19 Oct 2020 09:58:39 -0700 (PDT)
+Received: by mail-pg1-x542.google.com with SMTP id q21so282815pgi.13
+        for <linux-remoteproc@vger.kernel.org>; Mon, 19 Oct 2020 09:58:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=JnKBqiVPCUZogEowjztR7BAxa3AoxcS+bS5AdwrjCEo=;
+        b=LwtsdkStSJkKaZfp2gwZS5LjXrN+2QRD3Zg8fYk4x3vK+m2XY52+0BOnjhAtRUvY65
+         JwsIk/RszcuzbchFGdgJ0A/ChDlHglioMu7Qwuh6+23fslNYZB3IyYbl6aTBFK2LRLxJ
+         AXRBQmVwF7McFh2AO6lOQDSulGsuLUkV8gjeMOoIksNjRbs72WSGLhmhe17Z2hHDZSmu
+         HxbQmYjG4bNHLGA4x1GOW7yD7GVhMuAbD2tpQ8RWG0yq8E61tr6Q3BbWIFaHFzMa+tJc
+         VpnO+Z5Eg8Gbmb/NRiA35d9HU2VUyggXODiIYPnQj4R7tagz0PbC3rqTiKrou+hK0I32
+         2VBg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=JnKBqiVPCUZogEowjztR7BAxa3AoxcS+bS5AdwrjCEo=;
+        b=odEiqdED0eoeqRLltA/c9VxV52boYOAGDtUdoueBZkXtX5CqQV9fD2J9+aT2jzIP0q
+         aq9tYEEiEHz37iIqv2mEKEAn3SiiDceFJJRYm9TYrsbu1NPxNPs711VVJ6fBGphoOiQP
+         RIlYKPNOtiY54R5rA8DrM7dAytZaRfDShHoV4XLbT4sRmzVCQh0MtHt6vCq6/mmFojyW
+         ibUBgZwFJNoFGWuxs8xoYIGgDzHizpvCg148o+sadReoQbASMjRRo2REtoUi0Ol8AWYF
+         qVD8atIzrsrb6RBQMnd0oiHMCawkI3GuCSiPL9XzC86XdbZBJ/8y5Frz++L16DUMjeRX
+         ZSBg==
+X-Gm-Message-State: AOAM531vsSejY03WewW2xTIr+WXo3M5odVENfrb4b9/GRv6+AAvOD6fJ
+        w/sjlhgWZonyTUL9HpGbtye9BQ==
+X-Google-Smtp-Source: ABdhPJwlye7aQSicTs24CltVgwd7j+JZRLatEs81/2/YGvnuDJkBXaWq/REbtaoK7HycIMYoYc+D9g==
+X-Received: by 2002:a62:503:0:b029:13e:d13d:a0f9 with SMTP id 3-20020a6205030000b029013ed13da0f9mr484841pff.21.1603126719149;
+        Mon, 19 Oct 2020 09:58:39 -0700 (PDT)
+Received: from xps15 (S0106002369de4dac.cg.shawcable.net. [68.147.8.254])
+        by smtp.gmail.com with ESMTPSA id q13sm390220pfg.3.2020.10.19.09.58.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 19 Oct 2020 09:58:38 -0700 (PDT)
+Date:   Mon, 19 Oct 2020 10:58:36 -0600
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+To:     Peng Fan <peng.fan@nxp.com>
+Cc:     bjorn.andersson@linaro.org, o.rempel@pengutronix.de,
+        robh+dt@kernel.org, linux-remoteproc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, shawnguo@kernel.org,
+        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
+        linux-imx@nxp.com, linux-arm-kernel@lists.infradead.org,
+        Richard Zhu <hongxing.zhu@nxp.com>
+Subject: Re: [PATCH V2 1/7] remoteproc: elf: support platform specific memory
+ hook
+Message-ID: <20201019165836.GA496175@xps15>
+References: <20200927064131.24101-1-peng.fan@nxp.com>
+ <20200927064131.24101-2-peng.fan@nxp.com>
 MIME-Version: 1.0
-In-Reply-To: <20201015201926.GF1450102@xps15>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.75.127.51]
-X-ClientProxiedBy: SFHDAG2NODE1.st.com (10.75.127.4) To SFHDAG3NODE1.st.com
- (10.75.127.7)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.235,18.0.687
- definitions=2020-10-16_05:2020-10-16,2020-10-16 signatures=0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200927064131.24101-2-peng.fan@nxp.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
+Hi Peng,
 
-
-On 10/15/20 10:19 PM, Mathieu Poirier wrote:
-> On Thu, Oct 15, 2020 at 10:33:25AM +0200, Arnaud POULIQUEN wrote:
->> Hi Mathieu,
->>
->> On 10/14/20 1:25 AM, Mathieu Poirier wrote:
->>> Move structures rpmsg_hdr and rpmsg_ns_msg to their own header file
->>> so that they can be used by other entities.
->>>
->>> Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
->>> ---
->>>  drivers/rpmsg/virtio_rpmsg_bus.c | 58 ++----------------------------
->>>  include/linux/rpmsg_ns.h         | 62 ++++++++++++++++++++++++++++++++
->>>  include/uapi/linux/rpmsg.h       |  3 ++
->>>  3 files changed, 67 insertions(+), 56 deletions(-)
->>>  create mode 100644 include/linux/rpmsg_ns.h
->>>
->>> diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
->>> index 793fe924671f..85f2acc4ed9f 100644
->>> --- a/drivers/rpmsg/virtio_rpmsg_bus.c
->>> +++ b/drivers/rpmsg/virtio_rpmsg_bus.c
->>> @@ -19,7 +19,7 @@
->>>  #include <linux/mutex.h>
->>>  #include <linux/of_device.h>
->>>  #include <linux/rpmsg.h>
->>> -#include <linux/rpmsg_byteorder.h>
->>> +#include <linux/rpmsg_ns.h>
->>>  #include <linux/scatterlist.h>
->>>  #include <linux/slab.h>
->>>  #include <linux/sched.h>
->>> @@ -27,6 +27,7 @@
->>>  #include <linux/virtio_ids.h>
->>>  #include <linux/virtio_config.h>
->>>  #include <linux/wait.h>
->>> +#include <uapi/linux/rpmsg.h>
->>>  
->>>  #include "rpmsg_internal.h"
->>>  
->>> @@ -70,58 +71,6 @@ struct virtproc_info {
->>>  	struct rpmsg_endpoint *ns_ept;
->>>  };
->>>  
->>> -/* The feature bitmap for virtio rpmsg */
->>> -#define VIRTIO_RPMSG_F_NS	0 /* RP supports name service notifications */
->>> -
->>> -/**
->>> - * struct rpmsg_hdr - common header for all rpmsg messages
->>> - * @src: source address
->>> - * @dst: destination address
->>> - * @reserved: reserved for future use
->>> - * @len: length of payload (in bytes)
->>> - * @flags: message flags
->>> - * @data: @len bytes of message payload data
->>> - *
->>> - * Every message sent(/received) on the rpmsg bus begins with this header.
->>> - */
->>> -struct rpmsg_hdr {
->>> -	__rpmsg32 src;
->>> -	__rpmsg32 dst;
->>> -	__rpmsg32 reserved;
->>> -	__rpmsg16 len;
->>> -	__rpmsg16 flags;
->>> -	u8 data[];
->>> -} __packed;
->>> -
->>> -/**
->>> - * struct rpmsg_ns_msg - dynamic name service announcement message
->>> - * @name: name of remote service that is published
->>> - * @addr: address of remote service that is published
->>> - * @flags: indicates whether service is created or destroyed
->>> - *
->>> - * This message is sent across to publish a new service, or announce
->>> - * about its removal. When we receive these messages, an appropriate
->>> - * rpmsg channel (i.e device) is created/destroyed. In turn, the ->probe()
->>> - * or ->remove() handler of the appropriate rpmsg driver will be invoked
->>> - * (if/as-soon-as one is registered).
->>> - */
->>> -struct rpmsg_ns_msg {
->>> -	char name[RPMSG_NAME_SIZE];
->>> -	__rpmsg32 addr;
->>> -	__rpmsg32 flags;
->>> -} __packed;
->>> -
->>> -/**
->>> - * enum rpmsg_ns_flags - dynamic name service announcement flags
->>> - *
->>> - * @RPMSG_NS_CREATE: a new remote service was just created
->>> - * @RPMSG_NS_DESTROY: a known remote service was just destroyed
->>> - */
->>> -enum rpmsg_ns_flags {
->>> -	RPMSG_NS_CREATE		= 0,
->>> -	RPMSG_NS_DESTROY	= 1,
->>> -};
->>> -
->>>  /**
->>>   * @vrp: the remote processor this channel belongs to
->>>   */
->>> @@ -162,9 +111,6 @@ struct virtio_rpmsg_channel {
->>>   */
->>>  #define RPMSG_RESERVED_ADDRESSES	(1024)
->>>  
->>> -/* Address 53 is reserved for advertising remote services */
->>> -#define RPMSG_NS_ADDR			(53)
->>> -
->>>  static void virtio_rpmsg_destroy_ept(struct rpmsg_endpoint *ept);
->>>  static int virtio_rpmsg_send(struct rpmsg_endpoint *ept, void *data, int len);
->>>  static int virtio_rpmsg_sendto(struct rpmsg_endpoint *ept, void *data, int len,
->>> diff --git a/include/linux/rpmsg_ns.h b/include/linux/rpmsg_ns.h
->>> new file mode 100644
->>> index 000000000000..3d836b8580b2
->>> --- /dev/null
->>> +++ b/include/linux/rpmsg_ns.h
->>> @@ -0,0 +1,62 @@
->>> +/* SPDX-License-Identifier: GPL-2.0 */
->>> +
->>> +#ifndef _LINUX_RPMSG_NS_H
->>> +#define _LINUX_RPMSG_NS_H
->>> +
->>> +#include <linux/mod_devicetable.h>
->>> +#include <linux/types.h>
->>> +#include <linux/rpmsg_byteorder.h>
->>> +
->>> +/**
->>> + * struct rpmsg_hdr - common header for all rpmsg messages
->>> + * @src: source address
->>> + * @dst: destination address
->>> + * @reserved: reserved for future use
->>> + * @len: length of payload (in bytes)
->>> + * @flags: message flags
->>> + * @data: @len bytes of message payload data
->>> + *
->>> + * Every message sent(/received) on the rpmsg bus begins with this header.
->>> + */
->>> +struct rpmsg_hdr {
->>> +	__rpmsg32 src;
->>> +	__rpmsg32 dst;
->>> +	__rpmsg32 reserved;
->>> +	__rpmsg16 len;
->>> +	__rpmsg16 flags;
->>> +	u8 data[];
->>> +} __packed;
->>
->> This structure is not related to the rpmsg ns service but to the rpmsg bus.
->> If this structure has to be exposed to rpmsg client should be in rpmsg.h, but 
->> Is there a need to expose it for now?
->> I suppose that it is for vhost...As the need will depends on the implementation, 
->> I would suggest leaving it internally and expose only if needed, in the
->> related series.
->>
+On Sun, Sep 27, 2020 at 02:41:25PM +0800, Peng Fan wrote:
+> To arm64, "dc      zva, dst" is used in memset.
+> Per ARM DDI 0487A.j, chapter C5.3.8 DC ZVA, Data Cache Zero by VA,
 > 
-> I also thought about moving rpmsg_hdr to rpmsg.h but decided against because in
-> most cases using the name space service usually means that a message header will
-> be required.  I also thought it would be easier to use, i.e include one header
-> rather than two.  That too is a little thin because anyone using a name service
-> will also need to get access to rpmsg_device, which is in rpmsg.h.
+> "If the memory region being zeroed is any type of Device memory,
+> this instruction can give an alignment fault which is prioritized
+> in the same way as other alignment faults that are determined
+> by the memory type."
 > 
-> I'm definitely not strongly opinionated on where it should go, or I can leave it
-> in virtio_rpmsg_bus.c too... 
-
-The rpmsg_ns service does not use this structure. So seems to me not at the good place
-
-The virtio_rpmsg.c does, and a vhost_rpmsg.c should do it as well.
-I would be in favor of moving it to rpmsg_internal.h to expose it to
-the rpmg_buses (e.g. rpmsg_vhost) as a generic message header.
-Leaving it in virtio_rpmsg_bus.c also seems also a good alternative.
-
+> On i.MX platforms, when elf is loaded to onchip TCM area, the region
+> is ioremapped, so "dc zva, dst" will trigger abort. And ioremap_wc()
+> on i.MX not able to write correct data to TCM area.
+> 
+> So we need to use io helpers, and extend the elf loader to support
+> platform specific memory functions.
+> 
+> Acked-by: Richard Zhu <hongxing.zhu@nxp.com>
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> ---
+>  drivers/remoteproc/remoteproc_elf_loader.c | 20 ++++++++++++++++++--
+>  include/linux/remoteproc.h                 |  2 ++
+>  2 files changed, 20 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/remoteproc/remoteproc_elf_loader.c b/drivers/remoteproc/remoteproc_elf_loader.c
+> index df68d87752e4..6cb71fe47261 100644
+> --- a/drivers/remoteproc/remoteproc_elf_loader.c
+> +++ b/drivers/remoteproc/remoteproc_elf_loader.c
+> @@ -129,6 +129,22 @@ u64 rproc_elf_get_boot_addr(struct rproc *rproc, const struct firmware *fw)
+>  }
+>  EXPORT_SYMBOL(rproc_elf_get_boot_addr);
 >  
->>> +
->>> +/**
->>> + * struct rpmsg_ns_msg - dynamic name service announcement message
->>> + * @name: name of remote service that is published
->>> + * @addr: address of remote service that is published
->>> + * @flags: indicates whether service is created or destroyed
->>> + *
->>> + * This message is sent across to publish a new service, or announce
->>> + * about its removal. When we receive these messages, an appropriate
->>> + * rpmsg channel (i.e device) is created/destroyed. In turn, the ->probe()
->>> + * or ->remove() handler of the appropriate rpmsg driver will be invoked
->>> + * (if/as-soon-as one is registered).
->>> + */
->>> +struct rpmsg_ns_msg {
->>> +	char name[RPMSG_NAME_SIZE];
->>> +	__rpmsg32 addr;
->>> +	__rpmsg32 flags;
->>> +} __packed;
->>> +
->>> +/**
->>> + * enum rpmsg_ns_flags - dynamic name service announcement flags
->>> + *
->>> + * @RPMSG_NS_CREATE: a new remote service was just created
->>> + * @RPMSG_NS_DESTROY: a known remote service was just destroyed
->>> + */
->>> +enum rpmsg_ns_flags {
->>> +	RPMSG_NS_CREATE		= 0,
->>> +	RPMSG_NS_DESTROY	= 1,
->>> +};
->>> +
->>> +/* Address 53 is reserved for advertising remote services */
->>> +#define RPMSG_NS_ADDR			(53)
->>
->> What about my proposal [1] to put this in rpmsg.h, to create a list of
->> reserved Address
-> 
-> That too is a grey area... Moving RPMSG_NS_ADDR to rpmsg.h means we have a name
-> service #define in rpmsg.h.  I think that one should stay in rpmsg_ns.h. 
+> +static void rproc_elf_memcpy(struct rproc *rproc, void *dest, const void *src, size_t count)
+> +{
+> +	if (!rproc->ops->elf_memcpy)
+> +		memcpy(dest, src, count);
+> +
+> +	rproc->ops->elf_memcpy(rproc, dest, src, count);
+> +}
+> +
+> +static void rproc_elf_memset(struct rproc *rproc, void *s, int c, size_t count)
+> +{
+> +	if (!rproc->ops->elf_memset)
+> +		memset(s, c, count);
+> +
+> +	rproc->ops->elf_memset(rproc, s, c, count);
+> +}
+> +
+>  /**
+>   * rproc_elf_load_segments() - load firmware segments to memory
+>   * @rproc: remote processor which will be booted using these fw segments
+> @@ -214,7 +230,7 @@ int rproc_elf_load_segments(struct rproc *rproc, const struct firmware *fw)
+>  
+>  		/* put the segment where the remote processor expects it */
+>  		if (filesz)
+> -			memcpy(ptr, elf_data + offset, filesz);
+> +			rproc_elf_memcpy(rproc, ptr, elf_data + offset, filesz);
+>  
+>  		/*
+>  		 * Zero out remaining memory for this segment.
+> @@ -224,7 +240,7 @@ int rproc_elf_load_segments(struct rproc *rproc, const struct firmware *fw)
+>  		 * this.
+>  		 */
+>  		if (memsz > filesz)
+> -			memset(ptr + filesz, 0, memsz - filesz);
+> +			rproc_elf_memset(rproc, ptr + filesz, 0, memsz - filesz);
+>  	}
+>  
+>  	return ret;
+> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+> index 2fa68bf5aa4f..1f5fa2c772df 100644
+> --- a/include/linux/remoteproc.h
+> +++ b/include/linux/remoteproc.h
+> @@ -392,6 +392,8 @@ struct rproc_ops {
+>  	int (*load)(struct rproc *rproc, const struct firmware *fw);
+>  	int (*sanity_check)(struct rproc *rproc, const struct firmware *fw);
+>  	u64 (*get_boot_addr)(struct rproc *rproc, const struct firmware *fw);
+> +	void (*elf_memcpy)(struct rproc *rproc, void *dest, const void *src, size_t count);
+> +	void (*elf_memset)(struct rproc *rproc, void *s, int c, size_t count);
 
-That seems reasonable, very simple to change this in future if needed.
+As with every other operations, the above two addition should be documented.
 
-Regards
-Arnaud
+With that:
 
+Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+
+>  	unsigned long (*panic)(struct rproc *rproc);
+>  };
+>  
+> -- 
+> 2.28.0
 > 
->>
->> [1] https://lkml.org/lkml/2020/7/31/442
->>
->>> +
->>> +#endif
->>> diff --git a/include/uapi/linux/rpmsg.h b/include/uapi/linux/rpmsg.h
->>> index e14c6dab4223..d669c04ef289 100644
->>> --- a/include/uapi/linux/rpmsg.h
->>> +++ b/include/uapi/linux/rpmsg.h
->>> @@ -24,4 +24,7 @@ struct rpmsg_endpoint_info {
->>>  #define RPMSG_CREATE_EPT_IOCTL	_IOW(0xb5, 0x1, struct rpmsg_endpoint_info)
->>>  #define RPMSG_DESTROY_EPT_IOCTL	_IO(0xb5, 0x2)
->>>  
->>> +/* The feature bitmap for virtio rpmsg */
->>> +#define VIRTIO_RPMSG_F_NS	0 /* RP supports name service notifications */
->>> +
->>
->> Same suggestion here,i would drop this from this series
-> 
-> Will do.
-> 
-> Thanks for the feedback,
-> Mathieu
-> 
->>
->> Thanks,
->> Arnaud
->>
->>>  #endif
->>>
