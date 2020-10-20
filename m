@@ -1,174 +1,277 @@
-Return-Path: <SRS0=uUKq=D2=vger.kernel.org=linux-remoteproc-owner@kernel.org>
+Return-Path: <SRS0=A2u3=D3=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3B33C388F8
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 19 Oct 2020 22:40:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4883FC433DF
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 20 Oct 2020 07:04:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9D786222EA
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 19 Oct 2020 22:40:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A37062237B
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 20 Oct 2020 07:04:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="mulioCin"
+	dkim=pass (2048-bit key) header.d=st.com header.i=@st.com header.b="q5L/vYhE"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388492AbgJSWkS (ORCPT
+        id S2404728AbgJTHEZ (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 19 Oct 2020 18:40:18 -0400
-Received: from mail-eopbgr760089.outbound.protection.outlook.com ([40.107.76.89]:44233
-        "EHLO NAM02-CY1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2388483AbgJSWkS (ORCPT
+        Tue, 20 Oct 2020 03:04:25 -0400
+Received: from mx07-00178001.pphosted.com ([185.132.182.106]:59411 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2404723AbgJTHEZ (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 19 Oct 2020 18:40:18 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Prtx5naxZ445+a1ZDVipvDAHFcmrljFjvldPtkj3fkX/eqVHOUO21yFXPjuVtSNjA7P9cTzkuLFK2Ewu/IRx6LqlfwvIUyQz20WZ/qDXUxdYb8FU67JyBzPE2Vxb6m4pD64et/a/871RUXEiYknFyKv4JcUx+4t5QAKTP/i2WZNEZvxxCTgcb4TIfaLE+yX1jWVA740bUIW0HcXNwJV6wSqN2f+39q/S+u1kPN/CDmLPn+n31e+6gFB/OagamADSEMY49qlGYdgun5p6E5l5JFEtuExmeZ65KnH06M/kpxPtBcZA7E5Qw6GfMRHG2ZkBOfNdEhK0ogUrhNr6iYAaOA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=p5xh2iMbOUuYykH3VtoEpRrVeANMsj9APMUlrpsyzW0=;
- b=Wb6nl96TALDXF9KUx5wVfyB0fZaMJhJjl+4jGJpGmIJOiC/G+73bH2vBbmkvVunrSvz13/G4wbLsLXm1pDKk3hcBxiP+CwyJqiwO9TcjDXEkCA4ZMbArGp+jZxt2kLgQDFsvtZGWhZYJHR27wKuLxIHv9VQ59TocUwiLmdqPFDKxInsfhyY3aVLInSmmU8CFoCrDvwI86QRdttipymTr7WAErFAzNIkU10dHijYgwaL/XGJpU7+O7GswncYkeJ2LQ8hMnQ/bPraH8HRDHI+Ivg7JXJ9mN0X87hhlkj2Uzv8TXV2prbyvewLTD5xCuzDaj/CHVd1q/7WWyhxy2+ZZYA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 149.199.60.83) smtp.rcpttodomain=lists.infradead.org
- smtp.mailfrom=xilinx.com; dmarc=bestguesspass action=none
- header.from=xilinx.com; dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=xilinx.onmicrosoft.com; s=selector2-xilinx-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=p5xh2iMbOUuYykH3VtoEpRrVeANMsj9APMUlrpsyzW0=;
- b=mulioCinFEEVco/J4qJZjGUsjZ+iBkcDJZlU/VX8AChx4Dvn58GbCrBjY1OmfPRs9CUoozqT0fNjfHeIAqd/903aycPGy7aF7CJhJxu2kiAZn3W3h+HRISunX5HX0it2YfjiPOdNbEVFLLh/XmYb5xYY5j6OjtZpsdztaeSARuY=
-Received: from CY4PR13CA0032.namprd13.prod.outlook.com (2603:10b6:903:99::18)
- by DM5PR02MB2570.namprd02.prod.outlook.com (2603:10b6:3:43::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3477.20; Mon, 19 Oct
- 2020 22:40:15 +0000
-Received: from CY1NAM02FT041.eop-nam02.prod.protection.outlook.com
- (2603:10b6:903:99:cafe::de) by CY4PR13CA0032.outlook.office365.com
- (2603:10b6:903:99::18) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3499.7 via Frontend
- Transport; Mon, 19 Oct 2020 22:40:14 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 149.199.60.83)
- smtp.mailfrom=xilinx.com; lists.infradead.org; dkim=none (message not signed)
- header.d=none;lists.infradead.org; dmarc=bestguesspass action=none
- header.from=xilinx.com;
-Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
- 149.199.60.83 as permitted sender) receiver=protection.outlook.com;
- client-ip=149.199.60.83; helo=xsj-pvapsmtpgw01;
-Received: from xsj-pvapsmtpgw01 (149.199.60.83) by
- CY1NAM02FT041.mail.protection.outlook.com (10.152.74.156) with Microsoft SMTP
- Server id 15.20.3477.21 via Frontend Transport; Mon, 19 Oct 2020 22:40:14
- +0000
-Received: from [149.199.38.66] (port=33948 helo=smtp.xilinx.com)
-        by xsj-pvapsmtpgw01 with esmtp (Exim 4.90)
-        (envelope-from <ben.levinsky@xilinx.com>)
-        id 1kUdoF-0004r4-RY; Mon, 19 Oct 2020 15:39:19 -0700
-Received: from [127.0.0.1] (helo=localhost)
-        by smtp.xilinx.com with smtp (Exim 4.63)
-        (envelope-from <ben.levinsky@xilinx.com>)
-        id 1kUdp8-0007Tv-6w; Mon, 19 Oct 2020 15:40:14 -0700
-Received: from xsj-pvapsmtp01 (xsj-smtp1.xilinx.com [149.199.38.66])
-        by xsj-smtp-dlp2.xlnx.xilinx.com (8.13.8/8.13.1) with ESMTP id 09JMe75c012016;
-        Mon, 19 Oct 2020 15:40:08 -0700
-Received: from [172.19.2.206] (helo=xsjblevinsk50.xilinx.com)
-        by xsj-pvapsmtp01 with esmtp (Exim 4.63)
-        (envelope-from <ben.levinsky@xilinx.com>)
-        id 1kUdp1-0007R9-Ow; Mon, 19 Oct 2020 15:40:07 -0700
-From:   Ben Levinsky <ben.levinsky@xilinx.com>
-To:     sunnyliangjy@gmail.com, punit1.agrawal@toshiba.co.jp,
-        stefanos@xilinx.com, michals@xilinx.com, michael.auchter@ni.com
-Cc:     devicetree@vger.kernel.org, mathieu.poirier@linaro.org,
-        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        robh+dt@kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v19 1/5] firmware: xilinx: Add ZynqMP firmware ioctl enums for RPU configuration.
-Date:   Mon, 19 Oct 2020 15:40:03 -0700
-Message-Id: <20201019224007.16846-2-ben.levinsky@xilinx.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20201019224007.16846-1-ben.levinsky@xilinx.com>
-References: <20201019224007.16846-1-ben.levinsky@xilinx.com>
-X-RCIS-Action: ALLOW
-X-TM-AS-Product-Ver: IMSS-7.1.0.1224-8.2.0.1013-23620.005
-X-TM-AS-User-Approved-Sender: Yes;Yes
-X-EOPAttributedMessage: 0
-X-MS-Office365-Filtering-HT: Tenant
-X-MS-PublicTrafficType: Email
+        Tue, 20 Oct 2020 03:04:25 -0400
+Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 09K6vsKH026983;
+        Tue, 20 Oct 2020 09:04:19 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=STMicroelectronics;
+ bh=s4nQYuoqPavXoCqW23JwfVqDR5D4+8KScwo2N9KV8wg=;
+ b=q5L/vYhEdiBYHOSHhr4tyO2eD7crs5PTT1ztsz1qRJAeGhSBnxnrBjIfW2rEHRC7CWq4
+ DSNlPmtdBZmgR4RKAqthw4pcHA65N9TNGmHDGejEOHbjV4h5KlUWnkEIR4EzJBI8hWlS
+ Uam5CH3Ht5IvXPxSClKOGV08/hQ/TiibAA8MD/9fSdl9jgcbdqybsFDVENFWVW1dG9GD
+ GQrfdoMGMXp7VkdUbWRQ1Xq6dzqi1vJFBuhzEA91okVUAtS0kX0ImLvwbJznCYYRa31a
+ b+UzisTseTsvG4mLE5FsLbZ4Nk45HbKsdWRLzxoVjlvg1Ry+2sls9NiCjW0MED47j0e8 Dw== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 347p30gmrc-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 20 Oct 2020 09:04:19 +0200
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 20FBB10002A;
+        Tue, 20 Oct 2020 09:04:18 +0200 (CEST)
+Received: from Webmail-eu.st.com (sfhdag3node1.st.com [10.75.127.7])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 0BF892ADA0E;
+        Tue, 20 Oct 2020 09:04:18 +0200 (CEST)
+Received: from lmecxl0889.lme.st.com (10.75.127.46) by SFHDAG3NODE1.st.com
+ (10.75.127.7) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 20 Oct
+ 2020 09:04:17 +0200
+Subject: Re: [PATCH v3 1/8] rpmsg: Introduce __rpmsg{16|32|64} types
+To:     Mathieu Poirier <mathieu.poirier@linaro.org>,
+        "ohad@wizery.com" <ohad@wizery.com>,
+        "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>
+CC:     "guennadi.liakhovetski@linux.intel.com" 
+        <guennadi.liakhovetski@linux.intel.com>,
+        "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20201019203438.501174-1-mathieu.poirier@linaro.org>
+ <20201019203438.501174-2-mathieu.poirier@linaro.org>
+From:   Arnaud POULIQUEN <arnaud.pouliquen@st.com>
+Message-ID: <d3fe9b33-ea92-a3d2-e801-bf3d823b108d@st.com>
+Date:   Tue, 20 Oct 2020 09:04:16 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MS-Office365-Filtering-Correlation-Id: 54cbafa5-4432-4f95-71e0-08d8747ff21e
-X-MS-TrafficTypeDiagnostic: DM5PR02MB2570:
-X-Microsoft-Antispam-PRVS: <DM5PR02MB2570729270BC213148D47DBEB51E0@DM5PR02MB2570.namprd02.prod.outlook.com>
-X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
-X-MS-Oob-TLC-OOBClassifiers: OLM:565;
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: nkNZTAE2e3FNfyI12rsuEgahFJIsKhiWehAjPCBtlAfuSx2WQhnP11Mxyz9ywWC79SmELr+COe4sIi4HGndVt2jOqQ3140BbETYeCZEYa7F6K35ZuBkqnmbOufe3V0x72ZbGen07UV3i/OQP4HJRdQznHSJHfklpoLrcCzZap0v2T10XOaeHonVDukvxU9NajrK14EKtNwNbtzHrFq62Id+M56jeeyRTijDbPbhDyFkeRZtJGEfKh1bu3y3vho/azkYgQd6m2tUemuG9Q2v31rBMHNLoQ+tSZviKKOlhgq3o4L5Ju8ZUMO5xQfrCpMGVVg6yvgk+VuGcMQUydHyxpLcPVbfiK0+xOQp9EMeJPEurhW7qWKNRtS8bvbj/8sRzOjRJh8zUEHtM4Bi/DXq3vg==
-X-Forefront-Antispam-Report: CIP:149.199.60.83;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:xsj-pvapsmtpgw01;PTR:unknown-60-83.xilinx.com;CAT:NONE;SFS:(376002)(39860400002)(396003)(136003)(346002)(46966005)(9786002)(83380400001)(2616005)(47076004)(426003)(8936002)(44832011)(81166007)(82310400003)(6666004)(356005)(82740400003)(4326008)(316002)(5660300002)(186003)(36756003)(8676002)(336012)(26005)(70206006)(1076003)(2906002)(508600001)(70586007)(7696005);DIR:OUT;SFP:1101;
-X-OriginatorOrg: xilinx.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Oct 2020 22:40:14.4565
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 54cbafa5-4432-4f95-71e0-08d8747ff21e
-X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.60.83];Helo=[xsj-pvapsmtpgw01]
-X-MS-Exchange-CrossTenant-AuthSource: CY1NAM02FT041.eop-nam02.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR02MB2570
+In-Reply-To: <20201019203438.501174-2-mathieu.poirier@linaro.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.75.127.46]
+X-ClientProxiedBy: SFHDAG1NODE3.st.com (10.75.127.3) To SFHDAG3NODE1.st.com
+ (10.75.127.7)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.235,18.0.687
+ definitions=2020-10-20_03:2020-10-16,2020-10-20 signatures=0
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Add ZynqMP firmware ioctl enums for RPU configuration.
+Hi Mathieu,
 
-Signed-off-by: Ben Levinsky <ben.levinsky@xilinx.com>
----
-v3:
-- add xilinx-related platform mgmt fn's instead of wrapping around
-  function pointer in xilinx eemi ops struct
-v4:
-- add default values for enums
----
- include/linux/firmware/xlnx-zynqmp.h | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
 
-diff --git a/include/linux/firmware/xlnx-zynqmp.h b/include/linux/firmware/xlnx-zynqmp.h
-index 5968df82b991..bb347dfe4ba4 100644
---- a/include/linux/firmware/xlnx-zynqmp.h
-+++ b/include/linux/firmware/xlnx-zynqmp.h
-@@ -104,6 +104,10 @@ enum pm_ret_status {
- };
- 
- enum pm_ioctl_id {
-+	IOCTL_GET_RPU_OPER_MODE = 0,
-+	IOCTL_SET_RPU_OPER_MODE = 1,
-+	IOCTL_RPU_BOOT_ADDR_CONFIG = 2,
-+	IOCTL_TCM_COMB_CONFIG = 3,
- 	IOCTL_SD_DLL_RESET = 6,
- 	IOCTL_SET_SD_TAPDELAY,
- 	IOCTL_SET_PLL_FRAC_MODE,
-@@ -129,6 +133,21 @@ enum pm_query_id {
- 	PM_QID_CLOCK_GET_MAX_DIVISOR,
- };
- 
-+enum rpu_oper_mode {
-+	PM_RPU_MODE_LOCKSTEP = 0,
-+	PM_RPU_MODE_SPLIT = 1,
-+};
-+
-+enum rpu_boot_mem {
-+	PM_RPU_BOOTMEM_LOVEC = 0,
-+	PM_RPU_BOOTMEM_HIVEC = 1,
-+};
-+
-+enum rpu_tcm_comb {
-+	PM_RPU_TCM_SPLIT = 0,
-+	PM_RPU_TCM_COMB = 1,
-+};
-+
- enum zynqmp_pm_reset_action {
- 	PM_RESET_ACTION_RELEASE,
- 	PM_RESET_ACTION_ASSERT,
--- 
-2.17.1
+On 10/19/20 10:34 PM, Mathieu Poirier wrote:
+> Introduce __rpmsg{16|32|64} types along with byte order conversion
+> functions based on an rpmsg_device operation as a foundation to
+> make RPMSG modular and transport agnostic.
+> 
+> Suggested-by: Guennadi Liakhovetski <guennadi.liakhovetski@linux.intel.com>
+> Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 
+Reviewed-by: Arnaud Pouliquen <arnaud.pouliquen@st.com>
+
+Thanks,
+Arnaud
+
+> ---
+>  include/linux/rpmsg.h            | 51 ++++++++++++++++++++++++
+>  include/linux/rpmsg_byteorder.h  | 67 ++++++++++++++++++++++++++++++++
+>  include/uapi/linux/rpmsg_types.h | 11 ++++++
+>  3 files changed, 129 insertions(+)
+>  create mode 100644 include/linux/rpmsg_byteorder.h
+>  create mode 100644 include/uapi/linux/rpmsg_types.h
+> 
+> diff --git a/include/linux/rpmsg.h b/include/linux/rpmsg.h
+> index 9fe156d1c018..97098a90c496 100644
+> --- a/include/linux/rpmsg.h
+> +++ b/include/linux/rpmsg.h
+> @@ -17,6 +17,7 @@
+>  #include <linux/kref.h>
+>  #include <linux/mutex.h>
+>  #include <linux/poll.h>
+> +#include <linux/rpmsg_byteorder.h>
+>  
+>  #define RPMSG_ADDR_ANY		0xFFFFFFFF
+>  
+> @@ -46,6 +47,7 @@ struct rpmsg_channel_info {
+>   * @dst: destination address
+>   * @ept: the rpmsg endpoint of this channel
+>   * @announce: if set, rpmsg will announce the creation/removal of this channel
+> + * @little_endian: True if transport is using little endian byte representation
+>   */
+>  struct rpmsg_device {
+>  	struct device dev;
+> @@ -55,6 +57,7 @@ struct rpmsg_device {
+>  	u32 dst;
+>  	struct rpmsg_endpoint *ept;
+>  	bool announce;
+> +	bool little_endian;
+>  
+>  	const struct rpmsg_device_ops *ops;
+>  };
+> @@ -111,6 +114,54 @@ struct rpmsg_driver {
+>  	int (*callback)(struct rpmsg_device *, void *, int, void *, u32);
+>  };
+>  
+> +static inline u16 rpmsg16_to_cpu(struct rpmsg_device *rpdev, __rpmsg16 val)
+> +{
+> +	if (!rpdev)
+> +		return __rpmsg16_to_cpu(rpmsg_is_little_endian(), val);
+> +	else
+> +		return __rpmsg16_to_cpu(rpdev->little_endian, val);
+> +}
+> +
+> +static inline __rpmsg16 cpu_to_rpmsg16(struct rpmsg_device *rpdev, u16 val)
+> +{
+> +	if (!rpdev)
+> +		return __cpu_to_rpmsg16(rpmsg_is_little_endian(), val);
+> +	else
+> +		return __cpu_to_rpmsg16(rpdev->little_endian, val);
+> +}
+> +
+> +static inline u32 rpmsg32_to_cpu(struct rpmsg_device *rpdev, __rpmsg32 val)
+> +{
+> +	if (!rpdev)
+> +		return __rpmsg32_to_cpu(rpmsg_is_little_endian(), val);
+> +	else
+> +		return __rpmsg32_to_cpu(rpdev->little_endian, val);
+> +}
+> +
+> +static inline __rpmsg32 cpu_to_rpmsg32(struct rpmsg_device *rpdev, u32 val)
+> +{
+> +	if (!rpdev)
+> +		return __cpu_to_rpmsg32(rpmsg_is_little_endian(), val);
+> +	else
+> +		return __cpu_to_rpmsg32(rpdev->little_endian, val);
+> +}
+> +
+> +static inline u64 rpmsg64_to_cpu(struct rpmsg_device *rpdev, __rpmsg64 val)
+> +{
+> +	if (!rpdev)
+> +		return __rpmsg64_to_cpu(rpmsg_is_little_endian(), val);
+> +	else
+> +		return __rpmsg64_to_cpu(rpdev->little_endian, val);
+> +}
+> +
+> +static inline __rpmsg64 cpu_to_rpmsg64(struct rpmsg_device *rpdev, u64 val)
+> +{
+> +	if (!rpdev)
+> +		return __cpu_to_rpmsg64(rpmsg_is_little_endian(), val);
+> +	else
+> +		return __cpu_to_rpmsg64(rpdev->little_endian, val);
+> +}
+> +
+>  #if IS_ENABLED(CONFIG_RPMSG)
+>  
+>  int register_rpmsg_device(struct rpmsg_device *dev);
+> diff --git a/include/linux/rpmsg_byteorder.h b/include/linux/rpmsg_byteorder.h
+> new file mode 100644
+> index 000000000000..c0f565dbad6d
+> --- /dev/null
+> +++ b/include/linux/rpmsg_byteorder.h
+> @@ -0,0 +1,67 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +/*
+> + * Follows implementation found in linux/virtio_byteorder.h
+> + */
+> +#ifndef _LINUX_RPMSG_BYTEORDER_H
+> +#define _LINUX_RPMSG_BYTEORDER_H
+> +#include <linux/types.h>
+> +#include <uapi/linux/rpmsg_types.h>
+> +
+> +static inline bool rpmsg_is_little_endian(void)
+> +{
+> +#ifdef __LITTLE_ENDIAN
+> +	return true;
+> +#else
+> +	return false;
+> +#endif
+> +}
+> +
+> +static inline u16 __rpmsg16_to_cpu(bool little_endian, __rpmsg16 val)
+> +{
+> +	if (little_endian)
+> +		return le16_to_cpu((__force __le16)val);
+> +	else
+> +		return be16_to_cpu((__force __be16)val);
+> +}
+> +
+> +static inline __rpmsg16 __cpu_to_rpmsg16(bool little_endian, u16 val)
+> +{
+> +	if (little_endian)
+> +		return (__force __rpmsg16)cpu_to_le16(val);
+> +	else
+> +		return (__force __rpmsg16)cpu_to_be16(val);
+> +}
+> +
+> +static inline u32 __rpmsg32_to_cpu(bool little_endian, __rpmsg32 val)
+> +{
+> +	if (little_endian)
+> +		return le32_to_cpu((__force __le32)val);
+> +	else
+> +		return be32_to_cpu((__force __be32)val);
+> +}
+> +
+> +static inline __rpmsg32 __cpu_to_rpmsg32(bool little_endian, u32 val)
+> +{
+> +	if (little_endian)
+> +		return (__force __rpmsg32)cpu_to_le32(val);
+> +	else
+> +		return (__force __rpmsg32)cpu_to_be32(val);
+> +}
+> +
+> +static inline u64 __rpmsg64_to_cpu(bool little_endian, __rpmsg64 val)
+> +{
+> +	if (little_endian)
+> +		return le64_to_cpu((__force __le64)val);
+> +	else
+> +		return be64_to_cpu((__force __be64)val);
+> +}
+> +
+> +static inline __rpmsg64 __cpu_to_rpmsg64(bool little_endian, u64 val)
+> +{
+> +	if (little_endian)
+> +		return (__force __rpmsg64)cpu_to_le64(val);
+> +	else
+> +		return (__force __rpmsg64)cpu_to_be64(val);
+> +}
+> +
+> +#endif /* _LINUX_RPMSG_BYTEORDER_H */
+> diff --git a/include/uapi/linux/rpmsg_types.h b/include/uapi/linux/rpmsg_types.h
+> new file mode 100644
+> index 000000000000..36e3b9404391
+> --- /dev/null
+> +++ b/include/uapi/linux/rpmsg_types.h
+> @@ -0,0 +1,11 @@
+> +/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+> +#ifndef _UAPI_LINUX_RPMSG_TYPES_H
+> +#define _UAPI_LINUX_RPMSG_TYPES_H
+> +
+> +#include <linux/types.h>
+> +
+> +typedef __u16 __bitwise __rpmsg16;
+> +typedef __u32 __bitwise __rpmsg32;
+> +typedef __u64 __bitwise __rpmsg64;
+> +
+> +#endif /* _UAPI_LINUX_RPMSG_TYPES_H */
+> 
