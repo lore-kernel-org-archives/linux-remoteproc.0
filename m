@@ -7,23 +7,23 @@ X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79DD7C2D0A3
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 26 Oct 2020 11:12:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43CAFC56202
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 26 Oct 2020 11:12:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 347702224A
+	by mail.kernel.org (Postfix) with ESMTP id 033722224A
 	for <linux-remoteproc@archiver.kernel.org>; Mon, 26 Oct 2020 11:12:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1773156AbgJZLLU (ORCPT
+        id S1773147AbgJZLLP (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 26 Oct 2020 07:11:20 -0400
-Received: from muru.com ([72.249.23.125]:46568 "EHLO muru.com"
+        Mon, 26 Oct 2020 07:11:15 -0400
+Received: from muru.com ([72.249.23.125]:46554 "EHLO muru.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1773149AbgJZLLQ (ORCPT
+        id S1773143AbgJZLLM (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 26 Oct 2020 07:11:16 -0400
+        Mon, 26 Oct 2020 07:11:12 -0400
 Received: from hillo.muru.com (localhost [127.0.0.1])
-        by muru.com (Postfix) with ESMTP id 3C51D8196;
-        Mon, 26 Oct 2020 11:11:18 +0000 (UTC)
+        by muru.com (Postfix) with ESMTP id 3BC7B80AA;
+        Mon, 26 Oct 2020 11:11:14 +0000 (UTC)
 From:   Tony Lindgren <tony@atomide.com>
 To:     linux-omap@vger.kernel.org
 Cc:     "Andrew F . Davis" <afd@ti.com>, Dave Gerlach <d-gerlach@ti.com>,
@@ -41,9 +41,9 @@ Cc:     "Andrew F . Davis" <afd@ti.com>, Dave Gerlach <d-gerlach@ti.com>,
         Santosh Shilimkar <ssantosh@kernel.org>,
         Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
         linux-remoteproc@vger.kernel.org
-Subject: [PATCH 5/9] bus: ti-sysc: Implement GPMC debug quirk to drop platform data
-Date:   Mon, 26 Oct 2020 13:10:45 +0200
-Message-Id: <20201026111049.54835-6-tony@atomide.com>
+Subject: [PATCH 4/9] bus: ti-sysc: Support modules without control registers
+Date:   Mon, 26 Oct 2020 13:10:44 +0200
+Message-Id: <20201026111049.54835-5-tony@atomide.com>
 X-Mailer: git-send-email 2.29.1
 In-Reply-To: <20201026111049.54835-1-tony@atomide.com>
 References: <20201026111049.54835-1-tony@atomide.com>
@@ -53,53 +53,40 @@ Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-We need to enable no-reset-on-init quirk for GPMC if the config
-option for CONFIG_OMAP_GPMC_DEBUG is set. Otherwise the GPMC
-driver code is unable to show the bootloader configured timings.
+Some modules like MPU have a powerdomain and functional clock but not
+necessarily any control registers. Let's allow configuring interconnect
+target modules with no control registers.
 
 Signed-off-by: Tony Lindgren <tony@atomide.com>
 ---
- drivers/bus/ti-sysc.c                 | 10 ++++++++++
- include/linux/platform_data/ti-sysc.h |  1 +
- 2 files changed, 11 insertions(+)
+ drivers/bus/ti-sysc.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
 diff --git a/drivers/bus/ti-sysc.c b/drivers/bus/ti-sysc.c
 --- a/drivers/bus/ti-sysc.c
 +++ b/drivers/bus/ti-sysc.c
-@@ -1382,6 +1382,8 @@ static const struct sysc_revision_quirk sysc_revision_quirks[] = {
- 		   SYSC_QUIRK_CLKDM_NOAUTO),
- 	SYSC_QUIRK("dwc3", 0x488c0000, 0, 0x10, -ENODEV, 0x500a0200, 0xffffffff,
- 		   SYSC_QUIRK_CLKDM_NOAUTO),
-+	SYSC_QUIRK("gpmc", 0, 0, 0x10, 0x14, 0x00000060, 0xffffffff,
-+		   SYSC_QUIRK_GPMC_DEBUG),
- 	SYSC_QUIRK("hdmi", 0, 0, 0x10, -ENODEV, 0x50030200, 0xffffffff,
- 		   SYSC_QUIRK_OPT_CLKS_NEEDED),
- 	SYSC_QUIRK("hdq1w", 0, 0, 0x14, 0x18, 0x00000006, 0xffffffff,
-@@ -1815,6 +1817,14 @@ static void sysc_init_module_quirks(struct sysc *ddata)
- 		return;
- 	}
+@@ -850,8 +850,12 @@ static int sysc_ioremap(struct sysc *ddata)
+  */
+ static int sysc_map_and_check_registers(struct sysc *ddata)
+ {
++	struct device_node *np = ddata->dev->of_node;
+ 	int error;
  
-+#ifdef CONFIG_OMAP_GPMC_DEBUG
-+	if (ddata->cfg.quirks & SYSC_QUIRK_GPMC_DEBUG) {
-+		ddata->cfg.quirks |= SYSC_QUIRK_NO_RESET_ON_INIT;
++	if (!of_get_property(np, "reg", NULL))
++		return 0;
 +
-+		return;
-+	}
-+#endif
-+
- 	if (ddata->cfg.quirks & SYSC_MODULE_QUIRK_I2C) {
- 		ddata->pre_reset_quirk = sysc_pre_reset_quirk_i2c;
- 		ddata->post_reset_quirk = sysc_post_reset_quirk_i2c;
-diff --git a/include/linux/platform_data/ti-sysc.h b/include/linux/platform_data/ti-sysc.h
---- a/include/linux/platform_data/ti-sysc.h
-+++ b/include/linux/platform_data/ti-sysc.h
-@@ -50,6 +50,7 @@ struct sysc_regbits {
- 	s8 emufree_shift;
- };
+ 	error = sysc_parse_and_check_child_range(ddata);
+ 	if (error)
+ 		return error;
+@@ -2906,6 +2910,9 @@ static int sysc_probe(struct platform_device *pdev)
+ 	if (!ddata)
+ 		return -ENOMEM;
  
-+#define SYSC_QUIRK_GPMC_DEBUG		BIT(26)
- #define SYSC_MODULE_QUIRK_ENA_RESETDONE	BIT(25)
- #define SYSC_MODULE_QUIRK_PRUSS		BIT(24)
- #define SYSC_MODULE_QUIRK_DSS_RESET	BIT(23)
++	ddata->offsets[SYSC_REVISION] = -ENODEV;
++	ddata->offsets[SYSC_SYSCONFIG] = -ENODEV;
++	ddata->offsets[SYSC_SYSSTATUS] = -ENODEV;
+ 	ddata->dev = &pdev->dev;
+ 	platform_set_drvdata(pdev, ddata);
+ 
 -- 
 2.29.1
