@@ -7,39 +7,39 @@ X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93460C4363A
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 27 Oct 2020 00:21:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EB52C61DD8
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 27 Oct 2020 00:32:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5A95A20708
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 27 Oct 2020 00:21:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5F1BC20882
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 27 Oct 2020 00:32:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1603758064;
-	bh=0WPl1MyFeXwDNAOJwHf2dIt0E01BWkqsAC3b9Kikm6k=;
+	s=default; t=1603758742;
+	bh=dqa6JtxLJRn8iT3a/4dQdhFUK2GrFl4nkpI3gzWfnGc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=L/0z2Ix6eeqkd5DyP9diQOkl7QLfimxi8CEEMQeMKWe1HYyLTeM3jumzeRWtbA24v
-	 C9k/+DjmWLRZglo0N/efoV9ddRuxvWQSBSNMwnzJEdxbQ8dcxMd4Sd7h6tWdiS14E3
-	 5pLuia2/jdxAbhkMucYiwgVcfPWnKELoQ+sCos3M=
+	b=Boy0gObVJ82okYkPu+9LxI508L5G4TQ6CvvmQCM5psleKsywU7nDObT6DHfBjwqYC
+	 KJs6dHtVg7A1537GS+5WNLIrGXpilvW3gLCvjDSIItz/o5PiDzhGFhoAq0QeVJoCXX
+	 PgvSbzNQ9vrUyCKiH9VhpYNmgZ0yHoVkeFgqcphA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437475AbgJ0AF6 (ORCPT
+        id S2409515AbgJ0AcM (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 26 Oct 2020 20:05:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54030 "EHLO mail.kernel.org"
+        Mon, 26 Oct 2020 20:32:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51912 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2438158AbgJ0AFJ (ORCPT
+        id S2409373AbgJZXvT (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 26 Oct 2020 20:05:09 -0400
+        Mon, 26 Oct 2020 19:51:19 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D61F42087C;
-        Tue, 27 Oct 2020 00:05:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D94F620874;
+        Mon, 26 Oct 2020 23:51:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1603757108;
-        bh=0WPl1MyFeXwDNAOJwHf2dIt0E01BWkqsAC3b9Kikm6k=;
+        s=default; t=1603756278;
+        bh=dqa6JtxLJRn8iT3a/4dQdhFUK2GrFl4nkpI3gzWfnGc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=f1sqEy4kWU9tZoiuOnyICsnuId/aOsTsiUdbL5MjegRYs2uofRrJQZarOvs4n9dN4
-         9OYRp39R+us6+rjg7ZJEOIuiDtMfn72HGJdBrII0Hk66KudGGffTXVI4IeV9VKtZob
-         xwBVmjWCY+NrChkGTtvE6xbzqEL/w4WEGM0UzbXw=
+        b=VIdT1FoC0o+dCqIPM3dyRFvBKMJtX9slY0QRu8uOVcgZGGkzvQfXVNwuXMZ+0L0fd
+         GdzeY0lB8fDFNuTPYe2Tnf0xbLzbov5n5gTBX4yiQqD5zLhZGCcefg/0WWucWjn6ba
+         tbo8WkZgeC4Em1h+co7/1UcLLAmtIAXC3vmJYGlc=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Chris Lew <clew@codeaurora.org>,
@@ -48,12 +48,12 @@ Cc:     Chris Lew <clew@codeaurora.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
         Sasha Levin <sashal@kernel.org>, linux-arm-msm@vger.kernel.org,
         linux-remoteproc@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 45/60] rpmsg: glink: Use complete_all for open states
-Date:   Mon, 26 Oct 2020 20:04:00 -0400
-Message-Id: <20201027000415.1026364-45-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.9 109/147] rpmsg: glink: Use complete_all for open states
+Date:   Mon, 26 Oct 2020 19:48:27 -0400
+Message-Id: <20201026234905.1022767-109-sashal@kernel.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20201027000415.1026364-1-sashal@kernel.org>
-References: <20201027000415.1026364-1-sashal@kernel.org>
+In-Reply-To: <20201026234905.1022767-1-sashal@kernel.org>
+References: <20201026234905.1022767-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -81,7 +81,7 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 3 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/rpmsg/qcom_glink_native.c b/drivers/rpmsg/qcom_glink_native.c
-index facc577ab0acc..a755f85686e53 100644
+index f40312b16da06..b5570c83a28c6 100644
 --- a/drivers/rpmsg/qcom_glink_native.c
 +++ b/drivers/rpmsg/qcom_glink_native.c
 @@ -970,7 +970,7 @@ static int qcom_glink_rx_open_ack(struct qcom_glink *glink, unsigned int lcid)
