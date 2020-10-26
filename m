@@ -2,28 +2,28 @@ Return-Path: <SRS0=//YT=EB=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-9.9 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9C9CC55178
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 26 Oct 2020 11:11:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C10CC56201
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 26 Oct 2020 11:12:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AD6B822265
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 26 Oct 2020 11:11:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EA73F2224A
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 26 Oct 2020 11:12:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1773203AbgJZLLl (ORCPT
+        id S1773165AbgJZLLW (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 26 Oct 2020 07:11:41 -0400
-Received: from muru.com ([72.249.23.125]:46626 "EHLO muru.com"
+        Mon, 26 Oct 2020 07:11:22 -0400
+Received: from muru.com ([72.249.23.125]:46584 "EHLO muru.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1773189AbgJZLLd (ORCPT
+        id S1773157AbgJZLLU (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 26 Oct 2020 07:11:33 -0400
+        Mon, 26 Oct 2020 07:11:20 -0400
 Received: from hillo.muru.com (localhost [127.0.0.1])
-        by muru.com (Postfix) with ESMTP id 68F4281A0;
-        Mon, 26 Oct 2020 11:11:34 +0000 (UTC)
+        by muru.com (Postfix) with ESMTP id 3B65A80AA;
+        Mon, 26 Oct 2020 11:11:22 +0000 (UTC)
 From:   Tony Lindgren <tony@atomide.com>
 To:     linux-omap@vger.kernel.org
 Cc:     "Andrew F . Davis" <afd@ti.com>, Dave Gerlach <d-gerlach@ti.com>,
@@ -35,15 +35,15 @@ Cc:     "Andrew F . Davis" <afd@ti.com>, Dave Gerlach <d-gerlach@ti.com>,
         Roger Quadros <rogerq@ti.com>, Suman Anna <s-anna@ti.com>,
         Tero Kristo <t-kristo@ti.com>, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
-        linux-remoteproc@vger.kernel.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Michael Turquette <mturquette@baylibre.com>,
         Santosh Shilimkar <ssantosh@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
-Subject: [PATCH 9/9] remoteproc/wkup_m3: Use reset control driver if available
-Date:   Mon, 26 Oct 2020 13:10:49 +0200
-Message-Id: <20201026111049.54835-10-tony@atomide.com>
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org
+Subject: [PATCH 6/9] soc: ti: omap-prm: Add pm_clk for genpd
+Date:   Mon, 26 Oct 2020 13:10:46 +0200
+Message-Id: <20201026111049.54835-7-tony@atomide.com>
 X-Mailer: git-send-email 2.29.1
 In-Reply-To: <20201026111049.54835-1-tony@atomide.com>
 References: <20201026111049.54835-1-tony@atomide.com>
@@ -53,115 +53,98 @@ Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-In order to move wkup_m3 to probe without platform data, let's add
-support for using optional reset control driver if configured in the
-dts. With this change and the related dts change, we can start
-dropping the platform data for am335x.
+In order to probe l3 and l4 interconnects with simple-pm-bus, we want
+genpd to manage the clocks for the interconnects. For interconnect target
+modules, we already have ti-sysc manage the clocks so let's skipe managing
+clocks for ti-sysc modules.
 
-And once wkup_m3 no longer needs platform data, we can simply drop the
-related legacy reset platform data callbacks from wkup_m3 driver later
-on after also am437x no longer depends on it.
-
-Cc: linux-remoteproc@vger.kernel.org
-Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Dave Gerlach <d-gerlach@ti.com>
-Cc: Philipp Zabel <p.zabel@pengutronix.de>
-Cc: Suman Anna <s-anna@ti.com>
+Cc: Santosh Shilimkar <ssantosh@kernel.org>
 Signed-off-by: Tony Lindgren <tony@atomide.com>
 ---
+ drivers/soc/ti/omap_prm.c | 37 +++++++++++++++++++++++++++++++++++++
+ 1 file changed, 37 insertions(+)
 
-Please review and ack if no issues. If you guys instead want to set up an
-immutable remoteproc branch with just this patch in it against v5.10-rc1
-that works too :)
-
----
- drivers/remoteproc/wkup_m3_rproc.c | 28 +++++++++++++++++++++-------
- 1 file changed, 21 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/remoteproc/wkup_m3_rproc.c b/drivers/remoteproc/wkup_m3_rproc.c
---- a/drivers/remoteproc/wkup_m3_rproc.c
-+++ b/drivers/remoteproc/wkup_m3_rproc.c
-@@ -17,6 +17,7 @@
- #include <linux/platform_device.h>
- #include <linux/pm_runtime.h>
- #include <linux/remoteproc.h>
-+#include <linux/reset.h>
- 
- #include <linux/platform_data/wkup_m3.h>
- 
-@@ -43,11 +44,13 @@ struct wkup_m3_mem {
-  * @rproc: rproc handle
-  * @pdev: pointer to platform device
-  * @mem: WkupM3 memory information
-+ * @rsts: reset control
+diff --git a/drivers/soc/ti/omap_prm.c b/drivers/soc/ti/omap_prm.c
+--- a/drivers/soc/ti/omap_prm.c
++++ b/drivers/soc/ti/omap_prm.c
+@@ -7,6 +7,7 @@
   */
- struct wkup_m3_rproc {
- 	struct rproc *rproc;
- 	struct platform_device *pdev;
- 	struct wkup_m3_mem mem[WKUPM3_MEM_MAX];
-+	struct reset_control *rsts;
- };
  
- static int wkup_m3_rproc_start(struct rproc *rproc)
-@@ -57,6 +60,9 @@ static int wkup_m3_rproc_start(struct rproc *rproc)
- 	struct device *dev = &pdev->dev;
- 	struct wkup_m3_platform_data *pdata = dev_get_platdata(dev);
+ #include <linux/kernel.h>
++#include <linux/clk.h>
+ #include <linux/device.h>
+ #include <linux/io.h>
+ #include <linux/iopoll.h>
+@@ -14,6 +15,7 @@
+ #include <linux/of.h>
+ #include <linux/of_device.h>
+ #include <linux/platform_device.h>
++#include <linux/pm_clock.h>
+ #include <linux/pm_domain.h>
+ #include <linux/reset-controller.h>
+ #include <linux/delay.h>
+@@ -325,6 +327,35 @@ static int omap_prm_domain_power_off(struct generic_pm_domain *domain)
+ 	return 0;
+ }
  
-+	if (wkupm3->rsts)
-+		return reset_control_deassert(wkupm3->rsts);
++/*
++ * Note that ti-sysc already manages the module clocks separately so
++ * no need to manage those. Interconnect instances need clocks managed
++ * for simple-pm-bus.
++ */
++static int omap_prm_domain_attach_clock(struct device *dev)
++{
++	struct device_node *np = dev->of_node;
++	int error;
 +
- 	if (pdata->deassert_reset(pdev, pdata->reset_name)) {
- 		dev_err(dev, "Unable to reset wkup_m3!\n");
- 		return -ENODEV;
-@@ -72,6 +78,9 @@ static int wkup_m3_rproc_stop(struct rproc *rproc)
- 	struct device *dev = &pdev->dev;
- 	struct wkup_m3_platform_data *pdata = dev_get_platdata(dev);
- 
-+	if (wkupm3->rsts)
-+		return reset_control_assert(wkupm3->rsts);
++	if (of_device_is_compatible(np, "ti-sysc"))
++		return 0;
 +
- 	if (pdata->assert_reset(pdev, pdata->reset_name)) {
- 		dev_err(dev, "Unable to assert reset of wkup_m3!\n");
- 		return -ENODEV;
-@@ -132,12 +141,6 @@ static int wkup_m3_rproc_probe(struct platform_device *pdev)
- 	int ret;
- 	int i;
- 
--	if (!(pdata && pdata->deassert_reset && pdata->assert_reset &&
--	      pdata->reset_name)) {
--		dev_err(dev, "Platform data missing!\n");
--		return -ENODEV;
--	}
--
- 	ret = of_property_read_string(dev->of_node, "ti,pm-firmware",
- 				      &fw_name);
- 	if (ret) {
-@@ -165,6 +168,17 @@ static int wkup_m3_rproc_probe(struct platform_device *pdev)
- 	wkupm3->rproc = rproc;
- 	wkupm3->pdev = pdev;
- 
-+	wkupm3->rsts = devm_reset_control_get_optional_shared(dev, "rstctrl");
-+	if (PTR_ERR_OR_ZERO(wkupm3->rsts)) {
-+		if (!(pdata && pdata->deassert_reset && pdata->assert_reset &&
-+		      pdata->reset_name)) {
-+			dev_err(dev, "Platform data missing!\n");
-+			ret = -ENODEV;
-+			goto err_put_rproc;
-+		}
-+		wkupm3->rsts = NULL;
++	if (!of_property_read_bool(np, "clocks"))
++		return 0;
++
++	error = pm_clk_create(dev);
++	if (error)
++		return error;
++
++	error = of_pm_clk_add_clks(dev);
++	if (error < 0) {
++		pm_clk_destroy(dev);
++		return error;
 +	}
 +
- 	for (i = 0; i < ARRAY_SIZE(mem_names); i++) {
- 		res = platform_get_resource_byname(pdev, IORESOURCE_MEM,
- 						   mem_names[i]);
-@@ -173,7 +187,7 @@ static int wkup_m3_rproc_probe(struct platform_device *pdev)
- 			dev_err(&pdev->dev, "devm_ioremap_resource failed for resource %d\n",
- 				i);
- 			ret = PTR_ERR(wkupm3->mem[i].cpu_addr);
--			goto err;
-+			goto err_put_rproc;
- 		}
- 		wkupm3->mem[i].bus_addr = res->start;
- 		wkupm3->mem[i].size = resource_size(res);
++	return 0;
++}
++
+ static int omap_prm_domain_attach_dev(struct generic_pm_domain *domain,
+ 				      struct device *dev)
+ {
+@@ -349,6 +380,10 @@ static int omap_prm_domain_attach_dev(struct generic_pm_domain *domain,
+ 	genpd_data = dev_gpd_data(dev);
+ 	genpd_data->data = NULL;
+ 
++	ret = omap_prm_domain_attach_clock(dev);
++	if (ret)
++		return ret;
++
+ 	return 0;
+ }
+ 
+@@ -357,6 +392,7 @@ static void omap_prm_domain_detach_dev(struct generic_pm_domain *domain,
+ {
+ 	struct generic_pm_domain_data *genpd_data;
+ 
++	pm_clk_destroy(dev);
+ 	genpd_data = dev_gpd_data(dev);
+ 	genpd_data->data = NULL;
+ }
+@@ -393,6 +429,7 @@ static int omap_prm_domain_init(struct device *dev, struct omap_prm *prm)
+ 	prmd->pd.power_off = omap_prm_domain_power_off;
+ 	prmd->pd.attach_dev = omap_prm_domain_attach_dev;
+ 	prmd->pd.detach_dev = omap_prm_domain_detach_dev;
++	prmd->pd.flags = GENPD_FLAG_PM_CLK;
+ 
+ 	pm_genpd_init(&prmd->pd, NULL, true);
+ 	error = of_genpd_add_provider_simple(np, &prmd->pd);
 -- 
 2.29.1
