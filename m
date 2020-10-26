@@ -2,115 +2,87 @@ Return-Path: <SRS0=//YT=EB=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F724C2D0A3
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 26 Oct 2020 07:35:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 906FCC4363A
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 26 Oct 2020 11:11:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4F463222EA
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 26 Oct 2020 07:35:29 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jnwlplfG"
+	by mail.kernel.org (Postfix) with ESMTP id 4F3BC2224A
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 26 Oct 2020 11:11:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1769792AbgJZHf2 (ORCPT
+        id S1773077AbgJZLK5 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 26 Oct 2020 03:35:28 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:36468 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1769791AbgJZHf2 (ORCPT
+        Mon, 26 Oct 2020 07:10:57 -0400
+Received: from muru.com ([72.249.23.125]:46486 "EHLO muru.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1772586AbgJZLK4 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 26 Oct 2020 03:35:28 -0400
-Received: by mail-pf1-f194.google.com with SMTP id w65so2897328pfd.3;
-        Mon, 26 Oct 2020 00:35:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=CI3vWPl8k1Jbjm4zcRL1dzvW2GroWE4ViyULbDeW7tE=;
-        b=jnwlplfGJlvMbotV1BTE9FRhh6dY30lA13rcqxgkEQEwwQPijEo5WK1aUldXkkj4s8
-         A57O+/fK6UYLCh0/kL5oPq4MMycvlZttramPfdNUZz0GiXO0bdLKxYKmqSVAwxjMeruM
-         an7Okue+io5GKdxNx8Py0+Bn4VTYvEGjmqAz+9nSic+7roECf4X7dbxX/PoAeze+wl9D
-         +OlXO8rYSaLWdznI/ySQlTFxi24T641m/qjWQELHr/uQZ9r2s2iYuMOEOO5Ynd37rmAI
-         1x6Cq4PBaIKLlyqYG4sOLUFxjqJEF/OHx/O4PqT4/EWZNg5x2xzSs9nJyhGpRKUPiX2E
-         8I+A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=CI3vWPl8k1Jbjm4zcRL1dzvW2GroWE4ViyULbDeW7tE=;
-        b=uiz4rv6ekHozujn1QqZoKnGyTRQJFj+pNESb8OBpSd18J0LKBGSqvmMgXvGdoB7TvJ
-         DWRDHiOfV/pGqXuZkoTk32Sl3/98BD99sb+4OiBgKtPbpChFDj9Mgd9ca9xn/7VR1xOY
-         QZs69CMCo2GCj9uSps5XzhfUurectFiL5NM8oHA7CBaJ/XY6guMgV+Jfiwpqvvlcr4rT
-         HGp0hRT54y9CIq/mELYmyxFrMbsWeChTRLl7dhoMSHIbk6gEMFpuumv79YTjLayFZ8Fl
-         35Dnaj+O2i1MCNGfrvLlh0gcq+uYEQ4PBLvCDMqkeyMRNPbkVxr+krg2ZIJ5aVYCNaLO
-         e6AQ==
-X-Gm-Message-State: AOAM532s9FIKIgg8XM5epSehoJj7I3e/UrZy3tJfbyW0aNtcnj/7EHzq
-        jgPVnAWHZjHuencfJE1SS10=
-X-Google-Smtp-Source: ABdhPJwWltliyR9yyP+QGJYPEogmll/0VkXsakMpR3a/mq+vvaCEdzc4l5+rIGz8R98A4RWPcDcYCA==
-X-Received: by 2002:a65:4cce:: with SMTP id n14mr15363159pgt.349.1603697728029;
-        Mon, 26 Oct 2020 00:35:28 -0700 (PDT)
-Received: from ubt.spreadtrum.com ([117.18.48.82])
-        by smtp.gmail.com with ESMTPSA id gm14sm11616517pjb.2.2020.10.26.00.35.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 26 Oct 2020 00:35:27 -0700 (PDT)
-From:   Chunyan Zhang <zhang.lyra@gmail.com>
-To:     Ohad Ben-Cohen <ohad@wizery.com>,
+        Mon, 26 Oct 2020 07:10:56 -0400
+Received: from hillo.muru.com (localhost [127.0.0.1])
+        by muru.com (Postfix) with ESMTP id D0C3480AA;
+        Mon, 26 Oct 2020 11:10:57 +0000 (UTC)
+From:   Tony Lindgren <tony@atomide.com>
+To:     linux-omap@vger.kernel.org
+Cc:     "Andrew F . Davis" <afd@ti.com>, Dave Gerlach <d-gerlach@ti.com>,
+        Faiz Abbas <faiz_abbas@ti.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        Keerthy <j-keerthy@ti.com>, Nishanth Menon <nm@ti.com>,
+        Peter Ujfalusi <peter.ujfalusi@ti.com>,
+        Roger Quadros <rogerq@ti.com>, Suman Anna <s-anna@ti.com>,
+        Tero Kristo <t-kristo@ti.com>, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Baolin Wang <baolin.wang7@gmail.com>
-Cc:     linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Chunyan Zhang <chunyan.zhang@unisoc.com>
-Subject: [PATCH 2/2] hwspinlock: sprd: use module_platform_driver() instead postcore initcall
-Date:   Mon, 26 Oct 2020 15:35:21 +0800
-Message-Id: <20201026073521.24492-1-zhang.lyra@gmail.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20201026073009.24164-2-zhang.lyra@gmail.com>
-References: <20201026073009.24164-2-zhang.lyra@gmail.com>
+        Michael Turquette <mturquette@baylibre.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org
+Subject: [PATCH 0/9] Genpd related code changes to drop am335x pdata
+Date:   Mon, 26 Oct 2020 13:10:40 +0200
+Message-Id: <20201026111049.54835-1-tony@atomide.com>
+X-Mailer: git-send-email 2.29.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-From: Chunyan Zhang <chunyan.zhang@unisoc.com>
+Hi all,
 
-The hardware spinlock devices are defined in the DT, there's no need for
-init calls order, remove boilerplate code by using module_platform_driver.
+Here are the code related changes for v5.11 merge window to drop the
+remaining am335x platform data. I'll be posting the related device tree
+changes separately.
 
-Signed-off-by: Chunyan Zhang <chunyan.zhang@unisoc.com>
----
- drivers/hwspinlock/sprd_hwspinlock.c | 13 +------------
- 1 file changed, 1 insertion(+), 12 deletions(-)
+Regards,
 
-diff --git a/drivers/hwspinlock/sprd_hwspinlock.c b/drivers/hwspinlock/sprd_hwspinlock.c
-index e7b55217293c..179231cec5a6 100644
---- a/drivers/hwspinlock/sprd_hwspinlock.c
-+++ b/drivers/hwspinlock/sprd_hwspinlock.c
-@@ -151,18 +151,7 @@ static struct platform_driver sprd_hwspinlock_driver = {
- 		.of_match_table = sprd_hwspinlock_of_match,
- 	},
- };
--
--static int __init sprd_hwspinlock_init(void)
--{
--	return platform_driver_register(&sprd_hwspinlock_driver);
--}
--postcore_initcall(sprd_hwspinlock_init);
--
--static void __exit sprd_hwspinlock_exit(void)
--{
--	platform_driver_unregister(&sprd_hwspinlock_driver);
--}
--module_exit(sprd_hwspinlock_exit);
-+module_platform_driver(sprd_hwspinlock_driver);
- 
- MODULE_LICENSE("GPL v2");
- MODULE_DESCRIPTION("Hardware spinlock driver for Spreadtrum");
+Tony
+
+
+Tero Kristo (1):
+  soc: ti: omap-prm: am3: add genpd support for remaining PRM instances
+
+Tony Lindgren (8):
+  ARM: OMAP2+: Check for inited flag
+  ARM: OMAP2+: Probe PRCM first to probe l4_wkup with simple-pm-bus
+  clk: ti: am33xx: Keep am3 l3 main clock always on for genpd
+  bus: ti-sysc: Support modules without control registers
+  bus: ti-sysc: Implement GPMC debug quirk to drop platform data
+  soc: ti: omap-prm: Add pm_clk for genpd
+  soc: ti: pm33xx: Enable basic PM runtime support for genpd
+  remoteproc/wkup_m3: Use reset control driver if available
+
+ arch/arm/mach-omap2/omap_hwmod.c      |  6 +++
+ arch/arm/mach-omap2/pdata-quirks.c    | 11 ++++
+ drivers/bus/ti-sysc.c                 | 17 +++++++
+ drivers/clk/ti/clk-33xx.c             |  2 +
+ drivers/remoteproc/wkup_m3_rproc.c    | 28 +++++++---
+ drivers/soc/ti/omap_prm.c             | 73 +++++++++++++++++++++++++--
+ drivers/soc/ti/pm33xx.c               | 17 ++++++-
+ include/linux/platform_data/ti-sysc.h |  1 +
+ 8 files changed, 143 insertions(+), 12 deletions(-)
+
 -- 
-2.20.1
-
+2.29.1
