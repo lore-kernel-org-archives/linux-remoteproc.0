@@ -2,184 +2,114 @@ Return-Path: <SRS0=//YT=EB=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AC5BC2D0A3
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 26 Oct 2020 15:33:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8A24C4363A
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 26 Oct 2020 15:49:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DA68B223EA
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 26 Oct 2020 15:33:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 62D1C22409
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 26 Oct 2020 15:49:40 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jtSGr9La"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1771762AbgJZPds (ORCPT
+        id S1773116AbgJZPtk (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 26 Oct 2020 11:33:48 -0400
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:40057 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1769833AbgJZPds (ORCPT
+        Mon, 26 Oct 2020 11:49:40 -0400
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:40737 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1772482AbgJZPtj (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 26 Oct 2020 11:33:48 -0400
-Received: by mail-oi1-f195.google.com with SMTP id m128so10869797oig.7;
-        Mon, 26 Oct 2020 08:33:46 -0700 (PDT)
+        Mon, 26 Oct 2020 11:49:39 -0400
+Received: by mail-oi1-f193.google.com with SMTP id m128so10923288oig.7
+        for <linux-remoteproc@vger.kernel.org>; Mon, 26 Oct 2020 08:49:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=pZLcxZ2MnUfE2owgeO5H9FxVAp5GYsqgLY4ZhY+S9R8=;
+        b=jtSGr9LazkMCJoDk/IxFFP4G5Qs+Y/9svdQos1NCXU8w7ehGZ1EUP/P/1qM5Zn8/Jo
+         sdeFpgprcu3SWr7TpeAQolSe02ABLWQf+Pty2W6nb4JyLbLaeZn+PQi2twz5+iUeR+WL
+         03CZsOTG45+8p7ykLyG/f2YL6cOKxOwa1DleYjm/yOQyV9F1o5xu8twZBHPHM6TMPbfi
+         HZdDc6zw/913iaREkqY3fNRuLIv5jELnWoD25g/3dDPPvbzNVn/oVekUMoMNW7G+/Sjw
+         kZ9nnGIUmmxoDjTd8cwh/QyFuWIVpvY47VBot6ALPeaPToOWxzeTVrSlIsJbWkdayyo5
+         om6Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Npr8JFXnNVuOd5JBeJSU1d/jU6NcSqcvSBeX3MQnMCw=;
-        b=sH8yJaENEr9zRQqaDTeQATgawIviJucH7DkUXXsgh8DUOOgsVqXmevMa7ZuxmlFGmy
-         1ohrWmb9/tj16yPG2s5pYTUROLtqGX/V10vi7a47Jgx1G2P18lLhl/NRZoc2dtnuTq9V
-         iVyOzl5cucanZmyyOk6EuYGtLfig1zg1LplGrstjAUprL4QMyZxP9eeOtIL4T9KcASBy
-         dPAqu+c9EVn3dbX04FohmSHSW+og8a7/byFE3+GVynRI9ZrKm5Ptkr7U8K3dpMPA10ky
-         4e7T0lFGmuvfJdjGN0eTaDtE7O6PF/pANZLirGwbTY+4ntfDrCUB2bj+Nk2Z+8MEGODV
-         J7Aw==
-X-Gm-Message-State: AOAM530FuyZkAkAPmr4PIiuMp5gaI7duxLyjIIOJe72FXaJ7sHD2h1pZ
-        tIVjAA9nkCzA72riuBn4rTS73gPBeriHdAJbV4Q=
-X-Google-Smtp-Source: ABdhPJwLqZF2nUpKrvhcxyI34nr4X7bBy8icWsJGObwdQ8i/5k3Ztdf2PJq2vrTAVMJP3VVhuKLd7HTBbICac/wUeIE=
-X-Received: by 2002:aca:c490:: with SMTP id u138mr13399294oif.54.1603726426441;
- Mon, 26 Oct 2020 08:33:46 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200916061500.1970090-1-hch@lst.de> <20200916061500.1970090-7-hch@lst.de>
-In-Reply-To: <20200916061500.1970090-7-hch@lst.de>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 26 Oct 2020 16:33:34 +0100
-Message-ID: <CAMuHMdX9c0va_EqBw1wfD_JiVPpjiBPLzE88EmLGVLfVhECugw@mail.gmail.com>
-Subject: Re: [PATCH 6/6] dma-mapping: introduce DMA range map, supplanting dma_pfn_offset
-To:     Christoph Hellwig <hch@lst.de>,
-        Jim Quinlan <james.quinlan@broadcom.com>
-Cc:     Linux IOMMU <iommu@lists.linux-foundation.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=pZLcxZ2MnUfE2owgeO5H9FxVAp5GYsqgLY4ZhY+S9R8=;
+        b=I84OlKZHsMIck7kU6Kjqokkr6Oy+kPA/TW/xk30T4+yjvULNNTannnsf0BykJIds9W
+         BZyk+ZXZNM+km2Gh4EVgG0o/zV+ypKLJT3pkAIfeMgXNZGXCCXtYcPXwVsqcvHXhXXf4
+         pAbukE1afAVyV124ltpAT+vbOW5ZJPGeZwStBZNbAU1ttCUlrOgJwRsSVYFwH0v4xtU4
+         PJNb80LPlRl+uds9Ct3KrGDuCsX2EPTzLoGcXutB5kJFPZFLCg5NSubefbMXEXtMKfG7
+         RNStvJgk0WH4w5GwMHF/2ft5+clUZNqcxcmBZaYjcywQLOaOAKxYczIqhyqqgAMCfeVM
+         3A3A==
+X-Gm-Message-State: AOAM531agjlNJe4YcTWbYiZBZyNfyAP/CuiLGs9PQKhzSStPTblOHymU
+        7P41HNt/azCvXuTq2QVQazy8+A==
+X-Google-Smtp-Source: ABdhPJy5vzb4gSulEItGq7NAbNpQx1Rk+qmcaxsk1uEPTY3pthSMzWWPWLeRubLs4nUV8lHjyEbN1w==
+X-Received: by 2002:aca:4d06:: with SMTP id a6mr14494885oib.166.1603727379027;
+        Mon, 26 Oct 2020 08:49:39 -0700 (PDT)
+Received: from builder.lan (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
+        by smtp.gmail.com with ESMTPSA id a16sm3807833otk.39.2020.10.26.08.49.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 26 Oct 2020 08:49:38 -0700 (PDT)
+Date:   Mon, 26 Oct 2020 10:49:36 -0500
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Arnaud Pouliquen <arnaud.pouliquen@st.com>
+Cc:     Rob Herring <robh@kernel.org>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        devicetree@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org,
+        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
         Ohad Ben-Cohen <ohad@wizery.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        "open list:REMOTE PROCESSOR (REMOTEPROC) SUBSYSTEM" 
-        <linux-remoteproc@vger.kernel.org>,
-        USB list <linux-usb@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux-sh list <linux-sh@vger.kernel.org>,
-        linux-pci <linux-pci@vger.kernel.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Ahmad Fatoum <a.fatoum@pengutronix.de>
+Subject: Re: [PATCH v2 0/4] ARM: stm32: add DT properties for remote proc
+ synchronisation
+Message-ID: <20201026154936.GA178863@builder.lan>
+References: <20201014125441.2457-1-arnaud.pouliquen@st.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201014125441.2457-1-arnaud.pouliquen@st.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi Christoph, Jim,
+On Wed 14 Oct 07:54 CDT 2020, Arnaud Pouliquen wrote:
 
-On Wed, Sep 16, 2020 at 8:30 AM Christoph Hellwig <hch@lst.de> wrote:
-> From: Jim Quinlan <james.quinlan@broadcom.com>
->
-> The new field 'dma_range_map' in struct device is used to facilitate the
-> use of single or multiple offsets between mapping regions of cpu addrs and
-> dma addrs.  It subsumes the role of "dev->dma_pfn_offset" which was only
-> capable of holding a single uniform offset and had no region bounds
-> checking.
->
-> The function of_dma_get_range() has been modified so that it takes a single
-> argument -- the device node -- and returns a map, NULL, or an error code.
-> The map is an array that holds the information regarding the DMA regions.
-> Each range entry contains the address offset, the cpu_start address, the
-> dma_start address, and the size of the region.
->
-> of_dma_configure() is the typical manner to set range offsets but there are
-> a number of ad hoc assignments to "dev->dma_pfn_offset" in the kernel
-> driver code.  These cases now invoke the function
-> dma_direct_set_offset(dev, cpu_addr, dma_addr, size).
->
-> Signed-off-by: Jim Quinlan <james.quinlan@broadcom.com>
-> [hch: various interface cleanups]
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> Tested-by: Nathan Chancellor <natechancellor@gmail.com>
+> This series implements the DT part associated to the commit 9276536f455b3
+> ("remoteproc: stm32: Parse syscon that will manage M4 synchronisation")
+> 
+> Delta vs V1 [1]
+> - add Rob acked-by on patch 1/4
+> - simplify yaml descriptions and align other syscon descriptions
+> 
+> [1]https://patchwork.kernel.org/project/linux-arm-kernel/list/?series=339339
+> 
+> Arnaud Pouliquen (4):
+>   dt-bindings: arm: stm32: Add compatible for syscon tamp node
+>   dt-bindings: remoteproc: stm32_rproc: update for firmware
+>     synchronization
+>   dt-bindings: remoteproc: stm32_rproc: update syscon descriptions
 
-Thanks for your patch, which is now commit e0d072782c734d27
-("dma-mapping: introduce DMA range map, supplanting dma_pfn_offset") in
-v5.10-rc1, and to which I have bisected a PCIe failure on R-Car M2-W
-(r8a7791/koelsch).
+Applied the dt-bindings updates, expecting the dts change to go throught
+he ST soc tree.
 
-The first PCI host bridge, containing USB, probes fine:
+Thank you,
+Bjorn
 
- pci-rcar-gen2 ee090000.pci: host bridge /soc/pci@ee090000 ranges:
- pci-rcar-gen2 ee090000.pci:      MEM 0x00ee080000..0x00ee08ffff -> 0x00ee080000
- pci-rcar-gen2 ee090000.pci: PCI: revision 11
- pci-rcar-gen2 ee090000.pci: PCI host bridge to bus 0000:00
- pci_bus 0000:00: root bus resource [bus 00]
- pci_bus 0000:00: root bus resource [mem 0xee080000-0xee08ffff]
- pci 0000:00:00.0: [1033:0000] type 00 class 0x060000
- pci 0000:00:00.0: reg 0x10: [mem 0xee090800-0xee090bff]
- pci 0000:00:00.0: reg 0x14: [mem 0x40000000-0x7fffffff pref]
- pci 0000:00:01.0: [1033:0035] type 00 class 0x0c0310
- pci 0000:00:01.0: reg 0x10: [mem 0x00000000-0x00000fff]
- pci 0000:00:01.0: supports D1 D2
- pci 0000:00:01.0: PME# supported from D0 D1 D2 D3hot
- pci 0000:00:02.0: [1033:00e0] type 00 class 0x0c0320
- pci 0000:00:02.0: reg 0x10: [mem 0x00000000-0x000000ff]
- pci 0000:00:02.0: supports D1 D2
- pci 0000:00:02.0: PME# supported from D0 D1 D2 D3hot
- PCI: bus0: Fast back to back transfers disabled
- pci 0000:00:01.0: BAR 0: assigned [mem 0xee080000-0xee080fff]
- pci 0000:00:02.0: BAR 0: assigned [mem 0xee081000-0xee0810ff]
- pci 0000:00:01.0: enabling device (0140 -> 0142)
- pci 0000:00:02.0: enabling device (0140 -> 0142)
-
-The second PCI host bridge, connected to an (empty) PCIe slot, fails:
-
- pci-rcar-gen2 ee0d0000.pci: host bridge /soc/pci@ee0d0000 ranges:
- pci-rcar-gen2 ee0d0000.pci:      MEM 0x00ee0c0000..0x00ee0cffff -> 0x00ee0c0000
- pci-rcar-gen2 ee0d0000.pci: PCI: revision 11
- pci-rcar-gen2 ee0d0000.pci: PCI host bridge to bus 0001:01
- pci_bus 0001:01: root bus resource [bus 01]
- pci_bus 0001:01: root bus resource [mem 0xee0c0000-0xee0cffff]
- pci 0001:01:00.0: [1033:0000] type 00 class 0x060000
- pci 0001:01:00.0: reg 0x10: [mem 0xee0d0800-0xee0d0bff]
- pci 0001:01:00.0: reg 0x14: [mem 0x40000000-0x7fffffff pref]
- pci 0001:01:01.0: [1033:0035] type 00 class 0x0c0310
- pci 0001:01:01.0: reg 0x10: [mem 0x00000000-0x00000fff]
- pci 0001:01:01.0: supports D1 D2
- pci 0001:01:01.0: PME# supported from D0 D1 D2 D3hot
- pci 0001:01:02.0: [1033:00e0] type 00 class 0x0c0320
- pci 0001:01:02.0: reg 0x10: [mem 0x00000000-0x000000ff]
- pci 0001:01:02.0: supports D1 D2
- pci 0001:01:02.0: PME# supported from D0 D1 D2 D3hot
- PCI: bus1: Fast back to back transfers disabled
- pci 0001:01:01.0: BAR 0: assigned [mem 0xee0c0000-0xee0c0fff]
- pci 0001:01:02.0: BAR 0: assigned [mem 0xee0c1000-0xee0c10ff]
- pci 0001:01:01.0: enabling device (0140 -> 0142)
- pci 0001:01:02.0: enabling device (0140 -> 0142)
--rcar-pcie fe000000.pcie: host bridge /soc/pcie@fe000000 ranges:
--rcar-pcie fe000000.pcie:       IO 0x00fe100000..0x00fe1fffff -> 0x0000000000
--rcar-pcie fe000000.pcie:      MEM 0x00fe200000..0x00fe3fffff -> 0x00fe200000
--rcar-pcie fe000000.pcie:      MEM 0x0030000000..0x0037ffffff -> 0x0030000000
--rcar-pcie fe000000.pcie:      MEM 0x0038000000..0x003fffffff -> 0x0038000000
--rcar-pcie fe000000.pcie:   IB MEM 0x0040000000..0x00bfffffff -> 0x0040000000
--rcar-pcie fe000000.pcie:   IB MEM 0x0200000000..0x02ffffffff -> 0x0200000000
--rcar-pcie fe000000.pcie: PCIe link down
-+rcar-pcie fe000000.pcie: Adjusted size 0x0 invalid
-+rcar-pcie: probe of fe000000.pcie failed with error -22
-
-I've posted a patch "[PATCH] dma-mapping: Fix 32-bit overflow with
-CONFIG_ARM_LPAE=n"
-(https://lore.kernel.org/linux-arm-kernel/20201026152755.3738293-1-geert+renesas@glider.be/).
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+>   ARM: dts: stm32: update stm32mp151 for remote proc synchronization
+>     support
+> 
+>  .../bindings/arm/stm32/st,stm32-syscon.yaml   |  1 +
+>  .../bindings/remoteproc/st,stm32-rproc.yaml   | 21 +++++++++++++------
+>  arch/arm/boot/dts/stm32mp151.dtsi             |  7 +++++++
+>  3 files changed, 23 insertions(+), 6 deletions(-)
+> 
+> -- 
+> 2.17.1
+> 
