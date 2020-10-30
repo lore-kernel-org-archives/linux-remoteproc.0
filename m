@@ -4,189 +4,126 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56655C5DF9D
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 30 Oct 2020 16:43:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91E84C00A89
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 30 Oct 2020 19:57:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E95192075E
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 30 Oct 2020 16:43:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3497D206DD
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 30 Oct 2020 19:57:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="INVfZz/f"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="D1KboTu9"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725939AbgJ3QnJ (ORCPT
+        id S1727394AbgJ3T5P (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 30 Oct 2020 12:43:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55918 "EHLO
+        Fri, 30 Oct 2020 15:57:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57962 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726430AbgJ3QnG (ORCPT
+        with ESMTP id S1726061AbgJ3T5P (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 30 Oct 2020 12:43:06 -0400
-Received: from mail-il1-x141.google.com (mail-il1-x141.google.com [IPv6:2607:f8b0:4864:20::141])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4918DC0613D5
-        for <linux-remoteproc@vger.kernel.org>; Fri, 30 Oct 2020 09:43:05 -0700 (PDT)
-Received: by mail-il1-x141.google.com with SMTP id a20so7013984ilk.13
-        for <linux-remoteproc@vger.kernel.org>; Fri, 30 Oct 2020 09:43:05 -0700 (PDT)
+        Fri, 30 Oct 2020 15:57:15 -0400
+Received: from mail-pf1-x431.google.com (mail-pf1-x431.google.com [IPv6:2607:f8b0:4864:20::431])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 48E89C0613CF
+        for <linux-remoteproc@vger.kernel.org>; Fri, 30 Oct 2020 12:57:15 -0700 (PDT)
+Received: by mail-pf1-x431.google.com with SMTP id f72so551559pfa.6
+        for <linux-remoteproc@vger.kernel.org>; Fri, 30 Oct 2020 12:57:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=NZmqGfCg08N6iXx9q7TVWlSnhQqIDOwOjzOwbvXDxjI=;
-        b=INVfZz/fkvsZivy8jdRFY4jjuumPUnT03fIMmAZxhr2j3OQtTxmqWeMui9FFLMvZFz
-         QB2ePhBsJkuNysGjMHbU9DiLLxlLmss4JFzjBmUNAkJoiiGzYBFH/upOKm0AUQMizu+W
-         okAB9PgkVOM5lyq7RfM3eZWziu4Lw6xFmIPsA3WEdWrepzCLkMsPGFysW4PIdG4Ix46W
-         ABDHiqA089OjzR7YGXqWWnY73UPmGi5ssu5dObic6I8EipSHtDNSFTIEabkYZFtOUw53
-         gKZFvyCe8mIA4cQPQ5Ji/NguzzOPrnGBpJ5jXdtWnz2BLO+k8PETRjkg1JznRZelvTOY
-         uyUg==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Ew/hgsvRisXzOea/BiQC6oa3+KUQRn1pxw4aSv8Mebs=;
+        b=D1KboTu9dsuM8gidff256oUqlsnwLBMzpCdteDNa+vC+x3PeMh30bdSjyi+Mj9N9ZF
+         w0+OaCz5mMGDqC0P78sSwDvTmw923yIk+hRpPoyEkZIwQBc7Zg2G2UtjeCi+6YB1BWWW
+         lIcvMa6W9y9LYoNHucO3MRKMZwoUKhBwtSN8J0Iw/6WlIKG4P1tvhdvnW6zEzLtq9IzR
+         wD9w9h4Xnee8V/J8UNh3LO5cH0N2wBRqPWdDmDWtPb7dbD57WNkVS7FLl1kJ0auRU4GA
+         z80xv3uqx7y2vEZwmiEG8uthlxvzJAJG+IoPx1/4tXTurP9JqUOV82h9h6q0s0rK2QOl
+         9wUA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=NZmqGfCg08N6iXx9q7TVWlSnhQqIDOwOjzOwbvXDxjI=;
-        b=JCIyE/bGjH8LQ8zxtz8m/Cu9TfvwtdHjWv81W79Xeva2vA3D/eYfoDnUUqkAJwxAZD
-         he6iaHh29ZdEBSZDFHL6b94GXXccU8+zOszBOaongC4XnIY4mI1xtkRp1BH7mkd1Q5UT
-         u54e4wYoEu9PjauIND7GlhJDRDjDFrOY8Shjs2dDd8DW32geoEZ1kuJ/T8L3SV0zm4N5
-         A/emBrtm3EFoowrhx0DXgJvlSsRAm9C+DBJSxb766OF10BDvy5X+QY3mBYNrPNjSeZZv
-         uddlN0qSlysd6o4z2pCCQH5yS9nYP0G2M7rExoI87XDpF9RM8EngQDuDu7BqX4uoDiUC
-         UWxQ==
-X-Gm-Message-State: AOAM530Y5WV4TgQrpK/F8CDmJzNgCSd2/j5V6FhheUxvceaSxGoNsuqg
-        oZJSwn7H0ljUXTEY1VVKUTET7saL5Sh4TzKkv6l7ow==
-X-Google-Smtp-Source: ABdhPJwYf7SWuKIRh8xsBOBodbVLmuU+KCM1QaVpZsez95JZOYKTbDYung3PLxm+lfmttII+vBXdnzsUUs8NHjrseg0=
-X-Received: by 2002:a92:6403:: with SMTP id y3mr2528711ilb.72.1604076184121;
- Fri, 30 Oct 2020 09:43:04 -0700 (PDT)
-MIME-Version: 1.0
-References: <cover.1604042072.git.mchehab+huawei@kernel.org> <5bc78e5b68ed1e9e39135173857cb2e753be868f.1604042072.git.mchehab+huawei@kernel.org>
-In-Reply-To: <5bc78e5b68ed1e9e39135173857cb2e753be868f.1604042072.git.mchehab+huawei@kernel.org>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Ew/hgsvRisXzOea/BiQC6oa3+KUQRn1pxw4aSv8Mebs=;
+        b=aaip3HfVARrrKJIT9rfCkCTxCS+0y/HkfAqFLv05nFtiZ+DlcsjnExa8bqibR3h/56
+         RwFOgZJVax3/OcURtFRSIFtXegbfiGq124m4vHxKDly49eWFfA94xng34hHq7dzG6LJz
+         AWdfsNr93iKYdYxh2gyjT4dRKnY4kfiJUF/LFFwYZJWeD89XBE7ZaX5RGodmcJqidSjM
+         H+ToFpdj1UdeuNm82hprGlxvl6MjmFIJjgK8otrDoIWid59GoI160cP87u04WqpUP6Pd
+         am2ewwTIBQkIfWz+E9S8Y3cmwPft4CGYkD4yq8DIyZwmqtt12D8vxV/ws5TK4FMy5YSG
+         RZLg==
+X-Gm-Message-State: AOAM531HTpwKDGM6Y4GabUgApx+agm/zM2oWkWaOW/HxPOSDR1pnTjFl
+        6SzMxmnE8oYAbdqZGUS06289bg==
+X-Google-Smtp-Source: ABdhPJxeXGCpJHhAwBQHwpXqsKOZPA3IEHJpZ70ejWzeakA4FvrZf0hNNrN3tvPQjrDBXcOmKI9/NQ==
+X-Received: by 2002:a17:90a:f993:: with SMTP id cq19mr4843655pjb.173.1604087834851;
+        Fri, 30 Oct 2020 12:57:14 -0700 (PDT)
+Received: from xps15.cg.shawcable.net (S0106002369de4dac.cg.shawcable.net. [68.147.8.254])
+        by smtp.gmail.com with ESMTPSA id o15sm6892640pfd.16.2020.10.30.12.57.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 30 Oct 2020 12:57:14 -0700 (PDT)
 From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-Date:   Fri, 30 Oct 2020 10:42:53 -0600
-Message-ID: <CANLsYkxc2uzA57Hg5OX31JOx08JCZfynzebjABv=6H01796xGA@mail.gmail.com>
-Subject: Re: [PATCH v2 31/39] docs: ABI: cleanup several ABI documents
-To:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Cc:     Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        "Gautham R. Shenoy" <ego@linux.vnet.ibm.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        =?UTF-8?B?TWFyZWsgQmVow7pu?= <marek.behun@nic.cz>,
-        =?UTF-8?Q?Marek_Marczykowski=2DG=C3=B3recki?= 
-        <marmarek@invisiblethingslab.com>,
-        =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali@kernel.org>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        =?UTF-8?Q?Roger_Pau_Monn=C3=A9?= <roger.pau@citrix.com>,
-        Alexander Antonov <alexander.antonov@linux.intel.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Andreas Klinger <ak@it-klinger.de>,
-        Andrew Donnellan <ajd@linux.ibm.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Andy Shevchenko <andriy.shevchenko@intel.com>,
-        Anton Vorontsov <anton@enomsg.org>,
-        Asutosh Das <asutoshd@codeaurora.org>,
-        Bart Van Assche <bvanassche@acm.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Boris Brezillon <bbrezillon@kernel.org>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Cezary Rojewski <cezary.rojewski@intel.com>,
-        Chao Yu <chao@kernel.org>,
-        Christian Gromm <christian.gromm@microchip.com>,
-        Colin Cross <ccross@android.com>, Dan Murphy <dmurphy@ti.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Danil Kipnis <danil.kipnis@cloud.ionos.com>,
-        David Sterba <dsterba@suse.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Dongsheng Yang <dongsheng.yang@easystack.cn>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Frederic Barrat <fbarrat@linux.ibm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Hanjun Guo <guohanjun@huawei.com>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        Jack Wang <jinpu.wang@cloud.ionos.com>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
-        Jerry Snitselaar <jsnitsel@redhat.com>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Johan Hovold <johan@kernel.org>,
-        Jonas Meurer <jonas@freesources.org>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Kajol Jain <kjain@linux.ibm.com>,
-        Kees Cook <keescook@chromium.org>,
-        Konstantin Khlebnikov <koct9i@gmail.com>,
-        Kranthi Kuntala <kranthi.kuntala@intel.com>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Lee Jones <lee.jones@linaro.org>, Len Brown <lenb@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Mario Limonciello <mario.limonciello@dell.com>,
-        Mark Gross <mgross@linux.intel.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Michael Hennerich <Michael.Hennerich@analog.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Mike Leach <mike.leach@linaro.org>,
-        Oded Gabbay <oded.gabbay@gmail.com>,
-        Ohad Ben-Cohen <ohad@wizery.com>,
-        Oleh Kravchenko <oleg@kaa.org.ua>, Pavel Machek <pavel@ucw.cz>,
-        Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
-        Peter Chen <peter.chen@nxp.com>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Roman Sudarikov <roman.sudarikov@linux.intel.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Samuel Thibault <samuel.thibault@ens-lyon.org>,
-        Saravana Kannan <saravanak@google.com>,
-        Sebastian Reichel <sre@kernel.org>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Stefan Achatz <erazor_de@users.sourceforge.net>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Tom Rix <trix@redhat.com>, Tony Luck <tony.luck@intel.com>,
-        Vaibhav Jain <vaibhav@linux.ibm.com>,
-        Vineela Tummalapalli <vineela.tummalapalli@intel.com>,
-        Wu Hao <hao.wu@intel.com>, ceph-devel@vger.kernel.org,
-        Coresight ML <coresight@lists.linaro.org>,
-        dri-devel@lists.freedesktop.org, linux-acpi@vger.kernel.org,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-f2fs-devel@lists.sourceforge.net, linux-fpga@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-i3c@lists.infradead.org,
-        linux-iio@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-media@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-remoteproc <linux-remoteproc@vger.kernel.org>,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linuxppc-dev@lists.ozlabs.org, netdev@vger.kernel.org,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
+To:     ohad@wizery.com, bjorn.andersson@linaro.org
+Cc:     linux-remoteproc@vger.kernel.org
+Subject: [PATCH v2 00/14] remoteproc: Add support for detaching from rproc 
+Date:   Fri, 30 Oct 2020 13:56:59 -0600
+Message-Id: <20201030195713.1366341-1-mathieu.poirier@linaro.org>
+X-Mailer: git-send-email 2.25.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Fri, 30 Oct 2020 at 01:41, Mauro Carvalho Chehab
-<mchehab+huawei@kernel.org> wrote:
->
-> There are some ABI documents that, while they don't generate
-> any warnings, they have issues when parsed by get_abi.pl script
-> on its output result.
->
-> Address them, in order to provide a clean output.
->
-> Acked-by: Jonathan Cameron <Jonathan.Cameron@huawei.com> #for IIO
-> Reviewed-by: Tom Rix <trix@redhat.com> # for fpga-manager
-> Reviewed-By: Kajol Jain<kjain@linux.ibm.com> # for sysfs-bus-event_source-devices-hv_gpci and sysfs-bus-event_source-devices-hv_24x7
-> Acked-by: Oded Gabbay <oded.gabbay@gmail.com> # for Habanalabs
-> Acked-by: Vaibhav Jain <vaibhav@linux.ibm.com> # for sysfs-bus-papr-pmem
-> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-> ---
+Following the work done here [1], this set provides support for the
+remoteproc core to release resources associated with a remote processor
+without having to switch it off. That way a platform driver can be removed
+or the applcation processor power cycled while the remote processor is
+still operating.
 
->  .../testing/sysfs-bus-coresight-devices-etb10 |   5 +-
+The only thing that changes in this revision are the last two patches where
+device tree bindings to control how to handle attached remote processors have
+been added.  More specifically two bindings are being proposed:
 
-For the CoreSight part:
+"autonomous_on_core_reboot": When rproc_cdev_release() or rproc_del() are called
+and the remote processor has been attached to, it will be detached from (rather
+than turned off) if "autonomous_on_core_reboot" is specified in the DT.
 
-Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+"autonomous_on_remote_crash": When a remote processor that has been attached to
+crashes, it will be detached from if "autonomous_on_remote_crash" is specified
+in the DT. It is _not_ used in this set and presented to show how I intend to 
+organise things. 
+
+I spent a fair amount of time coming up with the name for the bindings and would
+welcome other ideas.  I will write a proper yaml file and CC the linux-kernel
+mailing list once we have an agreement on the naming convention.
+
+Applies cleanly on v5.10-rc1
+
+Thanks,
+Mathieu
+
+[1]. https://lkml.org/lkml/2020/7/14/1600
+
+Mathieu Poirier (14):
+  remoteproc: Re-check state in rproc_shutdown()
+  remoteproc: Remove useless check in rproc_del()
+  remoteproc: Add new RPROC_ATTACHED state
+  remoteproc: Properly represent the attached state
+  remoteproc: Properly deal with a kernel panic when attached
+  remoteproc: Add new detach() remoteproc operation
+  remoteproc: Introduce function __rproc_detach()
+  remoteproc: Introduce function rproc_detach()
+  remoteproc: Rename function rproc_actuate()
+  remoteproc: Add return value to function rproc_shutdown()
+  remoteproc: Properly deal with a stop request when attached
+  remoteproc: Properly deal with detach request
+  remoteproc: Add automation flags
+  remoteproc: Refactor rproc delete and cdev release path
+
+ drivers/remoteproc/remoteproc_cdev.c  |  24 +++-
+ drivers/remoteproc/remoteproc_core.c  | 183 +++++++++++++++++++++-----
+ drivers/remoteproc/remoteproc_sysfs.c |  17 ++-
+ include/linux/remoteproc.h            |  19 ++-
+ 4 files changed, 199 insertions(+), 44 deletions(-)
+
+-- 
+2.25.1
+
