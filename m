@@ -2,95 +2,75 @@ Return-Path: <SRS0=eTbm=EJ=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+X-Spam-Status: No, score=-8.2 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77FE0C2D0A3
-	for <linux-remoteproc@archiver.kernel.org>; Tue,  3 Nov 2020 15:24:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8116BC2D0A3
+	for <linux-remoteproc@archiver.kernel.org>; Tue,  3 Nov 2020 16:32:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2C52722370
-	for <linux-remoteproc@archiver.kernel.org>; Tue,  3 Nov 2020 15:24:48 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rrVlj56y"
+	by mail.kernel.org (Postfix) with ESMTP id 3EB02206DF
+	for <linux-remoteproc@archiver.kernel.org>; Tue,  3 Nov 2020 16:32:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728320AbgKCPYe (ORCPT
+        id S1726126AbgKCQci (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 3 Nov 2020 10:24:34 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55842 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728302AbgKCPY3 (ORCPT
+        Tue, 3 Nov 2020 11:32:38 -0500
+Received: from mga17.intel.com ([192.55.52.151]:47964 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726018AbgKCQch (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 3 Nov 2020 10:24:29 -0500
-Received: from mail-oo1-xc34.google.com (mail-oo1-xc34.google.com [IPv6:2607:f8b0:4864:20::c34])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9C593C061A49
-        for <linux-remoteproc@vger.kernel.org>; Tue,  3 Nov 2020 07:24:27 -0800 (PST)
-Received: by mail-oo1-xc34.google.com with SMTP id u5so4286868oot.0
-        for <linux-remoteproc@vger.kernel.org>; Tue, 03 Nov 2020 07:24:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=N71Zs4qg4W+XUXzJvJITvEfPb9AWspIlQairrp1whfg=;
-        b=rrVlj56yk2trpBYSpi4k2yd1xCK2bo7zfyPwMRTDKgj2zJFZf+rsg3l64hS6mNlXsJ
-         /lsnCjsBYlscUhZQjxreix9yr1FDyyJ44isM98ku6PfR5nfH8ewfPGTyJoG+z8DaKf3B
-         GC0lFyYci0jWLRuivuAjfzCGQfauYD+FIBoJ65Z0ysgZFvM7r9APNUcj/A/ERVF2MbLf
-         yty4WBGjCP2WpSIZHr96/NF2lvOu9gyd0kH5dNJE6T16tbnf8/wDcP2ZEnVaZTeW+uv8
-         AOywb/DHyLh7Si/JMqeCh4eS5XqaKQQMWQhjlysMgge2i4X83N4I6vLqLPfg4x7OeC6p
-         Yirg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=N71Zs4qg4W+XUXzJvJITvEfPb9AWspIlQairrp1whfg=;
-        b=Q4o57eUFU95NkYHb6Ab/vS8uFCDOIlhiE7n/rpXsgmKjgpif1iJWc7WLQt2rn7V5Ml
-         ljd4rgdb1KLzDRm/6tgWkOWamkq5cYctd6wHAeLuSMSosAHfNFKWMJY7nCxCZqdcbSkp
-         9ESYR1BV9HTZDKY1/Yr2dQy8nwp5DFTFMpcHn7cuREpGvTEK3jN9ALUxrBryym+TqVVa
-         SsYW6jQrQy8gUVbsGH33znm/xPouf2kwksKOio6WK+fKUOkJQSx8xk6xhUK1f1vtJEHT
-         tNXbK8dZINMXw+u+xirhGXyD3QoXkbEHSQhSReTV/iukfV86UjYn5odV52c+zqsnWmJv
-         mOHA==
-X-Gm-Message-State: AOAM531Qdy946J6kb7xgq999HB6zxpCR2OCgRfjIVnWEqN4+VBX/4kAL
-        096U+CxY9ZOIn1OkPWnvzF79VA==
-X-Google-Smtp-Source: ABdhPJwU2NP+qjv7T5X33Bc5Qb64pjBRUiEN1Yk0nWz/TQ1GhwOuIu9xrFu+5vjm7/EyqQJ1LvpBNw==
-X-Received: by 2002:a4a:6b1a:: with SMTP id g26mr10661391ooc.13.1604417066733;
-        Tue, 03 Nov 2020 07:24:26 -0800 (PST)
-Received: from builder.lan (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
-        by smtp.gmail.com with ESMTPSA id v5sm4548511otb.44.2020.11.03.07.24.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Nov 2020 07:24:25 -0800 (PST)
-Date:   Tue, 3 Nov 2020 09:24:23 -0600
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Cc:     Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        coresight@lists.linaro.org, dri-devel@lists.freedesktop.org,
-        linux-acpi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-f2fs-devel@lists.sourceforge.net, linux-fpga@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-i3c@lists.infradead.org,
-        linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-media@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linuxppc-dev@lists.ozlabs.org, netdev@vger.kernel.org
-Subject: Re: [PATCH 30/33] docs: ABI: cleanup several ABI documents
-Message-ID: <20201103004241.GD223412@builder.lan>
-References: <cover.1603893146.git.mchehab+huawei@kernel.org>
- <95ef2cf3a58f4e50f17d9e58e0d9440ad14d0427.1603893146.git.mchehab+huawei@kernel.org>
+        Tue, 3 Nov 2020 11:32:37 -0500
+IronPort-SDR: /sClODo3mhsqZh6EjCqLxl9xG+pD6SqA2fVGKn3573gtACvRyCLk6X5ue8iavqeBOiiyGOfQoo
+ YT5BGMeR+wiQ==
+X-IronPort-AV: E=McAfee;i="6000,8403,9794"; a="148938099"
+X-IronPort-AV: E=Sophos;i="5.77,448,1596524400"; 
+   d="scan'208";a="148938099"
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2020 08:32:37 -0800
+IronPort-SDR: WfgwmvfGml5BSVZD4UDOE/583Vi++IgeIZe4vunJDVytGoRRzV7GKL6JCkJ7lKmfQMUPUANIsj
+ nkVs680ReJQw==
+X-IronPort-AV: E=Sophos;i="5.77,448,1596524400"; 
+   d="scan'208";a="538547046"
+Received: from gliakhov-mobl2.ger.corp.intel.com (HELO ubuntu) ([10.252.32.201])
+  by orsmga005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2020 08:32:36 -0800
+Date:   Tue, 3 Nov 2020 17:32:26 +0100
+From:   Guennadi Liakhovetski <guennadi.liakhovetski@linux.intel.com>
+To:     Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc:     ohad@wizery.com, bjorn.andersson@linaro.org,
+        arnaud.pouliquen@st.com, linux-remoteproc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 3/8] rpmsg: Move structure rpmsg_ns_msg to header file
+Message-ID: <20201103163225.GA19947@ubuntu>
+References: <20201027175218.1033609-1-mathieu.poirier@linaro.org>
+ <20201027175218.1033609-4-mathieu.poirier@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <95ef2cf3a58f4e50f17d9e58e0d9440ad14d0427.1603893146.git.mchehab+huawei@kernel.org>
+In-Reply-To: <20201027175218.1033609-4-mathieu.poirier@linaro.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Wed 28 Oct 09:23 CDT 2020, Mauro Carvalho Chehab wrote:
-[..]
->  .../ABI/testing/sysfs-class-remoteproc        |  14 +-
+Hi Mathieu,
 
-for this:
+On Tue, Oct 27, 2020 at 11:52:13AM -0600, Mathieu Poirier wrote:
+> Move structure rpmsg_ns_msg to its own header file so that
+> it can be used by other entities.
+> 
+> Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+> Reviewed-by: Arnaud Pouliquen <arnaud.pouliquen@st.com>
+> ---
+>  drivers/rpmsg/virtio_rpmsg_bus.c | 32 +-----------------------
+>  include/linux/rpmsg_ns.h         | 42 ++++++++++++++++++++++++++++++++
 
-Acked-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Sorry for a delayed comment, it just occurred to me: there is a 
+include/linux/rpmsg directory already, so, perhaps it would be 
+better to place the new headers there as include/linux/rpmsg/ns.h 
+and include/linux/rpmsg/byteorder.h?
 
-Thanks,
-Bjorn
+Thanks
+Guennadi
