@@ -2,134 +2,115 @@ Return-Path: <SRS0=hTqE=EK=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.2 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 779BCC2D0A3
-	for <linux-remoteproc@archiver.kernel.org>; Wed,  4 Nov 2020 07:04:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DF41C2D0A3
+	for <linux-remoteproc@archiver.kernel.org>; Wed,  4 Nov 2020 14:02:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2935A2225B
-	for <linux-remoteproc@archiver.kernel.org>; Wed,  4 Nov 2020 07:04:27 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="BBlMCXEH"
+	by mail.kernel.org (Postfix) with ESMTP id E5962221E2
+	for <linux-remoteproc@archiver.kernel.org>; Wed,  4 Nov 2020 14:02:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727754AbgKDHE0 (ORCPT
+        id S1726706AbgKDOCI (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 4 Nov 2020 02:04:26 -0500
-Received: from z5.mailgun.us ([104.130.96.5]:27785 "EHLO z5.mailgun.us"
+        Wed, 4 Nov 2020 09:02:08 -0500
+Received: from mga05.intel.com ([192.55.52.43]:11257 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727001AbgKDHE0 (ORCPT
+        id S1726527AbgKDOCI (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 4 Nov 2020 02:04:26 -0500
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1604473466; h=Message-Id: Date: Subject: Cc: To: From:
- Sender; bh=842P1Vw0/CyU8oFdqPii40F1dxpgOb7DzwKwSzArais=; b=BBlMCXEHIsL6Y83PHn+ERvSmIb8pZRTdDv4zx0zj8T72jTWGduN5Dgri/L9CyQWp3O4NzXBE
- S5161OVrTNFFvXNjQJs3e81w/ylJMs90Xi2Nh0P+Lq8HIoWMEj8LUwi3jmzbEYNjMCqKY1iu
- 34L1+WOSw5+XDMIPON5OL6nCZfE=
-X-Mailgun-Sending-Ip: 104.130.96.5
-X-Mailgun-Sid: WyI4ZWZiZiIsICJsaW51eC1yZW1vdGVwcm9jQHZnZXIua2VybmVsLm9yZyIsICJiZTllNGEiXQ==
-Received: from smtp.codeaurora.org
- (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
- smtp-out-n04.prod.us-west-2.postgun.com with SMTP id
- 5fa2525dca0638c0dca909f7 (version=TLS1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Wed, 04 Nov 2020 07:03:57
- GMT
-Sender: sibis=codeaurora.org@mg.codeaurora.org
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 2A153C433FF; Wed,  4 Nov 2020 07:03:57 +0000 (UTC)
-Received: from blr-ubuntu-87.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: sibis)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 3D258C433C6;
-        Wed,  4 Nov 2020 07:03:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3D258C433C6
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=sibis@codeaurora.org
-From:   Sibi Sankar <sibis@codeaurora.org>
-To:     bjorn.andersson@linaro.org
-Cc:     ohad@wizery.com, linux-arm-msm@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        agross@kernel.org, evgreen@chromium.org,
-        Sibi Sankar <sibis@codeaurora.org>
-Subject: [PATCH 1/2] remoteproc: qcom_q6v5_mss: Replace ioremap with memremap
-Date:   Wed,  4 Nov 2020 12:33:41 +0530
-Message-Id: <1604473422-29639-1-git-send-email-sibis@codeaurora.org>
-X-Mailer: git-send-email 2.7.4
+        Wed, 4 Nov 2020 09:02:08 -0500
+IronPort-SDR: Ck6oRT/9GSj30lwG4HgwlreZV33r5fowkYM1IfMsCEkLQoeolukgpEPNzKMmes71BQl1xTPlsm
+ vKXPfWwaYkIw==
+X-IronPort-AV: E=McAfee;i="6000,8403,9794"; a="253928618"
+X-IronPort-AV: E=Sophos;i="5.77,451,1596524400"; 
+   d="scan'208";a="253928618"
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2020 06:01:56 -0800
+IronPort-SDR: hXnJiNdbkWZLoYrlaTGLrYXR7Cn2+3f0uU0yDyEEepyNgeSNYWJ0I5TiXuj6LWli6jMDY3AIcM
+ edHa46A1/tOg==
+X-IronPort-AV: E=Sophos;i="5.77,451,1596524400"; 
+   d="scan'208";a="538932865"
+Received: from gliakhov-mobl2.ger.corp.intel.com (HELO ubuntu) ([10.249.45.232])
+  by orsmga005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2020 06:01:54 -0800
+Date:   Wed, 4 Nov 2020 15:01:44 +0100
+From:   Guennadi Liakhovetski <guennadi.liakhovetski@linux.intel.com>
+To:     Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc:     ohad@wizery.com, bjorn.andersson@linaro.org,
+        arnaud.pouliquen@st.com, linux-remoteproc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 8/8] rpmsg: Turn name service into a stand alone driver
+Message-ID: <20201104140143.GA30197@ubuntu>
+References: <20201027175218.1033609-1-mathieu.poirier@linaro.org>
+ <20201027175218.1033609-9-mathieu.poirier@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201027175218.1033609-9-mathieu.poirier@linaro.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Fix the sparse warnings reported by the kernel test bot by replacing
-ioremap calls with memremap.
+Hi Mathieu, Arnaud,
 
-Reported-by: kernel test robot <lkp@intel.com>
-Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
----
+I've tried the patch set with my VirtIO / vhost audio implementation, 
+in general it worked quite well, but I did need one chamge, which 
+should be improved in this patch:
 
-I'll send out the patches to convert ioremap to memremap on other
-qc remoteproc drivers once I get a chance to test them.
+On Tue, Oct 27, 2020 at 11:52:18AM -0600, Mathieu Poirier wrote:
+> From: Arnaud Pouliquen <arnaud.pouliquen@st.com>
+> 
+> Make the RPMSG name service announcement a stand alone driver so that it
+> can be reused by other subsystems.  It is also the first step in making the
+> functionatlity transport independent, i.e that is not tied to virtIO.
+> 
+> Co-developed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@st.com>
+> ---
 
- drivers/remoteproc/qcom_q6v5_mss.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+[snip]
 
-diff --git a/drivers/remoteproc/qcom_q6v5_mss.c b/drivers/remoteproc/qcom_q6v5_mss.c
-index 9a473cfef758..2c866b6da23c 100644
---- a/drivers/remoteproc/qcom_q6v5_mss.c
-+++ b/drivers/remoteproc/qcom_q6v5_mss.c
-@@ -1194,7 +1194,7 @@ static int q6v5_mpss_load(struct q6v5 *qproc)
- 			goto release_firmware;
- 		}
- 
--		ptr = ioremap_wc(qproc->mpss_phys + offset, phdr->p_memsz);
-+		ptr = memremap(qproc->mpss_phys + offset, phdr->p_memsz, MEMREMAP_WC);
- 		if (!ptr) {
- 			dev_err(qproc->dev,
- 				"unable to map memory region: %pa+%zx-%x\n",
-@@ -1209,7 +1209,7 @@ static int q6v5_mpss_load(struct q6v5 *qproc)
- 					"failed to load segment %d from truncated file %s\n",
- 					i, fw_name);
- 				ret = -EINVAL;
--				iounmap(ptr);
-+				memunmap(ptr);
- 				goto release_firmware;
- 			}
- 
-@@ -1221,7 +1221,7 @@ static int q6v5_mpss_load(struct q6v5 *qproc)
- 							ptr, phdr->p_filesz);
- 			if (ret) {
- 				dev_err(qproc->dev, "failed to load %s\n", fw_name);
--				iounmap(ptr);
-+				memunmap(ptr);
- 				goto release_firmware;
- 			}
- 
-@@ -1232,7 +1232,7 @@ static int q6v5_mpss_load(struct q6v5 *qproc)
- 			memset(ptr + phdr->p_filesz, 0,
- 			       phdr->p_memsz - phdr->p_filesz);
- 		}
--		iounmap(ptr);
-+		memunmap(ptr);
- 		size += phdr->p_memsz;
- 
- 		code_length = readl(qproc->rmb_base + RMB_PMI_CODE_LENGTH_REG);
-@@ -1299,11 +1299,11 @@ static void qcom_q6v5_dump_segment(struct rproc *rproc,
- 	}
- 
- 	if (!ret)
--		ptr = ioremap_wc(qproc->mpss_phys + offset + cp_offset, size);
-+		ptr = memremap(qproc->mpss_phys + offset + cp_offset, size, MEMREMAP_WC);
- 
- 	if (ptr) {
- 		memcpy(dest, ptr, size);
--		iounmap(ptr);
-+		memunmap(ptr);
- 	} else {
- 		memset(dest, 0xff, size);
- 	}
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+> diff --git a/include/linux/rpmsg_ns.h b/include/linux/rpmsg_ns.h
+> index bb479f430080..42786bb759b5 100644
+> --- a/include/linux/rpmsg_ns.h
+> +++ b/include/linux/rpmsg_ns.h
+> @@ -39,4 +39,21 @@ enum rpmsg_ns_flags {
+>  /* Address 53 is reserved for advertising remote services */
+>  #define RPMSG_NS_ADDR			(53)
+>  
+> +/**
+> + * rpmsg_ns_register_device() - register name service device based on rpdev
+> + * @rpdev: prepared rpdev to be used for creating endpoints
+> + *
+> + * This function wraps rpmsg_register_device() preparing the rpdev for use as
+> + * basis for the rpmsg name service device.
+> + */
+> +static inline int rpmsg_ns_register_device(struct rpmsg_device *rpdev)
+> +{
+> +       strcpy(rpdev->id.name, "rpmsg_ns");
 
+you need to
+
+#include <linux/rpmsg.h>
+
+in this file for rpdev definition. Or you could leave this function in 
+rpmsg_ns.c, then it's enough to forward-declare struct rpdev here.
+
+Thanks
+Guennadi
+
+> +       rpdev->driver_override = "rpmsg_ns";
+> +       rpdev->src = RPMSG_NS_ADDR;
+> +       rpdev->dst = RPMSG_NS_ADDR;
+> +
+> +       return rpmsg_register_device(rpdev);
+> +}
+> +
+>  #endif
+> -- 
+> 2.25.1
+> 
