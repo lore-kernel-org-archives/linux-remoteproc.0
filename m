@@ -5,48 +5,47 @@ X-Spam-Level:
 X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04064C388F9
-	for <linux-remoteproc@archiver.kernel.org>; Wed,  4 Nov 2020 07:04:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 779BCC2D0A3
+	for <linux-remoteproc@archiver.kernel.org>; Wed,  4 Nov 2020 07:04:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9395522277
-	for <linux-remoteproc@archiver.kernel.org>; Wed,  4 Nov 2020 07:04:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2935A2225B
+	for <linux-remoteproc@archiver.kernel.org>; Wed,  4 Nov 2020 07:04:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="etCM6m0y"
+	dkim=pass (1024-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="BBlMCXEH"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726957AbgKDHEO (ORCPT
+        id S1727754AbgKDHE0 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 4 Nov 2020 02:04:14 -0500
-Received: from m42-4.mailgun.net ([69.72.42.4]:19517 "EHLO m42-4.mailgun.net"
+        Wed, 4 Nov 2020 02:04:26 -0500
+Received: from z5.mailgun.us ([104.130.96.5]:27785 "EHLO z5.mailgun.us"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727001AbgKDHEO (ORCPT
+        id S1727001AbgKDHE0 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 4 Nov 2020 02:04:14 -0500
+        Wed, 4 Nov 2020 02:04:26 -0500
 DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1604473452; h=References: In-Reply-To: Message-Id: Date:
- Subject: Cc: To: From: Sender;
- bh=FBG4FjjRRBcKTtOAJC7lN4saKQswEbaWiO8CLix7/8A=; b=etCM6m0ygFnTdG0Ww/Z9XRkqi1VoZwpGrljMtROGUO37whUDcYuOSfz46WQWWmi4RAdhEsO8
- fPgK86nIyKPmaEAUfr/bjPdtKFdgT9YXcnwf6Lo9b3jeKLfsD9bI/DU3rfFBkTw5m0lRFoaZ
- 5b/+vefOU+JsiUGZMA5NzgwAQl8=
-X-Mailgun-Sending-Ip: 69.72.42.4
+ s=smtp; t=1604473466; h=Message-Id: Date: Subject: Cc: To: From:
+ Sender; bh=842P1Vw0/CyU8oFdqPii40F1dxpgOb7DzwKwSzArais=; b=BBlMCXEHIsL6Y83PHn+ERvSmIb8pZRTdDv4zx0zj8T72jTWGduN5Dgri/L9CyQWp3O4NzXBE
+ S5161OVrTNFFvXNjQJs3e81w/ylJMs90Xi2Nh0P+Lq8HIoWMEj8LUwi3jmzbEYNjMCqKY1iu
+ 34L1+WOSw5+XDMIPON5OL6nCZfE=
+X-Mailgun-Sending-Ip: 104.130.96.5
 X-Mailgun-Sid: WyI4ZWZiZiIsICJsaW51eC1yZW1vdGVwcm9jQHZnZXIua2VybmVsLm9yZyIsICJiZTllNGEiXQ==
 Received: from smtp.codeaurora.org
  (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
- smtp-out-n06.prod.us-west-2.postgun.com with SMTP id
- 5fa252601037425ce1292cb1 (version=TLS1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Wed, 04 Nov 2020 07:04:00
+ smtp-out-n04.prod.us-west-2.postgun.com with SMTP id
+ 5fa2525dca0638c0dca909f7 (version=TLS1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Wed, 04 Nov 2020 07:03:57
  GMT
 Sender: sibis=codeaurora.org@mg.codeaurora.org
 Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 06BC2C433C9; Wed,  4 Nov 2020 07:04:00 +0000 (UTC)
+        id 2A153C433FF; Wed,  4 Nov 2020 07:03:57 +0000 (UTC)
 Received: from blr-ubuntu-87.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
         (Authenticated sender: sibis)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id BE10BC433CB;
-        Wed,  4 Nov 2020 07:03:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org BE10BC433CB
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 3D258C433C6;
+        Wed,  4 Nov 2020 07:03:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3D258C433C6
 Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=sibis@codeaurora.org
 From:   Sibi Sankar <sibis@codeaurora.org>
@@ -55,124 +54,81 @@ Cc:     ohad@wizery.com, linux-arm-msm@vger.kernel.org,
         linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
         agross@kernel.org, evgreen@chromium.org,
         Sibi Sankar <sibis@codeaurora.org>
-Subject: [PATCH 2/2] remoteproc: qcom_q6v5_mss: map/unmap MBA region before/after use
-Date:   Wed,  4 Nov 2020 12:33:42 +0530
-Message-Id: <1604473422-29639-2-git-send-email-sibis@codeaurora.org>
+Subject: [PATCH 1/2] remoteproc: qcom_q6v5_mss: Replace ioremap with memremap
+Date:   Wed,  4 Nov 2020 12:33:41 +0530
+Message-Id: <1604473422-29639-1-git-send-email-sibis@codeaurora.org>
 X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1604473422-29639-1-git-send-email-sibis@codeaurora.org>
-References: <1604473422-29639-1-git-send-email-sibis@codeaurora.org>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-The application processor accessing the MBA region after assigning it to
-the remote Q6 would lead to an XPU violation. Fix this by un-mapping the
-MBA region post firmware copy and MBA text log dumps.
+Fix the sparse warnings reported by the kernel test bot by replacing
+ioremap calls with memremap.
 
+Reported-by: kernel test robot <lkp@intel.com>
 Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
 ---
- drivers/remoteproc/qcom_q6v5_mss.c | 37 ++++++++++++++++++++++---------------
- 1 file changed, 22 insertions(+), 15 deletions(-)
+
+I'll send out the patches to convert ioremap to memremap on other
+qc remoteproc drivers once I get a chance to test them.
+
+ drivers/remoteproc/qcom_q6v5_mss.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
 diff --git a/drivers/remoteproc/qcom_q6v5_mss.c b/drivers/remoteproc/qcom_q6v5_mss.c
-index 2c866b6da23c..1b4a34325788 100644
+index 9a473cfef758..2c866b6da23c 100644
 --- a/drivers/remoteproc/qcom_q6v5_mss.c
 +++ b/drivers/remoteproc/qcom_q6v5_mss.c
-@@ -189,7 +189,6 @@ struct q6v5 {
- 	size_t total_dump_size;
+@@ -1194,7 +1194,7 @@ static int q6v5_mpss_load(struct q6v5 *qproc)
+ 			goto release_firmware;
+ 		}
  
- 	phys_addr_t mba_phys;
--	void *mba_region;
- 	size_t mba_size;
- 	size_t dp_size;
+-		ptr = ioremap_wc(qproc->mpss_phys + offset, phdr->p_memsz);
++		ptr = memremap(qproc->mpss_phys + offset, phdr->p_memsz, MEMREMAP_WC);
+ 		if (!ptr) {
+ 			dev_err(qproc->dev,
+ 				"unable to map memory region: %pa+%zx-%x\n",
+@@ -1209,7 +1209,7 @@ static int q6v5_mpss_load(struct q6v5 *qproc)
+ 					"failed to load segment %d from truncated file %s\n",
+ 					i, fw_name);
+ 				ret = -EINVAL;
+-				iounmap(ptr);
++				memunmap(ptr);
+ 				goto release_firmware;
+ 			}
  
-@@ -408,7 +407,7 @@ static int q6v5_xfer_mem_ownership(struct q6v5 *qproc, int *current_perm,
- 				   current_perm, next, perms);
- }
+@@ -1221,7 +1221,7 @@ static int q6v5_mpss_load(struct q6v5 *qproc)
+ 							ptr, phdr->p_filesz);
+ 			if (ret) {
+ 				dev_err(qproc->dev, "failed to load %s\n", fw_name);
+-				iounmap(ptr);
++				memunmap(ptr);
+ 				goto release_firmware;
+ 			}
  
--static void q6v5_debug_policy_load(struct q6v5 *qproc)
-+static void q6v5_debug_policy_load(struct q6v5 *qproc, void *ptr)
- {
- 	const struct firmware *dp_fw;
+@@ -1232,7 +1232,7 @@ static int q6v5_mpss_load(struct q6v5 *qproc)
+ 			memset(ptr + phdr->p_filesz, 0,
+ 			       phdr->p_memsz - phdr->p_filesz);
+ 		}
+-		iounmap(ptr);
++		memunmap(ptr);
+ 		size += phdr->p_memsz;
  
-@@ -416,7 +415,7 @@ static void q6v5_debug_policy_load(struct q6v5 *qproc)
- 		return;
- 
- 	if (SZ_1M + dp_fw->size <= qproc->mba_size) {
--		memcpy(qproc->mba_region + SZ_1M, dp_fw->data, dp_fw->size);
-+		memcpy(ptr + SZ_1M, dp_fw->data, dp_fw->size);
- 		qproc->dp_size = dp_fw->size;
+ 		code_length = readl(qproc->rmb_base + RMB_PMI_CODE_LENGTH_REG);
+@@ -1299,11 +1299,11 @@ static void qcom_q6v5_dump_segment(struct rproc *rproc,
  	}
  
-@@ -426,6 +425,7 @@ static void q6v5_debug_policy_load(struct q6v5 *qproc)
- static int q6v5_load(struct rproc *rproc, const struct firmware *fw)
- {
- 	struct q6v5 *qproc = rproc->priv;
-+	void *ptr;
+ 	if (!ret)
+-		ptr = ioremap_wc(qproc->mpss_phys + offset + cp_offset, size);
++		ptr = memremap(qproc->mpss_phys + offset + cp_offset, size, MEMREMAP_WC);
  
- 	/* MBA is restricted to a maximum size of 1M */
- 	if (fw->size > qproc->mba_size || fw->size > SZ_1M) {
-@@ -433,8 +433,16 @@ static int q6v5_load(struct rproc *rproc, const struct firmware *fw)
- 		return -EINVAL;
+ 	if (ptr) {
+ 		memcpy(dest, ptr, size);
+-		iounmap(ptr);
++		memunmap(ptr);
+ 	} else {
+ 		memset(dest, 0xff, size);
  	}
- 
--	memcpy(qproc->mba_region, fw->data, fw->size);
--	q6v5_debug_policy_load(qproc);
-+	ptr = memremap(qproc->mba_phys, qproc->mba_size, MEMREMAP_WC);
-+	if (!ptr) {
-+		dev_err(qproc->dev, "unable to map memory region: %pa+%zx\n",
-+			&qproc->mba_phys, qproc->mba_size);
-+		return -EBUSY;
-+	}
-+
-+	memcpy(ptr, fw->data, fw->size);
-+	q6v5_debug_policy_load(qproc, ptr);
-+	memunmap(ptr);
- 
- 	return 0;
- }
-@@ -541,6 +549,7 @@ static void q6v5_dump_mba_logs(struct q6v5 *qproc)
- {
- 	struct rproc *rproc = qproc->rproc;
- 	void *data;
-+	void *ptr;
- 
- 	if (!qproc->has_mba_logs)
- 		return;
-@@ -549,12 +558,16 @@ static void q6v5_dump_mba_logs(struct q6v5 *qproc)
- 				    qproc->mba_size))
- 		return;
- 
--	data = vmalloc(MBA_LOG_SIZE);
--	if (!data)
-+	ptr = memremap(qproc->mba_phys, qproc->mba_size, MEMREMAP_WC);
-+	if (!ptr)
- 		return;
- 
--	memcpy(data, qproc->mba_region, MBA_LOG_SIZE);
--	dev_coredumpv(&rproc->dev, data, MBA_LOG_SIZE, GFP_KERNEL);
-+	data = vmalloc(MBA_LOG_SIZE);
-+	if (data) {
-+		memcpy(data, ptr, MBA_LOG_SIZE);
-+		dev_coredumpv(&rproc->dev, data, MBA_LOG_SIZE, GFP_KERNEL);
-+	}
-+	memunmap(ptr);
- }
- 
- static int q6v5proc_reset(struct q6v5 *qproc)
-@@ -1605,12 +1618,6 @@ static int q6v5_alloc_memory_region(struct q6v5 *qproc)
- 
- 	qproc->mba_phys = r.start;
- 	qproc->mba_size = resource_size(&r);
--	qproc->mba_region = devm_ioremap_wc(qproc->dev, qproc->mba_phys, qproc->mba_size);
--	if (!qproc->mba_region) {
--		dev_err(qproc->dev, "unable to map memory region: %pa+%zx\n",
--			&r.start, qproc->mba_size);
--		return -EBUSY;
--	}
- 
- 	if (!child) {
- 		node = of_parse_phandle(qproc->dev->of_node,
 -- 
 The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
 a Linux Foundation Collaborative Project
