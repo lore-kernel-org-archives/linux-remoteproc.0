@@ -2,133 +2,124 @@ Return-Path: <SRS0=hTqE=EK=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.2 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC2B4C2D0A3
-	for <linux-remoteproc@archiver.kernel.org>; Wed,  4 Nov 2020 18:39:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 001F1C4742C
+	for <linux-remoteproc@archiver.kernel.org>; Wed,  4 Nov 2020 19:05:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 914112067C
-	for <linux-remoteproc@archiver.kernel.org>; Wed,  4 Nov 2020 18:39:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7C3D52080D
+	for <linux-remoteproc@archiver.kernel.org>; Wed,  4 Nov 2020 19:05:53 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WffJI4fY"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732488AbgKDSjX (ORCPT
+        id S1731106AbgKDTFw (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 4 Nov 2020 13:39:23 -0500
-Received: from mga09.intel.com ([134.134.136.24]:27943 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730821AbgKDSjW (ORCPT
+        Wed, 4 Nov 2020 14:05:52 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60982 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730008AbgKDTFw (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 4 Nov 2020 13:39:22 -0500
-IronPort-SDR: wjVPy/YGzPxFhulFWjpLBYVRkFmUgbMfJySLb9ggRd3WFysnU7FY+EcUUilmLbLQpu/JU7ZSBv
- FTv4ZuyGQtHQ==
-X-IronPort-AV: E=McAfee;i="6000,8403,9795"; a="169412349"
-X-IronPort-AV: E=Sophos;i="5.77,451,1596524400"; 
-   d="scan'208";a="169412349"
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2020 10:39:19 -0800
-IronPort-SDR: TRz0ZAf1iIHhuMzYgUtUvFiTygJH/RMSNOFivvgfiA1YLcp106Gd+M+uEiDKzhK9ghV2X94iV0
- akU6sXa02c3Q==
-X-IronPort-AV: E=Sophos;i="5.77,451,1596524400"; 
-   d="scan'208";a="539016839"
-Received: from gliakhov-mobl2.ger.corp.intel.com (HELO ubuntu) ([10.249.45.232])
-  by orsmga005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2020 10:39:17 -0800
-Date:   Wed, 4 Nov 2020 19:39:04 +0100
-From:   Guennadi Liakhovetski <guennadi.liakhovetski@linux.intel.com>
-To:     Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc:     ohad@wizery.com, bjorn.andersson@linaro.org,
-        arnaud.pouliquen@st.com, linux-remoteproc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 8/8] rpmsg: Turn name service into a stand alone driver
-Message-ID: <20201104183904.GA31822@ubuntu>
-References: <20201027175218.1033609-1-mathieu.poirier@linaro.org>
- <20201027175218.1033609-9-mathieu.poirier@linaro.org>
- <20201104140143.GA30197@ubuntu>
- <20201104173424.GB2893396@xps15>
+        Wed, 4 Nov 2020 14:05:52 -0500
+Received: from mail-pf1-x443.google.com (mail-pf1-x443.google.com [IPv6:2607:f8b0:4864:20::443])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 973C4C0613D4
+        for <linux-remoteproc@vger.kernel.org>; Wed,  4 Nov 2020 11:05:50 -0800 (PST)
+Received: by mail-pf1-x443.google.com with SMTP id w65so18096462pfd.3
+        for <linux-remoteproc@vger.kernel.org>; Wed, 04 Nov 2020 11:05:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=e3RgBMCNd6sKZVbOqvGd6J+ApVrztDEwtVCn4pPL4cY=;
+        b=WffJI4fYp4FmcCF8nhmDGr00/Y8B8NnS9ajFsJns0MLqg4gebReZE6TRQPBIoh6Etu
+         9qykh1g3rHXSVsje8HrlVgj1qIOwf2hJReWpMctR7Ua12XZIKKmWYJraVxLPIXx8mx1C
+         PwlFC4Lx6B5D8B5nKMn+YVEZt8Yqx3diDzr6LPjXkuxxkR78nDntu3DZaqWsYp1RQomk
+         aAYcB333lTvasR1WznLCjCwPcgBiwA06BjuZf/0iNa/pmvyQ3tFD8stopS600nXWYQFk
+         FgQhVtTHZAlNesMYo+BKuIFzp+Afoky5/qQv3GOlCdBK6jMzY2x63MQKQ/s8nOTvFy2l
+         vtkg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=e3RgBMCNd6sKZVbOqvGd6J+ApVrztDEwtVCn4pPL4cY=;
+        b=HGb0q6X2fMFQCml+VZqdHaB0qOtO4KZG80Sb3UZDm8m8KRg4tGjQ6zB9tCmm3bshzW
+         +BgRXrK/Xxw9FmKvJSl3lU19VasD9NkqfVcS/wzQFuwZW+PP4QpQA65sM1ymdqjG/zL6
+         pSiDNvLk+r7KIVSd1vbLha8GbgBr2qYaYoMR3v5hq+RXNemiDyPsdwleO/cY9sgxnqo4
+         ZHeMNCrIUv9t4nZz9VcqPN0yFVkdSLWlXLGLnj08BAHf7W75x5RlBzVsVgPgDAKnU1u8
+         aI2ojJTGTkTEZxAoZnjpT6FOD0r8YEWRDXa0fHH3n2oEo+2k2dgcbr5psly4rXTfILUI
+         0Dyg==
+X-Gm-Message-State: AOAM532yoWmKe4WpwDjSDdj8XRWp0cQKjUMRjEzglsvE4nI3KGCEa6/F
+        uFmDnXBnq18HOM7bjTI72pa5nw==
+X-Google-Smtp-Source: ABdhPJwSb7Xs5JU7LvSxnxDJzTwVF5qjpqXYY4TsO/ILSHq1xQbXdfVIMJi3nS5qDmjPiCZ98ePPXg==
+X-Received: by 2002:a17:90a:5310:: with SMTP id x16mr5606218pjh.62.1604516750131;
+        Wed, 04 Nov 2020 11:05:50 -0800 (PST)
+Received: from xps15 (S0106002369de4dac.cg.shawcable.net. [68.147.8.254])
+        by smtp.gmail.com with ESMTPSA id m129sm3210275pfd.177.2020.11.04.11.05.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Nov 2020 11:05:49 -0800 (PST)
+Date:   Wed, 4 Nov 2020 12:05:47 -0700
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+To:     Alexandre Courbot <acourbot@chromium.org>
+Cc:     Ohad Ben-Cohen <ohad@wizery.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        linux-remoteproc@vger.kernel.org,
+        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
+        kernel test robot <lkp@intel.com>
+Subject: Re: [PATCH] remoteproc/mtk_scp: surround DT device IDs with CONFIG_OF
+Message-ID: <20201104190547.GD2893396@xps15>
+References: <20201102074007.299222-1-acourbot@chromium.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20201104173424.GB2893396@xps15>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20201102074007.299222-1-acourbot@chromium.org>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Wed, Nov 04, 2020 at 10:34:24AM -0700, Mathieu Poirier wrote:
-> On Wed, Nov 04, 2020 at 03:01:44PM +0100, Guennadi Liakhovetski wrote:
-> > Hi Mathieu, Arnaud,
-> > 
-> > I've tried the patch set with my VirtIO / vhost audio implementation, 
-> > in general it worked quite well, 
-> 
-> Very good - it would be nice if you could add your "Tested-by:" tags.
+Hi Alexander,
 
-Sure, I guess it would be better if I reply with both "Tested-by" and 
-"Reviewed-by" to your next version?
+On Mon, Nov 02, 2020 at 04:40:07PM +0900, Alexandre Courbot wrote:
+> Now that this driver can be compiled with COMPILE_TEST, we have no
+> guarantee that CONFIG_OF will also be defined. When that happens, a
+> warning about mtk_scp_of_match being defined but unused will be reported
+> so make sure this variable is only defined if of_match_ptr() actually
+> uses it.
+> 
+> Fixes: cbd2dca74926c0e4610c40923cc786b732c9e8ef remoteproc: scp: add COMPILE_TEST dependency
+> Reported-by: kernel test robot <lkp@intel.com>
+> Signed-off-by: Alexandre Courbot <acourbot@chromium.org>
+> ---
+>  drivers/remoteproc/mtk_scp.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
+> index 577cbd5d421e..f74f22d4d1ff 100644
+> --- a/drivers/remoteproc/mtk_scp.c
+> +++ b/drivers/remoteproc/mtk_scp.c
+> @@ -772,12 +772,14 @@ static const struct mtk_scp_of_data mt8192_of_data = {
+>  	.host_to_scp_int_bit = MT8192_HOST_IPC_INT_BIT,
+>  };
+>  
+> +#if defined(CONFIG_OF)
+>  static const struct of_device_id mtk_scp_of_match[] = {
+>  	{ .compatible = "mediatek,mt8183-scp", .data = &mt8183_of_data },
+>  	{ .compatible = "mediatek,mt8192-scp", .data = &mt8192_of_data },
+>  	{},
+>  };
+>  MODULE_DEVICE_TABLE(of, mtk_scp_of_match);
+> +#endif
 
-Thanks
-Guennadi
+I think it is better to add a "depends on OF" in the Kconfig.
 
-> > On Tue, Oct 27, 2020 at 11:52:18AM -0600, Mathieu Poirier wrote:
-> > > From: Arnaud Pouliquen <arnaud.pouliquen@st.com>
-> > > 
-> > > Make the RPMSG name service announcement a stand alone driver so that it
-> > > can be reused by other subsystems.  It is also the first step in making the
-> > > functionatlity transport independent, i.e that is not tied to virtIO.
-> > > 
-> > > Co-developed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-> > > Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@st.com>
-> > > ---
-> > 
-> > [snip]
-> > 
-> > > diff --git a/include/linux/rpmsg_ns.h b/include/linux/rpmsg_ns.h
-> > > index bb479f430080..42786bb759b5 100644
-> > > --- a/include/linux/rpmsg_ns.h
-> > > +++ b/include/linux/rpmsg_ns.h
-> > > @@ -39,4 +39,21 @@ enum rpmsg_ns_flags {
-> > >  /* Address 53 is reserved for advertising remote services */
-> > >  #define RPMSG_NS_ADDR			(53)
-> > >  
-> > > +/**
-> > > + * rpmsg_ns_register_device() - register name service device based on rpdev
-> > > + * @rpdev: prepared rpdev to be used for creating endpoints
-> > > + *
-> > > + * This function wraps rpmsg_register_device() preparing the rpdev for use as
-> > > + * basis for the rpmsg name service device.
-> > > + */
-> > > +static inline int rpmsg_ns_register_device(struct rpmsg_device *rpdev)
-> > > +{
-> > > +       strcpy(rpdev->id.name, "rpmsg_ns");
-> > 
-> > you need to
-> > 
-> > #include <linux/rpmsg.h>
+Thanks,
+Mathieu
+
+>  
+>  static struct platform_driver mtk_scp_driver = {
+>  	.probe = scp_probe,
+> -- 
+> 2.29.1.341.ge80a0c044ae-goog
 > 
-> Of course yes - I'll simply add the header file.  I plan on having another
-> revision addressing your comments out by the end of the week or early next week.
-> 
-> Thanks,
-> Mathieu
-> 
-> > 
-> > in this file for rpdev definition. Or you could leave this function in 
-> > rpmsg_ns.c, then it's enough to forward-declare struct rpdev here.
-> > 
-> > Thanks
-> > Guennadi
-> > 
-> > > +       rpdev->driver_override = "rpmsg_ns";
-> > > +       rpdev->src = RPMSG_NS_ADDR;
-> > > +       rpdev->dst = RPMSG_NS_ADDR;
-> > > +
-> > > +       return rpmsg_register_device(rpdev);
-> > > +}
-> > > +
-> > >  #endif
-> > > -- 
-> > > 2.25.1
-> > > 
