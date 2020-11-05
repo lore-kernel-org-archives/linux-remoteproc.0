@@ -5,60 +5,60 @@ X-Spam-Level:
 X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DC74C4741F
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  5 Nov 2020 04:50:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 183B5C00A89
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  5 Nov 2020 04:50:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3724C2083B
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  5 Nov 2020 04:50:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B36A420867
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  5 Nov 2020 04:50:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tiU9APlP"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="T/12uOtj"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730406AbgKEEuc (ORCPT
+        id S1730977AbgKEEug (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 4 Nov 2020 23:50:32 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38932 "EHLO
+        Wed, 4 Nov 2020 23:50:36 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38940 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727260AbgKEEuc (ORCPT
+        with ESMTP id S1727260AbgKEEue (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 4 Nov 2020 23:50:32 -0500
-Received: from mail-ot1-x342.google.com (mail-ot1-x342.google.com [IPv6:2607:f8b0:4864:20::342])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 74480C0613CF
-        for <linux-remoteproc@vger.kernel.org>; Wed,  4 Nov 2020 20:50:32 -0800 (PST)
-Received: by mail-ot1-x342.google.com with SMTP id i18so302668ots.0
-        for <linux-remoteproc@vger.kernel.org>; Wed, 04 Nov 2020 20:50:32 -0800 (PST)
+        Wed, 4 Nov 2020 23:50:34 -0500
+Received: from mail-oo1-xc44.google.com (mail-oo1-xc44.google.com [IPv6:2607:f8b0:4864:20::c44])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BFEBAC0613CF
+        for <linux-remoteproc@vger.kernel.org>; Wed,  4 Nov 2020 20:50:34 -0800 (PST)
+Received: by mail-oo1-xc44.google.com with SMTP id j6so127975oot.3
+        for <linux-remoteproc@vger.kernel.org>; Wed, 04 Nov 2020 20:50:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=FvjwOA4E4EU4uWdZHjmur5yZGUS7qBISeC6b1M+D3zM=;
-        b=tiU9APlPLOoAxUJp76XWPjX0w6Bzx0nGeeJFMUVVCicmATSCu0ouGOStpsm7KH2jwB
-         K7hHvMnRwOoRvfihBotW5GprFltQEStY9Jfm7q+4st4EWnGOTU73Jx2M75hpCfe5Hr6L
-         MF83qfpHNGdRLhGlFU2btE7KJchSHqtEQa3AjnqgjvJB3lQJ/zMbDsXJahAIUwoGiciE
-         Ht1H91HmQnTJG7/5Vos+NVVvdPLXNllP3efOkrwybSR/pIyClUEMvO6FANa7IFG0sKWz
-         60dlWyzlKq+eLg2Wbu4oJqMqTyOdVtDlFW3Pdc/Dsc5Y6Golc1qyTigYMINObZ1xh4fq
-         WFHA==
+        bh=gB/8DdyhYbLhO5Kc+ec+n/kffS9x3KIVkFEGOmCDRJQ=;
+        b=T/12uOtjxpMBCy+hcNVksK0w3Ds/WMLclOhdA8ZQlboyiWlsCIWN7K9VOfFekbEmsG
+         DRdkefILdU8kv15wz0+46STpmtYnXqjCjY+XobWRyrBufATbkeL6mMeYyAnMZrJAUH6x
+         Opm7dQKE+Y9ecV6Q/pTeklabK81olgrqfyU2yZipE1bu1IVuFgInoCro/maggP4Vv+7/
+         O2OEUQwgm0gx/sVLlPsRdQElJzd0N6alU3U1nLwos1brzE9ZWhLm36cvUsYjp2W8oodn
+         Uhnl8nwir1KQlC4M4XLjv41+9OP5B4Hl1U2TaRi04XzxV/cFs0PBhH6rUx+fxYSsKfJp
+         lGoQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=FvjwOA4E4EU4uWdZHjmur5yZGUS7qBISeC6b1M+D3zM=;
-        b=MNc3adsd+92cycWtYngeXfLkMx8dGIwX9MNOwzuQpk1LLGUJ2JNVmo7esMT4N4P9/v
-         7s7IFYX2Iwx8oixAqzXYBr62VnZKGb9jrExRYUaGFrRm3z8QYvDyuarNou5o4iM3Hmd0
-         DkHZRm9Sz33sq6DXodrUHeQWue3AfY8ntTdUaHTGhf2ooencKHgjTWfTzYKy8ndCmwTG
-         YQKHpABp2D9txrZ4klWeHgDcIWsCqCG4mT6ZPj0otsyI8aAyDEwuqgPbocIctv/SFrKZ
-         eVN7b+mjyOSOiSnH2GN9bq5mBGu74hU9rmDeoxxZzYcOsbxYq0u0Vkgz2UOvGMgq87jb
-         jhCQ==
-X-Gm-Message-State: AOAM533ctshZGn2TG0piIdKBr13aZ6AEF263zQxjYWNOVMfTs7L+AAjG
-        8Z5fpx5jTJOO9DMBH41DyoGzFQ==
-X-Google-Smtp-Source: ABdhPJy+pHmn9uCABK0hmaSx7N/RXjSjED1Z0kRvX70fzCNGwChVT6aF6Wa70HEsQOk6oZmoejz7gA==
-X-Received: by 2002:a9d:60d:: with SMTP id 13mr468308otn.366.1604551831750;
-        Wed, 04 Nov 2020 20:50:31 -0800 (PST)
+        bh=gB/8DdyhYbLhO5Kc+ec+n/kffS9x3KIVkFEGOmCDRJQ=;
+        b=o22jr7d6ng2K9+MpGCh78V11MYxh12I8HlCLFbmIox+3eZslB+3lhGGGcazdXB0Nm2
+         NZVWSu4Zi58PFqWzkI8gaik1GYf1AxjbmHG7JOtvgrl0rrFAwScE0WT6yZ01AfAOlWPM
+         s662noRetbFX4obtmMb6GiwRowIBLqCupN2NydgrokIuY/HDhFceykuprDEhxKTnbc7W
+         iBdPA/EPggxYdN8ZmI6V+47phbBGBS3ucVoae3HjVQ2D/E5ciLUnRmjGpDGr7aa3HSLL
+         UdCW6lelcBXbBhv3zK7sCZLS0kgsP2Z7T5HJR0lCFVFw0lG7JGmgoem5U+RL4vcLQ3wc
+         UJ2g==
+X-Gm-Message-State: AOAM532/YaKNr6R3UX19JwSbcaGzUm/pQ0irOo7iI6RoDuw1Adsh27j4
+        3/ziyF2wzEZim+HRLo373jPGJ3sjFOdLlg==
+X-Google-Smtp-Source: ABdhPJx4ZmvUrrA8jrXcstfyYpHmx/MurkeM5ac5qOudm3eTphho4ODrP1gQQJWpEx1sXanpYNrz4g==
+X-Received: by 2002:a4a:9cc3:: with SMTP id d3mr561837ook.4.1604551834112;
+        Wed, 04 Nov 2020 20:50:34 -0800 (PST)
 Received: from localhost.localdomain (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
-        by smtp.gmail.com with ESMTPSA id k13sm100553ooi.41.2020.11.04.20.50.30
+        by smtp.gmail.com with ESMTPSA id k13sm100553ooi.41.2020.11.04.20.50.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Nov 2020 20:50:31 -0800 (PST)
+        Wed, 04 Nov 2020 20:50:33 -0800 (PST)
 From:   Bjorn Andersson <bjorn.andersson@linaro.org>
 To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
@@ -66,10 +66,10 @@ To:     Andy Gross <agross@kernel.org>,
         Siddharth Gupta <sidgup@codeaurora.org>,
         Sibi Sankar <sibis@codeaurora.org>
 Cc:     linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: [PATCH v2 1/4] remoteproc: sysmon: Ensure remote notification ordering
-Date:   Wed,  4 Nov 2020 20:50:48 -0800
-Message-Id: <20201105045051.1365780-2-bjorn.andersson@linaro.org>
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2 3/4] remoteproc: qcom: q6v5: Query sysmon before graceful shutdown
+Date:   Wed,  4 Nov 2020 20:50:50 -0800
+Message-Id: <20201105045051.1365780-4-bjorn.andersson@linaro.org>
 X-Mailer: git-send-email 2.28.0
 In-Reply-To: <20201105045051.1365780-1-bjorn.andersson@linaro.org>
 References: <20201105045051.1365780-1-bjorn.andersson@linaro.org>
@@ -79,130 +79,133 @@ Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-The reliance on the remoteproc's state for determining when to send
-sysmon notifications to a remote processor is racy with regard to
-concurrent remoteproc operations.
+Requesting a graceful shutdown through the shared memory state signals
+will not be acked in the event that sysmon has already successfully shut
+down the remote firmware. So extend the stop request API to optinally
+take the remoteproc's sysmon instance and query if there's already been
+a successful shutdown attempt, before doing the signal dance.
 
-Further more the advertisement of the state of other remote processor to
-a newly started remote processor might not only send the wrong state,
-but might result in a stream of state changes that are out of order.
-
-Address this by introducing state tracking within the sysmon instances
-themselves and extend the locking to ensure that the notifications are
-consistent with this state.
-
-Fixes: 1f36ab3f6e3b ("remoteproc: sysmon: Inform current rproc about all active rprocs")
-Fixes: 1877f54f75ad ("remoteproc: sysmon: Add notifications for events")
-Fixes: 1fb82ee806d1 ("remoteproc: qcom: Introduce sysmon")
-Cc: stable@vger.kernel.org
 Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 ---
 
 Changes since v1:
-- Reduced the locking to be per sysmon instance
-- Dropped unused local "rproc" variable in sysmon_notify()
+- New patch
 
- drivers/remoteproc/qcom_sysmon.c | 27 +++++++++++++++++++++------
- 1 file changed, 21 insertions(+), 6 deletions(-)
+ drivers/remoteproc/qcom_q6v5.c      | 8 +++++++-
+ drivers/remoteproc/qcom_q6v5.h      | 3 ++-
+ drivers/remoteproc/qcom_q6v5_adsp.c | 2 +-
+ drivers/remoteproc/qcom_q6v5_mss.c  | 2 +-
+ drivers/remoteproc/qcom_q6v5_pas.c  | 2 +-
+ drivers/remoteproc/qcom_q6v5_wcss.c | 2 +-
+ 6 files changed, 13 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/remoteproc/qcom_sysmon.c b/drivers/remoteproc/qcom_sysmon.c
-index 9eb2f6bccea6..38f63c968fa8 100644
---- a/drivers/remoteproc/qcom_sysmon.c
-+++ b/drivers/remoteproc/qcom_sysmon.c
-@@ -22,6 +22,9 @@ struct qcom_sysmon {
- 	struct rproc_subdev subdev;
- 	struct rproc *rproc;
+diff --git a/drivers/remoteproc/qcom_q6v5.c b/drivers/remoteproc/qcom_q6v5.c
+index fd6fd36268d9..9627a950928e 100644
+--- a/drivers/remoteproc/qcom_q6v5.c
++++ b/drivers/remoteproc/qcom_q6v5.c
+@@ -13,6 +13,7 @@
+ #include <linux/soc/qcom/smem.h>
+ #include <linux/soc/qcom/smem_state.h>
+ #include <linux/remoteproc.h>
++#include "qcom_common.h"
+ #include "qcom_q6v5.h"
  
-+	int state;
-+	struct mutex state_lock;
-+
- 	struct list_head node;
- 
- 	const char *name;
-@@ -448,7 +451,10 @@ static int sysmon_prepare(struct rproc_subdev *subdev)
- 		.ssr_event = SSCTL_SSR_EVENT_BEFORE_POWERUP
- 	};
- 
-+	mutex_lock(&sysmon->state_lock);
-+	sysmon->state = SSCTL_SSR_EVENT_BEFORE_POWERUP;
- 	blocking_notifier_call_chain(&sysmon_notifiers, 0, (void *)&event);
-+	mutex_unlock(&sysmon->state_lock);
- 
- 	return 0;
- }
-@@ -472,22 +478,25 @@ static int sysmon_start(struct rproc_subdev *subdev)
- 		.ssr_event = SSCTL_SSR_EVENT_AFTER_POWERUP
- 	};
- 
-+	mutex_lock(&sysmon->state_lock);
-+	sysmon->state = SSCTL_SSR_EVENT_AFTER_POWERUP;
- 	blocking_notifier_call_chain(&sysmon_notifiers, 0, (void *)&event);
-+	mutex_unlock(&sysmon->state_lock);
- 
--	mutex_lock(&sysmon_lock);
- 	list_for_each_entry(target, &sysmon_list, node) {
--		if (target == sysmon ||
--		    target->rproc->state != RPROC_RUNNING)
-+		if (target == sysmon)
- 			continue;
- 
-+		mutex_lock(&target->state_lock);
- 		event.subsys_name = target->name;
-+		event.ssr_event = target->state;
- 
- 		if (sysmon->ssctl_version == 2)
- 			ssctl_send_event(sysmon, &event);
- 		else if (sysmon->ept)
- 			sysmon_send_event(sysmon, &event);
-+		mutex_unlock(&target->state_lock);
- 	}
--	mutex_unlock(&sysmon_lock);
- 
- 	return 0;
- }
-@@ -500,7 +509,10 @@ static void sysmon_stop(struct rproc_subdev *subdev, bool crashed)
- 		.ssr_event = SSCTL_SSR_EVENT_BEFORE_SHUTDOWN
- 	};
- 
-+	mutex_lock(&sysmon->state_lock);
-+	sysmon->state = SSCTL_SSR_EVENT_BEFORE_SHUTDOWN;
- 	blocking_notifier_call_chain(&sysmon_notifiers, 0, (void *)&event);
-+	mutex_unlock(&sysmon->state_lock);
- 
- 	/* Don't request graceful shutdown if we've crashed */
- 	if (crashed)
-@@ -521,7 +533,10 @@ static void sysmon_unprepare(struct rproc_subdev *subdev)
- 		.ssr_event = SSCTL_SSR_EVENT_AFTER_SHUTDOWN
- 	};
- 
-+	mutex_lock(&sysmon->state_lock);
-+	sysmon->state = SSCTL_SSR_EVENT_AFTER_SHUTDOWN;
- 	blocking_notifier_call_chain(&sysmon_notifiers, 0, (void *)&event);
-+	mutex_unlock(&sysmon->state_lock);
- }
- 
+ #define Q6V5_PANIC_DELAY_MS	200
+@@ -146,15 +147,20 @@ static irqreturn_t q6v5_stop_interrupt(int irq, void *data)
  /**
-@@ -534,11 +549,10 @@ static int sysmon_notify(struct notifier_block *nb, unsigned long event,
- 			 void *data)
+  * qcom_q6v5_request_stop() - request the remote processor to stop
+  * @q6v5:	reference to qcom_q6v5 context
++ * @sysmon:	reference to the remote's sysmon instance, or NULL
+  *
+  * Return: 0 on success, negative errno on failure
+  */
+-int qcom_q6v5_request_stop(struct qcom_q6v5 *q6v5)
++int qcom_q6v5_request_stop(struct qcom_q6v5 *q6v5, struct qcom_sysmon *sysmon)
  {
- 	struct qcom_sysmon *sysmon = container_of(nb, struct qcom_sysmon, nb);
--	struct rproc *rproc = sysmon->rproc;
- 	struct sysmon_event *sysmon_event = data;
+ 	int ret;
  
- 	/* Skip non-running rprocs and the originating instance */
--	if (rproc->state != RPROC_RUNNING ||
-+	if (sysmon->state != SSCTL_SSR_EVENT_AFTER_POWERUP ||
- 	    !strcmp(sysmon_event->subsys_name, sysmon->name)) {
- 		dev_dbg(sysmon->dev, "not notifying %s\n", sysmon->name);
- 		return NOTIFY_DONE;
-@@ -591,6 +605,7 @@ struct qcom_sysmon *qcom_add_sysmon_subdev(struct rproc *rproc,
- 	init_completion(&sysmon->ind_comp);
- 	init_completion(&sysmon->shutdown_comp);
- 	mutex_init(&sysmon->lock);
-+	mutex_init(&sysmon->state_lock);
+ 	q6v5->running = false;
  
- 	sysmon->shutdown_irq = of_irq_get_byname(sysmon->dev->of_node,
- 						 "shutdown-ack");
++	/* Don't perform SMP2P dance if sysmon already shut down the remote */
++	if (qcom_sysmon_shutdown_acked(sysmon))
++		return 0;
++
+ 	qcom_smem_state_update_bits(q6v5->state,
+ 				    BIT(q6v5->stop_bit), BIT(q6v5->stop_bit));
+ 
+diff --git a/drivers/remoteproc/qcom_q6v5.h b/drivers/remoteproc/qcom_q6v5.h
+index c4ed887c1499..1c212f670cbc 100644
+--- a/drivers/remoteproc/qcom_q6v5.h
++++ b/drivers/remoteproc/qcom_q6v5.h
+@@ -8,6 +8,7 @@
+ 
+ struct rproc;
+ struct qcom_smem_state;
++struct qcom_sysmon;
+ 
+ struct qcom_q6v5 {
+ 	struct device *dev;
+@@ -40,7 +41,7 @@ int qcom_q6v5_init(struct qcom_q6v5 *q6v5, struct platform_device *pdev,
+ 
+ int qcom_q6v5_prepare(struct qcom_q6v5 *q6v5);
+ int qcom_q6v5_unprepare(struct qcom_q6v5 *q6v5);
+-int qcom_q6v5_request_stop(struct qcom_q6v5 *q6v5);
++int qcom_q6v5_request_stop(struct qcom_q6v5 *q6v5, struct qcom_sysmon *sysmon);
+ int qcom_q6v5_wait_for_start(struct qcom_q6v5 *q6v5, int timeout);
+ unsigned long qcom_q6v5_panic(struct qcom_q6v5 *q6v5);
+ 
+diff --git a/drivers/remoteproc/qcom_q6v5_adsp.c b/drivers/remoteproc/qcom_q6v5_adsp.c
+index efb2c1aa80a3..9db0380236e7 100644
+--- a/drivers/remoteproc/qcom_q6v5_adsp.c
++++ b/drivers/remoteproc/qcom_q6v5_adsp.c
+@@ -264,7 +264,7 @@ static int adsp_stop(struct rproc *rproc)
+ 	int handover;
+ 	int ret;
+ 
+-	ret = qcom_q6v5_request_stop(&adsp->q6v5);
++	ret = qcom_q6v5_request_stop(&adsp->q6v5, adsp->sysmon);
+ 	if (ret == -ETIMEDOUT)
+ 		dev_err(adsp->dev, "timed out on wait\n");
+ 
+diff --git a/drivers/remoteproc/qcom_q6v5_mss.c b/drivers/remoteproc/qcom_q6v5_mss.c
+index 9a473cfef758..501764934014 100644
+--- a/drivers/remoteproc/qcom_q6v5_mss.c
++++ b/drivers/remoteproc/qcom_q6v5_mss.c
+@@ -1370,7 +1370,7 @@ static int q6v5_stop(struct rproc *rproc)
+ 	struct q6v5 *qproc = (struct q6v5 *)rproc->priv;
+ 	int ret;
+ 
+-	ret = qcom_q6v5_request_stop(&qproc->q6v5);
++	ret = qcom_q6v5_request_stop(&qproc->q6v5, qproc->sysmon);
+ 	if (ret == -ETIMEDOUT)
+ 		dev_err(qproc->dev, "timed out on wait\n");
+ 
+diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
+index 3837f23995e0..ed1772bfa55d 100644
+--- a/drivers/remoteproc/qcom_q6v5_pas.c
++++ b/drivers/remoteproc/qcom_q6v5_pas.c
+@@ -214,7 +214,7 @@ static int adsp_stop(struct rproc *rproc)
+ 	int handover;
+ 	int ret;
+ 
+-	ret = qcom_q6v5_request_stop(&adsp->q6v5);
++	ret = qcom_q6v5_request_stop(&adsp->q6v5, adsp->sysmon);
+ 	if (ret == -ETIMEDOUT)
+ 		dev_err(adsp->dev, "timed out on wait\n");
+ 
+diff --git a/drivers/remoteproc/qcom_q6v5_wcss.c b/drivers/remoteproc/qcom_q6v5_wcss.c
+index 8846ef0b0f1a..d6639856069b 100644
+--- a/drivers/remoteproc/qcom_q6v5_wcss.c
++++ b/drivers/remoteproc/qcom_q6v5_wcss.c
+@@ -390,7 +390,7 @@ static int q6v5_wcss_stop(struct rproc *rproc)
+ 	int ret;
+ 
+ 	/* WCSS powerdown */
+-	ret = qcom_q6v5_request_stop(&wcss->q6v5);
++	ret = qcom_q6v5_request_stop(&wcss->q6v5, wcss->sysmon);
+ 	if (ret == -ETIMEDOUT) {
+ 		dev_err(wcss->dev, "timed out on wait\n");
+ 		return ret;
 -- 
 2.28.0
 
