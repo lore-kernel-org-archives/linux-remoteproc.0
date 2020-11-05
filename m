@@ -2,161 +2,207 @@ Return-Path: <SRS0=+gsc=EL=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77D6AC2D0A3
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  5 Nov 2020 03:10:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DC74C4741F
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  5 Nov 2020 04:50:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 20B3620867
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  5 Nov 2020 03:10:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3724C2083B
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  5 Nov 2020 04:50:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LjAR1Xma"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tiU9APlP"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388497AbgKEDKr (ORCPT
+        id S1730406AbgKEEuc (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 4 Nov 2020 22:10:47 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:33635 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2388496AbgKEDKq (ORCPT
+        Wed, 4 Nov 2020 23:50:32 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38932 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727260AbgKEEuc (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 4 Nov 2020 22:10:46 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1604545844;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=+u0ac9KHv5wcKAFb5ZDCdLBF5wpiQCLC3Skb+q8JnJI=;
-        b=LjAR1XmaEXJ33P9soNUmv8CHufVUaORDD6RmmlAV4gYs8qv6b41rJ2rvVRzulXOuWTVrW7
-        SzywyCbgYD/1bFvtirez3Gnw9CgNpTqHQJmN1NZaycLHQ/hZrN/9uxLN+0KTfBgGSBl35W
-        LZub8RqSDy4hSLKtZd8oA8Xvy791Go0=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-503-yd3NH94MMTu1ekabTjB6KQ-1; Wed, 04 Nov 2020 22:10:40 -0500
-X-MC-Unique: yd3NH94MMTu1ekabTjB6KQ-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 940321007469;
-        Thu,  5 Nov 2020 03:10:38 +0000 (UTC)
-Received: from [10.72.13.154] (ovpn-13-154.pek2.redhat.com [10.72.13.154])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id D783C5B4DC;
-        Thu,  5 Nov 2020 03:10:25 +0000 (UTC)
-Subject: Re: [PATCH virtio] virtio: virtio_console: fix DMA memory allocation
- for rproc serial
-To:     Alexander Lobakin <alobakin@pm.me>, Amit Shah <amit@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Arnaud Pouliquen <arnaud.pouliquen@st.com>,
-        Suman Anna <s-anna@ti.com>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Wed, 4 Nov 2020 23:50:32 -0500
+Received: from mail-ot1-x342.google.com (mail-ot1-x342.google.com [IPv6:2607:f8b0:4864:20::342])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 74480C0613CF
+        for <linux-remoteproc@vger.kernel.org>; Wed,  4 Nov 2020 20:50:32 -0800 (PST)
+Received: by mail-ot1-x342.google.com with SMTP id i18so302668ots.0
+        for <linux-remoteproc@vger.kernel.org>; Wed, 04 Nov 2020 20:50:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=FvjwOA4E4EU4uWdZHjmur5yZGUS7qBISeC6b1M+D3zM=;
+        b=tiU9APlPLOoAxUJp76XWPjX0w6Bzx0nGeeJFMUVVCicmATSCu0ouGOStpsm7KH2jwB
+         K7hHvMnRwOoRvfihBotW5GprFltQEStY9Jfm7q+4st4EWnGOTU73Jx2M75hpCfe5Hr6L
+         MF83qfpHNGdRLhGlFU2btE7KJchSHqtEQa3AjnqgjvJB3lQJ/zMbDsXJahAIUwoGiciE
+         Ht1H91HmQnTJG7/5Vos+NVVvdPLXNllP3efOkrwybSR/pIyClUEMvO6FANa7IFG0sKWz
+         60dlWyzlKq+eLg2Wbu4oJqMqTyOdVtDlFW3Pdc/Dsc5Y6Golc1qyTigYMINObZ1xh4fq
+         WFHA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=FvjwOA4E4EU4uWdZHjmur5yZGUS7qBISeC6b1M+D3zM=;
+        b=MNc3adsd+92cycWtYngeXfLkMx8dGIwX9MNOwzuQpk1LLGUJ2JNVmo7esMT4N4P9/v
+         7s7IFYX2Iwx8oixAqzXYBr62VnZKGb9jrExRYUaGFrRm3z8QYvDyuarNou5o4iM3Hmd0
+         DkHZRm9Sz33sq6DXodrUHeQWue3AfY8ntTdUaHTGhf2ooencKHgjTWfTzYKy8ndCmwTG
+         YQKHpABp2D9txrZ4klWeHgDcIWsCqCG4mT6ZPj0otsyI8aAyDEwuqgPbocIctv/SFrKZ
+         eVN7b+mjyOSOiSnH2GN9bq5mBGu74hU9rmDeoxxZzYcOsbxYq0u0Vkgz2UOvGMgq87jb
+         jhCQ==
+X-Gm-Message-State: AOAM533ctshZGn2TG0piIdKBr13aZ6AEF263zQxjYWNOVMfTs7L+AAjG
+        8Z5fpx5jTJOO9DMBH41DyoGzFQ==
+X-Google-Smtp-Source: ABdhPJy+pHmn9uCABK0hmaSx7N/RXjSjED1Z0kRvX70fzCNGwChVT6aF6Wa70HEsQOk6oZmoejz7gA==
+X-Received: by 2002:a9d:60d:: with SMTP id 13mr468308otn.366.1604551831750;
+        Wed, 04 Nov 2020 20:50:31 -0800 (PST)
+Received: from localhost.localdomain (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
+        by smtp.gmail.com with ESMTPSA id k13sm100553ooi.41.2020.11.04.20.50.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Nov 2020 20:50:31 -0800 (PST)
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
         Ohad Ben-Cohen <ohad@wizery.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        virtualization@lists.linux-foundation.org,
-        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org
-References: <AOKowLclCbOCKxyiJ71WeNyuAAj2q8EUtxrXbyky5E@cp7-web-042.plabs.ch>
-From:   Jason Wang <jasowang@redhat.com>
-Message-ID: <004da56d-aad2-3b69-3428-02a14263289b@redhat.com>
-Date:   Thu, 5 Nov 2020 11:10:24 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Siddharth Gupta <sidgup@codeaurora.org>,
+        Sibi Sankar <sibis@codeaurora.org>
+Cc:     linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: [PATCH v2 1/4] remoteproc: sysmon: Ensure remote notification ordering
+Date:   Wed,  4 Nov 2020 20:50:48 -0800
+Message-Id: <20201105045051.1365780-2-bjorn.andersson@linaro.org>
+X-Mailer: git-send-email 2.28.0
+In-Reply-To: <20201105045051.1365780-1-bjorn.andersson@linaro.org>
+References: <20201105045051.1365780-1-bjorn.andersson@linaro.org>
 MIME-Version: 1.0
-In-Reply-To: <AOKowLclCbOCKxyiJ71WeNyuAAj2q8EUtxrXbyky5E@cp7-web-042.plabs.ch>
-Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
+The reliance on the remoteproc's state for determining when to send
+sysmon notifications to a remote processor is racy with regard to
+concurrent remoteproc operations.
 
-On 2020/11/4 下午11:31, Alexander Lobakin wrote:
-> Since commit 086d08725d34 ("remoteproc: create vdev subdevice with
-> specific dma memory pool"), every remoteproc has a DMA subdevice
-> ("remoteprocX#vdevYbuffer") for each virtio device, which inherits
-> DMA capabilities from the corresponding platform device. This allowed
-> to associate different DMA pools with each vdev, and required from
-> virtio drivers to perform DMA operations with the parent device
-> (vdev->dev.parent) instead of grandparent (vdev->dev.parent->parent).
->
-> virtio_rpmsg_bus was already changed in the same merge cycle with
-> commit d999b622fcfb ("rpmsg: virtio: allocate buffer from parent"),
-> but virtio_console did not. In fact, operations using the grandparent
-> worked fine while the grandparent was the platform device, but since
-> commit c774ad010873 ("remoteproc: Fix and restore the parenting
-> hierarchy for vdev") this was changed, and now the grandparent device
-> is the remoteproc device without any DMA capabilities.
-> So, starting v5.8-rc1 the following warning is observed:
->
-> [    2.483925] ------------[ cut here ]------------
-> [    2.489148] WARNING: CPU: 3 PID: 101 at kernel/dma/mapping.c:427 0x80e7eee8
-> [    2.489152] Modules linked in: virtio_console(+)
-> [    2.503737]  virtio_rpmsg_bus rpmsg_core
-> [    2.508903]
-> [    2.528898] <Other modules, stack and call trace here>
-> [    2.913043]
-> [    2.914907] ---[ end trace 93ac8746beab612c ]---
-> [    2.920102] virtio-ports vport1p0: Error allocating inbufs
->
-> kernel/dma/mapping.c:427 is:
->
-> WARN_ON_ONCE(!dev->coherent_dma_mask);
->
-> obviously because the grandparent now is remoteproc dev without any
-> DMA caps:
->
-> [    3.104943] Parent: remoteproc0#vdev1buffer, grandparent: remoteproc0
->
-> Fix this the same way as it was for virtio_rpmsg_bus, using just the
-> parent device (vdev->dev.parent, "remoteprocX#vdevYbuffer") for DMA
-> operations.
-> This also allows now to reserve DMA pools/buffers for rproc serial
-> via Device Tree.
->
-> Fixes: c774ad010873 ("remoteproc: Fix and restore the parenting hierarchy for vdev")
-> Cc: stable@vger.kernel.org # 5.1+
-> Signed-off-by: Alexander Lobakin <alobakin@pm.me>
-> ---
->   drivers/char/virtio_console.c | 8 ++++----
->   1 file changed, 4 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/char/virtio_console.c b/drivers/char/virtio_console.c
-> index a2da8f768b94..1836cc56e357 100644
-> --- a/drivers/char/virtio_console.c
-> +++ b/drivers/char/virtio_console.c
-> @@ -435,12 +435,12 @@ static struct port_buffer *alloc_buf(struct virtio_device *vdev, size_t buf_size
->   		/*
->   		 * Allocate DMA memory from ancestor. When a virtio
->   		 * device is created by remoteproc, the DMA memory is
-> -		 * associated with the grandparent device:
-> -		 * vdev => rproc => platform-dev.
-> +		 * associated with the parent device:
-> +		 * virtioY => remoteprocX#vdevYbuffer.
->   		 */
-> -		if (!vdev->dev.parent || !vdev->dev.parent->parent)
-> +		buf->dev = vdev->dev.parent;
-> +		if (!buf->dev)
->   			goto free_buf;
-> -		buf->dev = vdev->dev.parent->parent;
+Further more the advertisement of the state of other remote processor to
+a newly started remote processor might not only send the wrong state,
+but might result in a stream of state changes that are out of order.
 
+Address this by introducing state tracking within the sysmon instances
+themselves and extend the locking to ensure that the notifications are
+consistent with this state.
 
-I wonder it could be the right time to introduce dma_dev for virtio 
-instead of depending on something magic via parent.
+Fixes: 1f36ab3f6e3b ("remoteproc: sysmon: Inform current rproc about all active rprocs")
+Fixes: 1877f54f75ad ("remoteproc: sysmon: Add notifications for events")
+Fixes: 1fb82ee806d1 ("remoteproc: qcom: Introduce sysmon")
+Cc: stable@vger.kernel.org
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+---
 
-(Btw I don't even notice that there's transport specific code in virtio 
-console, it's better to avoid it)
+Changes since v1:
+- Reduced the locking to be per sysmon instance
+- Dropped unused local "rproc" variable in sysmon_notify()
 
-Thanks
+ drivers/remoteproc/qcom_sysmon.c | 27 +++++++++++++++++++++------
+ 1 file changed, 21 insertions(+), 6 deletions(-)
 
-
->   
->   		/* Increase device refcnt to avoid freeing it */
->   		get_device(buf->dev);
+diff --git a/drivers/remoteproc/qcom_sysmon.c b/drivers/remoteproc/qcom_sysmon.c
+index 9eb2f6bccea6..38f63c968fa8 100644
+--- a/drivers/remoteproc/qcom_sysmon.c
++++ b/drivers/remoteproc/qcom_sysmon.c
+@@ -22,6 +22,9 @@ struct qcom_sysmon {
+ 	struct rproc_subdev subdev;
+ 	struct rproc *rproc;
+ 
++	int state;
++	struct mutex state_lock;
++
+ 	struct list_head node;
+ 
+ 	const char *name;
+@@ -448,7 +451,10 @@ static int sysmon_prepare(struct rproc_subdev *subdev)
+ 		.ssr_event = SSCTL_SSR_EVENT_BEFORE_POWERUP
+ 	};
+ 
++	mutex_lock(&sysmon->state_lock);
++	sysmon->state = SSCTL_SSR_EVENT_BEFORE_POWERUP;
+ 	blocking_notifier_call_chain(&sysmon_notifiers, 0, (void *)&event);
++	mutex_unlock(&sysmon->state_lock);
+ 
+ 	return 0;
+ }
+@@ -472,22 +478,25 @@ static int sysmon_start(struct rproc_subdev *subdev)
+ 		.ssr_event = SSCTL_SSR_EVENT_AFTER_POWERUP
+ 	};
+ 
++	mutex_lock(&sysmon->state_lock);
++	sysmon->state = SSCTL_SSR_EVENT_AFTER_POWERUP;
+ 	blocking_notifier_call_chain(&sysmon_notifiers, 0, (void *)&event);
++	mutex_unlock(&sysmon->state_lock);
+ 
+-	mutex_lock(&sysmon_lock);
+ 	list_for_each_entry(target, &sysmon_list, node) {
+-		if (target == sysmon ||
+-		    target->rproc->state != RPROC_RUNNING)
++		if (target == sysmon)
+ 			continue;
+ 
++		mutex_lock(&target->state_lock);
+ 		event.subsys_name = target->name;
++		event.ssr_event = target->state;
+ 
+ 		if (sysmon->ssctl_version == 2)
+ 			ssctl_send_event(sysmon, &event);
+ 		else if (sysmon->ept)
+ 			sysmon_send_event(sysmon, &event);
++		mutex_unlock(&target->state_lock);
+ 	}
+-	mutex_unlock(&sysmon_lock);
+ 
+ 	return 0;
+ }
+@@ -500,7 +509,10 @@ static void sysmon_stop(struct rproc_subdev *subdev, bool crashed)
+ 		.ssr_event = SSCTL_SSR_EVENT_BEFORE_SHUTDOWN
+ 	};
+ 
++	mutex_lock(&sysmon->state_lock);
++	sysmon->state = SSCTL_SSR_EVENT_BEFORE_SHUTDOWN;
+ 	blocking_notifier_call_chain(&sysmon_notifiers, 0, (void *)&event);
++	mutex_unlock(&sysmon->state_lock);
+ 
+ 	/* Don't request graceful shutdown if we've crashed */
+ 	if (crashed)
+@@ -521,7 +533,10 @@ static void sysmon_unprepare(struct rproc_subdev *subdev)
+ 		.ssr_event = SSCTL_SSR_EVENT_AFTER_SHUTDOWN
+ 	};
+ 
++	mutex_lock(&sysmon->state_lock);
++	sysmon->state = SSCTL_SSR_EVENT_AFTER_SHUTDOWN;
+ 	blocking_notifier_call_chain(&sysmon_notifiers, 0, (void *)&event);
++	mutex_unlock(&sysmon->state_lock);
+ }
+ 
+ /**
+@@ -534,11 +549,10 @@ static int sysmon_notify(struct notifier_block *nb, unsigned long event,
+ 			 void *data)
+ {
+ 	struct qcom_sysmon *sysmon = container_of(nb, struct qcom_sysmon, nb);
+-	struct rproc *rproc = sysmon->rproc;
+ 	struct sysmon_event *sysmon_event = data;
+ 
+ 	/* Skip non-running rprocs and the originating instance */
+-	if (rproc->state != RPROC_RUNNING ||
++	if (sysmon->state != SSCTL_SSR_EVENT_AFTER_POWERUP ||
+ 	    !strcmp(sysmon_event->subsys_name, sysmon->name)) {
+ 		dev_dbg(sysmon->dev, "not notifying %s\n", sysmon->name);
+ 		return NOTIFY_DONE;
+@@ -591,6 +605,7 @@ struct qcom_sysmon *qcom_add_sysmon_subdev(struct rproc *rproc,
+ 	init_completion(&sysmon->ind_comp);
+ 	init_completion(&sysmon->shutdown_comp);
+ 	mutex_init(&sysmon->lock);
++	mutex_init(&sysmon->state_lock);
+ 
+ 	sysmon->shutdown_irq = of_irq_get_byname(sysmon->dev->of_node,
+ 						 "shutdown-ack");
+-- 
+2.28.0
 
