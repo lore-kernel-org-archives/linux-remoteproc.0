@@ -2,305 +2,126 @@ Return-Path: <SRS0=+gsc=EL=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6D5CC56201
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  5 Nov 2020 04:50:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B10EC00A89
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  5 Nov 2020 04:55:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4E68821556
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  5 Nov 2020 04:50:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C628D2083B
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  5 Nov 2020 04:55:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PPET8LLK"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QybcdYkG"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726214AbgKEEuq (ORCPT
+        id S1729240AbgKEEzl (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 4 Nov 2020 23:50:46 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38930 "EHLO
+        Wed, 4 Nov 2020 23:55:41 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39758 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730751AbgKEEud (ORCPT
+        with ESMTP id S1727107AbgKEEzl (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 4 Nov 2020 23:50:33 -0500
+        Wed, 4 Nov 2020 23:55:41 -0500
 Received: from mail-ot1-x341.google.com (mail-ot1-x341.google.com [IPv6:2607:f8b0:4864:20::341])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7186DC0613CF
-        for <linux-remoteproc@vger.kernel.org>; Wed,  4 Nov 2020 20:50:33 -0800 (PST)
-Received: by mail-ot1-x341.google.com with SMTP id g19so255353otp.13
-        for <linux-remoteproc@vger.kernel.org>; Wed, 04 Nov 2020 20:50:33 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3CE51C0613D1
+        for <linux-remoteproc@vger.kernel.org>; Wed,  4 Nov 2020 20:55:41 -0800 (PST)
+Received: by mail-ot1-x341.google.com with SMTP id k3so267176otp.12
+        for <linux-remoteproc@vger.kernel.org>; Wed, 04 Nov 2020 20:55:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=0AMfzJQSHdnGOYZqMbBXX9tseE50EVF4YR2bSIdLe74=;
-        b=PPET8LLKlL/3si+aNNv7BOs1O+rwB3JVqNTsq0aFIm/JVqMT9eplyCNqgJ+JAKQofe
-         d6NYoWOjL2wi2VFtMyJnPxWEF/A2XlzI8OW8Vt26dzsP5r/es5NDTeMtG6XpqZxFvyvB
-         ESs04WnX21nn7MAqMnAwQGOLJUbjJLR2fSpO8UTcjzTaUyCi1RWGeLLTxgagjCz/ymlE
-         yTv+4bnvpYz++eDqfKIIbhtpsGkyWqOqJ2Hi4AObBYGfazImOeCQHoXzcRypBkTJ5pfv
-         vZp4zGRdArrIlqO78Jxj/SCGdz3EmjA0Ta0cdrIm6ICTunc9FP4qlM4KdBsclPqXRoBe
-         TG0Q==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=i6MGr/Kg3VZyORAXNQIPSqeLnV8zx9yqFNyMUoSyDIg=;
+        b=QybcdYkGQifdwCUvS6mzcHt5x/ze6Uk+AU8hfeX5CCttAAjMJ9JixZwigksaFEM1U8
+         v/okucIqFFVU7VHHDOMk+/vW3ceFa/smhEYZKI3wHU4eN5TPV25FIT14cJgS7Zp7WLmJ
+         gcjWURKjGLYBgmYycdwu1V64hbzyatd/3umDLpv/6+FshkDeLD1qJ35IK7KNbXnaMmzR
+         SejanBqzPKxCy15mDtB2/KqyQTFGCQD0m/3N29NgrgYBsQyTWF4c0yWAvFBLe4RG+nYD
+         3jMfs8d6Njg8jo76DutCptIjzK9ankBp9i7CdLZpoN5UwGUOg/Q4j2mBtdUq8SavqrwZ
+         fRFw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=0AMfzJQSHdnGOYZqMbBXX9tseE50EVF4YR2bSIdLe74=;
-        b=Qz+wpivbia8NwF5xjdneHaKY7xCftkuRJ7A5nDpxO84GyZamDD5NBj1A0kdMRbxSkE
-         QeaRRT6hEsQKnjXqNpTfSlcsDdV8lBRNTGW9WCQdp2mbHFnhSPoUy+qfdc4ZJZD/TD+D
-         YN7SwrGHaiuRaFr1i8gSKos7Xj7Eq16/PdLkM6SPTeOx1gne/+Eazs+riTT03TlyJGGx
-         S8ye4p4g5HK6csxng82XrggQM3P6OaFtjrz2cHO2rG3JkcKRT6+jzKAQ6frO54RjUq19
-         KcDBU55Dz+aIkr/Y413gfEpBWRb/YNw8E0tlaBYbyXMi1/eRwXi+DCqrWMDVNDzjgqLD
-         0DSA==
-X-Gm-Message-State: AOAM533bSImu2jJuLPt8N5OawfIyf9U0iZThtc2ULlyEd3LiSFUZlXn4
-        A55n8DHgOTJ9oAtyaz8dD8wNJQ==
-X-Google-Smtp-Source: ABdhPJwcQsdhkwET5pl7CJPqv/BumVDviK7CSwbVN1yVJNzQSMnsLW0S7LwnZeiOF+0RckMkJFCIYA==
-X-Received: by 2002:a9d:6b08:: with SMTP id g8mr424994otp.272.1604551832794;
-        Wed, 04 Nov 2020 20:50:32 -0800 (PST)
-Received: from localhost.localdomain (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
-        by smtp.gmail.com with ESMTPSA id k13sm100553ooi.41.2020.11.04.20.50.31
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=i6MGr/Kg3VZyORAXNQIPSqeLnV8zx9yqFNyMUoSyDIg=;
+        b=tDcas1kOeHkG4UDJSfZxSo10DZzAJn19zxMgL1cN4Ad/cQWFlPSaPIc8+XXA00BwC0
+         Q1Pj8hxJoPzE98/PiwdOPMly0hdfXiByTuriDkPNMggTcantlx8HZKi7Eya1rHVDNj+E
+         k+tdewKFtYPYE60SSwI5QMJQcKgJh/rBJ8fOYieP1iLx78fmggEJWQytRGjU80JHdOLU
+         uIO0BnqtLny+dhGmD4l28o32/FTR2qb3rpXEoM/QouDi7DofB9H4vUpQWlA9sUIc2Jvx
+         AhraIzvf7+T/kqq+hdJ+VpkSUBcJ+VLQdxOLel0OFCgaPinHBiRapDEYgBsMZ8jCCHP+
+         t1dg==
+X-Gm-Message-State: AOAM532fN7cTAPgRDyPfFiq2bp0MZL8FQ5U6l1TskKwZTS/J6K0AjHff
+        ButMTU8TlDdItMuUCj2aMh1u1Q==
+X-Google-Smtp-Source: ABdhPJx8wemuxHJ5PcafcR+3WSW0gpy0QWAV+NsA3hxjXU/Wnf4rhD2zTdNnzBM3zh6Mhoi0OJRe7g==
+X-Received: by 2002:a9d:7d87:: with SMTP id j7mr510237otn.356.1604552140570;
+        Wed, 04 Nov 2020 20:55:40 -0800 (PST)
+Received: from builder.lan (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
+        by smtp.gmail.com with ESMTPSA id l23sm95998otk.68.2020.11.04.20.55.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Nov 2020 20:50:32 -0800 (PST)
+        Wed, 04 Nov 2020 20:55:39 -0800 (PST)
+Date:   Wed, 4 Nov 2020 22:55:38 -0600
 From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
+To:     Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc:     Alexandre Courbot <acourbot@chromium.org>,
         Ohad Ben-Cohen <ohad@wizery.com>,
-        Siddharth Gupta <sidgup@codeaurora.org>,
-        Sibi Sankar <sibis@codeaurora.org>
-Cc:     linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/4] remoteproc: sysmon: Expose the shutdown result
-Date:   Wed,  4 Nov 2020 20:50:49 -0800
-Message-Id: <20201105045051.1365780-3-bjorn.andersson@linaro.org>
-X-Mailer: git-send-email 2.28.0
-In-Reply-To: <20201105045051.1365780-1-bjorn.andersson@linaro.org>
-References: <20201105045051.1365780-1-bjorn.andersson@linaro.org>
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        linux-remoteproc@vger.kernel.org,
+        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
+        kernel test robot <lkp@intel.com>
+Subject: Re: [PATCH] remoteproc/mtk_scp: surround DT device IDs with CONFIG_OF
+Message-ID: <20201105045538.GA29931@builder.lan>
+References: <20201102074007.299222-1-acourbot@chromium.org>
+ <20201104190547.GD2893396@xps15>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201104190547.GD2893396@xps15>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-A graceful shutdown of the Qualcomm remote processors where
-traditionally performed by invoking a shared memory state signal and
-waiting for the associated ack.
+On Wed 04 Nov 13:05 CST 2020, Mathieu Poirier wrote:
 
-This was later superseded by the "sysmon" mechanism, where some form of
-shared memory bus is used to send a "graceful shutdown request" message
-and one of more signals comes back to indicate its success.
+> Hi Alexander,
+> 
+> On Mon, Nov 02, 2020 at 04:40:07PM +0900, Alexandre Courbot wrote:
+> > Now that this driver can be compiled with COMPILE_TEST, we have no
+> > guarantee that CONFIG_OF will also be defined. When that happens, a
+> > warning about mtk_scp_of_match being defined but unused will be reported
+> > so make sure this variable is only defined if of_match_ptr() actually
+> > uses it.
+> > 
+> > Fixes: cbd2dca74926c0e4610c40923cc786b732c9e8ef remoteproc: scp: add COMPILE_TEST dependency
+> > Reported-by: kernel test robot <lkp@intel.com>
+> > Signed-off-by: Alexandre Courbot <acourbot@chromium.org>
+> > ---
+> >  drivers/remoteproc/mtk_scp.c | 2 ++
+> >  1 file changed, 2 insertions(+)
+> > 
+> > diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
+> > index 577cbd5d421e..f74f22d4d1ff 100644
+> > --- a/drivers/remoteproc/mtk_scp.c
+> > +++ b/drivers/remoteproc/mtk_scp.c
+> > @@ -772,12 +772,14 @@ static const struct mtk_scp_of_data mt8192_of_data = {
+> >  	.host_to_scp_int_bit = MT8192_HOST_IPC_INT_BIT,
+> >  };
+> >  
+> > +#if defined(CONFIG_OF)
+> >  static const struct of_device_id mtk_scp_of_match[] = {
+> >  	{ .compatible = "mediatek,mt8183-scp", .data = &mt8183_of_data },
+> >  	{ .compatible = "mediatek,mt8192-scp", .data = &mt8192_of_data },
+> >  	{},
+> >  };
+> >  MODULE_DEVICE_TABLE(of, mtk_scp_of_match);
+> > +#endif
+> 
+> I think it is better to add a "depends on OF" in the Kconfig.
+> 
 
-But when this newer mechanism is in effect the firmware is shut down by
-the time the older mechanism, implemented in the remoteproc drivers,
-attempts to perform a graceful shutdown - and as such it will never
-receive an ack back.
+That would reduce the efficiency of COMPILE_TEST, so I would prefer that
+we drop of_match_ptr(), which will result in the pointer always being
+populated and this being referenced - although unused when built without
+OF.
 
-This patch therefor track the success of the latest shutdown attempt in
-sysmon and exposes a new function in the API that the remoteproc driver
-can use to query the success and the necessity of invoking the older
-mechanism.
-
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
----
-
-Changes since v1:
-- New patch
-
- drivers/remoteproc/qcom_common.h |  6 +++
- drivers/remoteproc/qcom_sysmon.c | 82 ++++++++++++++++++++++++--------
- 2 files changed, 69 insertions(+), 19 deletions(-)
-
-diff --git a/drivers/remoteproc/qcom_common.h b/drivers/remoteproc/qcom_common.h
-index dfc641c3a98b..8ba9052955bd 100644
---- a/drivers/remoteproc/qcom_common.h
-+++ b/drivers/remoteproc/qcom_common.h
-@@ -51,6 +51,7 @@ struct qcom_sysmon *qcom_add_sysmon_subdev(struct rproc *rproc,
- 					   const char *name,
- 					   int ssctl_instance);
- void qcom_remove_sysmon_subdev(struct qcom_sysmon *sysmon);
-+bool qcom_sysmon_shutdown_acked(struct qcom_sysmon *sysmon);
- #else
- static inline struct qcom_sysmon *qcom_add_sysmon_subdev(struct rproc *rproc,
- 							 const char *name,
-@@ -62,6 +63,11 @@ static inline struct qcom_sysmon *qcom_add_sysmon_subdev(struct rproc *rproc,
- static inline void qcom_remove_sysmon_subdev(struct qcom_sysmon *sysmon)
- {
- }
-+
-+static inline bool qcom_sysmon_shutdown_acked(struct qcom_sysmon *sysmon)
-+{
-+	return false;
-+}
- #endif
- 
- #endif
-diff --git a/drivers/remoteproc/qcom_sysmon.c b/drivers/remoteproc/qcom_sysmon.c
-index 38f63c968fa8..1c42f00010d3 100644
---- a/drivers/remoteproc/qcom_sysmon.c
-+++ b/drivers/remoteproc/qcom_sysmon.c
-@@ -44,6 +44,7 @@ struct qcom_sysmon {
- 	struct mutex lock;
- 
- 	bool ssr_ack;
-+	bool shutdown_acked;
- 
- 	struct qmi_handle qmi;
- 	struct sockaddr_qrtr ssctl;
-@@ -115,10 +116,13 @@ static void sysmon_send_event(struct qcom_sysmon *sysmon,
- /**
-  * sysmon_request_shutdown() - request graceful shutdown of remote
-  * @sysmon:	sysmon context
-+ *
-+ * Return: boolean indicator of the remote processor acking the request
-  */
--static void sysmon_request_shutdown(struct qcom_sysmon *sysmon)
-+static bool sysmon_request_shutdown(struct qcom_sysmon *sysmon)
- {
- 	char *req = "ssr:shutdown";
-+	bool acked = false;
- 	int ret;
- 
- 	mutex_lock(&sysmon->lock);
-@@ -141,9 +145,13 @@ static void sysmon_request_shutdown(struct qcom_sysmon *sysmon)
- 	if (!sysmon->ssr_ack)
- 		dev_err(sysmon->dev,
- 			"unexpected response to sysmon shutdown request\n");
-+	else
-+		acked = true;
- 
- out_unlock:
- 	mutex_unlock(&sysmon->lock);
-+
-+	return acked;
- }
- 
- static int sysmon_callback(struct rpmsg_device *rpdev, void *data, int count,
-@@ -297,14 +305,33 @@ static struct qmi_msg_handler qmi_indication_handler[] = {
- 	{}
- };
- 
-+static bool ssctl_request_shutdown_wait(struct qcom_sysmon *sysmon)
-+{
-+	int ret;
-+
-+	ret = wait_for_completion_timeout(&sysmon->shutdown_comp, 10 * HZ);
-+	if (ret)
-+		return true;
-+
-+	ret = try_wait_for_completion(&sysmon->ind_comp);
-+	if (ret)
-+		return true;
-+
-+	dev_err(sysmon->dev, "timeout waiting for shutdown ack\n");
-+	return false;
-+}
-+
- /**
-  * ssctl_request_shutdown() - request shutdown via SSCTL QMI service
-  * @sysmon:	sysmon context
-+ *
-+ * Return: boolean indicator of the remote processor acking the request
-  */
--static void ssctl_request_shutdown(struct qcom_sysmon *sysmon)
-+static bool ssctl_request_shutdown(struct qcom_sysmon *sysmon)
- {
- 	struct ssctl_shutdown_resp resp;
- 	struct qmi_txn txn;
-+	bool acked = false;
- 	int ret;
- 
- 	reinit_completion(&sysmon->ind_comp);
-@@ -312,7 +339,7 @@ static void ssctl_request_shutdown(struct qcom_sysmon *sysmon)
- 	ret = qmi_txn_init(&sysmon->qmi, &txn, ssctl_shutdown_resp_ei, &resp);
- 	if (ret < 0) {
- 		dev_err(sysmon->dev, "failed to allocate QMI txn\n");
--		return;
-+		return false;
- 	}
- 
- 	ret = qmi_send_request(&sysmon->qmi, &sysmon->ssctl, &txn,
-@@ -320,27 +347,23 @@ static void ssctl_request_shutdown(struct qcom_sysmon *sysmon)
- 	if (ret < 0) {
- 		dev_err(sysmon->dev, "failed to send shutdown request\n");
- 		qmi_txn_cancel(&txn);
--		return;
-+		return false;
- 	}
- 
- 	ret = qmi_txn_wait(&txn, 5 * HZ);
--	if (ret < 0)
-+	if (ret < 0) {
- 		dev_err(sysmon->dev, "failed receiving QMI response\n");
--	else if (resp.resp.result)
-+	} else if (resp.resp.result) {
- 		dev_err(sysmon->dev, "shutdown request failed\n");
--	else
-+	} else {
- 		dev_dbg(sysmon->dev, "shutdown request completed\n");
--
--	if (sysmon->shutdown_irq > 0) {
--		ret = wait_for_completion_timeout(&sysmon->shutdown_comp,
--						  10 * HZ);
--		if (!ret) {
--			ret = try_wait_for_completion(&sysmon->ind_comp);
--			if (!ret)
--				dev_err(sysmon->dev,
--					"timeout waiting for shutdown ack\n");
--		}
-+		acked = true;
- 	}
-+
-+	if (sysmon->shutdown_irq > 0)
-+		return ssctl_request_shutdown_wait(sysmon);
-+
-+	return acked;
- }
- 
- /**
-@@ -508,6 +531,9 @@ static void sysmon_stop(struct rproc_subdev *subdev, bool crashed)
- 		.subsys_name = sysmon->name,
- 		.ssr_event = SSCTL_SSR_EVENT_BEFORE_SHUTDOWN
- 	};
-+	bool acked;
-+
-+	sysmon->shutdown_acked = false;
- 
- 	mutex_lock(&sysmon->state_lock);
- 	sysmon->state = SSCTL_SSR_EVENT_BEFORE_SHUTDOWN;
-@@ -519,9 +545,11 @@ static void sysmon_stop(struct rproc_subdev *subdev, bool crashed)
- 		return;
- 
- 	if (sysmon->ssctl_version)
--		ssctl_request_shutdown(sysmon);
-+		acked = ssctl_request_shutdown(sysmon);
- 	else if (sysmon->ept)
--		sysmon_request_shutdown(sysmon);
-+		acked = sysmon_request_shutdown(sysmon);
-+
-+	sysmon->shutdown_acked = acked;
- }
- 
- static void sysmon_unprepare(struct rproc_subdev *subdev)
-@@ -679,6 +707,22 @@ void qcom_remove_sysmon_subdev(struct qcom_sysmon *sysmon)
- }
- EXPORT_SYMBOL_GPL(qcom_remove_sysmon_subdev);
- 
-+/**
-+ * qcom_sysmon_shutdown_acked() - query the success of the last shutdown
-+ * @sysmon:	sysmon context
-+ *
-+ * When sysmon is used to request a graceful shutdown of the remote processor
-+ * this can be used by the remoteproc driver to query the success, in order to
-+ * know if it should fall back to other means of requesting a shutdown.
-+ *
-+ * Return: boolean indicator of the success of the last shutdown request
-+ */
-+bool qcom_sysmon_shutdown_acked(struct qcom_sysmon *sysmon)
-+{
-+	return sysmon && sysmon->shutdown_acked;
-+}
-+EXPORT_SYMBOL_GPL(qcom_sysmon_shutdown_acked);
-+
- /**
-  * sysmon_probe() - probe sys_mon channel
-  * @rpdev:	rpmsg device handle
--- 
-2.28.0
-
+Regards,
+Bjorn
