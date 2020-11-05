@@ -2,139 +2,161 @@ Return-Path: <SRS0=+gsc=EL=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79035C2D0A3
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  5 Nov 2020 00:32:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77D6AC2D0A3
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  5 Nov 2020 03:10:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0EB8720BED
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  5 Nov 2020 00:32:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 20B3620867
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  5 Nov 2020 03:10:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="c08FE5tw"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LjAR1Xma"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733161AbgKEAcA (ORCPT
+        id S2388497AbgKEDKr (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 4 Nov 2020 19:32:00 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55536 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733015AbgKEAcA (ORCPT
+        Wed, 4 Nov 2020 22:10:47 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:33635 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2388496AbgKEDKq (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 4 Nov 2020 19:32:00 -0500
-Received: from mail-ot1-x342.google.com (mail-ot1-x342.google.com [IPv6:2607:f8b0:4864:20::342])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4995BC0613D2
-        for <linux-remoteproc@vger.kernel.org>; Wed,  4 Nov 2020 16:32:00 -0800 (PST)
-Received: by mail-ot1-x342.google.com with SMTP id y22so510558oti.10
-        for <linux-remoteproc@vger.kernel.org>; Wed, 04 Nov 2020 16:32:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=DhtABJSiSskHDxawNAHeInkIhoLHhr/Rqw/OKeWlcko=;
-        b=c08FE5twIizIFpFrR0X/M7OkgNhJ2p0x0vrQ6RGZw5VXMVCZFwNoSfrHcfZnn81BNj
-         eiR3m10a/IwrOYu+Vle02m3Iw9+XrBhUZPKN2chKPhkqE9DkIOy4J6cFCy9Fuyqifk8P
-         5F4tFe1zGCTXmGSw72IPxFzkbQcnGis8jRzIYh9YQJ9khSwPfD5urXbdLuhArBRytbMH
-         B9Ikxy3A362Hq01A8oZkIXDC6fXPAJtLCv/MnjKdnLneUZA1HySt/Q+PMZO7rKWIQQuu
-         7TpeOADFqg3g7rB3PpiM0iTVFPfO+Aowoj04YtG/tgkK9pDyk+vUJ+CcnBl0wk0pOXId
-         wK1A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=DhtABJSiSskHDxawNAHeInkIhoLHhr/Rqw/OKeWlcko=;
-        b=W+/qJK0k8AqVU4SQ03+yin8jF8rRzoRsepXTvQRLtTA/tIcakqAF88ruLXsNfJwwz3
-         f8QEqjwgzML/O7+k5QpMd7YSafbTMVRRfWAYTGVnyuEGaspMY1QPWlSJcppMkh2WlnTM
-         D15nIfy1p46I8ly5nDaHuVjY7y8pvGwk/klfNupIUGHfqLW22MS5PnlLHXi+rDmv5HK8
-         u2GBhr2BredzYDqHWGFWrewZUq5KE46wXwL7pKtw0c7fz9ftZXd42SskU6cD9u/GQItV
-         uQB+vSDgG3FY0LG+ZPOncN3wlTYiEKVRfQUbb7e6uXmcep3KbgRiCL5sZ1UVQu+bkf3S
-         zoqw==
-X-Gm-Message-State: AOAM530nDUT3Xo9M94c/7cNQdSndxcFsa0+orPqqkBTQoBby67IfarsM
-        qEHIsXwUmQ8jGxo0u+cgT1vSYQ==
-X-Google-Smtp-Source: ABdhPJxCS/mOcYL7FqRe4TEjOvLWgtxG77KL5UeDdUxWeQP7HVo0sHNHQ89bndZeMYLeRuDsYPdHDg==
-X-Received: by 2002:a9d:6419:: with SMTP id h25mr222385otl.79.1604536319425;
-        Wed, 04 Nov 2020 16:31:59 -0800 (PST)
-Received: from builder.lan (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
-        by smtp.gmail.com with ESMTPSA id s28sm398527otr.4.2020.11.04.16.31.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Nov 2020 16:31:58 -0800 (PST)
-Date:   Wed, 4 Nov 2020 18:31:57 -0600
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Ohad Ben-Cohen <ohad@wizery.com>,
+        Wed, 4 Nov 2020 22:10:46 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1604545844;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=+u0ac9KHv5wcKAFb5ZDCdLBF5wpiQCLC3Skb+q8JnJI=;
+        b=LjAR1XmaEXJ33P9soNUmv8CHufVUaORDD6RmmlAV4gYs8qv6b41rJ2rvVRzulXOuWTVrW7
+        SzywyCbgYD/1bFvtirez3Gnw9CgNpTqHQJmN1NZaycLHQ/hZrN/9uxLN+0KTfBgGSBl35W
+        LZub8RqSDy4hSLKtZd8oA8Xvy791Go0=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-503-yd3NH94MMTu1ekabTjB6KQ-1; Wed, 04 Nov 2020 22:10:40 -0500
+X-MC-Unique: yd3NH94MMTu1ekabTjB6KQ-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 940321007469;
+        Thu,  5 Nov 2020 03:10:38 +0000 (UTC)
+Received: from [10.72.13.154] (ovpn-13-154.pek2.redhat.com [10.72.13.154])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id D783C5B4DC;
+        Thu,  5 Nov 2020 03:10:25 +0000 (UTC)
+Subject: Re: [PATCH virtio] virtio: virtio_console: fix DMA memory allocation
+ for rproc serial
+To:     Alexander Lobakin <alobakin@pm.me>, Amit Shah <amit@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Arnaud Pouliquen <arnaud.pouliquen@st.com>,
+        Suman Anna <s-anna@ti.com>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Siddharth Gupta <sidgup@codeaurora.org>
-Cc:     linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH] remoteproc: sysmon: Ensure remote notification ordering
-Message-ID: <20201105003157.GC1328@builder.lan>
-References: <20201104161625.1085981-1-bjorn.andersson@linaro.org>
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Ohad Ben-Cohen <ohad@wizery.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        virtualization@lists.linux-foundation.org,
+        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org
+References: <AOKowLclCbOCKxyiJ71WeNyuAAj2q8EUtxrXbyky5E@cp7-web-042.plabs.ch>
+From:   Jason Wang <jasowang@redhat.com>
+Message-ID: <004da56d-aad2-3b69-3428-02a14263289b@redhat.com>
+Date:   Thu, 5 Nov 2020 11:10:24 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201104161625.1085981-1-bjorn.andersson@linaro.org>
+In-Reply-To: <AOKowLclCbOCKxyiJ71WeNyuAAj2q8EUtxrXbyky5E@cp7-web-042.plabs.ch>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Wed 04 Nov 10:16 CST 2020, Bjorn Andersson wrote:
 
-> The reliance on the remoteproc's state for determining when to send
-> sysmon notifications to a remote processor is racy with regard to
-> concurrent remoteproc operations.
-> 
-> Further more the advertisement of the state of other remote processor to
-> a newly started remote processor might not only send the wrong state,
-> but might result in a stream of state changes that are out of order.
-> 
-> Address this by introducing state tracking within the sysmon instances
-> themselves and extend the locking to ensure that the notifications are
-> consistent with this state.
-> 
-> The use of a big lock for all instances will cause contention for
-> concurrent remote processor state transitions, but the correctness of
-> the remote processors' view of their peers is more important.
-> 
-> Fixes: 1f36ab3f6e3b ("remoteproc: sysmon: Inform current rproc about all active rprocs")
-> Fixes: 1877f54f75ad ("remoteproc: sysmon: Add notifications for events")
-> Fixes: 1fb82ee806d1 ("remoteproc: qcom: Introduce sysmon")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+On 2020/11/4 下午11:31, Alexander Lobakin wrote:
+> Since commit 086d08725d34 ("remoteproc: create vdev subdevice with
+> specific dma memory pool"), every remoteproc has a DMA subdevice
+> ("remoteprocX#vdevYbuffer") for each virtio device, which inherits
+> DMA capabilities from the corresponding platform device. This allowed
+> to associate different DMA pools with each vdev, and required from
+> virtio drivers to perform DMA operations with the parent device
+> (vdev->dev.parent) instead of grandparent (vdev->dev.parent->parent).
+>
+> virtio_rpmsg_bus was already changed in the same merge cycle with
+> commit d999b622fcfb ("rpmsg: virtio: allocate buffer from parent"),
+> but virtio_console did not. In fact, operations using the grandparent
+> worked fine while the grandparent was the platform device, but since
+> commit c774ad010873 ("remoteproc: Fix and restore the parenting
+> hierarchy for vdev") this was changed, and now the grandparent device
+> is the remoteproc device without any DMA capabilities.
+> So, starting v5.8-rc1 the following warning is observed:
+>
+> [    2.483925] ------------[ cut here ]------------
+> [    2.489148] WARNING: CPU: 3 PID: 101 at kernel/dma/mapping.c:427 0x80e7eee8
+> [    2.489152] Modules linked in: virtio_console(+)
+> [    2.503737]  virtio_rpmsg_bus rpmsg_core
+> [    2.508903]
+> [    2.528898] <Other modules, stack and call trace here>
+> [    2.913043]
+> [    2.914907] ---[ end trace 93ac8746beab612c ]---
+> [    2.920102] virtio-ports vport1p0: Error allocating inbufs
+>
+> kernel/dma/mapping.c:427 is:
+>
+> WARN_ON_ONCE(!dev->coherent_dma_mask);
+>
+> obviously because the grandparent now is remoteproc dev without any
+> DMA caps:
+>
+> [    3.104943] Parent: remoteproc0#vdev1buffer, grandparent: remoteproc0
+>
+> Fix this the same way as it was for virtio_rpmsg_bus, using just the
+> parent device (vdev->dev.parent, "remoteprocX#vdevYbuffer") for DMA
+> operations.
+> This also allows now to reserve DMA pools/buffers for rproc serial
+> via Device Tree.
+>
+> Fixes: c774ad010873 ("remoteproc: Fix and restore the parenting hierarchy for vdev")
+> Cc: stable@vger.kernel.org # 5.1+
+> Signed-off-by: Alexander Lobakin <alobakin@pm.me>
 > ---
->  drivers/remoteproc/qcom_sysmon.c | 20 ++++++++++++++++----
->  1 file changed, 16 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/remoteproc/qcom_sysmon.c b/drivers/remoteproc/qcom_sysmon.c
-> index 9eb2f6bccea6..1e507b66354a 100644
-> --- a/drivers/remoteproc/qcom_sysmon.c
-> +++ b/drivers/remoteproc/qcom_sysmon.c
-> @@ -22,6 +22,8 @@ struct qcom_sysmon {
->  	struct rproc_subdev subdev;
->  	struct rproc *rproc;
->  
-> +	int state;
-> +
->  	struct list_head node;
->  
->  	const char *name;
-> @@ -448,7 +450,10 @@ static int sysmon_prepare(struct rproc_subdev *subdev)
->  		.ssr_event = SSCTL_SSR_EVENT_BEFORE_POWERUP
->  	};
->  
-> +	mutex_lock(&sysmon_lock);
-
-This doesn't work, because taking the big lock prevents a concurrently
-failing remote processor from reaching smd orglink to indicate that that
-remote is dead and the first remote's notifications should be
-aborted/fail fast.
-
-The result is in most cases that we're stuck here waiting for a timeout,
-but there are extreme corner cases where the notification might be
-waiting for the dead remote to drain the communication fifo.
+>   drivers/char/virtio_console.c | 8 ++++----
+>   1 file changed, 4 insertions(+), 4 deletions(-)
+>
+> diff --git a/drivers/char/virtio_console.c b/drivers/char/virtio_console.c
+> index a2da8f768b94..1836cc56e357 100644
+> --- a/drivers/char/virtio_console.c
+> +++ b/drivers/char/virtio_console.c
+> @@ -435,12 +435,12 @@ static struct port_buffer *alloc_buf(struct virtio_device *vdev, size_t buf_size
+>   		/*
+>   		 * Allocate DMA memory from ancestor. When a virtio
+>   		 * device is created by remoteproc, the DMA memory is
+> -		 * associated with the grandparent device:
+> -		 * vdev => rproc => platform-dev.
+> +		 * associated with the parent device:
+> +		 * virtioY => remoteprocX#vdevYbuffer.
+>   		 */
+> -		if (!vdev->dev.parent || !vdev->dev.parent->parent)
+> +		buf->dev = vdev->dev.parent;
+> +		if (!buf->dev)
+>   			goto free_buf;
+> -		buf->dev = vdev->dev.parent->parent;
 
 
-Will send a new version that don't rely on the big lock, but still keeps
-state information consistent.
+I wonder it could be the right time to introduce dma_dev for virtio 
+instead of depending on something magic via parent.
 
-Regards,
-Bjorn
+(Btw I don't even notice that there's transport specific code in virtio 
+console, it's better to avoid it)
+
+Thanks
+
+
+>   
+>   		/* Increase device refcnt to avoid freeing it */
+>   		get_device(buf->dev);
+
