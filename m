@@ -2,159 +2,114 @@ Return-Path: <SRS0=mBHI=EM=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D81EFC2D0A3
-	for <linux-remoteproc@archiver.kernel.org>; Fri,  6 Nov 2020 17:43:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CCADFC2D0A3
+	for <linux-remoteproc@archiver.kernel.org>; Fri,  6 Nov 2020 17:53:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 79D4D2151B
-	for <linux-remoteproc@archiver.kernel.org>; Fri,  6 Nov 2020 17:43:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 50B0B22203
+	for <linux-remoteproc@archiver.kernel.org>; Fri,  6 Nov 2020 17:53:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=st.com header.i=@st.com header.b="wkxVjlK6"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="r843aCJQ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727356AbgKFRnK (ORCPT
+        id S1726034AbgKFRxg (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 6 Nov 2020 12:43:10 -0500
-Received: from mx07-00178001.pphosted.com ([185.132.182.106]:65266 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727346AbgKFRnK (ORCPT
+        Fri, 6 Nov 2020 12:53:36 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48180 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726010AbgKFRxf (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 6 Nov 2020 12:43:10 -0500
-Received: from pps.filterd (m0046037.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 0A6HWF28009649;
-        Fri, 6 Nov 2020 18:43:06 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=STMicroelectronics;
- bh=N2cs/IoK11soJ0LOqDdOy5t8b6nhJwW4mu0xJQ8r8fM=;
- b=wkxVjlK63uMJm5KcPEPTvGsRpHXWmdttoPPVd/WWpRklHzOIMaEaeZipIa6rn5/VRvLv
- U3LOF5hRkDIkZ8wN+N5iWO50huR3PVSic3dOvm704LgvHHPy7pnKCLvH0AiJqlTmGf9k
- 5uvYEZPVmw8dD/0emLqYRHxCJLIOXUXpukjOoqNlzTRtGbfHyW8rJnJeYWNS+FV7AkI9
- Hlh5Tn7C/GacV1XwUEhRoh1zA84BT1Fxw2mwkTSOE6/0u8cd4yCzGcrkvDPbCPVw8ymr
- t7sq9Gl6qqNYWDTMC9TVOfXJfTaSb6DaXalDaRcIxt0AXZSlsohuSDQYhB5Ynissdt4J 5A== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 34h00ews3n-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 06 Nov 2020 18:43:06 +0100
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 375BE10002A;
-        Fri,  6 Nov 2020 18:43:06 +0100 (CET)
-Received: from Webmail-eu.st.com (sfhdag3node1.st.com [10.75.127.7])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 2D24824FD43;
-        Fri,  6 Nov 2020 18:43:06 +0100 (CET)
-Received: from lmecxl0889.lme.st.com (10.75.127.44) by SFHDAG3NODE1.st.com
- (10.75.127.7) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 6 Nov
- 2020 18:43:05 +0100
-Subject: Re: [PATCH v2 07/14] remoteproc: Introduce function __rproc_detach()
-To:     Mathieu Poirier <mathieu.poirier@linaro.org>,
-        "ohad@wizery.com" <ohad@wizery.com>,
-        "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>
-CC:     "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>
-References: <20201030195713.1366341-1-mathieu.poirier@linaro.org>
- <20201030195713.1366341-8-mathieu.poirier@linaro.org>
-From:   Arnaud POULIQUEN <arnaud.pouliquen@st.com>
-Message-ID: <f9d421b6-ffb3-20f2-c0b1-fa4976a3a29e@st.com>
-Date:   Fri, 6 Nov 2020 18:43:05 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Fri, 6 Nov 2020 12:53:35 -0500
+Received: from mail-pg1-x541.google.com (mail-pg1-x541.google.com [IPv6:2607:f8b0:4864:20::541])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A46CFC0613D2
+        for <linux-remoteproc@vger.kernel.org>; Fri,  6 Nov 2020 09:53:35 -0800 (PST)
+Received: by mail-pg1-x541.google.com with SMTP id z24so1520248pgk.3
+        for <linux-remoteproc@vger.kernel.org>; Fri, 06 Nov 2020 09:53:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=5TMQVCNljoYFuIcGIa8R0xZ7bhBD1oFyjgSl29C7UwE=;
+        b=r843aCJQdIeK6veUamZyT4x8F0NofnZMojaKQ0Ch7uG8gUppCLbvQambLJWmecH5EX
+         /04FfcLGF7hnoUbPpOcKMiaG/ITcxBEZSNodVKrBn7Bf2TocGWnLTsIU4LVIpW7CZ8Mj
+         ZVN9tnreu774u3TGaZQqrHDJdrWZ3E54LjgMxW7CNqVpz/NcoCyefP2luBzCg7xllyw6
+         GHI8WaDiFDksSUzThDgRpBSBDf0JL6qYuwYxRrOn8BOG+chOLFsFJXfvrGqxj0wZdMF3
+         s25Dk5dQpKB/mf0uUN/Rt6RrAEw3OyVmrlIk8LgoDPJZkwAc3JLRvkTJfiTzK+1OwiO8
+         O04Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=5TMQVCNljoYFuIcGIa8R0xZ7bhBD1oFyjgSl29C7UwE=;
+        b=YQdmmJZm5yWzxvdcqHCELJIK0M+qXLLqdSTvFpsX4tCqvWlfFEvoyrVfRMC+M6t2Dq
+         Q1meGwegpytvARGeOoaSS4kv3PdsyQC+3iCXei90S/+xKOK9ja9Tf13QCufo6wONyC7h
+         UMPxd64hC75j9iX3u/mETPeedNCcHa7JInXuoYIrmNQkba0zc+bi+t5oA+shy73WGdqO
+         +1SA9QcbktET6D3VWXMUFTQn9xomUudaJ9ES2xgtP8KNtrreGDvE4KUlLvY52ohWxoq0
+         3ctsvzajKa7SPw3X0GDGFUMUZrTLcwVzQA21gWe3w0mWLcaaCri9SlC26QrRAaXP05QC
+         5l8Q==
+X-Gm-Message-State: AOAM532cyGHPUZVpYdg5WUwDnPE6ZAtEPxcVAeZ6UAw6leMU9WSLrsxz
+        xFJ8R/ZjB88UpmZ/h/uBbJgAgQ==
+X-Google-Smtp-Source: ABdhPJzl06YEHrgQVSuXECQAbWSUXZn/uPA8xvoeuhi0T/5hgG+lKXZ4xbbTIWK0wYu1zHgohEXh+w==
+X-Received: by 2002:a63:5509:: with SMTP id j9mr2643913pgb.3.1604685215106;
+        Fri, 06 Nov 2020 09:53:35 -0800 (PST)
+Received: from xps15 (S0106002369de4dac.cg.shawcable.net. [68.147.8.254])
+        by smtp.gmail.com with ESMTPSA id l190sm2644522pfl.205.2020.11.06.09.53.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 06 Nov 2020 09:53:34 -0800 (PST)
+Date:   Fri, 6 Nov 2020 10:53:32 -0700
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+To:     Guennadi Liakhovetski <guennadi.liakhovetski@linux.intel.com>
+Cc:     ohad@wizery.com, bjorn.andersson@linaro.org,
+        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 8/8] rpmsg: Turn name service into a stand alone driver
+Message-ID: <20201106175332.GB3203364@xps15>
+References: <20201105225028.3058818-1-mathieu.poirier@linaro.org>
+ <20201105225028.3058818-9-mathieu.poirier@linaro.org>
+ <20201106131545.GA10889@ubuntu>
+ <20201106140028.GB10889@ubuntu>
 MIME-Version: 1.0
-In-Reply-To: <20201030195713.1366341-8-mathieu.poirier@linaro.org>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.75.127.44]
-X-ClientProxiedBy: SFHDAG7NODE1.st.com (10.75.127.19) To SFHDAG3NODE1.st.com
- (10.75.127.7)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.312,18.0.737
- definitions=2020-11-06_06:2020-11-05,2020-11-06 signatures=0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201106140028.GB10889@ubuntu>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-
-
-On 10/30/20 8:57 PM, Mathieu Poirier wrote:
-> Introduce function __rproc_detach() to perform the same kind of
-> operation as rproc_stop(), but instead of switching off the
-> remote processor using rproc->ops->stop(), it uses
-> rproc->ops->detach().  That way it is possible for the core
-> to release the resources associated with a remote processor while
-> the latter is kept operating.
+On Fri, Nov 06, 2020 at 03:00:28PM +0100, Guennadi Liakhovetski wrote:
+> On Fri, Nov 06, 2020 at 02:15:45PM +0100, Guennadi Liakhovetski wrote:
+> > Hi Mathieu, Arnaud,
+> > 
+> > On Thu, Nov 05, 2020 at 03:50:28PM -0700, Mathieu Poirier wrote:
+> > > From: Arnaud Pouliquen <arnaud.pouliquen@st.com>
+> > > 
+> > > Make the RPMSG name service announcement a stand alone driver so that it
+> > > can be reused by other subsystems.  It is also the first step in making the
+> > > functionatlity transport independent, i.e that is not tied to virtIO.
+> > 
+> > Sorry, I just realised that my testing was incomplete. I haven't tested 
+> > automatic module loading and indeed it doesn't work. If rpmsg_ns is loaded 
+> > it probes and it's working, but if it isn't loaded and instead the rpmsg 
+> > bus driver is probed (e.g. virtio_rpmsg_bus), calling 
+> > rpmsg_ns_register_device() to create a new rpmsg_ns device doesn't cause 
+> > rpmsg_ns to be loaded.
 > 
-> Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-> Reviewed-by: Peng Fan <peng.fan@nxp.com>
-> ---
->  drivers/remoteproc/remoteproc_core.c | 31 ++++++++++++++++++++++++++++
->  1 file changed, 31 insertions(+)
+> A simple fix for that is using MODULE_ALIAS("rpmsg:rpmsg_ns"); in rpmsg_ns.c 
+> but that alone doesn't fix the problem completely - the module does load then 
+> but not quickly enough, the NS announcement from the host / remote arrives 
+> before rpmsg_ns has properly registered. I think the best solution would be 
+> to link rpmsg_ns.c together with rpmsg_core.c. You'll probably want to keep 
+> the module name, so you could rename them to just core.c and ns.c.
+
+I'm pretty sure it is because virtio_device_ready() in rpmsg_probe() is called
+before the kernel has finished loading the name space driver.  There has to be
+a way to prevent that from happening - I will investigate further.
+
+Thanks for reporting this,
+Mathieu
+
 > 
-> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-> index ed1f9ca4248b..62e88ff65009 100644
-> --- a/drivers/remoteproc/remoteproc_core.c
-> +++ b/drivers/remoteproc/remoteproc_core.c
-> @@ -1664,6 +1664,37 @@ static int rproc_stop(struct rproc *rproc, bool crashed)
->  	return 0;
->  }
->  
-> +/*
-> + * __rproc_detach(): Does the opposite of rproc_attach()
-> + */
-> +static int __maybe_unused __rproc_detach(struct rproc *rproc)
-> +{
-> +	struct device *dev = &rproc->dev;
-> +	int ret;
-> +
-> +	/* No need to continue if a detach() operation has not been provided */
-> +	if (!rproc->ops->detach)
-> +		return -EINVAL;
-> +
-> +	/* Stop any subdevices for the remote processor */
-> +	rproc_stop_subdevices(rproc, false);
-
-How to determine whether a subdevice should be stopped or detached? 
-For instance, in ST, we have a resource manager subdev which maintains clocks and regulators
-for peripherals used by the remote processor.
-In case of detachment we would need to maintain clock and regulators.
-
-> +
-> +	/* Tell the remote processor the core isn't available anymore */
-> +	ret = rproc->ops->detach(rproc);
-> +	if (ret) {
-> +		dev_err(dev, "can't detach from rproc: %d\n", ret);
-> +		rproc_start_subdevices(rproc);
-> +		return ret;
-> +	}
-> +
-> +	rproc_unprepare_subdevices(rproc);
-
-Same here, is prepare/unprepare can depend on the operation?
-
-Seems that adding rproc_attach_subdevices/rproc_detach_subdevices could be not sufficient
-to address prepare/unprepare.
-Alternative could be:
-- extra parameter for the subdev ops to indicate attach/detach action...?
-- intermediate rproc state : ATTACHING, DETACHING
-- other?
-
-That's said, I don't think that it is blocking for the ST resource manager.
-In this particular case, regulators and clocks can be permanently activated
-as a back-up solution (always-on).
-
-So, if no other company has a problem with that, we can keep this implementation for now.
-
-Regards,
-Arnaud
-
-> +
-> +	rproc->state = RPROC_DETACHED;
-> +
-> +	dev_info(dev, "detached remote processor %s\n", rproc->name);
-> +
-> +	return 0;
-> +}
->  
->  /**
->   * rproc_trigger_recovery() - recover a remoteproc
-> 
+> Thanks
+> Guennadi
