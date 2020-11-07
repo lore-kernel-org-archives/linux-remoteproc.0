@@ -1,115 +1,95 @@
-Return-Path: <SRS0=mBHI=EM=vger.kernel.org=linux-remoteproc-owner@kernel.org>
+Return-Path: <SRS0=MZUM=EN=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CCADFC2D0A3
-	for <linux-remoteproc@archiver.kernel.org>; Fri,  6 Nov 2020 17:53:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB5EAC388F7
+	for <linux-remoteproc@archiver.kernel.org>; Sat,  7 Nov 2020 23:36:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 50B0B22203
-	for <linux-remoteproc@archiver.kernel.org>; Fri,  6 Nov 2020 17:53:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 43E0B2087E
+	for <linux-remoteproc@archiver.kernel.org>; Sat,  7 Nov 2020 23:36:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="r843aCJQ"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="poX5pAv3"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726034AbgKFRxg (ORCPT
+        id S1726099AbgKGXgi (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 6 Nov 2020 12:53:36 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48180 "EHLO
+        Sat, 7 Nov 2020 18:36:38 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41458 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726010AbgKFRxf (ORCPT
+        with ESMTP id S1725838AbgKGXgi (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 6 Nov 2020 12:53:35 -0500
-Received: from mail-pg1-x541.google.com (mail-pg1-x541.google.com [IPv6:2607:f8b0:4864:20::541])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A46CFC0613D2
-        for <linux-remoteproc@vger.kernel.org>; Fri,  6 Nov 2020 09:53:35 -0800 (PST)
-Received: by mail-pg1-x541.google.com with SMTP id z24so1520248pgk.3
-        for <linux-remoteproc@vger.kernel.org>; Fri, 06 Nov 2020 09:53:35 -0800 (PST)
+        Sat, 7 Nov 2020 18:36:38 -0500
+Received: from mail-lj1-x242.google.com (mail-lj1-x242.google.com [IPv6:2a00:1450:4864:20::242])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 37103C0613CF;
+        Sat,  7 Nov 2020 15:36:38 -0800 (PST)
+Received: by mail-lj1-x242.google.com with SMTP id 23so5597359ljv.7;
+        Sat, 07 Nov 2020 15:36:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=5TMQVCNljoYFuIcGIa8R0xZ7bhBD1oFyjgSl29C7UwE=;
-        b=r843aCJQdIeK6veUamZyT4x8F0NofnZMojaKQ0Ch7uG8gUppCLbvQambLJWmecH5EX
-         /04FfcLGF7hnoUbPpOcKMiaG/ITcxBEZSNodVKrBn7Bf2TocGWnLTsIU4LVIpW7CZ8Mj
-         ZVN9tnreu774u3TGaZQqrHDJdrWZ3E54LjgMxW7CNqVpz/NcoCyefP2luBzCg7xllyw6
-         GHI8WaDiFDksSUzThDgRpBSBDf0JL6qYuwYxRrOn8BOG+chOLFsFJXfvrGqxj0wZdMF3
-         s25Dk5dQpKB/mf0uUN/Rt6RrAEw3OyVmrlIk8LgoDPJZkwAc3JLRvkTJfiTzK+1OwiO8
-         O04Q==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=BAsmVBERLtIkPKSJ/BkTRWhkFllTaoPPg4wptJs5664=;
+        b=poX5pAv3AOQHHZmM+Gav0NU4a+LwsQfDRy0vVeqVkcgYU0LOj8Jy5tEM6jWyB7Ol3Q
+         s0AV8D6db2DKMZ+L9Wex3RJgUcs7Qtt++/7/nOh1NtcOpK0spqD9kCfFJgbOOohTOO/L
+         VtSMx6f/QI8q8IWON+suc6oMDzKIpY74xo7ps0D1+YfQji8jFI3K3lVK9CZATnAvkiUh
+         jAYM7mDR7wqa58MQRy5h2sXqWZaiD59Z+WY/juDjqsBO7H9uxxQpW/JFqlPYzJK/Motk
+         58tZKjHMmR9ry2ip4XY6pLJZGN3eP9/H1baA6VZCodqcTY/WHCiLRcN6YoRF3j6RZNiI
+         VCYQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=5TMQVCNljoYFuIcGIa8R0xZ7bhBD1oFyjgSl29C7UwE=;
-        b=YQdmmJZm5yWzxvdcqHCELJIK0M+qXLLqdSTvFpsX4tCqvWlfFEvoyrVfRMC+M6t2Dq
-         Q1meGwegpytvARGeOoaSS4kv3PdsyQC+3iCXei90S/+xKOK9ja9Tf13QCufo6wONyC7h
-         UMPxd64hC75j9iX3u/mETPeedNCcHa7JInXuoYIrmNQkba0zc+bi+t5oA+shy73WGdqO
-         +1SA9QcbktET6D3VWXMUFTQn9xomUudaJ9ES2xgtP8KNtrreGDvE4KUlLvY52ohWxoq0
-         3ctsvzajKa7SPw3X0GDGFUMUZrTLcwVzQA21gWe3w0mWLcaaCri9SlC26QrRAaXP05QC
-         5l8Q==
-X-Gm-Message-State: AOAM532cyGHPUZVpYdg5WUwDnPE6ZAtEPxcVAeZ6UAw6leMU9WSLrsxz
-        xFJ8R/ZjB88UpmZ/h/uBbJgAgQ==
-X-Google-Smtp-Source: ABdhPJzl06YEHrgQVSuXECQAbWSUXZn/uPA8xvoeuhi0T/5hgG+lKXZ4xbbTIWK0wYu1zHgohEXh+w==
-X-Received: by 2002:a63:5509:: with SMTP id j9mr2643913pgb.3.1604685215106;
-        Fri, 06 Nov 2020 09:53:35 -0800 (PST)
-Received: from xps15 (S0106002369de4dac.cg.shawcable.net. [68.147.8.254])
-        by smtp.gmail.com with ESMTPSA id l190sm2644522pfl.205.2020.11.06.09.53.33
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=BAsmVBERLtIkPKSJ/BkTRWhkFllTaoPPg4wptJs5664=;
+        b=LNXqBMDTf2lv/LTkDaA3g9t+xCXYqcV24MnOG9ZOC+GueraxMQCr+WSb4AJmTqpum1
+         YCD/OljGNqRbjA4+hKTYY5z6hEslZR3PTXh1PeKy2LAf5AvH6WBGG4ecVws4bcxz4Jhg
+         zJgZ4gG5trJRo8lkGjldL6219MAVxsccZHz0pbw+XoEf6Q2ysTxh95SM2HXcbZDtWmQI
+         7bHYcroFsFaaSeppGFe0S/ZR/zn0+B6wOhYmhXnx3vSwxmQMRe1UIJuvUilgkUG3zrAB
+         9AjxR5vKORxBug+MOE+byR4A6F2K7Ojngjp2ITbBsU7b664PI6cEuNPLUoJX+S21Aq3i
+         7nLQ==
+X-Gm-Message-State: AOAM533FArig/jYQg1OTyuKcwzj7Vfe7AaQitWC+kN0QmWVFM7j+oTwb
+        G+9j3ni1+/ounaPeXpJIFbY=
+X-Google-Smtp-Source: ABdhPJxSOMHDT1FfYuwhl+GENcESSIMAcfVtTuE8fwfTk0I7FTy+FSLRnnTDASsRo8ReOLKPlxJf9w==
+X-Received: by 2002:a2e:9449:: with SMTP id o9mr3023985ljh.457.1604792196622;
+        Sat, 07 Nov 2020 15:36:36 -0800 (PST)
+Received: from localhost.localdomain (h-155-4-221-112.NA.cust.bahnhof.se. [155.4.221.112])
+        by smtp.gmail.com with ESMTPSA id j23sm782772lfm.16.2020.11.07.15.36.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Nov 2020 09:53:34 -0800 (PST)
-Date:   Fri, 6 Nov 2020 10:53:32 -0700
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-To:     Guennadi Liakhovetski <guennadi.liakhovetski@linux.intel.com>
-Cc:     ohad@wizery.com, bjorn.andersson@linaro.org,
-        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 8/8] rpmsg: Turn name service into a stand alone driver
-Message-ID: <20201106175332.GB3203364@xps15>
-References: <20201105225028.3058818-1-mathieu.poirier@linaro.org>
- <20201105225028.3058818-9-mathieu.poirier@linaro.org>
- <20201106131545.GA10889@ubuntu>
- <20201106140028.GB10889@ubuntu>
+        Sat, 07 Nov 2020 15:36:35 -0800 (PST)
+From:   Rikard Falkeborn <rikard.falkeborn@gmail.com>
+To:     Ohad Ben-Cohen <ohad@wizery.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Paul Cercueil <paul@crapouillou.net>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org,
+        Rikard Falkeborn <rikard.falkeborn@gmail.com>
+Subject: [PATCH 0/2] remoteproc: Constify static struct rproc_ops
+Date:   Sun,  8 Nov 2020 00:36:28 +0100
+Message-Id: <20201107233630.9728-1-rikard.falkeborn@gmail.com>
+X-Mailer: git-send-email 2.29.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201106140028.GB10889@ubuntu>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Fri, Nov 06, 2020 at 03:00:28PM +0100, Guennadi Liakhovetski wrote:
-> On Fri, Nov 06, 2020 at 02:15:45PM +0100, Guennadi Liakhovetski wrote:
-> > Hi Mathieu, Arnaud,
-> > 
-> > On Thu, Nov 05, 2020 at 03:50:28PM -0700, Mathieu Poirier wrote:
-> > > From: Arnaud Pouliquen <arnaud.pouliquen@st.com>
-> > > 
-> > > Make the RPMSG name service announcement a stand alone driver so that it
-> > > can be reused by other subsystems.  It is also the first step in making the
-> > > functionatlity transport independent, i.e that is not tied to virtIO.
-> > 
-> > Sorry, I just realised that my testing was incomplete. I haven't tested 
-> > automatic module loading and indeed it doesn't work. If rpmsg_ns is loaded 
-> > it probes and it's working, but if it isn't loaded and instead the rpmsg 
-> > bus driver is probed (e.g. virtio_rpmsg_bus), calling 
-> > rpmsg_ns_register_device() to create a new rpmsg_ns device doesn't cause 
-> > rpmsg_ns to be loaded.
-> 
-> A simple fix for that is using MODULE_ALIAS("rpmsg:rpmsg_ns"); in rpmsg_ns.c 
-> but that alone doesn't fix the problem completely - the module does load then 
-> but not quickly enough, the NS announcement from the host / remote arrives 
-> before rpmsg_ns has properly registered. I think the best solution would be 
-> to link rpmsg_ns.c together with rpmsg_core.c. You'll probably want to keep 
-> the module name, so you could rename them to just core.c and ns.c.
+Constify two static struct rproc_ops which are never modified. These two
+changes makes all static instances of rproc_ops in the kernel const.
 
-I'm pretty sure it is because virtio_device_ready() in rpmsg_probe() is called
-before the kernel has finished loading the name space driver.  There has to be
-a way to prevent that from happening - I will investigate further.
+Rikard Falkeborn (2):
+  remoteproc: ingenic: Constify ingenic_rproc_ops
+  remoteproc: stm32: Constify st_rproc_ops
 
-Thanks for reporting this,
-Mathieu
+ drivers/remoteproc/ingenic_rproc.c | 2 +-
+ drivers/remoteproc/stm32_rproc.c   | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-> 
-> Thanks
-> Guennadi
+-- 
+2.29.2
+
