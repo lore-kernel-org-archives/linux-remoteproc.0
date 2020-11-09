@@ -2,195 +2,129 @@ Return-Path: <SRS0=udoQ=EP=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.4 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EBE3BC5517A
-	for <linux-remoteproc@archiver.kernel.org>; Mon,  9 Nov 2020 06:04:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98B1AC2D0A3
+	for <linux-remoteproc@archiver.kernel.org>; Mon,  9 Nov 2020 08:49:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 865FD206E5
-	for <linux-remoteproc@archiver.kernel.org>; Mon,  9 Nov 2020 06:04:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2CDDC206ED
+	for <linux-remoteproc@archiver.kernel.org>; Mon,  9 Nov 2020 08:49:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="b7+JoW//"
+	dkim=pass (2048-bit key) header.d=st.com header.i=@st.com header.b="HSrBj9bP"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729524AbgKIGEn (ORCPT
+        id S1726482AbgKIItA (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 9 Nov 2020 01:04:43 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:42356 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728951AbgKIGEm (ORCPT
+        Mon, 9 Nov 2020 03:49:00 -0500
+Received: from mx07-00178001.pphosted.com ([185.132.182.106]:60114 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726127AbgKIItA (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 9 Nov 2020 01:04:42 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1604901880;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=UBLQUM1X/0MCddQFRLO/RxxvuYfOPaxQX5b2ahy4mRA=;
-        b=b7+JoW//Tgb+xIBmZiFdZ2w01q3l4Gj4I+eg2tccbog2pN4HI3gWncmtn0Ty+v02o5yvJC
-        qwqc74ANpS2A48eykU1SPNuuMpZhTpJDxjHJ71P0TG2O+9gZry2LnsKwl65Be5HfZe1yYX
-        OQixWwEho6yZr1bdGyX3DKTTJdTKcA8=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-253-RLBubNkaMJCIgAKuA2Lw4g-1; Mon, 09 Nov 2020 01:04:38 -0500
-X-MC-Unique: RLBubNkaMJCIgAKuA2Lw4g-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id B24B21882FA1;
-        Mon,  9 Nov 2020 06:04:35 +0000 (UTC)
-Received: from [10.72.12.244] (ovpn-12-244.pek2.redhat.com [10.72.12.244])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 55C325C5AF;
-        Mon,  9 Nov 2020 06:04:26 +0000 (UTC)
-Subject: Re: [PATCH virtio] virtio: virtio_console: fix DMA memory allocation
- for rproc serial
-To:     Alexander Lobakin <alobakin@pm.me>
-Cc:     Amit Shah <amit@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Arnaud Pouliquen <arnaud.pouliquen@st.com>,
-        Suman Anna <s-anna@ti.com>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Ohad Ben-Cohen <ohad@wizery.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        virtualization@lists.linux-foundation.org,
-        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org
-References: <AOKowLclCbOCKxyiJ71WeNyuAAj2q8EUtxrXbyky5E@cp7-web-042.plabs.ch>
- <004da56d-aad2-3b69-3428-02a14263289b@redhat.com>
- <aXBO8lWEART2MNuWacIKln3qh6wttCtF2oUd7vthkNU@cp3-web-012.plabs.ch>
-From:   Jason Wang <jasowang@redhat.com>
-Message-ID: <b4aaeab1-4e9f-2b38-0124-e0b0ca9c287b@redhat.com>
-Date:   Mon, 9 Nov 2020 14:04:24 +0800
+        Mon, 9 Nov 2020 03:49:00 -0500
+Received: from pps.filterd (m0046037.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 0A98mXkK005109;
+        Mon, 9 Nov 2020 09:48:54 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=STMicroelectronics;
+ bh=gswr127pV79PDGvq3mOE0Nu5v+9AQ5VJ4ll6tXITl8E=;
+ b=HSrBj9bPeqqEv1ps/7Nv3wVCcFbHr6JohgyxmLLqbyu3bzBwnWPPadhRhtKi/u6iwkuu
+ Np0ECpmiBcla+VhI3Tm7aC4rQldSWaHM0xtL6mhoBUwAe9vng4kBou0rCjpa4eWzU3uC
+ p58H1Pxyg48XBGjBQnFxRG3Mp2M5qQrx4qPL/W/ghqWJ6AJYSlC8B45DDtak3tm5KDjW
+ wHtIMaw2AH5LedvFtDAy8VlrXtdrgIsLev0Qwv2Nk9N2QSfKBueeEYKmwAG7cmTfr/K1
+ lQVr2BRMJY89Mwy8pkZG/oCr2y0CQzWOb2QU7kyOGcmxCSWBsa0nD/dFydZCkr686WXd 5A== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 34nj80gucj-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 09 Nov 2020 09:48:54 +0100
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 893CB100034;
+        Mon,  9 Nov 2020 09:48:53 +0100 (CET)
+Received: from Webmail-eu.st.com (sfhdag3node1.st.com [10.75.127.7])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 702A6230D43;
+        Mon,  9 Nov 2020 09:48:53 +0100 (CET)
+Received: from lmecxl0889.lme.st.com (10.75.127.50) by SFHDAG3NODE1.st.com
+ (10.75.127.7) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 9 Nov
+ 2020 09:48:37 +0100
+Subject: Re: [PATCH v5 8/8] rpmsg: Turn name service into a stand alone driver
+To:     Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Guennadi Liakhovetski <guennadi.liakhovetski@linux.intel.com>
+CC:     "ohad@wizery.com" <ohad@wizery.com>,
+        "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>,
+        "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20201105225028.3058818-1-mathieu.poirier@linaro.org>
+ <20201105225028.3058818-9-mathieu.poirier@linaro.org>
+ <20201106131545.GA10889@ubuntu> <20201106140028.GB10889@ubuntu>
+ <20201106175332.GB3203364@xps15>
+From:   Arnaud POULIQUEN <arnaud.pouliquen@st.com>
+Message-ID: <e7dedfb6-1e9c-4246-9db1-e14a2e16c68c@st.com>
+Date:   Mon, 9 Nov 2020 09:48:37 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <aXBO8lWEART2MNuWacIKln3qh6wttCtF2oUd7vthkNU@cp3-web-012.plabs.ch>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20201106175332.GB3203364@xps15>
+Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.75.127.50]
+X-ClientProxiedBy: SFHDAG4NODE3.st.com (10.75.127.12) To SFHDAG3NODE1.st.com
+ (10.75.127.7)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.312,18.0.737
+ definitions=2020-11-09_02:2020-11-05,2020-11-09 signatures=0
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
+Hi Guennadi, Mathieu,
 
-On 2020/11/5 下午8:22, Alexander Lobakin wrote:
-> From: Jason Wang <jasowang@redhat.com>
-> Date: Thu, 5 Nov 2020 11:10:24 +0800
->
-> Hi Jason,
->
->> On 2020/11/4 下午11:31, Alexander Lobakin wrote:
->>> Since commit 086d08725d34 ("remoteproc: create vdev subdevice with
->>> specific dma memory pool"), every remoteproc has a DMA subdevice
->>> ("remoteprocX#vdevYbuffer") for each virtio device, which inherits
->>> DMA capabilities from the corresponding platform device. This allowed
->>> to associate different DMA pools with each vdev, and required from
->>> virtio drivers to perform DMA operations with the parent device
->>> (vdev->dev.parent) instead of grandparent (vdev->dev.parent->parent).
+On 11/6/20 6:53 PM, Mathieu Poirier wrote:
+> On Fri, Nov 06, 2020 at 03:00:28PM +0100, Guennadi Liakhovetski wrote:
+>> On Fri, Nov 06, 2020 at 02:15:45PM +0100, Guennadi Liakhovetski wrote:
+>>> Hi Mathieu, Arnaud,
 >>>
->>> virtio_rpmsg_bus was already changed in the same merge cycle with
->>> commit d999b622fcfb ("rpmsg: virtio: allocate buffer from parent"),
->>> but virtio_console did not. In fact, operations using the grandparent
->>> worked fine while the grandparent was the platform device, but since
->>> commit c774ad010873 ("remoteproc: Fix and restore the parenting
->>> hierarchy for vdev") this was changed, and now the grandparent device
->>> is the remoteproc device without any DMA capabilities.
->>> So, starting v5.8-rc1 the following warning is observed:
+>>> On Thu, Nov 05, 2020 at 03:50:28PM -0700, Mathieu Poirier wrote:
+>>>> From: Arnaud Pouliquen <arnaud.pouliquen@st.com>
+>>>>
+>>>> Make the RPMSG name service announcement a stand alone driver so that it
+>>>> can be reused by other subsystems.  It is also the first step in making the
+>>>> functionatlity transport independent, i.e that is not tied to virtIO.
 >>>
->>> [    2.483925] ------------[ cut here ]------------
->>> [    2.489148] WARNING: CPU: 3 PID: 101 at kernel/dma/mapping.c:427 0x80e7eee8
->>> [    2.489152] Modules linked in: virtio_console(+)
->>> [    2.503737]  virtio_rpmsg_bus rpmsg_core
->>> [    2.508903]
->>> [    2.528898] <Other modules, stack and call trace here>
->>> [    2.913043]
->>> [    2.914907] ---[ end trace 93ac8746beab612c ]---
->>> [    2.920102] virtio-ports vport1p0: Error allocating inbufs
->>>
->>> kernel/dma/mapping.c:427 is:
->>>
->>> WARN_ON_ONCE(!dev->coherent_dma_mask);
->>>
->>> obviously because the grandparent now is remoteproc dev without any
->>> DMA caps:
->>>
->>> [    3.104943] Parent: remoteproc0#vdev1buffer, grandparent: remoteproc0
->>>
->>> Fix this the same way as it was for virtio_rpmsg_bus, using just the
->>> parent device (vdev->dev.parent, "remoteprocX#vdevYbuffer") for DMA
->>> operations.
->>> This also allows now to reserve DMA pools/buffers for rproc serial
->>> via Device Tree.
->>>
->>> Fixes: c774ad010873 ("remoteproc: Fix and restore the parenting hierarchy for vdev")
->>> Cc: stable@vger.kernel.org # 5.1+
->>> Signed-off-by: Alexander Lobakin <alobakin@pm.me>
->>> ---
->>>    drivers/char/virtio_console.c | 8 ++++----
->>>    1 file changed, 4 insertions(+), 4 deletions(-)
->>>
->>> diff --git a/drivers/char/virtio_console.c b/drivers/char/virtio_console.c
->>> index a2da8f768b94..1836cc56e357 100644
->>> --- a/drivers/char/virtio_console.c
->>> +++ b/drivers/char/virtio_console.c
->>> @@ -435,12 +435,12 @@ static struct port_buffer *alloc_buf(struct virtio_device *vdev, size_t buf_size
->>>    		/*
->>>    		 * Allocate DMA memory from ancestor. When a virtio
->>>    		 * device is created by remoteproc, the DMA memory is
->>> -		 * associated with the grandparent device:
->>> -		 * vdev => rproc => platform-dev.
->>> +		 * associated with the parent device:
->>> +		 * virtioY => remoteprocX#vdevYbuffer.
->>>    		 */
->>> -		if (!vdev->dev.parent || !vdev->dev.parent->parent)
->>> +		buf->dev = vdev->dev.parent;
->>> +		if (!buf->dev)
->>>    			goto free_buf;
->>> -		buf->dev = vdev->dev.parent->parent;
+>>> Sorry, I just realised that my testing was incomplete. I haven't tested 
+>>> automatic module loading and indeed it doesn't work. If rpmsg_ns is loaded 
+>>> it probes and it's working, but if it isn't loaded and instead the rpmsg 
+>>> bus driver is probed (e.g. virtio_rpmsg_bus), calling 
+>>> rpmsg_ns_register_device() to create a new rpmsg_ns device doesn't cause 
+>>> rpmsg_ns to be loaded.
 >>
->> I wonder it could be the right time to introduce dma_dev for virtio
->> instead of depending on something magic via parent.
-> This patch are meant to hit RC window and stable trees as a fix of
-> the bug that is present since v5.8-rc1. So any new features are out
-> of scope of this particular fix.
+>> A simple fix for that is using MODULE_ALIAS("rpmsg:rpmsg_ns"); in rpmsg_ns.c 
+>> but that alone doesn't fix the problem completely - the module does load then 
+>> but not quickly enough, the NS announcement from the host / remote arrives 
+>> before rpmsg_ns has properly registered. I think the best solution would be 
+>> to link rpmsg_ns.c together with rpmsg_core.c. You'll probably want to keep 
+>> the module name, so you could rename them to just core.c and ns.c.
+> 
+> I'm pretty sure it is because virtio_device_ready() in rpmsg_probe() is called
+> before the kernel has finished loading the name space driver.  There has to be
+> a way to prevent that from happening - I will investigate further.
 
+Right, no dependency is set so the rpmsg_ns driver is never probed...
+And  name service announcement messages are dropped if the service is not present.
 
-Right.
+if rpmsg_virtio_bus is built-in
+-> using "select RPMSG_NS" in RPMSG_VIRTIO kconfig should ensure that rpmsg_ns is also built-in 
+if rpmsg_virtio_bus is build as module rpmsg_ns.ko should be loaded first.
+-> MODULE_SOFTDEP could be used in virtio_rpmsg_bus.c
 
+Thanks,
+Arnaud
 
->
-> The idea of DMAing through "dev->parent" is that "virtioX" itself is a
-> logical dev, not the real one, but its parent *is*. This logic is used
-> across the whole tree -- every subsystem creates its own logical device,
-> but drivers should always use the backing PCI/platform/etc. devices for
-> DMA operations, which represent the real hardware.
-
-
-Yes, so what I meant is to use different variables for DMA and 
-hierarchy. So it's the responsibility of the lower layer to pass a 
-correct "dma_dev" to the upper layer instead of depending parent.
-
-Anyway for this patch.
-
-Acked-by: Jason Wang <jasowang@redhat.com>
-
-Thanks
-
-
->
->> (Btw I don't even notice that there's transport specific code in virtio
->> console, it's better to avoid it)
+> 
+> Thanks for reporting this,
+> Mathieu
+> 
 >>
 >> Thanks
-> Thanks,
-> Al
->
->>>    		/* Increase device refcnt to avoid freeing it */
->>>    		get_device(buf->dev);
-
+>> Guennadi
