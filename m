@@ -7,214 +7,208 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5863FC2D0A3
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 10 Nov 2020 03:29:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DCD9C2D0A3
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 10 Nov 2020 03:35:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EC73A20721
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 10 Nov 2020 03:29:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A5B9E206E3
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 10 Nov 2020 03:35:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="C4LBHiwp"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="iI1Ti+tw"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730035AbgKJD3R (ORCPT
+        id S1730482AbgKJDfu (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 9 Nov 2020 22:29:17 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42984 "EHLO
+        Mon, 9 Nov 2020 22:35:50 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44032 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729454AbgKJD3Q (ORCPT
+        with ESMTP id S1729454AbgKJDft (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 9 Nov 2020 22:29:16 -0500
-Received: from mail-ot1-x343.google.com (mail-ot1-x343.google.com [IPv6:2607:f8b0:4864:20::343])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D664DC0613D3
-        for <linux-remoteproc@vger.kernel.org>; Mon,  9 Nov 2020 19:29:16 -0800 (PST)
-Received: by mail-ot1-x343.google.com with SMTP id n15so11190815otl.8
-        for <linux-remoteproc@vger.kernel.org>; Mon, 09 Nov 2020 19:29:16 -0800 (PST)
+        Mon, 9 Nov 2020 22:35:49 -0500
+Received: from mail-ot1-x344.google.com (mail-ot1-x344.google.com [IPv6:2607:f8b0:4864:20::344])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE9D9C0613D3
+        for <linux-remoteproc@vger.kernel.org>; Mon,  9 Nov 2020 19:35:49 -0800 (PST)
+Received: by mail-ot1-x344.google.com with SMTP id n15so11202544otl.8
+        for <linux-remoteproc@vger.kernel.org>; Mon, 09 Nov 2020 19:35:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=OBdsDRfH0FHtxmwB5xLlqinVd4Y5dkqyDaI/LWJdwN0=;
-        b=C4LBHiwph1WQAmv/k0YbDnKYv09yEGgtfzYyCaB+NrX06O4FC3KH+N4aBXvoPyhDwu
-         EbUxiMOJARlB92zq9SPdkceLMZbUk1TDcTcmYbeTeojYDlG3Q4dOWZ8D3p6QYDFWaciM
-         yetqgab03WMwbRh/YtK0b9TZJDHCyNjdwiPVniWlnYQrKM49rVcdmzUSX/wCm+2/bTJN
-         LuMqifEVHgVcaC6L4xG8mreqMOf/EnYnLfbJqgat5vGaWDdV84gFqV5T+iJVfo0dx3e/
-         girONLYUsAXDPQcDXGbSG/kb8Kwm+9HRkPffCdZtaCTyjGN8BA/Yu4rJh88Vzkh5fppa
-         aVyQ==
+        bh=fxbnx6fB8pa6ONyNTh9qdaa1sggi/dJNjnt3v+Nrh9I=;
+        b=iI1Ti+twWOnzmRmblWhhRYQrQVRuajNGU7U+jAf9UL4xcfCvt7JI1oRQMLuNfUMBxX
+         cwhgTiaLWlGsGJbIP0R0XhJI2bQc8TtOvL81YnqTigq7WHm+pahMnJxFm5hhVD2KnmG4
+         rKa/eVw2u7K06UGyOuMWtJgmOyLjbcjNCrw0Td2s6RQ+IrAL5q4e/Cdz45LkihRmZm3S
+         RBsWaLwvsQ1d/ldUCOxUC+U3WQwIprAcXcHVPT4+RgSpZGTs3fCJLYhlWldmo3jCyaYU
+         L4ne78CZHHMD9DT1AGyAs4dfi+bXWY/0/i9uahiqp7ePe5/xadO8AD7R9Rdh3HYwYopp
+         s1zg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=OBdsDRfH0FHtxmwB5xLlqinVd4Y5dkqyDaI/LWJdwN0=;
-        b=ENCSX1KF+DneePn52ad3mqpK6NtnGxVgyXXgAGQgAjefPInRa56bUtsMarve+Nbr8a
-         Xe2D5nC3ZatCtdSCeoxmO6YTib6ZLnrSYIYnxaeV1qCAmbxQdzezK9Eh137ubj6TOgTi
-         CNZewAKbJdUJC5151QsSzOPC8vqc8jwpvDWY+AFWuwKV81f5N5sTLmN9NsaQMKRcKnK+
-         BGiVGqJ9hsDsKi4tdnwOFJm+TQUM55zgPJVeFKm5EnJ8RnncaGaCKjfgcBGQ8c3sMKVp
-         X4lqlXZNbSc9u56u01Ns/TJOKT1yI1qMPdeS6VNxV0vZy20LveIV9bb4vYP88+syJdSB
-         gIbg==
-X-Gm-Message-State: AOAM530swv7NBNAFZUovrWXEZJbAkHAZxHB1CP27UxnNQI2y7wAN5yA7
-        1yXXCn80o8V1KBjoO5XKrADU3w==
-X-Google-Smtp-Source: ABdhPJw5LvP9zCjf0MwtuDtaGbQ8Jn2DgYUN5KeLGHlc/YGu3BZ3xxRjKkUrfa4CvlLVLf9EHlvV6g==
-X-Received: by 2002:a05:6830:18c9:: with SMTP id v9mr13358229ote.74.1604978956205;
-        Mon, 09 Nov 2020 19:29:16 -0800 (PST)
+        bh=fxbnx6fB8pa6ONyNTh9qdaa1sggi/dJNjnt3v+Nrh9I=;
+        b=m2EZuKZP0kx/e8VZFmxCAuOAXKht7kY/N1wGo7sPZ+GU5E9MajlBMmjTzjdBs8tJkz
+         1oBIsflnPMoSKBf1ckhX7Z4jijaxNy7mSh8cEehUmjOzd5I+UDNLDwikQiEaWuFOdQn+
+         fJrVs1OQ1xls9KEEhpbOC6qRWHdAjPFU4/uel/p/FTs9X8XaDvUGIvhxqZ7yIaiheO8H
+         BL+8yZfw/7UiRSY0tvO7hoDH2d9haVK1oQrea9pVdp7UpzJffwAtgW4yWxHogWg5J8sS
+         +61i0+Pzj259ERGJGrMq8MWVpKosIf04+/I2lXBBYXo80lTpNB3X3QYMa4x8eRno6qRJ
+         hUkQ==
+X-Gm-Message-State: AOAM533rxDyd+fwtmTFOwkZZtS5FgrOTC5yAqsdf8Ns9ABOAN+dzD/mn
+        kmRDW1O2oLkUhGgYE26lkkrfKtz2gk07fg==
+X-Google-Smtp-Source: ABdhPJyOScqheXQ3E47DhzYXn+OVAGDdqd3gFuweaisaCp9+W50ErM3MhuGXeEvqxOGybnvW2ftwOQ==
+X-Received: by 2002:a9d:6e82:: with SMTP id a2mr12551695otr.274.1604979349232;
+        Mon, 09 Nov 2020 19:35:49 -0800 (PST)
 Received: from builder.lan (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
-        by smtp.gmail.com with ESMTPSA id q7sm2844609oig.42.2020.11.09.19.29.15
+        by smtp.gmail.com with ESMTPSA id x25sm2923469oie.17.2020.11.09.19.35.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Nov 2020 19:29:15 -0800 (PST)
-Date:   Mon, 9 Nov 2020 21:29:13 -0600
+        Mon, 09 Nov 2020 19:35:48 -0800 (PST)
+Date:   Mon, 9 Nov 2020 21:35:47 -0600
 From:   Bjorn Andersson <bjorn.andersson@linaro.org>
 To:     Rishabh Bhatnagar <rishabhb@codeaurora.org>
 Cc:     linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
         tsoni@codeaurora.org, psodagud@codeaurora.org,
         sidgup@codeaurora.org
-Subject: Re: [PATCH 2/2] remoteproc: qcom: Add trace events for q6v5_pas
- driver
-Message-ID: <20201110032913.GC332990@builder.lan>
+Subject: Re: [PATCH 1/2] soc: qcom: Add tracepoints to mdt loader
+Message-ID: <20201110033547.GD332990@builder.lan>
 References: <1604971241-29000-1-git-send-email-rishabhb@codeaurora.org>
- <1604971241-29000-3-git-send-email-rishabhb@codeaurora.org>
+ <1604971241-29000-2-git-send-email-rishabhb@codeaurora.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1604971241-29000-3-git-send-email-rishabhb@codeaurora.org>
+In-Reply-To: <1604971241-29000-2-git-send-email-rishabhb@codeaurora.org>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
 On Mon 09 Nov 19:20 CST 2020, Rishabh Bhatnagar wrote:
 
-> Add tracepoints for q6v5_pas driver. These will help in
-> analyzing the time taken by each step in remoteproc
-> bootup/shutdown process and also serve as standard
-> checkpoints in code.
+> Add trace events to the mdt loader driver. These events
+> can help us trace the region where we are loading the
+> segments and the time it takes to initialize the image
+> and setup the memory region.
 > 
-
-These tracepoints seems quite generic and useful to drivers other than
-the Qualcomm PAS driver. Please move them into the framework instead.
-
 > Signed-off-by: Rishabh Bhatnagar <rishabhb@codeaurora.org>
 > ---
->  drivers/remoteproc/qcom_q6v5_pas.c | 11 +++++++++++
->  include/trace/events/q6v5_pas.h    | 34 ++++++++++++++++++++++++++++++++++
->  2 files changed, 45 insertions(+)
->  create mode 100644 include/trace/events/q6v5_pas.h
+>  drivers/soc/qcom/mdt_loader.c     |  8 ++++++
+>  include/trace/events/mdt_loader.h | 57 +++++++++++++++++++++++++++++++++++++++
+>  2 files changed, 65 insertions(+)
+>  create mode 100644 include/trace/events/mdt_loader.h
 > 
-> diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
-> index 3837f23..b3c0a6a 100644
-> --- a/drivers/remoteproc/qcom_q6v5_pas.c
-> +++ b/drivers/remoteproc/qcom_q6v5_pas.c
-> @@ -29,6 +29,9 @@
->  #include "qcom_q6v5.h"
->  #include "remoteproc_internal.h"
+> diff --git a/drivers/soc/qcom/mdt_loader.c b/drivers/soc/qcom/mdt_loader.c
+> index 24cd193..df69e23 100644
+> --- a/drivers/soc/qcom/mdt_loader.c
+> +++ b/drivers/soc/qcom/mdt_loader.c
+> @@ -17,6 +17,9 @@
+>  #include <linux/slab.h>
+>  #include <linux/soc/qcom/mdt_loader.h>
 >  
 > +#define CREATE_TRACE_POINTS
-> +#include <trace/events/q6v5_pas.h>
+> +#include <trace/events/mdt_loader.h>
 > +
->  struct adsp_data {
->  	int crash_reason_smem;
->  	const char *firmware_name;
-> @@ -121,12 +124,14 @@ static int adsp_load(struct rproc *rproc, const struct firmware *fw)
->  	struct qcom_adsp *adsp = (struct qcom_adsp *)rproc->priv;
->  	int ret;
+>  static bool mdt_phdr_valid(const struct elf32_phdr *phdr)
+>  {
+>  	if (phdr->p_type != PT_LOAD)
+> @@ -169,6 +172,7 @@ static int __qcom_mdt_load(struct device *dev, const struct firmware *fw,
+>  			goto out;
+>  		}
 >  
-> +	trace_q6v5_pas("setting up memory and loading segments", rproc->name);
->  	ret = qcom_mdt_load(adsp->dev, fw, rproc->firmware, adsp->pas_id,
->  			    adsp->mem_region, adsp->mem_phys, adsp->mem_size,
->  			    &adsp->mem_reloc);
->  	if (ret)
->  		return ret;
+> +		trace_memory_setup("pas_init_image", fw_name);
+
+I think it would be favourable if you pushed this into the PAS functions
+in the scm driver instead.
+
+>  		ret = qcom_scm_pas_init_image(pas_id, metadata, metadata_len);
 >  
-> +	trace_q6v5_pas("done loading segments", rproc->name);
->  	qcom_pil_info_store(adsp->info_name, adsp->mem_phys, adsp->mem_size);
+>  		kfree(metadata);
+> @@ -196,8 +200,10 @@ static int __qcom_mdt_load(struct device *dev, const struct firmware *fw,
 >  
->  	return 0;
-> @@ -137,6 +142,7 @@ static int adsp_start(struct rproc *rproc)
->  	struct qcom_adsp *adsp = (struct qcom_adsp *)rproc->priv;
->  	int ret;
+>  	if (relocate) {
+>  		if (pas_init) {
+> +			trace_memory_setup("pas_mem_setup", fw_name);
+>  			ret = qcom_scm_pas_mem_setup(pas_id, mem_phys,
+>  						     max_addr - min_addr);
+> +
+>  			if (ret) {
+>  				dev_err(dev, "unable to setup relocation\n");
+>  				goto out;
+> @@ -232,6 +238,8 @@ static int __qcom_mdt_load(struct device *dev, const struct firmware *fw,
 >  
-> +	trace_q6v5_pas("Voting for resources", rproc->name);
->  	qcom_q6v5_prepare(&adsp->q6v5);
+>  		ptr = mem_region + offset;
 >  
->  	ret = adsp_pds_enable(adsp, adsp->active_pds, adsp->active_pd_count);
-> @@ -163,12 +169,14 @@ static int adsp_start(struct rproc *rproc)
->  	if (ret)
->  		goto disable_cx_supply;
->  
-> +	trace_q6v5_pas("Before authenticate and reset", rproc->name);
->  	ret = qcom_scm_pas_auth_and_reset(adsp->pas_id);
->  	if (ret) {
->  		dev_err(adsp->dev,
->  			"failed to authenticate image and release reset\n");
->  		goto disable_px_supply;
->  	}
-> +	trace_q6v5_pas("After authenticate and reset", rproc->name);
->  
->  	ret = qcom_q6v5_wait_for_start(&adsp->q6v5, msecs_to_jiffies(5000));
->  	if (ret == -ETIMEDOUT) {
-> @@ -177,6 +185,7 @@ static int adsp_start(struct rproc *rproc)
->  		goto disable_px_supply;
->  	}
->  
-> +	trace_q6v5_pas("Remoteproc is up", rproc->name);
->  	return 0;
->  
->  disable_px_supply:
-> @@ -214,6 +223,7 @@ static int adsp_stop(struct rproc *rproc)
->  	int handover;
->  	int ret;
->  
-> +	trace_q6v5_pas("Request stop", rproc->name);
->  	ret = qcom_q6v5_request_stop(&adsp->q6v5);
->  	if (ret == -ETIMEDOUT)
->  		dev_err(adsp->dev, "timed out on wait\n");
-> @@ -227,6 +237,7 @@ static int adsp_stop(struct rproc *rproc)
->  	if (handover)
->  		qcom_pas_handover(&adsp->q6v5);
->  
-> +	trace_q6v5_pas("Remoteproc is down", rproc->name);
->  	return ret;
->  }
->  
-> diff --git a/include/trace/events/q6v5_pas.h b/include/trace/events/q6v5_pas.h
+> +		trace_regions(ptr, phdr->p_filesz, i);
+
+"regions" is a very generic name for a trace event, perhaps
+trace_qcom_mdt_load_segment() ?
+
+I think it would be quite useful with a trace event indicating which
+firmware mdt file (and what .bXX files) we're trying to load.
+
+PS. ptr is a virtual address, there's no point in tracing this - we're
+interested in "mem_reloc + offset".
+
+Regards,
+Bjorn
+
+> +
+>  		if (phdr->p_filesz && phdr->p_offset < fw->size) {
+>  			/* Firmware is large enough to be non-split */
+>  			if (phdr->p_offset + phdr->p_filesz > fw->size) {
+> diff --git a/include/trace/events/mdt_loader.h b/include/trace/events/mdt_loader.h
 > new file mode 100644
-> index 0000000..38ee5e2
+> index 0000000..6299f65
 > --- /dev/null
-> +++ b/include/trace/events/q6v5_pas.h
-> @@ -0,0 +1,34 @@
+> +++ b/include/trace/events/mdt_loader.h
+> @@ -0,0 +1,57 @@
 > +/* SPDX-License-Identifier: GPL-2.0-only */
 > +/*
 > + * Copyright (c) 2020, The Linux Foundation. All rights reserved.
 > + */
 > +
 > +#undef TRACE_SYSTEM
-> +#define TRACE_SYSTEM q6v5_pas
+> +#define TRACE_SYSTEM mdt_loader
 > +
-> +#if !defined(_TRACE_Q6V5_PAS_H) || defined(TRACE_HEADER_MULTI_READ)
-> +#define _TRACE_Q6V5_PAS_H
+> +#if !defined(_TRACE_MDT_LOADER_H) || defined(TRACE_HEADER_MULTI_READ)
+> +#define _TRACE_MDT_LOADER_H
 > +
+> +#include <linux/types.h>
 > +#include <linux/tracepoint.h>
 > +
-> +TRACE_EVENT(q6v5_pas,
+> +TRACE_EVENT(memory_setup,
 > +
-> +	TP_PROTO(const char *event, const char *rproc_name),
-
-Rather than distinguishing the trace events by the textual first
-parameter, split it into individual trace events for each event.
-
-Regards,
-Bjorn
-
+> +	TP_PROTO(const char *event, char *fw_name),
 > +
-> +	TP_ARGS(event, rproc_name),
+> +	TP_ARGS(event, fw_name),
 > +
 > +	TP_STRUCT__entry(
 > +		__string(event, event)
-> +		__string(rproc_name, rproc_name)
+> +		__string(fw_name, fw_name)
 > +	),
 > +
 > +	TP_fast_assign(
 > +		__assign_str(event, event);
-> +		__assign_str(rproc_name, rproc_name);
+> +		__assign_str(fw_name, fw_name);
 > +	),
 > +
-> +	TP_printk("event=%s remoteproc:%s", __get_str(event), __get_str(rproc_name))
+> +	TP_printk("doing %s for %s", __get_str(event), __get_str(fw_name))
+> +);
+> +
+> +TRACE_EVENT(regions,
+> +
+> +	TP_PROTO(void *region_start, size_t region_size, int i),
+> +
+> +	TP_ARGS(region_start, region_size, i),
+> +
+> +	TP_STRUCT__entry(
+> +		__field(void *, region_start)
+> +		__field(size_t, region_size)
+> +		__field(int, index)
+> +	),
+> +
+> +	TP_fast_assign(
+> +		__entry->region_start = region_start;
+> +		__entry->region_size = region_size;
+> +		__entry->index = i;
+> +	),
+> +
+> +	TP_printk("segment %d: region start=%pK size=%zx", __entry->index,
+> +		  __entry->region_start, __entry->region_size)
 > +);
 > +
 > +#endif
