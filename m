@@ -2,182 +2,58 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=0.6 required=3.0 tests=BAYES_50,DKIM_ADSP_CUSTOM_MED,
+	FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FREEMAIL_REPLYTO_END_DIGIT,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 159DBC388F9
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 11 Nov 2020 05:40:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 823ECC388F9
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 11 Nov 2020 07:24:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 95E6120756
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 11 Nov 2020 05:40:09 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dlr8D/Ym"
+	by mail.kernel.org (Postfix) with ESMTP id 3FE4320825
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 11 Nov 2020 07:24:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725882AbgKKFkI (ORCPT
+        id S1726151AbgKKHYF convert rfc822-to-8bit (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 11 Nov 2020 00:40:08 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33668 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725860AbgKKFkI (ORCPT
+        Wed, 11 Nov 2020 02:24:05 -0500
+Received: from sw73-70-41.adsl.seed.net.tw ([203.73.70.41]:43559 "EHLO
+        oa.trendtek.com.tw" rhost-flags-OK-FAIL-OK-OK) by vger.kernel.org
+        with ESMTP id S1726140AbgKKHYB (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 11 Nov 2020 00:40:08 -0500
-Received: from mail-oi1-x241.google.com (mail-oi1-x241.google.com [IPv6:2607:f8b0:4864:20::241])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 125E1C0613D4
-        for <linux-remoteproc@vger.kernel.org>; Tue, 10 Nov 2020 21:40:08 -0800 (PST)
-Received: by mail-oi1-x241.google.com with SMTP id u127so903049oib.6
-        for <linux-remoteproc@vger.kernel.org>; Tue, 10 Nov 2020 21:40:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=NDUtVAeVkvu9Gc32xI9255swYRKkk0TO9KMq0qQOaaU=;
-        b=dlr8D/YmUWgv/Jf/c0R8525jdTh8nfECXhST6AI+/uG1Syl/mqBvP2XmjV2tL0GUia
-         NE2lL6NPV2JThEGplv1Mv2AKXBJT89u9cjCWG1nhO+Fgek3Wc7xw1uEWwboSpTxpNVO7
-         2/WYgow2Wu668HDGUgzN/w7+FwzW1RVTnCZW2RUHCto4ZEBTi3kU4N+1BR6AigJUk3Eo
-         p+E9TU4l94ftxz4U/BV8Njr6rzrXZE+PcDgkIJQQOcKPYMP1+kwtg8dOmJdm6NUh4VEB
-         ywy5KRP8Zw1kgH/flRfUT7+14BrXSK6b5NlYG3T9pqxCyD0tFX8rMwxkbvwjyuQq1OWF
-         gTMg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=NDUtVAeVkvu9Gc32xI9255swYRKkk0TO9KMq0qQOaaU=;
-        b=DYFCls7jQF3kLdDmXKRaL0VMnFg1bKNoMSQWVQ877I5wSwah6TYpUFwcM6oQdCcIaU
-         PzoFShvI5lAOMKhXeGmEjQ4Ri+Aro2xNHFdNbCcLCe9LyOUA5pQ2p7EkOzxRZke1I8La
-         tuHYaJMnE9vR7ZmsaMDeMc7lDQqmuEAeTrpLyaDUVbnrKupL1fr77D9C6ThWQ9rCSXxc
-         T1fymaO8v5lwg8dVsGKRdaXyPjcNNBlqDbF6vrpt2a3eTG+kjueuXyzXCK3Z2EWpZr2f
-         zk0OY8oAcK/S3lwGOdEW9Ab5VwYNy3EX+km5Z4LnZFNriuNkEy07Fgov2dEJYElJZrrs
-         mjLw==
-X-Gm-Message-State: AOAM532hjJprgBxGkEbOeMzpMg/+6JNoPv6eC0y7b5iMtot4twPHaXbw
-        RFluBQNS4qADT4f8mcdyBrGwKw==
-X-Google-Smtp-Source: ABdhPJxK6F7c/RWwxw7TCkgpzaMCWt/aNHqdIKETIZxMQKdxSmrzM+jPTd2O483Ga0o1zzppb+OFdA==
-X-Received: by 2002:aca:90c:: with SMTP id 12mr1138942oij.15.1605073207304;
-        Tue, 10 Nov 2020 21:40:07 -0800 (PST)
-Received: from builder.lan (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
-        by smtp.gmail.com with ESMTPSA id m3sm233355oim.36.2020.11.10.21.40.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Nov 2020 21:40:06 -0800 (PST)
-Date:   Tue, 10 Nov 2020 23:40:04 -0600
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     rishabhb@codeaurora.org
-Cc:     Andy Gross <agross@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>,
-        Siddharth Gupta <sidgup@codeaurora.org>,
-        Sibi Sankar <sibis@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH v2 1/4] remoteproc: sysmon: Ensure remote notification
- ordering
-Message-ID: <20201111054004.GG332990@builder.lan>
-References: <20201105045051.1365780-1-bjorn.andersson@linaro.org>
- <20201105045051.1365780-2-bjorn.andersson@linaro.org>
- <fb182a63172af055be473247bc783bd6@codeaurora.org>
+        Wed, 11 Nov 2020 02:24:01 -0500
+X-Greylist: delayed 68735 seconds by postgrey-1.27 at vger.kernel.org; Wed, 11 Nov 2020 02:24:00 EST
+Received: from [156.96.44.214] ([156.96.44.214])
+        (authenticated bits=0)
+        by oa.trendtek.com.tw (8.13.8/8.13.1) with ESMTP id 0AB7NOkY023732
+        for <linux-remoteproc@vger.kernel.org>; Wed, 11 Nov 2020 15:23:54 +0800
+Message-Id: <202011110723.0AB7NOkY023732@oa.trendtek.com.tw>
+Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <fb182a63172af055be473247bc783bd6@codeaurora.org>
+Content-Transfer-Encoding: 8BIT
+Content-Description: Mail message body
+Subject: Corporate and Personal Loan *
+To:     linux-remoteproc@vger.kernel.org
+From:   "Investment  Corporate" <financialcapability6@gmail.com>
+Date:   Wed, 11 Nov 2020 00:31:04 -0800
+Reply-To: hmurrah39@gmail.com
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Tue 10 Nov 18:57 CST 2020, rishabhb@codeaurora.org wrote:
+Hello linux-remoteproc@vger.kernel.org
 
-> On 2020-11-04 20:50, Bjorn Andersson wrote:
-> > The reliance on the remoteproc's state for determining when to send
-> > sysmon notifications to a remote processor is racy with regard to
-> > concurrent remoteproc operations.
-> > 
-> > Further more the advertisement of the state of other remote processor to
-> > a newly started remote processor might not only send the wrong state,
-> > but might result in a stream of state changes that are out of order.
-> > 
-> > Address this by introducing state tracking within the sysmon instances
-> > themselves and extend the locking to ensure that the notifications are
-> > consistent with this state.
-> > 
-> > Fixes: 1f36ab3f6e3b ("remoteproc: sysmon: Inform current rproc about
-> > all active rprocs")
-> > Fixes: 1877f54f75ad ("remoteproc: sysmon: Add notifications for events")
-> > Fixes: 1fb82ee806d1 ("remoteproc: qcom: Introduce sysmon")
-> > Cc: stable@vger.kernel.org
-> > Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> > ---
-> > 
-> > Changes since v1:
-> > - Reduced the locking to be per sysmon instance
-> > - Dropped unused local "rproc" variable in sysmon_notify()
-> > 
-> >  drivers/remoteproc/qcom_sysmon.c | 27 +++++++++++++++++++++------
-> >  1 file changed, 21 insertions(+), 6 deletions(-)
-> > 
-> > diff --git a/drivers/remoteproc/qcom_sysmon.c
-> > b/drivers/remoteproc/qcom_sysmon.c
-> > index 9eb2f6bccea6..38f63c968fa8 100644
-> > --- a/drivers/remoteproc/qcom_sysmon.c
-> > +++ b/drivers/remoteproc/qcom_sysmon.c
-> > @@ -22,6 +22,9 @@ struct qcom_sysmon {
-> >  	struct rproc_subdev subdev;
-> >  	struct rproc *rproc;
-> > 
-> > +	int state;
-> > +	struct mutex state_lock;
-> > +
-> >  	struct list_head node;
-> > 
-> >  	const char *name;
-> > @@ -448,7 +451,10 @@ static int sysmon_prepare(struct rproc_subdev
-> > *subdev)
-> >  		.ssr_event = SSCTL_SSR_EVENT_BEFORE_POWERUP
-> >  	};
-> > 
-> > +	mutex_lock(&sysmon->state_lock);
-> > +	sysmon->state = SSCTL_SSR_EVENT_BEFORE_POWERUP;
-> >  	blocking_notifier_call_chain(&sysmon_notifiers, 0, (void *)&event);
-> > +	mutex_unlock(&sysmon->state_lock);
-> > 
-> >  	return 0;
-> >  }
-> > @@ -472,22 +478,25 @@ static int sysmon_start(struct rproc_subdev
-> > *subdev)
-> >  		.ssr_event = SSCTL_SSR_EVENT_AFTER_POWERUP
-> >  	};
-> > 
-> > +	mutex_lock(&sysmon->state_lock);
-> > +	sysmon->state = SSCTL_SSR_EVENT_AFTER_POWERUP;
-> >  	blocking_notifier_call_chain(&sysmon_notifiers, 0, (void *)&event);
-> > +	mutex_unlock(&sysmon->state_lock);
-> > 
-> > -	mutex_lock(&sysmon_lock);
-> 
-> We should keep the sysmon_lock to make sure sysmon_list is not modified
-> at the time we are doing this operation?
 
-Yes, that seems like a very good idea. I will review and update.
+We are Base Investment Company offering Corporate and Personal Loan at 3% Interest Rate for a duration of 10Years.
 
-> >  	list_for_each_entry(target, &sysmon_list, node) {
-> > -		if (target == sysmon ||
-> > -		    target->rproc->state != RPROC_RUNNING)
-> > +		if (target == sysmon)
-> >  			continue;
-> > 
-> > +		mutex_lock(&target->state_lock);
-> >  		event.subsys_name = target->name;
-> > +		event.ssr_event = target->state;
-> 
-> Is it better to only send this event when target->state is
-> "SSCTL_SSR_EVENT_AFTER_POWERUP"?
 
-It depends on what the remote's requirements, I tested this and didn't
-see any problems sending both SSCTL_SSR_EVENT_AFTER_POWERUP and
-SSCTL_SSR_EVENT_AFTER_SHUTDOWN at least...
-I don't know if I managed to hit a case where I sent any of the
-intermediate states.
+We also pay 1% commission to brokers, who introduce project owners for finance or other opportunities.
 
-If you could provide some more input here I would appreciate it -
-although I would be happy to merge the patch after fixing above locking
-issue and then we can limit the events sent once we have a more detailed
-answer, if that helps.
 
-Regards,
-Bjorn
+Please get back to me if you are interested for more
+
+details.
+
+
+Yours faithfully,
+
+Hashim Murrah
