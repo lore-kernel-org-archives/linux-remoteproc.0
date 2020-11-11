@@ -2,129 +2,182 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C1CCC388F7
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 11 Nov 2020 01:04:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 159DBC388F9
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 11 Nov 2020 05:40:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E0F3421D46
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 11 Nov 2020 01:04:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 95E6120756
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 11 Nov 2020 05:40:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="UhGv++v9"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dlr8D/Ym"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732357AbgKKBEs (ORCPT
+        id S1725882AbgKKFkI (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 10 Nov 2020 20:04:48 -0500
-Received: from z5.mailgun.us ([104.130.96.5]:62356 "EHLO z5.mailgun.us"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731982AbgKKBEn (ORCPT
+        Wed, 11 Nov 2020 00:40:08 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33668 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725860AbgKKFkI (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 10 Nov 2020 20:04:43 -0500
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1605056683; h=Message-ID: References: In-Reply-To: Subject:
- Cc: To: From: Date: Content-Transfer-Encoding: Content-Type:
- MIME-Version: Sender; bh=G4FZ8gmhmVNCMNey8HG1PJzz0ZnJLvtQudj18MvCfxc=;
- b=UhGv++v9em9cxeeb08GCP97CpqXIv5lxS1ONtchJ/sAp8R6Qfnc0grIW7U/0zrrHZvre4uW9
- l1ttHnwm8HtnsoeyqjTukypPvn9ROggVDZl8XcIZcRxo3o8IdR94ql0lsD9n+lHT5N+mBXne
- BSy/IZUcR8CEBo7Tb7si61zNaCg=
-X-Mailgun-Sending-Ip: 104.130.96.5
-X-Mailgun-Sid: WyI4ZWZiZiIsICJsaW51eC1yZW1vdGVwcm9jQHZnZXIua2VybmVsLm9yZyIsICJiZTllNGEiXQ==
-Received: from smtp.codeaurora.org
- (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
- smtp-out-n01.prod.us-east-1.postgun.com with SMTP id
- 5fab38a4b8c6a84a5c46c862 (version=TLS1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Wed, 11 Nov 2020 01:04:35
- GMT
-Sender: rishabhb=codeaurora.org@mg.codeaurora.org
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 478E6C433C9; Wed, 11 Nov 2020 01:04:35 +0000 (UTC)
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: rishabhb)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id D975AC433C8;
-        Wed, 11 Nov 2020 01:04:34 +0000 (UTC)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Tue, 10 Nov 2020 17:04:34 -0800
-From:   rishabhb@codeaurora.org
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+        Wed, 11 Nov 2020 00:40:08 -0500
+Received: from mail-oi1-x241.google.com (mail-oi1-x241.google.com [IPv6:2607:f8b0:4864:20::241])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 125E1C0613D4
+        for <linux-remoteproc@vger.kernel.org>; Tue, 10 Nov 2020 21:40:08 -0800 (PST)
+Received: by mail-oi1-x241.google.com with SMTP id u127so903049oib.6
+        for <linux-remoteproc@vger.kernel.org>; Tue, 10 Nov 2020 21:40:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=NDUtVAeVkvu9Gc32xI9255swYRKkk0TO9KMq0qQOaaU=;
+        b=dlr8D/YmUWgv/Jf/c0R8525jdTh8nfECXhST6AI+/uG1Syl/mqBvP2XmjV2tL0GUia
+         NE2lL6NPV2JThEGplv1Mv2AKXBJT89u9cjCWG1nhO+Fgek3Wc7xw1uEWwboSpTxpNVO7
+         2/WYgow2Wu668HDGUgzN/w7+FwzW1RVTnCZW2RUHCto4ZEBTi3kU4N+1BR6AigJUk3Eo
+         p+E9TU4l94ftxz4U/BV8Njr6rzrXZE+PcDgkIJQQOcKPYMP1+kwtg8dOmJdm6NUh4VEB
+         ywy5KRP8Zw1kgH/flRfUT7+14BrXSK6b5NlYG3T9pqxCyD0tFX8rMwxkbvwjyuQq1OWF
+         gTMg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=NDUtVAeVkvu9Gc32xI9255swYRKkk0TO9KMq0qQOaaU=;
+        b=DYFCls7jQF3kLdDmXKRaL0VMnFg1bKNoMSQWVQ877I5wSwah6TYpUFwcM6oQdCcIaU
+         PzoFShvI5lAOMKhXeGmEjQ4Ri+Aro2xNHFdNbCcLCe9LyOUA5pQ2p7EkOzxRZke1I8La
+         tuHYaJMnE9vR7ZmsaMDeMc7lDQqmuEAeTrpLyaDUVbnrKupL1fr77D9C6ThWQ9rCSXxc
+         T1fymaO8v5lwg8dVsGKRdaXyPjcNNBlqDbF6vrpt2a3eTG+kjueuXyzXCK3Z2EWpZr2f
+         zk0OY8oAcK/S3lwGOdEW9Ab5VwYNy3EX+km5Z4LnZFNriuNkEy07Fgov2dEJYElJZrrs
+         mjLw==
+X-Gm-Message-State: AOAM532hjJprgBxGkEbOeMzpMg/+6JNoPv6eC0y7b5iMtot4twPHaXbw
+        RFluBQNS4qADT4f8mcdyBrGwKw==
+X-Google-Smtp-Source: ABdhPJxK6F7c/RWwxw7TCkgpzaMCWt/aNHqdIKETIZxMQKdxSmrzM+jPTd2O483Ga0o1zzppb+OFdA==
+X-Received: by 2002:aca:90c:: with SMTP id 12mr1138942oij.15.1605073207304;
+        Tue, 10 Nov 2020 21:40:07 -0800 (PST)
+Received: from builder.lan (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
+        by smtp.gmail.com with ESMTPSA id m3sm233355oim.36.2020.11.10.21.40.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Nov 2020 21:40:06 -0800 (PST)
+Date:   Tue, 10 Nov 2020 23:40:04 -0600
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     rishabhb@codeaurora.org
 Cc:     Andy Gross <agross@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>,
         Siddharth Gupta <sidgup@codeaurora.org>,
         Sibi Sankar <sibis@codeaurora.org>,
         linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 4/4] remoteproc: sysmon: Improve error messages
-In-Reply-To: <20201105045051.1365780-5-bjorn.andersson@linaro.org>
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH v2 1/4] remoteproc: sysmon: Ensure remote notification
+ ordering
+Message-ID: <20201111054004.GG332990@builder.lan>
 References: <20201105045051.1365780-1-bjorn.andersson@linaro.org>
- <20201105045051.1365780-5-bjorn.andersson@linaro.org>
-Message-ID: <cb2a980190c5fa542c11a3640441886c@codeaurora.org>
-X-Sender: rishabhb@codeaurora.org
-User-Agent: Roundcube Webmail/1.3.9
+ <20201105045051.1365780-2-bjorn.andersson@linaro.org>
+ <fb182a63172af055be473247bc783bd6@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <fb182a63172af055be473247bc783bd6@codeaurora.org>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On 2020-11-04 20:50, Bjorn Andersson wrote:
-> Improve the style of a few of the error messages printed by the sysmon
-> implementation and fix the copy-pasted shutdown error in the send-event
-> function.
+On Tue 10 Nov 18:57 CST 2020, rishabhb@codeaurora.org wrote:
+
+> On 2020-11-04 20:50, Bjorn Andersson wrote:
+> > The reliance on the remoteproc's state for determining when to send
+> > sysmon notifications to a remote processor is racy with regard to
+> > concurrent remoteproc operations.
+> > 
+> > Further more the advertisement of the state of other remote processor to
+> > a newly started remote processor might not only send the wrong state,
+> > but might result in a stream of state changes that are out of order.
+> > 
+> > Address this by introducing state tracking within the sysmon instances
+> > themselves and extend the locking to ensure that the notifications are
+> > consistent with this state.
+> > 
+> > Fixes: 1f36ab3f6e3b ("remoteproc: sysmon: Inform current rproc about
+> > all active rprocs")
+> > Fixes: 1877f54f75ad ("remoteproc: sysmon: Add notifications for events")
+> > Fixes: 1fb82ee806d1 ("remoteproc: qcom: Introduce sysmon")
+> > Cc: stable@vger.kernel.org
+> > Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> > ---
+> > 
+> > Changes since v1:
+> > - Reduced the locking to be per sysmon instance
+> > - Dropped unused local "rproc" variable in sysmon_notify()
+> > 
+> >  drivers/remoteproc/qcom_sysmon.c | 27 +++++++++++++++++++++------
+> >  1 file changed, 21 insertions(+), 6 deletions(-)
+> > 
+> > diff --git a/drivers/remoteproc/qcom_sysmon.c
+> > b/drivers/remoteproc/qcom_sysmon.c
+> > index 9eb2f6bccea6..38f63c968fa8 100644
+> > --- a/drivers/remoteproc/qcom_sysmon.c
+> > +++ b/drivers/remoteproc/qcom_sysmon.c
+> > @@ -22,6 +22,9 @@ struct qcom_sysmon {
+> >  	struct rproc_subdev subdev;
+> >  	struct rproc *rproc;
+> > 
+> > +	int state;
+> > +	struct mutex state_lock;
+> > +
+> >  	struct list_head node;
+> > 
+> >  	const char *name;
+> > @@ -448,7 +451,10 @@ static int sysmon_prepare(struct rproc_subdev
+> > *subdev)
+> >  		.ssr_event = SSCTL_SSR_EVENT_BEFORE_POWERUP
+> >  	};
+> > 
+> > +	mutex_lock(&sysmon->state_lock);
+> > +	sysmon->state = SSCTL_SSR_EVENT_BEFORE_POWERUP;
+> >  	blocking_notifier_call_chain(&sysmon_notifiers, 0, (void *)&event);
+> > +	mutex_unlock(&sysmon->state_lock);
+> > 
+> >  	return 0;
+> >  }
+> > @@ -472,22 +478,25 @@ static int sysmon_start(struct rproc_subdev
+> > *subdev)
+> >  		.ssr_event = SSCTL_SSR_EVENT_AFTER_POWERUP
+> >  	};
+> > 
+> > +	mutex_lock(&sysmon->state_lock);
+> > +	sysmon->state = SSCTL_SSR_EVENT_AFTER_POWERUP;
+> >  	blocking_notifier_call_chain(&sysmon_notifiers, 0, (void *)&event);
+> > +	mutex_unlock(&sysmon->state_lock);
+> > 
+> > -	mutex_lock(&sysmon_lock);
 > 
-> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> ---
+> We should keep the sysmon_lock to make sure sysmon_list is not modified
+> at the time we are doing this operation?
+
+Yes, that seems like a very good idea. I will review and update.
+
+> >  	list_for_each_entry(target, &sysmon_list, node) {
+> > -		if (target == sysmon ||
+> > -		    target->rproc->state != RPROC_RUNNING)
+> > +		if (target == sysmon)
+> >  			continue;
+> > 
+> > +		mutex_lock(&target->state_lock);
+> >  		event.subsys_name = target->name;
+> > +		event.ssr_event = target->state;
 > 
-> Changes since v1:
-> - New patch
-> 
->  drivers/remoteproc/qcom_sysmon.c | 12 ++++++------
->  1 file changed, 6 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/remoteproc/qcom_sysmon.c 
-> b/drivers/remoteproc/qcom_sysmon.c
-> index 1c42f00010d3..47683932512a 100644
-> --- a/drivers/remoteproc/qcom_sysmon.c
-> +++ b/drivers/remoteproc/qcom_sysmon.c
-> @@ -352,9 +352,9 @@ static bool ssctl_request_shutdown(struct
-> qcom_sysmon *sysmon)
-> 
->  	ret = qmi_txn_wait(&txn, 5 * HZ);
->  	if (ret < 0) {
-> -		dev_err(sysmon->dev, "failed receiving QMI response\n");
-> +		dev_err(sysmon->dev, "timeout waiting for shutdown response\n");
->  	} else if (resp.resp.result) {
-> -		dev_err(sysmon->dev, "shutdown request failed\n");
-> +		dev_err(sysmon->dev, "shutdown request rejected\n");
->  	} else {
->  		dev_dbg(sysmon->dev, "shutdown request completed\n");
->  		acked = true;
-> @@ -397,18 +397,18 @@ static void ssctl_send_event(struct qcom_sysmon 
-> *sysmon,
->  			       SSCTL_SUBSYS_EVENT_REQ, 40,
->  			       ssctl_subsys_event_req_ei, &req);
->  	if (ret < 0) {
-> -		dev_err(sysmon->dev, "failed to send shutdown request\n");
-> +		dev_err(sysmon->dev, "failed to send subsystem event\n");
->  		qmi_txn_cancel(&txn);
->  		return;
->  	}
-> 
->  	ret = qmi_txn_wait(&txn, 5 * HZ);
->  	if (ret < 0)
-> -		dev_err(sysmon->dev, "failed receiving QMI response\n");
-> +		dev_err(sysmon->dev, "timeout waiting for subsystem event 
-> response\n");
->  	else if (resp.resp.result)
-> -		dev_err(sysmon->dev, "ssr event send failed\n");
-> +		dev_err(sysmon->dev, "subsystem event rejected\n");
->  	else
-> -		dev_dbg(sysmon->dev, "ssr event send completed\n");
-> +		dev_dbg(sysmon->dev, "subsystem event accepted\n");
->  }
-> 
->  /**
-Reviewed-by: Rishabh Bhatnagar <rishabhb@codeaurora.org>
+> Is it better to only send this event when target->state is
+> "SSCTL_SSR_EVENT_AFTER_POWERUP"?
+
+It depends on what the remote's requirements, I tested this and didn't
+see any problems sending both SSCTL_SSR_EVENT_AFTER_POWERUP and
+SSCTL_SSR_EVENT_AFTER_SHUTDOWN at least...
+I don't know if I managed to hit a case where I sent any of the
+intermediate states.
+
+If you could provide some more input here I would appreciate it -
+although I would be happy to merge the patch after fixing above locking
+issue and then we can limit the events sent once we have a more detailed
+answer, if that helps.
+
+Regards,
+Bjorn
