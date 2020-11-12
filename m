@@ -7,73 +7,66 @@ X-Spam-Status: No, score=-11.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1E2AC388F7
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 12 Nov 2020 13:28:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05F20C388F7
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 12 Nov 2020 13:56:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 569AB207BB
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 12 Nov 2020 13:28:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8C07120936
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 12 Nov 2020 13:56:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=st.com header.i=@st.com header.b="w4Fyx9zg"
+	dkim=pass (2048-bit key) header.d=st.com header.i=@st.com header.b="GugvL+P8"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728010AbgKLN2m (ORCPT
+        id S1728086AbgKLN4c (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 12 Nov 2020 08:28:42 -0500
-Received: from mx07-00178001.pphosted.com ([185.132.182.106]:8316 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728062AbgKLN2m (ORCPT
+        Thu, 12 Nov 2020 08:56:32 -0500
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:5790 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727796AbgKLN4a (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 12 Nov 2020 08:28:42 -0500
-Received: from pps.filterd (m0046037.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 0ACDQut4003126;
-        Thu, 12 Nov 2020 14:28:35 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
+        Thu, 12 Nov 2020 08:56:30 -0500
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 0ACDq6cT026833;
+        Thu, 12 Nov 2020 14:56:23 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : subject : to : cc
+ : references : message-id : date : mime-version : in-reply-to :
  content-type : content-transfer-encoding; s=STMicroelectronics;
- bh=KgPybn41cghQnWFkKiZqBov/4m79Pi5Fy63yP4R62os=;
- b=w4Fyx9zgiS1tFDhlRiLm3IEE17p+ydSDqWv2mK2/lH1SxN594awfJ+7EDe+qBRdHsSXN
- b3HJ9Bn4SVRsxkwtm0hZWqygN1pHC9v417WSGpQ/KcTTvG9ZJ2uJIW5R1eJvPz/MYFxH
- IKnb6tAR9nAw5QMtBdMoQyUDyUFWRJ6tQV7kJmzCL5tj/nT0oMgDSkN5IWq4gvxsy/L3
- Pt4m0K59CexYrr8IS1u+AC8PaKOUzNN3EwzXRG7p2K5QMJ21edr4w0+x/mPYfNhX+aeH
- i3dD7dvSd113QPFbuAp/NSt+ym+Emu3fHpd1nzMS7DDKMtML3d7t5Q03Q/w7lVM1a0iv lw== 
+ bh=3b/CjCuOeBh9Ynq6BHd0Jn8CCpAGLxoDNDuw/Rwj1IU=;
+ b=GugvL+P8pwFSZKG9pZkVp1Rjt4bL3AX/0h75dQDIeETDxm0eBYN7MFosNnqc1ceu+5Yz
+ ILsOuY2r8pjF6/1BADIj5gTHB62rFVturkZaYlxJPFU/6aw7jY1V/6Cfb7uVohLL/N32
+ L767HMimIKmdcxp8JlLFx2N8licwKd4k4PFDgR2inn9ireBh3A6TaHM0K7KSvCvBNm5O
+ TXDVMNoy2f+UOZFfY/9UjsckDxGrusRoC4ZnPM5UpGqyewpZ8qFD2+LiXucH/T2gbGw4
+ b0BJ9E+bwLz0+Dv/yIGjPDB6okRUxXOR3no7PVQuOTdVB72IsxnoMennRguzrcZemqE1 ZA== 
 Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 34nj814wdq-1
+        by mx07-00178001.pphosted.com with ESMTP id 34nhkd65d1-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 12 Nov 2020 14:28:35 +0100
+        Thu, 12 Nov 2020 14:56:22 +0100
 Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 6FD2B100034;
-        Thu, 12 Nov 2020 14:28:34 +0100 (CET)
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id C582B10002A;
+        Thu, 12 Nov 2020 14:56:21 +0100 (CET)
 Received: from Webmail-eu.st.com (sfhdag3node1.st.com [10.75.127.7])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 5697E258BEF;
-        Thu, 12 Nov 2020 14:28:34 +0100 (CET)
-Received: from lmecxl0889.lme.st.com (10.75.127.48) by SFHDAG3NODE1.st.com
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id B5CE72607AA;
+        Thu, 12 Nov 2020 14:56:21 +0100 (CET)
+Received: from lmecxl0889.lme.st.com (10.75.127.50) by SFHDAG3NODE1.st.com
  (10.75.127.7) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 12 Nov
- 2020 14:27:39 +0100
-Subject: Re: [PATCH v5 8/8] rpmsg: Turn name service into a stand alone driver
-To:     Guennadi Liakhovetski <guennadi.liakhovetski@linux.intel.com>
-CC:     Mathieu Poirier <mathieu.poirier@linaro.org>,
-        "ohad@wizery.com" <ohad@wizery.com>,
-        "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>,
-        "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20201105225028.3058818-9-mathieu.poirier@linaro.org>
- <20201106131545.GA10889@ubuntu> <20201106140028.GB10889@ubuntu>
- <20201106175332.GB3203364@xps15>
- <e7dedfb6-1e9c-4246-9db1-e14a2e16c68c@st.com> <20201109102023.GA17692@ubuntu>
- <20201109175536.GD3395222@xps15>
- <eb7f6707-4483-3e1a-1e39-7f32fbf437e0@st.com> <20201111144942.GA6403@ubuntu>
- <c31b8427-baca-5c77-6420-b592c57a3a7b@st.com> <20201112115115.GA11069@ubuntu>
+ 2020 14:56:21 +0100
 From:   Arnaud POULIQUEN <arnaud.pouliquen@st.com>
-Message-ID: <945f377d-1975-552d-25b2-1dc25d3c3a46@st.com>
-Date:   Thu, 12 Nov 2020 14:27:38 +0100
+Subject: Re: [RFC v2 13/14] remoteproc: Add automation flags
+To:     Mathieu Poirier <mathieu.poirier@linaro.org>,
+        "ohad@wizery.com" <ohad@wizery.com>,
+        "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>
+CC:     "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>
+References: <20201030195713.1366341-1-mathieu.poirier@linaro.org>
+ <20201030195713.1366341-14-mathieu.poirier@linaro.org>
+Message-ID: <498ebbb1-3a27-fe48-576c-25a0856f82f4@st.com>
+Date:   Thu, 12 Nov 2020 14:56:20 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <20201112115115.GA11069@ubuntu>
+In-Reply-To: <20201030195713.1366341-14-mathieu.poirier@linaro.org>
 Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.75.127.48]
-X-ClientProxiedBy: SFHDAG4NODE3.st.com (10.75.127.12) To SFHDAG3NODE1.st.com
+X-Originating-IP: [10.75.127.50]
+X-ClientProxiedBy: SFHDAG1NODE2.st.com (10.75.127.2) To SFHDAG3NODE1.st.com
  (10.75.127.7)
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.312,18.0.737
  definitions=2020-11-12_05:2020-11-12,2020-11-12 signatures=0
@@ -81,339 +74,157 @@ Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
+Hi Mathieu,
+
+Thanks for initiating the discussion!
+
+Waiting feedback from other, please find my feedback on our proposal below.
+
+On 10/30/20 8:57 PM, Mathieu Poirier wrote:
+> Adding flags to dictate how to handle a platform driver being removed
+> or the remote processor crashing while in RPROC_ATTACHED state.
+> 
+> Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+> ---
+>  drivers/remoteproc/remoteproc_core.c | 25 +++++++++++++++++++++++++
+>  include/linux/remoteproc.h           |  5 +++++
+>  2 files changed, 30 insertions(+)
+> 
+> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+> index 229fa2cad0bd..d024367c63e5 100644
+> --- a/drivers/remoteproc/remoteproc_core.c
+> +++ b/drivers/remoteproc/remoteproc_core.c
+> @@ -2227,6 +2227,29 @@ static int rproc_alloc_ops(struct rproc *rproc, const struct rproc_ops *ops)
+>  	return 0;
+>  }
+>  
+> +static void rproc_set_automation_flags(struct rproc *rproc)
+> +{
+> +	struct device *dev = rproc->dev.parent;
+> +	struct device_node *np = dev->of_node;
+> +	bool core_reboot, remote_crash;
+> +
+> +	/*
+> +	 * When function rproc_cdev_release() or rproc_del() are called and
+> +	 * the remote processor has been attached to, it will be detached from
+> +	 * (rather than turned off) if "autonomous_on_core_reboot" is specified
+> +	 * in the DT.
+> +	 */
+> +	core_reboot = of_property_read_bool(np, "autonomous_on_core_reboot");
+> +	rproc->autonomous_on_core_reboot = core_reboot;
+> +
+> +	/*
+> +	 * When the remote processor crashes it will be detached from, and
+> +	 * attached to, if "autonomous_on_remote_crash" is specified in the DT.
+> +	 */
+> +	remote_crash = of_property_read_bool(np, "autonomous_on_remote_crash");
+> +	rproc->autonomous_on_core_reboot = core_reboot;
+> +}
+> +
+
+I wonder if the naming is not too restrictive.
+
+I think here we probably need first to identify the use cases we want to support
+to determine which use cases should be addressed and deduce DT fields.
+
+Please find my view below:
+
+1) Attach to a remote processor on boot.
+This is the "attach" you introduced in a previous series. I wonder here if a DT
+field should not be introduce for platform which are not able to dynamically
+determines the remote processor state. Something like "remote-boot-on" or
+"autonomous-boot-on".
+
+2) Detach from a remote processor on Linux kernel shutdown
+Two possible actions: shutdown the remote processor or detach from it.
+A DT field could be used to determine the expected behavior.
+
+3) Linux core reboot on crash
+Two possible actions: shutdown and restart the remote processor or
+detach/re-attach from/to it.
+Is same DT field than 2) can be used for this . Or should be determine by a
+new sysfs recovery option [1]?
+
+[1]
+https://elixir.bootlin.com/linux/v5.10-rc2/source/drivers/remoteproc/remoteproc_sysfs.c#L45
+
+4) The remote processor need to reboot on crash.
+3 possible actions:
+ - shutdown and restart the remote processor
+ - detach and re-attach from/to it.
+ - Just shutdown, as no recovery possible without a system reset.
+
+5) Detach/re-attach on Linux suspend/resume
+Perhaps better to manage this in platform drivers without a generic DT field?
+
+If i try to apply this on the remote proc boot and shutdown sequences:
+
+1) on remoteproc device add:
+- Need to determine if the remote processor is already running:
+   - started by another entity
+   - Linux reboot after crash
+
+2) On remoteproc device release.
+- Need to determine if the remote processor need to be shutdown or detached:
+   - Linux kernel crash
+   - Linux kernel graceful shutdown with remote processor keeping ON.
+
+3) On remote processor crash
+- Need to determine if the remote processor will be restarted by an external
+entity or by the remoteproc framework, or if simply not possible to recover
+without a system reset.
+
+Regarding these use cases here is an alternative proposal(inspired by regulator
+framework):
+- "remote-boot-on": determine on probe if the remoteproc firmware is already
+booted. This field is optional, use by a platform driver which can not
+determine the state of the remote processor. Could be dynamically updated by the
+platform driver to manage Kernel crash...
+
+- "remote-always-on": means that the detach has to be privileged on
+shutdown. Need also to be managed by platform driver as it can be
+compared to the remote processor current state.
+
+- "remoteproc-crash-recovery": crash recovery mode:
+   possible value: "SHUTDOWN", "DETACH", "DISABLED"
 
 
-On 11/12/20 12:51 PM, Guennadi Liakhovetski wrote:
-> Hi Arnaud,
-> 
-> On Thu, Nov 12, 2020 at 11:17:54AM +0100, Arnaud POULIQUEN wrote:
->> Hi Guennadi,
->>
->> On 11/11/20 3:49 PM, Guennadi Liakhovetski wrote:
->>> Hi Arnaud,
-> 
-> [snip]
-> 
->>> From: Guennadi Liakhovetski <guennadi.liakhovetski@linux.intel.com>
->>> Subject: [PATCH] fixup! rpmsg: Turn name service into a stand alone driver
->>>
->>> Link ns.c with core.c together to guarantee immediate probing.
->>>
->>> Signed-off-by: Guennadi Liakhovetski <guennadi.liakhovetski@linux.intel.com>
->>> ---
->>>  drivers/rpmsg/Makefile                        |  2 +-
->>>  drivers/rpmsg/{rpmsg_core.c => core.c}        | 13 +++--
->>>  drivers/rpmsg/{rpmsg_ns.c => ns.c}            | 49 ++++++++++++++-----
->>>  drivers/rpmsg/virtio_rpmsg_bus.c              |  5 +-
->>>  include/linux/rpmsg.h                         |  4 +-
->>>  .../{rpmsg_byteorder.h => rpmsg/byteorder.h}  |  0
->>>  include/linux/{rpmsg_ns.h => rpmsg/ns.h}      | 16 +++---
->>>  7 files changed, 61 insertions(+), 28 deletions(-)
->>>  rename drivers/rpmsg/{rpmsg_core.c => core.c} (99%)
->>>  rename drivers/rpmsg/{rpmsg_ns.c => ns.c} (76%)
->>>  rename include/linux/{rpmsg_byteorder.h => rpmsg/byteorder.h} (100%)
->>>  rename include/linux/{rpmsg_ns.h => rpmsg/ns.h} (82%)
->>>
->>> diff --git a/drivers/rpmsg/Makefile b/drivers/rpmsg/Makefile
->>> index 8d452656f0ee..5aa79e167372 100644
->>> --- a/drivers/rpmsg/Makefile
->>> +++ b/drivers/rpmsg/Makefile
->>> @@ -1,7 +1,7 @@
->>>  # SPDX-License-Identifier: GPL-2.0
->>> +rpmsg_core-objs			:= core.o ns.o
->>>  obj-$(CONFIG_RPMSG)		+= rpmsg_core.o
->>>  obj-$(CONFIG_RPMSG_CHAR)	+= rpmsg_char.o
->>> -obj-$(CONFIG_RPMSG_NS)		+= rpmsg_ns.o
->>>  obj-$(CONFIG_RPMSG_MTK_SCP)	+= mtk_rpmsg.o
->>>  qcom_glink-objs			:= qcom_glink_native.o qcom_glink_ssr.o
->>>  obj-$(CONFIG_RPMSG_QCOM_GLINK) += qcom_glink.o
->>> diff --git a/drivers/rpmsg/rpmsg_core.c b/drivers/rpmsg/core.c
->>> similarity index 99%
->>> rename from drivers/rpmsg/rpmsg_core.c
->>> rename to drivers/rpmsg/core.c
->>> index 6381c1e00741..0c622cced804 100644
->>> --- a/drivers/rpmsg/rpmsg_core.c
->>> +++ b/drivers/rpmsg/core.c
->>> @@ -14,6 +14,7 @@
->>>  #include <linux/kernel.h>
->>>  #include <linux/module.h>
->>>  #include <linux/rpmsg.h>
->>> +#include <linux/rpmsg/ns.h>
->>>  #include <linux/of_device.h>
->>>  #include <linux/pm_domain.h>
->>>  #include <linux/slab.h>
->>> @@ -625,21 +626,27 @@ void unregister_rpmsg_driver(struct rpmsg_driver *rpdrv)
->>>  }
->>>  EXPORT_SYMBOL(unregister_rpmsg_driver);
->>>  
->>> -
->>>  static int __init rpmsg_init(void)
->>>  {
->>>  	int ret;
->>>  
->>>  	ret = bus_register(&rpmsg_bus);
->>> -	if (ret)
->>> +	if (ret) {
->>>  		pr_err("failed to register rpmsg bus: %d\n", ret);
->>> +		return ret;
->>> +	}
->>> +
->>> +	ret = rpmsg_ns_init();
->>> +	if (ret)
->>> +		bus_unregister(&rpmsg_bus);
->>>  
->>>  	return ret;
->>>  }
->>>  postcore_initcall(rpmsg_init);
->>>  
->>> -static void __exit rpmsg_fini(void)
->>> +static void rpmsg_fini(void)
->>>  {
->>> +	rpmsg_ns_exit();
->>>  	bus_unregister(&rpmsg_bus);
->>>  }
->>>  module_exit(rpmsg_fini);
->>
->> The drawback of this solution is that it makes the anoucement service ns
->> mandatory, but it is optional because it depends on the RPMsg backend bus.
->> RPMsg NS should be generic but optional.
->> What about calling this in rpmsg_virtio?
-> 
-> This just registers a driver. If the backend doesn't register a suitable 
-> device by calling rpmsg_ns_register_device(); nothing happens. But if 
-> you're concerned about wasted memory, we can make it conditional on a 
-> configuration option.
-I'm not worried about memory, but I'm trying to understand why this can't be
-done in the background rather than the kernel. Doing this in the kernel can be
-confusing enough to backend such as GLINK bus that does not use this service.
-
-I saw also this alternative to keep module independent, but i did not test it yet.
-
-https://elixir.bootlin.com/linux/latest/source/drivers/gpu/drm/drm_fb_helper.c#L2274
-
-> 
->>> diff --git a/drivers/rpmsg/rpmsg_ns.c b/drivers/rpmsg/ns.c
->>> similarity index 76%
->>> rename from drivers/rpmsg/rpmsg_ns.c
->>> rename to drivers/rpmsg/ns.c
->>> index 8e26824ca328..86c011bfb62f 100644
->>> --- a/drivers/rpmsg/rpmsg_ns.c
->>> +++ b/drivers/rpmsg/ns.c
->>> @@ -2,15 +2,47 @@
->>>  /*
->>>   * Copyright (C) STMicroelectronics 2020 - All Rights Reserved
->>>   */
->>> +#include <linux/completion.h>
->>>  #include <linux/device.h>
->>> +#include <linux/export.h>
->>>  #include <linux/kernel.h>
->>>  #include <linux/module.h>
->>> -#include <linux/slab.h>
->>>  #include <linux/rpmsg.h>
->>> -#include <linux/rpmsg_ns.h>
->>> +#include <linux/rpmsg/ns.h>
->>> +#include <linux/slab.h>
->>>  
->>>  #include "rpmsg_internal.h"
->>>  
->>> +int rpmsg_ns_register_device(struct rpmsg_device *rpdev)
->>> +{
->>> +	int ret;
->>> +
->>> +	strcpy(rpdev->id.name, "rpmsg_ns");
->>> +	rpdev->driver_override = "rpmsg_ns";
->>> +	rpdev->src = RPMSG_NS_ADDR;
->>> +	rpdev->dst = RPMSG_NS_ADDR;
->>> +
->>> +	ret = rpmsg_register_device(rpdev);
->>> +	if (ret < 0)
->>> +		return ret;
->>> +
->>> +	if (!wait_for_completion_timeout(&rpdev->ns_ready,
->>> +					 msecs_to_jiffies(1))) {
->>
->> Does this work if called in rproc_virtio_probe? i tried a similar implementation
->> but it always falls in timeout because rpmsg_ns_probe never called, probably due
->> to the serial probing.The rpmsg_ns probe always occurs after the end of the
->> virtio probe.
-> 
-> It works, yes. As you see, rpmsg_register_device() is called first, that can 
-> already result in the .probe() being called and the completion being signalled
-> before we actually start a wait on it. That works well. BTW, the version here is 
-> missing a call to
-> 
-> +	init_completion(&rpdev->ns_ready);
-> 
-> right above the call to rpmsg_register_device(). But yes, it works.
-> 
->> For me the wait completion can not be called during the virtio probe. That's why
->> i implemented it in rpmsg_recv_done to ensure that the service is available
->> before first message treatment.
-> 
-> Why can it not be called in rpmsg_ns_probe()? The only purpose of this completion 
-> is to make sure that rpmsg_create_ept() for the NS endpoint has completed before 
-> we begin communicating with the remote / host, e.g. by calling 
-> virtio_device_ready() in case of the VirtIO backend, right?
-
-How the module driver are probed during device registration is not cristal clear
-for me here...
-Your approach looks to me a good compromize, I definitively need to apply and
-test you patch to well understood the associated scheduling...
-
-Thanks,
+Regards,
 Arnaud
 
+>  /**
+>   * rproc_alloc() - allocate a remote processor handle
+>   * @dev: the underlying device
+> @@ -2285,6 +2308,8 @@ struct rproc *rproc_alloc(struct device *dev, const char *name,
+>  	if (rproc_alloc_ops(rproc, ops))
+>  		goto put_device;
+>  
+> +	rproc_set_automation_flags(rproc);
+> +
+>  	/* Assign a unique device index and name */
+>  	rproc->index = ida_simple_get(&rproc_dev_index, 0, 0, GFP_KERNEL);
+>  	if (rproc->index < 0) {
+> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+> index 71d4d4873164..9a6e79ef35d7 100644
+> --- a/include/linux/remoteproc.h
+> +++ b/include/linux/remoteproc.h
+> @@ -516,6 +516,9 @@ struct rproc_dump_segment {
+>   * @nb_vdev: number of vdev currently handled by rproc
+>   * @char_dev: character device of the rproc
+>   * @cdev_put_on_release: flag to indicate if remoteproc should be shutdown on @char_dev release
+> + * @autonomous_on_core_reboot: true if the remote processor should be detached from
+> + *			       (rather than turned off) when the remoteproc core
+> + *			       goes away.
+>   */
+>  struct rproc {
+>  	struct list_head node;
+> @@ -554,6 +557,8 @@ struct rproc {
+>  	u16 elf_machine;
+>  	struct cdev cdev;
+>  	bool cdev_put_on_release;
+> +	bool autonomous_on_core_reboot	: 1,
+> +	     autonomous_on_remote_crash	: 1;
+>  };
+>  
+>  /**
 > 
-> Thanks
-> Guennadi
-> 
->> Thanks,
->> Arnaud
->>
->>> +		struct rpmsg_channel_info info = {
->>> +			.name = "rpmsg_ns",
->>> +			.src = rpdev->src,
->>> +			.dst = rpdev->dst,
->>> +		};
->>> +
->>> +		rpmsg_unregister_device(rpdev->dev.parent, &info);
->>> +
->>> +		return -ETIMEDOUT;
->>> +	}
->>> +
->>> +	return 0;
->>> +}
->>> +EXPORT_SYMBOL(rpmsg_ns_register_device);
->>> +
->>>  /* invoked when a name service announcement arrives */
->>>  static int rpmsg_ns_cb(struct rpmsg_device *rpdev, void *data, int len,
->>>  		       void *priv, u32 src)
->>> @@ -76,6 +108,8 @@ static int rpmsg_ns_probe(struct rpmsg_device *rpdev)
->>>  	}
->>>  	rpdev->ept = ns_ept;
->>>  
->>> +	complete(&rpdev->ns_ready);
->>> +
->>>  	return 0;
->>>  }
->>>  
->>> @@ -84,7 +118,7 @@ static struct rpmsg_driver rpmsg_ns_driver = {
->>>  	.probe = rpmsg_ns_probe,
->>>  };
->>>  
->>> -static int rpmsg_ns_init(void)
->>> +int rpmsg_ns_init(void)
->>>  {
->>>  	int ret;
->>>  
->>> @@ -94,15 +128,8 @@ static int rpmsg_ns_init(void)
->>>  
->>>  	return ret;
->>>  }
->>> -postcore_initcall(rpmsg_ns_init);
->>>  
->>> -static void rpmsg_ns_exit(void)
->>> +void rpmsg_ns_exit(void)
->>>  {
->>>  	unregister_rpmsg_driver(&rpmsg_ns_driver);
->>>  }
->>> -module_exit(rpmsg_ns_exit);
->>> -
->>> -MODULE_DESCRIPTION("Name service announcement rpmsg Driver");
->>> -MODULE_AUTHOR("Arnaud Pouliquen <arnaud.pouliquen@st.com>");
->>> -MODULE_ALIAS("rpmsg_ns");
->>> -MODULE_LICENSE("GPL v2");
->>> diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
->>> index 10a16be986fc..fdf00cc5f57f 100644
->>> --- a/drivers/rpmsg/virtio_rpmsg_bus.c
->>> +++ b/drivers/rpmsg/virtio_rpmsg_bus.c
->>> @@ -19,8 +19,8 @@
->>>  #include <linux/mutex.h>
->>>  #include <linux/of_device.h>
->>>  #include <linux/rpmsg.h>
->>> -#include <linux/rpmsg_byteorder.h>
->>> -#include <linux/rpmsg_ns.h>
->>> +#include <linux/rpmsg/byteorder.h>
->>> +#include <linux/rpmsg/ns.h>
->>>  #include <linux/rpmsg/virtio.h>
->>>  #include <linux/scatterlist.h>
->>>  #include <linux/slab.h>
->>> @@ -920,6 +920,7 @@ static int rpmsg_probe(struct virtio_device *vdev)
->>>  	return 0;
->>>  
->>>  free_coherent:
->>> +	kfree(vch);
->>>  	dma_free_coherent(vdev->dev.parent, total_buf_space,
->>>  			  bufs_va, vrp->bufs_dma);
->>>  vqs_del:
->>> diff --git a/include/linux/rpmsg.h b/include/linux/rpmsg.h
->>> index 8ee1b1dab657..71fd15ada5c0 100644
->>> --- a/include/linux/rpmsg.h
->>> +++ b/include/linux/rpmsg.h
->>> @@ -10,6 +10,7 @@
->>>  #ifndef _LINUX_RPMSG_H
->>>  #define _LINUX_RPMSG_H
->>>  
->>> +#include <linux/completion.h>
->>>  #include <linux/types.h>
->>>  #include <linux/device.h>
->>>  #include <linux/err.h>
->>> @@ -17,7 +18,7 @@
->>>  #include <linux/kref.h>
->>>  #include <linux/mutex.h>
->>>  #include <linux/poll.h>
->>> -#include <linux/rpmsg_byteorder.h>
->>> +#include <linux/rpmsg/byteorder.h>
->>>  
->>>  #define RPMSG_ADDR_ANY		0xFFFFFFFF
->>>  
->>> @@ -58,6 +59,7 @@ struct rpmsg_device {
->>>  	struct rpmsg_endpoint *ept;
->>>  	bool announce;
->>>  	bool little_endian;
->>> +	struct completion ns_ready;
->>>  
->>>  	const struct rpmsg_device_ops *ops;
->>>  };
->>> diff --git a/include/linux/rpmsg_byteorder.h b/include/linux/rpmsg/byteorder.h
->>> similarity index 100%
->>> rename from include/linux/rpmsg_byteorder.h
->>> rename to include/linux/rpmsg/byteorder.h
->>> diff --git a/include/linux/rpmsg_ns.h b/include/linux/rpmsg/ns.h
->>> similarity index 82%
->>> rename from include/linux/rpmsg_ns.h
->>> rename to include/linux/rpmsg/ns.h
->>> index 42786bb759b5..2499db0c8c3d 100644
->>> --- a/include/linux/rpmsg_ns.h
->>> +++ b/include/linux/rpmsg/ns.h
->>> @@ -4,8 +4,9 @@
->>>  #define _LINUX_RPMSG_NS_H
->>>  
->>>  #include <linux/mod_devicetable.h>
->>> +#include <linux/rpmsg.h>
->>> +#include <linux/rpmsg/byteorder.h>
->>>  #include <linux/types.h>
->>> -#include <linux/rpmsg_byteorder.h>
->>>  
->>>  /**
->>>   * struct rpmsg_ns_msg - dynamic name service announcement message
->>> @@ -46,14 +47,9 @@ enum rpmsg_ns_flags {
->>>   * This function wraps rpmsg_register_device() preparing the rpdev for use as
->>>   * basis for the rpmsg name service device.
->>>   */
->>> -static inline int rpmsg_ns_register_device(struct rpmsg_device *rpdev)
->>> -{
->>> -       strcpy(rpdev->id.name, "rpmsg_ns");
->>> -       rpdev->driver_override = "rpmsg_ns";
->>> -       rpdev->src = RPMSG_NS_ADDR;
->>> -       rpdev->dst = RPMSG_NS_ADDR;
->>> -
->>> -       return rpmsg_register_device(rpdev);
->>> -}
->>> +int rpmsg_ns_register_device(struct rpmsg_device *rpdev);
->>> +
->>> +int rpmsg_ns_init(void);
->>> +void rpmsg_ns_exit(void);
->>>  
->>>  #endif
->>>
