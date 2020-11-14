@@ -3,329 +3,233 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3AA4C8300E
-	for <linux-remoteproc@archiver.kernel.org>; Sat, 14 Nov 2020 08:47:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3ABBC63798
+	for <linux-remoteproc@archiver.kernel.org>; Sat, 14 Nov 2020 16:49:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6A33F222EA
-	for <linux-remoteproc@archiver.kernel.org>; Sat, 14 Nov 2020 08:47:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6DAAE22280
+	for <linux-remoteproc@archiver.kernel.org>; Sat, 14 Nov 2020 16:49:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HUvz7Sh0"
+	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="XZ63pnE1"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726662AbgKNIql (ORCPT
+        id S1726734AbgKNQtb (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Sat, 14 Nov 2020 03:46:41 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60136 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726644AbgKNIqj (ORCPT
+        Sat, 14 Nov 2020 11:49:31 -0500
+Received: from mail-dm6nam10on2053.outbound.protection.outlook.com ([40.107.93.53]:60600
+        "EHLO NAM10-DM6-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726481AbgKNQt3 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Sat, 14 Nov 2020 03:46:39 -0500
-Received: from mail-lf1-x131.google.com (mail-lf1-x131.google.com [IPv6:2a00:1450:4864:20::131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 72393C0617A7
-        for <linux-remoteproc@vger.kernel.org>; Sat, 14 Nov 2020 00:46:39 -0800 (PST)
-Received: by mail-lf1-x131.google.com with SMTP id j205so17687806lfj.6
-        for <linux-remoteproc@vger.kernel.org>; Sat, 14 Nov 2020 00:46:39 -0800 (PST)
+        Sat, 14 Nov 2020 11:49:29 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Lc74seY36zrngGrv4pLyQyY5squRPzLlDwhRui/UaC1aoJhoSPet3UwdnUmbvyTBnHlPCoTybzpdHsFaRprDwZtPp5y2qcwXV1wRSnsTjnm+M+wYj1S0FeqlsV4ZBYIKEavmrI0Gm8VKN9tJWyyFXR/Gh/b6BHLLCAvZPB8iT9lPH96/F0DiHNpciCV5Tz9H90vktyeJfV0Zug9UD0Ttg/Z3mZSOYvA5U9gPOY0msnodAp38DPk+VMQMg4Q9wKIURHw53SVIT8nKc2h8Jx3agQgf2FMjjoz4w9k0z7uCwpD5HbKDinquGDzXTnr/CZDN8Qo1tYKNICH4b6dhAQMsaA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=VJ+f26VHd7qTVop0EtmJHM9Dm0melO76w6gQnDIAoCo=;
+ b=jTCq60OeFuOC7srfyT7zOawIkcbX80oLX6ldIVyuzue+iaVB8mMBc43WGUq47JCY9WiITe7X5LuI8ETAow737fPKcGBYhxrnsupsjQA/nuV2Nt7mSv7/Hnvc8kqNP3qeu0DOQPtTfXGRRG6w15pXDoyc41K/UGoJW9jYKYS1grzf7AeEM/IulJnB8tIv7kHyWaZjfWVuvNGD/q0r9grJZHnD80EM4msnAcgaHD8c1vh07A27nZ+KYmg76ywVuXxugBt5foo/5bNXWd8E9O7YKBpIbNtl8Clif3NFtCrDLBNhPMuBKw/64Q1QsF0jPPAY+PnRMWjx0LNqSwEynCxZnw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 149.199.62.198) smtp.rcpttodomain=linaro.org smtp.mailfrom=xilinx.com;
+ dmarc=bestguesspass action=none header.from=xilinx.com; dkim=none (message
+ not signed); arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=pvnq03FM/3pEVJgF0bzCES36MpT5JZUKMzF3cy8uBe4=;
-        b=HUvz7Sh0+WP+NOLJwbaC0Galjuf19dciwnl72U6/083K7u71ixeADurCVcoUMF4hil
-         xVBX3GOxjxANjPivy5p9xVg9PGybsrxg9EJqXxZ3oIxwzf+TBYHKq3gl1BvBGCmhE0Ch
-         XKvUhlYdIcsuKLjHiNNjVHVwptyDCIOC3JG1mQ/xUlORo9AjC+vwiE/z0CaRMjLQJymH
-         3Yaqc+EfcGLrmZwjTcsbMLdAxrwyBNH//r3Hc8lqVLGTk4eLFRvpSIHmWcVHAu+mDbtM
-         IUJXgD1Tuyhp3FZhO/mML4JW9cR+auCyjp7PBOSlrHAT3rFkR54noeat+ArqTThN8ZK8
-         t8Nw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=pvnq03FM/3pEVJgF0bzCES36MpT5JZUKMzF3cy8uBe4=;
-        b=jDa5xhbfF85VfCuJ4boKOB/U9Zzava9gHl/HH0qD3Krd+UXqvI04EfC+41Q2PTOvw+
-         4zO+xCpJOmlwficDO0TyR+HxathpAPAS0l33QXc1jsbMTp8Yb4LSJVeECszONdnWJW2X
-         XUIOb0SgY9ZU4q4OLWhJp5Esdd1lZxeq/sCCZV2RSRv0PSfqIt+2vNzsX7psK4UDm1a7
-         9FOuje2v0uUq7L6MEoNIKWIZU5smh1FnGLKjElXZklM77E1XVhBph7XB72Cp+U3d3FKw
-         2T6C1cageemx4QqH+d9OW3QFW6Lf+Nxa6fNOeOahYEjZlk2wVJK4yj8CFgj/v3MYz6A+
-         kSYQ==
-X-Gm-Message-State: AOAM53377aOrrFjAiPkg6A3EhKmhWDbSNRLxPZz5brgRnjd0xZDPg0y3
-        NrHng2vOsZPlmHGqsmsMLnHABg==
-X-Google-Smtp-Source: ABdhPJxWr5ZJ1OBrHBDYqf1U0C/VlmSKyU6Xm+1DoCnNIjMKxjbunlyt4Z4H3jS34nXYA+HfEZ21Iw==
-X-Received: by 2002:ac2:5dcb:: with SMTP id x11mr2241073lfq.44.1605343597642;
-        Sat, 14 Nov 2020 00:46:37 -0800 (PST)
-Received: from gilgamesh.semihalf.com (193-106-246-138.noc.fibertech.net.pl. [193.106.246.138])
-        by smtp.gmail.com with ESMTPSA id f62sm1870081lfd.144.2020.11.14.00.46.36
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 14 Nov 2020 00:46:37 -0800 (PST)
-From:   Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>
-To:     ohad@wizery.com, bjorn.andersson@linaro.org,
-        mathieu.poirier@linaro.org, s-anna@ti.com
-Cc:     grzegorz.jaszczyk@linaro.org, linux-remoteproc@vger.kernel.org,
-        robh+dt@kernel.org, lee.jones@linaro.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        praneeth@ti.com, rogerq@ti.com
-Subject: [PATCH 1/6] dt-bindings: remoteproc: Add binding doc for PRU cores in the PRU-ICSS
-Date:   Sat, 14 Nov 2020 09:46:08 +0100
-Message-Id: <20201114084613.13503-2-grzegorz.jaszczyk@linaro.org>
-X-Mailer: git-send-email 2.29.0
-In-Reply-To: <20201114084613.13503-1-grzegorz.jaszczyk@linaro.org>
-References: <20201114084613.13503-1-grzegorz.jaszczyk@linaro.org>
+ d=xilinx.onmicrosoft.com; s=selector2-xilinx-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=VJ+f26VHd7qTVop0EtmJHM9Dm0melO76w6gQnDIAoCo=;
+ b=XZ63pnE12+JbUCcOUimFlO20C72ki9FvW6FYA9Sqcch31+dTn8SqHUKfJ/T/qF/xx1vKgjCVzbd047W4W5phoCGwfXL32VLPoQoFHVAYkxtqf44dyqy14IBcCpifTrurhdL3FazCGxK6uaaerk7QUUCkGswMtKsMryXggkpT6d8=
+Received: from SA9PR10CA0028.namprd10.prod.outlook.com (2603:10b6:806:a7::33)
+ by BN6PR02MB3377.namprd02.prod.outlook.com (2603:10b6:405:6c::38) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3541.25; Sat, 14 Nov
+ 2020 16:49:24 +0000
+Received: from SN1NAM02FT009.eop-nam02.prod.protection.outlook.com
+ (2603:10b6:806:a7:cafe::56) by SA9PR10CA0028.outlook.office365.com
+ (2603:10b6:806:a7::33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3564.25 via Frontend
+ Transport; Sat, 14 Nov 2020 16:49:24 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 149.199.62.198)
+ smtp.mailfrom=xilinx.com; linaro.org; dkim=none (message not signed)
+ header.d=none;linaro.org; dmarc=bestguesspass action=none
+ header.from=xilinx.com;
+Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
+ 149.199.62.198 as permitted sender) receiver=protection.outlook.com;
+ client-ip=149.199.62.198; helo=xsj-pvapexch01.xlnx.xilinx.com;
+Received: from xsj-pvapexch01.xlnx.xilinx.com (149.199.62.198) by
+ SN1NAM02FT009.mail.protection.outlook.com (10.152.73.32) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.3564.22 via Frontend Transport; Sat, 14 Nov 2020 16:49:23 +0000
+Received: from xsj-pvapexch02.xlnx.xilinx.com (172.19.86.41) by
+ xsj-pvapexch01.xlnx.xilinx.com (172.19.86.40) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1913.5; Sat, 14 Nov 2020 08:49:21 -0800
+Received: from smtp.xilinx.com (172.19.127.96) by
+ xsj-pvapexch02.xlnx.xilinx.com (172.19.86.41) with Microsoft SMTP Server id
+ 15.1.1913.5 via Frontend Transport; Sat, 14 Nov 2020 08:49:21 -0800
+Envelope-to: mathieu.poirier@linaro.org,
+ devicetree@vger.kernel.org,
+ linux-remoteproc@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+Received: from [172.19.2.206] (port=38914 helo=xsjblevinsk50.xilinx.com)
+        by smtp.xilinx.com with esmtp (Exim 4.90)
+        (envelope-from <ben.levinsky@xilinx.com>)
+        id 1kdyjp-0007Ai-H4; Sat, 14 Nov 2020 08:49:21 -0800
+From:   Ben Levinsky <ben.levinsky@xilinx.com>
+To:     <mathieu.poirier@linaro.org>
+CC:     <devicetree@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>
+Subject: [PATCH v23 2/5] firmware: xilinx: Add shutdown/wakeup APIs
+Date:   Sat, 14 Nov 2020 08:49:18 -0800
+Message-ID: <20201114164921.14573-3-ben.levinsky@xilinx.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20201114164921.14573-1-ben.levinsky@xilinx.com>
+References: <20201114164921.14573-1-ben.levinsky@xilinx.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-Office365-Filtering-HT: Tenant
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: ff687229-f09a-4359-a941-08d888bd3dc6
+X-MS-TrafficTypeDiagnostic: BN6PR02MB3377:
+X-Microsoft-Antispam-PRVS: <BN6PR02MB3377BE563180FD32E2138730B5E50@BN6PR02MB3377.namprd02.prod.outlook.com>
+X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
+X-MS-Oob-TLC-OOBClassifiers: OLM:4941;
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: YNbaH3u428Et6lM9QvDMvf905Z7hYTyUcGbnYHj2xprlrZRzuBy8Qn7/fDJOyFbCZQjLrfWEyxmQQegKXqobNwZCRK2XQfquKhjrT6iZsOFbQm1nCt2Bs38UQdqPW+Y2Nd/UMsLv3C1z+dKu6s0ddcAiBUEsgs8mM421BAXHm1bfa5c/c3swd+uFlH0YXZEUPyR2udkTmeUe+ytlnTTK2eBj4limwUXjvOqVQ7VjpHM9Gj2JWIxHbNuWT1pBNwstyGDvp9H8RVyq49xrtnD3h6vSfcBMXKs3VfBs4a6F13Ypc/QqCiQcDvct79k4/TAj227g+3K3WnIXE8ak7Bm73e+TcbzLKKnWsD2V6i7XLVdFsTfkCWFFg/fnGFmDAXxhV9+AAumQbV4A2Sc9uc3mqZvU+5dHOH657iL738db2GQ=
+X-Forefront-Antispam-Report: CIP:149.199.62.198;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:xsj-pvapexch01.xlnx.xilinx.com;PTR:unknown-62-198.xilinx.com;CAT:NONE;SFS:(4636009)(396003)(136003)(376002)(39850400004)(346002)(46966005)(9786002)(44832011)(7696005)(336012)(1076003)(478600001)(8936002)(83380400001)(36906005)(54906003)(186003)(6916009)(2906002)(26005)(8676002)(70586007)(316002)(70206006)(2616005)(426003)(6666004)(7636003)(5660300002)(4326008)(356005)(47076004)(36756003)(82740400003)(82310400003)(102446001);DIR:OUT;SFP:1101;
+X-OriginatorOrg: xilinx.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Nov 2020 16:49:23.8731
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: ff687229-f09a-4359-a941-08d888bd3dc6
+X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.62.198];Helo=[xsj-pvapexch01.xlnx.xilinx.com]
+X-MS-Exchange-CrossTenant-AuthSource: SN1NAM02FT009.eop-nam02.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN6PR02MB3377
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-From: Suman Anna <s-anna@ti.com>
+Add shutdown/wakeup a resource eemi operations to shutdown
+or bringup a resource.
 
-The Programmable Real-Time Unit and Industrial Communication Subsystem
-(PRU-ICSS or simply PRUSS) on various TI SoCs consists of dual 32-bit
-RISC cores (Programmable Real-Time Units, or PRUs) for program execution.
+Note alignment of args matches convention of other fn's in this file.
+The reason being that the long fn name results in aligned args that
+otherwise go over 80 chars so shift right to avoid this
 
-The K3 AM65x amd J721E SoCs have the next generation of the PRU-ICSS IP,
-commonly called ICSSG. The ICSSG IP on AM65x SoCs has two PRU cores,
-two auxiliary custom PRU cores called Real Time Units (RTUs). The K3
-AM65x SR2.0 and J721E SoCs have a revised version of the ICSSG IP, and
-include two additional custom auxiliary PRU cores called Transmit PRUs
-(Tx_PRUs).
-
-This patch adds the bindings for these PRU cores. The binding covers the
-OMAP architecture SoCs - AM33xx, AM437x and AM57xx; Keystone 2 architecture
-based 66AK2G SoC; and the K3 architecture based SoCs - AM65x and J721E. The
-Davinci based OMAPL138 SoCs will be covered in a future patch.
-
-Co-developed-by: Roger Quadros <rogerq@ti.com>
-Signed-off-by: Roger Quadros <rogerq@ti.com>
-Signed-off-by: Suman Anna <s-anna@ti.com>
-Signed-off-by: Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>
+Signed-off-by: Ben Levinsky <ben.levinsky@xilinx.com>
 ---
- .../bindings/remoteproc/ti,pru-rproc.yaml     | 214 ++++++++++++++++++
- 1 file changed, 214 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/remoteproc/ti,pru-rproc.yaml
+ drivers/firmware/xilinx/zynqmp.c     | 35 ++++++++++++++++++++++++++++
+ include/linux/firmware/xlnx-zynqmp.h | 23 ++++++++++++++++++
+ 2 files changed, 58 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/remoteproc/ti,pru-rproc.yaml b/Documentation/devicetree/bindings/remoteproc/ti,pru-rproc.yaml
-new file mode 100644
-index 000000000000..c5d5b3a5398f
---- /dev/null
-+++ b/Documentation/devicetree/bindings/remoteproc/ti,pru-rproc.yaml
-@@ -0,0 +1,214 @@
-+# SPDX-License-Identifier: (GPL-2.0-only or BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/remoteproc/ti,pru-rproc.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
+diff --git a/drivers/firmware/xilinx/zynqmp.c b/drivers/firmware/xilinx/zynqmp.c
+index 8d1ff2454e2e..a966ee956573 100644
+--- a/drivers/firmware/xilinx/zynqmp.c
++++ b/drivers/firmware/xilinx/zynqmp.c
+@@ -846,6 +846,41 @@ int zynqmp_pm_release_node(const u32 node)
+ }
+ EXPORT_SYMBOL_GPL(zynqmp_pm_release_node);
+ 
++/**
++ * zynqmp_pm_force_pwrdwn - PM call to request for another PU or subsystem to
++ *             be powered down forcefully
++ * @node:  Node ID of the targeted PU or subsystem
++ * @ack:   Flag to specify whether acknowledge is requested
++ *
++ * Return: status, either success or error+reason
++ */
++int zynqmp_pm_force_pwrdwn(const u32 node,
++			   const enum zynqmp_pm_request_ack ack)
++{
++	return zynqmp_pm_invoke_fn(PM_FORCE_POWERDOWN, node, ack, 0, 0, NULL);
++}
++EXPORT_SYMBOL_GPL(zynqmp_pm_force_pwrdwn);
 +
-+title: TI Programmable Realtime Unit (PRU) cores
++/**
++ * zynqmp_pm_request_wake - PM call to wake up selected master or subsystem
++ * @node:  Node ID of the master or subsystem
++ * @set_addr:  Specifies whether the address argument is relevant
++ * @address:   Address from which to resume when woken up
++ * @ack:   Flag to specify whether acknowledge requested
++ *
++ * Return: status, either success or error+reason
++ */
++int zynqmp_pm_request_wake(const u32 node,
++			   const bool set_addr,
++			   const u64 address,
++			   const enum zynqmp_pm_request_ack ack)
++{
++	/* set_addr flag is encoded into 1st bit of address */
++	return zynqmp_pm_invoke_fn(PM_REQUEST_WAKEUP, node, address | set_addr,
++				   address >> 32, ack, NULL);
++}
++EXPORT_SYMBOL_GPL(zynqmp_pm_request_wake);
 +
-+maintainers:
-+  - Suman Anna <s-anna@ti.com>
+ /**
+  * zynqmp_pm_set_requirement() - PM call to set requirement for PM slaves
+  * @node:		Node ID of the slave
+diff --git a/include/linux/firmware/xlnx-zynqmp.h b/include/linux/firmware/xlnx-zynqmp.h
+index 0dd2d188f8aa..0cc862b26263 100644
+--- a/include/linux/firmware/xlnx-zynqmp.h
++++ b/include/linux/firmware/xlnx-zynqmp.h
+@@ -12,6 +12,7 @@
+ 
+ #ifndef __FIRMWARE_ZYNQMP_H__
+ #define __FIRMWARE_ZYNQMP_H__
++#include <linux/types.h>
+ 
+ #define ZYNQMP_PM_VERSION_MAJOR	1
+ #define ZYNQMP_PM_VERSION_MINOR	0
+@@ -64,6 +65,8 @@
+ 
+ enum pm_api_id {
+ 	PM_GET_API_VERSION = 1,
++	PM_FORCE_POWERDOWN = 8,
++	PM_REQUEST_WAKEUP = 10,
+ 	PM_SYSTEM_SHUTDOWN = 12,
+ 	PM_REQUEST_NODE = 13,
+ 	PM_RELEASE_NODE,
+@@ -380,6 +383,12 @@ int zynqmp_pm_write_pggs(u32 index, u32 value);
+ int zynqmp_pm_read_pggs(u32 index, u32 *value);
+ int zynqmp_pm_system_shutdown(const u32 type, const u32 subtype);
+ int zynqmp_pm_set_boot_health_status(u32 value);
++int zynqmp_pm_force_pwrdwn(const u32 target,
++			   const enum zynqmp_pm_request_ack ack);
++int zynqmp_pm_request_wake(const u32 node,
++			   const bool set_addr,
++			   const u64 address,
++			   const enum zynqmp_pm_request_ack ack);
+ #else
+ static inline struct zynqmp_eemi_ops *zynqmp_pm_get_eemi_ops(void)
+ {
+@@ -530,6 +539,20 @@ static inline int zynqmp_pm_set_boot_health_status(u32 value)
+ {
+ 	return -ENODEV;
+ }
 +
-+description: |
-+  Each Programmable Real-Time Unit and Industrial Communication Subsystem
-+  (PRU-ICSS or PRUSS) has two 32-bit load/store RISC CPU cores called
-+  Programmable Real-Time Units (PRUs), each represented by a node. Each PRU
-+  core has a dedicated Instruction RAM, Control and Debug register sets, and
-+  use the Data RAMs present within the PRU-ICSS for code execution.
++static inline int zynqmp_pm_force_pwrdwn(const u32 target,
++					 const enum zynqmp_pm_request_ack ack)
++{
++	return -ENODEV;
++}
 +
-+  The K3 SoCs containing ICSSG v1.0 (eg: AM65x SR1.0) also have two Auxiliary
-+  PRU cores called RTUs with slightly different IP integration. The K3 SoCs
-+  containing the revised ICSSG v1.1 (eg: J721E, AM65x SR2.0) have an extra two
-+  auxiliary Transmit PRU cores called Tx_PRUs that augment the PRUs. Each RTU
-+  or Tx_PRU core can also be used independently like a PRU, or alongside a
-+  corresponding PRU core to provide/implement auxiliary functionality/support.
-+
-+  Each PRU, RTU or Tx_PRU core node should be defined as a child node of the
-+  corresponding PRU-ICSS node. Each node can optionally be rendered inactive by
-+  using the standard DT string property, "status".
-+
-+  Please see the overall PRU-ICSS bindings document for additional details
-+  including a complete example,
-+    Documentation/devicetree/bindings/soc/ti/ti,pruss.yaml
-+
-+properties:
-+  compatible:
-+    enum:
-+     - ti,am3356-pru   # for AM335x SoC family (AM3356+ SoCs only)
-+     - ti,am4376-pru   # for AM437x SoC family (AM4376+ SoCs only)
-+     - ti,am5728-pru   # for AM57xx SoC family
-+     - ti,k2g-pru      # for 66AK2G SoC family
-+     - ti,am654-pru    # for PRUs in K3 AM65x SoC family
-+     - ti,am654-rtu    # for RTUs in K3 AM65x SoC family
-+     - ti,am654-tx-pru # for Tx_PRUs in K3 AM65x SR2.0 SoCs
-+     - ti,j721e-pru    # for PRUs in K3 J721E SoC family
-+     - ti,j721e-rtu    # for RTUs in K3 J721E SoC family
-+     - ti,j721e-tx-pru # for Tx_PRUs in K3 J721E SoC family
-+
-+  reg:
-+    items:
-+      - description: Address and Size of the PRU Instruction RAM
-+      - description: Address and Size of the PRU CTRL sub-module registers
-+      - description: Address and Size of the PRU Debug sub-module registers
-+
-+  reg-names:
-+    items:
-+      - const: iram
-+      - const: control
-+      - const: debug
-+
-+  firmware-name:
-+    description: |
-+      Should contain the name of the default firmware image
-+      file located on the firmware search path.
-+
-+if:
-+  properties:
-+    compatible:
-+      enum:
-+        - ti,am654-rtu
-+        - ti,j721e-rtu
-+then:
-+  properties:
-+    $nodename:
-+      pattern: "^rtu@[0-9a-f]+$"
-+else:
-+  if:
-+    properties:
-+      compatible:
-+        enum:
-+          - ti,am654-tx-pru
-+          - ti,j721e-tx-pru
-+  then:
-+    properties:
-+      $nodename:
-+        pattern: "^txpru@[0-9a-f]+"
-+  else:
-+    properties:
-+      $nodename:
-+        pattern: "^pru@[0-9a-f]+$"
-+
-+required:
-+ - compatible
-+ - reg
-+ - reg-names
-+ - firmware-name
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    /* AM33xx PRU-ICSS */
-+    pruss_tm: target-module@300000 {  /* 0x4a300000, ap 9 04.0 */
-+      compatible = "ti,sysc-pruss", "ti,sysc";
-+      #address-cells = <1>;
-+      #size-cells = <1>;
-+      ranges = <0x0 0x300000 0x80000>;
-+
-+      pruss: pruss@0 {
-+        compatible = "ti,am3356-pruss";
-+        reg = <0x0 0x80000>;
-+        #address-cells = <1>;
-+        #size-cells = <1>;
-+        ranges;
-+
-+        pruss_mem: memories@0 {
-+          reg = <0x0 0x2000>,
-+                <0x2000 0x2000>,
-+                <0x10000 0x3000>;
-+          reg-names = "dram0", "dram1", "shrdram2";
-+        };
-+
-+        pru0: pru@34000 {
-+          compatible = "ti,am3356-pru";
-+          reg = <0x34000 0x2000>,
-+                <0x22000 0x400>,
-+                <0x22400 0x100>;
-+          reg-names = "iram", "control", "debug";
-+          firmware-name = "am335x-pru0-fw";
-+        };
-+
-+        pru1: pru@38000 {
-+          compatible = "ti,am3356-pru";
-+          reg = <0x38000 0x2000>,
-+                <0x24000 0x400>,
-+                <0x24400 0x100>;
-+          reg-names = "iram", "control", "debug";
-+          firmware-name = "am335x-pru1-fw";
-+        };
-+      };
-+    };
-+
-+  - |
-+    /* AM65x SR2.0 ICSSG */
-+    #include <dt-bindings/soc/ti,sci_pm_domain.h>
-+
-+    icssg0: icssg@b000000 {
-+      compatible = "ti,am654-icssg";
-+      reg = <0xb000000 0x80000>;
-+      power-domains = <&k3_pds 62 TI_SCI_PD_EXCLUSIVE>;
-+      #address-cells = <1>;
-+      #size-cells = <1>;
-+      ranges = <0x0 0xb000000 0x80000>;
-+
-+      icssg0_mem: memories@0 {
-+        reg = <0x0 0x2000>,
-+              <0x2000 0x2000>,
-+              <0x10000 0x10000>;
-+        reg-names = "dram0", "dram1", "shrdram2";
-+      };
-+
-+      pru0_0: pru@34000 {
-+        compatible = "ti,am654-pru";
-+        reg = <0x34000 0x4000>,
-+              <0x22000 0x100>,
-+              <0x22400 0x100>;
-+        reg-names = "iram", "control", "debug";
-+        firmware-name = "am65x-pru0_0-fw";
-+      };
-+
-+      rtu0_0: rtu@4000 {
-+        compatible = "ti,am654-rtu";
-+        reg = <0x4000 0x2000>,
-+              <0x23000 0x100>,
-+              <0x23400 0x100>;
-+        reg-names = "iram", "control", "debug";
-+        firmware-name = "am65x-rtu0_0-fw";
-+      };
-+
-+      tx_pru0_0: txpru@a000 {
-+        compatible = "ti,am654-tx-pru";
-+        reg = <0xa000 0x1800>,
-+              <0x25000 0x100>,
-+              <0x25400 0x100>;
-+        reg-names = "iram", "control", "debug";
-+        firmware-name = "am65x-txpru0_0-fw";
-+      };
-+
-+      pru0_1: pru@38000 {
-+        compatible = "ti,am654-pru";
-+        reg = <0x38000 0x4000>,
-+              <0x24000 0x100>,
-+              <0x24400 0x100>;
-+        reg-names = "iram", "control", "debug";
-+        firmware-name = "am65x-pru0_1-fw";
-+      };
-+
-+      rtu0_1: rtu@6000 {
-+        compatible = "ti,am654-rtu";
-+        reg = <0x6000 0x2000>,
-+              <0x23800 0x100>,
-+              <0x23c00 0x100>;
-+        reg-names = "iram", "control", "debug";
-+        firmware-name = "am65x-rtu0_1-fw";
-+      };
-+
-+      tx_pru0_1: txpru@c000 {
-+        compatible = "ti,am654-tx-pru";
-+        reg = <0xc000 0x1800>,
-+              <0x25800 0x100>,
-+              <0x25c00 0x100>;
-+        reg-names = "iram", "control", "debug";
-+        firmware-name = "am65x-txpru0_1-fw";
-+      };
-+    };
++static inline int zynqmp_pm_request_wake(const u32 node,
++					 const bool set_addr,
++					 const u64 address,
++					 const enum zynqmp_pm_request_ack ack)
++{
++	return -ENODEV;
++}
+ #endif
+ 
+ #endif /* __FIRMWARE_ZYNQMP_H__ */
 -- 
-2.29.0
+2.17.1
 
