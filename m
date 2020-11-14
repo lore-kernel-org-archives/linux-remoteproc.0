@@ -7,58 +7,58 @@ X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0FCFC64E7C
-	for <linux-remoteproc@archiver.kernel.org>; Sat, 14 Nov 2020 08:47:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B0EDC8300F
+	for <linux-remoteproc@archiver.kernel.org>; Sat, 14 Nov 2020 08:47:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8F97622265
-	for <linux-remoteproc@archiver.kernel.org>; Sat, 14 Nov 2020 08:47:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4679A2222C
+	for <linux-remoteproc@archiver.kernel.org>; Sat, 14 Nov 2020 08:47:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ejcL9da7"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="N2JwHMrP"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726743AbgKNIqs (ORCPT
+        id S1726698AbgKNIqz (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Sat, 14 Nov 2020 03:46:48 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60148 "EHLO
+        Sat, 14 Nov 2020 03:46:55 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60154 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726758AbgKNIqr (ORCPT
+        with ESMTP id S1726707AbgKNIqn (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Sat, 14 Nov 2020 03:46:47 -0500
-Received: from mail-lj1-x243.google.com (mail-lj1-x243.google.com [IPv6:2a00:1450:4864:20::243])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 72148C0613D2
-        for <linux-remoteproc@vger.kernel.org>; Sat, 14 Nov 2020 00:46:45 -0800 (PST)
-Received: by mail-lj1-x243.google.com with SMTP id i17so12754853ljd.3
-        for <linux-remoteproc@vger.kernel.org>; Sat, 14 Nov 2020 00:46:45 -0800 (PST)
+        Sat, 14 Nov 2020 03:46:43 -0500
+Received: from mail-lf1-x12b.google.com (mail-lf1-x12b.google.com [IPv6:2a00:1450:4864:20::12b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DB395C0617A6
+        for <linux-remoteproc@vger.kernel.org>; Sat, 14 Nov 2020 00:46:42 -0800 (PST)
+Received: by mail-lf1-x12b.google.com with SMTP id f11so17686152lfs.3
+        for <linux-remoteproc@vger.kernel.org>; Sat, 14 Nov 2020 00:46:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=OCYSuNi1JCYOWWFaprqNxn30Bt1Uq8l9kVTd9Q510R8=;
-        b=ejcL9da7O8w5FN5tmzIGzQwAWtWpetZ/vbghzoH05lEbeuN/mcOxM8FGs9i2qAW4EE
-         flv1xiKWnScN8Ms6/cZSXFMp5sMfgowpz+opFHNCGk4cqLGy9gdtFjVEBnQyQlZ/Ldsy
-         /i/oY1l3khXDOtKKRzXfCSX/hrL8+KYNZVSH2JLZvDJDrZRQO7A8GhxLxa8I3GStmNn/
-         vW0krurjjgGfyb6ue6YXqp71viqOeoFZylV3KliWcnB+4+bGyY9ay1BtKu84dhuZ4628
-         yWlYNp+S1jGYZcyhFTZSUznE8CpevKxG0NfY+MEQhI0VYlqlJBPtG/brRZUWprZHVonz
-         1AtA==
+        bh=a/nSWEsw3N6fSKKLuz4XMLcWzgg3KLh595YgOxVRdOs=;
+        b=N2JwHMrPfSCZtpY3q2xbT+ib5L1HzYHliqPlmcYp9QsD2VBTyZKlDdbpGuiOFoJd1s
+         52+L9WETgaAeMww0c5i8OTnbug++dQoSJ0h7+K+lDnRpglJY3CEsa8su/PqZr0U1lKQg
+         r5HAu3k15jf4yz3c+LI71v1m2P/mpF51p8O2ha8LsW/FM4q0Kj3gB3yLEjuUU22rhv7k
+         nN5dl3awHgK8joTyqs975AkNlM1P0mZe8C+Hp9+azEMoonWwf2UHgxDo2IJ9dbo/z6LK
+         IqMLpuPKn6xVz1/e1Q2og6dDca8UOCwyr22MKH2TxlEZLvf0sbZSqgBhr0amgtdkB3mi
+         jhBQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=OCYSuNi1JCYOWWFaprqNxn30Bt1Uq8l9kVTd9Q510R8=;
-        b=lWbYitSZajECPUAlYHWpEDN3axv+3Aw7nrvLipvZcaaOn2cVsGWh9tFuGxzAdbZx8/
-         XDxRjLs3eJjOpR8R1HTuNwDx1LyFYAHxOb3gSGjnqJi+M403hmoRUNQ6iPQ+tcGMsUie
-         nWZehYkx/pVfnILsFliXnVQ+erT9jXbemPCXRIYnqvV7G7odtduqfJa4KK3XMyKXmOWc
-         OZCDMSGHNqSPCw2Tn9xGij9k6MqSL5PFzu82Xm1/AdDwY7Z6g8a3FsywbnCh+MG9L1i1
-         kRRD0NnnKi7DsDUtS7FQ7PDr35igL14lKJGckHuPhOXIgiBOne7IUYuDIxCnrsCuENwm
-         KKxw==
-X-Gm-Message-State: AOAM532wch/8o+s/0IyduVf9WMga6rGr/8idytqDDDvIs9+CO1CGpihu
-        w5hoUmcsu4uvZP6TvSdGYYvn2w==
-X-Google-Smtp-Source: ABdhPJxOCtOaBNVaLtUp3RGqQhAgkWE3qbunetNHx3xw/RfWPbTg0Qw5bYgXFZmv7fFat7Ga2SKy3g==
-X-Received: by 2002:a2e:2f0f:: with SMTP id v15mr2594592ljv.402.1605343603946;
-        Sat, 14 Nov 2020 00:46:43 -0800 (PST)
+        bh=a/nSWEsw3N6fSKKLuz4XMLcWzgg3KLh595YgOxVRdOs=;
+        b=En1wjDwKhcItzffridKqqH94DoAN3giSiVyqdQEGqyu7N0zUbO1ru2VglXf966jHeM
+         aP3BOB+zIY8CJK4C4Zjdb5UgUcIOvqm4IfmPB3KTsm3j9+g7LI4MypbmBcpCBGcRlryb
+         jTw6H805dnHXQvaBeDEFJZ41zBBNAg213yxDlD1dtC8ZBYJkSmGyBL5TkPFVexdDqMzA
+         UtJQsuARLA07PWvZ5AFS5+l0fWhBtY79OhFkbaHY1HhtVLBmXvqaqXalxHS0OKoQr8Ld
+         3kMh/Koxt11q/5mi6UR+aHBUlNlCwnuQBRW/wyTZ8U0IXYDZJAWIEo/GgCrTPj74cnlZ
+         OGDg==
+X-Gm-Message-State: AOAM532VTMAnwb66ARztLVDBjn6twgAsrobRVfv5Qe1lqlMxsWRoA8RZ
+        pnsfV5aEnjGLSxwrB64ttHjj1A==
+X-Google-Smtp-Source: ABdhPJydz8kP6av8ZiAuObPfCUcyTmQd+SirxJXI3YER6a5DTo1JgeQT9UyQvyt+lPNEc3iKShgWIA==
+X-Received: by 2002:a05:6512:368a:: with SMTP id d10mr2224684lfs.579.1605343601373;
+        Sat, 14 Nov 2020 00:46:41 -0800 (PST)
 Received: from gilgamesh.semihalf.com (193-106-246-138.noc.fibertech.net.pl. [193.106.246.138])
-        by smtp.gmail.com with ESMTPSA id f62sm1870081lfd.144.2020.11.14.00.46.42
+        by smtp.gmail.com with ESMTPSA id f62sm1870081lfd.144.2020.11.14.00.46.40
         (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 14 Nov 2020 00:46:43 -0800 (PST)
+        Sat, 14 Nov 2020 00:46:40 -0800 (PST)
 From:   Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>
 To:     ohad@wizery.com, bjorn.andersson@linaro.org,
         mathieu.poirier@linaro.org, s-anna@ti.com
@@ -67,9 +67,9 @@ Cc:     grzegorz.jaszczyk@linaro.org, linux-remoteproc@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         praneeth@ti.com, rogerq@ti.com
-Subject: [PATCH 6/6] remoteproc/pru: Add support for various PRU cores on K3 J721E SoCs
-Date:   Sat, 14 Nov 2020 09:46:13 +0100
-Message-Id: <20201114084613.13503-7-grzegorz.jaszczyk@linaro.org>
+Subject: [PATCH 4/6] remoteproc/pru: Add pru-specific debugfs support
+Date:   Sat, 14 Nov 2020 09:46:11 +0100
+Message-Id: <20201114084613.13503-5-grzegorz.jaszczyk@linaro.org>
 X-Mailer: git-send-email 2.29.0
 In-Reply-To: <20201114084613.13503-1-grzegorz.jaszczyk@linaro.org>
 References: <20201114084613.13503-1-grzegorz.jaszczyk@linaro.org>
@@ -81,39 +81,223 @@ X-Mailing-List: linux-remoteproc@vger.kernel.org
 
 From: Suman Anna <s-anna@ti.com>
 
-The K3 J721E family of SoCs have a revised version of the AM65x ICSSG IP
-and contains two instances of this newer ICSSG IP. Each ICSSG processor
-subsystem contains 2 primary PRU cores, 2 auxiliary PRU cores called RTUs,
-and 2 new auxiliary cores called Transmit PRUs (Tx_PRUs).
+The remoteproc core creates certain standard debugfs entries,
+that does not give a whole lot of useful information for the
+PRUs. The PRU remoteproc driver is enhanced to add additional
+debugfs entries for PRU. These will be auto-cleaned up when
+the parent rproc debug directory is removed.
 
-Enhance the existing PRU remoteproc driver to support these new PRU
-and RTU cores by using specific compatibles. The cores have the same
-memory copying limitations as on AM65x, so reuses the custom memcpy
-function within the driver's ELF loader implementation. The initial
-names for the firmware images for each PRU core are retrieved from
-DT nodes, and can be adjusted through sysfs if required.
+The enhanced debugfs support adds two new entries: 'regs' and
+'single_step'. The 'regs' dumps out the useful CTRL sub-module
+registers as well as each of the 32 GPREGs and CT_REGs registers.
+The GPREGs and CT_REGs though are printed only when the PRU is
+halted and accessible as per the IP design.
+
+The 'single_step' utilizes the single-step execution of the PRU
+cores. Writing a non-zero value performs a single step, and a
+zero value restores the PRU to execute in the same mode as the
+mode before the first single step. (note: if the PRU is halted
+because of a halt instruction, then no change occurs).
+
+Logic for setting the PC and jumping over a halt instruction shall
+be added in the future.
 
 Signed-off-by: Suman Anna <s-anna@ti.com>
-Co-developed-by: Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>
 Signed-off-by: Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>
 ---
- drivers/remoteproc/pru_rproc.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/remoteproc/pru_rproc.c | 137 +++++++++++++++++++++++++++++++++
+ 1 file changed, 137 insertions(+)
 
 diff --git a/drivers/remoteproc/pru_rproc.c b/drivers/remoteproc/pru_rproc.c
-index 04c9f07799e2..98f9c598993f 100644
+index 825e9c7e081b..33806ddcbd5d 100644
 --- a/drivers/remoteproc/pru_rproc.c
 +++ b/drivers/remoteproc/pru_rproc.c
-@@ -855,6 +855,9 @@ static const struct of_device_id pru_rproc_match[] = {
- 	{ .compatible = "ti,am654-pru",		.data = &k3_pru_data },
- 	{ .compatible = "ti,am654-rtu",		.data = &k3_rtu_data },
- 	{ .compatible = "ti,am654-tx-pru",	.data = &k3_tx_pru_data },
-+	{ .compatible = "ti,j721e-pru",		.data = &k3_pru_data },
-+	{ .compatible = "ti,j721e-rtu",		.data = &k3_rtu_data },
-+	{ .compatible = "ti,j721e-tx-pru",	.data = &k3_tx_pru_data },
- 	{},
+@@ -11,6 +11,7 @@
+  */
+ 
+ #include <linux/bitops.h>
++#include <linux/debugfs.h>
+ #include <linux/irqdomain.h>
+ #include <linux/module.h>
+ #include <linux/of_device.h>
+@@ -25,6 +26,13 @@
+ /* PRU_ICSS_PRU_CTRL registers */
+ #define PRU_CTRL_CTRL		0x0000
+ #define PRU_CTRL_STS		0x0004
++#define PRU_CTRL_WAKEUP_EN	0x0008
++#define PRU_CTRL_CYCLE		0x000C
++#define PRU_CTRL_STALL		0x0010
++#define PRU_CTRL_CTBIR0		0x0020
++#define PRU_CTRL_CTBIR1		0x0024
++#define PRU_CTRL_CTPPR0		0x0028
++#define PRU_CTRL_CTPPR1		0x002C
+ 
+ /* CTRL register bit-fields */
+ #define CTRL_CTRL_SOFT_RST_N	BIT(0)
+@@ -34,6 +42,10 @@
+ #define CTRL_CTRL_SINGLE_STEP	BIT(8)
+ #define CTRL_CTRL_RUNSTATE	BIT(15)
+ 
++/* PRU_ICSS_PRU_DEBUG registers */
++#define PRU_DEBUG_GPREG(x)	(0x0000 + (x) * 4)
++#define PRU_DEBUG_CT_REG(x)	(0x0080 + (x) * 4)
++
+ /* PRU Core IRAM address masks */
+ #define PRU0_IRAM_ADDR_MASK	0x34000
+ #define PRU1_IRAM_ADDR_MASK	0x38000
+@@ -73,6 +85,8 @@ enum pru_iomem {
+  * @pru_interrupt_map: pointer to interrupt mapping description (firmware)
+  * @pru_interrupt_map_sz: pru_interrupt_map size
+  * @evt_count: number of mapped events
++ * @dbg_single_step: debug state variable to set PRU into single step mode
++ * @dbg_continuous: debug state variable to restore PRU execution mode
+  */
+ struct pru_rproc {
+ 	int id;
+@@ -85,6 +99,8 @@ struct pru_rproc {
+ 	struct pru_irq_rsc *pru_interrupt_map;
+ 	size_t pru_interrupt_map_sz;
+ 	ssize_t evt_count;
++	u32 dbg_single_step;
++	u32 dbg_continuous;
  };
- MODULE_DEVICE_TABLE(of, pru_rproc_match);
+ 
+ static inline u32 pru_control_read_reg(struct pru_rproc *pru, unsigned int reg)
+@@ -98,6 +114,125 @@ void pru_control_write_reg(struct pru_rproc *pru, unsigned int reg, u32 val)
+ 	writel_relaxed(val, pru->mem_regions[PRU_IOMEM_CTRL].va + reg);
+ }
+ 
++static inline u32 pru_debug_read_reg(struct pru_rproc *pru, unsigned int reg)
++{
++	return readl_relaxed(pru->mem_regions[PRU_IOMEM_DEBUG].va + reg);
++}
++
++static int regs_show(struct seq_file *s, void *data)
++{
++	struct rproc *rproc = s->private;
++	struct pru_rproc *pru = rproc->priv;
++	int i, nregs = 32;
++	u32 pru_sts;
++	int pru_is_running;
++
++	seq_puts(s, "============== Control Registers ==============\n");
++	seq_printf(s, "CTRL      := 0x%08x\n",
++		   pru_control_read_reg(pru, PRU_CTRL_CTRL));
++	pru_sts = pru_control_read_reg(pru, PRU_CTRL_STS);
++	seq_printf(s, "STS (PC)  := 0x%08x (0x%08x)\n", pru_sts, pru_sts << 2);
++	seq_printf(s, "WAKEUP_EN := 0x%08x\n",
++		   pru_control_read_reg(pru, PRU_CTRL_WAKEUP_EN));
++	seq_printf(s, "CYCLE     := 0x%08x\n",
++		   pru_control_read_reg(pru, PRU_CTRL_CYCLE));
++	seq_printf(s, "STALL     := 0x%08x\n",
++		   pru_control_read_reg(pru, PRU_CTRL_STALL));
++	seq_printf(s, "CTBIR0    := 0x%08x\n",
++		   pru_control_read_reg(pru, PRU_CTRL_CTBIR0));
++	seq_printf(s, "CTBIR1    := 0x%08x\n",
++		   pru_control_read_reg(pru, PRU_CTRL_CTBIR1));
++	seq_printf(s, "CTPPR0    := 0x%08x\n",
++		   pru_control_read_reg(pru, PRU_CTRL_CTPPR0));
++	seq_printf(s, "CTPPR1    := 0x%08x\n",
++		   pru_control_read_reg(pru, PRU_CTRL_CTPPR1));
++
++	seq_puts(s, "=============== Debug Registers ===============\n");
++	pru_is_running = pru_control_read_reg(pru, PRU_CTRL_CTRL) &
++				CTRL_CTRL_RUNSTATE;
++	if (pru_is_running) {
++		seq_puts(s, "PRU is executing, cannot print/access debug registers.\n");
++		return 0;
++	}
++
++	for (i = 0; i < nregs; i++) {
++		seq_printf(s, "GPREG%-2d := 0x%08x\tCT_REG%-2d := 0x%08x\n",
++			   i, pru_debug_read_reg(pru, PRU_DEBUG_GPREG(i)),
++			   i, pru_debug_read_reg(pru, PRU_DEBUG_CT_REG(i)));
++	}
++
++	return 0;
++}
++
++DEFINE_SHOW_ATTRIBUTE(regs);
++
++/*
++ * Control PRU single-step mode
++ *
++ * This is a debug helper function used for controlling the single-step
++ * mode of the PRU. The PRU Debug registers are not accessible when the
++ * PRU is in RUNNING state.
++ *
++ * Writing a non-zero value sets the PRU into single-step mode irrespective
++ * of its previous state. The PRU mode is saved only on the first set into
++ * a single-step mode. Writing a zero value will restore the PRU into its
++ * original mode.
++ */
++static int pru_rproc_debug_ss_set(void *data, u64 val)
++{
++	struct rproc *rproc = data;
++	struct pru_rproc *pru = rproc->priv;
++	u32 reg_val;
++
++	val = val ? 1 : 0;
++	if (!val && !pru->dbg_single_step)
++		return 0;
++
++	reg_val = pru_control_read_reg(pru, PRU_CTRL_CTRL);
++
++	if (val && !pru->dbg_single_step)
++		pru->dbg_continuous = reg_val;
++
++	if (val)
++		reg_val |= CTRL_CTRL_SINGLE_STEP | CTRL_CTRL_EN;
++	else
++		reg_val = pru->dbg_continuous;
++
++	pru->dbg_single_step = val;
++	pru_control_write_reg(pru, PRU_CTRL_CTRL, reg_val);
++
++	return 0;
++}
++
++static int pru_rproc_debug_ss_get(void *data, u64 *val)
++{
++	struct rproc *rproc = data;
++	struct pru_rproc *pru = rproc->priv;
++
++	*val = pru->dbg_single_step;
++
++	return 0;
++}
++DEFINE_SIMPLE_ATTRIBUTE(pru_rproc_debug_ss_fops, pru_rproc_debug_ss_get,
++			pru_rproc_debug_ss_set, "%llu\n");
++
++/*
++ * Create PRU-specific debugfs entries
++ *
++ * The entries are created only if the parent remoteproc debugfs directory
++ * exists, and will be cleaned up by the remoteproc core.
++ */
++static void pru_rproc_create_debug_entries(struct rproc *rproc)
++{
++	if (!rproc->dbg_dir)
++		return;
++
++	debugfs_create_file("regs", 0400, rproc->dbg_dir,
++			    rproc, &regs_fops);
++	debugfs_create_file("single_step", 0600, rproc->dbg_dir,
++			    rproc, &pru_rproc_debug_ss_fops);
++}
++
+ static void pru_dispose_irq_mapping(struct pru_rproc *pru)
+ {
+ 	while (--pru->evt_count >= 0) {
+@@ -575,6 +710,8 @@ static int pru_rproc_probe(struct platform_device *pdev)
+ 		return ret;
+ 	}
+ 
++	pru_rproc_create_debug_entries(rproc);
++
+ 	dev_dbg(dev, "PRU rproc node %pOF probed successfully\n", np);
+ 
+ 	return 0;
 -- 
 2.29.0
 
