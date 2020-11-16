@@ -2,130 +2,135 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-20.4 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
+X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14F35C4742C
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 16 Nov 2020 08:41:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7858C63697
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 16 Nov 2020 09:08:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AE4F520684
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 16 Nov 2020 08:41:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 633CD22240
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 16 Nov 2020 09:08:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="QOBEhTLv"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="L3o8CJJI"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726281AbgKPI0O (ORCPT
+        id S1727228AbgKPInK (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 16 Nov 2020 03:26:14 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44592 "EHLO
+        Mon, 16 Nov 2020 03:43:10 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47220 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726176AbgKPI0O (ORCPT
+        with ESMTP id S1726158AbgKPInK (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 16 Nov 2020 03:26:14 -0500
-Received: from mail-yb1-xb4a.google.com (mail-yb1-xb4a.google.com [IPv6:2607:f8b0:4864:20::b4a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 22BABC0613CF
-        for <linux-remoteproc@vger.kernel.org>; Mon, 16 Nov 2020 00:26:13 -0800 (PST)
-Received: by mail-yb1-xb4a.google.com with SMTP id c137so3249781ybf.21
-        for <linux-remoteproc@vger.kernel.org>; Mon, 16 Nov 2020 00:26:13 -0800 (PST)
+        Mon, 16 Nov 2020 03:43:10 -0500
+Received: from mail-vs1-xe42.google.com (mail-vs1-xe42.google.com [IPv6:2607:f8b0:4864:20::e42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4B12EC0613CF
+        for <linux-remoteproc@vger.kernel.org>; Mon, 16 Nov 2020 00:43:10 -0800 (PST)
+Received: by mail-vs1-xe42.google.com with SMTP id r14so8695917vsa.13
+        for <linux-remoteproc@vger.kernel.org>; Mon, 16 Nov 2020 00:43:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=sender:date:in-reply-to:message-id:mime-version:references:subject
-         :from:to:cc;
-        bh=iRKdGUeQKewf5nuXxBX2agP7HYNBW301CirwCFhx4pU=;
-        b=QOBEhTLv6QVv/QjZqTP+H+yyG/6mzw35iNQXRNy1YtY/1cays5xvfiDfdKHvbTTDS+
-         2YSyEvQ1HADSKiodkgTxOjX1QQDG/L/gJ5iA9Hz6adaEPpASQUu9DvqifQpNAgE0nU5T
-         PFlgzbIQ6XbOXWAe2kerZkJUBEkmpnLyQ/IFB7WXMy76lv+rK/fasC7cEZd6DmdebDpv
-         S9uV5tIvfjS1zglfg1qhhPaqBfBcIyqFWgO309RdbxgEAR6aj4e4GoSvWVjA7JrnV0Un
-         l8bNzLcVj+e56k+Eq1KzcueJlH62U0gTkqNjKyzsuqyyr4g2L8Ist6sX40HSJZh9IgFE
-         7Tmg==
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=CKXWZoZd8QcdkzAVySC/eiJYHbKt+QMjTxLKQIPnmNY=;
+        b=L3o8CJJIIYNqMEHzdr8KgW7ZkkgOFBCI8VX1mioeOJ3k58L9dtdLzGM0AWSuhtK8sd
+         3RS2fKA9noFJ9Yti/ZlEaur2G8Uz/OOJ4cvxaC2FVxb1NiS+KNF9n1R3knsrOMQlnVA0
+         RX+Y1KN6Iiu4HA5zPkISm9Utbe10GZBtszf1k=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=iRKdGUeQKewf5nuXxBX2agP7HYNBW301CirwCFhx4pU=;
-        b=qzC7xVglstcPuRJL5GU+/WIc+T68jLk/ROAYNyCEnWQAHqjnNM9p1ZNvE6Xbi0nVn7
-         JUJY4KDUCh3sTld0Qg58cnczFobwwV27zsvwUcMNzgAjbfaKMELbK5RfJlEQEaHHyfg/
-         F7vEyKRBzPdcciA1/4vWECtZhBdS4lLE3BqYNUk859pnGc0QHIr5NsEwdDHBEZnWvc2Y
-         90RfX5u7rbsXrWTwp6OpOfAGSoVV+EVmMhxWT/eTjDRgDZ8VfcNgHeEvTSIXOPzHewSm
-         v7XIsMi0NFDdMjKqRKoJMboY9e+3P5zMC+gXO80eCsX/ALYcnirCJs4BsCguBy0lvEYZ
-         Ue2g==
-X-Gm-Message-State: AOAM531Nc8G2rtAD6dedzgWrdNYxxwFhgrr310/0CCHTA4v8CYDGL9p5
-        VOMtzBQivtTyhlSfzjNsBHas9ZPQFa/c
-X-Google-Smtp-Source: ABdhPJw0N0XKpM+KTbbElpvFZIMiwftJ2h8EAOI91tZQq6qWMiAPMPFuFLr/2HlvN0EDQXvVSWUOTPNvIvX4
-Sender: "tzungbi via sendgmr" <tzungbi@tzungbi-z840.tpe.corp.google.com>
-X-Received: from tzungbi-z840.tpe.corp.google.com ([2401:fa00:1:b:725a:fff:fe41:c6a5])
- (user=tzungbi job=sendgmr) by 2002:a25:da0f:: with SMTP id
- n15mr13910518ybf.481.1605515172335; Mon, 16 Nov 2020 00:26:12 -0800 (PST)
-Date:   Mon, 16 Nov 2020 16:25:37 +0800
-In-Reply-To: <20201116082537.3287009-1-tzungbi@google.com>
-Message-Id: <20201116082537.3287009-3-tzungbi@google.com>
-Mime-Version: 1.0
-References: <20201116082537.3287009-1-tzungbi@google.com>
-X-Mailer: git-send-email 2.29.2.299.gdc1121823c-goog
-Subject: [PATCH v2 2/2] remoteproc/mediatek: fix sparse errors on dma_alloc
- and dma_free
-From:   Tzung-Bi Shih <tzungbi@google.com>
-To:     ohad@wizery.com, bjorn.andersson@linaro.org
-Cc:     linux-remoteproc@vger.kernel.org, matthias.bgg@gmail.com,
-        linux-mediatek@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, groeck@chromium.org,
-        drinkcat@chromium.org, pihsun@chromium.org, tzungbi@google.com,
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=CKXWZoZd8QcdkzAVySC/eiJYHbKt+QMjTxLKQIPnmNY=;
+        b=ewSc1s4B2oIhllphLiONvx/W0BJ0/eOEw0sOHHJrEu0xewtMvASRHVZWnp1c0Yjwb5
+         XXWnauolncm1S22xo8/pA/9nLZEN8k1s2bLTA/UgEqRYJqSSSrRLrh+z1gcACh0olVEF
+         uC6fSdky93nFLgyBXdC+R79Qyw/KEyWaAG1CniypCxi8kATMJ3eswnndDmw1A9Se53b2
+         muH5IHOAIX9zTVS1Ics9tSN4wn4avgkQBNHsqp5oWEzrQx7IQiAE4pkq4Tzw53Vzjdmm
+         PYRq10j8eNojTehIMPitND7tev358ev9EaedfFFnCUzBPjeIso+8jpOIk70KSp/GW+UC
+         5wAg==
+X-Gm-Message-State: AOAM532bMJpYUReaUDeMLlz/n5T0NJl7NiDskm6U+05t9Zgq2VOsPUmG
+        qbJSB0xQABdAwH1kHeIEovlARf6r/lbGrGjQXZY4cg==
+X-Google-Smtp-Source: ABdhPJxOnfFqjublvcEGqBfUg6OiK+LATMc5qZd9s1aNgp/F8asGgvnGu3qq8bcqkc57U29ER3+Y3MQeOGiuYAq0tVM=
+X-Received: by 2002:a67:2783:: with SMTP id n125mr7520035vsn.47.1605516189515;
+ Mon, 16 Nov 2020 00:43:09 -0800 (PST)
+MIME-Version: 1.0
+References: <20201116082537.3287009-1-tzungbi@google.com> <20201116082537.3287009-2-tzungbi@google.com>
+In-Reply-To: <20201116082537.3287009-2-tzungbi@google.com>
+From:   Nicolas Boichat <drinkcat@chromium.org>
+Date:   Mon, 16 Nov 2020 16:42:58 +0800
+Message-ID: <CANMq1KA_4M3vLzA6aK++_0_StDD1f7O=Q9AsofeQzHWzFmVV6Q@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] remoteproc/mediatek: fix sparse errors on sram
+ power on and off
+To:     Tzung-Bi Shih <tzungbi@google.com>
+Cc:     Ohad Ben-Cohen <ohad@wizery.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        "open list:REMOTE PROCESSOR (REMOTEPROC) SUBSYSTEM" 
+        <linux-remoteproc@vger.kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        "moderated list:ARM/Mediatek SoC support" 
+        <linux-mediatek@lists.infradead.org>,
+        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
+        Guenter Roeck <groeck@chromium.org>,
+        Pi-Hsun Shih <pihsun@chromium.org>,
         kernel test robot <lkp@intel.com>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Fixes the following sparse errors on dma_alloc_coherent() and
-dma_free_coherent().
+On Mon, Nov 16, 2020 at 4:26 PM Tzung-Bi Shih <tzungbi@google.com> wrote:
+>
+> Fixes the following sparse errors on sram power on and off:
+>
+> On drivers/remoteproc/mtk_scp.c:306:17:
+> warning: incorrect type in argument 2 (different address spaces)
+>    expected void volatile [noderef] __iomem *addr
+>    got void *addr
+>
+> On drivers/remoteproc/mtk_scp.c:307:9:
+> warning: incorrect type in argument 2 (different address spaces)
+>    expected void volatile [noderef] __iomem *addr
+>    got void *addr
+>
+> On drivers/remoteproc/mtk_scp.c:314:9:
+> warning: incorrect type in argument 2 (different address spaces)
+>    expected void volatile [noderef] __iomem *addr
+>    got void *addr
+>
+> On drivers/remoteproc/mtk_scp.c:316:17:
+> warning: incorrect type in argument 2 (different address spaces)
+>    expected void volatile [noderef] __iomem *addr
+>    got void *addr
 
-On drivers/remoteproc/mtk_scp.c:559:23:
-warning: incorrect type in assignment (different address spaces)
-   expected void [noderef] __iomem *cpu_addr
-   got void *
+Reviewed-by: Nicolas Boichat <drinkcat@chromium.org>
 
-On drivers/remoteproc/mtk_scp.c:572:56:
-warning: incorrect type in argument 3 (different address spaces)
-   expected void *cpu_addr
-   got void [noderef] __iomem *cpu_addr
-
-The cpu_addr is not a __iomem address.  Removes the marker.
-
-Reported-by: kernel test robot <lkp@intel.com>
-Signed-off-by: Tzung-Bi Shih <tzungbi@google.com>
----
- drivers/remoteproc/mtk_common.h | 2 +-
- drivers/remoteproc/mtk_scp.c    | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/remoteproc/mtk_common.h b/drivers/remoteproc/mtk_common.h
-index 47b4561443a9..b3397d327786 100644
---- a/drivers/remoteproc/mtk_common.h
-+++ b/drivers/remoteproc/mtk_common.h
-@@ -99,7 +99,7 @@ struct mtk_scp {
- 	bool ipi_id_ack[SCP_IPI_MAX];
- 	wait_queue_head_t ack_wq;
- 
--	void __iomem *cpu_addr;
-+	void *cpu_addr;
- 	dma_addr_t dma_addr;
- 	size_t dram_size;
- 
-diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
-index 8ed89ea1eb78..a1e23b5f19b9 100644
---- a/drivers/remoteproc/mtk_scp.c
-+++ b/drivers/remoteproc/mtk_scp.c
-@@ -413,7 +413,7 @@ static void *scp_da_to_va(struct rproc *rproc, u64 da, size_t len)
- 	} else if (scp->dram_size) {
- 		offset = da - scp->dma_addr;
- 		if (offset >= 0 && (offset + len) < scp->dram_size)
--			return (void __force *)scp->cpu_addr + offset;
-+			return scp->cpu_addr + offset;
- 	}
- 
- 	return NULL;
--- 
-2.29.2.299.gdc1121823c-goog
-
+> Reported-by: kernel test robot <lkp@intel.com>
+> Signed-off-by: Tzung-Bi Shih <tzungbi@google.com>
+> ---
+>  drivers/remoteproc/mtk_scp.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
+> index 577cbd5d421e..8ed89ea1eb78 100644
+> --- a/drivers/remoteproc/mtk_scp.c
+> +++ b/drivers/remoteproc/mtk_scp.c
+> @@ -298,7 +298,7 @@ static int mt8183_scp_before_load(struct mtk_scp *scp)
+>         return 0;
+>  }
+>
+> -static void mt8192_power_on_sram(void *addr)
+> +static void mt8192_power_on_sram(void __iomem *addr)
+>  {
+>         int i;
+>
+> @@ -307,7 +307,7 @@ static void mt8192_power_on_sram(void *addr)
+>         writel(0, addr);
+>  }
+>
+> -static void mt8192_power_off_sram(void *addr)
+> +static void mt8192_power_off_sram(void __iomem *addr)
+>  {
+>         int i;
+>
+> --
+> 2.29.2.299.gdc1121823c-goog
+>
