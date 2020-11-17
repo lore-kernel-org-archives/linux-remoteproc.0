@@ -2,90 +2,103 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62FA9C64E75
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 17 Nov 2020 14:03:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1521C2D0E4
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 17 Nov 2020 16:03:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0F03E2083E
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 17 Nov 2020 14:03:34 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="dmPoiDU8"
+	by mail.kernel.org (Postfix) with ESMTP id 74FF1241A7
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 17 Nov 2020 16:03:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387478AbgKQOCz (ORCPT
+        id S1726588AbgKQQDn (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 17 Nov 2020 09:02:55 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37602 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387477AbgKQOCy (ORCPT
+        Tue, 17 Nov 2020 11:03:43 -0500
+Received: from mga06.intel.com ([134.134.136.31]:58471 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725767AbgKQQDn (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 17 Nov 2020 09:02:54 -0500
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 59BA5C0613CF;
-        Tue, 17 Nov 2020 06:02:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=m0hk7B27NeOlPrLY9cJvHDlIQhUidBou/7Utsa5IK1g=; b=dmPoiDU8T3nNQ2t/waEeUgrzZI
-        k5qNrx2A0lHyPcMXIWNDO0HshkfKPtpOVNdWQJYjkYcYByLttcMxJHgNzVu4a90Z78/r3OezLmBao
-        FU3EuqTrqylL4pd0zDJ5wo11G8mxUPs4VesrCfSMlYHNoCE8LZ2KA5caKj2Qe+IaFAGjBLzd9eXX5
-        bOQrnE7lBoJmrbAJcCv0y6TXYbj9qmzcmPHMyjfeECuKcA+1f9Yksr1Ij0vg0393q5JhoLioopfN0
-        tg4wklF1HbhnUL6sdcamNXOADkGJY5O/Hh8vYDxX9NMdbEV8SIRiV2R/YnhtFWW58o2fpWe2r/FqC
-        qMBg9a3w==;
-Received: from hch by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kf1Z0-00087I-Ri; Tue, 17 Nov 2020 14:02:30 +0000
-Date:   Tue, 17 Nov 2020 14:02:30 +0000
-From:   Christoph Hellwig <hch@infradead.org>
+        Tue, 17 Nov 2020 11:03:43 -0500
+IronPort-SDR: sIK4wotKrdYhe6Ui4An37FFZlPAyTE/uaM/mnn0PN1yiALgWBVj4SBe0GHsfmNRm+0EFPucgCp
+ J8gt2n4U1kdw==
+X-IronPort-AV: E=McAfee;i="6000,8403,9808"; a="232567101"
+X-IronPort-AV: E=Sophos;i="5.77,485,1596524400"; 
+   d="scan'208";a="232567101"
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Nov 2020 08:03:42 -0800
+IronPort-SDR: MgMJFhvz1WxqBDp0qQDWfbasziMLBzN+LgGtFfziH2qf6LA11nU1BNpLEiRw0szajESBOa5X3Q
+ gCdgNHn3F5Fg==
+X-IronPort-AV: E=Sophos;i="5.77,485,1596524400"; 
+   d="scan'208";a="310254823"
+Received: from gliakhov-mobl2.ger.corp.intel.com (HELO ubuntu) ([10.252.34.253])
+  by fmsmga008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Nov 2020 08:03:40 -0800
+Date:   Tue, 17 Nov 2020 17:03:31 +0100
+From:   Guennadi Liakhovetski <guennadi.liakhovetski@linux.intel.com>
 To:     Arnaud POULIQUEN <arnaud.pouliquen@st.com>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        Alexander Lobakin <alobakin@pm.me>,
-        Amit Shah <amit@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Suman Anna <s-anna@ti.com>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Ohad Ben-Cohen <ohad@wizery.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
-        "virtualization@lists.linux-foundation.org" 
-        <virtualization@lists.linux-foundation.org>,
+Cc:     Mathieu Poirier <mathieu.poirier@linaro.org>,
+        "ohad@wizery.com" <ohad@wizery.com>,
+        "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>,
         "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>
-Subject: Re: [PATCH virtio] virtio: virtio_console: fix DMA memory allocation
- for rproc serial
-Message-ID: <20201117140230.GA30567@infradead.org>
-References: <AOKowLclCbOCKxyiJ71WeNyuAAj2q8EUtxrXbyky5E@cp7-web-042.plabs.ch>
- <20201116091950.GA30524@infradead.org>
- <ca183081-5a9f-0104-bf79-5fea544c9271@st.com>
- <20201116162844.GB16619@infradead.org>
- <20201116163907.GA19209@infradead.org>
- <79d2eb78-caad-9c0d-e130-51e628cedaaa@st.com>
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v5 8/8] rpmsg: Turn name service into a stand alone driver
+Message-ID: <20201117160330.GA15538@ubuntu>
+References: <eb7f6707-4483-3e1a-1e39-7f32fbf437e0@st.com>
+ <20201111144942.GA6403@ubuntu>
+ <c31b8427-baca-5c77-6420-b592c57a3a7b@st.com>
+ <20201112115115.GA11069@ubuntu>
+ <945f377d-1975-552d-25b2-1dc25d3c3a46@st.com>
+ <2d25d1aa-bd8a-f0db-7888-9f72edc9f687@st.com>
+ <20201116151028.GA1519@ubuntu>
+ <e5e49e1a-dc2a-ce16-425c-d2d87f415868@st.com>
+ <20201116224003.GC3892875@xps15>
+ <50549519-d9ff-9048-a3d8-dab02bfda096@st.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <79d2eb78-caad-9c0d-e130-51e628cedaaa@st.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <50549519-d9ff-9048-a3d8-dab02bfda096@st.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Tue, Nov 17, 2020 at 03:00:32PM +0100, Arnaud POULIQUEN wrote:
-> The dma_declare_coherent_memory allows to associate vdev0buffer memory region
-> to the remoteproc virtio device (vdev parent). This region is used to allocated
-> the rpmsg buffers.
-> The memory for the rpmsg buffer is allocated by the rpmsg_virtio device in
-> rpmsg_virtio_bus[1]. The size depends on the total size needed for the rpmsg
-> buffers.
+On Tue, Nov 17, 2020 at 12:42:30PM +0100, Arnaud POULIQUEN wrote:
+
+[snip]
+
+> diff --git a/drivers/rpmsg/rpmsg_ns.c b/drivers/rpmsg/rpmsg_ns.c
+> index 5bda7cb44618..80c2cc23bada 100644
+> --- a/drivers/rpmsg/rpmsg_ns.c
+> +++ b/drivers/rpmsg/rpmsg_ns.c
+> @@ -55,6 +55,39 @@ static int rpmsg_ns_cb(struct rpmsg_device *rpdev, void
+> *data, int len,
+>  	return 0;
+>  }
 > 
-> The vrings are allocated directly by the remoteproc device.
+> +/**
+> + * rpmsg_ns_register_device() - register name service device based on rpdev
+> + * @rpdev: prepared rpdev to be used for creating endpoints
+> + *
+> + * This function wraps rpmsg_register_device() preparing the rpdev for use as
+> + * basis for the rpmsg name service device.
+> + */
+> +int rpmsg_ns_register_device(struct rpmsg_device *rpdev)
+> +{
+> +#ifdef MODULES
+> +	int ret;
+> +	struct module *rpmsg_ns;
+> +
+> +	mutex_lock(&module_mutex);
+> +	rpmsg_ns = find_module(KBUILD_MODNAME);
+> +	mutex_unlock(&module_mutex);
+> +
+> +	if (!rpmsg_ns) {
+> +		ret = request_module(KBUILD_MODNAME);
 
-Weird.  I thought virtio was pretty strict in not allowing diret DMA
-API usage in drivers to support the legacy no-mapping case.
+Is this code requesting the module in which it is located?.. I must be missing 
+something...
 
-Either way, the point stands:  if you want these magic buffers handed
-out to specific rpmsg instances I think not having to detour through the
-DMA API is going to make everyones life easier.
+Thanks
+Guennadi
