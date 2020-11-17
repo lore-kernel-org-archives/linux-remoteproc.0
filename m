@@ -2,380 +2,79 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B3DAC6379F
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 17 Nov 2020 20:10:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DE4BC63777
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 17 Nov 2020 20:40:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3B42B2068E
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 17 Nov 2020 20:10:19 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="lYE4czBv"
+	by mail.kernel.org (Postfix) with ESMTP id C7751222E9
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 17 Nov 2020 20:40:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731699AbgKQUJx (ORCPT
+        id S1728638AbgKQUkl (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 17 Nov 2020 15:09:53 -0500
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:45956 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725771AbgKQUJv (ORCPT
+        Tue, 17 Nov 2020 15:40:41 -0500
+Received: from mga03.intel.com ([134.134.136.65]:19638 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726685AbgKQUkl (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 17 Nov 2020 15:09:51 -0500
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 0AHK9jh1095978;
-        Tue, 17 Nov 2020 14:09:45 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1605643785;
-        bh=S+9i10+aV294z+9DJ3JDrFbFtBIcX7sIE52SD8LIvWQ=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=lYE4czBvvYiREbOcz62ISFgC27qcy788dK53Pm59I0zuyz+F/obaRD8je6xgYQjcA
-         H5vPy3+kvucQiPiB+pjfdyED3pa6l/3xxBx9WZwQn+A9pbpCa/R7aWxbiM7tsYDTPg
-         KbF2XJUOhhJMTn3qIMIMV8fSRhyZXlNkvNkzb/PA=
-Received: from DLEE111.ent.ti.com (dlee111.ent.ti.com [157.170.170.22])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 0AHK9j9R005901
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 17 Nov 2020 14:09:45 -0600
-Received: from DLEE111.ent.ti.com (157.170.170.22) by DLEE111.ent.ti.com
- (157.170.170.22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3; Tue, 17
- Nov 2020 14:09:44 -0600
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE111.ent.ti.com
- (157.170.170.22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3 via
- Frontend Transport; Tue, 17 Nov 2020 14:09:44 -0600
-Received: from [10.250.38.244] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 0AHK9iu1046455;
-        Tue, 17 Nov 2020 14:09:44 -0600
-Subject: Re: [PATCH 5/6] remoteproc/pru: Add support for various PRU cores on
- K3 AM65x SoCs
-To:     Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>,
-        <ohad@wizery.com>, <bjorn.andersson@linaro.org>,
-        <mathieu.poirier@linaro.org>
-CC:     <linux-remoteproc@vger.kernel.org>, <robh+dt@kernel.org>,
-        <lee.jones@linaro.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-omap@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <praneeth@ti.com>,
-        <rogerq@ti.com>
-References: <20201114084613.13503-1-grzegorz.jaszczyk@linaro.org>
- <20201114084613.13503-6-grzegorz.jaszczyk@linaro.org>
-From:   Suman Anna <s-anna@ti.com>
-Message-ID: <0ae5656f-20d7-95dc-f88a-7125edfbfb75@ti.com>
-Date:   Tue, 17 Nov 2020 14:09:38 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Tue, 17 Nov 2020 15:40:41 -0500
+IronPort-SDR: azWK+q+exYxhbsvL6CFkA1uokF15Silq0/KRqVnahBFML5JZABYIkHeCSF7iGd3dBmLj8ujAUt
+ XeE1z50V0irw==
+X-IronPort-AV: E=McAfee;i="6000,8403,9808"; a="171103547"
+X-IronPort-AV: E=Sophos;i="5.77,486,1596524400"; 
+   d="scan'208";a="171103547"
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Nov 2020 12:40:39 -0800
+IronPort-SDR: TSx5QXqK9wP0dqSvKoHiVm3SypOSWWd0FF3Tz7HYDxWTjjGe0qDjnb+Z3VdA5moPvIre84FcAA
+ uihhRCqli/RQ==
+X-IronPort-AV: E=Sophos;i="5.77,486,1596524400"; 
+   d="scan'208";a="544202466"
+Received: from gliakhov-mobl2.ger.corp.intel.com (HELO ubuntu) ([10.252.34.253])
+  by orsmga005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Nov 2020 12:40:37 -0800
+Date:   Tue, 17 Nov 2020 21:40:33 +0100
+From:   Guennadi Liakhovetski <guennadi.liakhovetski@linux.intel.com>
+To:     Arnaud POULIQUEN <arnaud.pouliquen@st.com>
+Cc:     Mathieu Poirier <mathieu.poirier@linaro.org>,
+        "ohad@wizery.com" <ohad@wizery.com>,
+        "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>,
+        "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v5 8/8] rpmsg: Turn name service into a stand alone driver
+Message-ID: <20201117204032.GC15538@ubuntu>
+References: <945f377d-1975-552d-25b2-1dc25d3c3a46@st.com>
+ <2d25d1aa-bd8a-f0db-7888-9f72edc9f687@st.com>
+ <20201116151028.GA1519@ubuntu>
+ <e5e49e1a-dc2a-ce16-425c-d2d87f415868@st.com>
+ <20201116224003.GC3892875@xps15>
+ <50549519-d9ff-9048-a3d8-dab02bfda096@st.com>
+ <20201117160330.GA15538@ubuntu>
+ <a653c503-7fd1-7b87-88a5-88c9002ba410@st.com>
+ <20201117165816.GB15538@ubuntu>
+ <16e07968-d783-8bcc-cec1-fd02cd717ddd@st.com>
 MIME-Version: 1.0
-In-Reply-To: <20201114084613.13503-6-grzegorz.jaszczyk@linaro.org>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <16e07968-d783-8bcc-cec1-fd02cd717ddd@st.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi Greg,
+On Tue, Nov 17, 2020 at 06:30:54PM +0100, Arnaud POULIQUEN wrote:
 
-On 11/14/20 2:46 AM, Grzegorz Jaszczyk wrote:
-> From: Suman Anna <s-anna@ti.com>
-> 
-> The K3 AM65x family of SoCs have the next generation of the PRU-ICSS
-> processor subsystem, commonly referred to as ICSSG. Each ICSSG processor
-> subsystem on AM65x SR1.0 contains two primary PRU cores and two new
-> auxiliary PRU cores called RTUs. The AM65x SR2.0 SoCs have a revised
-> ICSSG IP that is based off the subsequent IP revision used on J721E
-> SoCs. This IP instance has two new custom auxiliary PRU cores called
-> Transmit PRUs (Tx_PRUs) in addition to the existing PRUs and RTUs.
-> 
-> Each RTU and Tx_PRU cores have their own dedicated IRAM (smaller than
-> a PRU), Control and debug feature sets, but is different in terms of
-> sub-modules integrated around it and does not have the full capabilities
-> associated with a PRU core. The RTU core is typically used to aid a
-> PRU core in accelerating data transfers, while the Tx_PRU cores is
-> normally used to control the TX L2 FIFO if enabled in Ethernet
-> applications. Both can also be used to run independent applications.
-> The RTU and Tx_PRU cores though share the same Data RAMs as the PRU
-> cores, so the memories have to be partitioned carefully between different
-> applications. The new cores also support a new sub-module called Task
-> Manager to support two different context thread executions.
-> 
-> Enhance the existing PRU remoteproc driver to support these new PRU, RTU
-> and Tx PRU cores by using specific compatibles. The initial names for the
-> firmware images for each PRU core are retrieved from DT nodes, and can
-> be adjusted through sysfs if required.
-> 
-> The PRU remoteproc driver has to be specifically modified to use a
-> custom memcpy function within its ELF loader implementation for these
-> new cores in order to overcome a limitation with copying data into each
-> of the core's IRAM memories. These memory ports support only 4-byte
-> writes, and any sub-word order byte writes clear out the remaining
-> bytes other than the bytes being written within the containing word.
-> The default ARM64 memcpy also cannot be used as it throws an exception
-> when the preferred 8-byte copy operation is attempted. This choice is
-> made by using a state flag that is set only on K3 SoCs.
-> 
-> Signed-off-by: Suman Anna <s-anna@ti.com>
-> Co-developed-by: Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>
-> Signed-off-by: Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>
-> ---
->  drivers/remoteproc/pru_rproc.c | 141 ++++++++++++++++++++++++++++++---
->  1 file changed, 132 insertions(+), 9 deletions(-)
-> 
-> diff --git a/drivers/remoteproc/pru_rproc.c b/drivers/remoteproc/pru_rproc.c
-> index 33806ddcbd5d..04c9f07799e2 100644
-> --- a/drivers/remoteproc/pru_rproc.c
-> +++ b/drivers/remoteproc/pru_rproc.c
-> @@ -46,9 +46,13 @@
->  #define PRU_DEBUG_GPREG(x)	(0x0000 + (x) * 4)
->  #define PRU_DEBUG_CT_REG(x)	(0x0080 + (x) * 4)
->  
-> -/* PRU Core IRAM address masks */
-> +/* PRU/RTU/Tx_PRU Core IRAM address masks */
->  #define PRU0_IRAM_ADDR_MASK	0x34000
->  #define PRU1_IRAM_ADDR_MASK	0x38000
-> +#define RTU0_IRAM_ADDR_MASK	0x4000
-> +#define RTU1_IRAM_ADDR_MASK	0x6000
-> +#define TX_PRU0_IRAM_ADDR_MASK	0xa000
-> +#define TX_PRU1_IRAM_ADDR_MASK	0xc000
->  
->  /* PRU device addresses for various type of PRU RAMs */
->  #define PRU_IRAM_DA	0	/* Instruction RAM */
-> @@ -73,12 +77,38 @@ enum pru_iomem {
->  	PRU_IOMEM_MAX,
->  };
->  
-> +/**
-> + * enum pru_type - PRU core type identifier
-> + *
-> + * @PRU_TYPE_PRU: Programmable Real-time Unit
-> + * @PRU_TYPE_RTU: Auxiliary Programmable Real-Time Unit
-> + * @PRU_TYPE_TX_PRU: Transmit Programmable Real-Time Unit
-> + * @PRU_TYPE_MAX: just keep this one at the end
-> + */
-> +enum pru_type {
-> +	PRU_TYPE_PRU = 0,
-> +	PRU_TYPE_RTU,
-> +	PRU_TYPE_TX_PRU,
-> +	PRU_TYPE_MAX,
-> +};
-> +
-> +/**
-> + * struct pru_private_data - device data for a PRU core
-> + * @type: type of the PRU core (PRU, RTU, Tx_PRU)
-> + * @is_k3: flag used to identify the need for special load & event handling
-> + */
-> +struct pru_private_data {
-> +	enum pru_type type;
-> +	unsigned int is_k3 : 1;
-> +};
-> +
->  /**
->   * struct pru_rproc - PRU remoteproc structure
->   * @id: id of the PRU core within the PRUSS
->   * @dev: PRU core device pointer
->   * @pruss: back-reference to parent PRUSS structure
->   * @rproc: remoteproc pointer for this PRU core
-> + * @data: PRU core specific data
->   * @mem_regions: data for each of the PRU memory regions
->   * @fw_name: name of firmware image used during loading
->   * @mapped_irq: virtual interrupt numbers of created fw specific mapping
-> @@ -93,6 +123,7 @@ struct pru_rproc {
->  	struct device *dev;
->  	struct pruss *pruss;
->  	struct rproc *rproc;
-> +	const struct pru_private_data *data;
->  	struct pruss_mem_region mem_regions[PRU_IOMEM_MAX];
->  	const char *fw_name;
->  	int *mapped_irq;
-> @@ -318,11 +349,12 @@ static int pru_rproc_start(struct rproc *rproc)
->  {
->  	struct device *dev = &rproc->dev;
->  	struct pru_rproc *pru = rproc->priv;
-> +	const char *names[PRU_TYPE_MAX] = { "PRU", "RTU", "Tx_PRU" };
->  	u32 val;
->  	int ret;
->  
-> -	dev_dbg(dev, "starting PRU%d: entry-point = 0x%llx\n",
-> -		pru->id, (rproc->bootaddr >> 2));
-> +	dev_dbg(dev, "starting %s%d: entry-point = 0x%llx\n",
-> +		names[pru->data->type], pru->id, (rproc->bootaddr >> 2));
->  
->  	ret = pru_handle_intrmap(rproc);
->  	/*
-> @@ -344,9 +376,10 @@ static int pru_rproc_stop(struct rproc *rproc)
->  {
->  	struct device *dev = &rproc->dev;
->  	struct pru_rproc *pru = rproc->priv;
-> +	const char *names[PRU_TYPE_MAX] = { "PRU", "RTU", "Tx_PRU" };
->  	u32 val;
->  
-> -	dev_dbg(dev, "stopping PRU%d\n", pru->id);
-> +	dev_dbg(dev, "stopping %s%d\n", names[pru->data->type], pru->id);
->  
->  	val = pru_control_read_reg(pru, PRU_CTRL_CTRL);
->  	val &= ~CTRL_CTRL_EN;
-> @@ -458,9 +491,53 @@ static struct rproc_ops pru_rproc_ops = {
->  	.da_to_va	= pru_rproc_da_to_va,
->  };
->  
-> +/*
-> + * Custom memory copy implementation for ICSSG PRU/RTU Cores
+[snip]
 
-Please update this to add Tx_PRU as well to the list here and in the below
-description.
+> It's not a good day for me today... it seems I read your explanation too quickly
+> this morning, which is, however, very clear.
+> My apologies
 
-> + *
-> + * The ICSSG PRU/RTU cores have a memory copying issue with IRAM memories, that
-> + * is not seen on previous generation SoCs. The data is reflected properly in
-> + * the IRAM memories only for integer (4-byte) copies. Any unaligned copies
-> + * result in all the other pre-existing bytes zeroed out within that 4-byte
-> + * boundary, thereby resulting in wrong text/code in the IRAMs. Also, the
-> + * IRAM memory port interface does not allow any 8-byte copies (as commonly
-> + * used by ARM64 memcpy implementation) and throws an exception. The DRAM
-> + * memory ports do not show this behavior. Use this custom copying function
-> + * to properly load the PRU/RTU firmware images on all memories for simplicity.
+Oh, I did the same to one of your earlier emails one of these days - 
+I missed a paragraph at the end and then "re-discovered" it in a 
+later email, so, I can do that too! :-D
 
-This last line is obsolete now that we use regular memcpy for Data RAM copies.
-
-regards
-Suman
-
-> + */
-> +static int pru_rproc_memcpy(void *dest, const void *src, size_t count)
-> +{
-> +	const int *s = src;
-> +	int *d = dest;
-> +	int size = count / 4;
-> +	int *tmp_src = NULL;
-> +
-> +	/*
-> +	 * TODO: relax limitation of 4-byte aligned dest addresses and copy
-> +	 * sizes
-> +	 */
-> +	if ((long)dest % 4 || count % 4)
-> +		return -EINVAL;
-> +
-> +	/* src offsets in ELF firmware image can be non-aligned */
-> +	if ((long)src % 4) {
-> +		tmp_src = kmemdup(src, count, GFP_KERNEL);
-> +		if (!tmp_src)
-> +			return -ENOMEM;
-> +		s = tmp_src;
-> +	}
-> +
-> +	while (size--)
-> +		*d++ = *s++;
-> +
-> +	kfree(tmp_src);
-> +
-> +	return 0;
-> +}
-> +
->  static int
->  pru_rproc_load_elf_segments(struct rproc *rproc, const struct firmware *fw)
->  {
-> +	struct pru_rproc *pru = rproc->priv;
->  	struct device *dev = &rproc->dev;
->  	struct elf32_hdr *ehdr;
->  	struct elf32_phdr *phdr;
-> @@ -512,7 +589,17 @@ pru_rproc_load_elf_segments(struct rproc *rproc, const struct firmware *fw)
->  		if (!phdr->p_filesz)
->  			continue;
->  
-> -		memcpy(ptr, elf_data + phdr->p_offset, filesz);
-> +		if (pru->data->is_k3 && is_iram) {
-> +			ret = pru_rproc_memcpy(ptr, elf_data + phdr->p_offset,
-> +					       filesz);
-> +			if (ret) {
-> +				dev_err(dev, "PRU memory copy failed for da 0x%x memsz 0x%x\n",
-> +					da, memsz);
-> +				break;
-> +			}
-> +		} else {
-> +			memcpy(ptr, elf_data + phdr->p_offset, filesz);
-> +		}
->  	}
->  
->  	return ret;
-> @@ -619,9 +706,17 @@ static int pru_rproc_set_id(struct pru_rproc *pru)
->  	int ret = 0;
->  
->  	switch (pru->mem_regions[PRU_IOMEM_IRAM].pa & 0x3ffff) {
-> +	case TX_PRU0_IRAM_ADDR_MASK:
-> +		fallthrough;
-> +	case RTU0_IRAM_ADDR_MASK:
-> +		fallthrough;
->  	case PRU0_IRAM_ADDR_MASK:
->  		pru->id = 0;
->  		break;
-> +	case TX_PRU1_IRAM_ADDR_MASK:
-> +		fallthrough;
-> +	case RTU1_IRAM_ADDR_MASK:
-> +		fallthrough;
->  	case PRU1_IRAM_ADDR_MASK:
->  		pru->id = 1;
->  		break;
-> @@ -642,8 +737,13 @@ static int pru_rproc_probe(struct platform_device *pdev)
->  	struct rproc *rproc = NULL;
->  	struct resource *res;
->  	int i, ret;
-> +	const struct pru_private_data *data;
->  	const char *mem_names[PRU_IOMEM_MAX] = { "iram", "control", "debug" };
->  
-> +	data = of_device_get_match_data(&pdev->dev);
-> +	if (!data)
-> +		return -ENODEV;
-> +
->  	ret = of_property_read_string(np, "firmware-name", &fw_name);
->  	if (ret) {
->  		dev_err(dev, "unable to retrieve firmware-name %d\n", ret);
-> @@ -676,6 +776,7 @@ static int pru_rproc_probe(struct platform_device *pdev)
->  
->  	pru = rproc->priv;
->  	pru->dev = dev;
-> +	pru->data = data;
->  	pru->pruss = platform_get_drvdata(ppdev);
->  	pru->rproc = rproc;
->  	pru->fw_name = fw_name;
-> @@ -727,11 +828,33 @@ static int pru_rproc_remove(struct platform_device *pdev)
->  	return 0;
->  }
->  
-> +static const struct pru_private_data pru_data = {
-> +	.type = PRU_TYPE_PRU,
-> +};
-> +
-> +static const struct pru_private_data k3_pru_data = {
-> +	.type = PRU_TYPE_PRU,
-> +	.is_k3 = 1,
-> +};
-> +
-> +static const struct pru_private_data k3_rtu_data = {
-> +	.type = PRU_TYPE_RTU,
-> +	.is_k3 = 1,
-> +};
-> +
-> +static const struct pru_private_data k3_tx_pru_data = {
-> +	.type = PRU_TYPE_TX_PRU,
-> +	.is_k3 = 1,
-> +};
-> +
->  static const struct of_device_id pru_rproc_match[] = {
-> -	{ .compatible = "ti,am3356-pru", },
-> -	{ .compatible = "ti,am4376-pru", },
-> -	{ .compatible = "ti,am5728-pru", },
-> -	{ .compatible = "ti,k2g-pru",    },
-> +	{ .compatible = "ti,am3356-pru",	.data = &pru_data },
-> +	{ .compatible = "ti,am4376-pru",	.data = &pru_data },
-> +	{ .compatible = "ti,am5728-pru",	.data = &pru_data },
-> +	{ .compatible = "ti,k2g-pru",		.data = &pru_data },
-> +	{ .compatible = "ti,am654-pru",		.data = &k3_pru_data },
-> +	{ .compatible = "ti,am654-rtu",		.data = &k3_rtu_data },
-> +	{ .compatible = "ti,am654-tx-pru",	.data = &k3_tx_pru_data },
->  	{},
->  };
->  MODULE_DEVICE_TABLE(of, pru_rproc_match);
-> 
-
+Cheers
+Guennadi
