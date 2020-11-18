@@ -2,325 +2,469 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-17.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE295C56201
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 18 Nov 2020 22:26:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7917AC6379D
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 18 Nov 2020 23:04:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3BD94246DE
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 18 Nov 2020 22:26:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 285AE246EF
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 18 Nov 2020 23:04:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YdBUcbcD"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="k++fN+KO"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726519AbgKRW0R (ORCPT
+        id S1726502AbgKRXEI (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 18 Nov 2020 17:26:17 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56714 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726255AbgKRW0R (ORCPT
+        Wed, 18 Nov 2020 18:04:08 -0500
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:34226 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725823AbgKRXEI (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 18 Nov 2020 17:26:17 -0500
-Received: from mail-pf1-x443.google.com (mail-pf1-x443.google.com [IPv6:2607:f8b0:4864:20::443])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4180AC0613D6
-        for <linux-remoteproc@vger.kernel.org>; Wed, 18 Nov 2020 14:26:17 -0800 (PST)
-Received: by mail-pf1-x443.google.com with SMTP id g7so2505088pfc.2
-        for <linux-remoteproc@vger.kernel.org>; Wed, 18 Nov 2020 14:26:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=/ei20up2lfscrQesr+sFD5UNuMDQ0VaRFySN6eQPxNE=;
-        b=YdBUcbcD4XTCFMdpqH5/xHyNxBUNZTYvqT01kQwtH3JmkXqtQ6E7JnNXrh0BOWELMV
-         tkjpXscYHQxynFm0DVdJIdKzJujTlLmxUg3tyIYgiJDwWaem5M5cBOsXeBfECMUhsiEE
-         HqJNlHC7uTQDaA8gQO0w1EPjqQNrj9ow49KA/t0hmRf2c+OH68nXOWuCcVwXCnuq1VYF
-         KfI7kkxUfeUVHdHs0vYOcUK5BJFwblPWi4EcKX9ndnlZwON8uPz+RvZrXmmVIZ+Vucwb
-         JJTRdl+6i1kKQx7oYoEBQHRGcijEwJqxfexlPv0t6ey4IBtG7MgZYStfxMnkMvK2zKsG
-         goRw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=/ei20up2lfscrQesr+sFD5UNuMDQ0VaRFySN6eQPxNE=;
-        b=g0ShQDkJ7kAA5MzrQJgxT9FfX9idgV3ORk8y0t2Wy9TZmq8GqGLVUoij1QyIfIejco
-         Q3KRMS22A9FS+EHCDwwYlbL401y07ZR80znKWqEl1zzeMR6CG+cx/tfFZwyahtI13mhY
-         osT1HK4Yj8/GQHyrFMYlmjagAbUVkAMuEby+GLa7WC0bek9XS9gBNSG6+GgH95XlmBQH
-         Zh2zrjFBBecw4ub8V0z6IqpVFkRE7maT2jrOo5rBKNUqo2jBAXlH0QdpyEBpLB7w6TkI
-         C2ktaHofoXIIwG5Yu59Rid9uQW4WN8i9Q1Ksan6J0/5EXY8S/iz+HVmkO/JHL7UEFCLN
-         jEwA==
-X-Gm-Message-State: AOAM533RMzIUbpk/09V8v9iMfz+7tNBQiclmfQ4X1xTjrDebfm0yvPMI
-        sO9Mwg8J9uD5PSzLmlSwDhfJcg==
-X-Google-Smtp-Source: ABdhPJz/Tj/VnlCoc+pzDOA/mgoONTHwnYAQCGENHBF+RBCs3eb0qMJd/vnjBRid1d5P5Osw7YUnIg==
-X-Received: by 2002:a17:90a:9504:: with SMTP id t4mr1206011pjo.82.1605738376643;
-        Wed, 18 Nov 2020 14:26:16 -0800 (PST)
-Received: from xps15 (S0106889e681aac74.cg.shawcable.net. [68.147.0.187])
-        by smtp.gmail.com with ESMTPSA id g6sm3807114pjd.3.2020.11.18.14.26.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Nov 2020 14:26:15 -0800 (PST)
-Date:   Wed, 18 Nov 2020 15:26:14 -0700
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-To:     Rishabh Bhatnagar <rishabhb@codeaurora.org>
-Cc:     linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        bjorn.andersson@linaro.org, tsoni@codeaurora.org,
-        psodagud@codeaurora.org, sidgup@codeaurora.org
-Subject: Re: [PATCH v2 3/3] remoteproc: Add ftrace events to trace lifecycle
- of remoteprocs
-Message-ID: <20201118222614.GA75192@xps15>
-References: <1605563084-30385-1-git-send-email-rishabhb@codeaurora.org>
- <1605563084-30385-4-git-send-email-rishabhb@codeaurora.org>
+        Wed, 18 Nov 2020 18:04:08 -0500
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 0AIN4A7u123297;
+        Wed, 18 Nov 2020 17:04:10 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1605740650;
+        bh=fwEj+R47uFH1Mm6ZfrXrvU1GXmf2DxMiFOfatEShQ9Q=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=k++fN+KOGtbJ5X8mRHcpy3SHres2PE30x83QVJoBtpPD/k4ngZRPwDQRE0FdMY/sg
+         q6iB92hnz4SHbOnf1LOQFTLFx6RdfGJKcL90E+C5l5+AnqeYZ186bdvbEoE713CUHW
+         DKZxckaU6/dU+45PHmKEe5RNpV7yvGyNMdwM7zQg=
+Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 0AIN4ASs007539
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 18 Nov 2020 17:04:10 -0600
+Received: from DFLE108.ent.ti.com (10.64.6.29) by DFLE114.ent.ti.com
+ (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3; Wed, 18
+ Nov 2020 17:04:10 -0600
+Received: from fllv0039.itg.ti.com (10.64.41.19) by DFLE108.ent.ti.com
+ (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3 via
+ Frontend Transport; Wed, 18 Nov 2020 17:04:10 -0600
+Received: from [10.250.38.244] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id 0AIN4AwW081925;
+        Wed, 18 Nov 2020 17:04:10 -0600
+Subject: Re: [PATCH 3/6] remoteproc/pru: Add support for PRU specific
+ interrupt configuration
+To:     Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>
+CC:     Ohad Ben Cohen <ohad@wizery.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        <linux-remoteproc@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Lee Jones <lee.jones@linaro.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-omap@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        "Bajjuri, Praneeth" <praneeth@ti.com>,
+        Roger Quadros <rogerq@ti.com>
+References: <20201114084613.13503-1-grzegorz.jaszczyk@linaro.org>
+ <20201114084613.13503-4-grzegorz.jaszczyk@linaro.org>
+ <5e92947a-febf-90d0-b40e-499fe2144737@ti.com>
+ <CAMxfBF5xMyb4LZ6Ei9xS49yXfHWJjKppWo7NNHqc5CfHYAiZTg@mail.gmail.com>
+From:   Suman Anna <s-anna@ti.com>
+Message-ID: <ada369ed-0c1b-46e1-68bb-b37d04cf90fd@ti.com>
+Date:   Wed, 18 Nov 2020 17:04:04 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1605563084-30385-4-git-send-email-rishabhb@codeaurora.org>
+In-Reply-To: <CAMxfBF5xMyb4LZ6Ei9xS49yXfHWJjKppWo7NNHqc5CfHYAiZTg@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Mon, Nov 16, 2020 at 01:44:44PM -0800, Rishabh Bhatnagar wrote:
-> Add trace events to trace bootup/shutdown/recovery of remote
-> processors. These events are useful in analyzing the time
-> spent in each step in the life cycle and can be used for
-> performace analysis. Also these serve as standard checkpoints
-> in debugging.
-> 
-> Signed-off-by: Rishabh Bhatnagar <rishabhb@codeaurora.org>
-> ---
->  drivers/remoteproc/remoteproc_core.c | 19 +++++++-
->  include/trace/events/remoteproc.h    | 91 ++++++++++++++++++++++++++++++++++++
->  2 files changed, 109 insertions(+), 1 deletion(-)
->  create mode 100644 include/trace/events/remoteproc.h
-> 
-> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-> index dab2c0f..39da409 100644
-> --- a/drivers/remoteproc/remoteproc_core.c
-> +++ b/drivers/remoteproc/remoteproc_core.c
-> @@ -42,6 +42,9 @@
->  
->  #include "remoteproc_internal.h"
->  
-> +#define CREATE_TRACE_POINTS
-> +#include <trace/events/remoteproc.h>
-> +
->  #define HIGH_BITS_MASK 0xFFFFFFFF00000000ULL
->  
->  static DEFINE_MUTEX(rproc_list_mutex);
-> @@ -1164,6 +1167,7 @@ static int rproc_prepare_subdevices(struct rproc *rproc)
->  	struct rproc_subdev *subdev;
->  	int ret;
->  
-> +	trace_rproc_subdevices("Prepare subdevices", rproc->name);
+Hi Greg,
 
-I wouldn't add this to the core - after a while they become part of the ABI and
-we can't move things around.  I suppose they can stay in platform drivers but
-even that is going against the general trend in the kernel community to avoid them at
-all.  To me this should remain out of tree code but Bjorn will make the call.
-
-Thanks,
-Mathieu
-
->  	list_for_each_entry(subdev, &rproc->subdevs, node) {
->  		if (subdev->prepare) {
->  			ret = subdev->prepare(subdev);
-> @@ -1188,6 +1192,7 @@ static int rproc_start_subdevices(struct rproc *rproc)
->  	struct rproc_subdev *subdev;
->  	int ret;
->  
-> +	trace_rproc_subdevices("Start subdevices", rproc->name);
->  	list_for_each_entry(subdev, &rproc->subdevs, node) {
->  		if (subdev->start) {
->  			ret = subdev->start(subdev);
-> @@ -1211,6 +1216,7 @@ static void rproc_stop_subdevices(struct rproc *rproc, bool crashed)
->  {
->  	struct rproc_subdev *subdev;
->  
-> +	trace_rproc_subdevices("Stop subdevices", rproc->name);
->  	list_for_each_entry_reverse(subdev, &rproc->subdevs, node) {
->  		if (subdev->stop)
->  			subdev->stop(subdev, crashed);
-> @@ -1221,6 +1227,7 @@ static void rproc_unprepare_subdevices(struct rproc *rproc)
->  {
->  	struct rproc_subdev *subdev;
->  
-> +	trace_rproc_subdevices("Unprepare subdevices", rproc->name);
->  	list_for_each_entry_reverse(subdev, &rproc->subdevs, node) {
->  		if (subdev->unprepare)
->  			subdev->unprepare(subdev);
-> @@ -1357,6 +1364,7 @@ static int rproc_start(struct rproc *rproc, const struct firmware *fw)
->  	struct device *dev = &rproc->dev;
->  	int ret;
->  
-> +	trace_rproc_boot("loading firmware segments into memory", rproc->name);
->  	/* load the ELF segments to memory */
->  	ret = rproc_load_segments(rproc, fw);
->  	if (ret) {
-> @@ -1385,6 +1393,7 @@ static int rproc_start(struct rproc *rproc, const struct firmware *fw)
->  		goto reset_table_ptr;
->  	}
->  
-> +	trace_rproc_boot("starting remoteproc", rproc->name);
->  	/* power up the remote processor */
->  	ret = rproc->ops->start(rproc);
->  	if (ret) {
-> @@ -1402,6 +1411,7 @@ static int rproc_start(struct rproc *rproc, const struct firmware *fw)
->  
->  	rproc->state = RPROC_RUNNING;
->  
-> +	trace_rproc_boot("remoteproc is up", rproc->name);
->  	dev_info(dev, "remote processor %s is now up\n", rproc->name);
->  
->  	return 0;
-> @@ -1648,6 +1658,7 @@ static int rproc_stop(struct rproc *rproc, bool crashed)
->  	/* the installed resource table is no longer accessible */
->  	rproc->table_ptr = rproc->cached_table;
->  
-> +	trace_rproc_shutdown("Stopping the remoteproc", rproc->name);
->  	/* power off the remote processor */
->  	ret = rproc->ops->stop(rproc);
->  	if (ret) {
-> @@ -1697,6 +1708,7 @@ int rproc_trigger_recovery(struct rproc *rproc)
->  	if (rproc->state != RPROC_CRASHED)
->  		goto unlock_mutex;
->  
-> +	trace_rproc_recovery("Recover remoteproc", rproc->name);
->  	dev_err(dev, "recovering %s\n", rproc->name);
->  
->  	ret = rproc_stop(rproc, true);
-> @@ -1716,6 +1728,7 @@ int rproc_trigger_recovery(struct rproc *rproc)
->  	/* boot the remote processor up again */
->  	ret = rproc_start(rproc, firmware_p);
->  
-> +	trace_rproc_recovery("Recovery completed", rproc->name);
->  	release_firmware(firmware_p);
->  
->  unlock_mutex:
-> @@ -1796,6 +1809,7 @@ int rproc_boot(struct rproc *rproc)
->  	/* skip the boot or attach process if rproc is already powered up */
->  	if (atomic_inc_return(&rproc->power) > 1) {
->  		ret = 0;
-> +		trace_rproc_boot("Incrementing ref count and exiting", rproc->name);
->  		goto unlock_mutex;
->  	}
->  
-> @@ -1804,6 +1818,7 @@ int rproc_boot(struct rproc *rproc)
->  
->  		ret = rproc_actuate(rproc);
->  	} else {
-> +		trace_rproc_boot("requesting firmware", rproc->name);
->  		dev_info(dev, "powering up %s\n", rproc->name);
->  
->  		/* load firmware */
-> @@ -1858,8 +1873,10 @@ void rproc_shutdown(struct rproc *rproc)
->  	}
->  
->  	/* if the remote proc is still needed, bail out */
-> -	if (!atomic_dec_and_test(&rproc->power))
-> +	if (!atomic_dec_and_test(&rproc->power)) {
-> +		trace_rproc_shutdown("Decrementing ref count and exiting", rproc->name);
->  		goto out;
-> +	}
->  
->  	ret = rproc_stop(rproc, false);
->  	if (ret) {
-> diff --git a/include/trace/events/remoteproc.h b/include/trace/events/remoteproc.h
-> new file mode 100644
-> index 0000000..341bf4b
-> --- /dev/null
-> +++ b/include/trace/events/remoteproc.h
-> @@ -0,0 +1,91 @@
-> +/* SPDX-License-Identifier: GPL-2.0-only */
-> +/*
-> + * Copyright (c) 2020, The Linux Foundation. All rights reserved.
-> + */
-> +
-> +#undef TRACE_SYSTEM
-> +#define TRACE_SYSTEM remoteproc
-> +
-> +#if !defined(_TRACE_REMOTEPROC_H) || defined(TRACE_HEADER_MULTI_READ)
-> +#define _TRACE_REMOTEPROC_H
-> +
-> +#include <linux/tracepoint.h>
-> +
-> +TRACE_EVENT(rproc_boot,
-> +
-> +	TP_PROTO(const char *event, const char *rproc_name),
-> +
-> +	TP_ARGS(event, rproc_name),
-> +
-> +	TP_STRUCT__entry(
-> +		__string(event, event)
-> +		__string(rproc_name, rproc_name)
-> +	),
-> +
-> +	TP_fast_assign(
-> +		__assign_str(event, event);
-> +		__assign_str(rproc_name, rproc_name);
-> +	),
-> +
-> +	TP_printk("rproc_boot: %s: %s", __get_str(rproc_name), __get_str(event))
-> +);
-> +
-> +TRACE_EVENT(rproc_shutdown,
-> +
-> +	TP_PROTO(const char *event, const char *rproc_name),
-> +
-> +	TP_ARGS(event, rproc_name),
-> +
-> +	TP_STRUCT__entry(
-> +		__string(event, event)
-> +		__string(rproc_name, rproc_name)
-> +	),
-> +
-> +	TP_fast_assign(
-> +		__assign_str(event, event);
-> +		__assign_str(rproc_name, rproc_name);
-> +	),
-> +
-> +	TP_printk("rproc_shutdown: %s: %s", __get_str(rproc_name), __get_str(event))
-> +);
-> +
-> +TRACE_EVENT(rproc_recovery,
-> +
-> +	TP_PROTO(const char *event, const char *rproc_name),
-> +
-> +	TP_ARGS(event, rproc_name),
-> +
-> +	TP_STRUCT__entry(
-> +		__string(event, event)
-> +		__string(rproc_name, rproc_name)
-> +	),
-> +
-> +	TP_fast_assign(
-> +		__assign_str(event, event);
-> +		__assign_str(rproc_name, rproc_name);
-> +	),
-> +
-> +	TP_printk("rproc_recovery: %s: %s", __get_str(rproc_name), __get_str(event))
-> +);
-> +
-> +TRACE_EVENT(rproc_subdevices,
-> +
-> +	TP_PROTO(const char *event, const char *rproc_name),
-> +
-> +	TP_ARGS(event, rproc_name),
-> +
-> +	TP_STRUCT__entry(
-> +		__string(event, event)
-> +		__string(rproc_name, rproc_name)
-> +	),
-> +
-> +	TP_fast_assign(
-> +		__assign_str(event, event);
-> +		__assign_str(rproc_name, rproc_name);
-> +	),
-> +
-> +	TP_printk("rproc_subdevices: %s: %s", __get_str(rproc_name), __get_str(event))
-> +);
-> +#endif
-> +#include <trace/define_trace.h>
-> +
-> -- 
-> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-> a Linux Foundation Collaborative Project
+On 11/18/20 9:27 AM, Grzegorz Jaszczyk wrote:
+> Hi Suman,
 > 
+> On Tue, 17 Nov 2020 at 21:40, Suman Anna <s-anna@ti.com> wrote:
+>>
+>> Hi Greg,
+>>
+>> On 11/14/20 2:46 AM, Grzegorz Jaszczyk wrote:
+>>> The firmware blob can contain optional ELF sections: .resource_table
+>>> section and .pru_irq_map one. The second one contains the PRUSS
+>>> interrupt mapping description, which needs to be setup before powering
+>>> on the PRU core. To avoid RAM wastage this ELF section is not mapped to
+>>> any ELF segment (by the firmware linker) and therefore is not loaded to
+>>> PRU memory.
+>>>
+>>> The PRU interrupt configuration is handled within the PRUSS INTC irqchip
+>>> driver and leverages the system events to interrupt channels and host
+>>> interrupts mapping configuration. Relevant irq routing information is
+>>> passed through a special .pru_irq_map ELF section (for interrupts routed
+>>> to and used by PRU cores) or via the PRU application's device tree node
+>>> (for interrupts routed to and used by the main CPU). The mappings are
+>>> currently programmed during the booting/shutdown of the PRU.
+>>>
+>>> The interrupt configuration passed through .pru_irq_map ELF section is
+>>> optional. It varies on specific firmware functionality and therefore
+>>> have to be unwinded during PRU stop and performed again during
+>>> PRU start.
+>>>
+>>> Co-developed-by: Suman Anna <s-anna@ti.com>
+>>> Signed-off-by: Suman Anna <s-anna@ti.com>
+>>> Signed-off-by: Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>
+>>> ---
+>>>  drivers/remoteproc/pru_rproc.c | 191 ++++++++++++++++++++++++++++++++-
+>>>  drivers/remoteproc/pru_rproc.h |  46 ++++++++
+>>>  2 files changed, 236 insertions(+), 1 deletion(-)
+>>>  create mode 100644 drivers/remoteproc/pru_rproc.h
+>>>
+>>> diff --git a/drivers/remoteproc/pru_rproc.c b/drivers/remoteproc/pru_rproc.c
+>>> index c94c8e965c21..825e9c7e081b 100644
+>>> --- a/drivers/remoteproc/pru_rproc.c
+>>> +++ b/drivers/remoteproc/pru_rproc.c
+>>> @@ -11,13 +11,16 @@
+>>>   */
+>>>
+>>>  #include <linux/bitops.h>
+>>> +#include <linux/irqdomain.h>
+>>>  #include <linux/module.h>
+>>>  #include <linux/of_device.h>
+>>> +#include <linux/of_irq.h>
+>>>  #include <linux/pruss_driver.h>
+>>>  #include <linux/remoteproc.h>
+>>>
+>>>  #include "remoteproc_internal.h"
+>>>  #include "remoteproc_elf_helpers.h"
+>>> +#include "pru_rproc.h"
+>>>
+>>>  /* PRU_ICSS_PRU_CTRL registers */
+>>>  #define PRU_CTRL_CTRL                0x0000
+>>> @@ -41,6 +44,8 @@
+>>>  #define PRU_SDRAM_DA 0x2000  /* Secondary Data RAM */
+>>>  #define PRU_SHRDRAM_DA       0x10000 /* Shared Data RAM */
+>>>
+>>> +#define MAX_PRU_SYS_EVENTS 160
+>>> +
+>>>  /**
+>>>   * enum pru_iomem - PRU core memory/register range identifiers
+>>>   *
+>>> @@ -64,6 +69,10 @@ enum pru_iomem {
+>>>   * @rproc: remoteproc pointer for this PRU core
+>>>   * @mem_regions: data for each of the PRU memory regions
+>>>   * @fw_name: name of firmware image used during loading
+>>> + * @mapped_irq: virtual interrupt numbers of created fw specific mapping
+>>> + * @pru_interrupt_map: pointer to interrupt mapping description (firmware)
+>>> + * @pru_interrupt_map_sz: pru_interrupt_map size
+>>> + * @evt_count: number of mapped events
+>>>   */
+>>>  struct pru_rproc {
+>>>       int id;
+>>> @@ -72,6 +81,10 @@ struct pru_rproc {
+>>>       struct rproc *rproc;
+>>>       struct pruss_mem_region mem_regions[PRU_IOMEM_MAX];
+>>>       const char *fw_name;
+>>> +     int *mapped_irq;
+>>> +     struct pru_irq_rsc *pru_interrupt_map;
+>>> +     size_t pru_interrupt_map_sz;
+>>> +     ssize_t evt_count;
+>>
+>> Do you really need this to be ssize_t type?
+> 
+> You are right, it is not needed. I will use size_t type instead and
+> modify relevant while loop.
+
+Hmm, size_t is ok, but perhaps the same type you used struct pru_irq_rsc is better.
+
+> 
+>>
+>>>  };
+>>>
+>>>  static inline u32 pru_control_read_reg(struct pru_rproc *pru, unsigned int reg)
+>>> @@ -85,15 +98,107 @@ void pru_control_write_reg(struct pru_rproc *pru, unsigned int reg, u32 val)
+>>>       writel_relaxed(val, pru->mem_regions[PRU_IOMEM_CTRL].va + reg);
+>>>  }
+>>>
+>>> +static void pru_dispose_irq_mapping(struct pru_rproc *pru)
+>>> +{
+>>> +     while (--pru->evt_count >= 0) {
+>>> +             if (pru->mapped_irq[pru->evt_count] > 0)
+>>> +                     irq_dispose_mapping(pru->mapped_irq[pru->evt_count]);
+>>> +     }
+>>> +
+>>> +     kfree(pru->mapped_irq);
+>>> +}
+>>> +
+>>> +/*
+>>> + * Parse the custom PRU interrupt map resource and configure the INTC
+>>> + * appropriately.
+>>> + */
+>>> +static int pru_handle_intrmap(struct rproc *rproc)
+>>> +{
+>>> +     struct device *dev = rproc->dev.parent;
+>>> +     struct pru_rproc *pru = rproc->priv;
+>>> +     struct pru_irq_rsc *rsc = pru->pru_interrupt_map;
+>>> +     struct irq_fwspec fwspec;
+>>> +     struct device_node *irq_parent;
+>>> +     int i, ret = 0;
+>>> +
+>>> +     /* not having pru_interrupt_map is not an error */
+>>> +     if (!rsc)
+>>> +             return 0;
+>>> +
+>>> +     /* currently supporting only type 0 */
+>>> +     if (rsc->type != 0) {
+>>> +             dev_err(dev, "unsupported rsc type: %d\n", rsc->type);
+>>> +             return -EINVAL;
+>>> +     }
+>>> +
+>>> +     if (rsc->num_evts < 0 || rsc->num_evts > MAX_PRU_SYS_EVENTS)
+>>> +             return -EINVAL;
+>>> +
+>>> +     if (sizeof(*rsc) + rsc->num_evts * sizeof(struct pruss_int_map) !=
+>>> +         pru->pru_interrupt_map_sz)
+>>> +             return -EINVAL;
+>>> +
+>>> +     pru->evt_count = rsc->num_evts;
+>>> +     pru->mapped_irq = kcalloc(pru->evt_count, sizeof(int), GFP_KERNEL);
+>>> +     if (!pru->mapped_irq)
+>>> +             return -ENOMEM;
+>>> +
+>>> +     /*
+>>> +      * parse and fill in system event to interrupt channel and
+>>> +      * channel-to-host mapping
+>>> +      */
+>>> +     irq_parent = of_irq_find_parent(pru->dev->of_node);
+>>> +     if (!irq_parent) {
+>>> +             kfree(pru->mapped_irq);
+>>> +             return -ENODEV;
+>>> +     }
+>>> +
+>>> +     fwspec.fwnode = of_node_to_fwnode(irq_parent);
+>>> +     fwspec.param_count = 3;
+>>> +     for (i = 0; i < pru->evt_count; i++) {
+>>> +             fwspec.param[0] = rsc->pru_intc_map[i].event;
+>>> +             fwspec.param[1] = rsc->pru_intc_map[i].chnl;
+>>> +             fwspec.param[2] = rsc->pru_intc_map[i].host;
+>>> +
+>>> +             dev_dbg(dev, "mapping%d: event %d, chnl %d, host %d\n",
+>>> +                    i, fwspec.param[0], fwspec.param[1], fwspec.param[2]);
+>>> +
+>>> +             pru->mapped_irq[i] = irq_create_fwspec_mapping(&fwspec);
+>>> +             if (pru->mapped_irq[i] < 0) {
+>>> +                     dev_err(dev, "failed to get virq\n");
+>>> +                     ret = pru->mapped_irq[i];
+>>> +                     goto map_fail;
+>>> +             }
+>>> +     }
+>>> +
+>>> +     return ret;
+>>> +
+>>> +map_fail:
+>>> +     pru_dispose_irq_mapping(pru);
+>>> +
+>>> +     return ret;
+>>> +}
+>>> +
+>>>  static int pru_rproc_start(struct rproc *rproc)
+>>>  {
+>>>       struct device *dev = &rproc->dev;
+>>>       struct pru_rproc *pru = rproc->priv;
+>>>       u32 val;
+>>> +     int ret;
+>>>
+>>>       dev_dbg(dev, "starting PRU%d: entry-point = 0x%llx\n",
+>>>               pru->id, (rproc->bootaddr >> 2));
+>>>
+>>> +     ret = pru_handle_intrmap(rproc);
+>>> +     /*
+>>> +      * reset references to pru interrupt map - they will stop being valid
+>>> +      * after rproc_start returns
+>>> +      */
+>>> +     pru->pru_interrupt_map = NULL;
+>>> +     pru->pru_interrupt_map_sz = 0;
+>>> +     if (ret)
+>>> +             return ret;
+>>> +
+>>>       val = CTRL_CTRL_EN | ((rproc->bootaddr >> 2) << 16);
+>>>       pru_control_write_reg(pru, PRU_CTRL_CTRL, val);
+>>>
+>>> @@ -112,6 +217,10 @@ static int pru_rproc_stop(struct rproc *rproc)
+>>>       val &= ~CTRL_CTRL_EN;
+>>>       pru_control_write_reg(pru, PRU_CTRL_CTRL, val);
+>>>
+>>> +     /* dispose irq mapping - new firmware can provide new mapping */
+>>> +     if (pru->mapped_irq)
+>>> +             pru_dispose_irq_mapping(pru);
+>>> +
+>>>       return 0;
+>>>  }
+>>>
+>>> @@ -274,16 +383,96 @@ pru_rproc_load_elf_segments(struct rproc *rproc, const struct firmware *fw)
+>>>       return ret;
+>>>  }
+>>>
+>>> +static const void *
+>>> +pru_rproc_find_interrupt_map(struct device *dev, const struct firmware *fw)
+>>> +{
+>>> +     const void *shdr, *name_table_shdr;
+>>> +     const char *name_table;
+>>> +     const u8 *elf_data = (void *)fw->data;
+>>> +     u8 class = fw_elf_get_class(fw);
+>>> +     size_t fw_size = fw->size;
+>>> +     const void *ehdr = elf_data;
+>>> +     u16 shnum = elf_hdr_get_e_shnum(class, ehdr);
+>>> +     u32 elf_shdr_get_size = elf_size_of_shdr(class);
+>>> +     u16 shstrndx = elf_hdr_get_e_shstrndx(class, ehdr);
+>>> +     int i;
+>>> +
+>>> +     /* first, get the section header according to the elf class */
+>>> +     shdr = elf_data + elf_hdr_get_e_shoff(class, ehdr);
+>>> +     /* compute name table section header entry in shdr array */
+>>> +     name_table_shdr = shdr + (shstrndx * elf_shdr_get_size);
+>>> +     /* finally, compute the name table section address in elf */
+>>> +     name_table = elf_data + elf_shdr_get_sh_offset(class, name_table_shdr);
+>>
+>> I see you used the style influenced by the remoteproc_elf_loader code. PRUs are
+>> all 32-bit, so we need not use this strictly. I am ok with this style, but
+>> prefer consistent usage style between this function and
+>> pru_rproc_load_elf_segments().
+> 
+> Ok. I will get rid of generic elf helpers macros usage and will stick
+> with elf32_* related structs instead. This will make it similar to
+> pru_rproc_load_elf_segments() in terms of style.
+
+Yeah, ok with me.
+
+> 
+>>
+>>> +
+>>> +     for (i = 0; i < shnum; i++, shdr += elf_shdr_get_size) {
+>>> +             u64 size = elf_shdr_get_sh_size(class, shdr);
+>>> +             u64 offset = elf_shdr_get_sh_offset(class, shdr);
+>>> +             u32 name = elf_shdr_get_sh_name(class, shdr);
+>>> +
+>>> +             if (strcmp(name_table + name, ".pru_irq_map"))
+>>> +                     continue;
+>>> +
+>>> +             /* make sure we have the entire table */
+>>> +             if (offset + size > fw_size || offset + size < size) {
+>>> +                     dev_err(dev, "interrupt map sec truncated\n");
+>>
+>> sec can confuse developers, suggest rephrasing this trace, something like
+>> ".pru_irq_map section truncated"
+> 
+> Ok. I will also update the comment to: "make sure we have the entire irq map"
+
+Please don't use "we" in debug traces, and just the summary of the error trace.
+
+> 
+>>
+>>> +                     return ERR_PTR(-EINVAL);
+>>> +             }
+>>> +
+>>> +             /* make sure table has at least the header */
+>>> +             if (sizeof(struct pru_irq_rsc) > size) {
+>>> +                     dev_err(dev, "header-less interrupt map sec\n");
+>>
+>> same comment as above
+> 
+> Sure, I will use "header-less .pru_irq_map section\n" and update the
+> comment above to: "make sure irq map has at least the header"
+
+similar to above
+
+> 
+>>
+>>> +                     return ERR_PTR(-EINVAL);
+>>> +             }
+>>> +
+>>> +             return shdr;
+>>> +     }
+>>> +
+>>> +     dev_dbg(dev, "no .pru_irq_map section found for this fw\n");
+>>> +
+>>> +     return NULL;
+>>> +}
+>>> +
+>>> +/*
+>>> + * Usa a custom parse_fw callback function for dealing with standard
+>>> + * resource table and a PRU-specific custom ELF section.
+>>> + *
+>>> + * The firmware blob can contain optional ELF sections: .resource_table section
+>>> + * and .pru_irq_map one. The second one contains the PRUSS interrupt mapping
+>>> + * description, which needs to be setup before powering on the PRU core. To
+>>> + * avoid RAM wastage this ELF section is not mapped to any ELF segment (by the
+>>> + * firmware linker) and therefore is not loaded to PRU memory.
+>>
+>> Some of this description can move to Patch 2 as well.
+> 
+> I thought about it before posting but IMO this function without
+> .pru_irq_map handling is kind of self explaining. Especially when
+> taking into account comment and deb_dbg message from the function body
+> of previous patch. Nevertheless I can add:
+> /*
+>  * Usa a custom parse_fw callback function for dealing with optional resource
+>  * table.
+>  */
+
+Or you can keep the first two lines generic, "... dealing with PRU firmware
+specific sections", and only add the details in the second paragraph in this
+patch. The commit in code above resource table + these two links should suffice
+for patch 2.
+
+> 
+> to patch #2 and then overwrite it in patch #3, but not sure if it is
+> the best option.
+> 
+>>
+>>> + */
+>>>  static int pru_rproc_parse_fw(struct rproc *rproc, const struct firmware *fw)
+>>>  {
+>>> +     struct device *dev = &rproc->dev;
+>>> +     struct pru_rproc *pru = rproc->priv;
+>>> +     const u8 *elf_data = fw->data;
+>>> +     const void *shdr;
+>>> +     u8 class = fw_elf_get_class(fw);
+>>> +     u64 sh_offset;
+>>>       int ret;
+>>>
+>>>       /* load optional rsc table */
+>>>       ret = rproc_elf_load_rsc_table(rproc, fw);
+>>>       if (ret == -EINVAL)
+>>>               dev_dbg(&rproc->dev, "no resource table found for this fw\n");
+>>> +     else if (ret)
+>>> +             return ret;
+>>
+>> This hunk should be part of Patch 2.
+> 
+> You are right.
+> 
+>>
+>>>
+>>> -     return ret;
+>>> +     /* find .pru_interrupt_map section, not having it is not an error */
+>>> +     shdr = pru_rproc_find_interrupt_map(dev, fw);
+>>> +     if (IS_ERR(shdr))
+>>> +             return PTR_ERR(shdr);
+>>> +
+>>> +     if (!shdr)
+>>> +             return 0;
+>>> +
+>>> +     /* preserve pointer to PRU interrupt map together with it size */
+>>> +     sh_offset = elf_shdr_get_sh_offset(class, shdr);
+>>> +     pru->pru_interrupt_map = (struct pru_irq_rsc *)(elf_data + sh_offset);
+>>> +     pru->pru_interrupt_map_sz = elf_shdr_get_sh_size(class, shdr);
+>>> +
+>>> +     return 0;
+>>
+>> And this one as well.
+> 
+> Correct,
+> 
+> Thank you for your review,
+> Grzegorz
+
+regards
+Suman
