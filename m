@@ -2,460 +2,280 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
+X-Spam-Status: No, score=-10.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC947C2D0E4
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 17 Nov 2020 20:41:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B7AAC2D0E4
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 18 Nov 2020 00:07:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 474902225E
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 17 Nov 2020 20:41:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3334C221FB
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 18 Nov 2020 00:07:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="WkxAugJ3"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="sYKoNr7a"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727732AbgKQUlA (ORCPT
+        id S1726765AbgKRAGu (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 17 Nov 2020 15:41:00 -0500
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:56428 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726685AbgKQUlA (ORCPT
+        Tue, 17 Nov 2020 19:06:50 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47172 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726375AbgKRAGu (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 17 Nov 2020 15:41:00 -0500
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 0AHKetYE074444;
-        Tue, 17 Nov 2020 14:40:55 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1605645655;
-        bh=oIFVW7OJjw7vsUanuRkTR2PvjHrGA33bVfcem1FU4Zs=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=WkxAugJ36OHmvxmQU8Dcv87MNJ9rV7dSWHTDNivm+r1CR9fe/1d3pHOuWQ+FcaWDL
-         y7AtBavbayLyHD86SYFncxFqOVPgnRcmcJ6CXfT4HBypxX4Fkf4ol7ki4ciB/nGziC
-         QcNKnaLAGlwjr/ILnV2SgTXLMjHCslzf6R8847RU=
-Received: from DLEE110.ent.ti.com (dlee110.ent.ti.com [157.170.170.21])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 0AHKet6t095858
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 17 Nov 2020 14:40:55 -0600
-Received: from DLEE102.ent.ti.com (157.170.170.32) by DLEE110.ent.ti.com
- (157.170.170.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3; Tue, 17
- Nov 2020 14:40:54 -0600
-Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE102.ent.ti.com
- (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3 via
- Frontend Transport; Tue, 17 Nov 2020 14:40:54 -0600
-Received: from [10.250.38.244] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id 0AHKestR025759;
-        Tue, 17 Nov 2020 14:40:54 -0600
-Subject: Re: [PATCH 3/6] remoteproc/pru: Add support for PRU specific
- interrupt configuration
-To:     Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>,
-        <ohad@wizery.com>, <bjorn.andersson@linaro.org>,
-        <mathieu.poirier@linaro.org>
-CC:     <linux-remoteproc@vger.kernel.org>, <robh+dt@kernel.org>,
-        <lee.jones@linaro.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-omap@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <praneeth@ti.com>,
-        <rogerq@ti.com>
-References: <20201114084613.13503-1-grzegorz.jaszczyk@linaro.org>
- <20201114084613.13503-4-grzegorz.jaszczyk@linaro.org>
-From:   Suman Anna <s-anna@ti.com>
-Message-ID: <5e92947a-febf-90d0-b40e-499fe2144737@ti.com>
-Date:   Tue, 17 Nov 2020 14:40:48 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Tue, 17 Nov 2020 19:06:50 -0500
+Received: from mail-pj1-x1044.google.com (mail-pj1-x1044.google.com [IPv6:2607:f8b0:4864:20::1044])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E479C0617A6
+        for <linux-remoteproc@vger.kernel.org>; Tue, 17 Nov 2020 16:06:50 -0800 (PST)
+Received: by mail-pj1-x1044.google.com with SMTP id h12so91687pjv.2
+        for <linux-remoteproc@vger.kernel.org>; Tue, 17 Nov 2020 16:06:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=LbHoYkDshsZNDnVClBGFOLqaI4R4jBMVshvMjXXS/SE=;
+        b=sYKoNr7a0tDbSEHIPgnmUJvh5wuPFq7BuhpbIsvk5MbdedI1K4AY1d5kJ0F0UzHH2u
+         VoL7b0W+czcz8FNRWscvjogwdoa1xogZLEVWEW69P3QBHk7WrBM6zJ/oiT4PxA00rIxM
+         R3Tre+W3SY8EFuaBEhrCiUXMtoSPk78bxz8BtTLOlNicEEhMYKbfs2Fbq9tq9Tg+ovOd
+         6NOporZbyLb99nkfRHlQYgQf/DzxcP9olswA868ClDX1GuXHm026eNKl6J6TWLMU63ci
+         42tPX9GNXr9a3ZxlcLFrCaIt6hibXFj5zsdMKzxOuwp+/rOB7oRkA8F/kK1A8YWoJZn3
+         hfkw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=LbHoYkDshsZNDnVClBGFOLqaI4R4jBMVshvMjXXS/SE=;
+        b=h1TIWBVLkMAO0bBl75Yu4p2j7V4uS/ndLA7RqNc7vfDggJhFLEYwKtubtvEZsGFh/j
+         pnO+2uAoCoTH2nf0gMAaccMf4PAWuPYmbR3GcJvmM5DoVK3C38+6TeACv/F+wiF0RA3q
+         v6Fch0rea/gX9HkkuJE3+9R58z5zaNw9ABlcgk36Vq/hQdqp9QGInMSPfcX1e+1OVLph
+         S9bDdNZ4wMbQGfnG7fm+tm9srdGY+ARpznbEM1Oq2JUqlEJ49s0zaNoKFRdGmzkaxouF
+         wQhWgFQga/FRx1QmM3KD0K3+vpJNVV9F4Ztc0WwFeETI0NNrY/kQt1jjr+autZ6I2IyP
+         SAuw==
+X-Gm-Message-State: AOAM53076hVZtX38fpL9JlniFYooWIHxPtQQskyprSq3fpNpQujavgiG
+        FlNVC1SAGFPVUvDWcODMzh35FQ==
+X-Google-Smtp-Source: ABdhPJwGg8xThv48+1ANtylzltaxVEheW1K+481DJrc8Aj6pOPtjN7C7oCLqNDFUIGIriYtGavz8LA==
+X-Received: by 2002:a17:90a:c0f:: with SMTP id 15mr1457749pjs.148.1605658009680;
+        Tue, 17 Nov 2020 16:06:49 -0800 (PST)
+Received: from xps15 (S0106889e681aac74.cg.shawcable.net. [68.147.0.187])
+        by smtp.gmail.com with ESMTPSA id l1sm1519511pgg.4.2020.11.17.16.06.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 17 Nov 2020 16:06:48 -0800 (PST)
+Date:   Tue, 17 Nov 2020 17:06:47 -0700
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+To:     Arnaud POULIQUEN <arnaud.pouliquen@st.com>
+Cc:     Guennadi Liakhovetski <guennadi.liakhovetski@linux.intel.com>,
+        "ohad@wizery.com" <ohad@wizery.com>,
+        "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>,
+        "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v5 8/8] rpmsg: Turn name service into a stand alone driver
+Message-ID: <20201118000647.GA4113759@xps15>
+References: <c31b8427-baca-5c77-6420-b592c57a3a7b@st.com>
+ <20201112115115.GA11069@ubuntu>
+ <945f377d-1975-552d-25b2-1dc25d3c3a46@st.com>
+ <2d25d1aa-bd8a-f0db-7888-9f72edc9f687@st.com>
+ <20201116151028.GA1519@ubuntu>
+ <e5e49e1a-dc2a-ce16-425c-d2d87f415868@st.com>
+ <20201116224003.GC3892875@xps15>
+ <50549519-d9ff-9048-a3d8-dab02bfda096@st.com>
+ <20201117160330.GA15538@ubuntu>
+ <a653c503-7fd1-7b87-88a5-88c9002ba410@st.com>
 MIME-Version: 1.0
-In-Reply-To: <20201114084613.13503-4-grzegorz.jaszczyk@linaro.org>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a653c503-7fd1-7b87-88a5-88c9002ba410@st.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi Greg,
-
-On 11/14/20 2:46 AM, Grzegorz Jaszczyk wrote:
-> The firmware blob can contain optional ELF sections: .resource_table
-> section and .pru_irq_map one. The second one contains the PRUSS
-> interrupt mapping description, which needs to be setup before powering
-> on the PRU core. To avoid RAM wastage this ELF section is not mapped to
-> any ELF segment (by the firmware linker) and therefore is not loaded to
-> PRU memory.
+On Tue, Nov 17, 2020 at 05:44:05PM +0100, Arnaud POULIQUEN wrote:
 > 
-> The PRU interrupt configuration is handled within the PRUSS INTC irqchip
-> driver and leverages the system events to interrupt channels and host
-> interrupts mapping configuration. Relevant irq routing information is
-> passed through a special .pru_irq_map ELF section (for interrupts routed
-> to and used by PRU cores) or via the PRU application's device tree node
-> (for interrupts routed to and used by the main CPU). The mappings are
-> currently programmed during the booting/shutdown of the PRU.
 > 
-> The interrupt configuration passed through .pru_irq_map ELF section is
-> optional. It varies on specific firmware functionality and therefore
-> have to be unwinded during PRU stop and performed again during
-> PRU start.
+> On 11/17/20 5:03 PM, Guennadi Liakhovetski wrote:
+> > On Tue, Nov 17, 2020 at 12:42:30PM +0100, Arnaud POULIQUEN wrote:
+> > 
+> > [snip]
+> > 
+> >> diff --git a/drivers/rpmsg/rpmsg_ns.c b/drivers/rpmsg/rpmsg_ns.c
+> >> index 5bda7cb44618..80c2cc23bada 100644
+> >> --- a/drivers/rpmsg/rpmsg_ns.c
+> >> +++ b/drivers/rpmsg/rpmsg_ns.c
+> >> @@ -55,6 +55,39 @@ static int rpmsg_ns_cb(struct rpmsg_device *rpdev, void
+> >> *data, int len,
+> >>  	return 0;
+> >>  }
+> >>
+> >> +/**
+> >> + * rpmsg_ns_register_device() - register name service device based on rpdev
+> >> + * @rpdev: prepared rpdev to be used for creating endpoints
+> >> + *
+> >> + * This function wraps rpmsg_register_device() preparing the rpdev for use as
+> >> + * basis for the rpmsg name service device.
+> >> + */
+> >> +int rpmsg_ns_register_device(struct rpmsg_device *rpdev)
+> >> +{
+> >> +#ifdef MODULES
+> >> +	int ret;
+> >> +	struct module *rpmsg_ns;
+> >> +
+> >> +	mutex_lock(&module_mutex);
+> >> +	rpmsg_ns = find_module(KBUILD_MODNAME);
+> >> +	mutex_unlock(&module_mutex);
+> >> +
+> >> +	if (!rpmsg_ns) {
+> >> +		ret = request_module(KBUILD_MODNAME);
+> > 
+> > Is this code requesting the module in which it is located?.. I must be missing 
+> > something...
 > 
-> Co-developed-by: Suman Anna <s-anna@ti.com>
-> Signed-off-by: Suman Anna <s-anna@ti.com>
-> Signed-off-by: Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>
-> ---
->  drivers/remoteproc/pru_rproc.c | 191 ++++++++++++++++++++++++++++++++-
->  drivers/remoteproc/pru_rproc.h |  46 ++++++++
->  2 files changed, 236 insertions(+), 1 deletion(-)
->  create mode 100644 drivers/remoteproc/pru_rproc.h
+> Right this is stupid...Thanks to highlight this!
 > 
-> diff --git a/drivers/remoteproc/pru_rproc.c b/drivers/remoteproc/pru_rproc.c
-> index c94c8e965c21..825e9c7e081b 100644
-> --- a/drivers/remoteproc/pru_rproc.c
-> +++ b/drivers/remoteproc/pru_rproc.c
-> @@ -11,13 +11,16 @@
->   */
->  
->  #include <linux/bitops.h>
-> +#include <linux/irqdomain.h>
->  #include <linux/module.h>
->  #include <linux/of_device.h>
-> +#include <linux/of_irq.h>
->  #include <linux/pruss_driver.h>
->  #include <linux/remoteproc.h>
->  
->  #include "remoteproc_internal.h"
->  #include "remoteproc_elf_helpers.h"
-> +#include "pru_rproc.h"
->  
->  /* PRU_ICSS_PRU_CTRL registers */
->  #define PRU_CTRL_CTRL		0x0000
-> @@ -41,6 +44,8 @@
->  #define PRU_SDRAM_DA	0x2000	/* Secondary Data RAM */
->  #define PRU_SHRDRAM_DA	0x10000 /* Shared Data RAM */
->  
-> +#define MAX_PRU_SYS_EVENTS 160
-> +
->  /**
->   * enum pru_iomem - PRU core memory/register range identifiers
->   *
-> @@ -64,6 +69,10 @@ enum pru_iomem {
->   * @rproc: remoteproc pointer for this PRU core
->   * @mem_regions: data for each of the PRU memory regions
->   * @fw_name: name of firmware image used during loading
-> + * @mapped_irq: virtual interrupt numbers of created fw specific mapping
-> + * @pru_interrupt_map: pointer to interrupt mapping description (firmware)
-> + * @pru_interrupt_map_sz: pru_interrupt_map size
-> + * @evt_count: number of mapped events
->   */
->  struct pru_rproc {
->  	int id;
-> @@ -72,6 +81,10 @@ struct pru_rproc {
->  	struct rproc *rproc;
->  	struct pruss_mem_region mem_regions[PRU_IOMEM_MAX];
->  	const char *fw_name;
-> +	int *mapped_irq;
-> +	struct pru_irq_rsc *pru_interrupt_map;
-> +	size_t pru_interrupt_map_sz;
-> +	ssize_t evt_count;
-
-Do you really need this to be ssize_t type?
-
->  };
->  
->  static inline u32 pru_control_read_reg(struct pru_rproc *pru, unsigned int reg)
-> @@ -85,15 +98,107 @@ void pru_control_write_reg(struct pru_rproc *pru, unsigned int reg, u32 val)
->  	writel_relaxed(val, pru->mem_regions[PRU_IOMEM_CTRL].va + reg);
->  }
->  
-> +static void pru_dispose_irq_mapping(struct pru_rproc *pru)
-> +{
-> +	while (--pru->evt_count >= 0) {
-> +		if (pru->mapped_irq[pru->evt_count] > 0)
-> +			irq_dispose_mapping(pru->mapped_irq[pru->evt_count]);
-> +	}
-> +
-> +	kfree(pru->mapped_irq);
-> +}
-> +
-> +/*
-> + * Parse the custom PRU interrupt map resource and configure the INTC
-> + * appropriately.
-> + */
-> +static int pru_handle_intrmap(struct rproc *rproc)
-> +{
-> +	struct device *dev = rproc->dev.parent;
-> +	struct pru_rproc *pru = rproc->priv;
-> +	struct pru_irq_rsc *rsc = pru->pru_interrupt_map;
-> +	struct irq_fwspec fwspec;
-> +	struct device_node *irq_parent;
-> +	int i, ret = 0;
-> +
-> +	/* not having pru_interrupt_map is not an error */
-> +	if (!rsc)
-> +		return 0;
-> +
-> +	/* currently supporting only type 0 */
-> +	if (rsc->type != 0) {
-> +		dev_err(dev, "unsupported rsc type: %d\n", rsc->type);
-> +		return -EINVAL;
-> +	}
-> +
-> +	if (rsc->num_evts < 0 || rsc->num_evts > MAX_PRU_SYS_EVENTS)
-> +		return -EINVAL;
-> +
-> +	if (sizeof(*rsc) + rsc->num_evts * sizeof(struct pruss_int_map) !=
-> +	    pru->pru_interrupt_map_sz)
-> +		return -EINVAL;
-> +
-> +	pru->evt_count = rsc->num_evts;
-> +	pru->mapped_irq = kcalloc(pru->evt_count, sizeof(int), GFP_KERNEL);
-> +	if (!pru->mapped_irq)
-> +		return -ENOMEM;
-> +
-> +	/*
-> +	 * parse and fill in system event to interrupt channel and
-> +	 * channel-to-host mapping
-> +	 */
-> +	irq_parent = of_irq_find_parent(pru->dev->of_node);
-> +	if (!irq_parent) {
-> +		kfree(pru->mapped_irq);
-> +		return -ENODEV;
-> +	}
-> +
-> +	fwspec.fwnode = of_node_to_fwnode(irq_parent);
-> +	fwspec.param_count = 3;
-> +	for (i = 0; i < pru->evt_count; i++) {
-> +		fwspec.param[0] = rsc->pru_intc_map[i].event;
-> +		fwspec.param[1] = rsc->pru_intc_map[i].chnl;
-> +		fwspec.param[2] = rsc->pru_intc_map[i].host;
-> +
-> +		dev_dbg(dev, "mapping%d: event %d, chnl %d, host %d\n",
-> +		       i, fwspec.param[0], fwspec.param[1], fwspec.param[2]);
-> +
-> +		pru->mapped_irq[i] = irq_create_fwspec_mapping(&fwspec);
-> +		if (pru->mapped_irq[i] < 0) {
-> +			dev_err(dev, "failed to get virq\n");
-> +			ret = pru->mapped_irq[i];
-> +			goto map_fail;
-> +		}
-> +	}
-> +
-> +	return ret;
-> +
-> +map_fail:
-> +	pru_dispose_irq_mapping(pru);
-> +
-> +	return ret;
-> +}
-> +
->  static int pru_rproc_start(struct rproc *rproc)
->  {
->  	struct device *dev = &rproc->dev;
->  	struct pru_rproc *pru = rproc->priv;
->  	u32 val;
-> +	int ret;
->  
->  	dev_dbg(dev, "starting PRU%d: entry-point = 0x%llx\n",
->  		pru->id, (rproc->bootaddr >> 2));
->  
-> +	ret = pru_handle_intrmap(rproc);
-> +	/*
-> +	 * reset references to pru interrupt map - they will stop being valid
-> +	 * after rproc_start returns
-> +	 */
-> +	pru->pru_interrupt_map = NULL;
-> +	pru->pru_interrupt_map_sz = 0;
-> +	if (ret)
-> +		return ret;
-> +
->  	val = CTRL_CTRL_EN | ((rproc->bootaddr >> 2) << 16);
->  	pru_control_write_reg(pru, PRU_CTRL_CTRL, val);
->  
-> @@ -112,6 +217,10 @@ static int pru_rproc_stop(struct rproc *rproc)
->  	val &= ~CTRL_CTRL_EN;
->  	pru_control_write_reg(pru, PRU_CTRL_CTRL, val);
->  
-> +	/* dispose irq mapping - new firmware can provide new mapping */
-> +	if (pru->mapped_irq)
-> +		pru_dispose_irq_mapping(pru);
-> +
+> That being said, your remark is very interesting: we need to load the module to
+> access to this function. This means that calling this function ensures that the
+> module is loaded. In this case no need to add the piece of code to find
+> module... here is the call stack associated (associated patch is available below):
+> 
+> 
+> (rpmsg_ns_probe+0x5c/0xe0 [rpmsg_ns])
+> [   11.858748] [<bf00a0a0>] (rpmsg_ns_probe [rpmsg_ns]) from [<bf0005cc>]
+> (rpmsg_dev_probe+0x14c/0x1b0 [rpmsg_core])
+> [   11.869047] [<bf0005cc>] (rpmsg_dev_probe [rpmsg_core]) from [<c067cd44>]
+> (really_probe+0x208/0x4f0)
+> [   11.878117] [<c067cd44>] (really_probe) from [<c067d1f4>]
+> (driver_probe_device+0x78/0x16c)
+> [   11.886404] [<c067d1f4>] (driver_probe_device) from [<c067ad48>]
+> (bus_for_each_drv+0x84/0xd0)
+> [   11.894887] [<c067ad48>] (bus_for_each_drv) from [<c067ca9c>]
+> (__device_attach+0xf0/0x188)
+> [   11.903142] [<c067ca9c>] (__device_attach) from [<c067bb10>]
+> (bus_probe_device+0x84/0x8c)
+> [   11.911314] [<c067bb10>] (bus_probe_device) from [<c0678094>]
+> (device_add+0x3b0/0x7b0)
+> [   11.919227] [<c0678094>] (device_add) from [<bf0003dc>]
+> (rpmsg_register_device+0x54/0x88 [rpmsg_core])
+> [   11.928541] [<bf0003dc>] (rpmsg_register_device [rpmsg_core]) from
+> [<bf011b58>] (rpmsg_probe+0x298/0x3c8 [virtio_rpmsg_bus])
+> [   11.939748] [<bf011b58>] (rpmsg_probe [virtio_rpmsg_bus]) from [<c05cd648>]
+> (virtio_dev_probe+0x1f4/0x2c4)
+> [   11.949377] [<c05cd648>] (virtio_dev_probe) from [<c067cd44>]
+> (really_probe+0x208/0x4f0)
+> [   11.957454] [<c067cd44>] (really_probe) from [<c067d1f4>]
+> (driver_probe_device+0x78/0x16c)
+> [   11.965710] [<c067d1f4>] (driver_probe_device) from [<c067d548>]
+> (device_driver_attach+0x58/0x60)
+> [   11.974574] [<c067d548>] (device_driver_attach) from [<c067d604>]
+> (__driver_attach+0xb4/0x154)
+> [   11.983177] [<c067d604>] (__driver_attach) from [<c067ac68>]
+> (bus_for_each_dev+0x78/0xc0)
+> [   11.991344] [<c067ac68>] (bus_for_each_dev) from [<c067bdc0>]
+> (bus_add_driver+0x170/0x20c)
+> [   11.999600] [<c067bdc0>] (bus_add_driver) from [<c067e12c>]
+> (driver_register+0x74/0x108)
+> [   12.007693] [<c067e12c>] (driver_register) from [<bf017010>]
+> (rpmsg_init+0x10/0x1000 [virtio_rpmsg_bus])
+> [   12.017168] [<bf017010>] (rpmsg_init [virtio_rpmsg_bus]) from [<c0102090>]
+> (do_one_initcall+0x58/0x2bc)
+> [
+> 
+> This would make the patch very simple. I tested following patch on my platform,
+> applying it, i do not reproduce the initial issue.
+> 
+> 
+> diff --git a/drivers/rpmsg/Kconfig b/drivers/rpmsg/Kconfig
+> index c3fc75e6514b..1394114782d2 100644
+> --- a/drivers/rpmsg/Kconfig
+> +++ b/drivers/rpmsg/Kconfig
+> @@ -71,5 +71,6 @@ config RPMSG_VIRTIO
+>  	depends on HAS_DMA
+>  	select RPMSG
+>  	select VIRTIO
+> +	select RPMSG_NS
+> 
+>  endmenu
+> diff --git a/drivers/rpmsg/rpmsg_ns.c b/drivers/rpmsg/rpmsg_ns.c
+> index 5bda7cb44618..5867281188de 100644
+> --- a/drivers/rpmsg/rpmsg_ns.c
+> +++ b/drivers/rpmsg/rpmsg_ns.c
+> @@ -55,6 +55,24 @@ static int rpmsg_ns_cb(struct rpmsg_device *rpdev, void
+> *data, int len,
 >  	return 0;
 >  }
->  
-> @@ -274,16 +383,96 @@ pru_rproc_load_elf_segments(struct rproc *rproc, const struct firmware *fw)
->  	return ret;
->  }
->  
-> +static const void *
-> +pru_rproc_find_interrupt_map(struct device *dev, const struct firmware *fw)
-> +{
-> +	const void *shdr, *name_table_shdr;
-> +	const char *name_table;
-> +	const u8 *elf_data = (void *)fw->data;
-> +	u8 class = fw_elf_get_class(fw);
-> +	size_t fw_size = fw->size;
-> +	const void *ehdr = elf_data;
-> +	u16 shnum = elf_hdr_get_e_shnum(class, ehdr);
-> +	u32 elf_shdr_get_size = elf_size_of_shdr(class);
-> +	u16 shstrndx = elf_hdr_get_e_shstrndx(class, ehdr);
-> +	int i;
-> +
-> +	/* first, get the section header according to the elf class */
-> +	shdr = elf_data + elf_hdr_get_e_shoff(class, ehdr);
-> +	/* compute name table section header entry in shdr array */
-> +	name_table_shdr = shdr + (shstrndx * elf_shdr_get_size);
-> +	/* finally, compute the name table section address in elf */
-> +	name_table = elf_data + elf_shdr_get_sh_offset(class, name_table_shdr);
-
-I see you used the style influenced by the remoteproc_elf_loader code. PRUs are
-all 32-bit, so we need not use this strictly. I am ok with this style, but
-prefer consistent usage style between this function and
-pru_rproc_load_elf_segments().
-
-> +
-> +	for (i = 0; i < shnum; i++, shdr += elf_shdr_get_size) {
-> +		u64 size = elf_shdr_get_sh_size(class, shdr);
-> +		u64 offset = elf_shdr_get_sh_offset(class, shdr);
-> +		u32 name = elf_shdr_get_sh_name(class, shdr);
-> +
-> +		if (strcmp(name_table + name, ".pru_irq_map"))
-> +			continue;
-> +
-> +		/* make sure we have the entire table */
-> +		if (offset + size > fw_size || offset + size < size) {
-> +			dev_err(dev, "interrupt map sec truncated\n");
-
-sec can confuse developers, suggest rephrasing this trace, something like
-".pru_irq_map section truncated"
-
-> +			return ERR_PTR(-EINVAL);
-> +		}
-> +
-> +		/* make sure table has at least the header */
-> +		if (sizeof(struct pru_irq_rsc) > size) {
-> +			dev_err(dev, "header-less interrupt map sec\n");
-
-same comment as above
-
-> +			return ERR_PTR(-EINVAL);
-> +		}
-> +
-> +		return shdr;
-> +	}
-> +
-> +	dev_dbg(dev, "no .pru_irq_map section found for this fw\n");
-> +
-> +	return NULL;
-> +}
-> +
-> +/*
-> + * Usa a custom parse_fw callback function for dealing with standard
-> + * resource table and a PRU-specific custom ELF section.
-> + *
-> + * The firmware blob can contain optional ELF sections: .resource_table section
-> + * and .pru_irq_map one. The second one contains the PRUSS interrupt mapping
-> + * description, which needs to be setup before powering on the PRU core. To
-> + * avoid RAM wastage this ELF section is not mapped to any ELF segment (by the
-> + * firmware linker) and therefore is not loaded to PRU memory.
-
-Some of this description can move to Patch 2 as well.
-
-> + */
->  static int pru_rproc_parse_fw(struct rproc *rproc, const struct firmware *fw)
->  {
-> +	struct device *dev = &rproc->dev;
-> +	struct pru_rproc *pru = rproc->priv;
-> +	const u8 *elf_data = fw->data;
-> +	const void *shdr;
-> +	u8 class = fw_elf_get_class(fw);
-> +	u64 sh_offset;
->  	int ret;
->  
->  	/* load optional rsc table */
->  	ret = rproc_elf_load_rsc_table(rproc, fw);
->  	if (ret == -EINVAL)
->  		dev_dbg(&rproc->dev, "no resource table found for this fw\n");
-> +	else if (ret)
-> +		return ret;
-
-This hunk should be part of Patch 2.
-
->  
-> -	return ret;
-> +	/* find .pru_interrupt_map section, not having it is not an error */
-> +	shdr = pru_rproc_find_interrupt_map(dev, fw);
-> +	if (IS_ERR(shdr))
-> +		return PTR_ERR(shdr);
-> +
-> +	if (!shdr)
-> +		return 0;
-> +
-> +	/* preserve pointer to PRU interrupt map together with it size */
-> +	sh_offset = elf_shdr_get_sh_offset(class, shdr);
-> +	pru->pru_interrupt_map = (struct pru_irq_rsc *)(elf_data + sh_offset);
-> +	pru->pru_interrupt_map_sz = elf_shdr_get_sh_size(class, shdr);
-> +
-> +	return 0;
-
-And this one as well.
-
-regards
-Suman
-
->  }
->  
->  /*
-> diff --git a/drivers/remoteproc/pru_rproc.h b/drivers/remoteproc/pru_rproc.h
-> new file mode 100644
-> index 000000000000..8ee9c3171610
-> --- /dev/null
-> +++ b/drivers/remoteproc/pru_rproc.h
-> @@ -0,0 +1,46 @@
-> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-3-Clause) */
-> +/*
-> + * PRUSS Remote Processor specific types
-> + *
-> + * Copyright (C) 2014-2020 Texas Instruments Incorporated - https://www.ti.com/
-> + *	Suman Anna <s-anna@ti.com>
-> + */
-> +
-> +#ifndef _PRU_RPROC_H_
-> +#define _PRU_RPROC_H_
-> +
-> +/**
-> + * struct pruss_int_map - PRU system events _to_ channel and host mapping
-> + * @event: number of the system event
-> + * @chnl: channel number assigned to a given @event
-> + * @host: host number assigned to a given @chnl
-> + *
-> + * PRU system events are mapped to channels, and these channels are mapped
-> + * to host interrupts. Events can be mapped to channels in a one-to-one or
-> + * many-to-one ratio (multiple events per channel), and channels can be
-> + * mapped to host interrupts in a one-to-one or many-to-one ratio (multiple
-> + * channels per interrupt).
-> + */
-> +struct pruss_int_map {
-> +	u8 event;
-> +	u8 chnl;
-> +	u8 host;
-> +};
-> +
-> +/**
-> + * struct pru_irq_rsc - PRU firmware section header for IRQ data
-> + * @type: resource type
-> + * @num_evts: number of described events
-> + * @pru_intc_map: PRU interrupt routing description
-> + *
-> + * The PRU firmware blob can contain optional .pru_irq_map ELF section, which
-> + * provides the PRUSS interrupt mapping description. The pru_irq_rsc struct
-> + * describes resource entry format.
-> + */
-> +struct pru_irq_rsc {
-> +	u8 type;
-> +	u8 num_evts;
-> +	struct pruss_int_map pru_intc_map[];
-> +} __packed;
-> +
-> +#endif	/* _PRU_RPROC_H_ */
 > 
+> +/**
+> + * rpmsg_ns_register_device() - register name service device based on rpdev
+> + * @rpdev: prepared rpdev to be used for creating endpoints
+> + *
+> + * This function wraps rpmsg_register_device() preparing the rpdev for use as
+> + * basis for the rpmsg name service device.
+> + */
+> +int rpmsg_ns_register_device(struct rpmsg_device *rpdev)
+> +{
+> +	strcpy(rpdev->id.name, KBUILD_MODNAME);
+> +	rpdev->driver_override = KBUILD_MODNAME;
+> +	rpdev->src = RPMSG_NS_ADDR;
+> +	rpdev->dst = RPMSG_NS_ADDR;
+> +
+> +	return rpmsg_register_device(rpdev);
+> +}
+> +EXPORT_SYMBOL(rpmsg_ns_register_device);
+> +
+>  static int rpmsg_ns_probe(struct rpmsg_device *rpdev)
+>  {
+>  	struct rpmsg_endpoint *ns_ept;
+> @@ -80,7 +98,7 @@ static int rpmsg_ns_probe(struct rpmsg_device *rpdev)
+>  }
+> 
+>  static struct rpmsg_driver rpmsg_ns_driver = {
+> -	.drv.name = "rpmsg_ns",
+> +	.drv.name = KBUILD_MODNAME,
+>  	.probe = rpmsg_ns_probe,
+>  };
+> 
+> @@ -104,5 +122,5 @@ module_exit(rpmsg_ns_exit);
+> 
+>  MODULE_DESCRIPTION("Name service announcement rpmsg Driver");
+>  MODULE_AUTHOR("Arnaud Pouliquen <arnaud.pouliquen@st.com>");
+> -MODULE_ALIAS("rpmsg_ns");
+> +MODULE_ALIAS("rpmsg:" KBUILD_MODNAME);
+>  MODULE_LICENSE("GPL v2");
+> diff --git a/include/linux/rpmsg/ns.h b/include/linux/rpmsg/ns.h
+> index bdc1ea278814..68eac2b42075 100644
+> --- a/include/linux/rpmsg/ns.h
+> +++ b/include/linux/rpmsg/ns.h
+> @@ -41,21 +41,6 @@ enum rpmsg_ns_flags {
+>  /* Address 53 is reserved for advertising remote services */
+>  #define RPMSG_NS_ADDR			(53)
+> 
+> -/**
+> - * rpmsg_ns_register_device() - register name service device based on rpdev
+> - * @rpdev: prepared rpdev to be used for creating endpoints
+> - *
+> - * This function wraps rpmsg_register_device() preparing the rpdev for use as
+> - * basis for the rpmsg name service device.
+> - */
+> -static inline int rpmsg_ns_register_device(struct rpmsg_device *rpdev)
+> -{
+> -	strcpy(rpdev->id.name, "rpmsg_ns");
+> -	rpdev->driver_override = "rpmsg_ns";
+> -	rpdev->src = RPMSG_NS_ADDR;
+> -	rpdev->dst = RPMSG_NS_ADDR;
+> -
+> -	return rpmsg_register_device(rpdev);
+> -}
+> +int rpmsg_ns_register_device(struct rpmsg_device *rpdev);
 
+I confirm that all this is working as expected - I will send a new revision of
+this set tomorrow afternoon.  
+
+Guennadi, can I add a Co-developed-by and Signed-off-by with your name on the
+patch?
+
+> 
+>  #endif
+> 
+> Thanks,
+> Arnaud
+> 
+> > 
+> > Thanks
+> > Guennadi
+> > 
