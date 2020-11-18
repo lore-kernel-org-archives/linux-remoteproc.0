@@ -2,42 +2,43 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A698BC64E69
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EDE4AC64E75
 	for <linux-remoteproc@archiver.kernel.org>; Wed, 18 Nov 2020 14:30:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4B75B246BE
+	by mail.kernel.org (Postfix) with ESMTP id 88A3D246B8
 	for <linux-remoteproc@archiver.kernel.org>; Wed, 18 Nov 2020 14:30:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="gOBSiA62"
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="aUJxovfQ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726514AbgKROaI (ORCPT
+        id S1726344AbgKROaI (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
         Wed, 18 Nov 2020 09:30:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54852 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.99]:54850 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726644AbgKROaI (ORCPT
+        id S1726630AbgKROaI (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
         Wed, 18 Nov 2020 09:30:08 -0500
 Content-Type: text/plain; charset="utf-8"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1605709807;
-        bh=dKIrA8H//TT01Rwhab/RU8FCEGPF5RUyaYXEDBO+4og=;
+        bh=nBOxISI7ecVa7TTBPigkR/9k9M/rIFYfXkLkQh9H+xE=;
         h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=gOBSiA62Xv0NASoQhr6QY3l8f2X7dQclIGc/JyvwtjC9azeCec2k3jXpeQ+JaKwgW
-         l//LYnrfBhtRQMGFmG2S/4OCbrfdfxRFopYhmAiGUg1UmwqDTp381ErEEKDP0ZzTEE
-         NGTrj8EOdTMWx9vSyDg9he25PrrBhQskCxp2TwIs=
+        b=aUJxovfQ9d8KMFj+s2uuzSdR+edVjxGffLPD0E0OONy3CwWNJe2xVcmc4OgtwmTcm
+         ShLkXjKGjfx1oyN3vbXRXjVI9c2DdxHlP5etIGJFSIBUrQhXXqpsueNzt4aJqjc7em
+         3yeVZamB4L22rqi1KhGXq9DEYjKHfaANSVu2zSRY=
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] remoteproc: qcom: pas: fix error handling in adsp_pds_enable
+Subject: Re: [PATCH] remoteproc: qcom: fix reference leak in adsp_start
 From:   patchwork-bot+linux-remoteproc@kernel.org
-Message-Id: <160570980705.9988.7338051674322352943.git-patchwork-notify@kernel.org>
+Message-Id: <160570980701.9988.1584176934804447500.git-patchwork-notify@kernel.org>
 Date:   Wed, 18 Nov 2020 14:30:07 +0000
-References: <20201102143554.144707-1-zhangqilong3@huawei.com>
-In-Reply-To: <20201102143554.144707-1-zhangqilong3@huawei.com>
+References: <20201102143534.144484-1-zhangqilong3@huawei.com>
+In-Reply-To: <20201102143534.144484-1-zhangqilong3@huawei.com>
 To:     Zhang Qilong <zhangqilong3@huawei.com>
 Cc:     linux-remoteproc@vger.kernel.org
 Precedence: bulk
@@ -48,20 +49,19 @@ Hello:
 
 This patch was applied to andersson/remoteproc.git (refs/heads/for-next):
 
-On Mon, 2 Nov 2020 22:35:54 +0800 you wrote:
-> If the pm_runtime_get_sync failed in adsp_pds_enable when
-> loop (i), The unroll_pd_votes will start from (i - 1), and
-> it will resulted in following problems:
+On Mon, 2 Nov 2020 22:35:34 +0800 you wrote:
+> pm_runtime_get_sync will increment pm usage counter even it
+> failed. Forgetting to pm_runtime_put_noidle will result in
+> reference leak in adsp_start, so we should fix it.
 > 
->   1) pm_runtime_get_sync will increment pm usage counter even it
->      failed. Forgetting to pm_runtime_put_noidle will result in
->      reference leak.
+> Fixes: dc160e4491222 ("remoteproc: qcom: Introduce Non-PAS ADSP PIL driver")
+> Signed-off-by: Zhang Qilong <zhangqilong3@huawei.com>
 > 
 > [...]
 
 Here is the summary with links:
-  - remoteproc: qcom: pas: fix error handling in adsp_pds_enable
-    https://git.kernel.org/andersson/remoteproc/c/2b9de1272fbd
+  - remoteproc: qcom: fix reference leak in adsp_start
+    https://git.kernel.org/andersson/remoteproc/c/00293e662cca
 
 You are awesome, thank you!
 --
