@@ -2,117 +2,145 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-11.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C29CBC56201
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 19 Nov 2020 17:33:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9D00C56201
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 19 Nov 2020 21:06:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 589DF221EB
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 19 Nov 2020 17:33:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8A13F221EB
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 19 Nov 2020 21:06:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xHfwpgtK"
+	dkim=pass (1024-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="JOLwDCBK"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728694AbgKSRdf (ORCPT
+        id S1726314AbgKSVFy (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 19 Nov 2020 12:33:35 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36054 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728672AbgKSRde (ORCPT
+        Thu, 19 Nov 2020 16:05:54 -0500
+Received: from m42-4.mailgun.net ([69.72.42.4]:51536 "EHLO m42-4.mailgun.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725907AbgKSVFy (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 19 Nov 2020 12:33:34 -0500
-Received: from mail-pg1-x542.google.com (mail-pg1-x542.google.com [IPv6:2607:f8b0:4864:20::542])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BAC09C0613CF
-        for <linux-remoteproc@vger.kernel.org>; Thu, 19 Nov 2020 09:33:34 -0800 (PST)
-Received: by mail-pg1-x542.google.com with SMTP id 81so4869243pgf.0
-        for <linux-remoteproc@vger.kernel.org>; Thu, 19 Nov 2020 09:33:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=lTDVZu78sQRjzGc9f1m4SYFSbzIEF2W5wGuEGt9FlSM=;
-        b=xHfwpgtKrk1Df4SjR7jUsrMdAFTDc7OgvNY6trictLf5Ln9RuV/h6HV5ooqXOHH9cT
-         T7onq3l77JCiY18+f4dkMsWgy4IG1b3EDG2yVcHRXLjvGmigo6ve2YPgdrcksU/q0AQq
-         URYaTadUQbkdGx+XtnT5fiE6KfwSlLclOmf/hvD3RCT4kQuy0YXFPv0qOP4tD0Agzs1U
-         0l3Q5e1TMiKsNNt4ruCn72x/UPhf1G7Bbr06wOaYjJRUrhAVNiQ7p6/ShQzzmZZq7nIK
-         pqGtMYbtUL/h5ArThLru1U9kFYsw/V6d/ETFNOz2ihLWoueSSYPsGMN3OjuzJwJrYcAq
-         HJNg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=lTDVZu78sQRjzGc9f1m4SYFSbzIEF2W5wGuEGt9FlSM=;
-        b=OzkRbvEbIxg5NbYTVzc7tz8MOgBBZRPKRna5RiLG9jKtI+kDLED7c/Wh9J6ZhLJW/d
-         dbL9qSdjBQw1kA9uKXeCNRXuuNNPwNl3oUn9GyV8HVlIMc16Wafmx44SqlRr8zSxozkf
-         rlyoaAV9rR/DWpiHO27BVoOjudjG5+STj55zKv3aRkDi3KYk3br7Hj4k7LcUBy5wtDhP
-         Ne8JNIZcUh+GTd8ZJ7Pg0qkopQzRW/iZANQ2jvmvPm2BgHSm0bA3EQj8w0u+uTCOKAU/
-         GSDX2nfdO7QNI1UdeL+29/bWOmoE+xwOV7fmz126IejK7wkyQ/DGfr4ZZvvK7obLpcla
-         Txnw==
-X-Gm-Message-State: AOAM531lRZn0gpoVSKN/D/YckxOxntdyGoQWRhknedyr6Wv/kO7qh2xZ
-        /Z5nAqsT0kEkbETLD7qngJXjww==
-X-Google-Smtp-Source: ABdhPJyp+ND5pp7SrhY7dYPw47jJui8zSPlJCkdZ1E6KXwXexCgFwpH18AyjuAjnTeXgeuQnVHxUgw==
-X-Received: by 2002:a17:90b:3789:: with SMTP id mz9mr5612540pjb.123.1605807214335;
-        Thu, 19 Nov 2020 09:33:34 -0800 (PST)
-Received: from xps15 (S0106889e681aac74.cg.shawcable.net. [68.147.0.187])
-        by smtp.gmail.com with ESMTPSA id a123sm400557pfd.218.2020.11.19.09.33.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 19 Nov 2020 09:33:33 -0800 (PST)
-Date:   Thu, 19 Nov 2020 10:33:32 -0700
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-To:     Guennadi Liakhovetski <guennadi.liakhovetski@linux.intel.com>
-Cc:     Arnaud POULIQUEN <arnaud.pouliquen@st.com>,
-        "ohad@wizery.com" <ohad@wizery.com>,
-        "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>,
-        "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v6 8/8] rpmsg: Turn name service into a stand alone driver
-Message-ID: <20201119173332.GA94178@xps15>
-References: <20201118213700.74106-1-mathieu.poirier@linaro.org>
- <20201118213700.74106-9-mathieu.poirier@linaro.org>
- <447fdbd6-2e3d-2786-c444-25148efcb9f8@st.com>
- <20201119171051.GA6464@ubuntu>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201119171051.GA6464@ubuntu>
+        Thu, 19 Nov 2020 16:05:54 -0500
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1605819953; h=Message-Id: Date: Subject: Cc: To: From:
+ Sender; bh=p02axMjNocUH+jqzcrSgerd2G87SR9mTMt14pK8m/ok=; b=JOLwDCBKv/RspP5Xxqs8LxeKo8vOzKpmerWnxjwd/9pArvLEnvJuvV/d3tSM4fip2OA0mOk5
+ w0d+SCg1axDiAnxL1whs30dFEyLmePmC/XbWwY4xOowDxprsZ3EZfytWkKgyLRtRwmRD3Kds
+ FqKiuGVK4jvFlBWdxkPL4ogDbRM=
+X-Mailgun-Sending-Ip: 69.72.42.4
+X-Mailgun-Sid: WyI4ZWZiZiIsICJsaW51eC1yZW1vdGVwcm9jQHZnZXIua2VybmVsLm9yZyIsICJiZTllNGEiXQ==
+Received: from smtp.codeaurora.org
+ (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
+ smtp-out-n08.prod.us-east-1.postgun.com with SMTP id
+ 5fb6de319e87e16352b13eef (version=TLS1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Thu, 19 Nov 2020 21:05:53
+ GMT
+Sender: sidgup=codeaurora.org@mg.codeaurora.org
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 62AA2C43463; Thu, 19 Nov 2020 21:05:52 +0000 (UTC)
+Received: from sidgup-linux.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: sidgup)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id ED978C433C6;
+        Thu, 19 Nov 2020 21:05:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org ED978C433C6
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=sidgup@codeaurora.org
+From:   Siddharth Gupta <sidgup@codeaurora.org>
+To:     agross@kernel.org, bjorn.andersson@linaro.org, ohad@wizery.com,
+        linux-remoteproc@vger.kernel.org
+Cc:     Siddharth Gupta <sidgup@codeaurora.org>,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, tsoni@codeaurora.org,
+        psodagud@codeaurora.org, rishabhb@codeaurora.org,
+        linux-doc@vger.kernel.org
+Subject: [PATCH v8 0/4] Introduce mini-dump support for remoteproc
+Date:   Thu, 19 Nov 2020 13:05:31 -0800
+Message-Id: <1605819935-10726-1-git-send-email-sidgup@codeaurora.org>
+X-Mailer: git-send-email 2.7.4
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Thu, Nov 19, 2020 at 06:10:51PM +0100, Guennadi Liakhovetski wrote:
-> Hi Mathieu,
-> 
-> I haven't tested it yet, but I've compared it to the previous version 
-> and all the changed except the one, mentioned by Arnaud, seem to be 
-> there! So, let's just fix this one and should be good to go!
->
+Sometimes firmware sizes can be in tens of MB's and reading all the memory
+during coredump can consume lot of time and memory.
 
-Apologies for the brain bug - the code got lost in the thread...
- 
-> Thanks
-> Guennadi
-> 
-> On Thu, Nov 19, 2020 at 03:52:50PM +0100, Arnaud POULIQUEN wrote:
-> 
-> [snip]
-> 
-> > As Guennadi mentionned in a previous mail
-> > a kfree(vch) is missing on error
-> > 
-> > @@ -949,10 +949,11 @@ static int rpmsg_probe(struct virtio_device *vdev)
-> >  	dev_info(&vdev->dev, "rpmsg host is online\n");
-> > 
-> >  	return 0;
-> > 
-> >  free_coherent:
-> > +	kfree(vch);
-> >  	dma_free_coherent(vdev->dev.parent, total_buf_space,
-> >  			  bufs_va, vrp->bufs_dma);
-> >  vqs_del:
-> > 
-> > Otherwise i tested this series successfully.
-> > 
-> > Thanks,
-> > Arnaud
+Introducing support for mini-dumps. Mini-dump contains smallest amount of
+useful information, that could help to debug subsystem crashes.
+
+During bootup memory is allocated in SMEM (Shared memory) in the form of a
+table that contains the physical addresses and sizes of the regions that
+are supposed to be collected during coredump. This memory is shared amongst
+all processors in a Qualcomm platform, so all remoteprocs fill in their
+entry in the global table once they are out of reset.
+
+This patch series adds support for parsing the global minidump table and
+uses the current coredump frameork to expose this memory to userspace
+during remoteproc's recovery.
+
+This patch series also integrates the patch:
+https://patchwork.kernel.org/patch/11695541/ sent by Siddharth.
+
+Changelog:
+v7 -> v8:
+- Addressed all comments from Bjorn:
+    * Renamed set_section_name to elf_strtbl_add.
+    * Renamed rproc_minidump to rproc_coredump_using_sections.
+    * Removed qcom_minidump header and moved structures to qcom_common source files.
+    * Moved minidump specific functions to qcom_common source files.
+    * Other minor fixes.
+
+v6 -> v7:
+- The STR_TAB size is calculated dynamically now instead of a predefined size.
+- Added comments to indicate details about the reserved null section header. More
+  details can be found at https://refspecs.linuxfoundation.org/elf/elf.pdf.
+
+v5 -> v6:
+- Removed priv_cleanup operation from rproc_ops. The dump_segments list is
+  updated and cleaned up each time minidump is invoked.
+- Split patch #2 into 2 parts - one that adds the rproc_minidump function, and
+  the other that uses the new function in the qcom_q6v5_pas driver.
+- Updated structs in qcom_minidump to explicitly indicate the endianness of the
+  data stored in SMEM, also updated member names.
+- Read the global table of contents in SMEM each time adsp_minidump is invoked.
+
+v4 -> v5:
+- Fixed adsp_add_minidump_segments to read IO memory using appropriate functions.
+
+v3 -> v4:
+- Made adsp_priv_cleanup a static function.
+
+v2 -> v3:
+- Refactored code to remove dependency on Qualcomm configs.
+- Renamed do_rproc_minidump to rproc_minidump and marked as exported
+  symbol.
+
+v1 -> v2:
+- 3 kernel test robot warnings have been resolved.
+- Introduced priv_cleanup op in order to making the cleaning of
+  private elements used by the remoteproc more readable.
+- Removed rproc_cleanup_priv as it is no longer needed.
+- Switched to if/else format for rproc_alloc in order to keep 
+  the static const decalaration of adsp_minidump_ops.
+
+Siddharth Gupta (4):
+  remoteproc: core: Add ops to enable custom coredump functionality
+  remoteproc: coredump: Add minidump functionality
+  remoteproc: qcom: Add capability to collect minidumps
+  remoteproc: qcom: Add minidump id for sm8150 modem
+
+ drivers/remoteproc/qcom_common.c            | 147 ++++++++++++++++++++++++++++
+ drivers/remoteproc/qcom_common.h            |   2 +
+ drivers/remoteproc/qcom_q6v5_pas.c          |  28 +++++-
+ drivers/remoteproc/remoteproc_core.c        |   6 +-
+ drivers/remoteproc/remoteproc_coredump.c    | 140 ++++++++++++++++++++++++++
+ drivers/remoteproc/remoteproc_elf_helpers.h |  26 +++++
+ include/linux/remoteproc.h                  |   3 +
+ 7 files changed, 349 insertions(+), 3 deletions(-)
+
+-- 
+Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
+
