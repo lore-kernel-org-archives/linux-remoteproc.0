@@ -7,111 +7,125 @@ X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C9E8C2D0E4
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 20 Nov 2020 23:31:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E30C6C2D0E4
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 20 Nov 2020 23:35:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 14E882240B
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 20 Nov 2020 23:31:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 872182240B
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 20 Nov 2020 23:35:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="k5IKkXy7"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lSqmqi3Q"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726719AbgKTXby (ORCPT
+        id S1728295AbgKTXfk (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 20 Nov 2020 18:31:54 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60122 "EHLO
+        Fri, 20 Nov 2020 18:35:40 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60698 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728412AbgKTXby (ORCPT
+        with ESMTP id S1727364AbgKTXfk (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 20 Nov 2020 18:31:54 -0500
-Received: from mail-pf1-x442.google.com (mail-pf1-x442.google.com [IPv6:2607:f8b0:4864:20::442])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 30B2AC0613CF
-        for <linux-remoteproc@vger.kernel.org>; Fri, 20 Nov 2020 15:31:53 -0800 (PST)
-Received: by mail-pf1-x442.google.com with SMTP id 131so9358660pfb.9
-        for <linux-remoteproc@vger.kernel.org>; Fri, 20 Nov 2020 15:31:53 -0800 (PST)
+        Fri, 20 Nov 2020 18:35:40 -0500
+Received: from mail-pl1-x644.google.com (mail-pl1-x644.google.com [IPv6:2607:f8b0:4864:20::644])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E16C7C0613CF
+        for <linux-remoteproc@vger.kernel.org>; Fri, 20 Nov 2020 15:35:39 -0800 (PST)
+Received: by mail-pl1-x644.google.com with SMTP id 5so5676068plj.8
+        for <linux-remoteproc@vger.kernel.org>; Fri, 20 Nov 2020 15:35:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=xEIO6/wEzyK0kZrzGy927QBd/xK3YcJG0eoEjfm1d8c=;
-        b=k5IKkXy7hLPF4UkKuPBEklGT1V91wEnWAciAbHkrStWRj5v4gWESyPuiDEiAA/L8xd
-         vhgu9cQc+KiegUUiuKe/N6/5XvAPYfLbKqgSp1T8tHM4tIqJWP35ljCXC7McHVed4IiA
-         u3GhuFTX41MrbW660ye83JMnrWanbvuKc4jbgHy9d1wckivK+DVK5eCdb9hrSZ4kpd/u
-         pxSyt4eXQQrz1BtIk+htAIQXsHymf6aDDgxpJFBo6nTeNsU0+ENaNZHGsdz2v5+pFL8L
-         keicqStW710rcOB7s2Hd4Fw0uJDDUfYVTv1BdP+NxXvniyh/jUKoUGnBvdkwLEu4rlzx
-         Rfog==
+        bh=nRTceVwrQo7nc3Kc6KStQCnzuWIzRftiyAd8oL6fIFE=;
+        b=lSqmqi3Q157w+EhxtXGbrkd4lSfMsE4CKVqKVirBli6bOwnZN6/opiV6vTd2uXQ1GF
+         ApulU6IasNb58YkXkwLIvOkkYl4uS9NzMoYbUq14q9tMxncPbJ+OO+IA/Bn6rp0EIXx6
+         y6gDU7gvwPFzcYm5edJ2P5d9u6A43kcI4OZNgNImA8wALXcMAdTWQxsUlqx4ni1IrQHP
+         yqs3cXCvS9TuRiFMvk29L+f0v7RuK+m08Z54n3lvu0X4OaZ4NL+E8oTDEsxSh423T4Sw
+         rglb8cb16Uw6Wib/oV+A0/9scpXEvLN078NqrIwPPm5x6t66Y/Lr4sye6aUOSIU4iqN9
+         oLog==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=xEIO6/wEzyK0kZrzGy927QBd/xK3YcJG0eoEjfm1d8c=;
-        b=NxWPuXlRL+GuVgOkefD7J48W3ueTiXKjTLD0vlFdJ2U0gOn33mJeVcqiyk7Wj73JTG
-         HXBRKYgAk/I++tzjUeuV76bbiSEPGFg/+agdMe3wrbtFkyVYLlE43bZp/R5To5k+MWRO
-         fZvYET58DS0wwMJyBCYRYfXTuvqdIwP2Yrle444cGKq4m3wEKg/zET2n1Zgu5h2387tr
-         bTzGvnxaBUShRmA3STWPzJrYHFKt6ra6ezHsGu50LM0F/bmKMzwkBUbli66978tBMZkN
-         Nf27kPfHbvAW9ZEgvxV/86UGUnt5p3fe9pawCgjxz3zV6HJ2EQv+9PggZplkogm2THRE
-         +xww==
-X-Gm-Message-State: AOAM532LpJlpSHTbVRH8LlBq3ANoFNgs09YtGw0M2iPisaP/RkvzKZlp
-        yVoFlSsGv8Odv+Vk/bNxiobFaQ==
-X-Google-Smtp-Source: ABdhPJxSxX7IYQtKm4ZeIuwINPJZEhC+oMtEbu+YSlsWQhi0fEHQV88uZ8/XWi1dG0f7OwdyQHAWog==
-X-Received: by 2002:a17:90b:ec6:: with SMTP id gz6mr10965174pjb.142.1605915112733;
-        Fri, 20 Nov 2020 15:31:52 -0800 (PST)
+        bh=nRTceVwrQo7nc3Kc6KStQCnzuWIzRftiyAd8oL6fIFE=;
+        b=UqinnM0sizKkhY1OokDvhp8D9HO3B8GI3pRk5qu2/1wF5i4YkA5Z09SVhvq4lp0B9T
+         +mMs17rm7mRZPMBgQ8i6tWbJkVNg9wXS9dIhPWd+9vbB8lW5c7e+SCSnJh+o/RZBlyRk
+         QpHo3faHs63Biu+Duq+ASx+r2i0R8sQzjP85dZLRZ3wxxL0HwNOmpl+kugeSYGBHCStc
+         9YzeZSZSIYUwLpH8a+dZ5E5Q2DjKAO76Oai8IZZ4aYLjPcg8iUjbVss2oPQG1UV0188n
+         vEJ2xQE22ddooFRU2I7QISv3qQSVTfMelH3Rt41dINuX0HIXXrtVKiQNZixT6CWelJEV
+         cqaA==
+X-Gm-Message-State: AOAM5327Ykb3ieG1qPaX5KSdE+Cz/CF4P/vJiCz3Rl+3LoPifHNQBCHw
+        QFBYn9l44K0tGOep90Ow9f3wow==
+X-Google-Smtp-Source: ABdhPJz7jpiA+PzNI27E9IqxJ7o62Iz6jhCSYhdGO6EHIxHvY5p5FHzAXs1zPrxaX+LDxpqR6FO7sg==
+X-Received: by 2002:a17:902:b410:b029:d6:614b:679c with SMTP id x16-20020a170902b410b02900d6614b679cmr16035685plr.79.1605915339434;
+        Fri, 20 Nov 2020 15:35:39 -0800 (PST)
 Received: from xps15 (S0106889e681aac74.cg.shawcable.net. [68.147.0.187])
-        by smtp.gmail.com with ESMTPSA id y14sm4823503pfr.73.2020.11.20.15.31.51
+        by smtp.gmail.com with ESMTPSA id b3sm4721015pfd.66.2020.11.20.15.35.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 20 Nov 2020 15:31:52 -0800 (PST)
-Date:   Fri, 20 Nov 2020 16:31:50 -0700
+        Fri, 20 Nov 2020 15:35:38 -0800 (PST)
+Date:   Fri, 20 Nov 2020 16:35:37 -0700
 From:   Mathieu Poirier <mathieu.poirier@linaro.org>
 To:     Tzung-Bi Shih <tzungbi@google.com>
 Cc:     ohad@wizery.com, bjorn.andersson@linaro.org,
         linux-remoteproc@vger.kernel.org,
         linux-mediatek@lists.infradead.org, pihsun@chromium.org,
         matthias.bgg@gmail.com, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 1/3] remoteproc/mediatek: fix boundary check
-Message-ID: <20201120233150.GG4137289@xps15>
+Subject: Re: [PATCH v2 2/3] remoteproc/mediatek: skip if filesz is 0
+Message-ID: <20201120233537.GH4137289@xps15>
 References: <20201116084413.3312631-1-tzungbi@google.com>
- <20201116084413.3312631-2-tzungbi@google.com>
+ <20201116084413.3312631-3-tzungbi@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20201116084413.3312631-2-tzungbi@google.com>
+In-Reply-To: <20201116084413.3312631-3-tzungbi@google.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Mon, Nov 16, 2020 at 04:44:11PM +0800, Tzung-Bi Shih wrote:
-> It is valid if offset+length == sram_size.
+On Mon, Nov 16, 2020 at 04:44:12PM +0800, Tzung-Bi Shih wrote:
+> The main purpose of the loop is to load the memory to the SCP SRAM.
+> If filesz is 0, can go to next program header directly.
 > 
-> For example, sram_size=100, offset=99, length=1.  Accessing offset 99
-> with length 1 is valid.
+> We don't need to try to validate the FW binary for those filesz==0
+> segments.
 > 
 > Signed-off-by: Tzung-Bi Shih <tzungbi@google.com>
 > ---
->  drivers/remoteproc/mtk_scp.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+>  drivers/remoteproc/mtk_scp.c | 12 ++++++------
+>  1 file changed, 6 insertions(+), 6 deletions(-)
 > 
 > diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
-> index a1e23b5f19b9..0abbeb62cf43 100644
+> index 0abbeb62cf43..74ed675f61a6 100644
 > --- a/drivers/remoteproc/mtk_scp.c
 > +++ b/drivers/remoteproc/mtk_scp.c
-> @@ -408,11 +408,11 @@ static void *scp_da_to_va(struct rproc *rproc, u64 da, size_t len)
+> @@ -234,12 +234,14 @@ static int scp_elf_load_segments(struct rproc *rproc, const struct firmware *fw)
+>  		u32 offset = phdr->p_offset;
+>  		void __iomem *ptr;
 >  
->  	if (da < scp->sram_size) {
->  		offset = da;
-> -		if (offset >= 0 && (offset + len) < scp->sram_size)
-> +		if (offset >= 0 && (offset + len) <= scp->sram_size)
->  			return (void __force *)scp->sram_base + offset;
->  	} else if (scp->dram_size) {
->  		offset = da - scp->dma_addr;
-> -		if (offset >= 0 && (offset + len) < scp->dram_size)
-> +		if (offset >= 0 && (offset + len) <= scp->dram_size)
-
-Right, I had the same kind of conversation with the TI folks.
+> -		if (phdr->p_type != PT_LOAD)
+> -			continue;
+> -
+>  		dev_dbg(dev, "phdr: type %d da 0x%x memsz 0x%x filesz 0x%x\n",
+>  			phdr->p_type, da, memsz, filesz);
+>  
+> +		if (phdr->p_type != PT_LOAD)
+> +			continue;
+> +		if (!filesz)
+> +			continue;
+> +
+>  		if (filesz > memsz) {
+>  			dev_err(dev, "bad phdr filesz 0x%x memsz 0x%x\n",
+>  				filesz, memsz);
+> @@ -263,9 +265,7 @@ static int scp_elf_load_segments(struct rproc *rproc, const struct firmware *fw)
+>  		}
+>  
+>  		/* put the segment where the remote processor expects it */
+> -		if (phdr->p_filesz)
+> -			scp_memcpy_aligned(ptr, elf_data + phdr->p_offset,
+> -					   filesz);
+> +		scp_memcpy_aligned(ptr, elf_data + phdr->p_offset, filesz);
 
 Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 
->  			return scp->cpu_addr + offset;
 >  	}
 >  
+>  	return ret;
 > -- 
 > 2.29.2.299.gdc1121823c-goog
 > 
