@@ -2,195 +2,141 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6E38C64EBC
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 20 Nov 2020 21:43:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5B78C2D0E4
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 20 Nov 2020 22:37:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7EC012240B
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 20 Nov 2020 21:43:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 60E0822470
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 20 Nov 2020 22:37:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VzUNQrAE"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IiJvOOQf"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728367AbgKTVnI (ORCPT
+        id S1728282AbgKTWhF (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 20 Nov 2020 16:43:08 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43284 "EHLO
+        Fri, 20 Nov 2020 17:37:05 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51674 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728174AbgKTVmu (ORCPT
+        with ESMTP id S1728260AbgKTWhE (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 20 Nov 2020 16:42:50 -0500
+        Fri, 20 Nov 2020 17:37:04 -0500
 Received: from mail-pg1-x542.google.com (mail-pg1-x542.google.com [IPv6:2607:f8b0:4864:20::542])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3CB65C0613CF
-        for <linux-remoteproc@vger.kernel.org>; Fri, 20 Nov 2020 13:42:50 -0800 (PST)
-Received: by mail-pg1-x542.google.com with SMTP id m9so8447070pgb.4
-        for <linux-remoteproc@vger.kernel.org>; Fri, 20 Nov 2020 13:42:50 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CABB0C061A04
+        for <linux-remoteproc@vger.kernel.org>; Fri, 20 Nov 2020 14:37:04 -0800 (PST)
+Received: by mail-pg1-x542.google.com with SMTP id f18so8529881pgi.8
+        for <linux-remoteproc@vger.kernel.org>; Fri, 20 Nov 2020 14:37:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=JnwwhkWQ3GeoAyW3l6kwgfA23oecuiB8HGCIRs5X5Aw=;
-        b=VzUNQrAE4wFp3JCqzBDRItQY7d3iKu/bjxiETUpjz7KFyDIseKrdmQP2XNTMg0xkiI
-         OQw3Zga7phPQJBVmwriflTkHTQuYUhkOif16K6MAzXfQutfYp8ugJDs14wQqpT11mRz3
-         VDS0qldQ1OH7vb3YnJveqwnJfdb3S7ytdIFVUXoXb6nFDTLitAMzXWvKoKunysc00Z9F
-         VheyIho7s1GwBwGe6zW/1ymYAlQj/qhHQGqbHiB4Pmz4sv/ePpiFu4Uidpf047clRP8o
-         ERcfzJviiftPSrcPSpcANhL8nVILqf6OWyAHhxA925gphG6gBcokQ78CCslA3dHTcQkf
-         i4Vg==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=4zBsSClJxK/oRC1/vhFa/cwjuf3LYCK8JJOKPWg9iec=;
+        b=IiJvOOQfoY3zYljz6wJd/z8j1MJMr60n656zy9wu42s1EcN4zs31x16q0hrbj9o0Qt
+         grw3V1YyAqeMtmk1aKaFCOkNpInUU1/IXMXxXYbW0f65LcRN9XjvZcJwPTgPsPTQCUMe
+         4d9EcZ8CJrlNBwmzXR8wa+xIxkkpeDch0xSDStaKjYrLhq5guO6H5r3AiLPGdrSxGqA0
+         aKinU4UUF47pI/TV1+IYMYLeEEOlVpAkYE0L4/mZ+WsyXUjZH+hueca0wYUdYe+c+RyI
+         FXwqGMNwZ76rgC+kuSYkCw0A9uiPbSVF7xhw/JsCv4VzbqGzoqwM8T/A/uxK5Z6lK68Z
+         yVzQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=JnwwhkWQ3GeoAyW3l6kwgfA23oecuiB8HGCIRs5X5Aw=;
-        b=b8hLgQJHQJHjYz+yCP8yadr8J+YDrg9PYc8g9UMNm2kZol7BCL42WlqwhJxDZ4jRZF
-         Y2WUpKQqT6HGfWjg6TkkRJtymsZceoLGJpcmPVkii6OagymQeAUA8CTk8QC75OiBgyfX
-         ZiZUoYoJa8Y5jdH6vGCph7rMYWBatEZCylwj4vJ0BOVdpUPW5pA2ebJLyGP7CWU6Njxk
-         ioMafswmyoIap/ZcSv9OkXpi1/VyoBLWDYJc+WAK/c+kLeNt7sRMQIzabarg9hk6ysIo
-         flqCGw1S0lWlny0ofyr1KEHqIFgRbKuXRMnVl1awxJbyohxeYGD0x3PuJrpq6V872Gh/
-         tf3A==
-X-Gm-Message-State: AOAM5300BXEhXFp5L1sfjZNPKtuUmtyUwhyg6L/s18kcc75M2TDCwINu
-        WwdfFibPMcOuj85PYcP7+8K17w==
-X-Google-Smtp-Source: ABdhPJxOTtuYstDLKctepxBS7KkotAln4vgrKRWz/Ij9cHcCnk2ExRqDEA1CI505Q5s/1Zcy21Dnaw==
-X-Received: by 2002:a17:90b:4a4b:: with SMTP id lb11mr6323001pjb.131.1605908569804;
-        Fri, 20 Nov 2020 13:42:49 -0800 (PST)
-Received: from xps15.cg.shawcable.net (S0106889e681aac74.cg.shawcable.net. [68.147.0.187])
-        by smtp.gmail.com with ESMTPSA id e8sm4713197pfj.157.2020.11.20.13.42.48
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=4zBsSClJxK/oRC1/vhFa/cwjuf3LYCK8JJOKPWg9iec=;
+        b=GSWBxXRxLkQYBTqCsjM/edOLKp1DXIQY0q6bDTVHIXCuQ6ocSpzMbv8p0mXDQvLKAy
+         m7l8SXOpwNIHudBTg5ScEmcduUVt90H/Z5DLYL8IgWI4Hmb8tZVHl6u6O7TXOMB38VXs
+         BfDsn+zBu0g3+O3TzrmryiyPR1pAVacQDwPvCL+th1UypHAjF6Q+ZhlRVigDQ88HOm5Q
+         MqSinUmF240T+Ratzer9/2fDoGTZ5lvggH4ENu9OBv6jqk9TzxCuAM7RVZJV8DgYWV6Z
+         oWX2886KgvO+CU3INS1dCGUZ6/HhGUfTCPwlDkMKEl+nYs3gYN1eG49L59ppJcHYXFby
+         dDAQ==
+X-Gm-Message-State: AOAM530UMU1K8tITyOpF8LgIkF2Nx7l2P5NGNDMvWRGpDYGXsBTuOLDb
+        T8Y9wd+WBVjoGzTgOqybZg//gg==
+X-Google-Smtp-Source: ABdhPJz9vh7QXNVSMeNOljxwXcEdKLKPOsBMHRM83Y5rYhvQAkwQSFFkDuQ+ybVfYd+6FX1n+Y6vZA==
+X-Received: by 2002:a62:2a8c:0:b029:197:a56b:8e79 with SMTP id q134-20020a622a8c0000b0290197a56b8e79mr11024847pfq.51.1605911824277;
+        Fri, 20 Nov 2020 14:37:04 -0800 (PST)
+Received: from xps15 (S0106889e681aac74.cg.shawcable.net. [68.147.0.187])
+        by smtp.gmail.com with ESMTPSA id u197sm5089110pfc.127.2020.11.20.14.37.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 20 Nov 2020 13:42:49 -0800 (PST)
+        Fri, 20 Nov 2020 14:37:03 -0800 (PST)
+Date:   Fri, 20 Nov 2020 15:37:01 -0700
 From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-To:     ohad@wizery.com, bjorn.andersson@linaro.org
-Cc:     guennadi.liakhovetski@linux.intel.com, arnaud.pouliquen@st.com,
+To:     Paul Cercueil <paul@crapouillou.net>
+Cc:     Ohad Ben-Cohen <ohad@wizery.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>, od@zcrc.me,
         linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v7 3/8] rpmsg: Move structure rpmsg_ns_msg to header file
-Date:   Fri, 20 Nov 2020 14:42:40 -0700
-Message-Id: <20201120214245.172963-4-mathieu.poirier@linaro.org>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20201120214245.172963-1-mathieu.poirier@linaro.org>
-References: <20201120214245.172963-1-mathieu.poirier@linaro.org>
+Subject: Re: [PATCH] remoteproc: Add module parameter 'auto_boot'
+Message-ID: <20201120223701.GF4137289@xps15>
+References: <20201115115056.83225-1-paul@crapouillou.net>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201115115056.83225-1-paul@crapouillou.net>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Move structure rpmsg_ns_msg to its own header file so that
-it can be used by other entities.
+Hi Paul,
 
-Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-Reviewed-by: Arnaud Pouliquen <arnaud.pouliquen@st.com>
----
- drivers/rpmsg/virtio_rpmsg_bus.c | 32 +-----------------------
- include/linux/rpmsg/ns.h         | 42 ++++++++++++++++++++++++++++++++
- 2 files changed, 43 insertions(+), 31 deletions(-)
- create mode 100644 include/linux/rpmsg/ns.h
+On Sun, Nov 15, 2020 at 11:50:56AM +0000, Paul Cercueil wrote:
+> Until now the remoteproc core would always default to trying to boot the
+> remote processor at startup. The various remoteproc drivers could
+> however override that setting.
+> 
+> Whether or not we want the remote processor to boot, really depends on
+> the nature of the processor itself - a processor built into a WiFi chip
+> will need to be booted for the WiFi hardware to be usable, for instance,
+> but a general-purpose co-processor does not have any predeterminated
+> function, and as such we cannot assume that the OS will want the
+> processor to be booted - yet alone that we have a single do-it-all
+> firmware to load.
+>
 
-diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
-index 5259fbbc8e68..20d0cf909bea 100644
---- a/drivers/rpmsg/virtio_rpmsg_bus.c
-+++ b/drivers/rpmsg/virtio_rpmsg_bus.c
-@@ -20,6 +20,7 @@
- #include <linux/of_device.h>
- #include <linux/rpmsg.h>
- #include <linux/rpmsg/byteorder.h>
-+#include <linux/rpmsg/ns.h>
- #include <linux/scatterlist.h>
- #include <linux/slab.h>
- #include <linux/sched.h>
-@@ -93,34 +94,6 @@ struct rpmsg_hdr {
- 	u8 data[];
- } __packed;
+If I understand correctly you have various remote processors that use the same firmware
+but are serving different purposes - is this correct?
  
--/**
-- * struct rpmsg_ns_msg - dynamic name service announcement message
-- * @name: name of remote service that is published
-- * @addr: address of remote service that is published
-- * @flags: indicates whether service is created or destroyed
-- *
-- * This message is sent across to publish a new service, or announce
-- * about its removal. When we receive these messages, an appropriate
-- * rpmsg channel (i.e device) is created/destroyed. In turn, the ->probe()
-- * or ->remove() handler of the appropriate rpmsg driver will be invoked
-- * (if/as-soon-as one is registered).
-- */
--struct rpmsg_ns_msg {
--	char name[RPMSG_NAME_SIZE];
--	__rpmsg32 addr;
--	__rpmsg32 flags;
--} __packed;
--
--/**
-- * enum rpmsg_ns_flags - dynamic name service announcement flags
-- *
-- * @RPMSG_NS_CREATE: a new remote service was just created
-- * @RPMSG_NS_DESTROY: a known remote service was just destroyed
-- */
--enum rpmsg_ns_flags {
--	RPMSG_NS_CREATE		= 0,
--	RPMSG_NS_DESTROY	= 1,
--};
- 
- /**
-  * struct virtio_rpmsg_channel - rpmsg channel descriptor
-@@ -167,9 +140,6 @@ struct virtio_rpmsg_channel {
-  */
- #define RPMSG_RESERVED_ADDRESSES	(1024)
- 
--/* Address 53 is reserved for advertising remote services */
--#define RPMSG_NS_ADDR			(53)
--
- static void virtio_rpmsg_destroy_ept(struct rpmsg_endpoint *ept);
- static int virtio_rpmsg_send(struct rpmsg_endpoint *ept, void *data, int len);
- static int virtio_rpmsg_sendto(struct rpmsg_endpoint *ept, void *data, int len,
-diff --git a/include/linux/rpmsg/ns.h b/include/linux/rpmsg/ns.h
-new file mode 100644
-index 000000000000..73ecc91dc26f
---- /dev/null
-+++ b/include/linux/rpmsg/ns.h
-@@ -0,0 +1,42 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+
-+#ifndef _LINUX_RPMSG_NS_H
-+#define _LINUX_RPMSG_NS_H
-+
-+#include <linux/mod_devicetable.h>
-+#include <linux/rpmsg/byteorder.h>
-+#include <linux/types.h>
-+
-+/**
-+ * struct rpmsg_ns_msg - dynamic name service announcement message
-+ * @name: name of remote service that is published
-+ * @addr: address of remote service that is published
-+ * @flags: indicates whether service is created or destroyed
-+ *
-+ * This message is sent across to publish a new service, or announce
-+ * about its removal. When we receive these messages, an appropriate
-+ * rpmsg channel (i.e device) is created/destroyed. In turn, the ->probe()
-+ * or ->remove() handler of the appropriate rpmsg driver will be invoked
-+ * (if/as-soon-as one is registered).
-+ */
-+struct rpmsg_ns_msg {
-+	char name[RPMSG_NAME_SIZE];
-+	__rpmsg32 addr;
-+	__rpmsg32 flags;
-+} __packed;
-+
-+/**
-+ * enum rpmsg_ns_flags - dynamic name service announcement flags
-+ *
-+ * @RPMSG_NS_CREATE: a new remote service was just created
-+ * @RPMSG_NS_DESTROY: a known remote service was just destroyed
-+ */
-+enum rpmsg_ns_flags {
-+	RPMSG_NS_CREATE		= 0,
-+	RPMSG_NS_DESTROY	= 1,
-+};
-+
-+/* Address 53 is reserved for advertising remote services */
-+#define RPMSG_NS_ADDR			(53)
-+
-+#endif
--- 
-2.25.1
+> Add a 'auto_boot' module parameter that instructs the remoteproc whether
+> or not it should auto-boot the remote processor, which will default to
+> "true" to respect the previous behaviour.
+>
 
+Given that the core can't be a module I wonder if this isn't something that
+would be better off in the specific platform driver or the device tree...  Other
+people might have an opinion as well.
+
+Thanks,
+Mathieu
+
+> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+> ---
+>  drivers/remoteproc/remoteproc_core.c | 7 ++++++-
+>  1 file changed, 6 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+> index dab2c0f5caf0..687b1bfd49db 100644
+> --- a/drivers/remoteproc/remoteproc_core.c
+> +++ b/drivers/remoteproc/remoteproc_core.c
+> @@ -44,6 +44,11 @@
+>  
+>  #define HIGH_BITS_MASK 0xFFFFFFFF00000000ULL
+>  
+> +static bool auto_boot = true;
+> +module_param(auto_boot, bool, 0400);
+> +MODULE_PARM_DESC(auto_boot,
+> +		 "Auto-boot the remote processor [default=true]");
+> +
+>  static DEFINE_MUTEX(rproc_list_mutex);
+>  static LIST_HEAD(rproc_list);
+>  static struct notifier_block rproc_panic_nb;
+> @@ -2176,7 +2181,7 @@ struct rproc *rproc_alloc(struct device *dev, const char *name,
+>  		return NULL;
+>  
+>  	rproc->priv = &rproc[1];
+> -	rproc->auto_boot = true;
+> +	rproc->auto_boot = auto_boot;
+>  	rproc->elf_class = ELFCLASSNONE;
+>  	rproc->elf_machine = EM_NONE;
+>  
+> -- 
+> 2.29.2
+> 
