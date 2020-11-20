@@ -7,65 +7,65 @@ X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06C9CC56202
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 20 Nov 2020 21:43:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DBC97C64E7C
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 20 Nov 2020 21:43:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BD7E42408E
+	by mail.kernel.org (Postfix) with ESMTP id 85BC22240B
 	for <linux-remoteproc@archiver.kernel.org>; Fri, 20 Nov 2020 21:43:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mHVx4nMr"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rsprrXgQ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728521AbgKTVnE (ORCPT
+        id S1728553AbgKTVnE (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
         Fri, 20 Nov 2020 16:43:04 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43306 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43298 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728367AbgKTVmx (ORCPT
+        with ESMTP id S1728521AbgKTVmx (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
         Fri, 20 Nov 2020 16:42:53 -0500
-Received: from mail-pf1-x442.google.com (mail-pf1-x442.google.com [IPv6:2607:f8b0:4864:20::442])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C450C061A47
-        for <linux-remoteproc@vger.kernel.org>; Fri, 20 Nov 2020 13:42:53 -0800 (PST)
-Received: by mail-pf1-x442.google.com with SMTP id 131so9136148pfb.9
-        for <linux-remoteproc@vger.kernel.org>; Fri, 20 Nov 2020 13:42:53 -0800 (PST)
+Received: from mail-pf1-x443.google.com (mail-pf1-x443.google.com [IPv6:2607:f8b0:4864:20::443])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4B804C061A04
+        for <linux-remoteproc@vger.kernel.org>; Fri, 20 Nov 2020 13:42:52 -0800 (PST)
+Received: by mail-pf1-x443.google.com with SMTP id a18so9151672pfl.3
+        for <linux-remoteproc@vger.kernel.org>; Fri, 20 Nov 2020 13:42:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=zy3k3QU006yaoOz1NXa213YD9ZVtkyTeVCamwFEkkEQ=;
-        b=mHVx4nMreWTzBAHDDMmYZXDqZmTt10XLrRXiZQrup3sGkBkxTudYjR55ls20nM5eW1
-         JmmqivHfvVfsui8YPxni6zeqnY09u38UAcAxPavMKmwVOyxQMCgOrcSCJ5YuTeGiBIU3
-         MRqBh9EIUAuzrVsupH8W9p1t8zaoNe9kLz1qM6PTl+AwQDI9aZg2IyHNfq429pebncYa
-         mSRK5ytaY2LePH3dTwe8pyZ0zd8dXwRUAwJZh4SrbQS5pXauaIuhtFzEw38nDfAGiDhE
-         1fmmI4s5+Z0W465VJf5xAONWerTxW2/4i7Hk+/CoJaU6mTtchTzxgrna2DVHVj9zLI3R
-         gcIw==
+        bh=YpJGL4iVaQpB7OmyOGqz/Jf0POXHK+Nggf2uFVT9Buw=;
+        b=rsprrXgQJ8Uxq1riKWhihy1oQMH/BBT8pLh6Z5YIbfumyJK4ixSQK3k6LnsVGQ1WOE
+         EID9fHBgPrYlxGubouynSgoa/cjJZwycBwZPRP2gzxDiyi0Pyl1i+lRu4J/E7npqafBl
+         kAKwcXcog/Kir1pfvgk+Fg7LQ239DGndiqza9kdbGoBa+gJE40fZdw5uyE+YxTGHan8x
+         D6688IWtT7RThWkrPGHfTrkDIV8yUSRnn8Q+hBSVxBUS4DxJzfcO8r/Ja2WYxu3AUbnV
+         0AWocaPeoBm5aLIQmfZOEHf4a9r7kr5h9u0zLnumaIk46MaeS/zytw/cwXF0MX3lMqgB
+         zbRA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=zy3k3QU006yaoOz1NXa213YD9ZVtkyTeVCamwFEkkEQ=;
-        b=S3ykg5gug0Ndz0Jpz1GUG2nkamzqc2q/EpfsIfKJ2Qs40N3Y8fRB8zQBDq8NX2nDg4
-         adDQWJlu9rq1NLBwYldT7T+i5HsTEseQRVwaedAbKen0tF+U5eBUGpb84AuMgzdAUmW8
-         lxPG087QPezw0PyK4KRDP+o4LCyS+1LSLJO0CcV/iFYOvY9K1x+4344dBWYTtOxEocra
-         NMlkgnlV6Zazk1269Y1J9F7H8YcAW4C2tD5i9/BpanMED+EVr5O48WX6uA1/8wCHY3wg
-         jcEBW5m61BeqtLrEeyPR/eqKYxLvxkw6G6S+pIaSqFV4Tri3FbfXGOCMxf8FdeLpDAok
-         sugA==
-X-Gm-Message-State: AOAM530XMkxBOAJR1/zOkjFQvL9nmuwrF/F6vkh+v0EBGPuAxsy+mTHM
-        e0idPSaUprwc1j2EuCg6BDvPdSGVkFiGjg==
-X-Google-Smtp-Source: ABdhPJzDV/RbYKBqaRiwM48tr9/S9fRSo6t/9VSD2dhcy8do6dMdNAgMBeP8oattOr/L6XrG3E0dPQ==
-X-Received: by 2002:a17:90a:c401:: with SMTP id i1mr11822474pjt.184.1605908572867;
-        Fri, 20 Nov 2020 13:42:52 -0800 (PST)
+        bh=YpJGL4iVaQpB7OmyOGqz/Jf0POXHK+Nggf2uFVT9Buw=;
+        b=ZicW0bKkRyHrlBAfhRii4gF/B8sZwDjGsKhLL7G6sKZ0F8bIa71Ujt6xJalm0FGMED
+         pexzl8OKLGVbRFMcDa/PELDO+M5p3OVv58vPsarJLtkUrfJmOR71dpX8LP41c59nUDEK
+         pooKswHD/zA8H5o4iwTbDZesXkoTUPbaRVik2ts/hZVejmJn0i7NTk2urkTFrknCGXCd
+         nGFJbYF7P680kUqYBHYNn0tsfwc4CsL3beUCAjSJioWnbGU0mGYVwwa3W8UUq0wJGQ1D
+         vd0pUP0jkqG6jeKjVLYmzRGnDqmvrZw4fbSvBrK63YAPeoDMkeWt2rD4eiQi6AEYCGFP
+         bMug==
+X-Gm-Message-State: AOAM532DAtROyGf085Ok+nMrQiaIMhDca2bnRw9NrYFDIkkp/U7ViqbN
+        7IayQPVb2uCfjD4ctrXj6QYFOQ==
+X-Google-Smtp-Source: ABdhPJwG8ojTAM3LzlvZko1yKgzZTHIM/kSHXTPEW1lLwhIcriYMoHO4WDHWxjOocTsdcRguRLxlSw==
+X-Received: by 2002:a63:f944:: with SMTP id q4mr18079882pgk.98.1605908571882;
+        Fri, 20 Nov 2020 13:42:51 -0800 (PST)
 Received: from xps15.cg.shawcable.net (S0106889e681aac74.cg.shawcable.net. [68.147.0.187])
-        by smtp.gmail.com with ESMTPSA id e8sm4713197pfj.157.2020.11.20.13.42.52
+        by smtp.gmail.com with ESMTPSA id e8sm4713197pfj.157.2020.11.20.13.42.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 20 Nov 2020 13:42:52 -0800 (PST)
+        Fri, 20 Nov 2020 13:42:51 -0800 (PST)
 From:   Mathieu Poirier <mathieu.poirier@linaro.org>
 To:     ohad@wizery.com, bjorn.andersson@linaro.org
 Cc:     guennadi.liakhovetski@linux.intel.com, arnaud.pouliquen@st.com,
         linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v7 6/8] rpmsg: virtio: Add rpmsg channel device ops
-Date:   Fri, 20 Nov 2020 14:42:43 -0700
-Message-Id: <20201120214245.172963-7-mathieu.poirier@linaro.org>
+Subject: [PATCH v7 5/8] rpmsg: core: Add channel creation internal API
+Date:   Fri, 20 Nov 2020 14:42:42 -0700
+Message-Id: <20201120214245.172963-6-mathieu.poirier@linaro.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20201120214245.172963-1-mathieu.poirier@linaro.org>
 References: <20201120214245.172963-1-mathieu.poirier@linaro.org>
@@ -77,63 +77,108 @@ X-Mailing-List: linux-remoteproc@vger.kernel.org
 
 From: Arnaud Pouliquen <arnaud.pouliquen@st.com>
 
-Implement the create and release of the RPMsg channel
-for the RPMsg virtio bus.
+Add the channel creation API as a first step to be able to define the
+name service announcement as a rpmsg driver independent from the RPMsg
+virtio bus.
 
 Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@st.com>
 Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 Reviewed-by: Guennadi Liakhovetski <guennadi.liakhovetski@linux.intel.com>
 ---
- drivers/rpmsg/virtio_rpmsg_bus.c | 22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
+ drivers/rpmsg/rpmsg_core.c     | 44 ++++++++++++++++++++++++++++++++++
+ drivers/rpmsg/rpmsg_internal.h | 10 ++++++++
+ 2 files changed, 54 insertions(+)
 
-diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
-index 2253936593c5..6ec299f7f790 100644
---- a/drivers/rpmsg/virtio_rpmsg_bus.c
-+++ b/drivers/rpmsg/virtio_rpmsg_bus.c
-@@ -151,6 +151,8 @@ static int virtio_rpmsg_trysendto(struct rpmsg_endpoint *ept, void *data,
- 				  int len, u32 dst);
- static int virtio_rpmsg_trysend_offchannel(struct rpmsg_endpoint *ept, u32 src,
- 					   u32 dst, void *data, int len);
-+static struct rpmsg_device *__rpmsg_create_channel(struct virtproc_info *vrp,
-+						   struct rpmsg_channel_info *chinfo);
+diff --git a/drivers/rpmsg/rpmsg_core.c b/drivers/rpmsg/rpmsg_core.c
+index 91de940896e3..e5daee4f9373 100644
+--- a/drivers/rpmsg/rpmsg_core.c
++++ b/drivers/rpmsg/rpmsg_core.c
+@@ -20,6 +20,50 @@
  
- static const struct rpmsg_endpoint_ops virtio_endpoint_ops = {
- 	.destroy_ept = virtio_rpmsg_destroy_ept,
-@@ -255,6 +257,24 @@ static struct rpmsg_endpoint *__rpmsg_create_ept(struct virtproc_info *vrp,
- 	return NULL;
- }
+ #include "rpmsg_internal.h"
  
-+static struct rpmsg_device *virtio_rpmsg_create_channel(struct rpmsg_device *rpdev,
-+							struct rpmsg_channel_info *chinfo)
++/**
++ * rpmsg_create_channel() - create a new rpmsg channel
++ * using its name and address info.
++ * @rpdev: rpmsg device
++ * @chinfo: channel_info to bind
++ *
++ * Returns a pointer to the new rpmsg device on success, or NULL on error.
++ */
++struct rpmsg_device *rpmsg_create_channel(struct rpmsg_device *rpdev,
++					  struct rpmsg_channel_info *chinfo)
 +{
-+	struct virtio_rpmsg_channel *vch = to_virtio_rpmsg_channel(rpdev);
-+	struct virtproc_info *vrp = vch->vrp;
++	if (WARN_ON(!rpdev))
++		return NULL;
++	if (!rpdev->ops || !rpdev->ops->create_channel) {
++		dev_err(&rpdev->dev, "no create_channel ops found\n");
++		return NULL;
++	}
 +
-+	return __rpmsg_create_channel(vrp, chinfo);
++	return rpdev->ops->create_channel(rpdev, chinfo);
 +}
++EXPORT_SYMBOL(rpmsg_create_channel);
 +
-+static int virtio_rpmsg_release_channel(struct rpmsg_device *rpdev,
-+					struct rpmsg_channel_info *chinfo)
++/**
++ * rpmsg_release_channel() - release a rpmsg channel
++ * using its name and address info.
++ * @rpdev: rpmsg device
++ * @chinfo: channel_info to bind
++ *
++ * Returns 0 on success or an appropriate error value.
++ */
++int rpmsg_release_channel(struct rpmsg_device *rpdev,
++			  struct rpmsg_channel_info *chinfo)
 +{
-+	struct virtio_rpmsg_channel *vch = to_virtio_rpmsg_channel(rpdev);
-+	struct virtproc_info *vrp = vch->vrp;
++	if (WARN_ON(!rpdev))
++		return -EINVAL;
++	if (!rpdev->ops || !rpdev->ops->release_channel) {
++		dev_err(&rpdev->dev, "no release_channel ops found\n");
++		return -ENXIO;
++	}
 +
-+	return rpmsg_unregister_device(&vrp->vdev->dev, chinfo);
++	return rpdev->ops->release_channel(rpdev, chinfo);
 +}
++EXPORT_SYMBOL(rpmsg_release_channel);
 +
- static struct rpmsg_endpoint *virtio_rpmsg_create_ept(struct rpmsg_device *rpdev,
- 						      rpmsg_rx_cb_t cb,
- 						      void *priv,
-@@ -347,6 +367,8 @@ static int virtio_rpmsg_announce_destroy(struct rpmsg_device *rpdev)
- }
+ /**
+  * rpmsg_create_ept() - create a new rpmsg_endpoint
+  * @rpdev: rpmsg channel device
+diff --git a/drivers/rpmsg/rpmsg_internal.h b/drivers/rpmsg/rpmsg_internal.h
+index 3fc83cd50e98..f1de73e0f2d6 100644
+--- a/drivers/rpmsg/rpmsg_internal.h
++++ b/drivers/rpmsg/rpmsg_internal.h
+@@ -20,6 +20,8 @@
  
- static const struct rpmsg_device_ops virtio_rpmsg_ops = {
-+	.create_channel = virtio_rpmsg_create_channel,
-+	.release_channel = virtio_rpmsg_release_channel,
- 	.create_ept = virtio_rpmsg_create_ept,
- 	.announce_create = virtio_rpmsg_announce_create,
- 	.announce_destroy = virtio_rpmsg_announce_destroy,
+ /**
+  * struct rpmsg_device_ops - indirection table for the rpmsg_device operations
++ * @create_channel:	create backend-specific channel, optional
++ * @release_channel:	release backend-specific channel, optional
+  * @create_ept:		create backend-specific endpoint, required
+  * @announce_create:	announce presence of new channel, optional
+  * @announce_destroy:	announce destruction of channel, optional
+@@ -29,6 +31,10 @@
+  * advertise new channels implicitly by creating the endpoints.
+  */
+ struct rpmsg_device_ops {
++	struct rpmsg_device *(*create_channel)(struct rpmsg_device *rpdev,
++					       struct rpmsg_channel_info *chinfo);
++	int (*release_channel)(struct rpmsg_device *rpdev,
++			       struct rpmsg_channel_info *chinfo);
+ 	struct rpmsg_endpoint *(*create_ept)(struct rpmsg_device *rpdev,
+ 					    rpmsg_rx_cb_t cb, void *priv,
+ 					    struct rpmsg_channel_info chinfo);
+@@ -75,6 +81,10 @@ int rpmsg_unregister_device(struct device *parent,
+ struct device *rpmsg_find_device(struct device *parent,
+ 				 struct rpmsg_channel_info *chinfo);
+ 
++struct rpmsg_device *rpmsg_create_channel(struct rpmsg_device *rpdev,
++					  struct rpmsg_channel_info *chinfo);
++int rpmsg_release_channel(struct rpmsg_device *rpdev,
++			  struct rpmsg_channel_info *chinfo);
+ /**
+  * rpmsg_chrdev_register_device() - register chrdev device based on rpdev
+  * @rpdev:	prepared rpdev to be used for creating endpoints
 -- 
 2.25.1
 
