@@ -2,118 +2,84 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A268C56202
-	for <linux-remoteproc@archiver.kernel.org>; Sat, 21 Nov 2020 04:05:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C899BC388F9
+	for <linux-remoteproc@archiver.kernel.org>; Sat, 21 Nov 2020 14:09:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 31D7622210
-	for <linux-remoteproc@archiver.kernel.org>; Sat, 21 Nov 2020 04:05:45 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gY5vw82/"
+	by mail.kernel.org (Postfix) with ESMTP id 741CB2224A
+	for <linux-remoteproc@archiver.kernel.org>; Sat, 21 Nov 2020 14:09:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726749AbgKUEFo (ORCPT
+        id S1727531AbgKUOJH (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 20 Nov 2020 23:05:44 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45984 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726674AbgKUEFo (ORCPT
+        Sat, 21 Nov 2020 09:09:07 -0500
+Received: from smtp2207-205.mail.aliyun.com ([121.197.207.205]:51899 "EHLO
+        smtp2207-205.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726570AbgKUOJG (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 20 Nov 2020 23:05:44 -0500
-Received: from mail-ot1-x341.google.com (mail-ot1-x341.google.com [IPv6:2607:f8b0:4864:20::341])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7CCEFC0613CF
-        for <linux-remoteproc@vger.kernel.org>; Fri, 20 Nov 2020 20:05:44 -0800 (PST)
-Received: by mail-ot1-x341.google.com with SMTP id o3so10754651ota.8
-        for <linux-remoteproc@vger.kernel.org>; Fri, 20 Nov 2020 20:05:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=vDCzn8IpZ7D1wHWvbrDgdoNWq9ddfRFT4DNN+T24cXc=;
-        b=gY5vw82/h1f9OVJ6eYtJiP9As4gPHncfRQvhz8TcCdbhtOmCxWl33fmyGQ6MvrZL6A
-         waOVRIqwe0WcHXmIblrUj19BejHVizPjBSFo2hNrkki0O7hlNlGU3yuOQkaBZrESXzmR
-         qE+uvja8Olo04T/4NAfKxAci/eyYLNH65J3s5cLeZ3VlfRrzVIlHqU1wwUIGI0QJXRpk
-         ohNEt48kmWR8niX3dPmKODoDL6iaRgJdTFDao7BK9GH7XkmEHIJcGOvDzdMh/biLtPPl
-         4xbJyPHkbmsek6hQwgZtdchqWy4LjTQnOOjTlvXyLDKsu9lrNkb9cQ1A7FdnKoVjbKeH
-         c7KA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=vDCzn8IpZ7D1wHWvbrDgdoNWq9ddfRFT4DNN+T24cXc=;
-        b=b1SEDZz4qlqmmZjlOD3Djtr7oW5FItZB1euyEQaTeHV6UzodlBjZfGAIacfxCdM9Mu
-         KdrYC4PSQc7dG6Xtwd2qqaIXJk8oUF85G1Vb7KVK4xYDpY1LCdqp0ns7YIwEvSiTVlU8
-         CWHb3+tGBk8gOYIOlX502qIJOd8W+t8lsgAN7ziJXo286+uKiKfR8SVRmZ0g1ytU5DM+
-         SACC2QADtg85H5eAhQdRgB0c8MSezZtsl6HHhpkuZdb2ujfUym8v8lePNqLryGI/UVT+
-         A9iX0PRD5IlxODHJ7c7RVP8KSw74PMtOV9H9SQJZlejJ4/TzWSQkDbWHU7B0rq+TdAWy
-         r/ZQ==
-X-Gm-Message-State: AOAM531XYPXndlM8mr9L6jmuYsHqek+NvwExlFpagxVF+YYk2KccehFv
-        50ML3289V0N0qeGtwt7xbVEBZA==
-X-Google-Smtp-Source: ABdhPJyEoLAlB4m/u91It7w5xf0owODbLy8PAPhdLNw5Vc0V3GxHTc8Ur+ZzMXEXgxSWKQFTLiGEow==
-X-Received: by 2002:a05:6830:1e95:: with SMTP id n21mr16865592otr.49.1605931543881;
-        Fri, 20 Nov 2020 20:05:43 -0800 (PST)
-Received: from builder.lan (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
-        by smtp.gmail.com with ESMTPSA id r206sm2760502oih.14.2020.11.20.20.05.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 20 Nov 2020 20:05:43 -0800 (PST)
-Date:   Fri, 20 Nov 2020 22:05:41 -0600
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Siddharth Gupta <sidgup@codeaurora.org>
-Cc:     agross@kernel.org, ohad@wizery.com,
-        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, tsoni@codeaurora.org,
-        psodagud@codeaurora.org, rishabhb@codeaurora.org,
-        linux-doc@vger.kernel.org
-Subject: Re: [PATCH v8 4/4] remoteproc: qcom: Add minidump id for sm8150 modem
-Message-ID: <20201121040541.GM9177@builder.lan>
-References: <1605819935-10726-1-git-send-email-sidgup@codeaurora.org>
- <1605819935-10726-5-git-send-email-sidgup@codeaurora.org>
+        Sat, 21 Nov 2020 09:09:06 -0500
+X-Alimail-AntiSpam: AC=CONTINUE;BC=0.1342164|-1;CH=green;DM=|CONTINUE|false|;DS=CONTINUE|ham_social|0.018434-0.00355031-0.978016;FP=0|0|0|0|0|-1|-1|-1;HT=ay29a033018047201;MF=fuyao@allwinnertech.com;NM=1;PH=DS;RN=4;RT=4;SR=0;TI=SMTPD_---.IzZuxG._1605967737;
+Received: from localhost(mailfrom:fuyao@allwinnertech.com fp:SMTPD_---.IzZuxG._1605967737)
+          by smtp.aliyun-inc.com(10.147.41.187);
+          Sat, 21 Nov 2020 22:08:57 +0800
+Date:   Sat, 21 Nov 2020 22:08:57 +0800
+From:   fuyao <fuyao@allwinnertech.com>
+To:     Maxime Ripard <maxime@cerno.tech>
+Cc:     wens@csie.org, linux-remoteproc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/2] introduce sunxi hwspinlock
+Message-ID: <20201121140857.GA23438@debian>
+Mail-Followup-To: Maxime Ripard <maxime@cerno.tech>, wens@csie.org,
+        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <y>
+ <cover.1605767679.git.fuyao@allwinnertech.com>
+ <20201120160710.wlkl5cdfqlrym2fj@gilmour>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1605819935-10726-5-git-send-email-sidgup@codeaurora.org>
+In-Reply-To: <20201120160710.wlkl5cdfqlrym2fj@gilmour>
+Organization: fuyao_love_xxt.Allwinnertech.Technology
+User-Agent: Mutt/1.12.1+6 (4c2f7c70) (2019-08-28)
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Thu 19 Nov 15:05 CST 2020, Siddharth Gupta wrote:
-
-> Add minidump id for modem in sm8150 chipset so that the regions to be
-> included in the coredump generated upon a crash is based on the minidump
-> tables in SMEM instead of those in the ELF header.
+On Fri, Nov 20, 2020 at 05:07:10PM +0100, Maxime Ripard wrote:
+> Hi!
 > 
-> Signed-off-by: Siddharth Gupta <sidgup@codeaurora.org>
-
-When reposting patches without modifications, please add any
-Acked-by, Reviewed-by or Tested-by that you received previously.
-
-
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-
-Regards,
-Bjorn
-
-> ---
->  drivers/remoteproc/qcom_q6v5_pas.c | 1 +
->  1 file changed, 1 insertion(+)
+> On Thu, Nov 19, 2020 at 02:44:51PM +0800, fuyao@allwinnertech.com wrote:
+> > From: fuyao <fuyao@allwinnertech.com>
+> > 
+> > this series add hwspinlock of sunxi. it provides hardware assistance for
+> > synchronization between the multiple processors in the system.
+> > (Or1k, Cortex-A7, Cortex-A53, Xtensa)
 > 
-> diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
-> index ca05c2ef..e61ef88 100644
-> --- a/drivers/remoteproc/qcom_q6v5_pas.c
-> +++ b/drivers/remoteproc/qcom_q6v5_pas.c
-> @@ -630,6 +630,7 @@ static const struct adsp_data mpss_resource_init = {
->  	.crash_reason_smem = 421,
->  	.firmware_name = "modem.mdt",
->  	.pas_id = 4,
-> +	.minidump_id = 3,
->  	.has_aggre2_clk = false,
->  	.auto_boot = false,
->  	.active_pd_names = (char*[]){
-> -- 
-> Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-> a Linux Foundation Collaborative Project
+> Xtensa? Which SoC has an Xtensa core?
+
+The new Soc named R329 use Xtensa core as the arisc role and audio.
+And the hwspinlock is the same as h3 and h6.
+
+Additional, The new RISC-V Soc also use the same hwspinlock.
+
 > 
+> Unfortunately, there's been a submission of the same driver earlier this week:
+> https://lore.kernel.org/lkml/cover.1605693132.git.wilken.gottwalt@posteo.net/
+> 
+> It would be great if you could point out whatever issue there is with
+> that patch series (it looks like the retry delay could be useful for
+> example).
+
+I will test that submission with arisc next week.
+
+BTW, which sunxi board you used, I want to used the same board with you.
+
+^-^
+
+thanks
+-- 
+fuyao
+
+
