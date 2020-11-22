@@ -2,203 +2,103 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1D1CC5519F
-	for <linux-remoteproc@archiver.kernel.org>; Sun, 22 Nov 2020 17:48:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54B51C5519F
+	for <linux-remoteproc@archiver.kernel.org>; Sun, 22 Nov 2020 23:46:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B11402076B
-	for <linux-remoteproc@archiver.kernel.org>; Sun, 22 Nov 2020 17:48:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1416320721
+	for <linux-remoteproc@archiver.kernel.org>; Sun, 22 Nov 2020 23:46:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="uBGArDuz"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="r51WnwYG"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727973AbgKVRsw (ORCPT
+        id S1726635AbgKVXpq (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Sun, 22 Nov 2020 12:48:52 -0500
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:43092 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727567AbgKVRsw (ORCPT
+        Sun, 22 Nov 2020 18:45:46 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51546 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726533AbgKVXpq (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Sun, 22 Nov 2020 12:48:52 -0500
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 0AMHmiD4073306;
-        Sun, 22 Nov 2020 11:48:44 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1606067324;
-        bh=egm0vCVcqJrsWJaT4E6pP8bZGHQ8X8UOvlmsF/oNS10=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=uBGArDuzJMG4hrWeaTtmXS35Ui2AA6mk50W2afDjPL21aFoAko57gcoOE6UUYaMWW
-         AnSGQ3GbQDeb6TxeEQ/BiiR0Mz2lfGjvZYww4qKAxIOu4FnE+mIhmfjI7mm+LeqkGl
-         IUlgoiCT+gKhwHl53fWJbkgKYQQJ88QaYqPGmyME=
-Received: from DFLE105.ent.ti.com (dfle105.ent.ti.com [10.64.6.26])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 0AMHmilg037864
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Sun, 22 Nov 2020 11:48:44 -0600
-Received: from DFLE108.ent.ti.com (10.64.6.29) by DFLE105.ent.ti.com
- (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3; Sun, 22
- Nov 2020 11:48:44 -0600
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE108.ent.ti.com
- (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3 via
- Frontend Transport; Sun, 22 Nov 2020 11:48:44 -0600
-Received: from [10.250.68.46] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 0AMHmh9w018260;
-        Sun, 22 Nov 2020 11:48:44 -0600
-Subject: Re: [PATCH v2 2/3] remoteproc: Introduce deny_sysfs_ops flag
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-CC:     Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Arnaud Pouliquen <arnaud.pouliquen@st.com>,
-        Loic Pallardy <loic.pallardy@st.com>,
-        Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>,
-        Tony Lindgren <tony@atomide.com>,
-        <linux-remoteproc@vger.kernel.org>, <linux-omap@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20201121030156.22857-1-s-anna@ti.com>
- <20201121030156.22857-3-s-anna@ti.com> <20201121033810.GG9177@builder.lan>
- <e416b071-5cae-797e-5d15-7e947c99aa55@ti.com> <20201122053317.GJ807@yoga>
-From:   Suman Anna <s-anna@ti.com>
-Message-ID: <1930fba4-70bd-f602-6dbd-f1cc8071da10@ti.com>
-Date:   Sun, 22 Nov 2020 11:48:43 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Sun, 22 Nov 2020 18:45:46 -0500
+Received: from mail-lf1-x143.google.com (mail-lf1-x143.google.com [IPv6:2a00:1450:4864:20::143])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A9FA3C0613CF;
+        Sun, 22 Nov 2020 15:45:45 -0800 (PST)
+Received: by mail-lf1-x143.google.com with SMTP id t6so5221565lfl.13;
+        Sun, 22 Nov 2020 15:45:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=YXxP3RMxT376q+ZmBT066fZ9m4LvolVKcjp1W/SeW1c=;
+        b=r51WnwYG/i2vhCeYqTi0U5OD+hDTl5M5FfvQbL7GTutGpU4gzoOJHkTiidCc2J1V88
+         yOp1feMkpDYvvM3e3SNATS3DfZtQoD2Wf6eZ29++Y/3FNKGfTOFwc9PTnIB7pSeCXp0L
+         K0E2Rr3KiKf1gXRNNNULKY4iD3mg825BiQjLHgdXZbkH+MJqo1CrM8Fz2TUwhmCYEKek
+         EvrrlXe1lqztHfy+955gsQ5Sf/9nhZ6GCrZ0M7uyie2GLmpQc8MVtqYD1HHSRRIZFCra
+         ABqMebw+vVlEgl4oRwev+f5nLFbclsiaW4uT5TcCt2FTh4AkOa5MXw0ySZ03Qewpbbjt
+         mR+w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=YXxP3RMxT376q+ZmBT066fZ9m4LvolVKcjp1W/SeW1c=;
+        b=r9Gml8Yin49TPnsHnbhvgOvGR7Moq5xzJ+LRbPPKsDkrkoRYqknhL+1XULIqcRhQdd
+         3EnY5J+OLwd2ST9/kD6ii3m5N8l/WfojZhpM9XIU1/PV4Hjk+Ec9D+FQlz2N4tl6jnGH
+         wAPx4urj0j1QZDtXbw69MN5KFzLu7fsZ0+C2T84160gKBXTm3SDRuH89PiHPWTML6QGj
+         yMoXlXeHiPrx5vLYtMdiprhnuy1zdFw4Trvl4cu+gC+TTE02X1BGpUpM0FUVzglVM/yU
+         Ni/YxQsANh1bx0WxD3fFftgWjMspi+hhyYwhdZo0yrSqN1Cah8Fn2CsMxgJJ8gKyLTsn
+         AylQ==
+X-Gm-Message-State: AOAM531+0Uusqx7dcxMT3XDticfg5kGMa3Ejrx+iFbzu6Xmu8xyhHXVt
+        /hXGnxXDlKla45fcbE5RDlc=
+X-Google-Smtp-Source: ABdhPJxdiDoegY2A3emPdGj+0KNMM6+UCjUum/KAmg6hvWx0oC4M0cuUg4vHnEdWB/x7mHz1zKYYFg==
+X-Received: by 2002:ac2:4844:: with SMTP id 4mr827010lfy.64.1606088744250;
+        Sun, 22 Nov 2020 15:45:44 -0800 (PST)
+Received: from localhost.localdomain (h-158-174-22-6.NA.cust.bahnhof.se. [158.174.22.6])
+        by smtp.gmail.com with ESMTPSA id y186sm190059lfc.127.2020.11.22.15.45.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 22 Nov 2020 15:45:43 -0800 (PST)
+From:   Rikard Falkeborn <rikard.falkeborn@gmail.com>
+To:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Ohad Ben-Cohen <ohad@wizery.com>
+Cc:     linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Rikard Falkeborn <rikard.falkeborn@gmail.com>
+Subject: [PATCH] remoteproc: qcom_sysmon: Constify qmi_indication_handler
+Date:   Mon, 23 Nov 2020 00:45:40 +0100
+Message-Id: <20201122234540.34623-1-rikard.falkeborn@gmail.com>
+X-Mailer: git-send-email 2.29.2
 MIME-Version: 1.0
-In-Reply-To: <20201122053317.GJ807@yoga>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On 11/21/20 11:33 PM, Bjorn Andersson wrote:
-> On Fri 20 Nov 21:44 CST 2020, Suman Anna wrote:
-> 
->> On 11/20/20 9:38 PM, Bjorn Andersson wrote:
->>> On Fri 20 Nov 21:01 CST 2020, Suman Anna wrote:
->>>
->>>> The remoteproc framework provides sysfs interfaces for changing
->>>> the firmware name and for starting/stopping a remote processor
->>>> through the sysfs files 'state' and 'firmware'. The 'recovery'
->>>> sysfs file can also be used similarly to control the error recovery
->>>> state machine of a remoteproc. These interfaces are currently
->>>> allowed irrespective of how the remoteprocs were booted (like
->>>> remoteproc self auto-boot, remoteproc client-driven boot etc).
->>>> These interfaces can adversely affect a remoteproc and its clients
->>>> especially when a remoteproc is being controlled by a remoteproc
->>>> client driver(s). Also, not all remoteproc drivers may want to
->>>> support the sysfs interfaces by default.
->>>>
->>>> Add support to deny the sysfs state/firmware/recovery change by
->>>> introducing a state flag 'deny_sysfs_ops' that the individual
->>>> remoteproc drivers can set based on their usage needs. The default
->>>> behavior is to allow the sysfs operations as before.
->>>>
->>>
->>> This makes sense, but can't we implement attribute_group->is_visible to
->>> simply hide these entries from userspace instead of leaving them
->>> "broken"?
->>
->> I would have to look into that, but can that be changed dynamically?
->> Also, note that the enforcement is only on the writes/stores which impact
->> the state-machine, but not the reads/shows.
->>
->> For PRU usecases, we will be setting this dynamically.
->>
-> 
-> It looks to be dynamic, but I don't know if there's any "caching"
-> involved. Please have a look and let me know.
+The only usage of qmi_indication_handler[] is to pass its address to
+qmi_handle_init() which accepts a const pointer. Make it const to allow
+the compiler to put it in read-only memory.
 
-OK, will do. I can only check the week after though.
+Signed-off-by: Rikard Falkeborn <rikard.falkeborn@gmail.com>
+---
+ drivers/remoteproc/qcom_sysmon.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-regards
-Suman
-
-> 
-> Regards,
-> Bjorn
-> 
->> regards
->> Suman
->>
->>>
->>> Regards,
->>> Bjorn
->>>
->>>> Signed-off-by: Suman Anna <s-anna@ti.com>
->>>> ---
->>>> v2: revised to account for the 'recovery' sysfs file as well, patch
->>>>     description updated accordingly
->>>> v1: https://patchwork.kernel.org/project/linux-remoteproc/patch/20180915003725.17549-5-s-anna@ti.com/
->>>>
->>>>  drivers/remoteproc/remoteproc_sysfs.c | 12 ++++++++++++
->>>>  include/linux/remoteproc.h            |  2 ++
->>>>  2 files changed, 14 insertions(+)
->>>>
->>>> diff --git a/drivers/remoteproc/remoteproc_sysfs.c b/drivers/remoteproc/remoteproc_sysfs.c
->>>> index bd2950a246c9..3fd18a71c188 100644
->>>> --- a/drivers/remoteproc/remoteproc_sysfs.c
->>>> +++ b/drivers/remoteproc/remoteproc_sysfs.c
->>>> @@ -49,6 +49,10 @@ static ssize_t recovery_store(struct device *dev,
->>>>  {
->>>>  	struct rproc *rproc = to_rproc(dev);
->>>>  
->>>> +	/* restrict sysfs operations if not allowed by remoteproc drivers */
->>>> +	if (rproc->deny_sysfs_ops)
->>>> +		return -EPERM;
->>>> +
->>>>  	if (sysfs_streq(buf, "enabled")) {
->>>>  		/* change the flag and begin the recovery process if needed */
->>>>  		rproc->recovery_disabled = false;
->>>> @@ -158,6 +162,10 @@ static ssize_t firmware_store(struct device *dev,
->>>>  	char *p;
->>>>  	int err, len = count;
->>>>  
->>>> +	/* restrict sysfs operations if not allowed by remoteproc drivers */
->>>> +	if (rproc->deny_sysfs_ops)
->>>> +		return -EPERM;
->>>> +
->>>>  	err = mutex_lock_interruptible(&rproc->lock);
->>>>  	if (err) {
->>>>  		dev_err(dev, "can't lock rproc %s: %d\n", rproc->name, err);
->>>> @@ -225,6 +233,10 @@ static ssize_t state_store(struct device *dev,
->>>>  	struct rproc *rproc = to_rproc(dev);
->>>>  	int ret = 0;
->>>>  
->>>> +	/* restrict sysfs operations if not allowed by remoteproc drivers */
->>>> +	if (rproc->deny_sysfs_ops)
->>>> +		return -EPERM;
->>>> +
->>>>  	if (sysfs_streq(buf, "start")) {
->>>>  		if (rproc->state == RPROC_RUNNING)
->>>>  			return -EBUSY;
->>>> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
->>>> index 3fa3ba6498e8..dbc3767f7d0e 100644
->>>> --- a/include/linux/remoteproc.h
->>>> +++ b/include/linux/remoteproc.h
->>>> @@ -508,6 +508,7 @@ struct rproc_dump_segment {
->>>>   * @has_iommu: flag to indicate if remote processor is behind an MMU
->>>>   * @auto_boot: flag to indicate if remote processor should be auto-started
->>>>   * @autonomous: true if an external entity has booted the remote processor
->>>> + * @deny_sysfs_ops: flag to not permit sysfs operations on state, firmware and recovery
->>>>   * @dump_segments: list of segments in the firmware
->>>>   * @nb_vdev: number of vdev currently handled by rproc
->>>>   * @char_dev: character device of the rproc
->>>> @@ -545,6 +546,7 @@ struct rproc {
->>>>  	bool has_iommu;
->>>>  	bool auto_boot;
->>>>  	bool autonomous;
->>>> +	bool deny_sysfs_ops;
->>>>  	struct list_head dump_segments;
->>>>  	int nb_vdev;
->>>>  	u8 elf_class;
->>>> -- 
->>>> 2.28.0
->>>>
->>
+diff --git a/drivers/remoteproc/qcom_sysmon.c b/drivers/remoteproc/qcom_sysmon.c
+index 9eb2f6bccea6..6c3275b58c36 100644
+--- a/drivers/remoteproc/qcom_sysmon.c
++++ b/drivers/remoteproc/qcom_sysmon.c
+@@ -283,7 +283,7 @@ static void sysmon_ind_cb(struct qmi_handle *qmi, struct sockaddr_qrtr *sq,
+ 	complete(&sysmon->ind_comp);
+ }
+ 
+-static struct qmi_msg_handler qmi_indication_handler[] = {
++static const struct qmi_msg_handler qmi_indication_handler[] = {
+ 	{
+ 		.type = QMI_INDICATION,
+ 		.msg_id = SSCTL_SHUTDOWN_READY_IND,
+-- 
+2.29.2
 
