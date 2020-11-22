@@ -2,202 +2,105 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 662BEC56201
-	for <linux-remoteproc@archiver.kernel.org>; Sun, 22 Nov 2020 05:33:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80691C56201
+	for <linux-remoteproc@archiver.kernel.org>; Sun, 22 Nov 2020 05:41:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1DDB920756
-	for <linux-remoteproc@archiver.kernel.org>; Sun, 22 Nov 2020 05:33:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2D04620789
+	for <linux-remoteproc@archiver.kernel.org>; Sun, 22 Nov 2020 05:41:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hhAU5sN9"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yt8RZtRJ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726564AbgKVFdY (ORCPT
+        id S1727306AbgKVFle (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Sun, 22 Nov 2020 00:33:24 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53366 "EHLO
+        Sun, 22 Nov 2020 00:41:34 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54618 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727244AbgKVFdV (ORCPT
+        with ESMTP id S1727250AbgKVFld (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Sun, 22 Nov 2020 00:33:21 -0500
-Received: from mail-oo1-xc43.google.com (mail-oo1-xc43.google.com [IPv6:2607:f8b0:4864:20::c43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 00644C0613D2
-        for <linux-remoteproc@vger.kernel.org>; Sat, 21 Nov 2020 21:33:20 -0800 (PST)
-Received: by mail-oo1-xc43.google.com with SMTP id l20so3207127oot.3
-        for <linux-remoteproc@vger.kernel.org>; Sat, 21 Nov 2020 21:33:20 -0800 (PST)
+        Sun, 22 Nov 2020 00:41:33 -0500
+Received: from mail-oo1-xc41.google.com (mail-oo1-xc41.google.com [IPv6:2607:f8b0:4864:20::c41])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BE2CDC0613CF
+        for <linux-remoteproc@vger.kernel.org>; Sat, 21 Nov 2020 21:41:33 -0800 (PST)
+Received: by mail-oo1-xc41.google.com with SMTP id l20so3209063oot.3
+        for <linux-remoteproc@vger.kernel.org>; Sat, 21 Nov 2020 21:41:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=rBk7AaJksPs4+dZwHUgGRS8rDbwOaPmlXDjOAF+UfIc=;
-        b=hhAU5sN9lBkAewI2RLDDcIq0a5Vwrk8UjyMK72+Gd9D7VlAYG4V2MfOnam9ie3WDnG
-         danw4b86caKXhZqCWe0Sz2eexJ7J1xP4UFKI2AUVoCB2HjtM6H0cvGfoZ1NYAXNL2cd8
-         0xRhO1bCv2sjrQrh88yr9CHKCvqN1vixVBLkmUDhXerTfrEN6sOSsdXQqIVLxngVv5A0
-         CfZFcd30U5i3gMngf5TESYHHtN7W6cJC+5KZmw958Da8bqQac8rwVRkwvK+fn8LswP+r
-         LLdD4D1tg37JXgb5GaWkGDjQbCTuE1avXsDFzeLK2MtG7R6qjguVb9tHdf5Ie95rmgmr
-         LDbQ==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=rhieI/Etrh/oLPSGfJ0G28Ub6VKedDTj5ibAz+QRjJQ=;
+        b=yt8RZtRJhxjtMa3XNP71tJYZVjVo40qof8Yw+gB9yKFvN0uZuj6ccy3760pdFSKX3f
+         lTR1ycIF1XdnB6rfKgckevdqE0HCFCsVL4mn52X4qXWwf1U8b6Rhg1CQfyYK9/o4LJcY
+         bQ4Lk+aiP1NbQ22//pCZuwVwyGh87msQlBxmub5380Izxi9uNJeQYH0QVbrOlPJ5RpBi
+         sfn3O3jH2L/9CwaBkvpRWwvUlP2J9z8CI+99qmA1MJC5Q9H8O7xa8+NwRRFYlCdfBj7T
+         d34YCiJcYXxdJZhN8p1iPUpYReQsG8PiTOa7m8Zf8A+BKtwy+iAeon4VhoPQEp6HPdIs
+         VQ+g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=rBk7AaJksPs4+dZwHUgGRS8rDbwOaPmlXDjOAF+UfIc=;
-        b=mSGWuaCNW9WPYKC9zbh1TFKtZmZ6U4RmLQsJjhpzm1NiS4pc17IZQolrls43CTKziP
-         yKIzyaLgmObS9aUSjlTJgoHrcdM3lBFBk9IAPKOrnz17EhHDGUFcZpmHsLld76mtJOOX
-         ew2aYY8D9k7nkIZuAFtQ4l6Dm8oMvxYegYRJmMr0phe3uVveK1cZF5cUDHUD//ISqLfE
-         /2+mq9kwDRkUYF5RJevjVr06zmBB/YbfL9quyT9s6oEd3rxoxnUzTXZhkZTOmwHYAQqM
-         BQxs6YyISDjDYNIGgI5Z7jZEzrKge8XfV+4pOZXFe1wF+aYzGf1aqDKZBtiy/h+KgZjK
-         q72g==
-X-Gm-Message-State: AOAM530GWvB+FBl7eX6AUJyFqs7oyOc87ZvoQ1wth9Bo5SstSiVbw4ML
-        8KBrE9wOYmxUtSf/3wwfhBUarQ==
-X-Google-Smtp-Source: ABdhPJxCG8bB6h3+L0WVbfQf1BLdyrSuovVTPEDjqE7NDspokJ/aQGbqIPtOsNvHLhq4DXw7W1xHPw==
-X-Received: by 2002:a4a:9e02:: with SMTP id t2mr4957781ook.42.1606023200289;
-        Sat, 21 Nov 2020 21:33:20 -0800 (PST)
-Received: from yoga (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
-        by smtp.gmail.com with ESMTPSA id e15sm4342227otj.43.2020.11.21.21.33.19
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=rhieI/Etrh/oLPSGfJ0G28Ub6VKedDTj5ibAz+QRjJQ=;
+        b=I1wYJhza52bfM0NjORNcbX1JStQPpnNb1LICjfo5sQ/+u2KAhQ8YRFbtPFtGC2djYA
+         JYxMrSjCUitRvCvdvv3LVMpXbXLp//t1EGXwWSZIV8tUA8MlGZdDiIwwJv+APX/ZJT/J
+         X5Uq9Kk2PAwYPLeC/ugfhWpOUA8kqUDISZ6+PA4lZdY7p0Ngm003que9lqQzX+qRYHi3
+         Yl/TcczhRZ8ysBo+lKzwspBJUfpkri2uFuBqAPn2E2jdOPsEBN1enaMwihrN3qD8uyEy
+         wGw52pHsAMYT7WRrWFlZIBLg7LmTCVKtNeYYHd+Cfwz/dfnF4PO17w2TwK0a/Wygxo6b
+         YhpA==
+X-Gm-Message-State: AOAM532bMSRFJrnRVAm4RZAjQHxpwWGLcx9GRnjitCKsTUalBzsAGYcO
+        Kq9ulbR00ZcrsUECeTwW9Iosxg==
+X-Google-Smtp-Source: ABdhPJyFNu2dmTei1U58jC06Dd+Siul99APlr0Ea81Zpgxba2pcqJhTAmCB+lTzbiTVaxoG91fAwpQ==
+X-Received: by 2002:a4a:7b4b:: with SMTP id l72mr2355888ooc.45.1606023693019;
+        Sat, 21 Nov 2020 21:41:33 -0800 (PST)
+Received: from localhost.localdomain (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
+        by smtp.gmail.com with ESMTPSA id s28sm4303132otr.4.2020.11.21.21.41.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 21 Nov 2020 21:33:19 -0800 (PST)
-Date:   Sat, 21 Nov 2020 23:33:17 -0600
+        Sat, 21 Nov 2020 21:41:32 -0800 (PST)
 From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Suman Anna <s-anna@ti.com>
+To:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Ohad Ben-Cohen <ohad@wizery.com>,
+        Siddharth Gupta <sidgup@codeaurora.org>
 Cc:     Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Arnaud Pouliquen <arnaud.pouliquen@st.com>,
-        Loic Pallardy <loic.pallardy@st.com>,
-        Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>,
-        Tony Lindgren <tony@atomide.com>,
-        linux-remoteproc@vger.kernel.org, linux-omap@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/3] remoteproc: Introduce deny_sysfs_ops flag
-Message-ID: <20201122053317.GJ807@yoga>
-References: <20201121030156.22857-1-s-anna@ti.com>
- <20201121030156.22857-3-s-anna@ti.com>
- <20201121033810.GG9177@builder.lan>
- <e416b071-5cae-797e-5d15-7e947c99aa55@ti.com>
+Subject: [PATCH v3 0/4] remoteproc: Improvement for the Qualcomm sysmon
+Date:   Sat, 21 Nov 2020 21:41:31 -0800
+Message-Id: <20201122054135.802935-1-bjorn.andersson@linaro.org>
+X-Mailer: git-send-email 2.28.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e416b071-5cae-797e-5d15-7e947c99aa55@ti.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Fri 20 Nov 21:44 CST 2020, Suman Anna wrote:
+The core part of this series is the update to the sysmon driver to ensure that
+notifications sent to the remote processor are consistent and always present
+valid state transitions.
 
-> On 11/20/20 9:38 PM, Bjorn Andersson wrote:
-> > On Fri 20 Nov 21:01 CST 2020, Suman Anna wrote:
-> > 
-> >> The remoteproc framework provides sysfs interfaces for changing
-> >> the firmware name and for starting/stopping a remote processor
-> >> through the sysfs files 'state' and 'firmware'. The 'recovery'
-> >> sysfs file can also be used similarly to control the error recovery
-> >> state machine of a remoteproc. These interfaces are currently
-> >> allowed irrespective of how the remoteprocs were booted (like
-> >> remoteproc self auto-boot, remoteproc client-driven boot etc).
-> >> These interfaces can adversely affect a remoteproc and its clients
-> >> especially when a remoteproc is being controlled by a remoteproc
-> >> client driver(s). Also, not all remoteproc drivers may want to
-> >> support the sysfs interfaces by default.
-> >>
-> >> Add support to deny the sysfs state/firmware/recovery change by
-> >> introducing a state flag 'deny_sysfs_ops' that the individual
-> >> remoteproc drivers can set based on their usage needs. The default
-> >> behavior is to allow the sysfs operations as before.
-> >>
-> > 
-> > This makes sense, but can't we implement attribute_group->is_visible to
-> > simply hide these entries from userspace instead of leaving them
-> > "broken"?
-> 
-> I would have to look into that, but can that be changed dynamically?
-> Also, note that the enforcement is only on the writes/stores which impact
-> the state-machine, but not the reads/shows.
-> 
-> For PRU usecases, we will be setting this dynamically.
-> 
+In testing this I finally took the time to fix up the issue of the SMP2P based
+graceful shutdown in the remoteproc drivers always timing out if sysmon has
+already successfully shut down the remote processor.
 
-It looks to be dynamic, but I don't know if there's any "caching"
-involved. Please have a look and let me know.
+Bjorn Andersson (4):
+  remoteproc: sysmon: Ensure remote notification ordering
+  remoteproc: sysmon: Expose the shutdown result
+  remoteproc: qcom: q6v5: Query sysmon before graceful shutdown
+  remoteproc: sysmon: Improve error messages
 
-Regards,
-Bjorn
+ drivers/remoteproc/qcom_common.h    |   6 ++
+ drivers/remoteproc/qcom_q6v5.c      |   8 +-
+ drivers/remoteproc/qcom_q6v5.h      |   3 +-
+ drivers/remoteproc/qcom_q6v5_adsp.c |   2 +-
+ drivers/remoteproc/qcom_q6v5_mss.c  |   2 +-
+ drivers/remoteproc/qcom_q6v5_pas.c  |   2 +-
+ drivers/remoteproc/qcom_q6v5_wcss.c |   2 +-
+ drivers/remoteproc/qcom_sysmon.c    | 119 +++++++++++++++++++++-------
+ 8 files changed, 109 insertions(+), 35 deletions(-)
 
-> regards
-> Suman
-> 
-> > 
-> > Regards,
-> > Bjorn
-> > 
-> >> Signed-off-by: Suman Anna <s-anna@ti.com>
-> >> ---
-> >> v2: revised to account for the 'recovery' sysfs file as well, patch
-> >>     description updated accordingly
-> >> v1: https://patchwork.kernel.org/project/linux-remoteproc/patch/20180915003725.17549-5-s-anna@ti.com/
-> >>
-> >>  drivers/remoteproc/remoteproc_sysfs.c | 12 ++++++++++++
-> >>  include/linux/remoteproc.h            |  2 ++
-> >>  2 files changed, 14 insertions(+)
-> >>
-> >> diff --git a/drivers/remoteproc/remoteproc_sysfs.c b/drivers/remoteproc/remoteproc_sysfs.c
-> >> index bd2950a246c9..3fd18a71c188 100644
-> >> --- a/drivers/remoteproc/remoteproc_sysfs.c
-> >> +++ b/drivers/remoteproc/remoteproc_sysfs.c
-> >> @@ -49,6 +49,10 @@ static ssize_t recovery_store(struct device *dev,
-> >>  {
-> >>  	struct rproc *rproc = to_rproc(dev);
-> >>  
-> >> +	/* restrict sysfs operations if not allowed by remoteproc drivers */
-> >> +	if (rproc->deny_sysfs_ops)
-> >> +		return -EPERM;
-> >> +
-> >>  	if (sysfs_streq(buf, "enabled")) {
-> >>  		/* change the flag and begin the recovery process if needed */
-> >>  		rproc->recovery_disabled = false;
-> >> @@ -158,6 +162,10 @@ static ssize_t firmware_store(struct device *dev,
-> >>  	char *p;
-> >>  	int err, len = count;
-> >>  
-> >> +	/* restrict sysfs operations if not allowed by remoteproc drivers */
-> >> +	if (rproc->deny_sysfs_ops)
-> >> +		return -EPERM;
-> >> +
-> >>  	err = mutex_lock_interruptible(&rproc->lock);
-> >>  	if (err) {
-> >>  		dev_err(dev, "can't lock rproc %s: %d\n", rproc->name, err);
-> >> @@ -225,6 +233,10 @@ static ssize_t state_store(struct device *dev,
-> >>  	struct rproc *rproc = to_rproc(dev);
-> >>  	int ret = 0;
-> >>  
-> >> +	/* restrict sysfs operations if not allowed by remoteproc drivers */
-> >> +	if (rproc->deny_sysfs_ops)
-> >> +		return -EPERM;
-> >> +
-> >>  	if (sysfs_streq(buf, "start")) {
-> >>  		if (rproc->state == RPROC_RUNNING)
-> >>  			return -EBUSY;
-> >> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-> >> index 3fa3ba6498e8..dbc3767f7d0e 100644
-> >> --- a/include/linux/remoteproc.h
-> >> +++ b/include/linux/remoteproc.h
-> >> @@ -508,6 +508,7 @@ struct rproc_dump_segment {
-> >>   * @has_iommu: flag to indicate if remote processor is behind an MMU
-> >>   * @auto_boot: flag to indicate if remote processor should be auto-started
-> >>   * @autonomous: true if an external entity has booted the remote processor
-> >> + * @deny_sysfs_ops: flag to not permit sysfs operations on state, firmware and recovery
-> >>   * @dump_segments: list of segments in the firmware
-> >>   * @nb_vdev: number of vdev currently handled by rproc
-> >>   * @char_dev: character device of the rproc
-> >> @@ -545,6 +546,7 @@ struct rproc {
-> >>  	bool has_iommu;
-> >>  	bool auto_boot;
-> >>  	bool autonomous;
-> >> +	bool deny_sysfs_ops;
-> >>  	struct list_head dump_segments;
-> >>  	int nb_vdev;
-> >>  	u8 elf_class;
-> >> -- 
-> >> 2.28.0
-> >>
-> 
+-- 
+2.28.0
+
