@@ -2,103 +2,91 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.3 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54B51C5519F
-	for <linux-remoteproc@archiver.kernel.org>; Sun, 22 Nov 2020 23:46:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5063AC63798
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 23 Nov 2020 03:03:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1416320721
-	for <linux-remoteproc@archiver.kernel.org>; Sun, 22 Nov 2020 23:46:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 18BD52151B
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 23 Nov 2020 03:03:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="r51WnwYG"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="mv7jqd2j"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726635AbgKVXpq (ORCPT
+        id S1727033AbgKWDDV (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Sun, 22 Nov 2020 18:45:46 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51546 "EHLO
+        Sun, 22 Nov 2020 22:03:21 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53536 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726533AbgKVXpq (ORCPT
+        with ESMTP id S1726917AbgKWDDV (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Sun, 22 Nov 2020 18:45:46 -0500
-Received: from mail-lf1-x143.google.com (mail-lf1-x143.google.com [IPv6:2a00:1450:4864:20::143])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A9FA3C0613CF;
-        Sun, 22 Nov 2020 15:45:45 -0800 (PST)
-Received: by mail-lf1-x143.google.com with SMTP id t6so5221565lfl.13;
-        Sun, 22 Nov 2020 15:45:45 -0800 (PST)
+        Sun, 22 Nov 2020 22:03:21 -0500
+Received: from mail-io1-xd2a.google.com (mail-io1-xd2a.google.com [IPv6:2607:f8b0:4864:20::d2a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0DBA8C0613CF
+        for <linux-remoteproc@vger.kernel.org>; Sun, 22 Nov 2020 19:03:21 -0800 (PST)
+Received: by mail-io1-xd2a.google.com with SMTP id m9so16524466iox.10
+        for <linux-remoteproc@vger.kernel.org>; Sun, 22 Nov 2020 19:03:21 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=YXxP3RMxT376q+ZmBT066fZ9m4LvolVKcjp1W/SeW1c=;
-        b=r51WnwYG/i2vhCeYqTi0U5OD+hDTl5M5FfvQbL7GTutGpU4gzoOJHkTiidCc2J1V88
-         yOp1feMkpDYvvM3e3SNATS3DfZtQoD2Wf6eZ29++Y/3FNKGfTOFwc9PTnIB7pSeCXp0L
-         K0E2Rr3KiKf1gXRNNNULKY4iD3mg825BiQjLHgdXZbkH+MJqo1CrM8Fz2TUwhmCYEKek
-         EvrrlXe1lqztHfy+955gsQ5Sf/9nhZ6GCrZ0M7uyie2GLmpQc8MVtqYD1HHSRRIZFCra
-         ABqMebw+vVlEgl4oRwev+f5nLFbclsiaW4uT5TcCt2FTh4AkOa5MXw0ySZ03Qewpbbjt
-         mR+w==
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=cmZ2kkoeLoaVXWsbBzaDLLnsyKzK7HyWpB00+aI5R04=;
+        b=mv7jqd2joqZTqXkI4wFOSBKjG7mjGzwc8NaV90PMqDA/DN8tf+ynMKFWkB0YE5Xdtu
+         XwDb7MsRyYVJ31vIHzOxIdkKAuYop1oDNg2T3wdLwpn4t3bR4jiFCzi50pZH4CDb614G
+         Qr/UNiKI8pabdnGpSCMyBP7x4BVvwNOw2GpgtWJlxyNdFWg5QGJtwz0saIFfU/EKpiI2
+         4m7tBqqLiuDTB7I2VMH4Px+fD09edrqypQCe2O4OFa8Ko9EqMSOIsN5awSVLurciXmeh
+         TBwObMWQGtRNet6CeLTeDRDEA11rp3RXV9fyts+WDXHvnjn7np2Y7SyikX1ABWRu6rii
+         gBgA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=YXxP3RMxT376q+ZmBT066fZ9m4LvolVKcjp1W/SeW1c=;
-        b=r9Gml8Yin49TPnsHnbhvgOvGR7Moq5xzJ+LRbPPKsDkrkoRYqknhL+1XULIqcRhQdd
-         3EnY5J+OLwd2ST9/kD6ii3m5N8l/WfojZhpM9XIU1/PV4Hjk+Ec9D+FQlz2N4tl6jnGH
-         wAPx4urj0j1QZDtXbw69MN5KFzLu7fsZ0+C2T84160gKBXTm3SDRuH89PiHPWTML6QGj
-         yMoXlXeHiPrx5vLYtMdiprhnuy1zdFw4Trvl4cu+gC+TTE02X1BGpUpM0FUVzglVM/yU
-         Ni/YxQsANh1bx0WxD3fFftgWjMspi+hhyYwhdZo0yrSqN1Cah8Fn2CsMxgJJ8gKyLTsn
-         AylQ==
-X-Gm-Message-State: AOAM531+0Uusqx7dcxMT3XDticfg5kGMa3Ejrx+iFbzu6Xmu8xyhHXVt
-        /hXGnxXDlKla45fcbE5RDlc=
-X-Google-Smtp-Source: ABdhPJxdiDoegY2A3emPdGj+0KNMM6+UCjUum/KAmg6hvWx0oC4M0cuUg4vHnEdWB/x7mHz1zKYYFg==
-X-Received: by 2002:ac2:4844:: with SMTP id 4mr827010lfy.64.1606088744250;
-        Sun, 22 Nov 2020 15:45:44 -0800 (PST)
-Received: from localhost.localdomain (h-158-174-22-6.NA.cust.bahnhof.se. [158.174.22.6])
-        by smtp.gmail.com with ESMTPSA id y186sm190059lfc.127.2020.11.22.15.45.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 22 Nov 2020 15:45:43 -0800 (PST)
-From:   Rikard Falkeborn <rikard.falkeborn@gmail.com>
-To:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Ohad Ben-Cohen <ohad@wizery.com>
-Cc:     linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Rikard Falkeborn <rikard.falkeborn@gmail.com>
-Subject: [PATCH] remoteproc: qcom_sysmon: Constify qmi_indication_handler
-Date:   Mon, 23 Nov 2020 00:45:40 +0100
-Message-Id: <20201122234540.34623-1-rikard.falkeborn@gmail.com>
-X-Mailer: git-send-email 2.29.2
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=cmZ2kkoeLoaVXWsbBzaDLLnsyKzK7HyWpB00+aI5R04=;
+        b=oW12jQ6qbavOezDMMA4PlpWnqzHfFqhsScEJRmIyJF7xS7giyuUTZ4UoxNaC3qr0t6
+         Y1zhvhU/ZuM/F02rWQRySTBhXunCqvNm7oNC95BmcvBZgEAGC9dEUDW8nZERquIMP2Q0
+         lHQji04Y1NlqJoHxKKMNFOUpF6uaVIM3Vy2R2+QsZ6spi+OSAfVzOfMi8YklIwqcxFYU
+         eKDd6mT9yVP9w10jP8HIa9mzN3mCd6R0OXhv3sZi4rEdFO5Ae9+f8Vyw0fSx0n1CeVez
+         vjdsvmucZ9nOJhuTvt6LpcK9kPfmpoSbGCfmQfLckShDTRE4/OhEFjiy2xHTFq0N1qMs
+         uwNA==
+X-Gm-Message-State: AOAM533HDFqy967owANrH/6rFUJisA7ZocrS+xd1hTJiQp+i8tirmiKN
+        DAqre9jdc15PJABna0mIy51e2cZ8+PdHK8qDDW3dkg==
+X-Google-Smtp-Source: ABdhPJwptrKso09cemQUc5m/nxPNPk7xqo4MYznakzCuHAhqaRV7MRIz8vyAnBx+NtiZFKXMuZapIY5faME+27pSUxI=
+X-Received: by 2002:a02:5e45:: with SMTP id h66mr10874397jab.126.1606100600165;
+ Sun, 22 Nov 2020 19:03:20 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20201116084413.3312631-1-tzungbi@google.com> <20201116084413.3312631-4-tzungbi@google.com>
+ <20201120235020.GI4137289@xps15>
+In-Reply-To: <20201120235020.GI4137289@xps15>
+From:   Tzung-Bi Shih <tzungbi@google.com>
+Date:   Mon, 23 Nov 2020 11:03:09 +0800
+Message-ID: <CA+Px+wXor-iCk98JfSx8pph10=WdkjGRNacY-FBGAX3xh9x71g@mail.gmail.com>
+Subject: Re: [PATCH v2 3/3] remoteproc/mediatek: read IPI buffer offset from FW
+To:     Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc:     Ohad Ben-Cohen <ohad@wizery.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        "open list:REMOTE PROCESSOR (REMOTEPROC) SUBSYSTEM" 
+        <linux-remoteproc@vger.kernel.org>,
+        "moderated list:ARM/Mediatek SoC support" 
+        <linux-mediatek@lists.infradead.org>,
+        Pi-Hsun Shih <pihsun@chromium.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        "moderated list:ARM/Mediatek SoC support" 
+        <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-The only usage of qmi_indication_handler[] is to pass its address to
-qmi_handle_init() which accepts a const pointer. Make it const to allow
-the compiler to put it in read-only memory.
+On Sat, Nov 21, 2020 at 7:50 AM Mathieu Poirier
+<mathieu.poirier@linaro.org> wrote:
+>
+> Here you are breaking all the current implementation with a firmware image that
+> doesn't have a .ipi_buffer section name.  I'm not against this change but you need
+> to make sure you don't break anything else with your changes.
 
-Signed-off-by: Rikard Falkeborn <rikard.falkeborn@gmail.com>
----
- drivers/remoteproc/qcom_sysmon.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/remoteproc/qcom_sysmon.c b/drivers/remoteproc/qcom_sysmon.c
-index 9eb2f6bccea6..6c3275b58c36 100644
---- a/drivers/remoteproc/qcom_sysmon.c
-+++ b/drivers/remoteproc/qcom_sysmon.c
-@@ -283,7 +283,7 @@ static void sysmon_ind_cb(struct qmi_handle *qmi, struct sockaddr_qrtr *sq,
- 	complete(&sysmon->ind_comp);
- }
- 
--static struct qmi_msg_handler qmi_indication_handler[] = {
-+static const struct qmi_msg_handler qmi_indication_handler[] = {
- 	{
- 		.type = QMI_INDICATION,
- 		.msg_id = SSCTL_SHUTDOWN_READY_IND,
--- 
-2.29.2
-
+Thanks for your review.  And yes, this change could break MTK SCP when
+working with legacy firmware.  We'll make sure the new firmware in
+MT8183 also contains the .ipi_buffer section to not really break
+anything.
