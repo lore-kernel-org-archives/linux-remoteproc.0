@@ -7,65 +7,65 @@ X-Spam-Status: No, score=-18.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0DE1C64E7A
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 26 Nov 2020 21:07:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4945FC64E8A
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 26 Nov 2020 21:07:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 73D3A21D93
+	by mail.kernel.org (Postfix) with ESMTP id ECE4D21D93
 	for <linux-remoteproc@archiver.kernel.org>; Thu, 26 Nov 2020 21:07:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="pBsQ3pXn"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Dg+HdzxD"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391757AbgKZVHL (ORCPT
+        id S2391639AbgKZVHM (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 26 Nov 2020 16:07:11 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42862 "EHLO
+        Thu, 26 Nov 2020 16:07:12 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42854 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391641AbgKZVG6 (ORCPT
+        with ESMTP id S2391631AbgKZVG6 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
         Thu, 26 Nov 2020 16:06:58 -0500
-Received: from mail-pg1-x541.google.com (mail-pg1-x541.google.com [IPv6:2607:f8b0:4864:20::541])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77426C061A48
-        for <linux-remoteproc@vger.kernel.org>; Thu, 26 Nov 2020 13:06:58 -0800 (PST)
-Received: by mail-pg1-x541.google.com with SMTP id l17so2597170pgk.1
-        for <linux-remoteproc@vger.kernel.org>; Thu, 26 Nov 2020 13:06:58 -0800 (PST)
+Received: from mail-pf1-x442.google.com (mail-pf1-x442.google.com [IPv6:2607:f8b0:4864:20::442])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7606EC061A54
+        for <linux-remoteproc@vger.kernel.org>; Thu, 26 Nov 2020 13:06:56 -0800 (PST)
+Received: by mail-pf1-x442.google.com with SMTP id x24so2613332pfn.6
+        for <linux-remoteproc@vger.kernel.org>; Thu, 26 Nov 2020 13:06:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=BZKEoNhgpUCxk0BJFPhN8SyKdDsMxIN4bfJcnaCrMrQ=;
-        b=pBsQ3pXncC41Q83qq1u3ofxVdrDRk/6O4wPSti+nnYcmiF/ZOJ+H5vqGvPmxtPWizc
-         8y3XwipOESsOriEGeSxOxbflSMQm4o+Zmj2Tk14XtK/OJ7+4S3LV6hNbruVNDcsVejL0
-         3I5CJZZVpoIcl5kia7yH3D5fKKpBOVfAHD5gSGFglaYzgTr6wT+ol0kdNyBvyKzWULPA
-         1zRpvcdUbIxHbgCWet60vwfVRlsnB0mCIl9fX6QZcSxbDEg2EytQI9J75p2Sg4/y79NQ
-         fmRGRnv6MkGS1+KhY6nNhQJVg5BiNov4S0XYjDOjoH/haen8AIlWClVRPfxi/mft/PB+
-         GKxQ==
+        bh=/KGOX9KkEX+n+yFMKTjakVzZosqRnFOWNvseTfllA6Q=;
+        b=Dg+HdzxDV2YNawQ0UhBP6HdLS5ZVfu3mLkvXwyT6jnxsG2wu2G+m7UD0mOxya3fTN2
+         a9YMPlCBY/rXtrETa0IEBOpG/TCZKmhJsG1jozvA4SM9iuIVszkHSgf+Q9SPAx5DIGCW
+         Pwh61Oz8jyJQb0BuXQy8+l1YJhUgNlq9j4tWrr/dqDZJiI8IVfWCzO5G50b2Usgzcv1W
+         IvWXUq5805Wcj7MwD2WFiInSQL8+Ltpv5QL8ebWvwGCOPUNejoEmFYsIesO0NeSQbimY
+         1MlVtiFWwIm/l1LjWovvF+mF6BIdiCKp5xTS77fFQLxqNJ0g7M9vSZvDmKQ/9jsQnNsY
+         3XNw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=BZKEoNhgpUCxk0BJFPhN8SyKdDsMxIN4bfJcnaCrMrQ=;
-        b=DDtJ/y009FxnDv5sFbNXCppzugkth3/ocA3Zi3ER5HEF3mLcPkkfIeQeNMF5P68LDo
-         RSFJxstYt44pwEm+H/WP4TuN7JE06Euiiq5HcozSjJEpES0yYSF32NKqdSlLq/ntQaGW
-         oTtEZz3AeOC1hXZtNDbRiOYEufRImIlDPdM7OMa6KPsYZqCnPt7IpaY03keXl4t1Hk8u
-         NXwmJUqQ49p2xk8JceV8pKSV+Y/MoeZiojQpk3GQDjjM3wcxCY+CIbK5xQZW0s86xNAk
-         Q/fdST4MflnSQX04S29OrS0kGf/oEHZ/ATDWQCvxcZnOewsK4/MqenBWI1rjgoAiLUdx
-         lJZQ==
-X-Gm-Message-State: AOAM5337Xm0vDNsONvjDbp08iOtFshMVOZxbae5jDhrLVPTLcjcH6H3g
-        330fGCsjjQ1A7IfTXIL6g+/BRg==
-X-Google-Smtp-Source: ABdhPJx3to5KO+RDOFbdZsmC8iWcc6Tc9rvKooHi7wvnqs33TJvUOiEWWcUokQuvgrRVA0RKL78vtA==
-X-Received: by 2002:a62:fc4a:0:b029:19a:ad58:b015 with SMTP id e71-20020a62fc4a0000b029019aad58b015mr1116046pfh.77.1606424818052;
-        Thu, 26 Nov 2020 13:06:58 -0800 (PST)
+        bh=/KGOX9KkEX+n+yFMKTjakVzZosqRnFOWNvseTfllA6Q=;
+        b=klCL/1gmItJKKDki1hHT274UgWrThstx1UAt+wSCdnC3w9il7f6rgZxTYe0D75sWbT
+         Z1IlwzWuRX05HqiCAfH5JIbff5dWDtW3gvTucYODW/U2hY5K7IpxkL7spYEP4QfawE1Q
+         vnEKmKi9czrrYZKXe0N1EA2z/cTGEayUZpF3KBMZ8z7WDSWJuw3PzjQGSGlBH7CpupiO
+         hCvhqH2snGGQhjYMAlNujDjfMXBBd7Kx+cImkViLgQw0DERM/mQ6NkOWZIOpcuwqCDiG
+         W+Gr2HMdblmMMWCJ7BvYoGyilCRTgwgSVpT4kUWWgZ0tlkgkiNG7NK0T5g2Q/VMOlsAh
+         DYvQ==
+X-Gm-Message-State: AOAM531jc5jUHxa8lP8YCTfQraXDsRglyiJHkyQsH0adkFvm2r2DXsvc
+        lIVRxQEGGQIr3KCk2FG3UiQ+sA==
+X-Google-Smtp-Source: ABdhPJzr8aZpx9HBvkaCPyAWEaw6iohIuja0Ntqlnm2c2SLjUUSlnTqjuSH7wdlhYHHiPjrfDzHPnw==
+X-Received: by 2002:a62:1d6:0:b029:197:f8a8:e6de with SMTP id 205-20020a6201d60000b0290197f8a8e6demr4133919pfb.38.1606424816035;
+        Thu, 26 Nov 2020 13:06:56 -0800 (PST)
 Received: from xps15.cg.shawcable.net (S0106889e681aac74.cg.shawcable.net. [68.147.0.187])
-        by smtp.gmail.com with ESMTPSA id c203sm5612676pfc.10.2020.11.26.13.06.57
+        by smtp.gmail.com with ESMTPSA id c203sm5612676pfc.10.2020.11.26.13.06.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 26 Nov 2020 13:06:57 -0800 (PST)
+        Thu, 26 Nov 2020 13:06:55 -0800 (PST)
 From:   Mathieu Poirier <mathieu.poirier@linaro.org>
 To:     ohad@wizery.com, bjorn.andersson@linaro.org, robh+dt@kernel.org
 Cc:     linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, arnaud.pouliquen@st.com
-Subject: [PATCH v3 14/15] remoteproc: Properly deal with detach request
-Date:   Thu, 26 Nov 2020 14:06:41 -0700
-Message-Id: <20201126210642.897302-15-mathieu.poirier@linaro.org>
+Subject: [PATCH v3 12/15] remoteproc: Properly deal with a stop request when attached
+Date:   Thu, 26 Nov 2020 14:06:39 -0700
+Message-Id: <20201126210642.897302-13-mathieu.poirier@linaro.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20201126210642.897302-1-mathieu.poirier@linaro.org>
 References: <20201126210642.897302-1-mathieu.poirier@linaro.org>
@@ -75,49 +75,76 @@ Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-This patch introduces the capability to detach a remote processor
-that has been attached to or booted by the remoteproc core.  For
-that to happen a rproc::ops::detach() operation need to be
-available.
+This patch introduces the capability to stop a remote processor
+that has been attached to by the remoteproc core.  For that to
+happen a rproc::ops::stop() operation need to be available.
 
 Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 Reviewed-by: Peng Fan <peng.fan@nxp.com>
+Reviewed-by: Arnaud Pouliquen <arnaud.pouliquen@st.com>
 ---
- drivers/remoteproc/remoteproc_cdev.c  | 6 ++++++
- drivers/remoteproc/remoteproc_sysfs.c | 6 ++++++
- 2 files changed, 12 insertions(+)
+ drivers/remoteproc/remoteproc_cdev.c  | 5 +++--
+ drivers/remoteproc/remoteproc_core.c  | 6 +++++-
+ drivers/remoteproc/remoteproc_sysfs.c | 5 +++--
+ 3 files changed, 11 insertions(+), 5 deletions(-)
 
 diff --git a/drivers/remoteproc/remoteproc_cdev.c b/drivers/remoteproc/remoteproc_cdev.c
-index 61541bc7d26c..f7645f289563 100644
+index b19ea3057bde..d06f8d4919c7 100644
 --- a/drivers/remoteproc/remoteproc_cdev.c
 +++ b/drivers/remoteproc/remoteproc_cdev.c
-@@ -43,6 +43,12 @@ static ssize_t rproc_cdev_write(struct file *filp, const char __user *buf, size_
- 			return -EINVAL;
+@@ -37,10 +37,11 @@ static ssize_t rproc_cdev_write(struct file *filp, const char __user *buf, size_
  
- 		ret = rproc_shutdown(rproc);
-+	} else if (!strncmp(cmd, "detach", len)) {
+ 		ret = rproc_boot(rproc);
+ 	} else if (!strncmp(cmd, "stop", len)) {
+-		if (rproc->state != RPROC_RUNNING)
 +		if (rproc->state != RPROC_RUNNING &&
 +		    rproc->state != RPROC_ATTACHED)
-+			return -EINVAL;
-+
-+		ret = rproc_detach(rproc);
+ 			return -EINVAL;
+ 
+-		rproc_shutdown(rproc);
++		ret = rproc_shutdown(rproc);
  	} else {
  		dev_err(&rproc->dev, "Unrecognized option\n");
  		ret = -EINVAL;
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index 51275107eb1f..3d7d245edc4e 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -1642,6 +1642,10 @@ static int rproc_stop(struct rproc *rproc, bool crashed)
+ 	struct device *dev = &rproc->dev;
+ 	int ret;
+ 
++	/* No need to continue if a stop() operation has not been provided */
++	if (!rproc->ops->stop)
++		return -EINVAL;
++
+ 	/* Stop any subdevices for the remote processor */
+ 	rproc_stop_subdevices(rproc, crashed);
+ 
+@@ -1880,7 +1884,7 @@ int rproc_shutdown(struct rproc *rproc)
+ 		return ret;
+ 	}
+ 
+-	if (rproc->state != RPROC_RUNNING) {
++	if (rproc->state != RPROC_RUNNING && rproc->state != RPROC_ATTACHED) {
+ 		ret = -EPERM;
+ 		goto out;
+ 	}
 diff --git a/drivers/remoteproc/remoteproc_sysfs.c b/drivers/remoteproc/remoteproc_sysfs.c
-index 7d281cfe3e03..5a239df5877e 100644
+index f9694def9b54..3696f2ccc785 100644
 --- a/drivers/remoteproc/remoteproc_sysfs.c
 +++ b/drivers/remoteproc/remoteproc_sysfs.c
-@@ -207,6 +207,12 @@ static ssize_t state_store(struct device *dev,
- 			return -EINVAL;
- 
- 		ret = rproc_shutdown(rproc);
-+	} else if (sysfs_streq(buf, "detach")) {
+@@ -201,10 +201,11 @@ static ssize_t state_store(struct device *dev,
+ 		if (ret)
+ 			dev_err(&rproc->dev, "Boot failed: %d\n", ret);
+ 	} else if (sysfs_streq(buf, "stop")) {
+-		if (rproc->state != RPROC_RUNNING)
 +		if (rproc->state != RPROC_RUNNING &&
 +		    rproc->state != RPROC_ATTACHED)
-+			return -EINVAL;
-+
-+		ret = rproc_detach(rproc);
+ 			return -EINVAL;
+ 
+-		rproc_shutdown(rproc);
++		ret = rproc_shutdown(rproc);
  	} else {
  		dev_err(&rproc->dev, "Unrecognised option: %s\n", buf);
  		ret = -EINVAL;
