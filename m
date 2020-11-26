@@ -2,73 +2,125 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD1D5C63697
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 26 Nov 2020 17:40:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56FA8C63777
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 26 Nov 2020 21:07:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6EE932075A
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 26 Nov 2020 17:40:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E3B7620643
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 26 Nov 2020 21:07:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="h8TUk0KE"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WCLVMJKo"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391696AbgKZRkG (ORCPT
+        id S1733182AbgKZVGq (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 26 Nov 2020 12:40:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34406 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391694AbgKZRkG (ORCPT
+        Thu, 26 Nov 2020 16:06:46 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42784 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1733051AbgKZVGp (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 26 Nov 2020 12:40:06 -0500
-Content-Type: text/plain; charset="utf-8"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1606412405;
-        bh=fpPmvvwxPBvLDgKzsATjOaheLBKcbbfUS2ZQDxY4g50=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=h8TUk0KEEVl6lp8OI9OqNGIzUlq+WDfOpmkIaQhAXsIHt37VgZ4+b6C89/3xT/s0H
-         c1Hjm9MCL5j302Oy8KJhbBiLoHqspOn1GiBmgS7H0DtAtifZbHy8O7YyfsdlGhyFV+
-         4FE8ZgvNQ4S7fWYp/vV588NXL9twMFNUQvpxBKy8=
+        Thu, 26 Nov 2020 16:06:45 -0500
+Received: from mail-pg1-x52d.google.com (mail-pg1-x52d.google.com [IPv6:2607:f8b0:4864:20::52d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A5961C061A04
+        for <linux-remoteproc@vger.kernel.org>; Thu, 26 Nov 2020 13:06:44 -0800 (PST)
+Received: by mail-pg1-x52d.google.com with SMTP id o4so305971pgj.0
+        for <linux-remoteproc@vger.kernel.org>; Thu, 26 Nov 2020 13:06:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=2RSwp2FaxZrOvHsikh11ndH236WC9DHwtvvMtCMsWVE=;
+        b=WCLVMJKohk7tpNgIMveowBplgnFQVZhH9HgOvahmn7+xrODcXctJrrgY00/CccPGwv
+         tyHt5rAF9C2NJvufmc4ZCVcsi8b0UawM/TuHOQjjI4FtHr3jR5w8bh/oirrMYUDsHDpN
+         ttzBDqiYOftZrygCewF/fu1BtQR2MNTVBG+AXFYw2zZMgPEHXiLqxIXeAW1cqORmDjEJ
+         s2mtIMeS+Swup/wHX+wnCOJLH9tsLxVMn+QHdREOG7Hg3WxIJxW72uYkzsIOTdnMSz5Q
+         Rg7Vybd1CsCBms8ONBejFbYhdfccvDBXuCjEBN0zJOGUPhFwp0GlyaXINylnEKYgf8B/
+         fYsw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=2RSwp2FaxZrOvHsikh11ndH236WC9DHwtvvMtCMsWVE=;
+        b=Yt1M6/LR5mzqyyXZM4bU7RdsaIr1nC9R4gph4od/UVzgvWmOgOaDvSdA2H2d4jMYAK
+         P4W/RImz0RfXWGiJYkeMMZju+AeU9neFcZoABebogW/mDlS56bW3yoYBOcQGUOOdNRTI
+         W1eKxcpXxEVplCIKY+W8lbw13SwBw2oibre2wg5O5SKZBgwJsHHqGofZnpBhuO+Bnx6M
+         68B0dVdwRhKNPZ4hU57z8m/oOuZtsCfDnYSuGQyQiRuTsgvuZATqS1rddVvjUxRhSz5q
+         WU2UIJk4eANuT+PDW7xAGO0EwFPgP7cT+ekiTo7NYzxeeFgBJVJMspxviAFw52n732BV
+         edLg==
+X-Gm-Message-State: AOAM532Kqdb4xrrW6a5Jbgh2k4RIIw0lygsRNCYAQFP4gmiCXj8uZW2d
+        XZ9X+8Li8dkIVcSlEeGbL38zzg==
+X-Google-Smtp-Source: ABdhPJwxeEQIjKpTn0OagaY59ueQhB39UvCG8dzpWHbg09mghBOlddWBx1rNZdnGkC3DTz6y4QOb0g==
+X-Received: by 2002:a63:7b55:: with SMTP id k21mr3901924pgn.256.1606424803641;
+        Thu, 26 Nov 2020 13:06:43 -0800 (PST)
+Received: from xps15.cg.shawcable.net (S0106889e681aac74.cg.shawcable.net. [68.147.0.187])
+        by smtp.gmail.com with ESMTPSA id c203sm5612676pfc.10.2020.11.26.13.06.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 26 Nov 2020 13:06:43 -0800 (PST)
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+To:     ohad@wizery.com, bjorn.andersson@linaro.org, robh+dt@kernel.org
+Cc:     linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, arnaud.pouliquen@st.com
+Subject: [PATCH v3 00/15] remoteproc: Add support for detaching from rproc
+Date:   Thu, 26 Nov 2020 14:06:27 -0700
+Message-Id: <20201126210642.897302-1-mathieu.poirier@linaro.org>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH 0/3] TI K3 R5F remoteproc support on J7200 SoCs
-From:   patchwork-bot+linux-remoteproc@kernel.org
-Message-Id: <160641240572.5337.14819862757502229008.git-patchwork-notify@kernel.org>
-Date:   Thu, 26 Nov 2020 17:40:05 +0000
-References: <20201119010531.21083-1-s-anna@ti.com>
-In-Reply-To: <20201119010531.21083-1-s-anna@ti.com>
-To:     Suman Anna <s-anna@ti.com>
-Cc:     linux-remoteproc@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hello:
+Following the work done here [1], this set provides support for the
+remoteproc core to release resources associated with a remote processor
+without having to switch it off. That way a platform driver can be removed
+or the application processor power cycled while the remote processor is
+still operating.
 
-This series was applied to andersson/remoteproc.git (refs/heads/for-next):
+Applies cleanly on rproc-next (c3c21b356505).
 
-On Wed, 18 Nov 2020 19:05:28 -0600 you wrote:
-> Hi All,
-> 
-> The following series enhances the K3 R5F remoteproc driver to add support
-> for the R5F clusters on the newer TI K3 J7200 SoC family. The J7200 SoCs
-> have 2 R5FSS clusters, and both clusters are capable of supporting either
-> the LockStep or Split-modes like on the existing AM65x and J721E SoCs.
-> 
-> [...]
+Thanks,
+Mathieu
 
-Here is the summary with links:
-  - [1/3] dt-bindings: remoteproc: k3-r5f: Update bindings for J7200 SoCs
-    https://git.kernel.org/andersson/remoteproc/c/41e6f43f3b24
-  - [2/3] remoteproc: k3-r5: Extend support to R5F clusters on J7200 SoCs
-    https://git.kernel.org/andersson/remoteproc/c/7508ea19b20d
-  - [3/3] remoteproc: k3-r5: Adjust TCM sizes in Split-mode on J7200 SoCs
-    https://git.kernel.org/andersson/remoteproc/c/c3c21b356505
+[1]. https://lkml.org/lkml/2020/7/14/1600
 
-You are awesome, thank you!
---
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+----
+New for V3:
+- Added RB from Arnaud where applicable.
+- Reformatted comments about "detach" operation in struct rproc_ops.
+- Fixed error path in rproc_shutdown().
+- Fixed processing of "start" command in state_store() and rproc_cdev_write().
+- Changed binding from "autonomous-on-core-reboot" to
+  "autonomous-on-core-shutdown".
+- Wrote a proper YAML file for the binding.
 
+Mathieu Poirier (15):
+  dt-bindings: remoteproc: Add bindind to support autonomous processors
+  remoteproc: Re-check state in rproc_shutdown()
+  remoteproc: Remove useless check in rproc_del()
+  remoteproc: Add new RPROC_ATTACHED state
+  remoteproc: Properly represent the attached state
+  remoteproc: Properly deal with a kernel panic when attached
+  remoteproc: Add new detach() remoteproc operation
+  remoteproc: Introduce function __rproc_detach()
+  remoteproc: Introduce function rproc_detach()
+  remoteproc: Rename function rproc_actuate()
+  remoteproc: Add return value to function rproc_shutdown()
+  remoteproc: Properly deal with a stop request when attached
+  remoteproc: Properly deal with a start request when attached
+  remoteproc: Properly deal with detach request
+  remoteproc: Refactor rproc delete and cdev release path
+
+ .../bindings/remoteproc/remoteproc-core.yaml  |  25 +++
+ drivers/remoteproc/remoteproc_cdev.c          |  27 ++-
+ drivers/remoteproc/remoteproc_core.c          | 182 +++++++++++++++---
+ drivers/remoteproc/remoteproc_sysfs.c         |  20 +-
+ include/linux/remoteproc.h                    |  18 +-
+ 5 files changed, 225 insertions(+), 47 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/remoteproc/remoteproc-core.yaml
+
+-- 
+2.25.1
 
