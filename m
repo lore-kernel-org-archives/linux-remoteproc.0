@@ -5,50 +5,49 @@ X-Spam-Level:
 X-Spam-Status: No, score=-17.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
-	version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18F1EC64E7C
-	for <linux-remoteproc@archiver.kernel.org>; Wed,  2 Dec 2020 18:15:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65FB1C71155
+	for <linux-remoteproc@archiver.kernel.org>; Wed,  2 Dec 2020 18:16:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AFB24205F4
-	for <linux-remoteproc@archiver.kernel.org>; Wed,  2 Dec 2020 18:15:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 10651205F4
+	for <linux-remoteproc@archiver.kernel.org>; Wed,  2 Dec 2020 18:16:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389225AbgLBSPA (ORCPT
+        id S1728928AbgLBSPe (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 2 Dec 2020 13:15:00 -0500
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:7126 "EHLO
+        Wed, 2 Dec 2020 13:15:34 -0500
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:6168 "EHLO
         mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728928AbgLBSO7 (ORCPT
+        by vger.kernel.org with ESMTP id S1727193AbgLBSPd (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 2 Dec 2020 13:14:59 -0500
+        Wed, 2 Dec 2020 13:15:33 -0500
 Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 0B2I6tYT028933;
-        Wed, 2 Dec 2020 19:14:13 +0100
+        by mx07-00178001.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 0B2I6wh6029053;
+        Wed, 2 Dec 2020 19:14:47 +0100
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=subject : to : cc :
  references : from : message-id : date : mime-version : in-reply-to :
  content-type : content-transfer-encoding; s=STMicroelectronics;
- bh=+ehhIvZT3gHwM+iFz5dh1rgFUsswUN3WcEf/7+x1Dz8=;
- b=IjRgF/+o6j8F1XYDHMSWcFchK4Y7SSq88RjQRY1DY1q6fYCoS2MCdlqo9zGAgkZ85PKf
- Bd2s7DUoUoNVuCFTflR+8BTbPRLY38qEdWC+iU6RIJruLu0OpVFtnNWwZTZ38DwDn5GT
- sEB/EvxlgZldRRsZ3GjGPNBWWCXlnweS0d1htQI/YGXqsjWv3bA1jPiYF1lWg7hTk+kK
- 5ZBagCg9lO1CmQeokV8pvBlLzW7zfIxH9yaQmub9KhgEd1vH7H5H1I5KXwwWgttU7ybj
- /AwQx/2+vmvHnpv3Sb3Iir4299RB8dWrrgviMIePshiAwWziJNJIm5RTMhRfccDojKoM hA== 
+ bh=IHMm0cjK3eOhtNxeby0JUJ/xysp13KMNTZpGx5FB/i4=;
+ b=MOIjqtIojG1qXzPtXeep1E4QAsRYcVURS4/JTKn8wpEb7izKb8yvgq3HGGEK3bToJkrJ
+ DLPy0u8noBFuBIp37ZY9omsCnC/hZdTUAl3EIeHbXKkZ8hInsGqtXA//atdDlPWw3nNh
+ s9YhlVaFhqxsKg66/FM20cFfJEYpJWNk+w6dGtxvrG6+SmltXL3tLVGjjzJNEDHExw81
+ DnURP9LoQzP44OCvfqdqFa2Fb5CPheSO8L57CbuFvGdkJuuc8pGDNa5Sfded7hjzWU1C
+ zTkRXB6LcNXiy+WzFc7i+vBdPLBGW+g/7WZOIuQpl4IlOKyDi73amJoZColMkS4VwAYj uQ== 
 Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 355w3cd362-1
+        by mx07-00178001.pphosted.com with ESMTP id 355w3cd384-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 02 Dec 2020 19:14:13 +0100
+        Wed, 02 Dec 2020 19:14:47 +0100
 Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id E3CE610002A;
-        Wed,  2 Dec 2020 19:14:12 +0100 (CET)
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 4B34110002A;
+        Wed,  2 Dec 2020 19:14:47 +0100 (CET)
 Received: from Webmail-eu.st.com (sfhdag3node1.st.com [10.75.127.7])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id D149B23FCD6;
-        Wed,  2 Dec 2020 19:14:12 +0100 (CET)
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 3CFD0225F18;
+        Wed,  2 Dec 2020 19:14:47 +0100 (CET)
 Received: from lmecxl0889.lme.st.com (10.75.127.49) by SFHDAG3NODE1.st.com
  (10.75.127.7) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 2 Dec
- 2020 19:14:12 +0100
-Subject: Re: [PATCH v3 11/15] remoteproc: Add return value to function
- rproc_shutdown()
+ 2020 19:14:46 +0100
+Subject: Re: [PATCH v3 13/15] remoteproc: Properly deal with a start request
+ when attached
 To:     Mathieu Poirier <mathieu.poirier@linaro.org>,
         "ohad@wizery.com" <ohad@wizery.com>,
         "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>,
@@ -57,14 +56,14 @@ CC:     "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
         "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 References: <20201126210642.897302-1-mathieu.poirier@linaro.org>
- <20201126210642.897302-12-mathieu.poirier@linaro.org>
+ <20201126210642.897302-14-mathieu.poirier@linaro.org>
 From:   Arnaud POULIQUEN <arnaud.pouliquen@st.com>
-Message-ID: <7aeadffa-f024-7bdc-2bdf-a09210c7a393@st.com>
-Date:   Wed, 2 Dec 2020 19:14:10 +0100
+Message-ID: <24a902d1-f2e5-2318-16bc-202955fcfe28@st.com>
+Date:   Wed, 2 Dec 2020 19:14:45 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <20201126210642.897302-12-mathieu.poirier@linaro.org>
+In-Reply-To: <20201126210642.897302-14-mathieu.poirier@linaro.org>
 Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -80,89 +79,51 @@ X-Mailing-List: linux-remoteproc@vger.kernel.org
 
 
 On 11/26/20 10:06 PM, Mathieu Poirier wrote:
-> Add a return value to function rproc_shutdown() in order to
-> properly deal with error conditions that may occur.
+> This patch takes into account scenarios where a remote processor
+> has been attached to when receiving a "start" command from sysfs.
+> 
+> As with the "running" case, the command can't be carried out if the
+> remote processor is already in operation.
 > 
 > Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-> Reviewed-by: Peng Fan <peng.fan@nxp.com>
+
 
 Reviewed-by: Arnaud Pouliquen <arnaud.pouliquen@st.com>
 
 Thanks,
 Arnaud
+
 > ---
->  drivers/remoteproc/remoteproc_core.c | 19 ++++++++++++++-----
->  include/linux/remoteproc.h           |  2 +-
->  2 files changed, 15 insertions(+), 6 deletions(-)
+>  drivers/remoteproc/remoteproc_cdev.c  | 3 ++-
+>  drivers/remoteproc/remoteproc_sysfs.c | 3 ++-
+>  2 files changed, 4 insertions(+), 2 deletions(-)
 > 
-> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-> index b54f60cc3cbd..51275107eb1f 100644
-> --- a/drivers/remoteproc/remoteproc_core.c
-> +++ b/drivers/remoteproc/remoteproc_core.c
-> @@ -1869,7 +1869,7 @@ EXPORT_SYMBOL(rproc_boot);
->   *   returns, and users can still use it with a subsequent rproc_boot(), if
->   *   needed.
->   */
-> -void rproc_shutdown(struct rproc *rproc)
-> +int rproc_shutdown(struct rproc *rproc)
->  {
->  	struct device *dev = &rproc->dev;
->  	int ret;
-> @@ -1877,15 +1877,19 @@ void rproc_shutdown(struct rproc *rproc)
->  	ret = mutex_lock_interruptible(&rproc->lock);
->  	if (ret) {
->  		dev_err(dev, "can't lock rproc %s: %d\n", rproc->name, ret);
-> -		return;
-> +		return ret;
->  	}
+> diff --git a/drivers/remoteproc/remoteproc_cdev.c b/drivers/remoteproc/remoteproc_cdev.c
+> index d06f8d4919c7..61541bc7d26c 100644
+> --- a/drivers/remoteproc/remoteproc_cdev.c
+> +++ b/drivers/remoteproc/remoteproc_cdev.c
+> @@ -32,7 +32,8 @@ static ssize_t rproc_cdev_write(struct file *filp, const char __user *buf, size_
+>  		return -EFAULT;
 >  
-> -	if (rproc->state != RPROC_RUNNING)
-> +	if (rproc->state != RPROC_RUNNING) {
-> +		ret = -EPERM;
->  		goto out;
-> +	}
+>  	if (!strncmp(cmd, "start", len)) {
+> -		if (rproc->state == RPROC_RUNNING)
+> +		if (rproc->state == RPROC_RUNNING ||
+> +		    rproc->state == RPROC_ATTACHED)
+>  			return -EBUSY;
 >  
->  	/* if the remote proc is still needed, bail out */
-> -	if (!atomic_dec_and_test(&rproc->power))
-> +	if (!atomic_dec_and_test(&rproc->power)) {
-> +		ret = -EBUSY;
->  		goto out;
-> +	}
+>  		ret = rproc_boot(rproc);
+> diff --git a/drivers/remoteproc/remoteproc_sysfs.c b/drivers/remoteproc/remoteproc_sysfs.c
+> index 3696f2ccc785..7d281cfe3e03 100644
+> --- a/drivers/remoteproc/remoteproc_sysfs.c
+> +++ b/drivers/remoteproc/remoteproc_sysfs.c
+> @@ -194,7 +194,8 @@ static ssize_t state_store(struct device *dev,
+>  	int ret = 0;
 >  
->  	ret = rproc_stop(rproc, false);
->  	if (ret) {
-> @@ -1897,7 +1901,11 @@ void rproc_shutdown(struct rproc *rproc)
->  	rproc_resource_cleanup(rproc);
+>  	if (sysfs_streq(buf, "start")) {
+> -		if (rproc->state == RPROC_RUNNING)
+> +		if (rproc->state == RPROC_RUNNING ||
+> +		    rproc->state == RPROC_ATTACHED)
+>  			return -EBUSY;
 >  
->  	/* release HW resources if needed */
-> -	rproc_unprepare_device(rproc);
-> +	ret = rproc_unprepare_device(rproc);
-> +	if (ret) {
-> +		atomic_inc(&rproc->power);
-> +		goto out;
-> +	}
->  
->  	rproc_disable_iommu(rproc);
->  
-> @@ -1907,6 +1915,7 @@ void rproc_shutdown(struct rproc *rproc)
->  	rproc->table_ptr = NULL;
->  out:
->  	mutex_unlock(&rproc->lock);
-> +	return ret;
->  }
->  EXPORT_SYMBOL(rproc_shutdown);
->  
-> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-> index 329c1c071dcf..02312096d59f 100644
-> --- a/include/linux/remoteproc.h
-> +++ b/include/linux/remoteproc.h
-> @@ -655,7 +655,7 @@ rproc_of_resm_mem_entry_init(struct device *dev, u32 of_resm_idx, size_t len,
->  			     u32 da, const char *name, ...);
->  
->  int rproc_boot(struct rproc *rproc);
-> -void rproc_shutdown(struct rproc *rproc);
-> +int rproc_shutdown(struct rproc *rproc);
->  int rproc_detach(struct rproc *rproc);
->  int rproc_set_firmware(struct rproc *rproc, const char *fw_name);
->  void rproc_report_crash(struct rproc *rproc, enum rproc_crash_type type);
+>  		ret = rproc_boot(rproc);
 > 
