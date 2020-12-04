@@ -2,128 +2,139 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C0D4C433FE
-	for <linux-remoteproc@archiver.kernel.org>; Fri,  4 Dec 2020 14:15:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC0EDC4361A
+	for <linux-remoteproc@archiver.kernel.org>; Fri,  4 Dec 2020 15:07:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D841222B2A
-	for <linux-remoteproc@archiver.kernel.org>; Fri,  4 Dec 2020 14:15:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A1BC322B2D
+	for <linux-remoteproc@archiver.kernel.org>; Fri,  4 Dec 2020 15:07:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728314AbgLDOP2 (ORCPT
+        id S1726715AbgLDPG7 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 4 Dec 2020 09:15:28 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35186 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726763AbgLDOP1 (ORCPT
+        Fri, 4 Dec 2020 10:06:59 -0500
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:55622 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726635AbgLDPG6 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 4 Dec 2020 09:15:27 -0500
-Received: from mail-qt1-x843.google.com (mail-qt1-x843.google.com [IPv6:2607:f8b0:4864:20::843])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 48B91C061A52
-        for <linux-remoteproc@vger.kernel.org>; Fri,  4 Dec 2020 06:14:47 -0800 (PST)
-Received: by mail-qt1-x843.google.com with SMTP id b9so3978597qtr.2
-        for <linux-remoteproc@vger.kernel.org>; Fri, 04 Dec 2020 06:14:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=S84fLM5R0eFjhFKwNgg6t4YhV/zLIcH5ndZplGJKCzk=;
-        b=FP5hEdFsRSIYWxa3GBQxUIGiNfZW+RsNpvHY7m/q1DyyPbkND79VQBJWckEaVPjjZX
-         sjVd87SJ9MmGox3RADjhpP0A/HOIdjZx5PlqGuF/leZGa8Bw/hx86RIAxlUTGGNwb27a
-         +D1UO8CRuCEHwqrUcs06O+mIP/Kl1f80FHBxnrnHZSHst9PPcCCW59+3D2WWaRDpvh7q
-         dZcTkLPX5qwzBiYsuGZ/FQZBVeSfSHPNXckqXqUBtVGXF1hLAeYjzKbam9vXszZKt3Mi
-         WFbamiWmqxuepukArl5+g2yCh1igyXRSe/T9bOtldmrgSxp+/gqwTn231YA/o7PBoBCl
-         5cPw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=S84fLM5R0eFjhFKwNgg6t4YhV/zLIcH5ndZplGJKCzk=;
-        b=dmwbRM9Hgp+Pnnx/5W+VoQOLBb2g/7pM+5qLBLXHrnenL3k1LpNK1xTntmSiwnC7KM
-         j66QI+NOkCnn6tVUUKhQG18ryg4/mMXewRtDm7eT2EuvI8i1hd4N5AxtiCumHZFgCkNu
-         Xnb3Zzefsj3uHk/W9rVPm1Mv1q8h8N2zVSxy+PD1S7/pE54pznkzZ38k5grAWG8qGI3J
-         5DVuqhEOjyt1iJlyy3U/e6rbePZ05UCWtXgDkPOhWXCPlPAmlHOUWxDEOhzKKYF88aSR
-         HNTAst6kujA3a732hOZOHCJjHtPLLbpyIv01oyFiKQ0jA0pWAMRgkiuABBZuKENEc6eD
-         yRHQ==
-X-Gm-Message-State: AOAM5318oIcRFF10vf4NylEVOSIVmbEdx88CiIG7n1EM0ngRCUymWupi
-        SfNfyV6Qbc+PkUdmAlUBHcTHVz6lP+D7sqiZSggRkQ==
-X-Google-Smtp-Source: ABdhPJwdyeC4GEux7iJupu+IbCVt8JIddUtBx9AF0hehts+m24vl3ICE698dbMxZN1MoyOrNL7phD3GbsGer4ueulyg=
-X-Received: by 2002:ac8:6b9a:: with SMTP id z26mr9626192qts.200.1607091286490;
- Fri, 04 Dec 2020 06:14:46 -0800 (PST)
-MIME-Version: 1.0
+        Fri, 4 Dec 2020 10:06:58 -0500
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 0B4F5GG6108931;
+        Fri, 4 Dec 2020 09:05:16 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1607094316;
+        bh=x3QQpVqGD3Chyeor/qyNF9e/Ifi7+TxddtR8br0FcC0=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=beDMLR2F2b0vX4LtEZVKhLWSvvEgIF/zj52w5G0h5t5JqeYKbDvnVdzOGPHyTLDiR
+         M8CHn6vinImn2yRgvQn4WG2KMFWfp4OPW1yfSFztRjTIud937SO0kpm2MKlngfadjl
+         P0J9fzweeDR2UeHZ7uR52WBE63azojKO7faku3CA=
+Received: from DLEE113.ent.ti.com (dlee113.ent.ti.com [157.170.170.24])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 0B4F5G79008358
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 4 Dec 2020 09:05:16 -0600
+Received: from DLEE115.ent.ti.com (157.170.170.26) by DLEE113.ent.ti.com
+ (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3; Fri, 4 Dec
+ 2020 09:05:15 -0600
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE115.ent.ti.com
+ (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3 via
+ Frontend Transport; Fri, 4 Dec 2020 09:05:15 -0600
+Received: from [10.250.68.46] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 0B4F590Z054621;
+        Fri, 4 Dec 2020 09:05:10 -0600
+Subject: Re: [PATCH v2 0/6] Add a PRU remoteproc driver
+To:     Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>,
+        <ohad@wizery.com>, <bjorn.andersson@linaro.org>,
+        <mathieu.poirier@linaro.org>
+CC:     <linux-remoteproc@vger.kernel.org>, <robh+dt@kernel.org>,
+        <lee.jones@linaro.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-omap@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <praneeth@ti.com>,
+        <rogerq@ti.com>
 References: <20201119140850.12268-1-grzegorz.jaszczyk@linaro.org>
- <20201119140850.12268-7-grzegorz.jaszczyk@linaro.org> <20201203185332.GC1392978@xps15>
-In-Reply-To: <20201203185332.GC1392978@xps15>
-From:   Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>
-Date:   Fri, 4 Dec 2020 15:14:35 +0100
-Message-ID: <CAMxfBF5xaBd2Dm9fpJD+eS_x2Q9-5Ub6iHTRetgt9Ce8vZChqQ@mail.gmail.com>
-Subject: Re: [PATCH v2 6/6] remoteproc/pru: Add support for various PRU cores
- on K3 J721E SoCs
-To:     Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc:     Ohad Ben Cohen <ohad@wizery.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        "Anna, Suman" <s-anna@ti.com>, linux-remoteproc@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>,
-        Lee Jones <lee.jones@linaro.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        "Bajjuri, Praneeth" <praneeth@ti.com>,
-        Roger Quadros <rogerq@ti.com>
-Content-Type: text/plain; charset="UTF-8"
+From:   Suman Anna <s-anna@ti.com>
+Message-ID: <d31a38a2-940c-2ce6-b496-4b4ac2fbe08e@ti.com>
+Date:   Fri, 4 Dec 2020 09:05:08 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
+MIME-Version: 1.0
+In-Reply-To: <20201119140850.12268-1-grzegorz.jaszczyk@linaro.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi Mathieu,
+Hi Greg,
 
-On Thu, 3 Dec 2020 at 19:53, Mathieu Poirier <mathieu.poirier@linaro.org> wrote:
->
-> On Thu, Nov 19, 2020 at 03:08:50PM +0100, Grzegorz Jaszczyk wrote:
-> > From: Suman Anna <s-anna@ti.com>
-> >
-> > The K3 J721E family of SoCs have a revised version of the AM65x ICSSG IP
-> > and contains two instances of this newer ICSSG IP. Each ICSSG processor
-> > subsystem contains 2 primary PRU cores, 2 auxiliary PRU cores called RTUs,
-> > and 2 new auxiliary cores called Transmit PRUs (Tx_PRUs).
-> >
-> > Enhance the existing PRU remoteproc driver to support these new PRU
-> > and RTU cores by using specific compatibles. The cores have the same
-> > memory copying limitations as on AM65x, so reuses the custom memcpy
-> > function within the driver's ELF loader implementation. The initial
-> > names for the firmware images for each PRU core are retrieved from
-> > DT nodes, and can be adjusted through sysfs if required.
-> >
-> > Signed-off-by: Suman Anna <s-anna@ti.com>
-> > Co-developed-by: Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>
-> > Signed-off-by: Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>
->
-> Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+On 11/19/20 8:08 AM, Grzegorz Jaszczyk wrote:
+> Hi All,
+> 
+> The Programmable Real-Time Unit and Industrial Communication Subsystem
+> (PRU-ICSS or simply PRUSS) on various TI SoCs consists of dual 32-bit
+> RISC cores (Programmable Real-Time Units, or PRUs) for program execution.
+> 
+> The K3 AM65x amd J721E SoCs have the next generation of the PRU-ICSS IP,
+> commonly called ICSSG. The ICSSG IP on AM65x SoCs has two PRU cores,
+> two auxiliary custom PRU cores called Real Time Units (RTUs). The K3
+> AM65x SR2.0 and J721E SoCs have a revised version of the ICSSG IP, and
+> include two additional custom auxiliary PRU cores called Transmit PRUs
+> (Tx_PRUs).
+> 
+> This series contains the PRUSS remoteproc driver together with relevant
+> dt-binding. This is the 3rd foundation component for PRUSS subsystem, the
+> previous two were already merged and can be found under:
+> 1) drivers/soc/ti/pruss.c
+>    Documentation/devicetree/bindings/soc/ti/ti,pruss.yaml
+> 2) drivers/irqchip/irq-pruss-intc.c
+>    Documentation/devicetree/bindings/interrupt-controller/ti,pruss-intc.yaml
+> 
+> The following is a v2 version of the series. Please see the individual patches
+> for exact changes in each patch, following are the main changes from v1:
+> - Patch #1: fix two yamllint warnings.
+> - Patch #2: address Suman comments: minor style improvements and fix for
+> 	    optional resource table handling (moved from patch #3).
+> - Patch #3: address Suman comment: minor style, comments and trace improvements
+> 	    (no functional changes).
+> - Patch #4: No changes.
+> - Patch #5: Update documentation of pru_rproc_memcpy() function and is_k3 flag.
+> - Patch #6: No changes.
+> 
+> Best regards,
+> Grzegorz
+> 
+> Grzegorz Jaszczyk (1):
+>   remoteproc/pru: Add support for PRU specific interrupt configuration
+> 
+> Suman Anna (5):
+>   dt-bindings: remoteproc: Add binding doc for PRU cores in the PRU-ICSS
+>   remoteproc/pru: Add a PRU remoteproc driver
+>   remoteproc/pru: Add pru-specific debugfs support
+>   remoteproc/pru: Add support for various PRU cores on K3 AM65x SoCs
+>   remoteproc/pru: Add support for various PRU cores on K3 J721E SoCs
 
-Thank you for all your review,
-Grzegorz
+One minor change for v3 when you repost to address Mathieu's comments, can you
+please adjust the patch titles to use
+"remoteproc: pru:" instead following the latest convention.
 
->
-> > ---
-> >  drivers/remoteproc/pru_rproc.c | 3 +++
-> >  1 file changed, 3 insertions(+)
-> >
-> > diff --git a/drivers/remoteproc/pru_rproc.c b/drivers/remoteproc/pru_rproc.c
-> > index 48c1c51e0d42..96f689283a8b 100644
-> > --- a/drivers/remoteproc/pru_rproc.c
-> > +++ b/drivers/remoteproc/pru_rproc.c
-> > @@ -852,6 +852,9 @@ static const struct of_device_id pru_rproc_match[] = {
-> >       { .compatible = "ti,am654-pru",         .data = &k3_pru_data },
-> >       { .compatible = "ti,am654-rtu",         .data = &k3_rtu_data },
-> >       { .compatible = "ti,am654-tx-pru",      .data = &k3_tx_pru_data },
-> > +     { .compatible = "ti,j721e-pru",         .data = &k3_pru_data },
-> > +     { .compatible = "ti,j721e-rtu",         .data = &k3_rtu_data },
-> > +     { .compatible = "ti,j721e-tx-pru",      .data = &k3_tx_pru_data },
-> >       {},
-> >  };
-> >  MODULE_DEVICE_TABLE(of, pru_rproc_match);
-> > --
-> > 2.29.0
-> >
+Thanks,
+Suman
+
+> 
+>  .../bindings/remoteproc/ti,pru-rproc.yaml     | 214 +++++
+>  drivers/remoteproc/Kconfig                    |  12 +
+>  drivers/remoteproc/Makefile                   |   1 +
+>  drivers/remoteproc/pru_rproc.c                | 877 ++++++++++++++++++
+>  drivers/remoteproc/pru_rproc.h                |  46 +
+>  5 files changed, 1150 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/remoteproc/ti,pru-rproc.yaml
+>  create mode 100644 drivers/remoteproc/pru_rproc.c
+>  create mode 100644 drivers/remoteproc/pru_rproc.h
+> 
+
