@@ -5,480 +5,199 @@ X-Spam-Level:
 X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ADAD8C433FE
-	for <linux-remoteproc@archiver.kernel.org>; Fri,  4 Dec 2020 17:41:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 308B4C433FE
+	for <linux-remoteproc@archiver.kernel.org>; Fri,  4 Dec 2020 17:52:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6665022A83
-	for <linux-remoteproc@archiver.kernel.org>; Fri,  4 Dec 2020 17:41:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E22CF22AAD
+	for <linux-remoteproc@archiver.kernel.org>; Fri,  4 Dec 2020 17:52:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731330AbgLDRlB (ORCPT
+        id S2387627AbgLDRwl (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 4 Dec 2020 12:41:01 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38934 "EHLO
+        Fri, 4 Dec 2020 12:52:41 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40740 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726518AbgLDRlA (ORCPT
+        with ESMTP id S2387580AbgLDRwl (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 4 Dec 2020 12:41:00 -0500
-Received: from mail-pf1-x443.google.com (mail-pf1-x443.google.com [IPv6:2607:f8b0:4864:20::443])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 32A55C0613D1
-        for <linux-remoteproc@vger.kernel.org>; Fri,  4 Dec 2020 09:40:20 -0800 (PST)
-Received: by mail-pf1-x443.google.com with SMTP id c79so4216336pfc.2
-        for <linux-remoteproc@vger.kernel.org>; Fri, 04 Dec 2020 09:40:20 -0800 (PST)
+        Fri, 4 Dec 2020 12:52:41 -0500
+Received: from mail-io1-xd44.google.com (mail-io1-xd44.google.com [IPv6:2607:f8b0:4864:20::d44])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A159C061A4F
+        for <linux-remoteproc@vger.kernel.org>; Fri,  4 Dec 2020 09:52:01 -0800 (PST)
+Received: by mail-io1-xd44.google.com with SMTP id y5so6618726iow.5
+        for <linux-remoteproc@vger.kernel.org>; Fri, 04 Dec 2020 09:52:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=p66dAZ6SLWm01mjV5Tw/VD4DvpdLjI/e51OKNApulLg=;
-        b=WQt67mUdCQgXxlaaA5KFkwfSWC2pY1vFqWFxlUwvodxyeZHKtSfH3KHMDCl8DPomBT
-         8I2KomVzUwq5gPJ+WDysp5kvoxNeS6fljSXRimijcefAh8KhcSGZ0qm9rvQc5Y431qz3
-         BFHLIvDQAnwCS2hpNMQzXksjzYCipKvdVQ7EVs6UeCBpa8MXcOxVyA2juZnm66an4XLS
-         hc2npqg04vwqIje2/jAAyJ5buMoPIXcSqvG8bbCpxFa6SwCi86fOS4UW6YGt7BNlYgWO
-         beCbqwYgJg8kj0l1S/2/e1UTTUtet20ilp3d6cL5JO0u/lBlunVCXzLEuZwOAH5IWiJa
-         Tpaw==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=7UAVaDXI+I5u9V+JJpY6eb9l7dnPddi/+P+0R/fGgMY=;
+        b=AjlKtvRF/fi9F8lPROkXKg51IjrxmrrtIDYi5sz1HKdVda2FMTzJCtoidPFpsLedvF
+         togG9/KWphvdHTDOGeIlz1Mx/vJGAxIMxBYRbs+xMZUl0vNscohNS6Smpy6YBV2JJmW6
+         eS1H66CEcz07rLjMmevcT0oN+JVCmOdsgyWeSKXJaQwy/rcTKn+ELv8LmofPqSbt7wdu
+         2sJ1zpBA6MsuOEKBZDoU+YFUos6p4Et0XrSg9r/GqGE4JKei4NtQP0CiJ3DvUdjdMsDK
+         0u8Hwkho8bFJVZHqeqghFZv6x60COdfFVYG7TIlNFO5+fQr4if81wHxlKP7655rP3CGO
+         K60g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=p66dAZ6SLWm01mjV5Tw/VD4DvpdLjI/e51OKNApulLg=;
-        b=DSdaDfNpgt2fUkv/GKGPg3boynoGJmojOefiGn3BKPuSmD70cIaleU66b44S09YqSv
-         HNTmFnwyKTKsu8Uj7b7QU88Qe7TTu59YAJQqC3GONbvwXkX3gLnlROECIL9fzdzfmcLJ
-         SaJee4vOYW/1NkwhBdqTyFdlNzDpXBwc0k+yAoiTxsQ+HWqZWS4cGP3Is81rfiLzM4zG
-         TlGDzhuXmj/c5Y+t2NGn5Bq23cvNZXCiiXS0U7a3w8QUnAJgPbdx0LOrEpUI07n4Fd79
-         2y8wJ37XRxJ49qGnKrwgWmTYbRUoBGFqwxuKedD0eANM+yaduqFAnW7aEzTIQZecer2C
-         HTvQ==
-X-Gm-Message-State: AOAM532utpPGgVyvr6lW7NZdpJJCQuy6VwtY+RfmbBXeWxOxxUfmUPoc
-        4CUGtgWArerU+Pdfvc6b+ldzMg==
-X-Google-Smtp-Source: ABdhPJwMLaP/LaAcqZQfgOXXqbNn/tj/kn2bvHxVw6phMHfZBeOjxSQ0vU04mvAjY4W0TSe6pFq7Rw==
-X-Received: by 2002:a63:6683:: with SMTP id a125mr8283405pgc.272.1607103619504;
-        Fri, 04 Dec 2020 09:40:19 -0800 (PST)
-Received: from xps15 (S0106889e681aac74.cg.shawcable.net. [68.147.0.187])
-        by smtp.gmail.com with ESMTPSA id s70sm3311160pfc.97.2020.12.04.09.40.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Dec 2020 09:40:18 -0800 (PST)
-Date:   Fri, 4 Dec 2020 10:40:16 -0700
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-To:     Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>
-Cc:     Ohad Ben Cohen <ohad@wizery.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        "Anna, Suman" <s-anna@ti.com>, linux-remoteproc@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>,
-        Lee Jones <lee.jones@linaro.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        "Bajjuri, Praneeth" <praneeth@ti.com>,
-        Roger Quadros <rogerq@ti.com>
-Subject: Re: [PATCH v2 3/6] remoteproc/pru: Add support for PRU specific
- interrupt configuration
-Message-ID: <20201204174016.GD1392978@xps15>
-References: <20201119140850.12268-1-grzegorz.jaszczyk@linaro.org>
- <20201119140850.12268-4-grzegorz.jaszczyk@linaro.org>
- <20201202225739.GF1282360@xps15>
- <CAMxfBF6az3RGRq00qzbLzPidgG3fu9sXrLzDCDURCUtMoMMfNA@mail.gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=7UAVaDXI+I5u9V+JJpY6eb9l7dnPddi/+P+0R/fGgMY=;
+        b=fofDsYQ1C1ef2ecQWCH9ma2ZNqnjYEZQsywLub+0axb3Vrd0LTnzFBv+mjS9npLKH2
+         qdplS4T0fe8PZ/9d2/34lwKE2P4gRSH6Zi+H6k0I+zzsg/ykSW+EQMFbHrGwgAL+UsVO
+         3ay9QjSno0IYXxR+o0tOeDWjjG8DVuYWZAz+6DU9mV76xQXEJvh/ajgS/N2cFK31DBXb
+         HvJIQryFKzZIDEm/Kpat70a/cEZ7WHmC6x+aYBiGrQyjROyzrnVxxAjDPdAcMWTiz1WU
+         xTURYksPliSTFwEpiNjwdPumGKh+E1ThoVRln1WMDmK0Lvuo4w7xH3iFIEbUrYDKHalP
+         DxEg==
+X-Gm-Message-State: AOAM531akjKC1Cfhwnyxo7Ljprp2HGFxroa8QHwyOtGArrM65b3gzKon
+        exOl5WepbBj8EHczLm2ajSR/4OGmJzGkZxy+o7zqrA==
+X-Google-Smtp-Source: ABdhPJyI3pTXHexcHgBPq8OSBX6ioRMzSNf+GCrlVplPEh/3zrvNYahNpsh1ZldQNo3MU+KoMgSUBVxGggJrmOmyB1s=
+X-Received: by 2002:a5e:db4b:: with SMTP id r11mr7636498iop.148.1607104320277;
+ Fri, 04 Dec 2020 09:52:00 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMxfBF6az3RGRq00qzbLzPidgG3fu9sXrLzDCDURCUtMoMMfNA@mail.gmail.com>
+References: <20201120214245.172963-1-mathieu.poirier@linaro.org>
+ <20201123160610.GA19108@ubuntu> <20201202110555.GA65230@ubuntu>
+ <20201202203954.GC1282360@xps15> <20201203204218.GA13001@ubuntu>
+In-Reply-To: <20201203204218.GA13001@ubuntu>
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+Date:   Fri, 4 Dec 2020 10:51:49 -0700
+Message-ID: <CANLsYkzDiWtyNvYm8a_MBgz=cryb2mNNUwVA9=K2yrO3XTa-xA@mail.gmail.com>
+Subject: Re: [PATCH v7 0/8] rpmsg: Make RPMSG name service modular
+To:     Guennadi Liakhovetski <guennadi.liakhovetski@linux.intel.com>
+Cc:     Kishon Vijay Abraham I <kishon@ti.com>,
+        Ohad Ben-Cohen <ohad@wizery.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Arnaud POULIQUEN <arnaud.pouliquen@st.com>,
+        linux-remoteproc <linux-remoteproc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Jason Wang <jasowang@redhat.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Vincent Whitchurch <vincent.whitchurch@axis.com>,
+        virtualization@lists.linux-foundation.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Fri, Dec 04, 2020 at 03:11:55PM +0100, Grzegorz Jaszczyk wrote:
-> Hi Mathieu,
-> 
-> On Wed, 2 Dec 2020 at 23:57, Mathieu Poirier <mathieu.poirier@linaro.org> wrote:
-> >
-> > On Thu, Nov 19, 2020 at 03:08:47PM +0100, Grzegorz Jaszczyk wrote:
-> > > The firmware blob can contain optional ELF sections: .resource_table
-> > > section and .pru_irq_map one. The second one contains the PRUSS
-> > > interrupt mapping description, which needs to be setup before powering
-> > > on the PRU core. To avoid RAM wastage this ELF section is not mapped to
-> > > any ELF segment (by the firmware linker) and therefore is not loaded to
-> > > PRU memory.
-> > >
-> > > The PRU interrupt configuration is handled within the PRUSS INTC irqchip
-> > > driver and leverages the system events to interrupt channels and host
-> > > interrupts mapping configuration. Relevant irq routing information is
-> > > passed through a special .pru_irq_map ELF section (for interrupts routed
-> > > to and used by PRU cores) or via the PRU application's device tree node
-> > > (for interrupts routed to and used by the main CPU). The mappings are
-> > > currently programmed during the booting/shutdown of the PRU.
-> > >
-> > > The interrupt configuration passed through .pru_irq_map ELF section is
-> > > optional. It varies on specific firmware functionality and therefore
-> > > have to be unwinded during PRU stop and performed again during
-> > > PRU start.
-> > >
-> > > Co-developed-by: Suman Anna <s-anna@ti.com>
-> > > Signed-off-by: Suman Anna <s-anna@ti.com>
-> > > Signed-off-by: Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>
-> > > ---
-> > > v1->v2:
-> > > Address Suman comments:
-> > > - Rework pru_rproc_find_interrupt_map() style: get rid of generic ELF
-> > >   helpers macros usage and stick with elf32_* related structs instead
-> > >   (in order to be consistent with pru_rproc_load_elf_segments() style).
-> > > - Improve comments and dev_err msgs in pru_rproc_find_interrupt_map().
-> > > - Use u8 instead of ssize_t for evt_count.
-> > > ---
-> > >  drivers/remoteproc/pru_rproc.c | 180 +++++++++++++++++++++++++++++++++
-> > >  drivers/remoteproc/pru_rproc.h |  46 +++++++++
-> > >  2 files changed, 226 insertions(+)
-> > >  create mode 100644 drivers/remoteproc/pru_rproc.h
-> > >
-> > > diff --git a/drivers/remoteproc/pru_rproc.c b/drivers/remoteproc/pru_rproc.c
-> > > index b686f19f9b1a..c68c3d6bfddd 100644
-> > > --- a/drivers/remoteproc/pru_rproc.c
-> > > +++ b/drivers/remoteproc/pru_rproc.c
-> > > @@ -11,13 +11,16 @@
-> > >   */
-> > >
-> > >  #include <linux/bitops.h>
-> > > +#include <linux/irqdomain.h>
-> > >  #include <linux/module.h>
-> > >  #include <linux/of_device.h>
-> > > +#include <linux/of_irq.h>
-> > >  #include <linux/pruss_driver.h>
-> > >  #include <linux/remoteproc.h>
-> > >
-> > >  #include "remoteproc_internal.h"
-> > >  #include "remoteproc_elf_helpers.h"
-> > > +#include "pru_rproc.h"
-> > >
-> > >  /* PRU_ICSS_PRU_CTRL registers */
-> > >  #define PRU_CTRL_CTRL                0x0000
-> > > @@ -42,6 +45,8 @@
-> > >  #define PRU_SDRAM_DA 0x2000  /* Secondary Data RAM */
-> > >  #define PRU_SHRDRAM_DA       0x10000 /* Shared Data RAM */
-> > >
-> > > +#define MAX_PRU_SYS_EVENTS 160
-> > > +
-> > >  /**
-> > >   * enum pru_iomem - PRU core memory/register range identifiers
-> > >   *
-> > > @@ -65,6 +70,10 @@ enum pru_iomem {
-> > >   * @rproc: remoteproc pointer for this PRU core
-> > >   * @mem_regions: data for each of the PRU memory regions
-> > >   * @fw_name: name of firmware image used during loading
-> > > + * @mapped_irq: virtual interrupt numbers of created fw specific mapping
-> > > + * @pru_interrupt_map: pointer to interrupt mapping description (firmware)
-> > > + * @pru_interrupt_map_sz: pru_interrupt_map size
-> > > + * @evt_count: number of mapped events
-> > >   */
-> > >  struct pru_rproc {
-> > >       int id;
-> > > @@ -73,6 +82,10 @@ struct pru_rproc {
-> > >       struct rproc *rproc;
-> > >       struct pruss_mem_region mem_regions[PRU_IOMEM_MAX];
-> > >       const char *fw_name;
-> > > +     int *mapped_irq;
-> > > +     struct pru_irq_rsc *pru_interrupt_map;
-> > > +     size_t pru_interrupt_map_sz;
-> > > +     u8 evt_count;
-> > >  };
-> > >
-> > >  static inline u32 pru_control_read_reg(struct pru_rproc *pru, unsigned int reg)
-> > > @@ -86,15 +99,107 @@ void pru_control_write_reg(struct pru_rproc *pru, unsigned int reg, u32 val)
-> > >       writel_relaxed(val, pru->mem_regions[PRU_IOMEM_CTRL].va + reg);
-> > >  }
-> > >
-> >
-> > > +static void pru_dispose_irq_mapping(struct pru_rproc *pru)
-> > > +{
-> > > +     while (pru->evt_count--) {
-> > > +             if (pru->mapped_irq[pru->evt_count] > 0)
-> > > +                     irq_dispose_mapping(pru->mapped_irq[pru->evt_count]);
-> > > +     }
-> > > +
-> > > +     kfree(pru->mapped_irq);
-> > > +}
-> > > +
-> > > +/*
-> > > + * Parse the custom PRU interrupt map resource and configure the INTC
-> > > + * appropriately.
-> > > + */
-> > > +static int pru_handle_intrmap(struct rproc *rproc)
-> > > +{
-> > > +     struct device *dev = rproc->dev.parent;
-> > > +     struct pru_rproc *pru = rproc->priv;
-> > > +     struct pru_irq_rsc *rsc = pru->pru_interrupt_map;
-> > > +     struct irq_fwspec fwspec;
-> > > +     struct device_node *irq_parent;
-> > > +     int i, ret = 0;
-> > > +
-> > > +     /* not having pru_interrupt_map is not an error */
-> > > +     if (!rsc)
-> > > +             return 0;
-> > > +
-> > > +     /* currently supporting only type 0 */
-> > > +     if (rsc->type != 0) {
-> > > +             dev_err(dev, "unsupported rsc type: %d\n", rsc->type);
-> > > +             return -EINVAL;
-> > > +     }
-> > > +
-> > > +     if (rsc->num_evts < 0 || rsc->num_evts > MAX_PRU_SYS_EVENTS)
-> > > +             return -EINVAL;
-> > > +
-> >
-> > pru_irq_rsc::num_evts is a 'u8' and can't be negative.
-> 
-> Sure - I will remove the 'rsc->num_evts < 0 ' check.
-> 
-> >
-> > > +     if (sizeof(*rsc) + rsc->num_evts * sizeof(struct pruss_int_map) !=
-> > > +         pru->pru_interrupt_map_sz)
-> > > +             return -EINVAL;
-> > > +
-> > > +     pru->evt_count = rsc->num_evts;
-> > > +     pru->mapped_irq = kcalloc(pru->evt_count, sizeof(int), GFP_KERNEL);
-> > > +     if (!pru->mapped_irq)
-> > > +             return -ENOMEM;
-> > > +
-> > > +     /*
-> > > +      * parse and fill in system event to interrupt channel and
-> > > +      * channel-to-host mapping
-> > > +      */
-> > > +     irq_parent = of_irq_find_parent(pru->dev->of_node);
-> > > +     if (!irq_parent) {
-> > > +             kfree(pru->mapped_irq);
-> > > +             return -ENODEV;
-> > > +     }
-> > > +
-> > > +     fwspec.fwnode = of_node_to_fwnode(irq_parent);
-> > > +     fwspec.param_count = 3;
-> > > +     for (i = 0; i < pru->evt_count; i++) {
-> > > +             fwspec.param[0] = rsc->pru_intc_map[i].event;
-> > > +             fwspec.param[1] = rsc->pru_intc_map[i].chnl;
-> > > +             fwspec.param[2] = rsc->pru_intc_map[i].host;
-> > > +
-> > > +             dev_dbg(dev, "mapping%d: event %d, chnl %d, host %d\n",
-> > > +                    i, fwspec.param[0], fwspec.param[1], fwspec.param[2]);
-> > > +
-> > > +             pru->mapped_irq[i] = irq_create_fwspec_mapping(&fwspec);
-> > > +             if (pru->mapped_irq[i] < 0) {
-> >
-> > Function irq_create_fwspec_mapping() returns an unsigned int - theoretically the
-> > above check could return a false positive.  I suggest to make
-> > pru_proc::mapped_irq a '*unsigned int" and revise the error condition.
-> 
-> You are right - I will do as suggested.
-> 
-> >
-> > > +                     dev_err(dev, "failed to get virq\n");
-> > > +                     ret = pru->mapped_irq[i];
-> > > +                     goto map_fail;
-> > > +             }
-> > > +     }
-> > > +
-> > > +     return ret;
-> > > +
-> > > +map_fail:
-> > > +     pru_dispose_irq_mapping(pru);
-> > > +
-> > > +     return ret;
-> > > +}
-> > > +
-> > >  static int pru_rproc_start(struct rproc *rproc)
-> > >  {
-> > >       struct device *dev = &rproc->dev;
-> > >       struct pru_rproc *pru = rproc->priv;
-> > >       u32 val;
-> > > +     int ret;
-> > >
-> > >       dev_dbg(dev, "starting PRU%d: entry-point = 0x%llx\n",
-> > >               pru->id, (rproc->bootaddr >> 2));
-> > >
-> > > +     ret = pru_handle_intrmap(rproc);
-> > > +     /*
-> > > +      * reset references to pru interrupt map - they will stop being valid
-> > > +      * after rproc_start returns
-> > > +      */
-> >
-> > Why is that?  As far as I understand the interrupt map points inside the
-> > firmware image, which won't go away until @rproc is disposed of or users change
-> > it via sysfs.  And the latter can't happen when the remote processor is active.
-> > Can't this go to pru_dispose_irq_mapping()?
-> 
-> Those references are pointing to the fw segments which are released
-> right after rproc_start() due to release_firmware() call. I think that
-> resetting them before pru_rproc_start() returns is proper. If you
-> don't mind I prefer to keep this part as is.
+I am adding Vincent Whitchurch and the virtualization mailing list...
 
-You correct - I had rproc::cached_table in mind but that one is kmemdup()'ed.
+On Thu, 3 Dec 2020 at 13:42, Guennadi Liakhovetski
+<guennadi.liakhovetski@linux.intel.com> wrote:
+>
+> (adding vhost maintainers and the author of [1])
+>
+> Hi,
+>
+> I'm working on an Audio DSP virtualisation solution [2] and the next
+> step in its upstreaming should be an RPMsg vhost implementation, based
+> on [3], which contains a simple addition to the current library-style
+> vhost API. Later in [1] a different approach has been presented,
+> converting the vhost framework to a proper bus-type and device driver.
+> Therefore my questions:
+>
+> 1. if the latter approach is prefered, should we expect follow up
+> versions of [1] and their upstreaming?
+> 2. judging by the size and complexity of [1] would it maybe be
+> preferable to first extract a minimum patch set just to add vhost
+> rpmsg? Looking at the patch set it should be doable and not too
+> difficult? Kishon, would it be something you could submit?
 
-> 
-> Thank you,
-> Grzegorz
-> 
+To me that is the best approach.  It might be best for you to do the
+work and credit Kishon where needed.
+
+> 3. or would it be preferable to keep vhost in its present form, use
+> [3] for rpmsg support and re-implement [1] based on a different
+> vhost / vringh approach?
+>
+> Thanks
+> Guennadi
+>
+> [1] https://www.spinics.net/lists/kvm/msg219632.html
+> [2] https://mailman.alsa-project.org/pipermail/sound-open-firmware/2020-April/003766.html
+> [3] https://www.spinics.net/lists/linux-virtualization/msg43359.html
+>
+> On Wed, Dec 02, 2020 at 01:39:54PM -0700, Mathieu Poirier wrote:
+> > Good day,
 > >
-> > More comments to come tomorrow.
+> > On Wed, Dec 02, 2020 at 12:05:55PM +0100, Guennadi Liakhovetski wrote:
+> > > Hi Mathieu,
+> > >
+> > > I'd like to resume reviewing and begin upstreaming of the next steps of
+> > > my Audio DSP Virtualisation work, based on this your patch set. How
 > >
-> > Thanks,
-> > Mathieu
+> > I'm all for it too.
 > >
-> > > +     pru->pru_interrupt_map = NULL;
-> > > +     pru->pru_interrupt_map_sz = 0;
-> > > +     if (ret)
-> > > +             return ret;
-> > > +
-> > >       val = CTRL_CTRL_EN | ((rproc->bootaddr >> 2) << 16);
-> > >       pru_control_write_reg(pru, PRU_CTRL_CTRL, val);
+> > > confident are we that it's going to be upstreamed in its present form?
+> > > What's the plan to push it to "next?"
 > > >
-> > > @@ -113,6 +218,10 @@ static int pru_rproc_stop(struct rproc *rproc)
-> > >       val &= ~CTRL_CTRL_EN;
-> > >       pru_control_write_reg(pru, PRU_CTRL_CTRL, val);
+> >
+> > I thought we were pretty unanimous that something like what Kishon did was the
+> > way to go.
+> >
+> > > Thanks
+> > > Guennadi
 > > >
-> > > +     /* dispose irq mapping - new firmware can provide new mapping */
-> > > +     if (pru->mapped_irq)
-> > > +             pru_dispose_irq_mapping(pru);
-> > > +
-> > >       return 0;
-> > >  }
-> > >
-> > > @@ -275,12 +384,70 @@ pru_rproc_load_elf_segments(struct rproc *rproc, const struct firmware *fw)
-> > >       return ret;
-> > >  }
-> > >
-> > > +static const void *
-> > > +pru_rproc_find_interrupt_map(struct device *dev, const struct firmware *fw)
-> > > +{
-> > > +     struct elf32_shdr *shdr, *name_table_shdr;
-> > > +     const char *name_table;
-> > > +     const u8 *elf_data = fw->data;
-> > > +     struct elf32_hdr *ehdr = (struct elf32_hdr *)elf_data;
-> > > +     u16 shnum = ehdr->e_shnum;
-> > > +     u16 shstrndx = ehdr->e_shstrndx;
-> > > +     int i;
-> > > +
-> > > +     /* first, get the section header */
-> > > +     shdr = (struct elf32_shdr *)(elf_data + ehdr->e_shoff);
-> > > +     /* compute name table section header entry in shdr array */
-> > > +     name_table_shdr = shdr + shstrndx;
-> > > +     /* finally, compute the name table section address in elf */
-> > > +     name_table = elf_data + name_table_shdr->sh_offset;
-> > > +
-> > > +     for (i = 0; i < shnum; i++, shdr++) {
-> > > +             u32 size = shdr->sh_size;
-> > > +             u32 offset = shdr->sh_offset;
-> > > +             u32 name = shdr->sh_name;
-> > > +
-> > > +             if (strcmp(name_table + name, ".pru_irq_map"))
-> > > +                     continue;
-> > > +
-> > > +             /* make sure we have the entire irq map */
-> > > +             if (offset + size > fw->size || offset + size < size) {
-> > > +                     dev_err(dev, ".pru_irq_map section truncated\n");
-> > > +                     return ERR_PTR(-EINVAL);
-> > > +             }
-> > > +
-> > > +             /* make sure irq map has at least the header */
-> > > +             if (sizeof(struct pru_irq_rsc) > size) {
-> > > +                     dev_err(dev, "header-less .pru_irq_map section\n");
-> > > +                     return ERR_PTR(-EINVAL);
-> > > +             }
-> > > +
-> > > +             return shdr;
-> > > +     }
-> > > +
-> > > +     dev_dbg(dev, "no .pru_irq_map section found for this fw\n");
-> > > +
-> > > +     return NULL;
-> > > +}
-> > > +
-> > >  /*
-> > >   * Use a custom parse_fw callback function for dealing with PRU firmware
-> > >   * specific sections.
-> > > + *
-> > > + * The firmware blob can contain optional ELF sections: .resource_table section
-> > > + * and .pru_irq_map one. The second one contains the PRUSS interrupt mapping
-> > > + * description, which needs to be setup before powering on the PRU core. To
-> > > + * avoid RAM wastage this ELF section is not mapped to any ELF segment (by the
-> > > + * firmware linker) and therefore is not loaded to PRU memory.
-> > >   */
-> > >  static int pru_rproc_parse_fw(struct rproc *rproc, const struct firmware *fw)
-> > >  {
-> > > +     struct device *dev = &rproc->dev;
-> > > +     struct pru_rproc *pru = rproc->priv;
-> > > +     const u8 *elf_data = fw->data;
-> > > +     const void *shdr;
-> > > +     u8 class = fw_elf_get_class(fw);
-> > > +     u64 sh_offset;
-> > >       int ret;
-> > >
-> > >       /* load optional rsc table */
-> > > @@ -290,6 +457,19 @@ static int pru_rproc_parse_fw(struct rproc *rproc, const struct firmware *fw)
-> > >       else if (ret)
-> > >               return ret;
-> > >
-> > > +     /* find .pru_interrupt_map section, not having it is not an error */
-> > > +     shdr = pru_rproc_find_interrupt_map(dev, fw);
-> > > +     if (IS_ERR(shdr))
-> > > +             return PTR_ERR(shdr);
-> > > +
-> > > +     if (!shdr)
-> > > +             return 0;
-> > > +
-> > > +     /* preserve pointer to PRU interrupt map together with it size */
-> > > +     sh_offset = elf_shdr_get_sh_offset(class, shdr);
-> > > +     pru->pru_interrupt_map = (struct pru_irq_rsc *)(elf_data + sh_offset);
-> > > +     pru->pru_interrupt_map_sz = elf_shdr_get_sh_size(class, shdr);
-> > > +
-> > >       return 0;
-> > >  }
-> > >
-> > > diff --git a/drivers/remoteproc/pru_rproc.h b/drivers/remoteproc/pru_rproc.h
-> > > new file mode 100644
-> > > index 000000000000..8ee9c3171610
-> > > --- /dev/null
-> > > +++ b/drivers/remoteproc/pru_rproc.h
-> > > @@ -0,0 +1,46 @@
-> > > +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-3-Clause) */
-> > > +/*
-> > > + * PRUSS Remote Processor specific types
-> > > + *
-> > > + * Copyright (C) 2014-2020 Texas Instruments Incorporated - https://www.ti.com/
-> > > + *   Suman Anna <s-anna@ti.com>
-> > > + */
-> > > +
-> > > +#ifndef _PRU_RPROC_H_
-> > > +#define _PRU_RPROC_H_
-> > > +
-> > > +/**
-> > > + * struct pruss_int_map - PRU system events _to_ channel and host mapping
-> > > + * @event: number of the system event
-> > > + * @chnl: channel number assigned to a given @event
-> > > + * @host: host number assigned to a given @chnl
-> > > + *
-> > > + * PRU system events are mapped to channels, and these channels are mapped
-> > > + * to host interrupts. Events can be mapped to channels in a one-to-one or
-> > > + * many-to-one ratio (multiple events per channel), and channels can be
-> > > + * mapped to host interrupts in a one-to-one or many-to-one ratio (multiple
-> > > + * channels per interrupt).
-> > > + */
-> > > +struct pruss_int_map {
-> > > +     u8 event;
-> > > +     u8 chnl;
-> > > +     u8 host;
-> > > +};
-> > > +
-> > > +/**
-> > > + * struct pru_irq_rsc - PRU firmware section header for IRQ data
-> > > + * @type: resource type
-> > > + * @num_evts: number of described events
-> > > + * @pru_intc_map: PRU interrupt routing description
-> > > + *
-> > > + * The PRU firmware blob can contain optional .pru_irq_map ELF section, which
-> > > + * provides the PRUSS interrupt mapping description. The pru_irq_rsc struct
-> > > + * describes resource entry format.
-> > > + */
-> > > +struct pru_irq_rsc {
-> > > +     u8 type;
-> > > +     u8 num_evts;
-> > > +     struct pruss_int_map pru_intc_map[];
-> > > +} __packed;
-> > > +
-> > > +#endif       /* _PRU_RPROC_H_ */
-> > > --
-> > > 2.29.0
-> > >
+> > > On Mon, Nov 23, 2020 at 05:06:10PM +0100, Guennadi Liakhovetski wrote:
+> > > > Hi Mathieu,
+> > > >
+> > > > Thanks for bringing all the stuff together and for polishing it!
+> > > >
+> > > > For the entire series:
+> > > >
+> > > > Tested-by: Guennadi Liakhovetski <guennadi.liakhovetski@linux.intel.com>
+> > > > Reviewed-by: Guennadi Liakhovetski <guennadi.liakhovetski@linux.intel.com>
+> > > >
+> > > > Thanks
+> > > > Guennadi
+> > > >
+> > > > On Fri, Nov 20, 2020 at 02:42:37PM -0700, Mathieu Poirier wrote:
+> > > > > This revision addresses comments received from the previous revision,
+> > > > > i.e V6.  Please see details below.
+> > > > >
+> > > > > It starts by making the RPMSG protocol transport agnostic by
+> > > > > moving the headers it uses to generic types and using those in the
+> > > > > current implementation.  From there it re-uses the work that Arnaud
+> > > > > published[1] to make the name service modular.
+> > > > >
+> > > > > Tested on stm32mp157 with the RPMSG client sample application.  Applies
+> > > > > cleanly on rpmsg-next.
+> > > > >
+> > > > > Thanks,
+> > > > > Mathieu
+> > > > >
+> > > > > [1]. https://patchwork.kernel.org/project/linux-remoteproc/list/?series=338335
+> > > > >
+> > > > > -------
+> > > > > New for V7:
+> > > > > - Fixed error path in rpmsg_probe() as reported by Guennadi
+> > > > >
+> > > > > Arnaud Pouliquen (4):
+> > > > >   rpmsg: virtio: Rename rpmsg_create_channel
+> > > > >   rpmsg: core: Add channel creation internal API
+> > > > >   rpmsg: virtio: Add rpmsg channel device ops
+> > > > >   rpmsg: Turn name service into a stand alone driver
+> > > > >
+> > > > > Mathieu Poirier (4):
+> > > > >   rpmsg: Introduce __rpmsg{16|32|64} types
+> > > > >   rpmsg: virtio: Move from virtio to rpmsg byte conversion
+> > > > >   rpmsg: Move structure rpmsg_ns_msg to header file
+> > > > >   rpmsg: Make rpmsg_{register|unregister}_device() public
+> > > > >
+> > > > >  drivers/rpmsg/Kconfig            |   9 ++
+> > > > >  drivers/rpmsg/Makefile           |   1 +
+> > > > >  drivers/rpmsg/rpmsg_core.c       |  44 ++++++++
+> > > > >  drivers/rpmsg/rpmsg_internal.h   |  14 ++-
+> > > > >  drivers/rpmsg/rpmsg_ns.c         | 126 +++++++++++++++++++++
+> > > > >  drivers/rpmsg/virtio_rpmsg_bus.c | 186 +++++++++++--------------------
+> > > > >  include/linux/rpmsg.h            |  63 ++++++++++-
+> > > > >  include/linux/rpmsg/byteorder.h  |  67 +++++++++++
+> > > > >  include/linux/rpmsg/ns.h         |  45 ++++++++
+> > > > >  include/uapi/linux/rpmsg_types.h |  11 ++
+> > > > >  10 files changed, 439 insertions(+), 127 deletions(-)
+> > > > >  create mode 100644 drivers/rpmsg/rpmsg_ns.c
+> > > > >  create mode 100644 include/linux/rpmsg/byteorder.h
+> > > > >  create mode 100644 include/linux/rpmsg/ns.h
+> > > > >  create mode 100644 include/uapi/linux/rpmsg_types.h
+> > > > >
+> > > > > --
+> > > > > 2.25.1
+> > > > >
