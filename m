@@ -2,68 +2,94 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+X-Spam-Status: No, score=-17.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06BC7C4361A
-	for <linux-remoteproc@archiver.kernel.org>; Fri,  4 Dec 2020 19:35:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D718CC4361B
+	for <linux-remoteproc@archiver.kernel.org>; Fri,  4 Dec 2020 19:38:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9B6C922C7D
-	for <linux-remoteproc@archiver.kernel.org>; Fri,  4 Dec 2020 19:35:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8ADCE22CAF
+	for <linux-remoteproc@archiver.kernel.org>; Fri,  4 Dec 2020 19:38:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726276AbgLDTez (ORCPT
+        id S1730806AbgLDTi0 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 4 Dec 2020 14:34:55 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:48794 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726021AbgLDTey (ORCPT
+        Fri, 4 Dec 2020 14:38:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60484 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727661AbgLDTi0 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 4 Dec 2020 14:34:54 -0500
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <colin.king@canonical.com>)
-        id 1klGqJ-00070J-Po; Fri, 04 Dec 2020 19:34:11 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Ohad Ben-Cohen <ohad@wizery.com>,
+        Fri, 4 Dec 2020 14:38:26 -0500
+From:   Arnd Bergmann <arnd@kernel.org>
+Authentication-Results: mail.kernel.org; dkim=permerror (bad message/signature format)
+To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
-        linux-remoteproc@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] remoteproc: fix spelling mistake "Peripherial" -> "Peripherial" in Kconfig
-Date:   Fri,  4 Dec 2020 19:34:11 +0000
-Message-Id: <20201204193411.1152006-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.29.2
+        Ohad Ben-Cohen <ohad@wizery.com>,
+        Rishabh Bhatnagar <rishabhb@codeaurora.org>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Siddharth Gupta <sidgup@codeaurora.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Ma Feng <mafeng.ma@huawei.com>,
+        Rikard Falkeborn <rikard.falkeborn@gmail.com>,
+        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] remoteproc: sysmon: fix shutdown_acked state
+Date:   Fri,  4 Dec 2020 20:37:35 +0100
+Message-Id: <20201204193740.3162065-1-arnd@kernel.org>
+X-Mailer: git-send-email 2.27.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Arnd Bergmann <arnd@arndb.de>
 
-There is a spelling mistake in the Kconfig help text. Fix it.
+The latest version of sysmon_stop() starts by initializing
+the sysmon->shutdown_acked variable, but then overwrites it
+with an uninitialized variable later:
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+drivers/remoteproc/qcom_sysmon.c:551:11: error: variable 'acked' is used uninitialized whenever 'if' condition is false [-Werror,-Wsometimes-uninitialized]
+        else if (sysmon->ept)
+                 ^~~~~~~~~~~
+drivers/remoteproc/qcom_sysmon.c:554:27: note: uninitialized use occurs here
+        sysmon->shutdown_acked = acked;
+                                 ^~~~~
+
+Remove the local 'acked' variable again and set the state directly.
+
+Fixes: 5c212aaf5457 ("remoteproc: sysmon: Expose the shutdown result")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- drivers/remoteproc/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/remoteproc/qcom_sysmon.c | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
-index d99548fb5dde..d45be05640ea 100644
---- a/drivers/remoteproc/Kconfig
-+++ b/drivers/remoteproc/Kconfig
-@@ -183,7 +183,7 @@ config QCOM_Q6V5_PAS
- 	select QCOM_RPROC_COMMON
- 	select QCOM_SCM
- 	help
--	  Say y here to support the TrustZone based Peripherial Image Loader
-+	  Say y here to support the TrustZone based Peripheral Image Loader
- 	  for the Qualcomm Hexagon v5 based remote processors. This is commonly
- 	  used to control subsystems such as ADSP, Compute and Sensor.
+diff --git a/drivers/remoteproc/qcom_sysmon.c b/drivers/remoteproc/qcom_sysmon.c
+index d01bc4bda7bf..9fca81492863 100644
+--- a/drivers/remoteproc/qcom_sysmon.c
++++ b/drivers/remoteproc/qcom_sysmon.c
+@@ -533,7 +533,6 @@ static void sysmon_stop(struct rproc_subdev *subdev, bool crashed)
+ 		.subsys_name = sysmon->name,
+ 		.ssr_event = SSCTL_SSR_EVENT_BEFORE_SHUTDOWN
+ 	};
+-	bool acked;
  
+ 	sysmon->shutdown_acked = false;
+ 
+@@ -547,11 +546,9 @@ static void sysmon_stop(struct rproc_subdev *subdev, bool crashed)
+ 		return;
+ 
+ 	if (sysmon->ssctl_version)
+-		acked = ssctl_request_shutdown(sysmon);
++		sysmon->shutdown_acked = ssctl_request_shutdown(sysmon);
+ 	else if (sysmon->ept)
+-		acked = sysmon_request_shutdown(sysmon);
+-
+-	sysmon->shutdown_acked = acked;
++		sysmon->shutdown_acked = sysmon_request_shutdown(sysmon);
+ }
+ 
+ static void sysmon_unprepare(struct rproc_subdev *subdev)
 -- 
-2.29.2
+2.27.0
 
