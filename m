@@ -2,650 +2,161 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MSGID_FROM_MTA_HEADER,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35DBCC433FE
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  3 Dec 2020 23:44:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1C56C4361A
+	for <linux-remoteproc@archiver.kernel.org>; Fri,  4 Dec 2020 07:14:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D39AA22285
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  3 Dec 2020 23:44:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3DEE120639
+	for <linux-remoteproc@archiver.kernel.org>; Fri,  4 Dec 2020 07:14:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387814AbgLCXoo (ORCPT
+        id S1727038AbgLDHNg (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 3 Dec 2020 18:44:44 -0500
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:33596 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726063AbgLCXoo (ORCPT
+        Fri, 4 Dec 2020 02:13:36 -0500
+Received: from mail-eopbgr60075.outbound.protection.outlook.com ([40.107.6.75]:2951
+        "EHLO EUR04-DB3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725550AbgLDHNf (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 3 Dec 2020 18:44:44 -0500
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 0B3Ngxa8030668;
-        Thu, 3 Dec 2020 17:42:59 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1607038979;
-        bh=9zbGjKmxuYXN0pqTb9zM6K/iA2tRQReLGqHlofF3IE8=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=VO7t7/+/+bo0PjVCXFgDrZs1zPxpp8DAVTx6cpJEiedj2hNQeJ2uWLAsXof3zBEOz
-         6Ys7+M6l7Myy7iB/Gaoyl7hG8pb+WwfdAd9+aRsdhmQ/VcSK6o57EBN+ZDzhaWcw0t
-         4NORm0DGWVTFJRT0KEVCJERv8Pu1SA/fDHMGhAAs=
-Received: from DFLE108.ent.ti.com (dfle108.ent.ti.com [10.64.6.29])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 0B3NgxJY022102
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 3 Dec 2020 17:42:59 -0600
-Received: from DFLE109.ent.ti.com (10.64.6.30) by DFLE108.ent.ti.com
- (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3; Thu, 3 Dec
- 2020 17:42:58 -0600
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE109.ent.ti.com
- (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3 via
- Frontend Transport; Thu, 3 Dec 2020 17:42:58 -0600
-Received: from [10.250.38.244] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 0B3NgwtS010777;
-        Thu, 3 Dec 2020 17:42:58 -0600
-Subject: Re: [PATCH v2 2/6] remoteproc/pru: Add a PRU remoteproc driver
-To:     Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>
-CC:     <ohad@wizery.com>, <bjorn.andersson@linaro.org>,
-        <linux-remoteproc@vger.kernel.org>, <robh+dt@kernel.org>,
-        <lee.jones@linaro.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-omap@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <praneeth@ti.com>,
-        <rogerq@ti.com>
-References: <20201119140850.12268-1-grzegorz.jaszczyk@linaro.org>
- <20201119140850.12268-3-grzegorz.jaszczyk@linaro.org>
- <20201201225436.GB1240310@xps15> <20201202205336.GD1282360@xps15>
- <20201202211358.GE1282360@xps15>
-From:   Suman Anna <s-anna@ti.com>
-Message-ID: <1b661532-6846-1c60-6dc7-11bd23709e20@ti.com>
-Date:   Thu, 3 Dec 2020 17:42:53 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Fri, 4 Dec 2020 02:13:35 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=VOmQ50YPgEPpFkeWqXgLppNr5hefYn0S7JRx2jU4mPVHnMg7O8ymbR3/2wjGjfe3H0JR6qSji2qluxIqY4wuyMtt+NWbZtwYE1LnBzqXzOVFkZ/wxsXHDekDrq9oVGOQ11cWR93eDG2iH7zjSytyKp2/IvddqozgyK8iuhgb25XYgq/aBre9iNrjz5pMsd+KsNEOV5nvnTUWH374ntvPv/rKM+22h3Do+2aCHX3aBYHtg+YNTN1OjySCBBMTOReiV5R8iY188aCc19JHvbV16mIp2a7LlBGiOrMCxkPBJeeaOJxy6ND0FnzZms2m0g2P3WtGKtscNi6AtzrGVHwViQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=RqHu5y22V5asq3zuVYCgJv2DOL3bKthyVe5hf/9ok84=;
+ b=KNOFS97ZaKvvGLWB4Vnloq6JvaZGG8JzrSLVazSgzeU31bXAPu4O2pemaYVf+cx/nWCHPk9NmoFlUrisVl/Du7os6lgnH1h6bj8MVxQ9bZFBPqeqwHzEcqH3fF4NkA78RjHnScozvBe0AFQxPWHgwhdTb9vbyWzZSulh8dfbQrPaTKCrA/GdVC0cFDv+qI13Fp9Qv9kgC11aovTmt9V0gj9tzBY4EYQs9hGdM1+WWA8JzdjghHLWD1UMPcjy6Wedkp8MPCnIsEbdAzDvNE6w/S3LDl+B6rP0awC7AnOTNdNr+EgT1JRnICJyWRaGvFGcuZ6rcTBSQVuQiGtL/Oa3nQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector2-NXP1-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=RqHu5y22V5asq3zuVYCgJv2DOL3bKthyVe5hf/9ok84=;
+ b=GNdOaMOZCxBTN2ya4QGmjfzDQsr0AflHKJqT08NWgLcG7FXLV1t0laZxFbGvNfJcstR98mh/0Jrk/IJvYUGTVzLiXp4i0wKkifX+FGu3OyFFhEtHmEAFrrAuqqWUO+tYnQNjTQhCQ+Kr1BFQsul0F5HbDAGfEGEq+enasBAmRDQ=
+Authentication-Results: wizery.com; dkim=none (message not signed)
+ header.d=none;wizery.com; dmarc=none action=none header.from=oss.nxp.com;
+Received: from DB6PR0402MB2760.eurprd04.prod.outlook.com (2603:10a6:4:a1::14)
+ by DB7PR04MB4633.eurprd04.prod.outlook.com (2603:10a6:5:36::27) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3611.31; Fri, 4 Dec
+ 2020 07:12:45 +0000
+Received: from DB6PR0402MB2760.eurprd04.prod.outlook.com
+ ([fe80::c964:9:850a:fc5]) by DB6PR0402MB2760.eurprd04.prod.outlook.com
+ ([fe80::c964:9:850a:fc5%10]) with mapi id 15.20.3632.018; Fri, 4 Dec 2020
+ 07:12:44 +0000
+From:   "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+To:     ohad@wizery.com, bjorn.andersson@linaro.org,
+        mathieu.poirier@linaro.org, o.rempel@pengutronix.de
+Cc:     shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
+        festevam@gmail.com, linux-imx@nxp.com,
+        linux-remoteproc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Peng Fan <peng.fan@nxp.com>
+Subject: [PATCH V3 0/7] remoteproc: imx_rproc: support iMX8MQ/M
+Date:   Fri,  4 Dec 2020 15:40:29 +0800
+Message-Id: <20201204074036.23870-1-peng.fan@oss.nxp.com>
+X-Mailer: git-send-email 2.28.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [119.31.174.71]
+X-ClientProxiedBy: MAXPR0101CA0069.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:a00:e::31) To DB6PR0402MB2760.eurprd04.prod.outlook.com
+ (2603:10a6:4:a1::14)
 MIME-Version: 1.0
-In-Reply-To: <20201202211358.GE1282360@xps15>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from linux-1xn6.ap.freescale.net (119.31.174.71) by MAXPR0101CA0069.INDPRD01.PROD.OUTLOOK.COM (2603:1096:a00:e::31) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3632.17 via Frontend Transport; Fri, 4 Dec 2020 07:12:40 +0000
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-HT: Tenant
+X-MS-Office365-Filtering-Correlation-Id: f7e44ff3-3191-408c-fb5c-08d89823ff1d
+X-MS-TrafficTypeDiagnostic: DB7PR04MB4633:
+X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
+X-MS-Exchange-Transport-Forked: True
+X-Microsoft-Antispam-PRVS: <DB7PR04MB4633D9D646E88D585D86DF8AC9F10@DB7PR04MB4633.eurprd04.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:6790;
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: +AIp87Ilz/J5TE5xioLIdk/KeUZ0uAKr5ICTz0p9dZl94Q8rmISIw8Nm+Hn78LnUVbGFK4VZobUiY4lIs3zdKrB1kSxy034BMzkiiO53k4eGcQT+ffF4mwxwRGYjuU/y1XmQnzvHpuTF1PsJsTg/6GLSjiTB/xqY5xxhxwE6Z+WKKihumEZCxbkQvP0wenwNNJ3O/wAlRFRBDFDxsxaRUfQq1mJOU/bvao/wNELIvP3+cGFkYVFuVtVZYli0oov7XWWA0USp9stkgSinRDKR/hFEdceNc9ahtoDzwM05MnwwW34EvuPaxzfprsXYXwEfiKsVKBHpX4M1mI0LlzxkTMLjesJpP98Q6zhrVnHAa594NOHqSQjs7xfp2oUXIwNdw5iE2b2QRn9T3TpdepEDx+T7jzOEOy3K5oLzde2BWO1dMbqyqjQZm/FpqS+5PhuAgJo+DLpqKwn1wlf/28tpcQ==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB6PR0402MB2760.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(39860400002)(376002)(366004)(396003)(346002)(136003)(2616005)(86362001)(52116002)(6512007)(7416002)(1076003)(83380400001)(66946007)(966005)(66556008)(66476007)(478600001)(316002)(186003)(16526019)(8676002)(956004)(6666004)(6506007)(2906002)(26005)(6486002)(8936002)(4326008)(5660300002)(32563001);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData: =?us-ascii?Q?3oCNczuwgeonmdzeua4eHK+SDyse15UWF5RFUrNweIF+xFVBes/m4sUTABqZ?=
+ =?us-ascii?Q?K9Oy62CRECUTnXVANUq4YPe9MmEP3cXHgKHKWAlp/y6M1gDnqOU/mU+lNqZM?=
+ =?us-ascii?Q?/tLJO4E2uZ+AX+CcVh8lkciTkZT92yOnracuaQwPTnfZReTKnDOht1huBCLI?=
+ =?us-ascii?Q?Ng5MYyvRdLmdcL6bwSU78xw2vdtYASxo4PIvoq6q/j5gj4hczL6hZOQk27Qh?=
+ =?us-ascii?Q?c0v5aXqFx/UEDTA8UWuqzbZBDHT7hZT6uH4KHemxfcNe9vKi56V2GIBFAyyG?=
+ =?us-ascii?Q?kAkbhqvtuHf3D8auTw+Hze2BKswjmAQbUP2ttP22f6J361ni2PBsndFgsFmc?=
+ =?us-ascii?Q?nvRWTRuDMd8TXYA2QNrj1681WYzxrmo2QFEdAEQoOwGqICxmjTgnHE69UWqs?=
+ =?us-ascii?Q?5WWYP0tScYhzsNIQfZyzXM6P8O4zTRSXxpNdfd7rHTwWyGB30Ll2gUSfoXnf?=
+ =?us-ascii?Q?1irxsjmuT/rEzDfac/+a/urM//hJD6wazNVSdYqh9GcjWy7d43B5PhmmUSW8?=
+ =?us-ascii?Q?h3ltMgaacbrf29xlOCBNAkA9uaZ/OALwWcRe7SUfK/VwI0mBKqbArJ/uVJ7X?=
+ =?us-ascii?Q?fR+rpVar01jxU9SklNHycRmtzQATDoVegpiKOXOjls1Hqg7yg3mg0kEsiOiO?=
+ =?us-ascii?Q?JBfLeYTJKZ8IvItJs3hk3VwbIEV5y7IkTVZT5vTB+vxhbFT7aDxl+tBqMmP4?=
+ =?us-ascii?Q?/cpZx9Ltz3NzD4xzncD/cDVoyFuMkIDiiESuLGGnRKmAalHvCtJ18ALUWAQ3?=
+ =?us-ascii?Q?krZEbTwtvFApriljotqA8Y38TuTElqTC1OF4en/VsqnB2PRvC2ejrvxlStS7?=
+ =?us-ascii?Q?zMPD8y7uMJczIXSJKC0SfEQ0/eisLcIPtw2DiPEQu6/UxRXdHiDVj2l8VO3/?=
+ =?us-ascii?Q?EmS8/dzMWSGHOnnNGyYNQzFbMh167xh1Nd0AT4gUJ1Pwh3dk3QAJ4ft5QHGr?=
+ =?us-ascii?Q?XlcErkuxxxr/Z+vPv9tRrlFY4bIvIB+DtGge4D5T+os+BhSh26nIPNbja7LD?=
+ =?us-ascii?Q?pv7N?=
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f7e44ff3-3191-408c-fb5c-08d89823ff1d
+X-MS-Exchange-CrossTenant-AuthSource: DB6PR0402MB2760.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Dec 2020 07:12:44.9235
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: zOpuBE1g6m8qV+PYPVGMTnJgNlsE3oZOaOuxihyiDIV+hbRNKNYyvD3K/AntAtW7QEDDjmUIY1HjUCgOmqdAFA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB7PR04MB4633
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi Mathieu,
+From: Peng Fan <peng.fan@nxp.com>
 
-On 12/2/20 3:13 PM, Mathieu Poirier wrote:
-> On Wed, Dec 02, 2020 at 01:53:36PM -0700, Mathieu Poirier wrote:
->> On Tue, Dec 01, 2020 at 03:54:36PM -0700, Mathieu Poirier wrote:
->>> Hi Grzeg,
->>>
->>> I have started to review this set - comments will come over the next few days.
->>>
->>> See below for a start. 
->>>
->>> On Thu, Nov 19, 2020 at 03:08:46PM +0100, Grzegorz Jaszczyk wrote:
->>>> From: Suman Anna <s-anna@ti.com>
->>>>
->>>> The Programmable Real-Time Unit Subsystem (PRUSS) consists of
->>>> dual 32-bit RISC cores (Programmable Real-Time Units, or PRUs)
->>>> for program execution. This patch adds a remoteproc platform
->>>> driver for managing the individual PRU RISC cores life cycle.
->>>>
->>>> The PRUs do not have a unified address space (have an Instruction
->>>> RAM and a primary Data RAM at both 0x0). The PRU remoteproc driver
->>>> therefore uses a custom remoteproc core ELF loader ops. The added
->>>> .da_to_va ops is only used to provide translations for the PRU
->>>> Data RAMs. This remoteproc driver does not have support for error
->>>> recovery and system suspend/resume features. Different compatibles
->>>> are used to allow providing scalability for instance-specific device
->>>> data if needed. The driver uses a default firmware-name retrieved
->>>> from device-tree for each PRU core, and the firmwares are expected
->>>> to be present in the standard Linux firmware search paths. They can
->>>> also be adjusted by userspace if required through the sysfs interface
->>>> provided by the remoteproc core.
->>>>
->>>> The PRU remoteproc driver uses a client-driven boot methodology: it
->>>> does _not_ support auto-boot so that the PRU load and boot is dictated
->>>> by the corresponding client drivers for achieving various usecases.
->>>> This allows flexibility for the client drivers or applications to set
->>>> a firmware name (if needed) based on their desired functionality and
->>>> boot the PRU. The sysfs bind and unbind attributes have also been
->>>> suppressed so that the PRU devices cannot be unbound and thereby
->>>> shutdown a PRU from underneath a PRU client driver.
->>>>
->>>> The driver currently supports the AM335x, AM437x, AM57xx and 66AK2G
->>>> SoCs, and support for other TI SoCs will be added in subsequent
->>>> patches.
->>>>
->>>> Co-developed-by: Andrew F. Davis <afd@ti.com>
->>>> Signed-off-by: Andrew F. Davis <afd@ti.com>
->>>> Signed-off-by: Suman Anna <s-anna@ti.com>
->>>> Co-developed-by: Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>
->>>> Signed-off-by: Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>
->>>> ---
->>>> v1->v2:
->>>> - Use PRU_IRAM_ADDR_MASK definition instead of raw 0x3ffff.
->>>> - Convert 'len' argument from int to size_t type in all *da_to_va.
->>>> - Return 0 in case of missing .resource_table for pru_rproc_parse_fw()
->>>>   (move the logic from patch #3 where it was corrected).
->>>> ---
->>>>  drivers/remoteproc/Kconfig     |  12 +
->>>>  drivers/remoteproc/Makefile    |   1 +
->>>>  drivers/remoteproc/pru_rproc.c | 435 +++++++++++++++++++++++++++++++++
->>>>  3 files changed, 448 insertions(+)
->>>>  create mode 100644 drivers/remoteproc/pru_rproc.c
->>>>
->>>> diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
->>>> index d99548fb5dde..3e3865a7cd78 100644
->>>> --- a/drivers/remoteproc/Kconfig
->>>> +++ b/drivers/remoteproc/Kconfig
->>>> @@ -125,6 +125,18 @@ config KEYSTONE_REMOTEPROC
->>>>  	  It's safe to say N here if you're not interested in the Keystone
->>>>  	  DSPs or just want to use a bare minimum kernel.
->>>>  
->>>> +config PRU_REMOTEPROC
->>>> +	tristate "TI PRU remoteproc support"
->>>> +	depends on TI_PRUSS
->>>> +	default TI_PRUSS
->>>> +	help
->>>> +	  Support for TI PRU remote processors present within a PRU-ICSS
->>>> +	  subsystem via the remote processor framework.
->>>> +
->>>> +	  Say Y or M here to support the Programmable Realtime Unit (PRU)
->>>> +	  processors on various TI SoCs. It's safe to say N here if you're
->>>> +	  not interested in the PRU or if you are unsure.
->>>> +
->>>>  config QCOM_PIL_INFO
->>>>  	tristate
->>>>  
->>>> diff --git a/drivers/remoteproc/Makefile b/drivers/remoteproc/Makefile
->>>> index da2ace4ec86c..bb26c9e4ef9c 100644
->>>> --- a/drivers/remoteproc/Makefile
->>>> +++ b/drivers/remoteproc/Makefile
->>>> @@ -18,6 +18,7 @@ obj-$(CONFIG_OMAP_REMOTEPROC)		+= omap_remoteproc.o
->>>>  obj-$(CONFIG_WKUP_M3_RPROC)		+= wkup_m3_rproc.o
->>>>  obj-$(CONFIG_DA8XX_REMOTEPROC)		+= da8xx_remoteproc.o
->>>>  obj-$(CONFIG_KEYSTONE_REMOTEPROC)	+= keystone_remoteproc.o
->>>> +obj-$(CONFIG_PRU_REMOTEPROC)		+= pru_rproc.o
->>>>  obj-$(CONFIG_QCOM_PIL_INFO)		+= qcom_pil_info.o
->>>>  obj-$(CONFIG_QCOM_RPROC_COMMON)		+= qcom_common.o
->>>>  obj-$(CONFIG_QCOM_Q6V5_COMMON)		+= qcom_q6v5.o
->>>> diff --git a/drivers/remoteproc/pru_rproc.c b/drivers/remoteproc/pru_rproc.c
->>>> new file mode 100644
->>>> index 000000000000..b686f19f9b1a
->>>> --- /dev/null
->>>> +++ b/drivers/remoteproc/pru_rproc.c
->>>> @@ -0,0 +1,435 @@
->>>> +// SPDX-License-Identifier: GPL-2.0-only
->>>> +/*
->>>> + * PRU-ICSS remoteproc driver for various TI SoCs
->>>> + *
->>>> + * Copyright (C) 2014-2020 Texas Instruments Incorporated - https://www.ti.com/
->>>> + *
->>>> + * Author(s):
->>>> + *	Suman Anna <s-anna@ti.com>
->>>> + *	Andrew F. Davis <afd@ti.com>
->>>> + *	Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org> for Texas Instruments
->>>> + */
->>>> +
->>>> +#include <linux/bitops.h>
->>>> +#include <linux/module.h>
->>>> +#include <linux/of_device.h>
->>>> +#include <linux/pruss_driver.h>
->>>> +#include <linux/remoteproc.h>
->>>> +
->>>> +#include "remoteproc_internal.h"
->>>> +#include "remoteproc_elf_helpers.h"
->>>> +
->>>> +/* PRU_ICSS_PRU_CTRL registers */
->>>> +#define PRU_CTRL_CTRL		0x0000
->>>> +#define PRU_CTRL_STS		0x0004
->>>> +
->>>> +/* CTRL register bit-fields */
->>>> +#define CTRL_CTRL_SOFT_RST_N	BIT(0)
->>>> +#define CTRL_CTRL_EN		BIT(1)
->>>> +#define CTRL_CTRL_SLEEPING	BIT(2)
->>>> +#define CTRL_CTRL_CTR_EN	BIT(3)
->>>> +#define CTRL_CTRL_SINGLE_STEP	BIT(8)
->>>> +#define CTRL_CTRL_RUNSTATE	BIT(15)
->>>> +
->>>> +/* PRU Core IRAM address masks */
->>>> +#define PRU_IRAM_ADDR_MASK	0x3ffff
->>>> +#define PRU0_IRAM_ADDR_MASK	0x34000
->>>> +#define PRU1_IRAM_ADDR_MASK	0x38000
->>>> +
->>>> +/* PRU device addresses for various type of PRU RAMs */
->>>> +#define PRU_IRAM_DA	0	/* Instruction RAM */
->>>> +#define PRU_PDRAM_DA	0	/* Primary Data RAM */
->>>> +#define PRU_SDRAM_DA	0x2000	/* Secondary Data RAM */
->>>> +#define PRU_SHRDRAM_DA	0x10000 /* Shared Data RAM */
->>>> +
->>>> +/**
->>>> + * enum pru_iomem - PRU core memory/register range identifiers
->>>> + *
->>>> + * @PRU_IOMEM_IRAM: PRU Instruction RAM range
->>>> + * @PRU_IOMEM_CTRL: PRU Control register range
->>>> + * @PRU_IOMEM_DEBUG: PRU Debug register range
->>>> + * @PRU_IOMEM_MAX: just keep this one at the end
->>>> + */
->>>> +enum pru_iomem {
->>>> +	PRU_IOMEM_IRAM = 0,
->>>> +	PRU_IOMEM_CTRL,
->>>> +	PRU_IOMEM_DEBUG,
->>>> +	PRU_IOMEM_MAX,
->>>> +};
->>>> +
->>>> +/**
->>>> + * struct pru_rproc - PRU remoteproc structure
->>>> + * @id: id of the PRU core within the PRUSS
->>>> + * @dev: PRU core device pointer
->>>> + * @pruss: back-reference to parent PRUSS structure
->>>> + * @rproc: remoteproc pointer for this PRU core
->>>> + * @mem_regions: data for each of the PRU memory regions
->>>> + * @fw_name: name of firmware image used during loading
->>>> + */
->>>> +struct pru_rproc {
->>>> +	int id;
->>>> +	struct device *dev;
->>>> +	struct pruss *pruss;
->>>> +	struct rproc *rproc;
->>>> +	struct pruss_mem_region mem_regions[PRU_IOMEM_MAX];
->>>> +	const char *fw_name;
->>>> +};
->>>> +
->>>> +static inline u32 pru_control_read_reg(struct pru_rproc *pru, unsigned int reg)
->>>> +{
->>>> +	return readl_relaxed(pru->mem_regions[PRU_IOMEM_CTRL].va + reg);
->>>> +}
->>>> +
->>>> +static inline
->>>> +void pru_control_write_reg(struct pru_rproc *pru, unsigned int reg, u32 val)
->>>> +{
->>>> +	writel_relaxed(val, pru->mem_regions[PRU_IOMEM_CTRL].va + reg);
->>>> +}
->>>> +
->>>> +static int pru_rproc_start(struct rproc *rproc)
->>>> +{
->>>> +	struct device *dev = &rproc->dev;
->>>> +	struct pru_rproc *pru = rproc->priv;
->>>> +	u32 val;
->>>> +
->>>> +	dev_dbg(dev, "starting PRU%d: entry-point = 0x%llx\n",
->>>> +		pru->id, (rproc->bootaddr >> 2));
->>>> +
->>>> +	val = CTRL_CTRL_EN | ((rproc->bootaddr >> 2) << 16);
->>>> +	pru_control_write_reg(pru, PRU_CTRL_CTRL, val);
->>>> +
->>>> +	return 0;
->>>> +}
->>>> +
->>>> +static int pru_rproc_stop(struct rproc *rproc)
->>>> +{
->>>> +	struct device *dev = &rproc->dev;
->>>> +	struct pru_rproc *pru = rproc->priv;
->>>> +	u32 val;
->>>> +
->>>> +	dev_dbg(dev, "stopping PRU%d\n", pru->id);
->>>> +
->>>> +	val = pru_control_read_reg(pru, PRU_CTRL_CTRL);
->>>> +	val &= ~CTRL_CTRL_EN;
->>>> +	pru_control_write_reg(pru, PRU_CTRL_CTRL, val);
->>>> +
->>>> +	return 0;
->>>> +}
->>>> +
->>>> +/*
->>>> + * Convert PRU device address (data spaces only) to kernel virtual address.
->>>> + *
->>>> + * Each PRU has access to all data memories within the PRUSS, accessible at
->>>> + * different ranges. So, look through both its primary and secondary Data
->>>> + * RAMs as well as any shared Data RAM to convert a PRU device address to
->>>> + * kernel virtual address. Data RAM0 is primary Data RAM for PRU0 and Data
->>>> + * RAM1 is primary Data RAM for PRU1.
->>>> + */
->>>> +static void *pru_d_da_to_va(struct pru_rproc *pru, u32 da, size_t len)
->>>> +{
->>>> +	struct pruss_mem_region dram0, dram1, shrd_ram;
->>>> +	struct pruss *pruss = pru->pruss;
->>>> +	u32 offset;
->>>> +	void *va = NULL;
->>>> +
->>>> +	if (len == 0)
->>>> +		return NULL;
->>>> +
->>>> +	dram0 = pruss->mem_regions[PRUSS_MEM_DRAM0];
->>>> +	dram1 = pruss->mem_regions[PRUSS_MEM_DRAM1];
->>>> +	/* PRU1 has its local RAM addresses reversed */
->>>> +	if (pru->id == 1)
->>>> +		swap(dram0, dram1);
->>>> +	shrd_ram = pruss->mem_regions[PRUSS_MEM_SHRD_RAM2];
->>>> +
->>>> +	if (da >= PRU_PDRAM_DA && da + len <= PRU_PDRAM_DA + dram0.size) {
->>>> +		offset = da - PRU_PDRAM_DA;
->>>> +		va = (__force void *)(dram0.va + offset);
->>>> +	} else if (da >= PRU_SDRAM_DA &&
->>>> +		   da + len <= PRU_SDRAM_DA + dram1.size) {
->>>> +		offset = da - PRU_SDRAM_DA;
->>>> +		va = (__force void *)(dram1.va + offset);
->>>> +	} else if (da >= PRU_SHRDRAM_DA &&
->>>> +		   da + len <= PRU_SHRDRAM_DA + shrd_ram.size) {
->>>> +		offset = da - PRU_SHRDRAM_DA;
->>>> +		va = (__force void *)(shrd_ram.va + offset);
->>>> +	}
->>>> +
->>>> +	return va;
->>>> +}
->>>> +
->>>> +/*
->>>> + * Convert PRU device address (instruction space) to kernel virtual address.
->>>> + *
->>>> + * A PRU does not have an unified address space. Each PRU has its very own
->>>> + * private Instruction RAM, and its device address is identical to that of
->>>> + * its primary Data RAM device address.
->>>> + */
->>>> +static void *pru_i_da_to_va(struct pru_rproc *pru, u32 da, size_t len)
->>>> +{
->>>> +	u32 offset;
->>>> +	void *va = NULL;
->>>> +
->>>> +	if (len == 0)
->>>> +		return NULL;
->>>> +
->>>> +	if (da >= PRU_IRAM_DA &&
->>>> +	    da + len <= PRU_IRAM_DA + pru->mem_regions[PRU_IOMEM_IRAM].size) {
->>>> +		offset = da - PRU_IRAM_DA;
->>>> +		va = (__force void *)(pru->mem_regions[PRU_IOMEM_IRAM].va +
->>>> +				      offset);
->>>> +	}
->>>> +
->>>> +	return va;
->>>> +}
->>>> +
->>>> +/*
->>>> + * Provide address translations for only PRU Data RAMs through the remoteproc
->>>> + * core for any PRU client drivers. The PRU Instruction RAM access is restricted
->>>> + * only to the PRU loader code.
->>>> + */
->>>> +static void *pru_rproc_da_to_va(struct rproc *rproc, u64 da, size_t len)
->>>> +{
->>>> +	struct pru_rproc *pru = rproc->priv;
->>>> +
->>>> +	return pru_d_da_to_va(pru, da, len);
->>>> +}
->>>> +
->>>> +/* PRU-specific address translator used by PRU loader. */
->>>> +static void *pru_da_to_va(struct rproc *rproc, u64 da, size_t len, bool is_iram)
->>>> +{
->>>> +	struct pru_rproc *pru = rproc->priv;
->>>> +	void *va;
->>>> +
->>>> +	if (is_iram)
->>>> +		va = pru_i_da_to_va(pru, da, len);
->>>> +	else
->>>> +		va = pru_d_da_to_va(pru, da, len);
->>>> +
->>>> +	return va;
->>>> +}
->>>> +
->>>> +static struct rproc_ops pru_rproc_ops = {
->>>> +	.start		= pru_rproc_start,
->>>> +	.stop		= pru_rproc_stop,
->>>> +	.da_to_va	= pru_rproc_da_to_va,
->>>> +};
->>>> +
->>>> +static int
->>>> +pru_rproc_load_elf_segments(struct rproc *rproc, const struct firmware *fw)
->>>> +{
->>>> +	struct device *dev = &rproc->dev;
->>>> +	struct elf32_hdr *ehdr;
->>>> +	struct elf32_phdr *phdr;
->>>> +	int i, ret = 0;
->>>> +	const u8 *elf_data = fw->data;
->>>> +
->>>> +	ehdr = (struct elf32_hdr *)elf_data;
->>>> +	phdr = (struct elf32_phdr *)(elf_data + ehdr->e_phoff);
->>>> +
->>>> +	/* go through the available ELF segments */
->>>> +	for (i = 0; i < ehdr->e_phnum; i++, phdr++) {
->>>> +		u32 da = phdr->p_paddr;
->>>> +		u32 memsz = phdr->p_memsz;
->>>> +		u32 filesz = phdr->p_filesz;
->>>> +		u32 offset = phdr->p_offset;
->>>> +		bool is_iram;
->>>> +		void *ptr;
->>>> +
->>>> +		if (phdr->p_type != PT_LOAD)
->>>> +			continue;
->>>> +
->>>> +		dev_dbg(dev, "phdr: type %d da 0x%x memsz 0x%x filesz 0x%x\n",
->>>> +			phdr->p_type, da, memsz, filesz);
->>>> +
->>>> +		if (filesz > memsz) {
->>>> +			dev_err(dev, "bad phdr filesz 0x%x memsz 0x%x\n",
->>>> +				filesz, memsz);
->>>> +			ret = -EINVAL;
->>>> +			break;
->>>> +		}
->>>> +
->>>> +		if (offset + filesz > fw->size) {
->>>> +			dev_err(dev, "truncated fw: need 0x%x avail 0x%zx\n",
->>>> +				offset + filesz, fw->size);
->>>> +			ret = -EINVAL;
->>>> +			break;
->>>> +		}
->>>> +
->>>> +		/* grab the kernel address for this device address */
->>>> +		is_iram = phdr->p_flags & PF_X;
->>>> +		ptr = pru_da_to_va(rproc, da, memsz, is_iram);
->>>> +		if (!ptr) {
->>>> +			dev_err(dev, "bad phdr da 0x%x mem 0x%x\n", da, memsz);
->>>> +			ret = -EINVAL;
->>>> +			break;
->>>> +		}
->>>> +
->>>> +		/* skip the memzero logic performed by remoteproc ELF loader */
->>>> +		if (!phdr->p_filesz)
->>>> +			continue;
->>>
->>> I don't see the need to do all this if phdr->p_filesz is not valid.  I would move
->>> this below the check for PT_LOAD above.  Otherwise people are looking for some
->>> kind of hidden logic when there isn't any.  The comment should probably go
->>> after the memcpy().
->>
+V3:
+ Since I was quite busy in the past days, V3 is late
+ Rebased on Linux-next
+ Add R-b tags
+ 1/7: Add R-b tag of Mathieu, add comments
+ 4/7: Typo fix
+ 5/7: Add R-b tag of Mathieu, drop index Per Mathieu's comments
+ 6/7: Add R-b tag of Mathieu
+ 7/7: Add comment for vqid << 16, drop unneeded timeout settings of mailbox
+      Use queue_work instead of schedule_delayed_work
+      free mbox channels when remove
 
-Agreed.
+V2:
+ Rebased on linux-next
+ Dropped early boot feature to make patchset simple.
+ Drop rsc-da
+ https://patchwork.kernel.org/project/linux-remoteproc/cover/20200927064131.24101-1-peng.fan@nxp.com/
 
-Greg, perhaps you can use the variable filesz directly when you move it up for v3.
+V1:
+ https://patchwork.kernel.org/cover/11682461/
 
->> ... and thinking futher on this, it would be nice to know why the memory isn't
->> zero'ed out when a discrepency exists between the segment size in memory and the
->> segment size in the image.  Right now all we know is that it isn't done.
+This patchset is to support i.MX8MQ/M coproc.
+The early boot feature was dropped to make the patchset small in V2.
 
-The memset is always kinda of an optimization, it is strictly not needed by
-loader code. Also, for PRUs, IIRC, especially on K3 SoCs, we would have to use a
-custom memset to overcome the same limitations as with memcpy, so we dropped it.
+Since i.MX specific TCM memory requirement, add elf platform hook.
+Several patches have got reviewed by Oleksij and Mathieu in v1.
 
-regards
-Suman
+Peng Fan (7):
+  remoteproc: elf: support platform specific memory hook
+  remoteproc: imx_rproc: add elf memory hooks
+  remoteproc: imx_rproc: correct err message
+  remoteproc: imx_rproc: use devm_ioremap
+  remoteproc: imx_rproc: add i.MX specific parse fw hook
+  remoteproc: imx_rproc: support i.MX8MQ/M
+  remoteproc: imx_proc: enable virtio/mailbox
 
->>
-> 
-> With the above:
-> 
-> Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-> 
->>>
->>> I am running out of time for today and will continue tomorrow.
->>>
->>>> +
->>>> +		memcpy(ptr, elf_data + phdr->p_offset, filesz);
->>>> +	}
->>>> +
->>>> +	return ret;
->>>> +}
->>>> +
->>>> +/*
->>>> + * Use a custom parse_fw callback function for dealing with PRU firmware
->>>> + * specific sections.
->>>> + */
->>>> +static int pru_rproc_parse_fw(struct rproc *rproc, const struct firmware *fw)
->>>> +{
->>>> +	int ret;
->>>> +
->>>> +	/* load optional rsc table */
->>>> +	ret = rproc_elf_load_rsc_table(rproc, fw);
->>>> +	if (ret == -EINVAL)
->>>> +		dev_dbg(&rproc->dev, "no resource table found for this fw\n");
->>>> +	else if (ret)
->>>> +		return ret;
->>>> +
->>>> +	return 0;
->>>> +}
->>>> +
->>>> +/*
->>>> + * Compute PRU id based on the IRAM addresses. The PRU IRAMs are
->>>> + * always at a particular offset within the PRUSS address space.
->>>> + */
->>>> +static int pru_rproc_set_id(struct pru_rproc *pru)
->>>> +{
->>>> +	int ret = 0;
->>>> +
->>>> +	switch (pru->mem_regions[PRU_IOMEM_IRAM].pa & PRU_IRAM_ADDR_MASK) {
->>>> +	case PRU0_IRAM_ADDR_MASK:
->>>> +		pru->id = 0;
->>>> +		break;
->>>> +	case PRU1_IRAM_ADDR_MASK:
->>>> +		pru->id = 1;
->>>> +		break;
->>>> +	default:
->>>> +		ret = -EINVAL;
->>>> +	}
->>>> +
->>>> +	return ret;
->>>> +}
->>>> +
->>>> +static int pru_rproc_probe(struct platform_device *pdev)
->>>> +{
->>>> +	struct device *dev = &pdev->dev;
->>>> +	struct device_node *np = dev->of_node;
->>>> +	struct platform_device *ppdev = to_platform_device(dev->parent);
->>>> +	struct pru_rproc *pru;
->>>> +	const char *fw_name;
->>>> +	struct rproc *rproc = NULL;
->>>> +	struct resource *res;
->>>> +	int i, ret;
->>>> +	const char *mem_names[PRU_IOMEM_MAX] = { "iram", "control", "debug" };
->>>> +
->>>> +	ret = of_property_read_string(np, "firmware-name", &fw_name);
->>>> +	if (ret) {
->>>> +		dev_err(dev, "unable to retrieve firmware-name %d\n", ret);
->>>> +		return ret;
->>>> +	}
->>>> +
->>>> +	rproc = devm_rproc_alloc(dev, pdev->name, &pru_rproc_ops, fw_name,
->>>> +				 sizeof(*pru));
->>>> +	if (!rproc) {
->>>> +		dev_err(dev, "rproc_alloc failed\n");
->>>> +		return -ENOMEM;
->>>> +	}
->>>> +	/* use a custom load function to deal with PRU-specific quirks */
->>>> +	rproc->ops->load = pru_rproc_load_elf_segments;
->>>> +
->>>> +	/* use a custom parse function to deal with PRU-specific resources */
->>>> +	rproc->ops->parse_fw = pru_rproc_parse_fw;
->>>> +
->>>> +	/* error recovery is not supported for PRUs */
->>>> +	rproc->recovery_disabled = true;
->>>> +
->>>> +	/*
->>>> +	 * rproc_add will auto-boot the processor normally, but this is not
->>>> +	 * desired with PRU client driven boot-flow methodology. A PRU
->>>> +	 * application/client driver will boot the corresponding PRU
->>>> +	 * remote-processor as part of its state machine either through the
->>>> +	 * remoteproc sysfs interface or through the equivalent kernel API.
->>>> +	 */
->>>> +	rproc->auto_boot = false;
->>>> +
->>>> +	pru = rproc->priv;
->>>> +	pru->dev = dev;
->>>> +	pru->pruss = platform_get_drvdata(ppdev);
->>>> +	pru->rproc = rproc;
->>>> +	pru->fw_name = fw_name;
->>>> +
->>>> +	for (i = 0; i < ARRAY_SIZE(mem_names); i++) {
->>>> +		res = platform_get_resource_byname(pdev, IORESOURCE_MEM,
->>>> +						   mem_names[i]);
->>>> +		pru->mem_regions[i].va = devm_ioremap_resource(dev, res);
->>>> +		if (IS_ERR(pru->mem_regions[i].va)) {
->>>> +			dev_err(dev, "failed to parse and map memory resource %d %s\n",
->>>> +				i, mem_names[i]);
->>>> +			ret = PTR_ERR(pru->mem_regions[i].va);
->>>> +			return ret;
->>>> +		}
->>>> +		pru->mem_regions[i].pa = res->start;
->>>> +		pru->mem_regions[i].size = resource_size(res);
->>>> +
->>>> +		dev_dbg(dev, "memory %8s: pa %pa size 0x%zx va %pK\n",
->>>> +			mem_names[i], &pru->mem_regions[i].pa,
->>>> +			pru->mem_regions[i].size, pru->mem_regions[i].va);
->>>> +	}
->>>> +
->>>> +	ret = pru_rproc_set_id(pru);
->>>> +	if (ret < 0)
->>>> +		return ret;
->>>> +
->>>> +	platform_set_drvdata(pdev, rproc);
->>>> +
->>>> +	ret = devm_rproc_add(dev, pru->rproc);
->>>> +	if (ret) {
->>>> +		dev_err(dev, "rproc_add failed: %d\n", ret);
->>>> +		return ret;
->>>> +	}
->>>> +
->>>> +	dev_dbg(dev, "PRU rproc node %pOF probed successfully\n", np);
->>>> +
->>>> +	return 0;
->>>> +}
->>>> +
->>>> +static int pru_rproc_remove(struct platform_device *pdev)
->>>> +{
->>>> +	struct device *dev = &pdev->dev;
->>>> +	struct rproc *rproc = platform_get_drvdata(pdev);
->>>> +
->>>> +	dev_dbg(dev, "%s: removing rproc %s\n", __func__, rproc->name);
->>>> +
->>>> +	return 0;
->>>> +}
->>>> +
->>>> +static const struct of_device_id pru_rproc_match[] = {
->>>> +	{ .compatible = "ti,am3356-pru", },
->>>> +	{ .compatible = "ti,am4376-pru", },
->>>> +	{ .compatible = "ti,am5728-pru", },
->>>> +	{ .compatible = "ti,k2g-pru",    },
->>>> +	{},
->>>> +};
->>>> +MODULE_DEVICE_TABLE(of, pru_rproc_match);
->>>> +
->>>> +static struct platform_driver pru_rproc_driver = {
->>>> +	.driver = {
->>>> +		.name   = "pru-rproc",
->>>> +		.of_match_table = pru_rproc_match,
->>>> +		.suppress_bind_attrs = true,
->>>> +	},
->>>> +	.probe  = pru_rproc_probe,
->>>> +	.remove = pru_rproc_remove,
->>>> +};
->>>> +module_platform_driver(pru_rproc_driver);
->>>> +
->>>> +MODULE_AUTHOR("Suman Anna <s-anna@ti.com>");
->>>> +MODULE_AUTHOR("Andrew F. Davis <afd@ti.com>");
->>>> +MODULE_AUTHOR("Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>");
->>>> +MODULE_DESCRIPTION("PRU-ICSS Remote Processor Driver");
->>>> +MODULE_LICENSE("GPL v2");
->>>> -- 
->>>> 2.29.0
->>>>
+ drivers/remoteproc/imx_rproc.c             | 290 ++++++++++++++++++++-
+ drivers/remoteproc/remoteproc_elf_loader.c |  20 +-
+ include/linux/remoteproc.h                 |   4 +
+ 3 files changed, 306 insertions(+), 8 deletions(-)
+
+-- 
+2.28.0
 
