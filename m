@@ -5,449 +5,332 @@ X-Spam-Level:
 X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8ADB8C0018C
-	for <linux-remoteproc@archiver.kernel.org>; Mon,  7 Dec 2020 17:38:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F2BBC433FE
+	for <linux-remoteproc@archiver.kernel.org>; Mon,  7 Dec 2020 18:04:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 50D0D238E1
-	for <linux-remoteproc@archiver.kernel.org>; Mon,  7 Dec 2020 17:38:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 449062371F
+	for <linux-remoteproc@archiver.kernel.org>; Mon,  7 Dec 2020 18:04:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725863AbgLGRiP (ORCPT
+        id S1726314AbgLGSEz (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 7 Dec 2020 12:38:15 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41320 "EHLO
+        Mon, 7 Dec 2020 13:04:55 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45504 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725866AbgLGRiP (ORCPT
+        with ESMTP id S1725774AbgLGSEy (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 7 Dec 2020 12:38:15 -0500
-Received: from mail-pj1-x1042.google.com (mail-pj1-x1042.google.com [IPv6:2607:f8b0:4864:20::1042])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B9E31C06179C
-        for <linux-remoteproc@vger.kernel.org>; Mon,  7 Dec 2020 09:37:34 -0800 (PST)
-Received: by mail-pj1-x1042.google.com with SMTP id f14so9676pju.4
-        for <linux-remoteproc@vger.kernel.org>; Mon, 07 Dec 2020 09:37:34 -0800 (PST)
+        Mon, 7 Dec 2020 13:04:54 -0500
+Received: from mail-pf1-x442.google.com (mail-pf1-x442.google.com [IPv6:2607:f8b0:4864:20::442])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 33749C061749
+        for <linux-remoteproc@vger.kernel.org>; Mon,  7 Dec 2020 10:04:14 -0800 (PST)
+Received: by mail-pf1-x442.google.com with SMTP id s21so10811850pfu.13
+        for <linux-remoteproc@vger.kernel.org>; Mon, 07 Dec 2020 10:04:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=7Ebpt5cfMiTKbuZ5nIn9zCZ7+Zci76UBuARvG/gB8ZE=;
-        b=gcVSZG47wTiQMICsr7SJ11C5o1aFkVs/laLQb9timmk9vS95ha7ICe8nQORu06hcif
-         WNU33sxdItnJTGIhKmbmB7tRSOisiAjMPDs+3eaaOHRmfWT4DkKZHNR+0h4meWWyEPWk
-         FaxelRg3z8APUQcn3AcjPEes/1K2GxtyeZpoQ9GYqi6YPyVH7ea5NjEwb8qYXdnS2VYN
-         0EO9oUNmsXsRMlxz4Q5cFpgpVi8zc21kNP1xQb4fkSrB2J8K2Jty2UYLRBgvE+n6ig0g
-         ITUXEwYTSY/YCbBjn4/tg6HPO2tao+4S2VYskjpt9iP+90rGn+hWb22BJHFwhfmJI8fI
-         0WgQ==
+        bh=pemtUxbnIHdy7nZLjzIFWDscWKaIJzriqu/FiVLySJ4=;
+        b=XclHISPe5HvoXZsQw6QjDHa+9Wbj81p0X+sDCqlGs6Mc7gI5g20Oz31ilw9vj05Myk
+         a3fxlydg+WSGUSqVNSMFXqGfzbxmby/ejXR9PR1yXAmqNSTIOxpOAd7jMZyac4v1KOLN
+         vmUvS/UqHJ34DAA2XJKTtUpVODE238jhFDnTMMHSgB/ZzRTWdew/uhFy0y28f0RMqVKx
+         qDvADqGyA3wuNRnzf7AAZ4QDqkNdDcXGmrQ9/Hrq0oLbUau2sE0zsZ2Bl3NBo8YMZcjj
+         TMMo4KSeYkyMG/Y7TfKn4zDjVVthXeoIjEf3eCmT3N7yg2jHLKJnh6RlpmFEsxKvYRFV
+         w5+w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=7Ebpt5cfMiTKbuZ5nIn9zCZ7+Zci76UBuARvG/gB8ZE=;
-        b=oaxMxPAyyxw1y814mAlxaySstcCynbitEg0qeTKEh414eaAzU6YgHb+Jyi5efXxZCX
-         vDbOj2qVe0J2llURjcLlC/yZXsRu0doF4R4tGgfLMcK0Iy+1xHRPXFLcMsGCKBXXjVbZ
-         aiWn7Ygdb3imAE46WvhLGa0wIWw/QEUiurJ03lbaoNFQeLiaSDMBP2hWKqKXRFFBw50J
-         NJfWpBoW5oycR+aqEay4Xl132WneT6BHBd+vT2+DGe7w8xqnFTAf8/29fog9/TNFpQqf
-         Gt6DiE0FDmAM2yaiRtr7Ba2kp4y1MR37mcLO6Jzz8112EZrkd7LiOZzXtrZml3o797Q0
-         vyGA==
-X-Gm-Message-State: AOAM5329APZh2DkXxBMlOZF9ic3YQfQRe/CZcCezzE3nV9wnIzOY4gu+
-        mcv+PUp7i88Qxnr/C4dVTwALzA==
-X-Google-Smtp-Source: ABdhPJxkttzghd82KPAVm3omAXItDw4FUmg0cNs4oz1Thv7OBqw2tkozDr/U+GFRWeA9Y/nfHxgQ1g==
-X-Received: by 2002:a17:90b:943:: with SMTP id dw3mr16948945pjb.97.1607362654047;
-        Mon, 07 Dec 2020 09:37:34 -0800 (PST)
+        bh=pemtUxbnIHdy7nZLjzIFWDscWKaIJzriqu/FiVLySJ4=;
+        b=AU4H9YPm9xLDeikHQJxH2NV5go/Zk5ih2NEjH1dfj4kAsj4QZMfGjTECNAAJT/meOk
+         fA8RBHPCP3tGjpJHsLecpuW/zdHHbwLkShxEqAHhXc4pA0ne8ug9WzuV5RffpEpOPCL6
+         WviDJRh3DiH2S3mH2flIz8xUFGJA8UVCSpYehk7dQjO3McxKjbf6vLYdW+cbTbVFp+La
+         z9DxbtsORqgOnhTqH/6IrKy2uCRpkDQvJYrSCTHLrC+pPsSoeOTj3yCIEsDTfVbvgVV9
+         sMyLj66N7z8pzF7fS1JM3chqAz6P0mh7KekHEPs6oGn1i2Vv67v/sF1x3SFwUHFsk1/2
+         G21w==
+X-Gm-Message-State: AOAM5339c2rs7StzngqiEGdGbuqFbo6imFEJIoWV5rsOMpYz9ML94KKB
+        +Yw7cdSEfbALbS56koYqnj9u8g==
+X-Google-Smtp-Source: ABdhPJw8q2W1yXRjIyR26Q5eQGfd7A6A9l48jY9e/7hxCMCVuxX7YznnHOYaj9Z5BoeT1ccb6IEN2w==
+X-Received: by 2002:a62:ed01:0:b029:19a:a667:9925 with SMTP id u1-20020a62ed010000b029019aa6679925mr16579784pfh.35.1607364253583;
+        Mon, 07 Dec 2020 10:04:13 -0800 (PST)
 Received: from xps15 (S0106889e681aac74.cg.shawcable.net. [68.147.0.187])
-        by smtp.gmail.com with ESMTPSA id c2sm14814740pfa.59.2020.12.07.09.37.32
+        by smtp.gmail.com with ESMTPSA id x18sm3405080pfr.158.2020.12.07.10.04.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Dec 2020 09:37:33 -0800 (PST)
-Date:   Mon, 7 Dec 2020 10:37:31 -0700
+        Mon, 07 Dec 2020 10:04:12 -0800 (PST)
+Date:   Mon, 7 Dec 2020 11:04:10 -0700
 From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-To:     Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>
-Cc:     ohad@wizery.com, bjorn.andersson@linaro.org, s-anna@ti.com,
-        linux-remoteproc@vger.kernel.org, robh+dt@kernel.org,
-        lee.jones@linaro.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, praneeth@ti.com,
-        rogerq@ti.com
-Subject: Re: [PATCH v3 3/6] remoteproc: pru: Add support for PRU specific
- interrupt configuration
-Message-ID: <20201207173731.GA1509079@xps15>
-References: <20201204201807.14716-1-grzegorz.jaszczyk@linaro.org>
- <20201204201807.14716-4-grzegorz.jaszczyk@linaro.org>
+To:     Ben Levinsky <ben.levinsky@xilinx.com>
+Cc:     devicetree@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v24 4/5] dt-bindings: remoteproc: Add documentation for
+ ZynqMP R5 rproc bindings
+Message-ID: <20201207180410.GB1509079@xps15>
+References: <20201130155717.26008-1-ben.levinsky@xilinx.com>
+ <20201130155717.26008-5-ben.levinsky@xilinx.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20201204201807.14716-4-grzegorz.jaszczyk@linaro.org>
+In-Reply-To: <20201130155717.26008-5-ben.levinsky@xilinx.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Fri, Dec 04, 2020 at 09:18:04PM +0100, Grzegorz Jaszczyk wrote:
-> The firmware blob can contain optional ELF sections: .resource_table
-> section and .pru_irq_map one. The second one contains the PRUSS
-> interrupt mapping description, which needs to be setup before powering
-> on the PRU core. To avoid RAM wastage this ELF section is not mapped to
-> any ELF segment (by the firmware linker) and therefore is not loaded to
-> PRU memory.
-> 
-> The PRU interrupt configuration is handled within the PRUSS INTC irqchip
-> driver and leverages the system events to interrupt channels and host
-> interrupts mapping configuration. Relevant irq routing information is
-> passed through a special .pru_irq_map ELF section (for interrupts routed
-> to and used by PRU cores) or via the PRU application's device tree node
-> (for interrupts routed to and used by the main CPU). The mappings are
-> currently programmed during the booting/shutdown of the PRU.
-> 
-> The interrupt configuration passed through .pru_irq_map ELF section is
-> optional. It varies on specific firmware functionality and therefore
-> have to be unwinded during PRU stop and performed again during
-> PRU start.
-> 
-> Co-developed-by: Suman Anna <s-anna@ti.com>
-> Signed-off-by: Suman Anna <s-anna@ti.com>
-> Signed-off-by: Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>
-> ---
-> v2-v3:
-> Address Mathieu comments:
-> - Because irq_create_fwspec_mapping() returns an unsigned int, convert
->   mapped_irq type to 'unsigned int *'. Due to this change update
->   relevant error path.
-> - Since the num_evts is u8 value and can't be negative drop
->   'rsc->num_evts < 0' check.
-> 
-> Fix checkpatch --strict warning:
->  CHECK: Alignment should match open parenthesis
->  #163: FILE: drivers/remoteproc/pru_rproc.c:165:
->  +		dev_dbg(dev, "mapping%d: event %d, chnl %d, host %d\n",
->  +		       i, fwspec.param[0], fwspec.param[1], fwspec.param[2]);
-> 
-> v1->v2:
-> Address Suman comments:
-> - Rework pru_rproc_find_interrupt_map() style: get rid of generic ELF
->   helpers macros usage and stick with elf32_* related structs instead
->   (in order to be consistent with pru_rproc_load_elf_segments() style).
-> - Improve comments and dev_err msgs in pru_rproc_find_interrupt_map().
-> - Use u8 instead of ssize_t for evt_count.
-> ---
->  drivers/remoteproc/pru_rproc.c | 180 +++++++++++++++++++++++++++++++++
->  drivers/remoteproc/pru_rproc.h |  46 +++++++++
->  2 files changed, 226 insertions(+)
->  create mode 100644 drivers/remoteproc/pru_rproc.h
-> 
-> diff --git a/drivers/remoteproc/pru_rproc.c b/drivers/remoteproc/pru_rproc.c
-> index d33392bbd8af..4ef59d15d888 100644
-> --- a/drivers/remoteproc/pru_rproc.c
-> +++ b/drivers/remoteproc/pru_rproc.c
-> @@ -11,13 +11,16 @@
->   */
->  
->  #include <linux/bitops.h>
-> +#include <linux/irqdomain.h>
->  #include <linux/module.h>
->  #include <linux/of_device.h>
-> +#include <linux/of_irq.h>
->  #include <linux/pruss_driver.h>
->  #include <linux/remoteproc.h>
->  
->  #include "remoteproc_internal.h"
->  #include "remoteproc_elf_helpers.h"
-> +#include "pru_rproc.h"
->  
->  /* PRU_ICSS_PRU_CTRL registers */
->  #define PRU_CTRL_CTRL		0x0000
-> @@ -42,6 +45,8 @@
->  #define PRU_SDRAM_DA	0x2000	/* Secondary Data RAM */
->  #define PRU_SHRDRAM_DA	0x10000 /* Shared Data RAM */
->  
-> +#define MAX_PRU_SYS_EVENTS 160
-> +
->  /**
->   * enum pru_iomem - PRU core memory/register range identifiers
->   *
-> @@ -65,6 +70,10 @@ enum pru_iomem {
->   * @rproc: remoteproc pointer for this PRU core
->   * @mem_regions: data for each of the PRU memory regions
->   * @fw_name: name of firmware image used during loading
-> + * @mapped_irq: virtual interrupt numbers of created fw specific mapping
-> + * @pru_interrupt_map: pointer to interrupt mapping description (firmware)
-> + * @pru_interrupt_map_sz: pru_interrupt_map size
-> + * @evt_count: number of mapped events
->   */
->  struct pru_rproc {
->  	int id;
-> @@ -73,6 +82,10 @@ struct pru_rproc {
->  	struct rproc *rproc;
->  	struct pruss_mem_region mem_regions[PRU_IOMEM_MAX];
->  	const char *fw_name;
-> +	unsigned int *mapped_irq;
-> +	struct pru_irq_rsc *pru_interrupt_map;
-> +	size_t pru_interrupt_map_sz;
-> +	u8 evt_count;
->  };
->  
->  static inline u32 pru_control_read_reg(struct pru_rproc *pru, unsigned int reg)
-> @@ -86,15 +99,107 @@ void pru_control_write_reg(struct pru_rproc *pru, unsigned int reg, u32 val)
->  	writel_relaxed(val, pru->mem_regions[PRU_IOMEM_CTRL].va + reg);
->  }
->  
-> +static void pru_dispose_irq_mapping(struct pru_rproc *pru)
-> +{
-> +	while (pru->evt_count--) {
-> +		if (pru->mapped_irq[pru->evt_count] > 0)
-> +			irq_dispose_mapping(pru->mapped_irq[pru->evt_count]);
-> +	}
-> +
-> +	kfree(pru->mapped_irq);
-> +}
-> +
-> +/*
-> + * Parse the custom PRU interrupt map resource and configure the INTC
-> + * appropriately.
-> + */
-> +static int pru_handle_intrmap(struct rproc *rproc)
-> +{
-> +	struct device *dev = rproc->dev.parent;
-> +	struct pru_rproc *pru = rproc->priv;
-> +	struct pru_irq_rsc *rsc = pru->pru_interrupt_map;
-> +	struct irq_fwspec fwspec;
-> +	struct device_node *irq_parent;
-> +	int i, ret = 0;
-> +
-> +	/* not having pru_interrupt_map is not an error */
-> +	if (!rsc)
-> +		return 0;
-> +
-> +	/* currently supporting only type 0 */
-> +	if (rsc->type != 0) {
-> +		dev_err(dev, "unsupported rsc type: %d\n", rsc->type);
-> +		return -EINVAL;
-> +	}
-> +
-> +	if (rsc->num_evts > MAX_PRU_SYS_EVENTS)
-> +		return -EINVAL;
-> +
-> +	if (sizeof(*rsc) + rsc->num_evts * sizeof(struct pruss_int_map) !=
-> +	    pru->pru_interrupt_map_sz)
-> +		return -EINVAL;
-> +
-> +	pru->evt_count = rsc->num_evts;
-> +	pru->mapped_irq = kcalloc(pru->evt_count, sizeof(int), GFP_KERNEL);
+Rob Herring is the maintainer of all the yaml files - he is the one this patch
+needs to go to.  I merely look at them to understand the platform device
+implementation.
 
-sizeof(unsigned int)
-
-> +	if (!pru->mapped_irq)
-> +		return -ENOMEM;
-> +
-> +	/*
-> +	 * parse and fill in system event to interrupt channel and
-> +	 * channel-to-host mapping
-> +	 */
-> +	irq_parent = of_irq_find_parent(pru->dev->of_node);
-> +	if (!irq_parent) {
-> +		kfree(pru->mapped_irq);
-> +		return -ENODEV;
-> +	}
-> +
-> +	fwspec.fwnode = of_node_to_fwnode(irq_parent);
-> +	fwspec.param_count = 3;
-> +	for (i = 0; i < pru->evt_count; i++) {
-> +		fwspec.param[0] = rsc->pru_intc_map[i].event;
-> +		fwspec.param[1] = rsc->pru_intc_map[i].chnl;
-> +		fwspec.param[2] = rsc->pru_intc_map[i].host;
-> +
-> +		dev_dbg(dev, "mapping%d: event %d, chnl %d, host %d\n",
-> +			i, fwspec.param[0], fwspec.param[1], fwspec.param[2]);
-> +
-> +		pru->mapped_irq[i] = irq_create_fwspec_mapping(&fwspec);
-> +		if (!pru->mapped_irq[i]) {
-> +			dev_err(dev, "failed to get virq\n");
-> +			ret = pru->mapped_irq[i];
-> +			goto map_fail;
-> +		}
-> +	}
-> +
-> +	return ret;
-> +
-> +map_fail:
-> +	pru_dispose_irq_mapping(pru);
-> +
-> +	return ret;
-> +}
-> +
->  static int pru_rproc_start(struct rproc *rproc)
->  {
->  	struct device *dev = &rproc->dev;
->  	struct pru_rproc *pru = rproc->priv;
->  	u32 val;
-> +	int ret;
->  
->  	dev_dbg(dev, "starting PRU%d: entry-point = 0x%llx\n",
->  		pru->id, (rproc->bootaddr >> 2));
->  
-> +	ret = pru_handle_intrmap(rproc);
-> +	/*
-> +	 * reset references to pru interrupt map - they will stop being valid
-> +	 * after rproc_start returns
-> +	 */
-> +	pru->pru_interrupt_map = NULL;
-> +	pru->pru_interrupt_map_sz = 0;
-> +	if (ret)
-> +		return ret;
-> +
->  	val = CTRL_CTRL_EN | ((rproc->bootaddr >> 2) << 16);
->  	pru_control_write_reg(pru, PRU_CTRL_CTRL, val);
->  
-> @@ -113,6 +218,10 @@ static int pru_rproc_stop(struct rproc *rproc)
->  	val &= ~CTRL_CTRL_EN;
->  	pru_control_write_reg(pru, PRU_CTRL_CTRL, val);
->  
-> +	/* dispose irq mapping - new firmware can provide new mapping */
-> +	if (pru->mapped_irq)
-> +		pru_dispose_irq_mapping(pru);
-> +
->  	return 0;
->  }
->  
-> @@ -273,12 +382,70 @@ pru_rproc_load_elf_segments(struct rproc *rproc, const struct firmware *fw)
->  	return ret;
->  }
->  
-> +static const void *
-> +pru_rproc_find_interrupt_map(struct device *dev, const struct firmware *fw)
-> +{
-> +	struct elf32_shdr *shdr, *name_table_shdr;
-> +	const char *name_table;
-> +	const u8 *elf_data = fw->data;
-> +	struct elf32_hdr *ehdr = (struct elf32_hdr *)elf_data;
-> +	u16 shnum = ehdr->e_shnum;
-> +	u16 shstrndx = ehdr->e_shstrndx;
-> +	int i;
-> +
-> +	/* first, get the section header */
-> +	shdr = (struct elf32_shdr *)(elf_data + ehdr->e_shoff);
-> +	/* compute name table section header entry in shdr array */
-> +	name_table_shdr = shdr + shstrndx;
-> +	/* finally, compute the name table section address in elf */
-> +	name_table = elf_data + name_table_shdr->sh_offset;
-> +
-> +	for (i = 0; i < shnum; i++, shdr++) {
-> +		u32 size = shdr->sh_size;
-> +		u32 offset = shdr->sh_offset;
-> +		u32 name = shdr->sh_name;
-> +
-> +		if (strcmp(name_table + name, ".pru_irq_map"))
-> +			continue;
-> +
-> +		/* make sure we have the entire irq map */
-> +		if (offset + size > fw->size || offset + size < size) {
-> +			dev_err(dev, ".pru_irq_map section truncated\n");
-> +			return ERR_PTR(-EINVAL);
-> +		}
-> +
-> +		/* make sure irq map has at least the header */
-> +		if (sizeof(struct pru_irq_rsc) > size) {
-> +			dev_err(dev, "header-less .pru_irq_map section\n");
-> +			return ERR_PTR(-EINVAL);
-> +		}
-> +
-> +		return shdr;
-> +	}
-> +
-> +	dev_dbg(dev, "no .pru_irq_map section found for this fw\n");
-> +
-> +	return NULL;
-> +}
-> +
->  /*
->   * Use a custom parse_fw callback function for dealing with PRU firmware
->   * specific sections.
-> + *
-> + * The firmware blob can contain optional ELF sections: .resource_table section
-> + * and .pru_irq_map one. The second one contains the PRUSS interrupt mapping
-> + * description, which needs to be setup before powering on the PRU core. To
-> + * avoid RAM wastage this ELF section is not mapped to any ELF segment (by the
-> + * firmware linker) and therefore is not loaded to PRU memory.
->   */
->  static int pru_rproc_parse_fw(struct rproc *rproc, const struct firmware *fw)
->  {
-> +	struct device *dev = &rproc->dev;
-> +	struct pru_rproc *pru = rproc->priv;
-> +	const u8 *elf_data = fw->data;
-> +	const void *shdr;
-> +	u8 class = fw_elf_get_class(fw);
-> +	u64 sh_offset;
->  	int ret;
->  
->  	/* load optional rsc table */
-> @@ -288,6 +455,19 @@ static int pru_rproc_parse_fw(struct rproc *rproc, const struct firmware *fw)
->  	else if (ret)
->  		return ret;
->  
-> +	/* find .pru_interrupt_map section, not having it is not an error */
-> +	shdr = pru_rproc_find_interrupt_map(dev, fw);
-> +	if (IS_ERR(shdr))
-> +		return PTR_ERR(shdr);
-> +
-> +	if (!shdr)
-> +		return 0;
-> +
-> +	/* preserve pointer to PRU interrupt map together with it size */
-> +	sh_offset = elf_shdr_get_sh_offset(class, shdr);
-> +	pru->pru_interrupt_map = (struct pru_irq_rsc *)(elf_data + sh_offset);
-> +	pru->pru_interrupt_map_sz = elf_shdr_get_sh_size(class, shdr);
-> +
->  	return 0;
->  }
->  
-> diff --git a/drivers/remoteproc/pru_rproc.h b/drivers/remoteproc/pru_rproc.h
+On Mon, Nov 30, 2020 at 07:57:16AM -0800, Ben Levinsky wrote:
+> Add binding for ZynqMP R5 OpenAMP.
+> 
+> Represent the RPU domain resources in one device node. Each RPU
+> processor is a subnode of the top RPU domain node.
+> 
+> Signed-off-by: Jason Wu <j.wu@xilinx.com>
+> Signed-off-by: Wendy Liang <jliang@xilinx.com>
+> Signed-off-by: Michal Simek <michal.simek@xilinx.com>
+> Signed-off-by: Ben Levinsky <ben.levinsky@xilinx.com>
+> ---
+> v24: update for 'make dt_binding_check' errors
+> ---
+>  .../xilinx,zynqmp-r5-remoteproc.yaml          | 223 ++++++++++++++++++
+>  1 file changed, 223 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/remoteproc/xilinx,zynqmp-r5-remoteproc.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/remoteproc/xilinx,zynqmp-r5-remoteproc.yaml b/Documentation/devicetree/bindings/remoteproc/xilinx,zynqmp-r5-remoteproc.yaml
 > new file mode 100644
-> index 000000000000..8ee9c3171610
+> index 000000000000..bccbdee8c3f2
 > --- /dev/null
-> +++ b/drivers/remoteproc/pru_rproc.h
-> @@ -0,0 +1,46 @@
-> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-3-Clause) */
-> +/*
-> + * PRUSS Remote Processor specific types
-> + *
-> + * Copyright (C) 2014-2020 Texas Instruments Incorporated - https://www.ti.com/
-> + *	Suman Anna <s-anna@ti.com>
-> + */
+> +++ b/Documentation/devicetree/bindings/remoteproc/xilinx,zynqmp-r5-remoteproc.yaml
+> @@ -0,0 +1,223 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: "http://devicetree.org/schemas/remoteproc/xilinx,zynqmp-r5-remoteproc.yaml#"
+> +$schema: "http://devicetree.org/meta-schemas/core.yaml#"
 > +
-> +#ifndef _PRU_RPROC_H_
-> +#define _PRU_RPROC_H_
+> +title: Xilinx R5 remote processor controller bindings
 > +
-> +/**
-> + * struct pruss_int_map - PRU system events _to_ channel and host mapping
-> + * @event: number of the system event
-> + * @chnl: channel number assigned to a given @event
-> + * @host: host number assigned to a given @chnl
-> + *
-> + * PRU system events are mapped to channels, and these channels are mapped
-> + * to host interrupts. Events can be mapped to channels in a one-to-one or
-> + * many-to-one ratio (multiple events per channel), and channels can be
-> + * mapped to host interrupts in a one-to-one or many-to-one ratio (multiple
-> + * channels per interrupt).
-> + */
-> +struct pruss_int_map {
-> +	u8 event;
-> +	u8 chnl;
-> +	u8 host;
-> +};
+> +description:
+> +  This document defines the binding for the remoteproc component that loads and
+> +  boots firmwares on the Xilinx Zynqmp and Versal family chipsets.
 > +
-> +/**
-> + * struct pru_irq_rsc - PRU firmware section header for IRQ data
-> + * @type: resource type
-> + * @num_evts: number of described events
-> + * @pru_intc_map: PRU interrupt routing description
-> + *
-> + * The PRU firmware blob can contain optional .pru_irq_map ELF section, which
-> + * provides the PRUSS interrupt mapping description. The pru_irq_rsc struct
-> + * describes resource entry format.
-> + */
-> +struct pru_irq_rsc {
-> +	u8 type;
-> +	u8 num_evts;
-> +	struct pruss_int_map pru_intc_map[];
-> +} __packed;
+> +  Note that the Linux has global addressing view of the R5-related memory (TCM)
+> +  so the absolute address ranges are provided in TCM reg's.
 > +
-> +#endif	/* _PRU_RPROC_H_ */
+> +maintainers:
+> +  - Ed Mooring <ed.mooring@xilinx.com>
+> +  - Ben Levinsky <ben.levinsky@xilinx.com>
+> +
+> +properties:
+> +  $nodename:
+> +    pattern: "^r5fss(@.*)?"
+> +
+> +  compatible:
+> +    enum:
+> +      - xlnx,zynqmp-r5-remoteproc
+> +
+> +  reg:
+> +    items:
+> +      - description: Address and Size of Xilinx RPU Configuration register
+> +
+> +  "#address-cells":
+> +    const: 2
+> +
+> +  "#size-cells":
+> +    const: 2
+> +
+> +  ranges: true
+> +
+> +# Optional properties:
+> +# --------------------
+> +  xlnx,cluster-mode:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    enum: [0, 1]
+> +    description: |
+> +      Configuration Mode for the Dual R5F cores within the R5F cluster.
+> +      Should be either a value of 1 (LockStep mode) or 0 (Split mode),
+> +      default is LockStep mode if omitted.
+> +
+> +
+> +#R5F Processor Child Nodes:
+> +# ==========================
+> +
+> +patternProperties:
+> +  "^r5f_[a-f0-9]+$":
+> +    type: object
+> +    description: |
+> +      The R5F Sub-System device node should define one or two R5F child nodes,
+> +      each node representing a Xilinx instantiation of the Arm Cortex R5F core.
+> +      There should be one or two child nodes if the R5F is in Split mode and
+> +      one child node if the R5F is in Lockstep mode.
+> +
+> +      In Split mode each R5F core has two associated TCM Banks. R5_0 has
+> +      TCM Banks 0A and 0B and R5_1 has TCM Banks 1A and 1B.
+> +
+> +      In Lockstep mode only one R5F child node should be defined. This one
+> +      child has access to TCM Banks 0A, 0B, 1A and 1B and any of the four can
+> +      be included in the child R5F's sram property.
+> +
+> +      The example below shows Split mode with two child nodes.
+> +
+> +    properties:
+> +      compatible:
+> +        enum:
+> +          - xilinx,r5f
+> +
+> +# The following properties are mandatory for R5F Core0 in both LockStep and Split
+> +# modes, and are mandatory for R5F Core1 _only_ in Split mode.
+> +
+> +      memory-region:
+> +        description: |
+> +          Phandles to the memory nodes to be associated with the
+
+Is a word missing here?
+
+> +          The reserved memory nodes should be carveout nodes, and
+> +          should be defined with a "no-map" property as per the bindings in
+> +          Documentation/devicetree/bindings/reserved-memory/reserved-memory.txt
+> +        minItems: 1
+> +        maxItems: 6
+> +        items:
+> +          - description: Region used for dynamic DMA allocations like vrings and
+> +                         vring buffers
+> +          - description: region reserved for firmware image sections
+> +        additionalItems: true
+> +
+> +      power-domain:
+> +        description: |
+> +          Power node ID that is used to uniquely identify the RPU for Xilinx
+> +          Power Management.
+> +        maxItems: 1
+> +
+> +# Optional properties:
+> +# --------------------
+> +# The following properties are optional properties for each of the R5F cores:
+> +
+> +      mboxes:
+> +        description: |
+> +          Standard property to specify a mailbox
+> +          This property is required only if the rpmsg/virtio functionality
+> +          is used
+> +
+> +           Refer to the zynqmp-ipi-mailbox documentation for client usage of this
+> +           property
+
+Indentation problem
+
+> +        maxItems: 1
+> +
+> +      mbox-names:
+> +        description: |
+> +          Refer to the zynqmp-ipi-mailbox documentation for client usage of this
+> +          property
+> +        items:
+> +          - const: tx
+> +          - const: rx
+> +
+> +      sram:
+> +        $ref: /schemas/types.yaml#/definitions/phandle-array
+> +        minItems: 1
+> +        maxItems: 4
+> +        description: |
+> +          Phandles to one or more reserved on-chip SRAM regions. The regions
+> +          should be defined as child nodes of the respective SRAM node, and
+> +          should be defined as per the generic bindings in,
+> +          Documentation/devicetree/bindings/sram/sram.yaml
+> +
+> +    required:
+> +      - compatible
+> +      - power-domain
+> +
+> +    unevaluatedProperties: false
+> +
+> +required:
+> +  - reg
+> +  - compatible
+> +  - "#address-cells"
+> +  - "#size-cells"
+> +  - ranges
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    / {
+> +        compatible = "xlnx,zynqmp-zcu102-rev1.0", "xlnx,zynqmp-zcu102", "xlnx,zynqmp";
+> +        #address-cells = <2>;
+> +        #size-cells = <2>;
+> +        model = "ZynqMP ZCU102 ";
+> +
+> +        zynqmp_ipi1 {
+> +          compatible = "xlnx,zynqmp-ipi-mailbox";
+> +          interrupt-parent = <&gic>;
+> +          interrupts = <0 33 4>;
+> +          xlnx,ipi-id = <5>;
+> +          #address-cells = <1>;
+> +          #size-cells = <0>;
+> +
+> +          ipi_mailbox_rpu0: mailbox@ff990600 {
+> +            reg = <0xff990600 0x20>,
+> +                  <0xff990620 0x20>,
+> +                  <0xff9900c0 0x20>,
+> +                  <0xff9900e0 0x20>;
+> +            reg-names = "local_request_region",
+> +            "local_response_region",
+> +            "remote_request_region",
+> +            "remote_response_region";
+> +            #mbox-cells = <1>;
+> +            xlnx,ipi-id = <3>;
+> +          };
+> +          ipi_mailbox_rpu1: mailbox@ff990780 {
+> +            reg = <0xff990780 0x20>,
+> +                  <0xff9907a0 0x20>,
+> +                  <0xff9907c0 0x20>,
+> +                  <0xff9905a0 0x20>;
+> +            reg-names = "local_request_region",
+> +            "local_response_region",
+> +            "remote_request_region",
+> +            "remote_response_region";
+> +            #mbox-cells = <1>;
+> +            xlnx,ipi-id = <3>;
+> +          };
+> +        };
+> +
+> +        r5fss@ff9a0000 {
+> +          compatible = "xlnx,zynqmp-r5-remoteproc";
+> +          #address-cells = <2>;
+> +          #size-cells = <2>;
+> +          ranges;
+> +          reg = <0x0 0xff9a0000 0x0 0x10000>;
+> +          xlnx,cluster-mode = <0>;
+> +
+> +          r5f_0 {
+> +               compatible = "xilinx,r5f";
+> +               memory-region = <&elf_load0>,
+> +                               <&rpu0vdev0vring0>,
+> +                               <&rpu0vdev0vring1>,
+> +                               <&rpu0vdev0buffer>;
+> +               sram = <&tcm_0a>, <&tcm_0b>;
+> +               mboxes = <&ipi_mailbox_rpu0 0x0 &ipi_mailbox_rpu0 0x1>;
+> +               mbox-names = "tx", "rx";
+> +               power-domain = <0x7>;
+> +          };
+> +          r5f_1 {
+> +               compatible = "xilinx,r5f";
+> +               memory-region = <&elf_load1>,
+> +                               <&rpu1vdev0vring0>,
+> +                               <&rpu1vdev0vring1>,
+> +                               <&rpu1vdev0buffer>;
+> +               sram = <&tcm_1a>, <&tcm_1b>;
+> +               mboxes = <&ipi_mailbox_rpu1 0x0 &ipi_mailbox_rpu1 0x1>;
+> +               mbox-names = "tx", "rx";
+> +               power-domain = <0x8>;
+> +          };
+> +
+> +        };
+> +    };
+> +
+> +...
 > -- 
-> 2.29.0
+> 2.17.1
 > 
