@@ -2,118 +2,130 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BE66C2BB40
-	for <linux-remoteproc@archiver.kernel.org>; Tue,  8 Dec 2020 14:04:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D97CC433FE
+	for <linux-remoteproc@archiver.kernel.org>; Tue,  8 Dec 2020 14:11:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2D77323AC4
-	for <linux-remoteproc@archiver.kernel.org>; Tue,  8 Dec 2020 14:04:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 49BC623A77
+	for <linux-remoteproc@archiver.kernel.org>; Tue,  8 Dec 2020 14:11:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729660AbgLHOEY (ORCPT
+        id S1729366AbgLHOLU (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 8 Dec 2020 09:04:24 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33552 "EHLO
+        Tue, 8 Dec 2020 09:11:20 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34638 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729497AbgLHOEX (ORCPT
+        with ESMTP id S1728786AbgLHOLU (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 8 Dec 2020 09:04:23 -0500
-Received: from mail-qt1-x844.google.com (mail-qt1-x844.google.com [IPv6:2607:f8b0:4864:20::844])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A4281C0613D6
-        for <linux-remoteproc@vger.kernel.org>; Tue,  8 Dec 2020 06:03:43 -0800 (PST)
-Received: by mail-qt1-x844.google.com with SMTP id z9so11955120qtn.4
-        for <linux-remoteproc@vger.kernel.org>; Tue, 08 Dec 2020 06:03:43 -0800 (PST)
+        Tue, 8 Dec 2020 09:11:20 -0500
+Received: from mail-lj1-x242.google.com (mail-lj1-x242.google.com [IPv6:2a00:1450:4864:20::242])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0BB1DC061793
+        for <linux-remoteproc@vger.kernel.org>; Tue,  8 Dec 2020 06:10:40 -0800 (PST)
+Received: by mail-lj1-x242.google.com with SMTP id a1so18241927ljq.3
+        for <linux-remoteproc@vger.kernel.org>; Tue, 08 Dec 2020 06:10:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=qGakVdCw5QYE//gz30LSIclGvqsDhnmw0oMI5x6lLuQ=;
-        b=E/xtGCV68XO2lDrxqtkeFJy3TqmsWvpSWNHFR6+Il8UYsQXY8BSJb3UOYhwtGSXH+s
-         Vthej7B9BmrAIS484t2wLTDWnIbScnD6bq3QXy1jB0VrCq/TQfL2ef8c+mOklWD3Fd1f
-         L2OEuZNAavpYc3JQx/1Tt1qeNSr9j36j0M0RvTlHrAj/mcUQXdhZsR3zNlpO8fLLT+Ku
-         N9k8af29CduZ94sAwbOn+Kq+UTCX6gIBYyFliCWfmkxKyH+isnz7HHp0r4V9B5sLWe9C
-         QbQ5Y2QqGb2+Ojgcn3EQMJOcPUoo/QGBibQw4SnX+jisq4XXFOIWOf+OLj3FMJNsvqi5
-         O2gw==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=WG9wP54MrSEA3r8eccjMo3MMPcrQmj+RNEk7HB0q6IQ=;
+        b=tLSv5kqER7QrODTRcifV8nGuQ11SV83y9ngu95JJG1ccgBn7uOzsiNH/gRKrLoWrRv
+         TEBWSfZ4QKCf48OwWD0BefaBs6ImB3yLobss+Rw3PXHLQLK825uCoWEvmMw2cDb7rbpt
+         DqlDCVLGCXG2lBs/IPs4Ma8WtYast15jvLRFh0i5iETgZOKnvym0MGi+4xzCBY6V3gQ2
+         iyBmye15tC2+vlGmSymOs7hrGdpoFtcJi4JnyYU0n9Q5+/E6/tLYvsmcqQUwAFyIAYTt
+         /5GKTV9EWdpadvOXoDEB7baIqGWdt4GVCxjnYv9G8euvEbUCWArSYSf5y+OaFVVFFSRG
+         nbfw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=qGakVdCw5QYE//gz30LSIclGvqsDhnmw0oMI5x6lLuQ=;
-        b=RhQsfqSytk185hrwY+1Vp5/V823KyIJcCfTG8wIo6w9oIwf8IKGOB8PkPWeFZPZsF+
-         gD2s4hV290EVsAWxFPjSOXdtQYkdDfU7UwX9LJvawsKyzvWIKO3IgbfnWzD1mF1JGKUT
-         NgWn/pq9lHnXnNm2Hp6LmB9e1gkV7lySpwHRBQrTUWbkSpI5I1HJ7tct/sTmeVpauYtK
-         R0w3a9dClMzcgEjfEPShuiLXWqqE4ZuUm2p95Rn1K2IPBc6YqA67/t3g0nIXfnRF430W
-         u9SHR/4h/iQJrtfBJIBzY9ZOjU/wHiHBnOCo/JH7be3hElqEB/W3bJKQQcYWl4X9gmQy
-         8gyA==
-X-Gm-Message-State: AOAM532NExZXvHqDo1MkVndfhuqz/4Lk7CSfUM+UyhNRaVmeL39BsRWK
-        j5avcSqUZQ+1M94X+FwZh7wm/3AXgxSCh87krW1vpQ==
-X-Google-Smtp-Source: ABdhPJzwJcU+8YDkuOryWUOx1yXx3QATsUaPN1cy3ssbkdgjWnq5iNuGCnPDsunfOudRYLgqbw2w1AxdVdNmcKRt4uU=
-X-Received: by 2002:ac8:6b9a:: with SMTP id z26mr30901677qts.200.1607436222731;
- Tue, 08 Dec 2020 06:03:42 -0800 (PST)
-MIME-Version: 1.0
-References: <20201204201807.14716-1-grzegorz.jaszczyk@linaro.org>
- <20201204201807.14716-4-grzegorz.jaszczyk@linaro.org> <20201207173731.GA1509079@xps15>
-In-Reply-To: <20201207173731.GA1509079@xps15>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=WG9wP54MrSEA3r8eccjMo3MMPcrQmj+RNEk7HB0q6IQ=;
+        b=jM08c1lO7bq3dDSjkkJjn33KLwaLUtAsUEHSlPbjZsEFzxM2XnYYnzP5iS7RJfwmNy
+         Gp4X2qAMEZmojg/GGuURDGePz0eD1VMGv6TpOX00dAOv9ZhOpO6SDuC7P8WPrAMNdhv9
+         0xZfc7EIsBa+eoGy/9hpH+WBbn/HzRphvYrQPu6onS8anh0HBuEzX1U/jBt8KJP/Gjhs
+         Z7Ro1jyx6Tm/b4rpREYhCE414XLu9qw+9RYLAgugDSMf9x95D+DdjuWA4Jg6iPJBRo1U
+         58jr9D7QczAzU98hN4ZHjr+4UZPIXXk4FslPKcYcYGTfknxq07WZcSu5AD5pwMcrSkDY
+         7nDg==
+X-Gm-Message-State: AOAM530olrUxPkahDkjVeSYaJmpVgg3zFlaHYmSNoVwkYT/p5ExEz/V5
+        AapPREnah73wO/VDKIK4O7A+gSEzk3qgNA==
+X-Google-Smtp-Source: ABdhPJyLdeJgtkZKcSWMf0zSXx3pEMIkIpWCoLsUYgkmE1e4osmpomPb6wXMomDuRkBAdpb/9nnnqA==
+X-Received: by 2002:a2e:9bd5:: with SMTP id w21mr416170ljj.432.1607436638447;
+        Tue, 08 Dec 2020 06:10:38 -0800 (PST)
+Received: from gilgamesh.semihalf.com (193-106-246-138.noc.fibertech.net.pl. [193.106.246.138])
+        by smtp.gmail.com with ESMTPSA id h23sm417017ljh.115.2020.12.08.06.10.37
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 08 Dec 2020 06:10:37 -0800 (PST)
 From:   Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>
-Date:   Tue, 8 Dec 2020 15:03:32 +0100
-Message-ID: <CAMxfBF6UVBkM_oV=oO0H+2VXxRjwp9ggLLrxQvSyg+VVOzPwTQ@mail.gmail.com>
-Subject: Re: [PATCH v3 3/6] remoteproc: pru: Add support for PRU specific
- interrupt configuration
-To:     Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc:     Ohad Ben Cohen <ohad@wizery.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        "Anna, Suman" <s-anna@ti.com>, linux-remoteproc@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>,
-        Lee Jones <lee.jones@linaro.org>, devicetree@vger.kernel.org,
+To:     ohad@wizery.com, bjorn.andersson@linaro.org,
+        mathieu.poirier@linaro.org, robh+dt@kernel.org, s-anna@ti.com
+Cc:     grzegorz.jaszczyk@linaro.org, linux-remoteproc@vger.kernel.org,
+        lee.jones@linaro.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        "Bajjuri, Praneeth" <praneeth@ti.com>,
-        Roger Quadros <rogerq@ti.com>
-Content-Type: text/plain; charset="UTF-8"
+        linux-arm-kernel@lists.infradead.org, praneeth@ti.com,
+        rogerq@ti.com
+Subject: [PATCH v4 0/6] Add a PRU remoteproc driver
+Date:   Tue,  8 Dec 2020 15:09:56 +0100
+Message-Id: <20201208141002.17777-1-grzegorz.jaszczyk@linaro.org>
+X-Mailer: git-send-email 2.29.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi Mathieu
+Hi All,
 
-On Mon, 7 Dec 2020 at 18:37, Mathieu Poirier <mathieu.poirier@linaro.org> wrote:
+The Programmable Real-Time Unit and Industrial Communication Subsystem
+(PRU-ICSS or simply PRUSS) on various TI SoCs consists of dual 32-bit
+RISC cores (Programmable Real-Time Units, or PRUs) for program execution.
 
-[...]
+The K3 AM65x and J721E SoCs have the next generation of the PRU-ICSS IP,
+commonly called ICSSG. The ICSSG IP on AM65x SoCs has two PRU cores,
+two auxiliary custom PRU cores called Real Time Units (RTUs). The K3
+AM65x SR2.0 and J721E SoCs have a revised version of the ICSSG IP, and
+include two additional custom auxiliary PRU cores called Transmit PRUs
+(Tx_PRUs).
 
-> > +static int pru_handle_intrmap(struct rproc *rproc)
-> > +{
-> > +     struct device *dev = rproc->dev.parent;
-> > +     struct pru_rproc *pru = rproc->priv;
-> > +     struct pru_irq_rsc *rsc = pru->pru_interrupt_map;
-> > +     struct irq_fwspec fwspec;
-> > +     struct device_node *irq_parent;
-> > +     int i, ret = 0;
-> > +
-> > +     /* not having pru_interrupt_map is not an error */
-> > +     if (!rsc)
-> > +             return 0;
-> > +
-> > +     /* currently supporting only type 0 */
-> > +     if (rsc->type != 0) {
-> > +             dev_err(dev, "unsupported rsc type: %d\n", rsc->type);
-> > +             return -EINVAL;
-> > +     }
-> > +
-> > +     if (rsc->num_evts > MAX_PRU_SYS_EVENTS)
-> > +             return -EINVAL;
-> > +
-> > +     if (sizeof(*rsc) + rsc->num_evts * sizeof(struct pruss_int_map) !=
-> > +         pru->pru_interrupt_map_sz)
-> > +             return -EINVAL;
-> > +
-> > +     pru->evt_count = rsc->num_evts;
-> > +     pru->mapped_irq = kcalloc(pru->evt_count, sizeof(int), GFP_KERNEL);
->
-> sizeof(unsigned int)
+This series contains the PRUSS remoteproc driver together with relevant
+dt-binding. This is the 3rd foundation component for PRUSS subsystem, the
+previous two were already merged and can be found under:
+1) drivers/soc/ti/pruss.c
+   Documentation/devicetree/bindings/soc/ti/ti,pruss.yaml
+2) drivers/irqchip/irq-pruss-intc.c
+   Documentation/devicetree/bindings/interrupt-controller/ti,pruss-intc.yaml
 
-Sure, I will post v4 addressing this comment and sorry for missing that.
+The following is a v4 version of the series. There is only one change
+from v3 [1]:
+- Use sizeof(unsigned int) instead of sizeof(int) for kcalloc in
+pru_handle_intrmap() in patch #3.
 
-Thank you,
+[1] https://patchwork.kernel.org/project/linux-arm-kernel/cover/20201204201807.14716-1-grzegorz.jaszczyk@linaro.org/
+
+Best regards,
 Grzegorz
+
+Grzegorz Jaszczyk (1):
+  remoteproc: pru: Add support for PRU specific interrupt configuration
+
+Suman Anna (5):
+  dt-bindings: remoteproc: Add binding doc for PRU cores in the PRU-ICSS
+  remoteproc: pru: Add a PRU remoteproc driver
+  remoteproc: pru: Add pru-specific debugfs support
+  remoteproc: pru: Add support for various PRU cores on K3 AM65x SoCs
+  remoteproc: pru: Add support for various PRU cores on K3 J721E SoCs
+
+ .../bindings/remoteproc/ti,pru-rproc.yaml     | 214 +++++
+ drivers/remoteproc/Kconfig                    |  12 +
+ drivers/remoteproc/Makefile                   |   1 +
+ drivers/remoteproc/pru_rproc.c                | 875 ++++++++++++++++++
+ drivers/remoteproc/pru_rproc.h                |  46 +
+ 5 files changed, 1148 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/remoteproc/ti,pru-rproc.yaml
+ create mode 100644 drivers/remoteproc/pru_rproc.c
+ create mode 100644 drivers/remoteproc/pru_rproc.h
+
+-- 
+2.29.0
+
