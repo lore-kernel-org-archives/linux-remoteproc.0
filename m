@@ -5,430 +5,1041 @@ X-Spam-Level:
 X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E0E9C4361B
-	for <linux-remoteproc@archiver.kernel.org>; Wed,  9 Dec 2020 15:00:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25370C433FE
+	for <linux-remoteproc@archiver.kernel.org>; Wed,  9 Dec 2020 19:02:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F407823A5A
-	for <linux-remoteproc@archiver.kernel.org>; Wed,  9 Dec 2020 15:00:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C9C5C2312E
+	for <linux-remoteproc@archiver.kernel.org>; Wed,  9 Dec 2020 19:02:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733259AbgLIPAz (ORCPT
+        id S2387434AbgLITBl (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 9 Dec 2020 10:00:55 -0500
-Received: from mail-eopbgr50082.outbound.protection.outlook.com ([40.107.5.82]:25513
-        "EHLO EUR03-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1733258AbgLIPAz (ORCPT
+        Wed, 9 Dec 2020 14:01:41 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50236 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1733278AbgLITBb (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 9 Dec 2020 10:00:55 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=fNuVSD63J4veIpLaTzfuRQzHgcaP0Hy1D2cC3W1mr+hqaTbMjNnCXPHhcKryE39vsN/G4/hEXGmYou/r0+ARJTG1k9TZ3Vnv6bqJwG7MjgNu4EgrqGeJD9U1vt9oOz84UQ2lez9naxCbk/xgGgNhbQXJTlvu8UYVz+vBpBtyXv1Q54fysa0+zBCruuKO+rpOrIW0/aqD0eqvj+KhIhVyDiQf+YSxdZmjh2/xtBSIrJOMRCGi6MiQ2vtABsxiu9jaApAHfJzNTGbZlQb/dp9/7KprTfEXUmtYn1uw/oigeqSWQ6tZQLkN/X2+AxWg2RN0D+yNk8tuUsb6FUcJ8/STsQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=5yFx9Q/4ATpAz0A7RzwKlG6CjkETLgR95tG0zOs3kFg=;
- b=IgKtb1yKx7294kz+Z4zbL6RxNIQK9R4L9bhKwXO/Q5gePWMiMrtBnCaw0o4es+tqo1qn7bI3fCUCFHqooojaCiI2SqODp5+TQ9N2jfLEjl+bdpEjyu2Eic86ec+9CfzTuJfcJUJoihLv7Pgq0yc0hcn55+6y/UoTD+1e0ymw31859AUzwzTWN5IRMSLj8MQv17FZw6Q07Y25XnI1sklfKzYSLlarElbHqF/UCsjXq65W/nhUEqD0WN9lOKzxRkzjuhwIBDpPE2HYVPJCmVKBX9zG30dyGNGhTVP2IZcCfuvuSzq5ZzqZRJNXr+Y1AGfoXIjh8orn0Nr/le0ygww/NQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=5yFx9Q/4ATpAz0A7RzwKlG6CjkETLgR95tG0zOs3kFg=;
- b=TOcEfQBGD3dG2UvMiN+kN6/M9K4MmxT9VZjMcKlQ3szTIs/5yeJcz3vA+EMQlLUCdYXDv9cuI8rKiJPjJSgKCz+aGg3VAMfQ4Nk2K9dJXsl4XAFmjoD7lhBn9rlXSdleXbhY0RVDu8W+oRTO/+2aQt3PIxsiTlRNjhzUsiRJ4+w=
-Received: from DB6PR0402MB2760.eurprd04.prod.outlook.com (2603:10a6:4:a1::14)
- by DB8PR04MB6857.eurprd04.prod.outlook.com (2603:10a6:10:114::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3632.19; Wed, 9 Dec
- 2020 15:00:02 +0000
-Received: from DB6PR0402MB2760.eurprd04.prod.outlook.com
- ([fe80::c964:9:850a:fc5]) by DB6PR0402MB2760.eurprd04.prod.outlook.com
- ([fe80::c964:9:850a:fc5%10]) with mapi id 15.20.3632.024; Wed, 9 Dec 2020
- 15:00:02 +0000
-From:   Peng Fan <peng.fan@nxp.com>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
-CC:     "ohad@wizery.com" <ohad@wizery.com>,
-        "mathieu.poirier@linaro.org" <mathieu.poirier@linaro.org>,
-        "o.rempel@pengutronix.de" <o.rempel@pengutronix.de>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Richard Zhu <hongxing.zhu@nxp.com>
-Subject: RE: [PATCH V3 1/7] remoteproc: elf: support platform specific memory
- hook
-Thread-Topic: [PATCH V3 1/7] remoteproc: elf: support platform specific memory
- hook
-Thread-Index: AQHWygzgCpXjE6CrJEiplG2nzloV+anno8iAgANDaRCAA/w2oA==
-Date:   Wed, 9 Dec 2020 15:00:02 +0000
-Message-ID: <DB6PR0402MB27602A953194DBE2CE96D54388CC0@DB6PR0402MB2760.eurprd04.prod.outlook.com>
-References: <20201204074036.23870-1-peng.fan@oss.nxp.com>
- <20201204074036.23870-2-peng.fan@oss.nxp.com> <X8rRedNHet9gm5lJ@builder.lan>
- <DB6PR0402MB276056A300BD72EA59FC429488CE0@DB6PR0402MB2760.eurprd04.prod.outlook.com>
-In-Reply-To: <DB6PR0402MB276056A300BD72EA59FC429488CE0@DB6PR0402MB2760.eurprd04.prod.outlook.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: linaro.org; dkim=none (message not signed)
- header.d=none;linaro.org; dmarc=none action=none header.from=nxp.com;
-x-originating-ip: [92.121.68.129]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: d19feef8-b321-42c0-6940-08d89c531b43
-x-ms-traffictypediagnostic: DB8PR04MB6857:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <DB8PR04MB68570402483639F2B0EE88E788CC0@DB8PR04MB6857.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:1265;
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: wOEcbvLnBXxcXXu7N/C8CduIuy30BEk34EJiM9ws+k+J76Uq3QfIAxa8+W/18FEf4BdpkubUGPWPnMxyaWt1ROIGywEoF3ZWUYQCOy1ysmbGsd+0q0eXLFtIAD704T7u3zpXltl1KLq+EmlAsyQK66O5uaXaoIXpHPizW0Z/yiKekdVhbAZR3MR9CxkckLZDUPhrANA9TKCIkF4xnmnBkuGhNz4CA3uSPZ608w/g2cKQlrlXNJysHLjNFppEls73FNEEfkbF03b/K0LeV4YmreIuA4H6W9Cuo7ZZ1YUCn4+sPiJcB+8GrmZ4fWioMZfV
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB6PR0402MB2760.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(376002)(366004)(346002)(136003)(44832011)(66946007)(8936002)(71200400001)(83380400001)(33656002)(6506007)(508600001)(2906002)(76116006)(186003)(110136005)(66446008)(66556008)(55016002)(26005)(7696005)(66476007)(8676002)(4326008)(52536014)(54906003)(9686003)(7416002)(86362001)(5660300002)(64756008);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata: =?us-ascii?Q?XMmo//MjAZIGCEOEm4yU6OeD4DHmYriOZEKXmS6kgloNB/Q6wGtsyUyxE/yL?=
- =?us-ascii?Q?njuTIgNmYTvvrFwnn7hEdMtWFhKBCAVVRsYdVdEp85OBMs8Bytbt4OChYbl1?=
- =?us-ascii?Q?/1bcwQQU4MBRSeRtaa9h+uRaABOwC72LEFbqo3eOaMgYCKHzEL5edZb3WXpK?=
- =?us-ascii?Q?O9Kqud7A0HaYCW1sU6mLih6MIvnc2ByBZeMYPwwPtP+XjAIviZH2iU1XV4t5?=
- =?us-ascii?Q?cSU9gDENZ1nDgYVu5EFdSU9YPfoEdbSW39MNLZIes3MwNWOan9qywX2Ciz5e?=
- =?us-ascii?Q?4Yi9aWelsExqyMO9Ev1ahElqldDorif2jbd0ynS+lMZxYhG9v/AKYXVhwAM4?=
- =?us-ascii?Q?SXyZ0htXzmC9DpDXEFiHcNtIPajYITbXjCESdzq07vh2xSWBgAPnqKV1iFWT?=
- =?us-ascii?Q?9XGq+S6R/iV0ZJ6kFiHToAGkXFvAF4XIM9xYkDMwAiyFuKKR6JsMxGHbh4XR?=
- =?us-ascii?Q?JlCm5lfj1m289f/JMB/kZYaYQP+PVKEJrB8kDTyyICNSU+28AIVexy8vId2O?=
- =?us-ascii?Q?IkaeMsFrBY1TUxsXRUD6fT4T8gqocUgt7HpPV5ysCpKM0Ly8ShR6pjEsT0Go?=
- =?us-ascii?Q?q8Y4xTMz8OR4N/z+K+xsPldtbgcQXvu/6RPnDeyb6Rp7kWSQZ4iujbbMabwm?=
- =?us-ascii?Q?B0JLPi+TuR7TTz5ks7iz/lA2IEgMs4GHvggC6X9+vUNWZfrGV1mY3t5Vbod0?=
- =?us-ascii?Q?hrxGuC+5Voz4d/uhn/J2mS094qDNTocjSnAYf2LE9aoPebPNOPvzgu24Yera?=
- =?us-ascii?Q?8kjlMi0NtbE/FH5DwPbzTzCS7SjyC6STSXzOa40DBu3BCd+csK6icdc4nKkb?=
- =?us-ascii?Q?gNIMYinAaHvo6wHcz6V8wAZVNjqfxsATXb7VEQXPBU21kC6fd3H3UAgpISRR?=
- =?us-ascii?Q?MaMkqNiNELakJ1o21tv6+KdiDJBfz0ePE6Chod4vFd8f7UReC5pM+dUqqMQb?=
- =?us-ascii?Q?hPPdlGsrtrVDy1N90ead8sfDM/123b+YJQ6so7/6xxg=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Wed, 9 Dec 2020 14:01:31 -0500
+Received: from mail-pj1-x1043.google.com (mail-pj1-x1043.google.com [IPv6:2607:f8b0:4864:20::1043])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6D373C0613D6
+        for <linux-remoteproc@vger.kernel.org>; Wed,  9 Dec 2020 11:00:51 -0800 (PST)
+Received: by mail-pj1-x1043.google.com with SMTP id m5so1490437pjv.5
+        for <linux-remoteproc@vger.kernel.org>; Wed, 09 Dec 2020 11:00:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=8K6TcrBzRWtDuDW6G6xrouJBXPikzUN4iMT333h5JRc=;
+        b=HrgVH2vwuM0ml8blR8+eMvbOk+LNOu0o85ehJzyDutqSFtDIILAQPxjQn3bVdxHXqF
+         aXg/HQSOipzgKqOjKTTgX6AbEk0WNFneNvftZSruP7aWpTJN5mEo0n5YLjq4vD+aG54a
+         LREVmQgqDsZr4Sb6b3RKDNdsx5PyF69ZDSqxIC1rKOiz3EcOwlVEK5uNfkvD8dqTNW8D
+         +RU1qbJMXQ2QitfWsuLq/8nHgm6jpUl42O3pATdun1QZWSdQxm3gIG9rU00VOjNoo4PQ
+         VUgAdRU6NyrlaNstvn1wKgbskC7IrDFSffkGym5QwJmG8LMAtG/sq/MnIdotn1ZHpXFb
+         rJ0g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=8K6TcrBzRWtDuDW6G6xrouJBXPikzUN4iMT333h5JRc=;
+        b=PkSjsjfAsy8VeuxS46rax21J56hM3++hRqb0orKWQsDQpIJGZpi08o3iup+jVkQi7a
+         PrOFbK8Fy9wY00EU438d4bRYpl4YdUqaaEYFLq7MHeEo4VGghRsd60UXhCq7MQAskHUY
+         vvVPGVHzYxFjZaZ96q8dmytLqR2ioAft45TsayAKK7NTXEZBqfvJX7BPJW0binIrbs3a
+         VUZlZ1RK5gjw2N+7gMkv0F2eExmuxhL6lTVUqjQljn7ALM5pxELFVE7VZwyb0eLFsK/p
+         N8Z6eKUFlojj6eITcqFrBGV/sU+Gga9A1hHwoWWY0/IWTQRIkclsbdr0HSwuQnKDsDe6
+         3gow==
+X-Gm-Message-State: AOAM531rJGeYoCT1Ir0hEdb7P5vST4EDaQT0JoG4NbUwHtzgCIfKhLFM
+        QawSW84ve3KEeTCInZqagUsumQ==
+X-Google-Smtp-Source: ABdhPJybdM8n4aMQ6MFoH00g4Eo7nHQvMjSJR+uTPdhU6akKdTrtq2GI0M/F+/GKbkS+iuOiy7yqtA==
+X-Received: by 2002:a17:902:6103:b029:da:c46c:b3d6 with SMTP id t3-20020a1709026103b02900dac46cb3d6mr3478210plj.46.1607540450396;
+        Wed, 09 Dec 2020 11:00:50 -0800 (PST)
+Received: from xps15 (S0106889e681aac74.cg.shawcable.net. [68.147.0.187])
+        by smtp.gmail.com with ESMTPSA id a11sm3053419pgl.93.2020.12.09.11.00.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 09 Dec 2020 11:00:49 -0800 (PST)
+Date:   Wed, 9 Dec 2020 12:00:47 -0700
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+To:     Ben Levinsky <ben.levinsky@xilinx.com>
+Cc:     devicetree@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v24 5/5] remoteproc: Add initial zynqmp R5 remoteproc
+ driver
+Message-ID: <20201209190047.GA1811046@xps15>
+References: <20201130155717.26008-1-ben.levinsky@xilinx.com>
+ <20201130155717.26008-6-ben.levinsky@xilinx.com>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: DB6PR0402MB2760.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d19feef8-b321-42c0-6940-08d89c531b43
-X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Dec 2020 15:00:02.5017
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 1ViW1cqOxuFDeEWAXsRn+OrTq4Py7JcxZ5mJ9b4mRb8sLupAX5SSaieuQG2zEMOIu/39TEGnPc+1J9j+dU27eQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB8PR04MB6857
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201130155717.26008-6-ben.levinsky@xilinx.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-> Subject: RE: [PATCH V3 1/7] remoteproc: elf: support platform specific
-> memory hook
->=20
-> Hi Bjorn,
->=20
-> > Subject: Re: [PATCH V3 1/7] remoteproc: elf: support platform specific
-> > memory hook
-> >
-> > On Fri 04 Dec 01:40 CST 2020, Peng Fan (OSS) wrote:
-> >
-> > > From: Peng Fan <peng.fan@nxp.com>
-> > >
-> > > To arm64, "dc      zva, dst" is used in memset.
-> > > Per ARM DDI 0487A.j, chapter C5.3.8 DC ZVA, Data Cache Zero by VA,
-> > >
-> > > "If the memory region being zeroed is any type of Device memory,
-> > > this instruction can give an alignment fault which is prioritized in
-> > > the same way as other alignment faults that are determined by the
-> > > memory type."
-> > >
-> > > On i.MX platforms, when elf is loaded to onchip TCM area, the region
-> > > is ioremapped, so "dc zva, dst" will trigger abort. And ioremap_wc()
-> > > on i.MX not able to write correct data to TCM area.
-> > >
-> > > So we need to use io helpers, and extend the elf loader to support
-> > > platform specific memory functions.
-> > >
-> > > Acked-by: Richard Zhu <hongxing.zhu@nxp.com>
-> > > Signed-off-by: Peng Fan <peng.fan@nxp.com>
-> > > Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-> > > ---
-> > >  drivers/remoteproc/remoteproc_elf_loader.c | 20
-> > ++++++++++++++++++--
-> > >  include/linux/remoteproc.h                 |  4 ++++
-> > >  2 files changed, 22 insertions(+), 2 deletions(-)
-> > >
-> > > diff --git a/drivers/remoteproc/remoteproc_elf_loader.c
-> > > b/drivers/remoteproc/remoteproc_elf_loader.c
-> > > index df68d87752e4..6cb71fe47261 100644
-> > > --- a/drivers/remoteproc/remoteproc_elf_loader.c
-> > > +++ b/drivers/remoteproc/remoteproc_elf_loader.c
-> > > @@ -129,6 +129,22 @@ u64 rproc_elf_get_boot_addr(struct rproc
-> > > *rproc, const struct firmware *fw)  }
-> > EXPORT_SYMBOL(rproc_elf_get_boot_addr);
-> > >
-> > > +static void rproc_elf_memcpy(struct rproc *rproc, void *dest, const
-> > > +void *src, size_t count) {
-> > > +	if (!rproc->ops->elf_memcpy)
-> > > +		memcpy(dest, src, count);
-> > > +
-> > > +	rproc->ops->elf_memcpy(rproc, dest, src, count);
-> >
-> > Looking at the current set of remoteproc drivers I get a feeling that
-> > we'll end up with a while bunch of functions that all just wraps
-> > memcpy_toio(). And the reason for this is that we are we're "abusing"
-> > the carveout to carry the __iomem pointer without keeping track of it.
-> >
-> > And this is not the only time we're supposed to use an io-accessor,
-> > another example is rproc_copy_segment() in rproc_coredump.c
-> >
-> > It also means that if a platform driver for some reason where to
-> > support both ioremap and normal carveouts the elf_memcpy op would be
-> quite quirky.
-> >
-> >
-> > So I would prefer if we track the knowledge about void *va being a
-> > __iomem or not in the struct rproc_mem_entry and make rproc_da_to_va()
-> > return this information as well.
-> >
-> > Then instead of extending the ops we can make this simply call memcpy
-> > or
-> > memcpy_toio() depending on this.
->=20
-> A draft proposal as below, are you ok with the approach?
-
-Mathieu, do you have any comments?
-
-Thanks,
-Peng.
-
->=20
-> diff --git a/drivers/remoteproc/remoteproc_core.c
-> b/drivers/remoteproc/remoteproc_core.c
-> index 46c2937ebea9..bbb6e0613c1b 100644
-> --- a/drivers/remoteproc/remoteproc_core.c
-> +++ b/drivers/remoteproc/remoteproc_core.c
-> @@ -189,13 +189,13 @@ EXPORT_SYMBOL(rproc_va_to_pa);
->   * here the output of the DMA API for the carveouts, which should be mor=
-e
->   * correct.
->   */
-> -void *rproc_da_to_va(struct rproc *rproc, u64 da, size_t len)
-> +void *rproc_da_to_va(struct rproc *rproc, u64 da, size_t len, bool
-> +*iomem)
->  {
->         struct rproc_mem_entry *carveout;
->         void *ptr =3D NULL;
->=20
->         if (rproc->ops->da_to_va) {
-> -               ptr =3D rproc->ops->da_to_va(rproc, da, len);
-> +               ptr =3D rproc->ops->da_to_va(rproc, da, len, iomem);
->                 if (ptr)
->                         goto out;
->         }
-> @@ -217,6 +217,9 @@ void *rproc_da_to_va(struct rproc *rproc, u64 da,
-> size_t len)
->=20
->                 ptr =3D carveout->va + offset;
->=20
-> +               if (iomem)
-> +                       iomem =3D carveout->iomem;
+On Mon, Nov 30, 2020 at 07:57:17AM -0800, Ben Levinsky wrote:
+> R5 is included in Xilinx Zynq UltraScale MPSoC so by adding this
+> remotproc driver, we can boot the R5 sub-system in two different
+> configurations -
+> 	* Split
+> 	* Lockstep
+> 
+> The Xilinx R5 Remoteproc Driver boots the R5's via calls to the Xilinx
+> Platform Management Unit that handles the R5 configuration, memory access
+> and R5 lifecycle management. The interface to this manager is done in this
+> driver via zynqmp_pm_* function calls.
+> 
+> Signed-off-by: Wendy Liang <wendy.liang@xilinx.com>
+> Signed-off-by: Michal Simek <michal.simek@xilinx.com>
+> Signed-off-by: Ed Mooring <ed.mooring@xilinx.com>
+> Signed-off-by: Jason Wu <j.wu@xilinx.com>
+> Signed-off-by: Ben Levinsky <ben.levinsky@xilinx.com>
+> ---
+>  drivers/remoteproc/Kconfig                |   8 +
+>  drivers/remoteproc/Makefile               |   1 +
+>  drivers/remoteproc/zynqmp_r5_remoteproc.c | 872 ++++++++++++++++++++++
+>  3 files changed, 881 insertions(+)
+>  create mode 100644 drivers/remoteproc/zynqmp_r5_remoteproc.c
+> 
+> diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
+> index c6659dfea7c7..c2fe54b1d94f 100644
+> --- a/drivers/remoteproc/Kconfig
+> +++ b/drivers/remoteproc/Kconfig
+> @@ -275,6 +275,14 @@ config TI_K3_DSP_REMOTEPROC
+>  	  It's safe to say N here if you're not interested in utilizing
+>  	  the DSP slave processors.
+>  
+> +config ZYNQMP_R5_REMOTEPROC
+> +	tristate "ZynqMP R5 remoteproc support"
+> +	depends on PM && ARCH_ZYNQMP
+> +	select RPMSG_VIRTIO
+> +	select ZYNQMP_IPI_MBOX
+> +	help
+> +	  Say y or m here to support ZynqMP R5 remote processors via the remote
+> +	  processor framework.
+>  endif # REMOTEPROC
+>  
+>  endmenu
+> diff --git a/drivers/remoteproc/Makefile b/drivers/remoteproc/Makefile
+> index 3dfa28e6c701..ef1abff654c2 100644
+> --- a/drivers/remoteproc/Makefile
+> +++ b/drivers/remoteproc/Makefile
+> @@ -33,3 +33,4 @@ obj-$(CONFIG_ST_REMOTEPROC)		+= st_remoteproc.o
+>  obj-$(CONFIG_ST_SLIM_REMOTEPROC)	+= st_slim_rproc.o
+>  obj-$(CONFIG_STM32_RPROC)		+= stm32_rproc.o
+>  obj-$(CONFIG_TI_K3_DSP_REMOTEPROC)	+= ti_k3_dsp_remoteproc.o
+> +obj-$(CONFIG_ZYNQMP_R5_REMOTEPROC)	+= zynqmp_r5_remoteproc.o
+> diff --git a/drivers/remoteproc/zynqmp_r5_remoteproc.c b/drivers/remoteproc/zynqmp_r5_remoteproc.c
+> new file mode 100644
+> index 000000000000..2593de618409
+> --- /dev/null
+> +++ b/drivers/remoteproc/zynqmp_r5_remoteproc.c
+> @@ -0,0 +1,872 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Zynq R5 Remote Processor driver
+> + *
+> + * Based on origin OMAP and Zynq Remote Processor driver
+> + *
+> + */
 > +
->                 break;
->         }
->=20
-> diff --git a/drivers/remoteproc/remoteproc_coredump.c
-> b/drivers/remoteproc/remoteproc_coredump.c
-> index 34530dc20cb4..5ff9389e6319 100644
-> --- a/drivers/remoteproc/remoteproc_coredump.c
-> +++ b/drivers/remoteproc/remoteproc_coredump.c
-> @@ -153,18 +153,22 @@ static void rproc_copy_segment(struct rproc *rproc,
-> void *dest,
->                                size_t offset, size_t size)  {
->         void *ptr;
-> +       bool iomem;
->=20
->         if (segment->dump) {
->                 segment->dump(rproc, segment, dest, offset, size);
->         } else {
-> -               ptr =3D rproc_da_to_va(rproc, segment->da + offset, size)=
-;
-> +               ptr =3D rproc_da_to_va(rproc, segment->da + offset, size,
-> + &iomem);
->                 if (!ptr) {
->                         dev_err(&rproc->dev,
->                                 "invalid copy request for
-> segment %pad with offset %zu and size %zu)\n",
->                                 &segment->da, offset, size);
->                         memset(dest, 0xff, size);
->                 } else {
-> -                       memcpy(dest, ptr, size);
-> +                       if (iomem)
-> +                               memcpy_fromio(dest, ptr, size);
-> +                       else
-> +                               memcpy(dest, ptr, size);
->                 }
->         }
->  }
-> diff --git a/drivers/remoteproc/remoteproc_elf_loader.c
-> b/drivers/remoteproc/remoteproc_elf_loader.c
-> index df68d87752e4..20538143249e 100644
-> --- a/drivers/remoteproc/remoteproc_elf_loader.c
-> +++ b/drivers/remoteproc/remoteproc_elf_loader.c
-> @@ -175,6 +175,7 @@ int rproc_elf_load_segments(struct rproc *rproc,
-> const struct firmware *fw)
->                 u64 offset =3D elf_phdr_get_p_offset(class, phdr);
->                 u32 type =3D elf_phdr_get_p_type(class, phdr);
->                 void *ptr;
-> +               bool iomem;
->=20
->                 if (type !=3D PT_LOAD)
->                         continue;
-> @@ -204,7 +205,7 @@ int rproc_elf_load_segments(struct rproc *rproc,
-> const struct firmware *fw)
->                 }
->=20
->                 /* grab the kernel address for this device address */
-> -               ptr =3D rproc_da_to_va(rproc, da, memsz);
-> +               ptr =3D rproc_da_to_va(rproc, da, memsz, &iomem);
->                 if (!ptr) {
->                         dev_err(dev, "bad phdr da 0x%llx mem
-> 0x%llx\n", da,
->                                 memsz);
-> @@ -213,8 +214,12 @@ int rproc_elf_load_segments(struct rproc *rproc,
-> const struct firmware *fw)
->                 }
->=20
->                 /* put the segment where the remote processor expects
-> it */
-> -               if (filesz)
-> -                       memcpy(ptr, elf_data + offset, filesz);
-> +               if (filesz) {
-> +                       if (iomem)
-> +                               memcpy_fromio(ptr, elf_data + offset,
-> filesz);
-> +                       else
-> +                               memcpy(ptr, elf_data + offset, filesz);
-> +               }
->=20
->                 /*
->                  * Zero out remaining memory for this segment.
-> @@ -223,8 +228,12 @@ int rproc_elf_load_segments(struct rproc *rproc,
-> const struct firmware *fw)
->                  * did this for us. albeit harmless, we may consider
-> removing
->                  * this.
->                  */
-> -               if (memsz > filesz)
-> -                       memset(ptr + filesz, 0, memsz - filesz);
-> +               if (memsz > filesz) {
-> +                       if (iomem)
-> +                               memset_toio(ptr + filesz, 0, memsz -
-> filesz);
-> +                       else
-> +                               memset(ptr + filesz, 0, memsz -
-> filesz);
-> +               }
->         }
->=20
->         return ret;
-> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h inde=
-x
-> e8ac041c64d9..01bb9fa12784 100644
-> --- a/include/linux/remoteproc.h
-> +++ b/include/linux/remoteproc.h
-> @@ -329,6 +329,7 @@ struct rproc;
->   */
->  struct rproc_mem_entry {
->         void *va;
-> +       bool iomem;
->         dma_addr_t dma;
->         size_t len;
->         u32 da;
-> diff --git a/include/linux/uaccess.h b/include/linux/uaccess.h index
-> d6473a72a336..dfa0bd7812a5 100644
-> --- a/include/linux/uaccess.h
-> +++ b/include/linux/uaccess.h
-> @@ -194,7 +194,7 @@ copy_from_user(void *to, const void __user *from,
-> unsigned long n)  }
->=20
->  static __always_inline unsigned long __must_check -copy_to_user(void
-> __user *to, const void *from, unsigned long n)
-> +copy_to_user(void __user *to, const void *_toiofrom, unsigned long n)
->  {
->         if (likely(check_copy_size(from, n, true)))
->                 n =3D _copy_to_user(to, from, n);
->=20
-> Thanks,
-> Peng.
->=20
-> >
-> > Regards,
-> > Bjorn
-> >
-> > > +}
-> > > +
-> > > +static void rproc_elf_memset(struct rproc *rproc, void *s, int c,
-> > > +size_t count) {
-> > > +	if (!rproc->ops->elf_memset)
-> > > +		memset(s, c, count);
-> > > +
-> > > +	rproc->ops->elf_memset(rproc, s, c, count); }
-> > > +
-> > >  /**
-> > >   * rproc_elf_load_segments() - load firmware segments to memory
-> > >   * @rproc: remote processor which will be booted using these fw
-> > > segments @@ -214,7 +230,7 @@ int rproc_elf_load_segments(struct
-> > > rproc *rproc, const struct firmware *fw)
-> > >
-> > >  		/* put the segment where the remote processor expects it */
-> > >  		if (filesz)
-> > > -			memcpy(ptr, elf_data + offset, filesz);
-> > > +			rproc_elf_memcpy(rproc, ptr, elf_data + offset, filesz);
-> > >
-> > >  		/*
-> > >  		 * Zero out remaining memory for this segment.
-> > > @@ -224,7 +240,7 @@ int rproc_elf_load_segments(struct rproc *rproc,
-> > const struct firmware *fw)
-> > >  		 * this.
-> > >  		 */
-> > >  		if (memsz > filesz)
-> > > -			memset(ptr + filesz, 0, memsz - filesz);
-> > > +			rproc_elf_memset(rproc, ptr + filesz, 0, memsz - filesz);
-> > >  	}
-> > >
-> > >  	return ret;
-> > > diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-> > > index e8ac041c64d9..06c52f88a3fd 100644
-> > > --- a/include/linux/remoteproc.h
-> > > +++ b/include/linux/remoteproc.h
-> > > @@ -373,6 +373,8 @@ enum rsc_handling_status {
-> > >   *			expects to find it
-> > >   * @sanity_check:	sanity check the fw image
-> > >   * @get_boot_addr:	get boot address to entry point specified in
-> > firmware
-> > > + * @elf_memcpy:		platform specific elf loader memcpy
-> > > + * @elf_memset:		platform specific elf loader memset
-> > >   * @panic:	optional callback to react to system panic, core will del=
-ay
-> > >   *		panic at least the returned number of milliseconds
-> > >   */
-> > > @@ -392,6 +394,8 @@ struct rproc_ops {
-> > >  	int (*load)(struct rproc *rproc, const struct firmware *fw);
-> > >  	int (*sanity_check)(struct rproc *rproc, const struct firmware *fw)=
-;
-> > >  	u64 (*get_boot_addr)(struct rproc *rproc, const struct firmware
-> > > *fw);
-> > > +	void (*elf_memcpy)(struct rproc *rproc, void *dest, const void
-> > > +*src,
-> > size_t count);
-> > > +	void (*elf_memset)(struct rproc *rproc, void *s, int c, size_t
-> > > +count);
-> > >  	unsigned long (*panic)(struct rproc *rproc);  };
-> > >
-> > > --
-> > > 2.28.0
-> > >
+> +#include <linux/firmware/xlnx-zynqmp.h>
+> +#include <linux/interrupt.h>
+> +#include <linux/kernel.h>
+> +#include <linux/list.h>
+> +#include <linux/mailbox_client.h>
+> +#include <linux/mailbox/zynqmp-ipi-message.h>
+> +#include <linux/module.h>
+> +#include <linux/of_address.h>
+> +#include <linux/of_platform.h>
+> +#include <linux/of_reserved_mem.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/remoteproc.h>
+> +#include <linux/skbuff.h>
+> +#include <linux/sysfs.h>
+> +
+> +#include "remoteproc_internal.h"
+> +
+> +#define MAX_RPROCS	2 /* Support up to 2 RPU */
+> +#define MAX_MEM_PNODES	4 /* Max power nodes for one RPU memory instance */
+> +
+> +#define BANK_LIST_PROP	"sram"
+> +#define DDR_LIST_PROP	"memory-region"
+> +
+> +/* IPI buffer MAX length */
+> +#define IPI_BUF_LEN_MAX	32U
+> +/* RX mailbox client buffer max length */
+> +#define RX_MBOX_CLIENT_BUF_MAX	(IPI_BUF_LEN_MAX + \
+> +				 sizeof(struct zynqmp_ipi_message))
+> +
+> +/*
+> + * Map each Xilinx on-chip SRAM  Bank address to their own respective
+> + * pm_node_id.
+> + */
+> +struct sram_addr_data {
+> +	phys_addr_t addr;
+> +	enum pm_node_id id;
+> +};
+> +
+> +#define NUM_SRAMS 4U
+> +static const struct sram_addr_data zynqmp_banks[NUM_SRAMS] = {
+> +	{0xffe00000UL, NODE_TCM_0_A},
+> +	{0xffe20000UL, NODE_TCM_0_B},
+> +	{0xffe90000UL, NODE_TCM_1_A},
+> +	{0xffeb0000UL, NODE_TCM_1_B},
+> +};
+> +
+> +/**
+> + * struct zynqmp_r5_rproc - ZynqMP R5 core structure
+> + *
+> + * @rx_mc_buf: rx mailbox client buffer to save the rx message
+> + * @tx_mc: tx mailbox client
+> + * @rx_mc: rx mailbox client
+> + * @mbox_work: mbox_work for the RPU remoteproc
+> + * @tx_mc_skbs: socket buffers for tx mailbox client
+> + * @dev: device of RPU instance
+> + * @rproc: rproc handle
+> + * @tx_chan: tx mailbox channel
+> + * @rx_chan: rx mailbox channel
+> + * @pnode_id: RPU CPU power domain id
+> + * @elem: linked list item
+> + */
+> +struct zynqmp_r5_rproc {
+> +	unsigned char rx_mc_buf[RX_MBOX_CLIENT_BUF_MAX];
+> +	struct mbox_client tx_mc;
+> +	struct mbox_client rx_mc;
+> +	struct work_struct mbox_work;
+> +	struct sk_buff_head tx_mc_skbs;
+> +	struct device *dev;
+> +	struct rproc *rproc;
+> +	struct mbox_chan *tx_chan;
+> +	struct mbox_chan *rx_chan;
+> +	u32 pnode_id;
+> +	struct list_head elem;
+> +};
+> +
+> +/*
+> + * r5_set_mode - set RPU operation mode
+> + * @z_rproc: Remote processor private data
+> + * @rpu_mode: mode specified by device tree to configure the RPU to
+> + *
+> + * set RPU operation mode
+> + *
+> + * Return: 0 for success, negative value for failure
+> + */
+> +static int r5_set_mode(struct zynqmp_r5_rproc *z_rproc,
+> +		       enum rpu_oper_mode rpu_mode)
+> +{
+> +	enum rpu_tcm_comb tcm_mode;
+> +	enum rpu_oper_mode cur_rpu_mode;
+> +	int ret;
+> +
+> +	ret = zynqmp_pm_get_rpu_mode(z_rproc->pnode_id, &cur_rpu_mode);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	if (rpu_mode != cur_rpu_mode) {
+> +		ret = zynqmp_pm_set_rpu_mode(z_rproc->pnode_id,
+> +					     rpu_mode);
+> +		if (ret < 0)
+> +			return ret;
+> +	}
+> +
+> +	tcm_mode = (rpu_mode == PM_RPU_MODE_LOCKSTEP) ?
+> +		    PM_RPU_TCM_COMB : PM_RPU_TCM_SPLIT;
+> +	return zynqmp_pm_set_tcm_config(z_rproc->pnode_id, tcm_mode);
+> +}
+> +
+> +/*
+> + * zynqmp_r5_rproc_mem_release
+> + * @rproc: single R5 core's corresponding rproc instance
+> + * @mem: mem entry to unmap
+> + *
+> + * Unmap TCM banks when powering down R5 core.
+> + *
+> + * return 0 on success, otherwise non-zero value on failure
+> + */
+> +static int tcm_mem_release(struct rproc *rproc, struct rproc_mem_entry *mem)
+> +{
+> +	u32 pnode_id = (u64)mem->priv;
+> +
+> +	iounmap(mem->va);
+> +	return zynqmp_pm_release_node(pnode_id);
+> +}
+> +
+> +/*
+> + * zynqmp_r5_rproc_start
+> + * @rproc: single R5 core's corresponding rproc instance
+> + *
+> + * Start R5 Core from designated boot address.
+> + *
+> + * return 0 on success, otherwise non-zero value on failure
+> + */
+> +static int zynqmp_r5_rproc_start(struct rproc *rproc)
+> +{
+> +	struct zynqmp_r5_rproc *z_rproc = rproc->priv;
+> +	enum rpu_boot_mem bootmem;
+> +
+> +	bootmem = (rproc->bootaddr & 0xF0000000) == 0xF0000000 ?
+> +		  PM_RPU_BOOTMEM_HIVEC : PM_RPU_BOOTMEM_LOVEC;
+> +
+> +	dev_dbg(rproc->dev.parent, "RPU boot from %s.",
+> +		bootmem == PM_RPU_BOOTMEM_HIVEC ? "OCM" : "TCM");
+> +
+> +	return zynqmp_pm_request_wake(z_rproc->pnode_id, 1,
+> +				     bootmem, ZYNQMP_PM_REQUEST_ACK_NO);
+> +}
+> +
+> +/*
+> + * zynqmp_r5_rproc_stop
+> + * @rproc: single R5 core's corresponding rproc instance
+> + *
+> + * Power down  R5 Core.
+> + *
+> + * return 0 on success, otherwise non-zero value on failure
+> + */
+> +static int zynqmp_r5_rproc_stop(struct rproc *rproc)
+> +{
+> +	struct zynqmp_r5_rproc *z_rproc = rproc->priv;
+> +
+> +	return zynqmp_pm_force_pwrdwn(z_rproc->pnode_id,
+> +				     ZYNQMP_PM_REQUEST_ACK_BLOCKING);
+> +}
+> +
+> +/*
+> + * zynqmp_r5_rproc_mem_alloc
+> + * @rproc: single R5 core's corresponding rproc instance
+> + * @mem: mem entry to map
+> + *
+> + * Callback to map va for memory-region's carveout.
+> + *
+> + * return 0 on success, otherwise non-zero value on failure
+> + */
+> +static int zynqmp_r5_rproc_mem_alloc(struct rproc *rproc,
+> +				     struct rproc_mem_entry *mem)
+> +{
+> +	void *va;
+> +
+> +	va = ioremap_wc(mem->dma, mem->len);
+> +	if (IS_ERR_OR_NULL(va))
+> +		return -ENOMEM;
+> +
+> +	mem->va = va;
+> +
+> +	return 0;
+> +}
+> +
+> +/*
+> + * zynqmp_r5_rproc_mem_release
+> + * @rproc: single R5 core's corresponding rproc instance
+> + * @mem: mem entry to unmap
+> + *
+> + * Unmap memory-region carveout
+> + *
+> + * return 0 on success, otherwise non-zero value on failure
+> + */
+> +static int zynqmp_r5_rproc_mem_release(struct rproc *rproc,
+> +				       struct rproc_mem_entry *mem)
+> +{
+> +	iounmap(mem->va);
+> +	return 0;
+> +}
+> +
+> +/*
+> + * parse_mem_regions
+> + * @rproc: single R5 core's corresponding rproc instance
+> + *
+> + * Construct rproc mem carveouts from carveout provided in
+> + * memory-region property
+> + *
+> + * return 0 on success, otherwise non-zero value on failure
+> + */
+> +static int parse_mem_regions(struct rproc *rproc)
+> +{
+> +	int num_mems, i;
+> +	struct zynqmp_r5_rproc *z_rproc = rproc->priv;
+> +	struct device *dev = &rproc->dev;
+> +	struct device_node *np = z_rproc->dev->of_node;
+> +	struct rproc_mem_entry *mem;
+> +
+> +	num_mems = of_count_phandle_with_args(np, DDR_LIST_PROP, NULL);
+> +	if (num_mems <= 0)
+> +		return 0;
+> +
+> +	for (i = 0; i < num_mems; i++) {
+> +		struct device_node *node;
+> +		struct reserved_mem *rmem;
+> +
+> +		node = of_parse_phandle(np, DDR_LIST_PROP, i);
+> +		if (!node)
+> +			return -EINVAL;
+> +
+> +		rmem = of_reserved_mem_lookup(node);
+> +		if (!rmem)
+> +			return -EINVAL;
+> +
+> +		if (strstr(node->name, "vdev0vring")) {
+> +			int vring_id;
+> +			char name[16];
+> +
+> +			/*
+> +			 * expecting form of "rpuXvdev0vringX as documented
+> +			 * in xilinx remoteproc device tree binding
+> +			 */
+> +			if (strlen(node->name) < 15) {
+> +				dev_err(dev, "%pOF is less than 14 chars",
+> +					node);
+> +				return -EINVAL;
+> +			}
+> +
+> +			/*
+> +			 * can be 1 of multiple vring IDs per IPC channel
+> +			 * e.g. 'vdev0vring0' and 'vdev0vring1'
+> +			 */
+> +			vring_id = node->name[14] - '0';
+> +			snprintf(name, sizeof(name), "vdev0vring%d", vring_id);
+> +			/* Register vring */
+> +			mem = rproc_mem_entry_init(dev, NULL,
+> +						   (dma_addr_t)rmem->base,
+> +						   rmem->size, rmem->base,
+> +						   zynqmp_r5_rproc_mem_alloc,
+> +						   zynqmp_r5_rproc_mem_release,
+> +						   name);
+> +		} else {
+> +			/* Register DMA region */
+> +			int (*alloc)(struct rproc *r,
+> +				     struct rproc_mem_entry *rme);
+> +			int (*release)(struct rproc *r,
+> +				       struct rproc_mem_entry *rme);
+> +			char name[20];
+> +
+> +			if (strstr(node->name, "vdev0buffer")) {
+> +				alloc = NULL;
+> +				release = NULL;
+> +				strcpy(name, "vdev0buffer");
+> +			} else {
+> +				alloc = zynqmp_r5_rproc_mem_alloc;
+> +				release = zynqmp_r5_rproc_mem_release;
+> +				strcpy(name, node->name);
+> +			}
+> +
+> +			mem = rproc_mem_entry_init(dev, NULL,
+> +						   (dma_addr_t)rmem->base,
+> +						   rmem->size, rmem->base,
+> +						   alloc, release, name);
+> +		}
+> +		if (!mem)
+> +			return -ENOMEM;
+> +
+> +		rproc_add_carveout(rproc, mem);
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +/*
+> + * zynqmp_r5_pm_request_tcm
+> + * @addr: base address of mem provided in R5 core's sram property.
+> + *
+> + * Given sram base address, determine its corresponding Xilinx
+> + * Platform Management ID and then request access to this node
+> + * so that it can be power up.
+> + *
+> + * return 0 on success, otherwise non-zero value on failure
+> + */
+> +static int zynqmp_r5_pm_request_sram(phys_addr_t addr)
+> +{
+> +	unsigned int i;
+> +
+
+unsigned int?
+
+> +	for (i = 0; i < NUM_SRAMS; i++) {
+> +		if (zynqmp_banks[i].addr == addr)
+> +			return zynqmp_pm_request_node(zynqmp_banks[i].id,
+> +						      ZYNQMP_PM_CAPABILITY_ACCESS,
+> +						      0,
+> +						      ZYNQMP_PM_REQUEST_ACK_BLOCKING);
+> +	}
+> +
+	for (i = 0; i < NUM_SRAMS; i++) {
+		if (zynqmp_banks[i].addr != addr)
+                        continue;
+
+		return zynqmp_pm_request_node(zynqmp_banks[i].id,
+					      ZYNQMP_PM_CAPABILITY_ACCESS, 0,
+					      ZYNQMP_PM_REQUEST_ACK_BLOCKING);
+	}
+
+> +	return -EINVAL;
+> +}
+> +
+> +/*
+> + * tcm_mem_alloc
+> + * @rproc: single R5 core's corresponding rproc instance
+> + * @mem: mem entry to initialize the va and da fields of
+> + *
+> + * Given TCM bank entry,
+
+Line break in the middle of a sentence.
+
+> + * this callback will set device address for R5 running on TCM
+> + * and also setup virtual address for TCM bank remoteproc carveout
+> + *
+> + * return 0 on success, otherwise non-zero value on failure
+> + */
+> +static int tcm_mem_alloc(struct rproc *rproc,
+> +			 struct rproc_mem_entry *mem)
+> +{
+> +	void *va;
+> +	struct device *dev = rproc->dev.parent;
+> +
+> +	va = ioremap_wc(mem->dma, mem->len);
+> +	if (IS_ERR_OR_NULL(va))
+> +		return -ENOMEM;
+> +
+> +	/* Update memory entry va */
+> +	mem->va = va;
+> +
+> +	va = devm_ioremap_wc(dev, mem->da, mem->len);
+
+What does that do?
+
+> +	if (!va)
+> +		return -ENOMEM;
+> +	/* As R5 is 32 bit, wipe out extra high bits */
+> +	mem->da &= 0x000fffff;
+
+And yet only 20 bits are kept...
+
+> +	/*
+> +	 * The R5s expect their TCM banks to be at address 0x0 and 0x2000,
+> +	 * while on the Linux side they are at 0xffexxxxx. Zero out the high
+> +	 * 12 bits of the address.
+> +	 */
+> +
+> +	/*
+> +	 * TCM Banks 1A and 1B (0xffe90000 and 0xffeb0000) still
+> +	 * need to be translated to 0x0 and 0x20000
+> +	 */
+> +	if (mem->da == 0x90000 || mem->da == 0xB0000)
+> +		mem->da -= 0x90000;
+> +
+> +	/* if translated TCM bank address is not valid report error */
+> +	if (mem->da != 0x0 && mem->da != 0x20000) {
+> +		dev_err(dev, "invalid TCM bank address: %x\n", mem->da);
+> +		return -EINVAL;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +/*
+> + * parse_tcm_banks()
+> + * @rproc: single R5 core's corresponding rproc instance
+> + *
+> + * Given R5 node in remoteproc instance
+> + * allocate remoteproc carveout for TCM memory
+> + * needed for firmware to be loaded
+> + *
+> + * return 0 on success, otherwise non-zero value on failure
+> + */
+> +static int parse_tcm_banks(struct rproc *rproc)
+> +{
+> +	int i, num_banks;
+> +	struct zynqmp_r5_rproc *z_rproc = rproc->priv;
+> +	struct device *dev = &rproc->dev;
+> +	struct device_node *r5_node = z_rproc->dev->of_node;
+> +
+> +	/* go through TCM banks for r5 node */
+> +	num_banks = of_count_phandle_with_args(r5_node, BANK_LIST_PROP, NULL);
+> +	if (num_banks <= 0) {
+> +		dev_err(dev, "need to specify TCM banks\n");
+> +		return -EINVAL;
+> +	}
+> +	for (i = 0; i < num_banks; i++) {
+> +		struct resource rsc;
+> +		resource_size_t size;
+> +		struct device_node *dt_node;
+> +		struct rproc_mem_entry *mem;
+> +		int ret;
+> +		u32 pnode_id; /* zynqmp_pm* fn's expect u32 */
+> +
+> +		dt_node = of_parse_phandle(r5_node, BANK_LIST_PROP, i);
+
+Please have a look at the documentation for of_parse_phandle(), especially the
+part about the need to use of_node_put().
+
+> +		if (!dt_node)
+> +			return -EINVAL;
+> +
+> +		if (of_device_is_available(dt_node)) {
+> +			ret = of_address_to_resource(dt_node, 0, &rsc);
+
+Is there a scenario where SRAMs would be declared but explicitly marked as
+unusable?
+
+> +			if (ret < 0)
+> +				return ret;
+> +			ret = zynqmp_r5_pm_request_sram(rsc.start);
+> +			if (ret < 0)
+> +				return ret;
+> +
+> +			/* add carveout */
+> +			size = resource_size(&rsc);
+> +			mem = rproc_mem_entry_init(dev, NULL, rsc.start,
+> +						   (int)size, rsc.start,
+
+(int)size?  I'm pretty sure that will make sparse unhappy.  Speaking of which, I
+advise to run the sparse checker on you set if you haven't already done so.
+
+More comments to follow tomorrow.
+
+> +						   tcm_mem_alloc,
+> +						   tcm_mem_release,
+> +						   rsc.name);
+> +			if (!mem)
+> +				return -ENOMEM;
+> +
+> +			mem->priv = (void *)(u64)pnode_id;
+> +			rproc_add_carveout(rproc, mem);
+> +		}
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +/*
+> + * zynqmp_r5_parse_fw()
+> + * @rproc: single R5 core's corresponding rproc instance
+> + * @fw: ptr to firmware to be loaded onto r5 core
+> + *
+> + * When loading firmware, ensure the necessary carveouts are in remoteproc
+> + *
+> + * return 0 on success, otherwise non-zero value on failure
+> + */
+> +static int zynqmp_r5_parse_fw(struct rproc *rproc, const struct firmware *fw)
+> +{
+> +	int ret;
+> +
+> +	ret = parse_tcm_banks(rproc);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = parse_mem_regions(rproc);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = rproc_elf_load_rsc_table(rproc, fw);
+> +	if (ret == -EINVAL) {
+> +		/*
+> +		 * resource table only required for IPC.
+> +		 * if not present, this is not necessarily an error;
+> +		 * for example, loading r5 hello world application
+> +		 * so simply inform user and keep going.
+> +		 */
+> +		dev_info(&rproc->dev, "no resource table found.\n");
+> +		ret = 0;
+> +	}
+> +	return ret;
+> +}
+> +
+> +/*
+> + * zynqmp_r5_rproc_kick() - kick a firmware if mbox is provided
+> + * @rproc: r5 core's corresponding rproc structure
+> + * @vqid: virtqueue ID
+> + */
+> +static void zynqmp_r5_rproc_kick(struct rproc *rproc, int vqid)
+> +{
+> +	struct sk_buff *skb;
+> +	unsigned int skb_len;
+> +	struct zynqmp_ipi_message *mb_msg;
+> +	int ret;
+> +
+> +	struct device *dev = rproc->dev.parent;
+> +	struct zynqmp_r5_rproc *z_rproc = rproc->priv;
+> +
+> +	if (of_property_read_bool(dev->of_node, "mboxes")) {
+> +		skb_len = (unsigned int)(sizeof(vqid) + sizeof(mb_msg));
+> +		skb = alloc_skb(skb_len, GFP_ATOMIC);
+> +		if (!skb)
+> +			return;
+> +
+> +		mb_msg = (struct zynqmp_ipi_message *)skb_put(skb, skb_len);
+> +		mb_msg->len = sizeof(vqid);
+> +		memcpy(mb_msg->data, &vqid, sizeof(vqid));
+> +
+> +		skb_queue_tail(&z_rproc->tx_mc_skbs, skb);
+> +		ret = mbox_send_message(z_rproc->tx_chan, mb_msg);
+> +		if (ret < 0) {
+> +			dev_warn(dev, "Failed to kick remote.\n");
+> +			skb_dequeue_tail(&z_rproc->tx_mc_skbs);
+> +			kfree_skb(skb);
+> +		}
+> +	} else {
+> +		(void)skb;
+> +		(void)skb_len;
+> +		(void)mb_msg;
+> +		(void)ret;
+> +		(void)vqid;
+> +	}
+> +}
+> +
+> +static struct rproc_ops zynqmp_r5_rproc_ops = {
+> +	.start		= zynqmp_r5_rproc_start,
+> +	.stop		= zynqmp_r5_rproc_stop,
+> +	.load		= rproc_elf_load_segments,
+> +	.parse_fw	= zynqmp_r5_parse_fw,
+> +	.find_loaded_rsc_table = rproc_elf_find_loaded_rsc_table,
+> +	.sanity_check	= rproc_elf_sanity_check,
+> +	.get_boot_addr	= rproc_elf_get_boot_addr,
+> +	.kick		= zynqmp_r5_rproc_kick,
+> +};
+> +
+> +/**
+> + * event_notified_idr_cb() - event notified idr callback
+> + * @id: idr id
+> + * @ptr: pointer to idr private data
+> + * @data: data passed to idr_for_each callback
+> + *
+> + * Pass notification to remoteproc virtio
+> + *
+> + * Return: 0. having return is to satisfy the idr_for_each() function
+> + *          pointer input argument requirement.
+> + **/
+> +static int event_notified_idr_cb(int id, void *ptr, void *data)
+> +{
+> +	struct rproc *rproc = data;
+> +
+> +	(void)rproc_vq_interrupt(rproc, id);
+> +	return 0;
+> +}
+> +
+> +/**
+> + * handle_event_notified() - remoteproc notification work function
+> + * @work: pointer to the work structure
+> + *
+> + * It checks each registered remoteproc notify IDs.
+> + */
+> +static void handle_event_notified(struct work_struct *work)
+> +{
+> +	struct rproc *rproc;
+> +	struct zynqmp_r5_rproc *z_rproc;
+> +
+> +	z_rproc = container_of(work, struct zynqmp_r5_rproc, mbox_work);
+> +
+> +	(void)mbox_send_message(z_rproc->rx_chan, NULL);
+> +	rproc = z_rproc->rproc;
+> +	/*
+> +	 * We only use IPI for interrupt. The firmware side may or may
+> +	 * not write the notifyid when it trigger IPI.
+> +	 * And thus, we scan through all the registered notifyids.
+> +	 */
+> +	idr_for_each(&rproc->notifyids, event_notified_idr_cb, rproc);
+> +}
+> +
+> +/**
+> + * zynqmp_r5_mb_rx_cb() - Receive channel mailbox callback
+> + * @cl: mailbox client
+> + * @msg: message pointer
+> + *
+> + * It will schedule the R5 notification work.
+> + */
+> +static void zynqmp_r5_mb_rx_cb(struct mbox_client *cl, void *msg)
+> +{
+> +	struct zynqmp_r5_rproc *z_rproc;
+> +
+> +	z_rproc = container_of(cl, struct zynqmp_r5_rproc, rx_mc);
+> +	if (msg) {
+> +		struct zynqmp_ipi_message *ipi_msg, *buf_msg;
+> +		size_t len;
+> +
+> +		ipi_msg = (struct zynqmp_ipi_message *)msg;
+> +		buf_msg = (struct zynqmp_ipi_message *)z_rproc->rx_mc_buf;
+> +		len = (ipi_msg->len >= IPI_BUF_LEN_MAX) ?
+> +		      IPI_BUF_LEN_MAX : ipi_msg->len;
+> +		buf_msg->len = len;
+> +		memcpy(buf_msg->data, ipi_msg->data, len);
+> +	}
+> +	schedule_work(&z_rproc->mbox_work);
+> +}
+> +
+> +/**
+> + * zynqmp_r5_mb_tx_done() - Request has been sent to the remote
+> + * @cl: mailbox client
+> + * @msg: pointer to the message which has been sent
+> + * @r: status of last TX - OK or error
+> + *
+> + * It will be called by the mailbox framework when the last TX has done.
+> + */
+> +static void zynqmp_r5_mb_tx_done(struct mbox_client *cl, void *msg, int r)
+> +{
+> +	struct zynqmp_r5_rproc *z_rproc;
+> +	struct sk_buff *skb;
+> +
+> +	if (!msg)
+> +		return;
+> +	z_rproc = container_of(cl, struct zynqmp_r5_rproc, tx_mc);
+> +	skb = skb_dequeue(&z_rproc->tx_mc_skbs);
+> +	kfree_skb(skb);
+> +}
+> +
+> +/**
+> + * zynqmp_r5_setup_mbox() - Setup mailboxes
+> + *			    this is used for each individual R5 core
+> + *
+> + * @z_rproc: pointer to the ZynqMP R5 processor platform data
+> + * @node: pointer of the device node
+> + *
+> + * Function to setup mailboxes to talk to RPU.
+> + *
+> + * Return: 0 for success, negative value for failure.
+> + */
+> +static int zynqmp_r5_setup_mbox(struct zynqmp_r5_rproc *z_rproc,
+> +				struct device_node *node)
+> +{
+> +	struct mbox_client *mclient;
+> +
+> +	/* Setup TX mailbox channel client */
+> +	mclient = &z_rproc->tx_mc;
+> +	mclient->rx_callback = NULL;
+> +	mclient->tx_block = false;
+> +	mclient->knows_txdone = false;
+> +	mclient->tx_done = zynqmp_r5_mb_tx_done;
+> +	mclient->dev = z_rproc->dev;
+> +
+> +	/* Setup TX mailbox channel client */
+> +	mclient = &z_rproc->rx_mc;
+> +	mclient->dev = z_rproc->dev;
+> +	mclient->rx_callback = zynqmp_r5_mb_rx_cb;
+> +	mclient->tx_block = false;
+> +	mclient->knows_txdone = false;
+> +
+> +	INIT_WORK(&z_rproc->mbox_work, handle_event_notified);
+> +
+> +	/* Request TX and RX channels */
+> +	z_rproc->tx_chan = mbox_request_channel_byname(&z_rproc->tx_mc, "tx");
+> +	if (IS_ERR(z_rproc->tx_chan)) {
+> +		dev_err(z_rproc->dev, "failed to request mbox tx channel.\n");
+> +		z_rproc->tx_chan = NULL;
+> +		return -EINVAL;
+> +	}
+> +
+> +	z_rproc->rx_chan = mbox_request_channel_byname(&z_rproc->rx_mc, "rx");
+> +	if (IS_ERR(z_rproc->rx_chan)) {
+> +		dev_err(z_rproc->dev, "failed to request mbox rx channel.\n");
+> +		z_rproc->rx_chan = NULL;
+> +		return -EINVAL;
+> +	}
+> +	skb_queue_head_init(&z_rproc->tx_mc_skbs);
+> +
+> +	return 0;
+> +}
+> +
+> +/**
+> + * zynqmp_r5_probe() - Probes ZynqMP R5 processor device node
+> + *		       this is called for each individual R5 core to
+> + *		       set up mailbox, Xilinx platform manager unique ID,
+> + *		       add to rproc core
+> + *
+> + * @pdev: domain platform device for current R5 core
+> + * @node: pointer of the device node for current R5 core
+> + * @rpu_mode: mode to configure RPU, split or lockstep
+> + * @z_rproc: Xilinx specific remoteproc structure used later to link
+> + *           in to cluster of cores
+> + *
+> + * Return: 0 for success, negative value for failure.
+> + */
+> +static int zynqmp_r5_probe(struct platform_device *pdev,
+> +			   struct device_node *node,
+> +			   enum rpu_oper_mode rpu_mode,
+> +			   struct zynqmp_r5_rproc **z_rproc)
+> +{
+> +	int ret;
+> +	struct device *dev = &pdev->dev;
+> +	struct rproc *rproc_ptr;
+> +
+> +	/* Allocate remoteproc instance */
+> +	rproc_ptr = devm_rproc_alloc(dev, dev_name(dev), &zynqmp_r5_rproc_ops,
+> +				     NULL, sizeof(struct zynqmp_r5_rproc));
+> +	if (!rproc_ptr) {
+> +		ret = -ENOMEM;
+> +		goto error;
+> +	}
+> +
+> +	rproc_ptr->auto_boot = false;
+> +	*z_rproc = rproc_ptr->priv;
+> +	(*z_rproc)->rproc = rproc_ptr;
+> +	(*z_rproc)->dev = dev;
+> +	/* Set up DMA mask */
+> +	ret = dma_set_coherent_mask(dev, DMA_BIT_MASK(32));
+> +	if (ret)
+> +		goto error;
+> +
+> +	/* Get R5 power domain node */
+> +	ret = of_property_read_u32(node, "power-domain", &(*z_rproc)->pnode_id);
+> +	if (ret)
+> +		goto error;
+> +
+> +	ret = r5_set_mode(*z_rproc, rpu_mode);
+> +	if (ret)
+> +		goto error;
+> +
+> +	if (of_property_read_bool(node, "mboxes")) {
+> +		ret = zynqmp_r5_setup_mbox(*z_rproc, node);
+> +		if (ret)
+> +			goto error;
+> +	}
+> +
+> +	/* Add R5 remoteproc */
+> +	ret = devm_rproc_add(dev, rproc_ptr);
+> +	if (ret)
+> +		goto error;
+> +
+> +	return 0;
+> +error:
+> +	*z_rproc = NULL;
+> +	return ret;
+> +}
+> +
+> +/*
+> + * zynqmp_r5_remoteproc_probe()
+> + *
+> + * @pdev: domain platform device for R5 cluster
+> + *
+> + * called when driver is probed, for each R5 core specified in DT,
+> + * setup as needed to do remoteproc-related operations
+> + *
+> + * Return: 0 for success, negative value for failure.
+> + */
+> +static int zynqmp_r5_remoteproc_probe(struct platform_device *pdev)
+> +{
+> +	int ret, core_count;
+> +	struct device *dev = &pdev->dev;
+> +	struct device_node *nc;
+> +	enum rpu_oper_mode rpu_mode = PM_RPU_MODE_LOCKSTEP;
+> +	struct list_head *cluster; /* list to track each core's rproc */
+> +	struct zynqmp_r5_rproc *z_rproc;
+> +	struct platform_device *child_pdev;
+> +	struct list_head *pos;
+> +
+> +	ret = of_property_read_u32(dev->of_node, "xlnx,cluster-mode", &rpu_mode);
+> +	if (ret < 0 || (rpu_mode != PM_RPU_MODE_LOCKSTEP &&
+> +			rpu_mode != PM_RPU_MODE_SPLIT)) {
+> +		dev_err(dev, "invalid format cluster mode: ret %d mode %x\n",
+> +			ret, rpu_mode);
+> +		return ret;
+> +	}
+> +
+> +	dev_dbg(dev, "RPU configuration: %s\n",
+> +		rpu_mode == PM_RPU_MODE_LOCKSTEP ? "lockstep" : "split");
+> +
+> +	/*
+> +	 * if 2 RPUs provided but one is lockstep, then we have an
+> +	 * invalid configuration.
+> +	 */
+> +
+> +	core_count = of_get_available_child_count(dev->of_node);
+> +	if ((rpu_mode == PM_RPU_MODE_LOCKSTEP && core_count != 1) ||
+> +	    core_count > MAX_RPROCS)
+> +		return -EINVAL;
+> +
+> +	cluster = devm_kzalloc(dev, sizeof(*cluster), GFP_KERNEL);
+> +	if (!cluster)
+> +		return -ENOMEM;
+> +	INIT_LIST_HEAD(cluster);
+> +
+> +	ret = devm_of_platform_populate(dev);
+> +	if (ret) {
+> +		dev_err(dev, "devm_of_platform_populate failed, ret = %d\n",
+> +			ret);
+> +		return ret;
+> +	}
+> +
+> +	/* probe each individual r5 core's remoteproc-related info */
+> +	for_each_available_child_of_node(dev->of_node, nc) {
+> +		child_pdev = of_find_device_by_node(nc);
+> +		if (!child_pdev) {
+> +			dev_err(dev, "could not get R5 core platform device\n");
+> +			ret = -ENODEV;
+> +			goto out;
+> +		}
+> +
+> +		ret = zynqmp_r5_probe(child_pdev, nc, rpu_mode, &z_rproc);
+> +		dev_dbg(dev, "%s to probe rpu %pOF\n",
+> +			ret ? "Failed" : "Able",
+> +			nc);
+> +		if (!z_rproc)
+> +			ret = -EINVAL;
+> +		if (ret)
+> +			goto out;
+> +		list_add_tail(&z_rproc->elem, cluster);
+> +	}
+> +	/* wire in so each core can be cleaned up at driver remove */
+> +	platform_set_drvdata(pdev, cluster);
+> +	return 0;
+> +out:
+> +	/*
+> +	 * undo core0 upon any failures on core1 in split-mode
+> +	 *
+> +	 * in zynqmp_r5_probe z_rproc is set to null
+> +	 * and ret to non-zero value if error
+> +	 */
+> +	if (ret && !z_rproc && rpu_mode == PM_RPU_MODE_SPLIT &&
+> +	    !list_empty(cluster)) {
+> +		list_for_each(pos, cluster) {
+> +			z_rproc = list_entry(pos, struct zynqmp_r5_rproc, elem);
+> +			if (of_property_read_bool(z_rproc->dev->of_node, "mboxes")) {
+> +				mbox_free_channel(z_rproc->tx_chan);
+> +				mbox_free_channel(z_rproc->rx_chan);
+> +			}
+> +		}
+> +	}
+> +	return ret;
+> +}
+> +
+> +/*
+> + * zynqmp_r5_remoteproc_remove()
+> + *
+> + * @pdev: domain platform device for R5 cluster
+> + *
+> + * When the driver is unloaded, clean up the mailboxes for each
+> + * remoteproc that was initially probed.
+> + */
+> +static int zynqmp_r5_remoteproc_remove(struct platform_device *pdev)
+> +{
+> +	struct list_head *pos, *temp, *cluster = (struct list_head *)
+> +						 platform_get_drvdata(pdev);
+> +	struct zynqmp_r5_rproc *z_rproc = NULL;
+> +
+> +	list_for_each_safe(pos, temp, cluster) {
+> +		z_rproc = list_entry(pos, struct zynqmp_r5_rproc, elem);
+> +		if (of_property_read_bool(z_rproc->dev->of_node, "mboxes")) {
+> +			mbox_free_channel(z_rproc->tx_chan);
+> +			mbox_free_channel(z_rproc->rx_chan);
+> +		}
+> +		list_del(pos);
+> +	}
+> +	return 0;
+> +}
+> +
+> +/* Match table for OF platform binding */
+> +static const struct of_device_id zynqmp_r5_remoteproc_match[] = {
+> +	{ .compatible = "xlnx,zynqmp-r5-remoteproc", },
+> +	{ /* end of list */ },
+> +};
+> +MODULE_DEVICE_TABLE(of, zynqmp_r5_remoteproc_match);
+> +
+> +static struct platform_driver zynqmp_r5_remoteproc_driver = {
+> +	.probe = zynqmp_r5_remoteproc_probe,
+> +	.remove = zynqmp_r5_remoteproc_remove,
+> +	.driver = {
+> +		.name = "zynqmp_r5_remoteproc",
+> +		.of_match_table = zynqmp_r5_remoteproc_match,
+> +	},
+> +};
+> +module_platform_driver(zynqmp_r5_remoteproc_driver);
+> +
+> +MODULE_AUTHOR("Ben Levinsky <ben.levinsky@xilinx.com>");
+> +MODULE_LICENSE("GPL v2");
+> -- 
+> 2.17.1
+> 
