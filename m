@@ -7,57 +7,57 @@ X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A421C4167B
-	for <linux-remoteproc@archiver.kernel.org>; Tue,  8 Dec 2020 20:28:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D74EBC4167B
+	for <linux-remoteproc@archiver.kernel.org>; Wed,  9 Dec 2020 00:54:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C697F23AC8
-	for <linux-remoteproc@archiver.kernel.org>; Tue,  8 Dec 2020 20:28:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A9A1E23B6B
+	for <linux-remoteproc@archiver.kernel.org>; Wed,  9 Dec 2020 00:54:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729317AbgLHU1l (ORCPT
+        id S1727844AbgLIAxy (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 8 Dec 2020 15:27:41 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38616 "EHLO
+        Tue, 8 Dec 2020 19:53:54 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52298 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729553AbgLHUZo (ORCPT
+        with ESMTP id S1725940AbgLIAxy (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 8 Dec 2020 15:25:44 -0500
-Received: from mail-pg1-x544.google.com (mail-pg1-x544.google.com [IPv6:2607:f8b0:4864:20::544])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D2C3AC06179C
-        for <linux-remoteproc@vger.kernel.org>; Tue,  8 Dec 2020 12:25:03 -0800 (PST)
-Received: by mail-pg1-x544.google.com with SMTP id q3so13242070pgr.3
-        for <linux-remoteproc@vger.kernel.org>; Tue, 08 Dec 2020 12:25:03 -0800 (PST)
+        Tue, 8 Dec 2020 19:53:54 -0500
+Received: from mail-pg1-x543.google.com (mail-pg1-x543.google.com [IPv6:2607:f8b0:4864:20::543])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 42855C0613CF
+        for <linux-remoteproc@vger.kernel.org>; Tue,  8 Dec 2020 16:53:14 -0800 (PST)
+Received: by mail-pg1-x543.google.com with SMTP id w16so55546pga.9
+        for <linux-remoteproc@vger.kernel.org>; Tue, 08 Dec 2020 16:53:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=5dRT8uVlJwjIaHGkFNwsvEp2IYayT9YK4fkX5+XH1So=;
-        b=VMOukCZmENMM8B9bRDfq9MiBErortJqoBFgQ3+s/mRR1bKSYJJT0eTpMc1AJYZ9cKE
-         Pil9jDg2oU3SmxTy4KeE7OC7LEWwsS5Qv6cRQBVxBggYcT7A4LMgBX4QcRz/6vs1/WRf
-         sJjlUk/iuVbk6s70oLrKPewQrYBcdLQJSObuMyEKgsS0GkyiBZTN28qUD98lnPq1avGV
-         kKdAHDTRGnmE3EpvFT6SxCE4tiPVpUoMNATdI+PfcfdBuxItsvpi+ylJpHXOSTQrxQ6G
-         aNHY2QYaHmG0wt/4rRYginYT2Hh5zy6mjtAsGWl1QMkvraN4g64dQNuVDjlntzbRSQxE
-         H93A==
+        bh=0tqcFPccNMLLaQVclVsBzh5ComBfmMvUjCh7GoU46XE=;
+        b=MQGPxtMq6+Uvnppng+806OGiuXQXDo5YtUMcUE4HlsGiDT3a2ucJZDTll8h2c94eM0
+         HBggA55nqJ3cdyery7+utx5o6xMzDAzTdbW2e8L61eHCSYBc0T/lOGthZ4b7yf8jFPdZ
+         etq6a9RHK8ZXSbhC30IFpFt0pjrYdrSbaNccbS9Zd2O0+xWipMG27gkzYKhjOe71F4jn
+         VWlunhUwRLIDllZRptNEaK453jY/7eZ3MHOcVCA6xepHkl++HqqY98WGZS4JwvWHNMDJ
+         H/q14fdyAyW76jJJtpcBr4Adlwyt9x96X61A8iel07OQ8qSd1FJz3aNmkJNkxcHpA9Vr
+         qMYQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=5dRT8uVlJwjIaHGkFNwsvEp2IYayT9YK4fkX5+XH1So=;
-        b=rKOEM2t65Bf0dG0yJbDdDVE86VBtHOgHG2fV0ZfXJn+GB1yaE7iEvpUAIY9C6A+0jf
-         ewNGJs8/P20L7B06lS2CyBqPZ3c14yYK8omct9EwoborheDBkchIUnbiZ74b3BoZDasI
-         WknN/ErK1xeARJZ6bhl568fajbkGyOr/wNv/N5MyMlW821/u90jBItZ/quEn7O9qemW7
-         HqCA+pHVszyAvF4+kF6LDjHEuQkhonBGAOcOcHZ5OjLpOmrXH0DaqxDjmJnahasO6Agp
-         ud5SZpy+3+O99OD1KR7fsgS4fJ9+ILgshosagJGtSsVx9qWKkG8Znj4EP9Kwfv+GSPXq
-         /xbw==
-X-Gm-Message-State: AOAM533dS3s4g2vUJuVFyKKWGO6bvS8V+lVJVKTsZKUTz8b6c48rO3iY
-        lJq96LJZZAIRoFNRsDDEut+2+A==
-X-Google-Smtp-Source: ABdhPJz2n2OIUCzO99uSjxuKeCmXgf3cmmJrqW2FVAj5z2b1z3WzLhUwBv5PxeBy019F9m0VnHvaDA==
-X-Received: by 2002:a63:c60a:: with SMTP id w10mr24027846pgg.211.1607459103338;
-        Tue, 08 Dec 2020 12:25:03 -0800 (PST)
+        bh=0tqcFPccNMLLaQVclVsBzh5ComBfmMvUjCh7GoU46XE=;
+        b=f+ulSUp0yRsgGdT/7GhkJNbqj3iOlpdHyHMRJQBB556/uC6K6uITnYtNeGw9w8RtNo
+         pNA+6phanliQXuPln5Isk4+ATwSQCKzBJl13Azf5wBCIW19wzT2H8b1Os5eUwS/lpRBM
+         Jgh4kbwbChyeCt1Dg2RkMfEqVaOILc/HNKA0a2S/AAzlkqh3zVh7kDd2MCWahotTd9H8
+         YKHwA5PXdHrN/Ercyp41L3563K7YZY2AUjPPaKvaM7SAu2gxQZquo7Oa7uL2VrL12z1T
+         2kwonyi+BPFe9ZGbryUMkTrWNqgY2IV5Xu6Furm6IxBsF5y2wiOu71cd85nnhcEkSpSd
+         KKxw==
+X-Gm-Message-State: AOAM532LhHH01U5F0lECPHRv57aRLzTA7D96R/4eilxco1m5xYDMLisa
+        UKE/tnCLXZAwUmzwiA1doXSeE+SX5JjekET9
+X-Google-Smtp-Source: ABdhPJwcAoO7brvPWVKwewkAgFJCxhDF7yornHFLfdjKRuSsgNp/i4WF+4b8F3PtImYIG6dOTXpQfA==
+X-Received: by 2002:aa7:8105:0:b029:18e:c8d9:2c24 with SMTP id b5-20020aa781050000b029018ec8d92c24mr44332pfi.49.1607475193594;
+        Tue, 08 Dec 2020 16:53:13 -0800 (PST)
 Received: from xps15 (S0106889e681aac74.cg.shawcable.net. [68.147.0.187])
-        by smtp.gmail.com with ESMTPSA id y15sm4296190pju.13.2020.12.08.12.25.02
+        by smtp.gmail.com with ESMTPSA id nm6sm83279pjb.25.2020.12.08.16.53.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Dec 2020 12:25:02 -0800 (PST)
-Date:   Tue, 8 Dec 2020 13:25:00 -0700
+        Tue, 08 Dec 2020 16:53:12 -0800 (PST)
+Date:   Tue, 8 Dec 2020 17:53:11 -0700
 From:   Mathieu Poirier <mathieu.poirier@linaro.org>
 To:     Arnaud POULIQUEN <arnaud.pouliquen@st.com>
 Cc:     "ohad@wizery.com" <ohad@wizery.com>,
@@ -67,7 +67,7 @@ Cc:     "ohad@wizery.com" <ohad@wizery.com>,
         "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 Subject: Re: [PATCH v3 09/15] remoteproc: Introduce function rproc_detach()
-Message-ID: <20201208202500.GA1601690@xps15>
+Message-ID: <20201209005311.GB1601690@xps15>
 References: <20201126210642.897302-1-mathieu.poirier@linaro.org>
  <20201126210642.897302-10-mathieu.poirier@linaro.org>
  <0e705760-b69a-d872-9770-c03dde85ab1c@st.com>
@@ -167,23 +167,23 @@ On Tue, Dec 08, 2020 at 07:35:18PM +0100, Arnaud POULIQUEN wrote:
 > Linux, generating a crash in rproc_free_vring.
 > I attached a fix at the end of the mail.
 > 
+
+I have reproduced the condition on my side and confirm that your solution is
+correct.  See below for a minor comment. 
+
 > 2) After the detach, the rproc state is "detached"
 > but it is no longer possible to re-attach to it correctly.
 > Neither if the firmware is standalone, nor if it has been booted
 > by the Linux.
-
-Thanks for the report - I thought both problems had been fixed...
-
 > 
+
+Did you update your FW image?  If so, I need to run the same one.
+
 > I did not investigate, but the issue is probably linked to the resource
 > table address which is set to NULL.
 > 
 > So we either have to fix the problem in order to attach or forbid the transition.
 > 
-
-Perfect timing on your side as I was contemplating sending another revision.
-Let me look at things and I will get back to you.
-
 > 
 > Regards,
 > Arnaud
@@ -251,6 +251,16 @@ Let me look at things and I will get back to you.
 > +	 */
 > +	if (rproc->cached_table)
 > +		rproc->table_ptr = rproc->cached_table;
+
+I don't think there is an explicit need to check ->cached_table.  If the remote
+processor has been started by the remoteproc core it is valid anyway.  And below
+kfree() is called invariably. 
+
+So that problem is fixed.  Let me know about your FW image and we'll pick it up
+from there.
+
+Mathieu
+
 > +
 >  	ret = __rproc_detach(rproc);
 >  	if (ret) {
