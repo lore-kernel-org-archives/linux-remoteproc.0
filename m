@@ -2,340 +2,111 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-10.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 476B1C4361B
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 10 Dec 2020 18:19:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 145E5C433FE
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 10 Dec 2020 19:15:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0483823BE5
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 10 Dec 2020 18:19:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BBD452388B
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 10 Dec 2020 19:15:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392950AbgLJSSF (ORCPT
+        id S2393327AbgLJTOc (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 10 Dec 2020 13:18:05 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39926 "EHLO
+        Thu, 10 Dec 2020 14:14:32 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48706 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2392930AbgLJSR7 (ORCPT
+        with ESMTP id S2392440AbgLJTOY (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 10 Dec 2020 13:17:59 -0500
-Received: from mail-oi1-x243.google.com (mail-oi1-x243.google.com [IPv6:2607:f8b0:4864:20::243])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8B7ACC0613D6
-        for <linux-remoteproc@vger.kernel.org>; Thu, 10 Dec 2020 10:17:19 -0800 (PST)
-Received: by mail-oi1-x243.google.com with SMTP id q25so6736337oij.10
-        for <linux-remoteproc@vger.kernel.org>; Thu, 10 Dec 2020 10:17:19 -0800 (PST)
+        Thu, 10 Dec 2020 14:14:24 -0500
+Received: from mail-ot1-x32a.google.com (mail-ot1-x32a.google.com [IPv6:2607:f8b0:4864:20::32a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F900C0613D6
+        for <linux-remoteproc@vger.kernel.org>; Thu, 10 Dec 2020 11:13:44 -0800 (PST)
+Received: by mail-ot1-x32a.google.com with SMTP id j12so5948079ota.7
+        for <linux-remoteproc@vger.kernel.org>; Thu, 10 Dec 2020 11:13:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=uw5yIh61JKo5/En0PAb29LwQEGzQi6lmhmDKRSFr+G4=;
-        b=CkjGDT2hZQGIq0Q38/mkTxav9g9BsLKr2SYSgKdozoMRLVy+FMr/RGgV8HdVkDrlPI
-         9Q1vE13lNnDfykLYcFlnso6D9sudUXdtvkvFTDfNRO6aQ628tQnvprUoWIRdtaQKJpOM
-         8h8AQ8yZYfZO/1olEfRwxlk+TSO8j1mRZ+ZUhaXbCvJKcAsgHJ66UOLNOye1KM2ulSbd
-         IOJIfr+vM7+T6FlXBqt1AQ+X0dkv6zxsArOahoai5tzjsYuUmDxDHv/bSpPLA3nVLMob
-         ZOdDPaxH+BF0ZmkrEToSfrpzTxy/aEekbiSET39hLIw2B6oI2GovNnkNK5tcIiTQ9m91
-         f4Ew==
+        bh=rV+7QbIpoEHyV1QEHhNp3YtVSX1/V3k8/A1NIhk+ID4=;
+        b=SebKKM2A6F1mWz9TyAm2rHniatujs6WnYYjDJT1UEfD57Pv4fvPFZd4VfAbXFLbjj7
+         BTAXrBWyVydj+7toBtnKqAAXg/gL78KVEb4UgwUvpGPFL+WjJ3Et3+Djo7xXIVwGGzoJ
+         Q3XQy1sAtSn9NpGQH1v8J23IxreP9D98pikJ48dAVf4Jin/xOL6cJiSHdHrTsChGMzm8
+         pYtMoz3kY1ktY5TFKiIB4/uckenADHq+3/zgm6+Q5S8U5cV/Ece/iEzXkXLMGGNBiCgI
+         xQv9hDzOQCNMd+lAbmAXqa1u7P9ZCX2/2ev57nsK+Yh4bBWoZvyeuyKhcplBEahH7WMt
+         1/aA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=uw5yIh61JKo5/En0PAb29LwQEGzQi6lmhmDKRSFr+G4=;
-        b=JwgtFwtvlZDoS2imKmXcZhkuS+++AycxBRsvtgB6Y0q6mJxRwAp9Jj4lYDN0XsEwbC
-         V7RQnv4YJKJNp/cBlwekyuj4SBDS+8Me2pT9n6Cfc8hAC8CE8uYw09IUUHf0T7zrIcA7
-         VLRyhX0J07Afsc46LO51MfArh2RMX6fP4RGpnPGgvQXMIt/dWZWaQh7Bd3hOFmf0ippG
-         pHrI4rHVNsgmt5GHCyCtPZ3kaqr9sYDftFoj3iyW/1r2B239SolimezG4r7dhh5x6Src
-         SiBBXxubhldfj+7qTlfawmiGUBKyUOXVXZmCe9qenh2i7F1loMpQe5VYzHnlcL8VIRZc
-         hbLg==
-X-Gm-Message-State: AOAM530B/AE7ROd5pr9BvYguutVpcrRMr3HQjSaZHYUwjMV9zGGuc9EN
-        uB7jbFyG8VM3sDqNPv62iEjsGQ==
-X-Google-Smtp-Source: ABdhPJzGp3kXk985pD2FxipwKLcWv24P0Pd7Y2VkOhf3ynr8Mdq36ad/FJxmqgsa2ySHU7kpdAHFWw==
-X-Received: by 2002:aca:3757:: with SMTP id e84mr2795207oia.5.1607624238805;
-        Thu, 10 Dec 2020 10:17:18 -0800 (PST)
+        bh=rV+7QbIpoEHyV1QEHhNp3YtVSX1/V3k8/A1NIhk+ID4=;
+        b=nTVzlrlZxAsXM6Xn+qTVY7efCgZH6UEmZtrZU1BY6Zru3yIvApgSgGpJsD8LuPaQWy
+         +nbgjsIArf2VpJva+8Iurr2jbfx04vXDbGKt3vldw3CXHk5T5ujggcf4zI7iCK8nIXNQ
+         s9RNENe5uj610HtH7uuHmhcIILz2q9UbqSw3+ynWqD42aELbTCYB4q37XFgrwRjtlzn6
+         28AvS1okU2kbaT19NJ6R7jq8Masx87grB5ugOdP1rauLGMmAYlcBXErL4kAh8pkn+75B
+         HJg1QfliFB5Dr8xOlP5yWj4PyYc2cbZUPVSJeKsnsvtNAhnbkL9MlZl3E72//YsOd8VL
+         3+pQ==
+X-Gm-Message-State: AOAM533Q/B0EEzSbZGocqeFBJ5SpbWNo3VEqlT+SJsjcqH6hQd+yWmn/
+        mEgw7pDmeNthr/Ab6cg8WC8IDxZ8TTkgzw==
+X-Google-Smtp-Source: ABdhPJyNR5NlijxCxWh1GOoMaQStn0ETWQLD0me+RpD+TTHMBngQj/gW1GRC2Gjq6CqVLzH4bZEBfw==
+X-Received: by 2002:a9d:5b4:: with SMTP id 49mr6984843otd.136.1607627623808;
+        Thu, 10 Dec 2020 11:13:43 -0800 (PST)
 Received: from builder.lan (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
-        by smtp.gmail.com with ESMTPSA id y8sm937798oix.43.2020.12.10.10.17.17
+        by smtp.gmail.com with ESMTPSA id v13sm1197641oic.17.2020.12.10.11.13.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Dec 2020 10:17:17 -0800 (PST)
-Date:   Thu, 10 Dec 2020 12:17:15 -0600
+        Thu, 10 Dec 2020 11:13:42 -0800 (PST)
+Date:   Thu, 10 Dec 2020 13:13:40 -0600
 From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc:     Rishabh Bhatnagar <rishabhb@codeaurora.org>,
-        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        tsoni@codeaurora.org, psodagud@codeaurora.org,
-        sidgup@codeaurora.org
-Subject: Re: [PATCH v2 3/3] remoteproc: Add ftrace events to trace lifecycle
- of remoteprocs
-Message-ID: <X9JmK6/eUHfMj+dR@builder.lan>
-References: <1605563084-30385-1-git-send-email-rishabhb@codeaurora.org>
- <1605563084-30385-4-git-send-email-rishabhb@codeaurora.org>
- <20201118222614.GA75192@xps15>
+To:     Tzung-Bi Shih <tzungbi@google.com>
+Cc:     Ohad Ben-Cohen <ohad@wizery.com>,
+        "open list:REMOTE PROCESSOR (REMOTEPROC) SUBSYSTEM" 
+        <linux-remoteproc@vger.kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        "moderated list:ARM/Mediatek SoC support" 
+        <linux-mediatek@lists.infradead.org>
+Subject: Re: [PATCH] remoteproc/mediatek: change MT8192 CFG register base
+Message-ID: <X9JzZKtgGYELamYe@builder.lan>
+References: <20201210054109.587795-1-tzungbi@google.com>
+ <X9JUmRarnxPaXtrZ@builder.lan>
+ <CA+Px+wUqWh+_B6rQ1kyZRALF9r-HE8ZWpgt0c9B6doxRXLZ+9g@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20201118222614.GA75192@xps15>
+In-Reply-To: <CA+Px+wUqWh+_B6rQ1kyZRALF9r-HE8ZWpgt0c9B6doxRXLZ+9g@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Wed 18 Nov 16:26 CST 2020, Mathieu Poirier wrote:
+On Thu 10 Dec 11:09 CST 2020, Tzung-Bi Shih wrote:
 
-> On Mon, Nov 16, 2020 at 01:44:44PM -0800, Rishabh Bhatnagar wrote:
-> > Add trace events to trace bootup/shutdown/recovery of remote
-> > processors. These events are useful in analyzing the time
-> > spent in each step in the life cycle and can be used for
-> > performace analysis. Also these serve as standard checkpoints
-> > in debugging.
-> > 
-> > Signed-off-by: Rishabh Bhatnagar <rishabhb@codeaurora.org>
-> > ---
-> >  drivers/remoteproc/remoteproc_core.c | 19 +++++++-
-> >  include/trace/events/remoteproc.h    | 91 ++++++++++++++++++++++++++++++++++++
-> >  2 files changed, 109 insertions(+), 1 deletion(-)
-> >  create mode 100644 include/trace/events/remoteproc.h
-> > 
-> > diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-> > index dab2c0f..39da409 100644
-> > --- a/drivers/remoteproc/remoteproc_core.c
-> > +++ b/drivers/remoteproc/remoteproc_core.c
-> > @@ -42,6 +42,9 @@
-> >  
-> >  #include "remoteproc_internal.h"
-> >  
-> > +#define CREATE_TRACE_POINTS
-> > +#include <trace/events/remoteproc.h>
-> > +
-> >  #define HIGH_BITS_MASK 0xFFFFFFFF00000000ULL
-> >  
-> >  static DEFINE_MUTEX(rproc_list_mutex);
-> > @@ -1164,6 +1167,7 @@ static int rproc_prepare_subdevices(struct rproc *rproc)
-> >  	struct rproc_subdev *subdev;
-> >  	int ret;
-> >  
-> > +	trace_rproc_subdevices("Prepare subdevices", rproc->name);
+> On Fri, Dec 11, 2020 at 1:02 AM Bjorn Andersson
+> <bjorn.andersson@linaro.org> wrote:
+> >
+> > On Wed 09 Dec 23:41 CST 2020, Tzung-Bi Shih wrote:
+> >
+> > > The correct MT8192 CFG register base is 0x20000 off.  Changes the
+> > > registers accordingly.
+> > >
+> > > Fixes: fd0b6c1ff85a ("remoteproc/mediatek: Add support for mt8192 SCP")
+> > > Signed-off-by: Tzung-Bi Shih <tzungbi@google.com>
+> >
+> > I presume there's an associated DT change with this?
+> >
+> > I'm okay with taking this, but would like to have Matthias ack on the
+> > fact that we're breaking backwards compatibility with older DTS.
+> >
+> > (Or I could ack this and Matthias can take it together with the DT
+> > change, to reduce the breakage gap in the git history?)
 > 
-> I wouldn't add this to the core - after a while they become part of the ABI and
-> we can't move things around.  I suppose they can stay in platform drivers but
-> even that is going against the general trend in the kernel community to avoid them at
-> all.  To me this should remain out of tree code but Bjorn will make the call.
+> Yes, it has associated DT changes.  But the board "MT8192 SCP" is
+> still under development, the DTS part hasn't been sent to upstream
+> yet.
 > 
+> Thus, it won't break anyone else.
 
-I need to update my understanding of traces being ABI or not. But I
-think the general start/stop traces would be useful and I expect that we
-will continue to do those.
+Then I don't mind merging this, will include it in v5.11.
 
-For the subdevices we need to conclude what we want to trace, e.g.
-is this big trace adding anything beyond the trace_rproc_boot()?
-Shouldn't we trace the individual subdevs, and if so we're definitely in
-the area you're worrying about.
-
-Regards,
+Thank you,
 Bjorn
-
-> Thanks,
-> Mathieu
-> 
-> >  	list_for_each_entry(subdev, &rproc->subdevs, node) {
-> >  		if (subdev->prepare) {
-> >  			ret = subdev->prepare(subdev);
-> > @@ -1188,6 +1192,7 @@ static int rproc_start_subdevices(struct rproc *rproc)
-> >  	struct rproc_subdev *subdev;
-> >  	int ret;
-> >  
-> > +	trace_rproc_subdevices("Start subdevices", rproc->name);
-> >  	list_for_each_entry(subdev, &rproc->subdevs, node) {
-> >  		if (subdev->start) {
-> >  			ret = subdev->start(subdev);
-> > @@ -1211,6 +1216,7 @@ static void rproc_stop_subdevices(struct rproc *rproc, bool crashed)
-> >  {
-> >  	struct rproc_subdev *subdev;
-> >  
-> > +	trace_rproc_subdevices("Stop subdevices", rproc->name);
-> >  	list_for_each_entry_reverse(subdev, &rproc->subdevs, node) {
-> >  		if (subdev->stop)
-> >  			subdev->stop(subdev, crashed);
-> > @@ -1221,6 +1227,7 @@ static void rproc_unprepare_subdevices(struct rproc *rproc)
-> >  {
-> >  	struct rproc_subdev *subdev;
-> >  
-> > +	trace_rproc_subdevices("Unprepare subdevices", rproc->name);
-> >  	list_for_each_entry_reverse(subdev, &rproc->subdevs, node) {
-> >  		if (subdev->unprepare)
-> >  			subdev->unprepare(subdev);
-> > @@ -1357,6 +1364,7 @@ static int rproc_start(struct rproc *rproc, const struct firmware *fw)
-> >  	struct device *dev = &rproc->dev;
-> >  	int ret;
-> >  
-> > +	trace_rproc_boot("loading firmware segments into memory", rproc->name);
-> >  	/* load the ELF segments to memory */
-> >  	ret = rproc_load_segments(rproc, fw);
-> >  	if (ret) {
-> > @@ -1385,6 +1393,7 @@ static int rproc_start(struct rproc *rproc, const struct firmware *fw)
-> >  		goto reset_table_ptr;
-> >  	}
-> >  
-> > +	trace_rproc_boot("starting remoteproc", rproc->name);
-> >  	/* power up the remote processor */
-> >  	ret = rproc->ops->start(rproc);
-> >  	if (ret) {
-> > @@ -1402,6 +1411,7 @@ static int rproc_start(struct rproc *rproc, const struct firmware *fw)
-> >  
-> >  	rproc->state = RPROC_RUNNING;
-> >  
-> > +	trace_rproc_boot("remoteproc is up", rproc->name);
-> >  	dev_info(dev, "remote processor %s is now up\n", rproc->name);
-> >  
-> >  	return 0;
-> > @@ -1648,6 +1658,7 @@ static int rproc_stop(struct rproc *rproc, bool crashed)
-> >  	/* the installed resource table is no longer accessible */
-> >  	rproc->table_ptr = rproc->cached_table;
-> >  
-> > +	trace_rproc_shutdown("Stopping the remoteproc", rproc->name);
-> >  	/* power off the remote processor */
-> >  	ret = rproc->ops->stop(rproc);
-> >  	if (ret) {
-> > @@ -1697,6 +1708,7 @@ int rproc_trigger_recovery(struct rproc *rproc)
-> >  	if (rproc->state != RPROC_CRASHED)
-> >  		goto unlock_mutex;
-> >  
-> > +	trace_rproc_recovery("Recover remoteproc", rproc->name);
-> >  	dev_err(dev, "recovering %s\n", rproc->name);
-> >  
-> >  	ret = rproc_stop(rproc, true);
-> > @@ -1716,6 +1728,7 @@ int rproc_trigger_recovery(struct rproc *rproc)
-> >  	/* boot the remote processor up again */
-> >  	ret = rproc_start(rproc, firmware_p);
-> >  
-> > +	trace_rproc_recovery("Recovery completed", rproc->name);
-> >  	release_firmware(firmware_p);
-> >  
-> >  unlock_mutex:
-> > @@ -1796,6 +1809,7 @@ int rproc_boot(struct rproc *rproc)
-> >  	/* skip the boot or attach process if rproc is already powered up */
-> >  	if (atomic_inc_return(&rproc->power) > 1) {
-> >  		ret = 0;
-> > +		trace_rproc_boot("Incrementing ref count and exiting", rproc->name);
-> >  		goto unlock_mutex;
-> >  	}
-> >  
-> > @@ -1804,6 +1818,7 @@ int rproc_boot(struct rproc *rproc)
-> >  
-> >  		ret = rproc_actuate(rproc);
-> >  	} else {
-> > +		trace_rproc_boot("requesting firmware", rproc->name);
-> >  		dev_info(dev, "powering up %s\n", rproc->name);
-> >  
-> >  		/* load firmware */
-> > @@ -1858,8 +1873,10 @@ void rproc_shutdown(struct rproc *rproc)
-> >  	}
-> >  
-> >  	/* if the remote proc is still needed, bail out */
-> > -	if (!atomic_dec_and_test(&rproc->power))
-> > +	if (!atomic_dec_and_test(&rproc->power)) {
-> > +		trace_rproc_shutdown("Decrementing ref count and exiting", rproc->name);
-> >  		goto out;
-> > +	}
-> >  
-> >  	ret = rproc_stop(rproc, false);
-> >  	if (ret) {
-> > diff --git a/include/trace/events/remoteproc.h b/include/trace/events/remoteproc.h
-> > new file mode 100644
-> > index 0000000..341bf4b
-> > --- /dev/null
-> > +++ b/include/trace/events/remoteproc.h
-> > @@ -0,0 +1,91 @@
-> > +/* SPDX-License-Identifier: GPL-2.0-only */
-> > +/*
-> > + * Copyright (c) 2020, The Linux Foundation. All rights reserved.
-> > + */
-> > +
-> > +#undef TRACE_SYSTEM
-> > +#define TRACE_SYSTEM remoteproc
-> > +
-> > +#if !defined(_TRACE_REMOTEPROC_H) || defined(TRACE_HEADER_MULTI_READ)
-> > +#define _TRACE_REMOTEPROC_H
-> > +
-> > +#include <linux/tracepoint.h>
-> > +
-> > +TRACE_EVENT(rproc_boot,
-> > +
-> > +	TP_PROTO(const char *event, const char *rproc_name),
-> > +
-> > +	TP_ARGS(event, rproc_name),
-> > +
-> > +	TP_STRUCT__entry(
-> > +		__string(event, event)
-> > +		__string(rproc_name, rproc_name)
-> > +	),
-> > +
-> > +	TP_fast_assign(
-> > +		__assign_str(event, event);
-> > +		__assign_str(rproc_name, rproc_name);
-> > +	),
-> > +
-> > +	TP_printk("rproc_boot: %s: %s", __get_str(rproc_name), __get_str(event))
-> > +);
-> > +
-> > +TRACE_EVENT(rproc_shutdown,
-> > +
-> > +	TP_PROTO(const char *event, const char *rproc_name),
-> > +
-> > +	TP_ARGS(event, rproc_name),
-> > +
-> > +	TP_STRUCT__entry(
-> > +		__string(event, event)
-> > +		__string(rproc_name, rproc_name)
-> > +	),
-> > +
-> > +	TP_fast_assign(
-> > +		__assign_str(event, event);
-> > +		__assign_str(rproc_name, rproc_name);
-> > +	),
-> > +
-> > +	TP_printk("rproc_shutdown: %s: %s", __get_str(rproc_name), __get_str(event))
-> > +);
-> > +
-> > +TRACE_EVENT(rproc_recovery,
-> > +
-> > +	TP_PROTO(const char *event, const char *rproc_name),
-> > +
-> > +	TP_ARGS(event, rproc_name),
-> > +
-> > +	TP_STRUCT__entry(
-> > +		__string(event, event)
-> > +		__string(rproc_name, rproc_name)
-> > +	),
-> > +
-> > +	TP_fast_assign(
-> > +		__assign_str(event, event);
-> > +		__assign_str(rproc_name, rproc_name);
-> > +	),
-> > +
-> > +	TP_printk("rproc_recovery: %s: %s", __get_str(rproc_name), __get_str(event))
-> > +);
-> > +
-> > +TRACE_EVENT(rproc_subdevices,
-> > +
-> > +	TP_PROTO(const char *event, const char *rproc_name),
-> > +
-> > +	TP_ARGS(event, rproc_name),
-> > +
-> > +	TP_STRUCT__entry(
-> > +		__string(event, event)
-> > +		__string(rproc_name, rproc_name)
-> > +	),
-> > +
-> > +	TP_fast_assign(
-> > +		__assign_str(event, event);
-> > +		__assign_str(rproc_name, rproc_name);
-> > +	),
-> > +
-> > +	TP_printk("rproc_subdevices: %s: %s", __get_str(rproc_name), __get_str(event))
-> > +);
-> > +#endif
-> > +#include <trace/define_trace.h>
-> > +
-> > -- 
-> > The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-> > a Linux Foundation Collaborative Project
-> > 
