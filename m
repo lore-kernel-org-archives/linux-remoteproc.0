@@ -2,61 +2,61 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8294FC4361B
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 11 Dec 2020 20:35:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CBE50C433FE
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 11 Dec 2020 20:39:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 21FDE2404C
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 11 Dec 2020 20:35:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8492823B85
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 11 Dec 2020 20:39:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392302AbgLKSto (ORCPT
+        id S1733291AbgLKSw0 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 11 Dec 2020 13:49:44 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56252 "EHLO
+        Fri, 11 Dec 2020 13:52:26 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56354 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391150AbgLKStD (ORCPT
+        with ESMTP id S2406089AbgLKStS (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 11 Dec 2020 13:49:03 -0500
+        Fri, 11 Dec 2020 13:49:18 -0500
 Received: from mail-lf1-x142.google.com (mail-lf1-x142.google.com [IPv6:2a00:1450:4864:20::142])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 02943C0613D6
-        for <linux-remoteproc@vger.kernel.org>; Fri, 11 Dec 2020 10:48:31 -0800 (PST)
-Received: by mail-lf1-x142.google.com with SMTP id o17so11790334lfg.4
-        for <linux-remoteproc@vger.kernel.org>; Fri, 11 Dec 2020 10:48:30 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D669C0611CE
+        for <linux-remoteproc@vger.kernel.org>; Fri, 11 Dec 2020 10:48:38 -0800 (PST)
+Received: by mail-lf1-x142.google.com with SMTP id 23so14702425lfg.10
+        for <linux-remoteproc@vger.kernel.org>; Fri, 11 Dec 2020 10:48:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=wMhTDsg70Yk7T7X6CYibQwNaCnRI/oxGvYkjMkZKbJ8=;
-        b=DaV9D4/FqG17M7EXWFR471nJTqUGOj/F0eo2+aMEbbmv7/mnjFvgixtxEqLl/b23d4
-         O2IlW6ZhoQONLWTJ8k1wOY4zK65HJtMseKh1kpVibf717YL8HbFlzKSBf0mlTxAp7RKK
-         EzZ5hj46G8ji1+RXN1oxW2x4RBZ/X7Lbram9oczoFknjgoC6StoYT2WWzN6183uHYx4s
-         LLpTW284FQweuL5ejqIV1ySICnkIQijrk69ZOO4afvjn5IU95dVXmTDYThprbkPjXM9u
-         vJgYWx7t547yjdC8cczuR/+UUGudsCut2rvADOZqlO3HLsYLA0SBgFbIy6pVMGIrOPPF
-         YT1w==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=23e4OtAdhS6/eJqfaLbIjryiFMaMMoJbdSAg/gW4lu0=;
+        b=q79X2koiMjIHXybLkIW4FWzjM/9/iZFbs+VMBdG6rVDGEHSeJh7EPaE+HbHzPrq7oU
+         CigCr/VHSjXJfVgBpTI05X1oJY0g2BT7jjhHlm8w95330FvCWsMNYmSxXdDpJVmFmPCr
+         e44f0E+2RX6RkzuqcEu7hYqwHNCk0Fgt/1stP62U0Bf9vCOmyivfbb5QoggKNVfBRwDq
+         tyVkLBum85kpO75FYOeuReJgHBG/cTqxY6ZQ7d6g4B6GFz9YYlnKzo2ZmTKZ2oKf6Jth
+         JorAl48lb+ppozzchngCQK6trkAGU1w+3jFsWLCbO/BO503e01IXfdV/PMFSpRF/8/RR
+         MBCA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=wMhTDsg70Yk7T7X6CYibQwNaCnRI/oxGvYkjMkZKbJ8=;
-        b=PzI7nOs1A6RiEgmLyZtZo9HrXlgQV5BrwqC3SWJXB/GiUXI/RZ9KSk7nXsRleCAE+C
-         caoWayDc2znViIfYW+n91SfpTKS3MRiEQRJ18JqQH9KmgBJkZKDGRfnix0FSJrHdonL2
-         d3XyECc399YRZpqJ/ZzOQfP3Hw2DPA6r1PNTSjU/OeOrOQY/JSy9QfSBPLyBpWrTCDjn
-         IUTwO/aGcfJ6dHd24iIfNMtgWdKAKgKTzsLVv2dfIZK+/sdQEpZhRBbwFxi9oamUTi+t
-         Lw/pD2COsiSTxfbMaN2AZsGRrYq2AiFBXbN5XfqLSzQqOR5u4sHT73bf3MHiC9bHlPn+
-         cb9Q==
-X-Gm-Message-State: AOAM530jGyqliKsHBNLmgPOmgc39SNONQcwt+PmAcmiQIOP5er0ZtOQt
-        IFu/dl5vua7GQB9FlA6HxeftTg==
-X-Google-Smtp-Source: ABdhPJyXFvqmtAUTFC39BmGoE8MlvIHW8Q/xrmxlfynKVkXQdXT50P0xShNduRwJpeJYrg/XhQxZsg==
-X-Received: by 2002:ac2:4ecd:: with SMTP id p13mr5541265lfr.430.1607712509514;
-        Fri, 11 Dec 2020 10:48:29 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=23e4OtAdhS6/eJqfaLbIjryiFMaMMoJbdSAg/gW4lu0=;
+        b=XC4DC8EiFngQAuGd2zxcvCE9VbDBsT9kx/7LEs0Upa7x/TpErBl9XHZkQCR/KQXILq
+         kiQWwUtnLbckyrdvKpaetcff+ZWjTkLYgVXf7nkIa8CtHzZoxGeOu9ZnE/Dpuc+I6Zd8
+         7LDNn+vEaZ6/A3DbibvqppKCzwdKzYZ45OrX+1yjI2xB2054c+LkJsfqYPb98wgNBLEs
+         CPo5sZNlbsYsL1R0PIuPzMw3MI/KesAChtBZv/V/ryeUBPcSv710KujhnTNs6jegYwYb
+         CtN8bWIBxSfikPgD2v7261oFavfXzdY7j371FgiZyWGy4N7nWXFZnkRyetnnqZ+P0dzj
+         25Bg==
+X-Gm-Message-State: AOAM530buDbE40C6xM4kSbxhtJVUVKQgaSb636uuPoJDYnfuxmnmoSIC
+        X+kQwSStNz3nvZDKpCxRPvKlYQ==
+X-Google-Smtp-Source: ABdhPJwBXyi9c57tCqFnSmFEnnzvpT/Tkl6e6mKo5DWEtSjfh992tfxLK1CtEZXWJGwrSMr9Q9C2vA==
+X-Received: by 2002:ac2:5451:: with SMTP id d17mr2678709lfn.222.1607712517070;
+        Fri, 11 Dec 2020 10:48:37 -0800 (PST)
 Received: from gilgamesh.semihalf.com (193-106-246-138.noc.fibertech.net.pl. [193.106.246.138])
-        by smtp.gmail.com with ESMTPSA id b12sm903316lfb.139.2020.12.11.10.48.28
+        by smtp.gmail.com with ESMTPSA id b12sm903316lfb.139.2020.12.11.10.48.35
         (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 11 Dec 2020 10:48:28 -0800 (PST)
+        Fri, 11 Dec 2020 10:48:36 -0800 (PST)
 From:   Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>
 To:     ssantosh@kernel.org, s-anna@ti.com
 Cc:     grzegorz.jaszczyk@linaro.org, santosh.shilimkar@oracle.com,
@@ -64,70 +64,86 @@ Cc:     grzegorz.jaszczyk@linaro.org, santosh.shilimkar@oracle.com,
         linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         praneeth@ti.com, tony@atomide.com,
         linux-remoteproc@vger.kernel.org, mathieu.poirier@linaro.org
-Subject: [PATCH 0/6] Introduce PRU platform consumer API
-Date:   Fri, 11 Dec 2020 19:48:05 +0100
-Message-Id: <20201211184811.6490-1-grzegorz.jaszczyk@linaro.org>
+Subject: [PATCH 6/6] soc: ti: pruss: Add helper functions to get/set PRUSS_CFG_GPMUX
+Date:   Fri, 11 Dec 2020 19:48:11 +0100
+Message-Id: <20201211184811.6490-7-grzegorz.jaszczyk@linaro.org>
 X-Mailer: git-send-email 2.29.0
+In-Reply-To: <20201211184811.6490-1-grzegorz.jaszczyk@linaro.org>
+References: <20201211184811.6490-1-grzegorz.jaszczyk@linaro.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi All,
+From: Tero Kristo <t-kristo@ti.com>
 
-The Programmable Real-Time Unit and Industrial Communication Subsystem (PRU-ICSS
-or simply PRUSS) on various TI SoCs consists of dual 32-bit RISC cores
-(Programmable Real-Time Units, or PRUs) for program execution.
+Add two new helper functions pruss_cfg_get_gpmux() & pruss_cfg_set_gpmux()
+to get and set the GP MUX mode for programming the PRUSS internal wrapper
+mux functionality as needed by usecases.
 
-There are 3 foundation components for TI PRUSS subsystem: the PRUSS platform
-driver, the PRUSS INTC driver and the PRUSS remoteproc driver. Two first were
-already merged and can be found under:
-1) drivers/soc/ti/pruss.c
-   Documentation/devicetree/bindings/soc/ti/ti,pruss.yaml
-2) drivers/irqchip/irq-pruss-intc.c
-   Documentation/devicetree/bindings/interrupt-controller/ti,pruss-intc.yaml
+Co-developed-by: Suman Anna <s-anna@ti.com>
+Signed-off-by: Suman Anna <s-anna@ti.com>
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
+Co-developed-by: Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>
+Signed-off-by: Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>
+---
+ include/linux/pruss_driver.h | 44 ++++++++++++++++++++++++++++++++++++
+ 1 file changed, 44 insertions(+)
 
-The third one [1] was accepted and applied to andersson/remoteproc.git
-(refs/heads/for-next): [2] but is not merged yet.
-
-The programmable nature of the PRUs provide flexibility to implement custom
-peripheral interfaces, fast real-time responses, or specialized data handling.
-Example of a PRU consumer drivers will be:
-  - Software UART over PRUSS
-  - PRU-ICSS Ethernet EMAC
-
-In order to make usage of common PRU resources and allow the consumer drivers to
-configure the PRU hardware for specific usage the PRU API is introduced.
-
-This patch set depends on "Introduce PRU remoteproc consumer API" set [3], which
-is complementary to this one but goes for different, remoteproc sub-system.
-
-[1] https://patchwork.kernel.org/project/linux-arm-kernel/cover/20201208141002.17777-1-grzegorz.jaszczyk@linaro.org/
-[2] https://git.kernel.org/pub/scm/linux/kernel/git/andersson/remoteproc.git/commit/?h=for-next&id=b44786c9bdc46eac8388843f0a6116369cb18bca
-[3] https://patchwork.kernel.org/project/linux-arm-kernel/cover/20201211142933.25784-1-grzegorz.jaszczyk@linaro.org/
-
-Best regards,
-Grzegorz
-
-Andrew F. Davis (1):
-  soc: ti: pruss: Add pruss_{request,release}_mem_region() API
-
-Suman Anna (3):
-  soc: ti: pruss: Add pruss_cfg_read()/update() API
-  soc: ti: pruss: Add helper functions to set GPI mode, MII_RT_event and
-    XFR
-  soc: ti: pruss: Add helper function to enable OCP master ports
-
-Tero Kristo (2):
-  soc: ti: pruss: Add pruss_get()/put() API
-  soc: ti: pruss: Add helper functions to get/set PRUSS_CFG_GPMUX
-
- drivers/soc/ti/pruss.c       | 257 ++++++++++++++++++++++++++++++++++-
- include/linux/pruss.h        | 221 ++++++++++++++++++++++++++++++
- include/linux/pruss_driver.h |  72 +++++++---
- 3 files changed, 526 insertions(+), 24 deletions(-)
-
+diff --git a/include/linux/pruss_driver.h b/include/linux/pruss_driver.h
+index e2d5477225c6..3312281ef4c1 100644
+--- a/include/linux/pruss_driver.h
++++ b/include/linux/pruss_driver.h
+@@ -35,4 +35,48 @@ struct pruss {
+ 	struct clk *iep_clk_mux;
+ };
+ 
++/**
++ * pruss_cfg_get_gpmux() - get the current GPMUX value for a PRU device
++ * @pruss: pruss instance
++ * @pru_id: PRU identifier (0-1)
++ * @mux: pointer to store the current mux value into
++ *
++ * Return: 0 on success, or an error code otherwise
++ */
++static inline int pruss_cfg_get_gpmux(struct pruss *pruss,
++				      enum pruss_pru_id pru_id, u8 *mux)
++{
++	int ret = 0;
++	u32 val;
++
++	if (pru_id < 0 || pru_id >= PRUSS_NUM_PRUS)
++		return -EINVAL;
++
++	ret = pruss_cfg_read(pruss, PRUSS_CFG_GPCFG(pru_id), &val);
++	if (!ret)
++		*mux = (u8)((val & PRUSS_GPCFG_PRU_MUX_SEL_MASK) >>
++			    PRUSS_GPCFG_PRU_MUX_SEL_SHIFT);
++	return ret;
++}
++
++/**
++ * pruss_cfg_set_gpmux() - set the GPMUX value for a PRU device
++ * @pruss: pruss instance
++ * @pru_id: PRU identifier (0-1)
++ * @mux: new mux value for PRU
++ *
++ * Return: 0 on success, or an error code otherwise
++ */
++static inline int pruss_cfg_set_gpmux(struct pruss *pruss,
++				      enum pruss_pru_id pru_id, u8 mux)
++{
++	if (mux >= PRUSS_GP_MUX_SEL_MAX ||
++	    pru_id < 0 || pru_id >= PRUSS_NUM_PRUS)
++		return -EINVAL;
++
++	return pruss_cfg_update(pruss, PRUSS_CFG_GPCFG(pru_id),
++				PRUSS_GPCFG_PRU_MUX_SEL_MASK,
++				(u32)mux << PRUSS_GPCFG_PRU_MUX_SEL_SHIFT);
++}
++
+ #endif	/* _PRUSS_DRIVER_H_ */
 -- 
 2.29.0
 
