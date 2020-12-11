@@ -2,61 +2,61 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24DEBC433FE
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 11 Dec 2020 20:34:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8294FC4361B
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 11 Dec 2020 20:35:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C40D22404C
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 11 Dec 2020 20:34:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 21FDE2404C
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 11 Dec 2020 20:35:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2436874AbgLKStp (ORCPT
+        id S2392302AbgLKSto (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 11 Dec 2020 13:49:45 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56256 "EHLO
+        Fri, 11 Dec 2020 13:49:44 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56252 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2436724AbgLKStD (ORCPT
+        with ESMTP id S2391150AbgLKStD (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
         Fri, 11 Dec 2020 13:49:03 -0500
-Received: from mail-lj1-x241.google.com (mail-lj1-x241.google.com [IPv6:2a00:1450:4864:20::241])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9C8ACC0613CF
-        for <linux-remoteproc@vger.kernel.org>; Fri, 11 Dec 2020 10:48:34 -0800 (PST)
-Received: by mail-lj1-x241.google.com with SMTP id m13so12034003ljo.11
-        for <linux-remoteproc@vger.kernel.org>; Fri, 11 Dec 2020 10:48:34 -0800 (PST)
+Received: from mail-lf1-x142.google.com (mail-lf1-x142.google.com [IPv6:2a00:1450:4864:20::142])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 02943C0613D6
+        for <linux-remoteproc@vger.kernel.org>; Fri, 11 Dec 2020 10:48:31 -0800 (PST)
+Received: by mail-lf1-x142.google.com with SMTP id o17so11790334lfg.4
+        for <linux-remoteproc@vger.kernel.org>; Fri, 11 Dec 2020 10:48:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=OeQblmEHmyU6ck7RbL05kxW1lADVlZG0oOc0x1IzMi8=;
-        b=VnMB+AKlZB60TxwFqAfhWZM36t9koknPXjgiZAlqim5uZDFdayVyxM/n8jJgSCEcMK
-         UCe5WR7aDt8Tmezde9EzGrbI2CIWD/uNVmZ7+TVoQWq8OMNuwscPQpJkPrVHlC8naDsv
-         8ppjsxEP7AkbFt8SdGPbL1Xo/oIQCw2eyCjrsMyWQ3gDxGqlzn2P3NHDdFBWazk6wnWp
-         00G4FfNRt1R8uq+dSAKocGIkWgg45vKN9h72sq4oG28pd4kw6hFar4owBmLxxImuCOmD
-         NgbPRdXF2Y4h2Ppia8FgnmJ/xU0rtC1xP7u+mJIoJvC+Sw0YMAUzhfrOQxzZV47Ab1Oi
-         J9Vw==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=wMhTDsg70Yk7T7X6CYibQwNaCnRI/oxGvYkjMkZKbJ8=;
+        b=DaV9D4/FqG17M7EXWFR471nJTqUGOj/F0eo2+aMEbbmv7/mnjFvgixtxEqLl/b23d4
+         O2IlW6ZhoQONLWTJ8k1wOY4zK65HJtMseKh1kpVibf717YL8HbFlzKSBf0mlTxAp7RKK
+         EzZ5hj46G8ji1+RXN1oxW2x4RBZ/X7Lbram9oczoFknjgoC6StoYT2WWzN6183uHYx4s
+         LLpTW284FQweuL5ejqIV1ySICnkIQijrk69ZOO4afvjn5IU95dVXmTDYThprbkPjXM9u
+         vJgYWx7t547yjdC8cczuR/+UUGudsCut2rvADOZqlO3HLsYLA0SBgFbIy6pVMGIrOPPF
+         YT1w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=OeQblmEHmyU6ck7RbL05kxW1lADVlZG0oOc0x1IzMi8=;
-        b=peGw5+UuF8R/0jzVpHU4aZDor6S2ahUYFTpCJaCIHrGZ9lRcofUd+q1FsbyKKaCpXR
-         kIXMGH79uXoccC/S6ICXu6j24n49bF//GkeD5ApAuZpLGIpYqh8F7bEiF/OFULARmQRv
-         fnam5JOdXwgKyJx4Llwvbk+HUaNFqPzFNoFO42lWgxP9V+Y5UP8t9tbUVKNmo4mLXT0/
-         0kDFYFjSawYtBf0SR3M09+B14uLmUVI6MYPqqoRtouMnvgQ+96VN79IodOgRS9sUaCtT
-         E+sNRXKIHau3yWKEaIvTSfauc6XyMlPcCy2hqgibMxX0L5sE2Iekb+f8yVB/ywp3O6ig
-         N7jw==
-X-Gm-Message-State: AOAM5315htSrqNX1UfTntcDXRJAMWc+hmigSzT+Yd1yn3cx5sBzdJNyd
-        RX7vYGmTzZDTam2gyp4KrHNFTA==
-X-Google-Smtp-Source: ABdhPJyUlAP20ov/n9Zw1QH84wSmzsvKhgW4+J7VMAAydn5ABB+Q5iJHJRce3uuwiXxJ3Y/gxV3ZJg==
-X-Received: by 2002:a2e:3312:: with SMTP id d18mr4645763ljc.284.1607712512029;
-        Fri, 11 Dec 2020 10:48:32 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=wMhTDsg70Yk7T7X6CYibQwNaCnRI/oxGvYkjMkZKbJ8=;
+        b=PzI7nOs1A6RiEgmLyZtZo9HrXlgQV5BrwqC3SWJXB/GiUXI/RZ9KSk7nXsRleCAE+C
+         caoWayDc2znViIfYW+n91SfpTKS3MRiEQRJ18JqQH9KmgBJkZKDGRfnix0FSJrHdonL2
+         d3XyECc399YRZpqJ/ZzOQfP3Hw2DPA6r1PNTSjU/OeOrOQY/JSy9QfSBPLyBpWrTCDjn
+         IUTwO/aGcfJ6dHd24iIfNMtgWdKAKgKTzsLVv2dfIZK+/sdQEpZhRBbwFxi9oamUTi+t
+         Lw/pD2COsiSTxfbMaN2AZsGRrYq2AiFBXbN5XfqLSzQqOR5u4sHT73bf3MHiC9bHlPn+
+         cb9Q==
+X-Gm-Message-State: AOAM530jGyqliKsHBNLmgPOmgc39SNONQcwt+PmAcmiQIOP5er0ZtOQt
+        IFu/dl5vua7GQB9FlA6HxeftTg==
+X-Google-Smtp-Source: ABdhPJyXFvqmtAUTFC39BmGoE8MlvIHW8Q/xrmxlfynKVkXQdXT50P0xShNduRwJpeJYrg/XhQxZsg==
+X-Received: by 2002:ac2:4ecd:: with SMTP id p13mr5541265lfr.430.1607712509514;
+        Fri, 11 Dec 2020 10:48:29 -0800 (PST)
 Received: from gilgamesh.semihalf.com (193-106-246-138.noc.fibertech.net.pl. [193.106.246.138])
-        by smtp.gmail.com with ESMTPSA id b12sm903316lfb.139.2020.12.11.10.48.30
+        by smtp.gmail.com with ESMTPSA id b12sm903316lfb.139.2020.12.11.10.48.28
         (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 11 Dec 2020 10:48:31 -0800 (PST)
+        Fri, 11 Dec 2020 10:48:28 -0800 (PST)
 From:   Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>
 To:     ssantosh@kernel.org, s-anna@ti.com
 Cc:     grzegorz.jaszczyk@linaro.org, santosh.shilimkar@oracle.com,
@@ -64,250 +64,70 @@ Cc:     grzegorz.jaszczyk@linaro.org, santosh.shilimkar@oracle.com,
         linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         praneeth@ti.com, tony@atomide.com,
         linux-remoteproc@vger.kernel.org, mathieu.poirier@linaro.org
-Subject: [PATCH 2/6] soc: ti: pruss: Add pruss_{request,release}_mem_region() API
-Date:   Fri, 11 Dec 2020 19:48:07 +0100
-Message-Id: <20201211184811.6490-3-grzegorz.jaszczyk@linaro.org>
+Subject: [PATCH 0/6] Introduce PRU platform consumer API
+Date:   Fri, 11 Dec 2020 19:48:05 +0100
+Message-Id: <20201211184811.6490-1-grzegorz.jaszczyk@linaro.org>
 X-Mailer: git-send-email 2.29.0
-In-Reply-To: <20201211184811.6490-1-grzegorz.jaszczyk@linaro.org>
-References: <20201211184811.6490-1-grzegorz.jaszczyk@linaro.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-From: "Andrew F. Davis" <afd@ti.com>
+Hi All,
 
-Add two new API - pruss_request_mem_region() & pruss_release_mem_region(),
-to the PRUSS platform driver to allow client drivers to acquire and release
-the common memory resources present within a PRU-ICSS subsystem. This
-allows the client drivers to directly manipulate the respective memories,
-as per their design contract with the associated firmware.
+The Programmable Real-Time Unit and Industrial Communication Subsystem (PRU-ICSS
+or simply PRUSS) on various TI SoCs consists of dual 32-bit RISC cores
+(Programmable Real-Time Units, or PRUs) for program execution.
 
-Co-developed-by: Suman Anna <s-anna@ti.com>
-Signed-off-by: Suman Anna <s-anna@ti.com>
-Signed-off-by: Andrew F. Davis <afd@ti.com>
-Co-developed-by: Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>
-Signed-off-by: Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>
----
- drivers/soc/ti/pruss.c       | 77 ++++++++++++++++++++++++++++++++++++
- include/linux/pruss.h        | 39 ++++++++++++++++++
- include/linux/pruss_driver.h | 27 +++----------
- 3 files changed, 121 insertions(+), 22 deletions(-)
+There are 3 foundation components for TI PRUSS subsystem: the PRUSS platform
+driver, the PRUSS INTC driver and the PRUSS remoteproc driver. Two first were
+already merged and can be found under:
+1) drivers/soc/ti/pruss.c
+   Documentation/devicetree/bindings/soc/ti/ti,pruss.yaml
+2) drivers/irqchip/irq-pruss-intc.c
+   Documentation/devicetree/bindings/interrupt-controller/ti,pruss-intc.yaml
 
-diff --git a/drivers/soc/ti/pruss.c b/drivers/soc/ti/pruss.c
-index 28eb6415cb95..7569a7fc94f6 100644
---- a/drivers/soc/ti/pruss.c
-+++ b/drivers/soc/ti/pruss.c
-@@ -88,6 +88,82 @@ void pruss_put(struct pruss *pruss)
- }
- EXPORT_SYMBOL_GPL(pruss_put);
- 
-+/**
-+ * pruss_request_mem_region() - request a memory resource
-+ * @pruss: the pruss instance
-+ * @mem_id: the memory resource id
-+ * @region: pointer to memory region structure to be filled in
-+ *
-+ * This function allows a client driver to request a memory resource,
-+ * and if successful, will let the client driver own the particular
-+ * memory region until released using the pruss_release_mem_region()
-+ * API.
-+ *
-+ * Return: 0 if requested memory region is available (in such case pointer to
-+ * memory region is returned via @region), an error otherwise
-+ */
-+int pruss_request_mem_region(struct pruss *pruss, enum pruss_mem mem_id,
-+			     struct pruss_mem_region *region)
-+{
-+	if (!pruss || !region || mem_id >= PRUSS_MEM_MAX)
-+		return -EINVAL;
-+
-+	mutex_lock(&pruss->lock);
-+
-+	if (pruss->mem_in_use[mem_id]) {
-+		mutex_unlock(&pruss->lock);
-+		return -EBUSY;
-+	}
-+
-+	*region = pruss->mem_regions[mem_id];
-+	pruss->mem_in_use[mem_id] = region;
-+
-+	mutex_unlock(&pruss->lock);
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(pruss_request_mem_region);
-+
-+/**
-+ * pruss_release_mem_region() - release a memory resource
-+ * @pruss: the pruss instance
-+ * @region: the memory region to release
-+ *
-+ * This function is the complimentary function to
-+ * pruss_request_mem_region(), and allows the client drivers to
-+ * release back a memory resource.
-+ *
-+ * Return: 0 on success, an error code otherwise
-+ */
-+int pruss_release_mem_region(struct pruss *pruss,
-+			     struct pruss_mem_region *region)
-+{
-+	int id;
-+
-+	if (!pruss || !region)
-+		return -EINVAL;
-+
-+	mutex_lock(&pruss->lock);
-+
-+	/* find out the memory region being released */
-+	for (id = 0; id < PRUSS_MEM_MAX; id++) {
-+		if (pruss->mem_in_use[id] == region)
-+			break;
-+	}
-+
-+	if (id == PRUSS_MEM_MAX) {
-+		mutex_unlock(&pruss->lock);
-+		return -EINVAL;
-+	}
-+
-+	pruss->mem_in_use[id] = NULL;
-+
-+	mutex_unlock(&pruss->lock);
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(pruss_release_mem_region);
-+
- static void pruss_of_free_clk_provider(void *data)
- {
- 	struct device_node *clk_mux_np = data;
-@@ -243,6 +319,7 @@ static int pruss_probe(struct platform_device *pdev)
- 		return -ENOMEM;
- 
- 	pruss->dev = dev;
-+	mutex_init(&pruss->lock);
- 
- 	child = of_get_child_by_name(np, "memories");
- 	if (!child) {
-diff --git a/include/linux/pruss.h b/include/linux/pruss.h
-index 403951910515..ec5b6609b5e5 100644
---- a/include/linux/pruss.h
-+++ b/include/linux/pruss.h
-@@ -39,6 +39,28 @@ enum pru_ctable_idx {
- 	PRU_C31,
- };
- 
-+/*
-+ * enum pruss_mem - PRUSS memory range identifiers
-+ */
-+enum pruss_mem {
-+	PRUSS_MEM_DRAM0 = 0,
-+	PRUSS_MEM_DRAM1,
-+	PRUSS_MEM_SHRD_RAM2,
-+	PRUSS_MEM_MAX,
-+};
-+
-+/**
-+ * struct pruss_mem_region - PRUSS memory region structure
-+ * @va: kernel virtual address of the PRUSS memory region
-+ * @pa: physical (bus) address of the PRUSS memory region
-+ * @size: size of the PRUSS memory region
-+ */
-+struct pruss_mem_region {
-+	void __iomem *va;
-+	phys_addr_t pa;
-+	size_t size;
-+};
-+
- struct device_node;
- struct rproc;
- struct pruss;
-@@ -47,6 +69,10 @@ struct pruss;
- 
- struct pruss *pruss_get(struct rproc *rproc);
- void pruss_put(struct pruss *pruss);
-+int pruss_request_mem_region(struct pruss *pruss, enum pruss_mem mem_id,
-+			     struct pruss_mem_region *region);
-+int pruss_release_mem_region(struct pruss *pruss,
-+			     struct pruss_mem_region *region);
- 
- #else
- 
-@@ -57,6 +83,19 @@ static inline struct pruss *pruss_get(struct rproc *rproc)
- 
- static inline void pruss_put(struct pruss *pruss) { }
- 
-+static inline int pruss_request_mem_region(struct pruss *pruss,
-+					   enum pruss_mem mem_id,
-+					   struct pruss_mem_region *region)
-+{
-+	return -ENOTSUPP;
-+}
-+
-+static inline int pruss_release_mem_region(struct pruss *pruss,
-+					   struct pruss_mem_region *region)
-+{
-+	return -ENOTSUPP;
-+}
-+
- #endif /* CONFIG_TI_PRUSS */
- 
- #if IS_ENABLED(CONFIG_PRU_REMOTEPROC)
-diff --git a/include/linux/pruss_driver.h b/include/linux/pruss_driver.h
-index d054d2179d82..e2d5477225c6 100644
---- a/include/linux/pruss_driver.h
-+++ b/include/linux/pruss_driver.h
-@@ -9,37 +9,18 @@
- #ifndef _PRUSS_DRIVER_H_
- #define _PRUSS_DRIVER_H_
- 
-+#include <linux/mutex.h>
- #include <linux/pruss.h>
- #include <linux/types.h>
- 
--/*
-- * enum pruss_mem - PRUSS memory range identifiers
-- */
--enum pruss_mem {
--	PRUSS_MEM_DRAM0 = 0,
--	PRUSS_MEM_DRAM1,
--	PRUSS_MEM_SHRD_RAM2,
--	PRUSS_MEM_MAX,
--};
--
--/**
-- * struct pruss_mem_region - PRUSS memory region structure
-- * @va: kernel virtual address of the PRUSS memory region
-- * @pa: physical (bus) address of the PRUSS memory region
-- * @size: size of the PRUSS memory region
-- */
--struct pruss_mem_region {
--	void __iomem *va;
--	phys_addr_t pa;
--	size_t size;
--};
--
- /**
-  * struct pruss - PRUSS parent structure
-  * @dev: pruss device pointer
-  * @cfg_base: base iomap for CFG region
-  * @cfg_regmap: regmap for config region
-  * @mem_regions: data for each of the PRUSS memory regions
-+ * @mem_in_use: to indicate if memory resource is in use
-+ * @lock: mutex to serialize access to resources
-  * @core_clk_mux: clk handle for PRUSS CORE_CLK_MUX
-  * @iep_clk_mux: clk handle for PRUSS IEP_CLK_MUX
-  */
-@@ -48,6 +29,8 @@ struct pruss {
- 	void __iomem *cfg_base;
- 	struct regmap *cfg_regmap;
- 	struct pruss_mem_region mem_regions[PRUSS_MEM_MAX];
-+	struct pruss_mem_region *mem_in_use[PRUSS_MEM_MAX];
-+	struct mutex lock; /* PRU resource lock */
- 	struct clk *core_clk_mux;
- 	struct clk *iep_clk_mux;
- };
+The third one [1] was accepted and applied to andersson/remoteproc.git
+(refs/heads/for-next): [2] but is not merged yet.
+
+The programmable nature of the PRUs provide flexibility to implement custom
+peripheral interfaces, fast real-time responses, or specialized data handling.
+Example of a PRU consumer drivers will be:
+  - Software UART over PRUSS
+  - PRU-ICSS Ethernet EMAC
+
+In order to make usage of common PRU resources and allow the consumer drivers to
+configure the PRU hardware for specific usage the PRU API is introduced.
+
+This patch set depends on "Introduce PRU remoteproc consumer API" set [3], which
+is complementary to this one but goes for different, remoteproc sub-system.
+
+[1] https://patchwork.kernel.org/project/linux-arm-kernel/cover/20201208141002.17777-1-grzegorz.jaszczyk@linaro.org/
+[2] https://git.kernel.org/pub/scm/linux/kernel/git/andersson/remoteproc.git/commit/?h=for-next&id=b44786c9bdc46eac8388843f0a6116369cb18bca
+[3] https://patchwork.kernel.org/project/linux-arm-kernel/cover/20201211142933.25784-1-grzegorz.jaszczyk@linaro.org/
+
+Best regards,
+Grzegorz
+
+Andrew F. Davis (1):
+  soc: ti: pruss: Add pruss_{request,release}_mem_region() API
+
+Suman Anna (3):
+  soc: ti: pruss: Add pruss_cfg_read()/update() API
+  soc: ti: pruss: Add helper functions to set GPI mode, MII_RT_event and
+    XFR
+  soc: ti: pruss: Add helper function to enable OCP master ports
+
+Tero Kristo (2):
+  soc: ti: pruss: Add pruss_get()/put() API
+  soc: ti: pruss: Add helper functions to get/set PRUSS_CFG_GPMUX
+
+ drivers/soc/ti/pruss.c       | 257 ++++++++++++++++++++++++++++++++++-
+ include/linux/pruss.h        | 221 ++++++++++++++++++++++++++++++
+ include/linux/pruss_driver.h |  72 +++++++---
+ 3 files changed, 526 insertions(+), 24 deletions(-)
+
 -- 
 2.29.0
 
