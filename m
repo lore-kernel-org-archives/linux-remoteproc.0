@@ -2,148 +2,164 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CBE50C433FE
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 11 Dec 2020 20:39:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95632C4361B
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 11 Dec 2020 22:40:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8492823B85
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 11 Dec 2020 20:39:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6014123ED2
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 11 Dec 2020 22:40:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733291AbgLKSw0 (ORCPT
+        id S2406125AbgLKVj2 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 11 Dec 2020 13:52:26 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56354 "EHLO
+        Fri, 11 Dec 2020 16:39:28 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54352 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2406089AbgLKStS (ORCPT
+        with ESMTP id S2406089AbgLKVix (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 11 Dec 2020 13:49:18 -0500
-Received: from mail-lf1-x142.google.com (mail-lf1-x142.google.com [IPv6:2a00:1450:4864:20::142])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D669C0611CE
-        for <linux-remoteproc@vger.kernel.org>; Fri, 11 Dec 2020 10:48:38 -0800 (PST)
-Received: by mail-lf1-x142.google.com with SMTP id 23so14702425lfg.10
-        for <linux-remoteproc@vger.kernel.org>; Fri, 11 Dec 2020 10:48:38 -0800 (PST)
+        Fri, 11 Dec 2020 16:38:53 -0500
+Received: from mail-il1-x142.google.com (mail-il1-x142.google.com [IPv6:2607:f8b0:4864:20::142])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A64FDC0613CF
+        for <linux-remoteproc@vger.kernel.org>; Fri, 11 Dec 2020 13:38:12 -0800 (PST)
+Received: by mail-il1-x142.google.com with SMTP id c18so10137101iln.10
+        for <linux-remoteproc@vger.kernel.org>; Fri, 11 Dec 2020 13:38:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=23e4OtAdhS6/eJqfaLbIjryiFMaMMoJbdSAg/gW4lu0=;
-        b=q79X2koiMjIHXybLkIW4FWzjM/9/iZFbs+VMBdG6rVDGEHSeJh7EPaE+HbHzPrq7oU
-         CigCr/VHSjXJfVgBpTI05X1oJY0g2BT7jjhHlm8w95330FvCWsMNYmSxXdDpJVmFmPCr
-         e44f0E+2RX6RkzuqcEu7hYqwHNCk0Fgt/1stP62U0Bf9vCOmyivfbb5QoggKNVfBRwDq
-         tyVkLBum85kpO75FYOeuReJgHBG/cTqxY6ZQ7d6g4B6GFz9YYlnKzo2ZmTKZ2oKf6Jth
-         JorAl48lb+ppozzchngCQK6trkAGU1w+3jFsWLCbO/BO503e01IXfdV/PMFSpRF/8/RR
-         MBCA==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=svarBrGApw/qWLNn00KtZB/9F43QBsME7evkZEf9bH0=;
+        b=lijKy5APL+2z3DCf1DQMRh/nY6D0yvzEmRQceFyYFlJXEGulqTwhUHBnKVOLbX3/Ud
+         +Xg2TItailnEAU6W/DUUy3qlxqXi9AkpdUTWQmCXgztBFY2UyEr57SOZM145JRlz8kFa
+         3JjVHxCcUqihqlf6wBHD7SCglMZz22hhi+cUEo1Wc+rbpUU6HcfvC6QT2FZkCR83p3Up
+         GEEdApUqp2639oaBPb96OL7+AZPvgjYwjVWPeKavHRbOndqX3a9gjP4UcbMAUxRTFc0H
+         EMfUQLa8XOGIOfFfWOmpnZr4TBTztTGbL/tRLDHc8qPiyvrQyc+VJSKuN36TvQfdeo3H
+         Ejmw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=23e4OtAdhS6/eJqfaLbIjryiFMaMMoJbdSAg/gW4lu0=;
-        b=XC4DC8EiFngQAuGd2zxcvCE9VbDBsT9kx/7LEs0Upa7x/TpErBl9XHZkQCR/KQXILq
-         kiQWwUtnLbckyrdvKpaetcff+ZWjTkLYgVXf7nkIa8CtHzZoxGeOu9ZnE/Dpuc+I6Zd8
-         7LDNn+vEaZ6/A3DbibvqppKCzwdKzYZ45OrX+1yjI2xB2054c+LkJsfqYPb98wgNBLEs
-         CPo5sZNlbsYsL1R0PIuPzMw3MI/KesAChtBZv/V/ryeUBPcSv710KujhnTNs6jegYwYb
-         CtN8bWIBxSfikPgD2v7261oFavfXzdY7j371FgiZyWGy4N7nWXFZnkRyetnnqZ+P0dzj
-         25Bg==
-X-Gm-Message-State: AOAM530buDbE40C6xM4kSbxhtJVUVKQgaSb636uuPoJDYnfuxmnmoSIC
-        X+kQwSStNz3nvZDKpCxRPvKlYQ==
-X-Google-Smtp-Source: ABdhPJwBXyi9c57tCqFnSmFEnnzvpT/Tkl6e6mKo5DWEtSjfh992tfxLK1CtEZXWJGwrSMr9Q9C2vA==
-X-Received: by 2002:ac2:5451:: with SMTP id d17mr2678709lfn.222.1607712517070;
-        Fri, 11 Dec 2020 10:48:37 -0800 (PST)
-Received: from gilgamesh.semihalf.com (193-106-246-138.noc.fibertech.net.pl. [193.106.246.138])
-        by smtp.gmail.com with ESMTPSA id b12sm903316lfb.139.2020.12.11.10.48.35
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 11 Dec 2020 10:48:36 -0800 (PST)
-From:   Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>
-To:     ssantosh@kernel.org, s-anna@ti.com
-Cc:     grzegorz.jaszczyk@linaro.org, santosh.shilimkar@oracle.com,
-        lee.jones@linaro.org, linux-kernel@vger.kernel.org,
-        linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        praneeth@ti.com, tony@atomide.com,
-        linux-remoteproc@vger.kernel.org, mathieu.poirier@linaro.org
-Subject: [PATCH 6/6] soc: ti: pruss: Add helper functions to get/set PRUSS_CFG_GPMUX
-Date:   Fri, 11 Dec 2020 19:48:11 +0100
-Message-Id: <20201211184811.6490-7-grzegorz.jaszczyk@linaro.org>
-X-Mailer: git-send-email 2.29.0
-In-Reply-To: <20201211184811.6490-1-grzegorz.jaszczyk@linaro.org>
-References: <20201211184811.6490-1-grzegorz.jaszczyk@linaro.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=svarBrGApw/qWLNn00KtZB/9F43QBsME7evkZEf9bH0=;
+        b=mGIFojTJ+6MYHRMFr7awkmndJkEzjgzh3pVk0CQD/3YjCbcLQOndzpj1ODE5Q0Lc/h
+         lxTCKeWUrrd7fL3t+FXXdAGzSfQE8uI+lpUHrdsSf/cWQkP5C7udSOVK7B6H469Zuw8r
+         Iqv5xI/fS/pcp4WWPWWi2PEmhPIGgMhFeku2SH8UmNPVPGfqjEGXMFVjrlnBpj4uhJix
+         jm2jQih9Aq5gex8mXQURQqNHoHuTYhwcuG2J3TvfIKjbRFiMta8eyz4F3vu+O7LEUSLG
+         A+msTiCCeEgzcvQUMH9uFMCccaCTpukQhi9qZ3O9PGbK4Gto51n/rDV0WDGiIXTZhDUS
+         Q9zQ==
+X-Gm-Message-State: AOAM531Ujsfpjsm/LtRIjzcKhmltneRCi2qTz0+QL9T9yjClwGA64Djs
+        ZbdUYRH4HrXfqFgauRXikMcxkgDRxxvKlaO39CWtAA==
+X-Google-Smtp-Source: ABdhPJycWEeDJv8ZrtJhu1ouD0YnBXYNmMXHpafEco1lG49PDdUdz107EJ9/0kVpRncz9K96jvYZ1d35wBG3xMK4Dn8=
+X-Received: by 2002:a92:c986:: with SMTP id y6mr19431085iln.57.1607722691963;
+ Fri, 11 Dec 2020 13:38:11 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20201204074036.23870-1-peng.fan@oss.nxp.com> <20201204074036.23870-2-peng.fan@oss.nxp.com>
+ <X8rRedNHet9gm5lJ@builder.lan> <DB6PR0402MB276056A300BD72EA59FC429488CE0@DB6PR0402MB2760.eurprd04.prod.outlook.com>
+ <DB6PR0402MB27602A953194DBE2CE96D54388CC0@DB6PR0402MB2760.eurprd04.prod.outlook.com>
+In-Reply-To: <DB6PR0402MB27602A953194DBE2CE96D54388CC0@DB6PR0402MB2760.eurprd04.prod.outlook.com>
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+Date:   Fri, 11 Dec 2020 14:38:01 -0700
+Message-ID: <CANLsYkzh4GqqoQHFMUtQ_1+yja06nDratY_UOLPEpmufVgS2HA@mail.gmail.com>
+Subject: Re: [PATCH V3 1/7] remoteproc: elf: support platform specific memory hook
+To:     Peng Fan <peng.fan@nxp.com>
+Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        "Peng Fan (OSS)" <peng.fan@oss.nxp.com>,
+        "ohad@wizery.com" <ohad@wizery.com>,
+        "o.rempel@pengutronix.de" <o.rempel@pengutronix.de>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Richard Zhu <hongxing.zhu@nxp.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-From: Tero Kristo <t-kristo@ti.com>
+On Wed, 9 Dec 2020 at 08:00, Peng Fan <peng.fan@nxp.com> wrote:
+>
+> > Subject: RE: [PATCH V3 1/7] remoteproc: elf: support platform specific
+> > memory hook
+> >
+> > Hi Bjorn,
+> >
+> > > Subject: Re: [PATCH V3 1/7] remoteproc: elf: support platform specific
+> > > memory hook
+> > >
+> > > On Fri 04 Dec 01:40 CST 2020, Peng Fan (OSS) wrote:
+> > >
+> > > > From: Peng Fan <peng.fan@nxp.com>
+> > > >
+> > > > To arm64, "dc      zva, dst" is used in memset.
+> > > > Per ARM DDI 0487A.j, chapter C5.3.8 DC ZVA, Data Cache Zero by VA,
+> > > >
+> > > > "If the memory region being zeroed is any type of Device memory,
+> > > > this instruction can give an alignment fault which is prioritized in
+> > > > the same way as other alignment faults that are determined by the
+> > > > memory type."
+> > > >
+> > > > On i.MX platforms, when elf is loaded to onchip TCM area, the region
+> > > > is ioremapped, so "dc zva, dst" will trigger abort. And ioremap_wc()
+> > > > on i.MX not able to write correct data to TCM area.
+> > > >
+> > > > So we need to use io helpers, and extend the elf loader to support
+> > > > platform specific memory functions.
+> > > >
+> > > > Acked-by: Richard Zhu <hongxing.zhu@nxp.com>
+> > > > Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> > > > Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+> > > > ---
+> > > >  drivers/remoteproc/remoteproc_elf_loader.c | 20
+> > > ++++++++++++++++++--
+> > > >  include/linux/remoteproc.h                 |  4 ++++
+> > > >  2 files changed, 22 insertions(+), 2 deletions(-)
+> > > >
+> > > > diff --git a/drivers/remoteproc/remoteproc_elf_loader.c
+> > > > b/drivers/remoteproc/remoteproc_elf_loader.c
+> > > > index df68d87752e4..6cb71fe47261 100644
+> > > > --- a/drivers/remoteproc/remoteproc_elf_loader.c
+> > > > +++ b/drivers/remoteproc/remoteproc_elf_loader.c
+> > > > @@ -129,6 +129,22 @@ u64 rproc_elf_get_boot_addr(struct rproc
+> > > > *rproc, const struct firmware *fw)  }
+> > > EXPORT_SYMBOL(rproc_elf_get_boot_addr);
+> > > >
+> > > > +static void rproc_elf_memcpy(struct rproc *rproc, void *dest, const
+> > > > +void *src, size_t count) {
+> > > > + if (!rproc->ops->elf_memcpy)
+> > > > +         memcpy(dest, src, count);
+> > > > +
+> > > > + rproc->ops->elf_memcpy(rproc, dest, src, count);
+> > >
+> > > Looking at the current set of remoteproc drivers I get a feeling that
+> > > we'll end up with a while bunch of functions that all just wraps
+> > > memcpy_toio(). And the reason for this is that we are we're "abusing"
+> > > the carveout to carry the __iomem pointer without keeping track of it.
+> > >
+> > > And this is not the only time we're supposed to use an io-accessor,
+> > > another example is rproc_copy_segment() in rproc_coredump.c
+> > >
+> > > It also means that if a platform driver for some reason where to
+> > > support both ioremap and normal carveouts the elf_memcpy op would be
+> > quite quirky.
+> > >
+> > >
+> > > So I would prefer if we track the knowledge about void *va being a
+> > > __iomem or not in the struct rproc_mem_entry and make rproc_da_to_va()
+> > > return this information as well.
+> > >
+> > > Then instead of extending the ops we can make this simply call memcpy
+> > > or
+> > > memcpy_toio() depending on this.
+> >
+> > A draft proposal as below, are you ok with the approach?
+>
+> Mathieu, do you have any comments?
+>
 
-Add two new helper functions pruss_cfg_get_gpmux() & pruss_cfg_set_gpmux()
-to get and set the GP MUX mode for programming the PRUSS internal wrapper
-mux functionality as needed by usecases.
-
-Co-developed-by: Suman Anna <s-anna@ti.com>
-Signed-off-by: Suman Anna <s-anna@ti.com>
-Signed-off-by: Tero Kristo <t-kristo@ti.com>
-Co-developed-by: Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>
-Signed-off-by: Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>
----
- include/linux/pruss_driver.h | 44 ++++++++++++++++++++++++++++++++++++
- 1 file changed, 44 insertions(+)
-
-diff --git a/include/linux/pruss_driver.h b/include/linux/pruss_driver.h
-index e2d5477225c6..3312281ef4c1 100644
---- a/include/linux/pruss_driver.h
-+++ b/include/linux/pruss_driver.h
-@@ -35,4 +35,48 @@ struct pruss {
- 	struct clk *iep_clk_mux;
- };
- 
-+/**
-+ * pruss_cfg_get_gpmux() - get the current GPMUX value for a PRU device
-+ * @pruss: pruss instance
-+ * @pru_id: PRU identifier (0-1)
-+ * @mux: pointer to store the current mux value into
-+ *
-+ * Return: 0 on success, or an error code otherwise
-+ */
-+static inline int pruss_cfg_get_gpmux(struct pruss *pruss,
-+				      enum pruss_pru_id pru_id, u8 *mux)
-+{
-+	int ret = 0;
-+	u32 val;
-+
-+	if (pru_id < 0 || pru_id >= PRUSS_NUM_PRUS)
-+		return -EINVAL;
-+
-+	ret = pruss_cfg_read(pruss, PRUSS_CFG_GPCFG(pru_id), &val);
-+	if (!ret)
-+		*mux = (u8)((val & PRUSS_GPCFG_PRU_MUX_SEL_MASK) >>
-+			    PRUSS_GPCFG_PRU_MUX_SEL_SHIFT);
-+	return ret;
-+}
-+
-+/**
-+ * pruss_cfg_set_gpmux() - set the GPMUX value for a PRU device
-+ * @pruss: pruss instance
-+ * @pru_id: PRU identifier (0-1)
-+ * @mux: new mux value for PRU
-+ *
-+ * Return: 0 on success, or an error code otherwise
-+ */
-+static inline int pruss_cfg_set_gpmux(struct pruss *pruss,
-+				      enum pruss_pru_id pru_id, u8 mux)
-+{
-+	if (mux >= PRUSS_GP_MUX_SEL_MAX ||
-+	    pru_id < 0 || pru_id >= PRUSS_NUM_PRUS)
-+		return -EINVAL;
-+
-+	return pruss_cfg_update(pruss, PRUSS_CFG_GPCFG(pru_id),
-+				PRUSS_GPCFG_PRU_MUX_SEL_MASK,
-+				(u32)mux << PRUSS_GPCFG_PRU_MUX_SEL_SHIFT);
-+}
-+
- #endif	/* _PRUSS_DRIVER_H_ */
--- 
-2.29.0
-
+I will look into this on Monday.
