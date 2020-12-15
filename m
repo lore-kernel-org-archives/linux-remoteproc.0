@@ -2,75 +2,105 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-23.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EDE50C4361B
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 15 Dec 2020 17:14:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 395E6C4361B
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 15 Dec 2020 18:08:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9D94322475
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 15 Dec 2020 17:14:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 04CEF20578
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 15 Dec 2020 18:08:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730510AbgLORNa (ORCPT
+        id S1729535AbgLOSI2 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 15 Dec 2020 12:13:30 -0500
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:36924 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730472AbgLORNX (ORCPT
+        Tue, 15 Dec 2020 13:08:28 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47972 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727063AbgLOSIS (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 15 Dec 2020 12:13:23 -0500
-Received: by mail-ot1-f67.google.com with SMTP id o11so20084799ote.4;
-        Tue, 15 Dec 2020 09:13:08 -0800 (PST)
+        Tue, 15 Dec 2020 13:08:18 -0500
+Received: from mail-oi1-x242.google.com (mail-oi1-x242.google.com [IPv6:2607:f8b0:4864:20::242])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0FA66C0617A7
+        for <linux-remoteproc@vger.kernel.org>; Tue, 15 Dec 2020 10:07:38 -0800 (PST)
+Received: by mail-oi1-x242.google.com with SMTP id f132so24292620oib.12
+        for <linux-remoteproc@vger.kernel.org>; Tue, 15 Dec 2020 10:07:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=aWT20cxGDnE+dNIxUaJWQEqPNcNAaFYi+yHn0ak9yqY=;
+        b=Ar1Etn1abBefJjCVtgl/nkMWVHndI9Y5bRpOMmsPzFda+OV4u8idKMnl3Pe96J0oEH
+         NkcTwp4VZsR+CS3U3fP4isewKiQb6ybba7QUc7WG41QpkaAV19YS9+/1+KDvwaXu+uPp
+         /PVWZ0dDWJ7ZY4vTmVFsyMVuCdKfnX3mi3GEvGH/PZs1HUv6gYwIMnOmYtYZIc9/yJOG
+         G0Y8SUs71CEw7Db+OFiAjrvS+kptYuRLVAtGjb1iJou4SJYSlnXQtzj2111O3gcaJ1Fe
+         FXY1WROoZBw66i48Q9JT11gN20E7qafrBDBa/D6mxHl6V+HFHSCh/FzUFeiZAqbZCTJO
+         AjYg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=tq/IR9knUY1aNNzaItUIR0LH+tSlkFf5XqzmbSFPck0=;
-        b=Ex+0qeyDLb5HViFl/kVTrvpjZHoEgDC0iF+BHdfYeJgrZrGYw8q2g2yCsqFxGoklse
-         KO4PiUb9s778XX7mkXPL8a45imI2+7ncxY9hDBAnonoXUlCbLfPtOTGxEwJr1gADxWZF
-         oLHp3rWp6UgByNDUslPGkk8HKEO+Fom6evo8wE+khe41WrdukVHfM2FK+cZTQZtGvBpU
-         TlsiFMHJXDJYXjVJ2JPuMaHjB1pxdaikSfZWqcAYmfCnsKHPe4qcqzv+O5vPT0q61w7a
-         +2z/aHaD/y1r9VDIiOkHpR+Gg+uPLtuCja17bzEXx0q4TD7TrMFGMT6X9m/LaRuoNUbg
-         g80Q==
-X-Gm-Message-State: AOAM530FMTzZwy8hx29W4q34jdeEeUM5s0x4kQwJN58VwcPiQzLzicgc
-        8c+1o47djNRag0fC/6bvQA==
-X-Google-Smtp-Source: ABdhPJyzQbJ2HQ/svaqxAA488qWQdmLYLwOfT9qsUlzvoW1OAKhM2rplpYojejBWBK+LfmebEn/TOw==
-X-Received: by 2002:a05:6830:400f:: with SMTP id h15mr24027638ots.284.1608052363028;
-        Tue, 15 Dec 2020 09:12:43 -0800 (PST)
-Received: from xps15 (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id g12sm4847248oos.8.2020.12.15.09.12.41
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=aWT20cxGDnE+dNIxUaJWQEqPNcNAaFYi+yHn0ak9yqY=;
+        b=H6GStUXccXxfUgQl3PSoiuTht9u/y8GTp2CvAjJSRTh2SF3sp3zyfrWjGjDcy7z8CA
+         cDqQuItl7DdHUxGEpPBAWQCHOkrFlKWAS/UllnTfdREp0s1Mf7lhPSTH9POUmtAbtDGU
+         sXaYqy4xIlu6mNdAStTGDVHBABV6ZoSCmzQaXp6tYKSXro1IQk6ytNQKTPd/BjDgOjq6
+         Ii1+xBibsQo1vUceloUgvICu8OHu7hGrUPJcRUrXfr/FcVXOWOEkcqB1RjZzu8mim60c
+         caxyiZCTPyU0clRwGcAVBsX77Dx2VREZag82LSTmQgVTXpwhma8kyUdv1khzP62am6OT
+         wknw==
+X-Gm-Message-State: AOAM533kCSE+vcYcThkiTOVypF9va5pEwiLNDLTh38Ov0A7Yn7XN1IyI
+        yOpAlrVJIZkWW/4wjHrw53rIpaJigXi8+w==
+X-Google-Smtp-Source: ABdhPJwK+5A9TPLHf3urLGkpH6nkUE2PbxcaEVEGg6uBnCbM+6OjzkKh518fON34xzTwLrjfQMvRQw==
+X-Received: by 2002:aca:ed51:: with SMTP id l78mr65136oih.144.1608055657471;
+        Tue, 15 Dec 2020 10:07:37 -0800 (PST)
+Received: from builder.lan (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
+        by smtp.gmail.com with ESMTPSA id s26sm585458otd.8.2020.12.15.10.07.36
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Dec 2020 09:12:42 -0800 (PST)
-Received: (nullmailer pid 4043914 invoked by uid 1000);
-        Tue, 15 Dec 2020 17:12:41 -0000
-Date:   Tue, 15 Dec 2020 11:12:41 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Tzung-Bi Shih <tzungbi@google.com>
-Cc:     matthias.bgg@gmail.com, ohad@wizery.com,
-        linux-mediatek@lists.infradead.org,
-        linux-remoteproc@vger.kernel.org, robh+dt@kernel.org,
-        bjorn.andersson@linaro.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH 1/2] dt-bindings: remoteproc: mediatek: add L1TCM memory
- region
-Message-ID: <20201215171241.GA4043874@robh.at.kernel.org>
-References: <20201214050521.845396-1-tzungbi@google.com>
- <20201214050521.845396-2-tzungbi@google.com>
+        Tue, 15 Dec 2020 10:07:36 -0800 (PST)
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Chunyan Zhang <chunyan.zhang@unisoc.com>,
+        Baolin Wang <baolin.wang7@gmail.com>,
+        Baolin Wang <baolin.wang@linux.alibaba.com>
+Subject: [GIT PULL] hwspinlock updates for v5.11
+Date:   Tue, 15 Dec 2020 12:07:35 -0600
+Message-Id: <20201215180735.1528535-1-bjorn.andersson@linaro.org>
+X-Mailer: git-send-email 2.29.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201214050521.845396-2-tzungbi@google.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Mon, 14 Dec 2020 13:05:20 +0800, Tzung-Bi Shih wrote:
-> Adds L1TCM memory region.  The reg-name is "l1tcm".
-> 
-> Signed-off-by: Tzung-Bi Shih <tzungbi@google.com>
-> ---
->  Documentation/devicetree/bindings/remoteproc/mtk,scp.txt | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
-> 
+The following changes since commit 3650b228f83adda7e5ee532e2b90429c03f7b9ec:
 
-Acked-by: Rob Herring <robh@kernel.org>
+  Linux 5.10-rc1 (2020-10-25 15:14:11 -0700)
+
+are available in the Git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/andersson/remoteproc.git tags/hwlock-v5.11
+
+for you to fetch changes up to c3e9b463b41b45c4556a13043265097e2184226e:
+
+  hwspinlock: sirf: Remove the redundant 'of_match_ptr' (2020-12-10 13:34:40 -0600)
+
+----------------------------------------------------------------
+hwspinlock updates for v5.11
+
+This contains a few minor cleanups and build warning fixes for the sprd
+and sirf hwspinlock drivers.
+
+----------------------------------------------------------------
+Baolin Wang (2):
+      hwspinlock: sprd: Remove redundant header files
+      hwspinlock: sirf: Remove the redundant 'of_match_ptr'
+
+Chunyan Zhang (2):
+      hwspinlock: sprd: use module_platform_driver() instead postcore initcall
+      hwspinlock: sprd: fixed warning of unused variable 'sprd_hwspinlock_of_match'
+
+ drivers/hwspinlock/sirf_hwspinlock.c |  2 +-
+ drivers/hwspinlock/sprd_hwspinlock.c | 17 ++---------------
+ 2 files changed, 3 insertions(+), 16 deletions(-)
