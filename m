@@ -3,162 +3,74 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4226C2BB9A
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 14 Dec 2020 22:59:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EDE50C4361B
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 15 Dec 2020 17:14:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 854D9224F9
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 14 Dec 2020 22:59:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9D94322475
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 15 Dec 2020 17:14:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2441342AbgLNW73 (ORCPT
+        id S1730510AbgLORNa (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 14 Dec 2020 17:59:29 -0500
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:35864 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731662AbgLNW70 (ORCPT
+        Tue, 15 Dec 2020 12:13:30 -0500
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:36924 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730472AbgLORNX (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 14 Dec 2020 17:59:26 -0500
-Received: by mail-oi1-f193.google.com with SMTP id 9so14010916oiq.3;
-        Mon, 14 Dec 2020 14:59:09 -0800 (PST)
+        Tue, 15 Dec 2020 12:13:23 -0500
+Received: by mail-ot1-f67.google.com with SMTP id o11so20084799ote.4;
+        Tue, 15 Dec 2020 09:13:08 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=FJU+jaQzEtO5duCLwvppA4dJ34gJjhLrozV/fOOF1No=;
-        b=qc4mIwSlZDebYe99h1bt7OoNiKzaoUIRFMhvjFutoEmaZR0UdI9jzaiFtc4tq3dUkf
-         DoDLOJZkJK7PsbporRWUUMdSyXNJHfxvDHa6mQ0o9NK69hE4xndo+oeeAxN7mHWjfyaF
-         aEXwGPdlJiAKk3XyVehOb7QtSVQKvzK7sqcnGJ4GxjKqYVy546I4F1PvRAz5GloVmrja
-         nnBLZspWe0BCzLPrfBw2Gy4ELxCzqZlvDF7QomW25QHfXiXnTjAkbaiPuvWIKQ9UWMlH
-         /uoHJqxXPoUNjefXSYwpkg92oGiONsq4xiyXZBBhYCqJdDcWEuw5sXuxoZ3XLJKnB33t
-         16gA==
-X-Gm-Message-State: AOAM530u2BbS3QWzWHmdERQYt1E8uXUMbVblDdKB9TPWacVzwyRQwlrj
-        r+kReEGqnSA98YJ40Dhltg==
-X-Google-Smtp-Source: ABdhPJxPklj4vRPATchV+so4shDonNm9ZnUmNJFK2LqIHwfhYahU0gsHtGQIDCXRf9GZjTxR8v6q7Q==
-X-Received: by 2002:aca:f48b:: with SMTP id s133mr19806622oih.59.1607986724341;
-        Mon, 14 Dec 2020 14:58:44 -0800 (PST)
+        bh=tq/IR9knUY1aNNzaItUIR0LH+tSlkFf5XqzmbSFPck0=;
+        b=Ex+0qeyDLb5HViFl/kVTrvpjZHoEgDC0iF+BHdfYeJgrZrGYw8q2g2yCsqFxGoklse
+         KO4PiUb9s778XX7mkXPL8a45imI2+7ncxY9hDBAnonoXUlCbLfPtOTGxEwJr1gADxWZF
+         oLHp3rWp6UgByNDUslPGkk8HKEO+Fom6evo8wE+khe41WrdukVHfM2FK+cZTQZtGvBpU
+         TlsiFMHJXDJYXjVJ2JPuMaHjB1pxdaikSfZWqcAYmfCnsKHPe4qcqzv+O5vPT0q61w7a
+         +2z/aHaD/y1r9VDIiOkHpR+Gg+uPLtuCja17bzEXx0q4TD7TrMFGMT6X9m/LaRuoNUbg
+         g80Q==
+X-Gm-Message-State: AOAM530FMTzZwy8hx29W4q34jdeEeUM5s0x4kQwJN58VwcPiQzLzicgc
+        8c+1o47djNRag0fC/6bvQA==
+X-Google-Smtp-Source: ABdhPJyzQbJ2HQ/svaqxAA488qWQdmLYLwOfT9qsUlzvoW1OAKhM2rplpYojejBWBK+LfmebEn/TOw==
+X-Received: by 2002:a05:6830:400f:: with SMTP id h15mr24027638ots.284.1608052363028;
+        Tue, 15 Dec 2020 09:12:43 -0800 (PST)
 Received: from xps15 (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id e1sm4615291oib.11.2020.12.14.14.58.42
+        by smtp.gmail.com with ESMTPSA id g12sm4847248oos.8.2020.12.15.09.12.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Dec 2020 14:58:43 -0800 (PST)
-Received: (nullmailer pid 2539817 invoked by uid 1000);
-        Mon, 14 Dec 2020 22:58:42 -0000
-Date:   Mon, 14 Dec 2020 16:58:42 -0600
+        Tue, 15 Dec 2020 09:12:42 -0800 (PST)
+Received: (nullmailer pid 4043914 invoked by uid 1000);
+        Tue, 15 Dec 2020 17:12:41 -0000
+Date:   Tue, 15 Dec 2020 11:12:41 -0600
 From:   Rob Herring <robh@kernel.org>
-To:     Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>
-Cc:     ohad@wizery.com, bjorn.andersson@linaro.org,
-        mathieu.poirier@linaro.org, s-anna@ti.com, ssantosh@kernel.org,
-        linux-remoteproc@vger.kernel.org, lee.jones@linaro.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        praneeth@ti.com, rogerq@ti.com
-Subject: Re: [PATCH 1/5] dt-bindings: remoteproc: Add PRU consumer bindings
-Message-ID: <20201214225842.GA2537432@robh.at.kernel.org>
-References: <20201211142933.25784-1-grzegorz.jaszczyk@linaro.org>
- <20201211142933.25784-2-grzegorz.jaszczyk@linaro.org>
+To:     Tzung-Bi Shih <tzungbi@google.com>
+Cc:     matthias.bgg@gmail.com, ohad@wizery.com,
+        linux-mediatek@lists.infradead.org,
+        linux-remoteproc@vger.kernel.org, robh+dt@kernel.org,
+        bjorn.andersson@linaro.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH 1/2] dt-bindings: remoteproc: mediatek: add L1TCM memory
+ region
+Message-ID: <20201215171241.GA4043874@robh.at.kernel.org>
+References: <20201214050521.845396-1-tzungbi@google.com>
+ <20201214050521.845396-2-tzungbi@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20201211142933.25784-2-grzegorz.jaszczyk@linaro.org>
+In-Reply-To: <20201214050521.845396-2-tzungbi@google.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Fri, Dec 11, 2020 at 03:29:29PM +0100, Grzegorz Jaszczyk wrote:
-> From: Suman Anna <s-anna@ti.com>
+On Mon, 14 Dec 2020 13:05:20 +0800, Tzung-Bi Shih wrote:
+> Adds L1TCM memory region.  The reg-name is "l1tcm".
 > 
-> Add a YAML binding document for PRU consumers. The binding includes
-> all the common properties that can be used by different PRU consumer
-> or application nodes and supported by the PRU remoteproc driver.
-> These are used to configure the PRU hardware for specific user
-> applications.
-> 
-> The application nodes themselves should define their own bindings.
-> 
-> Co-developed-by: Tero Kristo <t-kristo@ti.com>
-> Signed-off-by: Tero Kristo <t-kristo@ti.com>
-> Signed-off-by: Suman Anna <s-anna@ti.com>
-> Co-developed-by: Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>
-> Signed-off-by: Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>
+> Signed-off-by: Tzung-Bi Shih <tzungbi@google.com>
 > ---
->  .../bindings/remoteproc/ti,pru-consumer.yaml  | 64 +++++++++++++++++++
->  1 file changed, 64 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/remoteproc/ti,pru-consumer.yaml
+>  Documentation/devicetree/bindings/remoteproc/mtk,scp.txt | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
 > 
-> diff --git a/Documentation/devicetree/bindings/remoteproc/ti,pru-consumer.yaml b/Documentation/devicetree/bindings/remoteproc/ti,pru-consumer.yaml
-> new file mode 100644
-> index 000000000000..2c5c5e2b6159
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/remoteproc/ti,pru-consumer.yaml
-> @@ -0,0 +1,64 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only or BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/remoteproc/ti,pru-consumer.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Common TI PRU Consumer Binding
-> +
-> +maintainers:
-> +  - Suman Anna <s-anna@ti.com>
-> +
-> +description: |
-> +  A PRU application/consumer/user node typically uses one or more PRU device
-> +  nodes to implement a PRU application/functionality. Each application/client
-> +  node would need a reference to at least a PRU node, and optionally define
-> +  some properties needed for hardware/firmware configuration. The below
-> +  properties are a list of common properties supported by the PRU remoteproc
-> +  infrastructure.
-> +
-> +  The application nodes shall define their own bindings like regular platform
-> +  devices, so below are in addition to each node's bindings.
-> +
-> +properties:
-> +  prus:
 
-ti,prus
-
-> +    $ref: /schemas/types.yaml#/definitions/phandle-array
-> +    description: phandles to the PRU, RTU or Tx_PRU nodes used
-> +
-> +  firmware-name:
-> +    $ref: /schemas/types.yaml#/definitions/string-array
-> +    description: |
-> +      firmwares for the PRU cores, the default firmware for the core from
-> +      the PRU node will be used if not provided. The firmware names should
-> +      correspond to the PRU cores listed in the 'prus' property
-> +
-> +  ti,pruss-gp-mux-sel:
-> +    $ref: /schemas/types.yaml#/definitions/uint32-array
-> +    enum: [0, 1, 2, 3, 4]
-> +    description: |
-> +      array of values for the GP_MUX_SEL under PRUSS_GPCFG register for a PRU.
-> +      This selects the internal muxing scheme for the PRU instance. Values
-> +      should correspond to the PRU cores listed in the 'prus' property. The
-> +      GP_MUX_SEL setting is a per-slice setting (one setting for PRU0, RTU0,
-> +      and Tx_PRU0 on K3 SoCs). Use the same value for all cores within the
-> +      same slice in the associative array. If the array size is smaller than
-> +      the size of 'prus' property, the default out-of-reset value (0) for the
-> +      PRU core is used.
-> +
-> +required:
-> +  - prus
-> +
-> +dependencies:
-> +  firmware-name: [ prus ]
-> +  ti,pruss-gp-mux-sel: [ prus ]
-> +
-> +additionalProperties: true
-> +
-> +examples:
-> +  - |
-> +    /* PRU application node example */
-> +    pru-app {
-> +        prus = <&pru0>, <&pru1>;
-> +        firmware-name = "pruss-app-fw0", "pruss-app-fw1";
-> +        ti,pruss-gp-mux-sel = <2>, <1>;
-> +    };
-> -- 
-> 2.29.0
-> 
+Acked-by: Rob Herring <robh@kernel.org>
