@@ -7,160 +7,134 @@ X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F1AAC3527E
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 16 Dec 2020 16:54:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B596AC4361B
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 17 Dec 2020 03:05:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 30273235FD
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 16 Dec 2020 16:54:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6C4C223434
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 17 Dec 2020 03:05:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726863AbgLPQyb (ORCPT
+        id S1727231AbgLQDEw (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 16 Dec 2020 11:54:31 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34428 "EHLO
+        Wed, 16 Dec 2020 22:04:52 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43978 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726859AbgLPQyb (ORCPT
+        with ESMTP id S1727262AbgLQDEw (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 16 Dec 2020 11:54:31 -0500
-Received: from mail-lf1-x136.google.com (mail-lf1-x136.google.com [IPv6:2a00:1450:4864:20::136])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 22913C0619D2
-        for <linux-remoteproc@vger.kernel.org>; Wed, 16 Dec 2020 08:53:02 -0800 (PST)
-Received: by mail-lf1-x136.google.com with SMTP id m12so50088414lfo.7
-        for <linux-remoteproc@vger.kernel.org>; Wed, 16 Dec 2020 08:53:01 -0800 (PST)
+        Wed, 16 Dec 2020 22:04:52 -0500
+Received: from mail-pj1-x1032.google.com (mail-pj1-x1032.google.com [IPv6:2607:f8b0:4864:20::1032])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D0E4EC0617A7
+        for <linux-remoteproc@vger.kernel.org>; Wed, 16 Dec 2020 19:04:11 -0800 (PST)
+Received: by mail-pj1-x1032.google.com with SMTP id b5so3262748pjk.2
+        for <linux-remoteproc@vger.kernel.org>; Wed, 16 Dec 2020 19:04:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=QN2ZDNaFP2aT/ClXBsxAgxKdaK3vIBmK5H4WTk/CkiE=;
-        b=F7PRpDU16rzweD3c39edlX+7YkESCotZA/8lVuw7u0iyFp6lxPyNoIfl0Gmn0GfPRu
-         OCGSXbVPuEVr40Ead0jo3k1yeY70xXijLUCaTjfVxqHvWPzP3fy4QAOjarCRXxazAJe8
-         cBhtLSxLpWkBBdgh1jN4e/08b0qSU+soXhcAIuMBp4olkK69NiLajmjSn24lGN9bQOw9
-         srP1jHf1P3c1pu0FMOabufaANlqPNlridBo3+jdRcJ2s1XvU+OyO+3h0y87Dy//Igqhv
-         ZtRI+fAbOWMuf2iRmbKTalhDEDfkjZwfKtLksMmH330rgoqwGh6ySl5KYrSbBLFiRBDZ
-         8E4w==
+        h=from:to:cc:subject:date:message-id;
+        bh=2OShYK3cxttn34XBpwf6upnK9s0bIYer5Kl6XYLdf3g=;
+        b=mtcwFqcGIhXVaOQzBmuoweU6wes3MKwesB6hNJhtfaGrUtHMulZK5oR1A1hAV7Pd4Y
+         qFnULivaUIKPeFOQzZoXf08RrBBSd++PBugZgCXPhiJLERPBsHWUj37gdNEStB0oPhv+
+         5laHL0h/jqNldFsbpx3FcYtJj0e4CXlLm5/a2LOS6e7jqwGC8Y8XXXp9uU/ydFf9ka2t
+         YdipjftiSutrDfKDfvx+UTCbf/ij6OTAllFGkEI35z1/dNEkqjaFlPgNJdkg3LQkt+x7
+         57scNyn4i7WJRE8p5T2/yUu4nBPe1d0ee3tFUvcz+OXJH+hGBFoHY1ecnpNokveJZEqv
+         fcuw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=QN2ZDNaFP2aT/ClXBsxAgxKdaK3vIBmK5H4WTk/CkiE=;
-        b=Thsi/x+5MP/2tB95JaCaRqQN16G5dYaJD0BMqDs1I/bACiW0Dz8al64KEoGA0KEna+
-         /J1TQhsW6fNa+BUsKLNAn8UbXC6mIPKfMFBXqJraBSzN5noBN1rD64PMZyTvLuIwqqS8
-         8dJexYf/vieIoWPmt2G3FtPB66L5BoIbCGFlTnvbonFHadHZ6x0qCz8zLBDdUrxilFiU
-         /0dgZeRnJhVOFZhzbweg68Utf8XvFEDuMoMQbhnnkNsRpx33nMwQQD9icxS4TtXGcxaD
-         hhxAMxneoU+HQFKoQHDwTlI0uIJOkqYtv65bImsyc3VXcnWuCIWllHD7fGEls5sdTIgF
-         F5UQ==
-X-Gm-Message-State: AOAM532Zl/X6oHsx7OnF2SAbSk+/JGhV0u/Bjywv4QY09d3//o32/ZmJ
-        q+wXtaTDYkj7zjzbb13GCWijhA==
-X-Google-Smtp-Source: ABdhPJxXwjufBrBS5p5gGK+QRTNfqS9gpkIv6Yx7cXPGiFdZEIUdxaMtfzMcrRCrrXmj0W3+90mb4A==
-X-Received: by 2002:a2e:9f14:: with SMTP id u20mr5744528ljk.244.1608137579582;
-        Wed, 16 Dec 2020 08:52:59 -0800 (PST)
-Received: from gilgamesh.semihalf.com (193-106-246-138.noc.fibertech.net.pl. [193.106.246.138])
-        by smtp.gmail.com with ESMTPSA id t3sm281645lfe.263.2020.12.16.08.52.58
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 16 Dec 2020 08:52:58 -0800 (PST)
-From:   Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>
-To:     ohad@wizery.com, bjorn.andersson@linaro.org,
-        mathieu.poirier@linaro.org, robh+dt@kernel.org, s-anna@ti.com,
-        ssantosh@kernel.org
-Cc:     grzegorz.jaszczyk@linaro.org, linux-remoteproc@vger.kernel.org,
-        lee.jones@linaro.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, praneeth@ti.com,
-        rogerq@ti.com, t-kristo@ti.com
-Subject: [PATCH v2 5/5] remoteproc: pru: Configure firmware based on client setup
-Date:   Wed, 16 Dec 2020 17:52:39 +0100
-Message-Id: <20201216165239.2744-6-grzegorz.jaszczyk@linaro.org>
-X-Mailer: git-send-email 2.29.0
-In-Reply-To: <20201216165239.2744-1-grzegorz.jaszczyk@linaro.org>
-References: <20201216165239.2744-1-grzegorz.jaszczyk@linaro.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=2OShYK3cxttn34XBpwf6upnK9s0bIYer5Kl6XYLdf3g=;
+        b=Y16nRi7sA4M0qz7XcDmK1KexOqKsHWEumBtwwdpmI3CNOdQZCxK+MrI5r00Qd51jAY
+         MCZZhXEt/N1kgnqu18E7ODH8LrQdmg0DEZ85lKzQer/jH/3SxENtFtFjU4fiWzPInXjm
+         iVECY2HvLImdxBmN4RAcTl4CweeSGAGcVTwQQ7dZ1kSJYBmDrc82xHXYe0gF603V9Jok
+         dsi4f1ticYnZc+6p7XSyB20WUfIMF7DDc/WCXHIeXxM457xe5XvggZZWYAOWxo9RH2h+
+         LfoYibC1xxv3VNz61tEvF6IFKmD3cWtCByO0+HOt5JA96fZNNwnE9PJfvivVTb8F7IYw
+         3JmA==
+X-Gm-Message-State: AOAM531C4P9lr5OhciTFc2D3Gy+O6zbuvziwbxGGvkOhF7wmD5jN0+6d
+        70GvZvVxYafOPnoiiBT7rDnrKA==
+X-Google-Smtp-Source: ABdhPJzjsGhTbXQUP6JIFv2xSVy9MTdU2w93YM+Nji7Dqa0++qRPapAO4Bk/Km/Fdxn3qmj6Nwe5Lw==
+X-Received: by 2002:a17:902:848e:b029:dc:1aa4:114d with SMTP id c14-20020a170902848eb02900dc1aa4114dmr4382311plo.18.1608174251173;
+        Wed, 16 Dec 2020 19:04:11 -0800 (PST)
+Received: from localhost.localdomain (80.251.214.228.16clouds.com. [80.251.214.228])
+        by smtp.gmail.com with ESMTPSA id 3sm3810675pfv.92.2020.12.16.19.04.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Dec 2020 19:04:10 -0800 (PST)
+From:   Shawn Guo <shawn.guo@linaro.org>
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Ohad Ben-Cohen <ohad@wizery.com>
+Cc:     linux-remoteproc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        Shawn Guo <shawn.guo@linaro.org>
+Subject: [PATCH] remoteproc: qcom: add more help text qcom options
+Date:   Thu, 17 Dec 2020 11:04:00 +0800
+Message-Id: <20201217030400.6235-1-shawn.guo@linaro.org>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-From: Tero Kristo <t-kristo@ti.com>
+With these more help text added, hopefully it's easier to understand the
+distinctions of these qcom remoteproc drivers.
 
-Client device node property firmware-name is now used to configure
-firmware for the PRU instances. The default firmware is also
-restored once releasing the PRU resource.
-
-Co-developed-by: Suman Anna <s-anna@ti.com>
-Signed-off-by: Suman Anna <s-anna@ti.com>
-Signed-off-by: Tero Kristo <t-kristo@ti.com>
-Co-developed-by: Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>
-Signed-off-by: Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>
+Signed-off-by: Shawn Guo <shawn.guo@linaro.org>
 ---
- drivers/remoteproc/pru_rproc.c | 35 ++++++++++++++++++++++++++++++++++
- 1 file changed, 35 insertions(+)
+ drivers/remoteproc/Kconfig | 20 ++++++++++++++------
+ 1 file changed, 14 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/remoteproc/pru_rproc.c b/drivers/remoteproc/pru_rproc.c
-index a37c3f5838ea..4a9c7973bf3a 100644
---- a/drivers/remoteproc/pru_rproc.c
-+++ b/drivers/remoteproc/pru_rproc.c
-@@ -170,6 +170,23 @@ void pru_control_set_reg(struct pru_rproc *pru, unsigned int reg,
- 	spin_unlock_irqrestore(&pru->rmw_lock, flags);
- }
+diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
+index d99548fb5dde..062a990a7d19 100644
+--- a/drivers/remoteproc/Kconfig
++++ b/drivers/remoteproc/Kconfig
+@@ -150,7 +150,9 @@ config QCOM_Q6V5_ADSP
+ 	select QCOM_RPROC_COMMON
+ 	help
+ 	  Say y here to support the Peripheral Image Loader
+-	  for the Qualcomm Technology Inc. ADSP remote processors.
++	  for the non-TrustZone part of Qualcomm Technology Inc. ADSP and CDSP
++	  remote processors. The TrustZone part is handled by QCOM_Q6V5_PAS
++	  driver.
  
-+/**
-+ * pru_rproc_set_firmware() - set firmware for a pru core
-+ * @rproc: the rproc instance of the PRU
-+ * @fw_name: the new firmware name, or NULL if default is desired
-+ *
-+ * Return: 0 on success, or errno in error case.
-+ */
-+static int pru_rproc_set_firmware(struct rproc *rproc, const char *fw_name)
-+{
-+	struct pru_rproc *pru = rproc->priv;
-+
-+	if (!fw_name)
-+		fw_name = pru->fw_name;
-+
-+	return rproc_set_firmware(rproc, fw_name);
-+}
-+
- static struct rproc *__pru_rproc_get(struct device_node *np, int index)
- {
- 	struct device_node *rproc_np = NULL;
-@@ -230,6 +247,8 @@ struct rproc *pru_rproc_get(struct device_node *np, int index,
- 	struct rproc *rproc;
- 	struct pru_rproc *pru;
- 	struct device *dev;
-+	const char *fw_name;
-+	int ret;
+ config QCOM_Q6V5_MSS
+ 	tristate "Qualcomm Hexagon V5 self-authenticating modem subsystem support"
+@@ -167,7 +169,8 @@ config QCOM_Q6V5_MSS
+ 	select QCOM_SCM
+ 	help
+ 	  Say y here to support the Qualcomm self-authenticating modem
+-	  subsystem based on Hexagon V5.
++	  subsystem based on Hexagon V5. The TrustZone based system is
++	  handled by QCOM_Q6V5_PAS driver.
  
- 	rproc = __pru_rproc_get(np, index);
- 	if (IS_ERR(rproc))
-@@ -254,7 +273,21 @@ struct rproc *pru_rproc_get(struct device_node *np, int index,
- 	if (pru_id)
- 		*pru_id = pru->id;
+ config QCOM_Q6V5_PAS
+ 	tristate "Qualcomm Hexagon v5 Peripheral Authentication Service support"
+@@ -185,7 +188,9 @@ config QCOM_Q6V5_PAS
+ 	help
+ 	  Say y here to support the TrustZone based Peripherial Image Loader
+ 	  for the Qualcomm Hexagon v5 based remote processors. This is commonly
+-	  used to control subsystems such as ADSP, Compute and Sensor.
++	  used to control subsystems such as ADSP (Application DSP),
++	  CDSP (Compute DSP), MPSS (Modem Peripheral SubSystem), and
++	  SLPI (Sensor Low Power Island).
  
-+	ret = of_property_read_string_index(np, "firmware-name", index,
-+					    &fw_name);
-+	if (!ret) {
-+		ret = pru_rproc_set_firmware(rproc, fw_name);
-+		if (ret) {
-+			dev_err(dev, "failed to set firmware: %d\n", ret);
-+			goto err;
-+		}
-+	}
-+
- 	return rproc;
-+
-+err:
-+	pru_rproc_put(rproc);
-+	return ERR_PTR(ret);
- }
- EXPORT_SYMBOL_GPL(pru_rproc_get);
+ config QCOM_Q6V5_WCSS
+ 	tristate "Qualcomm Hexagon based WCSS Peripheral Image Loader"
+@@ -202,7 +207,8 @@ config QCOM_Q6V5_WCSS
+ 	select QCOM_SCM
+ 	help
+ 	  Say y here to support the Qualcomm Peripheral Image Loader for the
+-	  Hexagon V5 based WCSS remote processors.
++	  Hexagon V5 based WCSS remote processors on e.g. IPQ8074.  This is
++	  a non-TrustZone wireless subsystem.
  
-@@ -276,6 +309,8 @@ void pru_rproc_put(struct rproc *rproc)
- 	if (!pru->client_np)
- 		return;
+ config QCOM_SYSMON
+ 	tristate "Qualcomm sysmon driver"
+@@ -231,8 +237,10 @@ config QCOM_WCNSS_PIL
+ 	select QCOM_RPROC_COMMON
+ 	select QCOM_SCM
+ 	help
+-	  Say y here to support the Peripheral Image Loader for the Qualcomm
+-	  Wireless Connectivity Subsystem.
++	  Say y here to support the Peripheral Image Loader for loading WCNSS
++	  firmware and boot the core on e.g. MSM8974, MSM8916. The firmware is
++	  verified and booted with the help of the Peripheral Authentication
++	  System (PAS) in TrustZone.
  
-+	pru_rproc_set_firmware(rproc, NULL);
-+
- 	mutex_lock(&pru->lock);
- 	pru->client_np = NULL;
- 	rproc->deny_sysfs_ops = false;
+ config ST_REMOTEPROC
+ 	tristate "ST remoteproc support"
 -- 
-2.29.0
+2.17.1
 
