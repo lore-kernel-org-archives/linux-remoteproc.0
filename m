@@ -5,65 +5,65 @@ X-Spam-Level:
 X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CECBC3526D
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 18 Dec 2020 17:34:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B0DFC35270
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 18 Dec 2020 17:34:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4193D23B6C
+	by mail.kernel.org (Postfix) with ESMTP id DC97223B6B
 	for <linux-remoteproc@archiver.kernel.org>; Fri, 18 Dec 2020 17:34:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732804AbgLRReY (ORCPT
+        id S1732849AbgLRReY (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
         Fri, 18 Dec 2020 12:34:24 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60094 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60084 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732841AbgLRReX (ORCPT
+        with ESMTP id S1732833AbgLRReW (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 18 Dec 2020 12:34:23 -0500
-Received: from mail-pg1-x532.google.com (mail-pg1-x532.google.com [IPv6:2607:f8b0:4864:20::532])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 113C4C061A4D
-        for <linux-remoteproc@vger.kernel.org>; Fri, 18 Dec 2020 09:32:48 -0800 (PST)
-Received: by mail-pg1-x532.google.com with SMTP id e2so1749181pgi.5
-        for <linux-remoteproc@vger.kernel.org>; Fri, 18 Dec 2020 09:32:48 -0800 (PST)
+        Fri, 18 Dec 2020 12:34:22 -0500
+Received: from mail-pf1-x42b.google.com (mail-pf1-x42b.google.com [IPv6:2607:f8b0:4864:20::42b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B5A59C061A49
+        for <linux-remoteproc@vger.kernel.org>; Fri, 18 Dec 2020 09:32:45 -0800 (PST)
+Received: by mail-pf1-x42b.google.com with SMTP id q22so1917832pfk.12
+        for <linux-remoteproc@vger.kernel.org>; Fri, 18 Dec 2020 09:32:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=vutdwpz2dUDTweVlb30ERc0HCxLnN2+/Hjzz5Y0E1bI=;
-        b=BKXSrxbXnh6d2zRd2aZGKoJTdugQUWnvySJCEm8scXWnxe9+TXu4/81oD7MQ7cAa17
-         gBO+juB3m0O1fJjMKmtwbmlZgSx+e0JTk0c0HSQxxX0PtJqu1sIPMrzlHOrooOtCcSlV
-         jBWWe3U8wAgF2HAAPUjjDl3dn+tkcgA2TspNkWMz0iMrwWGEqpVYwi9SA/2ycdhEX7EB
-         ZroR/ixb5Fa5kmAWWEgaoiZgosqZ7gUGLmayhcP9HTnP7Q9Xz3hklPJzJNnEk/sy635S
-         mZImmX9q2aaGbnoKtTFr/Lu2XDsdDRBFlAnGqEILryiXq7xAUF5u33LS7NVbe1lAjHJ7
-         TgaQ==
+        bh=uKSTphgWknohNFtSvHeL9OjdtOYRpK15kmrAWNQQraE=;
+        b=Sgu23wLrVw115S9/YyqCMr2Y0KfHFTxj1vMq0A1WmMhO7T3Z3IYbXsGL9fZ9vZpWV+
+         NwvwjEizp4EZgh5DHKkTO+7opKvFbblxnzEKwtbWFxMdGkeSl34oRCksoIWEySV1QSXW
+         XOMLxcxDPy/6TNC6cCL1lYiaRLXsjbb7O9Ubco0yEr39D99u5hoXsmke5LvldHNQhp46
+         YLb9nLKZFhQPXwmBCeLkmU6u2ZzV+25hq7ODVyshWIYIjNS+F5/bkEq/Ms+icIF0ismk
+         0Xb6XXvH1CH9opA0XIjWOq2BrhSF0Cs6RBbq4RUU2KLCUBFedI0ujuavSJ51FAex/r7V
+         3JNw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=vutdwpz2dUDTweVlb30ERc0HCxLnN2+/Hjzz5Y0E1bI=;
-        b=Fmxp4k5sZg9XfNWC9B7z8PpVuY+N7qYZXYZtXtYcJuiKLla+jzl7af6KlY99kqKpom
-         /iAGehz//4HM1b4qGZdW/5LYsHiJG672Fqj9iT3/V2pUxirzlGGDP1KbzqR8ElYM0d2S
-         LkihnwNNf8CMEiaEDJRv8+X+QvgD3+KI4XGQ0L9rxN6WLNYUlhtHS5FYdswSDjWny396
-         0JYCpLEFuC5hAtQE3V0lOD4GeZnhtnwR0x4gRPzLOoRZ97nPOnifwvUkn9+ZoQnLhfgG
-         +QtRh8IGX1/fgiiFY2bqCDlvAL5s3LUJMFIoCNwYIcp8mvg7NUMHnpspe6u4j3EQn2Qk
-         S8Hg==
-X-Gm-Message-State: AOAM533QwDJ1EOkkFTqQ3mklypK7urtWw8Taml1QpnSBOhrWjTxapYcv
-        Akgk3V4CVZYR5fZ7NjekIBzd/FdaHjXFcw+A
-X-Google-Smtp-Source: ABdhPJyoSPdQNxv0nHKlET++OnaWfTpvXjLCfYQZndPk5Wlb1V3YDItJACWOCJnUBVrQbDsT25+Nuw==
-X-Received: by 2002:a65:4c4b:: with SMTP id l11mr1097792pgr.177.1608312767705;
-        Fri, 18 Dec 2020 09:32:47 -0800 (PST)
+        bh=uKSTphgWknohNFtSvHeL9OjdtOYRpK15kmrAWNQQraE=;
+        b=M9OlFc/pFSbUsuxemUrMRxtrQcCAwfovIcEoHcpr55wmkFvuvA6QtPyGVlbmv7P993
+         6miAnMVLuTxYoUE6lnQPPOkXyzv2eyGPkOJjWDBBx0JCQkoNDpyO3RrNzOsABDJt4cYQ
+         gSb+CD0yA6SktM1MfBpunjpCiGzr55jRyO19djA4AHAMcqPYOkaKzxN/QxY6157YQMNH
+         i4+QAfbKTo1oqEpvnX4lHSJID25o/N/zoY6BUlPEIT8AceHsJgvEqBe3E7v7bWzfu7HL
+         fJveQH1Ayg5g1k2OJQfwFLS0LlJT5AS21VA+XlfKWZLwDZe6W9tJkgcxstUyH2H8DJX8
+         Kowg==
+X-Gm-Message-State: AOAM533W7rtK6xAjVLG3TYQp1BjAGvdVZxkdH+I7JweAAu8L55u/Vz7E
+        KRdDc+uMbJC07PyzI6DB17GXuQ==
+X-Google-Smtp-Source: ABdhPJxvEiUvC4NMjZYIqkx7yflVwE+0LHTRmVO1sN51YXmbr6EuTkm70GnXFugiDs6d8eKiUvaawg==
+X-Received: by 2002:a62:1749:0:b029:19d:960c:1bb8 with SMTP id 70-20020a6217490000b029019d960c1bb8mr5302964pfx.63.1608312765271;
+        Fri, 18 Dec 2020 09:32:45 -0800 (PST)
 Received: from xps15.cg.shawcable.net (S0106889e681aac74.cg.shawcable.net. [68.147.0.187])
-        by smtp.gmail.com with ESMTPSA id l11sm9892957pgt.79.2020.12.18.09.32.46
+        by smtp.gmail.com with ESMTPSA id l11sm9892957pgt.79.2020.12.18.09.32.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Dec 2020 09:32:46 -0800 (PST)
+        Fri, 18 Dec 2020 09:32:44 -0800 (PST)
 From:   Mathieu Poirier <mathieu.poirier@linaro.org>
 To:     ohad@wizery.com, bjorn.andersson@linaro.org, robh+dt@kernel.org
 Cc:     arnaud.pouliquen@st.com, linux-remoteproc@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v4 15/17] remoteproc: Properly deal with a start request when attached
-Date:   Fri, 18 Dec 2020 10:32:26 -0700
-Message-Id: <20201218173228.2277032-16-mathieu.poirier@linaro.org>
+Subject: [PATCH v4 13/17] remoteproc: Add return value to function rproc_shutdown()
+Date:   Fri, 18 Dec 2020 10:32:24 -0700
+Message-Id: <20201218173228.2277032-14-mathieu.poirier@linaro.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20201218173228.2277032-1-mathieu.poirier@linaro.org>
 References: <20201218173228.2277032-1-mathieu.poirier@linaro.org>
@@ -73,47 +73,87 @@ Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-This patch takes into account scenarios where a remote processor
-has been attached to when receiving a "start" command from sysfs.
-
-As with the "running" case, the command can't be carried out if the
-remote processor is already in operation.
+Add a return value to function rproc_shutdown() in order to
+properly deal with error conditions that may occur.
 
 Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+Reviewed-by: Peng Fan <peng.fan@nxp.com>
 Reviewed-by: Arnaud Pouliquen <arnaud.pouliquen@st.com>
 ---
- drivers/remoteproc/remoteproc_cdev.c  | 3 ++-
- drivers/remoteproc/remoteproc_sysfs.c | 3 ++-
- 2 files changed, 4 insertions(+), 2 deletions(-)
+ drivers/remoteproc/remoteproc_core.c | 19 ++++++++++++++-----
+ include/linux/remoteproc.h           |  2 +-
+ 2 files changed, 15 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/remoteproc/remoteproc_cdev.c b/drivers/remoteproc/remoteproc_cdev.c
-index d06f8d4919c7..61541bc7d26c 100644
---- a/drivers/remoteproc/remoteproc_cdev.c
-+++ b/drivers/remoteproc/remoteproc_cdev.c
-@@ -32,7 +32,8 @@ static ssize_t rproc_cdev_write(struct file *filp, const char __user *buf, size_
- 		return -EFAULT;
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index ece3f15070b9..90057ad1bb6c 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -1886,7 +1886,7 @@ EXPORT_SYMBOL(rproc_boot);
+  *   returns, and users can still use it with a subsequent rproc_boot(), if
+  *   needed.
+  */
+-void rproc_shutdown(struct rproc *rproc)
++int rproc_shutdown(struct rproc *rproc)
+ {
+ 	struct device *dev = &rproc->dev;
+ 	int ret;
+@@ -1894,15 +1894,19 @@ void rproc_shutdown(struct rproc *rproc)
+ 	ret = mutex_lock_interruptible(&rproc->lock);
+ 	if (ret) {
+ 		dev_err(dev, "can't lock rproc %s: %d\n", rproc->name, ret);
+-		return;
++		return ret;
+ 	}
  
- 	if (!strncmp(cmd, "start", len)) {
--		if (rproc->state == RPROC_RUNNING)
-+		if (rproc->state == RPROC_RUNNING ||
-+		    rproc->state == RPROC_ATTACHED)
- 			return -EBUSY;
+-	if (rproc->state != RPROC_RUNNING)
++	if (rproc->state != RPROC_RUNNING) {
++		ret = -EPERM;
+ 		goto out;
++	}
  
- 		ret = rproc_boot(rproc);
-diff --git a/drivers/remoteproc/remoteproc_sysfs.c b/drivers/remoteproc/remoteproc_sysfs.c
-index 96751c087585..298052c9d068 100644
---- a/drivers/remoteproc/remoteproc_sysfs.c
-+++ b/drivers/remoteproc/remoteproc_sysfs.c
-@@ -223,7 +223,8 @@ static ssize_t state_store(struct device *dev,
- 	int ret = 0;
+ 	/* if the remote proc is still needed, bail out */
+-	if (!atomic_dec_and_test(&rproc->power))
++	if (!atomic_dec_and_test(&rproc->power)) {
++		ret = -EBUSY;
+ 		goto out;
++	}
  
- 	if (sysfs_streq(buf, "start")) {
--		if (rproc->state == RPROC_RUNNING)
-+		if (rproc->state == RPROC_RUNNING ||
-+		    rproc->state == RPROC_ATTACHED)
- 			return -EBUSY;
+ 	ret = rproc_stop(rproc, false);
+ 	if (ret) {
+@@ -1914,7 +1918,11 @@ void rproc_shutdown(struct rproc *rproc)
+ 	rproc_resource_cleanup(rproc);
  
- 		ret = rproc_boot(rproc);
+ 	/* release HW resources if needed */
+-	rproc_unprepare_device(rproc);
++	ret = rproc_unprepare_device(rproc);
++	if (ret) {
++		atomic_inc(&rproc->power);
++		goto out;
++	}
+ 
+ 	rproc_disable_iommu(rproc);
+ 
+@@ -1924,6 +1932,7 @@ void rproc_shutdown(struct rproc *rproc)
+ 	rproc->table_ptr = NULL;
+ out:
+ 	mutex_unlock(&rproc->lock);
++	return ret;
+ }
+ EXPORT_SYMBOL(rproc_shutdown);
+ 
+diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+index 65ece6f177b7..aa5bceb72015 100644
+--- a/include/linux/remoteproc.h
++++ b/include/linux/remoteproc.h
+@@ -658,7 +658,7 @@ rproc_of_resm_mem_entry_init(struct device *dev, u32 of_resm_idx, size_t len,
+ 			     u32 da, const char *name, ...);
+ 
+ int rproc_boot(struct rproc *rproc);
+-void rproc_shutdown(struct rproc *rproc);
++int rproc_shutdown(struct rproc *rproc);
+ int rproc_detach(struct rproc *rproc);
+ int rproc_set_firmware(struct rproc *rproc, const char *fw_name);
+ void rproc_report_crash(struct rproc *rproc, enum rproc_crash_type type);
 -- 
 2.25.1
 
