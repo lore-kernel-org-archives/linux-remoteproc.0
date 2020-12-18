@@ -5,65 +5,65 @@ X-Spam-Level:
 X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D554DC4361B
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 18 Dec 2020 17:33:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00592C4361B
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 18 Dec 2020 17:34:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7A8FF23AC9
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 18 Dec 2020 17:33:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B8F1323B6B
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 18 Dec 2020 17:34:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727967AbgLRRdc (ORCPT
+        id S1731339AbgLRRds (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 18 Dec 2020 12:33:32 -0500
+        Fri, 18 Dec 2020 12:33:48 -0500
 Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60026 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732216AbgLRRdc (ORCPT
+        with ESMTP id S1727945AbgLRRdr (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 18 Dec 2020 12:33:32 -0500
-Received: from mail-pl1-x632.google.com (mail-pl1-x632.google.com [IPv6:2607:f8b0:4864:20::632])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 06C8AC061248
-        for <linux-remoteproc@vger.kernel.org>; Fri, 18 Dec 2020 09:32:32 -0800 (PST)
-Received: by mail-pl1-x632.google.com with SMTP id b8so1775125plx.0
-        for <linux-remoteproc@vger.kernel.org>; Fri, 18 Dec 2020 09:32:32 -0800 (PST)
+        Fri, 18 Dec 2020 12:33:47 -0500
+Received: from mail-pg1-x535.google.com (mail-pg1-x535.google.com [IPv6:2607:f8b0:4864:20::535])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4A651C0611E4
+        for <linux-remoteproc@vger.kernel.org>; Fri, 18 Dec 2020 09:32:35 -0800 (PST)
+Received: by mail-pg1-x535.google.com with SMTP id g18so1759115pgk.1
+        for <linux-remoteproc@vger.kernel.org>; Fri, 18 Dec 2020 09:32:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=gRhRZVtQaTMtklLhGYfbei+QaPodzo2py0ncJTxvT/s=;
-        b=tNpsREt+XbPPv5QuoOhm9OqsITxalLxxOZfgF8GTLq+WJ8iOk5xzuavWPKfg58ioVE
-         vBnZIyX/ncnJ2y40CyDTmSENMfPGcJewYu8oc3kJ5gXDZkQ35Pan0ThRHaPR4j8bNOFr
-         dTa2k+0iXIbnE8vX66p/PMHDMBGHZkIVXf63lWQg4QHZsaFAbrdfmUqSzPgzV3SkxCiN
-         cW227HbMVgiQ4M8uIXZeAKla3krZ6TzWemIzYMDGTUV1n5M6UZwJ8ZU3XQmivnqsNLFA
-         EXNaCAd9JvVPPXBHFKQ7X9WuYH5XIhAaGzy5Z0igOM8Fo4zLsHKrqv0pq7vRF5UwrOUn
-         I7lg==
+        bh=txg4LgzTONgLC7bOinTZzbCI37JS2siLcSWFwbF15Qk=;
+        b=FT1wjtnmHCPECVPEQOVxWLN5IehXSRiI66FrjheH51idu4RnVyVuXK++01jSwEYClT
+         KZcFQ0KFJhcsVGfoIH42EnumgM9kl6NEwU9q1v901FR335NFKd/uI3zQqmhFcU52+ZnU
+         UrBN9FzQambsdleQEA8D+rYpufRq4QHqAZbw3u2I8hS4Ef79mMz71XebEFznG6UxpIN2
+         EKW/X23xQvlKzToX003uherA1MKSw08scJZVf8NMCxj1EVa/iXVQZ7+M7FUbWOoBQx5V
+         bNimp0NbeQwOPco7XjifzHPkmZTafaMiWHnat4Mjv2WN1m2Z993yQZMHJGR4wx/4klCI
+         C8QQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=gRhRZVtQaTMtklLhGYfbei+QaPodzo2py0ncJTxvT/s=;
-        b=MnyFvvAQXoBq5PAHF9AnXdVpCTiyorpJ2F/y4//+nnjlLJOSOkVwf8DhdBIH9utEYz
-         5RyejHx/fXTF5tplI9672U5/Bs1cymzbv3yklyl6IaaCwLgRXLiXJXa5GFx4sm5OxlWU
-         2ZeKoozdI+55UzCxCdkwctctUo55T8NjXUxuCt93tsZVj4pmG6dxA/oMPxeKyTPpA4Pz
-         zek7SxYtOWj09mT5rrR5ECwrzHl5EQOev9YjpccCFfgpTdIw6Lyo4XZzLrsy+WuyDwy3
-         ouM8P+mnw/c5G85EDlO49B53x44xcyqLGwMYAdKour73a0ClNc6m9C8eOTQPBHCzC508
-         XFkg==
-X-Gm-Message-State: AOAM53263gDeffx9rxKUZD83dVQwuTaqCSEwPdX7IXa9ZliZIQmyaVq0
-        xp8rK0+2Zyr878kpShvM18ENxQ==
-X-Google-Smtp-Source: ABdhPJyG/NZO9JMMo4KBjMYKSaNOPJm7mR6yfpLRHFGp5pZbF3G299VUhTFYpP1iX5qT8HulTiUHVA==
-X-Received: by 2002:a17:902:ed0d:b029:da:c83b:5f40 with SMTP id b13-20020a170902ed0db02900dac83b5f40mr5444448pld.20.1608312751595;
-        Fri, 18 Dec 2020 09:32:31 -0800 (PST)
+        bh=txg4LgzTONgLC7bOinTZzbCI37JS2siLcSWFwbF15Qk=;
+        b=ISuwBaPuMOYaVbHfMZFGRDAIh24RhlNA7WvSorUhB86siUIedc9abUNxPkKTVwzMtv
+         4ocw6OMK20FV/EIDslv10oB6STV4rDN0HhA9u/eHoWYdrL/4fSMSDBKsGGLr3JiSeW9T
+         xqOhEs+NdAQ2fpl2WxEc5gpjUkRwJlBSJoSbhWrG/bVUov5QFJAPA4I8yH4WnYs6KHkK
+         i4H5m0gZuwySucIY9s7uBtLzzINkTh0HAVcpmULjELoVdqJa52CJ4txSemPgNCss4XM8
+         ownO9U9l4bR1687YJlMLQCOmp0GRfTVtUhB3v4JP9963+U26Wvzi+UuOckX6S0vJRSce
+         gctg==
+X-Gm-Message-State: AOAM530XwbWvGuZI5lxGSN9caKTVH73A0Q1vGR1CrsD6YYaZiR0bDntC
+        jMtRKCsouiwAvQpXER8XCFADwA==
+X-Google-Smtp-Source: ABdhPJxpl9rldBP7FevfT9lA0VGRaw7OCOci0QW9tFHtQzy20O1eC9TD5qAuoEvJvgQ74t1TCRI1AA==
+X-Received: by 2002:a63:2060:: with SMTP id r32mr5077740pgm.129.1608312754801;
+        Fri, 18 Dec 2020 09:32:34 -0800 (PST)
 Received: from xps15.cg.shawcable.net (S0106889e681aac74.cg.shawcable.net. [68.147.0.187])
-        by smtp.gmail.com with ESMTPSA id l11sm9892957pgt.79.2020.12.18.09.32.30
+        by smtp.gmail.com with ESMTPSA id l11sm9892957pgt.79.2020.12.18.09.32.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Dec 2020 09:32:30 -0800 (PST)
+        Fri, 18 Dec 2020 09:32:34 -0800 (PST)
 From:   Mathieu Poirier <mathieu.poirier@linaro.org>
 To:     ohad@wizery.com, bjorn.andersson@linaro.org, robh+dt@kernel.org
 Cc:     arnaud.pouliquen@st.com, linux-remoteproc@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v4 01/17] dt-bindings: remoteproc: Add bindind to support autonomous processors
-Date:   Fri, 18 Dec 2020 10:32:12 -0700
-Message-Id: <20201218173228.2277032-2-mathieu.poirier@linaro.org>
+Subject: [PATCH v4 04/17] remoteproc: Rename function rproc_actuate()
+Date:   Fri, 18 Dec 2020 10:32:15 -0700
+Message-Id: <20201218173228.2277032-5-mathieu.poirier@linaro.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20201218173228.2277032-1-mathieu.poirier@linaro.org>
 References: <20201218173228.2277032-1-mathieu.poirier@linaro.org>
@@ -73,57 +73,56 @@ Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-This patch adds a binding to guide the remoteproc core on how to deal with
-remote processors in two cases:
-
-1) When an application holding a reference to a remote processor character
-   device interface crashes.
-
-2) when the platform driver for a remote processor is removed.
-
-In both cases if "autonomous-on-core-reboot" is specified in the remote
-processor DT node, the remoteproc core will detach the remote processor
-rather than switching it off.
+Rename function rproc_actuate() to rproc_attach().  That way it is
+easy to understand that it does the opposite of rproc_detach().
 
 Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+Reviewed-by: Peng Fan <peng.fan@nxp.com>
+Reviewed-by: Arnaud Pouliquen <arnaud.pouliquen@st.com>
 ---
- .../bindings/remoteproc/remoteproc-core.yaml  | 27 +++++++++++++++++++
- 1 file changed, 27 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/remoteproc/remoteproc-core.yaml
+ drivers/remoteproc/remoteproc_core.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/remoteproc/remoteproc-core.yaml b/Documentation/devicetree/bindings/remoteproc/remoteproc-core.yaml
-new file mode 100644
-index 000000000000..e8bb8ef9031a
---- /dev/null
-+++ b/Documentation/devicetree/bindings/remoteproc/remoteproc-core.yaml
-@@ -0,0 +1,27 @@
-+# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/remoteproc/remoteproc-core.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Binding(s) for a primary processor applicable to all ancillary
-+       processors
-+
-+maintainers:
-+  - Bjorn Andersson <bjorn.andersson@linaro.org>
-+  - Mathieu Poirier <mathieu.poirier@linaro.org>
-+
-+description:
-+  This document defines the bindings used by a primary processor to determine
-+  the state it should leave an ancillary processor when the former is no longer
-+  functioning.
-+
-+properties:
-+  autonomous-on-core-reboot:
-+    $ref: /schemas/types.yaml#/definitions/flag
-+    description:
-+      When specified the ancillary processor should be left operational when
-+      the primary processor is no longer available.  Otherwise the ancillary
-+      processor should be made inoperative.
-+
-+additionalProperties: true
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index f36786b47a4f..d0f6b39b56f9 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -1416,7 +1416,7 @@ static int rproc_start(struct rproc *rproc, const struct firmware *fw)
+ 	return ret;
+ }
+ 
+-static int rproc_attach(struct rproc *rproc)
++static int __rproc_attach(struct rproc *rproc)
+ {
+ 	struct device *dev = &rproc->dev;
+ 	int ret;
+@@ -1541,7 +1541,7 @@ static int rproc_fw_boot(struct rproc *rproc, const struct firmware *fw)
+  * Attach to remote processor - similar to rproc_fw_boot() but without
+  * the steps that deal with the firmware image.
+  */
+-static int rproc_actuate(struct rproc *rproc)
++static int rproc_attach(struct rproc *rproc)
+ {
+ 	struct device *dev = &rproc->dev;
+ 	int ret;
+@@ -1581,7 +1581,7 @@ static int rproc_actuate(struct rproc *rproc)
+ 		goto clean_up_resources;
+ 	}
+ 
+-	ret = rproc_attach(rproc);
++	ret = __rproc_attach(rproc);
+ 	if (ret)
+ 		goto clean_up_resources;
+ 
+@@ -1802,7 +1802,7 @@ int rproc_boot(struct rproc *rproc)
+ 	if (rproc->state == RPROC_DETACHED) {
+ 		dev_info(dev, "attaching to %s\n", rproc->name);
+ 
+-		ret = rproc_actuate(rproc);
++		ret = rproc_attach(rproc);
+ 	} else {
+ 		dev_info(dev, "powering up %s\n", rproc->name);
+ 
 -- 
 2.25.1
 
