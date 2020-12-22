@@ -2,181 +2,182 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-20.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9CCEC4332B
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 22 Dec 2020 11:00:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF070C433DB
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 22 Dec 2020 15:59:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B8C3723105
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 22 Dec 2020 11:00:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 81E6D229C5
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 22 Dec 2020 15:59:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725962AbgLVK6r (ORCPT
+        id S1726832AbgLVP6g (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 22 Dec 2020 05:58:47 -0500
-Received: from mx07-00178001.pphosted.com ([185.132.182.106]:7242 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725785AbgLVK6q (ORCPT
+        Tue, 22 Dec 2020 10:58:36 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53442 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727183AbgLVP6g (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 22 Dec 2020 05:58:46 -0500
-Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 0BMAvIsl004047;
-        Tue, 22 Dec 2020 11:57:59 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=from : to : cc :
- subject : date : message-id : mime-version : content-type; s=selector1;
- bh=udCeyTxsbq23gfM8tPSsY63UuxyyFwwhHocq4F3kNCU=;
- b=s/qo5F1LSfov3N6KiW7oLo+tngFJCqliBam3XojjcsJNelPXI++XReLYrh2S+tuk7tR0
- HhmXNUVDiXK8woiBTEdPDQ9pdmWUX7Ic8OJTGR9x048/YQ6xW1Iw22aGh4g0uAamnazh
- WzAEylJnd6dOtKUfzjIok/gYbSJQea3fy5EStc6bArzVkAiadmG5m2ws7qsH47e667RU
- F77uPo33yqJshZxx1NA5CHBna8R4wbBVbGV5/qasradtL9UFvkb2sk82ewJ/XVg5yr8M
- zqGxNup3SJF99kXZ6C3A3ojZvf5LibGv26MD2DbdaCvkSucRTAmP1RnKnqfhtvtfpsYF MQ== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 35k0d1bjtd-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 22 Dec 2020 11:57:59 +0100
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 0A4F710002A;
-        Tue, 22 Dec 2020 11:57:59 +0100 (CET)
-Received: from Webmail-eu.st.com (sfhdag2node3.st.com [10.75.127.6])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id E36EB231602;
-        Tue, 22 Dec 2020 11:57:58 +0100 (CET)
-Received: from localhost (10.75.127.48) by SFHDAG2NODE3.st.com (10.75.127.6)
- with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 22 Dec 2020 11:57:58
- +0100
-From:   Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Ohad Ben-Cohen <ohad@wizery.com>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Andy Gross <agross@kernel.org>
-CC:     <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-msm@vger.kernel.org>, <arnaud.pouliquen@foss.st.com>
-Subject: [PATCH v2 00/16] introduce generic IOCTL interface for RPMsg channels management
-Date:   Tue, 22 Dec 2020 11:57:10 +0100
-Message-ID: <20201222105726.16906-1-arnaud.pouliquen@foss.st.com>
-X-Mailer: git-send-email 2.17.1
+        Tue, 22 Dec 2020 10:58:36 -0500
+Received: from mail-qk1-x729.google.com (mail-qk1-x729.google.com [IPv6:2607:f8b0:4864:20::729])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CDBCDC06179C
+        for <linux-remoteproc@vger.kernel.org>; Tue, 22 Dec 2020 07:57:55 -0800 (PST)
+Received: by mail-qk1-x729.google.com with SMTP id h4so12282757qkk.4
+        for <linux-remoteproc@vger.kernel.org>; Tue, 22 Dec 2020 07:57:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=tSbt+6uAU0/n70HJg2Z4UTZW3SPBYifyx/RQerMQRfc=;
+        b=v7KC8FXXHyCRgKzSN1WdkZDILxNnZ3Tz50y2318GZEHFh2OgiVvbWtDas110A8j1bC
+         bEUiYC07U4pNjkhq5tMD+838LcJrm+4obowXGjaHsc3RA+uiGe0rNYbBNCKn52aZEwnC
+         BmcivK/TRVARKJegXMu8ZFzRsFfrV6Y7RPlm3CCXYLmXCCvVZPZII7ey3+RAXWnuHYkw
+         VbEPi9Vqp1tuNwtjvV0bwxS+nhv1FE0yn+SLr/afAFKEWLTfcHUaQtvx/8wiFeBmYSxX
+         ZjtuPMNqwpNZohmsmlH7kRYZXt9GF3YqcZAdXzrmFIEU9pwaL8VXAIbq3OJSqwbpIN0G
+         E/IQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=tSbt+6uAU0/n70HJg2Z4UTZW3SPBYifyx/RQerMQRfc=;
+        b=trsTqmDMqYIJn3CV1q+fDGmAhLUVnSKfhUMMn2Y1YzjRdofrcM0ZARoFJ6eI7nef6/
+         4IEBaRe/yTMt39XE0UwI0Z3w5+4y1fwIk0uuqn3aHkc8Zi+tPXYiTId+HtnH0LynhErY
+         RwHCV5HiAjh055DYWQnxFqiyh9pOkKumlaPt6vvyWHupSBKovRqQsL1bIXFFiTaKCahs
+         uOgNK34G0Hnekrtc2A+pPsb8prGVUvyvrICVkuyt+wWurHmKd/WD0tD+8W6f0LSAlvC/
+         gKQ1yCn0f/f7KyVvV62nyNxyYFtPkgG7RaEe2QGmReHheHL4EXBSXhosJ91AdDd8vbYx
+         c39Q==
+X-Gm-Message-State: AOAM5339LBufscB8P5wvtrqETs+VRqOAp5PAxDv0QiFSXHP32gsJ7Zv5
+        BuysXrZ6SsVty3Q6aQKzv5IJImH19zELo+xKR9ApnA==
+X-Google-Smtp-Source: ABdhPJyepNPHP4E52r1tz6fvELiPwmDt6Q5gFH4TExNWOuUpN0HYpkwqkhdR3ClOmYLtVmWMmX7T7ktkH+FPYq0fd1o=
+X-Received: by 2002:a05:620a:12b9:: with SMTP id x25mr23021282qki.421.1608652674817;
+ Tue, 22 Dec 2020 07:57:54 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.75.127.48]
-X-ClientProxiedBy: SFHDAG3NODE2.st.com (10.75.127.8) To SFHDAG2NODE3.st.com
- (10.75.127.6)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.343,18.0.737
- definitions=2020-12-22_04:2020-12-21,2020-12-22 signatures=0
+References: <20201211142933.25784-1-grzegorz.jaszczyk@linaro.org>
+ <20201211142933.25784-2-grzegorz.jaszczyk@linaro.org> <20201214225842.GA2537432@robh.at.kernel.org>
+ <CAMxfBF65ve2Pk5Uz5V1V_LfOLFUFKebVE8bzSjLT0nonuH8TDg@mail.gmail.com> <CAL_JsqKpzZvdWJodzbqQBLZ-v98n3KaoTaYM-0iQ-_71hCbW8Q@mail.gmail.com>
+In-Reply-To: <CAL_JsqKpzZvdWJodzbqQBLZ-v98n3KaoTaYM-0iQ-_71hCbW8Q@mail.gmail.com>
+From:   Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>
+Date:   Tue, 22 Dec 2020 16:57:43 +0100
+Message-ID: <CAMxfBF5q2hjiYANZNtxz-PD=pR73EpXBpnWuB4dqXD1a=f2=gg@mail.gmail.com>
+Subject: Re: [PATCH 1/5] dt-bindings: remoteproc: Add PRU consumer bindings
+To:     Rob Herring <robh@kernel.org>
+Cc:     Ohad Ben Cohen <ohad@wizery.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        "Anna, Suman" <s-anna@ti.com>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        "open list:REMOTE PROCESSOR (REMOTEPROC) SUBSYSTEM" 
+        <linux-remoteproc@vger.kernel.org>,
+        Lee Jones <lee.jones@linaro.org>, devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linux-omap <linux-omap@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        "Bajjuri, Praneeth" <praneeth@ti.com>,
+        Roger Quadros <rogerq@ti.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-This series is a restructuring of the RPMsg char driver, to create a generic
-RPMsg ioctl interface for all rpmsg services.
+Hi Rob,
 
-The RPMsg char driver provides interfaces that:
-- expose a char RPMsg device for communication with the remote processor,
-- expose controls interface for applications to create and release endpoints.
+On Fri, 18 Dec 2020 at 23:51, Rob Herring <robh@kernel.org> wrote:
+>
+> On Wed, Dec 16, 2020 at 9:55 AM Grzegorz Jaszczyk
+> <grzegorz.jaszczyk@linaro.org> wrote:
+> >
+> > Hi Rob,
+> >
+> > On Mon, 14 Dec 2020 at 23:58, Rob Herring <robh@kernel.org> wrote:
+> > >
+> > > On Fri, Dec 11, 2020 at 03:29:29PM +0100, Grzegorz Jaszczyk wrote:
+> > > > From: Suman Anna <s-anna@ti.com>
+> > > >
+> > > > Add a YAML binding document for PRU consumers. The binding includes
+> > > > all the common properties that can be used by different PRU consumer
+> > > > or application nodes and supported by the PRU remoteproc driver.
+> > > > These are used to configure the PRU hardware for specific user
+> > > > applications.
+> > > >
+> > > > The application nodes themselves should define their own bindings.
+> > > >
+> > > > Co-developed-by: Tero Kristo <t-kristo@ti.com>
+> > > > Signed-off-by: Tero Kristo <t-kristo@ti.com>
+> > > > Signed-off-by: Suman Anna <s-anna@ti.com>
+> > > > Co-developed-by: Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>
+> > > > Signed-off-by: Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>
+> > > > ---
+> > > >  .../bindings/remoteproc/ti,pru-consumer.yaml  | 64 +++++++++++++++++++
+> > > >  1 file changed, 64 insertions(+)
+> > > >  create mode 100644 Documentation/devicetree/bindings/remoteproc/ti,pru-consumer.yaml
+> > > >
+> > > > diff --git a/Documentation/devicetree/bindings/remoteproc/ti,pru-consumer.yaml b/Documentation/devicetree/bindings/remoteproc/ti,pru-consumer.yaml
+> > > > new file mode 100644
+> > > > index 000000000000..2c5c5e2b6159
+> > > > --- /dev/null
+> > > > +++ b/Documentation/devicetree/bindings/remoteproc/ti,pru-consumer.yaml
+> > > > @@ -0,0 +1,64 @@
+> > > > +# SPDX-License-Identifier: (GPL-2.0-only or BSD-2-Clause)
+> > > > +%YAML 1.2
+> > > > +---
+> > > > +$id: http://devicetree.org/schemas/remoteproc/ti,pru-consumer.yaml#
+> > > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > > > +
+> > > > +title: Common TI PRU Consumer Binding
+> > > > +
+> > > > +maintainers:
+> > > > +  - Suman Anna <s-anna@ti.com>
+> > > > +
+> > > > +description: |
+> > > > +  A PRU application/consumer/user node typically uses one or more PRU device
+> > > > +  nodes to implement a PRU application/functionality. Each application/client
+> > > > +  node would need a reference to at least a PRU node, and optionally define
+> > > > +  some properties needed for hardware/firmware configuration. The below
+> > > > +  properties are a list of common properties supported by the PRU remoteproc
+> > > > +  infrastructure.
+> > > > +
+> > > > +  The application nodes shall define their own bindings like regular platform
+> > > > +  devices, so below are in addition to each node's bindings.
+> > > > +
+> > > > +properties:
+> > > > +  prus:
+> > >
+> > > ti,prus
+> >
+> > Thank you - I will change and post v2 but with this I will run into
+> > issues when this binding will be referenced by some consumer YAML
+> > binding. Running dtbs_check in such case throws:
+> > ... k3-am654-base-board.dt.yaml: serial@28000: 'ti,prus' does not
+> > match any of the regexes: 'pinctrl-[0-9]+'
+> > In the same time if I will remove this property from that node I am getting:
+> > ... k3-am654-base-board.dt.yaml: serial@28000: 'ti,prus' is a required property
+> > as expected.
+>
+> Sounds like you didn't update 'ti,prus' in whatever schema you include
+> this one from.
+>
+> >
+> > Getting rid of the comma from this property name workarounds mentioned
+> > problem (which is not proper but allows me to correctly test this
+> > binding): e.g. s/ti,prus/ti-pruss/ or using the previous name without
+> > a comma.
+> > It seems to be an issue with dtbs_check itself which we will encounter
+> > in the future.
+>
+> If not, can you point me to a branch having this problem.
 
-The objective of this series is to decorrelate the two interfaces:
-  - Provide a char device for a RPMsg raw service in the rpmsg_char that can be
-    probed by a RPMsg bus on a ns announcement.
-  - Generalize the use of the ioctl for all RPMsg services by creating the
-    rpmsg_ctrl, but keep it compatibile with the legacy.
+Sure, here is temporary branch with 4 last commits demonstrating
+mentioned issues (when property name contains comma):
+https://git.linaro.org/people/grzegorz.jaszczyk/linux.git/log/?h=ti-pruss-binding-issue
 
-If the V1 create a new rpmsg_raw driver in addition to the rpmsg_ctrl this
-version try to reuse the rpmsg_char driver by addapting QCOM GLINK and SMD
-drivers.
-So a goal of this version is to help to determine the best strategy to move
-forward:
-  - reuse rpmsg_char.
-  - introduce a new driver and keep rpmsg_char as a legacy driver for a while.
+The last commit gets rid of the comma from properties names which
+successfully w/a the problem.
 
-Notice that SMD and GLINK patches have to be tested, only build has been tested.
+Please note that those are only TEMP commits which demonstrates the
+mentioned issue. I've put error logs with some notes in commit log to
+ease understanding what issues are seen when.
 
-1) RPMsg control driver: rpmsg_ctrl.c
-  This driver is based on the control part of the RPMsg_char driver. 
-  On probe a /dev/rpmsg_ctrl<X> interface is created to allow to manage the
-  channels.
-  The principles are the following:
-  - The RPMsg service driver registers it's name and the associated service
-    using the rpmsg_ctrl_unregister_ctl API. The list of supported services
-    is defined in  include/uapi/linux/rpmsg.h and exposed to the
-    application thanks to a new field in rpmsg_endpoint_info struct.
-  - On the RPMsg bus probe(e.g virtio bus) an rpmsg_ctrl device is
-    registered that creates the control interface.
-  - The application can then create or release a channel by specifying:
-       - the name service
-       - the source address.
-       - the destination address.
-  - The rpmsg_ctrl uses the same interface than the ns announcement to
-    create and release the associated channel but using the driver_override
-    field to force the service name.
-    The  "driver_override" allows to force the name service associated to
-    an RPMsg driver, bypassing the rpmsg_device_id based match check.
-  - At least for virtio bus, an associated ns announcement is sent to the
-    remote side.  
-
-2) rpmsg char driver: rpmsg_char.c
-    - The rpmsg class has not been removed. The associated attributes
-      are already available in /sys/bus/rpmsg/.
-    - The eptdev device is now an RPMsg device probed by a RPMsg bus driver
-      (probed only by the ioctl in rpmsg_char driver).
-
-Know current Limitations:
-- Tested only with virtio RPMsg bus and for one vdev instance.
-- The glink and smd drivers adaptations have not been tested (not able to test).
-- To limit commit and not update the IOCT interface some features have been not
-  implemented in this first step:
-    - the NS announcement as not been updated, it is not possible to create an
-      endpoint with a destibnation address set to RPMSG_ADDR_ANY (-1),
-    - not possible to destroy the channel,
-    - only the "rpmsg-raw" service is supported.
-
-This series can be applied in Bjorn's rpmsg-next branch on top of the
-RPMsg_ns series(4c0943255805).
-
-This series can be tested using rpmsgexport tools available here:
-https://github.com/andersson/rpmsgexport.
----
-new from V1[1]:
-- In V1 the rpmsg_char.c was not impacted, a rpmsg_raw.c has been created
-  instead.
-- IOCTL interface as not been updated (to go by steps).
-- smd and glink drivers has been updated to support channels creation and
-  release.
-
-[1] https://patchwork.kernel.org/project/linux-remoteproc/list/?series=327277
-
-Arnaud Pouliquen (16):
-  rpmsg: introduce RPMsg control driver for channel creation
-  rpmsg: add RPMsg control API to register service
-  rpmsg: add override field in channel info
-  rpmsg: ctrl: implement the ioctl function to create device
-  rpmsg: ns: initialize channel info override field
-  rpmsg: add helper to register the rpmsg ctrl device
-  rpmsg: char: clean up rpmsg class
-  rpmsg: char: make char rpmsg a rpmsg device without the control part
-  rpmsg: char: register RPMsg raw service to the ioctl interface.
-  rpmsg: char: allow only one endpoint per device
-  rpmsg: char: check destination address is not null
-  rpmsg: virtio: use the driver_override in channel creation ops
-  rpmsg: virtio: probe the rpmsg_ctl device
-  rpmsg: glink: add create and release rpmsg channel ops
-  rpmsg: smd: add create and release rpmsg channel ops
-  rpmsg: replace rpmsg_chrdev_register_device use
-
- drivers/rpmsg/Kconfig             |   8 +
- drivers/rpmsg/Makefile            |   1 +
- drivers/rpmsg/qcom_glink_native.c |  96 +++++++--
- drivers/rpmsg/qcom_smd.c          |  59 +++++-
- drivers/rpmsg/rpmsg_char.c        | 246 ++++++-----------------
- drivers/rpmsg/rpmsg_ctrl.c        | 320 ++++++++++++++++++++++++++++++
- drivers/rpmsg/rpmsg_internal.h    |  14 --
- drivers/rpmsg/rpmsg_ns.c          |   1 +
- drivers/rpmsg/virtio_rpmsg_bus.c  |  38 +++-
- include/linux/rpmsg.h             |  40 ++++
- include/uapi/linux/rpmsg.h        |  14 ++
- 11 files changed, 606 insertions(+), 231 deletions(-)
- create mode 100644 drivers/rpmsg/rpmsg_ctrl.c
-
--- 
-2.17.1
-
+Thank you in advance,
+Grzegorz
