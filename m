@@ -5,46 +5,46 @@ X-Spam-Level:
 X-Spam-Status: No, score=-18.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 936ABC43333
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ECE9FC43217
 	for <linux-remoteproc@archiver.kernel.org>; Tue, 22 Dec 2020 10:59:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7023523103
+	by mail.kernel.org (Postfix) with ESMTP id C7F2423340
 	for <linux-remoteproc@archiver.kernel.org>; Tue, 22 Dec 2020 10:59:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726491AbgLVK6v (ORCPT
+        id S1726282AbgLVK7r (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 22 Dec 2020 05:58:51 -0500
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:39062 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726288AbgLVK6u (ORCPT
+        Tue, 22 Dec 2020 05:59:47 -0500
+Received: from mx07-00178001.pphosted.com ([185.132.182.106]:60546 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725854AbgLVK6s (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 22 Dec 2020 05:58:50 -0500
-Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 0BMAw5bP004484;
-        Tue, 22 Dec 2020 11:58:05 +0100
+        Tue, 22 Dec 2020 05:58:48 -0500
+Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 0BMAv6qd017298;
+        Tue, 22 Dec 2020 11:58:02 +0100
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=from : to : cc :
  subject : date : message-id : in-reply-to : references : mime-version :
  content-type; s=selector1;
- bh=UPiHBdbTHBNY7dOfvc0ufFTBldl3o20yeOxrHUfL6kA=;
- b=aFPViVI0NW7dADKfDwovSbcpRfZr3rzSvb4GZ+NwE8AGTBgHtY2hDk09ztV0zoAYWYaI
- NlveXdKspUPgA7dDEl2nBvneCfetq056cn8lBXKJ+zYvRSVOjiBAnv31uqmbor5rxT5o
- pnshpAd7q2ybPFnxY/T1vKuf1MeJgBBOyoOHwqGYyUDchLRzgEID0COpxfxEBXCFWx3H
- SH3a1q6m74wbAfSuxBKa7u5TFGwtL1w1QqfSWyToZ6ab/pKGgR4vmuYSPmVJrgqUDaPi
- c6Wi1xgRUFIl92Q0UBOSZZn5qRapV+/cR3hF6gteW6e5sXEKKp4kfD4cMGu7SgdjrYeL Uw== 
+ bh=14ixMlR3u345kc7IjufikRjZjTnNfAABnHJSVaxqAF8=;
+ b=gL3JGK2phKWIhN8aEiqTBKP5nA+qfnkwhzrNNCtqNdzdC10HVT1HrEaP3ohxnwGwEPHH
+ VfbXloCHO36ZInpAtcvRm0Yf2uWOt/h4QfUr+ahyJq1VfiT18qXiYkO3LNBVokvysdr6
+ vokQ4tDiK3gDohIc8+X5omsZgj5SBCO+Abir+a0qJ4SEnXAh0h2j7aI2Xn7dNp4iFT/w
+ 5eGVa5lNTCVr09MasmN68UT/6pjiDBNeic57rI6VnLy3nTeRpEboNZ1qLu+DyS8hR74+
+ R9kJ5Xhbllwm+5TrfVA68bOOe2xCwuD5zB10Dig8yFVepxjGFHNeykv7PNEeWeYtf/Jw 6Q== 
 Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 35k0cgky50-1
+        by mx07-00178001.pphosted.com with ESMTP id 35k7vva3gy-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 22 Dec 2020 11:58:05 +0100
+        Tue, 22 Dec 2020 11:58:02 +0100
 Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 7E65810002A;
-        Tue, 22 Dec 2020 11:58:04 +0100 (CET)
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 0364910003A;
+        Tue, 22 Dec 2020 11:58:02 +0100 (CET)
 Received: from Webmail-eu.st.com (sfhdag2node3.st.com [10.75.127.6])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 6FC4A2073FA;
-        Tue, 22 Dec 2020 11:58:03 +0100 (CET)
-Received: from localhost (10.75.127.48) by SFHDAG2NODE3.st.com (10.75.127.6)
- with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 22 Dec 2020 11:58:02
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id E9E76231603;
+        Tue, 22 Dec 2020 11:58:01 +0100 (CET)
+Received: from localhost (10.75.127.51) by SFHDAG2NODE3.st.com (10.75.127.6)
+ with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 22 Dec 2020 11:58:01
  +0100
 From:   Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
 To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
@@ -54,16 +54,16 @@ To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
 CC:     <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <linux-stm32@st-md-mailman.stormreply.com>,
         <linux-arm-msm@vger.kernel.org>, <arnaud.pouliquen@foss.st.com>
-Subject: [PATCH v2 06/16] rpmsg: add helper to register the rpmsg ctrl device
-Date:   Tue, 22 Dec 2020 11:57:16 +0100
-Message-ID: <20201222105726.16906-7-arnaud.pouliquen@foss.st.com>
+Subject: [PATCH v2 04/16] rpmsg: ctrl: implement the ioctl function to create device
+Date:   Tue, 22 Dec 2020 11:57:14 +0100
+Message-ID: <20201222105726.16906-5-arnaud.pouliquen@foss.st.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20201222105726.16906-1-arnaud.pouliquen@foss.st.com>
 References: <20201222105726.16906-1-arnaud.pouliquen@foss.st.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-X-Originating-IP: [10.75.127.48]
-X-ClientProxiedBy: SFHDAG2NODE3.st.com (10.75.127.6) To SFHDAG2NODE3.st.com
+X-Originating-IP: [10.75.127.51]
+X-ClientProxiedBy: SFHDAG2NODE1.st.com (10.75.127.4) To SFHDAG2NODE3.st.com
  (10.75.127.6)
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.343,18.0.737
  definitions=2020-12-22_04:2020-12-21,2020-12-22 signatures=0
@@ -71,67 +71,75 @@ Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-This function registers a rpmsg_ctl device and its associated
-/dev/rpmsg_ctrl interface.
+Implement the ioctl function that parses the list of
+rpmsg drivers registered to create an associated device.
+To be ISO user API, in a first step, the driver_override
+is only allowed for the RPMsg raw service, supported by the
+rpmsg_char driver.
 
 Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
 ---
- drivers/rpmsg/rpmsg_ctrl.c | 16 ++++++++++++++++
- include/linux/rpmsg.h      |  7 +++++++
- 2 files changed, 23 insertions(+)
+ drivers/rpmsg/rpmsg_ctrl.c | 43 ++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 41 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/rpmsg/rpmsg_ctrl.c b/drivers/rpmsg/rpmsg_ctrl.c
-index 8381b5b2b794..e4b0ca6dffe3 100644
+index 065e2e304019..8381b5b2b794 100644
 --- a/drivers/rpmsg/rpmsg_ctrl.c
 +++ b/drivers/rpmsg/rpmsg_ctrl.c
-@@ -271,6 +271,22 @@ void rpmsg_ctrl_unregister_ctl(const struct rpmsg_drv_ctrl_info *ctrl)
- }
- EXPORT_SYMBOL(rpmsg_ctrl_unregister_ctl);
- 
-+/**
-+ * rpmsg_ctl_register_device() - register control device based on rpdev
-+ * @rpdev:	prepared rpdev to be used for creating endpoints
-+ *
-+ * This function wraps rpmsg_register_device() preparing the rpdev for use as
-+ * a control rpmsg driver forcing the channel name.
-+ */
-+int rpmsg_ctl_register_device(struct rpmsg_device *rpdev)
-+{
-+	strcpy(rpdev->id.name, KBUILD_MODNAME);
-+	rpdev->driver_override = KBUILD_MODNAME;
-+
-+	return rpmsg_register_device(rpdev);
-+}
-+EXPORT_SYMBOL(rpmsg_ctl_register_device);
-+
- static int rpmsg_ctrl_init(void)
- {
- 	int ret;
-diff --git a/include/linux/rpmsg.h b/include/linux/rpmsg.h
-index 5681c585e235..86540528325f 100644
---- a/include/linux/rpmsg.h
-+++ b/include/linux/rpmsg.h
-@@ -335,6 +335,8 @@ static inline __poll_t rpmsg_poll(struct rpmsg_endpoint *ept,
- int  rpmsg_ctrl_register_ctl(const struct rpmsg_drv_ctrl_info *ctrl);
- void rpmsg_ctrl_unregister_ctl(const struct rpmsg_drv_ctrl_info *ctrl);
- 
-+int rpmsg_ctl_register_device(struct rpmsg_device *rpdev);
-+
- #else
- 
- static inline int rpmsg_ctrl_register_ctl(const struct rpmsg_drv_ctrl_info *ctrl)
-@@ -346,6 +348,11 @@ static inline void rpmsg_ctrl_unregister_ctl(const struct rpmsg_drv_ctrl_info *c
- {
+@@ -56,12 +56,51 @@ static int rpmsg_ctrl_dev_open(struct inode *inode, struct file *filp)
+ 	return 0;
  }
  
-+static inline int rpmsg_ctl_register_device(struct rpmsg_device *rpdev)
++static const char *rpmsg_ctrl_get_drv_name(u32 service)
 +{
-+	return 0;
++	struct rpmsg_ctl_info *drv_info;
++
++	list_for_each_entry(drv_info, &rpmsg_drv_list, node) {
++		if (drv_info->ctrl->service == service)
++			return drv_info->ctrl->drv_name;
++	}
++
++	return NULL;
 +}
 +
- #endif /* IS_ENABLED(CONFIG_RPMSG_CTRL) */
+ static long rpmsg_ctrl_dev_ioctl(struct file *fp, unsigned int cmd,
+ 				 unsigned long arg)
+ {
+ 	struct rpmsg_ctrl_dev *ctrldev = fp->private_data;
+-
+-	dev_info(&ctrldev->dev, "Control not yet implemented\n");
++	void __user *argp = (void __user *)arg;
++	struct rpmsg_channel_info chinfo;
++	struct rpmsg_endpoint_info eptinfo;
++	struct rpmsg_device *newch;
++
++	if (cmd != RPMSG_CREATE_EPT_IOCTL)
++		return -EINVAL;
++
++	if (copy_from_user(&eptinfo, argp, sizeof(eptinfo)))
++		return -EFAULT;
++
++	/*
++	 * In a frst step only the rpmsg_raw service is supported.
++	 * The override is foorced to RPMSG_RAW_SERVICE
++	 */
++	chinfo.driver_override = rpmsg_ctrl_get_drv_name(RPMSG_RAW_SERVICE);
++	if (!chinfo.driver_override)
++		return -ENODEV;
++
++	memcpy(chinfo.name, eptinfo.name, RPMSG_NAME_SIZE);
++	chinfo.name[RPMSG_NAME_SIZE - 1] = '\0';
++	chinfo.src = eptinfo.src;
++	chinfo.dst = eptinfo.dst;
++
++	newch = rpmsg_create_channel(ctrldev->rpdev, &chinfo);
++	if (!newch) {
++		dev_err(&ctrldev->dev, "rpmsg_create_channel failed\n");
++		return -ENXIO;
++	}
  
- #endif /* _LINUX_RPMSG_H */
+ 	return 0;
+ };
 -- 
 2.17.1
 
