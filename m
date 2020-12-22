@@ -2,50 +2,49 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-18.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F379C433E6
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9114C43332
 	for <linux-remoteproc@archiver.kernel.org>; Tue, 22 Dec 2020 10:59:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 05BA62310D
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 22 Dec 2020 10:59:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B1D2C23105
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 22 Dec 2020 10:59:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726844AbgLVK65 (ORCPT
+        id S1726701AbgLVK6y (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 22 Dec 2020 05:58:57 -0500
-Received: from mx07-00178001.pphosted.com ([185.132.182.106]:60602 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726681AbgLVK64 (ORCPT
+        Tue, 22 Dec 2020 05:58:54 -0500
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:39106 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725847AbgLVK6y (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 22 Dec 2020 05:58:56 -0500
-Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 0BMAvKvC017379;
-        Tue, 22 Dec 2020 11:58:11 +0100
+        Tue, 22 Dec 2020 05:58:54 -0500
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 0BMAw7bS004508;
+        Tue, 22 Dec 2020 11:58:08 +0100
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=from : to : cc :
  subject : date : message-id : in-reply-to : references : mime-version :
  content-type; s=selector1;
- bh=hSH+H/5k2tLr+GOxs0FZsD8RmN2qSemTHcqXNWMd+Kk=;
- b=akxDJVmAlcc8vCZTooD8MGXAmwVlQPkX5n52kvzCdN9l/knVvzjLf2eb5AHtvxrpa1P6
- Z4aD3KF+Oxf1MOHAgKBH1H9+DvhIlQP43aq30zqiEHfM2Pdj4ndsFeI2mgW00gV7Rg0h
- /X9Z27iO8PElu5FZ0dKnNwmRhNWxweNulPgU+34oVPM0hQt0myDZOYno7vHm5uHeg6y7
- wQMTWvOcJ1WRSLFRZdtUItIUtTH6OAleMCof8n1wlieSTC8cpdHMpJEf7vTAEhLczrst
- aXVovvAbU0goo92Qe9dNNDii28wvgxdoLiWFs3SYAsR6sYzGBqA9KoZkgMo+xj0awMMX SA== 
+ bh=FvUUYLv2sdHQDAD6TMTnFsgYR6QnR4DXZXkL8+B6VwY=;
+ b=1oQB3pCeIgtSu1zbzjQT5Xa6VlRLXfLAvy93JORdtgYpHD2lrxw5oGxy5Z+AoO7OBoYF
+ lk5sJmAmPxeJGQcZmxNslbXW0yxXZ0CyfO3Ot37ww4YfL2SdIB2zr67gY5cRDuXXMal2
+ r4cXDJ62RQcF62ZVN93J+Ymdw8wJyJy/GHw01lXI0YOR+dXWGhJR5JmZqgOcSo8gTyS4
+ tukQKhRn1mwNw+X80FOAhzhCtK99y06S70Ff5CcxkHq/JsqA65tLLyb6LWk6z1K3oUrw
+ 2kj4KDi68tbGVaf0KbO0W/8N+YBCbgNRFq3ls1aRmLAU63X6YkJMCqEP83w48yoD+Zd6 Fw== 
 Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 35k7vva3hq-1
+        by mx07-00178001.pphosted.com with ESMTP id 35k0cgky5d-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 22 Dec 2020 11:58:10 +0100
+        Tue, 22 Dec 2020 11:58:08 +0100
 Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 934F5100034;
-        Tue, 22 Dec 2020 11:58:10 +0100 (CET)
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 2CC1110002A;
+        Tue, 22 Dec 2020 11:58:08 +0100 (CET)
 Received: from Webmail-eu.st.com (sfhdag2node3.st.com [10.75.127.6])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 8663622ECB4;
-        Tue, 22 Dec 2020 11:58:10 +0100 (CET)
-Received: from localhost (10.75.127.48) by SFHDAG2NODE3.st.com (10.75.127.6)
- with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 22 Dec 2020 11:58:10
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 2038122ECB4;
+        Tue, 22 Dec 2020 11:58:08 +0100 (CET)
+Received: from localhost (10.75.127.51) by SFHDAG2NODE3.st.com (10.75.127.6)
+ with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 22 Dec 2020 11:58:07
  +0100
 From:   Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
 To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
@@ -55,16 +54,16 @@ To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
 CC:     <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <linux-stm32@st-md-mailman.stormreply.com>,
         <linux-arm-msm@vger.kernel.org>, <arnaud.pouliquen@foss.st.com>
-Subject: [PATCH v2 15/16] rpmsg: smd: add create and release rpmsg channel ops
-Date:   Tue, 22 Dec 2020 11:57:25 +0100
-Message-ID: <20201222105726.16906-16-arnaud.pouliquen@foss.st.com>
+Subject: [PATCH v2 12/16] rpmsg: virtio: use the driver_override in channel creation ops
+Date:   Tue, 22 Dec 2020 11:57:22 +0100
+Message-ID: <20201222105726.16906-13-arnaud.pouliquen@foss.st.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20201222105726.16906-1-arnaud.pouliquen@foss.st.com>
 References: <20201222105726.16906-1-arnaud.pouliquen@foss.st.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-X-Originating-IP: [10.75.127.48]
-X-ClientProxiedBy: SFHDAG1NODE2.st.com (10.75.127.2) To SFHDAG2NODE3.st.com
+X-Originating-IP: [10.75.127.51]
+X-ClientProxiedBy: SFHDAG2NODE3.st.com (10.75.127.6) To SFHDAG2NODE3.st.com
  (10.75.127.6)
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.343,18.0.737
  definitions=2020-12-22_04:2020-12-21,2020-12-22 signatures=0
@@ -72,103 +71,27 @@ Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Add the new ops introduced by the rpmsg_ns series and used
-by the rpmsg_ctrl driver to instantiate a new rpmsg channel.
+Use the override information from the channel info structure
+to set the rpdev override and so links the channel to a specific
+driver.
 
 Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
 ---
- drivers/rpmsg/qcom_smd.c | 57 ++++++++++++++++++++++++++++++++++------
- 1 file changed, 49 insertions(+), 8 deletions(-)
+ drivers/rpmsg/virtio_rpmsg_bus.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/rpmsg/qcom_smd.c b/drivers/rpmsg/qcom_smd.c
-index 19903de6268d..40853702f54f 100644
---- a/drivers/rpmsg/qcom_smd.c
-+++ b/drivers/rpmsg/qcom_smd.c
-@@ -67,6 +67,7 @@ struct smd_channel_info_word;
- struct smd_channel_info_word_pair;
+diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
+index e87d4cf926eb..c1d4bc08b2a5 100644
+--- a/drivers/rpmsg/virtio_rpmsg_bus.c
++++ b/drivers/rpmsg/virtio_rpmsg_bus.c
+@@ -416,6 +416,7 @@ static struct rpmsg_device *__rpmsg_create_channel(struct virtproc_info *vrp,
+ 	rpdev->dst = chinfo->dst;
+ 	rpdev->ops = &virtio_rpmsg_ops;
+ 	rpdev->little_endian = virtio_is_little_endian(vrp->vdev);
++	rpdev->driver_override = (char *)chinfo->driver_override;
  
- static const struct rpmsg_endpoint_ops qcom_smd_endpoint_ops;
-+static const struct rpmsg_device_ops qcom_smd_device_ops;
- 
- #define SMD_ALLOC_TBL_COUNT	2
- #define SMD_ALLOC_TBL_SIZE	64
-@@ -1013,6 +1014,52 @@ static struct device_node *qcom_smd_match_channel(struct device_node *edge_node,
- 	return NULL;
- }
- 
-+static void qcom_smd_release_device(struct device *dev)
-+{
-+	struct rpmsg_device *rpdev = to_rpmsg_device(dev);
-+	struct qcom_smd_device *qsdev = to_smd_device(rpdev);
-+
-+	kfree(qsdev);
-+}
-+
-+static struct rpmsg_device *
-+qcom_smd_create_rpmsg_ch(struct rpmsg_device *rp_parent,
-+			 struct rpmsg_channel_info *chinfo)
-+{
-+	struct qcom_smd_device *qsdev, *qspdev = to_smd_device(rp_parent);
-+	struct qcom_smd_edge *edge = qspdev->edge;
-+	int ret;
-+
-+	qsdev = kzalloc(sizeof(*qsdev), GFP_KERNEL);
-+	if (!qsdev)
-+		return ERR_PTR(-ENOMEM);
-+
-+	qsdev->edge = edge;
-+	strncpy(qsdev->rpdev.id.name, chinfo->name, RPMSG_NAME_SIZE);
-+	qsdev->rpdev.src = chinfo->src;
-+	qsdev->rpdev.dst = chinfo->dst;
-+	qsdev->rpdev.ops = &qcom_smd_device_ops;
-+	qsdev->rpdev.dev.parent = &edge->dev;
-+	qsdev->rpdev.dev.release = qcom_smd_release_device;
-+	qsdev->rpdev.driver_override = (char *)chinfo->driver_override;
-+
-+	ret = rpmsg_register_device(&qsdev->rpdev);
-+	if (ret) {
-+		kfree(qsdev);
-+		return ERR_PTR(ret);
-+	}
-+
-+	return &qsdev->rpdev;
-+}
-+
-+static int qcom_smd_release_rpmsg_ch(struct rpmsg_device *rpdev,
-+				     struct rpmsg_channel_info *chinfo)
-+{
-+	struct qcom_smd_device *qsdev = to_smd_device(rpdev);
-+
-+	return rpmsg_unregister_device(&qsdev->edge->dev, chinfo);
-+}
-+
- static int qcom_smd_announce_create(struct rpmsg_device *rpdev)
- {
- 	struct qcom_smd_endpoint *qept = to_smd_endpoint(rpdev->ept);
-@@ -1033,6 +1080,8 @@ static int qcom_smd_announce_create(struct rpmsg_device *rpdev)
- static const struct rpmsg_device_ops qcom_smd_device_ops = {
- 	.create_ept = qcom_smd_create_ept,
- 	.announce_create = qcom_smd_announce_create,
-+	.create_channel = qcom_smd_create_rpmsg_ch,
-+	.release_channel = qcom_smd_release_rpmsg_ch,
- };
- 
- static const struct rpmsg_endpoint_ops qcom_smd_endpoint_ops = {
-@@ -1042,14 +1091,6 @@ static const struct rpmsg_endpoint_ops qcom_smd_endpoint_ops = {
- 	.poll = qcom_smd_poll,
- };
- 
--static void qcom_smd_release_device(struct device *dev)
--{
--	struct rpmsg_device *rpdev = to_rpmsg_device(dev);
--	struct qcom_smd_device *qsdev = to_smd_device(rpdev);
--
--	kfree(qsdev);
--}
--
- /*
-  * Create a smd client device for channel that is being opened.
-  */
+ 	/*
+ 	 * rpmsg server channels has predefined local address (for now),
 -- 
 2.17.1
 
