@@ -2,140 +2,72 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3986BC433DB
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 23 Dec 2020 10:58:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7153C433E0
+	for <linux-remoteproc@archiver.kernel.org>; Sat, 26 Dec 2020 14:21:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F09B82222A
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 23 Dec 2020 10:58:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 95C1E221E9
+	for <linux-remoteproc@archiver.kernel.org>; Sat, 26 Dec 2020 14:21:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728177AbgLWK6A (ORCPT
+        id S1726138AbgLZOUw (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 23 Dec 2020 05:58:00 -0500
-Received: from aposti.net ([89.234.176.197]:45690 "EHLO aposti.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728157AbgLWK6A (ORCPT
+        Sat, 26 Dec 2020 09:20:52 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43994 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725969AbgLZOUw (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 23 Dec 2020 05:58:00 -0500
-Date:   Wed, 23 Dec 2020 10:57:09 +0000
-From:   Paul Cercueil <paul@crapouillou.net>
-Subject: Doc to write firmware?
-To:     linux-remoteproc@vger.kernel.org
-Message-Id: <93HSLQ.5D3DAYSGVCVP@crapouillou.net>
+        Sat, 26 Dec 2020 09:20:52 -0500
+X-Greylist: delayed 480 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Sat, 26 Dec 2020 06:19:56 PST
+Received: from relay08.th.seeweb.it (relay08.th.seeweb.it [IPv6:2001:4b7a:2000:18::169])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9CB7DC061757
+        for <linux-remoteproc@vger.kernel.org>; Sat, 26 Dec 2020 06:19:56 -0800 (PST)
+Received: from localhost.localdomain (abac131.neoplus.adsl.tpnet.pl [83.6.166.131])
+        by m-r2.th.seeweb.it (Postfix) with ESMTPA id 2F0A83F1D1;
+        Sat, 26 Dec 2020 15:11:11 +0100 (CET)
+From:   Konrad Dybcio <konrad.dybcio@somainline.org>
+To:     phone-devel@vger.kernel.org
+Cc:     ~postmarketos/upstreaming@lists.sr.ht,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Ohad Ben-Cohen <ohad@wizery.com>,
+        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH RFC] remoteproc: qcom: wcnss: Adjust voltage requirements for Pronto v2
+Date:   Sat, 26 Dec 2020 15:11:00 +0100
+Message-Id: <20201226141100.90147-1-konrad.dybcio@somainline.org>
+X-Mailer: git-send-email 2.29.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi,
+This is required for MSM8974 devices that cannot afford to push
+the regulators further.
 
-Having written the ingenic-remoteproc driver I am trying now to write 
-something a bit more advanced than a hello-world. Something like a 
-case-invert program for starters. However I'm having a hard time trying 
-to figure out how things work.
+Signed-off-by: Konrad Dybcio <konrad.dybcio@somainline.org>
+---
+ drivers/remoteproc/qcom_wcnss.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-My resource table is as follows:
-
-----------------------------
-struct resource_table_hdr {
- struct resource_table header;
-
- uint32_t offset[3];
-
- struct {
-  struct fw_rsc_hdr header;
-  struct fw_rsc_carveout carveout;
- } carveout;
-
- struct {
-  struct fw_rsc_hdr header;
-  struct fw_rsc_trace trace;
- } trace;
-
- struct {
-  struct fw_rsc_hdr header;
-  struct fw_rsc_vdev vdev;
-  struct fw_rsc_vdev_vring vrings[2];
-  uint8_t config[0xc];
- } vdev;
-};
-
-const struct resource_table_hdr resource_table
-__attribute__((used, section (".resource_table"))) = {
- .header = {
-  .ver = 1,
-  .num = ARRAY_SIZE(resource_table.offset), /* Number of resources */
- },
-
- .offset[0] = offsetof(struct resource_table_hdr, carveout),
- .offset[1] = offsetof(struct resource_table_hdr, trace),
- .offset[2] = offsetof(struct resource_table_hdr, vdev),
-
- .carveout = {
-  .header = {
-   .type = RSC_CARVEOUT,
-  },
-  .carveout = {
-   .da = 0xf4000000,
-   .len = 0x2000,
-   .name = "firmware",
-  },
- },
-
- /* Trace resource to printf() into */
- .trace = {
-  .header = {
-   .type = RSC_TRACE,
-  },
-  .trace = {
-   .da = (uint32_t)trace_buf,
-   .len = TRACE_BUFFER_SIZE,
-   .name = "trace",
-  },
- },
-
- /* VirtIO device */
- .vdev = {
-  .header = {
-   .type = RSC_VDEV,
-  },
-  .vdev = {
-   .id = VIRTIO_ID_RPROC_SERIAL,
-   .notifyid = 0,
-   .dfeatures = 0,
-   .config_len = 0xc,
-   .num_of_vrings = 2,
-  },
-  .vrings = {
-   [0] = {
-    .align = 0x10,
-    .num = 0x4,
-    .notifyid = 0,
-   },
-   [1] = {
-    .align = 0x10,
-    .num = 0x4,
-    .notifyid = 0,
-   },
-  },
- },
-};
-----------------------------
-
-The firmware is properly loaded and I get debug prints in my trace 
-buffer. However, my vrings' .da fields don't seem to be initialized to 
-anything meaningful at all. Then I use the virtio/vring code from 
-(https://github.com/MIPS/mips-rproc-example/blob/master/firmware/common/include/vring.h), 
-and calling vring_print() shows that my vring_desc's addresses are 
-garbage as well.
-
-Is there an example on how to write a basic I/O remoteproc program?
-
-Cheers,
--Paul
-
+diff --git a/drivers/remoteproc/qcom_wcnss.c b/drivers/remoteproc/qcom_wcnss.c
+index e2573f79a137..71480be545e4 100644
+--- a/drivers/remoteproc/qcom_wcnss.c
++++ b/drivers/remoteproc/qcom_wcnss.c
+@@ -124,7 +124,7 @@ static const struct wcnss_data pronto_v2_data = {
+ 	.spare_offset = 0x1088,
+ 
+ 	.vregs = (struct wcnss_vreg_info[]) {
+-		{ "vddmx", 1287500, 1287500, 0 },
++		{ "vddmx", 950000, 1150000, 0 },
+ 		{ "vddcx", .super_turbo = true },
+ 		{ "vddpx", 1800000, 1800000, 0 },
+ 	},
+-- 
+2.29.2
 
