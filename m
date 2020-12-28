@@ -2,139 +2,74 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-20.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1EA0C433E0
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 28 Dec 2020 17:46:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FF4AC433E6
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 28 Dec 2020 18:55:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9C29B216C4
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 28 Dec 2020 17:46:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 15B7B22AAD
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 28 Dec 2020 18:55:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728012AbgL1RqZ (ORCPT
+        id S1728203AbgL1SzY (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 28 Dec 2020 12:46:25 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36772 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727330AbgL1RqZ (ORCPT
+        Mon, 28 Dec 2020 13:55:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39010 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728116AbgL1SzY (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 28 Dec 2020 12:46:25 -0500
-Received: from mail-ot1-x332.google.com (mail-ot1-x332.google.com [IPv6:2607:f8b0:4864:20::332])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BBFC1C0613D6
-        for <linux-remoteproc@vger.kernel.org>; Mon, 28 Dec 2020 09:45:44 -0800 (PST)
-Received: by mail-ot1-x332.google.com with SMTP id i6so9797808otr.2
-        for <linux-remoteproc@vger.kernel.org>; Mon, 28 Dec 2020 09:45:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=Om6/ussyHcBEJZqJjYlQvXi/CwxT8/WrKL7Ny39pM38=;
-        b=sZAJkmUlGr6sQgRLHyrO1Bq7H8K74L/6g8idarABANKfZ+XaYYL1r//7C3XolSQ+ap
-         JAiBO606lpINpNPuXdFRIerXA4pPFhvQEP2Lx+T3A8XfGFbCg3btEwRrwbU87bE3SpYD
-         yRJ6SQUEt8Q7IOYyGApLZ2u5GNYm3S5C+Px71fKD1YQI7b2oG9qJH+9UqMp+/W/wMrA6
-         cOD6vZBYU8CPrJjjZ6ygf4ZQJsC7lOZpd7ZjFWJL5isVkmL5HhvS11Hw5liJ+qByoXj+
-         ysUcPiAiGy8VMHkgDzuPdM6Gb34H4MNNCBWZbfkpUC2Ctwki6sCg6mX6QgL+2h9rc3RF
-         ByFg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=Om6/ussyHcBEJZqJjYlQvXi/CwxT8/WrKL7Ny39pM38=;
-        b=X001bTkCoR2qEKugiwcOLOsXzvtt//GdwNxyjmryCAZC1YUzd2uAPpa6wsnQN/Z6rV
-         Tb47rXOu0XrHYRAG8h3raTTWsATnpuEyImlKhnZwx2nwNUlnNvI39BnNrtgrHeYeexaL
-         H9Ix11MGL5e25FHg7JJ4GSxvT0oTVsQ0EEQAnZgXuGKjrtpUBkvIRTl9tYzBmaIUhfLt
-         UTpSKq/ZPhtgyjfLSZEj3poLPpjf8Erj5WOp+o8e+HDZD25csH9tnWfZeBagfpey5tAq
-         bNYU9c7FmxYcZ8yRPFUWxmFG2UBpfkdFmvAB6Lb7P1oKPw+4KVtIysxyxA7sfIoKPgHp
-         8LFA==
-X-Gm-Message-State: AOAM532Z22BTWTSgJKLWmeer4nujpsOoczEPovNX3Tt4yXkgT5vDKn/a
-        tSuGwtMLCKXgq6GmlBrOD/HYqg==
-X-Google-Smtp-Source: ABdhPJyoZSKeFeAkv0tZbKhS3/z5T3WZvwJv+hFwNI1MM01GlnpsEcFel2lF9Dl+RyQubSVL39RuIQ==
-X-Received: by 2002:a9d:2270:: with SMTP id o103mr32897108ota.320.1609177544012;
-        Mon, 28 Dec 2020 09:45:44 -0800 (PST)
-Received: from builder.lan (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
-        by smtp.gmail.com with ESMTPSA id t25sm7356044oic.15.2020.12.28.09.45.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Dec 2020 09:45:43 -0800 (PST)
-Date:   Mon, 28 Dec 2020 11:45:41 -0600
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Dimitar Dimitrov <dimitar@dinux.eu>
-Cc:     ohad@wizery.com, Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>,
-        linux-remoteproc@vger.kernel.org, linux-omap@vger.kernel.org,
-        Suman Anna <s-anna@ti.com>
-Subject: Re: [PATCH] remoteproc: pru: Fix loading of GNU Binutils ELF
-Message-ID: <X+oZxcgHLlInB3c2@builder.lan>
-References: <20201228074933.22675-1-dimitar@dinux.eu>
+        Mon, 28 Dec 2020 13:55:24 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPS id C3B8322AEC;
+        Mon, 28 Dec 2020 18:54:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1609181683;
+        bh=ySo1Cm+PFwF00BsOWRXV3KpcqMsg9bloDDl17qnHUIk=;
+        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+        b=ua6wnLVtUI0kkkpwAorsUdNmwLcUJPz5xGYvKd1vKTSNzE+K4IOG/sKPGo1qgZPag
+         Bacn9VcnfTh9jXArkgF4OTHxSQjWPl37F11bcPV7dukSvci6NWMhQK49k196X6OW40
+         xb8clyVRXfpZ9V+QN4DAjfFHy37usl433ViK4HNGSz+Kj5fqS2MmXuRsyRL0MfUoAr
+         qtWPTt4zjH8Y26e2vgZ4dlmeD3XsB9oTKg6s2o7HUVUyAYETekiVLy3EoAfU0C7szy
+         g+dvBlvUSVoow83xU0ohhtZbzE24WsFv1imXg0UitkDTGopcv/wwhaAylCJZE84+ec
+         wxCfCY5pHdbpA==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201228074933.22675-1-dimitar@dinux.eu>
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH virtio] virtio: virtio_console: fix DMA memory allocation for
+ rproc serial
+From:   patchwork-bot+linux-remoteproc@kernel.org
+Message-Id: <160918168375.4261.7525417768126390145.git-patchwork-notify@kernel.org>
+Date:   Mon, 28 Dec 2020 18:54:43 +0000
+References: <AOKowLclCbOCKxyiJ71WeNyuAAj2q8EUtxrXbyky5E@cp7-web-042.plabs.ch>
+In-Reply-To: <AOKowLclCbOCKxyiJ71WeNyuAAj2q8EUtxrXbyky5E@cp7-web-042.plabs.ch>
+To:     Alexander Lobakin <alobakin@pm.me>
+Cc:     linux-remoteproc@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Mon 28 Dec 01:49 CST 2020, Dimitar Dimitrov wrote:
+Hello:
 
-> PRU port of GNU Binutils lacks support for separate address spaces.
-> PRU IRAM addresses are marked with artificial offset to differentiate
-> them from DRAM addresses. Hence remoteproc must mask IRAM addresses
-> coming from GNU ELF in order to get the true hardware address.
+This patch was applied to andersson/remoteproc.git (refs/heads/for-next):
+
+On Wed, 04 Nov 2020 15:31:36 +0000 you wrote:
+> Since commit 086d08725d34 ("remoteproc: create vdev subdevice with
+> specific dma memory pool"), every remoteproc has a DMA subdevice
+> ("remoteprocX#vdevYbuffer") for each virtio device, which inherits
+> DMA capabilities from the corresponding platform device. This allowed
+> to associate different DMA pools with each vdev, and required from
+> virtio drivers to perform DMA operations with the parent device
+> (vdev->dev.parent) instead of grandparent (vdev->dev.parent->parent).
 > 
-> Patch was tested on top of latest linux-remoteproc/for-next branch:
->   commit 4c0943255805 ("Merge branches 'hwspinlock-next', 'rpmsg-next' and 'rproc-next' into for-next")'
-> 
-> PRU firmware used for testing was the example in:
->   https://github.com/dinuxbg/pru-gcc-examples/tree/master/blinking-led/pru
-> 
-> Signed-off-by: Dimitar Dimitrov <dimitar@dinux.eu>
-> ---
->  drivers/remoteproc/pru_rproc.c | 14 ++++++++++++++
->  1 file changed, 14 insertions(+)
-> 
-> diff --git a/drivers/remoteproc/pru_rproc.c b/drivers/remoteproc/pru_rproc.c
-> index 2667919d76b3..b03114bbb9ab 100644
-> --- a/drivers/remoteproc/pru_rproc.c
-> +++ b/drivers/remoteproc/pru_rproc.c
-> @@ -61,6 +61,18 @@
->  #define PRU_SDRAM_DA	0x2000	/* Secondary Data RAM */
->  #define PRU_SHRDRAM_DA	0x10000 /* Shared Data RAM */
->  
-> +/*
-> + * GNU binutils do not support multiple address spaces. The GNU linker's
-> + * default linker script places IRAM at an arbitrary high offset, in order
-> + * to differentiate it from DRAM. Hence we need to strip the artificial offset
-> + * in the IRAM addresses coming from the ELF file.
-> + *
-> + * The TI proprietary linker would never set those higher IRAM address bits
-> + * anyway. PRU architecture limits the program counter to 16 bit word
-> + * addresses.
-> + */
-> +#define PRU_IRAM_DA_MASK	0xfffff
+> [...]
 
-If the limit is 16 bits, why is your mask 20 bits?
+Here is the summary with links:
+  - [virtio] virtio: virtio_console: fix DMA memory allocation for rproc serial
+    https://git.kernel.org/andersson/remoteproc/c/9d516aa82b7d
 
-> +
->  #define MAX_PRU_SYS_EVENTS 160
->  
->  /**
-> @@ -450,6 +462,8 @@ static void *pru_i_da_to_va(struct pru_rproc *pru, u32 da, size_t len)
->  	if (len == 0)
->  		return NULL;
->  
+You are awesome, thank you!
+--
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
-Given that the comment explains this operation I think it would be
-better to place it here. And if the masking directly follows what's
-described in the comment you don't need a define for the mask.
 
-Regards,
-Bjorn
-
-> +	da &= PRU_IRAM_DA_MASK;
-> +
->  	if (da >= PRU_IRAM_DA &&
->  	    da + len <= PRU_IRAM_DA + pru->mem_regions[PRU_IOMEM_IRAM].size) {
->  		offset = da - PRU_IRAM_DA;
-> -- 
-> 2.20.1
-> 
