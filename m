@@ -2,72 +2,118 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+X-Spam-Status: No, score=-21.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7153C433E0
-	for <linux-remoteproc@archiver.kernel.org>; Sat, 26 Dec 2020 14:21:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02EC2C433E6
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 28 Dec 2020 08:18:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 95C1E221E9
-	for <linux-remoteproc@archiver.kernel.org>; Sat, 26 Dec 2020 14:21:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C66B8207B0
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 28 Dec 2020 08:18:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726138AbgLZOUw (ORCPT
+        id S1726477AbgL1IR4 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Sat, 26 Dec 2020 09:20:52 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43994 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725969AbgLZOUw (ORCPT
+        Mon, 28 Dec 2020 03:17:56 -0500
+Received: from server28.superhosting.bg ([217.174.156.11]:38724 "EHLO
+        server28.superhosting.bg" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726470AbgL1IR4 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Sat, 26 Dec 2020 09:20:52 -0500
-X-Greylist: delayed 480 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Sat, 26 Dec 2020 06:19:56 PST
-Received: from relay08.th.seeweb.it (relay08.th.seeweb.it [IPv6:2001:4b7a:2000:18::169])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9CB7DC061757
-        for <linux-remoteproc@vger.kernel.org>; Sat, 26 Dec 2020 06:19:56 -0800 (PST)
-Received: from localhost.localdomain (abac131.neoplus.adsl.tpnet.pl [83.6.166.131])
-        by m-r2.th.seeweb.it (Postfix) with ESMTPA id 2F0A83F1D1;
-        Sat, 26 Dec 2020 15:11:11 +0100 (CET)
-From:   Konrad Dybcio <konrad.dybcio@somainline.org>
-To:     phone-devel@vger.kernel.org
-Cc:     ~postmarketos/upstreaming@lists.sr.ht,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Ohad Ben-Cohen <ohad@wizery.com>,
-        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH RFC] remoteproc: qcom: wcnss: Adjust voltage requirements for Pronto v2
-Date:   Sat, 26 Dec 2020 15:11:00 +0100
-Message-Id: <20201226141100.90147-1-konrad.dybcio@somainline.org>
-X-Mailer: git-send-email 2.29.2
+        Mon, 28 Dec 2020 03:17:56 -0500
+X-Greylist: delayed 1644 seconds by postgrey-1.27 at vger.kernel.org; Mon, 28 Dec 2020 03:17:54 EST
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=dinux.eu;
+         s=default; h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:
+        Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:Content-Description:
+        Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+        In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=tZuFaG5joET93VOBoGovQ+P9CJGFAP2C2y5iFf+oEZQ=; b=TKWh38ujgVcC5yELFfnHLdSTc0
+        feeQhH3To9cLhc23aTQvcDAdYgwiSdBGZB5iSuFx6gvm+OfEtW5aTj78W9mjNwp0vZlT1F/G3cJWi
+        Mr3S0okq6S4l0Jdb7J2zAXLzbvrAlJbZTR8ODOW/N0G3/Q9Dd9GT9WkrRP7HRmQ2k2DL/5SAQqflP
+        n+vR8W2ddnTNS+CNGInqeK3FenFYSr7Il903z3AcgkcF79uutotf4PT1Xco6YNYS3VyAbUu2ub3vq
+        2SRJvotSqcsTKGvBhMpYgqZKbABy/+ZeuMjTHp7kLyR/ULAivMZXhNcNYVZL4KLmlMdn75bIK2r97
+        3+kCrOfw==;
+Received: from [95.87.234.74] (port=40156 helo=localhost.localdomain)
+        by server28.superhosting.bg with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+        (Exim 4.93)
+        (envelope-from <dimitar@dinux.eu>)
+        id 1ktnHl-0000iW-S4; Mon, 28 Dec 2020 09:49:48 +0200
+From:   Dimitar Dimitrov <dimitar@dinux.eu>
+To:     ohad@wizery.com, bjorn.andersson@linaro.org
+Cc:     Dimitar Dimitrov <dimitar@dinux.eu>,
+        Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>,
+        linux-remoteproc@vger.kernel.org, linux-omap@vger.kernel.org,
+        Suman Anna <s-anna@ti.com>
+Subject: [PATCH] remoteproc: pru: Fix loading of GNU Binutils ELF
+Date:   Mon, 28 Dec 2020 09:49:33 +0200
+Message-Id: <20201228074933.22675-1-dimitar@dinux.eu>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-OutGoing-Spam-Status: No, score=-0.2
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - server28.superhosting.bg
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - dinux.eu
+X-Get-Message-Sender-Via: server28.superhosting.bg: authenticated_id: dimitar@dinux.eu
+X-Authenticated-Sender: server28.superhosting.bg: dimitar@dinux.eu
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-This is required for MSM8974 devices that cannot afford to push
-the regulators further.
+PRU port of GNU Binutils lacks support for separate address spaces.
+PRU IRAM addresses are marked with artificial offset to differentiate
+them from DRAM addresses. Hence remoteproc must mask IRAM addresses
+coming from GNU ELF in order to get the true hardware address.
 
-Signed-off-by: Konrad Dybcio <konrad.dybcio@somainline.org>
+Patch was tested on top of latest linux-remoteproc/for-next branch:
+  commit 4c0943255805 ("Merge branches 'hwspinlock-next', 'rpmsg-next' and 'rproc-next' into for-next")'
+
+PRU firmware used for testing was the example in:
+  https://github.com/dinuxbg/pru-gcc-examples/tree/master/blinking-led/pru
+
+Signed-off-by: Dimitar Dimitrov <dimitar@dinux.eu>
 ---
- drivers/remoteproc/qcom_wcnss.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/remoteproc/pru_rproc.c | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-diff --git a/drivers/remoteproc/qcom_wcnss.c b/drivers/remoteproc/qcom_wcnss.c
-index e2573f79a137..71480be545e4 100644
---- a/drivers/remoteproc/qcom_wcnss.c
-+++ b/drivers/remoteproc/qcom_wcnss.c
-@@ -124,7 +124,7 @@ static const struct wcnss_data pronto_v2_data = {
- 	.spare_offset = 0x1088,
+diff --git a/drivers/remoteproc/pru_rproc.c b/drivers/remoteproc/pru_rproc.c
+index 2667919d76b3..b03114bbb9ab 100644
+--- a/drivers/remoteproc/pru_rproc.c
++++ b/drivers/remoteproc/pru_rproc.c
+@@ -61,6 +61,18 @@
+ #define PRU_SDRAM_DA	0x2000	/* Secondary Data RAM */
+ #define PRU_SHRDRAM_DA	0x10000 /* Shared Data RAM */
  
- 	.vregs = (struct wcnss_vreg_info[]) {
--		{ "vddmx", 1287500, 1287500, 0 },
-+		{ "vddmx", 950000, 1150000, 0 },
- 		{ "vddcx", .super_turbo = true },
- 		{ "vddpx", 1800000, 1800000, 0 },
- 	},
++/*
++ * GNU binutils do not support multiple address spaces. The GNU linker's
++ * default linker script places IRAM at an arbitrary high offset, in order
++ * to differentiate it from DRAM. Hence we need to strip the artificial offset
++ * in the IRAM addresses coming from the ELF file.
++ *
++ * The TI proprietary linker would never set those higher IRAM address bits
++ * anyway. PRU architecture limits the program counter to 16 bit word
++ * addresses.
++ */
++#define PRU_IRAM_DA_MASK	0xfffff
++
+ #define MAX_PRU_SYS_EVENTS 160
+ 
+ /**
+@@ -450,6 +462,8 @@ static void *pru_i_da_to_va(struct pru_rproc *pru, u32 da, size_t len)
+ 	if (len == 0)
+ 		return NULL;
+ 
++	da &= PRU_IRAM_DA_MASK;
++
+ 	if (da >= PRU_IRAM_DA &&
+ 	    da + len <= PRU_IRAM_DA + pru->mem_regions[PRU_IOMEM_IRAM].size) {
+ 		offset = da - PRU_IRAM_DA;
 -- 
-2.29.2
+2.20.1
 
