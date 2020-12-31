@@ -6,60 +6,66 @@ X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27D4FC433E0
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 31 Dec 2020 15:36:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CC49C433E6
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 31 Dec 2020 18:15:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0126C22472
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 31 Dec 2020 15:36:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CA4C8223E8
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 31 Dec 2020 18:15:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726485AbgLaPfd (ORCPT
+        id S1726707AbgLaSPL (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 31 Dec 2020 10:35:33 -0500
-Received: from mail-ot1-f50.google.com ([209.85.210.50]:36982 "EHLO
-        mail-ot1-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726071AbgLaPfd (ORCPT
+        Thu, 31 Dec 2020 13:15:11 -0500
+Received: from mail-ot1-f41.google.com ([209.85.210.41]:38172 "EHLO
+        mail-ot1-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726314AbgLaSPL (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 31 Dec 2020 10:35:33 -0500
-Received: by mail-ot1-f50.google.com with SMTP id o11so18275567ote.4;
-        Thu, 31 Dec 2020 07:35:17 -0800 (PST)
+        Thu, 31 Dec 2020 13:15:11 -0500
+Received: by mail-ot1-f41.google.com with SMTP id j20so18583833otq.5;
+        Thu, 31 Dec 2020 10:14:55 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject:date
-         :message-id;
-        bh=U5+TgRxBr8Fo4F24dxi/XK3rCsce2994tILTdIkxtms=;
-        b=VYsOjXJADSQAuA4BKAbhJA2e89sZAZTVZdKcVFRiqM2ITm4EulVIYjXSIqk9RcRVgG
-         9w34n9nxx3abDZc16ct2PAjzdtKOZxTEG097n8Dvr8sgYt+zSUASpfev4wIEsbJs9yvz
-         039kQuOMNxAJyePvPzEo3LxL4FqSUML3nuiBSJ+xNU6wiqrBAtOzU7FXNIFAfdVPsTMo
-         RG1bWE206DhGtJgwtVNYKwLJDluk8TKq2NiZ0cm2QeINx6EmDjVxc+1XDmMtIIi/Ndr9
-         KwBqgWubnG27+ob02/6aplzsJP8/Gy+SHpDh9HUdNotwLWjDliB5m8OgsgZfhYc/laML
-         IHTg==
-X-Gm-Message-State: AOAM533ex3VVCMT+G1n4ezV4HRmJOp2wVxU3RKr+foA1nonui2fUpFeF
-        lZg4GfxbaHhZtJEOKXWiRQ==
-X-Google-Smtp-Source: ABdhPJwueo20TglGcEsIU4ebdW4CqO2h44on2UHrkgjVWDuMsGX+RxqetVDTW5S7wZkG+1Pb4x+4/w==
-X-Received: by 2002:a9d:5d02:: with SMTP id b2mr41960733oti.148.1609428892020;
-        Thu, 31 Dec 2020 07:34:52 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=iq0dcWEVlFUmNv6kk0ISrl3suC2cnVnqKLX0qddM2wo=;
+        b=Yo50ISLJ7OXL/R6+eTS4WRMk2FYA5o3p9hWgMZ62y3ADTC8mdub4beYebzWNT88fcG
+         KhRa9URt5dv6RVVjLfIjafF4Y+NL4sQO86LzZToPBJX5mJIFjNDR4pBq082MUQ/dgzuE
+         VAw9nKeCNKCRnSCfcjdqD7eFozen+LBSp2MkMkE5MNjowEB5SSAVZ5HZVox+Klo4miRS
+         hjzayWuNSYsvtLefeDhwoCOjWEhl2j86JMHnnisqltiFe5LYuvnar/9Xcbkq7r7oGfEW
+         OIL5f+3jAsJ8JnYZb0IePCE5nLljnL7m/bidvHuW2ouU3SshLWLJDecKjxvXE8EGPpgh
+         O4tQ==
+X-Gm-Message-State: AOAM533D0PKYsofZuBwLnYHCfN1HDtfTyFj74GAD+0xUISs1BER1woTV
+        RlC+oHPF6y31HKP1ohLrWfXswiFaXQ==
+X-Google-Smtp-Source: ABdhPJxnSl31FNRefQoVvm0p3wnIQvQHkxPiFa4SHrf1hPyKCmgwy5k8a1uYLMvcEdPkcGpykvuJig==
+X-Received: by 2002:a05:6830:1de8:: with SMTP id b8mr41585182otj.204.1609438470100;
+        Thu, 31 Dec 2020 10:14:30 -0800 (PST)
 Received: from robh.at.kernel.org ([64.188.179.253])
-        by smtp.gmail.com with ESMTPSA id h30sm10449278ooi.12.2020.12.31.07.34.49
+        by smtp.gmail.com with ESMTPSA id f25sm11148595oou.39.2020.12.31.10.14.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 31 Dec 2020 07:34:50 -0800 (PST)
-Received: (nullmailer pid 1828652 invoked by uid 1000);
-        Thu, 31 Dec 2020 15:34:48 -0000
+        Thu, 31 Dec 2020 10:14:28 -0800 (PST)
+Received: (nullmailer pid 2077595 invoked by uid 1000);
+        Thu, 31 Dec 2020 18:14:25 -0000
+Date:   Thu, 31 Dec 2020 11:14:25 -0700
 From:   Rob Herring <robh@kernel.org>
 To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc:     linux-arm-kernel@lists.infradead.org, robh+dt@kernel.org,
-        linux-kernel@vger.kernel.org, linux-amlogic@lists.infradead.org,
-        linux-remoteproc@vger.kernel.org, bjorn.andersson@linaro.org,
-        devicetree@vger.kernel.org, ohad@wizery.com
+Cc:     linux-remoteproc@vger.kernel.org,
+        linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, bjorn.andersson@linaro.org,
+        ohad@wizery.com
+Subject: Re: [PATCH 2/5] dt-bindings: Amlogic: add the documentation for the
+ SECBUS2 registers
+Message-ID: <20201231181425.GA2075418@robh.at.kernel.org>
+References: <20201230012724.1326156-1-martin.blumenstingl@googlemail.com>
+ <20201230012724.1326156-3-martin.blumenstingl@googlemail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 In-Reply-To: <20201230012724.1326156-3-martin.blumenstingl@googlemail.com>
-References: <20201230012724.1326156-1-martin.blumenstingl@googlemail.com> <20201230012724.1326156-3-martin.blumenstingl@googlemail.com>
-Subject: Re: [PATCH 2/5] dt-bindings: Amlogic: add the documentation for the SECBUS2 registers
-Date:   Thu, 31 Dec 2020 08:34:48 -0700
-Message-Id: <1609428888.809731.1828651.nullmailer@robh.at.kernel.org>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Wed, 30 Dec 2020 02:27:21 +0100, Martin Blumenstingl wrote:
+On Wed, Dec 30, 2020 at 02:27:21AM +0100, Martin Blumenstingl wrote:
 > The Meson8/Meson8b/Meson8m2 SoCs have a register bank called SECBUS2 which
 > contains registers for various IP blocks such as pin-controller bits for
 > the BSD_EN and TEST_N GPIOs as well as some AO ARC core control bits.
@@ -77,24 +83,69 @@ On Wed, 30 Dec 2020 02:27:21 +0100, Martin Blumenstingl wrote:
 >  1 file changed, 53 insertions(+)
 >  create mode 100644 Documentation/devicetree/bindings/arm/amlogic/amlogic,meson-mx-secbus2.yaml
 > 
+> diff --git a/Documentation/devicetree/bindings/arm/amlogic/amlogic,meson-mx-secbus2.yaml b/Documentation/devicetree/bindings/arm/amlogic/amlogic,meson-mx-secbus2.yaml
+> new file mode 100644
+> index 000000000000..cfa8e9de6c28
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/arm/amlogic/amlogic,meson-mx-secbus2.yaml
+> @@ -0,0 +1,53 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: "http://devicetree.org/schemas/arm/amlogic/amlogic,meson-mx-secbus2.yaml#"
+> +$schema: "http://devicetree.org/meta-schemas/core.yaml#"
+> +
+> +title: Amlogic Meson8/Meson8b/Meson8m2 SECBUS2 register interface
+> +
+> +maintainers:
+> +  - Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+> +
+> +description: |
+> +  The Meson8/Meson8b/Meson8m2 SoCs have a register bank called SECBUS2 which
+> +  contains registers for various IP blocks such as pin-controller bits for
+> +  the BSD_EN and TEST_N GPIOs as well as some AO ARC core control bits.
+> +  The registers can be accessed directly when not running in "secure mode".
+> +  When "secure mode" is enabled then these registers have to be accessed
+> +  through secure monitor calls.
+> +
+> +# We need a select here so we don't match all nodes with 'syscon'
 
-My bot found errors running 'make dt_binding_check' on your patch:
+No, you don't. The default 'select' will ignore 'syscon' and 
+'simple-mfd'.
 
-yamllint warnings/errors:
-./Documentation/devicetree/bindings/arm/amlogic/amlogic,meson-mx-secbus2.yaml:35:9: [warning] wrong indentation: expected 10 but found 8 (indentation)
-
-dtschema/dtc warnings/errors:
-
-See https://patchwork.ozlabs.org/patch/1421302
-
-This check can fail if there are any dependencies. The base for a patch
-series is generally the most recent rc1.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit.
-
+> +select:
+> +  properties:
+> +    compatible:
+> +      contains:
+> +        enum:
+> +          - amlogic,meson8-secbus2
+> +          - amlogic,meson8b-secbus2
+> +  required:
+> +    - compatible
+> +
+> +properties:
+> +  compatible:
+> +    items:
+> +      - enum:
+> +        - amlogic,meson8-secbus2
+> +        - amlogic,meson8b-secbus2
+> +      - const: syscon
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    secbus2: system-controller@4000 {
+> +      compatible = "amlogic,meson8-secbus2", "syscon";
+> +      reg = <0x4000 0x2000>;
+> +    };
+> -- 
+> 2.30.0
+> 
