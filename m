@@ -8,65 +8,65 @@ X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A526C43381
-	for <linux-remoteproc@archiver.kernel.org>; Sat,  2 Jan 2021 21:00:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 858AFC433E0
+	for <linux-remoteproc@archiver.kernel.org>; Sat,  2 Jan 2021 21:00:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CDD502075F
-	for <linux-remoteproc@archiver.kernel.org>; Sat,  2 Jan 2021 21:00:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 583342075F
+	for <linux-remoteproc@archiver.kernel.org>; Sat,  2 Jan 2021 21:00:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726671AbhABU76 (ORCPT
+        id S1726810AbhABVAF (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Sat, 2 Jan 2021 15:59:58 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45044 "EHLO
+        Sat, 2 Jan 2021 16:00:05 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45050 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726659AbhABU76 (ORCPT
+        with ESMTP id S1726659AbhABU77 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Sat, 2 Jan 2021 15:59:58 -0500
-Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6BB8FC061573;
-        Sat,  2 Jan 2021 12:59:17 -0800 (PST)
-Received: by mail-ed1-x52d.google.com with SMTP id i24so22960674edj.8;
-        Sat, 02 Jan 2021 12:59:17 -0800 (PST)
+        Sat, 2 Jan 2021 15:59:59 -0500
+Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 34BC5C0613D3;
+        Sat,  2 Jan 2021 12:59:19 -0800 (PST)
+Received: by mail-ed1-x52b.google.com with SMTP id u19so22990090edx.2;
+        Sat, 02 Jan 2021 12:59:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=googlemail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=ywgU0RqknLqPrZiMHs7nQjxQoQ/2d1Llugr9rRHrcUE=;
-        b=nTzXSsLMgjBkPOAji4+eKD2k58N7k6whoOZN/Tj/TQWrTcRDD4obYaEI30ntGHCnNO
-         0W1mCPQYL8N0tDfY0DwySC1trF4Sf+Q3kAa0C5rWnWOHs65XBuOjz94R7I0i9wOdNxHL
-         9FbZAttDo2a9kydgIuTwxQn8IXb5Be2HkAqfeiB9sFYXw003GpRKmGJ5ZouXAFJ1VWDk
-         LlMnw98aZ1AY/cLqbh15fYBYTPgVnmPL6VHuTRsjdvnRHaqW8YTkPdZ6p0pEZBusRKFV
-         Zt5pbHgIMX7IkkDk6FAXBaqEdo5tGK0i+Gxfws85YUdlj9ueFF1WcXxfu2sFYQkZLqAv
-         kRuQ==
+        bh=NGzJTaWs2ZS8AEwsirv2BgYJFSuAwUWvelZNyl7tzMs=;
+        b=Tg/pmAPZCNd3zQAFNQCWeZ5zvyCApeVeQKiW+gWJyvwl9mgWktozIyDe1luQ9VXlnL
+         99ncXwaQjzzrgzKsbjygYbDj0fZQN6AL1SiXAcYk6RtV87WOeOfOAFVZ1Yjd4JjdbpN9
+         NvoTX5iz4x2Crsb5hy3D2m7Xx421xHpdTicXCnK0Mgf+BRfuoUYk/WftQAZbdHofOVHa
+         LzbNa+TveWRq2E1ENMOIJMx/QEeUlpaRVhaAYojj4xCLnrcX08zG4JNaDCKAPsRCT56+
+         wPzJJBEPJrvMhgRYPVjjrkR2Zs/eJweqpd/kTq4Pjsl6ISpK1w71bfgoYccTtFc5UkxI
+         s8aQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=ywgU0RqknLqPrZiMHs7nQjxQoQ/2d1Llugr9rRHrcUE=;
-        b=ifToocsT2aw9bLJoz1zKiBN+y6mCazDKqdWeCVNODX21XdZGIeTzMFMuHPHRCsyaT0
-         NrUvRsvTvIi6xg7zphNK/Lj/4QPZ8MG4tIh0PGzDx/be35aif9owOucJslPSNgPR11gc
-         CntCOEH1hdRwq1Jvsp0NADd4Yor/KicUEyJReIgHyzj1Z/fzkDTAhX08AefyuXNHwY8T
-         M+tiqMVo2baEApzqxLGUFGfcZ4TDASsZQOYnUc2hmqMZFbj2ACXjK5eF57eSLy5439Ke
-         r0gLULygkfWRknhR8DqUmgVu7qxbHsF2STuk8+ABcG7uV/D+kRMxJd2uvTXN/d+zbhF2
-         j2Cg==
-X-Gm-Message-State: AOAM532A1NuNi8j4NEbbwgwzTL8glFrDHz8he+sGMZQZBWICcB+NcR/B
-        APgy9YKU1qUekRoYvM/U5onbb44s0cA=
-X-Google-Smtp-Source: ABdhPJw3+ko0VZX14qsFf/BNsYrFexeTS/1D1ZEDnK/05bBIvDZ7G0qwLteAixk33fJQF6HJwa/0Sg==
-X-Received: by 2002:aa7:d494:: with SMTP id b20mr66478539edr.330.1609621155953;
-        Sat, 02 Jan 2021 12:59:15 -0800 (PST)
+        bh=NGzJTaWs2ZS8AEwsirv2BgYJFSuAwUWvelZNyl7tzMs=;
+        b=uIt+TBWUTg9o8pVMl3NNcLhISKm1Xw8GkcKE5M45STZ98hqbGt6eN1qxm+EmfDP/Sw
+         SlQiUUsilDCmizI7CnTh+UqA+BoHq0HW8lH+m+AV5QGEkFsPPU+kOlxYThURCuESqJ/A
+         9RFiHhbzFokjI9eJ4htaUi3GfYaX36u3sRSmj+9CInI0j2stBGKYLfNrrzLAtkozJ756
+         YNTWYRPt3e2HJZJWc+11njY/cpG0qfARKn6F0auNl3PVNObh/bvcqhAcrIRvsyCNx1NX
+         0aG7t8pyNf5CDTn4acdwAg2fenbQOU4GYgNyMUXQTG+58v5jwpzP/Zt6S5OfDxQaoXNu
+         7mUw==
+X-Gm-Message-State: AOAM533J0098X/YGn5IkdAKApGYzIiT+KAigRmzqbYYfC4yPfdc/fzZ8
+        d2I4RRTvXne1raK0DggzE/Yf+rdg4dY=
+X-Google-Smtp-Source: ABdhPJxNjL3jVdnY7FvrXUle/pGeYWEwsyGUIY0+q1xwGunJf2gHd111vYmjSNdwOjN/a8SLQ3JjnQ==
+X-Received: by 2002:aa7:d915:: with SMTP id a21mr12883539edr.251.1609621157745;
+        Sat, 02 Jan 2021 12:59:17 -0800 (PST)
 Received: from localhost.localdomain (p200300f13724fd00428d5cfffeb99db8.dip0.t-ipconnect.de. [2003:f1:3724:fd00:428d:5cff:feb9:9db8])
-        by smtp.googlemail.com with ESMTPSA id v18sm41420617edx.30.2021.01.02.12.59.15
+        by smtp.googlemail.com with ESMTPSA id v18sm41420617edx.30.2021.01.02.12.59.16
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 02 Jan 2021 12:59:15 -0800 (PST)
+        Sat, 02 Jan 2021 12:59:17 -0800 (PST)
 From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 To:     linux-remoteproc@vger.kernel.org, linux-amlogic@lists.infradead.org
 Cc:     ohad@wizery.com, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, bjorn.andersson@linaro.org,
         robh+dt@kernel.org, linux-arm-kernel@lists.infradead.org,
         Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Subject: [PATCH v2 1/5] dt-bindings: sram: Add compatible strings for the Meson AO ARC SRAM
-Date:   Sat,  2 Jan 2021 21:59:00 +0100
-Message-Id: <20210102205904.2691120-2-martin.blumenstingl@googlemail.com>
+Subject: [PATCH v2 3/5] dt-bindings: remoteproc: Add the documentation for Meson AO ARC rproc
+Date:   Sat,  2 Jan 2021 21:59:02 +0100
+Message-Id: <20210102205904.2691120-4-martin.blumenstingl@googlemail.com>
 X-Mailer: git-send-email 2.30.0
 In-Reply-To: <20210102205904.2691120-1-martin.blumenstingl@googlemail.com>
 References: <20210102205904.2691120-1-martin.blumenstingl@googlemail.com>
@@ -76,29 +76,109 @@ Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Amlogic Meson8, Meson8b and Meson8m2 SoCs embed an ARC EM4 core
-typically used for managing system suspend. A section of the SoCs SRAM
-is mapped as memory for this ARC core. Add new compatible strings for
-the SRAM section for the ARC core memory.
+Amlogic Meson6, Meson8, Meson8b and Meson8m2 SoCs embed an ARC EM4
+controller for always-on operations, typically used for managing system
+suspend.
 
 Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 ---
- Documentation/devicetree/bindings/sram/sram.yaml | 2 ++
- 1 file changed, 2 insertions(+)
+ .../remoteproc/amlogic,meson-mx-ao-arc.yaml   | 87 +++++++++++++++++++
+ 1 file changed, 87 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/remoteproc/amlogic,meson-mx-ao-arc.yaml
 
-diff --git a/Documentation/devicetree/bindings/sram/sram.yaml b/Documentation/devicetree/bindings/sram/sram.yaml
-index 19d116ff9ddc..6d65771e979c 100644
---- a/Documentation/devicetree/bindings/sram/sram.yaml
-+++ b/Documentation/devicetree/bindings/sram/sram.yaml
-@@ -72,6 +72,8 @@ patternProperties:
-             - allwinner,sun4i-a10-sram-d
-             - allwinner,sun9i-a80-smp-sram
-             - allwinner,sun50i-a64-sram-c
-+            - amlogic,meson8-ao-arc-sram
-+            - amlogic,meson8b-ao-arc-sram
-             - amlogic,meson8-smp-sram
-             - amlogic,meson8b-smp-sram
-             - amlogic,meson-gxbb-scp-shmem
+diff --git a/Documentation/devicetree/bindings/remoteproc/amlogic,meson-mx-ao-arc.yaml b/Documentation/devicetree/bindings/remoteproc/amlogic,meson-mx-ao-arc.yaml
+new file mode 100644
+index 000000000000..d892d29a656b
+--- /dev/null
++++ b/Documentation/devicetree/bindings/remoteproc/amlogic,meson-mx-ao-arc.yaml
+@@ -0,0 +1,87 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: "http://devicetree.org/schemas/remoteproc/amlogic,meson-mx-ao-arc.yaml#"
++$schema: "http://devicetree.org/meta-schemas/core.yaml#"
++
++title: Amlogic Meson AO ARC Remote Processor bindings
++
++description:
++  Amlogic Meson6, Meson8, Meson8b and Meson8m2 SoCs embed an ARC core
++  controller for always-on operations, typically used for managing
++  system suspend. Meson6 and older use a ARC core based on the ARCv1
++  ISA, while Meson8, Meson8b and Meson8m2 use an ARC EM4 (ARCv2 ISA)
++  core.
++
++maintainers:
++  - Martin Blumenstingl <martin.blumenstingl@googlemail.com>
++
++properties:
++  compatible:
++    items:
++      - enum:
++          - amlogic,meson8-ao-arc
++          - amlogic,meson8b-ao-arc
++      - const: amlogic,meson-mx-ao-arc
++
++  firmware-name:
++    $ref: /schemas/types.yaml#/definitions/string
++    description:
++      The name of the firmware which should be loaded for this remote
++      processor.
++
++  reg:
++    description:
++      Address ranges of the remap and CPU control addresses for the
++      remote processor.
++    minItems: 2
++
++  reg-names:
++    items:
++      - const: remap
++      - const: cpu
++
++  resets:
++    minItems: 1
++
++  clocks:
++    minItems: 1
++
++  sram:
++    $ref: /schemas/types.yaml#/definitions/phandle
++    description:
++      phandles to a reserved SRAM region which is used as the memory of
++      the ARC core. The region should be defined as child nodes of the
++      AHB SRAM node as per the generic bindings in
++      Documentation/devicetree/bindings/sram/sram.yaml
++
++  amlogic,secbus2:
++    $ref: /schemas/types.yaml#/definitions/phandle
++    description:
++      A phandle to the SECBUS2 region which contains some configuration
++      bits of this remote processor
++
++required:
++  - compatible
++  - reg
++  - reg-names
++  - resets
++  - clocks
++  - sram
++  - amlogic,secbus2
++
++additionalProperties: false
++
++examples:
++  - |
++    remoteproc@1c {
++      compatible= "amlogic,meson8-ao-arc", "amlogic,meson-mx-ao-arc";
++      reg = <0x1c 0x8>, <0x38 0x8>;
++      reg-names = "remap", "cpu";
++      resets = <&media_cpu_reset>;
++      clocks = <&media_cpu_clock>;
++      sram = <&ahb_sram_ao_arc>;
++      amlogic,secbus2 = <&secbus2>;
++    };
++
++...
 -- 
 2.30.0
 
