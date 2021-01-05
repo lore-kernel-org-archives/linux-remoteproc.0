@@ -2,1288 +2,260 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-17.5 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A895DC43333
-	for <linux-remoteproc@archiver.kernel.org>; Tue,  5 Jan 2021 13:56:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58033C433DB
+	for <linux-remoteproc@archiver.kernel.org>; Tue,  5 Jan 2021 16:54:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 87AB122AAB
-	for <linux-remoteproc@archiver.kernel.org>; Tue,  5 Jan 2021 13:56:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1911B22CB9
+	for <linux-remoteproc@archiver.kernel.org>; Tue,  5 Jan 2021 16:54:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727759AbhAEN4i (ORCPT
+        id S1730003AbhAEQyJ (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 5 Jan 2021 08:56:38 -0500
-Received: from frasgout.his.huawei.com ([185.176.79.56]:2293 "EHLO
-        frasgout.his.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725939AbhAEN4h (ORCPT
+        Tue, 5 Jan 2021 11:54:09 -0500
+Received: from mx07-00178001.pphosted.com ([185.132.182.106]:25484 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729770AbhAEQyJ (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 5 Jan 2021 08:56:37 -0500
-Received: from fraeml706-chm.china.huawei.com (unknown [172.18.147.201])
-        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4D9DTr0lv3z67YJD;
-        Tue,  5 Jan 2021 21:53:04 +0800 (CST)
-Received: from lhreml710-chm.china.huawei.com (10.201.108.61) by
- fraeml706-chm.china.huawei.com (10.206.15.55) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.2106.2; Tue, 5 Jan 2021 14:55:50 +0100
-Received: from localhost (10.47.69.23) by lhreml710-chm.china.huawei.com
- (10.201.108.61) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2106.2; Tue, 5 Jan 2021
- 13:55:48 +0000
-Date:   Tue, 5 Jan 2021 13:55:13 +0000
-From:   Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To:     Rob Herring <robh@kernel.org>
-CC:     <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Jens Axboe <axboe@kernel.dk>, Stephen Boyd <sboyd@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        "Chanwoo Choi" <cw00.choi@samsung.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        "Thomas Gleixner" <tglx@linutronix.de>,
-        Marc Zyngier <maz@kernel.org>,
-        "Mauro Carvalho Chehab" <mchehab@kernel.org>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        "Jakub Kicinski" <kuba@kernel.org>,
-        Sebastian Reichel <sre@kernel.org>,
-        "Ohad Ben-Cohen" <ohad@wizery.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-ide@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <dri-devel@lists.freedesktop.org>, <linux-gpio@vger.kernel.org>,
-        <linux-iio@vger.kernel.org>, <linux-input@vger.kernel.org>,
-        <linux-media@vger.kernel.org>, <linux-mmc@vger.kernel.org>,
-        <netdev@vger.kernel.org>, <linux-pm@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>,
-        <linux-riscv@lists.infradead.org>, <linux-serial@vger.kernel.org>,
-        <alsa-devel@alsa-project.org>, <linux-spi@vger.kernel.org>,
-        <linux-usb@vger.kernel.org>
-Subject: Re: [PATCH] dt-bindings: Add missing array size constraints
-Message-ID: <20210105135513.00004a40@Huawei.com>
-In-Reply-To: <20210104230253.2805217-1-robh@kernel.org>
-References: <20210104230253.2805217-1-robh@kernel.org>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; i686-w64-mingw32)
+        Tue, 5 Jan 2021 11:54:09 -0500
+Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 105GhHOG026506;
+        Tue, 5 Jan 2021 17:53:22 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=selector1;
+ bh=PYh8uP+cLCBEt0dTKTjsI7bBJjnHyuuerqReO0sAe18=;
+ b=2DSEAvkigRKTyND9nH3lEfYnsgV7pV6/GnXsJsWw/Q+WM9KndI8pHLd0319OJZc1BC5B
+ gyhtIhtWypFr8KGnDsgOQlKfKWuQ8oray8ybfQ7n+YwSANw7rxshxQJVKJXxOjkQrCjk
+ Fcqa57gxUGOKpTNzdLjhj9Q41AIuQTW1GcPyBY5KyReVUR/dO6JlLWqsvJnfSOW4fPlF
+ Nhy0utUCjNfIDg11DB1rxRC4sOtRaYLNX6k/k8+7dPDHgT5F6kwZiSuM7dMGey5G0lCl
+ ASF3eIa0cMpPd0HcRRq6U8ovMlgHfIaOtqmz13VFW+ODOeyseFmykQi80Q/l/b4eB+hb Eg== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 35tf66x4gx-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 05 Jan 2021 17:53:22 +0100
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id C1820100034;
+        Tue,  5 Jan 2021 17:53:21 +0100 (CET)
+Received: from Webmail-eu.st.com (sfhdag2node3.st.com [10.75.127.6])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 1D5D42349DE;
+        Tue,  5 Jan 2021 17:53:21 +0100 (CET)
+Received: from lmecxl0889.lme.st.com (10.75.127.51) by SFHDAG2NODE3.st.com
+ (10.75.127.6) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 5 Jan
+ 2021 17:53:20 +0100
+Subject: Re: [PATCH v2 02/16] rpmsg: add RPMsg control API to register service
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+CC:     Ohad Ben-Cohen <ohad@wizery.com>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-msm@vger.kernel.org>
+References: <20201222105726.16906-1-arnaud.pouliquen@foss.st.com>
+ <20201222105726.16906-3-arnaud.pouliquen@foss.st.com>
+ <X/O0JC9z2s9MNRWa@builder.lan>
+From:   Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
+Message-ID: <f5a30755-cec6-2748-cf3e-bd67cc1613fc@foss.st.com>
+Date:   Tue, 5 Jan 2021 17:53:19 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
+In-Reply-To: <X/O0JC9z2s9MNRWa@builder.lan>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.47.69.23]
-X-ClientProxiedBy: lhreml721-chm.china.huawei.com (10.201.108.72) To
- lhreml710-chm.china.huawei.com (10.201.108.61)
-X-CFilter-Loop: Reflected
+X-Originating-IP: [10.75.127.51]
+X-ClientProxiedBy: SFHDAG4NODE3.st.com (10.75.127.12) To SFHDAG2NODE3.st.com
+ (10.75.127.6)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.343,18.0.737
+ definitions=2021-01-05_03:2021-01-05,2021-01-05 signatures=0
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Mon, 4 Jan 2021 16:02:53 -0700
-Rob Herring <robh@kernel.org> wrote:
 
-> DT properties which can have multiple entries need to specify what the
-> entries are and define how many entries there can be. In the case of
-> only a single entry, just 'maxItems: 1' is sufficient.
+
+On 1/5/21 1:34 AM, Bjorn Andersson wrote:
+> On Tue 22 Dec 04:57 CST 2020, Arnaud Pouliquen wrote:
 > 
-> Add the missing entry constraints. These were found with a modified
-> meta-schema. Unfortunately, there are a few cases where the size
-> constraints are not defined such as common bindings, so the meta-schema
-> can't be part of the normal checks.
+>> Add API to register a RPMsg service to the control device.
+>> The rpmsg_drv_ctrl_info structure links a service to its driver.
+>>
+>> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+>> ---
+>>  drivers/rpmsg/rpmsg_ctrl.c | 57 ++++++++++++++++++++++++++++++++++++++
+>>  include/linux/rpmsg.h      | 31 +++++++++++++++++++++
+>>  include/uapi/linux/rpmsg.h | 14 ++++++++++
+>>  3 files changed, 102 insertions(+)
+>>
+>> diff --git a/drivers/rpmsg/rpmsg_ctrl.c b/drivers/rpmsg/rpmsg_ctrl.c
+>> index 425c3e32ada4..065e2e304019 100644
+>> --- a/drivers/rpmsg/rpmsg_ctrl.c
+>> +++ b/drivers/rpmsg/rpmsg_ctrl.c
+>> @@ -27,6 +27,20 @@ struct rpmsg_ctrl_dev {
+>>  	struct device dev;
+>>  };
+>>  
+>> +/**
+>> + * struct rpmsg_ctl_info - control info list node
+>> + * @ctrl:	control driver info
+>> + * @node:	list node
+>> + *
+>> + * This structure is used by rpmsg_ctl to list the registered drivers services
+>> + */
+>> +struct rpmsg_ctl_info {
+>> +	const struct rpmsg_drv_ctrl_info *ctrl;
+>> +	struct list_head node;
+>> +};
+>> +
+>> +static LIST_HEAD(rpmsg_drv_list);
+>> +
+>>  static DEFINE_IDA(rpmsg_ctrl_ida);
+>>  static DEFINE_IDA(rpmsg_minor_ida);
+>>  
+>> @@ -175,6 +189,49 @@ static struct rpmsg_driver rpmsg_ctrl_driver = {
+>>  	.remove = rpmsg_ctrl_remove,
+>>  };
+>>  
+>> +/**
+>> + * rpmsg_ctrl_register_ctl() -register control for the associated service
+>> + * @ctrl: rpmsg driver information
+>> + *
+>> + * This function is called by the rpmsg driver to register a service that will
+>> + * be exposed to be instantiate by the application.
+>> + */
+>> +int  rpmsg_ctrl_register_ctl(const struct rpmsg_drv_ctrl_info *ctrl)
+>> +{
+>> +	struct rpmsg_ctl_info *drv_info;
+>> +
+>> +	drv_info =  kzalloc(sizeof(*drv_info), GFP_KERNEL);
+>> +	if (!drv_info)
+>> +		return -ENOMEM;
+>> +
+>> +	drv_info->ctrl = ctrl;
+>> +
+>> +	list_add_tail(&drv_info->node, &rpmsg_drv_list);
+>> +
+>> +	return 0;
+>> +}
+>> +EXPORT_SYMBOL(rpmsg_ctrl_register_ctl);
+>> +
+>> +/**
+>> + * rpmsg_ctrl_unregister_ctl() -unregister control for the associated service
+>> + * @ctrl: the rpmsg control information
+>> + *
+>> + * This function is called by the rpmsg driver to unregister the associated
+>> + * service.
+>> + */
+>> +void rpmsg_ctrl_unregister_ctl(const struct rpmsg_drv_ctrl_info *ctrl)
+>> +{
+>> +	struct rpmsg_ctl_info *drv_info, *tmp;
+>> +
+>> +	list_for_each_entry_safe(drv_info, tmp, &rpmsg_drv_list, node) {
+>> +		if (drv_info->ctrl == ctrl) {
+>> +			list_del(&drv_info->node);
+>> +			kfree(drv_info);
+>> +		}
+>> +	}
+>> +}
+>> +EXPORT_SYMBOL(rpmsg_ctrl_unregister_ctl);
+>> +
+>>  static int rpmsg_ctrl_init(void)
+>>  {
+>>  	int ret;
+>> diff --git a/include/linux/rpmsg.h b/include/linux/rpmsg.h
+>> index a5db828b2420..5d64704c2346 100644
+>> --- a/include/linux/rpmsg.h
+>> +++ b/include/linux/rpmsg.h
+>> @@ -26,6 +26,19 @@ struct rpmsg_endpoint;
+>>  struct rpmsg_device_ops;
+>>  struct rpmsg_endpoint_ops;
+>>  
+>> +/**
+>> + * struct rpmsg_drv_ctrl_info - rpmsg ctrl structure
+>> + * @drv_name:	name of the associated driver
+>> + * @service:	the associated rpmsg service listed in @rpmsg_services
+>> + *
+>> + * This structure is used by rpmsg_ctl to link the endpoint creation to the
+>> + * service rpmsg driver.
+>> + */
+>> +struct rpmsg_drv_ctrl_info {
+>> +	const char *drv_name;
+>> +	u32  service;
+>> +};
+>> +
+>>  /**
+>>   * struct rpmsg_channel_info - channel info representation
+>>   * @name: name of service
+>> @@ -315,4 +328,22 @@ static inline __poll_t rpmsg_poll(struct rpmsg_endpoint *ept,
+>>  	module_driver(__rpmsg_driver, register_rpmsg_driver, \
+>>  			unregister_rpmsg_driver)
+>>  
+>> +#if IS_ENABLED(CONFIG_RPMSG_CTRL)
+>> +
+>> +int  rpmsg_ctrl_register_ctl(const struct rpmsg_drv_ctrl_info *ctrl);
+>> +void rpmsg_ctrl_unregister_ctl(const struct rpmsg_drv_ctrl_info *ctrl);
+>> +
+>> +#else
+>> +
+>> +static inline int rpmsg_ctrl_register_ctl(const struct rpmsg_drv_ctrl_info *ctrl)
+>> +{
+>> +	return 0;
+>> +}
+>> +
+>> +static inline void rpmsg_ctrl_unregister_ctl(const struct rpmsg_drv_ctrl_info *ctrl)
+>> +{
+>> +}
+>> +
+>> +#endif /* IS_ENABLED(CONFIG_RPMSG_CTRL) */
+>> +
+>>  #endif /* _LINUX_RPMSG_H */
+>> diff --git a/include/uapi/linux/rpmsg.h b/include/uapi/linux/rpmsg.h
+>> index e14c6dab4223..0b0cb028e0b3 100644
+>> --- a/include/uapi/linux/rpmsg.h
+>> +++ b/include/uapi/linux/rpmsg.h
+>> @@ -9,6 +9,20 @@
+>>  #include <linux/ioctl.h>
+>>  #include <linux/types.h>
+>>  
+>> +/**
+>> + * enum rpmsg_services - list of supported RPMsg services
+>> + *
+>> + * @RPMSG_RAW_SERVICE: char device RPMSG service
+>> + * @RPMSG_START_PRIVATE_SERVICES: private services have to be declared after.
+>> + */
+>> +enum rpmsg_services {
+>> +	/* Reserved services */
+>> +	RPMSG_RAW_SERVICE =  0,
+>> +
 > 
-> Cc: Jens Axboe <axboe@kernel.dk>
-> Cc: Stephen Boyd <sboyd@kernel.org>
-> Cc: Thierry Reding <thierry.reding@gmail.com>
-> Cc: MyungJoo Ham <myungjoo.ham@samsung.com>
-> Cc: Chanwoo Choi <cw00.choi@samsung.com>
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> Cc: Jonathan Cameron <jic23@kernel.org>
-> Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Marc Zyngier <maz@kernel.org>
-> Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
-> Cc: Chen-Yu Tsai <wens@csie.org>
-> Cc: Ulf Hansson <ulf.hansson@linaro.org>
-> Cc: "David S. Miller" <davem@davemloft.net>
-> Cc: Jakub Kicinski <kuba@kernel.org>
-> Cc: Sebastian Reichel <sre@kernel.org>
-> Cc: Ohad Ben-Cohen <ohad@wizery.com>
-> Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Signed-off-by: Rob Herring <robh@kernel.org>
+> What kind of things do you envision this list to contain in a year from
+> now?
 
-Acked-by: Jonathan Cameron <Jonathan.Cameron@huawei.com> #for-iio
+The next one is the TTY, and perhaps the RPMsg I2C that allows to share a I2C
+bus between the main and a remote processor.
 
-> ---
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linux-ide@vger.kernel.org
-> Cc: linux-clk@vger.kernel.org
-> Cc: dri-devel@lists.freedesktop.org
-> Cc: linux-gpio@vger.kernel.org
-> Cc: linux-iio@vger.kernel.org
-> Cc: linux-input@vger.kernel.org
-> Cc: linux-media@vger.kernel.org
-> Cc: linux-mmc@vger.kernel.org
-> Cc: netdev@vger.kernel.org
-> Cc: linux-pm@vger.kernel.org
-> Cc: linux-remoteproc@vger.kernel.org
-> Cc: linux-riscv@lists.infradead.org
-> Cc: linux-serial@vger.kernel.org
-> Cc: alsa-devel@alsa-project.org
-> Cc: linux-spi@vger.kernel.org
-> Cc: linux-usb@vger.kernel.org
-> ---
->  .../socionext,uniphier-system-cache.yaml      |  4 ++--
->  .../bindings/ata/sata_highbank.yaml           |  1 +
->  .../bindings/clock/canaan,k210-clk.yaml       |  1 +
->  .../bindings/display/brcm,bcm2711-hdmi.yaml   |  1 +
->  .../bindings/display/brcm,bcm2835-hdmi.yaml   |  1 +
->  .../display/panel/jdi,lt070me05000.yaml       |  1 +
->  .../display/panel/mantix,mlaf057we51-x.yaml   |  3 ++-
->  .../display/panel/novatek,nt36672a.yaml       |  1 +
->  .../devicetree/bindings/dsp/fsl,dsp.yaml      |  2 +-
->  .../devicetree/bindings/eeprom/at25.yaml      |  3 +--
->  .../bindings/extcon/extcon-ptn5150.yaml       |  2 ++
->  .../bindings/gpio/gpio-pca95xx.yaml           |  1 +
->  .../bindings/iio/adc/adi,ad7768-1.yaml        |  2 ++
->  .../bindings/iio/adc/aspeed,ast2400-adc.yaml  |  1 +
->  .../bindings/iio/adc/lltc,ltc2496.yaml        |  2 +-
->  .../bindings/iio/adc/qcom,spmi-vadc.yaml      |  1 +
->  .../bindings/iio/adc/st,stm32-adc.yaml        |  2 ++
->  .../iio/magnetometer/asahi-kasei,ak8975.yaml  |  1 +
->  .../iio/potentiometer/adi,ad5272.yaml         |  1 +
->  .../input/touchscreen/elan,elants_i2c.yaml    |  1 +
->  .../interrupt-controller/fsl,intmux.yaml      |  2 +-
->  .../interrupt-controller/st,stm32-exti.yaml   |  2 ++
->  .../allwinner,sun4i-a10-video-engine.yaml     |  1 +
->  .../devicetree/bindings/media/i2c/imx219.yaml |  1 +
->  .../memory-controllers/exynos-srom.yaml       |  2 ++
->  .../bindings/misc/fsl,dpaa2-console.yaml      |  1 +
->  .../bindings/mmc/mmc-controller.yaml          |  2 ++
->  .../bindings/net/ti,k3-am654-cpsw-nuss.yaml   |  1 +
->  .../bindings/net/ti,k3-am654-cpts.yaml        |  1 +
->  .../phy/allwinner,sun4i-a10-usb-phy.yaml      |  2 ++
->  .../phy/allwinner,sun50i-a64-usb-phy.yaml     |  2 ++
->  .../phy/allwinner,sun50i-h6-usb-phy.yaml      |  2 ++
->  .../phy/allwinner,sun5i-a13-usb-phy.yaml      |  2 ++
->  .../phy/allwinner,sun6i-a31-usb-phy.yaml      |  2 ++
->  .../phy/allwinner,sun8i-a23-usb-phy.yaml      |  2 ++
->  .../phy/allwinner,sun8i-a83t-usb-phy.yaml     |  2 ++
->  .../phy/allwinner,sun8i-h3-usb-phy.yaml       |  2 ++
->  .../phy/allwinner,sun8i-r40-usb-phy.yaml      |  2 ++
->  .../phy/allwinner,sun8i-v3s-usb-phy.yaml      |  2 ++
->  .../phy/allwinner,sun9i-a80-usb-phy.yaml      | 19 ++++++++-----------
->  .../phy/socionext,uniphier-ahci-phy.yaml      |  2 +-
->  .../phy/socionext,uniphier-pcie-phy.yaml      |  2 +-
->  .../phy/socionext,uniphier-usb3hs-phy.yaml    |  2 +-
->  .../phy/socionext,uniphier-usb3ss-phy.yaml    |  2 +-
->  .../bindings/phy/ti,phy-gmii-sel.yaml         |  2 +-
->  .../pinctrl/aspeed,ast2400-pinctrl.yaml       |  3 +--
->  .../pinctrl/aspeed,ast2500-pinctrl.yaml       |  4 ++--
->  .../bindings/power/supply/bq25980.yaml        |  1 +
->  .../bindings/remoteproc/ingenic,vpu.yaml      |  2 +-
->  .../remoteproc/ti,omap-remoteproc.yaml        |  3 +++
->  .../bindings/riscv/sifive-l2-cache.yaml       |  1 +
->  .../bindings/serial/renesas,hscif.yaml        |  2 ++
->  .../bindings/serial/renesas,scif.yaml         |  2 ++
->  .../bindings/serial/renesas,scifa.yaml        |  2 ++
->  .../bindings/serial/renesas,scifb.yaml        |  2 ++
->  .../sound/allwinner,sun4i-a10-codec.yaml      |  1 +
->  .../bindings/sound/google,sc7180-trogdor.yaml |  1 +
->  .../bindings/sound/samsung,aries-wm8994.yaml  |  3 +++
->  .../bindings/sound/samsung,midas-audio.yaml   |  2 ++
->  .../devicetree/bindings/sound/tas2562.yaml    |  2 ++
->  .../devicetree/bindings/sound/tas2770.yaml    |  2 ++
->  .../bindings/sound/tlv320adcx140.yaml         |  1 +
->  .../devicetree/bindings/spi/renesas,rspi.yaml |  2 ++
->  .../devicetree/bindings/sram/sram.yaml        |  2 ++
->  .../timer/allwinner,sun4i-a10-timer.yaml      |  2 ++
->  .../bindings/timer/intel,ixp4xx-timer.yaml    |  2 +-
->  .../usb/allwinner,sun4i-a10-musb.yaml         |  2 +-
->  .../bindings/usb/brcm,usb-pinmap.yaml         |  3 +++
->  .../devicetree/bindings/usb/generic-ehci.yaml |  1 +
->  .../devicetree/bindings/usb/generic-ohci.yaml |  1 +
->  .../devicetree/bindings/usb/ingenic,musb.yaml |  2 +-
->  .../bindings/usb/renesas,usbhs.yaml           |  1 +
->  .../devicetree/bindings/usb/ti,j721e-usb.yaml |  3 ++-
->  .../bindings/usb/ti,keystone-dwc3.yaml        |  2 ++
->  74 files changed, 118 insertions(+), 33 deletions(-)
+Please notice that this field will also has to be added in a second step to the
+rpmsg_endpoint_info struct, to allow the applications to select the expected
+service.
+
+Regards
+Arnaud
+
 > 
-> diff --git a/Documentation/devicetree/bindings/arm/socionext/socionext,uniphier-system-cache.yaml b/Documentation/devicetree/bindings/arm/socionext/socionext,uniphier-system-cache.yaml
-> index 2e765bb3e6f6..7ca5375f278f 100644
-> --- a/Documentation/devicetree/bindings/arm/socionext/socionext,uniphier-system-cache.yaml
-> +++ b/Documentation/devicetree/bindings/arm/socionext/socionext,uniphier-system-cache.yaml
-> @@ -30,8 +30,8 @@ properties:
->        Interrupts can be used to notify the completion of cache operations.
->        The number of interrupts should match to the number of CPU cores.
->        The specified interrupts correspond to CPU0, CPU1, ... in this order.
-> -      minItems: 1
-> -      maxItems: 4
-> +    minItems: 1
-> +    maxItems: 4
->  
->    cache-unified: true
->  
-> diff --git a/Documentation/devicetree/bindings/ata/sata_highbank.yaml b/Documentation/devicetree/bindings/ata/sata_highbank.yaml
-> index 5e2a2394e600..ce75d77e9289 100644
-> --- a/Documentation/devicetree/bindings/ata/sata_highbank.yaml
-> +++ b/Documentation/devicetree/bindings/ata/sata_highbank.yaml
-> @@ -61,6 +61,7 @@ properties:
->      maxItems: 8
->  
->    calxeda,sgpio-gpio:
-> +    maxItems: 3
->      description: |
->        phandle-gpio bank, bit offset, and default on or off, which indicates
->        that the driver supports SGPIO indicator lights using the indicated
-> diff --git a/Documentation/devicetree/bindings/clock/canaan,k210-clk.yaml b/Documentation/devicetree/bindings/clock/canaan,k210-clk.yaml
-> index 565ca468cb44..7f5cf4001f76 100644
-> --- a/Documentation/devicetree/bindings/clock/canaan,k210-clk.yaml
-> +++ b/Documentation/devicetree/bindings/clock/canaan,k210-clk.yaml
-> @@ -22,6 +22,7 @@ properties:
->      const: canaan,k210-clk
->  
->    clocks:
-> +    maxItems: 1
->      description:
->        Phandle of the SoC 26MHz fixed-rate oscillator clock.
->  
-> diff --git a/Documentation/devicetree/bindings/display/brcm,bcm2711-hdmi.yaml b/Documentation/devicetree/bindings/display/brcm,bcm2711-hdmi.yaml
-> index 7ce06f9f9f8e..767edc0a7978 100644
-> --- a/Documentation/devicetree/bindings/display/brcm,bcm2711-hdmi.yaml
-> +++ b/Documentation/devicetree/bindings/display/brcm,bcm2711-hdmi.yaml
-> @@ -60,6 +60,7 @@ properties:
->        Phandle of the I2C controller used for DDC EDID probing
->  
->    hpd-gpios:
-> +    maxItems: 1
->      description: >
->        The GPIO pin for the HDMI hotplug detect (if it doesn't appear
->        as an interrupt/status bit in the HDMI controller itself)
-> diff --git a/Documentation/devicetree/bindings/display/brcm,bcm2835-hdmi.yaml b/Documentation/devicetree/bindings/display/brcm,bcm2835-hdmi.yaml
-> index f54b4e4808f0..031e35e76db2 100644
-> --- a/Documentation/devicetree/bindings/display/brcm,bcm2835-hdmi.yaml
-> +++ b/Documentation/devicetree/bindings/display/brcm,bcm2835-hdmi.yaml
-> @@ -37,6 +37,7 @@ properties:
->        Phandle of the I2C controller used for DDC EDID probing
->  
->    hpd-gpios:
-> +    maxItems: 1
->      description: >
->        The GPIO pin for the HDMI hotplug detect (if it doesn't appear
->        as an interrupt/status bit in the HDMI controller itself)
-> diff --git a/Documentation/devicetree/bindings/display/panel/jdi,lt070me05000.yaml b/Documentation/devicetree/bindings/display/panel/jdi,lt070me05000.yaml
-> index b8b9435e464c..4f92365e888a 100644
-> --- a/Documentation/devicetree/bindings/display/panel/jdi,lt070me05000.yaml
-> +++ b/Documentation/devicetree/bindings/display/panel/jdi,lt070me05000.yaml
-> @@ -30,6 +30,7 @@ properties:
->        power supply for LCM (1.8V)
->  
->    dcdc-en-gpios:
-> +    maxItems: 1
->      description: |
->        phandle of the gpio for power ic line
->        Power IC supply enable, High active
-> diff --git a/Documentation/devicetree/bindings/display/panel/mantix,mlaf057we51-x.yaml b/Documentation/devicetree/bindings/display/panel/mantix,mlaf057we51-x.yaml
-> index 51f423297ec8..aa5a0dc391a4 100644
-> --- a/Documentation/devicetree/bindings/display/panel/mantix,mlaf057we51-x.yaml
-> +++ b/Documentation/devicetree/bindings/display/panel/mantix,mlaf057we51-x.yaml
-> @@ -37,7 +37,8 @@ properties:
->  
->    reset-gpios: true
->  
-> -  'mantix,tp-rstn-gpios':
-> +  mantix,tp-rstn-gpios:
-> +    maxItems: 1
->      description: second reset line that triggers DSI config load
->  
->    backlight: true
-> diff --git a/Documentation/devicetree/bindings/display/panel/novatek,nt36672a.yaml b/Documentation/devicetree/bindings/display/panel/novatek,nt36672a.yaml
-> index 2f5df1d235ae..ef4c0a24512d 100644
-> --- a/Documentation/devicetree/bindings/display/panel/novatek,nt36672a.yaml
-> +++ b/Documentation/devicetree/bindings/display/panel/novatek,nt36672a.yaml
-> @@ -30,6 +30,7 @@ properties:
->        panel. The novatek,nt36672a compatible shall always be provided as a fallback.
->  
->    reset-gpios:
-> +    maxItems: 1
->      description: phandle of gpio for reset line - This should be 8mA, gpio
->        can be configured using mux, pinctrl, pinctrl-names (active high)
->  
-> diff --git a/Documentation/devicetree/bindings/dsp/fsl,dsp.yaml b/Documentation/devicetree/bindings/dsp/fsl,dsp.yaml
-> index 4cc011230153..7afc9f2be13a 100644
-> --- a/Documentation/devicetree/bindings/dsp/fsl,dsp.yaml
-> +++ b/Documentation/devicetree/bindings/dsp/fsl,dsp.yaml
-> @@ -21,7 +21,7 @@ properties:
->        - fsl,imx8mp-dsp
->  
->    reg:
-> -    description: Should contain register location and length
-> +    maxItems: 1
->  
->    clocks:
->      items:
-> diff --git a/Documentation/devicetree/bindings/eeprom/at25.yaml b/Documentation/devicetree/bindings/eeprom/at25.yaml
-> index 121a601db22e..6a2dc8b3ed14 100644
-> --- a/Documentation/devicetree/bindings/eeprom/at25.yaml
-> +++ b/Documentation/devicetree/bindings/eeprom/at25.yaml
-> @@ -39,8 +39,7 @@ properties:
->            - const: atmel,at25
->  
->    reg:
-> -    description:
-> -      Chip select number.
-> +    maxItems: 1
->  
->    spi-max-frequency: true
->  
-> diff --git a/Documentation/devicetree/bindings/extcon/extcon-ptn5150.yaml b/Documentation/devicetree/bindings/extcon/extcon-ptn5150.yaml
-> index 4b0f414486d2..d5cfa32ea52d 100644
-> --- a/Documentation/devicetree/bindings/extcon/extcon-ptn5150.yaml
-> +++ b/Documentation/devicetree/bindings/extcon/extcon-ptn5150.yaml
-> @@ -19,6 +19,7 @@ properties:
->      const: nxp,ptn5150
->  
->    int-gpios:
-> +    maxItems: 1
->      deprecated: true
->      description:
->        GPIO pin (input) connected to the PTN5150's INTB pin.
-> @@ -31,6 +32,7 @@ properties:
->      maxItems: 1
->  
->    vbus-gpios:
-> +    maxItems: 1
->      description:
->        GPIO pin (output) used to control VBUS. If skipped, no such control
->        takes place.
-> diff --git a/Documentation/devicetree/bindings/gpio/gpio-pca95xx.yaml b/Documentation/devicetree/bindings/gpio/gpio-pca95xx.yaml
-> index f5ee23c2df60..57cdcfd4ff3c 100644
-> --- a/Documentation/devicetree/bindings/gpio/gpio-pca95xx.yaml
-> +++ b/Documentation/devicetree/bindings/gpio/gpio-pca95xx.yaml
-> @@ -81,6 +81,7 @@ properties:
->      const: 2
->  
->    reset-gpios:
-> +    maxItems: 1
->      description:
->        GPIO specification for the RESET input. This is an active low signal to
->        the PCA953x.  Not valid for Maxim MAX732x devices.
-> diff --git a/Documentation/devicetree/bindings/iio/adc/adi,ad7768-1.yaml b/Documentation/devicetree/bindings/iio/adc/adi,ad7768-1.yaml
-> index 924477dfb833..a85a28145ef6 100644
-> --- a/Documentation/devicetree/bindings/iio/adc/adi,ad7768-1.yaml
-> +++ b/Documentation/devicetree/bindings/iio/adc/adi,ad7768-1.yaml
-> @@ -40,6 +40,7 @@ properties:
->        ADC reference voltage supply
->  
->    adi,sync-in-gpios:
-> +    maxItems: 1
->      description:
->        Enables synchronization of multiple devices that require simultaneous
->        sampling. A pulse is always required if the configuration is changed
-> @@ -76,6 +77,7 @@ patternProperties:
->  
->      properties:
->        reg:
-> +        maxItems: 1
->          description: |
->            The channel number.
->  
-> diff --git a/Documentation/devicetree/bindings/iio/adc/aspeed,ast2400-adc.yaml b/Documentation/devicetree/bindings/iio/adc/aspeed,ast2400-adc.yaml
-> index 7f534a933e92..a726b6c2ab65 100644
-> --- a/Documentation/devicetree/bindings/iio/adc/aspeed,ast2400-adc.yaml
-> +++ b/Documentation/devicetree/bindings/iio/adc/aspeed,ast2400-adc.yaml
-> @@ -23,6 +23,7 @@ properties:
->      maxItems: 1
->  
->    clocks:
-> +    maxItems: 1
->      description:
->        Input clock used to derive the sample clock. Expected to be the
->        SoC's APB clock.
-> diff --git a/Documentation/devicetree/bindings/iio/adc/lltc,ltc2496.yaml b/Documentation/devicetree/bindings/iio/adc/lltc,ltc2496.yaml
-> index 2716d4e95329..0bd2fc0356c8 100644
-> --- a/Documentation/devicetree/bindings/iio/adc/lltc,ltc2496.yaml
-> +++ b/Documentation/devicetree/bindings/iio/adc/lltc,ltc2496.yaml
-> @@ -20,7 +20,7 @@ properties:
->      description: Power supply for the reference voltage
->  
->    reg:
-> -    description: spi chipselect number according to the usual spi bindings
-> +    maxItems: 1
->  
->    spi-max-frequency:
->      description: maximal spi bus frequency supported
-> diff --git a/Documentation/devicetree/bindings/iio/adc/qcom,spmi-vadc.yaml b/Documentation/devicetree/bindings/iio/adc/qcom,spmi-vadc.yaml
-> index 95cc705b961b..74a4a9d95798 100644
-> --- a/Documentation/devicetree/bindings/iio/adc/qcom,spmi-vadc.yaml
-> +++ b/Documentation/devicetree/bindings/iio/adc/qcom,spmi-vadc.yaml
-> @@ -68,6 +68,7 @@ patternProperties:
->  
->      properties:
->        reg:
-> +        maxItems: 1
->          description: |
->            ADC channel number.
->            See include/dt-bindings/iio/qcom,spmi-vadc.h
-> diff --git a/Documentation/devicetree/bindings/iio/adc/st,stm32-adc.yaml b/Documentation/devicetree/bindings/iio/adc/st,stm32-adc.yaml
-> index 28417b31b558..6364ede9bb5f 100644
-> --- a/Documentation/devicetree/bindings/iio/adc/st,stm32-adc.yaml
-> +++ b/Documentation/devicetree/bindings/iio/adc/st,stm32-adc.yaml
-> @@ -41,6 +41,8 @@ properties:
->      maxItems: 2
->  
->    clocks:
-> +    minItems: 1
-> +    maxItems: 2
->      description: |
->        Core can use up to two clocks, depending on part used:
->          - "adc" clock: for the analog circuitry, common to all ADCs.
-> diff --git a/Documentation/devicetree/bindings/iio/magnetometer/asahi-kasei,ak8975.yaml b/Documentation/devicetree/bindings/iio/magnetometer/asahi-kasei,ak8975.yaml
-> index a25590a16ba7..a0a1ffe017df 100644
-> --- a/Documentation/devicetree/bindings/iio/magnetometer/asahi-kasei,ak8975.yaml
-> +++ b/Documentation/devicetree/bindings/iio/magnetometer/asahi-kasei,ak8975.yaml
-> @@ -47,6 +47,7 @@ properties:
->      description: an optional 3x3 mounting rotation matrix.
->  
->    reset-gpios:
-> +    maxItems: 1
->      description: |
->        an optional pin needed for AK09911 to set the reset state. This should
->        be usually active low
-> diff --git a/Documentation/devicetree/bindings/iio/potentiometer/adi,ad5272.yaml b/Documentation/devicetree/bindings/iio/potentiometer/adi,ad5272.yaml
-> index 1aee9f9be951..0ebb6725a1af 100644
-> --- a/Documentation/devicetree/bindings/iio/potentiometer/adi,ad5272.yaml
-> +++ b/Documentation/devicetree/bindings/iio/potentiometer/adi,ad5272.yaml
-> @@ -25,6 +25,7 @@ properties:
->      maxItems: 1
->  
->    reset-gpios:
-> +    maxItems: 1
->      description:
->        Active low signal to the AD5272 RESET input.
->  
-> diff --git a/Documentation/devicetree/bindings/input/touchscreen/elan,elants_i2c.yaml b/Documentation/devicetree/bindings/input/touchscreen/elan,elants_i2c.yaml
-> index a792d6377b1d..a9b53c2e6f0a 100644
-> --- a/Documentation/devicetree/bindings/input/touchscreen/elan,elants_i2c.yaml
-> +++ b/Documentation/devicetree/bindings/input/touchscreen/elan,elants_i2c.yaml
-> @@ -29,6 +29,7 @@ properties:
->      description: touchscreen can be used as a wakeup source.
->  
->    reset-gpios:
-> +    maxItems: 1
->      description: reset gpio the chip is connected to.
->  
->    vcc33-supply:
-> diff --git a/Documentation/devicetree/bindings/interrupt-controller/fsl,intmux.yaml b/Documentation/devicetree/bindings/interrupt-controller/fsl,intmux.yaml
-> index 43c6effbb5bd..1d6e0f64a807 100644
-> --- a/Documentation/devicetree/bindings/interrupt-controller/fsl,intmux.yaml
-> +++ b/Documentation/devicetree/bindings/interrupt-controller/fsl,intmux.yaml
-> @@ -31,7 +31,7 @@ properties:
->        The 1st cell is hw interrupt number, the 2nd cell is channel index.
->  
->    clocks:
-> -    description: ipg clock.
-> +    maxItems: 1
->  
->    clock-names:
->      const: ipg
-> diff --git a/Documentation/devicetree/bindings/interrupt-controller/st,stm32-exti.yaml b/Documentation/devicetree/bindings/interrupt-controller/st,stm32-exti.yaml
-> index 2a5b29567926..6d3e68eb2e8b 100644
-> --- a/Documentation/devicetree/bindings/interrupt-controller/st,stm32-exti.yaml
-> +++ b/Documentation/devicetree/bindings/interrupt-controller/st,stm32-exti.yaml
-> @@ -36,6 +36,8 @@ properties:
->        Reference to a phandle of a hardware spinlock provider node.
->  
->    interrupts:
-> +    minItems: 1
-> +    maxItems: 96
->      description:
->        Interrupts references to primary interrupt controller
->  
-> diff --git a/Documentation/devicetree/bindings/media/allwinner,sun4i-a10-video-engine.yaml b/Documentation/devicetree/bindings/media/allwinner,sun4i-a10-video-engine.yaml
-> index 2f7058f7760c..c34303b87a5b 100644
-> --- a/Documentation/devicetree/bindings/media/allwinner,sun4i-a10-video-engine.yaml
-> +++ b/Documentation/devicetree/bindings/media/allwinner,sun4i-a10-video-engine.yaml
-> @@ -53,6 +53,7 @@ properties:
->      maxItems: 1
->  
->    memory-region:
-> +    maxItems: 1
->      description:
->        CMA pool to use for buffers allocation instead of the default
->        CMA pool.
-> diff --git a/Documentation/devicetree/bindings/media/i2c/imx219.yaml b/Documentation/devicetree/bindings/media/i2c/imx219.yaml
-> index dfc4d29a4f04..184d33bd3828 100644
-> --- a/Documentation/devicetree/bindings/media/i2c/imx219.yaml
-> +++ b/Documentation/devicetree/bindings/media/i2c/imx219.yaml
-> @@ -40,6 +40,7 @@ properties:
->        Digital core voltage supply, 1.2 volts
->  
->    reset-gpios:
-> +    maxItems: 1
->      description: |-
->        Reference to the GPIO connected to the xclr pin, if any.
->        Must be released (set high) after all supplies are applied.
-> diff --git a/Documentation/devicetree/bindings/memory-controllers/exynos-srom.yaml b/Documentation/devicetree/bindings/memory-controllers/exynos-srom.yaml
-> index 637e24f0f73b..c6e44f47ce7c 100644
-> --- a/Documentation/devicetree/bindings/memory-controllers/exynos-srom.yaml
-> +++ b/Documentation/devicetree/bindings/memory-controllers/exynos-srom.yaml
-> @@ -28,6 +28,8 @@ properties:
->      const: 1
->  
->    ranges:
-> +    minItems: 1
-> +    maxItems: 4
->      description: |
->        Reflects the memory layout with four integer values per bank. Format:
->        <bank-number> 0 <parent address of bank> <size>
-> diff --git a/Documentation/devicetree/bindings/misc/fsl,dpaa2-console.yaml b/Documentation/devicetree/bindings/misc/fsl,dpaa2-console.yaml
-> index 271a3eafc054..8cc951feb7df 100644
-> --- a/Documentation/devicetree/bindings/misc/fsl,dpaa2-console.yaml
-> +++ b/Documentation/devicetree/bindings/misc/fsl,dpaa2-console.yaml
-> @@ -15,6 +15,7 @@ properties:
->      const: "fsl,dpaa2-console"
->  
->    reg:
-> +    maxItems: 1
->      description: A standard property. Specifies the region where the MCFBA
->                  (MC firmware base address) register can be found.
->  
-> diff --git a/Documentation/devicetree/bindings/mmc/mmc-controller.yaml b/Documentation/devicetree/bindings/mmc/mmc-controller.yaml
-> index 186f04ba9357..df4ee4c778ae 100644
-> --- a/Documentation/devicetree/bindings/mmc/mmc-controller.yaml
-> +++ b/Documentation/devicetree/bindings/mmc/mmc-controller.yaml
-> @@ -40,6 +40,7 @@ properties:
->        There is no card detection available; polling must be used.
->  
->    cd-gpios:
-> +    maxItems: 1
->      description:
->        The card detection will be done using the GPIO provided.
->  
-> @@ -104,6 +105,7 @@ properties:
->        line. Not used in combination with eMMC or SDIO.
->  
->    wp-gpios:
-> +    maxItems: 1
->      description:
->        GPIO to use for the write-protect detection.
->  
-> diff --git a/Documentation/devicetree/bindings/net/ti,k3-am654-cpsw-nuss.yaml b/Documentation/devicetree/bindings/net/ti,k3-am654-cpsw-nuss.yaml
-> index c47b58f3e3f6..097c5cc6c853 100644
-> --- a/Documentation/devicetree/bindings/net/ti,k3-am654-cpsw-nuss.yaml
-> +++ b/Documentation/devicetree/bindings/net/ti,k3-am654-cpsw-nuss.yaml
-> @@ -66,6 +66,7 @@ properties:
->    dma-coherent: true
->  
->    clocks:
-> +    maxItems: 1
->      description: CPSW2G NUSS functional clock
->  
->    clock-names:
-> diff --git a/Documentation/devicetree/bindings/net/ti,k3-am654-cpts.yaml b/Documentation/devicetree/bindings/net/ti,k3-am654-cpts.yaml
-> index 9b7117920d90..2a42a27fb911 100644
-> --- a/Documentation/devicetree/bindings/net/ti,k3-am654-cpts.yaml
-> +++ b/Documentation/devicetree/bindings/net/ti,k3-am654-cpts.yaml
-> @@ -59,6 +59,7 @@ properties:
->        - const: cpts
->  
->    clocks:
-> +    maxItems: 1
->      description: CPTS reference clock
->  
->    clock-names:
-> diff --git a/Documentation/devicetree/bindings/phy/allwinner,sun4i-a10-usb-phy.yaml b/Documentation/devicetree/bindings/phy/allwinner,sun4i-a10-usb-phy.yaml
-> index 94ac23687b7e..77606c899fe2 100644
-> --- a/Documentation/devicetree/bindings/phy/allwinner,sun4i-a10-usb-phy.yaml
-> +++ b/Documentation/devicetree/bindings/phy/allwinner,sun4i-a10-usb-phy.yaml
-> @@ -51,9 +51,11 @@ properties:
->        - const: usb2_reset
->  
->    usb0_id_det-gpios:
-> +    maxItems: 1
->      description: GPIO to the USB OTG ID pin
->  
->    usb0_vbus_det-gpios:
-> +    maxItems: 1
->      description: GPIO to the USB OTG VBUS detect pin
->  
->    usb0_vbus_power-supply:
-> diff --git a/Documentation/devicetree/bindings/phy/allwinner,sun50i-a64-usb-phy.yaml b/Documentation/devicetree/bindings/phy/allwinner,sun50i-a64-usb-phy.yaml
-> index fd6e126fcf18..078af52b16ed 100644
-> --- a/Documentation/devicetree/bindings/phy/allwinner,sun50i-a64-usb-phy.yaml
-> +++ b/Documentation/devicetree/bindings/phy/allwinner,sun50i-a64-usb-phy.yaml
-> @@ -50,9 +50,11 @@ properties:
->        - const: usb1_reset
->  
->    usb0_id_det-gpios:
-> +    maxItems: 1
->      description: GPIO to the USB OTG ID pin
->  
->    usb0_vbus_det-gpios:
-> +    maxItems: 1
->      description: GPIO to the USB OTG VBUS detect pin
->  
->    usb0_vbus_power-supply:
-> diff --git a/Documentation/devicetree/bindings/phy/allwinner,sun50i-h6-usb-phy.yaml b/Documentation/devicetree/bindings/phy/allwinner,sun50i-h6-usb-phy.yaml
-> index 7670411002c9..e632140722a2 100644
-> --- a/Documentation/devicetree/bindings/phy/allwinner,sun50i-h6-usb-phy.yaml
-> +++ b/Documentation/devicetree/bindings/phy/allwinner,sun50i-h6-usb-phy.yaml
-> @@ -50,9 +50,11 @@ properties:
->        - const: usb3_reset
->  
->    usb0_id_det-gpios:
-> +    maxItems: 1
->      description: GPIO to the USB OTG ID pin
->  
->    usb0_vbus_det-gpios:
-> +    maxItems: 1
->      description: GPIO to the USB OTG VBUS detect pin
->  
->    usb0_vbus_power-supply:
-> diff --git a/Documentation/devicetree/bindings/phy/allwinner,sun5i-a13-usb-phy.yaml b/Documentation/devicetree/bindings/phy/allwinner,sun5i-a13-usb-phy.yaml
-> index 9b319381d1ad..5bad9b06e2e7 100644
-> --- a/Documentation/devicetree/bindings/phy/allwinner,sun5i-a13-usb-phy.yaml
-> +++ b/Documentation/devicetree/bindings/phy/allwinner,sun5i-a13-usb-phy.yaml
-> @@ -45,9 +45,11 @@ properties:
->        - const: usb1_reset
->  
->    usb0_id_det-gpios:
-> +    maxItems: 1
->      description: GPIO to the USB OTG ID pin
->  
->    usb0_vbus_det-gpios:
-> +    maxItems: 1
->      description: GPIO to the USB OTG VBUS detect pin
->  
->    usb0_vbus_power-supply:
-> diff --git a/Documentation/devicetree/bindings/phy/allwinner,sun6i-a31-usb-phy.yaml b/Documentation/devicetree/bindings/phy/allwinner,sun6i-a31-usb-phy.yaml
-> index b0ed01bbf3db..922b4665e00d 100644
-> --- a/Documentation/devicetree/bindings/phy/allwinner,sun6i-a31-usb-phy.yaml
-> +++ b/Documentation/devicetree/bindings/phy/allwinner,sun6i-a31-usb-phy.yaml
-> @@ -54,9 +54,11 @@ properties:
->        - const: usb2_reset
->  
->    usb0_id_det-gpios:
-> +    maxItems: 1
->      description: GPIO to the USB OTG ID pin
->  
->    usb0_vbus_det-gpios:
-> +    maxItems: 1
->      description: GPIO to the USB OTG VBUS detect pin
->  
->    usb0_vbus_power-supply:
-> diff --git a/Documentation/devicetree/bindings/phy/allwinner,sun8i-a23-usb-phy.yaml b/Documentation/devicetree/bindings/phy/allwinner,sun8i-a23-usb-phy.yaml
-> index b0674406f8aa..a94019efc2f3 100644
-> --- a/Documentation/devicetree/bindings/phy/allwinner,sun8i-a23-usb-phy.yaml
-> +++ b/Documentation/devicetree/bindings/phy/allwinner,sun8i-a23-usb-phy.yaml
-> @@ -50,9 +50,11 @@ properties:
->        - const: usb1_reset
->  
->    usb0_id_det-gpios:
-> +    maxItems: 1
->      description: GPIO to the USB OTG ID pin
->  
->    usb0_vbus_det-gpios:
-> +    maxItems: 1
->      description: GPIO to the USB OTG VBUS detect pin
->  
->    usb0_vbus_power-supply:
-> diff --git a/Documentation/devicetree/bindings/phy/allwinner,sun8i-a83t-usb-phy.yaml b/Documentation/devicetree/bindings/phy/allwinner,sun8i-a83t-usb-phy.yaml
-> index 48dc9c834a9b..33f3ddc0492d 100644
-> --- a/Documentation/devicetree/bindings/phy/allwinner,sun8i-a83t-usb-phy.yaml
-> +++ b/Documentation/devicetree/bindings/phy/allwinner,sun8i-a83t-usb-phy.yaml
-> @@ -56,9 +56,11 @@ properties:
->        - const: usb2_reset
->  
->    usb0_id_det-gpios:
-> +    maxItems: 1
->      description: GPIO to the USB OTG ID pin
->  
->    usb0_vbus_det-gpios:
-> +    maxItems: 1
->      description: GPIO to the USB OTG VBUS detect pin
->  
->    usb0_vbus_power-supply:
-> diff --git a/Documentation/devicetree/bindings/phy/allwinner,sun8i-h3-usb-phy.yaml b/Documentation/devicetree/bindings/phy/allwinner,sun8i-h3-usb-phy.yaml
-> index 60c344585276..f80431060803 100644
-> --- a/Documentation/devicetree/bindings/phy/allwinner,sun8i-h3-usb-phy.yaml
-> +++ b/Documentation/devicetree/bindings/phy/allwinner,sun8i-h3-usb-phy.yaml
-> @@ -62,9 +62,11 @@ properties:
->        - const: usb3_reset
->  
->    usb0_id_det-gpios:
-> +    maxItems: 1
->      description: GPIO to the USB OTG ID pin
->  
->    usb0_vbus_det-gpios:
-> +    maxItems: 1
->      description: GPIO to the USB OTG VBUS detect pin
->  
->    usb0_vbus_power-supply:
-> diff --git a/Documentation/devicetree/bindings/phy/allwinner,sun8i-r40-usb-phy.yaml b/Documentation/devicetree/bindings/phy/allwinner,sun8i-r40-usb-phy.yaml
-> index a2bb36790fbd..d947e50a49d2 100644
-> --- a/Documentation/devicetree/bindings/phy/allwinner,sun8i-r40-usb-phy.yaml
-> +++ b/Documentation/devicetree/bindings/phy/allwinner,sun8i-r40-usb-phy.yaml
-> @@ -56,9 +56,11 @@ properties:
->        - const: usb2_reset
->  
->    usb0_id_det-gpios:
-> +    maxItems: 1
->      description: GPIO to the USB OTG ID pin
->  
->    usb0_vbus_det-gpios:
-> +    maxItems: 1
->      description: GPIO to the USB OTG VBUS detect pin
->  
->    usb0_vbus_power-supply:
-> diff --git a/Documentation/devicetree/bindings/phy/allwinner,sun8i-v3s-usb-phy.yaml b/Documentation/devicetree/bindings/phy/allwinner,sun8i-v3s-usb-phy.yaml
-> index eadfd0c9493c..a2836c296cc4 100644
-> --- a/Documentation/devicetree/bindings/phy/allwinner,sun8i-v3s-usb-phy.yaml
-> +++ b/Documentation/devicetree/bindings/phy/allwinner,sun8i-v3s-usb-phy.yaml
-> @@ -42,9 +42,11 @@ properties:
->      const: usb0_reset
->  
->    usb0_id_det-gpios:
-> +    maxItems: 1
->      description: GPIO to the USB OTG ID pin
->  
->    usb0_vbus_det-gpios:
-> +    maxItems: 1
->      description: GPIO to the USB OTG VBUS detect pin
->  
->    usb0_vbus_power-supply:
-> diff --git a/Documentation/devicetree/bindings/phy/allwinner,sun9i-a80-usb-phy.yaml b/Documentation/devicetree/bindings/phy/allwinner,sun9i-a80-usb-phy.yaml
-> index ded7d6f0a119..2eb493fa64fd 100644
-> --- a/Documentation/devicetree/bindings/phy/allwinner,sun9i-a80-usb-phy.yaml
-> +++ b/Documentation/devicetree/bindings/phy/allwinner,sun9i-a80-usb-phy.yaml
-> @@ -22,7 +22,8 @@ properties:
->  
->    clocks:
->      anyOf:
-> -      - description: Main PHY Clock
-> +      - maxItems: 1
-> +        description: Main PHY Clock
->  
->        - items:
->            - description: Main PHY clock
-> @@ -39,20 +40,16 @@ properties:
->            - const: hsic_480M
->  
->    resets:
-> -    anyOf:
-> +    minItems: 1
-> +    items:
->        - description: Normal USB PHY reset
-> -
-> -      - items:
-> -          - description: Normal USB PHY reset
-> -          - description: HSIC Reset
-> +      - description: HSIC Reset
->  
->    reset-names:
-> -    oneOf:
-> +    minItems: 1
-> +    items:
->        - const: phy
-> -
-> -      - items:
-> -          - const: phy
-> -          - const: hsic
-> +      - const: hsic
->  
->    phy_type:
->      const: hsic
-> diff --git a/Documentation/devicetree/bindings/phy/socionext,uniphier-ahci-phy.yaml b/Documentation/devicetree/bindings/phy/socionext,uniphier-ahci-phy.yaml
-> index 34756347a14e..745c525ce6b9 100644
-> --- a/Documentation/devicetree/bindings/phy/socionext,uniphier-ahci-phy.yaml
-> +++ b/Documentation/devicetree/bindings/phy/socionext,uniphier-ahci-phy.yaml
-> @@ -20,7 +20,7 @@ properties:
->        - socionext,uniphier-pxs3-ahci-phy
->  
->    reg:
-> -    description: PHY register region (offset and length)
-> +    maxItems: 1
->  
->    "#phy-cells":
->      const: 0
-> diff --git a/Documentation/devicetree/bindings/phy/socionext,uniphier-pcie-phy.yaml b/Documentation/devicetree/bindings/phy/socionext,uniphier-pcie-phy.yaml
-> index a06831fd64b9..3e0566899041 100644
-> --- a/Documentation/devicetree/bindings/phy/socionext,uniphier-pcie-phy.yaml
-> +++ b/Documentation/devicetree/bindings/phy/socionext,uniphier-pcie-phy.yaml
-> @@ -21,7 +21,7 @@ properties:
->        - socionext,uniphier-pxs3-pcie-phy
->  
->    reg:
-> -    description: PHY register region (offset and length)
-> +    maxItems: 1
->  
->    "#phy-cells":
->      const: 0
-> diff --git a/Documentation/devicetree/bindings/phy/socionext,uniphier-usb3hs-phy.yaml b/Documentation/devicetree/bindings/phy/socionext,uniphier-usb3hs-phy.yaml
-> index 6fa5caab1487..a681cbc3b4ef 100644
-> --- a/Documentation/devicetree/bindings/phy/socionext,uniphier-usb3hs-phy.yaml
-> +++ b/Documentation/devicetree/bindings/phy/socionext,uniphier-usb3hs-phy.yaml
-> @@ -24,7 +24,7 @@ properties:
->        - socionext,uniphier-pxs3-usb3-hsphy
->  
->    reg:
-> -    description: PHY register region (offset and length)
-> +    maxItems: 1
->  
->    "#phy-cells":
->      const: 0
-> diff --git a/Documentation/devicetree/bindings/phy/socionext,uniphier-usb3ss-phy.yaml b/Documentation/devicetree/bindings/phy/socionext,uniphier-usb3ss-phy.yaml
-> index 9d46715ed036..41c0dd68ee25 100644
-> --- a/Documentation/devicetree/bindings/phy/socionext,uniphier-usb3ss-phy.yaml
-> +++ b/Documentation/devicetree/bindings/phy/socionext,uniphier-usb3ss-phy.yaml
-> @@ -25,7 +25,7 @@ properties:
->        - socionext,uniphier-pxs3-usb3-ssphy
->  
->    reg:
-> -    description: PHY register region (offset and length)
-> +    maxItems: 1
->  
->    "#phy-cells":
->      const: 0
-> diff --git a/Documentation/devicetree/bindings/phy/ti,phy-gmii-sel.yaml b/Documentation/devicetree/bindings/phy/ti,phy-gmii-sel.yaml
-> index bcec422d7734..ff8a6d9eb153 100644
-> --- a/Documentation/devicetree/bindings/phy/ti,phy-gmii-sel.yaml
-> +++ b/Documentation/devicetree/bindings/phy/ti,phy-gmii-sel.yaml
-> @@ -55,7 +55,7 @@ properties:
->        - ti,am654-phy-gmii-sel
->  
->    reg:
-> -    description: Address and length of the register set for the device
-> +    maxItems: 1
->  
->    '#phy-cells': true
->  
-> diff --git a/Documentation/devicetree/bindings/pinctrl/aspeed,ast2400-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/aspeed,ast2400-pinctrl.yaml
-> index 54631dc1adb0..91be5720d094 100644
-> --- a/Documentation/devicetree/bindings/pinctrl/aspeed,ast2400-pinctrl.yaml
-> +++ b/Documentation/devicetree/bindings/pinctrl/aspeed,ast2400-pinctrl.yaml
-> @@ -23,8 +23,7 @@ properties:
->    compatible:
->      const: aspeed,ast2400-pinctrl
->    reg:
-> -    description: |
-> -      A hint for the memory regions associated with the pin-controller
-> +    maxItems: 2
->  
->  patternProperties:
->    '^.*$':
-> diff --git a/Documentation/devicetree/bindings/pinctrl/aspeed,ast2500-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/aspeed,ast2500-pinctrl.yaml
-> index a90c0fe0495f..40e9e8d4be5a 100644
-> --- a/Documentation/devicetree/bindings/pinctrl/aspeed,ast2500-pinctrl.yaml
-> +++ b/Documentation/devicetree/bindings/pinctrl/aspeed,ast2500-pinctrl.yaml
-> @@ -24,8 +24,8 @@ properties:
->    compatible:
->      const: aspeed,ast2500-pinctrl
->    reg:
-> -    description: |
-> -      A hint for the memory regions associated with the pin-controller
-> +    maxItems: 2
-> +
->    aspeed,external-nodes:
->      minItems: 2
->      maxItems: 2
-> diff --git a/Documentation/devicetree/bindings/power/supply/bq25980.yaml b/Documentation/devicetree/bindings/power/supply/bq25980.yaml
-> index f6b3dd4093ca..06eca6667f67 100644
-> --- a/Documentation/devicetree/bindings/power/supply/bq25980.yaml
-> +++ b/Documentation/devicetree/bindings/power/supply/bq25980.yaml
-> @@ -70,6 +70,7 @@ properties:
->      description: Enables bypass mode at boot time
->  
->    interrupts:
-> +    maxItems: 1
->      description: |
->        Indicates that the device state has changed.
->  
-> diff --git a/Documentation/devicetree/bindings/remoteproc/ingenic,vpu.yaml b/Documentation/devicetree/bindings/remoteproc/ingenic,vpu.yaml
-> index c019f9fbe916..d0aa91bbf5e5 100644
-> --- a/Documentation/devicetree/bindings/remoteproc/ingenic,vpu.yaml
-> +++ b/Documentation/devicetree/bindings/remoteproc/ingenic,vpu.yaml
-> @@ -44,7 +44,7 @@ properties:
->        - const: vpu
->  
->    interrupts:
-> -    description: VPU hardware interrupt
-> +    maxItems: 1
->  
->  required:
->    - compatible
-> diff --git a/Documentation/devicetree/bindings/remoteproc/ti,omap-remoteproc.yaml b/Documentation/devicetree/bindings/remoteproc/ti,omap-remoteproc.yaml
-> index 084960a8f17a..1a1159097a2a 100644
-> --- a/Documentation/devicetree/bindings/remoteproc/ti,omap-remoteproc.yaml
-> +++ b/Documentation/devicetree/bindings/remoteproc/ti,omap-remoteproc.yaml
-> @@ -70,10 +70,13 @@ properties:
->        the firmware image.
->  
->    clocks:
-> +    maxItems: 1
->      description: |
->        Main functional clock for the remote processor
->  
->    resets:
-> +    minItems: 1
-> +    maxItems: 2
->      description: |
->        Reset handles for the remote processor
->  
-> diff --git a/Documentation/devicetree/bindings/riscv/sifive-l2-cache.yaml b/Documentation/devicetree/bindings/riscv/sifive-l2-cache.yaml
-> index efc0198eeb74..2ece8630dc68 100644
-> --- a/Documentation/devicetree/bindings/riscv/sifive-l2-cache.yaml
-> +++ b/Documentation/devicetree/bindings/riscv/sifive-l2-cache.yaml
-> @@ -63,6 +63,7 @@ properties:
->    next-level-cache: true
->  
->    memory-region:
-> +    maxItems: 1
->      description: |
->        The reference to the reserved-memory for the L2 Loosely Integrated Memory region.
->        The reserved memory node should be defined as per the bindings in reserved-memory.txt.
-> diff --git a/Documentation/devicetree/bindings/serial/renesas,hscif.yaml b/Documentation/devicetree/bindings/serial/renesas,hscif.yaml
-> index c139c5edb93e..69533347aa57 100644
-> --- a/Documentation/devicetree/bindings/serial/renesas,hscif.yaml
-> +++ b/Documentation/devicetree/bindings/serial/renesas,hscif.yaml
-> @@ -81,6 +81,8 @@ properties:
->      maxItems: 1
->  
->    dmas:
-> +    minItems: 2
-> +    maxItems: 4
->      description:
->        Must contain a list of pairs of references to DMA specifiers, one for
->        transmission, and one for reception.
-> diff --git a/Documentation/devicetree/bindings/serial/renesas,scif.yaml b/Documentation/devicetree/bindings/serial/renesas,scif.yaml
-> index 672158906c33..22d76829f7ae 100644
-> --- a/Documentation/devicetree/bindings/serial/renesas,scif.yaml
-> +++ b/Documentation/devicetree/bindings/serial/renesas,scif.yaml
-> @@ -120,6 +120,8 @@ properties:
->      maxItems: 1
->  
->    dmas:
-> +    minItems: 2
-> +    maxItems: 4
->      description:
->        Must contain a list of pairs of references to DMA specifiers, one for
->        transmission, and one for reception.
-> diff --git a/Documentation/devicetree/bindings/serial/renesas,scifa.yaml b/Documentation/devicetree/bindings/serial/renesas,scifa.yaml
-> index dbffb9534835..3c67d3202e1b 100644
-> --- a/Documentation/devicetree/bindings/serial/renesas,scifa.yaml
-> +++ b/Documentation/devicetree/bindings/serial/renesas,scifa.yaml
-> @@ -55,6 +55,8 @@ properties:
->      maxItems: 1
->  
->    dmas:
-> +    minItems: 2
-> +    maxItems: 4
->      description:
->        Must contain a list of pairs of references to DMA specifiers, one for
->        transmission, and one for reception.
-> diff --git a/Documentation/devicetree/bindings/serial/renesas,scifb.yaml b/Documentation/devicetree/bindings/serial/renesas,scifb.yaml
-> index 147f8a37e02a..d5571c7a4424 100644
-> --- a/Documentation/devicetree/bindings/serial/renesas,scifb.yaml
-> +++ b/Documentation/devicetree/bindings/serial/renesas,scifb.yaml
-> @@ -55,6 +55,8 @@ properties:
->      maxItems: 1
->  
->    dmas:
-> +    minItems: 2
-> +    maxItems: 4
->      description:
->        Must contain a list of pairs of references to DMA specifiers, one for
->        transmission, and one for reception.
-> diff --git a/Documentation/devicetree/bindings/sound/allwinner,sun4i-a10-codec.yaml b/Documentation/devicetree/bindings/sound/allwinner,sun4i-a10-codec.yaml
-> index dd47fef9854d..559aff13ae23 100644
-> --- a/Documentation/devicetree/bindings/sound/allwinner,sun4i-a10-codec.yaml
-> +++ b/Documentation/devicetree/bindings/sound/allwinner,sun4i-a10-codec.yaml
-> @@ -88,6 +88,7 @@ properties:
->      description: Phandle to the codec analog controls in the PRCM
->  
->    allwinner,pa-gpios:
-> +    maxItems: 1
->      description: GPIO to enable the external amplifier
->  
->  required:
-> diff --git a/Documentation/devicetree/bindings/sound/google,sc7180-trogdor.yaml b/Documentation/devicetree/bindings/sound/google,sc7180-trogdor.yaml
-> index 5095b780e2c7..837e3faa63a9 100644
-> --- a/Documentation/devicetree/bindings/sound/google,sc7180-trogdor.yaml
-> +++ b/Documentation/devicetree/bindings/sound/google,sc7180-trogdor.yaml
-> @@ -55,6 +55,7 @@ patternProperties:
->          maxItems: 1
->  
->        reg:
-> +        maxItems: 1
->          description: dai link address.
->  
->        cpu:
-> diff --git a/Documentation/devicetree/bindings/sound/samsung,aries-wm8994.yaml b/Documentation/devicetree/bindings/sound/samsung,aries-wm8994.yaml
-> index 1c6947294825..5fff586dc802 100644
-> --- a/Documentation/devicetree/bindings/sound/samsung,aries-wm8994.yaml
-> +++ b/Documentation/devicetree/bindings/sound/samsung,aries-wm8994.yaml
-> @@ -62,12 +62,15 @@ properties:
->      description: Supply for the micbias on the headset mic
->  
->    earpath-sel-gpios:
-> +    maxItems: 1
->      description: GPIO for switching between tv-out and mic paths
->  
->    headset-detect-gpios:
-> +    maxItems: 1
->      description: GPIO for detection of headset insertion
->  
->    headset-key-gpios:
-> +    maxItems: 1
->      description: GPIO for detection of headset key press
->  
->    io-channels:
-> diff --git a/Documentation/devicetree/bindings/sound/samsung,midas-audio.yaml b/Documentation/devicetree/bindings/sound/samsung,midas-audio.yaml
-> index 578928e67e5c..095775c598fa 100644
-> --- a/Documentation/devicetree/bindings/sound/samsung,midas-audio.yaml
-> +++ b/Documentation/devicetree/bindings/sound/samsung,midas-audio.yaml
-> @@ -53,9 +53,11 @@ properties:
->      description: Supply for the micbias on the Sub microphone
->  
->    fm-sel-gpios:
-> +    maxItems: 1
->      description: GPIO pin for FM selection
->  
->    lineout-sel-gpios:
-> +    maxItems: 1
->      description: GPIO pin for line out selection
->  
->  required:
-> diff --git a/Documentation/devicetree/bindings/sound/tas2562.yaml b/Documentation/devicetree/bindings/sound/tas2562.yaml
-> index 27f7132ba2ef..acd4bbe69731 100644
-> --- a/Documentation/devicetree/bindings/sound/tas2562.yaml
-> +++ b/Documentation/devicetree/bindings/sound/tas2562.yaml
-> @@ -36,10 +36,12 @@ properties:
->         I2C address of the device can be one of these 0x4c, 0x4d, 0x4e or 0x4f
->  
->    shut-down-gpios:
-> +    maxItems: 1
->      description: GPIO used to control the state of the device.
->      deprecated: true
->  
->    shutdown-gpios:
-> +    maxItems: 1
->      description: GPIO used to control the state of the device.
->  
->    interrupts:
-> diff --git a/Documentation/devicetree/bindings/sound/tas2770.yaml b/Documentation/devicetree/bindings/sound/tas2770.yaml
-> index 07e7f9951d2e..027bebf4e8cf 100644
-> --- a/Documentation/devicetree/bindings/sound/tas2770.yaml
-> +++ b/Documentation/devicetree/bindings/sound/tas2770.yaml
-> @@ -27,9 +27,11 @@ properties:
->         I2C address of the device can be between 0x41 to 0x48.
->  
->    reset-gpio:
-> +    maxItems: 1
->      description: GPIO used to reset the device.
->  
->    shutdown-gpios:
-> +    maxItems: 1
->      description: GPIO used to control the state of the device.
->  
->    interrupts:
-> diff --git a/Documentation/devicetree/bindings/sound/tlv320adcx140.yaml b/Documentation/devicetree/bindings/sound/tlv320adcx140.yaml
-> index df18be9d7b15..54d64785aad2 100644
-> --- a/Documentation/devicetree/bindings/sound/tlv320adcx140.yaml
-> +++ b/Documentation/devicetree/bindings/sound/tlv320adcx140.yaml
-> @@ -35,6 +35,7 @@ properties:
->        I2C addresss of the device can be one of these 0x4c, 0x4d, 0x4e or 0x4f
->  
->    reset-gpios:
-> +    maxItems: 1
->      description: |
->        GPIO used for hardware reset.
->  
-> diff --git a/Documentation/devicetree/bindings/spi/renesas,rspi.yaml b/Documentation/devicetree/bindings/spi/renesas,rspi.yaml
-> index 10e83cb17e8d..8397f60d80a2 100644
-> --- a/Documentation/devicetree/bindings/spi/renesas,rspi.yaml
-> +++ b/Documentation/devicetree/bindings/spi/renesas,rspi.yaml
-> @@ -68,6 +68,8 @@ properties:
->      maxItems: 1
->  
->    dmas:
-> +    minItems: 2
-> +    maxItems: 4
->      description:
->        Must contain a list of pairs of references to DMA specifiers, one for
->        transmission, and one for reception.
-> diff --git a/Documentation/devicetree/bindings/sram/sram.yaml b/Documentation/devicetree/bindings/sram/sram.yaml
-> index 19d116ff9ddc..2a62bb204bbe 100644
-> --- a/Documentation/devicetree/bindings/sram/sram.yaml
-> +++ b/Documentation/devicetree/bindings/sram/sram.yaml
-> @@ -35,6 +35,7 @@ properties:
->      maxItems: 1
->  
->    clocks:
-> +    maxItems: 1
->      description:
->        A list of phandle and clock specifier pair that controls the single
->        SRAM clock.
-> @@ -46,6 +47,7 @@ properties:
->      const: 1
->  
->    ranges:
-> +    maxItems: 1
->      description:
->        Should translate from local addresses within the sram to bus addresses.
->  
-> diff --git a/Documentation/devicetree/bindings/timer/allwinner,sun4i-a10-timer.yaml b/Documentation/devicetree/bindings/timer/allwinner,sun4i-a10-timer.yaml
-> index d918cee100ac..1c7cf32e7ac2 100644
-> --- a/Documentation/devicetree/bindings/timer/allwinner,sun4i-a10-timer.yaml
-> +++ b/Documentation/devicetree/bindings/timer/allwinner,sun4i-a10-timer.yaml
-> @@ -22,6 +22,8 @@ properties:
->      maxItems: 1
->  
->    interrupts:
-> +    minItems: 2
-> +    maxItems: 6
->      description:
->        List of timers interrupts
->  
-> diff --git a/Documentation/devicetree/bindings/timer/intel,ixp4xx-timer.yaml b/Documentation/devicetree/bindings/timer/intel,ixp4xx-timer.yaml
-> index 1a721d8af67a..a8de99b0c0f9 100644
-> --- a/Documentation/devicetree/bindings/timer/intel,ixp4xx-timer.yaml
-> +++ b/Documentation/devicetree/bindings/timer/intel,ixp4xx-timer.yaml
-> @@ -18,7 +18,7 @@ properties:
->        - const: intel,ixp4xx-timer
->  
->    reg:
-> -    description: Should contain registers location and length
-> +    maxItems: 1
->  
->    interrupts:
->      minItems: 1
-> diff --git a/Documentation/devicetree/bindings/usb/allwinner,sun4i-a10-musb.yaml b/Documentation/devicetree/bindings/usb/allwinner,sun4i-a10-musb.yaml
-> index d9207bf9d894..0f520f17735e 100644
-> --- a/Documentation/devicetree/bindings/usb/allwinner,sun4i-a10-musb.yaml
-> +++ b/Documentation/devicetree/bindings/usb/allwinner,sun4i-a10-musb.yaml
-> @@ -39,7 +39,7 @@ properties:
->      maxItems: 1
->  
->    phys:
-> -    description: PHY specifier for the OTG PHY
-> +    maxItems: 1
->  
->    phy-names:
->      const: usb
-> diff --git a/Documentation/devicetree/bindings/usb/brcm,usb-pinmap.yaml b/Documentation/devicetree/bindings/usb/brcm,usb-pinmap.yaml
-> index ffa148b9eaa8..d4618d15ecc1 100644
-> --- a/Documentation/devicetree/bindings/usb/brcm,usb-pinmap.yaml
-> +++ b/Documentation/devicetree/bindings/usb/brcm,usb-pinmap.yaml
-> @@ -22,6 +22,8 @@ properties:
->      description: Interrupt for signals mirrored to out-gpios.
->  
->    in-gpios:
-> +    minItems: 1
-> +    maxItems: 2
->      description: Array of one or two GPIO pins used for input signals.
->  
->    brcm,in-functions:
-> @@ -33,6 +35,7 @@ properties:
->      description: Array of enable and mask pairs, one per gpio in-gpios.
->  
->    out-gpios:
-> +    maxItems: 1
->      description: Array of one GPIO pin used for output signals.
->  
->    brcm,out-functions:
-> diff --git a/Documentation/devicetree/bindings/usb/generic-ehci.yaml b/Documentation/devicetree/bindings/usb/generic-ehci.yaml
-> index 247ef00381ea..f76b25f7fc7a 100644
-> --- a/Documentation/devicetree/bindings/usb/generic-ehci.yaml
-> +++ b/Documentation/devicetree/bindings/usb/generic-ehci.yaml
-> @@ -83,6 +83,7 @@ properties:
->        Phandle of a companion.
->  
->    phys:
-> +    maxItems: 1
->      description: PHY specifier for the USB PHY
->  
->    phy-names:
-> diff --git a/Documentation/devicetree/bindings/usb/generic-ohci.yaml b/Documentation/devicetree/bindings/usb/generic-ohci.yaml
-> index 2178bcc401bc..8e2bd61f2075 100644
-> --- a/Documentation/devicetree/bindings/usb/generic-ohci.yaml
-> +++ b/Documentation/devicetree/bindings/usb/generic-ohci.yaml
-> @@ -71,6 +71,7 @@ properties:
->        Overrides the detected port count
->  
->    phys:
-> +    maxItems: 1
->      description: PHY specifier for the USB PHY
->  
->    phy-names:
-> diff --git a/Documentation/devicetree/bindings/usb/ingenic,musb.yaml b/Documentation/devicetree/bindings/usb/ingenic,musb.yaml
-> index 678396eeeb78..f506225a4d57 100644
-> --- a/Documentation/devicetree/bindings/usb/ingenic,musb.yaml
-> +++ b/Documentation/devicetree/bindings/usb/ingenic,musb.yaml
-> @@ -40,7 +40,7 @@ properties:
->        - const: mc
->  
->    phys:
-> -    description: PHY specifier for the USB PHY
-> +    maxItems: 1
->  
->    usb-role-switch:
->      type: boolean
-> diff --git a/Documentation/devicetree/bindings/usb/renesas,usbhs.yaml b/Documentation/devicetree/bindings/usb/renesas,usbhs.yaml
-> index 54c361d4a7af..e67223d90bb7 100644
-> --- a/Documentation/devicetree/bindings/usb/renesas,usbhs.yaml
-> +++ b/Documentation/devicetree/bindings/usb/renesas,usbhs.yaml
-> @@ -68,6 +68,7 @@ properties:
->        Integer to use BUSWAIT register.
->  
->    renesas,enable-gpio:
-> +    maxItems: 1
->      description: |
->        gpio specifier to check GPIO determining if USB function should be
->        enabled.
-> diff --git a/Documentation/devicetree/bindings/usb/ti,j721e-usb.yaml b/Documentation/devicetree/bindings/usb/ti,j721e-usb.yaml
-> index 388245b91a55..adce36e48bc9 100644
-> --- a/Documentation/devicetree/bindings/usb/ti,j721e-usb.yaml
-> +++ b/Documentation/devicetree/bindings/usb/ti,j721e-usb.yaml
-> @@ -15,13 +15,14 @@ properties:
->        - const: ti,j721e-usb
->  
->    reg:
-> -    description: module registers
-> +    maxItems: 1
->  
->    power-domains:
->      description:
->        PM domain provider node and an args specifier containing
->        the USB device id value. See,
->        Documentation/devicetree/bindings/soc/ti/sci-pm-domain.txt
-> +    maxItems: 1
->  
->    clocks:
->      description: Clock phandles to usb2_refclk and lpm_clk
-> diff --git a/Documentation/devicetree/bindings/usb/ti,keystone-dwc3.yaml b/Documentation/devicetree/bindings/usb/ti,keystone-dwc3.yaml
-> index c1b19fc5d0a2..91ef374faba8 100644
-> --- a/Documentation/devicetree/bindings/usb/ti,keystone-dwc3.yaml
-> +++ b/Documentation/devicetree/bindings/usb/ti,keystone-dwc3.yaml
-> @@ -43,12 +43,14 @@ properties:
->      maxItems: 2
->  
->    power-domains:
-> +    maxItems: 1
->      description: Should contain a phandle to a PM domain provider node
->        and an args specifier containing the USB device id
->        value. This property is as per the binding,
->        Documentation/devicetree/bindings/soc/ti/sci-pm-domain.txt
->  
->    phys:
-> +    maxItems: 1
->      description:
->        PHY specifier for the USB3.0 PHY. Some SoCs need the USB3.0 PHY
->        to be turned on before the controller.
-
+> Regards,
+> Bjorn
+> 
+>> +	/* Private services */
+>> +	RPMSG_START_PRIVATE_SERVICES =  1024,
+>> +};
+>> +
+>>  /**
+>>   * struct rpmsg_endpoint_info - endpoint info representation
+>>   * @name: name of service
+>> -- 
+>> 2.17.1
+>>
