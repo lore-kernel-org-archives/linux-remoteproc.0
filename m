@@ -7,57 +7,57 @@ X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF809C433E0
-	for <linux-remoteproc@archiver.kernel.org>; Tue,  5 Jan 2021 01:09:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95BCBC433DB
+	for <linux-remoteproc@archiver.kernel.org>; Tue,  5 Jan 2021 01:11:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A65202256F
-	for <linux-remoteproc@archiver.kernel.org>; Tue,  5 Jan 2021 01:09:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 669802256F
+	for <linux-remoteproc@archiver.kernel.org>; Tue,  5 Jan 2021 01:11:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726656AbhAEBJR (ORCPT
+        id S1727769AbhAEBLc (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 4 Jan 2021 20:09:17 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45792 "EHLO
+        Mon, 4 Jan 2021 20:11:32 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46138 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726703AbhAEBJQ (ORCPT
+        with ESMTP id S1727738AbhAEBLb (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 4 Jan 2021 20:09:16 -0500
-Received: from mail-oi1-x229.google.com (mail-oi1-x229.google.com [IPv6:2607:f8b0:4864:20::229])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 96FC4C061794
-        for <linux-remoteproc@vger.kernel.org>; Mon,  4 Jan 2021 17:08:36 -0800 (PST)
-Received: by mail-oi1-x229.google.com with SMTP id f132so34243734oib.12
-        for <linux-remoteproc@vger.kernel.org>; Mon, 04 Jan 2021 17:08:36 -0800 (PST)
+        Mon, 4 Jan 2021 20:11:31 -0500
+Received: from mail-ot1-x331.google.com (mail-ot1-x331.google.com [IPv6:2607:f8b0:4864:20::331])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E89DC061574
+        for <linux-remoteproc@vger.kernel.org>; Mon,  4 Jan 2021 17:10:51 -0800 (PST)
+Received: by mail-ot1-x331.google.com with SMTP id q25so27847959otn.10
+        for <linux-remoteproc@vger.kernel.org>; Mon, 04 Jan 2021 17:10:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=YcK6x2F0hAH3C4ilxXFyLj41n5Xvo6yc+ELSQXD0LIc=;
-        b=f/RE34BW/oAyQKlrhKc/zNrq77fwzysiyNj4beCL+g5SAFMXpG5NyzsWq7BNgrd7jN
-         Zf/gFE66oE7EtuUQOyIhaZUWtXaLs1KhIwLV5Wf07Nx3BOegQBgKmZTWqyQaBqmejhYR
-         YOuqRjdgaUaRgfbdFZ2z//mqKDXXkibVj2Qkjt1SrmBBkpkeEkMD0FAM4ry5GUkHZw+j
-         K7hOXVcTZTulH61DyTpkEzu0rCqOWAvKBc3jzZNxRZxBKWZokrSmYRQ+dsE7O3sKMql0
-         ibGw6dX9oAHkCuCy2s8MkrWsUHqYAEciUwoav3wNoiC2b+fItWKvyK5Hj1TR1tgm8q3I
-         4Kow==
+        bh=//v3nEDqI/fknyujCjSI+soM4pOu12qYcTNNDEQN8zY=;
+        b=giw0pLGn4GccxW37Cg4PpxpFl1jHyDWYdmiQROH6AXIy3ArQLQonIh8fUh/BaG1L+7
+         em/SOGu4t6qM5bTAlX9nbOTcfL7KXVYpYjYoqQeCPfS7/XaG1vwbs7pMVPOXl7fqOy2s
+         kJkCQHgkzKVVhchki19tVzakoebGrxbpSbxvTNO3tDf9sKmbSM/AMHjuHUTBmOSkfRN0
+         CwHpYqkrrfplwhMYfRKiTyYHNKr0gDZSOEgyZ3dQ/FigA2NjoxRsyeLEkkg9px1uy8O7
+         a3cHNbfzGLxvw8D6zU8V0iVzW4VEgFkUnwz0E04IVONIKXJNhBAn0AXPgna1f1v65BuN
+         A86Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=YcK6x2F0hAH3C4ilxXFyLj41n5Xvo6yc+ELSQXD0LIc=;
-        b=X+ppTKgh92xmWLaqG4o1fWlREZwP64s6c7ka7dh+tqbojFBHjPdCQLElPpAG0xES66
-         TGjQeaLNMJYLohhWYYytrpulksXCOMvYsDUsNA5ugws+xYGWJJqx1X9JvbNMdcsw3EUz
-         Hkoy7NQxvXNADuA6AtmwL/xwuzRVoHwcKfMFanbtM/5XBi0KcJ5H/mbv1rOHeh/k/gB7
-         B+7qKHTeErid9+OnzSVLt1k0/R5VI22T5+hr9AcydGrvpuMYmVqAfKO5JxjKsiHOpZI/
-         RKhcPLqF+/wUzPsdGYMHgcxw0kiyEV77y5wSVuGkYMmJ9sekoMFDfXBC/G0eRCKKcK+d
-         eIww==
-X-Gm-Message-State: AOAM533CcgYeUvZP78WhzOQbL+cCkfK2ePwf6vwYDaDqJQPqPL4EywF8
-        oKvt5FuO1oBddLxSvCkMvRMnvm8cH+Qegw==
-X-Google-Smtp-Source: ABdhPJyx+ugT8ZkD8E5L04yl0GXuh1mnuRmFVWGgnA7uM+EHuA0qlFOf3vlltEo08p/2z/8/+8u9kA==
-X-Received: by 2002:aca:3f07:: with SMTP id m7mr1091975oia.104.1609808916036;
-        Mon, 04 Jan 2021 17:08:36 -0800 (PST)
+        bh=//v3nEDqI/fknyujCjSI+soM4pOu12qYcTNNDEQN8zY=;
+        b=igOTDzYnOiFtDpQBUjL9GICtsy0uNRW7X83UxYMPMVhRkv0+bjEEV7HUyjXqiO88pG
+         eifL83ajYSnJFSqjaMSwNgMVfNWE274D4dDpakrKwwnO35hXAYRH8K2yAoGIkyQOKcML
+         anUgNnTxWgClynfiEJxQpFoTYNYVI1I7NkMwRGkoVqDt3ki/n5o+YRJHfbumVrKoTyCS
+         UdmLJ2nWu7zSCW7SOiNXhxaYo6xxrqNjOypnbdEGJAKmZ+jwReLFLx3oNdFx832ZWyZn
+         zm+YkpZaBoSBKrek8A3NhHqOfRb1p4+wBuduGsSSmDkUBf2AAwgUNLAf/vQPYpwkAcqa
+         uQlw==
+X-Gm-Message-State: AOAM532MCLnU7bX5iBlq6ZXLNrIQc5iA8Vi/AKFMv95CkQNAFnZqu5VJ
+        YvWIN9qyy7wwWJlPdZXsUXG5LA==
+X-Google-Smtp-Source: ABdhPJwUlzQRCUsYORUXzlU0YpSidv080/49H75fNG7tPQx5Bs/Vvx9zxWGzeUaO8nF3FbvuBIgI+Q==
+X-Received: by 2002:a05:6830:1de8:: with SMTP id b8mr52892246otj.204.1609809050780;
+        Mon, 04 Jan 2021 17:10:50 -0800 (PST)
 Received: from builder.lan (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
-        by smtp.gmail.com with ESMTPSA id m29sm13888454oof.20.2021.01.04.17.08.35
+        by smtp.gmail.com with ESMTPSA id n22sm13760778oig.32.2021.01.04.17.10.49
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Jan 2021 17:08:35 -0800 (PST)
-Date:   Mon, 4 Jan 2021 19:08:33 -0600
+        Mon, 04 Jan 2021 17:10:50 -0800 (PST)
+Date:   Mon, 4 Jan 2021 19:10:48 -0600
 From:   Bjorn Andersson <bjorn.andersson@linaro.org>
 To:     Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
 Cc:     Ohad Ben-Cohen <ohad@wizery.com>,
@@ -66,186 +66,89 @@ Cc:     Ohad Ben-Cohen <ohad@wizery.com>,
         linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-stm32@st-md-mailman.stormreply.com,
         linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH v2 14/16] rpmsg: glink: add create and release rpmsg
- channel ops
-Message-ID: <X/O8EdzYBPXRel8d@builder.lan>
+Subject: Re: [PATCH v2 16/16] rpmsg: replace rpmsg_chrdev_register_device use
+Message-ID: <X/O8mOaSHUIJYEDw@builder.lan>
 References: <20201222105726.16906-1-arnaud.pouliquen@foss.st.com>
- <20201222105726.16906-15-arnaud.pouliquen@foss.st.com>
+ <20201222105726.16906-17-arnaud.pouliquen@foss.st.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20201222105726.16906-15-arnaud.pouliquen@foss.st.com>
+In-Reply-To: <20201222105726.16906-17-arnaud.pouliquen@foss.st.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
 On Tue 22 Dec 04:57 CST 2020, Arnaud Pouliquen wrote:
 
-> Add the new ops introduced by the rpmsg_ns series and used
-> by the rpmsg_ctrl driver to instantiate a new rpmsg channel.
+> Replace rpmsg_chrdev_register_device by the new helper
+> rpmsg_ctl_register_device to probe the new IOCTL interface.
 > 
 
-This is nice for completeness sake, but I don't think it makes sense for
-transports that has the nameserver "builtin" to the transport itself.
-
-I.e. if we have the NS sitting on top of GLINK and the remote firmware
-sends a "create channel" message, then this code would cause Linux to
-send a in-transport "create channel" message back to the remote side in
-hope that it would be willing to talk on that channel - but that would
-imply that the remote side needs to have registered a rpmsg device
-related to that service name - in which case it already sent a
-in-transport "create channel" message.
+This again implies that rpmsg_char was broken in SMD and GLINK during a
+large part of this series. Your strategy also has the side effect of
+having changed the name from /dev/rpmsg_ctrlX to /dev/rpmsg_ctlX,
+breaking my userspace.
 
 Regards,
 Bjorn
 
 > Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
 > ---
->  drivers/rpmsg/qcom_glink_native.c | 94 ++++++++++++++++++++++++-------
->  1 file changed, 75 insertions(+), 19 deletions(-)
+>  drivers/rpmsg/qcom_glink_native.c |  2 +-
+>  drivers/rpmsg/qcom_smd.c          |  2 +-
+>  drivers/rpmsg/rpmsg_internal.h    | 14 --------------
+>  3 files changed, 2 insertions(+), 16 deletions(-)
 > 
 > diff --git a/drivers/rpmsg/qcom_glink_native.c b/drivers/rpmsg/qcom_glink_native.c
-> index 27a05167c18c..d74c338de077 100644
+> index d74c338de077..6c7bb84f7da9 100644
 > --- a/drivers/rpmsg/qcom_glink_native.c
 > +++ b/drivers/rpmsg/qcom_glink_native.c
-> @@ -205,6 +205,9 @@ static const struct rpmsg_endpoint_ops glink_endpoint_ops;
->  #define GLINK_FEATURE_INTENTLESS	BIT(1)
+> @@ -1681,7 +1681,7 @@ static int qcom_glink_create_chrdev(struct qcom_glink *glink)
+>  	rpdev->dev.parent = glink->dev;
+>  	rpdev->dev.release = qcom_glink_device_release;
 >  
->  static void qcom_glink_rx_done_work(struct work_struct *work);
-> +static struct rpmsg_device *
-> +qcom_glink_create_rpdev(struct qcom_glink *glink,
-> +			struct rpmsg_channel_info *chinfo);
->  
->  static struct glink_channel *qcom_glink_alloc_channel(struct qcom_glink *glink,
->  						      const char *name)
-> @@ -1203,6 +1206,37 @@ static int qcom_glink_announce_create(struct rpmsg_device *rpdev)
->  	return 0;
+> -	return rpmsg_chrdev_register_device(rpdev);
+> +	return rpmsg_ctl_register_device(rpdev);
 >  }
 >  
-> +static struct rpmsg_device *
-> +qcom_glink_create_channel(struct rpmsg_device *rp_parent,
-> +			  struct rpmsg_channel_info *chinfo)
-> +{
-> +	struct glink_channel *channel = to_glink_channel(rp_parent->ept);
-> +	struct qcom_glink *glink = channel->glink;
-> +	struct rpmsg_device *rpdev;
-> +	const char *name = chinfo->name;
-> +
-> +	channel = qcom_glink_alloc_channel(glink, name);
-> +	if (IS_ERR(channel))
-> +		return ERR_PTR(PTR_ERR(channel));
-> +
-> +	rpdev = qcom_glink_create_rpdev(glink, chinfo);
-> +	if (!IS_ERR(rpdev)) {
-> +		rpdev->ept = &channel->ept;
-> +		channel->rpdev = rpdev;
-> +	}
-> +
-> +	return rpdev;
-> +}
-> +
-> +static int qcom_glink_release_channel(struct rpmsg_device *rpdev,
-> +				      struct rpmsg_channel_info *chinfo)
-> +{
-> +	struct glink_channel *channel = to_glink_channel(rpdev->ept);
-> +	struct qcom_glink *glink = channel->glink;
-> +
-> +	return rpmsg_unregister_device(glink->dev, chinfo);
-> +}
-> +
->  static void qcom_glink_destroy_ept(struct rpmsg_endpoint *ept)
->  {
->  	struct glink_channel *channel = to_glink_channel(ept);
-> @@ -1359,6 +1393,8 @@ static struct device_node *qcom_glink_match_channel(struct device_node *node,
->  static const struct rpmsg_device_ops glink_device_ops = {
->  	.create_ept = qcom_glink_create_ept,
->  	.announce_create = qcom_glink_announce_create,
-> +	.create_channel = qcom_glink_create_channel,
-> +	.release_channel = qcom_glink_release_channel,
->  };
+>  struct qcom_glink *qcom_glink_native_probe(struct device *dev,
+> diff --git a/drivers/rpmsg/qcom_smd.c b/drivers/rpmsg/qcom_smd.c
+> index 40853702f54f..a39457c57705 100644
+> --- a/drivers/rpmsg/qcom_smd.c
+> +++ b/drivers/rpmsg/qcom_smd.c
+> @@ -1138,7 +1138,7 @@ static int qcom_smd_create_chrdev(struct qcom_smd_edge *edge)
+>  	qsdev->rpdev.dev.parent = &edge->dev;
+>  	qsdev->rpdev.dev.release = qcom_smd_release_device;
 >  
->  static const struct rpmsg_endpoint_ops glink_endpoint_ops = {
-> @@ -1376,13 +1412,45 @@ static void qcom_glink_rpdev_release(struct device *dev)
->  	kfree(rpdev);
+> -	return rpmsg_chrdev_register_device(&qsdev->rpdev);
+> +	return rpmsg_ctl_register_device(&qsdev->rpdev);
 >  }
 >  
-> +static struct rpmsg_device *
-> +qcom_glink_create_rpdev(struct qcom_glink *glink,
-> +			struct rpmsg_channel_info *chinfo)
-> +{
-> +	struct rpmsg_device *rpdev;
-> +	struct device_node *node;
-> +	int ret;
-> +
-> +	rpdev = kzalloc(sizeof(*rpdev), GFP_KERNEL);
-> +	if (!rpdev)
-> +		return ERR_PTR(-ENOMEM);
-> +
-> +	strncpy(rpdev->id.name, chinfo->name, RPMSG_NAME_SIZE);
-> +	rpdev->src = chinfo->src;
-> +	rpdev->dst = chinfo->dst;
-> +	rpdev->ops = &glink_device_ops;
-> +
-> +	node = qcom_glink_match_channel(glink->dev->of_node, chinfo->name);
-> +	rpdev->dev.of_node = node;
-> +	rpdev->dev.parent = glink->dev;
-> +	rpdev->dev.release = qcom_glink_rpdev_release;
-> +	rpdev->driver_override = (char *)chinfo->driver_override;
-> +
-> +	ret = rpmsg_register_device(rpdev);
-> +	if (ret) {
-> +		kfree(rpdev);
-> +		return ERR_PTR(ret);
-> +	}
-> +
-> +	return rpdev;
-> +}
-> +
->  static int qcom_glink_rx_open(struct qcom_glink *glink, unsigned int rcid,
->  			      char *name)
->  {
->  	struct glink_channel *channel;
->  	struct rpmsg_device *rpdev;
->  	bool create_device = false;
-> -	struct device_node *node;
-> +	struct rpmsg_channel_info chinfo;
->  	int lcid;
->  	int ret;
->  	unsigned long flags;
-> @@ -1416,27 +1484,15 @@ static int qcom_glink_rx_open(struct qcom_glink *glink, unsigned int rcid,
->  	complete_all(&channel->open_req);
+>  /*
+> diff --git a/drivers/rpmsg/rpmsg_internal.h b/drivers/rpmsg/rpmsg_internal.h
+> index a76c344253bf..c81dfb374b64 100644
+> --- a/drivers/rpmsg/rpmsg_internal.h
+> +++ b/drivers/rpmsg/rpmsg_internal.h
+> @@ -81,19 +81,5 @@ struct rpmsg_device *rpmsg_create_channel(struct rpmsg_device *rpdev,
+>  					  struct rpmsg_channel_info *chinfo);
+>  int rpmsg_release_channel(struct rpmsg_device *rpdev,
+>  			  struct rpmsg_channel_info *chinfo);
+> -/**
+> - * rpmsg_chrdev_register_device() - register chrdev device based on rpdev
+> - * @rpdev:	prepared rpdev to be used for creating endpoints
+> - *
+> - * This function wraps rpmsg_register_device() preparing the rpdev for use as
+> - * basis for the rpmsg chrdev.
+> - */
+> -static inline int rpmsg_chrdev_register_device(struct rpmsg_device *rpdev)
+> -{
+> -	strcpy(rpdev->id.name, "rpmsg_chrdev");
+> -	rpdev->driver_override = "rpmsg_chrdev";
+> -
+> -	return rpmsg_register_device(rpdev);
+> -}
 >  
->  	if (create_device) {
-> -		rpdev = kzalloc(sizeof(*rpdev), GFP_KERNEL);
-> -		if (!rpdev) {
-> -			ret = -ENOMEM;
-> +		strncpy(chinfo.name, channel->name, sizeof(chinfo.name));
-> +		chinfo.src = RPMSG_ADDR_ANY;
-> +		chinfo.dst = RPMSG_ADDR_ANY;
-> +		rpdev = qcom_glink_create_rpdev(glink, &chinfo);
-> +		if (IS_ERR(rpdev)) {
-> +			ret = PTR_ERR(rpdev);
->  			goto rcid_remove;
->  		}
-> -
->  		rpdev->ept = &channel->ept;
-> -		strncpy(rpdev->id.name, name, RPMSG_NAME_SIZE);
-> -		rpdev->src = RPMSG_ADDR_ANY;
-> -		rpdev->dst = RPMSG_ADDR_ANY;
-> -		rpdev->ops = &glink_device_ops;
-> -
-> -		node = qcom_glink_match_channel(glink->dev->of_node, name);
-> -		rpdev->dev.of_node = node;
-> -		rpdev->dev.parent = glink->dev;
-> -		rpdev->dev.release = qcom_glink_rpdev_release;
-> -
-> -		ret = rpmsg_register_device(rpdev);
-> -		if (ret)
-> -			goto rcid_remove;
-> -
->  		channel->rpdev = rpdev;
->  	}
->  
+>  #endif
 > -- 
 > 2.17.1
 > 
