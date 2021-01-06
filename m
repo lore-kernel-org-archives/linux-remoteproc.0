@@ -2,200 +2,235 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AAD11C433E6
-	for <linux-remoteproc@archiver.kernel.org>; Wed,  6 Jan 2021 21:53:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF64AC433E0
+	for <linux-remoteproc@archiver.kernel.org>; Wed,  6 Jan 2021 23:16:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 734692333B
-	for <linux-remoteproc@archiver.kernel.org>; Wed,  6 Jan 2021 21:53:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8BEFE23333
+	for <linux-remoteproc@archiver.kernel.org>; Wed,  6 Jan 2021 23:16:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726102AbhAFVxS (ORCPT
+        id S1726439AbhAFXP5 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 6 Jan 2021 16:53:18 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41694 "EHLO
+        Wed, 6 Jan 2021 18:15:57 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54626 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726225AbhAFVxS (ORCPT
+        with ESMTP id S1726449AbhAFXP5 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 6 Jan 2021 16:53:18 -0500
-Received: from mail-pj1-x102a.google.com (mail-pj1-x102a.google.com [IPv6:2607:f8b0:4864:20::102a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 66D79C061786
-        for <linux-remoteproc@vger.kernel.org>; Wed,  6 Jan 2021 13:52:38 -0800 (PST)
-Received: by mail-pj1-x102a.google.com with SMTP id m5so2328733pjv.5
-        for <linux-remoteproc@vger.kernel.org>; Wed, 06 Jan 2021 13:52:38 -0800 (PST)
+        Wed, 6 Jan 2021 18:15:57 -0500
+Received: from mail-pl1-x62b.google.com (mail-pl1-x62b.google.com [IPv6:2607:f8b0:4864:20::62b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1904DC061799
+        for <linux-remoteproc@vger.kernel.org>; Wed,  6 Jan 2021 15:15:17 -0800 (PST)
+Received: by mail-pl1-x62b.google.com with SMTP id t6so2342320plq.1
+        for <linux-remoteproc@vger.kernel.org>; Wed, 06 Jan 2021 15:15:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=HukvAs5xxTkseuhceHeX/B2BEJaqcqWMBwuX9s+LI9M=;
-        b=Wvr00hYTEdWIPua37y5P419mwAgY2sjz2en3bOtw/Z1bU7ZaNsz0tgC6ULfZXg3zRg
-         xVL4ce48B/3iT2FGOR4hTKPN/xql6b++xIuUWE4l+iGfWXRJV2OMxrnT/imnAyZY4n24
-         I4rMswWAJJ8FOZ/0lQUGEhp2ZgCU5eVkkf4Enkx+YfiQvfW3zNtboVCfGfgMyqyMFytW
-         iQIvHfP0btcxr7CzFHSij2Ykb8A/G2PMlliUOEh3tFxIRk/J7feSMHAb8/kGcYgqmoBr
-         Ai2mvJayclIkQ1GKmIpu1RN58v0HJAy4xJKNW873CnnDSsf7CVrHby0lP6dbqBTqpTZm
-         gSYA==
+        bh=Z2HbF3Kd7nM9wygPmlCYxiwG6y4AFwQv3HT8OOOSHMQ=;
+        b=iFlaLI79wgjwFEvTJdIveBCsHg6CY7wDDEiAYPhU0r5X/ym0GPr4SALgpYfzEz4vYL
+         OwO2AYrEUoBy1Y13AUf2PvP2uAp+n6v5cFl0qmy4xvDO/pqFh+c3Af9B2E5kDmbd6wKc
+         NL8tfziIr6ZO36TTY1yGGZEfYLJrA6nhKkDqwfLCwkGfHfMZpbOPjkDPuL+4HP7YWDeI
+         P8agkefOdvsPn0aSWWm+XIdfqnLf17Smp+nQIy/RFf1CLLIE354cOWD6wRKabC+/JTxL
+         aBNv9tMsOUGm1dV2cY41IqvmGAuxrq5mNtSkn7hNvkFGFgzSvwtL21j2O0sFVxNMZ9ud
+         DONA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=HukvAs5xxTkseuhceHeX/B2BEJaqcqWMBwuX9s+LI9M=;
-        b=hTweCZTQVVfnhFY2QCMpT8f5uGRQs8yjd1zqHS7p7+VgcTxZIjqOY57crLG2CmaqQ8
-         LItSjUSH2oCqDSSDSk9KgsLyAMEC4HbJ3esy94w+rZTTaq/maGpiUppEpz2DCqwbyu21
-         Dr3zNEj5gueOSkRKD8KSkRCsExv+PojwH4gsoecPPzHwZgMe8E8A7PW1Hxx+baSr5ECj
-         oV2L9wTvGOos61nn+zklF3nryym+YE8VFjWBx75ReSgK0W579JEyb/dXrxNT4B9G1XKo
-         T39IC28/1xnKcpUO8AOA8aDEHG4127SKZnpPx9OpTFXdPfZusG+C3rBpXiZUDFlFGNyg
-         7N9g==
-X-Gm-Message-State: AOAM533rmI1C8ZCLWLYgl/jM7jkNXOjEqxqWODEzWjksNXkA9VJ3D7i+
-        cntMCfxIHxUm6Zpr/AeN3cGAJ/FMNqYjYg==
-X-Google-Smtp-Source: ABdhPJw3UwzxDGQ/wLD0G46TUGwVhsCVBULh4e9UkSGcf7xUZS0T0Aq1n5n2ls5F+sQ7hQyz9+ohAw==
-X-Received: by 2002:a17:90b:100e:: with SMTP id gm14mr6139267pjb.179.1609969957794;
-        Wed, 06 Jan 2021 13:52:37 -0800 (PST)
+        bh=Z2HbF3Kd7nM9wygPmlCYxiwG6y4AFwQv3HT8OOOSHMQ=;
+        b=bRiWw60H1w19QV6sWRXoTAtFpclYzhY2Lw2hUacMVKvMrDrZDS7ODFf7AbxmF2d9QX
+         kkUzGo4bpdw8dFcT34cgyM+I36mNCTaWgaB1WbV1p6SR55x1PzJYk+gccGn21JO4rvf8
+         SUFCidANRCr9m1XDj5I/9Ey4oBRj+ocZKHATKLR+T5jlDA8DLuWTUC85JlZO7X3Kx6Rh
+         gsfTY3tObnDgo/ClIsi4AszFGpn9HTSjmVD2Ppy528VcGApNP6+WlmdaEar4dWA0w/bI
+         6Bb1Flzb7BL7AMsZe7Udj+2oYm8zvu+6qKUcDSU95uNCLl0lFWLCR6pH056ZJRPfL04J
+         Qxjw==
+X-Gm-Message-State: AOAM531Xum18OoKqUfAcBD3uk3dVhFuDpCxSFpCFIcas5Bo1hYfW1nOd
+        aFNalyGLxiXrjL3k51q9wxsSMT/CzpYY2Q==
+X-Google-Smtp-Source: ABdhPJzDxsj3pgOjDMYZyKv0dxP6QZv8d4cxpZXurn6hvDguDKOMjJBOlkEXcFGD86UpPAfzYJquOw==
+X-Received: by 2002:a17:90a:ae02:: with SMTP id t2mr6329731pjq.169.1609974916458;
+        Wed, 06 Jan 2021 15:15:16 -0800 (PST)
 Received: from xps15 (S0106889e681aac74.cg.shawcable.net. [68.147.0.187])
-        by smtp.gmail.com with ESMTPSA id k15sm3403025pfp.115.2021.01.06.13.52.36
+        by smtp.gmail.com with ESMTPSA id t15sm3615365pfc.12.2021.01.06.15.15.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Jan 2021 13:52:36 -0800 (PST)
-Date:   Wed, 6 Jan 2021 14:52:34 -0700
+        Wed, 06 Jan 2021 15:15:15 -0800 (PST)
+Date:   Wed, 6 Jan 2021 16:15:13 -0700
 From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-To:     Paul Cercueil <paul@crapouillou.net>
-Cc:     linux-remoteproc@vger.kernel.org
-Subject: Re: Doc to write firmware?
-Message-ID: <20210106215234.GB9149@xps15>
-References: <93HSLQ.5D3DAYSGVCVP@crapouillou.net>
+To:     Tzung-Bi Shih <tzungbi@google.com>
+Cc:     ohad@wizery.com, bjorn.andersson@linaro.org, robh+dt@kernel.org,
+        linux-remoteproc@vger.kernel.org, matthias.bgg@gmail.com,
+        linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH 2/2] remoteproc/mediatek: support L1TCM
+Message-ID: <20210106231513.GC9149@xps15>
+References: <20201214050521.845396-1-tzungbi@google.com>
+ <20201214050521.845396-3-tzungbi@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <93HSLQ.5D3DAYSGVCVP@crapouillou.net>
+In-Reply-To: <20201214050521.845396-3-tzungbi@google.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi Paul,
+Hi Shih,
 
-On Wed, Dec 23, 2020 at 10:57:09AM +0000, Paul Cercueil wrote:
-> Hi,
+On Mon, Dec 14, 2020 at 01:05:21PM +0800, Tzung-Bi Shih wrote:
+> L1TCM is a high performance memory region in MT8192 SCP.
 > 
-> Having written the ingenic-remoteproc driver I am trying now to write
-> something a bit more advanced than a hello-world. Something like a
-> case-invert program for starters. However I'm having a hard time trying to
-> figure out how things work.
+> Reads L1TCM memory region from DTS to determine if the machine supports.
+> Loads L1TCM memory region to SCP sys if the firmware provides.
 > 
-> My resource table is as follows:
+> Starts from MT8192 SCP, the firmware contains physical addresses for
+> each memory region, for instance:
 > 
-> ----------------------------
-> struct resource_table_hdr {
-> struct resource_table header;
+> Program Headers:
+>   Type   Offset   VirtAddr   PhysAddr   FileSiz MemSiz  Flg Align
+>   LOAD   0xXXXXXX 0xXXXXXXXX 0x10500000 0xXXXXX 0xXXXXX XXX 0xXXXX
+>   LOAD   0xXXXXXX 0xXXXXXXXX 0x10700000 0xXXXXX 0xXXXXX XXX 0xXXXX
+>   LOAD   0xXXXXXX 0xXXXXXXXX 0x50000000 0xXXXXX 0xXXXXX XXX 0xXXXX
 > 
-> uint32_t offset[3];
+> Kernel driver can use the "PhysAddr" (i.e. da in the da_to_va callbacks)
+> to know the ELF segment belongs to which region.
 > 
-> struct {
->  struct fw_rsc_hdr header;
->  struct fw_rsc_carveout carveout;
-> } carveout;
+> To backward compatible to MT8183 SCP, separates the da_to_va callbacks
+> for new and legacy version.
 > 
-> struct {
->  struct fw_rsc_hdr header;
->  struct fw_rsc_trace trace;
-> } trace;
+> Signed-off-by: Tzung-Bi Shih <tzungbi@google.com>
+> ---
+>  drivers/remoteproc/mtk_common.h |  5 +++
+>  drivers/remoteproc/mtk_scp.c    | 54 +++++++++++++++++++++++++++++++--
+>  2 files changed, 57 insertions(+), 2 deletions(-)
 > 
-> struct {
->  struct fw_rsc_hdr header;
->  struct fw_rsc_vdev vdev;
->  struct fw_rsc_vdev_vring vrings[2];
->  uint8_t config[0xc];
-> } vdev;
-> };
-> 
-> const struct resource_table_hdr resource_table
-> __attribute__((used, section (".resource_table"))) = {
-> .header = {
->  .ver = 1,
->  .num = ARRAY_SIZE(resource_table.offset), /* Number of resources */
-> },
-> 
-> .offset[0] = offsetof(struct resource_table_hdr, carveout),
-> .offset[1] = offsetof(struct resource_table_hdr, trace),
-> .offset[2] = offsetof(struct resource_table_hdr, vdev),
-> 
-> .carveout = {
->  .header = {
->   .type = RSC_CARVEOUT,
->  },
->  .carveout = {
->   .da = 0xf4000000,
->   .len = 0x2000,
->   .name = "firmware",
->  },
-> },
-> 
-> /* Trace resource to printf() into */
-> .trace = {
->  .header = {
->   .type = RSC_TRACE,
->  },
->  .trace = {
->   .da = (uint32_t)trace_buf,
->   .len = TRACE_BUFFER_SIZE,
->   .name = "trace",
->  },
-> },
-> 
-> /* VirtIO device */
-> .vdev = {
->  .header = {
->   .type = RSC_VDEV,
->  },
->  .vdev = {
->   .id = VIRTIO_ID_RPROC_SERIAL,
->   .notifyid = 0,
->   .dfeatures = 0,
->   .config_len = 0xc,
->   .num_of_vrings = 2,
->  },
->  .vrings = {
->   [0] = {
->    .align = 0x10,
->    .num = 0x4,
->    .notifyid = 0,
->   },
->   [1] = {
->    .align = 0x10,
->    .num = 0x4,
->    .notifyid = 0,
->   },
->  },
-> },
-> };
-> ----------------------------
-> 
+> diff --git a/drivers/remoteproc/mtk_common.h b/drivers/remoteproc/mtk_common.h
+> index 988edb4977c3..94bc54b224ee 100644
+> --- a/drivers/remoteproc/mtk_common.h
+> +++ b/drivers/remoteproc/mtk_common.h
+> @@ -75,6 +75,7 @@ struct mtk_scp_of_data {
+>  	void (*scp_reset_assert)(struct mtk_scp *scp);
+>  	void (*scp_reset_deassert)(struct mtk_scp *scp);
+>  	void (*scp_stop)(struct mtk_scp *scp);
+> +	void *(*scp_da_to_va)(struct mtk_scp *scp, u64 da, size_t len);
+>  
+>  	u32 host_to_scp_reg;
+>  	u32 host_to_scp_int_bit;
+> @@ -89,6 +90,10 @@ struct mtk_scp {
+>  	void __iomem *reg_base;
+>  	void __iomem *sram_base;
+>  	size_t sram_size;
+> +	phys_addr_t sram_phys;
+> +	void __iomem *l1tcm_base;
+> +	size_t l1tcm_size;
+> +	phys_addr_t l1tcm_phys;
+>  
+>  	const struct mtk_scp_of_data *data;
+>  
+> diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
+> index e0c235690361..f025aba67abc 100644
+> --- a/drivers/remoteproc/mtk_scp.c
+> +++ b/drivers/remoteproc/mtk_scp.c
+> @@ -458,9 +458,8 @@ static int scp_start(struct rproc *rproc)
+>  	return ret;
+>  }
+>  
+> -static void *scp_da_to_va(struct rproc *rproc, u64 da, size_t len)
+> +static void *mt8183_scp_da_to_va(struct mtk_scp *scp, u64 da, size_t len)
+>  {
+> -	struct mtk_scp *scp = (struct mtk_scp *)rproc->priv;
+>  	int offset;
+>  
+>  	if (da < scp->sram_size) {
+> @@ -476,6 +475,42 @@ static void *scp_da_to_va(struct rproc *rproc, u64 da, size_t len)
+>  	return NULL;
+>  }
+>  
+> +static void *mt8192_scp_da_to_va(struct mtk_scp *scp, u64 da, size_t len)
+> +{
+> +	int offset;
+> +
+> +	if (da >= scp->sram_phys &&
+> +	    (da + len) <= scp->sram_phys + scp->sram_size) {
+> +		offset = da - scp->sram_phys;
+> +		return (void __force *)scp->sram_base + offset;
+> +	}
+> +
+> +	/* optional memory region */
+> +	if (scp->l1tcm_size &&
+> +	    da >= scp->l1tcm_phys &&
+> +	    (da + len) <= scp->l1tcm_phys + scp->l1tcm_size) {
+> +		offset = da - scp->l1tcm_phys;
+> +		return (void __force *)scp->l1tcm_base + offset;
+> +	}
+> +
+> +	/* optional memory region */
+> +	if (scp->dram_size &&
+> +	    da >= scp->dma_addr &&
+> +	    (da + len) <= scp->dma_addr + scp->dram_size) {
+> +		offset = da - scp->dma_addr;
+> +		return scp->cpu_addr + offset;
+> +	}
+> +
+> +	return NULL;
+> +}
+> +
+> +static void *scp_da_to_va(struct rproc *rproc, u64 da, size_t len)
+> +{
+> +	struct mtk_scp *scp = (struct mtk_scp *)rproc->priv;
+> +
+> +	return scp->data->scp_da_to_va(scp, da, len);
+> +}
+> +
+>  static void mt8183_scp_stop(struct mtk_scp *scp)
+>  {
+>  	/* Disable SCP watchdog */
+> @@ -714,6 +749,19 @@ static int scp_probe(struct platform_device *pdev)
+>  		goto free_rproc;
+>  	}
+>  	scp->sram_size = resource_size(res);
+> +	scp->sram_phys = res->start;
+> +
+> +	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "l1tcm");
+> +	if (res) {
 
-The lack of proper tabulation above makes it really hard to read.
+As far as I can tell the if() condition isn't needed since
+platform_get_resource_byname() returns NULL on error and devm_ioremap_resource()
+is capable of handling that condition.  As such the code to parse "l1tcm" can be
+the same as what is done for "sram".
 
-> The firmware is properly loaded and I get debug prints in my trace buffer.
-> However, my vrings' .da fields don't seem to be initialized to anything
-> meaningful at all. Then I use the virtio/vring code from (https://github.com/MIPS/mips-rproc-example/blob/master/firmware/common/include/vring.h),
-> and calling vring_print() shows that my vring_desc's addresses are garbage
-> as well.
-> 
-> Is there an example on how to write a basic I/O remoteproc program?
-> 
+With the above:
 
-The easiest is probably to implement a VIRTIO_ID_RPMSG and try to test things
-out with the RPMSG client sample application [1].  It isn't an I/O example but it
-will allow you to quickly find the problem with the vring addresses.
+Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 
-You may also want to checkout ST's development kit [2] if you want a working
-example.  I use it as one of my reference board, the price is right and the
-support is completely upstream.  
-
-Mathieu 
-
-[1]. https://elixir.bootlin.com/linux/latest/source/samples/rpmsg/rpmsg_client_sample.c
-[2]. https://www.st.com/en/evaluation-tools/stm32mp157c-dk2.html
-
-> Cheers,
-> -Paul
-> 
+> +		scp->l1tcm_base = devm_ioremap_resource(dev, res);
+> +		if (IS_ERR((__force void *)scp->l1tcm_base)) {
+> +			dev_err(dev, "Failed to parse and map l1tcm memory\n");
+> +			ret = PTR_ERR((__force void *)scp->l1tcm_base);
+> +			goto free_rproc;
+> +		}
+> +		scp->l1tcm_size = resource_size(res);
+> +		scp->l1tcm_phys = res->start;
+> +	}
+>  
+>  	mutex_init(&scp->send_lock);
+>  	for (i = 0; i < SCP_IPI_MAX; i++)
+> @@ -803,6 +851,7 @@ static const struct mtk_scp_of_data mt8183_of_data = {
+>  	.scp_reset_assert = mt8183_scp_reset_assert,
+>  	.scp_reset_deassert = mt8183_scp_reset_deassert,
+>  	.scp_stop = mt8183_scp_stop,
+> +	.scp_da_to_va = mt8183_scp_da_to_va,
+>  	.host_to_scp_reg = MT8183_HOST_TO_SCP,
+>  	.host_to_scp_int_bit = MT8183_HOST_IPC_INT_BIT,
+>  	.ipi_buf_offset = 0x7bdb0,
+> @@ -814,6 +863,7 @@ static const struct mtk_scp_of_data mt8192_of_data = {
+>  	.scp_reset_assert = mt8192_scp_reset_assert,
+>  	.scp_reset_deassert = mt8192_scp_reset_deassert,
+>  	.scp_stop = mt8192_scp_stop,
+> +	.scp_da_to_va = mt8192_scp_da_to_va,
+>  	.host_to_scp_reg = MT8192_GIPC_IN_SET,
+>  	.host_to_scp_int_bit = MT8192_HOST_IPC_INT_BIT,
+>  };
+> -- 
+> 2.29.2.684.gfbc64c5ab5-goog
 > 
