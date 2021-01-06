@@ -2,108 +2,141 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CC6BC433E0
-	for <linux-remoteproc@archiver.kernel.org>; Wed,  6 Jan 2021 01:57:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A40FC433DB
+	for <linux-remoteproc@archiver.kernel.org>; Wed,  6 Jan 2021 02:40:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 56B3422CE3
-	for <linux-remoteproc@archiver.kernel.org>; Wed,  6 Jan 2021 01:57:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 060ED22D50
+	for <linux-remoteproc@archiver.kernel.org>; Wed,  6 Jan 2021 02:40:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726397AbhAFB4S (ORCPT
+        id S1726492AbhAFCj1 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 5 Jan 2021 20:56:18 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51952 "EHLO
+        Tue, 5 Jan 2021 21:39:27 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59172 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725860AbhAFB4R (ORCPT
+        with ESMTP id S1726363AbhAFCj1 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 5 Jan 2021 20:56:17 -0500
-Received: from mail-pj1-x102a.google.com (mail-pj1-x102a.google.com [IPv6:2607:f8b0:4864:20::102a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 227A9C061382;
-        Tue,  5 Jan 2021 17:55:37 -0800 (PST)
-Received: by mail-pj1-x102a.google.com with SMTP id b5so770884pjk.2;
-        Tue, 05 Jan 2021 17:55:37 -0800 (PST)
+        Tue, 5 Jan 2021 21:39:27 -0500
+Received: from mail-io1-xd33.google.com (mail-io1-xd33.google.com [IPv6:2607:f8b0:4864:20::d33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 890FFC06135B
+        for <linux-remoteproc@vger.kernel.org>; Tue,  5 Jan 2021 18:38:18 -0800 (PST)
+Received: by mail-io1-xd33.google.com with SMTP id p187so1415028iod.4
+        for <linux-remoteproc@vger.kernel.org>; Tue, 05 Jan 2021 18:38:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=M2SnuavxPcXUJasCexKnjXWwhRBi46twzYFZCFVtxIA=;
-        b=jaDmkjxUvv933vnXaE4le+w+4C0Bd4foHxhGcP6dcW/tNQyBdvdC1uMwWxXqUJtanL
-         h/JnWWeoprKpQ5HR8NxHvwUySBVL7w0jELn2jUrKjC7FlK89tbyez+y1IiScIIvPhxc8
-         AiXvSOYqXH3Np15o8MSmUnThKxABfQxLT4vZq83I3lWVJISw1kh2vfPKoNvJc1xvaOJB
-         fEPXTm6XgOztjw7QJS08uxTdw6zqn8T3nnquHMHqFjI5ukqv+HRTwSJmCpQOx1bV3Xkd
-         NG2cHtrZOP+7buEgNt6n5rNGFG8hzxitWbJV1V3FRmCJPCs/DS99SJmJmqTU06qHid4e
-         DJsw==
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=r+/PreIeRIyJhWTmPHlg8PaigpleetNErd1NQtA8DC0=;
+        b=IyvuCntzbEM634mTKWfcIUbPNY54uF5i9qHiaIcpKFuFY/8w6hJVosc25DZdhpVjYL
+         XcODW3DeDH5uHjt1a7ou4U3UnfBsvAZ+perIDuIgtlrsFyUSKjQ6PiNlo0ECTMP9f7f6
+         EEKoUOzTc0H3PtCgKB/47ASuD3rBkD2Nhr891ZrR85rOvN0+MP+VmlfnYOXLkjqlu88i
+         iSlvs7zVNnjvqZyGCYA2SlBFupkiC9Kw535IViGkT2xNk0+zeBCswExyoXHZ+ndyMBq4
+         4Cm1npywEliUS4rI2N6QXfcoiej83OjGCZnHv1n0v4ng7uBKK0OoiOAWxcx+WRV0XQMT
+         2+GQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=M2SnuavxPcXUJasCexKnjXWwhRBi46twzYFZCFVtxIA=;
-        b=Gm4NK1HjAkIyZFrndQ4RKI0zXoUbRudM6Lpluk6pub1t8h/Vq6MjsNUKWhXzdb/k4i
-         fgUDbhR12HmfZB5qdgRnEIf8lqAV3+m3ywDb1jda2G5wuo2jRUQTG3dgUuhUitJsm2h7
-         O2wTqqrcizMbELImebwFqAWTn8qL052zC0zIgnvMpyXc01XRGyTpvbj7Wtzm23AXqVjq
-         rBqHMChSQlG4zwzoz/V8QfhwLUN8cz32BmLUOhXFbKcJerrajq8PHPd3qbwHO+P3Fmbj
-         gpIAySaZ8EUdr5+qKPYV1vXxSAxuJqE897Rt9papNXkiuWTUCUinzqu8UwH9rSbeFbZl
-         j2jQ==
-X-Gm-Message-State: AOAM5335hddFYcwt693gwDcgKmDbd9S+lEdw6CiNR0Y3lo5vJe4R8b/+
-        Sf/5sOuuL5PjHb5t9X2s9JfibKu+uNA=
-X-Google-Smtp-Source: ABdhPJyBKCiWl8KqpA3d/9qhuLzYJM2/8URZ+PH/AyWme2ojcsE4nRsA6SZa1w/6+Y6vqjUiBP87Hg==
-X-Received: by 2002:a17:902:6e02:b029:dc:8e14:a928 with SMTP id u2-20020a1709026e02b02900dc8e14a928mr1938073plk.24.1609898136435;
-        Tue, 05 Jan 2021 17:55:36 -0800 (PST)
-Received: from google.com ([2620:15c:202:201:a6ae:11ff:fe11:fcc3])
-        by smtp.gmail.com with ESMTPSA id gm18sm425052pjb.55.2021.01.05.17.55.33
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=r+/PreIeRIyJhWTmPHlg8PaigpleetNErd1NQtA8DC0=;
+        b=hVgFzrfzQHeF+i0eW3KDb0XoeEMqfAP9vDKSc9/wuvdmcpxwtVd2zSXbct7IQhlv+N
+         fhi9IHkdeihf504h6nEbf4dusMj8/O91khdtLz2/AWsjh6xBHtdO0D9cv2ESSbCnzEZN
+         6KmjlTaiGBFrokb+qSmRvd/vQ9BnwA25p5Zv8rM5MSEDEWPfDim/uTIc1nYw5CfvnEn6
+         EWqk/W+M2j+rvHL+hVRgzqV9zLLsfKsUtim/CV88knN/sOCgrGkAjJ4ALacneKEMDQus
+         RMnw/t3fmZT1+o36gImvz/wQrt9Twy3Ouwo5TNkLT+AaSs2rBVNEorQGEXQlall+G+RQ
+         6s4g==
+X-Gm-Message-State: AOAM533HvCxoVOi7Fdmuc1UaEVAER9VhPaBQpJHCzz6vWVoh7UTrKyNG
+        5/eNz2G4a47JDWo9L447ukGOjg==
+X-Google-Smtp-Source: ABdhPJxfMczwuZHkwdxxG/JIVf5///s4L3iM2So+mqtXQM6+UPZahBIBGK9koryYqLSZ5Q2DrWGqng==
+X-Received: by 2002:a6b:6d1a:: with SMTP id a26mr1566213iod.158.1609900698007;
+        Tue, 05 Jan 2021 18:38:18 -0800 (PST)
+Received: from beast.localdomain (c-73-185-129-58.hsd1.mn.comcast.net. [73.185.129.58])
+        by smtp.gmail.com with ESMTPSA id x2sm631755ior.42.2021.01.05.18.38.16
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 Jan 2021 17:55:35 -0800 (PST)
-Date:   Tue, 5 Jan 2021 17:55:31 -0800
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To:     Rob Herring <robh@kernel.org>
-Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jens Axboe <axboe@kernel.dk>, Stephen Boyd <sboyd@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Marc Zyngier <maz@kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Sebastian Reichel <sre@kernel.org>,
-        Ohad Ben-Cohen <ohad@wizery.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-arm-kernel@lists.infradead.org, linux-ide@vger.kernel.org,
-        linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-gpio@vger.kernel.org, linux-iio@vger.kernel.org,
-        linux-input@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-mmc@vger.kernel.org, netdev@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        linux-riscv@lists.infradead.org, linux-serial@vger.kernel.org,
-        alsa-devel@alsa-project.org, linux-spi@vger.kernel.org,
-        linux-usb@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: Add missing array size constraints
-Message-ID: <X/UYk4RESSfjCIPI@google.com>
-References: <20210104230253.2805217-1-robh@kernel.org>
+        Tue, 05 Jan 2021 18:38:17 -0800 (PST)
+From:   Alex Elder <elder@linaro.org>
+To:     bjorn.andersson@linaro.org, agross@kernel.org
+Cc:     davem@davemloft.net, kuba@kernel.org, ohad@wizery.com,
+        evgreen@chromium.org, cpratapa@codeaurora.org,
+        subashab@codeaurora.org, netdev@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH net-next 2/3] soc: qcom: mdt_loader: define stubs for COMPILE_TEST
+Date:   Tue,  5 Jan 2021 20:38:11 -0600
+Message-Id: <20210106023812.2542-3-elder@linaro.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20210106023812.2542-1-elder@linaro.org>
+References: <20210106023812.2542-1-elder@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210104230253.2805217-1-robh@kernel.org>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Mon, Jan 04, 2021 at 04:02:53PM -0700, Rob Herring wrote:
->  .../input/touchscreen/elan,elants_i2c.yaml    |  1 +
+Define stub functions for the exposed MDT functions in case
+QCOM_MDT_LOADER is not configured.  This allows users of these
+functions to link correctly for COMPILE_TEST builds without
+QCOM_SCM enabled.
 
-Acked-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Signed-off-by: Alex Elder <elder@linaro.org>
+---
+ include/linux/soc/qcom/mdt_loader.h | 35 +++++++++++++++++++++++++++++
+ 1 file changed, 35 insertions(+)
 
+diff --git a/include/linux/soc/qcom/mdt_loader.h b/include/linux/soc/qcom/mdt_loader.h
+index e600baec68253..afd47217996b0 100644
+--- a/include/linux/soc/qcom/mdt_loader.h
++++ b/include/linux/soc/qcom/mdt_loader.h
+@@ -11,6 +11,8 @@
+ struct device;
+ struct firmware;
+ 
++#if IS_ENABLED(CONFIG_QCOM_MDT_LOADER)
++
+ ssize_t qcom_mdt_get_size(const struct firmware *fw);
+ int qcom_mdt_load(struct device *dev, const struct firmware *fw,
+ 		  const char *fw_name, int pas_id, void *mem_region,
+@@ -23,4 +25,37 @@ int qcom_mdt_load_no_init(struct device *dev, const struct firmware *fw,
+ 			  phys_addr_t *reloc_base);
+ void *qcom_mdt_read_metadata(const struct firmware *fw, size_t *data_len);
+ 
++#else /* !IS_ENABLED(CONFIG_QCOM_MDT_LOADER) */
++
++static inline ssize_t qcom_mdt_get_size(const struct firmware *fw)
++{
++	return -ENODEV;
++}
++
++static inline int qcom_mdt_load(struct device *dev, const struct firmware *fw,
++				const char *fw_name, int pas_id,
++				void *mem_region, phys_addr_t mem_phys,
++				size_t mem_size, phys_addr_t *reloc_base)
++{
++	return -ENODEV;
++}
++
++static inline int qcom_mdt_load_no_init(struct device *dev,
++					const struct firmware *fw,
++					const char *fw_name, int pas_id,
++					void *mem_region, phys_addr_t mem_phys,
++					size_t mem_size,
++					phys_addr_t *reloc_base)
++{
++	return -ENODEV;
++}
++
++static inline void *qcom_mdt_read_metadata(const struct firmware *fw,
++					   size_t *data_len)
++{
++	return ERR_PTR(-ENODEV);
++}
++
++#endif /* !IS_ENABLED(CONFIG_QCOM_MDT_LOADER) */
++
+ #endif
 -- 
-Dmitry
+2.20.1
+
