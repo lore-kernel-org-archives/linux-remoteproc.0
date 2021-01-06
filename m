@@ -2,186 +2,200 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E2F3C43332
-	for <linux-remoteproc@archiver.kernel.org>; Wed,  6 Jan 2021 21:24:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AAD11C433E6
+	for <linux-remoteproc@archiver.kernel.org>; Wed,  6 Jan 2021 21:53:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7E5E12313B
-	for <linux-remoteproc@archiver.kernel.org>; Wed,  6 Jan 2021 21:24:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 734692333B
+	for <linux-remoteproc@archiver.kernel.org>; Wed,  6 Jan 2021 21:53:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726102AbhAFVYy (ORCPT
+        id S1726102AbhAFVxS (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 6 Jan 2021 16:24:54 -0500
-Received: from so254-31.mailgun.net ([198.61.254.31]:14723 "EHLO
-        so254-31.mailgun.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726681AbhAFVYj (ORCPT
+        Wed, 6 Jan 2021 16:53:18 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41694 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726225AbhAFVxS (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 6 Jan 2021 16:24:39 -0500
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1609968254; h=References: In-Reply-To: Message-Id: Date:
- Subject: Cc: To: From: Sender;
- bh=MYazQZSddXgcH9RSsDLWhr+gbu/RoBdunijn/+4XvK0=; b=sB6k/WsdZXlySuo46TARvNijM3avRsQ7Bwe6nzpyl03Nvw9LxN+872kJgBUTGfCGcLYjxXXK
- rtTtpMcNg81gOwpa7JrVajAlwDeGJ9nKUZhi6HJ+YgL0LRit9N7G1c7r/349qVnPn8ZwOWpZ
- 8ymrpkPl+7ksgoRaFGeR6UqnCQo=
-X-Mailgun-Sending-Ip: 198.61.254.31
-X-Mailgun-Sid: WyI4ZWZiZiIsICJsaW51eC1yZW1vdGVwcm9jQHZnZXIua2VybmVsLm9yZyIsICJiZTllNGEiXQ==
-Received: from smtp.codeaurora.org
- (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
- smtp-out-n06.prod.us-west-2.postgun.com with SMTP id
- 5ff62a63661021aa280f66e8 (version=TLS1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Wed, 06 Jan 2021 21:23:47
- GMT
-Sender: sidgup=codeaurora.org@mg.codeaurora.org
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 3D129C43462; Wed,  6 Jan 2021 21:23:47 +0000 (UTC)
-Received: from sidgup-linux.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: sidgup)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 29629C433CA;
-        Wed,  6 Jan 2021 21:23:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 29629C433CA
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=sidgup@codeaurora.org
-From:   Siddharth Gupta <sidgup@codeaurora.org>
-To:     bjorn.andersson@linaro.org, agross@kernel.org, ohad@wizery.com,
-        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     Siddharth Gupta <sidgup@codeaurora.org>, psodagud@codeaurora.org,
-        rishabhb@codeaurora.org
-Subject: [PATCH 3/3] soc: qcom: mdt_loader: Read hash from firmware blob
-Date:   Wed,  6 Jan 2021 13:23:31 -0800
-Message-Id: <1609968211-7579-4-git-send-email-sidgup@codeaurora.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1609968211-7579-1-git-send-email-sidgup@codeaurora.org>
-References: <1609968211-7579-1-git-send-email-sidgup@codeaurora.org>
+        Wed, 6 Jan 2021 16:53:18 -0500
+Received: from mail-pj1-x102a.google.com (mail-pj1-x102a.google.com [IPv6:2607:f8b0:4864:20::102a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 66D79C061786
+        for <linux-remoteproc@vger.kernel.org>; Wed,  6 Jan 2021 13:52:38 -0800 (PST)
+Received: by mail-pj1-x102a.google.com with SMTP id m5so2328733pjv.5
+        for <linux-remoteproc@vger.kernel.org>; Wed, 06 Jan 2021 13:52:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=HukvAs5xxTkseuhceHeX/B2BEJaqcqWMBwuX9s+LI9M=;
+        b=Wvr00hYTEdWIPua37y5P419mwAgY2sjz2en3bOtw/Z1bU7ZaNsz0tgC6ULfZXg3zRg
+         xVL4ce48B/3iT2FGOR4hTKPN/xql6b++xIuUWE4l+iGfWXRJV2OMxrnT/imnAyZY4n24
+         I4rMswWAJJ8FOZ/0lQUGEhp2ZgCU5eVkkf4Enkx+YfiQvfW3zNtboVCfGfgMyqyMFytW
+         iQIvHfP0btcxr7CzFHSij2Ykb8A/G2PMlliUOEh3tFxIRk/J7feSMHAb8/kGcYgqmoBr
+         Ai2mvJayclIkQ1GKmIpu1RN58v0HJAy4xJKNW873CnnDSsf7CVrHby0lP6dbqBTqpTZm
+         gSYA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=HukvAs5xxTkseuhceHeX/B2BEJaqcqWMBwuX9s+LI9M=;
+        b=hTweCZTQVVfnhFY2QCMpT8f5uGRQs8yjd1zqHS7p7+VgcTxZIjqOY57crLG2CmaqQ8
+         LItSjUSH2oCqDSSDSk9KgsLyAMEC4HbJ3esy94w+rZTTaq/maGpiUppEpz2DCqwbyu21
+         Dr3zNEj5gueOSkRKD8KSkRCsExv+PojwH4gsoecPPzHwZgMe8E8A7PW1Hxx+baSr5ECj
+         oV2L9wTvGOos61nn+zklF3nryym+YE8VFjWBx75ReSgK0W579JEyb/dXrxNT4B9G1XKo
+         T39IC28/1xnKcpUO8AOA8aDEHG4127SKZnpPx9OpTFXdPfZusG+C3rBpXiZUDFlFGNyg
+         7N9g==
+X-Gm-Message-State: AOAM533rmI1C8ZCLWLYgl/jM7jkNXOjEqxqWODEzWjksNXkA9VJ3D7i+
+        cntMCfxIHxUm6Zpr/AeN3cGAJ/FMNqYjYg==
+X-Google-Smtp-Source: ABdhPJw3UwzxDGQ/wLD0G46TUGwVhsCVBULh4e9UkSGcf7xUZS0T0Aq1n5n2ls5F+sQ7hQyz9+ohAw==
+X-Received: by 2002:a17:90b:100e:: with SMTP id gm14mr6139267pjb.179.1609969957794;
+        Wed, 06 Jan 2021 13:52:37 -0800 (PST)
+Received: from xps15 (S0106889e681aac74.cg.shawcable.net. [68.147.0.187])
+        by smtp.gmail.com with ESMTPSA id k15sm3403025pfp.115.2021.01.06.13.52.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 06 Jan 2021 13:52:36 -0800 (PST)
+Date:   Wed, 6 Jan 2021 14:52:34 -0700
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+To:     Paul Cercueil <paul@crapouillou.net>
+Cc:     linux-remoteproc@vger.kernel.org
+Subject: Re: Doc to write firmware?
+Message-ID: <20210106215234.GB9149@xps15>
+References: <93HSLQ.5D3DAYSGVCVP@crapouillou.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <93HSLQ.5D3DAYSGVCVP@crapouillou.net>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Since the split elf blobs will always contain the hash segment, we rely on
-the blob file to get the hash rather than assume that it will be present in
-the mdt file. This change uses the hash index to read the appropriate elf
-blob to get the hash segment.
+Hi Paul,
 
-Signed-off-by: Siddharth Gupta <sidgup@codeaurora.org>
----
- drivers/remoteproc/qcom_q6v5_mss.c  |  4 ++--
- drivers/soc/qcom/mdt_loader.c       | 38 +++++++++++++++++++++++++++----------
- include/linux/soc/qcom/mdt_loader.h |  3 ++-
- 3 files changed, 32 insertions(+), 13 deletions(-)
+On Wed, Dec 23, 2020 at 10:57:09AM +0000, Paul Cercueil wrote:
+> Hi,
+> 
+> Having written the ingenic-remoteproc driver I am trying now to write
+> something a bit more advanced than a hello-world. Something like a
+> case-invert program for starters. However I'm having a hard time trying to
+> figure out how things work.
+> 
+> My resource table is as follows:
+> 
+> ----------------------------
+> struct resource_table_hdr {
+> struct resource_table header;
+> 
+> uint32_t offset[3];
+> 
+> struct {
+>  struct fw_rsc_hdr header;
+>  struct fw_rsc_carveout carveout;
+> } carveout;
+> 
+> struct {
+>  struct fw_rsc_hdr header;
+>  struct fw_rsc_trace trace;
+> } trace;
+> 
+> struct {
+>  struct fw_rsc_hdr header;
+>  struct fw_rsc_vdev vdev;
+>  struct fw_rsc_vdev_vring vrings[2];
+>  uint8_t config[0xc];
+> } vdev;
+> };
+> 
+> const struct resource_table_hdr resource_table
+> __attribute__((used, section (".resource_table"))) = {
+> .header = {
+>  .ver = 1,
+>  .num = ARRAY_SIZE(resource_table.offset), /* Number of resources */
+> },
+> 
+> .offset[0] = offsetof(struct resource_table_hdr, carveout),
+> .offset[1] = offsetof(struct resource_table_hdr, trace),
+> .offset[2] = offsetof(struct resource_table_hdr, vdev),
+> 
+> .carveout = {
+>  .header = {
+>   .type = RSC_CARVEOUT,
+>  },
+>  .carveout = {
+>   .da = 0xf4000000,
+>   .len = 0x2000,
+>   .name = "firmware",
+>  },
+> },
+> 
+> /* Trace resource to printf() into */
+> .trace = {
+>  .header = {
+>   .type = RSC_TRACE,
+>  },
+>  .trace = {
+>   .da = (uint32_t)trace_buf,
+>   .len = TRACE_BUFFER_SIZE,
+>   .name = "trace",
+>  },
+> },
+> 
+> /* VirtIO device */
+> .vdev = {
+>  .header = {
+>   .type = RSC_VDEV,
+>  },
+>  .vdev = {
+>   .id = VIRTIO_ID_RPROC_SERIAL,
+>   .notifyid = 0,
+>   .dfeatures = 0,
+>   .config_len = 0xc,
+>   .num_of_vrings = 2,
+>  },
+>  .vrings = {
+>   [0] = {
+>    .align = 0x10,
+>    .num = 0x4,
+>    .notifyid = 0,
+>   },
+>   [1] = {
+>    .align = 0x10,
+>    .num = 0x4,
+>    .notifyid = 0,
+>   },
+>  },
+> },
+> };
+> ----------------------------
+> 
 
-diff --git a/drivers/remoteproc/qcom_q6v5_mss.c b/drivers/remoteproc/qcom_q6v5_mss.c
-index 66106ba..74c0229 100644
---- a/drivers/remoteproc/qcom_q6v5_mss.c
-+++ b/drivers/remoteproc/qcom_q6v5_mss.c
-@@ -4,7 +4,7 @@
-  *
-  * Copyright (C) 2016 Linaro Ltd.
-  * Copyright (C) 2014 Sony Mobile Communications AB
-- * Copyright (c) 2012-2013, The Linux Foundation. All rights reserved.
-+ * Copyright (c) 2012-2013, 2020 The Linux Foundation. All rights reserved.
-  */
- 
- #include <linux/clk.h>
-@@ -828,7 +828,7 @@ static int q6v5_mpss_init_image(struct q6v5 *qproc, const struct firmware *fw)
- 	void *ptr;
- 	int ret;
- 
--	metadata = qcom_mdt_read_metadata(fw, &size);
-+	metadata = qcom_mdt_read_metadata(qproc->dev, fw, qproc->hexagon_mdt_image, &size);
- 	if (IS_ERR(metadata))
- 		return PTR_ERR(metadata);
- 
-diff --git a/drivers/soc/qcom/mdt_loader.c b/drivers/soc/qcom/mdt_loader.c
-index c9bbd8c..6876c0b 100644
---- a/drivers/soc/qcom/mdt_loader.c
-+++ b/drivers/soc/qcom/mdt_loader.c
-@@ -103,15 +103,18 @@ EXPORT_SYMBOL_GPL(qcom_mdt_get_size);
-  *
-  * Return: pointer to data, or ERR_PTR()
-  */
--void *qcom_mdt_read_metadata(const struct firmware *fw, size_t *data_len)
-+void *qcom_mdt_read_metadata(struct device *dev, const struct firmware *fw, const char *firmware,
-+			     size_t *data_len)
- {
- 	const struct elf32_phdr *phdrs;
- 	const struct elf32_hdr *ehdr;
--	size_t hash_offset;
-+	const struct firmware *seg_fw;
- 	size_t hash_index;
- 	size_t hash_size;
- 	size_t ehdr_size;
-+	char *fw_name;
- 	void *data;
-+	int ret;
- 
- 	ehdr = (struct elf32_hdr *)fw->data;
- 	phdrs = (struct elf32_phdr *)(ehdr + 1);
-@@ -137,14 +140,29 @@ void *qcom_mdt_read_metadata(const struct firmware *fw, size_t *data_len)
- 	if (!data)
- 		return ERR_PTR(-ENOMEM);
- 
--	/* Is the header and hash already packed */
--	if (qcom_mdt_bins_are_split(fw))
--		hash_offset = phdrs[0].p_filesz;
--	else
--		hash_offset = phdrs[hash_index].p_offset;
--
-+	/* copy elf header */
- 	memcpy(data, fw->data, ehdr_size);
--	memcpy(data + ehdr_size, fw->data + hash_offset, hash_size);
-+
-+	if (qcom_mdt_bins_are_split(fw)) {
-+		fw_name = kstrdup(firmware, GFP_KERNEL);
-+		if (!fw_name) {
-+			kfree(data);
-+			return ERR_PTR(-ENOMEM);
-+		}
-+		snprintf(fw_name + strlen(fw_name) - 3, 4, "b%02d", hash_index);
-+
-+		ret = request_firmware_into_buf(&seg_fw, fw_name, dev, data + ehdr_size, hash_size);
-+		kfree(fw_name);
-+
-+		if (ret) {
-+			kfree(data);
-+			return ERR_PTR(ret);
-+		}
-+
-+		release_firmware(seg_fw);
-+	} else {
-+		memcpy(data + ehdr_size, fw->data + phdrs[hash_index].p_offset, hash_size);
-+	}
- 
- 	*data_len = ehdr_size + hash_size;
- 
-@@ -191,7 +209,7 @@ static int __qcom_mdt_load(struct device *dev, const struct firmware *fw,
- 		return -ENOMEM;
- 
- 	if (pas_init) {
--		metadata = qcom_mdt_read_metadata(fw, &metadata_len);
-+		metadata = qcom_mdt_read_metadata(dev, fw, firmware, &metadata_len);
- 		if (IS_ERR(metadata)) {
- 			ret = PTR_ERR(metadata);
- 			goto out;
-diff --git a/include/linux/soc/qcom/mdt_loader.h b/include/linux/soc/qcom/mdt_loader.h
-index e600bae..04ba5e8 100644
---- a/include/linux/soc/qcom/mdt_loader.h
-+++ b/include/linux/soc/qcom/mdt_loader.h
-@@ -21,6 +21,7 @@ int qcom_mdt_load_no_init(struct device *dev, const struct firmware *fw,
- 			  const char *fw_name, int pas_id, void *mem_region,
- 			  phys_addr_t mem_phys, size_t mem_size,
- 			  phys_addr_t *reloc_base);
--void *qcom_mdt_read_metadata(const struct firmware *fw, size_t *data_len);
-+void *qcom_mdt_read_metadata(struct device *dev, const struct firmware *fw, const char *firmware,
-+			     size_t *data_len);
- 
- #endif
--- 
-Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+The lack of proper tabulation above makes it really hard to read.
 
+> The firmware is properly loaded and I get debug prints in my trace buffer.
+> However, my vrings' .da fields don't seem to be initialized to anything
+> meaningful at all. Then I use the virtio/vring code from (https://github.com/MIPS/mips-rproc-example/blob/master/firmware/common/include/vring.h),
+> and calling vring_print() shows that my vring_desc's addresses are garbage
+> as well.
+> 
+> Is there an example on how to write a basic I/O remoteproc program?
+> 
+
+The easiest is probably to implement a VIRTIO_ID_RPMSG and try to test things
+out with the RPMSG client sample application [1].  It isn't an I/O example but it
+will allow you to quickly find the problem with the vring addresses.
+
+You may also want to checkout ST's development kit [2] if you want a working
+example.  I use it as one of my reference board, the price is right and the
+support is completely upstream.  
+
+Mathieu 
+
+[1]. https://elixir.bootlin.com/linux/latest/source/samples/rpmsg/rpmsg_client_sample.c
+[2]. https://www.st.com/en/evaluation-tools/stm32mp157c-dk2.html
+
+> Cheers,
+> -Paul
+> 
+> 
