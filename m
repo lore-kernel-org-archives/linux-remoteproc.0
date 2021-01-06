@@ -2,94 +2,81 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DB5FC433E0
-	for <linux-remoteproc@archiver.kernel.org>; Wed,  6 Jan 2021 21:08:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E7D9C433E0
+	for <linux-remoteproc@archiver.kernel.org>; Wed,  6 Jan 2021 21:24:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6969323123
-	for <linux-remoteproc@archiver.kernel.org>; Wed,  6 Jan 2021 21:08:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CE8132313C
+	for <linux-remoteproc@archiver.kernel.org>; Wed,  6 Jan 2021 21:24:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726293AbhAFVHq (ORCPT
+        id S1726477AbhAFVYh (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 6 Jan 2021 16:07:46 -0500
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:42506 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726234AbhAFVHp (ORCPT
+        Wed, 6 Jan 2021 16:24:37 -0500
+Received: from so254-31.mailgun.net ([198.61.254.31]:51678 "EHLO
+        so254-31.mailgun.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725815AbhAFVYh (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 6 Jan 2021 16:07:45 -0500
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 106L5JB3039931;
-        Wed, 6 Jan 2021 15:05:19 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1609967119;
-        bh=L12PL6fV1pxKWKnarr6ev77TpWmo7Qc/1tbFWmLBank=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=b1qMYkrJQs/bY874vOcBuWO06etKG6qqMdfJbvoXaK7ldpFTPLMJJabkaVBMZOCxI
-         l2cpKS/PHrWxjcpl3i7ErI4mI7WxGRog/qnPTbZbxjAYtYgbA6xpLFJx2C5iR8Xf1T
-         tKNC8iLn8D4RNur6ciZP1Z2eToTFn8G4yxHZSup0=
-Received: from DFLE115.ent.ti.com (dfle115.ent.ti.com [10.64.6.36])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 106L5JBF027095
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 6 Jan 2021 15:05:19 -0600
-Received: from DFLE110.ent.ti.com (10.64.6.31) by DFLE115.ent.ti.com
- (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3; Wed, 6 Jan
- 2021 15:05:18 -0600
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE110.ent.ti.com
- (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3 via
- Frontend Transport; Wed, 6 Jan 2021 15:05:18 -0600
-Received: from [10.250.66.86] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 106L5Gil109040;
-        Wed, 6 Jan 2021 15:05:16 -0600
-Subject: Re: [PATCH v2 0/5] Introduce PRU remoteproc consumer API
-To:     David Lechner <david@lechnology.com>,
-        <grzegorz.jaszczyk@linaro.org>
-CC:     <bjorn.andersson@linaro.org>, <devicetree@vger.kernel.org>,
-        <lee.jones@linaro.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-omap@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>, <mathieu.poirier@linaro.org>,
-        <ohad@wizery.com>, <praneeth@ti.com>, <robh+dt@kernel.org>,
-        <rogerq@kernel.org>, <ssantosh@kernel.org>
-References: <20201216165239.2744-1-grzegorz.jaszczyk@linaro.org>
- <9603a894-495b-3c73-0916-aea52f98fe9f@lechnology.com>
-From:   Suman Anna <s-anna@ti.com>
-Message-ID: <3be186ef-5f1b-c3c7-f6c9-ccac6ebecaf7@ti.com>
-Date:   Wed, 6 Jan 2021 15:05:16 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
-MIME-Version: 1.0
-In-Reply-To: <9603a894-495b-3c73-0916-aea52f98fe9f@lechnology.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+        Wed, 6 Jan 2021 16:24:37 -0500
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1609968253; h=Message-Id: Date: Subject: Cc: To: From:
+ Sender; bh=xCv3iRqpoeNg7/+ZVkHfzJbBo5DoGpht24M2Wxts2vQ=; b=nw2hgcFsNN8GZGgBQ4P88p/nYxkgrVrE4fhmvJYDfmccrwH2jhp0mIz8AzMDSzqTjjWHB7F3
+ Ddpgr8eSh0CqjJ34+jj7BA4NWgkfkv0hMTfas+OwbpM5iUggUEVkl4ezA6qSOziqGq7/oeyl
+ ac+x4HBDQKUpC4dK7vj8kegEHsw=
+X-Mailgun-Sending-Ip: 198.61.254.31
+X-Mailgun-Sid: WyI4ZWZiZiIsICJsaW51eC1yZW1vdGVwcm9jQHZnZXIua2VybmVsLm9yZyIsICJiZTllNGEiXQ==
+Received: from smtp.codeaurora.org
+ (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
+ smtp-out-n02.prod.us-east-1.postgun.com with SMTP id
+ 5ff62a61a1d2634b3fc08b68 (version=TLS1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Wed, 06 Jan 2021 21:23:45
+ GMT
+Sender: sidgup=codeaurora.org@mg.codeaurora.org
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 27561C43463; Wed,  6 Jan 2021 21:23:45 +0000 (UTC)
+Received: from sidgup-linux.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: sidgup)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 17FE4C433ED;
+        Wed,  6 Jan 2021 21:23:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 17FE4C433ED
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=sidgup@codeaurora.org
+From:   Siddharth Gupta <sidgup@codeaurora.org>
+To:     bjorn.andersson@linaro.org, agross@kernel.org, ohad@wizery.com,
+        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Siddharth Gupta <sidgup@codeaurora.org>, psodagud@codeaurora.org,
+        rishabhb@codeaurora.org
+Subject: [PATCH 0/3] soc: qcom: mdt_loader: General improvements
+Date:   Wed,  6 Jan 2021 13:23:28 -0800
+Message-Id: <1609968211-7579-1-git-send-email-sidgup@codeaurora.org>
+X-Mailer: git-send-email 2.7.4
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi David,
+This series of patches improves general functionality for the mdt loader.
 
-On 1/4/21 2:11 PM, David Lechner wrote:
-> 
->> Please see the individual patches for exact changes in each patch, following is
->> the only change from v1:
->>  - Change the 'prus' property name to 'ti,prus' as suggested by Rob Herring,
->>  which influences patch #1 and patch #2
-> 
-> It looks like "soc: ti: pruss: Add pruss_{request, release}_mem_region() API"
-> was also dropped in v2. Was this intentional?
+Patch 1 adds the ability to dynamically detect hash segment location.
+Patch 2 updates the logic used to identify whether the firmware is split or not.
+Patch 3 updates the way the metadata is read and generated.
 
-No, it is not dropped. That patch is part of a different similarly titled
-"Introduce PRU platform consumer API" series [1], which is dependent on this
-series and is against a different folder (maintainer): drivers/soc/ti.
+Siddharth Gupta (3):
+  soc: qcom: mdt_loader: Allow hash at any phdr
+  soc: qcom: mdt_loader: Handle split bins correctly
+  soc: qcom: mdt_loader: Read hash from firmware blob
 
-regards
-Suman
+ drivers/remoteproc/qcom_q6v5_mss.c  |   4 +-
+ drivers/soc/qcom/mdt_loader.c       | 110 ++++++++++++++++++++++++------------
+ include/linux/soc/qcom/mdt_loader.h |   3 +-
+ 3 files changed, 79 insertions(+), 38 deletions(-)
 
-[1] https://patchwork.kernel.org/project/linux-remoteproc/list/?series=400787
+-- 
+Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
 
