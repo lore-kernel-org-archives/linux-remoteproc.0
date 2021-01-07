@@ -2,142 +2,172 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 559BAC433DB
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  7 Jan 2021 21:51:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50C63C433DB
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  7 Jan 2021 22:46:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1DBA723406
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  7 Jan 2021 21:51:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1DED0235FA
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  7 Jan 2021 22:46:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727107AbhAGVvg (ORCPT
+        id S1729272AbhAGWqR (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 7 Jan 2021 16:51:36 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40966 "EHLO
+        Thu, 7 Jan 2021 17:46:17 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49524 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726878AbhAGVvg (ORCPT
+        with ESMTP id S1728568AbhAGWpc (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 7 Jan 2021 16:51:36 -0500
-Received: from mail-pl1-x636.google.com (mail-pl1-x636.google.com [IPv6:2607:f8b0:4864:20::636])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1173EC0612F4
-        for <linux-remoteproc@vger.kernel.org>; Thu,  7 Jan 2021 13:50:56 -0800 (PST)
-Received: by mail-pl1-x636.google.com with SMTP id 4so4502414plk.5
-        for <linux-remoteproc@vger.kernel.org>; Thu, 07 Jan 2021 13:50:56 -0800 (PST)
+        Thu, 7 Jan 2021 17:45:32 -0500
+Received: from mail-pj1-x102a.google.com (mail-pj1-x102a.google.com [IPv6:2607:f8b0:4864:20::102a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5809EC0612F5
+        for <linux-remoteproc@vger.kernel.org>; Thu,  7 Jan 2021 14:44:52 -0800 (PST)
+Received: by mail-pj1-x102a.google.com with SMTP id z12so2574895pjn.1
+        for <linux-remoteproc@vger.kernel.org>; Thu, 07 Jan 2021 14:44:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=uw28iSl5y8aqxwZIYKIrfSUBToG10LDkBuDH9Apkh7o=;
-        b=V99HHI70hgC8uhJ4/d1qVv4HDq07qqzh23fVSWdmXaH8TEoYOCeclao664ZEDxV0n+
-         ERR7J42+75Ho6Sw64CRGX8b43xem9LrXd4PhC8BEFYkVlX/1VjV9QucFC9BmwsT4diZG
-         3hf572OsZvtU66+/ofAKW7IEIAmaU9XbfkykqzppFUNX5/UIXkzgFr8VIwlYNsn97mT9
-         Fpis7AfqrsvyCyx3AVsJh1NPEDe9VIwTbC1vyO9llYUAQBeFM9KL1+MBUtE2cKPtqGBY
-         sX3RekgctotcR5peaoxSIpVL5xrDWik74DGcajR/DHQb/jrc97f2upijcBtzr0FTI6/Z
-         V7ow==
+        bh=Xy+0Wf/XBKC2krvhyfRiZMGzAb4maQJy3OQAnfkQkMU=;
+        b=hsnk/TljudfgBTilsXRtE3DyqLWx19RlNt7pJrmtbueV5GV1Ol6lZqtMn79gZQFcdF
+         qpR5VxBsznA9PSdPyzr/wSNR+UlPuM50yZ8aUWD2n2E44rmQ4CWAWM3sstdfpPziiHW+
+         zZNQGQGfiUJT5NvXsz4Z34VS2CH4a7sRvV2SZsvlhIi3bGZpe11E6TFpp4BP03jGkoJ1
+         aVOBqP8jCjtiVSIYZFTUpSu341pFEjG9/hyuyFQPa9DiJ3XgluQTek4f4583q9I/xewQ
+         H1bDHgMpRnCU7RQibL8P/EBqv2lj5auT9LzNGuZuWLZ0DMTNM3ANJZ6Ba4d97aPvuCns
+         v8Zw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=uw28iSl5y8aqxwZIYKIrfSUBToG10LDkBuDH9Apkh7o=;
-        b=FPqsiuEJLQsL4bFhZdOdWzlThp4iIK8eLb+qNW5XsEIeIOYSQ/FSttUGBX6EbJhH/q
-         flckEp5QG0+gNrADHR6PmCTbetVkxqJYT+5rXoZGj7bSUnQhDevZQ6k4hj4P2UY++0dw
-         1gtcLuRL2V9Fb1KoQqY5tvAUWf0nRpGMg+98ZTGDZO4jN97dMqMiq+uj8q4lqVjty1qh
-         DH3eF8KMYFw4H5P5XPeP2+PzZvMM3GQTS4KNiEZLedEotEvwuEK1DHIqhlfRJ/jyrjF2
-         yk/UTs4f8S0zDDQOoMc1uhPBQsDY3fl1Dm53nfiW78wG2gYp9VhC/M1dKuZQRHvhvSST
-         NmwA==
-X-Gm-Message-State: AOAM5338SGdTugXdrxq0h8snfEW+eSVqCEGY3z+5eR/MFReg9xyZ/rZY
-        m4WZOHci6qz09LqHIiF1e4Y96w==
-X-Google-Smtp-Source: ABdhPJwAWY4rbvoPuyfQ9PF72eamwyBXspTaMcknhM0xeBVWbdgpL023Ily+Xrw9JvD0wx4wRpwVbQ==
-X-Received: by 2002:a17:90a:fb97:: with SMTP id cp23mr453605pjb.215.1610056255559;
-        Thu, 07 Jan 2021 13:50:55 -0800 (PST)
+        bh=Xy+0Wf/XBKC2krvhyfRiZMGzAb4maQJy3OQAnfkQkMU=;
+        b=Kjx5cgN8GleiSN1VKPbvT+4AFhhicUc1bdtroYhHcaV4jf9/NLpwe3ti35AmbaSm3h
+         dulUGiOLBfFAww5Ghk/J4knXKeGhBzbPE1zqTanJucBiGYCbWB1sUAuDx+PFFEsFLlGK
+         KhqZfIPymRr28WBbktfMuXRfphlAXP/dGtF5p/GKVzZHCuGwBC777SHpbQSqFVbADFcI
+         ttpPSCDurm+TXduD3Rr4SeU7eO8w9HHgGwKnbMShOUeLP8mKaoJdDGzZW8hsFglNT7DE
+         sK/K8lWg0yUmjLfQ4nIBI4v4+JI/i+Kg56GKsmTOjLtWd50EBmoLqYed2K6f3DBGB70h
+         7QaA==
+X-Gm-Message-State: AOAM532EVtVWwmULCxpOpBZl9ISjNJgC3xZsMuLYtH4g4CkWRF44aHWO
+        Y+mkYZs1BGfPQy6d94SyfZ61CQ==
+X-Google-Smtp-Source: ABdhPJzAQ9RA9JKB0gtITGbuYddKSMfQtTts02BCc6DMDF0Q74OZgPLC/3M7ibTt9QMmJu8uU0l8Sg==
+X-Received: by 2002:a17:90a:8a8b:: with SMTP id x11mr685794pjn.54.1610059491904;
+        Thu, 07 Jan 2021 14:44:51 -0800 (PST)
 Received: from xps15 (S0106889e681aac74.cg.shawcable.net. [68.147.0.187])
-        by smtp.gmail.com with ESMTPSA id 92sm2974663pjv.15.2021.01.07.13.50.54
+        by smtp.gmail.com with ESMTPSA id x5sm5776179pjr.38.2021.01.07.14.44.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Jan 2021 13:50:54 -0800 (PST)
-Date:   Thu, 7 Jan 2021 14:50:53 -0700
+        Thu, 07 Jan 2021 14:44:50 -0800 (PST)
+Date:   Thu, 7 Jan 2021 15:44:48 -0700
 From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-To:     Tzung-Bi Shih <tzungbi@google.com>
-Cc:     ohad@wizery.com, bjorn.andersson@linaro.org,
-        linux-remoteproc@vger.kernel.org, matthias.bgg@gmail.com,
-        linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH v2] remoteproc/mediatek: enable MPU for all memory
- regions in MT8192 SCP
-Message-ID: <20210107215053.GA43045@xps15>
-References: <20210107023020.3224002-1-tzungbi@google.com>
+To:     Suman Anna <s-anna@ti.com>
+Cc:     Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>, ohad@wizery.com,
+        bjorn.andersson@linaro.org, robh+dt@kernel.org,
+        ssantosh@kernel.org, linux-remoteproc@vger.kernel.org,
+        lee.jones@linaro.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, praneeth@ti.com,
+        rogerq@kernel.org
+Subject: Re: [PATCH v2 0/5] Introduce PRU remoteproc consumer API
+Message-ID: <20210107224448.GB43045@xps15>
+References: <20201216165239.2744-1-grzegorz.jaszczyk@linaro.org>
+ <20210106232704.GE9149@xps15>
+ <11303a1b-5ab4-def5-77b1-c500894c9c87@ti.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210107023020.3224002-1-tzungbi@google.com>
+In-Reply-To: <11303a1b-5ab4-def5-77b1-c500894c9c87@ti.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Thu, Jan 07, 2021 at 10:30:20AM +0800, Tzung-Bi Shih wrote:
-> The register MT8192_CORE0_MEM_ATT_PREDEF contains attributes for each
-> memory region.  It defines whether a memory region can be managed by MPU
-> or not.
+On Wed, Jan 06, 2021 at 06:03:25PM -0600, Suman Anna wrote:
+> Hi Mathieu,
 > 
-> In the past, due to the default settings in the register, MT8192 SCP
-> works luckily.  After enabling L1TCM, SCP starts to access memory region
-> that is not included in the default settings.  As a result, SCP hangs.
+> On 1/6/21 5:27 PM, Mathieu Poirier wrote:
+> > On Wed, Dec 16, 2020 at 05:52:34PM +0100, Grzegorz Jaszczyk wrote:
+> >> Hi All,
+> >>
+> >> The Programmable Real-Time Unit and Industrial Communication Subsystem
+> >> (PRU-ICSS or simply PRUSS) on various TI SoCs consists of dual 32-bit
+> >> RISC cores (Programmable Real-Time Units, or PRUs) for program execution.
+> >>
+> >> There are 3 foundation components for PRUSS subsystem: the PRUSS platform
+> >> driver, the PRUSS INTC driver and the PRUSS remoteproc driver. All were
+> >> already merged and can be found under:
+> >> 1) drivers/soc/ti/pruss.c
+> >>    Documentation/devicetree/bindings/soc/ti/ti,pruss.yaml
+> >> 2) drivers/irqchip/irq-pruss-intc.c
+> >>    Documentation/devicetree/bindings/interrupt-controller/ti,pruss-intc.yaml
+> >> 3) drivers/remoteproc/pru_rproc.c
+> >>    Documentation/devicetree/bindings/remoteproc/ti,pru-rproc.yaml
+> >>
+> >> The programmable nature of the PRUs provide flexibility to implement custom
+> >> peripheral interfaces, fast real-time responses, or specialized data handling.
+> >> Example of a PRU consumer drivers will be:
+> >>   - Software UART over PRUSS
+> >>   - PRU-ICSS Ethernet EMAC
+> >>
+> >> In order to make usage of common PRU resources and allow the consumer drivers to
+> >> configure the PRU hardware for specific usage the PRU API is introduced.
+> >>
+> >> Patch #3 of this series depends on one not merged remteproc related patch [1].
+> >>
+> >> Please see the individual patches for exact changes in each patch, following is
+> >> the only change from v1:
+> >>  - Change the 'prus' property name to 'ti,prus' as suggested by Rob Herring,
+> >>  which influences patch #1 and patch #2
+> >>
+> >> [1] https://patchwork.kernel.org/project/linux-remoteproc/patch/20201121030156.22857-3-s-anna@ti.com/
+> >>
+> >> Best regards,
+> >> Grzegorz
+> >>
+> >> Roger Quadros (1):
+> >>   remoteproc: pru: Add pru_rproc_set_ctable() function
+> >>
+> >> Suman Anna (2):
+> >>   dt-bindings: remoteproc: Add PRU consumer bindings
+> >>   remoteproc: pru: Deny rproc sysfs ops for PRU client driven boots
+> >>
+> >> Tero Kristo (2):
+> >>   remoteproc: pru: Add APIs to get and put the PRU cores
+> >>   remoteproc: pru: Configure firmware based on client setup
+> >>
+> >>  .../bindings/remoteproc/ti,pru-consumer.yaml  |  64 +++++
+> >>  drivers/remoteproc/pru_rproc.c                | 221 +++++++++++++++++-
+> >>  include/linux/pruss.h                         |  78 +++++++
+> > 
+> > This patchset is giving checkpatch.pl errors and as such will not go further
+> > with this revision.
 > 
-> Enables MPU for all memory regions in MT8192 SCP.
-> 
-> Note that the register is read only once when SCP resets.  Thus, it must
-> be set from kernel side.
+> Yeah, I am aware of those. Greg has intentionally skipped the checkpatch
+> warnings around ENOTSUPP, based on some similar discussion on a different patch,
+> https://lkml.org/lkml/2020/11/10/764.
 
-Much better - now I understand what is going on.  
+I only see input from Andy and Lars in the thread you point out, nothing from
+Greg.  I have also taken a look at the patch [1] that made checkpatch complain
+about ENOTSUPP.  From what I see in that commit log the goal is to prevent new
+additions of ENOTSUPP to the kernel.
 
-Based on the description of the problem please add a "Fixes" tag and CC stable.
-I also suggest you bundle this patch with your other patchset [1] once you have
-make the modifications for devm_platform_ioremap_resource_byname().
+Please modify and resend, otherwise I'm sure someone will send another patch to
+fix it before the end of the cycle.
 
 Thanks,
 Mathieu
 
-[1]. https://patchwork.kernel.org/project/linux-remoteproc/list/?series=401287
-
+[1]. 6b9ea5ff5abd checkpatch: warn about uses of ENOTSUPP
 > 
-> Signed-off-by: Tzung-Bi Shih <tzungbi@google.com>
-> ---
-> Changes from v1[1]:
-> - Adds more details in commit message.
+> Let me know if you prefer that we change these to EOPNOTSUPP.
 > 
-> [1]: https://patchwork.kernel.org/project/linux-remoteproc/patch/20201214051047.859110-1-tzungbi@google.com/ 
+> regards
+> Suman
 > 
->  drivers/remoteproc/mtk_common.h | 1 +
->  drivers/remoteproc/mtk_scp.c    | 3 +++
->  2 files changed, 4 insertions(+)
-> 
-> diff --git a/drivers/remoteproc/mtk_common.h b/drivers/remoteproc/mtk_common.h
-> index 94bc54b224ee..5f7cd2336cef 100644
-> --- a/drivers/remoteproc/mtk_common.h
-> +++ b/drivers/remoteproc/mtk_common.h
-> @@ -47,6 +47,7 @@
->  
->  #define MT8192_CORE0_SW_RSTN_CLR	0x10000
->  #define MT8192_CORE0_SW_RSTN_SET	0x10004
-> +#define MT8192_CORE0_MEM_ATT_PREDEF	0x10008
->  #define MT8192_CORE0_WDT_CFG		0x10034
->  
->  #define SCP_FW_VER_LEN			32
-> diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
-> index f025aba67abc..130c0b9511df 100644
-> --- a/drivers/remoteproc/mtk_scp.c
-> +++ b/drivers/remoteproc/mtk_scp.c
-> @@ -369,6 +369,9 @@ static int mt8192_scp_before_load(struct mtk_scp *scp)
->  	mt8192_power_on_sram(scp->reg_base + MT8192_L1TCM_SRAM_PDN);
->  	mt8192_power_on_sram(scp->reg_base + MT8192_CPU0_SRAM_PD);
->  
-> +	/* enable MPU for all memory regions */
-> +	writel(0xff, scp->reg_base + MT8192_CORE0_MEM_ATT_PREDEF);
-> +
->  	return 0;
->  }
->  
-> -- 
-> 2.29.2.729.g45daf8777d-goog
+> > 
+> >>  3 files changed, 360 insertions(+), 3 deletions(-)
+> >>  create mode 100644 Documentation/devicetree/bindings/remoteproc/ti,pru-consumer.yaml
+> >>  create mode 100644 include/linux/pruss.h
+> >>
+> >> -- 
+> >> 2.29.0
+> >>
 > 
