@@ -2,174 +2,105 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97F09C433E0
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  7 Jan 2021 22:51:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CA6CC433E0
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  7 Jan 2021 23:34:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5EE28235FA
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  7 Jan 2021 22:51:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 390312343B
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  7 Jan 2021 23:34:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727858AbhAGWvN (ORCPT
+        id S1728416AbhAGXet (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 7 Jan 2021 17:51:13 -0500
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:50948 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727722AbhAGWvM (ORCPT
+        Thu, 7 Jan 2021 18:34:49 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57186 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725944AbhAGXes (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 7 Jan 2021 17:51:12 -0500
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 107MnUtN023753;
-        Thu, 7 Jan 2021 16:49:30 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1610059770;
-        bh=51yABxhCeAmEePY6q8Lluk9jwTGYnWzQRyoK2i9Ziv8=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=d/fCjMt0G30a1P6t/yUjo+j0I6KfhUGU3eixrTlkiNrNIdgH8rWlFHP4ir01EDSsM
-         6GJeb2hVM4fw61KS4pSpGcgIM0a1BOWb0v+vZtbbYshESRrq8z99p9TvABzRj5myGQ
-         wQUZ+2R2EB5LGsUPUoVIO3TLbTGUDOBVcoaCj4nQ=
-Received: from DFLE110.ent.ti.com (dfle110.ent.ti.com [10.64.6.31])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 107MnUDK083642
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 7 Jan 2021 16:49:30 -0600
-Received: from DFLE106.ent.ti.com (10.64.6.27) by DFLE110.ent.ti.com
- (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3; Thu, 7 Jan
- 2021 16:49:29 -0600
-Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE106.ent.ti.com
- (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3 via
- Frontend Transport; Thu, 7 Jan 2021 16:49:29 -0600
-Received: from [10.250.33.36] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id 107MnTKk110118;
-        Thu, 7 Jan 2021 16:49:29 -0600
-Subject: Re: [PATCH v2 0/5] Introduce PRU remoteproc consumer API
-To:     Mathieu Poirier <mathieu.poirier@linaro.org>
-CC:     Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>,
-        <ohad@wizery.com>, <bjorn.andersson@linaro.org>,
-        <robh+dt@kernel.org>, <ssantosh@kernel.org>,
-        <linux-remoteproc@vger.kernel.org>, <lee.jones@linaro.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-omap@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <praneeth@ti.com>,
-        <rogerq@kernel.org>
-References: <20201216165239.2744-1-grzegorz.jaszczyk@linaro.org>
- <20210106232704.GE9149@xps15> <11303a1b-5ab4-def5-77b1-c500894c9c87@ti.com>
- <20210107224448.GB43045@xps15>
-From:   Suman Anna <s-anna@ti.com>
-Message-ID: <75365443-57e3-e2e0-5865-f78af9d5890b@ti.com>
-Date:   Thu, 7 Jan 2021 16:49:29 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Thu, 7 Jan 2021 18:34:48 -0500
+Received: from mail-il1-x131.google.com (mail-il1-x131.google.com [IPv6:2607:f8b0:4864:20::131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 59872C0612F4
+        for <linux-remoteproc@vger.kernel.org>; Thu,  7 Jan 2021 15:34:08 -0800 (PST)
+Received: by mail-il1-x131.google.com with SMTP id h3so774042ils.4
+        for <linux-remoteproc@vger.kernel.org>; Thu, 07 Jan 2021 15:34:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=HiZ/f0eHV5aQFZa+Y8E8w0anBR8YlRAd0P5p11hd21Q=;
+        b=bi3iyF594n09MDCSVSCiyjO+ne3h666WZxMh8k5ozUoKAFfkzQSlJO+FVULBXEhnKQ
+         DWrLKTOF8SpB5jFeJRr1gJYpfh+wE4Azs8o3phz8oVAdLPK4Gvg5gf+olk6iEuygy2MQ
+         KPS4JWhZ/2doj1g3CJTmD7x8mBZcHw+0ifkGbe/wyrPWZLKPsgQsH/BmjrXC7JVaCSle
+         vIwey3oJzIBVDPDWZKxRpBrqjtfEgAAG7oIV1lWSd7s9Q/TeNnurLrIDUqRfFTXLlMRK
+         8k/qGboO8sFuWJUfst1Vhxt2ZZQWcbgILUjaBWlXyo8a38IRRaVFBxr56dGmyr2LDdVj
+         XqVw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=HiZ/f0eHV5aQFZa+Y8E8w0anBR8YlRAd0P5p11hd21Q=;
+        b=sC6JPbI1MmYn6dL+2TqoaYMH1oVNZV1b3LnQtVJJIcvJJ/0dAXX+KlHFwcwVT9mEAs
+         2mDZzu6ePcDJwuqGktJRNfDvlaTTxDturiCOojqZP9vdUp/wSK1uzPaiNP4OdJAD/WFk
+         qvmFuarQukVvKOvx4l5rK6U2CKqxj4D0t1qeK7CVrpDDNK2XvqrU0EVWkx6prcw1QqKt
+         iMI4v1wsw7pmz7tGCUf9IA6DL+3ytQI1K//fMN2U6v38ZaTJvaSvX0UtgNpx0jvuBL7+
+         TMK6d8wUn0KEdQ4rmkCh6w68ys2FFOjBx5+YF6768j4gI/J14yok9e4pS9+ujXIyhAy5
+         D32A==
+X-Gm-Message-State: AOAM53218I5eCPcHhxdWK1zRfkX1WLD4JdoSAXzkrTX+Vylt19w6R+rU
+        WKgPHfbJyAEG2yl/fXlDvNpBBg==
+X-Google-Smtp-Source: ABdhPJxn7aD4n6NGnZR2YanSnANfePYBUaScug0tpdv9ckw4F2oMe0QIzJmRZiToQH06QxVoMbaKow==
+X-Received: by 2002:a92:6403:: with SMTP id y3mr1248404ilb.72.1610062447746;
+        Thu, 07 Jan 2021 15:34:07 -0800 (PST)
+Received: from beast.localdomain (c-73-185-129-58.hsd1.mn.comcast.net. [73.185.129.58])
+        by smtp.gmail.com with ESMTPSA id o195sm5648521ila.38.2021.01.07.15.34.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 07 Jan 2021 15:34:07 -0800 (PST)
+From:   Alex Elder <elder@linaro.org>
+To:     davem@davemloft.net, kuba@kernel.org, bjorn.andersson@linaro.org,
+        agross@kernel.org, ohad@wizery.com
+Cc:     evgreen@chromium.org, cpratapa@codeaurora.org,
+        subashab@codeaurora.org, netdev@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH net-next 0/4] net: ipa: support COMPILE_TEST
+Date:   Thu,  7 Jan 2021 17:34:00 -0600
+Message-Id: <20210107233404.17030-1-elder@linaro.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <20210107224448.GB43045@xps15>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On 1/7/21 4:44 PM, Mathieu Poirier wrote:
-> On Wed, Jan 06, 2021 at 06:03:25PM -0600, Suman Anna wrote:
->> Hi Mathieu,
->>
->> On 1/6/21 5:27 PM, Mathieu Poirier wrote:
->>> On Wed, Dec 16, 2020 at 05:52:34PM +0100, Grzegorz Jaszczyk wrote:
->>>> Hi All,
->>>>
->>>> The Programmable Real-Time Unit and Industrial Communication Subsystem
->>>> (PRU-ICSS or simply PRUSS) on various TI SoCs consists of dual 32-bit
->>>> RISC cores (Programmable Real-Time Units, or PRUs) for program execution.
->>>>
->>>> There are 3 foundation components for PRUSS subsystem: the PRUSS platform
->>>> driver, the PRUSS INTC driver and the PRUSS remoteproc driver. All were
->>>> already merged and can be found under:
->>>> 1) drivers/soc/ti/pruss.c
->>>>    Documentation/devicetree/bindings/soc/ti/ti,pruss.yaml
->>>> 2) drivers/irqchip/irq-pruss-intc.c
->>>>    Documentation/devicetree/bindings/interrupt-controller/ti,pruss-intc.yaml
->>>> 3) drivers/remoteproc/pru_rproc.c
->>>>    Documentation/devicetree/bindings/remoteproc/ti,pru-rproc.yaml
->>>>
->>>> The programmable nature of the PRUs provide flexibility to implement custom
->>>> peripheral interfaces, fast real-time responses, or specialized data handling.
->>>> Example of a PRU consumer drivers will be:
->>>>   - Software UART over PRUSS
->>>>   - PRU-ICSS Ethernet EMAC
->>>>
->>>> In order to make usage of common PRU resources and allow the consumer drivers to
->>>> configure the PRU hardware for specific usage the PRU API is introduced.
->>>>
->>>> Patch #3 of this series depends on one not merged remteproc related patch [1].
->>>>
->>>> Please see the individual patches for exact changes in each patch, following is
->>>> the only change from v1:
->>>>  - Change the 'prus' property name to 'ti,prus' as suggested by Rob Herring,
->>>>  which influences patch #1 and patch #2
->>>>
->>>> [1] https://patchwork.kernel.org/project/linux-remoteproc/patch/20201121030156.22857-3-s-anna@ti.com/
->>>>
->>>> Best regards,
->>>> Grzegorz
->>>>
->>>> Roger Quadros (1):
->>>>   remoteproc: pru: Add pru_rproc_set_ctable() function
->>>>
->>>> Suman Anna (2):
->>>>   dt-bindings: remoteproc: Add PRU consumer bindings
->>>>   remoteproc: pru: Deny rproc sysfs ops for PRU client driven boots
->>>>
->>>> Tero Kristo (2):
->>>>   remoteproc: pru: Add APIs to get and put the PRU cores
->>>>   remoteproc: pru: Configure firmware based on client setup
->>>>
->>>>  .../bindings/remoteproc/ti,pru-consumer.yaml  |  64 +++++
->>>>  drivers/remoteproc/pru_rproc.c                | 221 +++++++++++++++++-
->>>>  include/linux/pruss.h                         |  78 +++++++
->>>
->>> This patchset is giving checkpatch.pl errors and as such will not go further
->>> with this revision.
->>
->> Yeah, I am aware of those. Greg has intentionally skipped the checkpatch
->> warnings around ENOTSUPP, based on some similar discussion on a different patch,
->> https://lkml.org/lkml/2020/11/10/764.
-> 
-> I only see input from Andy and Lars in the thread you point out, nothing from
-> Greg.  I have also taken a look at the patch [1] that made checkpatch complain
-> about ENOTSUPP.  From what I see in that commit log the goal is to prevent new
-> additions of ENOTSUPP to the kernel.
-> 
-> Please modify and resend, otherwise I'm sure someone will send another patch to
-> fix it before the end of the cycle.
+This series adds the IPA driver as a possible target when
+the COMPILE_TEST configuration is enabled.  Two small changes to
+dependent subsystems needed to be made for this to work.
 
-Yeah ok. I will send out a v3.
+Version 2 of this series adds one more patch, which adds the
+declation of struct page to "gsi_trans.h".  The Intel kernel test
+robot reported that this was a problem for the alpha build.
 
-regards
-Suman
+David/Jakub, please take all four of these patches through the
+net-next tree if you find them acceptable.
 
-> 
-> Thanks,
-> Mathieu
-> 
-> [1]. 6b9ea5ff5abd checkpatch: warn about uses of ENOTSUPP
->>
->> Let me know if you prefer that we change these to EOPNOTSUPP.
->>
->> regards
->> Suman
->>
->>>
->>>>  3 files changed, 360 insertions(+), 3 deletions(-)
->>>>  create mode 100644 Documentation/devicetree/bindings/remoteproc/ti,pru-consumer.yaml
->>>>  create mode 100644 include/linux/pruss.h
->>>>
->>>> -- 
->>>> 2.29.0
->>>>
->>
+Thanks.
+
+					-Alex
+
+Alex Elder (4):
+  remoteproc: qcom: expose types for COMPILE_TEST
+  soc: qcom: mdt_loader: define stubs for COMPILE_TEST
+  net: ipa: declare the page pointer type in "gsi_trans.h"
+  net: ipa: support COMPILE_TEST
+
+ drivers/net/ipa/Kconfig               | 10 +++++---
+ drivers/net/ipa/gsi_trans.h           |  1 +
+ include/linux/remoteproc/qcom_rproc.h |  4 +--
+ include/linux/soc/qcom/mdt_loader.h   | 35 +++++++++++++++++++++++++++
+ 4 files changed, 44 insertions(+), 6 deletions(-)
+
+-- 
+2.20.1
 
