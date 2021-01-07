@@ -2,116 +2,125 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-23.6 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
+X-Spam-Status: No, score=-26.6 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E82EAC433DB
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  7 Jan 2021 01:51:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86D7AC433DB
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  7 Jan 2021 02:32:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B69D52223E
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  7 Jan 2021 01:51:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 30BE7230FE
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  7 Jan 2021 02:32:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726301AbhAGBvN (ORCPT
+        id S1726651AbhAGCbu (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 6 Jan 2021 20:51:13 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50828 "EHLO
+        Wed, 6 Jan 2021 21:31:50 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57174 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725860AbhAGBvM (ORCPT
+        with ESMTP id S1726260AbhAGCbu (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 6 Jan 2021 20:51:12 -0500
-Received: from mail-io1-xd2c.google.com (mail-io1-xd2c.google.com [IPv6:2607:f8b0:4864:20::d2c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AA468C0612F0
-        for <linux-remoteproc@vger.kernel.org>; Wed,  6 Jan 2021 17:50:32 -0800 (PST)
-Received: by mail-io1-xd2c.google.com with SMTP id u26so4708884iof.3
-        for <linux-remoteproc@vger.kernel.org>; Wed, 06 Jan 2021 17:50:32 -0800 (PST)
+        Wed, 6 Jan 2021 21:31:50 -0500
+Received: from mail-qt1-x849.google.com (mail-qt1-x849.google.com [IPv6:2607:f8b0:4864:20::849])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C7712C0612F1
+        for <linux-remoteproc@vger.kernel.org>; Wed,  6 Jan 2021 18:31:09 -0800 (PST)
+Received: by mail-qt1-x849.google.com with SMTP id f19so3870445qtx.6
+        for <linux-remoteproc@vger.kernel.org>; Wed, 06 Jan 2021 18:31:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=2P2u9jEjWHYVU1qxKrf4iKIpSUfUX3zNuv6jnN50kWY=;
-        b=o9uaPPJjdoOqqWjDoF+6zow7bpzZM5nAd4zCN8YCAQETkDD3CrOk+M0aOrjER+Ma1P
-         K+8feL8e1xUQrEePD7AMiNB2UaGYxrQFfbptq3Rgav+7h5GLeYHgxrN99bj4CZ0+HFl+
-         QJW03cwujyZUkSKyslBTbIadFmtgAaGiMjmNOv78ZTLyjk1yo24TOx3kGRpYdcQk5dqR
-         /xNf8s9seXFP/0DJrVhnvj+MmHCKBe3lvA1L431DZ0p3xKpegyJxMDzTTCjlIua5UL5f
-         7wNU8HC650Eq0eCbp6nmzGqbLLtXJEnfxQqYb16lclGBr7XvlJYejMLfUeDhj0s5iG5+
-         G5MQ==
+        h=sender:date:message-id:mime-version:subject:from:to:cc;
+        bh=tNysKkCMZfVPOEF1Rqcdgg1STtCMPOn28jLi9xU4sRo=;
+        b=gZCxS3Qx0a2mPHdct3VLekV6zlfpRBbW377QpRAcUnlZsXnYIEX0TJKZFPMavk7L8q
+         1+lYkZG08d8XABjLTKlm0kf2MAAUFGJpAojUrmruB6Nrf8z1Te5S1ivCjP0GVYMOANxB
+         auRm8f5xyT7VQ6Sf7TxYnq0KmwPBEytKLjYkiU5KO82QJ86k7t9mdzRpfkZZVE56dOBk
+         pzIAEqkGnudhmnOljX+tgX1hslPIBQErlh4t1W2H98cq16loFYCeQGHDI3TLNa7LXFFh
+         S3dqQc9IQKjfUqJWlJeNw/K0q2I1wsD5OxM20QSrMD4HCyv8oTRsaYqgLTxWWDDMIIxW
+         vN8g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=2P2u9jEjWHYVU1qxKrf4iKIpSUfUX3zNuv6jnN50kWY=;
-        b=jiVhdll5vepCFsL00uw6xIf/Un5e7yor/PhvFDEc1DLFjQ2njd4OehBCAkOTeFdQ8k
-         OcQ/4GS4dhb6xJiWxSMbnEPFGpCs58MpkAYiQZ5KMKRQBImtP/dk5uSgDuLPyucpjKyk
-         TKfOqvJi5HlM7SBFUlIt4KP8utf1CcTnXGxy30xFusviPRCKSUUVinZHiOyblTY+nmKm
-         1pA9GKQ5yUfeKwWUvzQ+KgpEAkhxMB7m4o+D85AuEexb6dio1HWSJ3/CbUFE9vWgSUSg
-         S5QyZpBQMoK3x3xKHacsnOzuySeFYK2JdxCYBRNJlRnuQ8c7z2sqtAQGEfEdcTcX+2Sx
-         lZoA==
-X-Gm-Message-State: AOAM532+cqV6ndYOyEyN0QlsBliy42c1gCyj4eqJ3wsSz44GNrn94QpG
-        5chkm9CQ4Jp/SxoAOTDIfPcyFawFwsp873+EWijIug==
-X-Google-Smtp-Source: ABdhPJwnLMZbzPVzAP5dJqQf/bIvgS2HPh2LtxSQphRjCMi9klzEWcLCchHZzWTLlzo2OiyqneoUmKEGjiuJIzgTWAE=
-X-Received: by 2002:a02:c804:: with SMTP id p4mr6149995jao.110.1609984231882;
- Wed, 06 Jan 2021 17:50:31 -0800 (PST)
-MIME-Version: 1.0
-References: <20201214050521.845396-1-tzungbi@google.com> <20201214050521.845396-3-tzungbi@google.com>
- <20210106231513.GC9149@xps15>
-In-Reply-To: <20210106231513.GC9149@xps15>
+        h=x-gm-message-state:sender:date:message-id:mime-version:subject:from
+         :to:cc;
+        bh=tNysKkCMZfVPOEF1Rqcdgg1STtCMPOn28jLi9xU4sRo=;
+        b=KCJ3eoU7P9Mxe+TUxmar5dwKlKgGnh+NQJw23QUCl7sRIKM+SVulBNKZ1JkgpQnG/T
+         jpE60R/020mV0lrZjGv3boA9JGcjEgBFKtgD2lJIRewzJqbr85QwrB7+HWmGS3xe9ah9
+         eUY70Uigl/e/n7zBDQsWpuyMJjoSjkgW1Xx388W4Bzjkvf6LfrozPOm4JJrJOVdKbRKR
+         k0OJKzAIe/AXycXHcL7gt9Weml1+Jy4f4ZSAU8x+oj36dUNVBubB4Jl1HjB0H2v7pZC8
+         mQzr4i0kuwH+XLjsyUhE9nDVbib4X9AYhId5wcIGstKjYIgpZc6+rOedNEwwibG52M22
+         01Qw==
+X-Gm-Message-State: AOAM530wDYX1l+9SqB0fClDZhnUuvo1rpzfLirrVFSRVSsYcjP2f7mXW
+        GdBLMxLG9KStem5Z+ArV6NTiTT6KAA6r
+X-Google-Smtp-Source: ABdhPJz4AGltbzoejR8dMF7WllRpmHxZwwc4BkoGIX+vicw/ugDUH2TD8KEmZXaDNJ9+P93XWZjVpB10F8su
+Sender: "tzungbi via sendgmr" <tzungbi@tzungbi-z840.tpe.corp.google.com>
+X-Received: from tzungbi-z840.tpe.corp.google.com ([2401:fa00:1:b:725a:fff:fe41:c6a5])
+ (user=tzungbi job=sendgmr) by 2002:a0c:f888:: with SMTP id
+ u8mr55647qvn.47.1609986668860; Wed, 06 Jan 2021 18:31:08 -0800 (PST)
+Date:   Thu,  7 Jan 2021 10:30:20 +0800
+Message-Id: <20210107023020.3224002-1-tzungbi@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.29.2.729.g45daf8777d-goog
+Subject: [PATCH v2] remoteproc/mediatek: enable MPU for all memory regions in
+ MT8192 SCP
 From:   Tzung-Bi Shih <tzungbi@google.com>
-Date:   Thu, 7 Jan 2021 09:50:21 +0800
-Message-ID: <CA+Px+wXEV9GDCMjR8inbQ89tNV9n7RedeAOGJL_yATmeCLjXJw@mail.gmail.com>
-Subject: Re: [PATCH 2/2] remoteproc/mediatek: support L1TCM
-To:     Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc:     Ohad Ben-Cohen <ohad@wizery.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        "open list:REMOTE PROCESSOR (REMOTEPROC) SUBSYSTEM" 
-        <linux-remoteproc@vger.kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        "moderated list:ARM/Mediatek SoC support" 
-        <linux-mediatek@lists.infradead.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>
+To:     ohad@wizery.com, bjorn.andersson@linaro.org
+Cc:     linux-remoteproc@vger.kernel.org, matthias.bgg@gmail.com,
+        linux-mediatek@lists.infradead.org, mathieu.poirier@linaro.org,
+        tzungbi@google.com
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Thu, Jan 7, 2021 at 7:15 AM Mathieu Poirier
-<mathieu.poirier@linaro.org> wrote:
->
-> >  static void mt8183_scp_stop(struct mtk_scp *scp)
-> >  {
-> >       /* Disable SCP watchdog */
-> > @@ -714,6 +749,19 @@ static int scp_probe(struct platform_device *pdev)
-> >               goto free_rproc;
-> >       }
-> >       scp->sram_size = resource_size(res);
-> > +     scp->sram_phys = res->start;
-> > +
-> > +     res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "l1tcm");
-> > +     if (res) {
->
-> As far as I can tell the if() condition isn't needed since
-> platform_get_resource_byname() returns NULL on error and devm_ioremap_resource()
-> is capable of handling that condition.  As such the code to parse "l1tcm" can be
-> the same as what is done for "sram".
+The register MT8192_CORE0_MEM_ATT_PREDEF contains attributes for each
+memory region.  It defines whether a memory region can be managed by MPU
+or not.
 
-The "l1tcm" memory region is optional.  The if() condition is for: if
-DTS doesn't provide the memory region, kernel can skip the code block.
+In the past, due to the default settings in the register, MT8192 SCP
+works luckily.  After enabling L1TCM, SCP starts to access memory region
+that is not included in the default settings.  As a result, SCP hangs.
 
->
-> With the above:
->
-> Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
->
-> > +             scp->l1tcm_base = devm_ioremap_resource(dev, res);
-> > +             if (IS_ERR((__force void *)scp->l1tcm_base)) {
-> > +                     dev_err(dev, "Failed to parse and map l1tcm memory\n");
-> > +                     ret = PTR_ERR((__force void *)scp->l1tcm_base);
-> > +                     goto free_rproc;
-> > +             }
-> > +             scp->l1tcm_size = resource_size(res);
-> > +             scp->l1tcm_phys = res->start;
-> > +     }
+Enables MPU for all memory regions in MT8192 SCP.
+
+Note that the register is read only once when SCP resets.  Thus, it must
+be set from kernel side.
+
+Signed-off-by: Tzung-Bi Shih <tzungbi@google.com>
+---
+Changes from v1[1]:
+- Adds more details in commit message.
+
+[1]: https://patchwork.kernel.org/project/linux-remoteproc/patch/20201214051047.859110-1-tzungbi@google.com/ 
+
+ drivers/remoteproc/mtk_common.h | 1 +
+ drivers/remoteproc/mtk_scp.c    | 3 +++
+ 2 files changed, 4 insertions(+)
+
+diff --git a/drivers/remoteproc/mtk_common.h b/drivers/remoteproc/mtk_common.h
+index 94bc54b224ee..5f7cd2336cef 100644
+--- a/drivers/remoteproc/mtk_common.h
++++ b/drivers/remoteproc/mtk_common.h
+@@ -47,6 +47,7 @@
+ 
+ #define MT8192_CORE0_SW_RSTN_CLR	0x10000
+ #define MT8192_CORE0_SW_RSTN_SET	0x10004
++#define MT8192_CORE0_MEM_ATT_PREDEF	0x10008
+ #define MT8192_CORE0_WDT_CFG		0x10034
+ 
+ #define SCP_FW_VER_LEN			32
+diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
+index f025aba67abc..130c0b9511df 100644
+--- a/drivers/remoteproc/mtk_scp.c
++++ b/drivers/remoteproc/mtk_scp.c
+@@ -369,6 +369,9 @@ static int mt8192_scp_before_load(struct mtk_scp *scp)
+ 	mt8192_power_on_sram(scp->reg_base + MT8192_L1TCM_SRAM_PDN);
+ 	mt8192_power_on_sram(scp->reg_base + MT8192_CPU0_SRAM_PD);
+ 
++	/* enable MPU for all memory regions */
++	writel(0xff, scp->reg_base + MT8192_CORE0_MEM_ATT_PREDEF);
++
+ 	return 0;
+ }
+ 
+-- 
+2.29.2.729.g45daf8777d-goog
+
