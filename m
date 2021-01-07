@@ -2,151 +2,116 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-23.6 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EF75C433E6
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  7 Jan 2021 00:04:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E82EAC433DB
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  7 Jan 2021 01:51:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DCD8E23333
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  7 Jan 2021 00:04:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B69D52223E
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  7 Jan 2021 01:51:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726918AbhAGAEO (ORCPT
+        id S1726301AbhAGBvN (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 6 Jan 2021 19:04:14 -0500
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:48708 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726293AbhAGAEO (ORCPT
+        Wed, 6 Jan 2021 20:51:13 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50828 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725860AbhAGBvM (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 6 Jan 2021 19:04:14 -0500
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 10703Q2G098696;
-        Wed, 6 Jan 2021 18:03:26 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1609977806;
-        bh=tQrVlUnNzpbNpbVX/IO4V0JvoJkj7OSMnP+9H9h9UJA=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=ZwjmnLknoQ8Ahwzpf1rRAvCFiXzyQFMEGeD8+4EYe1FIDZh4MuVMBFfKb1JF8DYBL
-         G6swATQ9kJsfej/rWjyegqWjUbOg1KSiJ7nrmmDsWZ6DLuACvXo0g1gPd4T97zJ4K7
-         UXsDanqiAXESMCyYF250A3EkqJXIxX6mQ79MgxHw=
-Received: from DLEE113.ent.ti.com (dlee113.ent.ti.com [157.170.170.24])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 10703Qpx127037
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 6 Jan 2021 18:03:26 -0600
-Received: from DLEE110.ent.ti.com (157.170.170.21) by DLEE113.ent.ti.com
- (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3; Wed, 6 Jan
- 2021 18:03:26 -0600
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE110.ent.ti.com
- (157.170.170.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3 via
- Frontend Transport; Wed, 6 Jan 2021 18:03:26 -0600
-Received: from [10.250.66.86] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 10703PVP035418;
-        Wed, 6 Jan 2021 18:03:25 -0600
-Subject: Re: [PATCH v2 0/5] Introduce PRU remoteproc consumer API
-To:     Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>
-CC:     <ohad@wizery.com>, <bjorn.andersson@linaro.org>,
-        <robh+dt@kernel.org>, <ssantosh@kernel.org>,
-        <linux-remoteproc@vger.kernel.org>, <lee.jones@linaro.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-omap@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <praneeth@ti.com>,
-        <rogerq@kernel.org>
-References: <20201216165239.2744-1-grzegorz.jaszczyk@linaro.org>
- <20210106232704.GE9149@xps15>
-From:   Suman Anna <s-anna@ti.com>
-Message-ID: <11303a1b-5ab4-def5-77b1-c500894c9c87@ti.com>
-Date:   Wed, 6 Jan 2021 18:03:25 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Wed, 6 Jan 2021 20:51:12 -0500
+Received: from mail-io1-xd2c.google.com (mail-io1-xd2c.google.com [IPv6:2607:f8b0:4864:20::d2c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AA468C0612F0
+        for <linux-remoteproc@vger.kernel.org>; Wed,  6 Jan 2021 17:50:32 -0800 (PST)
+Received: by mail-io1-xd2c.google.com with SMTP id u26so4708884iof.3
+        for <linux-remoteproc@vger.kernel.org>; Wed, 06 Jan 2021 17:50:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=2P2u9jEjWHYVU1qxKrf4iKIpSUfUX3zNuv6jnN50kWY=;
+        b=o9uaPPJjdoOqqWjDoF+6zow7bpzZM5nAd4zCN8YCAQETkDD3CrOk+M0aOrjER+Ma1P
+         K+8feL8e1xUQrEePD7AMiNB2UaGYxrQFfbptq3Rgav+7h5GLeYHgxrN99bj4CZ0+HFl+
+         QJW03cwujyZUkSKyslBTbIadFmtgAaGiMjmNOv78ZTLyjk1yo24TOx3kGRpYdcQk5dqR
+         /xNf8s9seXFP/0DJrVhnvj+MmHCKBe3lvA1L431DZ0p3xKpegyJxMDzTTCjlIua5UL5f
+         7wNU8HC650Eq0eCbp6nmzGqbLLtXJEnfxQqYb16lclGBr7XvlJYejMLfUeDhj0s5iG5+
+         G5MQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=2P2u9jEjWHYVU1qxKrf4iKIpSUfUX3zNuv6jnN50kWY=;
+        b=jiVhdll5vepCFsL00uw6xIf/Un5e7yor/PhvFDEc1DLFjQ2njd4OehBCAkOTeFdQ8k
+         OcQ/4GS4dhb6xJiWxSMbnEPFGpCs58MpkAYiQZ5KMKRQBImtP/dk5uSgDuLPyucpjKyk
+         TKfOqvJi5HlM7SBFUlIt4KP8utf1CcTnXGxy30xFusviPRCKSUUVinZHiOyblTY+nmKm
+         1pA9GKQ5yUfeKwWUvzQ+KgpEAkhxMB7m4o+D85AuEexb6dio1HWSJ3/CbUFE9vWgSUSg
+         S5QyZpBQMoK3x3xKHacsnOzuySeFYK2JdxCYBRNJlRnuQ8c7z2sqtAQGEfEdcTcX+2Sx
+         lZoA==
+X-Gm-Message-State: AOAM532+cqV6ndYOyEyN0QlsBliy42c1gCyj4eqJ3wsSz44GNrn94QpG
+        5chkm9CQ4Jp/SxoAOTDIfPcyFawFwsp873+EWijIug==
+X-Google-Smtp-Source: ABdhPJwnLMZbzPVzAP5dJqQf/bIvgS2HPh2LtxSQphRjCMi9klzEWcLCchHZzWTLlzo2OiyqneoUmKEGjiuJIzgTWAE=
+X-Received: by 2002:a02:c804:: with SMTP id p4mr6149995jao.110.1609984231882;
+ Wed, 06 Jan 2021 17:50:31 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20210106232704.GE9149@xps15>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+References: <20201214050521.845396-1-tzungbi@google.com> <20201214050521.845396-3-tzungbi@google.com>
+ <20210106231513.GC9149@xps15>
+In-Reply-To: <20210106231513.GC9149@xps15>
+From:   Tzung-Bi Shih <tzungbi@google.com>
+Date:   Thu, 7 Jan 2021 09:50:21 +0800
+Message-ID: <CA+Px+wXEV9GDCMjR8inbQ89tNV9n7RedeAOGJL_yATmeCLjXJw@mail.gmail.com>
+Subject: Re: [PATCH 2/2] remoteproc/mediatek: support L1TCM
+To:     Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc:     Ohad Ben-Cohen <ohad@wizery.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        "open list:REMOTE PROCESSOR (REMOTEPROC) SUBSYSTEM" 
+        <linux-remoteproc@vger.kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        "moderated list:ARM/Mediatek SoC support" 
+        <linux-mediatek@lists.infradead.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi Mathieu,
+On Thu, Jan 7, 2021 at 7:15 AM Mathieu Poirier
+<mathieu.poirier@linaro.org> wrote:
+>
+> >  static void mt8183_scp_stop(struct mtk_scp *scp)
+> >  {
+> >       /* Disable SCP watchdog */
+> > @@ -714,6 +749,19 @@ static int scp_probe(struct platform_device *pdev)
+> >               goto free_rproc;
+> >       }
+> >       scp->sram_size = resource_size(res);
+> > +     scp->sram_phys = res->start;
+> > +
+> > +     res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "l1tcm");
+> > +     if (res) {
+>
+> As far as I can tell the if() condition isn't needed since
+> platform_get_resource_byname() returns NULL on error and devm_ioremap_resource()
+> is capable of handling that condition.  As such the code to parse "l1tcm" can be
+> the same as what is done for "sram".
 
-On 1/6/21 5:27 PM, Mathieu Poirier wrote:
-> On Wed, Dec 16, 2020 at 05:52:34PM +0100, Grzegorz Jaszczyk wrote:
->> Hi All,
->>
->> The Programmable Real-Time Unit and Industrial Communication Subsystem
->> (PRU-ICSS or simply PRUSS) on various TI SoCs consists of dual 32-bit
->> RISC cores (Programmable Real-Time Units, or PRUs) for program execution.
->>
->> There are 3 foundation components for PRUSS subsystem: the PRUSS platform
->> driver, the PRUSS INTC driver and the PRUSS remoteproc driver. All were
->> already merged and can be found under:
->> 1) drivers/soc/ti/pruss.c
->>    Documentation/devicetree/bindings/soc/ti/ti,pruss.yaml
->> 2) drivers/irqchip/irq-pruss-intc.c
->>    Documentation/devicetree/bindings/interrupt-controller/ti,pruss-intc.yaml
->> 3) drivers/remoteproc/pru_rproc.c
->>    Documentation/devicetree/bindings/remoteproc/ti,pru-rproc.yaml
->>
->> The programmable nature of the PRUs provide flexibility to implement custom
->> peripheral interfaces, fast real-time responses, or specialized data handling.
->> Example of a PRU consumer drivers will be:
->>   - Software UART over PRUSS
->>   - PRU-ICSS Ethernet EMAC
->>
->> In order to make usage of common PRU resources and allow the consumer drivers to
->> configure the PRU hardware for specific usage the PRU API is introduced.
->>
->> Patch #3 of this series depends on one not merged remteproc related patch [1].
->>
->> Please see the individual patches for exact changes in each patch, following is
->> the only change from v1:
->>  - Change the 'prus' property name to 'ti,prus' as suggested by Rob Herring,
->>  which influences patch #1 and patch #2
->>
->> [1] https://patchwork.kernel.org/project/linux-remoteproc/patch/20201121030156.22857-3-s-anna@ti.com/
->>
->> Best regards,
->> Grzegorz
->>
->> Roger Quadros (1):
->>   remoteproc: pru: Add pru_rproc_set_ctable() function
->>
->> Suman Anna (2):
->>   dt-bindings: remoteproc: Add PRU consumer bindings
->>   remoteproc: pru: Deny rproc sysfs ops for PRU client driven boots
->>
->> Tero Kristo (2):
->>   remoteproc: pru: Add APIs to get and put the PRU cores
->>   remoteproc: pru: Configure firmware based on client setup
->>
->>  .../bindings/remoteproc/ti,pru-consumer.yaml  |  64 +++++
->>  drivers/remoteproc/pru_rproc.c                | 221 +++++++++++++++++-
->>  include/linux/pruss.h                         |  78 +++++++
-> 
-> This patchset is giving checkpatch.pl errors and as such will not go further
-> with this revision.
+The "l1tcm" memory region is optional.  The if() condition is for: if
+DTS doesn't provide the memory region, kernel can skip the code block.
 
-Yeah, I am aware of those. Greg has intentionally skipped the checkpatch
-warnings around ENOTSUPP, based on some similar discussion on a different patch,
-https://lkml.org/lkml/2020/11/10/764.
-
-Let me know if you prefer that we change these to EOPNOTSUPP.
-
-regards
-Suman
-
-> 
->>  3 files changed, 360 insertions(+), 3 deletions(-)
->>  create mode 100644 Documentation/devicetree/bindings/remoteproc/ti,pru-consumer.yaml
->>  create mode 100644 include/linux/pruss.h
->>
->> -- 
->> 2.29.0
->>
-
+>
+> With the above:
+>
+> Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+>
+> > +             scp->l1tcm_base = devm_ioremap_resource(dev, res);
+> > +             if (IS_ERR((__force void *)scp->l1tcm_base)) {
+> > +                     dev_err(dev, "Failed to parse and map l1tcm memory\n");
+> > +                     ret = PTR_ERR((__force void *)scp->l1tcm_base);
+> > +                     goto free_rproc;
+> > +             }
+> > +             scp->l1tcm_size = resource_size(res);
+> > +             scp->l1tcm_phys = res->start;
+> > +     }
