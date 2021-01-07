@@ -5,63 +5,63 @@ X-Spam-Level:
 X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53FD2C433E9
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  7 Jan 2021 17:54:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25846C433E6
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  7 Jan 2021 18:03:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 12089233FD
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  7 Jan 2021 17:54:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D540323435
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  7 Jan 2021 18:03:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728149AbhAGRyx (ORCPT
+        id S1726406AbhAGSDV (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 7 Jan 2021 12:54:53 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60212 "EHLO
+        Thu, 7 Jan 2021 13:03:21 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33338 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728963AbhAGRyw (ORCPT
+        with ESMTP id S1726326AbhAGSDU (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 7 Jan 2021 12:54:52 -0500
-Received: from mail-pg1-x52a.google.com (mail-pg1-x52a.google.com [IPv6:2607:f8b0:4864:20::52a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2B5F0C0612FB
-        for <linux-remoteproc@vger.kernel.org>; Thu,  7 Jan 2021 09:54:07 -0800 (PST)
-Received: by mail-pg1-x52a.google.com with SMTP id n10so5433337pgl.10
-        for <linux-remoteproc@vger.kernel.org>; Thu, 07 Jan 2021 09:54:07 -0800 (PST)
+        Thu, 7 Jan 2021 13:03:20 -0500
+Received: from mail-ot1-x334.google.com (mail-ot1-x334.google.com [IPv6:2607:f8b0:4864:20::334])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A0ADDC0612F6
+        for <linux-remoteproc@vger.kernel.org>; Thu,  7 Jan 2021 10:02:40 -0800 (PST)
+Received: by mail-ot1-x334.google.com with SMTP id a109so7136107otc.1
+        for <linux-remoteproc@vger.kernel.org>; Thu, 07 Jan 2021 10:02:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=IWDaWvFgIj6PDvmAQcUMKtpRMVpX3sfMWCsGoHCRRMU=;
-        b=zQLv9ng9eOHhK1e/h86+a9yh/LgrUGqObWfOKQ/BUlm1mbjrcEhbhfEibCjnX29o1t
-         ttatKOq6oj/9QocQzsB5mfszuFViFwv1Jntdk6CaNo8ow8jS7r4Ofts2jdkZlddlsw7m
-         1XF3MEUE0pEOCFwYwfZtWgXTGprOvTMRP5yS+7qRfM9nRFqpQDVW5pdEQJOpvCJX7dBe
-         pjlGfjFc7bBZfGXEZgJYiCER3PT7Y8UatpbnpcCqFTns9aP2AX+u5A0UdpC/i9SZ8k5W
-         m8OaSYPivBJnZLVzEOY4Y0+VadcxU5qOtTUkAhGBsoILN+ZhHeBRFcJYVhKMmILkkCHk
-         cvMA==
+        bh=nQ6Ok2qv3kfguUtTE5w7jI9nGycF4ZB8N3EBEUPDAj8=;
+        b=GwN3LcQd554wGKPgJZjH1S7VHyf+0nrBX7wmPn3JVgqimfAzoUPQLhWHotgOQe7ajF
+         6De7OUFvPfIMGE4dDVzXUKNrYKlmP9OyvJ8fg+47iV01+hf3T+w+TiwAtX3U8MmqxRZr
+         LI01MTRfxwQb5EfDfTtAyMCPzm8bkI/S4dL793hljuLJg1vRMtn9lFeX/geK8/3fKbr7
+         y8TEAdTkxnpOBjIjtoinf6V66xDyy4CXMzlh2NNGIqf4XUY3tONryrCf35zsvB2lfp2W
+         hiu+wCzN8jMKi7gWx391yzyIV6X3ZpdltVMG1arUX114ausrADiHORtjP1XY7AzorT6p
+         wVsg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=IWDaWvFgIj6PDvmAQcUMKtpRMVpX3sfMWCsGoHCRRMU=;
-        b=bJRXRQ/nFijfLbhdtvPHXAkK0IZXHvJtkIJM933+Cq5PDpmlmYie4YYVaboPQ7N/Bh
-         2iGW4f0c/6+02PlzJDKdsM1GyiB0CEt5nYJslkAwgtJ8L2R7uDWC+DPl9Cka5eIRVNeG
-         Gf7I+it6UpaV3AfV23kBGsCxctn2MiEwC+JxKLb3nCKfKeZq0+5lkD1HAeoUJQRfh8Fl
-         v+8aiKW3CavdMkahT8x84q1LbdVRyFZrPMUpqXDHf/Klv5IxAWPUHuQZPpZzWA48QPX6
-         Wbiw5670hFP1rwU0PMbs3PuWUI6Zx0Cs+aOVoA1nWIZQMBhFs4QLbpHL804q+OHPuXVX
-         hdtQ==
-X-Gm-Message-State: AOAM530LFwCi5huxhtRMS6FEscXENXfhBg+2ExBiiR9Mg2lUGiKti5Lt
-        KXtYGn2KTP9eEFt0J1XFSz41IA==
-X-Google-Smtp-Source: ABdhPJxCfrjEXiW33j6eEsIDc7kOPI8fuEpZoFk+csDEAoECb4+ggDNJWA6uJddxVoP2HXVARmd61Q==
-X-Received: by 2002:a62:fc4f:0:b029:19d:d060:27ca with SMTP id e76-20020a62fc4f0000b029019dd06027camr9499492pfh.66.1610042046636;
-        Thu, 07 Jan 2021 09:54:06 -0800 (PST)
-Received: from xps15 (S0106889e681aac74.cg.shawcable.net. [68.147.0.187])
-        by smtp.gmail.com with ESMTPSA id b12sm6364417pft.114.2021.01.07.09.54.05
+        bh=nQ6Ok2qv3kfguUtTE5w7jI9nGycF4ZB8N3EBEUPDAj8=;
+        b=VaM5E+wapCjrvOTsvIv2CPm3NOpnoWK4Ve05Qy82En28qJdNexPH+12QPYCwxA0Iu7
+         6reLBqjAufAFTLtW6ZEd5M8E8rqKEzEjoi89+20OjAVYBs0BSRXcYHiYGoJ7bqtdjW9t
+         Fb5g7+aTm+49e1NGaMHQhCga92vnz1XS1s40o3ezXLFYbmyV+dvcYooj1egp4A4JSDB5
+         2FyheogRTMoG7LukF7TkHLQRwpmU0J0zXvmifyMmSqvWQzxnLBOM4p8Bqb1ZU1SvEwcu
+         1335VDK+ymuIC+206t/oiaYRtQbxvf2DLb3MONZhzpIdj5FdPkEbez9Jr37XiMiJDf0d
+         W9tQ==
+X-Gm-Message-State: AOAM5310hT8zdOlFUzHl4Hy/+xKg9+VAA+XVQ81SxeQVm9damSMpU2KE
+        XtKGhJeRdkp177OdT/uee+KrKw==
+X-Google-Smtp-Source: ABdhPJw0C/3EMOrNHLY5ELywjkiY+brXvZR5p3DxYWimDV92myKzXZGMLQS8FRc3/VYO9pYkAA4nZQ==
+X-Received: by 2002:a05:6830:204b:: with SMTP id f11mr7177993otp.372.1610042559828;
+        Thu, 07 Jan 2021 10:02:39 -0800 (PST)
+Received: from builder.lan (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
+        by smtp.gmail.com with ESMTPSA id t186sm1438689oif.1.2021.01.07.10.02.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Jan 2021 09:54:05 -0800 (PST)
-Date:   Thu, 7 Jan 2021 10:54:04 -0700
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+        Thu, 07 Jan 2021 10:02:39 -0800 (PST)
+Date:   Thu, 7 Jan 2021 12:02:37 -0600
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
 To:     Tzung-Bi Shih <tzungbi@google.com>
-Cc:     Ohad Ben-Cohen <ohad@wizery.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
+Cc:     Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Ohad Ben-Cohen <ohad@wizery.com>,
         Rob Herring <robh+dt@kernel.org>,
         "open list:REMOTE PROCESSOR (REMOTEPROC) SUBSYSTEM" 
         <linux-remoteproc@vger.kernel.org>,
@@ -71,7 +71,7 @@ Cc:     Ohad Ben-Cohen <ohad@wizery.com>,
         "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
         <devicetree@vger.kernel.org>
 Subject: Re: [PATCH 2/2] remoteproc/mediatek: support L1TCM
-Message-ID: <20210107175404.GA33624@xps15>
+Message-ID: <X/dMvWdwVfnjsUXM@builder.lan>
 References: <20201214050521.845396-1-tzungbi@google.com>
  <20201214050521.845396-3-tzungbi@google.com>
  <20210106231513.GC9149@xps15>
@@ -84,7 +84,8 @@ Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Thu, Jan 07, 2021 at 09:50:21AM +0800, Tzung-Bi Shih wrote:
+On Wed 06 Jan 19:50 CST 2021, Tzung-Bi Shih wrote:
+
 > On Thu, Jan 7, 2021 at 7:15 AM Mathieu Poirier
 > <mathieu.poirier@linaro.org> wrote:
 > >
@@ -109,7 +110,17 @@ On Thu, Jan 07, 2021 at 09:50:21AM +0800, Tzung-Bi Shih wrote:
 > DTS doesn't provide the memory region, kernel can skip the code block.
 > 
 
-Very well - thanks for the clarification.
+People are actively looking for platform_get_resource_byname +
+devm_ioremap_resource() pairs to replace with
+devm_platform_ioremap_resource_byname(), so we're probably going to have
+someone try to patch this soon...
+
+So please change the pair to devm_platform_ioremap_resource_byname() and
+treat a returned -EINVAL as the memory isn't specified and other
+IS_ERR() as errors.
+
+Thanks,
+Bjorn
 
 > >
 > > With the above:
