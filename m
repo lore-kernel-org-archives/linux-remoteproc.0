@@ -2,144 +2,126 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68949C433E9
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  7 Jan 2021 09:11:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53FD2C433E9
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  7 Jan 2021 17:54:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 10F8723333
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  7 Jan 2021 09:11:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 12089233FD
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  7 Jan 2021 17:54:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726467AbhAGJLB (ORCPT
+        id S1728149AbhAGRyx (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 7 Jan 2021 04:11:01 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34686 "EHLO
+        Thu, 7 Jan 2021 12:54:53 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60212 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726171AbhAGJLA (ORCPT
+        with ESMTP id S1728963AbhAGRyw (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 7 Jan 2021 04:11:00 -0500
-Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com [IPv6:2a00:1450:4864:20::12e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 42CB2C0612F6
-        for <linux-remoteproc@vger.kernel.org>; Thu,  7 Jan 2021 01:10:20 -0800 (PST)
-Received: by mail-lf1-x12e.google.com with SMTP id m25so12851437lfc.11
-        for <linux-remoteproc@vger.kernel.org>; Thu, 07 Jan 2021 01:10:20 -0800 (PST)
+        Thu, 7 Jan 2021 12:54:52 -0500
+Received: from mail-pg1-x52a.google.com (mail-pg1-x52a.google.com [IPv6:2607:f8b0:4864:20::52a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2B5F0C0612FB
+        for <linux-remoteproc@vger.kernel.org>; Thu,  7 Jan 2021 09:54:07 -0800 (PST)
+Received: by mail-pg1-x52a.google.com with SMTP id n10so5433337pgl.10
+        for <linux-remoteproc@vger.kernel.org>; Thu, 07 Jan 2021 09:54:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=T+iZKNW1gmpT+HQqIiqmRRpQMcaG8pgogUVWa/pKYOM=;
-        b=cyz7QwbTfHcC+qnorIFVkv7DnbL/oyA5L+VJJAN8XWkNMg42oKdig8X5tU4xa7X7pN
-         01zspKzmEcVvu5fY2nzlSr3geA/q2812tr8Wz0sUieGMHhvg1aGrsz+m0J4b8Wmr2jr4
-         Bxuqd5E5gXQb8ARkFssKYAOK0W62M412pmNUBd9NwRQD04zf23syAxjzcLmFBod8VeLt
-         Wkczn2W4OJkxg0o6mQ3tRUOpKTABRCCUpHtxAiPQFjxJEJCf/WQ1QzYZHEZTgGgMtnu2
-         jNC0bNdR63+2S3cfHE4fDoxHLsYIWb3l6Ja+q5Vt8aM4kBs1TbyhYMIEDY91gB4GZfH3
-         2CvQ==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=IWDaWvFgIj6PDvmAQcUMKtpRMVpX3sfMWCsGoHCRRMU=;
+        b=zQLv9ng9eOHhK1e/h86+a9yh/LgrUGqObWfOKQ/BUlm1mbjrcEhbhfEibCjnX29o1t
+         ttatKOq6oj/9QocQzsB5mfszuFViFwv1Jntdk6CaNo8ow8jS7r4Ofts2jdkZlddlsw7m
+         1XF3MEUE0pEOCFwYwfZtWgXTGprOvTMRP5yS+7qRfM9nRFqpQDVW5pdEQJOpvCJX7dBe
+         pjlGfjFc7bBZfGXEZgJYiCER3PT7Y8UatpbnpcCqFTns9aP2AX+u5A0UdpC/i9SZ8k5W
+         m8OaSYPivBJnZLVzEOY4Y0+VadcxU5qOtTUkAhGBsoILN+ZhHeBRFcJYVhKMmILkkCHk
+         cvMA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=T+iZKNW1gmpT+HQqIiqmRRpQMcaG8pgogUVWa/pKYOM=;
-        b=bt1m4n3nX5G18FavPrhWEllRXddFHoORjAALTD50rpyhIXlTTajP1pVA6QMuGbBxMo
-         QmqTVxeHmX74ILhu0o3chvzbHIISQMQVvxkNxMrnvkxy9zHBAWwVNnrri3u0M7kZ/mKo
-         Wi6n9EL+cLxK8Yszzqfo8I/PpVew9/7qnPCV8mKjPx/ureWUs31BjxtJROx2v8UBFO2V
-         umuZrVVU0NlJVQq/RmQOnr6zWpnUMiWNB4MLtYnF6QOaEFIUXl0mnl+PkCAc2i6qDh+f
-         jxhkyzddN8USQnx5r3iHqhTeLFvWRDh0Qgae0g7abysQBqqKwZB84oEic169/XKozC8c
-         o8rQ==
-X-Gm-Message-State: AOAM530w1yhA0OBwuMwuM2I6EQLaVElc85tx39eCYuUsb5FsD5x0PT6K
-        VgOPSq2Un6KMRFPRFKgxfl9Nt51quBumnqMnv506WA==
-X-Google-Smtp-Source: ABdhPJz6FNuZKYGADUxlk9Tv8Rh/lJVu/2CmZBJO3UIrMaB/edLmB9ZlsVBcuBoQ7GbjgHsRrGXCE/gOnIldpK4OwK0=
-X-Received: by 2002:a19:495d:: with SMTP id l29mr3392190lfj.465.1610010618615;
- Thu, 07 Jan 2021 01:10:18 -0800 (PST)
-MIME-Version: 1.0
-References: <20210104230253.2805217-1-robh@kernel.org>
-In-Reply-To: <20210104230253.2805217-1-robh@kernel.org>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Thu, 7 Jan 2021 10:10:07 +0100
-Message-ID: <CACRpkdZVC8RE-DTes+p6g-1EAHxQWpu2u+sBCX2ei32cvaCrDA@mail.gmail.com>
-Subject: Re: [PATCH] dt-bindings: Add missing array size constraints
-To:     Rob Herring <robh@kernel.org>
-Cc:     "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Jens Axboe <axboe@kernel.dk>, Stephen Boyd <sboyd@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Marc Zyngier <maz@kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Sebastian Reichel <sre@kernel.org>,
-        Ohad Ben-Cohen <ohad@wizery.com>,
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=IWDaWvFgIj6PDvmAQcUMKtpRMVpX3sfMWCsGoHCRRMU=;
+        b=bJRXRQ/nFijfLbhdtvPHXAkK0IZXHvJtkIJM933+Cq5PDpmlmYie4YYVaboPQ7N/Bh
+         2iGW4f0c/6+02PlzJDKdsM1GyiB0CEt5nYJslkAwgtJ8L2R7uDWC+DPl9Cka5eIRVNeG
+         Gf7I+it6UpaV3AfV23kBGsCxctn2MiEwC+JxKLb3nCKfKeZq0+5lkD1HAeoUJQRfh8Fl
+         v+8aiKW3CavdMkahT8x84q1LbdVRyFZrPMUpqXDHf/Klv5IxAWPUHuQZPpZzWA48QPX6
+         Wbiw5670hFP1rwU0PMbs3PuWUI6Zx0Cs+aOVoA1nWIZQMBhFs4QLbpHL804q+OHPuXVX
+         hdtQ==
+X-Gm-Message-State: AOAM530LFwCi5huxhtRMS6FEscXENXfhBg+2ExBiiR9Mg2lUGiKti5Lt
+        KXtYGn2KTP9eEFt0J1XFSz41IA==
+X-Google-Smtp-Source: ABdhPJxCfrjEXiW33j6eEsIDc7kOPI8fuEpZoFk+csDEAoECb4+ggDNJWA6uJddxVoP2HXVARmd61Q==
+X-Received: by 2002:a62:fc4f:0:b029:19d:d060:27ca with SMTP id e76-20020a62fc4f0000b029019dd06027camr9499492pfh.66.1610042046636;
+        Thu, 07 Jan 2021 09:54:06 -0800 (PST)
+Received: from xps15 (S0106889e681aac74.cg.shawcable.net. [68.147.0.187])
+        by smtp.gmail.com with ESMTPSA id b12sm6364417pft.114.2021.01.07.09.54.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 07 Jan 2021 09:54:05 -0800 (PST)
+Date:   Thu, 7 Jan 2021 10:54:04 -0700
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+To:     Tzung-Bi Shih <tzungbi@google.com>
+Cc:     Ohad Ben-Cohen <ohad@wizery.com>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "open list:LIBATA SUBSYSTEM (Serial and Parallel ATA drivers)" 
-        <linux-ide@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
-        "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        linux-iio <linux-iio@vger.kernel.org>,
-        Linux Input <linux-input@vger.kernel.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        linux-mmc <linux-mmc@vger.kernel.org>,
-        netdev <netdev@vger.kernel.org>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        linux-remoteproc@vger.kernel.org,
-        linux-riscv <linux-riscv@lists.infradead.org>,
-        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
-        "moderated list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..." 
-        <alsa-devel@alsa-project.org>,
-        linux-spi <linux-spi@vger.kernel.org>,
-        linux-usb <linux-usb@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Rob Herring <robh+dt@kernel.org>,
+        "open list:REMOTE PROCESSOR (REMOTEPROC) SUBSYSTEM" 
+        <linux-remoteproc@vger.kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        "moderated list:ARM/Mediatek SoC support" 
+        <linux-mediatek@lists.infradead.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>
+Subject: Re: [PATCH 2/2] remoteproc/mediatek: support L1TCM
+Message-ID: <20210107175404.GA33624@xps15>
+References: <20201214050521.845396-1-tzungbi@google.com>
+ <20201214050521.845396-3-tzungbi@google.com>
+ <20210106231513.GC9149@xps15>
+ <CA+Px+wXEV9GDCMjR8inbQ89tNV9n7RedeAOGJL_yATmeCLjXJw@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CA+Px+wXEV9GDCMjR8inbQ89tNV9n7RedeAOGJL_yATmeCLjXJw@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Tue, Jan 5, 2021 at 12:03 AM Rob Herring <robh@kernel.org> wrote:
+On Thu, Jan 07, 2021 at 09:50:21AM +0800, Tzung-Bi Shih wrote:
+> On Thu, Jan 7, 2021 at 7:15 AM Mathieu Poirier
+> <mathieu.poirier@linaro.org> wrote:
+> >
+> > >  static void mt8183_scp_stop(struct mtk_scp *scp)
+> > >  {
+> > >       /* Disable SCP watchdog */
+> > > @@ -714,6 +749,19 @@ static int scp_probe(struct platform_device *pdev)
+> > >               goto free_rproc;
+> > >       }
+> > >       scp->sram_size = resource_size(res);
+> > > +     scp->sram_phys = res->start;
+> > > +
+> > > +     res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "l1tcm");
+> > > +     if (res) {
+> >
+> > As far as I can tell the if() condition isn't needed since
+> > platform_get_resource_byname() returns NULL on error and devm_ioremap_resource()
+> > is capable of handling that condition.  As such the code to parse "l1tcm" can be
+> > the same as what is done for "sram".
+> 
+> The "l1tcm" memory region is optional.  The if() condition is for: if
+> DTS doesn't provide the memory region, kernel can skip the code block.
+> 
 
-> DT properties which can have multiple entries need to specify what the
-> entries are and define how many entries there can be. In the case of
-> only a single entry, just 'maxItems: 1' is sufficient.
->
-> Add the missing entry constraints. These were found with a modified
-> meta-schema. Unfortunately, there are a few cases where the size
-> constraints are not defined such as common bindings, so the meta-schema
-> can't be part of the normal checks.
->
-> Cc: Jens Axboe <axboe@kernel.dk>
-> Cc: Stephen Boyd <sboyd@kernel.org>
-> Cc: Thierry Reding <thierry.reding@gmail.com>
-> Cc: MyungJoo Ham <myungjoo.ham@samsung.com>
-> Cc: Chanwoo Choi <cw00.choi@samsung.com>
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> Cc: Jonathan Cameron <jic23@kernel.org>
-> Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Marc Zyngier <maz@kernel.org>
-> Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
-> Cc: Chen-Yu Tsai <wens@csie.org>
-> Cc: Ulf Hansson <ulf.hansson@linaro.org>
-> Cc: "David S. Miller" <davem@davemloft.net>
-> Cc: Jakub Kicinski <kuba@kernel.org>
-> Cc: Sebastian Reichel <sre@kernel.org>
-> Cc: Ohad Ben-Cohen <ohad@wizery.com>
-> Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Signed-off-by: Rob Herring <robh@kernel.org>
+Very well - thanks for the clarification.
 
-This is good. The stricter the better.
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-
-Yours,
-Linus Walleij
+> >
+> > With the above:
+> >
+> > Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+> >
+> > > +             scp->l1tcm_base = devm_ioremap_resource(dev, res);
+> > > +             if (IS_ERR((__force void *)scp->l1tcm_base)) {
+> > > +                     dev_err(dev, "Failed to parse and map l1tcm memory\n");
+> > > +                     ret = PTR_ERR((__force void *)scp->l1tcm_base);
+> > > +                     goto free_rproc;
+> > > +             }
+> > > +             scp->l1tcm_size = resource_size(res);
+> > > +             scp->l1tcm_phys = res->start;
+> > > +     }
