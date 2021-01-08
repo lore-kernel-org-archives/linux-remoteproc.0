@@ -7,211 +7,122 @@ X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94D1CC433DB
-	for <linux-remoteproc@archiver.kernel.org>; Fri,  8 Jan 2021 00:22:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB55BC433DB
+	for <linux-remoteproc@archiver.kernel.org>; Fri,  8 Jan 2021 00:26:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 56DAE23715
-	for <linux-remoteproc@archiver.kernel.org>; Fri,  8 Jan 2021 00:22:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6CD8C236F9
+	for <linux-remoteproc@archiver.kernel.org>; Fri,  8 Jan 2021 00:26:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729678AbhAHAW0 (ORCPT
+        id S1729466AbhAHA0K (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 7 Jan 2021 19:22:26 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36532 "EHLO
+        Thu, 7 Jan 2021 19:26:10 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37136 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729677AbhAHAWZ (ORCPT
+        with ESMTP id S1728416AbhAHA0J (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 7 Jan 2021 19:22:25 -0500
-Received: from mail-oi1-x236.google.com (mail-oi1-x236.google.com [IPv6:2607:f8b0:4864:20::236])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DE9C2C0612F4
-        for <linux-remoteproc@vger.kernel.org>; Thu,  7 Jan 2021 16:21:22 -0800 (PST)
-Received: by mail-oi1-x236.google.com with SMTP id d203so9547985oia.0
-        for <linux-remoteproc@vger.kernel.org>; Thu, 07 Jan 2021 16:21:22 -0800 (PST)
+        Thu, 7 Jan 2021 19:26:09 -0500
+Received: from mail-oi1-x229.google.com (mail-oi1-x229.google.com [IPv6:2607:f8b0:4864:20::229])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4679BC0612F5
+        for <linux-remoteproc@vger.kernel.org>; Thu,  7 Jan 2021 16:25:29 -0800 (PST)
+Received: by mail-oi1-x229.google.com with SMTP id l200so9470335oig.9
+        for <linux-remoteproc@vger.kernel.org>; Thu, 07 Jan 2021 16:25:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=jh1NDgjNWRjA8Aq13pnXKbiZVjDJiJx85Umgevs5PU8=;
-        b=d1V+5OfpVMa6VjIwSL+c3ajAIHJgDuVGtVjNFITMZ2Xg3kTlzRaUcnIOe8wIcC6dGn
-         VrRzsl+SH8sTTPjAT/pzlCpJ7HZ1uO5ttZRxD/9xqAvh151mqDpxV2/mnrPxBgt38lCu
-         2v2J4pnbWCXYEyUsKZLy8EAISzeXY+Tk3XsnnowfP3YCa4MMBwwLpdLPrlBLiDGn1vzi
-         SJG3qtNnL2m99r+e+DS/NVD5CAnUPe//mrO7cc0U9sTJPICcdQ32Q5JgNwSZIj2jKdFF
-         cjbV9Y14gKj/66nyfJoUVP6556sT8trSlDVJnQ6IfnyawQrYcf72UXNBjGrmQIXvqRlE
-         0lkA==
+        bh=oGrTk/yeWTnA31Jo270+ll4E9/49b7ZKp7EyAwvneEU=;
+        b=JQnuGnxvD3JKHHFEOGkLTIbvO3B6yCKNSW3xHDtM8s96yHFXZ7FF7o97pYgpIFkCq1
+         kFLW4qOp6ubT+Cww0VuN+E4BzaWTr+WXK5UL3bCOx3PteGnqshU9kyAYkrf84sZ1IFRc
+         WKrNkzZ7tnbgwn+fMwKpEiuSt86kijf0WG+p5w+cKIljzRsDHncnxhrqWNE6G23agUv/
+         JLspzH0S2GYzv2YFzfj5bAbyxgwGWJ+CZ64IsciEE2E7JljFBTdpj0xrbWU7m7GeJg+a
+         0cl3BwXr+dGZ2F2998OUcj7CzVhLmWoWoqcpZUYDGzzMSsONRQDyZKyegxA3PxzuUl5d
+         Qktw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=jh1NDgjNWRjA8Aq13pnXKbiZVjDJiJx85Umgevs5PU8=;
-        b=D1DLBWMABkcYysuyeneadzpqtSiEEuDM3ftHpi528N2q9yaOlzFXcnwC16jmPA9XT6
-         pve3V9i0ymdTm3jZnDNZsxlt5qAGWGISroFy7cZT/jlQ2069xR1hmq3Uu88Iz6RCtixM
-         bYKljAGFeAQOcOHRzd6N1Ip5gjAd6WVFKPVrbzA9QPMnRavBpr4q+rHrt6KytwFlCnK/
-         BdULl0j9sy+3gxVxC40iCHwrvH/knnr8iZDMzoiOuKmNgNu3hS/7hdoJB+9pem+yyGzi
-         3U2AEzBoyauf5E/z4W6diI+K/G7W6xR089cfZYYd89uheJVkdPCIR1+r/xWjNpYeegue
-         VLWA==
-X-Gm-Message-State: AOAM532i/tmBLRyKhsh2lK6hykpA0+vieEREGJ/Li66HyF2qa7I4/TKN
-        Rm/F/OTc0GrG0OJMsqIs9+izZg==
-X-Google-Smtp-Source: ABdhPJxsgt0CDcHNxBQpHrl+MTl1CCja/p2uRaji3iF5aJ4YtKMaIRd4Eu0hqeG4qXijEwNS/A7F8w==
-X-Received: by 2002:aca:3dd7:: with SMTP id k206mr759727oia.134.1610065282324;
-        Thu, 07 Jan 2021 16:21:22 -0800 (PST)
+        bh=oGrTk/yeWTnA31Jo270+ll4E9/49b7ZKp7EyAwvneEU=;
+        b=Hl1CT1JcMWDi9At6/ojuhxJXhtln8Y90PtIy6Q1RxBzV/2aQ1Xx4YUSK/ThQ3Qb4/P
+         mFYYILxSYgAn9j8qeCjj13p6dQSsX7O1IwZXiOIISyRamq8xABwepSzcHIPvHUEc8qgr
+         CeJGUyIY2MZj4MRa48KfNHE0q4yS87OZyyD2yMSCFwOzuUq3BVeQzvHVUC7n2KVrreTR
+         RJTV9/FmBz9aScDiY4o0iyBZu6LiGCFfkAYhUJ3V+4FFnvW1RWJ+LqTk1meXbPMKoZpD
+         Mw3k75k3F3rp9awZu+Ax5pHL1d7m/y+8SQeh2W3heT0xm9xOFJ2RYNA43wTaDyWdtFPB
+         G/jA==
+X-Gm-Message-State: AOAM530m7bDyDVhN6ieYt5eS9w+hVTG0cZpoiDxBmTu3YU7yGGv25xGO
+        Kcw+bYzPLMlnrnfzXn96cgIWiw==
+X-Google-Smtp-Source: ABdhPJz61kjLr8UxAKdXVaYNqcpc2qFRGRYSF7r8UUIqv49dlBUOXcEScowP73at/yGrjt88LY8QWw==
+X-Received: by 2002:aca:2302:: with SMTP id e2mr752952oie.94.1610065528628;
+        Thu, 07 Jan 2021 16:25:28 -0800 (PST)
 Received: from builder.lan (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
-        by smtp.gmail.com with ESMTPSA id g12sm1440706otg.10.2021.01.07.16.21.21
+        by smtp.gmail.com with ESMTPSA id j10sm1474227otn.63.2021.01.07.16.25.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Jan 2021 16:21:21 -0800 (PST)
-Date:   Thu, 7 Jan 2021 18:21:20 -0600
+        Thu, 07 Jan 2021 16:25:27 -0800 (PST)
+Date:   Thu, 7 Jan 2021 18:25:25 -0600
 From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Siddharth Gupta <sidgup@codeaurora.org>
-Cc:     agross@kernel.org, ohad@wizery.com, linux-arm-msm@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        psodagud@codeaurora.org, rishabhb@codeaurora.org
-Subject: Re: [PATCH 3/3] soc: qcom: mdt_loader: Read hash from firmware blob
-Message-ID: <X/elgO+66ibjeL+3@builder.lan>
-References: <1609968211-7579-1-git-send-email-sidgup@codeaurora.org>
- <1609968211-7579-4-git-send-email-sidgup@codeaurora.org>
+To:     Alex Elder <elder@linaro.org>
+Cc:     davem@davemloft.net, kuba@kernel.org, agross@kernel.org,
+        ohad@wizery.com, evgreen@chromium.org, cpratapa@codeaurora.org,
+        subashab@codeaurora.org, netdev@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next 4/4] net: ipa: support COMPILE_TEST
+Message-ID: <X/emdfMiot199HR7@builder.lan>
+References: <20210107233404.17030-1-elder@linaro.org>
+ <20210107233404.17030-5-elder@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1609968211-7579-4-git-send-email-sidgup@codeaurora.org>
+In-Reply-To: <20210107233404.17030-5-elder@linaro.org>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Wed 06 Jan 15:23 CST 2021, Siddharth Gupta wrote:
+On Thu 07 Jan 17:34 CST 2021, Alex Elder wrote:
 
-> Since the split elf blobs will always contain the hash segment, we rely on
-
-I think it will sounds better if we add "should" in "we should rely on..."
-
-> the blob file to get the hash rather than assume that it will be present in
-> the mdt file. This change uses the hash index to read the appropriate elf
-> blob to get the hash segment.
+> Arrange for the IPA driver to be built when COMPILE_TEST is enabled.
 > 
-> Signed-off-by: Siddharth Gupta <sidgup@codeaurora.org>
-> ---
->  drivers/remoteproc/qcom_q6v5_mss.c  |  4 ++--
->  drivers/soc/qcom/mdt_loader.c       | 38 +++++++++++++++++++++++++++----------
->  include/linux/soc/qcom/mdt_loader.h |  3 ++-
->  3 files changed, 32 insertions(+), 13 deletions(-)
+> Update the help text to reflect that we support two Qualcomm SoCs.
 > 
-> diff --git a/drivers/remoteproc/qcom_q6v5_mss.c b/drivers/remoteproc/qcom_q6v5_mss.c
-> index 66106ba..74c0229 100644
-> --- a/drivers/remoteproc/qcom_q6v5_mss.c
-> +++ b/drivers/remoteproc/qcom_q6v5_mss.c
-> @@ -4,7 +4,7 @@
->   *
->   * Copyright (C) 2016 Linaro Ltd.
->   * Copyright (C) 2014 Sony Mobile Communications AB
-> - * Copyright (c) 2012-2013, The Linux Foundation. All rights reserved.
-> + * Copyright (c) 2012-2013, 2020 The Linux Foundation. All rights reserved.
->   */
->  
->  #include <linux/clk.h>
-> @@ -828,7 +828,7 @@ static int q6v5_mpss_init_image(struct q6v5 *qproc, const struct firmware *fw)
->  	void *ptr;
->  	int ret;
->  
-> -	metadata = qcom_mdt_read_metadata(fw, &size);
-> +	metadata = qcom_mdt_read_metadata(qproc->dev, fw, qproc->hexagon_mdt_image, &size);
->  	if (IS_ERR(metadata))
->  		return PTR_ERR(metadata);
->  
-> diff --git a/drivers/soc/qcom/mdt_loader.c b/drivers/soc/qcom/mdt_loader.c
-> index c9bbd8c..6876c0b 100644
-> --- a/drivers/soc/qcom/mdt_loader.c
-> +++ b/drivers/soc/qcom/mdt_loader.c
-> @@ -103,15 +103,18 @@ EXPORT_SYMBOL_GPL(qcom_mdt_get_size);
->   *
->   * Return: pointer to data, or ERR_PTR()
->   */
-> -void *qcom_mdt_read_metadata(const struct firmware *fw, size_t *data_len)
-> +void *qcom_mdt_read_metadata(struct device *dev, const struct firmware *fw, const char *firmware,
-> +			     size_t *data_len)
->  {
->  	const struct elf32_phdr *phdrs;
->  	const struct elf32_hdr *ehdr;
-> -	size_t hash_offset;
-> +	const struct firmware *seg_fw;
->  	size_t hash_index;
->  	size_t hash_size;
->  	size_t ehdr_size;
-> +	char *fw_name;
->  	void *data;
-> +	int ret;
->  
->  	ehdr = (struct elf32_hdr *)fw->data;
->  	phdrs = (struct elf32_phdr *)(ehdr + 1);
-> @@ -137,14 +140,29 @@ void *qcom_mdt_read_metadata(const struct firmware *fw, size_t *data_len)
->  	if (!data)
->  		return ERR_PTR(-ENOMEM);
->  
-> -	/* Is the header and hash already packed */
-> -	if (qcom_mdt_bins_are_split(fw))
-> -		hash_offset = phdrs[0].p_filesz;
-> -	else
-> -		hash_offset = phdrs[hash_index].p_offset;
-> -
-> +	/* copy elf header */
->  	memcpy(data, fw->data, ehdr_size);
-> -	memcpy(data + ehdr_size, fw->data + hash_offset, hash_size);
-> +
+> Suggested-by: Jakub Kicinski <kuba@kernel.org>
+> Signed-off-by: Alex Elder <elder@linaro.org>
 
-This seems to duplicates parts of the loop in __qcom_mdt_load(), how
-about breaking this out to a separate
-
-static int mdt_load_segment(struct device *dev, const struct firmware *fw,
-			    int idx, void *buf, size_t len, bool is_split)
-
-Which either just memcpy from @fw or does the filename and loading
-dance, based on @is_split?
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 
 Regards,
 Bjorn
 
-> +	if (qcom_mdt_bins_are_split(fw)) {
-> +		fw_name = kstrdup(firmware, GFP_KERNEL);
-> +		if (!fw_name) {
-> +			kfree(data);
-> +			return ERR_PTR(-ENOMEM);
-> +		}
-> +		snprintf(fw_name + strlen(fw_name) - 3, 4, "b%02d", hash_index);
-> +
-> +		ret = request_firmware_into_buf(&seg_fw, fw_name, dev, data + ehdr_size, hash_size);
-> +		kfree(fw_name);
-> +
-> +		if (ret) {
-> +			kfree(data);
-> +			return ERR_PTR(ret);
-> +		}
-> +
-> +		release_firmware(seg_fw);
-> +	} else {
-> +		memcpy(data + ehdr_size, fw->data + phdrs[hash_index].p_offset, hash_size);
-> +	}
+> ---
+>  drivers/net/ipa/Kconfig | 10 ++++++----
+>  1 file changed, 6 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/net/ipa/Kconfig b/drivers/net/ipa/Kconfig
+> index 9f0d2a93379c5..10a0e041ee775 100644
+> --- a/drivers/net/ipa/Kconfig
+> +++ b/drivers/net/ipa/Kconfig
+> @@ -1,9 +1,10 @@
+>  config QCOM_IPA
+>  	tristate "Qualcomm IPA support"
+> -	depends on ARCH_QCOM && 64BIT && NET
+> -	depends on QCOM_Q6V5_MSS
+> +	depends on 64BIT && NET
+> +	depends on ARCH_QCOM || COMPILE_TEST
+> +	depends on QCOM_RPROC_COMMON || (QCOM_RPROC_COMMON=n && COMPILE_TEST)
+> +	select QCOM_MDT_LOADER if ARCH_QCOM
+>  	select QCOM_QMI_HELPERS
+> -	select QCOM_MDT_LOADER
+>  	help
+>  	  Choose Y or M here to include support for the Qualcomm
+>  	  IP Accelerator (IPA), a hardware block present in some
+> @@ -11,7 +12,8 @@ config QCOM_IPA
+>  	  that is capable of generic hardware handling of IP packets,
+>  	  including routing, filtering, and NAT.  Currently the IPA
+>  	  driver supports only basic transport of network traffic
+> -	  between the AP and modem, on the Qualcomm SDM845 SoC.
+> +	  between the AP and modem, on the Qualcomm SDM845 and SC7180
+> +	  SoCs.
 >  
->  	*data_len = ehdr_size + hash_size;
->  
-> @@ -191,7 +209,7 @@ static int __qcom_mdt_load(struct device *dev, const struct firmware *fw,
->  		return -ENOMEM;
->  
->  	if (pas_init) {
-> -		metadata = qcom_mdt_read_metadata(fw, &metadata_len);
-> +		metadata = qcom_mdt_read_metadata(dev, fw, firmware, &metadata_len);
->  		if (IS_ERR(metadata)) {
->  			ret = PTR_ERR(metadata);
->  			goto out;
-> diff --git a/include/linux/soc/qcom/mdt_loader.h b/include/linux/soc/qcom/mdt_loader.h
-> index e600bae..04ba5e8 100644
-> --- a/include/linux/soc/qcom/mdt_loader.h
-> +++ b/include/linux/soc/qcom/mdt_loader.h
-> @@ -21,6 +21,7 @@ int qcom_mdt_load_no_init(struct device *dev, const struct firmware *fw,
->  			  const char *fw_name, int pas_id, void *mem_region,
->  			  phys_addr_t mem_phys, size_t mem_size,
->  			  phys_addr_t *reloc_base);
-> -void *qcom_mdt_read_metadata(const struct firmware *fw, size_t *data_len);
-> +void *qcom_mdt_read_metadata(struct device *dev, const struct firmware *fw, const char *firmware,
-> +			     size_t *data_len);
->  
->  #endif
+>  	  Note that if selected, the selection type must match that
+>  	  of QCOM_Q6V5_COMMON (Y or M).
 > -- 
-> Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-> a Linux Foundation Collaborative Project
+> 2.20.1
 > 
