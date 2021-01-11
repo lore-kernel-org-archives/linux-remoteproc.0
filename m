@@ -5,59 +5,59 @@ X-Spam-Level:
 X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0EC1C433DB
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 11 Jan 2021 20:36:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C97BC4332D
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 11 Jan 2021 20:45:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8492522CAF
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 11 Jan 2021 20:36:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C944A22CAD
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 11 Jan 2021 20:45:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731317AbhAKUgK (ORCPT
+        id S2391135AbhAKUpb (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 11 Jan 2021 15:36:10 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60280 "EHLO
+        Mon, 11 Jan 2021 15:45:31 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34044 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726405AbhAKUgJ (ORCPT
+        with ESMTP id S2391131AbhAKUp1 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 11 Jan 2021 15:36:09 -0500
-Received: from mail-pg1-x52f.google.com (mail-pg1-x52f.google.com [IPv6:2607:f8b0:4864:20::52f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E716EC0617A2
-        for <linux-remoteproc@vger.kernel.org>; Mon, 11 Jan 2021 12:35:28 -0800 (PST)
-Received: by mail-pg1-x52f.google.com with SMTP id p18so405019pgm.11
-        for <linux-remoteproc@vger.kernel.org>; Mon, 11 Jan 2021 12:35:28 -0800 (PST)
+        Mon, 11 Jan 2021 15:45:27 -0500
+Received: from mail-pg1-x531.google.com (mail-pg1-x531.google.com [IPv6:2607:f8b0:4864:20::531])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 336C2C061795
+        for <linux-remoteproc@vger.kernel.org>; Mon, 11 Jan 2021 12:44:47 -0800 (PST)
+Received: by mail-pg1-x531.google.com with SMTP id q7so438562pgm.5
+        for <linux-remoteproc@vger.kernel.org>; Mon, 11 Jan 2021 12:44:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
         bh=htaXQZSG0QXBfUKmA/4BqSl5HPobFjCxlJW4yk2E5ns=;
-        b=yVqF7D9PXxJAUy23VKH2SpkjDpvitkAQ1NY3aYG76avArTGssg+rOGCA4fXn6QHxm0
-         1DvfF8tEu1vx7/KPfPvmcId0e5K2doyNffVelPnul5R8nIacp6+/JXhhSDFDz2w7uhDa
-         mekTvarZZW9rLcOsiwEZY6Ec92/scs2ym/GaUG7LZDsM3klU6ip/+fsZ81mURynYbnfm
-         23WTHIQ3tEy7pRMiTGck3Iim+i1zRncYgtWcFlQ0u6m0/4NBffSa1ZKAeXKVsXiguDrm
-         d5qG+oqQCiJNuLa58kKocYk2Ewo4zCMCfhXmnQTS5FIyVsD6fqy0VdrIm/FjYmyWEb6D
-         Q5Sw==
+        b=O3N5mg9bdze7Ib2ynKPcRncsWq4DeRqKXai+5tqZT6vC3AXXoCwYrSPHkNTvmet9Iq
+         1WFZ43d9O+L1KRgshF4eGm2hf5cpBZgHk7qGEIfG/CXt6BCo+vY6EwTxjCAN+FvqYfuM
+         Sxp4IgTW+sJ7kjHDfPTk1AJ8WAg8K1bh0WZkmIHkjYnaWIx6i0aSbmEvZlupHGjFkpJm
+         RftTtJJYX1EA4PPw4yim0yhw/Wo4oNe/NSLtFNGDz+g/MGPLPdKfNObrl0XGK1AqP0TS
+         ZqKkdtAbmfw58yoMaAVNb0e2H3/eMRig8foXXdm4A1TSiwbm5Q+ZY7DYBu0rGAdVzXUN
+         zNAw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
         bh=htaXQZSG0QXBfUKmA/4BqSl5HPobFjCxlJW4yk2E5ns=;
-        b=B3DyQnGAEhl40Dvx7iCVHRLFX2p7Pkx1DKjMslh7ZGDUf0hQAMwr3INPSF1S4VlmGA
-         UppxHxi99atZ3aSIwQ/r5I4v79bJ+yTcuqW3rF53k6XXLUpYkODR1HbdoaOjRiZyfmr+
-         7yi+MzpA76ppta8WaBkxKAlme63veZQbID6Sgu2QUnBjYWFS5AuYCoucMjYCcLLVAjLU
-         BWqc0mY+wGS3p6c7Zcp52Juaqiatx8Gi+qpvIyuZbOGhaxpsR7iAD7bVvYJMLpZEYKej
-         dknMvH9RURMaAMfBnOM14ROQpYbaLfV49PsNJlILRXTdj5rx9KVQpQZjwhIYsNcNA9km
-         zMFQ==
-X-Gm-Message-State: AOAM533i4VEO2ShqaVQrL9SShMem/Zy7L9RDKVRPDyJGOscNvOxWZHIC
-        ntQq0T0Bsf18Z7HGgytgL7sMfg==
-X-Google-Smtp-Source: ABdhPJyDzUPDWrOXZop7ttJxWaDIJwqu/yOCE8pdt99yLt+u0R1+06rNosUhfC7KvCFTWf1cDG7Dcw==
-X-Received: by 2002:a63:4746:: with SMTP id w6mr1201346pgk.377.1610397328503;
-        Mon, 11 Jan 2021 12:35:28 -0800 (PST)
+        b=twEl6gSq/GBeweGseQraYTBFzytsZNeheAW5lVM/gBLuDiOVlji/bndNhfQzw3eh10
+         t2kPB9DbBMbEj1zng4YdMm6jpnzNR3vIvmsq/JQRUkDVxTUmwmsRce64EsNZdP9FPTps
+         G+ZlYG/tpvBZD1Wyl7qWABTnBuODHU36RD17rj12AJpzkckCUXJlWymhMq9nS/jij5x0
+         /D28TSfbq7IFIRJTTm61/CwVi4vNINPPWpts9zto9q4C3MmnCYG2sIpX4Qbv9rlOeTZY
+         BDuAHZ1TCDNS/fzFs0Wxn7+EDQ6iUQ7YAxojZev4YjEnkR+8EtZrRUjPtJNekdPTKh4Q
+         z2Jg==
+X-Gm-Message-State: AOAM532QdLcfGXQDcZ8fV+z2DPPMTnfnm4/0HtCtzknpeoYH7iomsKPr
+        f9O1Run3PcKHxb3xImKosZJ0o9vek2Nsxw==
+X-Google-Smtp-Source: ABdhPJzKPAhhrZdX5YzDSRv6fxW723f9nT86WDJoB9QWXDuU2iIS1gUxmnqTlT9GlzyBHBi4S76Dtg==
+X-Received: by 2002:a62:c312:0:b029:1a9:19c7:a8e with SMTP id v18-20020a62c3120000b02901a919c70a8emr1143762pfg.74.1610397886774;
+        Mon, 11 Jan 2021 12:44:46 -0800 (PST)
 Received: from xps15 (S0106889e681aac74.cg.shawcable.net. [68.147.0.187])
-        by smtp.gmail.com with ESMTPSA id b10sm611038pgh.15.2021.01.11.12.35.27
+        by smtp.gmail.com with ESMTPSA id b13sm499319pfi.162.2021.01.11.12.44.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Jan 2021 12:35:27 -0800 (PST)
-Date:   Mon, 11 Jan 2021 13:35:25 -0700
+        Mon, 11 Jan 2021 12:44:46 -0800 (PST)
+Date:   Mon, 11 Jan 2021 13:44:44 -0700
 From:   Mathieu Poirier <mathieu.poirier@linaro.org>
 To:     peng.fan@nxp.com
 Cc:     ohad@wizery.com, bjorn.andersson@linaro.org,
@@ -68,7 +68,7 @@ Cc:     ohad@wizery.com, bjorn.andersson@linaro.org,
         paul@crapouillou.net, matthias.bgg@gmail.com, agross@kernel.org,
         patrice.chotard@st.com
 Subject: Re: [PATCH V5 3/8] remoteproc: imx_rproc: correct err message
-Message-ID: <20210111203525.GF144935@xps15>
+Message-ID: <20210111204444.GG144935@xps15>
 References: <20201229033019.25899-1-peng.fan@nxp.com>
  <20201229033019.25899-4-peng.fan@nxp.com>
 MIME-Version: 1.0
