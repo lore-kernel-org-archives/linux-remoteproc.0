@@ -5,49 +5,49 @@ X-Spam-Level:
 X-Spam-Status: No, score=-18.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,MSGID_FROM_MTA_HEADER,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7FA8C433E0
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 12 Jan 2021 09:51:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D4DDC433DB
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 12 Jan 2021 09:51:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B655223100
+	by mail.kernel.org (Postfix) with ESMTP id EED0023102
 	for <linux-remoteproc@archiver.kernel.org>; Tue, 12 Jan 2021 09:51:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391382AbhALJu4 (ORCPT
+        id S2391470AbhALJvQ (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 12 Jan 2021 04:50:56 -0500
-Received: from mail-eopbgr10053.outbound.protection.outlook.com ([40.107.1.53]:59779
-        "EHLO EUR02-HE1-obe.outbound.protection.outlook.com"
+        Tue, 12 Jan 2021 04:51:16 -0500
+Received: from mail-eopbgr70085.outbound.protection.outlook.com ([40.107.7.85]:13701
+        "EHLO EUR04-HE1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2387627AbhALJux (ORCPT
+        id S2391469AbhALJvQ (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 12 Jan 2021 04:50:53 -0500
+        Tue, 12 Jan 2021 04:51:16 -0500
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=YKRFtr4mhjHYPloT56+MZefuCoTG26EMLQmDxmyUUFsevQfayzitEqcW7p1FFj0dSg41ck0RHs4XskSyocVJ48Hp5f5c8OU8QxUstEa15t/WVrwnPnxcpvuFWm/StXbMBYJrxi07GWA3Ox0pcVELKIYpm/e1ki7rqdRXVSvXTTw/o0dGC5mEp5fx3mOkMB0ODOgdUJhlxFcP5vhLEUMblzBKlhp08227lyViIggxeVlo/iU2UKg4KrNhbXsQfgaYhC/ObIttGx+t2H+LjLg7vCzi6eyocmr6IsDK6eK1HovsfqrMWIUmG/+fdv8PSTB2jutJ6G2cJZRlCu3K9Ia3ig==
+ b=JJMVFuunKY7ofZSpguSlFmZURgB9r7T11Ra/wUnvhyjsL1XRHanKAWX7IQNvN01h5BKvUwFnfdlVmkwROVrhQOHA83WPPA7qWFx/BEGgr5WKp/GeEA6LMAgyFJOVW6JSPbLqfWNJoSMQ68voWCcIuYK9i0pcFnXoFc7aoYoegxUGb7P6V58nY+zfYJKG6Xo0aUECDbBvQ6oe6hoeFsxT+HWW72NrGeYKhBSx8fPbWkl6ieNwwTFBSNpYI46vLO0WZLLwHfeiJxt7LdvVkXq6xBWzq79HJdDUTxOa+s4nMz8kmVZBdsQMLrxPNil9S0Dbs2IRb8E9Et8cJddyq5iMxQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=pd6ac21P5Qewd2ZmHmUa7bhm0Fg4CDbanYbYIYDKsJ0=;
- b=MlbnlDKqyBAw04ma9qqShoutQNekVspXri2X+1U7LPp35HT5yBZAv6NxQh7dWawzyA4guviyOyVBIUbFyQqmFTJthHYpvkxVoBqfjo7kfHYIUcLbQGvjwzM++ZUW0n1FfWyYCiBB3npeeBsxjvu1cFP6pRMKVUZzeHCt9N+aB/ITbikrhadqKE8IFUZFpYquUpKMBzuNNnU+WSBinHq4pOSBt2+yF91v+O9MlbBx+UG6Bf3MDgs+fKgVYbbSAwG0wmuyf9tVkmRn4Qee8Ok38Q6qhQUS4AH59pohlqGceFWiq6gjnCkzhKa7x5yvnhQ/TJ8Z0hdKmCvYSzKXkvZVzA==
+ bh=NrM/10lxX+u8ygpoSj3Cn75qK7g8pM1NhQgG/rAaoNk=;
+ b=NawoSvHLH8V59SQJLJnYVRhWL9xTYmwlZjg5/aC53YWlsBdMyU/mR1CZK51BA2leBELWHUo+4WZdMjBL6TmgHOmhPa66KaGSp0jOuqjMz5QXRYMeQI6lgkiPJd3tKsen5qDaeUaaUxMYhpL5ovt1EZwF47Q7sg8Io4YzeFr3KQ8VZ9nC5XluEsEeGeGKYXEmQCH2wLI5+vhV4pkQSjLXh7h0vUgn2yc86bkHsC4z60CGS5s8wQBA6hTDl6smEz1ivrlQaZQSPJ8P5uyzWaS69hnsioVLtJi6/EzKDZBP/5XD9VIaODULWn0hG3gaJH1jMoLV4kjr6o22tGSKQiZU6g==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
  header.d=nxp.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=pd6ac21P5Qewd2ZmHmUa7bhm0Fg4CDbanYbYIYDKsJ0=;
- b=CpskRu7JyVO2Q6zm9YlVVil4B7tQyMmCqlRjHSsYmT/DIKciP+VOspxHA49WWOhSgdMr/ciJjpl6ma7kE0JsvtXC4DEhBpJImlnBhqfxD4g+m4A/kyV+Gj7jhPqi7aoCDHH1ytY4699tEWY7D00PxwnP1o3JzSRxQQQYd5ZdLQ4=
+ bh=NrM/10lxX+u8ygpoSj3Cn75qK7g8pM1NhQgG/rAaoNk=;
+ b=qofN123OxXjBOdTiuIOXhLxETYyTtGJ341ldllTyzu8Ju870BTxYp4ZHEeMp6PhFmQ8HJ7P21pWteAjGHOX4HkAffwpDVxJA4sfURR37IRBDzpxtks72lRhIk7SLtaWSj+ronoqxDvcRsgpgQ0jeNh7YRvqv6QXXsSXh9279dCA=
 Authentication-Results: wizery.com; dkim=none (message not signed)
  header.d=none;wizery.com; dmarc=none action=none header.from=nxp.com;
 Received: from DB6PR0402MB2760.eurprd04.prod.outlook.com (2603:10a6:4:a1::14)
- by DB7PR04MB4089.eurprd04.prod.outlook.com (2603:10a6:5:1b::29) with
+ by DBBPR04MB6025.eurprd04.prod.outlook.com (2603:10a6:10:cf::23) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3742.6; Tue, 12 Jan
- 2021 09:49:30 +0000
+ 2021 09:49:51 +0000
 Received: from DB6PR0402MB2760.eurprd04.prod.outlook.com
  ([fe80::c964:9:850a:fc5]) by DB6PR0402MB2760.eurprd04.prod.outlook.com
  ([fe80::c964:9:850a:fc5%10]) with mapi id 15.20.3742.012; Tue, 12 Jan 2021
- 09:49:30 +0000
+ 09:49:51 +0000
 From:   peng.fan@nxp.com
 To:     ohad@wizery.com, bjorn.andersson@linaro.org,
         mathieu.poirier@linaro.org, o.rempel@pengutronix.de,
@@ -58,9 +58,9 @@ Cc:     shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         paul@crapouillou.net, matthias.bgg@gmail.com, agross@kernel.org,
         patrice.chotard@st.com, Peng Fan <peng.fan@nxp.com>
-Subject: [PATCH V6 02/10] dt-bindings: remoteproc: imx_rproc: add i.MX8MQ/M support
-Date:   Tue, 12 Jan 2021 17:39:11 +0800
-Message-Id: <1610444359-1857-3-git-send-email-peng.fan@nxp.com>
+Subject: [PATCH V6 06/10] remoteproc: imx_rproc: use devm_ioremap
+Date:   Tue, 12 Jan 2021 17:39:15 +0800
+Message-Id: <1610444359-1857-7-git-send-email-peng.fan@nxp.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1610444359-1857-1-git-send-email-peng.fan@nxp.com>
 References: <1610444359-1857-1-git-send-email-peng.fan@nxp.com>
@@ -71,132 +71,79 @@ X-ClientProxiedBy: SG2PR06CA0212.apcprd06.prod.outlook.com
  (2603:10a6:4:a1::14)
 MIME-Version: 1.0
 X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from localhost.localdomain (119.31.174.66) by SG2PR06CA0212.apcprd06.prod.outlook.com (2603:1096:4:68::20) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.20.3742.6 via Frontend Transport; Tue, 12 Jan 2021 09:49:25 +0000
+Received: from localhost.localdomain (119.31.174.66) by SG2PR06CA0212.apcprd06.prod.outlook.com (2603:1096:4:68::20) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.20.3742.6 via Frontend Transport; Tue, 12 Jan 2021 09:49:46 +0000
 X-MS-PublicTrafficType: Email
 X-MS-Office365-Filtering-HT: Tenant
-X-MS-Office365-Filtering-Correlation-Id: 6079a8a6-36eb-4a78-dcaa-08d8b6df5b6d
-X-MS-TrafficTypeDiagnostic: DB7PR04MB4089:
+X-MS-Office365-Filtering-Correlation-Id: 554e8347-1ee2-4f19-0a13-08d8b6df686f
+X-MS-TrafficTypeDiagnostic: DBBPR04MB6025:
 X-MS-Exchange-Transport-Forked: True
-X-Microsoft-Antispam-PRVS: <DB7PR04MB40894D62AC83B348ED429C7288AA0@DB7PR04MB4089.eurprd04.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:3044;
+X-Microsoft-Antispam-PRVS: <DBBPR04MB6025C6A1BEC6EE73D009336288AA0@DBBPR04MB6025.eurprd04.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:849;
 X-MS-Exchange-SenderADCheck: 1
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: M3dtvvAV+b29G8zZ3GKxXKU4WriUQIhRtxJR54z7z4hRnt//ZLyIDR6w5mrZ9MuW7n6e61Uujz5ApqE4EsTJeppTN0XYr1qOK62hGNKuCpA2s6E7Eo/dqSts1gKBCsMTHBQ1wTxugRTFlvN2+Xo2BsMq20Lx6bbUOx5nzs93k+c5WT+d+Br5HgiJulf7VBAkXq+ozQznoYhKqWSg3vESHQAR0xh8O2CX1rb2qYsYe6iQxmiLlOQoKVgER8COlnHPsBNbbl2791vAuFKe5ioeYhGBZqRhzB8mbVbhuZQLZDOfT+lCJorBAMKw9vfp9TBerf87JsEqPGZ9el2vq52eXAoH5AqX85LW1v62HFKnm0cFlkp7PVOFSdCR8BfqPkKr670p+EdP3AvPti6WhwzEXRMbpW26KreVm90q6f6g7CyB068uChafPOgZy/Z1gIuwmJLMDQXIlTLemFalUMas1Q==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB6PR0402MB2760.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(366004)(86362001)(36756003)(8936002)(186003)(66946007)(66476007)(9686003)(26005)(6512007)(16526019)(5660300002)(4326008)(2616005)(69590400011)(52116002)(7416002)(8676002)(6506007)(2906002)(956004)(83380400001)(6486002)(6666004)(66556008)(498600001);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData: =?us-ascii?Q?z29muCEXuYbatZQ4UD80rnODiV0NGHyEt5HvApB7P70uuXl2V6gmyiwUL9nQ?=
- =?us-ascii?Q?10ZI/AmxuVO1g5hUcViwK/+doozeN6cERr6onaHAl/maoMJ9NPA00GACTF99?=
- =?us-ascii?Q?2XHgXqD4ClLtUAB1Ez8HVSy53pW2DP0t4ZQQ3e6aGb/yZmKOg9UtReBe6mE7?=
- =?us-ascii?Q?cY0x4cUfcUkjWTMh8w5trjlpun77kqetW5Or3BwKI2KKNYMnmJVk1ttvrKgP?=
- =?us-ascii?Q?AxlcKEW3dWVMbb0FbsLQ4m8TZKLAtRkEZ7aFwlrs5maCmll2IjLaGmDC+9MH?=
- =?us-ascii?Q?sLAMYOmvEjy65PxFh8p5kyAvEp3bAUTc0Ik8AsYhlJGGCHpJvxIdx+hLeQBl?=
- =?us-ascii?Q?gi6+ziBMd6qgsHPTY2lvnmcjJv1zpp/1Vu4pgoseSSjzT9wcGCV0OJEicJdF?=
- =?us-ascii?Q?/T4Pr8954nV7PvC1vLsicauwMnb9q8AkST0LZs+e/cAFqqA0TUb9NVoABm9A?=
- =?us-ascii?Q?3nJKiQit7XhztmkB+Jb4HAx+bYW7X9vD1mW48plJhm+a0Z8oJVFmQ67eI3y7?=
- =?us-ascii?Q?yIvxSmZW+bKE5viIfRk8X+YuHf2w4PrknszVX2kd6ApaJ1n3byx0aBPnvmjX?=
- =?us-ascii?Q?n50D0AtljnsPYf5MCY/m/UxIYSfpZ7hwVFQdN42OFmXtZWx48upTT0oYkCRt?=
- =?us-ascii?Q?D6S3yAo5sPeSUTVmVUNXzZoUzm/R8kkoF4/u8Q1YgHhdmo4OApsnPoCp0Kjx?=
- =?us-ascii?Q?3utsFJdj2M3UYJn7xkrxZOinOypX3J0HWotIaJQ7PHvrKKPxI8FrQM9GhgC/?=
- =?us-ascii?Q?BI7DxwtgZixhyWznRERQY7KckyU/oIjgJkaHkVtAaGORuXWZUwOaahwSJiH3?=
- =?us-ascii?Q?6X1pfoFEenBZ7n0c3AAPa8sRMwqD6EbLFfySmXWf+ZD3QDKnFmXtIoRT8zLR?=
- =?us-ascii?Q?tY7UgCTMogRUQOnkMrIzeLOGWyu+0kwYviEQOpgzicPtSepvJmn44D1fEEOg?=
- =?us-ascii?Q?rqlgzINsRJfhNATj10Y5GhbFHK0K2ZAESC0pwWI9lBfs7U3SSY1GnBoX+SuR?=
- =?us-ascii?Q?+c3C?=
+X-Microsoft-Antispam-Message-Info: VOqoCL53/Oir5Phe51N/q1ZMBYG0+f+0B37FvCTBzW/yJHcwLrol7JzDVy52709yCpJ7pWgjhbQysSoB2me8i329wSvOrXFhvvmFN4HihxOsgVP2rWDOfj3GDHkOTdfuTlabdtS7iwP+PHB8BqCZuOYo0ppUF9lge3UH2wlcZ1PTO2nHrUz3cDVluBltt4QiMvxnrULoaapwKIVk3RSuDcqcHFLlUtusQLH8AV4egRchjunpDxpPNy5+Wmz6YK/RsB1sIe/c0A4J3WwzQNkLOTG671eY/uePclcifIwvIwbCyblAAG7mPH5ikAxGXgLOWk9hfhmHS8K+iOuWTambAbkDNWO7HqZONMFjsEHsIM4QDrehZ59YPn0k6nmrW/VjLQ91rF8fLgOl1XtkvNl/kr1rdwiktBbuWgQs1aRyp8hnDU6Wt5Ep1PStVD0QewNPxbs34oYEUF3vY5S8DzCedw==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB6PR0402MB2760.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(366004)(4326008)(498600001)(6512007)(7416002)(6666004)(9686003)(69590400011)(66476007)(86362001)(6486002)(8676002)(83380400001)(8936002)(2906002)(66556008)(956004)(2616005)(66946007)(52116002)(5660300002)(6506007)(26005)(186003)(36756003)(16526019);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData: =?us-ascii?Q?xHUI7ptyfO3WVRvtCBjwC4Jpr3hdJ1HlgAUJrKdvq8RlIzUhuwsxWTIejFtp?=
+ =?us-ascii?Q?p4kq+OIsWw8WY9GqHpkaUzKWx2bwuvpWELOu32+wNSxhJ0ciZhr9xtFNKuYR?=
+ =?us-ascii?Q?v/Fl1UK2kZpxeI4Vsu8+Iv8b4gWOR519N/eCDkgmJmFtzdED2Zah3zy7+mxn?=
+ =?us-ascii?Q?9wb+MmrebDOL3fTOqs3mlaW4mZc4RuOfA9JcDuQfqyljAqLdegPWqIv8JLZR?=
+ =?us-ascii?Q?kujBenSGc6a37/4reQVxjHWNpfAX+KW1Q6WYnZ/5NM5+YLoysGuTHiNYvFKo?=
+ =?us-ascii?Q?7NdiaAfjzCi5zwQQHQYRAd/BqRM0Ql+9IWykKrdb9SrAO628oMMNxjheIq2v?=
+ =?us-ascii?Q?C0Xx25pM5TL736rt+USY9T6GEDn5l9o7Y8zcQwmo9vpzjFThx6kLCmUu7Goe?=
+ =?us-ascii?Q?TKVYYdUAXORDGbeQZiAcqxpH75iqsawidTompHovPa++NC+y896EOJPuVuvz?=
+ =?us-ascii?Q?UbXR0QesviG5YvY6fBwJMMplNYKrZ56rW7YO2Vpzyma/PBb/HjcPP64peLEA?=
+ =?us-ascii?Q?cI9tMZWa4Z6uEX0OClJHl8DwlF7EWezWlWJBmOOTsnOt0Ds/TbwdxNcKCyLa?=
+ =?us-ascii?Q?BuXdA/ZnjFZNd9dg+Eg7AGuzc+Okneg/VWVMkEo5YNTW3vRP2/Ov1Oiask8t?=
+ =?us-ascii?Q?0CKzFzevj8/9U5z/C9RJzhhEeuLGzJtMn6IxZFGCtuCUop0lV49TGBYCIwOt?=
+ =?us-ascii?Q?R1YVgUcRmbz5jP/zYVLc62YRq+N+HN+fLCIYozfxudt3oY5isElTV8eNFqXK?=
+ =?us-ascii?Q?dKFvjFnDY2BuYeQxfPDO465d4kgnRdnvpKDbM4KwOxBTl1EqY3fxe1p5vUdk?=
+ =?us-ascii?Q?y3RWMw/F6pz08KHGJVUn+lTLiFD7FmA7d3G9QN5nP996tTs5KF/2Dh9X+B6j?=
+ =?us-ascii?Q?BT7LbJPbRvsoQIzDDVQhwOj3S9SCx3ru2rFgpcfzOPnLLeR1Xn2arb3nbZYd?=
+ =?us-ascii?Q?kj+hS+fK1vtIJpEKfryLoSrutSH2i/fGPWgZ8K8cvLOQJKGph+XFSuC28mCm?=
+ =?us-ascii?Q?bTW1?=
 X-OriginatorOrg: nxp.com
 X-MS-Exchange-CrossTenant-AuthSource: DB6PR0402MB2760.eurprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Jan 2021 09:49:29.9864
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Jan 2021 09:49:51.8035
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6079a8a6-36eb-4a78-dcaa-08d8b6df5b6d
+X-MS-Exchange-CrossTenant-Network-Message-Id: 554e8347-1ee2-4f19-0a13-08d8b6df686f
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 14mj/YcZcc6E3I1v7U7ZANXmVLd0Ice5dGakBIJSFhShBOfdeX2cTDjJcTZAS5af/0WwuLKn8tKOC5ehUnyS3A==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB7PR04MB4089
+X-MS-Exchange-CrossTenant-UserPrincipalName: HNkJgwfaDSwKxnkYHYatgn2dNktTJw/vc7fFyf4NABFZoZaljaos0mRllwOEcaATE4xQyZqIgLKY4QH81rjg+w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBBPR04MB6025
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
 From: Peng Fan <peng.fan@nxp.com>
 
-Add i.MX8MQ/M support, also include mailbox for rpmsg/virtio usage.
+We might need to map an region multiple times, becaue the region might
+be shared between remote processors, such i.MX8QM with dual M4 cores.
+So use devm_ioremap, not devm_ioremap_resource.
 
+Reviewed-by: Oleksij Rempel <o.rempel@pengutronix.de>
+Reviewed-by: Richard Zhu <hongxing.zhu@nxp.com>
 Signed-off-by: Peng Fan <peng.fan@nxp.com>
+Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 ---
- .../bindings/remoteproc/fsl,imx-rproc.yaml    | 49 +++++++++++++++++++
- 1 file changed, 49 insertions(+)
+ drivers/remoteproc/imx_rproc.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.yaml b/Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.yaml
-index bce6ccfe1538..0b534ce227af 100644
---- a/Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.yaml
-+++ b/Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.yaml
-@@ -15,6 +15,8 @@ maintainers:
- properties:
-   compatible:
-     enum:
-+      - fsl,imx8mq-cm4
-+      - fsl,imx8mm-cm4
-       - fsl,imx7d-cm4
-       - fsl,imx6sx-cm4
+diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rproc.c
+index 2a093cea4997..47fc1d06be6a 100644
+--- a/drivers/remoteproc/imx_rproc.c
++++ b/drivers/remoteproc/imx_rproc.c
+@@ -296,7 +296,8 @@ static int imx_rproc_addr_init(struct imx_rproc *priv,
+ 		if (b >= IMX7D_RPROC_MEM_MAX)
+ 			break;
  
-@@ -26,6 +28,20 @@ properties:
-     description:
-       Phandle to syscon block which provide access to System Reset Controller
- 
-+  mbox-names:
-+    items:
-+      - const: tx
-+      - const: rx
-+      - const: rxdb
-+
-+  mboxes:
-+    description:
-+      This property is required only if the rpmsg/virtio functionality is used.
-+      List of <&phandle type channel> - 1 channel for TX, 1 channel for RX, 1 channel for RXDB.
-+      (see mailbox/fsl,mu.yaml)
-+    minItems: 1
-+    maxItems: 3
-+
-   memory-region:
-     description:
-       list of phandels to the reserved memory regions.
-@@ -56,4 +72,37 @@ examples:
-       clocks		= <&clks IMX7D_ARM_M4_ROOT_CLK>;
-     };
- 
-+  - |
-+    #include <dt-bindings/clock/imx8mm-clock.h>
-+    rsc_table: rsc_table@550ff000 {
-+      no-map;
-+      reg = <0x550ff000 0x1000>;
-+    };
-+
-+    vdev0vring0: vdev0vring0@55000000 {
-+      no-map;
-+      reg = <0x55000000 0x8000>;
-+    };
-+
-+    vdev0vring1: vdev0vring1@55008000 {
-+      reg = <0x55008000 0x8000>;
-+      no-map;
-+    };
-+
-+    vdevbuffer: vdevbuffer@55400000 {
-+      compatible = "shared-dma-pool";
-+      reg = <0x55400000 0x100000>;
-+      no-map;
-+    };
-+
-+    imx8mm-cm4 {
-+      compatible = "fsl,imx8mm-cm4";
-+      clocks = <&clk IMX8MM_CLK_M4_DIV>;
-+      mbox-names = "tx", "rx", "rxdb";
-+      mboxes = <&mu 0 1
-+                &mu 1 1
-+                &mu 3 1>;
-+      memory-region = <&vdevbuffer>, <&vdev0vring0>, <&vdev0vring1>, <&rsc_table>;
-+      syscon = <&src>;
-+    };
- ...
+-		priv->mem[b].cpu_addr = devm_ioremap_resource(&pdev->dev, &res);
++		/* Not use resource version, because we might share region */
++		priv->mem[b].cpu_addr = devm_ioremap(&pdev->dev, res.start, resource_size(&res));
+ 		if (IS_ERR(priv->mem[b].cpu_addr)) {
+ 			dev_err(dev, "failed to remap %pr\n", &res);
+ 			err = PTR_ERR(priv->mem[b].cpu_addr);
 -- 
 2.28.0
 
