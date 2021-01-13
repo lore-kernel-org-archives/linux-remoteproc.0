@@ -5,434 +5,280 @@ X-Spam-Level:
 X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BDC7FC43217
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 13 Jan 2021 00:52:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B765BC433DB
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 13 Jan 2021 02:21:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A720E23133
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 13 Jan 2021 00:52:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 78F84230FC
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 13 Jan 2021 02:21:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393565AbhAMAm6 (ORCPT
+        id S1727635AbhAMCU5 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 12 Jan 2021 19:42:58 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44322 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390162AbhALXoP (ORCPT
+        Tue, 12 Jan 2021 21:20:57 -0500
+Received: from mail-eopbgr00061.outbound.protection.outlook.com ([40.107.0.61]:16453
+        "EHLO EUR02-AM5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727559AbhAMCU5 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 12 Jan 2021 18:44:15 -0500
-Received: from mail-pg1-x534.google.com (mail-pg1-x534.google.com [IPv6:2607:f8b0:4864:20::534])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 65669C061786
-        for <linux-remoteproc@vger.kernel.org>; Tue, 12 Jan 2021 15:43:34 -0800 (PST)
-Received: by mail-pg1-x534.google.com with SMTP id z21so255458pgj.4
-        for <linux-remoteproc@vger.kernel.org>; Tue, 12 Jan 2021 15:43:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=32Kp6/sD46+sAwhgF+rfAJ8qDBHi38S+G0rBkcScl0M=;
-        b=k/zcTILluI13d9wsQcCKcz94dXeq5vvxf09aqE2SxtcZxn/e5psVYrHoNDAnniUwoR
-         PZNUT0XJk7W7evklZOD1TAUPFNqgglLNiprj1+9mcYsOmNiqi2aYrQYyQYg3Svdm/1HZ
-         +8qCK/Yk6G/UTEdJ0CcwE7siUHqQtXUJK5Abu8cn2HA9TIUrKRCElWB9vOSry8Vzl3o5
-         u6g7pi8TOgj2sp/J6MciiKQHcpz1k0Y8qhWhswj4GVTjmNv0ULINQ661wgsfdh7+pEBA
-         EAlMQdd+Kexrzr9e0Bjv9n2zNjt5PViGsO+vkBL0KaHmn1nJCUJgxCJkBfc+Wz5wOgcZ
-         2rag==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=32Kp6/sD46+sAwhgF+rfAJ8qDBHi38S+G0rBkcScl0M=;
-        b=fPR5Ir9zeWofk+36VQ8Gea57s9rTOm+5MptZFfy23D0w2+GsspcO/ocZT0vaKjOp4M
-         8BaL+RCjFCXf2AdYYzNEaCz6B/qHfFztYm5C2Leo9Khz+k/wjQL/gx7tSUhzNMEOSiKG
-         xT47fMNFH79gEg6vDCXPBxG+jDX8/ff0m1ou8uj/5UbiemsRcuFMkfypdgiQrp/urxTA
-         avtrtQVTmT6t6K4WEIEvCPIfMIOcDMWKKeYViOft/4m66VLgz2WPot+5bDkx2ql5lCAG
-         R9ptq3u8jpz9rLJq38+QMm6Cw4Zn5nqBreFrmhk3QVPGKzpoxZL1VEIL5cLCGgRmfEUM
-         +fxA==
-X-Gm-Message-State: AOAM531D67whlNXe30u0UE+CQrzetJo9iNFrFU2K8M6Yi0251pgu8Mvn
-        3ue4Z3SwDXTHGWkOrmvBwlraJA==
-X-Google-Smtp-Source: ABdhPJybelxnuiC/lBZZ87VVxXUp+zZ5RK34oDS0mQDhofDCVCvvv3ryjWyMlO0Du7sPdCKOX9n3YA==
-X-Received: by 2002:a63:d246:: with SMTP id t6mr1454523pgi.283.1610495013394;
-        Tue, 12 Jan 2021 15:43:33 -0800 (PST)
-Received: from xps15 (S0106889e681aac74.cg.shawcable.net. [68.147.0.187])
-        by smtp.gmail.com with ESMTPSA id u25sm216586pfn.101.2021.01.12.15.43.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Jan 2021 15:43:32 -0800 (PST)
-Date:   Tue, 12 Jan 2021 16:43:30 -0700
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc:     linux-remoteproc@vger.kernel.org,
-        linux-amlogic@lists.infradead.org, ohad@wizery.com,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        bjorn.andersson@linaro.org, robh+dt@kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 4/5] remoteproc: meson-mx-ao-arc: Add a driver for the
- AO ARC remote procesor
-Message-ID: <20210112234330.GA192175@xps15>
-References: <20210102205904.2691120-1-martin.blumenstingl@googlemail.com>
- <20210102205904.2691120-5-martin.blumenstingl@googlemail.com>
+        Tue, 12 Jan 2021 21:20:57 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=D4vrs/lWPJA6sEozeqq2q5qn9TC0HxCvQC1KF+DGysicaSfnjgzdbuhpevKMmRKxaGzLYZSo+lJv1P5htG8eBXy5FZZwco4SGJY30Pw087BIu9uUXuYqGRVTJtuw8SaX5hdCZGWMPrkQnWWxPPEGN+k1JTQrUo1S+STL903sGUI6a80oB81Mz0cOvRT12K/DOmVioZt2Fja1+PpZfKgUAUnjlaYPceRmK9xJrwMN58LTwboncnwckssoxrQbxeEMcz1HWNU/a3DyVOjLOsj+oFvLJVxIYUD7GMeViO7xN7lah3KJbUJvLTt6R+g41y8gitZKVvMuWv7BppXQDgUb8Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=+vWbx1YTqMWWGTmiDsNUx2y2TkazctAWAnuA2VN/LGs=;
+ b=H8TzU2hrYQVu3N/TKdMimqHDv1nqWtpbptQoDYwauolbSmUgFie862gHuTaoyjrHaICb21LHG/Ll7Y9y41N51/mw2RsteudlCHkHROR+S7o8goCDwB3u3rkO8BJBcuD77phMTW8W7lclmxDQYyQbuVPtxLo/liASoLm4jvfvJwIPw4ez8D7i2/VbZKGmZIqAcE8U6sjJTwWuEGY/MG8eQ+H1U0ZjC9VDVmF10LpjbmG6gw+UsF71bi59wtagiswXrhGxEZ7pXEpwNyDvZ9ARWHMUFABUPRNQp/YJw8CxnYLWqt3UTIYTF2C0YQOzwX0jnzWB/rt2xEeTxiRg1dNqYw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=+vWbx1YTqMWWGTmiDsNUx2y2TkazctAWAnuA2VN/LGs=;
+ b=sFXHqFD1kjVypUBBJTi33oNZ/o+BmZ3yeAiw+RhlxzkhKa1LqrB+c2EuMb67jGHG18udV9eyFQvBMDeUZjid9AkEhQg7bCVnEMnUEgP15FQpEvJ+XysWxurVv6u5x5r/Cx3qgUk3W0WDiF8OAlYdAKSny5DbmL/hF2wLoNNonBc=
+Received: from DB6PR0402MB2760.eurprd04.prod.outlook.com (2603:10a6:4:a1::14)
+ by DB6PR04MB3127.eurprd04.prod.outlook.com (2603:10a6:6:c::19) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.3742.12; Wed, 13 Jan 2021 02:19:32 +0000
+Received: from DB6PR0402MB2760.eurprd04.prod.outlook.com
+ ([fe80::c964:9:850a:fc5]) by DB6PR0402MB2760.eurprd04.prod.outlook.com
+ ([fe80::c964:9:850a:fc5%10]) with mapi id 15.20.3742.012; Wed, 13 Jan 2021
+ 02:19:32 +0000
+From:   Peng Fan <peng.fan@nxp.com>
+To:     Mathieu Poirier <mathieu.poirier@linaro.org>
+CC:     "ohad@wizery.com" <ohad@wizery.com>,
+        "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>,
+        "o.rempel@pengutronix.de" <o.rempel@pengutronix.de>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "paul@crapouillou.net" <paul@crapouillou.net>,
+        "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
+        "agross@kernel.org" <agross@kernel.org>,
+        "patrice.chotard@st.com" <patrice.chotard@st.com>
+Subject: RE: [PATCH V5 7/8] remoteproc: imx_rproc: ignore mapping vdev regions
+Thread-Topic: [PATCH V5 7/8] remoteproc: imx_rproc: ignore mapping vdev
+ regions
+Thread-Index: AQHW3Y8IMsfD4HQjaUqOo7Zl/WNCSKojDGiAgADFokCAAJlRgIAAfjgw
+Date:   Wed, 13 Jan 2021 02:19:32 +0000
+Message-ID: <DB6PR0402MB27602E812FD657F7EC81854F88A90@DB6PR0402MB2760.eurprd04.prod.outlook.com>
+References: <20201229033019.25899-1-peng.fan@nxp.com>
+ <20201229033019.25899-8-peng.fan@nxp.com> <20210111215023.GJ144935@xps15>
+ <DB6PR0402MB2760F6F982C32B6557467C9188AA0@DB6PR0402MB2760.eurprd04.prod.outlook.com>
+ <20210112184629.GA186830@xps15>
+In-Reply-To: <20210112184629.GA186830@xps15>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: linaro.org; dkim=none (message not signed)
+ header.d=none;linaro.org; dmarc=none action=none header.from=nxp.com;
+x-originating-ip: [92.121.68.129]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: 54d80d28-ef39-478e-87dd-08d8b769a9e8
+x-ms-traffictypediagnostic: DB6PR04MB3127:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <DB6PR04MB3127B5659279E4ABB975EE5488A90@DB6PR04MB3127.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:9508;
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: b4zPJc0IOXL1oKR83k0dsSbGPOh3dA6oyQy6w+9GQBPpfQsS38ziGWk16+T7wXX/P2wkX2TSJe+pJKxosP2P5t7zfbRkepjV9jckqLRYj5GCR5N67ZBshNZPds9/m8kx+hRruByt0Oi/onQf5HkWhevJHi7K/h+BWTW/yEEdUydD6pNJ3lZl35+jdmlqd8kcXzzkVj9AgttIGKM78tY2BGzxxtMlBRMNPjeibGDpdoVKfj9BvpmLQnDgF5ey4/BYCFdWb7WLf73LCZ85owXhSGBFGvvt5cC0Tkp2XCHA74ZxdxsGB5b1AdD359ZALa4iFoBQYVpDrECz+5qeOq2eOH0r2aycCSOg+dtWokzxy54lfgpl2mUNTvRBT9qAesLoDOiH9EOApvIi34KLua3jiPWuc31XUiSmfb+vlIukE67WueqnFuNBLa7rmQXQ8RmV5OfiwGf7ZmizBnjoszUlug==
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB6PR0402MB2760.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(396003)(376002)(346002)(39860400002)(366004)(136003)(8676002)(2906002)(44832011)(186003)(66556008)(4326008)(7416002)(6506007)(33656002)(26005)(83380400001)(9686003)(86362001)(71200400001)(5660300002)(52536014)(54906003)(316002)(66946007)(966005)(64756008)(55016002)(6916009)(76116006)(45080400002)(66446008)(7696005)(8936002)(66476007)(478600001);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata: =?us-ascii?Q?8qrr1XMnEGbmPAdSCkIYjV2GTUYeWyR9nUopogUISpje7yAFF++7evLFKVDk?=
+ =?us-ascii?Q?8PTn7KH4BP96Ut7khrMLBFr6VVEpXK2wAZpiQEJod9RveZneqxNowYpvULI4?=
+ =?us-ascii?Q?aAPsC7+y6i3RPTfzo4MZLUQH508DJh6+3wEQ024leuVN1Xj9mvv+VKXRwn8H?=
+ =?us-ascii?Q?7qSe9afvp5VvHw7oNIuwZwSMxPnfS/McmcWxojY8XzLoFK0dMCm09o3sQ182?=
+ =?us-ascii?Q?tnZpEwMQW2ZtQuwd+qMEW9ju0nyl+tg7qfCJ5+LNgn7gt7LkwZln01dMPqon?=
+ =?us-ascii?Q?3JtCkoUhPBlAmfVSzWBbTFQPDD6LpTT7gtpQMpCMQbYYEIkFIEjT5eLJEuXe?=
+ =?us-ascii?Q?S6KC33y112Er1IRrptZIJx2oGZN7rWWDl/z2KPEm673ynQ+ba0YvSxea+wu2?=
+ =?us-ascii?Q?3pz56wHSnN49pt03W7Fk7ELi1ITvq5F4UQ4mVM+afQAxb8YG+99PVggf1UIG?=
+ =?us-ascii?Q?ZYDw96tpa8gCg8xMqEZIcGQESAVBPvzWHpUvbHp70LcR1Dfsx9zzx48Qk9FZ?=
+ =?us-ascii?Q?uYce09jDuYTSKR9Ff48iXVeCKAyPjY1fsrLKrGUYvCdfp98o0VAzkDdOulpE?=
+ =?us-ascii?Q?Qux6lus0HTrMp11InF2e2pJRiueLgva3VnHBPvY4yR/nATE5ZYayUcn1RpG2?=
+ =?us-ascii?Q?jWqT+ZbnZmvjEON2Xf1gRt9T0BEwGlz1cTyx+UIFQbALGUxXr3rrUmqEJ/YR?=
+ =?us-ascii?Q?jx/Zc8fe/o6QQBvH2gq9FdS5+XUmXpcILRJ3910SQ2XHPAQh4ouHmxd/+/ll?=
+ =?us-ascii?Q?ZxpR9kHg3P1zFPxKT9WrSPTLj2+JXOdayWimKBpKvUsd7Kj2SPcs/JYPHcll?=
+ =?us-ascii?Q?7VWZhobAQwSBRq8u22v82dQ4ovLLRPn64PxGzO8N5BF+XrUNxGVvcTkrBhUp?=
+ =?us-ascii?Q?enChspspW0i05Oq35zhttNMenBY0zyLY+2NvBOMf3XuXbon834oOivE/iKWU?=
+ =?us-ascii?Q?3YvFkCNJWpvn1He+0lFi2rD9mr5ubKmBvKxWqF0WRnc=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210102205904.2691120-5-martin.blumenstingl@googlemail.com>
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: DB6PR0402MB2760.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 54d80d28-ef39-478e-87dd-08d8b769a9e8
+X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Jan 2021 02:19:32.1293
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: Fr4GIsKIJ1Yl+7PpaBZ5dPDpu5tkXpeqBbv2HnieMqqXAEfdu4v/be9RQ08SRMlSkLeWK44sL7DOmWvDYziJtA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB6PR04MB3127
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi Martin,
+> Subject: Re: [PATCH V5 7/8] remoteproc: imx_rproc: ignore mapping vdev
+> regions
+>=20
+> On Tue, Jan 12, 2021 at 09:41:12AM +0000, Peng Fan wrote:
+> > > Subject: Re: [PATCH V5 7/8] remoteproc: imx_rproc: ignore mapping
+> > > vdev regions
+> > >
+> > > On Tue, Dec 29, 2020 at 11:30:18AM +0800, peng.fan@nxp.com wrote:
+> > > > From: Peng Fan <peng.fan@nxp.com>
+> > > >
+> > > > vdev regions are vdev0vring0, vdev0vring1, vdevbuffer and similar.
+> > > > They are handled by remoteproc common code, no need to map in imx
+> > > > rproc driver.
+> > > >
+> > > > Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> > > > ---
+> > > >  drivers/remoteproc/imx_rproc.c | 3 +++
+> > > >  1 file changed, 3 insertions(+)
+> > > >
+> > > > diff --git a/drivers/remoteproc/imx_rproc.c
+> > > > b/drivers/remoteproc/imx_rproc.c index f80428afb8a7..e62a53ee128e
+> > > > 100644
+> > > > --- a/drivers/remoteproc/imx_rproc.c
+> > > > +++ b/drivers/remoteproc/imx_rproc.c
+> > > > @@ -417,6 +417,9 @@ static int imx_rproc_addr_init(struct
+> > > > imx_rproc
+> > > *priv,
+> > > >  		struct resource res;
+> > > >
+> > > >  		node =3D of_parse_phandle(np, "memory-region", a);
+> > > > +		/* Not map vdev region */
+> > > > +		if (!strcmp(node->name, "vdev"))
+> > > > +			continue;
+> > >
+> > > I am very confused and because I don't see an example for the DT in
+> > > the bindings document I have to guess what is going on.
+> >
+> > V6 will include the DT yaml.
+> >
+> > >
+> > > So I am guessing that you have laid out the memory regions for the
+> > > vrings and the vdev0buffer in the DT "memory-region".
+> >
+> > The dts part will be similar as following:
+> >
+> > +    #include <dt-bindings/clock/imx8mm-clock.h>
+> > +    rsc_table: rsc_table@550ff000 {
+> > +      no-map;
+> > +      reg =3D <0x550ff000 0x1000>;
+> > +    };
+> > +
+> > +    vdev0vring0: vdev0vring0@55000000 {
+> > +      no-map;
+> > +      reg =3D <0x55000000 0x8000>;
+> > +    };
+> > +
+> > +    vdev0vring1: vdev0vring1@55008000 {
+> > +      reg =3D <0x55008000 0x8000>;
+> > +      no-map;
+> > +    };
+> > +
+> > +    vdevbuffer: vdevbuffer@55400000 {
+> > +      compatible =3D "shared-dma-pool";
+> > +      reg =3D <0x55400000 0x100000>;
+> > +      no-map;
+> > +    };
+> > +
+> > +    imx8mm-cm4 {
+> > +      compatible =3D "fsl,imx8mm-cm4";
+> > +      clocks =3D <&clk IMX8MM_CLK_M4_DIV>;
+> > +      mbox-names =3D "tx", "rx", "rxdb";
+> > +      mboxes =3D <&mu 0 1
+> > +                &mu 1 1
+> > +                &mu 3 1>;
+> > +      memory-region =3D <&vdevbuffer>, <&vdev0vring0>, <&vdev0vring1>,
+> <&rsc_table>;
+> > +      syscon =3D <&src>;
+> > +    };
+> >
+> > >
+> > > For the vrings I don't see the allocation of a carveout, which means
+> > > that you will take the memory out of the DMA pool and the reserve
+> > > memory will be wasted.
+> >
+> > imx_rproc_parse_memory_regions will alloc carveout.
+>=20
+> They _will_ but for now they don't and as such there a discrepancy betwee=
+n
+> the bindings and the code that was published in V6.  At this point you ca=
+n
+> either drop the vrings in the DT or send another revision with the carveo=
+uts
+> allocated.  I would definitely prefer the latter because it wouldn't invo=
+lve yet
+> another modification of the bindings.
 
-On Sat, Jan 02, 2021 at 09:59:03PM +0100, Martin Blumenstingl wrote:
-> Amlogic Meson6, Meson8, Meson8b and Meson8m2 embed an ARC core in the
-> Always-On (AO) power-domain. This is typically used for waking up the
-> ARM cores after system suspend.
-> 
-> The configuration is spread across three different registers:
-> - AO_REMAP_REG0 which must be programmed to zero, it's actual purpose
->   is unknown. There is a second remap register which is not used in the
->   vendor kernel (which served as reference for this driver).
-> - AO_CPU_CNTL is used to start and stop the ARC core.
-> - AO_SECURE_REG0 in the SECBUS2 register area with unknown purpose.
+You mean I drop patch v5 7/8 and send v7, right?
 
-I certainly appreciate your candor.
-
-> 
-> To boot the ARC core we also need to enable it's gate clock and trigger
-> a reset.
-> 
-> The actual code for this ARC core can come from an ELF binary, for
-> example by building the Zephyr RTOS for an ARC EM4 core and then taking
-> "zephyr.elf" as firmware. This executable does not have any "rsc table"
-> so we are skipping rproc_elf_load_rsc_table (rproc_ops.parse_fw) and
-> rproc_elf_find_loaded_rsc_table (rproc_ops.find_loaded_rsc_table).
-> 
-> Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-> ---
->  drivers/remoteproc/Kconfig           |  11 ++
->  drivers/remoteproc/Makefile          |   1 +
->  drivers/remoteproc/meson_mx_ao_arc.c | 240 +++++++++++++++++++++++++++
->  3 files changed, 252 insertions(+)
->  create mode 100644 drivers/remoteproc/meson_mx_ao_arc.c
-> 
-> diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
-> index 9e7efe542f69..0e7fb91635fe 100644
-> --- a/drivers/remoteproc/Kconfig
-> +++ b/drivers/remoteproc/Kconfig
-> @@ -125,6 +125,17 @@ config KEYSTONE_REMOTEPROC
->  	  It's safe to say N here if you're not interested in the Keystone
->  	  DSPs or just want to use a bare minimum kernel.
->  
-> +config MESON_MX_AO_ARC_REMOTEPROC
-> +	tristate "Amlogic Meson6/8/8b/8m2 AO ARC remote processor support"
-> +	depends on HAS_IOMEM
-> +	depends on (ARM && ARCH_MESON) || COMPILE_TEST
-> +	select GENERIC_ALLOCATOR
-> +	help
-> +	  Say m or y here to have support for the AO ARC remote processor
-> +	  on Amlogic Meson6/Meson8/Meson8b/Meson8m2 SoCs. This is
-> +	  typically used for system suspend.
-> +	  If unusre say N.
-
-s/unusre/unsure
-
-> +
->  config PRU_REMOTEPROC
->  	tristate "TI PRU remoteproc support"
->  	depends on TI_PRUSS
-> diff --git a/drivers/remoteproc/Makefile b/drivers/remoteproc/Makefile
-> index bb26c9e4ef9c..ce1abeb30907 100644
-> --- a/drivers/remoteproc/Makefile
-> +++ b/drivers/remoteproc/Makefile
-> @@ -18,6 +18,7 @@ obj-$(CONFIG_OMAP_REMOTEPROC)		+= omap_remoteproc.o
->  obj-$(CONFIG_WKUP_M3_RPROC)		+= wkup_m3_rproc.o
->  obj-$(CONFIG_DA8XX_REMOTEPROC)		+= da8xx_remoteproc.o
->  obj-$(CONFIG_KEYSTONE_REMOTEPROC)	+= keystone_remoteproc.o
-> +obj-$(CONFIG_MESON_MX_AO_ARC_REMOTEPROC)+= meson_mx_ao_arc.o
->  obj-$(CONFIG_PRU_REMOTEPROC)		+= pru_rproc.o
->  obj-$(CONFIG_QCOM_PIL_INFO)		+= qcom_pil_info.o
->  obj-$(CONFIG_QCOM_RPROC_COMMON)		+= qcom_common.o
-> diff --git a/drivers/remoteproc/meson_mx_ao_arc.c b/drivers/remoteproc/meson_mx_ao_arc.c
-> new file mode 100644
-> index 000000000000..1deb03ca30f4
-> --- /dev/null
-> +++ b/drivers/remoteproc/meson_mx_ao_arc.c
-> @@ -0,0 +1,240 @@
-> +// SPDX-License-Identifier: GPL-2.0-or-later
-> +/*
-> + * Copyright (C) 2020 Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-> + */
-> +
-> +#include <linux/bitfield.h>
-> +#include <linux/bitops.h>
-> +#include <linux/clk.h>
-> +#include <linux/delay.h>
-> +#include <linux/property.h>
-
-Is it possible for this to go after platform_device.h?
-
-> +#include <linux/genalloc.h>
-> +#include <linux/io.h>
-> +#include <linux/ioport.h>
-> +#include <linux/mfd/syscon.h>
-> +#include <linux/module.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/regmap.h>
-> +#include <linux/remoteproc.h>
-> +#include <linux/reset.h>
-> +#include <linux/sizes.h>
-> +
-> +#include "remoteproc_internal.h"
-> +
-> +#define AO_REMAP_REG0					0x0
-> +#define AO_REMAP_REG1					0x4
-> +
-> +#define AO_CPU_CNTL					0x0
-> +	#define AO_CPU_CNTL_MEM_ADDR_UPPER		GENMASK(28, 16)
-> +	#define AO_CPU_CNTL_HALT			BIT(9)
-> +	#define AO_CPU_CNTL_UNKNONWN			BIT(8)
-> +	#define AO_CPU_CNTL_RUN				BIT(0)
-
-Any reason for the extra tabulation at the beginning of the lines?
-
-> +
-> +#define AO_CPU_STAT					0x4
-> +
-> +#define AO_SECURE_REG0					0x0
-> +	#define AO_SECURE_REG0_UNKNOWN			GENMASK(23, 8)
-> +
-> +#define MESON_AO_RPROC_SRAM_USABLE_BITS			GENMASK(31, 20)
-
-As per your comments in the cover letter I assume we don't know more about this?
-
-> +#define MESON_AO_RPROC_MEMORY_OFFSET			0x10000000
-> +
-> +struct meson_mx_ao_arc_rproc_priv {
-> +	void __iomem		*remap_base;
-> +	void __iomem		*cpu_base;
-> +	unsigned long		sram_va;
-> +	phys_addr_t		sram_pa;
-> +	size_t			sram_size;
-> +	struct gen_pool		*sram_pool;
-> +	struct reset_control	*arc_reset;
-> +	struct clk		*arc_pclk;
-> +	struct regmap		*secbus2_regmap;
-> +};
-> +
-> +static int meson_mx_ao_arc_rproc_start(struct rproc *rproc)
-> +{
-> +	struct meson_mx_ao_arc_rproc_priv *priv = rproc->priv;
-> +	phys_addr_t phys_addr;
-> +	int ret;
-> +
-> +	ret = clk_prepare_enable(priv->arc_pclk);
-> +	if (ret)
-> +		return ret;
-> +
-> +	writel(0, priv->remap_base + AO_REMAP_REG0);
-> +	usleep_range(10, 100);
-
-That's wonderful - here too I assume there is no indication as to why this is
-needed? 
-
-> +
-> +	regmap_update_bits(priv->secbus2_regmap, AO_SECURE_REG0,
-> +			   AO_SECURE_REG0_UNKNOWN, 0);
-> +
-> +	ret = reset_control_reset(priv->arc_reset);
-> +	if (ret) {
-> +		clk_disable_unprepare(priv->arc_pclk);
-> +		return ret;
-> +	}
-> +
-> +	usleep_range(10, 100);
-> +
-> +	/* convert from 0xd9000000 to 0xc9000000 as the vendor driver does */
-> +	phys_addr = priv->sram_pa - MESON_AO_RPROC_MEMORY_OFFSET;
-> +
-> +	writel(FIELD_PREP(AO_CPU_CNTL_MEM_ADDR_UPPER,
-> +			  FIELD_GET(MESON_AO_RPROC_SRAM_USABLE_BITS, phys_addr)) |
-> +	       AO_CPU_CNTL_UNKNONWN | AO_CPU_CNTL_RUN,
-
-This is really hard to read - please unpack.
-
-> +	       priv->cpu_base + AO_CPU_CNTL);
-> +	usleep_range(20, 200);
-> +
-> +	return 0;
-> +}
-> +
-> +static int meson_mx_ao_arc_rproc_stop(struct rproc *rproc)
-> +{
-> +	struct meson_mx_ao_arc_rproc_priv *priv = rproc->priv;
-> +
-> +	writel(AO_CPU_CNTL_HALT, priv->cpu_base + AO_CPU_CNTL);
-> +
-> +	clk_disable_unprepare(priv->arc_pclk);
-> +
-> +	return 0;
-> +}
-> +
-> +static void *meson_mx_ao_arc_rproc_da_to_va(struct rproc *rproc, u64 da,
-> +					    size_t len)
-> +{
-> +	struct meson_mx_ao_arc_rproc_priv *priv = rproc->priv;
-> +
-> +	if ((da + len) >= priv->sram_size)
-> +		return NULL;
-
-This isn't an index so it should be '>' rather than '>='.  You should be able to
-ask for the whole range and get it, which the above prevents you from doing.
-
-Moreover are you sure 'da' always starts at 0? This seems to be at odds with
-your comment in meson_mx_ao_arc_rproc_start() about converting from 0xd9000000
-to 0xc9000000.
-
-> +
-> +	return (void *)priv->sram_va + da;
-> +}
-> +
-> +static struct rproc_ops meson_mx_ao_arc_rproc_ops = {
-> +	.start		= meson_mx_ao_arc_rproc_start,
-> +	.stop		= meson_mx_ao_arc_rproc_stop,
-> +	.da_to_va	= meson_mx_ao_arc_rproc_da_to_va,
-> +	.get_boot_addr	= rproc_elf_get_boot_addr,
-> +	.load		= rproc_elf_load_segments,
-> +	.sanity_check	= rproc_elf_sanity_check,
-> +};
-> +
-> +static int meson_mx_ao_arc_rproc_probe(struct platform_device *pdev)
-> +{
-> +	struct meson_mx_ao_arc_rproc_priv *priv;
-> +	struct platform_device *secbus2_pdev;
-> +	struct device *dev = &pdev->dev;
-> +	const char *fw_name;
-> +	struct rproc *rproc;
-> +	int ret;
-> +
-> +	ret = device_property_read_string(dev, "firmware-name", &fw_name);
-
-I would have expected of_property_read_string() but that is also fine.
-
-> +	if (ret)
-> +		fw_name = NULL;
-> +
-> +	rproc = devm_rproc_alloc(dev, "meson-mx-ao-arc",
-> +				 &meson_mx_ao_arc_rproc_ops, fw_name,
-> +				 sizeof(*priv));
-> +	if (!rproc)
-> +		return -ENOMEM;
-> +
-> +	rproc->has_iommu = false;
-> +	priv = rproc->priv;
-> +
-> +	priv->sram_pool = of_gen_pool_get(dev->of_node, "sram", 0);
-> +	if (!priv->sram_pool) {
-> +		dev_err(dev, "Could not get SRAM pool\n");
-> +		return -ENODEV;
-> +	}
-> +
-> +	priv->sram_size = gen_pool_avail(priv->sram_pool);
-> +
-> +	priv->sram_va = gen_pool_alloc(priv->sram_pool, priv->sram_size);
-> +	if (!priv->sram_va) {
-> +		dev_err(dev, "Could not alloc memory in SRAM pool\n");
-> +		return -ENOMEM;
-> +	}
-> +
-> +	priv->sram_pa = gen_pool_virt_to_phys(priv->sram_pool, priv->sram_va);
-> +	if (priv->sram_pa & ~MESON_AO_RPROC_SRAM_USABLE_BITS) {
-> +		dev_err(dev, "SRAM address contains unusable bits\n");
-> +		ret = -EINVAL;
-> +		goto err_free_genpool;
-> +	}
-> +
-> +	priv->secbus2_regmap = syscon_regmap_lookup_by_phandle(dev->of_node,
-> +							       "amlogic,secbus2");
-> +	if (IS_ERR(priv->secbus2_regmap)) {
-> +		dev_err(dev, "Failed to find SECBUS2 regmap\n");
-> +		ret = PTR_ERR(priv->secbus2_regmap);
-> +		goto err_free_genpool;
-> +	}
-> +
-> +	priv->remap_base = devm_platform_ioremap_resource_byname(pdev, "remap");
-> +	if (IS_ERR(priv->remap_base)) {
-> +		ret = PTR_ERR(priv->remap_base);
-> +		goto err_free_genpool;
-> +	}
-> +
-> +	priv->cpu_base = devm_platform_ioremap_resource_byname(pdev, "cpu");
-> +	if (IS_ERR(priv->cpu_base)) {
-> +		ret = PTR_ERR(priv->cpu_base);
-> +		goto err_free_genpool;
-> +	}
-> +
-> +	priv->arc_reset = devm_reset_control_get_exclusive(dev, NULL);
-> +	if (IS_ERR(priv->arc_reset)) {
-
-Looking at __devm_reset_control_get(), this should probably be IS_ERR_OR_NULL().
+Or are there other changes that I need to do?
 
 Thanks,
-Mathieu
+Peng.
 
-> +		dev_err(dev, "Failed to get ARC reset\n");
-> +		ret = PTR_ERR(priv->arc_reset);
-> +		goto err_free_genpool;
-> +	}
-> +
-> +	priv->arc_pclk = devm_clk_get(dev, NULL);
-> +	if (IS_ERR(priv->arc_pclk)) {
-> +		dev_err(dev, "Failed to get the ARC PCLK\n");
-> +		ret = PTR_ERR(priv->arc_pclk);
-> +		goto err_free_genpool;
-> +	}
-> +
-> +	platform_set_drvdata(pdev, rproc);
-> +
-> +	ret = rproc_add(rproc);
-> +	if (ret)
-> +		goto err_free_genpool;
-> +
-> +	return 0;
-> +
-> +err_free_genpool:
-> +	gen_pool_free(priv->sram_pool, priv->sram_va, priv->sram_size);
-> +	return ret;
-> +}
-> +
-> +static int meson_mx_ao_arc_rproc_remove(struct platform_device *pdev)
-> +{
-> +	struct rproc *rproc = platform_get_drvdata(pdev);
-> +	struct meson_mx_ao_arc_rproc_priv *priv = rproc->priv;
-> +
-> +	rproc_del(rproc);
-> +	gen_pool_free(priv->sram_pool, priv->sram_va, priv->sram_size);
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct of_device_id meson_mx_ao_arc_rproc_match[] = {
-> +	{ .compatible = "amlogic,meson8-ao-arc" },
-> +	{ .compatible = "amlogic,meson8b-ao-arc" },
-> +	{ /* sentinel */ }
-> +};
-> +MODULE_DEVICE_TABLE(of, meson_mx_ao_arc_rproc_match);
-> +
-> +static struct platform_driver meson_mx_ao_arc_rproc_driver = {
-> +	.probe = meson_mx_ao_arc_rproc_probe,
-> +	.remove = meson_mx_ao_arc_rproc_remove,
-> +	.driver = {
-> +		.name = "meson-mx-ao-arc-rproc",
-> +		.of_match_table = of_match_ptr(meson_mx_ao_arc_rproc_match),
-> +	},
-> +};
-> +module_platform_driver(meson_mx_ao_arc_rproc_driver);
-> +
-> +MODULE_DESCRIPTION("Amlogic Meson6/8/8b/8m2 AO ARC remote processor driver");
-> +MODULE_AUTHOR("Martin Blumenstingl <martin.blumenstingl@googlemail.com>");
-> +MODULE_LICENSE("GPL v2");
-> -- 
-> 2.30.0
-> 
-> 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+>=20
+> >
+> > >
+> > > For the vdev0buffer, what you have will work *only* if that entry is
+> > > the first one in the list of memory regions, as we agreed here [2].
+> >
+> > Yes. I agree and follow this rule from then.
+> >
+> > Thanks,
+> > Peng.
+> >
+> > >
+> > > [1].
+> > > https://eur01.safelinks.protection.outlook.com/?url=3Dhttps%3A%2F%2Fe=
+l
+> > > ixir.b
+> > >
+> ootlin.com%2Flinux%2Fv5.11-rc3%2Fsource%2Fdrivers%2Fremoteproc%2Fre
+> > >
+> moteproc_core.c%23L321&amp;data=3D04%7C01%7Cpeng.fan%40nxp.com%7
+> > >
+> C581784529b1646b9d34b08d8b67ae8c7%7C686ea1d3bc2b4c6fa92cd99c5c
+> > >
+> 301635%7C0%7C0%7C637459986311799770%7CUnknown%7CTWFpbGZsb3
+> > >
+> d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0
+> > > %3D%7C1000&amp;sdata=3DQur6YiTWlak0ZRnrUZRzawfoO38EBrAItqZm66
+> b4
+> > > m20%3D&amp;reserved=3D0
+> > > [2].
+> > > https://eur01.safelinks.protection.outlook.com/?url=3Dhttps%3A%2F%2Fp=
+a
+> > > tch
+> > >
+> work.kernel.org%2Fproject%2Flinux-remoteproc%2Fpatch%2F202007221315
+> > >
+> 43.7024-1-peng.fan%40nxp.com%2F&amp;data=3D04%7C01%7Cpeng.fan%40n
+> > >
+> xp.com%7C581784529b1646b9d34b08d8b67ae8c7%7C686ea1d3bc2b4c6fa9
+> > >
+> 2cd99c5c301635%7C0%7C0%7C637459986311799770%7CUnknown%7CTW
+> > >
+> FpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJX
+> > >
+> VCI6Mn0%3D%7C1000&amp;sdata=3Db%2F8muWtb3yxKIsnXmKmRGYYV33%2
+> > > FHjwA6a8x58geY7eE%3D&amp;reserved=3D0
+> > >
+> > > >  		err =3D of_address_to_resource(node, 0, &res);
+> > > >  		if (err) {
+> > > >  			dev_err(dev, "unable to resolve memory region\n");
+> > > > --
+> > > > 2.28.0
+> > > >
