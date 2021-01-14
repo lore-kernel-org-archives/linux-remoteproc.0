@@ -2,153 +2,158 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.5 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E9D1C433E0
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 14 Jan 2021 02:12:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50061C433E9
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 14 Jan 2021 09:07:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0C9D7235F8
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 14 Jan 2021 02:12:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0330223A04
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 14 Jan 2021 09:07:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728777AbhANCMZ (ORCPT
+        id S1727804AbhANJHQ (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 13 Jan 2021 21:12:25 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50834 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729247AbhAMWEo (ORCPT
+        Thu, 14 Jan 2021 04:07:16 -0500
+Received: from mx07-00178001.pphosted.com ([185.132.182.106]:55058 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727274AbhANJHH (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 13 Jan 2021 17:04:44 -0500
-Received: from mail-oi1-x22b.google.com (mail-oi1-x22b.google.com [IPv6:2607:f8b0:4864:20::22b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D644EC061794
-        for <linux-remoteproc@vger.kernel.org>; Wed, 13 Jan 2021 14:04:02 -0800 (PST)
-Received: by mail-oi1-x22b.google.com with SMTP id d203so3839486oia.0
-        for <linux-remoteproc@vger.kernel.org>; Wed, 13 Jan 2021 14:04:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=wOwkhQAgNtweZgYmyrlXoMgH8ym5z5w1V+rJvmQv+fQ=;
-        b=kJwNWHVPnLhMUJeCvPu8sI3PIqH4iL2mp7HxaA6Ti7QwQL24qrg8smwdLQ0gVTHxto
-         nR4124VVq//u+nE/WpRYRhOqDNinS6G6xSUciBqnNP8RVffiHNrzzMxOw8Vj1wN4dWo3
-         /vTce6X+VMO+EKoGrxS1d6v6863RBoqhs+B5gwCon1hItNM5JgBJ9taXAsP3ms5gFZZu
-         YTWZk8mzx7fbr7zGszoch2h5R1MslFjc7BFrGhW9JUeE9yxIeMgvhdvw/JL3A/JefLLw
-         44+KvlvQeHV2Bw3bwBRdUkGHHbAIXCE0sN2NQMcAng19IYmiMuhYTHOwk7a+ORzYcOO6
-         +rqw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=wOwkhQAgNtweZgYmyrlXoMgH8ym5z5w1V+rJvmQv+fQ=;
-        b=F/hDgvsGC92f3T6mgX/kDrQ6CcY+/USj5XvBcuRlcQ01Yg/FWY2v2Q0ZdKDZUGDNCw
-         eWH+ZJmktRkY7i7xrP4sCzof4U52EsSjsKsZds51dsUSQsx+YFIE+GbAms6hEfk4XWSW
-         SoNTvis9hmjZNHyfQ8VYObxGFt7x3+0l1lY3+vK36cLQ33OJdyCN7LC9oK0rZ2tLu8Mq
-         Pdfv2PtkMe03ZPu6okv63Rnu3w4+bcbCUWiCtk/NhJiSc7plgXmOr7yG4DurT7QzOVEf
-         4YrCOapEemKujKbtvUQoNDO0vTZ3DTmS7EqtncueQFILufLxCpQ9S9OAnK+tBT3SY5yK
-         UxpA==
-X-Gm-Message-State: AOAM533dlolHQ0zauqxvCMZRMUD2v+Wwi50xjllem87ERtLvXvkypPkY
-        aiSgMChftu+9yJERtyIPlM2Pew==
-X-Google-Smtp-Source: ABdhPJwlt8k8vervQGWkTLMPK3UWJLXRvUzPeB35zL+kRjtcd8bJFhMsLRQGYe0jgNMKxKOqwujABg==
-X-Received: by 2002:aca:4257:: with SMTP id p84mr844472oia.176.1610575442148;
-        Wed, 13 Jan 2021 14:04:02 -0800 (PST)
-Received: from builder.lan (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
-        by smtp.gmail.com with ESMTPSA id g92sm649467otb.66.2021.01.13.14.04.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 Jan 2021 14:04:01 -0800 (PST)
-Date:   Wed, 13 Jan 2021 16:03:59 -0600
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+        Thu, 14 Jan 2021 04:07:07 -0500
+Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 10E922US020227;
+        Thu, 14 Jan 2021 10:06:21 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=selector1;
+ bh=iOusNVKYpK/rUzV9p2n9FI3ih0zBi6c6lWLF2Wo9T2E=;
+ b=6SbEn1F8DEZRaoW3tB7wsnwd/an7oQhOAYQyFaSBPL5y94qEkZDRW0oUOCyMO7GXkkRF
+ pdTS0FTHYVNps92luQgioXH057rQR1EYkgq40QKA2++C738t59x1i2bZPzf8se+UnfSf
+ 9+C13zqU9c8tQ+aVY9aP6LRbfwzmByoQD0RnZ5Jwkt4SKz3MhinueBmjgrdUc0fxN7Gs
+ Jm85AW7eMgU5mdKpmD9fkd+b24QiYcv9E+A0LDgPWh6Isug7L4edZ1TVEEhtbbP9pc6R
+ 07MAEDdYd+DVtfaw2z2meXFgbmJ1Hf0Li/V6itt2r05UxqAotx1WQ0lqG+Ou2OvpHzNJ FA== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 362379c85y-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 14 Jan 2021 10:06:21 +0100
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 0188210002A;
+        Thu, 14 Jan 2021 10:06:20 +0100 (CET)
+Received: from Webmail-eu.st.com (sfhdag2node3.st.com [10.75.127.6])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id DDBFC2283F5;
+        Thu, 14 Jan 2021 10:06:20 +0100 (CET)
+Received: from lmecxl0889.lme.st.com (10.75.127.50) by SFHDAG2NODE3.st.com
+ (10.75.127.6) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 14 Jan
+ 2021 10:06:20 +0100
+Subject: Re: [PATCH v2 00/16] introduce generic IOCTL interface for RPMsg
+ channels management
 To:     Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc:     Andy Gross <agross@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>,
-        Sibi Sankar <sibis@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] remoteproc: qcom_q6v5_mss: Validate p_filesz in ELF
- loader
-Message-ID: <X/9uT0ld7OE5pPv4@builder.lan>
-References: <20210107235053.745888-1-bjorn.andersson@linaro.org>
- <20210113212257.GB229796@xps15>
+CC:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Ohad Ben-Cohen <ohad@wizery.com>,
+        Andy Gross <agross@kernel.org>,
+        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-msm@vger.kernel.org>
+References: <20201222105726.16906-1-arnaud.pouliquen@foss.st.com>
+ <20210113203143.GA229796@xps15>
+From:   Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
+Message-ID: <d1daa198-dcf1-a63d-309d-868741088d09@foss.st.com>
+Date:   Thu, 14 Jan 2021 10:05:59 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210113212257.GB229796@xps15>
+In-Reply-To: <20210113203143.GA229796@xps15>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.75.127.50]
+X-ClientProxiedBy: SFHDAG3NODE2.st.com (10.75.127.8) To SFHDAG2NODE3.st.com
+ (10.75.127.6)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.343,18.0.737
+ definitions=2021-01-14_03:2021-01-13,2021-01-14 signatures=0
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Wed 13 Jan 15:22 CST 2021, Mathieu Poirier wrote:
+Hi Mathieu,
 
-> Hi Bjorn,
+On 1/13/21 9:31 PM, Mathieu Poirier wrote:
+> Hi Arnaud,
 > 
-> On Thu, Jan 07, 2021 at 03:50:53PM -0800, Bjorn Andersson wrote:
-> > Analog to the issue in the common mdt_loader code the MSS ELF loader
-> > does not validate that p_filesz bytes will fit in the memory region and
-> > that the loaded segments are not truncated. Fix this in the same way
-> > as proposed for the mdt_loader.
-> > 
-> > Fixes: 135b9e8d1cd8 ("remoteproc: qcom_q6v5_mss: Validate modem blob firmware size before load")
-> > Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> > ---
-> >  drivers/remoteproc/qcom_q6v5_mss.c | 17 +++++++++++++++++
-> >  1 file changed, 17 insertions(+)
-> > 
-> > diff --git a/drivers/remoteproc/qcom_q6v5_mss.c b/drivers/remoteproc/qcom_q6v5_mss.c
-> > index 66106ba25ba3..2b59e0cbdce1 100644
-> > --- a/drivers/remoteproc/qcom_q6v5_mss.c
-> > +++ b/drivers/remoteproc/qcom_q6v5_mss.c
-> > @@ -1210,6 +1210,14 @@ static int q6v5_mpss_load(struct q6v5 *qproc)
-> >  			goto release_firmware;
-> >  		}
-> >  
-> > +		if (phdr->p_filesz > phdr->p_memsz) {
-> > +			dev_err(qproc->dev,
-> > +				"refusing to load segment %d with p_filesz > p_memsz\n",
-> > +				i);
-> > +			ret = -EINVAL;
-> > +			break;
+> [...]
 > 
-> Based on the error handling for the above and below conditions, I would have
-> expected a "goto release_firmware" rather than a "break".
+>>
+>> Arnaud Pouliquen (16):
+>>   rpmsg: introduce RPMsg control driver for channel creation
+>>   rpmsg: add RPMsg control API to register service
+>>   rpmsg: add override field in channel info
+>>   rpmsg: ctrl: implement the ioctl function to create device
+>>   rpmsg: ns: initialize channel info override field
+>>   rpmsg: add helper to register the rpmsg ctrl device
+>>   rpmsg: char: clean up rpmsg class
+>>   rpmsg: char: make char rpmsg a rpmsg device without the control part
+>>   rpmsg: char: register RPMsg raw service to the ioctl interface.
+>>   rpmsg: char: allow only one endpoint per device
+>>   rpmsg: char: check destination address is not null
+>>   rpmsg: virtio: use the driver_override in channel creation ops
+>>   rpmsg: virtio: probe the rpmsg_ctl device
+>>   rpmsg: glink: add create and release rpmsg channel ops
+>>   rpmsg: smd: add create and release rpmsg channel ops
+>>   rpmsg: replace rpmsg_chrdev_register_device use
+>>
+>>  drivers/rpmsg/Kconfig             |   8 +
+>>  drivers/rpmsg/Makefile            |   1 +
+>>  drivers/rpmsg/qcom_glink_native.c |  96 +++++++--
+>>  drivers/rpmsg/qcom_smd.c          |  59 +++++-
+>>  drivers/rpmsg/rpmsg_char.c        | 246 ++++++-----------------
+>>  drivers/rpmsg/rpmsg_ctrl.c        | 320 ++++++++++++++++++++++++++++++
+>>  drivers/rpmsg/rpmsg_internal.h    |  14 --
+>>  drivers/rpmsg/rpmsg_ns.c          |   1 +
+>>  drivers/rpmsg/virtio_rpmsg_bus.c  |  38 +++-
+>>  include/linux/rpmsg.h             |  40 ++++
+>>  include/uapi/linux/rpmsg.h        |  14 ++
+>>  11 files changed, 606 insertions(+), 231 deletions(-)
+>>  create mode 100644 drivers/rpmsg/rpmsg_ctrl.c
 > 
+> I am finally coming around to review this set.  I see that you already had an
+> extensive conversation with Bjorn - did you want me to have a look as well or
+> should I wait for the next revision?
 
-You're certainly right!
+Based on Bjorn first feedback, my understanding is that the management based on
+create/destroy channel does not match with the QCOM RPMsg backend
+implementation. I think this is the blocking point of my V2 implementation.
 
-Yet another reason for the duplication between this function, the
-mdt_loader and the remoteproc_elf_loader is a bad idea - still not sure
-how to refactor any one of them to fit the three.
+Before sending a new revision i would hope that we have a roundtable discussion
+to clarify the direction to move forward, to avoid sending useless revisions.
 
-Thank you,
-Bjorn
+As discussed in [1], there are different alternatives, that probably depend on
+the features we expect to support.
+I tried to sum-up the requirement I have in mind in [1].
 
-> > +		}
-> > +
-> >  		ptr = memremap(qproc->mpss_phys + offset, phdr->p_memsz, MEMREMAP_WC);
-> >  		if (!ptr) {
-> >  			dev_err(qproc->dev,
-> > @@ -1241,6 +1249,15 @@ static int q6v5_mpss_load(struct q6v5 *qproc)
-> >  				goto release_firmware;
-> >  			}
-> >  
-> > +			if (seg_fw->size != phdr->p_filesz) {
-> > +				dev_err(qproc->dev,
-> > +					"failed to load segment %d from truncated file %s\n",
-> > +					i, fw_name);
-> > +				ret = -EINVAL;
-> > +				memunmap(ptr);
-> > +				break;
-> 
-> Same here.
-> 
-> > +			}
-> > +
-> >  			release_firmware(seg_fw);
-> >  		}
+The 2 main directions I can see are:
+- rework the rpmsg_char to match with all rpmsg backend (V2 implementation)
+    to be honest i don't know how to move forward in this direction as QCOM and
+    virtio backends are rather different.
+- not modify the rpmsg_char but create the rpmsg_ctrl (and perhaps also a
+rpmsg_raw for a /dev/rpmsg data interface) that would use the create/destroy
+channel such as the rpmsg ns (V1 implementation).
+    one advantage of this solution is that this does not impact QCOM drivers.
+    one drawback is that we duplicate the code.
+
+[1]
+https://patchwork.kernel.org/project/linux-remoteproc/patch/20201222105726.16906-5-arnaud.pouliquen@foss.st.com/
+
+[2] https://patchwork.kernel.org/project/linux-remoteproc/list/?series=327277
+
+Thanks,
+Arnaud
+
 > 
 > Thanks,
 > Mathieu
 > 
-> >  
-> > -- 
-> > 2.29.2
-> > 
+>>
+>> -- 
+>> 2.17.1
+>>
