@@ -2,214 +2,177 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 105DCC433DB
-	for <linux-remoteproc@archiver.kernel.org>; Sat, 16 Jan 2021 00:56:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E9F3C433E6
+	for <linux-remoteproc@archiver.kernel.org>; Sat, 16 Jan 2021 21:02:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BE83023A34
-	for <linux-remoteproc@archiver.kernel.org>; Sat, 16 Jan 2021 00:56:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0B67C23106
+	for <linux-remoteproc@archiver.kernel.org>; Sat, 16 Jan 2021 21:02:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725815AbhAPAzu (ORCPT
+        id S1726788AbhAPVCN (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 15 Jan 2021 19:55:50 -0500
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:33264 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725601AbhAPAzu (ORCPT
+        Sat, 16 Jan 2021 16:02:13 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60292 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726201AbhAPVCM (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 15 Jan 2021 19:55:50 -0500
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 10G0rVXL127232;
-        Fri, 15 Jan 2021 18:53:31 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1610758411;
-        bh=SyYryF1l2gNr4uYRFERqQnjjOjHe3QCik1F2wFcrCjQ=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=kL3pW6lmlXo4lTCzRsYEFYaIvlivswr+3s0mJkq84/hFuoPMAnQlH6+TldjBpK0WP
-         tJHOGuLgeUSUbHYUuwRVc2pv73TCtoswG5CIe/9A498+pNx1qaFzDPkbpsFUxMhMZE
-         NxR26SwFdGiULKjOTppGwjNQ2H9Z+DarwH1i/vnQ=
-Received: from DFLE106.ent.ti.com (dfle106.ent.ti.com [10.64.6.27])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 10G0rVa9004891
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 15 Jan 2021 18:53:31 -0600
-Received: from DFLE109.ent.ti.com (10.64.6.30) by DFLE106.ent.ti.com
- (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3; Fri, 15
- Jan 2021 18:53:30 -0600
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE109.ent.ti.com
- (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3 via
- Frontend Transport; Fri, 15 Jan 2021 18:53:30 -0600
-Received: from [10.250.34.42] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 10G0rUor073601;
-        Fri, 15 Jan 2021 18:53:30 -0600
-Subject: Re: [PATCH] remoteproc: pru: future-proof PRU ID matching
-To:     David Lechner <david@lechnology.com>,
-        <linux-remoteproc@vger.kernel.org>
-CC:     Ohad Ben-Cohen <ohad@wizery.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20210104211816.420602-1-david@lechnology.com>
-From:   Suman Anna <s-anna@ti.com>
-Message-ID: <ccc1ee4b-ed73-f7c8-ca1e-f15eedeeb84b@ti.com>
-Date:   Fri, 15 Jan 2021 18:53:30 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Sat, 16 Jan 2021 16:02:12 -0500
+Received: from mail-ej1-x629.google.com (mail-ej1-x629.google.com [IPv6:2a00:1450:4864:20::629])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F13F5C061573;
+        Sat, 16 Jan 2021 13:01:31 -0800 (PST)
+Received: by mail-ej1-x629.google.com with SMTP id l9so12582714ejx.3;
+        Sat, 16 Jan 2021 13:01:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=b6fot4S0o8FzBACw00nl0yHU0eEOQr6GTvAJmo+zENQ=;
+        b=kEh8eR+7T5R8d2o7uD/lJHuY8dv8i1NNXBpsp2Kz30djqxD7PIinIv/GSxaERAsJpg
+         Qr0hFfmaigLfAsv5JuvxCUBLYzpgQYycqh9F5C0XcuRdgYrvYzeG9jyILTswpMT/YdiH
+         /dHlEryL8aAmxfVSM7wxBoXNF1RJpruY1SYHCUz/REnMjrP2fn84U5XQp2BWwKazYlUC
+         jEOjzxN3MikFrF5Km1Pd99tN7xpYFveHz7rurvd1xnSkWsS0UNssSj9zd0w0x7W3Tz94
+         I4hOFNF12VhfALTvQKJ6uJQfw7aQPFbYs2mTGN/nssOQXUFN9rOj18I2w8BO3gcdbD6q
+         qqJg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=b6fot4S0o8FzBACw00nl0yHU0eEOQr6GTvAJmo+zENQ=;
+        b=ufkMVxnqegcm3wyPYxKUGiHBYvhm8T8TyEQSSYLbX8aY14juGFTar/9kub8JHtEvfT
+         kBB73R/HD37HQTe7vb918gh988169QJ5PNZt1paLg1s+poejwuaBCvL8OyyrHZmvlHn9
+         mWoI442KxiZHCinSi4/orAV/5BqHT86345jIfNDxdld9/6IkV5Q9xHN9va0EzklLL+46
+         Ikl6nAT7z6FpXvb6OP5X4RJTdGKlfaseSfKCbpl24l/asVD6jSIw+Bfc1NRBFC10+5Li
+         LnaYWPGTumiGgAZ6EPXsAmvSFOoOAuJZqaCgqyabqXM6xJlH5GIpeabF4Fv28ChBuvWp
+         J/+Q==
+X-Gm-Message-State: AOAM532prfrxSEGiDGy2aeWFFKZviCV4hTUEnR1ebJR08PnAYOwNKNCa
+        AYIIuDJi+WjwII99jk40n8wjVPHQI/SdnwlMmyw=
+X-Google-Smtp-Source: ABdhPJwi6ie1Yk7L9E3ktUS9hNm/69jCzQMPLiaiVv9fUfCeBpf1UPMrxU+hF3OIde5B0EuEm426RXWdLPC1C9q7KzM=
+X-Received: by 2002:a17:907:3e27:: with SMTP id hp39mr8452064ejc.187.1610830890430;
+ Sat, 16 Jan 2021 13:01:30 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20210104211816.420602-1-david@lechnology.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+References: <20210102205904.2691120-1-martin.blumenstingl@googlemail.com>
+ <20210102205904.2691120-5-martin.blumenstingl@googlemail.com> <20210112234330.GA192175@xps15>
+In-Reply-To: <20210112234330.GA192175@xps15>
+From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date:   Sat, 16 Jan 2021 22:01:19 +0100
+Message-ID: <CAFBinCCfiC9a6u2qAs8-pEUB299C=vHut5=1ZPVPoCs0w-+r-Q@mail.gmail.com>
+Subject: Re: [PATCH v2 4/5] remoteproc: meson-mx-ao-arc: Add a driver for the
+ AO ARC remote procesor
+To:     Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc:     linux-remoteproc@vger.kernel.org,
+        linux-amlogic@lists.infradead.org, ohad@wizery.com,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        bjorn.andersson@linaro.org, robh+dt@kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On 1/4/21 3:18 PM, David Lechner wrote:
-> Currently, to determine the ID (0 or 1) of a PRU core, the last 19 bits
-> of the physical address of the cores IRAM are compared to known values.
-> However, the PRUs on TI AM18XX have IRAM at 0x01c38000 and 0x01c3c000
-> respectively. The former conflicts with PRU1_IRAM_ADDR_MASK which could
-> cause PRU0 to be detected as PRU1. (The latter also conflicts with
-> TX_PRU1_IRAM_ADDR_MASK but it would still be correctly detected as
-> PRU1.)
-> 
-> This fixes the problem by moving the address matching offset values to
-> the device-specific data. This way the compatible string does half of
-> the work of narrowing down the addresses to two possibilities instead
-> of checking the address against all possible PRU types. This also lets
-> us narrow down the scope of the match from 19 bits to 16 bits for all
-> PRU types.
-> 
-> After this, the TI AM18XX PRUs will be able to be added without running
-> into the problems stated above.
-> 
-> We can also drop the local ret variable while touching this code.
-> 
-> Signed-off-by: David Lechner <david@lechnology.com>
+Hi Mathieu,
 
-Will test this patch on Mon/Tue on various platforms.
+thank you for taking the time to go through my patch!
 
-Bjorn,
-Please wait for my Ack on this before you pick this up.
+On Wed, Jan 13, 2021 at 12:43 AM Mathieu Poirier
+<mathieu.poirier@linaro.org> wrote:
+[...]
+> > +       If unusre say N.
+>
+> s/unusre/unsure
+godo catch, noted.
 
-regards
-Suman
+[...]
+> > +#include <linux/property.h>
+>
+> Is it possible for this to go after platform_device.h?
+I think so, not sure why this is not in alphabetical order
 
-> ---
->  drivers/remoteproc/pru_rproc.c | 49 ++++++++++++++--------------------
->  1 file changed, 20 insertions(+), 29 deletions(-)
-> 
-> diff --git a/drivers/remoteproc/pru_rproc.c b/drivers/remoteproc/pru_rproc.c
-> index 2667919d76b3..94ce48df2f48 100644
-> --- a/drivers/remoteproc/pru_rproc.c
-> +++ b/drivers/remoteproc/pru_rproc.c
-> @@ -46,15 +46,6 @@
->  #define PRU_DEBUG_GPREG(x)	(0x0000 + (x) * 4)
->  #define PRU_DEBUG_CT_REG(x)	(0x0080 + (x) * 4)
->  
-> -/* PRU/RTU/Tx_PRU Core IRAM address masks */
-> -#define PRU_IRAM_ADDR_MASK	0x3ffff
-> -#define PRU0_IRAM_ADDR_MASK	0x34000
-> -#define PRU1_IRAM_ADDR_MASK	0x38000
-> -#define RTU0_IRAM_ADDR_MASK	0x4000
-> -#define RTU1_IRAM_ADDR_MASK	0x6000
-> -#define TX_PRU0_IRAM_ADDR_MASK	0xa000
-> -#define TX_PRU1_IRAM_ADDR_MASK	0xc000
-> -
->  /* PRU device addresses for various type of PRU RAMs */
->  #define PRU_IRAM_DA	0	/* Instruction RAM */
->  #define PRU_PDRAM_DA	0	/* Primary Data RAM */
-> @@ -96,10 +87,14 @@ enum pru_type {
->  /**
->   * struct pru_private_data - device data for a PRU core
->   * @type: type of the PRU core (PRU, RTU, Tx_PRU)
-> + * @pru0_iram_offset: used to identify PRU core 0
-> + * @pru1_iram_offset: used to identify PRU core 1
->   * @is_k3: flag used to identify the need for special load handling
->   */
->  struct pru_private_data {
->  	enum pru_type type;
-> +	u16 pru0_iram_offset;
-> +	u16 pru1_iram_offset;
->  	unsigned int is_k3 : 1;
->  };
->  
-> @@ -693,33 +688,21 @@ static int pru_rproc_parse_fw(struct rproc *rproc, const struct firmware *fw)
->  }
->  
->  /*
-> - * Compute PRU id based on the IRAM addresses. The PRU IRAMs are
-> + * Compute PRU id based on the last 16 bits of IRAM addresses. The PRU IRAMs are
->   * always at a particular offset within the PRUSS address space.
->   */
->  static int pru_rproc_set_id(struct pru_rproc *pru)
->  {
-> -	int ret = 0;
-> -
-> -	switch (pru->mem_regions[PRU_IOMEM_IRAM].pa & PRU_IRAM_ADDR_MASK) {
-> -	case TX_PRU0_IRAM_ADDR_MASK:
-> -		fallthrough;
-> -	case RTU0_IRAM_ADDR_MASK:
-> -		fallthrough;
-> -	case PRU0_IRAM_ADDR_MASK:
-> +	u16 offset = pru->mem_regions[PRU_IOMEM_IRAM].pa;
-> +
-> +	if (offset == pru->data->pru0_iram_offset)
->  		pru->id = 0;
-> -		break;
-> -	case TX_PRU1_IRAM_ADDR_MASK:
-> -		fallthrough;
-> -	case RTU1_IRAM_ADDR_MASK:
-> -		fallthrough;
-> -	case PRU1_IRAM_ADDR_MASK:
-> +	else if (offset == pru->data->pru1_iram_offset)
->  		pru->id = 1;
-> -		break;
-> -	default:
-> -		ret = -EINVAL;
-> -	}
-> +	else
-> +		return -EINVAL;
->  
-> -	return ret;
-> +	return 0;
->  }
->  
->  static int pru_rproc_probe(struct platform_device *pdev)
-> @@ -825,20 +808,28 @@ static int pru_rproc_remove(struct platform_device *pdev)
->  
->  static const struct pru_private_data pru_data = {
->  	.type = PRU_TYPE_PRU,
-> +	.pru0_iram_offset = 0x4000,
-> +	.pru1_iram_offset = 0x8000,
->  };
->  
->  static const struct pru_private_data k3_pru_data = {
->  	.type = PRU_TYPE_PRU,
-> +	.pru0_iram_offset = 0x4000,
-> +	.pru1_iram_offset = 0x8000,
->  	.is_k3 = 1,
->  };
->  
->  static const struct pru_private_data k3_rtu_data = {
->  	.type = PRU_TYPE_RTU,
-> +	.pru0_iram_offset = 0x4000,
-> +	.pru1_iram_offset = 0x6000,
->  	.is_k3 = 1,
->  };
->  
->  static const struct pru_private_data k3_tx_pru_data = {
->  	.type = PRU_TYPE_TX_PRU,
-> +	.pru0_iram_offset = 0xa000,
-> +	.pru1_iram_offset = 0xc000,
->  	.is_k3 = 1,
->  };
->  
-> 
+[...]
+> > +#define AO_CPU_CNTL                                  0x0
+> > +     #define AO_CPU_CNTL_MEM_ADDR_UPPER              GENMASK(28, 16)
+> > +     #define AO_CPU_CNTL_HALT                        BIT(9)
+> > +     #define AO_CPU_CNTL_UNKNONWN                    BIT(8)
+> > +     #define AO_CPU_CNTL_RUN                         BIT(0)
+>
+> Any reason for the extra tabulation at the beginning of the lines?
+not really, I think I did the same thing as in
+drivers/iio/adc/meson_saradc.c where the register itself starts at the
+beginning of the line and each bit(mask) starts indented
+I'll change this for the next version
 
+[...]
+> > +#define MESON_AO_RPROC_SRAM_USABLE_BITS                      GENMASK(31, 20)
+>
+> As per your comments in the cover letter I assume we don't know more about this?
+unfortunately not, but I'll still try to get some more information
+from someone at Amlogic.
+That said, this is "legacy" hardware for them so I can't make any promises.
+
+> > +#define MESON_AO_RPROC_MEMORY_OFFSET                 0x10000000
+> > +
+> > +struct meson_mx_ao_arc_rproc_priv {
+> > +     void __iomem            *remap_base;
+> > +     void __iomem            *cpu_base;
+> > +     unsigned long           sram_va;
+> > +     phys_addr_t             sram_pa;
+> > +     size_t                  sram_size;
+> > +     struct gen_pool         *sram_pool;
+> > +     struct reset_control    *arc_reset;
+> > +     struct clk              *arc_pclk;
+> > +     struct regmap           *secbus2_regmap;
+> > +};
+> > +
+> > +static int meson_mx_ao_arc_rproc_start(struct rproc *rproc)
+> > +{
+> > +     struct meson_mx_ao_arc_rproc_priv *priv = rproc->priv;
+> > +     phys_addr_t phys_addr;
+> > +     int ret;
+> > +
+> > +     ret = clk_prepare_enable(priv->arc_pclk);
+> > +     if (ret)
+> > +             return ret;
+> > +
+> > +     writel(0, priv->remap_base + AO_REMAP_REG0);
+> > +     usleep_range(10, 100);
+>
+> That's wonderful - here too I assume there is no indication as to why this is
+> needed?
+looking at this again: the vendor driver only has a delay after
+pulsing the reset line
+I will double check and hopefully remove this usleep_range and only
+keep the one below (after pulsing the reset line)
+
+[...]
+> > +static void *meson_mx_ao_arc_rproc_da_to_va(struct rproc *rproc, u64 da,
+> > +                                         size_t len)
+> > +{
+> > +     struct meson_mx_ao_arc_rproc_priv *priv = rproc->priv;
+> > +
+> > +     if ((da + len) >= priv->sram_size)
+> > +             return NULL;
+>
+> This isn't an index so it should be '>' rather than '>='.  You should be able to
+> ask for the whole range and get it, which the above prevents you from doing.
+>
+> Moreover are you sure 'da' always starts at 0? This seems to be at odds with
+> your comment in meson_mx_ao_arc_rproc_start() about converting from 0xd9000000
+> to 0xc9000000.
+thanks for both of these comments, I'll address this in the next version
+
+[...]
+> > +     priv->arc_reset = devm_reset_control_get_exclusive(dev, NULL);
+> > +     if (IS_ERR(priv->arc_reset)) {
+>
+> Looking at __devm_reset_control_get(), this should probably be IS_ERR_OR_NULL().
+as far as I know only devm_reset_control_get_optional_exclusive (the
+important bit is "optional" - I am using the "mandatory/not optional"
+variant) can return NULL, all other variants return PTR_ERR or a valid
+reset_control.
+
+
+Best regards,
+Martin
