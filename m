@@ -2,177 +2,240 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.5 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E9F3C433E6
-	for <linux-remoteproc@archiver.kernel.org>; Sat, 16 Jan 2021 21:02:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A7A9C433E0
+	for <linux-remoteproc@archiver.kernel.org>; Sun, 17 Jan 2021 23:04:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0B67C23106
-	for <linux-remoteproc@archiver.kernel.org>; Sat, 16 Jan 2021 21:02:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E6343207AE
+	for <linux-remoteproc@archiver.kernel.org>; Sun, 17 Jan 2021 23:04:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726788AbhAPVCN (ORCPT
+        id S1730277AbhAQXEV (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Sat, 16 Jan 2021 16:02:13 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60292 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726201AbhAPVCM (ORCPT
+        Sun, 17 Jan 2021 18:04:21 -0500
+Received: from m43-15.mailgun.net ([69.72.43.15]:47681 "EHLO
+        m43-15.mailgun.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729784AbhAQXEU (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Sat, 16 Jan 2021 16:02:12 -0500
-Received: from mail-ej1-x629.google.com (mail-ej1-x629.google.com [IPv6:2a00:1450:4864:20::629])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F13F5C061573;
-        Sat, 16 Jan 2021 13:01:31 -0800 (PST)
-Received: by mail-ej1-x629.google.com with SMTP id l9so12582714ejx.3;
-        Sat, 16 Jan 2021 13:01:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=b6fot4S0o8FzBACw00nl0yHU0eEOQr6GTvAJmo+zENQ=;
-        b=kEh8eR+7T5R8d2o7uD/lJHuY8dv8i1NNXBpsp2Kz30djqxD7PIinIv/GSxaERAsJpg
-         Qr0hFfmaigLfAsv5JuvxCUBLYzpgQYycqh9F5C0XcuRdgYrvYzeG9jyILTswpMT/YdiH
-         /dHlEryL8aAmxfVSM7wxBoXNF1RJpruY1SYHCUz/REnMjrP2fn84U5XQp2BWwKazYlUC
-         jEOjzxN3MikFrF5Km1Pd99tN7xpYFveHz7rurvd1xnSkWsS0UNssSj9zd0w0x7W3Tz94
-         I4hOFNF12VhfALTvQKJ6uJQfw7aQPFbYs2mTGN/nssOQXUFN9rOj18I2w8BO3gcdbD6q
-         qqJg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=b6fot4S0o8FzBACw00nl0yHU0eEOQr6GTvAJmo+zENQ=;
-        b=ufkMVxnqegcm3wyPYxKUGiHBYvhm8T8TyEQSSYLbX8aY14juGFTar/9kub8JHtEvfT
-         kBB73R/HD37HQTe7vb918gh988169QJ5PNZt1paLg1s+poejwuaBCvL8OyyrHZmvlHn9
-         mWoI442KxiZHCinSi4/orAV/5BqHT86345jIfNDxdld9/6IkV5Q9xHN9va0EzklLL+46
-         Ikl6nAT7z6FpXvb6OP5X4RJTdGKlfaseSfKCbpl24l/asVD6jSIw+Bfc1NRBFC10+5Li
-         LnaYWPGTumiGgAZ6EPXsAmvSFOoOAuJZqaCgqyabqXM6xJlH5GIpeabF4Fv28ChBuvWp
-         J/+Q==
-X-Gm-Message-State: AOAM532prfrxSEGiDGy2aeWFFKZviCV4hTUEnR1ebJR08PnAYOwNKNCa
-        AYIIuDJi+WjwII99jk40n8wjVPHQI/SdnwlMmyw=
-X-Google-Smtp-Source: ABdhPJwi6ie1Yk7L9E3ktUS9hNm/69jCzQMPLiaiVv9fUfCeBpf1UPMrxU+hF3OIde5B0EuEm426RXWdLPC1C9q7KzM=
-X-Received: by 2002:a17:907:3e27:: with SMTP id hp39mr8452064ejc.187.1610830890430;
- Sat, 16 Jan 2021 13:01:30 -0800 (PST)
+        Sun, 17 Jan 2021 18:04:20 -0500
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1610924638; h=Content-Transfer-Encoding: Content-Type:
+ In-Reply-To: MIME-Version: Date: Message-ID: References: Cc: To:
+ Subject: From: Sender; bh=2RtPblk3uLge3eG94olthgEo0MZHJLfj9TAIfc/5g38=;
+ b=S4cgG9TFPqjR3LEJRT5sQCPSAvI1poO5HbQSLDzvo1MKMIIju+PxlhLJbzBEa9K6IeO46cw8
+ sIDoVtxQl8lpwSwbMl4SUuC61fB9U8AdvbWXTRDmc79z+u+M9GoiRQS9wt64P09RfKCDDiAd
+ F+/u/7pbt5aKczUW1JrSIXAsXWU=
+X-Mailgun-Sending-Ip: 69.72.43.15
+X-Mailgun-Sid: WyI4ZWZiZiIsICJsaW51eC1yZW1vdGVwcm9jQHZnZXIua2VybmVsLm9yZyIsICJiZTllNGEiXQ==
+Received: from smtp.codeaurora.org
+ (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
+ smtp-out-n09.prod.us-east-1.postgun.com with SMTP id
+ 6004c23e8a0374a501c39092 (version=TLS1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Sun, 17 Jan 2021 23:03:26
+ GMT
+Sender: sidgup=codeaurora.org@mg.codeaurora.org
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 61A50C43463; Sun, 17 Jan 2021 23:03:25 +0000 (UTC)
+Received: from [192.168.1.10] (cpe-75-83-25-192.socal.res.rr.com [75.83.25.192])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: sidgup)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 88856C433ED;
+        Sun, 17 Jan 2021 23:03:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 88856C433ED
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=sidgup@codeaurora.org
+From:   Siddharth Gupta <sidgup@codeaurora.org>
+Subject: Re: [PATCH 3/3] soc: qcom: mdt_loader: Read hash from firmware blob
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     agross@kernel.org, ohad@wizery.com, linux-arm-msm@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        psodagud@codeaurora.org, rishabhb@codeaurora.org
+References: <1609968211-7579-1-git-send-email-sidgup@codeaurora.org>
+ <1609968211-7579-4-git-send-email-sidgup@codeaurora.org>
+ <X/elgO+66ibjeL+3@builder.lan>
+ <ec2a7223-d785-a9f3-d864-3c03e4965be5@codeaurora.org>
+ <YACDYu/qaYPyfKqS@builder.lan>
+Message-ID: <5efad446-cf46-02b3-461d-a67e12a4b1c0@codeaurora.org>
+Date:   Sun, 17 Jan 2021 15:03:22 -0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.6.1
 MIME-Version: 1.0
-References: <20210102205904.2691120-1-martin.blumenstingl@googlemail.com>
- <20210102205904.2691120-5-martin.blumenstingl@googlemail.com> <20210112234330.GA192175@xps15>
-In-Reply-To: <20210112234330.GA192175@xps15>
-From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date:   Sat, 16 Jan 2021 22:01:19 +0100
-Message-ID: <CAFBinCCfiC9a6u2qAs8-pEUB299C=vHut5=1ZPVPoCs0w-+r-Q@mail.gmail.com>
-Subject: Re: [PATCH v2 4/5] remoteproc: meson-mx-ao-arc: Add a driver for the
- AO ARC remote procesor
-To:     Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc:     linux-remoteproc@vger.kernel.org,
-        linux-amlogic@lists.infradead.org, ohad@wizery.com,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        bjorn.andersson@linaro.org, robh+dt@kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <YACDYu/qaYPyfKqS@builder.lan>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi Mathieu,
 
-thank you for taking the time to go through my patch!
-
-On Wed, Jan 13, 2021 at 12:43 AM Mathieu Poirier
-<mathieu.poirier@linaro.org> wrote:
-[...]
-> > +       If unusre say N.
+On 1/14/2021 9:46 AM, Bjorn Andersson wrote:
+> On Wed 13 Jan 17:01 CST 2021, Siddharth Gupta wrote:
 >
-> s/unusre/unsure
-godo catch, noted.
-
-[...]
-> > +#include <linux/property.h>
+>> On 1/7/2021 4:21 PM, Bjorn Andersson wrote:
+>>> On Wed 06 Jan 15:23 CST 2021, Siddharth Gupta wrote:
+>>>
+>>>> Since the split elf blobs will always contain the hash segment, we rely on
+>>> I think it will sounds better if we add "should" in "we should rely on..."
+>> Sure
+>>>> the blob file to get the hash rather than assume that it will be present in
+>>>> the mdt file. This change uses the hash index to read the appropriate elf
+>>>> blob to get the hash segment.
+>>>>
+>>>> Signed-off-by: Siddharth Gupta<sidgup@codeaurora.org>
+>>>> ---
+>>>>    drivers/remoteproc/qcom_q6v5_mss.c  |  4 ++--
+>>>>    drivers/soc/qcom/mdt_loader.c       | 38 +++++++++++++++++++++++++++----------
+>>>>    include/linux/soc/qcom/mdt_loader.h |  3 ++-
+>>>>    3 files changed, 32 insertions(+), 13 deletions(-)
+>>>>
+>>>> diff --git a/drivers/remoteproc/qcom_q6v5_mss.c b/drivers/remoteproc/qcom_q6v5_mss.c
+>>>> index 66106ba..74c0229 100644
+>>>> --- a/drivers/remoteproc/qcom_q6v5_mss.c
+>>>> +++ b/drivers/remoteproc/qcom_q6v5_mss.c
+>>>> @@ -4,7 +4,7 @@
+>>>>     *
+>>>>     * Copyright (C) 2016 Linaro Ltd.
+>>>>     * Copyright (C) 2014 Sony Mobile Communications AB
+>>>> - * Copyright (c) 2012-2013, The Linux Foundation. All rights reserved.
+>>>> + * Copyright (c) 2012-2013, 2020 The Linux Foundation. All rights reserved.
+>>>>     */
+>>>>    #include <linux/clk.h>
+>>>> @@ -828,7 +828,7 @@ static int q6v5_mpss_init_image(struct q6v5 *qproc, const struct firmware *fw)
+>>>>    	void *ptr;
+>>>>    	int ret;
+>>>> -	metadata = qcom_mdt_read_metadata(fw, &size);
+>>>> +	metadata = qcom_mdt_read_metadata(qproc->dev, fw, qproc->hexagon_mdt_image, &size);
+>>>>    	if (IS_ERR(metadata))
+>>>>    		return PTR_ERR(metadata);
+>>>> diff --git a/drivers/soc/qcom/mdt_loader.c b/drivers/soc/qcom/mdt_loader.c
+>>>> index c9bbd8c..6876c0b 100644
+>>>> --- a/drivers/soc/qcom/mdt_loader.c
+>>>> +++ b/drivers/soc/qcom/mdt_loader.c
+>>>> @@ -103,15 +103,18 @@ EXPORT_SYMBOL_GPL(qcom_mdt_get_size);
+>>>>     *
+>>>>     * Return: pointer to data, or ERR_PTR()
+>>>>     */
+>>>> -void *qcom_mdt_read_metadata(const struct firmware *fw, size_t *data_len)
+>>>> +void *qcom_mdt_read_metadata(struct device *dev, const struct firmware *fw, const char *firmware,
+>>>> +			     size_t *data_len)
+>>>>    {
+>>>>    	const struct elf32_phdr *phdrs;
+>>>>    	const struct elf32_hdr *ehdr;
+>>>> -	size_t hash_offset;
+>>>> +	const struct firmware *seg_fw;
+>>>>    	size_t hash_index;
+>>>>    	size_t hash_size;
+>>>>    	size_t ehdr_size;
+>>>> +	char *fw_name;
+>>>>    	void *data;
+>>>> +	int ret;
+>>>>    	ehdr = (struct elf32_hdr *)fw->data;
+>>>>    	phdrs = (struct elf32_phdr *)(ehdr + 1);
+>>>> @@ -137,14 +140,29 @@ void *qcom_mdt_read_metadata(const struct firmware *fw, size_t *data_len)
+>>>>    	if (!data)
+>>>>    		return ERR_PTR(-ENOMEM);
+>>>> -	/* Is the header and hash already packed */
+>>>> -	if (qcom_mdt_bins_are_split(fw))
+>>>> -		hash_offset = phdrs[0].p_filesz;
+>>>> -	else
+>>>> -		hash_offset = phdrs[hash_index].p_offset;
+>>>> -
+>>>> +	/* copy elf header */
+>>>>    	memcpy(data, fw->data, ehdr_size);
+>>>> -	memcpy(data + ehdr_size, fw->data + hash_offset, hash_size);
+>>>> +
+>>> This seems to duplicates parts of the loop in __qcom_mdt_load(), how
+>>> about breaking this out to a separate
+>>>
+>>> static int mdt_load_segment(struct device *dev, const struct firmware *fw,
+>>> 			    int idx, void *buf, size_t len, bool is_split)
+>>>
+>>> Which either just memcpy from @fw or does the filename and loading
+>>> dance, based on @is_split?
+>> Since mdt_load_segment won't know the name of the firmware without a global
+>> variable
+>> (which in turn will make it non-reentrant), the idea of creating such a
+>> function and not passing
+>> the actual name of the firmware seemed wrong.
+>>
+> Wouldn't you be able to pass "firmware" as an argument to the
+> load_segment function?
+We can, which is what I guess you meant in the first place. What I thought
+was that if we are creating something like mdt_load_segments passing
+"firmware.mdt" with the index instead of "firmware.b<index>" seemed
+kind of wrong, but I guess that is just a matter of the naming convention.
+>> If we want to pass the firmware name in this function the code size will be
+>> more or equal to
+>> what we started with. If that is not a problem I can make the changes.
+>>
+> Perhaps I'm missing something here, I do expect that you would end with
+> code similar to the hunk you add here. But in doing so we should be able
+> to reuse that in the __qcom_mdt_load(). Or am I too optimistic?
 >
-> Is it possible for this to go after platform_device.h?
-I think so, not sure why this is not in alphabetical order
+> (In particular I'm not fond of the fw_name dance and doing it twice is
+> worse)
+If I am creating the firmware name inside this function then we should 
+definitely
+see a code reduction. I'll make the changes and push the new patchset soon.
 
-[...]
-> > +#define AO_CPU_CNTL                                  0x0
-> > +     #define AO_CPU_CNTL_MEM_ADDR_UPPER              GENMASK(28, 16)
-> > +     #define AO_CPU_CNTL_HALT                        BIT(9)
-> > +     #define AO_CPU_CNTL_UNKNONWN                    BIT(8)
-> > +     #define AO_CPU_CNTL_RUN                         BIT(0)
+Thanks,
+Sid
 >
-> Any reason for the extra tabulation at the beginning of the lines?
-not really, I think I did the same thing as in
-drivers/iio/adc/meson_saradc.c where the register itself starts at the
-beginning of the line and each bit(mask) starts indented
-I'll change this for the next version
-
-[...]
-> > +#define MESON_AO_RPROC_SRAM_USABLE_BITS                      GENMASK(31, 20)
+> Regards,
+> Bjorn
 >
-> As per your comments in the cover letter I assume we don't know more about this?
-unfortunately not, but I'll still try to get some more information
-from someone at Amlogic.
-That said, this is "legacy" hardware for them so I can't make any promises.
-
-> > +#define MESON_AO_RPROC_MEMORY_OFFSET                 0x10000000
-> > +
-> > +struct meson_mx_ao_arc_rproc_priv {
-> > +     void __iomem            *remap_base;
-> > +     void __iomem            *cpu_base;
-> > +     unsigned long           sram_va;
-> > +     phys_addr_t             sram_pa;
-> > +     size_t                  sram_size;
-> > +     struct gen_pool         *sram_pool;
-> > +     struct reset_control    *arc_reset;
-> > +     struct clk              *arc_pclk;
-> > +     struct regmap           *secbus2_regmap;
-> > +};
-> > +
-> > +static int meson_mx_ao_arc_rproc_start(struct rproc *rproc)
-> > +{
-> > +     struct meson_mx_ao_arc_rproc_priv *priv = rproc->priv;
-> > +     phys_addr_t phys_addr;
-> > +     int ret;
-> > +
-> > +     ret = clk_prepare_enable(priv->arc_pclk);
-> > +     if (ret)
-> > +             return ret;
-> > +
-> > +     writel(0, priv->remap_base + AO_REMAP_REG0);
-> > +     usleep_range(10, 100);
->
-> That's wonderful - here too I assume there is no indication as to why this is
-> needed?
-looking at this again: the vendor driver only has a delay after
-pulsing the reset line
-I will double check and hopefully remove this usleep_range and only
-keep the one below (after pulsing the reset line)
-
-[...]
-> > +static void *meson_mx_ao_arc_rproc_da_to_va(struct rproc *rproc, u64 da,
-> > +                                         size_t len)
-> > +{
-> > +     struct meson_mx_ao_arc_rproc_priv *priv = rproc->priv;
-> > +
-> > +     if ((da + len) >= priv->sram_size)
-> > +             return NULL;
->
-> This isn't an index so it should be '>' rather than '>='.  You should be able to
-> ask for the whole range and get it, which the above prevents you from doing.
->
-> Moreover are you sure 'da' always starts at 0? This seems to be at odds with
-> your comment in meson_mx_ao_arc_rproc_start() about converting from 0xd9000000
-> to 0xc9000000.
-thanks for both of these comments, I'll address this in the next version
-
-[...]
-> > +     priv->arc_reset = devm_reset_control_get_exclusive(dev, NULL);
-> > +     if (IS_ERR(priv->arc_reset)) {
->
-> Looking at __devm_reset_control_get(), this should probably be IS_ERR_OR_NULL().
-as far as I know only devm_reset_control_get_optional_exclusive (the
-important bit is "optional" - I am using the "mandatory/not optional"
-variant) can return NULL, all other variants return PTR_ERR or a valid
-reset_control.
-
-
-Best regards,
-Martin
+>> Thanks,
+>> Sid
+>>> Regards,
+>>> Bjorn
+>>>
+>>>> +	if (qcom_mdt_bins_are_split(fw)) {
+>>>> +		fw_name = kstrdup(firmware, GFP_KERNEL);
+>>>> +		if (!fw_name) {
+>>>> +			kfree(data);
+>>>> +			return ERR_PTR(-ENOMEM);
+>>>> +		}
+>>>> +		snprintf(fw_name + strlen(fw_name) - 3, 4, "b%02d", hash_index);
+>>>> +
+>>>> +		ret = request_firmware_into_buf(&seg_fw, fw_name, dev, data + ehdr_size, hash_size);
+>>>> +		kfree(fw_name);
+>>>> +
+>>>> +		if (ret) {
+>>>> +			kfree(data);
+>>>> +			return ERR_PTR(ret);
+>>>> +		}
+>>>> +
+>>>> +		release_firmware(seg_fw);
+>>>> +	} else {
+>>>> +		memcpy(data + ehdr_size, fw->data + phdrs[hash_index].p_offset, hash_size);
+>>>> +	}
+>>>>    	*data_len = ehdr_size + hash_size;
+>>>> @@ -191,7 +209,7 @@ static int __qcom_mdt_load(struct device *dev, const struct firmware *fw,
+>>>>    		return -ENOMEM;
+>>>>    	if (pas_init) {
+>>>> -		metadata = qcom_mdt_read_metadata(fw, &metadata_len);
+>>>> +		metadata = qcom_mdt_read_metadata(dev, fw, firmware, &metadata_len);
+>>>>    		if (IS_ERR(metadata)) {
+>>>>    			ret = PTR_ERR(metadata);
+>>>>    			goto out;
+>>>> diff --git a/include/linux/soc/qcom/mdt_loader.h b/include/linux/soc/qcom/mdt_loader.h
+>>>> index e600bae..04ba5e8 100644
+>>>> --- a/include/linux/soc/qcom/mdt_loader.h
+>>>> +++ b/include/linux/soc/qcom/mdt_loader.h
+>>>> @@ -21,6 +21,7 @@ int qcom_mdt_load_no_init(struct device *dev, const struct firmware *fw,
+>>>>    			  const char *fw_name, int pas_id, void *mem_region,
+>>>>    			  phys_addr_t mem_phys, size_t mem_size,
+>>>>    			  phys_addr_t *reloc_base);
+>>>> -void *qcom_mdt_read_metadata(const struct firmware *fw, size_t *data_len);
+>>>> +void *qcom_mdt_read_metadata(struct device *dev, const struct firmware *fw, const char *firmware,
+>>>> +			     size_t *data_len);
+>>>>    #endif
+>>>> -- 
+>>>> Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+>>>> a Linux Foundation Collaborative Project
+>>>>
