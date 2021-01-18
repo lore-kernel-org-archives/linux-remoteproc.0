@@ -2,240 +2,212 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.5 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,MSGID_FROM_MTA_HEADER,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A7A9C433E0
-	for <linux-remoteproc@archiver.kernel.org>; Sun, 17 Jan 2021 23:04:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A53D0C433DB
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 18 Jan 2021 12:31:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E6343207AE
-	for <linux-remoteproc@archiver.kernel.org>; Sun, 17 Jan 2021 23:04:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 75D7E22286
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 18 Jan 2021 12:31:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730277AbhAQXEV (ORCPT
+        id S2391485AbhARMb0 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Sun, 17 Jan 2021 18:04:21 -0500
-Received: from m43-15.mailgun.net ([69.72.43.15]:47681 "EHLO
-        m43-15.mailgun.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729784AbhAQXEU (ORCPT
+        Mon, 18 Jan 2021 07:31:26 -0500
+Received: from mail-eopbgr80082.outbound.protection.outlook.com ([40.107.8.82]:24595
+        "EHLO EUR04-VI1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2390845AbhARMbR (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Sun, 17 Jan 2021 18:04:20 -0500
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1610924638; h=Content-Transfer-Encoding: Content-Type:
- In-Reply-To: MIME-Version: Date: Message-ID: References: Cc: To:
- Subject: From: Sender; bh=2RtPblk3uLge3eG94olthgEo0MZHJLfj9TAIfc/5g38=;
- b=S4cgG9TFPqjR3LEJRT5sQCPSAvI1poO5HbQSLDzvo1MKMIIju+PxlhLJbzBEa9K6IeO46cw8
- sIDoVtxQl8lpwSwbMl4SUuC61fB9U8AdvbWXTRDmc79z+u+M9GoiRQS9wt64P09RfKCDDiAd
- F+/u/7pbt5aKczUW1JrSIXAsXWU=
-X-Mailgun-Sending-Ip: 69.72.43.15
-X-Mailgun-Sid: WyI4ZWZiZiIsICJsaW51eC1yZW1vdGVwcm9jQHZnZXIua2VybmVsLm9yZyIsICJiZTllNGEiXQ==
-Received: from smtp.codeaurora.org
- (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
- smtp-out-n09.prod.us-east-1.postgun.com with SMTP id
- 6004c23e8a0374a501c39092 (version=TLS1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Sun, 17 Jan 2021 23:03:26
- GMT
-Sender: sidgup=codeaurora.org@mg.codeaurora.org
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 61A50C43463; Sun, 17 Jan 2021 23:03:25 +0000 (UTC)
-Received: from [192.168.1.10] (cpe-75-83-25-192.socal.res.rr.com [75.83.25.192])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: sidgup)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 88856C433ED;
-        Sun, 17 Jan 2021 23:03:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 88856C433ED
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=sidgup@codeaurora.org
-From:   Siddharth Gupta <sidgup@codeaurora.org>
-Subject: Re: [PATCH 3/3] soc: qcom: mdt_loader: Read hash from firmware blob
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     agross@kernel.org, ohad@wizery.com, linux-arm-msm@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        psodagud@codeaurora.org, rishabhb@codeaurora.org
-References: <1609968211-7579-1-git-send-email-sidgup@codeaurora.org>
- <1609968211-7579-4-git-send-email-sidgup@codeaurora.org>
- <X/elgO+66ibjeL+3@builder.lan>
- <ec2a7223-d785-a9f3-d864-3c03e4965be5@codeaurora.org>
- <YACDYu/qaYPyfKqS@builder.lan>
-Message-ID: <5efad446-cf46-02b3-461d-a67e12a4b1c0@codeaurora.org>
-Date:   Sun, 17 Jan 2021 15:03:22 -0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.6.1
+        Mon, 18 Jan 2021 07:31:17 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Ht9xgGgsTc2xYi4Wi5rE5XJTSRcP2n+h4or1IVdoeuoHaN4qrt3W5tFJjdNLd/EW1je0LNj62JsK3+prM19zk6JAeEtcCXYg+JZmO3SPGdgjhNYYdlVPblOwgbkqpweD9wTU5BqISWvQvwWVUSirZmKwVtaZJRKuEOhb29yrPEhi5k2H7adSB7/C2DTSKuKsY8ikK4WydQl6LxL7vTci03X0LOOsdwnx/6klFF7a4rzDwGkIashku7TC5bDsj2CYWz84rkp/fscklfgC2TbApd01IJg2rf6/h9e/sz7aI+zXH2HhcBiSRnSFaW/S/K7D/HQ8ZQOlR7p+RmbqZQgRxA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=6DKry2gjhsPjTETZ1vRFjvc9GuFAszLzT50jYX+YN80=;
+ b=ZpqwCMD16XRz/Ew6HAJc3Q0n1W+cMpOpbe3Otn4jsMfd587wNroeIjbVEGwMg6jEm5fnmw4qM37fpjFuqDRlUsI9m+c+dHolq/PwWnV/nhS5OQYr1wk4MQSo29Qyr0YHgzA1kcvO6wEC4/ZeDXyId/azrj8w+iU35MK7tgr37XA0MbgvHfEapCsFwbYQXsnhr8neDbZbPO9ivXFCZBaUS+rLIupi8b6ZEY0cuFOR+38E52nUaVT/TxAcNOIHk1JnTKw92cA0RVijGM0psYa83IEjI87xls7x32RiRbBwIpxUXzo8ymtIq3Ecj1LlNQOPIZaETnmY/qdSz6GaXDYuag==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=6DKry2gjhsPjTETZ1vRFjvc9GuFAszLzT50jYX+YN80=;
+ b=B9FuRgBelKzUUsO54RT4CycyqzI5I9vC9YMolztUzHFH9syh6tx+H/0Q3onHXESFEE+di9DDpYpAfLMFogsa/aKCMEB1hQKefCNKJH6ydhmiyYpR2jbId/44+zULznUBTDXEOn8b0QDdtG6SBgIA+i2ZamD4aoJghliGrT1cOnA=
+Authentication-Results: wizery.com; dkim=none (message not signed)
+ header.d=none;wizery.com; dmarc=none action=none header.from=nxp.com;
+Received: from DB6PR0402MB2760.eurprd04.prod.outlook.com (2603:10a6:4:a1::14)
+ by DB8PR04MB7178.eurprd04.prod.outlook.com (2603:10a6:10:12e::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3763.13; Mon, 18 Jan
+ 2021 12:30:27 +0000
+Received: from DB6PR0402MB2760.eurprd04.prod.outlook.com
+ ([fe80::c964:9:850a:fc5]) by DB6PR0402MB2760.eurprd04.prod.outlook.com
+ ([fe80::c964:9:850a:fc5%10]) with mapi id 15.20.3763.014; Mon, 18 Jan 2021
+ 12:30:27 +0000
+From:   peng.fan@nxp.com
+To:     ohad@wizery.com, bjorn.andersson@linaro.org,
+        mathieu.poirier@linaro.org, o.rempel@pengutronix.de,
+        robh+dt@kernel.org, devicetree@vger.kernel.org
+Cc:     shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
+        festevam@gmail.com, linux-imx@nxp.com,
+        linux-remoteproc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        paul@crapouillou.net, matthias.bgg@gmail.com, agross@kernel.org,
+        patrice.chotard@st.com, Peng Fan <peng.fan@nxp.com>
+Subject: [PATCH V7 00/10] remoteproc: imx_rproc: support iMX8MQ/M 
+Date:   Mon, 18 Jan 2021 20:19:49 +0800
+Message-Id: <1610972399-28286-1-git-send-email-peng.fan@nxp.com>
+X-Mailer: git-send-email 2.7.4
+Content-Type: text/plain
+X-Originating-IP: [119.31.174.66]
+X-ClientProxiedBy: SG2PR03CA0113.apcprd03.prod.outlook.com
+ (2603:1096:4:91::17) To DB6PR0402MB2760.eurprd04.prod.outlook.com
+ (2603:10a6:4:a1::14)
 MIME-Version: 1.0
-In-Reply-To: <YACDYu/qaYPyfKqS@builder.lan>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from localhost.localdomain (119.31.174.66) by SG2PR03CA0113.apcprd03.prod.outlook.com (2603:1096:4:91::17) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.20.3784.6 via Frontend Transport; Mon, 18 Jan 2021 12:30:22 +0000
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-HT: Tenant
+X-MS-Office365-Filtering-Correlation-Id: bcc79742-1856-4a0b-b32d-08d8bbacd60f
+X-MS-TrafficTypeDiagnostic: DB8PR04MB7178:
+X-MS-Exchange-Transport-Forked: True
+X-Microsoft-Antispam-PRVS: <DB8PR04MB7178E1DDC9D7EB5568362FBE88A40@DB8PR04MB7178.eurprd04.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:8273;
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: PzIrL3y906IZvULSn58KjSszhRKQDXem0gykVAztZAkWOPvsToMPdzbdrMvKQY9gACu7beQA7lP7j9oJmiBtQESAmD/nfhQPPcaZgEiKFMZ7dCiQD2RT0w2wlsV6fOmkNXL0BAGWtssEVSnSbnOlBckjBRL21ORDKB/CutmRaLOmIVwSXHqHb99gljYRW1RI0hm9prYutAXgfIMepofr8T5qlz1vxM9is3D9OiZjYv7EweWTOEvEc/tTvchWms51sNkY5nvPMgh6EjYZ2/aFdsmkQ6xzw8M6izjJz0WkrONYEBHZv/Hz3pJtNnuMKS0qs/PqdTeC8mBy2Pe+VB2CaY/jkKDpEm0G/QoMHeTgL7FwUfToasKPO7HOWwq66ar7WEYUxzvWRzZ4PeSMuCC7ZMsSyQzNCUAWcl5e3mI/a9eJjiSYeb4OY6OpM2Sg9dsOb+NsoCjY7CrGICzuQR3+Hnpk0t0eaPukc09bDZuhnA+upEEJI8IC1EcDiqfeR0lftMq9vLYcpYGhCgU0OmfoAshTLsmyUGB6ACkuzt9bZ4Q=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB6PR0402MB2760.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(396003)(136003)(346002)(376002)(366004)(39860400002)(5660300002)(2616005)(966005)(4326008)(36756003)(8936002)(69590400011)(956004)(478600001)(6666004)(186003)(26005)(6506007)(52116002)(6512007)(9686003)(66556008)(66946007)(66476007)(7416002)(2906002)(16526019)(4743002)(86362001)(8676002)(83380400001)(316002)(6486002)(32563001);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData: =?us-ascii?Q?V7fqUBHMqaMp0OBhSD7ek56oS4cRZXQwnatxd3+cKZGSFmyOpY3rHIJ9tw9t?=
+ =?us-ascii?Q?D8ldolRI7wDwfedvnIgUvuLP7zt67I6fco5OvHWH+p6E+yKgoV9rc2j6tsjg?=
+ =?us-ascii?Q?oaMi6R2HmfD1Jwai7vjrDoyG1zYMHdZWbSqHSwZurGgVH1vGmwvUpQvUZH6t?=
+ =?us-ascii?Q?Z4NQmj0hT1ltNU/TJV3tKtXV5nPjIBiLcgOg6LeZxuCoqKU/sb6fLq51kfDU?=
+ =?us-ascii?Q?gAhtKZCRA7hPBg3iCh5n0qlkiOEwsy+4jkDul+QTs53yLmf4jbeJ8W+IQ2Dl?=
+ =?us-ascii?Q?8I2WqCfm1qEY+hXN8d8Cu1v8FdE2sbzYf7pAPp+gm49n0MkzGG0LJYodzWvc?=
+ =?us-ascii?Q?P87slHguGFtWj9ai/oEdJAq7W21SiAEQo+jBKYT/X7NON9tjWIlE5vOzqNiU?=
+ =?us-ascii?Q?0uYbTpqDhnaZLUWLNOqsFQJrVA6Z4sV6NDoEPDEb5uTTwsyvGrXJqJpeH6mP?=
+ =?us-ascii?Q?yrPOQ56dDODkdW/VH/7PRIMV0eCMQ4Z/065Nw3Jy1g7HHt5rq2uV/JezuE9G?=
+ =?us-ascii?Q?S0o5MDwkd0ig5KpGUOkbFA2GDdz2H1tqlAHyDC3wsDBt/hS0iqQSSYfTqrT8?=
+ =?us-ascii?Q?OnjUCTp7+r2Qmyfc/+Qp5F5NUKA0+89iiTzWnG4Z6wmLPJTK+YnjA63qRWDH?=
+ =?us-ascii?Q?pACeXiqbK1OYSuz53Bm9aojac+5+Q5IRHHxeO9k4HYoZMYCUZKSAI2pCZNvT?=
+ =?us-ascii?Q?NddEg3X6Kmxm6YwZ0J2cX5lRxOeuiPdtf6MEU3i2TaFterrPeE+GRyFGPGOG?=
+ =?us-ascii?Q?ohwhO/puqg6viK2St06gsbjtD7Ch4KHBtNSGemlCNSG19NrNezRWWBIr7/mC?=
+ =?us-ascii?Q?eiUIWGPwqBWRhQUXjT8fHUZVkzv83Feixgn/z/Hxyy1nVPwFxmnpyIywN7r4?=
+ =?us-ascii?Q?5195KB8ccE7oukzRbBRAz6g33aXxxAlO5g++xHW6uhIlJPdGBAgnAhVXUilH?=
+ =?us-ascii?Q?H/7YxXpphpxesr/VGuuyd5GZh0t1/EpSm/hCMXYnxqe7DMnDkiBipkqCYrsc?=
+ =?us-ascii?Q?F0sw?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: bcc79742-1856-4a0b-b32d-08d8bbacd60f
+X-MS-Exchange-CrossTenant-AuthSource: DB6PR0402MB2760.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Jan 2021 12:30:27.5626
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Qq3YKTcxuufZrlh/zevNZg8980cKfCiAW2iONSvjjJSAeHcJSW4Av02/SZ4LyZoqJjqgsR4DGRaPvMIALXxRmg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB8PR04MB7178
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
+From: Peng Fan <peng.fan@nxp.com>
 
-On 1/14/2021 9:46 AM, Bjorn Andersson wrote:
-> On Wed 13 Jan 17:01 CST 2021, Siddharth Gupta wrote:
->
->> On 1/7/2021 4:21 PM, Bjorn Andersson wrote:
->>> On Wed 06 Jan 15:23 CST 2021, Siddharth Gupta wrote:
->>>
->>>> Since the split elf blobs will always contain the hash segment, we rely on
->>> I think it will sounds better if we add "should" in "we should rely on..."
->> Sure
->>>> the blob file to get the hash rather than assume that it will be present in
->>>> the mdt file. This change uses the hash index to read the appropriate elf
->>>> blob to get the hash segment.
->>>>
->>>> Signed-off-by: Siddharth Gupta<sidgup@codeaurora.org>
->>>> ---
->>>>    drivers/remoteproc/qcom_q6v5_mss.c  |  4 ++--
->>>>    drivers/soc/qcom/mdt_loader.c       | 38 +++++++++++++++++++++++++++----------
->>>>    include/linux/soc/qcom/mdt_loader.h |  3 ++-
->>>>    3 files changed, 32 insertions(+), 13 deletions(-)
->>>>
->>>> diff --git a/drivers/remoteproc/qcom_q6v5_mss.c b/drivers/remoteproc/qcom_q6v5_mss.c
->>>> index 66106ba..74c0229 100644
->>>> --- a/drivers/remoteproc/qcom_q6v5_mss.c
->>>> +++ b/drivers/remoteproc/qcom_q6v5_mss.c
->>>> @@ -4,7 +4,7 @@
->>>>     *
->>>>     * Copyright (C) 2016 Linaro Ltd.
->>>>     * Copyright (C) 2014 Sony Mobile Communications AB
->>>> - * Copyright (c) 2012-2013, The Linux Foundation. All rights reserved.
->>>> + * Copyright (c) 2012-2013, 2020 The Linux Foundation. All rights reserved.
->>>>     */
->>>>    #include <linux/clk.h>
->>>> @@ -828,7 +828,7 @@ static int q6v5_mpss_init_image(struct q6v5 *qproc, const struct firmware *fw)
->>>>    	void *ptr;
->>>>    	int ret;
->>>> -	metadata = qcom_mdt_read_metadata(fw, &size);
->>>> +	metadata = qcom_mdt_read_metadata(qproc->dev, fw, qproc->hexagon_mdt_image, &size);
->>>>    	if (IS_ERR(metadata))
->>>>    		return PTR_ERR(metadata);
->>>> diff --git a/drivers/soc/qcom/mdt_loader.c b/drivers/soc/qcom/mdt_loader.c
->>>> index c9bbd8c..6876c0b 100644
->>>> --- a/drivers/soc/qcom/mdt_loader.c
->>>> +++ b/drivers/soc/qcom/mdt_loader.c
->>>> @@ -103,15 +103,18 @@ EXPORT_SYMBOL_GPL(qcom_mdt_get_size);
->>>>     *
->>>>     * Return: pointer to data, or ERR_PTR()
->>>>     */
->>>> -void *qcom_mdt_read_metadata(const struct firmware *fw, size_t *data_len)
->>>> +void *qcom_mdt_read_metadata(struct device *dev, const struct firmware *fw, const char *firmware,
->>>> +			     size_t *data_len)
->>>>    {
->>>>    	const struct elf32_phdr *phdrs;
->>>>    	const struct elf32_hdr *ehdr;
->>>> -	size_t hash_offset;
->>>> +	const struct firmware *seg_fw;
->>>>    	size_t hash_index;
->>>>    	size_t hash_size;
->>>>    	size_t ehdr_size;
->>>> +	char *fw_name;
->>>>    	void *data;
->>>> +	int ret;
->>>>    	ehdr = (struct elf32_hdr *)fw->data;
->>>>    	phdrs = (struct elf32_phdr *)(ehdr + 1);
->>>> @@ -137,14 +140,29 @@ void *qcom_mdt_read_metadata(const struct firmware *fw, size_t *data_len)
->>>>    	if (!data)
->>>>    		return ERR_PTR(-ENOMEM);
->>>> -	/* Is the header and hash already packed */
->>>> -	if (qcom_mdt_bins_are_split(fw))
->>>> -		hash_offset = phdrs[0].p_filesz;
->>>> -	else
->>>> -		hash_offset = phdrs[hash_index].p_offset;
->>>> -
->>>> +	/* copy elf header */
->>>>    	memcpy(data, fw->data, ehdr_size);
->>>> -	memcpy(data + ehdr_size, fw->data + hash_offset, hash_size);
->>>> +
->>> This seems to duplicates parts of the loop in __qcom_mdt_load(), how
->>> about breaking this out to a separate
->>>
->>> static int mdt_load_segment(struct device *dev, const struct firmware *fw,
->>> 			    int idx, void *buf, size_t len, bool is_split)
->>>
->>> Which either just memcpy from @fw or does the filename and loading
->>> dance, based on @is_split?
->> Since mdt_load_segment won't know the name of the firmware without a global
->> variable
->> (which in turn will make it non-reentrant), the idea of creating such a
->> function and not passing
->> the actual name of the firmware seemed wrong.
->>
-> Wouldn't you be able to pass "firmware" as an argument to the
-> load_segment function?
-We can, which is what I guess you meant in the first place. What I thought
-was that if we are creating something like mdt_load_segments passing
-"firmware.mdt" with the index instead of "firmware.b<index>" seemed
-kind of wrong, but I guess that is just a matter of the naming convention.
->> If we want to pass the firmware name in this function the code size will be
->> more or equal to
->> what we started with. If that is not a problem I can make the changes.
->>
-> Perhaps I'm missing something here, I do expect that you would end with
-> code similar to the hunk you add here. But in doing so we should be able
-> to reuse that in the __qcom_mdt_load(). Or am I too optimistic?
->
-> (In particular I'm not fond of the fw_name dance and doing it twice is
-> worse)
-If I am creating the firmware name inside this function then we should 
-definitely
-see a code reduction. I'll make the changes and push the new patchset soon.
+V7:
+ Add R-b tag from Mathieu
+ vdevbuffer->vdev0buffer in patch 1/10, 7/10
+ correct err msg and shutdown seq per Mathieu's comments in patch 10/10
+ Hope this version is ok to be merged.
+ 
+V6:
+ Add R-b tag from Mathieu
+ Convert imx-rproc.txt to yaml and add dt-bindings support for i.MX8MQ/M, patch 1/10 2/10
+ No other changes.
 
-Thanks,
-Sid
->
-> Regards,
-> Bjorn
->
->> Thanks,
->> Sid
->>> Regards,
->>> Bjorn
->>>
->>>> +	if (qcom_mdt_bins_are_split(fw)) {
->>>> +		fw_name = kstrdup(firmware, GFP_KERNEL);
->>>> +		if (!fw_name) {
->>>> +			kfree(data);
->>>> +			return ERR_PTR(-ENOMEM);
->>>> +		}
->>>> +		snprintf(fw_name + strlen(fw_name) - 3, 4, "b%02d", hash_index);
->>>> +
->>>> +		ret = request_firmware_into_buf(&seg_fw, fw_name, dev, data + ehdr_size, hash_size);
->>>> +		kfree(fw_name);
->>>> +
->>>> +		if (ret) {
->>>> +			kfree(data);
->>>> +			return ERR_PTR(ret);
->>>> +		}
->>>> +
->>>> +		release_firmware(seg_fw);
->>>> +	} else {
->>>> +		memcpy(data + ehdr_size, fw->data + phdrs[hash_index].p_offset, hash_size);
->>>> +	}
->>>>    	*data_len = ehdr_size + hash_size;
->>>> @@ -191,7 +209,7 @@ static int __qcom_mdt_load(struct device *dev, const struct firmware *fw,
->>>>    		return -ENOMEM;
->>>>    	if (pas_init) {
->>>> -		metadata = qcom_mdt_read_metadata(fw, &metadata_len);
->>>> +		metadata = qcom_mdt_read_metadata(dev, fw, firmware, &metadata_len);
->>>>    		if (IS_ERR(metadata)) {
->>>>    			ret = PTR_ERR(metadata);
->>>>    			goto out;
->>>> diff --git a/include/linux/soc/qcom/mdt_loader.h b/include/linux/soc/qcom/mdt_loader.h
->>>> index e600bae..04ba5e8 100644
->>>> --- a/include/linux/soc/qcom/mdt_loader.h
->>>> +++ b/include/linux/soc/qcom/mdt_loader.h
->>>> @@ -21,6 +21,7 @@ int qcom_mdt_load_no_init(struct device *dev, const struct firmware *fw,
->>>>    			  const char *fw_name, int pas_id, void *mem_region,
->>>>    			  phys_addr_t mem_phys, size_t mem_size,
->>>>    			  phys_addr_t *reloc_base);
->>>> -void *qcom_mdt_read_metadata(const struct firmware *fw, size_t *data_len);
->>>> +void *qcom_mdt_read_metadata(struct device *dev, const struct firmware *fw, const char *firmware,
->>>> +			     size_t *data_len);
->>>>    #endif
->>>> -- 
->>>> Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
->>>> a Linux Foundation Collaborative Project
->>>>
+V5:
+ Apply on Linux next
+ Add V5 subject prefix
+ Add R-b tag from Bjorn for 1/8, 2/8, 3/8
+ https://patchwork.kernel.org/project/linux-remoteproc/cover/20201229033019.25899-1-peng.fan@nxp.com/
+
+V4:
+ According to Bjorn's comments, add is_iomem for da to va usage
+ 1/8, 2/8 is new patch
+ 3/8, follow Bjorn's comments to correct/update the err msg.
+ 6/8, new patch
+ 8/8, use dev_err_probe to simplify code, use queue_work instead schedule_delayed_work
+
+V3:
+ Since I was quite busy in the past days, V3 is late
+ Rebased on Linux-next
+ Add R-b tags
+ 1/7: Add R-b tag of Mathieu, add comments
+ 4/7: Typo fix
+ 5/7: Add R-b tag of Mathieu, drop index Per Mathieu's comments
+ 6/7: Add R-b tag of Mathieu
+ 7/7: Add comment for vqid << 16, drop unneeded timeout settings of mailbox
+      Use queue_work instead of schedule_delayed_work
+      free mbox channels when remove
+ https://lkml.org/lkml/2020/12/4/82
+
+V2:
+ Rebased on linux-next
+ Dropped early boot feature to make patchset simple.
+ Drop rsc-da
+ https://patchwork.kernel.org/project/linux-remoteproc/cover/20200927064131.24101-1-peng.fan@nxp.com/
+
+V1:
+ https://patchwork.kernel.org/cover/11682461/
+
+This patchset is to support i.MX8MQ/M coproc.
+The early boot feature was dropped to make the patchset small in V2.
+
+Since i.MX specific TCM memory requirement, add elf platform hook.
+Several patches have got reviewed by Oleksij and Mathieu in v1.
+
+
+
+
+Peng Fan (10):
+  dt-bindings: remoteproc: convert imx rproc bindings to json-schema
+  dt-bindings: remoteproc: imx_rproc: add i.MX8MQ/M support
+  remoteproc: introduce is_iomem to rproc_mem_entry
+  remoteproc: add is_iomem to da_to_va
+  remoteproc: imx_rproc: correct err message
+  remoteproc: imx_rproc: use devm_ioremap
+  remoteproc: imx_rproc: add i.MX specific parse fw hook
+  remoteproc: imx_rproc: support i.MX8MQ/M
+  remoteproc: imx_rproc: ignore mapping vdev regions
+  remoteproc: imx_proc: enable virtio/mailbox
+
+ .../bindings/remoteproc/fsl,imx-rproc.yaml    | 108 ++++++++
+ .../bindings/remoteproc/imx-rproc.txt         |  33 ---
+ drivers/remoteproc/imx_rproc.c                | 260 +++++++++++++++++-
+ drivers/remoteproc/ingenic_rproc.c            |   2 +-
+ drivers/remoteproc/keystone_remoteproc.c      |   2 +-
+ drivers/remoteproc/mtk_scp.c                  |   6 +-
+ drivers/remoteproc/omap_remoteproc.c          |   2 +-
+ drivers/remoteproc/pru_rproc.c                |   2 +-
+ drivers/remoteproc/qcom_q6v5_adsp.c           |   2 +-
+ drivers/remoteproc/qcom_q6v5_pas.c            |   2 +-
+ drivers/remoteproc/qcom_q6v5_wcss.c           |   2 +-
+ drivers/remoteproc/qcom_wcnss.c               |   2 +-
+ drivers/remoteproc/remoteproc_core.c          |   7 +-
+ drivers/remoteproc/remoteproc_coredump.c      |   8 +-
+ drivers/remoteproc/remoteproc_debugfs.c       |   2 +-
+ drivers/remoteproc/remoteproc_elf_loader.c    |  21 +-
+ drivers/remoteproc/remoteproc_internal.h      |   2 +-
+ drivers/remoteproc/st_slim_rproc.c            |   2 +-
+ drivers/remoteproc/ti_k3_dsp_remoteproc.c     |   2 +-
+ drivers/remoteproc/ti_k3_r5_remoteproc.c      |   2 +-
+ drivers/remoteproc/wkup_m3_rproc.c            |   2 +-
+ include/linux/remoteproc.h                    |   4 +-
+ 22 files changed, 407 insertions(+), 68 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.yaml
+ delete mode 100644 Documentation/devicetree/bindings/remoteproc/imx-rproc.txt
+
+-- 
+2.28.0
+
