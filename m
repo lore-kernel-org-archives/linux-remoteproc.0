@@ -5,59 +5,59 @@ X-Spam-Level:
 X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C306C433E0
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 21 Jan 2021 23:47:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27E42C433DB
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 21 Jan 2021 23:53:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BFDE8206B7
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 21 Jan 2021 23:47:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DD59620717
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 21 Jan 2021 23:53:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725950AbhAUXrD (ORCPT
+        id S1726269AbhAUXxz (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 21 Jan 2021 18:47:03 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59884 "EHLO
+        Thu, 21 Jan 2021 18:53:55 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33102 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725935AbhAUXrA (ORCPT
+        with ESMTP id S1726292AbhAUXxx (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 21 Jan 2021 18:47:00 -0500
-Received: from mail-pf1-x42a.google.com (mail-pf1-x42a.google.com [IPv6:2607:f8b0:4864:20::42a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 200FAC0613ED
-        for <linux-remoteproc@vger.kernel.org>; Thu, 21 Jan 2021 15:46:20 -0800 (PST)
-Received: by mail-pf1-x42a.google.com with SMTP id t29so2498334pfg.11
-        for <linux-remoteproc@vger.kernel.org>; Thu, 21 Jan 2021 15:46:20 -0800 (PST)
+        Thu, 21 Jan 2021 18:53:53 -0500
+Received: from mail-pj1-x102a.google.com (mail-pj1-x102a.google.com [IPv6:2607:f8b0:4864:20::102a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 486F6C061756
+        for <linux-remoteproc@vger.kernel.org>; Thu, 21 Jan 2021 15:53:01 -0800 (PST)
+Received: by mail-pj1-x102a.google.com with SMTP id e6so2714087pjj.1
+        for <linux-remoteproc@vger.kernel.org>; Thu, 21 Jan 2021 15:53:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=k1M9wjUVYtoeJq8YrVy/FC3Nxc8VT4kRU7pOrSsvkdQ=;
-        b=wzmltjsSrdLir61WBNAbEIB49FW2A9AbvjQct285FtPu7nR67Ov4C965p/cMcz0guf
-         TDi80bHPgagSk//SOqUfUgFt890T/UHdQlIyXl+yp77aXU0RaF4pGoQalpIYYpp0gN6K
-         RSYSujd3s1GChTJEALdwTumVU3vyzKdA8QJ/1jHhKtGBdMkT5z6laMplbDUowHL55Quv
-         YHu+ThpnEoVMyHfVZVZH1ilThZ876rpXSXKSjZQI2ro+RjbJ+Ranzk7QVfR3rewG2WIl
-         5clw53XjDi954yVFvC5irXKvcs0xkcyXUMwrYblNJSeNbb0DIMunm6jJ2wHTkubVE0Bm
-         5yOg==
+        bh=oJrGhqFdkfW9wRZyay7gwNcE73cpE4zERtrcMcbTWr0=;
+        b=OPELpH75YfQI1ATMiUGuilGIUBPs8DsfCGvxdD/RxoAW+K4McjtBdgnhXdrGn/sFIi
+         FFFHaobn9FbUP/3jpSBU7Fl48nrsSETVJaAgZhzmJQKea0q2Tp6Q1S3iREur5mT8Fndj
+         ToIWyQPv+mVhJ9RNEMO17mrBpmavV39aPqP9VcmYkLbjxLLgB2fpALfHSVVLh2+NnGtp
+         79qKIAvIN9KaZlHViSxHuZjpU8ONYfEyGA5Vd8U0YSDWUpboZ+vQ1o7s9FgyJorqqn7m
+         vzFHOo40C6i18UnWn60qehhiBeY9fckRMbffVdWOyea5kZlP/q6124YSsJ4Oah15AoFc
+         GOpg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=k1M9wjUVYtoeJq8YrVy/FC3Nxc8VT4kRU7pOrSsvkdQ=;
-        b=pkba3v+QUgDLdlToyojRLLla7Ae54+QCh8u2gO55jFYH4Dijaa6StmFq4ZYi/UZhGq
-         coI53ADNOtHS7Txp5xkdPZWZsz86aXxoSj7BpCLrs5CG9wKVfPA4cwnfS3qVTR0NPOYg
-         s6RfD+WDq8xyFvyJYWvv6x13XrmrIAFsuqVZ59vD9gDDFTBRPq5P40mYoxbx5981niNG
-         AsUV98NAI6whnxlY1JGM/qTN0N6dUi1zKUZL8Ha3HJ8RihfgKfpu6rusnjxY3KvbiH6R
-         cRXUSsQjkAu9iO6lpFI7thzYU4qM9u+JH/+Qx6amuigk0ieDsKm67Zy+qpB5RMynvXXg
-         B5PQ==
-X-Gm-Message-State: AOAM530MrNLl6+te6wqkDCuxpfUDbaoKBoVbqQsID3JjDSBi1D2BAf92
-        /o35oxHzai7fY0oK/wAioVto3g==
-X-Google-Smtp-Source: ABdhPJw1/Zw0PiXUNr0YHEyKWifin3wU0VLJk2GV/NHx5C8phUGbmohofQNDpHt8ns5llGlKNSRemw==
-X-Received: by 2002:a63:4082:: with SMTP id n124mr1817023pga.340.1611272779489;
-        Thu, 21 Jan 2021 15:46:19 -0800 (PST)
+        bh=oJrGhqFdkfW9wRZyay7gwNcE73cpE4zERtrcMcbTWr0=;
+        b=gAuuI2b/yrZeQzJrHytsWyPLDDpXPkj/27j9AjxNVriHw53R4HJYRk7CFHOT873Fea
+         1ZtfQYFDzeJhh2HTqK27u0K9XOznCWfpQcSEWsQLVvOP6jBhmRPsPMu+3rc0VaK4wOMa
+         wYdLBLlIeDYhx+XvA5kg3ejaT97g2zyCh5plcQwdnX8aDzocStd+xBTPlrrTg+r7FkRb
+         0jXj4T0YXu0tTWmT0Ss/62pjOjsdlIlw2UeAMhDjoepMHfbZMJfAvPyE0qTgYgxw46Hs
+         jQVt0PhsckB5RNRBMhXmXgDH+92NhVJ2QOnZEj/fe3XvywwdyxZP1sqPeXVnRzQHM1fc
+         V1tA==
+X-Gm-Message-State: AOAM532o0GIb6i5aQZrz6LyBeoofWsOtYCKxg8KLPB9cECv1EeFGsthe
+        tkJziaXezWo1j8XfSNCDbFVXqg==
+X-Google-Smtp-Source: ABdhPJw7vWA2rsCwRMG2SZYl6Oy49UG7A7wKq6eSudZ3L0H49zTx2h1DTw4Jgm7bepuEOjnJz6wz5g==
+X-Received: by 2002:a17:902:834a:b029:de:343e:adb0 with SMTP id z10-20020a170902834ab02900de343eadb0mr1943726pln.28.1611273180836;
+        Thu, 21 Jan 2021 15:53:00 -0800 (PST)
 Received: from xps15 (S0106889e681aac74.cg.shawcable.net. [68.147.0.187])
-        by smtp.gmail.com with ESMTPSA id y16sm6459819pgg.20.2021.01.21.15.46.16
+        by smtp.gmail.com with ESMTPSA id n128sm6948132pga.55.2021.01.21.15.52.59
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Jan 2021 15:46:16 -0800 (PST)
-Date:   Thu, 21 Jan 2021 16:46:14 -0700
+        Thu, 21 Jan 2021 15:53:00 -0800 (PST)
+Date:   Thu, 21 Jan 2021 16:52:58 -0700
 From:   Mathieu Poirier <mathieu.poirier@linaro.org>
 To:     Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
 Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
@@ -66,198 +66,101 @@ Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
         linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-stm32@st-md-mailman.stormreply.com,
         linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH v2 02/16] rpmsg: add RPMsg control API to register service
-Message-ID: <20210121234614.GF611676@xps15>
+Subject: Re: [PATCH v2 04/16] rpmsg: ctrl: implement the ioctl function to
+ create device
+Message-ID: <20210121235258.GG611676@xps15>
 References: <20201222105726.16906-1-arnaud.pouliquen@foss.st.com>
- <20201222105726.16906-3-arnaud.pouliquen@foss.st.com>
+ <20201222105726.16906-5-arnaud.pouliquen@foss.st.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20201222105726.16906-3-arnaud.pouliquen@foss.st.com>
+In-Reply-To: <20201222105726.16906-5-arnaud.pouliquen@foss.st.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Tue, Dec 22, 2020 at 11:57:12AM +0100, Arnaud Pouliquen wrote:
-> Add API to register a RPMsg service to the control device.
-> The rpmsg_drv_ctrl_info structure links a service to its driver.
+On Tue, Dec 22, 2020 at 11:57:14AM +0100, Arnaud Pouliquen wrote:
+> Implement the ioctl function that parses the list of
+> rpmsg drivers registered to create an associated device.
+> To be ISO user API, in a first step, the driver_override
+> is only allowed for the RPMsg raw service, supported by the
+> rpmsg_char driver.
 > 
 > Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
 > ---
->  drivers/rpmsg/rpmsg_ctrl.c | 57 ++++++++++++++++++++++++++++++++++++++
->  include/linux/rpmsg.h      | 31 +++++++++++++++++++++
->  include/uapi/linux/rpmsg.h | 14 ++++++++++
->  3 files changed, 102 insertions(+)
+>  drivers/rpmsg/rpmsg_ctrl.c | 43 ++++++++++++++++++++++++++++++++++++--
+>  1 file changed, 41 insertions(+), 2 deletions(-)
 > 
 > diff --git a/drivers/rpmsg/rpmsg_ctrl.c b/drivers/rpmsg/rpmsg_ctrl.c
-> index 425c3e32ada4..065e2e304019 100644
+> index 065e2e304019..8381b5b2b794 100644
 > --- a/drivers/rpmsg/rpmsg_ctrl.c
 > +++ b/drivers/rpmsg/rpmsg_ctrl.c
-> @@ -27,6 +27,20 @@ struct rpmsg_ctrl_dev {
->  	struct device dev;
->  };
+> @@ -56,12 +56,51 @@ static int rpmsg_ctrl_dev_open(struct inode *inode, struct file *filp)
+>  	return 0;
+>  }
 >  
-> +/**
-> + * struct rpmsg_ctl_info - control info list node
-> + * @ctrl:	control driver info
-> + * @node:	list node
-> + *
-> + * This structure is used by rpmsg_ctl to list the registered drivers services
-> + */
-> +struct rpmsg_ctl_info {
-
-struct rpmsg_ctrl_info
-
-> +	const struct rpmsg_drv_ctrl_info *ctrl;
-> +	struct list_head node;
-> +};
-> +
-> +static LIST_HEAD(rpmsg_drv_list);
-> +
->  static DEFINE_IDA(rpmsg_ctrl_ida);
->  static DEFINE_IDA(rpmsg_minor_ida);
->  
-> @@ -175,6 +189,49 @@ static struct rpmsg_driver rpmsg_ctrl_driver = {
->  	.remove = rpmsg_ctrl_remove,
->  };
->  
-> +/**
-> + * rpmsg_ctrl_register_ctl() -register control for the associated service
-> + * @ctrl: rpmsg driver information
-> + *
-> + * This function is called by the rpmsg driver to register a service that will
-> + * be exposed to be instantiate by the application.
-> + */
-> +int  rpmsg_ctrl_register_ctl(const struct rpmsg_drv_ctrl_info *ctrl)
-
-Here an rpmsg_drv is registered with the infrastructure and as such I propose
-rpmsg_ctrl_register_driver_ctrl().
-
+> +static const char *rpmsg_ctrl_get_drv_name(u32 service)
 > +{
 > +	struct rpmsg_ctl_info *drv_info;
 > +
-> +	drv_info =  kzalloc(sizeof(*drv_info), GFP_KERNEL);
-> +	if (!drv_info)
-> +		return -ENOMEM;
-
-When this driver is remove all drv_info left in rpmsg_drv_list should be free'd.
-We can't count on users to call rpmsg_ctrl_unregister_ctl().
-
-> +
-> +	drv_info->ctrl = ctrl;
-
-This has the potential of creating problems - we don't know then the memory
-assocaited with @ctrl will disappear on us.
-
-> +
-> +	list_add_tail(&drv_info->node, &rpmsg_drv_list);
-> +
-> +	return 0;
-> +}
-> +EXPORT_SYMBOL(rpmsg_ctrl_register_ctl);
-> +
-> +/**
-> + * rpmsg_ctrl_unregister_ctl() -unregister control for the associated service
-> + * @ctrl: the rpmsg control information
-> + *
-> + * This function is called by the rpmsg driver to unregister the associated
-> + * service.
-> + */
-> +void rpmsg_ctrl_unregister_ctl(const struct rpmsg_drv_ctrl_info *ctrl)
-> +{
-> +	struct rpmsg_ctl_info *drv_info, *tmp;
-> +
-> +	list_for_each_entry_safe(drv_info, tmp, &rpmsg_drv_list, node) {
-> +		if (drv_info->ctrl == ctrl) {
-> +			list_del(&drv_info->node);
-> +			kfree(drv_info);
-> +		}
+> +	list_for_each_entry(drv_info, &rpmsg_drv_list, node) {
+> +		if (drv_info->ctrl->service == service)
+> +			return drv_info->ctrl->drv_name;
 > +	}
-> +}
-> +EXPORT_SYMBOL(rpmsg_ctrl_unregister_ctl);
 > +
->  static int rpmsg_ctrl_init(void)
+
+I'm unsure about the above... To me this looks like what the .match() function
+of a bus would do.  And when I read Bjorn's comment he brought up the
+auxiliary_bus.  I don't know about the auxiliary_bus but it is worth looking
+into.  Registering with a bus would streamline a lot of the code in this
+patchset.
+
+I'm out of time for today - I will continue tomorrow.
+
+Thanks,
+Mathieu
+
+> +	return NULL;
+> +}
+> +
+>  static long rpmsg_ctrl_dev_ioctl(struct file *fp, unsigned int cmd,
+>  				 unsigned long arg)
 >  {
->  	int ret;
-> diff --git a/include/linux/rpmsg.h b/include/linux/rpmsg.h
-> index a5db828b2420..5d64704c2346 100644
-> --- a/include/linux/rpmsg.h
-> +++ b/include/linux/rpmsg.h
-> @@ -26,6 +26,19 @@ struct rpmsg_endpoint;
->  struct rpmsg_device_ops;
->  struct rpmsg_endpoint_ops;
+>  	struct rpmsg_ctrl_dev *ctrldev = fp->private_data;
+> -
+> -	dev_info(&ctrldev->dev, "Control not yet implemented\n");
+> +	void __user *argp = (void __user *)arg;
+> +	struct rpmsg_channel_info chinfo;
+> +	struct rpmsg_endpoint_info eptinfo;
+> +	struct rpmsg_device *newch;
+> +
+> +	if (cmd != RPMSG_CREATE_EPT_IOCTL)
+> +		return -EINVAL;
+> +
+> +	if (copy_from_user(&eptinfo, argp, sizeof(eptinfo)))
+> +		return -EFAULT;
+> +
+> +	/*
+> +	 * In a frst step only the rpmsg_raw service is supported.
+> +	 * The override is foorced to RPMSG_RAW_SERVICE
+> +	 */
+> +	chinfo.driver_override = rpmsg_ctrl_get_drv_name(RPMSG_RAW_SERVICE);
+> +	if (!chinfo.driver_override)
+> +		return -ENODEV;
+> +
+> +	memcpy(chinfo.name, eptinfo.name, RPMSG_NAME_SIZE);
+> +	chinfo.name[RPMSG_NAME_SIZE - 1] = '\0';
+> +	chinfo.src = eptinfo.src;
+> +	chinfo.dst = eptinfo.dst;
+> +
+> +	newch = rpmsg_create_channel(ctrldev->rpdev, &chinfo);
+> +	if (!newch) {
+> +		dev_err(&ctrldev->dev, "rpmsg_create_channel failed\n");
+> +		return -ENXIO;
+> +	}
 >  
-> +/**
-> + * struct rpmsg_drv_ctrl_info - rpmsg ctrl structure
-> + * @drv_name:	name of the associated driver
-> + * @service:	the associated rpmsg service listed in @rpmsg_services
-> + *
-> + * This structure is used by rpmsg_ctl to link the endpoint creation to the
-> + * service rpmsg driver.
-> + */
-> +struct rpmsg_drv_ctrl_info {
-> +	const char *drv_name;
-> +	u32  service;
-> +};
-> +
->  /**
->   * struct rpmsg_channel_info - channel info representation
->   * @name: name of service
-> @@ -315,4 +328,22 @@ static inline __poll_t rpmsg_poll(struct rpmsg_endpoint *ept,
->  	module_driver(__rpmsg_driver, register_rpmsg_driver, \
->  			unregister_rpmsg_driver)
->  
-> +#if IS_ENABLED(CONFIG_RPMSG_CTRL)
-> +
-> +int  rpmsg_ctrl_register_ctl(const struct rpmsg_drv_ctrl_info *ctrl);
-> +void rpmsg_ctrl_unregister_ctl(const struct rpmsg_drv_ctrl_info *ctrl);
-> +
-> +#else
-> +
-> +static inline int rpmsg_ctrl_register_ctl(const struct rpmsg_drv_ctrl_info *ctrl)
-> +{
-> +	return 0;
-> +}
-> +
-> +static inline void rpmsg_ctrl_unregister_ctl(const struct rpmsg_drv_ctrl_info *ctrl)
-> +{
-> +}
-> +
-> +#endif /* IS_ENABLED(CONFIG_RPMSG_CTRL) */
-
-Shouldn't this be in its own header, something like rpmsg_ctrl.h?
-
-> +
->  #endif /* _LINUX_RPMSG_H */
-> diff --git a/include/uapi/linux/rpmsg.h b/include/uapi/linux/rpmsg.h
-> index e14c6dab4223..0b0cb028e0b3 100644
-> --- a/include/uapi/linux/rpmsg.h
-> +++ b/include/uapi/linux/rpmsg.h
-> @@ -9,6 +9,20 @@
->  #include <linux/ioctl.h>
->  #include <linux/types.h>
->  
-> +/**
-> + * enum rpmsg_services - list of supported RPMsg services
-> + *
-> + * @RPMSG_RAW_SERVICE: char device RPMSG service
-> + * @RPMSG_START_PRIVATE_SERVICES: private services have to be declared after.
-> + */
-> +enum rpmsg_services {
-> +	/* Reserved services */
-> +	RPMSG_RAW_SERVICE =  0,
-> +
-> +	/* Private services */
-> +	RPMSG_START_PRIVATE_SERVICES =  1024,
-
-We have plenty of bits in an enum type - I would set this to 4096 just to be on
-the safe side.
-
-> +};
-> +
->  /**
->   * struct rpmsg_endpoint_info - endpoint info representation
->   * @name: name of service
+>  	return 0;
+>  };
 > -- 
 > 2.17.1
 > 
