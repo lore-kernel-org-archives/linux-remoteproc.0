@@ -2,66 +2,63 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-19.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DB52C433E0
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 25 Jan 2021 23:59:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70606C433E0
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 26 Jan 2021 00:02:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 34C92225AB
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 25 Jan 2021 23:59:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3C1C422AAC
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 26 Jan 2021 00:02:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732113AbhAYX62 (ORCPT
+        id S1732061AbhAZABy (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 25 Jan 2021 18:58:28 -0500
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:57924 "EHLO
+        Mon, 25 Jan 2021 19:01:54 -0500
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:57916 "EHLO
         fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732463AbhAYX6I (ORCPT
+        with ESMTP id S1732633AbhAYX6r (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 25 Jan 2021 18:58:08 -0500
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 10PNvAPj122248;
-        Mon, 25 Jan 2021 17:57:10 -0600
+        Mon, 25 Jan 2021 18:58:47 -0500
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 10PNv55x122241;
+        Mon, 25 Jan 2021 17:57:05 -0600
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1611619030;
-        bh=W3mA6Gr5VSniesCxAOF0B2n9RNZ/SuE/+94mPRQluPI=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=iffWKY5NUrEgU3wM9905b4E16ObCP55qW8eZ/EHV+2EvCsp1rocAFtcmI+7JEreUt
-         TrHGnEmTqYsuK6JxeGEL4XzUZy+/orZMn0ZFLcxKtZFreEagdDLi1Q1nzBod5Sl/4u
-         n02IHObORkfZZ752jKTpf4XVaylKbet780oII3CQ=
-Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 10PNvAVb019507
+        s=ti-com-17Q1; t=1611619025;
+        bh=ihr9DKYldcHIliHzENLCBXu8ilCX6+CT5/SvXOqjD/Y=;
+        h=From:To:CC:Subject:Date;
+        b=pfmP7WnjszOhA9THPpLyAxjy53PnSSWXKOfRWBDAgS0ogElva+6hJ/6GDyT0d7oJe
+         5jZEXo8lUMVnZwHNh5XDVTdEvkDM2C6eFUqHRHn+XczBEgvM7bAjbxnGwJppDdWzXa
+         nMDmPEmqrN95yoGdTYBIRWGzKnZqZ/mrE+lr0NSI=
+Received: from DLEE113.ent.ti.com (dlee113.ent.ti.com [157.170.170.24])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 10PNv5BX088196
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 25 Jan 2021 17:57:10 -0600
-Received: from DLEE111.ent.ti.com (157.170.170.22) by DLEE108.ent.ti.com
- (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
+        Mon, 25 Jan 2021 17:57:05 -0600
+Received: from DLEE112.ent.ti.com (157.170.170.23) by DLEE113.ent.ti.com
+ (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3; Mon, 25
- Jan 2021 17:57:09 -0600
-Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE111.ent.ti.com
- (157.170.170.22) with Microsoft SMTP Server (version=TLS1_2,
+ Jan 2021 17:57:04 -0600
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE112.ent.ti.com
+ (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3 via
- Frontend Transport; Mon, 25 Jan 2021 17:57:09 -0600
+ Frontend Transport; Mon, 25 Jan 2021 17:57:04 -0600
 Received: from lelv0597.itg.ti.com (lelv0597.itg.ti.com [10.181.64.32])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id 10PNv9tn035747;
-        Mon, 25 Jan 2021 17:57:09 -0600
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id 10PNv434035608;
+        Mon, 25 Jan 2021 17:57:04 -0600
 Received: from localhost ([10.250.35.71])
-        by lelv0597.itg.ti.com (8.14.7/8.14.7) with ESMTP id 10PNv9sZ117189;
-        Mon, 25 Jan 2021 17:57:09 -0600
+        by lelv0597.itg.ti.com (8.14.7/8.14.7) with ESMTP id 10PNv3vo117156;
+        Mon, 25 Jan 2021 17:57:04 -0600
 From:   Suman Anna <s-anna@ti.com>
 To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
         Rob Herring <robh+dt@kernel.org>
 CC:     <devicetree@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-omap@vger.kernel.org>, Suman Anna <s-anna@ti.com>
-Subject: [PATCH 1/2] dt-bindings: hwlock: Update OMAP HwSpinlock binding for AM64x SoCs
-Date:   Mon, 25 Jan 2021 17:56:52 -0600
-Message-ID: <20210125235653.24385-2-s-anna@ti.com>
+Subject: [PATCH 0/2] Add HwSpinlock support for TI K3 AM64x SoCs
+Date:   Mon, 25 Jan 2021 17:56:51 -0600
+Message-ID: <20210125235653.24385-1-s-anna@ti.com>
 X-Mailer: git-send-email 2.29.2
-In-Reply-To: <20210125235653.24385-1-s-anna@ti.com>
-References: <20210125235653.24385-1-s-anna@ti.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
@@ -70,58 +67,25 @@ Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Update the existing OMAP HwSpinlock binding to include the info for
-AM64x SoCs. There are some minor IP integration differences between
-the AM64x SoCs and the previous AM65x and J721E SoC families. A new
-example is also added showcasing the difference in the IP's presence
-on the interconnect.
+Hi Bjorn,
 
-Signed-off-by: Suman Anna <s-anna@ti.com>
----
+The following series extends the OMAP HwSpinlock driver to enable the
+HwSpinlock IP present on the most recent TI K3 AM64x SoCs [1]. I will
+post the DT nodes once the binding is acked and merged.
+
+regards
+Suman
+
+[1] https://patchwork.kernel.org/project/linux-arm-kernel/cover/20210120202532.9011-1-d-gerlach@ti.com/
+
+Suman Anna (2):
+  dt-bindings: hwlock: Update OMAP HwSpinlock binding for AM64x SoCs
+  hwspinlock: omap: Add support for K3 AM64x SoCs
+
  .../bindings/hwlock/ti,omap-hwspinlock.yaml   | 26 +++++++++++++++++++
- 1 file changed, 26 insertions(+)
+ drivers/hwspinlock/omap_hwspinlock.c          |  4 ++-
+ 2 files changed, 29 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/hwlock/ti,omap-hwspinlock.yaml b/Documentation/devicetree/bindings/hwlock/ti,omap-hwspinlock.yaml
-index ac35491a6f65..ac146c0d628f 100644
---- a/Documentation/devicetree/bindings/hwlock/ti,omap-hwspinlock.yaml
-+++ b/Documentation/devicetree/bindings/hwlock/ti,omap-hwspinlock.yaml
-@@ -14,6 +14,7 @@ properties:
-     enum:
-       - ti,omap4-hwspinlock  # for OMAP44xx, OMAP54xx, AM33xx, AM43xx, DRA7xx SoCs
-       - ti,am654-hwspinlock  # for K3 AM65x, J721E and J7200 SoCs
-+      - ti,am64-hwspinlock   # for K3 AM64x SoCs
- 
-   reg:
-     maxItems: 1
-@@ -74,3 +75,28 @@ examples:
-             };
-         };
-     };
-+
-+  - |
-+    / {
-+        /* K3 AM64x SoCs */
-+        model = "Texas Instruments K3 AM642 SoC";
-+        compatible = "ti,am642-evm", "ti,am642";
-+        #address-cells = <2>;
-+        #size-cells = <2>;
-+
-+        bus@f4000 {
-+            compatible = "simple-bus";
-+            #address-cells = <2>;
-+            #size-cells = <2>;
-+            ranges = <0x00 0x000f4000 0x00 0x000f4000 0x00 0x000002d0>, /* PINCTRL */
-+                     <0x00 0x01000000 0x00 0x01000000 0x00 0x02330400>, /* First peripheral window */
-+                     <0x00 0x0f000000 0x00 0x0f000000 0x00 0x00c44200>, /* Second peripheral window */
-+                     <0x00 0x20000000 0x00 0x20000000 0x00 0x0a008000>; /* Third peripheral window */
-+
-+            spinlock@2a000000 {
-+                compatible = "ti,am64-hwspinlock";
-+                reg = <0x00 0x2a000000 0x00 0x1000>;
-+                #hwlock-cells = <1>;
-+            };
-+        };
-+    };
 -- 
 2.29.2
 
