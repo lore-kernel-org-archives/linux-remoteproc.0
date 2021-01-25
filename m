@@ -2,107 +2,255 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-17.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 887D7C433E6
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 26 Jan 2021 19:08:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FDA9C433E0
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 26 Jan 2021 19:09:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5158422CE3
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 26 Jan 2021 19:08:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4AE6E22CE3
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 26 Jan 2021 19:09:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730156AbhAZF7E (ORCPT
+        id S1728857AbhAZF67 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 26 Jan 2021 00:59:04 -0500
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:38760 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730339AbhAYPpS (ORCPT
+        Tue, 26 Jan 2021 00:58:59 -0500
+Received: from mx07-00178001.pphosted.com ([185.132.182.106]:26680 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728007AbhAYMZc (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 25 Jan 2021 10:45:18 -0500
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 10PFhJOw068695;
-        Mon, 25 Jan 2021 09:43:19 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1611589399;
-        bh=vpK8KsGh4di2NeiKW/oNr1WDemKXSP0tZVJsjl+yK2I=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=Pm76+CeI0lFGxKuMy53JoY+o4Um3hoRNRan78X6YFK0td+dwpiEPKQEL6Y2rY+jSq
-         dN58ujcgdNdYXFPFzCpVMx3GcHeVf8HePFsVsZ+p36uw1rSl4vzzOaZ793XoJ3BJHz
-         DQTJ0BRf2KRPpmmUE0W4ZGktfal7c3aEFEn2iHDA=
-Received: from DLEE110.ent.ti.com (dlee110.ent.ti.com [157.170.170.21])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 10PFhJ8v042342
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 25 Jan 2021 09:43:19 -0600
-Received: from DLEE110.ent.ti.com (157.170.170.21) by DLEE110.ent.ti.com
- (157.170.170.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3; Mon, 25
- Jan 2021 09:43:19 -0600
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE110.ent.ti.com
- (157.170.170.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3 via
- Frontend Transport; Mon, 25 Jan 2021 09:43:19 -0600
-Received: from [10.250.35.71] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 10PFhIGL112819;
-        Mon, 25 Jan 2021 09:43:19 -0600
-Subject: Re: [PATCH v2 0/5] Introduce PRU remoteproc consumer API
-To:     "santosh.shilimkar@oracle.com" <santosh.shilimkar@oracle.com>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>
-CC:     Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>,
-        <ohad@wizery.com>, <bjorn.andersson@linaro.org>,
-        <robh+dt@kernel.org>, <ssantosh@kernel.org>,
-        <linux-remoteproc@vger.kernel.org>, <lee.jones@linaro.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-omap@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <praneeth@ti.com>,
-        <rogerq@kernel.org>
-References: <20201216165239.2744-1-grzegorz.jaszczyk@linaro.org>
- <20210106232704.GE9149@xps15> <11303a1b-5ab4-def5-77b1-c500894c9c87@ti.com>
- <20210107224448.GB43045@xps15> <75365443-57e3-e2e0-5865-f78af9d5890b@ti.com>
- <b0e32ad0-487f-9d57-7287-835eee836514@oracle.com>
-From:   Suman Anna <s-anna@ti.com>
-Message-ID: <c5252e8d-094a-dcb7-7ccb-172e58ab3413@ti.com>
-Date:   Mon, 25 Jan 2021 09:43:18 -0600
+        Mon, 25 Jan 2021 07:25:32 -0500
+Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 10PAh1DN022642;
+        Mon, 25 Jan 2021 11:52:14 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=selector1;
+ bh=tXd3M2ItuZ7tpZg66nEEuBS/rKqYkgB3GdCw/VU5/cs=;
+ b=2DOcuIft/jK7bqI9H7ePVgL1XWZR4adtOa4kig4Rdz8Oz/APCiTqyO1A31UBunC5PIVJ
+ rYeZEeVybn4HjgqbSpKF96RIL8Ftukg0i8sMYHdYr35QuNFXo9wNPKguaa+I2Cdtd2yA
+ UCEP6VvcKfpjJZfDbGeEEY4ZDWiho+ijtElHFtIsm7A5+d8dAE8N1Xiu8uXHZH4CwvzG
+ ukq0sueHtLbhf8rlJuKfkVvT3pGaupz45UDVQNP7aWDBM0k79Luj/R3MIdZ6kBqx9oz/
+ RI13iXxgAwKHruCUKPylyzOu3wlP0ZAN5x5FiqdXDl+sZD+uOAZ4p9NYGBu1iUodiLZX dw== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 368a56afqt-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 25 Jan 2021 11:52:14 +0100
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id EA302100038;
+        Mon, 25 Jan 2021 11:52:13 +0100 (CET)
+Received: from Webmail-eu.st.com (sfhdag2node3.st.com [10.75.127.6])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id BDA5D23BD5C;
+        Mon, 25 Jan 2021 11:52:13 +0100 (CET)
+Received: from lmecxl0889.lme.st.com (10.75.127.49) by SFHDAG2NODE3.st.com
+ (10.75.127.6) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 25 Jan
+ 2021 11:52:13 +0100
+Subject: Re: [PATCH v2 04/16] rpmsg: ctrl: implement the ioctl function to
+ create device
+To:     Mathieu Poirier <mathieu.poirier@linaro.org>
+CC:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Ohad Ben-Cohen <ohad@wizery.com>,
+        Andy Gross <agross@kernel.org>,
+        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-msm@vger.kernel.org>
+References: <20201222105726.16906-1-arnaud.pouliquen@foss.st.com>
+ <20201222105726.16906-5-arnaud.pouliquen@foss.st.com>
+ <20210121235258.GG611676@xps15>
+ <1b76bf93-9647-c658-b4dd-1b10264a1189@foss.st.com>
+ <20210122205934.GA866146@xps15>
+From:   Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
+Message-ID: <3ad1b5e8-3b16-bfd2-bfd9-2d8d0ac8e8d5@foss.st.com>
+Date:   Mon, 25 Jan 2021 11:52:12 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <b0e32ad0-487f-9d57-7287-835eee836514@oracle.com>
+In-Reply-To: <20210122205934.GA866146@xps15>
 Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.75.127.49]
+X-ClientProxiedBy: SFHDAG2NODE3.st.com (10.75.127.6) To SFHDAG2NODE3.st.com
+ (10.75.127.6)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.343,18.0.737
+ definitions=2021-01-25_03:2021-01-25,2021-01-25 signatures=0
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi Santosh,
+Hi Mathieu,
 
-On 1/24/21 10:34 PM, santosh.shilimkar@oracle.com wrote:
-> Hi Suman, Mathieu,
-> 
-> On 1/7/21 2:49 PM, Suman Anna wrote:
->> On 1/7/21 4:44 PM, Mathieu Poirier wrote:
->>> On Wed, Jan 06, 2021 at 06:03:25PM -0600, Suman Anna wrote:
->>>> Hi Mathieu,
+On 1/22/21 9:59 PM, Mathieu Poirier wrote:
+> On Fri, Jan 22, 2021 at 02:05:27PM +0100, Arnaud POULIQUEN wrote:
+>> Hi Mathieu,
+>>
+>> On 1/22/21 12:52 AM, Mathieu Poirier wrote:
+>>> On Tue, Dec 22, 2020 at 11:57:14AM +0100, Arnaud Pouliquen wrote:
+>>>> Implement the ioctl function that parses the list of
+>>>> rpmsg drivers registered to create an associated device.
+>>>> To be ISO user API, in a first step, the driver_override
+>>>> is only allowed for the RPMsg raw service, supported by the
+>>>> rpmsg_char driver.
 >>>>
-> [...]
->>> I only see input from Andy and Lars in the thread you point out, nothing from
->>> Greg.  I have also taken a look at the patch [1] that made checkpatch complain
->>> about ENOTSUPP.  From what I see in that commit log the goal is to prevent new
->>> additions of ENOTSUPP to the kernel.
+>>>> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+>>>> ---
+>>>>  drivers/rpmsg/rpmsg_ctrl.c | 43 ++++++++++++++++++++++++++++++++++++--
+>>>>  1 file changed, 41 insertions(+), 2 deletions(-)
+>>>>
+>>>> diff --git a/drivers/rpmsg/rpmsg_ctrl.c b/drivers/rpmsg/rpmsg_ctrl.c
+>>>> index 065e2e304019..8381b5b2b794 100644
+>>>> --- a/drivers/rpmsg/rpmsg_ctrl.c
+>>>> +++ b/drivers/rpmsg/rpmsg_ctrl.c
+>>>> @@ -56,12 +56,51 @@ static int rpmsg_ctrl_dev_open(struct inode *inode, struct file *filp)
+>>>>  	return 0;
+>>>>  }
+>>>>  
+>>>> +static const char *rpmsg_ctrl_get_drv_name(u32 service)
+>>>> +{
+>>>> +	struct rpmsg_ctl_info *drv_info;
+>>>> +
+>>>> +	list_for_each_entry(drv_info, &rpmsg_drv_list, node) {
+>>>> +		if (drv_info->ctrl->service == service)
+>>>> +			return drv_info->ctrl->drv_name;
+>>>> +	}
+>>>> +
 >>>
->>> Please modify and resend, otherwise I'm sure someone will send another patch to
->>> fix it before the end of the cycle.
+>>> I'm unsure about the above... To me this looks like what the .match() function
+>>> of a bus would do.  And when I read Bjorn's comment he brought up the
+>>> auxiliary_bus.  I don't know about the auxiliary_bus but it is worth looking
+>>> into.  Registering with a bus would streamline a lot of the code in this
+>>> patchset.
 >>
->> Yeah ok. I will send out a v3.
+>> As answered Bjorn, we already have the RPMsg bus to manage the rpmsg devices.
+>> Look like duplication from my POV, except if the IOCTL does not manage channel
+>> but only endpoint.
 >>
-> I haven't seen v3 of this series yet. Please post it
-> if you would like to include it for 5.12.
+>> In my design I considered that the rpmsg_ctrl creates a channel associated to a
+>> rpmsg_device such as the RPMsg ns_announcement.
+>>
+>> Based on this assumption, if we implement the auxiliary_bus (or other) for the
+>> rpmsg_ctrl a RPMsg driver will have to manage the probe by rpmsg_bus and by the
+>> auxillary bus. The probe from the auxiliary bus would lead to the creation of an
+>> RPMsg device on the rpmsg_bus, so a duplication with cross dependencies and
+>> would probably make tricky the remove part.
+>>
+>> That said, I think the design depends on the functionality that should be
+>> implemented in the rpmsg_ctrl. Here is an alternative approach based on the
+>> auxiliary bus, which I'm starting to think about:
+>>
+>> The current approach of the rpmsg_char driver is to use the IOCTRL interface to
+>> instantiate a cdev with an endpoint (the RPMsg device is associated with the
+>> ioctl dev). This would correspond to the use of an auxiliary bus to manage local
+>> endpoint creations.
+>>
+>> We could therefore consider an RPMsg name service based on an RPmsg device. This
+>> RPMsg device would register a kind of "RPMsg service endpoint" driver on the
+>> auxiliary rpmsg_ioctl bus.
+>> The rpmsg_ctrl will be used to instantiate the endpoints for this RPMsg device.
+>> on user application request the rpmsg_ctrl will call the appropriate auxiliary
+>> device to create an endpoint.
+>>
+>> If we consider that one objective of this series is to allow application to
+>> initiate the communication with the remote processor, so to be able to initiate
+>> the service (ns announcement sent to the remote processor).
+>> This implies that:
+>> -either the RPMsg device has been probed first by a remote ns announcement or by
+>> a Linux kernel driver using the "driver_override", to register an auxiliary
+>> device. In this case an endpoint will be created associated to the RPMsg service
+>> - or create a RPMsg device on first ioctl endpoint creation request, if it does
+>> not exist (that could trig a NS announcement to remote processor).
+>>
+>> But I'm not sure that this approach would work with QCOM RPMsg backends...
+>>
+> 
+> I don't think there is a way forward with this set without a clear understanding
+> of the Glink and SMD drivers.  I have already spent a fair amount of time in the
+> Glink driver and will continue on Monday with SMD.  
+> 
+>>>
+>>> I'm out of time for today - I will continue tomorrow.
+>>
+>> It seems to me that the main point to step forward is to clarify the global
+>> design and features of the rpmsg-ctrl.
+>> Depending on the decision taken, this series could be trashed and rewritten from
+>> a blank page...To not lost to much time on the series don't hesitate to limit
+>> the review to the minimum.
+>>
+> 
+> I doubt you will ever get clear guidelines on the whole solution.  I will get
+> back to you once I am done with the SMD driver, which should be in the
+> latter part of next week.
 
-This series is dependent on couple of patches that would have to come through
-the remoteproc tree first, and I need to post the next versions of those as
-well. So, let me sort out those first. You can drop this from your queue for 5.12.
 
-regards
-Suman
+Thanks for your time past on this topic!
+
+I don't expect a clear guidance but that we clarify the objective of this RPMsg
+IOCTL. A first step would be sure that we are in line with the objective of the
+RPMsg IOCTL.
+For instance should we continue in a way to have the rpmsg_char more "rpmsg
+service" generic, relying on a rpmsg_ioctl for the control part? Or should we
+implement something independent (with is own API) to limit dependency with QCOM
+backends constraints?
+At the end, if implementing a IOCTL interface directly in the RPMsg TTY seems to
+you and Bjorn simpler, I can also go on this way...
+
+On my side I expect to find time this week to prototype a RPMSg ioctl using the
+auxiliary bus to better understand involved mechanism.
+
+Thanks,
+Arnaud
+
+> 
+>> Thanks,
+>> Arnaud
+>>
+>>>
+>>> Thanks,
+>>> Mathieu
+>>>
+>>>> +	return NULL;
+>>>> +}
+>>>> +
+>>>>  static long rpmsg_ctrl_dev_ioctl(struct file *fp, unsigned int cmd,
+>>>>  				 unsigned long arg)
+>>>>  {
+>>>>  	struct rpmsg_ctrl_dev *ctrldev = fp->private_data;
+>>>> -
+>>>> -	dev_info(&ctrldev->dev, "Control not yet implemented\n");
+>>>> +	void __user *argp = (void __user *)arg;
+>>>> +	struct rpmsg_channel_info chinfo;
+>>>> +	struct rpmsg_endpoint_info eptinfo;
+>>>> +	struct rpmsg_device *newch;
+>>>> +
+>>>> +	if (cmd != RPMSG_CREATE_EPT_IOCTL)
+>>>> +		return -EINVAL;
+>>>> +
+>>>> +	if (copy_from_user(&eptinfo, argp, sizeof(eptinfo)))
+>>>> +		return -EFAULT;
+>>>> +
+>>>> +	/*
+>>>> +	 * In a frst step only the rpmsg_raw service is supported.
+>>>> +	 * The override is foorced to RPMSG_RAW_SERVICE
+>>>> +	 */
+>>>> +	chinfo.driver_override = rpmsg_ctrl_get_drv_name(RPMSG_RAW_SERVICE);
+>>>> +	if (!chinfo.driver_override)
+>>>> +		return -ENODEV;
+>>>> +
+>>>> +	memcpy(chinfo.name, eptinfo.name, RPMSG_NAME_SIZE);
+>>>> +	chinfo.name[RPMSG_NAME_SIZE - 1] = '\0';
+>>>> +	chinfo.src = eptinfo.src;
+>>>> +	chinfo.dst = eptinfo.dst;
+>>>> +
+>>>> +	newch = rpmsg_create_channel(ctrldev->rpdev, &chinfo);
+>>>> +	if (!newch) {
+>>>> +		dev_err(&ctrldev->dev, "rpmsg_create_channel failed\n");
+>>>> +		return -ENXIO;
+>>>> +	}
+>>>>  
+>>>>  	return 0;
+>>>>  };
+>>>> -- 
+>>>> 2.17.1
+>>>>
