@@ -2,138 +2,113 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-19.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5BEFC433E0
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 25 Jan 2021 18:19:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B08EC433DB
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 25 Jan 2021 23:59:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A1A8922D04
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 25 Jan 2021 18:19:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 133DC22597
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 25 Jan 2021 23:59:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726339AbhAYSSy (ORCPT
+        id S1732613AbhAYX6e (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 25 Jan 2021 13:18:54 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60628 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731158AbhAYRwT (ORCPT
+        Mon, 25 Jan 2021 18:58:34 -0500
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:57936 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732469AbhAYX6O (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 25 Jan 2021 12:52:19 -0500
-Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 12793C06178A
-        for <linux-remoteproc@vger.kernel.org>; Mon, 25 Jan 2021 09:51:38 -0800 (PST)
-Received: by mail-wr1-x433.google.com with SMTP id c12so13877349wrc.7
-        for <linux-remoteproc@vger.kernel.org>; Mon, 25 Jan 2021 09:51:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:in-reply-to:references:date:message-id
-         :mime-version;
-        bh=0snvcNaYNGpV/k+7WdqZD7n4s15hYF8lRKnrHcT9zcs=;
-        b=BtcA8Bf0tWpg53PhU7aSoui0E3BpWfWCGjqofDJ+lP3yBnl5dwdung0WUSxXzvTvA6
-         WTu0tUvkwAXT3Cq0iMGsPbfl59hMfy9/EW2erNyZaTvlylVVwGwXwBqddWaBT3BIrZSZ
-         szt2OKUvwyMX7g2nAaDniEzmcScpvK2uXK2FUX/B8kO35o/a5Bx7cLy+XFV68farduPZ
-         RXmB0aaZMFxEo1a+abC3GeeawXzwnaq7G2FLyEvxRjdRPrR8idbR1k+RyOJQe84ZOVJH
-         Eu6mnLruo8fA0Wi+cgYcDCt2WXKASkVR4Nkm0uuXK0BOtazXaqSUOfOkCWKMVpzE2dNl
-         +dLg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
-         :message-id:mime-version;
-        bh=0snvcNaYNGpV/k+7WdqZD7n4s15hYF8lRKnrHcT9zcs=;
-        b=fvfxefKARIWSs7eS4vbojCUXm1P6PNyrj6hdH6NTcqKfee2Ttc/BpqjwlwCJieuCka
-         OY/u5nOm938ShN6T4QrPAji/KADgdXq6gJWiWUwLAVfQ9Gwk2YWFwj0NqcKYDhGAleNa
-         9mgsVdeOIzVbyQLHkNU8iU+aEHn7eRM/eGbk9B5dEAFKT6dvcJt/iXh8uV2jU/SnzUsy
-         NenreUdonUWByxzvWzWGTy5LEpnKAw0lls2Fcw+pfI31i2DCEOnD4TL5ShszzRpeMsPA
-         1+x47Xy8yDu3/9nZkVR34nqCqYkm2Z8xLSWPlKpXibo7zNPfFWVbnmW5sEO/1okYt52C
-         JJhQ==
-X-Gm-Message-State: AOAM533+QsrDMRl3ahKb5lKOWcxbJOfc9NJmxlcU1cyobJ4GKG1C6JWp
-        MoEIY6kBAsZFqcaxDMlPsnCm5A==
-X-Google-Smtp-Source: ABdhPJzfEafFozbxGGxAYvRjvaBNZaQlhERyvwak6AebaeXwdOrGAa45QDqKfniSaEX6MY+MkoOeMg==
-X-Received: by 2002:a5d:6a01:: with SMTP id m1mr2243274wru.318.1611597096632;
-        Mon, 25 Jan 2021 09:51:36 -0800 (PST)
-Received: from localhost (c-71-197-186-152.hsd1.wa.comcast.net. [71.197.186.152])
-        by smtp.gmail.com with ESMTPSA id r124sm62707wmr.16.2021.01.25.09.51.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 25 Jan 2021 09:51:35 -0800 (PST)
-From:   Kevin Hilman <khilman@baylibre.com>
-To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        linux-remoteproc@vger.kernel.org, linux-amlogic@lists.infradead.org
-Cc:     ohad@wizery.com, devicetree@vger.kernel.org,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        linux-kernel@vger.kernel.org, bjorn.andersson@linaro.org,
-        robh+dt@kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 0/5] Amlogic Meson Always-On ARC remote-processor
- support
-In-Reply-To: <20210102205904.2691120-1-martin.blumenstingl@googlemail.com>
-References: <20210102205904.2691120-1-martin.blumenstingl@googlemail.com>
-Date:   Mon, 25 Jan 2021 09:51:33 -0800
-Message-ID: <7hmtwwx5ui.fsf@baylibre.com>
+        Mon, 25 Jan 2021 18:58:14 -0500
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 10PNvF4J122260;
+        Mon, 25 Jan 2021 17:57:15 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1611619035;
+        bh=u490ZBd71l4VSU5ZzR93uUh3gBx2Qawp9w+Ia8TQfbc=;
+        h=From:To:CC:Subject:Date:In-Reply-To:References;
+        b=fwrQgHbcXL2VL8GW5qSwSrSmyjJo4F4We1fOR3s4+7Pi7gBWFdlEB6AMtjom0c62K
+         WFEcdnjjwgjyNTx2Ph6kDtdZ2RF+IYOD5OgVMMs+DDi/Uq1vSRs3VqNG/CJ5CUbNDP
+         QaRWyhmEmYr21BTXcbibaiH+PXb/hOfCrs06UccU=
+Received: from DFLE112.ent.ti.com (dfle112.ent.ti.com [10.64.6.33])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 10PNvF6s088368
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 25 Jan 2021 17:57:15 -0600
+Received: from DFLE105.ent.ti.com (10.64.6.26) by DFLE112.ent.ti.com
+ (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3; Mon, 25
+ Jan 2021 17:57:15 -0600
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE105.ent.ti.com
+ (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3 via
+ Frontend Transport; Mon, 25 Jan 2021 17:57:14 -0600
+Received: from lelv0597.itg.ti.com (lelv0597.itg.ti.com [10.181.64.32])
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id 10PNvEsH035804;
+        Mon, 25 Jan 2021 17:57:14 -0600
+Received: from localhost ([10.250.35.71])
+        by lelv0597.itg.ti.com (8.14.7/8.14.7) with ESMTP id 10PNvE3t117198;
+        Mon, 25 Jan 2021 17:57:14 -0600
+From:   Suman Anna <s-anna@ti.com>
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>
+CC:     <devicetree@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-omap@vger.kernel.org>, Suman Anna <s-anna@ti.com>
+Subject: [PATCH 2/2] hwspinlock: omap: Add support for K3 AM64x SoCs
+Date:   Mon, 25 Jan 2021 17:56:53 -0600
+Message-ID: <20210125235653.24385-3-s-anna@ti.com>
+X-Mailer: git-send-email 2.29.2
+In-Reply-To: <20210125235653.24385-1-s-anna@ti.com>
+References: <20210125235653.24385-1-s-anna@ti.com>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Martin Blumenstingl <martin.blumenstingl@googlemail.com> writes:
+The AM64x SoC contains a HwSpinlock IP instance in the MAIN domain,
+and is a minor variant of the IP on the current TI K3 SoCs such as
+AM64x, J721E or J7200 SoCs. The IP is not built with the K3 safety
+feature in hardware, and has slightly different integration into
+the overall SoC.
 
-> Amlogic Meson6/8/8b/8m2 come with an ARC core in the Always-On (AO)
-> power-domain. This is typically used for waking up the ARM CPU after
-> powering it down for system suspend.
->
-> The exact ARC core used on Meson6 and earlier is not known. I believe
-> it is an ARC625, but I am not sure about this. Meson8/8b/8m2 uses an
-> ARC EM4 core.
-> They all have in common that they use a section of the SoCs SRAM for
-> running code on the ARC core.
->
-> Unfortunately there's no information about the remote-processor control
-> registers in the public Meson8b (S805) datasheet. All information is
-> either taken from Amlogic's 3.10 kernel and 2011-03 u-boot or found by
-> testing (for example the clock input is not mentioned anywhere in the
-> reference code, but disabling it stops the AO ARC core from working).
->
-> This series consists of five patches:
->  1: dt-bindings for the SRAM section
->  2: dt-bindings for the SECBUS2 syscon region which contains a few
->     bits for controlling this remote processor
->  3: dt-bindings for the AO ARC remote processor
->  4: the driver for booting code on the AO ARC remote processor
->  5: (only included for documentation purposes) dts changes (these will
->     be re-sent separately)
->
-> Patches #3 and #4 should go through the remoteproc tree. Patches #1
-> and #2 may go through Rob's (devicetree) tree, Kevin's linux-amlogic
-> tree or through the remoteproc tree. Personally I have no preference
-> here.
->
-> To test this series I ported the Amlogic serial driver and added the
-> board files for the Amlogic AO ARC EM4 to the Zephyr RTOS. The code can
-> be found here: [0] (the resulting zephyr.elf can then be loaded as
-> remote-processor firmware from Linux).
->
->
-> Changes since v1 at [1]:
-> - fixed yamllint warnings (after installing the package these now also
->   show up on my build machine) in patches #2 and #3. Thanks for the
->   hint Rob
-> - dropped the explicit "select" statement from the dt-bindings in patch
->   #2 as suggested by Rob (thanks)
->
->
-> [0] https://github.com/xdarklight/zephyr-rtos/commits/amlogic_ao_em4-20201229
-> [1] https://patchwork.kernel.org/project/linux-amlogic/list/?series=407349
->
->
-> Martin Blumenstingl (5):
->   dt-bindings: sram: Add compatible strings for the Meson AO ARC SRAM
->   dt-bindings: Amlogic: add the documentation for the SECBUS2 registers
->   dt-bindings: remoteproc: Add the documentation for Meson AO ARC rproc
->   remoteproc: meson-mx-ao-arc: Add a driver for the AO ARC remote
->     procesor
->   ARM: dts: meson: add the AO ARC remote processor
+Add the support for this IP through a new compatible.
 
-Patches 1-2, 5 queued for v5.12 via the amlogic tree.
+Signed-off-by: Suman Anna <s-anna@ti.com>
+---
+ drivers/hwspinlock/omap_hwspinlock.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-Kevin
+diff --git a/drivers/hwspinlock/omap_hwspinlock.c b/drivers/hwspinlock/omap_hwspinlock.c
+index 3b05560456ea..65dbf1ae3aa7 100644
+--- a/drivers/hwspinlock/omap_hwspinlock.c
++++ b/drivers/hwspinlock/omap_hwspinlock.c
+@@ -2,11 +2,12 @@
+ /*
+  * OMAP hardware spinlock driver
+  *
+- * Copyright (C) 2010-2015 Texas Instruments Incorporated - http://www.ti.com
++ * Copyright (C) 2010-2021 Texas Instruments Incorporated - https://www.ti.com
+  *
+  * Contact: Simon Que <sque@ti.com>
+  *          Hari Kanigeri <h-kanigeri2@ti.com>
+  *          Ohad Ben-Cohen <ohad@wizery.com>
++ *          Suman Anna <s-anna@ti.com>
+  */
+ 
+ #include <linux/kernel.h>
+@@ -165,6 +166,7 @@ static int omap_hwspinlock_remove(struct platform_device *pdev)
+ static const struct of_device_id omap_hwspinlock_of_match[] = {
+ 	{ .compatible = "ti,omap4-hwspinlock", },
+ 	{ .compatible = "ti,am654-hwspinlock", },
++	{ .compatible = "ti,am64-hwspinlock", },
+ 	{ /* end */ },
+ };
+ MODULE_DEVICE_TABLE(of, omap_hwspinlock_of_match);
+-- 
+2.29.2
+
