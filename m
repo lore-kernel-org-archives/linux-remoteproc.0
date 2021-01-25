@@ -2,75 +2,113 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53281C433E0
-	for <linux-remoteproc@archiver.kernel.org>; Sat, 23 Jan 2021 14:31:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C0DBC433DB
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 25 Jan 2021 04:38:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 21B3722EBE
-	for <linux-remoteproc@archiver.kernel.org>; Sat, 23 Jan 2021 14:31:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EACD6224B1
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 25 Jan 2021 04:38:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726024AbhAWOay (ORCPT
+        id S1727110AbhAYEiH (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Sat, 23 Jan 2021 09:30:54 -0500
-Received: from aposti.net ([89.234.176.197]:34542 "EHLO aposti.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725899AbhAWOaw (ORCPT
+        Sun, 24 Jan 2021 23:38:07 -0500
+Received: from aserp2120.oracle.com ([141.146.126.78]:51930 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727068AbhAYEh6 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Sat, 23 Jan 2021 09:30:52 -0500
-From:   Paul Cercueil <paul@crapouillou.net>
-To:     Ohad Ben-Cohen <ohad@wizery.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     od@zcrc.me, linux-mips@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Paul Cercueil <paul@crapouillou.net>
-Subject: [PATCH] remoteproc: ingenic: Add module parameter 'auto_boot'
-Date:   Sat, 23 Jan 2021 14:29:56 +0000
-Message-Id: <20210123142956.17865-1-paul@crapouillou.net>
+        Sun, 24 Jan 2021 23:37:58 -0500
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 10P4YmDE139655;
+        Mon, 25 Jan 2021 04:37:00 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2020-01-29;
+ bh=szoXrV/RFeXwfntAWWK5Bt/AJH3TXlpRkFzpc71lSSA=;
+ b=ju0q6P16syKbWSwjYL1i958OzTdIcL9OPeFLr44Xvl7LBmzzf1/w5h86TXES761DLY6U
+ h/avO6gWVRbgzsQ6yrDg8f9Rip/J0ZVzPV3EQbQWGUvOCPrIKeuMg+NaTusOHT1PtAat
+ lKsdCIAcJI1YienytqboopOxZqMh9jHzB2Me9oFGbv3GptASCysey5LH0Xk3Ugt5SUCw
+ yB6mbbDLvPP6W7tZMpbUcu89N0gDis+PU9CRSgvZLQcfyPxZz0rCqmgbzr48lDF5mQdk
+ kS6rwpmix9QZObfVgu+fmusRlUNoVEYtSsGcoaXDoyfJuHjaXAJ5RT+tvEreV8Q88lre lg== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by aserp2120.oracle.com with ESMTP id 368brkbdpb-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 25 Jan 2021 04:36:59 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 10P4Yvr4144538;
+        Mon, 25 Jan 2021 04:34:59 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserp3030.oracle.com with ESMTP id 368wck37gb-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 25 Jan 2021 04:34:59 +0000
+Received: from abhmp0017.oracle.com (abhmp0017.oracle.com [141.146.116.23])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 10P4Ytjt010237;
+        Mon, 25 Jan 2021 04:34:55 GMT
+Received: from santoshs-mbp-3.lan (/69.181.241.203)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Sun, 24 Jan 2021 20:34:54 -0800
+Subject: Re: [PATCH v2 0/5] Introduce PRU remoteproc consumer API
+To:     Suman Anna <s-anna@ti.com>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc:     Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>, ohad@wizery.com,
+        bjorn.andersson@linaro.org, robh+dt@kernel.org,
+        ssantosh@kernel.org, linux-remoteproc@vger.kernel.org,
+        lee.jones@linaro.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, praneeth@ti.com,
+        rogerq@kernel.org
+References: <20201216165239.2744-1-grzegorz.jaszczyk@linaro.org>
+ <20210106232704.GE9149@xps15> <11303a1b-5ab4-def5-77b1-c500894c9c87@ti.com>
+ <20210107224448.GB43045@xps15> <75365443-57e3-e2e0-5865-f78af9d5890b@ti.com>
+From:   "santosh.shilimkar@oracle.com" <santosh.shilimkar@oracle.com>
+Organization: Oracle Corporation
+Message-ID: <b0e32ad0-487f-9d57-7287-835eee836514@oracle.com>
+Date:   Sun, 24 Jan 2021 20:34:38 -0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:78.0)
+ Gecko/20100101 Thunderbird/78.5.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <75365443-57e3-e2e0-5865-f78af9d5890b@ti.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9874 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 mlxscore=0 suspectscore=0
+ phishscore=0 mlxlogscore=999 bulkscore=0 malwarescore=0 spamscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
+ definitions=main-2101250024
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9874 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 impostorscore=0
+ phishscore=0 bulkscore=0 priorityscore=1501 mlxlogscore=999
+ lowpriorityscore=0 spamscore=0 mlxscore=0 suspectscore=0 malwarescore=0
+ clxscore=1011 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2009150000 definitions=main-2101250024
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Add a 'auto_boot' module parameter that instructs the remoteproc driver
-whether or not it should auto-boot the remote processor, which will
-default to "false", since the VPU in Ingenic SoCs does not really have
-any predetermined function.
+Hi Suman, Mathieu,
 
-Signed-off-by: Paul Cercueil <paul@crapouillou.net>
----
- drivers/remoteproc/ingenic_rproc.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+On 1/7/21 2:49 PM, Suman Anna wrote:
+> On 1/7/21 4:44 PM, Mathieu Poirier wrote:
+>> On Wed, Jan 06, 2021 at 06:03:25PM -0600, Suman Anna wrote:
+>>> Hi Mathieu,
+>>>
+[...]
+>> I only see input from Andy and Lars in the thread you point out, nothing from
+>> Greg.  I have also taken a look at the patch [1] that made checkpatch complain
+>> about ENOTSUPP.  From what I see in that commit log the goal is to prevent new
+>> additions of ENOTSUPP to the kernel.
+>>
+>> Please modify and resend, otherwise I'm sure someone will send another patch to
+>> fix it before the end of the cycle.
+> 
+> Yeah ok. I will send out a v3.
+> 
+I haven't seen v3 of this series yet. Please post it
+if you would like to include it for 5.12.
 
-diff --git a/drivers/remoteproc/ingenic_rproc.c b/drivers/remoteproc/ingenic_rproc.c
-index 26e19e6143b7..e2618c36eaab 100644
---- a/drivers/remoteproc/ingenic_rproc.c
-+++ b/drivers/remoteproc/ingenic_rproc.c
-@@ -27,6 +27,11 @@
- #define AUX_CTRL_NMI		BIT(1)
- #define AUX_CTRL_SW_RESET	BIT(0)
- 
-+static bool auto_boot;
-+module_param(auto_boot, bool, 0400);
-+MODULE_PARM_DESC(auto_boot,
-+		 "Auto-boot the remote processor [default=false]");
-+
- struct vpu_mem_map {
- 	const char *name;
- 	unsigned int da;
-@@ -172,6 +177,8 @@ static int ingenic_rproc_probe(struct platform_device *pdev)
- 	if (!rproc)
- 		return -ENOMEM;
- 
-+	rproc->auto_boot = auto_boot;
-+
- 	vpu = rproc->priv;
- 	vpu->dev = &pdev->dev;
- 	platform_set_drvdata(pdev, vpu);
--- 
-2.29.2
-
+Regards,
+Santosh
