@@ -2,90 +2,184 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70606C433E0
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 26 Jan 2021 00:02:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4AA6C433DB
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 26 Jan 2021 05:59:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3C1C422AAC
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 26 Jan 2021 00:02:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 79BEF2255F
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 26 Jan 2021 05:59:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732061AbhAZABy (ORCPT
+        id S1729463AbhAZF7A (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 25 Jan 2021 19:01:54 -0500
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:57916 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732633AbhAYX6r (ORCPT
+        Tue, 26 Jan 2021 00:59:00 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60110 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730156AbhAYPkh (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 25 Jan 2021 18:58:47 -0500
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 10PNv55x122241;
-        Mon, 25 Jan 2021 17:57:05 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1611619025;
-        bh=ihr9DKYldcHIliHzENLCBXu8ilCX6+CT5/SvXOqjD/Y=;
-        h=From:To:CC:Subject:Date;
-        b=pfmP7WnjszOhA9THPpLyAxjy53PnSSWXKOfRWBDAgS0ogElva+6hJ/6GDyT0d7oJe
-         5jZEXo8lUMVnZwHNh5XDVTdEvkDM2C6eFUqHRHn+XczBEgvM7bAjbxnGwJppDdWzXa
-         nMDmPEmqrN95yoGdTYBIRWGzKnZqZ/mrE+lr0NSI=
-Received: from DLEE113.ent.ti.com (dlee113.ent.ti.com [157.170.170.24])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 10PNv5BX088196
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 25 Jan 2021 17:57:05 -0600
-Received: from DLEE112.ent.ti.com (157.170.170.23) by DLEE113.ent.ti.com
- (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3; Mon, 25
- Jan 2021 17:57:04 -0600
-Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE112.ent.ti.com
- (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3 via
- Frontend Transport; Mon, 25 Jan 2021 17:57:04 -0600
-Received: from lelv0597.itg.ti.com (lelv0597.itg.ti.com [10.181.64.32])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id 10PNv434035608;
-        Mon, 25 Jan 2021 17:57:04 -0600
-Received: from localhost ([10.250.35.71])
-        by lelv0597.itg.ti.com (8.14.7/8.14.7) with ESMTP id 10PNv3vo117156;
-        Mon, 25 Jan 2021 17:57:04 -0600
-From:   Suman Anna <s-anna@ti.com>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>
-CC:     <devicetree@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-omap@vger.kernel.org>, Suman Anna <s-anna@ti.com>
-Subject: [PATCH 0/2] Add HwSpinlock support for TI K3 AM64x SoCs
-Date:   Mon, 25 Jan 2021 17:56:51 -0600
-Message-ID: <20210125235653.24385-1-s-anna@ti.com>
-X-Mailer: git-send-email 2.29.2
+        Mon, 25 Jan 2021 10:40:37 -0500
+Received: from mail-oi1-x229.google.com (mail-oi1-x229.google.com [IPv6:2607:f8b0:4864:20::229])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 875AFC061A27
+        for <linux-remoteproc@vger.kernel.org>; Mon, 25 Jan 2021 07:31:05 -0800 (PST)
+Received: by mail-oi1-x229.google.com with SMTP id k25so1020571oik.13
+        for <linux-remoteproc@vger.kernel.org>; Mon, 25 Jan 2021 07:31:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=SxLdn12bo3JSW90T75UdB4U6gB9SmHyBIuYHXoIZPRQ=;
+        b=MU5tTA09S06hrIolF1u8q9KD+3sVZNjSLC5hGaSbPtODodiEiNldyDDwkQBpW9/IR0
+         wiRf2HV0jtTVx9xTZwyJki1S+rDIYiwkd2OoVMtpztyK8qSTkDkgY7Tf2GTIoT7ysVSu
+         /YwQ73lOG0+K6CPsw6w+9bh/CvrspQy6K0AFVUczFCobWzzn0Xm8XjMFv7XLHa/a74xU
+         khbhC63FVQ+h0zvr/hkcE8XXv9mniX9bAthC+NPMr4hDSq1qjh0Dt5pbfELhQZjHu828
+         yjQlvYpXjb11s6B4zXi7NrKma0xWC4OsMLIMXLOBz3UyIfKh1NBq5QmXtsGh2DGSdEJt
+         pvOg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=SxLdn12bo3JSW90T75UdB4U6gB9SmHyBIuYHXoIZPRQ=;
+        b=agboCwNxs9ZlbM6ToRlZDp83EkFDRuk889xxQBINMFG1mzVAY9ORKzaX2sV1Vb7PZg
+         JTEd+uXXFn59csIr/ZaC3isrO09SqUfZwNAElB68g6G1jVCIjGgkenNGH5b7cPRPp0Fk
+         3Rdbno5jQrRvhz2osUA1frNdLvzXoOqEqwhSAyjjRdAD/jx9xTcqX7wGB0T2dcK1Rm8g
+         BbVJtCRYe2gjrG1ZD51JXGWW8l4o9ldMpcTDkDzUzZHWF5J6VdeHANpGX26mJr5v+cDi
+         ujLyuHSPfyBgYWLto5sMIntA+DMZe5zLj1xsrKSGypTm0tshDu3J6vxFtl0sBu/gBdR+
+         ogFw==
+X-Gm-Message-State: AOAM532RWlspAQFZOw7Wcv0oVLA/MzzatHzOwuYTJUxxEcQsaAllQIRd
+        /XX725TAE8ridKgwQCP8nn/w1HtXml5hhg==
+X-Google-Smtp-Source: ABdhPJwf+L+KA9mn2cXt2xAl2y1Sy7p52UWACchm3iCYrC/exscxq/OhmVqtwAnV4kAo6wXF1VSc/g==
+X-Received: by 2002:a54:4391:: with SMTP id u17mr476610oiv.30.1611588664850;
+        Mon, 25 Jan 2021 07:31:04 -0800 (PST)
+Received: from builder.lan (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
+        by smtp.gmail.com with ESMTPSA id v17sm3497202ott.7.2021.01.25.07.31.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 25 Jan 2021 07:31:04 -0800 (PST)
+Date:   Mon, 25 Jan 2021 09:31:02 -0600
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Arnaud POULIQUEN <arnaud.pouliquen@st.com>
+Cc:     Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Arnaud POULIQUEN - foss <arnaud.pouliquen@foss.st.com>,
+        Ohad Ben-Cohen <ohad@wizery.com>,
+        "linux-stm32@st-md-mailman.stormreply.com" 
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [Linux-stm32] [PATCH] rpmsg: char: return an error if device
+ already open
+Message-ID: <YA7kNj0/lbUhqJBd@builder.lan>
+References: <20210106133714.9984-1-arnaud.pouliquen@foss.st.com>
+ <20210114190543.GB255481@xps15>
+ <6de9ff8f-0be1-387a-df7e-7d77dd859513@st.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6de9ff8f-0be1-387a-df7e-7d77dd859513@st.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi Bjorn,
+On Fri 15 Jan 03:13 CST 2021, Arnaud POULIQUEN wrote:
 
-The following series extends the OMAP HwSpinlock driver to enable the
-HwSpinlock IP present on the most recent TI K3 AM64x SoCs [1]. I will
-post the DT nodes once the binding is acked and merged.
+> Hi Mathieu,
+> 
+> 
+> On 1/14/21 8:05 PM, Mathieu Poirier wrote:
+> > On Wed, Jan 06, 2021 at 02:37:14PM +0100, Arnaud Pouliquen wrote:
+> >> The rpmsg_create_ept function is invoked when the device is opened.
+> >> As only one endpoint must be created per device. It is not
+> >> possible to open the same device twice.
+> >> The fix consists in returning -EBUSY when device is already
+> >> opened.
+> >>
+> >> Fixes: c0cdc19f84a4 ("rpmsg: Driver for user space endpoint interface")
+> >> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+> >> ---
+> >>  drivers/rpmsg/rpmsg_char.c | 3 +++
+> >>  1 file changed, 3 insertions(+)
+> >>
+> >> diff --git a/drivers/rpmsg/rpmsg_char.c b/drivers/rpmsg/rpmsg_char.c
+> >> index 4bbbacdbf3bb..360a1ab0a9c4 100644
+> >> --- a/drivers/rpmsg/rpmsg_char.c
+> >> +++ b/drivers/rpmsg/rpmsg_char.c
+> >> @@ -127,6 +127,9 @@ static int rpmsg_eptdev_open(struct inode *inode, struct file *filp)
+> >>  	struct rpmsg_device *rpdev = eptdev->rpdev;
+> >>  	struct device *dev = &eptdev->dev;
+> >>  
+> >> +	if (eptdev->ept)
+> >> +		return -EBUSY;
+> >> +
+> > 
+> > I rarely had to work so hard to review a 2 line patch...
+> 
+> That means that my commit description was not enough explicit...
+> 
+> > 
+> > As far as I can tell the actual code is doing the right thing.  If user space is
+> > trying to open the same eptdev more than once function rpmsg_create_ept() should
+> > complain and the operation denied, wich is what the current code is doing.  
+> > 
+> > There is currently two customers for this API - SMD and GLINK.  The SMD code is
+> > quite clear that if the channel is already open, the operation will be
+> > denied [1].  The GLINK code isn't as clear but the fact that it returns NULL on
+> > error conditions [2] is a good indication that things are working the same way.
+> > 
+> > What kind of use case are you looking to address?  Is there any way you can use
+> > rpdev->ops->create_ept() as it is currently done?
+> 
+> This patch was part of the IOCTL rpmsg series. I sent it separately at Bjorn's
+> request [1].
+> 
 
-regards
-Suman
+I apparently didn't spend as much effort as Mathieu thinking about the
+details. I do believe that he's right, at least both GLINK and SMD
+_should_ return -EBUSY if we try to open an already open channel -
+either because the kernel has bound a driver to the channel or because
+rpmsg_char already has it opened.
 
-[1] https://patchwork.kernel.org/project/linux-arm-kernel/cover/20210120202532.9011-1-d-gerlach@ti.com/
+> I detect the issue using the RPMSG_ADDR_ANY for the source address when tested
+> it with the rpmsf_virtio bus. In this case at each sys open of the device, a new
+> endpoint is created because a new source address is allocated.
+> 
 
-Suman Anna (2):
-  dt-bindings: hwlock: Update OMAP HwSpinlock binding for AM64x SoCs
-  hwspinlock: omap: Add support for K3 AM64x SoCs
+In SMD and GLINK channels are identified solely by their name and hence
+it's not possible to have duplicates. As this isn't the case for virtio
+I didn't have any objections to it and that's why I asked you to resend
+it separately.
 
- .../bindings/hwlock/ti,omap-hwspinlock.yaml   | 26 +++++++++++++++++++
- drivers/hwspinlock/omap_hwspinlock.c          |  4 ++-
- 2 files changed, 29 insertions(+), 1 deletion(-)
+But in line with GLINK/SMD, what would the expected behavior be if I
+with the virtio backend open a rpmsg_char which is already bound to a
+kernel driver?
 
--- 
-2.29.2
+Do you think we should get another "channel" or do you think the virtio
+driver should detect this and return -EBUSY? (I.e. render this patch
+unnecessary)
 
+Regards,
+Bjorn
+
+> [1]https://patchwork.kernel.org/project/linux-remoteproc/patch/20201222105726.16906-11-arnaud.pouliquen@foss.st.com/
+> 
+> Thanks,
+> Arnaud
+> 
+> > 
+> > Thanks,
+> > Mathieu
+> > 
+> > [1]. https://elixir.bootlin.com/linux/v5.11-rc3/source/drivers/rpmsg/qcom_smd.c#L920
+> > [2]. https://elixir.bootlin.com/linux/v5.11-rc3/source/drivers/rpmsg/qcom_glink_native.c#L1149
+> > 
+> >>  	get_device(dev);
+> >>  
+> >>  	ept = rpmsg_create_ept(rpdev, rpmsg_ept_cb, eptdev, eptdev->chinfo);
+> >> -- 
+> >> 2.17.1
+> >>
+> > _______________________________________________
+> > Linux-stm32 mailing list
+> > Linux-stm32@st-md-mailman.stormreply.com
+> > https://st-md-mailman.stormreply.com/mailman/listinfo/linux-stm32
+> > 
