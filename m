@@ -2,255 +2,128 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
+X-Spam-Status: No, score=-26.3 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FDA9C433E0
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 26 Jan 2021 19:09:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BE3CC433E6
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 27 Jan 2021 08:23:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4AE6E22CE3
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 26 Jan 2021 19:09:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5FD772073C
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 27 Jan 2021 08:23:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728857AbhAZF67 (ORCPT
+        id S231741AbhA0IXB (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 26 Jan 2021 00:58:59 -0500
-Received: from mx07-00178001.pphosted.com ([185.132.182.106]:26680 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728007AbhAYMZc (ORCPT
+        Wed, 27 Jan 2021 03:23:01 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50040 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231709AbhA0IVc (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 25 Jan 2021 07:25:32 -0500
-Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 10PAh1DN022642;
-        Mon, 25 Jan 2021 11:52:14 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=selector1;
- bh=tXd3M2ItuZ7tpZg66nEEuBS/rKqYkgB3GdCw/VU5/cs=;
- b=2DOcuIft/jK7bqI9H7ePVgL1XWZR4adtOa4kig4Rdz8Oz/APCiTqyO1A31UBunC5PIVJ
- rYeZEeVybn4HjgqbSpKF96RIL8Ftukg0i8sMYHdYr35QuNFXo9wNPKguaa+I2Cdtd2yA
- UCEP6VvcKfpjJZfDbGeEEY4ZDWiho+ijtElHFtIsm7A5+d8dAE8N1Xiu8uXHZH4CwvzG
- ukq0sueHtLbhf8rlJuKfkVvT3pGaupz45UDVQNP7aWDBM0k79Luj/R3MIdZ6kBqx9oz/
- RI13iXxgAwKHruCUKPylyzOu3wlP0ZAN5x5FiqdXDl+sZD+uOAZ4p9NYGBu1iUodiLZX dw== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 368a56afqt-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 25 Jan 2021 11:52:14 +0100
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id EA302100038;
-        Mon, 25 Jan 2021 11:52:13 +0100 (CET)
-Received: from Webmail-eu.st.com (sfhdag2node3.st.com [10.75.127.6])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id BDA5D23BD5C;
-        Mon, 25 Jan 2021 11:52:13 +0100 (CET)
-Received: from lmecxl0889.lme.st.com (10.75.127.49) by SFHDAG2NODE3.st.com
- (10.75.127.6) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 25 Jan
- 2021 11:52:13 +0100
-Subject: Re: [PATCH v2 04/16] rpmsg: ctrl: implement the ioctl function to
- create device
-To:     Mathieu Poirier <mathieu.poirier@linaro.org>
-CC:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Ohad Ben-Cohen <ohad@wizery.com>,
-        Andy Gross <agross@kernel.org>,
-        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-msm@vger.kernel.org>
-References: <20201222105726.16906-1-arnaud.pouliquen@foss.st.com>
- <20201222105726.16906-5-arnaud.pouliquen@foss.st.com>
- <20210121235258.GG611676@xps15>
- <1b76bf93-9647-c658-b4dd-1b10264a1189@foss.st.com>
- <20210122205934.GA866146@xps15>
-From:   Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
-Message-ID: <3ad1b5e8-3b16-bfd2-bfd9-2d8d0ac8e8d5@foss.st.com>
-Date:   Mon, 25 Jan 2021 11:52:12 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
-MIME-Version: 1.0
-In-Reply-To: <20210122205934.GA866146@xps15>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.75.127.49]
-X-ClientProxiedBy: SFHDAG2NODE3.st.com (10.75.127.6) To SFHDAG2NODE3.st.com
- (10.75.127.6)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.343,18.0.737
- definitions=2021-01-25_03:2021-01-25,2021-01-25 signatures=0
+        Wed, 27 Jan 2021 03:21:32 -0500
+Received: from mail-yb1-xb49.google.com (mail-yb1-xb49.google.com [IPv6:2607:f8b0:4864:20::b49])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D8F4AC0613D6
+        for <linux-remoteproc@vger.kernel.org>; Wed, 27 Jan 2021 00:20:51 -0800 (PST)
+Received: by mail-yb1-xb49.google.com with SMTP id f127so1609423ybf.12
+        for <linux-remoteproc@vger.kernel.org>; Wed, 27 Jan 2021 00:20:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=sender:date:message-id:mime-version:subject:from:to:cc;
+        bh=m63EAmeXqIPZihoN5M7lU0BGu+fGoCuFKs5wvqm9uCA=;
+        b=A38tSlugr9efDA+LeHkBD/HUda1hBTlNbl7J32yuQz1GqzRWG8F58h/i1UGyDUEepF
+         +ClPSZhqCa0Mu2UWQl4mFrhisFN2pM+cto10cgBLwrZFkG4+dlu97XDYTRGx7Dj48N1n
+         fWYGVmUrPGwPkqomLxlUN+TGFAYnmZSnNgQbtOky9TVF7dxVAtR8hY0NDmcdcB1dZoMA
+         O7u4Ii3AYfhqAG6E2MozUXAIBh4+/23JhFRQiij3ZgSq9OyCSSTBASlk1NbRN7lc635s
+         x9xjeZWshFWULgKzpV56PWfVpX3Xgnn/y940vBQ8Ygb+wUuxwo6VyYEERswUpILwKICU
+         fBNQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:message-id:mime-version:subject:from
+         :to:cc;
+        bh=m63EAmeXqIPZihoN5M7lU0BGu+fGoCuFKs5wvqm9uCA=;
+        b=Wxmcgc441O1XDDi3EmtnpW58GvYD9A+G4Ys4E/uA7SC6KeksOLPE3clLsMLBfi0LD9
+         +exCUV26Flm+SDvQ/ake0FvoBnaH6FQ3UaFdo4qDae0bNiQ47F2y8NQsebu8NlE42pGE
+         Cg1yLEkofzZAlsvdSgm+ClZWYxuvg9YH+ytAsBP1moAArJFul8+t1EmGpmVkLzktluuA
+         aYAf5tRFA8yojcNnonTLqZzJTKry2Bvh2PdBMNZp+vOALwmkEJD9uTsTlXg6XKupr0bx
+         VnsTbW2xWd4jX2InPMKntHhSQFdr/86IN//GONUM2zNXBamO/dp55PoFahwbmaXSpll2
+         SQ9w==
+X-Gm-Message-State: AOAM532Y79jzBWcRrPIYKl5TFQQCNhQQ23BoiKUzawg3gqF/Ft6TRaA5
+        USBMpL0ad74IIsj/kHv1Fm6z0NipP1He
+X-Google-Smtp-Source: ABdhPJynQgwplEBxjt9UAAah6WMRYX2BQntT4VDdhIhRFxcAABTS8xP8M0U6ru671sdENwBgDKegwjsfmrsK
+Sender: "tzungbi via sendgmr" <tzungbi@tzungbi-z840.tpe.corp.google.com>
+X-Received: from tzungbi-z840.tpe.corp.google.com ([2401:fa00:1:b:d17d:c7bb:69a2:7e2f])
+ (user=tzungbi job=sendgmr) by 2002:a25:b8ca:: with SMTP id
+ g10mr13488161ybm.517.1611735651150; Wed, 27 Jan 2021 00:20:51 -0800 (PST)
+Date:   Wed, 27 Jan 2021 16:20:46 +0800
+Message-Id: <20210127082046.3735157-1-tzungbi@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.30.0.280.ga3ce27912f-goog
+Subject: [PATCH] remoteproc/mediatek: acknowledge watchdog IRQ after handled
+From:   Tzung-Bi Shih <tzungbi@google.com>
+To:     ohad@wizery.com, bjorn.andersson@linaro.org
+Cc:     linux-remoteproc@vger.kernel.org, matthias.bgg@gmail.com,
+        linux-mediatek@lists.infradead.org, tzungbi@google.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi Mathieu,
+Acknowledges watchdog IRQ after handled or kernel keeps receiving the
+interrupt.
 
-On 1/22/21 9:59 PM, Mathieu Poirier wrote:
-> On Fri, Jan 22, 2021 at 02:05:27PM +0100, Arnaud POULIQUEN wrote:
->> Hi Mathieu,
->>
->> On 1/22/21 12:52 AM, Mathieu Poirier wrote:
->>> On Tue, Dec 22, 2020 at 11:57:14AM +0100, Arnaud Pouliquen wrote:
->>>> Implement the ioctl function that parses the list of
->>>> rpmsg drivers registered to create an associated device.
->>>> To be ISO user API, in a first step, the driver_override
->>>> is only allowed for the RPMsg raw service, supported by the
->>>> rpmsg_char driver.
->>>>
->>>> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
->>>> ---
->>>>  drivers/rpmsg/rpmsg_ctrl.c | 43 ++++++++++++++++++++++++++++++++++++--
->>>>  1 file changed, 41 insertions(+), 2 deletions(-)
->>>>
->>>> diff --git a/drivers/rpmsg/rpmsg_ctrl.c b/drivers/rpmsg/rpmsg_ctrl.c
->>>> index 065e2e304019..8381b5b2b794 100644
->>>> --- a/drivers/rpmsg/rpmsg_ctrl.c
->>>> +++ b/drivers/rpmsg/rpmsg_ctrl.c
->>>> @@ -56,12 +56,51 @@ static int rpmsg_ctrl_dev_open(struct inode *inode, struct file *filp)
->>>>  	return 0;
->>>>  }
->>>>  
->>>> +static const char *rpmsg_ctrl_get_drv_name(u32 service)
->>>> +{
->>>> +	struct rpmsg_ctl_info *drv_info;
->>>> +
->>>> +	list_for_each_entry(drv_info, &rpmsg_drv_list, node) {
->>>> +		if (drv_info->ctrl->service == service)
->>>> +			return drv_info->ctrl->drv_name;
->>>> +	}
->>>> +
->>>
->>> I'm unsure about the above... To me this looks like what the .match() function
->>> of a bus would do.  And when I read Bjorn's comment he brought up the
->>> auxiliary_bus.  I don't know about the auxiliary_bus but it is worth looking
->>> into.  Registering with a bus would streamline a lot of the code in this
->>> patchset.
->>
->> As answered Bjorn, we already have the RPMsg bus to manage the rpmsg devices.
->> Look like duplication from my POV, except if the IOCTL does not manage channel
->> but only endpoint.
->>
->> In my design I considered that the rpmsg_ctrl creates a channel associated to a
->> rpmsg_device such as the RPMsg ns_announcement.
->>
->> Based on this assumption, if we implement the auxiliary_bus (or other) for the
->> rpmsg_ctrl a RPMsg driver will have to manage the probe by rpmsg_bus and by the
->> auxillary bus. The probe from the auxiliary bus would lead to the creation of an
->> RPMsg device on the rpmsg_bus, so a duplication with cross dependencies and
->> would probably make tricky the remove part.
->>
->> That said, I think the design depends on the functionality that should be
->> implemented in the rpmsg_ctrl. Here is an alternative approach based on the
->> auxiliary bus, which I'm starting to think about:
->>
->> The current approach of the rpmsg_char driver is to use the IOCTRL interface to
->> instantiate a cdev with an endpoint (the RPMsg device is associated with the
->> ioctl dev). This would correspond to the use of an auxiliary bus to manage local
->> endpoint creations.
->>
->> We could therefore consider an RPMsg name service based on an RPmsg device. This
->> RPMsg device would register a kind of "RPMsg service endpoint" driver on the
->> auxiliary rpmsg_ioctl bus.
->> The rpmsg_ctrl will be used to instantiate the endpoints for this RPMsg device.
->> on user application request the rpmsg_ctrl will call the appropriate auxiliary
->> device to create an endpoint.
->>
->> If we consider that one objective of this series is to allow application to
->> initiate the communication with the remote processor, so to be able to initiate
->> the service (ns announcement sent to the remote processor).
->> This implies that:
->> -either the RPMsg device has been probed first by a remote ns announcement or by
->> a Linux kernel driver using the "driver_override", to register an auxiliary
->> device. In this case an endpoint will be created associated to the RPMsg service
->> - or create a RPMsg device on first ioctl endpoint creation request, if it does
->> not exist (that could trig a NS announcement to remote processor).
->>
->> But I'm not sure that this approach would work with QCOM RPMsg backends...
->>
-> 
-> I don't think there is a way forward with this set without a clear understanding
-> of the Glink and SMD drivers.  I have already spent a fair amount of time in the
-> Glink driver and will continue on Monday with SMD.  
-> 
->>>
->>> I'm out of time for today - I will continue tomorrow.
->>
->> It seems to me that the main point to step forward is to clarify the global
->> design and features of the rpmsg-ctrl.
->> Depending on the decision taken, this series could be trashed and rewritten from
->> a blank page...To not lost to much time on the series don't hesitate to limit
->> the review to the minimum.
->>
-> 
-> I doubt you will ever get clear guidelines on the whole solution.  I will get
-> back to you once I am done with the SMD driver, which should be in the
-> latter part of next week.
+Fixes: fd0b6c1ff85a ("remoteproc/mediatek: Add support for mt8192 SCP")
+Signed-off-by: Tzung-Bi Shih <tzungbi@google.com>
+---
+ drivers/remoteproc/mtk_common.h |  1 +
+ drivers/remoteproc/mtk_scp.c    | 20 +++++++++++---------
+ 2 files changed, 12 insertions(+), 9 deletions(-)
 
+diff --git a/drivers/remoteproc/mtk_common.h b/drivers/remoteproc/mtk_common.h
+index 988edb4977c3..bcab38511bf3 100644
+--- a/drivers/remoteproc/mtk_common.h
++++ b/drivers/remoteproc/mtk_common.h
+@@ -47,6 +47,7 @@
+ 
+ #define MT8192_CORE0_SW_RSTN_CLR	0x10000
+ #define MT8192_CORE0_SW_RSTN_SET	0x10004
++#define MT8192_CORE0_WDT_IRQ		0x10030
+ #define MT8192_CORE0_WDT_CFG		0x10034
+ 
+ #define SCP_FW_VER_LEN			32
+diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
+index e0c235690361..eba825b46696 100644
+--- a/drivers/remoteproc/mtk_scp.c
++++ b/drivers/remoteproc/mtk_scp.c
+@@ -197,17 +197,19 @@ static void mt8192_scp_irq_handler(struct mtk_scp *scp)
+ 
+ 	scp_to_host = readl(scp->reg_base + MT8192_SCP2APMCU_IPC_SET);
+ 
+-	if (scp_to_host & MT8192_SCP_IPC_INT_BIT)
++	if (scp_to_host & MT8192_SCP_IPC_INT_BIT) {
+ 		scp_ipi_handler(scp);
+-	else
+-		scp_wdt_handler(scp, scp_to_host);
+ 
+-	/*
+-	 * SCP won't send another interrupt until we clear
+-	 * MT8192_SCP2APMCU_IPC.
+-	 */
+-	writel(MT8192_SCP_IPC_INT_BIT,
+-	       scp->reg_base + MT8192_SCP2APMCU_IPC_CLR);
++		/*
++		 * SCP won't send another interrupt until we clear
++		 * MT8192_SCP2APMCU_IPC.
++		 */
++		writel(MT8192_SCP_IPC_INT_BIT,
++		       scp->reg_base + MT8192_SCP2APMCU_IPC_CLR);
++	} else {
++		scp_wdt_handler(scp, scp_to_host);
++		writel(1, scp->reg_base + MT8192_CORE0_WDT_IRQ);
++	}
+ }
+ 
+ static irqreturn_t scp_irq_handler(int irq, void *priv)
+-- 
+2.30.0.280.ga3ce27912f-goog
 
-Thanks for your time past on this topic!
-
-I don't expect a clear guidance but that we clarify the objective of this RPMsg
-IOCTL. A first step would be sure that we are in line with the objective of the
-RPMsg IOCTL.
-For instance should we continue in a way to have the rpmsg_char more "rpmsg
-service" generic, relying on a rpmsg_ioctl for the control part? Or should we
-implement something independent (with is own API) to limit dependency with QCOM
-backends constraints?
-At the end, if implementing a IOCTL interface directly in the RPMsg TTY seems to
-you and Bjorn simpler, I can also go on this way...
-
-On my side I expect to find time this week to prototype a RPMSg ioctl using the
-auxiliary bus to better understand involved mechanism.
-
-Thanks,
-Arnaud
-
-> 
->> Thanks,
->> Arnaud
->>
->>>
->>> Thanks,
->>> Mathieu
->>>
->>>> +	return NULL;
->>>> +}
->>>> +
->>>>  static long rpmsg_ctrl_dev_ioctl(struct file *fp, unsigned int cmd,
->>>>  				 unsigned long arg)
->>>>  {
->>>>  	struct rpmsg_ctrl_dev *ctrldev = fp->private_data;
->>>> -
->>>> -	dev_info(&ctrldev->dev, "Control not yet implemented\n");
->>>> +	void __user *argp = (void __user *)arg;
->>>> +	struct rpmsg_channel_info chinfo;
->>>> +	struct rpmsg_endpoint_info eptinfo;
->>>> +	struct rpmsg_device *newch;
->>>> +
->>>> +	if (cmd != RPMSG_CREATE_EPT_IOCTL)
->>>> +		return -EINVAL;
->>>> +
->>>> +	if (copy_from_user(&eptinfo, argp, sizeof(eptinfo)))
->>>> +		return -EFAULT;
->>>> +
->>>> +	/*
->>>> +	 * In a frst step only the rpmsg_raw service is supported.
->>>> +	 * The override is foorced to RPMSG_RAW_SERVICE
->>>> +	 */
->>>> +	chinfo.driver_override = rpmsg_ctrl_get_drv_name(RPMSG_RAW_SERVICE);
->>>> +	if (!chinfo.driver_override)
->>>> +		return -ENODEV;
->>>> +
->>>> +	memcpy(chinfo.name, eptinfo.name, RPMSG_NAME_SIZE);
->>>> +	chinfo.name[RPMSG_NAME_SIZE - 1] = '\0';
->>>> +	chinfo.src = eptinfo.src;
->>>> +	chinfo.dst = eptinfo.dst;
->>>> +
->>>> +	newch = rpmsg_create_channel(ctrldev->rpdev, &chinfo);
->>>> +	if (!newch) {
->>>> +		dev_err(&ctrldev->dev, "rpmsg_create_channel failed\n");
->>>> +		return -ENXIO;
->>>> +	}
->>>>  
->>>>  	return 0;
->>>>  };
->>>> -- 
->>>> 2.17.1
->>>>
