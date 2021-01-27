@@ -8,217 +8,101 @@ X-Spam-Status: No, score=-26.2 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
 	URIBL_BLOCKED,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1815BC433DB
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59958C43381
 	for <linux-remoteproc@archiver.kernel.org>; Wed, 27 Jan 2021 08:37:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B57212067B
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 27 Jan 2021 08:37:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 149E52074F
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 27 Jan 2021 08:37:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231572AbhA0Igu (ORCPT
+        id S231389AbhA0Igv (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 27 Jan 2021 03:36:50 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52882 "EHLO
+        Wed, 27 Jan 2021 03:36:51 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52880 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231389AbhA0Iep (ORCPT
+        with ESMTP id S231372AbhA0Iep (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
         Wed, 27 Jan 2021 03:34:45 -0500
-Received: from mail-qk1-x74a.google.com (mail-qk1-x74a.google.com [IPv6:2607:f8b0:4864:20::74a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4BA19C061793
-        for <linux-remoteproc@vger.kernel.org>; Wed, 27 Jan 2021 00:32:41 -0800 (PST)
-Received: by mail-qk1-x74a.google.com with SMTP id v190so917185qkc.15
-        for <linux-remoteproc@vger.kernel.org>; Wed, 27 Jan 2021 00:32:41 -0800 (PST)
+Received: from mail-pg1-x549.google.com (mail-pg1-x549.google.com [IPv6:2607:f8b0:4864:20::549])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 40FFBC06178C
+        for <linux-remoteproc@vger.kernel.org>; Wed, 27 Jan 2021 00:32:37 -0800 (PST)
+Received: by mail-pg1-x549.google.com with SMTP id 26so1078822pgl.2
+        for <linux-remoteproc@vger.kernel.org>; Wed, 27 Jan 2021 00:32:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=sender:date:in-reply-to:message-id:mime-version:references:subject
          :from:to:cc;
-        bh=RaHwNMHy6Q38UiSowCFhrFgySXI51I5XcIPwGHCFzHA=;
-        b=gt9CAJsB4pywidn35l9GS7kegoCleTTUcDZQcAThNVCvSLsL96zDlM02lHQsGfKQ4c
-         nsHoKonjbw5h9LIEPq4EboL2a1/SsfYSAUu/BUE/cwZnBWXda+GTE9VNTxAl1MQ9ztOQ
-         6gc8/U7UN3d21+aj9xiGZGioe1yftTZmpYLKQN9YWg+z/TRqfPjgCc+2macCjkKVx28A
-         qHAjRc8Qs0f8MmcSNqAu9+fZnYQ5UW0EQT8ibFMEem5CnFSMe5v62wxmy9417Kk0613z
-         8zigCiHr9ge6GEe+D6moVsmhYHXFMeVM4b0IJnK/ECA6/6A/j6higCoRvB91xZxYNpkB
-         lwgg==
+        bh=LGZTxpAXqFWtECT4mU7eGwfUfjYEwbaGaOmL3s+WPHY=;
+        b=Mk8UO9d9k5Z55wJIilDYOJbDVrADuEvo1RU1iq6uOFWQ2fpZhKzOBeUq40bTXbRUhW
+         H9Nd9XfdYWaApv8HgACBsOSQIMZ9Q/3vTbecNY/Qps4GTc5lhFlAGQWsX9ovK/wsGDh5
+         0UWExHtK6vDsOFjf/kVISrSdNxBzzWdmNJmnZmUd5HnK+Ek75aatKN7s4buu1pQ/uCKo
+         TdxneGiJN2fv9e7ZRAi9kYTlCnRSyFrrcjcJNtBR7kUjRwvWFO3mHbo/bMHOMRnk86tx
+         oMIO8+9hrYWPcva2sgwg+r4M/1tpmOF1ANT3UzZ0ZwtgXaNrcJQ1mn2bTF3FO74hBpHO
+         dGmQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:sender:date:in-reply-to:message-id:mime-version
          :references:subject:from:to:cc;
-        bh=RaHwNMHy6Q38UiSowCFhrFgySXI51I5XcIPwGHCFzHA=;
-        b=U5ZzOqPWB7sxhZd1Ixv181bMsS9AWkadNR0GDX84MiVlU50wVinR/8NivWGyTlW9PC
-         iJejnNXs03shADiI6OMXPHBrGnyZv42LGqYS5qYmmmkyw4UM+Z2mjUnLdqBEagxojiUE
-         llCltbSkjKS/55+aAmkXkCjOknXapw5zslf1rXBlmEjzVq9yXvnDoiWVG20l7WQdgBKa
-         Y7YFOVirh4cHAB3+VjoySpy8c2DECWggUdVoOBi2eLy+00bFnxLPo273zyCqaWlmwUaR
-         sz5wHCJIh8MzCra4J+HbJqhApXOST10dYJF9tQ+BzvGTgSrttDOOJ/yrKse8ulvW0OVK
-         Xf5A==
-X-Gm-Message-State: AOAM5315ZfbDvDtIPyJ7EJF/PKcyUGqYD4jFTxTMxfbITLO2WRs8o9lQ
-        HK5DWdaAVd4Ib44u+373kEU0nGue9ekM
-X-Google-Smtp-Source: ABdhPJxPwHBmIFY24IEnCMNSrpm1zBwNilXq7JcimT+k2/ombKudG+h8PD0tqcATpEqofEfIQ5a7TWoIaljj
+        bh=LGZTxpAXqFWtECT4mU7eGwfUfjYEwbaGaOmL3s+WPHY=;
+        b=G8F3zZd9R9bugPnnpWSmc5YdFPVGL1fZpGbE6c2puGuDq21CF6GY69xePTazeTxtV7
+         KPOsDX3zAfOitenxlel24+qnK065pn+9WWJGF70ul8bs1tgznmLQFvgPbw4mEsWwXOqc
+         rRticDCQLcG47Aqf5mjXtQ/LhOQfODPzg1PWcakx1dKjMpr6es3EZ0/Bzn7NEgr6f8yd
+         vWttY9kh7mQBmEXN/BXfH5ndSqYP+yiWPSIea2/N+3i+jERd8lJIlAQ7TJKrbef1+ZnS
+         rom883n8suP1bp/tY9PvBX80Tu+NAycHOiiWMIY9AfehbaN2PJZF+BfhzB/NPE//RCE1
+         xMSA==
+X-Gm-Message-State: AOAM5320x0lTrDV4Q5D1lCu3BW89b7eBiMK9wZz+/V2cfcbtevSM9nfR
+        FlKgs0At/O9/3OkLO6FsEf++Qi3mv7s9
+X-Google-Smtp-Source: ABdhPJy8uOr6FzvmT069kx+Pz1AfQycAO6RoKVfv9FAjkZesiSjZw9ppOmVHAroDlr7jOix3x2+itbb2+XU4
 Sender: "tzungbi via sendgmr" <tzungbi@tzungbi-z840.tpe.corp.google.com>
 X-Received: from tzungbi-z840.tpe.corp.google.com ([2401:fa00:1:b:d17d:c7bb:69a2:7e2f])
- (user=tzungbi job=sendgmr) by 2002:ad4:4cd0:: with SMTP id
- i16mr2727580qvz.49.1611736360511; Wed, 27 Jan 2021 00:32:40 -0800 (PST)
-Date:   Wed, 27 Jan 2021 16:31:36 +0800
+ (user=tzungbi job=sendgmr) by 2002:a62:ce8b:0:b029:1bc:39bd:13ad with SMTP id
+ y133-20020a62ce8b0000b02901bc39bd13admr9563175pfg.24.1611736356753; Wed, 27
+ Jan 2021 00:32:36 -0800 (PST)
+Date:   Wed, 27 Jan 2021 16:31:35 +0800
 In-Reply-To: <20210127083136.3745652-1-tzungbi@google.com>
-Message-Id: <20210127083136.3745652-5-tzungbi@google.com>
+Message-Id: <20210127083136.3745652-4-tzungbi@google.com>
 Mime-Version: 1.0
 References: <20210127083136.3745652-1-tzungbi@google.com>
 X-Mailer: git-send-email 2.30.0.280.ga3ce27912f-goog
-Subject: [PATCH v3 4/4] remoteproc/mediatek: support L1TCM
+Subject: [PATCH v3 3/4] dt-bindings: remoteproc: mediatek: add L1TCM memory region
 From:   Tzung-Bi Shih <tzungbi@google.com>
 To:     ohad@wizery.com, bjorn.andersson@linaro.org, robh+dt@kernel.org
 Cc:     linux-remoteproc@vger.kernel.org, matthias.bgg@gmail.com,
         linux-mediatek@lists.infradead.org, mathieu.poirier@linaro.org,
-        devicetree@vger.kernel.org, tzungbi@google.com
+        devicetree@vger.kernel.org, tzungbi@google.com,
+        Rob Herring <robh@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-L1TCM is a high performance memory region in MT8192 SCP.
+Adds L1TCM memory region.  The reg-name is "l1tcm".
 
-Reads L1TCM memory region from DTS to determine if the machine supports.
-Loads L1TCM memory region to SCP sys if the firmware provides.
-
-Starts from MT8192 SCP, the firmware contains physical addresses for
-each memory region, for instance:
-
-Program Headers:
-  Type   Offset   VirtAddr   PhysAddr   FileSiz MemSiz  Flg Align
-  LOAD   0xXXXXXX 0xXXXXXXXX 0x10500000 0xXXXXX 0xXXXXX XXX 0xXXXX
-  LOAD   0xXXXXXX 0xXXXXXXXX 0x10700000 0xXXXXX 0xXXXXX XXX 0xXXXX
-  LOAD   0xXXXXXX 0xXXXXXXXX 0x50000000 0xXXXXX 0xXXXXX XXX 0xXXXX
-
-Kernel driver can use the "PhysAddr" (i.e. da in the da_to_va callbacks)
-to know the ELF segment belongs to which region.
-
-To backward compatible to MT8183 SCP, separates the da_to_va callbacks
-for new and legacy version.
-
+Acked-by: Rob Herring <robh@kernel.org>
 Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 Signed-off-by: Tzung-Bi Shih <tzungbi@google.com>
 ---
- drivers/remoteproc/mtk_common.h |  5 +++
- drivers/remoteproc/mtk_scp.c    | 56 +++++++++++++++++++++++++++++++--
- 2 files changed, 59 insertions(+), 2 deletions(-)
+ Documentation/devicetree/bindings/remoteproc/mtk,scp.txt | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/remoteproc/mtk_common.h b/drivers/remoteproc/mtk_common.h
-index 204691138677..61901f5efa05 100644
---- a/drivers/remoteproc/mtk_common.h
-+++ b/drivers/remoteproc/mtk_common.h
-@@ -77,6 +77,7 @@ struct mtk_scp_of_data {
- 	void (*scp_reset_assert)(struct mtk_scp *scp);
- 	void (*scp_reset_deassert)(struct mtk_scp *scp);
- 	void (*scp_stop)(struct mtk_scp *scp);
-+	void *(*scp_da_to_va)(struct mtk_scp *scp, u64 da, size_t len);
+diff --git a/Documentation/devicetree/bindings/remoteproc/mtk,scp.txt b/Documentation/devicetree/bindings/remoteproc/mtk,scp.txt
+index 3ba668bab14b..3f5f78764b60 100644
+--- a/Documentation/devicetree/bindings/remoteproc/mtk,scp.txt
++++ b/Documentation/devicetree/bindings/remoteproc/mtk,scp.txt
+@@ -6,10 +6,10 @@ Mediatek SoCs.
  
- 	u32 host_to_scp_reg;
- 	u32 host_to_scp_int_bit;
-@@ -91,6 +92,10 @@ struct mtk_scp {
- 	void __iomem *reg_base;
- 	void __iomem *sram_base;
- 	size_t sram_size;
-+	phys_addr_t sram_phys;
-+	void __iomem *l1tcm_base;
-+	size_t l1tcm_size;
-+	phys_addr_t l1tcm_phys;
- 
- 	const struct mtk_scp_of_data *data;
- 
-diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
-index 05b157689121..ce727598c41c 100644
---- a/drivers/remoteproc/mtk_scp.c
-+++ b/drivers/remoteproc/mtk_scp.c
-@@ -463,9 +463,8 @@ static int scp_start(struct rproc *rproc)
- 	return ret;
- }
- 
--static void *scp_da_to_va(struct rproc *rproc, u64 da, size_t len)
-+static void *mt8183_scp_da_to_va(struct mtk_scp *scp, u64 da, size_t len)
- {
--	struct mtk_scp *scp = (struct mtk_scp *)rproc->priv;
- 	int offset;
- 
- 	if (da < scp->sram_size) {
-@@ -481,6 +480,42 @@ static void *scp_da_to_va(struct rproc *rproc, u64 da, size_t len)
- 	return NULL;
- }
- 
-+static void *mt8192_scp_da_to_va(struct mtk_scp *scp, u64 da, size_t len)
-+{
-+	int offset;
-+
-+	if (da >= scp->sram_phys &&
-+	    (da + len) <= scp->sram_phys + scp->sram_size) {
-+		offset = da - scp->sram_phys;
-+		return (void __force *)scp->sram_base + offset;
-+	}
-+
-+	/* optional memory region */
-+	if (scp->l1tcm_size &&
-+	    da >= scp->l1tcm_phys &&
-+	    (da + len) <= scp->l1tcm_phys + scp->l1tcm_size) {
-+		offset = da - scp->l1tcm_phys;
-+		return (void __force *)scp->l1tcm_base + offset;
-+	}
-+
-+	/* optional memory region */
-+	if (scp->dram_size &&
-+	    da >= scp->dma_addr &&
-+	    (da + len) <= scp->dma_addr + scp->dram_size) {
-+		offset = da - scp->dma_addr;
-+		return scp->cpu_addr + offset;
-+	}
-+
-+	return NULL;
-+}
-+
-+static void *scp_da_to_va(struct rproc *rproc, u64 da, size_t len)
-+{
-+	struct mtk_scp *scp = (struct mtk_scp *)rproc->priv;
-+
-+	return scp->data->scp_da_to_va(scp, da, len);
-+}
-+
- static void mt8183_scp_stop(struct mtk_scp *scp)
- {
- 	/* Disable SCP watchdog */
-@@ -719,6 +754,21 @@ static int scp_probe(struct platform_device *pdev)
- 		goto free_rproc;
- 	}
- 	scp->sram_size = resource_size(res);
-+	scp->sram_phys = res->start;
-+
-+	/* l1tcm is an optional memory region */
-+	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "l1tcm");
-+	scp->l1tcm_base = devm_ioremap_resource(dev, res);
-+	if (IS_ERR((__force void *)scp->l1tcm_base)) {
-+		ret = PTR_ERR((__force void *)scp->l1tcm_base);
-+		if (ret != -EINVAL) {
-+			dev_err(dev, "Failed to map l1tcm memory\n");
-+			goto free_rproc;
-+		}
-+	} else {
-+		scp->l1tcm_size = resource_size(res);
-+		scp->l1tcm_phys = res->start;
-+	}
- 
- 	mutex_init(&scp->send_lock);
- 	for (i = 0; i < SCP_IPI_MAX; i++)
-@@ -807,6 +857,7 @@ static const struct mtk_scp_of_data mt8183_of_data = {
- 	.scp_reset_assert = mt8183_scp_reset_assert,
- 	.scp_reset_deassert = mt8183_scp_reset_deassert,
- 	.scp_stop = mt8183_scp_stop,
-+	.scp_da_to_va = mt8183_scp_da_to_va,
- 	.host_to_scp_reg = MT8183_HOST_TO_SCP,
- 	.host_to_scp_int_bit = MT8183_HOST_IPC_INT_BIT,
- 	.ipi_buf_offset = 0x7bdb0,
-@@ -818,6 +869,7 @@ static const struct mtk_scp_of_data mt8192_of_data = {
- 	.scp_reset_assert = mt8192_scp_reset_assert,
- 	.scp_reset_deassert = mt8192_scp_reset_deassert,
- 	.scp_stop = mt8192_scp_stop,
-+	.scp_da_to_va = mt8192_scp_da_to_va,
- 	.host_to_scp_reg = MT8192_GIPC_IN_SET,
- 	.host_to_scp_int_bit = MT8192_HOST_IPC_INT_BIT,
- };
+ Required properties:
+ - compatible		Should be "mediatek,mt8183-scp"
+-- reg			Should contain the address ranges for the two memory
+-			regions, SRAM and CFG.
+-- reg-names		Contains the corresponding names for the two memory
+-			regions. These should be named "sram" & "cfg".
++- reg			Should contain the address ranges for memory regions:
++			SRAM, CFG, and L1TCM.
++- reg-names		Contains the corresponding names for the memory regions:
++			"sram", "cfg", and "l1tcm".
+ - clocks		Clock for co-processor (See: ../clock/clock-bindings.txt)
+ - clock-names		Contains the corresponding name for the clock. This
+ 			should be named "main".
 -- 
 2.30.0.280.ga3ce27912f-goog
 
