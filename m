@@ -2,128 +2,113 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-26.3 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
+X-Spam-Status: No, score=-21.3 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT,
+	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BE3CC433E6
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 27 Jan 2021 08:23:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AF0DC433E0
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 27 Jan 2021 08:35:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5FD772073C
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 27 Jan 2021 08:23:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 43CDA2074B
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 27 Jan 2021 08:35:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231741AbhA0IXB (ORCPT
+        id S231133AbhA0Ifi (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 27 Jan 2021 03:23:01 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50040 "EHLO
+        Wed, 27 Jan 2021 03:35:38 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52520 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231709AbhA0IVc (ORCPT
+        with ESMTP id S231234AbhA0IdH (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 27 Jan 2021 03:21:32 -0500
+        Wed, 27 Jan 2021 03:33:07 -0500
 Received: from mail-yb1-xb49.google.com (mail-yb1-xb49.google.com [IPv6:2607:f8b0:4864:20::b49])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D8F4AC0613D6
-        for <linux-remoteproc@vger.kernel.org>; Wed, 27 Jan 2021 00:20:51 -0800 (PST)
-Received: by mail-yb1-xb49.google.com with SMTP id f127so1609423ybf.12
-        for <linux-remoteproc@vger.kernel.org>; Wed, 27 Jan 2021 00:20:51 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E7A7FC061573
+        for <linux-remoteproc@vger.kernel.org>; Wed, 27 Jan 2021 00:32:25 -0800 (PST)
+Received: by mail-yb1-xb49.google.com with SMTP id t18so1621305ybb.22
+        for <linux-remoteproc@vger.kernel.org>; Wed, 27 Jan 2021 00:32:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=sender:date:message-id:mime-version:subject:from:to:cc;
-        bh=m63EAmeXqIPZihoN5M7lU0BGu+fGoCuFKs5wvqm9uCA=;
-        b=A38tSlugr9efDA+LeHkBD/HUda1hBTlNbl7J32yuQz1GqzRWG8F58h/i1UGyDUEepF
-         +ClPSZhqCa0Mu2UWQl4mFrhisFN2pM+cto10cgBLwrZFkG4+dlu97XDYTRGx7Dj48N1n
-         fWYGVmUrPGwPkqomLxlUN+TGFAYnmZSnNgQbtOky9TVF7dxVAtR8hY0NDmcdcB1dZoMA
-         O7u4Ii3AYfhqAG6E2MozUXAIBh4+/23JhFRQiij3ZgSq9OyCSSTBASlk1NbRN7lc635s
-         x9xjeZWshFWULgKzpV56PWfVpX3Xgnn/y940vBQ8Ygb+wUuxwo6VyYEERswUpILwKICU
-         fBNQ==
+        bh=aKDeH71Tli9XQuLs5CYh8sW8w8ao2Xs2kCULImvJNK0=;
+        b=t436uXBjJDL+yAOtaCIiKZx7xqFzhPjLrwAyt2lrxpY6ZeOSNRyktTvNjLFl24cMCq
+         KxQCE6AnzrMEWkPgOKB2AB56npuFWUkiWZTJq9Z51GTIHlo2MPHhmx1RXK4r7ImMO95e
+         uc7O7Z3acdjR8VnOtkAXney7xBK4KCd89aTR/S+i4FA689wAo/GF+lqMh7d2rWXuIp4a
+         F2QF2nXOPUYQ0w1/UxIOJU2VhbS4ZYx4Bqzyzhj7DIfVxaHYqFzsL2S1UnNX9RIvBIFX
+         ESecTmgJeJvVeIAgPWooU2VUCWpF78AicfLhkFw7VKz/+7PyrzjLC5NOXVv4xuCWsStX
+         UnNg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:sender:date:message-id:mime-version:subject:from
          :to:cc;
-        bh=m63EAmeXqIPZihoN5M7lU0BGu+fGoCuFKs5wvqm9uCA=;
-        b=Wxmcgc441O1XDDi3EmtnpW58GvYD9A+G4Ys4E/uA7SC6KeksOLPE3clLsMLBfi0LD9
-         +exCUV26Flm+SDvQ/ake0FvoBnaH6FQ3UaFdo4qDae0bNiQ47F2y8NQsebu8NlE42pGE
-         Cg1yLEkofzZAlsvdSgm+ClZWYxuvg9YH+ytAsBP1moAArJFul8+t1EmGpmVkLzktluuA
-         aYAf5tRFA8yojcNnonTLqZzJTKry2Bvh2PdBMNZp+vOALwmkEJD9uTsTlXg6XKupr0bx
-         VnsTbW2xWd4jX2InPMKntHhSQFdr/86IN//GONUM2zNXBamO/dp55PoFahwbmaXSpll2
-         SQ9w==
-X-Gm-Message-State: AOAM532Y79jzBWcRrPIYKl5TFQQCNhQQ23BoiKUzawg3gqF/Ft6TRaA5
-        USBMpL0ad74IIsj/kHv1Fm6z0NipP1He
-X-Google-Smtp-Source: ABdhPJynQgwplEBxjt9UAAah6WMRYX2BQntT4VDdhIhRFxcAABTS8xP8M0U6ru671sdENwBgDKegwjsfmrsK
+        bh=aKDeH71Tli9XQuLs5CYh8sW8w8ao2Xs2kCULImvJNK0=;
+        b=hOga/siz0/vuLCRCSWy+CVFG5eb4lk0A7GQFoBwKpQjLssQRSxtBL/3ONNr08clhD4
+         hvAgWIfU8htoOUvAQKXDBMPynDEWlOo8Kc9bxx8+Gb1pYsL5z2RF2LjMqR5lWFUbPThf
+         KIAQMo50am+bMToRO+7166VEq9T5SCkNEm0g1JuDT2+IUBpzmSmogJjRMzeK6FkesSyI
+         cUVQ9QGqkygot9Ggqj9xs0PYLseP40UZCLUZL0C7woW8vNkj1l7KLI/KIvYjjizh/bG0
+         afYpZ/e/Ye6GPOiLKiHBfq8wSWlUgOxVu9mm+XqapNXEAKiOTkUT7Oz68m7fd+lqLFmP
+         qDSw==
+X-Gm-Message-State: AOAM530YejTOqgug8XxfTiuLT2dP8F94AohubE2ezcbqsb8zmO+LOWIF
+        wpGYN5TK0ZhDtKXP895G4/zkwzKzougS
+X-Google-Smtp-Source: ABdhPJwHk8ASW2v639pnmwmCI7M4JqSqFGoRe11lllt8D4Z21ok2zLpv3pYTVNGlFca6bOW/98GJg4yPQ7fI
 Sender: "tzungbi via sendgmr" <tzungbi@tzungbi-z840.tpe.corp.google.com>
 X-Received: from tzungbi-z840.tpe.corp.google.com ([2401:fa00:1:b:d17d:c7bb:69a2:7e2f])
- (user=tzungbi job=sendgmr) by 2002:a25:b8ca:: with SMTP id
- g10mr13488161ybm.517.1611735651150; Wed, 27 Jan 2021 00:20:51 -0800 (PST)
-Date:   Wed, 27 Jan 2021 16:20:46 +0800
-Message-Id: <20210127082046.3735157-1-tzungbi@google.com>
+ (user=tzungbi job=sendgmr) by 2002:a25:b7d1:: with SMTP id
+ u17mr15271518ybj.227.1611736345240; Wed, 27 Jan 2021 00:32:25 -0800 (PST)
+Date:   Wed, 27 Jan 2021 16:31:32 +0800
+Message-Id: <20210127083136.3745652-1-tzungbi@google.com>
 Mime-Version: 1.0
 X-Mailer: git-send-email 2.30.0.280.ga3ce27912f-goog
-Subject: [PATCH] remoteproc/mediatek: acknowledge watchdog IRQ after handled
+Subject: [PATCH v3 0/4] remoteproc/mediatek: support L1TCM for MT8192 SCP
 From:   Tzung-Bi Shih <tzungbi@google.com>
-To:     ohad@wizery.com, bjorn.andersson@linaro.org
+To:     ohad@wizery.com, bjorn.andersson@linaro.org, robh+dt@kernel.org
 Cc:     linux-remoteproc@vger.kernel.org, matthias.bgg@gmail.com,
-        linux-mediatek@lists.infradead.org, tzungbi@google.com
+        linux-mediatek@lists.infradead.org, mathieu.poirier@linaro.org,
+        devicetree@vger.kernel.org, tzungbi@google.com
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Acknowledges watchdog IRQ after handled or kernel keeps receiving the
-interrupt.
+The series applies after [1].
 
-Fixes: fd0b6c1ff85a ("remoteproc/mediatek: Add support for mt8192 SCP")
-Signed-off-by: Tzung-Bi Shih <tzungbi@google.com>
----
- drivers/remoteproc/mtk_common.h |  1 +
- drivers/remoteproc/mtk_scp.c    | 20 +++++++++++---------
- 2 files changed, 12 insertions(+), 9 deletions(-)
+The series supports L1TCM which is a high performance memory region in
+MT8192 SCP.
 
-diff --git a/drivers/remoteproc/mtk_common.h b/drivers/remoteproc/mtk_common.h
-index 988edb4977c3..bcab38511bf3 100644
---- a/drivers/remoteproc/mtk_common.h
-+++ b/drivers/remoteproc/mtk_common.h
-@@ -47,6 +47,7 @@
- 
- #define MT8192_CORE0_SW_RSTN_CLR	0x10000
- #define MT8192_CORE0_SW_RSTN_SET	0x10004
-+#define MT8192_CORE0_WDT_IRQ		0x10030
- #define MT8192_CORE0_WDT_CFG		0x10034
- 
- #define SCP_FW_VER_LEN			32
-diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
-index e0c235690361..eba825b46696 100644
---- a/drivers/remoteproc/mtk_scp.c
-+++ b/drivers/remoteproc/mtk_scp.c
-@@ -197,17 +197,19 @@ static void mt8192_scp_irq_handler(struct mtk_scp *scp)
- 
- 	scp_to_host = readl(scp->reg_base + MT8192_SCP2APMCU_IPC_SET);
- 
--	if (scp_to_host & MT8192_SCP_IPC_INT_BIT)
-+	if (scp_to_host & MT8192_SCP_IPC_INT_BIT) {
- 		scp_ipi_handler(scp);
--	else
--		scp_wdt_handler(scp, scp_to_host);
- 
--	/*
--	 * SCP won't send another interrupt until we clear
--	 * MT8192_SCP2APMCU_IPC.
--	 */
--	writel(MT8192_SCP_IPC_INT_BIT,
--	       scp->reg_base + MT8192_SCP2APMCU_IPC_CLR);
-+		/*
-+		 * SCP won't send another interrupt until we clear
-+		 * MT8192_SCP2APMCU_IPC.
-+		 */
-+		writel(MT8192_SCP_IPC_INT_BIT,
-+		       scp->reg_base + MT8192_SCP2APMCU_IPC_CLR);
-+	} else {
-+		scp_wdt_handler(scp, scp_to_host);
-+		writel(1, scp->reg_base + MT8192_CORE0_WDT_IRQ);
-+	}
- }
- 
- static irqreturn_t scp_irq_handler(int irq, void *priv)
+The 1st patch replaces platform_get_resource_byname() and
+devm_ioremap_resource() pairs per [2] suggested.
+
+The 2nd patch enables MPU for all memory regions.  The patch was
+independent but merged to this series per [3] suggested.
+
+The 3rd patch adds a new reg-name "l1tcm" for L1TCM.
+
+The 4th patch supports L1TCM in the firmware loader.  Note that MT8192
+SCP is still under development.  The patch breaks early MT8192 SCP
+firmware which should only break our own development environment.
+
+Changes from v2[4]:
+- Rebases the series to [1].
+
+Changes from v1[5]:
+- Adds 2 patches at beginning of the series.
+
+[1]: https://patchwork.kernel.org/project/linux-remoteproc/list/?series=422635
+[2]: https://patchwork.kernel.org/project/linux-remoteproc/patch/20201214050521.845396-3-tzungbi@google.com/#23879113
+[3]: https://patchwork.kernel.org/project/linux-remoteproc/patch/20210107023020.3224002-1-tzungbi@google.com/#23879623
+[4]: https://patchwork.kernel.org/project/linux-remoteproc/list/?series=411065
+[5]: https://patchwork.kernel.org/project/linux-remoteproc/list/?series=401287
+
+Tzung-Bi Shih (4):
+  remoteproc/mediatek: use devm_platform_ioremap_resource_byname
+  remoteproc/mediatek: enable MPU for all memory regions in MT8192 SCP
+  dt-bindings: remoteproc: mediatek: add L1TCM memory region
+  remoteproc/mediatek: support L1TCM
+
+ .../bindings/remoteproc/mtk,scp.txt           |  8 +--
+ drivers/remoteproc/mtk_common.h               |  6 ++
+ drivers/remoteproc/mtk_scp.c                  | 62 +++++++++++++++++--
+ 3 files changed, 68 insertions(+), 8 deletions(-)
+
 -- 
 2.30.0.280.ga3ce27912f-goog
 
