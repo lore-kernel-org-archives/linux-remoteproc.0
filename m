@@ -7,175 +7,88 @@ X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3968EC433DB
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 28 Jan 2021 08:53:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03196C433DB
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 28 Jan 2021 18:54:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DCC1F64DBD
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 28 Jan 2021 08:53:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A2CBF64E22
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 28 Jan 2021 18:54:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232331AbhA1Iv2 (ORCPT
+        id S232204AbhA1SyT (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 28 Jan 2021 03:51:28 -0500
-Received: from muru.com ([72.249.23.125]:53894 "EHLO muru.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232151AbhA1Iuu (ORCPT <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 28 Jan 2021 03:50:50 -0500
-Received: from hillo.muru.com (localhost [127.0.0.1])
-        by muru.com (Postfix) with ESMTP id 8A1CB80A9;
-        Thu, 28 Jan 2021 08:44:10 +0000 (UTC)
-From:   Tony Lindgren <tony@atomide.com>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Ohad Ben-Cohen <ohad@wizery.com>
-Cc:     Suman Anna <s-anna@ti.com>, linux-remoteproc@vger.kernel.org,
-        linux-omap@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Dave Gerlach <d-gerlach@ti.com>,
-        Rob Herring <robh+dt@kernel.org>
-Subject: [PATCH] remoteproc/wkup_m3: Drop legacy platform data no longer needed
-Date:   Thu, 28 Jan 2021 10:44:02 +0200
-Message-Id: <20210128084402.1832-1-tony@atomide.com>
-X-Mailer: git-send-email 2.30.0
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Thu, 28 Jan 2021 13:54:19 -0500
+Received: from alexa-out.qualcomm.com ([129.46.98.28]:40403 "EHLO
+        alexa-out.qualcomm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231283AbhA1SwT (ORCPT
+        <rfc822;linux-remoteproc@vger.kernel.org>);
+        Thu, 28 Jan 2021 13:52:19 -0500
+Received: from ironmsg08-lv.qualcomm.com ([10.47.202.152])
+  by alexa-out.qualcomm.com with ESMTP; 28 Jan 2021 10:48:57 -0800
+X-QCInternal: smtphost
+Received: from ironmsg01-blr.qualcomm.com ([10.86.208.130])
+  by ironmsg08-lv.qualcomm.com with ESMTP/TLS/AES256-SHA; 28 Jan 2021 10:48:55 -0800
+X-QCInternal: smtphost
+Received: from gokulsri-linux.qualcomm.com ([10.201.2.207])
+  by ironmsg01-blr.qualcomm.com with ESMTP; 29 Jan 2021 00:18:17 +0530
+Received: by gokulsri-linux.qualcomm.com (Postfix, from userid 432570)
+        id 714E321A02; Fri, 29 Jan 2021 00:18:16 +0530 (IST)
+From:   Gokul Sriram Palanisamy <gokulsri@codeaurora.org>
+To:     sboyd@kernel.org, agross@kernel.org, bjorn.andersson@linaro.org,
+        david.brown@linaro.org, devicetree@vger.kernel.org,
+        jassisinghbrar@gmail.com, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org, mark.rutland@arm.com,
+        mturquette@baylibre.com, ohad@wizery.com, robh+dt@kernel.org,
+        sricharan@codeaurora.org, nprakash@codeaurora.org,
+        gokulsri@codeaurora.org
+Subject: [PATCH v9 4/4] remoteproc: qcom: wcss: explicitly request exclusive reset control
+Date:   Fri, 29 Jan 2021 00:18:15 +0530
+Message-Id: <1611859695-11824-5-git-send-email-gokulsri@codeaurora.org>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1611859695-11824-1-git-send-email-gokulsri@codeaurora.org>
+References: <1611859695-11824-1-git-send-email-gokulsri@codeaurora.org>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-We have v5.11 booting am3 and 4 with ti-sysc interconnect target module
-driver and genpd. As part of that conversion, wkup_m3 driver got converted
-to optionally use reset driver instead of legacy platform data with
-commit 57df7e370d2a ("remoteproc/wkup_m3: Use reset control driver if
-available").
+From: Govind Singh <govinds@codeaurora.org>
 
-The related SoC calls already got removed with commit b62168e516da ("ARM:
-OMAP2+: Fix am4 only build after genpd changes").
+Use request exclusive reset control for wcss reset controls.
 
-We can now just drop the legacy platform data for v5.12 or later, there's
-no rush to do this for v5.11.
-
-Cc: Arnd Bergmann <arnd@arndb.de>
-Cc: Dave Gerlach <d-gerlach@ti.com>
-Cc: Rob Herring <robh+dt@kernel.org>
-Cc: Suman Anna <s-anna@ti.com>
-Signed-off-by: Tony Lindgren <tony@atomide.com>
+Signed-off-by: Govind Singh <govinds@codeaurora.org>
+Signed-off-by: Gokul Sriram Palanisamy <gokulsri@codeaurora.org>
 ---
- arch/arm/mach-omap2/pdata-quirks.c    |  1 -
- drivers/remoteproc/wkup_m3_rproc.c    | 37 ++-------------------------
- include/linux/platform_data/wkup_m3.h | 22 ----------------
- 3 files changed, 2 insertions(+), 58 deletions(-)
- delete mode 100644 include/linux/platform_data/wkup_m3.h
+ drivers/remoteproc/qcom_q6v5_wcss.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm/mach-omap2/pdata-quirks.c b/arch/arm/mach-omap2/pdata-quirks.c
---- a/arch/arm/mach-omap2/pdata-quirks.c
-+++ b/arch/arm/mach-omap2/pdata-quirks.c
-@@ -21,7 +21,6 @@
- #include <linux/platform_data/hsmmc-omap.h>
- #include <linux/platform_data/iommu-omap.h>
- #include <linux/platform_data/ti-sysc.h>
--#include <linux/platform_data/wkup_m3.h>
- #include <linux/platform_data/asoc-ti-mcbsp.h>
- #include <linux/platform_data/ti-prm.h>
+diff --git a/drivers/remoteproc/qcom_q6v5_wcss.c b/drivers/remoteproc/qcom_q6v5_wcss.c
+index 7a6cadc..7628259 100644
+--- a/drivers/remoteproc/qcom_q6v5_wcss.c
++++ b/drivers/remoteproc/qcom_q6v5_wcss.c
+@@ -788,21 +788,21 @@ static int q6v5_wcss_init_reset(struct q6v5_wcss *wcss,
+ 	struct device *dev = wcss->dev;
  
-diff --git a/drivers/remoteproc/wkup_m3_rproc.c b/drivers/remoteproc/wkup_m3_rproc.c
---- a/drivers/remoteproc/wkup_m3_rproc.c
-+++ b/drivers/remoteproc/wkup_m3_rproc.c
-@@ -19,8 +19,6 @@
- #include <linux/remoteproc.h>
- #include <linux/reset.h>
+ 	if (desc->aon_reset_required) {
+-		wcss->wcss_aon_reset = devm_reset_control_get(dev, "wcss_aon_reset");
++		wcss->wcss_aon_reset = devm_reset_control_get_exclusive(dev, "wcss_aon_reset");
+ 		if (IS_ERR(wcss->wcss_aon_reset)) {
+ 			dev_err(wcss->dev, "fail to acquire wcss_aon_reset\n");
+ 			return PTR_ERR(wcss->wcss_aon_reset);
+ 		}
+ 	}
  
--#include <linux/platform_data/wkup_m3.h>
--
- #include "remoteproc_internal.h"
+-	wcss->wcss_reset = devm_reset_control_get(dev, "wcss_reset");
++	wcss->wcss_reset = devm_reset_control_get_exclusive(dev, "wcss_reset");
+ 	if (IS_ERR(wcss->wcss_reset)) {
+ 		dev_err(wcss->dev, "unable to acquire wcss_reset\n");
+ 		return PTR_ERR(wcss->wcss_reset);
+ 	}
  
- #define WKUPM3_MEM_MAX	2
-@@ -56,37 +54,15 @@ struct wkup_m3_rproc {
- static int wkup_m3_rproc_start(struct rproc *rproc)
- {
- 	struct wkup_m3_rproc *wkupm3 = rproc->priv;
--	struct platform_device *pdev = wkupm3->pdev;
--	struct device *dev = &pdev->dev;
--	struct wkup_m3_platform_data *pdata = dev_get_platdata(dev);
--	int error = 0;
--
--	error = reset_control_deassert(wkupm3->rsts);
- 
--	if (!wkupm3->rsts && pdata->deassert_reset(pdev, pdata->reset_name)) {
--		dev_err(dev, "Unable to reset wkup_m3!\n");
--		error = -ENODEV;
--	}
--
--	return error;
-+	return reset_control_deassert(wkupm3->rsts);
- }
- 
- static int wkup_m3_rproc_stop(struct rproc *rproc)
- {
- 	struct wkup_m3_rproc *wkupm3 = rproc->priv;
--	struct platform_device *pdev = wkupm3->pdev;
--	struct device *dev = &pdev->dev;
--	struct wkup_m3_platform_data *pdata = dev_get_platdata(dev);
--	int error = 0;
- 
--	error = reset_control_assert(wkupm3->rsts);
--
--	if (!wkupm3->rsts && pdata->assert_reset(pdev, pdata->reset_name)) {
--		dev_err(dev, "Unable to assert reset of wkup_m3!\n");
--		error = -ENODEV;
--	}
--
--	return error;
-+	return reset_control_assert(wkupm3->rsts);
- }
- 
- static void *wkup_m3_rproc_da_to_va(struct rproc *rproc, u64 da, size_t len)
-@@ -128,7 +104,6 @@ MODULE_DEVICE_TABLE(of, wkup_m3_rproc_of_match);
- static int wkup_m3_rproc_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
--	struct wkup_m3_platform_data *pdata = dev->platform_data;
- 	/* umem always needs to be processed first */
- 	const char *mem_names[WKUPM3_MEM_MAX] = { "umem", "dmem" };
- 	struct wkup_m3_rproc *wkupm3;
-@@ -171,14 +146,6 @@ static int wkup_m3_rproc_probe(struct platform_device *pdev)
- 	wkupm3->rsts = devm_reset_control_get_optional_shared(dev, "rstctrl");
- 	if (IS_ERR(wkupm3->rsts))
- 		return PTR_ERR(wkupm3->rsts);
--	if (!wkupm3->rsts) {
--		if (!(pdata && pdata->deassert_reset && pdata->assert_reset &&
--		      pdata->reset_name)) {
--			dev_err(dev, "Platform data missing!\n");
--			ret = -ENODEV;
--			goto err_put_rproc;
--		}
--	}
- 
- 	for (i = 0; i < ARRAY_SIZE(mem_names); i++) {
- 		res = platform_get_resource_byname(pdev, IORESOURCE_MEM,
-diff --git a/include/linux/platform_data/wkup_m3.h b/include/linux/platform_data/wkup_m3.h
-deleted file mode 100644
---- a/include/linux/platform_data/wkup_m3.h
-+++ /dev/null
-@@ -1,22 +0,0 @@
--/* SPDX-License-Identifier: GPL-2.0-only */
--/*
-- * TI Wakeup M3 remote processor platform data
-- *
-- * Copyright (C) 2014-2015 Texas Instruments, Inc.
-- *
-- * Dave Gerlach <d-gerlach@ti.com>
-- */
--
--#ifndef _LINUX_PLATFORM_DATA_WKUP_M3_H
--#define _LINUX_PLATFORM_DATA_WKUP_M3_H
--
--struct platform_device;
--
--struct wkup_m3_platform_data {
--	const char *reset_name;
--
--	int (*assert_reset)(struct platform_device *pdev, const char *name);
--	int (*deassert_reset)(struct platform_device *pdev, const char *name);
--};
--
--#endif /* _LINUX_PLATFORM_DATA_WKUP_M3_H */
+ 	if (desc->wcss_q6_reset_required) {
+-		wcss->wcss_q6_reset = devm_reset_control_get(dev, "wcss_q6_reset");
++		wcss->wcss_q6_reset = devm_reset_control_get_exclusive(dev, "wcss_q6_reset");
+ 		if (IS_ERR(wcss->wcss_q6_reset)) {
+ 			dev_err(wcss->dev, "unable to acquire wcss_q6_reset\n");
+ 			return PTR_ERR(wcss->wcss_q6_reset);
 -- 
-2.30.0
+2.7.4
+
