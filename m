@@ -2,225 +2,101 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
+X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A18BC433E0
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 28 Jan 2021 23:15:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0F16C433DB
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 28 Jan 2021 23:22:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E547664DD6
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 28 Jan 2021 23:15:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6673064DD6
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 28 Jan 2021 23:22:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231533AbhA1XPq (ORCPT
+        id S231394AbhA1XWJ (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 28 Jan 2021 18:15:46 -0500
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:51458 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231626AbhA1XPp (ORCPT
-        <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 28 Jan 2021 18:15:45 -0500
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 10SNEi7K109853;
-        Thu, 28 Jan 2021 17:14:44 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1611875684;
-        bh=bq6iSGP/RE+Xm/ja0Wbs/DCk32U/HkC//x7/CEJGZe8=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=ZT5EefVFKHK9BOOOdRJyV+PZz1+M8bb0HKt1acgOTo5RtCGDywmh552hEi+1OSxER
-         RBZPE7xmxkOJe7WL3IjmPOs+Ujg3+QA752ISPqOcQZA11J7ZF8wDABRGHqaPP35li3
-         HO6FEVls/LrLVMCSOnKe6gXJ7179hyJhK9EQkWII=
-Received: from DFLE100.ent.ti.com (dfle100.ent.ti.com [10.64.6.21])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 10SNEiNA047036
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 28 Jan 2021 17:14:44 -0600
-Received: from DFLE113.ent.ti.com (10.64.6.34) by DFLE100.ent.ti.com
- (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3; Thu, 28
- Jan 2021 17:14:44 -0600
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE113.ent.ti.com
- (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3 via
- Frontend Transport; Thu, 28 Jan 2021 17:14:44 -0600
-Received: from [10.250.35.71] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 10SNEhHq097772;
-        Thu, 28 Jan 2021 17:14:43 -0600
-Subject: Re: [PATCH] remoteproc/wkup_m3: Drop legacy platform data no longer
- needed
-To:     Tony Lindgren <tony@atomide.com>,
+        Thu, 28 Jan 2021 18:22:09 -0500
+Received: from vern.gendns.com ([98.142.107.122]:59422 "EHLO vern.gendns.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229774AbhA1XWH (ORCPT <rfc822;linux-remoteproc@vger.kernel.org>);
+        Thu, 28 Jan 2021 18:22:07 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=lechnology.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=vxlxCLEYe7Qe4lS7C6DM4d8MIH71fHWxRV8aQVea7Ys=; b=X+VBHukCOX8r+XYvSfWAR9bb+8
+        JqHbWpTS3cQ07ZU36o3kbzgAG2kNkxUZF/vsZMJ3E6n2Y1CczeTLgc7e8zpdH5kecX8V01t0pp1AH
+        UEpaxF9RGjJggnbaQFY6q9zzC/2xlG7kAmgRszhsnfz1dL/4qVUafF25eeSQdPMceSmH5/hejksgR
+        rOusT0hb07HieVXhQ19wni1Hoy4kQx6/qbtfsDujPqUbBvmiS2jAqqPvVzIPWOw/KHq5hObXJpap+
+        rtH2rPxr8w/DFAiWWwrQJdcp2ZrzRVdRaRofZAQ2naRWOEN8/AW3qiM9amRlU+IP5Aza5drcq5FPI
+        2lKAACIA==;
+Received: from 108-198-5-147.lightspeed.okcbok.sbcglobal.net ([108.198.5.147]:50246 helo=[192.168.0.134])
+        by vern.gendns.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+        (Exim 4.93)
+        (envelope-from <david@lechnology.com>)
+        id 1l5GbL-00079l-AH; Thu, 28 Jan 2021 18:21:23 -0500
+Subject: Re: [PATCH] remoteproc: pru: future-proof PRU ID matching
+To:     Suman Anna <s-anna@ti.com>, linux-remoteproc@vger.kernel.org
+Cc:     Ohad Ben-Cohen <ohad@wizery.com>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Ohad Ben-Cohen <ohad@wizery.com>
-CC:     <linux-remoteproc@vger.kernel.org>, <linux-omap@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>, Dave Gerlach <d-gerlach@ti.com>,
-        Rob Herring <robh+dt@kernel.org>
-References: <20210128084402.1832-1-tony@atomide.com>
-From:   Suman Anna <s-anna@ti.com>
-Message-ID: <ec2b5581-b207-f7ed-2f0d-09e5b5d9dfaa@ti.com>
-Date:   Thu, 28 Jan 2021 17:14:38 -0600
+        Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>,
+        linux-kernel@vger.kernel.org
+References: <20210104211816.420602-1-david@lechnology.com>
+ <ccc1ee4b-ed73-f7c8-ca1e-f15eedeeb84b@ti.com>
+ <e2a0a40d-f720-8139-29f3-39a473c69119@ti.com>
+From:   David Lechner <david@lechnology.com>
+Message-ID: <5fed434e-1569-ab9f-b1a4-475aa820ef47@lechnology.com>
+Date:   Thu, 28 Jan 2021 17:21:21 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <20210128084402.1832-1-tony@atomide.com>
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <e2a0a40d-f720-8139-29f3-39a473c69119@ti.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - vern.gendns.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - lechnology.com
+X-Get-Message-Sender-Via: vern.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
+X-Authenticated-Sender: vern.gendns.com: davidmain@lechnology.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi Tony,
-
-On 1/28/21 2:44 AM, Tony Lindgren wrote:
-> We have v5.11 booting am3 and 4 with ti-sysc interconnect target module
-> driver and genpd. As part of that conversion, wkup_m3 driver got converted
-> to optionally use reset driver instead of legacy platform data with
-> commit 57df7e370d2a ("remoteproc/wkup_m3: Use reset control driver if
-> available").
+On 1/28/21 4:55 PM, Suman Anna wrote:
+> Hi David,
 > 
-> The related SoC calls already got removed with commit b62168e516da ("ARM:
-> OMAP2+: Fix am4 only build after genpd changes").
+> On 1/15/21 6:53 PM, Suman Anna wrote:
+>> On 1/4/21 3:18 PM, David Lechner wrote:
+>>>   static int pru_rproc_probe(struct platform_device *pdev)
+>>> @@ -825,20 +808,28 @@ static int pru_rproc_remove(struct platform_device *pdev)
+>>>   
+>>>   static const struct pru_private_data pru_data = {
+>>>   	.type = PRU_TYPE_PRU,
+>>> +	.pru0_iram_offset = 0x4000,
+>>> +	.pru1_iram_offset = 0x8000,
 > 
-> We can now just drop the legacy platform data for v5.12 or later, there's
-> no rush to do this for v5.11.
+> The offsets for the PRU cores are actually 0x34000 and 0x38000 respectively from
+> the base of the PRUSS on non-Davinci SoCs.
 > 
-> Cc: Arnd Bergmann <arnd@arndb.de>
-> Cc: Dave Gerlach <d-gerlach@ti.com>
-> Cc: Rob Herring <robh+dt@kernel.org>
-> Cc: Suman Anna <s-anna@ti.com>
-> Signed-off-by: Tony Lindgren <tony@atomide.com>
-> ---
->  arch/arm/mach-omap2/pdata-quirks.c    |  1 -
->  drivers/remoteproc/wkup_m3_rproc.c    | 37 ++-------------------------
->  include/linux/platform_data/wkup_m3.h | 22 ----------------
->  3 files changed, 2 insertions(+), 58 deletions(-)
->  delete mode 100644 include/linux/platform_data/wkup_m3.h
+> If we were to use this static data approach, then we might as well continue to
+> use the current address masking logic with the appropriate masks for Davinci
+> (0x38000 and 0x3C000, not true offsets but as masks they would work). Davinci
+> PRUSS is the only one with its differences being the first PRUSS IP, and I would
+> prefer to keep the logic aligned to the IPs on all the recent SoCs on 3
+> different TI SoC families (OMAP, Keystone 2 and K3).
 > 
-> diff --git a/arch/arm/mach-omap2/pdata-quirks.c b/arch/arm/mach-omap2/pdata-quirks.c
-> --- a/arch/arm/mach-omap2/pdata-quirks.c
-> +++ b/arch/arm/mach-omap2/pdata-quirks.c
-> @@ -21,7 +21,6 @@
->  #include <linux/platform_data/hsmmc-omap.h>
->  #include <linux/platform_data/iommu-omap.h>
->  #include <linux/platform_data/ti-sysc.h>
-> -#include <linux/platform_data/wkup_m3.h>
->  #include <linux/platform_data/asoc-ti-mcbsp.h>
->  #include <linux/platform_data/ti-prm.h>
->  
-> diff --git a/drivers/remoteproc/wkup_m3_rproc.c b/drivers/remoteproc/wkup_m3_rproc.c
-> --- a/drivers/remoteproc/wkup_m3_rproc.c
-> +++ b/drivers/remoteproc/wkup_m3_rproc.c
-> @@ -19,8 +19,6 @@
->  #include <linux/remoteproc.h>
->  #include <linux/reset.h>
->  
-> -#include <linux/platform_data/wkup_m3.h>
-> -
->  #include "remoteproc_internal.h"
->  
->  #define WKUPM3_MEM_MAX	2
-> @@ -56,37 +54,15 @@ struct wkup_m3_rproc {
->  static int wkup_m3_rproc_start(struct rproc *rproc)
->  {
->  	struct wkup_m3_rproc *wkupm3 = rproc->priv;
-> -	struct platform_device *pdev = wkupm3->pdev;
-> -	struct device *dev = &pdev->dev;
-> -	struct wkup_m3_platform_data *pdata = dev_get_platdata(dev);
-> -	int error = 0;
-> -
-> -	error = reset_control_deassert(wkupm3->rsts);
->  
-> -	if (!wkupm3->rsts && pdata->deassert_reset(pdev, pdata->reset_name)) {
-> -		dev_err(dev, "Unable to reset wkup_m3!\n");
-> -		error = -ENODEV;
-> -	}
-> -
-> -	return error;
-> +	return reset_control_deassert(wkupm3->rsts);
->  }
->  
->  static int wkup_m3_rproc_stop(struct rproc *rproc)
->  {
->  	struct wkup_m3_rproc *wkupm3 = rproc->priv;
-> -	struct platform_device *pdev = wkupm3->pdev;
-> -	struct device *dev = &pdev->dev;
-> -	struct wkup_m3_platform_data *pdata = dev_get_platdata(dev);
-> -	int error = 0;
->  
-> -	error = reset_control_assert(wkupm3->rsts);
-> -
-> -	if (!wkupm3->rsts && pdata->assert_reset(pdev, pdata->reset_name)) {
-> -		dev_err(dev, "Unable to assert reset of wkup_m3!\n");
-> -		error = -ENODEV;
-> -	}
-> -
-> -	return error;
-> +	return reset_control_assert(wkupm3->rsts);
->  }
->  
->  static void *wkup_m3_rproc_da_to_va(struct rproc *rproc, u64 da, size_t len)
-> @@ -128,7 +104,6 @@ MODULE_DEVICE_TABLE(of, wkup_m3_rproc_of_match);
->  static int wkup_m3_rproc_probe(struct platform_device *pdev)
->  {
->  	struct device *dev = &pdev->dev;
-> -	struct wkup_m3_platform_data *pdata = dev->platform_data;
->  	/* umem always needs to be processed first */
->  	const char *mem_names[WKUPM3_MEM_MAX] = { "umem", "dmem" };
->  	struct wkup_m3_rproc *wkupm3;
-> @@ -171,14 +146,6 @@ static int wkup_m3_rproc_probe(struct platform_device *pdev)
->  	wkupm3->rsts = devm_reset_control_get_optional_shared(dev, "rstctrl");
+> Let me know what you think.
 
-We should no longer be using the optional variant now that this is what is
-expected. Otherwise, rest of the changes look good. Any reason to use the shared
-variant, I need to take a closer look at how the resets are represented.
+I'm not too picky as long as it works. :-)
 
-Do I need anything else or I should be able to test this patch on latest 5.11-rc
-or master?
-
-regards
-Suman
-
->  	if (IS_ERR(wkupm3->rsts))
->  		return PTR_ERR(wkupm3->rsts);
-> -	if (!wkupm3->rsts) {
-> -		if (!(pdata && pdata->deassert_reset && pdata->assert_reset &&
-> -		      pdata->reset_name)) {
-> -			dev_err(dev, "Platform data missing!\n");
-> -			ret = -ENODEV;
-> -			goto err_put_rproc;
-> -		}
-> -	}
->  
->  	for (i = 0; i < ARRAY_SIZE(mem_names); i++) {
->  		res = platform_get_resource_byname(pdev, IORESOURCE_MEM,
-> diff --git a/include/linux/platform_data/wkup_m3.h b/include/linux/platform_data/wkup_m3.h
-> deleted file mode 100644
-> --- a/include/linux/platform_data/wkup_m3.h
-> +++ /dev/null
-> @@ -1,22 +0,0 @@
-> -/* SPDX-License-Identifier: GPL-2.0-only */
-> -/*
-> - * TI Wakeup M3 remote processor platform data
-> - *
-> - * Copyright (C) 2014-2015 Texas Instruments, Inc.
-> - *
-> - * Dave Gerlach <d-gerlach@ti.com>
-> - */
-> -
-> -#ifndef _LINUX_PLATFORM_DATA_WKUP_M3_H
-> -#define _LINUX_PLATFORM_DATA_WKUP_M3_H
-> -
-> -struct platform_device;
-> -
-> -struct wkup_m3_platform_data {
-> -	const char *reset_name;
-> -
-> -	int (*assert_reset)(struct platform_device *pdev, const char *name);
-> -	int (*deassert_reset)(struct platform_device *pdev, const char *name);
-> -};
-> -
-> -#endif /* _LINUX_PLATFORM_DATA_WKUP_M3_H */
-> 
-
+If keeping the static data to a minimum is really important, I suppose we could
+introduce a new type = PRU_TYPE_PRU_V1 for these PRUSSs instead. It sounds like
+this information might be useful elsewhere anyway.
