@@ -8,61 +8,61 @@ X-Spam-Status: No, score=-17.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB5F9C433DB
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 28 Jan 2021 22:58:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A18BC433E0
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 28 Jan 2021 23:15:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6900464DE8
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 28 Jan 2021 22:58:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E547664DD6
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 28 Jan 2021 23:15:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231310AbhA1W6F (ORCPT
+        id S231533AbhA1XPq (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 28 Jan 2021 17:58:05 -0500
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:53084 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231646AbhA1W5f (ORCPT
+        Thu, 28 Jan 2021 18:15:46 -0500
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:51458 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231626AbhA1XPp (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 28 Jan 2021 17:57:35 -0500
+        Thu, 28 Jan 2021 18:15:45 -0500
 Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 10SMt95U097208;
-        Thu, 28 Jan 2021 16:55:09 -0600
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 10SNEi7K109853;
+        Thu, 28 Jan 2021 17:14:44 -0600
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1611874510;
-        bh=jonMZv526fvLfzZM6MKHRBQrNWc4O0SRB31532W4+KU=;
-        h=Subject:From:To:CC:References:Date:In-Reply-To;
-        b=xUhqGDFTyCN3lfJIhQ+XBxnZZ2SrDFbAvF5aHn2SW7RO6f+2d/qXXFR6z12fqGNLM
-         N+uwpJ7etWS13zGb0aqCvS18Vzq0PZUe6+5baqHU9vIqwz3DvVzleAOnaExKgav1ax
-         5be3EmHpe0st499SsQwLKO/qru3ZttPh1WA2Dhs4=
-Received: from DFLE102.ent.ti.com (dfle102.ent.ti.com [10.64.6.23])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 10SMt9j5015626
+        s=ti-com-17Q1; t=1611875684;
+        bh=bq6iSGP/RE+Xm/ja0Wbs/DCk32U/HkC//x7/CEJGZe8=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=ZT5EefVFKHK9BOOOdRJyV+PZz1+M8bb0HKt1acgOTo5RtCGDywmh552hEi+1OSxER
+         RBZPE7xmxkOJe7WL3IjmPOs+Ujg3+QA752ISPqOcQZA11J7ZF8wDABRGHqaPP35li3
+         HO6FEVls/LrLVMCSOnKe6gXJ7179hyJhK9EQkWII=
+Received: from DFLE100.ent.ti.com (dfle100.ent.ti.com [10.64.6.21])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 10SNEiNA047036
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 28 Jan 2021 16:55:09 -0600
-Received: from DFLE111.ent.ti.com (10.64.6.32) by DFLE102.ent.ti.com
- (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
+        Thu, 28 Jan 2021 17:14:44 -0600
+Received: from DFLE113.ent.ti.com (10.64.6.34) by DFLE100.ent.ti.com
+ (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3; Thu, 28
- Jan 2021 16:55:09 -0600
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE111.ent.ti.com
- (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
+ Jan 2021 17:14:44 -0600
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE113.ent.ti.com
+ (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3 via
- Frontend Transport; Thu, 28 Jan 2021 16:55:09 -0600
+ Frontend Transport; Thu, 28 Jan 2021 17:14:44 -0600
 Received: from [10.250.35.71] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 10SMt9KI010966;
-        Thu, 28 Jan 2021 16:55:09 -0600
-Subject: Re: [PATCH] remoteproc: pru: future-proof PRU ID matching
-From:   Suman Anna <s-anna@ti.com>
-To:     David Lechner <david@lechnology.com>,
-        <linux-remoteproc@vger.kernel.org>
-CC:     Ohad Ben-Cohen <ohad@wizery.com>,
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 10SNEhHq097772;
+        Thu, 28 Jan 2021 17:14:43 -0600
+Subject: Re: [PATCH] remoteproc/wkup_m3: Drop legacy platform data no longer
+ needed
+To:     Tony Lindgren <tony@atomide.com>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20210104211816.420602-1-david@lechnology.com>
- <ccc1ee4b-ed73-f7c8-ca1e-f15eedeeb84b@ti.com>
-Message-ID: <e2a0a40d-f720-8139-29f3-39a473c69119@ti.com>
-Date:   Thu, 28 Jan 2021 16:55:04 -0600
+        Ohad Ben-Cohen <ohad@wizery.com>
+CC:     <linux-remoteproc@vger.kernel.org>, <linux-omap@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>, Dave Gerlach <d-gerlach@ti.com>,
+        Rob Herring <robh+dt@kernel.org>
+References: <20210128084402.1832-1-tony@atomide.com>
+From:   Suman Anna <s-anna@ti.com>
+Message-ID: <ec2b5581-b207-f7ed-2f0d-09e5b5d9dfaa@ti.com>
+Date:   Thu, 28 Jan 2021 17:14:38 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <ccc1ee4b-ed73-f7c8-ca1e-f15eedeeb84b@ti.com>
+In-Reply-To: <20210128084402.1832-1-tony@atomide.com>
 Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -71,176 +71,156 @@ Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi David,
+Hi Tony,
 
-On 1/15/21 6:53 PM, Suman Anna wrote:
-> On 1/4/21 3:18 PM, David Lechner wrote:
->> Currently, to determine the ID (0 or 1) of a PRU core, the last 19 bits
->> of the physical address of the cores IRAM are compared to known values.
->> However, the PRUs on TI AM18XX have IRAM at 0x01c38000 and 0x01c3c000
->> respectively. The former conflicts with PRU1_IRAM_ADDR_MASK which could
->> cause PRU0 to be detected as PRU1. (The latter also conflicts with
->> TX_PRU1_IRAM_ADDR_MASK but it would still be correctly detected as
->> PRU1.)
->>
->> This fixes the problem by moving the address matching offset values to
->> the device-specific data. This way the compatible string does half of
->> the work of narrowing down the addresses to two possibilities instead
->> of checking the address against all possible PRU types. This also lets
->> us narrow down the scope of the match from 19 bits to 16 bits for all
->> PRU types.
->>
->> After this, the TI AM18XX PRUs will be able to be added without running
->> into the problems stated above.
->>
->> We can also drop the local ret variable while touching this code.
->>
->> Signed-off-by: David Lechner <david@lechnology.com>
+On 1/28/21 2:44 AM, Tony Lindgren wrote:
+> We have v5.11 booting am3 and 4 with ti-sysc interconnect target module
+> driver and genpd. As part of that conversion, wkup_m3 driver got converted
+> to optionally use reset driver instead of legacy platform data with
+> commit 57df7e370d2a ("remoteproc/wkup_m3: Use reset control driver if
+> available").
 > 
-> Will test this patch on Mon/Tue on various platforms.
+> The related SoC calls already got removed with commit b62168e516da ("ARM:
+> OMAP2+: Fix am4 only build after genpd changes").
 > 
-> Bjorn,
-> Please wait for my Ack on this before you pick this up.
+> We can now just drop the legacy platform data for v5.12 or later, there's
+> no rush to do this for v5.11.
 > 
-> regards
-> Suman
+> Cc: Arnd Bergmann <arnd@arndb.de>
+> Cc: Dave Gerlach <d-gerlach@ti.com>
+> Cc: Rob Herring <robh+dt@kernel.org>
+> Cc: Suman Anna <s-anna@ti.com>
+> Signed-off-by: Tony Lindgren <tony@atomide.com>
+> ---
+>  arch/arm/mach-omap2/pdata-quirks.c    |  1 -
+>  drivers/remoteproc/wkup_m3_rproc.c    | 37 ++-------------------------
+>  include/linux/platform_data/wkup_m3.h | 22 ----------------
+>  3 files changed, 2 insertions(+), 58 deletions(-)
+>  delete mode 100644 include/linux/platform_data/wkup_m3.h
 > 
->> ---
->>  drivers/remoteproc/pru_rproc.c | 49 ++++++++++++++--------------------
->>  1 file changed, 20 insertions(+), 29 deletions(-)
->>
->> diff --git a/drivers/remoteproc/pru_rproc.c b/drivers/remoteproc/pru_rproc.c
->> index 2667919d76b3..94ce48df2f48 100644
->> --- a/drivers/remoteproc/pru_rproc.c
->> +++ b/drivers/remoteproc/pru_rproc.c
->> @@ -46,15 +46,6 @@
->>  #define PRU_DEBUG_GPREG(x)	(0x0000 + (x) * 4)
->>  #define PRU_DEBUG_CT_REG(x)	(0x0080 + (x) * 4)
->>  
->> -/* PRU/RTU/Tx_PRU Core IRAM address masks */
->> -#define PRU_IRAM_ADDR_MASK	0x3ffff
->> -#define PRU0_IRAM_ADDR_MASK	0x34000
->> -#define PRU1_IRAM_ADDR_MASK	0x38000
->> -#define RTU0_IRAM_ADDR_MASK	0x4000
->> -#define RTU1_IRAM_ADDR_MASK	0x6000
->> -#define TX_PRU0_IRAM_ADDR_MASK	0xa000
->> -#define TX_PRU1_IRAM_ADDR_MASK	0xc000
->> -
->>  /* PRU device addresses for various type of PRU RAMs */
->>  #define PRU_IRAM_DA	0	/* Instruction RAM */
->>  #define PRU_PDRAM_DA	0	/* Primary Data RAM */
->> @@ -96,10 +87,14 @@ enum pru_type {
->>  /**
->>   * struct pru_private_data - device data for a PRU core
->>   * @type: type of the PRU core (PRU, RTU, Tx_PRU)
->> + * @pru0_iram_offset: used to identify PRU core 0
->> + * @pru1_iram_offset: used to identify PRU core 1
->>   * @is_k3: flag used to identify the need for special load handling
->>   */
->>  struct pru_private_data {
->>  	enum pru_type type;
->> +	u16 pru0_iram_offset;
->> +	u16 pru1_iram_offset;
->>  	unsigned int is_k3 : 1;
->>  };
->>  
->> @@ -693,33 +688,21 @@ static int pru_rproc_parse_fw(struct rproc *rproc, const struct firmware *fw)
->>  }
->>  
->>  /*
->> - * Compute PRU id based on the IRAM addresses. The PRU IRAMs are
->> + * Compute PRU id based on the last 16 bits of IRAM addresses. The PRU IRAMs are
->>   * always at a particular offset within the PRUSS address space.
->>   */
->>  static int pru_rproc_set_id(struct pru_rproc *pru)
->>  {
->> -	int ret = 0;
->> -
->> -	switch (pru->mem_regions[PRU_IOMEM_IRAM].pa & PRU_IRAM_ADDR_MASK) {
->> -	case TX_PRU0_IRAM_ADDR_MASK:
->> -		fallthrough;
->> -	case RTU0_IRAM_ADDR_MASK:
->> -		fallthrough;
->> -	case PRU0_IRAM_ADDR_MASK:
->> +	u16 offset = pru->mem_regions[PRU_IOMEM_IRAM].pa;
->> +
->> +	if (offset == pru->data->pru0_iram_offset)
->>  		pru->id = 0;
->> -		break;
->> -	case TX_PRU1_IRAM_ADDR_MASK:
->> -		fallthrough;
->> -	case RTU1_IRAM_ADDR_MASK:
->> -		fallthrough;
->> -	case PRU1_IRAM_ADDR_MASK:
->> +	else if (offset == pru->data->pru1_iram_offset)
->>  		pru->id = 1;
->> -		break;
->> -	default:
->> -		ret = -EINVAL;
->> -	}
->> +	else
->> +		return -EINVAL;
->>  
->> -	return ret;
->> +	return 0;
+> diff --git a/arch/arm/mach-omap2/pdata-quirks.c b/arch/arm/mach-omap2/pdata-quirks.c
+> --- a/arch/arm/mach-omap2/pdata-quirks.c
+> +++ b/arch/arm/mach-omap2/pdata-quirks.c
+> @@ -21,7 +21,6 @@
+>  #include <linux/platform_data/hsmmc-omap.h>
+>  #include <linux/platform_data/iommu-omap.h>
+>  #include <linux/platform_data/ti-sysc.h>
+> -#include <linux/platform_data/wkup_m3.h>
+>  #include <linux/platform_data/asoc-ti-mcbsp.h>
+>  #include <linux/platform_data/ti-prm.h>
+>  
+> diff --git a/drivers/remoteproc/wkup_m3_rproc.c b/drivers/remoteproc/wkup_m3_rproc.c
+> --- a/drivers/remoteproc/wkup_m3_rproc.c
+> +++ b/drivers/remoteproc/wkup_m3_rproc.c
+> @@ -19,8 +19,6 @@
+>  #include <linux/remoteproc.h>
+>  #include <linux/reset.h>
+>  
+> -#include <linux/platform_data/wkup_m3.h>
+> -
+>  #include "remoteproc_internal.h"
+>  
+>  #define WKUPM3_MEM_MAX	2
+> @@ -56,37 +54,15 @@ struct wkup_m3_rproc {
+>  static int wkup_m3_rproc_start(struct rproc *rproc)
+>  {
+>  	struct wkup_m3_rproc *wkupm3 = rproc->priv;
+> -	struct platform_device *pdev = wkupm3->pdev;
+> -	struct device *dev = &pdev->dev;
+> -	struct wkup_m3_platform_data *pdata = dev_get_platdata(dev);
+> -	int error = 0;
+> -
+> -	error = reset_control_deassert(wkupm3->rsts);
+>  
+> -	if (!wkupm3->rsts && pdata->deassert_reset(pdev, pdata->reset_name)) {
+> -		dev_err(dev, "Unable to reset wkup_m3!\n");
+> -		error = -ENODEV;
+> -	}
+> -
+> -	return error;
+> +	return reset_control_deassert(wkupm3->rsts);
+>  }
+>  
+>  static int wkup_m3_rproc_stop(struct rproc *rproc)
+>  {
+>  	struct wkup_m3_rproc *wkupm3 = rproc->priv;
+> -	struct platform_device *pdev = wkupm3->pdev;
+> -	struct device *dev = &pdev->dev;
+> -	struct wkup_m3_platform_data *pdata = dev_get_platdata(dev);
+> -	int error = 0;
+>  
+> -	error = reset_control_assert(wkupm3->rsts);
+> -
+> -	if (!wkupm3->rsts && pdata->assert_reset(pdev, pdata->reset_name)) {
+> -		dev_err(dev, "Unable to assert reset of wkup_m3!\n");
+> -		error = -ENODEV;
+> -	}
+> -
+> -	return error;
+> +	return reset_control_assert(wkupm3->rsts);
+>  }
+>  
+>  static void *wkup_m3_rproc_da_to_va(struct rproc *rproc, u64 da, size_t len)
+> @@ -128,7 +104,6 @@ MODULE_DEVICE_TABLE(of, wkup_m3_rproc_of_match);
+>  static int wkup_m3_rproc_probe(struct platform_device *pdev)
+>  {
+>  	struct device *dev = &pdev->dev;
+> -	struct wkup_m3_platform_data *pdata = dev->platform_data;
+>  	/* umem always needs to be processed first */
+>  	const char *mem_names[WKUPM3_MEM_MAX] = { "umem", "dmem" };
+>  	struct wkup_m3_rproc *wkupm3;
+> @@ -171,14 +146,6 @@ static int wkup_m3_rproc_probe(struct platform_device *pdev)
+>  	wkupm3->rsts = devm_reset_control_get_optional_shared(dev, "rstctrl");
 
-While this logic does work, it is a bit convoluted IMO for any one reading the
-code. The offset here is kind of a misnomer, this logic is relying on only the
-least 16-bits of the address.
+We should no longer be using the optional variant now that this is what is
+expected. Otherwise, rest of the changes look good. Any reason to use the shared
+variant, I need to take a closer look at how the resets are represented.
 
-I have actually used a different logic in our downstream code, and we chose the
-current approach to minimize the static data.
-
-https://git.ti.com/gitweb?p=rpmsg/remoteproc.git;a=blob;f=drivers/remoteproc/pru_rproc.c;h=cbcd8a6e420e61d60218a01ea0e76f0c9989a337;hb=refs/heads/rproc-linux-5.4.y#l1135
-
->>  }
->>  
->>  static int pru_rproc_probe(struct platform_device *pdev)
->> @@ -825,20 +808,28 @@ static int pru_rproc_remove(struct platform_device *pdev)
->>  
->>  static const struct pru_private_data pru_data = {
->>  	.type = PRU_TYPE_PRU,
->> +	.pru0_iram_offset = 0x4000,
->> +	.pru1_iram_offset = 0x8000,
-
-The offsets for the PRU cores are actually 0x34000 and 0x38000 respectively from
-the base of the PRUSS on non-Davinci SoCs.
-
-If we were to use this static data approach, then we might as well continue to
-use the current address masking logic with the appropriate masks for Davinci
-(0x38000 and 0x3C000, not true offsets but as masks they would work). Davinci
-PRUSS is the only one with its differences being the first PRUSS IP, and I would
-prefer to keep the logic aligned to the IPs on all the recent SoCs on 3
-different TI SoC families (OMAP, Keystone 2 and K3).
-
-Let me know what you think.
+Do I need anything else or I should be able to test this patch on latest 5.11-rc
+or master?
 
 regards
 Suman
 
->>  };
->>  
->>  static const struct pru_private_data k3_pru_data = {
->>  	.type = PRU_TYPE_PRU,
->> +	.pru0_iram_offset = 0x4000,
->> +	.pru1_iram_offset = 0x8000,
->>  	.is_k3 = 1,
->>  };
->>  
->>  static const struct pru_private_data k3_rtu_data = {
->>  	.type = PRU_TYPE_RTU,
->> +	.pru0_iram_offset = 0x4000,
->> +	.pru1_iram_offset = 0x6000,
->>  	.is_k3 = 1,
->>  };
->>  
->>  static const struct pru_private_data k3_tx_pru_data = {
->>  	.type = PRU_TYPE_TX_PRU,
->> +	.pru0_iram_offset = 0xa000,
->> +	.pru1_iram_offset = 0xc000,
->>  	.is_k3 = 1,
->>  };
->>  
->>
+>  	if (IS_ERR(wkupm3->rsts))
+>  		return PTR_ERR(wkupm3->rsts);
+> -	if (!wkupm3->rsts) {
+> -		if (!(pdata && pdata->deassert_reset && pdata->assert_reset &&
+> -		      pdata->reset_name)) {
+> -			dev_err(dev, "Platform data missing!\n");
+> -			ret = -ENODEV;
+> -			goto err_put_rproc;
+> -		}
+> -	}
+>  
+>  	for (i = 0; i < ARRAY_SIZE(mem_names); i++) {
+>  		res = platform_get_resource_byname(pdev, IORESOURCE_MEM,
+> diff --git a/include/linux/platform_data/wkup_m3.h b/include/linux/platform_data/wkup_m3.h
+> deleted file mode 100644
+> --- a/include/linux/platform_data/wkup_m3.h
+> +++ /dev/null
+> @@ -1,22 +0,0 @@
+> -/* SPDX-License-Identifier: GPL-2.0-only */
+> -/*
+> - * TI Wakeup M3 remote processor platform data
+> - *
+> - * Copyright (C) 2014-2015 Texas Instruments, Inc.
+> - *
+> - * Dave Gerlach <d-gerlach@ti.com>
+> - */
+> -
+> -#ifndef _LINUX_PLATFORM_DATA_WKUP_M3_H
+> -#define _LINUX_PLATFORM_DATA_WKUP_M3_H
+> -
+> -struct platform_device;
+> -
+> -struct wkup_m3_platform_data {
+> -	const char *reset_name;
+> -
+> -	int (*assert_reset)(struct platform_device *pdev, const char *name);
+> -	int (*deassert_reset)(struct platform_device *pdev, const char *name);
+> -};
+> -
+> -#endif /* _LINUX_PLATFORM_DATA_WKUP_M3_H */
 > 
 
