@@ -5,32 +5,32 @@ X-Spam-Level:
 X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1640C433E0
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 29 Jan 2021 17:12:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FC5FC433DB
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 29 Jan 2021 17:13:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7592264DE1
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 29 Jan 2021 17:12:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0138464DE1
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 29 Jan 2021 17:13:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232317AbhA2RLh (ORCPT
+        id S232371AbhA2RNj (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 29 Jan 2021 12:11:37 -0500
-Received: from alexa-out.qualcomm.com ([129.46.98.28]:24279 "EHLO
+        Fri, 29 Jan 2021 12:13:39 -0500
+Received: from alexa-out.qualcomm.com ([129.46.98.28]:53124 "EHLO
         alexa-out.qualcomm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231532AbhA2RLg (ORCPT
+        with ESMTP id S231596AbhA2RMv (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 29 Jan 2021 12:11:36 -0500
+        Fri, 29 Jan 2021 12:12:51 -0500
 Received: from ironmsg09-lv.qualcomm.com ([10.47.202.153])
-  by alexa-out.qualcomm.com with ESMTP; 29 Jan 2021 09:10:16 -0800
+  by alexa-out.qualcomm.com with ESMTP; 29 Jan 2021 09:12:08 -0800
 X-QCInternal: smtphost
 Received: from ironmsg02-blr.qualcomm.com ([10.86.208.131])
-  by ironmsg09-lv.qualcomm.com with ESMTP/TLS/AES256-SHA; 29 Jan 2021 09:10:14 -0800
+  by ironmsg09-lv.qualcomm.com with ESMTP/TLS/AES256-SHA; 29 Jan 2021 09:12:06 -0800
 X-QCInternal: smtphost
 Received: from gokulsri-linux.qualcomm.com ([10.201.2.207])
-  by ironmsg02-blr.qualcomm.com with ESMTP; 29 Jan 2021 22:39:38 +0530
+  by ironmsg02-blr.qualcomm.com with ESMTP; 29 Jan 2021 22:42:00 +0530
 Received: by gokulsri-linux.qualcomm.com (Postfix, from userid 432570)
-        id DFEB1219FC; Fri, 29 Jan 2021 22:39:38 +0530 (IST)
+        id 9D3EB219FC; Fri, 29 Jan 2021 22:42:00 +0530 (IST)
 From:   Gokul Sriram Palanisamy <gokulsri@codeaurora.org>
 To:     sboyd@kernel.org, agross@kernel.org, bjorn.andersson@linaro.org,
         david.brown@linaro.org, devicetree@vger.kernel.org,
@@ -38,14 +38,13 @@ To:     sboyd@kernel.org, agross@kernel.org, bjorn.andersson@linaro.org,
         linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-remoteproc@vger.kernel.org, mark.rutland@arm.com,
         mturquette@baylibre.com, ohad@wizery.com, robh+dt@kernel.org,
-        sricharan@codeaurora.org, nprakash@codeaurora.org,
-        gokulsri@codeaurora.org
+        sricharan@codeaurora.org, gokulsri@codeaurora.org
 Subject: [PATCH 2/3] remoteproc: qcom: wcss: populate driver data for IPQ6018
-Date:   Fri, 29 Jan 2021 22:39:37 +0530
-Message-Id: <1611940178-24546-3-git-send-email-gokulsri@codeaurora.org>
+Date:   Fri, 29 Jan 2021 22:41:59 +0530
+Message-Id: <1611940320-24830-3-git-send-email-gokulsri@codeaurora.org>
 X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1611940178-24546-1-git-send-email-gokulsri@codeaurora.org>
-References: <1611940178-24546-1-git-send-email-gokulsri@codeaurora.org>
+In-Reply-To: <1611940320-24830-1-git-send-email-gokulsri@codeaurora.org>
+References: <1611940320-24830-1-git-send-email-gokulsri@codeaurora.org>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
