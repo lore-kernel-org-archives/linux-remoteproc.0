@@ -2,209 +2,193 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 962BCC433E0
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 29 Jan 2021 22:32:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1A79C433E0
+	for <linux-remoteproc@archiver.kernel.org>; Sat, 30 Jan 2021 05:29:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4ED0C64DE1
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 29 Jan 2021 22:32:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5BE8064E0C
+	for <linux-remoteproc@archiver.kernel.org>; Sat, 30 Jan 2021 05:29:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233517AbhA2WcV (ORCPT
+        id S233466AbhA3F0V (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 29 Jan 2021 17:32:21 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59800 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233199AbhA2WcU (ORCPT
+        Sat, 30 Jan 2021 00:26:21 -0500
+Received: from alexa-out.qualcomm.com ([129.46.98.28]:20533 "EHLO
+        alexa-out.qualcomm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230321AbhA3FYD (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 29 Jan 2021 17:32:20 -0500
-Received: from mail-pj1-x102a.google.com (mail-pj1-x102a.google.com [IPv6:2607:f8b0:4864:20::102a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CD1D5C0613ED
-        for <linux-remoteproc@vger.kernel.org>; Fri, 29 Jan 2021 14:31:38 -0800 (PST)
-Received: by mail-pj1-x102a.google.com with SMTP id s24so6509296pjp.5
-        for <linux-remoteproc@vger.kernel.org>; Fri, 29 Jan 2021 14:31:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=44aPK+qfNhVHStfDRIRpD5EW6awmzw8NVPyHtW87QUk=;
-        b=I/mJtt2raReIV2iEoMHX1xil1KU9AFUZgaa0Ine2hW8R/Sm9D+KJHnuhhMJzAr1zWs
-         uu7PPSZfHcva/KAgOPnjxasA3P5JvRlqkG15EUz7v5T79mFtIuGbx8z25GX9aKedCohD
-         mqD2pDgj/PKw3abvd5xTIJSx/7Jov1wde8WLIMPcp9ECKvWs2oXt804Yts591zXvrQtK
-         6zw42Bfee+w60zonnl4dR3kSdQV6kwsNu4yMYpbYIrgiBnDVd97zMll8dpfH3mol8feD
-         LfVPIbI0e8xz6XMHG8/7f1ecO4I6nHcXOD6yLEZ3ojd1k7e4oQgjyeeS7Y+b+Y5jRIM1
-         bKNA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=44aPK+qfNhVHStfDRIRpD5EW6awmzw8NVPyHtW87QUk=;
-        b=L6lzc7xcY8KYZwjMLbZs9akZdy4zipn0vjcbskFOgYXvqJ2nXPWuYEYY60FWAbvSaS
-         mHBiZSxXROk3EkK35rIRiou5Gg8FAk041viV2WzKj0fv4e8zaQuqihjqTLRRBFMsNYeN
-         yrAN2wMhmKJmefFtBKeCLZfauRyhxu0eF7AHBv4tPTkj4DKts9bh3SOdeVbn/EKMBLRR
-         fz2YMH0Rl5phSlqCw8eTKoWcbYPIPqzN/MHbWeflnX4sXRZERJs9s/OBAkyuqQIkaIBt
-         Yhpaqc+rDJSZnp9P3PbjS4eC3+l+2lgJOmrNsQXWRRVyFwq4KyrJDOxpIGngsl0dvw27
-         90CQ==
-X-Gm-Message-State: AOAM53339nkgjthNTqDJMSa3h03tMIU8+Fke5yDmLCbriSeurwAST79g
-        IllVj44tk4Bu5+1KzG5cClhTAA==
-X-Google-Smtp-Source: ABdhPJyQgV/v73KQ9zgZ2nRJvw59hBZ/pWV5hCqHwOyxLJDf+0Q14wR+lhkPz8KLyQs3j03N8ePt5A==
-X-Received: by 2002:a17:902:70c5:b029:e0:5b2:50f2 with SMTP id l5-20020a17090270c5b02900e005b250f2mr6464751plt.20.1611959498270;
-        Fri, 29 Jan 2021 14:31:38 -0800 (PST)
-Received: from xps15 (S0106889e681aac74.cg.shawcable.net. [68.147.0.187])
-        by smtp.gmail.com with ESMTPSA id q15sm7896588pfk.181.2021.01.29.14.31.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 29 Jan 2021 14:31:37 -0800 (PST)
-Date:   Fri, 29 Jan 2021 15:31:35 -0700
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-To:     Arnaud POULIQUEN <arnaud.pouliquen@st.com>
-Cc:     "ohad@wizery.com" <ohad@wizery.com>,
-        "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4 12/17] remoteproc: Introduce function rproc_detach()
-Message-ID: <20210129223135.GC1319650@xps15>
-References: <20201218173228.2277032-1-mathieu.poirier@linaro.org>
- <20201218173228.2277032-13-mathieu.poirier@linaro.org>
- <406cd7ad-060e-a611-be20-5c1869f17e73@st.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <406cd7ad-060e-a611-be20-5c1869f17e73@st.com>
+        Sat, 30 Jan 2021 00:24:03 -0500
+Received: from ironmsg08-lv.qualcomm.com ([10.47.202.152])
+  by alexa-out.qualcomm.com with ESMTP; 29 Jan 2021 21:20:26 -0800
+X-QCInternal: smtphost
+Received: from ironmsg02-blr.qualcomm.com ([10.86.208.131])
+  by ironmsg08-lv.qualcomm.com with ESMTP/TLS/AES256-SHA; 29 Jan 2021 21:20:23 -0800
+X-QCInternal: smtphost
+Received: from gokulsri-linux.qualcomm.com ([10.201.2.207])
+  by ironmsg02-blr.qualcomm.com with ESMTP; 30 Jan 2021 10:50:13 +0530
+Received: by gokulsri-linux.qualcomm.com (Postfix, from userid 432570)
+        id ACA0521A02; Sat, 30 Jan 2021 10:50:13 +0530 (IST)
+From:   Gokul Sriram Palanisamy <gokulsri@codeaurora.org>
+To:     sboyd@kernel.org, agross@kernel.org, bjorn.andersson@linaro.org,
+        david.brown@linaro.org, devicetree@vger.kernel.org,
+        jassisinghbrar@gmail.com, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org, mark.rutland@arm.com,
+        mturquette@baylibre.com, ohad@wizery.com, robh+dt@kernel.org,
+        sricharan@codeaurora.org, gokulsri@codeaurora.org
+Subject: [PATCH v8 2/9] remoteproc: qcom: Add secure PIL support
+Date:   Sat, 30 Jan 2021 10:50:06 +0530
+Message-Id: <1611984013-10201-3-git-send-email-gokulsri@codeaurora.org>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1611984013-10201-1-git-send-email-gokulsri@codeaurora.org>
+References: <1611984013-10201-1-git-send-email-gokulsri@codeaurora.org>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Wed, Jan 27, 2021 at 09:50:31AM +0100, Arnaud POULIQUEN wrote:
-> 
-> 
-> On 12/18/20 6:32 PM, Mathieu Poirier wrote:
-> > Introduce function rproc_detach() to enable the remoteproc
-> > core to release the resources associated with a remote processor
-> > without stopping its operation.
-> > 
-> > Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-> > Reviewed-by: Peng Fan <peng.fan@nxp.com>
-> > ---
-> >  drivers/remoteproc/remoteproc_core.c | 71 +++++++++++++++++++++++++++-
-> >  include/linux/remoteproc.h           |  2 +
-> >  2 files changed, 72 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-> > index e665ed4776c3..ece3f15070b9 100644
-> > --- a/drivers/remoteproc/remoteproc_core.c
-> > +++ b/drivers/remoteproc/remoteproc_core.c
-> > @@ -1673,7 +1673,7 @@ static int rproc_stop(struct rproc *rproc, bool crashed)
-> >  /*
-> >   * __rproc_detach(): Does the opposite of rproc_attach()
-> >   */
-> > -static int __maybe_unused __rproc_detach(struct rproc *rproc)
-> > +static int __rproc_detach(struct rproc *rproc)
-> >  {
-> >  	struct device *dev = &rproc->dev;
-> >  	int ret;
-> > @@ -1927,6 +1927,75 @@ void rproc_shutdown(struct rproc *rproc)
-> >  }
-> >  EXPORT_SYMBOL(rproc_shutdown);
-> >  
-> > +/**
-> > + * rproc_detach() - Detach the remote processor from the
-> > + * remoteproc core
-> > + *
-> > + * @rproc: the remote processor
-> > + *
-> > + * Detach a remote processor (previously attached to with rproc_actuate()).
-> 
-> You rename the function to rproc_attach in you patch 04/17.
-> 
+IPQ8074 uses secure PIL. Hence, adding the support for the same.
 
-Yes, good catch.
+Signed-off-by: Gokul Sriram Palanisamy <gokulsri@codeaurora.org>
+Signed-off-by: Sricharan R <sricharan@codeaurora.org>
+Signed-off-by: Nikhil Prakash V <nprakash@codeaurora.org>
+---
+ drivers/remoteproc/qcom_q6v5_wcss.c | 43 ++++++++++++++++++++++++++++++++++---
+ 1 file changed, 40 insertions(+), 3 deletions(-)
 
-> Then Reviewed-by: Arnaud Pouliquen <arnaud.pouliquen@st.com>
-> 
-> Thanks,
-> Arnaud
-> 
-> > + *
-> > + * In case @rproc is still being used by an additional user(s), then
-> > + * this function will just decrement the power refcount and exit,
-> > + * without disconnecting the device.
-> > + *
-> > + * Function rproc_detach() calls __rproc_detach() in order to let a remote
-> > + * processor know that services provided by the application processor are
-> > + * no longer available.  From there it should be possible to remove the
-> > + * platform driver and even power cycle the application processor (if the HW
-> > + * supports it) without needing to switch off the remote processor.
-> > + */
-> > +int rproc_detach(struct rproc *rproc)
-> > +{
-> > +	struct device *dev = &rproc->dev;
-> > +	int ret;
-> > +
-> > +	ret = mutex_lock_interruptible(&rproc->lock);
-> > +	if (ret) {
-> > +		dev_err(dev, "can't lock rproc %s: %d\n", rproc->name, ret);
-> > +		return ret;
-> > +	}
-> > +
-> > +	if (rproc->state != RPROC_RUNNING && rproc->state != RPROC_ATTACHED) {
-> > +		ret = -EPERM;
-> > +		goto out;
-> > +	}
-> > +
-> > +	/* if the remote proc is still needed, bail out */
-> > +	if (!atomic_dec_and_test(&rproc->power)) {
-> > +		ret = -EBUSY;
-> > +		goto out;
-> > +	}
-> > +
-> > +	ret = __rproc_detach(rproc);
-> > +	if (ret) {
-> > +		atomic_inc(&rproc->power);
-> > +		goto out;
-> > +	}
-> > +
-> > +	/* clean up all acquired resources */
-> > +	rproc_resource_cleanup(rproc);
-> > +
-> > +	rproc_disable_iommu(rproc);
-> > +
-> > +	/*
-> > +	 * If the remote processor was booted by the core the cached table needs
-> > +	 * to be freed and ->table_ptr set to NULL because it will be
-> > +	 * invalidated by rproc_resource_cleanup().  If the remote processor was
-> > +	 * attached to ->cached_table is NULL and kfree() returns right away.
-> > +	 *
-> > +	 * In either case ->table_ptr has to be set to NULL.  It will be set
-> > +	 * again when the remote processor is re-attached to.
-> > +	 */
-> > +	kfree(rproc->cached_table);
-> > +	rproc->cached_table = NULL;
-> > +	rproc->table_ptr = NULL;
-> > +out:
-> > +	mutex_unlock(&rproc->lock);
-> > +	return ret;
-> > +}
-> > +EXPORT_SYMBOL(rproc_detach);
-> > +
-> >  /**
-> >   * rproc_get_by_phandle() - find a remote processor by phandle
-> >   * @phandle: phandle to the rproc
-> > diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-> > index 9bb34c3eb847..65ece6f177b7 100644
-> > --- a/include/linux/remoteproc.h
-> > +++ b/include/linux/remoteproc.h
-> > @@ -659,6 +659,8 @@ rproc_of_resm_mem_entry_init(struct device *dev, u32 of_resm_idx, size_t len,
-> >  
-> >  int rproc_boot(struct rproc *rproc);
-> >  void rproc_shutdown(struct rproc *rproc);
-> > +int rproc_detach(struct rproc *rproc);
-> > +int rproc_set_firmware(struct rproc *rproc, const char *fw_name);
-> >  void rproc_report_crash(struct rproc *rproc, enum rproc_crash_type type);
-> >  int rproc_coredump_add_segment(struct rproc *rproc, dma_addr_t da, size_t size);
-> >  int rproc_coredump_add_custom_segment(struct rproc *rproc,
-> > 
+diff --git a/drivers/remoteproc/qcom_q6v5_wcss.c b/drivers/remoteproc/qcom_q6v5_wcss.c
+index c0368bb..4e35e5c 100644
+--- a/drivers/remoteproc/qcom_q6v5_wcss.c
++++ b/drivers/remoteproc/qcom_q6v5_wcss.c
+@@ -18,6 +18,7 @@
+ #include <linux/regulator/consumer.h>
+ #include <linux/reset.h>
+ #include <linux/soc/qcom/mdt_loader.h>
++#include <linux/qcom_scm.h>
+ #include "qcom_common.h"
+ #include "qcom_pil_info.h"
+ #include "qcom_q6v5.h"
+@@ -86,6 +87,9 @@
+ #define TCSR_WCSS_CLK_ENABLE	0x14
+ 
+ #define MAX_HALT_REG		3
++
++#define WCNSS_PAS_ID		6
++
+ enum {
+ 	WCSS_IPQ8074,
+ 	WCSS_QCS404,
+@@ -134,6 +138,7 @@ struct q6v5_wcss {
+ 	unsigned int crash_reason_smem;
+ 	u32 version;
+ 	bool requires_force_stop;
++	bool need_mem_protection;
+ 
+ 	struct qcom_rproc_glink glink_subdev;
+ 	struct qcom_rproc_ssr ssr_subdev;
+@@ -152,6 +157,7 @@ struct wcss_data {
+ 	int ssctl_id;
+ 	const struct rproc_ops *ops;
+ 	bool requires_force_stop;
++	bool need_mem_protection;
+ };
+ 
+ static int q6v5_wcss_reset(struct q6v5_wcss *wcss)
+@@ -251,6 +257,15 @@ static int q6v5_wcss_start(struct rproc *rproc)
+ 
+ 	qcom_q6v5_prepare(&wcss->q6v5);
+ 
++	if (wcss->need_mem_protection) {
++		ret = qcom_scm_pas_auth_and_reset(WCNSS_PAS_ID);
++		if (ret) {
++			dev_err(wcss->dev, "wcss_reset failed\n");
++			return ret;
++		}
++		goto wait_for_reset;
++	}
++
+ 	/* Release Q6 and WCSS reset */
+ 	ret = reset_control_deassert(wcss->wcss_reset);
+ 	if (ret) {
+@@ -285,6 +300,7 @@ static int q6v5_wcss_start(struct rproc *rproc)
+ 	if (ret)
+ 		goto wcss_q6_reset;
+ 
++wait_for_reset:
+ 	ret = qcom_q6v5_wait_for_start(&wcss->q6v5, 5 * HZ);
+ 	if (ret == -ETIMEDOUT)
+ 		dev_err(wcss->dev, "start timed out\n");
+@@ -717,6 +733,15 @@ static int q6v5_wcss_stop(struct rproc *rproc)
+ 	struct q6v5_wcss *wcss = rproc->priv;
+ 	int ret;
+ 
++	if (wcss->need_mem_protection) {
++		ret = qcom_scm_pas_shutdown(WCNSS_PAS_ID);
++		if (ret) {
++			dev_err(wcss->dev, "not able to shutdown\n");
++			return ret;
++		}
++		goto pas_done;
++	}
++
+ 	/* WCSS powerdown */
+ 	if (wcss->requires_force_stop) {
+ 		ret = qcom_q6v5_request_stop(&wcss->q6v5, NULL);
+@@ -741,6 +766,7 @@ static int q6v5_wcss_stop(struct rproc *rproc)
+ 			return ret;
+ 	}
+ 
++pas_done:
+ 	clk_disable_unprepare(wcss->prng_clk);
+ 	qcom_q6v5_unprepare(&wcss->q6v5);
+ 
+@@ -764,9 +790,15 @@ static int q6v5_wcss_load(struct rproc *rproc, const struct firmware *fw)
+ 	struct q6v5_wcss *wcss = rproc->priv;
+ 	int ret;
+ 
+-	ret = qcom_mdt_load_no_init(wcss->dev, fw, rproc->firmware,
+-				    0, wcss->mem_region, wcss->mem_phys,
+-				    wcss->mem_size, &wcss->mem_reloc);
++	if (wcss->need_mem_protection)
++		ret = qcom_mdt_load(wcss->dev, fw, rproc->firmware,
++				    WCNSS_PAS_ID, wcss->mem_region,
++				    wcss->mem_phys, wcss->mem_size,
++				    &wcss->mem_reloc);
++	else
++		ret = qcom_mdt_load_no_init(wcss->dev, fw, rproc->firmware,
++					    0, wcss->mem_region, wcss->mem_phys,
++					    wcss->mem_size, &wcss->mem_reloc);
+ 	if (ret)
+ 		return ret;
+ 
+@@ -1032,6 +1064,9 @@ static int q6v5_wcss_probe(struct platform_device *pdev)
+ 	if (!desc)
+ 		return -EINVAL;
+ 
++	if (desc->need_mem_protection && !qcom_scm_is_available())
++		return -EPROBE_DEFER;
++
+ 	rproc = rproc_alloc(&pdev->dev, pdev->name, desc->ops,
+ 			    desc->firmware_name, sizeof(*wcss));
+ 	if (!rproc) {
+@@ -1045,6 +1080,7 @@ static int q6v5_wcss_probe(struct platform_device *pdev)
+ 
+ 	wcss->version = desc->version;
+ 	wcss->requires_force_stop = desc->requires_force_stop;
++	wcss->need_mem_protection = desc->need_mem_protection;
+ 
+ 	ret = q6v5_wcss_init_mmio(wcss, pdev);
+ 	if (ret)
+@@ -1115,6 +1151,7 @@ static const struct wcss_data wcss_ipq8074_res_init = {
+ 	.wcss_q6_reset_required = true,
+ 	.ops = &q6v5_wcss_ipq8074_ops,
+ 	.requires_force_stop = true,
++	.need_mem_protection = true,
+ };
+ 
+ static const struct wcss_data wcss_qcs404_res_init = {
+-- 
+2.7.4
+
