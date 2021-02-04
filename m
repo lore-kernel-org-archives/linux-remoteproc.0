@@ -2,125 +2,120 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.4 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-19.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 028B8C433E0
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  4 Feb 2021 15:14:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7D2DC433E9
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  4 Feb 2021 15:41:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B6C6964F5E
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  4 Feb 2021 15:14:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8C99860202
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  4 Feb 2021 15:41:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237092AbhBDPOJ (ORCPT
+        id S237511AbhBDPlR (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 4 Feb 2021 10:14:09 -0500
-Received: from mx07-00178001.pphosted.com ([185.132.182.106]:11302 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S237111AbhBDPMS (ORCPT
-        <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 4 Feb 2021 10:12:18 -0500
-Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 114F2AAf019077;
-        Thu, 4 Feb 2021 16:11:14 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=selector1;
- bh=sE6exNrtQq570ihFE/Urs/fOiX/fcIs+40k5WvNHbCU=;
- b=3YP4elACwrLPsMfVFx3oqTAbN2nrwbUUjDET+rokUwyW58zM/vP0Lrxg01V/Ym4U5wsH
- oIgiCByyqYsDajGrJl/M6v37u1OzgnSPLai11PKUjhUD97SfGlqT1erk2zfKiV9vNC9t
- ZfleUze9tsFYrzJsutJpOfbSkMwIKO3cmPlCJfDp+5UOGIVlZD/l3AsRs1M9wLAi6dBm
- b/I4LArXJ3vHXsns3MY57LxKVlhHAALkO2/f+nrV7zVnm6mqc9IwBRtDPLQehn49qpH0
- hKuQWxs5fl0cAkmcIHMhY8tcxGvhoxzZWbZQ1DIymX3oflIpSVYr5Ec2ZddZV7jvquD/ GQ== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 36d0fs86hx-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 04 Feb 2021 16:11:14 +0100
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id AA37010002A;
-        Thu,  4 Feb 2021 16:11:13 +0100 (CET)
-Received: from Webmail-eu.st.com (sfhdag2node3.st.com [10.75.127.6])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 62BEC2BA2CA;
-        Thu,  4 Feb 2021 16:11:13 +0100 (CET)
-Received: from lmecxl0889.lme.st.com (10.75.127.51) by SFHDAG2NODE3.st.com
- (10.75.127.6) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 4 Feb
- 2021 16:11:12 +0100
-Subject: Re: [PATCH v3 06/15] rpmsg: update rpmsg_chrdev_register_device
- function
-To:     kernel test robot <lkp@intel.com>,
+        Thu, 4 Feb 2021 10:41:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60606 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S237219AbhBDPk5 (ORCPT <rfc822;linux-remoteproc@vger.kernel.org>);
+        Thu, 4 Feb 2021 10:40:57 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 422E064F4A;
+        Thu,  4 Feb 2021 15:40:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1612453216;
+        bh=oX49zY8OEwwhNvdM/kvlJEBpdDBF23mL3VHLWA6xajw=;
+        h=From:To:Cc:Subject:Date:From;
+        b=SFmZkxlKEWJGZ4cBkjku0jdiBKWAVeYXmZbAcjYFqpTpKsFY3+gjLigdazxK3h4mF
+         l++QutmqzUUf1s5Ba/lS1UqG5h8Hg0wWzaAO8+wpWPcI3ABjJAiZzkAnpwhb5NRMCH
+         ZuvJLcETBe4WQMVjuZREQ23mfKKHVQOIF7QAUs8M0hp52896rODOxVjg16E5Ya4VNS
+         PAloeKywkXROy8QTMsMeNlOkieUIIMhExpUiA3NR9K6RWjzi/nrB9m6ERE2ZFm0UwZ
+         e7EPpDLzfsWM0VjnnlSjpcrZNoabU0fMfgcFgntMF17dzIfXUgm2N076901MsNpZqY
+         ip2oOFNowJG6w==
+From:   Arnd Bergmann <arnd@kernel.org>
+To:     Ohad Ben-Cohen <ohad@wizery.com>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Ohad Ben-Cohen <ohad@wizery.com>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Andy Gross <agross@kernel.org>
-CC:     <kbuild-all@lists.01.org>, <linux-remoteproc@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-msm@vger.kernel.org>
-References: <20210204084534.10516-7-arnaud.pouliquen@foss.st.com>
- <202102042006.UBNrTXCE-lkp@intel.com>
-From:   Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
-Message-ID: <c853e1f6-d5f9-4270-5a78-2e9730e5089e@foss.st.com>
-Date:   Thu, 4 Feb 2021 16:11:12 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Alex Elder <elder@linaro.org>, Chris Lew <clew@codeaurora.org>,
+        Rishabh Bhatnagar <rishabhb@codeaurora.org>
+Cc:     Arnd Bergmann <arnd@arndb.de>, Suman Anna <s-anna@ti.com>,
+        "Andrew F. Davis" <afd@ti.com>,
+        Alexandre Courbot <acourbot@chromium.org>,
+        Siddharth Gupta <sidgup@codeaurora.org>,
+        Paul Cercueil <paul@crapouillou.net>,
+        Colin Ian King <colin.king@canonical.com>,
+        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] remoteproc: qcom: fix glink dependencies
+Date:   Thu,  4 Feb 2021 16:40:04 +0100
+Message-Id: <20210204154010.1585457-1-arnd@kernel.org>
+X-Mailer: git-send-email 2.29.2
 MIME-Version: 1.0
-In-Reply-To: <202102042006.UBNrTXCE-lkp@intel.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.75.127.51]
-X-ClientProxiedBy: SFHDAG2NODE3.st.com (10.75.127.6) To SFHDAG2NODE3.st.com
- (10.75.127.6)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.369,18.0.737
- definitions=2021-02-04_08:2021-02-04,2021-02-04 signatures=0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
+From: Arnd Bergmann <arnd@arndb.de>
 
+Building the remoteproc drivers into the kernel while the qcom_glink
+code is in a loadable module results in a link error:
 
-On 2/4/21 1:44 PM, kernel test robot wrote:
-> Hi Arnaud,
-> 
-> I love your patch! Yet something to improve:
-> 
-> [auto build test ERROR on linus/master]
-> [also build test ERROR on v5.11-rc6 next-20210125]
-> [cannot apply to rpmsg/for-next agross-msm/qcom/for-next]
-> [If your patch is applied to the wrong git tree, kindly drop us a note.
-> And when submitting patch, we suggest to use '--base' as documented in
-> https://git-scm.com/docs/git-format-patch]
-> 
-> url:    https://github.com/0day-ci/linux/commits/Arnaud-Pouliquen/introduce-a-generic-IOCTL-interface-for-RPMsg-channels-management/20210204-165337
-> base:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git 61556703b610a104de324e4f061dc6cf7b218b46
-> config: openrisc-randconfig-r001-20210204 (attached as .config)
-> compiler: or1k-linux-gcc (GCC) 9.3.0
-> reproduce (this is a W=1 build):
->         wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
->         chmod +x ~/bin/make.cross
->         # https://github.com/0day-ci/linux/commit/23c166e0b157f0695fa7daefb8c5e30f383c3efd
->         git remote add linux-review https://github.com/0day-ci/linux
->         git fetch --no-tags linux-review Arnaud-Pouliquen/introduce-a-generic-IOCTL-interface-for-RPMsg-channels-management/20210204-165337
->         git checkout 23c166e0b157f0695fa7daefb8c5e30f383c3efd
->         # save the attached .config to linux build tree
->         COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-9.3.0 make.cross ARCH=openrisc 
-> 
-> If you fix the issue, kindly add following tag as appropriate
-> Reported-by: kernel test robot <lkp@intel.com>>
-> All errors (new ones prefixed by >>):
-> 
->    or1k-linux-ld: drivers/rpmsg/qcom_glink_native.o: in function `qcom_glink_native_probe':
->>> qcom_glink_native.c:(.text+0x2e88): undefined reference to `rpmsg_ctrl_register_device'
->    qcom_glink_native.c:(.text+0x2e88): relocation truncated to fit: R_OR1K_INSN_REL_26 against undefined symbol `rpmsg_ctrl_register_device'
+ld.lld: error: undefined symbol: qcom_glink_ssr_notify
+>>> referenced by vmlinux.o:(glink_subdev_unprepare)
 
-Thanks for highlighting it!
+Add a Kconfig dependency to avoid this.
 
-I await further review comments first, but I will address this in my next
-revision, if it still relevant.
+Fixes: 8527efc59d45 ("rpmsg: glink: Guard qcom_glink_ssr_notify() with correct config")
+Fixes: 5d1f2e3c8090 ("soc: qcom: glink_ssr: Internalize ssr_notifiers")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ drivers/remoteproc/Kconfig | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-> 
-> ---
-> 0-DAY CI Kernel Test Service, Intel Corporation
-> https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
-> 
+diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
+index 9e7efe542f69..88488af01fd9 100644
+--- a/drivers/remoteproc/Kconfig
++++ b/drivers/remoteproc/Kconfig
+@@ -155,6 +155,7 @@ config QCOM_Q6V5_ADSP
+ 	depends on RPMSG_QCOM_SMD || (COMPILE_TEST && RPMSG_QCOM_SMD=n)
+ 	depends on RPMSG_QCOM_GLINK_SMEM || RPMSG_QCOM_GLINK_SMEM=n
+ 	depends on QCOM_SYSMON || QCOM_SYSMON=n
++	depends on RPMSG_QCOM_GLINK || RPMSG_QCOM_GLINK=n
+ 	select MFD_SYSCON
+ 	select QCOM_PIL_INFO
+ 	select QCOM_MDT_LOADER
+@@ -171,6 +172,7 @@ config QCOM_Q6V5_MSS
+ 	depends on RPMSG_QCOM_SMD || (COMPILE_TEST && RPMSG_QCOM_SMD=n)
+ 	depends on RPMSG_QCOM_GLINK_SMEM || RPMSG_QCOM_GLINK_SMEM=n
+ 	depends on QCOM_SYSMON || QCOM_SYSMON=n
++	depends on RPMSG_QCOM_GLINK || RPMSG_QCOM_GLINK=n
+ 	select MFD_SYSCON
+ 	select QCOM_MDT_LOADER
+ 	select QCOM_PIL_INFO
+@@ -188,6 +190,7 @@ config QCOM_Q6V5_PAS
+ 	depends on RPMSG_QCOM_SMD || (COMPILE_TEST && RPMSG_QCOM_SMD=n)
+ 	depends on RPMSG_QCOM_GLINK_SMEM || RPMSG_QCOM_GLINK_SMEM=n
+ 	depends on QCOM_SYSMON || QCOM_SYSMON=n
++	depends on RPMSG_QCOM_GLINK || RPMSG_QCOM_GLINK=n
+ 	select MFD_SYSCON
+ 	select QCOM_PIL_INFO
+ 	select QCOM_MDT_LOADER
+@@ -206,6 +209,7 @@ config QCOM_Q6V5_WCSS
+ 	depends on RPMSG_QCOM_SMD || (COMPILE_TEST && RPMSG_QCOM_SMD=n)
+ 	depends on RPMSG_QCOM_GLINK_SMEM || RPMSG_QCOM_GLINK_SMEM=n
+ 	depends on QCOM_SYSMON || QCOM_SYSMON=n
++	depends on RPMSG_QCOM_GLINK || RPMSG_QCOM_GLINK=n
+ 	select MFD_SYSCON
+ 	select QCOM_MDT_LOADER
+ 	select QCOM_PIL_INFO
+@@ -238,6 +242,7 @@ config QCOM_WCNSS_PIL
+ 	depends on RPMSG_QCOM_GLINK_SMEM || RPMSG_QCOM_GLINK_SMEM=n
+ 	depends on QCOM_SMEM
+ 	depends on QCOM_SYSMON || QCOM_SYSMON=n
++	depends on RPMSG_QCOM_GLINK || RPMSG_QCOM_GLINK=n
+ 	select QCOM_MDT_LOADER
+ 	select QCOM_PIL_INFO
+ 	select QCOM_RPROC_COMMON
+-- 
+2.29.2
+
