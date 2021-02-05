@@ -2,142 +2,200 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3B95C433DB
-	for <linux-remoteproc@archiver.kernel.org>; Fri,  5 Feb 2021 08:23:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF09FC433E0
+	for <linux-remoteproc@archiver.kernel.org>; Fri,  5 Feb 2021 20:30:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4E7C964FBA
-	for <linux-remoteproc@archiver.kernel.org>; Fri,  5 Feb 2021 08:23:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6B53E64E02
+	for <linux-remoteproc@archiver.kernel.org>; Fri,  5 Feb 2021 20:30:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231334AbhBEIXX (ORCPT
+        id S231612AbhBESre (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 5 Feb 2021 03:23:23 -0500
-Received: from mx07-00178001.pphosted.com ([185.132.182.106]:41860 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231166AbhBEIXT (ORCPT
+        Fri, 5 Feb 2021 13:47:34 -0500
+Received: from mail-oi1-f170.google.com ([209.85.167.170]:46634 "EHLO
+        mail-oi1-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233118AbhBESqF (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 5 Feb 2021 03:23:19 -0500
-Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 1158KmuI002731;
-        Fri, 5 Feb 2021 09:22:24 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=selector1;
- bh=Po9OQlbyk7P2cLykDVpRf1AUVuQjNntuCh8fm7rd8hQ=;
- b=TcoB1OpfTeOrAFSU0FD3txxDBVLuaKctwy8Zbn+4li9sKgF6M6iGz8tmF+Cx5bU4LeMK
- RxXTRpPVVeTFaF7UsL3FQKPqg8pAN5VtL9b46a5rzsZDrEWM66jUdzARC+l/r0KGyPmT
- sss24FzgezF2m4s7Zdiki5hAj+PS2TTKgJgbZrWrDsXtNmjx7KighA/L7rws7Wpvj9vj
- abmVLYCA6xd8iElAuJxbWu/Q4xb06FC/c0fOwX4uhgFf7sEhfv5x0i1Istgdd1/hmXM3
- UKCxIgX4z1k8adk40iBLkv6caPCSW3+jvtaT3bMfnE0IfO0l4QDFlKd16vUVp/0gDCHp fg== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 36ey7hen8m-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 05 Feb 2021 09:22:24 +0100
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id B3D3D100038;
-        Fri,  5 Feb 2021 09:22:23 +0100 (CET)
-Received: from Webmail-eu.st.com (sfhdag2node3.st.com [10.75.127.6])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 7200321E696;
-        Fri,  5 Feb 2021 09:22:23 +0100 (CET)
-Received: from lmecxl0889.lme.st.com (10.75.127.49) by SFHDAG2NODE3.st.com
- (10.75.127.6) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 5 Feb
- 2021 09:21:32 +0100
-Subject: Re: [PATCH v3 06/15] rpmsg: update rpmsg_chrdev_register_device
- function
-To:     Mathieu Poirier <mathieu.poirier@linaro.org>
-CC:     kernel test robot <lkp@intel.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Ohad Ben-Cohen <ohad@wizery.com>,
-        Andy Gross <agross@kernel.org>, <kbuild-all@lists.01.org>,
-        linux-remoteproc <linux-remoteproc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>
-References: <20210204084534.10516-7-arnaud.pouliquen@foss.st.com>
- <202102042006.UBNrTXCE-lkp@intel.com>
- <c853e1f6-d5f9-4270-5a78-2e9730e5089e@foss.st.com>
- <CANLsYky5r2BjBxjXaB4xNFNcb+zyVJshWZzgMUqf6C5Q9op9BA@mail.gmail.com>
-From:   Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
-Message-ID: <6bf6bb7b-d5c4-69d7-baad-831bc2ca4eae@foss.st.com>
-Date:   Fri, 5 Feb 2021 09:21:31 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Fri, 5 Feb 2021 13:46:05 -0500
+Received: by mail-oi1-f170.google.com with SMTP id k25so8815270oik.13;
+        Fri, 05 Feb 2021 12:28:15 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=jX/IDqbyvll8w6wyZZ4Cj2yRz+uUuRNKbkr2Ni7Gh1A=;
+        b=sPWDBDOboVtgz7L6+2wMX3yxMcRic20z0HxEh4rheyWS5nREb2wU2RCrnD2AiNrPJP
+         JUgt/lDRG61cjiBk4K5NE3lL729DAdt4tvt4gzFpwpzHghQFPTagMGUBv5Nr6FshP4Y1
+         7eHeKCDvU6M9E33S1QUt1zMrRvRuOeeHoKk82wWzox+Wx9cqIQ+oUnyIxMOnUNFdKvOS
+         LepKMesD1qzyRlVMtdlSK7YaCHH7CdWBs3Rr6/m+zmO22RcWoqk/uMXeT8Jzr2ncW9pv
+         /US6TM+OALEuw5TJDvXiwBWGcuAscw24nGgPCNgzh7N779/fokCIBxkEBGgIyzhcBfbs
+         kUsw==
+X-Gm-Message-State: AOAM53008rG7fixeVIrgMN7Lu6TgLXHGM+p0YbThnMeZIahk9Z/Nhuby
+        q73R3astt1iF4y8ZheMRzQ==
+X-Google-Smtp-Source: ABdhPJz8CUi5+i96guoIgJKUCUhhGLrPNUElr8USXuQmVUt0ogKvxivHEPBFlzbi0C4QhUI2PZOt5g==
+X-Received: by 2002:a05:6808:918:: with SMTP id w24mr4326260oih.20.1612556869753;
+        Fri, 05 Feb 2021 12:27:49 -0800 (PST)
+Received: from robh.at.kernel.org (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id l12sm1995301oov.37.2021.02.05.12.27.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 05 Feb 2021 12:27:48 -0800 (PST)
+Received: (nullmailer pid 3669209 invoked by uid 1000);
+        Fri, 05 Feb 2021 20:27:47 -0000
+Date:   Fri, 5 Feb 2021 14:27:47 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     peng.fan@nxp.com
+Cc:     ohad@wizery.com, bjorn.andersson@linaro.org,
+        mathieu.poirier@linaro.org, o.rempel@pengutronix.de,
+        devicetree@vger.kernel.org, shawnguo@kernel.org,
+        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
+        linux-imx@nxp.com, linux-remoteproc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        paul@crapouillou.net, matthias.bgg@gmail.com, agross@kernel.org,
+        patrice.chotard@st.com
+Subject: Re: [PATCH V9 01/10] dt-bindings: remoteproc: convert imx rproc
+ bindings to json-schema
+Message-ID: <20210205202747.GA3664957@robh.at.kernel.org>
+References: <1611191015-22584-1-git-send-email-peng.fan@nxp.com>
+ <1611191015-22584-2-git-send-email-peng.fan@nxp.com>
 MIME-Version: 1.0
-In-Reply-To: <CANLsYky5r2BjBxjXaB4xNFNcb+zyVJshWZzgMUqf6C5Q9op9BA@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.75.127.49]
-X-ClientProxiedBy: SFHDAG2NODE3.st.com (10.75.127.6) To SFHDAG2NODE3.st.com
- (10.75.127.6)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.369,18.0.737
- definitions=2021-02-05_04:2021-02-05,2021-02-05 signatures=0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1611191015-22584-2-git-send-email-peng.fan@nxp.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-
-
-On 2/4/21 5:53 PM, Mathieu Poirier wrote:
-> On Thu, 4 Feb 2021 at 08:11, Arnaud POULIQUEN
-> <arnaud.pouliquen@foss.st.com> wrote:
->>
->>
->>
->> On 2/4/21 1:44 PM, kernel test robot wrote:
->>> Hi Arnaud,
->>>
->>> I love your patch! Yet something to improve:
->>>
->>> [auto build test ERROR on linus/master]
->>> [also build test ERROR on v5.11-rc6 next-20210125]
->>> [cannot apply to rpmsg/for-next agross-msm/qcom/for-next]
->>> [If your patch is applied to the wrong git tree, kindly drop us a note.
->>> And when submitting patch, we suggest to use '--base' as documented in
->>> https://git-scm.com/docs/git-format-patch]
->>>
->>> url:    https://github.com/0day-ci/linux/commits/Arnaud-Pouliquen/introduce-a-generic-IOCTL-interface-for-RPMsg-channels-management/20210204-165337
->>> base:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git 61556703b610a104de324e4f061dc6cf7b218b46
->>> config: openrisc-randconfig-r001-20210204 (attached as .config)
->>> compiler: or1k-linux-gcc (GCC) 9.3.0
->>> reproduce (this is a W=1 build):
->>>         wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
->>>         chmod +x ~/bin/make.cross
->>>         # https://github.com/0day-ci/linux/commit/23c166e0b157f0695fa7daefb8c5e30f383c3efd
->>>         git remote add linux-review https://github.com/0day-ci/linux
->>>         git fetch --no-tags linux-review Arnaud-Pouliquen/introduce-a-generic-IOCTL-interface-for-RPMsg-channels-management/20210204-165337
->>>         git checkout 23c166e0b157f0695fa7daefb8c5e30f383c3efd
->>>         # save the attached .config to linux build tree
->>>         COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-9.3.0 make.cross ARCH=openrisc
->>>
->>> If you fix the issue, kindly add following tag as appropriate
->>> Reported-by: kernel test robot <lkp@intel.com>>
->>> All errors (new ones prefixed by >>):
->>>
->>>    or1k-linux-ld: drivers/rpmsg/qcom_glink_native.o: in function `qcom_glink_native_probe':
->>>>> qcom_glink_native.c:(.text+0x2e88): undefined reference to `rpmsg_ctrl_register_device'
->>>    qcom_glink_native.c:(.text+0x2e88): relocation truncated to fit: R_OR1K_INSN_REL_26 against undefined symbol `rpmsg_ctrl_register_device'
->>
->> Thanks for highlighting it!
->>
->> I await further review comments first, but I will address this in my next
->> revision, if it still relevant.
+On Thu, Jan 21, 2021 at 09:03:26AM +0800, peng.fan@nxp.com wrote:
+> From: Peng Fan <peng.fan@nxp.com>
 > 
-> I will be surprised if I get to look at your patchset before February
-> 22nd so it may be better to address the above.
-
-Thanks for the information.
-I will therefore target a new review in week 7 even if no further comments are
-posted.
-
+> Convert the imx rproc binding to DT schema format using json-schema.
 > 
->>
->>>
->>> ---
->>> 0-DAY CI Kernel Test Service, Intel Corporation
->>> https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
->>>
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> ---
+>  .../bindings/remoteproc/fsl,imx-rproc.yaml    | 59 +++++++++++++++++++
+>  .../bindings/remoteproc/imx-rproc.txt         | 33 -----------
+>  2 files changed, 59 insertions(+), 33 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.yaml
+>  delete mode 100644 Documentation/devicetree/bindings/remoteproc/imx-rproc.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.yaml b/Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.yaml
+> new file mode 100644
+> index 000000000000..bce6ccfe1538
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.yaml
+> @@ -0,0 +1,59 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: "http://devicetree.org/schemas/remoteproc/fsl,imx-rproc.yaml#"
+> +$schema: "http://devicetree.org/meta-schemas/core.yaml#"
+> +
+> +title: NXP iMX6SX/iMX7D Co-Processor Bindings
+> +
+> +description:
+> +  This binding provides support for ARM Cortex M4 Co-processor found on some NXP iMX SoCs.
+> +
+> +maintainers:
+> +  - Peng Fan <peng.fan@nxp.com>
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - fsl,imx7d-cm4
+> +      - fsl,imx6sx-cm4
+> +
+> +  clocks:
+> +    description:
+> +      Clock for co-processor (See ../clock/clock-bindings.txt)
+
+Drop description. You need to define how many clocks (maxItems: 1)
+
+> +
+> +  syscon:
+> +    description:
+> +      Phandle to syscon block which provide access to System Reset Controller
+
+type ref
+
+> +
+> +  memory-region:
+> +    description:
+> +      list of phandels to the reserved memory regions.
+> +      (see ../reserved-memory/reserved-memory.txt)
+
+Don't need a generic description for a common property.
+
+How many and what is each one.
+
+> +
+> +required:
+> +  - compatible
+> +  - clocks
+> +  - syscon
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/clock/imx7d-clock.h>
+> +    m4_reserved_sysmem1: cm4@80000000 {
+> +      reg = <0x80000000 0x80000>;
+> +    };
+> +
+> +    m4_reserved_sysmem2: cm4@81000000 {
+> +      reg = <0x81000000 0x80000>;
+> +    };
+> +
+> +    imx7d-cm4 {
+> +      compatible	= "fsl,imx7d-cm4";
+> +      memory-region	= <&m4_reserved_sysmem1>, <&m4_reserved_sysmem2>;
+> +      syscon		= <&src>;
+> +      clocks		= <&clks IMX7D_ARM_M4_ROOT_CLK>;
+> +    };
+> +
+> +...
+> diff --git a/Documentation/devicetree/bindings/remoteproc/imx-rproc.txt b/Documentation/devicetree/bindings/remoteproc/imx-rproc.txt
+> deleted file mode 100644
+> index fbcefd965dc4..000000000000
+> --- a/Documentation/devicetree/bindings/remoteproc/imx-rproc.txt
+> +++ /dev/null
+> @@ -1,33 +0,0 @@
+> -NXP iMX6SX/iMX7D Co-Processor Bindings
+> -----------------------------------------
+> -
+> -This binding provides support for ARM Cortex M4 Co-processor found on some
+> -NXP iMX SoCs.
+> -
+> -Required properties:
+> -- compatible		Should be one of:
+> -				"fsl,imx7d-cm4"
+> -				"fsl,imx6sx-cm4"
+> -- clocks		Clock for co-processor (See: ../clock/clock-bindings.txt)
+> -- syscon		Phandle to syscon block which provide access to
+> -			System Reset Controller
+> -
+> -Optional properties:
+> -- memory-region		list of phandels to the reserved memory regions.
+> -			(See: ../reserved-memory/reserved-memory.txt)
+> -
+> -Example:
+> -	m4_reserved_sysmem1: cm4@80000000 {
+> -		reg = <0x80000000 0x80000>;
+> -	};
+> -
+> -	m4_reserved_sysmem2: cm4@81000000 {
+> -		reg = <0x81000000 0x80000>;
+> -	};
+> -
+> -	imx7d-cm4 {
+> -		compatible	= "fsl,imx7d-cm4";
+> -		memory-region	= <&m4_reserved_sysmem1>, <&m4_reserved_sysmem2>;
+> -		syscon		= <&src>;
+> -		clocks		= <&clks IMX7D_ARM_M4_ROOT_CLK>;
+> -	};
+> -- 
+> 2.28.0
+> 
