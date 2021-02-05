@@ -2,131 +2,142 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.4 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+X-Spam-Status: No, score=-12.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9C33C433DB
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  4 Feb 2021 17:35:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3B95C433DB
+	for <linux-remoteproc@archiver.kernel.org>; Fri,  5 Feb 2021 08:23:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9BA3960203
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  4 Feb 2021 17:35:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4E7C964FBA
+	for <linux-remoteproc@archiver.kernel.org>; Fri,  5 Feb 2021 08:23:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238595AbhBDRe6 (ORCPT
+        id S231334AbhBEIXX (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 4 Feb 2021 12:34:58 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37286 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238576AbhBDRdj (ORCPT
+        Fri, 5 Feb 2021 03:23:23 -0500
+Received: from mx07-00178001.pphosted.com ([185.132.182.106]:41860 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S231166AbhBEIXT (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 4 Feb 2021 12:33:39 -0500
-Received: from mail-il1-x132.google.com (mail-il1-x132.google.com [IPv6:2607:f8b0:4864:20::132])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8F540C0613D6
-        for <linux-remoteproc@vger.kernel.org>; Thu,  4 Feb 2021 09:32:59 -0800 (PST)
-Received: by mail-il1-x132.google.com with SMTP id m20so3291101ilj.13
-        for <linux-remoteproc@vger.kernel.org>; Thu, 04 Feb 2021 09:32:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=p0Q2uFdsPG2m597Q9FFih/IKz1kEOh3l14NqTe6ccy4=;
-        b=mdksKdq/c8ZM+W9H8aGvPmb5nCMKi5nzFzgGAZFAhYG0HUWHHDvDk5YacZq1DW2tbb
-         oGNN62OhAkyE7P7DwhJIZLi2s3rJpelS0iwJfYZvAF1DLAxnWC6yA2IKsVHIxXHHcdn3
-         LPaIwsSoDEoz0THRbJDJW+cw4YBo68ZbticCnLZGiT5eW32sMvKmaU+DgC43Sg3YY073
-         lZsNWWTQ38AHLjKPxHNFi3VnRUEy8R66m4v1d+7WUufuwNr+WN1pMit+ZEUHgXu60vkD
-         pWGJ9SxVdk167I+UX/iMc0axVDA3SOlaaR0ofMxQVBJ2c84hSpPDadOyVf/mjajkbUGl
-         nxhA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=p0Q2uFdsPG2m597Q9FFih/IKz1kEOh3l14NqTe6ccy4=;
-        b=CBb0PLVF16EXlQqWeEn6Mv0gvCoAkiA42UAH2VO0Nh92tJElS/mIt69QxOgrikMjKC
-         jvNypSAvLu1myBHcYYJ7Vi837C5i9npGmrxetzkKwun3VCZN4t1TqRDwv3/jI3nT4mK6
-         kT6S0yVMpVdXCE48sEs1FV+HtiAvZbNMuKLow+VlDFHQcNdiMxTFL20KSKHOOMO3Rq43
-         2/Edbib4WGNWt3tHfT/Igu1rGCIbSkgKDn6GuvbwFjJ6mx52JpQLafQMHZsqm9MfrfD1
-         I4H3fZJha3+DCX4j4T8Qv3loIAZBYJu22vcsSwNlpEepjJdHfk0zYsy+EqLa3YPHmXVU
-         pnKw==
-X-Gm-Message-State: AOAM5330oXwoQ/IclbwJL5k/MljG0lkoRJLaJVLWrsOvLOpC6Jiwer+d
-        /MW//xv/QSZoUUgZRYBVkwBOtA==
-X-Google-Smtp-Source: ABdhPJxxHBTxw1u7BUN3/k+DkEdi8I+kF9ikRlGjWN8uogW9/4ZZnAtUFf1/kEs7CZfVkcXigtO84w==
-X-Received: by 2002:a92:ab0d:: with SMTP id v13mr169165ilh.119.1612459978950;
-        Thu, 04 Feb 2021 09:32:58 -0800 (PST)
-Received: from [172.22.22.26] (c-73-185-129-58.hsd1.mn.comcast.net. [73.185.129.58])
-        by smtp.googlemail.com with ESMTPSA id x7sm2959431ioa.48.2021.02.04.09.32.57
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 04 Feb 2021 09:32:58 -0800 (PST)
-Subject: Re: [PATCH] remoteproc: qcom: fix glink dependencies
-To:     Arnd Bergmann <arnd@kernel.org>
-Cc:     Ohad Ben-Cohen <ohad@wizery.com>,
+        Fri, 5 Feb 2021 03:23:19 -0500
+Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 1158KmuI002731;
+        Fri, 5 Feb 2021 09:22:24 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=selector1;
+ bh=Po9OQlbyk7P2cLykDVpRf1AUVuQjNntuCh8fm7rd8hQ=;
+ b=TcoB1OpfTeOrAFSU0FD3txxDBVLuaKctwy8Zbn+4li9sKgF6M6iGz8tmF+Cx5bU4LeMK
+ RxXTRpPVVeTFaF7UsL3FQKPqg8pAN5VtL9b46a5rzsZDrEWM66jUdzARC+l/r0KGyPmT
+ sss24FzgezF2m4s7Zdiki5hAj+PS2TTKgJgbZrWrDsXtNmjx7KighA/L7rws7Wpvj9vj
+ abmVLYCA6xd8iElAuJxbWu/Q4xb06FC/c0fOwX4uhgFf7sEhfv5x0i1Istgdd1/hmXM3
+ UKCxIgX4z1k8adk40iBLkv6caPCSW3+jvtaT3bMfnE0IfO0l4QDFlKd16vUVp/0gDCHp fg== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 36ey7hen8m-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 05 Feb 2021 09:22:24 +0100
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id B3D3D100038;
+        Fri,  5 Feb 2021 09:22:23 +0100 (CET)
+Received: from Webmail-eu.st.com (sfhdag2node3.st.com [10.75.127.6])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 7200321E696;
+        Fri,  5 Feb 2021 09:22:23 +0100 (CET)
+Received: from lmecxl0889.lme.st.com (10.75.127.49) by SFHDAG2NODE3.st.com
+ (10.75.127.6) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 5 Feb
+ 2021 09:21:32 +0100
+Subject: Re: [PATCH v3 06/15] rpmsg: update rpmsg_chrdev_register_device
+ function
+To:     Mathieu Poirier <mathieu.poirier@linaro.org>
+CC:     kernel test robot <lkp@intel.com>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Chris Lew <clew@codeaurora.org>,
-        Rishabh Bhatnagar <rishabhb@codeaurora.org>,
-        Arnd Bergmann <arnd@arndb.de>, Suman Anna <s-anna@ti.com>,
-        "Andrew F. Davis" <afd@ti.com>,
-        Alexandre Courbot <acourbot@chromium.org>,
-        Siddharth Gupta <sidgup@codeaurora.org>,
-        Paul Cercueil <paul@crapouillou.net>,
-        Colin Ian King <colin.king@canonical.com>,
-        linux-remoteproc@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20210204154010.1585457-1-arnd@kernel.org>
- <c326e5c8-e394-88bc-24f4-4dd8e246db3c@linaro.org>
- <CAK8P3a24WPVX3t4_X=muLfYUXtK6UOOHATrLQT3y_tWSb2XYrQ@mail.gmail.com>
-From:   Alex Elder <elder@linaro.org>
-Message-ID: <6fa5b9ca-8afd-e6f6-84ed-1e87d3a3c95f@linaro.org>
-Date:   Thu, 4 Feb 2021 11:32:57 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.6.1
+        Ohad Ben-Cohen <ohad@wizery.com>,
+        Andy Gross <agross@kernel.org>, <kbuild-all@lists.01.org>,
+        linux-remoteproc <linux-remoteproc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>
+References: <20210204084534.10516-7-arnaud.pouliquen@foss.st.com>
+ <202102042006.UBNrTXCE-lkp@intel.com>
+ <c853e1f6-d5f9-4270-5a78-2e9730e5089e@foss.st.com>
+ <CANLsYky5r2BjBxjXaB4xNFNcb+zyVJshWZzgMUqf6C5Q9op9BA@mail.gmail.com>
+From:   Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
+Message-ID: <6bf6bb7b-d5c4-69d7-baad-831bc2ca4eae@foss.st.com>
+Date:   Fri, 5 Feb 2021 09:21:31 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <CAK8P3a24WPVX3t4_X=muLfYUXtK6UOOHATrLQT3y_tWSb2XYrQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <CANLsYky5r2BjBxjXaB4xNFNcb+zyVJshWZzgMUqf6C5Q9op9BA@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.75.127.49]
+X-ClientProxiedBy: SFHDAG2NODE3.st.com (10.75.127.6) To SFHDAG2NODE3.st.com
+ (10.75.127.6)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.369,18.0.737
+ definitions=2021-02-05_04:2021-02-05,2021-02-05 signatures=0
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On 2/4/21 11:16 AM, Arnd Bergmann wrote:
-> On Thu, Feb 4, 2021 at 5:16 PM Alex Elder <elder@linaro.org> wrote:
+
+
+On 2/4/21 5:53 PM, Mathieu Poirier wrote:
+> On Thu, 4 Feb 2021 at 08:11, Arnaud POULIQUEN
+> <arnaud.pouliquen@foss.st.com> wrote:
 >>
->> On 2/4/21 9:40 AM, Arnd Bergmann wrote:
->>> From: Arnd Bergmann <arnd@arndb.de>
+>>
+>>
+>> On 2/4/21 1:44 PM, kernel test robot wrote:
+>>> Hi Arnaud,
 >>>
->>> Building the remoteproc drivers into the kernel while the qcom_glink
->>> code is in a loadable module results in a link error:
+>>> I love your patch! Yet something to improve:
 >>>
->>> ld.lld: error: undefined symbol: qcom_glink_ssr_notify
->>>>>> referenced by vmlinux.o:(glink_subdev_unprepare)
+>>> [auto build test ERROR on linus/master]
+>>> [also build test ERROR on v5.11-rc6 next-20210125]
+>>> [cannot apply to rpmsg/for-next agross-msm/qcom/for-next]
+>>> [If your patch is applied to the wrong git tree, kindly drop us a note.
+>>> And when submitting patch, we suggest to use '--base' as documented in
+>>> https://git-scm.com/docs/git-format-patch]
 >>>
->>> Add a Kconfig dependency to avoid this.
+>>> url:    https://github.com/0day-ci/linux/commits/Arnaud-Pouliquen/introduce-a-generic-IOCTL-interface-for-RPMsg-channels-management/20210204-165337
+>>> base:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git 61556703b610a104de324e4f061dc6cf7b218b46
+>>> config: openrisc-randconfig-r001-20210204 (attached as .config)
+>>> compiler: or1k-linux-gcc (GCC) 9.3.0
+>>> reproduce (this is a W=1 build):
+>>>         wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+>>>         chmod +x ~/bin/make.cross
+>>>         # https://github.com/0day-ci/linux/commit/23c166e0b157f0695fa7daefb8c5e30f383c3efd
+>>>         git remote add linux-review https://github.com/0day-ci/linux
+>>>         git fetch --no-tags linux-review Arnaud-Pouliquen/introduce-a-generic-IOCTL-interface-for-RPMsg-channels-management/20210204-165337
+>>>         git checkout 23c166e0b157f0695fa7daefb8c5e30f383c3efd
+>>>         # save the attached .config to linux build tree
+>>>         COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-9.3.0 make.cross ARCH=openrisc
+>>>
+>>> If you fix the issue, kindly add following tag as appropriate
+>>> Reported-by: kernel test robot <lkp@intel.com>>
+>>> All errors (new ones prefixed by >>):
+>>>
+>>>    or1k-linux-ld: drivers/rpmsg/qcom_glink_native.o: in function `qcom_glink_native_probe':
+>>>>> qcom_glink_native.c:(.text+0x2e88): undefined reference to `rpmsg_ctrl_register_device'
+>>>    qcom_glink_native.c:(.text+0x2e88): relocation truncated to fit: R_OR1K_INSN_REL_26 against undefined symbol `rpmsg_ctrl_register_device'
 >>
->> So if they're incompatible in that way it's declared in the
->> header but not defined in the kernel so the link fails.
+>> Thanks for highlighting it!
 >>
->> And at issue is anything that calls qcom_add_glink_subdev(),
->> which is qcom_q6v5_{adsp,mss,pas,wcss}.c, and those are
->> selected by CONFIG_QCOM_Q6V5_{ADSP,MSS,PAS,WCSS}.
->>
->> But I don't see why QCOM_WCNSS_PIL needs the dependency.
->>
->> Can you explain that?  Other that that this looks good
->> to me (and I'll offer reviewed-by with your response).
+>> I await further review comments first, but I will address this in my next
+>> revision, if it still relevant.
 > 
-> The problem is that QCOM_WCNSS_PIL selects
-> QCOM_RPROC_COMMON, so qcom_common.o is built-in
-> whenever QCOM_WCNSS_PIL=y, and this will lead to the
-> same link failure, regardless of whether the function is needed
-> or not.
+> I will be surprised if I get to look at your patchset before February
+> 22nd so it may be better to address the above.
 
-Thanks for the explanation.  Maybe that is something
-than get fixed, maybe not.
+Thanks for the information.
+I will therefore target a new review in week 7 even if no further comments are
+posted.
 
-Reviewed-by: Alex Elder <elder@linaro.org>
-
->        Arnd
 > 
-
+>>
+>>>
+>>> ---
+>>> 0-DAY CI Kernel Test Service, Intel Corporation
+>>> https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
+>>>
