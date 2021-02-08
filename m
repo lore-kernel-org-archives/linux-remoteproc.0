@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,MSGID_FROM_MTA_HEADER,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CCE95C43381
-	for <linux-remoteproc@archiver.kernel.org>; Mon,  8 Feb 2021 09:13:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9C43C433DB
+	for <linux-remoteproc@archiver.kernel.org>; Mon,  8 Feb 2021 09:13:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A022064E88
-	for <linux-remoteproc@archiver.kernel.org>; Mon,  8 Feb 2021 09:13:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 581F364E7A
+	for <linux-remoteproc@archiver.kernel.org>; Mon,  8 Feb 2021 09:13:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231303AbhBHJNO (ORCPT
+        id S231307AbhBHJNk (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 8 Feb 2021 04:13:14 -0500
-Received: from mail-am6eur05on2089.outbound.protection.outlook.com ([40.107.22.89]:51744
+        Mon, 8 Feb 2021 04:13:40 -0500
+Received: from mail-am6eur05on2086.outbound.protection.outlook.com ([40.107.22.86]:49473
         "EHLO EUR05-AM6-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S231388AbhBHJLc (ORCPT <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 8 Feb 2021 04:11:32 -0500
+        id S231436AbhBHJLy (ORCPT <rfc822;linux-remoteproc@vger.kernel.org>);
+        Mon, 8 Feb 2021 04:11:54 -0500
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=GYEMUX6XjQxgX6bGybN8n6ybm4LtnOfYcXpombkJQ8fbfRfTFmJbd7x9H4nWWaycdlVW1w0JLqSdNdTNIP9/QL3kbiGIn66/gi4sQByu9EG2ubxmsSuAYXJP7mqs9nILsWn8Ip/lh5aHgrgaifvbpsgtyMRo2CMctQ0nL0WB8aHT0j3MfnKQsmwrlCbAt8d+M1LERb08EznKr/krtIDJZ62O3JARDg5Bd2wPdfXeCRv37KEpK4nkdLpDkWVHhd/sCgxKCk1iNDG19gOb1CbyPoaON/Uw1Paq0pIK5l4aBAHWDDpv1/MSSt29vsgq3mmKZfO4xW5rHxtNDyqlhoG0DQ==
+ b=UxuOolDYRa46VE1Xb372TEKDUe6vFHP8Kp98Wy2XQh3VctYEPa7qiOQkevS7Wp39kPDIonxwT9OZcR24QVPbtLbmdLIq4H3QsUrerUigcL8JWBNsZhKTwiJOmehDu6C1yFmG0c2cDw9e6LQCMtbuR01cU+/68Njd3Lha01dmnB+F/uIr1bbYed+nQCwivS3ex0ktellUNChnBBODl5uYIdNJfozewLTbWkSUM42K1GCxEJl31XJ3wI7i03mPQYgEOXmHraCKyCkBJOQ/xXd5gtUamXGi/tcSFUQJAMjFiXK9YumcsGBhAElUT/jmHiU8JoBqbAKHAnPVOt63WLwkQA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=nJE0Ov249gPUdtT6ZeB+lf9+Z+9T/yJFkeTd4I25VJs=;
- b=VEN6VdjYoKgzV8/7g2tBr+iw5wFYCkf1WiMBUSMdu8Q3NUkRjbk0pe7s4nWOYO05R2fkmAR9RCkRSCvcL00xxwxIxolTnwRDDlWRTh5GC5wjQO0RHenEQq15dyznXpR37WaZ5ISfM0Z7pTmHgNqqjAxaFY0QaH4nadcXLk5eCAiza7RZYMla/dHNyJLLz7CFU9sHCODHoS46CdcK6SWpbYkFgpWfRb2jzdIfUkHO6xgG3hB0AtiXWPLR5fZLTBFMljpsq5+BP+wGgWw2FFQglwUksNiiph6nIQH/W6KM0F9dr/EPas7x250F7OOFwLhzaHcd0eNrQ8rL5lPFHarn2g==
+ bh=ZfBczTf+RB1EWa5ibevseo+tYbxVdHstdpl8p+i5B30=;
+ b=IU/mVIr+padiD32Z4lmU9ahqsflhaeTQoB+yAu70gqbbXcTmcItFq8Gr0qYrqvIJl+YEwm0FunIwky5rpIyvkOeov+kq7vPvFOHV2lWJidHt5Uuidpf2c5eqZ4LTQT//DCKBEFleb02HWhry4ApfcrwB42FA61MzCGpJwhPVidUD9whGs9eFGfYM22C7X2bBavTyAXrTtVkHUge78Pi8492uTuo4qZbWBX96SzwG3+CLHcJLrQlcatepOIVpT38nBzuntgo+KSjh2uryMzW1yCFeLpgDyucBm9qEr3pGLBi3bozHKqPTsfExgtO3gY2eBk3sJtrma9dSVrv47WLiKA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
  dkim=pass header.d=oss.nxp.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
  s=selector2-NXP1-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=nJE0Ov249gPUdtT6ZeB+lf9+Z+9T/yJFkeTd4I25VJs=;
- b=cedwUi9Bjnv0QJE9/evoYT/hAQ8hv2zfDcHUoTsI988tIrMnThFzJQXIMdqHoQ2PfxsXj1ibJ508lFNqe9UTR8wlmD2DGjdeuQNms5b28DtzyXj7qBqpbJxCjXfBlhya9CX7kYwyWLC4cMnRxncDx1FSsRTFMprSKOKl++blxvs=
+ bh=ZfBczTf+RB1EWa5ibevseo+tYbxVdHstdpl8p+i5B30=;
+ b=R6aYpo8QITNYelMzBoModnSZAsiRZihwxIZqutNhNM5gorPCKe1yotBno6lxDECdwl6BEV3XkNMN1kVxwjxYJudsVFcTa5V4XIso0FWxp+laWO9pParmzvvqlkMtlNI+nJccf13PK9Db1OU/jzbgMtX4oseyClyg/Phf7FAeMK4=
 Authentication-Results: wizery.com; dkim=none (message not signed)
  header.d=none;wizery.com; dmarc=none action=none header.from=oss.nxp.com;
 Received: from DB6PR0402MB2760.eurprd04.prod.outlook.com (2603:10a6:4:a1::14)
  by DB6PR0402MB2933.eurprd04.prod.outlook.com (2603:10a6:4:9c::17) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3825.20; Mon, 8 Feb
- 2021 09:08:12 +0000
+ 2021 09:08:35 +0000
 Received: from DB6PR0402MB2760.eurprd04.prod.outlook.com
  ([fe80::d58c:d479:d094:43d0]) by DB6PR0402MB2760.eurprd04.prod.outlook.com
  ([fe80::d58c:d479:d094:43d0%9]) with mapi id 15.20.3825.030; Mon, 8 Feb 2021
- 09:08:12 +0000
+ 09:08:35 +0000
 From:   peng.fan@oss.nxp.com
 To:     ohad@wizery.com, bjorn.andersson@linaro.org,
         mathieu.poirier@linaro.org, o.rempel@pengutronix.de,
@@ -57,9 +57,9 @@ Cc:     shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         paul@crapouillou.net, matthias.bgg@gmail.com, agross@kernel.org,
         patrice.chotard@st.com, Peng Fan <peng.fan@nxp.com>
-Subject: [PATCH V10 06/10] remoteproc: imx_rproc: use devm_ioremap
-Date:   Mon,  8 Feb 2021 16:56:07 +0800
-Message-Id: <1612774571-6134-7-git-send-email-peng.fan@oss.nxp.com>
+Subject: [PATCH V10 10/10] remoteproc: imx_proc: enable virtio/mailbox
+Date:   Mon,  8 Feb 2021 16:56:11 +0800
+Message-Id: <1612774571-6134-11-git-send-email-peng.fan@oss.nxp.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1612774571-6134-1-git-send-email-peng.fan@oss.nxp.com>
 References: <1612774571-6134-1-git-send-email-peng.fan@oss.nxp.com>
@@ -70,52 +70,52 @@ X-ClientProxiedBy: SG2PR01CA0102.apcprd01.prod.exchangelabs.com
  (2603:10a6:4:a1::14)
 MIME-Version: 1.0
 X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from localhost.localdomain (119.31.174.66) by SG2PR01CA0102.apcprd01.prod.exchangelabs.com (2603:1096:3:15::28) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.20.3825.19 via Frontend Transport; Mon, 8 Feb 2021 09:08:07 +0000
+Received: from localhost.localdomain (119.31.174.66) by SG2PR01CA0102.apcprd01.prod.exchangelabs.com (2603:1096:3:15::28) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.20.3825.19 via Frontend Transport; Mon, 8 Feb 2021 09:08:30 +0000
 X-MS-PublicTrafficType: Email
 X-MS-Office365-Filtering-HT: Tenant
-X-MS-Office365-Filtering-Correlation-Id: f67f1452-8715-4af3-aab3-08d8cc110fc2
+X-MS-Office365-Filtering-Correlation-Id: 7a717bbe-b64f-41fe-f65e-08d8cc111d9b
 X-MS-TrafficTypeDiagnostic: DB6PR0402MB2933:
 X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
 X-MS-Exchange-Transport-Forked: True
-X-Microsoft-Antispam-PRVS: <DB6PR0402MB2933F0E53308766A97EF51C4C98F9@DB6PR0402MB2933.eurprd04.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:849;
+X-Microsoft-Antispam-PRVS: <DB6PR0402MB2933FC08376792786DF1BBFFC98F9@DB6PR0402MB2933.eurprd04.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:751;
 X-MS-Exchange-SenderADCheck: 1
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 5WJv9pLYkr13n2lo8Z8bueCiiizYYuM8RHJ9wFziFFX5eWzu6AQ/4e7xqmkBgwaN2AOFSsVregEhPXxQiGXlQxY138SfL8zz6+0hfKhImA9p55SN4pYdq7RGr20VK52kkL8bsjMNDBAI53v/FlT2e69T4tLjSvQ+GHBjegn94ALmM1IV4ED8924DCOQjYousTbyfbi95nQxRtJF8vcocY4QMYqfEIGB7QCknmmOX7qJbZjpF0YtVhwH8dohjSUg1qrLzoVtqLE9ZnLBQ4cdTmjyepTW3+H7XN3k41XVbBJqg22sVufcBkYWnjqVN+4Zm8TeovYmqhsk+g+/yLCOuNP3KAREdoLExjnMvzcmtr+TRrJ7+42RlSepNvCW8DEJxGrlNApfN09alZ772iyZghrkanCOhSvFbgb+CfqmssYDTBgISKRa0tX5oeKwNzjJ+BhPG1jdYEvtPNIelKWWnbToWVvGjoq/beGnI8X7W8KAifsSK6QCbFdWLmpRdoTLmzY6RsXfcHi8NJgPG62FrJXWQLJQ6jorKvyFmycPe7xFiZTsAvjYSOP8YVGf2Ar8Dttm75m6i3GIugfI/E8TaLg==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB6PR0402MB2760.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(396003)(366004)(376002)(346002)(39860400002)(136003)(7416002)(52116002)(316002)(83380400001)(4326008)(8936002)(186003)(69590400011)(86362001)(66946007)(6486002)(8676002)(6512007)(478600001)(6506007)(26005)(956004)(2616005)(5660300002)(16526019)(66476007)(66556008)(2906002)(9686003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData: =?us-ascii?Q?hIkQrueU7TlIdxqh1A6EbwMIgzCV5FK7FPFLcCc7Hrkknv2G9nVMxG14IuYZ?=
- =?us-ascii?Q?mD/VwiV/Tj0bmpd5jgT+3qcmks9FffKgvyTiH180ZX5sbSHJr2XKPbikQKJM?=
- =?us-ascii?Q?q8JZdIvOPHImcpq7xwnlnjmh2bvWs+xpk5aApFWMAztJ8G038OOYACVC8Gmf?=
- =?us-ascii?Q?w9FDK4PsxvWr3QsnG5m6BpF6djo/9HH3Fkx0IWQCJA0DArKpUeGvtQAwQzEC?=
- =?us-ascii?Q?E8WrTf9TQo3hGQSeoQHCwD605pUyH33oV8M0Mb853USVxRrumwoWBUQGQBYV?=
- =?us-ascii?Q?qbpTxd6ctKb1B2jcQ88Jhu7z5PVwG9qblSIegqCs1Z8+o5Ve3A64dDiwG0RS?=
- =?us-ascii?Q?cfbCkwtGG51dtHlhQz19xj0/0XIzPvCIhbReSzp0YpGCtwfg5EnhihrT7pdJ?=
- =?us-ascii?Q?cAcLB3x12OsqeR+co/JMxEr9/5a9Y1V3VykSWZC4YGuoJM2XWPMk64MNxgAg?=
- =?us-ascii?Q?lJpQ4uGcAU6NiqWZJvzJxtKbTjWDdroDmRIdpEsZFWwm+VqmHjT4E2/c6deA?=
- =?us-ascii?Q?OxfcwzF3vdti6ibAcr3md6b1dWnBbyQQsd+FHzDwI6Sn6Abnnce/b3hWYInS?=
- =?us-ascii?Q?XpFylcYWwe30mbWRQYtmSz8PK8OLTFf5gFI2eI5mDaa+X/FVpt2WkybFpLWr?=
- =?us-ascii?Q?ki4ddlYePGhr5BWfHD7TLlp3eR5Tqv3vPXgKg/OF8z60NRTwQMly/JouZZNW?=
- =?us-ascii?Q?RRM10Ws/4sKYji/J8Y7VdGoU0jC61dFwz4eaubGrErrG13le28/0Zz8T6RWj?=
- =?us-ascii?Q?Vj/Og5VCnFqf6scxkmWhieDKckCL5q/mnyxoMwFxpB+Zax3eYRPsAd+YuaCw?=
- =?us-ascii?Q?rusO0x+GTz1gRAUIF+e4lbzX/cIxsP/QXbkyW7q6FEcGiB6ATLtjOaxKLoTj?=
- =?us-ascii?Q?W50Kf1a5cpve18AY17mfUhSUWwX5wF6r5WcYbyd39hLEycFda67WrKQ8+kom?=
- =?us-ascii?Q?dLO4pps4u3WnOrRYxO3YPtyRDaobhKqlkmPJf0DRoZP4xlnsS6PD4f5bBwHt?=
- =?us-ascii?Q?rfvtJU6vAM0RErCSJlZ4LUyYTLKlKXcqUdhK+i5w52GY1BSXf3bo2Lrj7qtw?=
- =?us-ascii?Q?kyN/1pRwcwZpZT1v7ZsRentDuDL1JQMO+wzT0IKRJ7F1eOUj1JjiJ4is0N1N?=
- =?us-ascii?Q?6p1xCQLpbRXEBkOIHjSQnIXNauUncVWRU93vaMjLaB3TfSXbDGggx4NPZrgg?=
- =?us-ascii?Q?3nFBgHhDA7OVIpfApjyt3bkFBwvEUGaNteOXBwzq5ClzRXn6u7EkEPhTvqWe?=
- =?us-ascii?Q?EkcyVxCUkWYcxsbLaEVO9u878m1m9ahXrzO9g753mAj4o/N9uQh8swGNZHvg?=
- =?us-ascii?Q?DGp62NC0cg657fh2tAkbDUz3?=
+X-Microsoft-Antispam-Message-Info: 0dLjvMAUYXkpR7YlfHqeQudylHZWAdj+7VBBY4f4TLM9eB+JGV5ag9bl9ugutoQBl31oLap1XqFTtGek+hLWqO7axw15pJP2crTPq0cZXIGk7GwZv/O+hV468ExttUtqJkqEhGOCd43KGUbINhLj57SzwScRzVGGdMaEg8iKFtT8mdVa2HLUaYI7Q5FaIOEMCshSXpV3Z76CR7OrlidKrJIT1JhhROh83ff6plhScBKa0k6D0A+5d+cqGKOf8Fl3p7Vwvvqeu1eQ+8KjCTMDf6LjYcYiayrxwiRYqBfShXdZOLkkE0+4bjhKr6CaY6tB29N2aTIZsUl5A5Bg4/dvIJa2btXbeFwGimJ9q7W87qiIu0fMeAEY/XGiCQt6S0kKMihnjUbzNMlV/IHjGg1vZaCOBRFfpXycvogSI1lHAbp3VoY2dg0FhJW3O/UK7oESqRs+B53a4Bye/TdCMz4tVSE1bjUSOlv+div6NMMB2VmYXVGCgWB1DCarnSTjHGJ/9kJ6oRB3mKrv3QR/BkAR8bWz+DrIE/ckHmlSWRTVt3ZDrbuMePFG2tgoFuR96omNA+59WJ6URZfJBPhFsHsvPA==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB6PR0402MB2760.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(396003)(366004)(376002)(346002)(39860400002)(136003)(7416002)(52116002)(6666004)(316002)(83380400001)(4326008)(8936002)(15650500001)(186003)(69590400011)(86362001)(66946007)(6486002)(8676002)(6512007)(478600001)(6506007)(26005)(956004)(2616005)(5660300002)(16526019)(66476007)(66556008)(2906002)(9686003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData: =?us-ascii?Q?VEO9yqGZ+nrKDySeTSA3RWulTkMfT/ewy7T12OzBdCCKnZxYERJvt1VyTFkq?=
+ =?us-ascii?Q?HMo93tz0f6X7WEJUhNk8HIfJ2wAPESWIshgilBpSueJrVsImllPQOfzC6GZY?=
+ =?us-ascii?Q?Zz60j/OOMtJoxfS1Wm87hCduZd7duB+iRtbJ7Dwon1uwcTRsAnBjTFNKFOhU?=
+ =?us-ascii?Q?ENP/u6nb81W31XyoTNQ0fD1CDmVrtAgV2LYH4N6WJE5eDQPSQaTAPb53QQGY?=
+ =?us-ascii?Q?YiK7wsOlOEx6vEKsg6McJ5UTKlmvyeLZPqbIyA7E9PTmujOwPlGRWIGKN61x?=
+ =?us-ascii?Q?Z2R/F7kalNSjcH5o19AdHFOqhoDZKGRLqzhZVdXZaagCL0uYIWicEz4NWTQ+?=
+ =?us-ascii?Q?2rGdcXkReiL2uA14Qwk12thnfLs3NKkzrKaBsvgd2exhh7/DESFpJi7l0N0A?=
+ =?us-ascii?Q?6i1snGqF4eSGZJB0Cwy+A0BnqxOn2/KEa7qT3U4IQntHufYolNXu/kukP8e4?=
+ =?us-ascii?Q?coigYfjIITK8EqT4rS4RRkzhRw/IQtVH5Qu7/ZK6w1LZPFSm8EC0PRHlOmZ+?=
+ =?us-ascii?Q?aGSg1d/TOijxsG9751GI3EJEvX2DWhl+4lDTqaWaCKjfUXlKazXoZc9k+FqO?=
+ =?us-ascii?Q?x2YoYtIA1FAIYKUOSEccSc6uF0rBvqGe4EwNiGqn8bLiMByWu46MRWLQEmIk?=
+ =?us-ascii?Q?1Z7Y4mm/sEx+ElX2c5LUEMS9d797EUEninDTEAwThFd0tyCUK2bmDKq04n7H?=
+ =?us-ascii?Q?APnl2Mf48rSMbT7eOf2Ypebdt9U77YoaskngaM/B3ftlEEVs8xRF3OOm175q?=
+ =?us-ascii?Q?afCfhE6GrpxZpMMXGSUk+o5nAnUXaWuHcnd4EXdIZbDwdWejcUwgHOVmsH07?=
+ =?us-ascii?Q?S9Adb3A6cjX7CFPupa3ZseasM9FEdgxKno6ZIvPC7f+Nt+oiBgcLpBpSTFpL?=
+ =?us-ascii?Q?fmtCFzTQ37UXhG1EMHaSUzn2R6D8zSDhpG/8TCRsaEKh2RuiyDvfiV+dUIbE?=
+ =?us-ascii?Q?vCyhqGXOQrdkGv8ftKUiaR0N3ocWfU4jUhVjE0oI80hTZpFBipEFyBD1A1kq?=
+ =?us-ascii?Q?Knz1zaQYpwzdWPQas0CqFM8bmLkMmhp3Udnk2jKWkrbC+OUqpCGTxp3vo6Sz?=
+ =?us-ascii?Q?/lfGkh7fpNAFUCkkzOIRnMNN7a3OQV+UoOBHzFtgRrNfR4jxpkAS75xoDjmk?=
+ =?us-ascii?Q?3pA7R413svWZgsO4MqHDCt5aOx89IOeBJWfMjxFAlkTocweqKMfzVuwKs7VD?=
+ =?us-ascii?Q?PL9jC26snWBMm24FMmrTpH21pmUBqxIbjGKvGcXmpmgCLc2tPDGsnO9QQiMp?=
+ =?us-ascii?Q?FIpWHLdd0xWpgLeOFVWXGNS/Y4Y9wAxUv2jlilcj7ZQN7Tq0d7doHfcjaMRv?=
+ =?us-ascii?Q?nqdJxuhZlpIeF8c7Pq2gr34L?=
 X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f67f1452-8715-4af3-aab3-08d8cc110fc2
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7a717bbe-b64f-41fe-f65e-08d8cc111d9b
 X-MS-Exchange-CrossTenant-AuthSource: DB6PR0402MB2760.eurprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Feb 2021 09:08:12.7319
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Feb 2021 09:08:35.8484
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 2eRu+ObApVTY3i+bXJgQ8hOL6Cw+3Ii55WYvBZ63AsKBhzF78BXPt9E2hLL5yoII0cFe5p+jne89E73PHqjMTg==
+X-MS-Exchange-CrossTenant-UserPrincipalName: mcpi28mQpMAzNmtwAvfdGD1sFuesxa0mg3X0AtoMa35vM/Hig1nl/5dsSCIStfuTv3eW4vPqMQXdkw78J3jeyA==
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB6PR0402MB2933
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
@@ -123,32 +123,214 @@ X-Mailing-List: linux-remoteproc@vger.kernel.org
 
 From: Peng Fan <peng.fan@nxp.com>
 
-We might need to map an region multiple times, becaue the region might
-be shared between remote processors, such i.MX8QM with dual M4 cores.
-So use devm_ioremap, not devm_ioremap_resource.
+Use virtio/mailbox to build connection between Remote Proccessors
+and Linux. Add work queue to handle incoming messages.
 
-Reviewed-by: Oleksij Rempel <o.rempel@pengutronix.de>
 Reviewed-by: Richard Zhu <hongxing.zhu@nxp.com>
+Reviewed-by: Mathieu Poirier <mathieu.poirer@linaro.org>
 Signed-off-by: Peng Fan <peng.fan@nxp.com>
-Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 ---
- drivers/remoteproc/imx_rproc.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/remoteproc/imx_rproc.c | 116 ++++++++++++++++++++++++++++++++-
+ 1 file changed, 113 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rproc.c
-index 2a093cea4997..47fc1d06be6a 100644
+index 3685bbd135b0..90471790bb24 100644
 --- a/drivers/remoteproc/imx_rproc.c
 +++ b/drivers/remoteproc/imx_rproc.c
-@@ -296,7 +296,8 @@ static int imx_rproc_addr_init(struct imx_rproc *priv,
- 		if (b >= IMX7D_RPROC_MEM_MAX)
- 			break;
+@@ -7,6 +7,7 @@
+ #include <linux/err.h>
+ #include <linux/interrupt.h>
+ #include <linux/kernel.h>
++#include <linux/mailbox_client.h>
+ #include <linux/mfd/syscon.h>
+ #include <linux/module.h>
+ #include <linux/of_address.h>
+@@ -15,6 +16,9 @@
+ #include <linux/platform_device.h>
+ #include <linux/regmap.h>
+ #include <linux/remoteproc.h>
++#include <linux/workqueue.h>
++
++#include "remoteproc_internal.h"
  
--		priv->mem[b].cpu_addr = devm_ioremap_resource(&pdev->dev, &res);
-+		/* Not use resource version, because we might share region */
-+		priv->mem[b].cpu_addr = devm_ioremap(&pdev->dev, res.start, resource_size(&res));
- 		if (IS_ERR(priv->mem[b].cpu_addr)) {
- 			dev_err(dev, "failed to remap %pr\n", &res);
- 			err = PTR_ERR(priv->mem[b].cpu_addr);
+ #define IMX7D_SRC_SCR			0x0C
+ #define IMX7D_ENABLE_M4			BIT(3)
+@@ -86,6 +90,11 @@ struct imx_rproc {
+ 	const struct imx_rproc_dcfg	*dcfg;
+ 	struct imx_rproc_mem		mem[IMX7D_RPROC_MEM_MAX];
+ 	struct clk			*clk;
++	struct mbox_client		cl;
++	struct mbox_chan		*tx_ch;
++	struct mbox_chan		*rx_ch;
++	struct work_struct		rproc_work;
++	struct workqueue_struct		*workqueue;
+ };
+ 
+ static const struct imx_rproc_att imx_rproc_att_imx8mq[] = {
+@@ -366,9 +375,33 @@ static int imx_rproc_parse_fw(struct rproc *rproc, const struct firmware *fw)
+ 	return 0;
+ }
+ 
++static void imx_rproc_kick(struct rproc *rproc, int vqid)
++{
++	struct imx_rproc *priv = rproc->priv;
++	int err;
++	__u32 mmsg;
++
++	if (!priv->tx_ch) {
++		dev_err(priv->dev, "No initialized mbox tx channel\n");
++		return;
++	}
++
++	/*
++	 * Send the index of the triggered virtqueue as the mu payload.
++	 * Let remote processor know which virtqueue is used.
++	 */
++	mmsg = vqid << 16;
++
++	err = mbox_send_message(priv->tx_ch, (void *)&mmsg);
++	if (err < 0)
++		dev_err(priv->dev, "%s: failed (%d, err:%d)\n",
++			__func__, vqid, err);
++}
++
+ static const struct rproc_ops imx_rproc_ops = {
+ 	.start		= imx_rproc_start,
+ 	.stop		= imx_rproc_stop,
++	.kick		= imx_rproc_kick,
+ 	.da_to_va       = imx_rproc_da_to_va,
+ 	.load		= rproc_elf_load_segments,
+ 	.parse_fw	= imx_rproc_parse_fw,
+@@ -444,6 +477,66 @@ static int imx_rproc_addr_init(struct imx_rproc *priv,
+ 	return 0;
+ }
+ 
++static void imx_rproc_vq_work(struct work_struct *work)
++{
++	struct imx_rproc *priv = container_of(work, struct imx_rproc,
++					      rproc_work);
++
++	rproc_vq_interrupt(priv->rproc, 0);
++	rproc_vq_interrupt(priv->rproc, 1);
++}
++
++static void imx_rproc_rx_callback(struct mbox_client *cl, void *msg)
++{
++	struct rproc *rproc = dev_get_drvdata(cl->dev);
++	struct imx_rproc *priv = rproc->priv;
++
++	queue_work(priv->workqueue, &priv->rproc_work);
++}
++
++static int imx_rproc_xtr_mbox_init(struct rproc *rproc)
++{
++	struct imx_rproc *priv = rproc->priv;
++	struct device *dev = priv->dev;
++	struct mbox_client *cl;
++	int ret;
++
++	if (!of_get_property(dev->of_node, "mbox-names", NULL))
++		return 0;
++
++	cl = &priv->cl;
++	cl->dev = dev;
++	cl->tx_block = true;
++	cl->tx_tout = 100;
++	cl->knows_txdone = false;
++	cl->rx_callback = imx_rproc_rx_callback;
++
++	priv->tx_ch = mbox_request_channel_byname(cl, "tx");
++	if (IS_ERR(priv->tx_ch)) {
++		ret = PTR_ERR(priv->tx_ch);
++		return dev_err_probe(cl->dev, ret,
++				     "failed to request tx mailbox channel: %d\n", ret);
++	}
++
++	priv->rx_ch = mbox_request_channel_byname(cl, "rx");
++	if (IS_ERR(priv->rx_ch)) {
++		mbox_free_channel(priv->tx_ch);
++		ret = PTR_ERR(priv->rx_ch);
++		return dev_err_probe(cl->dev, ret,
++				     "failed to request rx mailbox channel: %d\n", ret);
++	}
++
++	return 0;
++}
++
++static void imx_rproc_free_mbox(struct rproc *rproc)
++{
++	struct imx_rproc *priv = rproc->priv;
++
++	mbox_free_channel(priv->tx_ch);
++	mbox_free_channel(priv->rx_ch);
++}
++
+ static int imx_rproc_probe(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+@@ -481,18 +574,28 @@ static int imx_rproc_probe(struct platform_device *pdev)
+ 	priv->dev = dev;
+ 
+ 	dev_set_drvdata(dev, rproc);
++	priv->workqueue = create_workqueue(dev_name(dev));
++	if (!priv->workqueue) {
++		dev_err(dev, "cannot create workqueue\n");
++		ret = -ENOMEM;
++		goto err_put_rproc;
++	}
++
++	ret = imx_rproc_xtr_mbox_init(rproc);
++	if (ret)
++		goto err_put_wkq;
+ 
+ 	ret = imx_rproc_addr_init(priv, pdev);
+ 	if (ret) {
+ 		dev_err(dev, "failed on imx_rproc_addr_init\n");
+-		goto err_put_rproc;
++		goto err_put_mbox;
+ 	}
+ 
+ 	priv->clk = devm_clk_get(dev, NULL);
+ 	if (IS_ERR(priv->clk)) {
+ 		dev_err(dev, "Failed to get clock\n");
+ 		ret = PTR_ERR(priv->clk);
+-		goto err_put_rproc;
++		goto err_put_mbox;
+ 	}
+ 
+ 	/*
+@@ -502,9 +605,11 @@ static int imx_rproc_probe(struct platform_device *pdev)
+ 	ret = clk_prepare_enable(priv->clk);
+ 	if (ret) {
+ 		dev_err(&rproc->dev, "Failed to enable clock\n");
+-		goto err_put_rproc;
++		goto err_put_mbox;
+ 	}
+ 
++	INIT_WORK(&(priv->rproc_work), imx_rproc_vq_work);
++
+ 	ret = rproc_add(rproc);
+ 	if (ret) {
+ 		dev_err(dev, "rproc_add failed\n");
+@@ -515,6 +620,10 @@ static int imx_rproc_probe(struct platform_device *pdev)
+ 
+ err_put_clk:
+ 	clk_disable_unprepare(priv->clk);
++err_put_mbox:
++	imx_rproc_free_mbox(rproc);
++err_put_wkq:
++	destroy_workqueue(priv->workqueue);
+ err_put_rproc:
+ 	rproc_free(rproc);
+ 
+@@ -528,6 +637,7 @@ static int imx_rproc_remove(struct platform_device *pdev)
+ 
+ 	clk_disable_unprepare(priv->clk);
+ 	rproc_del(rproc);
++	imx_rproc_free_mbox(rproc);
+ 	rproc_free(rproc);
+ 
+ 	return 0;
 -- 
 2.30.0
 
