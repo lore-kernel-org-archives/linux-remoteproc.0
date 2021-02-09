@@ -2,153 +2,126 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.5 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CABAC433E0
-	for <linux-remoteproc@archiver.kernel.org>; Tue,  9 Feb 2021 08:37:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4ABA4C433E6
+	for <linux-remoteproc@archiver.kernel.org>; Tue,  9 Feb 2021 17:01:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 343EE64E92
-	for <linux-remoteproc@archiver.kernel.org>; Tue,  9 Feb 2021 08:37:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0756664EC2
+	for <linux-remoteproc@archiver.kernel.org>; Tue,  9 Feb 2021 17:01:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229888AbhBIIhA (ORCPT
+        id S232997AbhBIRBM (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 9 Feb 2021 03:37:00 -0500
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:6404 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S229851AbhBIIgn (ORCPT
+        Tue, 9 Feb 2021 12:01:12 -0500
+Received: from mail-ot1-f48.google.com ([209.85.210.48]:41070 "EHLO
+        mail-ot1-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232953AbhBIRBJ (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 9 Feb 2021 03:36:43 -0500
-Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 1198XXQO027458;
-        Tue, 9 Feb 2021 09:35:49 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=from : subject : to
- : cc : references : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=selector1;
- bh=Xf58I3oc4vS+xAXxH1lhtadhjXCgDFhO3xI+liBkPK0=;
- b=ib56VHmZDsGHys78o8FHk6nGMU47CmKDSx1mNBVu6sE9mtHc2lM6nd44t/2xyjbNZjs3
- qDRg1Z0chYkU9V1obPQ0l2KZnT0s/FUUAZbWZiA9AM2ZepDy0Brc4OKBvdlHegrqR0sU
- n7k99jeE3/wmJIhHgCXQ8KszDJ4Wms1/vKx5jSUlUz50MOPGcLqOlJW2BjIqx4FOJcel
- mEGIdJqHaNERxIyeAF6+tRmdWurB1fGlggokP/7jNKWRZKg89Lj6zy5LMOeMBMpwqhT2
- B3+a47WSiEhAMT9cbG5xJgmghnCLOJqz2nuket9vXYmK3d9H0ABDLkaiNalxpPM7ZKgW Ug== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 36hrf778q4-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 09 Feb 2021 09:35:49 +0100
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 3D1C610002A;
-        Tue,  9 Feb 2021 09:35:49 +0100 (CET)
-Received: from Webmail-eu.st.com (gpxdag2node6.st.com [10.75.127.70])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 24E1621CA78;
-        Tue,  9 Feb 2021 09:35:49 +0100 (CET)
-Received: from lmecxl0889.lme.st.com (10.75.127.116) by GPXDAG2NODE6.st.com
- (10.75.127.70) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 9 Feb
- 2021 09:35:48 +0100
-From:   Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
-Subject: Re: [PATCH v2] remoteproc: stm32: improve debug using dev_err_probe
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Ohad Ben-Cohen <ohad@wizery.com>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>
-CC:     <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>
-References: <20201217144125.12903-1-arnaud.pouliquen@foss.st.com>
-Message-ID: <9d12a62c-ba39-4943-d9c4-9e3da8ef947f@foss.st.com>
-Date:   Tue, 9 Feb 2021 09:35:47 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Tue, 9 Feb 2021 12:01:09 -0500
+Received: by mail-ot1-f48.google.com with SMTP id s107so18064294otb.8;
+        Tue, 09 Feb 2021 09:00:52 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=Y8TeBLOmzfFfpZzlPtDxoUFP64ezbCJGhYftb61vGiQ=;
+        b=EqWueqR1MHghokf9kvZzU5b02cQ825ApiDuSWonpj2xqTlN14OTbeMA7J252oTwWdg
+         taUaSRaaMIhYLgFL6lV8bZJoKgunVEH96TtGSS4F8w2fVL+TIhmtPq39CNB4vquTuljB
+         Alz/RJuJ1rXBp0zzVZkpR+ifWdZxPvug7a2ydE2NKLCIsWoNDzEQtLeHZtNzJmvqeYVx
+         XdcQ8dl+FWCeYbZFCtSfOj1uSqUoEiYVOKucxyepYHbYI+s7vpNIG/HLfdoWwCPAG8mh
+         TOvBLGqznybhABNYnqRU5qPzWma2ImIzqr1jqEhSl5vX4RvNDEYB+OLNKbKkfQ7WYgDV
+         B0Iw==
+X-Gm-Message-State: AOAM532e1nzwmsgJwz50OyEs3cOc8YOsFlxzVS2+s1FEOryzwEoXfvsc
+        ufZp3HPiix13zATN9Si0Ew==
+X-Google-Smtp-Source: ABdhPJwt1iqcyfLSNCa+WJl49vNU1QSnGo6FL49KCVk7vj1wWiZg4P85gMbMvxQ21AZMB3FNVw2lTA==
+X-Received: by 2002:a9d:5f05:: with SMTP id f5mr12390332oti.234.1612890027602;
+        Tue, 09 Feb 2021 09:00:27 -0800 (PST)
+Received: from robh.at.kernel.org (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id x7sm4329323oot.15.2021.02.09.09.00.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 09 Feb 2021 09:00:26 -0800 (PST)
+Received: (nullmailer pid 3932832 invoked by uid 1000);
+        Tue, 09 Feb 2021 17:00:25 -0000
+Date:   Tue, 9 Feb 2021 11:00:25 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Suman Anna <s-anna@ti.com>
+Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        devicetree@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org
+Subject: Re: [PATCH 1/2] dt-bindings: hwlock: Update OMAP HwSpinlock binding
+ for AM64x SoCs
+Message-ID: <20210209170025.GA3927023@robh.at.kernel.org>
+References: <20210125235653.24385-1-s-anna@ti.com>
+ <20210125235653.24385-2-s-anna@ti.com>
 MIME-Version: 1.0
-In-Reply-To: <20201217144125.12903-1-arnaud.pouliquen@foss.st.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.75.127.116]
-X-ClientProxiedBy: GPXDAG1NODE6.st.com (10.75.127.67) To GPXDAG2NODE6.st.com
- (10.75.127.70)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.369,18.0.737
- definitions=2021-02-09_02:2021-02-09,2021-02-09 signatures=0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210125235653.24385-2-s-anna@ti.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi,
-
-Gentle reminder, in case it has been forgotten.
-
-Thanks,
-Arnaud
-
-On 12/17/20 3:41 PM, Arnaud Pouliquen wrote:
-> From: Arnaud Pouliquen <arnaud.pouliquen@foss-st.com>
+On Mon, Jan 25, 2021 at 05:56:52PM -0600, Suman Anna wrote:
+> Update the existing OMAP HwSpinlock binding to include the info for
+> AM64x SoCs. There are some minor IP integration differences between
+> the AM64x SoCs and the previous AM65x and J721E SoC families. A new
+> example is also added showcasing the difference in the IP's presence
+> on the interconnect.
 > 
-> When possible use dev_err_probe help to properly deal with the
-> PROBE_DEFER error.
-> The benefit is that DEFER issue will be logged in the devices_deferred
-> debugfs file.
-> 
-> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss-st.com>
+> Signed-off-by: Suman Anna <s-anna@ti.com>
 > ---
-> V1 to V2: As suggested by Ahmad Fatoum use dev_err_probe to deal with
->           deferred cases
+>  .../bindings/hwlock/ti,omap-hwspinlock.yaml   | 26 +++++++++++++++++++
+>  1 file changed, 26 insertions(+)
 > 
-> V1: https://www.spinics.net/lists/kernel/msg3765884.html
-> ---
-> 
->  drivers/remoteproc/stm32_rproc.c | 23 +++++++++++++----------
->  1 file changed, 13 insertions(+), 10 deletions(-)
-> 
-> diff --git a/drivers/remoteproc/stm32_rproc.c b/drivers/remoteproc/stm32_rproc.c
-> index a180aeae9675..ccb3c14a0023 100644
-> --- a/drivers/remoteproc/stm32_rproc.c
-> +++ b/drivers/remoteproc/stm32_rproc.c
-> @@ -370,8 +370,13 @@ static int stm32_rproc_request_mbox(struct rproc *rproc)
+> diff --git a/Documentation/devicetree/bindings/hwlock/ti,omap-hwspinlock.yaml b/Documentation/devicetree/bindings/hwlock/ti,omap-hwspinlock.yaml
+> index ac35491a6f65..ac146c0d628f 100644
+> --- a/Documentation/devicetree/bindings/hwlock/ti,omap-hwspinlock.yaml
+> +++ b/Documentation/devicetree/bindings/hwlock/ti,omap-hwspinlock.yaml
+> @@ -14,6 +14,7 @@ properties:
+>      enum:
+>        - ti,omap4-hwspinlock  # for OMAP44xx, OMAP54xx, AM33xx, AM43xx, DRA7xx SoCs
+>        - ti,am654-hwspinlock  # for K3 AM65x, J721E and J7200 SoCs
+> +      - ti,am64-hwspinlock   # for K3 AM64x SoCs
 >  
->  		ddata->mb[i].chan = mbox_request_channel_byname(cl, name);
->  		if (IS_ERR(ddata->mb[i].chan)) {
-> -			if (PTR_ERR(ddata->mb[i].chan) == -EPROBE_DEFER)
-> +			if (PTR_ERR(ddata->mb[i].chan) == -EPROBE_DEFER) {
-> +				dev_err_probe(dev->parent,
-> +					      PTR_ERR(ddata->mb[i].chan),
-> +					      "failed to request mailbox %s\n",
-> +					      name);
->  				goto err_probe;
-> +			}
->  			dev_warn(dev, "cannot get %s mbox\n", name);
->  			ddata->mb[i].chan = NULL;
->  		}
-> @@ -592,15 +597,14 @@ static int stm32_rproc_parse_dt(struct platform_device *pdev,
->  
->  	irq = platform_get_irq(pdev, 0);
->  	if (irq == -EPROBE_DEFER)
-> -		return -EPROBE_DEFER;
-> +		return dev_err_probe(dev, irq, "failed to get interrupt\n");
->  
->  	if (irq > 0) {
->  		err = devm_request_irq(dev, irq, stm32_rproc_wdg, 0,
->  				       dev_name(dev), pdev);
-> -		if (err) {
-> -			dev_err(dev, "failed to request wdg irq\n");
-> -			return err;
-> -		}
-> +		if (err)
-> +			return dev_err_probe(dev, err,
-> +					     "failed to request wdg irq\n");
->  
->  		ddata->wdg_irq = irq;
->  
-> @@ -613,10 +617,9 @@ static int stm32_rproc_parse_dt(struct platform_device *pdev,
->  	}
->  
->  	ddata->rst = devm_reset_control_get_by_index(dev, 0);
-> -	if (IS_ERR(ddata->rst)) {
-> -		dev_err(dev, "failed to get mcu reset\n");
-> -		return PTR_ERR(ddata->rst);
-> -	}
-> +	if (IS_ERR(ddata->rst))
-> +		return dev_err_probe(dev, PTR_ERR(ddata->rst),
-> +				     "failed to get mcu_reset\n");
->  
->  	/*
->  	 * if platform is secured the hold boot bit must be written by
+>    reg:
+>      maxItems: 1
+> @@ -74,3 +75,28 @@ examples:
+>              };
+>          };
+>      };
+> +
+> +  - |
+> +    / {
+> +        /* K3 AM64x SoCs */
+> +        model = "Texas Instruments K3 AM642 SoC";
+> +        compatible = "ti,am642-evm", "ti,am642";
+> +        #address-cells = <2>;
+> +        #size-cells = <2>;
+> +
+> +        bus@f4000 {
+> +            compatible = "simple-bus";
+> +            #address-cells = <2>;
+> +            #size-cells = <2>;
+> +            ranges = <0x00 0x000f4000 0x00 0x000f4000 0x00 0x000002d0>, /* PINCTRL */
+> +                     <0x00 0x01000000 0x00 0x01000000 0x00 0x02330400>, /* First peripheral window */
+> +                     <0x00 0x0f000000 0x00 0x0f000000 0x00 0x00c44200>, /* Second peripheral window */
+> +                     <0x00 0x20000000 0x00 0x20000000 0x00 0x0a008000>; /* Third peripheral window */
+> +
+> +            spinlock@2a000000 {
+
+Why are you doing the whole hierarchy here? Don't do that.
+
+In any case, a new compatible doesn't warrant a whole new example, so 
+drop the example.
+
+> +                compatible = "ti,am64-hwspinlock";
+> +                reg = <0x00 0x2a000000 0x00 0x1000>;
+> +                #hwlock-cells = <1>;
+> +            };
+> +        };
+> +    };
+> -- 
+> 2.29.2
 > 
