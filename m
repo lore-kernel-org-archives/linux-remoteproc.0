@@ -2,72 +2,78 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3A07C433E9
-	for <linux-remoteproc@archiver.kernel.org>; Tue,  9 Feb 2021 17:45:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6F6EC433DB
+	for <linux-remoteproc@archiver.kernel.org>; Tue,  9 Feb 2021 21:16:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8C23B64EB8
-	for <linux-remoteproc@archiver.kernel.org>; Tue,  9 Feb 2021 17:45:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 84D1064E74
+	for <linux-remoteproc@archiver.kernel.org>; Tue,  9 Feb 2021 21:16:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233035AbhBIRpG (ORCPT
+        id S234108AbhBIVPE (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 9 Feb 2021 12:45:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60040 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233361AbhBIRmZ (ORCPT <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 9 Feb 2021 12:42:25 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPS id 27B3E64E7E;
-        Tue,  9 Feb 2021 17:40:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1612892408;
-        bh=nEdqdnkc5e9De3zGK92Wntm4U1KI9k7qOWVYDRU4+Qo=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=YcIxkO+RE9s01pTguMIvpm00e1vRLy7Chsbhpky8/Dqj0UvWPU/WwFTDAuO/3XcdU
-         a5+bvn0oqnkE0QXVJukeAI7842DfvBjQLDmjV0xyGxmeTWS78/KqHcZOnf/Kl0eom4
-         4Qz2Tq6hXyBpw2zno9G95Mo9BxoUa1jTciKksAtHn0wmFlRS492smwWA6vvVe7/WZg
-         04hmpEoxGDL8br96hY9ZSuwMbc0pJcUc3zHNZMXRsx3BeE0TtoP3dM23Z+HVgR6cvz
-         JuYWrd4LunWQAvw3RIcvFNzp7BPjUdhTp2E/yF+d1tgVL/6mpBnKMTG8gK5pkj9xPj
-         pRB/MEqrD5dZA==
-Content-Type: text/plain; charset="utf-8"
+        Tue, 9 Feb 2021 16:15:04 -0500
+Received: from mail-oi1-f181.google.com ([209.85.167.181]:34894 "EHLO
+        mail-oi1-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233931AbhBIUnm (ORCPT
+        <rfc822;linux-remoteproc@vger.kernel.org>);
+        Tue, 9 Feb 2021 15:43:42 -0500
+Received: by mail-oi1-f181.google.com with SMTP id l3so10949996oii.2;
+        Tue, 09 Feb 2021 12:43:26 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=Di0YvPKm/59BJaf3ZJnWx4wP6aCe6n3LSpohUxDF3jU=;
+        b=fp++cp4dv1Yjl1N68/nJCKKp2+S+Gs2S1TAdhrSXVFdjXCwijDYtTOZY9WEs0mlcMh
+         i6xX1MytZvl6yWZyR+8P08efrGCXypgCREQh5aqjBRaFh9wb6NjJWX/l4FaxcQ+KTGUE
+         F8jEjLgBu3gFXBlB27lgPbe71Lr19vUTOxeBWQQah81ZM5QKSMBtG33tMba0W5FG7p7/
+         hTJyPi1sB/wkKoxLOHEDdp49C2Yld9a0jvdNTDVYNLK2qQR9vVK6dJIZFicm+qWOSCSB
+         nPD0KCumBCpCckpv4IeuDxZ/MdEH3NL4t+BZ6/oFx4WIrECYa7H3ynlsUFQDSMLJNFW2
+         kM/A==
+X-Gm-Message-State: AOAM532ZaUWp90iq2zss4zey+UIaJHoxJzWnCUr9ntUPy3hma8rszVqf
+        aZrrdR1IrUJzbeAuc4uidANqJnjn1g==
+X-Google-Smtp-Source: ABdhPJwpkXK7E8OdkjL/79Yw6UN1he5ZXXuBaD4uI9rnhQjjLTvCFqbBLcSYEPn1Z5es3HvXPL4f/Q==
+X-Received: by 2002:aca:3807:: with SMTP id f7mr3734125oia.140.1612901123615;
+        Tue, 09 Feb 2021 12:05:23 -0800 (PST)
+Received: from robh.at.kernel.org (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id q7sm4484930oif.1.2021.02.09.12.05.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 09 Feb 2021 12:05:22 -0800 (PST)
+Received: (nullmailer pid 75330 invoked by uid 1000);
+        Tue, 09 Feb 2021 20:05:20 -0000
+Date:   Tue, 9 Feb 2021 14:05:20 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Gokul Sriram Palanisamy <gokulsri@codeaurora.org>
+Cc:     linux-arm-msm@vger.kernel.org, robh+dt@kernel.org,
+        sboyd@kernel.org, agross@kernel.org, jassisinghbrar@gmail.com,
+        bjorn.andersson@linaro.org, mturquette@baylibre.com,
+        mark.rutland@arm.com, sricharan@codeaurora.org,
+        devicetree@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, david.brown@linaro.org,
+        linux-clk@vger.kernel.org, ohad@wizery.com
+Subject: Re: [PATCH 1/3] dt-bindings: remoteproc: qcom: Add Q6V5 Modem PIL
+ binding for IPQ6018
+Message-ID: <20210209200520.GA75242@robh.at.kernel.org>
+References: <1611940320-24830-1-git-send-email-gokulsri@codeaurora.org>
+ <1611940320-24830-2-git-send-email-gokulsri@codeaurora.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] remoteproc: ingenic: Add module parameter 'auto_boot'
-From:   patchwork-bot+linux-remoteproc@kernel.org
-Message-Id: <161289240813.27941.1123581479668960515.git-patchwork-notify@kernel.org>
-Date:   Tue, 09 Feb 2021 17:40:08 +0000
-References: <20210123142956.17865-1-paul@crapouillou.net>
-In-Reply-To: <20210123142956.17865-1-paul@crapouillou.net>
-To:     Paul Cercueil <paul@crapouillou.net>
-Cc:     linux-remoteproc@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1611940320-24830-2-git-send-email-gokulsri@codeaurora.org>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hello:
-
-This patch was applied to andersson/remoteproc.git (refs/heads/for-next):
-
-On Sat, 23 Jan 2021 14:29:56 +0000 you wrote:
-> Add a 'auto_boot' module parameter that instructs the remoteproc driver
-> whether or not it should auto-boot the remote processor, which will
-> default to "false", since the VPU in Ingenic SoCs does not really have
-> any predetermined function.
+On Fri, 29 Jan 2021 22:41:58 +0530, Gokul Sriram Palanisamy wrote:
+> Add a new modem compatible string for IPQ6018 SoCs
 > 
-> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+> Signed-off-by: Gokul Sriram Palanisamy <gokulsri@codeaurora.org>
+> ---
+>  Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt | 4 ++++
+>  1 file changed, 4 insertions(+)
 > 
-> [...]
 
-Here is the summary with links:
-  - remoteproc: ingenic: Add module parameter 'auto_boot'
-    https://git.kernel.org/andersson/remoteproc/c/ec8207ae39dc
-
-You are awesome, thank you!
---
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+Acked-by: Rob Herring <robh@kernel.org>
