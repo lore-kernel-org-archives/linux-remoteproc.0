@@ -4,60 +4,60 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EAA02C433E0
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 15 Feb 2021 18:52:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61580C433DB
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 16 Feb 2021 18:48:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AD92A64E31
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 15 Feb 2021 18:52:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2A21F64EBA
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 16 Feb 2021 18:48:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230425AbhBOSwG (ORCPT
+        id S230471AbhBPSsw (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 15 Feb 2021 13:52:06 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53610 "EHLO
+        Tue, 16 Feb 2021 13:48:52 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50744 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230349AbhBOSwF (ORCPT
+        with ESMTP id S230213AbhBPSsv (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 15 Feb 2021 13:52:05 -0500
-Received: from mail-pf1-x436.google.com (mail-pf1-x436.google.com [IPv6:2607:f8b0:4864:20::436])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E4084C0613D6
-        for <linux-remoteproc@vger.kernel.org>; Mon, 15 Feb 2021 10:51:24 -0800 (PST)
-Received: by mail-pf1-x436.google.com with SMTP id j12so4675229pfj.12
-        for <linux-remoteproc@vger.kernel.org>; Mon, 15 Feb 2021 10:51:24 -0800 (PST)
+        Tue, 16 Feb 2021 13:48:51 -0500
+Received: from mail-pf1-x42e.google.com (mail-pf1-x42e.google.com [IPv6:2607:f8b0:4864:20::42e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DF60FC061756
+        for <linux-remoteproc@vger.kernel.org>; Tue, 16 Feb 2021 10:48:10 -0800 (PST)
+Received: by mail-pf1-x42e.google.com with SMTP id c11so6695737pfp.10
+        for <linux-remoteproc@vger.kernel.org>; Tue, 16 Feb 2021 10:48:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=BxlVvv0G95aC9gtYE7t2KR3BNqZMWK+GKLbcq8IyzJA=;
-        b=WPbRJaKhxrtosxHfxEn3/7Iv8PpF3biurqMxEY5S4iJr1V3a8EyDte4ZyTzfMlCg4H
-         HWoiJhyPNWqpD5qMoY/fntBWx9ghH+HQt347vYCv7gHSB77ss0klfPgUPZrkUjSXAetc
-         SUCNWcohBJmAzGnA21EklH+eOLd7mlzgZRF9pgmNQA6HZhbWgttjUMutn6NJen1BvsjD
-         EBiE1O0JkwHZJGsuPyoXcb13cgEvY7fbCqXdNdoQdCtIhQmdV0p2pCi4WRq/5nzJ3t+v
-         tKrHJj2x6mBNJyFulGqac2Co7VaKXeZYxnrsTDzwDZOckO8rvIOD15svD7So8yZKpljQ
-         epnQ==
+        bh=YKrUnHK99NO6dXZJHFV9NunxqQfBb0pV7zfZJqFDakw=;
+        b=t7JyODIa//QTHNywEwamOUNBmXXQxAt6JHj1spdqmO9vw+rlUkdaYcieBKaFU5p0Rg
+         s2yID8BkK43YZATLf96OI+sg5ZNSkh30O5ozRXfNy1kh5w3JQrx9bAaCgdkwpV4xi9bQ
+         JG9EtHKqAZ67OyIr3H71xFllA1Up/jWKJ1fpqRGtgel65n/8A2/16ASYXOMvd8BhpGpS
+         Hxes+wOTLE8OIfaO1/K28guS+5KQAkJH6AMolK7v5YnKg25PBC+wQiAr9Uj3+KtLfDQ7
+         PpYXhIRGhP7DBcRlPXTciyVywPYGsClA538OF4YNCFYgLaFxwPWQGM3tWEtu6aw5FjuD
+         XIMQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=BxlVvv0G95aC9gtYE7t2KR3BNqZMWK+GKLbcq8IyzJA=;
-        b=CocrWR50LrdHcqezNJNExSDcQAvpNmZjc6dODUhxB8cl40p9jXIozhskwiNf8QyHFx
-         EZwsiKqJOpEnaTirBGyMXiNqtJ7bQ4uHx2EN4/gYFYfOizZEdvN79B4Qf2TF1z58t3qE
-         z1IpxJnaw4zz9XFqIslWunayRECTFaUdvkfdcUbS8XntTwJoOWTIvDiJQc2J32LWogkG
-         d7jrf5RgcfKO3k1Wpv4w+7tfnCfkyZLjKyhRnH/uhMV36lRiOpmZFhL6HTRnorMPLSjh
-         arqC0VYdmdCjVCh2wevI/71nITKsKyMuCFYnKdjXKBbJsvJfx48nXxB4d9azeorrnjFt
-         j8mA==
-X-Gm-Message-State: AOAM531Kp2bsMbl6xEaDfTKXXIXuxJT9RmAWu4I6bng4XkBRKSNpwwSl
-        nzRYRGG7BxXlwmD3/YJgB14BJQ==
-X-Google-Smtp-Source: ABdhPJyKWEN/1DbkNtSaY8IyxlhWMrtH5+lOLFp6B2btAtp+nHezp1PB4iUc2cgK6/jp9s+FbVGlHQ==
-X-Received: by 2002:a05:6a00:2286:b029:1ae:6c7f:31ce with SMTP id f6-20020a056a002286b02901ae6c7f31cemr16334015pfe.6.1613415083939;
-        Mon, 15 Feb 2021 10:51:23 -0800 (PST)
+        bh=YKrUnHK99NO6dXZJHFV9NunxqQfBb0pV7zfZJqFDakw=;
+        b=XfssaAeacojUBupm37errrPdfJ931oO3DSgK840qDrf+AMKA92fwpxHD+HZ+d6b9wa
+         oE6IbVywC/uroXB/ycyNc3EObmCT0JQlCJ73S599jxGkV4Eph4qJWJvJ/Sr09Wzd26Sg
+         nZamO5OXG1FZVgnT1G7cadETQoT7yr2BgjlU6SnDx+b7Ot2MWrdG6NFLbi9XoVq3nARE
+         i3C4Wi/BQrumx34HzGg+CieruJeLvIFiA0N57xEORSYFQbWiKneE4gmY49Mn3UXl6/ei
+         V6ISHj5/Vczlr3skQD+t5UI6Xm8+c9lbZaRAhd9w5OfJO1Vq8s3Fq4TSaDupyfxx7p8D
+         3oaw==
+X-Gm-Message-State: AOAM532Zjf0Cw8RTVqS6UzLENys4AJU/EnKT7eryxxw/Gj2/xJRN96BC
+        fq3FHMUY3H3XIaAI22HOVdPeBp+2WgObRA==
+X-Google-Smtp-Source: ABdhPJxXcS+4x0wyytkE3PLch+a4m01a032NJRYWQXW1udypdsIrsr8pQP1q8TmU/Kp3SKU5N7RBcg==
+X-Received: by 2002:a05:6a00:1a03:b029:1d3:1fa3:4a5d with SMTP id g3-20020a056a001a03b02901d31fa34a5dmr20812830pfv.1.1613501289912;
+        Tue, 16 Feb 2021 10:48:09 -0800 (PST)
 Received: from xps15 (S0106889e681aac74.cg.shawcable.net. [68.147.0.187])
-        by smtp.gmail.com with ESMTPSA id p15sm141979pja.21.2021.02.15.10.51.22
+        by smtp.gmail.com with ESMTPSA id 184sm13787173pgj.93.2021.02.16.10.48.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 Feb 2021 10:51:23 -0800 (PST)
-Date:   Mon, 15 Feb 2021 11:51:21 -0700
+        Tue, 16 Feb 2021 10:48:09 -0800 (PST)
+Date:   Tue, 16 Feb 2021 11:48:07 -0700
 From:   Mathieu Poirier <mathieu.poirier@linaro.org>
 To:     Ben Levinsky <ben.levinsky@xilinx.com>
 Cc:     devicetree@vger.kernel.org, linux-remoteproc@vger.kernel.org,
@@ -65,7 +65,7 @@ Cc:     devicetree@vger.kernel.org, linux-remoteproc@vger.kernel.org,
         michal.simek@xilinx.com
 Subject: Re: [PATCH v25 5/5] remoteproc: Add initial zynqmp R5 remoteproc
  driver
-Message-ID: <20210215185121.GA2771622@xps15>
+Message-ID: <20210216184807.GB2771622@xps15>
 References: <20210111020250.6846-1-ben.levinsky@xilinx.com>
  <20210111020250.6846-6-ben.levinsky@xilinx.com>
 MIME-Version: 1.0
@@ -75,11 +75,6 @@ In-Reply-To: <20210111020250.6846-6-ben.levinsky@xilinx.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
-
-Good day,
-
-I have started to review this set - as with previous revisions comments will
-come over several days.
 
 On Sun, Jan 10, 2021 at 06:02:50PM -0800, Ben Levinsky wrote:
 > R5 is included in Xilinx Zynq UltraScale MPSoC so by adding this
@@ -301,7 +296,15 @@ On Sun, Jan 10, 2021 at 06:02:50PM -0800, Ben Levinsky wrote:
 > +
 > +	iounmap(mem->va);
 > +	return zynqmp_pm_release_node(pnode_id);
+
+Is the opposite of that call zynqmp_pm_request_node()?  If so doing the power up
+and down of the TCM banks at driver probe() and remove() is highly inefficient.
+Consider using rproc_ops::prepare() and rproc_ops::unprepare().
+
 > +}
+
+Please move this just after tcm_mem_alloc()
+
 > +
 > +/*
 > + * zynqmp_r5_rproc_start
@@ -420,6 +423,9 @@ On Sun, Jan 10, 2021 at 06:02:50PM -0800, Ben Levinsky wrote:
 > +			 * device tree node name of length 15 characters, or
 > +			 * firmware mem, where name is not used by remoteproc
 > +			 *  core later on. So default to vring length of 15.
+
+s/"*  core"/"* core"
+
 > +			 *
 > +			 * Extra char for null-terminated string.
 > +			 */
@@ -446,6 +452,16 @@ On Sun, Jan 10, 2021 at 06:02:50PM -0800, Ben Levinsky wrote:
 > +				 */
 > +				vring_id = it.node->name[14] - '0';
 > +				snprintf(name, sizeof(name), "vdev0vring%d", vring_id);
+
+Function strstr() returns a pointer to the beginning of the string being
+searched for.  As such you should be able to do something like:
+
+                        name = strstr(it.node->name, "vdev0vring");
+                        if (name) {
+                                ...
+
+and simply use @name when calling rproc_mem_entry_init().
+
 > +			} else {
 > +				strncpy(name, it.node->name, 16);
 > +			}
@@ -601,6 +617,9 @@ On Sun, Jan 10, 2021 at 06:02:50PM -0800, Ben Levinsky wrote:
 > +					   rsc.name);
 > +		if (!mem) {
 > +			ret = zynqmp_pm_release_node(pnode_id);
+
+Where is @pnode_id initialised?
+
 > +			if (ret)
 > +				dev_warn(dev,
 > +					 "fail to release node: %x ret: %x\n",
@@ -609,6 +628,13 @@ On Sun, Jan 10, 2021 at 06:02:50PM -0800, Ben Levinsky wrote:
 > +		}
 > +
 > +		mem->priv = (void *)(u64)pnode_id;
+
+
+And here too - how does this work when you test things out on your side? 
+
+Please note that I will need a reply to these questions before I review another
+set.
+
 > +		rproc_add_carveout(rproc, mem);
 > +	}
 > +
@@ -697,6 +723,12 @@ On Sun, Jan 10, 2021 at 06:02:50PM -0800, Ben Levinsky wrote:
 > +	}
 > +}
 > +
+
+I am done reviewing this set.
+
+Thanks,
+Mathieu
+
 > +static struct rproc_ops zynqmp_r5_rproc_ops = {
 > +	.start		= zynqmp_r5_rproc_start,
 > +	.stop		= zynqmp_r5_rproc_stop,
@@ -708,14 +740,6 @@ On Sun, Jan 10, 2021 at 06:02:50PM -0800, Ben Levinsky wrote:
 > +	.kick		= zynqmp_r5_rproc_kick,
 > +};
 > +
-
-I have reviewed from the end of the file to here (see comments below) and aside
-from minor comments, things look good.  I will review from here to the top
-tomorrow.
-
-Thanks,
-Mathieu
-
 > +/**
 > + * event_notified_idr_cb() - event notified idr callback
 > + * @id: idr id
@@ -914,11 +938,6 @@ Mathieu
 > +	z_rproc = rproc_ptr->priv;
 > +	z_rproc->rproc = rproc_ptr;
 > +	z_rproc->dev = dev;
-
-Here z_rproc->dev is the same as z_rproc->rproc->dev->parent and as far as I can
-tell z_rproc->rproc is available where z_rproc->dev is used.  As such
-zynqmpq_r5_rproc::dev can likely be removed.
-
 > +
 > +	/* Set up DMA mask */
 > +	ret = dma_set_coherent_mask(dev, DMA_BIT_MASK(32));
@@ -1003,10 +1022,6 @@ zynqmpq_r5_rproc::dev can likely be removed.
 > +	if (ret) {
 > +		dev_err(dev, "devm_of_platform_populate failed, ret = %d\n",
 > +			ret);
-
-You can move the above "ret);" to the above line to avoid breaking it.  The 80
-character per line rule was relaxed for cases like these.
-
 > +		return ret;
 > +	}
 > +
@@ -1023,9 +1038,6 @@ character per line rule was relaxed for cases like these.
 > +		dev_dbg(dev, "%s to probe rpu %pOF\n",
 > +			ret ? "Failed" : "Able",
 > +			nc);
-
-Staking - "nc);" could easily be on the previous line.
-
 > +		if (IS_ERR(z_rproc)) {
 > +			ret = PTR_ERR(z_rproc);
 > +			goto out;
@@ -1041,9 +1053,6 @@ Staking - "nc);" could easily be on the previous line.
 > +	 *
 > +	 * in zynqmp_r5_probe z_rproc is set to null
 > +	 * and ret to non-zero value if error
-
-Not sure this comment applies anymore.
-
 > +	 */
 > +	list_for_each(pos, cluster) {
 > +		z_rproc = list_entry(pos, struct zynqmp_r5_rproc, elem);
@@ -1070,11 +1079,6 @@ Not sure this comment applies anymore.
 > +		z_rproc = list_entry(pos, struct zynqmp_r5_rproc, elem);
 > +		zynqmp_r5_cleanup_mbox(z_rproc);
 > +		list_del(pos);
-
-In zynqmp_r5_remoteproc_probe() the element is not removed.  It doesn't make a
-difference since the list isn't used for anything after this.  Regardless, pick
-a heuristic and stick with it.
-
 > +	}
 > +	return 0;
 > +}
