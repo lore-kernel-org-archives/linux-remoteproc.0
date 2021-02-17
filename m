@@ -2,49 +2,49 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC8BFC433DB
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 17 Feb 2021 13:32:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3967C433E6
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 17 Feb 2021 13:32:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B3DC964E5F
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 17 Feb 2021 13:32:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8283B64E4D
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 17 Feb 2021 13:32:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232996AbhBQNc0 (ORCPT
+        id S233076AbhBQNc3 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 17 Feb 2021 08:32:26 -0500
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:55894 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S233070AbhBQNbh (ORCPT
+        Wed, 17 Feb 2021 08:32:29 -0500
+Received: from mx07-00178001.pphosted.com ([185.132.182.106]:39314 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S233077AbhBQNbi (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 17 Feb 2021 08:31:37 -0500
-Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 11HDRRcP001276;
-        Wed, 17 Feb 2021 14:30:49 +0100
+        Wed, 17 Feb 2021 08:31:38 -0500
+Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 11HDQ2F0017925;
+        Wed, 17 Feb 2021 14:30:51 +0100
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=from : to : cc :
  subject : date : message-id : in-reply-to : references : mime-version :
  content-type; s=selector1;
- bh=FcW1J/setFwTwOH+VhdGFYbPkMfYg30KWwRW0YzViPA=;
- b=qWZTQbClAlnSPhjTjTdZTlkGkN+JsfLLO96J9mPfVADaeQ5ChTSpJ99AgSxXUl8/9kbK
- gAOeWw+Hldjtys4pCi2egSgiPsBFoliy/j70O3Y9zszF4zkdLGi7NIUOPfChJ3SUZ0E6
- DHXW7Xw0fv/jgedSVlhgB5jt9/qKTg3tQECDfofKaIYb5NjWK3XeqZp8K+konRFH5evU
- k8PksxHOHwLkszBJVWqA2fY75+v8dbefRi3S0lCT+ASs4CABelDUVAxQSx0LBU7/zMyh
- dSJt4+w6kX9ON3l3jBhvRPyK7A4JyNG3sP2NrQmgR+CA0C9wpdIR+ZxFfcqk+L/iiel9 ow== 
+ bh=M1W7lnH3WVTrEg/mRlrlwrtBldl3psNcbgfNxLcMeWc=;
+ b=5oEp4dFty/rj17KYD5JjY+d0TCSrz8NAo07al8jk7dsq+bmF+C6bNcFLl+lOS4CEcte3
+ +nOzPF0W8x9AcA0qd1z6MTD2ahMAqSbmCirH9BB5bBboDCMokeUlKLuE4+fMsqAzFrNc
+ Da0HfhTFwgLZ2G1sZuhy2VRMIoj0WmY0rd3axnCn3mZJkAV+UmjhmfmlhvyUwwF11n5q
+ ILU4JPpmYGWdb/DPj9vMdUZpDVfgpaK/FGIuhZNovBs1r4482pj3Ght9Ow4MbGoS8Yeg
+ LQnIFWI2ssv38kQWn8qvOYTD1GLQr2VxbuEuBxklFeqoFmP0Can0zLlfyeB12ayxSc1l dw== 
 Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 36p6hpq0n5-1
+        by mx07-00178001.pphosted.com with ESMTP id 36p706nnbp-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 17 Feb 2021 14:30:49 +0100
+        Wed, 17 Feb 2021 14:30:51 +0100
 Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id AB0B710002A;
-        Wed, 17 Feb 2021 14:30:48 +0100 (CET)
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id CF55710002A;
+        Wed, 17 Feb 2021 14:30:50 +0100 (CET)
 Received: from Webmail-eu.st.com (sfhdag2node3.st.com [10.75.127.6])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 9ECCB2370C9;
-        Wed, 17 Feb 2021 14:30:48 +0100 (CET)
-Received: from localhost (10.75.127.45) by SFHDAG2NODE3.st.com (10.75.127.6)
- with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 17 Feb 2021 14:30:48
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id C40E22370C9;
+        Wed, 17 Feb 2021 14:30:50 +0100 (CET)
+Received: from localhost (10.75.127.46) by SFHDAG2NODE3.st.com (10.75.127.6)
+ with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 17 Feb 2021 14:30:50
  +0100
 From:   Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
 To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
@@ -54,16 +54,16 @@ To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
 CC:     <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <linux-stm32@st-md-mailman.stormreply.com>,
         <linux-arm-msm@vger.kernel.org>, <arnaud.pouliquen@foss.st.com>
-Subject: [PATCH v4 02/16] rpmsg: move RPMSG_ADDR_ANY in user API
-Date:   Wed, 17 Feb 2021 14:28:51 +0100
-Message-ID: <20210217132905.1485-3-arnaud.pouliquen@foss.st.com>
+Subject: [PATCH v4 05/16] rpmsg: char: dissociate the control device from the rpmsg class
+Date:   Wed, 17 Feb 2021 14:28:54 +0100
+Message-ID: <20210217132905.1485-6-arnaud.pouliquen@foss.st.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20210217132905.1485-1-arnaud.pouliquen@foss.st.com>
 References: <20210217132905.1485-1-arnaud.pouliquen@foss.st.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-X-Originating-IP: [10.75.127.45]
-X-ClientProxiedBy: SFHDAG3NODE1.st.com (10.75.127.7) To SFHDAG2NODE3.st.com
+X-Originating-IP: [10.75.127.46]
+X-ClientProxiedBy: SFHDAG3NODE3.st.com (10.75.127.9) To SFHDAG2NODE3.st.com
  (10.75.127.6)
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.369,18.0.761
  definitions=2021-02-17_11:2021-02-16,2021-02-17 signatures=0
@@ -71,42 +71,29 @@ Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-As the RPMSG_ADDR_ANY is a valid src or dst address that can be set by
-user applications,  migrate its definition in user API.
+The RPMsg control device is a RPMsg device, it is already
+referenced in the RPMsg bus. There is only an interest to
+reference the ept char devices in the rpmsg class.
+This patch prepares the code split of the control and end point
+devices in two separate files.
 
 Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
 ---
- include/linux/rpmsg.h      | 3 +--
- include/uapi/linux/rpmsg.h | 2 ++
- 2 files changed, 3 insertions(+), 2 deletions(-)
+ drivers/rpmsg/rpmsg_char.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/include/linux/rpmsg.h b/include/linux/rpmsg.h
-index a5db828b2420..d97dcd049f18 100644
---- a/include/linux/rpmsg.h
-+++ b/include/linux/rpmsg.h
-@@ -18,8 +18,7 @@
- #include <linux/mutex.h>
- #include <linux/poll.h>
- #include <linux/rpmsg/byteorder.h>
--
--#define RPMSG_ADDR_ANY		0xFFFFFFFF
-+#include <uapi/linux/rpmsg.h>
+diff --git a/drivers/rpmsg/rpmsg_char.c b/drivers/rpmsg/rpmsg_char.c
+index 78a6d19fdf82..23e369a00531 100644
+--- a/drivers/rpmsg/rpmsg_char.c
++++ b/drivers/rpmsg/rpmsg_char.c
+@@ -485,7 +485,6 @@ static int rpmsg_chrdev_probe(struct rpmsg_device *rpdev)
+ 	dev = &ctrldev->dev;
+ 	device_initialize(dev);
+ 	dev->parent = &rpdev->dev;
+-	dev->class = rpmsg_class;
  
- struct rpmsg_device;
- struct rpmsg_endpoint;
-diff --git a/include/uapi/linux/rpmsg.h b/include/uapi/linux/rpmsg.h
-index e14c6dab4223..5e00748da319 100644
---- a/include/uapi/linux/rpmsg.h
-+++ b/include/uapi/linux/rpmsg.h
-@@ -9,6 +9,8 @@
- #include <linux/ioctl.h>
- #include <linux/types.h>
- 
-+#define RPMSG_ADDR_ANY		0xFFFFFFFF
-+
- /**
-  * struct rpmsg_endpoint_info - endpoint info representation
-  * @name: name of service
+ 	cdev_init(&ctrldev->cdev, &rpmsg_ctrldev_fops);
+ 	ctrldev->cdev.owner = THIS_MODULE;
 -- 
 2.17.1
 
