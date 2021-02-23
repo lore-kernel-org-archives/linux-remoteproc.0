@@ -5,67 +5,67 @@ X-Spam-Level:
 X-Spam-Status: No, score=-18.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD751C433E6
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 23 Feb 2021 23:46:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54096C433DB
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 23 Feb 2021 23:46:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8752264DAF
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 23 Feb 2021 23:46:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 27B6D64E00
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 23 Feb 2021 23:46:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230417AbhBWXp3 (ORCPT
+        id S231706AbhBWXps (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 23 Feb 2021 18:45:29 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35020 "EHLO
+        Tue, 23 Feb 2021 18:45:48 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34650 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233922AbhBWXma (ORCPT
+        with ESMTP id S233784AbhBWXkR (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 23 Feb 2021 18:42:30 -0500
-Received: from mail-pl1-x62f.google.com (mail-pl1-x62f.google.com [IPv6:2607:f8b0:4864:20::62f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CBB51C061A29
-        for <linux-remoteproc@vger.kernel.org>; Tue, 23 Feb 2021 15:35:33 -0800 (PST)
-Received: by mail-pl1-x62f.google.com with SMTP id e9so16366plh.3
-        for <linux-remoteproc@vger.kernel.org>; Tue, 23 Feb 2021 15:35:33 -0800 (PST)
+        Tue, 23 Feb 2021 18:40:17 -0500
+Received: from mail-pf1-x42a.google.com (mail-pf1-x42a.google.com [IPv6:2607:f8b0:4864:20::42a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 95A65C06121F
+        for <linux-remoteproc@vger.kernel.org>; Tue, 23 Feb 2021 15:35:26 -0800 (PST)
+Received: by mail-pf1-x42a.google.com with SMTP id b145so60279pfb.4
+        for <linux-remoteproc@vger.kernel.org>; Tue, 23 Feb 2021 15:35:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=9dNXLfIEwaBmyxdvGPLcXIZoYDoiye95/dFOxo0lMe4=;
-        b=FacrPQa+2h15QlpIr28yddn6IuvoguAmRAZYlTCp41sRk7VfSbFMMi2D9zF2VeoMVT
-         lvlrXDCraOoq8hw/Hd6ybksPaLxpOFGajiMU2ieGncuh6NybqdpyvHRRkwXU/UjOBGM+
-         TUQgRGVRW4k05wOMkgzVXIYlWss60zHMqwZvLSiwQsmkXhgVszeak0UuXk5E6Iw8z7Hd
-         wu1QmI7wa2PfmOxwH1qiYm/V8xlSYqdvXwvMgazNhLtLuLOwSiPZN3DdNyRAgga/VkdD
-         END38q1jtAVeC7pWOVX2IAEp9taTPnTKdHNiWUZ89mdX6PgHv+/nG5g/As1233+t08MD
-         YRBw==
+        bh=XYqKe5JHKTsf6qqgvmLT8SEOr6JSbsFQUrC6la75+Tk=;
+        b=MVV3vhm//Qy9ZrlCKMb16NdKTMroR2imuUkINcRxjjux/bl+uLuSLPbpRD1+1mGIZ2
+         /+sbA0DrgyiBvh1ce7jR11k4/prDQABZEu8ZLl3253su/2GxBM+oPNcmyeOpwTYRE+7z
+         +rEw6KT7cYrDATX1TD0OrKkoCUkaxwMFoCtsF8rAZqLVI00FRRM7Smxj+VDWVRSjMIV3
+         OThZC45qFdxVv2NFrY+eZC93qdE+bRPGGmbzveBgWmpKZ2ubGAN8sVI9cO3knHgUkDs5
+         DIp1kZYv0d42wEBFiWsihBdlBZHobFfXoZup1cI+LlhkMqK7Dncr90uKVhwBfkAxZDjG
+         Lq9Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=9dNXLfIEwaBmyxdvGPLcXIZoYDoiye95/dFOxo0lMe4=;
-        b=dzDVChQVGPYCI0Ym2INGEHtjAjTkar2U91MUDqwesGaWCeQwBUysIeKwJ7rOPSsVLc
-         FXHBXd12LXkzC46Ic9fhHKLbeDQR+AXWIkMr6SrGxAckHQkNSmEQ0FZodmZ7j7KYetu1
-         2D2HNPuEP3dZTK/OpltyoKCLFXL1DslLNLbllETAyxdnxnbwx98BbOAM9EsEb6H/d3jc
-         xpTQdUz9OY0fxwybpVs6woGVDBCC6ifDYe4H4nJdRx3Sa+x5zAxiRRe5n/oKWJXnz76J
-         EUCwkSg/1RbHKvATemCHXLMPWIAtYmZ6LnmLCq6qMzlkibZjEq4Z0/iUjdjAWlyVoFSy
-         rygQ==
-X-Gm-Message-State: AOAM5303jzrsjRujnKeBjuET5QJaIbITlOeEOjuF/INHgtY6fO4R/6Kl
-        m1hU1ORSJDH8AEQdRhSiRDC5Uw==
-X-Google-Smtp-Source: ABdhPJzDAGh6wh3Npt8Bm/YQ7HhxIWxiSdzM/fQpCszCDx97I+KOxtsQXnMjbwrn7gO/M6IugUvOzA==
-X-Received: by 2002:a17:90a:4a0a:: with SMTP id e10mr1161914pjh.112.1614123333381;
-        Tue, 23 Feb 2021 15:35:33 -0800 (PST)
+        bh=XYqKe5JHKTsf6qqgvmLT8SEOr6JSbsFQUrC6la75+Tk=;
+        b=dv0X9cqUxtFaY8YqBmuXR94L5NP1bTj/yOxG0HCb+kOEHI/JxgTx8780II0rvodaOb
+         iyZ7wfeKeZRLctqo7V0d+UBOcUQjhGFrgPbbrSBGUbTZNSZzGFzaeJGQo+7xPcSjdB9Q
+         eMIU4UnMm9QZCw2xlae5p3MBs4B7c+WaWxCdHQMCOdPvDQ/wknGowbPTP8mQHylhoQAG
+         /zY0ZjfeALgHBe8jdBL+4YoSUfD+ATErYLLzv0kIHLJne3md9Yao7/0TpknN5kDbbmMT
+         NSc2To4P2QA5bP0i5rO8pOlOUXMLyeplkQbex0oBIQSagF4U2W2vwHkhV4u1s2VZvVdb
+         V8Wg==
+X-Gm-Message-State: AOAM5334iHRmLSEgOjXIQ5bv5Av5X3ITOBRGUxkKkmJFnuZ+nVuPHuux
+        EZrChu7+hUboU/O2LJnXupKvzA==
+X-Google-Smtp-Source: ABdhPJznFf7DZqYNrPiOXAMW7oDr5knTQMa3p2jpXOrDYXjPzd9l0Vi8c8/FZ3GcjCq+M+pXBqRevg==
+X-Received: by 2002:a63:fc1c:: with SMTP id j28mr26149581pgi.281.1614123326234;
+        Tue, 23 Feb 2021 15:35:26 -0800 (PST)
 Received: from xps15.cg.shawcable.net (S0106889e681aac74.cg.shawcable.net. [68.147.0.187])
-        by smtp.gmail.com with ESMTPSA id c24sm311999pfd.11.2021.02.23.15.35.32
+        by smtp.gmail.com with ESMTPSA id c24sm311999pfd.11.2021.02.23.15.35.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 23 Feb 2021 15:35:33 -0800 (PST)
+        Tue, 23 Feb 2021 15:35:25 -0800 (PST)
 From:   Mathieu Poirier <mathieu.poirier@linaro.org>
 To:     ohad@wizery.com, bjorn.andersson@linaro.org,
         arnaud.pouliquen@st.com
 Cc:     mcoquelin.stm32@gmail.com, alexandre.torgue@st.com,
         linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v6 16/16] remoteproc: Refactor rproc delete and cdev release path
-Date:   Tue, 23 Feb 2021 16:35:15 -0700
-Message-Id: <20210223233515.3468677-17-mathieu.poirier@linaro.org>
+Subject: [PATCH v6 08/16] remoteproc: Add new detach() remoteproc operation
+Date:   Tue, 23 Feb 2021 16:35:07 -0700
+Message-Id: <20210223233515.3468677-9-mathieu.poirier@linaro.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20210223233515.3468677-1-mathieu.poirier@linaro.org>
 References: <20210223233515.3468677-1-mathieu.poirier@linaro.org>
@@ -75,79 +75,38 @@ Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Refactor function rproc_del() and rproc_cdev_release() to take
-into account the current state of the remote processor when choosing
-the state to transition to.
+Add an new detach() operation in order to support scenarios where
+the remoteproc core is going away but the remote processor is
+kept operating.  This could be the case when the system is
+rebooted or when the platform driver is removed.
 
 Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+Reviewed-by: Peng Fan <peng.fan@nxp.com>
+Reviewed-by: Arnaud Pouliquen <arnaud.pouliquen@st.com>
 ---
-New for V6:
-- The RPROC_RUNNING -> RPROC_DETACHED transition is no longer permitted.
-  to avoid dealing with complex resource table management problems.
-- Transition to the next state is no longer dictated by a DT binding for
-  the same reason as above.
-- Removed Peng and Arnaud's RB tags because of the above.
----
+ include/linux/remoteproc.h | 2 ++
+ 1 file changed, 2 insertions(+)
 
- drivers/remoteproc/remoteproc_cdev.c | 10 ++++++++--
- drivers/remoteproc/remoteproc_core.c |  9 +++++++--
- 2 files changed, 15 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/remoteproc/remoteproc_cdev.c b/drivers/remoteproc/remoteproc_cdev.c
-index 2db494816d5f..0b8a84c04f76 100644
---- a/drivers/remoteproc/remoteproc_cdev.c
-+++ b/drivers/remoteproc/remoteproc_cdev.c
-@@ -86,11 +86,17 @@ static long rproc_device_ioctl(struct file *filp, unsigned int ioctl, unsigned l
- static int rproc_cdev_release(struct inode *inode, struct file *filp)
- {
- 	struct rproc *rproc = container_of(inode->i_cdev, struct rproc, cdev);
-+	int ret = 0;
-+
-+	if (!rproc->cdev_put_on_release)
-+		return 0;
- 
--	if (rproc->cdev_put_on_release && rproc->state == RPROC_RUNNING)
-+	if (rproc->state == RPROC_RUNNING)
- 		rproc_shutdown(rproc);
-+	else if (rproc->state == RPROC_ATTACHED)
-+		ret = rproc_detach(rproc);
- 
--	return 0;
-+	return ret;
- }
- 
- static const struct file_operations rproc_fops = {
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index 00452da25fba..a05d5fec43b1 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -2542,11 +2542,16 @@ EXPORT_SYMBOL(rproc_put);
-  */
- int rproc_del(struct rproc *rproc)
- {
-+	int ret = 0;
-+
- 	if (!rproc)
- 		return -EINVAL;
- 
- 	/* TODO: make sure this works with rproc->power > 1 */
--	rproc_shutdown(rproc);
-+	if (rproc->state == RPROC_RUNNING)
-+		rproc_shutdown(rproc);
-+	else if (rproc->state == RPROC_ATTACHED)
-+		ret = rproc_detach(rproc);
- 
- 	mutex_lock(&rproc->lock);
- 	rproc->state = RPROC_DELETED;
-@@ -2565,7 +2570,7 @@ int rproc_del(struct rproc *rproc)
- 
- 	device_del(&rproc->dev);
- 
--	return 0;
-+	return ret;
- }
- EXPORT_SYMBOL(rproc_del);
- 
+diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+index 51538a7d120d..eff55ec72e80 100644
+--- a/include/linux/remoteproc.h
++++ b/include/linux/remoteproc.h
+@@ -361,6 +361,7 @@ enum rsc_handling_status {
+  * @start:	power on the device and boot it
+  * @stop:	power off the device
+  * @attach:	attach to a device that his already powered up
++ * @detach:	detach from a device, leaving it powered up
+  * @kick:	kick a virtqueue (virtqueue id given as a parameter)
+  * @da_to_va:	optional platform hook to perform address translations
+  * @parse_fw:	parse firmware to extract information (e.g. resource table)
+@@ -385,6 +386,7 @@ struct rproc_ops {
+ 	int (*start)(struct rproc *rproc);
+ 	int (*stop)(struct rproc *rproc);
+ 	int (*attach)(struct rproc *rproc);
++	int (*detach)(struct rproc *rproc);
+ 	void (*kick)(struct rproc *rproc, int vqid);
+ 	void * (*da_to_va)(struct rproc *rproc, u64 da, size_t len);
+ 	int (*parse_fw)(struct rproc *rproc, const struct firmware *fw);
 -- 
 2.25.1
 
