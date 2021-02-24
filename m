@@ -5,65 +5,65 @@ X-Spam-Level:
 X-Spam-Status: No, score=-23.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
 	INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 949D5C433DB
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7591C433E6
 	for <linux-remoteproc@archiver.kernel.org>; Wed, 24 Feb 2021 19:18:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4545264E90
+	by mail.kernel.org (Postfix) with ESMTP id 9AD1E64ECB
 	for <linux-remoteproc@archiver.kernel.org>; Wed, 24 Feb 2021 19:18:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234227AbhBXTR6 (ORCPT
+        id S236075AbhBXTSK (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 24 Feb 2021 14:17:58 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32840 "EHLO
+        Wed, 24 Feb 2021 14:18:10 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32878 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233169AbhBXTR5 (ORCPT
+        with ESMTP id S236074AbhBXTSF (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 24 Feb 2021 14:17:57 -0500
-Received: from mail-oi1-x22f.google.com (mail-oi1-x22f.google.com [IPv6:2607:f8b0:4864:20::22f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E1634C061574
-        for <linux-remoteproc@vger.kernel.org>; Wed, 24 Feb 2021 11:17:16 -0800 (PST)
-Received: by mail-oi1-x22f.google.com with SMTP id x20so3506383oie.11
-        for <linux-remoteproc@vger.kernel.org>; Wed, 24 Feb 2021 11:17:16 -0800 (PST)
+        Wed, 24 Feb 2021 14:18:05 -0500
+Received: from mail-oi1-x22d.google.com (mail-oi1-x22d.google.com [IPv6:2607:f8b0:4864:20::22d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A1BABC061788
+        for <linux-remoteproc@vger.kernel.org>; Wed, 24 Feb 2021 11:17:25 -0800 (PST)
+Received: by mail-oi1-x22d.google.com with SMTP id f3so3492307oiw.13
+        for <linux-remoteproc@vger.kernel.org>; Wed, 24 Feb 2021 11:17:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=unIZiqjM81E4aLspX0eOoY8QoqZ7VwmVk3MtveJp+mg=;
-        b=nL23m0TleeM/iM/xtqYq0/NWoaaa17YrmxKHOMGRs7rIR/C8gLsbXetmaw9ffktvIt
-         lZ+4uxlhzQNGDWE4Z9q7GfYoxsil6VtFWya3+Xxb0zXzx63vBmfF64a40g7mvvvh0VKg
-         F8Y/4Tn4NaZJbJQhuE7oBhdOTHbo74QEBLny7bWSxD1OQaK0Td3uCDwG/Nqe2AikdMLU
-         2vDg5wX/i/DbhDANXUpX6Us5ZaddfeCl25gIIOqtNyIAisOT9c2eV6U79xRslmfJyA/l
-         WKomgElkTOVk4tldrbRs54Hi2+Qxy2EqhkDWeNBv7sKgKXAoWxbaFb9WXsBnLJlPnnsU
-         3y0g==
+        bh=I8Pi+N3izjvLgN9WH2B+20tIF94LSgSHMSIUFc4Ty8w=;
+        b=SARxZf6g0HBHC74fcmKG4XIyoQrIdJHeIzfJS4Uu0lrB+H2fG4v/3UQfSF4MmXXRSF
+         Cid7wLKki5Y+qVLMyZQTvB7a04R2PP9huqmtzYQwX04XdbgZ3sMXU2y82pkb3hxBtGW1
+         xvRoh6IxMJFhI4K44E9joQLN1kGoDREF2KUZjPekCVKCl0WKZvjeHcWfu/1n9J/If3+s
+         u67/kBxLg0gEm2aBmfRQSIbuDIlSfxvFm0aGfDnPPxQ3GZPZRVdaLQ4WxrlYTPsQET5k
+         lAqK9aeQ1DBjs0SlD6OH9dhncGs4RnkNsBw4I1M04v+uqgJjnkZ9CKPrzGJDdIRlMVTy
+         HisA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=unIZiqjM81E4aLspX0eOoY8QoqZ7VwmVk3MtveJp+mg=;
-        b=r8T8GO14yGm2wFLJBrZEqyP7zbSrzN7HpsCDJ5eb3VLGY5wQWNE0UaE1GVai7mKBQE
-         DbSYh0qIH7v/F6ftiZ68BvPjtzXVNpyumLuhNdRokmaYKH3yQaDHWTetPxsrZW6YUdRp
-         bg+Mzm/U77KXLSj6F4pPpkdDcQiaVPMZQWVOHpFYd8E9Sdlk+34At0/og3VzWI0T4+ON
-         76XUg5jUZkcbgMFJJdmh5edkqsdVe5PwCwQO7V1kxKlnteLLN/jxGqzfRzlcl8gpNQFb
-         BFQH5arASNbPvwVdhLK5egWd85AjWibiOiZs6Ds6Vrgpff37zQDGm4QEQZUp0vEA7hRI
-         xwZw==
-X-Gm-Message-State: AOAM532Wj4aYFRz0IVrVAG8+ZRhGxdPLs7bxQwjKyIly6Fxr1bX12Hkz
-        w6qixoCgXmUNVpWWRpkKV7/N5A==
-X-Google-Smtp-Source: ABdhPJzs6hLGUPlk0Z1vQAiKOTASOCCNBdU7+ld0kU+Z2GKmp8poC2bIj0MnksBVaAFnxsaYwEXIdA==
-X-Received: by 2002:a05:6808:140e:: with SMTP id w14mr3745185oiv.176.1614194236327;
-        Wed, 24 Feb 2021 11:17:16 -0800 (PST)
+        bh=I8Pi+N3izjvLgN9WH2B+20tIF94LSgSHMSIUFc4Ty8w=;
+        b=NzZwrxHhNLJv6leDMiHSpX+mYL/40qd8/iXEPG96DwrE7rbA3GUJO3AndLYpHkRn8i
+         Xecz5yiO4bW9z1HEbEujLJKQsCnnRviHgAIEHou8x6wFnAgsobrDp7DJqtuN5yAJGG8I
+         lhGqy0bU96xPEPIBwEYXckTZguehKu+SNHzZ+VX0XNz/a/w39qBAGNGO2CxiXvfK9MjF
+         lfRJtswEdkDoswqQc7mRZMEL3G7H/hls90QtxcSZQgAooIqrWhbNi+jMcTsmEgEoeQx0
+         1mnqIZlOW5SliRkKkUN6W9GY7NQfq2l3ehGEj3Kztm5Upf3x+huyPqslHO/Ogvfm3tEx
+         2Shg==
+X-Gm-Message-State: AOAM5330TQb8k1W4ozo60IFilSPuZW6S3o7t3vfUT9xUWeVoVVfo9vdx
+        7MqbiE4Qe7TDKZ8Wp440Ph+SHw==
+X-Google-Smtp-Source: ABdhPJxXMwpDIdouaiwB6M5ABCQNrEngwDXUvkUo+X1fy9IfVUb7bPHGFeWnkdBzdQrygyBntDwzrA==
+X-Received: by 2002:aca:b286:: with SMTP id b128mr3751243oif.126.1614194245064;
+        Wed, 24 Feb 2021 11:17:25 -0800 (PST)
 Received: from builder.lan (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
-        by smtp.gmail.com with ESMTPSA id b14sm551501ooj.26.2021.02.24.11.17.15
+        by smtp.gmail.com with ESMTPSA id h2sm575793otn.43.2021.02.24.11.17.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 24 Feb 2021 11:17:16 -0800 (PST)
+        Wed, 24 Feb 2021 11:17:24 -0800 (PST)
 From:   Bjorn Andersson <bjorn.andersson@linaro.org>
 To:     Linus Torvalds <torvalds@linux-foundation.org>
 Cc:     Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Suman Anna <s-anna@ti.com>
-Subject: [GIT PULL] hwspinlock updated for v5.12
-Date:   Wed, 24 Feb 2021 13:17:15 -0600
-Message-Id: <20210224191715.192575-1-bjorn.andersson@linaro.org>
+        linux-kernel@vger.kernel.org, Alex Elder <elder@linaro.org>
+Subject: [GIT PULL] rpmsg updates for v5.12
+Date:   Wed, 24 Feb 2021 13:17:23 -0600
+Message-Id: <20210224191723.192631-1-bjorn.andersson@linaro.org>
 X-Mailer: git-send-email 2.30.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -77,22 +77,26 @@ The following changes since commit 5c8fe583cce542aa0b84adc939ce85293de36e5e:
 
 are available in the Git repository at:
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/andersson/remoteproc.git tags/hwlock-v5.12
+  https://git.kernel.org/pub/scm/linux/kernel/git/andersson/remoteproc.git tags/rpmsg-v5.12
 
-for you to fetch changes up to b9ddb2500e7e544410f38476ab928fc2fe01e381:
+for you to fetch changes up to 3e35772bc1e42287c8f4c70055deb5e3f5a3e8b5:
 
-  hwspinlock: omap: Add support for K3 AM64x SoCs (2021-02-09 11:36:50 -0600)
-
-----------------------------------------------------------------
-hwspinlock updated for v5.12
-
-This adds support for the hardware spinlock in the TI K3 AM64x SoC.
+  rpmsg: glink: add include of header file (2021-01-05 22:22:40 -0600)
 
 ----------------------------------------------------------------
-Suman Anna (2):
-      dt-bindings: hwlock: Update OMAP HwSpinlock binding for AM64x SoCs
-      hwspinlock: omap: Add support for K3 AM64x SoCs
+rpmsg updates for v5.12
 
- Documentation/devicetree/bindings/hwlock/ti,omap-hwspinlock.yaml | 1 +
- drivers/hwspinlock/omap_hwspinlock.c                             | 4 +++-
- 2 files changed, 4 insertions(+), 1 deletion(-)
+This fixes two build issues in the GLINK driver and corrects some
+kerneldoc in the same.
+
+----------------------------------------------------------------
+Alex Elder (2):
+      rpmsg: glink: fix some kerneldoc comments
+      rpmsg: glink: add include of header file
+
+Bjorn Andersson (1):
+      rpmsg: glink: Guard qcom_glink_ssr_notify() with correct config
+
+ drivers/rpmsg/qcom_glink_ssr.c   | 17 +++++++++--------
+ include/linux/rpmsg/qcom_glink.h |  8 ++++++--
+ 2 files changed, 15 insertions(+), 10 deletions(-)
