@@ -2,148 +2,66 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-23.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 908B1C433E0
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 24 Feb 2021 19:18:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C19AC433DB
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 24 Feb 2021 19:38:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 45B8764E90
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 24 Feb 2021 19:18:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B7A2664EC4
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 24 Feb 2021 19:38:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236097AbhBXTSP (ORCPT
+        id S234622AbhBXTi2 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 24 Feb 2021 14:18:15 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32912 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234002AbhBXTSP (ORCPT
-        <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 24 Feb 2021 14:18:15 -0500
-Received: from mail-ot1-x332.google.com (mail-ot1-x332.google.com [IPv6:2607:f8b0:4864:20::332])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D15ACC06178A
-        for <linux-remoteproc@vger.kernel.org>; Wed, 24 Feb 2021 11:17:34 -0800 (PST)
-Received: by mail-ot1-x332.google.com with SMTP id b16so3293396otq.1
-        for <linux-remoteproc@vger.kernel.org>; Wed, 24 Feb 2021 11:17:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=nB6G31ifHs1XRqYmtnHDEje7sHPajlmEoehYS5A3DUc=;
-        b=VZOx7qUR+7mJXqJ9iqn6paTOVJxuWYZc0sdvlthC4ugg5fZ0nAT2WWqSGeEzVkbjVk
-         65HrpZVjIhUuwAYReB+iN7NdX53zBhBW50vRqlZNFO6kHsdUmNZbEgR5g27S9LLgK5yK
-         D9E7bb6k/X8AynTPcRS+HMYwjmxhjo/5uF7IYE9q9SKcLfDBFqaj7/tVd9i1qvsT7S+s
-         P0SAVbZTSfDw7nDTHTBot1dfwQiZDFnesiGnTMEGr0ZfN1Kfl5zJwd3nlUkNgi27QbHu
-         HOsP/yLV1O7PoAkunpBddf2Z6BWB9/8tjZq3nSQpY+5ClJ2YwSUYozuuHl+J90I1JAf5
-         +uUA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=nB6G31ifHs1XRqYmtnHDEje7sHPajlmEoehYS5A3DUc=;
-        b=EG/j1aokKZI/WcvTCy+WM2Yxht+x25ayzfW3w0E5Up+BsttnnvRGKTm+BnQNlwKEHH
-         x3LFbrOfwpA3xKdQTeVUah2Jv6+Fx8GJQ05rCqS8Od8FGw3sGUybKZ8oS2bk6KDyd9eL
-         mr4LiYojtOUpbfhrRFjTvSqcJLM/dgNDDjuhd/cad4K8f7eUzx+Lts0oNwUoY8Bs4jRP
-         0FSUKrTDxGCWs9oIQwxL5AwGNgIxfdHf7dvAV7A9f3gRszlaSzD0Ou1aXWpyQuec+1wv
-         ov5/9YnA8szUhzhfZAdUqfRmNF6c0Me/hkuiOTwLYwtTd6xl32mcn8asBZUwU+zLOhUn
-         rCbg==
-X-Gm-Message-State: AOAM532agCcxr2Q+dYuPNCKQco+bPFru9jqmYedgeS/0q1ioSc61wdMS
-        7uT9/OYzBIup/FLT7YAFdO4feA==
-X-Google-Smtp-Source: ABdhPJxPMUQBuUeHbRa1hG6opY8bKdFANOOrneclwF3w8TQpazZD8r47t2+LLG86KBoAGoZU0Nsc8g==
-X-Received: by 2002:a9d:65c2:: with SMTP id z2mr26217258oth.288.1614194254274;
-        Wed, 24 Feb 2021 11:17:34 -0800 (PST)
-Received: from builder.lan (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
-        by smtp.gmail.com with ESMTPSA id k21sm559297ood.13.2021.02.24.11.17.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 24 Feb 2021 11:17:33 -0800 (PST)
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Tzung-Bi Shih <tzungbi@google.com>,
-        Stephan Gerhold <stephan@gerhold.net>,
-        Vinod Koul <vkoul@kernel.org>,
-        Arnaud Pouliquen <arnaud.pouliquen@foss-st.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Daniele Alessandrelli <daniele.alessandrelli@intel.com>,
-        Paul Cercueil <paul@crapouillou.net>,
-        Shawn Guo <shawn.guo@linaro.org>,
-        Yang Li <yang.lee@linux.alibaba.com>
-Subject: [GIT PULL] remoteproc updates for v5.12
-Date:   Wed, 24 Feb 2021 13:17:32 -0600
-Message-Id: <20210224191732.192685-1-bjorn.andersson@linaro.org>
-X-Mailer: git-send-email 2.30.0
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Wed, 24 Feb 2021 14:38:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48762 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S234317AbhBXTi2 (ORCPT <rfc822;linux-remoteproc@vger.kernel.org>);
+        Wed, 24 Feb 2021 14:38:28 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPS id B5C2164EC4;
+        Wed, 24 Feb 2021 19:37:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1614195467;
+        bh=yTmI1SK9IK07/gVZ0SM0XXsyNEz5IRximdjuO4rObQ8=;
+        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+        b=NPiOVjN5nJMq1k13QXpBYgU4cbqlK9fkFen8EvEStdABRIDPLCAUxhTO0PmgPIzGa
+         3MlFHDBTy7/4uspELtuo089lhmXdpNW/nV0ntZuPoXVDG3Wer3sn27V9YEaTTOJgst
+         V/x0uymjOfYNOW6rY3cYNcPu9RnWnrpW6dLUPnut+tb6+cwwNHo9WBvJawGIbYuTv6
+         vT8tketrd31tgloIHoyFjGYr1q7Q6tVQtRbTbf6aYlqrk+AJbYW99wtqd2VSOwnnTn
+         1UH70W/07QDEF1Yv03+UbkHls5DRwmchvtzE6so+IB6h816HMRqHZVmQXPzM6vKDOE
+         sGV4DvmdSHU/A==
+Subject: Re: [GIT PULL] hwspinlock updated for v5.12
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <20210224191715.192575-1-bjorn.andersson@linaro.org>
+References: <20210224191715.192575-1-bjorn.andersson@linaro.org>
+X-PR-Tracked-List-Id: <linux-remoteproc.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20210224191715.192575-1-bjorn.andersson@linaro.org>
+X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/andersson/remoteproc.git tags/hwlock-v5.12
+X-PR-Tracked-Commit-Id: b9ddb2500e7e544410f38476ab928fc2fe01e381
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 890caa39a95933f6af3ed395f2a8a3db1fb0a85d
+Message-Id: <161419546760.19197.13115632649140626529.pr-tracker-bot@kernel.org>
+Date:   Wed, 24 Feb 2021 19:37:47 +0000
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Ohad Ben-Cohen <ohad@wizery.com>,
+        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Suman Anna <s-anna@ti.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-The following changes since commit 5c8fe583cce542aa0b84adc939ce85293de36e5e:
+The pull request you sent on Wed, 24 Feb 2021 13:17:15 -0600:
 
-  Linux 5.11-rc1 (2020-12-27 15:30:22 -0800)
+> https://git.kernel.org/pub/scm/linux/kernel/git/andersson/remoteproc.git tags/hwlock-v5.12
 
-are available in the Git repository at:
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/890caa39a95933f6af3ed395f2a8a3db1fb0a85d
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/andersson/remoteproc.git tags/rproc-v5.12
+Thank you!
 
-for you to fetch changes up to e8b4e9a21af77b65ea68bd698acf4abe04afd051:
-
-  remoteproc: qcom: pas: Add SM8350 PAS remoteprocs (2021-02-11 12:52:18 -0600)
-
-----------------------------------------------------------------
-remoteproc updates for v5.12
-
-This adds remoteproc support for the audio, compute, sensor and modem
-remoteprocs on the Qualcomm SM8350 platform, it adds Qualcomm WCN3660b
-support, Mediatek MT8192 SCP driver support for MPU and L1TCM memory,
-STM32 driver adopts dev_err_probe() and the Qualcomm Kconfig
-help texts are revamped.
-
-----------------------------------------------------------------
-Arnaud Pouliquen (1):
-      remoteproc: stm32: improve debug using dev_err_probe
-
-Arnd Bergmann (1):
-      remoteproc: qcom: fix glink dependencies
-
-Daniele Alessandrelli (1):
-      remoteproc: core: Fix rproc->firmware free in rproc_set_firmware()
-
-Paul Cercueil (1):
-      remoteproc: ingenic: Add module parameter 'auto_boot'
-
-Shawn Guo (1):
-      remoteproc: qcom: add more help text qcom options
-
-Stephan Gerhold (2):
-      dt-bindings: remoteproc: qcom,wcnss: Add qcom,wcn3660b compatible
-      remoteproc: qcom_wcnss: Add qcom,wcn3660b compatible
-
-Tzung-Bi Shih (5):
-      remoteproc/mediatek: acknowledge watchdog IRQ after handled
-      remoteproc/mediatek: use devm_platform_ioremap_resource_byname
-      remoteproc/mediatek: enable MPU for all memory regions in MT8192 SCP
-      dt-bindings: remoteproc: mediatek: add L1TCM memory region
-      remoteproc/mediatek: support L1TCM
-
-Vinod Koul (2):
-      dt-bindings: remoteproc: qcom: pas: Add SM8350 remoteprocs
-      remoteproc: qcom: pas: Add SM8350 PAS remoteprocs
-
-Yang Li (1):
-      remoteproc: qcom_wcnss: remove unneeded semicolon
-
- .../devicetree/bindings/remoteproc/mtk,scp.txt     |  8 +--
- .../devicetree/bindings/remoteproc/qcom,adsp.txt   | 12 ++++
- .../bindings/remoteproc/qcom,wcnss-pil.txt         |  1 +
- drivers/remoteproc/Kconfig                         | 25 +++++--
- drivers/remoteproc/ingenic_rproc.c                 |  7 ++
- drivers/remoteproc/mtk_common.h                    |  7 ++
- drivers/remoteproc/mtk_scp.c                       | 82 ++++++++++++++++++----
- drivers/remoteproc/qcom_q6v5_pas.c                 | 63 +++++++++++++++++
- drivers/remoteproc/qcom_wcnss.c                    |  2 +-
- drivers/remoteproc/qcom_wcnss_iris.c               |  1 +
- drivers/remoteproc/remoteproc_core.c               |  2 +-
- drivers/remoteproc/stm32_rproc.c                   | 23 +++---
- 12 files changed, 198 insertions(+), 35 deletions(-)
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
