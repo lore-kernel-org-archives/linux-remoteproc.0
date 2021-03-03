@@ -2,212 +2,281 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-17.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2317FC433E6
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  4 Mar 2021 00:50:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D630FC433DB
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  4 Mar 2021 00:50:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F0F4B64F9A
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  4 Mar 2021 00:50:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B8D7664FA5
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  4 Mar 2021 00:50:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233337AbhCDAuG (ORCPT
+        id S232083AbhCDAty (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 3 Mar 2021 19:50:06 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33036 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1382968AbhCCSoa (ORCPT
+        Wed, 3 Mar 2021 19:49:54 -0500
+Received: from mx07-00178001.pphosted.com ([185.132.182.106]:47334 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S241960AbhCCNZu (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 3 Mar 2021 13:44:30 -0500
-Received: from mail-pl1-x630.google.com (mail-pl1-x630.google.com [IPv6:2607:f8b0:4864:20::630])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E8B5FC06175F
-        for <linux-remoteproc@vger.kernel.org>; Wed,  3 Mar 2021 10:43:48 -0800 (PST)
-Received: by mail-pl1-x630.google.com with SMTP id s16so14532392plr.9
-        for <linux-remoteproc@vger.kernel.org>; Wed, 03 Mar 2021 10:43:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=gVzR7oLstl6ac4ZTkA4CIGL1WR32C+kvWFg+bT72InI=;
-        b=Kdp0z6TouC9vsp6Gaa4T0X4l/lsXsHfBSgHsbjgBgBPnZs72XvLOn3wMnlX2wWvV+U
-         zAMijtl3Db+skGKokSbjFctHPeDghD+JPckIzTRM+Fx2LFOFfIymQelQrxwLgZlOYD4j
-         YO2yBXWtCdBIUxFcBE1BbMM/MVUOP60rUwUdqaOe9MTiaIxQZBVKN3o3iJyV5pEm3h1U
-         pz+M9M2KJbAiQoZiDGGSSqkcchEre8O5f/3u2SuaFDxXZBbBV4J74E4O05bgZTa54tad
-         9oD8BVbYvPaWNc7HCsQkWiYbEST7gerlhWe9ONUT1GMXJcWy7IjXVQfVNn3IHTPjp0rS
-         lpjw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=gVzR7oLstl6ac4ZTkA4CIGL1WR32C+kvWFg+bT72InI=;
-        b=n3O7WXEz92IUAjKpsY9wisY7jBh8mfHHJeImpuC6L7+g9pru+r9daVWdSzFCFvrews
-         WkItOPwcOtkJD/sPCm4PwmeziksBs1/pMXVp2y7FP0pCTasDR1LuIK23dR3Z8TUdZ7c2
-         uLlgceQ8Kl0chfhcYZif/8ktqAEPD25k7XhcUERCD6eK2wz0y+ZAC6I9LvXI28UwYKwK
-         NHuYcQa47Dz5AoVUCDBg1F80e9mt4CgtIKYXZeAMQyrnTlvD2I5xZ6bUm/0FqONzORqK
-         mxx/mT0h5rZx4b9DmtHIoIoJqJsLpfCuUCX8mS69aaCussJHnxVUyZIWvEJA8ppyadBW
-         WkLA==
-X-Gm-Message-State: AOAM533muABlkqPPHMHVd+v4YsxMm/Pxeo5khVBHGa61FfYvFZnZUvQD
-        sP5kV2ErOGcNnvqZc29t1WFH2Q==
-X-Google-Smtp-Source: ABdhPJyaZX7NAFW2wCjv1k35xfC/hJogQ35MtOZEOH1TxdzZzw44BBaFYPLSKZlYUZq4CWNEHQPUwQ==
-X-Received: by 2002:a17:90a:4882:: with SMTP id b2mr474911pjh.69.1614797028306;
-        Wed, 03 Mar 2021 10:43:48 -0800 (PST)
-Received: from xps15 (S0106889e681aac74.cg.shawcable.net. [68.147.0.187])
-        by smtp.gmail.com with ESMTPSA id v126sm23944372pfv.163.2021.03.03.10.43.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 03 Mar 2021 10:43:47 -0800 (PST)
-Date:   Wed, 3 Mar 2021 11:43:45 -0700
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-To:     Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Wed, 3 Mar 2021 08:25:50 -0500
+Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 123DL0Ep003994;
+        Wed, 3 Mar 2021 14:22:39 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=selector1;
+ bh=iWcMqaioAbOcEOUYc2PgX4sjLWX0rmRYYIEX6Aexrls=;
+ b=7mMxG78oxY9mNZQEcSHcjvnffXSccMz7nMDgWejxe1zgpIdl4axXFV0pH4dKSOuYi02F
+ Hg9q5zXQuZfPVEBx1Ultdruu3DV3GyYXF4kOXzXt2HXOBxHjDdIMuU+hZU43bVqHOZXU
+ qDUhXYjCyTMq15Z94noWyt1GP+SxL2Gw0Ogzhhd4giwM2GT9zBNEdbg7GX5OP9n0DiWZ
+ +7t/M3ZtmRFTWjIkeINY8va0AW6bbmDLhJc2lWtp5/pU0G350DDnyJU0HWQ1J/FLY0Wt
+ rbvDUUeZ3TiKqUgimjKZ6MmtZUjK3KMZ6ioBkjoN5C8k7wQBe3SQ4WjrJegKj1+ms25a +w== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 370xehwtgp-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 03 Mar 2021 14:22:39 +0100
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 6E81010002A;
+        Wed,  3 Mar 2021 14:22:38 +0100 (CET)
+Received: from Webmail-eu.st.com (sfhdag2node3.st.com [10.75.127.6])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 52E0D246CF5;
+        Wed,  3 Mar 2021 14:22:38 +0100 (CET)
+Received: from lmecxl0889.lme.st.com (10.75.127.47) by SFHDAG2NODE3.st.com
+ (10.75.127.6) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 3 Mar
+ 2021 14:22:37 +0100
+Subject: Re: [PATCH v5 04/16] rpmsg: char: export eptdev create an destroy
+ functions
+To:     Mathieu Poirier <mathieu.poirier@linaro.org>
+CC:     Bjorn Andersson <bjorn.andersson@linaro.org>,
         Ohad Ben-Cohen <ohad@wizery.com>,
         Andy Gross <agross@kernel.org>,
-        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH v5 11/16] rpmsg: virtio: register the rpmsg_ctrl device
-Message-ID: <20210303184345.GD3817330@xps15>
+        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-msm@vger.kernel.org>
 References: <20210219111501.14261-1-arnaud.pouliquen@foss.st.com>
- <20210219111501.14261-12-arnaud.pouliquen@foss.st.com>
+ <20210219111501.14261-5-arnaud.pouliquen@foss.st.com>
+ <20210302175702.GA3791957@xps15>
+From:   Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
+Message-ID: <4b361c08-09ad-b353-4896-97af3edfc9c6@foss.st.com>
+Date:   Wed, 3 Mar 2021 14:22:36 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210219111501.14261-12-arnaud.pouliquen@foss.st.com>
+In-Reply-To: <20210302175702.GA3791957@xps15>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.75.127.47]
+X-ClientProxiedBy: SFHDAG1NODE3.st.com (10.75.127.3) To SFHDAG2NODE3.st.com
+ (10.75.127.6)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.369,18.0.761
+ definitions=2021-03-03_04:2021-03-03,2021-03-03 signatures=0
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Fri, Feb 19, 2021 at 12:14:56PM +0100, Arnaud Pouliquen wrote:
-> Instantiate the rpmsg_ioctl device on virtio RPMsg bus creation.
+Hi Mathieu,
 
-s/rpmsg_ioctl/rpmsg_ctrl
+On 3/2/21 6:57 PM, Mathieu Poirier wrote:
+> Good morning,
+> 
+> I have started to review this set - comments will be staggered over several
+> days.
+> 
+> On Fri, Feb 19, 2021 at 12:14:49PM +0100, Arnaud Pouliquen wrote:
+>> To prepare the split code related to the control and the endpoint
+>> devices in separate files:
+>> - suppress the dependency with the rpmsg_ctrldev struct,
+>> - rename and export the functions in rpmsg_char.h.
+>>
+>> Suggested-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+>> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+>> ---
+>>  drivers/rpmsg/rpmsg_char.c | 22 ++++++++++------
+>>  drivers/rpmsg/rpmsg_char.h | 51 ++++++++++++++++++++++++++++++++++++++
+>>  2 files changed, 66 insertions(+), 7 deletions(-)
+>>  create mode 100644 drivers/rpmsg/rpmsg_char.h
+>>
+>> diff --git a/drivers/rpmsg/rpmsg_char.c b/drivers/rpmsg/rpmsg_char.c
+>> index 9e33b53bbf56..78a6d19fdf82 100644
+>> --- a/drivers/rpmsg/rpmsg_char.c
+>> +++ b/drivers/rpmsg/rpmsg_char.c
+>> @@ -1,5 +1,6 @@
+>>  // SPDX-License-Identifier: GPL-2.0
+>>  /*
+>> + * Copyright (C) 2021, STMicroelectronics
+>>   * Copyright (c) 2016, Linaro Ltd.
+>>   * Copyright (c) 2012, Michal Simek <monstr@monstr.eu>
+>>   * Copyright (c) 2012, PetaLogix
+>> @@ -22,6 +23,7 @@
+>>  #include <linux/uaccess.h>
+>>  #include <uapi/linux/rpmsg.h>
+>>  
+>> +#include "rpmsg_char.h"
+>>  #include "rpmsg_internal.h"
+>>  
+>>  #define RPMSG_DEV_MAX	(MINORMASK + 1)
+>> @@ -78,7 +80,7 @@ struct rpmsg_eptdev {
+>>  	wait_queue_head_t readq;
+>>  };
+>>  
+>> -static int rpmsg_eptdev_destroy(struct device *dev, void *data)
+>> +static int rpmsg_eptdev_destroy(struct device *dev)
+>>  {
+>>  	struct rpmsg_eptdev *eptdev = dev_to_eptdev(dev);
+>>  
+>> @@ -277,7 +279,7 @@ static long rpmsg_eptdev_ioctl(struct file *fp, unsigned int cmd,
+>>  	if (cmd != RPMSG_DESTROY_EPT_IOCTL)
+>>  		return -EINVAL;
+>>  
+>> -	return rpmsg_eptdev_destroy(&eptdev->dev, NULL);
+>> +	return rpmsg_eptdev_destroy(&eptdev->dev);
+>>  }
+>>  
+>>  static const struct file_operations rpmsg_eptdev_fops = {
+>> @@ -336,10 +338,15 @@ static void rpmsg_eptdev_release_device(struct device *dev)
+>>  	kfree(eptdev);
+>>  }
+>>  
+>> -static int rpmsg_eptdev_create(struct rpmsg_ctrldev *ctrldev,
+>> +int rpmsg_chrdev_eptdev_destroy(struct device *dev, void *data)
+>> +{
+>> +	return rpmsg_eptdev_destroy(dev);
+>> +}
+>> +EXPORT_SYMBOL(rpmsg_chrdev_eptdev_destroy);
+> 
+> Below we have rpmsg_chrdev_create_eptdev() so it would make sense to have
+> rpmsg_chrdev_destroy_ept().
+> 
+> I would also rename rpmsg_eptdev_destroy() to rpmsg_chrdev_destroy_ept() and
+> export that symbol rather than introducing a function that only calls another
+> one.  You did exactly that for rpmsg_chrdev_create_eptdev().
 
-Now I understand what you meant in patch 05.
+This function is used in rpmsg_ctrl to remove eptdev devices.
+As device_for_each_child request a specific function prototype I do not only
+export but change function prototype.
 
-> This provides the possibility to expose the RPMSG_CREATE_EPT_IOCTL
-> to create RPMsg chdev endpoints.
-
-You mean RPMSG device endpoints, i.e rpmsg_eptdev?  If so I think it should be
-added to the changelog.  Otherwiser someone could be tempted to look for "chdev"
-and find anything but a rpmsg_eptdev.
+I can squash all in one function but that means that the "data" parameter is
+just always unused.
 
 > 
-> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+>> +
+>> +int rpmsg_chrdev_create_eptdev(struct rpmsg_device *rpdev, struct device *parent,
+>>  			       struct rpmsg_channel_info chinfo)
+>>  {
+>> -	struct rpmsg_device *rpdev = ctrldev->rpdev;
+>>  	struct rpmsg_eptdev *eptdev;
+>>  	struct device *dev;
+>>  	int ret;
+>> @@ -359,7 +366,7 @@ static int rpmsg_eptdev_create(struct rpmsg_ctrldev *ctrldev,
+>>  
+>>  	device_initialize(dev);
+>>  	dev->class = rpmsg_class;
+>> -	dev->parent = &ctrldev->dev;
+>> +	dev->parent = parent;
+>>  	dev->groups = rpmsg_eptdev_groups;
+>>  	dev_set_drvdata(dev, eptdev);
+>>  
+>> @@ -402,6 +409,7 @@ static int rpmsg_eptdev_create(struct rpmsg_ctrldev *ctrldev,
+>>  
+>>  	return ret;
+>>  }
+>> +EXPORT_SYMBOL(rpmsg_chrdev_create_eptdev);
+>>  
+>>  static int rpmsg_ctrldev_open(struct inode *inode, struct file *filp)
+>>  {
+>> @@ -441,7 +449,7 @@ static long rpmsg_ctrldev_ioctl(struct file *fp, unsigned int cmd,
+>>  	chinfo.src = eptinfo.src;
+>>  	chinfo.dst = eptinfo.dst;
+>>  
+>> -	return rpmsg_eptdev_create(ctrldev, chinfo);
+>> +	return rpmsg_chrdev_create_eptdev(ctrldev->rpdev, &ctrldev->dev, chinfo);
 > 
-> ---
-> V5:
-> Fix compilation issue
-> Reported-by: kernel test robot <lkp@intel.com>
-> Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
->  drivers/rpmsg/virtio_rpmsg_bus.c | 57 +++++++++++++++++++++++++++++---
->  1 file changed, 52 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
-> index e87d4cf926eb..2e6b34084012 100644
-> --- a/drivers/rpmsg/virtio_rpmsg_bus.c
-> +++ b/drivers/rpmsg/virtio_rpmsg_bus.c
-> @@ -813,14 +813,52 @@ static void rpmsg_xmit_done(struct virtqueue *svq)
->  	wake_up_interruptible(&vrp->sendq);
->  }
->  
-> +static struct rpmsg_device *rpmsg_virtio_add_ctrl_dev(struct virtio_device *vdev)
-> +{
-> +	struct virtproc_info *vrp = vdev->priv;
-> +	struct virtio_rpmsg_channel *vch;
-> +	struct rpmsg_device *rpdev_ctrl;
-> +	int err = 0;
-> +
-> +	vch = kzalloc(sizeof(*vch), GFP_KERNEL);
-> +	if (!vch)
-> +		return ERR_PTR(-ENOMEM);
-> +
-> +	/* Link the channel to the vrp */
-> +	vch->vrp = vrp;
-> +
-> +	/* Assign public information to the rpmsg_device */
-> +	rpdev_ctrl = &vch->rpdev;
-> +	rpdev_ctrl->ops = &virtio_rpmsg_ops;
-> +
-> +	rpdev_ctrl->dev.parent = &vrp->vdev->dev;
-> +	rpdev_ctrl->dev.release = virtio_rpmsg_release_device;
-> +	rpdev_ctrl->little_endian = virtio_is_little_endian(vrp->vdev);
-> +
-> +	err = rpmsg_ctrl_register_device(rpdev_ctrl);
-> +	if (err) {
-> +		kfree(vch);
-> +		return ERR_PTR(err);
-> +	}
-> +
-> +	return rpdev_ctrl;
-> +}
-> +
-> +static void rpmsg_virtio_del_ctrl_dev(struct rpmsg_device *rpdev_ctrl)
-> +{
-> +	if (!rpdev_ctrl)
-> +		return;
-> +	kfree(to_virtio_rpmsg_channel(rpdev_ctrl));
-> +}
-> +
->  static int rpmsg_probe(struct virtio_device *vdev)
->  {
->  	vq_callback_t *vq_cbs[] = { rpmsg_recv_done, rpmsg_xmit_done };
->  	static const char * const names[] = { "input", "output" };
->  	struct virtqueue *vqs[2];
->  	struct virtproc_info *vrp;
-> -	struct virtio_rpmsg_channel *vch;
-> -	struct rpmsg_device *rpdev_ns;
-> +	struct virtio_rpmsg_channel *vch = NULL;
-> +	struct rpmsg_device *rpdev_ns = NULL, *rpdev_ctrl;
+> Not sure why we have to change the signature of rpmsg_eptdev_create() but I may
+> find an answer to that question later on in the patchset.
 
-As far as I can tell @rpdev_ns doesn't have to be initialized.
+Here I need to break dependency with rpmsg_ctrldev that will move to the
+rpmsg_ctrl.c. rpmsg_eptdev_create doesn't need it but just parent devices to be
+attached to.
 
->  	void *bufs_va;
->  	int err = 0, i;
->  	size_t total_buf_space;
-> @@ -894,12 +932,18 @@ static int rpmsg_probe(struct virtio_device *vdev)
->  
->  	vdev->priv = vrp;
->  
-> +	rpdev_ctrl = rpmsg_virtio_add_ctrl_dev(vdev);
-> +	if (IS_ERR(rpdev_ctrl)) {
-> +		err = PTR_ERR(rpdev_ctrl);
-> +		goto free_coherent;
-> +	}
-> +
->  	/* if supported by the remote processor, enable the name service */
->  	if (virtio_has_feature(vdev, VIRTIO_RPMSG_F_NS)) {
->  		vch = kzalloc(sizeof(*vch), GFP_KERNEL);
->  		if (!vch) {
->  			err = -ENOMEM;
-> -			goto free_coherent;
-> +			goto free_ctrldev;
->  		}
->  
->  		/* Link the channel to our vrp */
-> @@ -915,7 +959,7 @@ static int rpmsg_probe(struct virtio_device *vdev)
->  
->  		err = rpmsg_ns_register_device(rpdev_ns);
->  		if (err)
-> -			goto free_coherent;
-> +			goto free_vch;
->  	}
->  
->  	/*
-> @@ -939,8 +983,11 @@ static int rpmsg_probe(struct virtio_device *vdev)
->  
->  	return 0;
->  
-> -free_coherent:
-> +free_vch:
->  	kfree(vch);
-> +free_ctrldev:
-> +	rpmsg_virtio_del_ctrl_dev(rpdev_ctrl);
-> +free_coherent:
->  	dma_free_coherent(vdev->dev.parent, total_buf_space,
->  			  bufs_va, vrp->bufs_dma);
->  vqs_del:
-> -- 
-> 2.17.1
+I will add more explicit information about this, in the commit message.
+
+Thanks,
+Arnaud
+
 > 
+>>  };
+>>  
+>>  static const struct file_operations rpmsg_ctrldev_fops = {
+>> @@ -527,7 +535,7 @@ static void rpmsg_chrdev_remove(struct rpmsg_device *rpdev)
+>>  	int ret;
+>>  
+>>  	/* Destroy all endpoints */
+>> -	ret = device_for_each_child(&ctrldev->dev, NULL, rpmsg_eptdev_destroy);
+>> +	ret = device_for_each_child(&ctrldev->dev, NULL, rpmsg_chrdev_eptdev_destroy);
+>>  	if (ret)
+>>  		dev_warn(&rpdev->dev, "failed to nuke endpoints: %d\n", ret);
+>>  
+>> diff --git a/drivers/rpmsg/rpmsg_char.h b/drivers/rpmsg/rpmsg_char.h
+>> new file mode 100644
+>> index 000000000000..0feb3ea9445c
+>> --- /dev/null
+>> +++ b/drivers/rpmsg/rpmsg_char.h
+>> @@ -0,0 +1,51 @@
+>> +/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+>> +/*
+>> + * Copyright (C) STMicroelectronics 2021.
+>> + */
+>> +
+>> +#ifndef __RPMSG_CHRDEV_H__
+>> +#define __RPMSG_CHRDEV_H__
+>> +
+>> +#if IS_ENABLED(CONFIG_RPMSG_CHAR)
+>> +/**
+>> + * rpmsg_chrdev_create_eptdev() - register char device based on an endpoint
+>> + * @rpdev:  prepared rpdev to be used for creating endpoints
+>> + * @parent: parent device
+>> + * @chinfo: assiated endpoint channel information.
+>> + *
+>> + * This function create a new rpmsg char endpoint device to instantiate a new
+>> + * endpoint based on chinfo information.
+>> + */
+>> +int rpmsg_chrdev_create_eptdev(struct rpmsg_device *rpdev, struct device *parent,
+>> +			       struct rpmsg_channel_info chinfo);
+>> +
+>> +/**
+>> + * rpmsg_chrdev_eptdev_destroy() - destroy created char device
+>> + * @data: parent device
+>> + * @chinfo: assiated endpoint channel information.
+>> + *
+>> + * This function create a new rpmsg char endpoint device to instantiate a new
+>> + * endpoint based on chinfo information.
+>> + */
+>> +int rpmsg_chrdev_eptdev_destroy(struct device *dev, void *data);
+>> +
+>> +#else  /*IS_ENABLED(CONFIG_RPMSG_CHAR) */
+>> +
+>> +static inline int rpmsg_chrdev_create_eptdev(struct rpmsg_device *rpdev,
+>> +					     struct device *parent,
+>> +					     struct rpmsg_channel_info chinfo)
+>> +{
+>> +	return -EINVAL;
+>> +}
+>> +
+>> +static inline int rpmsg_chrdev_eptdev_destroy(struct device *dev, void *data)
+>> +{
+>> +	/* This shouldn't be possible */
+>> +	WARN_ON(1);
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +#endif /*IS_ENABLED(CONFIG_RPMSG_CHAR) */
+>> +
+>> +#endif /*__RPMSG_CHRDEV_H__ */
+>> -- 
+>> 2.17.1
+>>
