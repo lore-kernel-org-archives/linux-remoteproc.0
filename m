@@ -7,57 +7,57 @@ X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE3A7C433E0
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  4 Mar 2021 18:56:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A263C433DB
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  4 Mar 2021 19:07:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7202064F60
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  4 Mar 2021 18:56:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E2A8464F64
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  4 Mar 2021 19:07:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235284AbhCDSzr (ORCPT
+        id S236444AbhCDTHA (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 4 Mar 2021 13:55:47 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35208 "EHLO
+        Thu, 4 Mar 2021 14:07:00 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37710 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231363AbhCDSzl (ORCPT
+        with ESMTP id S236758AbhCDTGj (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 4 Mar 2021 13:55:41 -0500
-Received: from mail-pf1-x430.google.com (mail-pf1-x430.google.com [IPv6:2607:f8b0:4864:20::430])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D62B4C061756
-        for <linux-remoteproc@vger.kernel.org>; Thu,  4 Mar 2021 10:55:26 -0800 (PST)
-Received: by mail-pf1-x430.google.com with SMTP id 192so12597978pfv.0
-        for <linux-remoteproc@vger.kernel.org>; Thu, 04 Mar 2021 10:55:26 -0800 (PST)
+        Thu, 4 Mar 2021 14:06:39 -0500
+Received: from mail-pg1-x52b.google.com (mail-pg1-x52b.google.com [IPv6:2607:f8b0:4864:20::52b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC8E7C06175F
+        for <linux-remoteproc@vger.kernel.org>; Thu,  4 Mar 2021 11:05:59 -0800 (PST)
+Received: by mail-pg1-x52b.google.com with SMTP id x29so11269369pgk.6
+        for <linux-remoteproc@vger.kernel.org>; Thu, 04 Mar 2021 11:05:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=X7AZqrsRrcth+0vhIoZwJc17+iOSIdFnS/9ezQsHyQQ=;
-        b=xSTFsW+hrccBHxvVPtlkcY8CGpQI2Nq2GgtdkOJdhbhCXFFqCWd8vx/b6SteK+K3sx
-         O7CpZtlT2qht9yecYV3E1H+KjKow7dwfq5RgjuBtTWPpfSX7vsQH5QW3qJdEzbt7B1+P
-         KwJx7UgNgcKunhOVZ/7ZbrxXjSlXrfiVKuZUCJ3m3l3F/Yqhi/Qt/FgRxDzAz5Gv96C7
-         O8SRmEUPbIA4WXIvdZSqk9GPZywHWI9acmID8dKrMIIA9363DOP0/BRQXWSwTLM/p+KL
-         +3s08yEl/5vuEBH97+Owc2XBgbVs2r1yggCYLaaF0MuoTddjrfNNTXW8GaAWQYtg4lNS
-         3VYw==
+        bh=rbbyP4f7puqulTra1fDP6OcDsptLygIaw3JP1xb77tM=;
+        b=fadB5UiTzffTtxrnqdd8PhIkKLTzeY5XXE5bdX4vJi9wo5p/1BA58D1ACxEGMuIXJo
+         uRdV+JdUT+4TivRh1Y40BT7tBt05iF3Tz+jLltT8q+VcbuFdOFg+2BbGlOhl2nPI5mQN
+         4lwwe1QpLvzBeIwu2bP1lHAPbZMo0UurQ8Q2ArljOCzw8/qTlcmYslAtXIPic2EMbECj
+         cdZCaoCA3q4OIWue/ZYMje4G8wQSt2UGacFpsykcWPznbxJR2tF86woEKSo30D3ge1IK
+         TvQkapUM9mbMHGPF+Jmp2IgSipfBrZoPAOUpOpk9yVHDrrFEj5JMOGn1W1Dtcak7NGNR
+         2P5Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=X7AZqrsRrcth+0vhIoZwJc17+iOSIdFnS/9ezQsHyQQ=;
-        b=FcCDFKKBzX3MbOKyA+xtKK1/pAapObg4P5wvbgwJ0t0KPTZyGzHlDheZt1rIPowA6X
-         9vCbwh9vLBzF5Cor2fP4E93CjUWStHhOGaSG8UsGnTGfOE4kMlLzsav1Nn5VqA3Eq0mD
-         zWDO7sXgvxxlAkgc9KozKrUI9AsaeS2rvAyVIxHFl8hUSKkFI1uA4l0qhJ4TEU6z1kog
-         ib4Y10of0JZvBx3b9uqkQWAXJS4R0mvypcSprxbU1VvRdlqUliVda2FBMoRy1Q9X2mc6
-         PnrtyMrIglRgFj63Fy1zCK4wPJBF8TAMWdDMYk0/kwxVKyy0dbQ1QmvF/R9Iw/NCNwrp
-         nHKA==
-X-Gm-Message-State: AOAM5305KPM6KFgY1BcsE9c/4XZYAvyOlBDwqMnPMcbqw10SXCg8XjbZ
-        Q0Bjb+df3/hGgQ9+of0mQQtLaA==
-X-Google-Smtp-Source: ABdhPJzszkC/1+6RyebxySsHQ7RkcPuJ6V9QsqjSOJNVdr6UKz2Z+8c3UoA2uw2WhPBEvSd3uoTFnQ==
-X-Received: by 2002:a05:6a00:138f:b029:1b8:b9d5:3a2c with SMTP id t15-20020a056a00138fb02901b8b9d53a2cmr5230356pfg.10.1614884126417;
-        Thu, 04 Mar 2021 10:55:26 -0800 (PST)
+        bh=rbbyP4f7puqulTra1fDP6OcDsptLygIaw3JP1xb77tM=;
+        b=J0CHbwRGyi9Aydll7OBpK/pjqnMmZiSsHocr1EeW+5vHUAe2oRDEDLMhqJGnPxMaQp
+         fcVqAzKRIg1JBXriBYDFSk0sXIDEyKgU0KPofJH+6D2CNkp86P/hWKqhm3bRK/S5feap
+         qQDgW2oEQycuO38HfgWl2h73Pnb/JOn5KPE7qwMKHJrKij/fZDZhCVMoBwtbkiy6x8vy
+         fL2msTIGZlWo8QYpjQUv+IbNdvMCa2S3fOZoiJxwxUr4+P+SoVx0kDJELDKWcAVVtCKY
+         j9cLUs0BPthllPUUnZb3fp7SpTshIGcEzFkP8gQNhuDjyNzRcZNP9kZG6yX3M/jkvSBi
+         OGMA==
+X-Gm-Message-State: AOAM533C8B8alcwJHj0lt3/6DfC+3D6i5cgQYZYT7J7sBHiGdRjkg6K3
+        Z/RJkS5l0DPE/CKkDuWidsxqOw==
+X-Google-Smtp-Source: ABdhPJzM5524ccpy7qBq9OHI+RD9DcNp/2ZQOTkWThKPhkwH8zqKQJ3k0rww2CocJYdIxOK9EbiFlA==
+X-Received: by 2002:a63:4241:: with SMTP id p62mr4758259pga.453.1614884759096;
+        Thu, 04 Mar 2021 11:05:59 -0800 (PST)
 Received: from xps15 (S0106889e681aac74.cg.shawcable.net. [68.147.0.187])
-        by smtp.gmail.com with ESMTPSA id o1sm165048pgq.1.2021.03.04.10.55.22
+        by smtp.gmail.com with ESMTPSA id 188sm146234pfz.119.2021.03.04.11.05.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Mar 2021 10:55:22 -0800 (PST)
-Date:   Thu, 4 Mar 2021 11:55:20 -0700
+        Thu, 04 Mar 2021 11:05:55 -0800 (PST)
+Date:   Thu, 4 Mar 2021 12:05:53 -0700
 From:   Mathieu Poirier <mathieu.poirier@linaro.org>
 To:     Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
 Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
@@ -68,7 +68,7 @@ Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
         linux-arm-msm@vger.kernel.org
 Subject: Re: [PATCH v5 13/16] rpmsg: char: introduce
  __rpmsg_chrdev_create_eptdev function
-Message-ID: <20210304185520.GC3854911@xps15>
+Message-ID: <20210304190553.GD3854911@xps15>
 References: <20210219111501.14261-1-arnaud.pouliquen@foss.st.com>
  <20210219111501.14261-14-arnaud.pouliquen@foss.st.com>
 MIME-Version: 1.0
@@ -82,8 +82,25 @@ X-Mailing-List: linux-remoteproc@vger.kernel.org
 On Fri, Feb 19, 2021 at 12:14:58PM +0100, Arnaud Pouliquen wrote:
 > Introduce the __rpmsg_chrdev_create_eptdev internal function that returns
 > the rpmsg_eptdev context structure.
+
+Add newlines between paragraphs.
+
 > This patch prepares the introduction of a RPMsg device for the
 > char device. the RPMsg device will need a reference to the context.
+
+s/the/The
+
+s/RPMsg/RPMSG - throughout the patchset.
+
+As a general note please be mindful of patch changelogs.  I often find myself
+having to decipher the ideas being conveyed.
+
+I am done reviewing this set.  There are things I will want to come back to but
+the general goals behind the patchset are being achieved.
+
+Thanks,
+Mathieu
+
 > 
 > Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
 > ---
@@ -138,9 +155,6 @@ On Fri, Feb 19, 2021 at 12:14:58PM +0100, Arnaud Pouliquen wrote:
 > +	struct rpmsg_eptdev *eptdev;
 > +
 > +	eptdev = __rpmsg_chrdev_create_eptdev(rpdev, &rpdev->dev, chinfo);
-
-Shouldn't the second argument to __rpmsg_chrdev_create_eptdev() be @parent?
-
 > +	if (IS_ERR(eptdev))
 > +		return PTR_ERR(eptdev);
 > +
