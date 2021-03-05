@@ -2,140 +2,153 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-17.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9285C433E9
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  4 Mar 2021 19:13:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AD3EC433E9
+	for <linux-remoteproc@archiver.kernel.org>; Fri,  5 Mar 2021 10:47:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8EBC464F6F
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  4 Mar 2021 19:13:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E225364F69
+	for <linux-remoteproc@archiver.kernel.org>; Fri,  5 Mar 2021 10:47:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232311AbhCDTMT (ORCPT
+        id S229582AbhCEKq2 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 4 Mar 2021 14:12:19 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39654 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229463AbhCDTMM (ORCPT
+        Fri, 5 Mar 2021 05:46:28 -0500
+Received: from mx07-00178001.pphosted.com ([185.132.182.106]:39589 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229558AbhCEKqV (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 4 Mar 2021 14:12:12 -0500
-Received: from mail-pg1-x533.google.com (mail-pg1-x533.google.com [IPv6:2607:f8b0:4864:20::533])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8C70EC061574
-        for <linux-remoteproc@vger.kernel.org>; Thu,  4 Mar 2021 11:11:32 -0800 (PST)
-Received: by mail-pg1-x533.google.com with SMTP id l2so19554164pgb.1
-        for <linux-remoteproc@vger.kernel.org>; Thu, 04 Mar 2021 11:11:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=V8gX6BLRp5VTtpTwGxCWHd1uYqGAa6Y56JCNNo50CEo=;
-        b=ipvXcYweUEz5TS/xc4BHVGvCyArCaLaHVI1tfvZ5BJHQyXql9vlhqf3PZTWCX9Jc6r
-         s5RxCEH5BO7F5NoKO6+sGuKvkfOYCCzweKWKQ+6JNpBhXMPP7BqHW3SwpogalD0OeRn/
-         QOCEwo0swmxcHL+e0NQIGKyNmSxHigpv4swqVTBDJpL+hNngdx5N7g/PfMBQiv/jN82k
-         oav1PrsZIdfGZJgWScHC6Dmq9rgtf0Od8PRi0L+SrZRUlmfS2kMOuh9LdIdazP0Dxw9L
-         dkbTaioQ+P6Jfm/w9Q/WE53mTfvQ6fLIcmq6YSmpf/VUf0M9LnbNQdkrVVLdf2WFr0Mu
-         UGwQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=V8gX6BLRp5VTtpTwGxCWHd1uYqGAa6Y56JCNNo50CEo=;
-        b=NXdHPtpQqHQtEUSBopL40yI9GYD3EJVy0Z/+BFrFN1gKXYEkk3UE3wytHoYI9NZ3qD
-         yLG6rxEYgspIwu0khLG4QGEY2BtOT0cYhVJb/I+j3xir69EhFiATzUsDosc03wY1/9D0
-         tb9IC6SJVuY9VXreaaidJwBp321CDxJvEpRWg0eVXAiEqF611fvVtPKT2UhO3tMTql9m
-         SFeOVq2MrYAknjoN1CHRSXAfu7J6J2P3j5ELElSdCz9xG1/tE8vpn47OGRUlrvfnG84a
-         adDURlvkZ2WeQMexukgmqTQrklEEINfDOsQBhL+g9M+zZpkNam24/yqhkijr3d+D1DD/
-         wToA==
-X-Gm-Message-State: AOAM531kAi3FyngjBaXbzPtBK1fBVfxeR4JsnyPwm0SF/bMmmHgVmeC9
-        Ll4GzV9+ZggidDOt36+qxQ2Zcw==
-X-Google-Smtp-Source: ABdhPJyaBnKH+Hurc5YUT8rqKvUynaxhKbr/WowkCCfpFo2hdsry+fYZiqjB+V75/Hs+Yxi3DttC9g==
-X-Received: by 2002:a62:1e41:0:b029:1e6:fe13:b78e with SMTP id e62-20020a621e410000b02901e6fe13b78emr5177583pfe.26.1614885092044;
-        Thu, 04 Mar 2021 11:11:32 -0800 (PST)
-Received: from xps15 (S0106889e681aac74.cg.shawcable.net. [68.147.0.187])
-        by smtp.gmail.com with ESMTPSA id m12sm37318pjk.47.2021.03.04.11.11.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Mar 2021 11:11:31 -0800 (PST)
-Date:   Thu, 4 Mar 2021 12:11:29 -0700
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-To:     Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Fri, 5 Mar 2021 05:46:21 -0500
+Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 125AcLOY026340;
+        Fri, 5 Mar 2021 11:46:15 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=selector1;
+ bh=e8RgWyuTLeswgNcGA3ifo/dI3vZUFn59Nt++mY73tcI=;
+ b=VonhnXj3mFxSVt4fitfX6UjULmCRSRubQAuM/KrvVZQYZA2ouOHyqHGFDp1YJ8DEB9ro
+ I0QcpwTClTRndysEA8HG/jmCKXNlxHoyd7LCH/G1z4qX8z85WYmyEAb6qdepctdKo3mQ
+ 88yjp/BA+l36bpxpKuwSTW/Qxyi5M8IwTArCu0e8IQsvq8kU2s1WERqTrjYaKMRRkNTA
+ CFM8txCfIsXKACS9iBZ3BTsn4iiJdZmJgsCWUY7WMvNw7mRr/C3gvAiyHzqpuvVv0pUz
+ RjIJpFqj3Z3/JpnysWjFkKRCNb8WuOP/ELMyanHLuMOvdtVPwgayUcPZXHhL1Xnb+7mU TQ== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 36yfc4dq0k-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 05 Mar 2021 11:46:15 +0100
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 9D66910002A;
+        Fri,  5 Mar 2021 11:46:14 +0100 (CET)
+Received: from Webmail-eu.st.com (sfhdag2node3.st.com [10.75.127.6])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 85D252425CB;
+        Fri,  5 Mar 2021 11:46:14 +0100 (CET)
+Received: from lmecxl0889.lme.st.com (10.75.127.51) by SFHDAG2NODE3.st.com
+ (10.75.127.6) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 5 Mar
+ 2021 11:46:13 +0100
+Subject: Re: [PATCH v5 08/16] rpmsg: glink: add sendto and trysendto ops
+To:     Mathieu Poirier <mathieu.poirier@linaro.org>
+CC:     Bjorn Andersson <bjorn.andersson@linaro.org>,
         Ohad Ben-Cohen <ohad@wizery.com>,
         Andy Gross <agross@kernel.org>,
-        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH v5 08/16] rpmsg: glink: add sendto and trysendto ops
-Message-ID: <20210304191129.GE3854911@xps15>
+        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-msm@vger.kernel.org>
 References: <20210219111501.14261-1-arnaud.pouliquen@foss.st.com>
  <20210219111501.14261-9-arnaud.pouliquen@foss.st.com>
+ <20210304191129.GE3854911@xps15>
+From:   Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
+Message-ID: <e0f60693-3184-55c1-db67-1725a5f9c24d@foss.st.com>
+Date:   Fri, 5 Mar 2021 11:46:13 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210219111501.14261-9-arnaud.pouliquen@foss.st.com>
+In-Reply-To: <20210304191129.GE3854911@xps15>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.75.127.51]
+X-ClientProxiedBy: SFHDAG2NODE1.st.com (10.75.127.4) To SFHDAG2NODE3.st.com
+ (10.75.127.6)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.369,18.0.761
+ definitions=2021-03-05_05:2021-03-03,2021-03-05 signatures=0
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Fri, Feb 19, 2021 at 12:14:53PM +0100, Arnaud Pouliquen wrote:
-> Implement the sendto ops to support the future rpmsg_char update for the
-> vitio backend support.
+Hi Mathieu,
 
-Add a new line, otherwise it is very easy to read.
-
-> The use of sendto in rpmsg_char is needed as a destination address is
-> requested at least by the virtio backend.
-
-Same here and throughout the patchset.
-
-> The glink implementation does not need a destination address so ignores it.
+On 3/4/21 8:11 PM, Mathieu Poirier wrote:
+> On Fri, Feb 19, 2021 at 12:14:53PM +0100, Arnaud Pouliquen wrote:
+>> Implement the sendto ops to support the future rpmsg_char update for the
+>> vitio backend support.
 > 
-> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-> ---
->  drivers/rpmsg/qcom_glink_native.c | 16 ++++++++++++++++
->  1 file changed, 16 insertions(+)
+> Add a new line, otherwise it is very easy to read.
 > 
-> diff --git a/drivers/rpmsg/qcom_glink_native.c b/drivers/rpmsg/qcom_glink_native.c
-> index d4e4dd482614..ae2c03b59c55 100644
-> --- a/drivers/rpmsg/qcom_glink_native.c
-> +++ b/drivers/rpmsg/qcom_glink_native.c
-> @@ -1332,6 +1332,20 @@ static int qcom_glink_trysend(struct rpmsg_endpoint *ept, void *data, int len)
->  	return __qcom_glink_send(channel, data, len, false);
->  }
->  
-> +static int qcom_glink_sendto(struct rpmsg_endpoint *ept, void *data, int len, u32 dst)
-> +{
-> +	struct glink_channel *channel = to_glink_channel(ept);
-> +
-> +	return __qcom_glink_send(channel, data, len, true);
-> +}
-> +
-> +static int qcom_glink_trysendto(struct rpmsg_endpoint *ept, void *data, int len, u32 dst)
-> +{
-> +	struct glink_channel *channel = to_glink_channel(ept);
-> +
-> +	return __qcom_glink_send(channel, data, len, false);
-> +}
-
-Just rename send() to sendto() and trysend() to trysendto() and ignore the
-destination address.  The same goes for the next patch.  I would fold patch 08
-and 09 into 10 to help get the big picture. 
-
-> +
->  /*
->   * Finds the device_node for the glink child interested in this channel.
->   */
-> @@ -1364,7 +1378,9 @@ static const struct rpmsg_device_ops glink_device_ops = {
->  static const struct rpmsg_endpoint_ops glink_endpoint_ops = {
->  	.destroy_ept = qcom_glink_destroy_ept,
->  	.send = qcom_glink_send,
-> +	.sendto = qcom_glink_sendto,
->  	.trysend = qcom_glink_trysend,
-> +	.trysendto = qcom_glink_trysendto,
->  };
->  
->  static void qcom_glink_rpdev_release(struct device *dev)
-> -- 
-> 2.17.1
+>> The use of sendto in rpmsg_char is needed as a destination address is
+>> requested at least by the virtio backend.
 > 
+> Same here and throughout the patchset.
+> 
+>> The glink implementation does not need a destination address so ignores it.
+>>
+>> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+>> ---
+>>  drivers/rpmsg/qcom_glink_native.c | 16 ++++++++++++++++
+>>  1 file changed, 16 insertions(+)
+>>
+>> diff --git a/drivers/rpmsg/qcom_glink_native.c b/drivers/rpmsg/qcom_glink_native.c
+>> index d4e4dd482614..ae2c03b59c55 100644
+>> --- a/drivers/rpmsg/qcom_glink_native.c
+>> +++ b/drivers/rpmsg/qcom_glink_native.c
+>> @@ -1332,6 +1332,20 @@ static int qcom_glink_trysend(struct rpmsg_endpoint *ept, void *data, int len)
+>>  	return __qcom_glink_send(channel, data, len, false);
+>>  }
+>>  
+>> +static int qcom_glink_sendto(struct rpmsg_endpoint *ept, void *data, int len, u32 dst)
+>> +{
+>> +	struct glink_channel *channel = to_glink_channel(ept);
+>> +
+>> +	return __qcom_glink_send(channel, data, len, true);
+>> +}
+>> +
+>> +static int qcom_glink_trysendto(struct rpmsg_endpoint *ept, void *data, int len, u32 dst)
+>> +{
+>> +	struct glink_channel *channel = to_glink_channel(ept);
+>> +
+>> +	return __qcom_glink_send(channel, data, len, false);
+>> +}
+> 
+> Just rename send() to sendto() and trysend() to trysendto() and ignore the
+> destination address.  
+
+Function prototypes have to match with rpmsg_endpoint_ops structure defined
+below. So seems to me not possible to just rename the functions.
+Please could you clarify if i missed something?
+
+> The same goes for the next patch.  I would fold patch 08
+> and 09 into 10 to help get the big picture.
+
+I'm going to squash all in one.
+
+Thanks,
+Arnaud
+
+> 
+>> +
+>>  /*
+>>   * Finds the device_node for the glink child interested in this channel.
+>>   */
+>> @@ -1364,7 +1378,9 @@ static const struct rpmsg_device_ops glink_device_ops = {
+>>  static const struct rpmsg_endpoint_ops glink_endpoint_ops = {
+>>  	.destroy_ept = qcom_glink_destroy_ept,
+>>  	.send = qcom_glink_send,
+>> +	.sendto = qcom_glink_sendto,
+>>  	.trysend = qcom_glink_trysend,
+>> +	.trysendto = qcom_glink_trysendto,
+>>  };
+>>  
+>>  static void qcom_glink_rpdev_release(struct device *dev)
+>> -- 
+>> 2.17.1
+>>
