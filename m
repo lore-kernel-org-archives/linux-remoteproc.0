@@ -1,180 +1,144 @@
-Return-Path: <linux-remoteproc-owner@kernel.org>
+Return-Path: <SRS0=E3rE=ID=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61C02C433DB
-	for <linux-remoteproc@archiver.kernel.org>; Fri,  5 Mar 2021 11:43:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EB9FC433DB
+	for <linux-remoteproc@archiver.kernel.org>; Fri,  5 Mar 2021 16:56:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1033264F4F
-	for <linux-remoteproc@archiver.kernel.org>; Fri,  5 Mar 2021 11:43:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0FE4965092
+	for <linux-remoteproc@archiver.kernel.org>; Fri,  5 Mar 2021 16:56:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229551AbhCELmp (ORCPT
+        id S229690AbhCEQz1 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 5 Mar 2021 06:42:45 -0500
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:46726 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S229494AbhCELmp (ORCPT
+        Fri, 5 Mar 2021 11:55:27 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37448 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229573AbhCEQzN (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 5 Mar 2021 06:42:45 -0500
-Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 125BgFCj016426;
-        Fri, 5 Mar 2021 12:42:39 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=selector1;
- bh=ayap1z4ytk+f58IuXbxbKEhdT2MiFhxsxYLzw+aUaUU=;
- b=M5qQWPFaJ/+ecOybKEIVTyq8sLJ36eyGPTsbCz7GmwPN4EJCW1N0/aONz9qThZKOiMj+
- ck0HJT1B9TWqf3AJQr5fygf2ehv5qbZXq8TUokWzboPfmlynhdB8D1gkfQ5DaRAFXNde
- 3x0CUdNZcW5yO9hC+PfycbLOudcUlfIfEBhSW58Cskmz7ZhvqgUzNSeweU5h6KOx5Tri
- XyGo7WCE1xbLq3IidEMUG2jt/PlI4+b8DRI0DmPC93Xmm7JhVrIMGUCz5ZK7at5nlQ2s
- kSkVSEHnGNT0IoY/m+me59nKmhr6YqVnE6LLbY59IpgxIIXmGbbnM8YA4jJR0siJQWsg lA== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 373cb5tt2b-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 05 Mar 2021 12:42:39 +0100
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id CB06710002A;
-        Fri,  5 Mar 2021 12:42:37 +0100 (CET)
-Received: from Webmail-eu.st.com (sfhdag2node3.st.com [10.75.127.6])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id B7D1E24EE26;
-        Fri,  5 Mar 2021 12:42:37 +0100 (CET)
-Received: from lmecxl0889.lme.st.com (10.75.127.51) by SFHDAG2NODE3.st.com
- (10.75.127.6) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 5 Mar
- 2021 12:42:37 +0100
-Subject: Re: [PATCH v5 13/16] rpmsg: char: introduce
- __rpmsg_chrdev_create_eptdev function
-To:     Mathieu Poirier <mathieu.poirier@linaro.org>
-CC:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Fri, 5 Mar 2021 11:55:13 -0500
+Received: from mail-pj1-x1030.google.com (mail-pj1-x1030.google.com [IPv6:2607:f8b0:4864:20::1030])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A2BBDC061574
+        for <linux-remoteproc@vger.kernel.org>; Fri,  5 Mar 2021 08:55:13 -0800 (PST)
+Received: by mail-pj1-x1030.google.com with SMTP id l18so2415396pji.3
+        for <linux-remoteproc@vger.kernel.org>; Fri, 05 Mar 2021 08:55:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=5oX7JDjpyFM6sShOZapWIE6sOYsNksokkCB2Em8FcMw=;
+        b=EqxN9e8rDjI2I2gJOSPPG/q05JnU5yymLBDDd9p6ny16eovxkKkAUbrCkuQSTOB2WH
+         g6zlxso1OMmg9Ebdk6Nbnx5o4aQNreFt48edMlEaavtiJJ7mCrS65A3BOLEdjVhSZ+mg
+         svQQmF4n7dUqon7+f5JiNK/WxfI40+U7YPB4bBRw/Kp+EaQmtNgMxtI9sp7A7OxE3EjE
+         o7KtladbbuHryn65Vt1m/aXtqDmcRDiV/Bass2bcD0rWOKHvsdb54zCUGsLPAeLZK2Qu
+         kwjtxw9epGtY+6puNn5zLVMj+37z++zRhGSFrBWhgb8EC2qCS0sCjNMal2DihjLtBYY/
+         lBDg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=5oX7JDjpyFM6sShOZapWIE6sOYsNksokkCB2Em8FcMw=;
+        b=V8Di5ddNfxXx+kxQ65xeyC5PkwlJT2FjPAp3pJMvK9pCs79m3ZmG1zz93D00uZFQHo
+         t3Gdsm8ex5KVvOEqhRVkRQAH1LZkZWBno0Z+PCldRO6oi/f6w6xwRXvPaDN/87O2TEuC
+         SLw8UGXI79QQQ+WeYWHDBaSvPU6WAWY6jMNduGKaneEwWQR4jMbKbbJdUe40NG9fjhr/
+         IQBPPcaYxsaG37UaJhKWlcCj29vG8Asx90ETOsZnfzbWC8i/xBFCq82ps3d/j/HwBnBX
+         A6qntVaViV4IpO5D/u63y59xsxA6pjCcrLjSXdrZuR/geUx9Wycwik6/WwCTPxvgw+uC
+         nAog==
+X-Gm-Message-State: AOAM532bvfJ+Cw2TFbcaBV5U9Otulnrg3W77/TiVvFCNbD2hnLtKI/bm
+        vxnCAHCp4KutLnaVKBUTDSEBoQ==
+X-Google-Smtp-Source: ABdhPJxstzqvocrEH0wIvecZMQR/AbxctNSmn+OMgpLPNverTVBu8owjd2rr+kRGcTeQBx+lLo4/RQ==
+X-Received: by 2002:a17:90a:4d07:: with SMTP id c7mr11296018pjg.104.1614963313231;
+        Fri, 05 Mar 2021 08:55:13 -0800 (PST)
+Received: from xps15 (S0106889e681aac74.cg.shawcable.net. [68.147.0.187])
+        by smtp.gmail.com with ESMTPSA id mw13sm2794442pjb.42.2021.03.05.08.55.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 05 Mar 2021 08:55:12 -0800 (PST)
+Date:   Fri, 5 Mar 2021 09:55:10 -0700
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+To:     Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
+Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
         Ohad Ben-Cohen <ohad@wizery.com>,
         Andy Gross <agross@kernel.org>,
-        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-msm@vger.kernel.org>
+        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH v5 08/16] rpmsg: glink: add sendto and trysendto ops
+Message-ID: <20210305165510.GA3885132@xps15>
 References: <20210219111501.14261-1-arnaud.pouliquen@foss.st.com>
- <20210219111501.14261-14-arnaud.pouliquen@foss.st.com>
- <20210304190553.GD3854911@xps15>
-From:   Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
-Message-ID: <b22e9ab4-f278-d20c-628b-13676a83b232@foss.st.com>
-Date:   Fri, 5 Mar 2021 12:42:36 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+ <20210219111501.14261-9-arnaud.pouliquen@foss.st.com>
+ <20210304191129.GE3854911@xps15>
+ <e0f60693-3184-55c1-db67-1725a5f9c24d@foss.st.com>
 MIME-Version: 1.0
-In-Reply-To: <20210304190553.GD3854911@xps15>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.75.127.51]
-X-ClientProxiedBy: SFHDAG2NODE1.st.com (10.75.127.4) To SFHDAG2NODE3.st.com
- (10.75.127.6)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.369,18.0.761
- definitions=2021-03-05_05:2021-03-03,2021-03-05 signatures=0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e0f60693-3184-55c1-db67-1725a5f9c24d@foss.st.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi Mathieu
+[...]
 
-On 3/4/21 8:05 PM, Mathieu Poirier wrote:
-> On Fri, Feb 19, 2021 at 12:14:58PM +0100, Arnaud Pouliquen wrote:
->> Introduce the __rpmsg_chrdev_create_eptdev internal function that returns
->> the rpmsg_eptdev context structure.
+> >>  }
+> >>  
+> >> +static int qcom_glink_sendto(struct rpmsg_endpoint *ept, void *data, int len, u32 dst)
+> >> +{
+> >> +	struct glink_channel *channel = to_glink_channel(ept);
+> >> +
+> >> +	return __qcom_glink_send(channel, data, len, true);
+> >> +}
+> >> +
+> >> +static int qcom_glink_trysendto(struct rpmsg_endpoint *ept, void *data, int len, u32 dst)
+> >> +{
+> >> +	struct glink_channel *channel = to_glink_channel(ept);
+> >> +
+> >> +	return __qcom_glink_send(channel, data, len, false);
+> >> +}
+> > 
+> > Just rename send() to sendto() and trysend() to trysendto() and ignore the
+> > destination address.  
 > 
-> Add newlines between paragraphs.
-> 
->> This patch prepares the introduction of a RPMsg device for the
->> char device. the RPMsg device will need a reference to the context.
-> 
-> s/the/The
-> 
-> s/RPMsg/RPMSG - throughout the patchset.
-> 
-> As a general note please be mindful of patch changelogs.  I often find myself
-> having to decipher the ideas being conveyed.
 
-Sure, i will rewrite changelogs and comments to make them more explicit.
+Apologies for not being clear.
+
+> Function prototypes have to match with rpmsg_endpoint_ops structure defined
+> below. So seems to me not possible to just rename the functions.
+> Please could you clarify if i missed something?
+
+I don't think rproc_ops::send() and rproc_ops::trysend() are used anywhere else.
+So replace them with rproc_ops::sendto() and rproc_ops::trysendto() where the
+destination address would be ingnored.
 
 > 
-> I am done reviewing this set.  There are things I will want to come back to but
-> the general goals behind the patchset are being achieved.
+> > The same goes for the next patch.  I would fold patch 08
+> > and 09 into 10 to help get the big picture.
+> 
+> I'm going to squash all in one.
 
-Thanks for the review! So I'm going to move forward with this approach.
-
-For the next revision I would propose, to simplify the review, to remove patches
-related to the RPMSG_CREATE_DEV_IOCTL.
-
-Thanks,
-Arnaud
+Perfect
 
 > 
 > Thanks,
-> Mathieu
+> Arnaud
 > 
->>
->> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
->> ---
->>  drivers/rpmsg/rpmsg_char.c | 23 ++++++++++++++++++-----
->>  1 file changed, 18 insertions(+), 5 deletions(-)
->>
->> diff --git a/drivers/rpmsg/rpmsg_char.c b/drivers/rpmsg/rpmsg_char.c
->> index 09ae1304837c..66dcb8845d6c 100644
->> --- a/drivers/rpmsg/rpmsg_char.c
->> +++ b/drivers/rpmsg/rpmsg_char.c
->> @@ -328,8 +328,9 @@ int rpmsg_chrdev_eptdev_destroy(struct device *dev, void *data)
->>  }
->>  EXPORT_SYMBOL(rpmsg_chrdev_eptdev_destroy);
->>  
->> -int rpmsg_chrdev_create_eptdev(struct rpmsg_device *rpdev, struct device *parent,
->> -			       struct rpmsg_channel_info chinfo)
->> +static struct rpmsg_eptdev *__rpmsg_chrdev_create_eptdev(struct rpmsg_device *rpdev,
->> +							 struct device *parent,
->> +							 struct rpmsg_channel_info chinfo)
->>  {
->>  	struct rpmsg_eptdev *eptdev;
->>  	struct device *dev;
->> @@ -337,7 +338,7 @@ int rpmsg_chrdev_create_eptdev(struct rpmsg_device *rpdev, struct device *parent
->>  
->>  	eptdev = kzalloc(sizeof(*eptdev), GFP_KERNEL);
->>  	if (!eptdev)
->> -		return -ENOMEM;
->> +		return ERR_PTR(-ENOMEM);
->>  
->>  	dev = &eptdev->dev;
->>  	eptdev->rpdev = rpdev;
->> @@ -381,7 +382,7 @@ int rpmsg_chrdev_create_eptdev(struct rpmsg_device *rpdev, struct device *parent
->>  		put_device(dev);
->>  	}
->>  
->> -	return ret;
->> +	return eptdev;
->>  
->>  free_ept_ida:
->>  	ida_simple_remove(&rpmsg_ept_ida, dev->id);
->> @@ -391,7 +392,19 @@ int rpmsg_chrdev_create_eptdev(struct rpmsg_device *rpdev, struct device *parent
->>  	put_device(dev);
->>  	kfree(eptdev);
->>  
->> -	return ret;
->> +	return ERR_PTR(ret);
->> +}
->> +
->> +int rpmsg_chrdev_create_eptdev(struct rpmsg_device *rpdev, struct device *parent,
->> +			       struct rpmsg_channel_info chinfo)
->> +{
->> +	struct rpmsg_eptdev *eptdev;
->> +
->> +	eptdev = __rpmsg_chrdev_create_eptdev(rpdev, &rpdev->dev, chinfo);
->> +	if (IS_ERR(eptdev))
->> +		return PTR_ERR(eptdev);
->> +
->> +	return 0;
->>  }
->>  EXPORT_SYMBOL(rpmsg_chrdev_create_eptdev);
->>  
->> -- 
->> 2.17.1
->>
+> > 
+> >> +
+> >>  /*
+> >>   * Finds the device_node for the glink child interested in this channel.
+> >>   */
+> >> @@ -1364,7 +1378,9 @@ static const struct rpmsg_device_ops glink_device_ops = {
+> >>  static const struct rpmsg_endpoint_ops glink_endpoint_ops = {
+> >>  	.destroy_ept = qcom_glink_destroy_ept,
+> >>  	.send = qcom_glink_send,
+> >> +	.sendto = qcom_glink_sendto,
+> >>  	.trysend = qcom_glink_trysend,
+> >> +	.trysendto = qcom_glink_trysendto,
+> >>  };
+> >>  
+> >>  static void qcom_glink_rpdev_release(struct device *dev)
+> >> -- 
+> >> 2.17.1
+> >>
