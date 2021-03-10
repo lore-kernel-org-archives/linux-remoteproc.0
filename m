@@ -7,64 +7,64 @@ X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05668C432C3
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E92AC43619
 	for <linux-remoteproc@archiver.kernel.org>; Wed, 10 Mar 2021 21:11:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C9BF464FCD
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 10 Mar 2021 21:11:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 197AD64FCD
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 10 Mar 2021 21:11:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231636AbhCJVK7 (ORCPT
+        id S232238AbhCJVLB (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 10 Mar 2021 16:10:59 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33996 "EHLO
+        Wed, 10 Mar 2021 16:11:01 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33952 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232181AbhCJVKq (ORCPT
+        with ESMTP id S232250AbhCJVKv (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 10 Mar 2021 16:10:46 -0500
-Received: from mail-pj1-x1030.google.com (mail-pj1-x1030.google.com [IPv6:2607:f8b0:4864:20::1030])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C4F8BC061574
-        for <linux-remoteproc@vger.kernel.org>; Wed, 10 Mar 2021 13:10:46 -0800 (PST)
-Received: by mail-pj1-x1030.google.com with SMTP id gb6so2336802pjb.0
-        for <linux-remoteproc@vger.kernel.org>; Wed, 10 Mar 2021 13:10:46 -0800 (PST)
+        Wed, 10 Mar 2021 16:10:51 -0500
+Received: from mail-pf1-x42e.google.com (mail-pf1-x42e.google.com [IPv6:2607:f8b0:4864:20::42e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E4E33C061756
+        for <linux-remoteproc@vger.kernel.org>; Wed, 10 Mar 2021 13:10:50 -0800 (PST)
+Received: by mail-pf1-x42e.google.com with SMTP id y13so9531924pfr.0
+        for <linux-remoteproc@vger.kernel.org>; Wed, 10 Mar 2021 13:10:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=//t8ceQV9F1IbLzcb1N9QjBaVQNk+K1abKjB3CMSp5E=;
-        b=rfkm0nJEZoMdLtilTXPgnGadhHuTtG+vM1fymP6gqGdeCnlKc4F3KB3Uaq/4o3K8Cj
-         ZbaN+Ybje2iSv1GM27/q82Hn5SvEDzItHSyb+kYTu3LNsulPhcXzLF8IbMQU6oNEF/iu
-         MHnF625jXIXo225Nhk2Sxzxb+v7XZFpIAjZkW0mPrhJJmmdtRblLANQC8+1TlbXuB9QQ
-         Gk9OKYl5UgQWNKLC7vouDjdEgoSgeJaWR5hHGu81uIrXlhXaNmaKc9C45M8dT5cnJagu
-         qa0+ylB5RwENeF6kWFLCSSgbJeUTBQK2LKrqLl/gwb1h/Xtpx6f1q0SPjmDGDEY5WV7t
-         H3Mw==
+        bh=NN7h66rSqKzczqrKUwACdy1DE0E9dT7gEJY334oVOV4=;
+        b=YsAjFMkpkwep25SwkBMcSnhfdoVYmzl5QqEIPCJbSwI74cnvyGX4V5wUqrnUVokUaa
+         Wwe0fGdh9p1WmI8zDIGi0H/2xW+uWaCGsKbpdYsHH0KuFkUC1ijJUlmk4fxphEx+69qg
+         HTt1iNg6dk3TlCiNPQpdrB5SA98/PtH21zClh6HwbkMMgDTQK3H4LD/w9Xjtuel9L87Y
+         wrcjU/4YeLVOjlmoYb7vCgcbhXxtXTpQlm8/kA7JA0FoWh3bqIps41ay7knAgYM7n8gK
+         gZW8oXhs0XmuEBFUWkuoZCdNwRBivGpWiQbNUe3feoCqhkONqvUdtMWWYcxvHwXnZ6+t
+         j3/w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=//t8ceQV9F1IbLzcb1N9QjBaVQNk+K1abKjB3CMSp5E=;
-        b=YkI/hUHyHU+c2S09+86PMRQGmkg82NWzxn4yFaKZBIUcijA/2RnOBJYVFWW0Vs41nT
-         2ulNwlhRzk2CGBnYNRZZ+fMTiksMyqzaSD/MZpORpg+pqdmsstZkceJByqJO1L/DVDlT
-         oPDQ8GZcfkSbKCVy8BQBhfRYb1jPXKk543Cljns2Allo1oIorjkaI/d2eg5EXGwqdv+l
-         fIpHF+N7IDF+xAW/ztmWqMQ5KSLl3i/qzpnZ2unpZbUrSriXM94caz433zNTsCaJz2VO
-         uX/A7py+8/do4a4q5QlNxIStExKSFbhhcHlyu0rowrK3YGCK+V14hFwTOnDNjBtlpXA6
-         JyyA==
-X-Gm-Message-State: AOAM532gEAg9eiD79pfHYA9f4+SJhxf0UBsB4R2Fvn/YbK2TicXi4WwT
-        jlZORZeaeKbtKCy9+Z1PioBHlA==
-X-Google-Smtp-Source: ABdhPJztCx1IRaiY8WWUM/s+nmMh+Th74pFv36zfIr1uIduR9+Qdsma6eynemzXDr+wNoGlEZmYNwg==
-X-Received: by 2002:a17:90a:86c9:: with SMTP id y9mr5427957pjv.205.1615410646372;
-        Wed, 10 Mar 2021 13:10:46 -0800 (PST)
+        bh=NN7h66rSqKzczqrKUwACdy1DE0E9dT7gEJY334oVOV4=;
+        b=CerPjzefAH+GLfiDeC46GSmtKe/OCQQn4lgdIRDnuCjoSl8paVNT4SLPEQoAo+QyCs
+         4K/DwzazfjcVUNztdrrIQufAJiVWS0XoW508n8dHh3PXBSGyeyCtnbBz+ebscuYwSy7J
+         PjVcAaTWNBPkkUQ+XIGtJu1WetH8/B6d0OnWfpWcf2RIQ9nUjD/TzRslw9Dh6x95mTNr
+         ngjEbpmkmTpuG/ucY/Etm5mg2DUtEsFn0Zq+LTfBF6IGkPvPErVhczaaDwBI0f1MSa4U
+         /6bs37noMr6Fc2aHf77rscIf0suHl+jk1RX4GmkTfm8v9qoG0y6Vju/tXp1gRLkTFMRm
+         6rVg==
+X-Gm-Message-State: AOAM531OwsOhYJXPO4Y72osBFxgBaQt3RqNMYLkWDQ57vQ2goCUozM5l
+        YhP+t8SBHwwTEzHGj+jA6j5BZw==
+X-Google-Smtp-Source: ABdhPJzs6qFZckDYQpoX8ZcZkgPLgiZxCtH5GIit2um4iAczXphI47IzrLx0Fu7OfibLOT1u5w3gIw==
+X-Received: by 2002:a65:4386:: with SMTP id m6mr4472767pgp.384.1615410650544;
+        Wed, 10 Mar 2021 13:10:50 -0800 (PST)
 Received: from xps15.cg.shawcable.net (S0106889e681aac74.cg.shawcable.net. [68.147.0.187])
-        by smtp.gmail.com with ESMTPSA id j21sm371508pfc.114.2021.03.10.13.10.45
+        by smtp.gmail.com with ESMTPSA id j21sm371508pfc.114.2021.03.10.13.10.49
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Mar 2021 13:10:45 -0800 (PST)
+        Wed, 10 Mar 2021 13:10:49 -0800 (PST)
 From:   Mathieu Poirier <mathieu.poirier@linaro.org>
 To:     ohad@wizery.com, bjorn.andersson@linaro.org
 Cc:     arnaud.pouliquen@st.com, mcoquelin.stm32@gmail.com,
         alexandre.torgue@st.com, linux-remoteproc@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v7 13/17] remoteproc: Properly deal with a kernel panic when attached
-Date:   Wed, 10 Mar 2021 14:10:21 -0700
-Message-Id: <20210310211025.1084636-14-mathieu.poirier@linaro.org>
+Subject: [PATCH v7 16/17] remoteproc: Properly deal with a detach request when attached
+Date:   Wed, 10 Mar 2021 14:10:24 -0700
+Message-Id: <20210310211025.1084636-17-mathieu.poirier@linaro.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20210310211025.1084636-1-mathieu.poirier@linaro.org>
 References: <20210310211025.1084636-1-mathieu.poirier@linaro.org>
@@ -74,34 +74,49 @@ Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-The panic handler operation of registered remote processors
-should also be called when remote processors have been
-attached to.
+This patch introduces the capability to detach a remote processor
+that has been attached to by the remoteproc core.  For that to happen
+a rproc::ops::detach() operation needs to be available.
 
 Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-Reviewed-by: Peng Fan <peng.fan@nxp.com>
 Reviewed-by: Arnaud Pouliquen <arnaud.pouliquen@st.com>
 ---
- drivers/remoteproc/remoteproc_core.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ drivers/remoteproc/remoteproc_cdev.c  | 5 +++++
+ drivers/remoteproc/remoteproc_sysfs.c | 5 +++++
+ 2 files changed, 10 insertions(+)
 
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index c488b1aa6119..f6f0813dade5 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -2728,7 +2728,11 @@ static int rproc_panic_handler(struct notifier_block *nb, unsigned long event,
+diff --git a/drivers/remoteproc/remoteproc_cdev.c b/drivers/remoteproc/remoteproc_cdev.c
+index 0249d8f6c3f8..2db494816d5f 100644
+--- a/drivers/remoteproc/remoteproc_cdev.c
++++ b/drivers/remoteproc/remoteproc_cdev.c
+@@ -43,6 +43,11 @@ static ssize_t rproc_cdev_write(struct file *filp, const char __user *buf, size_
+ 			return -EINVAL;
  
- 	rcu_read_lock();
- 	list_for_each_entry_rcu(rproc, &rproc_list, node) {
--		if (!rproc->ops->panic || rproc->state != RPROC_RUNNING)
-+		if (!rproc->ops->panic)
-+			continue;
+ 		rproc_shutdown(rproc);
++	} else if (!strncmp(cmd, "detach", len)) {
++		if (rproc->state != RPROC_ATTACHED)
++			return -EINVAL;
 +
-+		if (rproc->state != RPROC_RUNNING &&
-+		    rproc->state != RPROC_ATTACHED)
- 			continue;
++		ret = rproc_detach(rproc);
+ 	} else {
+ 		dev_err(&rproc->dev, "Unrecognized option\n");
+ 		ret = -EINVAL;
+diff --git a/drivers/remoteproc/remoteproc_sysfs.c b/drivers/remoteproc/remoteproc_sysfs.c
+index 09eb700c5e7e..ad3dd208024c 100644
+--- a/drivers/remoteproc/remoteproc_sysfs.c
++++ b/drivers/remoteproc/remoteproc_sysfs.c
+@@ -207,6 +207,11 @@ static ssize_t state_store(struct device *dev,
+ 			return -EINVAL;
  
- 		d = rproc->ops->panic(rproc);
+ 		rproc_shutdown(rproc);
++	} else if (sysfs_streq(buf, "detach")) {
++		if (rproc->state != RPROC_ATTACHED)
++			return -EINVAL;
++
++		ret = rproc_detach(rproc);
+ 	} else {
+ 		dev_err(&rproc->dev, "Unrecognised option: %s\n", buf);
+ 		ret = -EINVAL;
 -- 
 2.25.1
 
