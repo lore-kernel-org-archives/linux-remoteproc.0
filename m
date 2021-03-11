@@ -2,78 +2,126 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6022AC433E9
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 11 Mar 2021 23:33:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F02D1C433DB
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 11 Mar 2021 23:39:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2E58364F92
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 11 Mar 2021 23:33:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BB4D764F7C
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 11 Mar 2021 23:39:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229587AbhCKXcb (ORCPT
+        id S229470AbhCKXih (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 11 Mar 2021 18:32:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57444 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229526AbhCKXcC (ORCPT <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 11 Mar 2021 18:32:02 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPS id 59EE064F93;
-        Thu, 11 Mar 2021 23:32:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1615505522;
-        bh=jFFcoy5t9CfyNbe96nM4wxsgowxYqmQjKkGbKhrJD1o=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=K7cGrRM8bcVhxm6Uw+bMMYSnPin7TogRjvjEnoVPgq/m4GHNyBo0qRqqx5nZbivQk
-         yetcKfCgZjVIkPC6Gz3qO2mTCK7NLOFWe7W9AFRAmELyVnFAiCtCIMrSkCEtqHQuWX
-         hgpWZg9gf0uPRLjppXhCGBR46V4IhRWZdX/ycPv0mQIxPSDc2cNWjzRpbWMHu5TP2g
-         z9lks4c3c/pySbq4TgSxM3yUYVJFmAo9DZJXE94PSKqEb27hKDKk73nLuCVxROhaTK
-         O8RklHThvHqSF7NP3rx1fAsHe2SXXpZ/yy9gXmERUWFLyz+0wFjQ4ZMtc95kBzAL/j
-         7tgpuu7pkmlEw==
-Content-Type: text/plain; charset="utf-8"
+        Thu, 11 Mar 2021 18:38:37 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36670 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230228AbhCKXiF (ORCPT
+        <rfc822;linux-remoteproc@vger.kernel.org>);
+        Thu, 11 Mar 2021 18:38:05 -0500
+Received: from mail-oi1-x229.google.com (mail-oi1-x229.google.com [IPv6:2607:f8b0:4864:20::229])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A4EAFC061761
+        for <linux-remoteproc@vger.kernel.org>; Thu, 11 Mar 2021 15:38:04 -0800 (PST)
+Received: by mail-oi1-x229.google.com with SMTP id d20so24997708oiw.10
+        for <linux-remoteproc@vger.kernel.org>; Thu, 11 Mar 2021 15:38:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=y7PZLngnSiOO6tUFoYHe7nczWb/djDzvqn8CynT2y7o=;
+        b=b2rJ6NYdtpvRsYrTydu07Hbmx4KuucnrL02ilCVLMbWyGoSCM5JuPNA0SIk20Buxrw
+         Oh7oUZvjjjC0iQHpcwiYsGwSmlZp3cPbWR34ABrpQwzFL/BM3NX+sV+8FPYzCPOw+ofi
+         VzULisEMofG367pN45L/GSPzAd+IR9TP6WzLklrASPitwJGBnwKsB41AUiiYv8Af4Oag
+         soqwhhbg7skLH9mj/+yzDctmKgkUlK/mjPc53IbweQF4YwS39hFqhrrVqT4JQC8twf9n
+         tzySqGOhOX9aVvGEGiQM9cPpOxzOmfyLIsxdAoV+ujtciMM/eNpufnB5In28l9oJdP0X
+         QWqg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=y7PZLngnSiOO6tUFoYHe7nczWb/djDzvqn8CynT2y7o=;
+        b=l2iCoVzusA0cGARUhNqriPpStSGjzu3CoJHxQW6CgwPuo0gUo4j6iWZZQ+gSkysaz3
+         5YAtOWcssIDYOzcGWUp1iFAJgT4BJDLr4WF38v5H25qmUWtWrEsqQXpr71sCj5gu+Hxj
+         HRxVnmWiWPHKT1229xfc2ByUomuSmX1HLgdSYDpAAhhwNM35WBZge1gOFXs0ZTfIJk8Q
+         Bg5Z4mOmvNychuQSHDxK+23OGJXuzRSv0dDD35nnfvjUuoL7pFBdX0zMsv13ILDePzLm
+         7E1kieeiPnAnVPT2rlAe1wLQSyUqbPhJ3LukLRkn+6qhiagF34Qo/BSeXZ8CNWKqZYG9
+         A8RQ==
+X-Gm-Message-State: AOAM532RrNjEoWaeqU2dLCV/OLWOE14RqsmdKudjmNoJ24/OgKcdLXZ8
+        Tg2j8z0YiBRMlCYoSKaKdsscsWFye2iXJg==
+X-Google-Smtp-Source: ABdhPJy3trbQfPJf8Jw30MXwWRENujdAMmMOYHCnCoFk8D7mpra/ivKmRip+qDmcJtYBYf2nNtZqnw==
+X-Received: by 2002:a05:6808:140e:: with SMTP id w14mr8230991oiv.176.1615505883760;
+        Thu, 11 Mar 2021 15:38:03 -0800 (PST)
+Received: from builder.lan (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
+        by smtp.gmail.com with ESMTPSA id z8sm987590otp.14.2021.03.11.15.38.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 11 Mar 2021 15:38:03 -0800 (PST)
+Date:   Thu, 11 Mar 2021 17:38:01 -0600
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+Cc:     Ohad Ben-Cohen <ohad@wizery.com>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH 0/6] rpmsg: enable the use of the rpmsg_char device for
+ the Virtio backend
+Message-ID: <YEqp2US8OykaUAa/@builder.lan>
+References: <20210311140413.31725-1-arnaud.pouliquen@foss.st.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next 0/4] net: ipa: support COMPILE_TEST
-From:   patchwork-bot+linux-remoteproc@kernel.org
-Message-Id: <161550552231.25923.13576421651721900761.git-patchwork-notify@kernel.org>
-Date:   Thu, 11 Mar 2021 23:32:02 +0000
-References: <20210107233404.17030-1-elder@linaro.org>
-In-Reply-To: <20210107233404.17030-1-elder@linaro.org>
-To:     Alex Elder <elder@linaro.org>
-Cc:     linux-remoteproc@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210311140413.31725-1-arnaud.pouliquen@foss.st.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hello:
+On Thu 11 Mar 08:04 CST 2021, Arnaud Pouliquen wrote:
 
-This series was applied to andersson/remoteproc.git (refs/heads/for-next):
-
-On Thu,  7 Jan 2021 17:34:00 -0600 you wrote:
-> This series adds the IPA driver as a possible target when
-> the COMPILE_TEST configuration is enabled.  Two small changes to
-> dependent subsystems needed to be made for this to work.
+> This series is the first step in the division of the series: 
+> "Introduce a generic IOCTL interface for RPMsg channels management"[1]
 > 
-> Version 2 of this series adds one more patch, which adds the
-> declation of struct page to "gsi_trans.h".  The Intel kernel test
-> robot reported that this was a problem for the alpha build.
+> The main goal here is to enable the RPMsg char interface for
+> the virtio RPMsg backend. 
 > 
-> [...]
+> In addition some patches have been includes in order to document the
+> interface and rename the rpmsg_char_init function.
+> 
+> It also includes Mathieu Poirier's comments made on [1]
+> 
+> Patchsets that should be the next steps:
+>  - Extract the control part of the char dev and create the rpmsg_ctrl.c
+>    file
+>  - Introduce the RPMSG_CREATE_DEV_IOCTL IOCTL to instantiate RPMsg devices
+> 
+> 
+> [1]: https://patchwork.kernel.org/project/linux-remoteproc/list/?series=435523
+> 
 
-Here is the summary with links:
-  - [net-next,1/4] remoteproc: qcom: expose types for COMPILE_TEST
-    https://git.kernel.org/andersson/remoteproc/c/994122211665
-  - [net-next,2/4] soc: qcom: mdt_loader: define stubs for COMPILE_TEST
-    https://git.kernel.org/andersson/remoteproc/c/ce2ceb9b1cff
-  - [net-next,3/4] net: ipa: declare the page pointer type in "gsi_trans.h"
-    https://git.kernel.org/andersson/remoteproc/c/a2d7764b3731
-  - [net-next,4/4] net: ipa: support COMPILE_TEST
-    https://git.kernel.org/andersson/remoteproc/c/38a4066f593c
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 
-You are awesome, thank you!
---
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+Regards,
+Bjorn
 
-
+> Arnaud Pouliquen (6):
+>   rpmsg: char: Rename rpmsg_char_init to rpmsg_chrdev_init
+>   rpmsg: Move RPMSG_ADDR_ANY in user API
+>   rpmsg: Add short description of the IOCTL defined in UAPI.
+>   rpmsg: char: Use rpmsg_sendto to specify the message destination
+>     address
+>   rpmsg: virtio: Register the rpmsg_char device
+>   rpmsg: char: Return an error if device already open
+> 
+>  drivers/rpmsg/qcom_glink_native.c | 16 ++++++++
+>  drivers/rpmsg/qcom_smd.c          | 16 ++++++++
+>  drivers/rpmsg/rpmsg_char.c        | 11 ++++--
+>  drivers/rpmsg/virtio_rpmsg_bus.c  | 62 ++++++++++++++++++++++++++++---
+>  include/linux/rpmsg.h             |  3 +-
+>  include/uapi/linux/rpmsg.h        | 13 ++++++-
+>  6 files changed, 108 insertions(+), 13 deletions(-)
+> 
+> -- 
+> 2.17.1
+> 
