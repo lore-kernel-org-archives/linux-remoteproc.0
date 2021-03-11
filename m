@@ -2,192 +2,189 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13F13C433E6
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 11 Mar 2021 14:05:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D899C433E0
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 11 Mar 2021 17:14:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AE8A964FB2
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 11 Mar 2021 14:05:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 00A7B64FDE
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 11 Mar 2021 17:14:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233825AbhCKOEk (ORCPT
+        id S229904AbhCKRNz (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 11 Mar 2021 09:04:40 -0500
-Received: from mx07-00178001.pphosted.com ([185.132.182.106]:36296 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S233854AbhCKOEc (ORCPT
+        Thu, 11 Mar 2021 12:13:55 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38596 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229985AbhCKRNk (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 11 Mar 2021 09:04:32 -0500
-Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 12BE2KRI014655;
-        Thu, 11 Mar 2021 15:04:28 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references : mime-version :
- content-type; s=selector1;
- bh=clzsKOQrZtu1JsISAcyAcvlZH0GBurC/MmdHmg2hM00=;
- b=eJjfT2jisFTZHROjAEdYNIwOzhejxRvyWM1Uzoq+eAie5rfUplZHJO9S1akPbkYRByWk
- KWkv3GNPJE4PKdK4IkpNFX9u1wN1QzbgLwUVQDGu9Dvfru/SuN1r7FnmXVLrKPnWyQSy
- Nn4qYxs5NbmBWL8+5ehi1zzr+pZ1DNSmyuV4cgpAhbI7ZbhRNgD7xTOSyfROgkZ1Gz16
- asVvf7MpyoeOZt4q+PUZvY/QE6WwjkXG0OOseXKLh3ll3AocurX0PxdG95rsFsZvECvE
- kLaOVVtFbubuJQYfbgG8/JRouyTonoR/se2zINlSD8MmhowPiRdeG34RLo0YYCnTWkgJ wQ== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 3741y76hy4-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 11 Mar 2021 15:04:27 +0100
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 89D7910002A;
-        Thu, 11 Mar 2021 15:04:27 +0100 (CET)
-Received: from Webmail-eu.st.com (sfhdag2node3.st.com [10.75.127.6])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 7D06F247BC8;
-        Thu, 11 Mar 2021 15:04:27 +0100 (CET)
-Received: from localhost (10.75.127.48) by SFHDAG2NODE3.st.com (10.75.127.6)
- with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 11 Mar 2021 15:04:27
- +0100
-From:   Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Ohad Ben-Cohen <ohad@wizery.com>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Andy Gross <agross@kernel.org>
-CC:     <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-msm@vger.kernel.org>, <arnaud.pouliquen@foss.st.com>
-Subject: [PATCH 4/6] rpmsg: char: Use rpmsg_sendto to specify the message destination address
-Date:   Thu, 11 Mar 2021 15:04:11 +0100
-Message-ID: <20210311140413.31725-5-arnaud.pouliquen@foss.st.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20210311140413.31725-1-arnaud.pouliquen@foss.st.com>
-References: <20210311140413.31725-1-arnaud.pouliquen@foss.st.com>
+        Thu, 11 Mar 2021 12:13:40 -0500
+Received: from mail-pj1-x1029.google.com (mail-pj1-x1029.google.com [IPv6:2607:f8b0:4864:20::1029])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B7E7AC061574
+        for <linux-remoteproc@vger.kernel.org>; Thu, 11 Mar 2021 09:13:40 -0800 (PST)
+Received: by mail-pj1-x1029.google.com with SMTP id t18so3778135pjs.3
+        for <linux-remoteproc@vger.kernel.org>; Thu, 11 Mar 2021 09:13:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=Al/T2sFWlvT3Vtl3R7CXJDlSotPrwvE7T7S7T8TsWxo=;
+        b=vX5cI/xl4BhFDK1i2+FF347SCqdm4hT3gkn1huohMMQ8ojPbiVWf2kwDKNkkERnbF0
+         yxLKe38HJb/UYRgAEzLIRG1OUa3AJnk00ObYH8XAEWu9IC9IcLLDaBkJwYR6YAYQqlgi
+         hBGwjYYUk4eRhYTY6IgETxzP6CStwS6fkY7bG8YPsmCOysAVg0hT+A5wcH+6iGDZIdoH
+         qPON9ACpFALlYYGji1aUhFopwQI8S8p++mABmayygY3pU1hwcSKKBUBTABlo7BBHTOuf
+         AzsEXlImcPG1Nl0QEisfya/cxEq3GI/WC1milcDDeSkafl2en2Sf4ErVPl5Bo/yXaS64
+         BRtg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=Al/T2sFWlvT3Vtl3R7CXJDlSotPrwvE7T7S7T8TsWxo=;
+        b=RyLgYy0uw3Bb9qj72l1YPfgR5kzkrMdaAc9uuztT2/8yKaMi4RRvfJkAQCDYJqkUZk
+         TOj0c3N5iRYkAxHTpsvhtqaP5OZmmol2h3dTRpiGx4/2c5LxQHptSIgFiQ+MkjxZ9KWQ
+         WujYgAga6meHPLmL2/9lm9cTB5lcvvK+zrVEUaS9LgpsRYrbJMmkCdkqb2CsAt1cCBnx
+         odd4MNIEpn6T3gjylT9zlBrWJxBfpEfL+SLfDZE/bg3YBSOiMQEVMeev1x2V1JAj/5RB
+         5Vwh1CJHeuKJBzJo6GQr/sbgWqQQ8sDXgZ3nQGBVg6v4tSg4kSjzgThrZ7lCr4rxIaxr
+         MF6g==
+X-Gm-Message-State: AOAM533fd2CaWZyH5cugk/B8FMyUj+PNyxaQzfULflQLe9z9b+XUAFCw
+        QYaKm7j3vm+l47v3bGJp7CMzuQ==
+X-Google-Smtp-Source: ABdhPJxXZ2mQrWMXsr2BEClDmGES5sAN9xqNAjKyB3hrk7VnzZoXr+dIKS/+ZlZKzDwWb4gBOKS0sw==
+X-Received: by 2002:a17:90a:9b18:: with SMTP id f24mr9511651pjp.96.1615482820187;
+        Thu, 11 Mar 2021 09:13:40 -0800 (PST)
+Received: from xps15 (S0106889e681aac74.cg.shawcable.net. [68.147.0.187])
+        by smtp.gmail.com with ESMTPSA id a1sm2838753pff.156.2021.03.11.09.13.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 11 Mar 2021 09:13:39 -0800 (PST)
+Date:   Thu, 11 Mar 2021 10:13:37 -0700
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     ohad@wizery.com, arnaud.pouliquen@st.com,
+        mcoquelin.stm32@gmail.com, alexandre.torgue@st.com,
+        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v7 12/17] remoteproc: Properly deal with the resource
+ table when stopping
+Message-ID: <20210311171337.GA1113417@xps15>
+References: <20210310211025.1084636-1-mathieu.poirier@linaro.org>
+ <20210310211025.1084636-13-mathieu.poirier@linaro.org>
+ <YElb4PITwZtMhpAw@builder.lan>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.75.127.48]
-X-ClientProxiedBy: SFHDAG2NODE3.st.com (10.75.127.6) To SFHDAG2NODE3.st.com
- (10.75.127.6)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.369,18.0.761
- definitions=2021-03-11_05:2021-03-10,2021-03-11 signatures=0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YElb4PITwZtMhpAw@builder.lan>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-When the endpoint device is created by the application, a destination
-address is specified in the rpmsg_channel_info structure. Since the
-rpmsg_endpoint structure does not store the destination address,
-this destination address must be specified when sending a message.
+On Wed, Mar 10, 2021 at 05:53:04PM -0600, Bjorn Andersson wrote:
+> On Wed 10 Mar 15:10 CST 2021, Mathieu Poirier wrote:
+> 
+> > When a remote processor that was attached to is stopped, special care
+> > must be taken to make sure the shutdown process is similar to what
+> > it would be had it been started by the remoteproc core.
+> > 
+> > This patch takes care of that by making a copy of the resource
+> > table currently used by the remote processor.  From that point on
+> > the copy is used, as if the remote processor had been started by
+> > the remoteproc core.
+> > 
+> > Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+> > ---
+> > New for V7:
+> >   New Patch, used to be part of 11/16 in V6.
+> > ---
+> >  drivers/remoteproc/remoteproc_core.c | 53 +++++++++++++++++++++++++++-
+> >  1 file changed, 52 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+> > index e9ea2558432d..c488b1aa6119 100644
+> > --- a/drivers/remoteproc/remoteproc_core.c
+> > +++ b/drivers/remoteproc/remoteproc_core.c
+> > @@ -1634,6 +1634,52 @@ static int rproc_reset_rsc_table_on_detach(struct rproc *rproc)
+> >  	return 0;
+> >  }
+> >  
+> > +static int rproc_reset_rsc_table_on_stop(struct rproc *rproc)
+> > +{
+> > +	struct resource_table *table_ptr;
+> > +
+> > +	/* A resource table was never retrieved, nothing to do here */
+> > +	if (!rproc->table_ptr)
+> > +		return 0;
+> > +
+> > +	/*
+> > +	 * If a cache table exists the remote processor was started by
+> > +	 * the remoteproc core.  That cache table should be used for
+> > +	 * the rest of the shutdown process.
+> > +	 */
+> > +	if (rproc->cached_table)
+> > +		goto out;
+> > +
+> > +	/* Remember where the external entity installed the resource table */
+> > +	table_ptr = rproc->table_ptr;
+> > +
+> 
+> Afaict this is just a remnant from the detach case.
+> 
+> I think the series looks really good now, please let me know and I can
+> drop the local "table_ptr" as I apply the patches.
 
-Replaces rpmsg_send with rpmsg_sendto to allow to specify the
-destination address. This implementation is requested for compatibly with
-some rpmsg backends like the virtio backend.
+(sigh) No matter how long you stare at a patchset there is always one that gets
+away.  I will address Arnaud's comment and fix this in a new revision.
 
-For this, the GLINK an SMD drivers have been updated to support the
-rpmsg_sendto, even if the destination address is ignored for these
-backends. For these drivers, the rpmsg_send and rpmsg_trysend ops are
-preserved to avoid breaking the legacy.
+Thanks,
+Mathieu 
 
-Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-
---- 
-update vs [1]
-squash following patches in one:
-  rpmsg: glink: add sendto and trysendto ops
-  rpmsg: smd: add sendto and trysendto ops
-  rpmsg: char: use sendto to specify the message destination address
-
-[1]: https://patchwork.kernel.org/project/linux-remoteproc/list/?series=435523
-
----
- drivers/rpmsg/qcom_glink_native.c | 16 ++++++++++++++++
- drivers/rpmsg/qcom_smd.c          | 16 ++++++++++++++++
- drivers/rpmsg/rpmsg_char.c        |  4 ++--
- 3 files changed, 34 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/rpmsg/qcom_glink_native.c b/drivers/rpmsg/qcom_glink_native.c
-index 27a05167c18c..edae0c9a8236 100644
---- a/drivers/rpmsg/qcom_glink_native.c
-+++ b/drivers/rpmsg/qcom_glink_native.c
-@@ -1332,6 +1332,20 @@ static int qcom_glink_trysend(struct rpmsg_endpoint *ept, void *data, int len)
- 	return __qcom_glink_send(channel, data, len, false);
- }
- 
-+static int qcom_glink_sendto(struct rpmsg_endpoint *ept, void *data, int len, u32 dst)
-+{
-+	struct glink_channel *channel = to_glink_channel(ept);
-+
-+	return __qcom_glink_send(channel, data, len, true);
-+}
-+
-+static int qcom_glink_trysendto(struct rpmsg_endpoint *ept, void *data, int len, u32 dst)
-+{
-+	struct glink_channel *channel = to_glink_channel(ept);
-+
-+	return __qcom_glink_send(channel, data, len, false);
-+}
-+
- /*
-  * Finds the device_node for the glink child interested in this channel.
-  */
-@@ -1364,7 +1378,9 @@ static const struct rpmsg_device_ops glink_device_ops = {
- static const struct rpmsg_endpoint_ops glink_endpoint_ops = {
- 	.destroy_ept = qcom_glink_destroy_ept,
- 	.send = qcom_glink_send,
-+	.sendto = qcom_glink_sendto,
- 	.trysend = qcom_glink_trysend,
-+	.trysendto = qcom_glink_trysendto,
- };
- 
- static void qcom_glink_rpdev_release(struct device *dev)
-diff --git a/drivers/rpmsg/qcom_smd.c b/drivers/rpmsg/qcom_smd.c
-index 19903de6268d..8da1b5cb31b3 100644
---- a/drivers/rpmsg/qcom_smd.c
-+++ b/drivers/rpmsg/qcom_smd.c
-@@ -974,6 +974,20 @@ static int qcom_smd_trysend(struct rpmsg_endpoint *ept, void *data, int len)
- 	return __qcom_smd_send(qsept->qsch, data, len, false);
- }
- 
-+static int qcom_smd_sendto(struct rpmsg_endpoint *ept, void *data, int len, u32 dst)
-+{
-+	struct qcom_smd_endpoint *qsept = to_smd_endpoint(ept);
-+
-+	return __qcom_smd_send(qsept->qsch, data, len, true);
-+}
-+
-+static int qcom_smd_trysendto(struct rpmsg_endpoint *ept, void *data, int len, u32 dst)
-+{
-+	struct qcom_smd_endpoint *qsept = to_smd_endpoint(ept);
-+
-+	return __qcom_smd_send(qsept->qsch, data, len, false);
-+}
-+
- static __poll_t qcom_smd_poll(struct rpmsg_endpoint *ept,
- 				  struct file *filp, poll_table *wait)
- {
-@@ -1038,7 +1052,9 @@ static const struct rpmsg_device_ops qcom_smd_device_ops = {
- static const struct rpmsg_endpoint_ops qcom_smd_endpoint_ops = {
- 	.destroy_ept = qcom_smd_destroy_ept,
- 	.send = qcom_smd_send,
-+	.sendto = qcom_smd_sendto,
- 	.trysend = qcom_smd_trysend,
-+	.trysendto = qcom_smd_trysendto,
- 	.poll = qcom_smd_poll,
- };
- 
-diff --git a/drivers/rpmsg/rpmsg_char.c b/drivers/rpmsg/rpmsg_char.c
-index 9e33b53bbf56..95a65f7a9d8d 100644
---- a/drivers/rpmsg/rpmsg_char.c
-+++ b/drivers/rpmsg/rpmsg_char.c
-@@ -239,9 +239,9 @@ static ssize_t rpmsg_eptdev_write_iter(struct kiocb *iocb,
- 	}
- 
- 	if (filp->f_flags & O_NONBLOCK)
--		ret = rpmsg_trysend(eptdev->ept, kbuf, len);
-+		ret = rpmsg_trysendto(eptdev->ept, kbuf, len, eptdev->chinfo.dst);
- 	else
--		ret = rpmsg_send(eptdev->ept, kbuf, len);
-+		ret = rpmsg_sendto(eptdev->ept, kbuf, len, eptdev->chinfo.dst);
- 
- unlock_eptdev:
- 	mutex_unlock(&eptdev->ept_lock);
--- 
-2.17.1
-
+> 
+> Regards,
+> Bjorn
+> 
+> > +	/*
+> > +	 * If we made it here the remote processor was started by another
+> > +	 * entity and a cache table doesn't exist.  As such make a copy of
+> > +	 * the resource table currently used by the remote processor and
+> > +	 * use that for the rest of the shutdown process.  The memory
+> > +	 * allocated here is free'd in rproc_shutdown().
+> > +	 */
+> > +	rproc->cached_table = kmemdup(rproc->table_ptr,
+> > +				      rproc->table_sz, GFP_KERNEL);
+> > +	if (!rproc->cached_table)
+> > +		return -ENOMEM;
+> > +
+> > +	/*
+> > +	 * Since the remote processor is being switched off the clean table
+> > +	 * won't be needed.  Allocated in rproc_set_rsc_table().
+> > +	 */
+> > +	kfree(rproc->clean_table);
+> > +
+> > +out:
+> > +	/*
+> > +	 * Use a copy of the resource table for the remainder of the
+> > +	 * shutdown process.
+> > +	 */
+> > +	rproc->table_ptr = rproc->cached_table;
+> > +	return 0;
+> > +}
+> > +
+> >  /*
+> >   * Attach to remote processor - similar to rproc_fw_boot() but without
+> >   * the steps that deal with the firmware image.
+> > @@ -1759,7 +1805,12 @@ static int rproc_stop(struct rproc *rproc, bool crashed)
+> >  	rproc_stop_subdevices(rproc, crashed);
+> >  
+> >  	/* the installed resource table is no longer accessible */
+> > -	rproc->table_ptr = rproc->cached_table;
+> > +	ret = rproc_reset_rsc_table_on_stop(rproc);
+> > +	if (ret) {
+> > +		dev_err(dev, "can't reset resource table: %d\n", ret);
+> > +		return ret;
+> > +	}
+> > +
+> >  
+> >  	/* power off the remote processor */
+> >  	ret = rproc->ops->stop(rproc);
+> > -- 
+> > 2.25.1
+> > 
