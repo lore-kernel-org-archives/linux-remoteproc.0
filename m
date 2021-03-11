@@ -2,320 +2,73 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-16.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E40ECC433DB
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 11 Mar 2021 18:07:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 441BBC433DB
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 11 Mar 2021 23:33:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A4B3E64DE5
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 11 Mar 2021 18:07:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0C25F64F94
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 11 Mar 2021 23:33:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230359AbhCKSGn (ORCPT
+        id S229526AbhCKXcc (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 11 Mar 2021 13:06:43 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49960 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230204AbhCKSGe (ORCPT
-        <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 11 Mar 2021 13:06:34 -0500
-Received: from mail-ot1-x32a.google.com (mail-ot1-x32a.google.com [IPv6:2607:f8b0:4864:20::32a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 30C51C061574
-        for <linux-remoteproc@vger.kernel.org>; Thu, 11 Mar 2021 10:06:34 -0800 (PST)
-Received: by mail-ot1-x32a.google.com with SMTP id t23-20020a0568301e37b02901b65ab30024so49254otr.4
-        for <linux-remoteproc@vger.kernel.org>; Thu, 11 Mar 2021 10:06:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=BAkVYaDZXDvqzd+93q6mQyCc1QCzmHmhvWDJslwlLVQ=;
-        b=ZpwaJSeDKiTDoplyS5R3U3C6LU/TzxwkihHTdD24J5F3Gy7cHA4cHcaBGn76kCWLIK
-         TFlFe/Jntcph5ybgEWjuxnSa3IdxAsUB7bh3FqO/C3nXDyDhapRBXtBdASbpLFSBWxT5
-         G0/+aodlizUHZehcYgPJDXIc/sDXnIhxzFBaRsK2dCYnSrcXYEr4kgDZd3qIyOBTM32h
-         bYdj7+z26r6eLv+xcbYFOqLc6vsg/ZT+Kt9qagkR5QfNvsr8WPb5PhkHrhUZ7DwdfhiT
-         MwCr36Tk2tfVTuN1Yz4H0HZQYLpCzEm9OXaZXdaci7gUzlcekzX+cY9c0+QZTZcRDFqv
-         HKXw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=BAkVYaDZXDvqzd+93q6mQyCc1QCzmHmhvWDJslwlLVQ=;
-        b=WVMnmq7sD7qW3aeI+cnISqaTTW8wJpHkQnMV5RyGzwBpwzrHz4+FsIwu/Z0GCE77lG
-         uP4nntjydXShHS4klcGQJc35Z0vX7r8uTDvCWzBbnGKlIDyHyu6qiQfqiTmdqS5KKBc/
-         AKpvYaR+w589D8kMO6Dg40dLVHqC4BeecfHVmQYTG3bFxvkTmUlEIPDclMB7QEOooUhR
-         serGb+cS2r0iNenQCpVTv8yfVKWsjbIe/1tm9CZOdZkY8ZdpVdP1nwiq2xmJqHSkPyDU
-         TkGfXEw/5Vk6nGT/IxyPq0YS3mMGlQPfh4w9iRJlq/jhJRujqwNA3QA0D6MmX5N/PMiw
-         ircQ==
-X-Gm-Message-State: AOAM531h8ZT7GtM7xOFmGhmBTavwhaZJrx6fV2jYl3715kjaZYB+Nlrc
-        5PtFAdlhjhyoBD1gRyb93YDF2A==
-X-Google-Smtp-Source: ABdhPJyVctZCnnNhBZKJiX69sS4mTpIVTOhqV1IBzdi6XWJosQqPD25nL134rQEZMjq4nsgeTq9Z6Q==
-X-Received: by 2002:a9d:86c:: with SMTP id 99mr91856oty.71.1615485993381;
-        Thu, 11 Mar 2021 10:06:33 -0800 (PST)
-Received: from builder.lan (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
-        by smtp.gmail.com with ESMTPSA id f8sm774478otp.71.2021.03.11.10.06.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 11 Mar 2021 10:06:32 -0800 (PST)
-Date:   Thu, 11 Mar 2021 12:06:30 -0600
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc:     "Peng Fan (OSS)" <peng.fan@oss.nxp.com>,
-        "ohad@wizery.com" <ohad@wizery.com>,
-        "o.rempel@pengutronix.de" <o.rempel@pengutronix.de>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "paul@crapouillou.net" <paul@crapouillou.net>,
-        "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
-        "agross@kernel.org" <agross@kernel.org>,
-        "patrice.chotard@st.com" <patrice.chotard@st.com>
-Subject: Re: [PATCH V13 00/10] remoteproc: imx_rproc: support iMX8MQ/M
-Message-ID: <YEpcJqMToL8YvaRP@builder.lan>
-References: <1615029865-23312-1-git-send-email-peng.fan@oss.nxp.com>
- <20210308160815.GB3977653@xps15>
- <DB6PR0402MB276009028DF766731BB2C06888909@DB6PR0402MB2760.eurprd04.prod.outlook.com>
- <20210311173818.GB1113417@xps15>
+        Thu, 11 Mar 2021 18:32:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57446 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229574AbhCKXcC (ORCPT <rfc822;linux-remoteproc@vger.kernel.org>);
+        Thu, 11 Mar 2021 18:32:02 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPS id 6622F64F94;
+        Thu, 11 Mar 2021 23:32:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1615505522;
+        bh=Agn4ESXTA2wliEGdsw8GtDWWQdax8XaxqZ+LmR7XOhk=;
+        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+        b=bAHkSqt7U0/M0u75edaa+ffUGSdGQO8S02ch273zF0D/fnKlBtVKA/8bLsC5clZK6
+         /8tsvjej9iGi+4wtQ7HoOi8Rpi6F3F6Cnym2uDZ5RdEQi4PtK3hWJfYoNnUyjEQDbc
+         6JhmNTF/kJg+xjBwP2I+6GgyrBVPsuL0zaFqcsiRB0PtbX8eOBNsBWmLI/5Z5Kjh9u
+         3Itfeu2/hdtSYmfnt4iBJKbOJ97WyGfrRwOcjA4+qOvJZC7rbKVIP+gPwQyqzbpshz
+         vkkGZ8T7VYrJ9FZjSb1n/Yf3+/gYonzHX0nbI7VP0bU3o6VD92KBlH1shg/HXRZQTN
+         Jz/HWmKjJyqQw==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210311173818.GB1113417@xps15>
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH v2] remoteproc: sysfs: Use sysfs_emit instead of sprintf
+From:   patchwork-bot+linux-remoteproc@kernel.org
+Message-Id: <161550552235.25923.1800332235171328945.git-patchwork-notify@kernel.org>
+Date:   Thu, 11 Mar 2021 23:32:02 +0000
+References: <1614808022-26062-1-git-send-email-sidgup@codeaurora.org>
+In-Reply-To: <1614808022-26062-1-git-send-email-sidgup@codeaurora.org>
+To:     Siddharth Gupta <sidgup@codeaurora.org>
+Cc:     linux-remoteproc@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Thu 11 Mar 11:38 CST 2021, Mathieu Poirier wrote:
+Hello:
 
-> On Thu, Mar 11, 2021 at 01:26:25AM +0000, Peng Fan (OSS) wrote:
-> > Mathieu,
-> > 
-> > > Subject: Re: [PATCH V13 00/10] remoteproc: imx_rproc: support iMX8MQ/M
-> > > 
-> > > On Sat, Mar 06, 2021 at 07:24:15PM +0800, peng.fan@oss.nxp.com wrote:
-> > > > From: Peng Fan <peng.fan@nxp.com>
-> > > >
-> > > > V13:
-> > > >  Add R-b tag from Rob for patch 1.
-> > > >  Drop the reserved memory node from patch 2 per Rob's comment.
-> > > >  Mathieu, Bjorn
-> > > >   Only patch 2 not have R-b/A-b tag, but since Rob's only has a minor
-> > > comment, and
-> > > >   addressed in this version, is it ok for you take into remoteproc next
-> > > branch?
-> > > >   Thanks.
-> > > 
-> > > As much as I want to, there is no way to move forward without an
-> > > acknowledgement from Rob.
-> > 
-> > Rob has gave his R-b tag for patch 2/13, please help pick up this patchset.
-> > I really wanna this feature in which has been for a long time. Then
-> > I will move on to add new stuff.
-> >
+This patch was applied to andersson/remoteproc.git (refs/heads/for-next):
+
+On Wed,  3 Mar 2021 13:47:02 -0800 you wrote:
+> From: Raghavendra Rao Ananta <rananta@codeaurora.org>
 > 
-> This set looks good to me - Bjorn will likely pick it up shortly.
->  
+> For security reasons sysfs_emit() is preferred over sprintf().
+> Hence, convert the remoteproc's sysfs show functions accordingly.
+> 
+> Signed-off-by: Raghavendra Rao Ananta <rananta@codeaurora.org>
+> Signed-off-by: Siddharth Gupta <sidgup@codeaurora.org>
+> 
+> [...]
 
-Certainly, I'm just waiting for tuxbuild to get back with some build
-results before I'm pushing the new branch(es).
+Here is the summary with links:
+  - [v2] remoteproc: sysfs: Use sysfs_emit instead of sprintf
+    https://git.kernel.org/andersson/remoteproc/c/145e1da374bc
 
-Regards,
-Bjorn
+You are awesome, thank you!
+--
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
-> > Thanks,
-> > Peng.
-> > 
-> > 
-> > > 
-> > > >
-> > > > V12:
-> > > >  Add maxItems to avoid dt_bindings_check fail  Rebased on top of
-> > > > linux-next
-> > > >
-> > > > V11:
-> > > >  Per Rob's comments, fix memory-region in patch 1/10  Rebased on top
-> > > > of Linux-next
-> > > >
-> > > > V10:
-> > > >  Per Rob's comments, fix patch 1/10
-> > > >
-> > > > V9:
-> > > >  Per Mathieu's comments,
-> > > >    update the tile of yaml in patch 2/10
-> > > >    update the Kconfig and MODULE_DESCRIPTION, I merge this change in
-> > > patch 8/10,
-> > > >    since this is a minor change, I still keep Mathieu's R-b tag. If any
-> > > objection, I could remove.
-> > > >    Add R-b tag in Patch 10/10
-> > > >
-> > > >  Rob, please help review patch 1/10 and 2/10
-> > > >
-> > > > V8:
-> > > >  Address sparse warning in patch 4/10 reported by kernel test robot
-> > > >
-> > > > V7:
-> > > >  Add R-b tag from Mathieu
-> > > >  vdevbuffer->vdev0buffer in patch 1/10, 7/10  correct err msg and
-> > > > shutdown seq per Mathieu's comments in patch 10/10  Hope this version
-> > > > is ok to be merged.
-> > > >
-> > > > V6:
-> > > >  Add R-b tag from Mathieu
-> > > >  Convert imx-rproc.txt to yaml and add dt-bindings support for
-> > > > i.MX8MQ/M, patch 1/10 2/10  No other changes.
-> > > >
-> > > > V5:
-> > > >  Apply on Linux next
-> > > >  Add V5 subject prefix
-> > > >  Add R-b tag from Bjorn for 1/8, 2/8, 3/8
-> > > >
-> > > > https://eur01.safelinks.protection.outlook.com/?url=https%3A%2F%2Fpatc
-> > > >
-> > > hwork.kernel.org%2Fproject%2Flinux-remoteproc%2Fcover%2F20201229033
-> > > 019
-> > > > .25899-1-peng.fan%40nxp.com%2F&amp;data=04%7C01%7Cpeng.fan%40n
-> > > xp.com%7
-> > > >
-> > > C18c2709725e14cbab54408d8e24c6492%7C686ea1d3bc2b4c6fa92cd99c5c3
-> > > 01635%7
-> > > >
-> > > C0%7C0%7C637508165016988280%7CUnknown%7CTWFpbGZsb3d8eyJWIjoi
-> > > MC4wLjAwMD
-> > > >
-> > > AiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C1000&amp;sdata
-> > > =bwlT
-> > > > uTk6iRuZke6SMhuyB2gxniStfxnX%2BKlVgm7MZuk%3D&amp;reserved=0
-> > > >
-> > > > V4:
-> > > >  According to Bjorn's comments, add is_iomem for da to va usage  1/8,
-> > > > 2/8 is new patch  3/8, follow Bjorn's comments to correct/update the
-> > > > err msg.
-> > > >  6/8, new patch
-> > > >  8/8, use dev_err_probe to simplify code, use queue_work instead
-> > > > schedule_delayed_work
-> > > >
-> > > > V3:
-> > > >  Since I was quite busy in the past days, V3 is late  Rebased on
-> > > > Linux-next  Add R-b tags
-> > > >  1/7: Add R-b tag of Mathieu, add comments
-> > > >  4/7: Typo fix
-> > > >  5/7: Add R-b tag of Mathieu, drop index Per Mathieu's comments
-> > > >  6/7: Add R-b tag of Mathieu
-> > > >  7/7: Add comment for vqid << 16, drop unneeded timeout settings of
-> > > mailbox
-> > > >       Use queue_work instead of schedule_delayed_work
-> > > >       free mbox channels when remove
-> > > >
-> > > > https://eur01.safelinks.protection.outlook.com/?url=https%3A%2F%2Flkml
-> > > > .org%2Flkml%2F2020%2F12%2F4%2F82&amp;data=04%7C01%7Cpeng.fan
-> > > %40nxp.com
-> > > > %7C18c2709725e14cbab54408d8e24c6492%7C686ea1d3bc2b4c6fa92cd9
-> > > 9c5c301635
-> > > > %7C0%7C0%7C637508165016988280%7CUnknown%7CTWFpbGZsb3d8eyJ
-> > > WIjoiMC4wLjAw
-> > > >
-> > > MDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C1000&amp;sd
-> > > ata=xQ
-> > > >
-> > > ReFFdUT2ZLhWyT2Vt2v0frG0xKq2psP1ExnLx%2BLXw%3D&amp;reserved=0
-> > > >
-> > > > V2:
-> > > >  Rebased on linux-next
-> > > >  Dropped early boot feature to make patchset simple.
-> > > >  Drop rsc-da
-> > > >
-> > > > https://eur01.safelinks.protection.outlook.com/?url=https%3A%2F%2Fpatc
-> > > >
-> > > hwork.kernel.org%2Fproject%2Flinux-remoteproc%2Fcover%2F20200927064
-> > > 131
-> > > > .24101-1-peng.fan%40nxp.com%2F&amp;data=04%7C01%7Cpeng.fan%40n
-> > > xp.com%7
-> > > >
-> > > C18c2709725e14cbab54408d8e24c6492%7C686ea1d3bc2b4c6fa92cd99c5c3
-> > > 01635%7
-> > > >
-> > > C0%7C0%7C637508165016988280%7CUnknown%7CTWFpbGZsb3d8eyJWIjoi
-> > > MC4wLjAwMD
-> > > >
-> > > AiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C1000&amp;sdata
-> > > =BWGP
-> > > >
-> > > gbVtOjOa%2BriGryGp9sh2CSY%2BhMESdGD%2F7LvPJ6w%3D&amp;reserved
-> > > =0
-> > > >
-> > > > V1:
-> > > >
-> > > > https://eur01.safelinks.protection.outlook.com/?url=https%3A%2F%2Fpatc
-> > > >
-> > > hwork.kernel.org%2Fcover%2F11682461%2F&amp;data=04%7C01%7Cpeng.f
-> > > an%40n
-> > > >
-> > > xp.com%7C18c2709725e14cbab54408d8e24c6492%7C686ea1d3bc2b4c6fa9
-> > > 2cd99c5c
-> > > >
-> > > 301635%7C0%7C0%7C637508165016988280%7CUnknown%7CTWFpbGZsb3
-> > > d8eyJWIjoiMC
-> > > >
-> > > 4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C1000&
-> > > amp;sd
-> > > >
-> > > ata=XkGYIxBgrHLwV7R3bro87N6fL7777Wa5rOAZdVjCoZs%3D&amp;reserved
-> > > =0
-> > > >
-> > > > This patchset is to support i.MX8MQ/M coproc.
-> > > > The early boot feature was dropped to make the patchset small in V2.
-> > > >
-> > > > Since i.MX specific TCM memory requirement, add elf platform hook.
-> > > > Several patches have got reviewed by Oleksij and Mathieu in v1.
-> > > >
-> > > >
-> > > > Peng Fan (10):
-> > > >   dt-bindings: remoteproc: convert imx rproc bindings to json-schema
-> > > >   dt-bindings: remoteproc: imx_rproc: add i.MX8MQ/M support
-> > > >   remoteproc: introduce is_iomem to rproc_mem_entry
-> > > >   remoteproc: add is_iomem to da_to_va
-> > > >   remoteproc: imx_rproc: correct err message
-> > > >   remoteproc: imx_rproc: use devm_ioremap
-> > > >   remoteproc: imx_rproc: add i.MX specific parse fw hook
-> > > >   remoteproc: imx_rproc: support i.MX8MQ/M
-> > > >   remoteproc: imx_rproc: ignore mapping vdev regions
-> > > >   remoteproc: imx_proc: enable virtio/mailbox
-> > > >
-> > > >  .../bindings/remoteproc/fsl,imx-rproc.yaml    |  90 ++++++
-> > > >  .../bindings/remoteproc/imx-rproc.txt         |  33 ---
-> > > >  drivers/remoteproc/Kconfig                    |   6 +-
-> > > >  drivers/remoteproc/imx_rproc.c                | 262
-> > > +++++++++++++++++-
-> > > >  drivers/remoteproc/ingenic_rproc.c            |   2 +-
-> > > >  drivers/remoteproc/keystone_remoteproc.c      |   2 +-
-> > > >  drivers/remoteproc/mtk_scp.c                  |   6 +-
-> > > >  drivers/remoteproc/omap_remoteproc.c          |   2 +-
-> > > >  drivers/remoteproc/pru_rproc.c                |   2 +-
-> > > >  drivers/remoteproc/qcom_q6v5_adsp.c           |   2 +-
-> > > >  drivers/remoteproc/qcom_q6v5_pas.c            |   2 +-
-> > > >  drivers/remoteproc/qcom_q6v5_wcss.c           |   2 +-
-> > > >  drivers/remoteproc/qcom_wcnss.c               |   2 +-
-> > > >  drivers/remoteproc/remoteproc_core.c          |   7 +-
-> > > >  drivers/remoteproc/remoteproc_coredump.c      |   8 +-
-> > > >  drivers/remoteproc/remoteproc_debugfs.c       |   2 +-
-> > > >  drivers/remoteproc/remoteproc_elf_loader.c    |  21 +-
-> > > >  drivers/remoteproc/remoteproc_internal.h      |   2 +-
-> > > >  drivers/remoteproc/st_slim_rproc.c            |   2 +-
-> > > >  drivers/remoteproc/ti_k3_dsp_remoteproc.c     |   2 +-
-> > > >  drivers/remoteproc/ti_k3_r5_remoteproc.c      |   2 +-
-> > > >  drivers/remoteproc/wkup_m3_rproc.c            |   2 +-
-> > > >  include/linux/remoteproc.h                    |   4 +-
-> > > >  23 files changed, 393 insertions(+), 72 deletions(-)  create mode
-> > > > 100644 Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.yaml
-> > > >  delete mode 100644
-> > > > Documentation/devicetree/bindings/remoteproc/imx-rproc.txt
-> > > >
-> > > > --
-> > > > 2.30.0
-> > > >
+
