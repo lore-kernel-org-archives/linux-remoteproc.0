@@ -2,311 +2,387 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2101C433DB
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 11 Mar 2021 23:50:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCC81C433DB
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 12 Mar 2021 00:22:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 98FC464F90
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 11 Mar 2021 23:50:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 91FA864F88
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 12 Mar 2021 00:22:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231821AbhCKXuC (ORCPT
+        id S229743AbhCLAWQ (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 11 Mar 2021 18:50:02 -0500
-Received: from mail-dm6nam10on2046.outbound.protection.outlook.com ([40.107.93.46]:21985
-        "EHLO NAM10-DM6-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S229574AbhCKXtg (ORCPT <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 11 Mar 2021 18:49:36 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=eZziMpdmtxjyL2/FAIbTo+72Legzs+5fyKkJ0bRQA2KdnMH4R4nfTrN4ABExC5lTOPmpiKBrpDMokxfUwhwcirKRTSafQZ3285IzpP/yM+V+q9AzbUgH8/uBs17HlELjyo7YQZNH2azyJN1ybsX0j7ErQr2CS5ntq63p77j4gg2BYsCcaxUKic5GuQTxN2au+GApDsIKeIMx2AUqrxkOBy2U8AftreWi9GZj4aZgnkuI7zZtqFDlA3H/NNBtOLyCEmChWaXXiBmsXNCiMIvAegVK1kOlSHG3m3HM7sTqNwUs2rpGClCBzF0+UbcJrB05MpCR7CCwfe5opwAd+VtbQQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=/hqcaftH5c8kZmOBWRYfP6vl8K2nNrA4IwbtqjD0l6g=;
- b=BltTYOATNxL6gZgb4ogHguZbsBDecWUtZvL5qVYp07fMd5mm6mvtPrhe5qEWfkx5wd20bourb1ES4QthqY1zUhm/TUL4pfK6NJtCW6YC7JjWle9d+LRBycwrw5+JZJV8n6FCKj+whcDQVr7einZtBqsKqT04jFeQtCxgLFQfBlE0s21S/Ya2lpzYYrQ0oN8XrwiNllObp9AMEh3Px20JACIvf2WZjWxRVKRJtG0gC2va8t6vzlbVx74MV+wzTRRh/M1IU4fbOckWYNrIuePCPV2Io9BIGOa8oR9p00UdEkiXksRO7GliY3gG2Z+ROsCxKqiFK6lZnU6kqTRPJVx2WQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=xilinx.com; dmarc=pass action=none header.from=xilinx.com;
- dkim=pass header.d=xilinx.com; arc=none
+        Thu, 11 Mar 2021 19:22:16 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45984 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229558AbhCLAVs (ORCPT
+        <rfc822;linux-remoteproc@vger.kernel.org>);
+        Thu, 11 Mar 2021 19:21:48 -0500
+Received: from mail-ot1-x335.google.com (mail-ot1-x335.google.com [IPv6:2607:f8b0:4864:20::335])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 92002C061760
+        for <linux-remoteproc@vger.kernel.org>; Thu, 11 Mar 2021 16:21:48 -0800 (PST)
+Received: by mail-ot1-x335.google.com with SMTP id w21-20020a9d63950000b02901ce7b8c45b4so544849otk.5
+        for <linux-remoteproc@vger.kernel.org>; Thu, 11 Mar 2021 16:21:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=xilinx.onmicrosoft.com; s=selector2-xilinx-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=/hqcaftH5c8kZmOBWRYfP6vl8K2nNrA4IwbtqjD0l6g=;
- b=RX+c4CoDesI1YYrNuAzE3e/qk3jckU1Jrtw+5Ko5kaOhL5yXze5k7w2gY3UuhpsflTbRGnoQqYanBvcy25P1Uop95CvhFmehtnrwbXFvLOt/Ds+JZilVJWz1r2b9gQjvNSIylVksbQVBp8vXs3gEO1cRpiQGH5Vt1Jmd8YVMXi0=
-Received: from BYAPR02MB4407.namprd02.prod.outlook.com (2603:10b6:a03:55::31)
- by BYAPR02MB5558.namprd02.prod.outlook.com (2603:10b6:a03:9b::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3890.20; Thu, 11 Mar
- 2021 23:49:13 +0000
-Received: from BYAPR02MB4407.namprd02.prod.outlook.com
- ([fe80::2cf3:79d2:d169:7fdb]) by BYAPR02MB4407.namprd02.prod.outlook.com
- ([fe80::2cf3:79d2:d169:7fdb%3]) with mapi id 15.20.3890.041; Thu, 11 Mar 2021
- 23:49:13 +0000
-From:   Ben Levinsky <BLEVINSK@xilinx.com>
-To:     Mathieu Poirier <mathieu.poirier@linaro.org>
-CC:     "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        Michal Simek <michals@xilinx.com>,
-        "Ed T. Mooring" <emooring@xilinx.com>
-Subject: Re: [PATCH v26 5/5] remoteproc: Add initial zynqmp R5 remoteproc
- driver
-Thread-Topic: [PATCH v26 5/5] remoteproc: Add initial zynqmp R5 remoteproc
- driver
-Thread-Index: AQHXCfsr2E1q1mchlUeHFfIK6xXzWap79YAAgAMSswA=
-Date:   Thu, 11 Mar 2021 23:49:13 +0000
-Message-ID: <38527B70-FE3A-4D05-8C2E-6A95A3D4ADF3@xilinx.com>
-References: <20210223154447.13247-1-ben.levinsky@xilinx.com>
- <20210223154447.13247-6-ben.levinsky@xilinx.com>
- <20210309165330.GA4013290@xps15>
-In-Reply-To: <20210309165330.GA4013290@xps15>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
-X-MS-TNEF-Correlator: 
-user-agent: Microsoft-MacOutlook/16.46.21021202
-authentication-results: linaro.org; dkim=none (message not signed)
- header.d=none;linaro.org; dmarc=none action=none header.from=xilinx.com;
-x-originating-ip: [149.199.62.133]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 4ed161be-f1a8-4e73-7baf-08d8e4e8460f
-x-ms-traffictypediagnostic: BYAPR02MB5558:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <BYAPR02MB5558AD3F09BDBC0CC3D702F0B5909@BYAPR02MB5558.namprd02.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:2449;
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: MS9mempsSxsCEwA5gxuZaUz6tlk3U5yxoUvKdYdczslGIqfyeAWyRx/B8W+lPKCMgJSxqBJTx14aubKHyL++E0Z/jP3nZqEoHC0eXLChu+ednP8fRm7ROLSolQfy15FCgGJ4+hp9E/vCrPJlqRsWD1DFLI4rHdFgF4wUVr7hpSwsozQ46wRqQ8Be0zLE3ruifgx921NO/BLQgSR7cErCJCwriSp6koLp4ACd+PEO027bCtJBcWyParHiD7O5im3H+EFDn89mNzW0AFZhJyA20T4oYLjd1IrUp80dw0h/E8nz/jjuxttxceEudK5/fDII6JUvH2s7+A6Eb9m8OW8ZrwQ/3/c3AK1cmAQrOruvxVp2d+BQSfLdqNlKsTP03JMYBc7f3+cxpVVVYl//4NEZSJF1kEIsALkDugo6zGKUiDxy9jrsPIgm88ruLnN6APVKP1RtAjKz5AqRBTqoP5z9yZDZDyY/AFEI6CTqPL0z+SGrkz2D1UdUlBe31kgIHuGbP9Zd0qfQwkkOWfEOXWeYPKbYLYSCv2lrDLbONH2OqvFEWkD9Cos7AAhDHNUQyjfVfcOq1l5mXa12J/eAwzmRkQ==
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR02MB4407.namprd02.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(136003)(396003)(346002)(39860400002)(366004)(376002)(64756008)(83380400001)(86362001)(5660300002)(36756003)(66476007)(316002)(54906003)(26005)(71200400001)(8676002)(2616005)(478600001)(6512007)(107886003)(186003)(2906002)(33656002)(6486002)(76116006)(6916009)(53546011)(6506007)(66446008)(66556008)(4326008)(66946007)(8936002)(45980500001);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata: =?utf-8?B?dnl5TzVkeTg2b01hWTJyUzA2eC9RMGVFc3E5UlA1YUcvNloyZzdvK2RhQ0pp?=
- =?utf-8?B?TTZabWsyY3dNS0d6dWcxeHM3WXRFNE9CQm9JWWU3bGhTVGNyZjFrOTNac1Qy?=
- =?utf-8?B?SVQrdmlkcEhXSW1QaHhkTm1lcnVLV1RkK0MrU3VXVno0VzVlMlZnL2c5a0x3?=
- =?utf-8?B?M3Y5eDBocmlWSURyK29JM1VMOTYzRllZaEE5YUlseTMzRXNRelZiMG1nZWUz?=
- =?utf-8?B?UFFsb1JGZHU1eWIwRjc1eFZqcXhmaW42YnNZY3h3ampiUVFOc3FBNTNEYmZp?=
- =?utf-8?B?bGR3dDgyS3d6R05ZdTZZTjIzN0NDTFQ0UW92ZTZnYjBBUjZsamJkZ3R2azRB?=
- =?utf-8?B?ZGE0YmVJZzdoVGpTbXdRNzRuOG5leTEraWNlaDQvMEhJak93ZFc4RGNPaFVV?=
- =?utf-8?B?OUV1T1FCMnVnb0k0VU9mdzVDbHpZd2hBa3F6QnExVW5IeStYWkRwSXZnM2lh?=
- =?utf-8?B?aWRqWVVOL01Wd1lRcFB5amx6Yy9HNEg5TGp3bERRaGk3Znl1REVTTHdPZVJn?=
- =?utf-8?B?bjVZSDNhRDdNdVU1QUtTWVRqa1RESjBRNUcwQ0xHYkc4RDQyR3JlSGZNVzFm?=
- =?utf-8?B?aHVMT3hHQkNFUmozWWxFa0xkeXo5eHFneS9sMTdtUG96dWMwOWpMeEExMnEx?=
- =?utf-8?B?dGtpME1PQVpmbEx3YXlpb0tnamsyaHdjUlZ0UTA5ZG02dzFGaEpnQlhMeCsz?=
- =?utf-8?B?T3BvTGtLUmRQaVFRYXhpMEZieHp0and5dVlXWUVtRGh4V2pFYkZiVlpkWHlo?=
- =?utf-8?B?V0t6NUsvRXNWZXQ4TXZYNVczcEJtd25nd1JGRlJ0N2NoN2JaekRKQlllMC8r?=
- =?utf-8?B?RkZaRXFlY1JBY1E4UjB2ZTUya1JEc0NPaGZLU1JZSTVmQzJtV0t3c0lVaFBp?=
- =?utf-8?B?WVY3RkNyZEJNeFQzTTI1WktTaTdxeGZHRHYzTTZoMWg0ZVhsekx4VUJkUEFC?=
- =?utf-8?B?d2R6b25KMWtUVDZoaG1vVytIbUxyT0VpaGs5MXlXUUlqS2thZzZTRW5vU1V5?=
- =?utf-8?B?dThkekhSN3NERXdQNTNxaXpxZVVVZW1pVmtJY1ZzWnZWRkEyVEhwalJjaks0?=
- =?utf-8?B?NnpEd0g3cDFrT0xDQzk1TGJNQ2lqbXBOVzZtS2FEQTBVVVdmNzNBOHNtdG16?=
- =?utf-8?B?aGsxZ2VDSFRVR3M2NEJDUmM4VU9IRjBvKzRnVndaWGp5L0NoeG9yeXI2azVK?=
- =?utf-8?B?YmwxdVBUREZQS29FbUJoWEQ3MzVKREIxVDh1YkRINEJYdWVkTTI0L0xsQ2FB?=
- =?utf-8?B?Vk5rNFZDK3I4eEpYM3hMSEx3UlJhdXpHZVF6WUlhS1hNNnBnZHkyeVBIMHI2?=
- =?utf-8?B?aFRrakhteU5GMUM0T0pId1A3eHZiN0UvRUs4Qk01UFFZa0kzNE4rZ0Zwc1hG?=
- =?utf-8?B?SXFqTVpXd3VsaE9XYXpSSTNicTh3VDJYNHFNczhqNkIwUVI0aTZCSlMxUVNB?=
- =?utf-8?B?a0x2dU5tdURUZkcvOXVMN01seWxTMVBIZnpmd05DNmV0SXVZMnB4MWlhc2sr?=
- =?utf-8?B?MDBicU85Smdsbjk4NjFZUEFaT3huYWgxQ3J4TjU0SVA3TjJ5MG52Y29TRUZD?=
- =?utf-8?B?Y0xQSDZ0Q1A0V1Z1TktHT2ZNdm00Z3dUYXIySFl2N0RvNzVEWGQzbjJLTFdU?=
- =?utf-8?B?RWYzMDA3VkVCTHJEQnd6NGNLTWJrYlV0ZkhyaThDektEQWVXVEttMXVJNDkv?=
- =?utf-8?B?aWR3ZnF5THFYbko0NXprOFFXTnRKbVNSQkV0NTNyaGtjK21VV085SHVhM1Nu?=
- =?utf-8?B?bFV3S2thVUNBcHQyVUp6VmErb2J4d2dqS3BpcnhGM0Z3SHpaMkpTVlVhc2V4?=
- =?utf-8?B?aEZxNE9xR2dMQWMyNlhSZz09?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <AA02380292BE08439A470AFB980FF849@namprd02.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=HzQ7I6zfyiU0Euaxya9+v7fvQ+LyJjOhCt+E8/12K5M=;
+        b=VQ7reaJDTyNby9OUcBov5SHD1GwkMjq1Jl5UyBz3viysmEeodSL1b3yDAFXa4lsHVw
+         tEgKwHvJVmeUMgYJB2QxcbfIN+cQnxMaCgt5yIMPBBGoeWcf9uRXFMCcSR3Wt96QbcZH
+         AQoPboumP15gyFdvacYf9OTYarYNKQRIm9/bxCMjBJ/7CN9q+hOGn6m34vJkj1Q3wAw/
+         7x4KraOBG8ZqYbcyxIY0jSc1esvRlEoFGuSp3g91VNU1xXI9xYD0y2n8JRFYqswWLTdM
+         JjgUsiprA+SG+DY120ibOlZHHN1L8FyYflhkbcMQROmZomlsoiP7y8LJcWTLVVwR91WN
+         C2Lg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=HzQ7I6zfyiU0Euaxya9+v7fvQ+LyJjOhCt+E8/12K5M=;
+        b=IO0yuAmzqSgdGo6yEOX6CWK8q2zvvlSdE4IMD3IsVC6CmLH4sGAm5b0Wrmp/u6ghR1
+         CqT82pPyya5r4qTzEjpGCQkJmx8TUiWcEafCB0CGF9oMrV2Uh/LhUxyAU0D3FEef0FaO
+         vL2MJh1Yd3mWCjxpKCtQSM2PN0AC6SmGw+OQGFQ/rxdkdDIcuI1RRS7Z1MlDGPk/kllJ
+         5J2M+wiOE1wnyVPo7hS16XkVMgE8gisVTP5wSQVXU7tiR/cyu82B8SghT7XM1coE/M7R
+         ZNq71hgGlCae8EM7e0Am86I7zaCkFmgNGN58EuFdwcioX/60IorxOPMWggS1g5fmU3BT
+         1vRg==
+X-Gm-Message-State: AOAM531Rz91ugklJVBsonBEQAXSrrKK01EI5YKF3S05hVdpc1YBwor0x
+        jTmb1/S4n9QFBhqGDgGXjOTKzXC2HV3zdA==
+X-Google-Smtp-Source: ABdhPJzNJYqQt9iFSwbizrPqtVhnv8PzgfJyyf6LNqCQvhcpPyYWZmycForMGFd7k5m/13uWQtm88A==
+X-Received: by 2002:a9d:6296:: with SMTP id x22mr1238136otk.196.1615508507710;
+        Thu, 11 Mar 2021 16:21:47 -0800 (PST)
+Received: from localhost.localdomain (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
+        by smtp.gmail.com with ESMTPSA id t5sm144907oog.20.2021.03.11.16.21.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 11 Mar 2021 16:21:47 -0800 (PST)
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Ohad Ben-Cohen <ohad@wizery.com>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc:     linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Anibal Limon <anibal.limon@linaro.org>,
+        Loic Poulain <loic.poulain@linaro.org>
+Subject: [PATCH] remoteproc: qcom: wcnss: Fix race with iris probe
+Date:   Thu, 11 Mar 2021 16:22:51 -0800
+Message-Id: <20210312002251.3273013-1-bjorn.andersson@linaro.org>
+X-Mailer: git-send-email 2.29.2
 MIME-Version: 1.0
-X-OriginatorOrg: xilinx.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: BYAPR02MB4407.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4ed161be-f1a8-4e73-7baf-08d8e4e8460f
-X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Mar 2021 23:49:13.0821
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 657af505-d5df-48d0-8300-c31994686c5c
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: MUgVU1m8MFHhvyQOsHfC+hsGZnNJobZQLUBmvhbe029nsCsr/TWCzdZupU01ynaE4FPw6YrQZTPfo75IN3flDQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR02MB5558
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-SGkgTWF0aGlldQ0KDQrvu78tLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KRnJvbTogTWF0aGll
-dSBQb2lyaWVyIDxtYXRoaWV1LnBvaXJpZXJAbGluYXJvLm9yZz4NCkRhdGU6IFR1ZXNkYXksIE1h
-cmNoIDksIDIwMjEgYXQgODo1MyBBTQ0KVG86IEJlbiBMZXZpbnNreSA8QkxFVklOU0tAeGlsaW54
-LmNvbT4NCkNjOiAiZGV2aWNldHJlZUB2Z2VyLmtlcm5lbC5vcmciIDxkZXZpY2V0cmVlQHZnZXIu
-a2VybmVsLm9yZz4sICJsaW51eC1yZW1vdGVwcm9jQHZnZXIua2VybmVsLm9yZyIgPGxpbnV4LXJl
-bW90ZXByb2NAdmdlci5rZXJuZWwub3JnPiwgImxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmci
-IDxsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnPiwgImxpbnV4LWFybS1rZXJuZWxAbGlzdHMu
-aW5mcmFkZWFkLm9yZyIgPGxpbnV4LWFybS1rZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9yZz4sIE1p
-Y2hhbCBTaW1layA8bWljaGFsc0B4aWxpbnguY29tPg0KU3ViamVjdDogUmU6IFtQQVRDSCB2MjYg
-NS81XSByZW1vdGVwcm9jOiBBZGQgaW5pdGlhbCB6eW5xbXAgUjUgcmVtb3RlcHJvYyBkcml2ZXIN
-Cg0KICAgIFsuLi5dDQoNCiAgICA+ICsNCiAgICA+ICsvKioNCiAgICA+ICsgKiB6eW5xbXBfcjVf
-cHJvYmUgLSBQcm9iZXMgWnlucU1QIFI1IHByb2Nlc3NvciBkZXZpY2Ugbm9kZQ0KICAgID4gKyAq
-CQkgICAgICAgdGhpcyBpcyBjYWxsZWQgZm9yIGVhY2ggaW5kaXZpZHVhbCBSNSBjb3JlIHRvDQog
-ICAgPiArICoJCSAgICAgICBzZXQgdXAgbWFpbGJveCwgWGlsaW54IHBsYXRmb3JtIG1hbmFnZXIg
-dW5pcXVlIElELA0KICAgID4gKyAqCQkgICAgICAgYWRkIHRvIHJwcm9jIGNvcmUNCiAgICA+ICsg
-Kg0KICAgID4gKyAqIEBwZGV2OiBkb21haW4gcGxhdGZvcm0gZGV2aWNlIGZvciBjdXJyZW50IFI1
-IGNvcmUNCiAgICA+ICsgKiBAbm9kZTogcG9pbnRlciBvZiB0aGUgZGV2aWNlIG5vZGUgZm9yIGN1
-cnJlbnQgUjUgY29yZQ0KICAgID4gKyAqIEBycHVfbW9kZTogbW9kZSB0byBjb25maWd1cmUgUlBV
-LCBzcGxpdCBvciBsb2Nrc3RlcA0KICAgID4gKyAqDQogICAgPiArICogUmV0dXJuOiAwIGZvciBz
-dWNjZXNzLCBuZWdhdGl2ZSB2YWx1ZSBmb3IgZmFpbHVyZS4NCiAgICA+ICsgKi8NCiAgICA+ICtz
-dGF0aWMgc3RydWN0IHp5bnFtcF9yNV9ycHJvYyAqenlucW1wX3I1X3Byb2JlKHN0cnVjdCBwbGF0
-Zm9ybV9kZXZpY2UgKnBkZXYsDQogICAgPiArCQkJCQkgICAgICAgc3RydWN0IGRldmljZV9ub2Rl
-ICpub2RlLA0KICAgID4gKwkJCQkJICAgICAgIGVudW0gcnB1X29wZXJfbW9kZSBycHVfbW9kZSkN
-CiAgICA+ICt7DQogICAgPiArCWludCByZXQsIG51bV9iYW5rczsNCiAgICA+ICsJc3RydWN0IGRl
-dmljZSAqZGV2ID0gJnBkZXYtPmRldjsNCiAgICA+ICsJc3RydWN0IHJwcm9jICpycHJvY19wdHI7
-DQogICAgPiArCXN0cnVjdCB6eW5xbXBfcjVfcnByb2MgKnpfcnByb2M7DQogICAgPiArCXN0cnVj
-dCBkZXZpY2Vfbm9kZSAqcjVfbm9kZTsNCiAgICA+ICsNCiAgICA+ICsJLyogQWxsb2NhdGUgcmVt
-b3RlcHJvYyBpbnN0YW5jZSAqLw0KICAgID4gKwlycHJvY19wdHIgPSBkZXZtX3Jwcm9jX2FsbG9j
-KGRldiwgZGV2X25hbWUoZGV2KSwgJnp5bnFtcF9yNV9ycHJvY19vcHMsDQogICAgPiArCQkJCSAg
-ICAgTlVMTCwgc2l6ZW9mKHN0cnVjdCB6eW5xbXBfcjVfcnByb2MpKTsNCiAgICA+ICsJaWYgKCFy
-cHJvY19wdHIpIHsNCiAgICA+ICsJCXJldCA9IC1FTk9NRU07DQogICAgPiArCQlnb3RvIGVycm9y
-Ow0KICAgID4gKwl9DQogICAgPiArDQogICAgPiArCXJwcm9jX3B0ci0+YXV0b19ib290ID0gZmFs
-c2U7DQogICAgPiArCXpfcnByb2MgPSBycHJvY19wdHItPnByaXY7DQogICAgPiArCXpfcnByb2Mt
-PnJwcm9jID0gcnByb2NfcHRyOw0KICAgID4gKwlyNV9ub2RlID0gel9ycHJvYy0+cnByb2MtPmRl
-di5wYXJlbnQtPm9mX25vZGU7DQogICAgPiArDQogICAgPiArCS8qIFNldCB1cCBETUEgbWFzayAq
-Lw0KICAgID4gKwlyZXQgPSBkbWFfc2V0X2NvaGVyZW50X21hc2soZGV2LCBETUFfQklUX01BU0so
-MzIpKTsNCiAgICA+ICsJaWYgKHJldCkNCiAgICA+ICsJCWdvdG8gZXJyb3I7DQogICAgPiArDQog
-ICAgPiArCS8qIEdldCBSNSBwb3dlciBkb21haW4gbm9kZSAqLw0KICAgID4gKwlyZXQgPSBvZl9w
-cm9wZXJ0eV9yZWFkX3UzMihub2RlLCAicG93ZXItZG9tYWluIiwgJnpfcnByb2MtPnBub2RlX2lk
-KTsNCiAgICA+ICsJaWYgKHJldCkNCiAgICA+ICsJCWdvdG8gZXJyb3I7DQogICAgPiArDQogICAg
-PiArCXJldCA9IHI1X3NldF9tb2RlKHpfcnByb2MsIHJwdV9tb2RlKTsNCiAgICA+ICsJaWYgKHJl
-dCkNCiAgICA+ICsJCWdvdG8gZXJyb3I7DQogICAgPiArDQogICAgPiArCWlmIChvZl9wcm9wZXJ0
-eV9yZWFkX2Jvb2wobm9kZSwgIm1ib3hlcyIpKSB7DQogICAgPiArCQlyZXQgPSB6eW5xbXBfcjVf
-c2V0dXBfbWJveCh6X3Jwcm9jLCBub2RlKTsNCiAgICA+ICsJCWlmIChyZXQpDQogICAgPiArCQkJ
-Z290byBlcnJvcjsNCiAgICA+ICsJfQ0KICAgID4gKw0KICAgID4gKwkvKiBnbyB0aHJvdWdoIFRD
-TSBiYW5rcyBmb3IgcjUgbm9kZSAqLw0KICAgID4gKwludW1fYmFua3MgPSBvZl9jb3VudF9waGFu
-ZGxlX3dpdGhfYXJncyhyNV9ub2RlLCBCQU5LX0xJU1RfUFJPUCwgTlVMTCk7DQogICAgPiArCWlm
-IChudW1fYmFua3MgPD0gMCkgew0KICAgID4gKwkJZGV2X2VycihkZXYsICJuZWVkIHRvIHNwZWNp
-ZnkgVENNIGJhbmtzXG4iKTsNCiAgICA+ICsJCXJldCA9IC1FSU5WQUw7DQogICAgPiArCQlnb3Rv
-IGVycm9yOw0KICAgID4gKwl9DQogICAgPiArDQogICAgPiArCWlmIChudW1fYmFua3MgPiBOVU1f
-U1JBTVMpIHsNCiAgICA+ICsJCWRldl9lcnIoZGV2LCAibWF4IG51bWJlciBvZiBzcmFtcyBpcyAl
-ZC4gZ2l2ZW46ICVkIFxyXG4iLA0KICAgID4gKwkJCU5VTV9TUkFNUywgbnVtX2JhbmtzKTsNCiAg
-ICA+ICsJCXJldCA9IC1FSU5WQUw7DQogICAgPiArCQlnb3RvIGVycm9yOw0KICAgID4gKwl9DQog
-ICAgPiArDQogICAgPiArCS8qIGNvbnN0cnVjdCBjb2xsZWN0aW9uIG9mIHNyYW1zIHVzZWQgYnkg
-dGhlIGN1cnJlbnQgUjUgY29yZSAqLw0KICAgID4gKwlmb3IgKDsgbnVtX2JhbmtzOyBudW1fYmFu
-a3MtLSkgew0KICAgID4gKwkJc3RydWN0IHJlc291cmNlIHJzYzsNCiAgICA+ICsJCXN0cnVjdCBk
-ZXZpY2Vfbm9kZSAqZHRfbm9kZTsNCiAgICA+ICsJCXJlc291cmNlX3NpemVfdCBzaXplOw0KICAg
-ID4gKwkJaW50IGk7DQogICAgPiArDQogICAgPiArCQlkdF9ub2RlID0gb2ZfcGFyc2VfcGhhbmRs
-ZShyNV9ub2RlLCBCQU5LX0xJU1RfUFJPUCwgaSk7DQoNCiAgICBWYXJpYWJsZSBAaSBpcyBub3Qg
-aW5pdGlhbGlzZWQgYnV0IGl0IGlzIHVzZWQgYXMgYW4gaW5kZXggdG8gcmV0cmlldmUgYSBoYW5k
-bGUNCiAgICB0byB0aGUgc3JhbSBiYW5rcy4gIFRoYXQgY29kZSBfc2hvdWxkXyBoYXZlIGZhaWxl
-ZCBmcmVxdWVudGx5IG9yIGF0IGxlYXN0IGhhdmUNCiAgICB5aWVsZGVkIGFibm9ybWFsIHJlc3Vs
-dHMgb2Z0ZW4gZW5vdWdoIHRvIGJlIG5vdGljZWQuICBXaHkgd2Fzbid0IGl0IHRoZSBjYXNlPw0K
-DQogICAgSSB3aWxsIHN0b3AgaGVyZSBmb3IgdGhlIG1vbWVudC4NCg0KW0Jlbl0NClllcyB0aGlz
-IHNob3VsZCBiZSBpbml0aWFsaXplZC4gVGhlIHJlYXNvbiB0aGlzIGdvdCB0aHJvdWdoIGlzIHRo
-YXQgYXMgaSBkZWZhdWx0cyB0byAwIGFuZCB0aGUgMHRoIGJhbmsgaG91c2VkIHRoZSByZXF1aXJl
-ZCBkYXRhLiB0aGUgY2FzZSB3aGVyZSBTUkFNUyB0aGF0IGNhbiBiZSB3cml0dGVuIHRvLCAweEZG
-RTIwMDAwIGluIHRoaXMgY2FzZSBvZiBzcGxpdCBtb2RlIGFuZCBvbiBSNS0wLCB3YXMgbm90IGNh
-dWdodC4NCg0KSW5zdGVhZCBvZiBpIEkgd2lsbCB1c2UgDQoNCiAgICAgICAgICAgICAgICBzcmFt
-X25vZGUgPSBvZl9wYXJzZV9waGFuZGxlKG5vZGUsIEJBTktfTElTVF9QUk9QLCAgICAgICAgICAg
-ICAgDQogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBudW1fYmFu
-a3MgLSAxKTsgDQoNCg0Kc3JhbV9ub2RlIGlzIHRoZSB2YXIgbmFtZSBnaXZlbiBpbiB0aGUgZnVu
-Y3Rpb24gY2FsbGVkIGJ5IHByb2JlIHRvIGNvbGxlY3QgdGhlIFNSQU0gaW5mb3JtYXRpb24uDQoN
-Cg0KDQpJZiB0aGVyZSBpcyBvdGhlciBmZWVkYmFjayBwbGVhc2UgbGV0IG1lIGtub3cNCg0KVGhh
-bmtzDQpCZW4NCg0KDQogICAgPiArCQlpZiAoIWR0X25vZGUpIHsNCiAgICA+ICsJCQlyZXQgPSAt
-RUlOVkFMOw0KICAgID4gKwkJCWdvdG8gZXJyb3I7DQogICAgPiArCQl9DQogICAgPiArDQogICAg
-PiArCQlyZXQgPSBvZl9hZGRyZXNzX3RvX3Jlc291cmNlKGR0X25vZGUsIDAsICZyc2MpOw0KICAg
-ID4gKwkJaWYgKHJldCA8IDApIHsNCiAgICA+ICsJCQlvZl9ub2RlX3B1dChkdF9ub2RlKTsNCiAg
-ICA+ICsJCQlnb3RvIGVycm9yOw0KICAgID4gKwkJfQ0KICAgID4gKw0KICAgID4gKwkJb2Zfbm9k
-ZV9wdXQoZHRfbm9kZSk7DQogICAgPiArCQlzaXplID0gcmVzb3VyY2Vfc2l6ZSgmcnNjKTsNCiAg
-ICA+ICsNCiAgICA+ICsJCS8qDQogICAgPiArCQkgKiBGaW5kIGNvcnJlc3BvbmRpbmcgWGlsaW54
-IHBsYXRmb3JtIG1hbmFnZW1lbnQgSUQuDQogICAgPiArCQkgKiBUaGUgYmFuayBpbmZvcm1hdGlv
-biBpcyB1c2VkIGluIHByZXBhcmUvdW5wcmVwYXJlIGFuZA0KICAgID4gKwkJICogcGFyc2VfZncu
-DQogICAgPiArCQkgKi8NCiAgICA+ICsJCWZvciAoaSA9IDA7IGkgPCBOVU1fU1JBTVM7IGkrKykg
-ew0KICAgID4gKwkJCWlmIChyc2Muc3RhcnQgPT0genlucW1wX2JhbmtzW2ldLmFkZHIpIHsNCiAg
-ICA+ICsJCQkJel9ycHJvYy0+c3JhbXNbaV0uYWRkciA9IHJzYy5zdGFydDsNCiAgICA+ICsJCQkJ
-el9ycHJvYy0+c3JhbXNbaV0uc2l6ZSA9IHNpemU7DQogICAgPiArCQkJCXpfcnByb2MtPnNyYW1z
-W2ldLmlkID0genlucW1wX2JhbmtzW2ldLmlkOw0KICAgID4gKwkJCQlicmVhazsNCiAgICA+ICsJ
-CQl9DQogICAgPiArCQl9DQogICAgPiArDQogICAgPiArCQlpZiAoaSA9PSBOVU1fU1JBTVMpIHsN
-CiAgICA+ICsJCQlkZXZfZXJyKGRldiwgInNyYW0gJWxseCBpcyBub3QgdmFsaWQuXG4iLCByc2Mu
-c3RhcnQpOw0KICAgID4gKwkJCXJldCA9IC1FSU5WQUw7DQogICAgPiArCQkJZ290byBlcnJvcjsN
-CiAgICA+ICsJCX0NCiAgICA+ICsJfQ0KICAgID4gKw0KICAgID4gKwkvKiBBZGQgUjUgcmVtb3Rl
-cHJvYyAqLw0KICAgID4gKwlyZXQgPSBkZXZtX3Jwcm9jX2FkZChkZXYsIHJwcm9jX3B0cik7DQog
-ICAgPiArCWlmIChyZXQpIHsNCiAgICA+ICsJCXp5bnFtcF9yNV9jbGVhbnVwX21ib3goel9ycHJv
-Yyk7DQogICAgPiArCQlnb3RvIGVycm9yOw0KICAgID4gKwl9DQogICAgPiArDQogICAgPiArCXJl
-dHVybiB6X3Jwcm9jOw0KICAgID4gK2Vycm9yOg0KICAgID4gKwlyZXR1cm4gRVJSX1BUUihyZXQp
-Ow0KICAgID4gK30NCiAgICA+ICsNCiAgICA+ICsvKg0KICAgID4gKyAqIHp5bnFtcF9yNV9yZW1v
-dGVwcm9jX3Byb2JlDQogICAgPiArICoNCiAgICA+ICsgKiBAcGRldjogZG9tYWluIHBsYXRmb3Jt
-IGRldmljZSBmb3IgUjUgY2x1c3Rlcg0KICAgID4gKyAqDQogICAgPiArICogY2FsbGVkIHdoZW4g
-ZHJpdmVyIGlzIHByb2JlZCwgZm9yIGVhY2ggUjUgY29yZSBzcGVjaWZpZWQgaW4gRFQsDQogICAg
-PiArICogc2V0dXAgYXMgbmVlZGVkIHRvIGRvIHJlbW90ZXByb2MtcmVsYXRlZCBvcGVyYXRpb25z
-DQogICAgPiArICoNCiAgICA+ICsgKiBSZXR1cm46IDAgZm9yIHN1Y2Nlc3MsIG5lZ2F0aXZlIHZh
-bHVlIGZvciBmYWlsdXJlLg0KICAgID4gKyAqLw0KICAgID4gK3N0YXRpYyBpbnQgenlucW1wX3I1
-X3JlbW90ZXByb2NfcHJvYmUoc3RydWN0IHBsYXRmb3JtX2RldmljZSAqcGRldikNCiAgICA+ICt7
-DQogICAgPiArCWludCByZXQsIGNvcmVfY291bnQ7DQogICAgPiArCXN0cnVjdCBkZXZpY2UgKmRl
-diA9ICZwZGV2LT5kZXY7DQogICAgPiArCXN0cnVjdCBkZXZpY2Vfbm9kZSAqbmM7DQogICAgPiAr
-CWVudW0gcnB1X29wZXJfbW9kZSBycHVfbW9kZSA9IFBNX1JQVV9NT0RFX0xPQ0tTVEVQOw0KICAg
-ID4gKwlzdHJ1Y3QgbGlzdF9oZWFkICpjbHVzdGVyOyAvKiBsaXN0IHRvIHRyYWNrIGVhY2ggY29y
-ZSdzIHJwcm9jICovDQogICAgPiArCXN0cnVjdCB6eW5xbXBfcjVfcnByb2MgKnpfcnByb2M7DQog
-ICAgPiArCXN0cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKmNoaWxkX3BkZXY7DQogICAgPiArCXN0cnVj
-dCBsaXN0X2hlYWQgKnBvczsNCiAgICA+ICsNCiAgICA+ICsJcmV0ID0gb2ZfcHJvcGVydHlfcmVh
-ZF91MzIoZGV2LT5vZl9ub2RlLCAieGxueCxjbHVzdGVyLW1vZGUiLCAmcnB1X21vZGUpOw0KICAg
-ID4gKwlpZiAocmV0IDwgMCB8fCAocnB1X21vZGUgIT0gUE1fUlBVX01PREVfTE9DS1NURVAgJiYN
-CiAgICA+ICsJCQlycHVfbW9kZSAhPSBQTV9SUFVfTU9ERV9TUExJVCkpIHsNCiAgICA+ICsJCWRl
-dl9lcnIoZGV2LCAiaW52YWxpZCBjbHVzdGVyIG1vZGU6IHJldCAlZCBtb2RlICV4XG4iLA0KICAg
-ID4gKwkJCXJldCwgcnB1X21vZGUpOw0KICAgID4gKwkJcmV0dXJuIHJldDsNCiAgICA+ICsJfQ0K
-ICAgID4gKw0KICAgID4gKwlkZXZfZGJnKGRldiwgIlJQVSBjb25maWd1cmF0aW9uOiAlc1xuIiwN
-CiAgICA+ICsJCXJwdV9tb2RlID09IFBNX1JQVV9NT0RFX0xPQ0tTVEVQID8gImxvY2tzdGVwIiA6
-ICJzcGxpdCIpOw0KICAgID4gKw0KICAgID4gKwkvKg0KICAgID4gKwkgKiBpZiAyIFJQVXMgcHJv
-dmlkZWQgYnV0IG9uZSBpcyBsb2Nrc3RlcCwgdGhlbiB3ZSBoYXZlIGFuDQogICAgPiArCSAqIGlu
-dmFsaWQgY29uZmlndXJhdGlvbi4NCiAgICA+ICsJICovDQogICAgPiArDQogICAgPiArCWNvcmVf
-Y291bnQgPSBvZl9nZXRfYXZhaWxhYmxlX2NoaWxkX2NvdW50KGRldi0+b2Zfbm9kZSk7DQogICAg
-PiArCWlmICgocnB1X21vZGUgPT0gUE1fUlBVX01PREVfTE9DS1NURVAgJiYgY29yZV9jb3VudCAh
-PSAxKSB8fA0KICAgID4gKwkgICAgY29yZV9jb3VudCA+IE1BWF9SUFJPQ1MpDQogICAgPiArCQly
-ZXR1cm4gLUVJTlZBTDsNCiAgICA+ICsNCiAgICA+ICsJY2x1c3RlciA9IGRldm1fa3phbGxvYyhk
-ZXYsIHNpemVvZigqY2x1c3RlciksIEdGUF9LRVJORUwpOw0KICAgID4gKwlpZiAoIWNsdXN0ZXIp
-DQogICAgPiArCQlyZXR1cm4gLUVOT01FTTsNCiAgICA+ICsJSU5JVF9MSVNUX0hFQUQoY2x1c3Rl
-cik7DQogICAgPiArDQogICAgPiArCXJldCA9IGRldm1fb2ZfcGxhdGZvcm1fcG9wdWxhdGUoZGV2
-KTsNCiAgICA+ICsJaWYgKHJldCkgew0KICAgID4gKwkJZGV2X2VycihkZXYsICJkZXZtX29mX3Bs
-YXRmb3JtX3BvcHVsYXRlIGZhaWxlZCwgcmV0ID0gJWRcbiIsIHJldCk7DQogICAgPiArCQlyZXR1
-cm4gcmV0Ow0KICAgID4gKwl9DQogICAgPiArDQogICAgPiArCS8qIHByb2JlIGVhY2ggaW5kaXZp
-ZHVhbCByNSBjb3JlJ3MgcmVtb3RlcHJvYy1yZWxhdGVkIGluZm8gKi8NCiAgICA+ICsJZm9yX2Vh
-Y2hfYXZhaWxhYmxlX2NoaWxkX29mX25vZGUoZGV2LT5vZl9ub2RlLCBuYykgew0KICAgID4gKwkJ
-Y2hpbGRfcGRldiA9IG9mX2ZpbmRfZGV2aWNlX2J5X25vZGUobmMpOw0KICAgID4gKwkJaWYgKCFj
-aGlsZF9wZGV2KSB7DQogICAgPiArCQkJZGV2X2VycihkZXYsICJjb3VsZCBub3QgZ2V0IFI1IGNv
-cmUgcGxhdGZvcm0gZGV2aWNlXG4iKTsNCiAgICA+ICsJCQlyZXQgPSAtRU5PREVWOw0KICAgID4g
-KwkJCWdvdG8gb3V0Ow0KICAgID4gKwkJfQ0KICAgID4gKw0KICAgID4gKwkJel9ycHJvYyA9IHp5
-bnFtcF9yNV9wcm9iZShjaGlsZF9wZGV2LCBuYywgcnB1X21vZGUpOw0KICAgID4gKwkJZGV2X2Ri
-ZyhkZXYsICIlcyB0byBwcm9iZSBycHUgJXBPRlxuIiwNCiAgICA+ICsJCQlyZXQgPyAiRmFpbGVk
-IiA6ICJBYmxlIiwgbmMpOw0KICAgID4gKwkJaWYgKElTX0VSUih6X3Jwcm9jKSkgew0KICAgID4g
-KwkJCXJldCA9IFBUUl9FUlIoel9ycHJvYyk7DQogICAgPiArCQkJZ290byBvdXQ7DQogICAgPiAr
-CQl9DQogICAgPiArCQlsaXN0X2FkZF90YWlsKCZ6X3Jwcm9jLT5lbGVtLCBjbHVzdGVyKTsNCiAg
-ICA+ICsJfQ0KICAgID4gKwkvKiB3aXJlIGluIHNvIGVhY2ggY29yZSBjYW4gYmUgY2xlYW5lZCB1
-cCBhdCBkcml2ZXIgcmVtb3ZlICovDQogICAgPiArCXBsYXRmb3JtX3NldF9kcnZkYXRhKHBkZXYs
-IGNsdXN0ZXIpOw0KICAgID4gKwlyZXR1cm4gMDsNCiAgICA+ICtvdXQ6DQogICAgPiArCWxpc3Rf
-Zm9yX2VhY2gocG9zLCBjbHVzdGVyKSB7DQogICAgPiArCQl6X3Jwcm9jID0gbGlzdF9lbnRyeShw
-b3MsIHN0cnVjdCB6eW5xbXBfcjVfcnByb2MsIGVsZW0pOw0KICAgID4gKwkJenlucW1wX3I1X2Ns
-ZWFudXBfbWJveCh6X3Jwcm9jKTsNCiAgICA+ICsJfQ0KICAgID4gKwlyZXR1cm4gcmV0Ow0KICAg
-ID4gK30NCiAgICA+ICsNCiAgICA+ICsvKg0KICAgID4gKyAqIHp5bnFtcF9yNV9yZW1vdGVwcm9j
-X3JlbW92ZQ0KICAgID4gKyAqDQogICAgPiArICogQHBkZXY6IGRvbWFpbiBwbGF0Zm9ybSBkZXZp
-Y2UgZm9yIFI1IGNsdXN0ZXINCiAgICA+ICsgKg0KICAgID4gKyAqIFdoZW4gdGhlIGRyaXZlciBp
-cyB1bmxvYWRlZCwgY2xlYW4gdXAgdGhlIG1haWxib3hlcyBmb3IgZWFjaA0KICAgID4gKyAqIHJl
-bW90ZXByb2MgdGhhdCB3YXMgaW5pdGlhbGx5IHByb2JlZC4NCiAgICA+ICsgKi8NCiAgICA+ICtz
-dGF0aWMgaW50IHp5bnFtcF9yNV9yZW1vdGVwcm9jX3JlbW92ZShzdHJ1Y3QgcGxhdGZvcm1fZGV2
-aWNlICpwZGV2KQ0KICAgID4gK3sNCiAgICA+ICsJc3RydWN0IGxpc3RfaGVhZCAqcG9zLCAqdGVt
-cCwgKmNsdXN0ZXIgPSAoc3RydWN0IGxpc3RfaGVhZCAqKQ0KICAgID4gKwkJCQkJCSBwbGF0Zm9y
-bV9nZXRfZHJ2ZGF0YShwZGV2KTsNCiAgICA+ICsJc3RydWN0IHp5bnFtcF9yNV9ycHJvYyAqel9y
-cHJvYyA9IE5VTEw7DQogICAgPiArDQogICAgPiArCWxpc3RfZm9yX2VhY2hfc2FmZShwb3MsIHRl
-bXAsIGNsdXN0ZXIpIHsNCiAgICA+ICsJCXpfcnByb2MgPSBsaXN0X2VudHJ5KHBvcywgc3RydWN0
-IHp5bnFtcF9yNV9ycHJvYywgZWxlbSk7DQogICAgPiArCQl6eW5xbXBfcjVfY2xlYW51cF9tYm94
-KHpfcnByb2MpOw0KICAgID4gKwl9DQogICAgPiArCXJldHVybiAwOw0KICAgID4gK30NCiAgICA+
-ICsNCiAgICA+ICsvKiBNYXRjaCB0YWJsZSBmb3IgT0YgcGxhdGZvcm0gYmluZGluZyAqLw0KICAg
-ID4gK3N0YXRpYyBjb25zdCBzdHJ1Y3Qgb2ZfZGV2aWNlX2lkIHp5bnFtcF9yNV9yZW1vdGVwcm9j
-X21hdGNoW10gPSB7DQogICAgPiArCXsgLmNvbXBhdGlibGUgPSAieGxueCx6eW5xbXAtcjUtcmVt
-b3RlcHJvYyIsIH0sDQogICAgPiArCXsgLyogZW5kIG9mIGxpc3QgKi8gfSwNCiAgICA+ICt9Ow0K
-ICAgID4gK01PRFVMRV9ERVZJQ0VfVEFCTEUob2YsIHp5bnFtcF9yNV9yZW1vdGVwcm9jX21hdGNo
-KTsNCiAgICA+ICsNCiAgICA+ICtzdGF0aWMgc3RydWN0IHBsYXRmb3JtX2RyaXZlciB6eW5xbXBf
-cjVfcmVtb3RlcHJvY19kcml2ZXIgPSB7DQogICAgPiArCS5wcm9iZSA9IHp5bnFtcF9yNV9yZW1v
-dGVwcm9jX3Byb2JlLA0KICAgID4gKwkucmVtb3ZlID0genlucW1wX3I1X3JlbW90ZXByb2NfcmVt
-b3ZlLA0KICAgID4gKwkuZHJpdmVyID0gew0KICAgID4gKwkJLm5hbWUgPSAienlucW1wX3I1X3Jl
-bW90ZXByb2MiLA0KICAgID4gKwkJLm9mX21hdGNoX3RhYmxlID0genlucW1wX3I1X3JlbW90ZXBy
-b2NfbWF0Y2gsDQogICAgPiArCX0sDQogICAgPiArfTsNCiAgICA+ICttb2R1bGVfcGxhdGZvcm1f
-ZHJpdmVyKHp5bnFtcF9yNV9yZW1vdGVwcm9jX2RyaXZlcik7DQogICAgPiArDQogICAgPiArTU9E
-VUxFX0FVVEhPUigiQmVuIExldmluc2t5IDxiZW4ubGV2aW5za3lAeGlsaW54LmNvbT4iKTsNCiAg
-ICA+ICtNT0RVTEVfTElDRU5TRSgiR1BMIHYyIik7DQogICAgPiAtLSANCiAgICA+IDIuMTcuMQ0K
-ICAgID4gDQoNCg==
+The remoteproc driver is split between the responsibilities of getting
+the SoC-internal ARM core up and running and the external RF (aka
+"Iris") part configured.
+
+In order to satisfy the regulator framework's need of a struct device *
+to look up supplies this was implemented as two different drivers, using
+of_platform_populate() in the remoteproc part to probe the iris part.
+
+Unfortunately it's possible that the iris part probe defers on yet not
+available regulators and an attempt to start the remoteproc will have to
+be rejected, until this has been resolved. But there's no useful
+mechanism of knowing when this would be.
+
+Instead replace the of_platform_populate() and the iris probe with a
+function that rolls its own struct device, with the relevant of_node
+associated that is enough to acquire regulators and clocks specified in
+the DT node and that may propagate the EPROBE_DEFER back to the wcnss
+device's probe.
+
+Reported-by: Anibal Limon <anibal.limon@linaro.org>
+Reported-by: Loic Poulain <loic.poulain@linaro.org>
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+---
+ drivers/remoteproc/qcom_wcnss.c      |  52 ++++--------
+ drivers/remoteproc/qcom_wcnss.h      |   4 +-
+ drivers/remoteproc/qcom_wcnss_iris.c | 120 +++++++++++++++++----------
+ 3 files changed, 91 insertions(+), 85 deletions(-)
+
+diff --git a/drivers/remoteproc/qcom_wcnss.c b/drivers/remoteproc/qcom_wcnss.c
+index e8007cc01bfa..2f482ab6aade 100644
+--- a/drivers/remoteproc/qcom_wcnss.c
++++ b/drivers/remoteproc/qcom_wcnss.c
+@@ -142,18 +142,6 @@ static const struct wcnss_data pronto_v2_data = {
+ 	.num_vregs = 1,
+ };
+ 
+-void qcom_wcnss_assign_iris(struct qcom_wcnss *wcnss,
+-			    struct qcom_iris *iris,
+-			    bool use_48mhz_xo)
+-{
+-	mutex_lock(&wcnss->iris_lock);
+-
+-	wcnss->iris = iris;
+-	wcnss->use_48mhz_xo = use_48mhz_xo;
+-
+-	mutex_unlock(&wcnss->iris_lock);
+-}
+-
+ static int wcnss_load(struct rproc *rproc, const struct firmware *fw)
+ {
+ 	struct qcom_wcnss *wcnss = (struct qcom_wcnss *)rproc->priv;
+@@ -639,12 +627,20 @@ static int wcnss_probe(struct platform_device *pdev)
+ 		goto detach_pds;
+ 	}
+ 
++	wcnss->iris = qcom_iris_probe(&pdev->dev, &wcnss->use_48mhz_xo);
++	if (IS_ERR(wcnss->iris)) {
++		ret = PTR_ERR(wcnss->iris);
++		goto detach_pds;
++	}
++
+ 	ret = rproc_add(rproc);
+ 	if (ret)
+-		goto detach_pds;
++		goto remove_iris;
+ 
+-	return of_platform_populate(pdev->dev.of_node, NULL, NULL, &pdev->dev);
++	return 0;
+ 
++remove_iris:
++	qcom_iris_remove(wcnss->iris);
+ detach_pds:
+ 	wcnss_release_pds(wcnss);
+ free_rproc:
+@@ -657,9 +653,10 @@ static int wcnss_remove(struct platform_device *pdev)
+ {
+ 	struct qcom_wcnss *wcnss = platform_get_drvdata(pdev);
+ 
+-	of_platform_depopulate(&pdev->dev);
++	qcom_iris_remove(wcnss->iris);
+ 
+-	qcom_smem_state_put(wcnss->state);
++	if (wcnss->state)
++		qcom_smem_state_put(wcnss->state);
+ 	rproc_del(wcnss->rproc);
+ 
+ 	qcom_remove_sysmon_subdev(wcnss->sysmon);
+@@ -687,28 +684,7 @@ static struct platform_driver wcnss_driver = {
+ 	},
+ };
+ 
+-static int __init wcnss_init(void)
+-{
+-	int ret;
+-
+-	ret = platform_driver_register(&wcnss_driver);
+-	if (ret)
+-		return ret;
+-
+-	ret = platform_driver_register(&qcom_iris_driver);
+-	if (ret)
+-		platform_driver_unregister(&wcnss_driver);
+-
+-	return ret;
+-}
+-module_init(wcnss_init);
+-
+-static void __exit wcnss_exit(void)
+-{
+-	platform_driver_unregister(&qcom_iris_driver);
+-	platform_driver_unregister(&wcnss_driver);
+-}
+-module_exit(wcnss_exit);
++module_platform_driver(wcnss_driver);
+ 
+ MODULE_DESCRIPTION("Qualcomm Peripheral Image Loader for Wireless Subsystem");
+ MODULE_LICENSE("GPL v2");
+diff --git a/drivers/remoteproc/qcom_wcnss.h b/drivers/remoteproc/qcom_wcnss.h
+index 62c8682d0a92..6d01ee6afa7f 100644
+--- a/drivers/remoteproc/qcom_wcnss.h
++++ b/drivers/remoteproc/qcom_wcnss.h
+@@ -17,9 +17,9 @@ struct wcnss_vreg_info {
+ 	bool super_turbo;
+ };
+ 
++struct qcom_iris *qcom_iris_probe(struct device *parent, bool *use_48mhz_xo);
++void qcom_iris_remove(struct qcom_iris *iris);
+ int qcom_iris_enable(struct qcom_iris *iris);
+ void qcom_iris_disable(struct qcom_iris *iris);
+ 
+-void qcom_wcnss_assign_iris(struct qcom_wcnss *wcnss, struct qcom_iris *iris, bool use_48mhz_xo);
+-
+ #endif
+diff --git a/drivers/remoteproc/qcom_wcnss_iris.c b/drivers/remoteproc/qcom_wcnss_iris.c
+index 169acd305ae3..09720ddddc85 100644
+--- a/drivers/remoteproc/qcom_wcnss_iris.c
++++ b/drivers/remoteproc/qcom_wcnss_iris.c
+@@ -17,7 +17,7 @@
+ #include "qcom_wcnss.h"
+ 
+ struct qcom_iris {
+-	struct device *dev;
++	struct device dev;
+ 
+ 	struct clk *xo_clk;
+ 
+@@ -75,7 +75,7 @@ int qcom_iris_enable(struct qcom_iris *iris)
+ 
+ 	ret = clk_prepare_enable(iris->xo_clk);
+ 	if (ret) {
+-		dev_err(iris->dev, "failed to enable xo clk\n");
++		dev_err(&iris->dev, "failed to enable xo clk\n");
+ 		goto disable_regulators;
+ 	}
+ 
+@@ -93,43 +93,90 @@ void qcom_iris_disable(struct qcom_iris *iris)
+ 	regulator_bulk_disable(iris->num_vregs, iris->vregs);
+ }
+ 
+-static int qcom_iris_probe(struct platform_device *pdev)
++static const struct of_device_id iris_of_match[] = {
++	{ .compatible = "qcom,wcn3620", .data = &wcn3620_data },
++	{ .compatible = "qcom,wcn3660", .data = &wcn3660_data },
++	{ .compatible = "qcom,wcn3660b", .data = &wcn3680_data },
++	{ .compatible = "qcom,wcn3680", .data = &wcn3680_data },
++	{}
++};
++
++static void qcom_iris_release(struct device *dev)
++{
++	struct qcom_iris *iris = container_of(dev, struct qcom_iris, dev);
++
++	of_node_put(iris->dev.of_node);
++	kfree(iris);
++}
++
++struct qcom_iris *qcom_iris_probe(struct device *parent, bool *use_48mhz_xo)
+ {
++	const struct of_device_id *match;
+ 	const struct iris_data *data;
+-	struct qcom_wcnss *wcnss;
++	struct device_node *of_node;
+ 	struct qcom_iris *iris;
+ 	int ret;
+ 	int i;
+ 
+-	iris = devm_kzalloc(&pdev->dev, sizeof(struct qcom_iris), GFP_KERNEL);
+-	if (!iris)
+-		return -ENOMEM;
++	of_node = of_get_child_by_name(parent->of_node, "iris");
++	if (!of_node) {
++		dev_err(parent, "No child node \"iris\" found\n");
++		return ERR_PTR(-EINVAL);
++	}
++
++	iris = kzalloc(sizeof(*iris), GFP_KERNEL);
++	if (!iris) {
++		of_node_put(of_node);
++		return ERR_PTR(-ENOMEM);
++	}
++
++	device_initialize(&iris->dev);
++	iris->dev.parent = parent;
++	iris->dev.release = qcom_iris_release;
++	iris->dev.of_node = of_node;
++
++	dev_set_name(&iris->dev, "%s.iris", dev_name(parent));
++
++	ret = device_add(&iris->dev);
++	if (ret) {
++		put_device(&iris->dev);
++		return ERR_PTR(ret);
++	}
++
++	match = of_match_device(iris_of_match, &iris->dev);
++	if (!match) {
++		dev_err(&iris->dev, "no matching compatible for iris\n");
++		ret = -EINVAL;
++		goto err_device_del;
++	}
+ 
+-	data = of_device_get_match_data(&pdev->dev);
+-	wcnss = dev_get_drvdata(pdev->dev.parent);
++	data = match->data;
+ 
+-	iris->xo_clk = devm_clk_get(&pdev->dev, "xo");
++	iris->xo_clk = devm_clk_get(&iris->dev, "xo");
+ 	if (IS_ERR(iris->xo_clk)) {
+-		if (PTR_ERR(iris->xo_clk) != -EPROBE_DEFER)
+-			dev_err(&pdev->dev, "failed to acquire xo clk\n");
+-		return PTR_ERR(iris->xo_clk);
++		ret = PTR_ERR(iris->xo_clk);
++		if (ret != -EPROBE_DEFER)
++			dev_err(&iris->dev, "failed to acquire xo clk\n");
++		goto err_device_del;
+ 	}
+ 
+ 	iris->num_vregs = data->num_vregs;
+-	iris->vregs = devm_kcalloc(&pdev->dev,
++	iris->vregs = devm_kcalloc(&iris->dev,
+ 				   iris->num_vregs,
+ 				   sizeof(struct regulator_bulk_data),
+ 				   GFP_KERNEL);
+-	if (!iris->vregs)
+-		return -ENOMEM;
++	if (!iris->vregs) {
++		ret = -ENOMEM;
++		goto err_device_del;
++	}
+ 
+ 	for (i = 0; i < iris->num_vregs; i++)
+ 		iris->vregs[i].supply = data->vregs[i].name;
+ 
+-	ret = devm_regulator_bulk_get(&pdev->dev, iris->num_vregs, iris->vregs);
++	ret = devm_regulator_bulk_get(&iris->dev, iris->num_vregs, iris->vregs);
+ 	if (ret) {
+-		dev_err(&pdev->dev, "failed to get regulators\n");
+-		return ret;
++		dev_err(&iris->dev, "failed to get regulators\n");
++		goto err_device_del;
+ 	}
+ 
+ 	for (i = 0; i < iris->num_vregs; i++) {
+@@ -143,34 +190,17 @@ static int qcom_iris_probe(struct platform_device *pdev)
+ 					   data->vregs[i].load_uA);
+ 	}
+ 
+-	qcom_wcnss_assign_iris(wcnss, iris, data->use_48mhz_xo);
+-
+-	return 0;
+-}
++	*use_48mhz_xo = data->use_48mhz_xo;
+ 
+-static int qcom_iris_remove(struct platform_device *pdev)
+-{
+-	struct qcom_wcnss *wcnss = dev_get_drvdata(pdev->dev.parent);
++	return iris;
+ 
+-	qcom_wcnss_assign_iris(wcnss, NULL, false);
++err_device_del:
++	device_del(&iris->dev);
+ 
+-	return 0;
++	return ERR_PTR(ret);
+ }
+ 
+-static const struct of_device_id iris_of_match[] = {
+-	{ .compatible = "qcom,wcn3620", .data = &wcn3620_data },
+-	{ .compatible = "qcom,wcn3660", .data = &wcn3660_data },
+-	{ .compatible = "qcom,wcn3660b", .data = &wcn3680_data },
+-	{ .compatible = "qcom,wcn3680", .data = &wcn3680_data },
+-	{}
+-};
+-MODULE_DEVICE_TABLE(of, iris_of_match);
+-
+-struct platform_driver qcom_iris_driver = {
+-	.probe = qcom_iris_probe,
+-	.remove = qcom_iris_remove,
+-	.driver = {
+-		.name = "qcom-iris",
+-		.of_match_table = iris_of_match,
+-	},
+-};
++void qcom_iris_remove(struct qcom_iris *iris)
++{
++	device_del(&iris->dev);
++}
+-- 
+2.29.2
+
