@@ -2,119 +2,275 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EE5CC433E0
-	for <linux-remoteproc@archiver.kernel.org>; Sat, 13 Mar 2021 00:09:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90548C433E6
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 15 Mar 2021 12:11:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 71CBD64F6B
-	for <linux-remoteproc@archiver.kernel.org>; Sat, 13 Mar 2021 00:09:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 55A4064EE8
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 15 Mar 2021 12:11:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235734AbhCMAIi (ORCPT
+        id S230502AbhCOMKl (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 12 Mar 2021 19:08:38 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43064 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235940AbhCMAIY (ORCPT
-        <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 12 Mar 2021 19:08:24 -0500
-Received: from mail-ot1-x330.google.com (mail-ot1-x330.google.com [IPv6:2607:f8b0:4864:20::330])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3F766C061574
-        for <linux-remoteproc@vger.kernel.org>; Fri, 12 Mar 2021 16:08:24 -0800 (PST)
-Received: by mail-ot1-x330.google.com with SMTP id w21-20020a9d63950000b02901ce7b8c45b4so2285682otk.5
-        for <linux-remoteproc@vger.kernel.org>; Fri, 12 Mar 2021 16:08:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=tskbPV38ZQ+dCuIiAy+hlftEgTtSwQTfVcXEgTZ53LE=;
-        b=syl4IVzUqcCzG/X8KX1ZmIvAcK9joYMmYIC+1NdCcNUvAK4hsCQRfjLe3q2XDMS7SU
-         W/zyY841KjSLXs9ZJ+D/CmDuMvAx/HLrFmye7Fq+7PzNN9k6Dyro9d51DU6f2jTU2Ael
-         X/dlLqIf5rsgXTRaQdogOkMCeG1OBu2m9eBrGMLMQalQBcK6bNzHCpjxbjIY5N060OBd
-         KtH7uDPPjMkEPJjJtq4J+/wgRBVKelDfarY40aqTNR+X0+OBfLoo8ZzHz+Altj1igtlZ
-         8fZUIXh5t3Fop96VnnhbjGohAlwPJ+bbjhj3phYEbIUhUGyfZrC9CMOnBAvyuFwrtmaE
-         iCdQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=tskbPV38ZQ+dCuIiAy+hlftEgTtSwQTfVcXEgTZ53LE=;
-        b=OJhQecIKEPPgPzHL4DwiuliOej8MrEBPkrThkNhcxU5meH7TurSqhJoWZ5S/qvI3pv
-         ImxW5WprDLsOEsPPDCX8rxMZD2MNDF2uZezKYF1OZZouwQva0Bc1GND0rPCp/+3/I7kN
-         1+Cl6XW7TiA/Oz/QSbIXlfLSDo/4s5rRcrh9xIKrYHmfXKV67u5tTQx+Rxnk8R/AiNd3
-         R2uJBw7HM6Ksp2DXBtaf6MdcnMq3YvwnsivQ7xqXGEzOrb9KYxlVZuSPwXyKlXTBcjWg
-         Cet+DhOWCsME12ZX0Yv4h4s1H2UfNvozjAukIS9xPvbtI09Apwbc6OWxqUNVDtnVms6c
-         83eQ==
-X-Gm-Message-State: AOAM5300Ck4YKpTnk9y4MheVqzxAMu7JREc5gPUhWeiT29nJC/hZtTMJ
-        04RdbXRRrhs/LUQHIdJXAz9jvQ==
-X-Google-Smtp-Source: ABdhPJx1Tgg6tgSb0mIivL8DCU2RQ7YRolkf5fIw2kxWEPXAgogJMSu1wzkCApV9yRUqgxNJtmfnFQ==
-X-Received: by 2002:a9d:6c88:: with SMTP id c8mr5390359otr.87.1615594103626;
-        Fri, 12 Mar 2021 16:08:23 -0800 (PST)
-Received: from builder.lan (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
-        by smtp.gmail.com with ESMTPSA id k24sm2123198oic.51.2021.03.12.16.08.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Mar 2021 16:08:23 -0800 (PST)
-Date:   Fri, 12 Mar 2021 18:08:21 -0600
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     'Wei Yongjun <weiyongjun1@huawei.com>
-Cc:     Ohad Ben-Cohen <ohad@wizery.com>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Peng Fan <peng.fan@nxp.com>, linux-remoteproc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        kernel-janitors@vger.kernel.org, Hulk Robot <hulkci@huawei.com>
-Subject: Re: [PATCH -next] remoteproc: imx_rproc: fix return value check in
- imx_rproc_addr_init()
-Message-ID: <YEwCdRagkF04spZx@builder.lan>
-References: <20210312080420.277151-1-weiyongjun1@huawei.com>
+        Mon, 15 Mar 2021 08:10:41 -0400
+Received: from z11.mailgun.us ([104.130.96.11]:29382 "EHLO z11.mailgun.us"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S230325AbhCOMKN (ORCPT <rfc822;linux-remoteproc@vger.kernel.org>);
+        Mon, 15 Mar 2021 08:10:13 -0400
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1615810213; h=Content-Transfer-Encoding: Content-Type:
+ MIME-Version: Message-ID: Date: Subject: In-Reply-To: References: Cc:
+ To: From: Sender; bh=g0f0jfhlgch2gxV5cExKRRjJHJkHKZSH3a5EzWHG8t4=; b=OG/cCvazJEmeMZWLt4ohSlIhbb9xkz0hH50j5WaPpFsoObktGJe6760F6cEkwjjMQm65ruMP
+ MSrJN/WA+WJjVMXTyaeAwqo1I9jEGtpzDw0wpn24RggX7Bz6/O7pko+aJSKJPkY3WLeYtd8q
+ o7XH1jAD4yp1P2XLG7YkZotPEC4=
+X-Mailgun-Sending-Ip: 104.130.96.11
+X-Mailgun-Sid: WyI4ZWZiZiIsICJsaW51eC1yZW1vdGVwcm9jQHZnZXIua2VybmVsLm9yZyIsICJiZTllNGEiXQ==
+Received: from smtp.codeaurora.org
+ (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
+ smtp-out-n02.prod.us-west-2.postgun.com with SMTP id
+ 604f4e2e21031618f6eb03ce (version=TLS1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Mon, 15 Mar 2021 12:08:14
+ GMT
+Sender: pillair=codeaurora.org@mg.codeaurora.org
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id AFFB2C43462; Mon, 15 Mar 2021 12:08:14 +0000 (UTC)
+Received: from Pillair (unknown [103.149.159.128])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: pillair)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id D855AC43461;
+        Mon, 15 Mar 2021 12:08:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D855AC43461
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=pillair@codeaurora.org
+From:   "Rakesh Pillai" <pillair@codeaurora.org>
+To:     "'Bjorn Andersson'" <bjorn.andersson@linaro.org>
+Cc:     <agross@kernel.org>, <ohad@wizery.com>,
+        <mathieu.poirier@linaro.org>, <robh+dt@kernel.org>,
+        <p.zabel@pengutronix.de>, <sibis@codeaurora.org>,
+        <linux-arm-msm@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <1615361290-19238-1-git-send-email-pillair@codeaurora.org> <1615361290-19238-3-git-send-email-pillair@codeaurora.org> <YEj3emYBinvkfaby@builder.lan>
+In-Reply-To: <YEj3emYBinvkfaby@builder.lan>
+Subject: RE: [PATCH 2/2] remoteproc: qcom: q6v5_wpss: Add support for sc7280 WPSS
+Date:   Mon, 15 Mar 2021 17:38:05 +0530
+Message-ID: <000001d71993$ded6e070$9c84a150$@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210312080420.277151-1-weiyongjun1@huawei.com>
+Content-Type: text/plain;
+        charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQJE4j0s7F0zBoVvuux+nIAAOegXnQHQWOo3AmfgvGuph6D5MA==
+Content-Language: en-us
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Fri 12 Mar 02:04 CST 2021, 'Wei Yongjun wrote:
 
-> From: Wei Yongjun <weiyongjun1@huawei.com>
-> 
-> In case of error, the function devm_ioremap() returns NULL pointer
-> not ERR_PTR(). The IS_ERR() test in the return value check should
-> be replaced with NULL test.
-> 
-> Fixes: ecadcc47492c ("remoteproc: imx_rproc: use devm_ioremap")
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-> ---
->  drivers/remoteproc/imx_rproc.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rproc.c
-> index 5ebb9f57d3e0..3ba4b6ba47aa 100644
-> --- a/drivers/remoteproc/imx_rproc.c
-> +++ b/drivers/remoteproc/imx_rproc.c
-> @@ -464,9 +464,9 @@ static int imx_rproc_addr_init(struct imx_rproc *priv,
->  
->  		/* Not use resource version, because we might share region */
->  		priv->mem[b].cpu_addr = devm_ioremap(&pdev->dev, res.start, resource_size(&res));
-> -		if (IS_ERR(priv->mem[b].cpu_addr)) {
-> +		if (!priv->mem[b].cpu_addr) {
->  			dev_err(dev, "failed to remap %pr\n", &res);
-> -			err = PTR_ERR(priv->mem[b].cpu_addr);
-> +			err = -ENOMEM;
->  			return err;
 
-Took the liberty of changing this to return -ENOMEM, as I applied the
-patch.
-
-Thank you,
-Bjorn
-
->  		}
->  		priv->mem[b].sys_addr = res.start;
+> -----Original Message-----
+> From: Bjorn Andersson <bjorn.andersson@linaro.org>
+> Sent: Wednesday, March 10, 2021 10:15 PM
+> To: Rakesh Pillai <pillair@codeaurora.org>
+> Cc: agross@kernel.org; ohad@wizery.com; mathieu.poirier@linaro.org;
+> robh+dt@kernel.org; p.zabel@pengutronix.de; sibis@codeaurora.org; linux-
+> arm-msm@vger.kernel.org; linux-remoteproc@vger.kernel.org;
+> devicetree@vger.kernel.org; linux-kernel@vger.kernel.org
+> Subject: Re: [PATCH 2/2] remoteproc: qcom: q6v5_wpss: Add support for
+> sc7280 WPSS
 > 
+> On Wed 10 Mar 01:28 CST 2021, Rakesh Pillai wrote:
+> 
+> > Add support for PIL loading of WPSS processor for SC7280
+> > WPSS boot will be requested by the wifi driver and hence
+> > disable auto-boot for WPSS. Also add a separate shutdown
+> > sequence handler for WPSS.
+> >
+> > Signed-off-by: Rakesh Pillai <pillair@codeaurora.org>
+> > ---
+> >  drivers/remoteproc/qcom_q6v5_adsp.c | 77
+> ++++++++++++++++++++++++++++++++++++-
+> >  1 file changed, 76 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/remoteproc/qcom_q6v5_adsp.c
+> b/drivers/remoteproc/qcom_q6v5_adsp.c
+> > index e024502..dc6b91d 100644
+> > --- a/drivers/remoteproc/qcom_q6v5_adsp.c
+> > +++ b/drivers/remoteproc/qcom_q6v5_adsp.c
+> > @@ -58,6 +58,8 @@ struct adsp_pil_data {
+> >  	const char *ssr_name;
+> >  	const char *sysmon_name;
+> >  	int ssctl_id;
+> > +	bool is_wpss;
+> > +	bool auto_boot;
+> >
+> >  	const char **clk_ids;
+> >  	int num_clks;
+> > @@ -96,8 +98,54 @@ struct qcom_adsp {
+> >  	struct qcom_rproc_glink glink_subdev;
+> >  	struct qcom_rproc_ssr ssr_subdev;
+> >  	struct qcom_sysmon *sysmon;
+> > +
+> > +	int (*shutdown)(struct qcom_adsp *adsp);
+> >  };
+> >
+> > +static int qcom_wpss_shutdown(struct qcom_adsp *adsp)
+> > +{
+> > +	unsigned long timeout;
+> > +	unsigned int val;
+> > +	int ret;
+> > +
+> > +	regmap_write(adsp->halt_map, adsp->halt_lpass +
+> LPASS_HALTREQ_REG, 1);
+> > +
+> > +	/* Wait for halt ACK from QDSP6 */
+> > +	timeout = jiffies + msecs_to_jiffies(ACK_TIMEOUT);
+> > +	for (;;) {
+> > +		ret = regmap_read(adsp->halt_map,
+> > +				  adsp->halt_lpass + LPASS_HALTACK_REG,
+> &val);
+> > +		if (ret || val || time_after(jiffies, timeout))
+> > +			break;
+> > +
+> > +		usleep_range(1000, 1100);
+> > +	}
+> > +
+> > +	/* Place the WPSS processor into reset */
+> > +	reset_control_assert(adsp->restart);
+> > +	/* wait after asserting subsystem restart from AOSS */
+> > +	usleep_range(100, 105);
+> > +	/* Remove the WPSS reset */
+> > +	reset_control_deassert(adsp->restart);
+> > +
+> > +	usleep_range(100, 105);
+> > +
+> > +	regmap_write(adsp->halt_map, adsp->halt_lpass +
+> LPASS_HALTREQ_REG, 0);
+> > +
+> > +	/* Wait for halt ACK from QDSP6 */
+> > +	timeout = jiffies + msecs_to_jiffies(ACK_TIMEOUT);
+> > +	for (;;) {
+> > +		ret = regmap_read(adsp->halt_map,
+> > +				  adsp->halt_lpass + LPASS_HALTACK_REG,
+> &val);
+> > +		if (ret || !val || time_after(jiffies, timeout))
+> > +			break;
+> > +
+> > +		usleep_range(1000, 1100);
+> > +	}
+> > +
+> > +	return 0;
+> > +}
+> > +
+> >  static int qcom_adsp_shutdown(struct qcom_adsp *adsp)
+> >  {
+> >  	unsigned long timeout;
+> > @@ -270,7 +318,7 @@ static int adsp_stop(struct rproc *rproc)
+> >  	if (ret == -ETIMEDOUT)
+> >  		dev_err(adsp->dev, "timed out on wait\n");
+> >
+> > -	ret = qcom_adsp_shutdown(adsp);
+> > +	ret = adsp->shutdown(adsp);
+> >  	if (ret)
+> >  		dev_err(adsp->dev, "failed to shutdown: %d\n", ret);
+> >
+> > @@ -439,6 +487,8 @@ static int adsp_probe(struct platform_device
+> *pdev)
+> >  		dev_err(&pdev->dev, "unable to allocate remoteproc\n");
+> >  		return -ENOMEM;
+> >  	}
+> > +
+> > +	rproc->auto_boot = desc->auto_boot;
+> >  	rproc_coredump_set_elf_info(rproc, ELFCLASS32, EM_NONE);
+> >
+> >  	adsp = (struct qcom_adsp *)rproc->priv;
+> > @@ -447,6 +497,11 @@ static int adsp_probe(struct platform_device
+> *pdev)
+> >  	adsp->info_name = desc->sysmon_name;
+> >  	platform_set_drvdata(pdev, adsp);
+> >
+> > +	if (desc->is_wpss)
+> > +		adsp->shutdown = qcom_wpss_shutdown;
+> > +	else
+> > +		adsp->shutdown = qcom_adsp_shutdown;
+> > +
+> >  	ret = adsp_alloc_memory_region(adsp);
+> >  	if (ret)
+> >  		goto free_rproc;
+> > @@ -515,6 +570,8 @@ static const struct adsp_pil_data adsp_resource_init
+> = {
+> >  	.ssr_name = "lpass",
+> >  	.sysmon_name = "adsp",
+> >  	.ssctl_id = 0x14,
+> > +	.is_wpss = false,
+> > +	.auto_boot = true;
+> >  	.clk_ids = (const char*[]) {
+> >  		"sway_cbcr", "lpass_ahbs_aon_cbcr",
+> "lpass_ahbm_aon_cbcr",
+> >  		"qdsp6ss_xo", "qdsp6ss_sleep", "qdsp6ss_core", NULL
+> > @@ -528,6 +585,8 @@ static const struct adsp_pil_data cdsp_resource_init
+> = {
+> >  	.ssr_name = "cdsp",
+> >  	.sysmon_name = "cdsp",
+> >  	.ssctl_id = 0x17,
+> > +	.is_wpss = false,
+> > +	.auto_boot = true;
+> >  	.clk_ids = (const char*[]) {
+> >  		"sway", "tbu", "bimc", "ahb_aon", "q6ss_slave",
+> "q6ss_master",
+> >  		"q6_axim", NULL
+> > @@ -535,7 +594,23 @@ static const struct adsp_pil_data
+> cdsp_resource_init = {
+> >  	.num_clks = 7,
+> >  };
+> >
+> > +static const struct adsp_pil_data wpss_resource_init = {
+> > +	.crash_reason_smem = 626,
+> > +	.firmware_name = "wpss.mdt",
+> > +	.ssr_name = "wpss",
+> > +	.sysmon_name = "wpss",
+> > +	.ssctl_id = 0x19,
+> > +	.is_wpss = true,
+> > +	.auto_boot = false;
+> 
+> Why is auto_boot false for the WPSS?
+
+Wifi driver will start the remote processor when it comes up. We do not want
+to load it at the start.
+
+> 
+> > +	.clk_ids = (const char*[]) {
+> > +		"gcc_wpss_ahb_bdg_mst_clk", "gcc_wpss_ahb_clk",
+> > +		"gcc_wpss_rscp_clk", NULL
+> > +	},
+> > +	.num_clks = 3,
+> > +};
+> > +
+> >  static const struct of_device_id adsp_of_match[] = {
+> > +	{ .compatible = "qcom,sc7280-wpss-pil", .data = &wpss_resource_init
+> },
+> 
+> Nit. Please keep things like this sorted alphabetically.
+
+Will fix this in the next patchset.
+
+Thanks,
+Rakesh
+
+> 
+> Regards,
+> Bjorn
+> 
+> >  	{ .compatible = "qcom,qcs404-cdsp-pil", .data = &cdsp_resource_init
+> },
+> >  	{ .compatible = "qcom,sdm845-adsp-pil", .data =
+> &adsp_resource_init },
+> >  	{ },
+> > --
+> > 2.7.4
+> >
+
