@@ -2,151 +2,77 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_SANE_1
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22DC6C433E6
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 16 Mar 2021 21:59:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97F0CC433DB
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 16 Mar 2021 22:33:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D65D964F8A
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 16 Mar 2021 21:59:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 57BF964F0C
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 16 Mar 2021 22:33:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229883AbhCPV6n (ORCPT
+        id S231322AbhCPWdU (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 16 Mar 2021 17:58:43 -0400
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:55640 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229948AbhCPV6j (ORCPT
+        Tue, 16 Mar 2021 18:33:20 -0400
+Received: from mail-io1-f50.google.com ([209.85.166.50]:38888 "EHLO
+        mail-io1-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231261AbhCPWdI (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 16 Mar 2021 17:58:39 -0400
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 12GLw7iv026455;
-        Tue, 16 Mar 2021 16:58:07 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1615931887;
-        bh=g14RBVCz+oZ5nDNrh2H5hGoVgfnfSkgeyZtgxiVB1KU=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=snth7o2c0zQpX6lz2y5Qp4OPb2aRkDAJxlVWRTWOOtGuzB/br/yfkTp0Nnt3WHO5Y
-         aB5jtiKBglU+WwiSJZDCq+jcR1jm9w9PhR4aA9blYS0KTKb2nAJSvCzkMXqhG8ORTK
-         JLUBMNHY089pbHWEfsGGpIgvpnB3hpd8G9MZ0/eQ=
-Received: from DFLE112.ent.ti.com (dfle112.ent.ti.com [10.64.6.33])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 12GLw7tp012156
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 16 Mar 2021 16:58:07 -0500
-Received: from DFLE109.ent.ti.com (10.64.6.30) by DFLE112.ent.ti.com
- (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2176.2; Tue, 16
- Mar 2021 16:58:06 -0500
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE109.ent.ti.com
- (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2176.2 via
- Frontend Transport; Tue, 16 Mar 2021 16:58:06 -0500
-Received: from [10.250.64.197] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 12GLw5Ym083325;
-        Tue, 16 Mar 2021 16:58:05 -0500
-Subject: Re: [PATCH] dt-bindings: Drop type references on common properties
-To:     Rob Herring <robh@kernel.org>, <devicetree@vger.kernel.org>
-CC:     <linux-kernel@vger.kernel.org>,
-        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        Maxime Ripard <mripard@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Marc Kleine-Budde <mkl@pengutronix.de>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Ohad Ben-Cohen <ohad@wizery.com>,
-        Mark Brown <broonie@kernel.org>,
-        Cheng-Yi Chiang <cychiang@chromium.org>,
-        Benson Leung <bleung@chromium.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Stefan Wahren <wahrenst@gmx.net>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Odelu Kukatla <okukatla@codeaurora.org>,
-        Alex Elder <elder@kernel.org>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        <linux-gpio@vger.kernel.org>, <linux-pm@vger.kernel.org>,
-        <linux-can@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>, <alsa-devel@alsa-project.org>,
-        <linux-usb@vger.kernel.org>
-References: <20210316194858.3527845-1-robh@kernel.org>
-From:   Suman Anna <s-anna@ti.com>
-Message-ID: <91063147-88a9-4ee7-8f4a-d9d01aa4d33f@ti.com>
-Date:   Tue, 16 Mar 2021 16:58:05 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Tue, 16 Mar 2021 18:33:08 -0400
+Received: by mail-io1-f50.google.com with SMTP id k2so39014776ioh.5;
+        Tue, 16 Mar 2021 15:33:08 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=b+euWy4WVr1SVJdj2VBm7OzPgUuY7Q9wvCXwicWf3TI=;
+        b=C53X00dz3BGvHp1WTrAD8LTP5x1DEo8JtiKYd/b6B8yZ8xzccoLRvaiNN5kpUULwO9
+         ja1SAcV5GLFKQnm9i/aI98DIiwp5o/2JZa6U2XijXMB7W+zYzFToFzBAgKCYo/uBW7T+
+         g3NaaBGrU6Z/dlVEGaCfyoS+qs0R5k6LYGUHwKJPlj8wC7oR5oPLnPRKXyZ+YlQi7w+B
+         DUXo36spFVrYXFzrNzmbNTMJegRULTIFRMX75vvX0RAqa/fMm5Z9i/QSkpgYRw9BvuIu
+         kTLs1TDwFRkeV38g/f8WBoFVmDK+Ys/vijg3+y1DKuvt89fVtJZ971flPfmszBVYA24J
+         HLDA==
+X-Gm-Message-State: AOAM531+p568oPpkVOuh2Q3vuHTHNb9bD0Zecwq55nQJwlSV8fUJasoo
+        FMUp1czu7jms9i98jYX5X/cM3nYXWg==
+X-Google-Smtp-Source: ABdhPJwK9EkoZm2zhnMJLQ6MhhalNj9fXzeNOwRkZvGpKlE3CkKajjRPLMmyTq5nX0YQ5Vld9GmKjw==
+X-Received: by 2002:a5d:93c2:: with SMTP id j2mr5106188ioo.166.1615933987869;
+        Tue, 16 Mar 2021 15:33:07 -0700 (PDT)
+Received: from robh.at.kernel.org ([64.188.179.253])
+        by smtp.gmail.com with ESMTPSA id g14sm9176897ioc.38.2021.03.16.15.33.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 16 Mar 2021 15:33:06 -0700 (PDT)
+Received: (nullmailer pid 3806232 invoked by uid 1000);
+        Tue, 16 Mar 2021 22:33:04 -0000
+Date:   Tue, 16 Mar 2021 16:33:04 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Rakesh Pillai <pillair@codeaurora.org>
+Cc:     p.zabel@pengutronix.de, linux-remoteproc@vger.kernel.org,
+        bjorn.andersson@linaro.org, sibis@codeaurora.org,
+        mathieu.poirier@linaro.org, ohad@wizery.com,
+        linux-arm-msm@vger.kernel.org, agross@kernel.org,
+        robh+dt@kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] dt-bindings: remoteproc: qcom: Add SC7280 WPSS
+ support
+Message-ID: <20210316223304.GA3806198@robh.at.kernel.org>
+References: <1615361290-19238-1-git-send-email-pillair@codeaurora.org>
+ <1615361290-19238-2-git-send-email-pillair@codeaurora.org>
 MIME-Version: 1.0
-In-Reply-To: <20210316194858.3527845-1-robh@kernel.org>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1615361290-19238-2-git-send-email-pillair@codeaurora.org>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On 3/16/21 2:48 PM, Rob Herring wrote:
-> Users of common properties shouldn't have a type definition as the
-> common schemas already have one. Drop all the unnecessary type
-> references in the tree.
+On Wed, 10 Mar 2021 12:58:09 +0530, Rakesh Pillai wrote:
+> Add WPSS PIL loading support for SC7280 SoCs.
 > 
-> A meta-schema update to catch these is pending.
-> 
-> Cc: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-> Cc: Maxime Ripard <mripard@kernel.org>
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
-> Cc: Krzysztof Kozlowski <krzk@kernel.org>
-> Cc: Marc Kleine-Budde <mkl@pengutronix.de>
-> Cc: "David S. Miller" <davem@davemloft.net>
-> Cc: Jakub Kicinski <kuba@kernel.org>
-> Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-> Cc: Ohad Ben-Cohen <ohad@wizery.com>
-> Cc: Mark Brown <broonie@kernel.org>
-> Cc: Cheng-Yi Chiang <cychiang@chromium.org>
-> Cc: Benson Leung <bleung@chromium.org>
-> Cc: Zhang Rui <rui.zhang@intel.com>
-> Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Cc: Stefan Wahren <wahrenst@gmx.net>
-> Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
-> Cc: Odelu Kukatla <okukatla@codeaurora.org>
-> Cc: Alex Elder <elder@kernel.org>
-> Cc: Suman Anna <s-anna@ti.com>
-> Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-> Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> Cc: linux-gpio@vger.kernel.org
-> Cc: linux-pm@vger.kernel.org
-> Cc: linux-can@vger.kernel.org
-> Cc: netdev@vger.kernel.org
-> Cc: linux-remoteproc@vger.kernel.org
-> Cc: alsa-devel@alsa-project.org
-> Cc: linux-usb@vger.kernel.org
-> Signed-off-by: Rob Herring <robh@kernel.org>
+> Signed-off-by: Rakesh Pillai <pillair@codeaurora.org>
 > ---
->  .../bindings/arm/bcm/raspberrypi,bcm2835-firmware.yaml       | 5 +----
->  Documentation/devicetree/bindings/arm/cpus.yaml              | 2 --
->  .../bindings/display/allwinner,sun4i-a10-tcon.yaml           | 1 -
->  .../devicetree/bindings/gpio/socionext,uniphier-gpio.yaml    | 3 +--
->  .../devicetree/bindings/iio/adc/st,stm32-dfsdm-adc.yaml      | 1 -
->  .../devicetree/bindings/interconnect/qcom,rpmh.yaml          | 1 -
->  .../bindings/memory-controllers/nvidia,tegra210-emc.yaml     | 2 +-
->  Documentation/devicetree/bindings/net/can/fsl,flexcan.yaml   | 1 -
->  Documentation/devicetree/bindings/net/qcom,ipa.yaml          | 1 -
->  Documentation/devicetree/bindings/nvmem/nvmem-consumer.yaml  | 2 --
->  .../devicetree/bindings/remoteproc/ti,omap-remoteproc.yaml   | 2 +-
+>  .../bindings/remoteproc/qcom,hexagon-v56.txt       | 35 ++++++++++++----------
+>  1 file changed, 20 insertions(+), 15 deletions(-)
+> 
 
-For OMAP remoteproc,
-Acked-by: Suman Anna <s-anna@ti.com>
-
-regards
-Suman
+Acked-by: Rob Herring <robh@kernel.org>
