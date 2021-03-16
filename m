@@ -2,40 +2,54 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SPF_HELO_NONE,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 973A6C43381
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 16 Mar 2021 20:51:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22DC6C433E6
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 16 Mar 2021 21:59:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 65CAC64F39
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 16 Mar 2021 20:51:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D65D964F8A
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 16 Mar 2021 21:59:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231855AbhCPUvL (ORCPT
+        id S229883AbhCPV6n (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 16 Mar 2021 16:51:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35994 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231435AbhCPUu6 (ORCPT <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 16 Mar 2021 16:50:58 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 13BFE64F39;
-        Tue, 16 Mar 2021 20:50:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1615927857;
-        bh=wG29cqpTFwh1U5z1wLV7rQaOMjdg76t/emDgukbgGPA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=AlNQS3sIaueBa+aw2xmovMe1PfQpQm5qijVCOSGd8xp7M9iazzG1IUStwNGO5HeZC
-         Woi/Dph3BYZAmC56XBt3kJr3bwnkvQj2aDY7UFFx2ivsYFJiciyKe45BxGDwaT8ehe
-         M0RbWE1Y+H1S9cTONIecNzYWWaFu6v7xEZwQ5IfXL37A72SR2GKjPp8X/L5w1LVpxF
-         ZFE26OAbbS/bVvfHkrxmrxSLnzqy6F/HxXLzSm9He8VegAzfrTEaUHv0/VaoXBnSZ1
-         sovrSnWFj5M9cWzbaEB1C/kMkolcauJuX24Lxy1SVfPoCHZ39NRwxtVJ25aNatAnbG
-         n7tMgcmC+O2Hg==
-Date:   Tue, 16 Mar 2021 20:50:54 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Rob Herring <robh@kernel.org>
-Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Tue, 16 Mar 2021 17:58:43 -0400
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:55640 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229948AbhCPV6j (ORCPT
+        <rfc822;linux-remoteproc@vger.kernel.org>);
+        Tue, 16 Mar 2021 17:58:39 -0400
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 12GLw7iv026455;
+        Tue, 16 Mar 2021 16:58:07 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1615931887;
+        bh=g14RBVCz+oZ5nDNrh2H5hGoVgfnfSkgeyZtgxiVB1KU=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=snth7o2c0zQpX6lz2y5Qp4OPb2aRkDAJxlVWRTWOOtGuzB/br/yfkTp0Nnt3WHO5Y
+         aB5jtiKBglU+WwiSJZDCq+jcR1jm9w9PhR4aA9blYS0KTKb2nAJSvCzkMXqhG8ORTK
+         JLUBMNHY089pbHWEfsGGpIgvpnB3hpd8G9MZ0/eQ=
+Received: from DFLE112.ent.ti.com (dfle112.ent.ti.com [10.64.6.33])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 12GLw7tp012156
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 16 Mar 2021 16:58:07 -0500
+Received: from DFLE109.ent.ti.com (10.64.6.30) by DFLE112.ent.ti.com
+ (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2176.2; Tue, 16
+ Mar 2021 16:58:06 -0500
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE109.ent.ti.com
+ (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2176.2 via
+ Frontend Transport; Tue, 16 Mar 2021 16:58:06 -0500
+Received: from [10.250.64.197] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 12GLw5Ym083325;
+        Tue, 16 Mar 2021 16:58:05 -0500
+Subject: Re: [PATCH] dt-bindings: Drop type references on common properties
+To:     Rob Herring <robh@kernel.org>, <devicetree@vger.kernel.org>
+CC:     <linux-kernel@vger.kernel.org>,
         Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
         Maxime Ripard <mripard@kernel.org>,
         Linus Walleij <linus.walleij@linaro.org>,
@@ -47,6 +61,7 @@ Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         Jakub Kicinski <kuba@kernel.org>,
         Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
         Ohad Ben-Cohen <ohad@wizery.com>,
+        Mark Brown <broonie@kernel.org>,
         Cheng-Yi Chiang <cychiang@chromium.org>,
         Benson Leung <bleung@chromium.org>,
         Zhang Rui <rui.zhang@intel.com>,
@@ -55,52 +70,83 @@ Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         Stefan Wahren <wahrenst@gmx.net>,
         Masahiro Yamada <yamada.masahiro@socionext.com>,
         Odelu Kukatla <okukatla@codeaurora.org>,
-        Alex Elder <elder@kernel.org>, Suman Anna <s-anna@ti.com>,
+        Alex Elder <elder@kernel.org>,
         Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
         Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-can@vger.kernel.org, netdev@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org, alsa-devel@alsa-project.org,
-        linux-usb@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: Drop type references on common properties
-Message-ID: <20210316205054.GE4309@sirena.org.uk>
+        <linux-gpio@vger.kernel.org>, <linux-pm@vger.kernel.org>,
+        <linux-can@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>, <alsa-devel@alsa-project.org>,
+        <linux-usb@vger.kernel.org>
 References: <20210316194858.3527845-1-robh@kernel.org>
+From:   Suman Anna <s-anna@ti.com>
+Message-ID: <91063147-88a9-4ee7-8f4a-d9d01aa4d33f@ti.com>
+Date:   Tue, 16 Mar 2021 16:58:05 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="hwvH6HDNit2nSK4j"
-Content-Disposition: inline
 In-Reply-To: <20210316194858.3527845-1-robh@kernel.org>
-X-Cookie: Results vary by individual.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-
---hwvH6HDNit2nSK4j
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Tue, Mar 16, 2021 at 01:48:58PM -0600, Rob Herring wrote:
+On 3/16/21 2:48 PM, Rob Herring wrote:
 > Users of common properties shouldn't have a type definition as the
 > common schemas already have one. Drop all the unnecessary type
 > references in the tree.
+> 
+> A meta-schema update to catch these is pending.
+> 
+> Cc: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+> Cc: Maxime Ripard <mripard@kernel.org>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
+> Cc: Krzysztof Kozlowski <krzk@kernel.org>
+> Cc: Marc Kleine-Budde <mkl@pengutronix.de>
+> Cc: "David S. Miller" <davem@davemloft.net>
+> Cc: Jakub Kicinski <kuba@kernel.org>
+> Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> Cc: Ohad Ben-Cohen <ohad@wizery.com>
+> Cc: Mark Brown <broonie@kernel.org>
+> Cc: Cheng-Yi Chiang <cychiang@chromium.org>
+> Cc: Benson Leung <bleung@chromium.org>
+> Cc: Zhang Rui <rui.zhang@intel.com>
+> Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Cc: Stefan Wahren <wahrenst@gmx.net>
+> Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
+> Cc: Odelu Kukatla <okukatla@codeaurora.org>
+> Cc: Alex Elder <elder@kernel.org>
+> Cc: Suman Anna <s-anna@ti.com>
+> Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+> Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> Cc: linux-gpio@vger.kernel.org
+> Cc: linux-pm@vger.kernel.org
+> Cc: linux-can@vger.kernel.org
+> Cc: netdev@vger.kernel.org
+> Cc: linux-remoteproc@vger.kernel.org
+> Cc: alsa-devel@alsa-project.org
+> Cc: linux-usb@vger.kernel.org
+> Signed-off-by: Rob Herring <robh@kernel.org>
+> ---
+>  .../bindings/arm/bcm/raspberrypi,bcm2835-firmware.yaml       | 5 +----
+>  Documentation/devicetree/bindings/arm/cpus.yaml              | 2 --
+>  .../bindings/display/allwinner,sun4i-a10-tcon.yaml           | 1 -
+>  .../devicetree/bindings/gpio/socionext,uniphier-gpio.yaml    | 3 +--
+>  .../devicetree/bindings/iio/adc/st,stm32-dfsdm-adc.yaml      | 1 -
+>  .../devicetree/bindings/interconnect/qcom,rpmh.yaml          | 1 -
+>  .../bindings/memory-controllers/nvidia,tegra210-emc.yaml     | 2 +-
+>  Documentation/devicetree/bindings/net/can/fsl,flexcan.yaml   | 1 -
+>  Documentation/devicetree/bindings/net/qcom,ipa.yaml          | 1 -
+>  Documentation/devicetree/bindings/nvmem/nvmem-consumer.yaml  | 2 --
+>  .../devicetree/bindings/remoteproc/ti,omap-remoteproc.yaml   | 2 +-
 
-Acked-by: Mark Brown <broonie@kernel.org>
+For OMAP remoteproc,
+Acked-by: Suman Anna <s-anna@ti.com>
 
---hwvH6HDNit2nSK4j
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmBRGi0ACgkQJNaLcl1U
-h9Bd6wf8CLasn7HPb9h3JBOHpH6rnzMDSD3qxnwn0mb6TNjjFgQqLvwZXfWTvJiz
-gkxGMMc+CwnV2uwRzJZLMaI25wo8z//d9xmFX/CVHiti3FZ45EooKQJ41a+CoHl7
-l2J+X1NiGe7EoOgJDvfrHK0+1OuZXN3hnBeNrx8gjqOoBtnbQbvsVhcjnUnN+i3s
-XMZwu0IJQ4MIFscfo3TlaXHt7MeWB4xg8uS/bU+6/OfuTIQmJ14midFU/YqJ6kSl
-QXBZ0oYXIheB+dwso+WQgBRJ3p2r8ob2yZfVwQLkZps30q6VurGqNeDSdRILHbz1
-IaOFXt46ttiq2cAG29TuJxNbVa8KzA==
-=BRod
------END PGP SIGNATURE-----
-
---hwvH6HDNit2nSK4j--
+regards
+Suman
