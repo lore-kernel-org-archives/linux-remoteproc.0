@@ -2,35 +2,42 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_RED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.9 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_RED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3E8CC43381
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 17 Mar 2021 05:53:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E6A3C433E0
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 17 Mar 2021 08:31:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CD6D364FB6
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 17 Mar 2021 05:53:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1CD2864FA7
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 17 Mar 2021 08:31:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230031AbhCQFxE (ORCPT
+        id S229519AbhCQIbR (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 17 Mar 2021 01:53:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45950 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229862AbhCQFwr (ORCPT <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 17 Mar 2021 01:52:47 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id A9BAE64F8C;
-        Wed, 17 Mar 2021 05:52:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1615960367;
-        bh=tOgFJ4o5PgryrZSo/91PbTtI3nbI+1J8paf/6XTa9WM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=HJ9lKY4hGhS1co2uTb9cICsaNrZmtCRDTA55GJgvzxAPdZEb1OjpPKZIOfBwYDu7+
-         xn+uL5wP9w8GPZvQZijePGNwKkZHL+c8obT2jisoZudWe1R+gYYnEZfI1GJ87WqKsw
-         VWZICVxNTlWraAgPFUH1RTY+mog6FAfryPhI102k=
-Date:   Wed, 17 Mar 2021 06:52:44 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+        Wed, 17 Mar 2021 04:31:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33514 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229578AbhCQIbE (ORCPT
+        <rfc822;linux-remoteproc@vger.kernel.org>);
+        Wed, 17 Mar 2021 04:31:04 -0400
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6012EC06175F
+        for <linux-remoteproc@vger.kernel.org>; Wed, 17 Mar 2021 01:31:04 -0700 (PDT)
+Received: from gallifrey.ext.pengutronix.de ([2001:67c:670:201:5054:ff:fe8d:eefb] helo=bjornoya.blackshift.org)
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <mkl@pengutronix.de>)
+        id 1lMRZV-00016k-TZ; Wed, 17 Mar 2021 09:30:29 +0100
+Received: from pengutronix.de (unknown [IPv6:2a03:f580:87bc:d400:31e3:6e40:b1cd:40a8])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-384) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (Client did not present a certificate)
+        (Authenticated sender: mkl-all@blackshift.org)
+        by smtp.blackshift.org (Postfix) with ESMTPSA id 582725F73BA;
+        Wed, 17 Mar 2021 08:30:22 +0000 (UTC)
+Date:   Wed, 17 Mar 2021 09:30:21 +0100
+From:   Marc Kleine-Budde <mkl@pengutronix.de>
 To:     Rob Herring <robh@kernel.org>
 Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
@@ -39,7 +46,6 @@ Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
         Krzysztof Kozlowski <krzk@kernel.org>,
-        Marc Kleine-Budde <mkl@pengutronix.de>,
         "David S. Miller" <davem@davemloft.net>,
         Jakub Kicinski <kuba@kernel.org>,
         Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
@@ -49,6 +55,7 @@ Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         Benson Leung <bleung@chromium.org>,
         Zhang Rui <rui.zhang@intel.com>,
         Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Stefan Wahren <wahrenst@gmx.net>,
         Masahiro Yamada <yamada.masahiro@socionext.com>,
         Odelu Kukatla <okukatla@codeaurora.org>,
@@ -60,23 +67,34 @@ Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-remoteproc@vger.kernel.org, alsa-devel@alsa-project.org,
         linux-usb@vger.kernel.org
 Subject: Re: [PATCH] dt-bindings: Drop type references on common properties
-Message-ID: <YFGZLM7MbypuE15L@kroah.com>
+Message-ID: <20210317082003.rhm6sdrwxmt4elu2@pengutronix.de>
 References: <20210316194858.3527845-1-robh@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="rrfkyphxuuq3viq3"
 Content-Disposition: inline
 In-Reply-To: <20210316194858.3527845-1-robh@kernel.org>
+X-SA-Exim-Connect-IP: 2001:67c:670:201:5054:ff:fe8d:eefb
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-remoteproc@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Tue, Mar 16, 2021 at 01:48:58PM -0600, Rob Herring wrote:
+
+--rrfkyphxuuq3viq3
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On 16.03.2021 13:48:58, Rob Herring wrote:
 > Users of common properties shouldn't have a type definition as the
 > common schemas already have one. Drop all the unnecessary type
 > references in the tree.
-> 
+>=20
 > A meta-schema update to catch these is pending.
-> 
+>=20
 > Cc: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
 > Cc: Maxime Ripard <mripard@kernel.org>
 > Cc: Linus Walleij <linus.walleij@linaro.org>
@@ -118,14 +136,33 @@ On Tue, Mar 16, 2021 at 01:48:58PM -0600, Rob Herring wrote:
 >  .../devicetree/bindings/interconnect/qcom,rpmh.yaml          | 1 -
 >  .../bindings/memory-controllers/nvidia,tegra210-emc.yaml     | 2 +-
 >  Documentation/devicetree/bindings/net/can/fsl,flexcan.yaml   | 1 -
->  Documentation/devicetree/bindings/net/qcom,ipa.yaml          | 1 -
->  Documentation/devicetree/bindings/nvmem/nvmem-consumer.yaml  | 2 --
->  .../devicetree/bindings/remoteproc/ti,omap-remoteproc.yaml   | 2 +-
->  Documentation/devicetree/bindings/sound/ak4642.yaml          | 2 --
->  .../devicetree/bindings/sound/google,cros-ec-codec.yaml      | 2 +-
->  Documentation/devicetree/bindings/sound/renesas,rsnd.yaml    | 1 -
->  .../devicetree/bindings/thermal/qcom-spmi-adc-tm5.yaml       | 1 -
->  Documentation/devicetree/bindings/usb/usb.yaml               | 1 -
->  16 files changed, 5 insertions(+), 23 deletions(-)
 
-Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+For the flexcan:
+
+Acked-by: Marc Kleine-Budde <mkl@pengutronix.de>
+
+regards,
+Marc
+
+--=20
+Pengutronix e.K.                 | Marc Kleine-Budde           |
+Embedded Linux                   | https://www.pengutronix.de  |
+Vertretung West/Dortmund         | Phone: +49-231-2826-924     |
+Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-5555 |
+
+--rrfkyphxuuq3viq3
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEK3kIWJt9yTYMP3ehqclaivrt76kFAmBRvhoACgkQqclaivrt
+76mnKAf+PxQ/8rd3QepXVtp0iP7BwfTPO2Vw0b0/dXzEt5pT/cygYEDP2YE6dumw
+9LbLd9JPDJJFhwXpMje5DOZW+Nfa93SRBq/MC1/XynoG8UAa7r2VuO7ZJscUNuI7
+nL04VVsP17gLMoR9ZGSvd+Vbau0uCw3APVawqN2d2nsi9eCCTykaIpQBrXGL+VHo
+h225JlHCOUVizUbAE8BFWxDXXff1mMEKHU46APvK+RXz1nExI23zmwJeIGA11RwP
+bjFMRZehLZesl/p6uDndUYNL4wTK7LXOf+u/A/wGDdQSuLOwoVbX9ACOLHsB0qfP
++1kjTYyaduEG1rpaYQ966dHZqjQEuQ==
+=4979
+-----END PGP SIGNATURE-----
+
+--rrfkyphxuuq3viq3--
