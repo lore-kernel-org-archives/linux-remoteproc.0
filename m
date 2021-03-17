@@ -2,170 +2,167 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_RED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E36AAC433DB
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 17 Mar 2021 09:45:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2108EC433DB
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 17 Mar 2021 16:23:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B0EA864F5E
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 17 Mar 2021 09:45:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CC24864F17
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 17 Mar 2021 16:23:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229846AbhCQJoj (ORCPT
+        id S231842AbhCQQXO (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 17 Mar 2021 05:44:39 -0400
-Received: from new1-smtp.messagingengine.com ([66.111.4.221]:38661 "EHLO
-        new1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229707AbhCQJoa (ORCPT
+        Wed, 17 Mar 2021 12:23:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51420 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232348AbhCQQW4 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 17 Mar 2021 05:44:30 -0400
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
-        by mailnew.nyi.internal (Postfix) with ESMTP id 42DB95804A4;
-        Wed, 17 Mar 2021 05:44:28 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute6.internal (MEProxy); Wed, 17 Mar 2021 05:44:28 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm2; bh=0BP8cAWztylqalmk4/OoD2Cy3lw
-        qhFZyUP90THNtZ1g=; b=cAeuP0qbO4eJljrqIMiebUowfsB/GxgB0fgTHUeF5Yo
-        +dFTnomigRMKK9PRko4dMH1zdWY+F8CZlLyyxbotj7dX6MhNo0ZdCfBIYlKvh+/Q
-        d3gw0kvUlYz+vN963+21XhyNQAmvwJjVEJA+avi6mYRcwb/KVLdURvi1B7dODlEU
-        qwo0pQOkSpU56PPi4NYkSD3fDTg0e80FKnqzVVH4HrLSduY507MOGgRp94x8tow8
-        C9HfLeh5qs5U1GUDOdKhbybH8VweO9ZHI/Nfv3WQtBMysN51MQalqCy7G6KdFGe4
-        mf58Y/uLDUegOKYAI0UMYq6LPHm6VBPkmbHqO3+RurQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=0BP8cA
-        Wztylqalmk4/OoD2Cy3lwqhFZyUP90THNtZ1g=; b=srtYkEJcS4huqv80LlbbSG
-        Fi8pxOzOhws71OZtEdfvdz4enBpQRhE0iI6Werq9aNVPnUT1M8U+utcOXh5XVeKQ
-        FokaGwGP35MMAOOqtri0m/vNjHo7TKirpcMZ/5W9e2L9Q2AF3sm0/WG+GT0NJggk
-        x83KKGNn2DhU8Bd9sU4Sgt1j3dm5XQtFyacw9sqD5kjEFms6c7sxEkUtKUvv63MW
-        qCQbrdMZ3s7LT10cwkeBrK/9NP5d5HvxG2zKV+2c3gCChb+8ufEt4coS7G9P7gdm
-        afb8Huog5c6refVYER6q+O7lbAN3g/n8yJC7Tc4bejsE73cF9Z1jUXn4fpW2Lq4Q
-        ==
-X-ME-Sender: <xms:ec9RYK39Y_a4zSfTwUaRQx1LJtTowhZfqZ55tBkolaY3hmRBQTPI7Q>
-    <xme:ec9RYNGM7ueV86Apfa1zFhVwr_eYaKeWpNprnytd5VORSYUGMtqFf5JVwUDGqEq2i
-    aqHVVd170LHaeJKjA4>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduledrudefgedgtdejucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvffukfhfgggtuggjsehgtderredttddvnecuhfhrohhmpeforgigihhm
-    vgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecuggftrfgrth
-    htvghrnhepleekgeehhfdutdeljefgleejffehfffgieejhffgueefhfdtveetgeehieeh
-    gedunecukfhppeeltddrkeelrdeikedrjeeinecuvehluhhsthgvrhfuihiivgeptdenuc
-    frrghrrghmpehmrghilhhfrhhomhepmhgrgihimhgvsegtvghrnhhordhtvggthh
-X-ME-Proxy: <xmx:ec9RYC4TIhkXMH2jEndCl15t4aT4tnjEM-i5V5FzoBn8t6HtdaEwrw>
-    <xmx:ec9RYL3qCCj83UuidkPt_WjshQ4_zjIBrTcOs3V7XXAW0QPplWZljQ>
-    <xmx:ec9RYNGEMZcMZqGZqtAf8jav8BKADI6fd14OggVtOw4i_pnVvBSC-w>
-    <xmx:fM9RYDRuhS2ysirc2Y7YeQnTiJcpzjxydTqzDoyqpnbGWb-Av1ZQ0w>
-Received: from localhost (lfbn-tou-1-1502-76.w90-89.abo.wanadoo.fr [90.89.68.76])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 21F05108005C;
-        Wed, 17 Mar 2021 05:44:25 -0400 (EDT)
-Date:   Wed, 17 Mar 2021 10:44:22 +0100
-From:   Maxime Ripard <maxime@cerno.tech>
-To:     Rob Herring <robh@kernel.org>
-Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Marc Kleine-Budde <mkl@pengutronix.de>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Ohad Ben-Cohen <ohad@wizery.com>,
-        Mark Brown <broonie@kernel.org>,
-        Cheng-Yi Chiang <cychiang@chromium.org>,
-        Benson Leung <bleung@chromium.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Stefan Wahren <wahrenst@gmx.net>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Odelu Kukatla <okukatla@codeaurora.org>,
-        Alex Elder <elder@kernel.org>, Suman Anna <s-anna@ti.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-can@vger.kernel.org, netdev@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org, alsa-devel@alsa-project.org,
-        linux-usb@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: Drop type references on common properties
-Message-ID: <20210317094422.tlzbuvfanfwxenps@gilmour>
-References: <20210316194858.3527845-1-robh@kernel.org>
+        Wed, 17 Mar 2021 12:22:56 -0400
+Received: from mail-pg1-x533.google.com (mail-pg1-x533.google.com [IPv6:2607:f8b0:4864:20::533])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 34A7CC06174A
+        for <linux-remoteproc@vger.kernel.org>; Wed, 17 Mar 2021 09:22:56 -0700 (PDT)
+Received: by mail-pg1-x533.google.com with SMTP id n9so24108155pgi.7
+        for <linux-remoteproc@vger.kernel.org>; Wed, 17 Mar 2021 09:22:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=F/NINQB6sPLYh+yrEh/k+DH7DYJo1ZCA8NxADWNTIuc=;
+        b=lwy1ZiWIAtcKPMq2R26yQtWGUBjV2/aZx0LQ5/d5QuNihi8Wtz5itX/qLsFLULsdJm
+         7h05IW0RREuLx9FjL+YHBC95rXkwbpjzIhuHNIZtFaMA7EuOA+eScoYXw2MGSaFRKVAX
+         2P/x3fmsNZ2EPyAEGghzUlj4dmRdMu9OYP8eVLPXGM5xFJ4l161c5YBcpnYSb0si1ad/
+         zTwmcmY/rSF9fYLI30rNoc1hu5Dqyjrq1344Tyw4f181YmPSmMJt17lKgUziZxarFICt
+         d1uhVm1jNw51JcIejSnN+UQERVi46InH2Km0pKVXytIkQcMw3l9goxuyK196nkww2Hyj
+         G+Nw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=F/NINQB6sPLYh+yrEh/k+DH7DYJo1ZCA8NxADWNTIuc=;
+        b=dPfqBXvD74nZPr4yl/ZUtvphuuU6MQEzWsD3vMoybf78rnlUcWXRs5vJxUU+BY/jeN
+         7SGEMnw+uvIfpFKiFZ1iY/Vnjz3IQ6phAdSLxY9Usm2h4CiVFccMQQatKr46B7Nk7cbf
+         vOppGpLoOc14AQlRJt08TZFIPP1AFIFkTP3xshsi8+O4q7rlmi0HP0+KMI4s8hebSbCD
+         5LA5H9D5QFkAc/P32K25y1eL7zKVKO2HCTbPu7HiJsLq5OLF+IC4MdB7P7SbJdaMx/w3
+         y1avcibceTExIaP1tJb+lsKLjQmQReEKKI8ME20dKxlJeUpg3V4AAxk+tPInGS6oSRK5
+         WDtg==
+X-Gm-Message-State: AOAM532SrR1pk8mGnG1ELMlYOsPnYbwmRcoCyl0hD89FFinhbAn8d1ek
+        C0g+FAFQlnS6VeZOXPNN1ljk8Q==
+X-Google-Smtp-Source: ABdhPJydMrFwkMHsrjjZHTQdQe8G/EncvIH1JMyUfSF3ZGFQ+NkG6boP3+9sjSylWtMrgquoYZZWbQ==
+X-Received: by 2002:aa7:9910:0:b029:1f1:b41b:f95c with SMTP id z16-20020aa799100000b02901f1b41bf95cmr4989428pff.5.1615998175710;
+        Wed, 17 Mar 2021 09:22:55 -0700 (PDT)
+Received: from xps15 (S0106889e681aac74.cg.shawcable.net. [68.147.0.187])
+        by smtp.gmail.com with ESMTPSA id 14sm20277815pfo.141.2021.03.17.09.22.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 17 Mar 2021 09:22:51 -0700 (PDT)
+Date:   Wed, 17 Mar 2021 10:22:49 -0600
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+To:     Ben Levinsky <BLEVINSK@xilinx.com>
+Cc:     "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        Michal Simek <michals@xilinx.com>,
+        "Ed T. Mooring" <emooring@xilinx.com>
+Subject: Re: [PATCH v26 5/5] remoteproc: Add initial zynqmp R5 remoteproc
+ driver
+Message-ID: <20210317162249.GA1494354@xps15>
+References: <20210223154447.13247-1-ben.levinsky@xilinx.com>
+ <20210223154447.13247-6-ben.levinsky@xilinx.com>
+ <20210308190046.GA3983426@xps15>
+ <FF6E631A-87E0-4194-844A-E6B58E5B2928@xilinx.com>
+ <20210315172558.GA1342614@xps15>
+ <1AD6632B-A69E-406B-A644-440B9C8B929F@xilinx.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="lj6yx5qimtjaxe7l"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210316194858.3527845-1-robh@kernel.org>
+In-Reply-To: <1AD6632B-A69E-406B-A644-440B9C8B929F@xilinx.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
+[...]
 
---lj6yx5qimtjaxe7l
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+>     >     > +/*
+>     >     > + * zynqmp_r5_remoteproc_probe
+>     >     > + *
+>     >     > + * @pdev: domain platform device for R5 cluster
+>     >     > + *
+>     >     > + * called when driver is probed, for each R5 core specified in DT,
+>     >     > + * setup as needed to do remoteproc-related operations
+>     >     > + *
+>     >     > + * Return: 0 for success, negative value for failure.
+>     >     > + */
+>     >     > +static int zynqmp_r5_remoteproc_probe(struct platform_device *pdev)
+>     >     > +{
+>     >     > +	int ret, core_count;
+>     >     > +	struct device *dev = &pdev->dev;
+>     >     > +	struct device_node *nc;
+>     >     > +	enum rpu_oper_mode rpu_mode = PM_RPU_MODE_LOCKSTEP;
+>     >     > +	struct list_head *cluster; /* list to track each core's rproc */
+>     >     > +	struct zynqmp_r5_rproc *z_rproc;
+>     >     > +	struct platform_device *child_pdev;
+>     >     > +	struct list_head *pos;
+>     >     > +
+>     >     > +	ret = of_property_read_u32(dev->of_node, "xlnx,cluster-mode", &rpu_mode);
+>     >     > +	if (ret < 0 || (rpu_mode != PM_RPU_MODE_LOCKSTEP &&
+>     >     > +			rpu_mode != PM_RPU_MODE_SPLIT)) {
+>     >     > +		dev_err(dev, "invalid cluster mode: ret %d mode %x\n",
+>     >     > +			ret, rpu_mode);
+>     >     > +		return ret;
+>     >     > +	}
+>     >     > +
+>     >     > +	dev_dbg(dev, "RPU configuration: %s\n",
+>     >     > +		rpu_mode == PM_RPU_MODE_LOCKSTEP ? "lockstep" : "split");
+>     >     > +
+>     >     > +	/*
+>     >     > +	 * if 2 RPUs provided but one is lockstep, then we have an
+>     >     > +	 * invalid configuration.
+>     >     > +	 */
+>     >     > +
+>     >     > +	core_count = of_get_available_child_count(dev->of_node);
+>     >     > +	if ((rpu_mode == PM_RPU_MODE_LOCKSTEP && core_count != 1) ||
+>     >     > +	    core_count > MAX_RPROCS)
+>     >     > +		return -EINVAL;
+>     >     > +
+>     >     > +	cluster = devm_kzalloc(dev, sizeof(*cluster), GFP_KERNEL);
+>     >     > +	if (!cluster)
+>     >     > +		return -ENOMEM;
+>     >     > +	INIT_LIST_HEAD(cluster);
+>     >     > +
+>     >     > +	ret = devm_of_platform_populate(dev);
+>     >     > +	if (ret) {
+>     >     > +		dev_err(dev, "devm_of_platform_populate failed, ret = %d\n", ret);
+>     >     > +		return ret;
+>     >     > +	}
+>     >     > +
+>     >     > +	/* probe each individual r5 core's remoteproc-related info */
+>     >     > +	for_each_available_child_of_node(dev->of_node, nc) {
+>     >     > +		child_pdev = of_find_device_by_node(nc);
+>     > 
+>     >     The device reference needs to be dropped after use, as described in the function
+>     >     documentation.
+>     > 
+>     >     I'm out of time - I will continue tomorrow.
+>     > 
+>     >     Mathieu
+>     > 
+>     > 
+>     > [Ben] By this do you mean that for each platform_device should have a call like
+>     > 	platform_set_drvdata(child_pdev, NULL); if it fails? or something else?
+> 
+>     Have another read at the documentation and look at how other people have used
+>     it.  You may already be aware but Bootlin's kernel cross-reference tool is
+>     really good for that.
+> 
+>     https://elixir.bootlin.com/linux/v5.12-rc3/source
+> 
+> If I understand what you are saying I will add calls for put_device(child_pdev) in error handling and at end of the loop.
 
-On Tue, Mar 16, 2021 at 01:48:58PM -0600, Rob Herring wrote:
-> Users of common properties shouldn't have a type definition as the
-> common schemas already have one. Drop all the unnecessary type
-> references in the tree.
->=20
-> A meta-schema update to catch these is pending.
->=20
-> Cc: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-> Cc: Maxime Ripard <mripard@kernel.org>
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
-> Cc: Krzysztof Kozlowski <krzk@kernel.org>
-> Cc: Marc Kleine-Budde <mkl@pengutronix.de>
-> Cc: "David S. Miller" <davem@davemloft.net>
-> Cc: Jakub Kicinski <kuba@kernel.org>
-> Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-> Cc: Ohad Ben-Cohen <ohad@wizery.com>
-> Cc: Mark Brown <broonie@kernel.org>
-> Cc: Cheng-Yi Chiang <cychiang@chromium.org>
-> Cc: Benson Leung <bleung@chromium.org>
-> Cc: Zhang Rui <rui.zhang@intel.com>
-> Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Cc: Stefan Wahren <wahrenst@gmx.net>
-> Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
-> Cc: Odelu Kukatla <okukatla@codeaurora.org>
-> Cc: Alex Elder <elder@kernel.org>
-> Cc: Suman Anna <s-anna@ti.com>
-> Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-> Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> Cc: linux-gpio@vger.kernel.org
-> Cc: linux-pm@vger.kernel.org
-> Cc: linux-can@vger.kernel.org
-> Cc: netdev@vger.kernel.org
-> Cc: linux-remoteproc@vger.kernel.org
-> Cc: alsa-devel@alsa-project.org
-> Cc: linux-usb@vger.kernel.org
-> Signed-off-by: Rob Herring <robh@kernel.org>
+That's one part of it.  But what will happen if there is no errors to deal with?
+Where will the reference to child_pdev->dev be dropped?
 
-Acked-by: Maxime Ripard <maxime@cerno.tech>
-
-Thanks!
-Maxiem
-
---lj6yx5qimtjaxe7l
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCYFHPdgAKCRDj7w1vZxhR
-xQMxAQCrXmT5FCI3eJYBXW/EUFlqbCTwnoDOAEjWcGLbj2XTCgEAxkEyHVxsELxK
-YT52x5rpTHartnwQ86HMToeCxMjKlAc=
-=93nZ
------END PGP SIGNATURE-----
-
---lj6yx5qimtjaxe7l--
+> 
+> 
