@@ -2,116 +2,86 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37196C4332E
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 18 Mar 2021 15:00:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 515D4C433DB
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 18 Mar 2021 18:43:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EE22064F3B
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 18 Mar 2021 15:00:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 07C4164F01
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 18 Mar 2021 18:43:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230040AbhCRPAM (ORCPT
+        id S232653AbhCRSnM (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 18 Mar 2021 11:00:12 -0400
-Received: from mx07-00178001.pphosted.com ([185.132.182.106]:37082 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230400AbhCRPAI (ORCPT
-        <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 18 Mar 2021 11:00:08 -0400
-Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 12IEpUpR022067;
-        Thu, 18 Mar 2021 15:59:55 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references : mime-version :
- content-type; s=selector1;
- bh=pFkvSD5TpvQpEmbDNgOBzvEMR5hvJGz0egnTJa2Wcyc=;
- b=dHfFqBoX9jVQXQV+9JVIXa/QYIvTgqwPfEr1JGfNRNL4lwqu/YlrT4tkv7D22/MJSeuR
- eBxUijk+7eF/E7j2tlphzTU/zgWnBcpNOYiSRyPeGInNs0/JemqA2jpvi1H7lqCL4XYC
- 8CluAbonoQH61StmY61X/FF9oVAO/TR4kiUB9NoDA2a08F+8AhQCB6locNlEij56H06a
- ynxfOUaxY3c6SAXZWvO7ZDnvBzSHr0A+VyB4qCSeP7ynz0STQDpPX4CFBPCZImRFIouS
- 7DYXaZnHRb2UTAZ+LvSIni4LQEAN8q5rTGnqLkE2IO8NzZveLE9OqrKSxhcBd3T7trkC /Q== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 378ps9x1vu-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 18 Mar 2021 15:59:55 +0100
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 1D89E100034;
-        Thu, 18 Mar 2021 15:59:55 +0100 (CET)
-Received: from Webmail-eu.st.com (sfhdag2node3.st.com [10.75.127.6])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 070D0210470;
-        Thu, 18 Mar 2021 15:59:55 +0100 (CET)
-Received: from localhost (10.75.127.46) by SFHDAG2NODE3.st.com (10.75.127.6)
- with Microsoft SMTP Server (TLS) id 15.0.1497.2; Thu, 18 Mar 2021 15:59:54
- +0100
-From:   Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Ohad Ben-Cohen <ohad@wizery.com>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Rob Herring <robh@kernel.org>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>
-CC:     <devicetree@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-Subject: [PATCH 1/2] dt-bindings: remoteproc: stm32-rproc: add new mailbox channel for detach
-Date:   Thu, 18 Mar 2021 15:59:22 +0100
-Message-ID: <20210318145923.31936-2-arnaud.pouliquen@foss.st.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20210318145923.31936-1-arnaud.pouliquen@foss.st.com>
-References: <20210318145923.31936-1-arnaud.pouliquen@foss.st.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.75.127.46]
-X-ClientProxiedBy: SFHDAG3NODE3.st.com (10.75.127.9) To SFHDAG2NODE3.st.com
- (10.75.127.6)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.369,18.0.761
- definitions=2021-03-18_09:2021-03-17,2021-03-18 signatures=0
+        Thu, 18 Mar 2021 14:43:12 -0400
+Received: from m43-7.mailgun.net ([69.72.43.7]:11752 "EHLO m43-7.mailgun.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S232743AbhCRSmt (ORCPT <rfc822;linux-remoteproc@vger.kernel.org>);
+        Thu, 18 Mar 2021 14:42:49 -0400
+X-Greylist: delayed 302 seconds by postgrey-1.27 at vger.kernel.org; Thu, 18 Mar 2021 14:42:49 EDT
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1616092969; h=Message-Id: Date: Subject: Cc: To: From:
+ Sender; bh=h/IajgnDHExOgsJmGShsRT30QzKP3s7Dn8aRHeUxonA=; b=ZQv+G9HrgtLvDDaBTrVDes/lj87mqQAVJdbEl/vXR5gpanuCUqOEmK+ocxAnb+hZ/pGJ3Bv4
+ paFIWe2P4SAxXLqx9PucfODtHf7RS8AF14ggdHUVWtt3VVHpZAkysbfCD0jGPXn/AllkiHa6
+ X+BFe28dxU3jSmUgURQGEyg0tMw=
+X-Mailgun-Sending-Ip: 69.72.43.7
+X-Mailgun-Sid: WyI4ZWZiZiIsICJsaW51eC1yZW1vdGVwcm9jQHZnZXIua2VybmVsLm9yZyIsICJiZTllNGEiXQ==
+Received: from smtp.codeaurora.org
+ (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
+ smtp-out-n02.prod.us-east-1.postgun.com with SMTP id
+ 60539dfae3fca7d0a601a3f3 (version=TLS1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Thu, 18 Mar 2021 18:37:46
+ GMT
+Sender: deesin=codeaurora.org@mg.codeaurora.org
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id E2461C43468; Thu, 18 Mar 2021 18:37:45 +0000 (UTC)
+Received: from deesin-linux.qualcomm.com (unknown [202.46.22.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: deesin)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id E174DC433ED;
+        Thu, 18 Mar 2021 18:37:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E174DC433ED
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=deesin@codeaurora.org
+From:   Deepak Kumar Singh <deesin@codeaurora.org>
+To:     bjorn.andersson@linaro.org, clew@codeaurora.org
+Cc:     linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org,
+        Deepak Kumar Singh <deesin@codeaurora.org>,
+        Andy Gross <agross@kernel.org>
+Subject: [PATCH V1 1/1] soc: qcom: smp2p: Add enable_irq_wake to SMP2P IRQ
+Date:   Fri, 19 Mar 2021 00:07:04 +0530
+Message-Id: <1616092624-31870-1-git-send-email-deesin@codeaurora.org>
+X-Mailer: git-send-email 2.7.4
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Add the "detach" mailbox item, that allows to define a mailbox to
-send a IPCC signal to the remote processor on remoteproc detach action.
+SMP2P interrupts are expected to wake the processor from suspend.
+Use enable_irq_wake to mark it wakeup capable from suspend.
 
-Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+Signed-off-by: Chris Lew <clew@codeaurora.org>
+Signed-off-by: Deepak Kumar Singh <deesin@codeaurora.org>
 ---
- .../bindings/remoteproc/st,stm32-rproc.yaml           | 11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
+ drivers/soc/qcom/smp2p.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/devicetree/bindings/remoteproc/st,stm32-rproc.yaml b/Documentation/devicetree/bindings/remoteproc/st,stm32-rproc.yaml
-index a1171dfba024..f5976cb431c0 100644
---- a/Documentation/devicetree/bindings/remoteproc/st,stm32-rproc.yaml
-+++ b/Documentation/devicetree/bindings/remoteproc/st,stm32-rproc.yaml
-@@ -65,16 +65,23 @@ properties:
-           Unidirectional channel:
-             - from local to remote, where ACK from the remote means that it is
-               ready for shutdown
-+       - description: |
-+          A channel (d) used by the local proc to notify the remote proc that it
-+          has to stop interprocessor communnication.
-+          Unidirectional channel:
-+            - from local to remote, where ACK from the remote means that communnication
-+              as been stopped on the remote side.
-     minItems: 1
--    maxItems: 3
-+    maxItems: 4
+diff --git a/drivers/soc/qcom/smp2p.c b/drivers/soc/qcom/smp2p.c
+index 2df4883..df47ee6 100644
+--- a/drivers/soc/qcom/smp2p.c
++++ b/drivers/soc/qcom/smp2p.c
+@@ -538,6 +538,7 @@ static int qcom_smp2p_probe(struct platform_device *pdev)
+ 		goto unwind_interfaces;
+ 	}
  
-   mbox-names:
-     items:
-       - const: vq0
-       - const: vq1
-       - const: shutdown
-+      - const: detach
-     minItems: 1
--    maxItems: 3
-+    maxItems: 4
++	enable_irq_wake(irq);
  
-   memory-region:
-     description:
+ 	return 0;
+ 
 -- 
-2.17.1
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
 
