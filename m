@@ -2,86 +2,104 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 515D4C433DB
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 18 Mar 2021 18:43:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14D97C433DB
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 18 Mar 2021 21:59:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 07C4164F01
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 18 Mar 2021 18:43:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E0B5464F45
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 18 Mar 2021 21:59:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232653AbhCRSnM (ORCPT
+        id S233243AbhCRV7D (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 18 Mar 2021 14:43:12 -0400
-Received: from m43-7.mailgun.net ([69.72.43.7]:11752 "EHLO m43-7.mailgun.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232743AbhCRSmt (ORCPT <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 18 Mar 2021 14:42:49 -0400
-X-Greylist: delayed 302 seconds by postgrey-1.27 at vger.kernel.org; Thu, 18 Mar 2021 14:42:49 EDT
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1616092969; h=Message-Id: Date: Subject: Cc: To: From:
- Sender; bh=h/IajgnDHExOgsJmGShsRT30QzKP3s7Dn8aRHeUxonA=; b=ZQv+G9HrgtLvDDaBTrVDes/lj87mqQAVJdbEl/vXR5gpanuCUqOEmK+ocxAnb+hZ/pGJ3Bv4
- paFIWe2P4SAxXLqx9PucfODtHf7RS8AF14ggdHUVWtt3VVHpZAkysbfCD0jGPXn/AllkiHa6
- X+BFe28dxU3jSmUgURQGEyg0tMw=
-X-Mailgun-Sending-Ip: 69.72.43.7
-X-Mailgun-Sid: WyI4ZWZiZiIsICJsaW51eC1yZW1vdGVwcm9jQHZnZXIua2VybmVsLm9yZyIsICJiZTllNGEiXQ==
-Received: from smtp.codeaurora.org
- (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
- smtp-out-n02.prod.us-east-1.postgun.com with SMTP id
- 60539dfae3fca7d0a601a3f3 (version=TLS1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Thu, 18 Mar 2021 18:37:46
- GMT
-Sender: deesin=codeaurora.org@mg.codeaurora.org
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id E2461C43468; Thu, 18 Mar 2021 18:37:45 +0000 (UTC)
-Received: from deesin-linux.qualcomm.com (unknown [202.46.22.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: deesin)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id E174DC433ED;
-        Thu, 18 Mar 2021 18:37:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E174DC433ED
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=deesin@codeaurora.org
-From:   Deepak Kumar Singh <deesin@codeaurora.org>
-To:     bjorn.andersson@linaro.org, clew@codeaurora.org
-Cc:     linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org,
-        Deepak Kumar Singh <deesin@codeaurora.org>,
-        Andy Gross <agross@kernel.org>
-Subject: [PATCH V1 1/1] soc: qcom: smp2p: Add enable_irq_wake to SMP2P IRQ
-Date:   Fri, 19 Mar 2021 00:07:04 +0530
-Message-Id: <1616092624-31870-1-git-send-email-deesin@codeaurora.org>
-X-Mailer: git-send-email 2.7.4
+        Thu, 18 Mar 2021 17:59:03 -0400
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:59494 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230509AbhCRV6z (ORCPT
+        <rfc822;linux-remoteproc@vger.kernel.org>);
+        Thu, 18 Mar 2021 17:58:55 -0400
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 12ILwnlp031737;
+        Thu, 18 Mar 2021 16:58:49 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1616104729;
+        bh=r0I/5gEUl9u/+u0BQsSSziZQ5jRmsqIYQXTlRPcwgsg=;
+        h=From:To:CC:Subject:Date;
+        b=NugvkazagSkVXvE3hocNAc0n9wB+fzG/McXT7gj4LS0a1NtMAVlQcaxghyUHefuxT
+         qBhvW0OPsfxZlnoD31GGMIALf4+GVXJq1DeFBdghUHvVIx9B4RPMJAe7NghK0RhzZb
+         zbVPeK9wJeUp8kYmtlfJN3I9hIK4Ixrw+1QXzQ0g=
+Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 12ILwnBb097713
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 18 Mar 2021 16:58:49 -0500
+Received: from DLEE111.ent.ti.com (157.170.170.22) by DLEE108.ent.ti.com
+ (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2176.2; Thu, 18
+ Mar 2021 16:58:48 -0500
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE111.ent.ti.com
+ (157.170.170.22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2176.2 via
+ Frontend Transport; Thu, 18 Mar 2021 16:58:49 -0500
+Received: from fllv0103.dal.design.ti.com (fllv0103.dal.design.ti.com [10.247.120.73])
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id 12ILwmu8043227;
+        Thu, 18 Mar 2021 16:58:48 -0500
+Received: from localhost ([10.250.32.139])
+        by fllv0103.dal.design.ti.com (8.14.7/8.14.7) with ESMTP id 12ILwmio096141;
+        Thu, 18 Mar 2021 16:58:48 -0500
+From:   Suman Anna <s-anna@ti.com>
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>
+CC:     Lokesh Vutla <lokeshvutla@ti.com>,
+        <linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, Suman Anna <s-anna@ti.com>
+Subject: [PATCH 0/2] TI K3 R5F remoteproc support on AM46x SoCs
+Date:   Thu, 18 Mar 2021 16:58:40 -0500
+Message-ID: <20210318215842.8196-1-s-anna@ti.com>
+X-Mailer: git-send-email 2.30.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-SMP2P interrupts are expected to wake the processor from suspend.
-Use enable_irq_wake to mark it wakeup capable from suspend.
+Hi All,
 
-Signed-off-by: Chris Lew <clew@codeaurora.org>
-Signed-off-by: Deepak Kumar Singh <deesin@codeaurora.org>
----
- drivers/soc/qcom/smp2p.c | 1 +
- 1 file changed, 1 insertion(+)
+The following series enhances the K3 R5F remoteproc driver to add support
+for the R5F clusters on the newer TI K3 AM64x SoC family. The AM64x SoCs
+have 2 R5FSS clusters and no DSPs. Both clusters are capable of supporting
+either the conventional Split-mode or a brand new "Single-CPU" mode.
 
-diff --git a/drivers/soc/qcom/smp2p.c b/drivers/soc/qcom/smp2p.c
-index 2df4883..df47ee6 100644
---- a/drivers/soc/qcom/smp2p.c
-+++ b/drivers/soc/qcom/smp2p.c
-@@ -538,6 +538,7 @@ static int qcom_smp2p_probe(struct platform_device *pdev)
- 		goto unwind_interfaces;
- 	}
- 
-+	enable_irq_wake(irq);
- 
- 	return 0;
- 
+The revised R5FSS IP has the following unique features:
+ 1. The new Single-CPU mode allows the Core1 TCMs to be combined with
+    the Core0 TCMs effectively doubling the amount of TCMs available.
+    This is same behavior as LockStep-mode on J7200 SoCs, but all other
+    previous SoCs could only use the Core0 TCMs. This combined TCMs appear
+    contiguous at the respective Core0 TCM addresses.
+ 2. TCMs are auto-initialized during module power-up, and the behavior
+    is programmable through a SEC_MMR register bit. This is same as on
+    J7200 SoCs, and is not present on earlier AM65x and J721E SoCs.
+
+The series is based on 5.12-rc2, and can apply on top of the current
+rproc-next branch as well.
+
+regards
+Suman
+
+Suman Anna (2):
+  dt-bindings: remoteproc: k3-r5f: Update bindings for AM64x SoCs
+  remoteproc: k3-r5: Extend support to R5F clusters on AM64x SoCs
+
+ .../bindings/remoteproc/ti,k3-r5f-rproc.yaml  |  31 +++-
+ drivers/remoteproc/ti_k3_r5_remoteproc.c      | 155 ++++++++++++++----
+ 2 files changed, 152 insertions(+), 34 deletions(-)
+
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.30.1
 
