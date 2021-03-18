@@ -2,72 +2,94 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8103C433E0
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 18 Mar 2021 14:51:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4B90C433DB
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 18 Mar 2021 15:00:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7399364E22
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 18 Mar 2021 14:51:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7DF5064F11
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 18 Mar 2021 15:00:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230400AbhCROu2 (ORCPT
+        id S231273AbhCRPAM (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 18 Mar 2021 10:50:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45166 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230374AbhCROuJ (ORCPT <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 18 Mar 2021 10:50:09 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPS id CF9A964F10;
-        Thu, 18 Mar 2021 14:50:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1616079008;
-        bh=1yBRc0mLwAlRZMeKwae5Y/eeXF+uewwMZNIzsmJ/VVY=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=My4GBnoloHp384abo6oh460SuOGJYE/90TnLOTqv2ZKm8tJbXvPCnx4VpU489nh10
-         Qc1pHko+aM4ZRT6gDP+K43fZ8fODR9NQWZLFGM0bE7JmP/31af/2FuvctNvnzT5qGb
-         0/ynHhsbhtT8JZJQk9vfsSyH8zdsgcx4pXYcPYX+tkmQUPH1n6Z6kH+2YkX7A4Vom3
-         Q7Le61dhK3u6Kb1FnDBRstprqF5o6ijTtNQoODIFurUq2wWl2B8zMEtiIUd9BQkgEN
-         r3M1WbNBVZ/9pNHT4WLGNTwV5XObo5I+LyOzFPTewtGXizSfmDZT9HygJdr7rUlr6Y
-         HP+L1du0Ue4ug==
-Content-Type: text/plain; charset="utf-8"
+        Thu, 18 Mar 2021 11:00:12 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:2236 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S229943AbhCRPAH (ORCPT
+        <rfc822;linux-remoteproc@vger.kernel.org>);
+        Thu, 18 Mar 2021 11:00:07 -0400
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 12IEps40030703;
+        Thu, 18 Mar 2021 15:59:54 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-type; s=selector1;
+ bh=aEk1LpIoswU+KY7dqudj3axx8EnaeYBiMGxagD03H1I=;
+ b=UlogJNZp+qe7/64PRtXlDCHsiIvRIvWoeW/WC0WP58n5g42RNja2blFiWeIeELCW5BN1
+ yXo4DYVWa0VKq5VmdO/ZQIv0BmpL4/Mxsv5yimxn5fq6HWyef04LiauR3ay5UsBM9cxw
+ 7zbsjVh8/1nNBel/ph/A+xDXKXJo0XlYaANTCuYxSU0LKl2JpT3ELB98jU3B3YIHyyt0
+ ZlXNFEq6vVkmBrfHvcJVMKCKtB3Z2Jl23ZN+/ubkIR6hWMpwuFXKjmNb2b1P8Dw6sbYN
+ umAD38kcFetFOh99BDakBdQ/vNHOJzvDlTwxaCXMecUkKVMWnSskFcBq3hhrE3jcSJmr zA== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 37a8prc15q-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 18 Mar 2021 15:59:54 +0100
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 59EB810002A;
+        Thu, 18 Mar 2021 15:59:54 +0100 (CET)
+Received: from Webmail-eu.st.com (sfhdag2node3.st.com [10.75.127.6])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 387A7210470;
+        Thu, 18 Mar 2021 15:59:54 +0100 (CET)
+Received: from localhost (10.75.127.46) by SFHDAG2NODE3.st.com (10.75.127.6)
+ with Microsoft SMTP Server (TLS) id 15.0.1497.2; Thu, 18 Mar 2021 15:59:53
+ +0100
+From:   Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Ohad Ben-Cohen <ohad@wizery.com>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Rob Herring <robh@kernel.org>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>
+CC:     <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+Subject: [PATCH 0/2] remoteproc: stm32: add support of detaching a remote processor
+Date:   Thu, 18 Mar 2021 15:59:21 +0100
+Message-ID: <20210318145923.31936-1-arnaud.pouliquen@foss.st.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH v2] remoteproc: qcom: wcnss: Allow specifying firmware-name
-From:   patchwork-bot+linux-remoteproc@kernel.org
-Message-Id: <161607900883.10697.6701112939956716214.git-patchwork-notify@kernel.org>
-Date:   Thu, 18 Mar 2021 14:50:08 +0000
-References: <20210312002441.3273183-1-bjorn.andersson@linaro.org>
-In-Reply-To: <20210312002441.3273183-1-bjorn.andersson@linaro.org>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     linux-remoteproc@vger.kernel.org
+Content-Type: text/plain
+X-Originating-IP: [10.75.127.46]
+X-ClientProxiedBy: SFHDAG1NODE1.st.com (10.75.127.1) To SFHDAG2NODE3.st.com
+ (10.75.127.6)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.369,18.0.761
+ definitions=2021-03-18_09:2021-03-17,2021-03-18 signatures=0
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hello:
+This patchset is the stm32mp1 platform implementation of the detach operation
+added in series [1].
 
-This patch was applied to andersson/remoteproc.git (refs/heads/for-next):
+On detach, the stm32 rproc driver sends a mailbox signal to the remote 
+processor to inform it that it will be detached. 
 
-On Thu, 11 Mar 2021 16:24:41 -0800 you wrote:
-> Introduce a firmware-name property, in order to be able to support
-> device/platform specific firmware for the wireless connectivity
-> subsystem; in line with other Qualcomm remoteproc drivers.
-> 
-> Acked-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> 
-> [...]
+Applied and tested on Bjorn's "for_next" branch (2b81aa17008e)
 
-Here is the summary with links:
-  - [v2] remoteproc: qcom: wcnss: Allow specifying firmware-name
-    https://git.kernel.org/andersson/remoteproc/c/48073935b9a4
+[1] https://patchwork.kernel.org/project/linux-remoteproc/list/?series=447171
 
-You are awesome, thank you!
---
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+Arnaud Pouliquen (2):
+  dt-bindings: remoteproc: stm32-rproc: add new mailbox channel for
+    detach
+  remoteproc: stm32: add capability to detach
 
+ .../bindings/remoteproc/st,stm32-rproc.yaml   | 11 +++++-
+ drivers/remoteproc/stm32_rproc.c              | 38 ++++++++++++++++++-
+ 2 files changed, 45 insertions(+), 4 deletions(-)
+
+-- 
+2.17.1
 
