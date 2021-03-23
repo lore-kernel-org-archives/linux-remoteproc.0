@@ -2,185 +2,105 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3849CC433E0
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 22 Mar 2021 09:28:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 358D4C433DB
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 23 Mar 2021 03:34:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0A22861986
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 22 Mar 2021 09:28:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 06792619A8
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 23 Mar 2021 03:34:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230042AbhCVJ1t (ORCPT
+        id S229804AbhCWDd1 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 22 Mar 2021 05:27:49 -0400
-Received: from mx07-00178001.pphosted.com ([185.132.182.106]:20438 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230048AbhCVJ1Y (ORCPT
+        Mon, 22 Mar 2021 23:33:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48770 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229760AbhCWDdP (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 22 Mar 2021 05:27:24 -0400
-Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 12M9CxkN014304;
-        Mon, 22 Mar 2021 10:27:08 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references : mime-version :
- content-type; s=selector1;
- bh=+TEAoakqQ2P/EInqBDC7sgpRA0k9i6CV8PBrFGCQ13o=;
- b=lIhI5MtiThg42YmcUa4gIGCbDSmkRYiwg8L7DrBSv352Gtsjh/wha0UsgbKsI8TC1bSc
- lnPOT+C5K/kY2eIDKQUBzlKjMcDClyrZn1sOM8svvjup2oCd7qKMyw2fXo63DXoQeREp
- J1ZbddXRzLdjzoY5S14vP8VDm+3UVl4H4i+Da6WwymWE9l4mtFxwSojy11yfaMSGDjVb
- q16TRdEUl7FDsLuXFne26TAadfY9eenTB3C4dgggmxsSRyJqkzOT3QS8hU96TNxh5JNZ
- +vZvZKlv1uSmCFLLFJjQAQf4mvQUGBysVWrdIFbz+B8XB25HPBaUw1mJLvewsiJDfeS1 2Q== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 37d7d7rq7m-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 22 Mar 2021 10:27:08 +0100
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id DA52F100038;
-        Mon, 22 Mar 2021 10:27:07 +0100 (CET)
-Received: from Webmail-eu.st.com (sfhdag2node3.st.com [10.75.127.6])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id C6A59231DE9;
-        Mon, 22 Mar 2021 10:27:07 +0100 (CET)
-Received: from localhost (10.75.127.44) by SFHDAG2NODE3.st.com (10.75.127.6)
- with Microsoft SMTP Server (TLS) id 15.0.1497.2; Mon, 22 Mar 2021 10:27:07
- +0100
-From:   Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Ohad Ben-Cohen <ohad@wizery.com>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Rob Herring <robh@kernel.org>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>
-CC:     <devicetree@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-Subject: [PATCH v2 2/2] remoteproc: stm32: add capability to detach
-Date:   Mon, 22 Mar 2021 10:26:51 +0100
-Message-ID: <20210322092651.7381-3-arnaud.pouliquen@foss.st.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20210322092651.7381-1-arnaud.pouliquen@foss.st.com>
-References: <20210322092651.7381-1-arnaud.pouliquen@foss.st.com>
+        Mon, 22 Mar 2021 23:33:15 -0400
+Received: from mail-pj1-x102a.google.com (mail-pj1-x102a.google.com [IPv6:2607:f8b0:4864:20::102a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6FACEC061756
+        for <linux-remoteproc@vger.kernel.org>; Mon, 22 Mar 2021 20:33:14 -0700 (PDT)
+Received: by mail-pj1-x102a.google.com with SMTP id mz6-20020a17090b3786b02900c16cb41d63so9537405pjb.2
+        for <linux-remoteproc@vger.kernel.org>; Mon, 22 Mar 2021 20:33:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:content-transfer-encoding:in-reply-to:references
+         :subject:from:cc:to:date:message-id:user-agent;
+        bh=5P3DscWIA5E6KtbKwWeXRGnWsYVIZfqGL9jI0er3QEs=;
+        b=PLfVMqXjw89ipCctSy0pa6GgYFf1dh4um6iGJvb8Q6End4A9Gp2XHOQIGzHTD0K+x+
+         bVdxdFQbFHkwdcHNEu8gUZu9QyBrOc3xnYopvtHQ4k3Zpmp7iQ+885WxtmZpDgXNhaoi
+         1ZIlAyMEmgukmdDmMwj4mzKqgddJddNeh8PrY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:content-transfer-encoding
+         :in-reply-to:references:subject:from:cc:to:date:message-id
+         :user-agent;
+        bh=5P3DscWIA5E6KtbKwWeXRGnWsYVIZfqGL9jI0er3QEs=;
+        b=oS5zT3QPFMdTNq3wjdcqHJV6vWjh0ZZH80XZ9PjHLb8jUs4yrEg3/LLpB7tUQ2W/jq
+         gx4o+Ktjj+sEEYISn3pUb+xQR0xkHx2v5rGuwNEnqkCxAZvqG6Kve4uRSko0xvkhHdg4
+         qAl1TDovIbUIrQQy9Ef6tTkOfgXUJKfDL0uj6A4oTvcwZneMbiBPyKEPt6N5oKw2J7Kz
+         mndXtsg4Z7Z1oL2TSzlip7eeVIJZ0CnnR25pHoStIo100e2H8CUuQaJcsmWo3mISWHaM
+         Cw7IX8005TE6LxC8X8pyEhbGrmxUyOcefDmBxLESpnuSP01Mcag7NAHTxkXBYzZ42wA7
+         svQQ==
+X-Gm-Message-State: AOAM530xIeE15BslJNw3OaZBOka0Tyd/fXMw+P8L6QStKt4FFTDy7S9m
+        TDCi/12u6haLoZP7/3wgyK4yvQ==
+X-Google-Smtp-Source: ABdhPJxCD6gbqkvS8RYoP3vs3t39AIDWuEDPHS2FZinVx4PxUyWhPvheyI42K1jrwIYwKSzsBRm8Yw==
+X-Received: by 2002:a17:90a:fd89:: with SMTP id cx9mr2216844pjb.93.1616470394007;
+        Mon, 22 Mar 2021 20:33:14 -0700 (PDT)
+Received: from chromium.org ([2620:15c:202:201:e90d:d453:87ae:2e10])
+        by smtp.gmail.com with ESMTPSA id cp22sm727217pjb.15.2021.03.22.20.33.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 22 Mar 2021 20:33:13 -0700 (PDT)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.75.127.44]
-X-ClientProxiedBy: SFHDAG1NODE1.st.com (10.75.127.1) To SFHDAG2NODE3.st.com
- (10.75.127.6)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.369,18.0.761
- definitions=2021-03-22_03:2021-03-22,2021-03-22 signatures=0
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <1616092624-31870-1-git-send-email-deesin@codeaurora.org>
+References: <1616092624-31870-1-git-send-email-deesin@codeaurora.org>
+Subject: Re: [PATCH V1 1/1] soc: qcom: smp2p: Add enable_irq_wake to SMP2P IRQ
+From:   Stephen Boyd <swboyd@chromium.org>
+Cc:     linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org,
+        Deepak Kumar Singh <deesin@codeaurora.org>,
+        Andy Gross <agross@kernel.org>
+To:     Deepak Kumar Singh <deesin@codeaurora.org>,
+        bjorn.andersson@linaro.org, clew@codeaurora.org
+Date:   Mon, 22 Mar 2021 20:33:12 -0700
+Message-ID: <161647039218.3012082.1225143087605342937@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-From: Arnaud Pouliquen <arnaud.pouliquen@foss-st.com>
+Quoting Deepak Kumar Singh (2021-03-18 11:37:04)
+> SMP2P interrupts are expected to wake the processor from suspend.
+> Use enable_irq_wake to mark it wakeup capable from suspend.
+>=20
+> Signed-off-by: Chris Lew <clew@codeaurora.org>
+> Signed-off-by: Deepak Kumar Singh <deesin@codeaurora.org>
+> ---
+>  drivers/soc/qcom/smp2p.c | 1 +
+>  1 file changed, 1 insertion(+)
+>=20
+> diff --git a/drivers/soc/qcom/smp2p.c b/drivers/soc/qcom/smp2p.c
+> index 2df4883..df47ee6 100644
+> --- a/drivers/soc/qcom/smp2p.c
+> +++ b/drivers/soc/qcom/smp2p.c
+> @@ -538,6 +538,7 @@ static int qcom_smp2p_probe(struct platform_device *p=
+dev)
+>                 goto unwind_interfaces;
+>         }
+> =20
+> +       enable_irq_wake(irq);
+> =20
 
-A mechanism similar to the shutdown mailbox signal is implemented to
-detach a remote processor.
+Can this use device_init_wakeup() and dev_pm_set_wake_irq() instead? I
+think that will help us recognize that this irq woke up the CPU and
+allow userspace to indicate that it doesn't want to get this wakeup for
+some reason.
 
-Upon detachment, a signal is sent to the remote firmware, allowing it
-to perform specific actions such as stopping RPMsg communication.
-
-The Cortex-M hold boot is also disabled to allow the remote processor
-to restart in case of crash.
-
-Notice that for this feature to be supported, the remote firmware
-resource table must be stored at the beginning of a 1kB section
-(default size provided to the remoteproc core).
-
-This restriction should be lifted in the future by using a backup
-register to store the actual size of the resource table.
-
-Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss-st.com>
----
- drivers/remoteproc/stm32_rproc.c | 38 ++++++++++++++++++++++++++++++--
- 1 file changed, 36 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/remoteproc/stm32_rproc.c b/drivers/remoteproc/stm32_rproc.c
-index 3d45f51de4d0..298ef5b19e27 100644
---- a/drivers/remoteproc/stm32_rproc.c
-+++ b/drivers/remoteproc/stm32_rproc.c
-@@ -28,7 +28,7 @@
- #define RELEASE_BOOT		1
- 
- #define MBOX_NB_VQ		2
--#define MBOX_NB_MBX		3
-+#define MBOX_NB_MBX		4
- 
- #define STM32_SMC_RCC		0x82001000
- #define STM32_SMC_REG_WRITE	0x1
-@@ -38,6 +38,7 @@
- #define STM32_MBX_VQ1		"vq1"
- #define STM32_MBX_VQ1_ID	1
- #define STM32_MBX_SHUTDOWN	"shutdown"
-+#define STM32_MBX_DETACH	"detach"
- 
- #define RSC_TBL_SIZE		1024
- 
-@@ -336,6 +337,15 @@ static const struct stm32_mbox stm32_rproc_mbox[MBOX_NB_MBX] = {
- 			.tx_done = NULL,
- 			.tx_tout = 500, /* 500 ms time out */
- 		},
-+	},
-+	{
-+		.name = STM32_MBX_DETACH,
-+		.vq_id = -1,
-+		.client = {
-+			.tx_block = true,
-+			.tx_done = NULL,
-+			.tx_tout = 200, /* 200 ms time out to detach should be fair enough */
-+		},
- 	}
- };
- 
-@@ -461,6 +471,25 @@ static int stm32_rproc_attach(struct rproc *rproc)
- 	return stm32_rproc_set_hold_boot(rproc, true);
- }
- 
-+static int stm32_rproc_detach(struct rproc *rproc)
-+{
-+	struct stm32_rproc *ddata = rproc->priv;
-+	int err, dummy_data, idx;
-+
-+	/* Inform the remote processor of the detach */
-+	idx = stm32_rproc_mbox_idx(rproc, STM32_MBX_DETACH);
-+	if (idx >= 0 && ddata->mb[idx].chan) {
-+		/* A dummy data is sent to allow to block on transmit */
-+		err = mbox_send_message(ddata->mb[idx].chan,
-+					&dummy_data);
-+		if (err < 0)
-+			dev_warn(&rproc->dev, "warning: remote FW detach without ack\n");
-+	}
-+
-+	/* Allow remote processor to auto-reboot */
-+	return stm32_rproc_set_hold_boot(rproc, false);
-+}
-+
- static int stm32_rproc_stop(struct rproc *rproc)
- {
- 	struct stm32_rproc *ddata = rproc->priv;
-@@ -597,7 +626,11 @@ stm32_rproc_get_loaded_rsc_table(struct rproc *rproc, size_t *table_sz)
- 	}
- 
- done:
--	/* Assuming the resource table fits in 1kB is fair */
-+	/*
-+	 * Assuming the resource table fits in 1kB is fair.
-+	 * Notice for the detach, that this 1 kB memory area has to be reserved in the coprocessor
-+	 * firmware for the resource table. A clean of this whole area is done on detach.
-+	 */
- 	*table_sz = RSC_TBL_SIZE;
- 	return (struct resource_table *)ddata->rsc_va;
- }
-@@ -607,6 +640,7 @@ static const struct rproc_ops st_rproc_ops = {
- 	.start		= stm32_rproc_start,
- 	.stop		= stm32_rproc_stop,
- 	.attach		= stm32_rproc_attach,
-+	.detach		= stm32_rproc_detach,
- 	.kick		= stm32_rproc_kick,
- 	.load		= rproc_elf_load_segments,
- 	.parse_fw	= stm32_rproc_parse_fw,
--- 
-2.17.1
-
+>         return 0;
+>
