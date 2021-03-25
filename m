@@ -7,214 +7,150 @@ X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AA76C433E0
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 25 Mar 2021 22:38:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 327F8C433DB
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 25 Mar 2021 23:01:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0153061A43
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 25 Mar 2021 22:38:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0068161A0F
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 25 Mar 2021 23:01:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231252AbhCYWi0 (ORCPT
+        id S231148AbhCYXBU (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 25 Mar 2021 18:38:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44232 "EHLO
+        Thu, 25 Mar 2021 19:01:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49032 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231191AbhCYWiT (ORCPT
+        with ESMTP id S231262AbhCYXAu (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 25 Mar 2021 18:38:19 -0400
-Received: from mail-pj1-x102a.google.com (mail-pj1-x102a.google.com [IPv6:2607:f8b0:4864:20::102a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BEC7EC06175F
-        for <linux-remoteproc@vger.kernel.org>; Thu, 25 Mar 2021 15:38:18 -0700 (PDT)
-Received: by mail-pj1-x102a.google.com with SMTP id gb6so1668717pjb.0
-        for <linux-remoteproc@vger.kernel.org>; Thu, 25 Mar 2021 15:38:18 -0700 (PDT)
+        Thu, 25 Mar 2021 19:00:50 -0400
+Received: from mail-pg1-x530.google.com (mail-pg1-x530.google.com [IPv6:2607:f8b0:4864:20::530])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B8B90C06175F
+        for <linux-remoteproc@vger.kernel.org>; Thu, 25 Mar 2021 16:00:49 -0700 (PDT)
+Received: by mail-pg1-x530.google.com with SMTP id v186so3311304pgv.7
+        for <linux-remoteproc@vger.kernel.org>; Thu, 25 Mar 2021 16:00:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=SPJBpRy3R9mFfMF6pdvZDady42C+XlqArOxVCK6oVWM=;
-        b=GzjcNL0W6qznBEXmz0l/PS0tZuqWqpIbM+EHd/fQjdQjR/jyzcS3HTWKo/fqBj/qna
-         JTe4dWoj1S+mkS1xITOVLOWjomCs8AoPIIJyX9yXn9YbzP9nvmsk6Qu94mAolpJgH8MA
-         YQedl3lq8dvhSNcer0VHSrpU0F9vzDyB3cSWvzvL2EcG/3f9j/Im6Lxl1XorjpyzgO+I
-         eNHn0kKqeyEqdzpawXZIJObBlfEosHaYMEesZE2uFy30pKK7sJQSfMGpBj50IbfWs9Cf
-         Gx2DeVGYe6UMhrsB1MLFobFuVtuyShnvEt5hdm0ZIlntlRBXggH4vOjhPnLUM+thJgPX
-         nr6A==
+        bh=NYtrjNLVWQTr/dq5ZWJC4E1PqUHmp98t32XFTCKiVw4=;
+        b=EZmqD8jxmBdlgeO8EZfB3JDqfJgcDTb2IC+XJ4WgJherysg5+d+VrBiP1bRB/J6gai
+         iq+bZmftHKnQiXYr9d7eBdUTXkLaRGYv0U983t6Usk8Dsuq+ou5WiS1TLizGOl6Ec+J+
+         Bvk/Yz5W80G3YVgJMpNz7nSR8y1/G318t/iLk7y3oOZUYFbBdqLdndcQms9GLeKNJCyH
+         DcH3qvHPg4NgUbNW5JqbzJdV1Nbq2ceomWP7PCS5PozXk/AiNyIO2sUiWs63qd8Au6Vj
+         BYfsWoWk9tlUdVSjKhoeUoR+SWjYjvp7/3pYjA6MgpzoDEtQQBK3Uw+tAcCFfGdiG0pw
+         Ff0g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=SPJBpRy3R9mFfMF6pdvZDady42C+XlqArOxVCK6oVWM=;
-        b=h2ACfP5nIvCg1R5SlyHbMIUam1jm9rgy0Bqt3fz6NVQ17kDDSgBJtDcGRHeLH6p7S8
-         6UyzN9J1qiW6/jLUHlbQOFdaW+/NbkSRGuga9Z/VP+DDQPHnTEoAbP8bE4gnGQsE5IVC
-         mkS+L6I/YSxL4WQXt49RB157RuqRosHu5/xZ+YKCf/zXGd7iiT1kVkEIZapTZ8CKXoV3
-         XLu3mOkTfQeVtZd+m1Cjz2wWtnvSPQCInDU0bj5geDn1XEdZHNajKPjGzBXi7845+Qno
-         RponUBvewMW22AjZWJKZOZzJ57gaZXTR1RATCCjBY3Y2AJwqHt1gYJR8LiynksaaRxiH
-         y36Q==
-X-Gm-Message-State: AOAM531uR0vTp2VDS+qKw1EW7j6J2N6PzMwYGgpZa3qMzhjEA66ajQBL
-        E9TDaIbxjj3gwSDkfql+AnknnA==
-X-Google-Smtp-Source: ABdhPJwSTTvB+/mfFyZ/jzgZP1pixjpzWPTWjiITbCA01sUAFTOJI+RnFl1vErKNPTHHu85TUYQKcw==
-X-Received: by 2002:a17:90b:1651:: with SMTP id il17mr11050782pjb.16.1616711898276;
-        Thu, 25 Mar 2021 15:38:18 -0700 (PDT)
+        bh=NYtrjNLVWQTr/dq5ZWJC4E1PqUHmp98t32XFTCKiVw4=;
+        b=s2tRqkLow8rlEv5J8ILb0jmRF1Zm5JWNKRge99LyjX73/gP/NJneQyqe2AxX0Kf5rZ
+         XItMG5YngYyy6eR2c+WbUSOjwHMALPbN77YWJ9/nFls9hDQsPfzcLMTD9IAS2Et1Yrgb
+         eP9QDg7+smvyB+6TRb9tBL6MQ/1aPfNIkxTztrYmQ2ioWPyl675lRtyUZTG4oWRTZuX8
+         2K0QHx5Q1SzSftod4ZFSCossaNXitppxF0Gqz/1Ylv4rLnp1w7rbdWvOUn3ppRuhuC9f
+         ht08+7Q/G9CvdFCbAVPMNo008CZKKr38sDT1yhYpZrF6viAHROgidhjzBzEhL2FoAdAs
+         /mDw==
+X-Gm-Message-State: AOAM533aYvJYyQqRBc+mYxLoBKf0nRX/bAXBV3nEJi8KU3SpFP2Ho3JI
+        nTlUJPkplQSr6lqa82SYSwKh+w==
+X-Google-Smtp-Source: ABdhPJzvKiD1Kv9upD760EFR6AfmRIrLbT435H9CLx1xpc+/w2S9Ah1dIAy8zg0+rg3yq1M4Fx9J3Q==
+X-Received: by 2002:aa7:86c1:0:b029:203:900:2813 with SMTP id h1-20020aa786c10000b029020309002813mr9748625pfo.35.1616713249127;
+        Thu, 25 Mar 2021 16:00:49 -0700 (PDT)
 Received: from xps15 (S0106889e681aac74.cg.shawcable.net. [68.147.0.187])
-        by smtp.gmail.com with ESMTPSA id p3sm6494878pgi.24.2021.03.25.15.38.16
+        by smtp.gmail.com with ESMTPSA id c6sm6810901pfj.99.2021.03.25.16.00.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 25 Mar 2021 15:38:17 -0700 (PDT)
-Date:   Thu, 25 Mar 2021 16:38:15 -0600
+        Thu, 25 Mar 2021 16:00:44 -0700 (PDT)
+Date:   Thu, 25 Mar 2021 17:00:42 -0600
 From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-To:     Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Ohad Ben-Cohen <ohad@wizery.com>,
-        Rob Herring <robh@kernel.org>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        devicetree@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-kernel@lists.infradead.org,
-        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] remoteproc: stm32: add capability to detach
-Message-ID: <20210325223815.GA1982573@xps15>
-References: <20210322092651.7381-1-arnaud.pouliquen@foss.st.com>
- <20210322092651.7381-3-arnaud.pouliquen@foss.st.com>
- <20210323211911.GA1714890@xps15>
+To:     "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+Cc:     ohad@wizery.com, bjorn.andersson@linaro.org,
+        o.rempel@pengutronix.de, shawnguo@kernel.org,
+        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
+        linux-imx@nxp.com, linux-remoteproc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Peng Fan <peng.fan@nxp.com>
+Subject: Re: [PATCH 1/2] remoteproc: imx_rproc: enlarge IMX7D_RPROC_MEM_MAX
+Message-ID: <20210325230042.GB1982573@xps15>
+References: <20210319104708.7754-1-peng.fan@oss.nxp.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210323211911.GA1714890@xps15>
+In-Reply-To: <20210319104708.7754-1-peng.fan@oss.nxp.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Tue, Mar 23, 2021 at 03:19:11PM -0600, Mathieu Poirier wrote:
-> Good day Arnaud,
-> 
-> On Mon, Mar 22, 2021 at 10:26:51AM +0100, Arnaud Pouliquen wrote:
-> > From: Arnaud Pouliquen <arnaud.pouliquen@foss-st.com>
-> > 
-> > A mechanism similar to the shutdown mailbox signal is implemented to
-> > detach a remote processor.
-> > 
-> > Upon detachment, a signal is sent to the remote firmware, allowing it
-> > to perform specific actions such as stopping RPMsg communication.
-> > 
-> > The Cortex-M hold boot is also disabled to allow the remote processor
-> > to restart in case of crash.
-> > 
-> > Notice that for this feature to be supported, the remote firmware
-> > resource table must be stored at the beginning of a 1kB section
-> > (default size provided to the remoteproc core).
-> > 
-> > This restriction should be lifted in the future by using a backup
-> > register to store the actual size of the resource table.
-> 
-> I'm not sure the above two paragraphs add anything valuable to the changelog.
-> At this time the size of 1kB is fixed and future enhancement are, well, in the
-> future.  So for now this patch is working with the rest of the current
-> environment and that is the important part.
-> 
-> > 
-> > Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss-st.com>
-> > ---
-> >  drivers/remoteproc/stm32_rproc.c | 38 ++++++++++++++++++++++++++++++--
-> >  1 file changed, 36 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/drivers/remoteproc/stm32_rproc.c b/drivers/remoteproc/stm32_rproc.c
-> > index 3d45f51de4d0..298ef5b19e27 100644
-> > --- a/drivers/remoteproc/stm32_rproc.c
-> > +++ b/drivers/remoteproc/stm32_rproc.c
-> > @@ -28,7 +28,7 @@
-> >  #define RELEASE_BOOT		1
-> >  
-> >  #define MBOX_NB_VQ		2
-> > -#define MBOX_NB_MBX		3
-> > +#define MBOX_NB_MBX		4
-> >  
-> >  #define STM32_SMC_RCC		0x82001000
-> >  #define STM32_SMC_REG_WRITE	0x1
-> > @@ -38,6 +38,7 @@
-> >  #define STM32_MBX_VQ1		"vq1"
-> >  #define STM32_MBX_VQ1_ID	1
-> >  #define STM32_MBX_SHUTDOWN	"shutdown"
-> > +#define STM32_MBX_DETACH	"detach"
-> >  
-> >  #define RSC_TBL_SIZE		1024
-> >  
-> > @@ -336,6 +337,15 @@ static const struct stm32_mbox stm32_rproc_mbox[MBOX_NB_MBX] = {
-> >  			.tx_done = NULL,
-> >  			.tx_tout = 500, /* 500 ms time out */
-> >  		},
-> > +	},
-> > +	{
-> > +		.name = STM32_MBX_DETACH,
-> > +		.vq_id = -1,
-> > +		.client = {
-> > +			.tx_block = true,
-> > +			.tx_done = NULL,
-> > +			.tx_tout = 200, /* 200 ms time out to detach should be fair enough */
-> > +		},
-> >  	}
-> >  };
-> >  
-> > @@ -461,6 +471,25 @@ static int stm32_rproc_attach(struct rproc *rproc)
-> >  	return stm32_rproc_set_hold_boot(rproc, true);
-> >  }
-> >  
-> > +static int stm32_rproc_detach(struct rproc *rproc)
-> > +{
-> > +	struct stm32_rproc *ddata = rproc->priv;
-> > +	int err, dummy_data, idx;
-> > +
-> > +	/* Inform the remote processor of the detach */
-> > +	idx = stm32_rproc_mbox_idx(rproc, STM32_MBX_DETACH);
-> > +	if (idx >= 0 && ddata->mb[idx].chan) {
-> > +		/* A dummy data is sent to allow to block on transmit */
-> > +		err = mbox_send_message(ddata->mb[idx].chan,
-> > +					&dummy_data);
-> > +		if (err < 0)
-> > +			dev_warn(&rproc->dev, "warning: remote FW detach without ack\n");
-> > +	}
-> > +
-> > +	/* Allow remote processor to auto-reboot */
-> > +	return stm32_rproc_set_hold_boot(rproc, false);
-> > +}
-> > +
-> >  static int stm32_rproc_stop(struct rproc *rproc)
-> >  {
-> >  	struct stm32_rproc *ddata = rproc->priv;
-> > @@ -597,7 +626,11 @@ stm32_rproc_get_loaded_rsc_table(struct rproc *rproc, size_t *table_sz)
-> >  	}
-> >  
-> >  done:
-> > -	/* Assuming the resource table fits in 1kB is fair */
-> > +	/*
-> > +	 * Assuming the resource table fits in 1kB is fair.
-> > +	 * Notice for the detach, that this 1 kB memory area has to be reserved in the coprocessor
-> > +	 * firmware for the resource table. A clean of this whole area is done on detach.
-> > +	 */
-> 
-> Can you rework the last sentence?  I'm not sure if it means the M4 will clean
-> the resource table or if that should be the application processor... I'm also
-> not clear on what you mean by "clean".  Usually it means zero'ing out but in
-> this case it means a re-initialisation of the original values.
-> 
-> 
-> >  	*table_sz = RSC_TBL_SIZE;
-> >  	return (struct resource_table *)ddata->rsc_va;
-> >  }
-> > @@ -607,6 +640,7 @@ static const struct rproc_ops st_rproc_ops = {
-> >  	.start		= stm32_rproc_start,
-> >  	.stop		= stm32_rproc_stop,
-> >  	.attach		= stm32_rproc_attach,
-> > +	.detach		= stm32_rproc_detach,
-> 
-> With the above:
-> 
-> Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+Hi Peng,
 
-Thanks for the firmware test image:
-
-Tested-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-
+On Fri, Mar 19, 2021 at 06:47:07PM +0800, Peng Fan (OSS) wrote:
+> From: Peng Fan <peng.fan@nxp.com>
 > 
-> >  	.kick		= stm32_rproc_kick,
-> >  	.load		= rproc_elf_load_segments,
-> >  	.parse_fw	= stm32_rproc_parse_fw,
-> > -- 
-> > 2.17.1
-> > 
+> 8 is not enough when we need more, so enlarge IMX7D_RPROC_MEM_MAX to 32,
+> and also rename it to IMX_RPROC_MEM_MAX which make more sense.
+> 
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> ---
+>  drivers/remoteproc/imx_rproc.c | 10 +++++-----
+>  1 file changed, 5 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rproc.c
+> index 6d3207ccbaef..24275429a7cc 100644
+> --- a/drivers/remoteproc/imx_rproc.c
+> +++ b/drivers/remoteproc/imx_rproc.c
+> @@ -48,7 +48,7 @@
+>  					 | IMX6SX_SW_M4C_NON_SCLR_RST \
+>  					 | IMX6SX_SW_M4C_RST)
+>  
+> -#define IMX7D_RPROC_MEM_MAX		8
+> +#define IMX_RPROC_MEM_MAX		32
+
+The size of structure imx_rproc_att_imx7d and imx_rproc_att_imx6sx have
+not changed nor has there been an addition of new imx_rproc_att that would
+justify the change.
+
+It seems to me you are working on something internally and this patch is in
+preparation for that.  If that is the case then please resubmit this patch with
+the rest of the code.
+
+Thanks,
+Mathieu 
+
+>  
+>  /**
+>   * struct imx_rproc_mem - slim internal memory structure
+> @@ -88,7 +88,7 @@ struct imx_rproc {
+>  	struct regmap			*regmap;
+>  	struct rproc			*rproc;
+>  	const struct imx_rproc_dcfg	*dcfg;
+> -	struct imx_rproc_mem		mem[IMX7D_RPROC_MEM_MAX];
+> +	struct imx_rproc_mem		mem[IMX_RPROC_MEM_MAX];
+>  	struct clk			*clk;
+>  	struct mbox_client		cl;
+>  	struct mbox_chan		*tx_ch;
+> @@ -272,7 +272,7 @@ static void *imx_rproc_da_to_va(struct rproc *rproc, u64 da, size_t len, bool *i
+>  	if (imx_rproc_da_to_sys(priv, da, len, &sys))
+>  		return NULL;
+>  
+> -	for (i = 0; i < IMX7D_RPROC_MEM_MAX; i++) {
+> +	for (i = 0; i < IMX_RPROC_MEM_MAX; i++) {
+>  		if (sys >= priv->mem[i].sys_addr && sys + len <
+>  		    priv->mem[i].sys_addr +  priv->mem[i].size) {
+>  			unsigned int offset = sys - priv->mem[i].sys_addr;
+> @@ -425,7 +425,7 @@ static int imx_rproc_addr_init(struct imx_rproc *priv,
+>  		if (!(att->flags & ATT_OWN))
+>  			continue;
+>  
+> -		if (b >= IMX7D_RPROC_MEM_MAX)
+> +		if (b >= IMX_RPROC_MEM_MAX)
+>  			break;
+>  
+>  		priv->mem[b].cpu_addr = devm_ioremap(&pdev->dev,
+> @@ -459,7 +459,7 @@ static int imx_rproc_addr_init(struct imx_rproc *priv,
+>  			return err;
+>  		}
+>  
+> -		if (b >= IMX7D_RPROC_MEM_MAX)
+> +		if (b >= IMX_RPROC_MEM_MAX)
+>  			break;
+>  
+>  		/* Not use resource version, because we might share region */
+> -- 
+> 2.30.0
+> 
