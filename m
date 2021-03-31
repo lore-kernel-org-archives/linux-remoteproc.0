@@ -2,117 +2,83 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C30AC433E2
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 31 Mar 2021 07:36:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FADFC433E0
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 31 Mar 2021 12:18:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5E55B619DB
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 31 Mar 2021 07:36:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EEB2061998
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 31 Mar 2021 12:18:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234003AbhCaHgH (ORCPT
+        id S235289AbhCaMR7 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 31 Mar 2021 03:36:07 -0400
-Received: from mx07-00178001.pphosted.com ([185.132.182.106]:44058 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S234107AbhCaHfm (ORCPT
+        Wed, 31 Mar 2021 08:17:59 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:15413 "EHLO
+        szxga06-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235019AbhCaMRd (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 31 Mar 2021 03:35:42 -0400
-Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 12V7W6Kq000671;
-        Wed, 31 Mar 2021 09:35:29 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references : mime-version :
- content-type; s=selector1;
- bh=IeHxfLmsaKojnEfoxgRyw8CnxhiIhINNKvdtNDXRh1k=;
- b=o9ldYfFQSf1wRLYJyaoZyoxFmrHKexf8eDFgsp+vK4/rlqzg0ex+9G3uwQpVF1LBYpZA
- zIFWjo0eEFYvx3FU2614I9IqFnN9E9zQOYor5uVNuiYq5JvK3roJBb2dyvar5hxTrPLp
- amhLto3FWhLdnXVjrx+krd3H0qTR1DhZzvumXwyO2neDcogOc3KGOdTYyfrZvZoKJ1RI
- km+pYSqNOA8fr9a7+02CWhxudnx0a7ZOXpwpgDOgr6tHenytkPeNRFYWaIzCvJFQxQCp
- O7TVpnlhaJeRjAQxiKJWazlcG4ZpFIhWHPx3LOUHusq5CW4gU6guG3V1oeb516IcpZYC 5w== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 37maa2jvga-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 31 Mar 2021 09:35:29 +0200
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id B6010100034;
-        Wed, 31 Mar 2021 09:35:28 +0200 (CEST)
-Received: from Webmail-eu.st.com (sfhdag2node3.st.com [10.75.127.6])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id A5B9F224823;
-        Wed, 31 Mar 2021 09:35:28 +0200 (CEST)
-Received: from localhost (10.75.127.44) by SFHDAG2NODE3.st.com (10.75.127.6)
- with Microsoft SMTP Server (TLS) id 15.0.1497.2; Wed, 31 Mar 2021 09:35:28
- +0200
-From:   Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Wed, 31 Mar 2021 08:17:33 -0400
+Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.60])
+        by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4F9QJN6b5nzlWsM;
+        Wed, 31 Mar 2021 20:15:48 +0800 (CST)
+Received: from localhost.localdomain (10.175.102.38) by
+ DGGEMS406-HUB.china.huawei.com (10.3.19.206) with Microsoft SMTP Server id
+ 14.3.498.0; Wed, 31 Mar 2021 20:17:23 +0800
+From:   Wei Yongjun <weiyongjun1@huawei.com>
+To:     <weiyongjun1@huawei.com>, Peng Fan <peng.fan@nxp.com>,
         Ohad Ben-Cohen <ohad@wizery.com>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Rob Herring <robh@kernel.org>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>
-CC:     <devicetree@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-Subject: [PATCH v4 1/2] dt-bindings: remoteproc: stm32-rproc: add new mailbox channel for detach
-Date:   Wed, 31 Mar 2021 09:33:46 +0200
-Message-ID: <20210331073347.8293-2-arnaud.pouliquen@foss.st.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20210331073347.8293-1-arnaud.pouliquen@foss.st.com>
-References: <20210331073347.8293-1-arnaud.pouliquen@foss.st.com>
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        "Mathieu Poirier" <mathieu.poirier@linaro.org>
+CC:     <linux-remoteproc@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>, Hulk Robot <hulkci@huawei.com>
+Subject: [PATCH -next] remoteproc: imx_rproc: fix build error without CONFIG_MAILBOX
+Date:   Wed, 31 Mar 2021 12:27:09 +0000
+Message-ID: <20210331122709.3935521-1-weiyongjun1@huawei.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.75.127.44]
-X-ClientProxiedBy: SFHDAG1NODE1.st.com (10.75.127.1) To SFHDAG2NODE3.st.com
- (10.75.127.6)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.369,18.0.761
- definitions=2021-03-31_01:2021-03-30,2021-03-31 signatures=0
+Content-Type:   text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
+X-Originating-IP: [10.175.102.38]
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Add the "detach" mailbox item, that allows to define a mailbox to
-send a IPCC signal to the remote processor on remoteproc detach action.
+Fix build error when CONFIG_MAILBOX is not set:
 
-Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
+arm-linux-gnueabi-ld: drivers/remoteproc/imx_rproc.o: in function `imx_rproc_kick':
+imx_rproc.c:(.text+0x328): undefined reference to `mbox_send_message'
+arm-linux-gnueabi-ld: drivers/remoteproc/imx_rproc.o: in function `imx_rproc_probe':
+imx_rproc.c:(.text+0x52c): undefined reference to `mbox_request_channel_byname'
+arm-linux-gnueabi-ld: imx_rproc.c:(.text+0x548): undefined reference to `mbox_request_channel_byname'
+arm-linux-gnueabi-ld: imx_rproc.c:(.text+0x76c): undefined reference to `mbox_free_channel'
+arm-linux-gnueabi-ld: imx_rproc.c:(.text+0x774): undefined reference to `mbox_free_channel'
+arm-linux-gnueabi-ld: imx_rproc.c:(.text+0x7c4): undefined reference to `mbox_free_channel'
+arm-linux-gnueabi-ld: drivers/remoteproc/imx_rproc.o: in function `imx_rproc_remove':
+imx_rproc.c:(.text+0x86c): undefined reference to `mbox_free_channel'
+arm-linux-gnueabi-ld: imx_rproc.c:(.text+0x874): undefined reference to `mbox_free_channel'
+make: *** [Makefile:1292: vmlinux] Error 1
+
+Fixes: 2df7062002d0 ("remoteproc: imx_proc: enable virtio/mailbox")
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 ---
- .../bindings/remoteproc/st,stm32-rproc.yaml           | 11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
+ drivers/remoteproc/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/devicetree/bindings/remoteproc/st,stm32-rproc.yaml b/Documentation/devicetree/bindings/remoteproc/st,stm32-rproc.yaml
-index a1171dfba024..64afdcfb613d 100644
---- a/Documentation/devicetree/bindings/remoteproc/st,stm32-rproc.yaml
-+++ b/Documentation/devicetree/bindings/remoteproc/st,stm32-rproc.yaml
-@@ -65,16 +65,23 @@ properties:
-           Unidirectional channel:
-             - from local to remote, where ACK from the remote means that it is
-               ready for shutdown
-+      - description: |
-+          A channel (d) used by the local proc to notify the remote proc that it
-+          has to stop interprocessor communnication.
-+          Unidirectional channel:
-+            - from local to remote, where ACK from the remote means that communnication
-+              as been stopped on the remote side.
-     minItems: 1
--    maxItems: 3
-+    maxItems: 4
- 
-   mbox-names:
-     items:
-       - const: vq0
-       - const: vq1
-       - const: shutdown
-+      - const: detach
-     minItems: 1
--    maxItems: 3
-+    maxItems: 4
- 
-   memory-region:
-     description:
--- 
-2.17.1
+diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
+index 7cf3d1b40c55..e68fcedc999c 100644
+--- a/drivers/remoteproc/Kconfig
++++ b/drivers/remoteproc/Kconfig
+@@ -26,6 +26,7 @@ config REMOTEPROC_CDEV
+ config IMX_REMOTEPROC
+ 	tristate "i.MX remoteproc support"
+ 	depends on ARCH_MXC
++	select MAILBOX
+ 	help
+ 	  Say y here to support iMX's remote processors via the remote
+ 	  processor framework.
 
