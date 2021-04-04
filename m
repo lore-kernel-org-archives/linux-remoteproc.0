@@ -7,180 +7,200 @@ X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C812C433B4
-	for <linux-remoteproc@archiver.kernel.org>; Sun,  4 Apr 2021 16:59:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F36F9C433B4
+	for <linux-remoteproc@archiver.kernel.org>; Sun,  4 Apr 2021 17:17:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4F0916128A
-	for <linux-remoteproc@archiver.kernel.org>; Sun,  4 Apr 2021 16:59:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C0F966128D
+	for <linux-remoteproc@archiver.kernel.org>; Sun,  4 Apr 2021 17:17:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231213AbhDDQ75 (ORCPT
+        id S230237AbhDDRSC (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Sun, 4 Apr 2021 12:59:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45664 "EHLO
+        Sun, 4 Apr 2021 13:18:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49542 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231150AbhDDQ74 (ORCPT
+        with ESMTP id S230494AbhDDRSA (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Sun, 4 Apr 2021 12:59:56 -0400
-Received: from mail-ot1-x32e.google.com (mail-ot1-x32e.google.com [IPv6:2607:f8b0:4864:20::32e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D828C0613E6
-        for <linux-remoteproc@vger.kernel.org>; Sun,  4 Apr 2021 09:59:52 -0700 (PDT)
-Received: by mail-ot1-x32e.google.com with SMTP id s11-20020a056830124bb029021bb3524ebeso9485133otp.0
-        for <linux-remoteproc@vger.kernel.org>; Sun, 04 Apr 2021 09:59:52 -0700 (PDT)
+        Sun, 4 Apr 2021 13:18:00 -0400
+Received: from mail-ot1-x330.google.com (mail-ot1-x330.google.com [IPv6:2607:f8b0:4864:20::330])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3FF02C061788
+        for <linux-remoteproc@vger.kernel.org>; Sun,  4 Apr 2021 10:17:56 -0700 (PDT)
+Received: by mail-ot1-x330.google.com with SMTP id t23-20020a0568301e37b02901b65ab30024so9455837otr.4
+        for <linux-remoteproc@vger.kernel.org>; Sun, 04 Apr 2021 10:17:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=hiTjEIXnFtxjVW2OYzhXcq2+uKAg/SMDNbyy/FBgm1A=;
-        b=ak2De3We9oa2zeT2NhySjCdqaW5U7HzWoB4gNPMOD6Vu3Vxqq68yr7hxDGUB9sQCDH
-         lLkUIbQmu8MRJjTwNhTFfF3vPL8RrtDlitX9s/Jocw/bNVKhEWX5x+D4WWqa0b/g0jF9
-         A17NnPtQIFCjy3Ktmr7ni/9Sv2eKOCblHTcYKS/ylUEfSoHkfl2aMWvyvkMJP+2nl85N
-         OghiDwD45edBXGR2PVxgRjBjtfkapyGXtKZ+HXVrXbtmFcXhbuRC5yAb5ZaX758kcCf5
-         i5UineOhy9V2svPssvdPSH78bXSV5Uov6ZqcpGOphA+QSqnWY3i2MaI9mjO5e7q2iqhi
-         szoA==
+        bh=c1CessPpLzgh2a5AVf24K9ZsL30ILYIkWayYu/yt2/8=;
+        b=ck/WMVXA3KQLbKNqUo4rGtmw+NgI8GSy5h2pThn9Nok952defCUZsftf4pI32pvsC3
+         5gB3i1LoDHBKKQiJvr97nV+7uUguQt9+9++o2aucuSNcjDx6Lz+euO4jvv6nm3FqY9N9
+         BR7PiMIb3wd0PBKapUQD0aisJyh+NMP0AcCWD7zvOKk5yDSApSrkqz6sAbGeZDc/zQWx
+         vS6QTsToqKlH+AJ7kYuz6vIYSV7yG6RG3a0T7uO7XfYy9y6kDuau18+SjMK7+EaKdvgS
+         AYxV9PHBOuz1h8z8Hi7W5KaC1w0QWRux4+lznR283yUIpL7R7jM0gRrBLWvGlvVwcb0v
+         I1Lw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=hiTjEIXnFtxjVW2OYzhXcq2+uKAg/SMDNbyy/FBgm1A=;
-        b=atefwcmcS84jVVzREf/OKMws29opd7rtG+eEffN6HB0ITT0tAa1CP8fF9id+x/3EsA
-         UfzkIbb/u4JrhZ1mn94qDddpSDNJm4196Mpd0oLY72FgH92K8mgLCUV53TZJxDN1o3sw
-         vnwAk1EE/NBGjguzYV71szXr+L2Nzt7xXBwu6uHYF3i9WPb0Yvy3gMpr4aewxEZqlEoJ
-         Sj7LFgQRYHJVbLVRAX6hOgAdLovyhKimfHF+26wq7uJUCrKuOjg5pmpTNLG8ZdFmaXLq
-         IUCONSydctPSklb6cCgppgFvHkj22mYE5O7YSDfEq6qx4ZyCcBybalXFD4lk3VYDLktQ
-         jMCA==
-X-Gm-Message-State: AOAM530ypfVnO8lKIlVOv7RsteodCI67gwETuRU9jgWDP4JJPS2uOPmu
-        FDEF9pFE+0oA63thUeN+bi5H+A==
-X-Google-Smtp-Source: ABdhPJwTgTvn9zUeRbv3NxxhEK4AYYUs3dcMkqfaR3Bn1JYFmZ0ILkHe1gCd485jcEn73OOAOBshFA==
-X-Received: by 2002:a9d:7f8a:: with SMTP id t10mr18726017otp.239.1617555591660;
-        Sun, 04 Apr 2021 09:59:51 -0700 (PDT)
+        bh=c1CessPpLzgh2a5AVf24K9ZsL30ILYIkWayYu/yt2/8=;
+        b=nYka8PI+Z/1X8/erTSoZEOJaIJlnReL8yn1tH2/MIFU4mo6flt2eohhpA8TGZ3P1+Z
+         7TAuFwVAzLltqaKNp4C4YE3a2vpD7y+Lm4fgyL9M4YayiWeLCdusWEXpTRpQU5XaGDbj
+         dcXxV1uc519AcKS+osoqqUQBd7Ou0hTxcsHqXeNVrqDzEwFhKVrT3mWHpgzfcepC7Gor
+         u4DnmEHV1P2kW91Ns3UQsBpaDFDd9vqztcB2kByNS+2IloFLDv8+hq6YSFaP020+ECrF
+         4uXT/hTCQeJR47DymN+sSAG4IXhSR3O0q0p/UfyWxxYvwyjygIjUZf1hbzmv2ybljFT7
+         w0lg==
+X-Gm-Message-State: AOAM5307+Be09FA7uTA/M3hU7t2D7NWO1HSmG6E0npuiZ0UJT5QQfMMa
+        Iv4Bokmqkvn53uDvV/la1GNo+i3LfOBv2A==
+X-Google-Smtp-Source: ABdhPJxChdfmhvt6D0eurGCCAP5+geqvhI7qaRQwc+qIUUf3jf1Z7EhiJi+4MKW17HZ7xkrqZKbeJg==
+X-Received: by 2002:a9d:3e10:: with SMTP id a16mr19783276otd.261.1617556675225;
+        Sun, 04 Apr 2021 10:17:55 -0700 (PDT)
 Received: from builder.lan (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
-        by smtp.gmail.com with ESMTPSA id m129sm2689059oif.34.2021.04.04.09.59.50
+        by smtp.gmail.com with ESMTPSA id s83sm2646719oif.43.2021.04.04.10.17.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 04 Apr 2021 09:59:51 -0700 (PDT)
-Date:   Sun, 4 Apr 2021 11:59:49 -0500
+        Sun, 04 Apr 2021 10:17:54 -0700 (PDT)
+Date:   Sun, 4 Apr 2021 12:17:52 -0500
 From:   Bjorn Andersson <bjorn.andersson@linaro.org>
 To:     Deepak Kumar Singh <deesin@codeaurora.org>
 Cc:     clew@codeaurora.org, linux-kernel@vger.kernel.org,
         linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
         Andy Gross <agross@kernel.org>
-Subject: Re: [PATCH V1 2/2] soc: qcom: aoss: Add debugfs entry
-Message-ID: <YGnwhSYxHMvmxBRS@builder.lan>
+Subject: Re: [PATCH V1 1/2] soc: qcom: aoss: Expose send for generic usecase
+Message-ID: <YGn0wBkOOILgaq5w@builder.lan>
 References: <1617344238-12137-1-git-send-email-deesin@codeaurora.org>
- <1617344238-12137-3-git-send-email-deesin@codeaurora.org>
+ <1617344238-12137-2-git-send-email-deesin@codeaurora.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1617344238-12137-3-git-send-email-deesin@codeaurora.org>
+In-Reply-To: <1617344238-12137-2-git-send-email-deesin@codeaurora.org>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
 On Fri 02 Apr 01:17 CDT 2021, Deepak Kumar Singh wrote:
 
-> It can be useful to control the different power states of various
-> parts of hardware for device testing. Add a debugfs node for qmp so
-> messages can be sent to aoss for debugging and testing purposes.
+> Not all upcoming usecases will have an interface to allow the aoss
+> driver to hook onto. Expose the send api and create a get function to
+> enable drivers to send their own messages to aoss.
 > 
 > Signed-off-by: Chris Lew <clew@codeaurora.org>
 > Signed-off-by: Deepak Kumar Singh <deesin@codeaurora.org>
 > ---
->  drivers/soc/qcom/qcom_aoss.c | 41 +++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 41 insertions(+)
+>  drivers/soc/qcom/qcom_aoss.c | 36 +++++++++++++++++++++++++++++++++++-
+>  1 file changed, 35 insertions(+), 1 deletion(-)
 > 
 > diff --git a/drivers/soc/qcom/qcom_aoss.c b/drivers/soc/qcom/qcom_aoss.c
-> index 5c643f0..1789880 100644
+> index 53acb94..5c643f0 100644
 > --- a/drivers/soc/qcom/qcom_aoss.c
 > +++ b/drivers/soc/qcom/qcom_aoss.c
-> @@ -4,6 +4,7 @@
->   */
->  #include <dt-bindings/power/qcom-aoss-qmp.h>
->  #include <linux/clk-provider.h>
-> +#include <linux/debugfs.h>
->  #include <linux/interrupt.h>
+> @@ -8,10 +8,12 @@
 >  #include <linux/io.h>
 >  #include <linux/mailbox_client.h>
-> @@ -86,6 +87,9 @@ struct qmp {
->  	struct clk_hw qdss_clk;
->  	struct genpd_onecell_data pd_data;
->  	struct qmp_cooling_device *cooling_devs;
-> +#if IS_ENABLED(CONFIG_DEBUG_FS)
-> +	struct dentry *debugfs_file;
-> +#endif /* CONFIG_DEBUG_FS */
->  };
+>  #include <linux/module.h>
+> +#include <linux/of_platform.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/pm_domain.h>
+>  #include <linux/thermal.h>
+>  #include <linux/slab.h>
+> +#include <linux/soc/qcom/qcom_aoss.h>
+
+I believe you forgot to 'git add' this.
+
 >  
->  struct qmp_pd {
-> @@ -549,6 +553,34 @@ struct qmp *qmp_get(struct device *dev)
+>  #define QMP_DESC_MAGIC			0x0
+>  #define QMP_DESC_VERSION		0x4
+> @@ -223,11 +225,14 @@ static bool qmp_message_empty(struct qmp *qmp)
+>   *
+>   * Return: 0 on success, negative errno on failure
+>   */
+> -static int qmp_send(struct qmp *qmp, const void *data, size_t len)
+> +int qmp_send(struct qmp *qmp, const void *data, size_t len)
+>  {
+>  	long time_left;
+>  	int ret;
+>  
+> +	if (!qmp || !data)
+
+I don't see a legit use case where these are NULL, so there's probably a
+developer staring at the kernel log wondering why their code isn't
+working. So better wrap this in a WARN_ON() to help him/her.
+
+
+Also, a developer failing to check the return value of qmp_get() would
+get here with qmp being -ENODEV, -EINVAL or -EPROBE_DEFER. Which we
+would gladly dereference in the next conditional. So rather than !qmp,
+IS_ERR_OR_NULL(qmp) would be useful.
+
+> +		return -EINVAL;
+> +
+>  	if (WARN_ON(len + sizeof(u32) > qmp->size))
+>  		return -EINVAL;
+>  
+> @@ -261,6 +266,7 @@ static int qmp_send(struct qmp *qmp, const void *data, size_t len)
+>  
+>  	return ret;
 >  }
->  EXPORT_SYMBOL(qmp_get);
+> +EXPORT_SYMBOL(qmp_send);
 >  
-> +#if IS_ENABLED(CONFIG_DEBUG_FS)
-> +static ssize_t aoss_dbg_write(struct file *file, const char __user *userstr,
-> +			      size_t len, loff_t *pos)
+>  static int qmp_qdss_clk_prepare(struct clk_hw *hw)
+>  {
+> @@ -515,6 +521,34 @@ static void qmp_cooling_devices_remove(struct qmp *qmp)
+>  		thermal_cooling_device_unregister(qmp->cooling_devs[i].cdev);
+>  }
+>  
+> +/**
+> + * qmp_get() - get a qmp handle from a device
+> + * @dev: client device pointer
+> + *
+> + * Return: handle to qmp device on success, ERR_PTR() on failure
+> + */
+> +struct qmp *qmp_get(struct device *dev)
 > +{
-> +	struct qmp *qmp = file->private_data;
-> +	char buf[QMP_MSG_LEN] = {};
-> +	int ret;
+> +	struct platform_device *pdev;
+> +	struct device_node *np;
+> +	struct qmp *qmp;
 > +
-> +	if (!len || len >= QMP_MSG_LEN)
-> +		return len;
+> +	if (!dev || !dev->of_node)
+> +		return ERR_PTR(-ENODEV);
 
-If len >= QMP_MSG_LEN we shouldn't lie to the caller and say that all
-went well, better return -EINVAL in this case.
+Value of @dev is an invalid argument, so I think -EINVAL is suitable.
 
 > +
-> +	ret  = copy_from_user(buf, userstr, len);
-> +	if (ret) {
-> +		dev_err(qmp->dev, "copy from user failed, ret:%d\n", ret);
-> +		return len;
+> +	np = of_parse_phandle(dev->of_node, "qcom,qmp", 0);
+> +	if (!np)
+> +		return ERR_PTR(-ENODEV);
+> +
+> +	pdev = of_find_device_by_node(np);
 
-		return -EFAULT;
+of_find_device_by_node() will increment the refcount of the underlying
+struct device of pdev, so you need to platform_device_put() once you're
+done with it.
 
-And you don't have to print here.
+As a side effect of not putting the struct device, the devm_kzalloc'ed
+qmp pointer will remain valid. So care is needed to make sure that the
+client doesn't end up with a dangling pointer if the qmp device is
+removed.
 
-The rest looks good.
+My suggestion is that you add a "qmp_put()" function, which invokes
+platform_device_put() and that you add some sort of tracking ("bool
+orphan"?) to the struct qmp and make qmp_send() fail if this is set.
+
+That way if someone unbinds the aoss device, the client will still have
+a "valid" pointer, but won't be able to qmp_send() after qmp_close() has
+been called in the aoss remove function.
 
 Regards,
 Bjorn
 
-> +	}
+> +	if (!pdev)
+> +		return ERR_PTR(-EINVAL);
 > +
-> +	ret = qmp_send(qmp, buf, QMP_MSG_LEN);
-> +
-> +	return ret ? ret : len;
+> +	qmp = platform_get_drvdata(pdev);
+> +	return qmp ? qmp : ERR_PTR(-EPROBE_DEFER);
 > +}
-> +
-> +static const struct file_operations aoss_dbg_fops = {
-> +	.open = simple_open,
-> +	.write = aoss_dbg_write,
-> +};
-> +#endif /* CONFIG_DEBUG_FS */
+> +EXPORT_SYMBOL(qmp_get);
 > +
 >  static int qmp_probe(struct platform_device *pdev)
 >  {
 >  	struct resource *res;
-> @@ -603,6 +635,11 @@ static int qmp_probe(struct platform_device *pdev)
->  
->  	platform_set_drvdata(pdev, qmp);
->  
-> +#if IS_ENABLED(CONFIG_DEBUG_FS)
-> +	qmp->debugfs_file = debugfs_create_file("aoss_send_message", 0220, NULL,
-> +						qmp, &aoss_dbg_fops);
-> +#endif /* CONFIG_DEBUG_FS */
-> +
->  	return 0;
->  
->  err_remove_qdss_clk:
-> @@ -619,6 +656,10 @@ static int qmp_remove(struct platform_device *pdev)
->  {
->  	struct qmp *qmp = platform_get_drvdata(pdev);
->  
-> +#if IS_ENABLED(CONFIG_DEBUG_FS)
-> +	debugfs_remove(qmp->debugfs_file);
-> +#endif /* CONFIG_DEBUG_FS */
-> +
->  	qmp_qdss_clk_remove(qmp);
->  	qmp_pd_remove(qmp);
->  	qmp_cooling_devices_remove(qmp);
 > -- 
 > The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
 > a Linux Foundation Collaborative Project
