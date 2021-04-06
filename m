@@ -2,123 +2,106 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78754C433ED
-	for <linux-remoteproc@archiver.kernel.org>; Tue,  6 Apr 2021 23:33:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DFEBC433ED
+	for <linux-remoteproc@archiver.kernel.org>; Tue,  6 Apr 2021 23:41:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4001861205
-	for <linux-remoteproc@archiver.kernel.org>; Tue,  6 Apr 2021 23:33:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 66250613A7
+	for <linux-remoteproc@archiver.kernel.org>; Tue,  6 Apr 2021 23:41:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232568AbhDFXdX (ORCPT
+        id S235794AbhDFXld (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 6 Apr 2021 19:33:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49490 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231375AbhDFXdW (ORCPT
+        Tue, 6 Apr 2021 19:41:33 -0400
+Received: from mail-wr1-f50.google.com ([209.85.221.50]:43666 "EHLO
+        mail-wr1-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233969AbhDFXld (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 6 Apr 2021 19:33:22 -0400
-Received: from mail-pf1-x435.google.com (mail-pf1-x435.google.com [IPv6:2607:f8b0:4864:20::435])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 255D5C06174A
-        for <linux-remoteproc@vger.kernel.org>; Tue,  6 Apr 2021 16:33:14 -0700 (PDT)
-Received: by mail-pf1-x435.google.com with SMTP id x26so4852530pfn.0
-        for <linux-remoteproc@vger.kernel.org>; Tue, 06 Apr 2021 16:33:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=LRgGDa7UAPYiNMpF39Lh56jOssvyorq9ppnVgi31J/o=;
-        b=dol2GVi+MHXAlQjLNZRDGWiqiSTsM30xf7XFveOIDRMzyunh6Jdu+U5JHQcGZuJpFT
-         1Nt6iDXj+VGjUXmzEpBOly2AcwI29wifSBNVAaPnsZM3dBKPWK3Jr388aqNYDVw+FmZP
-         N8XsQQuVaPQf2rjP9vqafbggki2gcIVroQ6vLd0+bSmdL38sYop/zcaQIqgxy72tLy6S
-         mnj2jbtr9HeKqe6ym8YnbmfZ2+b93HoPmG6lCSVT8TG4y4c2wdYlUIWyjLOefUnhFpRo
-         0HmzNOW90h4nNv8WNiQy/IcGujauCci6RgEGtB9+LMc/vaV6Y7B+1IoE4sPtZrrsuMh4
-         cv2g==
+        Tue, 6 Apr 2021 19:41:33 -0400
+Received: by mail-wr1-f50.google.com with SMTP id x7so15927982wrw.10;
+        Tue, 06 Apr 2021 16:41:23 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=LRgGDa7UAPYiNMpF39Lh56jOssvyorq9ppnVgi31J/o=;
-        b=DaKz6TP+6C+bqnJTf3aH4L6tuwQSObeZfZmYrCqDYxn1hCOxaSXQV4C7uTYZ67SbVu
-         36+cydB/2wB5yL7ypDSqew1ecUO8A46aFvuPSWvFwdJbR5t1bXdwyzl9fgRy/wqXYqnQ
-         FPjSWS/ttEPZ77FgfpqaVCM5KpKfNvH5CjSBg1ZYN8HfKd6qqh9O+bKO9WUwsshqpTIE
-         K2MXjZm53WuqdKRTcysO4pRsmexV6B48z5G7NR9baQushaALtAbWpnfz0Tx0wSjtBOEt
-         vWIFOFBTwzdvS7AznRi8xV4wdPlAZua27JXp+oLPJVWtHIRpPCI0vSjEXY91XLNY42ZR
-         ISMg==
-X-Gm-Message-State: AOAM532z8g+xwL1dCf/sRdCK7y0qr0JFKJ6KGbYwmapHzldYQkXNJyTs
-        vfWjt/ukOHE+CIJKnpuiv6y9yA==
-X-Google-Smtp-Source: ABdhPJwrZ0lc01wGERI3BcvvrKoJqUHSE2Q747ublXsAoC/rukUPbzW2AAL5/9C6tWoe/P1U0YuLLQ==
-X-Received: by 2002:a63:fb12:: with SMTP id o18mr539600pgh.438.1617751993641;
-        Tue, 06 Apr 2021 16:33:13 -0700 (PDT)
-Received: from xps15 (S0106889e681aac74.cg.shawcable.net. [68.147.0.187])
-        by smtp.gmail.com with ESMTPSA id z3sm19557575pff.40.2021.04.06.16.33.12
+        bh=WGIJa+EXD8Vc5DJNrcReg/z+0EimDhG6rdWhVbzOtFo=;
+        b=CQ0qDAptkIC6tW/QjkTYrwKTt0DT9a42qy4lPFnM4r8k/4F8gSOYBBIuxE740H2p17
+         RzmddTwaAv6ON0mKDDGrTQ6ejGZHjVorX9afl/5ZGJngAeB9LXBEdWJPOtKSHcClEYja
+         0GjWEUNfq94P3RHscsbNIMkuH9FGu2li59VWTnaAVpPcb4LCyp5zxjiF70kZ7aHou89A
+         A5ehGdBDBRM3f535in/qXuwptNZI9m7TKz+9vUC1WCUQPsnYxV5jcoDDQ8nW/hpGEKKf
+         eZS9buyKs29dE3EZCwG9rgsK/8mRQdPH3naKt8fipJEepHd10wqBgeYZGmdh3vQNY2v3
+         fL+w==
+X-Gm-Message-State: AOAM530oOUJ5jVaY3a5Wy5DIziWoTD0+ujeXIKTmzuteUQPdNU4wCtP5
+        65me661JHs864WiPuxyJDYg=
+X-Google-Smtp-Source: ABdhPJwgTgzHjDtAphSOcIvZkNyZiSytk4BvPsB6Agc23uPs67Vxh0ob67DGX16DGyXt0HXr4p5bpg==
+X-Received: by 2002:a5d:5612:: with SMTP id l18mr791487wrv.28.1617752483246;
+        Tue, 06 Apr 2021 16:41:23 -0700 (PDT)
+Received: from liuwe-devbox-debian-v2 ([51.145.34.42])
+        by smtp.gmail.com with ESMTPSA id f9sm4864133wmj.38.2021.04.06.16.41.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 Apr 2021 16:33:12 -0700 (PDT)
-Date:   Tue, 6 Apr 2021 17:33:10 -0600
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-To:     Suman Anna <s-anna@ti.com>
-Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>,
-        Jan Kiszka <jan.kiszka@siemens.com>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Lokesh Vutla <lokeshvutla@ti.com>,
-        linux-remoteproc@vger.kernel.org, linux-omap@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/3] remoteproc: pru: Fix wrong success return value for
- fw events
-Message-ID: <20210406233310.GB330882@xps15>
-References: <20210323223839.17464-1-s-anna@ti.com>
- <20210323223839.17464-3-s-anna@ti.com>
+        Tue, 06 Apr 2021 16:41:23 -0700 (PDT)
+Date:   Tue, 6 Apr 2021 23:41:21 +0000
+From:   Wei Liu <wei.liu@kernel.org>
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     Michael Ellerman <mpe@ellerman.id.au>,
+        Joerg Roedel <jroedel@suse.de>, Wei Liu <wei.liu@kernel.org>,
+        Michael Kelley <mikelley@microsoft.com>,
+        Mike Rapoport <rppt@kernel.org>,
+        Corey Minyard <cminyard@mvista.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        "Paul E. McKenney" <paulmck@kernel.org>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        linux-hyperv@vger.kernel.org,
+        openipmi-developer@lists.sourceforge.net,
+        linux-remoteproc@vger.kernel.org, linux-arch@vger.kernel.org,
+        kexec@lists.infradead.org, rcu@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        Corey Minyard <minyard@acm.org>,
+        Ohad Ben-Cohen <ohad@wizery.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Iurii Zaikin <yzaikin@google.com>
+Subject: Re: [PATCH v1 1/1] kernel.h: Split out panic and oops helpers
+Message-ID: <20210406234121.4ebbaoxyrzdywdj4@liuwe-devbox-debian-v2>
+References: <20210406133158.73700-1-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210323223839.17464-3-s-anna@ti.com>
+In-Reply-To: <20210406133158.73700-1-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Tue, Mar 23, 2021 at 05:38:38PM -0500, Suman Anna wrote:
-> The irq_create_fwspec_mapping() returns a proper virq value on success
-> and 0 upon any failure. The pru_handle_intrmap() treats this as an error
-> and disposes all firmware event mappings correctly, but is returning
-> this incorrect value as is, letting the pru_rproc_start() interpret it
-> as a success and boot the PRU.
+On Tue, Apr 06, 2021 at 04:31:58PM +0300, Andy Shevchenko wrote:
+> kernel.h is being used as a dump for all kinds of stuff for a long time.
+> Here is the attempt to start cleaning it up by splitting out panic and
+> oops helpers.
 > 
+> At the same time convert users in header and lib folder to use new header.
+> Though for time being include new header back to kernel.h to avoid twisted
+> indirected includes for existing users.
+> 
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-Very subtle...  I had to look twice to make sure.
-
-Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-
-> Fix this by returning an error value back upon any such failure. While
-> at this, revise the error trace to print some meaningful info about the
-> failed event.
-> 
-> Fixes: c75c9fdac66e ("remoteproc: pru: Add support for PRU specific interrupt configuration")
-> Signed-off-by: Suman Anna <s-anna@ti.com>
-> ---
->  drivers/remoteproc/pru_rproc.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/remoteproc/pru_rproc.c b/drivers/remoteproc/pru_rproc.c
-> index a9d07c0751be..87b43976c51b 100644
-> --- a/drivers/remoteproc/pru_rproc.c
-> +++ b/drivers/remoteproc/pru_rproc.c
-> @@ -339,8 +339,10 @@ static int pru_handle_intrmap(struct rproc *rproc)
->  
->  		pru->mapped_irq[i] = irq_create_fwspec_mapping(&fwspec);
->  		if (!pru->mapped_irq[i]) {
-> -			dev_err(dev, "failed to get virq\n");
-> -			ret = pru->mapped_irq[i];
-> +			dev_err(dev, "failed to get virq for fw mapping %d: event %d chnl %d host %d\n",
-> +				i, fwspec.param[0], fwspec.param[1],
-> +				fwspec.param[2]);
-> +			ret = -EINVAL;
->  			goto map_fail;
->  		}
->  	}
-> -- 
-> 2.30.1
-> 
+Acked-by: Wei Liu <wei.liu@kernel.org>
