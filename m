@@ -2,143 +2,104 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=BAYES_00,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D09D6C43460
-	for <linux-remoteproc@archiver.kernel.org>; Wed,  7 Apr 2021 15:30:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5934C433ED
+	for <linux-remoteproc@archiver.kernel.org>; Wed,  7 Apr 2021 15:56:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A9A9861382
-	for <linux-remoteproc@archiver.kernel.org>; Wed,  7 Apr 2021 15:30:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8D68E61132
+	for <linux-remoteproc@archiver.kernel.org>; Wed,  7 Apr 2021 15:56:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1353581AbhDGPaL (ORCPT
+        id S1353896AbhDGP5H (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 7 Apr 2021 11:30:11 -0400
-Received: from mail-pj1-f43.google.com ([209.85.216.43]:41609 "EHLO
-        mail-pj1-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1353563AbhDGPaK (ORCPT
+        Wed, 7 Apr 2021 11:57:07 -0400
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:52368 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233852AbhDGP5G (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 7 Apr 2021 11:30:10 -0400
-Received: by mail-pj1-f43.google.com with SMTP id z22-20020a17090a0156b029014d4056663fso1531594pje.0;
-        Wed, 07 Apr 2021 08:30:00 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=+M5ErOA6vMHXgHMo812hqipKBEarvAzxNuznNu4dPh4=;
-        b=jsvrsCk2USuWmPdJ3aMJwVWzy7393uAv08mKvsKYFaJ3jCz3VVW+3ptyPpHt+GKx4l
-         gu8PPEPO4ABq8AYUHGQRdtU2WGDKbxNh+d5+9X6fZqZ0bFodVnAgSlVZkClleG2AZ7/r
-         h3FWStbOqUeG0Z+tP0bxzNT5xF5sJ9dTINsUIQh9Xl4sC7+4A7Ekvo04F2GemAkmhlrg
-         H0euxVew93XQify4f3rbwJ4GvC3KOWGRPprBA2i2BqONFdVEMF65KAfxK6p20CvOCcot
-         yITsnojVRMOplQSR1DucFSuPOKLIdUhJXRLk+0tZRNqQLMG/GN5QHESxap34pjxgdthM
-         zdmQ==
-X-Gm-Message-State: AOAM533kWqDVeQEz732forA2TcK+LLVu5mlJfxMUpn4sSA/RFy4gbEcA
-        ZwqJzgEcQKtv84CmXQJ0khs=
-X-Google-Smtp-Source: ABdhPJxpL5KaAnDuQDJzuUb5KCGFxZ3YcW99M+WHBna9dnMuIO92XOsuZyqjUKOy0DftFppakeCj7Q==
-X-Received: by 2002:a17:902:b210:b029:e6:33b4:cd9e with SMTP id t16-20020a170902b210b02900e633b4cd9emr3418197plr.67.1617809399828;
-        Wed, 07 Apr 2021 08:29:59 -0700 (PDT)
-Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
-        by smtp.gmail.com with ESMTPSA id f65sm22129550pgc.19.2021.04.07.08.29.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 Apr 2021 08:29:58 -0700 (PDT)
-Received: by 42.do-not-panic.com (Postfix, from userid 1000)
-        id 00948402D7; Wed,  7 Apr 2021 15:29:56 +0000 (UTC)
-Date:   Wed, 7 Apr 2021 15:29:56 +0000
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Joerg Roedel <jroedel@suse.de>, Wei Liu <wei.liu@kernel.org>,
-        Michael Kelley <mikelley@microsoft.com>,
-        Mike Rapoport <rppt@kernel.org>,
-        Corey Minyard <cminyard@mvista.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        "Paul E. McKenney" <paulmck@kernel.org>,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
-        "open list:LINUX FOR POWERPC PA SEMI PWRFICIENT" 
-        <linuxppc-dev@lists.ozlabs.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux on Hyper-V List <linux-hyperv@vger.kernel.org>,
-        openipmi-developer@lists.sourceforge.net,
-        linux-remoteproc@vger.kernel.org,
-        Linux-Arch <linux-arch@vger.kernel.org>,
-        kexec@lists.infradead.org, rcu@vger.kernel.org,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        Corey Minyard <minyard@acm.org>,
-        Ohad Ben-Cohen <ohad@wizery.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Kees Cook <keescook@chromium.org>,
-        Iurii Zaikin <yzaikin@google.com>
-Subject: Re: [PATCH v1 1/1] kernel.h: Split out panic and oops helpers
-Message-ID: <20210407152956.GE4332@42.do-not-panic.com>
-References: <20210406133158.73700-1-andriy.shevchenko@linux.intel.com>
- <20210406165108.GA4332@42.do-not-panic.com>
- <CAHp75Ve9vBQqSegM2-ch9NUN-MdevxxOs5ZdHkk1W7AacN+Wrw@mail.gmail.com>
- <20210407143040.GB4332@42.do-not-panic.com>
- <CAHp75VeXiLa0b49eoZKVR1DSqTc9hKxpSgy294hMiaUzt0ugOA@mail.gmail.com>
+        Wed, 7 Apr 2021 11:57:06 -0400
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 137Fulpo116650;
+        Wed, 7 Apr 2021 10:56:47 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1617811007;
+        bh=r78S7ZI4t8HWx+zggh+zIGvWwlMtHHDtztUrnZCJObU=;
+        h=From:To:CC:Subject:Date;
+        b=tGbYaKvDiKH9NIF54rSuMN58mRR1ezK3lCaXY0Thb8N0zgo1d/MhStsmWIf6OVnHU
+         w4brV5JM1C+cslX76fKGDmIa9Ipr9bg7M5JFXIIN1XYVW68+TC7ASTFL/E7U0VDwuM
+         Z3PHCae2DNk2kkJb7eRAWm+TnPppBsT5iDn3NNVg=
+Received: from DFLE113.ent.ti.com (dfle113.ent.ti.com [10.64.6.34])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 137FulfA047396
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 7 Apr 2021 10:56:47 -0500
+Received: from DFLE112.ent.ti.com (10.64.6.33) by DFLE113.ent.ti.com
+ (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2176.2; Wed, 7 Apr
+ 2021 10:56:47 -0500
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE112.ent.ti.com
+ (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2176.2 via
+ Frontend Transport; Wed, 7 Apr 2021 10:56:47 -0500
+Received: from lelv0597.itg.ti.com (lelv0597.itg.ti.com [10.181.64.32])
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 137Ful3U112645;
+        Wed, 7 Apr 2021 10:56:47 -0500
+Received: from localhost ([10.250.37.105])
+        by lelv0597.itg.ti.com (8.14.7/8.14.7) with ESMTP id 137Fuk5C075236;
+        Wed, 7 Apr 2021 10:56:47 -0500
+From:   Suman Anna <s-anna@ti.com>
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>
+CC:     Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>,
+        Jan Kiszka <jan.kiszka@siemens.com>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Lokesh Vutla <lokeshvutla@ti.com>,
+        <linux-remoteproc@vger.kernel.org>, <linux-omap@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH v2 0/3] PRU firmware event/interrupt mapping fixes
+Date:   Wed, 7 Apr 2021 10:56:38 -0500
+Message-ID: <20210407155641.5501-1-s-anna@ti.com>
+X-Mailer: git-send-email 2.30.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHp75VeXiLa0b49eoZKVR1DSqTc9hKxpSgy294hMiaUzt0ugOA@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Wed, Apr 07, 2021 at 05:59:19PM +0300, Andy Shevchenko wrote:
-> On Wed, Apr 7, 2021 at 5:30 PM Luis Chamberlain <mcgrof@kernel.org> wrote:
-> > On Wed, Apr 07, 2021 at 10:33:44AM +0300, Andy Shevchenko wrote:
-> > > On Wed, Apr 7, 2021 at 10:25 AM Luis Chamberlain <mcgrof@kernel.org> wrote:
-> > > > On Tue, Apr 06, 2021 at 04:31:58PM +0300, Andy Shevchenko wrote:
-> 
-> ...
-> 
-> > > > Why is it worth it to add another file just for this?
-> > >
-> > > The main point is to break tons of loops that prevent having clean
-> > > headers anymore.
-> > >
-> > > In this case, see bug.h, which is very important in this sense.
-> >
-> > OK based on the commit log this was not clear, it seemed more of moving
-> > panic stuff to its own file, so just cleanup.
-> 
-> Sorry for that. it should have mentioned the kernel folder instead of
-> lib. But I think it won't clarify the above.
-> 
-> In any case there are several purposes in this case
->  - dropping dependency in bug.h
->  - dropping a loop by moving out panic_notifier.h
->  - unload kernel.h from something which has its own domain
-> 
-> I think that you are referring to the commit message describing 3rd
-> one, but not 1st and 2nd.
+Hi All,
 
-Right!
+The following is a minor revised version of the series [1] that includes fixes
+for various different issues associated with the PRU firmware event/interrupt
+mapping configuration logic. Please see the v1 cover-letter [1] for additional
+details. 
 
-> I will amend this for the future splits, thanks!
+There are currently no in-kernel dts nodes yet in mainline kernel (first
+nodes will appear in v5.13-rc1) so these can be picked up for either v5.13
+merge window or the current -rc cycle.
 
-Don't get me wrong, I love the motivation behind just the 3rd purpose,
-however I figured there might be something more when I saw panic_notifier.h.
-It was just not clear.
+Changes in v2:
+ - Picked up Reviewed-by tags on Patches 1 and 2
+ - Revised Patch 3 to address additional error cleanup paths as
+   pointed out by Mathieu.
 
-But awesome stuff!
+regards
+Suman
 
-  Luis
+[1] https://patchwork.kernel.org/project/linux-remoteproc/cover/20210323223839.17464-1-s-anna@ti.com/
+
+Suman Anna (3):
+  remoteproc: pru: Fixup interrupt-parent logic for fw events
+  remoteproc: pru: Fix wrong success return value for fw events
+  remoteproc: pru: Fix and cleanup firmware interrupt mapping logic
+
+ drivers/remoteproc/pru_rproc.c | 41 ++++++++++++++++++++++++++--------
+ 1 file changed, 32 insertions(+), 9 deletions(-)
+
+-- 
+2.30.1
+
