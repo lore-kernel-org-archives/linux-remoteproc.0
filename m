@@ -2,163 +2,152 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6491FC43460
-	for <linux-remoteproc@archiver.kernel.org>; Wed,  7 Apr 2021 14:43:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BEEAC43460
+	for <linux-remoteproc@archiver.kernel.org>; Wed,  7 Apr 2021 14:59:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 29AE76121E
-	for <linux-remoteproc@archiver.kernel.org>; Wed,  7 Apr 2021 14:43:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E1E89613CE
+	for <linux-remoteproc@archiver.kernel.org>; Wed,  7 Apr 2021 14:59:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344971AbhDGOnn (ORCPT
+        id S1353227AbhDGO7r (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 7 Apr 2021 10:43:43 -0400
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:34880 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1348773AbhDGOn2 (ORCPT
+        Wed, 7 Apr 2021 10:59:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54718 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1353220AbhDGO7q (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 7 Apr 2021 10:43:28 -0400
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 137EWMlD081494;
-        Wed, 7 Apr 2021 09:32:22 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1617805942;
-        bh=/ZE3NClD3KqnjT4ROQ1TsBEaHGQZKlKWPea6oZsVB5s=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=uGmHAP1EdO5bHcQhm8Mv+BUmRytLIH1lXKUQ8ha/vXJzZszJg+g3thRoZHCfzUsjO
-         nRb8tupTlEjMU8WCI2dwTSXgblZ5Rx6zPeZP0nvgW3Yh3PlorKvkS3fZPHhxcQUBnd
-         wL4K79yJrIz9iBK7nzad1fSOYKKzk4LQpLSWQjjU=
-Received: from DFLE105.ent.ti.com (dfle105.ent.ti.com [10.64.6.26])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 137EWMvV045630
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 7 Apr 2021 09:32:22 -0500
-Received: from DFLE104.ent.ti.com (10.64.6.25) by DFLE105.ent.ti.com
- (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2176.2; Wed, 7 Apr
- 2021 09:32:22 -0500
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE104.ent.ti.com
- (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2176.2 via
- Frontend Transport; Wed, 7 Apr 2021 09:32:22 -0500
-Received: from [10.250.37.105] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 137EWLMA070655;
-        Wed, 7 Apr 2021 09:32:22 -0500
-Subject: Re: [PATCH 1/3] remoteproc: pru: Fixup interrupt-parent logic for fw
- events
-To:     Mathieu Poirier <mathieu.poirier@linaro.org>
-CC:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>,
-        Jan Kiszka <jan.kiszka@siemens.com>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Lokesh Vutla <lokeshvutla@ti.com>,
-        <linux-remoteproc@vger.kernel.org>, <linux-omap@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20210323223839.17464-1-s-anna@ti.com>
- <20210323223839.17464-2-s-anna@ti.com> <20210406232837.GA330882@xps15>
-From:   Suman Anna <s-anna@ti.com>
-Message-ID: <00b3fcf3-c3ed-9c2c-712e-952af019f16b@ti.com>
-Date:   Wed, 7 Apr 2021 09:32:21 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Wed, 7 Apr 2021 10:59:46 -0400
+Received: from mail-pg1-x535.google.com (mail-pg1-x535.google.com [IPv6:2607:f8b0:4864:20::535])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6BBAEC061756;
+        Wed,  7 Apr 2021 07:59:36 -0700 (PDT)
+Received: by mail-pg1-x535.google.com with SMTP id t22so6111827pgu.0;
+        Wed, 07 Apr 2021 07:59:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=r/d1grSpme2mQqHlJWH4I0IMbDUguqI3gCUkY5Nr1Q4=;
+        b=fYy1lWNPXiQ+yb67ebJZu+8zEC+h0pBnsXArakBNChEkh6CjoRMYl72lknBCAuRuX2
+         jxuH9EpzzGDSCJWIUX2Ng7q0y9vsIP4Zr+Ek6u4yFt20hudhezjO5DOYAIxN+UZB5hMM
+         FswWwQr3PpOF1lHlMFl2SjtB1/0Fx4MrlsWZAZT4dZpOxE8in8RosRGUfdrKX/M6x4Fq
+         inZiwEl3DvszVRA5j32WLhIZYUUNpVuXdnve6hiU7XgFQUrk2IG/GFnBcXcqK58X9Wrd
+         bbLLNR2m9dcbokFkoo+uH9b1jOTr6jOD6OdvmDZN/EImsXC0vxwvNHIMR6Dr2vU22cdq
+         YTtg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=r/d1grSpme2mQqHlJWH4I0IMbDUguqI3gCUkY5Nr1Q4=;
+        b=CwV4SfJ5T9ynaA7+mggevnUvClo01FL40NS8lBx81l2cq+igOxHk0kGZlbIVC9/ISG
+         EyWuAbQ8gpCwbEEb52k8OYYKhn4x4xEV3rqw3MLC7bOyB6ZHKA9OqxJMDHz60j1dTRQj
+         PLYAv/JR5AX65zn2RuOcIkVMjwMyOGbuw0/2uix88YLWnjYxZDznWZESQgjGzxim4wa8
+         z7uOMl86wolFhhsVdGsI5z+nmySamZz8reo2EIhgkPTr1IxNaU8KRSkmGrhOINSdtcKs
+         0xAOa+wQQ8mCnglgWzdYomOgsQVJfSrMKbUHkKNeRY2qSnQzVFj7XfOiHg/kXzJVekci
+         cwRA==
+X-Gm-Message-State: AOAM531nqK+plWXtEn2WEGC5MC3uR3QH+Nh57umQItbVUkKDUiMsQii/
+        +Rcz1fprVFt1WvT1xiQjbd8sxNDajVcDgrUBUpA=
+X-Google-Smtp-Source: ABdhPJyU4xbKR/hTcJT3i+4AmcxOkV7rwYOr2kWTFFANFENce/N3tHTgLI14O9XHpuyAeqcD9v6uZo0Kn/Dprv2XBvs=
+X-Received: by 2002:a62:528e:0:b029:1f5:c5ee:a487 with SMTP id
+ g136-20020a62528e0000b02901f5c5eea487mr3114076pfb.7.1617807575856; Wed, 07
+ Apr 2021 07:59:35 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20210406232837.GA330882@xps15>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+References: <20210406133158.73700-1-andriy.shevchenko@linux.intel.com>
+ <20210406165108.GA4332@42.do-not-panic.com> <CAHp75Ve9vBQqSegM2-ch9NUN-MdevxxOs5ZdHkk1W7AacN+Wrw@mail.gmail.com>
+ <20210407143040.GB4332@42.do-not-panic.com>
+In-Reply-To: <20210407143040.GB4332@42.do-not-panic.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Wed, 7 Apr 2021 17:59:19 +0300
+Message-ID: <CAHp75VeXiLa0b49eoZKVR1DSqTc9hKxpSgy294hMiaUzt0ugOA@mail.gmail.com>
+Subject: Re: [PATCH v1 1/1] kernel.h: Split out panic and oops helpers
+To:     Luis Chamberlain <mcgrof@kernel.org>
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Joerg Roedel <jroedel@suse.de>, Wei Liu <wei.liu@kernel.org>,
+        Michael Kelley <mikelley@microsoft.com>,
+        Mike Rapoport <rppt@kernel.org>,
+        Corey Minyard <cminyard@mvista.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        "Paul E. McKenney" <paulmck@kernel.org>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
+        "open list:LINUX FOR POWERPC PA SEMI PWRFICIENT" 
+        <linuxppc-dev@lists.ozlabs.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux on Hyper-V List <linux-hyperv@vger.kernel.org>,
+        openipmi-developer@lists.sourceforge.net,
+        linux-remoteproc@vger.kernel.org,
+        Linux-Arch <linux-arch@vger.kernel.org>,
+        kexec@lists.infradead.org, rcu@vger.kernel.org,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        Corey Minyard <minyard@acm.org>,
+        Ohad Ben-Cohen <ohad@wizery.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Kees Cook <keescook@chromium.org>,
+        Iurii Zaikin <yzaikin@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On 4/6/21 6:28 PM, Mathieu Poirier wrote:
-> On Tue, Mar 23, 2021 at 05:38:37PM -0500, Suman Anna wrote:
->> The PRU firmware interrupt mapping logic in pru_handle_intrmap() uses
->> of_irq_find_parent() with PRU device node to get a handle to the PRUSS
->> Interrupt Controller at present. This logic however requires that the
->> PRU nodes always define a interrupt-parent property. This property is
->> neither a required/defined property as per the PRU remoteproc binding,
->> nor is relevant from a DT node point of view without any associated
->> interrupts. The curret logic finds a wrong interrupt controller and
->> fails to perform proper mapping without any interrupt-parent property
->> in the PRU nodes.
->>
->> Fix this logic to always find and use the sibling interrupt controller.
->> Also, while at this, fix the acquired interrupt controller device node
->> reference properly.
->>
->> Fixes: c75c9fdac66e ("remoteproc: pru: Add support for PRU specific interrupt configuration")
->> Signed-off-by: Suman Anna <s-anna@ti.com>
->> ---
->>  drivers/remoteproc/pru_rproc.c | 15 ++++++++++++---
->>  1 file changed, 12 insertions(+), 3 deletions(-)
->>
->> diff --git a/drivers/remoteproc/pru_rproc.c b/drivers/remoteproc/pru_rproc.c
->> index 16979c1cd2f4..a9d07c0751be 100644
->> --- a/drivers/remoteproc/pru_rproc.c
->> +++ b/drivers/remoteproc/pru_rproc.c
->> @@ -284,7 +284,7 @@ static int pru_handle_intrmap(struct rproc *rproc)
->>  	struct pru_rproc *pru = rproc->priv;
->>  	struct pru_irq_rsc *rsc = pru->pru_interrupt_map;
->>  	struct irq_fwspec fwspec;
->> -	struct device_node *irq_parent;
->> +	struct device_node *parent, *irq_parent;
->>  	int i, ret = 0;
->>  
->>  	/* not having pru_interrupt_map is not an error */
->> @@ -312,9 +312,16 @@ static int pru_handle_intrmap(struct rproc *rproc)
->>  
->>  	/*
->>  	 * parse and fill in system event to interrupt channel and
->> -	 * channel-to-host mapping
->> +	 * channel-to-host mapping. The interrupt controller to be used
->> +	 * for these mappings for a given PRU remoteproc is always its
->> +	 * corresponding sibling PRUSS INTC node.
->>  	 */
->> -	irq_parent = of_irq_find_parent(pru->dev->of_node);
-> 
-> If I understand correctly when an interrupt controller node wasn't speficied in
-> the parent this was unwinding until it found one...
+On Wed, Apr 7, 2021 at 5:30 PM Luis Chamberlain <mcgrof@kernel.org> wrote:
+> On Wed, Apr 07, 2021 at 10:33:44AM +0300, Andy Shevchenko wrote:
+> > On Wed, Apr 7, 2021 at 10:25 AM Luis Chamberlain <mcgrof@kernel.org> wrote:
+> > > On Tue, Apr 06, 2021 at 04:31:58PM +0300, Andy Shevchenko wrote:
 
-Correct if not specified in each PRU node, and ends up finding the complete
-wrong interrupt controller (GIC) as it walks up the tree.
+...
 
-> 
->> +	parent = of_get_parent(dev_of_node(pru->dev));
->> +	if (!parent)
->> +		return -ENODEV;
->> +
->> +	irq_parent = of_get_child_by_name(parent, "interrupt-controller");
->> +	of_node_put(parent);
->>  	if (!irq_parent) {
->>  		kfree(pru->mapped_irq);
->>  		return -ENODEV;
->> @@ -337,11 +344,13 @@ static int pru_handle_intrmap(struct rproc *rproc)
->>  			goto map_fail;
->>  		}
->>  	}
->> +	of_node_put(irq_parent);
->>  
->>  	return ret;
->>  
->>  map_fail:
->>  	pru_dispose_irq_mapping(pru);
->> +	of_node_put(irq_parent);
-> 
-> Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+> > > Why is it worth it to add another file just for this?
+> >
+> > The main point is to break tons of loops that prevent having clean
+> > headers anymore.
+> >
+> > In this case, see bug.h, which is very important in this sense.
+>
+> OK based on the commit log this was not clear, it seemed more of moving
+> panic stuff to its own file, so just cleanup.
 
-Thanks,
-Suman
+Sorry for that. it should have mentioned the kernel folder instead of
+lib. But I think it won't clarify the above.
 
-> 
->>  
->>  	return ret;
->>  }
->> -- 
->> 2.30.1
->>
+In any case there are several purposes in this case
+ - dropping dependency in bug.h
+ - dropping a loop by moving out panic_notifier.h
+ - unload kernel.h from something which has its own domain
 
+I think that you are referring to the commit message describing 3rd
+one, but not 1st and 2nd.
+
+I will amend this for the future splits, thanks!
+
+> > >  Seems like a very
+> > > small file.
+> >
+> > If it is an argument, it's kinda strange. We have much smaller headers.
+>
+> The motivation for such separate file was just not clear on the commit
+> log.
+
+-- 
+With Best Regards,
+Andy Shevchenko
