@@ -2,144 +2,162 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=BAYES_00,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+X-Spam-Status: No, score=-17.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92F40C43460
-	for <linux-remoteproc@archiver.kernel.org>; Wed,  7 Apr 2021 14:30:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1D74C433ED
+	for <linux-remoteproc@archiver.kernel.org>; Wed,  7 Apr 2021 14:35:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6565660FE9
-	for <linux-remoteproc@archiver.kernel.org>; Wed,  7 Apr 2021 14:30:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 94F3561279
+	for <linux-remoteproc@archiver.kernel.org>; Wed,  7 Apr 2021 14:35:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1352941AbhDGOay (ORCPT
+        id S1353013AbhDGOfm (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 7 Apr 2021 10:30:54 -0400
-Received: from mail-pj1-f46.google.com ([209.85.216.46]:42761 "EHLO
-        mail-pj1-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1352939AbhDGOaw (ORCPT
+        Wed, 7 Apr 2021 10:35:42 -0400
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:40956 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1353009AbhDGOfe (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 7 Apr 2021 10:30:52 -0400
-Received: by mail-pj1-f46.google.com with SMTP id j6-20020a17090adc86b02900cbfe6f2c96so1415205pjv.1;
-        Wed, 07 Apr 2021 07:30:43 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=1vVuZ4MvRzeF+pr2v0xmBFFQwK6hdMJanVjlk9hErro=;
-        b=p1KK1cOkqF4vkjiGQlQyjZrd/3svw7AsHzTRVm3MhKvVkKR6Dwx4Dfm6sdCjc9Sjqs
-         e9RPRL7lF7O2aTAFYFcgFp91u55IRZM+NAVgSg3WTaHfN7rlTs3eMe0+euKVBIXgJ3j9
-         Dx7tezCIPDcT5myzik9AmqF8mNzgjQnKa2P1oH64IpJA2yYdZcHqX0zanidKaX0AiS4t
-         rhmEmvIfDKDx+m7h6PfV0SxFb7d6VhzZI1lt0LOypBaHz7Io+8kmdqx8DA71pNVQj8F4
-         jPzUAMGalLGzmQ6k7AK911TjafA0Gc3OqjWJtEV96H8Ty8DiN14TDbhUigG4+ngbU61s
-         UaRw==
-X-Gm-Message-State: AOAM531J1WRsK/PlO1ajFnlQH3WLMDcsFiNsNR0QtAUYWNmZSZZxz0uS
-        WHPuV3DT84I9B+teB69JxaU=
-X-Google-Smtp-Source: ABdhPJytaBCeu/N78G2ItU1as7w8fUmjf8wbl8aAQkobTbao0e2hHv5pq8RooRp01fzv5LCBwmpFDg==
-X-Received: by 2002:a17:90a:6343:: with SMTP id v3mr3482681pjs.153.1617805842980;
-        Wed, 07 Apr 2021 07:30:42 -0700 (PDT)
-Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
-        by smtp.gmail.com with ESMTPSA id k11sm5779292pjs.1.2021.04.07.07.30.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 Apr 2021 07:30:41 -0700 (PDT)
-Received: by 42.do-not-panic.com (Postfix, from userid 1000)
-        id 09D07402D7; Wed,  7 Apr 2021 14:30:41 +0000 (UTC)
-Date:   Wed, 7 Apr 2021 14:30:40 +0000
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Joerg Roedel <jroedel@suse.de>, Wei Liu <wei.liu@kernel.org>,
-        Michael Kelley <mikelley@microsoft.com>,
-        Mike Rapoport <rppt@kernel.org>,
-        Corey Minyard <cminyard@mvista.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        "Paul E. McKenney" <paulmck@kernel.org>,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
-        "open list:LINUX FOR POWERPC PA SEMI PWRFICIENT" 
-        <linuxppc-dev@lists.ozlabs.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux on Hyper-V List <linux-hyperv@vger.kernel.org>,
-        openipmi-developer@lists.sourceforge.net,
-        linux-remoteproc@vger.kernel.org,
-        Linux-Arch <linux-arch@vger.kernel.org>,
-        kexec@lists.infradead.org, rcu@vger.kernel.org,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        Corey Minyard <minyard@acm.org>,
-        Ohad Ben-Cohen <ohad@wizery.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Kees Cook <keescook@chromium.org>,
-        Iurii Zaikin <yzaikin@google.com>
-Subject: Re: [PATCH v1 1/1] kernel.h: Split out panic and oops helpers
-Message-ID: <20210407143040.GB4332@42.do-not-panic.com>
-References: <20210406133158.73700-1-andriy.shevchenko@linux.intel.com>
- <20210406165108.GA4332@42.do-not-panic.com>
- <CAHp75Ve9vBQqSegM2-ch9NUN-MdevxxOs5ZdHkk1W7AacN+Wrw@mail.gmail.com>
+        Wed, 7 Apr 2021 10:35:34 -0400
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 137EYHA3037410;
+        Wed, 7 Apr 2021 09:34:17 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1617806057;
+        bh=P7s3BojRUYzZI+LPERcl8NdOIdH0Wwr5DaeL5x0Za5A=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=SzavdAqQoRHHEDBtHOYwCEB8DOkHvGuzgwAxLho6hwX2yKmOpENOQhfLvFoP96lZi
+         utRAK5HvAW183JV6ZWhSRrCk+zyi8L0IoJu0X+f6WeBZynM1LWXb2d1xCIwSCq1a3Z
+         zad8AH8Pxd/xMOJUL+Eqx8ZZpURRByfTCfHO6H80=
+Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 137EYHq6049658
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 7 Apr 2021 09:34:17 -0500
+Received: from DLEE112.ent.ti.com (157.170.170.23) by DLEE108.ent.ti.com
+ (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2176.2; Wed, 7 Apr
+ 2021 09:34:17 -0500
+Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE112.ent.ti.com
+ (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2176.2 via
+ Frontend Transport; Wed, 7 Apr 2021 09:34:17 -0500
+Received: from [10.250.37.105] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id 137EYGEG006674;
+        Wed, 7 Apr 2021 09:34:16 -0500
+Subject: Re: [PATCH 3/3] remoteproc: pru: Fix and cleanup firmware interrupt
+ mapping logic
+To:     Mathieu Poirier <mathieu.poirier@linaro.org>
+CC:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>,
+        Jan Kiszka <jan.kiszka@siemens.com>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Lokesh Vutla <lokeshvutla@ti.com>,
+        <linux-remoteproc@vger.kernel.org>, <linux-omap@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20210323223839.17464-1-s-anna@ti.com>
+ <20210323223839.17464-4-s-anna@ti.com> <20210406234747.GC330882@xps15>
+From:   Suman Anna <s-anna@ti.com>
+Message-ID: <98a3bc08-5740-3e2c-0ed6-0381cb20283d@ti.com>
+Date:   Wed, 7 Apr 2021 09:34:16 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHp75Ve9vBQqSegM2-ch9NUN-MdevxxOs5ZdHkk1W7AacN+Wrw@mail.gmail.com>
+In-Reply-To: <20210406234747.GC330882@xps15>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Wed, Apr 07, 2021 at 10:33:44AM +0300, Andy Shevchenko wrote:
-> On Wed, Apr 7, 2021 at 10:25 AM Luis Chamberlain <mcgrof@kernel.org> wrote:
-> >
-> > On Tue, Apr 06, 2021 at 04:31:58PM +0300, Andy Shevchenko wrote:
-> > > diff --git a/include/linux/panic_notifier.h b/include/linux/panic_notifier.h
-> > > new file mode 100644
-> > > index 000000000000..41e32483d7a7
-> > > --- /dev/null
-> > > +++ b/include/linux/panic_notifier.h
-> > > @@ -0,0 +1,12 @@
-> > > +/* SPDX-License-Identifier: GPL-2.0 */
-> > > +#ifndef _LINUX_PANIC_NOTIFIERS_H
-> > > +#define _LINUX_PANIC_NOTIFIERS_H
-> > > +
-> > > +#include <linux/notifier.h>
-> > > +#include <linux/types.h>
-> > > +
-> > > +extern struct atomic_notifier_head panic_notifier_list;
-> > > +
-> > > +extern bool crash_kexec_post_notifiers;
-> > > +
-> > > +#endif       /* _LINUX_PANIC_NOTIFIERS_H */
-> >
-> > Why is it worth it to add another file just for this?
+Hi Mathieu,
+
+On 4/6/21 6:47 PM, Mathieu Poirier wrote:
+> On Tue, Mar 23, 2021 at 05:38:39PM -0500, Suman Anna wrote:
+>> The PRU firmware interrupt mappings are configured and unconfigured in
+>> .start() and .stop() callbacks respectively using the variables 'evt_count'
+>> and a 'mapped_irq' pointer. These variables are modified only during these
+>> callbacks but are not re-initialized/reset properly during unwind or
+>> failure paths. These stale values caused a kernel crash while stopping a
+>> PRU remoteproc running a different firmware with no events on a subsequent
+>> run after a previous run that was running a firmware with events.
+>>
+>> Fix this crash by ensuring that the evt_count is 0 and the mapped_irq
+>> pointer is set to NULL in pru_dispose_irq_mapping(). Also, reset these
+>> variables properly during any failures in the .start() callback. While
+>> at this, the pru_dispose_irq_mapping() callsites are all made to look
+>> the same, moving any conditional logic to inside the function.
+>>
+>> Fixes: c75c9fdac66e ("remoteproc: pru: Add support for PRU specific interrupt configuration")
+>> Reported-by: Vignesh Raghavendra <vigneshr@ti.com>
+>> Signed-off-by: Suman Anna <s-anna@ti.com>
+>> ---
+>>  drivers/remoteproc/pru_rproc.c | 12 +++++++++---
+>>  1 file changed, 9 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/drivers/remoteproc/pru_rproc.c b/drivers/remoteproc/pru_rproc.c
+>> index 87b43976c51b..5df19acb90ed 100644
+>> --- a/drivers/remoteproc/pru_rproc.c
+>> +++ b/drivers/remoteproc/pru_rproc.c
+>> @@ -266,12 +266,17 @@ static void pru_rproc_create_debug_entries(struct rproc *rproc)
+>>  
+>>  static void pru_dispose_irq_mapping(struct pru_rproc *pru)
+>>  {
+>> -	while (pru->evt_count--) {
+>> +	if (!pru->mapped_irq)
+>> +		return;
+>> +
+>> +	while (pru->evt_count) {
+>> +		pru->evt_count--;
+>>  		if (pru->mapped_irq[pru->evt_count] > 0)
+>>  			irq_dispose_mapping(pru->mapped_irq[pru->evt_count]);
+>>  	}
+>>  
+>>  	kfree(pru->mapped_irq);
+>> +	pru->mapped_irq = NULL;
+>>  }
+>>  
+>>  /*
+>> @@ -324,6 +329,8 @@ static int pru_handle_intrmap(struct rproc *rproc)
+>>  	of_node_put(parent);
+>>  	if (!irq_parent) {
+>>  		kfree(pru->mapped_irq);
+>> +		pru->mapped_irq = NULL;
+>> +		pru->evt_count = 0;
 > 
-> The main point is to break tons of loops that prevent having clean
-> headers anymore.
->
-> In this case, see bug.h, which is very important in this sense.
+> Patch 1/3 introduced a check on @parent that doesn't free pru->mapped_irq.  I
+> would also expect that error path to do the same has what is done here.  And
+> looking further up I see the error path for !pru->mapped_irq doesn't set
+> pru->evt_count to zero.
 
-OK based on the commit log this was not clear, it seemed more of moving
-panic stuff to its own file, so just cleanup.
+Good catch, thank you. I will fix these up in v2.
 
-> >  Seems like a very
-> > small file.
+regards
+Suman
+
 > 
-> If it is an argument, it's kinda strange. We have much smaller headers.
+> Thanks,
+> Mathieu
+> 
+>>  		return -ENODEV;
+>>  	}
+>>  
+>> @@ -398,8 +405,7 @@ static int pru_rproc_stop(struct rproc *rproc)
+>>  	pru_control_write_reg(pru, PRU_CTRL_CTRL, val);
+>>  
+>>  	/* dispose irq mapping - new firmware can provide new mapping */
+>> -	if (pru->mapped_irq)
+>> -		pru_dispose_irq_mapping(pru);
+>> +	pru_dispose_irq_mapping(pru);
+>>  
+>>  	return 0;
+>>  }
+>> -- 
+>> 2.30.1
+>>
 
-The motivation for such separate file was just not clear on the commit
-log.
-
-  Luis
