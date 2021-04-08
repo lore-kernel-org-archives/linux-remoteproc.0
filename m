@@ -2,151 +2,119 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3082CC433B4
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  8 Apr 2021 14:34:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CBB50C433B4
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  8 Apr 2021 17:12:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D4F15610D0
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  8 Apr 2021 14:34:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ABE9B610A8
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  8 Apr 2021 17:12:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231526AbhDHOfD (ORCPT
+        id S231676AbhDHRMa (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 8 Apr 2021 10:35:03 -0400
-Received: from m12-11.163.com ([220.181.12.11]:39708 "EHLO m12-11.163.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231370AbhDHOfC (ORCPT <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 8 Apr 2021 10:35:02 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-        s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=Cacx6
-        cwEprhq0gPa/mEYy1Brd/gFq94w3n5KIQaFV7M=; b=M4qysGFJ3kxt6PHjuGBLn
-        tmlGXwm3Szj3cXnsPAYi2fNQykqyPBF8PUCd3arfq+aLYCE46a/+ADR6Xj7+37+v
-        LQYPJAYGu4+xZCeP5HKlB6vv02qamXg5zO9fA6KPCRIhRGfuAJ5iQ56pl1jAljMH
-        mD8w4LbMZWmbbQ1hBcmphY=
-Received: from yangjunlin.ccdomain.com (unknown [119.137.53.45])
-        by smtp7 (Coremail) with SMTP id C8CowAD375diFG9gN7jrWA--.29003S2;
-        Thu, 08 Apr 2021 22:34:12 +0800 (CST)
-From:   angkery <angkery@163.com>
-To:     agross@kernel.org, bjorn.andersson@linaro.org, ohad@wizery.com,
-        mathieu.poirier@linaro.org
-Cc:     linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Junlin Yang <yangjunlin@yulong.com>
-Subject: [PATCH] remoteproc: qcom: wcss: Remove unnecessary PTR_ERR()
-Date:   Thu,  8 Apr 2021 22:33:22 +0800
-Message-Id: <20210408143322.1647-1-angkery@163.com>
-X-Mailer: git-send-email 2.24.0.windows.2
+        Thu, 8 Apr 2021 13:12:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60122 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231566AbhDHRM3 (ORCPT
+        <rfc822;linux-remoteproc@vger.kernel.org>);
+        Thu, 8 Apr 2021 13:12:29 -0400
+Received: from mail-pl1-x634.google.com (mail-pl1-x634.google.com [IPv6:2607:f8b0:4864:20::634])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DE6A6C061762
+        for <linux-remoteproc@vger.kernel.org>; Thu,  8 Apr 2021 10:12:17 -0700 (PDT)
+Received: by mail-pl1-x634.google.com with SMTP id t20so1371560plr.13
+        for <linux-remoteproc@vger.kernel.org>; Thu, 08 Apr 2021 10:12:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=NbF124KRasDzZQm0mjKapmMYmH1JJyipVNq4bCxuJZo=;
+        b=xyQOevybRhccvFEmSeWlIHeszjmibVH6JCYi/z24DTj6q+C/KOG7t6hK4XsyQ+utBI
+         17XOgIX5ycSJUn8MjsweS81ajtsgR4Xr5W18dueJPi4g1gGhDmFLfJ8tmUE0vq3Ty9qf
+         5UOTiVgEbVZiMeurt/x67xw2eTcw/HRcyWK5Ufa4TWzYRWx22vNIuUbzz+L3m17AF1ZV
+         VnFKs5cyLl8nYxZk7wVNTisXi5ZTFQZYKlra8KHrH6IDU+6oFxFkU6b+mlUJK4DeDJJ3
+         25KhsMUmWxHdQ7u/7gIXHkrVh2SU+MA4bmUGdYDNxZBesiThTURpBtnL6mX+8/n22qG7
+         4xpQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=NbF124KRasDzZQm0mjKapmMYmH1JJyipVNq4bCxuJZo=;
+        b=l3mj36HI0O9ik1TtLuaZrLMQutEtRoeFbHQETyCclJITxv6AT2u25Brlnxc3m0kLJN
+         HVGKK+w3mCnOFtbqnsoHjcJKuTIxvKcOdCIbLq9fZTfHLuBLU+VTZI6rBdmH44vrpK4Q
+         83AMGsCuC+T1A3k1ES4tlWlKZbAcg2ypoZNW+zHaiIORa845OpS+rjbTVj4SxhYPzX8t
+         52vg6xVs1/H05IFDSLn6XG7qgitBbR99N4ZMSlIEn0YiK1Du+WOzUiYzZLe+QnPqPCUD
+         KI+uvIVBTntgkORbwyEHAwoCjGFvf1EDRjHkQg6uF81KRzVR4u/iygP0UPmeIRX7bwiL
+         NUqA==
+X-Gm-Message-State: AOAM532ooOGhH0yzLRYwGnUMn9cYGEqX/ZdJemLdYDXGDAXZU28KlAgX
+        AIwvej6sAKGpekY9838KXk2bblJLybFl
+X-Google-Smtp-Source: ABdhPJya7nSzcUaXFinDbTdfWS0l9ypjD89LH9KIQB6IAMzmSAES0j+15MK1y2AhdTPBU1Lo9xUPeA==
+X-Received: by 2002:a17:902:9f8f:b029:e9:944d:ea99 with SMTP id g15-20020a1709029f8fb02900e9944dea99mr3427565plq.45.1617901937299;
+        Thu, 08 Apr 2021 10:12:17 -0700 (PDT)
+Received: from localhost.localdomain ([103.77.37.191])
+        by smtp.gmail.com with ESMTPSA id 205sm52749pfc.201.2021.04.08.10.12.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 08 Apr 2021 10:12:16 -0700 (PDT)
+From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To:     bjorn.andersson@linaro.org
+Cc:     ohad@wizery.com, linux-remoteproc@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: [PATCH] remoteproc: qcom: pas: Add modem support for SDX55
+Date:   Thu,  8 Apr 2021 22:42:11 +0530
+Message-Id: <20210408171211.92141-1-manivannan.sadhasivam@linaro.org>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: C8CowAD375diFG9gN7jrWA--.29003S2
-X-Coremail-Antispam: 1Uf129KBjvJXoWxAr43KFykZryfuryrXryDGFg_yoW5tFy7p3
-        9ruFW5trykJrW8Gr9xZrs7Z3Wfuw1xJFW8Cw47Jas3Ca4Yyr4UAa15Xr10vFWFqrWrWay3
-        ZF48Z3yUC3W2gFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jjxRhUUUUU=
-X-Originating-IP: [119.137.53.45]
-X-CM-SenderInfo: 5dqjyvlu16il2tof0z/xtbBRgRuI13l-Mdu0gAAsw
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-From: Junlin Yang <yangjunlin@yulong.com>
+Add remoteproc support for Hexagon modem found on the Qualcomm SDX55
+platform.
 
-Remove unnecessary PTR_ERR(), it has been assigned to ret before,
-so return ret directly.
-
-Signed-off-by: Junlin Yang <yangjunlin@yulong.com>
+Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 ---
- drivers/remoteproc/qcom_q6v5_wcss.c | 18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
+ drivers/remoteproc/qcom_q6v5_pas.c | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
 
-diff --git a/drivers/remoteproc/qcom_q6v5_wcss.c b/drivers/remoteproc/qcom_q6v5_wcss.c
-index 71ec1a4..7581983 100644
---- a/drivers/remoteproc/qcom_q6v5_wcss.c
-+++ b/drivers/remoteproc/qcom_q6v5_wcss.c
-@@ -913,7 +913,7 @@ static int q6v5_wcss_init_clock(struct q6v5_wcss *wcss)
- 		ret = PTR_ERR(wcss->gcc_abhs_cbcr);
- 		if (ret != -EPROBE_DEFER)
- 			dev_err(wcss->dev, "failed to get gcc abhs clock");
--		return PTR_ERR(wcss->gcc_abhs_cbcr);
-+		return ret;
- 	}
+diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
+index e635454d6170..292141877260 100644
+--- a/drivers/remoteproc/qcom_q6v5_pas.c
++++ b/drivers/remoteproc/qcom_q6v5_pas.c
+@@ -785,6 +785,22 @@ static const struct adsp_data wcss_resource_init = {
+ 	.ssctl_id = 0x12,
+ };
  
- 	wcss->gcc_axim_cbcr = devm_clk_get(wcss->dev, "gcc_axim_cbcr");
-@@ -921,7 +921,7 @@ static int q6v5_wcss_init_clock(struct q6v5_wcss *wcss)
- 		ret = PTR_ERR(wcss->gcc_axim_cbcr);
- 		if (ret != -EPROBE_DEFER)
- 			dev_err(wcss->dev, "failed to get gcc axim clock\n");
--		return PTR_ERR(wcss->gcc_axim_cbcr);
-+		return ret;
- 	}
- 
- 	wcss->ahbfabric_cbcr_clk = devm_clk_get(wcss->dev,
-@@ -930,7 +930,7 @@ static int q6v5_wcss_init_clock(struct q6v5_wcss *wcss)
- 		ret = PTR_ERR(wcss->ahbfabric_cbcr_clk);
- 		if (ret != -EPROBE_DEFER)
- 			dev_err(wcss->dev, "failed to get ahbfabric clock\n");
--		return PTR_ERR(wcss->ahbfabric_cbcr_clk);
-+		return ret;
- 	}
- 
- 	wcss->lcc_csr_cbcr = devm_clk_get(wcss->dev, "tcsr_lcc_cbc");
-@@ -938,7 +938,7 @@ static int q6v5_wcss_init_clock(struct q6v5_wcss *wcss)
- 		ret = PTR_ERR(wcss->lcc_csr_cbcr);
- 		if (ret != -EPROBE_DEFER)
- 			dev_err(wcss->dev, "failed to get csr cbcr clk\n");
--		return PTR_ERR(wcss->lcc_csr_cbcr);
-+		return ret;
- 	}
- 
- 	wcss->ahbs_cbcr = devm_clk_get(wcss->dev,
-@@ -947,7 +947,7 @@ static int q6v5_wcss_init_clock(struct q6v5_wcss *wcss)
- 		ret = PTR_ERR(wcss->ahbs_cbcr);
- 		if (ret != -EPROBE_DEFER)
- 			dev_err(wcss->dev, "failed to get ahbs_cbcr clk\n");
--		return PTR_ERR(wcss->ahbs_cbcr);
-+		return ret;
- 	}
- 
- 	wcss->tcm_slave_cbcr = devm_clk_get(wcss->dev,
-@@ -956,7 +956,7 @@ static int q6v5_wcss_init_clock(struct q6v5_wcss *wcss)
- 		ret = PTR_ERR(wcss->tcm_slave_cbcr);
- 		if (ret != -EPROBE_DEFER)
- 			dev_err(wcss->dev, "failed to get tcm cbcr clk\n");
--		return PTR_ERR(wcss->tcm_slave_cbcr);
-+		return ret;
- 	}
- 
- 	wcss->qdsp6ss_abhm_cbcr = devm_clk_get(wcss->dev, "lcc_abhm_cbc");
-@@ -964,7 +964,7 @@ static int q6v5_wcss_init_clock(struct q6v5_wcss *wcss)
- 		ret = PTR_ERR(wcss->qdsp6ss_abhm_cbcr);
- 		if (ret != -EPROBE_DEFER)
- 			dev_err(wcss->dev, "failed to get abhm cbcr clk\n");
--		return PTR_ERR(wcss->qdsp6ss_abhm_cbcr);
-+		return ret;
- 	}
- 
- 	wcss->qdsp6ss_axim_cbcr = devm_clk_get(wcss->dev, "lcc_axim_cbc");
-@@ -972,7 +972,7 @@ static int q6v5_wcss_init_clock(struct q6v5_wcss *wcss)
- 		ret = PTR_ERR(wcss->qdsp6ss_axim_cbcr);
- 		if (ret != -EPROBE_DEFER)
- 			dev_err(wcss->dev, "failed to get axim cbcr clk\n");
--		return PTR_ERR(wcss->qdsp6ss_abhm_cbcr);
-+		return ret;
- 	}
- 
- 	wcss->lcc_bcr_sleep = devm_clk_get(wcss->dev, "lcc_bcr_sleep");
-@@ -980,7 +980,7 @@ static int q6v5_wcss_init_clock(struct q6v5_wcss *wcss)
- 		ret = PTR_ERR(wcss->lcc_bcr_sleep);
- 		if (ret != -EPROBE_DEFER)
- 			dev_err(wcss->dev, "failed to get bcr cbcr clk\n");
--		return PTR_ERR(wcss->lcc_bcr_sleep);
-+		return ret;
- 	}
- 
- 	return 0;
++static const struct adsp_data sdx55_mpss_resource = {
++	.crash_reason_smem = 421,
++	.firmware_name = "modem.mdt",
++	.pas_id = 4,
++	.has_aggre2_clk = false,
++	.auto_boot = true,
++	.proxy_pd_names = (char*[]){
++		"cx",
++		"mss",
++		NULL
++	},
++	.ssr_name = "mpss",
++	.sysmon_name = "modem",
++	.ssctl_id = 0x22,
++};
++
+ static const struct of_device_id adsp_of_match[] = {
+ 	{ .compatible = "qcom,msm8974-adsp-pil", .data = &adsp_resource_init},
+ 	{ .compatible = "qcom,msm8996-adsp-pil", .data = &adsp_resource_init},
+@@ -797,6 +813,7 @@ static const struct of_device_id adsp_of_match[] = {
+ 	{ .compatible = "qcom,sc7180-mpss-pas", .data = &mpss_resource_init},
+ 	{ .compatible = "qcom,sdm845-adsp-pas", .data = &adsp_resource_init},
+ 	{ .compatible = "qcom,sdm845-cdsp-pas", .data = &cdsp_resource_init},
++	{ .compatible = "qcom,sdx55-mpss-pas", .data = &sdx55_mpss_resource},
+ 	{ .compatible = "qcom,sm8150-adsp-pas", .data = &sm8150_adsp_resource},
+ 	{ .compatible = "qcom,sm8150-cdsp-pas", .data = &sm8150_cdsp_resource},
+ 	{ .compatible = "qcom,sm8150-mpss-pas", .data = &mpss_resource_init},
 -- 
-1.9.1
+2.25.1
 
