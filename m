@@ -2,151 +2,151 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48BF1C433B4
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  8 Apr 2021 13:29:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3082CC433B4
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  8 Apr 2021 14:34:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 210146113C
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  8 Apr 2021 13:29:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D4F15610D0
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  8 Apr 2021 14:34:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231474AbhDHN3f (ORCPT
+        id S231526AbhDHOfD (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 8 Apr 2021 09:29:35 -0400
-Received: from mga03.intel.com ([134.134.136.65]:48288 "EHLO mga03.intel.com"
+        Thu, 8 Apr 2021 10:35:03 -0400
+Received: from m12-11.163.com ([220.181.12.11]:39708 "EHLO m12-11.163.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229803AbhDHN3e (ORCPT <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 8 Apr 2021 09:29:34 -0400
-IronPort-SDR: QUpz64eg2gnFCpzxDWzU/AwdrbTUJxrBXgfjbrrtWatHMBwK5ASN5glArcmYGrKckRBAVv66VO
- L60nOvGTEpHA==
-X-IronPort-AV: E=McAfee;i="6000,8403,9948"; a="193579533"
-X-IronPort-AV: E=Sophos;i="5.82,206,1613462400"; 
-   d="scan'208";a="193579533"
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Apr 2021 06:29:22 -0700
-IronPort-SDR: D3QHX5UVSB8YX34MZLNYlLK0kPKdVmkIBWjKvFADTZAC3rD9R9M8THaBbj3tnr/+TF6aChcI+z
- hErj278onk1A==
-X-IronPort-AV: E=Sophos;i="5.82,206,1613462400"; 
-   d="scan'208";a="419147368"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
-  by orsmga007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Apr 2021 06:29:13 -0700
-Received: from andy by smile with local (Exim 4.94)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1lUUia-002IVr-4H; Thu, 08 Apr 2021 16:29:08 +0300
-Date:   Thu, 8 Apr 2021 16:29:08 +0300
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Cc:     Michael Ellerman <mpe@ellerman.id.au>,
-        Joerg Roedel <jroedel@suse.de>, Wei Liu <wei.liu@kernel.org>,
-        Michael Kelley <mikelley@microsoft.com>,
-        Mike Rapoport <rppt@kernel.org>,
-        Corey Minyard <cminyard@mvista.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        "Paul E. McKenney" <paulmck@kernel.org>,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        linux-hyperv@vger.kernel.org,
-        openipmi-developer@lists.sourceforge.net,
-        linux-remoteproc@vger.kernel.org, linux-arch@vger.kernel.org,
-        kexec@lists.infradead.org, rcu@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        Corey Minyard <minyard@acm.org>,
-        Ohad Ben-Cohen <ohad@wizery.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Iurii Zaikin <yzaikin@google.com>
-Subject: Re: [PATCH v1 1/1] kernel.h: Split out panic and oops helpers
-Message-ID: <YG8FJOYVovYIOLXA@smile.fi.intel.com>
-References: <20210406133158.73700-1-andriy.shevchenko@linux.intel.com>
- <03be4ed9-8e8d-e2c2-611d-ac09c61d84f9@rasmusvillemoes.dk>
+        id S231370AbhDHOfC (ORCPT <rfc822;linux-remoteproc@vger.kernel.org>);
+        Thu, 8 Apr 2021 10:35:02 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+        s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=Cacx6
+        cwEprhq0gPa/mEYy1Brd/gFq94w3n5KIQaFV7M=; b=M4qysGFJ3kxt6PHjuGBLn
+        tmlGXwm3Szj3cXnsPAYi2fNQykqyPBF8PUCd3arfq+aLYCE46a/+ADR6Xj7+37+v
+        LQYPJAYGu4+xZCeP5HKlB6vv02qamXg5zO9fA6KPCRIhRGfuAJ5iQ56pl1jAljMH
+        mD8w4LbMZWmbbQ1hBcmphY=
+Received: from yangjunlin.ccdomain.com (unknown [119.137.53.45])
+        by smtp7 (Coremail) with SMTP id C8CowAD375diFG9gN7jrWA--.29003S2;
+        Thu, 08 Apr 2021 22:34:12 +0800 (CST)
+From:   angkery <angkery@163.com>
+To:     agross@kernel.org, bjorn.andersson@linaro.org, ohad@wizery.com,
+        mathieu.poirier@linaro.org
+Cc:     linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Junlin Yang <yangjunlin@yulong.com>
+Subject: [PATCH] remoteproc: qcom: wcss: Remove unnecessary PTR_ERR()
+Date:   Thu,  8 Apr 2021 22:33:22 +0800
+Message-Id: <20210408143322.1647-1-angkery@163.com>
+X-Mailer: git-send-email 2.24.0.windows.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <03be4ed9-8e8d-e2c2-611d-ac09c61d84f9@rasmusvillemoes.dk>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: C8CowAD375diFG9gN7jrWA--.29003S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxAr43KFykZryfuryrXryDGFg_yoW5tFy7p3
+        9ruFW5trykJrW8Gr9xZrs7Z3Wfuw1xJFW8Cw47Jas3Ca4Yyr4UAa15Xr10vFWFqrWrWay3
+        ZF48Z3yUC3W2gFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jjxRhUUUUU=
+X-Originating-IP: [119.137.53.45]
+X-CM-SenderInfo: 5dqjyvlu16il2tof0z/xtbBRgRuI13l-Mdu0gAAsw
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Thu, Apr 08, 2021 at 02:45:12PM +0200, Rasmus Villemoes wrote:
-> On 06/04/2021 15.31, Andy Shevchenko wrote:
-> > kernel.h is being used as a dump for all kinds of stuff for a long time.
-> > Here is the attempt to start cleaning it up by splitting out panic and
-> > oops helpers.
-> 
-> Yay.
-> 
-> Acked-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+From: Junlin Yang <yangjunlin@yulong.com>
 
-Thanks!
+Remove unnecessary PTR_ERR(), it has been assigned to ret before,
+so return ret directly.
 
-> > At the same time convert users in header and lib folder to use new header.
-> > Though for time being include new header back to kernel.h to avoid twisted
-> > indirected includes for existing users.
-> 
-> I think it would be good to have some place to note that "This #include
-> is just for backwards compatibility, it will go away RealSoonNow, so if
-> you rely on something from linux/panic.h, include that explicitly
-> yourself TYVM. And if you're looking for a janitorial task, write a
-> script to check that every file that uses some identifier defined in
-> panic.h actually includes that file. When all offenders are found and
-> dealt with, remove the #include and this note.".
+Signed-off-by: Junlin Yang <yangjunlin@yulong.com>
+---
+ drivers/remoteproc/qcom_q6v5_wcss.c | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
 
-Good and...
-
-> > +struct taint_flag {
-> > +	char c_true;	/* character printed when tainted */
-> > +	char c_false;	/* character printed when not tainted */
-> > +	bool module;	/* also show as a per-module taint flag */
-> > +};
-> > +
-> > +extern const struct taint_flag taint_flags[TAINT_FLAGS_COUNT];
-> 
-> While you're doing this, nothing outside of kernel/panic.c cares about
-> the definition of struct taint_flag or use the taint_flags array, so
-> could you make the definition private to that file and make the array
-> static? (Another patch, of course.)
-
-...according to the above if *you are looking for a janitorial task*... :-))
-
-> > +enum lockdep_ok {
-> > +	LOCKDEP_STILL_OK,
-> > +	LOCKDEP_NOW_UNRELIABLE,
-> > +};
-> > +
-> > +extern const char *print_tainted(void);
-> > +extern void add_taint(unsigned flag, enum lockdep_ok);
-> > +extern int test_taint(unsigned flag);
-> > +extern unsigned long get_taint(void);
-> 
-> I know you're just moving code, but it would be a nice opportunity to
-> drop the redundant externs.
-
-As above. But for all these I have heard you. So, I'll keep this response
-as part of my always only growing TODO list.
-
+diff --git a/drivers/remoteproc/qcom_q6v5_wcss.c b/drivers/remoteproc/qcom_q6v5_wcss.c
+index 71ec1a4..7581983 100644
+--- a/drivers/remoteproc/qcom_q6v5_wcss.c
++++ b/drivers/remoteproc/qcom_q6v5_wcss.c
+@@ -913,7 +913,7 @@ static int q6v5_wcss_init_clock(struct q6v5_wcss *wcss)
+ 		ret = PTR_ERR(wcss->gcc_abhs_cbcr);
+ 		if (ret != -EPROBE_DEFER)
+ 			dev_err(wcss->dev, "failed to get gcc abhs clock");
+-		return PTR_ERR(wcss->gcc_abhs_cbcr);
++		return ret;
+ 	}
+ 
+ 	wcss->gcc_axim_cbcr = devm_clk_get(wcss->dev, "gcc_axim_cbcr");
+@@ -921,7 +921,7 @@ static int q6v5_wcss_init_clock(struct q6v5_wcss *wcss)
+ 		ret = PTR_ERR(wcss->gcc_axim_cbcr);
+ 		if (ret != -EPROBE_DEFER)
+ 			dev_err(wcss->dev, "failed to get gcc axim clock\n");
+-		return PTR_ERR(wcss->gcc_axim_cbcr);
++		return ret;
+ 	}
+ 
+ 	wcss->ahbfabric_cbcr_clk = devm_clk_get(wcss->dev,
+@@ -930,7 +930,7 @@ static int q6v5_wcss_init_clock(struct q6v5_wcss *wcss)
+ 		ret = PTR_ERR(wcss->ahbfabric_cbcr_clk);
+ 		if (ret != -EPROBE_DEFER)
+ 			dev_err(wcss->dev, "failed to get ahbfabric clock\n");
+-		return PTR_ERR(wcss->ahbfabric_cbcr_clk);
++		return ret;
+ 	}
+ 
+ 	wcss->lcc_csr_cbcr = devm_clk_get(wcss->dev, "tcsr_lcc_cbc");
+@@ -938,7 +938,7 @@ static int q6v5_wcss_init_clock(struct q6v5_wcss *wcss)
+ 		ret = PTR_ERR(wcss->lcc_csr_cbcr);
+ 		if (ret != -EPROBE_DEFER)
+ 			dev_err(wcss->dev, "failed to get csr cbcr clk\n");
+-		return PTR_ERR(wcss->lcc_csr_cbcr);
++		return ret;
+ 	}
+ 
+ 	wcss->ahbs_cbcr = devm_clk_get(wcss->dev,
+@@ -947,7 +947,7 @@ static int q6v5_wcss_init_clock(struct q6v5_wcss *wcss)
+ 		ret = PTR_ERR(wcss->ahbs_cbcr);
+ 		if (ret != -EPROBE_DEFER)
+ 			dev_err(wcss->dev, "failed to get ahbs_cbcr clk\n");
+-		return PTR_ERR(wcss->ahbs_cbcr);
++		return ret;
+ 	}
+ 
+ 	wcss->tcm_slave_cbcr = devm_clk_get(wcss->dev,
+@@ -956,7 +956,7 @@ static int q6v5_wcss_init_clock(struct q6v5_wcss *wcss)
+ 		ret = PTR_ERR(wcss->tcm_slave_cbcr);
+ 		if (ret != -EPROBE_DEFER)
+ 			dev_err(wcss->dev, "failed to get tcm cbcr clk\n");
+-		return PTR_ERR(wcss->tcm_slave_cbcr);
++		return ret;
+ 	}
+ 
+ 	wcss->qdsp6ss_abhm_cbcr = devm_clk_get(wcss->dev, "lcc_abhm_cbc");
+@@ -964,7 +964,7 @@ static int q6v5_wcss_init_clock(struct q6v5_wcss *wcss)
+ 		ret = PTR_ERR(wcss->qdsp6ss_abhm_cbcr);
+ 		if (ret != -EPROBE_DEFER)
+ 			dev_err(wcss->dev, "failed to get abhm cbcr clk\n");
+-		return PTR_ERR(wcss->qdsp6ss_abhm_cbcr);
++		return ret;
+ 	}
+ 
+ 	wcss->qdsp6ss_axim_cbcr = devm_clk_get(wcss->dev, "lcc_axim_cbc");
+@@ -972,7 +972,7 @@ static int q6v5_wcss_init_clock(struct q6v5_wcss *wcss)
+ 		ret = PTR_ERR(wcss->qdsp6ss_axim_cbcr);
+ 		if (ret != -EPROBE_DEFER)
+ 			dev_err(wcss->dev, "failed to get axim cbcr clk\n");
+-		return PTR_ERR(wcss->qdsp6ss_abhm_cbcr);
++		return ret;
+ 	}
+ 
+ 	wcss->lcc_bcr_sleep = devm_clk_get(wcss->dev, "lcc_bcr_sleep");
+@@ -980,7 +980,7 @@ static int q6v5_wcss_init_clock(struct q6v5_wcss *wcss)
+ 		ret = PTR_ERR(wcss->lcc_bcr_sleep);
+ 		if (ret != -EPROBE_DEFER)
+ 			dev_err(wcss->dev, "failed to get bcr cbcr clk\n");
+-		return PTR_ERR(wcss->lcc_bcr_sleep);
++		return ret;
+ 	}
+ 
+ 	return 0;
 -- 
-With Best Regards,
-Andy Shevchenko
-
+1.9.1
 
