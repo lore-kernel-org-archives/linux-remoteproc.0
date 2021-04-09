@@ -2,325 +2,154 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-17.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E197C433ED
-	for <linux-remoteproc@archiver.kernel.org>; Fri,  9 Apr 2021 06:23:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EEE5C43460
+	for <linux-remoteproc@archiver.kernel.org>; Fri,  9 Apr 2021 07:32:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EB0A561178
-	for <linux-remoteproc@archiver.kernel.org>; Fri,  9 Apr 2021 06:23:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4C6CC611AF
+	for <linux-remoteproc@archiver.kernel.org>; Fri,  9 Apr 2021 07:32:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233332AbhDIGXT (ORCPT
+        id S231566AbhDIHcN (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 9 Apr 2021 02:23:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33744 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229715AbhDIGXS (ORCPT <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 9 Apr 2021 02:23:18 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id B90B261057;
-        Fri,  9 Apr 2021 06:23:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-        s=korg; t=1617949385;
-        bh=mJ2iIVENJVBOnN2uXfAcyB/K8aKm5K5QHhvwNyApuAU=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=csPjYedzWhmuKBGMU155cpHTdZItXq65aNVGkrX9cDOfKgzfcWV1yVZ7+8tq01r+z
-         ODfCoIhkGumpTuUlBz+43/5MvpO/6M0D+77/eRG+VIJ27eTKjfLfS57BTaW5YITUdh
-         97swMkpU38QBpyu9C25OZZIPhXniOvfHNvdymBZE=
-Date:   Thu, 8 Apr 2021 23:23:03 -0700
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc:     Kees Cook <keescook@chromium.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Joerg Roedel <jroedel@suse.de>, Wei Liu <wei.liu@kernel.org>,
-        Michael Kelley <mikelley@microsoft.com>,
-        Mike Rapoport <rppt@kernel.org>,
-        Corey Minyard <cminyard@mvista.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        "Paul E. McKenney" <paulmck@kernel.org>,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
-        "open list:LINUX FOR POWERPC PA SEMI PWRFICIENT" 
-        <linuxppc-dev@lists.ozlabs.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux on Hyper-V List <linux-hyperv@vger.kernel.org>,
-        openipmi-developer@lists.sourceforge.net,
-        linux-remoteproc@vger.kernel.org,
-        Linux-Arch <linux-arch@vger.kernel.org>,
-        kexec@lists.infradead.org, rcu@vger.kernel.org,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        Corey Minyard <minyard@acm.org>,
-        Ohad Ben-Cohen <ohad@wizery.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Iurii Zaikin <yzaikin@google.com>
-Subject: Re: [PATCH v1 1/1] kernel.h: Split out panic and oops helpers
-Message-Id: <20210408232303.453749e0e6fb0adfa8545440@linux-foundation.org>
-In-Reply-To: <CAHp75Ve+11u=dtNTO8BCohOJHGWSMJtb1nGCOrNde7bXaD4ehA@mail.gmail.com>
-References: <20210406133158.73700-1-andriy.shevchenko@linux.intel.com>
-        <202104061143.E11D2D0@keescook>
-        <CAHp75Ve+11u=dtNTO8BCohOJHGWSMJtb1nGCOrNde7bXaD4ehA@mail.gmail.com>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Fri, 9 Apr 2021 03:32:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49102 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231686AbhDIHcM (ORCPT
+        <rfc822;linux-remoteproc@vger.kernel.org>);
+        Fri, 9 Apr 2021 03:32:12 -0400
+Received: from mail-pg1-x52b.google.com (mail-pg1-x52b.google.com [IPv6:2607:f8b0:4864:20::52b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 89175C061762
+        for <linux-remoteproc@vger.kernel.org>; Fri,  9 Apr 2021 00:31:58 -0700 (PDT)
+Received: by mail-pg1-x52b.google.com with SMTP id l76so3243997pga.6
+        for <linux-remoteproc@vger.kernel.org>; Fri, 09 Apr 2021 00:31:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=BF+Ynk25edmDGRQzllVeejrpjdoiXp/2zkQWTVrdN/I=;
+        b=g5TDCJpB6VHinqvDcni+7Djgn4WO1pCqA4mjyC4KtcE2/poU5PO98s871xwf0sdgFC
+         9sF/pL+L5BZlOuLm1KdnKdUHAgh8irK96w68V4c/hSK+/4SbjLfGFDmHzLJWBP2WTQPX
+         eek13SjDE84wxB1TZ+cApyigA4TNxI5SRVtkAfhrKbQy42p7I7A6yLWUDxWZNmdixlJ4
+         4feSMP/5ydPRwno+5OUPL1WXP3ty7Lgs/9FIhYIen7rRfcMwXUrhGJqtdqCe9SESWn8c
+         vmeoIckesF9dEwydL/pyrUP3yZBv7uJ9Uy7kEJKS4/YWQ6gvImwb8dTYG4krzQ5XNRqu
+         Mojw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=BF+Ynk25edmDGRQzllVeejrpjdoiXp/2zkQWTVrdN/I=;
+        b=G/tq/psT3o/d1GfzeHA+2JEAtbQfF3HnLCwBwr/aN0eJ8L7haainSk3/ECwuIPaewB
+         qVFKLY60pv7A8NQ+W8C93snLxCPO25gOEzMhH+MREDZ0n7DFYHekkau1DHHgrTphgYlP
+         /MloFqdMbRreOlJMUQJ+WlV/8mOkVzrIZRov58Ss656LsDb5dgZY2+OwaKZ6WtBf+Y8H
+         9MQTb2+5WIyHCbX0Z8dcu26zAMILqWwt94cKYtFt7BLkbdnfArZ99Y5plJu9lKU0d2RS
+         YwhvmbQ8EeJKpedg2xa58U0p7xMti4Js0NDBe7J7owvJshTawR3Sj12NUUsVQGgwhp/Q
+         GZGw==
+X-Gm-Message-State: AOAM531jLUVPRtbyL3VzEBZBfKthnYvc6ztEmgO3yserEOR809WOowjk
+        7gGwBV40gO+qUA+96FzhTCgt
+X-Google-Smtp-Source: ABdhPJzpSrEdAvXiTBAf4hBdLS6zlntm+U3O+7tXwn8kQBk+GYj5GAcg5B5h98Nx9AIZYqOx1wSNaw==
+X-Received: by 2002:a63:d242:: with SMTP id t2mr11789981pgi.431.1617953517730;
+        Fri, 09 Apr 2021 00:31:57 -0700 (PDT)
+Received: from work ([103.77.37.131])
+        by smtp.gmail.com with ESMTPSA id gk20sm1423565pjb.17.2021.04.09.00.31.54
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 09 Apr 2021 00:31:57 -0700 (PDT)
+Date:   Fri, 9 Apr 2021 13:01:53 +0530
+From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Deepak Kumar Singh <deesin@codeaurora.org>, clew@codeaurora.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org, Andy Gross <agross@kernel.org>
+Subject: Re: [PATCH V1 1/2] soc: qcom: aoss: Expose send for generic usecase
+Message-ID: <20210409073153.GE4376@work>
+References: <1617344238-12137-1-git-send-email-deesin@codeaurora.org>
+ <1617344238-12137-2-git-send-email-deesin@codeaurora.org>
+ <YGn0wBkOOILgaq5w@builder.lan>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YGn0wBkOOILgaq5w@builder.lan>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Wed, 7 Apr 2021 11:46:37 +0300 Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
-
-> On Wed, Apr 7, 2021 at 11:17 AM Kees Cook <keescook@chromium.org> wrote:
-> >
-> > On Tue, Apr 06, 2021 at 04:31:58PM +0300, Andy Shevchenko wrote:
-> > > kernel.h is being used as a dump for all kinds of stuff for a long time.
-> > > Here is the attempt to start cleaning it up by splitting out panic and
-> > > oops helpers.
-> > >
-> > > At the same time convert users in header and lib folder to use new header.
-> > > Though for time being include new header back to kernel.h to avoid twisted
-> > > indirected includes for existing users.
-> > >
-> > > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> >
-> > I like it! Do you have a multi-arch CI to do allmodconfig builds to
-> > double-check this?
+On Sun, Apr 04, 2021 at 12:17:52PM -0500, Bjorn Andersson wrote:
+> On Fri 02 Apr 01:17 CDT 2021, Deepak Kumar Singh wrote:
 > 
-> Unfortunately no, I rely on plenty of bots that are harvesting mailing lists.
+> > Not all upcoming usecases will have an interface to allow the aoss
+> > driver to hook onto. Expose the send api and create a get function to
+> > enable drivers to send their own messages to aoss.
+> > 
+> > Signed-off-by: Chris Lew <clew@codeaurora.org>
+> > Signed-off-by: Deepak Kumar Singh <deesin@codeaurora.org>
+> > ---
+> >  drivers/soc/qcom/qcom_aoss.c | 36 +++++++++++++++++++++++++++++++++++-
+> >  1 file changed, 35 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/soc/qcom/qcom_aoss.c b/drivers/soc/qcom/qcom_aoss.c
+> > index 53acb94..5c643f0 100644
+> > --- a/drivers/soc/qcom/qcom_aoss.c
+> > +++ b/drivers/soc/qcom/qcom_aoss.c
+> > @@ -8,10 +8,12 @@
+
+[...]
+
+> > +	pdev = of_find_device_by_node(np);
 > 
-> But I will appreciate it if somebody can run this through various build tests.
+> of_find_device_by_node() will increment the refcount of the underlying
+> struct device of pdev, so you need to platform_device_put() once you're
+> done with it.
+> 
+> As a side effect of not putting the struct device, the devm_kzalloc'ed
+> qmp pointer will remain valid. So care is needed to make sure that the
+> client doesn't end up with a dangling pointer if the qmp device is
+> removed.
+> 
+> My suggestion is that you add a "qmp_put()" function, which invokes
+> platform_device_put() and that you add some sort of tracking ("bool
+> orphan"?) to the struct qmp and make qmp_send() fail if this is set.
 > 
 
-um, did you try x86_64 allmodconfig?
+I think this is a duplication of what the struct device offers. Why
+can't we use the generic infrastructure for this usecase?
 
-I'm up to
-kernelh-split-out-panic-and-oops-helpers-fix-fix-fix-fix-fix-fix-fix.patch
-and counting.
+Like using device_initialize() in qmp_probe() along with a release
+callback for "struct device", then using get_device() in qmp_get().
+Then there should also be a qmp_put() API which calls put_device() to
+decrease the refcount.
 
-From: Andrew Morton <akpm@linux-foundation.org>
-Subject: kernelh-split-out-panic-and-oops-helpers-fix
+Ideally, the final refcount should be dropped in qmp_remove() and then
+the release callback will be called automatically to free "struct qmp".
 
-more files need panic_notifier.h
+> That way if someone unbinds the aoss device, the client will still have
+> a "valid" pointer, but won't be able to qmp_send() after qmp_close() has
+> been called in the aoss remove function.
+> 
 
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
----
+How can someone remove the qmp device if a client is holding its reference?
 
- arch/x86/xen/enlighten.c        |    1 +
- drivers/video/fbdev/hyperv_fb.c |    1 +
- 2 files changed, 2 insertions(+)
+Thanks,
+Mani
 
---- a/arch/x86/xen/enlighten.c~kernelh-split-out-panic-and-oops-helpers-fix
-+++ a/arch/x86/xen/enlighten.c
-@@ -6,6 +6,7 @@
- #include <linux/cpu.h>
- #include <linux/kexec.h>
- #include <linux/slab.h>
-+#include <linux/panic_notifier.h>
- 
- #include <xen/xen.h>
- #include <xen/features.h>
---- a/drivers/video/fbdev/hyperv_fb.c~kernelh-split-out-panic-and-oops-helpers-fix
-+++ a/drivers/video/fbdev/hyperv_fb.c
-@@ -52,6 +52,7 @@
- #include <linux/completion.h>
- #include <linux/fb.h>
- #include <linux/pci.h>
-+#include <linux/panic_notifier.h>
- #include <linux/efi.h>
- #include <linux/console.h>
- 
-_
-
-
-From: Andrew Morton <akpm@linux-foundation.org>
-Subject: kernelh-split-out-panic-and-oops-helpers-fix-fix
-
-arch/x86/purgatory/purgatory.c needs kernel.h
-
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
----
-
- arch/x86/purgatory/purgatory.c |    1 +
- 1 file changed, 1 insertion(+)
-
---- a/arch/x86/purgatory/purgatory.c~kernelh-split-out-panic-and-oops-helpers-fix-fix
-+++ a/arch/x86/purgatory/purgatory.c
-@@ -8,6 +8,7 @@
-  *       Vivek Goyal <vgoyal@redhat.com>
-  */
- 
-+#include <linux/kernel.h>
- #include <linux/bug.h>
- #include <crypto/sha2.h>
- #include <asm/purgatory.h>
-_
-
-From: Andrew Morton <akpm@linux-foundation.org>
-Subject: kernelh-split-out-panic-and-oops-helpers-fix-fix-fix
-
-drivers/clk/analogbits/wrpll-cln28hpc.c needs minmax.h, math.h and limits.h
-
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
----
-
- drivers/clk/analogbits/wrpll-cln28hpc.c |    4 ++++
- 1 file changed, 4 insertions(+)
-
---- a/drivers/clk/analogbits/wrpll-cln28hpc.c~kernelh-split-out-panic-and-oops-helpers-fix-fix-fix
-+++ a/drivers/clk/analogbits/wrpll-cln28hpc.c
-@@ -25,6 +25,10 @@
- #include <linux/err.h>
- #include <linux/log2.h>
- #include <linux/math64.h>
-+#include <linux/minmax.h>
-+#include <linux/math.h>
-+#include <linux/limits.h>
-+
- #include <linux/clk/analogbits-wrpll-cln28hpc.h>
- 
- /* MIN_INPUT_FREQ: minimum input clock frequency, in Hz (Fref_min) */
-_
-
-From: Andrew Morton <akpm@linux-foundation.org>
-Subject: kernelh-split-out-panic-and-oops-helpers-fix-fix-fix-fix
-
-drivers/misc/pvpanic/pvpanic.c needs panic_notifier.h
-
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
----
-
- drivers/misc/pvpanic/pvpanic.c |    1 +
- 1 file changed, 1 insertion(+)
-
---- a/drivers/misc/pvpanic/pvpanic.c~kernelh-split-out-panic-and-oops-helpers-fix-fix-fix-fix
-+++ a/drivers/misc/pvpanic/pvpanic.c
-@@ -13,6 +13,7 @@
- #include <linux/mod_devicetable.h>
- #include <linux/module.h>
- #include <linux/platform_device.h>
-+#include <linux/panic_notifier.h>
- #include <linux/types.h>
- #include <linux/cdev.h>
- #include <linux/list.h>
-_
-From: Andrew Morton <akpm@linux-foundation.org>
-Subject: kernelh-split-out-panic-and-oops-helpers-fix-fix-fix-fix-fix
-
-fix drivers/misc/pvpanic/pvpanic.c and drivers/net/ipa/ipa_smp2p.c
-
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
----
-
- drivers/net/ipa/ipa_smp2p.c |    1 +
- 1 file changed, 1 insertion(+)
-
---- a/drivers/net/ipa/ipa_smp2p.c~kernelh-split-out-panic-and-oops-helpers-fix-fix-fix-fix-fix
-+++ a/drivers/net/ipa/ipa_smp2p.c
-@@ -8,6 +8,7 @@
- #include <linux/device.h>
- #include <linux/interrupt.h>
- #include <linux/notifier.h>
-+#include <linux/panic_notifier.h>
- #include <linux/soc/qcom/smem.h>
- #include <linux/soc/qcom/smem_state.h>
- 
-_
-
-From: Andrew Morton <akpm@linux-foundation.org>
-Subject: kernelh-split-out-panic-and-oops-helpers-fix-fix-fix-fix-fix-fix
-
-fix drivers/power/reset/ltc2952-poweroff.c and drivers/misc/bcm-vk/bcm_vk_dev.c
-
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
----
-
- drivers/misc/bcm-vk/bcm_vk_dev.c       |    1 +
- drivers/power/reset/ltc2952-poweroff.c |    1 +
- 2 files changed, 2 insertions(+)
-
---- a/drivers/power/reset/ltc2952-poweroff.c~kernelh-split-out-panic-and-oops-helpers-fix-fix-fix-fix-fix-fix
-+++ a/drivers/power/reset/ltc2952-poweroff.c
-@@ -52,6 +52,7 @@
- #include <linux/slab.h>
- #include <linux/kmod.h>
- #include <linux/module.h>
-+#include <linux/panic_notifier.h>
- #include <linux/mod_devicetable.h>
- #include <linux/gpio/consumer.h>
- #include <linux/reboot.h>
---- a/drivers/misc/bcm-vk/bcm_vk_dev.c~kernelh-split-out-panic-and-oops-helpers-fix-fix-fix-fix-fix-fix
-+++ a/drivers/misc/bcm-vk/bcm_vk_dev.c
-@@ -9,6 +9,7 @@
- #include <linux/fs.h>
- #include <linux/idr.h>
- #include <linux/interrupt.h>
-+#include <linux/panic_notifier.h>
- #include <linux/kref.h>
- #include <linux/module.h>
- #include <linux/mutex.h>
-_
-
-From: Andrew Morton <akpm@linux-foundation.org>
-Subject: kernelh-split-out-panic-and-oops-helpers-fix-fix-fix-fix-fix-fix-fix
-
-fix drivers/leds/trigger/ledtrig-panic.c and drivers/firmware/google/gsmi.c
-
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
----
-
- drivers/firmware/google/gsmi.c       |    1 +
- drivers/leds/trigger/ledtrig-panic.c |    1 +
- 2 files changed, 2 insertions(+)
-
---- a/drivers/leds/trigger/ledtrig-panic.c~kernelh-split-out-panic-and-oops-helpers-fix-fix-fix-fix-fix-fix-fix
-+++ a/drivers/leds/trigger/ledtrig-panic.c
-@@ -8,6 +8,7 @@
- #include <linux/kernel.h>
- #include <linux/init.h>
- #include <linux/notifier.h>
-+#include <linux/panic_notifier.h>
- #include <linux/leds.h>
- #include "../leds.h"
- 
---- a/drivers/firmware/google/gsmi.c~kernelh-split-out-panic-and-oops-helpers-fix-fix-fix-fix-fix-fix-fix
-+++ a/drivers/firmware/google/gsmi.c
-@@ -19,6 +19,7 @@
- #include <linux/dma-mapping.h>
- #include <linux/fs.h>
- #include <linux/slab.h>
-+#include <linux/panic_notifier.h>
- #include <linux/ioctl.h>
- #include <linux/acpi.h>
- #include <linux/io.h>
-_
-
-
-and.... drivers/leds/trigger/ledtrig-heartbeat.c as well.
-
-I'll drop it.
+> Regards,
+> Bjorn
+> 
+> > +	if (!pdev)
+> > +		return ERR_PTR(-EINVAL);
+> > +
+> > +	qmp = platform_get_drvdata(pdev);
+> > +	return qmp ? qmp : ERR_PTR(-EPROBE_DEFER);
+> > +}
+> > +EXPORT_SYMBOL(qmp_get);
+> > +
+> >  static int qmp_probe(struct platform_device *pdev)
+> >  {
+> >  	struct resource *res;
+> > -- 
+> > The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+> > a Linux Foundation Collaborative Project
+> > 
