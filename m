@@ -2,224 +2,114 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-23.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B71AC43617
-	for <linux-remoteproc@archiver.kernel.org>; Fri,  9 Apr 2021 11:49:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA011C433B4
+	for <linux-remoteproc@archiver.kernel.org>; Fri,  9 Apr 2021 16:08:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1E3C661177
-	for <linux-remoteproc@archiver.kernel.org>; Fri,  9 Apr 2021 11:49:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B5CE36023C
+	for <linux-remoteproc@archiver.kernel.org>; Fri,  9 Apr 2021 16:08:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233841AbhDILtm (ORCPT
+        id S233527AbhDIQIN (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 9 Apr 2021 07:49:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50024 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232295AbhDILtj (ORCPT <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 9 Apr 2021 07:49:39 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 8D3AB6115B;
-        Fri,  9 Apr 2021 11:49:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1617968966;
-        bh=wSgw8vqxkTcKSyPgvD8ke8joz3MElmiOLTRjt10EyxQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=r257Sg1OggCxGJg5bCTag7NFuCUtM6bBbQPGssOeudpQTueqANF9k8caCST6j+GGs
-         mhq+777ZkQwKVhOaru41hweVqSWj04b/XsU8h7+ydnyEF2kONVWjrmWmJI81FX2inh
-         1I5q5flBzM6rB5dvZupRSAfvTfk2iRV4KJ8C1mZTY2vPCzbW73c/T7i/07hy3SI8DF
-         8mRhhs2yT0V+iCISJxvGjQqPD7ppY2j6k1JTxquPWqltBrBwD9Eqf+usc+F86rClEv
-         1sWx6Xv2N6pfdBPoJd3B8urT8gi+vY7QJWCh4h6thPfMXLecWCPm/VUEaLlVYX5ru+
-         /QWkr+ISokV9Q==
-Received: by earth.universe (Postfix, from userid 1000)
-        id 877D23C0C96; Fri,  9 Apr 2021 13:49:24 +0200 (CEST)
-Date:   Fri, 9 Apr 2021 13:49:24 +0200
-From:   Sebastian Reichel <sre@kernel.org>
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        Alexander Lobakin <alobakin@pm.me>,
-        Wei Liu <wei.liu@kernel.org>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Kees Cook <keescook@chromium.org>,
-        Mike Rapoport <rppt@kernel.org>,
-        Corey Minyard <cminyard@mvista.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        "Jason J. Herne" <jjherne@linux.ibm.com>,
-        Joerg Roedel <jroedel@suse.de>,
-        Michael Kelley <mikelley@microsoft.com>,
-        Joe Perches <joe@perches.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Scott Branden <scott.branden@broadcom.com>,
-        Olof Johansson <olof@lixom.net>,
-        Mihai Carabas <mihai.carabas@oracle.com>,
-        Wang Wenhu <wenhu.wang@vivo.com>,
-        Marek Czerski <ma.czerski@gmail.com>,
-        Hongbo Yao <yaohongbo@huawei.com>,
+        Fri, 9 Apr 2021 12:08:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50084 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229665AbhDIQIM (ORCPT
+        <rfc822;linux-remoteproc@vger.kernel.org>);
+        Fri, 9 Apr 2021 12:08:12 -0400
+Received: from mail-ot1-x333.google.com (mail-ot1-x333.google.com [IPv6:2607:f8b0:4864:20::333])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DF4ECC061761
+        for <linux-remoteproc@vger.kernel.org>; Fri,  9 Apr 2021 09:07:59 -0700 (PDT)
+Received: by mail-ot1-x333.google.com with SMTP id 65-20020a9d03470000b02902808b4aec6dso1436309otv.6
+        for <linux-remoteproc@vger.kernel.org>; Fri, 09 Apr 2021 09:07:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=8S+2fYEeMVwFqCwfJgeBBpDxfhhAdcH8iaoIoajPSJU=;
+        b=H8qwhyJWrXJPiSuHlG7cZHWEbypJ/9bfaLCdc8y9pS1WAkUMtmvNMDFlwLdUYFXc/z
+         qfTKaejISonfZiO0a/I/jWwmV8fLoI0kS5fawymabWz2OjleOP2jsVPFbThqjKQKx2af
+         Pt6+1fFMPsjWG4FDb9cAtvvEJrqguUVvrrYpCUulct12NOu6ckNBDgvYjLB6wIoVzMX0
+         PipHynlT9cyf1/hGmJmKiBsGCW3wqIDzZuWlh5YOMAhvmMO1s637DWisPPkKwwGms70A
+         3ORInnfVSv+Jr37CqhRMYTiwFAvm44A/6x6rdzgEtQhnwSTDkPTdMIbn93FZR9UhlA0B
+         dFcQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=8S+2fYEeMVwFqCwfJgeBBpDxfhhAdcH8iaoIoajPSJU=;
+        b=WHBx9T/iC115Q2cq26QpvWkYE7gGBcgSO8iXXrTtsGlPCuFGBiyyRI+WY3t4z4EAVA
+         ew4ZcRwyuNDQUbM0FpOwZAJhiE2/ASYXT1BgbEmVtV/OJ3aI8TaDA5x1YRsO+dRUkoJu
+         z/6ifRio3g1EayAYiArzD/dkTxO3RzCvopOlV7LeiRso5lmws7PLDO0A5k3v6leog8kW
+         NCujCQrz+0yFopGxtdvh57VEKz41Rb2PH696KKJ+9siZPpcSJfjgDKHPH4NvWvn+BZOV
+         kn9u7ZPRMgBVx8yaoOBO3ZyBD+Jcs7JOdfSaNgCmGAaaYldiskvpGmK1RHDNoIwwkYkQ
+         Pl+g==
+X-Gm-Message-State: AOAM530oJ5z/YUn8hh3t6Tltuj3b2bSuJjNM0lLsmpJy55ObFfO398gs
+        nyTkavWrFNUFiN7xd4A5/WgtEA==
+X-Google-Smtp-Source: ABdhPJzwv/4c9FWTOwYkpSuHqty/UHM9VsG6gL/I0CaJvHNGHTAgLMmQLbEXXCsWK8pdzGL++MnDWg==
+X-Received: by 2002:a9d:5a8d:: with SMTP id w13mr12842440oth.145.1617984479324;
+        Fri, 09 Apr 2021 09:07:59 -0700 (PDT)
+Received: from builder.lan (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
+        by smtp.gmail.com with ESMTPSA id 68sm670611otc.54.2021.04.09.09.07.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 09 Apr 2021 09:07:58 -0700 (PDT)
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Dimitar Dimitrov <dimitar@dinux.eu>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Vineeth Vijayan <vneethv@linux.ibm.com>,
-        Heiko Carstens <hca@linux.ibm.com>,
-        Peter Oberparleiter <oberpar@linux.ibm.com>,
-        Alexander Egorenkov <egorenar@linux.ibm.com>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        "Paul E. McKenney" <paulmck@kernel.org>,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
-        linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-mips@vger.kernel.org,
-        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-s390@vger.kernel.org, sparclinux@vger.kernel.org,
-        linux-um@lists.infradead.org, linux-hyperv@vger.kernel.org,
-        xen-devel@lists.xenproject.org, linux-xtensa@linux-xtensa.org,
-        openipmi-developer@lists.sourceforge.net,
-        linux-clk@vger.kernel.org, linux-edac@vger.kernel.org,
-        coresight@lists.linaro.org, linux-leds@vger.kernel.org,
-        bcm-kernel-feedback-list@broadcom.com, netdev@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        linux-staging@lists.linux.dev, dri-devel@lists.freedesktop.org,
-        linux-fbdev@vger.kernel.org, linux-arch@vger.kernel.org,
-        kexec@lists.infradead.org, rcu@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, Richard Henderson <rth@twiddle.net>,
-        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
-        Matt Turner <mattst88@gmail.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
-        Helge Deller <deller@gmx.de>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jeff Dike <jdike@addtoit.com>,
-        Richard Weinberger <richard@nod.at>,
-        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Juergen Gross <jgross@suse.com>,
-        Stefano Stabellini <sstabellini@kernel.org>,
-        Chris Zankel <chris@zankel.net>,
-        Max Filippov <jcmvbkbc@gmail.com>,
-        Corey Minyard <minyard@acm.org>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Dinh Nguyen <dinguyen@kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Tony Luck <tony.luck@intel.com>,
-        James Morse <james.morse@arm.com>,
-        Robert Richter <rric@kernel.org>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Mike Leach <mike.leach@linaro.org>,
-        Leo Yan <leo.yan@linaro.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Pavel Machek <pavel@ucw.cz>, Alex Elder <elder@kernel.org>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Ohad Ben-Cohen <ohad@wizery.com>,
-        Jens Frederich <jfrederich@gmail.com>,
-        Daniel Drake <dsd@laptop.org>,
-        Jon Nettleton <jon.nettleton@gmail.com>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        Mike Rapoport <rppt@linux.ibm.com>
-Subject: Re: [PATCH v2 1/1] kernel.h: Split out panic and oops helpers
-Message-ID: <20210409114924.6dpefx26px7aeuaj@earth.universe>
-References: <20210409100250.25922-1-andriy.shevchenko@linux.intel.com>
+        Suman Anna <s-anna@ti.com>
+Subject: [GIT PULL] remoteproc fixes for v5.12
+Date:   Fri,  9 Apr 2021 11:07:58 -0500
+Message-Id: <20210409160758.775271-1-bjorn.andersson@linaro.org>
+X-Mailer: git-send-email 2.31.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="c2qg5eip4k7clkwy"
-Content-Disposition: inline
-In-Reply-To: <20210409100250.25922-1-andriy.shevchenko@linux.intel.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
+The following changes since commit a38fd8748464831584a19438cbb3082b5a2dab15:
 
---c2qg5eip4k7clkwy
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+  Linux 5.12-rc2 (2021-03-05 17:33:41 -0800)
 
-Hi,
+are available in the Git repository at:
 
-On Fri, Apr 09, 2021 at 01:02:50PM +0300, Andy Shevchenko wrote:
-> kernel.h is being used as a dump for all kinds of stuff for a long time.
-> Here is the attempt to start cleaning it up by splitting out panic and
-> oops helpers.
->=20
-> There are several purposes of doing this:
-> - dropping dependency in bug.h
-> - dropping a loop by moving out panic_notifier.h
-> - unload kernel.h from something which has its own domain
->=20
-> At the same time convert users tree-wide to use new headers, although
-> for the time being include new header back to kernel.h to avoid twisted
-> indirected includes for existing users.
->=20
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> Acked-by: Mike Rapoport <rppt@linux.ibm.com>
-> Acked-by: Corey Minyard <cminyard@mvista.com>
-> Acked-by: Christian Brauner <christian.brauner@ubuntu.com>
-> Acked-by: Arnd Bergmann <arnd@arndb.de>
-> Acked-by: Kees Cook <keescook@chromium.org>
-> Acked-by: Wei Liu <wei.liu@kernel.org>
-> Acked-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-> Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-> ---
-> v2:
->  - fixed all errors with allmodconfig on x86_64 (Andrew)
->  - checked with allyesconfig on x86_64
->  - additionally grepped source code for panic notifier list usage
->    and converted all users
->  - elaborated commit message (Luis)
->  - collected given tags (incl. Andrew's SoB, see below)
->=20
-> I added Andrew's SoB since part of the fixes I took from him. Andrew,
-> feel free to amend or tell me how you want me to do.
->=20
-> [...]
->  drivers/power/reset/ltc2952-poweroff.c        |  1 +
-> [...]
+  https://git.kernel.org/pub/scm/linux/kernel/git/andersson/remoteproc.git tags/rproc-v5.12-fixes
 
-Acked-by: Sebastian Reichel <sre@kernel.org>
+for you to fetch changes up to 9afeefcf06fc7b4bdab06a6e2cb06745bded34dd:
 
--- Sebastian
+  remoteproc: pru: Fix firmware loading crashes on K3 SoCs (2021-03-17 14:15:07 -0500)
 
---c2qg5eip4k7clkwy
-Content-Type: application/pgp-signature; name="signature.asc"
+----------------------------------------------------------------
+remoteproc fixes for v5.12
 
------BEGIN PGP SIGNATURE-----
+This fixes an issue with firmware loading on the TI K3 PRU, fixes
+compatibility with GNU binutils for the same and resolves link error
+due to a 64-bit division in the Qualcomm PIL info.
 
-iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmBwPzkACgkQ2O7X88g7
-+poVqw//cO5+glgFxA2CU4t3EHFTzSR2pExNCOensIzn/2YcvKlq6RBiaVlO87al
-zfq//z42WEWWRFkl4NeyjJx6ueQGo5Hk7qQiPRQhgt55UiQsizdAFXK4u97lVQ68
-7V2xDT3MlQ/vc+LG3vZBcSGMIoupHDqbYU2kF8xlBhdwuF1lr44NDxRTRsVErgor
-hlvEGYmwSTIg8aEkLt6Da/elDscG08MDU+vv6KLaSiruCN+RtgZGin9gv3Xu+KUi
-PhPU9ZOAfi6duIQdKmdXiAZ8Vlp/43yzeo80t/XUyiEy7Yq+qtsP6YXHlSWlPJnV
-Zz3ifkmNn7YFWd+iOeTe3oTfVIAtg4w/uX184urC+t242MBSeqEkHt7/1TJR2UAx
-8s9NtSaCLUPuFLPO9s8t6nP4kQ4HN3BoxMvgessqguLZtSg3n1Z4+ZE8veoYHQD3
-Vwz58nFLYkMxRB/pFq6dkXv6uPXTbreYkWuUFsDIao2+FVDkMp81DqE86K2li2d6
-/B6jSmObDmG/aryJn+hoHhCEJSfLnaszENAc0toFvCGYU9D5Com1A74gdztMgOvf
-CB4G04azFTgeTjX5JB6r7KXrcZ08bzspk/lo5H9fx+SLki6gFb88zNqBOLcnMM0d
-FZFNMmZ543wUtAsJSxqObtKeAcjitPcaURrh6sWiRuJkndGtmNY=
-=QA06
------END PGP SIGNATURE-----
+It also recognizes Mathieu Poirier as co-maintainer of the remoteproc
+and rpmsg subsystems.
 
---c2qg5eip4k7clkwy--
+----------------------------------------------------------------
+Arnd Bergmann (1):
+      remoteproc: qcom: pil_info: avoid 64-bit division
+
+Dimitar Dimitrov (1):
+      remoteproc: pru: Fix loading of GNU Binutils ELF
+
+Mathieu Poirier (1):
+      MAINTAINERS: Add co-maintainer for remoteproc/RPMSG subsystems
+
+Suman Anna (1):
+      remoteproc: pru: Fix firmware loading crashes on K3 SoCs
+
+ MAINTAINERS                        |  2 ++
+ drivers/remoteproc/pru_rproc.c     | 20 +++++++++++++++++++-
+ drivers/remoteproc/qcom_pil_info.c |  2 +-
+ 3 files changed, 22 insertions(+), 2 deletions(-)
