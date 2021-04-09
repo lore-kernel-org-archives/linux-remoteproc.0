@@ -2,188 +2,614 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC2F5C43617
-	for <linux-remoteproc@archiver.kernel.org>; Fri,  9 Apr 2021 16:59:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C48E8C433ED
+	for <linux-remoteproc@archiver.kernel.org>; Fri,  9 Apr 2021 17:36:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 95797610CA
-	for <linux-remoteproc@archiver.kernel.org>; Fri,  9 Apr 2021 16:59:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9D6F86101B
+	for <linux-remoteproc@archiver.kernel.org>; Fri,  9 Apr 2021 17:36:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234142AbhDIQ7h (ORCPT
+        id S234311AbhDIRhE (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 9 Apr 2021 12:59:37 -0400
-Received: from mail-pl1-f172.google.com ([209.85.214.172]:33766 "EHLO
-        mail-pl1-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233038AbhDIQ7e (ORCPT
+        Fri, 9 Apr 2021 13:37:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41356 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234169AbhDIRhD (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 9 Apr 2021 12:59:34 -0400
-Received: by mail-pl1-f172.google.com with SMTP id p10so3070587pld.0;
-        Fri, 09 Apr 2021 09:59:20 -0700 (PDT)
+        Fri, 9 Apr 2021 13:37:03 -0400
+Received: from mail-pj1-x1030.google.com (mail-pj1-x1030.google.com [IPv6:2607:f8b0:4864:20::1030])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 63FF6C061763
+        for <linux-remoteproc@vger.kernel.org>; Fri,  9 Apr 2021 10:36:49 -0700 (PDT)
+Received: by mail-pj1-x1030.google.com with SMTP id ep1-20020a17090ae641b029014d48811e37so3544006pjb.4
+        for <linux-remoteproc@vger.kernel.org>; Fri, 09 Apr 2021 10:36:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=mJaagzwmcPBEqhRDdpSKhyBO2gPryJhAKnh/lrCyZxs=;
+        b=oTY2mTtLdLMpPirGdjcfRUbrfGUFUrbhcql99bh3xgY/vOztynS6H0LvmdPvVNZ1Si
+         69cMQKvFoiWRxGroCpClnx/aRaUdUJGwusmQiwubVHx9sp6h4iBh1G9/+Nmf47BxiZbu
+         08i5xIpZKsjQMwpGt9Uhoc3nD2PtAtdc1Fu9QwAw52zLm5qJ1Sw5c5UxNeAt+yiJlvsw
+         ZUW2cJB6/rcWIwwd5Ci+DG5OUmKtHEwwU5sMpS1O1LeeSOnOiwllYehXkB1lmPaQRVxK
+         QzNU/7xFX81uz2RwIjqURHodMWs8IuhuSqQdn3I1OHM51vRQqVzqglhlysPqIoBGg+Z1
+         /kNg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=+9xha/pXNeFBGiuagKWknyCqPbUKuPA8GXpvrC9Jx0I=;
-        b=BxoSKw8xD3QUltwN7gsMzZ89xAodvTc81Ucn20t1I1o7Y+bOpFUbxjg4eKdu6F+2Nn
-         2fWjNzGRaRW+I+Ptq6VbQMGZBPxK8efxYaqZI5y+5VLBDxM84vy/eKNmYobLUyvgNVxg
-         MCOUPGybbTtvFRWiuo6R670DigT1q6XlgQmiMDXLv+TILPESw2gvcCaRm9KjT1ppqT8a
-         3/MktU3k7KoE+qiNJj6eCwHrwqx7b2shYmdwO/Nk9bGuKnMrmX5MMMYt26SQKc1sSbZ1
-         RKmLamiYfdrJpNh5JD7/g0dsy8gJ3fXYzRCnBM+MZxx6yAv9AWxVJH/scmFmICdf4Stv
-         966w==
-X-Gm-Message-State: AOAM5305g4CkeQT1F9gmV4rNZwwr8Vv4+4S20W54eUB70KSj82WxNzYp
-        iVhFaYawaj9NArMskz9q66EB0t3i3nvsYCbl
-X-Google-Smtp-Source: ABdhPJyt31k6gfvx2YDw8pTeEF+IvcLsHKSfe6iHcUQ8SO6kPgNHHt27ciTzVzsJlbESXuH5ZVRF6Q==
-X-Received: by 2002:a17:90a:6b08:: with SMTP id v8mr14057598pjj.131.1617987559528;
-        Fri, 09 Apr 2021 09:59:19 -0700 (PDT)
-Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
-        by smtp.gmail.com with ESMTPSA id z23sm2795483pjh.45.2021.04.09.09.59.17
+        bh=mJaagzwmcPBEqhRDdpSKhyBO2gPryJhAKnh/lrCyZxs=;
+        b=o3l3aUzwMIlqrZo+t6OsANC3mVBU5pj11/9b3dGJSZECbqYT9+EPWyyWgBwjroXmWH
+         tTzaI9QoOSaT4rIURAxxj6vsmNX9Y/F019GXEEF/z9ya3jxblrk6l1BZxM68YqcTm7r5
+         7JEM93/Xk5iOfsAiC5KDFLeC6vTVRaUNoGXyNOf4zF4TAOL0/vk/8U32zLUKXf1RAyYa
+         fBXys6+JpkbDTPJPruXSUvsdFDOSMcDWSZoHqXg/Nk6o+AUc5yLXCNpIJ2lmF2yYyTRj
+         OoMbY1lzSnOWU5ot4yMca92/g+LbiVFsdGQPC9FHz+h/xyvYNK9nOzFL42MoL72AKQVV
+         BNQA==
+X-Gm-Message-State: AOAM533dMw7EZrMGVZRfE6TGDjgiI22RtG1lI6eSVqlrs2UoQ58UkKaZ
+        G2HwWo3qoBgOnoY7Qqln3vnNcw==
+X-Google-Smtp-Source: ABdhPJwBPaZ8iD2lW0roe1xGd9Srni2ldWafkaOXXwSKYry/1Wue2o1pffghu7WP3sLSvaWPPqTZ5A==
+X-Received: by 2002:a17:902:720b:b029:e9:abcc:e60a with SMTP id ba11-20020a170902720bb02900e9abcce60amr4625255plb.20.1617989808648;
+        Fri, 09 Apr 2021 10:36:48 -0700 (PDT)
+Received: from xps15 (S0106889e681aac74.cg.shawcable.net. [68.147.0.187])
+        by smtp.gmail.com with ESMTPSA id y2sm3091156pgp.2.2021.04.09.10.36.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 09 Apr 2021 09:59:18 -0700 (PDT)
-Received: by 42.do-not-panic.com (Postfix, from userid 1000)
-        id 6D85340256; Fri,  9 Apr 2021 16:59:17 +0000 (UTC)
-Date:   Fri, 9 Apr 2021 16:59:17 +0000
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        Alexander Lobakin <alobakin@pm.me>,
-        Wei Liu <wei.liu@kernel.org>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Kees Cook <keescook@chromium.org>,
-        Mike Rapoport <rppt@kernel.org>,
-        Corey Minyard <cminyard@mvista.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        "Jason J. Herne" <jjherne@linux.ibm.com>,
-        Joerg Roedel <jroedel@suse.de>,
-        Michael Kelley <mikelley@microsoft.com>,
-        Joe Perches <joe@perches.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Scott Branden <scott.branden@broadcom.com>,
-        Olof Johansson <olof@lixom.net>,
-        Mihai Carabas <mihai.carabas@oracle.com>,
-        Wang Wenhu <wenhu.wang@vivo.com>,
-        Marek Czerski <ma.czerski@gmail.com>,
-        Hongbo Yao <yaohongbo@huawei.com>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Vineeth Vijayan <vneethv@linux.ibm.com>,
-        Heiko Carstens <hca@linux.ibm.com>,
-        Peter Oberparleiter <oberpar@linux.ibm.com>,
-        Alexander Egorenkov <egorenar@linux.ibm.com>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        "Paul E. McKenney" <paulmck@kernel.org>,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
-        linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-mips@vger.kernel.org,
-        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-s390@vger.kernel.org, sparclinux@vger.kernel.org,
-        linux-um@lists.infradead.org, linux-hyperv@vger.kernel.org,
-        xen-devel@lists.xenproject.org, linux-xtensa@linux-xtensa.org,
-        openipmi-developer@lists.sourceforge.net,
-        linux-clk@vger.kernel.org, linux-edac@vger.kernel.org,
-        coresight@lists.linaro.org, linux-leds@vger.kernel.org,
-        bcm-kernel-feedback-list@broadcom.com, netdev@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        linux-staging@lists.linux.dev, dri-devel@lists.freedesktop.org,
-        linux-fbdev@vger.kernel.org, linux-arch@vger.kernel.org,
-        kexec@lists.infradead.org, rcu@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, Richard Henderson <rth@twiddle.net>,
-        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
-        Matt Turner <mattst88@gmail.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
-        Helge Deller <deller@gmx.de>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jeff Dike <jdike@addtoit.com>,
-        Richard Weinberger <richard@nod.at>,
-        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Juergen Gross <jgross@suse.com>,
-        Stefano Stabellini <sstabellini@kernel.org>,
-        Chris Zankel <chris@zankel.net>,
-        Max Filippov <jcmvbkbc@gmail.com>,
-        Corey Minyard <minyard@acm.org>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Dinh Nguyen <dinguyen@kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Tony Luck <tony.luck@intel.com>,
-        James Morse <james.morse@arm.com>,
-        Robert Richter <rric@kernel.org>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Mike Leach <mike.leach@linaro.org>,
-        Leo Yan <leo.yan@linaro.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Pavel Machek <pavel@ucw.cz>, Alex Elder <elder@kernel.org>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Sebastian Reichel <sre@kernel.org>,
+        Fri, 09 Apr 2021 10:36:48 -0700 (PDT)
+Date:   Fri, 9 Apr 2021 11:36:46 -0600
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+To:     Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
         Ohad Ben-Cohen <ohad@wizery.com>,
-        Jens Frederich <jfrederich@gmail.com>,
-        Daniel Drake <dsd@laptop.org>,
-        Jon Nettleton <jon.nettleton@gmail.com>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        Mike Rapoport <rppt@linux.ibm.com>
-Subject: Re: [PATCH v2 1/1] kernel.h: Split out panic and oops helpers
-Message-ID: <20210409165917.GH4332@42.do-not-panic.com>
-References: <20210409100250.25922-1-andriy.shevchenko@linux.intel.com>
+        Andy Gross <agross@kernel.org>,
+        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH 2/7] rpmsg: Move the rpmsg control device from rpmsg_char
+ to rpmsg_ctrl
+Message-ID: <20210409173646.GA489094@xps15>
+References: <20210323122737.23035-1-arnaud.pouliquen@foss.st.com>
+ <20210323122737.23035-3-arnaud.pouliquen@foss.st.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210409100250.25922-1-andriy.shevchenko@linux.intel.com>
+In-Reply-To: <20210323122737.23035-3-arnaud.pouliquen@foss.st.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Fri, Apr 09, 2021 at 01:02:50PM +0300, Andy Shevchenko wrote:
-> kernel.h is being used as a dump for all kinds of stuff for a long time.
-> Here is the attempt to start cleaning it up by splitting out panic and
-> oops helpers.
+On Tue, Mar 23, 2021 at 01:27:32PM +0100, Arnaud Pouliquen wrote:
+> Create the rpmsg_ctrl.c module and move the code related to the
+> rpmsg_ctrldev device in this new module.
 > 
-> There are several purposes of doing this:
-> - dropping dependency in bug.h
-> - dropping a loop by moving out panic_notifier.h
-> - unload kernel.h from something which has its own domain
+> Add the dependency between rpmsg_char and rpmsg_ctrl in the
+> kconfig file.
 > 
-> At the same time convert users tree-wide to use new headers, although
-> for the time being include new header back to kernel.h to avoid twisted
-> indirected includes for existing users.
-> 
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> Acked-by: Mike Rapoport <rppt@linux.ibm.com>
-> Acked-by: Corey Minyard <cminyard@mvista.com>
-> Acked-by: Christian Brauner <christian.brauner@ubuntu.com>
-> Acked-by: Arnd Bergmann <arnd@arndb.de>
-> Acked-by: Kees Cook <keescook@chromium.org>
-> Acked-by: Wei Liu <wei.liu@kernel.org>
-> Acked-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-> Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+> ---
+> update from [1]:
+> - keep rpmsg_ctrldev prefix (no more functions and structures renaming),
+>
 
-Acked-by: Luis Chamberlain <mcgrof@kernel.org>
+That is much better
+ 
+> [1]: https://patchwork.kernel.org/project/linux-remoteproc/patch/20210219111501.14261-7-arnaud.pouliquen@foss.st.com/
+> ---
+>  drivers/rpmsg/Kconfig      |   9 ++
+>  drivers/rpmsg/Makefile     |   1 +
+>  drivers/rpmsg/rpmsg_char.c | 177 +---------------------------
+>  drivers/rpmsg/rpmsg_ctrl.c | 233 +++++++++++++++++++++++++++++++++++++
+>  4 files changed, 244 insertions(+), 176 deletions(-)
+>  create mode 100644 drivers/rpmsg/rpmsg_ctrl.c
+> 
+> diff --git a/drivers/rpmsg/Kconfig b/drivers/rpmsg/Kconfig
+> index 0b4407abdf13..d822ec9ec692 100644
+> --- a/drivers/rpmsg/Kconfig
+> +++ b/drivers/rpmsg/Kconfig
+> @@ -10,11 +10,20 @@ config RPMSG_CHAR
+>  	tristate "RPMSG device interface"
+>  	depends on RPMSG
+>  	depends on NET
+> +	select RPMSG_CTRL
+>  	help
+>  	  Say Y here to export rpmsg endpoints as device files, usually found
+>  	  in /dev. They make it possible for user-space programs to send and
+>  	  receive rpmsg packets.
+>  
+> +config RPMSG_CTRL
+> +	tristate "RPMSG control interface"
+> +	depends on RPMSG
+> +	help
+> +	  Say Y here to enable the support of the /dev/rpmsg_ctrlX API. This API
+> +	  allows user-space programs to create endpoints with specific service name,
+> +	  source and destination addresses.
+> +
+>  config RPMSG_NS
+>  	tristate "RPMSG name service announcement"
+>  	depends on RPMSG
+> diff --git a/drivers/rpmsg/Makefile b/drivers/rpmsg/Makefile
+> index 8d452656f0ee..58e3b382e316 100644
+> --- a/drivers/rpmsg/Makefile
+> +++ b/drivers/rpmsg/Makefile
+> @@ -1,6 +1,7 @@
+>  # SPDX-License-Identifier: GPL-2.0
+>  obj-$(CONFIG_RPMSG)		+= rpmsg_core.o
+>  obj-$(CONFIG_RPMSG_CHAR)	+= rpmsg_char.o
+> +obj-$(CONFIG_RPMSG_CTRL)	+= rpmsg_ctrl.o
+>  obj-$(CONFIG_RPMSG_NS)		+= rpmsg_ns.o
+>  obj-$(CONFIG_RPMSG_MTK_SCP)	+= mtk_rpmsg.o
+>  qcom_glink-objs			:= qcom_glink_native.o qcom_glink_ssr.o
+> diff --git a/drivers/rpmsg/rpmsg_char.c b/drivers/rpmsg/rpmsg_char.c
+> index b9df8dc4365f..5d4a768002ce 100644
+> --- a/drivers/rpmsg/rpmsg_char.c
+> +++ b/drivers/rpmsg/rpmsg_char.c
+> @@ -29,30 +29,13 @@
+>  #define RPMSG_DEV_MAX	(MINORMASK + 1)
+>
 
-  Luis
+That define is also present in rpmsg_ctrl.c.  As such I would move it to
+rpmsg_char.h.
+  
+>  static dev_t rpmsg_major;
+> -static struct class *rpmsg_class;
+>  
+> -static DEFINE_IDA(rpmsg_ctrl_ida);
+>  static DEFINE_IDA(rpmsg_ept_ida);
+>  static DEFINE_IDA(rpmsg_minor_ida);
+>  
+>  #define dev_to_eptdev(dev) container_of(dev, struct rpmsg_eptdev, dev)
+>  #define cdev_to_eptdev(i_cdev) container_of(i_cdev, struct rpmsg_eptdev, cdev)
+>  
+> -#define dev_to_ctrldev(dev) container_of(dev, struct rpmsg_ctrldev, dev)
+> -#define cdev_to_ctrldev(i_cdev) container_of(i_cdev, struct rpmsg_ctrldev, cdev)
+> -
+> -/**
+> - * struct rpmsg_ctrldev - control device for instantiating endpoint devices
+> - * @rpdev:	underlaying rpmsg device
+> - * @cdev:	cdev for the ctrl device
+> - * @dev:	device for the ctrl device
+> - */
+> -struct rpmsg_ctrldev {
+> -	struct rpmsg_device *rpdev;
+> -	struct cdev cdev;
+> -	struct device dev;
+> -};
+> -
+>  /**
+>   * struct rpmsg_eptdev - endpoint device context
+>   * @dev:	endpoint device
+> @@ -409,169 +392,13 @@ int rpmsg_chrdev_create_eptdev(struct rpmsg_device *rpdev, struct device *parent
+>  }
+>  EXPORT_SYMBOL(rpmsg_chrdev_create_eptdev);
+>  
+> -static int rpmsg_ctrldev_open(struct inode *inode, struct file *filp)
+> -{
+> -	struct rpmsg_ctrldev *ctrldev = cdev_to_ctrldev(inode->i_cdev);
+> -
+> -	get_device(&ctrldev->dev);
+> -	filp->private_data = ctrldev;
+> -
+> -	return 0;
+> -}
+> -
+> -static int rpmsg_ctrldev_release(struct inode *inode, struct file *filp)
+> -{
+> -	struct rpmsg_ctrldev *ctrldev = cdev_to_ctrldev(inode->i_cdev);
+> -
+> -	put_device(&ctrldev->dev);
+> -
+> -	return 0;
+> -}
+> -
+> -static long rpmsg_ctrldev_ioctl(struct file *fp, unsigned int cmd,
+> -				unsigned long arg)
+> -{
+> -	struct rpmsg_ctrldev *ctrldev = fp->private_data;
+> -	void __user *argp = (void __user *)arg;
+> -	struct rpmsg_endpoint_info eptinfo;
+> -	struct rpmsg_channel_info chinfo;
+> -
+> -	if (cmd != RPMSG_CREATE_EPT_IOCTL)
+> -		return -EINVAL;
+> -
+> -	if (copy_from_user(&eptinfo, argp, sizeof(eptinfo)))
+> -		return -EFAULT;
+> -
+> -	memcpy(chinfo.name, eptinfo.name, RPMSG_NAME_SIZE);
+> -	chinfo.name[RPMSG_NAME_SIZE-1] = '\0';
+> -	chinfo.src = eptinfo.src;
+> -	chinfo.dst = eptinfo.dst;
+> -
+> -	return rpmsg_chrdev_create_eptdev(ctrldev->rpdev, &ctrldev->dev, chinfo, rpmsg_class);
+> -};
+> -
+> -static const struct file_operations rpmsg_ctrldev_fops = {
+> -	.owner = THIS_MODULE,
+> -	.open = rpmsg_ctrldev_open,
+> -	.release = rpmsg_ctrldev_release,
+> -	.unlocked_ioctl = rpmsg_ctrldev_ioctl,
+> -	.compat_ioctl = compat_ptr_ioctl,
+> -};
+> -
+> -static void rpmsg_ctrldev_release_device(struct device *dev)
+> -{
+> -	struct rpmsg_ctrldev *ctrldev = dev_to_ctrldev(dev);
+> -
+> -	ida_simple_remove(&rpmsg_ctrl_ida, dev->id);
+> -	ida_simple_remove(&rpmsg_minor_ida, MINOR(dev->devt));
+> -	cdev_del(&ctrldev->cdev);
+> -	kfree(ctrldev);
+> -}
+> -
+> -static int rpmsg_chrdev_probe(struct rpmsg_device *rpdev)
+> -{
+> -	struct rpmsg_ctrldev *ctrldev;
+> -	struct device *dev;
+> -	int ret;
+> -
+> -	ctrldev = kzalloc(sizeof(*ctrldev), GFP_KERNEL);
+> -	if (!ctrldev)
+> -		return -ENOMEM;
+> -
+> -	ctrldev->rpdev = rpdev;
+> -
+> -	dev = &ctrldev->dev;
+> -	device_initialize(dev);
+> -	dev->parent = &rpdev->dev;
+> -	dev->class = rpmsg_class;
+> -
+> -	cdev_init(&ctrldev->cdev, &rpmsg_ctrldev_fops);
+> -	ctrldev->cdev.owner = THIS_MODULE;
+> -
+> -	ret = ida_simple_get(&rpmsg_minor_ida, 0, RPMSG_DEV_MAX, GFP_KERNEL);
+> -	if (ret < 0)
+> -		goto free_ctrldev;
+> -	dev->devt = MKDEV(MAJOR(rpmsg_major), ret);
+> -
+> -	ret = ida_simple_get(&rpmsg_ctrl_ida, 0, 0, GFP_KERNEL);
+> -	if (ret < 0)
+> -		goto free_minor_ida;
+> -	dev->id = ret;
+> -	dev_set_name(&ctrldev->dev, "rpmsg_ctrl%d", ret);
+> -
+> -	ret = cdev_add(&ctrldev->cdev, dev->devt, 1);
+> -	if (ret)
+> -		goto free_ctrl_ida;
+> -
+> -	/* We can now rely on the release function for cleanup */
+> -	dev->release = rpmsg_ctrldev_release_device;
+> -
+> -	ret = device_add(dev);
+> -	if (ret) {
+> -		dev_err(&rpdev->dev, "device_add failed: %d\n", ret);
+> -		put_device(dev);
+> -	}
+> -
+> -	dev_set_drvdata(&rpdev->dev, ctrldev);
+> -
+> -	return ret;
+> -
+> -free_ctrl_ida:
+> -	ida_simple_remove(&rpmsg_ctrl_ida, dev->id);
+> -free_minor_ida:
+> -	ida_simple_remove(&rpmsg_minor_ida, MINOR(dev->devt));
+> -free_ctrldev:
+> -	put_device(dev);
+> -	kfree(ctrldev);
+> -
+> -	return ret;
+> -}
+> -
+> -static void rpmsg_chrdev_remove(struct rpmsg_device *rpdev)
+> -{
+> -	struct rpmsg_ctrldev *ctrldev = dev_get_drvdata(&rpdev->dev);
+> -	int ret;
+> -
+> -	/* Destroy all endpoints */
+> -	ret = device_for_each_child(&ctrldev->dev, NULL, rpmsg_chrdev_destroy_eptdev);
+> -	if (ret)
+> -		dev_warn(&rpdev->dev, "failed to nuke endpoints: %d\n", ret);
+> -
+> -	device_del(&ctrldev->dev);
+> -	put_device(&ctrldev->dev);
+> -}
+> -
+> -static struct rpmsg_driver rpmsg_chrdev_driver = {
+> -	.probe = rpmsg_chrdev_probe,
+> -	.remove = rpmsg_chrdev_remove,
+> -	.drv = {
+> -		.name = "rpmsg_chrdev",
+> -	},
+> -};
+> -
+>  static int rpmsg_chrdev_init(void)
+>  {
+>  	int ret;
+>  
+>  	ret = alloc_chrdev_region(&rpmsg_major, 0, RPMSG_DEV_MAX, "rpmsg");
+
+To avoid any confusion I would put "rpmsg_char"... And I don't think it changes
+anything for users.
+
+> -	if (ret < 0) {
+> +	if (ret < 0)
+>  		pr_err("rpmsg: failed to allocate char dev region\n");
+> -		return ret;
+> -	}
+> -
+> -	rpmsg_class = class_create(THIS_MODULE, "rpmsg");
+> -	if (IS_ERR(rpmsg_class)) {
+> -		pr_err("failed to create rpmsg class\n");
+> -		unregister_chrdev_region(rpmsg_major, RPMSG_DEV_MAX);
+> -		return PTR_ERR(rpmsg_class);
+> -	}
+> -
+> -	ret = register_rpmsg_driver(&rpmsg_chrdev_driver);
+> -	if (ret < 0) {
+> -		pr_err("rpmsgchr: failed to register rpmsg driver\n");
+> -		class_destroy(rpmsg_class);
+> -		unregister_chrdev_region(rpmsg_major, RPMSG_DEV_MAX);
+> -	}
+>  
+>  	return ret;
+>  }
+> @@ -579,8 +406,6 @@ postcore_initcall(rpmsg_chrdev_init);
+>  
+>  static void rpmsg_chrdev_exit(void)
+>  {
+> -	unregister_rpmsg_driver(&rpmsg_chrdev_driver);
+> -	class_destroy(rpmsg_class);
+>  	unregister_chrdev_region(rpmsg_major, RPMSG_DEV_MAX);
+>  }
+>  module_exit(rpmsg_chrdev_exit);
+> diff --git a/drivers/rpmsg/rpmsg_ctrl.c b/drivers/rpmsg/rpmsg_ctrl.c
+> new file mode 100644
+> index 000000000000..e203ecc18120
+> --- /dev/null
+> +++ b/drivers/rpmsg/rpmsg_ctrl.c
+> @@ -0,0 +1,233 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (C) 2021, STMicroelectronics
+> + * Copyright (c) 2016, Linaro Ltd.
+> + * Copyright (c) 2012, Michal Simek <monstr@monstr.eu>
+> + * Copyright (c) 2012, PetaLogix
+> + * Copyright (c) 2011, Texas Instruments, Inc.
+> + * Copyright (c) 2011, Google, Inc.
+> + *
+> + * Based on rpmsg performance statistics driver by Michal Simek, which in turn
+> + * was based on TI & Google OMX rpmsg driver.
+> + */
+> +#include <linux/cdev.h>
+> +#include <linux/device.h>
+> +#include <linux/fs.h>
+> +#include <linux/idr.h>
+> +#include <linux/kernel.h>
+> +#include <linux/module.h>
+> +#include <linux/rpmsg.h>
+> +#include <linux/slab.h>
+> +#include <uapi/linux/rpmsg.h>
+> +
+> +#include "rpmsg_char.h"
+> +#include "rpmsg_internal.h"
+> +
+> +#define RPMSG_DEV_MAX	(MINORMASK + 1)
+> +
+> +static dev_t rpmsg_major;
+> +struct class *rpmsg_class;
+> +
+> +static DEFINE_IDA(rpmsg_ctrl_ida);
+> +static DEFINE_IDA(rpmsg_minor_ida);
+> +
+> +#define dev_to_ctrldev(dev) container_of(dev, struct rpmsg_ctrldev, dev)
+> +#define cdev_to_ctrldev(i_cdev) container_of(i_cdev, struct rpmsg_ctrldev, cdev)
+> +
+> +/**
+> + * struct rpmsg_ctrldev - control device for instantiating endpoint devices
+> + * @rpdev:	underlaying rpmsg device
+> + * @cdev:	cdev for the ctrl device
+> + * @dev:	device for the ctrl device
+> + */
+> +struct rpmsg_ctrldev {
+> +	struct rpmsg_device *rpdev;
+> +	struct cdev cdev;
+> +	struct device dev;
+> +};
+> +
+> +static int rpmsg_ctrldev_open(struct inode *inode, struct file *filp)
+> +{
+> +	struct rpmsg_ctrldev *ctrldev = cdev_to_ctrldev(inode->i_cdev);
+> +
+> +	get_device(&ctrldev->dev);
+> +	filp->private_data = ctrldev;
+> +
+> +	return 0;
+> +}
+> +
+> +static int rpmsg_ctrldev_release(struct inode *inode, struct file *filp)
+> +{
+> +	struct rpmsg_ctrldev *ctrldev = cdev_to_ctrldev(inode->i_cdev);
+> +
+> +	put_device(&ctrldev->dev);
+> +
+> +	return 0;
+> +}
+> +
+> +static long rpmsg_ctrldev_ioctl(struct file *fp, unsigned int cmd,
+> +				unsigned long arg)
+> +{
+> +	struct rpmsg_ctrldev *ctrldev = fp->private_data;
+> +	void __user *argp = (void __user *)arg;
+> +	struct rpmsg_endpoint_info eptinfo;
+> +	struct rpmsg_channel_info chinfo;
+> +
+> +	if (cmd != RPMSG_CREATE_EPT_IOCTL)
+> +		return -EINVAL;
+> +
+> +	if (copy_from_user(&eptinfo, argp, sizeof(eptinfo)))
+> +		return -EFAULT;
+> +
+> +	memcpy(chinfo.name, eptinfo.name, RPMSG_NAME_SIZE);
+> +	chinfo.name[RPMSG_NAME_SIZE - 1] = '\0';
+> +	chinfo.src = eptinfo.src;
+> +	chinfo.dst = eptinfo.dst;
+> +
+> +	return rpmsg_chrdev_create_eptdev(ctrldev->rpdev, &ctrldev->dev, chinfo, rpmsg_class);
+> +};
+> +
+> +static const struct file_operations rpmsg_ctrldev_fops = {
+> +	.owner = THIS_MODULE,
+> +	.open = rpmsg_ctrldev_open,
+> +	.release = rpmsg_ctrldev_release,
+> +	.unlocked_ioctl = rpmsg_ctrldev_ioctl,
+> +	.compat_ioctl = compat_ptr_ioctl,
+> +};
+> +
+> +static void rpmsg_ctrldev_release_device(struct device *dev)
+> +{
+> +	struct rpmsg_ctrldev *ctrldev = dev_to_ctrldev(dev);
+> +
+> +	ida_simple_remove(&rpmsg_ctrl_ida, dev->id);
+> +	ida_simple_remove(&rpmsg_minor_ida, MINOR(dev->devt));
+> +	cdev_del(&ctrldev->cdev);
+> +	kfree(ctrldev);
+> +}
+> +
+> +static int rpmsg_ctrldev_probe(struct rpmsg_device *rpdev)
+> +{
+> +	struct rpmsg_ctrldev *ctrldev;
+> +	struct device *dev;
+> +	int ret;
+> +
+> +	ctrldev = kzalloc(sizeof(*ctrldev), GFP_KERNEL);
+> +	if (!ctrldev)
+> +		return -ENOMEM;
+> +
+> +	ctrldev->rpdev = rpdev;
+> +
+> +	dev = &ctrldev->dev;
+> +	device_initialize(dev);
+> +	dev->parent = &rpdev->dev;
+> +	dev->class = rpmsg_class;
+> +
+> +	cdev_init(&ctrldev->cdev, &rpmsg_ctrldev_fops);
+> +	ctrldev->cdev.owner = THIS_MODULE;
+> +
+> +	ret = ida_simple_get(&rpmsg_minor_ida, 0, RPMSG_DEV_MAX, GFP_KERNEL);
+> +	if (ret < 0)
+> +		goto free_ctrldev;
+> +	dev->devt = MKDEV(MAJOR(rpmsg_major), ret);
+> +
+> +	ret = ida_simple_get(&rpmsg_ctrl_ida, 0, 0, GFP_KERNEL);
+> +	if (ret < 0)
+> +		goto free_minor_ida;
+> +	dev->id = ret;
+> +	dev_set_name(&ctrldev->dev, "rpmsg_ctrl%d", ret);
+> +
+> +	ret = cdev_add(&ctrldev->cdev, dev->devt, 1);
+> +	if (ret)
+> +		goto free_ctrl_ida;
+> +
+> +	/* We can now rely on the release function for cleanup */
+> +	dev->release = rpmsg_ctrldev_release_device;
+> +
+> +	ret = device_add(dev);
+> +	if (ret) {
+> +		dev_err(&rpdev->dev, "device_add failed: %d\n", ret);
+> +		put_device(dev);
+> +	}
+> +
+> +	dev_set_drvdata(&rpdev->dev, ctrldev);
+> +
+> +	return ret;
+> +
+> +free_ctrl_ida:
+> +	ida_simple_remove(&rpmsg_ctrl_ida, dev->id);
+> +free_minor_ida:
+> +	ida_simple_remove(&rpmsg_minor_ida, MINOR(dev->devt));
+> +free_ctrldev:
+> +	put_device(dev);
+> +	kfree(ctrldev);
+> +
+> +	return ret;
+> +}
+> +
+> +static void rpmsg_ctrldev_remove(struct rpmsg_device *rpdev)
+> +{
+> +	struct rpmsg_ctrldev *ctrldev = dev_get_drvdata(&rpdev->dev);
+> +	int ret;
+> +
+> +	/* Destroy all endpoints */
+> +	ret = device_for_each_child(&ctrldev->dev, NULL, rpmsg_chrdev_destroy_eptdev);
+> +	if (ret)
+> +		dev_warn(&rpdev->dev, "failed to nuke endpoints: %d\n", ret);
+> +
+> +	device_del(&ctrldev->dev);
+> +	put_device(&ctrldev->dev);
+> +}
+> +
+> +static struct rpmsg_driver rpmsg_ctrldev_driver = {
+> +	.probe = rpmsg_ctrldev_probe,
+> +	.remove = rpmsg_ctrldev_remove,
+> +	.drv = {
+> +		.name = "rpmsg_ctrl",
+
+With this change rpmsg_chrdev_register_device() will fail to find a driver to
+work with, something that will break the Glink/SMD code if someone tries a
+bisect.  Things will work out just fine if you move this to patch 3.  
+
+> +	},
+> +};
+> +
+> +static int rpmsg_ctrldev_init(void)
+> +{
+> +	int ret;
+> +
+> +	ret = alloc_chrdev_region(&rpmsg_major, 0, RPMSG_DEV_MAX, "rpmsg");
+
+And here I'd go with "rpmsg_ctrl".
+
+> +	if (ret < 0) {
+> +		pr_err("rpmsg: failed to allocate char dev region\n");
+> +		return ret;
+> +	}
+> +
+> +	rpmsg_class = class_create(THIS_MODULE, "rpmsg");
+> +	if (IS_ERR(rpmsg_class)) {
+> +		pr_err("failed to create rpmsg class\n");
+> +		ret = PTR_ERR(rpmsg_class);
+> +		goto free_region;
+> +	}
+> +
+> +	ret = register_rpmsg_driver(&rpmsg_ctrldev_driver);
+> +	if (ret < 0) {
+> +		pr_err("rpmsg ctrl: failed to register rpmsg driver\n");
+> +		goto free_class;
+> +	}
+> +
+> +	return 0;
+> +
+> +free_class:
+> +	class_destroy(rpmsg_class);
+> +free_region:
+> +	unregister_chrdev_region(rpmsg_major, RPMSG_DEV_MAX);
+> +
+> +	return ret;
+> +}
+> +postcore_initcall(rpmsg_ctrldev_init);
+> +
+> +static void rpmsg_ctrldev_exit(void)
+> +{
+> +	unregister_rpmsg_driver(&rpmsg_ctrldev_driver);
+> +	class_destroy(rpmsg_class);
+> +	unregister_chrdev_region(rpmsg_major, RPMSG_DEV_MAX);
+> +}
+> +module_exit(rpmsg_ctrldev_exit);
+> +
+> +MODULE_DESCRIPTION("rpmsg control interface");
+> +MODULE_ALIAS("rpmsg:" KBUILD_MODNAME);
+> +MODULE_LICENSE("GPL v2");
+> -- 
+> 2.17.1
+> 
