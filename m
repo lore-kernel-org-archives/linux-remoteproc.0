@@ -2,105 +2,180 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-24.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB8F5C43616
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 12 Apr 2021 16:23:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D69BC43461
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 12 Apr 2021 19:53:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 94F2D611AD
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 12 Apr 2021 16:23:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 67F316103D
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 12 Apr 2021 19:53:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243374AbhDLQXc (ORCPT
+        id S238796AbhDLTx4 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 12 Apr 2021 12:23:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54878 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S243309AbhDLQXZ (ORCPT <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 12 Apr 2021 12:23:25 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id B4A8F61363;
-        Mon, 12 Apr 2021 16:23:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1618244587;
-        bh=CeTUghtikrcLWr0fV+9wynorJgQdQVB1NdTkfu+cc7Y=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=uKWwDG/tHaPZ0buuD/6S+kLMVfMIc9BPjbwbDykLo5QkIhEZ5zFJ+dJOj+s/70F78
-         AVcHZiyuxoQNL2pPh8PNXPqDBc7LiHLPTmbNAtd6+9UcTbdFZLwXDaBzPIhfOo+BDd
-         0tnWET4Oacp4khB9f5HEe1+q8RJZ2xYH8n3cHjI376wzJUt9QSson9pRerO27WHSr/
-         0Md7mqh9JmVpSBCUIZkbUGQ68P8ivhsJitjLfRtW0tJlzWibUj6/TBwlbfqcp/wHC2
-         YEIiioGAjxXf5WpSfpldYuVHr39wiO1u0zFQVZ3fFAZxXtC2cBEGZMKDvaoigU4Tnw
-         6IxPkN3oyz3PA==
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Dimitar Dimitrov <dimitar@dinux.eu>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-remoteproc@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.11 08/51] remoteproc: pru: Fix loading of GNU Binutils ELF
-Date:   Mon, 12 Apr 2021 12:22:13 -0400
-Message-Id: <20210412162256.313524-8-sashal@kernel.org>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210412162256.313524-1-sashal@kernel.org>
-References: <20210412162256.313524-1-sashal@kernel.org>
+        Mon, 12 Apr 2021 15:53:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41588 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S238871AbhDLTxy (ORCPT
+        <rfc822;linux-remoteproc@vger.kernel.org>);
+        Mon, 12 Apr 2021 15:53:54 -0400
+Received: from mail-pj1-x102f.google.com (mail-pj1-x102f.google.com [IPv6:2607:f8b0:4864:20::102f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 603A2C06174A
+        for <linux-remoteproc@vger.kernel.org>; Mon, 12 Apr 2021 12:53:36 -0700 (PDT)
+Received: by mail-pj1-x102f.google.com with SMTP id j6-20020a17090adc86b02900cbfe6f2c96so7741021pjv.1
+        for <linux-remoteproc@vger.kernel.org>; Mon, 12 Apr 2021 12:53:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=lohhSZFnccGy8jGa7QsIGJ/XDmBANUFVxrmI+3Kxbmc=;
+        b=gLuCRPomfgXVwaBM17qd3/jC44Igsbt8WKgl4XvpZ1GivlizY8xNMgmq3LpV0orNVf
+         QRlsDYxDXcAWNh9LTSTY+k6DgWFzxnoS6/fI6e50qGwCnKlfPutiNGac7YsAKgaqDdcl
+         GfPatf4ArWO3dzi4/u3Ky0dtmQPuAhnWSmcHwLW4Bt00QfaPpNkLdEhDIMOSaWhfnM9X
+         AORpvC2Jme2Ge6RwjJFPEOP91o/siangMmSE1OlUWTMKcmsGQ3ls3xFvWCNn1O+3jTo1
+         MUsimmcWqSeG5aobnlTjYRqqidI8IYK+HpIhXHL4I6K8KJ4+HUWu0vQ1L+N6fmrnEMJw
+         43fw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=lohhSZFnccGy8jGa7QsIGJ/XDmBANUFVxrmI+3Kxbmc=;
+        b=gHG9Wm9Ku9NkiRmkoUd6qNFaYG1QEeBDRhc/YAe51UgoE7/zfJMe9PuX1/1CPfy+p7
+         VaYwDKrRN3ocrXBe3OC4yMIa5thjEvAxNg47840vN4g78Kvx7tV5IDEu3yUVPBTPi0uw
+         wSXG/uPpChbbJL090ZR6jN/wJNTCsuPyO0lPCLpNzopFBM6BQZM/2H6klPokL3nL98Vf
+         8JgLVzQEnGViS9mfkTDWMac4njqoiQtFn8QIZPNUGEx2jiDZwfj1ECTVDc18Kwj+RJHq
+         bTjqJK8zaULoXj4qLtQL9r+c8cUMKcZswDjpJGWjFJHVYV+KjbU14VkoDLF1LTeFjxfl
+         6gRg==
+X-Gm-Message-State: AOAM531l5EnEQUzBXS6w1xMWi2gAF3RNK5Tbejcj/OW7ozNiFcLmm6hP
+        TzBAgCne/iPC/m7efxxY6nMzJQ==
+X-Google-Smtp-Source: ABdhPJzLvlP63bgMOBlYnFI7oM1829T9k+AQhynPrAGgacI8MdN24SvJnYMQRGsImsy8fWnSZL3Y1g==
+X-Received: by 2002:a17:90a:2807:: with SMTP id e7mr872172pjd.202.1618257215898;
+        Mon, 12 Apr 2021 12:53:35 -0700 (PDT)
+Received: from xps15 (S0106889e681aac74.cg.shawcable.net. [68.147.0.187])
+        by smtp.gmail.com with ESMTPSA id x30sm12391335pgl.39.2021.04.12.12.53.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 12 Apr 2021 12:53:34 -0700 (PDT)
+Date:   Mon, 12 Apr 2021 13:53:31 -0600
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+To:     Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Ohad Ben-Cohen <ohad@wizery.com>,
+        Andy Gross <agross@kernel.org>,
+        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH 5/7] rpmsg: char: Introduce a rpmsg driver for the rpmsg
+ char device
+Message-ID: <20210412195331.GA582352@xps15>
+References: <20210323122737.23035-1-arnaud.pouliquen@foss.st.com>
+ <20210323122737.23035-6-arnaud.pouliquen@foss.st.com>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210323122737.23035-6-arnaud.pouliquen@foss.st.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-From: Dimitar Dimitrov <dimitar@dinux.eu>
+On Tue, Mar 23, 2021 at 01:27:35PM +0100, Arnaud Pouliquen wrote:
+> A rpmsg char device allows to probe the endpoint device on a remote name
+> service announcement.
+> 
+> With this patch the /dev/rpmsgX interface is created either by a user
+> application or by the remote firmware.
+> 
+> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+> ---
+>  drivers/rpmsg/rpmsg_char.c | 58 +++++++++++++++++++++++++++++++++++++-
+>  1 file changed, 57 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/rpmsg/rpmsg_char.c b/drivers/rpmsg/rpmsg_char.c
+> index 7f6d46078179..69e774edb74b 100644
+> --- a/drivers/rpmsg/rpmsg_char.c
+> +++ b/drivers/rpmsg/rpmsg_char.c
+> @@ -28,6 +28,8 @@
+>  
+>  #define RPMSG_DEV_MAX	(MINORMASK + 1)
+>  
+> +#define RPMSG_CHAR_DEVNAME "rpmsg-raw"
+> +
+>  static dev_t rpmsg_major;
+>  
+>  static DEFINE_IDA(rpmsg_ept_ida);
+> @@ -405,13 +407,67 @@ int rpmsg_chrdev_create_eptdev(struct rpmsg_device *rpdev, struct device *parent
+>  }
+>  EXPORT_SYMBOL(rpmsg_chrdev_create_eptdev);
+>  
+> +static int rpmsg_chrdev_probe(struct rpmsg_device *rpdev)
+> +{
+> +	struct rpmsg_channel_info chinfo;
+> +	struct rpmsg_eptdev *eptdev;
+> +
+> +	if (!rpdev->ept)
+> +		return -EINVAL;
+> +
+> +	memcpy(chinfo.name, RPMSG_CHAR_DEVNAME, sizeof(RPMSG_CHAR_DEVNAME));
+> +	chinfo.src = rpdev->src;
+> +	chinfo.dst = rpdev->dst;
+> +
+> +	eptdev = __rpmsg_chrdev_create_eptdev(rpdev, &rpdev->dev, chinfo, NULL);
+> +	if (IS_ERR(eptdev))
+> +		return PTR_ERR(eptdev);
+> +
+> +	/* Set the private field of the default endpoint to retrieve context on callback. */
+> +	rpdev->ept->priv = eptdev;
+> +
+> +	return 0;
+> +}
+> +
+> +static void rpmsg_chrdev_remove(struct rpmsg_device *rpdev)
+> +{
+> +	int ret;
+> +
+> +	ret = device_for_each_child(&rpdev->dev, NULL, rpmsg_chrdev_destroy_eptdev);
+> +	if (ret)
+> +		dev_warn(&rpdev->dev, "failed to destroy endpoints: %d\n", ret);
+> +}
+> +
+> +static struct rpmsg_device_id rpmsg_chrdev_id_table[] = {
+> +	{ .name	= RPMSG_CHAR_DEVNAME },
+> +	{ },
+> +};
+> +
+> +static struct rpmsg_driver rpmsg_chrdev_driver = {
+> +	.probe = rpmsg_chrdev_probe,
+> +	.remove = rpmsg_chrdev_remove,
+> +	.id_table = rpmsg_chrdev_id_table,
+> +	.callback = rpmsg_ept_cb,
+> +	.drv = {
+> +		.name = "rpmsg_chrdev",
+> +	},
+> +};
+> +
+>  static int rpmsg_chrdev_init(void)
+>  {
+>  	int ret;
+>  
+>  	ret = alloc_chrdev_region(&rpmsg_major, 0, RPMSG_DEV_MAX, "rpmsg");
+> -	if (ret < 0)
+> +	if (ret < 0) {
+>  		pr_err("rpmsg: failed to allocate char dev region\n");
+> +		return ret;
+> +	}
+> +
+> +	ret = register_rpmsg_driver(&rpmsg_chrdev_driver);
+> +	if (ret < 0) {
+> +		pr_err("rpmsg: failed to register rpmsg raw driver\n");
+> +		unregister_chrdev_region(rpmsg_major, RPMSG_DEV_MAX);
+> +	}
 
-[ Upstream commit e6d9423d31b2f9bdd0220fd0584e3bb6ed2c4e52 ]
+Function unregister_rpmsg_driver() has to be called in rpmsg_chrdev_exit().
 
-PRU port of GNU Binutils lacks support for separate address spaces.
-PRU IRAM addresses are marked with artificial offset to differentiate
-them from DRAM addresses. Hence remoteproc must mask IRAM addresses
-coming from GNU ELF in order to get the true hardware address.
-
-PRU firmware used for testing was the example in:
-  https://github.com/dinuxbg/pru-gcc-examples/tree/master/blinking-led/pru
-
-Signed-off-by: Dimitar Dimitrov <dimitar@dinux.eu>
-Link: https://lore.kernel.org/r/20201230105005.30492-1-dimitar@dinux.eu
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/remoteproc/pru_rproc.c | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
-
-diff --git a/drivers/remoteproc/pru_rproc.c b/drivers/remoteproc/pru_rproc.c
-index 2667919d76b3..5fad787ba012 100644
---- a/drivers/remoteproc/pru_rproc.c
-+++ b/drivers/remoteproc/pru_rproc.c
-@@ -450,6 +450,24 @@ static void *pru_i_da_to_va(struct pru_rproc *pru, u32 da, size_t len)
- 	if (len == 0)
- 		return NULL;
- 
-+	/*
-+	 * GNU binutils do not support multiple address spaces. The GNU
-+	 * linker's default linker script places IRAM at an arbitrary high
-+	 * offset, in order to differentiate it from DRAM. Hence we need to
-+	 * strip the artificial offset in the IRAM addresses coming from the
-+	 * ELF file.
-+	 *
-+	 * The TI proprietary linker would never set those higher IRAM address
-+	 * bits anyway. PRU architecture limits the program counter to 16-bit
-+	 * word-address range. This in turn corresponds to 18-bit IRAM
-+	 * byte-address range for ELF.
-+	 *
-+	 * Two more bits are added just in case to make the final 20-bit mask.
-+	 * Idea is to have a safeguard in case TI decides to add banking
-+	 * in future SoCs.
-+	 */
-+	da &= 0xfffff;
-+
- 	if (da >= PRU_IRAM_DA &&
- 	    da + len <= PRU_IRAM_DA + pru->mem_regions[PRU_IOMEM_IRAM].size) {
- 		offset = da - PRU_IRAM_DA;
--- 
-2.30.2
-
+>  
+>  	return ret;
+>  }
+> -- 
+> 2.17.1
+> 
