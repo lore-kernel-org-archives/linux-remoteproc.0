@@ -2,113 +2,208 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05460C433ED
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 13 Apr 2021 18:10:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91083C43461
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 13 Apr 2021 20:51:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D4A37613BA
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 13 Apr 2021 18:10:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 76A7261353
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 13 Apr 2021 20:51:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232743AbhDMSLP (ORCPT
+        id S239416AbhDMUv6 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 13 Apr 2021 14:11:15 -0400
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:47938 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232787AbhDMSLO (ORCPT
+        Tue, 13 Apr 2021 16:51:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57920 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S241119AbhDMUvv (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 13 Apr 2021 14:11:14 -0400
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 13DIAiJe052808;
-        Tue, 13 Apr 2021 13:10:44 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1618337444;
-        bh=KoiDK2KidPgCteZ/uBTBPBdbjAxSy9tKGfetUPIXR1M=;
-        h=Subject:From:To:CC:References:Date:In-Reply-To;
-        b=Za8qvdQ5/KBaFQVxpiBcb72084jvMh6zqgk9AHfA987QcYzOiT2rfsoU93IEovrps
-         DGRXUJTVYYTqK4ed6UqrUMybf9IBRJfIdnNQ7IECRbwTNlv3G0NzlKELE7rdOYdoii
-         yuMxWkKZXXaNvb2anGpI5xB7bgkO0ipBOV9DkDTA=
-Received: from DFLE100.ent.ti.com (dfle100.ent.ti.com [10.64.6.21])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 13DIAi0L052195
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 13 Apr 2021 13:10:44 -0500
-Received: from DFLE101.ent.ti.com (10.64.6.22) by DFLE100.ent.ti.com
- (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2176.2; Tue, 13
- Apr 2021 13:10:44 -0500
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE101.ent.ti.com
- (10.64.6.22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2176.2 via
- Frontend Transport; Tue, 13 Apr 2021 13:10:44 -0500
-Received: from [10.250.68.143] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 13DIAh0j055635;
-        Tue, 13 Apr 2021 13:10:43 -0500
-Subject: Re: [PATCH v2 0/3] PRU firmware event/interrupt mapping fixes
-From:   Suman Anna <s-anna@ti.com>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>
-CC:     Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>,
-        Jan Kiszka <jan.kiszka@siemens.com>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Lokesh Vutla <lokeshvutla@ti.com>,
-        <linux-remoteproc@vger.kernel.org>, <linux-omap@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20210407155641.5501-1-s-anna@ti.com>
-Message-ID: <52942a19-c0f8-c376-9103-2e5020c49c3a@ti.com>
-Date:   Tue, 13 Apr 2021 13:10:43 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Tue, 13 Apr 2021 16:51:51 -0400
+Received: from mail-ot1-x334.google.com (mail-ot1-x334.google.com [IPv6:2607:f8b0:4864:20::334])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 06F08C061574
+        for <linux-remoteproc@vger.kernel.org>; Tue, 13 Apr 2021 13:51:27 -0700 (PDT)
+Received: by mail-ot1-x334.google.com with SMTP id w31-20020a9d36220000b02901f2cbfc9743so17355927otb.7
+        for <linux-remoteproc@vger.kernel.org>; Tue, 13 Apr 2021 13:51:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=BADcf3smBQPBGql3mN7VdZeMYEdWGQAgGXkly2TDUSE=;
+        b=uuxDg30ZNvq808mIE+x2+zZ9PmfAzxWCz4NaEpIgfbIUetY6YxRh4dz1U5PkEkv6rs
+         zrhgGwEISnucLuHbcK1lxvIqsr4iL+b0g8nWSASoFVLKTEzq2gqgN2r0EwrUjLi7qYws
+         LQIaNmOmF4BnXZ8ddWRq4PVsCWduKxXPxHLGWhFOAMin3tsWQVm0pp0S2b3zNbBn40MS
+         o+rboo+H051Xqzb6GW99Tf+gUT3dcZ6TQ48KB/fCBVUdpELFvD7RrjiVmHMV8qomgt98
+         bLrJS36gRoL8N/IayVzcWGtaieCS5MDET8EEvy75rpZIyIxx9XmNG7ux0gEFb+54le6q
+         DR6Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=BADcf3smBQPBGql3mN7VdZeMYEdWGQAgGXkly2TDUSE=;
+        b=Nm4+Foer6OsDcr+QpMMaXRRnfz9ShtoL94eQJw/uC40ToAEVOcAi2/Z9zlQvYfyrXL
+         nCqTrxvj9x4AqZEWIp+AXj9b+YLEDpBPSgwJukIAfofvOefnuwLRZDFrhoLo1p8rB1aW
+         QlMMfpOqTFZOc7LfrgiKLH/WeLdDx2QgZqj0yI1Ctdl/PhpST2imKxWyTEGuHmq0JTEE
+         BFMgc/s3O3oYK0hW+lmC8NqAvtBi/i4a1HDUv3Qtd6hPBY0NFyX4zlgAJ4z01tXnbnJN
+         06ZUKmtpM8P8nckrHcrH2SAOCjtf/QfHyuwmWigQ/p66rPaNuMJ9nySRsfLdmBlpaNya
+         UD6Q==
+X-Gm-Message-State: AOAM531jgyoUo+gRbYVTGbOq+tT6JyIlHqewy7MvWRBGpxSkDY4rgC+I
+        7W3S9eQsn8SFD4B3sJcD94n+wQ==
+X-Google-Smtp-Source: ABdhPJwbNaUu3jAxfv+aYheVOyvNkyEbnvYzugss7653tdjcZHAMyHlw4VIFLPcaReZqg9136rHWRA==
+X-Received: by 2002:a9d:928:: with SMTP id 37mr24297744otp.98.1618347086349;
+        Tue, 13 Apr 2021 13:51:26 -0700 (PDT)
+Received: from builder.lan (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
+        by smtp.gmail.com with ESMTPSA id w5sm2433153oos.43.2021.04.13.13.51.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 13 Apr 2021 13:51:25 -0700 (PDT)
+Date:   Tue, 13 Apr 2021 15:51:23 -0500
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+Cc:     Ohad Ben-Cohen <ohad@wizery.com>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Rob Herring <robh@kernel.org>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        devicetree@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org,
+        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] remoteproc: stm32: add capability to detach
+Message-ID: <YHYESxThXVnVH3q8@builder.lan>
+References: <20210318145923.31936-1-arnaud.pouliquen@foss.st.com>
+ <20210318145923.31936-3-arnaud.pouliquen@foss.st.com>
 MIME-Version: 1.0
-In-Reply-To: <20210407155641.5501-1-s-anna@ti.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210318145923.31936-3-arnaud.pouliquen@foss.st.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi Bjorn,
+On Thu 18 Mar 09:59 CDT 2021, Arnaud Pouliquen wrote:
 
-On 4/7/21 10:56 AM, Suman Anna wrote:
-> Hi All,
+> From: Arnaud Pouliquen <arnaud.pouliquen@foss-st.com>
 > 
-> The following is a minor revised version of the series [1] that includes fixes
-> for various different issues associated with the PRU firmware event/interrupt
-> mapping configuration logic. Please see the v1 cover-letter [1] for additional
-> details. 
+> A mechanism similar to the shutdown mailbox signal is implemented to
+> detach a remote processor.
 > 
-> There are currently no in-kernel dts nodes yet in mainline kernel (first
-> nodes will appear in v5.13-rc1) so these can be picked up for either v5.13
-> merge window or the current -rc cycle.
+> Upon detachment, a signal is sent to the remote firmware, allowing it
+> to perform specific actions such as stopping RPMsg communication.
 > 
-> Changes in v2:
->  - Picked up Reviewed-by tags on Patches 1 and 2
->  - Revised Patch 3 to address additional error cleanup paths as
->    pointed out by Mathieu.
+> The Cortex-M hold boot is also disabled to allow the remote processor
+> to restart in case of crash.
+> 
+> Notice that for this feature to be supported, the remote firmware 
+> resource table must be stored at the beginning of a 1kB section 
+> (default size provided to the remoteproc core).
+> 
+> This restriction should be lifted in the future by using a backup register
+> to store the actual size of the resource table. 
+> 
+> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss-st.com>
+> ---
+>  drivers/remoteproc/stm32_rproc.c | 38 ++++++++++++++++++++++++++++++--
+>  1 file changed, 36 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/remoteproc/stm32_rproc.c b/drivers/remoteproc/stm32_rproc.c
+> index 3d45f51de4d0..298ef5b19e27 100644
+> --- a/drivers/remoteproc/stm32_rproc.c
+> +++ b/drivers/remoteproc/stm32_rproc.c
+> @@ -28,7 +28,7 @@
+>  #define RELEASE_BOOT		1
+>  
+>  #define MBOX_NB_VQ		2
+> -#define MBOX_NB_MBX		3
+> +#define MBOX_NB_MBX		4
+>  
+>  #define STM32_SMC_RCC		0x82001000
+>  #define STM32_SMC_REG_WRITE	0x1
+> @@ -38,6 +38,7 @@
+>  #define STM32_MBX_VQ1		"vq1"
+>  #define STM32_MBX_VQ1_ID	1
+>  #define STM32_MBX_SHUTDOWN	"shutdown"
+> +#define STM32_MBX_DETACH	"detach"
+>  
+>  #define RSC_TBL_SIZE		1024
+>  
+> @@ -336,6 +337,15 @@ static const struct stm32_mbox stm32_rproc_mbox[MBOX_NB_MBX] = {
+>  			.tx_done = NULL,
+>  			.tx_tout = 500, /* 500 ms time out */
+>  		},
+> +	},
+> +	{
+> +		.name = STM32_MBX_DETACH,
+> +		.vq_id = -1,
+> +		.client = {
+> +			.tx_block = true,
+> +			.tx_done = NULL,
+> +			.tx_tout = 200, /* 200 ms time out to detach should be fair enough */
+> +		},
+>  	}
+>  };
+>  
+> @@ -461,6 +471,25 @@ static int stm32_rproc_attach(struct rproc *rproc)
+>  	return stm32_rproc_set_hold_boot(rproc, true);
+>  }
+>  
+> +static int stm32_rproc_detach(struct rproc *rproc)
+> +{
+> +	struct stm32_rproc *ddata = rproc->priv;
+> +	int err, dummy_data, idx;
+> +
+> +	/* Inform the remote processor of the detach */
+> +	idx = stm32_rproc_mbox_idx(rproc, STM32_MBX_DETACH);
+> +	if (idx >= 0 && ddata->mb[idx].chan) {
+> +		/* A dummy data is sent to allow to block on transmit */
+> +		err = mbox_send_message(ddata->mb[idx].chan,
+> +					&dummy_data);
 
-All patches are reviewed now, so can you please pick these up for the next merge
-window if not already in your queue.
+Isn't it the stm32_ipcc driver on the other side of this call? In which
+case I believe "data" is ignored, and you would be able to just pass
+NULL here.
 
-regards
-Suman
+As long as "data" isn't dereferenced it's probably better to send some
+bugus value, than an address to this variable on the stack. If on the
+other hand you pair this with one of the mailbox drivers that
+dereferences "data", you should initialize it...
 
-> 
-> regards
-> Suman
-> 
-> [1] https://patchwork.kernel.org/project/linux-remoteproc/cover/20210323223839.17464-1-s-anna@ti.com/
-> 
-> Suman Anna (3):
->   remoteproc: pru: Fixup interrupt-parent logic for fw events
->   remoteproc: pru: Fix wrong success return value for fw events
->   remoteproc: pru: Fix and cleanup firmware interrupt mapping logic
-> 
->  drivers/remoteproc/pru_rproc.c | 41 ++++++++++++++++++++++++++--------
->  1 file changed, 32 insertions(+), 9 deletions(-)
-> 
+Apart from this, I think the patch looks good!
 
+Regards,
+Bjorn
+
+> +		if (err < 0)
+> +			dev_warn(&rproc->dev, "warning: remote FW detach without ack\n");
+> +	}
+> +
+> +	/* Allow remote processor to auto-reboot */
+> +	return stm32_rproc_set_hold_boot(rproc, false);
+> +}
+> +
+>  static int stm32_rproc_stop(struct rproc *rproc)
+>  {
+>  	struct stm32_rproc *ddata = rproc->priv;
+> @@ -597,7 +626,11 @@ stm32_rproc_get_loaded_rsc_table(struct rproc *rproc, size_t *table_sz)
+>  	}
+>  
+>  done:
+> -	/* Assuming the resource table fits in 1kB is fair */
+> +	/*
+> +	 * Assuming the resource table fits in 1kB is fair.
+> +	 * Notice for the detach, that this 1 kB memory area has to be reserved in the coprocessor
+> +	 * firmware for the resource table. A clean of this whole area is done on detach.
+> +	 */
+>  	*table_sz = RSC_TBL_SIZE;
+>  	return (struct resource_table *)ddata->rsc_va;
+>  }
+> @@ -607,6 +640,7 @@ static const struct rproc_ops st_rproc_ops = {
+>  	.start		= stm32_rproc_start,
+>  	.stop		= stm32_rproc_stop,
+>  	.attach		= stm32_rproc_attach,
+> +	.detach		= stm32_rproc_detach,
+>  	.kick		= stm32_rproc_kick,
+>  	.load		= rproc_elf_load_segments,
+>  	.parse_fw	= stm32_rproc_parse_fw,
+> -- 
+> 2.17.1
+> 
