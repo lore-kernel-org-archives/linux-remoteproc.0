@@ -2,138 +2,172 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E34AC433ED
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 12 Apr 2021 20:02:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1EA1C433B4
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 13 Apr 2021 00:06:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 827F56121F
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 12 Apr 2021 20:02:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8904A611CE
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 13 Apr 2021 00:06:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237436AbhDLUDI (ORCPT
+        id S1344239AbhDMAGd (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 12 Apr 2021 16:03:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43616 "EHLO
+        Mon, 12 Apr 2021 20:06:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40384 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237373AbhDLUDH (ORCPT
+        with ESMTP id S1344250AbhDMAGc (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 12 Apr 2021 16:03:07 -0400
-Received: from mail-pg1-x532.google.com (mail-pg1-x532.google.com [IPv6:2607:f8b0:4864:20::532])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 16D99C06174A
-        for <linux-remoteproc@vger.kernel.org>; Mon, 12 Apr 2021 13:02:49 -0700 (PDT)
-Received: by mail-pg1-x532.google.com with SMTP id y32so10228895pga.11
-        for <linux-remoteproc@vger.kernel.org>; Mon, 12 Apr 2021 13:02:49 -0700 (PDT)
+        Mon, 12 Apr 2021 20:06:32 -0400
+Received: from mail-oo1-xc2e.google.com (mail-oo1-xc2e.google.com [IPv6:2607:f8b0:4864:20::c2e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C0C0DC06175F
+        for <linux-remoteproc@vger.kernel.org>; Mon, 12 Apr 2021 17:06:12 -0700 (PDT)
+Received: by mail-oo1-xc2e.google.com with SMTP id i25-20020a4aa1190000b02901bbd9429832so3461836ool.0
+        for <linux-remoteproc@vger.kernel.org>; Mon, 12 Apr 2021 17:06:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=WVDXmeX52NfVN0DmkVlJtvmcxR3Npy2o/kss1K8CAaU=;
-        b=VM5OO7HGLu6YFlVH4dlpvNPofEOfL9YasDMNEwSlAGZZT7jxKthbkCcEQIC5gNzULh
-         aY9OuADEmOlDvM/9f7+Uk1ln8J02NJFqoVJ/ahaNWe7/YGpL1y1pc0qonBrflIq+0Lbt
-         ZMwCXMbUa50IQF78qjUP1MrxgtbHXUErSXc6OhIp0LB6I7LqTfn27vD93uto3VXaj4BR
-         NBiSmvjfJFGs66t2mXNlj25BtVKKfIQlcSJgVujI188ttZFIcQtHfUHxm6jFDT4RhAhL
-         0xxH9gsTvRGcYvwR85p0aEyhkryrAF3kWPzkuJ8AVNgaxLADfM50PJcUW4A/6JGoqEp+
-         z+Hw==
+        bh=8fxzT0uDrVTZBSQzxnvbCG//UD0EW3zTDTfE8VxsHrc=;
+        b=hjwYNlWWZKfcv2jU4VNMOZ60EHaQpSYRZYAmnsiyFrZuBjUnjHeJSL0nOJ2VKUmjUl
+         Z8riG/xcb9KBQVHI6N2Ego7tvElHpe6Njq2rgxKUS3RqOgOgjzAW4vtNRrbsimTpbkxI
+         j24++xNm0Yh6dXBGNdT1lNynHNA+juSm6Jb0lO/7gxQ8cHogdfas6Sy3sL/egZ6MRJ/Y
+         5aXsKHoVhwR8S5EJceL7EPQe0sEU0YsYMp5D2S0PbsbiTLn2TBmQXzUDSVTp01BaUn90
+         TLeJOGVhACbUl9T7uipnvddSGQ6ym4ttDHgrRaHBfAoQlT3BNRbPqCYuOa67DQB0pizH
+         fIgg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=WVDXmeX52NfVN0DmkVlJtvmcxR3Npy2o/kss1K8CAaU=;
-        b=F4MYRLRsfwTk6TzpflPQVrtTacHlhgC2P/j5u22RrtHcDn2fZr62JOiML/oEX58hBN
-         RlWkShxH4TGUJRZXLFxs5KLF96SDypE0voTXNUXewMQT5DvRfIlyrldCNS0+P81ns3wI
-         NnM5oh+WvLtonvNZJS698v2wfbf7ToKRA0CVJoQYaP4Zp8KyN/wjyMOzusIC7blidBO3
-         zd7m4aXzapzkA0NFs822Z9SWEdohoz+dtctUZ4mODr/mwGO6JL+oMySC2cm1YY+TyfO8
-         AXoxELYmWEnZyBxDKVjkTNYTTTmk5pmL/FFkCY+Ci8TuRUZGbJyfU/sJriPOubd5U88y
-         iuAA==
-X-Gm-Message-State: AOAM532qFnE5S9ZjBNIKaTtu+sfC4L1kD2Roo1pLu6tJyoj73Omh+kNa
-        sXbFGb74eIi8Zm71BnxY8PqiimJ9KtrUuw==
-X-Google-Smtp-Source: ABdhPJxt+z0aQNOGOH5sN6m+iEk0+U1kVtq0OY2gs8QNxDdq78Hc/a5yRUyvNMkBzn2BHsKtXpq0Kg==
-X-Received: by 2002:a63:f926:: with SMTP id h38mr29530934pgi.257.1618257768578;
-        Mon, 12 Apr 2021 13:02:48 -0700 (PDT)
-Received: from xps15 (S0106889e681aac74.cg.shawcable.net. [68.147.0.187])
-        by smtp.gmail.com with ESMTPSA id v123sm10493376pfb.80.2021.04.12.13.02.47
+        bh=8fxzT0uDrVTZBSQzxnvbCG//UD0EW3zTDTfE8VxsHrc=;
+        b=fundFiru6qVOSvt5pYNuIb6n7k9cdLGblQzdSlfky1h0TD9Beeh8uoexrt3VgQoW6E
+         PXv9VUTN01ZzTjbFkN1Rj3XQrtueEoQwPLwMrT6DbCmBgrP+/7LT2ozyvJJ+RnVqZxSS
+         96eh3rZZIA1oV8ueHpPbJ+G3zbJfi9ipx7q+eHWcU/glo//iqUvsVfqrZS6tGV5yKtyG
+         ybirH9ogqbtgSHjOWyx/5srUKZLB9EgkjAOrYb491nvn+Z4sO8Pp5VvAZ/QV2k+EPBnu
+         IJteL2mEalIWgY+uhSPPFGktCk4Ehffzs7BSsaZDV6bL4THRiTlki+DftTI+KQU4/A0t
+         flGA==
+X-Gm-Message-State: AOAM5329qjJGxl9qaekgTJ/0yLIMbNYbK9yvl+qxVH4WN7750XIFCB2S
+        UJoFsCC9aIxWAhI1qFx7iEDMpA==
+X-Google-Smtp-Source: ABdhPJxttMmrIFUBQ2/jJF76W75whagEnk4Y+SUZP3EtUsqpzT+YH+C6AAjdM/AtBBZ+j8G+HV9u6Q==
+X-Received: by 2002:a4a:bc92:: with SMTP id m18mr1826918oop.55.1618272372130;
+        Mon, 12 Apr 2021 17:06:12 -0700 (PDT)
+Received: from yoga (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
+        by smtp.gmail.com with ESMTPSA id s3sm2513396ool.36.2021.04.12.17.06.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 12 Apr 2021 13:02:48 -0700 (PDT)
-Date:   Mon, 12 Apr 2021 14:02:45 -0600
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-To:     Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Ohad Ben-Cohen <ohad@wizery.com>,
-        Andy Gross <agross@kernel.org>,
-        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH 0/7] Restructure the rpmsg char and introduce the
- rpmsg-raw channel
-Message-ID: <20210412200245.GB582352@xps15>
-References: <20210323122737.23035-1-arnaud.pouliquen@foss.st.com>
+        Mon, 12 Apr 2021 17:06:11 -0700 (PDT)
+Date:   Mon, 12 Apr 2021 19:06:09 -0500
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc:     Deepak Kumar Singh <deesin@codeaurora.org>, clew@codeaurora.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org, Andy Gross <agross@kernel.org>
+Subject: Re: [PATCH V1 1/2] soc: qcom: aoss: Expose send for generic usecase
+Message-ID: <20210413000609.GG1538589@yoga>
+References: <1617344238-12137-1-git-send-email-deesin@codeaurora.org>
+ <1617344238-12137-2-git-send-email-deesin@codeaurora.org>
+ <YGn0wBkOOILgaq5w@builder.lan>
+ <20210409073153.GE4376@work>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210323122737.23035-1-arnaud.pouliquen@foss.st.com>
+In-Reply-To: <20210409073153.GE4376@work>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Tue, Mar 23, 2021 at 01:27:30PM +0100, Arnaud Pouliquen wrote:
-> This series is the second step in the division of the series [1]: 
-> "Introducing a Generic IOCTL Interface for RPMsg Channel Management".
-> 
-> The purpose of this patchset is to:
-> - split the control code related to the control
->   and the endpoint. 
-> - define the rpmsg-raw channel, associated with the rpmsg char device to
->   allow it to be instantiated using a name service announcement.
->     
-> An important point to keep in mind for this patchset is that the concept of
-> channel is associated with a default endpoint. To facilitate communication
-> with the remote side, this default endpoint must have a fixed address.
-> 
-> Consequently, for this series, I made a design choice to fix the endpoint
-> on the "rpmsg-raw" channel probe, and not allow to create/destroy an endpoint
-> on FS open/close.
-> 
-> This is only applicable for channels probed by the rpmsg bus. The behavior,
-> using the RPMSG_CREATE_EPT_IOCTL and RPMSG_DESTROY_EPT_IOCTL controls, is
-> preserved.
->   
-> The next steps should be to correct this:
-> Introduce the IOCTLs RPMSG_CREATE_DEV_IOCTL and RPMSG_DESTROY_DEV_IOCTL
-> to instantiate the rpmsg devices
-> 
-> [1]: https://patchwork.kernel.org/project/linux-remoteproc/list/?series=435523
-> 
-> Arnaud Pouliquen (7):
->   rpmsg: char: Export eptdev create an destroy functions
->   rpmsg: Move the rpmsg control device from rpmsg_char to rpmsg_ctrl
->   rpmsg: Update rpmsg_chrdev_register_device function
->   rpmsg: char: Introduce __rpmsg_chrdev_create_eptdev function
->   rpmsg: char: Introduce a rpmsg driver for the rpmsg char device
->   rpmsg: char: No dynamic endpoint management for the default one
->   rpmsg: char: Return error if user try to destroy a default endpoint.
->
+On Fri 09 Apr 02:31 CDT 2021, Manivannan Sadhasivam wrote:
 
-I am done reviewing this set.
+> On Sun, Apr 04, 2021 at 12:17:52PM -0500, Bjorn Andersson wrote:
+> > On Fri 02 Apr 01:17 CDT 2021, Deepak Kumar Singh wrote:
+> > 
+> > > Not all upcoming usecases will have an interface to allow the aoss
+> > > driver to hook onto. Expose the send api and create a get function to
+> > > enable drivers to send their own messages to aoss.
+> > > 
+> > > Signed-off-by: Chris Lew <clew@codeaurora.org>
+> > > Signed-off-by: Deepak Kumar Singh <deesin@codeaurora.org>
+> > > ---
+> > >  drivers/soc/qcom/qcom_aoss.c | 36 +++++++++++++++++++++++++++++++++++-
+> > >  1 file changed, 35 insertions(+), 1 deletion(-)
+> > > 
+> > > diff --git a/drivers/soc/qcom/qcom_aoss.c b/drivers/soc/qcom/qcom_aoss.c
+> > > index 53acb94..5c643f0 100644
+> > > --- a/drivers/soc/qcom/qcom_aoss.c
+> > > +++ b/drivers/soc/qcom/qcom_aoss.c
+> > > @@ -8,10 +8,12 @@
+> 
+> [...]
+> 
+> > > +	pdev = of_find_device_by_node(np);
+> > 
+> > of_find_device_by_node() will increment the refcount of the underlying
+> > struct device of pdev, so you need to platform_device_put() once you're
+> > done with it.
+> > 
+> > As a side effect of not putting the struct device, the devm_kzalloc'ed
+> > qmp pointer will remain valid. So care is needed to make sure that the
+> > client doesn't end up with a dangling pointer if the qmp device is
+> > removed.
+> > 
+> > My suggestion is that you add a "qmp_put()" function, which invokes
+> > platform_device_put() and that you add some sort of tracking ("bool
+> > orphan"?) to the struct qmp and make qmp_send() fail if this is set.
+> > 
+> 
+> I think this is a duplication of what the struct device offers. Why
+> can't we use the generic infrastructure for this usecase?
+> 
+> Like using device_initialize() in qmp_probe() along with a release
+> callback for "struct device", then using get_device() in qmp_get().
+> Then there should also be a qmp_put() API which calls put_device() to
+> decrease the refcount.
+> 
+> Ideally, the final refcount should be dropped in qmp_remove() and then
+> the release callback will be called automatically to free "struct qmp".
+> 
+> > That way if someone unbinds the aoss device, the client will still have
+> > a "valid" pointer, but won't be able to qmp_send() after qmp_close() has
+> > been called in the aoss remove function.
+> > 
+> 
+> How can someone remove the qmp device if a client is holding its reference?
+> 
 
-Thanks,
-Mathieu
- 
->  drivers/rpmsg/Kconfig             |   9 ++
->  drivers/rpmsg/Makefile            |   1 +
->  drivers/rpmsg/qcom_glink_native.c |   2 +-
->  drivers/rpmsg/qcom_smd.c          |   2 +-
->  drivers/rpmsg/rpmsg_char.c        | 221 +++++++++-------------------
->  drivers/rpmsg/rpmsg_char.h        |  50 +++++++
->  drivers/rpmsg/rpmsg_ctrl.c        | 233 ++++++++++++++++++++++++++++++
->  drivers/rpmsg/rpmsg_internal.h    |   8 +-
->  drivers/rpmsg/virtio_rpmsg_bus.c  |   2 +-
->  9 files changed, 368 insertions(+), 160 deletions(-)
->  create mode 100644 drivers/rpmsg/rpmsg_char.h
->  create mode 100644 drivers/rpmsg/rpmsg_ctrl.c
+The device could be unbound using sysfs, in which case remove() is
+called and I assumed that devres wouldn't be released until the struct
+device's refcount hit 0.
+
+Apparently this does not seems to be how it works, following the unbind
+path I see that devres is shot down regardless of the struct device's
+refcount.
+
+So we would need to ensure that struct qmp is refcounted on its own.
+For this we don't need a separate struct device, we can simply add a
+kref to the struct and avoid using devres to keep track of its lifetime.
+
+Regards,
+Bjorn
+
+> Thanks,
+> Mani
 > 
-> -- 
-> 2.17.1
-> 
+> > Regards,
+> > Bjorn
+> > 
+> > > +	if (!pdev)
+> > > +		return ERR_PTR(-EINVAL);
+> > > +
+> > > +	qmp = platform_get_drvdata(pdev);
+> > > +	return qmp ? qmp : ERR_PTR(-EPROBE_DEFER);
+> > > +}
+> > > +EXPORT_SYMBOL(qmp_get);
+> > > +
+> > >  static int qmp_probe(struct platform_device *pdev)
+> > >  {
+> > >  	struct resource *res;
+> > > -- 
+> > > The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+> > > a Linux Foundation Collaborative Project
+> > > 
