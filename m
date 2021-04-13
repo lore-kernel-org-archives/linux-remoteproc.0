@@ -2,102 +2,121 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49ED8C43460
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 13 Apr 2021 13:45:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42004C433ED
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 13 Apr 2021 16:56:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2D0CB61042
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 13 Apr 2021 13:45:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1ACA06128C
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 13 Apr 2021 16:56:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346114AbhDMNpv (ORCPT
+        id S231502AbhDMQ4X (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 13 Apr 2021 09:45:51 -0400
-Received: from mx07-00178001.pphosted.com ([185.132.182.106]:59025 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1346100AbhDMNps (ORCPT
+        Tue, 13 Apr 2021 12:56:23 -0400
+Received: from mail-pf1-f176.google.com ([209.85.210.176]:43703 "EHLO
+        mail-pf1-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231909AbhDMQ4W (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 13 Apr 2021 09:45:48 -0400
-Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 13DDgCKb020074;
-        Tue, 13 Apr 2021 15:45:26 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references : mime-version :
- content-type; s=selector1;
- bh=Sa3vC6SzHN8QPEow7pcGc+DlVRugfstE0VuBLK1pffo=;
- b=ebyc+BMi0ZTS5BbyfLZEcvq/r/l8o0ddKCCHz6uHPSqbaawthYNd7eP9Q8kflINsZsbn
- CO60d2+qukAUjqgowW9YpiFb2pB0OWzQDeKwm3N/RCq5ol2OgMq+DzSr6C1kAnk2z+aI
- +u0DJ5FSHffCYU23e8RnlUdrDWN8Ks5LuCWEA7aYvXGPIHxdOC3asnt2Cek5sRmxZMXm
- ISpTg3TWY/GUGBB5Ar0zEYj5i9PYdKmGBLlI4P5pV+AYu4Zm/Ln6MHP4c858axcEIsWy
- RTmHVA995IgQEBbKT8Vs5yvr9jUKnW6NZ5qaiUCCZ7LW8O4m/csmfip5gMunWYsN5ei7 QQ== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 37vwg94ngu-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 13 Apr 2021 15:45:26 +0200
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 96CED100034;
-        Tue, 13 Apr 2021 15:45:25 +0200 (CEST)
-Received: from Webmail-eu.st.com (sfhdag2node3.st.com [10.75.127.6])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 89515226C5A;
-        Tue, 13 Apr 2021 15:45:25 +0200 (CEST)
-Received: from localhost (10.75.127.50) by SFHDAG2NODE3.st.com (10.75.127.6)
- with Microsoft SMTP Server (TLS) id 15.0.1497.2; Tue, 13 Apr 2021 15:45:25
- +0200
-From:   Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Ohad Ben-Cohen <ohad@wizery.com>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>
-CC:     <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <arnaud.pouliquen@foss.st.com>
-Subject: [PATCH v2 7/7] rpmsg: char: Return error if user tries to destroy a default endpoint.
-Date:   Tue, 13 Apr 2021 15:44:58 +0200
-Message-ID: <20210413134458.17912-8-arnaud.pouliquen@foss.st.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20210413134458.17912-1-arnaud.pouliquen@foss.st.com>
-References: <20210413134458.17912-1-arnaud.pouliquen@foss.st.com>
+        Tue, 13 Apr 2021 12:56:22 -0400
+Received: by mail-pf1-f176.google.com with SMTP id p67so6863788pfp.10
+        for <linux-remoteproc@vger.kernel.org>; Tue, 13 Apr 2021 09:56:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=sUpSVvkMU+aPK+DNmgsnS+6a8vD5+JAsTuntfol5gy8=;
+        b=hdVno7YavyzfILsuVJzbAKdc7CvbcuqREdEPVLJ5PWQ23XyYjIwj9RFSnwx6rDi+lA
+         se5UZki2Lyjyl1YJ73HV15f8ZUgiGrrvBTgB2ZsyBISUZ91lizUJxF+qFMQDO2JcZY9A
+         yRB7JXlnC5WkgYt4edgOa856+AEmGRGoB7XEpJC2eJ0H0hFe7zTfObQ0qAr94yDdjDpY
+         oWURagE62WRe3sbXhvkjTAFvzPz6iTWH4f7fK8C1nO3sLI9GSsVcEbTrTc3udtPkrcXY
+         xA191vjacb7u1NZWC8n/0x8yP/P/K8Qmp9MsBux8h6Ef0ownsbbnIUwLWQG/em/IHPL2
+         psGw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=sUpSVvkMU+aPK+DNmgsnS+6a8vD5+JAsTuntfol5gy8=;
+        b=G/x92vtG3WTZtfIDC00g8CgzQmq2qcUEaWs9ZE1UfBk/CEQIOPQIyoF6znHXHNmI1t
+         7xTDbchsGgMvexBsPo8+hwyuFAY/Fp5G/Uon/VrOEKMNr3Xb06NGlXcDaS0gXpARKu2B
+         SmmHRaRTz7knCsfnx5L293vs7QLKiSKeCOQc+gFT6lumFH2KBuAKn+n64NxTxr3XQ7gS
+         tW2gSjJAwcv/qDSKM/biQOnw1ykbMLL/9xKURzNdXiOATCq9Qnu0yuaY71cdk8zl9UI0
+         SBZBWioPZP/csbCLsoZd0DHDi3dMntAwPnbDQ57bqmgDN9xvdHY9rg/N+4UK+3Qb6Uij
+         fX1w==
+X-Gm-Message-State: AOAM531FG1Qb6h37sJq0V2gwxU++OJj5dIe3a88XzxWUYOd3UCZlBxqj
+        Bu3FAzrKkWJD2xPd7Mg74fE4wg==
+X-Google-Smtp-Source: ABdhPJxGy692tTN+dAOl9VqSyETi6yi+oKFuJ1oc6Yaz09/MXY2NIMPJ7ZzOr0XOCifqeGzc5V0v2w==
+X-Received: by 2002:aa7:9843:0:b029:24e:8215:f546 with SMTP id n3-20020aa798430000b029024e8215f546mr8204673pfq.10.1618332902565;
+        Tue, 13 Apr 2021 09:55:02 -0700 (PDT)
+Received: from xps15 (S0106889e681aac74.cg.shawcable.net. [68.147.0.187])
+        by smtp.gmail.com with ESMTPSA id v6sm9905966pfb.130.2021.04.13.09.55.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 13 Apr 2021 09:55:02 -0700 (PDT)
+Date:   Tue, 13 Apr 2021 10:55:00 -0600
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+To:     peng.fan@oss.nxp.com
+Cc:     ohad@wizery.com, bjorn.andersson@linaro.org,
+        o.rempel@pengutronix.de, robh+dt@kernel.org,
+        devicetree@vger.kernel.org, shawnguo@kernel.org,
+        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
+        linux-remoteproc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Peng Fan <peng.fan@nxp.com>
+Subject: Re: [PATCH V3 2/8] dt-bindings: remoteproc: imx_rproc: add i.MX7ULP
+ support
+Message-ID: <20210413165500.GA750651@xps15>
+References: <1617846898-13662-1-git-send-email-peng.fan@oss.nxp.com>
+ <1617846898-13662-3-git-send-email-peng.fan@oss.nxp.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.75.127.50]
-X-ClientProxiedBy: SFHDAG2NODE3.st.com (10.75.127.6) To SFHDAG2NODE3.st.com
- (10.75.127.6)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.391,18.0.761
- definitions=2021-04-13_07:2021-04-13,2021-04-13 signatures=0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1617846898-13662-3-git-send-email-peng.fan@oss.nxp.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Using the RPMSG_DESTROY_EPT_IOCTL control, user application can
-destroy an endpoint. This patch prevents to destroy a default endpoint
-associated to a channel.
+On Thu, Apr 08, 2021 at 09:54:52AM +0800, peng.fan@oss.nxp.com wrote:
+> From: Peng Fan <peng.fan@nxp.com>
+> 
+> Add i.MX7ULP compatible.
+> 
+> We use i.MX7ULP dual mode and in which case i.MX7ULP A7 core runs under
+> control of M4 core, M4 core starts by ROM and powers most serivces used
 
-This update is needed to manage the "rpmsg-raw" channel. In this
-case a default endpoint is used and destroying it without the
-channel does not make sense.
+s/serivces/services
 
-Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
----
- drivers/rpmsg/rpmsg_char.c | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/drivers/rpmsg/rpmsg_char.c b/drivers/rpmsg/rpmsg_char.c
-index fa59abfa8878..d4316bb904f2 100644
---- a/drivers/rpmsg/rpmsg_char.c
-+++ b/drivers/rpmsg/rpmsg_char.c
-@@ -280,6 +280,10 @@ static long rpmsg_eptdev_ioctl(struct file *fp, unsigned int cmd,
- 	if (cmd != RPMSG_DESTROY_EPT_IOCTL)
- 		return -EINVAL;
- 
-+	/* Don't allow to destroy a default endpoint. */
-+	if (!eptdev->rpdev || eptdev->ept == eptdev->rpdev->ept)
-+		return -EPERM;
-+
- 	return rpmsg_chrdev_destroy_eptdev(&eptdev->dev, NULL);
- }
- 
--- 
-2.17.1
-
+> by A7 core, so A7 core has no power to start and stop M4 core. So
+> clocks and syscon are not required.
+> 
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> Acked-by: Rob Herring <robh@kernel.org>
+> ---
+>  .../devicetree/bindings/remoteproc/fsl,imx-rproc.yaml          | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.yaml b/Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.yaml
+> index b13bf8d70488..58bc2a23f97b 100644
+> --- a/Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.yaml
+> +++ b/Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.yaml
+> @@ -18,6 +18,7 @@ properties:
+>        - fsl,imx8mq-cm4
+>        - fsl,imx8mm-cm4
+>        - fsl,imx7d-cm4
+> +      - fsl,imx7ulp-cm4
+>        - fsl,imx6sx-cm4
+>  
+>    clocks:
+> @@ -57,8 +58,6 @@ properties:
+>  
+>  required:
+>    - compatible
+> -  - clocks
+> -  - syscon
+>  
+>  additionalProperties: false
+>  
+> -- 
+> 2.30.0
+> 
