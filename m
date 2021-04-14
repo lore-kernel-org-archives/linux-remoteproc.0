@@ -6,41 +6,41 @@ X-Spam-Status: No, score=-11.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
 	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40899C433ED
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D13F4C433B4
 	for <linux-remoteproc@archiver.kernel.org>; Wed, 14 Apr 2021 02:20:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1DB8B610E8
+	by mail.kernel.org (Postfix) with ESMTP id A46C3613C7
 	for <linux-remoteproc@archiver.kernel.org>; Wed, 14 Apr 2021 02:20:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238012AbhDNCUd (ORCPT
+        id S231786AbhDNCUe (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 13 Apr 2021 22:20:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46670 "EHLO mail.kernel.org"
+        Tue, 13 Apr 2021 22:20:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46666 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231786AbhDNCUb (ORCPT <rfc822;linux-remoteproc@vger.kernel.org>);
+        id S229710AbhDNCUb (ORCPT <rfc822;linux-remoteproc@vger.kernel.org>);
         Tue, 13 Apr 2021 22:20:31 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPS id 0469F613C8;
-        Wed, 14 Apr 2021 02:20:11 +0000 (UTC)
+Received: by mail.kernel.org (Postfix) with ESMTPS id EB2EC613C7;
+        Wed, 14 Apr 2021 02:20:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=k20201202; t=1618366811;
-        bh=YcSi8FHgPGW/oeU7up5vBplGip24lkBNDSmTA6wJ/w0=;
+        bh=AaKyGVAS9/59lm2utKKfd2ido/eFksPUaxRJzCxszac=;
         h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=jVblwhLB3/GuYzsrR5Pp14yqCX/P9/Dp/pH+ySutlhByhMUpxftNxgQxsy4WXZ/B8
-         dalr3JEpR0+AoNVzN5kOWt0wMdufr9CNkyALscy1ZUcv2y6Cdcwho3c2KP4YgDxWr8
-         moxP9mUQTMJHQLFAeDT3C230gHKyXS9pAd6Fr1jLkRjp3XYHIQQlwS8bwr28RrcrUp
-         I6YPSjAuoX8+akwmEjORLzurQH4bvWpfPNTFc+Ez5LDbqolecBgabQRn+kkRV7uPZo
-         o/7pIZGABZX1KGwsxvQbdv1BiGeTWrD1n29Jx50CHpzxjSnw148EciOqhy+dMiaM4M
-         4p85sZujPI8Gg==
+        b=RC9OnKHmatPyUod5AT1XH9K2On0XN+eeud98PMBXlDPchsq2ZfwEG3YaZVoqKU1NK
+         9qSGd3hKOJJEyO7VvlJh7sI+YwElbxIRPPhz4WRDK/VzdsLaFxDYIGZudtlRhlqQYO
+         tl/oYuTO/s5wVHJpqGkf3W/1nbEknC1GzAaUlxAGtDYjdGGECE8ncmLtcNwprcCwKw
+         ukFyJn7vA+cTSSe1tcBpCnix5Fj7IqcLVqbHYxpOfKLGfLr4qDoZS0wxVMc5nkE/a2
+         8BJscHJE7AK1sP2ThBXJr60nacIf2G0I8cNKwezDUK3vLTF/ZFJsV63d7aQlP1201H
+         16GCFADVreEtw==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH V2 0/4] remoteproc: imx: support remote cores booted early
+Subject: Re: [PATCH v2 0/3] PRU firmware event/interrupt mapping fixes
 From:   patchwork-bot+linux-remoteproc@kernel.org
-Message-Id: <161836681094.7360.6206038335132468048.git-patchwork-notify@kernel.org>
+Message-Id: <161836681090.7360.10429412919501045588.git-patchwork-notify@kernel.org>
 Date:   Wed, 14 Apr 2021 02:20:10 +0000
-References: <1617082235-15923-1-git-send-email-peng.fan@oss.nxp.com>
-In-Reply-To: <1617082235-15923-1-git-send-email-peng.fan@oss.nxp.com>
-To:     Peng Fan (OSS) <peng.fan@oss.nxp.com>
+References: <20210407155641.5501-1-s-anna@ti.com>
+In-Reply-To: <20210407155641.5501-1-s-anna@ti.com>
+To:     Suman Anna <s-anna@ti.com>
 Cc:     linux-remoteproc@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
@@ -50,30 +50,23 @@ Hello:
 
 This series was applied to andersson/remoteproc.git (refs/heads/for-next):
 
-On Tue, 30 Mar 2021 13:30:31 +0800 you wrote:
-> From: Peng Fan <peng.fan@nxp.com>
+On Wed, 7 Apr 2021 10:56:38 -0500 you wrote:
+> Hi All,
 > 
-> V2:
->  Patch [1,3]/4 is new
->  Patch 4/4: Update commit message, drop unneeded code that already implemented by core
-> 
-> This patchset is to support booted remote cores could be attached to linux.
-> - Add missing of_node_put to decrease device node refcount
-> - Enlarge IMX7D_RPROC_MEM_MAX because need more imx_rproc_mem, such as resource table.
-> - Following stm32 remoteproc practice, move memory parsing to rproc_ops
-> - Support attaching booted cores, by adding attach, get loaded resource table and etc.
+> The following is a minor revised version of the series [1] that includes fixes
+> for various different issues associated with the PRU firmware event/interrupt
+> mapping configuration logic. Please see the v1 cover-letter [1] for additional
+> details.
 > 
 > [...]
 
 Here is the summary with links:
-  - [V2,1/4] remoteproc: imx: add missing of_node_put
-    https://git.kernel.org/andersson/remoteproc/c/6e962bfe56b9
-  - [V2,2/4] remoteproc: imx_rproc: enlarge IMX7D_RPROC_MEM_MAX
-    https://git.kernel.org/andersson/remoteproc/c/f638a19775ae
-  - [V2,3/4] remoteproc: imx: move memory parsing to rproc_ops
-    https://git.kernel.org/andersson/remoteproc/c/10a3d4079eae
-  - [V2,4/4] remoteproc: imx_rproc: support remote cores booted before Linux Kernel
-    https://git.kernel.org/andersson/remoteproc/c/5e4c1243071d
+  - [v2,1/3] remoteproc: pru: Fixup interrupt-parent logic for fw events
+    https://git.kernel.org/andersson/remoteproc/c/6d1f2803cb6b
+  - [v2,2/3] remoteproc: pru: Fix wrong success return value for fw events
+    https://git.kernel.org/andersson/remoteproc/c/1fe72bcfac08
+  - [v2,3/3] remoteproc: pru: Fix and cleanup firmware interrupt mapping logic
+    https://git.kernel.org/andersson/remoteproc/c/880a66e026fb
 
 You are awesome, thank you!
 --
