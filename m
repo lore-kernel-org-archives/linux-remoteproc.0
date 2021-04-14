@@ -2,194 +2,82 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 906E7C433ED
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 13 Apr 2021 21:34:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40899C433ED
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 14 Apr 2021 02:20:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 71B8F61244
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 13 Apr 2021 21:34:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1DB8B610E8
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 14 Apr 2021 02:20:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244898AbhDMVfK (ORCPT
+        id S238012AbhDNCUd (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 13 Apr 2021 17:35:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39154 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236793AbhDMVfK (ORCPT
-        <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 13 Apr 2021 17:35:10 -0400
-Received: from mail-oo1-xc2f.google.com (mail-oo1-xc2f.google.com [IPv6:2607:f8b0:4864:20::c2f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 19DD4C06175F
-        for <linux-remoteproc@vger.kernel.org>; Tue, 13 Apr 2021 14:34:50 -0700 (PDT)
-Received: by mail-oo1-xc2f.google.com with SMTP id c6-20020a4aacc60000b02901e6260b12e2so1656697oon.3
-        for <linux-remoteproc@vger.kernel.org>; Tue, 13 Apr 2021 14:34:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=FOllnPXHllv++nMeKGcRp72HvHtuzEorYNDS+7csQnc=;
-        b=p9sK5bIAOVE/cIygFsqF2n3RJ/Zvp7PrybYGikPgpMOukszsWN9yMqWh8+kqno3Ps7
-         R5ebKFToe6e8f8vRJt+jFwyNSobdRLprqZt+Hsy887uwEIDEh6os48OkyTvqg6KFbrTP
-         jNL6QUiU4Rc5uLuSb1WybpZuII9c1Yb36cOEHHl/S7qAvxsO68SBHZ+55PNfbasDQmiu
-         W91v0TctoRIZvmnh98wnCGVnNCQJXXSUiPNmu20LG3w3/U+ZW7DulFM/vQshw0YGIWmh
-         uixtKVdjPVdfb1wadaScaxQgzx02kG0G2U8YM/5ChAY+cFFOF0YO3h3vFTbzbp3k+5ae
-         kwDw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=FOllnPXHllv++nMeKGcRp72HvHtuzEorYNDS+7csQnc=;
-        b=FUnHeQ4CDj2wLImcO2r1RPViXBlrzIqh31WsGA8dh0c2rxznvjvRc7oLsIFRuG++tC
-         YX1HAdY5tt9BKSz8gwEPv3yEHBMvG6jxgzDwZiiy6QrAIjuXssrrET/jPsewa6+aTJcz
-         4U2+Lhw6LYl6AdJ/oWimylmZhJNdsqwYkFU4zsWUnEyTCBj7Ih0XzGPfKWkmgjMDAbxA
-         Ms7ni4s6GUViw1SXGMkHfPOC3mVYDDW118JhH7SLkJuxNW4WedEsK6QbC74gEIMWf4dd
-         SvOHaVoe2KtX7ZLucCX6KjRA1bpdvfI9m9L1ugTj6YiSQNcsdFbLo0gV75QEhJA1mUVz
-         AmAA==
-X-Gm-Message-State: AOAM533fS6YOXDCuNUA3ZZJt01ru0L2dnxIJuHW7AtmCx7wECS0AFNKm
-        5DrWgaWjbazgd4N8H2V11GsHiA==
-X-Google-Smtp-Source: ABdhPJybcirmWf+UYoMFRkeUspQ4uHJRg55y+2KDoXOvGcKDZk1c3JAxpGR9+mLppviL0Pg0WFWg5A==
-X-Received: by 2002:a4a:9533:: with SMTP id m48mr28384650ooi.34.1618349689308;
-        Tue, 13 Apr 2021 14:34:49 -0700 (PDT)
-Received: from builder.lan (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
-        by smtp.gmail.com with ESMTPSA id m127sm3098859oib.32.2021.04.13.14.34.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 13 Apr 2021 14:34:48 -0700 (PDT)
-Date:   Tue, 13 Apr 2021 16:34:47 -0500
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-Cc:     Ohad Ben-Cohen <ohad@wizery.com>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Rob Herring <robh@kernel.org>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        devicetree@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-kernel@lists.infradead.org,
-        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 2/2] remoteproc: stm32: add capability to detach
-Message-ID: <YHYOd/vqeZCiqkpJ@builder.lan>
-References: <20210331073347.8293-1-arnaud.pouliquen@foss.st.com>
- <20210331073347.8293-3-arnaud.pouliquen@foss.st.com>
+        Tue, 13 Apr 2021 22:20:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46670 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S231786AbhDNCUb (ORCPT <rfc822;linux-remoteproc@vger.kernel.org>);
+        Tue, 13 Apr 2021 22:20:31 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPS id 0469F613C8;
+        Wed, 14 Apr 2021 02:20:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1618366811;
+        bh=YcSi8FHgPGW/oeU7up5vBplGip24lkBNDSmTA6wJ/w0=;
+        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+        b=jVblwhLB3/GuYzsrR5Pp14yqCX/P9/Dp/pH+ySutlhByhMUpxftNxgQxsy4WXZ/B8
+         dalr3JEpR0+AoNVzN5kOWt0wMdufr9CNkyALscy1ZUcv2y6Cdcwho3c2KP4YgDxWr8
+         moxP9mUQTMJHQLFAeDT3C230gHKyXS9pAd6Fr1jLkRjp3XYHIQQlwS8bwr28RrcrUp
+         I6YPSjAuoX8+akwmEjORLzurQH4bvWpfPNTFc+Ez5LDbqolecBgabQRn+kkRV7uPZo
+         o/7pIZGABZX1KGwsxvQbdv1BiGeTWrD1n29Jx50CHpzxjSnw148EciOqhy+dMiaM4M
+         4p85sZujPI8Gg==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210331073347.8293-3-arnaud.pouliquen@foss.st.com>
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH V2 0/4] remoteproc: imx: support remote cores booted early
+From:   patchwork-bot+linux-remoteproc@kernel.org
+Message-Id: <161836681094.7360.6206038335132468048.git-patchwork-notify@kernel.org>
+Date:   Wed, 14 Apr 2021 02:20:10 +0000
+References: <1617082235-15923-1-git-send-email-peng.fan@oss.nxp.com>
+In-Reply-To: <1617082235-15923-1-git-send-email-peng.fan@oss.nxp.com>
+To:     Peng Fan (OSS) <peng.fan@oss.nxp.com>
+Cc:     linux-remoteproc@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Wed 31 Mar 02:33 CDT 2021, Arnaud Pouliquen wrote:
+Hello:
 
-> A mechanism similar to the shutdown mailbox signal is implemented to
-> detach a remote processor.
-> 
-> Upon detachment, a signal is sent to the remote firmware, allowing it
-> to perform specific actions such as stopping rpmsg communication.
-> 
-> The Cortex-M hold boot is also disabled to allow the remote processor
-> to restart in case of crash.
-> 
-> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-> Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-> Tested-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-> ---
->  drivers/remoteproc/stm32_rproc.c | 39 ++++++++++++++++++++++++++++++--
->  1 file changed, 37 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/remoteproc/stm32_rproc.c b/drivers/remoteproc/stm32_rproc.c
-> index 3d45f51de4d0..7353f9e7e7af 100644
-> --- a/drivers/remoteproc/stm32_rproc.c
-> +++ b/drivers/remoteproc/stm32_rproc.c
-> @@ -28,7 +28,7 @@
->  #define RELEASE_BOOT		1
->  
->  #define MBOX_NB_VQ		2
-> -#define MBOX_NB_MBX		3
-> +#define MBOX_NB_MBX		4
->  
->  #define STM32_SMC_RCC		0x82001000
->  #define STM32_SMC_REG_WRITE	0x1
-> @@ -38,6 +38,7 @@
->  #define STM32_MBX_VQ1		"vq1"
->  #define STM32_MBX_VQ1_ID	1
->  #define STM32_MBX_SHUTDOWN	"shutdown"
-> +#define STM32_MBX_DETACH	"detach"
->  
->  #define RSC_TBL_SIZE		1024
->  
-> @@ -336,6 +337,15 @@ static const struct stm32_mbox stm32_rproc_mbox[MBOX_NB_MBX] = {
->  			.tx_done = NULL,
->  			.tx_tout = 500, /* 500 ms time out */
->  		},
-> +	},
-> +	{
-> +		.name = STM32_MBX_DETACH,
-> +		.vq_id = -1,
-> +		.client = {
-> +			.tx_block = true,
-> +			.tx_done = NULL,
-> +			.tx_tout = 200, /* 200 ms time out to detach should be fair enough */
-> +		},
->  	}
->  };
->  
-> @@ -461,6 +471,25 @@ static int stm32_rproc_attach(struct rproc *rproc)
->  	return stm32_rproc_set_hold_boot(rproc, true);
->  }
->  
-> +static int stm32_rproc_detach(struct rproc *rproc)
-> +{
-> +	struct stm32_rproc *ddata = rproc->priv;
-> +	int err, dummy_data, idx;
-> +
-> +	/* Inform the remote processor of the detach */
-> +	idx = stm32_rproc_mbox_idx(rproc, STM32_MBX_DETACH);
-> +	if (idx >= 0 && ddata->mb[idx].chan) {
-> +		/* A dummy data is sent to allow to block on transmit */
-> +		err = mbox_send_message(ddata->mb[idx].chan,
-> +					&dummy_data);
+This series was applied to andersson/remoteproc.git (refs/heads/for-next):
 
-Seems I posted my comment on v1, rather than this latest version. Please
-let me know if we should do anything about this dummy_data.
-
-Regards,
-Bjorn
-
-> +		if (err < 0)
-> +			dev_warn(&rproc->dev, "warning: remote FW detach without ack\n");
-> +	}
-> +
-> +	/* Allow remote processor to auto-reboot */
-> +	return stm32_rproc_set_hold_boot(rproc, false);
-> +}
-> +
->  static int stm32_rproc_stop(struct rproc *rproc)
->  {
->  	struct stm32_rproc *ddata = rproc->priv;
-> @@ -597,7 +626,12 @@ stm32_rproc_get_loaded_rsc_table(struct rproc *rproc, size_t *table_sz)
->  	}
->  
->  done:
-> -	/* Assuming the resource table fits in 1kB is fair */
-> +	/*
-> +	 * Assuming the resource table fits in 1kB is fair.
-> +	 * Notice for the detach, that this 1 kB memory area has to be reserved in the coprocessor
-> +	 * firmware for the resource table. On detach, the remoteproc core re-initializes this
-> +	 * entire area by overwriting it with the initial values stored in rproc->clean_table.
-> +	 */
->  	*table_sz = RSC_TBL_SIZE;
->  	return (struct resource_table *)ddata->rsc_va;
->  }
-> @@ -607,6 +641,7 @@ static const struct rproc_ops st_rproc_ops = {
->  	.start		= stm32_rproc_start,
->  	.stop		= stm32_rproc_stop,
->  	.attach		= stm32_rproc_attach,
-> +	.detach		= stm32_rproc_detach,
->  	.kick		= stm32_rproc_kick,
->  	.load		= rproc_elf_load_segments,
->  	.parse_fw	= stm32_rproc_parse_fw,
-> -- 
-> 2.17.1
+On Tue, 30 Mar 2021 13:30:31 +0800 you wrote:
+> From: Peng Fan <peng.fan@nxp.com>
 > 
+> V2:
+>  Patch [1,3]/4 is new
+>  Patch 4/4: Update commit message, drop unneeded code that already implemented by core
+> 
+> This patchset is to support booted remote cores could be attached to linux.
+> - Add missing of_node_put to decrease device node refcount
+> - Enlarge IMX7D_RPROC_MEM_MAX because need more imx_rproc_mem, such as resource table.
+> - Following stm32 remoteproc practice, move memory parsing to rproc_ops
+> - Support attaching booted cores, by adding attach, get loaded resource table and etc.
+> 
+> [...]
+
+Here is the summary with links:
+  - [V2,1/4] remoteproc: imx: add missing of_node_put
+    https://git.kernel.org/andersson/remoteproc/c/6e962bfe56b9
+  - [V2,2/4] remoteproc: imx_rproc: enlarge IMX7D_RPROC_MEM_MAX
+    https://git.kernel.org/andersson/remoteproc/c/f638a19775ae
+  - [V2,3/4] remoteproc: imx: move memory parsing to rproc_ops
+    https://git.kernel.org/andersson/remoteproc/c/10a3d4079eae
+  - [V2,4/4] remoteproc: imx_rproc: support remote cores booted before Linux Kernel
+    https://git.kernel.org/andersson/remoteproc/c/5e4c1243071d
+
+You are awesome, thank you!
+--
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
