@@ -5,46 +5,45 @@ X-Spam-Level:
 X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A141C433B4
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7679DC433ED
 	for <linux-remoteproc@archiver.kernel.org>; Fri, 16 Apr 2021 12:05:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0D0ED611AE
+	by mail.kernel.org (Postfix) with ESMTP id 4615C61003
 	for <linux-remoteproc@archiver.kernel.org>; Fri, 16 Apr 2021 12:05:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243155AbhDPMFW (ORCPT
+        id S243167AbhDPMFZ (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 16 Apr 2021 08:05:22 -0400
-Received: from so254-9.mailgun.net ([198.61.254.9]:42565 "EHLO
-        so254-9.mailgun.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243104AbhDPMFN (ORCPT
-        <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 16 Apr 2021 08:05:13 -0400
+        Fri, 16 Apr 2021 08:05:25 -0400
+Received: from m43-7.mailgun.net ([69.72.43.7]:48711 "EHLO m43-7.mailgun.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S243044AbhDPMFL (ORCPT <rfc822;linux-remoteproc@vger.kernel.org>);
+        Fri, 16 Apr 2021 08:05:11 -0400
 DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1618574688; h=References: In-Reply-To: Message-Id: Date:
+ s=smtp; t=1618574685; h=References: In-Reply-To: Message-Id: Date:
  Subject: Cc: To: From: Sender;
- bh=1Q9lGIorSgtvVf8T4mUeLfJwmDt66eiI57rSUJ3VUU8=; b=Ez3cJro4pY565T1Ys8AE7IbCV4xIQqsbFYhDv2kThpNZwIv6vXFBJ2E750zNQSIWmnG45NMt
- ANmGS30wmYUhVgtUL/V2KO57GYnmABSdHg88m05EEs20wUqllp415j6ID3ttUmyY9c3tcCPv
- PJuFxYR774AoEraYhsww3TPX4GY=
-X-Mailgun-Sending-Ip: 198.61.254.9
+ bh=tOehWGSGGKHCDXz71o0tdyMfZv6XvNrXTEW0iFnYhMI=; b=btKi/hunW7g7gX7uoDPvJi6jcmSzoh6AKyUs5GaJiZd6lLGUvsIKRTA6dzf2WAgvF71syAFb
+ FLu5o+lAeT7BmiQd+qCdz5kUjbozfQL5JQdmxmtxTwespbQoVyd9G3nzBOwaH/s+Aay22zZh
+ tYUhwFzPeTaVUrLfqQqIBoD/HBw=
+X-Mailgun-Sending-Ip: 69.72.43.7
 X-Mailgun-Sid: WyI4ZWZiZiIsICJsaW51eC1yZW1vdGVwcm9jQHZnZXIua2VybmVsLm9yZyIsICJiZTllNGEiXQ==
 Received: from smtp.codeaurora.org
  (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
- smtp-out-n01.prod.us-west-2.postgun.com with SMTP id
- 60797d5ff34440a9d43c98f8 (version=TLS1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Fri, 16 Apr 2021 12:04:47
+ smtp-out-n05.prod.us-east-1.postgun.com with SMTP id
+ 60797d4fc39407c3273741ee (version=TLS1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Fri, 16 Apr 2021 12:04:31
  GMT
 Sender: sibis=codeaurora.org@mg.codeaurora.org
 Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id E5BCEC43465; Fri, 16 Apr 2021 12:04:46 +0000 (UTC)
+        id D2C06C43461; Fri, 16 Apr 2021 12:04:30 +0000 (UTC)
 Received: from blr-ubuntu-87.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
         (Authenticated sender: sibis)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id CE8A3C43468;
-        Fri, 16 Apr 2021 12:04:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org CE8A3C43468
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 111ECC43464;
+        Fri, 16 Apr 2021 12:04:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 111ECC43464
 Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=sibis@codeaurora.org
 From:   Sibi Sankar <sibis@codeaurora.org>
@@ -55,9 +54,9 @@ Cc:     rjw@rjwysocki.net, agross@kernel.org, ohad@wizery.com,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         dianders@chromium.org, rishabhb@codeaurora.org,
         sidgup@codeaurora.org, Sibi Sankar <sibis@codeaurora.org>
-Subject: [PATCH 07/12] arm64: dts: qcom: sc7280: Use QMP binding to control load state
-Date:   Fri, 16 Apr 2021 17:33:53 +0530
-Message-Id: <1618574638-5117-8-git-send-email-sibis@codeaurora.org>
+Subject: [PATCH 04/12] dt-bindings: remoteproc: qcom: Add QMP bindings
+Date:   Fri, 16 Apr 2021 17:33:50 +0530
+Message-Id: <1618574638-5117-5-git-send-email-sibis@codeaurora.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1618574638-5117-1-git-send-email-sibis@codeaurora.org>
 References: <1618574638-5117-1-git-send-email-sibis@codeaurora.org>
@@ -65,35 +64,32 @@ Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Use the Qualcomm Mailbox Protocol (QMP) binding to control the load
-state resources on SC7280 SoCs and drop deprecated power-domains exposed
-by AOSS QMP node.
+Add Qualcomm Mailbox Protocol (QMP) binding to replace the power domains
+exposed by the AOSS QMP node.
 
 Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
 ---
- arch/arm64/boot/dts/qcom/sc7280.dtsi | 2 --
- 1 file changed, 2 deletions(-)
+ Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/qcom/sc7280.dtsi b/arch/arm64/boot/dts/qcom/sc7280.dtsi
-index 2cc478553935..0ee0e492b183 100644
---- a/arch/arm64/boot/dts/qcom/sc7280.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sc7280.dtsi
-@@ -9,7 +9,6 @@
- #include <dt-bindings/clock/qcom,rpmh.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
- #include <dt-bindings/mailbox/qcom-ipcc.h>
--#include <dt-bindings/power/qcom-aoss-qmp.h>
- #include <dt-bindings/power/qcom-rpmpd.h>
- #include <dt-bindings/soc/qcom,rpmh-rsc.h>
+diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt b/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt
+index 69c49c7b2cff..494257010629 100644
+--- a/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt
++++ b/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt
+@@ -174,7 +174,12 @@ For the compatible string below the following supplies are required:
+ 		    must be "cx", "mx"
+ 	qcom,sc7180-mss-pil:
+ 	qcom,sdm845-mss-pil:
+-		    must be "cx", "mx", "mss", "load_state"
++		    must be "cx", "mx", "mss"
++
++- qcom,qmp:
++	Usage: optional
++	Value type: <phandle>
++	Definition: reference to the AOSS side-channel message RAM.
  
-@@ -835,7 +834,6 @@
- 					IPCC_MPROC_SIGNAL_GLINK_QMP>;
- 
- 			#clock-cells = <0>;
--			#power-domain-cells = <1>;
- 		};
- 
- 		spmi_bus: spmi@c440000 {
+ - qcom,smem-states:
+ 	Usage: required
 -- 
 The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
 a Linux Foundation Collaborative Project
