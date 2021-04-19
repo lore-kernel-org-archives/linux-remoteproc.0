@@ -2,85 +2,173 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-17.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39CAAC433B4
-	for <linux-remoteproc@archiver.kernel.org>; Sun, 18 Apr 2021 02:03:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29087C433ED
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 19 Apr 2021 13:56:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0BAED6120C
-	for <linux-remoteproc@archiver.kernel.org>; Sun, 18 Apr 2021 02:03:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E7B3E61245
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 19 Apr 2021 13:56:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235868AbhDRCET (ORCPT
+        id S240414AbhDSN4d (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Sat, 17 Apr 2021 22:04:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54972 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236847AbhDRCER (ORCPT
+        Mon, 19 Apr 2021 09:56:33 -0400
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:59158 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S240877AbhDSN4O (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Sat, 17 Apr 2021 22:04:17 -0400
-Received: from mail-pg1-x536.google.com (mail-pg1-x536.google.com [IPv6:2607:f8b0:4864:20::536])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D874C061761
-        for <linux-remoteproc@vger.kernel.org>; Sat, 17 Apr 2021 19:03:48 -0700 (PDT)
-Received: by mail-pg1-x536.google.com with SMTP id y32so21802307pga.11
-        for <linux-remoteproc@vger.kernel.org>; Sat, 17 Apr 2021 19:03:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:content-transfer-encoding:in-reply-to:references
-         :subject:from:cc:to:date:message-id:user-agent;
-        bh=C2HEOji+lkE5tYxtcPnkjsb+drTF+enO01dc9wFWorM=;
-        b=SZvqil2ehY1UQMfRbMxDzYuySIf9LIymH+MgcHm9ka6xu9qS0JSv2a5mZITl8a5QiY
-         6hoJUORBanFBxbqlu5Rmava05kTx/0uljQeQv8DDuzNdiLuPfsidCy7FkpSt6eHwgJUl
-         TwFQlspdeIShxELRJ0K8wDTOWqGQAKRzbq1lw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:content-transfer-encoding
-         :in-reply-to:references:subject:from:cc:to:date:message-id
-         :user-agent;
-        bh=C2HEOji+lkE5tYxtcPnkjsb+drTF+enO01dc9wFWorM=;
-        b=IXIol0rTnFPiju5yFaqeGYj6uipXWj/0qegQ3qz5haW0FkcT8op0Ih6uNydtiY1FRx
-         bUL428gBngog6IfwJFeDZWg27TmIbpw732YfFJFxm5kOxUvk1jerYGHvdc65mir/DM2h
-         2ZQ+ii9fN7ItM+QXcyLEL0WKGyn2heq6bWWaEu4poQe/5N04I5uS8a5Jz23mAZLiWBRE
-         wAW/xOr50X81uMdoYSqLnXOgxsyEjwa90d2Mj+rfigrs2InmDfeNw7keIRUfCSMWYBC/
-         fGVE/fpO2EVAW+ZOSh4hffCfhgwzg1yoxjL9yYpn/T5y5CaTwP5MfAKq6SuUFtUqeKf6
-         BgPA==
-X-Gm-Message-State: AOAM532Kt0CyalRLKkrWcwy79IPKItRaLNwP2VA4t/8zK27Em/D7Ih0s
-        hWJn77V0iH1Trh/5wU2R61yLUw==
-X-Google-Smtp-Source: ABdhPJzRJqoJpM6U/GqIkIGfW6T8N9btDhAPA3n7hEbWDKYriPvfsj3W96eAuQWswG97A/jq0OWIFg==
-X-Received: by 2002:a63:c746:: with SMTP id v6mr5509957pgg.192.1618711428524;
-        Sat, 17 Apr 2021 19:03:48 -0700 (PDT)
-Received: from chromium.org ([2620:15c:202:201:e47c:5232:82d9:6d3f])
-        by smtp.gmail.com with ESMTPSA id v8sm2311556pff.220.2021.04.17.19.03.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 17 Apr 2021 19:03:48 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
+        Mon, 19 Apr 2021 09:56:14 -0400
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 13JDtcnT120107;
+        Mon, 19 Apr 2021 08:55:38 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1618840538;
+        bh=XKjbqgEpi2SlcsOaKtWJBqLEYB82iXVpqaPcS59RODQ=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=dm0lkFEkgNYd0EHaTvcsXsQ6o4ARTAsNr0okK5GyyBfog5W7HE1m/lmqgXj14a37T
+         mWIiK+4vOh8UiTcepImFarucJkyb87oZdUhNedHE+HDxd/gOSL0joAZcxjukCWiMlt
+         6+fiuYCmV1ts5Ao38g4p2lMIlpB7PS/+PNXSVk6k=
+Received: from DLEE107.ent.ti.com (dlee107.ent.ti.com [157.170.170.37])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 13JDtceU068477
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 19 Apr 2021 08:55:38 -0500
+Received: from DLEE106.ent.ti.com (157.170.170.36) by DLEE107.ent.ti.com
+ (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2176.2; Mon, 19
+ Apr 2021 08:55:37 -0500
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE106.ent.ti.com
+ (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2176.2 via
+ Frontend Transport; Mon, 19 Apr 2021 08:55:37 -0500
+Received: from [10.250.33.21] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 13JDtb6Q062385;
+        Mon, 19 Apr 2021 08:55:37 -0500
+Subject: Re: [PATCH v2 1/2] dt-bindings: remoteproc: k3-r5f: Update bindings
+ for AM64x SoCs
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>
+CC:     Lokesh Vutla <lokeshvutla@ti.com>,
+        <linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20210327143117.1840-1-s-anna@ti.com>
+ <20210327143117.1840-2-s-anna@ti.com>
+From:   Suman Anna <s-anna@ti.com>
+Message-ID: <8948a30c-1a2f-1fb0-05bb-37be9c02c5d5@ti.com>
+Date:   Mon, 19 Apr 2021 08:55:37 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <1618574638-5117-13-git-send-email-sibis@codeaurora.org>
-References: <1618574638-5117-1-git-send-email-sibis@codeaurora.org> <1618574638-5117-13-git-send-email-sibis@codeaurora.org>
-Subject: Re: [PATCH 12/12] dt-bindings: soc: qcom: aoss: Delete unused power-domain definitions
-From:   Stephen Boyd <swboyd@chromium.org>
-Cc:     rjw@rjwysocki.net, agross@kernel.org, ohad@wizery.com,
-        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        dianders@chromium.org, rishabhb@codeaurora.org,
-        sidgup@codeaurora.org, Sibi Sankar <sibis@codeaurora.org>
-To:     Sibi Sankar <sibis@codeaurora.org>, bjorn.andersson@linaro.org,
-        mathieu.poirier@linaro.org, robh+dt@kernel.org,
-        ulf.hansson@linaro.org
-Date:   Sat, 17 Apr 2021 19:03:46 -0700
-Message-ID: <161871142685.46595.13849836535825785791@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.9.1
+In-Reply-To: <20210327143117.1840-2-s-anna@ti.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Quoting Sibi Sankar (2021-04-16 05:03:58)
-> Delete unused power-domain definitions exposed by AOSS QMP.
->=20
-> Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
-> ---
+Hi Rob,
 
-Reviewed-by: Stephen Boyd <swboyd@chromium.org>
+On 3/27/21 9:31 AM, Suman Anna wrote:
+> The K3 AM64x SoCs have two dual-core Arm R5F clusters/subsystems, with
+> 2 R5F cores each, both in the MAIN voltage domain.
+> 
+> These clusters are a revised IP version compared to those present on
+> J721E and J7200 SoCs, and supports a new "Single-CPU" mode instead of
+> LockStep mode. Update the K3 R5F remoteproc bindings with the compatible
+> info relevant to these R5F clusters/subsystems on K3 AM64x SoCs.
+> 
+> Signed-off-by: Suman Anna <s-anna@ti.com>
+> ---
+> v2: No changes
+> 
+>  .../bindings/remoteproc/ti,k3-r5f-rproc.yaml  | 31 ++++++++++++++++---
+
+Looks like this patch has fallen through the cracks, can you please review and
+give your ack for this patch so that Bjorn can pick up the series for 5.13?
+
+regards
+Suman
+
+>  1 file changed, 26 insertions(+), 5 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/remoteproc/ti,k3-r5f-rproc.yaml b/Documentation/devicetree/bindings/remoteproc/ti,k3-r5f-rproc.yaml
+> index d905d614502b..130fbaacc4b1 100644
+> --- a/Documentation/devicetree/bindings/remoteproc/ti,k3-r5f-rproc.yaml
+> +++ b/Documentation/devicetree/bindings/remoteproc/ti,k3-r5f-rproc.yaml
+> @@ -14,8 +14,12 @@ description: |
+>    processor subsystems/clusters (R5FSS). The dual core cluster can be used
+>    either in a LockStep mode providing safety/fault tolerance features or in a
+>    Split mode providing two individual compute cores for doubling the compute
+> -  capacity. These are used together with other processors present on the SoC
+> -  to achieve various system level goals.
+> +  capacity on most SoCs. These are used together with other processors present
+> +  on the SoC to achieve various system level goals.
+> +
+> +  AM64x SoCs do not support LockStep mode, but rather a new non-safety mode
+> +  called "Single-CPU" mode, where only Core0 is used, but with ability to use
+> +  Core1's TCMs as well.
+>  
+>    Each Dual-Core R5F sub-system is represented as a single DTS node
+>    representing the cluster, with a pair of child DT nodes representing
+> @@ -33,6 +37,7 @@ properties:
+>        - ti,am654-r5fss
+>        - ti,j721e-r5fss
+>        - ti,j7200-r5fss
+> +      - ti,am64-r5fss
+>  
+>    power-domains:
+>      description: |
+> @@ -56,11 +61,12 @@ properties:
+>  
+>    ti,cluster-mode:
+>      $ref: /schemas/types.yaml#/definitions/uint32
+> -    enum: [0, 1]
+>      description: |
+>        Configuration Mode for the Dual R5F cores within the R5F cluster.
+> -      Should be either a value of 1 (LockStep mode) or 0 (Split mode),
+> -      default is LockStep mode if omitted.
+> +      Should be either a value of 1 (LockStep mode) or 0 (Split mode) on
+> +      most SoCs (AM65x, J721E, J7200), default is LockStep mode if omitted;
+> +      and should be either a value of 0 (Split mode) or 2 (Single-CPU mode)
+> +      on AM64x SoCs, default is Split mode if omitted.
+>  
+>  # R5F Processor Child Nodes:
+>  # ==========================
+> @@ -97,6 +103,7 @@ patternProperties:
+>            - ti,am654-r5f
+>            - ti,j721e-r5f
+>            - ti,j7200-r5f
+> +          - ti,am64-r5f
+>  
+>        reg:
+>          items:
+> @@ -198,6 +205,20 @@ patternProperties:
+>  
+>      unevaluatedProperties: false
+>  
+> +if:
+> +  properties:
+> +    compatible:
+> +      enum:
+> +        - ti,am64-r5fss
+> +then:
+> +  properties:
+> +    ti,cluster-mode:
+> +      enum: [0, 2]
+> +else:
+> +  properties:
+> +    ti,cluster-mode:
+> +      enum: [0, 1]
+> +
+>  required:
+>    - compatible
+>    - power-domains
+> 
+
