@@ -2,135 +2,112 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+X-Spam-Status: No, score=-21.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 624EFC433B4
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 20 Apr 2021 09:20:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2996C433B4
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 20 Apr 2021 19:27:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 242BB613AB
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 20 Apr 2021 09:20:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 968A0613CD
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 20 Apr 2021 19:27:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231300AbhDTJUc (ORCPT
+        id S233690AbhDTT1m (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 20 Apr 2021 05:20:32 -0400
-Received: from mx07-00178001.pphosted.com ([185.132.182.106]:47122 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230090AbhDTJUb (ORCPT
-        <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 20 Apr 2021 05:20:31 -0400
-Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 13K9HT4h020058;
-        Tue, 20 Apr 2021 11:19:58 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=from : to : cc :
- subject : date : message-id : mime-version : content-type; s=selector1;
- bh=N8/gyx3fcfxXoHoOct6sxrHqANEHCxA7tcJ8KBXQD8k=;
- b=wvJ7kT/s3qIv0eJqqR9jWMgPUHaw0EYOC6wlNz/i8F3PsXEYStW8PTTDaY5jabLUSpuq
- oDJkEALpeK3/gXZBE1BAf4rIunFCH66DT6ijf3fjDOeT0SOPP4TNLX7+Ig22t7ltW/NE
- iPvhpOPliKaRjyuarKlcJrpcmALfe4j1hNucpjel7p9s1LVj0r20HMJ3fgGNxGGDzAl3
- UZRX0DcOyEkI8TwO1U8s3nMPRtIMXt95CuYonKDNiWA+fs/pXiiNnDiBwq1X+tpJCkHZ
- EFRXCTzAJfdXTrVILAKUThJKh4BE90ccOrK+i8ldxUe4bS1Qi2QFPBiZSkw6ff7nahDJ XQ== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 381tg20qtw-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 20 Apr 2021 11:19:58 +0200
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 9827510002A;
-        Tue, 20 Apr 2021 11:19:57 +0200 (CEST)
-Received: from Webmail-eu.st.com (sfhdag2node3.st.com [10.75.127.6])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 88DC024186E;
-        Tue, 20 Apr 2021 11:19:57 +0200 (CEST)
-Received: from localhost (10.75.127.50) by SFHDAG2NODE3.st.com (10.75.127.6)
- with Microsoft SMTP Server (TLS) id 15.0.1497.2; Tue, 20 Apr 2021 11:19:56
- +0200
-From:   Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Ohad Ben-Cohen <ohad@wizery.com>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>
-CC:     <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <arnaud.pouliquen@foss.st.com>
-Subject: [PATCH] remoteproc: stm32: fix mbox_send_message call
-Date:   Tue, 20 Apr 2021 11:19:22 +0200
-Message-ID: <20210420091922.29429-1-arnaud.pouliquen@foss.st.com>
-X-Mailer: git-send-email 2.17.1
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.75.127.50]
-X-ClientProxiedBy: SFHDAG3NODE2.st.com (10.75.127.8) To SFHDAG2NODE3.st.com
- (10.75.127.6)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.391,18.0.761
- definitions=2021-04-20_02:2021-04-19,2021-04-20 signatures=0
+        Tue, 20 Apr 2021 15:27:42 -0400
+Received: from m43-7.mailgun.net ([69.72.43.7]:28760 "EHLO m43-7.mailgun.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S233518AbhDTT1l (ORCPT <rfc822;linux-remoteproc@vger.kernel.org>);
+        Tue, 20 Apr 2021 15:27:41 -0400
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1618946830; h=Message-Id: Date: Subject: Cc: To: From:
+ Sender; bh=ls+nKSXFw4V2lzNfach/eoF/mCkNSjwWW4tQrz2Fw9o=; b=jQOsGMGUmniPMk0UcMMbJzOjwbljs7RP8+3yg6EJWqi+NFSARXEc7XZZaLqI2HsRNPenZ0Ao
+ FJYv47tLHdwzheT6RVAqLP5JJGTqKewRk2LFprYMenfd3E+0Qfv9t3NBiZC3jNTJmTP7NEK9
+ u5oieA3l0w0RzNY62RCWy1ev9Sk=
+X-Mailgun-Sending-Ip: 69.72.43.7
+X-Mailgun-Sid: WyI4ZWZiZiIsICJsaW51eC1yZW1vdGVwcm9jQHZnZXIua2VybmVsLm9yZyIsICJiZTllNGEiXQ==
+Received: from smtp.codeaurora.org
+ (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
+ smtp-out-n04.prod.us-west-2.postgun.com with SMTP id
+ 607f2b022cc44d3aea1cb6b1 (version=TLS1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Tue, 20 Apr 2021 19:26:58
+ GMT
+Sender: sidgup=codeaurora.org@mg.codeaurora.org
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 1BE31C433D3; Tue, 20 Apr 2021 19:26:58 +0000 (UTC)
+Received: from sidgup-linux.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: sidgup)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 28F3CC43460;
+        Tue, 20 Apr 2021 19:26:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 28F3CC43460
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=sidgup@codeaurora.org
+From:   Siddharth Gupta <sidgup@codeaurora.org>
+To:     bjorn.andersson@linaro.org, ohad@wizery.com,
+        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Siddharth Gupta <sidgup@codeaurora.org>, psodagud@codeaurora.org,
+        eberman@codeaurora.org
+Subject: [PATCH] remoteproc: core: Move cdev add before device add
+Date:   Tue, 20 Apr 2021 12:26:45 -0700
+Message-Id: <1618946805-26970-1-git-send-email-sidgup@codeaurora.org>
+X-Mailer: git-send-email 2.7.4
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-mbox_send_message is called by passing a local dummy message or
-a function parameter. As the message is queued, it is dereferenced.
-This works because the message field is not used by the stm32 ipcc
-driver, but it is not clean.
+When cdev_add is called after device_add has been called there is no
+way for the userspace to know about the addition of a cdev as cdev_add
+itself doesn't trigger a uevent notification, or for the kernel to
+know about the change to devt. This results in two problems:
+ - mknod is never called for the cdev and hence no cdev appears on
+   devtmpfs.
+ - sysfs links to the new cdev are not established.
 
-Fix by passing a constant string in all cases.
+Based on how cdev_device_add[1] is written, it appears that the correct
+way to use these APIs is to call cdev_add before device_add is called.
+Since the cdev is an optional feature for remoteproc we cannot directly
+use the existing API. Hence moving rproc_char_device_add() before
+device_add() in rproc_add().
 
-The associated comments are removed because rproc should not have to
-deal with the behavior of the mailbox frame.
+[1]: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/fs/char_dev.c#n537
 
-Reported-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+Signed-off-by: Siddharth Gupta <sidgup@codeaurora.org>
 ---
- drivers/remoteproc/stm32_rproc.c | 14 +++++---------
- 1 file changed, 5 insertions(+), 9 deletions(-)
+ drivers/remoteproc/remoteproc_core.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/remoteproc/stm32_rproc.c b/drivers/remoteproc/stm32_rproc.c
-index 7353f9e7e7af..0e8203a432ab 100644
---- a/drivers/remoteproc/stm32_rproc.c
-+++ b/drivers/remoteproc/stm32_rproc.c
-@@ -474,14 +474,12 @@ static int stm32_rproc_attach(struct rproc *rproc)
- static int stm32_rproc_detach(struct rproc *rproc)
- {
- 	struct stm32_rproc *ddata = rproc->priv;
--	int err, dummy_data, idx;
-+	int err, idx;
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index 626a6b90f..562355a 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -2316,6 +2316,11 @@ int rproc_add(struct rproc *rproc)
+ 	struct device *dev = &rproc->dev;
+ 	int ret;
  
- 	/* Inform the remote processor of the detach */
- 	idx = stm32_rproc_mbox_idx(rproc, STM32_MBX_DETACH);
- 	if (idx >= 0 && ddata->mb[idx].chan) {
--		/* A dummy data is sent to allow to block on transmit */
--		err = mbox_send_message(ddata->mb[idx].chan,
--					&dummy_data);
-+		err = mbox_send_message(ddata->mb[idx].chan, "stop");
- 		if (err < 0)
- 			dev_warn(&rproc->dev, "warning: remote FW detach without ack\n");
- 	}
-@@ -493,15 +491,13 @@ static int stm32_rproc_detach(struct rproc *rproc)
- static int stm32_rproc_stop(struct rproc *rproc)
- {
- 	struct stm32_rproc *ddata = rproc->priv;
--	int err, dummy_data, idx;
-+	int err, idx;
++	/* add char device for this remoteproc */
++	ret = rproc_char_device_add(rproc);
++	if (ret < 0)
++		return ret;
++
+ 	ret = device_add(dev);
+ 	if (ret < 0)
+ 		return ret;
+@@ -2329,11 +2334,6 @@ int rproc_add(struct rproc *rproc)
+ 	/* create debugfs entries */
+ 	rproc_create_debug_dir(rproc);
  
- 	/* request shutdown of the remote processor */
- 	if (rproc->state != RPROC_OFFLINE) {
- 		idx = stm32_rproc_mbox_idx(rproc, STM32_MBX_SHUTDOWN);
- 		if (idx >= 0 && ddata->mb[idx].chan) {
--			/* a dummy data is sent to allow to block on transmit */
--			err = mbox_send_message(ddata->mb[idx].chan,
--						&dummy_data);
-+			err = mbox_send_message(ddata->mb[idx].chan, "detach");
- 			if (err < 0)
- 				dev_warn(&rproc->dev, "warning: remote FW shutdown without ack\n");
- 		}
-@@ -556,7 +552,7 @@ static void stm32_rproc_kick(struct rproc *rproc, int vqid)
- 			continue;
- 		if (!ddata->mb[i].chan)
- 			return;
--		err = mbox_send_message(ddata->mb[i].chan, (void *)(long)vqid);
-+		err = mbox_send_message(ddata->mb[i].chan, "kick");
- 		if (err < 0)
- 			dev_err(&rproc->dev, "%s: failed (%s, err:%d)\n",
- 				__func__, ddata->mb[i].name, err);
+-	/* add char device for this remoteproc */
+-	ret = rproc_char_device_add(rproc);
+-	if (ret < 0)
+-		return ret;
+-
+ 	/* if rproc is marked always-on, request it to boot */
+ 	if (rproc->auto_boot) {
+ 		ret = rproc_trigger_auto_boot(rproc);
 -- 
-2.17.1
+Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
 
