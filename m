@@ -2,157 +2,189 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-20.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93AFFC433B4
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 23 Apr 2021 14:50:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3162CC433ED
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 23 Apr 2021 21:49:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 66D0D61452
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 23 Apr 2021 14:50:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0389661422
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 23 Apr 2021 21:49:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231478AbhDWOvH (ORCPT
+        id S244098AbhDWVtn (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 23 Apr 2021 10:51:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46738 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229805AbhDWOvG (ORCPT
-        <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 23 Apr 2021 10:51:06 -0400
-Received: from mail-io1-xd35.google.com (mail-io1-xd35.google.com [IPv6:2607:f8b0:4864:20::d35])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 496F8C061574
-        for <linux-remoteproc@vger.kernel.org>; Fri, 23 Apr 2021 07:50:30 -0700 (PDT)
-Received: by mail-io1-xd35.google.com with SMTP id l21so5914307iob.1
-        for <linux-remoteproc@vger.kernel.org>; Fri, 23 Apr 2021 07:50:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=MMcmdkM2gVl581eh1B9ABdRu1Z5YC42G/lU2iC/THzU=;
-        b=qIlJIcsi0187qWtovyfGsZz8n53uJAkk180sB7FQ42Ul/t11paPOues0+jxUAYj71q
-         z9RsmX6RKBf39KKb9QGFgnqmtQ7PZMoCIpjl9NvVNFTOHDaKm3xNbifQmiPvB3BoKhM9
-         oGed1Yz0Y+WAC5hQh+W1uT6+jX9Lnt6k5z6R2IEEs5a3tP0zSuJ/B9zBKgMHXfcvw1Ky
-         Q+kAkEb73gv+KUaxPZ5cw0mr2D/Y+2KVPp2MmheSH/cAnbOr5Lp49FAvpgMEzl+Wpruo
-         rHjvxIQGw+E2ol8Xcd3waYnlj44uZ/Vxjgrw87E7HxtMO+uKHh4OfOSlNhGpNjLBnsEN
-         UwVQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=MMcmdkM2gVl581eh1B9ABdRu1Z5YC42G/lU2iC/THzU=;
-        b=EwzEKyTiiK5sokS7oXfsnTx5gnSSSfrTfayhvKp/IA12Xo5EeAX+yXmxEwzIIPLZrh
-         B7ctVczNbvAqMSb7UP7KNV7lyXzLIc8nM17MhAu/L/dGQq26RqwbWphVy3k/H6M+ST4Q
-         bLh4y2yULy7TGAn8g/K/QblDp8UQ2AA8QS2ynEvdAYsSug31upP+2LYw8Ql6MQ3omgm+
-         9iFg6TfvqD0mNruIDKHYAngIfiBfAftXvvfK1DgN73SEqVTbdao4LbK369O/oVxc+CTo
-         rlUMZTWUisR7bWuDqXBo8Az4iVmnSjFRc0Y6zVONNPfaeUpx3Z2JAB6LiuH7qySApXrE
-         mApA==
-X-Gm-Message-State: AOAM530tMUebHJA7xNEaNpwkwVyUdc/fC4yUr3nZeksAsRoxeOe75ydX
-        eF4jeHkACROYWVzp1qRAw173PttPWn5Vg0c1KUKR3g==
-X-Google-Smtp-Source: ABdhPJxCd6YQlgpzhXf6G9ZW9tJeJzvk3SgMyJj1x3xNVufTbvCo+nBbuDER55PCMLE0EGzTJ070ebIaCle6mrVMvZM=
-X-Received: by 2002:a05:6602:81e:: with SMTP id z30mr3618410iow.90.1619189429739;
- Fri, 23 Apr 2021 07:50:29 -0700 (PDT)
+        Fri, 23 Apr 2021 17:49:43 -0400
+Received: from m43-7.mailgun.net ([69.72.43.7]:11065 "EHLO m43-7.mailgun.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S244038AbhDWVtm (ORCPT <rfc822;linux-remoteproc@vger.kernel.org>);
+        Fri, 23 Apr 2021 17:49:42 -0400
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1619214545; h=Content-Transfer-Encoding: Content-Type:
+ In-Reply-To: MIME-Version: Date: Message-ID: From: References: Cc: To:
+ Subject: Sender; bh=99KSAoU7LK9uANgmM2v7FSx13N+3VdCWA4pNanhfmsE=; b=uGY4ka39g+CumUx0F+nH8IMla9N5oGsXhan1SeC/YqdPpWgAZLOLDwIMe95MOTPCbGb9A4by
+ UhSZRr2tMevi9Yohj81zudHvCAf6Ky5zWrZ3kY3zwf9cl+xkWWD9oxyEJG453BEGJSIeMtA6
+ sfutmFbhdqns0hYo9ksEoENzq5c=
+X-Mailgun-Sending-Ip: 69.72.43.7
+X-Mailgun-Sid: WyI4ZWZiZiIsICJsaW51eC1yZW1vdGVwcm9jQHZnZXIua2VybmVsLm9yZyIsICJiZTllNGEiXQ==
+Received: from smtp.codeaurora.org
+ (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
+ smtp-out-n07.prod.us-west-2.postgun.com with SMTP id
+ 608340c42cc44d3aeac4fd3c (version=TLS1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Fri, 23 Apr 2021 21:48:52
+ GMT
+Sender: sidgup=codeaurora.org@mg.codeaurora.org
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id BA8BFC4338A; Fri, 23 Apr 2021 21:48:52 +0000 (UTC)
+Received: from [192.168.1.10] (cpe-75-83-25-192.socal.res.rr.com [75.83.25.192])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: sidgup)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 46BE6C433D3;
+        Fri, 23 Apr 2021 21:48:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 46BE6C433D3
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=sidgup@codeaurora.org
+Subject: Re: [PATCH] remoteproc: core: Move cdev add before device add
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Mathieu Poirier <mathieu.poirier@linaro.org>, ohad@wizery.com,
+        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        psodagud@codeaurora.org, eberman@codeaurora.org
+References: <1618946805-26970-1-git-send-email-sidgup@codeaurora.org>
+ <20210422180455.GE1256950@xps15>
+ <e1fa4482-4fc9-e67d-d6b1-3168188f3d18@codeaurora.org>
+ <20210423030112.GE1908499@yoga>
+From:   Siddharth Gupta <sidgup@codeaurora.org>
+Message-ID: <9f04e44c-33f3-b3cd-ed8a-c5c642dc957d@codeaurora.org>
+Date:   Fri, 23 Apr 2021 14:48:50 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.9.0
 MIME-Version: 1.0
-References: <1618971622-30539-1-git-send-email-peng.fan@oss.nxp.com>
- <20210422165634.GD1256950@xps15> <DB6PR0402MB2760E471A0391FF8A31980BA88459@DB6PR0402MB2760.eurprd04.prod.outlook.com>
-In-Reply-To: <DB6PR0402MB2760E471A0391FF8A31980BA88459@DB6PR0402MB2760.eurprd04.prod.outlook.com>
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-Date:   Fri, 23 Apr 2021 08:50:18 -0600
-Message-ID: <CANLsYkwoS+3qYq=FHRLMjrJSr5cj_PiHaU+a+M17C+8-VJ+b9g@mail.gmail.com>
-Subject: Re: [PATCH V5 0/8] remoteproc: imx_rproc: support i.MX7ULP/8MN/8MP
-To:     Peng Fan <peng.fan@nxp.com>
-Cc:     "Peng Fan (OSS)" <peng.fan@oss.nxp.com>,
-        "ohad@wizery.com" <ohad@wizery.com>,
-        "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>,
-        "o.rempel@pengutronix.de" <o.rempel@pengutronix.de>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20210423030112.GE1908499@yoga>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Thu, 22 Apr 2021 at 19:01, Peng Fan <peng.fan@nxp.com> wrote:
->
-> Hi Mathieu,
->
-> > Subject: Re: [PATCH V5 0/8] remoteproc: imx_rproc: support
-> > i.MX7ULP/8MN/8MP
-> >
-> > On Wed, Apr 21, 2021 at 10:20:14AM +0800, peng.fan@oss.nxp.com wrote:
-> > > From: Peng Fan <peng.fan@nxp.com>
-> > >
-> > > V5:
-> > >  Add R-b tag
-> > >  Move the change in detect mode of patch 5 to patch 7 Per Mathieu's
-> > > comments
-> > >
-> > > V4:
-> > >  Typo fix
-> > >  patch 4: take state as a check condition  patch 5: move regmap
-> > > lookup/attach to imx_rproc_detect_mode  patch 6: add
-> > > imx_rproc_clk_enable for optional clk  patch 8: use switch/case in
-> > > imx_rproc_detect_mode
-> > > V3:
-> > >  Add A-b tag for Patch 1/2
-> > >  Fix the checkpatch warning for Patch 6,8
-> > >
-> > > V2:
-> > >  Patch 1/8, use fsl as vendor, typo fix  Because patchset [1] has v2
-> > > version, patch 5,6,7,8 are adapted that  change.
-> > >
-> > > This patchset is to support i.MX7ULP/8MN/8MP, also includes a patch to
-> > > parse fsl,auto-boot
-> > >
-> >
-> > One of the request I had from the last revision was to explicitly list what other
-> > patchset this work depends on and what branch it is based of, something I
-> > can't find here.
->
-> Sorry, that patchset has been merged, so I remove that line.
-> I should mention that that patchset has been merged into Linux-next tree.
->
 
-And what branch this set should be applied to is missing.
-
-> >
-> > As such I am dropping this set and won't look at another revision before May
-> > 22nd.
+On 4/22/2021 8:01 PM, Bjorn Andersson wrote:
+> On Thu 22 Apr 21:12 CDT 2021, Siddharth Gupta wrote:
 >
-> Ah. Is it just because that the dependency patchset not been mentioned or you
-> have issue applying the patchset that delay the patchset for one month?
+>> On 4/22/2021 11:04 AM, Mathieu Poirier wrote:
+>>> Hi Siddharth,
+>>>
+>>> On Tue, Apr 20, 2021 at 12:26:45PM -0700, Siddharth Gupta wrote:
+>>>> When cdev_add is called after device_add has been called there is no
+>>>> way for the userspace to know about the addition of a cdev as cdev_add
+>>>> itself doesn't trigger a uevent notification, or for the kernel to
+>>>> know about the change to devt. This results in two problems:
+>>>>    - mknod is never called for the cdev and hence no cdev appears on
+>>>>      devtmpfs.
+>>>>    - sysfs links to the new cdev are not established.
+>>>>
+>>>> Based on how cdev_device_add[1] is written, it appears that the correct
+>>> Please don't add this kind of reference to the change log as it will become
+>>> invalid with time.
+>> Okay sure, I will remove it.
+>>>> way to use these APIs is to call cdev_add before device_add is called.
+>>>> Since the cdev is an optional feature for remoteproc we cannot directly
+>>>> use the existing API.
+>>> Please explain why the existing API can't be used directly.
+>> Not sure what you mean here Mathieu? The reason why we can't use
+>> it is because cdev is an optional feature. We would either have to move
+>> device_add inside rproc_char_dev_add or the other way around and
+>> make cdev a regular feature. Since device_add can't be called on the
+>> same device struct twice[1], we have to do things this way. Also this
+>> way we don't have to rely on the userspace to call mknod as it will
+>> be called[2] as a part of the device_add call in devtmpfs_create_node.
+>>
+>> Now that I think about it, is the above what you want me to put in the
+>> commit text? :)
+>>
+> Your patch is correct, we need to cdev_add() and in particular assign
+> dev->devt before calling device_add(). Given how the code is split in
+> core and cdev there's no way to use cdev_device_add(), but I don't think
+> anyone is suggesting that - except for your commit message.
 >
-
-Both.
-
-> Thanks,
-> Peng.
+> So while everything you mention in your commit message seems correct,
+> you should be able to make it more to the point by distilling it down to
+> something like:
 >
-> >
-> > > Peng Fan (8):
-> > >   dt-bindings: remoteproc: imx_rproc: add fsl,auto-boot property
-> > >   dt-bindings: remoteproc: imx_rproc: add i.MX7ULP support
-> > >   dt-bindings: remoteproc: imx_rproc: support i.MX8MN/P
-> > >   remoteproc: imx_rproc: parse fsl,auto-boot
-> > >   remoteproc: imx_rproc: initial support for mutilple start/stop method
-> > >   remoteproc: imx_rproc: make clk optional
-> > >   remoteproc: imx_rproc: support i.MX7ULP
-> > >   remoteproc: imx_rproc: support i.MX8MN/P
-> > >
-> > >  .../bindings/remoteproc/fsl,imx-rproc.yaml    |  11 +-
-> > >  drivers/remoteproc/imx_rproc.c                | 196
-> > +++++++++++++++---
-> > >  2 files changed, 173 insertions(+), 34 deletions(-)
-> > >
-> > > --
-> > > 2.30.0
-> > >
+>    The cdev needs to be added and devt assigned before device_add() is
+>    called in order for the relevant sysfs and devtmpfs entries to be
+>    created and the uevent to be properly populated.
+Okay, I will make the appropriate changes. Thanks!
+>> [1]: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/base/core.c#n3105
+>> [2]: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/base/devtmpfs.c#n215
+>>>> Hence moving rproc_char_device_add() before
+>>>> device_add() in rproc_add().
+>>>>
+>>>> [1]: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/fs/char_dev.c#n537
+>>>>
+>>>> Signed-off-by: Siddharth Gupta <sidgup@codeaurora.org>
+>>>> ---
+>>>>    drivers/remoteproc/remoteproc_core.c | 10 +++++-----
+>>>>    1 file changed, 5 insertions(+), 5 deletions(-)
+>>>>
+>>>> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+>>>> index 626a6b90f..562355a 100644
+>>>> --- a/drivers/remoteproc/remoteproc_core.c
+>>>> +++ b/drivers/remoteproc/remoteproc_core.c
+>>>> @@ -2316,6 +2316,11 @@ int rproc_add(struct rproc *rproc)
+>>>>    	struct device *dev = &rproc->dev;
+>>>>    	int ret;
+>>>> +	/* add char device for this remoteproc */
+>>>> +	ret = rproc_char_device_add(rproc);
+>>>> +	if (ret < 0)
+>>>> +		return ret;
+>>>> +
+>>> I have tested this change and it works.  So how did it work before?
+>> It is a sporadic issue due to a race between the userspace uevent handler
+>> and cdev_add. If the uevent for the device is received/processed after
+>> cdev_add the cdev is created.
+>>
+>> If "add" is written to the uevent file or mknod is manually called for devt
+>> the cdev works as expected, just that the sysfs links won't be created.
+> So it works for e.g. systemd based systems (most of the time), while in
+> a system based on devtmpfs the dev node would never show up.
+Yes exactly! We were just lucky till now :)
+
+Thanks,
+Sid
+> Regards,
+> Bjorn
+>
+>>>>    	ret = device_add(dev);
+>>>>    	if (ret < 0)
+>>>>    		return ret;
+>>>> @@ -2329,11 +2334,6 @@ int rproc_add(struct rproc *rproc)
+>>>>    	/* create debugfs entries */
+>>>>    	rproc_create_debug_dir(rproc);
+>>>> -	/* add char device for this remoteproc */
+>>>> -	ret = rproc_char_device_add(rproc);
+>>>> -	if (ret < 0)
+>>>> -		return ret;
+>>>> -
+>>> While reviewing this patch I had another look at rproc_add() and noticed it
+>>> doesn't clean up after itself in case of failure.  If any of the conditions
+>>> aren't met the function returns but rproc_delete_debug_dir(),
+>>> rproc_char_device_remove() and device_del() aren't called.  Please fix that as
+>>> part of your next revision.
+>> Sure. I'll make those changes.
+>>
+>> Thanks,
+>> Sid
+>>> Thanks,
+>>> Mathieu
+>>>
+>>>
+>>>>    	/* if rproc is marked always-on, request it to boot */
+>>>>    	if (rproc->auto_boot) {
+>>>>    		ret = rproc_trigger_auto_boot(rproc);
+>>>> -- 
+>>>> Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+>>>> a Linux Foundation Collaborative Project
+>>>>
