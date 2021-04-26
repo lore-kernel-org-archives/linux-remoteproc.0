@@ -2,68 +2,69 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 886BEC433ED
-	for <linux-remoteproc@archiver.kernel.org>; Sun, 25 Apr 2021 08:38:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50033C43460
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 26 Apr 2021 07:06:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 55413613B1
-	for <linux-remoteproc@archiver.kernel.org>; Sun, 25 Apr 2021 08:38:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2D175611BD
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 26 Apr 2021 07:06:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229832AbhDYIis (ORCPT
+        id S232083AbhDZHGz (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Sun, 25 Apr 2021 04:38:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50856 "EHLO
+        Mon, 26 Apr 2021 03:06:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60634 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229620AbhDYIio (ORCPT
+        with ESMTP id S231616AbhDZHGy (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Sun, 25 Apr 2021 04:38:44 -0400
-Received: from mail-pl1-x635.google.com (mail-pl1-x635.google.com [IPv6:2607:f8b0:4864:20::635])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C4592C06175F
-        for <linux-remoteproc@vger.kernel.org>; Sun, 25 Apr 2021 01:38:04 -0700 (PDT)
-Received: by mail-pl1-x635.google.com with SMTP id o16so13738650plg.5
-        for <linux-remoteproc@vger.kernel.org>; Sun, 25 Apr 2021 01:38:04 -0700 (PDT)
+        Mon, 26 Apr 2021 03:06:54 -0400
+Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A0DD9C061756
+        for <linux-remoteproc@vger.kernel.org>; Mon, 26 Apr 2021 00:06:11 -0700 (PDT)
+Received: by mail-wr1-x433.google.com with SMTP id h15so2323661wre.11
+        for <linux-remoteproc@vger.kernel.org>; Mon, 26 Apr 2021 00:06:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=3W3NlpZ/7gGHJzSngRPZUKdly0z6CYcYYet1o/3cStA=;
-        b=DXhgLEsi/UC0GR5eFowFBe6fqTQ08/CSV6CJndatd25PlCEktjX6zCvjc3ZChBLqXb
-         fSYFeoB1EtLxUcP7zuBG6mt6+6dv+g9Dwt2WD/DdcWVMFbz++XjMeHA9MO2A0mor7pem
-         uNRuFOmpx5UJ6r1mtRpyCmsPaPwgQUSsrw4azukPCNco++CoqM9+kgWXJ92EzFgRAF97
-         6Q6OQgpNecQl25PNJd6A3M0OcP+el5d/oCjkpuZ8nzcVPJF0P+lI3KjaWuLvrtoi4Hzb
-         7T02TQpjumvtN7bJCUMGMxdFPncIWy32CBPuYhIzuo/4DhgV5scbUJljgZDMqXkI9duF
-         4o+w==
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=5RuHvbrZHVloxRo7eENq0ZIryQnDTJP0ete42G83Dm0=;
+        b=rIb8+v2FAdA/HfhwuFQ6R8dphR1T0XKcem+hDmiyp8QJyiWsUG/VegWao1LxxolHOc
+         ctEIXLn6mFraIjAcGx8exbmzWC852dgXWwKnm3td7C06aBOHnlsNlS160CFJsN2ch7Vj
+         HWWjhQbqWx0x6IG9wItFTZ7CFHUw87oc7fyqNSc+/s7ZHgo7JuV9fKzCZn674JYEsCX6
+         +JY2w1OdFXrf2gQXf6S9eNPX7nVE/EMMHAlAlr+3OXLCHkZjMdIqHV0Zr7RTiOc+GI+a
+         gWafVirCtDjutoLU7lw5+fWllx0HFwPneUNauWgJcEPM4s8PQEDUE5Fz8Ws+QQ5hE5Rh
+         LJag==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=3W3NlpZ/7gGHJzSngRPZUKdly0z6CYcYYet1o/3cStA=;
-        b=KzbzgE1dZbMJj4IDl3PmDPxhArY8FuYc4CiY9h5xedCe0Hx80V95PXo5GnVL1ONg0X
-         EuSAMF6cxSfBEv+87miMRllSKjs/671sVtBWSu/yEyWEioRLHzi6WFx9b0Fp/Wwi319T
-         zzCLrHW+twCTv1WP3cpabO8fRprY56Mn4/6OQvLdz3lM+4OyIy+/zwBUUwkgbpf2s4Ha
-         YfKyYTDHclIBALAnAgQEo+OPHhYy3m3rX0wyfiFS9pHNv3AR3WiEmbo5T6LWVOmiZdBp
-         EqOI9eS6P9phhdTllmY8HkBFsMA3dCtlfEBIG2sv6eSeQGV30/dlUxrKq1ogWuZtbcrL
-         Ujbg==
-X-Gm-Message-State: AOAM532yehdwC/Kj4rOomok3od8+PJKRe3coy9DycbIqgca3j9DNW7/1
-        VHMJ1vsvhnybOOu6BoHB7akrew==
-X-Google-Smtp-Source: ABdhPJw2m1tS8wv7y7a1jo2Ew6sVzyL43/PoChNVNkvcYnSnbekk+H2+GIggB/9rbKvDSb23HTPzHw==
-X-Received: by 2002:a17:902:9347:b029:e8:c21c:f951 with SMTP id g7-20020a1709029347b02900e8c21cf951mr12640722plp.14.1619339884119;
-        Sun, 25 Apr 2021 01:38:04 -0700 (PDT)
-Received: from dragon (80.251.214.228.16clouds.com. [80.251.214.228])
-        by smtp.gmail.com with ESMTPSA id fw24sm8820653pjb.21.2021.04.25.01.37.59
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 25 Apr 2021 01:38:03 -0700 (PDT)
-Date:   Sun, 25 Apr 2021 16:37:55 +0800
-From:   Shawn Guo <shawn.guo@linaro.org>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Luis Chamberlain <mcgrof@kernel.org>,
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=5RuHvbrZHVloxRo7eENq0ZIryQnDTJP0ete42G83Dm0=;
+        b=oUY1mhhgxbdCGDX3l+TV6UpoCa2xt/ceSsBEulw7re7kZOAyb7PM9Xaxvh1Ytc0x87
+         T7ntl0iAmBScWGKdDYbiVxnDhgtCVjTQ+nYEaoHwnAVbQ0BHYsGu3LBTEyiSYFutRoMi
+         RCi80yv9OHTaAIB8Ba6ZXLKWOPSpFUM+HI2hWK5aSN7ejwZf0yAtwYODrNyoDyK8PHjq
+         LH0pvO98sX9CTcqqGlJ2KDYs7ZE8ryxIUN1tkjO2I64cUw9k9ldkHrnSyApGE9DaN76C
+         MY2YYMc9ar5QJ/Yzr3ekwx0TmfBYDeTPg7I2vI/LwwXx7niUbaJB5IMviOuBb4hACQZM
+         1+XQ==
+X-Gm-Message-State: AOAM533X9gOeQ775L/h81mrIuZwiduawi13S1MGCGWRC2Ou7iu+nO4sL
+        zQezbTqAV+2elpkMjfpKjDxr5Q==
+X-Google-Smtp-Source: ABdhPJxQA11AMLyg/X551pHlVu8f4n+OUBOFc1FV8/qEkPz+6JKC49mgf31rgbpUC8pVKrxLOFj9Lw==
+X-Received: by 2002:a5d:4402:: with SMTP id z2mr20396301wrq.179.1619420770263;
+        Mon, 26 Apr 2021 00:06:10 -0700 (PDT)
+Received: from dell ([91.110.221.215])
+        by smtp.gmail.com with ESMTPSA id 200sm16751584wmb.1.2021.04.26.00.06.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 26 Apr 2021 00:06:09 -0700 (PDT)
+Date:   Mon, 26 Apr 2021 08:06:07 +0100
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Shawn Guo <shawn.guo@linaro.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Luis Chamberlain <mcgrof@kernel.org>,
         Vinod Koul <vkoul@kernel.org>,
         Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Lee Jones <lee.jones@linaro.org>,
         Arnd Bergmann <arnd@arndb.de>,
         Kalle Valo <kvalo@codeaurora.org>,
         Stuart Hayes <stuart.w.hayes@gmail.com>,
@@ -81,65 +82,46 @@ Cc:     Luis Chamberlain <mcgrof@kernel.org>,
         alsa-devel@alsa-project.org
 Subject: Re: [PATCH] firmware: replace HOTPLUG with UEVENT in FW_ACTION
  defines
-Message-ID: <20210425083754.GF15093@dragon>
+Message-ID: <20210426070607.GG6446@dell>
 References: <20210425020024.28057-1-shawn.guo@linaro.org>
- <YIUI3TZf/sZ6Sd3K@kroah.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <YIUI3TZf/sZ6Sd3K@kroah.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20210425020024.28057-1-shawn.guo@linaro.org>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Sun, Apr 25, 2021 at 08:14:53AM +0200, Greg Kroah-Hartman wrote:
-> On Sun, Apr 25, 2021 at 10:00:24AM +0800, Shawn Guo wrote:
-> > With commit 312c004d36ce ("[PATCH] driver core: replace "hotplug" by
-> > "uevent"") already in the tree over a decade, update the name of
-> > FW_ACTION defines to follow semantics, and reflect what the defines are
-> > really meant for, i.e. whether or not generate user space event.
-> > 
-> > Signed-off-by: Shawn Guo <shawn.guo@linaro.org>
-> > ---
-> >  drivers/dma/imx-sdma.c                      |  2 +-
-> >  drivers/media/platform/exynos4-is/fimc-is.c |  2 +-
-> >  drivers/mfd/iqs62x.c                        |  2 +-
-> >  drivers/misc/lattice-ecp3-config.c          |  2 +-
-> >  drivers/net/wireless/ti/wlcore/main.c       |  2 +-
-> >  drivers/platform/x86/dell/dell_rbu.c        |  2 +-
-> >  drivers/remoteproc/remoteproc_core.c        |  2 +-
-> >  drivers/scsi/lpfc/lpfc_init.c               |  2 +-
-> >  drivers/tty/serial/ucc_uart.c               |  2 +-
-> >  include/linux/firmware.h                    |  4 ++--
-> >  lib/test_firmware.c                         | 10 +++++-----
-> >  sound/soc/codecs/wm8958-dsp2.c              |  6 +++---
-> >  12 files changed, 19 insertions(+), 19 deletions(-)
-> > 
-> > diff --git a/drivers/dma/imx-sdma.c b/drivers/dma/imx-sdma.c
-> > index d5590c08db51..e2b559945c11 100644
-> > --- a/drivers/dma/imx-sdma.c
-> > +++ b/drivers/dma/imx-sdma.c
-> > @@ -1829,7 +1829,7 @@ static int sdma_get_firmware(struct sdma_engine *sdma,
-> >  	int ret;
-> >  
-> >  	ret = request_firmware_nowait(THIS_MODULE,
-> > -			FW_ACTION_HOTPLUG, fw_name, sdma->dev,
-> > +			FW_ACTION_UEVENT, fw_name, sdma->dev,
+On Sun, 25 Apr 2021, Shawn Guo wrote:
+
+> With commit 312c004d36ce ("[PATCH] driver core: replace "hotplug" by
+> "uevent"") already in the tree over a decade, update the name of
+> FW_ACTION defines to follow semantics, and reflect what the defines are
+> really meant for, i.e. whether or not generate user space event.
 > 
-> Naming is hard :)
-> 
-> I can take this after -rc1, but really, is it needed?
-> 
-> What problem does this renaming solve?
+> Signed-off-by: Shawn Guo <shawn.guo@linaro.org>
+> ---
+>  drivers/dma/imx-sdma.c                      |  2 +-
+>  drivers/media/platform/exynos4-is/fimc-is.c |  2 +-
 
-To me, it's a leftover from commit 312c004d36ce that made the rename at
-driver core.  With this patch, the define will be more matching its user
-request_firmware_nowait(..., bool uevent, ...).
+>  drivers/mfd/iqs62x.c                        |  2 +-
 
-> Who is the current name
-> confusing?
+Acked-by: Lee Jones <lee.jones@linaro.org>
 
-I'm one at least :)
+>  drivers/misc/lattice-ecp3-config.c          |  2 +-
+>  drivers/net/wireless/ti/wlcore/main.c       |  2 +-
+>  drivers/platform/x86/dell/dell_rbu.c        |  2 +-
+>  drivers/remoteproc/remoteproc_core.c        |  2 +-
+>  drivers/scsi/lpfc/lpfc_init.c               |  2 +-
+>  drivers/tty/serial/ucc_uart.c               |  2 +-
+>  include/linux/firmware.h                    |  4 ++--
+>  lib/test_firmware.c                         | 10 +++++-----
+>  sound/soc/codecs/wm8958-dsp2.c              |  6 +++---
+>  12 files changed, 19 insertions(+), 19 deletions(-)
 
-Shawn
+-- 
+Lee Jones [李琼斯]
+Senior Technical Lead - Developer Services
+Linaro.org │ Open source software for Arm SoCs
+Follow Linaro: Facebook | Twitter | Blog
