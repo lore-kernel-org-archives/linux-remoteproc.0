@@ -2,106 +2,254 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-17.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7280AC433ED
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 27 Apr 2021 19:03:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21FCCC433ED
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 28 Apr 2021 13:05:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4F9F8600EF
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 27 Apr 2021 19:03:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E225660241
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 28 Apr 2021 13:05:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236826AbhD0TEY (ORCPT
+        id S239201AbhD1NGM (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 27 Apr 2021 15:04:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59404 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236775AbhD0TEX (ORCPT
+        Wed, 28 Apr 2021 09:06:12 -0400
+Received: from mx07-00178001.pphosted.com ([185.132.182.106]:43000 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S239737AbhD1NGL (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 27 Apr 2021 15:04:23 -0400
-Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 18C96C061574;
-        Tue, 27 Apr 2021 12:03:40 -0700 (PDT)
-Received: by mail-ed1-x529.google.com with SMTP id d14so7428879edc.12;
-        Tue, 27 Apr 2021 12:03:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=5AYP4KxhmIkQe7UcuYlxvC2jIUXwtQ3ProZ5mNQJqDs=;
-        b=UlIUlSs04s5Amuabx+5K7RsqwQMa5AAAdjyjwJZB+M92fQlR+T9AwRoHNo+YgJDVZ3
-         n1n2r09TAgFNNphfHhghLA3jG+Skp41RZwzACfsFsM02OHyl+tFOGXAHDutHCWc/hkJV
-         QYKzEjRjdiIGb9yNRLhXR2Nic7cTl/kcT/d6g+0jAxd4H5zpLes4m+a5TxtFFcLIaKh7
-         zJLCSAkme/5aUqZm4rni0i86nEMV3XI/Dp5KgOHPQ/CFPbiE34miX3375k186NXtcAGa
-         tveNRpYrL3xcnwIMjSQm/j+bz7EHL0aXpQpn5TK3G93tKW7H/KuATaFXb3E4Zw/+wASJ
-         3CpQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=5AYP4KxhmIkQe7UcuYlxvC2jIUXwtQ3ProZ5mNQJqDs=;
-        b=kZYgYQahc4R9Wkgu2GM2cHAVNYZySSqSyapK7+w7RYawUeBuOj24lB3MwZY+G4Ynd0
-         OEI65gv75jrmuUzlFa2XbQAF4LOJK6hDCU0fAXmbNd3wLBS9/0qj0n3SqSQByzzM6izD
-         OwfNc7gEm/OmmQqabPiDpVc63ro1kITrfyuJOfUAtBAsavwBW/BgJKUFTcBPJ8HAOSNx
-         b9nJmaSvjJvlvU2kNU7fJPVDoYNss6rS6js+2+0ZkiWlFssHYgP1FgediHgooc8wQXj+
-         baRk5xNArX3RaZHJsCCrJVkryPpXOF8FQa0Rin94kt4aTK2lmFVHsXej1XI3t6UykDkp
-         IMOg==
-X-Gm-Message-State: AOAM531Y4myKgVPUA/OhZMFgzECZAsJZ0gqnnjFTzlGY8bXMt9qX7VuM
-        zEkxQFbSR7yCUapgJ4zIQqkNjgIRjfNvFcAiK3AF6Ubk
-X-Google-Smtp-Source: ABdhPJzBTlGqWZFllivz6SGMkHdvJgZYMGWKlvYCeURJhhugmqbBHOfLHrVh5fejLfJEru2ldm+1hnu/1jRJW22vClE=
-X-Received: by 2002:a50:9e4f:: with SMTP id z73mr6064469ede.338.1619550218836;
- Tue, 27 Apr 2021 12:03:38 -0700 (PDT)
+        Wed, 28 Apr 2021 09:06:11 -0400
+Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 13SD0j1f020977;
+        Wed, 28 Apr 2021 15:05:23 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=selector1;
+ bh=eVG3v1lNK3BXxdqTip+oyLR1+X82jhyNevCxSbpxH+E=;
+ b=3dlIO9+Oshqkwmw+9VEIpjnuaax+TOlu3qUw838yVD7R1hhvpXJvuQirqC511+ByiqEr
+ 5Wh3sCxTTDapgtXZW4IaTj4I1ULReLwAADx7L4e4hEAk08hQu5dtl5Vxa+GcJSeS/eu0
+ /oXJ+oSJop6N2+29FLAtxYWyJbHh6YM0Hn7oYNWCJmWqFnZIlSaNrqnbFPa5KeQ5AVdU
+ Wf1c4eEnedbVh6DTWgtmragIddZ2udmLX1uqu+4fyTKYSgVvRJmppDFFC8k67PYXi99p
+ Y4g6cgi7x8OrQe3PuKYUaYelcqe+9g7KGrn/HVRUWiL30ERGZlkyxptj85I31LS7ZzOQ EA== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 386ea8gghc-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 28 Apr 2021 15:05:23 +0200
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 3022510002A;
+        Wed, 28 Apr 2021 15:05:23 +0200 (CEST)
+Received: from Webmail-eu.st.com (sfhdag2node3.st.com [10.75.127.6])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 1BE06210895;
+        Wed, 28 Apr 2021 15:05:23 +0200 (CEST)
+Received: from lmecxl0889.lme.st.com (10.75.127.51) by SFHDAG2NODE3.st.com
+ (10.75.127.6) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Wed, 28 Apr
+ 2021 15:05:22 +0200
+Subject: Re: [PATCH v2 5/7] rpmsg: char: Introduce a rpmsg driver for the
+ rpmsg char device
+To:     Mathieu Poirier <mathieu.poirier@linaro.org>
+CC:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Ohad Ben-Cohen <ohad@wizery.com>,
+        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>
+References: <20210413134458.17912-1-arnaud.pouliquen@foss.st.com>
+ <20210413134458.17912-6-arnaud.pouliquen@foss.st.com>
+ <20210421174053.GA1223348@xps15>
+ <47015357-b006-1c32-f63f-d4fcac054d6f@foss.st.com>
+ <20210422163622.GC1256950@xps15>
+From:   Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
+Message-ID: <14998d88-b27b-3548-e52f-eb0365caa96f@foss.st.com>
+Date:   Wed, 28 Apr 2021 15:05:21 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-References: <20201230012724.1326156-1-martin.blumenstingl@googlemail.com>
- <20201230012724.1326156-4-martin.blumenstingl@googlemail.com>
- <YFLBPGNQpT9mM3AJ@builder.lan> <CAFBinCA92411o5+AGApr8+nkMdmzJ4ddzVY+Cb5FLBez+-92nA@mail.gmail.com>
- <YHYGLuxIN7WMakco@builder.lan>
-In-Reply-To: <YHYGLuxIN7WMakco@builder.lan>
-From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date:   Tue, 27 Apr 2021 21:03:28 +0200
-Message-ID: <CAFBinCDCtaqZG4a5jbw64RK4mrccSJTmznTiMPpp+gJNmo2LkA@mail.gmail.com>
-Subject: Re: [PATCH 3/5] dt-bindings: remoteproc: Add the documentation for
- Meson AO ARC rproc
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     linux-remoteproc@vger.kernel.org,
-        linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, ohad@wizery.com, robh+dt@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20210422163622.GC1256950@xps15>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.75.127.51]
+X-ClientProxiedBy: SFHDAG1NODE2.st.com (10.75.127.2) To SFHDAG2NODE3.st.com
+ (10.75.127.6)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.391,18.0.761
+ definitions=2021-04-28_06:2021-04-27,2021-04-28 signatures=0
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi Bjorn,
+Hi,
 
-On Tue, Apr 13, 2021 at 10:59 PM Bjorn Andersson
-<bjorn.andersson@linaro.org> wrote:
-[...]
-> Describing these kinds blocks in DT is indeed tricky, I've had
-> both cases where a block maps to multiple "functions" or where they
-> contain misc registers to be used in relation to some other block.
->
-> The prior typically lends itself to be modelled as a "simple-mfd" and
-> the latter as a "syscon".
-I think here the former description matches better
-each set of registers has one very specific purpose (pinctrl, GPIO,
-I2C, RTC, IR receiver, ...). there's only one exception inside the
-whole AO region called "PMU" (which mostly contains power management
-registers and a few clock control bits)
+On 4/22/21 6:36 PM, Mathieu Poirier wrote:
+> On Thu, Apr 22, 2021 at 09:58:27AM +0200, Arnaud POULIQUEN wrote:
+>> On 4/21/21 7:40 PM, Mathieu Poirier wrote:
+>>> Good day Arnaud,
+>>>
+>>> On Tue, Apr 13, 2021 at 03:44:56PM +0200, Arnaud Pouliquen wrote:
+>>>> A rpmsg char device allows to probe the endpoint device on a remote name
+>>>> service announcement.
+>>>>
+>>>> With this patch the /dev/rpmsgX interface is created either by a user
+>>>> application or by the remote firmware.
+>>>>
+>>>> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+>>>>
+>>>> ---
+>>>> update from V1:
+>>>>  - add missing unregister_rpmsg_driver call on module exit.
+>>>>
+>>>> ---
+>>>>  drivers/rpmsg/rpmsg_char.c | 59 +++++++++++++++++++++++++++++++++++++-
+>>>>  1 file changed, 58 insertions(+), 1 deletion(-)
+>>>>
+>>>> diff --git a/drivers/rpmsg/rpmsg_char.c b/drivers/rpmsg/rpmsg_char.c
+>>>> index a64249d83172..4606787b7011 100644
+>>>> --- a/drivers/rpmsg/rpmsg_char.c
+>>>> +++ b/drivers/rpmsg/rpmsg_char.c
+>>>> @@ -26,6 +26,8 @@
+>>>>  #include "rpmsg_char.h"
+>>>>  #include "rpmsg_internal.h"
+>>>>  
+>>>> +#define RPMSG_CHAR_DEVNAME "rpmsg-raw"
+>>>> +
+>>>
+>>> Why not simply call it rpmsg-char?
+>>
+>> I would avoid to link the rpmsg name service to the Linux Kernel device.
+> 
+> To me that's exactly what we want to do...  Am I missing something?
+> 
+>>
+>>>
+>>>>  static dev_t rpmsg_major;
+>>>>  
+>>>>  static DEFINE_IDA(rpmsg_ept_ida);
+>>>> @@ -403,13 +405,67 @@ int rpmsg_chrdev_create_eptdev(struct rpmsg_device *rpdev, struct device *parent
+>>>>  }
+>>>>  EXPORT_SYMBOL(rpmsg_chrdev_create_eptdev);
+>>>>  
+>>>> +static int rpmsg_chrdev_probe(struct rpmsg_device *rpdev)
+>>>> +{
+>>>> +	struct rpmsg_channel_info chinfo;
+>>>> +	struct rpmsg_eptdev *eptdev;
+>>>> +
+>>>> +	if (!rpdev->ept)
+>>>> +		return -EINVAL;
+>>>> +
+>>>> +	memcpy(chinfo.name, RPMSG_CHAR_DEVNAME, sizeof(RPMSG_CHAR_DEVNAME));
+>>>> +	chinfo.src = rpdev->src;
+>>>> +	chinfo.dst = rpdev->dst;
+>>>> +
+>>>> +	eptdev = __rpmsg_chrdev_create_eptdev(rpdev, &rpdev->dev, chinfo, NULL);
+>>>> +	if (IS_ERR(eptdev))
+>>>> +		return PTR_ERR(eptdev);
+>>>> +
+>>>> +	/* Set the private field of the default endpoint to retrieve context on callback. */
+>>>> +	rpdev->ept->priv = eptdev;
+>>>
+>>> This is already done in rpmsg_create_ept() when rpmsg_eptdev_open() is called.
+>>>
+>>>> +
+>>>> +	return 0;
+>>>> +}
+>>>> +
+>>>> +static void rpmsg_chrdev_remove(struct rpmsg_device *rpdev)
+>>>> +{
+>>>> +	int ret;
+>>>> +
+>>>> +	ret = device_for_each_child(&rpdev->dev, NULL, rpmsg_chrdev_destroy_eptdev);
+>>>> +	if (ret)
+>>>> +		dev_warn(&rpdev->dev, "failed to destroy endpoints: %d\n", ret);
+>>>> +}
+>>>> +
+>>>> +static struct rpmsg_device_id rpmsg_chrdev_id_table[] = {
+>>>> +	{ .name	= RPMSG_CHAR_DEVNAME },
+>>>> +	{ },
+>>>> +};
+>>>> +
+>>>> +static struct rpmsg_driver rpmsg_chrdev_driver = {
+>>>> +	.probe = rpmsg_chrdev_probe,
+>>>> +	.remove = rpmsg_chrdev_remove,
+>>>> +	.id_table = rpmsg_chrdev_id_table,
+>>>> +	.callback = rpmsg_ept_cb,
+>>>
+>>> Not sure why we need a callback associated to this driver when
+>>> rpmsg_eptdev_open() already creates and rpmsg_endpoint.  To me the only thing
+>>> having a callback provides is the association between the rpmsg_device and the
+>>> rpmsg_endpoint[1] that happens in rpmsg_dev_probe().  The QC folks already do
+>>> this association in their platform code[2].  Since this is not done in
+>>> __rpmsg_create_ept() a check for rpdev->ept == NULL could be done in
+>>> rpmsg_eptdev_open() and do the assignment there. 
+>>>
+>>> [1]. https://elixir.bootlin.com/linux/v5.12-rc6/source/drivers/rpmsg/rpmsg_core.c#L513  
+>>> [2]. https://elixir.bootlin.com/linux/v5.12-rc6/source/drivers/rpmsg/qcom_glink_native.c#L1623
+>>>
+>>
+>> That's a good point! When I started the redesign, I faced some issues with the
+>> approach you propose. But as I can not remember the reason and because the code
+>> has evolved, i need to re-think about this.
+>>
+> 
+> Glad to see we're on the same page.  I stared at this code for a very long time,
+> thinking there was some kind of bigger picture I wasn't getting.
 
-> So perhaps you could do a simple-mfd that spans the entire block and
-> then describe the remoteproc, watchdog?, pinctrl pieces as children
-> under that?
-I can send patches for the simple-mfd conversion (syscon won't be
-involved) so Rob can also give his feedback.
+I finally found the time to investigate this. If I remember now why I used this
+approach, I also saw that my patchset does not work with the QCOM platform driver.
 
-in my opinion this would not change the dt-bindings for the AO ARC
-remote-processor.
-Please let me know if there would be any dt-bindings changes so I can
-also include this when updating this series.
+As a first step of explanation, let's ignore the QC platform.
+rpdev->ept is null for the rpmsg ctrldev device created by the virtio rpmsg bus.
+If no default endpoint is created on rpmsg_chrdev_probe, it is not possible to
+differentiate the two in rpmsg_eptdev_open based on rpdev->ept == NULL.
 
+Now let's add the QC implementation
+As you mentioned, QC sets the rpdev->ept to a default endpoint before
+registering the rpmsg ctrldev. This shows that it is not reasonable to expect to
+handle all use cases based on the rpdev->ept value.
 
-Best regards,
-Martin
+So, to summarize, I need to rework this, probably by adding a new field in the
+rpmsg_eptdev structure, to properly handle the endpoint creation in the
+rpmsg_eptdev_open function.
+
+Regards,
+Arnaud
+
+> 
+> 
+>> Thanks,
+>> Arnaud
+>>
+>>
+>>>> +	.drv = {
+>>>> +		.name = "rpmsg_chrdev",
+>>>> +	},
+>>>> +};
+>>>> +
+>>>>  static int rpmsg_chrdev_init(void)
+>>>>  {
+>>>>  	int ret;
+>>>>  
+>>>>  	ret = alloc_chrdev_region(&rpmsg_major, 0, RPMSG_DEV_MAX, "rpmsg_char");
+>>>> -	if (ret < 0)
+>>>> +	if (ret < 0) {
+>>>>  		pr_err("rpmsg: failed to allocate char dev region\n");
+>>>> +		return ret;
+>>>> +	}
+>>>> +
+>>>> +	ret = register_rpmsg_driver(&rpmsg_chrdev_driver);
+>>>> +	if (ret < 0) {
+>>>> +		pr_err("rpmsg: failed to register rpmsg raw driver\n");
+>>>> +		unregister_chrdev_region(rpmsg_major, RPMSG_DEV_MAX);
+>>>> +	}
+>>>>  
+>>>>  	return ret;
+>>>>  }
+>>>> @@ -417,6 +473,7 @@ postcore_initcall(rpmsg_chrdev_init);
+>>>>  
+>>>>  static void rpmsg_chrdev_exit(void)
+>>>>  {
+>>>> +	unregister_rpmsg_driver(&rpmsg_chrdev_driver);
+>>>>  	unregister_chrdev_region(rpmsg_major, RPMSG_DEV_MAX);
+>>>>  }
+>>>>  module_exit(rpmsg_chrdev_exit);
+>>>> -- 
+>>>> 2.17.1
+>>>>
