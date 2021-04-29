@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-18.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 933EBC43600
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E748C43470
 	for <linux-remoteproc@archiver.kernel.org>; Thu, 29 Apr 2021 13:55:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4DE716144B
+	by mail.kernel.org (Postfix) with ESMTP id 2DB9E61407
 	for <linux-remoteproc@archiver.kernel.org>; Thu, 29 Apr 2021 13:55:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238780AbhD2N4c (ORCPT
+        id S238595AbhD2N4b (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 29 Apr 2021 09:56:32 -0400
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:7136 "EHLO
+        Thu, 29 Apr 2021 09:56:31 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:8666 "EHLO
         mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S237385AbhD2N42 (ORCPT
+        by vger.kernel.org with ESMTP id S237130AbhD2N42 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
         Thu, 29 Apr 2021 09:56:28 -0400
 Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 13TDqoBh016942;
-        Thu, 29 Apr 2021 15:55:37 +0200
+        by mx07-00178001.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 13TDqoWf016964;
+        Thu, 29 Apr 2021 15:55:36 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=from : to : cc :
  subject : date : message-id : in-reply-to : references : mime-version :
  content-type; s=selector1;
- bh=znudQlfS5PDiJZ59RvZ8YQ+jjVF5/hp4/M3cw5xvrR4=;
- b=VFK1pXQByRU8Gp782E+HSWiB2Ix1GRI6qMOPSqQGtC6uU06afQFQuLWVwj0t5/daY+QN
- 1kY5PbK1DMbqnccMtZqxbwj5iPsObJT8Re4d0XosTgLTf3xuMwaWCRtCdjzftfGk1i/K
- TpwkNVSHRrTKu0vK/p+1XWHJHNEFH/CxJ34rjKfaAKzkAtIOArZpaWM6RkFDpBcZtRRT
- +0DmeiVQiJXlxzjwQ3RMizmbSFj0L6y7qsFF2qWG8FzB0M5624++ns7EYNTeRg3Tq+0U
- OkEAURYUG6HUUAReUjC27RmWPRXRGpZl5uvZHgu1HwnusFkUUt3OA+/GYSeqsB8Un18P YQ== 
+ bh=S7Typx6gzUlbBuyCJfFatJ5O+B/4aSwdTXG7I7pkI0E=;
+ b=Puh/Cte5GSUMwNeTMtu9l3KVhZFqeG8EDbFJ04kH/d5/kMktzYVR/y/cBWelk2fe14og
+ ta18orPTjJlSln4ccvuBezhZCXHIMj7UPIjzCxedmkmLgBWYb+0S+Wa68dRPmth83NMr
+ vouiMJ2fjGJEYoIiFrNnFMIcESobeOoK59mJdc+uRib2MEMqBAWa9sbmSMtSIRvy915I
+ dwAgjqY9W4blWIWb4VkG9JtZdSRfA37RyWeWqy3CzjNfew9253mj/Xm8lnMgqgluLFqb
+ SZ5URYTgrS/nQ6bTWTDy4JtWYU5Dj85FMc/frhZwDS9y3HU6i+N5PXqNXnc1tWmFW1rt XA== 
 Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 38735wt32q-1
+        by mx07-00178001.pphosted.com with ESMTP id 38735wt32h-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 29 Apr 2021 15:55:37 +0200
+        Thu, 29 Apr 2021 15:55:36 +0200
 Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 216DA100034;
-        Thu, 29 Apr 2021 15:55:37 +0200 (CEST)
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 97F88100034;
+        Thu, 29 Apr 2021 15:55:35 +0200 (CEST)
 Received: from Webmail-eu.st.com (sfhdag2node3.st.com [10.75.127.6])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 167C62178F3;
-        Thu, 29 Apr 2021 15:55:37 +0200 (CEST)
-Received: from localhost (10.75.127.44) by SFHDAG2NODE3.st.com (10.75.127.6)
- with Microsoft SMTP Server (TLS) id 15.0.1497.2; Thu, 29 Apr 2021 15:55:36
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 8DAF7212FA0;
+        Thu, 29 Apr 2021 15:55:35 +0200 (CEST)
+Received: from localhost (10.75.127.45) by SFHDAG2NODE3.st.com (10.75.127.6)
+ with Microsoft SMTP Server (TLS) id 15.0.1497.2; Thu, 29 Apr 2021 15:55:35
  +0200
 From:   Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
 To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
@@ -53,16 +53,16 @@ To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
 CC:     <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <linux-stm32@st-md-mailman.stormreply.com>,
         <arnaud.pouliquen@foss.st.com>
-Subject: [PATCH v3 5/6] rpmsg: char: Introduce a rpmsg driver for the rpmsg char device
-Date:   Thu, 29 Apr 2021 15:55:06 +0200
-Message-ID: <20210429135507.8264-6-arnaud.pouliquen@foss.st.com>
+Subject: [PATCH v3 3/6] rpmsg: Update rpmsg_chrdev_register_device function
+Date:   Thu, 29 Apr 2021 15:55:04 +0200
+Message-ID: <20210429135507.8264-4-arnaud.pouliquen@foss.st.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20210429135507.8264-1-arnaud.pouliquen@foss.st.com>
 References: <20210429135507.8264-1-arnaud.pouliquen@foss.st.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-X-Originating-IP: [10.75.127.44]
-X-ClientProxiedBy: SFHDAG2NODE2.st.com (10.75.127.5) To SFHDAG2NODE3.st.com
+X-Originating-IP: [10.75.127.45]
+X-ClientProxiedBy: SFHDAG1NODE1.st.com (10.75.127.1) To SFHDAG2NODE3.st.com
  (10.75.127.6)
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.391,18.0.761
  definitions=2021-04-29_07:2021-04-28,2021-04-29 signatures=0
@@ -70,108 +70,102 @@ Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-A rpmsg char device allows to probe the endpoint device on a remote name
-service announcement.
+The rpmsg_chrdev driver has been replaced by the rpmsg_ctrl driver
+for the /dev/rpmsg_ctrlX devices management. The reference for the
+driver override is now the rpmsg_ctrl.
 
-With this patch the /dev/rpmsgX interface is created either by a user
-application or by the remote firmware.
+Update the rpmsg_chrdev_register_device function to reflect the update,
+and rename the function to use the rpmsg_ctrldev prefix.
+
+The platform drivers are updated accordingly.
 
 Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-
+Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 ---
-update from V1:
+ drivers/rpmsg/qcom_glink_native.c | 2 +-
+ drivers/rpmsg/qcom_smd.c          | 2 +-
+ drivers/rpmsg/rpmsg_ctrl.c        | 2 +-
+ drivers/rpmsg/rpmsg_internal.h    | 8 ++++----
+ drivers/rpmsg/virtio_rpmsg_bus.c  | 2 +-
+ 5 files changed, 8 insertions(+), 8 deletions(-)
 
- - add missing unregister_rpmsg_driver call on module exit.
----
- drivers/rpmsg/rpmsg_char.c | 53 +++++++++++++++++++++++++++++++++++++-
- 1 file changed, 52 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/rpmsg/rpmsg_char.c b/drivers/rpmsg/rpmsg_char.c
-index 5c6a7da6e4d7..9166454c1310 100644
---- a/drivers/rpmsg/rpmsg_char.c
-+++ b/drivers/rpmsg/rpmsg_char.c
-@@ -18,6 +18,8 @@
+diff --git a/drivers/rpmsg/qcom_glink_native.c b/drivers/rpmsg/qcom_glink_native.c
+index 05533c71b10e..7d7e809800ec 100644
+--- a/drivers/rpmsg/qcom_glink_native.c
++++ b/drivers/rpmsg/qcom_glink_native.c
+@@ -1642,7 +1642,7 @@ static int qcom_glink_create_chrdev(struct qcom_glink *glink)
+ 	rpdev->dev.parent = glink->dev;
+ 	rpdev->dev.release = qcom_glink_device_release;
  
- #include "rpmsg_char.h"
- 
-+#define RPMSG_CHAR_DEVNAME "rpmsg-raw"
-+
- static dev_t rpmsg_major;
- static struct class *rpmsg_class;
- 
-@@ -413,6 +415,40 @@ int rpmsg_chrdev_eptdev_create(struct rpmsg_device *rpdev, struct device *parent
+-	return rpmsg_chrdev_register_device(rpdev);
++	return rpmsg_ctrldev_register_device(rpdev);
  }
- EXPORT_SYMBOL(rpmsg_chrdev_eptdev_create);
  
-+static int rpmsg_chrdev_probe(struct rpmsg_device *rpdev)
-+{
-+	struct rpmsg_channel_info chinfo;
-+
-+	memcpy(chinfo.name, RPMSG_CHAR_DEVNAME, sizeof(RPMSG_CHAR_DEVNAME));
-+	chinfo.src = rpdev->src;
-+	chinfo.dst = rpdev->dst;
-+
-+	return __rpmsg_chrdev_eptdev_create(rpdev, &rpdev->dev, chinfo, true);
-+}
-+
-+static void rpmsg_chrdev_remove(struct rpmsg_device *rpdev)
-+{
-+	int ret;
-+
-+	ret = device_for_each_child(&rpdev->dev, NULL, rpmsg_chrdev_eptdev_destroy);
-+	if (ret)
-+		dev_warn(&rpdev->dev, "failed to destroy endpoints: %d\n", ret);
-+}
-+
-+static struct rpmsg_device_id rpmsg_chrdev_id_table[] = {
-+	{ .name	= RPMSG_CHAR_DEVNAME },
-+	{ },
-+};
-+
-+static struct rpmsg_driver rpmsg_chrdev_driver = {
-+	.probe = rpmsg_chrdev_probe,
-+	.remove = rpmsg_chrdev_remove,
-+	.id_table = rpmsg_chrdev_id_table,
-+	.drv = {
-+		.name = "rpmsg_chrdev",
-+	},
-+};
-+
- static int rpmsg_chrdev_init(void)
+ struct qcom_glink *qcom_glink_native_probe(struct device *dev,
+diff --git a/drivers/rpmsg/qcom_smd.c b/drivers/rpmsg/qcom_smd.c
+index 8da1b5cb31b3..d223e438d17c 100644
+--- a/drivers/rpmsg/qcom_smd.c
++++ b/drivers/rpmsg/qcom_smd.c
+@@ -1113,7 +1113,7 @@ static int qcom_smd_create_chrdev(struct qcom_smd_edge *edge)
+ 	qsdev->rpdev.dev.parent = &edge->dev;
+ 	qsdev->rpdev.dev.release = qcom_smd_release_device;
+ 
+-	return rpmsg_chrdev_register_device(&qsdev->rpdev);
++	return rpmsg_ctrldev_register_device(&qsdev->rpdev);
+ }
+ 
+ /*
+diff --git a/drivers/rpmsg/rpmsg_ctrl.c b/drivers/rpmsg/rpmsg_ctrl.c
+index 6b4d705b2dfd..6749e26b68fc 100644
+--- a/drivers/rpmsg/rpmsg_ctrl.c
++++ b/drivers/rpmsg/rpmsg_ctrl.c
+@@ -173,7 +173,7 @@ static struct rpmsg_driver rpmsg_ctrldev_driver = {
+ 	.probe = rpmsg_ctrldev_probe,
+ 	.remove = rpmsg_ctrldev_remove,
+ 	.drv = {
+-		.name = "rpmsg_chrdev",
++		.name = "rpmsg_ctrl",
+ 	},
+ };
+ 
+diff --git a/drivers/rpmsg/rpmsg_internal.h b/drivers/rpmsg/rpmsg_internal.h
+index a76c344253bf..8c500a8f29aa 100644
+--- a/drivers/rpmsg/rpmsg_internal.h
++++ b/drivers/rpmsg/rpmsg_internal.h
+@@ -82,16 +82,16 @@ struct rpmsg_device *rpmsg_create_channel(struct rpmsg_device *rpdev,
+ int rpmsg_release_channel(struct rpmsg_device *rpdev,
+ 			  struct rpmsg_channel_info *chinfo);
+ /**
+- * rpmsg_chrdev_register_device() - register chrdev device based on rpdev
++ * rpmsg_ctrl_register_device() - register a char device for control based on rpdev
+  * @rpdev:	prepared rpdev to be used for creating endpoints
+  *
+  * This function wraps rpmsg_register_device() preparing the rpdev for use as
+  * basis for the rpmsg chrdev.
+  */
+-static inline int rpmsg_chrdev_register_device(struct rpmsg_device *rpdev)
++static inline int rpmsg_ctrldev_register_device(struct rpmsg_device *rpdev)
  {
- 	int ret;
-@@ -427,15 +463,30 @@ static int rpmsg_chrdev_init(void)
- 	if (IS_ERR(rpmsg_class)) {
- 		pr_err("failed to create rpmsg class\n");
- 		unregister_chrdev_region(rpmsg_major, RPMSG_DEV_MAX);
--		return PTR_ERR(rpmsg_class);
-+		ret = PTR_ERR(rpmsg_class);
-+		goto free_region;
-+	}
-+
-+	ret = register_rpmsg_driver(&rpmsg_chrdev_driver);
-+	if (ret < 0) {
-+		pr_err("rpmsg: failed to register rpmsg raw driver\n");
-+		goto free_class;
- 	}
+-	strcpy(rpdev->id.name, "rpmsg_chrdev");
+-	rpdev->driver_override = "rpmsg_chrdev";
++	strcpy(rpdev->id.name, "rpmsg_ctrl");
++	rpdev->driver_override = "rpmsg_ctrl";
  
- 	return 0;
-+
-+free_class:
-+	class_destroy(rpmsg_class);
-+free_region:
-+	unregister_chrdev_region(rpmsg_major, RPMSG_DEV_MAX);
-+
-+	return ret;
+ 	return rpmsg_register_device(rpdev);
  }
- postcore_initcall(rpmsg_chrdev_init);
+diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
+index 8e49a3bacfc7..e42234a3e2ab 100644
+--- a/drivers/rpmsg/virtio_rpmsg_bus.c
++++ b/drivers/rpmsg/virtio_rpmsg_bus.c
+@@ -840,7 +840,7 @@ static struct rpmsg_device *rpmsg_virtio_add_ctrl_dev(struct virtio_device *vdev
+ 	rpdev_ctrl->dev.release = virtio_rpmsg_release_device;
+ 	rpdev_ctrl->little_endian = virtio_is_little_endian(vrp->vdev);
  
- static void rpmsg_chrdev_exit(void)
- {
-+	unregister_rpmsg_driver(&rpmsg_chrdev_driver);
- 	class_destroy(rpmsg_class);
- 	unregister_chrdev_region(rpmsg_major, RPMSG_DEV_MAX);
- }
+-	err = rpmsg_chrdev_register_device(rpdev_ctrl);
++	err = rpmsg_ctrldev_register_device(rpdev_ctrl);
+ 	if (err) {
+ 		kfree(vch);
+ 		return ERR_PTR(err);
 -- 
 2.17.1
 
