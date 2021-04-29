@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-18.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A891C43461
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A94F7C433ED
 	for <linux-remoteproc@archiver.kernel.org>; Thu, 29 Apr 2021 13:55:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1031E61407
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 29 Apr 2021 13:55:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 67A0E613B1
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 29 Apr 2021 13:55:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238314AbhD2N4a (ORCPT
+        id S238485AbhD2N4b (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 29 Apr 2021 09:56:30 -0400
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:7146 "EHLO
+        Thu, 29 Apr 2021 09:56:31 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:7122 "EHLO
         mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S233862AbhD2N42 (ORCPT
+        by vger.kernel.org with ESMTP id S237081AbhD2N42 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
         Thu, 29 Apr 2021 09:56:28 -0400
 Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 13TDqoVN016932;
-        Thu, 29 Apr 2021 15:55:36 +0200
+        by mx07-00178001.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 13TDqpQ7017018;
+        Thu, 29 Apr 2021 15:55:35 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=from : to : cc :
  subject : date : message-id : in-reply-to : references : mime-version :
  content-type; s=selector1;
- bh=yeXYULP5eq2GnrpxLGe9gEWKJg3B6sUimAODK7td/bA=;
- b=0BehwF1+ETy3Pr3KP0/c6xQbmH3w6zFnXnag+cZWKtSZRPXDGEHZwe6KMuWey516zPjg
- ApRk2cZYYOUptzu7teaBtJHzjw6OoXueChi83dTVcjoame+Mr63rDtY0uW5tJizRpL0m
- XkP0sZijp0mWD6pP2LXjHiaJOsUlJ1sZ7XMvhTYRHRtiyvFIlaHqfFMgK9Tha5lbq3cV
- c1On3Tg+0+GsUKaOrCDFqy5zH53gSu2fjhxphT5VQW/ORgptmHhyEsPuKzpQMyP6wHGL
- kYOiqWUpm63ZkT4nFrjCqr/rPl8Z8gT7RQtsAx37wdNgjqRxMskD6J+wEXUPtK3UFK23 Ng== 
+ bh=00Zn1FdyFNy4npU6MBWXKPj1CMbCnnLuzAW7ldPeI1c=;
+ b=Sk56QqPGmsOMuLyPphpSJeo8sS9e4cXMowtDuECcETSAsT8y+UgYYxNej8Q87nrzzHCU
+ RwMz8JNDruBoN2Kni9qMe9jT/FEkNC/K9GN/5UWIzXMdCcszNi1/dzLY3+LFc8jTNWpb
+ zHkeYoXNPZr8tsv18UfplPsjrbbylFqCcH8L8y+SveKLrn75VtkQSLq/rAr7tkDtClqm
+ KShmHToln+oZHq8LOtAZf2BNZdusHJkUv8JclX78T11S0Di4WCRVFzBDljZ3bTPw6iPV
+ cqKR5oAFv1TelL/75KevMtixvibejXOzFj87Fq15aSwEoI5417hg52MBELw6T40F0LWn Rg== 
 Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 38735wt32j-1
+        by mx07-00178001.pphosted.com with ESMTP id 38735wt32d-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 29 Apr 2021 15:55:36 +0200
+        Thu, 29 Apr 2021 15:55:35 +0200
 Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 507D310002A;
-        Thu, 29 Apr 2021 15:55:36 +0200 (CEST)
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id E261F10002A;
+        Thu, 29 Apr 2021 15:55:34 +0200 (CEST)
 Received: from Webmail-eu.st.com (sfhdag2node3.st.com [10.75.127.6])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 45C72212FA0;
-        Thu, 29 Apr 2021 15:55:36 +0200 (CEST)
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id D7E47212FA0;
+        Thu, 29 Apr 2021 15:55:34 +0200 (CEST)
 Received: from localhost (10.75.127.45) by SFHDAG2NODE3.st.com (10.75.127.6)
- with Microsoft SMTP Server (TLS) id 15.0.1497.2; Thu, 29 Apr 2021 15:55:35
+ with Microsoft SMTP Server (TLS) id 15.0.1497.2; Thu, 29 Apr 2021 15:55:34
  +0200
 From:   Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
 To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
@@ -53,16 +53,16 @@ To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
 CC:     <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <linux-stm32@st-md-mailman.stormreply.com>,
         <arnaud.pouliquen@foss.st.com>
-Subject: [PATCH v3 4/6] rpmsg: char: Add possibility to create and reuse default endpoint
-Date:   Thu, 29 Apr 2021 15:55:05 +0200
-Message-ID: <20210429135507.8264-5-arnaud.pouliquen@foss.st.com>
+Subject: [PATCH v3 2/6] rpmsg: Move the rpmsg control device from rpmsg_char to rpmsg_ctrl
+Date:   Thu, 29 Apr 2021 15:55:03 +0200
+Message-ID: <20210429135507.8264-3-arnaud.pouliquen@foss.st.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20210429135507.8264-1-arnaud.pouliquen@foss.st.com>
 References: <20210429135507.8264-1-arnaud.pouliquen@foss.st.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Originating-IP: [10.75.127.45]
-X-ClientProxiedBy: SFHDAG1NODE1.st.com (10.75.127.1) To SFHDAG2NODE3.st.com
+X-ClientProxiedBy: SFHDAG3NODE3.st.com (10.75.127.9) To SFHDAG2NODE3.st.com
  (10.75.127.6)
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.391,18.0.761
  definitions=2021-04-29_07:2021-04-28,2021-04-29 signatures=0
@@ -70,137 +70,506 @@ Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-This patch prepares the introduction of a rpmsg channel device for the
-char device. The rpmsg channel device will require a default endpoint to
-communicate to the remote processor.
+Create the rpmsg_ctrl.c module and move the code related to the
+rpmsg_ctrldev device in this new module.
 
-Add the use_default_ept field in rpmsg_eptdev structure. This boolean
-determines the behavior on rpmsg_eptdev_open and rpmsg_eptdev_release call.
-
-- If use_default_ept == false:
-  Use the legacy behavior by creating a new endpoint each time
-  rpmsg_eptdev_open is called and release it when rpmsg_eptdev_release
-  is called on /dev/rpmsgX device open/close.
-
-- if use_default_ept == true:
-  create a endpoint only on first rpmsg_eptdev_open call (if no default
-  endpoint already exists) and associate it to the default endpoint.
-  The endpoint is released when the rpmsg device is removed.
+Add the dependency between rpmsg_char and rpmsg_ctrl in the
+kconfig file.
 
 Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
 
 ---
-Update from V2
+Update from V2:
 
-This patch is a merge of two patches proposed in V2
- rpmsg: char: Introduce __rpmsg_chrdev_create_eptdev function
- rpmsg: char: No dynamic endpoint management for the default one
-
-With the introduction of the use_default_ept to determine the behaviour
-on  rpmsg_eptdev_open/release.
+- supress the "rpmsg" class in the rpmsg_ctrl module
+- cleanup useless includes
 ---
- drivers/rpmsg/rpmsg_char.c | 46 +++++++++++++++++++++++++++++++-------
- 1 file changed, 38 insertions(+), 8 deletions(-)
+ drivers/rpmsg/Kconfig      |   9 ++
+ drivers/rpmsg/Makefile     |   1 +
+ drivers/rpmsg/rpmsg_char.c | 170 +-----------------------------
+ drivers/rpmsg/rpmsg_char.h |   2 +
+ drivers/rpmsg/rpmsg_ctrl.c | 209 +++++++++++++++++++++++++++++++++++++
+ 5 files changed, 223 insertions(+), 168 deletions(-)
+ create mode 100644 drivers/rpmsg/rpmsg_ctrl.c
 
+diff --git a/drivers/rpmsg/Kconfig b/drivers/rpmsg/Kconfig
+index 0b4407abdf13..d822ec9ec692 100644
+--- a/drivers/rpmsg/Kconfig
++++ b/drivers/rpmsg/Kconfig
+@@ -10,11 +10,20 @@ config RPMSG_CHAR
+ 	tristate "RPMSG device interface"
+ 	depends on RPMSG
+ 	depends on NET
++	select RPMSG_CTRL
+ 	help
+ 	  Say Y here to export rpmsg endpoints as device files, usually found
+ 	  in /dev. They make it possible for user-space programs to send and
+ 	  receive rpmsg packets.
+ 
++config RPMSG_CTRL
++	tristate "RPMSG control interface"
++	depends on RPMSG
++	help
++	  Say Y here to enable the support of the /dev/rpmsg_ctrlX API. This API
++	  allows user-space programs to create endpoints with specific service name,
++	  source and destination addresses.
++
+ config RPMSG_NS
+ 	tristate "RPMSG name service announcement"
+ 	depends on RPMSG
+diff --git a/drivers/rpmsg/Makefile b/drivers/rpmsg/Makefile
+index 8d452656f0ee..58e3b382e316 100644
+--- a/drivers/rpmsg/Makefile
++++ b/drivers/rpmsg/Makefile
+@@ -1,6 +1,7 @@
+ # SPDX-License-Identifier: GPL-2.0
+ obj-$(CONFIG_RPMSG)		+= rpmsg_core.o
+ obj-$(CONFIG_RPMSG_CHAR)	+= rpmsg_char.o
++obj-$(CONFIG_RPMSG_CTRL)	+= rpmsg_ctrl.o
+ obj-$(CONFIG_RPMSG_NS)		+= rpmsg_ns.o
+ obj-$(CONFIG_RPMSG_MTK_SCP)	+= mtk_rpmsg.o
+ qcom_glink-objs			:= qcom_glink_native.o qcom_glink_ssr.o
 diff --git a/drivers/rpmsg/rpmsg_char.c b/drivers/rpmsg/rpmsg_char.c
-index 3b07a050b75e..5c6a7da6e4d7 100644
+index 3c53ece557a9..3b07a050b75e 100644
 --- a/drivers/rpmsg/rpmsg_char.c
 +++ b/drivers/rpmsg/rpmsg_char.c
-@@ -38,6 +38,8 @@ static DEFINE_IDA(rpmsg_minor_ida);
-  * @queue_lock:	synchronization of @queue operations
-  * @queue:	incoming message queue
-  * @readq:	wait object for incoming queue
-+ * @use_default_ept: specify if the endpoint has to be created at each device opening or
-+ *                   if the default endpoint should be reused.
-  */
- struct rpmsg_eptdev {
- 	struct device dev;
-@@ -52,6 +54,8 @@ struct rpmsg_eptdev {
- 	spinlock_t queue_lock;
- 	struct sk_buff_head queue;
- 	wait_queue_head_t readq;
-+
-+	bool use_default_ept;
- };
+@@ -18,33 +18,15 @@
  
- int rpmsg_chrdev_eptdev_destroy(struct device *dev, void *data)
-@@ -109,11 +113,29 @@ static int rpmsg_eptdev_open(struct inode *inode, struct file *filp)
+ #include "rpmsg_char.h"
  
- 	get_device(dev);
+-#define RPMSG_DEV_MAX	(MINORMASK + 1)
+-
+ static dev_t rpmsg_major;
+ static struct class *rpmsg_class;
  
--	ept = rpmsg_create_ept(rpdev, rpmsg_ept_cb, eptdev, eptdev->chinfo);
--	if (!ept) {
--		dev_err(dev, "failed to open %s\n", eptdev->chinfo.name);
--		put_device(dev);
--		return -EINVAL;
-+	/*
-+	 * If the rpmsg device default endpoint is used, create it only the first time then reuse
-+	 * it. Else a new endpoint is created on open that will be destroyed on release.
-+	 */
-+	if (eptdev->use_default_ept && rpdev->ept) {
-+		ept = rpdev->ept;
-+	} else {
-+		ept = rpmsg_create_ept(rpdev, rpmsg_ept_cb, eptdev, eptdev->chinfo);
-+		if (!ept) {
-+			dev_err(dev, "failed to open %s\n", eptdev->chinfo.name);
-+			put_device(dev);
-+			return -EINVAL;
-+		}
-+
-+		if (eptdev->use_default_ept) {
-+			/*
-+			 * Assign the new endpoint as default endpoint and update the channel
-+			 * info source to reflect the allocation in the rpmsg class.
-+			 */
-+			rpdev->ept = ept;
-+			rpdev->src = ept->addr;
-+			eptdev->chinfo.src = rpdev->src;
-+		}
- 	}
+-static DEFINE_IDA(rpmsg_ctrl_ida);
+ static DEFINE_IDA(rpmsg_ept_ida);
+ static DEFINE_IDA(rpmsg_minor_ida);
  
- 	eptdev->ept = ept;
-@@ -130,7 +152,8 @@ static int rpmsg_eptdev_release(struct inode *inode, struct file *filp)
- 	/* Close the endpoint, if it's not already destroyed by the parent */
- 	mutex_lock(&eptdev->ept_lock);
- 	if (eptdev->ept) {
--		rpmsg_destroy_ept(eptdev->ept);
-+		if (!eptdev->use_default_ept)
-+			rpmsg_destroy_ept(eptdev->ept);
- 		eptdev->ept = NULL;
- 	}
- 	mutex_unlock(&eptdev->ept_lock);
-@@ -316,8 +339,8 @@ static void rpmsg_eptdev_release_device(struct device *dev)
- 	kfree(eptdev);
+ #define dev_to_eptdev(dev) container_of(dev, struct rpmsg_eptdev, dev)
+ #define cdev_to_eptdev(i_cdev) container_of(i_cdev, struct rpmsg_eptdev, cdev)
+ 
+-#define dev_to_ctrldev(dev) container_of(dev, struct rpmsg_ctrldev, dev)
+-#define cdev_to_ctrldev(i_cdev) container_of(i_cdev, struct rpmsg_ctrldev, cdev)
+-
+-/**
+- * struct rpmsg_ctrldev - control device for instantiating endpoint devices
+- * @rpdev:	underlaying rpmsg device
+- * @cdev:	cdev for the ctrl device
+- * @dev:	device for the ctrl device
+- */
+-struct rpmsg_ctrldev {
+-	struct rpmsg_device *rpdev;
+-	struct cdev cdev;
+-	struct device dev;
+-};
+-
+ /**
+  * struct rpmsg_eptdev - endpoint device context
+  * @dev:	endpoint device
+@@ -401,151 +383,11 @@ int rpmsg_chrdev_eptdev_create(struct rpmsg_device *rpdev, struct device *parent
  }
- 
--int rpmsg_chrdev_eptdev_create(struct rpmsg_device *rpdev, struct device *parent,
--			       struct rpmsg_channel_info chinfo)
-+static int __rpmsg_chrdev_eptdev_create(struct rpmsg_device *rpdev, struct device *parent,
-+					struct rpmsg_channel_info chinfo, bool use_default_ept)
- {
- 	struct rpmsg_eptdev *eptdev;
- 	struct device *dev;
-@@ -330,6 +353,7 @@ int rpmsg_chrdev_eptdev_create(struct rpmsg_device *rpdev, struct device *parent
- 	dev = &eptdev->dev;
- 	eptdev->rpdev = rpdev;
- 	eptdev->chinfo = chinfo;
-+	eptdev->use_default_ept = use_default_ept;
- 
- 	mutex_init(&eptdev->ept_lock);
- 	spin_lock_init(&eptdev->queue_lock);
-@@ -381,6 +405,12 @@ int rpmsg_chrdev_eptdev_create(struct rpmsg_device *rpdev, struct device *parent
- 
- 	return ret;
- }
-+
-+int rpmsg_chrdev_eptdev_create(struct rpmsg_device *rpdev, struct device *parent,
-+			       struct rpmsg_channel_info chinfo)
-+{
-+	return __rpmsg_chrdev_eptdev_create(rpdev, parent, chinfo, false);
-+}
  EXPORT_SYMBOL(rpmsg_chrdev_eptdev_create);
  
+-static int rpmsg_ctrldev_open(struct inode *inode, struct file *filp)
+-{
+-	struct rpmsg_ctrldev *ctrldev = cdev_to_ctrldev(inode->i_cdev);
+-
+-	get_device(&ctrldev->dev);
+-	filp->private_data = ctrldev;
+-
+-	return 0;
+-}
+-
+-static int rpmsg_ctrldev_release(struct inode *inode, struct file *filp)
+-{
+-	struct rpmsg_ctrldev *ctrldev = cdev_to_ctrldev(inode->i_cdev);
+-
+-	put_device(&ctrldev->dev);
+-
+-	return 0;
+-}
+-
+-static long rpmsg_ctrldev_ioctl(struct file *fp, unsigned int cmd,
+-				unsigned long arg)
+-{
+-	struct rpmsg_ctrldev *ctrldev = fp->private_data;
+-	void __user *argp = (void __user *)arg;
+-	struct rpmsg_endpoint_info eptinfo;
+-	struct rpmsg_channel_info chinfo;
+-
+-	if (cmd != RPMSG_CREATE_EPT_IOCTL)
+-		return -EINVAL;
+-
+-	if (copy_from_user(&eptinfo, argp, sizeof(eptinfo)))
+-		return -EFAULT;
+-
+-	memcpy(chinfo.name, eptinfo.name, RPMSG_NAME_SIZE);
+-	chinfo.name[RPMSG_NAME_SIZE-1] = '\0';
+-	chinfo.src = eptinfo.src;
+-	chinfo.dst = eptinfo.dst;
+-
+-	return rpmsg_chrdev_eptdev_create(ctrldev->rpdev, &ctrldev->dev, chinfo);
+-};
+-
+-static const struct file_operations rpmsg_ctrldev_fops = {
+-	.owner = THIS_MODULE,
+-	.open = rpmsg_ctrldev_open,
+-	.release = rpmsg_ctrldev_release,
+-	.unlocked_ioctl = rpmsg_ctrldev_ioctl,
+-	.compat_ioctl = compat_ptr_ioctl,
+-};
+-
+-static void rpmsg_ctrldev_release_device(struct device *dev)
+-{
+-	struct rpmsg_ctrldev *ctrldev = dev_to_ctrldev(dev);
+-
+-	ida_simple_remove(&rpmsg_ctrl_ida, dev->id);
+-	ida_simple_remove(&rpmsg_minor_ida, MINOR(dev->devt));
+-	cdev_del(&ctrldev->cdev);
+-	kfree(ctrldev);
+-}
+-
+-static int rpmsg_chrdev_probe(struct rpmsg_device *rpdev)
+-{
+-	struct rpmsg_ctrldev *ctrldev;
+-	struct device *dev;
+-	int ret;
+-
+-	ctrldev = kzalloc(sizeof(*ctrldev), GFP_KERNEL);
+-	if (!ctrldev)
+-		return -ENOMEM;
+-
+-	ctrldev->rpdev = rpdev;
+-
+-	dev = &ctrldev->dev;
+-	device_initialize(dev);
+-	dev->parent = &rpdev->dev;
+-	dev->class = rpmsg_class;
+-
+-	cdev_init(&ctrldev->cdev, &rpmsg_ctrldev_fops);
+-	ctrldev->cdev.owner = THIS_MODULE;
+-
+-	ret = ida_simple_get(&rpmsg_minor_ida, 0, RPMSG_DEV_MAX, GFP_KERNEL);
+-	if (ret < 0)
+-		goto free_ctrldev;
+-	dev->devt = MKDEV(MAJOR(rpmsg_major), ret);
+-
+-	ret = ida_simple_get(&rpmsg_ctrl_ida, 0, 0, GFP_KERNEL);
+-	if (ret < 0)
+-		goto free_minor_ida;
+-	dev->id = ret;
+-	dev_set_name(&ctrldev->dev, "rpmsg_ctrl%d", ret);
+-
+-	ret = cdev_add(&ctrldev->cdev, dev->devt, 1);
+-	if (ret)
+-		goto free_ctrl_ida;
+-
+-	/* We can now rely on the release function for cleanup */
+-	dev->release = rpmsg_ctrldev_release_device;
+-
+-	ret = device_add(dev);
+-	if (ret) {
+-		dev_err(&rpdev->dev, "device_add failed: %d\n", ret);
+-		put_device(dev);
+-	}
+-
+-	dev_set_drvdata(&rpdev->dev, ctrldev);
+-
+-	return ret;
+-
+-free_ctrl_ida:
+-	ida_simple_remove(&rpmsg_ctrl_ida, dev->id);
+-free_minor_ida:
+-	ida_simple_remove(&rpmsg_minor_ida, MINOR(dev->devt));
+-free_ctrldev:
+-	put_device(dev);
+-	kfree(ctrldev);
+-
+-	return ret;
+-}
+-
+-static void rpmsg_chrdev_remove(struct rpmsg_device *rpdev)
+-{
+-	struct rpmsg_ctrldev *ctrldev = dev_get_drvdata(&rpdev->dev);
+-	int ret;
+-
+-	/* Destroy all endpoints */
+-	ret = device_for_each_child(&ctrldev->dev, NULL, rpmsg_chrdev_eptdev_destroy);
+-	if (ret)
+-		dev_warn(&rpdev->dev, "failed to nuke endpoints: %d\n", ret);
+-
+-	device_del(&ctrldev->dev);
+-	put_device(&ctrldev->dev);
+-}
+-
+-static struct rpmsg_driver rpmsg_chrdev_driver = {
+-	.probe = rpmsg_chrdev_probe,
+-	.remove = rpmsg_chrdev_remove,
+-	.drv = {
+-		.name = "rpmsg_chrdev",
+-	},
+-};
+-
  static int rpmsg_chrdev_init(void)
+ {
+ 	int ret;
+ 
+-	ret = alloc_chrdev_region(&rpmsg_major, 0, RPMSG_DEV_MAX, "rpmsg");
++	ret = alloc_chrdev_region(&rpmsg_major, 0, RPMSG_DEV_MAX, "rpmsg_char");
+ 	if (ret < 0) {
+ 		pr_err("rpmsg: failed to allocate char dev region\n");
+ 		return ret;
+@@ -558,20 +400,12 @@ static int rpmsg_chrdev_init(void)
+ 		return PTR_ERR(rpmsg_class);
+ 	}
+ 
+-	ret = register_rpmsg_driver(&rpmsg_chrdev_driver);
+-	if (ret < 0) {
+-		pr_err("rpmsgchr: failed to register rpmsg driver\n");
+-		class_destroy(rpmsg_class);
+-		unregister_chrdev_region(rpmsg_major, RPMSG_DEV_MAX);
+-	}
+-
+-	return ret;
++	return 0;
+ }
+ postcore_initcall(rpmsg_chrdev_init);
+ 
+ static void rpmsg_chrdev_exit(void)
+ {
+-	unregister_rpmsg_driver(&rpmsg_chrdev_driver);
+ 	class_destroy(rpmsg_class);
+ 	unregister_chrdev_region(rpmsg_major, RPMSG_DEV_MAX);
+ }
+diff --git a/drivers/rpmsg/rpmsg_char.h b/drivers/rpmsg/rpmsg_char.h
+index facd324290a4..311f5a7690f5 100644
+--- a/drivers/rpmsg/rpmsg_char.h
++++ b/drivers/rpmsg/rpmsg_char.h
+@@ -6,6 +6,8 @@
+ #ifndef __RPMSG_CHRDEV_H__
+ #define __RPMSG_CHRDEV_H__
+ 
++#define RPMSG_DEV_MAX	(MINORMASK + 1)
++
+ #if IS_REACHABLE(CONFIG_RPMSG_CHAR)
+ /**
+  * rpmsg_chrdev_eptdev_create() - register char device based on an endpoint
+diff --git a/drivers/rpmsg/rpmsg_ctrl.c b/drivers/rpmsg/rpmsg_ctrl.c
+new file mode 100644
+index 000000000000..6b4d705b2dfd
+--- /dev/null
++++ b/drivers/rpmsg/rpmsg_ctrl.c
+@@ -0,0 +1,209 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (C) 2021, STMicroelectronics
++ * Copyright (c) 2016, Linaro Ltd.
++ * Copyright (c) 2012, Michal Simek <monstr@monstr.eu>
++ * Copyright (c) 2012, PetaLogix
++ * Copyright (c) 2011, Texas Instruments, Inc.
++ * Copyright (c) 2011, Google, Inc.
++ *
++ * Based on rpmsg performance statistics driver by Michal Simek, which in turn
++ * was based on TI & Google OMX rpmsg driver.
++ */
++#include <linux/cdev.h>
++#include <linux/kernel.h>
++#include <linux/module.h>
++#include <linux/rpmsg.h>
++#include <linux/slab.h>
++
++#include "rpmsg_char.h"
++
++static dev_t rpmsg_major;
++
++static DEFINE_IDA(rpmsg_ctrl_ida);
++static DEFINE_IDA(rpmsg_minor_ida);
++
++#define dev_to_ctrldev(dev) container_of(dev, struct rpmsg_ctrldev, dev)
++#define cdev_to_ctrldev(i_cdev) container_of(i_cdev, struct rpmsg_ctrldev, cdev)
++
++/**
++ * struct rpmsg_ctrldev - control device for instantiating endpoint devices
++ * @rpdev:	underlaying rpmsg device
++ * @cdev:	cdev for the ctrl device
++ * @dev:	device for the ctrl device
++ */
++struct rpmsg_ctrldev {
++	struct rpmsg_device *rpdev;
++	struct cdev cdev;
++	struct device dev;
++};
++
++static int rpmsg_ctrldev_open(struct inode *inode, struct file *filp)
++{
++	struct rpmsg_ctrldev *ctrldev = cdev_to_ctrldev(inode->i_cdev);
++
++	get_device(&ctrldev->dev);
++	filp->private_data = ctrldev;
++
++	return 0;
++}
++
++static int rpmsg_ctrldev_release(struct inode *inode, struct file *filp)
++{
++	struct rpmsg_ctrldev *ctrldev = cdev_to_ctrldev(inode->i_cdev);
++
++	put_device(&ctrldev->dev);
++
++	return 0;
++}
++
++static long rpmsg_ctrldev_ioctl(struct file *fp, unsigned int cmd,
++				unsigned long arg)
++{
++	struct rpmsg_ctrldev *ctrldev = fp->private_data;
++	void __user *argp = (void __user *)arg;
++	struct rpmsg_endpoint_info eptinfo;
++	struct rpmsg_channel_info chinfo;
++
++	if (cmd != RPMSG_CREATE_EPT_IOCTL)
++		return -EINVAL;
++
++	if (copy_from_user(&eptinfo, argp, sizeof(eptinfo)))
++		return -EFAULT;
++
++	memcpy(chinfo.name, eptinfo.name, RPMSG_NAME_SIZE);
++	chinfo.name[RPMSG_NAME_SIZE - 1] = '\0';
++	chinfo.src = eptinfo.src;
++	chinfo.dst = eptinfo.dst;
++
++	return rpmsg_chrdev_eptdev_create(ctrldev->rpdev, &ctrldev->dev, chinfo);
++};
++
++static const struct file_operations rpmsg_ctrldev_fops = {
++	.owner = THIS_MODULE,
++	.open = rpmsg_ctrldev_open,
++	.release = rpmsg_ctrldev_release,
++	.unlocked_ioctl = rpmsg_ctrldev_ioctl,
++	.compat_ioctl = compat_ptr_ioctl,
++};
++
++static void rpmsg_ctrldev_release_device(struct device *dev)
++{
++	struct rpmsg_ctrldev *ctrldev = dev_to_ctrldev(dev);
++
++	ida_simple_remove(&rpmsg_ctrl_ida, dev->id);
++	ida_simple_remove(&rpmsg_minor_ida, MINOR(dev->devt));
++	cdev_del(&ctrldev->cdev);
++	kfree(ctrldev);
++}
++
++static int rpmsg_ctrldev_probe(struct rpmsg_device *rpdev)
++{
++	struct rpmsg_ctrldev *ctrldev;
++	struct device *dev;
++	int ret;
++
++	ctrldev = kzalloc(sizeof(*ctrldev), GFP_KERNEL);
++	if (!ctrldev)
++		return -ENOMEM;
++
++	ctrldev->rpdev = rpdev;
++
++	dev = &ctrldev->dev;
++	device_initialize(dev);
++	dev->parent = &rpdev->dev;
++
++	cdev_init(&ctrldev->cdev, &rpmsg_ctrldev_fops);
++	ctrldev->cdev.owner = THIS_MODULE;
++
++	ret = ida_simple_get(&rpmsg_minor_ida, 0, RPMSG_DEV_MAX, GFP_KERNEL);
++	if (ret < 0)
++		goto free_ctrldev;
++	dev->devt = MKDEV(MAJOR(rpmsg_major), ret);
++
++	ret = ida_simple_get(&rpmsg_ctrl_ida, 0, 0, GFP_KERNEL);
++	if (ret < 0)
++		goto free_minor_ida;
++	dev->id = ret;
++	dev_set_name(&ctrldev->dev, "rpmsg_ctrl%d", ret);
++
++	ret = cdev_add(&ctrldev->cdev, dev->devt, 1);
++	if (ret)
++		goto free_ctrl_ida;
++
++	/* We can now rely on the release function for cleanup */
++	dev->release = rpmsg_ctrldev_release_device;
++
++	ret = device_add(dev);
++	if (ret) {
++		dev_err(&rpdev->dev, "device_add failed: %d\n", ret);
++		put_device(dev);
++	}
++
++	dev_set_drvdata(&rpdev->dev, ctrldev);
++
++	return ret;
++
++free_ctrl_ida:
++	ida_simple_remove(&rpmsg_ctrl_ida, dev->id);
++free_minor_ida:
++	ida_simple_remove(&rpmsg_minor_ida, MINOR(dev->devt));
++free_ctrldev:
++	put_device(dev);
++	kfree(ctrldev);
++
++	return ret;
++}
++
++static void rpmsg_ctrldev_remove(struct rpmsg_device *rpdev)
++{
++	struct rpmsg_ctrldev *ctrldev = dev_get_drvdata(&rpdev->dev);
++	int ret;
++
++	/* Destroy all endpoints */
++	ret = device_for_each_child(&ctrldev->dev, NULL, rpmsg_chrdev_eptdev_destroy);
++	if (ret)
++		dev_warn(&rpdev->dev, "failed to nuke endpoints: %d\n", ret);
++
++	device_del(&ctrldev->dev);
++	put_device(&ctrldev->dev);
++}
++
++static struct rpmsg_driver rpmsg_ctrldev_driver = {
++	.probe = rpmsg_ctrldev_probe,
++	.remove = rpmsg_ctrldev_remove,
++	.drv = {
++		.name = "rpmsg_chrdev",
++	},
++};
++
++static int rpmsg_ctrldev_init(void)
++{
++	int ret;
++
++	ret = alloc_chrdev_region(&rpmsg_major, 0, RPMSG_DEV_MAX, "rpmsg_ctrl");
++	if (ret < 0) {
++		pr_err("rpmsg: failed to allocate char dev region\n");
++		return ret;
++	}
++
++	ret = register_rpmsg_driver(&rpmsg_ctrldev_driver);
++	if (ret < 0) {
++		pr_err("rpmsg ctrl: failed to register rpmsg driver\n");
++		unregister_chrdev_region(rpmsg_major, RPMSG_DEV_MAX);
++	}
++
++	return ret;
++}
++postcore_initcall(rpmsg_ctrldev_init);
++
++static void rpmsg_ctrldev_exit(void)
++{
++	unregister_rpmsg_driver(&rpmsg_ctrldev_driver);
++	unregister_chrdev_region(rpmsg_major, RPMSG_DEV_MAX);
++}
++module_exit(rpmsg_ctrldev_exit);
++
++MODULE_DESCRIPTION("rpmsg control interface");
++MODULE_ALIAS("rpmsg:" KBUILD_MODNAME);
++MODULE_LICENSE("GPL v2");
 -- 
 2.17.1
 
