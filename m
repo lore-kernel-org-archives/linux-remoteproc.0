@@ -2,102 +2,130 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E76D3C433B4
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 29 Apr 2021 13:55:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3481C43460
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 30 Apr 2021 15:00:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BE98D613B1
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 29 Apr 2021 13:55:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 91B4D61409
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 30 Apr 2021 15:00:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239466AbhD2N4f (ORCPT
+        id S232744AbhD3PBJ (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 29 Apr 2021 09:56:35 -0400
-Received: from mx07-00178001.pphosted.com ([185.132.182.106]:49283 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S238957AbhD2N4d (ORCPT
+        Fri, 30 Apr 2021 11:01:09 -0400
+Received: from mail-oi1-f169.google.com ([209.85.167.169]:42682 "EHLO
+        mail-oi1-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230105AbhD3PAl (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 29 Apr 2021 09:56:33 -0400
-Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 13TDqNHP015754;
-        Thu, 29 Apr 2021 15:55:38 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references : mime-version :
- content-type; s=selector1;
- bh=J0cFxw2bH7guQXoSBusLpJz9QK10xZKZUYYlRpY60N4=;
- b=1tuoEC4WBVtx1ElVYUBL1i7rYvax2QmzfEl20kwZqK2ys0KK0jM/ogKXSsspv5LlVSCc
- 4K/cOd7u+2Bv30MzuDOTMpKioK8R0l/pudVOBNb7ssPp3/IZF0+ynlV3PmHRMnn2pxUs
- u8TLR3JEzWXI12vxthiyrYCF1mU1096DXsQbjrqFDRaqMqIR0Hcgqs6FRFUVV4kHzsUW
- MSzeYeYW8s8qn8bXk6W1RObZHPxWEEz1rTjgdXcOqGZhKjpGAQ0Y0hvHjfzQY6pPuLCc
- uQG5Bw07DtMkSarxdP73bWs7hzNhlyKP2QXPL94Cn1vXmpD6+eHg2FkqezxvNoATNNoF 9w== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 387wnpr6b2-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 29 Apr 2021 15:55:38 +0200
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id BE8C810002A;
-        Thu, 29 Apr 2021 15:55:37 +0200 (CEST)
-Received: from Webmail-eu.st.com (sfhdag2node3.st.com [10.75.127.6])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id B4DAB212FA0;
-        Thu, 29 Apr 2021 15:55:37 +0200 (CEST)
-Received: from localhost (10.75.127.47) by SFHDAG2NODE3.st.com (10.75.127.6)
- with Microsoft SMTP Server (TLS) id 15.0.1497.2; Thu, 29 Apr 2021 15:55:37
- +0200
-From:   Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Ohad Ben-Cohen <ohad@wizery.com>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>
-CC:     <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <arnaud.pouliquen@foss.st.com>
-Subject: [PATCH v3 6/6] rpmsg: char: Return error if user tries to destroy a default endpoint.
-Date:   Thu, 29 Apr 2021 15:55:07 +0200
-Message-ID: <20210429135507.8264-7-arnaud.pouliquen@foss.st.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20210429135507.8264-1-arnaud.pouliquen@foss.st.com>
-References: <20210429135507.8264-1-arnaud.pouliquen@foss.st.com>
+        Fri, 30 Apr 2021 11:00:41 -0400
+Received: by mail-oi1-f169.google.com with SMTP id v24so2587784oiv.9;
+        Fri, 30 Apr 2021 07:59:53 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=7oqLTL7FjBg9HY0sSGI6aFeDyE5SlvMfM0+YrnIr+68=;
+        b=Atd9mx4JpjunbEpNR7TNWvwyTyETx6qDOvp97IDKjuJTY1mJQSjeNoxql0+iEjipq0
+         KaofdjWx/iKlZyWZJJCv0hYUrqiZ5zesO8EdThpKVwQz5i2qFJ6yIBh9q/c7WL5eDYCF
+         5cvEt94MNbuK5IB+RQlRqM5/QimHOzLHo5rtXWAvFcSr5rTDeQtq3DP2zKwZwf9a6meG
+         HTA1nR68lGU4OZjdA/udYUwaHYVgBkwuDv/ekLr4Bl/jtCkr8eCtuJT6OXvVj6d7j9FV
+         QShBLoMocfIg11hN6D2ft2nj7G0Td6QkYhYO5EkcFklqbSttTJyp9KOEggXcEwpp1G0M
+         DlcA==
+X-Gm-Message-State: AOAM533ZCARvxa5IgsOp2CYclTVAxLVqM7PXMimvD4wRiibiVkCtJ5OE
+        flNw2bjEDkB2dyfmL/BVIQ==
+X-Google-Smtp-Source: ABdhPJzFifVNTAoqHLiYvOi6iZntw6lonma1dt6TUb3/duVMgdwGynueJoTcanI8AUD76d8GTty0HQ==
+X-Received: by 2002:a54:4719:: with SMTP id k25mr10005129oik.174.1619794792956;
+        Fri, 30 Apr 2021 07:59:52 -0700 (PDT)
+Received: from robh.at.kernel.org (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id n105sm782562ota.45.2021.04.30.07.59.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 30 Apr 2021 07:59:51 -0700 (PDT)
+Received: (nullmailer pid 3313764 invoked by uid 1000);
+        Fri, 30 Apr 2021 14:59:50 -0000
+Date:   Fri, 30 Apr 2021 09:59:50 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Sibi Sankar <sibis@codeaurora.org>
+Cc:     bjorn.andersson@linaro.org, ulf.hansson@linaro.org,
+        mathieu.poirier@linaro.org, swboyd@chromium.org, rjw@rjwysocki.net,
+        agross@kernel.org, ohad@wizery.com, linux-arm-msm@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dianders@chromium.org,
+        rishabhb@codeaurora.org, sidgup@codeaurora.org
+Subject: Re: [PATCH 01/12] dt-bindings: soc: qcom: aoss: Drop power-domain
+ bindings
+Message-ID: <20210430145950.GA3311658@robh.at.kernel.org>
+References: <1618574638-5117-1-git-send-email-sibis@codeaurora.org>
+ <1618574638-5117-2-git-send-email-sibis@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.75.127.47]
-X-ClientProxiedBy: SFHDAG3NODE3.st.com (10.75.127.9) To SFHDAG2NODE3.st.com
- (10.75.127.6)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.391,18.0.761
- definitions=2021-04-29_07:2021-04-28,2021-04-29 signatures=0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1618574638-5117-2-git-send-email-sibis@codeaurora.org>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Using the RPMSG_DESTROY_EPT_IOCTL control, user application can
-destroy an endpoint. This patch prevents to destroy a default endpoint
-associated to a channel.
+On Fri, Apr 16, 2021 at 05:33:47PM +0530, Sibi Sankar wrote:
+> Drop power-domain bindings exposed by AOSS QMP node.
 
-This update is needed to manage the "rpmsg-raw" channel. In this
-case a default endpoint is used and destroying it without the
-channel does not make sense.
+That's obvious from the diff. The commit msg should tell us why.
 
-Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
----
- drivers/rpmsg/rpmsg_char.c | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/drivers/rpmsg/rpmsg_char.c b/drivers/rpmsg/rpmsg_char.c
-index 9166454c1310..f1cb352a59ed 100644
---- a/drivers/rpmsg/rpmsg_char.c
-+++ b/drivers/rpmsg/rpmsg_char.c
-@@ -282,6 +282,10 @@ static long rpmsg_eptdev_ioctl(struct file *fp, unsigned int cmd,
- 	if (cmd != RPMSG_DESTROY_EPT_IOCTL)
- 		return -EINVAL;
- 
-+	/* Don't allow to destroy a default endpoint. */
-+	if (!eptdev->rpdev || eptdev->ept == eptdev->rpdev->ept)
-+		return -EPERM;
-+
- 	return rpmsg_chrdev_eptdev_destroy(&eptdev->dev, NULL);
- }
- 
--- 
-2.17.1
-
+> 
+> Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
+> ---
+>  .../devicetree/bindings/soc/qcom/qcom,aoss-qmp.txt       | 16 ++--------------
+>  1 file changed, 2 insertions(+), 14 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/soc/qcom/qcom,aoss-qmp.txt b/Documentation/devicetree/bindings/soc/qcom/qcom,aoss-qmp.txt
+> index 783dc81b0f26..c0ae051a5b76 100644
+> --- a/Documentation/devicetree/bindings/soc/qcom/qcom,aoss-qmp.txt
+> +++ b/Documentation/devicetree/bindings/soc/qcom/qcom,aoss-qmp.txt
+> @@ -9,8 +9,7 @@ Messaging Protocol (QMP)
+>  
+>  The AOSS side channel exposes control over a set of resources, used to control
+>  a set of debug related clocks and to affect the low power state of resources
+> -related to the secondary subsystems. These resources are exposed as a set of
+> -power-domains.
+> +related to the secondary subsystems.
+>  
+>  - compatible:
+>  	Usage: required
+> @@ -46,14 +45,6 @@ power-domains.
+>  	Definition: must be 0
+>  		    The single clock represents the QDSS clock.
+>  
+> -- #power-domain-cells:
+> -	Usage: optional
+> -	Value type: <u32>
+> -	Definition: must be 1
+> -		    The provided power-domains are:
+> -		    CDSP state (0), LPASS state (1), modem state (2), SLPI
+> -		    state (3), SPSS state (4) and Venus state (5).
+> -
+>  = SUBNODES
+>  The AOSS side channel also provides the controls for three cooling devices,
+>  these are expressed as subnodes of the QMP node. The name of the node is used
+> @@ -66,8 +57,7 @@ to identify the resource and must therefor be "cx", "mx" or "ebi".
+>  
+>  = EXAMPLE
+>  
+> -The following example represents the AOSS side-channel message RAM and the
+> -mechanism exposing the power-domains, as found in SDM845.
+> +The following example represents the AOSS side-channel message RAM as found in SDM845.
+>  
+>    aoss_qmp: qmp@c300000 {
+>  	  compatible = "qcom,sdm845-aoss-qmp";
+> @@ -75,8 +65,6 @@ mechanism exposing the power-domains, as found in SDM845.
+>  	  interrupts = <GIC_SPI 389 IRQ_TYPE_EDGE_RISING>;
+>  	  mboxes = <&apss_shared 0>;
+>  
+> -	  #power-domain-cells = <1>;
+> -
+>  	  cx_cdev: cx {
+>  		#cooling-cells = <2>;
+>  	  };
+> -- 
+> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+> a Linux Foundation Collaborative Project
+> 
