@@ -7,147 +7,136 @@ X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63A3CC433ED
-	for <linux-remoteproc@archiver.kernel.org>; Mon,  3 May 2021 16:30:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4B01C433B4
+	for <linux-remoteproc@archiver.kernel.org>; Mon,  3 May 2021 17:42:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3005261166
-	for <linux-remoteproc@archiver.kernel.org>; Mon,  3 May 2021 16:30:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 99C78610E9
+	for <linux-remoteproc@archiver.kernel.org>; Mon,  3 May 2021 17:42:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231289AbhECQb1 (ORCPT
+        id S231665AbhECRng (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 3 May 2021 12:31:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48642 "EHLO
+        Mon, 3 May 2021 13:43:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36888 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231283AbhECQb0 (ORCPT
+        with ESMTP id S231664AbhECRnf (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 3 May 2021 12:31:26 -0400
-Received: from mail-pj1-x1030.google.com (mail-pj1-x1030.google.com [IPv6:2607:f8b0:4864:20::1030])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2260BC061761
-        for <linux-remoteproc@vger.kernel.org>; Mon,  3 May 2021 09:30:32 -0700 (PDT)
-Received: by mail-pj1-x1030.google.com with SMTP id f2-20020a17090a4a82b02900c67bf8dc69so6078889pjh.1
-        for <linux-remoteproc@vger.kernel.org>; Mon, 03 May 2021 09:30:32 -0700 (PDT)
+        Mon, 3 May 2021 13:43:35 -0400
+Received: from mail-pj1-x102a.google.com (mail-pj1-x102a.google.com [IPv6:2607:f8b0:4864:20::102a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A2CEC061761
+        for <linux-remoteproc@vger.kernel.org>; Mon,  3 May 2021 10:42:41 -0700 (PDT)
+Received: by mail-pj1-x102a.google.com with SMTP id j6-20020a17090adc86b02900cbfe6f2c96so3811653pjv.1
+        for <linux-remoteproc@vger.kernel.org>; Mon, 03 May 2021 10:42:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=EapMqo/OLl+j3jdXKjeGdsgmzEj1HQe1hRFKca8q+6A=;
-        b=C/diLqTofNdL2L3UQNySHFSMf8kta5H6GQIuxwE8d/AjN1svTd8wmbDYkG1MJQCp8+
-         h1yr2vX/WkZTs3xRjxIWXh5UQ6mXrsgBmkEU5cf6GmCtJGDaNmfzmcx7jp8qgPjFGpRW
-         z3PiQbRFhvl4rVXj6tKUsS2lwehUHtQJoCDB68Y0k2v0798717r7pZvlhyQLKGNg4CO+
-         mdE2+jWpFBHfapJQo+7t+kQaRoI2dUVd6Z2JH883DBOQW/Er756wanxgGwuFAfqgA0pI
-         26qMXp/EC4tW/c4D60e//8JiuMaoDlkpK58i42GxvOTD7nMyeJYbyROmDly1UdTNoG0K
-         M2gA==
+        bh=YwS8hQU33H1/ZeBZdRBG9ZJ/sKIODEM23v4su4rhiCc=;
+        b=dIevIsu+BecbCDIM9vCBTdsPIaXduatZL5c7A0AoUn5fKQ0NyNS3wvgxnmo+3iz1OB
+         bv9uA4L1dDIlulUeRitvUnI+TG+9ndoRh1q3j5wywyfDcEg2EMWAZCsAkUZ0sktXgrMw
+         gLDSgKJDMfHs6Y8JvuewH3RIv/4xjjbFKC1o3m7Nf5gEc0Qx5+78Ah6pO26iiV1NN/J6
+         OwWCCVIFiE9wze5yMp5o769ro4M3+RI9gb9VTi/vesW1Ao2Dk/Qzd6cVttXI8yV1FpVu
+         rd3DqiPKVvl9S3tNnIB4SjimSDxqyksXs8kqfHXp9AcQnXzjzH4KTvAX0gFJyATFhjC0
+         yHQQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=EapMqo/OLl+j3jdXKjeGdsgmzEj1HQe1hRFKca8q+6A=;
-        b=SfUiS1yXOGReQXJyk9IU1OulEiWPd0QuXKPqYlqejG5RhfOCnA73Bb3nO4JQDOHUV0
-         2+Wpo3QhCOkRchvInTrOClzQgF9XLEubpWcDk/UMLPLJwDs4okMQGXtpspQRP9/Hwuxt
-         bGNpd16nEOOl6eXPva4lnkLFvUjiS5AQ/8Nv8ccjEmfZwwAOTK8wrdX+dmuohlK+RGak
-         4rUTSyqhz8dlxmq1m4jWgHhkiBghZtx8wrwlq13Zwi3aVQA3AEaAcl+QY9tbDtWnAZVs
-         remzTXLdqM4N5QCA9CoDCsNzqSmZGY7iI5clNuvhFP54a5zonS1tICLkA4dftM5nq+/n
-         8kXQ==
-X-Gm-Message-State: AOAM530J7lKxcgHuStvkpvarx6Vl4eXqMdNal8SCOIg1hj7CJ8CKpJkH
-        rNrIHRqIa6lWAtw80GI/4vqa/egCqv5ICQ==
-X-Google-Smtp-Source: ABdhPJzwtq7mjX3hYAL/TNFTiJfK7icexqpayF9WmFmrYT0VVvx2PUn3rCuFqBYFWvFGyOKnT30lJA==
-X-Received: by 2002:a17:902:d645:b029:ed:5c25:9ac0 with SMTP id y5-20020a170902d645b02900ed5c259ac0mr21439416plh.23.1620059431667;
-        Mon, 03 May 2021 09:30:31 -0700 (PDT)
+        bh=YwS8hQU33H1/ZeBZdRBG9ZJ/sKIODEM23v4su4rhiCc=;
+        b=SMwTjiKR2IjrMv0vaiCxL+xgpJKkcYmrdgGcYPlwbnwRfSWWJLBSJPSrXZy/UFuGkL
+         u8K6+bjiaHi6pJCZh18cm3VpJLWw2eOFV+FqIB5FXz8kQPLAqUVf26/cM9GKw2XxouE5
+         axi8sd0snvUKG7iqOXL2XA4GdkwbpdviiPqIiJNfO+EBvTyth8yFy0JdMYfhTo3jdJcP
+         6mX/J1I35222ls6yWJHsp68eLzCXDPu5V+H0mEibBOGpgT9W40GLzfWFtlcmf3O9g9ZB
+         D2T8dX6xHxZW/Bl3MUxv9PPjAydaTs/j54pbWF8tl2eV/9pLevnGNicL4FA8kJJzqjm7
+         caSQ==
+X-Gm-Message-State: AOAM5329SYoXnvFkJAn+j95Uzhb+1F5YU7fXKZKx3XnJlj8DsyRW9hgL
+        74ts7/WDYVflMDOE9DdsHmeMow==
+X-Google-Smtp-Source: ABdhPJzTQEVa1Em9j/IFmpfCNW+75vCOby+/gmN3VVIzRlRGpxwsE43eZzakv3nxEXUiOCvj5fYExg==
+X-Received: by 2002:a17:90a:9f02:: with SMTP id n2mr16264556pjp.190.1620063761016;
+        Mon, 03 May 2021 10:42:41 -0700 (PDT)
 Received: from xps15 (S0106889e681aac74.cg.shawcable.net. [68.147.0.187])
-        by smtp.gmail.com with ESMTPSA id i123sm9788207pfc.53.2021.05.03.09.30.30
+        by smtp.gmail.com with ESMTPSA id u20sm194311pgl.27.2021.05.03.10.42.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 May 2021 09:30:31 -0700 (PDT)
-Date:   Mon, 3 May 2021 10:30:28 -0600
+        Mon, 03 May 2021 10:42:40 -0700 (PDT)
+Date:   Mon, 3 May 2021 11:42:38 -0600
 From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-To:     peng.fan@oss.nxp.com
-Cc:     ohad@wizery.com, bjorn.andersson@linaro.org,
-        o.rempel@pengutronix.de, robh+dt@kernel.org,
-        devicetree@vger.kernel.org, shawnguo@kernel.org,
-        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
-        linux-remoteproc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Peng Fan <peng.fan@nxp.com>
-Subject: Re: [PATCH V5 5/8] remoteproc: imx_rproc: initial support for
- mutilple start/stop method
-Message-ID: <20210503163028.GC1699665@xps15>
-References: <1618971622-30539-1-git-send-email-peng.fan@oss.nxp.com>
- <1618971622-30539-6-git-send-email-peng.fan@oss.nxp.com>
+To:     Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Ohad Ben-Cohen <ohad@wizery.com>,
+        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com
+Subject: Re: [PATCH] rpmsg: char: Remove useless includes
+Message-ID: <20210503174238.GD1699665@xps15>
+References: <20210429080639.6379-1-arnaud.pouliquen@foss.st.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1618971622-30539-6-git-send-email-peng.fan@oss.nxp.com>
+In-Reply-To: <20210429080639.6379-1-arnaud.pouliquen@foss.st.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Wed, Apr 21, 2021 at 10:20:19AM +0800, peng.fan@oss.nxp.com wrote:
-> From: Peng Fan <peng.fan@nxp.com>
+On Thu, Apr 29, 2021 at 10:06:39AM +0200, Arnaud Pouliquen wrote:
+> Remove includes that are not requested to build the module.
 > 
-> Add three methods IMX_RPROC_NONE(no need start/stop), IMX_RPROC_MMIO
-> (start/stop through mmio) and IMX_RPROC_SMC(start/stop through ARM SMCCC).
-> 
-> The current SoCs supported are all using IMX_RPROC_MMIO.
-> 
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
 > ---
->  drivers/remoteproc/imx_rproc.c | 13 +++++++++++++
->  1 file changed, 13 insertions(+)
-
-Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-
+> applied without issue on Bjorn next branch (dc0e14fa833b)
+> ---
+>  drivers/rpmsg/rpmsg_char.c | 9 ---------
+>  1 file changed, 9 deletions(-)
 > 
-> diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rproc.c
-> index 06dac92e98e6..6289aeae95b6 100644
-> --- a/drivers/remoteproc/imx_rproc.c
-> +++ b/drivers/remoteproc/imx_rproc.c
-> @@ -74,6 +74,15 @@ struct imx_rproc_att {
->  	int flags;
->  };
+> diff --git a/drivers/rpmsg/rpmsg_char.c b/drivers/rpmsg/rpmsg_char.c
+> index 2bebc9b2d163..e4e54f515af6 100644
+> --- a/drivers/rpmsg/rpmsg_char.c
+> +++ b/drivers/rpmsg/rpmsg_char.c
+> @@ -10,19 +10,10 @@
+>   * was based on TI & Google OMX rpmsg driver.
+>   */
+>  #include <linux/cdev.h>
+> -#include <linux/device.h>
+
+This is where the declaration for struct device is along with other goodies like
+get/put_device().
+
+> -#include <linux/fs.h>
+
+That is where struct file is declared.
+
+> -#include <linux/idr.h>
+
+This is where you get ida_simple_get() and ida_simple_remove() from.
+
+>  #include <linux/kernel.h>
+>  #include <linux/module.h>
+> -#include <linux/poll.h>
+
+This is where struct poll_table and poll_wait() comes from.
+
+>  #include <linux/rpmsg.h>
+>  #include <linux/skbuff.h>
+> -#include <linux/slab.h>
+
+This gives you kzalloc() and kfree().
+
+> -#include <linux/uaccess.h>
+
+This gives you copy_from_user().
+
+> -#include <uapi/linux/rpmsg.h>
+
+This gives you RPMSG_CREATE_EPT_IOCTL and RPMSG_DESTROY_EPT_IOCTL.
+
+> -
+> -#include "rpmsg_internal.h"
+
+That one I agree with.
+
+Thanks,
+Mathieu
+
 >  
-> +/* Remote core start/stop method */
-> +enum imx_rproc_method {
-> +	IMX_RPROC_NONE,
-> +	/* Through syscon regmap */
-> +	IMX_RPROC_MMIO,
-> +	/* Through ARM SMCCC */
-> +	IMX_RPROC_SMC,
-> +};
-> +
->  struct imx_rproc_dcfg {
->  	u32				src_reg;
->  	u32				src_mask;
-> @@ -81,6 +90,7 @@ struct imx_rproc_dcfg {
->  	u32				src_stop;
->  	const struct imx_rproc_att	*att;
->  	size_t				att_size;
-> +	enum imx_rproc_method		method;
->  };
+>  #define RPMSG_DEV_MAX	(MINORMASK + 1)
 >  
->  struct imx_rproc {
-> @@ -183,6 +193,7 @@ static const struct imx_rproc_dcfg imx_rproc_cfg_imx8mq = {
->  	.src_stop	= IMX7D_M4_STOP,
->  	.att		= imx_rproc_att_imx8mq,
->  	.att_size	= ARRAY_SIZE(imx_rproc_att_imx8mq),
-> +	.method		= IMX_RPROC_MMIO,
->  };
->  
->  static const struct imx_rproc_dcfg imx_rproc_cfg_imx7d = {
-> @@ -192,6 +203,7 @@ static const struct imx_rproc_dcfg imx_rproc_cfg_imx7d = {
->  	.src_stop	= IMX7D_M4_STOP,
->  	.att		= imx_rproc_att_imx7d,
->  	.att_size	= ARRAY_SIZE(imx_rproc_att_imx7d),
-> +	.method		= IMX_RPROC_MMIO,
->  };
->  
->  static const struct imx_rproc_dcfg imx_rproc_cfg_imx6sx = {
-> @@ -201,6 +213,7 @@ static const struct imx_rproc_dcfg imx_rproc_cfg_imx6sx = {
->  	.src_stop	= IMX6SX_M4_STOP,
->  	.att		= imx_rproc_att_imx6sx,
->  	.att_size	= ARRAY_SIZE(imx_rproc_att_imx6sx),
-> +	.method		= IMX_RPROC_MMIO,
->  };
->  
->  static int imx_rproc_start(struct rproc *rproc)
 > -- 
-> 2.30.0
+> 2.17.1
 > 
