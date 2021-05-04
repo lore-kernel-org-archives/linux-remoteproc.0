@@ -2,181 +2,151 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5839C433ED
-	for <linux-remoteproc@archiver.kernel.org>; Tue,  4 May 2021 16:15:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD632C433B4
+	for <linux-remoteproc@archiver.kernel.org>; Tue,  4 May 2021 16:43:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B5A4E611AD
-	for <linux-remoteproc@archiver.kernel.org>; Tue,  4 May 2021 16:15:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8846561177
+	for <linux-remoteproc@archiver.kernel.org>; Tue,  4 May 2021 16:43:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231538AbhEDQP6 (ORCPT
+        id S231680AbhEDQoq (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 4 May 2021 12:15:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53702 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231635AbhEDQP6 (ORCPT
+        Tue, 4 May 2021 12:44:46 -0400
+Received: from mx07-00178001.pphosted.com ([185.132.182.106]:6138 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S231602AbhEDQop (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 4 May 2021 12:15:58 -0400
-Received: from mail-pf1-x42f.google.com (mail-pf1-x42f.google.com [IPv6:2607:f8b0:4864:20::42f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 660B3C06174A
-        for <linux-remoteproc@vger.kernel.org>; Tue,  4 May 2021 09:15:02 -0700 (PDT)
-Received: by mail-pf1-x42f.google.com with SMTP id i190so8084996pfc.12
-        for <linux-remoteproc@vger.kernel.org>; Tue, 04 May 2021 09:15:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=fzqlNtdsBiBaV00EBDfKVyKk5AQAycDnav35PwKqWQ0=;
-        b=D2IFQQaetYGhTlhtgYsrBpNy8AToFBTXn0Gu4DMlO8jGiDLYp7MFoZkzLYYHGnJgd7
-         Qf4CTsMEAqskVg6SBDu5oORhrj8S2g2cXmuLusfAuQtdoyJqKpXJ0HrOMyhP0AZYmdac
-         M5v7vFPzePGp9Ona1e0nU8oycCySo2taxrJZ0EUmWqpSwu5LYXYBykeXCgawdmI5x+Xu
-         gFQPcvq0Ia5frivFVfhAsAK8DSY5a8ySOEgbUn903V2dJlDXN67YxSZGi+cXVtVbytDh
-         rwfFEE9xUHvNtrtN6ial9ZjztakMB1ZGt81T/AirJEjW2S1jFEfIFDRyvAYutHw4TjW1
-         7w4Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=fzqlNtdsBiBaV00EBDfKVyKk5AQAycDnav35PwKqWQ0=;
-        b=hX4JxjHuTf/8+3/7USO5tot9ciUhZxSBjeGWGnbqknvK7hm3PFqEctiZ/Kokz3ajD3
-         1cEiPAr77nAJ05nlel6uEm00Ibb0M5t1AkAT0A0SW/8AzlVSO4D3YIqZOP9F9FyAEluy
-         hamoqQ8uILDuDVfPhlmjYEUKY20fY9LjbEbLJDdAHziKwcgNiAey/j9gOVWC0di5PogZ
-         kDKvwhyMbhWg8BWYIHzVd9elEpYpsiYptByx4Nr37nsYNrNaGe1H/qg/nfsDW8XlP1co
-         w8aFhf/pbhmw0iQZTeEh8IeFRCt3J4KQgLq2jbjWUUnLvyL88LMtsZFHPFzDBPm0FL69
-         w+Gg==
-X-Gm-Message-State: AOAM532Tyfnaik437rSIHIn5zfyjEY36eHHCWyLIVM8CKflFDvK5W05K
-        /2Vl6uAMI8pfw6nwMujJ+ckf/YGcdoCA3w==
-X-Google-Smtp-Source: ABdhPJzCk9y60famhhKa+5OcfdcaNqL3o85Okqtd0ZbjfAs/He9D8jwde3CanKiE0X0WJz5Ebsg2xQ==
-X-Received: by 2002:a17:90a:d582:: with SMTP id v2mr30182424pju.88.1620144901956;
-        Tue, 04 May 2021 09:15:01 -0700 (PDT)
-Received: from xps15 (S0106889e681aac74.cg.shawcable.net. [68.147.0.187])
-        by smtp.gmail.com with ESMTPSA id 204sm2607767pfw.158.2021.05.04.09.15.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 May 2021 09:15:01 -0700 (PDT)
-Date:   Tue, 4 May 2021 10:14:59 -0600
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-To:     Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Ohad Ben-Cohen <ohad@wizery.com>,
-        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com
-Subject: Re: [PATCH v3 3/6] rpmsg: Update rpmsg_chrdev_register_device
- function
-Message-ID: <20210504161459.GC1734971@xps15>
-References: <20210429135507.8264-1-arnaud.pouliquen@foss.st.com>
- <20210429135507.8264-4-arnaud.pouliquen@foss.st.com>
+        Tue, 4 May 2021 12:44:45 -0400
+Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 144Gb6jU023605;
+        Tue, 4 May 2021 18:43:49 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=selector1;
+ bh=e4GHW6KQzv3cVavsJTuYmCHdmlph4nc7Fv8hSyOSqhE=;
+ b=VbuvjYKpdlB2wIjoDVIId9AxHsuXVWk/u2aXE0ZYPEmiHieniaqu0I3eGgflcPY+NHFg
+ bU5citlNI1pckg6K5jlHdUg1Ohtn+m7j2SdMuLqBYEQw9dwczUALMUmr/IQGQXJkpY/G
+ ObHHBhMoS/dQG3Dqt4an/MgylsyEGHBUVT0nVFmlYHbvvrXpiopfAcX4nwz3XpR1ibmj
+ h7xeWX75KbiE7DI5FdENhaabUAyFhp0QEc6iR9Jc4Uuu5BSr3YKp3NrLg+UJ3DMgjvPY
+ q7NBxGtvpFGvOHdQTBKjNwHo7VEZAYKFY8E741GkvMJmf9531QxEqH4SztN5Fl7WhK85 tA== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 38akujydqr-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 04 May 2021 18:43:49 +0200
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id A6BCC10002A;
+        Tue,  4 May 2021 18:43:48 +0200 (CEST)
+Received: from Webmail-eu.st.com (sfhdag2node3.st.com [10.75.127.6])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 8789C2A4D98;
+        Tue,  4 May 2021 18:43:48 +0200 (CEST)
+Received: from lmecxl0889.lme.st.com (10.75.127.48) by SFHDAG2NODE3.st.com
+ (10.75.127.6) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Tue, 4 May
+ 2021 18:43:47 +0200
+Subject: Re: race condition issue at remote proc startup
+To:     Yann Sionneau <ysionneau@kalray.eu>,
+        <linux-remoteproc@vger.kernel.org>
+CC:     Pierre-Yves Kerbrat <pkerbrat@kalrayinc.com>,
+        Vincent Chardon <vchardon@kalrayinc.com>,
+        Julien Hascoet <jhascoet@kalrayinc.com>
+References: <b086d39f-ee2e-39b5-c4b1-bf9fbbd6a83b@kalray.eu>
+From:   Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
+Message-ID: <d6827a71-81ea-579f-dc89-68ca9055dac1@foss.st.com>
+Date:   Tue, 4 May 2021 18:43:47 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210429135507.8264-4-arnaud.pouliquen@foss.st.com>
+In-Reply-To: <b086d39f-ee2e-39b5-c4b1-bf9fbbd6a83b@kalray.eu>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.75.127.48]
+X-ClientProxiedBy: SFHDAG2NODE3.st.com (10.75.127.6) To SFHDAG2NODE3.st.com
+ (10.75.127.6)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.391,18.0.761
+ definitions=2021-05-04_09:2021-05-04,2021-05-04 signatures=0
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Thu, Apr 29, 2021 at 03:55:04PM +0200, Arnaud Pouliquen wrote:
-> The rpmsg_chrdev driver has been replaced by the rpmsg_ctrl driver
-> for the /dev/rpmsg_ctrlX devices management. The reference for the
-> driver override is now the rpmsg_ctrl.
-> 
-> Update the rpmsg_chrdev_register_device function to reflect the update,
-> and rename the function to use the rpmsg_ctrldev prefix.
-> 
-> The platform drivers are updated accordingly.
-> 
-> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-> Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-> ---
->  drivers/rpmsg/qcom_glink_native.c | 2 +-
->  drivers/rpmsg/qcom_smd.c          | 2 +-
->  drivers/rpmsg/rpmsg_ctrl.c        | 2 +-
->  drivers/rpmsg/rpmsg_internal.h    | 8 ++++----
->  drivers/rpmsg/virtio_rpmsg_bus.c  | 2 +-
->  5 files changed, 8 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/rpmsg/qcom_glink_native.c b/drivers/rpmsg/qcom_glink_native.c
-> index 05533c71b10e..7d7e809800ec 100644
-> --- a/drivers/rpmsg/qcom_glink_native.c
-> +++ b/drivers/rpmsg/qcom_glink_native.c
-> @@ -1642,7 +1642,7 @@ static int qcom_glink_create_chrdev(struct qcom_glink *glink)
->  	rpdev->dev.parent = glink->dev;
->  	rpdev->dev.release = qcom_glink_device_release;
->  
-> -	return rpmsg_chrdev_register_device(rpdev);
-> +	return rpmsg_ctrldev_register_device(rpdev);
->  }
->  
->  struct qcom_glink *qcom_glink_native_probe(struct device *dev,
-> diff --git a/drivers/rpmsg/qcom_smd.c b/drivers/rpmsg/qcom_smd.c
-> index 8da1b5cb31b3..d223e438d17c 100644
-> --- a/drivers/rpmsg/qcom_smd.c
-> +++ b/drivers/rpmsg/qcom_smd.c
-> @@ -1113,7 +1113,7 @@ static int qcom_smd_create_chrdev(struct qcom_smd_edge *edge)
->  	qsdev->rpdev.dev.parent = &edge->dev;
->  	qsdev->rpdev.dev.release = qcom_smd_release_device;
->  
-> -	return rpmsg_chrdev_register_device(&qsdev->rpdev);
-> +	return rpmsg_ctrldev_register_device(&qsdev->rpdev);
->  }
->  
->  /*
-> diff --git a/drivers/rpmsg/rpmsg_ctrl.c b/drivers/rpmsg/rpmsg_ctrl.c
-> index 6b4d705b2dfd..6749e26b68fc 100644
-> --- a/drivers/rpmsg/rpmsg_ctrl.c
-> +++ b/drivers/rpmsg/rpmsg_ctrl.c
-> @@ -173,7 +173,7 @@ static struct rpmsg_driver rpmsg_ctrldev_driver = {
->  	.probe = rpmsg_ctrldev_probe,
->  	.remove = rpmsg_ctrldev_remove,
->  	.drv = {
-> -		.name = "rpmsg_chrdev",
-> +		.name = "rpmsg_ctrl",
->  	},
->  };
->  
-> diff --git a/drivers/rpmsg/rpmsg_internal.h b/drivers/rpmsg/rpmsg_internal.h
-> index a76c344253bf..8c500a8f29aa 100644
-> --- a/drivers/rpmsg/rpmsg_internal.h
-> +++ b/drivers/rpmsg/rpmsg_internal.h
-> @@ -82,16 +82,16 @@ struct rpmsg_device *rpmsg_create_channel(struct rpmsg_device *rpdev,
->  int rpmsg_release_channel(struct rpmsg_device *rpdev,
->  			  struct rpmsg_channel_info *chinfo);
->  /**
-> - * rpmsg_chrdev_register_device() - register chrdev device based on rpdev
-> + * rpmsg_ctrl_register_device() - register a char device for control based on rpdev
+Hello Yann
 
-rpmsg_ctrldev_register_device()
+On 5/4/21 11:45 AM, Yann Sionneau wrote:
+> Hello,
+> 
+> We (at Kalray) have some difficulties during initialization of a remoteproc
+> device, and there seem to have no clean way (at least not one we know of) out of
+> this problem.
+> 
+> We need vring defined in the resource table to be completely initialized before
+> the remoteproc device is started. By completely initialized I mean that the
+> vring device address defined in resource table shall be changed from 0xff..ff to
+> a proper address. Currently the remote device is started before the
+> initialization has completed, which creates a race condition between Linux and
+> the remoteproc device. (We have a particular architecture in which the processor
+> running Linux is the same as the embedded processor, this is why this problem
+> happens in our case but probably not when the processor running Linux is much
+> faster than the embedded processor).
 
->   * @rpdev:	prepared rpdev to be used for creating endpoints
->   *
->   * This function wraps rpmsg_register_device() preparing the rpdev for use as
->   * basis for the rpmsg chrdev.
->   */
-> -static inline int rpmsg_chrdev_register_device(struct rpmsg_device *rpdev)
-> +static inline int rpmsg_ctrldev_register_device(struct rpmsg_device *rpdev)
->  {
-> -	strcpy(rpdev->id.name, "rpmsg_chrdev");
-> -	rpdev->driver_override = "rpmsg_chrdev";
-> +	strcpy(rpdev->id.name, "rpmsg_ctrl");
-> +	rpdev->driver_override = "rpmsg_ctrl";
->  
->  	return rpmsg_register_device(rpdev);
->  }
-> diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
-> index 8e49a3bacfc7..e42234a3e2ab 100644
-> --- a/drivers/rpmsg/virtio_rpmsg_bus.c
-> +++ b/drivers/rpmsg/virtio_rpmsg_bus.c
-> @@ -840,7 +840,7 @@ static struct rpmsg_device *rpmsg_virtio_add_ctrl_dev(struct virtio_device *vdev
->  	rpdev_ctrl->dev.release = virtio_rpmsg_release_device;
->  	rpdev_ctrl->little_endian = virtio_is_little_endian(vrp->vdev);
->  
-> -	err = rpmsg_chrdev_register_device(rpdev_ctrl);
-> +	err = rpmsg_ctrldev_register_device(rpdev_ctrl);
->  	if (err) {
->  		kfree(vch);
->  		return ERR_PTR(err);
-> -- 
-> 2.17.1
+Is the remote side waiting for the vdev status[1] update before accessing the
+vrings?
+
+[1] https://elixir.bootlin.com/linux/latest/source/include/linux/remoteproc.h#L307
+
+
+> 
+> Our best attempt up to now is to configure the virtio ring sooner i.e during
+> subdevice preparation instead of subdevice start.
+> i.e. in rproc_handle_vdev change code from
+>     rvdev->subdev.start = rproc_vdev_do_start;
+> to
+>     /* da field in vring must be initialized before powering up
+>      * the remoterproc, or else race condition may occur.
+>      * Indeed the remoteproc may read it before it has been initialized.
+>      */
+>     rvdev->subdev.prepare = rproc_vdev_do_start;
+> 
+> This works but it has undesired side effects. In particular some notifications
+> are sent (the remote proc kick function is being called), but since the remote
+> CPU has not been started yet we are not able to handle them, thus we simply
+> ignore them if the state of the remote proc is not RUNNING.
+> At least this seems to solve our problem, but this is a particularly unpleasant
+> way of solving the problem, in particular it might impact the existing
+> remoteproc devices. Do you have any suggestion on some cleaner to way to solve
+> this problem?
+> 
+> FYI, here is our arch specific remote proc implementation:
+> https://github.com/kalray/linux_coolidge/blob/coolidge/drivers/remoteproc/kvx_remoteproc.c
+> 
+> 
+> PS: there seem to be a similar problem when the remote device is being stopped.
+> The vring buffer are destroyed and only after is the remote proc device stopped.
+> There is once again a race condition as the remote proc device might try to
+> access the vring after their destruction by the host. Proposed change is as follow:
+> In rproc_handle_vdev change code from
+>     rvdev->subdev.stop = rproc_vdev_do_stop;
+> to
+>     rvdev->subdev.unprepare = rproc_vdev_do_stop;
+
+Should also be handled with the vdev status.
+
+> 
+> Note this change has much less impact on existing remote proc and is symmetric
+> to the previous change thus it might make it sound more logical
+> 
+> PS2: I guess that this issue never showed up before because most other use cases
+> are using fixed addresses in the resource tables and not dynamically allocated
+> ones at runtime.
+
+We use dynamic vring address allocation without any issue on STM323MP1 platform,
+with the coprocessor started before the main processor running Linux.
+
+Regards,
+Arnaud
+
+> 
+> Regards,
 > 
