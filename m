@@ -2,230 +2,259 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-23.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75624C433B4
-	for <linux-remoteproc@archiver.kernel.org>; Tue,  4 May 2021 15:03:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4ECBBC433ED
+	for <linux-remoteproc@archiver.kernel.org>; Tue,  4 May 2021 15:52:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 52F6A610E9
-	for <linux-remoteproc@archiver.kernel.org>; Tue,  4 May 2021 15:03:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1DA7160241
+	for <linux-remoteproc@archiver.kernel.org>; Tue,  4 May 2021 15:52:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230465AbhEDPEt (ORCPT
+        id S231465AbhEDPxJ (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 4 May 2021 11:04:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37712 "EHLO
+        Tue, 4 May 2021 11:53:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48390 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230447AbhEDPEt (ORCPT
+        with ESMTP id S231274AbhEDPxI (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 4 May 2021 11:04:49 -0400
-Received: from mail-ot1-x336.google.com (mail-ot1-x336.google.com [IPv6:2607:f8b0:4864:20::336])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A75BC06174A
-        for <linux-remoteproc@vger.kernel.org>; Tue,  4 May 2021 08:03:54 -0700 (PDT)
-Received: by mail-ot1-x336.google.com with SMTP id b5-20020a9d5d050000b02902a5883b0f4bso8493590oti.2
-        for <linux-remoteproc@vger.kernel.org>; Tue, 04 May 2021 08:03:54 -0700 (PDT)
+        Tue, 4 May 2021 11:53:08 -0400
+Received: from mail-pf1-x42a.google.com (mail-pf1-x42a.google.com [IPv6:2607:f8b0:4864:20::42a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC644C06174A
+        for <linux-remoteproc@vger.kernel.org>; Tue,  4 May 2021 08:52:13 -0700 (PDT)
+Received: by mail-pf1-x42a.google.com with SMTP id x188so5968886pfd.7
+        for <linux-remoteproc@vger.kernel.org>; Tue, 04 May 2021 08:52:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=7RqrxjKfz082JmA0I2mWOlHPLVs3icQWS1e8qkoLqQM=;
-        b=HD9OR3yw/FoECz3QKw12l5ZHgUH6xdDcATLTz7Cv/+chyusGtyn/5ldMX8sEqQ4n0m
-         qhWtbT1L4/VKvOl1JQ4XOO+2JEB+eAzr/XIbO5BeUr3Uq4r2Dv7uCMmMleAdr7rFgqZh
-         /6Hiw/0LcMFGLe6mHAlxo/ARqkKV6mfqToJrkpI9T7iokQ18zevtnvkT4WU1pUEYzZVR
-         1Rk7rzUNZVTBwfDTQ3AqE7T2cK7z/hL72o+JDgvXqb4iiA9oMAcWqhgbBPlgorXptp9f
-         oaADbzoU7vgvsPgcNBfmB4opfz1fu3XC6vATq13Cho7dDE5iHqgAuuVN4ijTxRY9RtFh
-         yuug==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=aK6w36TXS1lTDUWJSQW5HJvsLC/htSSC9JiL+C6PdRY=;
+        b=s12t9WAsDoTLVhlDwC7JyXO0JKrTsup4RgX3JFrI7w39JZpLkCA5Apsz015Dv8Ny+B
+         QjT0o+cFM63prvDOKjQlRzezWmEBAR1S4ASeJyJUePMHwmue8EgPzOoBzYPUFfb2oppj
+         whKe299q/XO8GjnH56YqU0EQG2Tuc4ugOItYiVt9+0bJUpBB8nz1t+cawL5aLpoEwdPm
+         afDvXt1MpVeAW+C82jTfFECYjSsdBy83nflltQIgD4q8L3qVUvRWSicXrkkvRtbm4t6u
+         0iW33Gw2HKrvVV7VZBpeIAQPDLyL3F3R/e0kf7TAvQAeUQVh/eh3QDd/u4rqeABZ/pNQ
+         OO+g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=7RqrxjKfz082JmA0I2mWOlHPLVs3icQWS1e8qkoLqQM=;
-        b=ZUGZXpUQqObuO3TVBOkBCgUCIDESSvKKuxPUBu0apCE54r3RrBmUmx1orpEm31ynMK
-         Ilt9U6/NTlyNsQwxDMO/rqqT7/4SKiKc5si/rYdRnC+eLi0WwTIBQfptdSh/VO5/Rvqg
-         IeJYe5w7ooFqRSvh4lrKU3CjUvqEWcNtqHu6IySU0yG9XlyWpJCs2SmUJ2I3zKrSlANb
-         7QCtDqvjSkiFKdi+bWKc4yrjgpOA8TuRrG1qo3XxBNWWyh1hXpdDmmD8GLnAz909cpEL
-         JsAICMnzap6YhCCmpiwzm3J1UR38uWuit1aHSQ3YTXXXovTkOCrLVNTqUC1K6TV7dXyx
-         5+1Q==
-X-Gm-Message-State: AOAM531XbszxnoEWijG+LdSzQWbpZ8SxFkdj76L5ZlzHflXA/oxAhonw
-        GdnAh5CBfkKweX0evfUNhJ9shg==
-X-Google-Smtp-Source: ABdhPJxKgBddPKK3LgQdy9pkUQ7KVnV0z2VcxR0ksHF2TG7WRsPfDYQvzHDL/4V7EnP/Sza3NbWGfw==
-X-Received: by 2002:a9d:4e04:: with SMTP id p4mr8212021otf.311.1620140633754;
-        Tue, 04 May 2021 08:03:53 -0700 (PDT)
-Received: from builder.lan (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
-        by smtp.gmail.com with ESMTPSA id r189sm728490oif.8.2021.05.04.08.03.52
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=aK6w36TXS1lTDUWJSQW5HJvsLC/htSSC9JiL+C6PdRY=;
+        b=iHwzqT5f99xN/xyqBXqpVSvYtIQAZTo+ZH4Wta1WRfG3pAsS1Du5mpsM8HFxnD+BGE
+         er9ToiWd0E5s5TZLt/7AU24BOB6psI6ZacT7O4d0IorEJ0vXU/+VELl4ezp7vwezuOXU
+         WzIP6w7hqzV80nF0MuVCBMiqnBspyOliS6AI6fOe6Kn5GAMqjftffOqHtVmfIdIHy+ZT
+         r/k/AmzCezpEuyjt2HyZuqxdMRveP1lS/XcU7NI+RwM5v/p9iMJHJgBL1w874pdQ9WMa
+         L4DKs6/1v77MLTpJNFvvNEH0PhkcefxGDJF6V9eDTUt6Nar5yk+lBqINALWeLywTtUaQ
+         /sJg==
+X-Gm-Message-State: AOAM530HGaH5AbQTRQDL98bV9cWSYs+IBH0/Q4wU/OUWGZuveiVZdLtj
+        D7BfCIefscR1v464dMNwg3WGNw==
+X-Google-Smtp-Source: ABdhPJyBdoMb21arlZ4uNuFPhvdS2j0XFQGbJ5CW7RF5d7VcVfHtBNq1fHRZn8svCTpKNQ8wAo1RhQ==
+X-Received: by 2002:aa7:839a:0:b029:27a:8c0b:3f5e with SMTP id u26-20020aa7839a0000b029027a8c0b3f5emr23884672pfm.69.1620143533266;
+        Tue, 04 May 2021 08:52:13 -0700 (PDT)
+Received: from xps15 (S0106889e681aac74.cg.shawcable.net. [68.147.0.187])
+        by smtp.gmail.com with ESMTPSA id x13sm15675606pja.3.2021.05.04.08.52.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 May 2021 08:03:52 -0700 (PDT)
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Peng Fan <peng.fan@nxp.com>,
-        Govind Singh <govinds@codeaurora.org>,
-        Wei Yongjun <weiyongjun1@huawei.com>,
-        Suman Anna <s-anna@ti.com>,
-        Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Jindong Yue <jindong.yue@nxp.com>,
-        Junlin Yang <yangjunlin@yulong.com>,
-        Raghavendra Rao Ananta <rananta@codeaurora.org>,
-        Yang Li <yang.lee@linux.alibaba.com>
-Subject: [GIT PULL] remoteproc updates for v5.13
-Date:   Tue,  4 May 2021 10:03:51 -0500
-Message-Id: <20210504150351.1468612-1-bjorn.andersson@linaro.org>
-X-Mailer: git-send-email 2.31.0
+        Tue, 04 May 2021 08:52:12 -0700 (PDT)
+Date:   Tue, 4 May 2021 09:52:10 -0600
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+To:     Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Ohad Ben-Cohen <ohad@wizery.com>,
+        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com
+Subject: Re: [PATCH v3 1/6] rpmsg: char: Export eptdev create an destroy
+ functions
+Message-ID: <20210504155210.GA1734971@xps15>
+References: <20210429135507.8264-1-arnaud.pouliquen@foss.st.com>
+ <20210429135507.8264-2-arnaud.pouliquen@foss.st.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210429135507.8264-2-arnaud.pouliquen@foss.st.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-The following changes since commit a38fd8748464831584a19438cbb3082b5a2dab15:
+On Thu, Apr 29, 2021 at 03:55:02PM +0200, Arnaud Pouliquen wrote:
+> To prepare the split of the code related to the control (ctrldev)
+> and the endpoint (eptdev) devices in 2 separate files:
+> 
+> - Rename and export the functions in rpmsg_char.h.
+> 
+> - Suppress the dependency with the rpmsg_ctrldev struct in the
+>   rpmsg_eptdev_create function.
+> 
+> - The rpmsg class is provided as parameter in rpmsg_chrdev_create_eptdev,
+>   because the class is associated to the control part.
+> 
+> Suggested-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+> Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+> 
+> ---
+> Update from v2:
+> 
+> - rename functions from rpmsg_chrdev_create/destroy_eptdev to
+>   rpmsg_chrdev_eptdev_create/destroy
+> ---
+>  drivers/rpmsg/rpmsg_char.c | 18 ++++++++------
+>  drivers/rpmsg/rpmsg_char.h | 49 ++++++++++++++++++++++++++++++++++++++
+>  2 files changed, 60 insertions(+), 7 deletions(-)
+>  create mode 100644 drivers/rpmsg/rpmsg_char.h
+> 
+> diff --git a/drivers/rpmsg/rpmsg_char.c b/drivers/rpmsg/rpmsg_char.c
+> index e4e54f515af6..3c53ece557a9 100644
+> --- a/drivers/rpmsg/rpmsg_char.c
+> +++ b/drivers/rpmsg/rpmsg_char.c
+> @@ -1,5 +1,6 @@
+>  // SPDX-License-Identifier: GPL-2.0
+>  /*
+> + * Copyright (C) 2021, STMicroelectronics
+>   * Copyright (c) 2016, Linaro Ltd.
+>   * Copyright (c) 2012, Michal Simek <monstr@monstr.eu>
+>   * Copyright (c) 2012, PetaLogix
+> @@ -15,6 +16,8 @@
+>  #include <linux/rpmsg.h>
+>  #include <linux/skbuff.h>
+>  
+> +#include "rpmsg_char.h"
+> +
+>  #define RPMSG_DEV_MAX	(MINORMASK + 1)
+>  
+>  static dev_t rpmsg_major;
+> @@ -69,7 +72,7 @@ struct rpmsg_eptdev {
+>  	wait_queue_head_t readq;
+>  };
+>  
+> -static int rpmsg_eptdev_destroy(struct device *dev, void *data)
+> +int rpmsg_chrdev_eptdev_destroy(struct device *dev, void *data)
+>  {
+>  	struct rpmsg_eptdev *eptdev = dev_to_eptdev(dev);
+>  
+> @@ -88,6 +91,7 @@ static int rpmsg_eptdev_destroy(struct device *dev, void *data)
+>  
+>  	return 0;
+>  }
+> +EXPORT_SYMBOL(rpmsg_chrdev_eptdev_destroy);
+>  
+>  static int rpmsg_ept_cb(struct rpmsg_device *rpdev, void *buf, int len,
+>  			void *priv, u32 addr)
+> @@ -271,7 +275,7 @@ static long rpmsg_eptdev_ioctl(struct file *fp, unsigned int cmd,
+>  	if (cmd != RPMSG_DESTROY_EPT_IOCTL)
+>  		return -EINVAL;
+>  
+> -	return rpmsg_eptdev_destroy(&eptdev->dev, NULL);
+> +	return rpmsg_chrdev_eptdev_destroy(&eptdev->dev, NULL);
+>  }
+>  
+>  static const struct file_operations rpmsg_eptdev_fops = {
+> @@ -330,10 +334,9 @@ static void rpmsg_eptdev_release_device(struct device *dev)
+>  	kfree(eptdev);
+>  }
+>  
+> -static int rpmsg_eptdev_create(struct rpmsg_ctrldev *ctrldev,
+> +int rpmsg_chrdev_eptdev_create(struct rpmsg_device *rpdev, struct device *parent,
+>  			       struct rpmsg_channel_info chinfo)
+>  {
+> -	struct rpmsg_device *rpdev = ctrldev->rpdev;
+>  	struct rpmsg_eptdev *eptdev;
+>  	struct device *dev;
+>  	int ret;
+> @@ -353,7 +356,7 @@ static int rpmsg_eptdev_create(struct rpmsg_ctrldev *ctrldev,
+>  
+>  	device_initialize(dev);
+>  	dev->class = rpmsg_class;
+> -	dev->parent = &ctrldev->dev;
+> +	dev->parent = parent;
+>  	dev->groups = rpmsg_eptdev_groups;
+>  	dev_set_drvdata(dev, eptdev);
+>  
+> @@ -396,6 +399,7 @@ static int rpmsg_eptdev_create(struct rpmsg_ctrldev *ctrldev,
+>  
+>  	return ret;
+>  }
+> +EXPORT_SYMBOL(rpmsg_chrdev_eptdev_create);
+>  
+>  static int rpmsg_ctrldev_open(struct inode *inode, struct file *filp)
+>  {
+> @@ -435,7 +439,7 @@ static long rpmsg_ctrldev_ioctl(struct file *fp, unsigned int cmd,
+>  	chinfo.src = eptinfo.src;
+>  	chinfo.dst = eptinfo.dst;
+>  
+> -	return rpmsg_eptdev_create(ctrldev, chinfo);
+> +	return rpmsg_chrdev_eptdev_create(ctrldev->rpdev, &ctrldev->dev, chinfo);
+>  };
+>  
+>  static const struct file_operations rpmsg_ctrldev_fops = {
+> @@ -521,7 +525,7 @@ static void rpmsg_chrdev_remove(struct rpmsg_device *rpdev)
+>  	int ret;
+>  
+>  	/* Destroy all endpoints */
+> -	ret = device_for_each_child(&ctrldev->dev, NULL, rpmsg_eptdev_destroy);
+> +	ret = device_for_each_child(&ctrldev->dev, NULL, rpmsg_chrdev_eptdev_destroy);
+>  	if (ret)
+>  		dev_warn(&rpdev->dev, "failed to nuke endpoints: %d\n", ret);
+>  
+> diff --git a/drivers/rpmsg/rpmsg_char.h b/drivers/rpmsg/rpmsg_char.h
+> new file mode 100644
+> index 000000000000..facd324290a4
+> --- /dev/null
+> +++ b/drivers/rpmsg/rpmsg_char.h
+> @@ -0,0 +1,49 @@
+> +/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+> +/*
+> + * Copyright (C) STMicroelectronics 2021.
+> + */
+> +
+> +#ifndef __RPMSG_CHRDEV_H__
+> +#define __RPMSG_CHRDEV_H__
+> +
+> +#if IS_REACHABLE(CONFIG_RPMSG_CHAR)
+> +/**
+> + * rpmsg_chrdev_eptdev_create() - register char device based on an endpoint
+> + * @rpdev:  prepared rpdev to be used for creating endpoints
+> + * @parent: parent device
+> + * @chinfo: assiated endpoint channel information.
 
-  Linux 5.12-rc2 (2021-03-05 17:33:41 -0800)
+s/assiated/associated
 
-are available in the Git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/andersson/remoteproc.git tags/rproc-v5.13
-
-for you to fetch changes up to edf696f26855788cdff832ac83319e1f2aafcc90:
-
-  remoteproc: stm32: add capability to detach (2021-04-14 09:59:21 -0500)
-
-----------------------------------------------------------------
-remoteproc updates for v5.13
-
-This adds support to the remoteproc core for detaching Linux from a
-running remoteproc, e.g. to reboot Linux while leaving the remoteproc
-running, and it enable this support in the stm32 remoteproc driver.
-
-It also introduces a property for memory carveouts to track if they are
-iomem or system ram, to enable proper handling of the differences.
-
-The imx_rproc received a number of fixes and improvements, in particular
-support for attaching to already running remote processors and i.MX8MQ
-and i.MX8MM support.
-
-The Qualcomm wcss driver gained support for starting and stopping the
-wireless subsystem on QCS404, when not using the TrustZone-based
-validator/loader.
-
-Finally it brings a few fixes to the TI PRU and to the firmware loader
-for the Qualcomm modem subsystem drivers.
-
-----------------------------------------------------------------
-Arnaud POULIQUEN (1):
-      remoteproc: stm32: Move memory parsing to rproc_ops
-
-Arnaud Pouliquen (2):
-      dt-bindings: remoteproc: stm32-rproc: add new mailbox channel for detach
-      remoteproc: stm32: add capability to detach
-
-Bjorn Andersson (3):
-      remoteproc: qcom_q6v5_mss: Provide errors for firmware-name parsing
-      remoteproc: qcom_q6v5_mss: Validate p_filesz in ELF loader
-      remoteproc: qcom: wcnss: Allow specifying firmware-name
-
-Govind Singh (4):
-      remoteproc: qcom: wcss: populate hardcoded param using driver data
-      dt-bindings: remoteproc: qcom: Add Q6V5 Modem PIL binding for QCS404
-      remoteproc: qcom: wcss: Add non pas wcss Q6 support for QCS404
-      remoteproc: qcom: wcss: explicitly request exclusive reset control
-
-Jindong Yue (1):
-      remoteproc: core: Remove casting to rproc_handle_resource_t
-
-Junlin Yang (1):
-      remoteproc: qcom: wcss: Remove unnecessary PTR_ERR()
-
-Manivannan Sadhasivam (2):
-      dt-bindings: remoteproc: qcom: pas: Add binding for SDX55
-      remoteproc: qcom: pas: Add modem support for SDX55
-
-Mathieu Poirier (16):
-      remoteproc: Remove useless check in rproc_del()
-      remoteproc: Rename function rproc_actuate()
-      remoteproc: Add new RPROC_ATTACHED state
-      remoteproc: Properly represent the attached state
-      remoteproc: Add new get_loaded_rsc_table() to rproc_ops
-      remoteproc: stm32: Move resource table setup to rproc_ops
-      remoteproc: Add new detach() remoteproc operation
-      remoteproc: Introduce function __rproc_detach()
-      remoteproc: Introduce function rproc_detach()
-      remoteproc: Properly deal with the resource table when detaching
-      remoteproc: Properly deal with the resource table when stopping
-      remoteproc: Properly deal with a kernel panic when attached
-      remoteproc: Properly deal with a start request when attached
-      remoteproc: Properly deal with a stop request when attached
-      remoteproc: Properly deal with a detach request when attached
-      remoteproc: Refactor function rproc_cdev_release()
-
-Peng Fan (14):
-      dt-bindings: remoteproc: convert imx rproc bindings to json-schema
-      dt-bindings: remoteproc: imx_rproc: add i.MX8MQ/M support
-      remoteproc: introduce is_iomem to rproc_mem_entry
-      remoteproc: add is_iomem to da_to_va
-      remoteproc: imx_rproc: correct err message
-      remoteproc: imx_rproc: use devm_ioremap
-      remoteproc: imx_rproc: add i.MX specific parse fw hook
-      remoteproc: imx_rproc: support i.MX8MQ/M
-      remoteproc: imx_rproc: ignore mapping vdev regions
-      remoteproc: imx_proc: enable virtio/mailbox
-      remoteproc: imx_rproc: add missing of_node_put
-      remoteproc: imx_rproc: enlarge IMX7D_RPROC_MEM_MAX
-      remoteproc: imx_rproc: move memory parsing to rproc_ops
-      remoteproc: imx_rproc: support remote cores booted before Linux Kernel
-
-Raghavendra Rao Ananta (1):
-      remoteproc: sysfs: Use sysfs_emit instead of sprintf
-
-Suman Anna (3):
-      remoteproc: pru: Fixup interrupt-parent logic for fw events
-      remoteproc: pru: Fix wrong success return value for fw events
-      remoteproc: pru: Fix and cleanup firmware interrupt mapping logic
-
-Wei Yongjun (4):
-      remoteproc: imx_rproc: fix return value check in imx_rproc_addr_init()
-      remoteproc: qcom: wcss: Fix return value check in q6v5_wcss_init_mmio()
-      remoteproc: qcom: wcss: Fix wrong pointer passed to PTR_ERR()
-      remoteproc: imx_rproc: fix build error without CONFIG_MAILBOX
-
-Yang Li (1):
-      remoteproc: pru: Replace DEFINE_SIMPLE_ATTRIBUTE with DEFINE_DEBUGFS_ATTRIBUTE
-
- .../bindings/remoteproc/fsl,imx-rproc.yaml         |  90 ++++
- .../devicetree/bindings/remoteproc/imx-rproc.txt   |  33 --
- .../devicetree/bindings/remoteproc/qcom,adsp.txt   |   4 +
- .../devicetree/bindings/remoteproc/qcom,q6v5.txt   |  15 +
- .../bindings/remoteproc/qcom,wcnss-pil.txt         |   6 +
- .../bindings/remoteproc/st,stm32-rproc.yaml        |  11 +-
- drivers/remoteproc/Kconfig                         |   7 +-
- drivers/remoteproc/imx_rproc.c                     | 322 ++++++++++-
- drivers/remoteproc/ingenic_rproc.c                 |   2 +-
- drivers/remoteproc/keystone_remoteproc.c           |   2 +-
- drivers/remoteproc/mtk_scp.c                       |   6 +-
- drivers/remoteproc/omap_remoteproc.c               |   2 +-
- drivers/remoteproc/pru_rproc.c                     |  47 +-
- drivers/remoteproc/qcom_q6v5_adsp.c                |   2 +-
- drivers/remoteproc/qcom_q6v5_mss.c                 |  26 +-
- drivers/remoteproc/qcom_q6v5_pas.c                 |  19 +-
- drivers/remoteproc/qcom_q6v5_wcss.c                | 599 +++++++++++++++++++--
- drivers/remoteproc/qcom_wcnss.c                    |  10 +-
- drivers/remoteproc/remoteproc_cdev.c               |  21 +-
- drivers/remoteproc/remoteproc_core.c               | 337 ++++++++++--
- drivers/remoteproc/remoteproc_coredump.c           |   8 +-
- drivers/remoteproc/remoteproc_debugfs.c            |   2 +-
- drivers/remoteproc/remoteproc_elf_loader.c         |  21 +-
- drivers/remoteproc/remoteproc_internal.h           |  12 +-
- drivers/remoteproc/remoteproc_sysfs.c              |  21 +-
- drivers/remoteproc/st_slim_rproc.c                 |   2 +-
- drivers/remoteproc/stm32_rproc.c                   | 205 +++----
- drivers/remoteproc/ti_k3_dsp_remoteproc.c          |   2 +-
- drivers/remoteproc/ti_k3_r5_remoteproc.c           |   2 +-
- drivers/remoteproc/wkup_m3_rproc.c                 |   2 +-
- include/linux/remoteproc.h                         |  25 +-
- 31 files changed, 1569 insertions(+), 294 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.yaml
- delete mode 100644 Documentation/devicetree/bindings/remoteproc/imx-rproc.txt
+> + *
+> + * This function create a new rpmsg char endpoint device to instantiate a new
+> + * endpoint based on chinfo information.
+> + */
+> +int rpmsg_chrdev_eptdev_create(struct rpmsg_device *rpdev, struct device *parent,
+> +			       struct rpmsg_channel_info chinfo);
+> +
+> +/**
+> + * rpmsg_chrdev_eptdev_destroy() - destroy created char device endpoint.
+> + * @data: private data associated to the endpoint device
+> + *
+> + * This function destroys a rpmsg char endpoint device created by the RPMSG_DESTROY_EPT_IOCTL
+> + * control.
+> + */
+> +int rpmsg_chrdev_eptdev_destroy(struct device *dev, void *data);
+> +
+> +#else  /*IS_REACHABLE(CONFIG_RPMSG_CHAR) */
+> +
+> +static inline int rpmsg_chrdev_eptdev_create(struct rpmsg_device *rpdev, struct device *parent,
+> +					     struct rpmsg_channel_info chinfo)
+> +{
+> +	return -EINVAL;
+> +}
+> +
+> +static inline int rpmsg_chrdev_eptdev_destroy(struct device *dev, void *data)
+> +{
+> +	/* This shouldn't be possible */
+> +	WARN_ON(1);
+> +
+> +	return 0;
+> +}
+> +
+> +#endif /*IS_REACHABLE(CONFIG_RPMSG_CHAR) */
+> +
+> +#endif /*__RPMSG_CHRDEV_H__ */
+> -- 
+> 2.17.1
+> 
