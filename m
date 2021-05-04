@@ -2,143 +2,108 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD8C4C433ED
-	for <linux-remoteproc@archiver.kernel.org>; Tue,  4 May 2021 18:20:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A41DC433ED
+	for <linux-remoteproc@archiver.kernel.org>; Tue,  4 May 2021 18:22:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 74E1C613CD
-	for <linux-remoteproc@archiver.kernel.org>; Tue,  4 May 2021 18:20:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F36D961164
+	for <linux-remoteproc@archiver.kernel.org>; Tue,  4 May 2021 18:22:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232223AbhEDSV1 (ORCPT
+        id S232065AbhEDSXk (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 4 May 2021 14:21:27 -0400
-Received: from mx07-00178001.pphosted.com ([185.132.182.106]:30918 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231635AbhEDSV0 (ORCPT
+        Tue, 4 May 2021 14:23:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54348 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231635AbhEDSXk (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 4 May 2021 14:21:26 -0400
-Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 144I76re007189;
-        Tue, 4 May 2021 20:20:28 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=selector1;
- bh=yI6Ml2clRXcMJtwies2mHdCV4zB6gRnE8QVI0zDSqis=;
- b=tisRkZr/wrgdeQPj0Eo0EGJxkyeO64LlJfodSp5ujquOubFeb263JMs4Nl89NfzQqHVE
- 8el9w6Xh26K1TOjEkpgXC9N2gUljUiIiQ4AQpChCbbFUb4OmkZUTSBEzAys9wofQx/oP
- 48dfcItsx5QvknAiJgIT7zbgECxYweMIcuGtQ/q3Eb3+fn54jfyam3iI3UjcWiOH62hQ
- WuVjVyBhWsLu11hPO4c5gFmnVc9SZn3jGwdLPCBCBe5Lm+RiumvTXHMruUkatLj+GWlU
- ACQeHH8mUPj0/lcDbACKL6uREgoOgvgoGp5doEMi254bBGDApZXaDSVPYiM7RCFh7G5I fw== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 38akujyuf1-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 04 May 2021 20:20:28 +0200
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 5947F10002A;
-        Tue,  4 May 2021 20:20:27 +0200 (CEST)
-Received: from Webmail-eu.st.com (sfhdag2node3.st.com [10.75.127.6])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 43C12226568;
-        Tue,  4 May 2021 20:20:27 +0200 (CEST)
-Received: from lmecxl0889.lme.st.com (10.75.127.48) by SFHDAG2NODE3.st.com
- (10.75.127.6) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Tue, 4 May
- 2021 20:20:26 +0200
-Subject: Re: [PATCH] rpmsg: char: Remove useless includes
-To:     Mathieu Poirier <mathieu.poirier@linaro.org>
-CC:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Ohad Ben-Cohen <ohad@wizery.com>,
-        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>
-References: <20210429080639.6379-1-arnaud.pouliquen@foss.st.com>
- <20210503174238.GD1699665@xps15>
- <b2f6b9ca-9dc2-920b-941d-175779bc1034@foss.st.com>
- <20210504170530.GD1734971@xps15>
-From:   Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
-Message-ID: <7170fdd0-00cd-1486-7b4c-41040ecfff6f@foss.st.com>
-Date:   Tue, 4 May 2021 20:20:25 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Tue, 4 May 2021 14:23:40 -0400
+Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E0961C061574
+        for <linux-remoteproc@vger.kernel.org>; Tue,  4 May 2021 11:22:44 -0700 (PDT)
+Received: by mail-lf1-x132.google.com with SMTP id 12so14615049lfq.13
+        for <linux-remoteproc@vger.kernel.org>; Tue, 04 May 2021 11:22:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=95tKEyQCRjctWNwfrxHZvLv9YtVr1nyw8aN8qwe62ek=;
+        b=DfmgA0a2l67EFPmtb/aEWt6XaeBFKai/W5LbfSGCLk41/gVTTY8y1dx24hHl8MoY1c
+         D7AF4rCyuVObdpCyKlGU1SIvQZgZMNnJr2054NtjuOwX9qTknRQISNVFAWl1xjEB+8sl
+         d3ukkMTAydjJSDP9Y1te1EWdizvDDWyakizNg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=95tKEyQCRjctWNwfrxHZvLv9YtVr1nyw8aN8qwe62ek=;
+        b=iWRijmj6xzUmHjFlAJvoqmyygZjsWhz7NIeWcgujqQx+VZ0T969H6+grvaKPhGBvqr
+         pDgxfoU+OincjTV13Cq/0jA8+4m2lYLHEad1q78lnanesjCb98R9bE2VyHZw+TLbl0wy
+         dJONjxfZkqtHihb576twwU0rID+EzRvWSlsuvwUXll1jceNeXDSmFRrg/0zUkhWxhxI7
+         fVzZSdh27oQ2Fpb506VeeaHRTICxSu3UQRgm1DSNcWTAqikv0Zx4k54UJkA41jIXdfR5
+         tLqS70QUvmfKl1eJu8wTMxa5311EPvAPJLq2bVLjTIFzmS0rqOkQp7YFLGqY4jYGwTXN
+         q5VQ==
+X-Gm-Message-State: AOAM532yP9vrGXmJFG5iuN6m4NVb7xGFDPPBpcks+OAJc94PI1SNqjGd
+        PYzyzwvN7K5lug87cvNH7DS6xhQNVsKaM0Lr
+X-Google-Smtp-Source: ABdhPJxvtMy7D5pl9AxqXUDHvP53mgbAfByW8HsfrKKzpNc5wL1Sg16E2vIpzp9JlO5Tuaaf165gDg==
+X-Received: by 2002:ac2:4f86:: with SMTP id z6mr18141467lfs.156.1620152563217;
+        Tue, 04 May 2021 11:22:43 -0700 (PDT)
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com. [209.85.208.177])
+        by smtp.gmail.com with ESMTPSA id b11sm326520lfi.292.2021.05.04.11.22.42
+        for <linux-remoteproc@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 04 May 2021 11:22:42 -0700 (PDT)
+Received: by mail-lj1-f177.google.com with SMTP id w4so3687184ljw.9
+        for <linux-remoteproc@vger.kernel.org>; Tue, 04 May 2021 11:22:42 -0700 (PDT)
+X-Received: by 2002:a2e:9251:: with SMTP id v17mr4541263ljg.507.1620152561717;
+ Tue, 04 May 2021 11:22:41 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20210504170530.GD1734971@xps15>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.75.127.48]
-X-ClientProxiedBy: SFHDAG1NODE2.st.com (10.75.127.2) To SFHDAG2NODE3.st.com
- (10.75.127.6)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.391,18.0.761
- definitions=2021-05-04_12:2021-05-04,2021-05-04 signatures=0
+References: <20210504150351.1468612-1-bjorn.andersson@linaro.org>
+In-Reply-To: <20210504150351.1468612-1-bjorn.andersson@linaro.org>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Tue, 4 May 2021 11:22:25 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wgea9bo-j4+LAvZF7OKPAXKqrGgiBAhXTJ3Jv5JAZgA+A@mail.gmail.com>
+Message-ID: <CAHk-=wgea9bo-j4+LAvZF7OKPAXKqrGgiBAhXTJ3Jv5JAZgA+A@mail.gmail.com>
+Subject: Re: [GIT PULL] remoteproc updates for v5.13
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Peng Fan <peng.fan@nxp.com>,
+        Govind Singh <govinds@codeaurora.org>,
+        Wei Yongjun <weiyongjun1@huawei.com>,
+        Suman Anna <s-anna@ti.com>,
+        Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        Jindong Yue <jindong.yue@nxp.com>,
+        Junlin Yang <yangjunlin@yulong.com>,
+        Raghavendra Rao Ananta <rananta@codeaurora.org>,
+        Yang Li <yang.lee@linux.alibaba.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
+On Tue, May 4, 2021 at 8:03 AM Bjorn Andersson
+<bjorn.andersson@linaro.org> wrote:
+>
+> This adds support to the remoteproc core for detaching Linux from a
+> running remoteproc, e.g. to reboot Linux while leaving the remoteproc
+> running, and it enable this support in the stm32 remoteproc driver.
 
+Honestly, when explaining new functionality like this, it would be
+lovely to also give an example of the _why_, not just the what.
 
-On 5/4/21 7:05 PM, Mathieu Poirier wrote:
-> Hi Arnaud,
-> 
-> [...]
-> 
->>
->> I started by this one and then I got carried away tested the other include...
->> You are right, I just don't follow her the first rule of the "submit checklist"
->>
->> "If you use a facility then #include the file that defines/declares that
->> facility. Don’t depend on other header files pulling in ones that you use."
->>
->> That said I just have a doubt for uapi/linux/rpmsg.h that will be include
->> by rpmsg.h[2], as these includes are part of the rpmsg framework API, should we
->> keep both, considering the rule as strict?
-> 
-> I red the last paragraph several times I can't understand what you are
-> trying to convey.  Please rephrase, provide more context or detail exactly where
-> you think we have a problem.
+Ie, some concrete example of "this is useful to have the remoteproc
+continue scanning wireless networks" or whatever.
 
-There is no problem, just a question before sending an update.
+I'm sure there's some actual use-case for this all, but neither the
+pull request nor the individual commits seem to actually explain that
+"why", only the "what".
 
-As you mention the #include "rpmsg_internal.h" line can be removed, I plan to
-send a patch V2 for this.
+I've pulled this, but hope that these kinds of issues can be explained
+better.. I think a lot of people care more about "why" than some
+implementation detail "what" cases.
 
-That's said before sending a new version I would like to propose to also remove
-the #include  <uapi/linux/rpmsg.h> line.
-
-The rational to remove it is that include/rpmsg.h would already include
-<uapi/linux/rpmsg.h> in 5.13 [2]. And looking at some frameworks (e.g I2C, TTY)
-the drivers seem to include only the include/xxx.h and not the uapi/linux/xxx.h
-in such case.
-
-So my question is should I remove  #include  <uapi/linux/rpmsg.h> line? Or do
-you prefer that i keep it?
-
-Hope it is more clear... else please just forget my proposal, I wouldn't want
-you to waste too much time for a point of detail.
-
-Thanks,
-Arnaud
-
-> 
-> Thanks,
-> Mathieu
-> 
-> 
->>
->> [1] https://www.kernel.org/doc/html/latest/process/submit-checklist.html
->> [2]
->> https://patchwork.kernel.org/project/linux-remoteproc/patch/20210311140413.31725-3-arnaud.pouliquen@foss.st.com/
->>
->> Thanks,
->> Arnaud
->>
->>>
->>> Thanks,
->>> Mathieu
->>>
->>>>  
->>>>  #define RPMSG_DEV_MAX	(MINORMASK + 1)
->>>>  
->>>> -- 
->>>> 2.17.1
->>>>
+              Linus
