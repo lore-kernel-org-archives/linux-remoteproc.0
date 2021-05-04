@@ -2,151 +2,120 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD632C433B4
-	for <linux-remoteproc@archiver.kernel.org>; Tue,  4 May 2021 16:43:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A58CBC433B4
+	for <linux-remoteproc@archiver.kernel.org>; Tue,  4 May 2021 17:05:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8846561177
-	for <linux-remoteproc@archiver.kernel.org>; Tue,  4 May 2021 16:43:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 84A4C613C1
+	for <linux-remoteproc@archiver.kernel.org>; Tue,  4 May 2021 17:05:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231680AbhEDQoq (ORCPT
+        id S231961AbhEDRGb (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 4 May 2021 12:44:46 -0400
-Received: from mx07-00178001.pphosted.com ([185.132.182.106]:6138 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231602AbhEDQop (ORCPT
+        Tue, 4 May 2021 13:06:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36786 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231962AbhEDRG2 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 4 May 2021 12:44:45 -0400
-Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 144Gb6jU023605;
-        Tue, 4 May 2021 18:43:49 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=selector1;
- bh=e4GHW6KQzv3cVavsJTuYmCHdmlph4nc7Fv8hSyOSqhE=;
- b=VbuvjYKpdlB2wIjoDVIId9AxHsuXVWk/u2aXE0ZYPEmiHieniaqu0I3eGgflcPY+NHFg
- bU5citlNI1pckg6K5jlHdUg1Ohtn+m7j2SdMuLqBYEQw9dwczUALMUmr/IQGQXJkpY/G
- ObHHBhMoS/dQG3Dqt4an/MgylsyEGHBUVT0nVFmlYHbvvrXpiopfAcX4nwz3XpR1ibmj
- h7xeWX75KbiE7DI5FdENhaabUAyFhp0QEc6iR9Jc4Uuu5BSr3YKp3NrLg+UJ3DMgjvPY
- q7NBxGtvpFGvOHdQTBKjNwHo7VEZAYKFY8E741GkvMJmf9531QxEqH4SztN5Fl7WhK85 tA== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 38akujydqr-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 04 May 2021 18:43:49 +0200
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id A6BCC10002A;
-        Tue,  4 May 2021 18:43:48 +0200 (CEST)
-Received: from Webmail-eu.st.com (sfhdag2node3.st.com [10.75.127.6])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 8789C2A4D98;
-        Tue,  4 May 2021 18:43:48 +0200 (CEST)
-Received: from lmecxl0889.lme.st.com (10.75.127.48) by SFHDAG2NODE3.st.com
- (10.75.127.6) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Tue, 4 May
- 2021 18:43:47 +0200
-Subject: Re: race condition issue at remote proc startup
-To:     Yann Sionneau <ysionneau@kalray.eu>,
-        <linux-remoteproc@vger.kernel.org>
-CC:     Pierre-Yves Kerbrat <pkerbrat@kalrayinc.com>,
-        Vincent Chardon <vchardon@kalrayinc.com>,
-        Julien Hascoet <jhascoet@kalrayinc.com>
-References: <b086d39f-ee2e-39b5-c4b1-bf9fbbd6a83b@kalray.eu>
-From:   Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
-Message-ID: <d6827a71-81ea-579f-dc89-68ca9055dac1@foss.st.com>
-Date:   Tue, 4 May 2021 18:43:47 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Tue, 4 May 2021 13:06:28 -0400
+Received: from mail-pf1-x431.google.com (mail-pf1-x431.google.com [IPv6:2607:f8b0:4864:20::431])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C7236C061761
+        for <linux-remoteproc@vger.kernel.org>; Tue,  4 May 2021 10:05:33 -0700 (PDT)
+Received: by mail-pf1-x431.google.com with SMTP id m11so8292716pfc.11
+        for <linux-remoteproc@vger.kernel.org>; Tue, 04 May 2021 10:05:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=+bVzPOaiGSpT9fPHodrAVpiteIe5e+Ae3qWhGcxKKAU=;
+        b=kcQjh8UyCfHGDomwiT3CD9fJ4Uv6ynvJ7yVxBkSenSh8/4pBwX/ns1e1cqz5XvCt/J
+         /X4r5KTma3914e56sEW0xfNH34HnbCTLcPEzZ9r7is5j1IwB1+pAPOPz5gZE99F7gCvA
+         cmmJJlz3vPjEvTlna0gqbOGhjr6wyeKFP62zoJqbJ8weQppTiyYcolnZchUtGL8d2C3k
+         0eSZ8sCHZHpI6ZSH5PnWrhBEPlvPaaQvYHF2rl8AORhX2pHVCzlOY9wpSdRX115Q262l
+         vDWP34a0V73sWmZYN06/h8xDekYUalDNee9IxYJvQLy9a3OtYWkM12efk+irjATRNXQZ
+         fGew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=+bVzPOaiGSpT9fPHodrAVpiteIe5e+Ae3qWhGcxKKAU=;
+        b=WH3Q2WCZk1Sd4F3tywMBfuTKQ5Ij06DSvb3fIqUNMCb5diCgd/bFkrwJXPDGT9gpKz
+         COUCHI9NUk+nRWMlLf2AUPaUabCVXrm14KyHENRlNj9P0hoXlB2eaJ4bW853gNLJSDjW
+         +ulvlUgnR1Mg4Ooo11FJqdHGPiovzkkWqqf1C9NYhKbQP16Bcv7KSxg3ZwbGASrm5Zym
+         1vWOtAL3vNsziAy+qUHlMtRvlPkpkr3G9GdDg4cHX3jBX6BkLxgorzj9eCIdNv+A6a0+
+         BV3R+eVjJU/3CrySVV4Ix/NlEHmEhjmBwvjxYw7MzW6siVXDsQuUvHHfq7XDI2cof8HO
+         3FYQ==
+X-Gm-Message-State: AOAM531wLEtdWgZse/WZz8VJwr/r1MR2rbVx52eTuIDCJ3srYKT8YiJc
+        lXw5Xd5dGpp/quPIEKZfX2hxjg==
+X-Google-Smtp-Source: ABdhPJwrzlIkkQtOwdmep59o++iyB2NlituPGYpI1BN/yYBGd2NSCYsW91QD+1JkXKZU8+AcR+A8qQ==
+X-Received: by 2002:a63:5c41:: with SMTP id n1mr2160215pgm.333.1620147933177;
+        Tue, 04 May 2021 10:05:33 -0700 (PDT)
+Received: from xps15 (S0106889e681aac74.cg.shawcable.net. [68.147.0.187])
+        by smtp.gmail.com with ESMTPSA id x9sm13848080pfq.197.2021.05.04.10.05.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 May 2021 10:05:32 -0700 (PDT)
+Date:   Tue, 4 May 2021 11:05:30 -0600
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+To:     Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
+Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Ohad Ben-Cohen <ohad@wizery.com>,
+        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com
+Subject: Re: [PATCH] rpmsg: char: Remove useless includes
+Message-ID: <20210504170530.GD1734971@xps15>
+References: <20210429080639.6379-1-arnaud.pouliquen@foss.st.com>
+ <20210503174238.GD1699665@xps15>
+ <b2f6b9ca-9dc2-920b-941d-175779bc1034@foss.st.com>
 MIME-Version: 1.0
-In-Reply-To: <b086d39f-ee2e-39b5-c4b1-bf9fbbd6a83b@kalray.eu>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.75.127.48]
-X-ClientProxiedBy: SFHDAG2NODE3.st.com (10.75.127.6) To SFHDAG2NODE3.st.com
- (10.75.127.6)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.391,18.0.761
- definitions=2021-05-04_09:2021-05-04,2021-05-04 signatures=0
+In-Reply-To: <b2f6b9ca-9dc2-920b-941d-175779bc1034@foss.st.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hello Yann
+Hi Arnaud,
 
-On 5/4/21 11:45 AM, Yann Sionneau wrote:
-> Hello,
+[...]
+
 > 
-> We (at Kalray) have some difficulties during initialization of a remoteproc
-> device, and there seem to have no clean way (at least not one we know of) out of
-> this problem.
+> I started by this one and then I got carried away tested the other include...
+> You are right, I just don't follow her the first rule of the "submit checklist"
 > 
-> We need vring defined in the resource table to be completely initialized before
-> the remoteproc device is started. By completely initialized I mean that the
-> vring device address defined in resource table shall be changed from 0xff..ff to
-> a proper address. Currently the remote device is started before the
-> initialization has completed, which creates a race condition between Linux and
-> the remoteproc device. (We have a particular architecture in which the processor
-> running Linux is the same as the embedded processor, this is why this problem
-> happens in our case but probably not when the processor running Linux is much
-> faster than the embedded processor).
+> "If you use a facility then #include the file that defines/declares that
+> facility. Don’t depend on other header files pulling in ones that you use."
+> 
+> That said I just have a doubt for uapi/linux/rpmsg.h that will be include
+> by rpmsg.h[2], as these includes are part of the rpmsg framework API, should we
+> keep both, considering the rule as strict?
 
-Is the remote side waiting for the vdev status[1] update before accessing the
-vrings?
+I red the last paragraph several times I can't understand what you are
+trying to convey.  Please rephrase, provide more context or detail exactly where
+you think we have a problem.
 
-[1] https://elixir.bootlin.com/linux/latest/source/include/linux/remoteproc.h#L307
+Thanks,
+Mathieu
 
 
 > 
-> Our best attempt up to now is to configure the virtio ring sooner i.e during
-> subdevice preparation instead of subdevice start.
-> i.e. in rproc_handle_vdev change code from
->     rvdev->subdev.start = rproc_vdev_do_start;
-> to
->     /* da field in vring must be initialized before powering up
->      * the remoterproc, or else race condition may occur.
->      * Indeed the remoteproc may read it before it has been initialized.
->      */
->     rvdev->subdev.prepare = rproc_vdev_do_start;
+> [1] https://www.kernel.org/doc/html/latest/process/submit-checklist.html
+> [2]
+> https://patchwork.kernel.org/project/linux-remoteproc/patch/20210311140413.31725-3-arnaud.pouliquen@foss.st.com/
 > 
-> This works but it has undesired side effects. In particular some notifications
-> are sent (the remote proc kick function is being called), but since the remote
-> CPU has not been started yet we are not able to handle them, thus we simply
-> ignore them if the state of the remote proc is not RUNNING.
-> At least this seems to solve our problem, but this is a particularly unpleasant
-> way of solving the problem, in particular it might impact the existing
-> remoteproc devices. Do you have any suggestion on some cleaner to way to solve
-> this problem?
+> Thanks,
+> Arnaud
 > 
-> FYI, here is our arch specific remote proc implementation:
-> https://github.com/kalray/linux_coolidge/blob/coolidge/drivers/remoteproc/kvx_remoteproc.c
-> 
-> 
-> PS: there seem to be a similar problem when the remote device is being stopped.
-> The vring buffer are destroyed and only after is the remote proc device stopped.
-> There is once again a race condition as the remote proc device might try to
-> access the vring after their destruction by the host. Proposed change is as follow:
-> In rproc_handle_vdev change code from
->     rvdev->subdev.stop = rproc_vdev_do_stop;
-> to
->     rvdev->subdev.unprepare = rproc_vdev_do_stop;
-
-Should also be handled with the vdev status.
-
-> 
-> Note this change has much less impact on existing remote proc and is symmetric
-> to the previous change thus it might make it sound more logical
-> 
-> PS2: I guess that this issue never showed up before because most other use cases
-> are using fixed addresses in the resource tables and not dynamically allocated
-> ones at runtime.
-
-We use dynamic vring address allocation without any issue on STM323MP1 platform,
-with the coprocessor started before the main processor running Linux.
-
-Regards,
-Arnaud
-
-> 
-> Regards,
-> 
+> > 
+> > Thanks,
+> > Mathieu
+> > 
+> >>  
+> >>  #define RPMSG_DEV_MAX	(MINORMASK + 1)
+> >>  
+> >> -- 
+> >> 2.17.1
+> >>
