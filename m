@@ -2,115 +2,105 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-17.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C4D6C43460
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  6 May 2021 21:19:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88D2AC433ED
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  6 May 2021 23:51:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 349986121F
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  6 May 2021 21:19:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 56F3C61041
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  6 May 2021 23:51:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230362AbhEFVUF (ORCPT
+        id S233139AbhEFXwb (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 6 May 2021 17:20:05 -0400
-Received: from mail-41103.protonmail.ch ([185.70.41.103]:25427 "EHLO
-        mail-41103.protonmail.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230320AbhEFVUE (ORCPT
+        Thu, 6 May 2021 19:52:31 -0400
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:51782 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233079AbhEFXwb (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 6 May 2021 17:20:04 -0400
-Received: from mail-02.mail-europe.com (mail-0201.mail-europe.com [51.77.79.158])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits))
-        (No client certificate requested)
-        by mail-41103.protonmail.ch (Postfix) with ESMTPS id 4Fbmfc3xlSz4wy53
-        for <linux-remoteproc@vger.kernel.org>; Thu,  6 May 2021 21:19:04 +0000 (UTC)
-Authentication-Results: mail-41103.protonmail.ch;
-        dkim=pass (1024-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="vEUlZx9B"
-Date:   Thu, 06 May 2021 21:18:52 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
-        s=protonmail; t=1620335940;
-        bh=hOrbqVj5R3JVLRiDgquRCxHlYsob+D3PH8ZLMkNz0DQ=;
-        h=Date:To:From:Cc:Reply-To:Subject:From;
-        b=vEUlZx9BpIVLYi+i8KmAnglGAhY0Lm+PIWgY+jzs7hfCLrg2nNt+6cGhKjfk+jh+t
-         MW/USfsin/HVSWU0gRSSR3DqrLvTlTXA8hNDtHUcNzmek7ypLAcoBu346h8ed+gu0G
-         +qOE5bKEtiOU5gdivGNSoTUgxnzYSx0iCMl+hGNA=
-To:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Ohad Ben-Cohen <ohad@wizery.com>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        devicetree@vger.kernel.org
-From:   Yassine Oudjana <y.oudjana@protonmail.com>
-Cc:     Yassine Oudjana <y.oudjana@protonmail.com>,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        linux-kernel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht
-Reply-To: Yassine Oudjana <y.oudjana@protonmail.com>
-Subject: [PATCH 3/3] arm64: dts: qcom: msm8996: Disable ADSP and add power domains
-Message-ID: <Epn1vFjJb0oQhqMYxspzL6X1N6MPcDT1f9oVVOjXc@cp3-web-020.plabs.ch>
+        Thu, 6 May 2021 19:52:31 -0400
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 146NpVMY062345;
+        Thu, 6 May 2021 18:51:31 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1620345091;
+        bh=7GjAjZeKdhiyFEA5IzURuVplWL+AsqcJIeMSa7IF6xo=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=ENTVekq4NqcdyjZUvbnm5vOFNWRbS5sOKUz4ve82I/0JXF3P3w4C8kwcApelaqQWd
+         JKefxeyC3AZtOXy4C5JBSfWJFYFlVfTOLyyy8a9CiLkrGt6yR9eaTxvQbZ3Ha3mAOY
+         z529Sm+h6YX6bRf2XatNekO31Cm/WaU40M4TTNNk=
+Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 146NpVaO116954
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 6 May 2021 18:51:31 -0500
+Received: from DLEE113.ent.ti.com (157.170.170.24) by DLEE115.ent.ti.com
+ (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2176.2; Thu, 6 May
+ 2021 18:51:30 -0500
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE113.ent.ti.com
+ (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2176.2 via
+ Frontend Transport; Thu, 6 May 2021 18:51:30 -0500
+Received: from [10.250.33.171] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id 146NpUN7096397;
+        Thu, 6 May 2021 18:51:30 -0500
+Subject: Re: [PATCH] remoteproc: k3-r5: Fix an error message
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        <ohad@wizery.com>, <bjorn.andersson@linaro.org>,
+        <mathieu.poirier@linaro.org>
+CC:     <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>
+References: <d6e29d903b48957bf59c67229d54b0fc215e31ae.1620333870.git.christophe.jaillet@wanadoo.fr>
+From:   Suman Anna <s-anna@ti.com>
+Message-ID: <b585d9e1-8b52-aa1e-211d-fa79be6a5d55@ti.com>
+Date:   Thu, 6 May 2021 18:51:30 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <d6e29d903b48957bf59c67229d54b0fc215e31ae.1620333870.git.christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Disable ADSP by default and enable it in devices that use it.
-Also add CX power domain.
+On 5/6/21 3:46 PM, Christophe JAILLET wrote:
+> 'ret' is known to be 0 here.
+> Reorder the code so that the expected error code is printed.
+> 
+> Fixes: 6dedbd1d5443 ("remoteproc: k3-r5: Add a remoteproc driver for R5F subsystem")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Signed-off-by: Yassine Oudjana <y.oudjana@protonmail.com>
----
- arch/arm64/boot/dts/qcom/apq8096-db820c.dtsi | 4 ++++
- arch/arm64/boot/dts/qcom/msm8996.dtsi        | 6 ++++++
- 2 files changed, 10 insertions(+)
+Thanks for catching the issue.
 
-diff --git a/arch/arm64/boot/dts/qcom/apq8096-db820c.dtsi b/arch/arm64/boot=
-/dts/qcom/apq8096-db820c.dtsi
-index defcbd15edf9..409a5dec2615 100644
---- a/arch/arm64/boot/dts/qcom/apq8096-db820c.dtsi
-+++ b/arch/arm64/boot/dts/qcom/apq8096-db820c.dtsi
-@@ -162,6 +162,10 @@ bluetooth {
- =09};
- };
-=20
-+&adsp_pil {
-+=09status =3D "okay";
-+};
-+
- &blsp2_i2c0 {
- =09/* On High speed expansion */
- =09label =3D "HS-I2C2";
-diff --git a/arch/arm64/boot/dts/qcom/msm8996.dtsi b/arch/arm64/boot/dts/qc=
-om/msm8996.dtsi
-index ce430ba9c118..7e647843f7c7 100644
---- a/arch/arm64/boot/dts/qcom/msm8996.dtsi
-+++ b/arch/arm64/boot/dts/qcom/msm8996.dtsi
-@@ -6,6 +6,7 @@
- #include <dt-bindings/clock/qcom,gcc-msm8996.h>
- #include <dt-bindings/clock/qcom,mmcc-msm8996.h>
- #include <dt-bindings/clock/qcom,rpmcc.h>
-+#include <dt-bindings/power/qcom-rpmpd.h>
- #include <dt-bindings/soc/qcom,apr.h>
-=20
- / {
-@@ -2067,6 +2068,11 @@ adsp_pil: remoteproc@9300000 {
- =09=09=09qcom,smem-states =3D <&smp2p_adsp_out 0>;
- =09=09=09qcom,smem-state-names =3D "stop";
-=20
-+=09=09=09power-domains =3D <&rpmpd MSM8996_VDDCX>;
-+=09=09=09power-domain-names =3D "cx";
-+
-+=09=09=09status =3D "disabled";
-+
- =09=09=09smd-edge {
- =09=09=09=09interrupts =3D <GIC_SPI 156 IRQ_TYPE_EDGE_RISING>;
-=20
---=20
-2.31.1
+Acked-by: Suman Anna <s-anna@ti.com>
 
+regards
+Suman
+
+> ---
+>  drivers/remoteproc/ti_k3_r5_remoteproc.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/remoteproc/ti_k3_r5_remoteproc.c b/drivers/remoteproc/ti_k3_r5_remoteproc.c
+> index 5cf8d030a1f0..4104e4846dbf 100644
+> --- a/drivers/remoteproc/ti_k3_r5_remoteproc.c
+> +++ b/drivers/remoteproc/ti_k3_r5_remoteproc.c
+> @@ -1272,9 +1272,9 @@ static int k3_r5_core_of_init(struct platform_device *pdev)
+>  
+>  	core->tsp = k3_r5_core_of_get_tsp(dev, core->ti_sci);
+>  	if (IS_ERR(core->tsp)) {
+> +		ret = PTR_ERR(core->tsp);
+>  		dev_err(dev, "failed to construct ti-sci proc control, ret = %d\n",
+>  			ret);
+> -		ret = PTR_ERR(core->tsp);
+>  		goto err;
+>  	}
+>  
+> 
 
