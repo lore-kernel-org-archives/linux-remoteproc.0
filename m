@@ -4,85 +4,93 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-17.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	UNPARSEABLE_RELAY,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88D2AC433ED
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  6 May 2021 23:51:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79BA8C433B4
+	for <linux-remoteproc@archiver.kernel.org>; Fri,  7 May 2021 05:27:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 56F3C61041
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  6 May 2021 23:51:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 55344613DD
+	for <linux-remoteproc@archiver.kernel.org>; Fri,  7 May 2021 05:27:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233139AbhEFXwb (ORCPT
+        id S233866AbhEGF2E (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 6 May 2021 19:52:31 -0400
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:51782 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233079AbhEFXwb (ORCPT
+        Fri, 7 May 2021 01:28:04 -0400
+Received: from aserp2130.oracle.com ([141.146.126.79]:40392 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229666AbhEGF2D (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 6 May 2021 19:52:31 -0400
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 146NpVMY062345;
-        Thu, 6 May 2021 18:51:31 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1620345091;
-        bh=7GjAjZeKdhiyFEA5IzURuVplWL+AsqcJIeMSa7IF6xo=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=ENTVekq4NqcdyjZUvbnm5vOFNWRbS5sOKUz4ve82I/0JXF3P3w4C8kwcApelaqQWd
-         JKefxeyC3AZtOXy4C5JBSfWJFYFlVfTOLyyy8a9CiLkrGt6yR9eaTxvQbZ3Ha3mAOY
-         z529Sm+h6YX6bRf2XatNekO31Cm/WaU40M4TTNNk=
-Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 146NpVaO116954
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 6 May 2021 18:51:31 -0500
-Received: from DLEE113.ent.ti.com (157.170.170.24) by DLEE115.ent.ti.com
- (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2176.2; Thu, 6 May
- 2021 18:51:30 -0500
-Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE113.ent.ti.com
- (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2176.2 via
- Frontend Transport; Thu, 6 May 2021 18:51:30 -0500
-Received: from [10.250.33.171] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id 146NpUN7096397;
-        Thu, 6 May 2021 18:51:30 -0500
+        Fri, 7 May 2021 01:28:03 -0400
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 1475Qx1I141751;
+        Fri, 7 May 2021 05:26:59 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2020-01-29;
+ bh=bZpkfLXGxZtRvQ/gObGoRXOlarwb1F5b9uEOgTU4I9o=;
+ b=FuGhtglCltEYd/yz3iuuwispNUUL5X87Kc+UEDy01n/2FArYo++HnzIXQfcxbOFe8IOA
+ DQQtV313MiyzD/msQCgQiMjBugCWx/HY3aNPtaM5xzGmUMcHGp0VsIgrru2bGT8OBSUd
+ 1KPAonA1ctvzZtBglDsDVjYEnNodXmkn/CEnlZocaAK0ZwZUEeCvQgVjacOYquA6NGs4
+ R0aCb7mil/tLcEx6fKIq9UcA4JjOJTo5xLkxO/uLsZN20IMNzlsI0jAIfw9sflrTJ06d
+ Fdus5iHtUKHO7Th66USzts3hbkKE8KiKBksY5l0NUpXuwgiyJdXCBetM8koazoQEWvCE 6Q== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by aserp2130.oracle.com with ESMTP id 38csrd8dm2-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 07 May 2021 05:26:59 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 1475PYTT057069;
+        Fri, 7 May 2021 05:26:59 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+        by aserp3030.oracle.com with ESMTP id 38csre31sb-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 07 May 2021 05:26:59 +0000
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 1475QxOR064677;
+        Fri, 7 May 2021 05:26:59 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserp3030.oracle.com with ESMTP id 38csre31s2-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 07 May 2021 05:26:58 +0000
+Received: from abhmp0006.oracle.com (abhmp0006.oracle.com [141.146.116.12])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 1475Quck022006;
+        Fri, 7 May 2021 05:26:57 GMT
+Received: from kadam (/102.36.221.92)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 06 May 2021 22:26:56 -0700
+Date:   Fri, 7 May 2021 08:26:47 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     ohad@wizery.com, bjorn.andersson@linaro.org,
+        mathieu.poirier@linaro.org, s-anna@ti.com,
+        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
 Subject: Re: [PATCH] remoteproc: k3-r5: Fix an error message
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        <ohad@wizery.com>, <bjorn.andersson@linaro.org>,
-        <mathieu.poirier@linaro.org>
-CC:     <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>
+Message-ID: <20210507052647.GF1955@kadam>
 References: <d6e29d903b48957bf59c67229d54b0fc215e31ae.1620333870.git.christophe.jaillet@wanadoo.fr>
-From:   Suman Anna <s-anna@ti.com>
-Message-ID: <b585d9e1-8b52-aa1e-211d-fa79be6a5d55@ti.com>
-Date:   Thu, 6 May 2021 18:51:30 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 In-Reply-To: <d6e29d903b48957bf59c67229d54b0fc215e31ae.1620333870.git.christophe.jaillet@wanadoo.fr>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-ORIG-GUID: 1Fdh73NuUvaIFOnsbuhr-OEAzHDGF50-
+X-Proofpoint-GUID: 1Fdh73NuUvaIFOnsbuhr-OEAzHDGF50-
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9976 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 clxscore=1011
+ malwarescore=0 adultscore=0 mlxlogscore=999 impostorscore=0 phishscore=0
+ lowpriorityscore=0 bulkscore=0 priorityscore=1501 mlxscore=0 spamscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2104190000
+ definitions=main-2105070039
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On 5/6/21 3:46 PM, Christophe JAILLET wrote:
+On Thu, May 06, 2021 at 10:46:01PM +0200, Christophe JAILLET wrote:
 > 'ret' is known to be 0 here.
 > Reorder the code so that the expected error code is printed.
 > 
 > Fixes: 6dedbd1d5443 ("remoteproc: k3-r5: Add a remoteproc driver for R5F subsystem")
 > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-
-Thanks for catching the issue.
-
-Acked-by: Suman Anna <s-anna@ti.com>
-
-regards
-Suman
-
 > ---
 >  drivers/remoteproc/ti_k3_r5_remoteproc.c | 2 +-
 >  1 file changed, 1 insertion(+), 1 deletion(-)
@@ -98,9 +106,13 @@ Suman
 > +		ret = PTR_ERR(core->tsp);
 >  		dev_err(dev, "failed to construct ti-sci proc control, ret = %d\n",
 >  			ret);
-> -		ret = PTR_ERR(core->tsp);
->  		goto err;
->  	}
->  
-> 
+
+I recently learned about the %pe format specifier, which prints "-ENOMEM"
+instead of -12.
+
+		dev_err(dev, "failed to construct ti-sci proc control, ret = %pe\n",
+			core->tsp);
+regards,
+dan carpenter
+
 
