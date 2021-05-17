@@ -7,43 +7,43 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0385C433ED
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 17 May 2021 20:46:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F6CCC433ED
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 17 May 2021 23:08:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9659361185
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 17 May 2021 20:46:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 10BB1610CC
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 17 May 2021 23:08:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244413AbhEQUsA (ORCPT
+        id S238902AbhEQXJl (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 17 May 2021 16:48:00 -0400
-Received: from m43-7.mailgun.net ([69.72.43.7]:53033 "EHLO m43-7.mailgun.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S244398AbhEQUr7 (ORCPT <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 17 May 2021 16:47:59 -0400
+        Mon, 17 May 2021 19:09:41 -0400
+Received: from so254-9.mailgun.net ([198.61.254.9]:54944 "EHLO
+        so254-9.mailgun.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234739AbhEQXJk (ORCPT
+        <rfc822;linux-remoteproc@vger.kernel.org>);
+        Mon, 17 May 2021 19:09:40 -0400
 DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1621284403; h=References: In-Reply-To: Message-Id: Date:
- Subject: Cc: To: From: Sender;
- bh=OCZ7uak29LEl8jJmUhLI4AIqfTsr8cXO52ZSocwTCrQ=; b=nwEVGz3QfqxEYwNsPnfta4lzQ7vGsO4Ya3uNMHRFlhLmmZHDUzSWoVhBkZdhSZh42O+BTv2m
- gUEdQJiHzxa2k2IAPO5K6yTFWF6RLSfunS0wIxNo24/qqdAVt2MO91gLoGXpSVSfQ6k8iA9m
- szKmLTPQvpzUzsUmzMc6ohv+WHE=
-X-Mailgun-Sending-Ip: 69.72.43.7
+ s=smtp; t=1621292903; h=Message-Id: Date: Subject: Cc: To: From:
+ Sender; bh=our1eT9PPR2xC+61fn+sydgDdNIFwrvlcoBFRV9/vMA=; b=LEXaLuHhUsPkuNcNSE5vzzCFn8BP9stOc4NBiU+JTAvbJsJRAbsmVJoC9iIyqJsBN054H2ve
+ 3UbxGBp7F7B5NvFsLAxPa6EPiPs8BtXvia8+7ljVoIZFz0KcxZfl7MrzlvgW1jPojzTWTGuW
+ dQpqgudWFdorSGDHfLDx/EvX31I=
+X-Mailgun-Sending-Ip: 198.61.254.9
 X-Mailgun-Sid: WyI4ZWZiZiIsICJsaW51eC1yZW1vdGVwcm9jQHZnZXIua2VybmVsLm9yZyIsICJiZTllNGEiXQ==
 Received: from smtp.codeaurora.org
  (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
- smtp-out-n01.prod.us-east-1.postgun.com with SMTP id
- 60a2d61160c53c8c9dec21ee (version=TLS1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Mon, 17 May 2021 20:46:09
+ smtp-out-n04.prod.us-west-2.postgun.com with SMTP id
+ 60a2f7667b9a7a2b6c3a7f61 (version=TLS1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Mon, 17 May 2021 23:08:22
  GMT
 Sender: sidgup=codeaurora.org@mg.codeaurora.org
 Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id DF8EBC433D3; Mon, 17 May 2021 20:46:08 +0000 (UTC)
+        id F2CA8C433F1; Mon, 17 May 2021 23:08:21 +0000 (UTC)
 Received: from sidgup-linux.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
         (Authenticated sender: sidgup)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id AC5E3C433D3;
-        Mon, 17 May 2021 20:46:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org AC5E3C433D3
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 0BD19C433D3;
+        Mon, 17 May 2021 23:08:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 0BD19C433D3
 Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=sidgup@codeaurora.org
 From:   Siddharth Gupta <sidgup@codeaurora.org>
@@ -51,67 +51,101 @@ To:     bjorn.andersson@linaro.org, ohad@wizery.com,
         linux-remoteproc@vger.kernel.org
 Cc:     Siddharth Gupta <sidgup@codeaurora.org>,
         linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, psodagud@codeaurora.org,
-        stable@vger.kernel.org
-Subject: [PATCH 3/3] remoteproc: core: Cleanup device in case of failure
-Date:   Mon, 17 May 2021 13:45:49 -0700
-Message-Id: <1621284349-22752-4-git-send-email-sidgup@codeaurora.org>
+        linux-arm-kernel@lists.infradead.org, psodagud@codeaurora.org
+Subject: [PATCH] remoteproc: core: Invoke subdev callbacks in list order
+Date:   Mon, 17 May 2021 16:08:13 -0700
+Message-Id: <1621292893-18827-1-git-send-email-sidgup@codeaurora.org>
 X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1621284349-22752-1-git-send-email-sidgup@codeaurora.org>
-References: <1621284349-22752-1-git-send-email-sidgup@codeaurora.org>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-When a failure occurs in rproc_add() it returns an error, but does
-not cleanup after itself. This change adds the failure path in such
-cases.
+Subdevices at the beginning of the subdev list should have
+higher priority than those at the end of the list. Reverse
+traversal of the list causes priority inversion, which can
+impact the performance of the device.
+
+For example a device adds the glink, sysmon and ssr subdevs
+to its list. During a crash the ssr notification would go
+before the glink and sysmon notifications. This can cause a
+degraded response when a client driver waits for a response
+from the crashed rproc.
 
 Signed-off-by: Siddharth Gupta <sidgup@codeaurora.org>
 ---
- drivers/remoteproc/remoteproc_core.c | 15 ++++++++++++---
- 1 file changed, 12 insertions(+), 3 deletions(-)
+ drivers/remoteproc/remoteproc_core.c | 24 ++++++++++++++----------
+ 1 file changed, 14 insertions(+), 10 deletions(-)
 
 diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index 45d09bf..6f5fa81 100644
+index 626a6b90f..ac8fc42 100644
 --- a/drivers/remoteproc/remoteproc_core.c
 +++ b/drivers/remoteproc/remoteproc_core.c
-@@ -2326,8 +2326,10 @@ int rproc_add(struct rproc *rproc)
- 		return ret;
+@@ -1167,7 +1167,7 @@ static int rproc_handle_resources(struct rproc *rproc,
  
- 	ret = device_add(dev);
--	if (ret < 0)
--		return ret;
-+	if (ret < 0) {
-+		put_device(dev);
-+		goto rproc_remove_cdev;
-+	}
+ static int rproc_prepare_subdevices(struct rproc *rproc)
+ {
+-	struct rproc_subdev *subdev;
++	struct rproc_subdev *subdev, *itr;
+ 	int ret;
  
- 	dev_info(dev, "%s is available\n", rproc->name);
+ 	list_for_each_entry(subdev, &rproc->subdevs, node) {
+@@ -1181,9 +1181,11 @@ static int rproc_prepare_subdevices(struct rproc *rproc)
+ 	return 0;
  
-@@ -2338,7 +2340,7 @@ int rproc_add(struct rproc *rproc)
- 	if (rproc->auto_boot) {
- 		ret = rproc_trigger_auto_boot(rproc);
- 		if (ret < 0)
--			return ret;
-+			goto rproc_remove_dev;
+ unroll_preparation:
+-	list_for_each_entry_continue_reverse(subdev, &rproc->subdevs, node) {
+-		if (subdev->unprepare)
+-			subdev->unprepare(subdev);
++	list_for_each_entry(itr, &rproc->subdevs, node) {
++		if (itr == subdev)
++			break;
++		if (itr->unprepare)
++			itr->unprepare(subdev);
  	}
  
- 	/* expose to rproc_get_by_phandle users */
-@@ -2347,6 +2349,13 @@ int rproc_add(struct rproc *rproc)
- 	mutex_unlock(&rproc_list_mutex);
+ 	return ret;
+@@ -1191,7 +1193,7 @@ static int rproc_prepare_subdevices(struct rproc *rproc)
  
+ static int rproc_start_subdevices(struct rproc *rproc)
+ {
+-	struct rproc_subdev *subdev;
++	struct rproc_subdev *subdev, *itr;
+ 	int ret;
+ 
+ 	list_for_each_entry(subdev, &rproc->subdevs, node) {
+@@ -1205,9 +1207,11 @@ static int rproc_start_subdevices(struct rproc *rproc)
  	return 0;
-+
-+rproc_remove_dev:
-+	rproc_delete_debug_dir(rproc);
-+	device_del(dev);
-+rproc_remove_cdev:
-+	rproc_char_device_remove(rproc);
-+	return ret;
- }
- EXPORT_SYMBOL(rproc_add);
  
+ unroll_registration:
+-	list_for_each_entry_continue_reverse(subdev, &rproc->subdevs, node) {
+-		if (subdev->stop)
+-			subdev->stop(subdev, true);
++	list_for_each_entry(itr, &rproc->subdevs, node) {
++		if (itr == subdev)
++			break;
++		if (itr->stop)
++			itr->stop(itr, true);
+ 	}
+ 
+ 	return ret;
+@@ -1217,7 +1221,7 @@ static void rproc_stop_subdevices(struct rproc *rproc, bool crashed)
+ {
+ 	struct rproc_subdev *subdev;
+ 
+-	list_for_each_entry_reverse(subdev, &rproc->subdevs, node) {
++	list_for_each_entry(subdev, &rproc->subdevs, node) {
+ 		if (subdev->stop)
+ 			subdev->stop(subdev, crashed);
+ 	}
+@@ -1227,7 +1231,7 @@ static void rproc_unprepare_subdevices(struct rproc *rproc)
+ {
+ 	struct rproc_subdev *subdev;
+ 
+-	list_for_each_entry_reverse(subdev, &rproc->subdevs, node) {
++	list_for_each_entry(subdev, &rproc->subdevs, node) {
+ 		if (subdev->unprepare)
+ 			subdev->unprepare(subdev);
+ 	}
 -- 
 Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
 a Linux Foundation Collaborative Project
