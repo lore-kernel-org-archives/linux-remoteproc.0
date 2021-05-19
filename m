@@ -2,151 +2,96 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+X-Spam-Status: No, score=-14.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F6CCC433ED
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 17 May 2021 23:08:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A862C433B4
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 19 May 2021 18:03:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 10BB1610CC
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 17 May 2021 23:08:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 655B9611BF
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 19 May 2021 18:03:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238902AbhEQXJl (ORCPT
+        id S230369AbhESSEf (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 17 May 2021 19:09:41 -0400
-Received: from so254-9.mailgun.net ([198.61.254.9]:54944 "EHLO
-        so254-9.mailgun.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234739AbhEQXJk (ORCPT
+        Wed, 19 May 2021 14:04:35 -0400
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:44162 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230350AbhESSEf (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 17 May 2021 19:09:40 -0400
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1621292903; h=Message-Id: Date: Subject: Cc: To: From:
- Sender; bh=our1eT9PPR2xC+61fn+sydgDdNIFwrvlcoBFRV9/vMA=; b=LEXaLuHhUsPkuNcNSE5vzzCFn8BP9stOc4NBiU+JTAvbJsJRAbsmVJoC9iIyqJsBN054H2ve
- 3UbxGBp7F7B5NvFsLAxPa6EPiPs8BtXvia8+7ljVoIZFz0KcxZfl7MrzlvgW1jPojzTWTGuW
- dQpqgudWFdorSGDHfLDx/EvX31I=
-X-Mailgun-Sending-Ip: 198.61.254.9
-X-Mailgun-Sid: WyI4ZWZiZiIsICJsaW51eC1yZW1vdGVwcm9jQHZnZXIua2VybmVsLm9yZyIsICJiZTllNGEiXQ==
-Received: from smtp.codeaurora.org
- (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
- smtp-out-n04.prod.us-west-2.postgun.com with SMTP id
- 60a2f7667b9a7a2b6c3a7f61 (version=TLS1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Mon, 17 May 2021 23:08:22
- GMT
-Sender: sidgup=codeaurora.org@mg.codeaurora.org
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id F2CA8C433F1; Mon, 17 May 2021 23:08:21 +0000 (UTC)
-Received: from sidgup-linux.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: sidgup)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 0BD19C433D3;
-        Mon, 17 May 2021 23:08:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 0BD19C433D3
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=sidgup@codeaurora.org
-From:   Siddharth Gupta <sidgup@codeaurora.org>
-To:     bjorn.andersson@linaro.org, ohad@wizery.com,
-        linux-remoteproc@vger.kernel.org
-Cc:     Siddharth Gupta <sidgup@codeaurora.org>,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, psodagud@codeaurora.org
-Subject: [PATCH] remoteproc: core: Invoke subdev callbacks in list order
-Date:   Mon, 17 May 2021 16:08:13 -0700
-Message-Id: <1621292893-18827-1-git-send-email-sidgup@codeaurora.org>
-X-Mailer: git-send-email 2.7.4
+        Wed, 19 May 2021 14:04:35 -0400
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 14JI38kt105931;
+        Wed, 19 May 2021 13:03:08 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1621447388;
+        bh=qEAoTagAYs24UhGH26uRmjZCwpHp+mDCczMSu52fcDc=;
+        h=From:To:CC:Subject:Date;
+        b=nA/V6DmGjr3QAfJDL1rU98ZojfUyss1nMHlRWgtPXpVilJ9ef0vGEdQhKlkzx09gp
+         dzDmFLWNr7gzvR3WCTRu3CIUTjzOm/LlmCwj5Edgmp11wfYTyV9w5fym2lTCwbHpWB
+         B4oIoIzHl/GoPDTKR40i5b7slfyDcD92IGj/Y2TQ=
+Received: from DFLE109.ent.ti.com (dfle109.ent.ti.com [10.64.6.30])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 14JI38LC053290
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 19 May 2021 13:03:08 -0500
+Received: from DFLE111.ent.ti.com (10.64.6.32) by DFLE109.ent.ti.com
+ (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2176.2; Wed, 19
+ May 2021 13:03:08 -0500
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE111.ent.ti.com
+ (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2176.2 via
+ Frontend Transport; Wed, 19 May 2021 13:03:08 -0500
+Received: from fllv0103.dal.design.ti.com (fllv0103.dal.design.ti.com [10.247.120.73])
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 14JI38LT091512;
+        Wed, 19 May 2021 13:03:08 -0500
+Received: from localhost ([10.250.32.40])
+        by fllv0103.dal.design.ti.com (8.14.7/8.14.7) with ESMTP id 14JI384r104523;
+        Wed, 19 May 2021 13:03:08 -0500
+From:   Suman Anna <s-anna@ti.com>
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>
+CC:     <linux-remoteproc@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, Suman Anna <s-anna@ti.com>
+Subject: [PATCH 0/2] Minor remoteproc cleanups
+Date:   Wed, 19 May 2021 13:03:02 -0500
+Message-ID: <20210519180304.23563-1-s-anna@ti.com>
+X-Mailer: git-send-email 2.30.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Subdevices at the beginning of the subdev list should have
-higher priority than those at the end of the list. Reverse
-traversal of the list causes priority inversion, which can
-impact the performance of the device.
+Hi Bjorn, Mathieu,
 
-For example a device adds the glink, sysmon and ssr subdevs
-to its list. During a crash the ssr notification would go
-before the glink and sysmon notifications. This can cause a
-degraded response when a client driver waits for a response
-from the crashed rproc.
+The following series is minor document related cleanups. Some
+of the warnings look to be very old, and these are not functional
+issues, so I am not expecting these to be -stable content, and so
+I did not split or add any Fixes: tags.
 
-Signed-off-by: Siddharth Gupta <sidgup@codeaurora.org>
----
- drivers/remoteproc/remoteproc_core.c | 24 ++++++++++++++----------
- 1 file changed, 14 insertions(+), 10 deletions(-)
+Patch 1 fixes a warning when building remoteproc core files with W=1,
+and Patch 2 fixes all the existing kernel-doc warnings.
 
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index 626a6b90f..ac8fc42 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -1167,7 +1167,7 @@ static int rproc_handle_resources(struct rproc *rproc,
- 
- static int rproc_prepare_subdevices(struct rproc *rproc)
- {
--	struct rproc_subdev *subdev;
-+	struct rproc_subdev *subdev, *itr;
- 	int ret;
- 
- 	list_for_each_entry(subdev, &rproc->subdevs, node) {
-@@ -1181,9 +1181,11 @@ static int rproc_prepare_subdevices(struct rproc *rproc)
- 	return 0;
- 
- unroll_preparation:
--	list_for_each_entry_continue_reverse(subdev, &rproc->subdevs, node) {
--		if (subdev->unprepare)
--			subdev->unprepare(subdev);
-+	list_for_each_entry(itr, &rproc->subdevs, node) {
-+		if (itr == subdev)
-+			break;
-+		if (itr->unprepare)
-+			itr->unprepare(subdev);
- 	}
- 
- 	return ret;
-@@ -1191,7 +1193,7 @@ static int rproc_prepare_subdevices(struct rproc *rproc)
- 
- static int rproc_start_subdevices(struct rproc *rproc)
- {
--	struct rproc_subdev *subdev;
-+	struct rproc_subdev *subdev, *itr;
- 	int ret;
- 
- 	list_for_each_entry(subdev, &rproc->subdevs, node) {
-@@ -1205,9 +1207,11 @@ static int rproc_start_subdevices(struct rproc *rproc)
- 	return 0;
- 
- unroll_registration:
--	list_for_each_entry_continue_reverse(subdev, &rproc->subdevs, node) {
--		if (subdev->stop)
--			subdev->stop(subdev, true);
-+	list_for_each_entry(itr, &rproc->subdevs, node) {
-+		if (itr == subdev)
-+			break;
-+		if (itr->stop)
-+			itr->stop(itr, true);
- 	}
- 
- 	return ret;
-@@ -1217,7 +1221,7 @@ static void rproc_stop_subdevices(struct rproc *rproc, bool crashed)
- {
- 	struct rproc_subdev *subdev;
- 
--	list_for_each_entry_reverse(subdev, &rproc->subdevs, node) {
-+	list_for_each_entry(subdev, &rproc->subdevs, node) {
- 		if (subdev->stop)
- 			subdev->stop(subdev, crashed);
- 	}
-@@ -1227,7 +1231,7 @@ static void rproc_unprepare_subdevices(struct rproc *rproc)
- {
- 	struct rproc_subdev *subdev;
- 
--	list_for_each_entry_reverse(subdev, &rproc->subdevs, node) {
-+	list_for_each_entry(subdev, &rproc->subdevs, node) {
- 		if (subdev->unprepare)
- 			subdev->unprepare(subdev);
- 	}
+Patches are on top of v5.13-rc1.
+
+regards
+Suman
+
+Suman Anna (2):
+  remoteproc: Add kernel-doc comment for is_iomem
+  remoteproc: Fix various kernel-doc warnings
+
+ drivers/remoteproc/remoteproc_core.c       | 45 +++++++++++++------
+ drivers/remoteproc/remoteproc_elf_loader.c | 12 ++++--
+ drivers/remoteproc/remoteproc_virtio.c     |  6 ++-
+ include/linux/remoteproc.h                 | 50 ++++++++++++----------
+ 4 files changed, 70 insertions(+), 43 deletions(-)
+
 -- 
-Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.30.1
 
