@@ -2,332 +2,215 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-19.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-17.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ECFACC4707E
-	for <linux-remoteproc@archiver.kernel.org>; Sat, 22 May 2021 00:03:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07931C04FF3
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 24 May 2021 15:49:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CD3FC613F5
-	for <linux-remoteproc@archiver.kernel.org>; Sat, 22 May 2021 00:03:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DDDA861376
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 24 May 2021 15:49:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230280AbhEVAFG (ORCPT
+        id S233471AbhEXPum (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 21 May 2021 20:05:06 -0400
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:40154 "EHLO
+        Mon, 24 May 2021 11:50:42 -0400
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:32780 "EHLO
         fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230282AbhEVAFE (ORCPT
+        with ESMTP id S234359AbhEXPtE (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 21 May 2021 20:05:04 -0400
+        Mon, 24 May 2021 11:49:04 -0400
 Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 14M03bkM087981;
-        Fri, 21 May 2021 19:03:37 -0500
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 14OFlVEV053864;
+        Mon, 24 May 2021 10:47:31 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1621641817;
-        bh=utxACe9JOi+mmI1qJxt47DD+ZcLFKmpOoukqpsvO2jo=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=Z/ddQadANuUvpsWrN2SzG3eFfRO8OSpcpiilPH9khSeEKxtx6cLGUsndo4cMg7e+T
-         7tLBh8hpKl2d9Htd+yK4lLv3D7Z3ZstVZoLbWix4dBWgppia04VSogXvws2fqt+/tb
-         uLj+1Hnd5K5XmlB/K5uukLCbIjWBpkJw4qh6uE6A=
-Received: from DLEE114.ent.ti.com (dlee114.ent.ti.com [157.170.170.25])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 14M03bII123963
+        s=ti-com-17Q1; t=1621871251;
+        bh=IxzFLmrt4I56bToXBwyHHbCuQpHYXV4NOn/Wx15upW4=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=ICVkjOG4JwCvExRHK/IWwDuOkr1MtYDy9sVc6q+Vj2ymDGSlvRBdi3H8JoawgurD/
+         NgvaT4V4rnvSXe0AwtehL35jUUyJEPbwk5XnebQ++pw+ZazRjCJ2bu5M4JayuptooO
+         SdUDD4z/T3ai72hhoSX8LCFay6nPm5k+l83L7n74=
+Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 14OFlVo7059859
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 21 May 2021 19:03:37 -0500
-Received: from DLEE112.ent.ti.com (157.170.170.23) by DLEE114.ent.ti.com
- (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2176.2; Fri, 21
- May 2021 19:03:37 -0500
-Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE112.ent.ti.com
- (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
+        Mon, 24 May 2021 10:47:31 -0500
+Received: from DFLE106.ent.ti.com (10.64.6.27) by DFLE103.ent.ti.com
+ (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2176.2; Mon, 24
+ May 2021 10:47:31 -0500
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE106.ent.ti.com
+ (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2176.2 via
- Frontend Transport; Fri, 21 May 2021 19:03:36 -0500
-Received: from fllv0103.dal.design.ti.com (fllv0103.dal.design.ti.com [10.247.120.73])
-        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id 14M03aHp065132;
-        Fri, 21 May 2021 19:03:36 -0500
-Received: from localhost ([10.250.35.153])
-        by fllv0103.dal.design.ti.com (8.14.7/8.14.7) with ESMTP id 14M03aAd091586;
-        Fri, 21 May 2021 19:03:36 -0500
-From:   Suman Anna <s-anna@ti.com>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>
-CC:     Lokesh Vutla <lokeshvutla@ti.com>, Tero Kristo <kristo@kernel.org>,
-        <linux-remoteproc@vger.kernel.org>,
+ Frontend Transport; Mon, 24 May 2021 10:47:31 -0500
+Received: from [10.250.35.153] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 14OFlUDi035763;
+        Mon, 24 May 2021 10:47:30 -0500
+Subject: Re: [PATCH v2 1/2] dt-bindings: remoteproc: k3-r5f: Update bindings
+ for AM64x SoCs
+To:     Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>
+CC:     Rob Herring <robh+dt@kernel.org>,
+        Lokesh Vutla <lokeshvutla@ti.com>,
+        <linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, Suman Anna <s-anna@ti.com>
-Subject: [PATCH 6/6] remoteproc: k3-dsp: Add support for IPC-only mode for all K3 DSPs
-Date:   Fri, 21 May 2021 19:03:09 -0500
-Message-ID: <20210522000309.26134-7-s-anna@ti.com>
-X-Mailer: git-send-email 2.30.1
-In-Reply-To: <20210522000309.26134-1-s-anna@ti.com>
-References: <20210522000309.26134-1-s-anna@ti.com>
+        <linux-kernel@vger.kernel.org>
+References: <20210327143117.1840-1-s-anna@ti.com>
+ <20210327143117.1840-2-s-anna@ti.com>
+ <8948a30c-1a2f-1fb0-05bb-37be9c02c5d5@ti.com>
+ <ff8edffb-d926-9641-740b-2c292139aa07@ti.com>
+ <20210521204053.GA1011163@xps15>
+From:   Suman Anna <s-anna@ti.com>
+Message-ID: <911bfb1d-8e66-298a-83ba-998040f5596d@ti.com>
+Date:   Mon, 24 May 2021 10:47:30 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+In-Reply-To: <20210521204053.GA1011163@xps15>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Add support to the K3 DSP remoteproc driver to configure all the C66x
-and C71x cores on J721E SoCs to be either in IPC-only mode or the
-traditional remoteproc mode. The IPC-only mode expects that the remote
-processors are already booted by the bootloader, and only perform the
-minimum steps required to initialize and deinitialize the virtio IPC
-transports. The remoteproc mode allows the kernel remoteproc driver to
-do the regular load and boot and other device management operations for
-a DSP.
+On 5/21/21 3:40 PM, Mathieu Poirier wrote:
+> Hi suman,
+> 
+> On Wed, May 12, 2021 at 09:47:44PM -0500, Suman Anna wrote:
+>> Hi Rob,
+>>
+>> On 4/19/21 8:55 AM, Suman Anna wrote:
+>>> Hi Rob,
+>>>
+>>> On 3/27/21 9:31 AM, Suman Anna wrote:
+>>>> The K3 AM64x SoCs have two dual-core Arm R5F clusters/subsystems, with
+>>>> 2 R5F cores each, both in the MAIN voltage domain.
+>>>>
+>>>> These clusters are a revised IP version compared to those present on
+>>>> J721E and J7200 SoCs, and supports a new "Single-CPU" mode instead of
+>>>> LockStep mode. Update the K3 R5F remoteproc bindings with the compatible
+>>>> info relevant to these R5F clusters/subsystems on K3 AM64x SoCs.
+>>>>
+>>>> Signed-off-by: Suman Anna <s-anna@ti.com>
+>>>> ---
+>>>> v2: No changes
+>>>>
+>>>>  .../bindings/remoteproc/ti,k3-r5f-rproc.yaml  | 31 ++++++++++++++++---
+>>>
+>>> Looks like this patch has fallen through the cracks, can you please review and
+>>> give your ack for this patch so that Bjorn can pick up the series for 5.13?
+>>
+>> Gentle reminder, do you have any comments on this patch. Appreciate your ack so
+>> that we can get this in for 5.14?
+> 
+> If memory serves me well Rob indicated that he would not review or comment on
+> bindings related to multi-core remote processors.  On the flip side he also
+> mentioned that he would not object to their presence.  And since this is an
+> increment to an existing binding rather than a new one, I think it is fair for
+> us to pick it up.  
+> 
+> Rob - please intervene if my recollections are not accurate and accept my honest
+> apologies.  Otherwise: 
+> 
+> Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org> 
+> 
 
-The IPC-only mode for a DSP is detected and configured at driver probe
-time by querying the System Firmware for the DSP power and reset state
-and/or status and making sure that the DSP is indeed started by the
-bootloaders, otherwise the device is configured for remoteproc mode.
+Thank you Mathieu.
 
-Support for IPC-only mode is achieved through .attach(), .detach() and
-.get_loaded_rsc_table() callback ops and various other flags in both
-remoteproc core and the K3 DSP remoteproc driver. The resource table
-follows a design-by-contract approach and is expected to be at the base
-of the DDR firmware region reserved for each remoteproc, it is mostly
-expected to contain only the virtio device and trace resource entries.
+Bjorn,
+Is it possible for you to give an immutable branch with just this bindings so we
+can add the R5F nodes as well and avoid any checkpatch warnings on Nishanth's
+tree with our K3 dts patches?
 
-NOTE:
-The driver cannot configure a DSP core for remoteproc mode by any
-means without rebooting the kernel if that R5F core has been started
-by a bootloader.
+regards
+Suman
 
-Signed-off-by: Suman Anna <s-anna@ti.com>
----
- drivers/remoteproc/ti_k3_dsp_remoteproc.c | 151 ++++++++++++++++++++--
- 1 file changed, 138 insertions(+), 13 deletions(-)
-
-diff --git a/drivers/remoteproc/ti_k3_dsp_remoteproc.c b/drivers/remoteproc/ti_k3_dsp_remoteproc.c
-index faf60a274e8d..b154a52f1fa6 100644
---- a/drivers/remoteproc/ti_k3_dsp_remoteproc.c
-+++ b/drivers/remoteproc/ti_k3_dsp_remoteproc.c
-@@ -76,6 +76,7 @@ struct k3_dsp_dev_data {
-  * @ti_sci_id: TI-SCI device identifier
-  * @mbox: mailbox channel handle
-  * @client: mailbox client to request the mailbox channel
-+ * @ipc_only: flag to indicate IPC-only mode
-  */
- struct k3_dsp_rproc {
- 	struct device *dev;
-@@ -91,6 +92,7 @@ struct k3_dsp_rproc {
- 	u32 ti_sci_id;
- 	struct mbox_chan *mbox;
- 	struct mbox_client client;
-+	bool ipc_only;
- };
- 
- /**
-@@ -268,6 +270,10 @@ static int k3_dsp_rproc_prepare(struct rproc *rproc)
- 	struct device *dev = kproc->dev;
- 	int ret;
- 
-+	/* IPC-only mode does not require the core to be released from reset */
-+	if (kproc->ipc_only)
-+		return 0;
-+
- 	ret = kproc->ti_sci->ops.dev_ops.get_device(kproc->ti_sci,
- 						    kproc->ti_sci_id);
- 	if (ret)
-@@ -292,6 +298,10 @@ static int k3_dsp_rproc_unprepare(struct rproc *rproc)
- 	struct device *dev = kproc->dev;
- 	int ret;
- 
-+	/* do not put back the cores into reset in IPC-only mode */
-+	if (kproc->ipc_only)
-+		return 0;
-+
- 	ret = kproc->ti_sci->ops.dev_ops.put_device(kproc->ti_sci,
- 						    kproc->ti_sci_id);
- 	if (ret)
-@@ -314,6 +324,12 @@ static int k3_dsp_rproc_start(struct rproc *rproc)
- 	u32 boot_addr;
- 	int ret;
- 
-+	if (kproc->ipc_only) {
-+		dev_err(dev, "%s cannot be invoked in IPC-only mode\n",
-+			__func__);
-+		return -EINVAL;
-+	}
-+
- 	ret = k3_dsp_rproc_request_mbox(rproc);
- 	if (ret)
- 		return ret;
-@@ -351,6 +367,13 @@ static int k3_dsp_rproc_start(struct rproc *rproc)
- static int k3_dsp_rproc_stop(struct rproc *rproc)
- {
- 	struct k3_dsp_rproc *kproc = rproc->priv;
-+	struct device *dev = kproc->dev;
-+
-+	if (kproc->ipc_only) {
-+		dev_err(dev, "%s cannot be invoked in IPC-only mode\n",
-+			__func__);
-+		return -EINVAL;
-+	}
- 
- 	mbox_free_channel(kproc->mbox);
- 
-@@ -359,6 +382,85 @@ static int k3_dsp_rproc_stop(struct rproc *rproc)
- 	return 0;
- }
- 
-+/*
-+ * Attach to a running DSP remote processor (IPC-only mode)
-+ *
-+ * This rproc attach callback only needs to request the mailbox, the remote
-+ * processor is already booted, so there is no need to issue any TI-SCI
-+ * commands to boot the DSP core.
-+ */
-+static int k3_dsp_rproc_attach(struct rproc *rproc)
-+{
-+	struct k3_dsp_rproc *kproc = rproc->priv;
-+	struct device *dev = kproc->dev;
-+	int ret;
-+
-+	if (!kproc->ipc_only || rproc->state != RPROC_DETACHED) {
-+		dev_err(dev, "DSP is expected to be in IPC-only mode and RPROC_DETACHED state\n");
-+		return -EINVAL;
-+	}
-+
-+	ret = k3_dsp_rproc_request_mbox(rproc);
-+	if (ret)
-+		return ret;
-+
-+	dev_err(dev, "DSP initialized in IPC-only mode\n");
-+	return 0;
-+}
-+
-+/*
-+ * Detach from a running DSP remote processor (IPC-only mode)
-+ *
-+ * This rproc detach callback performs the opposite operation to attach callback
-+ * and only needs to release the mailbox, the DSP core is not stopped and will
-+ * be left to continue to run its booted firmware.
-+ */
-+static int k3_dsp_rproc_detach(struct rproc *rproc)
-+{
-+	struct k3_dsp_rproc *kproc = rproc->priv;
-+	struct device *dev = kproc->dev;
-+
-+	if (!kproc->ipc_only || rproc->state != RPROC_ATTACHED) {
-+		dev_err(dev, "DSP is expected to be in IPC-only mode and RPROC_ATTACHED state\n");
-+		return -EINVAL;
-+	}
-+
-+	mbox_free_channel(kproc->mbox);
-+	dev_err(dev, "DSP deinitialized in IPC-only mode\n");
-+	return 0;
-+}
-+
-+/*
-+ * This function implements the .get_loaded_rsc_table() callback and is used
-+ * to provide the resource table for a booted DSP in IPC-only mode. The K3 DSP
-+ * firmwares follow a design-by-contract approach and are expected to have the
-+ * resource table at the base of the DDR region reserved for firmware usage.
-+ * This provides flexibility for the remote processor to be booted by different
-+ * bootloaders that may or may not have the ability to publish the resource table
-+ * address and size through a DT property.
-+ */
-+static struct resource_table *k3_dsp_get_loaded_rsc_table(struct rproc *rproc,
-+							  size_t *rsc_table_sz)
-+{
-+	struct k3_dsp_rproc *kproc = rproc->priv;
-+	struct device *dev = kproc->dev;
-+
-+	if (!kproc->rmem[0].cpu_addr) {
-+		dev_err(dev, "memory-region #1 does not exist, loaded rsc table can't be found");
-+		return ERR_PTR(-ENOMEM);
-+	}
-+
-+	/*
-+	 * NOTE: The resource table size is currently hard-coded to a maximum
-+	 * of 256 bytes. The most common resource table usage for K3 firmwares
-+	 * is to only have the vdev resource entry and an optional trace entry.
-+	 * The exact size could be computed based on resource table address, but
-+	 * the hard-coded value suffices to support the IPC-only mode.
-+	 */
-+	*rsc_table_sz = 256;
-+	return (struct resource_table *)kproc->rmem[0].cpu_addr;
-+}
-+
- /*
-  * Custom function to translate a DSP device address (internal RAMs only) to a
-  * kernel virtual address.  The DSPs can access their RAMs at either an internal
-@@ -421,8 +523,11 @@ static void *k3_dsp_rproc_da_to_va(struct rproc *rproc, u64 da, size_t len, bool
- static const struct rproc_ops k3_dsp_rproc_ops = {
- 	.start		= k3_dsp_rproc_start,
- 	.stop		= k3_dsp_rproc_stop,
-+	.attach		= k3_dsp_rproc_attach,
-+	.detach		= k3_dsp_rproc_detach,
- 	.kick		= k3_dsp_rproc_kick,
- 	.da_to_va	= k3_dsp_rproc_da_to_va,
-+	.get_loaded_rsc_table = k3_dsp_get_loaded_rsc_table,
- };
- 
- static int k3_dsp_rproc_of_get_memories(struct platform_device *pdev,
-@@ -605,6 +710,8 @@ static int k3_dsp_rproc_probe(struct platform_device *pdev)
- 	struct k3_dsp_rproc *kproc;
- 	struct rproc *rproc;
- 	const char *fw_name;
-+	bool r_state = false;
-+	bool p_state = false;
- 	int ret = 0;
- 	int ret1;
- 
-@@ -683,19 +790,37 @@ static int k3_dsp_rproc_probe(struct platform_device *pdev)
- 		goto release_tsp;
- 	}
- 
--	/*
--	 * ensure the DSP local reset is asserted to ensure the DSP doesn't
--	 * execute bogus code in .prepare() when the module reset is released.
--	 */
--	if (data->uses_lreset) {
--		ret = reset_control_status(kproc->reset);
--		if (ret < 0) {
--			dev_err(dev, "failed to get reset status, status = %d\n",
--				ret);
--			goto release_mem;
--		} else if (ret == 0) {
--			dev_warn(dev, "local reset is deasserted for device\n");
--			k3_dsp_rproc_reset(kproc);
-+	ret = kproc->ti_sci->ops.dev_ops.is_on(kproc->ti_sci, kproc->ti_sci_id,
-+					       &r_state, &p_state);
-+	if (ret) {
-+		dev_err(dev, "failed to get initial state, mode cannot be determined, ret = %d\n",
-+			ret);
-+		goto release_mem;
-+	}
-+
-+	/* configure J721E devices for either remoteproc or IPC-only mode */
-+	if (p_state) {
-+		dev_err(dev, "configured DSP for IPC-only mode\n");
-+		rproc->state = RPROC_DETACHED;
-+		rproc->detach_on_shutdown = true;
-+		kproc->ipc_only = true;
-+	} else {
-+		dev_err(dev, "configured DSP for remoteproc mode\n");
-+		/*
-+		 * ensure the DSP local reset is asserted to ensure the DSP
-+		 * doesn't execute bogus code in .prepare() when the module
-+		 * reset is released.
-+		 */
-+		if (data->uses_lreset) {
-+			ret = reset_control_status(kproc->reset);
-+			if (ret < 0) {
-+				dev_err(dev, "failed to get reset status, status = %d\n",
-+					ret);
-+				goto release_mem;
-+			} else if (ret == 0) {
-+				dev_warn(dev, "local reset is deasserted for device\n");
-+				k3_dsp_rproc_reset(kproc);
-+			}
- 		}
- 	}
- 
--- 
-2.30.1
+>>
+>> regards
+>> Suman
+>>
+>>>
+>>> regards
+>>> Suman
+>>>
+>>>>  1 file changed, 26 insertions(+), 5 deletions(-)
+>>>>
+>>>> diff --git a/Documentation/devicetree/bindings/remoteproc/ti,k3-r5f-rproc.yaml b/Documentation/devicetree/bindings/remoteproc/ti,k3-r5f-rproc.yaml
+>>>> index d905d614502b..130fbaacc4b1 100644
+>>>> --- a/Documentation/devicetree/bindings/remoteproc/ti,k3-r5f-rproc.yaml
+>>>> +++ b/Documentation/devicetree/bindings/remoteproc/ti,k3-r5f-rproc.yaml
+>>>> @@ -14,8 +14,12 @@ description: |
+>>>>    processor subsystems/clusters (R5FSS). The dual core cluster can be used
+>>>>    either in a LockStep mode providing safety/fault tolerance features or in a
+>>>>    Split mode providing two individual compute cores for doubling the compute
+>>>> -  capacity. These are used together with other processors present on the SoC
+>>>> -  to achieve various system level goals.
+>>>> +  capacity on most SoCs. These are used together with other processors present
+>>>> +  on the SoC to achieve various system level goals.
+>>>> +
+>>>> +  AM64x SoCs do not support LockStep mode, but rather a new non-safety mode
+>>>> +  called "Single-CPU" mode, where only Core0 is used, but with ability to use
+>>>> +  Core1's TCMs as well.
+>>>>  
+>>>>    Each Dual-Core R5F sub-system is represented as a single DTS node
+>>>>    representing the cluster, with a pair of child DT nodes representing
+>>>> @@ -33,6 +37,7 @@ properties:
+>>>>        - ti,am654-r5fss
+>>>>        - ti,j721e-r5fss
+>>>>        - ti,j7200-r5fss
+>>>> +      - ti,am64-r5fss
+>>>>  
+>>>>    power-domains:
+>>>>      description: |
+>>>> @@ -56,11 +61,12 @@ properties:
+>>>>  
+>>>>    ti,cluster-mode:
+>>>>      $ref: /schemas/types.yaml#/definitions/uint32
+>>>> -    enum: [0, 1]
+>>>>      description: |
+>>>>        Configuration Mode for the Dual R5F cores within the R5F cluster.
+>>>> -      Should be either a value of 1 (LockStep mode) or 0 (Split mode),
+>>>> -      default is LockStep mode if omitted.
+>>>> +      Should be either a value of 1 (LockStep mode) or 0 (Split mode) on
+>>>> +      most SoCs (AM65x, J721E, J7200), default is LockStep mode if omitted;
+>>>> +      and should be either a value of 0 (Split mode) or 2 (Single-CPU mode)
+>>>> +      on AM64x SoCs, default is Split mode if omitted.
+>>>>  
+>>>>  # R5F Processor Child Nodes:
+>>>>  # ==========================
+>>>> @@ -97,6 +103,7 @@ patternProperties:
+>>>>            - ti,am654-r5f
+>>>>            - ti,j721e-r5f
+>>>>            - ti,j7200-r5f
+>>>> +          - ti,am64-r5f
+>>>>  
+>>>>        reg:
+>>>>          items:
+>>>> @@ -198,6 +205,20 @@ patternProperties:
+>>>>  
+>>>>      unevaluatedProperties: false
+>>>>  
+>>>> +if:
+>>>> +  properties:
+>>>> +    compatible:
+>>>> +      enum:
+>>>> +        - ti,am64-r5fss
+>>>> +then:
+>>>> +  properties:
+>>>> +    ti,cluster-mode:
+>>>> +      enum: [0, 2]
+>>>> +else:
+>>>> +  properties:
+>>>> +    ti,cluster-mode:
+>>>> +      enum: [0, 1]
+>>>> +
+>>>>  required:
+>>>>    - compatible
+>>>>    - power-domains
+>>>>
+>>>
+>>
 
