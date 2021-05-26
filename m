@@ -2,220 +2,253 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 151F6C47088
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 26 May 2021 01:00:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C561EC47087
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 26 May 2021 01:16:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EEEE061437
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 26 May 2021 01:00:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9ECC561423
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 26 May 2021 01:16:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229819AbhEZBBc (ORCPT
+        id S232846AbhEZBRy (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 25 May 2021 21:01:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48206 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232651AbhEZBBb (ORCPT
+        Tue, 25 May 2021 21:17:54 -0400
+Received: from so254-9.mailgun.net ([198.61.254.9]:47240 "EHLO
+        so254-9.mailgun.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231877AbhEZBRy (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 25 May 2021 21:01:31 -0400
-Received: from mail-ot1-x331.google.com (mail-ot1-x331.google.com [IPv6:2607:f8b0:4864:20::331])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 12589C061756
-        for <linux-remoteproc@vger.kernel.org>; Tue, 25 May 2021 18:00:00 -0700 (PDT)
-Received: by mail-ot1-x331.google.com with SMTP id n3-20020a9d74030000b029035e65d0a0b8so9057156otk.9
-        for <linux-remoteproc@vger.kernel.org>; Tue, 25 May 2021 18:00:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=NjrHFQBrBgmCbBNV4QZKo4mFLbuHzTnqDUF5SJUKcaY=;
-        b=GCqsUxCtjlppSkCqvJ3Kn8XW8m9bj7+kw/gIM3YrcpPIp+brZK3TmTIm+DL/EEvd75
-         Nai/m/uPYcY5bdCD/x1U2v/ZwqtKSnPhf9GcA5QYJr9DJBzu/jFZQYX8tQf84jfGZPVK
-         rfuPk17j6zAZC3fXlgG/EOe+sgl9AlnPqW/sWjCrky5KFOoH9pke1R9GGG6/8tZgQK4T
-         yw4R5d/yuCjwoSVM5rMDXouDMslq2tc0htf+r938cB5adIwIyBY0y48sQrP/W0OuIJ6U
-         3UGujDsXeI+R4fD3RCg1+upTJ/LjaWsdPE1yxtQ1H7bS8KNomvc4aJQgJERRAyYaVvoX
-         O3yg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=NjrHFQBrBgmCbBNV4QZKo4mFLbuHzTnqDUF5SJUKcaY=;
-        b=R1gfMo3caF8jhuyyfbu8TXISArxX0yO7wIu0LLYH9tJwxhhGaty+lwyAxXV2T1CbFr
-         KZcdozXgZXAFudsBmw56Ey5bMa2a0eQg8aXTlbiOPG+OjG7eln7xIBTMxQ85gsZfItyN
-         VHcY8DC1zhVZ/Jno4i66T0kImamPef6IRxKLeG3nehnu+EgYiqQCmcXztI7jYPrn0/W6
-         xRO+KGjrAhnGk+Xy7pFtZ7CHtYApAZx0AH1vXhVKVV+Ujz/htYHEvTpjOxLgw1OG5NqS
-         hIb0oimMamz9q8JIgDj1gj/v9iGWesguy4dcAHCRnfg6ez94CmZ8iKxYHs+9siNAqIXn
-         WV8g==
-X-Gm-Message-State: AOAM533WsuB0kz4y9OFZHsBZijd1XavC6vleijqI11/2uSGwTPHYoOIi
-        uWWGUSbOCxoo7JGpeZw/ZRwA1A==
-X-Google-Smtp-Source: ABdhPJwlK/SW/CODeWM9kktlBpwCnis7FDQZ4Na/hT1U3OZdj13rfaGxTXzfpo9Enz/5cOgVh+crSg==
-X-Received: by 2002:a05:6830:1d88:: with SMTP id y8mr334729oti.194.1621990798636;
-        Tue, 25 May 2021 17:59:58 -0700 (PDT)
-Received: from yoga (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
-        by smtp.gmail.com with ESMTPSA id a71sm3599841oib.20.2021.05.25.17.59.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 May 2021 17:59:58 -0700 (PDT)
-Date:   Tue, 25 May 2021 19:59:56 -0500
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Saravana Kannan <saravanak@google.com>
-Cc:     sidgup@codeaurora.org, linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org, ohad@wizery.com,
-        psodagud@codeaurora.org,
-        Android Kernel Team <kernel-team@android.com>
+        Tue, 25 May 2021 21:17:54 -0400
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1621991784; h=Content-Transfer-Encoding: Content-Type:
+ In-Reply-To: MIME-Version: Date: Message-ID: From: References: Cc: To:
+ Subject: Sender; bh=rYbjAIh3R6dWwfuAFiRlD63rXASeXZ2KtSUS/574FBE=; b=NxxCMgldOSQ2OquIavlh6m4FadpM1Swyr39iltrB9TXvOTbP+plwWutEXKuhNw6S32yhKGCP
+ hNPDceMOriWG1hAwxeNaDn2JLy8MA/V0Iu4jbzbb+M0lk6Eb2GzIM6Z4i9ZoDpg/PmRaOqsl
+ TNGgxmncLptrPjsKJGvUnYP2lxo=
+X-Mailgun-Sending-Ip: 198.61.254.9
+X-Mailgun-Sid: WyI4ZWZiZiIsICJsaW51eC1yZW1vdGVwcm9jQHZnZXIua2VybmVsLm9yZyIsICJiZTllNGEiXQ==
+Received: from smtp.codeaurora.org
+ (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
+ smtp-out-n05.prod.us-east-1.postgun.com with SMTP id
+ 60ada16660c53c8c9dbf6391 (version=TLS1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Wed, 26 May 2021 01:16:22
+ GMT
+Sender: sidgup=codeaurora.org@mg.codeaurora.org
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 10D7DC4338A; Wed, 26 May 2021 01:16:22 +0000 (UTC)
+Received: from [192.168.1.10] (cpe-75-83-25-192.socal.res.rr.com [75.83.25.192])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: sidgup)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id CF486C433F1;
+        Wed, 26 May 2021 01:16:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org CF486C433F1
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=sidgup@codeaurora.org
 Subject: Re: [PATCH] remoteproc: core: Invoke subdev callbacks in list order
-Message-ID: <YK2djEop2Dn7v0SE@yoga>
-References: <CAGETcx8ykYhBzkqZT+5G9oz2MOiHaSy4F3JoHudgK9WFnmRjbw@mail.gmail.com>
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     ohad@wizery.com, linux-remoteproc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, psodagud@codeaurora.org
+References: <1621292893-18827-1-git-send-email-sidgup@codeaurora.org>
+ <YKxo5BXwEPjS5K4d@yoga> <02bc228b-4bd2-de5a-6cf7-5623b8048e7f@codeaurora.org>
+ <YK2YL7im+1RH4MmY@yoga>
+From:   Siddharth Gupta <sidgup@codeaurora.org>
+Message-ID: <300e5068-464e-283e-4f1b-ae8abd9f68f5@codeaurora.org>
+Date:   Tue, 25 May 2021 18:16:19 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAGETcx8ykYhBzkqZT+5G9oz2MOiHaSy4F3JoHudgK9WFnmRjbw@mail.gmail.com>
+In-Reply-To: <YK2YL7im+1RH4MmY@yoga>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Tue 25 May 18:54 CDT 2021, Saravana Kannan wrote:
 
-> On XXXXX, Siddharth Gupta wrote:
-> > On 5/24/2021 8:03 PM, Bjorn Andersson wrote:
-> > > On Mon 17 May 18:08 CDT 2021, Siddharth Gupta wrote:
-> > >
-> > >> Subdevices at the beginning of the subdev list should have
-> > >> higher priority than those at the end of the list. Reverse
-> > >> traversal of the list causes priority inversion, which can
-> > >> impact the performance of the device.
-> > >>
-> > > The subdev lists layers of the communication onion, we bring them up
-> > > inside out and we take them down outside in.
-> > >
-> > > This stems from the primary idea that we want to be able to shut things
-> > > down cleanly (in the case of a stop) and we pass the "crashed" flag to
-> > > indicate to each recipient during "stop" that it may not rely on the
-> > > response of a lower layer.
-> > >
-> > > As such, I don't think it's right to say that we have a priority
-> > > inversion.
-> > My understanding of the topic was that each subdevice should be
-> > independent of the other. In our case unfortunately the sysmon
-> > subdevice depends on the glink endpoint.
-> 
-> In that case, the glink has to be prepared/started before sysmon, right?
-> 
+On 5/25/2021 5:37 PM, Bjorn Andersson wrote:
+> On Tue 25 May 14:48 CDT 2021, Siddharth Gupta wrote:
+>
+>> On 5/24/2021 8:03 PM, Bjorn Andersson wrote:
+>>> On Mon 17 May 18:08 CDT 2021, Siddharth Gupta wrote:
+>>>
+>>>> Subdevices at the beginning of the subdev list should have
+>>>> higher priority than those at the end of the list. Reverse
+>>>> traversal of the list causes priority inversion, which can
+>>>> impact the performance of the device.
+>>>>
+>>> The subdev lists layers of the communication onion, we bring them up
+>>> inside out and we take them down outside in.
+>>>
+>>> This stems from the primary idea that we want to be able to shut things
+>>> down cleanly (in the case of a stop) and we pass the "crashed" flag to
+>>> indicate to each recipient during "stop" that it may not rely on the
+>>> response of a lower layer.
+>>>
+>>> As such, I don't think it's right to say that we have a priority
+>>> inversion.
+>> My understanding of the topic was that each subdevice should be
+>> independent of the other. In our case unfortunately the sysmon
+>> subdevice depends on the glink endpoint.
+>>
+> We need to care for the ordering if sysmon is to be able to use smd or
+> glink to send the shutdown request.
+Right, I meant the dependence of either sysmon or SSR is on QMI,
+which in turn depends on glink.
+>
+>> However the priority inversion doesn't happen in these
+>> subdevices, it happens due to the SSR notifications that we send
+>> to kernel clients. In this case kernel clients also can have QMI
+>> sockets that in turn depend on the glink endpoint, which means
+>> when they go to release the QMI socket a broadcast will be sent
+>> out to all connected clients about the closure of the connection
+>> which in this case happens to be the remoteproc which died. So
+>> if we peel the onion, we will be unnecessarily be waiting for a
+>> dead remoteproc.
+> I see, that is indeed a problem.
+>
+>>>> For example a device adds the glink, sysmon and ssr subdevs
+>>>> to its list. During a crash the ssr notification would go
+>>>> before the glink and sysmon notifications. This can cause a
+>>>> degraded response when a client driver waits for a response
+>>>> from the crashed rproc.
+>>>>
+>>> In general the design is such that components are not expected to
+>>> communicate with the crashed remote when "crashed" is set, this avoids
+>>> the single-remote crash.
+>> Here the glink device on the rpmsg bus won't know about the
+>> crashed remoteproc till we send glink notification first, right?
+>> Since we send out sysmon and SSR notifications first, the glink
+>> device will still be "alive" on the rpmsg bus.
+> Yes, and this all stems from the design that everything communicating
+> over glink is a child of glink, which isn't the case when you have a SSR
+> event that will end up blocking the sequence in qrtr.
+>
+> For sysmon this is not a problem, because sysmon is implemented to not
+> attempt to communicate with the parent remoteproc upon a crash.
+Yes, exactly.
+> And all rpmsg devices will be torn down as a result of glink being torn
+> down, so glink can fail early based on this (not sure if this was
+> implemented downstream though).
+This was implemented downstream as a part of an early
+notification that was sent out to the glink device.
+>
+>>> The case where this isn't holding up is when two remote processors
+>>> crashes simultaneously, in which case e.g. sysmon has been seen hitting
+>>> its timeout waiting for an ack from a dead remoteproc - but I was under
+>>> the impression that this window shrunk dramatically as a side effect of
+>>> us fixing the notification ordering.
+>> You are right, the window would become smaller in the case of two
+>> remoteprocs, but this issue can come up with even a single
+>> remoteproc unless prioritize certain subdevices.
+> The problem that you describe where an SSR notification will directly or
+> indirectly attempt to communicate over QRTR will certainly cause issues
+> in the single-rproc case as well.
+>
+>
+> But is there any reason why these listeners has to do the wrong thing at
+> stop(crashed=true)?
+I don't think the listeners are doing anything wrong by closing
+the QMI handle/QRTR socket, the issue is that the glink device
+still thinks that it can communicate.
+>
+>>>> Signed-off-by: Siddharth Gupta <sidgup@codeaurora.org>
+>>>> ---
+>>>>    drivers/remoteproc/remoteproc_core.c | 24 ++++++++++++++----------
+>>>>    1 file changed, 14 insertions(+), 10 deletions(-)
+>>>>
+>>>> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+>>>> index 626a6b90f..ac8fc42 100644
+>>>> --- a/drivers/remoteproc/remoteproc_core.c
+>>>> +++ b/drivers/remoteproc/remoteproc_core.c
+>>>> @@ -1167,7 +1167,7 @@ static int rproc_handle_resources(struct rproc *rproc,
+>>>>    static int rproc_prepare_subdevices(struct rproc *rproc)
+>>>>    {
+>>>> -	struct rproc_subdev *subdev;
+>>>> +	struct rproc_subdev *subdev, *itr;
+>>>>    	int ret;
+>>>>    	list_for_each_entry(subdev, &rproc->subdevs, node) {
+>>>> @@ -1181,9 +1181,11 @@ static int rproc_prepare_subdevices(struct rproc *rproc)
+>>>>    	return 0;
+>>>>    unroll_preparation:
+>>>> -	list_for_each_entry_continue_reverse(subdev, &rproc->subdevs, node) {
+>>>> -		if (subdev->unprepare)
+>>>> -			subdev->unprepare(subdev);
+>>>> +	list_for_each_entry(itr, &rproc->subdevs, node) {
+>>>> +		if (itr == subdev)
+>>>> +			break;
+>>>> +		if (itr->unprepare)
+>>>> +			itr->unprepare(subdev);
+>>>>    	}
+>>>>    	return ret;
+>>>> @@ -1191,7 +1193,7 @@ static int rproc_prepare_subdevices(struct rproc *rproc)
+>>>>    static int rproc_start_subdevices(struct rproc *rproc)
+>>>>    {
+>>>> -	struct rproc_subdev *subdev;
+>>>> +	struct rproc_subdev *subdev, *itr;
+>>>>    	int ret;
+>>>>    	list_for_each_entry(subdev, &rproc->subdevs, node) {
+>>>> @@ -1205,9 +1207,11 @@ static int rproc_start_subdevices(struct rproc *rproc)
+>>>>    	return 0;
+>>>>    unroll_registration:
+>>>> -	list_for_each_entry_continue_reverse(subdev, &rproc->subdevs, node) {
+>>>> -		if (subdev->stop)
+>>>> -			subdev->stop(subdev, true);
+>>>> +	list_for_each_entry(itr, &rproc->subdevs, node) {
+>>>> +		if (itr == subdev)
+>>>> +			break;
+>>>> +		if (itr->stop)
+>>>> +			itr->stop(itr, true);
+>>>>    	}
+>>>>    	return ret;
+>>>> @@ -1217,7 +1221,7 @@ static void rproc_stop_subdevices(struct rproc *rproc, bool crashed)
+>>>>    {
+>>>>    	struct rproc_subdev *subdev;
+>>>> -	list_for_each_entry_reverse(subdev, &rproc->subdevs, node) {
+>>>> +	list_for_each_entry(subdev, &rproc->subdevs, node) {
+>>> I presume this is the case you actually care about, can you help me
+>>> understand if you changed the others for consistence or if there's some
+>>> flow of events where that might be necessary.
+>> Yes you are right, I only changed the others for consistence.
+>> However, I will give this more thought and see if unprepare in
+>> the reverse order can make a difference.
+>>
+> Per above argument I don't think things depend on the unrolling on error
+> happening in reverse order. But it's idiomatic.
+I say unprepare in any order might not make a difference because
+prepare would indicate to the subdevice that it should get its
+resources initialized because the remoteproc is going to come up,
+so unprepare would only be the subdevice releasing its resources.
+However start and stop in the reverse order will make a big
+difference. Please correct me if I am wrong.
 
-Correct, we prepare glink, then prepare sysmon, start glink then start
-sysmon - and reverse for stop and unprepare.
-
-> >
-> > However the priority inversion doesn't happen in these
-> > subdevices, it happens due to the SSR notifications that we send
-> > to kernel clients. In this case kernel clients also can have QMI
-> > sockets that in turn depend on the glink endpoint, which means
-> > when they go to release the QMI socket a broadcast will be sent
-> > out to all connected clients about the closure of the connection
-> > which in this case happens to be the remoteproc which died. So
-> > if we peel the onion, we will be unnecessarily be waiting for a
-> > dead remoteproc.
-> 
-> So why can't the QMI layer be smart about this and check that the
-> remoteproc hasn't crashed before you try to communicate with it?
-
-I guess we could do that, if we really have to. But I find it quite
-ugly and would like to avoid it.
-
-> Or if the
-> glink is torn down before QMI gets to broadcast, then it's a pretty clear
-> indication of failure and just notify all the kernel side QMI clients?
-> 
-
-No, the system is designed to deal with this; as the remoteproc goes
-down glink will be torn down, which will team down the qrtr link to
-whatever qrtr nodes exist on (or beyond) that remote processor.
-
-So if it's down the qrtr will naturally fail because there's no path to
-that qrtr node.
-
-> > >
-> > >> For example a device adds the glink, sysmon and ssr subdevs
-> > >> to its list. During a crash the ssr notification would go
-> > >> before the glink and sysmon notifications. This can cause a
-> > >> degraded response when a client driver waits for a response
-> > >> from the crashed rproc.
-> > >>
-> > > In general the design is such that components are not expected to
-> > > communicate with the crashed remote when "crashed" is set, this avoids
-> > > the single-remote crash.
-> > Here the glink device on the rpmsg bus won't know about the
-> > crashed remoteproc till we send glink notification first, right?
-> 
-> Why not just query the current state of the remote proc before trying to
-> talk to it? It should be a quick check.
-> 
-
-We notify subdevices (and thereby indirectly other drivers) that the
-remoteproc is going down, either cleanly or that it's dead.
-
-The problem seen here is that when remoteproc tell some component that
-the particular remote processor is dead (crashed/not going to respond)
-they react by attempting to communicate with the dying remote processor
-- which will naturally time out.
-
-In the general case the solution is simply to stop communicate with the
-remote when you're told it's dead. The question is what kind of implicit
-operations we're seeing here.
-
-> > Since we send out sysmon and SSR notifications first, the glink
-> > device will still be "alive" on the rpmsg bus.
-> > >
-> > > The case where this isn't holding up is when two remote processors
-> > > crashes simultaneously, in which case e.g. sysmon has been seen hitting
-> > > its timeout waiting for an ack from a dead remoteproc - but I was under
-> > > the impression that this window shrunk dramatically as a side effect of
-> > > us fixing the notification ordering.
-> > You are right, the window would become smaller in the case of two
-> > remoteprocs, but this issue can come up with even a single
-> > remoteproc unless prioritize certain subdevices.
-> 
-> I think the main problem you have here is rproc sub devices that depend on
-> other rproc sub devices. But there's no dependency tracking here. Your
-> change just happens to work for your specific case because the order of the
-> sub devices in the list happens to work for your inter-subdevice
-> dependencies. But this is definitely not going to work for all users of
-> subdevices.
-> 
-
-Right, in the particular case I'm talking about here we saw two remote
-processors dying concurrently and ended up in sysmon with each one
-trying to notify the other about the change in status. But as I said, to
-a large degree this has been avoided by making sure that sysmon checks
-the status of the remoteproc before attempting to send. It is however
-still possible that you get past this check before the recipient of your
-notification dies, in which case you would end up having to wait out the
-timeout.
-
-It might be possible to complete the process waiting for a response in
-this case, but I don't have any data indicating if it's worth it.
-
-And more importantly, this is not the problem that Siddharth is
-reporting.
-
-> If keeping track of dependency is too much complexity (I haven't read
-> enough rproc code to comment on that), at the least, it looks like you need
-> another ops instead of changing the order of stop() callbacks. Or at a
-> minimum pick the ordering based on the "crashed" flag. A blanket, I'll just
-> switch the ordering of stop() for everyone for all cases is wrong.
-> 
-
-I unfortunately don't see which problem you're trying to solve, above
-looks to me like an extreme micro-optimization and has nothing to do
-with dependencies.
-
-> In fact, in the normal/clean shutdown case, I'd think you'll want to stop
-> the subdevices in reverse initialization order so that you can cleanly stop
-> QMI/sysmon first before shutting down glink.
-> 
-
-Yes.
-
-Regards,
-Bjorn
+Thanks,
+Sid
+>
+> Regards,
+> Bjorn
+>
+>> Thanks,
+>> Sid
+>>> Regards,
+>>> Bjorn
+>>>
+>>>>    		if (subdev->stop)
+>>>>    			subdev->stop(subdev, crashed);
+>>>>    	}
+>>>> @@ -1227,7 +1231,7 @@ static void rproc_unprepare_subdevices(struct rproc *rproc)
+>>>>    {
+>>>>    	struct rproc_subdev *subdev;
+>>>> -	list_for_each_entry_reverse(subdev, &rproc->subdevs, node) {
+>>>> +	list_for_each_entry(subdev, &rproc->subdevs, node) {
+>>>>    		if (subdev->unprepare)
+>>>>    			subdev->unprepare(subdev);
+>>>>    	}
+>>>> -- 
+>>>> Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+>>>> a Linux Foundation Collaborative Project
+>>>>
