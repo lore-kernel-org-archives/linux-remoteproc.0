@@ -2,155 +2,153 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-17.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8DBCC2B9F7
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 28 May 2021 15:09:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46471C47087
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 28 May 2021 16:17:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A3381611C2
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 28 May 2021 15:09:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 23E3D613F0
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 28 May 2021 16:17:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234580AbhE1PKw (ORCPT
+        id S234815AbhE1QTY (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 28 May 2021 11:10:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42194 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230281AbhE1PKv (ORCPT
+        Fri, 28 May 2021 12:19:24 -0400
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:51434 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234443AbhE1QTY (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 28 May 2021 11:10:51 -0400
-Received: from mail-pl1-x631.google.com (mail-pl1-x631.google.com [IPv6:2607:f8b0:4864:20::631])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E4444C061574
-        for <linux-remoteproc@vger.kernel.org>; Fri, 28 May 2021 08:09:15 -0700 (PDT)
-Received: by mail-pl1-x631.google.com with SMTP id q16so1768676pls.6
-        for <linux-remoteproc@vger.kernel.org>; Fri, 28 May 2021 08:09:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=COCYNxlGniVWLUglCEtbTut6ZdY+Pq4JgW48n0IpT84=;
-        b=WTxda/Cp1mXnp/85bXAtFPvlw6RdyQBPOXugOPV0EJpEOxBma2Z5c6LJKbLEpIo7pR
-         3EgrsQMEED2Ofj9ZyjvxDdOf0jW9WEqUSoOUuCL72kSxv6VocWBHhSWQ9b3ciC11mKZM
-         b9AOElpQAYzFk33+5/7FUMAY6Snk1YBcwstg3pyaqk4L7kQ5a5hldGWfWzNll7CHC9Ev
-         pr+nlv4ha1GtzyS/R7YC5U0scTUNqBnT0Za5UZpdVIB0rUotqEYWxerD3O9vJAMNNK3P
-         qd4c23wLokVP9DXm4QBHz6NaVr8iEsfI+yNDER2p1dott3ZYRWwPbLssE3bj1CHWl69G
-         ADxg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=COCYNxlGniVWLUglCEtbTut6ZdY+Pq4JgW48n0IpT84=;
-        b=l+lOXllWuWlmDytzF5ke5X7j8X8uIuCAmGB3jcCiEj3BkbsoCiF/UChW2fyGhujXOn
-         7wHBNp9+irDtHE3ObnqgBW05K9cxb2+q05Yvt4XOWyvI3yuvG0NM8RB+tFpwrztrIZFz
-         jwEGEF9wcAruLZiB3S1qGza9FEE1qftMVdf4Nk8gwQmCf4THXBjzYiW5t0cDyTnNisX4
-         JkbICoUbyMcZwjvZiPu2cpMdGOKSQ/b3uub2ABuPPoKYtni9w9Mvid5iUq+FM8eQICtD
-         JnvOw4xdbeBZeJfCncrqzZE2VeRZ/RtYnI52TLEx0dWtleYNz/PLqsQccezFj7Kubo+h
-         E09A==
-X-Gm-Message-State: AOAM533ziw6eA0bI2WK7O9+bc5tMFMzPXl8I/K2yiS8Ilsfus91yYDN7
-        YomYGaLMnmDJRD21Tb+ENjVc8Q==
-X-Google-Smtp-Source: ABdhPJxLW5HcmwR1J11w7y68nOohx1ERp10zilmYVXxKP0MKPee9RkISAIEcUT1oU2OZsuLB6giABw==
-X-Received: by 2002:a17:90a:898c:: with SMTP id v12mr2134356pjn.72.1622214555324;
-        Fri, 28 May 2021 08:09:15 -0700 (PDT)
-Received: from xps15 (S0106889e681aac74.cg.shawcable.net. [68.147.0.187])
-        by smtp.gmail.com with ESMTPSA id y129sm4382096pfy.123.2021.05.28.08.09.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 May 2021 08:09:13 -0700 (PDT)
-Date:   Fri, 28 May 2021 09:09:12 -0600
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+        Fri, 28 May 2021 12:19:24 -0400
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 14SGHhSC086409;
+        Fri, 28 May 2021 11:17:43 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1622218663;
+        bh=D58FdqqYgrlOaSZQ555UBixMEXaRM61PLwIyCkqZMx4=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=PTm974/aIC3BkvWxw4p4/fM1W6sPiY79wrR9NlTtH5J2eb8ITd2KVull9eAKOMZN/
+         i0XWvNK/6P8K1wU0uHA6FGsenagShHN5KFf7TElcMGdnaXxF2T0vARRF+AyZ0okUNF
+         iK2PThvJOvVsThOD84k+bYbW30k4bV2OpQ+7L5Fg=
+Received: from DLEE105.ent.ti.com (dlee105.ent.ti.com [157.170.170.35])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 14SGHhq6084066
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 28 May 2021 11:17:43 -0500
+Received: from DLEE112.ent.ti.com (157.170.170.23) by DLEE105.ent.ti.com
+ (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2176.2; Fri, 28
+ May 2021 11:17:43 -0500
+Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE112.ent.ti.com
+ (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2176.2 via
+ Frontend Transport; Fri, 28 May 2021 11:17:43 -0500
+Received: from [10.250.35.153] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id 14SGHgP2026203;
+        Fri, 28 May 2021 11:17:42 -0500
+Subject: Re: [PATCH 1/6] remoteproc: Introduce rproc_detach_device() wrapper
 To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Alex Elder <elder@linaro.org>, ohad@wizery.com,
-        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/1] remoteproc: use freezable workqueue for crash
- notifications
-Message-ID: <20210528150912.GA1354763@xps15>
-References: <20210519234418.1196387-1-elder@linaro.org>
- <20210519234418.1196387-2-elder@linaro.org>
- <YLBpmdZoGDXNz64y@builder.lan>
+CC:     Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Lokesh Vutla <lokeshvutla@ti.com>,
+        Tero Kristo <kristo@kernel.org>,
+        <linux-remoteproc@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20210522000309.26134-1-s-anna@ti.com>
+ <20210522000309.26134-2-s-anna@ti.com> <YLBu9Wr1vNiwsfWT@builder.lan>
+From:   Suman Anna <s-anna@ti.com>
+Message-ID: <7b5556d8-e92c-f633-e58a-cdd71c25df29@ti.com>
+Date:   Fri, 28 May 2021 11:17:42 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YLBpmdZoGDXNz64y@builder.lan>
+In-Reply-To: <YLBu9Wr1vNiwsfWT@builder.lan>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Thu, May 27, 2021 at 10:55:05PM -0500, Bjorn Andersson wrote:
-> On Wed 19 May 18:44 CDT 2021, Alex Elder wrote:
+On 5/27/21 11:17 PM, Bjorn Andersson wrote:
+> On Fri 21 May 19:03 CDT 2021, Suman Anna wrote:
 > 
-> > When a remoteproc has crashed, rproc_report_crash() is called to
-> > handle whatever recovery is desired.  This can happen at almost any
-> > time, often triggered by an interrupt, though it can also be
-> > initiated by a write to debugfs file remoteproc/remoteproc*/crash.
-> > 
-> > When a crash is reported, the crash handler worker is scheduled to
-> > run (rproc_crash_handler_work()).  One thing that worker does is
-> > call rproc_trigger_recovery(), which calls rproc_stop().  That calls
-> > the ->stop method for any remoteproc subdevices before making the
-> > remote processor go offline.
-> > 
-> > The Q6V5 modem remoteproc driver implements an SSR subdevice that
-> > notifies registered drivers when the modem changes operational state
-> > (prepare, started, stop/crash, unprepared).  The IPA driver
-> > registers to receive these notifications.
-> > 
-> > With that as context, I'll now describe the problem.
-> > 
-> > There was a situation in which buggy modem firmware led to a modem
-> > crash very soon after system (AP) resume had begun.  The crash caused
-> > a remoteproc SSR crash notification to be sent to the IPA driver.
-> > The problem was that, although system resume had begun, it had not
-> > yet completed, and the IPA driver was still in a suspended state.
-> > 
-> > This scenario could happen to any driver that registers for these
-> > SSR notifications, because they are delivered without knowledge of
-> > the (suspend) state of registered recipient drivers.
-> > 
-> > This patch offers a simple fix for this, by having the crash
-> > handling worker function run on the system freezable workqueue.
-> > This workqueue does not operate if user space is frozen (for
-> > suspend).  As a result, the SSR subdevice only delivers its
-> > crash notification when the system is fully operational (i.e.,
-> > neither suspended nor in suspend/resume transition).
-> > 
+>> The .attach() rproc ops is invoked through the helper
+>> rproc_attach_device(), but the .detach() ops is invoked
+>> directly at present. Introduce a similar wrapper function
+>> rproc_detach_device() for .detach() ops so that the code
+>> is symmetric.
+>>
+>> Signed-off-by: Suman Anna <s-anna@ti.com>
+>> ---
+>>  drivers/remoteproc/remoteproc_core.c     | 2 +-
+>>  drivers/remoteproc/remoteproc_internal.h | 8 ++++++++
+>>  2 files changed, 9 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+>> index 6348aaa42bbb..6019f46001c8 100644
+>> --- a/drivers/remoteproc/remoteproc_core.c
+>> +++ b/drivers/remoteproc/remoteproc_core.c
+>> @@ -1869,7 +1869,7 @@ static int __rproc_detach(struct rproc *rproc)
+>>  	}
+>>  
+>>  	/* Tell the remote processor the core isn't available anymore */
+>> -	ret = rproc->ops->detach(rproc);
+>> +	ret = rproc_detach_device(rproc);
+>>  	if (ret) {
+>>  		dev_err(dev, "can't detach from rproc: %d\n", ret);
+>>  		return ret;
+>> diff --git a/drivers/remoteproc/remoteproc_internal.h b/drivers/remoteproc/remoteproc_internal.h
+>> index a328e634b1de..931d50b6a0d1 100644
+>> --- a/drivers/remoteproc/remoteproc_internal.h
+>> +++ b/drivers/remoteproc/remoteproc_internal.h
+>> @@ -121,6 +121,14 @@ static inline int rproc_attach_device(struct rproc *rproc)
+>>  	return 0;
+>>  }
+>>  
+>> +static inline int rproc_detach_device(struct rproc *rproc)
+>> +{
+>> +	if (rproc->ops->detach)
+>> +		return rproc->ops->detach(rproc);
+>> +
+>> +	return 0;
 > 
-> This makes sense to me; both that it ensures that we spend our resources
-> on the actual system resume and that it avoids surprises from this
-> happening while the system still is in a funky state...
+> I was going to complain that this will silently succeed to detach a
+> remoteproc when the driver doesn't implement detach, but then I realized
+> that in the current code path we just failed if it wasn't set.
 > 
-> Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> So this only becomes a problem if we're out of sync between the wish to
+> detach and the implementation of detach, in the later patch.
 > 
-> But it would be nice to get some input from other users of the
-> framework.
-> 
+> But based on this, why do we allow rproc_attach_device() to succeed even
+> though a driver doesn't implement attach? Could we achieve the symmetry
+> by going the other way?
 
-This patch is in my review queue - I should be able to get to it by the end of
-next week.
+We don't, it does throw an error. See rproc_validate(). The error-checking is
+somewhat asymmetric. Any remoteproc requiring attach behavior is supposed to be
+setting the rproc state as RPROC_DETACHED. The remoteproc core state-machine is
+dictated by that value between start and attach. rproc_validate() does check the
+required ops between RPROC_OFFLINE and RPROC_DETACHED states.
 
+Do you mean use return -EINVAL by default in both the wrappers? Atm, you will
+never exercise this particular code paths in either of these wrapper functions,
+because there are checks enforced even before these wrappers are invoked.
+
+regards
+Suman
+
+> 
 > Regards,
 > Bjorn
 > 
-> > Signed-off-by: Alex Elder <elder@linaro.org>
-> > ---
-> >  drivers/remoteproc/remoteproc_core.c | 4 ++--
-> >  1 file changed, 2 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-> > index 39cf44cb08035..6bedf2d2af239 100644
-> > --- a/drivers/remoteproc/remoteproc_core.c
-> > +++ b/drivers/remoteproc/remoteproc_core.c
-> > @@ -2724,8 +2724,8 @@ void rproc_report_crash(struct rproc *rproc, enum rproc_crash_type type)
-> >  	dev_err(&rproc->dev, "crash detected in %s: type %s\n",
-> >  		rproc->name, rproc_crash_to_string(type));
-> >  
-> > -	/* create a new task to handle the error */
-> > -	schedule_work(&rproc->crash_handler);
-> > +	/* Have a worker handle the error; ensure system is not suspended */
-> > +	queue_work(system_freezable_wq, &rproc->crash_handler);
-> >  }
-> >  EXPORT_SYMBOL(rproc_report_crash);
-> >  
-> > -- 
-> > 2.27.0
-> > 
+>> +}
+>> +
+>>  static inline
+>>  int rproc_fw_sanity_check(struct rproc *rproc, const struct firmware *fw)
+>>  {
+>> -- 
+>> 2.30.1
+>>
+
