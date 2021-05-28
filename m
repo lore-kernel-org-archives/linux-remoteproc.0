@@ -8,46 +8,47 @@ X-Spam-Status: No, score=-17.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46471C47087
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 28 May 2021 16:17:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78F9CC2B9F7
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 28 May 2021 16:40:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 23E3D613F0
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 28 May 2021 16:17:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4A615611CA
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 28 May 2021 16:40:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234815AbhE1QTY (ORCPT
+        id S236075AbhE1Qlo (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 28 May 2021 12:19:24 -0400
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:51434 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234443AbhE1QTY (ORCPT
+        Fri, 28 May 2021 12:41:44 -0400
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:54810 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235570AbhE1Qlm (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 28 May 2021 12:19:24 -0400
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 14SGHhSC086409;
-        Fri, 28 May 2021 11:17:43 -0500
+        Fri, 28 May 2021 12:41:42 -0400
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 14SGe3TH016682;
+        Fri, 28 May 2021 11:40:03 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1622218663;
-        bh=D58FdqqYgrlOaSZQ555UBixMEXaRM61PLwIyCkqZMx4=;
+        s=ti-com-17Q1; t=1622220003;
+        bh=8+ulhTM+gzJOOYMrxR6OJCETO3scGYEm/Q7ZRZMWEXE=;
         h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=PTm974/aIC3BkvWxw4p4/fM1W6sPiY79wrR9NlTtH5J2eb8ITd2KVull9eAKOMZN/
-         i0XWvNK/6P8K1wU0uHA6FGsenagShHN5KFf7TElcMGdnaXxF2T0vARRF+AyZ0okUNF
-         iK2PThvJOvVsThOD84k+bYbW30k4bV2OpQ+7L5Fg=
-Received: from DLEE105.ent.ti.com (dlee105.ent.ti.com [157.170.170.35])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 14SGHhq6084066
+        b=rh+u7S6nbxD3S+XkNjBnIHRcsT26C5ZGmIZ66fNkAszR9Y9+s/jL6mJ6huEBBztY0
+         5/M91bDFg3okvNkavx62dVBZCLWXVllpcixTbJTUVQrRbZEqXKUWPdMN0UIN7keXev
+         KZw75FHH/LOVO7PnIxXvZgssSINqrwWC6XU1chW4=
+Received: from DFLE107.ent.ti.com (dfle107.ent.ti.com [10.64.6.28])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 14SGe2iK013662
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 28 May 2021 11:17:43 -0500
-Received: from DLEE112.ent.ti.com (157.170.170.23) by DLEE105.ent.ti.com
- (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
+        Fri, 28 May 2021 11:40:02 -0500
+Received: from DFLE114.ent.ti.com (10.64.6.35) by DFLE107.ent.ti.com
+ (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2176.2; Fri, 28
- May 2021 11:17:43 -0500
-Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE112.ent.ti.com
- (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
+ May 2021 11:40:02 -0500
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE114.ent.ti.com
+ (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2176.2 via
- Frontend Transport; Fri, 28 May 2021 11:17:43 -0500
+ Frontend Transport; Fri, 28 May 2021 11:40:02 -0500
 Received: from [10.250.35.153] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id 14SGHgP2026203;
-        Fri, 28 May 2021 11:17:42 -0500
-Subject: Re: [PATCH 1/6] remoteproc: Introduce rproc_detach_device() wrapper
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 14SGe2S7051725;
+        Fri, 28 May 2021 11:40:02 -0500
+Subject: Re: [PATCH 2/6] remoteproc: Add support for detach-only during
+ shutdown
 To:     Bjorn Andersson <bjorn.andersson@linaro.org>
 CC:     Mathieu Poirier <mathieu.poirier@linaro.org>,
         Lokesh Vutla <lokeshvutla@ti.com>,
@@ -56,14 +57,14 @@ CC:     Mathieu Poirier <mathieu.poirier@linaro.org>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-kernel@vger.kernel.org>
 References: <20210522000309.26134-1-s-anna@ti.com>
- <20210522000309.26134-2-s-anna@ti.com> <YLBu9Wr1vNiwsfWT@builder.lan>
+ <20210522000309.26134-3-s-anna@ti.com> <YLBtbHevzyxT4RTK@builder.lan>
 From:   Suman Anna <s-anna@ti.com>
-Message-ID: <7b5556d8-e92c-f633-e58a-cdd71c25df29@ti.com>
-Date:   Fri, 28 May 2021 11:17:42 -0500
+Message-ID: <da468002-580c-de1a-dcf4-275d57bb7ac7@ti.com>
+Date:   Fri, 28 May 2021 11:40:02 -0500
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <YLBu9Wr1vNiwsfWT@builder.lan>
+In-Reply-To: <YLBtbHevzyxT4RTK@builder.lan>
 Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -72,82 +73,141 @@ Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On 5/27/21 11:17 PM, Bjorn Andersson wrote:
+Hi Bjorn,
+
+On 5/27/21 11:11 PM, Bjorn Andersson wrote:
 > On Fri 21 May 19:03 CDT 2021, Suman Anna wrote:
 > 
->> The .attach() rproc ops is invoked through the helper
->> rproc_attach_device(), but the .detach() ops is invoked
->> directly at present. Introduce a similar wrapper function
->> rproc_detach_device() for .detach() ops so that the code
->> is symmetric.
+>> The remoteproc core has support for both stopping and detaching a
+>> remote processor that was attached to previously, through both the
+>> remoteproc sysfs and cdev interfaces. The rproc_shutdown() though
+>> unconditionally only uses the stop functionality at present. This
+>> may not be the default desired functionality for all the remoteproc
+>> platform drivers.
 >>
->> Signed-off-by: Suman Anna <s-anna@ti.com>
->> ---
->>  drivers/remoteproc/remoteproc_core.c     | 2 +-
->>  drivers/remoteproc/remoteproc_internal.h | 8 ++++++++
->>  2 files changed, 9 insertions(+), 1 deletion(-)
+>> Introduce a new rproc state flag 'detach_on_shutdown' that individual
+>> remoteproc drivers can set to only allow detach in rproc_shutdown()
+>> that would have been invoked when the driver is uninstalled, so that
+>> remote processor continues to run undisturbed even after the driver
+>> removal.
 >>
->> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
->> index 6348aaa42bbb..6019f46001c8 100644
->> --- a/drivers/remoteproc/remoteproc_core.c
->> +++ b/drivers/remoteproc/remoteproc_core.c
->> @@ -1869,7 +1869,7 @@ static int __rproc_detach(struct rproc *rproc)
->>  	}
->>  
->>  	/* Tell the remote processor the core isn't available anymore */
->> -	ret = rproc->ops->detach(rproc);
->> +	ret = rproc_detach_device(rproc);
->>  	if (ret) {
->>  		dev_err(dev, "can't detach from rproc: %d\n", ret);
->>  		return ret;
->> diff --git a/drivers/remoteproc/remoteproc_internal.h b/drivers/remoteproc/remoteproc_internal.h
->> index a328e634b1de..931d50b6a0d1 100644
->> --- a/drivers/remoteproc/remoteproc_internal.h
->> +++ b/drivers/remoteproc/remoteproc_internal.h
->> @@ -121,6 +121,14 @@ static inline int rproc_attach_device(struct rproc *rproc)
->>  	return 0;
->>  }
->>  
->> +static inline int rproc_detach_device(struct rproc *rproc)
->> +{
->> +	if (rproc->ops->detach)
->> +		return rproc->ops->detach(rproc);
->> +
->> +	return 0;
 > 
-> I was going to complain that this will silently succeed to detach a
-> remoteproc when the driver doesn't implement detach, but then I realized
-> that in the current code path we just failed if it wasn't set.
+> I dislike the introduction of knobs for everything and would much rather
+> see that we define some sound defaults. Can we make shutdown just do
+> detach() if that's supported otherwise stop().
 > 
-> So this only becomes a problem if we're out of sync between the wish to
-> detach and the implementation of detach, in the later patch.
-> 
-> But based on this, why do we allow rproc_attach_device() to succeed even
-> though a driver doesn't implement attach? Could we achieve the symmetry
-> by going the other way?
 
-We don't, it does throw an error. See rproc_validate(). The error-checking is
-somewhat asymmetric. Any remoteproc requiring attach behavior is supposed to be
-setting the rproc state as RPROC_DETACHED. The remoteproc core state-machine is
-dictated by that value between start and attach. rproc_validate() does check the
-required ops between RPROC_OFFLINE and RPROC_DETACHED states.
+I maybe missing your point, but the change in remoteproc_core below exactly does
+that, right? Are you saying drop the checks in remoteproc_cdev and remoteproc_sysfs?
 
-Do you mean use return -EINVAL by default in both the wrappers? Atm, you will
-never exercise this particular code paths in either of these wrapper functions,
-because there are checks enforced even before these wrappers are invoked.
+The asymmetry did bug me as well, but it is already existing even before this
+patch. I personally would have preferred a cleaner and symmetrical attach,
+start, stop, detach, but existing code has overloaded attach into start (keys
+off by RPROC_OFFLINE/RPROC_DETACHED) while introducing a separate detach from
+stop. I have retained the meaning of stop as shutdown from userspace interface
+perspective, but enforcing the checks for detach only remoteprocs.
+
+The logic in rproc_shutdown is for driver paths.
+
+> This still allows userspace to explicitly stop the detachable remoteproc
+> before shutdown, if for some reason that's what you want...
+
+This is the existing behavior and the difference between stop and detach. That
+behavior is maintained for remoteprocs not setting the detach_on_shutdown flag.
+I am only restricting the behavior for those that set it.
+
+Mathieu,
+Your thoughts on this?
 
 regards
 Suman
+
+
 
 > 
 > Regards,
 > Bjorn
 > 
->> +}
+>> Signed-off-by: Suman Anna <s-anna@ti.com>
+>> ---
+>>  drivers/remoteproc/remoteproc_cdev.c  | 7 +++++++
+>>  drivers/remoteproc/remoteproc_core.c  | 5 ++++-
+>>  drivers/remoteproc/remoteproc_sysfs.c | 6 ++++++
+>>  include/linux/remoteproc.h            | 3 +++
+>>  4 files changed, 20 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/remoteproc/remoteproc_cdev.c b/drivers/remoteproc/remoteproc_cdev.c
+>> index 0b8a84c04f76..473467711a09 100644
+>> --- a/drivers/remoteproc/remoteproc_cdev.c
+>> +++ b/drivers/remoteproc/remoteproc_cdev.c
+>> @@ -42,6 +42,13 @@ static ssize_t rproc_cdev_write(struct file *filp, const char __user *buf, size_
+>>  		    rproc->state != RPROC_ATTACHED)
+>>  			return -EINVAL;
+>>  
+>> +		if (rproc->state == RPROC_ATTACHED &&
+>> +		    rproc->detach_on_shutdown) {
+>> +			dev_err(&rproc->dev,
+>> +				"stop not supported for this rproc, use detach\n");
+>> +			return -EINVAL;
+>> +		}
 >> +
->>  static inline
->>  int rproc_fw_sanity_check(struct rproc *rproc, const struct firmware *fw)
->>  {
+>>  		rproc_shutdown(rproc);
+>>  	} else if (!strncmp(cmd, "detach", len)) {
+>>  		if (rproc->state != RPROC_ATTACHED)
+>> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+>> index 6019f46001c8..e8ab3eb41f00 100644
+>> --- a/drivers/remoteproc/remoteproc_core.c
+>> +++ b/drivers/remoteproc/remoteproc_core.c
+>> @@ -2074,7 +2074,10 @@ void rproc_shutdown(struct rproc *rproc)
+>>  	if (!atomic_dec_and_test(&rproc->power))
+>>  		goto out;
+>>  
+>> -	ret = rproc_stop(rproc, false);
+>> +	if (rproc->detach_on_shutdown && rproc->state == RPROC_ATTACHED)
+>> +		ret = __rproc_detach(rproc);
+>> +	else
+>> +		ret = rproc_stop(rproc, false);
+>>  	if (ret) {
+>>  		atomic_inc(&rproc->power);
+>>  		goto out;
+>> diff --git a/drivers/remoteproc/remoteproc_sysfs.c b/drivers/remoteproc/remoteproc_sysfs.c
+>> index ea8b89f97d7b..1785fbcb1075 100644
+>> --- a/drivers/remoteproc/remoteproc_sysfs.c
+>> +++ b/drivers/remoteproc/remoteproc_sysfs.c
+>> @@ -206,6 +206,12 @@ static ssize_t state_store(struct device *dev,
+>>  		    rproc->state != RPROC_ATTACHED)
+>>  			return -EINVAL;
+>>  
+>> +		if (rproc->state == RPROC_ATTACHED &&
+>> +		    rproc->detach_on_shutdown) {
+>> +			dev_err(&rproc->dev, "stop not supported for this rproc, use detach\n");
+>> +			return -EINVAL;
+>> +		}
+>> +
+>>  		rproc_shutdown(rproc);
+>>  	} else if (sysfs_streq(buf, "detach")) {
+>>  		if (rproc->state != RPROC_ATTACHED)
+>> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+>> index 42a1f30e33a7..35ef921676a1 100644
+>> --- a/include/linux/remoteproc.h
+>> +++ b/include/linux/remoteproc.h
+>> @@ -530,6 +530,8 @@ struct rproc_dump_segment {
+>>   * @elf_machine: firmware ELF machine
+>>   * @cdev: character device of the rproc
+>>   * @cdev_put_on_release: flag to indicate if remoteproc should be shutdown on @char_dev release
+>> + * @detach_on_shutdown: flag to indicate if remoteproc cannot be shutdown in
+>> + *			attached state and _only_ support detach
+>>   */
+>>  struct rproc {
+>>  	struct list_head node;
+>> @@ -569,6 +571,7 @@ struct rproc {
+>>  	u16 elf_machine;
+>>  	struct cdev cdev;
+>>  	bool cdev_put_on_release;
+>> +	bool detach_on_shutdown;
+>>  };
+>>  
+>>  /**
 >> -- 
 >> 2.30.1
 >>
