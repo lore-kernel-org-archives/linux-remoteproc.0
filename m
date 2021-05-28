@@ -2,137 +2,232 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-20.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62C27C47089
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 28 May 2021 03:07:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F50DC47089
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 28 May 2021 03:17:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2F1C4610C7
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 28 May 2021 03:07:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3D7DB6128D
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 28 May 2021 03:17:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236252AbhE1DI7 (ORCPT
+        id S236320AbhE1DTA (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 27 May 2021 23:08:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49934 "EHLO
+        Thu, 27 May 2021 23:19:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52152 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236229AbhE1DI6 (ORCPT
+        with ESMTP id S236316AbhE1DS7 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 27 May 2021 23:08:58 -0400
-Received: from mail-oi1-x22e.google.com (mail-oi1-x22e.google.com [IPv6:2607:f8b0:4864:20::22e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EB855C06174A
-        for <linux-remoteproc@vger.kernel.org>; Thu, 27 May 2021 20:07:23 -0700 (PDT)
-Received: by mail-oi1-x22e.google.com with SMTP id x15so2886425oic.13
-        for <linux-remoteproc@vger.kernel.org>; Thu, 27 May 2021 20:07:23 -0700 (PDT)
+        Thu, 27 May 2021 23:18:59 -0400
+Received: from mail-oi1-x230.google.com (mail-oi1-x230.google.com [IPv6:2607:f8b0:4864:20::230])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F2FCBC061760
+        for <linux-remoteproc@vger.kernel.org>; Thu, 27 May 2021 20:17:25 -0700 (PDT)
+Received: by mail-oi1-x230.google.com with SMTP id w127so2905266oig.12
+        for <linux-remoteproc@vger.kernel.org>; Thu, 27 May 2021 20:17:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=89Ift1OU78vKtiGlNnIxDJCwM07AOIScHSivLdjVYhE=;
-        b=rn4NEkcrpv1c/o1jdjygsc3kzakWgXejAkh0y1fGD1jSkvspt5vZv+KUbcnjnTjZ9H
-         zlS2ox/g2O+oQBf53t1niN+/XlEmpiWCHOd1X7vK9OkmlfPtMhLkjqFLKs45elo1z642
-         7fVvKztv7sbNjq2c2zKKeyVqhajiW+OgNiPCs3qY+uB9z8EcL2GaKwbyOhLu56QXB5Sz
-         5lXxL7enT8hcp7UhIHuhCkZkcRx/Q20aN87kEO29Wr9Jy4soHZdoEICnZ894JwPuH/d5
-         aEmEVx8mAHksbR2iLe8CUQrNDPuOpnaSiwhmO3ApTAeqqC4taueSEQLJ4xifBgwWw9zx
-         GJ+A==
+        bh=Fj6yd4g3TXDmWwf/fK4MDrrZ2Jmwp4JZlzW8aDmDn3Y=;
+        b=zsMQpJ5RdRYryTFtLjl5EbEWvN/bwGgRWNHBN7gYmTygCYZ5R9g/TJlWSVUpADeOaf
+         hezuDxTM8XY0AKG0emXIMEv2rHeP6Xn2qVmHL/Wy+uWstqNX00TG/lXuhXSecLa0CwXU
+         RdVdPKsyqoUBvqNj6pKsM9B/oQnkVu9lw/bALcKx6Ii1AUiJpkX8XGjnF9cukwmudse4
+         BxJTVZ2nhsGHYWcMNsaZCv1cZZXjWIl/7/k50kz74KFOwKBv7c1qGivzhLYYUW47NFRV
+         sCOgHk/YiFCoSMW0b/kWaMFoV9sDiEL4frFnl7SP09ujaH6WyQqG3GF8UGnSnXQs+a6F
+         fUbg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=89Ift1OU78vKtiGlNnIxDJCwM07AOIScHSivLdjVYhE=;
-        b=d0NnXcKmi95qsUYGATzyEEFQFil+MUHAC7RjBQWJLOXVS+f49LYVrDjQkKmjug9B4h
-         bInNdP7gPSjlgMkEt9vfC6zmbm842bPSzReq5Obh+kr1Jv8CplbsDQoWdGM0IbkkE305
-         c4e/zBPzkQua2jbDJfOHbgJHCBE+md3CluEJmJsYXJhOnX+pWyuA7z3H+3ugHDHsX5r0
-         7uX/KQGYsFEIkumTk8GLQp/blp+x4WD0kZQ64BuJ3BX4iY7Ikzu0nO9Q7dWcXKUz+xpc
-         edwddIBpNO5ijpSK2Ami5KEs426w08dcE+1Rz2AmbVJQBjDWb3zG2mNZHjGcLMVqmFtm
-         9r5A==
-X-Gm-Message-State: AOAM533TRMa+/q4kJuSLSutFB3plOS1cAaP5oj374isFc2nFPBivFyIL
-        yYOMrqVv+rZl+E7E/zLE/2EaCQ==
-X-Google-Smtp-Source: ABdhPJy3bKWc2VMwI2rT0Nf0xgty4fAnT+udrJLeLwBkNxnBNKtnjPN2Q3vPH3brtW8w7DJZ6oZPHQ==
-X-Received: by 2002:aca:1916:: with SMTP id l22mr4606188oii.48.1622171243112;
-        Thu, 27 May 2021 20:07:23 -0700 (PDT)
+        bh=Fj6yd4g3TXDmWwf/fK4MDrrZ2Jmwp4JZlzW8aDmDn3Y=;
+        b=AW1n560oPzTi7UyxUz3I69uHe2xpcmSk4mRzfgtotQgbQYiPU2Lu/9F/EorgTqC07o
+         14ui0HEJftUGpd6zg94wOTN7CK5y3agoRlYzxMZ9thz/AkeYR+TZO4mLKhy2O93ZEyq+
+         Zr6J2uBCRtWICxdkvoglAt0y7vYMcpChHpaJ+D+m+j6Jt4xBd8eSKV9DDH9tsc74Ys4P
+         XiyKsiv7PYMTIu2BPLNwyUPRQsmExbXsu2gUKs5GcohoHEe9lM67rCxxTpdTSfYSanaU
+         m70E7GqdKFex7k+83Dn5iKKUk3Mh0GvuFJrqQuvt0FqnM/MWidIC087OD+qxRkiyd3L4
+         bUAQ==
+X-Gm-Message-State: AOAM53098Eeb1ddR9HN1OzNPpXBQOIqO+rKoaqRIjaLobZxLFWLwxs+Z
+        52H1S1Vc+F/PtC6ySgKVT2MKM/yf3o/c2Q==
+X-Google-Smtp-Source: ABdhPJxqRihBpgL6lj+evaoTo7huY41OzFJ14nffnsAKGVI8c/xGw0DoIXBOhbBGoZeejZoxUvA7WA==
+X-Received: by 2002:aca:af8f:: with SMTP id y137mr7422874oie.159.1622171845173;
+        Thu, 27 May 2021 20:17:25 -0700 (PDT)
 Received: from builder.lan (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
-        by smtp.gmail.com with ESMTPSA id i17sm825381oou.37.2021.05.27.20.07.22
+        by smtp.gmail.com with ESMTPSA id h4sm857667ooq.6.2021.05.27.20.17.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 May 2021 20:07:22 -0700 (PDT)
-Date:   Thu, 27 May 2021 22:07:20 -0500
+        Thu, 27 May 2021 20:17:24 -0700 (PDT)
+Date:   Thu, 27 May 2021 22:17:22 -0500
 From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc:     Suman Anna <s-anna@ti.com>, linux-remoteproc@vger.kernel.org,
+To:     Suman Anna <s-anna@ti.com>
+Cc:     Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Lokesh Vutla <lokeshvutla@ti.com>,
+        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] remoteproc: Fix various kernel-doc warnings
-Message-ID: <YLBeaE8IWlmDjHaY@builder.lan>
-References: <20210519180304.23563-1-s-anna@ti.com>
- <20210519180304.23563-3-s-anna@ti.com>
- <20210525180006.GD1113058@xps15>
+Subject: Re: [PATCH v2 1/2] dt-bindings: remoteproc: k3-r5f: Update bindings
+ for AM64x SoCs
+Message-ID: <YLBgwkiT9PE3Cu82@builder.lan>
+References: <20210327143117.1840-1-s-anna@ti.com>
+ <20210327143117.1840-2-s-anna@ti.com>
+ <8948a30c-1a2f-1fb0-05bb-37be9c02c5d5@ti.com>
+ <ff8edffb-d926-9641-740b-2c292139aa07@ti.com>
+ <20210521204053.GA1011163@xps15>
+ <911bfb1d-8e66-298a-83ba-998040f5596d@ti.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210525180006.GD1113058@xps15>
+In-Reply-To: <911bfb1d-8e66-298a-83ba-998040f5596d@ti.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Tue 25 May 13:00 CDT 2021, Mathieu Poirier wrote:
-> On Wed, May 19, 2021 at 01:03:04PM -0500, Suman Anna wrote:
-> > diff --git a/drivers/remoteproc/remoteproc_elf_loader.c b/drivers/remoteproc/remoteproc_elf_loader.c
-[..]
-> > @@ -362,7 +366,7 @@ EXPORT_SYMBOL(rproc_elf_load_rsc_table);
-> >   * This function finds the location of the loaded resource table. Don't
-> >   * call this function if the table wasn't loaded yet - it's a bug if you do.
-> >   *
-> > - * Returns the pointer to the resource table if it is found or NULL otherwise.
-> > + * Return: pointer to the resource table if it is found or NULL otherwise.
+On Mon 24 May 10:47 CDT 2021, Suman Anna wrote:
+
+> On 5/21/21 3:40 PM, Mathieu Poirier wrote:
+> > Hi suman,
+> > 
+> > On Wed, May 12, 2021 at 09:47:44PM -0500, Suman Anna wrote:
+> >> Hi Rob,
+> >>
+> >> On 4/19/21 8:55 AM, Suman Anna wrote:
+> >>> Hi Rob,
+> >>>
+> >>> On 3/27/21 9:31 AM, Suman Anna wrote:
+> >>>> The K3 AM64x SoCs have two dual-core Arm R5F clusters/subsystems, with
+> >>>> 2 R5F cores each, both in the MAIN voltage domain.
+> >>>>
+> >>>> These clusters are a revised IP version compared to those present on
+> >>>> J721E and J7200 SoCs, and supports a new "Single-CPU" mode instead of
+> >>>> LockStep mode. Update the K3 R5F remoteproc bindings with the compatible
+> >>>> info relevant to these R5F clusters/subsystems on K3 AM64x SoCs.
+> >>>>
+> >>>> Signed-off-by: Suman Anna <s-anna@ti.com>
+> >>>> ---
+> >>>> v2: No changes
+> >>>>
+> >>>>  .../bindings/remoteproc/ti,k3-r5f-rproc.yaml  | 31 ++++++++++++++++---
+> >>>
+> >>> Looks like this patch has fallen through the cracks, can you please review and
+> >>> give your ack for this patch so that Bjorn can pick up the series for 5.13?
+> >>
+> >> Gentle reminder, do you have any comments on this patch. Appreciate your ack so
+> >> that we can get this in for 5.14?
+> > 
+> > If memory serves me well Rob indicated that he would not review or comment on
+> > bindings related to multi-core remote processors.  On the flip side he also
+> > mentioned that he would not object to their presence.  And since this is an
+> > increment to an existing binding rather than a new one, I think it is fair for
+> > us to pick it up.  
+> > 
+> > Rob - please intervene if my recollections are not accurate and accept my honest
+> > apologies.  Otherwise: 
+> > 
+> > Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org> 
+> > 
 > 
-> Here the '.' has been kept while it was remove for all of the above.  I don't
-> know that the right guidelines are for this. 
+> Thank you Mathieu.
+> 
+> Bjorn,
+> Is it possible for you to give an immutable branch with just this bindings so we
+> can add the R5F nodes as well and avoid any checkpatch warnings on Nishanth's
+> tree with our K3 dts patches?
 > 
 
-Reviewing https://www.kernel.org/doc/html/latest/doc-guide/kernel-doc.html
-I don't see that this is defined. So I'm fine with whatever looks good.
+Hi Suman,
 
-That said, the section about "Return values" shows that the "Return:
-..." line should be short and concise and if needed followed by a
-newline and then a longer paragraph.
-
-
-I'll fix the capitalization of "the" below and apply this as is and we
-can go back an reformat these multiline Return entries later...
-
-> >   * If the table wasn't loaded yet the result is unspecified.
-> >   */
-[..]
-> > diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-[..]
-> > + * 2. immediately following this structure is the virtio config space for
-> > + *    this vdev (which is specific to the vdev; for more info, read the virtio
-> > + *    spec). the size of the config space is specified by @config_len.
-> 
-> s/the/The
-> 
-[..]
-> >  struct rproc {
-> > @@ -613,10 +617,10 @@ struct rproc_vring {
-> >   * struct rproc_vdev - remoteproc state for a supported virtio device
-> >   * @refcount: reference counter for the vdev and vring allocations
-> >   * @subdev: handle for registering the vdev as a rproc subdevice
-> > + * @dev: device struct used for reference count semantics
-> >   * @id: virtio device id (as in virtio_ids.h)
-> >   * @node: list node
-> >   * @rproc: the rproc handle
-> > - * @vdev: the virio device
-> >   * @vring: the vrings for this vdev
-> >   * @rsc_offset: offset of the vdev's resource entry
-> >   * @index: vdev position versus other vdev declared in resource table
-> 
-> With or without the above:
-> 
-> Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-> 
-
-Thanks Mathieu, and thanks Suman.
+That sounds rather ambitious, but you can now find this at:
+https://git.kernel.org/pub/scm/linux/kernel/git/andersson/remoteproc.git/tag/?h=20210327143117.1840-2-s-anna@ti.com
 
 Regards,
 Bjorn
+
+> regards
+> Suman
+> 
+> >>
+> >> regards
+> >> Suman
+> >>
+> >>>
+> >>> regards
+> >>> Suman
+> >>>
+> >>>>  1 file changed, 26 insertions(+), 5 deletions(-)
+> >>>>
+> >>>> diff --git a/Documentation/devicetree/bindings/remoteproc/ti,k3-r5f-rproc.yaml b/Documentation/devicetree/bindings/remoteproc/ti,k3-r5f-rproc.yaml
+> >>>> index d905d614502b..130fbaacc4b1 100644
+> >>>> --- a/Documentation/devicetree/bindings/remoteproc/ti,k3-r5f-rproc.yaml
+> >>>> +++ b/Documentation/devicetree/bindings/remoteproc/ti,k3-r5f-rproc.yaml
+> >>>> @@ -14,8 +14,12 @@ description: |
+> >>>>    processor subsystems/clusters (R5FSS). The dual core cluster can be used
+> >>>>    either in a LockStep mode providing safety/fault tolerance features or in a
+> >>>>    Split mode providing two individual compute cores for doubling the compute
+> >>>> -  capacity. These are used together with other processors present on the SoC
+> >>>> -  to achieve various system level goals.
+> >>>> +  capacity on most SoCs. These are used together with other processors present
+> >>>> +  on the SoC to achieve various system level goals.
+> >>>> +
+> >>>> +  AM64x SoCs do not support LockStep mode, but rather a new non-safety mode
+> >>>> +  called "Single-CPU" mode, where only Core0 is used, but with ability to use
+> >>>> +  Core1's TCMs as well.
+> >>>>  
+> >>>>    Each Dual-Core R5F sub-system is represented as a single DTS node
+> >>>>    representing the cluster, with a pair of child DT nodes representing
+> >>>> @@ -33,6 +37,7 @@ properties:
+> >>>>        - ti,am654-r5fss
+> >>>>        - ti,j721e-r5fss
+> >>>>        - ti,j7200-r5fss
+> >>>> +      - ti,am64-r5fss
+> >>>>  
+> >>>>    power-domains:
+> >>>>      description: |
+> >>>> @@ -56,11 +61,12 @@ properties:
+> >>>>  
+> >>>>    ti,cluster-mode:
+> >>>>      $ref: /schemas/types.yaml#/definitions/uint32
+> >>>> -    enum: [0, 1]
+> >>>>      description: |
+> >>>>        Configuration Mode for the Dual R5F cores within the R5F cluster.
+> >>>> -      Should be either a value of 1 (LockStep mode) or 0 (Split mode),
+> >>>> -      default is LockStep mode if omitted.
+> >>>> +      Should be either a value of 1 (LockStep mode) or 0 (Split mode) on
+> >>>> +      most SoCs (AM65x, J721E, J7200), default is LockStep mode if omitted;
+> >>>> +      and should be either a value of 0 (Split mode) or 2 (Single-CPU mode)
+> >>>> +      on AM64x SoCs, default is Split mode if omitted.
+> >>>>  
+> >>>>  # R5F Processor Child Nodes:
+> >>>>  # ==========================
+> >>>> @@ -97,6 +103,7 @@ patternProperties:
+> >>>>            - ti,am654-r5f
+> >>>>            - ti,j721e-r5f
+> >>>>            - ti,j7200-r5f
+> >>>> +          - ti,am64-r5f
+> >>>>  
+> >>>>        reg:
+> >>>>          items:
+> >>>> @@ -198,6 +205,20 @@ patternProperties:
+> >>>>  
+> >>>>      unevaluatedProperties: false
+> >>>>  
+> >>>> +if:
+> >>>> +  properties:
+> >>>> +    compatible:
+> >>>> +      enum:
+> >>>> +        - ti,am64-r5fss
+> >>>> +then:
+> >>>> +  properties:
+> >>>> +    ti,cluster-mode:
+> >>>> +      enum: [0, 2]
+> >>>> +else:
+> >>>> +  properties:
+> >>>> +    ti,cluster-mode:
+> >>>> +      enum: [0, 1]
+> >>>> +
+> >>>>  required:
+> >>>>    - compatible
+> >>>>    - power-domains
+> >>>>
+> >>>
+> >>
+> 
