@@ -2,235 +2,155 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-22.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A4E9C47087
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 28 May 2021 12:07:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8DBCC2B9F7
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 28 May 2021 15:09:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 32CCE611AB
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 28 May 2021 12:07:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A3381611C2
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 28 May 2021 15:09:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235038AbhE1MId (ORCPT
+        id S234580AbhE1PKw (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 28 May 2021 08:08:33 -0400
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:41008 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230256AbhE1MIc (ORCPT
+        Fri, 28 May 2021 11:10:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42194 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230281AbhE1PKv (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 28 May 2021 08:08:32 -0400
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 14SC6oFV032378;
-        Fri, 28 May 2021 07:06:50 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1622203610;
-        bh=tRHNNFt2JHywjRCZ7Ucj/4SrNodlgTnXD+qr/UJVcDs=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=FDIxaK2dSSIQ6KO6CXQhd5IhZXoBpxVnnfr1V60Y5GhWzMMUuXIoe+bJ6bmDTX/pW
-         4SHR+e8jkA2csuQi7/nF08taVzLeqpmVafN3W2vKtEL1mvXWC3hzBty6O+/wSOHuwj
-         k45YZ9QV/Qr5AtSJVuYBnfQN4AiA5OAvJxcXPtWQ=
-Received: from DLEE105.ent.ti.com (dlee105.ent.ti.com [157.170.170.35])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 14SC6ofm005350
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 28 May 2021 07:06:50 -0500
-Received: from DLEE100.ent.ti.com (157.170.170.30) by DLEE105.ent.ti.com
- (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2176.2; Fri, 28
- May 2021 07:06:50 -0500
-Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE100.ent.ti.com
- (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2176.2 via
- Frontend Transport; Fri, 28 May 2021 07:06:50 -0500
-Received: from [10.250.35.153] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id 14SC6n5q042873;
-        Fri, 28 May 2021 07:06:49 -0500
-Subject: Re: [PATCH v2 1/2] dt-bindings: remoteproc: k3-r5f: Update bindings
- for AM64x SoCs
+        Fri, 28 May 2021 11:10:51 -0400
+Received: from mail-pl1-x631.google.com (mail-pl1-x631.google.com [IPv6:2607:f8b0:4864:20::631])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E4444C061574
+        for <linux-remoteproc@vger.kernel.org>; Fri, 28 May 2021 08:09:15 -0700 (PDT)
+Received: by mail-pl1-x631.google.com with SMTP id q16so1768676pls.6
+        for <linux-remoteproc@vger.kernel.org>; Fri, 28 May 2021 08:09:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=COCYNxlGniVWLUglCEtbTut6ZdY+Pq4JgW48n0IpT84=;
+        b=WTxda/Cp1mXnp/85bXAtFPvlw6RdyQBPOXugOPV0EJpEOxBma2Z5c6LJKbLEpIo7pR
+         3EgrsQMEED2Ofj9ZyjvxDdOf0jW9WEqUSoOUuCL72kSxv6VocWBHhSWQ9b3ciC11mKZM
+         b9AOElpQAYzFk33+5/7FUMAY6Snk1YBcwstg3pyaqk4L7kQ5a5hldGWfWzNll7CHC9Ev
+         pr+nlv4ha1GtzyS/R7YC5U0scTUNqBnT0Za5UZpdVIB0rUotqEYWxerD3O9vJAMNNK3P
+         qd4c23wLokVP9DXm4QBHz6NaVr8iEsfI+yNDER2p1dott3ZYRWwPbLssE3bj1CHWl69G
+         ADxg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=COCYNxlGniVWLUglCEtbTut6ZdY+Pq4JgW48n0IpT84=;
+        b=l+lOXllWuWlmDytzF5ke5X7j8X8uIuCAmGB3jcCiEj3BkbsoCiF/UChW2fyGhujXOn
+         7wHBNp9+irDtHE3ObnqgBW05K9cxb2+q05Yvt4XOWyvI3yuvG0NM8RB+tFpwrztrIZFz
+         jwEGEF9wcAruLZiB3S1qGza9FEE1qftMVdf4Nk8gwQmCf4THXBjzYiW5t0cDyTnNisX4
+         JkbICoUbyMcZwjvZiPu2cpMdGOKSQ/b3uub2ABuPPoKYtni9w9Mvid5iUq+FM8eQICtD
+         JnvOw4xdbeBZeJfCncrqzZE2VeRZ/RtYnI52TLEx0dWtleYNz/PLqsQccezFj7Kubo+h
+         E09A==
+X-Gm-Message-State: AOAM533ziw6eA0bI2WK7O9+bc5tMFMzPXl8I/K2yiS8Ilsfus91yYDN7
+        YomYGaLMnmDJRD21Tb+ENjVc8Q==
+X-Google-Smtp-Source: ABdhPJxLW5HcmwR1J11w7y68nOohx1ERp10zilmYVXxKP0MKPee9RkISAIEcUT1oU2OZsuLB6giABw==
+X-Received: by 2002:a17:90a:898c:: with SMTP id v12mr2134356pjn.72.1622214555324;
+        Fri, 28 May 2021 08:09:15 -0700 (PDT)
+Received: from xps15 (S0106889e681aac74.cg.shawcable.net. [68.147.0.187])
+        by smtp.gmail.com with ESMTPSA id y129sm4382096pfy.123.2021.05.28.08.09.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 28 May 2021 08:09:13 -0700 (PDT)
+Date:   Fri, 28 May 2021 09:09:12 -0600
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
 To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-CC:     Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Lokesh Vutla <lokeshvutla@ti.com>,
-        <linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20210327143117.1840-1-s-anna@ti.com>
- <20210327143117.1840-2-s-anna@ti.com>
- <8948a30c-1a2f-1fb0-05bb-37be9c02c5d5@ti.com>
- <ff8edffb-d926-9641-740b-2c292139aa07@ti.com>
- <20210521204053.GA1011163@xps15>
- <911bfb1d-8e66-298a-83ba-998040f5596d@ti.com> <YLBgwkiT9PE3Cu82@builder.lan>
-From:   Suman Anna <s-anna@ti.com>
-Message-ID: <e98d49c4-78b5-9a49-1f00-a52d20ea3b95@ti.com>
-Date:   Fri, 28 May 2021 07:06:44 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+Cc:     Alex Elder <elder@linaro.org>, ohad@wizery.com,
+        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/1] remoteproc: use freezable workqueue for crash
+ notifications
+Message-ID: <20210528150912.GA1354763@xps15>
+References: <20210519234418.1196387-1-elder@linaro.org>
+ <20210519234418.1196387-2-elder@linaro.org>
+ <YLBpmdZoGDXNz64y@builder.lan>
 MIME-Version: 1.0
-In-Reply-To: <YLBgwkiT9PE3Cu82@builder.lan>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YLBpmdZoGDXNz64y@builder.lan>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On 5/27/21 10:17 PM, Bjorn Andersson wrote:
-> On Mon 24 May 10:47 CDT 2021, Suman Anna wrote:
+On Thu, May 27, 2021 at 10:55:05PM -0500, Bjorn Andersson wrote:
+> On Wed 19 May 18:44 CDT 2021, Alex Elder wrote:
 > 
->> On 5/21/21 3:40 PM, Mathieu Poirier wrote:
->>> Hi suman,
->>>
->>> On Wed, May 12, 2021 at 09:47:44PM -0500, Suman Anna wrote:
->>>> Hi Rob,
->>>>
->>>> On 4/19/21 8:55 AM, Suman Anna wrote:
->>>>> Hi Rob,
->>>>>
->>>>> On 3/27/21 9:31 AM, Suman Anna wrote:
->>>>>> The K3 AM64x SoCs have two dual-core Arm R5F clusters/subsystems, with
->>>>>> 2 R5F cores each, both in the MAIN voltage domain.
->>>>>>
->>>>>> These clusters are a revised IP version compared to those present on
->>>>>> J721E and J7200 SoCs, and supports a new "Single-CPU" mode instead of
->>>>>> LockStep mode. Update the K3 R5F remoteproc bindings with the compatible
->>>>>> info relevant to these R5F clusters/subsystems on K3 AM64x SoCs.
->>>>>>
->>>>>> Signed-off-by: Suman Anna <s-anna@ti.com>
->>>>>> ---
->>>>>> v2: No changes
->>>>>>
->>>>>>  .../bindings/remoteproc/ti,k3-r5f-rproc.yaml  | 31 ++++++++++++++++---
->>>>>
->>>>> Looks like this patch has fallen through the cracks, can you please review and
->>>>> give your ack for this patch so that Bjorn can pick up the series for 5.13?
->>>>
->>>> Gentle reminder, do you have any comments on this patch. Appreciate your ack so
->>>> that we can get this in for 5.14?
->>>
->>> If memory serves me well Rob indicated that he would not review or comment on
->>> bindings related to multi-core remote processors.  On the flip side he also
->>> mentioned that he would not object to their presence.  And since this is an
->>> increment to an existing binding rather than a new one, I think it is fair for
->>> us to pick it up.  
->>>
->>> Rob - please intervene if my recollections are not accurate and accept my honest
->>> apologies.  Otherwise: 
->>>
->>> Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org> 
->>>
->>
->> Thank you Mathieu.
->>
->> Bjorn,
->> Is it possible for you to give an immutable branch with just this bindings so we
->> can add the R5F nodes as well and avoid any checkpatch warnings on Nishanth's
->> tree with our K3 dts patches?
->>
+> > When a remoteproc has crashed, rproc_report_crash() is called to
+> > handle whatever recovery is desired.  This can happen at almost any
+> > time, often triggered by an interrupt, though it can also be
+> > initiated by a write to debugfs file remoteproc/remoteproc*/crash.
+> > 
+> > When a crash is reported, the crash handler worker is scheduled to
+> > run (rproc_crash_handler_work()).  One thing that worker does is
+> > call rproc_trigger_recovery(), which calls rproc_stop().  That calls
+> > the ->stop method for any remoteproc subdevices before making the
+> > remote processor go offline.
+> > 
+> > The Q6V5 modem remoteproc driver implements an SSR subdevice that
+> > notifies registered drivers when the modem changes operational state
+> > (prepare, started, stop/crash, unprepared).  The IPA driver
+> > registers to receive these notifications.
+> > 
+> > With that as context, I'll now describe the problem.
+> > 
+> > There was a situation in which buggy modem firmware led to a modem
+> > crash very soon after system (AP) resume had begun.  The crash caused
+> > a remoteproc SSR crash notification to be sent to the IPA driver.
+> > The problem was that, although system resume had begun, it had not
+> > yet completed, and the IPA driver was still in a suspended state.
+> > 
+> > This scenario could happen to any driver that registers for these
+> > SSR notifications, because they are delivered without knowledge of
+> > the (suspend) state of registered recipient drivers.
+> > 
+> > This patch offers a simple fix for this, by having the crash
+> > handling worker function run on the system freezable workqueue.
+> > This workqueue does not operate if user space is frozen (for
+> > suspend).  As a result, the SSR subdevice only delivers its
+> > crash notification when the system is fully operational (i.e.,
+> > neither suspended nor in suspend/resume transition).
+> > 
 > 
-> Hi Suman,
+> This makes sense to me; both that it ensures that we spend our resources
+> on the actual system resume and that it avoids surprises from this
+> happening while the system still is in a funky state...
 > 
-> That sounds rather ambitious, but you can now find this at:
-> https://git.kernel.org/pub/scm/linux/kernel/git/andersson/remoteproc.git/tag/?h=20210327143117.1840-2-s-anna@ti.com
+> Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> 
+> But it would be nice to get some input from other users of the
+> framework.
+> 
 
-Thanks a lot Bjorn. Appreciate this a lot.
+This patch is in my review queue - I should be able to get to it by the end of
+next week.
 
-regards
-Suman
-
-> 
 > Regards,
 > Bjorn
 > 
->> regards
->> Suman
->>
->>>>
->>>> regards
->>>> Suman
->>>>
->>>>>
->>>>> regards
->>>>> Suman
->>>>>
->>>>>>  1 file changed, 26 insertions(+), 5 deletions(-)
->>>>>>
->>>>>> diff --git a/Documentation/devicetree/bindings/remoteproc/ti,k3-r5f-rproc.yaml b/Documentation/devicetree/bindings/remoteproc/ti,k3-r5f-rproc.yaml
->>>>>> index d905d614502b..130fbaacc4b1 100644
->>>>>> --- a/Documentation/devicetree/bindings/remoteproc/ti,k3-r5f-rproc.yaml
->>>>>> +++ b/Documentation/devicetree/bindings/remoteproc/ti,k3-r5f-rproc.yaml
->>>>>> @@ -14,8 +14,12 @@ description: |
->>>>>>    processor subsystems/clusters (R5FSS). The dual core cluster can be used
->>>>>>    either in a LockStep mode providing safety/fault tolerance features or in a
->>>>>>    Split mode providing two individual compute cores for doubling the compute
->>>>>> -  capacity. These are used together with other processors present on the SoC
->>>>>> -  to achieve various system level goals.
->>>>>> +  capacity on most SoCs. These are used together with other processors present
->>>>>> +  on the SoC to achieve various system level goals.
->>>>>> +
->>>>>> +  AM64x SoCs do not support LockStep mode, but rather a new non-safety mode
->>>>>> +  called "Single-CPU" mode, where only Core0 is used, but with ability to use
->>>>>> +  Core1's TCMs as well.
->>>>>>  
->>>>>>    Each Dual-Core R5F sub-system is represented as a single DTS node
->>>>>>    representing the cluster, with a pair of child DT nodes representing
->>>>>> @@ -33,6 +37,7 @@ properties:
->>>>>>        - ti,am654-r5fss
->>>>>>        - ti,j721e-r5fss
->>>>>>        - ti,j7200-r5fss
->>>>>> +      - ti,am64-r5fss
->>>>>>  
->>>>>>    power-domains:
->>>>>>      description: |
->>>>>> @@ -56,11 +61,12 @@ properties:
->>>>>>  
->>>>>>    ti,cluster-mode:
->>>>>>      $ref: /schemas/types.yaml#/definitions/uint32
->>>>>> -    enum: [0, 1]
->>>>>>      description: |
->>>>>>        Configuration Mode for the Dual R5F cores within the R5F cluster.
->>>>>> -      Should be either a value of 1 (LockStep mode) or 0 (Split mode),
->>>>>> -      default is LockStep mode if omitted.
->>>>>> +      Should be either a value of 1 (LockStep mode) or 0 (Split mode) on
->>>>>> +      most SoCs (AM65x, J721E, J7200), default is LockStep mode if omitted;
->>>>>> +      and should be either a value of 0 (Split mode) or 2 (Single-CPU mode)
->>>>>> +      on AM64x SoCs, default is Split mode if omitted.
->>>>>>  
->>>>>>  # R5F Processor Child Nodes:
->>>>>>  # ==========================
->>>>>> @@ -97,6 +103,7 @@ patternProperties:
->>>>>>            - ti,am654-r5f
->>>>>>            - ti,j721e-r5f
->>>>>>            - ti,j7200-r5f
->>>>>> +          - ti,am64-r5f
->>>>>>  
->>>>>>        reg:
->>>>>>          items:
->>>>>> @@ -198,6 +205,20 @@ patternProperties:
->>>>>>  
->>>>>>      unevaluatedProperties: false
->>>>>>  
->>>>>> +if:
->>>>>> +  properties:
->>>>>> +    compatible:
->>>>>> +      enum:
->>>>>> +        - ti,am64-r5fss
->>>>>> +then:
->>>>>> +  properties:
->>>>>> +    ti,cluster-mode:
->>>>>> +      enum: [0, 2]
->>>>>> +else:
->>>>>> +  properties:
->>>>>> +    ti,cluster-mode:
->>>>>> +      enum: [0, 1]
->>>>>> +
->>>>>>  required:
->>>>>>    - compatible
->>>>>>    - power-domains
->>>>>>
->>>>>
->>>>
->>
-
+> > Signed-off-by: Alex Elder <elder@linaro.org>
+> > ---
+> >  drivers/remoteproc/remoteproc_core.c | 4 ++--
+> >  1 file changed, 2 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+> > index 39cf44cb08035..6bedf2d2af239 100644
+> > --- a/drivers/remoteproc/remoteproc_core.c
+> > +++ b/drivers/remoteproc/remoteproc_core.c
+> > @@ -2724,8 +2724,8 @@ void rproc_report_crash(struct rproc *rproc, enum rproc_crash_type type)
+> >  	dev_err(&rproc->dev, "crash detected in %s: type %s\n",
+> >  		rproc->name, rproc_crash_to_string(type));
+> >  
+> > -	/* create a new task to handle the error */
+> > -	schedule_work(&rproc->crash_handler);
+> > +	/* Have a worker handle the error; ensure system is not suspended */
+> > +	queue_work(system_freezable_wq, &rproc->crash_handler);
+> >  }
+> >  EXPORT_SYMBOL(rproc_report_crash);
+> >  
+> > -- 
+> > 2.27.0
+> > 
