@@ -2,45 +2,46 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-21.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75F92C47080
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 31 May 2021 15:01:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64EABC47083
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 31 May 2021 15:01:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5C8E660FE8
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 31 May 2021 15:01:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 470DE60FE8
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 31 May 2021 15:01:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232375AbhEaPC7 (ORCPT
+        id S233487AbhEaPD0 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 31 May 2021 11:02:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51048 "EHLO mail.kernel.org"
+        Mon, 31 May 2021 11:03:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50542 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233924AbhEaPAg (ORCPT <rfc822;linux-remoteproc@vger.kernel.org>);
+        id S233907AbhEaPAg (ORCPT <rfc822;linux-remoteproc@vger.kernel.org>);
         Mon, 31 May 2021 11:00:36 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPS id 7E74661186;
+Received: by mail.kernel.org (Postfix) with ESMTPS id 8D8D2610C8;
         Mon, 31 May 2021 14:50:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=k20201202; t=1622472647;
-        bh=3ZZUtOOjNOeUCHaBl7AzvBiUbXLzwGimQbEcfrGwnvY=;
+        bh=LFH+3FTK5Ge5lDd8AS8vlF5L16cGR7aV1t0jS8AXJkg=;
         h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=Ve8aNNM06CnJMcoANaYjTRm8bBY0U1WNeJvH7YA9RWPpjKyx/HUgNFxf6yQR2x01l
-         FzXw37WrDvhnA7zAve9IPbfodWpeU9Ip8eivfpAxSY857gqi79S1ms1F0U6WVeWhq/
-         lkGNvdj30hIKwB2y4JbR9CEtJPO2h/kJcJoh6Vs/p18MgV6UhBMRXc0gA2yFsd887G
-         uW7ZGIRULqQ2WuiNWC89tfHbHF17GPIR2n4EgIhNocchjcVaNM4+3l9wl3VyZbbEh/
-         ZjoW+TjOp/s7TSf4J9Y2CRxHZudldwx2Wdkkz7gSAHC3qzixO2woU70W9O4KuK/p9J
-         Xdb7ggzzb2Nyg==
+        b=Bjza7+MjuKKgL63nNYosA6G1KLynr4f+JW5tybKbSZNigmmHUeQYh1OQ7YWAMrr7N
+         GMd0W/uP3DYrnK5F7DYOeABOXHhd0khnRAaYbDsQkJIqj3a98NEfvdtMsNvKCdv4NR
+         A6SEpGgWG9pNnE+LVhbYnSNU2SvCUscXwFoKdYDxI8GhyNZhfI+rRAVI4tHCM4jQnB
+         yzWbkPRRFJeBWnGNcakvnz7utrIPr4RbUdWZQEeXrz5xBUtKmpJOAUUg2QNPq+xTx+
+         g7QZFqOQJ1wlIJft2B8r7z8gd8gInPZYjYLgXDrwVL7Ziu/WBIzpi5i3G2aWA7qfzz
+         cPPC97kFGcDRA==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH v2 0/2] TI K3 R5F remoteproc support on AM64x SoCs
+Subject: Re: [PATCH] remoteproc: k3-r5: Fix an error message
 From:   patchwork-bot+linux-remoteproc@kernel.org
-Message-Id: <162247264746.13780.15737518047205814285.git-patchwork-notify@kernel.org>
+Message-Id: <162247264750.13780.11355747185931627623.git-patchwork-notify@kernel.org>
 Date:   Mon, 31 May 2021 14:50:47 +0000
-References: <20210327143117.1840-1-s-anna@ti.com>
-In-Reply-To: <20210327143117.1840-1-s-anna@ti.com>
-To:     Suman Anna <s-anna@ti.com>
+References: <d6e29d903b48957bf59c67229d54b0fc215e31ae.1620333870.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <d6e29d903b48957bf59c67229d54b0fc215e31ae.1620333870.git.christophe.jaillet@wanadoo.fr>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 Cc:     linux-remoteproc@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
@@ -48,23 +49,21 @@ X-Mailing-List: linux-remoteproc@vger.kernel.org
 
 Hello:
 
-This series was applied to andersson/remoteproc.git (refs/heads/for-next):
+This patch was applied to andersson/remoteproc.git (refs/heads/for-next):
 
-On Sat, 27 Mar 2021 09:31:15 -0500 you wrote:
-> Hi All,
+On Thu,  6 May 2021 22:46:01 +0200 you wrote:
+> 'ret' is known to be 0 here.
+> Reorder the code so that the expected error code is printed.
 > 
-> The following series is a minor revision of the K3 R5F remoteproc AM64x
-> support series [1] addressing one review comment from Mathieu. Please
-> see the v1 cover-letter for details about the revised R5F IP in TI AM64x
-> SoCs.
-> 
-> [...]
+> Fixes: 6dedbd1d5443 ("remoteproc: k3-r5: Add a remoteproc driver for R5F subsystem")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+>  drivers/remoteproc/ti_k3_r5_remoteproc.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
 Here is the summary with links:
-  - [v2,1/2] dt-bindings: remoteproc: k3-r5f: Update bindings for AM64x SoCs
-    https://git.kernel.org/andersson/remoteproc/c/fee613a6fec6
-  - [v2,2/2] remoteproc: k3-r5: Extend support to R5F clusters on AM64x SoCs
-    https://git.kernel.org/andersson/remoteproc/c/ee99ee7c929c
+  - remoteproc: k3-r5: Fix an error message
+    https://git.kernel.org/andersson/remoteproc/c/34c4da6d5dfb
 
 You are awesome, thank you!
 --
