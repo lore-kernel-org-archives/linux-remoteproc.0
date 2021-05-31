@@ -6,139 +6,114 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
 	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A188C47083
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 31 May 2021 23:13:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C169C47082
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 31 May 2021 23:25:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0B8B46127C
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 31 May 2021 23:13:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 095B361287
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 31 May 2021 23:25:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231637AbhEaXPh (ORCPT
+        id S231571AbhEaX11 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 31 May 2021 19:15:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46356 "EHLO
+        Mon, 31 May 2021 19:27:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48974 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231377AbhEaXPg (ORCPT
+        with ESMTP id S231377AbhEaX10 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 31 May 2021 19:15:36 -0400
+        Mon, 31 May 2021 19:27:26 -0400
 Received: from mail-oi1-x22d.google.com (mail-oi1-x22d.google.com [IPv6:2607:f8b0:4864:20::22d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3A714C06174A
-        for <linux-remoteproc@vger.kernel.org>; Mon, 31 May 2021 16:13:56 -0700 (PDT)
-Received: by mail-oi1-x22d.google.com with SMTP id d21so13647759oic.11
-        for <linux-remoteproc@vger.kernel.org>; Mon, 31 May 2021 16:13:56 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BA4AEC061574
+        for <linux-remoteproc@vger.kernel.org>; Mon, 31 May 2021 16:25:45 -0700 (PDT)
+Received: by mail-oi1-x22d.google.com with SMTP id a21so2829405oiw.3
+        for <linux-remoteproc@vger.kernel.org>; Mon, 31 May 2021 16:25:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=JfoWOw2lhqOWrpi1h7rk1py0R+xMzghqPnvRIcLt89A=;
-        b=CKEC6RqlJ+yjZ43/8ooy8Fc1GSqSVu0EizUXmZF88PzAf0cvnBKyS6I2+H46Z6PH6b
-         2DguJsVXTej7G6AqxkagLPwZZ0RRqJcNJBs3dgg7QK8EbTHb0H5yS0ARSiKUSpavl/Ju
-         I1r/Vql1l+WzSfaAH4L+vOc+xZxJWn+Csyr/u1q/R13+yiPSChHlZj1vmZkr4W7WmfIT
-         08vKUtTnSQgtWoPqxtqfJIWpHmduZGHk/mxQy8TyUStvWGzk/o5wduCL1obgosca0qJu
-         +ZZF+JJjt1DhHYSpqFI4zJ2Kj7CNQqOHf6fDWW9XnmxC6P99H2Zet5HlhfSr0Z0X23cZ
-         pcTg==
+        bh=P5FtqPsnwQZKDb7nl4cAUBTTfq1pNiJvv/ldE5ugEj0=;
+        b=fVadRQuCiJamzw9jA5cKHzbZFlqlakyrj8y8bMx20uaFA13ORZhkqb/CugiaABxwrb
+         CbmeeyUOJp9/f4CTvbSwAsQO2TCTZFeZt7IL/6rEgcqwm1vPSDU4gwxjfgdIlfbLruwg
+         CKKstjrEvjmqVGh2WGAE1xBo7u/tTCFnxJ2N/HZ2wvrg9HooEHhsWfOUKi2ZMN82ftP3
+         pVVOj/9H+vcakbBtEAIA8Zyl6u63iR8hHbFOrO1ox1r+2v0owNv4eqvhC4wvK69PLiP8
+         y+JkEhyY/mlBTlomdZEG9kliF/bgyVTDynSVHn1ar4aOMANGyOC5LxUFKqrTXnjY7iin
+         AIMQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=JfoWOw2lhqOWrpi1h7rk1py0R+xMzghqPnvRIcLt89A=;
-        b=ei0jKCKq/QNL7MS6lcBXXqAUMgmsIic8rk0sFtY5yr0W2HYejnse0CTxGPSuhARPiy
-         d6B2KvkWGdqZcbJzotYdgn+GmBSSJ88yP21BRdOJGaVuswUR2LEx20BfWi5CWEtaCYBm
-         QDZf90+gqL0h3hI9P2JAR0m24yeV8yMU5DDt046LqYP+yQEVcAGV9/cAAdjPov+7ZdU9
-         nftgYMNSylAyMkkYrmx5nHDTDQZQOa8MDOzyDbbDVWZzOUMzEacxhdZRF/uBFpv2Bkht
-         ERQ9ml/AtrmlGV0XvX00nlb5D05nGeF8NrFkX8VddvG1FmxfQroaDEcAabwZBU5d6rzK
-         4F7g==
-X-Gm-Message-State: AOAM531fz1LgxKYr5tRdBTQXGpztYV+hOPdbksaYevDLHjMwbNB7e9Sd
-        bRwtId7WdsWWdq7wcm7CkNi68KthLlDRqw==
-X-Google-Smtp-Source: ABdhPJyamSr9qFbejRPIKOvh8De+WjtyRfJnkg92MQ5j0Ow+3tlvlq9v8Y5uPsJi8T2gtvRNzQJ+ZA==
-X-Received: by 2002:aca:c488:: with SMTP id u130mr15635140oif.0.1622502835354;
-        Mon, 31 May 2021 16:13:55 -0700 (PDT)
+        bh=P5FtqPsnwQZKDb7nl4cAUBTTfq1pNiJvv/ldE5ugEj0=;
+        b=CXpkBjfUmqdbQP+i/+D46afXrEPHBVgukmmUCAzKaeGS6jKsX7WxJxgNUeGvw3KFXs
+         ry/fuIaHB28E3br1vUgtfYy52/60eG2Om+hjD4xfG2B22q/nVRz1ZN0lU7fw7WOJ/cDz
+         HXKKxIHUYdFFMnjPMIoiZYJrdCuSkwpMQgsxNFkIsZYhPFdeM7Vv6O1Mol1Vn7CI0Sa8
+         NEir6Qb5iMHCGYEFU2ZKdftTwddEzRlUI8nfPVC28tR+clQ8JUj+G93TNLHcY6XdnkXK
+         U5H+GUbbd0ZFXsKhyFhdcxAGUar/6PEWxZnDUQnVhqHT9Z/0+G6eI9kxIcqXCDS7pVWM
+         Yqjg==
+X-Gm-Message-State: AOAM530QCyL1OVnNgkzRVr3abnhGiFwf6mGy9ORSyRzYMG1snjOnA5eW
+        Z6HjWRdgYwDsUie/FoYTMP88TiFzT+u8Nw==
+X-Google-Smtp-Source: ABdhPJyAoYAZKUW2Fj841yJnkucpoNLVHBR3f2ywfsfwnNoOLPcyVuxXcjJtiebkaV9cbx2Rp8otsQ==
+X-Received: by 2002:a54:4011:: with SMTP id x17mr15789052oie.112.1622503545112;
+        Mon, 31 May 2021 16:25:45 -0700 (PDT)
 Received: from yoga (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
-        by smtp.gmail.com with ESMTPSA id c19sm3101878oiw.7.2021.05.31.16.13.54
+        by smtp.gmail.com with ESMTPSA id r10sm3076856oic.4.2021.05.31.16.25.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 31 May 2021 16:13:54 -0700 (PDT)
-Date:   Mon, 31 May 2021 18:13:52 -0500
+        Mon, 31 May 2021 16:25:44 -0700 (PDT)
+Date:   Mon, 31 May 2021 18:25:42 -0500
 From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc:     Alex Elder <elder@linaro.org>, ohad@wizery.com,
+To:     Hillf Danton <hdanton@sina.com>
+Cc:     Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Alex Elder <elder@linaro.org>, ohad@wizery.com,
         linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
 Subject: Re: [PATCH 1/1] remoteproc: use freezable workqueue for crash
  notifications
-Message-ID: <YLVtsPNCr6dk9X0h@yoga>
+Message-ID: <YLVwdsa97jYjKKU6@yoga>
 References: <20210519234418.1196387-1-elder@linaro.org>
  <20210519234418.1196387-2-elder@linaro.org>
  <YLBpmdZoGDXNz64y@builder.lan>
- <20210531172153.GA1718330@xps15>
+ <20210529024847.5164-1-hdanton@sina.com>
+ <20210530030728.8340-1-hdanton@sina.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210531172153.GA1718330@xps15>
+In-Reply-To: <20210530030728.8340-1-hdanton@sina.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Mon 31 May 12:21 CDT 2021, Mathieu Poirier wrote:
+On Sat 29 May 22:07 CDT 2021, Hillf Danton wrote:
 
-> On Thu, May 27, 2021 at 10:55:05PM -0500, Bjorn Andersson wrote:
-> > On Wed 19 May 18:44 CDT 2021, Alex Elder wrote:
-> > 
-> > > When a remoteproc has crashed, rproc_report_crash() is called to
-> > > handle whatever recovery is desired.  This can happen at almost any
-> > > time, often triggered by an interrupt, though it can also be
-> > > initiated by a write to debugfs file remoteproc/remoteproc*/crash.
-> > > 
-> > > When a crash is reported, the crash handler worker is scheduled to
-> > > run (rproc_crash_handler_work()).  One thing that worker does is
-> > > call rproc_trigger_recovery(), which calls rproc_stop().  That calls
-> > > the ->stop method for any remoteproc subdevices before making the
-> > > remote processor go offline.
-> > > 
-> > > The Q6V5 modem remoteproc driver implements an SSR subdevice that
-> > > notifies registered drivers when the modem changes operational state
-> > > (prepare, started, stop/crash, unprepared).  The IPA driver
-> > > registers to receive these notifications.
-> > > 
-> > > With that as context, I'll now describe the problem.
-> > > 
-> > > There was a situation in which buggy modem firmware led to a modem
-> > > crash very soon after system (AP) resume had begun.  The crash caused
-> > > a remoteproc SSR crash notification to be sent to the IPA driver.
-> > > The problem was that, although system resume had begun, it had not
-> > > yet completed, and the IPA driver was still in a suspended state.
+> On Sat, 29 May 2021 12:28:36 -0500 Bjorn Andersson wrote:
+> >
+> >Can you please explain why the mutex_lock() "requires" the context
+> >executing it to be "unbound"? The lock is there to protect against
+> >concurrent modifications of the state coming from e.g. sysfs.
 > 
-> This is a very tight race condition - I agree with you that it is next to
-> impossible to test.
+> There are simple and light events pending on the bound workqueue,
 > 
-
-I certainly appreciate to see the upstream kernel be put through the
-level of product testing necessary to find issues like this.
-
-> > > 
-> > > This scenario could happen to any driver that registers for these
-> > > SSR notifications, because they are delivered without knowledge of
-> > > the (suspend) state of registered recipient drivers.
-> > > 
-> > > This patch offers a simple fix for this, by having the crash
-> > > handling worker function run on the system freezable workqueue.
-> > > This workqueue does not operate if user space is frozen (for
-> > > suspend).  As a result, the SSR subdevice only delivers its
-> > > crash notification when the system is fully operational (i.e.,
-> > > neither suspended nor in suspend/resume transition).
-> > > 
+> static void foo_event_fn(struct work_struct *w)
+> {
+> 	struct bar_struct *bar = container_of(w, struct bar_struct, work);
 > 
-> I think the real fix for this problem should be in the platform driver where
-> the remoteproc interrupt would be masked while suspending and re-enabled again
-> when resuming.  The runtime PM API would work just fine for that...  But doing
-> so wouldn't guarantee that other drivers, i.e IPA, would be operational.  Unless
-> of one is a child of the other or using a bus like mechanic, and getting
-> to that point will introduce a lot more churn than what this patch does. 
+> 	spin_lock_irq(&foo_lock);
+> 	list_del(&bar->list);
+> 	spin_unlock_irq(&foo_lock);
 > 
+> 	kfree(bar);
+> 	return;
+> or
+> 	if (bar has waiter)
+> 		wake_up();
+> }
+> 
+> and they are not tough enough to tolerate a schedule() for which the unbound
+> wq is allocated.
 
-Disabling the related interrupt(s) would mean that if the modem
-remoteproc firmware crashes while Linux is suspended we would not know
-about this until the next time Linux resumes. The expected outcome of
-this would be that until something else happens to wake up Linux you
-won't get any notifications from the network (i.e. no phone calls, text
-messages or incoming notifications)
+If you have work that is so latency sensitive that it can't handle other
+work items sleeping momentarily, is it really a good idea to schedule
+them on the system wide queues - or even schedule them at all?
 
-Regards,
+That said, the proposed patch does not move the work from an unbound to
+a bound queue, it simply moves it from one bound system queue to another
+and further changes to this should be done in a separate patch - backed
+by some measurements/data.
+
+Thanks,
 Bjorn
