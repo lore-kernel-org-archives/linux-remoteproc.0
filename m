@@ -7,158 +7,237 @@ X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C796FC47080
-	for <linux-remoteproc@archiver.kernel.org>; Tue,  1 Jun 2021 16:00:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01642C47080
+	for <linux-remoteproc@archiver.kernel.org>; Tue,  1 Jun 2021 17:15:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A3B146139A
-	for <linux-remoteproc@archiver.kernel.org>; Tue,  1 Jun 2021 16:00:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D5E65613BD
+	for <linux-remoteproc@archiver.kernel.org>; Tue,  1 Jun 2021 17:15:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234505AbhFAQB7 (ORCPT
+        id S233853AbhFARQy (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 1 Jun 2021 12:01:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47268 "EHLO
+        Tue, 1 Jun 2021 13:16:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36292 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230385AbhFAQB5 (ORCPT
+        with ESMTP id S231918AbhFARQy (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 1 Jun 2021 12:01:57 -0400
-Received: from mail-ot1-x32f.google.com (mail-ot1-x32f.google.com [IPv6:2607:f8b0:4864:20::32f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0D08DC061574
-        for <linux-remoteproc@vger.kernel.org>; Tue,  1 Jun 2021 09:00:14 -0700 (PDT)
-Received: by mail-ot1-x32f.google.com with SMTP id 36-20020a9d0ba70000b02902e0a0a8fe36so14580620oth.8
-        for <linux-remoteproc@vger.kernel.org>; Tue, 01 Jun 2021 09:00:14 -0700 (PDT)
+        Tue, 1 Jun 2021 13:16:54 -0400
+Received: from mail-pj1-x102b.google.com (mail-pj1-x102b.google.com [IPv6:2607:f8b0:4864:20::102b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9C138C061574
+        for <linux-remoteproc@vger.kernel.org>; Tue,  1 Jun 2021 10:15:12 -0700 (PDT)
+Received: by mail-pj1-x102b.google.com with SMTP id h12-20020a17090aa88cb029016400fd8ad8so59904pjq.3
+        for <linux-remoteproc@vger.kernel.org>; Tue, 01 Jun 2021 10:15:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=+EQc3xvG4vj4snpRMCUapfXHF8CpIpQCf2oacLZFBAk=;
-        b=JeHyn8OpcfFeowio6lacRBlt7uKlEBVT0atacKuoMyyheIZe6HEZu8oJ/iBrO1DO1F
-         OVCJhIf0AfES6MFJ+irIKqRLXlp/XbXYltlH4VO+ibPgl0QVSc6s78aPUXbuBvv8yocD
-         afVNLPjC4HLPkk/Cd2qCIZFkpoGavJXHJcKUGfSV+NA/WryXTERG3dvjf/jL/PB9luFx
-         98P38atSF+M/EjlnURCenI5RexCscTp24Gmkj7x8EuJmpnOTNKs8tAHj4TWY2bQiLmHO
-         Bd34DwXpJQG3Rs2VW+ed0CMqgWICwIarye8SitaTgBtoCXoyOGcrt951KGkSrXriw2Dx
-         IihQ==
+        bh=U65hdesdvDmorFbtO287+I+YEZ3urVVgKrKl2j6XaOE=;
+        b=lQ2a6yQOhnzrehY6i6bUnFYQhtdk49xyq3u3DAqS0+a09Kuf5d8sBn1xy56r7yaWHt
+         sBEmAsPdBN6igfc5WbwC0LP6Azup6KLjdcpK/8WAZNUq7C9VfjiQjSy8b0AYlHQ5lyN/
+         Vy1FMVcHCwms5Q2pMh5Rb71K/PqC+BoZrhonxDob60Bq6Q5frWNoTvycZsXsTINvgL31
+         9TmxjCbxehPCXkTNlqtt3YCrxT2+vL0j817NLmy+BE1JJD9V7EKWsfosQmesLTw5X5So
+         D6mEn1oGlfW2IIJYnY773fUsJudSHJLNReG3vI7VfdUoBT5Y1iqOCvfBSZz3pjcc4lAn
+         nKlw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=+EQc3xvG4vj4snpRMCUapfXHF8CpIpQCf2oacLZFBAk=;
-        b=Li1RPjmRgiABeTeOwkvrd9/t3fQ1kOFTZfw5UPmQqkgArN567SAI7QiJB6RIlrGB61
-         0wwqe4KtLoq9/Diee8B9qfRruJxvTrEjSZrdXsRRpIG6tCfECmpzSfgFi8VzLStnn/lD
-         4zQ35M8aE1s66WolKdEpBT/OFd/8R1D4tMUu5PDk2jAtKDoEh+K8K7+zpTxtUF2FPZML
-         SwWdVGUCF/OdWr8RZ/t0S3ZTi/CVonZcYf3gH43LWSEwivUlCIbkjRkmWuOeCLv8xaOs
-         rXgDpSSfGS1JXfsDeg98QlfvLwyGh3NNC8t6QTCArEYuPrdSxkJD94ZJFcUuryo0Hz2u
-         UJlg==
-X-Gm-Message-State: AOAM5312jITCtegUC9+dV+Ln0vcCDPTZJ+xK2BmJrDcpHRMc89g2bXNN
-        yxsmOmO9tnYNvce2cHpHsz6TsQ==
-X-Google-Smtp-Source: ABdhPJwPbmwjUcUd/RkviTbfJMWI6W/96DM7lu5hzupA0RL0pKF638/dfu5fK+yefZmIG0F5nNmpqw==
-X-Received: by 2002:a05:6830:a:: with SMTP id c10mr23699912otp.114.1622563213374;
-        Tue, 01 Jun 2021 09:00:13 -0700 (PDT)
-Received: from yoga (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
-        by smtp.gmail.com with ESMTPSA id a71sm3508262oib.20.2021.06.01.09.00.12
+        bh=U65hdesdvDmorFbtO287+I+YEZ3urVVgKrKl2j6XaOE=;
+        b=shusovquN4+8IS2/ecl1PEpZ7TRRAPV2vYU7sRti5Ggz2Sv6kQOW0VNpLT6t+lRd0J
+         jKIzUe9xlmXwC/gZ7QLdvawhVbq162BlILonrZYJkODAg+FeS4KimZMermgefbS1BvVM
+         UmDJUxwwMsatOpsbF6A1R1ZULvDlM7Vpo6Km9XhCfAxnAg3l94J1EtiH6F3fICCh8GiR
+         1Q09Sw5KLHbBH5que/UG5efCRamad5N3TmPe+dYCPWt03mr9B90NuM4tnoFKistW+RdW
+         7SKagJX8ANaab4Pw6azo5EnL4YooKKComMwUDWnSFbPRWA/6E6ZmSiAEHo6FyXkfZstY
+         q7Ug==
+X-Gm-Message-State: AOAM5312epph34Is2EluyPZIl1gMBw7WfTtsv4L2xyNzej5DREJMONyX
+        FCHlDPB2n1B7c71ZTHHLEgredQ==
+X-Google-Smtp-Source: ABdhPJys/Yp8G0oNUgYLPKf9H5QgDrsj8LcedkfkXi0nXaccVVUpRZqEsBhOmZkmtAWJigxiv6cNbw==
+X-Received: by 2002:a17:90b:4d82:: with SMTP id oj2mr25737050pjb.61.1622567712053;
+        Tue, 01 Jun 2021 10:15:12 -0700 (PDT)
+Received: from xps15 (S0106889e681aac74.cg.shawcable.net. [68.147.0.187])
+        by smtp.gmail.com with ESMTPSA id pg5sm13382530pjb.28.2021.06.01.10.15.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Jun 2021 09:00:12 -0700 (PDT)
-Date:   Tue, 1 Jun 2021 11:00:10 -0500
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc:     "Peng Fan (OSS)" <peng.fan@oss.nxp.com>, ohad@wizery.com,
-        o.rempel@pengutronix.de, shawnguo@kernel.org,
-        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
-        linux-imx@nxp.com, linux-remoteproc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Peng Fan <peng.fan@nxp.com>
-Subject: Re: [PATCH] remoteproc: imx_rproc: correct firmware reload
-Message-ID: <YLZZinrEMaYHgsEe@yoga>
-References: <20210601102939.16139-1-peng.fan@oss.nxp.com>
- <20210601153139.GB1759269@xps15>
+        Tue, 01 Jun 2021 10:15:10 -0700 (PDT)
+Date:   Tue, 1 Jun 2021 11:15:08 -0600
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+To:     Suman Anna <s-anna@ti.com>
+Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Lokesh Vutla <lokeshvutla@ti.com>,
+        Tero Kristo <kristo@kernel.org>,
+        linux-remoteproc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/6] remoteproc: Add support for detach-only during
+ shutdown
+Message-ID: <20210601171508.GC1759269@xps15>
+References: <20210522000309.26134-1-s-anna@ti.com>
+ <20210522000309.26134-3-s-anna@ti.com>
+ <YLBtbHevzyxT4RTK@builder.lan>
+ <da468002-580c-de1a-dcf4-275d57bb7ac7@ti.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210601153139.GB1759269@xps15>
+In-Reply-To: <da468002-580c-de1a-dcf4-275d57bb7ac7@ti.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Tue 01 Jun 10:31 CDT 2021, Mathieu Poirier wrote:
+Hey guys,
 
-> On Tue, Jun 01, 2021 at 06:29:39PM +0800, Peng Fan (OSS) wrote:
-> > From: Peng Fan <peng.fan@nxp.com>
-> > 
-> > ENABLE_M4 should be set to 1 when loading code to TCM, otherwise
-> > you will not able to replace the firmware after you stop m4.
-> > 
-> > Besides ENABLE_M4, we still need set SW_M4C_RST, because this bit
-> > will be automatically set with SW_M4C_NON_SCLR_RST set.
-> > 
-> > Signed-off-by: Peng Fan <peng.fan@nxp.com>
-> > ---
-> > 
-> > V1:
-> >  Although this is an fix, but it is not critical, patch is based on
-> >  https://patchwork.kernel.org/project/linux-remoteproc/cover/1620274123-1461-1-git-send-email-peng.fan@oss.nxp.com/
-> > 
-> >  drivers/remoteproc/imx_rproc.c | 8 +++++---
-> >  1 file changed, 5 insertions(+), 3 deletions(-)
-> > 
-> > diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rproc.c
-> > index cd2ca96a30e5..ce2ce42bee91 100644
-> > --- a/drivers/remoteproc/imx_rproc.c
-> > +++ b/drivers/remoteproc/imx_rproc.c
-> > @@ -33,7 +33,8 @@
-> >  
-> >  #define IMX7D_M4_START			(IMX7D_ENABLE_M4 | IMX7D_SW_M4P_RST \
-> >  					 | IMX7D_SW_M4C_RST)
-> > -#define IMX7D_M4_STOP			(IMX7D_ENABLE_M4 | IMX7D_SW_M4C_NON_SCLR_RST)
-> > +#define IMX7D_M4_STOP			(IMX7D_ENABLE_M4 | IMX7D_SW_M4C_RST | \
-> > +					 IMX7D_SW_M4C_NON_SCLR_RST)
-> >  
-> >  /* Address: 0x020D8000 */
-> >  #define IMX6SX_SRC_SCR			0x00
-> > @@ -44,7 +45,8 @@
-> >  
-> >  #define IMX6SX_M4_START			(IMX6SX_ENABLE_M4 | IMX6SX_SW_M4P_RST \
-> >  					 | IMX6SX_SW_M4C_RST)
-> > -#define IMX6SX_M4_STOP			(IMX6SX_ENABLE_M4 | IMX6SX_SW_M4C_NON_SCLR_RST)
-> > +#define IMX6SX_M4_STOP			(IMX6SX_ENABLE_M4 | IMX6SX_SW_M4C_RST | \
-> > +					 IMX6SX_SW_M4C_NON_SCLR_RST)
-> >  #define IMX6SX_M4_RST_MASK		(IMX6SX_ENABLE_M4 | IMX6SX_SW_M4P_RST \
-> >  					 | IMX6SX_SW_M4C_NON_SCLR_RST \
-> >  					 | IMX6SX_SW_M4C_RST)
-> > @@ -691,7 +693,7 @@ static int imx_rproc_detect_mode(struct imx_rproc *priv)
-> >  		return ret;
-> >  	}
-> >  
-> > -	if (!(val & dcfg->src_stop))
-> > +	if ((val & dcfg->src_mask) != dcfg->src_stop)
-> >  		priv->rproc->state = RPROC_DETACHED;
+On Fri, May 28, 2021 at 11:40:02AM -0500, Suman Anna wrote:
+> Hi Bjorn,
 > 
-> Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-> 
-> Bjorn hasn't picked up this set yet so it is best to send a v7 of [1] with this
-> change merged in it.
-> 
-
-Sorry I had missed that [1] was fully reviewed, so I figured I'll just
-apply the series and squash this in. But afaict this patch isn't a fix
-to any of the patches in [1].
-
-More so, this patch doesn't apply on top of either v5.13-rc1, linux-next
-or [1] - because neither IMX7D_M4_STOP nor IMX6SX_M4_STOP has
-IMX6SX_ENABLE_M4 included.
-
-
-Peng, I've applied [1] now, please let me know what to do about this
-patch.
-
-Regards,
-Bjorn
-
-> Thanks,
-> Mathieu 
-> 
-> [1]. https://patchwork.kernel.org/project/linux-remoteproc/cover/1620274123-1461-1-git-send-email-peng.fan@oss.nxp.com/
-> 
-> >  
-> >  	return 0;
-> > -- 
-> > 2.30.0
+> On 5/27/21 11:11 PM, Bjorn Andersson wrote:
+> > On Fri 21 May 19:03 CDT 2021, Suman Anna wrote:
 > > 
+> >> The remoteproc core has support for both stopping and detaching a
+> >> remote processor that was attached to previously, through both the
+> >> remoteproc sysfs and cdev interfaces. The rproc_shutdown() though
+> >> unconditionally only uses the stop functionality at present. This
+> >> may not be the default desired functionality for all the remoteproc
+> >> platform drivers.
+> >>
+> >> Introduce a new rproc state flag 'detach_on_shutdown' that individual
+> >> remoteproc drivers can set to only allow detach in rproc_shutdown()
+> >> that would have been invoked when the driver is uninstalled, so that
+> >> remote processor continues to run undisturbed even after the driver
+> >> removal.
+> >>
+> > 
+> > I dislike the introduction of knobs for everything and would much rather
+> > see that we define some sound defaults. Can we make shutdown just do
+> > detach() if that's supported otherwise stop().
+> > 
+> 
+> I maybe missing your point, but the change in remoteproc_core below exactly does
+> that, right? Are you saying drop the checks in remoteproc_cdev and remoteproc_sysfs?
+> 
+> The asymmetry did bug me as well, but it is already existing even before this
+> patch. I personally would have preferred a cleaner and symmetrical attach,
+> start, stop, detach, but existing code has overloaded attach into start (keys
+> off by RPROC_OFFLINE/RPROC_DETACHED) while introducing a separate detach from
+> stop. I have retained the meaning of stop as shutdown from userspace interface
+> perspective, but enforcing the checks for detach only remoteprocs.
+> 
+> The logic in rproc_shutdown is for driver paths.
+> 
+> > This still allows userspace to explicitly stop the detachable remoteproc
+> > before shutdown, if for some reason that's what you want...
+> 
+> This is the existing behavior and the difference between stop and detach. That
+> behavior is maintained for remoteprocs not setting the detach_on_shutdown flag.
+> I am only restricting the behavior for those that set it.
+> 
+> Mathieu,
+> Your thoughts on this?
+
+Introducing knobs in such a way makes the code very difficult to understand and
+maintain.  It is also a matter of time before another knob is introduced to
+modify the behavior of this knob.  
+
+Function rproc_detach() is exported and should be used in the platform driver if
+the state of the remote processor mandates it.  Function rproc_del() calls
+rproc_shutdown() but the latter will return immediately because of rproc->power.
+So calling rproc_detach() followed by rproc_del() will work as expected.  The
+real fix is to de-couple rproc_shutdown from rproc_del() and do the right calls
+in the platform drivers using them.
+
+With regards to rproc_cdev_write(), the state of the remote processor is
+advertised in sysfs.  As such it should be easy to write "stop" or "detach" to
+the character interface.  If a command to stop the remote processor is not
+supported in a scenario then rproc_ops::stop should reflect that.  If that is
+the case then rproc_shutdown() should be modified to return an error code, the
+same way rproc_detach() was done.
+
+> 
+> regards
+> Suman
+> 
+> 
+> 
+> > 
+> > Regards,
+> > Bjorn
+> > 
+> >> Signed-off-by: Suman Anna <s-anna@ti.com>
+> >> ---
+> >>  drivers/remoteproc/remoteproc_cdev.c  | 7 +++++++
+> >>  drivers/remoteproc/remoteproc_core.c  | 5 ++++-
+> >>  drivers/remoteproc/remoteproc_sysfs.c | 6 ++++++
+> >>  include/linux/remoteproc.h            | 3 +++
+> >>  4 files changed, 20 insertions(+), 1 deletion(-)
+> >>
+> >> diff --git a/drivers/remoteproc/remoteproc_cdev.c b/drivers/remoteproc/remoteproc_cdev.c
+> >> index 0b8a84c04f76..473467711a09 100644
+> >> --- a/drivers/remoteproc/remoteproc_cdev.c
+> >> +++ b/drivers/remoteproc/remoteproc_cdev.c
+> >> @@ -42,6 +42,13 @@ static ssize_t rproc_cdev_write(struct file *filp, const char __user *buf, size_
+> >>  		    rproc->state != RPROC_ATTACHED)
+> >>  			return -EINVAL;
+> >>  
+> >> +		if (rproc->state == RPROC_ATTACHED &&
+> >> +		    rproc->detach_on_shutdown) {
+> >> +			dev_err(&rproc->dev,
+> >> +				"stop not supported for this rproc, use detach\n");
+> >> +			return -EINVAL;
+> >> +		}
+> >> +
+> >>  		rproc_shutdown(rproc);
+> >>  	} else if (!strncmp(cmd, "detach", len)) {
+> >>  		if (rproc->state != RPROC_ATTACHED)
+> >> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+> >> index 6019f46001c8..e8ab3eb41f00 100644
+> >> --- a/drivers/remoteproc/remoteproc_core.c
+> >> +++ b/drivers/remoteproc/remoteproc_core.c
+> >> @@ -2074,7 +2074,10 @@ void rproc_shutdown(struct rproc *rproc)
+> >>  	if (!atomic_dec_and_test(&rproc->power))
+> >>  		goto out;
+> >>  
+> >> -	ret = rproc_stop(rproc, false);
+> >> +	if (rproc->detach_on_shutdown && rproc->state == RPROC_ATTACHED)
+> >> +		ret = __rproc_detach(rproc);
+> >> +	else
+> >> +		ret = rproc_stop(rproc, false);
+> >>  	if (ret) {
+> >>  		atomic_inc(&rproc->power);
+> >>  		goto out;
+> >> diff --git a/drivers/remoteproc/remoteproc_sysfs.c b/drivers/remoteproc/remoteproc_sysfs.c
+> >> index ea8b89f97d7b..1785fbcb1075 100644
+> >> --- a/drivers/remoteproc/remoteproc_sysfs.c
+> >> +++ b/drivers/remoteproc/remoteproc_sysfs.c
+> >> @@ -206,6 +206,12 @@ static ssize_t state_store(struct device *dev,
+> >>  		    rproc->state != RPROC_ATTACHED)
+> >>  			return -EINVAL;
+> >>  
+> >> +		if (rproc->state == RPROC_ATTACHED &&
+> >> +		    rproc->detach_on_shutdown) {
+> >> +			dev_err(&rproc->dev, "stop not supported for this rproc, use detach\n");
+> >> +			return -EINVAL;
+> >> +		}
+> >> +
+> >>  		rproc_shutdown(rproc);
+> >>  	} else if (sysfs_streq(buf, "detach")) {
+> >>  		if (rproc->state != RPROC_ATTACHED)
+> >> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+> >> index 42a1f30e33a7..35ef921676a1 100644
+> >> --- a/include/linux/remoteproc.h
+> >> +++ b/include/linux/remoteproc.h
+> >> @@ -530,6 +530,8 @@ struct rproc_dump_segment {
+> >>   * @elf_machine: firmware ELF machine
+> >>   * @cdev: character device of the rproc
+> >>   * @cdev_put_on_release: flag to indicate if remoteproc should be shutdown on @char_dev release
+> >> + * @detach_on_shutdown: flag to indicate if remoteproc cannot be shutdown in
+> >> + *			attached state and _only_ support detach
+> >>   */
+> >>  struct rproc {
+> >>  	struct list_head node;
+> >> @@ -569,6 +571,7 @@ struct rproc {
+> >>  	u16 elf_machine;
+> >>  	struct cdev cdev;
+> >>  	bool cdev_put_on_release;
+> >> +	bool detach_on_shutdown;
+> >>  };
+> >>  
+> >>  /**
+> >> -- 
+> >> 2.30.1
+> >>
+> 
