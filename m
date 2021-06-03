@@ -5,61 +5,63 @@ X-Spam-Level:
 X-Spam-Status: No, score=-19.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 101B8C47082
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  3 Jun 2021 14:26:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A878CC47096
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  3 Jun 2021 14:42:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EE18E60D07
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  3 Jun 2021 14:26:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8DC72613DE
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  3 Jun 2021 14:42:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230517AbhFCO2c (ORCPT
+        id S231532AbhFCOog (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 3 Jun 2021 10:28:32 -0400
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:44884 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230309AbhFCO2c (ORCPT
+        Thu, 3 Jun 2021 10:44:36 -0400
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:57238 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229744AbhFCOog (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 3 Jun 2021 10:28:32 -0400
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 153EQkDm012045;
-        Thu, 3 Jun 2021 09:26:46 -0500
+        Thu, 3 Jun 2021 10:44:36 -0400
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 153EgOXB104770;
+        Thu, 3 Jun 2021 09:42:24 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1622730406;
-        bh=fIVNwmif1ogtvdg6K8Ndbxh5RbYIcRehUlgIhqe5KYE=;
+        s=ti-com-17Q1; t=1622731344;
+        bh=8Ijv9UhqrX4N4JBpKzCRsR+ej46JBo6anCxAPeEUMPQ=;
         h=From:To:CC:Subject:Date;
-        b=jmiE0luU0xEBlm6WxI6FvWVMbs7ZmTbZEMnZms75jrQWzDaQyDs1P4HzbWnhrI1L3
-         JTiNUeGs4nW6iv9ZphSRN+yUbLNIRAjeiNsw2zOlV9UDjEn0t9poukQP9fy/KUl1Jo
-         pgeMrTHTFaCrIGnrndLMIs4ncIMZgC3whnHBRWuQ=
-Received: from DLEE112.ent.ti.com (dlee112.ent.ti.com [157.170.170.23])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 153EQkPX009259
+        b=q9XSpqFptmst7UmoFKzsfIWJFK7OUdT/oIPVqFHtK3OQpPiLUocAMH6GkKCAfau3p
+         ujJBD1j0Bn0N8WaY/HzJnsrIUe/xBTbVcHlkMlsuj7Qn8gkBIQhKr8lhVSZt8SwSI8
+         sP9Zr9C4j4fd04rfBpYToFeEc1NbARZk8vejoBVg=
+Received: from DLEE109.ent.ti.com (dlee109.ent.ti.com [157.170.170.41])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 153EgOgQ078876
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 3 Jun 2021 09:26:46 -0500
-Received: from DLEE100.ent.ti.com (157.170.170.30) by DLEE112.ent.ti.com
- (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
+        Thu, 3 Jun 2021 09:42:24 -0500
+Received: from DLEE101.ent.ti.com (157.170.170.31) by DLEE109.ent.ti.com
+ (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2176.2; Thu, 3 Jun
- 2021 09:26:45 -0500
-Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE100.ent.ti.com
- (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
+ 2021 09:42:24 -0500
+Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE101.ent.ti.com
+ (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2176.2 via
- Frontend Transport; Thu, 3 Jun 2021 09:26:46 -0500
+ Frontend Transport; Thu, 3 Jun 2021 09:42:24 -0500
 Received: from fllv0103.dal.design.ti.com (fllv0103.dal.design.ti.com [10.247.120.73])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id 153EQjU2087089;
-        Thu, 3 Jun 2021 09:26:45 -0500
+        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id 153EgOGP078619;
+        Thu, 3 Jun 2021 09:42:24 -0500
 Received: from localhost ([10.250.35.153])
-        by fllv0103.dal.design.ti.com (8.14.7/8.14.7) with ESMTP id 153EQjQC024229;
-        Thu, 3 Jun 2021 09:26:45 -0500
+        by fllv0103.dal.design.ti.com (8.14.7/8.14.7) with ESMTP id 153EgOTq031160;
+        Thu, 3 Jun 2021 09:42:24 -0500
 From:   Suman Anna <s-anna@ti.com>
 To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>
-CC:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        Wilken Gottwalt <wilken.gottwalt@posteo.net>
+CC:     Rob Herring <robh+dt@kernel.org>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
-        <devicetree@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Suman Anna <s-anna@ti.com>
-Subject: [PATCH] dt-bindings: remoteproc: qcom: pas: Fix indentation warnings
-Date:   Thu, 3 Jun 2021 09:26:39 -0500
-Message-ID: <20210603142639.8335-1-s-anna@ti.com>
+        Maxime Ripard <mripard@kernel.org>,
+        Chen-Yu Tsai <wens@csie.org>, <devicetree@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>, <linux-sunxi@lists.linux.dev>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, Suman Anna <s-anna@ti.com>
+Subject: [RFC PATCH] dt-bindings: hwlock: sun6i: Fix various warnings in binding
+Date:   Thu, 3 Jun 2021 09:42:16 -0500
+Message-ID: <20210603144216.10327-1-s-anna@ti.com>
 X-Mailer: git-send-email 2.30.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -69,123 +71,50 @@ Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-The list indentation should always be 2 spaces more than the preceding
-keyword. A few of the items are only using 1 space, and resulting in
-warnings with dt_binding_check. Fix these.
+The allwinner,sun6i-a31-hwspinlock.yaml binding has a mismatched
+$id and fails to compile the example due to undefined args specifier
+values for clocks and resets. Fix both of these issues.
 
-Fixes: cf107e98d024 ("dt-bindings: remoteproc: qcom: pas: Convert binding to YAML")
+Fixes: f9e784dcb63f ("dt-bindings: hwlock: add sun6i_hwspinlock")
 Signed-off-by: Suman Anna <s-anna@ti.com>
 ---
-Hi Bjorn,
+Hi Wilken,
 
-This patch is for you to pick up since you staged the corresponding YAML
-conversion patch. Issue found when double-checking one of my bindings on
-latest next.
+This fixes the warnings for now on linux-next, but I think the example
+should be including sun6i-a31-ccu.h files instead to be accurate, and
+those files are missing the definitions for CLK_BUS_SPINLOCK and
+RST_BUS_SPINLOCK. Feel free to send a newer version or do an incremental
+patch on top.
 
 regards
 Suman
 
- .../bindings/remoteproc/qcom,adsp.yaml        | 38 +++++++++----------
- 1 file changed, 19 insertions(+), 19 deletions(-)
+ .../bindings/hwlock/allwinner,sun6i-a31-hwspinlock.yaml      | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,adsp.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,adsp.yaml
-index 6c11812385ca..9ea05e608bc1 100644
---- a/Documentation/devicetree/bindings/remoteproc/qcom,adsp.yaml
-+++ b/Documentation/devicetree/bindings/remoteproc/qcom,adsp.yaml
-@@ -329,7 +329,7 @@ allOf:
-             - description: CX power domain
-         power-domain-names:
-           items:
--           - const: cx
-+            - const: cx
+diff --git a/Documentation/devicetree/bindings/hwlock/allwinner,sun6i-a31-hwspinlock.yaml b/Documentation/devicetree/bindings/hwlock/allwinner,sun6i-a31-hwspinlock.yaml
+index 733c3d01e56c..10e5a53e447b 100644
+--- a/Documentation/devicetree/bindings/hwlock/allwinner,sun6i-a31-hwspinlock.yaml
++++ b/Documentation/devicetree/bindings/hwlock/allwinner,sun6i-a31-hwspinlock.yaml
+@@ -1,7 +1,7 @@
+ # SPDX-License-Identifier: (GPL-2.0-only or BSD-2-Clause)
+ %YAML 1.2
+ ---
+-$id: http://devicetree.org/schemas/hwlock/allwinner,sun6i-hwspinlock.yaml#
++$id: http://devicetree.org/schemas/hwlock/allwinner,sun6i-a31-hwspinlock.yaml#
+ $schema: http://devicetree.org/meta-schemas/core.yaml#
  
-   - if:
-       properties:
-@@ -345,7 +345,7 @@ allOf:
-             - description: SSC-CX power domain
-         power-domain-names:
-           items:
--           - const: ssc_cx
-+            - const: ssc_cx
-       required:
-         - px-supply
+ title: SUN6I hardware spinlock driver for Allwinner sun6i compatible SoCs
+@@ -36,6 +36,9 @@ additionalProperties: false
  
-@@ -365,10 +365,10 @@ allOf:
-             - description: MSS power domain
-         power-domain-names:
-           items:
--           - const: load_state
--           - const: cx
--           - const: mx
--           - const: mss
-+            - const: load_state
-+            - const: cx
-+            - const: mx
-+            - const: mss
- 
-   - if:
-       properties:
-@@ -385,8 +385,8 @@ allOf:
-             - description: CX power domain
-         power-domain-names:
-           items:
--           - const: load_state
--           - const: cx
-+            - const: load_state
-+            - const: cx
- 
-   - if:
-       properties:
-@@ -404,9 +404,9 @@ allOf:
-             - description: MSS power domain
-         power-domain-names:
-           items:
--           - const: load_state
--           - const: cx
--           - const: mss
-+            - const: load_state
-+            - const: cx
-+            - const: mss
- 
-   - if:
-       properties:
-@@ -422,8 +422,8 @@ allOf:
-             - description: MSS power domain
-         power-domain-names:
-           items:
--           - const: cx
--           - const: mss
-+            - const: cx
-+            - const: mss
- 
-   - if:
-       properties:
-@@ -444,9 +444,9 @@ allOf:
-             - description: LMX power domain
-         power-domain-names:
-           items:
--           - const: load_state
--           - const: lcx
--           - const: lmx
-+            - const: load_state
-+            - const: lcx
-+            - const: lmx
- 
-   - if:
-       properties:
-@@ -463,9 +463,9 @@ allOf:
-             - description: MXC power domain
-         power-domain-names:
-           items:
--           - const: load_state
--           - const: cx
--           - const: mxc
-+            - const: load_state
-+            - const: cx
-+            - const: mxc
- 
-   - if:
-       properties:
+ examples:
+   - |
++    #include <dt-bindings/clock/sun8i-a23-a33-ccu.h>
++    #include <dt-bindings/reset/sun8i-a23-a33-ccu.h>
++
+     hwlock@1c18000 {
+         compatible = "allwinner,sun6i-a31-hwspinlock";
+         reg = <0x01c18000 0x1000>;
 -- 
 2.30.1
 
