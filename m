@@ -2,164 +2,146 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00349C4743C
-	for <linux-remoteproc@archiver.kernel.org>; Fri,  4 Jun 2021 20:47:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8DB0C4743D
+	for <linux-remoteproc@archiver.kernel.org>; Fri,  4 Jun 2021 21:13:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D06FB613F1
-	for <linux-remoteproc@archiver.kernel.org>; Fri,  4 Jun 2021 20:47:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7EB29613EC
+	for <linux-remoteproc@archiver.kernel.org>; Fri,  4 Jun 2021 21:13:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231542AbhFDUtL (ORCPT
+        id S229746AbhFDVPJ (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 4 Jun 2021 16:49:11 -0400
-Received: from so254-9.mailgun.net ([198.61.254.9]:24286 "EHLO
-        so254-9.mailgun.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230052AbhFDUtI (ORCPT
+        Fri, 4 Jun 2021 17:15:09 -0400
+Received: from mail-pg1-f174.google.com ([209.85.215.174]:40815 "EHLO
+        mail-pg1-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229665AbhFDVPI (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 4 Jun 2021 16:49:08 -0400
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1622839641; h=Content-Transfer-Encoding: Content-Type:
- In-Reply-To: MIME-Version: Date: Message-ID: References: Cc: To: From:
- Subject: Sender; bh=AeE9L/uymuy4P/CGTWAHqfDB7Asj3kbTFMENGCb52lI=; b=vASsjjDCd9Mhh32Vvfumk2d/qZPSP+P1L7hWYRrG/65hOkQPcpp4Ak+jK1jiOSktCUbru+VS
- JBS7Z8RPR+pdJA6nkuqPCxsWQrzBxS/dPDsM/gwYRgfEeSzK0C+lHRX6yzCvvlZSFJMdLId+
- NxknTy+lNqqZce9It1UObAi5qk0=
-X-Mailgun-Sending-Ip: 198.61.254.9
-X-Mailgun-Sid: WyI4ZWZiZiIsICJsaW51eC1yZW1vdGVwcm9jQHZnZXIua2VybmVsLm9yZyIsICJiZTllNGEiXQ==
-Received: from smtp.codeaurora.org
- (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
- smtp-out-n06.prod.us-west-2.postgun.com with SMTP id
- 60ba9145e570c05619fc36cf (version=TLS1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Fri, 04 Jun 2021 20:47:01
- GMT
-Sender: sidgup=codeaurora.org@mg.codeaurora.org
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id DCD51C433D3; Fri,  4 Jun 2021 20:47:00 +0000 (UTC)
-Received: from [192.168.1.10] (cpe-75-83-25-192.socal.res.rr.com [75.83.25.192])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: sidgup)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 88B81C4338A;
-        Fri,  4 Jun 2021 20:46:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 88B81C4338A
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=sidgup@codeaurora.org
-Subject: Re: [PATCH 1/1] remoteproc: use freezable workqueue for crash
- notifications
-From:   Siddharth Gupta <sidgup@codeaurora.org>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Alex Elder <elder@linaro.org>
-Cc:     ohad@wizery.com, mathieu.poirier@linaro.org,
-        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20210519234418.1196387-1-elder@linaro.org>
- <20210519234418.1196387-2-elder@linaro.org> <YLBpmdZoGDXNz64y@builder.lan>
- <be4ea351-7144-8b53-6fd7-6a2204e0040d@codeaurora.org>
-Message-ID: <f708d462-d863-ed3c-159d-acd5bffc6cba@codeaurora.org>
-Date:   Fri, 4 Jun 2021 13:46:58 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.2
+        Fri, 4 Jun 2021 17:15:08 -0400
+Received: by mail-pg1-f174.google.com with SMTP id j12so8834237pgh.7
+        for <linux-remoteproc@vger.kernel.org>; Fri, 04 Jun 2021 14:13:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=QvSj42IC9X/VM/7EZXZImoBUhNSJheUuiCLl0IF75NU=;
+        b=irc52CX95MAUzx3FMzgKRXeLnDxX6Muc8b9w+xbVcfiMOf2H6X8pnfDd+DffnZ5vWE
+         obYIvUsRO6ioqnIW9wH46dLgIi7/JwULyVlJfkrblDTozqN43O3LBQChm/wJnB6QYZbP
+         oZZ1OV8dOq2cPon4KUlBCLvCBiBBbLKKYlZeXVk2DsLtdnSG1ib9arvcvbUjaGbxxvIh
+         1kVyhFMWmhMWWjT1qxryRhBH90VZKUPMwHe8yF3GSow1U7fc2Q/vZZCJBQp9PcllbYy6
+         Is9on6kheUi1Wrv19nGEOLt2fbbZrKvTDQZ7fe6BfCGBO51hU2aWip+GQArOv2vWOIkL
+         yXxQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=QvSj42IC9X/VM/7EZXZImoBUhNSJheUuiCLl0IF75NU=;
+        b=W1Ia2kUJ+IPWOqP/KfnBZvORFWMmfgm8OtXZdRAtROD/j2FLpu/2YY9gve88ZJf9wz
+         cBzLGyjJmzvVOy6wSD+TCVK7+gNEgCq9v3T0hNXqfZFEJxQVx2QwRCAzNaU+ZdGa7XgV
+         wBBsiBIKo3FhPirvUe/5fUeVkVhFWD684egP1JMxpj/YwXIjLcIJCWEGYKNcPHgsKjZ+
+         Ust8gJ1dgM29f4jyDHM4Tsn158I+R5vLqw3J6Xe9CTr3XnLkrYwRZh+Yki38Nx5Iksz3
+         OqyjPnEKoguHFmXGeisiBhjk1247T6qp/GM/wQl3Lb79NSw8vA9faOgU1ySvKUUFao7b
+         iRPQ==
+X-Gm-Message-State: AOAM532b/Y107yqEb+zbPL32ouKcKys68zdGb9mKlA8dNHgEH8xTbQLN
+        rMQ+gvncSCEDy0yLkmgL3Fty3b2sCQgCmAzIYtQ9zg==
+X-Google-Smtp-Source: ABdhPJxZZNEEkPnqpVn7w/PtQ4RDsCPYfS+XUYeyuJ7k9JwElrcA87HSuGrHQ+ApctjxsIQnSSKDTyEpP+Dr4832G8s=
+X-Received: by 2002:a63:e309:: with SMTP id f9mr6771394pgh.443.1622841141722;
+ Fri, 04 Jun 2021 14:12:21 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <be4ea351-7144-8b53-6fd7-6a2204e0040d@codeaurora.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+References: <YLfL9Q+4860uqS8f@gerhold.net>
+In-Reply-To: <YLfL9Q+4860uqS8f@gerhold.net>
+From:   Loic Poulain <loic.poulain@linaro.org>
+Date:   Fri, 4 Jun 2021 23:11:45 +0200
+Message-ID: <CAMZdPi9tcye-4P4i0uXZcECJ-Big5T11JdvdXW6k2mEEi9XwyA@mail.gmail.com>
+Subject: Re: [RFC] Integrate RPMSG/SMD into WWAN subsystem
+To:     Stephan Gerhold <stephan@gerhold.net>
+Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Aleksander Morgado <aleksander@aleksander.es>,
+        Network Development <netdev@vger.kernel.org>,
+        linux-remoteproc@vger.kernel.org,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Ohad Ben-Cohen <ohad@wizery.com>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
+Hi Stephan,
 
-On 5/28/2021 5:12 PM, Siddharth Gupta wrote:
+On Wed, 2 Jun 2021 at 20:20, Stephan Gerhold <stephan@gerhold.net> wrote:
 >
-> On 5/27/2021 8:55 PM, Bjorn Andersson wrote:
->> On Wed 19 May 18:44 CDT 2021, Alex Elder wrote:
->>
->>> When a remoteproc has crashed, rproc_report_crash() is called to
->>> handle whatever recovery is desired.  This can happen at almost any
->>> time, often triggered by an interrupt, though it can also be
->>> initiated by a write to debugfs file remoteproc/remoteproc*/crash.
->>>
->>> When a crash is reported, the crash handler worker is scheduled to
->>> run (rproc_crash_handler_work()).  One thing that worker does is
->>> call rproc_trigger_recovery(), which calls rproc_stop().  That calls
->>> the ->stop method for any remoteproc subdevices before making the
->>> remote processor go offline.
->>>
->>> The Q6V5 modem remoteproc driver implements an SSR subdevice that
->>> notifies registered drivers when the modem changes operational state
->>> (prepare, started, stop/crash, unprepared).  The IPA driver
->>> registers to receive these notifications.
->>>
->>> With that as context, I'll now describe the problem.
->>>
->>> There was a situation in which buggy modem firmware led to a modem
->>> crash very soon after system (AP) resume had begun.  The crash caused
->>> a remoteproc SSR crash notification to be sent to the IPA driver.
->>> The problem was that, although system resume had begun, it had not
->>> yet completed, and the IPA driver was still in a suspended state.
->>>
->>> This scenario could happen to any driver that registers for these
->>> SSR notifications, because they are delivered without knowledge of
->>> the (suspend) state of registered recipient drivers.
->>>
->>> This patch offers a simple fix for this, by having the crash
->>> handling worker function run on the system freezable workqueue.
->>> This workqueue does not operate if user space is frozen (for
->>> suspend).  As a result, the SSR subdevice only delivers its
->>> crash notification when the system is fully operational (i.e.,
->>> neither suspended nor in suspend/resume transition).
->>>
->> This makes sense to me; both that it ensures that we spend our resources
->> on the actual system resume and that it avoids surprises from this
->> happening while the system still is in a funky state...
->>
->> Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
->>
->> But it would be nice to get some input from other users of the
->> framework.
-> This patch sounds like a good idea for cases where the
-> request_firmware() APIs fallback to userspace firmware loading.
+> Hi Loic, Hi Bjorn,
 >
-> Will test out this patch and report back.
+> I've been thinking about creating some sort of "RPMSG" driver for the
+> new WWAN subsystem; this would be used as a QMI/AT channel to the
+> integrated modem on some older Qualcomm SoCs such as MSM8916 and MSM8974.
 >
-> Thanks,
-> Sid
-I was able to test out this change with one of our usecases, no
-issues to report.
+> It's easy to confuse all the different approaches that Qualcomm has to
+> talk to their modems, so I will first try to briefly give an overview
+> about those that I'm familiar with:
+>
+> ---
+> There is USB and MHI that are mainly used to talk to "external" modems.
+>
+> For the integrated modems in many Qualcomm SoCs there is typically
+> a separate control and data path. They are not really related to each
+> other (e.g. currently no common parent device in sysfs).
+>
+> For the data path (network interface) there is "IPA" (drivers/net/ipa)
+> on newer SoCs or "BAM-DMUX" on some older SoCs (e.g. MSM8916/MSM8974).
+> I have a driver for BAM-DMUX that I hope to finish up and submit soon.
+>
+> The connection is set up via QMI. The messages are either sent via
+> a shared RPMSG channel (net/qrtr sockets in Linux) or via standalone
+> SMD/RPMSG channels (e.g. "DATA5_CNTL" for QMI and "DATA1" for AT).
+>
+> This gives a lot of possible combinations like BAM-DMUX+RPMSG
+> (MSM8916, MSM8974), or IPA+QRTR (SDM845) but also other funny
+> combinations like IPA+RPMSG (MSM8994) or BAM-DMUX+QRTR (MSM8937).
+>
+> Simply put, supporting all these in userspace like ModemManager
+> is a mess (Aleksander can probably confirm).
+> It would be nice if this could be simplified through the WWAN subsystem.
+>
+> It's not clear to me if or how well QRTR sockets can be mapped to a char
+> device for the WWAN subsystem, so for now I'm trying to focus on the
+> standalone RPMSG approach (for MSM8916, MSM8974, ...).
+> ---
+>
+> Currently ModemManager uses the RPMSG channels via the rpmsg-chardev
+> (drivers/rpmsg/rpmsg_char.c). It wasn't my idea to use it like this,
+> I just took that over from someone else. Realistically speaking, the
+> current approach isn't too different from the UCI "backdoor interface"
+> approach that was rejected for MHI...
+>
+> I kind of expected that I can just trivially copy some code from
+> rpmsg_char.c into a WWAN driver since they both end up as a simple char
+> device. But it looks like the abstractions in wwan_core are kind of
+> getting in the way here... As far as I can tell, they don't really fit
+> together with the RPMSG interface.
+>
+> For example there is rpmsg_send(...) (blocking) and rpmsg_trysend(...)
+> (non-blocking) and even a rpmsg_poll(...) [1] but I don't see a way to
+> get notified when the TX queue is full or no longer full so I can call
+> wwan_port_txon/off().
+>
+> Any suggestions or other thoughts?
 
-Could you please CC stable as well?
+It would be indeed nice to get this in the WWAN framework.
+I don't know much about rpmsg but I think it is straightforward for
+the RX path, the ept_cb can simply forward the buffers to
+wwan_port_rx. For tx, simply call rpmsg_trysend() in the wwan tx
+callback and don't use the txon/off helpers. In short, keep it simple
+and check if you observe any issues.
 
-Thanks,
-Sid
+And for sure you can propose changes in the WWAN framework if you
+think something is missing to support your specific case.
 
-Tested-by: Siddharth Gupta <sidgup@codeaurora.org>
->>
->> Regards,
->> Bjorn
->>
->>> Signed-off-by: Alex Elder <elder@linaro.org>
->>> ---
->>>   drivers/remoteproc/remoteproc_core.c | 4 ++--
->>>   1 file changed, 2 insertions(+), 2 deletions(-)
->>>
->>> diff --git a/drivers/remoteproc/remoteproc_core.c 
->>> b/drivers/remoteproc/remoteproc_core.c
->>> index 39cf44cb08035..6bedf2d2af239 100644
->>> --- a/drivers/remoteproc/remoteproc_core.c
->>> +++ b/drivers/remoteproc/remoteproc_core.c
->>> @@ -2724,8 +2724,8 @@ void rproc_report_crash(struct rproc *rproc, 
->>> enum rproc_crash_type type)
->>>       dev_err(&rproc->dev, "crash detected in %s: type %s\n",
->>>           rproc->name, rproc_crash_to_string(type));
->>>   -    /* create a new task to handle the error */
->>> -    schedule_work(&rproc->crash_handler);
->>> +    /* Have a worker handle the error; ensure system is not 
->>> suspended */
->>> +    queue_work(system_freezable_wq, &rproc->crash_handler);
->>>   }
->>>   EXPORT_SYMBOL(rproc_report_crash);
->>>   --
->>> 2.27.0
->>>
+Regards,
+Loic
