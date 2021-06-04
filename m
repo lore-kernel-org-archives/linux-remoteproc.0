@@ -2,137 +2,115 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB841C4709A
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  3 Jun 2021 20:08:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A09FC47097
+	for <linux-remoteproc@archiver.kernel.org>; Fri,  4 Jun 2021 04:55:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AE62861407
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  3 Jun 2021 20:08:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0617A61411
+	for <linux-remoteproc@archiver.kernel.org>; Fri,  4 Jun 2021 04:55:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229938AbhFCUKg (ORCPT
+        id S229810AbhFDE5e (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 3 Jun 2021 16:10:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39578 "EHLO mail.kernel.org"
+        Fri, 4 Jun 2021 00:57:34 -0400
+Received: from mout01.posteo.de ([185.67.36.65]:53491 "EHLO mout01.posteo.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229656AbhFCUKf (ORCPT <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 3 Jun 2021 16:10:35 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id E68B0611C9;
-        Thu,  3 Jun 2021 20:08:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1622750930;
-        bh=ohus4AnUUJOspGI/25odIC8ssfkU7zAoWzsK33rRY5c=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=fy7QLqvlvNvV19XtoYpomwc7SWdbn2/6Af6JfFQKmOnXkyzsT3KXef7oAcH6kPNo0
-         GLwyKOBjpJ1Jb/6Ce/Jw/t1ViRXdPeurRK0ej+vZnjZrrkI/yhXlvOyI7M5y/skN4s
-         4kgLGyIALAMWRz3YGnCqJ4rjNkQch2CKA3OyyHabrPyrvmSkAP/BC7PhHvypbvZc3i
-         RfhMjmxRshaYL8K19qpFBeM32chXXhP3+Asgowcs3N/8n+UG0vjZl+Kkx4M2hH80ER
-         c2hMo/d/VQ81ju9K9rwJiuQv/tsKrDF+IeHhwGFd2uKHzn5MTwgt97WTroKvNOtn+U
-         Ncnha5C7tJUEA==
-Date:   Thu, 3 Jun 2021 22:08:47 +0200
-From:   Wolfram Sang <wsa@kernel.org>
-To:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Cc:     Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Marc Kleine-Budde <mkl@pengutronix.de>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Nishanth Menon <nm@ti.com>, Ohad Ben-Cohen <ohad@wizery.com>,
-        Peter Ujfalusi <peter.ujfalusi@gmail.com>,
+        id S229452AbhFDE5e (ORCPT <rfc822;linux-remoteproc@vger.kernel.org>);
+        Fri, 4 Jun 2021 00:57:34 -0400
+Received: from submission (posteo.de [89.146.220.130]) 
+        by mout01.posteo.de (Postfix) with ESMTPS id 7244C24002A
+        for <linux-remoteproc@vger.kernel.org>; Fri,  4 Jun 2021 06:55:47 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=posteo.net; s=2017;
+        t=1622782547; bh=TTyTROyQXjsSXo74wJBHn6lqKWQ3+EbGHja6XTO7Rds=;
+        h=Date:From:To:Cc:Subject:From;
+        b=b4kfkQdftGPZQAMXH5LvwkFcZ3zhObfnY0zCw1HWa3vz1OjKz0xIDlQZfAUqaYm8n
+         LEzDIeuIPtgW+cna1vw2q7i1wnM3oFCyxkSEA+W10Mt7I3CRYrP+A9ukIObzFVybPW
+         pMClWvFX+BOQV2lPrTodITHK5rXrTxjmGbUTwKcFW1rUQUb1/w0DWPByV2HRJQMX/A
+         2icvC+zVgqIzhPQSq2W2c6YEOu0PV+VnOzM+DGMS+tgOEnXNRHlASnZ7hzPZRlQDME
+         9LASZa1tebUvbv6Ie5EVrYQPsgmQlntWn/Ef8HlLZU61ngXarVx6ERq9Tfp56/pUbZ
+         gKf2dD0fGmqfg==
+Received: from customer (localhost [127.0.0.1])
+        by submission (posteo.de) with ESMTPSA id 4Fx9Sc48Wdz6tm9;
+        Fri,  4 Jun 2021 06:55:44 +0200 (CEST)
+Date:   Fri,  4 Jun 2021 04:55:43 +0000
+From:   Wilken Gottwalt <wilken.gottwalt@posteo.net>
+To:     Suman Anna <s-anna@ti.com>
+Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
-        Roger Quadros <rogerq@ti.com>, Sekhar Nori <nsekhar@ti.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Tero Kristo <kristo@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Vinod Koul <vkoul@kernel.org>,
-        Wolfgang Grandegger <wg@grandegger.com>,
-        devicetree@vger.kernel.org, dmaengine@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-can@vger.kernel.org,
-        linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mmc@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        linux-usb@vger.kernel.org, netdev@vger.kernel.org
-Subject: Re: [PATCH 03/12] dt-bindings: soc: ti: update sci-pm-domain.yaml
- references
-Message-ID: <YLk2z0eEjX/kGpYb@kunai>
-Mail-Followup-To: Wolfram Sang <wsa@kernel.org>,
-        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Marc Kleine-Budde <mkl@pengutronix.de>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Nishanth Menon <nm@ti.com>, Ohad Ben-Cohen <ohad@wizery.com>,
-        Peter Ujfalusi <peter.ujfalusi@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>, Roger Quadros <rogerq@ti.com>,
-        Sekhar Nori <nsekhar@ti.com>, Stephen Boyd <sboyd@kernel.org>,
-        Tero Kristo <kristo@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>, Vinod Koul <vkoul@kernel.org>,
-        Wolfgang Grandegger <wg@grandegger.com>, devicetree@vger.kernel.org,
-        dmaengine@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-can@vger.kernel.org, linux-i2c@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org, linux-usb@vger.kernel.org,
-        netdev@vger.kernel.org
-References: <cover.1622648507.git.mchehab+huawei@kernel.org>
- <c03020ff281054c3bd2527c510659e05fec6f181.1622648507.git.mchehab+huawei@kernel.org>
+        Maxime Ripard <mripard@kernel.org>,
+        Chen-Yu Tsai <wens@csie.org>, <devicetree@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>, <linux-sunxi@lists.linux.dev>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC PATCH] dt-bindings: hwlock: sun6i: Fix various warnings in
+ binding
+Message-ID: <20210604065543.3d71ca53@monster.powergraphx.local>
+In-Reply-To: <20210603144216.10327-1-s-anna@ti.com>
+References: <20210603144216.10327-1-s-anna@ti.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="eSf5OGSJ/yHsEMv1"
-Content-Disposition: inline
-In-Reply-To: <c03020ff281054c3bd2527c510659e05fec6f181.1622648507.git.mchehab+huawei@kernel.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
+On Thu, 3 Jun 2021 09:42:16 -0500
+Suman Anna <s-anna@ti.com> wrote:
 
---eSf5OGSJ/yHsEMv1
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> The allwinner,sun6i-a31-hwspinlock.yaml binding has a mismatched
+> $id and fails to compile the example due to undefined args specifier
+> values for clocks and resets. Fix both of these issues.
+> 
+> Fixes: f9e784dcb63f ("dt-bindings: hwlock: add sun6i_hwspinlock")
+> Signed-off-by: Suman Anna <s-anna@ti.com>
+> ---
+> Hi Wilken,
+> 
+> This fixes the warnings for now on linux-next, but I think the example
+> should be including sun6i-a31-ccu.h files instead to be accurate, and
+> those files are missing the definitions for CLK_BUS_SPINLOCK and
+> RST_BUS_SPINLOCK. Feel free to send a newer version or do an incremental
+> patch on top.
+> 
+> regards
+> Suman
 
-On Wed, Jun 02, 2021 at 05:43:09PM +0200, Mauro Carvalho Chehab wrote:
-> Changeset fda55c7256fe ("dt-bindings: soc: ti: Convert ti,sci-pm-domain t=
-o json schema")
-> renamed: Documentation/devicetree/bindings/soc/ti/sci-pm-domain.txt
-> to: Documentation/devicetree/bindings/soc/ti/sci-pm-domain.yaml.
->=20
-> Update the cross-references accordingly.
->=20
-> Fixes: fda55c7256fe ("dt-bindings: soc: ti: Convert ti,sci-pm-domain to j=
-son schema")
-> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Hi Suman,
 
-Acked-by: Wolfram Sang <wsa@kernel.org> # for I2C
+thank you for fixing this. I would have fix it the same way for now, so it is
+fine for me. But I will keep an eye on it.
 
+greetings,
+Will
 
---eSf5OGSJ/yHsEMv1
-Content-Type: application/pgp-signature; name="signature.asc"
+>  .../bindings/hwlock/allwinner,sun6i-a31-hwspinlock.yaml      | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/hwlock/allwinner,sun6i-a31-hwspinlock.yaml
+> b/Documentation/devicetree/bindings/hwlock/allwinner,sun6i-a31-hwspinlock.yaml index
+> 733c3d01e56c..10e5a53e447b 100644 ---
+> a/Documentation/devicetree/bindings/hwlock/allwinner,sun6i-a31-hwspinlock.yaml +++
+> b/Documentation/devicetree/bindings/hwlock/allwinner,sun6i-a31-hwspinlock.yaml @@ -1,7 +1,7 @@
+>  # SPDX-License-Identifier: (GPL-2.0-only or BSD-2-Clause)
+>  %YAML 1.2
+>  ---
+> -$id: http://devicetree.org/schemas/hwlock/allwinner,sun6i-hwspinlock.yaml#
+> +$id: http://devicetree.org/schemas/hwlock/allwinner,sun6i-a31-hwspinlock.yaml#
+>  $schema: http://devicetree.org/meta-schemas/core.yaml#
+>  
+>  title: SUN6I hardware spinlock driver for Allwinner sun6i compatible SoCs
+> @@ -36,6 +36,9 @@ additionalProperties: false
+>  
+>  examples:
+>    - |
+> +    #include <dt-bindings/clock/sun8i-a23-a33-ccu.h>
+> +    #include <dt-bindings/reset/sun8i-a23-a33-ccu.h>
+> +
+>      hwlock@1c18000 {
+>          compatible = "allwinner,sun6i-a31-hwspinlock";
+>          reg = <0x01c18000 0x1000>;
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmC5Ns8ACgkQFA3kzBSg
-KbYFTRAAqF9TWZ+pTISLuMKGVBuNthxVoeuiLigsWW/9vfC9QmT42WbmWQLx2hLk
-hUIQK4Yk55RT94/cD1spz/yq0xYCXbk5J0VK0kVRt7+AcswPQG07pmbdwTpOjby8
-Um5IjYunC0vYKPDfdcAW/k7ZO4SREKVCVZUBVzo5lB+eSTlUdkPdxCGS+JtLoszv
-dzik1TD9wCS2DfdC0Mur4qvX2mdfZ+EIsh4UToC0FNN/JlowD/yUrKP9YdZco6Tt
-rHMyx1u1FxLcdhSjwMxEAS613dDaKAQMjhUQYX0n41ycMBNXqnHtbhcIRNh/9pd5
-hXumHx8IyZo/BBKUBEUjBWISpr9P9VJGbuToeDZQudumri3k8nLmGgntfrrnRSup
-gmCcuPGibZbLmw6R5POgYHujlJWpW7uVPXUTJkyX1MY91o4826M6XwweA3GCcmQZ
-CYy4XfE9EgEGYCCEPPhYw6Pbk4aJ+b2gfTeimssIBO9Ep4RtHEVr4qLR5w5QBkZM
-fLVzxA/NJFc+9b4CxkWwte+j9q3Re+JgqtPJrLa21gRMdyg/ReuA6fSAyt6ktNBy
-pM+ZxgyAcuL76EoF0qLH78ssshHX7ZRRDLWtpuE+n97YPQA0niwFkPPLwfEeVOYG
-oyATxaZ1YV6BwyJYLgeYhu0TuMT/poG+nvaDeyed23Sze4Tgunk=
-=k4Kj
------END PGP SIGNATURE-----
-
---eSf5OGSJ/yHsEMv1--
