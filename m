@@ -4,46 +4,46 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AFA14C48BD1
-	for <linux-remoteproc@archiver.kernel.org>; Mon,  7 Jun 2021 15:40:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D1F2C47094
+	for <linux-remoteproc@archiver.kernel.org>; Mon,  7 Jun 2021 15:40:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 965236121D
-	for <linux-remoteproc@archiver.kernel.org>; Mon,  7 Jun 2021 15:40:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 60C9261185
+	for <linux-remoteproc@archiver.kernel.org>; Mon,  7 Jun 2021 15:40:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231171AbhFGPme (ORCPT
+        id S231462AbhFGPmg (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 7 Jun 2021 11:42:34 -0400
-Received: from m43-7.mailgun.net ([69.72.43.7]:29396 "EHLO m43-7.mailgun.net"
+        Mon, 7 Jun 2021 11:42:36 -0400
+Received: from m43-7.mailgun.net ([69.72.43.7]:45896 "EHLO m43-7.mailgun.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231284AbhFGPmc (ORCPT <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 7 Jun 2021 11:42:32 -0400
+        id S231356AbhFGPmf (ORCPT <rfc822;linux-remoteproc@vger.kernel.org>);
+        Mon, 7 Jun 2021 11:42:35 -0400
 DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1623080441; h=References: In-Reply-To: Message-Id: Date:
+ s=smtp; t=1623080444; h=References: In-Reply-To: Message-Id: Date:
  Subject: Cc: To: From: Sender;
- bh=ILTEB962RGcOcJFzYeFC/WTqUCTEJyOXsjqGxTiwQ5E=; b=wMaC/rBejo2riAP8E5D8OWgGrcpC+ADdEIhi1s1eih78EhYlTl82JJuxE1G3cfoqyBy2/Rxt
- AL6W36NvzmOiKm3QcLrQZWi3Zc3Sk2WwnhpO75CvTwI++OjPrdAqWWML1rB10eXKSlq04eLi
- 5L0B0i6E3yaxPmNDxjzbnF8SQEI=
+ bh=TxmE3CdMjv0PMKEeaGmSFTMRDlIQ04V0jskPsF3c55o=; b=JLYeRJJNcfpu/b4wifV+SxBHnKexHSjpZU9SR86sKdEvg7T6629Ayjz3AJGESX1FGf1uMH4q
+ jDUdwm7h8adR+Lb7aoJOXzi5yW7bKVO4TYyFw+PzdJvNtFWRecEg+NRDHJJtqPnoqe9dXIs+
+ TsiOdA9eKovxJZPRJ7KfMMVDajo=
 X-Mailgun-Sending-Ip: 69.72.43.7
 X-Mailgun-Sid: WyI4ZWZiZiIsICJsaW51eC1yZW1vdGVwcm9jQHZnZXIua2VybmVsLm9yZyIsICJiZTllNGEiXQ==
 Received: from smtp.codeaurora.org
  (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
- smtp-out-n02.prod.us-west-2.postgun.com with SMTP id
- 60be3dde2eaeb98b5ef68b36 (version=TLS1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Mon, 07 Jun 2021 15:40:14
+ smtp-out-n03.prod.us-east-1.postgun.com with SMTP id
+ 60be3dd56ddc3305c4b4603a (version=TLS1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Mon, 07 Jun 2021 15:40:05
  GMT
 Sender: sibis=codeaurora.org@mg.codeaurora.org
 Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 8139FC4360C; Mon,  7 Jun 2021 15:40:14 +0000 (UTC)
+        id F41A7C43144; Mon,  7 Jun 2021 15:40:04 +0000 (UTC)
 Received: from blr-ubuntu-87.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
         (Authenticated sender: sibis)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 3C03DC43217;
-        Mon,  7 Jun 2021 15:40:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3C03DC43217
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id D0B56C43217;
+        Mon,  7 Jun 2021 15:39:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D0B56C43217
 Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=sibis@codeaurora.org
 From:   Sibi Sankar <sibis@codeaurora.org>
@@ -55,9 +55,9 @@ Cc:     ulf.hansson@linaro.org, rjw@rjwysocki.net, agross@kernel.org,
         linux-kernel@vger.kernel.org, dianders@chromium.org,
         rishabhb@codeaurora.org, sidgup@codeaurora.org,
         Sibi Sankar <sibis@codeaurora.org>
-Subject: [PATCH v2 03/13] dt-bindings: remoteproc: qcom: Add QMP bindings
-Date:   Mon,  7 Jun 2021 21:09:22 +0530
-Message-Id: <1623080372-13521-4-git-send-email-sibis@codeaurora.org>
+Subject: [PATCH v2 01/13] dt-bindings: soc: qcom: aoss: Drop power-domain bindings
+Date:   Mon,  7 Jun 2021 21:09:20 +0530
+Message-Id: <1623080372-13521-2-git-send-email-sibis@codeaurora.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1623080372-13521-1-git-send-email-sibis@codeaurora.org>
 References: <1623080372-13521-1-git-send-email-sibis@codeaurora.org>
@@ -65,34 +65,71 @@ Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Add Qualcomm Mailbox Protocol (QMP) binding to replace the power domains
-exposed by the AOSS QMP node.
+The power-domains exposed by AOSS QMP node are used to notify the Always
+on Subsystem (AOSS) that a particular co-processor is up/down. These
+co-processors enter low-power modes independent to that of the application
+processor and their states are expected to remain unaltered across system
+suspend/resume cycles. To achieve this behavior let's drop the power-domain
+bindings and replace them with generic qmp_send interface instead.
 
 Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
 Reviewed-by: Stephen Boyd <swboyd@chromium.org>
-Acked-by: Rob Herring <robh@kernel.org>
 ---
- Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt b/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt
-index 69c49c7b2cff..494257010629 100644
---- a/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt
-+++ b/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt
-@@ -174,7 +174,12 @@ For the compatible string below the following supplies are required:
- 		    must be "cx", "mx"
- 	qcom,sc7180-mss-pil:
- 	qcom,sdm845-mss-pil:
--		    must be "cx", "mx", "mss", "load_state"
-+		    must be "cx", "mx", "mss"
-+
-+- qcom,qmp:
-+	Usage: optional
-+	Value type: <phandle>
-+	Definition: reference to the AOSS side-channel message RAM.
+v2:
+ * Commit message update [Rob]
+
+ .../devicetree/bindings/soc/qcom/qcom,aoss-qmp.txt       | 16 ++--------------
+ 1 file changed, 2 insertions(+), 14 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/soc/qcom/qcom,aoss-qmp.txt b/Documentation/devicetree/bindings/soc/qcom/qcom,aoss-qmp.txt
+index 783dc81b0f26..c0ae051a5b76 100644
+--- a/Documentation/devicetree/bindings/soc/qcom/qcom,aoss-qmp.txt
++++ b/Documentation/devicetree/bindings/soc/qcom/qcom,aoss-qmp.txt
+@@ -9,8 +9,7 @@ Messaging Protocol (QMP)
  
- - qcom,smem-states:
+ The AOSS side channel exposes control over a set of resources, used to control
+ a set of debug related clocks and to affect the low power state of resources
+-related to the secondary subsystems. These resources are exposed as a set of
+-power-domains.
++related to the secondary subsystems.
+ 
+ - compatible:
  	Usage: required
+@@ -46,14 +45,6 @@ power-domains.
+ 	Definition: must be 0
+ 		    The single clock represents the QDSS clock.
+ 
+-- #power-domain-cells:
+-	Usage: optional
+-	Value type: <u32>
+-	Definition: must be 1
+-		    The provided power-domains are:
+-		    CDSP state (0), LPASS state (1), modem state (2), SLPI
+-		    state (3), SPSS state (4) and Venus state (5).
+-
+ = SUBNODES
+ The AOSS side channel also provides the controls for three cooling devices,
+ these are expressed as subnodes of the QMP node. The name of the node is used
+@@ -66,8 +57,7 @@ to identify the resource and must therefor be "cx", "mx" or "ebi".
+ 
+ = EXAMPLE
+ 
+-The following example represents the AOSS side-channel message RAM and the
+-mechanism exposing the power-domains, as found in SDM845.
++The following example represents the AOSS side-channel message RAM as found in SDM845.
+ 
+   aoss_qmp: qmp@c300000 {
+ 	  compatible = "qcom,sdm845-aoss-qmp";
+@@ -75,8 +65,6 @@ mechanism exposing the power-domains, as found in SDM845.
+ 	  interrupts = <GIC_SPI 389 IRQ_TYPE_EDGE_RISING>;
+ 	  mboxes = <&apss_shared 0>;
+ 
+-	  #power-domain-cells = <1>;
+-
+ 	  cx_cdev: cx {
+ 		#cooling-cells = <2>;
+ 	  };
 -- 
 The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
 a Linux Foundation Collaborative Project
