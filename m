@@ -2,107 +2,258 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31CF8C47082
-	for <linux-remoteproc@archiver.kernel.org>; Tue,  8 Jun 2021 09:08:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F510C47082
+	for <linux-remoteproc@archiver.kernel.org>; Tue,  8 Jun 2021 11:30:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1A2D0600EF
-	for <linux-remoteproc@archiver.kernel.org>; Tue,  8 Jun 2021 09:08:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E262A6128D
+	for <linux-remoteproc@archiver.kernel.org>; Tue,  8 Jun 2021 11:30:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229724AbhFHJJz (ORCPT
+        id S231871AbhFHLc3 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 8 Jun 2021 05:09:55 -0400
-Received: from mail.iot.bzh ([51.75.236.24]:52801 "EHLO mail.iot.bzh"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229657AbhFHJJz (ORCPT <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 8 Jun 2021 05:09:55 -0400
-Received: from localhost.localdomain (lfbn-ren-1-1868-231.w83-199.abo.wanadoo.fr [83.199.51.231])
-        by mail.iot.bzh (Postfix) with ESMTPSA id C5E0940081;
-        Tue,  8 Jun 2021 11:07:58 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iot.bzh; s=20180822;
-        t=1623143279;
+        Tue, 8 Jun 2021 07:32:29 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:33460 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S231609AbhFHLc3 (ORCPT
+        <rfc822;linux-remoteproc@vger.kernel.org>);
+        Tue, 8 Jun 2021 07:32:29 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1623151835;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=RstX5K6XZCEekqSBLBKXhSYsL5WzEMK2zaZ0jTY6khU=;
-        b=tm+rCUB9f9l4wf3L0Lbg9qS2pGscYdvzAd0HuZDfOxdD2JoXGWLw/UZoyuuEguV0MDUeVO
-        Vft2nqCLDB9zdC9Ybz5Zb6/gTEtxBHbjNdIyCjuxrTeNmMb5/fRA714qqiPDDK+u8lTUH4
-        b+EehnJwjj/pObY1pwShtya3ieU2Xhnqq6G00c67I4XYgyH04ZiyyOlDOdQXN0HsODQ+C5
-        O0z53YOl+zIkiy56OpCQZTj4TByAruiAsdCI2TsLnEI/pvkNQqVRskEhtK3HkEIka4Lp3F
-        2fjVpFZ0nfDNoUrZ3nlU74i4fGzxELhWKJBBbcvita9auk/lWOZWJuVarmAtbA==
-Subject: Re: [PATCH 0/4] rpmsg: char: introduce the rpmsg-raw channel
-To:     Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>,
+        bh=2RI5ey86j83Uuwo2tjOtbNfV+FjFbv6oI/7mKd3IkLQ=;
+        b=QzXqnlagGNpVRdEGpOQ7dzEL21w7lHIr8Xy8Dy//hlZg3nrFw4DFbbnq4PSLd639Mt2RSm
+        vntXbMcqPmLovQRQfLXKO0ESe7dTstVUGhCYvm7bc+r1rBpzuGY0SjZocdoGcpqmjyzQdK
+        QivsyLhd5vsd3wyZIKHyh3sbNffGHPY=
+Received: from mail-ed1-f72.google.com (mail-ed1-f72.google.com
+ [209.85.208.72]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-252-sEWbJ2LNNWuO2EwPt-f48A-1; Tue, 08 Jun 2021 07:30:34 -0400
+X-MC-Unique: sEWbJ2LNNWuO2EwPt-f48A-1
+Received: by mail-ed1-f72.google.com with SMTP id f12-20020a056402150cb029038fdcfb6ea2so10666580edw.14
+        for <linux-remoteproc@vger.kernel.org>; Tue, 08 Jun 2021 04:30:34 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
+         :message-id:mime-version:content-transfer-encoding;
+        bh=2RI5ey86j83Uuwo2tjOtbNfV+FjFbv6oI/7mKd3IkLQ=;
+        b=PNhylMW293vSN46piTImh6X5JzbGpP141sZedlYHnL+zL23v1C5YI4yglwjvUxYlhs
+         L1H9jnzpm5EO5HWFWbrGO4nSnsSPYiUgOfK7BYo2iKQ7PqEmKA+s+labQL+9DhDe409U
+         KkgevEL2KpuV/qUAu45TMdTYr71aBo3pV2yZyvKdnq/hl9wu10jItk5/lLybowj2Nw6G
+         kQNBog1Fk0m+Xb3WZdYcPB7ctf0q+34luDNcJEZ+ViPtt2+qOvXNJArFEj0Ix4pV7bBR
+         htspDUKovG3WO2lZzdi41rsplfeDrHoVXDtmfxIfu8WMWdAMikhsoz/E3nZBnCJ94dLe
+         qDhQ==
+X-Gm-Message-State: AOAM5332OXshtEm55WpoB6PwqsO8/cPBFVMQGn+wVRFnflmAPj8kwM4a
+        TgxdVBVFcy3wSEelHWWuW8YmC9qC4t3BdPD/PVSyz6grPi7vs3Ddovrr7nrHs7w8PzDhGbdqXUH
+        TKelUFg4R5rtOt/81keipseAcXpz9UQ==
+X-Received: by 2002:a17:906:1796:: with SMTP id t22mr22681446eje.304.1623151833295;
+        Tue, 08 Jun 2021 04:30:33 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJz8CZ6U8M4vg9eEJCjByzoIhJqloa45BAeveakQTDyR08YhlreAeA+vD8fAbQM0l0CtWDfZrg==
+X-Received: by 2002:a17:906:1796:: with SMTP id t22mr22681420eje.304.1623151833049;
+        Tue, 08 Jun 2021 04:30:33 -0700 (PDT)
+Received: from alrua-x1.borgediget.toke.dk ([45.145.92.2])
+        by smtp.gmail.com with ESMTPSA id w1sm7766790eds.37.2021.06.08.04.30.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 08 Jun 2021 04:30:32 -0700 (PDT)
+Received: by alrua-x1.borgediget.toke.dk (Postfix, from userid 1000)
+        id 88998180723; Tue,  8 Jun 2021 13:30:30 +0200 (CEST)
+From:   Toke =?utf-8?Q?H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>
+To:     Stephan Gerhold <stephan@gerhold.net>
+Cc:     Loic Poulain <loic.poulain@linaro.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Aleksander Morgado <aleksander@aleksander.es>,
+        Network Development <netdev@vger.kernel.org>,
+        linux-remoteproc@vger.kernel.org,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
         Ohad Ben-Cohen <ohad@wizery.com>,
         Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc:     linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com
-References: <20210607173032.30133-1-arnaud.pouliquen@foss.st.com>
-From:   Julien Massot <julien.massot@iot.bzh>
-Message-ID: <6aedbe64-9c5d-b738-ad99-0a33733be82d@iot.bzh>
-Date:   Tue, 8 Jun 2021 11:08:13 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.1
+Subject: Re: [RFC] Integrate RPMSG/SMD into WWAN subsystem
+In-Reply-To: <YL4GiEEcOQC2XrjP@gerhold.net>
+References: <YLfL9Q+4860uqS8f@gerhold.net>
+ <CAMZdPi9tcye-4P4i0uXZcECJ-Big5T11JdvdXW6k2mEEi9XwyA@mail.gmail.com>
+ <YLtDB2Cz5ttewsFu@gerhold.net>
+ <CAMZdPi_-Qa=JnThHs_h-144dAfSAjF5s+QdBawdXZ3kk8Mx8ng@mail.gmail.com>
+ <YL364+xK3mE2FU8a@gerhold.net> <87sg1tvryx.fsf@toke.dk>
+ <YL4GiEEcOQC2XrjP@gerhold.net>
+X-Clacks-Overhead: GNU Terry Pratchett
+Date:   Tue, 08 Jun 2021 13:30:30 +0200
+Message-ID: <87czswtwyx.fsf@toke.dk>
 MIME-Version: 1.0
-In-Reply-To: <20210607173032.30133-1-arnaud.pouliquen@foss.st.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi,
+Stephan Gerhold <stephan@gerhold.net> writes:
 
-On 6/7/21 7:30 PM, Arnaud Pouliquen wrote:
-> Purpose:
->    Allow the remote processor to instantiate a /dev/rpmsgX interface relying on the NS announcement
->    of the "rpmsg-raw" service.
->    This patchet is extracted from  the series [1] with rework to add rpmsg_create_default_ept helper.
-> 
->    
-> Aim:
->    There is no generic sysfs interface based on RPMsg that allows a user application to communicate
->    with a remote processor in a simple way.
->    The rpmsg_char dev solves a part of this problem by allowing an endpoint to be created on the
->    local side. But it does not take advantage of the NS announcement mechanism implemented for some
->    backends such as the virtio backend. So it is not possible to probe it from  a remote initiative.
->    Extending the char rpmsg device to support NS announcement makes the rpmsg_char more generic.
->    By announcing a "rpmg-raw" service, the firmware of a remote processor will be able to
->    instantiate a /dev/rpmsgX interface providing to the user application a basic link to communicate
->    with it without any knowledge of the rpmsg protocol.
-> 
-> Implementation details:
->    - Register a rpmsg driver for the rpmsg_char driver, associated to the "rpmsg-raw" channel service.
->    - In case of rpmsg char device instantiated by the rpmsg bus (on NS announcement) manage the
->      channel default endpoint to ensure a stable default endpoint address, for communication with
->      the remote processor.
-> 
-> How to test it:
->    - This series can be applied on git/andersson/remoteproc.git for-next branch (dc0e14fa833b)
->      + the "Restructure the rpmsg char to decorrelate the control part" series[2]
-> 
-> [1] https://patchwork.kernel.org/project/linux-remoteproc/list/?series=475217
-> [2] https://patchwork.kernel.org/project/linux-remoteproc/list/?series=483793
+> On Mon, Jun 07, 2021 at 01:23:18PM +0200, Toke H=C3=B8iland-J=C3=B8rgense=
+n wrote:
+>> Stephan Gerhold <stephan@gerhold.net> writes:
+>> > On Mon, Jun 07, 2021 at 11:27:07AM +0200, Loic Poulain wrote:
+>> >> On Sat, 5 Jun 2021 at 11:25, Stephan Gerhold <stephan@gerhold.net> wr=
+ote:
+>> >> > On Fri, Jun 04, 2021 at 11:11:45PM +0200, Loic Poulain wrote:
+>> >> > > On Wed, 2 Jun 2021 at 20:20, Stephan Gerhold <stephan@gerhold.net=
+> wrote:
+>> >> > > > I've been thinking about creating some sort of "RPMSG" driver f=
+or the
+>> >> > > > new WWAN subsystem; this would be used as a QMI/AT channel to t=
+he
+>> >> > > > integrated modem on some older Qualcomm SoCs such as MSM8916 an=
+d MSM8974.
+>> >> > > >
+>> >> > > > It's easy to confuse all the different approaches that Qualcomm=
+ has to
+>> >> > > > talk to their modems, so I will first try to briefly give an ov=
+erview
+>> >> > > > about those that I'm familiar with:
+>> >> > > >
+>> >> > > > ---
+>> >> > > > There is USB and MHI that are mainly used to talk to "external"=
+ modems.
+>> >> > > >
+>> >> > > > For the integrated modems in many Qualcomm SoCs there is typica=
+lly
+>> >> > > > a separate control and data path. They are not really related t=
+o each
+>> >> > > > other (e.g. currently no common parent device in sysfs).
+>> >> > > >
+>> >> > > > For the data path (network interface) there is "IPA" (drivers/n=
+et/ipa)
+>> >> > > > on newer SoCs or "BAM-DMUX" on some older SoCs (e.g. MSM8916/MS=
+M8974).
+>> >> > > > I have a driver for BAM-DMUX that I hope to finish up and submi=
+t soon.
+>> >> > > >
+>> >> > > > The connection is set up via QMI. The messages are either sent =
+via
+>> >> > > > a shared RPMSG channel (net/qrtr sockets in Linux) or via stand=
+alone
+>> >> > > > SMD/RPMSG channels (e.g. "DATA5_CNTL" for QMI and "DATA1" for A=
+T).
+>> >> > > >
+>> >> > > > This gives a lot of possible combinations like BAM-DMUX+RPMSG
+>> >> > > > (MSM8916, MSM8974), or IPA+QRTR (SDM845) but also other funny
+>> >> > > > combinations like IPA+RPMSG (MSM8994) or BAM-DMUX+QRTR (MSM8937=
+).
+>> >> > > >
+>> >> > > > Simply put, supporting all these in userspace like ModemManager
+>> >> > > > is a mess (Aleksander can probably confirm).
+>> >> > > > It would be nice if this could be simplified through the WWAN s=
+ubsystem.
+>> >> > > >
+>> >> > > > It's not clear to me if or how well QRTR sockets can be mapped =
+to a char
+>> >> > > > device for the WWAN subsystem, so for now I'm trying to focus o=
+n the
+>> >> > > > standalone RPMSG approach (for MSM8916, MSM8974, ...).
+>> >> > > > ---
+>> >> > > >
+>> >> > > > Currently ModemManager uses the RPMSG channels via the rpmsg-ch=
+ardev
+>> >> > > > (drivers/rpmsg/rpmsg_char.c). It wasn't my idea to use it like =
+this,
+>> >> > > > I just took that over from someone else. Realistically speaking=
+, the
+>> >> > > > current approach isn't too different from the UCI "backdoor int=
+erface"
+>> >> > > > approach that was rejected for MHI...
+>> >> > > >
+>> >> > > > I kind of expected that I can just trivially copy some code from
+>> >> > > > rpmsg_char.c into a WWAN driver since they both end up as a sim=
+ple char
+>> >> > > > device. But it looks like the abstractions in wwan_core are kin=
+d of
+>> >> > > > getting in the way here... As far as I can tell, they don't rea=
+lly fit
+>> >> > > > together with the RPMSG interface.
+>> >> > > >
+>> >> > > > For example there is rpmsg_send(...) (blocking) and rpmsg_tryse=
+nd(...)
+>> >> > > > (non-blocking) and even a rpmsg_poll(...) [1] but I don't see a=
+ way to
+>> >> > > > get notified when the TX queue is full or no longer full so I c=
+an call
+>> >> > > > wwan_port_txon/off().
+>> >> > > >
+>> >> > > > Any suggestions or other thoughts?
+>> >> > >
+>> >> > > It would be indeed nice to get this in the WWAN framework.
+>> >> > > I don't know much about rpmsg but I think it is straightforward f=
+or
+>> >> > > the RX path, the ept_cb can simply forward the buffers to
+>> >> > > wwan_port_rx.
+>> >> >
+>> >> > Right, that part should be straightforward.
+>> >> >
+>> >> > > For tx, simply call rpmsg_trysend() in the wwan tx
+>> >> > > callback and don't use the txon/off helpers. In short, keep it si=
+mple
+>> >> > > and check if you observe any issues.
+>> >> > >
+>> >> >
+>> >> > I'm not sure that's a good idea. This sounds like exactly the kind =
+of
+>> >> > thing that might explode later just because I don't manage to get t=
+he
+>> >> > TX queue full in my tests. In that case, writing to the WWAN char d=
+ev
+>> >> > would not block, even if O_NONBLOCK is not set.
+>> >>=20
+>> >> Right, if you think it could be a problem, you can always implement a
+>> >> more complex solution like calling rpmsg_send from a
+>> >> workqueue/kthread, and only re-enable tx once rpmsg_send returns.
+>> >>=20
+>> >
+>> > I did run into trouble when I tried to stream lots of data into the WW=
+AN
+>> > char device (e.g. using dd). However, in practice (with ModemManager)=
+=20
+>> > I did not manage to cause such issues yet. Personally, I think it's
+>> > something we should get right, just to avoid trouble later
+>> > (like "modem suddenly stops working").
+>> >
+>> > Right now I extended the WWAN port ops a bit so I tells me if the write
+>> > should be non-blocking or blocking and so I can call rpmsg_poll(...).
+>> >
+>> > But having some sort of workqueue also sounds like it could work quite
+>> > well, thanks for the suggestion! Will think about it some more, or
+>> > I might post what I have right now so you can take a look.
+>>=20
+>> How big are those hardware TXQs? Just pushing packets to the hardware
+>> until it overflows sounds like a recipe for absolutely terrible
+>> bufferbloat... That would be bad!
+>>=20
+>
+> For reference, we're not really talking about "hardware" TXQs here.
+> As far as I understand, the RPMSG channels on Qualcomm devices are
+> mostly just a firmware convention for communicating between different
+> CPUs/DSPs via shared memory.
+>
+> The packets are copied into some kind of shared FIFO/ring buffer
+> per channel, with varying sizes. On my test device, the firmware
+> allcates 1024 bytes for the QMI channel and 8192 bytes
+> for the AT channel.
+>
+> I'm not sure how this would cause any kind of overflow/bufferbloat.
+> The remote side (e.g. modem DSP) is notified separately for every packet
+> that is sent. If we're really writing more quickly than the remote side
+> will read, rpmsg_send() will block and therefore the client will
+> block as well (since tx was disabled before calling rpmsg_send()).
 
-Just tested this whole series on remoteproc for-next branch + [2].
-Works for me, /dev/rpmsg0 is created on NS announcement, and removed when stopping the remote processor.
-I can do a repeated series of open /read/write/close, and got EBUSY if I try to open it more than once
-at a time.
+Hmm, okay, if this is just control channel traffic and the buffers are
+no bigger than that maybe this is not such a huge issue. As long as the
+client (which I guess is whichever application is trying to control the
+modem?) can block and back off, so it won't just keep queuing up
+commands faster than the modem can process them...
 
-Firmware used for testing is derived from:
-https://github.com/zephyrproject-rtos/zephyr/tree/main/samples/subsys/ipc/openamp_rsc_table
-with:
-#define RPMSG_CHAN_NAME "rpmsg-raw"
+-Toke
 
-Thanks Arnaud for your work.
-
-Tested-by: Julien Massot <julien.massot@iot.bzh>
-
--- 
-Julien Massot [IoT.bzh]
