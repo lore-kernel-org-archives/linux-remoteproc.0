@@ -7,57 +7,54 @@ X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87ABCC47094
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 10 Jun 2021 16:09:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 542B9C47094
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 10 Jun 2021 17:06:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 66069613D8
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 10 Jun 2021 16:09:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 26568613E1
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 10 Jun 2021 17:06:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230077AbhFJQLS (ORCPT
+        id S229961AbhFJRIJ (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 10 Jun 2021 12:11:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39774 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230051AbhFJQLR (ORCPT
+        Thu, 10 Jun 2021 13:08:09 -0400
+Received: from mail-pj1-f53.google.com ([209.85.216.53]:41474 "EHLO
+        mail-pj1-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229895AbhFJRIJ (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 10 Jun 2021 12:11:17 -0400
-Received: from mail-pg1-x52b.google.com (mail-pg1-x52b.google.com [IPv6:2607:f8b0:4864:20::52b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 623ABC061574
-        for <linux-remoteproc@vger.kernel.org>; Thu, 10 Jun 2021 09:09:06 -0700 (PDT)
-Received: by mail-pg1-x52b.google.com with SMTP id j12so147857pgh.7
-        for <linux-remoteproc@vger.kernel.org>; Thu, 10 Jun 2021 09:09:06 -0700 (PDT)
+        Thu, 10 Jun 2021 13:08:09 -0400
+Received: by mail-pj1-f53.google.com with SMTP id go18-20020a17090b03d2b029016e4ae973f7so3143459pjb.0
+        for <linux-remoteproc@vger.kernel.org>; Thu, 10 Jun 2021 10:06:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=kYytFf8w8lGLC87US0lF5QfRu8TkslW/v1k/xfpSpOs=;
-        b=LZLpCp2A/10kvyEMW6w1HKRsdeMviQfJVUcbSXMkP1AtgBMgVOYnqXRSkmsdUA8mcZ
-         FMo7mr++UAryE0x5Ui9QmZMTC1zfXHs//EULrvKUZGbwyP2YR2FQYn5F5fCLgbWKaamX
-         yHyc5Cg1QV/+LqFCHLDYa9jCmqag68lN1Cx390SNnW4iwsTJ9GjWFtS28DUeBqxy0hLo
-         nSFftsX+xqgwWHNrkHvSjtPn0VQIbXk7HGJjLCJS0Tq+Pvi5iwQM58Pz5A1Fqa4iuvo6
-         aOkFHow5TPeGWwhR06HKlxD+rX5UQPdAgq4kjrLXwJPX4tZTpGHd/ioa5Pz0hJ0CNd+u
-         KHcw==
+        bh=zsuHs8q2OPqCHBMokULd2KXAu5PDhngkMlqiRUWGhEQ=;
+        b=F2TUxQY2snWw8ctmSasL8n8yd1F/8VJkGWADtJezydVUh0feZ2ggQESqkLle9qp1HM
+         HvmpS7ERNGH6v5vjMBIcnp6UatHp8sjOPLrasDOQJo9y4hUB9QC6h290zuTr/sq6mRmA
+         zFdQpBJ8yEny9GV6JXukn1KXu3DE12KljL1elMAFh2aaDATN/+ie62uhTdb+pLrZwaC9
+         gOz2ELUAr9QT5ixrEFveLybjpjZcKoUEKXp0k7MamWMLH4B5Dm8HtVfqRpCzM/Tb/qXg
+         opEp6Gc5PFhHZyvPztLLkM/+vwrJJqeW5AFCwjiIl6S6N+xz2VAPdJlBet0cFlIP3kEK
+         FMBQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=kYytFf8w8lGLC87US0lF5QfRu8TkslW/v1k/xfpSpOs=;
-        b=MHPHvpCqTKZyt+OimeriINh5ni87UUPBjVIu4P09FIu5KtVWsX9xU/Z4HEPl+bDwsE
-         D0BLKL8JcnYrNGNOwttU1tEdRhitZawJK9N63JPKk3CiHvGlzs0N15LKWbuc4bZC61qt
-         6i1A6gXvLlq1Fxgk2GHksdJPv3HBxSt9zxn76GsMjA+NGw9Pd2S1YYelBCvzglcDbmaM
-         9OsuJGK7X+pXwKSwvCccZ5NhZ7bXf8jsvEp5RawZq8XpYECKsyoyE2TV9qW/wMvZysa6
-         C3BJzvZaBR/J+bI7HAe+EMWqFWKhayO0plyFYu3ukJbv1uIz35XYx/7YVaRJaj2s7iYY
-         FBAw==
-X-Gm-Message-State: AOAM532EQRlnnekoo8XXZ3sUkKxlqyqtFnadOyPSKLC8sro9lIM3pUvR
-        eWgC+bryIB4geBd8NJDYDDYcjQ==
-X-Google-Smtp-Source: ABdhPJyp5BAJz6wrSY57esY6nrOu2qG1wIdc4fufA1/o01uQxiH7eippiBBxqOZVK1vycj1+UEwdWg==
-X-Received: by 2002:a63:5148:: with SMTP id r8mr5618964pgl.283.1623341345896;
-        Thu, 10 Jun 2021 09:09:05 -0700 (PDT)
+        bh=zsuHs8q2OPqCHBMokULd2KXAu5PDhngkMlqiRUWGhEQ=;
+        b=n4zBttTiK7ht5sk20vXIPhUYWb6raUF0OOQWKzlGqWUjQPt2NLAV1DEQDhlLQIeWjr
+         grm52+FPUTkpLULF4mh51LBSglxNGTKXRiAU6e4R0uLfOKflFo1lMW0/T+ugUSxzxEO0
+         ILYXqC9IERfQxIJ/vz8q3E7M/N79E7wsW4+j/e8p9ByaBoepZFI889EmE4xJLHYgd/Q3
+         tVolAtxxSdt+PH5+scSEV0i6cYhQtqxOsaZLMjHcwGvLw0Z0aZ4opqNR9ofSBedZ0J3W
+         DmW/QKaakps6v7PBwwdg+5Tw3qem0NyslOEt4VGhvFrnnhm8Qz9lI7kUwYwJPCD6MS7+
+         L1tg==
+X-Gm-Message-State: AOAM5314NZ1fXcI5sWLBCPJcDMceg6RMURESAQjPpW8lhQMSEb5PZAmG
+        SK6rqtHl0fDwkbhg9gYbk1UvHQ==
+X-Google-Smtp-Source: ABdhPJxjWwnJbs8N7HYKTbnCv8+sVi6XLob6NDA40U/LIZlS7d/nvHV2Ol/uuIWQ9gr5lVB8cFcUeg==
+X-Received: by 2002:a17:902:bc81:b029:ef:3f99:9f76 with SMTP id bb1-20020a170902bc81b02900ef3f999f76mr5901515plb.33.1623344712906;
+        Thu, 10 Jun 2021 10:05:12 -0700 (PDT)
 Received: from p14s (S0106889e681aac74.cg.shawcable.net. [68.147.0.187])
-        by smtp.gmail.com with ESMTPSA id a20sm2946041pfk.145.2021.06.10.09.09.04
+        by smtp.gmail.com with ESMTPSA id r28sm3077053pgm.53.2021.06.10.10.05.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Jun 2021 09:09:05 -0700 (PDT)
-Date:   Thu, 10 Jun 2021 10:09:03 -0600
+        Thu, 10 Jun 2021 10:05:11 -0700 (PDT)
+Date:   Thu, 10 Jun 2021 11:05:09 -0600
 From:   Mathieu Poirier <mathieu.poirier@linaro.org>
 To:     "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
 Cc:     ohad@wizery.com, bjorn.andersson@linaro.org,
@@ -65,59 +62,75 @@ Cc:     ohad@wizery.com, bjorn.andersson@linaro.org,
         s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
         linux-imx@nxp.com, linux-remoteproc@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Peng Fan <peng.fan@nxp.com>, kernel test robot <lkp@intel.com>
-Subject: Re: [PATCH] remoteproc: imx-rproc: Fix IMX_REMOTEPROC configuration
-Message-ID: <20210610160903.GB34238@p14s>
-References: <20210610031530.26326-1-peng.fan@oss.nxp.com>
+        Peng Fan <peng.fan@nxp.com>
+Subject: Re: [PATCH 2/2] remoteproc: imx_rproc: support i.MX8ULP
+Message-ID: <20210610170509.GE34238@p14s>
+References: <20210604072311.9186-1-peng.fan@oss.nxp.com>
+ <20210604072311.9186-3-peng.fan@oss.nxp.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210610031530.26326-1-peng.fan@oss.nxp.com>
+In-Reply-To: <20210604072311.9186-3-peng.fan@oss.nxp.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Thu, Jun 10, 2021 at 11:15:30AM +0800, Peng Fan (OSS) wrote:
+On Fri, Jun 04, 2021 at 03:23:11PM +0800, Peng Fan (OSS) wrote:
 > From: Peng Fan <peng.fan@nxp.com>
 > 
-> When CONFIG_IMX_REMOTEPROC is y and CONFIG_HAVE_ARM_SMCCC
-> is not set, compiling errors are encountered as follows:
+> i.MX8ULP is a new SoC with Ultra low power support, it has a Cortex-M33
+> core and two Cortex-A35 cores. We need to add new configuration because
+> it could not reuse the previous i.MX7/8 configuration.
 > 
-> drivers/remoteproc/imx_rproc.o: in function `imx_rproc_stop':
-> imx_rproc.c:(.text+0x140): undefined reference to `__arm_smccc_smc'
-> drivers/remoteproc/imx_rproc.o: in function `imx_rproc_detect_mode':
-> imx_rproc.c:(.text+0x272): undefined reference to `__arm_smccc_smc'
-> drivers/remoteproc/imx_rproc.o: in function `imx_rproc_start':
-> imx_rproc.c:(.text+0x5e0): undefined reference to `__arm_smccc_smc'
+> i.MX8ULP M33 core is kicked by ROM, it is not under control of A35 core.
+> So need to mark the method is IMX_RPROC_NONE.
 > 
-> __arm_smccc_smc is defined when HAVE_ARM_SMCCC is y, so
-> add dependency on HAVE_ARM_SMCCC in IMX_REMOTEPROC configuration.
-> 
-> Reported-by: kernel test robot <lkp@intel.com>
 > Signed-off-by: Peng Fan <peng.fan@nxp.com>
 > ---
->  drivers/remoteproc/Kconfig | 1 +
->  1 file changed, 1 insertion(+)
-
-Next time please add:
-
-Fixes: 79806d32d5aa ("remoteproc: imx_rproc: support i.MX8MN/P")
+>  drivers/remoteproc/imx_rproc.c | 13 +++++++++++++
+>  1 file changed, 13 insertions(+)
+>
 
 Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 
-> 
-> diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
-> index e68fcedc999c..9a6eedc3994a 100644
-> --- a/drivers/remoteproc/Kconfig
-> +++ b/drivers/remoteproc/Kconfig
-> @@ -26,6 +26,7 @@ config REMOTEPROC_CDEV
->  config IMX_REMOTEPROC
->  	tristate "i.MX remoteproc support"
->  	depends on ARCH_MXC
-> +	depends on HAVE_ARM_SMCCC
->  	select MAILBOX
->  	help
->  	  Say y here to support iMX's remote processors via the remote
+> diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rproc.c
+> index 7cc0cadea1cc..d88f76f5305e 100644
+> --- a/drivers/remoteproc/imx_rproc.c
+> +++ b/drivers/remoteproc/imx_rproc.c
+> @@ -172,6 +172,12 @@ static const struct imx_rproc_att imx_rproc_att_imx8mq[] = {
+>  	{ 0x40000000, 0x40000000, 0x80000000, 0 },
+>  };
+>  
+> +static const struct imx_rproc_att imx_rproc_att_imx8ulp[] = {
+> +	{0x1FFC0000, 0x1FFC0000, 0xC0000, ATT_OWN},
+> +	{0x21000000, 0x21000000, 0x10000, ATT_OWN},
+> +	{0x80000000, 0x80000000, 0x60000000, 0}
+> +};
+> +
+>  static const struct imx_rproc_att imx_rproc_att_imx7ulp[] = {
+>  	{0x1FFD0000, 0x1FFD0000, 0x30000, ATT_OWN},
+>  	{0x20000000, 0x20000000, 0x10000, ATT_OWN},
+> @@ -246,6 +252,12 @@ static const struct imx_rproc_dcfg imx_rproc_cfg_imx8mq = {
+>  	.method		= IMX_RPROC_MMIO,
+>  };
+>  
+> +static const struct imx_rproc_dcfg imx_rproc_cfg_imx8ulp = {
+> +	.att		= imx_rproc_att_imx8ulp,
+> +	.att_size	= ARRAY_SIZE(imx_rproc_att_imx8ulp),
+> +	.method		= IMX_RPROC_NONE,
+> +};
+> +
+>  static const struct imx_rproc_dcfg imx_rproc_cfg_imx7ulp = {
+>  	.att		= imx_rproc_att_imx7ulp,
+>  	.att_size	= ARRAY_SIZE(imx_rproc_att_imx7ulp),
+> @@ -824,6 +836,7 @@ static const struct of_device_id imx_rproc_of_match[] = {
+>  	{ .compatible = "fsl,imx8mm-cm4", .data = &imx_rproc_cfg_imx8mq },
+>  	{ .compatible = "fsl,imx8mn-cm7", .data = &imx_rproc_cfg_imx8mn },
+>  	{ .compatible = "fsl,imx8mp-cm7", .data = &imx_rproc_cfg_imx8mn },
+> +	{ .compatible = "fsl,imx8ulp-cm33", .data = &imx_rproc_cfg_imx8ulp },
+>  	{},
+>  };
+>  MODULE_DEVICE_TABLE(of, imx_rproc_of_match);
 > -- 
 > 2.30.0
 > 
