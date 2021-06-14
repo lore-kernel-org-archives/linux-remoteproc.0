@@ -2,77 +2,76 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA02FC48BE5
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 10 Jun 2021 18:30:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6406AC2B9F4
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 14 Jun 2021 10:22:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C544E613F5
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 10 Jun 2021 18:30:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3A53661159
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 14 Jun 2021 10:22:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229990AbhFJScB (ORCPT
+        id S232746AbhFNKYE (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 10 Jun 2021 14:32:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35804 "EHLO mail.kernel.org"
+        Mon, 14 Jun 2021 06:24:04 -0400
+Received: from m43-7.mailgun.net ([69.72.43.7]:24500 "EHLO m43-7.mailgun.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229935AbhFJScB (ORCPT <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 10 Jun 2021 14:32:01 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPS id E058C61419;
-        Thu, 10 Jun 2021 18:30:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1623349804;
-        bh=Uj1eVvlwnsMjSlJpOlq0Y6DG9P0cabJGsLYzFT3T2o8=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=tObd8DMFaj0yDSSgRT1Hh133V/7Ja6aIM8oeTUueFESnGFUtlnnV442J2d8c6jP76
-         PlEl7hpvsj9FcrpKNBrJ5BwN0du9gkIpH0d7aNXabJvI3FTCRoQLqm7nMKXy1e5W5U
-         zp88E98oKbdJjgfLXfyJjgsiHTyC80qWE0mwVwNP83E97OsjWiFUDX9HjRZjY96ytL
-         qQdUljGkYGsib9X3DvE75PhMrNfM4lV2rwpd4QVap7jnFHJRsVClceQ+DXyNTRPSXA
-         V8b7/Igd5utOH/TqiEtdEUSiSoAgVZhIOMaLjmgVXSWgur5+PCyYUnbOqXlP/U3WLx
-         XTFlUESXtrfBw==
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] remoteproc: imx-rproc: Fix IMX_REMOTEPROC configuration
-From:   patchwork-bot+linux-remoteproc@kernel.org
-Message-Id: <162334980489.1903.5853362106375793238.git-patchwork-notify@kernel.org>
-Date:   Thu, 10 Jun 2021 18:30:04 +0000
-References: <20210610031530.26326-1-peng.fan@oss.nxp.com>
-In-Reply-To: <20210610031530.26326-1-peng.fan@oss.nxp.com>
-To:     Peng Fan (OSS) <peng.fan@oss.nxp.com>
-Cc:     linux-remoteproc@vger.kernel.org
+        id S232814AbhFNKYC (ORCPT <rfc822;linux-remoteproc@vger.kernel.org>);
+        Mon, 14 Jun 2021 06:24:02 -0400
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1623666118; h=Message-Id: Date: Subject: Cc: To: From:
+ Sender; bh=Y4R+CI7JZXnnd2CPaAK0ArA0rsN6FK6Bg7xXP9MJpmM=; b=ucRHq88mDCcMQf84wLy2ubkTpPBhvgtxehcjhfbK55D7W2Rm7X3wcULCRdv/IfzMhxFEfOYw
+ MtEYSK9aK1d8QE7h+FJi7RQHACEAWlxGM+ijvFyLcldtc1FKRyWMJ/H3qFlVAdh9T39Umoo0
+ GQxOM5YPyAK2Fvp2Yyy/laLbWu4=
+X-Mailgun-Sending-Ip: 69.72.43.7
+X-Mailgun-Sid: WyI4ZWZiZiIsICJsaW51eC1yZW1vdGVwcm9jQHZnZXIua2VybmVsLm9yZyIsICJiZTllNGEiXQ==
+Received: from smtp.codeaurora.org
+ (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
+ smtp-out-n07.prod.us-east-1.postgun.com with SMTP id
+ 60c72dc4e27c0cc77f3e1230 (version=TLS1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Mon, 14 Jun 2021 10:21:56
+ GMT
+Sender: deesin=codeaurora.org@mg.codeaurora.org
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 8CC15C4323A; Mon, 14 Jun 2021 10:21:55 +0000 (UTC)
+Received: from deesin-linux.qualcomm.com (unknown [202.46.22.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: deesin)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id BCB26C4338A;
+        Mon, 14 Jun 2021 10:21:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org BCB26C4338A
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=deesin@codeaurora.org
+From:   Deepak Kumar Singh <deesin@codeaurora.org>
+To:     bjorn.andersson@linaro.org, clew@codeaurora.org,
+        sibis@codeaurora.org, manivannan.sadhasivam@linaro.org
+Cc:     linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org,
+        Deepak Kumar Singh <deesin@codeaurora.org>
+Subject: [PATCH V4 0/2] soc: qcom: aoss: Expose send for generic usecase 
+Date:   Mon, 14 Jun 2021 15:51:32 +0530
+Message-Id: <1623666094-2924-1-git-send-email-deesin@codeaurora.org>
+X-Mailer: git-send-email 2.7.4
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hello:
+[Changes from V3]
+Add qmp_put declaration in qcom_aoss.h
 
-This patch was applied to andersson/remoteproc.git (refs/heads/for-next):
+Deepak Kumar Singh (2):
+  soc: qcom: aoss: Expose send for generic usecase
+  soc: qcom: aoss: Add debugfs entry
 
-On Thu, 10 Jun 2021 11:15:30 +0800 you wrote:
-> From: Peng Fan <peng.fan@nxp.com>
-> 
-> When CONFIG_IMX_REMOTEPROC is y and CONFIG_HAVE_ARM_SMCCC
-> is not set, compiling errors are encountered as follows:
-> 
-> drivers/remoteproc/imx_rproc.o: in function `imx_rproc_stop':
-> imx_rproc.c:(.text+0x140): undefined reference to `__arm_smccc_smc'
-> drivers/remoteproc/imx_rproc.o: in function `imx_rproc_detect_mode':
-> imx_rproc.c:(.text+0x272): undefined reference to `__arm_smccc_smc'
-> drivers/remoteproc/imx_rproc.o: in function `imx_rproc_start':
-> imx_rproc.c:(.text+0x5e0): undefined reference to `__arm_smccc_smc'
-> 
-> [...]
+ drivers/soc/qcom/qcom_aoss.c       | 109 ++++++++++++++++++++++++++++++++++++-
+ include/linux/soc/qcom/qcom_aoss.h |  38 +++++++++++++
+ 2 files changed, 145 insertions(+), 2 deletions(-)
+ create mode 100644 include/linux/soc/qcom/qcom_aoss.h
 
-Here is the summary with links:
-  - remoteproc: imx-rproc: Fix IMX_REMOTEPROC configuration
-    https://git.kernel.org/andersson/remoteproc/c/1cd6239426a4
-
-You are awesome, thank you!
---
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
 
