@@ -2,111 +2,91 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
+X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA8E8C2B9F4
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 14 Jun 2021 19:15:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09814C48BE8
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 14 Jun 2021 20:40:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A470E61076
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 14 Jun 2021 19:15:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E15616124B
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 14 Jun 2021 20:40:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233846AbhFNTRr (ORCPT
+        id S235114AbhFNUnA (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 14 Jun 2021 15:17:47 -0400
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:37582 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233169AbhFNTRq (ORCPT
+        Mon, 14 Jun 2021 16:43:00 -0400
+Received: from so254-9.mailgun.net ([198.61.254.9]:24019 "EHLO
+        so254-9.mailgun.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234068AbhFNUnA (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 14 Jun 2021 15:17:46 -0400
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 15EJFOB8042719;
-        Mon, 14 Jun 2021 14:15:24 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1623698124;
-        bh=45zAPLvQCJnaXG/Xt6NAJCtou400q1d7LTyzDd2Q70c=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=AG0VBXIdeICzBJk0cSMUut2tcmYZKRpgYlYEI9/EGxBReEfvo6lf1mpvTKao+AM2c
-         8Qgsy4smY61YxETRYJ98jSqV13KjQHdb5wVoAmRcwP+LaHUn9V53Na18f1l1eSjOYY
-         +1oZBeqW7lxnV0JYdQVz0WnXJf4Jm5nOkVY/wjNI=
-Received: from DFLE112.ent.ti.com (dfle112.ent.ti.com [10.64.6.33])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 15EJFOmF039932
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 14 Jun 2021 14:15:24 -0500
-Received: from DFLE112.ent.ti.com (10.64.6.33) by DFLE112.ent.ti.com
- (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2176.2; Mon, 14
- Jun 2021 14:15:24 -0500
-Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE112.ent.ti.com
- (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2176.2 via
- Frontend Transport; Mon, 14 Jun 2021 14:15:24 -0500
-Received: from [10.250.35.153] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id 15EJFNau072913;
-        Mon, 14 Jun 2021 14:15:23 -0500
-Subject: Re: [RFC PATCH] dt-bindings: hwlock: sun6i: Fix various warnings in
- binding
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-CC:     Wilken Gottwalt <wilken.gottwalt@posteo.net>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Maxime Ripard <mripard@kernel.org>,
-        Chen-Yu Tsai <wens@csie.org>, <devicetree@vger.kernel.org>,
-        "open list:REMOTE PROCESSOR (REMOTEPROC) SUBSYSTEM" 
-        <linux-remoteproc@vger.kernel.org>, <linux-sunxi@lists.linux.dev>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>
-References: <20210603144216.10327-1-s-anna@ti.com>
- <CAL_Jsq+mhJgFZniXYTVf5ZEM84APhm2w_ozLJg_pFtgz+W_wYw@mail.gmail.com>
-From:   Suman Anna <s-anna@ti.com>
-Message-ID: <cd7ab36e-76f3-3d13-6896-6d812c66b0e3@ti.com>
-Date:   Mon, 14 Jun 2021 14:15:23 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.8.1
-MIME-Version: 1.0
-In-Reply-To: <CAL_Jsq+mhJgFZniXYTVf5ZEM84APhm2w_ozLJg_pFtgz+W_wYw@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+        Mon, 14 Jun 2021 16:43:00 -0400
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1623703257; h=Message-Id: Date: Subject: Cc: To: From:
+ Sender; bh=wMvFvYlAu8/pSGZVYLtUuw7jWYqW1OvLE8HlOOTAm68=; b=g5BuH20LaiDP+sbGhhnpajlGZQQVs9YyVV6VGmz5MpPvJCo3CheCl6Y0wyLSo3CVK6qNRnQT
+ eioDFPbYxRWoKiv0+ioYtbtXZpNiGQcqZQXrU7L4BxHRjVm9CLYYr+ADz6If1wr3ePvqEHQZ
+ m9dSez20r1e85bkRILHNiR6zEaw=
+X-Mailgun-Sending-Ip: 198.61.254.9
+X-Mailgun-Sid: WyI4ZWZiZiIsICJsaW51eC1yZW1vdGVwcm9jQHZnZXIua2VybmVsLm9yZyIsICJiZTllNGEiXQ==
+Received: from smtp.codeaurora.org
+ (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
+ smtp-out-n07.prod.us-east-1.postgun.com with SMTP id
+ 60c7bed8e27c0cc77f4f0fd4 (version=TLS1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Mon, 14 Jun 2021 20:40:56
+ GMT
+Sender: sidgup=codeaurora.org@mg.codeaurora.org
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 5E68EC4323A; Mon, 14 Jun 2021 20:40:55 +0000 (UTC)
+Received: from sidgup-linux.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: sidgup)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 40E39C433D3;
+        Mon, 14 Jun 2021 20:40:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 40E39C433D3
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=sidgup@codeaurora.org
+From:   Siddharth Gupta <sidgup@codeaurora.org>
+To:     bjorn.andersson@linaro.org, ohad@wizery.com,
+        linux-remoteproc@vger.kernel.org
+Cc:     Siddharth Gupta <sidgup@codeaurora.org>,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, psodagud@codeaurora.org,
+        stable@vger.kernel.org
+Subject: [PATCH v2 0/4] remoteproc: core: Fixes for rproc cdev and add
+Date:   Mon, 14 Jun 2021 13:40:40 -0700
+Message-Id: <1623703244-26814-1-git-send-email-sidgup@codeaurora.org>
+X-Mailer: git-send-email 2.7.4
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi Bjorn,
+This patch series contains stability fixes and error handling for remoteproc.
 
-On 6/7/21 8:19 AM, Rob Herring wrote:
-> On Thu, Jun 3, 2021 at 9:42 AM Suman Anna <s-anna@ti.com> wrote:
->>
->> The allwinner,sun6i-a31-hwspinlock.yaml binding has a mismatched
->> $id and fails to compile the example due to undefined args specifier
->> values for clocks and resets. Fix both of these issues.
->>
->> Fixes: f9e784dcb63f ("dt-bindings: hwlock: add sun6i_hwspinlock")
->> Signed-off-by: Suman Anna <s-anna@ti.com>
->> ---
->> Hi Wilken,
->>
->> This fixes the warnings for now on linux-next, but I think the example
->> should be including sun6i-a31-ccu.h files instead to be accurate, and
->> those files are missing the definitions for CLK_BUS_SPINLOCK and
->> RST_BUS_SPINLOCK. Feel free to send a newer version or do an incremental
->> patch on top.
->>
->> regards
->> Suman
->>
->>  .../bindings/hwlock/allwinner,sun6i-a31-hwspinlock.yaml      | 5 ++++-
->>  1 file changed, 4 insertions(+), 1 deletion(-)
-> 
-> Acked-by: Rob Herring <robh@kernel.org>
-> 
+The changes included in this series do the following:
+Patch 1: Fixes the creation of the rproc character device.
+Patch 2: Validates rproc as the first step of rproc_add().
+Patch 3: Fixes the rproc cdev remove and the order of dev_del() and cdev_del().
+Patch 4: Adds error handling in rproc_add().
 
-Gentle ping, can you pick up this patch and the remoteproc pas binding
-indentations fixes please so that linux-next is sane w.r.t these?
+v1 -> v2:
+- Added extra patch which addresses Bjorn's comments on patch 3
+  from v1.
+- Fixed commit text for patch 2 (s/calling making/making).
 
-regards
-Suman
+Siddharth Gupta (4):
+  remoteproc: core: Move cdev add before device add
+  remoteproc: core: Move validate before device add
+  remoteproc: core: Fix cdev remove and rproc del
+  remoteproc: core: Cleanup device in case of failure
+
+ 0000-cover-letter.patch.backup       | 26 ++++++++++++++++++++++++++
+ drivers/remoteproc/remoteproc_cdev.c |  2 +-
+ drivers/remoteproc/remoteproc_core.c | 27 ++++++++++++++++++---------
+ 3 files changed, 45 insertions(+), 10 deletions(-)
+ create mode 100644 0000-cover-letter.patch.backup
+
+-- 
+Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
+
