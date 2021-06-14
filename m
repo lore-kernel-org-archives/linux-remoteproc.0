@@ -2,94 +2,111 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-17.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C44BC48BE6
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 14 Jun 2021 16:51:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA8E8C2B9F4
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 14 Jun 2021 19:15:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 615FB611C1
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 14 Jun 2021 16:51:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A470E61076
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 14 Jun 2021 19:15:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235155AbhFNQxC (ORCPT
+        id S233846AbhFNTRr (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 14 Jun 2021 12:53:02 -0400
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:22468 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S235092AbhFNQxB (ORCPT
+        Mon, 14 Jun 2021 15:17:47 -0400
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:37582 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233169AbhFNTRq (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 14 Jun 2021 12:53:01 -0400
-Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 15EGmDJW015215;
-        Mon, 14 Jun 2021 18:50:44 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=from : to : cc :
- subject : date : message-id : mime-version : content-type; s=selector1;
- bh=/9D3/0H3bHA9sU2AK/C1nUebkqDvEpgx+D4YIfVFv5s=;
- b=KvkMyXtJRXZMcLaPnOzP5r1xVlPZv81gXFTvMuN6BIdhP5clixs7x+xB2gjdqk5inIjs
- TY6VTB9E9uFPKutcvLNtSJrqJFe30MLW9UUAXIoPcvZxVZLHnOK1eOLki956UlguXFBR
- x4fDRtMRppp+aIndW+8XiDRHIvptum2XNMlwWr/n/R796B4BPd4eVhDtVm5JFjvwTrYZ
- u1U81vE6582HxHwqpVMdU3xWsXBHdF+sm3CdnU2f2ILoee05v9VKrV9cQfPmbC1wB7eM
- 5qskzf3jo/6GqY1cVR9uV112QbA0sZjc5IxSfhpYszhKOMD2sBfMuUaNtPTQVJhuSGXX dg== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 3963682q6y-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 14 Jun 2021 18:50:44 +0200
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 1DF70100034;
-        Mon, 14 Jun 2021 18:50:42 +0200 (CEST)
-Received: from Webmail-eu.st.com (sfhdag2node3.st.com [10.75.127.6])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 0B58221CE24;
-        Mon, 14 Jun 2021 18:50:42 +0200 (CEST)
-Received: from localhost (10.75.127.46) by SFHDAG2NODE3.st.com (10.75.127.6)
- with Microsoft SMTP Server (TLS) id 15.0.1497.2; Mon, 14 Jun 2021 18:50:41
- +0200
-From:   Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-To:     Rob Herring <robh@kernel.org>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>
-CC:     <devicetree@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-Subject: [PATCH 0/2] Add new IPCC mailbox to support the coprocessor detach on some stm32mp15x boards
-Date:   Mon, 14 Jun 2021 18:49:38 +0200
-Message-ID: <20210614164940.27153-1-arnaud.pouliquen@foss.st.com>
-X-Mailer: git-send-email 2.17.1
+        Mon, 14 Jun 2021 15:17:46 -0400
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 15EJFOB8042719;
+        Mon, 14 Jun 2021 14:15:24 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1623698124;
+        bh=45zAPLvQCJnaXG/Xt6NAJCtou400q1d7LTyzDd2Q70c=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=AG0VBXIdeICzBJk0cSMUut2tcmYZKRpgYlYEI9/EGxBReEfvo6lf1mpvTKao+AM2c
+         8Qgsy4smY61YxETRYJ98jSqV13KjQHdb5wVoAmRcwP+LaHUn9V53Na18f1l1eSjOYY
+         +1oZBeqW7lxnV0JYdQVz0WnXJf4Jm5nOkVY/wjNI=
+Received: from DFLE112.ent.ti.com (dfle112.ent.ti.com [10.64.6.33])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 15EJFOmF039932
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 14 Jun 2021 14:15:24 -0500
+Received: from DFLE112.ent.ti.com (10.64.6.33) by DFLE112.ent.ti.com
+ (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2176.2; Mon, 14
+ Jun 2021 14:15:24 -0500
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE112.ent.ti.com
+ (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2176.2 via
+ Frontend Transport; Mon, 14 Jun 2021 14:15:24 -0500
+Received: from [10.250.35.153] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id 15EJFNau072913;
+        Mon, 14 Jun 2021 14:15:23 -0500
+Subject: Re: [RFC PATCH] dt-bindings: hwlock: sun6i: Fix various warnings in
+ binding
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+CC:     Wilken Gottwalt <wilken.gottwalt@posteo.net>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Maxime Ripard <mripard@kernel.org>,
+        Chen-Yu Tsai <wens@csie.org>, <devicetree@vger.kernel.org>,
+        "open list:REMOTE PROCESSOR (REMOTEPROC) SUBSYSTEM" 
+        <linux-remoteproc@vger.kernel.org>, <linux-sunxi@lists.linux.dev>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>
+References: <20210603144216.10327-1-s-anna@ti.com>
+ <CAL_Jsq+mhJgFZniXYTVf5ZEM84APhm2w_ozLJg_pFtgz+W_wYw@mail.gmail.com>
+From:   Suman Anna <s-anna@ti.com>
+Message-ID: <cd7ab36e-76f3-3d13-6896-6d812c66b0e3@ti.com>
+Date:   Mon, 14 Jun 2021 14:15:23 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.8.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.75.127.46]
-X-ClientProxiedBy: SFHDAG2NODE2.st.com (10.75.127.5) To SFHDAG2NODE3.st.com
- (10.75.127.6)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.391,18.0.761
- definitions=2021-06-14_10:2021-06-14,2021-06-14 signatures=0
+In-Reply-To: <CAL_Jsq+mhJgFZniXYTVf5ZEM84APhm2w_ozLJg_pFtgz+W_wYw@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Purpose:
-  Add the IPCC channel 4 as "detach" mailbox to support the remoteproc the feature added in [1].
+Hi Bjorn,
 
-  The enable of this feature is a design choice. As consequence, the new mbox is declared
-  only for stm32mp157c-ed1 & stm32mp15x-dkx boards maintained by ST Microelectronics.
+On 6/7/21 8:19 AM, Rob Herring wrote:
+> On Thu, Jun 3, 2021 at 9:42 AM Suman Anna <s-anna@ti.com> wrote:
+>>
+>> The allwinner,sun6i-a31-hwspinlock.yaml binding has a mismatched
+>> $id and fails to compile the example due to undefined args specifier
+>> values for clocks and resets. Fix both of these issues.
+>>
+>> Fixes: f9e784dcb63f ("dt-bindings: hwlock: add sun6i_hwspinlock")
+>> Signed-off-by: Suman Anna <s-anna@ti.com>
+>> ---
+>> Hi Wilken,
+>>
+>> This fixes the warnings for now on linux-next, but I think the example
+>> should be including sun6i-a31-ccu.h files instead to be accurate, and
+>> those files are missing the definitions for CLK_BUS_SPINLOCK and
+>> RST_BUS_SPINLOCK. Feel free to send a newer version or do an incremental
+>> patch on top.
+>>
+>> regards
+>> Suman
+>>
+>>  .../bindings/hwlock/allwinner,sun6i-a31-hwspinlock.yaml      | 5 ++++-
+>>  1 file changed, 4 insertions(+), 1 deletion(-)
+> 
+> Acked-by: Rob Herring <robh@kernel.org>
+> 
 
-Aim:
-  Allow to send to the remote processor a HW signal on IPCC channel 4 when user space requests
-  to detach the main processor from the remote processor (e.g. a reboot of the  Linux processor
-  on a crash).
+Gentle ping, can you pick up this patch and the remoteproc pas binding
+indentations fixes please so that linux-next is sane w.r.t these?
 
-[1] https://patchwork.ozlabs.org/project/devicetree-bindings/cover/20210331073347.8293-1-arnaud.pouliquen@foss.st.com/
-
-Arnaud Pouliquen (2):
-  ARM: dts: stm32: Add coprocessor detach mbox on stm32mp157c-ed1 board
-  ARM: dts: stm32: Add coprocessor detach mbox on stm32mp15x-dkx boards
-
- arch/arm/boot/dts/stm32mp157c-ed1.dts  | 4 ++--
- arch/arm/boot/dts/stm32mp15xx-dkx.dtsi | 4 ++--
- 2 files changed, 4 insertions(+), 4 deletions(-)
-
--- 
-2.17.1
-
+regards
+Suman
