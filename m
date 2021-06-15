@@ -2,72 +2,115 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68A38C2B9F4
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 14 Jun 2021 21:30:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9DDAC2B9F4
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 15 Jun 2021 02:23:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4CADE6100B
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 14 Jun 2021 21:30:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8026161153
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 15 Jun 2021 02:23:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234935AbhFNVcG (ORCPT
+        id S231310AbhFOCZV (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 14 Jun 2021 17:32:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33036 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S234042AbhFNVcG (ORCPT <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 14 Jun 2021 17:32:06 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPS id 494E461245;
-        Mon, 14 Jun 2021 21:30:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1623706203;
-        bh=RCrHbkWiqyZlL+G9v2Hk1WteEGOIYxjGpRKfBHHsB2A=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=KEhV1n+98DhtviZmY1kRFyiLbxNw2/mWZVGLa0uGEiSTC4QcngJaXg7DqFhIEzs+1
-         GUKXWVKWtIGjb8P+zbUlkaV8+yNsQhrYvJff/M5/VqoSLReOPUBUpjA5rdZUJABs6i
-         1/Rj84rDMOvQck65/2+9PWcFPdMe2AtHCAHkMH1XHSQo4OVbu+d9VwBxxJuZpH06l8
-         V37JnciukYDiS/rIDf68grWEDWGtB/HEU8AwtWSP5D+clOigu9hWXcVzGDinWC1uBI
-         myMgURuUzC7ARB5BIOb3YRBodIQeWkTyv67usNa/owjjUza9jBoyEWCynrTHf/Y8UB
-         k9NqEIp4ETLlw==
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] dt-bindings: remoteproc: qcom: pas: Fix indentation warnings
-From:   patchwork-bot+linux-remoteproc@kernel.org
-Message-Id: <162370620322.27129.546254612474662487.git-patchwork-notify@kernel.org>
-Date:   Mon, 14 Jun 2021 21:30:03 +0000
-References: <20210603142639.8335-1-s-anna@ti.com>
-In-Reply-To: <20210603142639.8335-1-s-anna@ti.com>
-To:     Suman Anna <s-anna@ti.com>
-Cc:     linux-remoteproc@vger.kernel.org
+        Mon, 14 Jun 2021 22:25:21 -0400
+Received: from so254-9.mailgun.net ([198.61.254.9]:14654 "EHLO
+        so254-9.mailgun.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229743AbhFOCZV (ORCPT
+        <rfc822;linux-remoteproc@vger.kernel.org>);
+        Mon, 14 Jun 2021 22:25:21 -0400
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1623723797; h=References: In-Reply-To: Message-Id: Date:
+ Subject: Cc: To: From: Sender;
+ bh=Fh3LQYTuFAvNjhbMx7475BUc/YgZsqQM5Z8jXNUrVGQ=; b=gk86Pk9Y5rLUlRfmKOS2AnuSJfbLjhUBxZKecEyBRvjrWyrAKJ+W+99kePRQUdOssPzdeIn8
+ pRCcLSsgPEniSyaBW+53U6e77rXKhPqsL6wamYwJHeg1sWBdmVGZZ8WccxLWqS8m077pqbIq
+ Fkn46sVfZqlT1xXa5wk+I0Yy+IQ=
+X-Mailgun-Sending-Ip: 198.61.254.9
+X-Mailgun-Sid: WyI4ZWZiZiIsICJsaW51eC1yZW1vdGVwcm9jQHZnZXIua2VybmVsLm9yZyIsICJiZTllNGEiXQ==
+Received: from smtp.codeaurora.org
+ (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
+ smtp-out-n01.prod.us-west-2.postgun.com with SMTP id
+ 60c80ea08491191eb3f5d642 (version=TLS1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Tue, 15 Jun 2021 02:21:20
+ GMT
+Sender: sidgup=codeaurora.org@mg.codeaurora.org
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id A484AC43217; Tue, 15 Jun 2021 02:21:20 +0000 (UTC)
+Received: from sidgup-linux.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: sidgup)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id AFC35C433D3;
+        Tue, 15 Jun 2021 02:21:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org AFC35C433D3
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=sidgup@codeaurora.org
+From:   Siddharth Gupta <sidgup@codeaurora.org>
+To:     bjorn.andersson@linaro.org, ohad@wizery.com,
+        linux-remoteproc@vger.kernel.org
+Cc:     Siddharth Gupta <sidgup@codeaurora.org>,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, psodagud@codeaurora.org,
+        stable@vger.kernel.org
+Subject: [PATCH v3 1/4] remoteproc: core: Move cdev add before device add
+Date:   Mon, 14 Jun 2021 19:21:08 -0700
+Message-Id: <1623723671-5517-2-git-send-email-sidgup@codeaurora.org>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1623723671-5517-1-git-send-email-sidgup@codeaurora.org>
+References: <1623723671-5517-1-git-send-email-sidgup@codeaurora.org>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hello:
+When cdev_add is called after device_add has been called there is no
+way for the userspace to know about the addition of a cdev as cdev_add
+itself doesn't trigger a uevent notification, or for the kernel to
+know about the change to devt. This results in two problems:
+ - mknod is never called for the cdev and hence no cdev appears on
+   devtmpfs.
+ - sysfs links to the new cdev are not established.
 
-This patch was applied to andersson/remoteproc.git (refs/heads/for-next):
+The cdev needs to be added and devt assigned before device_add() is
+called in order for the relevant sysfs and devtmpfs entries to be
+created and the uevent to be properly populated.
 
-On Thu, 3 Jun 2021 09:26:39 -0500 you wrote:
-> The list indentation should always be 2 spaces more than the preceding
-> keyword. A few of the items are only using 1 space, and resulting in
-> warnings with dt_binding_check. Fix these.
-> 
-> Fixes: cf107e98d024 ("dt-bindings: remoteproc: qcom: pas: Convert binding to YAML")
-> Signed-off-by: Suman Anna <s-anna@ti.com>
-> 
-> [...]
+Signed-off-by: Siddharth Gupta <sidgup@codeaurora.org>
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+---
+ drivers/remoteproc/remoteproc_core.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-Here is the summary with links:
-  - dt-bindings: remoteproc: qcom: pas: Fix indentation warnings
-    https://git.kernel.org/andersson/remoteproc/c/30da589dba53
-
-You are awesome, thank you!
---
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index 6348aaa..9ad8c5f 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -2333,6 +2333,11 @@ int rproc_add(struct rproc *rproc)
+ 	struct device *dev = &rproc->dev;
+ 	int ret;
+ 
++	/* add char device for this remoteproc */
++	ret = rproc_char_device_add(rproc);
++	if (ret < 0)
++		return ret;
++
+ 	ret = device_add(dev);
+ 	if (ret < 0)
+ 		return ret;
+@@ -2346,11 +2351,6 @@ int rproc_add(struct rproc *rproc)
+ 	/* create debugfs entries */
+ 	rproc_create_debug_dir(rproc);
+ 
+-	/* add char device for this remoteproc */
+-	ret = rproc_char_device_add(rproc);
+-	if (ret < 0)
+-		return ret;
+-
+ 	/* if rproc is marked always-on, request it to boot */
+ 	if (rproc->auto_boot) {
+ 		ret = rproc_trigger_auto_boot(rproc);
+-- 
+Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
 
