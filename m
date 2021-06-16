@@ -2,306 +2,243 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92CBFC48BE6
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 16 Jun 2021 17:16:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2550AC49EC8
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 16 Jun 2021 18:42:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7C09B6105A
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 16 Jun 2021 17:16:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 13BA5613F1
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 16 Jun 2021 18:42:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231374AbhFPRSy (ORCPT
+        id S231985AbhFPSoI (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 16 Jun 2021 13:18:54 -0400
-Received: from mo4-p01-ob.smtp.rzone.de ([85.215.255.50]:35312 "EHLO
-        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231405AbhFPRSx (ORCPT
-        <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 16 Jun 2021 13:18:53 -0400
-ARC-Seal: i=1; a=rsa-sha256; t=1623863626; cv=none;
-    d=strato.com; s=strato-dkim-0002;
-    b=tFAoIyJpluUM1HCZZzgLY5TY44fZU3rqhoyEReXlUfT6U/ZZ00+cIju4Rpnvc48fGc
-    H8P27Kft1pxKFD1FZJD0UojlhV/3GZmjA9JvkbihdauxFGOqnM0evZ8vgG7SiV5mdnQE
-    CIsogcSiqn1Ok02ZBSb4qWbhjYNtzFCVRJFl6M6vvXSZbTnPv203pwz2Kyc7JQhEiLaC
-    2SQd0EIeHhDRRbC0aoaS/9xgKilAMKr+gYfEoeSGWjXSoet8dagoiJBq7n8LzvBC8KoC
-    l2x364+oAAhFmiUB09qdMF4b8JHA0sa3VzobFXahMx2+6r7lXa0K0DBqBCTQpVONbAFT
-    XaZw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1623863626;
-    s=strato-dkim-0002; d=strato.com;
-    h=In-Reply-To:References:Message-ID:Subject:Cc:To:From:Date:Cc:Date:
-    From:Subject:Sender;
-    bh=RDg1xSQ6mX0ylsSTt2fF3oHZQADxjAmoO8Kg/tTJSiY=;
-    b=ObmqocqlpKqFqf/ry4MMzME9NYN2lkXgBDm30X2cJ+/EwncafhgyDSLUfQmbX46/+B
-    x6O8POCgwf7xvb7hxiRSwGyZnaWGVU7YOUMPtcN0FeP23CJlZ0asmhB3T3/hT6v3bHDQ
-    fCB47JJoMXqhNGEU46mV3j+rU2vSoUB42pitYeP1AtkCqtggd4x2gtt6AvcpmjDF6dez
-    60tOcv+wcWOhLWmb/fIvBt/jf5Xrb0b+wwqxLMhR51f7uA+ra1+bT+3om4zQ+FRDdCkR
-    r0CYZmmHQy8VnUz8rfLs2f0wkrRhPaFwP+rweUq/b8J3TL1n+VHh8oNEfl6I2fM1jfH9
-    Qq7A==
-ARC-Authentication-Results: i=1; strato.com;
-    dkim=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1623863626;
-    s=strato-dkim-0002; d=gerhold.net;
-    h=In-Reply-To:References:Message-ID:Subject:Cc:To:From:Date:Cc:Date:
-    From:Subject:Sender;
-    bh=RDg1xSQ6mX0ylsSTt2fF3oHZQADxjAmoO8Kg/tTJSiY=;
-    b=kRnCmt3lQ955BKBXGoZQkjftJ0ColV+KUz38afNjzoZGjYeQ49qTmDY3f431c/oz+C
-    kTuMAdcZZac+kdFXBAlXEedt2r3NEh/u1yGu8RVZ+Ue9qOV8aT0le4VDi+JsH9QLE7Gt
-    1D7LQoN9fZF/3J8hZnzPSGEoyQqGTGTHF1gLhH9AljW4rS6MQOIN+pemoFNEUx0YV64I
-    6lZy+0ybYjCxTkAcrgeOVTnyh9TNQoR+K4c2lbtIHm/coQrZAO3zEBpsXeXivbGNVCMH
-    tYU3PgScx+RKtQmKsN9lvHMB5dlNX4CTXOTHrPA1LAGWJiUlCTvLYKYz7IiYdkLyu4Rr
-    3y2g==
-Authentication-Results: strato.com;
-    dkim=none
-X-RZG-AUTH: ":P3gBZUipdd93FF5ZZvYFPugejmSTVR2nRPhVOQ/OcYgojyw4j34+u26zEodhPgRDZ8nxIc3GBg=="
-X-RZG-CLASS-ID: mo00
-Received: from gerhold.net
-    by smtp.strato.de (RZmta 47.27.2 DYNA|AUTH)
-    with ESMTPSA id y01375x5GHDjZg5
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
-        (Client did not present a certificate);
-    Wed, 16 Jun 2021 19:13:45 +0200 (CEST)
-Date:   Wed, 16 Jun 2021 19:13:41 +0200
-From:   Stephan Gerhold <stephan@gerhold.net>
-To:     Loic Poulain <loic.poulain@linaro.org>
-Cc:     "David S. Miller" <davem@davemloft.net>,
+        Wed, 16 Jun 2021 14:44:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42396 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S231892AbhFPSoD (ORCPT <rfc822;linux-remoteproc@vger.kernel.org>);
+        Wed, 16 Jun 2021 14:44:03 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 3914E610A3;
+        Wed, 16 Jun 2021 18:41:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1623868917;
+        bh=A/u+qgoYDIfPJH2nR7TN1MVSs3c34aZySloJGmF3DxI=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=XW7Y4X4BrA5t9ijeAkMM5QcCdVYTcPYigARzxXFbf+hvb/uvp+9Mh4a34b6q7DC/i
+         sftLrmCBohcI5jLH7tRhCQG0oRbDHxXeJk4RnxcA6Ul46XtSEkqfRY8t/XGFaIFk86
+         qALO4rJMHfSIQDqcWwSZq03gCR35QANxOrYdPBiBe/2o4ooVhYHO++ff/Wjl3yD1k0
+         5+AqyA7gDeMM/vaNpWgsQ3+LVyhh+c7BqwX1vaXN+fU88HSnc2YCtVPrtUbPSvo8Oo
+         6qWAuSvjwilO69NivBQSK/Tx5fcLWTIvpS50NkVkCoknp6Umst4ITXs8YCSnSw0png
+         hRSa7JSohypWw==
+Date:   Wed, 16 Jun 2021 20:41:50 +0200
+From:   Wolfram Sang <wsa@kernel.org>
+To:     Rob Herring <robh@kernel.org>
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-ide@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-crypto@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, dmaengine@vger.kernel.org,
+        linux-i2c@vger.kernel.org, linux-iio@vger.kernel.org,
+        alsa-devel@alsa-project.org, iommu@lists.linux-foundation.org,
+        linux-media@vger.kernel.org, linux-mmc@vger.kernel.org,
+        netdev@vger.kernel.org, linux-can@vger.kernel.org,
+        linux-pci@vger.kernel.org, linux-phy@lists.infradead.org,
+        linux-gpio@vger.kernel.org, linux-pwm@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org, linux-riscv@lists.infradead.org,
+        linux-rtc@vger.kernel.org, linux-serial@vger.kernel.org,
+        linux-spi@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-usb@vger.kernel.org, linux-watchdog@vger.kernel.org,
+        Jens Axboe <axboe@kernel.dk>, Stephen Boyd <sboyd@kernel.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>, Vinod Koul <vkoul@kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Kamal Dasu <kdasu.kdev@gmail.com>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Marc Zyngier <maz@kernel.org>, Joerg Roedel <joro@8bytes.org>,
+        Jassi Brar <jassisinghbrar@gmail.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
         Jakub Kicinski <kuba@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Aleksander Morgado <aleksander@aleksander.es>,
-        Sergey Ryazanov <ryazanov.s.a@gmail.com>,
-        Johannes Berg <johannes.berg@intel.com>,
-        M Chetan Kumar <m.chetan.kumar@intel.com>,
+        Wolfgang Grandegger <wg@grandegger.com>,
+        Marc Kleine-Budde <mkl@pengutronix.de>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Vivien Didelot <vivien.didelot@gmail.com>,
+        Vladimir Oltean <olteanv@gmail.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>, Lee Jones <lee.jones@linaro.org>,
         Ohad Ben-Cohen <ohad@wizery.com>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Network Development <netdev@vger.kernel.org>,
-        linux-remoteproc@vger.kernel.org,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        phone-devel@vger.kernel.org,
-        open list <linux-kernel@vger.kernel.org>,
-        ~postmarketos/upstreaming@lists.sr.ht
-Subject: Re: [PATCH net-next 3/3] net: wwan: Allow WWAN drivers to provide
- blocking tx and poll function
-Message-ID: <YMoxRRNXLNPRBdhy@gerhold.net>
-References: <20210615133229.213064-1-stephan@gerhold.net>
- <20210615133229.213064-4-stephan@gerhold.net>
- <CAMZdPi8JuyqoF3GwJHcdXhdn0e7ks_f2WiUFpmn3E8HH7T_Gng@mail.gmail.com>
- <YMkkUM3fHcWhYhmV@gerhold.net>
- <CAMZdPi877Qu5F+mYqD0tAm5-gewpHHwpa2Xp7DAn8OM8rxVLMA@mail.gmail.com>
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Mark Brown <broonie@kernel.org>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>
+Subject: Re: [PATCH] dt-bindings: Drop redundant minItems/maxItems
+Message-ID: <YMpF7gkpbNQYX5EB@kunai>
+Mail-Followup-To: Wolfram Sang <wsa@kernel.org>,
+        Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-ide@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-crypto@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        dmaengine@vger.kernel.org, linux-i2c@vger.kernel.org,
+        linux-iio@vger.kernel.org, alsa-devel@alsa-project.org,
+        iommu@lists.linux-foundation.org, linux-media@vger.kernel.org,
+        linux-mmc@vger.kernel.org, netdev@vger.kernel.org,
+        linux-can@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-phy@lists.infradead.org, linux-gpio@vger.kernel.org,
+        linux-pwm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        linux-riscv@lists.infradead.org, linux-rtc@vger.kernel.org,
+        linux-serial@vger.kernel.org, linux-spi@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-watchdog@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
+        Vinod Koul <vkoul@kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Kamal Dasu <kdasu.kdev@gmail.com>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Thomas Gleixner <tglx@linutronix.de>, Marc Zyngier <maz@kernel.org>,
+        Joerg Roedel <joro@8bytes.org>,
+        Jassi Brar <jassisinghbrar@gmail.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Wolfgang Grandegger <wg@grandegger.com>,
+        Marc Kleine-Budde <mkl@pengutronix.de>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Vivien Didelot <vivien.didelot@gmail.com>,
+        Vladimir Oltean <olteanv@gmail.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+        Lee Jones <lee.jones@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Mark Brown <broonie@kernel.org>, Zhang Rui <rui.zhang@intel.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>
+References: <20210615191543.1043414-1-robh@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="Ul4MnuDBL/PvPlAZ"
 Content-Disposition: inline
-In-Reply-To: <CAMZdPi877Qu5F+mYqD0tAm5-gewpHHwpa2Xp7DAn8OM8rxVLMA@mail.gmail.com>
+In-Reply-To: <20210615191543.1043414-1-robh@kernel.org>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Wed, Jun 16, 2021 at 11:28:46AM +0200, Loic Poulain wrote:
-> On Wed, 16 Jun 2021 at 00:06, Stephan Gerhold <stephan@gerhold.net> wrote:
-> >
-> > On Tue, Jun 15, 2021 at 11:24:41PM +0200, Loic Poulain wrote:
-> > > On Tue, 15 Jun 2021 at 15:34, Stephan Gerhold <stephan@gerhold.net> wrote:
-> > > >
-> > > > At the moment, the WWAN core provides wwan_port_txon/off() to implement
-> > > > blocking writes. The tx() port operation should not block, instead
-> > > > wwan_port_txon/off() should be called when the TX queue is full or has
-> > > > free space again.
-> > > >
-> > > > However, in some cases it is not straightforward to make use of that
-> > > > functionality. For example, the RPMSG API used by rpmsg_wwan_ctrl.c
-> > > > does not provide any way to be notified when the TX queue has space
-> > > > again. Instead, it only provides the following operations:
-> > > >
-> > > >   - rpmsg_send(): blocking write (wait until there is space)
-> > > >   - rpmsg_trysend(): non-blocking write (return error if no space)
-> > > >   - rpmsg_poll(): set poll flags depending on TX queue state
-> > > >
-> > > > Generally that's totally sufficient for implementing a char device,
-> > > > but it does not fit well to the currently provided WWAN port ops.
-> > > >
-> > > > Most of the time, using the non-blocking rpmsg_trysend() in the
-> > > > WWAN tx() port operation works just fine. However, with high-frequent
-> > > > writes to the char device it is possible to trigger a situation
-> > > > where this causes issues. For example, consider the following
-> > > > (somewhat unrealistic) example:
-> > > >
-> > > >  # dd if=/dev/zero bs=1000 of=/dev/wwan0p2QMI
-> > > >  dd: error writing '/dev/wwan0p2QMI': Resource temporarily unavailable
-> > > >  1+0 records out
-> > > >
-> > > > This fails immediately after writing the first record. It's likely
-> > > > only a matter of time until this triggers issues for some real application
-> > > > (e.g. ModemManager sending a lot of large QMI packets).
-> > > >
-> > > > The rpmsg_char device does not have this problem, because it uses
-> > > > rpmsg_trysend() and rpmsg_poll() to support non-blocking operations.
-> > > > Make it possible to use the same in the RPMSG WWAN driver by extending
-> > > > the tx() operation with a "nonblock" parameter and adding an optional
-> > > > poll() callback. This integrates nicely with the RPMSG API and does
-> > > > not break other WWAN drivers.
-> > > >
-> > > > With these changes, the dd example above blocks instead of exiting
-> > > > with an error.
-> > > >
-> > > > Cc: Loic Poulain <loic.poulain@linaro.org>
-> > > > Signed-off-by: Stephan Gerhold <stephan@gerhold.net>
-> > > > ---
-> > > > Note that rpmsg_poll() is an optional callback currently only implemented
-> > > > by the qcom_smd RPMSG provider. However, it should be easy to implement
-> > > > this for other RPMSG providers when needed.
-> > > >
-> > > > Another potential solution suggested by Loic Poulain in [1] is to always
-> > > > use the blocking rpmsg_send() from a workqueue/kthread and disable TX
-> > > > until it is done. I think this could also work (perhaps a bit more
-> > > > difficult to implement) but the main disadvantage is that I don't see
-> > > > a way to return any kind of error to the client with this approach.
-> > > > I assume we return immediately from the write() to the char device
-> > > > after scheduling the rpmsg_send(), so we already reported success
-> > > > when rpmsg_send() returns.
-> > > >
-> > > > At the end all that matters to me is that it works properly, so I'm
-> > > > open for any other suggestions. :)
-> > > >
-> > > > [1]: https://lore.kernel.org/linux-arm-msm/CAMZdPi_-Qa=JnThHs_h-144dAfSAjF5s+QdBawdXZ3kk8Mx8ng@mail.gmail.com/
-> > > > ---
-> > > >  drivers/net/wwan/iosm/iosm_ipc_port.c |  3 ++-
-> > > >  drivers/net/wwan/mhi_wwan_ctrl.c      |  3 ++-
-> > > >  drivers/net/wwan/rpmsg_wwan_ctrl.c    | 17 +++++++++++++++--
-> > > >  drivers/net/wwan/wwan_core.c          |  9 ++++++---
-> > > >  drivers/net/wwan/wwan_hwsim.c         |  3 ++-
-> > > >  include/linux/wwan.h                  | 13 +++++++++----
-> > > >  6 files changed, 36 insertions(+), 12 deletions(-)
-> > > >
-> > > > diff --git a/drivers/net/wwan/iosm/iosm_ipc_port.c b/drivers/net/wwan/iosm/iosm_ipc_port.c
-> > > > index beb944847398..2f874e41ceff 100644
-> > > > --- a/drivers/net/wwan/iosm/iosm_ipc_port.c
-> > > > +++ b/drivers/net/wwan/iosm/iosm_ipc_port.c
-> > > > @@ -31,7 +31,8 @@ static void ipc_port_ctrl_stop(struct wwan_port *port)
-> > > >  }
-> > > >
-> > > >  /* transfer control data to modem */
-> > > > -static int ipc_port_ctrl_tx(struct wwan_port *port, struct sk_buff *skb)
-> > > > +static int ipc_port_ctrl_tx(struct wwan_port *port, struct sk_buff *skb,
-> > > > +                           bool nonblock)
-> > > >  {
-> > > >         struct iosm_cdev *ipc_port = wwan_port_get_drvdata(port);
-> > > >
-> > > > diff --git a/drivers/net/wwan/mhi_wwan_ctrl.c b/drivers/net/wwan/mhi_wwan_ctrl.c
-> > > > index 1bc6b69aa530..9754f014d348 100644
-> > > > --- a/drivers/net/wwan/mhi_wwan_ctrl.c
-> > > > +++ b/drivers/net/wwan/mhi_wwan_ctrl.c
-> > > > @@ -139,7 +139,8 @@ static void mhi_wwan_ctrl_stop(struct wwan_port *port)
-> > > >         mhi_unprepare_from_transfer(mhiwwan->mhi_dev);
-> > > >  }
-> > > >
-> > > > -static int mhi_wwan_ctrl_tx(struct wwan_port *port, struct sk_buff *skb)
-> > > > +static int mhi_wwan_ctrl_tx(struct wwan_port *port, struct sk_buff *skb,
-> > > > +                           bool nonblock)
-> > > >  {
-> > > >         struct mhi_wwan_dev *mhiwwan = wwan_port_get_drvdata(port);
-> > > >         int ret;
-> > > > diff --git a/drivers/net/wwan/rpmsg_wwan_ctrl.c b/drivers/net/wwan/rpmsg_wwan_ctrl.c
-> > > > index de226cdb69fd..63f431eada39 100644
-> > > > --- a/drivers/net/wwan/rpmsg_wwan_ctrl.c
-> > > > +++ b/drivers/net/wwan/rpmsg_wwan_ctrl.c
-> > > > @@ -54,12 +54,16 @@ static void rpmsg_wwan_ctrl_stop(struct wwan_port *port)
-> > > >         rpwwan->ept = NULL;
-> > > >  }
-> > > >
-> > > > -static int rpmsg_wwan_ctrl_tx(struct wwan_port *port, struct sk_buff *skb)
-> > > > +static int rpmsg_wwan_ctrl_tx(struct wwan_port *port, struct sk_buff *skb,
-> > > > +                             bool nonblock)
-> > > >  {
-> > > >         struct rpmsg_wwan_dev *rpwwan = wwan_port_get_drvdata(port);
-> > > >         int ret;
-> > > >
-> > > > -       ret = rpmsg_trysend(rpwwan->ept, skb->data, skb->len);
-> > > > +       if (nonblock)
-> > > > +               ret = rpmsg_trysend(rpwwan->ept, skb->data, skb->len);
-> > > > +       else
-> > > > +               ret = rpmsg_send(rpwwan->ept, skb->data, skb->len);
-> > > >         if (ret)
-> > > >                 return ret;
-> > > >
-> > > > @@ -67,10 +71,19 @@ static int rpmsg_wwan_ctrl_tx(struct wwan_port *port, struct sk_buff *skb)
-> > > >         return 0;
-> > > >  }
-> > > >
-> > > > +static __poll_t rpmsg_wwan_ctrl_poll(struct wwan_port *port, struct file *filp,
-> > > > +                                    poll_table *wait)
-> > > > +{
-> > > > +       struct rpmsg_wwan_dev *rpwwan = wwan_port_get_drvdata(port);
-> > > > +
-> > > > +       return rpmsg_poll(rpwwan->ept, filp, wait);
-> > > > +}
-> > > > +
-> > > >  static const struct wwan_port_ops rpmsg_wwan_pops = {
-> > > >         .start = rpmsg_wwan_ctrl_start,
-> > > >         .stop = rpmsg_wwan_ctrl_stop,
-> > > >         .tx = rpmsg_wwan_ctrl_tx,
-> > > > +       .poll = rpmsg_wwan_ctrl_poll,
-> > > >  };
-> > > >
-> > > >  static struct device *rpmsg_wwan_find_parent(struct device *dev)
-> > > > diff --git a/drivers/net/wwan/wwan_core.c b/drivers/net/wwan/wwan_core.c
-> > > > index 7e728042fc41..c7fd0b897f87 100644
-> > > > --- a/drivers/net/wwan/wwan_core.c
-> > > > +++ b/drivers/net/wwan/wwan_core.c
-> > > > @@ -500,7 +500,8 @@ static void wwan_port_op_stop(struct wwan_port *port)
-> > > >         mutex_unlock(&port->ops_lock);
-> > > >  }
-> > > >
-> > > > -static int wwan_port_op_tx(struct wwan_port *port, struct sk_buff *skb)
-> > > > +static int wwan_port_op_tx(struct wwan_port *port, struct sk_buff *skb,
-> > > > +                          bool nonblock)
-> > > >  {
-> > > >         int ret;
-> > > >
-> > > > @@ -510,7 +511,7 @@ static int wwan_port_op_tx(struct wwan_port *port, struct sk_buff *skb)
-> > > >                 goto out_unlock;
-> > > >         }
-> > > >
-> > > > -       ret = port->ops->tx(port, skb);
-> > > > +       ret = port->ops->tx(port, skb, nonblock);
-> > > >
-> > > >  out_unlock:
-> > > >         mutex_unlock(&port->ops_lock);
-> > > > @@ -637,7 +638,7 @@ static ssize_t wwan_port_fops_write(struct file *filp, const char __user *buf,
-> > > >                 return -EFAULT;
-> > > >         }
-> > > >
-> > > > -       ret = wwan_port_op_tx(port, skb);
-> > > > +       ret = wwan_port_op_tx(port, skb, !!(filp->f_flags & O_NONBLOCK));
-> > > >         if (ret) {
-> > > >                 kfree_skb(skb);
-> > > >                 return ret;
-> > > > @@ -659,6 +660,8 @@ static __poll_t wwan_port_fops_poll(struct file *filp, poll_table *wait)
-> > > >                 mask |= EPOLLIN | EPOLLRDNORM;
-> > > >         if (!port->ops)
-> > > >                 mask |= EPOLLHUP | EPOLLERR;
-> > > > +       else if (port->ops->poll)
-> > > > +               mask |= port->ops->poll(port, filp, wait);
-> > >
-> > > I'm not sure it useful here because EPOLLOUT flag is already set above, right?
-> > >
-> >
-> > Oops, you're right - sorry! I thought the flags are inverted (only set
-> > if (is_write_blocked())), then it would have worked fine. :)
-> >
-> > I think this should be easy to fix though, I can just make the
-> >
-> >         if (!is_write_blocked(port))
-> >                 mask |= EPOLLOUT | EPOLLWRNORM;
-> >
-> > if statement conditional to (port->ops->poll == NULL). It only makes
-> > sense to supply the poll() op if the built-in write-blocking cannot be
-> > used easily (like in my case).
-> 
-> Yes, so maybe in that case poll ops should be renamed to something like tx_poll?
-> 
 
-Sounds good! I will rename it to tx_poll() in v2. :)
+--Ul4MnuDBL/PvPlAZ
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks!
-Stephan
+On Tue, Jun 15, 2021 at 01:15:43PM -0600, Rob Herring wrote:
+> If a property has an 'items' list, then a 'minItems' or 'maxItems' with t=
+he
+> same size as the list is redundant and can be dropped. Note that is DT
+> schema specific behavior and not standard json-schema behavior. The tooli=
+ng
+> will fixup the final schema adding any unspecified minItems/maxItems.
+>=20
+> This condition is partially checked with the meta-schema already, but
+> only if both 'minItems' and 'maxItems' are equal to the 'items' length.
+> An improved meta-schema is pending.
+>=20
+> Cc: Jens Axboe <axboe@kernel.dk>
+> Cc: Stephen Boyd <sboyd@kernel.org>
+> Cc: Herbert Xu <herbert@gondor.apana.org.au>
+> Cc: "David S. Miller" <davem@davemloft.net>
+> Cc: David Airlie <airlied@linux.ie>
+> Cc: Daniel Vetter <daniel@ffwll.ch>
+> Cc: Vinod Koul <vkoul@kernel.org>
+> Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> Cc: Kamal Dasu <kdasu.kdev@gmail.com>
+> Cc: Jonathan Cameron <jic23@kernel.org>
+> Cc: Lars-Peter Clausen <lars@metafoo.de>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Marc Zyngier <maz@kernel.org>
+> Cc: Joerg Roedel <joro@8bytes.org>
+> Cc: Jassi Brar <jassisinghbrar@gmail.com>
+> Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
+> Cc: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+> Cc: Ulf Hansson <ulf.hansson@linaro.org>
+> Cc: Jakub Kicinski <kuba@kernel.org>
+> Cc: Wolfgang Grandegger <wg@grandegger.com>
+> Cc: Marc Kleine-Budde <mkl@pengutronix.de>
+> Cc: Andrew Lunn <andrew@lunn.ch>
+> Cc: Vivien Didelot <vivien.didelot@gmail.com>
+> Cc: Vladimir Oltean <olteanv@gmail.com>
+> Cc: Bjorn Helgaas <bhelgaas@google.com>
+> Cc: Kishon Vijay Abraham I <kishon@ti.com>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: "Uwe Kleine-K=C3=B6nig" <u.kleine-koenig@pengutronix.de>
+> Cc: Lee Jones <lee.jones@linaro.org>
+> Cc: Ohad Ben-Cohen <ohad@wizery.com>
+> Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
+> Cc: Philipp Zabel <p.zabel@pengutronix.de>
+> Cc: Paul Walmsley <paul.walmsley@sifive.com>
+> Cc: Palmer Dabbelt <palmer@dabbelt.com>
+> Cc: Albert Ou <aou@eecs.berkeley.edu>
+> Cc: Alessandro Zummo <a.zummo@towertech.it>
+> Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Cc: Mark Brown <broonie@kernel.org>
+> Cc: Zhang Rui <rui.zhang@intel.com>
+> Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
+> Cc: Wim Van Sebroeck <wim@linux-watchdog.org>
+> Cc: Guenter Roeck <linux@roeck-us.net>
+> Signed-off-by: Rob Herring <robh@kernel.org>
+
+Acked-by: Wolfram Sang <wsa@kernel.org> # for I2C
+
+
+--Ul4MnuDBL/PvPlAZ
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmDKRekACgkQFA3kzBSg
+KbbFdA/+J6slaN90bvqrl9Kylr+F1vWPHBVKSRdA0mnhK09uqqdE0YEx3nLRBJYG
+zGjhfQY+0UCubghvsI8mYBKj+jv5fkzM8D2Mr13GL5b+zVFOML1f24o8y9Fwsi6A
+qbgTfoI0FaRdGTd1ocYLkYtywYrM9XmSeG9QuXBLIufeQsnOspjtQQ+WYRNM4qzw
+Qa+FkuAJZPED0sG7wbpPkzaA4eNfoKn0YQNwk8tIDdl5qvrw6W0cZ6lhog5v5kPB
+c3gC2OJzR4fXzt+uA2rIWWF9rujLHaiWT0nWXSz93ViX9pZPZ77kDSK4xEz8h3Rr
+mRX25SXmSnOf3xLGGkw6fx86sT5dZ6HlhWbhHbXdGzeYBeCfrgXwgj3wHXlyHA5S
+jIgGUlAeT9uMSmv3lmSQ4Lx3tUvKupZ8zX9N6/ay+2kiIei931x+sP73627hNjwz
+Tnbj1JBDeNgP0Oukiq6xMGyT5VxQk1rgh0garZvFZoPVEr/ae1Z5A8/mNKSwhOVj
+4PRKHuz72zpDbx7LuMaG6EnY5fzhDSGVRCSIeNs4yRX1cnVbtEGbsI7yOmrUx+wl
+3kAkYFZYbin5oRO36gDyYg5ZUyFDy4s+Jh5a8kPFANPY2ToOS8Ssa1hFNu0SSgve
+uONICGgcQoHO4Jbvea809td91bvqtiCieKCCX19GqJa37ktj2Ww=
+=EWxK
+-----END PGP SIGNATURE-----
+
+--Ul4MnuDBL/PvPlAZ--
