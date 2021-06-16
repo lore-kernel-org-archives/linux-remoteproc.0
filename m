@@ -2,288 +2,191 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-17.4 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E2FFC48BE5
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 16 Jun 2021 09:19:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 211A8C48BE8
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 16 Jun 2021 09:32:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4EBE861107
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 16 Jun 2021 09:19:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E0D5D6128C
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 16 Jun 2021 09:32:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232210AbhFPJVx (ORCPT
+        id S231336AbhFPJet (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 16 Jun 2021 05:21:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39216 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231727AbhFPJVw (ORCPT
+        Wed, 16 Jun 2021 05:34:49 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:8312 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S231316AbhFPJet (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 16 Jun 2021 05:21:52 -0400
-Received: from mail-pl1-x62a.google.com (mail-pl1-x62a.google.com [IPv6:2607:f8b0:4864:20::62a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EC4DCC061767
-        for <linux-remoteproc@vger.kernel.org>; Wed, 16 Jun 2021 02:19:46 -0700 (PDT)
-Received: by mail-pl1-x62a.google.com with SMTP id u18so832597plc.0
-        for <linux-remoteproc@vger.kernel.org>; Wed, 16 Jun 2021 02:19:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=kPlAhH5NwHtkd7QRuZaAQDneGzyCnvuOWwqDYkreipQ=;
-        b=d1cdxgTVmHQ8vSHU6CQuC6D7FOcaN4RAGY/AKSUKANPKxFjiMvq+2d7vXm4MFvyMqY
-         iHSCrCkw53XV7cfDQeI4CSgVdnG/slT9uecRaDIaNcZcE0jEEIkyr+liwGbTclMf32Lz
-         3kc5gdxGpXHy9ibF2+/ruLay5caxWAcFMMGfGwzvZa99SDvF71KoPs20v16MbVVvNThn
-         e7EwX+SbjnEb1M90XqprBxwyjA14XWDsirVirt4oGZBalJ9HENtjL87hbzjicLT2er9q
-         bWUZ3tJ7F/QCXBpg03nc1u24/IA0SjImkjGOWEgtYQnRMOWOhZFD5RHuner0TXE9zzUh
-         vM9w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=kPlAhH5NwHtkd7QRuZaAQDneGzyCnvuOWwqDYkreipQ=;
-        b=IS8CuOPBxXddQVJfOAmahHfbAmJwYLb7oymVkPxlrKN6JSR0r/aR+24zB4XFNun/8M
-         rvbTsvf25L4dlEWx+6tMF87ScPsRew5xODzd0XeghaGYqZUvbjzsuHexjzIH9zFVuQ/I
-         8i52K34Gs4aSS6fWCicYt5b54dSCpbPodm1/IAAIvGZxhcAdUvOElsA1WszjHvhDOoQi
-         QRra3UjzX5YkvdJv4xi8hF85Dt1ElMnb/AVLNdNPPWsiIdXGh/ifi0iird7VOGf6PmBg
-         ML8/90ddtmK5Vmz4ECU0025YL1EJr94j+nDck6eXsbmOmP13ST9/+UI717+A7MCndzvW
-         oPMQ==
-X-Gm-Message-State: AOAM532AA/WcNt+x1coFP/MIwdddLLe6YX0Ru+bGf4Zg9i1VkfhVAqTR
-        iYQmTNPsC01BcADQ36m/Eo8WWP++hSYYKpfEsv2ccw==
-X-Google-Smtp-Source: ABdhPJwjB6l7t81zu3o2PHt0sQ07v6Dqz5kXjbEEJ1pXJG0cIRo8caGDMT7G0iqSMi8MlbtkFjcI3kFdFCuG+wVZP5Y=
-X-Received: by 2002:a17:90a:d590:: with SMTP id v16mr3926450pju.205.1623835186136;
- Wed, 16 Jun 2021 02:19:46 -0700 (PDT)
-MIME-Version: 1.0
-References: <20210615133229.213064-1-stephan@gerhold.net> <20210615133229.213064-4-stephan@gerhold.net>
- <CAMZdPi8JuyqoF3GwJHcdXhdn0e7ks_f2WiUFpmn3E8HH7T_Gng@mail.gmail.com> <YMkkUM3fHcWhYhmV@gerhold.net>
-In-Reply-To: <YMkkUM3fHcWhYhmV@gerhold.net>
-From:   Loic Poulain <loic.poulain@linaro.org>
-Date:   Wed, 16 Jun 2021 11:28:46 +0200
-Message-ID: <CAMZdPi877Qu5F+mYqD0tAm5-gewpHHwpa2Xp7DAn8OM8rxVLMA@mail.gmail.com>
-Subject: Re: [PATCH net-next 3/3] net: wwan: Allow WWAN drivers to provide
- blocking tx and poll function
-To:     Stephan Gerhold <stephan@gerhold.net>
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Aleksander Morgado <aleksander@aleksander.es>,
-        Sergey Ryazanov <ryazanov.s.a@gmail.com>,
-        Johannes Berg <johannes.berg@intel.com>,
-        M Chetan Kumar <m.chetan.kumar@intel.com>,
+        Wed, 16 Jun 2021 05:34:49 -0400
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 15G9SSdo008917;
+        Wed, 16 Jun 2021 11:32:41 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=selector1;
+ bh=4Mh82hbLJWcyFPjkRwL84Ww/o+yLB0D/vib4O8TJaSA=;
+ b=ElKDY8G6h8No/lRk7AbCCPzeV+0VBGG82cejKnDTD3znY06x6G9qaxFMBYHX9ru4Lbmb
+ l/IRC3zVq3LLYlXDRmBNJMYIJ0dAgPQONtI86ldn9EFde6cJ7NYnmBMLIEBDcK+R79iQ
+ 838Ij9Cwx3uiSwfn2L5rttsfCP7/3tgoaDk63TPx3zcHOpyi8/Mysq8qIe2U4q+pEopL
+ w9UPubu8kEX5HQ0bAplmWM2+Zwt74g+hUvCrSdc9mBn7XVctZYw2mT4t8UU5+gSzJt5q
+ L8fkvFGPJtsfd+kivhc/dM+wOngZkSD4cjZyhhaGlNwKR5mFXzkF3ALqIvsoPWVtavRu bg== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 396rb77fp6-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 16 Jun 2021 11:32:41 +0200
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id C96B010009A;
+        Wed, 16 Jun 2021 11:30:52 +0200 (CEST)
+Received: from Webmail-eu.st.com (sfhdag2node3.st.com [10.75.127.6])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id B1C0621BF7D;
+        Wed, 16 Jun 2021 11:30:52 +0200 (CEST)
+Received: from lmecxl0889.lme.st.com (10.75.127.49) by SFHDAG2NODE3.st.com
+ (10.75.127.6) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Wed, 16 Jun
+ 2021 11:30:52 +0200
+Subject: Re: [PATCH 3/4] rpmsg: ctrl: Add check on rpmsg device removability
+ from user space
+To:     Mathieu Poirier <mathieu.poirier@linaro.org>
+CC:     Bjorn Andersson <bjorn.andersson@linaro.org>,
         Ohad Ben-Cohen <ohad@wizery.com>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Network Development <netdev@vger.kernel.org>,
-        linux-remoteproc@vger.kernel.org,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        phone-devel@vger.kernel.org,
-        open list <linux-kernel@vger.kernel.org>,
-        ~postmarketos/upstreaming@lists.sr.ht
-Content-Type: text/plain; charset="UTF-8"
+        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>
+References: <20210604091406.15901-1-arnaud.pouliquen@foss.st.com>
+ <20210604091406.15901-4-arnaud.pouliquen@foss.st.com>
+ <20210615174634.GB604521@p14s>
+From:   Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
+Message-ID: <b7dc5207-643b-b5e6-2bee-106b2eb87555@foss.st.com>
+Date:   Wed, 16 Jun 2021 11:30:51 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.8.1
+MIME-Version: 1.0
+In-Reply-To: <20210615174634.GB604521@p14s>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.75.127.49]
+X-ClientProxiedBy: SFHDAG2NODE3.st.com (10.75.127.6) To SFHDAG2NODE3.st.com
+ (10.75.127.6)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.391,18.0.761
+ definitions=2021-06-16_07:2021-06-15,2021-06-16 signatures=0
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Wed, 16 Jun 2021 at 00:06, Stephan Gerhold <stephan@gerhold.net> wrote:
->
-> On Tue, Jun 15, 2021 at 11:24:41PM +0200, Loic Poulain wrote:
-> > On Tue, 15 Jun 2021 at 15:34, Stephan Gerhold <stephan@gerhold.net> wrote:
-> > >
-> > > At the moment, the WWAN core provides wwan_port_txon/off() to implement
-> > > blocking writes. The tx() port operation should not block, instead
-> > > wwan_port_txon/off() should be called when the TX queue is full or has
-> > > free space again.
-> > >
-> > > However, in some cases it is not straightforward to make use of that
-> > > functionality. For example, the RPMSG API used by rpmsg_wwan_ctrl.c
-> > > does not provide any way to be notified when the TX queue has space
-> > > again. Instead, it only provides the following operations:
-> > >
-> > >   - rpmsg_send(): blocking write (wait until there is space)
-> > >   - rpmsg_trysend(): non-blocking write (return error if no space)
-> > >   - rpmsg_poll(): set poll flags depending on TX queue state
-> > >
-> > > Generally that's totally sufficient for implementing a char device,
-> > > but it does not fit well to the currently provided WWAN port ops.
-> > >
-> > > Most of the time, using the non-blocking rpmsg_trysend() in the
-> > > WWAN tx() port operation works just fine. However, with high-frequent
-> > > writes to the char device it is possible to trigger a situation
-> > > where this causes issues. For example, consider the following
-> > > (somewhat unrealistic) example:
-> > >
-> > >  # dd if=/dev/zero bs=1000 of=/dev/wwan0p2QMI
-> > >  dd: error writing '/dev/wwan0p2QMI': Resource temporarily unavailable
-> > >  1+0 records out
-> > >
-> > > This fails immediately after writing the first record. It's likely
-> > > only a matter of time until this triggers issues for some real application
-> > > (e.g. ModemManager sending a lot of large QMI packets).
-> > >
-> > > The rpmsg_char device does not have this problem, because it uses
-> > > rpmsg_trysend() and rpmsg_poll() to support non-blocking operations.
-> > > Make it possible to use the same in the RPMSG WWAN driver by extending
-> > > the tx() operation with a "nonblock" parameter and adding an optional
-> > > poll() callback. This integrates nicely with the RPMSG API and does
-> > > not break other WWAN drivers.
-> > >
-> > > With these changes, the dd example above blocks instead of exiting
-> > > with an error.
-> > >
-> > > Cc: Loic Poulain <loic.poulain@linaro.org>
-> > > Signed-off-by: Stephan Gerhold <stephan@gerhold.net>
-> > > ---
-> > > Note that rpmsg_poll() is an optional callback currently only implemented
-> > > by the qcom_smd RPMSG provider. However, it should be easy to implement
-> > > this for other RPMSG providers when needed.
-> > >
-> > > Another potential solution suggested by Loic Poulain in [1] is to always
-> > > use the blocking rpmsg_send() from a workqueue/kthread and disable TX
-> > > until it is done. I think this could also work (perhaps a bit more
-> > > difficult to implement) but the main disadvantage is that I don't see
-> > > a way to return any kind of error to the client with this approach.
-> > > I assume we return immediately from the write() to the char device
-> > > after scheduling the rpmsg_send(), so we already reported success
-> > > when rpmsg_send() returns.
-> > >
-> > > At the end all that matters to me is that it works properly, so I'm
-> > > open for any other suggestions. :)
-> > >
-> > > [1]: https://lore.kernel.org/linux-arm-msm/CAMZdPi_-Qa=JnThHs_h-144dAfSAjF5s+QdBawdXZ3kk8Mx8ng@mail.gmail.com/
-> > > ---
-> > >  drivers/net/wwan/iosm/iosm_ipc_port.c |  3 ++-
-> > >  drivers/net/wwan/mhi_wwan_ctrl.c      |  3 ++-
-> > >  drivers/net/wwan/rpmsg_wwan_ctrl.c    | 17 +++++++++++++++--
-> > >  drivers/net/wwan/wwan_core.c          |  9 ++++++---
-> > >  drivers/net/wwan/wwan_hwsim.c         |  3 ++-
-> > >  include/linux/wwan.h                  | 13 +++++++++----
-> > >  6 files changed, 36 insertions(+), 12 deletions(-)
-> > >
-> > > diff --git a/drivers/net/wwan/iosm/iosm_ipc_port.c b/drivers/net/wwan/iosm/iosm_ipc_port.c
-> > > index beb944847398..2f874e41ceff 100644
-> > > --- a/drivers/net/wwan/iosm/iosm_ipc_port.c
-> > > +++ b/drivers/net/wwan/iosm/iosm_ipc_port.c
-> > > @@ -31,7 +31,8 @@ static void ipc_port_ctrl_stop(struct wwan_port *port)
-> > >  }
-> > >
-> > >  /* transfer control data to modem */
-> > > -static int ipc_port_ctrl_tx(struct wwan_port *port, struct sk_buff *skb)
-> > > +static int ipc_port_ctrl_tx(struct wwan_port *port, struct sk_buff *skb,
-> > > +                           bool nonblock)
-> > >  {
-> > >         struct iosm_cdev *ipc_port = wwan_port_get_drvdata(port);
-> > >
-> > > diff --git a/drivers/net/wwan/mhi_wwan_ctrl.c b/drivers/net/wwan/mhi_wwan_ctrl.c
-> > > index 1bc6b69aa530..9754f014d348 100644
-> > > --- a/drivers/net/wwan/mhi_wwan_ctrl.c
-> > > +++ b/drivers/net/wwan/mhi_wwan_ctrl.c
-> > > @@ -139,7 +139,8 @@ static void mhi_wwan_ctrl_stop(struct wwan_port *port)
-> > >         mhi_unprepare_from_transfer(mhiwwan->mhi_dev);
-> > >  }
-> > >
-> > > -static int mhi_wwan_ctrl_tx(struct wwan_port *port, struct sk_buff *skb)
-> > > +static int mhi_wwan_ctrl_tx(struct wwan_port *port, struct sk_buff *skb,
-> > > +                           bool nonblock)
-> > >  {
-> > >         struct mhi_wwan_dev *mhiwwan = wwan_port_get_drvdata(port);
-> > >         int ret;
-> > > diff --git a/drivers/net/wwan/rpmsg_wwan_ctrl.c b/drivers/net/wwan/rpmsg_wwan_ctrl.c
-> > > index de226cdb69fd..63f431eada39 100644
-> > > --- a/drivers/net/wwan/rpmsg_wwan_ctrl.c
-> > > +++ b/drivers/net/wwan/rpmsg_wwan_ctrl.c
-> > > @@ -54,12 +54,16 @@ static void rpmsg_wwan_ctrl_stop(struct wwan_port *port)
-> > >         rpwwan->ept = NULL;
-> > >  }
-> > >
-> > > -static int rpmsg_wwan_ctrl_tx(struct wwan_port *port, struct sk_buff *skb)
-> > > +static int rpmsg_wwan_ctrl_tx(struct wwan_port *port, struct sk_buff *skb,
-> > > +                             bool nonblock)
-> > >  {
-> > >         struct rpmsg_wwan_dev *rpwwan = wwan_port_get_drvdata(port);
-> > >         int ret;
-> > >
-> > > -       ret = rpmsg_trysend(rpwwan->ept, skb->data, skb->len);
-> > > +       if (nonblock)
-> > > +               ret = rpmsg_trysend(rpwwan->ept, skb->data, skb->len);
-> > > +       else
-> > > +               ret = rpmsg_send(rpwwan->ept, skb->data, skb->len);
-> > >         if (ret)
-> > >                 return ret;
-> > >
-> > > @@ -67,10 +71,19 @@ static int rpmsg_wwan_ctrl_tx(struct wwan_port *port, struct sk_buff *skb)
-> > >         return 0;
-> > >  }
-> > >
-> > > +static __poll_t rpmsg_wwan_ctrl_poll(struct wwan_port *port, struct file *filp,
-> > > +                                    poll_table *wait)
-> > > +{
-> > > +       struct rpmsg_wwan_dev *rpwwan = wwan_port_get_drvdata(port);
-> > > +
-> > > +       return rpmsg_poll(rpwwan->ept, filp, wait);
-> > > +}
-> > > +
-> > >  static const struct wwan_port_ops rpmsg_wwan_pops = {
-> > >         .start = rpmsg_wwan_ctrl_start,
-> > >         .stop = rpmsg_wwan_ctrl_stop,
-> > >         .tx = rpmsg_wwan_ctrl_tx,
-> > > +       .poll = rpmsg_wwan_ctrl_poll,
-> > >  };
-> > >
-> > >  static struct device *rpmsg_wwan_find_parent(struct device *dev)
-> > > diff --git a/drivers/net/wwan/wwan_core.c b/drivers/net/wwan/wwan_core.c
-> > > index 7e728042fc41..c7fd0b897f87 100644
-> > > --- a/drivers/net/wwan/wwan_core.c
-> > > +++ b/drivers/net/wwan/wwan_core.c
-> > > @@ -500,7 +500,8 @@ static void wwan_port_op_stop(struct wwan_port *port)
-> > >         mutex_unlock(&port->ops_lock);
-> > >  }
-> > >
-> > > -static int wwan_port_op_tx(struct wwan_port *port, struct sk_buff *skb)
-> > > +static int wwan_port_op_tx(struct wwan_port *port, struct sk_buff *skb,
-> > > +                          bool nonblock)
-> > >  {
-> > >         int ret;
-> > >
-> > > @@ -510,7 +511,7 @@ static int wwan_port_op_tx(struct wwan_port *port, struct sk_buff *skb)
-> > >                 goto out_unlock;
-> > >         }
-> > >
-> > > -       ret = port->ops->tx(port, skb);
-> > > +       ret = port->ops->tx(port, skb, nonblock);
-> > >
-> > >  out_unlock:
-> > >         mutex_unlock(&port->ops_lock);
-> > > @@ -637,7 +638,7 @@ static ssize_t wwan_port_fops_write(struct file *filp, const char __user *buf,
-> > >                 return -EFAULT;
-> > >         }
-> > >
-> > > -       ret = wwan_port_op_tx(port, skb);
-> > > +       ret = wwan_port_op_tx(port, skb, !!(filp->f_flags & O_NONBLOCK));
-> > >         if (ret) {
-> > >                 kfree_skb(skb);
-> > >                 return ret;
-> > > @@ -659,6 +660,8 @@ static __poll_t wwan_port_fops_poll(struct file *filp, poll_table *wait)
-> > >                 mask |= EPOLLIN | EPOLLRDNORM;
-> > >         if (!port->ops)
-> > >                 mask |= EPOLLHUP | EPOLLERR;
-> > > +       else if (port->ops->poll)
-> > > +               mask |= port->ops->poll(port, filp, wait);
-> >
-> > I'm not sure it useful here because EPOLLOUT flag is already set above, right?
-> >
->
-> Oops, you're right - sorry! I thought the flags are inverted (only set
-> if (is_write_blocked())), then it would have worked fine. :)
->
-> I think this should be easy to fix though, I can just make the
->
->         if (!is_write_blocked(port))
->                 mask |= EPOLLOUT | EPOLLWRNORM;
->
-> if statement conditional to (port->ops->poll == NULL). It only makes
-> sense to supply the poll() op if the built-in write-blocking cannot be
-> used easily (like in my case).
 
-Yes, so maybe in that case poll ops should be renamed to something like tx_poll?
 
-Regards,
-Loic
+On 6/15/21 7:46 PM, Mathieu Poirier wrote:
+> On Fri, Jun 04, 2021 at 11:14:05AM +0200, Arnaud Pouliquen wrote:
+>> Using the RPMSG_RELEASE_DEV_IOCTL is possible to remove any
+>> rpmsg device (such as the rpmsg ns or the rpmsg ctrldev).
+>>
+>> Add a new field to store the removability of the device.
+>>
+>> By default the rpmsg device can not be removed by user space. It is
+>> set to 1 by the rpmsg ctrl on RPMSG_CREATE_DEV_IOCTL request, but
+>> could also be set by an rpmsg driver during probe.
+>>
+>> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+>> ---
+>>  drivers/rpmsg/rpmsg_ctrl.c | 17 ++++++++++++++++-
+>>  include/linux/rpmsg.h      |  2 ++
+>>  2 files changed, 18 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/rpmsg/rpmsg_ctrl.c b/drivers/rpmsg/rpmsg_ctrl.c
+>> index cb19e32d05e1..e93c6ec49038 100644
+>> --- a/drivers/rpmsg/rpmsg_ctrl.c
+>> +++ b/drivers/rpmsg/rpmsg_ctrl.c
+>> @@ -74,6 +74,7 @@ static long rpmsg_ctrldev_ioctl(struct file *fp, unsigned int cmd,
+>>  	struct rpmsg_endpoint_info eptinfo;
+>>  	struct rpmsg_channel_info chinfo;
+>>  	struct rpmsg_device *rpdev;
+>> +	struct device *dev;
+>>  	int ret = 0;
+>>  
+>>  	if (copy_from_user(&eptinfo, argp, sizeof(eptinfo)))
+>> @@ -95,11 +96,25 @@ static long rpmsg_ctrldev_ioctl(struct file *fp, unsigned int cmd,
+>>  		if (!rpdev) {
+>>  			dev_err(&ctrldev->dev, "failed to create %s channel\n", chinfo.name);
+>>  			ret = -ENXIO;
+>> +		} else {
+>> +			/* Allow user space to release the device. */
+>> +			rpdev->us_removable = 1;
+> 
+> As a rule of thumb I try really hard to avoid introducing new flags.  In this case we
+> can attain the same result by looking at chinfo->name, chinfo->src and
+> chinfo->dst.  I would introduce a new inline function in rpmsg_internal.h,
+> something like rpmsg_chrdev_is_ctrl_dev(), and compare the specifics in chinfo
+> to rpdev->id.name, rpdev->src and rpdev->dst.  If they all match then the
+> operation is refused.
+
+Something must have escaped me, because i turn around your your proposal,
+without understand it.
+
+The "us_removable" flag is not only for the rpmsg_ctrl, but for any rpmsg device
+that have not to be released by user application. Either because there are core
+( rpmsg_ctrl, rpmsg_ns) or because a rpmsg driver don't allow to unbind its
+rpmsg devices.
+
+look to me that rpmsg_chrdev_is_ctrl_dev just prevents rpmsg ctrl to be released
+by the RPMSG_RELEASE_DEV_IOCTL.
+
+Please, could you clarify what you have in mind here?
+
+Thanks,
+Arnaud
+
+> 
+> That way we don't introduce a new flag and there is also no need to call
+> rpmsg_find_device() twice.
+
+
+
+> 
+> Thanks,
+> Mathieu
+> 
+>>  		}
+>>  		break;
+>>  
+>>  	case RPMSG_RELEASE_DEV_IOCTL:
+>> -		ret = rpmsg_release_channel(ctrldev->rpdev, &chinfo);
+>> +		dev = rpmsg_find_device(ctrldev->rpdev->dev.parent, &chinfo);
+>> +		if (!dev)
+>> +			ret =  -ENXIO;
+>> +
+>> +		/* Verify that rpmsg device removal is allowed. */
+>> +		if (!ret) {
+>> +			rpdev = to_rpmsg_device(dev);
+>> +			if (!rpdev->us_removable)
+>> +				ret = -EACCES;
+>> +		}
+>> +		if (!ret)
+>> +			ret = rpmsg_release_channel(ctrldev->rpdev, &chinfo);
+>>  		if (ret)
+>>  			dev_err(&ctrldev->dev, "failed to release %s channel (%d)\n",
+>>  				chinfo.name, ret);
+>> diff --git a/include/linux/rpmsg.h b/include/linux/rpmsg.h
+>> index d97dcd049f18..3642aad1a789 100644
+>> --- a/include/linux/rpmsg.h
+>> +++ b/include/linux/rpmsg.h
+>> @@ -47,6 +47,7 @@ struct rpmsg_channel_info {
+>>   * @ept: the rpmsg endpoint of this channel
+>>   * @announce: if set, rpmsg will announce the creation/removal of this channel
+>>   * @little_endian: True if transport is using little endian byte representation
+>> + * @us_removable: True if userspace application has permission to remove the rpmsg device
+>>   */
+>>  struct rpmsg_device {
+>>  	struct device dev;
+>> @@ -57,6 +58,7 @@ struct rpmsg_device {
+>>  	struct rpmsg_endpoint *ept;
+>>  	bool announce;
+>>  	bool little_endian;
+>> +	bool us_removable;
+>>  
+>>  	const struct rpmsg_device_ops *ops;
+>>  };
+>> -- 
+>> 2.17.1
+>>
