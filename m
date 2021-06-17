@@ -2,231 +2,193 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.5 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CFD34C2B9F4
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 17 Jun 2021 08:02:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 512D6C49EB7
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 17 Jun 2021 09:15:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A15CB61078
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 17 Jun 2021 08:02:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3A131613C1
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 17 Jun 2021 09:15:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229666AbhFQIE0 (ORCPT
+        id S231569AbhFQJRM (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 17 Jun 2021 04:04:26 -0400
-Received: from mx07-00178001.pphosted.com ([185.132.182.106]:8524 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229716AbhFQIEZ (ORCPT
+        Thu, 17 Jun 2021 05:17:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49682 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231530AbhFQJRK (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 17 Jun 2021 04:04:25 -0400
-Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 15H7vCEg018983;
-        Thu, 17 Jun 2021 10:02:16 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=selector1;
- bh=mkIffYA2IIRDHWHO2j0eKvCtgWPyW1DH7iVGn8lTvJY=;
- b=Mv1eFLHUNbNnqzh7jnk5dexzM59khgCCu/dvNeH+lkV5Tn1ynQZ5l2hy4ZOEvV8s+5+A
- R4B0RDGyeRU98nlBdtTHQjnZ7RBr3s32RdsupW2tPXQB5pnLTyTnmZ+/QyikYY4A2Kyf
- A+E6oymSsUZdifJ/QZpVuN0pmCi8q5XRyJJGuoebyRzts8x5Z30UhfwzvSxvYkaKki3D
- +m6daNk3yAAx27O5Ltfw08O7+hRfhtAusNto8O7Kxu66xPxlUY1CNX1oIxL3Q9Tl7OhK
- uihAI79m7Rc4MVbNC7LhI4sNTdqTTWOMuOkXxeTnB2DM+rO4cINKNRigqF1ekopmCLtO 0w== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 3980uarq13-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 17 Jun 2021 10:02:16 +0200
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 3097A10002A;
-        Thu, 17 Jun 2021 10:02:15 +0200 (CEST)
-Received: from Webmail-eu.st.com (sfhdag2node3.st.com [10.75.127.6])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 1966E217371;
-        Thu, 17 Jun 2021 10:02:15 +0200 (CEST)
-Received: from lmecxl0889.lme.st.com (10.75.127.46) by SFHDAG2NODE3.st.com
- (10.75.127.6) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Thu, 17 Jun
- 2021 10:02:14 +0200
-Subject: Re: [PATCH 3/4] rpmsg: ctrl: Add check on rpmsg device removability
- from user space
-To:     Mathieu Poirier <mathieu.poirier@linaro.org>
-CC:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Ohad Ben-Cohen <ohad@wizery.com>,
-        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>
-References: <20210604091406.15901-1-arnaud.pouliquen@foss.st.com>
- <20210604091406.15901-4-arnaud.pouliquen@foss.st.com>
- <20210615174634.GB604521@p14s>
- <b7dc5207-643b-b5e6-2bee-106b2eb87555@foss.st.com>
- <20210616171524.GA637642@p14s>
-From:   Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
-Message-ID: <e4310ebf-4605-0462-e13b-0451ce19eea3@foss.st.com>
-Date:   Thu, 17 Jun 2021 10:02:14 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.8.1
+        Thu, 17 Jun 2021 05:17:10 -0400
+Received: from mail-vs1-xe2b.google.com (mail-vs1-xe2b.google.com [IPv6:2607:f8b0:4864:20::e2b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A1B34C0613A4
+        for <linux-remoteproc@vger.kernel.org>; Thu, 17 Jun 2021 02:15:02 -0700 (PDT)
+Received: by mail-vs1-xe2b.google.com with SMTP id c1so2596994vsh.8
+        for <linux-remoteproc@vger.kernel.org>; Thu, 17 Jun 2021 02:15:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=NiiU6fiVLbE4syulfvGQUEnbQNZvmtFPXY1KRGZ4VKs=;
+        b=tspUddDmWP1nXGb8dYzDapkXukDhtaQZ8yVoZQOykE4MszNmnQ2Jc7pAu3v7qBcemT
+         UyLs98rU9nEy8e3wRIJkxsl8g3L8Eb/AvQODxlfCIA8Y+SqSVtbG2msAYvDIZFEizfbY
+         20UD8As6h7+oRqO/LBfp1JKzos5qS4bIZn22juJCAEEZOMhbhqM1f/S6KCbcFkkK35Tr
+         P7laFgsJQmqhNYip+ALRHKPPvbOtIHBYtRpZR/hgm9hpO06Ne5Y1MzvmGVRytTLSpocX
+         +CLKqhQk6OUYMP0R+b/JJQ4/QkH+6e5JGgp8Hm8OfSHuZ6CIo4hVwTpj+jWWd51a3cq+
+         7N8A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=NiiU6fiVLbE4syulfvGQUEnbQNZvmtFPXY1KRGZ4VKs=;
+        b=GDcBblipLeFX+VhiwplRCqhghCqXe9iKCO1iqh7cnL6euZK2VaijlXwck9Esj14jE3
+         aaHh/GuLsk186JtZlBlqAZ8HAqBfLZ63OWUA/3s0aJhc5ADPRNayGR4i8sbcBywu4289
+         soMhqL6I2Q7k+ynEcMZKSA6cUDbD8Ae8hgEwERM9XnqdbfzqBudl1Av/RQEeQCiFGYfK
+         KU0KUYeOMlS5yB6SPIDybdjI2QATmgn7iozDwKynKIq1PAEVQUf80Nl4Ld2C9EkhMyej
+         hrNavW5k583c0IAADG1W0yHXE+wPn1iWA4hmDLGKMD1MrVLbbGYlL6KCnCgJ9TsWrbFi
+         JYsg==
+X-Gm-Message-State: AOAM532xnZhJ+h8QxQZLBynDk6pqOKbpMg4J4BQaaflyqkw3+VJbcPAg
+        oFcYtTuYztrZwowoRArPFL2cfkIBS5fDIGEgy3U3GQ==
+X-Google-Smtp-Source: ABdhPJyDDRUn2syWiuy8XigFtL3iDYKz59Ub/6ekAvgFfmAY9tRuxX/nulbHrrDC8J99+RHvCUQeMQ9XnjKDaURJSR4=
+X-Received: by 2002:a05:6102:2159:: with SMTP id h25mr3349328vsg.19.1623921301368;
+ Thu, 17 Jun 2021 02:15:01 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20210616171524.GA637642@p14s>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.75.127.46]
-X-ClientProxiedBy: SFHDAG1NODE3.st.com (10.75.127.3) To SFHDAG2NODE3.st.com
- (10.75.127.6)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.391,18.0.790
- definitions=2021-06-17_02:2021-06-15,2021-06-17 signatures=0
+References: <20210615191543.1043414-1-robh@kernel.org>
+In-Reply-To: <20210615191543.1043414-1-robh@kernel.org>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Thu, 17 Jun 2021 11:14:25 +0200
+Message-ID: <CAPDyKFrY4UOO5CbZ8Bj7AH2+3Wo1PRpUv+Zs96tub=MzGuGrrQ@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: Drop redundant minItems/maxItems
+To:     Rob Herring <robh@kernel.org>
+Cc:     DTML <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-ide@vger.kernel.org, linux-clk <linux-clk@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-crypto@vger.kernel.org,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        dmaengine@vger.kernel.org, linux-i2c@vger.kernel.org,
+        linux-iio@vger.kernel.org, alsa-devel@alsa-project.org,
+        "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg
+        Roedel <joro@8bytes.org>," <iommu@lists.linux-foundation.org>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        linux-mmc <linux-mmc@vger.kernel.org>,
+        netdev <netdev@vger.kernel.org>, linux-can@vger.kernel.org,
+        Linux PCI <linux-pci@vger.kernel.org>,
+        linux-phy@lists.infradead.org,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        linux-pwm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        linux-riscv <linux-riscv@lists.infradead.org>,
+        linux-rtc@vger.kernel.org, linux-serial@vger.kernel.org,
+        linux-spi@vger.kernel.org, Linux PM <linux-pm@vger.kernel.org>,
+        Linux USB List <linux-usb@vger.kernel.org>,
+        linux-watchdog@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>, Vinod Koul <vkoul@kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Kamal Dasu <kdasu.kdev@gmail.com>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Marc Zyngier <maz@kernel.org>, Joerg Roedel <joro@8bytes.org>,
+        Jassi Brar <jassisinghbrar@gmail.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Wolfgang Grandegger <wg@grandegger.com>,
+        Marc Kleine-Budde <mkl@pengutronix.de>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Vivien Didelot <vivien.didelot@gmail.com>,
+        Vladimir Oltean <olteanv@gmail.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>, Lee Jones <lee.jones@linaro.org>,
+        Ohad Ben-Cohen <ohad@wizery.com>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Mark Brown <broonie@kernel.org>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hello Mathieu,
+On Tue, 15 Jun 2021 at 21:15, Rob Herring <robh@kernel.org> wrote:
+>
+> If a property has an 'items' list, then a 'minItems' or 'maxItems' with t=
+he
+> same size as the list is redundant and can be dropped. Note that is DT
+> schema specific behavior and not standard json-schema behavior. The tooli=
+ng
+> will fixup the final schema adding any unspecified minItems/maxItems.
+>
+> This condition is partially checked with the meta-schema already, but
+> only if both 'minItems' and 'maxItems' are equal to the 'items' length.
+> An improved meta-schema is pending.
+>
+> Cc: Jens Axboe <axboe@kernel.dk>
+> Cc: Stephen Boyd <sboyd@kernel.org>
+> Cc: Herbert Xu <herbert@gondor.apana.org.au>
+> Cc: "David S. Miller" <davem@davemloft.net>
+> Cc: David Airlie <airlied@linux.ie>
+> Cc: Daniel Vetter <daniel@ffwll.ch>
+> Cc: Vinod Koul <vkoul@kernel.org>
+> Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> Cc: Kamal Dasu <kdasu.kdev@gmail.com>
+> Cc: Jonathan Cameron <jic23@kernel.org>
+> Cc: Lars-Peter Clausen <lars@metafoo.de>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Marc Zyngier <maz@kernel.org>
+> Cc: Joerg Roedel <joro@8bytes.org>
+> Cc: Jassi Brar <jassisinghbrar@gmail.com>
+> Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
+> Cc: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+> Cc: Ulf Hansson <ulf.hansson@linaro.org>
+> Cc: Jakub Kicinski <kuba@kernel.org>
+> Cc: Wolfgang Grandegger <wg@grandegger.com>
+> Cc: Marc Kleine-Budde <mkl@pengutronix.de>
+> Cc: Andrew Lunn <andrew@lunn.ch>
+> Cc: Vivien Didelot <vivien.didelot@gmail.com>
+> Cc: Vladimir Oltean <olteanv@gmail.com>
+> Cc: Bjorn Helgaas <bhelgaas@google.com>
+> Cc: Kishon Vijay Abraham I <kishon@ti.com>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: "Uwe Kleine-K=C3=B6nig" <u.kleine-koenig@pengutronix.de>
+> Cc: Lee Jones <lee.jones@linaro.org>
+> Cc: Ohad Ben-Cohen <ohad@wizery.com>
+> Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
+> Cc: Philipp Zabel <p.zabel@pengutronix.de>
+> Cc: Paul Walmsley <paul.walmsley@sifive.com>
+> Cc: Palmer Dabbelt <palmer@dabbelt.com>
+> Cc: Albert Ou <aou@eecs.berkeley.edu>
+> Cc: Alessandro Zummo <a.zummo@towertech.it>
+> Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Cc: Mark Brown <broonie@kernel.org>
+> Cc: Zhang Rui <rui.zhang@intel.com>
+> Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
+> Cc: Wim Van Sebroeck <wim@linux-watchdog.org>
+> Cc: Guenter Roeck <linux@roeck-us.net>
+> Signed-off-by: Rob Herring <robh@kernel.org>
 
-On 6/16/21 7:15 PM, Mathieu Poirier wrote:
-> On Wed, Jun 16, 2021 at 11:30:51AM +0200, Arnaud POULIQUEN wrote:
->>
->>
->> On 6/15/21 7:46 PM, Mathieu Poirier wrote:
->>> On Fri, Jun 04, 2021 at 11:14:05AM +0200, Arnaud Pouliquen wrote:
->>>> Using the RPMSG_RELEASE_DEV_IOCTL is possible to remove any
->>>> rpmsg device (such as the rpmsg ns or the rpmsg ctrldev).
->>>>
->>>> Add a new field to store the removability of the device.
->>>>
->>>> By default the rpmsg device can not be removed by user space. It is
->>>> set to 1 by the rpmsg ctrl on RPMSG_CREATE_DEV_IOCTL request, but
->>>> could also be set by an rpmsg driver during probe.
->>>>
->>>> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
->>>> ---
->>>>  drivers/rpmsg/rpmsg_ctrl.c | 17 ++++++++++++++++-
->>>>  include/linux/rpmsg.h      |  2 ++
->>>>  2 files changed, 18 insertions(+), 1 deletion(-)
->>>>
->>>> diff --git a/drivers/rpmsg/rpmsg_ctrl.c b/drivers/rpmsg/rpmsg_ctrl.c
->>>> index cb19e32d05e1..e93c6ec49038 100644
->>>> --- a/drivers/rpmsg/rpmsg_ctrl.c
->>>> +++ b/drivers/rpmsg/rpmsg_ctrl.c
->>>> @@ -74,6 +74,7 @@ static long rpmsg_ctrldev_ioctl(struct file *fp, unsigned int cmd,
->>>>  	struct rpmsg_endpoint_info eptinfo;
->>>>  	struct rpmsg_channel_info chinfo;
->>>>  	struct rpmsg_device *rpdev;
->>>> +	struct device *dev;
->>>>  	int ret = 0;
->>>>  
->>>>  	if (copy_from_user(&eptinfo, argp, sizeof(eptinfo)))
->>>> @@ -95,11 +96,25 @@ static long rpmsg_ctrldev_ioctl(struct file *fp, unsigned int cmd,
->>>>  		if (!rpdev) {
->>>>  			dev_err(&ctrldev->dev, "failed to create %s channel\n", chinfo.name);
->>>>  			ret = -ENXIO;
->>>> +		} else {
->>>> +			/* Allow user space to release the device. */
->>>> +			rpdev->us_removable = 1;
->>>
->>> As a rule of thumb I try really hard to avoid introducing new flags.  In this case we
->>> can attain the same result by looking at chinfo->name, chinfo->src and
->>> chinfo->dst.  I would introduce a new inline function in rpmsg_internal.h,
->>> something like rpmsg_chrdev_is_ctrl_dev(), and compare the specifics in chinfo
->>> to rpdev->id.name, rpdev->src and rpdev->dst.  If they all match then the
->>> operation is refused.
->>
->> Something must have escaped me, because i turn around your your proposal,
->> without understand it.
->>
->> The "us_removable" flag is not only for the rpmsg_ctrl, but for any rpmsg device
->> that have not to be released by user application. Either because there are core
->> ( rpmsg_ctrl, rpmsg_ns) or because a rpmsg driver don't allow to unbind its
->> rpmsg devices.
->>
-> 
-> I don't see how the current patch would allow a driver to prevent user space
-> from releasing a rpmsg device since the sysfs attribute can be changed at will.
-> So even if the driver sets the flag user space can still revert it.
+Acked-by: Ulf Hansson <ulf.hansson@linaro.org> # for MMC
 
+[...]
 
-The patch [4/4] define the a read only attribute using the rpmsg_show_attr
-declaration[1]. So the userspace can't change it.
-
-This also has the advantage of not allowing the new IOCTRL API to be used by
-default for legacy RPMSg devices without a specific patch.
-
-[1] https://elixir.bootlin.com/linux/latest/source/drivers/rpmsg/rpmsg_core.c#L362
-
-> 
->> look to me that rpmsg_chrdev_is_ctrl_dev just prevents rpmsg ctrl to be released
->> by the RPMSG_RELEASE_DEV_IOCTL.
-> 
-> That is correct.  I did not address rpmsg_ns to keep things simple but it would
-> also have to be handled properly.
-> 
->>
->> Please, could you clarify what you have in mind here?
-> 
-> Other than rpmsg_ctrl and rpmsg_ns I don't think we should introduce any
-> mechanism to prevent users from releasing an rpmsg.  Doing so needs root access
-> - if a user space process with root privileges can't be trusted then we have
-> bigger problems than unwanted releases of registered rpmsg devices.
-
-That's make sense. If we go on this way we could also trust the root application
-for the rpmsg_ns and only protect the rpmsg_ctrl which can not release itself,
-as you proposed.
-
-Thanks,
-
-Arnaud
-
-> 
->>
->> Thanks,
->> Arnaud
->>
->>>
->>> That way we don't introduce a new flag and there is also no need to call
->>> rpmsg_find_device() twice.
->>
->>
->>
->>>
->>> Thanks,
->>> Mathieu
->>>
->>>>  		}
->>>>  		break;
->>>>  
->>>>  	case RPMSG_RELEASE_DEV_IOCTL:
->>>> -		ret = rpmsg_release_channel(ctrldev->rpdev, &chinfo);
->>>> +		dev = rpmsg_find_device(ctrldev->rpdev->dev.parent, &chinfo);
->>>> +		if (!dev)
->>>> +			ret =  -ENXIO;
->>>> +
->>>> +		/* Verify that rpmsg device removal is allowed. */
->>>> +		if (!ret) {
->>>> +			rpdev = to_rpmsg_device(dev);
->>>> +			if (!rpdev->us_removable)
->>>> +				ret = -EACCES;
->>>> +		}
->>>> +		if (!ret)
->>>> +			ret = rpmsg_release_channel(ctrldev->rpdev, &chinfo);
->>>>  		if (ret)
->>>>  			dev_err(&ctrldev->dev, "failed to release %s channel (%d)\n",
->>>>  				chinfo.name, ret);
->>>> diff --git a/include/linux/rpmsg.h b/include/linux/rpmsg.h
->>>> index d97dcd049f18..3642aad1a789 100644
->>>> --- a/include/linux/rpmsg.h
->>>> +++ b/include/linux/rpmsg.h
->>>> @@ -47,6 +47,7 @@ struct rpmsg_channel_info {
->>>>   * @ept: the rpmsg endpoint of this channel
->>>>   * @announce: if set, rpmsg will announce the creation/removal of this channel
->>>>   * @little_endian: True if transport is using little endian byte representation
->>>> + * @us_removable: True if userspace application has permission to remove the rpmsg device
->>>>   */
->>>>  struct rpmsg_device {
->>>>  	struct device dev;
->>>> @@ -57,6 +58,7 @@ struct rpmsg_device {
->>>>  	struct rpmsg_endpoint *ept;
->>>>  	bool announce;
->>>>  	bool little_endian;
->>>> +	bool us_removable;
->>>>  
->>>>  	const struct rpmsg_device_ops *ops;
->>>>  };
->>>> -- 
->>>> 2.17.1
->>>>
+Kind regards
+Uffe
