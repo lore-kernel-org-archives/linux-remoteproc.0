@@ -2,347 +2,242 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,URIBL_RED,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-17.5 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 002E9C49EBE
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 17 Jun 2021 16:08:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23E90C2B9F4
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 17 Jun 2021 16:55:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E213361407
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 17 Jun 2021 16:08:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 06141613AA
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 17 Jun 2021 16:55:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233895AbhFQQLF (ORCPT
+        id S231365AbhFQQ5P (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 17 Jun 2021 12:11:05 -0400
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:37854 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233682AbhFQQKB (ORCPT
+        Thu, 17 Jun 2021 12:57:15 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:56232 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S231345AbhFQQ5O (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 17 Jun 2021 12:10:01 -0400
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 15HG62FL083373;
-        Thu, 17 Jun 2021 11:06:02 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1623945962;
-        bh=LVkWEpy5e6cRZkuXdEoUXgk9+WHo500mtyYaCdD+Lf0=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=jeALzHLk3n7+qQeuxED/H4L5B0pUGfd+IKm4cHUnNDcbGNi/N/vECD6HccgWs8Rdc
-         A79ZIeBKglC2uQcNptT6Rqq9rI3jaHqWmNvG1vKe80Rl9RF+rCyfhlpGUEyO1JBVae
-         q2yQKhqF9u2BVEw+7gi7jwzlSE7Jbm56DgmZH8PQ=
-Received: from DFLE113.ent.ti.com (dfle113.ent.ti.com [10.64.6.34])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 15HG60jb058606
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 17 Jun 2021 11:06:01 -0500
-Received: from DFLE115.ent.ti.com (10.64.6.36) by DFLE113.ent.ti.com
- (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2176.2; Thu, 17
- Jun 2021 11:06:00 -0500
-Received: from fllv0039.itg.ti.com (10.64.41.19) by DFLE115.ent.ti.com
- (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2176.2 via
- Frontend Transport; Thu, 17 Jun 2021 11:06:00 -0500
-Received: from [10.250.36.147] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id 15HG5xDj116986;
-        Thu, 17 Jun 2021 11:05:59 -0500
-Subject: Re: [PATCH] dt-bindings: Drop redundant minItems/maxItems
-To:     Rob Herring <robh@kernel.org>, <devicetree@vger.kernel.org>
-CC:     Andrew Lunn <andrew@lunn.ch>, <alsa-devel@alsa-project.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        <linux-iio@vger.kernel.org>, <linux-pci@vger.kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        <linux-remoteproc@vger.kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        <dri-devel@lists.freedesktop.org>, <linux-ide@vger.kernel.org>,
-        <linux-i2c@vger.kernel.org>, <linux-phy@lists.infradead.org>,
-        <linux-riscv@lists.infradead.org>,
-        Lee Jones <lee.jones@linaro.org>, <linux-clk@vger.kernel.org>,
-        <linux-rtc@vger.kernel.org>, Lars-Peter Clausen <lars@metafoo.de>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Marc Zyngier <maz@kernel.org>,
-        Jassi Brar <jassisinghbrar@gmail.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        David Airlie <airlied@linux.ie>,
-        <linux-serial@vger.kernel.org>,
-        =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Vivien Didelot <vivien.didelot@gmail.com>,
-        Wolfgang Grandegger <wg@grandegger.com>,
-        <linux-media@vger.kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>,
-        <linux-pwm@vger.kernel.org>, Albert Ou <aou@eecs.berkeley.edu>,
-        <linux-watchdog@vger.kernel.org>, <linux-pm@vger.kernel.org>,
-        <linux-can@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
-        Mark Brown <broonie@kernel.org>,
-        Marc Kleine-Budde <mkl@pengutronix.de>,
-        Kamal Dasu <kdasu.kdev@gmail.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        Jens Axboe <axboe@kernel.dk>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Stephen Boyd <sboyd@kernel.org>, <netdev@vger.kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        <linux-usb@vger.kernel.org>, <linux-mmc@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-spi@vger.kernel.org>,
-        <iommu@lists.linux-foundation.org>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        <linux-crypto@vger.kernel.org>, Daniel Vetter <daniel@ffwll.ch>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <dmaengine@vger.kernel.org>, Vladimir Oltean <olteanv@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jonathan Cameron <jic23@kernel.org>
-References: <20210615191543.1043414-1-robh@kernel.org>
-From:   Suman Anna <s-anna@ti.com>
-Message-ID: <bb8c18f6-139d-76be-87e7-0c93e03cc92c@ti.com>
-Date:   Thu, 17 Jun 2021 11:05:59 -0500
+        Thu, 17 Jun 2021 12:57:14 -0400
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 15HGrRrD026450;
+        Thu, 17 Jun 2021 18:55:02 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=subject : from : to
+ : cc : references : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=selector1;
+ bh=aNdtP7w+kyv5eaEn76NL6UGrI4oOfxzgSgioTmZyLxE=;
+ b=rdGIEjL8xQXOFSNovSn+bT9CzW81HTBdGdF/NIHF9JLvcbmAIDrPDN3PtYg8oprndBn+
+ 3woUjPOMInWCTohLlva3DuRCjg+eSgCo4KVjAoPsXCxhXjjfHjFvEyqljbM9duP6Aaoh
+ C9CrrPeZh2f6BOwvpZ3DC0yJ8lF8luC7qNEJF4YS7QhbcX55cMtxYaIGl0BFE/oKOxEr
+ y9amrOvYyl8Ki6ilPeRpnCEXY+fePaU1RtWhZ8r/xqimD5U/0zRYOgk9MNo3puEn9IDK
+ AK3QaFMCVbnUkGOOsm+xWTPjq6u9rCUqEqPUaH2dSdo+Dv8QKwxdZXo2xKcPKoPLFuX+ Cw== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 397p55ew51-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 17 Jun 2021 18:55:02 +0200
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 131C510002A;
+        Thu, 17 Jun 2021 18:55:02 +0200 (CEST)
+Received: from Webmail-eu.st.com (sfhdag2node3.st.com [10.75.127.6])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id E6CC125F3E0;
+        Thu, 17 Jun 2021 18:55:01 +0200 (CEST)
+Received: from lmecxl0889.lme.st.com (10.75.127.47) by SFHDAG2NODE3.st.com
+ (10.75.127.6) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Thu, 17 Jun
+ 2021 18:55:01 +0200
+Subject: Re: [PATCH 3/4] rpmsg: ctrl: Add check on rpmsg device removability
+ from user space
+From:   Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
+To:     Mathieu Poirier <mathieu.poirier@linaro.org>
+CC:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Ohad Ben-Cohen <ohad@wizery.com>,
+        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>
+References: <20210604091406.15901-1-arnaud.pouliquen@foss.st.com>
+ <20210604091406.15901-4-arnaud.pouliquen@foss.st.com>
+ <20210615174634.GB604521@p14s>
+ <b7dc5207-643b-b5e6-2bee-106b2eb87555@foss.st.com>
+ <20210616171524.GA637642@p14s>
+ <e4310ebf-4605-0462-e13b-0451ce19eea3@foss.st.com>
+Message-ID: <8278088f-b2fa-e5c9-8ae5-f5945f55b423@foss.st.com>
+Date:   Thu, 17 Jun 2021 18:55:00 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.8.1
 MIME-Version: 1.0
-In-Reply-To: <20210615191543.1043414-1-robh@kernel.org>
+In-Reply-To: <e4310ebf-4605-0462-e13b-0451ce19eea3@foss.st.com>
 Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.75.127.47]
+X-ClientProxiedBy: SFHDAG2NODE2.st.com (10.75.127.5) To SFHDAG2NODE3.st.com
+ (10.75.127.6)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.391,18.0.790
+ definitions=2021-06-17_15:2021-06-15,2021-06-17 signatures=0
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi Rob,
 
-On 6/15/21 2:15 PM, Rob Herring wrote:
-> If a property has an 'items' list, then a 'minItems' or 'maxItems' with the
-> same size as the list is redundant and can be dropped. Note that is DT
-> schema specific behavior and not standard json-schema behavior. The tooling
-> will fixup the final schema adding any unspecified minItems/maxItems.
+
+On 6/17/21 10:02 AM, Arnaud POULIQUEN wrote:
+> Hello Mathieu,
 > 
-> This condition is partially checked with the meta-schema already, but
-> only if both 'minItems' and 'maxItems' are equal to the 'items' length.
-> An improved meta-schema is pending.
+> On 6/16/21 7:15 PM, Mathieu Poirier wrote:
+>> On Wed, Jun 16, 2021 at 11:30:51AM +0200, Arnaud POULIQUEN wrote:
+>>>
+>>>
+>>> On 6/15/21 7:46 PM, Mathieu Poirier wrote:
+>>>> On Fri, Jun 04, 2021 at 11:14:05AM +0200, Arnaud Pouliquen wrote:
+>>>>> Using the RPMSG_RELEASE_DEV_IOCTL is possible to remove any
+>>>>> rpmsg device (such as the rpmsg ns or the rpmsg ctrldev).
+>>>>>
+>>>>> Add a new field to store the removability of the device.
+>>>>>
+>>>>> By default the rpmsg device can not be removed by user space. It is
+>>>>> set to 1 by the rpmsg ctrl on RPMSG_CREATE_DEV_IOCTL request, but
+>>>>> could also be set by an rpmsg driver during probe.
+>>>>>
+>>>>> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+>>>>> ---
+>>>>>  drivers/rpmsg/rpmsg_ctrl.c | 17 ++++++++++++++++-
+>>>>>  include/linux/rpmsg.h      |  2 ++
+>>>>>  2 files changed, 18 insertions(+), 1 deletion(-)
+>>>>>
+>>>>> diff --git a/drivers/rpmsg/rpmsg_ctrl.c b/drivers/rpmsg/rpmsg_ctrl.c
+>>>>> index cb19e32d05e1..e93c6ec49038 100644
+>>>>> --- a/drivers/rpmsg/rpmsg_ctrl.c
+>>>>> +++ b/drivers/rpmsg/rpmsg_ctrl.c
+>>>>> @@ -74,6 +74,7 @@ static long rpmsg_ctrldev_ioctl(struct file *fp, unsigned int cmd,
+>>>>>  	struct rpmsg_endpoint_info eptinfo;
+>>>>>  	struct rpmsg_channel_info chinfo;
+>>>>>  	struct rpmsg_device *rpdev;
+>>>>> +	struct device *dev;
+>>>>>  	int ret = 0;
+>>>>>  
+>>>>>  	if (copy_from_user(&eptinfo, argp, sizeof(eptinfo)))
+>>>>> @@ -95,11 +96,25 @@ static long rpmsg_ctrldev_ioctl(struct file *fp, unsigned int cmd,
+>>>>>  		if (!rpdev) {
+>>>>>  			dev_err(&ctrldev->dev, "failed to create %s channel\n", chinfo.name);
+>>>>>  			ret = -ENXIO;
+>>>>> +		} else {
+>>>>> +			/* Allow user space to release the device. */
+>>>>> +			rpdev->us_removable = 1;
+>>>>
+>>>> As a rule of thumb I try really hard to avoid introducing new flags.  In this case we
+>>>> can attain the same result by looking at chinfo->name, chinfo->src and
+>>>> chinfo->dst.  I would introduce a new inline function in rpmsg_internal.h,
+>>>> something like rpmsg_chrdev_is_ctrl_dev(), and compare the specifics in chinfo
+>>>> to rpdev->id.name, rpdev->src and rpdev->dst.  If they all match then the
+>>>> operation is refused.
+>>>
+>>> Something must have escaped me, because i turn around your your proposal,
+>>> without understand it.
+>>>
+>>> The "us_removable" flag is not only for the rpmsg_ctrl, but for any rpmsg device
+>>> that have not to be released by user application. Either because there are core
+>>> ( rpmsg_ctrl, rpmsg_ns) or because a rpmsg driver don't allow to unbind its
+>>> rpmsg devices.
+>>>
+>>
+>> I don't see how the current patch would allow a driver to prevent user space
+>> from releasing a rpmsg device since the sysfs attribute can be changed at will.
+>> So even if the driver sets the flag user space can still revert it.
 > 
-> Cc: Jens Axboe <axboe@kernel.dk>
-> Cc: Stephen Boyd <sboyd@kernel.org>
-> Cc: Herbert Xu <herbert@gondor.apana.org.au>
-> Cc: "David S. Miller" <davem@davemloft.net>
-> Cc: David Airlie <airlied@linux.ie>
-> Cc: Daniel Vetter <daniel@ffwll.ch>
-> Cc: Vinod Koul <vkoul@kernel.org>
-> Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> Cc: Kamal Dasu <kdasu.kdev@gmail.com>
-> Cc: Jonathan Cameron <jic23@kernel.org>
-> Cc: Lars-Peter Clausen <lars@metafoo.de>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Marc Zyngier <maz@kernel.org>
-> Cc: Joerg Roedel <joro@8bytes.org>
-> Cc: Jassi Brar <jassisinghbrar@gmail.com>
-> Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
-> Cc: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-> Cc: Ulf Hansson <ulf.hansson@linaro.org>
-> Cc: Jakub Kicinski <kuba@kernel.org>
-> Cc: Wolfgang Grandegger <wg@grandegger.com>
-> Cc: Marc Kleine-Budde <mkl@pengutronix.de>
-> Cc: Andrew Lunn <andrew@lunn.ch>
-> Cc: Vivien Didelot <vivien.didelot@gmail.com>
-> Cc: Vladimir Oltean <olteanv@gmail.com>
-> Cc: Bjorn Helgaas <bhelgaas@google.com>
-> Cc: Kishon Vijay Abraham I <kishon@ti.com>
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Cc: "Uwe Kleine-König" <u.kleine-koenig@pengutronix.de>
-> Cc: Lee Jones <lee.jones@linaro.org>
-> Cc: Ohad Ben-Cohen <ohad@wizery.com>
-> Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
-> Cc: Philipp Zabel <p.zabel@pengutronix.de>
-> Cc: Paul Walmsley <paul.walmsley@sifive.com>
-> Cc: Palmer Dabbelt <palmer@dabbelt.com>
-> Cc: Albert Ou <aou@eecs.berkeley.edu>
-> Cc: Alessandro Zummo <a.zummo@towertech.it>
-> Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Cc: Mark Brown <broonie@kernel.org>
-> Cc: Zhang Rui <rui.zhang@intel.com>
-> Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
-> Cc: Wim Van Sebroeck <wim@linux-watchdog.org>
-> Cc: Guenter Roeck <linux@roeck-us.net>
-> Signed-off-by: Rob Herring <robh@kernel.org>
-> ---
->  .../devicetree/bindings/ata/nvidia,tegra-ahci.yaml          | 1 -
->  .../devicetree/bindings/clock/allwinner,sun4i-a10-ccu.yaml  | 2 --
->  .../devicetree/bindings/clock/qcom,gcc-apq8064.yaml         | 1 -
->  Documentation/devicetree/bindings/clock/qcom,gcc-sdx55.yaml | 2 --
->  .../devicetree/bindings/clock/qcom,gcc-sm8350.yaml          | 2 --
->  .../devicetree/bindings/clock/sprd,sc9863a-clk.yaml         | 1 -
->  .../devicetree/bindings/crypto/allwinner,sun8i-ce.yaml      | 2 --
->  Documentation/devicetree/bindings/crypto/fsl-dcp.yaml       | 1 -
->  .../display/allwinner,sun4i-a10-display-backend.yaml        | 6 ------
->  .../bindings/display/allwinner,sun6i-a31-mipi-dsi.yaml      | 1 -
->  .../bindings/display/allwinner,sun8i-a83t-dw-hdmi.yaml      | 4 ----
->  .../bindings/display/allwinner,sun8i-a83t-hdmi-phy.yaml     | 2 --
->  .../bindings/display/allwinner,sun8i-r40-tcon-top.yaml      | 2 --
->  .../devicetree/bindings/display/bridge/cdns,mhdp8546.yaml   | 2 --
->  .../bindings/display/rockchip/rockchip,dw-hdmi.yaml         | 2 --
->  Documentation/devicetree/bindings/display/st,stm32-dsi.yaml | 2 --
->  .../devicetree/bindings/display/st,stm32-ltdc.yaml          | 1 -
->  .../devicetree/bindings/display/xlnx/xlnx,zynqmp-dpsub.yaml | 4 ----
->  .../devicetree/bindings/dma/renesas,rcar-dmac.yaml          | 1 -
->  .../devicetree/bindings/edac/amazon,al-mc-edac.yaml         | 2 --
->  Documentation/devicetree/bindings/eeprom/at24.yaml          | 1 -
->  Documentation/devicetree/bindings/example-schema.yaml       | 2 --
->  Documentation/devicetree/bindings/gpu/brcm,bcm-v3d.yaml     | 1 -
->  Documentation/devicetree/bindings/gpu/vivante,gc.yaml       | 1 -
->  Documentation/devicetree/bindings/i2c/brcm,brcmstb-i2c.yaml | 1 -
->  .../devicetree/bindings/i2c/marvell,mv64xxx-i2c.yaml        | 2 --
->  .../devicetree/bindings/i2c/mellanox,i2c-mlxbf.yaml         | 1 -
->  .../devicetree/bindings/iio/adc/amlogic,meson-saradc.yaml   | 1 -
->  .../devicetree/bindings/iio/adc/st,stm32-dfsdm-adc.yaml     | 2 --
->  .../bindings/interrupt-controller/fsl,irqsteer.yaml         | 1 -
->  .../bindings/interrupt-controller/loongson,liointc.yaml     | 1 -
->  Documentation/devicetree/bindings/iommu/arm,smmu-v3.yaml    | 1 -
->  .../devicetree/bindings/iommu/renesas,ipmmu-vmsa.yaml       | 1 -
->  .../devicetree/bindings/mailbox/st,stm32-ipcc.yaml          | 2 --
->  .../devicetree/bindings/media/amlogic,gx-vdec.yaml          | 1 -
->  Documentation/devicetree/bindings/media/i2c/adv7604.yaml    | 1 -
->  .../devicetree/bindings/media/marvell,mmp2-ccic.yaml        | 1 -
->  .../devicetree/bindings/media/qcom,sc7180-venus.yaml        | 1 -
->  .../devicetree/bindings/media/qcom,sdm845-venus-v2.yaml     | 1 -
->  .../devicetree/bindings/media/qcom,sm8250-venus.yaml        | 1 -
->  Documentation/devicetree/bindings/media/renesas,drif.yaml   | 1 -
->  .../bindings/memory-controllers/mediatek,smi-common.yaml    | 6 ++----
->  .../bindings/memory-controllers/mediatek,smi-larb.yaml      | 1 -
->  .../devicetree/bindings/mmc/allwinner,sun4i-a10-mmc.yaml    | 2 --
->  Documentation/devicetree/bindings/mmc/fsl-imx-esdhc.yaml    | 1 -
->  Documentation/devicetree/bindings/mmc/mtk-sd.yaml           | 2 --
->  Documentation/devicetree/bindings/mmc/renesas,sdhi.yaml     | 2 --
->  Documentation/devicetree/bindings/mmc/sdhci-am654.yaml      | 1 -
->  Documentation/devicetree/bindings/mmc/sdhci-pxa.yaml        | 1 -
->  .../devicetree/bindings/net/amlogic,meson-dwmac.yaml        | 2 --
->  .../devicetree/bindings/net/brcm,bcm4908-enet.yaml          | 2 --
->  Documentation/devicetree/bindings/net/can/bosch,m_can.yaml  | 2 --
->  Documentation/devicetree/bindings/net/dsa/brcm,sf2.yaml     | 2 --
->  Documentation/devicetree/bindings/net/snps,dwmac.yaml       | 2 --
->  Documentation/devicetree/bindings/net/stm32-dwmac.yaml      | 1 -
->  Documentation/devicetree/bindings/pci/brcm,stb-pcie.yaml    | 2 --
->  Documentation/devicetree/bindings/pci/loongson.yaml         | 1 -
->  .../devicetree/bindings/pci/mediatek-pcie-gen3.yaml         | 1 -
->  .../devicetree/bindings/pci/microchip,pcie-host.yaml        | 2 --
->  Documentation/devicetree/bindings/perf/arm,cmn.yaml         | 1 -
->  .../devicetree/bindings/phy/brcm,bcm63xx-usbh-phy.yaml      | 1 -
->  .../devicetree/bindings/phy/brcm,brcmstb-usb-phy.yaml       | 3 ---
->  Documentation/devicetree/bindings/phy/brcm,sata-phy.yaml    | 1 -
->  Documentation/devicetree/bindings/phy/mediatek,tphy.yaml    | 2 --
->  .../devicetree/bindings/phy/phy-cadence-sierra.yaml         | 2 --
->  .../devicetree/bindings/phy/phy-cadence-torrent.yaml        | 4 ----
->  .../devicetree/bindings/phy/qcom,ipq806x-usb-phy-hs.yaml    | 1 -
->  .../devicetree/bindings/phy/qcom,ipq806x-usb-phy-ss.yaml    | 1 -
->  Documentation/devicetree/bindings/phy/qcom,qmp-phy.yaml     | 1 -
->  Documentation/devicetree/bindings/phy/qcom,qusb2-phy.yaml   | 2 --
->  Documentation/devicetree/bindings/phy/renesas,usb2-phy.yaml | 2 --
->  Documentation/devicetree/bindings/phy/renesas,usb3-phy.yaml | 1 -
->  .../devicetree/bindings/pinctrl/actions,s500-pinctrl.yaml   | 1 -
->  .../devicetree/bindings/power/amlogic,meson-ee-pwrc.yaml    | 1 -
->  .../devicetree/bindings/pwm/allwinner,sun4i-a10-pwm.yaml    | 1 -
->  .../devicetree/bindings/remoteproc/st,stm32-rproc.yaml      | 2 --
->  .../devicetree/bindings/remoteproc/ti,k3-dsp-rproc.yaml     | 1 -
->  .../devicetree/bindings/remoteproc/ti,omap-remoteproc.yaml  | 1 -
->  Documentation/devicetree/bindings/reset/fsl,imx-src.yaml    | 1 -
->  .../devicetree/bindings/riscv/sifive-l2-cache.yaml          | 1 -
->  .../devicetree/bindings/rtc/allwinner,sun6i-a31-rtc.yaml    | 1 -
->  Documentation/devicetree/bindings/rtc/imxdi-rtc.yaml        | 1 -
->  Documentation/devicetree/bindings/serial/fsl-lpuart.yaml    | 2 --
->  Documentation/devicetree/bindings/serial/samsung_uart.yaml  | 1 -
->  .../devicetree/bindings/soc/qcom/qcom,geni-se.yaml          | 1 -
->  Documentation/devicetree/bindings/soc/ti/ti,pruss.yaml      | 2 --
->  .../bindings/sound/nvidia,tegra-audio-graph-card.yaml       | 1 -
->  .../devicetree/bindings/sound/nvidia,tegra210-i2s.yaml      | 2 --
->  Documentation/devicetree/bindings/sound/st,stm32-sai.yaml   | 3 ---
->  .../devicetree/bindings/spi/amlogic,meson-gx-spicc.yaml     | 1 -
->  .../devicetree/bindings/spi/brcm,spi-bcm-qspi.yaml          | 2 --
->  .../bindings/thermal/allwinner,sun8i-a83t-ths.yaml          | 2 --
->  Documentation/devicetree/bindings/thermal/qcom-tsens.yaml   | 1 -
->  .../bindings/timer/allwinner,sun5i-a13-hstimer.yaml         | 1 -
->  Documentation/devicetree/bindings/timer/arm,arch_timer.yaml | 1 -
->  .../devicetree/bindings/timer/arm,arch_timer_mmio.yaml      | 2 --
->  .../devicetree/bindings/timer/intel,ixp4xx-timer.yaml       | 1 -
->  .../devicetree/bindings/usb/maxim,max3420-udc.yaml          | 2 --
->  .../devicetree/bindings/usb/nvidia,tegra-xudc.yaml          | 4 ----
->  Documentation/devicetree/bindings/usb/renesas,usbhs.yaml    | 3 ---
->  .../devicetree/bindings/watchdog/st,stm32-iwdg.yaml         | 1 -
->  101 files changed, 2 insertions(+), 163 deletions(-)
 > 
+> The patch [4/4] define the a read only attribute using the rpmsg_show_attr
+> declaration[1]. So the userspace can't change it.
+> 
+> This also has the advantage of not allowing the new IOCTRL API to be used by
+> default for legacy RPMSg devices without a specific patch.
+> 
+> [1] https://elixir.bootlin.com/linux/latest/source/drivers/rpmsg/rpmsg_core.c#L362
+> 
+>>
+>>> look to me that rpmsg_chrdev_is_ctrl_dev just prevents rpmsg ctrl to be released
+>>> by the RPMSG_RELEASE_DEV_IOCTL.
+>>
+>> That is correct.  I did not address rpmsg_ns to keep things simple but it would
+>> also have to be handled properly.
+>>
+>>>
+>>> Please, could you clarify what you have in mind here?
+>>
+>> Other than rpmsg_ctrl and rpmsg_ns I don't think we should introduce any
+>> mechanism to prevent users from releasing an rpmsg.  Doing so needs root access
+>> - if a user space process with root privileges can't be trusted then we have
+>> bigger problems than unwanted releases of registered rpmsg devices.
+> 
+> That's make sense. If we go on this way we could also trust the root application
+> for the rpmsg_ns and only protect the rpmsg_ctrl which can not release itself,
+> as you proposed.
 
-[snip]
+As discussed in the OpenAMP by-weekly meeting, I will send a new revision,
+without the attribute.
 
-> diff --git a/Documentation/devicetree/bindings/remoteproc/ti,k3-dsp-rproc.yaml b/Documentation/devicetree/bindings/remoteproc/ti,k3-dsp-rproc.yaml
-> index 6070456a7b67..f399743b631b 100644
-> --- a/Documentation/devicetree/bindings/remoteproc/ti,k3-dsp-rproc.yaml
-> +++ b/Documentation/devicetree/bindings/remoteproc/ti,k3-dsp-rproc.yaml
-> @@ -57,7 +57,6 @@ properties:
->  
->    memory-region:
->      minItems: 2
-> -    maxItems: 8
->      description: |
->        phandle to the reserved memory nodes to be associated with the remoteproc
->        device. There should be at least two reserved memory nodes defined. The
+Thanks,
+Arnaud
 
-Does this enforce the maxItems to be 2 only now? Or should this be dropping the
-minItems here which matches the length of items instead of maxItems?
-
-I have originally listed the individual item list only for the mandatory items
-and rest are scalable. I provided this through "additionalItems: true" under
-this property.
-
-Also, have the exact same usage in
-Documentation/devicetree/bindings/remoteproc/ti,k3-r5f-rproc.yaml as well which
-is not included in this patch.
-
-> diff --git a/Documentation/devicetree/bindings/remoteproc/ti,omap-remoteproc.yaml b/Documentation/devicetree/bindings/remoteproc/ti,omap-remoteproc.yaml
-> index 73400bc6e91d..75161f191ac3 100644
-> --- a/Documentation/devicetree/bindings/remoteproc/ti,omap-remoteproc.yaml
-> +++ b/Documentation/devicetree/bindings/remoteproc/ti,omap-remoteproc.yaml
-> @@ -116,7 +116,6 @@ properties:
->        list, in the specified order, each representing the corresponding
->        internal RAM memory region.
->      minItems: 1
-> -    maxItems: 3
->      items:
->        - const: l2ram
->        - const: l1pram
-
-
-[snip]
-
-> diff --git a/Documentation/devicetree/bindings/soc/ti/ti,pruss.yaml b/Documentation/devicetree/bindings/soc/ti/ti,pruss.yaml
-> index dbc62821c60b..9790617af1bc 100644
-> --- a/Documentation/devicetree/bindings/soc/ti/ti,pruss.yaml
-> +++ b/Documentation/devicetree/bindings/soc/ti/ti,pruss.yaml
-> @@ -100,7 +100,6 @@ patternProperties:
->      properties:
->        reg:
->          minItems: 2 # On AM437x one of two PRUSS units don't contain Shared RAM.
-> -        maxItems: 3
->          items:
->            - description: Address and size of the Data RAM0.
->            - description: Address and size of the Data RAM1.
-> @@ -111,7 +110,6 @@ patternProperties:
->  
->        reg-names:
->          minItems: 2
-> -        maxItems: 3
->          items:
->            - const: dram0
->            - const: dram1
-
-
-regards
-Suman
+> 
+> Thanks,
+> 
+> Arnaud
+> 
+>>
+>>>
+>>> Thanks,
+>>> Arnaud
+>>>
+>>>>
+>>>> That way we don't introduce a new flag and there is also no need to call
+>>>> rpmsg_find_device() twice.
+>>>
+>>>
+>>>
+>>>>
+>>>> Thanks,
+>>>> Mathieu
+>>>>
+>>>>>  		}
+>>>>>  		break;
+>>>>>  
+>>>>>  	case RPMSG_RELEASE_DEV_IOCTL:
+>>>>> -		ret = rpmsg_release_channel(ctrldev->rpdev, &chinfo);
+>>>>> +		dev = rpmsg_find_device(ctrldev->rpdev->dev.parent, &chinfo);
+>>>>> +		if (!dev)
+>>>>> +			ret =  -ENXIO;
+>>>>> +
+>>>>> +		/* Verify that rpmsg device removal is allowed. */
+>>>>> +		if (!ret) {
+>>>>> +			rpdev = to_rpmsg_device(dev);
+>>>>> +			if (!rpdev->us_removable)
+>>>>> +				ret = -EACCES;
+>>>>> +		}
+>>>>> +		if (!ret)
+>>>>> +			ret = rpmsg_release_channel(ctrldev->rpdev, &chinfo);
+>>>>>  		if (ret)
+>>>>>  			dev_err(&ctrldev->dev, "failed to release %s channel (%d)\n",
+>>>>>  				chinfo.name, ret);
+>>>>> diff --git a/include/linux/rpmsg.h b/include/linux/rpmsg.h
+>>>>> index d97dcd049f18..3642aad1a789 100644
+>>>>> --- a/include/linux/rpmsg.h
+>>>>> +++ b/include/linux/rpmsg.h
+>>>>> @@ -47,6 +47,7 @@ struct rpmsg_channel_info {
+>>>>>   * @ept: the rpmsg endpoint of this channel
+>>>>>   * @announce: if set, rpmsg will announce the creation/removal of this channel
+>>>>>   * @little_endian: True if transport is using little endian byte representation
+>>>>> + * @us_removable: True if userspace application has permission to remove the rpmsg device
+>>>>>   */
+>>>>>  struct rpmsg_device {
+>>>>>  	struct device dev;
+>>>>> @@ -57,6 +58,7 @@ struct rpmsg_device {
+>>>>>  	struct rpmsg_endpoint *ept;
+>>>>>  	bool announce;
+>>>>>  	bool little_endian;
+>>>>> +	bool us_removable;
+>>>>>  
+>>>>>  	const struct rpmsg_device_ops *ops;
+>>>>>  };
+>>>>> -- 
+>>>>> 2.17.1
+>>>>>
