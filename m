@@ -7,238 +7,252 @@ X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B604C2B9F4
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 17 Jun 2021 16:56:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BB57C2B9F4
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 17 Jun 2021 21:32:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 04CC76128B
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 17 Jun 2021 16:56:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3BB0B61040
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 17 Jun 2021 21:32:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230064AbhFQQ6i (ORCPT
+        id S232664AbhFQVeI (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 17 Jun 2021 12:58:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41124 "EHLO
+        Thu, 17 Jun 2021 17:34:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45704 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229693AbhFQQ6h (ORCPT
+        with ESMTP id S231693AbhFQVeH (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 17 Jun 2021 12:58:37 -0400
-Received: from mail-pg1-x530.google.com (mail-pg1-x530.google.com [IPv6:2607:f8b0:4864:20::530])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EDFE6C061574
-        for <linux-remoteproc@vger.kernel.org>; Thu, 17 Jun 2021 09:56:28 -0700 (PDT)
-Received: by mail-pg1-x530.google.com with SMTP id g22so5456700pgk.1
-        for <linux-remoteproc@vger.kernel.org>; Thu, 17 Jun 2021 09:56:28 -0700 (PDT)
+        Thu, 17 Jun 2021 17:34:07 -0400
+Received: from mail-pg1-x52f.google.com (mail-pg1-x52f.google.com [IPv6:2607:f8b0:4864:20::52f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 46D77C06175F
+        for <linux-remoteproc@vger.kernel.org>; Thu, 17 Jun 2021 14:31:58 -0700 (PDT)
+Received: by mail-pg1-x52f.google.com with SMTP id e22so6007321pgv.10
+        for <linux-remoteproc@vger.kernel.org>; Thu, 17 Jun 2021 14:31:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=L9IcSvAICD+U/kKt7IUlwx608cX5lF0CPn5R5C+3NW8=;
-        b=XFzdglhhecZ/H2drQOlCjTs6C+ItAlaL2CsVQqHdgUVGZzeA0s+zS5r9gMjj3gS8m8
-         1YYYW6mG8Vb8pvyUUCoqZLicJwA1VTFgbXP7An/XJfvQW+LZx2/BjZ9gaJNG8zOx13C4
-         /GpgT+iXS6Zu/mKy6D4o6SbcYavhYuizV8IEMUrupNMjN7e61NfFjB5oda3eHrmTzSLc
-         u8L0veCkpE2b+dk4Fu4AIyh69ZdxSxlS0IPKkyIaBPSO3+JWzGpZOU/TE+NPmdMZlzN3
-         tMANSUo9w1KrAnqO2zP813Sd2gujuFCMdCrdn6cou+jtaonh/vZ2SraA85MN7WpBuC7c
-         RT4A==
+        bh=1ccgujzKU0wd1rTQD6F7407N4rqCkqhTNutbrnYFWtg=;
+        b=WCNyRPMVg2wLmtyRu4Q86ZkFVzZRNALeN5pyVCm8G4dypcQJ3TGnleGQmkEiA4JeyU
+         jesAcv+AuM4Dscak2YZck5c5jelmQbWSHYPSR0hJz49njhPn/M2RtpW9/OMu2gkCdCYJ
+         maHwqM3cfk4m9XRhTBu9YgHwSVK7ATU6T2WV7H5SF7anvyjRD5qFfik23D1rhOVnMNt6
+         YvW8WIasWseTwDihmlQjbL5GyeiDIF8R3P/V2fm9Z2UxWklxNVzbrM1iuPNaqYzUgYYG
+         M9YjNwwLGp0Uzz8c71T/Xz6EEcWaYGEKa58ynqKGUwoyfIihWRWszWsx6WizDVcgVh6w
+         ekQw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=L9IcSvAICD+U/kKt7IUlwx608cX5lF0CPn5R5C+3NW8=;
-        b=f2ktpFnDnBfN1EuSRHBzIYANVuayvCRNuih29Dvzn4Q/wCxq1z00bx0SKF1uQHzDGL
-         NeLLevuhsJlN7+gnFKscH9alaKI79tqX9r1J2pxjjuo3LQaPHmEaxb1AQWtB5ZpEh6H5
-         V0bFcC6r/PVAizmGr4aiqM/AvleiTuf1ohJD+jy68OK5PManz2buhN8wMIPerg+QfLq3
-         utZjYZgWLgQX1aaVXbCoz752l80DQxD3jUVxfnzFhzmhUq0Pd97RHUnK6F4+qOnfVcr/
-         +jezUaAlbrhaQm0HCEx21z4cQFp8YflrY/08ZeYNgb7dRf3PPbns6vU/kkQu/cB5pzYV
-         /3QQ==
-X-Gm-Message-State: AOAM531/vHz1JxzTWgMdkzORANBSKUP3my4YChL7Jk1N469PgL+BbNgp
-        YusT3vW5i1VgT8jBg/l3ggGyYQ==
-X-Google-Smtp-Source: ABdhPJz5PIJdGN/kVGKWKgGFc/IPVGn6kFv5v+i5czhgvDsG9p3htJ0Gzhm2i2EZO34T5kE2xDMgzg==
-X-Received: by 2002:a63:fd17:: with SMTP id d23mr5964877pgh.68.1623948988127;
-        Thu, 17 Jun 2021 09:56:28 -0700 (PDT)
+        bh=1ccgujzKU0wd1rTQD6F7407N4rqCkqhTNutbrnYFWtg=;
+        b=bbnNPlejHxaRH4YrlRateLsq5Ek6Rhex1X+/6v4FjBwxOftYuWrvojD2+jE1q3qrwH
+         VN84URDf7+vIi9oOIWTxWoHnbLJbpf+qyUoMeUJLruxCEHqMECvpbCH6utQXN8BbJV/L
+         6GPEjSeNIoZmfngQk8i5Nu0oyt/4+LfJOnOpkKbsWqx7YkE/0BwIwCeELu3CPDv+CZrR
+         1qyJsaRaXhqaAavR51DTK3v5pNgcFv2Cvtcnfol34/3ZOTIpmZRzbKpB2Ur/CBVK87v1
+         PCDl77BntcqSYOMp32OfwKJj7gj37RAAeMbbdNpXKcFy/vKLkoVuncZ7oHAmfIjfUrVp
+         ybew==
+X-Gm-Message-State: AOAM531fRYM844JYxDsPEz4JAGqxEARG2Ipaqd/IaAV18TdAVuO/XXDf
+        72n/NkmPCwrbogBDT15Ray9esD5QzwDGpw==
+X-Google-Smtp-Source: ABdhPJzOrEoYf/jCUQCsNh5XyhYT9KkBS5CH+qyULEC4ubHHawqvFVVl7uCnL4PzJIRqcKKlJ3ly7Q==
+X-Received: by 2002:a63:d452:: with SMTP id i18mr6909316pgj.0.1623965517755;
+        Thu, 17 Jun 2021 14:31:57 -0700 (PDT)
 Received: from p14s (S0106889e681aac74.cg.shawcable.net. [68.147.0.187])
-        by smtp.gmail.com with ESMTPSA id g8sm6690411pgo.10.2021.06.17.09.56.26
+        by smtp.gmail.com with ESMTPSA id y190sm6179714pfc.85.2021.06.17.14.31.56
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Jun 2021 09:56:26 -0700 (PDT)
-Date:   Thu, 17 Jun 2021 10:56:24 -0600
+        Thu, 17 Jun 2021 14:31:56 -0700 (PDT)
+Date:   Thu, 17 Jun 2021 15:31:54 -0600
 From:   Mathieu Poirier <mathieu.poirier@linaro.org>
 To:     Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
 Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
         Ohad Ben-Cohen <ohad@wizery.com>,
         linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com
-Subject: Re: [PATCH 3/4] rpmsg: ctrl: Add check on rpmsg device removability
- from user space
-Message-ID: <20210617165624.GB782884@p14s>
-References: <20210604091406.15901-1-arnaud.pouliquen@foss.st.com>
- <20210604091406.15901-4-arnaud.pouliquen@foss.st.com>
- <20210615174634.GB604521@p14s>
- <b7dc5207-643b-b5e6-2bee-106b2eb87555@foss.st.com>
- <20210616171524.GA637642@p14s>
- <e4310ebf-4605-0462-e13b-0451ce19eea3@foss.st.com>
+        linux-stm32@st-md-mailman.stormreply.com, julien.massot@iot.bzh
+Subject: Re: [PATCH 3/4] rpmsg: char: Introduce the "rpmsg-raw" channel
+Message-ID: <20210617213154.GA790564@p14s>
+References: <20210607173032.30133-1-arnaud.pouliquen@foss.st.com>
+ <20210607173032.30133-4-arnaud.pouliquen@foss.st.com>
+ <20210615200102.GE604521@p14s>
+ <b55cd4e5-fb9d-a0ab-03a9-3a771898db04@foss.st.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <e4310ebf-4605-0462-e13b-0451ce19eea3@foss.st.com>
+In-Reply-To: <b55cd4e5-fb9d-a0ab-03a9-3a771898db04@foss.st.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Thu, Jun 17, 2021 at 10:02:14AM +0200, Arnaud POULIQUEN wrote:
-> Hello Mathieu,
+On Wed, Jun 16, 2021 at 02:38:26PM +0200, Arnaud POULIQUEN wrote:
+> Hi Mathieu,
 > 
-> On 6/16/21 7:15 PM, Mathieu Poirier wrote:
-> > On Wed, Jun 16, 2021 at 11:30:51AM +0200, Arnaud POULIQUEN wrote:
+> On 6/15/21 10:01 PM, Mathieu Poirier wrote:
+> > On Mon, Jun 07, 2021 at 07:30:31PM +0200, Arnaud Pouliquen wrote:
+> >> Allows to probe the endpoint device on a remote name service announcement,
+> >> by registering a rpmsg_driverfor the "rpmsg-raw" channel.
 > >>
+> >> With this patch the /dev/rpmsgX interface can be instantiated by the remote
+> >> firmware.
 > >>
-> >> On 6/15/21 7:46 PM, Mathieu Poirier wrote:
-> >>> On Fri, Jun 04, 2021 at 11:14:05AM +0200, Arnaud Pouliquen wrote:
-> >>>> Using the RPMSG_RELEASE_DEV_IOCTL is possible to remove any
-> >>>> rpmsg device (such as the rpmsg ns or the rpmsg ctrldev).
-> >>>>
-> >>>> Add a new field to store the removability of the device.
-> >>>>
-> >>>> By default the rpmsg device can not be removed by user space. It is
-> >>>> set to 1 by the rpmsg ctrl on RPMSG_CREATE_DEV_IOCTL request, but
-> >>>> could also be set by an rpmsg driver during probe.
-> >>>>
-> >>>> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-> >>>> ---
-> >>>>  drivers/rpmsg/rpmsg_ctrl.c | 17 ++++++++++++++++-
-> >>>>  include/linux/rpmsg.h      |  2 ++
-> >>>>  2 files changed, 18 insertions(+), 1 deletion(-)
-> >>>>
-> >>>> diff --git a/drivers/rpmsg/rpmsg_ctrl.c b/drivers/rpmsg/rpmsg_ctrl.c
-> >>>> index cb19e32d05e1..e93c6ec49038 100644
-> >>>> --- a/drivers/rpmsg/rpmsg_ctrl.c
-> >>>> +++ b/drivers/rpmsg/rpmsg_ctrl.c
-> >>>> @@ -74,6 +74,7 @@ static long rpmsg_ctrldev_ioctl(struct file *fp, unsigned int cmd,
-> >>>>  	struct rpmsg_endpoint_info eptinfo;
-> >>>>  	struct rpmsg_channel_info chinfo;
-> >>>>  	struct rpmsg_device *rpdev;
-> >>>> +	struct device *dev;
-> >>>>  	int ret = 0;
-> >>>>  
-> >>>>  	if (copy_from_user(&eptinfo, argp, sizeof(eptinfo)))
-> >>>> @@ -95,11 +96,25 @@ static long rpmsg_ctrldev_ioctl(struct file *fp, unsigned int cmd,
-> >>>>  		if (!rpdev) {
-> >>>>  			dev_err(&ctrldev->dev, "failed to create %s channel\n", chinfo.name);
-> >>>>  			ret = -ENXIO;
-> >>>> +		} else {
-> >>>> +			/* Allow user space to release the device. */
-> >>>> +			rpdev->us_removable = 1;
-> >>>
-> >>> As a rule of thumb I try really hard to avoid introducing new flags.  In this case we
-> >>> can attain the same result by looking at chinfo->name, chinfo->src and
-> >>> chinfo->dst.  I would introduce a new inline function in rpmsg_internal.h,
-> >>> something like rpmsg_chrdev_is_ctrl_dev(), and compare the specifics in chinfo
-> >>> to rpdev->id.name, rpdev->src and rpdev->dst.  If they all match then the
-> >>> operation is refused.
+> >> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+> >> ---
+> >>  drivers/rpmsg/rpmsg_char.c | 54 ++++++++++++++++++++++++++++++++++++--
+> >>  1 file changed, 52 insertions(+), 2 deletions(-)
 > >>
-> >> Something must have escaped me, because i turn around your your proposal,
-> >> without understand it.
-> >>
-> >> The "us_removable" flag is not only for the rpmsg_ctrl, but for any rpmsg device
-> >> that have not to be released by user application. Either because there are core
-> >> ( rpmsg_ctrl, rpmsg_ns) or because a rpmsg driver don't allow to unbind its
-> >> rpmsg devices.
-> >>
+> >> diff --git a/drivers/rpmsg/rpmsg_char.c b/drivers/rpmsg/rpmsg_char.c
+> >> index 4199ac1bee10..3b850b218eb0 100644
+> >> --- a/drivers/rpmsg/rpmsg_char.c
+> >> +++ b/drivers/rpmsg/rpmsg_char.c
+> >> @@ -25,6 +25,8 @@
+> >>  
+> >>  #include "rpmsg_char.h"
+> >>  
+> >> +#define RPMSG_CHAR_DEVNAME "rpmsg-raw"
+> >> +
+> >>  static dev_t rpmsg_major;
+> >>  static struct class *rpmsg_class;
+> >>  
+> >> @@ -416,6 +418,40 @@ int rpmsg_chrdev_eptdev_create(struct rpmsg_device *rpdev, struct device *parent
+> >>  }
+> >>  EXPORT_SYMBOL(rpmsg_chrdev_eptdev_create);
+> >>  
+> >> +static int rpmsg_chrdev_probe(struct rpmsg_device *rpdev)
+> >> +{
+> >> +	struct rpmsg_channel_info chinfo;
+> >> +
+> >> +	memcpy(chinfo.name, RPMSG_CHAR_DEVNAME, sizeof(RPMSG_CHAR_DEVNAME));
+> >> +	chinfo.src = rpdev->src;
+> >> +	chinfo.dst = rpdev->dst;
+> >> +
+> >> +	return __rpmsg_chrdev_eptdev_create(rpdev, &rpdev->dev, chinfo, true);
 > > 
-> > I don't see how the current patch would allow a driver to prevent user space
-> > from releasing a rpmsg device since the sysfs attribute can be changed at will.
-> > So even if the driver sets the flag user space can still revert it.
+> > I am a little puzzled here as to why we need different modes... Why can't we
+> > simply call rpmsg_chrdev_eptdev_create() and let the endpoint be created on
+> > open() and destroyed on release() as per the current implementation?
 > 
+> The main reason is the support of the NS announcement
+> a NS announcement is received from the remote processor:
+> channel name: "rpmsg-raw"
+> remote address (dst address): 0x400
+> local address (scr address) : RPMSG_ADDR_ANY
+> => no default endpoint, and not local address.
 > 
-> The patch [4/4] define the a read only attribute using the rpmsg_show_attr
-> declaration[1]. So the userspace can't change it.
+> case 1) if we use legacy implementation ( no default endpoint)
+> => create/destroy endpoint on open/stop
+> - on first open: created endpoint is bound to scr address 0x406
+> - a first message is sent to the remote side, the address 0x406 is stored as
+> default channel dst address on remote side.
+> - on close: endpoint is closed and associated address 0x406 is free.
+> - another driver create an enpoint the address 0x406 is reserved for this new
+> endpoint.
+> - on new open:  scr address is set to next value 0x407
+> => how to inform remote processor that the address has changed?
+> => no reservation mechanism that ensure that you can reuse the same address
 > 
+> case 2) relying on use_default_ept
+> => Ensure that both side have always the same addresses to communicate.
 
-You are correct - I overlooked the RO attribute in the rpmsg_show_attr() macro.
+I see the problem and your solution is adequate - I think the code simply needs
+to be moved around a little.  Here is what I suggest:
 
-> This also has the advantage of not allowing the new IOCTRL API to be used by
-> default for legacy RPMSg devices without a specific patch.
-> 
-> [1] https://elixir.bootlin.com/linux/latest/source/drivers/rpmsg/rpmsg_core.c#L362
-> 
-> > 
-> >> look to me that rpmsg_chrdev_is_ctrl_dev just prevents rpmsg ctrl to be released
-> >> by the RPMSG_RELEASE_DEV_IOCTL.
-> > 
-> > That is correct.  I did not address rpmsg_ns to keep things simple but it would
-> > also have to be handled properly.
-> > 
-> >>
-> >> Please, could you clarify what you have in mind here?
-> > 
-> > Other than rpmsg_ctrl and rpmsg_ns I don't think we should introduce any
-> > mechanism to prevent users from releasing an rpmsg.  Doing so needs root access
-> > - if a user space process with root privileges can't be trusted then we have
-> > bigger problems than unwanted releases of registered rpmsg devices.
-> 
-> That's make sense. If we go on this way we could also trust the root application
-> for the rpmsg_ns and only protect the rpmsg_ctrl which can not release itself,
-> as you proposed.
+1) Create the endpoint in rpmsg_chrdev_probe(), just before calling
+rpmsg_chrdev_eptdev_create().  That way changes to rpmsg_eptdev_open() can be
+kept to a minimum.  I don't think we'll be needing
+__rpmsg_chrdev_eptdev_create() anymore.
 
-I think we should protect both of them or neither of them.  I'd be fine with either
-solution.
+2) We can get rid of use_default_ept by taking advantage of the fact that the
+rpmsg_char driver does not use rpmsg_device::ept.  If we create the endpoint in
+rpmsg_chrdev_probe() we know that if rpdev->ept exists, we must not create
+or destroy the endpoint in rpmsg_eptdev_open() and rpmsg_eptdev_release().
+
+3) Function rpmsg_eptdev_open() doesn't change much.  If rpdev->ept is NULL than
+an endpoint is created as the current implementation.  Otherwise we simply do:
+
+        eptdev->ept = rpdev->ept;
+
+4) Make sure the teardown path works as well.  From what I can see, it should.
+
+5) Add a __lot__ of comments.
+
+If the above all works this entire patchset should become really small.
 
 > 
-> Thanks,
+> > 
+> > I'd rather keep things simple for the refactoring and introduce new features
+> > later if need be.
 > 
+> Yes I agree with you, but here it could become a nightmare for the remote
+> processor if the Linux endpoint address is not stable.
+> 
+> Anyway we can consider this as a workaround waiting the extension of the NS
+> announcement to have a better management of the address exchange on channel
+> initialization.
+> 
+> Thanks
 > Arnaud
 > 
 > > 
+> > As I said, it may be that I don't understand the usecase.
+> > 
+> > Thanks,
+> > Mathieu
+> > 
+> >> +}
+> >> +
+> >> +static void rpmsg_chrdev_remove(struct rpmsg_device *rpdev)
+> >> +{
+> >> +	int ret;
+> >> +
+> >> +	ret = device_for_each_child(&rpdev->dev, NULL, rpmsg_chrdev_eptdev_destroy);
+> >> +	if (ret)
+> >> +		dev_warn(&rpdev->dev, "failed to destroy endpoints: %d\n", ret);
+> >> +}
+> >> +
+> >> +static struct rpmsg_device_id rpmsg_chrdev_id_table[] = {
+> >> +	{ .name	= RPMSG_CHAR_DEVNAME },
+> >> +	{ },
+> >> +};
+> >> +
+> >> +static struct rpmsg_driver rpmsg_chrdev_driver = {
+> >> +	.probe = rpmsg_chrdev_probe,
+> >> +	.remove = rpmsg_chrdev_remove,
+> >> +	.id_table = rpmsg_chrdev_id_table,
+> >> +	.drv = {
+> >> +		.name = "rpmsg_chrdev",
+> >> +	},
+> >> +};
+> >> +
+> >>  static int rpmsg_chrdev_init(void)
+> >>  {
+> >>  	int ret;
+> >> @@ -429,16 +465,30 @@ static int rpmsg_chrdev_init(void)
+> >>  	rpmsg_class = class_create(THIS_MODULE, "rpmsg");
+> >>  	if (IS_ERR(rpmsg_class)) {
+> >>  		pr_err("failed to create rpmsg class\n");
+> >> -		unregister_chrdev_region(rpmsg_major, RPMSG_DEV_MAX);
+> >> -		return PTR_ERR(rpmsg_class);
+> >> +		ret = PTR_ERR(rpmsg_class);
+> >> +		goto free_region;
+> >> +	}
+> >> +
+> >> +	ret = register_rpmsg_driver(&rpmsg_chrdev_driver);
+> >> +	if (ret < 0) {
+> >> +		pr_err("rpmsg: failed to register rpmsg raw driver\n");
+> >> +		goto free_class;
+> >>  	}
+> >>  
+> >>  	return 0;
+> >> +
+> >> +free_class:
+> >> +	class_destroy(rpmsg_class);
+> >> +free_region:
+> >> +	unregister_chrdev_region(rpmsg_major, RPMSG_DEV_MAX);
+> >> +
+> >> +	return ret;
+> >>  }
+> >>  postcore_initcall(rpmsg_chrdev_init);
+> >>  
+> >>  static void rpmsg_chrdev_exit(void)
+> >>  {
+> >> +	unregister_rpmsg_driver(&rpmsg_chrdev_driver);
+> >>  	class_destroy(rpmsg_class);
+> >>  	unregister_chrdev_region(rpmsg_major, RPMSG_DEV_MAX);
+> >>  }
+> >> -- 
+> >> 2.17.1
 > >>
-> >> Thanks,
-> >> Arnaud
-> >>
-> >>>
-> >>> That way we don't introduce a new flag and there is also no need to call
-> >>> rpmsg_find_device() twice.
-> >>
-> >>
-> >>
-> >>>
-> >>> Thanks,
-> >>> Mathieu
-> >>>
-> >>>>  		}
-> >>>>  		break;
-> >>>>  
-> >>>>  	case RPMSG_RELEASE_DEV_IOCTL:
-> >>>> -		ret = rpmsg_release_channel(ctrldev->rpdev, &chinfo);
-> >>>> +		dev = rpmsg_find_device(ctrldev->rpdev->dev.parent, &chinfo);
-> >>>> +		if (!dev)
-> >>>> +			ret =  -ENXIO;
-> >>>> +
-> >>>> +		/* Verify that rpmsg device removal is allowed. */
-> >>>> +		if (!ret) {
-> >>>> +			rpdev = to_rpmsg_device(dev);
-> >>>> +			if (!rpdev->us_removable)
-> >>>> +				ret = -EACCES;
-> >>>> +		}
-> >>>> +		if (!ret)
-> >>>> +			ret = rpmsg_release_channel(ctrldev->rpdev, &chinfo);
-> >>>>  		if (ret)
-> >>>>  			dev_err(&ctrldev->dev, "failed to release %s channel (%d)\n",
-> >>>>  				chinfo.name, ret);
-> >>>> diff --git a/include/linux/rpmsg.h b/include/linux/rpmsg.h
-> >>>> index d97dcd049f18..3642aad1a789 100644
-> >>>> --- a/include/linux/rpmsg.h
-> >>>> +++ b/include/linux/rpmsg.h
-> >>>> @@ -47,6 +47,7 @@ struct rpmsg_channel_info {
-> >>>>   * @ept: the rpmsg endpoint of this channel
-> >>>>   * @announce: if set, rpmsg will announce the creation/removal of this channel
-> >>>>   * @little_endian: True if transport is using little endian byte representation
-> >>>> + * @us_removable: True if userspace application has permission to remove the rpmsg device
-> >>>>   */
-> >>>>  struct rpmsg_device {
-> >>>>  	struct device dev;
-> >>>> @@ -57,6 +58,7 @@ struct rpmsg_device {
-> >>>>  	struct rpmsg_endpoint *ept;
-> >>>>  	bool announce;
-> >>>>  	bool little_endian;
-> >>>> +	bool us_removable;
-> >>>>  
-> >>>>  	const struct rpmsg_device_ops *ops;
-> >>>>  };
-> >>>> -- 
-> >>>> 2.17.1
-> >>>>
