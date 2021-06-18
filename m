@@ -2,327 +2,332 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_RED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F9D4C49EBD
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 17 Jun 2021 22:17:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DDA2C48BDF
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 18 Jun 2021 07:54:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 449CE61004
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 17 Jun 2021 22:17:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0A0996109E
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 18 Jun 2021 07:54:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232209AbhFQWTS (ORCPT
+        id S233518AbhFRH4Z (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 17 Jun 2021 18:19:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56494 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232088AbhFQWTM (ORCPT <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 17 Jun 2021 18:19:12 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id F0DD6613B4;
-        Thu, 17 Jun 2021 22:17:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1623968224;
-        bh=8lLNvAQJFBYHcwyHgNEpUKH4liF//tJL8IXh/++g2VQ=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=huvrHHpH2Av8vejTexiFgCIX8gaey/rp/0fjLnRAt1uHvre0POa9FMvPn6CSKF4vP
-         c1dyDYSMYo16eAP+y8b7jCtqCSK/GxM08QdxX1G394l3E8JBesdgSfezsVwCObf+XY
-         7aWLgTlzsBBO6TKNEHxE7nsZ/+OgD85yLW8ohdjh7wOtV4YkqobaNmS5taze+KHWCO
-         fK6lrJ8I7DNEWJB2YicAQ/PLhU6Y66Is1uaJonoeXzDn/9t9wK0lIH/tQqckcXFuET
-         u5Swl2hwja6dodRo6iE7Vpv+Vl8JR6ZLXVJxbLuKQjO/HsCiolAUliP6AHbf478B1T
-         ZnwiO+IrhijxQ==
-Received: by mail-ej1-f42.google.com with SMTP id g8so12572868ejx.1;
-        Thu, 17 Jun 2021 15:17:03 -0700 (PDT)
-X-Gm-Message-State: AOAM533H3WTBiNxJM6fB2cmYC7GQaa7pmWFlsaU47n2KIwiQ92m1Lq8f
-        UK4pz+k6qhTXDxkxwrDizAPdZXHPBGMyCwOnhw==
-X-Google-Smtp-Source: ABdhPJxzgkf6C07sPN7yjl1phyvHCv9pAxXmIQ1iuWsb7n6aw/LK46UKCpGaWvweVtQco41YaA9gmDx268LBgSxFl4o=
-X-Received: by 2002:a17:907:264b:: with SMTP id ar11mr7391845ejc.525.1623968222450;
- Thu, 17 Jun 2021 15:17:02 -0700 (PDT)
-MIME-Version: 1.0
-References: <20210615191543.1043414-1-robh@kernel.org> <bb8c18f6-139d-76be-87e7-0c93e03cc92c@ti.com>
-In-Reply-To: <bb8c18f6-139d-76be-87e7-0c93e03cc92c@ti.com>
-From:   Rob Herring <robh@kernel.org>
-Date:   Thu, 17 Jun 2021 16:16:50 -0600
-X-Gmail-Original-Message-ID: <CAL_Jsq+-ggeBMT_507HN+mM1KirM+w2ZnhZNe+Q7tRsFRJxDOw@mail.gmail.com>
-Message-ID: <CAL_Jsq+-ggeBMT_507HN+mM1KirM+w2ZnhZNe+Q7tRsFRJxDOw@mail.gmail.com>
-Subject: Re: [PATCH] dt-bindings: Drop redundant minItems/maxItems
-To:     Suman Anna <s-anna@ti.com>
-Cc:     devicetree@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>,
-        Linux-ALSA <alsa-devel@alsa-project.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        "open list:IIO SUBSYSTEM AND DRIVERS" <linux-iio@vger.kernel.org>,
-        PCI <linux-pci@vger.kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        "open list:REMOTE PROCESSOR (REMOTEPROC) SUBSYSTEM" 
-        <linux-remoteproc@vger.kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        "open list:LIBATA SUBSYSTEM (Serial and Parallel ATA drivers)" 
-        <linux-ide@vger.kernel.org>, Linux I2C <linux-i2c@vger.kernel.org>,
-        linux-phy@lists.infradead.org,
-        linux-riscv <linux-riscv@lists.infradead.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:REAL TIME CLOCK (RTC) SUBSYSTEM" 
-        <linux-rtc@vger.kernel.org>, Lars-Peter Clausen <lars@metafoo.de>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Marc Zyngier <maz@kernel.org>,
-        Jassi Brar <jassisinghbrar@gmail.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        David Airlie <airlied@linux.ie>,
-        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
-        =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>, Jakub Kicinski <kuba@kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Vivien Didelot <vivien.didelot@gmail.com>,
-        Wolfgang Grandegger <wg@grandegger.com>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Ohad Ben-Cohen <ohad@wizery.com>,
-        Linux PWM List <linux-pwm@vger.kernel.org>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        LINUX-WATCHDOG <linux-watchdog@vger.kernel.org>,
-        "open list:THERMAL" <linux-pm@vger.kernel.org>,
-        linux-can@vger.kernel.org,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Mark Brown <broonie@kernel.org>,
-        Marc Kleine-Budde <mkl@pengutronix.de>,
-        Kamal Dasu <kdasu.kdev@gmail.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Jens Axboe <axboe@kernel.dk>,
-        Alessandro Zummo <a.zummo@towertech.it>,
+        Fri, 18 Jun 2021 03:56:25 -0400
+Received: from mo4-p02-ob.smtp.rzone.de ([85.215.255.80]:33163 "EHLO
+        mo4-p02-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231948AbhFRH4Y (ORCPT
+        <rfc822;linux-remoteproc@vger.kernel.org>);
+        Fri, 18 Jun 2021 03:56:24 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1624002849;
+    s=strato-dkim-0002; d=gerhold.net;
+    h=References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Cc:Date:
+    From:Subject:Sender;
+    bh=uy+hgdlHCkjZaHqCgagFWKP0W7iEWd4t8/GD1xVlu3I=;
+    b=sPC9s9+jFJgFacTc94v++7IDgabXBo7aiI0VbOjvVLyN3l+k/04074ZiKCle4va/YX
+    uGWdSchOgFqvT2xfmDRGjbJ3IziNW1BzVUvCZGVWkBXyeRaWsS4rxGxMoHX+iOQ9Ceh+
+    5ZP/wh3WKHoofRH5DP9bgWp/6t1AC8Qz2MbNGUdZJjgrk1H7q1ll5dXhycPK/bGjDqxw
+    qKd7X35AuoUhLiWq3xc40uopkdg8+TaYdgrMUYh7vRQgJt6S753vi7ziZpUbGkfEWYdQ
+    fms4VBx28PEFI2eeQdDRbb93A+yV3hAR63eB4iWnQ8oYFULr4Z/fMoSlQtcEAwbdv1JU
+    Qnwg==
+Authentication-Results: strato.com;
+    dkim=none
+X-RZG-AUTH: ":P3gBZUipdd93FF5ZZvYFPugejmSTVR2nRPhVORvLd4SsytBXS7IYBkLahKxA626EOg=="
+X-RZG-CLASS-ID: mo00
+Received: from droid..
+    by smtp.strato.de (RZmta 47.27.3 DYNA|AUTH)
+    with ESMTPSA id 000885x5I7s94DE
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
+        (Client did not present a certificate);
+    Fri, 18 Jun 2021 09:54:09 +0200 (CEST)
+From:   Stephan Gerhold <stephan@gerhold.net>
+To:     "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>
+Cc:     Loic Poulain <loic.poulain@linaro.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Aleksander Morgado <aleksander@aleksander.es>,
+        Sergey Ryazanov <ryazanov.s.a@gmail.com>,
+        Johannes Berg <johannes.berg@intel.com>,
+        Leon Romanovsky <leon@kernel.org>,
+        M Chetan Kumar <m.chetan.kumar@intel.com>,
+        linuxwwan@intel.com, Ohad Ben-Cohen <ohad@wizery.com>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        netdev <netdev@vger.kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Linux USB List <linux-usb@vger.kernel.org>,
-        linux-mmc <linux-mmc@vger.kernel.org>,
-        linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org,
-        iommu@lists.linux-foundation.org,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        linux-crypto@vger.kernel.org, Daniel Vetter <daniel@ffwll.ch>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        dmaengine@vger.kernel.org, Vladimir Oltean <olteanv@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jonathan Cameron <jic23@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        netdev@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, phone-devel@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        ~postmarketos/upstreaming@lists.sr.ht,
+        Stephan Gerhold <stephan@gerhold.net>
+Subject: [PATCH net-next v2 2/3] net: wwan: Add RPMSG WWAN CTRL driver
+Date:   Fri, 18 Jun 2021 09:52:42 +0200
+Message-Id: <20210618075243.42046-3-stephan@gerhold.net>
+X-Mailer: git-send-email 2.32.0
+In-Reply-To: <20210618075243.42046-1-stephan@gerhold.net>
+References: <20210618075243.42046-1-stephan@gerhold.net>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Thu, Jun 17, 2021 at 10:06 AM Suman Anna <s-anna@ti.com> wrote:
->
-> Hi Rob,
->
-> On 6/15/21 2:15 PM, Rob Herring wrote:
-> > If a property has an 'items' list, then a 'minItems' or 'maxItems' with=
- the
-> > same size as the list is redundant and can be dropped. Note that is DT
-> > schema specific behavior and not standard json-schema behavior. The too=
-ling
-> > will fixup the final schema adding any unspecified minItems/maxItems.
-> >
-> > This condition is partially checked with the meta-schema already, but
-> > only if both 'minItems' and 'maxItems' are equal to the 'items' length.
-> > An improved meta-schema is pending.
-> >
-> > Cc: Jens Axboe <axboe@kernel.dk>
-> > Cc: Stephen Boyd <sboyd@kernel.org>
-> > Cc: Herbert Xu <herbert@gondor.apana.org.au>
-> > Cc: "David S. Miller" <davem@davemloft.net>
-> > Cc: David Airlie <airlied@linux.ie>
-> > Cc: Daniel Vetter <daniel@ffwll.ch>
-> > Cc: Vinod Koul <vkoul@kernel.org>
-> > Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> > Cc: Kamal Dasu <kdasu.kdev@gmail.com>
-> > Cc: Jonathan Cameron <jic23@kernel.org>
-> > Cc: Lars-Peter Clausen <lars@metafoo.de>
-> > Cc: Thomas Gleixner <tglx@linutronix.de>
-> > Cc: Marc Zyngier <maz@kernel.org>
-> > Cc: Joerg Roedel <joro@8bytes.org>
-> > Cc: Jassi Brar <jassisinghbrar@gmail.com>
-> > Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
-> > Cc: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-> > Cc: Ulf Hansson <ulf.hansson@linaro.org>
-> > Cc: Jakub Kicinski <kuba@kernel.org>
-> > Cc: Wolfgang Grandegger <wg@grandegger.com>
-> > Cc: Marc Kleine-Budde <mkl@pengutronix.de>
-> > Cc: Andrew Lunn <andrew@lunn.ch>
-> > Cc: Vivien Didelot <vivien.didelot@gmail.com>
-> > Cc: Vladimir Oltean <olteanv@gmail.com>
-> > Cc: Bjorn Helgaas <bhelgaas@google.com>
-> > Cc: Kishon Vijay Abraham I <kishon@ti.com>
-> > Cc: Linus Walleij <linus.walleij@linaro.org>
-> > Cc: "Uwe Kleine-K=C3=B6nig" <u.kleine-koenig@pengutronix.de>
-> > Cc: Lee Jones <lee.jones@linaro.org>
-> > Cc: Ohad Ben-Cohen <ohad@wizery.com>
-> > Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
-> > Cc: Philipp Zabel <p.zabel@pengutronix.de>
-> > Cc: Paul Walmsley <paul.walmsley@sifive.com>
-> > Cc: Palmer Dabbelt <palmer@dabbelt.com>
-> > Cc: Albert Ou <aou@eecs.berkeley.edu>
-> > Cc: Alessandro Zummo <a.zummo@towertech.it>
-> > Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>
-> > Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> > Cc: Mark Brown <broonie@kernel.org>
-> > Cc: Zhang Rui <rui.zhang@intel.com>
-> > Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
-> > Cc: Wim Van Sebroeck <wim@linux-watchdog.org>
-> > Cc: Guenter Roeck <linux@roeck-us.net>
-> > Signed-off-by: Rob Herring <robh@kernel.org>
-> > ---
-> >  .../devicetree/bindings/ata/nvidia,tegra-ahci.yaml          | 1 -
-> >  .../devicetree/bindings/clock/allwinner,sun4i-a10-ccu.yaml  | 2 --
-> >  .../devicetree/bindings/clock/qcom,gcc-apq8064.yaml         | 1 -
-> >  Documentation/devicetree/bindings/clock/qcom,gcc-sdx55.yaml | 2 --
-> >  .../devicetree/bindings/clock/qcom,gcc-sm8350.yaml          | 2 --
-> >  .../devicetree/bindings/clock/sprd,sc9863a-clk.yaml         | 1 -
-> >  .../devicetree/bindings/crypto/allwinner,sun8i-ce.yaml      | 2 --
-> >  Documentation/devicetree/bindings/crypto/fsl-dcp.yaml       | 1 -
-> >  .../display/allwinner,sun4i-a10-display-backend.yaml        | 6 ------
-> >  .../bindings/display/allwinner,sun6i-a31-mipi-dsi.yaml      | 1 -
-> >  .../bindings/display/allwinner,sun8i-a83t-dw-hdmi.yaml      | 4 ----
-> >  .../bindings/display/allwinner,sun8i-a83t-hdmi-phy.yaml     | 2 --
-> >  .../bindings/display/allwinner,sun8i-r40-tcon-top.yaml      | 2 --
-> >  .../devicetree/bindings/display/bridge/cdns,mhdp8546.yaml   | 2 --
-> >  .../bindings/display/rockchip/rockchip,dw-hdmi.yaml         | 2 --
-> >  Documentation/devicetree/bindings/display/st,stm32-dsi.yaml | 2 --
-> >  .../devicetree/bindings/display/st,stm32-ltdc.yaml          | 1 -
-> >  .../devicetree/bindings/display/xlnx/xlnx,zynqmp-dpsub.yaml | 4 ----
-> >  .../devicetree/bindings/dma/renesas,rcar-dmac.yaml          | 1 -
-> >  .../devicetree/bindings/edac/amazon,al-mc-edac.yaml         | 2 --
-> >  Documentation/devicetree/bindings/eeprom/at24.yaml          | 1 -
-> >  Documentation/devicetree/bindings/example-schema.yaml       | 2 --
-> >  Documentation/devicetree/bindings/gpu/brcm,bcm-v3d.yaml     | 1 -
-> >  Documentation/devicetree/bindings/gpu/vivante,gc.yaml       | 1 -
-> >  Documentation/devicetree/bindings/i2c/brcm,brcmstb-i2c.yaml | 1 -
-> >  .../devicetree/bindings/i2c/marvell,mv64xxx-i2c.yaml        | 2 --
-> >  .../devicetree/bindings/i2c/mellanox,i2c-mlxbf.yaml         | 1 -
-> >  .../devicetree/bindings/iio/adc/amlogic,meson-saradc.yaml   | 1 -
-> >  .../devicetree/bindings/iio/adc/st,stm32-dfsdm-adc.yaml     | 2 --
-> >  .../bindings/interrupt-controller/fsl,irqsteer.yaml         | 1 -
-> >  .../bindings/interrupt-controller/loongson,liointc.yaml     | 1 -
-> >  Documentation/devicetree/bindings/iommu/arm,smmu-v3.yaml    | 1 -
-> >  .../devicetree/bindings/iommu/renesas,ipmmu-vmsa.yaml       | 1 -
-> >  .../devicetree/bindings/mailbox/st,stm32-ipcc.yaml          | 2 --
-> >  .../devicetree/bindings/media/amlogic,gx-vdec.yaml          | 1 -
-> >  Documentation/devicetree/bindings/media/i2c/adv7604.yaml    | 1 -
-> >  .../devicetree/bindings/media/marvell,mmp2-ccic.yaml        | 1 -
-> >  .../devicetree/bindings/media/qcom,sc7180-venus.yaml        | 1 -
-> >  .../devicetree/bindings/media/qcom,sdm845-venus-v2.yaml     | 1 -
-> >  .../devicetree/bindings/media/qcom,sm8250-venus.yaml        | 1 -
-> >  Documentation/devicetree/bindings/media/renesas,drif.yaml   | 1 -
-> >  .../bindings/memory-controllers/mediatek,smi-common.yaml    | 6 ++----
-> >  .../bindings/memory-controllers/mediatek,smi-larb.yaml      | 1 -
-> >  .../devicetree/bindings/mmc/allwinner,sun4i-a10-mmc.yaml    | 2 --
-> >  Documentation/devicetree/bindings/mmc/fsl-imx-esdhc.yaml    | 1 -
-> >  Documentation/devicetree/bindings/mmc/mtk-sd.yaml           | 2 --
-> >  Documentation/devicetree/bindings/mmc/renesas,sdhi.yaml     | 2 --
-> >  Documentation/devicetree/bindings/mmc/sdhci-am654.yaml      | 1 -
-> >  Documentation/devicetree/bindings/mmc/sdhci-pxa.yaml        | 1 -
-> >  .../devicetree/bindings/net/amlogic,meson-dwmac.yaml        | 2 --
-> >  .../devicetree/bindings/net/brcm,bcm4908-enet.yaml          | 2 --
-> >  Documentation/devicetree/bindings/net/can/bosch,m_can.yaml  | 2 --
-> >  Documentation/devicetree/bindings/net/dsa/brcm,sf2.yaml     | 2 --
-> >  Documentation/devicetree/bindings/net/snps,dwmac.yaml       | 2 --
-> >  Documentation/devicetree/bindings/net/stm32-dwmac.yaml      | 1 -
-> >  Documentation/devicetree/bindings/pci/brcm,stb-pcie.yaml    | 2 --
-> >  Documentation/devicetree/bindings/pci/loongson.yaml         | 1 -
-> >  .../devicetree/bindings/pci/mediatek-pcie-gen3.yaml         | 1 -
-> >  .../devicetree/bindings/pci/microchip,pcie-host.yaml        | 2 --
-> >  Documentation/devicetree/bindings/perf/arm,cmn.yaml         | 1 -
-> >  .../devicetree/bindings/phy/brcm,bcm63xx-usbh-phy.yaml      | 1 -
-> >  .../devicetree/bindings/phy/brcm,brcmstb-usb-phy.yaml       | 3 ---
-> >  Documentation/devicetree/bindings/phy/brcm,sata-phy.yaml    | 1 -
-> >  Documentation/devicetree/bindings/phy/mediatek,tphy.yaml    | 2 --
-> >  .../devicetree/bindings/phy/phy-cadence-sierra.yaml         | 2 --
-> >  .../devicetree/bindings/phy/phy-cadence-torrent.yaml        | 4 ----
-> >  .../devicetree/bindings/phy/qcom,ipq806x-usb-phy-hs.yaml    | 1 -
-> >  .../devicetree/bindings/phy/qcom,ipq806x-usb-phy-ss.yaml    | 1 -
-> >  Documentation/devicetree/bindings/phy/qcom,qmp-phy.yaml     | 1 -
-> >  Documentation/devicetree/bindings/phy/qcom,qusb2-phy.yaml   | 2 --
-> >  Documentation/devicetree/bindings/phy/renesas,usb2-phy.yaml | 2 --
-> >  Documentation/devicetree/bindings/phy/renesas,usb3-phy.yaml | 1 -
-> >  .../devicetree/bindings/pinctrl/actions,s500-pinctrl.yaml   | 1 -
-> >  .../devicetree/bindings/power/amlogic,meson-ee-pwrc.yaml    | 1 -
-> >  .../devicetree/bindings/pwm/allwinner,sun4i-a10-pwm.yaml    | 1 -
-> >  .../devicetree/bindings/remoteproc/st,stm32-rproc.yaml      | 2 --
-> >  .../devicetree/bindings/remoteproc/ti,k3-dsp-rproc.yaml     | 1 -
-> >  .../devicetree/bindings/remoteproc/ti,omap-remoteproc.yaml  | 1 -
-> >  Documentation/devicetree/bindings/reset/fsl,imx-src.yaml    | 1 -
-> >  .../devicetree/bindings/riscv/sifive-l2-cache.yaml          | 1 -
-> >  .../devicetree/bindings/rtc/allwinner,sun6i-a31-rtc.yaml    | 1 -
-> >  Documentation/devicetree/bindings/rtc/imxdi-rtc.yaml        | 1 -
-> >  Documentation/devicetree/bindings/serial/fsl-lpuart.yaml    | 2 --
-> >  Documentation/devicetree/bindings/serial/samsung_uart.yaml  | 1 -
-> >  .../devicetree/bindings/soc/qcom/qcom,geni-se.yaml          | 1 -
-> >  Documentation/devicetree/bindings/soc/ti/ti,pruss.yaml      | 2 --
-> >  .../bindings/sound/nvidia,tegra-audio-graph-card.yaml       | 1 -
-> >  .../devicetree/bindings/sound/nvidia,tegra210-i2s.yaml      | 2 --
-> >  Documentation/devicetree/bindings/sound/st,stm32-sai.yaml   | 3 ---
-> >  .../devicetree/bindings/spi/amlogic,meson-gx-spicc.yaml     | 1 -
-> >  .../devicetree/bindings/spi/brcm,spi-bcm-qspi.yaml          | 2 --
-> >  .../bindings/thermal/allwinner,sun8i-a83t-ths.yaml          | 2 --
-> >  Documentation/devicetree/bindings/thermal/qcom-tsens.yaml   | 1 -
-> >  .../bindings/timer/allwinner,sun5i-a13-hstimer.yaml         | 1 -
-> >  Documentation/devicetree/bindings/timer/arm,arch_timer.yaml | 1 -
-> >  .../devicetree/bindings/timer/arm,arch_timer_mmio.yaml      | 2 --
-> >  .../devicetree/bindings/timer/intel,ixp4xx-timer.yaml       | 1 -
-> >  .../devicetree/bindings/usb/maxim,max3420-udc.yaml          | 2 --
-> >  .../devicetree/bindings/usb/nvidia,tegra-xudc.yaml          | 4 ----
-> >  Documentation/devicetree/bindings/usb/renesas,usbhs.yaml    | 3 ---
-> >  .../devicetree/bindings/watchdog/st,stm32-iwdg.yaml         | 1 -
-> >  101 files changed, 2 insertions(+), 163 deletions(-)
-> >
->
-> [snip]
->
-> > diff --git a/Documentation/devicetree/bindings/remoteproc/ti,k3-dsp-rpr=
-oc.yaml b/Documentation/devicetree/bindings/remoteproc/ti,k3-dsp-rproc.yaml
-> > index 6070456a7b67..f399743b631b 100644
-> > --- a/Documentation/devicetree/bindings/remoteproc/ti,k3-dsp-rproc.yaml
-> > +++ b/Documentation/devicetree/bindings/remoteproc/ti,k3-dsp-rproc.yaml
-> > @@ -57,7 +57,6 @@ properties:
-> >
-> >    memory-region:
-> >      minItems: 2
-> > -    maxItems: 8
-> >      description: |
-> >        phandle to the reserved memory nodes to be associated with the r=
-emoteproc
-> >        device. There should be at least two reserved memory nodes defin=
-ed. The
->
-> Does this enforce the maxItems to be 2 only now? Or should this be droppi=
-ng the
-> minItems here which matches the length of items instead of maxItems?
->
-> I have originally listed the individual item list only for the mandatory =
-items
-> and rest are scalable. I provided this through "additionalItems: true" un=
-der
-> this property.
+The remote processor messaging (rpmsg) subsystem provides an interface
+to communicate with other remote processors. On many Qualcomm SoCs this
+is used to communicate with an integrated modem DSP that implements most
+of the modem functionality and provides high-level protocols like
+QMI or AT to allow controlling the modem.
 
-Good catch. This should be dropped. The meta-schema doesn't enforce
-this if "additionalItems: true" which is rarely used.
+For QMI, most older Qualcomm SoCs (e.g. MSM8916/MSM8974) have
+a standalone "DATA5_CNTL" channel that allows exchanging QMI messages.
+Note that newer SoCs (e.g. SDM845) only allow exchanging QMI messages
+via a shared QRTR channel that is available via a socket API on Linux.
 
-> Also, have the exact same usage in
-> Documentation/devicetree/bindings/remoteproc/ti,k3-r5f-rproc.yaml as well=
- which
-> is not included in this patch.
+For AT, the "DATA4" channel accepts at least a limited set of AT
+commands, on many older and newer Qualcomm SoCs, although QMI is
+typically the preferred control protocol.
 
-Yeah, I just missed this one. I've double checked and there aren't any more=
-.
+Note that the data path (network interface) is entirely separate
+from the control path and varies between Qualcomm SoCs, e.g. "IPA"
+on newer Qualcomm SoCs or "BAM-DMUX" on some older ones.
 
-Rob
+The RPMSG WWAN CTRL driver exposes the QMI/AT control ports via the
+WWAN subsystem, and therefore allows userspace like ModemManager to
+set up the modem. Until now, ModemManager had to use the RPMSG-specific
+rpmsg-char where the channels must be explicitly exposed as a char
+device first and don't show up directly in sysfs.
+
+The driver is a fairly simple glue layer between WWAN and RPMSG
+and is mostly based on the existing mhi_wwan_ctrl.c and rpmsg_char.c.
+
+Cc: Loic Poulain <loic.poulain@linaro.org>
+Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
+Signed-off-by: Stephan Gerhold <stephan@gerhold.net>
+---
+Changes in v2: None
+---
+Notes from v1:
+
+I have mainly tested this driver on Qualcomm MSM8916 with the qcom_smd
+RPMSG provider, together with both ModemManager and oFono in userspace.
+
+Note that this driver can also work somewhat with the "glink" RPMSG provider
+on newer SoCs (mainly for AT ports), but for some reason dynamically opening
+and closing channels like this driver and rpmsg-char do is horribly broken
+there. I'm hoping someone with more experience and hardware can fix that later.
+---
+ MAINTAINERS                        |   7 ++
+ drivers/net/wwan/Kconfig           |  18 ++++
+ drivers/net/wwan/Makefile          |   1 +
+ drivers/net/wwan/rpmsg_wwan_ctrl.c | 143 +++++++++++++++++++++++++++++
+ 4 files changed, 169 insertions(+)
+ create mode 100644 drivers/net/wwan/rpmsg_wwan_ctrl.c
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 183cc61e2dc0..fbf792962d7b 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -15587,6 +15587,13 @@ F:	include/linux/rpmsg/
+ F:	include/uapi/linux/rpmsg.h
+ F:	samples/rpmsg/
+ 
++REMOTE PROCESSOR MESSAGING (RPMSG) WWAN CONTROL DRIVER
++M:	Stephan Gerhold <stephan@gerhold.net>
++L:	netdev@vger.kernel.org
++L:	linux-remoteproc@vger.kernel.org
++S:	Maintained
++F:	drivers/net/wwan/rpmsg_wwan_ctrl.c
++
+ RENESAS CLOCK DRIVERS
+ M:	Geert Uytterhoeven <geert+renesas@glider.be>
+ L:	linux-renesas-soc@vger.kernel.org
+diff --git a/drivers/net/wwan/Kconfig b/drivers/net/wwan/Kconfig
+index 249b3f1ed62b..de9384326bc8 100644
+--- a/drivers/net/wwan/Kconfig
++++ b/drivers/net/wwan/Kconfig
+@@ -38,6 +38,24 @@ config MHI_WWAN_CTRL
+ 	  To compile this driver as a module, choose M here: the module will be
+ 	  called mhi_wwan_ctrl.
+ 
++config RPMSG_WWAN_CTRL
++	tristate "RPMSG WWAN control driver"
++	depends on RPMSG
++	help
++	  RPMSG WWAN CTRL allows modems available via RPMSG channels to expose
++	  different modem protocols/ports to userspace, including AT and QMI.
++	  These protocols can be accessed directly from userspace
++	  (e.g. AT commands) or via libraries/tools (e.g. libqmi, libqcdm...).
++
++	  This is mainly used for modems integrated into many Qualcomm SoCs,
++	  e.g. for AT and QMI on Qualcomm MSM8916 or MSM8974. Note that many
++	  newer Qualcomm SoCs (e.g. SDM845) still provide an AT port through
++	  this driver but the QMI messages can only be sent through
++	  QRTR network sockets (CONFIG_QRTR).
++
++	  To compile this driver as a module, choose M here: the module will be
++	  called rpmsg_wwan_ctrl.
++
+ config IOSM
+ 	tristate "IOSM Driver for Intel M.2 WWAN Device"
+ 	depends on INTEL_IOMMU
+diff --git a/drivers/net/wwan/Makefile b/drivers/net/wwan/Makefile
+index 83dd3482ffc3..d90ac33abaef 100644
+--- a/drivers/net/wwan/Makefile
++++ b/drivers/net/wwan/Makefile
+@@ -9,4 +9,5 @@ wwan-objs += wwan_core.o
+ obj-$(CONFIG_WWAN_HWSIM) += wwan_hwsim.o
+ 
+ obj-$(CONFIG_MHI_WWAN_CTRL) += mhi_wwan_ctrl.o
++obj-$(CONFIG_RPMSG_WWAN_CTRL) += rpmsg_wwan_ctrl.o
+ obj-$(CONFIG_IOSM) += iosm/
+diff --git a/drivers/net/wwan/rpmsg_wwan_ctrl.c b/drivers/net/wwan/rpmsg_wwan_ctrl.c
+new file mode 100644
+index 000000000000..de226cdb69fd
+--- /dev/null
++++ b/drivers/net/wwan/rpmsg_wwan_ctrl.c
+@@ -0,0 +1,143 @@
++// SPDX-License-Identifier: GPL-2.0-only
++/* Copyright (c) 2021, Stephan Gerhold <stephan@gerhold.net> */
++#include <linux/kernel.h>
++#include <linux/mod_devicetable.h>
++#include <linux/module.h>
++#include <linux/platform_device.h>
++#include <linux/rpmsg.h>
++#include <linux/wwan.h>
++
++struct rpmsg_wwan_dev {
++	/* Lower level is a rpmsg dev, upper level is a wwan port */
++	struct rpmsg_device *rpdev;
++	struct wwan_port *wwan_port;
++	struct rpmsg_endpoint *ept;
++};
++
++static int rpmsg_wwan_ctrl_callback(struct rpmsg_device *rpdev,
++				    void *buf, int len, void *priv, u32 src)
++{
++	struct rpmsg_wwan_dev *rpwwan = priv;
++	struct sk_buff *skb;
++
++	skb = alloc_skb(len, GFP_ATOMIC);
++	if (!skb)
++		return -ENOMEM;
++
++	skb_put_data(skb, buf, len);
++	wwan_port_rx(rpwwan->wwan_port, skb);
++	return 0;
++}
++
++static int rpmsg_wwan_ctrl_start(struct wwan_port *port)
++{
++	struct rpmsg_wwan_dev *rpwwan = wwan_port_get_drvdata(port);
++	struct rpmsg_channel_info chinfo = {
++		.src = rpwwan->rpdev->src,
++		.dst = RPMSG_ADDR_ANY,
++	};
++
++	strncpy(chinfo.name, rpwwan->rpdev->id.name, RPMSG_NAME_SIZE);
++	rpwwan->ept = rpmsg_create_ept(rpwwan->rpdev, rpmsg_wwan_ctrl_callback,
++				       rpwwan, chinfo);
++	if (!rpwwan->ept)
++		return -EREMOTEIO;
++
++	return 0;
++}
++
++static void rpmsg_wwan_ctrl_stop(struct wwan_port *port)
++{
++	struct rpmsg_wwan_dev *rpwwan = wwan_port_get_drvdata(port);
++
++	rpmsg_destroy_ept(rpwwan->ept);
++	rpwwan->ept = NULL;
++}
++
++static int rpmsg_wwan_ctrl_tx(struct wwan_port *port, struct sk_buff *skb)
++{
++	struct rpmsg_wwan_dev *rpwwan = wwan_port_get_drvdata(port);
++	int ret;
++
++	ret = rpmsg_trysend(rpwwan->ept, skb->data, skb->len);
++	if (ret)
++		return ret;
++
++	consume_skb(skb);
++	return 0;
++}
++
++static const struct wwan_port_ops rpmsg_wwan_pops = {
++	.start = rpmsg_wwan_ctrl_start,
++	.stop = rpmsg_wwan_ctrl_stop,
++	.tx = rpmsg_wwan_ctrl_tx,
++};
++
++static struct device *rpmsg_wwan_find_parent(struct device *dev)
++{
++	/* Select first platform device as parent for the WWAN ports.
++	 * On Qualcomm platforms this is usually the platform device that
++	 * represents the modem remote processor. This might need to be
++	 * adjusted when adding device IDs for other platforms.
++	 */
++	for (dev = dev->parent; dev; dev = dev->parent) {
++		if (dev_is_platform(dev))
++			return dev;
++	}
++	return NULL;
++}
++
++static int rpmsg_wwan_ctrl_probe(struct rpmsg_device *rpdev)
++{
++	struct rpmsg_wwan_dev *rpwwan;
++	struct wwan_port *port;
++	struct device *parent;
++
++	parent = rpmsg_wwan_find_parent(&rpdev->dev);
++	if (!parent)
++		return -ENODEV;
++
++	rpwwan = devm_kzalloc(&rpdev->dev, sizeof(*rpwwan), GFP_KERNEL);
++	if (!rpwwan)
++		return -ENOMEM;
++
++	rpwwan->rpdev = rpdev;
++	dev_set_drvdata(&rpdev->dev, rpwwan);
++
++	/* Register as a wwan port, id.driver_data contains wwan port type */
++	port = wwan_create_port(parent, rpdev->id.driver_data,
++				&rpmsg_wwan_pops, rpwwan);
++	if (IS_ERR(port))
++		return PTR_ERR(port);
++
++	rpwwan->wwan_port = port;
++
++	return 0;
++};
++
++static void rpmsg_wwan_ctrl_remove(struct rpmsg_device *rpdev)
++{
++	struct rpmsg_wwan_dev *rpwwan = dev_get_drvdata(&rpdev->dev);
++
++	wwan_remove_port(rpwwan->wwan_port);
++}
++
++static const struct rpmsg_device_id rpmsg_wwan_ctrl_id_table[] = {
++	/* RPMSG channels for Qualcomm SoCs with integrated modem */
++	{ .name = "DATA5_CNTL", .driver_data = WWAN_PORT_QMI },
++	{ .name = "DATA4", .driver_data = WWAN_PORT_AT },
++	{},
++};
++MODULE_DEVICE_TABLE(rpmsg, rpmsg_wwan_ctrl_id_table);
++
++static struct rpmsg_driver rpmsg_wwan_ctrl_driver = {
++	.drv.name = "rpmsg_wwan_ctrl",
++	.id_table = rpmsg_wwan_ctrl_id_table,
++	.probe = rpmsg_wwan_ctrl_probe,
++	.remove = rpmsg_wwan_ctrl_remove,
++};
++module_rpmsg_driver(rpmsg_wwan_ctrl_driver);
++
++MODULE_LICENSE("GPL v2");
++MODULE_DESCRIPTION("RPMSG WWAN CTRL Driver");
++MODULE_AUTHOR("Stephan Gerhold <stephan@gerhold.net>");
+-- 
+2.32.0
+
