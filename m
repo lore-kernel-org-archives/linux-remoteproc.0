@@ -2,284 +2,164 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.5 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C71D9C48BDF
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 18 Jun 2021 11:36:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C4A7C48BE8
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 18 Jun 2021 12:24:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 98A25610CA
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 18 Jun 2021 11:36:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 477F36113E
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 18 Jun 2021 12:24:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231247AbhFRLiK (ORCPT
+        id S232546AbhFRM0n (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 18 Jun 2021 07:38:10 -0400
-Received: from mx07-00178001.pphosted.com ([185.132.182.106]:50562 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231598AbhFRLiJ (ORCPT
+        Fri, 18 Jun 2021 08:26:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45028 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232155AbhFRM0i (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 18 Jun 2021 07:38:09 -0400
-Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 15IBWkku030518;
-        Fri, 18 Jun 2021 13:35:45 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=selector1;
- bh=PpcAaJrSaZTHGuAzUixTxfiO8Bz+TZX1wKmwkjUgJ8s=;
- b=wOG+8h0hRjCQlzupRqd33iw2H3KBxT1FGyZf/xwMuzCZ6iPdezLEmBSPtBwP8YdaWwtg
- HSBd338QwHcX0I1DY7PfNOYync+/4ic9pHrjoe14nYiEpGQRURfM8PjdRh1+ubPewoe+
- WiclP4bwWhUnyMJI7mYsftH+jwt01Ctyjqj4GvQsl+iOrwcfThC0R9mEmMPcJNm0djA7
- cTkwfJn9m/MyPyF2Oq5DAVb3NoDmuWnuL/WR1SJc71S12mKqnx4HwKJ37FHdl+mHk2GE
- 5JsajgUdKnqghKuO7VuU2w/0mZCo57FRfaF8tC/xbAt1tgEAEBakcjU/qX4nk7ffl2G1 NA== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 398hn3ayww-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 18 Jun 2021 13:35:45 +0200
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id C48FB10002A;
-        Fri, 18 Jun 2021 13:35:44 +0200 (CEST)
-Received: from Webmail-eu.st.com (sfhdag2node3.st.com [10.75.127.6])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id A83D4225EBE;
-        Fri, 18 Jun 2021 13:35:44 +0200 (CEST)
-Received: from lmecxl0889.lme.st.com (10.75.127.51) by SFHDAG2NODE3.st.com
- (10.75.127.6) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Fri, 18 Jun
- 2021 13:35:44 +0200
-Subject: Re: [PATCH 3/4] rpmsg: char: Introduce the "rpmsg-raw" channel
-To:     Mathieu Poirier <mathieu.poirier@linaro.org>
-CC:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Ohad Ben-Cohen <ohad@wizery.com>,
-        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>, <julien.massot@iot.bzh>
-References: <20210607173032.30133-1-arnaud.pouliquen@foss.st.com>
- <20210607173032.30133-4-arnaud.pouliquen@foss.st.com>
- <20210615200102.GE604521@p14s>
- <b55cd4e5-fb9d-a0ab-03a9-3a771898db04@foss.st.com>
- <20210617213154.GA790564@p14s>
-From:   Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
-Message-ID: <d8e81ecd-c77d-9d16-7e43-218bd54a9f83@foss.st.com>
-Date:   Fri, 18 Jun 2021 13:35:43 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.8.1
+        Fri, 18 Jun 2021 08:26:38 -0400
+Received: from mail-oi1-x232.google.com (mail-oi1-x232.google.com [IPv6:2607:f8b0:4864:20::232])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 09CECC06175F
+        for <linux-remoteproc@vger.kernel.org>; Fri, 18 Jun 2021 05:24:29 -0700 (PDT)
+Received: by mail-oi1-x232.google.com with SMTP id r16so10372659oiw.3
+        for <linux-remoteproc@vger.kernel.org>; Fri, 18 Jun 2021 05:24:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=aleksander-es.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=zGMiRyRq//Dmyu1IU2B9k28pLofo2fcJNcRGLdmdXBI=;
+        b=QuJaZ1Jp0HJIGh8YZnu6ydU2L5dX6HOhfRdu9kDddNub/w55cjtKHA13sJUmZgiofz
+         GpLkWMkct9iFtf0ZUNsbaS3dqiRXl27SsCj6K69SitBlTCMauEaCPk+ZmuZCQVv202UG
+         nB2a/wI0WstcN/b2dvdjxoW1Uclz5jLN7LcARfwhywqO9uUu98j46bV11Yu6ZKIZNl+8
+         yGEtMKbXk+lAUBO4JS0deDefM02fwy6DiWyKOtqxePzwuIkV+8pPeEi9n8reQesDZvoj
+         N/igwfDpz1gGQcPfnXAmjc03cI5dAysuScVpPljRqMTo8j7Glq2cedV+19tAjZWkubyU
+         9ymw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=zGMiRyRq//Dmyu1IU2B9k28pLofo2fcJNcRGLdmdXBI=;
+        b=riDyFM9qsc7Hko+nFQkszegUHuLesGxdhFcar0SN9wpEd8ikg6167zu9of8JFxAbNJ
+         Y/liofMsNn4Ssi8bon/XB4NZWV5bKcyYs2sfFK7agG6KUe+8e94TjMw6XVrQUKQzf/Bv
+         t+XUPk0VbLhefjE8j8G2J+YOnTy6PtdSRC4vM5wPbNZYWoxC8Z4dWpuFWF4PTsWgwB2X
+         6v2EhDJsZmRl4Fob1LoXD28ILraaHH7nB5RfWWE4pMuxol/++nV6TFkVxJo0U/j1bYkp
+         ONevHnwLrFfW0UYRtRYPSHPY6O4tILjLdREaeIvKOeywElpocKUanQdTQmIjK90iytCB
+         m8eg==
+X-Gm-Message-State: AOAM532StO6AapUIt0PcX0r0yiPUfTzkI18zkZvssTFqiAOxCq48EDnP
+        EDIMANWXYCsQWaERCkxRqhw3XmqyYXSF20OIgTZx1w==
+X-Google-Smtp-Source: ABdhPJzbrSc8Z7nx9BQg7dqAKn++bJoithUarzQuKATTzxcv+74R8gd6Gfk/gduBg7VKKUuI1FMPDLFKHnZaFG3O5i0=
+X-Received: by 2002:a05:6808:13d5:: with SMTP id d21mr14723893oiw.114.1624019068209;
+ Fri, 18 Jun 2021 05:24:28 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20210617213154.GA790564@p14s>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.75.127.51]
-X-ClientProxiedBy: SFHDAG2NODE1.st.com (10.75.127.4) To SFHDAG2NODE3.st.com
- (10.75.127.6)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.391,18.0.790
- definitions=2021-06-18_07:2021-06-18,2021-06-18 signatures=0
+References: <20210618075243.42046-1-stephan@gerhold.net> <20210618075243.42046-3-stephan@gerhold.net>
+ <CAAP7ucKHXv_Wu7dpSmPpy1utMZV5iXGOjGg87AbcR4j+Xcz=WA@mail.gmail.com> <YMxx0XimZAEHmeUx@gerhold.net>
+In-Reply-To: <YMxx0XimZAEHmeUx@gerhold.net>
+From:   Aleksander Morgado <aleksander@aleksander.es>
+Date:   Fri, 18 Jun 2021 14:24:17 +0200
+Message-ID: <CAAP7uc+ckHLdMis0WQpuJSCJ0Ln7zBddEa-w3itRGykXsUiF2Q@mail.gmail.com>
+Subject: Re: [PATCH net-next v2 2/3] net: wwan: Add RPMSG WWAN CTRL driver
+To:     Stephan Gerhold <stephan@gerhold.net>
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Loic Poulain <loic.poulain@linaro.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Sergey Ryazanov <ryazanov.s.a@gmail.com>,
+        Johannes Berg <johannes.berg@intel.com>,
+        Leon Romanovsky <leon@kernel.org>,
+        M Chetan Kumar <m.chetan.kumar@intel.com>,
+        linuxwwan@intel.com, Ohad Ben-Cohen <ohad@wizery.com>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Network Development <netdev@vger.kernel.org>,
+        linux-remoteproc@vger.kernel.org,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        phone-devel@vger.kernel.org,
+        open list <linux-kernel@vger.kernel.org>,
+        ~postmarketos/upstreaming@lists.sr.ht
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi Mathieu,
+Hey,
 
-On 6/17/21 11:31 PM, Mathieu Poirier wrote:
-> On Wed, Jun 16, 2021 at 02:38:26PM +0200, Arnaud POULIQUEN wrote:
->> Hi Mathieu,
->>
->> On 6/15/21 10:01 PM, Mathieu Poirier wrote:
->>> On Mon, Jun 07, 2021 at 07:30:31PM +0200, Arnaud Pouliquen wrote:
->>>> Allows to probe the endpoint device on a remote name service announcement,
->>>> by registering a rpmsg_driverfor the "rpmsg-raw" channel.
->>>>
->>>> With this patch the /dev/rpmsgX interface can be instantiated by the remote
->>>> firmware.
->>>>
->>>> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
->>>> ---
->>>>  drivers/rpmsg/rpmsg_char.c | 54 ++++++++++++++++++++++++++++++++++++--
->>>>  1 file changed, 52 insertions(+), 2 deletions(-)
->>>>
->>>> diff --git a/drivers/rpmsg/rpmsg_char.c b/drivers/rpmsg/rpmsg_char.c
->>>> index 4199ac1bee10..3b850b218eb0 100644
->>>> --- a/drivers/rpmsg/rpmsg_char.c
->>>> +++ b/drivers/rpmsg/rpmsg_char.c
->>>> @@ -25,6 +25,8 @@
->>>>  
->>>>  #include "rpmsg_char.h"
->>>>  
->>>> +#define RPMSG_CHAR_DEVNAME "rpmsg-raw"
->>>> +
->>>>  static dev_t rpmsg_major;
->>>>  static struct class *rpmsg_class;
->>>>  
->>>> @@ -416,6 +418,40 @@ int rpmsg_chrdev_eptdev_create(struct rpmsg_device *rpdev, struct device *parent
->>>>  }
->>>>  EXPORT_SYMBOL(rpmsg_chrdev_eptdev_create);
->>>>  
->>>> +static int rpmsg_chrdev_probe(struct rpmsg_device *rpdev)
->>>> +{
->>>> +	struct rpmsg_channel_info chinfo;
->>>> +
->>>> +	memcpy(chinfo.name, RPMSG_CHAR_DEVNAME, sizeof(RPMSG_CHAR_DEVNAME));
->>>> +	chinfo.src = rpdev->src;
->>>> +	chinfo.dst = rpdev->dst;
->>>> +
->>>> +	return __rpmsg_chrdev_eptdev_create(rpdev, &rpdev->dev, chinfo, true);
->>>
->>> I am a little puzzled here as to why we need different modes... Why can't we
->>> simply call rpmsg_chrdev_eptdev_create() and let the endpoint be created on
->>> open() and destroyed on release() as per the current implementation?
->>
->> The main reason is the support of the NS announcement
->> a NS announcement is received from the remote processor:
->> channel name: "rpmsg-raw"
->> remote address (dst address): 0x400
->> local address (scr address) : RPMSG_ADDR_ANY
->> => no default endpoint, and not local address.
->>
->> case 1) if we use legacy implementation ( no default endpoint)
->> => create/destroy endpoint on open/stop
->> - on first open: created endpoint is bound to scr address 0x406
->> - a first message is sent to the remote side, the address 0x406 is stored as
->> default channel dst address on remote side.
->> - on close: endpoint is closed and associated address 0x406 is free.
->> - another driver create an enpoint the address 0x406 is reserved for this new
->> endpoint.
->> - on new open:  scr address is set to next value 0x407
->> => how to inform remote processor that the address has changed?
->> => no reservation mechanism that ensure that you can reuse the same address
->>
->> case 2) relying on use_default_ept
->> => Ensure that both side have always the same addresses to communicate.
-> 
-> I see the problem and your solution is adequate - I think the code simply needs
-> to be moved around a little.  Here is what I suggest:
-> 
-> 1) Create the endpoint in rpmsg_chrdev_probe(), just before calling
-> rpmsg_chrdev_eptdev_create().  That way changes to rpmsg_eptdev_open() can be
-> kept to a minimum.  I don't think we'll be needing
-> __rpmsg_chrdev_eptdev_create() anymore.
-
-Yes i could, but this will break a concept of the rpmsg_char that creates the
-endpoint on open, meaning that application is ready to communicate.
-
-I would rather preserve this behavior.
-
-> 
-> 2) We can get rid of use_default_ept by taking advantage of the fact that the
-> rpmsg_char driver does not use rpmsg_device::ept.  If we create the endpoint in
-> rpmsg_chrdev_probe() we know that if rpdev->ept exists, we must not create
-> or destroy the endpoint in rpmsg_eptdev_open() and rpmsg_eptdev_release().
+> > So, does this mean we're limiting the amount of channels exported to
+> > only one QMI control port and one AT control port?
 >
-> 3) Function rpmsg_eptdev_open() doesn't change much.  If rpdev->ept is NULL
-> than
-> an endpoint is created as the current implementation.  Otherwise we simply do:
->
->         eptdev->ept = rpdev->ept;
+> Yep, but I think:
+>   - It's easy to extend this with additional ports later
+>     if someone has a real use case for that.
+>   - It's still possible to export via rpmsgexport.
 >
 
-In qcom_glink_create_chrdev, a rpmsg_ctrl rpdev with a default endpoint is
-created and used as parameter of the  pmsg_ctrldev_register_device [1]
-=> rpdev->ept is not NULL.
+Ah, that's good then, if we can have the rpmsgexport fallback, there
+shouldn't be any issue.
 
-So the rpmsg_char has to differentiate 2 cases on rpmsg_eptdev_open:
-- A enpdoint has to be created as requested by RPMSG_CREATE_EPT_IOCTL
-(regardless of the rpdev->ept value)
-- for a rpmsg device created by an NS announcement: A default endpoint has to be
-reused (or created if rpdev->ept is null).
+> > Not saying that's wrong, but maybe it makes sense to add a comment
+> > somewhere specifying that explicitly.
+>
+> Given that these channels were only found through reverse engineering,
+> saying that DATA*_CNTL/DATA* are fully equivalent QMI/AT ports is just
+> a theory, I have no proof for this. Generally these channels had some
+> fixed use case on the original Android system, for example DATA1 (AT)
+> seems to have been often used for Bluetooth Dial-Up Networking (DUN)
+> while DATA4 was often more general purpose.
+>
+> Perhaps DATA* are all fully equivalent, independent AT channels at the
+> end, or perhaps DATA1/DATA4 behave slightly differently because there
+> were some special requirements for Bluetooth DUN. I have no way to tell.
+> And it can vary from device to device since we're stuck with
+> device-specific (and usually signed) firmware.
+>
+> Another example: I have seen DATA11 on some devices, but it does not
+> seem to work as AT port for some reason, there is no reply at all
+> from the modem on that channel. Perhaps it needs to be activated
+> somehow, perhaps it's not an AT channel at all, I have no way to tell.
+>
+> My point is: Here I'm only enabling what is proven to work on all
+> devices (used in postmarketOS for more than a year). I have insufficient
+> data to vouch for the reliability of any other channel. I cannot say if
+> the channels are really independent, or influence each other somehow.
+>
 
-so the rpdev->ept test is not relevant for decision, the use_default_ept ( or
-another flag) is mandatory.
+Fair enough; I think your approach is the correct one, just enable
+what's known to work.
 
+> As far as I understand, we currently do not have any use case for having
+> multiple QMI/AT ports exposed for ModemManager, right? And if someone
+> does have a use case, perhaps exposing them through the WWAN subsystem
+> is not even what they want, perhaps they want to forward them through
+> USB or something.
+>
 
-> 4) Make sure the teardown path works as well.  From what I can see, it should.
-> 
-> 5) Add a __lot__ of comments.
-> 
-> If the above all works this entire patchset should become really small.
+There is no such usecase in MM; having one single QMI port in MM is
+more than enough, and having the extra AT port gives some
+functionalities that we don't yet support in QMI (e.g. voice call
+management). We don't gain anything extra by having more QMI or more
+AT ports at this moment.
 
-Thanks,
-Arnaud
+> > Also, would it make sense to have some way to trigger the export of
+> > additional channels somehow via userspace? e.g. something like
+> > rpmsgexport but using the wwan subsystem. I'm not sure if that's a
+> > true need anywhere or just over-engineering the solution, truth be
+> > told.
+>
+> So personally I think we should keep this simple and limited to existing
+> use cases. If someone shows up with different requirements we can
+> investigate this further.
+>
 
-> 
->>
->>>
->>> I'd rather keep things simple for the refactoring and introduce new features
->>> later if need be.
->>
->> Yes I agree with you, but here it could become a nightmare for the remote
->> processor if the Linux endpoint address is not stable.
->>
->> Anyway we can consider this as a workaround waiting the extension of the NS
->> announcement to have a better management of the address exchange on channel
->> initialization.
->>
->> Thanks
->> Arnaud
->>
->>>
->>> As I said, it may be that I don't understand the usecase.
->>>
->>> Thanks,
->>> Mathieu
->>>
->>>> +}
->>>> +
->>>> +static void rpmsg_chrdev_remove(struct rpmsg_device *rpdev)
->>>> +{
->>>> +	int ret;
->>>> +
->>>> +	ret = device_for_each_child(&rpdev->dev, NULL, rpmsg_chrdev_eptdev_destroy);
->>>> +	if (ret)
->>>> +		dev_warn(&rpdev->dev, "failed to destroy endpoints: %d\n", ret);
->>>> +}
->>>> +
->>>> +static struct rpmsg_device_id rpmsg_chrdev_id_table[] = {
->>>> +	{ .name	= RPMSG_CHAR_DEVNAME },
->>>> +	{ },
->>>> +};
->>>> +
->>>> +static struct rpmsg_driver rpmsg_chrdev_driver = {
->>>> +	.probe = rpmsg_chrdev_probe,
->>>> +	.remove = rpmsg_chrdev_remove,
->>>> +	.id_table = rpmsg_chrdev_id_table,
->>>> +	.drv = {
->>>> +		.name = "rpmsg_chrdev",
->>>> +	},
->>>> +};
->>>> +
->>>>  static int rpmsg_chrdev_init(void)
->>>>  {
->>>>  	int ret;
->>>> @@ -429,16 +465,30 @@ static int rpmsg_chrdev_init(void)
->>>>  	rpmsg_class = class_create(THIS_MODULE, "rpmsg");
->>>>  	if (IS_ERR(rpmsg_class)) {
->>>>  		pr_err("failed to create rpmsg class\n");
->>>> -		unregister_chrdev_region(rpmsg_major, RPMSG_DEV_MAX);
->>>> -		return PTR_ERR(rpmsg_class);
->>>> +		ret = PTR_ERR(rpmsg_class);
->>>> +		goto free_region;
->>>> +	}
->>>> +
->>>> +	ret = register_rpmsg_driver(&rpmsg_chrdev_driver);
->>>> +	if (ret < 0) {
->>>> +		pr_err("rpmsg: failed to register rpmsg raw driver\n");
->>>> +		goto free_class;
->>>>  	}
->>>>  
->>>>  	return 0;
->>>> +
->>>> +free_class:
->>>> +	class_destroy(rpmsg_class);
->>>> +free_region:
->>>> +	unregister_chrdev_region(rpmsg_major, RPMSG_DEV_MAX);
->>>> +
->>>> +	return ret;
->>>>  }
->>>>  postcore_initcall(rpmsg_chrdev_init);
->>>>  
->>>>  static void rpmsg_chrdev_exit(void)
->>>>  {
->>>> +	unregister_rpmsg_driver(&rpmsg_chrdev_driver);
->>>>  	class_destroy(rpmsg_class);
->>>>  	unregister_chrdev_region(rpmsg_major, RPMSG_DEV_MAX);
->>>>  }
->>>> -- 
->>>> 2.17.1
->>>>
+Yes, I think I'm on that same boat.
+
+> If I send a v3 I will check if I can clarify this in the commit
+> message somewhat. I actually had something related in there but removed
+> it shortly before submitting the patch because I thought it's mostly
+> just speculation and the message was already quite long. Oh well :)
+>
+
+Heh :) Thanks!
+
+-- 
+Aleksander
+https://aleksander.es
