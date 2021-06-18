@@ -2,157 +2,151 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA9A9C48BDF
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 18 Jun 2021 10:13:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7412DC48BDF
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 18 Jun 2021 11:17:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9BC4461241
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 18 Jun 2021 10:13:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4CB106112D
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 18 Jun 2021 11:17:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233390AbhFRKQB (ORCPT
+        id S231241AbhFRLTM (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 18 Jun 2021 06:16:01 -0400
-Received: from mo4-p01-ob.smtp.rzone.de ([85.215.255.52]:31667 "EHLO
+        Fri, 18 Jun 2021 07:19:12 -0400
+Received: from mo4-p01-ob.smtp.rzone.de ([85.215.255.52]:9544 "EHLO
         mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232796AbhFRKP4 (ORCPT
+        with ESMTP id S229523AbhFRLTM (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 18 Jun 2021 06:15:56 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1624011224;
+        Fri, 18 Jun 2021 07:19:12 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1624015020;
     s=strato-dkim-0002; d=gerhold.net;
-    h=In-Reply-To:References:Message-ID:Subject:Cc:To:From:Date:Cc:Date:
-    From:Subject:Sender;
-    bh=TTr19vPZLviTwengBDXkAe6yBwL2HQTHr/uHIs4p14E=;
-    b=QLFXy2wdw1WOFvbKuBMoRdy8FTbEtqmvQMfqPGqjaN7xnO13u6RXJHMA5NFOZdOEee
-    26YIWqXEUd1yx+mgWWhslsxehJ3npRJ8VsF/cpuN/55Bi3sYYmxubYVxtZX18pwhfD7k
-    ZA78Lid+aHiMHI9w9/AFSrD9257wOgVblMbr/C6dkEeooTHppTdFwBI7Wbh5n14RUNIM
-    MbTqMpJBcukKctZE0pEg/6r+LxJvsex6mqfzUFfDbA0GEdr5Znpn6rrix4XuwmnJe8PP
-    WlMgNJHEPljljWVM5WtkT2gFuwsxK22yabnK6eqnPWFRQd6H0sV7BgNCoQYKXXA1Gd2m
-    S7EQ==
+    h=Message-Id:Date:Subject:Cc:To:From:Cc:Date:From:Subject:Sender;
+    bh=2IEraGzNWXmVYdeSeEGKrT4Xkx/HJOG80MAY09qwzKU=;
+    b=MhNpCRSVeiykPgc+vZZ4PyWh2hpCLJfiJdRDeHv6NjGfqhrEjC0GVkvPysJ3IQtrP2
+    z+SvB8yDvmfaqM/eAGzwlwxX6Zd5LLb1vyk2CI46v23FobqKoCPwO1ErzgFSSQym/K3F
+    UECZKSXYM9Qav/Uv8vc286lowUrWOqQj09azCHSy9QGrngNZ7gHS2dFEd3x60UaIPKf2
+    BBvAij1NWNxvqnyZS+RCb3y1wSw4KhBqoyXdO16FOJrwwLB/rd+ygcr1ETDaj89GpLhV
+    EKMjCu4gWVJtx8J7v+vKiuoQBuVsNTuxZwriEx+pwBqM8d4KAwrysjkVVWZwgOV+0osQ
+    FJvg==
 Authentication-Results: strato.com;
     dkim=none
-X-RZG-AUTH: ":P3gBZUipdd93FF5ZZvYFPugejmSTVR2nRPhVOQ/OcYgojyw4j34+u26zEodhPgRDZ8nxIcap"
+X-RZG-AUTH: ":P3gBZUipdd93FF5ZZvYFPugejmSTVR2nRPhVORvLd4SsytBXS7IYBkLahKxA626EOg=="
 X-RZG-CLASS-ID: mo00
-Received: from gerhold.net
+Received: from droid..
     by smtp.strato.de (RZmta 47.27.3 DYNA|AUTH)
-    with ESMTPSA id 000885x5IADh4yw
+    with ESMTPSA id 000885x5IBGx5MN
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
         (Client did not present a certificate);
-    Fri, 18 Jun 2021 12:13:43 +0200 (CEST)
-Date:   Fri, 18 Jun 2021 12:13:37 +0200
+    Fri, 18 Jun 2021 13:16:59 +0200 (CEST)
 From:   Stephan Gerhold <stephan@gerhold.net>
-To:     Aleksander Morgado <aleksander@aleksander.es>
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Loic Poulain <loic.poulain@linaro.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Sergey Ryazanov <ryazanov.s.a@gmail.com>,
-        Johannes Berg <johannes.berg@intel.com>,
-        Leon Romanovsky <leon@kernel.org>,
-        M Chetan Kumar <m.chetan.kumar@intel.com>,
-        linuxwwan@intel.com, Ohad Ben-Cohen <ohad@wizery.com>,
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Andy Gross <agross@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Network Development <netdev@vger.kernel.org>,
-        linux-remoteproc@vger.kernel.org,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        phone-devel@vger.kernel.org,
-        open list <linux-kernel@vger.kernel.org>,
-        ~postmarketos/upstreaming@lists.sr.ht
-Subject: Re: [PATCH net-next v2 2/3] net: wwan: Add RPMSG WWAN CTRL driver
-Message-ID: <YMxx0XimZAEHmeUx@gerhold.net>
-References: <20210618075243.42046-1-stephan@gerhold.net>
- <20210618075243.42046-3-stephan@gerhold.net>
- <CAAP7ucKHXv_Wu7dpSmPpy1utMZV5iXGOjGg87AbcR4j+Xcz=WA@mail.gmail.com>
+        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        ~postmarketos/upstreaming@lists.sr.ht,
+        Stephan Gerhold <stephan@gerhold.net>
+Subject: [PATCH 1/3] soc: qcom: smem_state: Add devm_qcom_smem_state_get()
+Date:   Fri, 18 Jun 2021 13:15:54 +0200
+Message-Id: <20210618111556.53416-1-stephan@gerhold.net>
+X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAAP7ucKHXv_Wu7dpSmPpy1utMZV5iXGOjGg87AbcR4j+Xcz=WA@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi Aleksander!
+It is easy to forget to call qcom_smem_state_put() after
+a qcom_smem_state_get(). Introduce a devm_qcom_smem_state_get()
+helper function that automates this so that qcom_smem_state_put()
+is automatically called when a device is removed.
 
-On Fri, Jun 18, 2021 at 10:21:18AM +0200, Aleksander Morgado wrote:
-> > +static const struct rpmsg_device_id rpmsg_wwan_ctrl_id_table[] = {
-> > +       /* RPMSG channels for Qualcomm SoCs with integrated modem */
-> > +       { .name = "DATA5_CNTL", .driver_data = WWAN_PORT_QMI },
-> > +       { .name = "DATA4", .driver_data = WWAN_PORT_AT },
-> > +       {},
-> > +};
-> 
-> If I understand this properly, now these rpmsg backed control ports
-> would be automatically exposed without the need of a userspace CLI
-> tool to do that (rpmsgexport).
-> 
+Signed-off-by: Stephan Gerhold <stephan@gerhold.net>
+---
+I use this in my WIP bam-dmux driver, so it might simplify coordination
+later if we can somehow get this in for 5.14 (if it isn't too late yet).
 
-Yep, that's the main advantage compared to the current approach.
+Similar code can be found in clk-devres.c for example:
+https://elixir.bootlin.com/linux/v5.13-rc6/source/drivers/clk/clk-devres.c#L7
+---
+ drivers/soc/qcom/smem_state.c       | 36 +++++++++++++++++++++++++++++
+ include/linux/soc/qcom/smem_state.h |  7 ++++++
+ 2 files changed, 43 insertions(+)
 
-> And if I recall correctly, DATA5_CNTL and DATA4 were the only channels
-> actively exported with udev actions using rpmsgexport in postmarketos,
-> but that didn't mean someone could add additional rules to export
-> other channels (i.e. as per the ModemManager port type hint rules,
-> DATA[0-9]*_CNTL as QMI and DATA[0-9]* as AT, except for DATA40_CNTL
-> and DATA_40 which are the USB tethering related ones).
-> 
+diff --git a/drivers/soc/qcom/smem_state.c b/drivers/soc/qcom/smem_state.c
+index d2b558438deb..31faf4aa868e 100644
+--- a/drivers/soc/qcom/smem_state.c
++++ b/drivers/soc/qcom/smem_state.c
+@@ -151,6 +151,42 @@ void qcom_smem_state_put(struct qcom_smem_state *state)
+ }
+ EXPORT_SYMBOL_GPL(qcom_smem_state_put);
+ 
++static void devm_qcom_smem_state_release(struct device *dev, void *res)
++{
++	qcom_smem_state_put(*(struct qcom_smem_state **)res);
++}
++
++/**
++ * devm_qcom_smem_state_get() - acquire handle to a devres managed state
++ * @dev:	client device pointer
++ * @con_id:	name of the state to lookup
++ * @bit:	flags from the state reference, indicating which bit's affected
++ *
++ * Returns handle to the state, or ERR_PTR(). qcom_smem_state_put() is called
++ * automatically when @dev is removed.
++ */
++struct qcom_smem_state *devm_qcom_smem_state_get(struct device *dev,
++						 const char *con_id,
++						 unsigned *bit)
++{
++	struct qcom_smem_state **ptr, *state;
++
++	ptr = devres_alloc(devm_qcom_smem_state_release, sizeof(*ptr), GFP_KERNEL);
++	if (!ptr)
++		return ERR_PTR(-ENOMEM);
++
++	state = qcom_smem_state_get(dev, con_id, bit);
++	if (!IS_ERR(state)) {
++		*ptr = state;
++		devres_add(dev, ptr);
++	} else {
++		devres_free(ptr);
++	}
++
++	return state;
++}
++EXPORT_SYMBOL_GPL(devm_qcom_smem_state_get);
++
+ /**
+  * qcom_smem_state_register() - register a new state
+  * @of_node:	of_node used for matching client lookups
+diff --git a/include/linux/soc/qcom/smem_state.h b/include/linux/soc/qcom/smem_state.h
+index 63ad8cddad14..17c56a50302f 100644
+--- a/include/linux/soc/qcom/smem_state.h
++++ b/include/linux/soc/qcom/smem_state.h
+@@ -14,6 +14,7 @@ struct qcom_smem_state_ops {
+ #ifdef CONFIG_QCOM_SMEM_STATE
+ 
+ struct qcom_smem_state *qcom_smem_state_get(struct device *dev, const char *con_id, unsigned *bit);
++struct qcom_smem_state *devm_qcom_smem_state_get(struct device *dev, const char *con_id, unsigned *bit);
+ void qcom_smem_state_put(struct qcom_smem_state *);
+ 
+ int qcom_smem_state_update_bits(struct qcom_smem_state *state, u32 mask, u32 value);
+@@ -29,6 +30,12 @@ static inline struct qcom_smem_state *qcom_smem_state_get(struct device *dev,
+ 	return ERR_PTR(-EINVAL);
+ }
+ 
++static inline struct qcom_smem_state *devm_qcom_smem_state_get(struct device *dev,
++	const char *con_id, unsigned *bit)
++{
++	return ERR_PTR(-EINVAL);
++}
++
+ static inline void qcom_smem_state_put(struct qcom_smem_state *state)
+ {
+ }
+-- 
+2.32.0
 
-Yep.
-
-> So, does this mean we're limiting the amount of channels exported to
-> only one QMI control port and one AT control port?
-
-Yep, but I think:
-  - It's easy to extend this with additional ports later
-    if someone has a real use case for that.
-  - It's still possible to export via rpmsgexport.
-
-> Not saying that's wrong, but maybe it makes sense to add a comment
-> somewhere specifying that explicitly.
-
-Given that these channels were only found through reverse engineering,
-saying that DATA*_CNTL/DATA* are fully equivalent QMI/AT ports is just
-a theory, I have no proof for this. Generally these channels had some
-fixed use case on the original Android system, for example DATA1 (AT)
-seems to have been often used for Bluetooth Dial-Up Networking (DUN)
-while DATA4 was often more general purpose.
-
-Perhaps DATA* are all fully equivalent, independent AT channels at the
-end, or perhaps DATA1/DATA4 behave slightly differently because there
-were some special requirements for Bluetooth DUN. I have no way to tell.
-And it can vary from device to device since we're stuck with
-device-specific (and usually signed) firmware.
-
-Another example: I have seen DATA11 on some devices, but it does not
-seem to work as AT port for some reason, there is no reply at all
-from the modem on that channel. Perhaps it needs to be activated
-somehow, perhaps it's not an AT channel at all, I have no way to tell.
-
-My point is: Here I'm only enabling what is proven to work on all
-devices (used in postmarketOS for more than a year). I have insufficient
-data to vouch for the reliability of any other channel. I cannot say if
-the channels are really independent, or influence each other somehow.
-
-As far as I understand, we currently do not have any use case for having
-multiple QMI/AT ports exposed for ModemManager, right? And if someone
-does have a use case, perhaps exposing them through the WWAN subsystem
-is not even what they want, perhaps they want to forward them through
-USB or something.
-
-> Also, would it make sense to have some way to trigger the export of
-> additional channels somehow via userspace? e.g. something like
-> rpmsgexport but using the wwan subsystem. I'm not sure if that's a
-> true need anywhere or just over-engineering the solution, truth be
-> told.
-
-So personally I think we should keep this simple and limited to existing
-use cases. If someone shows up with different requirements we can
-investigate this further.
-
-If I send a v3 I will check if I can clarify this in the commit
-message somewhat. I actually had something related in there but removed
-it shortly before submitting the patch because I thought it's mostly
-just speculation and the message was already quite long. Oh well :)
-
-Stephan
