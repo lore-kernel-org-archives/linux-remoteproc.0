@@ -7,189 +7,207 @@ X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66B66C4743C
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 21 Jun 2021 22:42:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EBD8C4743C
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 21 Jun 2021 23:16:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4A7C360E08
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 21 Jun 2021 22:42:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 49F9A6023D
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 21 Jun 2021 23:16:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232172AbhFUWoz (ORCPT
+        id S231262AbhFUXSw (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 21 Jun 2021 18:44:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57676 "EHLO
+        Mon, 21 Jun 2021 19:18:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36982 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232112AbhFUWoy (ORCPT
+        with ESMTP id S230433AbhFUXSv (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 21 Jun 2021 18:44:54 -0400
-Received: from mail-pl1-x62a.google.com (mail-pl1-x62a.google.com [IPv6:2607:f8b0:4864:20::62a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CB0DAC061574
-        for <linux-remoteproc@vger.kernel.org>; Mon, 21 Jun 2021 15:42:38 -0700 (PDT)
-Received: by mail-pl1-x62a.google.com with SMTP id o21so9364092pll.6
-        for <linux-remoteproc@vger.kernel.org>; Mon, 21 Jun 2021 15:42:38 -0700 (PDT)
+        Mon, 21 Jun 2021 19:18:51 -0400
+Received: from mail-pj1-x1032.google.com (mail-pj1-x1032.google.com [IPv6:2607:f8b0:4864:20::1032])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DC2D3C061574
+        for <linux-remoteproc@vger.kernel.org>; Mon, 21 Jun 2021 16:16:36 -0700 (PDT)
+Received: by mail-pj1-x1032.google.com with SMTP id g24so10864359pji.4
+        for <linux-remoteproc@vger.kernel.org>; Mon, 21 Jun 2021 16:16:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=JCTSVkIytk/Hp0iEchwMobckKs7yA/n0NMw1lar0mLg=;
-        b=heKd2ClbKCDXRwF6fkwDkcbMHXcQwPByNrGsZHf/mglW82+G95Qrwyq4r4Cka9FXsV
-         mnvwlivYWR8kVKPhO+ZEAmnjtUGzXUkU+h9ZeqGyFviJCYhufhjWDHmELeFYxihn3eNk
-         5I4bZvf3TkcyzPJh6ULTc39PaYMgtSOtSPneodBxPNI1CzdaC5WxWGsSG+5xfZAGNsOF
-         z4OWXGBBdcV4xgIs/tnNP1UYKljQwTPqn9DFg3181EqFU3W+I4HuMcREzxOy8HThTRbl
-         c81JnLUqTlujjre6zKxFS5b//u4mvRzwMGax3pc0C0fWSnjJTttrIIUu3L1HvWw8Dhdd
-         8tTA==
+        bh=o38KzSQf9bk0w4H1R0wVtOAX95R/HHsV6qoW4ydXw+4=;
+        b=Y52wWIe+5PSkZscV4l4zndjTceFusvppikvaZXHKCtsxUv1L8hByVc26U04LgF7QIg
+         XpKk5xmflRzxBgkJxQPYwo6/5Adnf6f8dnNwNCWvDJ3TGa9xMuGXF5/rkQJIVL6bYj/8
+         IshpVIuUWX6RQhpEKrbFTPmDDGCs2260NApQqevq9I2GR7csiOovxNE6ItezXrtaCqWB
+         rbNLX3FkKHgZsIb1aLqGLZLazCt6SLL0cOEGFiv6XD3UHRnVvANYDC7z8oAi7aENWxJj
+         HMVSKkNPecKOW6tDlvGmXMRpSdp8C0XGajSKA8U2wcZ/zpogBS679AAIQDZhl1TGbLFo
+         73VQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=JCTSVkIytk/Hp0iEchwMobckKs7yA/n0NMw1lar0mLg=;
-        b=rk9xu9oneQUYhzj2WleqZBO3y6gpWpndkPbsIdbxT/gDH2QsomW+eQsUfBt/dD5P77
-         zhSphKcpZc0wuxxyBqWGZKUGb0i0u+30ol6gJpqq34gWvuTs0iDIGtv6fQimmISReLyh
-         RZ9acXhjSsdIFQHdzAczKihc2F6C55LTAg7Cd6p3CR8heCb9gWpKQn2qn6LrDpfcWd0V
-         +m36TiduAz2gH7ovp0qM0MtlO3rxvoBWG0v+WdkCIIgi8BDdvJqqiKI6Z6IstG7qGaDw
-         pek/Yyvy4rAOLqyCGSpw1fiIqvbSSlHGnmqOzpKO+pQ0xFBq0oZh+pFmSFarINMgsA6w
-         A5gw==
-X-Gm-Message-State: AOAM533TDB23A3unFoxivDEimUIOyKPJHkL7KIumimyQCk/sX7Kz71ta
-        jkzDR7Of+/1+loy+VjFqE+C4qg==
-X-Google-Smtp-Source: ABdhPJw380SDPCqztfQNuWLssT48FIFqA/Fzbx9ACZhnNr8oIqJQVAOfOEWjzQ5EYcebKaB890LLAw==
-X-Received: by 2002:a17:90a:1b25:: with SMTP id q34mr499846pjq.163.1624315358306;
-        Mon, 21 Jun 2021 15:42:38 -0700 (PDT)
+        bh=o38KzSQf9bk0w4H1R0wVtOAX95R/HHsV6qoW4ydXw+4=;
+        b=avJfNII/jdvtiB2AY/NOqnrAxQ0JLJSNOSA1dMZPgAHnm6IY4BMtA06HaoBwlENzkg
+         JkgGPUjRgmIeeCXEvmbknI0vf/GJTGCHpmodwSlOosRJpnZ9z2xSyS+Jf4phtplD/xFk
+         KFekY+Xzy0OuvzzG9XjaTM/lY3lFOOW+cK58hdc1zug9/S5Sb9LnIGPqzRuMUbnNlaM1
+         gaTrkQsHupfUSIzjQwQ2R09QGNdjSz0mJuXLxHyIF5IC47B1UmC0nLECRm5eDeuJNu5l
+         RotZuqjE56ULmZ90WaidgcGlSpQan/zQWYx79F9Kc4ruSD9SBbjbXzD+RjmBYpGL/VZL
+         9cng==
+X-Gm-Message-State: AOAM533OxC5K9suolG+XQvzcpiGQLD7Iv/PL7C+cJywkIH5mnmzLl68b
+        1hfyomiwgXpZ/Oxfg39YlyuCJA==
+X-Google-Smtp-Source: ABdhPJzvZNwZ5ttzMbcP5RAWrMfd1TwySMuBxZi2MrHX6mW1Virrq+UUkD7969Grh1YJRoBbIrn48A==
+X-Received: by 2002:a17:902:c1cd:b029:121:3424:fcd5 with SMTP id c13-20020a170902c1cdb02901213424fcd5mr19098076plc.77.1624317396394;
+        Mon, 21 Jun 2021 16:16:36 -0700 (PDT)
 Received: from p14s (S0106889e681aac74.cg.shawcable.net. [68.147.0.187])
-        by smtp.gmail.com with ESMTPSA id c5sm4584329pfv.47.2021.06.21.15.42.36
+        by smtp.gmail.com with ESMTPSA id z17sm16635456pfq.218.2021.06.21.16.16.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Jun 2021 15:42:37 -0700 (PDT)
-Date:   Mon, 21 Jun 2021 16:42:35 -0600
+        Mon, 21 Jun 2021 16:16:35 -0700 (PDT)
+Date:   Mon, 21 Jun 2021 17:16:33 -0600
 From:   Mathieu Poirier <mathieu.poirier@linaro.org>
 To:     Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
 Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
         Ohad Ben-Cohen <ohad@wizery.com>,
         linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com, julien.massot@iot.bzh
-Subject: Re: [PATCH 1/4] rpmsg: Introduce rpmsg_create_default_ept function
-Message-ID: <20210621224235.GB980846@p14s>
-References: <20210607173032.30133-1-arnaud.pouliquen@foss.st.com>
- <20210607173032.30133-2-arnaud.pouliquen@foss.st.com>
+        linux-stm32@st-md-mailman.stormreply.com
+Subject: Re: [PATCH v2 1/1] rpmsg: ctrl: Introduce new
+ RPMSG_CREATE/RELEASE_DEV_IOCTL controls
+Message-ID: <20210621231633.GC980846@p14s>
+References: <20210621125800.27696-1-arnaud.pouliquen@foss.st.com>
+ <20210621125800.27696-2-arnaud.pouliquen@foss.st.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210607173032.30133-2-arnaud.pouliquen@foss.st.com>
+In-Reply-To: <20210621125800.27696-2-arnaud.pouliquen@foss.st.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Mon, Jun 07, 2021 at 07:30:29PM +0200, Arnaud Pouliquen wrote:
-> The rpmsg devices can be probed without default endpoint. This function
-> provides the capability for rpmsg drivers to create a default endpoint
-> on runtime.
+On Mon, Jun 21, 2021 at 02:58:00PM +0200, Arnaud Pouliquen wrote:
+> Allow the user space application to create and release an rpmsg device
+> by adding RPMSG_CREATE_DEV_IOCTL and RPMSG_RELEASE_DEV_IOCTL ioctrls to
+> the /dev/rpmsg_ctrl interface
 > 
-> For example, a driver might want the rpmsg core dispatcher to drop its
-> messages until it is ready to process them. In this case, the driver will
-> create the default endpoint when the conditions are met to process the
-> messages.
+> The RPMSG_CREATE_DEV_IOCTL Ioctl can be used to instantiate a local rpmsg
+> device.
+> Depending on the back-end implementation, the associated rpmsg driver is
+> probed and a NS announcement can be sent to the remote processor.
 > 
+> The RPMSG_RELEASE_DEV_IOCTL allows the user application to release a
+> rpmsg device created either by the remote processor or with the
+> RPMSG_CREATE_DEV_IOCTL call.
+> Depending on the back-end implementation, the associated rpmsg driver is
+> removed and a NS destroy rpmsg can be sent to the remote processor.
+> 
+> Suggested-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 > Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
 > ---
->  drivers/rpmsg/rpmsg_core.c | 51 ++++++++++++++++++++++++++++++++++++++
->  include/linux/rpmsg.h      | 14 +++++++++++
->  2 files changed, 65 insertions(+)
+>  drivers/rpmsg/rpmsg_ctrl.c | 37 +++++++++++++++++++++++++++++++++----
+>  include/uapi/linux/rpmsg.h | 10 ++++++++++
+>  2 files changed, 43 insertions(+), 4 deletions(-)
 > 
-> diff --git a/drivers/rpmsg/rpmsg_core.c b/drivers/rpmsg/rpmsg_core.c
-> index e5daee4f9373..07b680bda61f 100644
-> --- a/drivers/rpmsg/rpmsg_core.c
-> +++ b/drivers/rpmsg/rpmsg_core.c
-> @@ -115,6 +115,57 @@ struct rpmsg_endpoint *rpmsg_create_ept(struct rpmsg_device *rpdev,
->  }
->  EXPORT_SYMBOL(rpmsg_create_ept);
+> diff --git a/drivers/rpmsg/rpmsg_ctrl.c b/drivers/rpmsg/rpmsg_ctrl.c
+> index eeb1708548c1..cb19e32d05e1 100644
+> --- a/drivers/rpmsg/rpmsg_ctrl.c
+> +++ b/drivers/rpmsg/rpmsg_ctrl.c
+> @@ -23,6 +23,7 @@
+>  #include <uapi/linux/rpmsg.h>
+>  
+>  #include "rpmsg_char.h"
+> +#include "rpmsg_internal.h"
+>  
+>  static dev_t rpmsg_major;
+>  
+> @@ -37,11 +38,13 @@ static DEFINE_IDA(rpmsg_minor_ida);
+>   * @rpdev:	underlaying rpmsg device
+>   * @cdev:	cdev for the ctrl device
+>   * @dev:	device for the ctrl device
+> + * @ctrl_lock:	serialize the ioctrls.
+>   */
+>  struct rpmsg_ctrldev {
+>  	struct rpmsg_device *rpdev;
+>  	struct cdev cdev;
+>  	struct device dev;
+> +	struct mutex ctrl_lock;
+>  };
+>  
+>  static int rpmsg_ctrldev_open(struct inode *inode, struct file *filp)
+> @@ -70,9 +73,8 @@ static long rpmsg_ctrldev_ioctl(struct file *fp, unsigned int cmd,
+>  	void __user *argp = (void __user *)arg;
+>  	struct rpmsg_endpoint_info eptinfo;
+>  	struct rpmsg_channel_info chinfo;
+> -
+> -	if (cmd != RPMSG_CREATE_EPT_IOCTL)
+> -		return -EINVAL;
+> +	struct rpmsg_device *rpdev;
+> +	int ret = 0;
+>  
+>  	if (copy_from_user(&eptinfo, argp, sizeof(eptinfo)))
+>  		return -EFAULT;
+> @@ -82,7 +84,33 @@ static long rpmsg_ctrldev_ioctl(struct file *fp, unsigned int cmd,
+>  	chinfo.src = eptinfo.src;
+>  	chinfo.dst = eptinfo.dst;
+>  
+> -	return rpmsg_chrdev_eptdev_create(ctrldev->rpdev, &ctrldev->dev, chinfo);
+> +	mutex_lock(&ctrldev->ctrl_lock);
+
+Have you been able to verify the VFS layer doesn't take care of serializing
+ioctl() and file accesses in general?  I did a quick search in the drivers/
+directory and the vast majority of implementations don't use a lock.
+
+Thanks,
+Mathieu
+
+> +	switch (cmd) {
+> +	case RPMSG_CREATE_EPT_IOCTL:
+> +		ret = rpmsg_chrdev_eptdev_create(ctrldev->rpdev, &ctrldev->dev, chinfo);
+> +		break;
+> +
+> +	case RPMSG_CREATE_DEV_IOCTL:
+> +		rpdev = rpmsg_create_channel(ctrldev->rpdev, &chinfo);
+> +		if (!rpdev) {
+> +			dev_err(&ctrldev->dev, "failed to create %s channel\n", chinfo.name);
+> +			ret = -ENXIO;
+> +		}
+> +		break;
+> +
+> +	case RPMSG_RELEASE_DEV_IOCTL:
+> +		ret = rpmsg_release_channel(ctrldev->rpdev, &chinfo);
+> +		if (ret)
+> +			dev_err(&ctrldev->dev, "failed to release %s channel (%d)\n",
+> +				chinfo.name, ret);
+> +		break;
+> +
+> +	default:
+> +		ret = -EINVAL;
+> +	}
+> +	mutex_unlock(&ctrldev->ctrl_lock);
+> +
+> +	return ret;
+>  };
+>  
+>  static const struct file_operations rpmsg_ctrldev_fops = {
+> @@ -119,6 +147,7 @@ static int rpmsg_ctrldev_probe(struct rpmsg_device *rpdev)
+>  	device_initialize(dev);
+>  	dev->parent = &rpdev->dev;
+>  
+> +	mutex_init(&ctrldev->ctrl_lock);
+>  	cdev_init(&ctrldev->cdev, &rpmsg_ctrldev_fops);
+>  	ctrldev->cdev.owner = THIS_MODULE;
+>  
+> diff --git a/include/uapi/linux/rpmsg.h b/include/uapi/linux/rpmsg.h
+> index f5ca8740f3fb..1637e68177d9 100644
+> --- a/include/uapi/linux/rpmsg.h
+> +++ b/include/uapi/linux/rpmsg.h
+> @@ -33,4 +33,14 @@ struct rpmsg_endpoint_info {
+>   */
+>  #define RPMSG_DESTROY_EPT_IOCTL	_IO(0xb5, 0x2)
 >  
 > +/**
-> + * rpmsg_create_default_ept() - create a default rpmsg_endpoint for a rpmsg device
-> + * @rpdev: rpmsg channel device
-> + * @cb: rx callback handler
-> + * @priv: private data for the driver's use
-> + * @chinfo: channel_info with the local rpmsg address to bind with @cb
-> + *
-> + * On register_rpmsg_driver if no callback is provided in the rpmsg_driver structure,
-> + * no endpoint is created when the device is probed by the rpmsg bus.
-> + *
-> + * This function returns a pointer to the default endpoint if already created or creates
-> + * a endpoint and assign it as the default endpoint of the rpmsg device.
-> + *
-> + * Drivers should provide their @rpdev channel (so the new endpoint would belong
-> + * to the same remote processor their channel belongs to), an rx callback
-> + * function, an optional private data (which is provided back when the
-> + * rx callback is invoked), and an address they want to bind with the
-> + * callback. If @addr is RPMSG_ADDR_ANY, then rpmsg_create_ept will
-> + * dynamically assign them an available rpmsg address (drivers should have
-> + * a very good reason why not to always use RPMSG_ADDR_ANY here).
-> + *
-> + * Returns a pointer to the endpoint on success, or NULL on error.
+> + * Instantiate a new local rpmsg service device.
 > + */
-> +struct rpmsg_endpoint *rpmsg_create_default_ept(struct rpmsg_device *rpdev,
-> +						rpmsg_rx_cb_t cb, void *priv,
-> +						struct rpmsg_channel_info chinfo)
-> +{
-> +	struct rpmsg_endpoint *ept;
+> +#define RPMSG_CREATE_DEV_IOCTL	_IOW(0xb5, 0x3, struct rpmsg_endpoint_info)
 > +
-> +	if (WARN_ON(!rpdev))
-> +		return NULL;
+> +/**
+> + * Release a local rpmsg device.
+> + */
+> +#define RPMSG_RELEASE_DEV_IOCTL	_IOW(0xb5, 0x4, struct rpmsg_endpoint_info)
 > +
-> +	/* It does not make sense to create a default  endpoint without a callback. */
-> +	if (!cb)
-> +		return NULL;
-> +
-> +	if (rpdev->ept)
-> +		return rpdev->ept;
-> +
-> +	ept = rpdev->ops->create_ept(rpdev, cb, priv, chinfo);
-> +	if (!ept)
-> +		return NULL;
-> +
-> +	/* Assign the new endpoint as default endpoint */
-> +	rpdev->ept = ept;
-> +	rpdev->src = ept->addr;
-> +
-> +	return ept;
-> +}
-> +EXPORT_SYMBOL(rpmsg_create_default_ept);
-> +
->  /**
->   * rpmsg_destroy_ept() - destroy an existing rpmsg endpoint
->   * @ept: endpoing to destroy
-> diff --git a/include/linux/rpmsg.h b/include/linux/rpmsg.h
-> index d97dcd049f18..ab034061722c 100644
-> --- a/include/linux/rpmsg.h
-> +++ b/include/linux/rpmsg.h
-> @@ -172,6 +172,9 @@ void rpmsg_destroy_ept(struct rpmsg_endpoint *);
->  struct rpmsg_endpoint *rpmsg_create_ept(struct rpmsg_device *,
->  					rpmsg_rx_cb_t cb, void *priv,
->  					struct rpmsg_channel_info chinfo);
-> +struct rpmsg_endpoint *rpmsg_create_default_ept(struct rpmsg_device *rpdev,
-> +						rpmsg_rx_cb_t cb, void *priv,
-> +						struct rpmsg_channel_info chinfo);
->  
->  int rpmsg_send(struct rpmsg_endpoint *ept, void *data, int len);
->  int rpmsg_sendto(struct rpmsg_endpoint *ept, void *data, int len, u32 dst);
-> @@ -234,6 +237,17 @@ static inline struct rpmsg_endpoint *rpmsg_create_ept(struct rpmsg_device *rpdev
->  	return ERR_PTR(-ENXIO);
->  }
->  
-> +static inline struct rpmsg_endpoint *rpmsg_create_default_ept(struct rpmsg_device *rpdev,
-> +							      rpmsg_rx_cb_t cb,
-> +							      void *priv,
-
-Please move this to the previous line to match the definition in the other arm
-of the #if.
-
-> +							      struct rpmsg_channel_info chinfo)
-> +{
-> +	/* This shouldn't be possible */
-> +	WARN_ON(1);
-> +
-> +	return NULL;
-> +}
-> +
->  static inline int rpmsg_send(struct rpmsg_endpoint *ept, void *data, int len)
->  {
->  	/* This shouldn't be possible */
+>  #endif
 > -- 
 > 2.17.1
 > 
