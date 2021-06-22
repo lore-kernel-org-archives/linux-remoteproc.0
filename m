@@ -2,183 +2,178 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BC97C2B9F4
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 22 Jun 2021 07:56:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29021C48BDF
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 22 Jun 2021 08:17:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EC09460234
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 22 Jun 2021 07:56:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 028AE61289
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 22 Jun 2021 08:17:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229789AbhFVH6o (ORCPT
+        id S230423AbhFVIUC (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 22 Jun 2021 03:58:44 -0400
-Received: from mx07-00178001.pphosted.com ([185.132.182.106]:24032 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229695AbhFVH6k (ORCPT
+        Tue, 22 Jun 2021 04:20:02 -0400
+Received: from mail-vs1-f54.google.com ([209.85.217.54]:46782 "EHLO
+        mail-vs1-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229844AbhFVIT7 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 22 Jun 2021 03:58:40 -0400
-Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 15M7pj4e000519;
-        Tue, 22 Jun 2021 09:56:22 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=subject : from : to
- : cc : references : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=selector1;
- bh=M4vQq6o9guP9Q2iNescGvhgawySCsF/5dy9COFyDUPE=;
- b=gEBIZhnvF3Bowm0xCrUnMpkiKeH9Kwsdw9ku9Yzfiu/Itln+KPswMRP8pTyFwBMH9nGC
- GyOfzpoevJa/HBy96GkYGIb7gvww7UW6jkoZ3P8l/v9abj3/NTMPoaXA0SCRjUMWJVDr
- UQuD5hYt49ssKupgCEmK49vb2YhJfG7/stet1LeRg53EX1NYvF+qtIXTbNMgTjTjWGLw
- aoVTmSLw9Y0UbltiDuf/M4MbfMp/ypbLj0zyBDMTSlslZDyIxGta09gzzjtaxS5E2VEW
- xM18ZKE/78h27yUDE+4/hCZV04bfti2OluDq2M5fQZ/h88I01u6BB4sTWL2SsPcliKMO Uw== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 39b871s9v1-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 22 Jun 2021 09:56:22 +0200
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 54F57100038;
-        Tue, 22 Jun 2021 09:56:21 +0200 (CEST)
-Received: from Webmail-eu.st.com (sfhdag2node3.st.com [10.75.127.6])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 447D521514B;
-        Tue, 22 Jun 2021 09:56:21 +0200 (CEST)
-Received: from lmecxl0889.lme.st.com (10.75.127.47) by SFHDAG2NODE3.st.com
- (10.75.127.6) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Tue, 22 Jun
- 2021 09:56:20 +0200
-Subject: Re: [PATCH] remoteproc: stm32: fix mbox_send_message call
-From:   Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-CC:     Ohad Ben-Cohen <ohad@wizery.com>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>
-References: <20210420091922.29429-1-arnaud.pouliquen@foss.st.com>
- <YLBi/JZ0u8394tI8@builder.lan>
- <b563f831-3876-1d5d-7268-ce1260363906@foss.st.com>
-Message-ID: <e112e4a3-d5c1-caff-8ef9-cbd5b21ea3a1@foss.st.com>
-Date:   Tue, 22 Jun 2021 09:56:20 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.8.1
+        Tue, 22 Jun 2021 04:19:59 -0400
+Received: by mail-vs1-f54.google.com with SMTP id z15so10758892vsn.13;
+        Tue, 22 Jun 2021 01:17:41 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=s0hVMlLFV5eIwzuXXBEJWEV7FxMfuDBGtQwv1PuAfDc=;
+        b=Yc8JShUBMH1dnjUYyQ4i3CS2+y2GF6q1YtRwv/bRUTq4JGwOzFH8jz0/QYnr8ZuDpr
+         HcEesiBUGFsp/umSzAQ1ucxKn54tANWqVfYyhNDVX62VWxoC03W6vKFzSWDS1INIUujo
+         EfpD0ZvANCW00iJ41ZnsyYqUYQ7WKnBJFLN0taGCgErNoNfbEbrJRexR6AwIwIKT2Knb
+         /0emor8cfQJbNOnIXhfpVS1iQMsX9FEwTZTkt2w2NsDGz2POO5RqhJxIgP7TG7ACSbj/
+         GkkcJgg3HdSB+eNLe7DKVV3GNyEiHob+PVe9RVIKAdqt1PMr45YhOFebl4O9XRmtiOlY
+         SQDQ==
+X-Gm-Message-State: AOAM530BLNzCLpsQ3ZsdxG/iSlElsnvEgk5f19JQOeLC0TziQs7pI7vp
+        kFMx7YZsKONrP5YDTSXRni3TndxcwI12ri99DDk=
+X-Google-Smtp-Source: ABdhPJz3clw2O8tsVFk5F4OGcaBfo9Z8eHqvoF8LwYXAPGollSTCOREHx1S0f08A9nsiznMjaM5G5srL4UVXlJSotsU=
+X-Received: by 2002:a05:6102:2011:: with SMTP id p17mr21421376vsr.40.1624349860512;
+ Tue, 22 Jun 2021 01:17:40 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <b563f831-3876-1d5d-7268-ce1260363906@foss.st.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.75.127.47]
-X-ClientProxiedBy: SFHDAG2NODE2.st.com (10.75.127.5) To SFHDAG2NODE3.st.com
- (10.75.127.6)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.391,18.0.790
- definitions=2021-06-22_04:2021-06-21,2021-06-22 signatures=0
+References: <20210615191543.1043414-1-robh@kernel.org>
+In-Reply-To: <20210615191543.1043414-1-robh@kernel.org>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Tue, 22 Jun 2021 10:17:28 +0200
+Message-ID: <CAMuHMdUGXu8yj3JWKwM8mt7axkrzGMiowC1t0PHrbpxRCBME3w@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: Drop redundant minItems/maxItems
+To:     Rob Herring <robh@kernel.org>
+Cc:     "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-ide@vger.kernel.org, linux-clk <linux-clk@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+        DRI Development <dri-devel@lists.freedesktop.org>,
+        dmaengine <dmaengine@vger.kernel.org>,
+        Linux I2C <linux-i2c@vger.kernel.org>,
+        linux-iio@vger.kernel.org,
+        ALSA Development Mailing List <alsa-devel@alsa-project.org>,
+        Linux IOMMU <iommu@lists.linux-foundation.org>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Linux MMC List <linux-mmc@vger.kernel.org>,
+        netdev <netdev@vger.kernel.org>, linux-can@vger.kernel.org,
+        linux-pci <linux-pci@vger.kernel.org>,
+        linux-phy@lists.infradead.org,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux PWM List <linux-pwm@vger.kernel.org>,
+        "open list:REMOTE PROCESSOR (REMOTEPROC) SUBSYSTEM" 
+        <linux-remoteproc@vger.kernel.org>,
+        linux-riscv <linux-riscv@lists.infradead.org>,
+        linux-rtc@vger.kernel.org,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+        linux-spi <linux-spi@vger.kernel.org>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        USB list <linux-usb@vger.kernel.org>,
+        Linux Watchdog Mailing List <linux-watchdog@vger.kernel.org>,
+        Jens Axboe <axboe@kernel.dk>, Stephen Boyd <sboyd@kernel.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>, Vinod Koul <vkoul@kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Kamal Dasu <kdasu.kdev@gmail.com>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Marc Zyngier <maz@kernel.org>, Joerg Roedel <joro@8bytes.org>,
+        Jassi Brar <jassisinghbrar@gmail.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Wolfgang Grandegger <wg@grandegger.com>,
+        Marc Kleine-Budde <mkl@pengutronix.de>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Vivien Didelot <vivien.didelot@gmail.com>,
+        Vladimir Oltean <olteanv@gmail.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>, Lee Jones <lee.jones@linaro.org>,
+        Ohad Ben-Cohen <ohad@wizery.com>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Mark Brown <broonie@kernel.org>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hello Bjorn
+Hi Rob,
 
-On 5/28/21 10:03 AM, Arnaud POULIQUEN wrote:
-> Hello Bjorn,
-> 
-> On 5/28/21 5:26 AM, Bjorn Andersson wrote:
->> On Tue 20 Apr 04:19 CDT 2021, Arnaud Pouliquen wrote:
->>
->>> mbox_send_message is called by passing a local dummy message or
->>> a function parameter. As the message is queued, it is dereferenced.
->>> This works because the message field is not used by the stm32 ipcc
->>> driver, but it is not clean.
->>>
->>> Fix by passing a constant string in all cases.
->>>
->>> The associated comments are removed because rproc should not have to
->>> deal with the behavior of the mailbox frame.
->>>
->>
->> Didn't we conclude that the mailbox driver doesn't actually dereference
->> the pointer being passed?
-> 
-> Right it can store the reference to queue the sent.
-> 
->>
->> If so I would prefer that you just pass NULL, so that if you in the
->> future need to pass some actual data it will be easy to distinguish the
->> old and new case.
-> 
-> I can not use NULL pointer in stm32_rproc_attach and stm32_rproc_detach case.
-> The reason is that the tx_done callback is not called if the message is NULL.
-> (https://elixir.bootlin.com/linux/latest/source/drivers/mailbox/mailbox.c#L106)
-> 
-> I could use NULL pointer in stm32_rproc_kick, but I would prefer to use the same way
-> of calling mbox_send_message for all use cases and not take into account the
-> mailbox internal behavior.
+On Tue, Jun 15, 2021 at 9:16 PM Rob Herring <robh@kernel.org> wrote:
+> If a property has an 'items' list, then a 'minItems' or 'maxItems' with the
+> same size as the list is redundant and can be dropped. Note that is DT
+> schema specific behavior and not standard json-schema behavior. The tooling
+> will fixup the final schema adding any unspecified minItems/maxItems.
+>
+> This condition is partially checked with the meta-schema already, but
+> only if both 'minItems' and 'maxItems' are equal to the 'items' length.
+> An improved meta-schema is pending.
 
-Do you still have any concern about this patch?
+> Signed-off-by: Rob Herring <robh@kernel.org>
 
-Thanks,
-Arnaud
+> --- a/Documentation/devicetree/bindings/net/stm32-dwmac.yaml
+> +++ b/Documentation/devicetree/bindings/net/stm32-dwmac.yaml
+> @@ -46,7 +46,6 @@ properties:
+>
+>    clocks:
+>      minItems: 3
+> -    maxItems: 5
+>      items:
+>        - description: GMAC main clock
+>        - description: MAC TX clock
 
-> 
-> Thanks,
-> Arnaud
-> 
-> 
->>
->> Regards,
->> Bjorn
->>
->>> Reported-by: Bjorn Andersson <bjorn.andersson@linaro.org>
->>> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
->>> ---
->>>  drivers/remoteproc/stm32_rproc.c | 14 +++++---------
->>>  1 file changed, 5 insertions(+), 9 deletions(-)
->>>
->>> diff --git a/drivers/remoteproc/stm32_rproc.c b/drivers/remoteproc/stm32_rproc.c
->>> index 7353f9e7e7af..0e8203a432ab 100644
->>> --- a/drivers/remoteproc/stm32_rproc.c
->>> +++ b/drivers/remoteproc/stm32_rproc.c
->>> @@ -474,14 +474,12 @@ static int stm32_rproc_attach(struct rproc *rproc)
->>>  static int stm32_rproc_detach(struct rproc *rproc)
->>>  {
->>>  	struct stm32_rproc *ddata = rproc->priv;
->>> -	int err, dummy_data, idx;
->>> +	int err, idx;
->>>  
->>>  	/* Inform the remote processor of the detach */
->>>  	idx = stm32_rproc_mbox_idx(rproc, STM32_MBX_DETACH);
->>>  	if (idx >= 0 && ddata->mb[idx].chan) {
->>> -		/* A dummy data is sent to allow to block on transmit */
->>> -		err = mbox_send_message(ddata->mb[idx].chan,
->>> -					&dummy_data);
->>> +		err = mbox_send_message(ddata->mb[idx].chan, "stop");
->>>  		if (err < 0)
->>>  			dev_warn(&rproc->dev, "warning: remote FW detach without ack\n");
->>>  	}
->>> @@ -493,15 +491,13 @@ static int stm32_rproc_detach(struct rproc *rproc)
->>>  static int stm32_rproc_stop(struct rproc *rproc)
->>>  {
->>>  	struct stm32_rproc *ddata = rproc->priv;
->>> -	int err, dummy_data, idx;
->>> +	int err, idx;
->>>  
->>>  	/* request shutdown of the remote processor */
->>>  	if (rproc->state != RPROC_OFFLINE) {
->>>  		idx = stm32_rproc_mbox_idx(rproc, STM32_MBX_SHUTDOWN);
->>>  		if (idx >= 0 && ddata->mb[idx].chan) {
->>> -			/* a dummy data is sent to allow to block on transmit */
->>> -			err = mbox_send_message(ddata->mb[idx].chan,
->>> -						&dummy_data);
->>> +			err = mbox_send_message(ddata->mb[idx].chan, "detach");
->>>  			if (err < 0)
->>>  				dev_warn(&rproc->dev, "warning: remote FW shutdown without ack\n");
->>>  		}
->>> @@ -556,7 +552,7 @@ static void stm32_rproc_kick(struct rproc *rproc, int vqid)
->>>  			continue;
->>>  		if (!ddata->mb[i].chan)
->>>  			return;
->>> -		err = mbox_send_message(ddata->mb[i].chan, (void *)(long)vqid);
->>> +		err = mbox_send_message(ddata->mb[i].chan, "kick");
->>>  		if (err < 0)
->>>  			dev_err(&rproc->dev, "%s: failed (%s, err:%d)\n",
->>>  				__func__, ddata->mb[i].name, err);
->>> -- 
->>> 2.17.1
->>>
+While resolving the conflict with commit fea99822914039c6
+("dt-bindings: net: document ptp_ref clk in dwmac") in soc/for-next,
+I noticed the following construct for clock-names:
+
+  clock-names:
+    minItems: 3
+    maxItems: 6
+    contains:
+      enum:
+        - stmmaceth
+        - mac-clk-tx
+        - mac-clk-rx
+        - ethstp
+        - eth-ck
+        - ptp_ref
+
+Should this use items instead of enum, and drop maxItems, or is this
+a valid construct to support specifying the clocks in random order?
+If the latter, it does mean that the order of clock-names may not
+match the order of the clock descriptions.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
