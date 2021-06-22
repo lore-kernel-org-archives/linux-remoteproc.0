@@ -2,212 +2,142 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MSGID_FROM_MTA_HEADER,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EBD8C4743C
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 21 Jun 2021 23:16:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5061EC2B9F4
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 22 Jun 2021 03:40:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 49F9A6023D
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 21 Jun 2021 23:16:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 245E561164
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 22 Jun 2021 03:40:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231262AbhFUXSw (ORCPT
+        id S230032AbhFVDnF (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 21 Jun 2021 19:18:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36982 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230433AbhFUXSv (ORCPT
-        <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 21 Jun 2021 19:18:51 -0400
-Received: from mail-pj1-x1032.google.com (mail-pj1-x1032.google.com [IPv6:2607:f8b0:4864:20::1032])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DC2D3C061574
-        for <linux-remoteproc@vger.kernel.org>; Mon, 21 Jun 2021 16:16:36 -0700 (PDT)
-Received: by mail-pj1-x1032.google.com with SMTP id g24so10864359pji.4
-        for <linux-remoteproc@vger.kernel.org>; Mon, 21 Jun 2021 16:16:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=o38KzSQf9bk0w4H1R0wVtOAX95R/HHsV6qoW4ydXw+4=;
-        b=Y52wWIe+5PSkZscV4l4zndjTceFusvppikvaZXHKCtsxUv1L8hByVc26U04LgF7QIg
-         XpKk5xmflRzxBgkJxQPYwo6/5Adnf6f8dnNwNCWvDJ3TGa9xMuGXF5/rkQJIVL6bYj/8
-         IshpVIuUWX6RQhpEKrbFTPmDDGCs2260NApQqevq9I2GR7csiOovxNE6ItezXrtaCqWB
-         rbNLX3FkKHgZsIb1aLqGLZLazCt6SLL0cOEGFiv6XD3UHRnVvANYDC7z8oAi7aENWxJj
-         HMVSKkNPecKOW6tDlvGmXMRpSdp8C0XGajSKA8U2wcZ/zpogBS679AAIQDZhl1TGbLFo
-         73VQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=o38KzSQf9bk0w4H1R0wVtOAX95R/HHsV6qoW4ydXw+4=;
-        b=avJfNII/jdvtiB2AY/NOqnrAxQ0JLJSNOSA1dMZPgAHnm6IY4BMtA06HaoBwlENzkg
-         JkgGPUjRgmIeeCXEvmbknI0vf/GJTGCHpmodwSlOosRJpnZ9z2xSyS+Jf4phtplD/xFk
-         KFekY+Xzy0OuvzzG9XjaTM/lY3lFOOW+cK58hdc1zug9/S5Sb9LnIGPqzRuMUbnNlaM1
-         gaTrkQsHupfUSIzjQwQ2R09QGNdjSz0mJuXLxHyIF5IC47B1UmC0nLECRm5eDeuJNu5l
-         RotZuqjE56ULmZ90WaidgcGlSpQan/zQWYx79F9Kc4ruSD9SBbjbXzD+RjmBYpGL/VZL
-         9cng==
-X-Gm-Message-State: AOAM533OxC5K9suolG+XQvzcpiGQLD7Iv/PL7C+cJywkIH5mnmzLl68b
-        1hfyomiwgXpZ/Oxfg39YlyuCJA==
-X-Google-Smtp-Source: ABdhPJzvZNwZ5ttzMbcP5RAWrMfd1TwySMuBxZi2MrHX6mW1Virrq+UUkD7969Grh1YJRoBbIrn48A==
-X-Received: by 2002:a17:902:c1cd:b029:121:3424:fcd5 with SMTP id c13-20020a170902c1cdb02901213424fcd5mr19098076plc.77.1624317396394;
-        Mon, 21 Jun 2021 16:16:36 -0700 (PDT)
-Received: from p14s (S0106889e681aac74.cg.shawcable.net. [68.147.0.187])
-        by smtp.gmail.com with ESMTPSA id z17sm16635456pfq.218.2021.06.21.16.16.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Jun 2021 16:16:35 -0700 (PDT)
-Date:   Mon, 21 Jun 2021 17:16:33 -0600
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-To:     Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Ohad Ben-Cohen <ohad@wizery.com>,
-        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com
-Subject: Re: [PATCH v2 1/1] rpmsg: ctrl: Introduce new
- RPMSG_CREATE/RELEASE_DEV_IOCTL controls
-Message-ID: <20210621231633.GC980846@p14s>
-References: <20210621125800.27696-1-arnaud.pouliquen@foss.st.com>
- <20210621125800.27696-2-arnaud.pouliquen@foss.st.com>
+        Mon, 21 Jun 2021 23:43:05 -0400
+Received: from mail-am6eur05on2079.outbound.protection.outlook.com ([40.107.22.79]:27904
+        "EHLO EUR05-AM6-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S229904AbhFVDnE (ORCPT <rfc822;linux-remoteproc@vger.kernel.org>);
+        Mon, 21 Jun 2021 23:43:04 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=L6F3vjWNswjDTYvQrgITuHe3hP1Wnzh013euCh3fTfk68m064sn0D7GxdFrX59fd7VpwEbi67emtxL7G+JB8uSWCudaInEaz1Ye9biI1WlchTU3W/AH8bRFi0yrSEPaZjZXWT/aAYlqdgxZonU6sqG1V9RWJTq4JbsL+HZk7t9kI+tr+gR9db5nxNyknrutOhLVmcSEspOUUPzCMJlNlGvJ/AaGQhkZ4NHLodHZQGB/yU5TrqeOWIbpX1ra0j+dHtN6nyQe+ZCRiVCyLT15v4/mwRwR3nzk1VU8HlmXg0ctfEmFAoFSpH4iy7IDr6/iseWIB3LzXLJPt54kMLn3nJQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=veTEjqituPkFbd9cYbKv9MoCYiQlCndkm0MxCB4K+Vc=;
+ b=T7kDjQGXZNIKmRql+tXbiaqimrgZDgdRYMUGL/alFqw/WZ+ssC02vBFmJ7rkAFtSjt87ghbRzg30PmutjrABL+yfOz+aGOYtTXDWZdmizYGduH4+1zwYJdzz/OKXDQ8Fi6hCYZ1dfth51Q7XFPZNymWr9eKoKvGqPe1kalbfU0hp+o+gIbbAuAI7WnK2e6VBGZzbHftQbttodaXYcEw/zQWIkggQpoKl72oj2w/LAaqLRlvkgkET/BUQtF1uEdRxU2WZoAAYiT+E3up1GBpdFakwO1nqLHplTe0JjEUGxLDGTaKwNCjstkac+M+K52yu+ulijVZ6KH5+xSmvWEqRAg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector2-NXP1-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=veTEjqituPkFbd9cYbKv9MoCYiQlCndkm0MxCB4K+Vc=;
+ b=a1PHhJbJMcZCmAYU6TcNJ/IVm7Ja1ZTpwbXsVz71eS/yTmkebUwOLVfqJJakFLBn4x47QJ+rbkm8ljz73naQpzFMo/DFjsObTqkp5eOra4G3K3nzv8e2INdAZthdprxpuuLP3WckiBi5NaxRXf/PsMnbGy1y9yrZMWIDk2PsBEk=
+Authentication-Results: wizery.com; dkim=none (message not signed)
+ header.d=none;wizery.com; dmarc=none action=none header.from=oss.nxp.com;
+Received: from DB6PR0402MB2760.eurprd04.prod.outlook.com (2603:10a6:4:a1::14)
+ by DB3PR0402MB3913.eurprd04.prod.outlook.com (2603:10a6:8:3::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4242.19; Tue, 22 Jun
+ 2021 03:40:45 +0000
+Received: from DB6PR0402MB2760.eurprd04.prod.outlook.com
+ ([fe80::c445:d742:eb76:86dd]) by DB6PR0402MB2760.eurprd04.prod.outlook.com
+ ([fe80::c445:d742:eb76:86dd%9]) with mapi id 15.20.4242.023; Tue, 22 Jun 2021
+ 03:40:45 +0000
+From:   "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+To:     ohad@wizery.com, bjorn.andersson@linaro.org,
+        mathieu.poirier@linaro.org, o.rempel@pengutronix.de,
+        robh+dt@kernel.org
+Cc:     shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
+        festevam@gmail.com, linux-imx@nxp.com,
+        linux-remoteproc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, Peng Fan <peng.fan@nxp.com>
+Subject: [PATCH V2 0/2] remoteproc: imx_rproc: support i.MX8ULP
+Date:   Tue, 22 Jun 2021 12:14:11 +0800
+Message-Id: <20210622041413.16992-1-peng.fan@oss.nxp.com>
+X-Mailer: git-send-email 2.30.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [119.31.174.71]
+X-ClientProxiedBy: SG2PR0302CA0014.apcprd03.prod.outlook.com
+ (2603:1096:3:2::24) To DB6PR0402MB2760.eurprd04.prod.outlook.com
+ (2603:10a6:4:a1::14)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210621125800.27696-2-arnaud.pouliquen@foss.st.com>
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from linux-1xn6.ap.freescale.net (119.31.174.71) by SG2PR0302CA0014.apcprd03.prod.outlook.com (2603:1096:3:2::24) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4264.9 via Frontend Transport; Tue, 22 Jun 2021 03:40:40 +0000
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 0234bfbd-ea0d-4018-8bae-08d9352f8415
+X-MS-TrafficTypeDiagnostic: DB3PR0402MB3913:
+X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
+X-MS-Exchange-Transport-Forked: True
+X-Microsoft-Antispam-PRVS: <DB3PR0402MB3913B24161D20D43A5DDF591C9099@DB3PR0402MB3913.eurprd04.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:1443;
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: ufbWpCGnDkqLlNX7fuHf2ESfx3l4Jj5I6MJn/dqdb3lh2Qn1WN1P5foL80VWnaqsWpC80XnG5faR0sIVLcMYJGAYPYTiQpDTOHYcBaYCXIWHxxGn1FItArA9I2HQiFGFWSitx4Ic0P7qdeW4ASRpKVW2yKe7rCf/sTCMXQ3XK6PfmJ83wC7fzvyLPRuuyGRXrGNzRV3yu+lX+SatdGgR90BdT96/fLH9HA3RRmVlI21cmWj6ZXBvZyXcWbRjfrgnDNZxZqYinsrIORBYkYH3MOSzgRRnMnF2bsED3IRZEU/cxHgZR/iXPZmhSkAw9UqZkORvqtF2FQyxayurpgErddjDFCGNqOb5Q3fyM1VZtaSFSAJ/ddR2AOmy0cqa0Dt3kPjQKXRsy1jQxvwdEmbWfmvJgxftaYMjPlbIyWq19dWDrr+/43fTBgEQDzV3Dk6iEwrKARMbM05wqtOfIbokISl1G74+fPfBu6EmJRmEEXAgwUPC7LWRdhVzUImPTBCmzLBxlxGX6YKZqTYJhyGwGHkQ0Ehi+G/nc6xHVe6O2TskEjQ5nZKk4QLs9HymBRxNc6ouKbhkBcK2bRC4hTuY/Gf7RxUg8OhKJBR+aOOq98lWRabM5jvVA4O+9xk5kXAX7uPa04E+jMAtU5FbdX7WqE+TXGC/nYpy60yWXD7CGeo=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB6PR0402MB2760.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(136003)(39860400002)(396003)(346002)(366004)(376002)(66556008)(66476007)(66946007)(6486002)(8936002)(956004)(7416002)(8676002)(2616005)(316002)(6666004)(186003)(6506007)(52116002)(16526019)(26005)(6512007)(4744005)(2906002)(5660300002)(86362001)(4326008)(478600001)(38100700002)(1076003)(38350700002);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?3vQ9m/LNrfwdqAJSexcobd/erkNcYeN/0IknXYRchg+mJa4G1rGA1ddI1OPe?=
+ =?us-ascii?Q?G1iqYT1gYSf7XNLbmg7AWuZxRm1/Xp5JRjIPXhIL2xas5rJe1kD5QZtGaqyl?=
+ =?us-ascii?Q?EHGqBT7h4JjFeAw9RXs+OZ8FbUCehTqLumfCIjNBRzr3N0KH1mPpdJzcSO+2?=
+ =?us-ascii?Q?TL4jXQmYLridgTWO+Q9FniqCbADw0vK29bgmsh7chCLwbWGId63ylmOvWnwc?=
+ =?us-ascii?Q?jhbRebK3JgNZDhTg69uUCKQb5NBhRwvQy6GK6zrlCnewJILu1QGSLlQ5+An4?=
+ =?us-ascii?Q?ukHmKWfQszk1QPCVOtdMVNRHtugch3f8xACQvpdg21KRQc2WwOXoW/0+qLmS?=
+ =?us-ascii?Q?0VTW+mIf2DYO91kt2PYuPV0yOSwpEVHfj2zY3uYi00qxbA0/PrX22Kz+JnHk?=
+ =?us-ascii?Q?pbCY02a5c9z+p4FTTKm1/2+BuFRGqwnZil4pJj7qGmRLeDW52tat+EpdGd0D?=
+ =?us-ascii?Q?J/DbC7XOwcnhNpxjoXbylB7GVjUCJOiUv5iJmInri1rtt2lWJWUWMXSkCANh?=
+ =?us-ascii?Q?jaTh4JMoKbZ+W1tqjc3kmf6/8cM0nihYfElNeOb0PeoFmEx1lCCHbyG0ToZh?=
+ =?us-ascii?Q?awEB03vgrv1d4gZELscdB521Wq0t+KYob5IOJhVMxwS1ahS3F0o1nLmgaZkx?=
+ =?us-ascii?Q?ocoPhajwR75QiW4hSwvh1IhZcmq48vYy54j2qwZoR8v353Re5z4sxY4Xeouv?=
+ =?us-ascii?Q?PTYYVbOcsqPABlPmlaOIzMN/rwt2rM3L4MyG1kq4sba66c2OCoMKkwGhRlxk?=
+ =?us-ascii?Q?kGKlcIK8iikMborE/+5dWFmdPAp99iojZNl1o5u2Ipe9LvFu3Q6PQETTIxT4?=
+ =?us-ascii?Q?9rx2rvmq5e58JvV+hozgsRexSwka181ZcIFzyN1L4qNO9aVA+CfGvg8g8CLm?=
+ =?us-ascii?Q?cymUHnixH8/4BIzScLKU0l/ZPBnDU8ORSr/n3Y4abVW+TygGniojateSsDmq?=
+ =?us-ascii?Q?ZDJTidOcf/N7ihkgKLmcEWSxqkwc4MkqG7kYYsmKtG/m1ow8npg4FHTGT5Ab?=
+ =?us-ascii?Q?vY4DpyhYrbebF5M+CEFR69di1leEsWc6OGc7vOXDoAqHnOuWGTgUXkVASwsq?=
+ =?us-ascii?Q?KnAovvZj9nviH1BpOSBjylJWNYewunDQp1MmUBAh2jFy7mS3Y91i1vMDNJeH?=
+ =?us-ascii?Q?Q1VbqgoUUD9B/ld20ThjAHlmTepIVpF6+kyPDuhtYDG26e4ceZC9tanL8t7N?=
+ =?us-ascii?Q?crfeTnV/Lk0HUv9GgUEAm/IXl0ah/iHQx6ByjhAiBhGkubWma8jaGFOJMKII?=
+ =?us-ascii?Q?VEao1H6OIYrOGWbsWCQ5D2uDXh/ISIlxFwcxdwCBgn9O4rU3GSR0soMJ2PiD?=
+ =?us-ascii?Q?ZJ7AlhgwessJUOIuk+D9MxhKbOeh9JHdI7GESzRn51ptyw=3D=3D?=
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0234bfbd-ea0d-4018-8bae-08d9352f8415
+X-MS-Exchange-CrossTenant-AuthSource: DB6PR0402MB2760.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Jun 2021 03:40:44.8583
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: wi46EGvGgAZJq8jh43PQL8WYEr4NoyhIGSEAApPUxwM6PkN5JI5UmtwPSfM9+b9oIuLIBfkgopcLKi4jojCXPQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB3PR0402MB3913
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Mon, Jun 21, 2021 at 02:58:00PM +0200, Arnaud Pouliquen wrote:
-> Allow the user space application to create and release an rpmsg device
-> by adding RPMSG_CREATE_DEV_IOCTL and RPMSG_RELEASE_DEV_IOCTL ioctrls to
-> the /dev/rpmsg_ctrl interface
-> 
-> The RPMSG_CREATE_DEV_IOCTL Ioctl can be used to instantiate a local rpmsg
-> device.
-> Depending on the back-end implementation, the associated rpmsg driver is
-> probed and a NS announcement can be sent to the remote processor.
-> 
-> The RPMSG_RELEASE_DEV_IOCTL allows the user application to release a
-> rpmsg device created either by the remote processor or with the
-> RPMSG_CREATE_DEV_IOCTL call.
-> Depending on the back-end implementation, the associated rpmsg driver is
-> removed and a NS destroy rpmsg can be sent to the remote processor.
-> 
-> Suggested-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-> ---
->  drivers/rpmsg/rpmsg_ctrl.c | 37 +++++++++++++++++++++++++++++++++----
->  include/uapi/linux/rpmsg.h | 10 ++++++++++
->  2 files changed, 43 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/rpmsg/rpmsg_ctrl.c b/drivers/rpmsg/rpmsg_ctrl.c
-> index eeb1708548c1..cb19e32d05e1 100644
-> --- a/drivers/rpmsg/rpmsg_ctrl.c
-> +++ b/drivers/rpmsg/rpmsg_ctrl.c
-> @@ -23,6 +23,7 @@
->  #include <uapi/linux/rpmsg.h>
->  
->  #include "rpmsg_char.h"
-> +#include "rpmsg_internal.h"
->  
->  static dev_t rpmsg_major;
->  
-> @@ -37,11 +38,13 @@ static DEFINE_IDA(rpmsg_minor_ida);
->   * @rpdev:	underlaying rpmsg device
->   * @cdev:	cdev for the ctrl device
->   * @dev:	device for the ctrl device
-> + * @ctrl_lock:	serialize the ioctrls.
->   */
->  struct rpmsg_ctrldev {
->  	struct rpmsg_device *rpdev;
->  	struct cdev cdev;
->  	struct device dev;
-> +	struct mutex ctrl_lock;
->  };
->  
->  static int rpmsg_ctrldev_open(struct inode *inode, struct file *filp)
-> @@ -70,9 +73,8 @@ static long rpmsg_ctrldev_ioctl(struct file *fp, unsigned int cmd,
->  	void __user *argp = (void __user *)arg;
->  	struct rpmsg_endpoint_info eptinfo;
->  	struct rpmsg_channel_info chinfo;
-> -
-> -	if (cmd != RPMSG_CREATE_EPT_IOCTL)
-> -		return -EINVAL;
-> +	struct rpmsg_device *rpdev;
-> +	int ret = 0;
->  
->  	if (copy_from_user(&eptinfo, argp, sizeof(eptinfo)))
->  		return -EFAULT;
-> @@ -82,7 +84,33 @@ static long rpmsg_ctrldev_ioctl(struct file *fp, unsigned int cmd,
->  	chinfo.src = eptinfo.src;
->  	chinfo.dst = eptinfo.dst;
->  
-> -	return rpmsg_chrdev_eptdev_create(ctrldev->rpdev, &ctrldev->dev, chinfo);
-> +	mutex_lock(&ctrldev->ctrl_lock);
+From: Peng Fan <peng.fan@nxp.com>
 
-Have you been able to verify the VFS layer doesn't take care of serializing
-ioctl() and file accesses in general?  I did a quick search in the drivers/
-directory and the vast majority of implementations don't use a lock.
+V2:
+ Add R-b from Mathieu
+ Add Rob in Cc for dt-bindings
 
-Thanks,
-Mathieu
+i.MX8ULP features a M33 core + dual A35 core, M33 is kicked by ROM,
+so like 7ULP, A35 only communicate with M33.
 
-> +	switch (cmd) {
-> +	case RPMSG_CREATE_EPT_IOCTL:
-> +		ret = rpmsg_chrdev_eptdev_create(ctrldev->rpdev, &ctrldev->dev, chinfo);
-> +		break;
-> +
-> +	case RPMSG_CREATE_DEV_IOCTL:
-> +		rpdev = rpmsg_create_channel(ctrldev->rpdev, &chinfo);
-> +		if (!rpdev) {
-> +			dev_err(&ctrldev->dev, "failed to create %s channel\n", chinfo.name);
-> +			ret = -ENXIO;
-> +		}
-> +		break;
-> +
-> +	case RPMSG_RELEASE_DEV_IOCTL:
-> +		ret = rpmsg_release_channel(ctrldev->rpdev, &chinfo);
-> +		if (ret)
-> +			dev_err(&ctrldev->dev, "failed to release %s channel (%d)\n",
-> +				chinfo.name, ret);
-> +		break;
-> +
-> +	default:
-> +		ret = -EINVAL;
-> +	}
-> +	mutex_unlock(&ctrldev->ctrl_lock);
-> +
-> +	return ret;
->  };
->  
->  static const struct file_operations rpmsg_ctrldev_fops = {
-> @@ -119,6 +147,7 @@ static int rpmsg_ctrldev_probe(struct rpmsg_device *rpdev)
->  	device_initialize(dev);
->  	dev->parent = &rpdev->dev;
->  
-> +	mutex_init(&ctrldev->ctrl_lock);
->  	cdev_init(&ctrldev->cdev, &rpmsg_ctrldev_fops);
->  	ctrldev->cdev.owner = THIS_MODULE;
->  
-> diff --git a/include/uapi/linux/rpmsg.h b/include/uapi/linux/rpmsg.h
-> index f5ca8740f3fb..1637e68177d9 100644
-> --- a/include/uapi/linux/rpmsg.h
-> +++ b/include/uapi/linux/rpmsg.h
-> @@ -33,4 +33,14 @@ struct rpmsg_endpoint_info {
->   */
->  #define RPMSG_DESTROY_EPT_IOCTL	_IO(0xb5, 0x2)
->  
-> +/**
-> + * Instantiate a new local rpmsg service device.
-> + */
-> +#define RPMSG_CREATE_DEV_IOCTL	_IOW(0xb5, 0x3, struct rpmsg_endpoint_info)
-> +
-> +/**
-> + * Release a local rpmsg device.
-> + */
-> +#define RPMSG_RELEASE_DEV_IOCTL	_IOW(0xb5, 0x4, struct rpmsg_endpoint_info)
-> +
->  #endif
-> -- 
-> 2.17.1
-> 
+Based linux-next/master 6-22
+
+Peng Fan (2):
+  dt-bindings: remoteproc: imx_rproc: support i.MX8ULP
+  remoteproc: imx_rproc: support i.MX8ULP
+
+ .../bindings/remoteproc/fsl,imx-rproc.yaml          |  1 +
+ drivers/remoteproc/imx_rproc.c                      | 13 +++++++++++++
+ 2 files changed, 14 insertions(+)
+
+-- 
+2.30.0
+
