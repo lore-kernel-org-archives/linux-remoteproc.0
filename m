@@ -7,236 +7,322 @@ X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80160C48BE5
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 22 Jun 2021 19:56:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78099C2B9F4
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 22 Jun 2021 20:30:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 66A8A6100B
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 22 Jun 2021 19:56:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 51EDC60240
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 22 Jun 2021 20:30:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231726AbhFVT6o (ORCPT
+        id S229769AbhFVUck (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 22 Jun 2021 15:58:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36038 "EHLO
+        Tue, 22 Jun 2021 16:32:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43922 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232727AbhFVT6m (ORCPT
+        with ESMTP id S229758AbhFVUcj (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 22 Jun 2021 15:58:42 -0400
-Received: from mail-pj1-x102e.google.com (mail-pj1-x102e.google.com [IPv6:2607:f8b0:4864:20::102e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CBB5CC061574
-        for <linux-remoteproc@vger.kernel.org>; Tue, 22 Jun 2021 12:56:25 -0700 (PDT)
-Received: by mail-pj1-x102e.google.com with SMTP id bb20so69592pjb.3
-        for <linux-remoteproc@vger.kernel.org>; Tue, 22 Jun 2021 12:56:25 -0700 (PDT)
+        Tue, 22 Jun 2021 16:32:39 -0400
+Received: from mail-pj1-x1035.google.com (mail-pj1-x1035.google.com [IPv6:2607:f8b0:4864:20::1035])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B1F81C061756
+        for <linux-remoteproc@vger.kernel.org>; Tue, 22 Jun 2021 13:30:22 -0700 (PDT)
+Received: by mail-pj1-x1035.google.com with SMTP id bv7-20020a17090af187b029016fb18e04cfso2411229pjb.0
+        for <linux-remoteproc@vger.kernel.org>; Tue, 22 Jun 2021 13:30:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=wWX30k0wCOH4VUrr9w7JLdTu3FgdZI02sjGI8lnIEhw=;
-        b=gloImhQFCt6Ls0McIRY/m8R/crCTXOEXo5JMcKCh9rbpVe0VpscVwzq4l/EzfkujvQ
-         129xiuq0uAGetaBOoyIsCeF9d+z8NCLYUw7O2xv0r3H2TLAu9t6lAfkRK6VDaYUPdrIj
-         a8ONgoSvrwvSN6gAG01M3v2748dxlhUPXBVSajNC1TZyJyJDU9t/bMvHRBR0ChjzW4ON
-         D+YF0KcbjBdOFkpK4FKBUZ2qvi/YlS5Jdw93og1ozdx69l1QulK0yrCFKklAATNEkGku
-         ECD56RBGQvBPHvp3d5Dceg/3yCLkUgi+kNiPDpmLRbAPfjmHq4vduBPCU2CejgbE55Pu
-         GWKA==
+        bh=1Z8nR8Zd8jzX70IIRsF7fFgfk8BefU65kdRczYirIyA=;
+        b=HLIOe0dXTJ2nmF+XdNTx1+VVI/jk5Zs+HJmy32SBeHSTgEhf4p2Qx7TLUlLp+Rbgsi
+         HMbfm/X/XCTl7pfMs3y5W2McDbgiXIIj79UE0rYhQP/hViaY3zha9lVcq0Z2tKmsPDrP
+         XFSelso16KWg52mquhrNsGygLKRzEcJiPXVB9gJmnuMEqYvOLAObQ4AOY7ntdpJQmkU1
+         Ahjxh5kO9ceSjuLeM7SG3NDJNbityysYxWcYLyCKxRDoGiYuvKUIC1iWPP/2EqVrCkm7
+         s5hBBxeZ6B8YHc21SL3LJ5++QL0rrJIOa15iVPswPu39hYVE1r+aZkYwknyE7u/rmTA2
+         q+Vw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=wWX30k0wCOH4VUrr9w7JLdTu3FgdZI02sjGI8lnIEhw=;
-        b=TUOdtA2zyNVg0b6HWcnIVt+ulxD8GV975q+E8rCfzKk+tKyJ2cWRstm31Oo0wPje2v
-         j6h9p/jK785hGNY3YWmDmzFRUdtzze9eZP7WNedBMAsvIQP25qF3xzloGJ+885b+ELEp
-         Bp7sXoAImqq1XJKNFdmncsC5Zam3XSSvqFl1GtDnhLboIvFkkFGg2b0WALyWYuyVjzsj
-         WEIwUxm0qaptJ/hA7a/CDd/1pHTUny8n2BTB+jCC0oELRzvyJUMQHpSkXvwmBHDDoNZe
-         +ZA79HKE9h/ZK3jqxJW5AFOwdOFM5fmG2XLbP+pq79pQHLaFEvXzKP/WdD0YRz+mbxKP
-         nsHw==
-X-Gm-Message-State: AOAM531jpvcyNDVmofqLHHk5XPWAXB1l6pr5okTkQwSRtzuquYC4QD3P
-        hdQvDu/t8tTwuuIDxndy72slAOrO7N4o+A==
-X-Google-Smtp-Source: ABdhPJzwR121z7t+6Lr9Ouc8b+4LRPRbqsVt0xg2z+e/E34CfcYtKEovUQj/7xShiQkoDvgq4/YxdQ==
-X-Received: by 2002:a17:902:b94c:b029:117:9c88:7744 with SMTP id h12-20020a170902b94cb02901179c887744mr23571777pls.20.1624391785262;
-        Tue, 22 Jun 2021 12:56:25 -0700 (PDT)
+        bh=1Z8nR8Zd8jzX70IIRsF7fFgfk8BefU65kdRczYirIyA=;
+        b=qPsmtBeMs3iD3XvlNMVBYH5EiaXEDSDYQkcrbGzcGcDki/fPJS3FQIRgUyk1QRQtF/
+         VdABqP7RNqxhyHhvtaHnJm5al9V5E0z2Puk2hvrmoIpsfZ+Pc3Uh4q9GvkOgen6vdOC9
+         +2/K8eTt//r41Vv6i+ZKJZ+qpfhM/QGjT9Pnyw9sGFboEj2kdP9f65+2Yvb7gUUI7TAJ
+         CgAruhDr5vu0AXR9eh04isSSoVxyhFIRNlnPSSDqUcwk4rdfBC+3mJH2gGtoyIoVI6Ir
+         oSvM67VrItNeHfbwodEgtoiYrHv9KhOB2WYIs/mkG7TnUjV6foHzHM4biKvzPknyZfy5
+         KHsQ==
+X-Gm-Message-State: AOAM531/ZJECyVRdkbPsitD4ZNVYZBV4ftYmNaIcbrPAgJFiNTx86B+l
+        VSKYy1kkCLLM1xVKAeSCIf+FXA==
+X-Google-Smtp-Source: ABdhPJwA9k98Taw9fXKAdxCjSvrk9LfAURZ7apB1cgDNCwK1ORtExS+alCZ96YcGvKeuzI0t9k2D8g==
+X-Received: by 2002:a17:902:249:b029:121:b9eb:a513 with SMTP id 67-20020a1709020249b0290121b9eba513mr21629180plc.6.1624393822170;
+        Tue, 22 Jun 2021 13:30:22 -0700 (PDT)
 Received: from p14s (S0106889e681aac74.cg.shawcable.net. [68.147.0.187])
-        by smtp.gmail.com with ESMTPSA id f15sm20685040pgg.23.2021.06.22.12.56.23
+        by smtp.gmail.com with ESMTPSA id s12sm1376462pjz.37.2021.06.22.13.30.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Jun 2021 12:56:24 -0700 (PDT)
-Date:   Tue, 22 Jun 2021 13:56:22 -0600
+        Tue, 22 Jun 2021 13:30:21 -0700 (PDT)
+Date:   Tue, 22 Jun 2021 14:30:19 -0600
 From:   Mathieu Poirier <mathieu.poirier@linaro.org>
 To:     Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
 Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
         Ohad Ben-Cohen <ohad@wizery.com>,
         linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com
-Subject: Re: [PATCH v2 1/1] rpmsg: ctrl: Introduce new
- RPMSG_CREATE/RELEASE_DEV_IOCTL controls
-Message-ID: <20210622195622.GA1006507@p14s>
-References: <20210621125800.27696-1-arnaud.pouliquen@foss.st.com>
- <20210621125800.27696-2-arnaud.pouliquen@foss.st.com>
- <20210621231633.GC980846@p14s>
- <343c372e-0c0a-ad4e-356b-47eb975ce0e0@foss.st.com>
+        linux-stm32@st-md-mailman.stormreply.com, julien.massot@iot.bzh
+Subject: Re: [PATCH 3/4] rpmsg: char: Introduce the "rpmsg-raw" channel
+Message-ID: <20210622203019.GB1006507@p14s>
+References: <20210607173032.30133-1-arnaud.pouliquen@foss.st.com>
+ <20210607173032.30133-4-arnaud.pouliquen@foss.st.com>
+ <20210615200102.GE604521@p14s>
+ <b55cd4e5-fb9d-a0ab-03a9-3a771898db04@foss.st.com>
+ <20210617213154.GA790564@p14s>
+ <d8e81ecd-c77d-9d16-7e43-218bd54a9f83@foss.st.com>
+ <20210621223852.GA980846@p14s>
+ <b293bc1c-5f80-6a4c-4d9b-57bbada01958@foss.st.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <343c372e-0c0a-ad4e-356b-47eb975ce0e0@foss.st.com>
+In-Reply-To: <b293bc1c-5f80-6a4c-4d9b-57bbada01958@foss.st.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Tue, Jun 22, 2021 at 09:43:49AM +0200, Arnaud POULIQUEN wrote:
-> Hi Mathieu
+On Tue, Jun 22, 2021 at 10:21:02AM +0200, Arnaud POULIQUEN wrote:
 > 
-> On 6/22/21 1:16 AM, Mathieu Poirier wrote:
-> > On Mon, Jun 21, 2021 at 02:58:00PM +0200, Arnaud Pouliquen wrote:
-> >> Allow the user space application to create and release an rpmsg device
-> >> by adding RPMSG_CREATE_DEV_IOCTL and RPMSG_RELEASE_DEV_IOCTL ioctrls to
-> >> the /dev/rpmsg_ctrl interface
+> 
+> On 6/22/21 12:38 AM, Mathieu Poirier wrote:
+> > On Fri, Jun 18, 2021 at 01:35:43PM +0200, Arnaud POULIQUEN wrote:
+> >> Hi Mathieu,
 > >>
-> >> The RPMSG_CREATE_DEV_IOCTL Ioctl can be used to instantiate a local rpmsg
-> >> device.
-> >> Depending on the back-end implementation, the associated rpmsg driver is
-> >> probed and a NS announcement can be sent to the remote processor.
+> >> On 6/17/21 11:31 PM, Mathieu Poirier wrote:
+> >>> On Wed, Jun 16, 2021 at 02:38:26PM +0200, Arnaud POULIQUEN wrote:
+> >>>> Hi Mathieu,
+> >>>>
+> >>>> On 6/15/21 10:01 PM, Mathieu Poirier wrote:
+> >>>>> On Mon, Jun 07, 2021 at 07:30:31PM +0200, Arnaud Pouliquen wrote:
+> >>>>>> Allows to probe the endpoint device on a remote name service announcement,
+> >>>>>> by registering a rpmsg_driverfor the "rpmsg-raw" channel.
+> >>>>>>
+> >>>>>> With this patch the /dev/rpmsgX interface can be instantiated by the remote
+> >>>>>> firmware.
+> >>>>>>
+> >>>>>> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+> >>>>>> ---
+> >>>>>>  drivers/rpmsg/rpmsg_char.c | 54 ++++++++++++++++++++++++++++++++++++--
+> >>>>>>  1 file changed, 52 insertions(+), 2 deletions(-)
+> >>>>>>
+> >>>>>> diff --git a/drivers/rpmsg/rpmsg_char.c b/drivers/rpmsg/rpmsg_char.c
+> >>>>>> index 4199ac1bee10..3b850b218eb0 100644
+> >>>>>> --- a/drivers/rpmsg/rpmsg_char.c
+> >>>>>> +++ b/drivers/rpmsg/rpmsg_char.c
+> >>>>>> @@ -25,6 +25,8 @@
+> >>>>>>  
+> >>>>>>  #include "rpmsg_char.h"
+> >>>>>>  
+> >>>>>> +#define RPMSG_CHAR_DEVNAME "rpmsg-raw"
+> >>>>>> +
+> >>>>>>  static dev_t rpmsg_major;
+> >>>>>>  static struct class *rpmsg_class;
+> >>>>>>  
+> >>>>>> @@ -416,6 +418,40 @@ int rpmsg_chrdev_eptdev_create(struct rpmsg_device *rpdev, struct device *parent
+> >>>>>>  }
+> >>>>>>  EXPORT_SYMBOL(rpmsg_chrdev_eptdev_create);
+> >>>>>>  
+> >>>>>> +static int rpmsg_chrdev_probe(struct rpmsg_device *rpdev)
+> >>>>>> +{
+> >>>>>> +	struct rpmsg_channel_info chinfo;
+> >>>>>> +
+> >>>>>> +	memcpy(chinfo.name, RPMSG_CHAR_DEVNAME, sizeof(RPMSG_CHAR_DEVNAME));
+> >>>>>> +	chinfo.src = rpdev->src;
+> >>>>>> +	chinfo.dst = rpdev->dst;
+> >>>>>> +
+> >>>>>> +	return __rpmsg_chrdev_eptdev_create(rpdev, &rpdev->dev, chinfo, true);
+> >>>>>
+> >>>>> I am a little puzzled here as to why we need different modes... Why can't we
+> >>>>> simply call rpmsg_chrdev_eptdev_create() and let the endpoint be created on
+> >>>>> open() and destroyed on release() as per the current implementation?
+> >>>>
+> >>>> The main reason is the support of the NS announcement
+> >>>> a NS announcement is received from the remote processor:
+> >>>> channel name: "rpmsg-raw"
+> >>>> remote address (dst address): 0x400
+> >>>> local address (scr address) : RPMSG_ADDR_ANY
+> >>>> => no default endpoint, and not local address.
+> >>>>
+> >>>> case 1) if we use legacy implementation ( no default endpoint)
+> >>>> => create/destroy endpoint on open/stop
+> >>>> - on first open: created endpoint is bound to scr address 0x406
+> >>>> - a first message is sent to the remote side, the address 0x406 is stored as
+> >>>> default channel dst address on remote side.
+> >>>> - on close: endpoint is closed and associated address 0x406 is free.
+> >>>> - another driver create an enpoint the address 0x406 is reserved for this new
+> >>>> endpoint.
+> >>>> - on new open:  scr address is set to next value 0x407
+> >>>> => how to inform remote processor that the address has changed?
+> >>>> => no reservation mechanism that ensure that you can reuse the same address
+> >>>>
+> >>>> case 2) relying on use_default_ept
+> >>>> => Ensure that both side have always the same addresses to communicate.
+> >>>
+> >>> I see the problem and your solution is adequate - I think the code simply needs
+> >>> to be moved around a little.  Here is what I suggest:
+> >>>
+> >>> 1) Create the endpoint in rpmsg_chrdev_probe(), just before calling
+> >>> rpmsg_chrdev_eptdev_create().  That way changes to rpmsg_eptdev_open() can be
+> >>> kept to a minimum.  I don't think we'll be needing
+> >>> __rpmsg_chrdev_eptdev_create() anymore.
 > >>
-> >> The RPMSG_RELEASE_DEV_IOCTL allows the user application to release a
-> >> rpmsg device created either by the remote processor or with the
-> >> RPMSG_CREATE_DEV_IOCTL call.
-> >> Depending on the back-end implementation, the associated rpmsg driver is
-> >> removed and a NS destroy rpmsg can be sent to the remote processor.
-> >>
-> >> Suggested-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-> >> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-> >> ---
-> >>  drivers/rpmsg/rpmsg_ctrl.c | 37 +++++++++++++++++++++++++++++++++----
-> >>  include/uapi/linux/rpmsg.h | 10 ++++++++++
-> >>  2 files changed, 43 insertions(+), 4 deletions(-)
-> >>
-> >> diff --git a/drivers/rpmsg/rpmsg_ctrl.c b/drivers/rpmsg/rpmsg_ctrl.c
-> >> index eeb1708548c1..cb19e32d05e1 100644
-> >> --- a/drivers/rpmsg/rpmsg_ctrl.c
-> >> +++ b/drivers/rpmsg/rpmsg_ctrl.c
-> >> @@ -23,6 +23,7 @@
-> >>  #include <uapi/linux/rpmsg.h>
-> >>  
-> >>  #include "rpmsg_char.h"
-> >> +#include "rpmsg_internal.h"
-> >>  
-> >>  static dev_t rpmsg_major;
-> >>  
-> >> @@ -37,11 +38,13 @@ static DEFINE_IDA(rpmsg_minor_ida);
-> >>   * @rpdev:	underlaying rpmsg device
-> >>   * @cdev:	cdev for the ctrl device
-> >>   * @dev:	device for the ctrl device
-> >> + * @ctrl_lock:	serialize the ioctrls.
-> >>   */
-> >>  struct rpmsg_ctrldev {
-> >>  	struct rpmsg_device *rpdev;
-> >>  	struct cdev cdev;
-> >>  	struct device dev;
-> >> +	struct mutex ctrl_lock;
-> >>  };
-> >>  
-> >>  static int rpmsg_ctrldev_open(struct inode *inode, struct file *filp)
-> >> @@ -70,9 +73,8 @@ static long rpmsg_ctrldev_ioctl(struct file *fp, unsigned int cmd,
-> >>  	void __user *argp = (void __user *)arg;
-> >>  	struct rpmsg_endpoint_info eptinfo;
-> >>  	struct rpmsg_channel_info chinfo;
-> >> -
-> >> -	if (cmd != RPMSG_CREATE_EPT_IOCTL)
-> >> -		return -EINVAL;
-> >> +	struct rpmsg_device *rpdev;
-> >> +	int ret = 0;
-> >>  
-> >>  	if (copy_from_user(&eptinfo, argp, sizeof(eptinfo)))
-> >>  		return -EFAULT;
-> >> @@ -82,7 +84,33 @@ static long rpmsg_ctrldev_ioctl(struct file *fp, unsigned int cmd,
-> >>  	chinfo.src = eptinfo.src;
-> >>  	chinfo.dst = eptinfo.dst;
-> >>  
-> >> -	return rpmsg_chrdev_eptdev_create(ctrldev->rpdev, &ctrldev->dev, chinfo);
-> >> +	mutex_lock(&ctrldev->ctrl_lock);
+> >> Yes i could, but this will break a concept of the rpmsg_char that creates the
+> >> endpoint on open, meaning that application is ready to communicate.
 > > 
-> > Have you been able to verify the VFS layer doesn't take care of serializing
-> > ioctl() and file accesses in general?  I did a quick search in the drivers/
-> > directory and the vast majority of implementations don't use a lock.
+> > In my opinion creating and destorying an endpoint on open/close is something we
+> > want to move away from. 
 > 
-> Please find my answer here https://lkml.org/lkml/2021/6/21/235
+> Not simple to answer... As discussed a mechanism is requested by some developer
+> to be able on a ns announcement to inform the remote side that the user
+> application or the client driver is ready to communicate, the endpoint creation
+> could be the trigger.
+> 
+> That said, let's go by steps. For this patchset I will try to come back to my
+> first implementation where i created the endpoint on probe.
 
-Ah ok, I hadn't noticed that one.
-
-> I tested by suppressing the lock and adding msleep to check a potential atomic.
-> in the rpmsg_ctrldev_ioctl function. Nothing seems prevent the re-entrance.
-
-Thanks for testing this out.  I did some research on my side and turns out
-unlocked_ioctl() was introduced to get rid of the Big Kernel Lock rather than
-indicate that serialisation is not supported by this interface.  Someone also
-asked the exact same question here [1].
-
-So yes, locking is required. 
-
-Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-
-[1]. https://stackoverflow.com/questions/18874962/linux-device-driver-file-operations-it-is-possible-to-have-race-conditions
+Going back to that conversation I realise the directions I gave out on that
+front was not optimal.  As you mention above please go back to creating the
+endpoint on probe().
 
 > 
-> Regards,
+> > 
+> >>
+> >> I would rather preserve this behavior.
+> >>
+> >>>
+> >>> 2) We can get rid of use_default_ept by taking advantage of the fact that the
+> >>> rpmsg_char driver does not use rpmsg_device::ept.  If we create the endpoint in
+> >>> rpmsg_chrdev_probe() we know that if rpdev->ept exists, we must not create
+> >>> or destroy the endpoint in rpmsg_eptdev_open() and rpmsg_eptdev_release().
+> >>>
+> >>> 3) Function rpmsg_eptdev_open() doesn't change much.  If rpdev->ept is NULL
+> >>> than
+> >>> an endpoint is created as the current implementation.  Otherwise we simply do:
+> >>>
+> >>>         eptdev->ept = rpdev->ept;
+> >>>
+> >>
+> >> In qcom_glink_create_chrdev, a rpmsg_ctrl rpdev with a default endpoint is
+> >> created and used as parameter of the  pmsg_ctrldev_register_device [1]
+> >> => rpdev->ept is not NULL.
+> >>
+> >> So the rpmsg_char has to differentiate 2 cases on rpmsg_eptdev_open:
+> >> - A enpdoint has to be created as requested by RPMSG_CREATE_EPT_IOCTL
+> >> (regardless of the rpdev->ept value)
+> >> - for a rpmsg device created by an NS announcement: A default endpoint has to be
+> >> reused (or created if rpdev->ept is null).
+> >>
+> >> so the rpdev->ept test is not relevant for decision, the use_default_ept ( or
+> >> another flag) is mandatory.
+> > 
+> > Yes, we need a flag.  May I suggest "fixed_ept" rather than "used_default_ept"?
+> 
+> "fixed_ept" could be miss-understood . It can be interpreted as an endpoint with
+> a fixed address (not set to RPMSG_ADDR_ANY).
+> What about "default_ept" or "static_ept"?
+
+I'll take static_ept.
+
+> 
+> Thanks
 > Arnaud
 > 
 > > 
-> > Thanks,
-> > Mathieu
-> > 
-> >> +	switch (cmd) {
-> >> +	case RPMSG_CREATE_EPT_IOCTL:
-> >> +		ret = rpmsg_chrdev_eptdev_create(ctrldev->rpdev, &ctrldev->dev, chinfo);
-> >> +		break;
-> >> +
-> >> +	case RPMSG_CREATE_DEV_IOCTL:
-> >> +		rpdev = rpmsg_create_channel(ctrldev->rpdev, &chinfo);
-> >> +		if (!rpdev) {
-> >> +			dev_err(&ctrldev->dev, "failed to create %s channel\n", chinfo.name);
-> >> +			ret = -ENXIO;
-> >> +		}
-> >> +		break;
-> >> +
-> >> +	case RPMSG_RELEASE_DEV_IOCTL:
-> >> +		ret = rpmsg_release_channel(ctrldev->rpdev, &chinfo);
-> >> +		if (ret)
-> >> +			dev_err(&ctrldev->dev, "failed to release %s channel (%d)\n",
-> >> +				chinfo.name, ret);
-> >> +		break;
-> >> +
-> >> +	default:
-> >> +		ret = -EINVAL;
-> >> +	}
-> >> +	mutex_unlock(&ctrldev->ctrl_lock);
-> >> +
-> >> +	return ret;
-> >>  };
-> >>  
-> >>  static const struct file_operations rpmsg_ctrldev_fops = {
-> >> @@ -119,6 +147,7 @@ static int rpmsg_ctrldev_probe(struct rpmsg_device *rpdev)
-> >>  	device_initialize(dev);
-> >>  	dev->parent = &rpdev->dev;
-> >>  
-> >> +	mutex_init(&ctrldev->ctrl_lock);
-> >>  	cdev_init(&ctrldev->cdev, &rpmsg_ctrldev_fops);
-> >>  	ctrldev->cdev.owner = THIS_MODULE;
-> >>  
-> >> diff --git a/include/uapi/linux/rpmsg.h b/include/uapi/linux/rpmsg.h
-> >> index f5ca8740f3fb..1637e68177d9 100644
-> >> --- a/include/uapi/linux/rpmsg.h
-> >> +++ b/include/uapi/linux/rpmsg.h
-> >> @@ -33,4 +33,14 @@ struct rpmsg_endpoint_info {
-> >>   */
-> >>  #define RPMSG_DESTROY_EPT_IOCTL	_IO(0xb5, 0x2)
-> >>  
-> >> +/**
-> >> + * Instantiate a new local rpmsg service device.
-> >> + */
-> >> +#define RPMSG_CREATE_DEV_IOCTL	_IOW(0xb5, 0x3, struct rpmsg_endpoint_info)
-> >> +
-> >> +/**
-> >> + * Release a local rpmsg device.
-> >> + */
-> >> +#define RPMSG_RELEASE_DEV_IOCTL	_IOW(0xb5, 0x4, struct rpmsg_endpoint_info)
-> >> +
-> >>  #endif
-> >> -- 
-> >> 2.17.1
 > >>
+> >>
+> >>> 4) Make sure the teardown path works as well.  From what I can see, it should.
+> >>>
+> >>> 5) Add a __lot__ of comments.
+> >>>
+> >>> If the above all works this entire patchset should become really small.
+> >>
+> >> Thanks,
+> >> Arnaud
+> >>
+> >>>
+> >>>>
+> >>>>>
+> >>>>> I'd rather keep things simple for the refactoring and introduce new features
+> >>>>> later if need be.
+> >>>>
+> >>>> Yes I agree with you, but here it could become a nightmare for the remote
+> >>>> processor if the Linux endpoint address is not stable.
+> >>>>
+> >>>> Anyway we can consider this as a workaround waiting the extension of the NS
+> >>>> announcement to have a better management of the address exchange on channel
+> >>>> initialization.
+> >>>>
+> >>>> Thanks
+> >>>> Arnaud
+> >>>>
+> >>>>>
+> >>>>> As I said, it may be that I don't understand the usecase.
+> >>>>>
+> >>>>> Thanks,
+> >>>>> Mathieu
+> >>>>>
+> >>>>>> +}
+> >>>>>> +
+> >>>>>> +static void rpmsg_chrdev_remove(struct rpmsg_device *rpdev)
+> >>>>>> +{
+> >>>>>> +	int ret;
+> >>>>>> +
+> >>>>>> +	ret = device_for_each_child(&rpdev->dev, NULL, rpmsg_chrdev_eptdev_destroy);
+> >>>>>> +	if (ret)
+> >>>>>> +		dev_warn(&rpdev->dev, "failed to destroy endpoints: %d\n", ret);
+> >>>>>> +}
+> >>>>>> +
+> >>>>>> +static struct rpmsg_device_id rpmsg_chrdev_id_table[] = {
+> >>>>>> +	{ .name	= RPMSG_CHAR_DEVNAME },
+> >>>>>> +	{ },
+> >>>>>> +};
+> >>>>>> +
+> >>>>>> +static struct rpmsg_driver rpmsg_chrdev_driver = {
+> >>>>>> +	.probe = rpmsg_chrdev_probe,
+> >>>>>> +	.remove = rpmsg_chrdev_remove,
+> >>>>>> +	.id_table = rpmsg_chrdev_id_table,
+> >>>>>> +	.drv = {
+> >>>>>> +		.name = "rpmsg_chrdev",
+> >>>>>> +	},
+> >>>>>> +};
+> >>>>>> +
+> >>>>>>  static int rpmsg_chrdev_init(void)
+> >>>>>>  {
+> >>>>>>  	int ret;
+> >>>>>> @@ -429,16 +465,30 @@ static int rpmsg_chrdev_init(void)
+> >>>>>>  	rpmsg_class = class_create(THIS_MODULE, "rpmsg");
+> >>>>>>  	if (IS_ERR(rpmsg_class)) {
+> >>>>>>  		pr_err("failed to create rpmsg class\n");
+> >>>>>> -		unregister_chrdev_region(rpmsg_major, RPMSG_DEV_MAX);
+> >>>>>> -		return PTR_ERR(rpmsg_class);
+> >>>>>> +		ret = PTR_ERR(rpmsg_class);
+> >>>>>> +		goto free_region;
+> >>>>>> +	}
+> >>>>>> +
+> >>>>>> +	ret = register_rpmsg_driver(&rpmsg_chrdev_driver);
+> >>>>>> +	if (ret < 0) {
+> >>>>>> +		pr_err("rpmsg: failed to register rpmsg raw driver\n");
+> >>>>>> +		goto free_class;
+> >>>>>>  	}
+> >>>>>>  
+> >>>>>>  	return 0;
+> >>>>>> +
+> >>>>>> +free_class:
+> >>>>>> +	class_destroy(rpmsg_class);
+> >>>>>> +free_region:
+> >>>>>> +	unregister_chrdev_region(rpmsg_major, RPMSG_DEV_MAX);
+> >>>>>> +
+> >>>>>> +	return ret;
+> >>>>>>  }
+> >>>>>>  postcore_initcall(rpmsg_chrdev_init);
+> >>>>>>  
+> >>>>>>  static void rpmsg_chrdev_exit(void)
+> >>>>>>  {
+> >>>>>> +	unregister_rpmsg_driver(&rpmsg_chrdev_driver);
+> >>>>>>  	class_destroy(rpmsg_class);
+> >>>>>>  	unregister_chrdev_region(rpmsg_major, RPMSG_DEV_MAX);
+> >>>>>>  }
+> >>>>>> -- 
+> >>>>>> 2.17.1
+> >>>>>>
