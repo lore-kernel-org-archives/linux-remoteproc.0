@@ -6,41 +6,41 @@ X-Spam-Status: No, score=-11.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
 	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5464DC49EAB
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70A0DC48BC2
 	for <linux-remoteproc@archiver.kernel.org>; Wed, 23 Jun 2021 21:50:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3EFBE613BE
+	by mail.kernel.org (Postfix) with ESMTP id 5E58E613BE
 	for <linux-remoteproc@archiver.kernel.org>; Wed, 23 Jun 2021 21:50:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229774AbhFWVwY (ORCPT
+        id S229796AbhFWVwY (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
         Wed, 23 Jun 2021 17:52:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41300 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.99]:41304 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229796AbhFWVwX (ORCPT <rfc822;linux-remoteproc@vger.kernel.org>);
+        id S229800AbhFWVwX (ORCPT <rfc822;linux-remoteproc@vger.kernel.org>);
         Wed, 23 Jun 2021 17:52:23 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPS id AE9DA613C2;
+Received: by mail.kernel.org (Postfix) with ESMTPS id B6F07613D1;
         Wed, 23 Jun 2021 21:50:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=k20201202; t=1624485005;
-        bh=qmHmnj5eYH4W2LG+a82CHATaUE3veTPE7AkgdF6yaSM=;
+        bh=2aojuLw2hFoqOuX4cGOYJvZ3wwKCzP0N9CSPM+yhNe0=;
         h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=Xz6AFCvYhRKJn2IPhs1eUi2MRkRgqPIFmIJRdVPYG/MtyFrvJ4+8nDy/+JfTx/4uB
-         Rs7/ZPxDgGvvg2NM4cdnBA6PU7L6Cb0FpG7JDEhkeaKfCgrjqMiWPxFmUAQbThB2i5
-         Z4M3RydS5ml5jdtSLXTwdTWZfTzolH19w7Hda2UMtrfya/O8JzeNWSMjxiCOmLzOlR
-         sW7xZeN6SkBMQ1yrWtmPE0xNUiVJzfOJpjoeSjFqNoYJHfF6JNiAQ/JGOuZKW54m5K
-         GPieDt+2iPYSl9NrkEAr9E1U5la6XPUJhVfzqKK1n4Mn+vWbTx83UxYSbXymMY7tjB
-         OaZx4FfOHzc2g==
+        b=lAjGVe01UZZO+2q9CzEn1WY+jfmO6zQmv3/djJtjblQXruzGdL5qvUCzSGn+bV2TM
+         9U3H89mjcQfn6AfHSCjULSXWR1gD4YfU0HqYqeMGiZvBsw7U8KogVSs4EgHV6kyE16
+         3e/8Z6x7Bm1E7Oywd6lwLkv2PPr68sC5EE2ekUjsqNTcPWnav3W/iUnmoRxSCFqhot
+         GgnMZG95+56ynYQ8KlnFjf8ZLp4JI0XaA/y19Ym65HDTeF3blKWjjW2jm2qbCNkbTB
+         BhePU1UK1xuvI4s2QIAnMa3YkJ5akwL/LYosko1ks2oCt2SPbv57XDtcaroBgUjo0S
+         jCiFhKvffihJg==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH V3 0/2] remoteproc: imx_rproc: support i.MX8ULP
+Subject: Re: [PATCH] remoteproc: core: Move cdev add before device add
 From:   patchwork-bot+linux-remoteproc@kernel.org
-Message-Id: <162448500566.18278.11746200316594733150.git-patchwork-notify@kernel.org>
+Message-Id: <162448500570.18278.8235199339523096069.git-patchwork-notify@kernel.org>
 Date:   Wed, 23 Jun 2021 21:50:05 +0000
-References: <20210622060148.18411-1-peng.fan@oss.nxp.com>
-In-Reply-To: <20210622060148.18411-1-peng.fan@oss.nxp.com>
-To:     Peng Fan (OSS) <peng.fan@oss.nxp.com>
+References: <1618946805-26970-1-git-send-email-sidgup@codeaurora.org>
+In-Reply-To: <1618946805-26970-1-git-send-email-sidgup@codeaurora.org>
+To:     Siddharth Gupta <sidgup@codeaurora.org>
 Cc:     linux-remoteproc@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
@@ -48,25 +48,22 @@ X-Mailing-List: linux-remoteproc@vger.kernel.org
 
 Hello:
 
-This series was applied to andersson/remoteproc.git (refs/heads/for-next):
+This patch was applied to andersson/remoteproc.git (refs/heads/for-next):
 
-On Tue, 22 Jun 2021 14:01:46 +0800 you wrote:
-> From: Peng Fan <peng.fan@nxp.com>
-> 
-> V3:
->  Per Fabio's comment, keep the entries in alphabetical order in Patch 1.
-> 
-> V2:
->  Add R-b from Mathieu
->  Add Rob in Cc for dt-bindings
+On Tue, 20 Apr 2021 12:26:45 -0700 you wrote:
+> When cdev_add is called after device_add has been called there is no
+> way for the userspace to know about the addition of a cdev as cdev_add
+> itself doesn't trigger a uevent notification, or for the kernel to
+> know about the change to devt. This results in two problems:
+>  - mknod is never called for the cdev and hence no cdev appears on
+>    devtmpfs.
+>  - sysfs links to the new cdev are not established.
 > 
 > [...]
 
 Here is the summary with links:
-  - [V3,1/2] dt-bindings: remoteproc: imx_rproc: support i.MX8ULP
-    https://git.kernel.org/andersson/remoteproc/c/5f5fb97491b9
-  - [V3,2/2] remoteproc: imx_rproc: support i.MX8ULP
-    https://git.kernel.org/andersson/remoteproc/c/d59eedc0e408
+  - remoteproc: core: Move cdev add before device add
+    https://git.kernel.org/andersson/remoteproc/c/c6659ee893e2
 
 You are awesome, thank you!
 --
