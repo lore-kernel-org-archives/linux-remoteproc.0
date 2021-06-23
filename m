@@ -2,197 +2,143 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F28EC4743C
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 23 Jun 2021 18:45:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E53A1C48BE5
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 23 Jun 2021 18:56:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 370BF61185
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 23 Jun 2021 18:45:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D05D2611C1
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 23 Jun 2021 18:56:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229999AbhFWSre (ORCPT
+        id S229853AbhFWS66 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 23 Jun 2021 14:47:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32808 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229955AbhFWSre (ORCPT
-        <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 23 Jun 2021 14:47:34 -0400
-Received: from mail-oi1-x232.google.com (mail-oi1-x232.google.com [IPv6:2607:f8b0:4864:20::232])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 46E70C061574
-        for <linux-remoteproc@vger.kernel.org>; Wed, 23 Jun 2021 11:45:16 -0700 (PDT)
-Received: by mail-oi1-x232.google.com with SMTP id w127so4384051oig.12
-        for <linux-remoteproc@vger.kernel.org>; Wed, 23 Jun 2021 11:45:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=25Xb4P9ONl4NzuOE9BknQdHYzn3+WMCAH5CmkrDBv8c=;
-        b=nspS8/ZDtdjWSrZvTFB2KZLPbZsxOpGn627p0IOIQNtGCxXkG50wmJ3EULXwPEIzFc
-         mFdNRIrWbhiKHovPgDEdXLAr4/LKlZrtEj0mG+mWTH7HAZVsGxzgLo/SvuiWx1YN5uQH
-         aPp5GXJr56C6TvZxA1xLowlM7TFEbWyxx8CLOW+CXNluKaOmP2FRhXJEMj0X8KLOh1Ui
-         MsKz/Vetz0ClkYt29qCLhtoLf99QlgzJhLcn8Vmi9c49a11Y/dwJfh8HxOyp05b+a5vW
-         hGNXGX8JGfINtmrC+9Icqbz8f9OfASh8MHhBaRFS32+sFwgYXyE2LfNCQGdyyl2yzRAI
-         spQg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=25Xb4P9ONl4NzuOE9BknQdHYzn3+WMCAH5CmkrDBv8c=;
-        b=ah4qgFyaxDojcJwsL1YLUbgk7AFlqtqvA0LlwK2nJ8t7tG7UuoH52bxFTk5HM6Ki1Q
-         IEwPJRqXE52R3hPa2RLwS/NeYFlivBXuBZ4vJPxvy3CzX0hRONjZLxJvbhhWiBCGi0li
-         esZ2q2MD990OllExk1fLtk4J4cRjkT867ajtVfOQbY92x9mHDjqNJ8whUsmT92Jw/++J
-         z/BxPOSzkve9DqxnrCe5tcRw/MLj8cwAop/J3duX7PPAMQ9ryJxvyWvjmoPY5x76AeEC
-         OEQNDj0+0dQs1XCQu54GG2jal1RZzBMYCtyH9bCTiY7rwh3RHo6I1d+roCsv3ohLoxEz
-         LZJw==
-X-Gm-Message-State: AOAM532v+jNtHOVp1abr1Zym8Vidvb2gCukt4ohed/aelRh6hAykzgYH
-        XI36LSpdGPZt1AegPZlsGLayQ02FCYHZCg==
-X-Google-Smtp-Source: ABdhPJyhsb7VidpHXFDZm+c5HXvnzfTp415YuNkk7mYhD1hIhA/pa0B4lCsqz8c7gS021qvRHGI3+w==
-X-Received: by 2002:aca:3285:: with SMTP id y127mr973809oiy.115.1624473915614;
-        Wed, 23 Jun 2021 11:45:15 -0700 (PDT)
-Received: from builder.lan (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
-        by smtp.gmail.com with ESMTPSA id v42sm147961ott.70.2021.06.23.11.45.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Jun 2021 11:45:14 -0700 (PDT)
-Date:   Wed, 23 Jun 2021 13:45:13 -0500
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
-Cc:     Ohad Ben-Cohen <ohad@wizery.com>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Wed, 23 Jun 2021 14:58:58 -0400
+Received: from m43-7.mailgun.net ([69.72.43.7]:41145 "EHLO m43-7.mailgun.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229523AbhFWS66 (ORCPT <rfc822;linux-remoteproc@vger.kernel.org>);
+        Wed, 23 Jun 2021 14:58:58 -0400
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1624474599; h=Content-Transfer-Encoding: Content-Type:
+ In-Reply-To: MIME-Version: Date: Message-ID: From: References: Cc: To:
+ Subject: Sender; bh=raM5yy7Fixm9SBjgzY+GjFB9SPnrp4+WIjv/dKrKXH8=; b=GBWjoKLEgLyvYVv6zH06zlnz4iM9xsisZfTGu7XslBVa1NIHBrsK9030gFD9BmWB3LPSiJhC
+ D9DJTQ0s6ioZS9laSg0lSXFFPE51yK4TTt/Zt2nuBlMj+gFpnLkVuElIiHFcXye6kk8ULECR
+ bhvAocpxqXumpi8U6vjZzs3XecY=
+X-Mailgun-Sending-Ip: 69.72.43.7
+X-Mailgun-Sid: WyI4ZWZiZiIsICJsaW51eC1yZW1vdGVwcm9jQHZnZXIua2VybmVsLm9yZyIsICJiZTllNGEiXQ==
+Received: from smtp.codeaurora.org
+ (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
+ smtp-out-n06.prod.us-west-2.postgun.com with SMTP id
+ 60d383df638039e9976a6a48 (version=TLS1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Wed, 23 Jun 2021 18:56:31
+ GMT
+Sender: sidgup=codeaurora.org@mg.codeaurora.org
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 3EC04C43217; Wed, 23 Jun 2021 18:56:31 +0000 (UTC)
+Received: from [192.168.1.10] (cpe-75-83-25-192.socal.res.rr.com [75.83.25.192])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: sidgup)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 81904C433D3;
+        Wed, 23 Jun 2021 18:56:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 81904C433D3
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=sidgup@codeaurora.org
+Subject: Re: [PATCH v3 1/4] remoteproc: core: Move cdev add before device add
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     bjorn.andersson@linaro.org, ohad@wizery.com,
         linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com
-Subject: Re: [PATCH] remoteproc: stm32: fix mbox_send_message call
-Message-ID: <YNOBOeEkvG8WXM9o@builder.lan>
-References: <20210420091922.29429-1-arnaud.pouliquen@foss.st.com>
- <YLBi/JZ0u8394tI8@builder.lan>
- <b563f831-3876-1d5d-7268-ce1260363906@foss.st.com>
- <e112e4a3-d5c1-caff-8ef9-cbd5b21ea3a1@foss.st.com>
+        linux-arm-msm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, psodagud@codeaurora.org,
+        stable@vger.kernel.org
+References: <1623723671-5517-1-git-send-email-sidgup@codeaurora.org>
+ <1623723671-5517-2-git-send-email-sidgup@codeaurora.org>
+ <YMgy7eg3wde0eVfe@kroah.com>
+ <0a196786-f624-d9bb-8ef9-55c04ed57497@codeaurora.org>
+ <YMmTGD6hAKbpGWMp@kroah.com>
+ <f81acd52-fe59-a296-b221-febbf8281606@codeaurora.org>
+ <YNLibU0/kMfZ3Hio@kroah.com>
+From:   Siddharth Gupta <sidgup@codeaurora.org>
+Message-ID: <7e8ee1c3-e11e-52fc-068d-34fe036e132f@codeaurora.org>
+Date:   Wed, 23 Jun 2021 11:56:28 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.11.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e112e4a3-d5c1-caff-8ef9-cbd5b21ea3a1@foss.st.com>
+In-Reply-To: <YNLibU0/kMfZ3Hio@kroah.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Tue 22 Jun 02:56 CDT 2021, Arnaud POULIQUEN wrote:
 
-> Hello Bjorn
-> 
-> On 5/28/21 10:03 AM, Arnaud POULIQUEN wrote:
-> > Hello Bjorn,
-> > 
-> > On 5/28/21 5:26 AM, Bjorn Andersson wrote:
-> >> On Tue 20 Apr 04:19 CDT 2021, Arnaud Pouliquen wrote:
-> >>
-> >>> mbox_send_message is called by passing a local dummy message or
-> >>> a function parameter. As the message is queued, it is dereferenced.
-> >>> This works because the message field is not used by the stm32 ipcc
-> >>> driver, but it is not clean.
-> >>>
-> >>> Fix by passing a constant string in all cases.
-> >>>
-> >>> The associated comments are removed because rproc should not have to
-> >>> deal with the behavior of the mailbox frame.
-> >>>
-> >>
-> >> Didn't we conclude that the mailbox driver doesn't actually dereference
-> >> the pointer being passed?
-> > 
-> > Right it can store the reference to queue the sent.
-> > 
-> >>
-> >> If so I would prefer that you just pass NULL, so that if you in the
-> >> future need to pass some actual data it will be easy to distinguish the
-> >> old and new case.
-> > 
-> > I can not use NULL pointer in stm32_rproc_attach and stm32_rproc_detach case.
-> > The reason is that the tx_done callback is not called if the message is NULL.
-> > (https://elixir.bootlin.com/linux/latest/source/drivers/mailbox/mailbox.c#L106)
-> > 
-> > I could use NULL pointer in stm32_rproc_kick, but I would prefer to use the same way
-> > of calling mbox_send_message for all use cases and not take into account the
-> > mailbox internal behavior.
-> 
-> Do you still have any concern about this patch?
-> 
+On 6/23/2021 12:27 AM, Greg KH wrote:
+> On Wed, Jun 16, 2021 at 11:47:01AM -0700, Siddharth Gupta wrote:
+>> On 6/15/2021 10:58 PM, Greg KH wrote:
+>>> On Tue, Jun 15, 2021 at 12:03:26PM -0700, Siddharth Gupta wrote:
+>>>> On 6/14/2021 9:56 PM, Greg KH wrote:
+>>>>> On Mon, Jun 14, 2021 at 07:21:08PM -0700, Siddharth Gupta wrote:
+>>>>>> When cdev_add is called after device_add has been called there is no
+>>>>>> way for the userspace to know about the addition of a cdev as cdev_add
+>>>>>> itself doesn't trigger a uevent notification, or for the kernel to
+>>>>>> know about the change to devt. This results in two problems:
+>>>>>>     - mknod is never called for the cdev and hence no cdev appears on
+>>>>>>       devtmpfs.
+>>>>>>     - sysfs links to the new cdev are not established.
+>>>>>>
+>>>>>> The cdev needs to be added and devt assigned before device_add() is
+>>>>>> called in order for the relevant sysfs and devtmpfs entries to be
+>>>>>> created and the uevent to be properly populated.
+>>>>> So this means no one ever ran this code on a system that used devtmpfs?
+>>>>>
+>>>>> How was it ever tested?
+>>>> My testing was done with toybox + Android's ueventd ramdisk.
+>>>> As I mentioned in the discussion, the race became evident
+>>>> recently. I will make sure to test all such changes without
+>>>> systemd/ueventd in the future.
+>>> It isn't an issue of systemd/ueventd, those do not control /dev on a
+>>> normal system, that is what devtmpfs is for.
+>> I am not fully aware of when devtmpfs is enabled or not, but in
+>> case it is not - systemd/ueventd will create these files with
+>> mknod, right?
+> No, systemd does not create device nodes, and neither does udev.  Hasn't
+> done so for well over 10 years now.
+Oh okay. I thought ueventd does it because it allows setting
+the node permissions through ueventd.rc:
+https://android.googlesource.com/platform/system/core/+/master/rootdir/ueventd.rc
+>
+>> I was even manually able to call mknod from the
+>> terminal when some of the remoteproc character device entries
+>> showed up (using major number from there, and minor number being
+>> the remoteproc id), and that allowed me to boot up the
+>> remoteprocs as well.
+> Yes, that is fine, but that also means that this was not working from
+> the very beginning :(
+Right. To clarify, I did this after we started seeing the problem
+on our devices, which led me to believe there was a race between
+ueventd and cdev_add(). Not sure anymore if that is not the case.
+>
+>>> And devtmpfs nodes are only created if you create a struct device
+>>> somewhere with a proper major/minor, which you were not doing here, so
+>>> you must have had a static /dev on your test systems, right?
+>> I am not sure of what you mean by a static /dev? Could you
+>> explain? In case you mean the character device would be
+>> non-functional, that is not the case. They have been working
+>> for us since the beginning.
+> /dev on modern systems is managed by devtmpfs, which knows to create the
+> device nodes when you properly register the device with the driver core.
+> A "static" /dev is managed by mknod from userspace, like you did "by
+> hand", and that is usually only done by older systems.
+Thanks for the explanation! As I mentioned earlier - I was under
+the impression that ueventd does it. I will go through our older
+builds where this was working (without this patch) and try to see
+how the dev nodes were being populated.
 
-I think my concern is now directed at the mailbox api. I think the
-change is reasonable given that. Thanks for the explanation. I'm picking
-up the patch.
-
-Regards,
-Bjorn
-
-> Thanks,
-> Arnaud
-> 
-> > 
-> > Thanks,
-> > Arnaud
-> > 
-> > 
-> >>
-> >> Regards,
-> >> Bjorn
-> >>
-> >>> Reported-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> >>> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-> >>> ---
-> >>>  drivers/remoteproc/stm32_rproc.c | 14 +++++---------
-> >>>  1 file changed, 5 insertions(+), 9 deletions(-)
-> >>>
-> >>> diff --git a/drivers/remoteproc/stm32_rproc.c b/drivers/remoteproc/stm32_rproc.c
-> >>> index 7353f9e7e7af..0e8203a432ab 100644
-> >>> --- a/drivers/remoteproc/stm32_rproc.c
-> >>> +++ b/drivers/remoteproc/stm32_rproc.c
-> >>> @@ -474,14 +474,12 @@ static int stm32_rproc_attach(struct rproc *rproc)
-> >>>  static int stm32_rproc_detach(struct rproc *rproc)
-> >>>  {
-> >>>  	struct stm32_rproc *ddata = rproc->priv;
-> >>> -	int err, dummy_data, idx;
-> >>> +	int err, idx;
-> >>>  
-> >>>  	/* Inform the remote processor of the detach */
-> >>>  	idx = stm32_rproc_mbox_idx(rproc, STM32_MBX_DETACH);
-> >>>  	if (idx >= 0 && ddata->mb[idx].chan) {
-> >>> -		/* A dummy data is sent to allow to block on transmit */
-> >>> -		err = mbox_send_message(ddata->mb[idx].chan,
-> >>> -					&dummy_data);
-> >>> +		err = mbox_send_message(ddata->mb[idx].chan, "stop");
-> >>>  		if (err < 0)
-> >>>  			dev_warn(&rproc->dev, "warning: remote FW detach without ack\n");
-> >>>  	}
-> >>> @@ -493,15 +491,13 @@ static int stm32_rproc_detach(struct rproc *rproc)
-> >>>  static int stm32_rproc_stop(struct rproc *rproc)
-> >>>  {
-> >>>  	struct stm32_rproc *ddata = rproc->priv;
-> >>> -	int err, dummy_data, idx;
-> >>> +	int err, idx;
-> >>>  
-> >>>  	/* request shutdown of the remote processor */
-> >>>  	if (rproc->state != RPROC_OFFLINE) {
-> >>>  		idx = stm32_rproc_mbox_idx(rproc, STM32_MBX_SHUTDOWN);
-> >>>  		if (idx >= 0 && ddata->mb[idx].chan) {
-> >>> -			/* a dummy data is sent to allow to block on transmit */
-> >>> -			err = mbox_send_message(ddata->mb[idx].chan,
-> >>> -						&dummy_data);
-> >>> +			err = mbox_send_message(ddata->mb[idx].chan, "detach");
-> >>>  			if (err < 0)
-> >>>  				dev_warn(&rproc->dev, "warning: remote FW shutdown without ack\n");
-> >>>  		}
-> >>> @@ -556,7 +552,7 @@ static void stm32_rproc_kick(struct rproc *rproc, int vqid)
-> >>>  			continue;
-> >>>  		if (!ddata->mb[i].chan)
-> >>>  			return;
-> >>> -		err = mbox_send_message(ddata->mb[i].chan, (void *)(long)vqid);
-> >>> +		err = mbox_send_message(ddata->mb[i].chan, "kick");
-> >>>  		if (err < 0)
-> >>>  			dev_err(&rproc->dev, "%s: failed (%s, err:%d)\n",
-> >>>  				__func__, ddata->mb[i].name, err);
-> >>> -- 
-> >>> 2.17.1
-> >>>
+Thanks,
+Sid
+> thanks,
+>
+> greg k-h
