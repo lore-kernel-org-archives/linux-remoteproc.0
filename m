@@ -6,41 +6,41 @@ X-Spam-Status: No, score=-11.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
 	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D9BFC49EA5
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 380ADC49EA6
 	for <linux-remoteproc@archiver.kernel.org>; Wed, 23 Jun 2021 21:50:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E62D8613CE
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 23 Jun 2021 21:50:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1F0DD613BE
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 23 Jun 2021 21:50:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229801AbhFWVwY (ORCPT
+        id S229688AbhFWVwY (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
         Wed, 23 Jun 2021 17:52:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41294 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.99]:41298 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229688AbhFWVwX (ORCPT <rfc822;linux-remoteproc@vger.kernel.org>);
+        id S229774AbhFWVwX (ORCPT <rfc822;linux-remoteproc@vger.kernel.org>);
         Wed, 23 Jun 2021 17:52:23 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPS id 9CEF061185;
+Received: by mail.kernel.org (Postfix) with ESMTPS id AAE34613BE;
         Wed, 23 Jun 2021 21:50:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=k20201202; t=1624485005;
-        bh=IEFLIt0CZL2VTZmJ129Br9PR6Q1XRRzCWrrad/T5m6A=;
+        bh=RIGXKk0iGSt4B0KK8QuQIrF2tnlUSbYDYsAYJLD6cns=;
         h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=U++oY2S/s22oINjTch2dSnRxQACbs9S3L9ykKqA6AyMikAIl0s2ron25P3YtwQp68
-         NTvU8upliAB4/SEl0uhwJQUfYJ86Q17huP25seRwp1wEHBu5GBrmLacLGHEZik+zSE
-         UVP9Bq+M0Zngi/8ew0IisjKHmaLqIXe40pi1uaXNodopdlrv2NoymMva3reNUcGglD
-         RYlPUd4Fsxd/XN46KU2D+6rd8CkuCsUEG23r0Dh3rhdCH1G+xXPbF/qfoBtJzk+gG5
-         AGtRMOgNE1n0fIXTNnB96PXXIDVBvpKdERwnfl5eZt5PUtBiPI0rJ5rk6/b9k/vhvc
-         jwOwq+Vfk6Lvg==
+        b=E4f6q+YM5iKNP43GPcCN7RVRCIqAh7p2DadG27Nh34hiGaCKT1fAvL469k/Xz3eBi
+         Jufi1rbDlUVTkHD4BH2cyV0nwyju+qB/59QpOXzRBChcT94dl84jgECCSM4pwQVpoC
+         tYH/gr293y7d89kMoZ6n/H9jbGMTyOgj2bAFg+WqyLVaMCQGsgMsuyF9aEzzqIu0o0
+         6hQZumFZOUurfGuMvuA5m13sqS9SNV0EZvScpBgbqbGzz5BFhkDUiO3tWRVAYmXmG1
+         6dRVNXDwpwnN+ACY8bQiK6Ksdbo7GQ4xniWuSmb4K+XEGBGJBwnoGf0nbt2q1I5I8X
+         7qlXM+fZTgDfg==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] remoteproc: stm32: fix mbox_send_message call
+Subject: Re: [PATCH v4 0/4] remoteproc: core: Fixes for rproc cdev and add
 From:   patchwork-bot+linux-remoteproc@kernel.org
-Message-Id: <162448500558.18278.2355898451447696936.git-patchwork-notify@kernel.org>
+Message-Id: <162448500562.18278.2587332241995479556.git-patchwork-notify@kernel.org>
 Date:   Wed, 23 Jun 2021 21:50:05 +0000
-References: <20210420091922.29429-1-arnaud.pouliquen@foss.st.com>
-In-Reply-To: <20210420091922.29429-1-arnaud.pouliquen@foss.st.com>
-To:     Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+References: <1623783824-13395-1-git-send-email-sidgup@codeaurora.org>
+In-Reply-To: <1623783824-13395-1-git-send-email-sidgup@codeaurora.org>
+To:     Siddharth Gupta <sidgup@codeaurora.org>
 Cc:     linux-remoteproc@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
@@ -48,21 +48,28 @@ X-Mailing-List: linux-remoteproc@vger.kernel.org
 
 Hello:
 
-This patch was applied to andersson/remoteproc.git (refs/heads/for-next):
+This series was applied to andersson/remoteproc.git (refs/heads/for-next):
 
-On Tue, 20 Apr 2021 11:19:22 +0200 you wrote:
-> mbox_send_message is called by passing a local dummy message or
-> a function parameter. As the message is queued, it is dereferenced.
-> This works because the message field is not used by the stm32 ipcc
-> driver, but it is not clean.
+On Tue, 15 Jun 2021 12:03:40 -0700 you wrote:
+> This patch series contains stability fixes and error handling for remoteproc.
 > 
-> Fix by passing a constant string in all cases.
+> The changes included in this series do the following:
+> Patch 1: Fixes the creation of the rproc character device.
+> Patch 2: Validates rproc as the first step of rproc_add().
+> Patch 3: Fixes rproc cdev remove and the order of dev_del() and cdev_del().
+> Patch 4: Adds error handling in rproc_add().
 > 
 > [...]
 
 Here is the summary with links:
-  - remoteproc: stm32: fix mbox_send_message call
-    https://git.kernel.org/andersson/remoteproc/c/51c4b4e21226
+  - [v4,1/4] remoteproc: core: Move cdev add before device add
+    https://git.kernel.org/andersson/remoteproc/c/c6659ee893e2
+  - [v4,2/4] remoteproc: core: Move validate before device add
+    https://git.kernel.org/andersson/remoteproc/c/519346ecabd3
+  - [v4,3/4] remoteproc: core: Fix cdev remove and rproc del
+    https://git.kernel.org/andersson/remoteproc/c/930eec0be20c
+  - [v4,4/4] remoteproc: core: Cleanup device in case of failure
+    https://git.kernel.org/andersson/remoteproc/c/7dbdb8bd7c02
 
 You are awesome, thank you!
 --
