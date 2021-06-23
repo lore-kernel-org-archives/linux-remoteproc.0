@@ -4,174 +4,195 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A155DC4743C
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 23 Jun 2021 18:30:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F28EC4743C
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 23 Jun 2021 18:45:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7ACCA610F7
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 23 Jun 2021 18:30:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 370BF61185
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 23 Jun 2021 18:45:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229796AbhFWSdA (ORCPT
+        id S229999AbhFWSre (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 23 Jun 2021 14:33:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57718 "EHLO
+        Wed, 23 Jun 2021 14:47:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32808 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229688AbhFWSdA (ORCPT
+        with ESMTP id S229955AbhFWSre (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 23 Jun 2021 14:33:00 -0400
-Received: from mail-ot1-x333.google.com (mail-ot1-x333.google.com [IPv6:2607:f8b0:4864:20::333])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 595AFC061756
-        for <linux-remoteproc@vger.kernel.org>; Wed, 23 Jun 2021 11:30:41 -0700 (PDT)
-Received: by mail-ot1-x333.google.com with SMTP id x17-20020a05683000d1b029045fb1889a9eso2452946oto.5
-        for <linux-remoteproc@vger.kernel.org>; Wed, 23 Jun 2021 11:30:41 -0700 (PDT)
+        Wed, 23 Jun 2021 14:47:34 -0400
+Received: from mail-oi1-x232.google.com (mail-oi1-x232.google.com [IPv6:2607:f8b0:4864:20::232])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 46E70C061574
+        for <linux-remoteproc@vger.kernel.org>; Wed, 23 Jun 2021 11:45:16 -0700 (PDT)
+Received: by mail-oi1-x232.google.com with SMTP id w127so4384051oig.12
+        for <linux-remoteproc@vger.kernel.org>; Wed, 23 Jun 2021 11:45:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=WJMzr+Jl3R5GAI9Of144V0IeWXQCmxVgTH63e35xnxk=;
-        b=vjodYnCLgNjzjazT/YAtt/llLZzCBXCn8HWNy85RMQPXTF5ZH0G+Zw0uiouIc02DrH
-         X5iM8K3gLnzTPCv6HHFd8b3SBMK5qlkxUXPvzYhMUEviupkzLI5NAiK0ILCOB8muJTVr
-         GgAJqxInOWhXdX9x4fCTZiE+w9n8e/D8QTtNc1k6Leyu3au7KkRb/aXtjkfOER5IPXXo
-         ZYAM8zLs+Yh30DnMflN+BGNyJKt5TVSTyOTjIKPQ0vrfBFdQJfuQk4o8s5s5g96kAWX5
-         qNUYyjfmh0zrI4mFeCnEqnvatlw/bjcz5L+GdahAwPKlwMlWtJhlkxzzFVEvooodrkc6
-         MEXg==
+        bh=25Xb4P9ONl4NzuOE9BknQdHYzn3+WMCAH5CmkrDBv8c=;
+        b=nspS8/ZDtdjWSrZvTFB2KZLPbZsxOpGn627p0IOIQNtGCxXkG50wmJ3EULXwPEIzFc
+         mFdNRIrWbhiKHovPgDEdXLAr4/LKlZrtEj0mG+mWTH7HAZVsGxzgLo/SvuiWx1YN5uQH
+         aPp5GXJr56C6TvZxA1xLowlM7TFEbWyxx8CLOW+CXNluKaOmP2FRhXJEMj0X8KLOh1Ui
+         MsKz/Vetz0ClkYt29qCLhtoLf99QlgzJhLcn8Vmi9c49a11Y/dwJfh8HxOyp05b+a5vW
+         hGNXGX8JGfINtmrC+9Icqbz8f9OfASh8MHhBaRFS32+sFwgYXyE2LfNCQGdyyl2yzRAI
+         spQg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=WJMzr+Jl3R5GAI9Of144V0IeWXQCmxVgTH63e35xnxk=;
-        b=DL0dJxhuKuB6ZdeXFhc6wsnX5PkkjVk1RtsZ6g9LMfHXMmodWj3MMzuYXVyyDdAI0M
-         FTEXslfVSw2M2Xl/711xLT9c8401Dsz11rhS4m6vi0a+8mHHPupcPPJNtruAhpVmk/U/
-         dGauzZIwPtxKj0eOBKFlOM9bqN4ZNDHTiy1SgRbwjjy7QVtr2hXmlcfu2/Oqggq698EC
-         rloxN8KDazZVtlnwnVIi6vtxCvvS62woHKtmmsOmvbOAGdcRSUSecXpJwAqvMmyn051j
-         gYE9DfVUX6WO/1YJGtCakaNkCxhIBl4wy6ZWWX/lmt5voTEl+pdxevkTg/shovCgZRtq
-         CLTA==
-X-Gm-Message-State: AOAM530/AUHDdwb7dCl/c+LZgTedLp3IwqJW/97WKIi0A/C/5pbn9O16
-        m/AFIUE/iK75LtNpTnOjnPsbgg==
-X-Google-Smtp-Source: ABdhPJyIdbly5DHprDKi6hQM47lDMQy4DGmNCYeUrQuWrEiOpr09hH6GKHiSNMtYkbSlVKpu5UtLPg==
-X-Received: by 2002:a9d:5a18:: with SMTP id v24mr1107219oth.191.1624473040619;
-        Wed, 23 Jun 2021 11:30:40 -0700 (PDT)
+        bh=25Xb4P9ONl4NzuOE9BknQdHYzn3+WMCAH5CmkrDBv8c=;
+        b=ah4qgFyaxDojcJwsL1YLUbgk7AFlqtqvA0LlwK2nJ8t7tG7UuoH52bxFTk5HM6Ki1Q
+         IEwPJRqXE52R3hPa2RLwS/NeYFlivBXuBZ4vJPxvy3CzX0hRONjZLxJvbhhWiBCGi0li
+         esZ2q2MD990OllExk1fLtk4J4cRjkT867ajtVfOQbY92x9mHDjqNJ8whUsmT92Jw/++J
+         z/BxPOSzkve9DqxnrCe5tcRw/MLj8cwAop/J3duX7PPAMQ9ryJxvyWvjmoPY5x76AeEC
+         OEQNDj0+0dQs1XCQu54GG2jal1RZzBMYCtyH9bCTiY7rwh3RHo6I1d+roCsv3ohLoxEz
+         LZJw==
+X-Gm-Message-State: AOAM532v+jNtHOVp1abr1Zym8Vidvb2gCukt4ohed/aelRh6hAykzgYH
+        XI36LSpdGPZt1AegPZlsGLayQ02FCYHZCg==
+X-Google-Smtp-Source: ABdhPJyhsb7VidpHXFDZm+c5HXvnzfTp415YuNkk7mYhD1hIhA/pa0B4lCsqz8c7gS021qvRHGI3+w==
+X-Received: by 2002:aca:3285:: with SMTP id y127mr973809oiy.115.1624473915614;
+        Wed, 23 Jun 2021 11:45:15 -0700 (PDT)
 Received: from builder.lan (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
-        by smtp.gmail.com with ESMTPSA id w132sm113099oig.38.2021.06.23.11.30.39
+        by smtp.gmail.com with ESMTPSA id v42sm147961ott.70.2021.06.23.11.45.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Jun 2021 11:30:40 -0700 (PDT)
-Date:   Wed, 23 Jun 2021 13:30:38 -0500
+        Wed, 23 Jun 2021 11:45:14 -0700 (PDT)
+Date:   Wed, 23 Jun 2021 13:45:13 -0500
 From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Stephan Gerhold <stephan@gerhold.net>
-Cc:     Andy Gross <agross@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>,
+To:     Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
+Cc:     Ohad Ben-Cohen <ohad@wizery.com>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
-        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        ~postmarketos/upstreaming@lists.sr.ht
-Subject: Re: [PATCH 1/3] soc: qcom: smem_state: Add devm_qcom_smem_state_get()
-Message-ID: <YNN9znie9VTj+wg7@builder.lan>
-References: <20210618111556.53416-1-stephan@gerhold.net>
+        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com
+Subject: Re: [PATCH] remoteproc: stm32: fix mbox_send_message call
+Message-ID: <YNOBOeEkvG8WXM9o@builder.lan>
+References: <20210420091922.29429-1-arnaud.pouliquen@foss.st.com>
+ <YLBi/JZ0u8394tI8@builder.lan>
+ <b563f831-3876-1d5d-7268-ce1260363906@foss.st.com>
+ <e112e4a3-d5c1-caff-8ef9-cbd5b21ea3a1@foss.st.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210618111556.53416-1-stephan@gerhold.net>
+In-Reply-To: <e112e4a3-d5c1-caff-8ef9-cbd5b21ea3a1@foss.st.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Fri 18 Jun 06:15 CDT 2021, Stephan Gerhold wrote:
+On Tue 22 Jun 02:56 CDT 2021, Arnaud POULIQUEN wrote:
 
-> It is easy to forget to call qcom_smem_state_put() after
-> a qcom_smem_state_get(). Introduce a devm_qcom_smem_state_get()
-> helper function that automates this so that qcom_smem_state_put()
-> is automatically called when a device is removed.
+> Hello Bjorn
+> 
+> On 5/28/21 10:03 AM, Arnaud POULIQUEN wrote:
+> > Hello Bjorn,
+> > 
+> > On 5/28/21 5:26 AM, Bjorn Andersson wrote:
+> >> On Tue 20 Apr 04:19 CDT 2021, Arnaud Pouliquen wrote:
+> >>
+> >>> mbox_send_message is called by passing a local dummy message or
+> >>> a function parameter. As the message is queued, it is dereferenced.
+> >>> This works because the message field is not used by the stm32 ipcc
+> >>> driver, but it is not clean.
+> >>>
+> >>> Fix by passing a constant string in all cases.
+> >>>
+> >>> The associated comments are removed because rproc should not have to
+> >>> deal with the behavior of the mailbox frame.
+> >>>
+> >>
+> >> Didn't we conclude that the mailbox driver doesn't actually dereference
+> >> the pointer being passed?
+> > 
+> > Right it can store the reference to queue the sent.
+> > 
+> >>
+> >> If so I would prefer that you just pass NULL, so that if you in the
+> >> future need to pass some actual data it will be easy to distinguish the
+> >> old and new case.
+> > 
+> > I can not use NULL pointer in stm32_rproc_attach and stm32_rproc_detach case.
+> > The reason is that the tx_done callback is not called if the message is NULL.
+> > (https://elixir.bootlin.com/linux/latest/source/drivers/mailbox/mailbox.c#L106)
+> > 
+> > I could use NULL pointer in stm32_rproc_kick, but I would prefer to use the same way
+> > of calling mbox_send_message for all use cases and not take into account the
+> > mailbox internal behavior.
+> 
+> Do you still have any concern about this patch?
 > 
 
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+I think my concern is now directed at the mailbox api. I think the
+change is reasonable given that. Thanks for the explanation. I'm picking
+up the patch.
 
 Regards,
 Bjorn
 
-> Signed-off-by: Stephan Gerhold <stephan@gerhold.net>
-> ---
-> I use this in my WIP bam-dmux driver, so it might simplify coordination
-> later if we can somehow get this in for 5.14 (if it isn't too late yet).
+> Thanks,
+> Arnaud
 > 
-> Similar code can be found in clk-devres.c for example:
-> https://elixir.bootlin.com/linux/v5.13-rc6/source/drivers/clk/clk-devres.c#L7
-> ---
->  drivers/soc/qcom/smem_state.c       | 36 +++++++++++++++++++++++++++++
->  include/linux/soc/qcom/smem_state.h |  7 ++++++
->  2 files changed, 43 insertions(+)
-> 
-> diff --git a/drivers/soc/qcom/smem_state.c b/drivers/soc/qcom/smem_state.c
-> index d2b558438deb..31faf4aa868e 100644
-> --- a/drivers/soc/qcom/smem_state.c
-> +++ b/drivers/soc/qcom/smem_state.c
-> @@ -151,6 +151,42 @@ void qcom_smem_state_put(struct qcom_smem_state *state)
->  }
->  EXPORT_SYMBOL_GPL(qcom_smem_state_put);
->  
-> +static void devm_qcom_smem_state_release(struct device *dev, void *res)
-> +{
-> +	qcom_smem_state_put(*(struct qcom_smem_state **)res);
-> +}
-> +
-> +/**
-> + * devm_qcom_smem_state_get() - acquire handle to a devres managed state
-> + * @dev:	client device pointer
-> + * @con_id:	name of the state to lookup
-> + * @bit:	flags from the state reference, indicating which bit's affected
-> + *
-> + * Returns handle to the state, or ERR_PTR(). qcom_smem_state_put() is called
-> + * automatically when @dev is removed.
-> + */
-> +struct qcom_smem_state *devm_qcom_smem_state_get(struct device *dev,
-> +						 const char *con_id,
-> +						 unsigned *bit)
-> +{
-> +	struct qcom_smem_state **ptr, *state;
-> +
-> +	ptr = devres_alloc(devm_qcom_smem_state_release, sizeof(*ptr), GFP_KERNEL);
-> +	if (!ptr)
-> +		return ERR_PTR(-ENOMEM);
-> +
-> +	state = qcom_smem_state_get(dev, con_id, bit);
-> +	if (!IS_ERR(state)) {
-> +		*ptr = state;
-> +		devres_add(dev, ptr);
-> +	} else {
-> +		devres_free(ptr);
-> +	}
-> +
-> +	return state;
-> +}
-> +EXPORT_SYMBOL_GPL(devm_qcom_smem_state_get);
-> +
->  /**
->   * qcom_smem_state_register() - register a new state
->   * @of_node:	of_node used for matching client lookups
-> diff --git a/include/linux/soc/qcom/smem_state.h b/include/linux/soc/qcom/smem_state.h
-> index 63ad8cddad14..17c56a50302f 100644
-> --- a/include/linux/soc/qcom/smem_state.h
-> +++ b/include/linux/soc/qcom/smem_state.h
-> @@ -14,6 +14,7 @@ struct qcom_smem_state_ops {
->  #ifdef CONFIG_QCOM_SMEM_STATE
->  
->  struct qcom_smem_state *qcom_smem_state_get(struct device *dev, const char *con_id, unsigned *bit);
-> +struct qcom_smem_state *devm_qcom_smem_state_get(struct device *dev, const char *con_id, unsigned *bit);
->  void qcom_smem_state_put(struct qcom_smem_state *);
->  
->  int qcom_smem_state_update_bits(struct qcom_smem_state *state, u32 mask, u32 value);
-> @@ -29,6 +30,12 @@ static inline struct qcom_smem_state *qcom_smem_state_get(struct device *dev,
->  	return ERR_PTR(-EINVAL);
->  }
->  
-> +static inline struct qcom_smem_state *devm_qcom_smem_state_get(struct device *dev,
-> +	const char *con_id, unsigned *bit)
-> +{
-> +	return ERR_PTR(-EINVAL);
-> +}
-> +
->  static inline void qcom_smem_state_put(struct qcom_smem_state *state)
->  {
->  }
-> -- 
-> 2.32.0
-> 
+> > 
+> > Thanks,
+> > Arnaud
+> > 
+> > 
+> >>
+> >> Regards,
+> >> Bjorn
+> >>
+> >>> Reported-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> >>> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+> >>> ---
+> >>>  drivers/remoteproc/stm32_rproc.c | 14 +++++---------
+> >>>  1 file changed, 5 insertions(+), 9 deletions(-)
+> >>>
+> >>> diff --git a/drivers/remoteproc/stm32_rproc.c b/drivers/remoteproc/stm32_rproc.c
+> >>> index 7353f9e7e7af..0e8203a432ab 100644
+> >>> --- a/drivers/remoteproc/stm32_rproc.c
+> >>> +++ b/drivers/remoteproc/stm32_rproc.c
+> >>> @@ -474,14 +474,12 @@ static int stm32_rproc_attach(struct rproc *rproc)
+> >>>  static int stm32_rproc_detach(struct rproc *rproc)
+> >>>  {
+> >>>  	struct stm32_rproc *ddata = rproc->priv;
+> >>> -	int err, dummy_data, idx;
+> >>> +	int err, idx;
+> >>>  
+> >>>  	/* Inform the remote processor of the detach */
+> >>>  	idx = stm32_rproc_mbox_idx(rproc, STM32_MBX_DETACH);
+> >>>  	if (idx >= 0 && ddata->mb[idx].chan) {
+> >>> -		/* A dummy data is sent to allow to block on transmit */
+> >>> -		err = mbox_send_message(ddata->mb[idx].chan,
+> >>> -					&dummy_data);
+> >>> +		err = mbox_send_message(ddata->mb[idx].chan, "stop");
+> >>>  		if (err < 0)
+> >>>  			dev_warn(&rproc->dev, "warning: remote FW detach without ack\n");
+> >>>  	}
+> >>> @@ -493,15 +491,13 @@ static int stm32_rproc_detach(struct rproc *rproc)
+> >>>  static int stm32_rproc_stop(struct rproc *rproc)
+> >>>  {
+> >>>  	struct stm32_rproc *ddata = rproc->priv;
+> >>> -	int err, dummy_data, idx;
+> >>> +	int err, idx;
+> >>>  
+> >>>  	/* request shutdown of the remote processor */
+> >>>  	if (rproc->state != RPROC_OFFLINE) {
+> >>>  		idx = stm32_rproc_mbox_idx(rproc, STM32_MBX_SHUTDOWN);
+> >>>  		if (idx >= 0 && ddata->mb[idx].chan) {
+> >>> -			/* a dummy data is sent to allow to block on transmit */
+> >>> -			err = mbox_send_message(ddata->mb[idx].chan,
+> >>> -						&dummy_data);
+> >>> +			err = mbox_send_message(ddata->mb[idx].chan, "detach");
+> >>>  			if (err < 0)
+> >>>  				dev_warn(&rproc->dev, "warning: remote FW shutdown without ack\n");
+> >>>  		}
+> >>> @@ -556,7 +552,7 @@ static void stm32_rproc_kick(struct rproc *rproc, int vqid)
+> >>>  			continue;
+> >>>  		if (!ddata->mb[i].chan)
+> >>>  			return;
+> >>> -		err = mbox_send_message(ddata->mb[i].chan, (void *)(long)vqid);
+> >>> +		err = mbox_send_message(ddata->mb[i].chan, "kick");
+> >>>  		if (err < 0)
+> >>>  			dev_err(&rproc->dev, "%s: failed (%s, err:%d)\n",
+> >>>  				__func__, ddata->mb[i].name, err);
+> >>> -- 
+> >>> 2.17.1
+> >>>
