@@ -2,122 +2,176 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3B60C4743C
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 23 Jun 2021 18:21:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A155DC4743C
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 23 Jun 2021 18:30:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B49DE610F7
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 23 Jun 2021 18:21:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7ACCA610F7
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 23 Jun 2021 18:30:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229844AbhFWSX6 (ORCPT
+        id S229796AbhFWSdA (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 23 Jun 2021 14:23:58 -0400
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:48116 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229660AbhFWSX6 (ORCPT
+        Wed, 23 Jun 2021 14:33:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57718 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229688AbhFWSdA (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 23 Jun 2021 14:23:58 -0400
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 15NILYWr071228;
-        Wed, 23 Jun 2021 13:21:34 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1624472494;
-        bh=79nXRFxC4/U2NLmPwObb1ZTUAuFp3i4R/z6Tw5A45Yg=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=gWqDNnWG39W4fdfwRJMo58bET38dQjWrllEIEWkkDFtb77XXaE3nPQ9xS5PEROWg4
-         S39mN6HWE1DyVoorriK4jjD1nUYRsv4ayhXEPi8UYLhULzCFwpfI08LrRwJ1e0COks
-         IJVxCeltnZH93PbT8W1FvizF9Rpzh+fVzcHGTpmw=
-Received: from DFLE109.ent.ti.com (dfle109.ent.ti.com [10.64.6.30])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 15NILYHM100800
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 23 Jun 2021 13:21:34 -0500
-Received: from DFLE111.ent.ti.com (10.64.6.32) by DFLE109.ent.ti.com
- (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2176.2; Wed, 23
- Jun 2021 13:21:33 -0500
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE111.ent.ti.com
- (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2176.2 via
- Frontend Transport; Wed, 23 Jun 2021 13:21:33 -0500
-Received: from [10.250.100.73] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 15NILU5x017357;
-        Wed, 23 Jun 2021 13:21:31 -0500
-Subject: Re: [PATCH 2/2] remoteproc: pru: Add support for various PRU cores on
- K3 AM64x SoCs
-To:     Suman Anna <s-anna@ti.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Wed, 23 Jun 2021 14:33:00 -0400
+Received: from mail-ot1-x333.google.com (mail-ot1-x333.google.com [IPv6:2607:f8b0:4864:20::333])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 595AFC061756
+        for <linux-remoteproc@vger.kernel.org>; Wed, 23 Jun 2021 11:30:41 -0700 (PDT)
+Received: by mail-ot1-x333.google.com with SMTP id x17-20020a05683000d1b029045fb1889a9eso2452946oto.5
+        for <linux-remoteproc@vger.kernel.org>; Wed, 23 Jun 2021 11:30:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=WJMzr+Jl3R5GAI9Of144V0IeWXQCmxVgTH63e35xnxk=;
+        b=vjodYnCLgNjzjazT/YAtt/llLZzCBXCn8HWNy85RMQPXTF5ZH0G+Zw0uiouIc02DrH
+         X5iM8K3gLnzTPCv6HHFd8b3SBMK5qlkxUXPvzYhMUEviupkzLI5NAiK0ILCOB8muJTVr
+         GgAJqxInOWhXdX9x4fCTZiE+w9n8e/D8QTtNc1k6Leyu3au7KkRb/aXtjkfOER5IPXXo
+         ZYAM8zLs+Yh30DnMflN+BGNyJKt5TVSTyOTjIKPQ0vrfBFdQJfuQk4o8s5s5g96kAWX5
+         qNUYyjfmh0zrI4mFeCnEqnvatlw/bjcz5L+GdahAwPKlwMlWtJhlkxzzFVEvooodrkc6
+         MEXg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=WJMzr+Jl3R5GAI9Of144V0IeWXQCmxVgTH63e35xnxk=;
+        b=DL0dJxhuKuB6ZdeXFhc6wsnX5PkkjVk1RtsZ6g9LMfHXMmodWj3MMzuYXVyyDdAI0M
+         FTEXslfVSw2M2Xl/711xLT9c8401Dsz11rhS4m6vi0a+8mHHPupcPPJNtruAhpVmk/U/
+         dGauzZIwPtxKj0eOBKFlOM9bqN4ZNDHTiy1SgRbwjjy7QVtr2hXmlcfu2/Oqggq698EC
+         rloxN8KDazZVtlnwnVIi6vtxCvvS62woHKtmmsOmvbOAGdcRSUSecXpJwAqvMmyn051j
+         gYE9DfVUX6WO/1YJGtCakaNkCxhIBl4wy6ZWWX/lmt5voTEl+pdxevkTg/shovCgZRtq
+         CLTA==
+X-Gm-Message-State: AOAM530/AUHDdwb7dCl/c+LZgTedLp3IwqJW/97WKIi0A/C/5pbn9O16
+        m/AFIUE/iK75LtNpTnOjnPsbgg==
+X-Google-Smtp-Source: ABdhPJyIdbly5DHprDKi6hQM47lDMQy4DGmNCYeUrQuWrEiOpr09hH6GKHiSNMtYkbSlVKpu5UtLPg==
+X-Received: by 2002:a9d:5a18:: with SMTP id v24mr1107219oth.191.1624473040619;
+        Wed, 23 Jun 2021 11:30:40 -0700 (PDT)
+Received: from builder.lan (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
+        by smtp.gmail.com with ESMTPSA id w132sm113099oig.38.2021.06.23.11.30.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 23 Jun 2021 11:30:40 -0700 (PDT)
+Date:   Wed, 23 Jun 2021 13:30:38 -0500
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Stephan Gerhold <stephan@gerhold.net>
+Cc:     Andy Gross <agross@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>
-CC:     Kishon Vijay Abraham I <kishon@ti.com>,
-        Lokesh Vutla <lokeshvutla@ti.com>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>,
-        Jan Kiszka <jan.kiszka@siemens.com>,
-        <linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-omap@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>
-References: <20210623173243.7862-1-s-anna@ti.com>
- <20210623173243.7862-3-s-anna@ti.com>
-From:   Grygorii Strashko <grygorii.strashko@ti.com>
-Message-ID: <ee8e0458-370a-61f8-e348-d718d312cd02@ti.com>
-Date:   Wed, 23 Jun 2021 21:21:22 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.8.1
+        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        ~postmarketos/upstreaming@lists.sr.ht
+Subject: Re: [PATCH 1/3] soc: qcom: smem_state: Add devm_qcom_smem_state_get()
+Message-ID: <YNN9znie9VTj+wg7@builder.lan>
+References: <20210618111556.53416-1-stephan@gerhold.net>
 MIME-Version: 1.0
-In-Reply-To: <20210623173243.7862-3-s-anna@ti.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210618111556.53416-1-stephan@gerhold.net>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
+On Fri 18 Jun 06:15 CDT 2021, Stephan Gerhold wrote:
 
+> It is easy to forget to call qcom_smem_state_put() after
+> a qcom_smem_state_get(). Introduce a devm_qcom_smem_state_get()
+> helper function that automates this so that qcom_smem_state_put()
+> is automatically called when a device is removed.
+> 
 
-On 23/06/2021 20:32, Suman Anna wrote:
-> The K3 AM64x family of SoCs have a ICSSG IP that is similar to the
-> version on AM65x SR2.0 SoCs with some minor differences. The AM64x
-> SoCs contain two instances of this newer ICSSG IP. Each ICSSG processor
-> subsystem contains 2 primary PRU cores, 2 auxiliary PRU cores called
-> RTUs, and 2 new auxiliary cores called Transmit PRUs (Tx_PRUs).
-> 
-> Enhance the existing PRU remoteproc driver to support all these PRU,
-> RTU and Tx_PRU cores by using specific compatibles. The cores have the
-> same memory copying limitations as on AM65x, so reuses the custom memcpy
-> function within the driver's ELF loader implementation. The initial
-> names for the firmware images for each PRU core are retrieved from
-> DT nodes, and can be adjusted through sysfs if required.
-> 
-> Signed-off-by: Suman Anna <s-anna@ti.com>
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+
+Regards,
+Bjorn
+
+> Signed-off-by: Stephan Gerhold <stephan@gerhold.net>
 > ---
->   drivers/remoteproc/pru_rproc.c | 3 +++
->   1 file changed, 3 insertions(+)
+> I use this in my WIP bam-dmux driver, so it might simplify coordination
+> later if we can somehow get this in for 5.14 (if it isn't too late yet).
 > 
-> diff --git a/drivers/remoteproc/pru_rproc.c b/drivers/remoteproc/pru_rproc.c
-> index e5778e476245..0ecf2675f5eb 100644
-> --- a/drivers/remoteproc/pru_rproc.c
-> +++ b/drivers/remoteproc/pru_rproc.c
-> @@ -894,6 +894,9 @@ static const struct of_device_id pru_rproc_match[] = {
->   	{ .compatible = "ti,j721e-pru",		.data = &k3_pru_data },
->   	{ .compatible = "ti,j721e-rtu",		.data = &k3_rtu_data },
->   	{ .compatible = "ti,j721e-tx-pru",	.data = &k3_tx_pru_data },
-> +	{ .compatible = "ti,am642-pru",		.data = &k3_pru_data },
-> +	{ .compatible = "ti,am642-rtu",		.data = &k3_rtu_data },
-> +	{ .compatible = "ti,am642-tx-pru",	.data = &k3_tx_pru_data },
->   	{},
->   };
->   MODULE_DEVICE_TABLE(of, pru_rproc_match);
+> Similar code can be found in clk-devres.c for example:
+> https://elixir.bootlin.com/linux/v5.13-rc6/source/drivers/clk/clk-devres.c#L7
+> ---
+>  drivers/soc/qcom/smem_state.c       | 36 +++++++++++++++++++++++++++++
+>  include/linux/soc/qcom/smem_state.h |  7 ++++++
+>  2 files changed, 43 insertions(+)
 > 
-
-
-Reviewed-by: Grygorii Strashko <grygorii.strashko@ti.com>
-
--- 
-Best regards,
-grygorii
+> diff --git a/drivers/soc/qcom/smem_state.c b/drivers/soc/qcom/smem_state.c
+> index d2b558438deb..31faf4aa868e 100644
+> --- a/drivers/soc/qcom/smem_state.c
+> +++ b/drivers/soc/qcom/smem_state.c
+> @@ -151,6 +151,42 @@ void qcom_smem_state_put(struct qcom_smem_state *state)
+>  }
+>  EXPORT_SYMBOL_GPL(qcom_smem_state_put);
+>  
+> +static void devm_qcom_smem_state_release(struct device *dev, void *res)
+> +{
+> +	qcom_smem_state_put(*(struct qcom_smem_state **)res);
+> +}
+> +
+> +/**
+> + * devm_qcom_smem_state_get() - acquire handle to a devres managed state
+> + * @dev:	client device pointer
+> + * @con_id:	name of the state to lookup
+> + * @bit:	flags from the state reference, indicating which bit's affected
+> + *
+> + * Returns handle to the state, or ERR_PTR(). qcom_smem_state_put() is called
+> + * automatically when @dev is removed.
+> + */
+> +struct qcom_smem_state *devm_qcom_smem_state_get(struct device *dev,
+> +						 const char *con_id,
+> +						 unsigned *bit)
+> +{
+> +	struct qcom_smem_state **ptr, *state;
+> +
+> +	ptr = devres_alloc(devm_qcom_smem_state_release, sizeof(*ptr), GFP_KERNEL);
+> +	if (!ptr)
+> +		return ERR_PTR(-ENOMEM);
+> +
+> +	state = qcom_smem_state_get(dev, con_id, bit);
+> +	if (!IS_ERR(state)) {
+> +		*ptr = state;
+> +		devres_add(dev, ptr);
+> +	} else {
+> +		devres_free(ptr);
+> +	}
+> +
+> +	return state;
+> +}
+> +EXPORT_SYMBOL_GPL(devm_qcom_smem_state_get);
+> +
+>  /**
+>   * qcom_smem_state_register() - register a new state
+>   * @of_node:	of_node used for matching client lookups
+> diff --git a/include/linux/soc/qcom/smem_state.h b/include/linux/soc/qcom/smem_state.h
+> index 63ad8cddad14..17c56a50302f 100644
+> --- a/include/linux/soc/qcom/smem_state.h
+> +++ b/include/linux/soc/qcom/smem_state.h
+> @@ -14,6 +14,7 @@ struct qcom_smem_state_ops {
+>  #ifdef CONFIG_QCOM_SMEM_STATE
+>  
+>  struct qcom_smem_state *qcom_smem_state_get(struct device *dev, const char *con_id, unsigned *bit);
+> +struct qcom_smem_state *devm_qcom_smem_state_get(struct device *dev, const char *con_id, unsigned *bit);
+>  void qcom_smem_state_put(struct qcom_smem_state *);
+>  
+>  int qcom_smem_state_update_bits(struct qcom_smem_state *state, u32 mask, u32 value);
+> @@ -29,6 +30,12 @@ static inline struct qcom_smem_state *qcom_smem_state_get(struct device *dev,
+>  	return ERR_PTR(-EINVAL);
+>  }
+>  
+> +static inline struct qcom_smem_state *devm_qcom_smem_state_get(struct device *dev,
+> +	const char *con_id, unsigned *bit)
+> +{
+> +	return ERR_PTR(-EINVAL);
+> +}
+> +
+>  static inline void qcom_smem_state_put(struct qcom_smem_state *state)
+>  {
+>  }
+> -- 
+> 2.32.0
+> 
