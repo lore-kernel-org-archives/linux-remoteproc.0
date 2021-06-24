@@ -2,72 +2,91 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70A0DC48BC2
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 23 Jun 2021 21:50:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59FA0C49EA6
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 24 Jun 2021 18:34:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5E58E613BE
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 23 Jun 2021 21:50:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 45AE56135C
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 24 Jun 2021 18:34:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229796AbhFWVwY (ORCPT
+        id S232556AbhFXSg0 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 23 Jun 2021 17:52:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41304 "EHLO mail.kernel.org"
+        Thu, 24 Jun 2021 14:36:26 -0400
+Received: from m43-7.mailgun.net ([69.72.43.7]:20296 "EHLO m43-7.mailgun.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229800AbhFWVwX (ORCPT <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 23 Jun 2021 17:52:23 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPS id B6F07613D1;
-        Wed, 23 Jun 2021 21:50:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1624485005;
-        bh=2aojuLw2hFoqOuX4cGOYJvZ3wwKCzP0N9CSPM+yhNe0=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=lAjGVe01UZZO+2q9CzEn1WY+jfmO6zQmv3/djJtjblQXruzGdL5qvUCzSGn+bV2TM
-         9U3H89mjcQfn6AfHSCjULSXWR1gD4YfU0HqYqeMGiZvBsw7U8KogVSs4EgHV6kyE16
-         3e/8Z6x7Bm1E7Oywd6lwLkv2PPr68sC5EE2ekUjsqNTcPWnav3W/iUnmoRxSCFqhot
-         GgnMZG95+56ynYQ8KlnFjf8ZLp4JI0XaA/y19Ym65HDTeF3blKWjjW2jm2qbCNkbTB
-         BhePU1UK1xuvI4s2QIAnMa3YkJ5akwL/LYosko1ks2oCt2SPbv57XDtcaroBgUjo0S
-         jCiFhKvffihJg==
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] remoteproc: core: Move cdev add before device add
-From:   patchwork-bot+linux-remoteproc@kernel.org
-Message-Id: <162448500570.18278.8235199339523096069.git-patchwork-notify@kernel.org>
-Date:   Wed, 23 Jun 2021 21:50:05 +0000
-References: <1618946805-26970-1-git-send-email-sidgup@codeaurora.org>
-In-Reply-To: <1618946805-26970-1-git-send-email-sidgup@codeaurora.org>
-To:     Siddharth Gupta <sidgup@codeaurora.org>
-Cc:     linux-remoteproc@vger.kernel.org
+        id S232528AbhFXSg0 (ORCPT <rfc822;linux-remoteproc@vger.kernel.org>);
+        Thu, 24 Jun 2021 14:36:26 -0400
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1624559647; h=Message-Id: Date: Subject: Cc: To: From:
+ Sender; bh=GxBqhq5qZ6sCOlmDi4RHXLn9UxYWl42lZR0vN6cONic=; b=DRkD2efLg4iS0dXTSxz23iScRsRpcqkPiz6xDr7QKTM1T6pk9fgLoGvcKNdKtYidUT+RNj1/
+ KN3QDcRLEyHK1atojlEEq2n9ZDmamScwovYTahnteg35kGw0IsHDtLOB45heo7XuEopjB42t
+ hxOlwaE+opKEn7xIPl3A+IYSJ8E=
+X-Mailgun-Sending-Ip: 69.72.43.7
+X-Mailgun-Sid: WyI4ZWZiZiIsICJsaW51eC1yZW1vdGVwcm9jQHZnZXIua2VybmVsLm9yZyIsICJiZTllNGEiXQ==
+Received: from smtp.codeaurora.org
+ (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
+ smtp-out-n05.prod.us-east-1.postgun.com with SMTP id
+ 60d4d00806ea41c941da536f (version=TLS1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Thu, 24 Jun 2021 18:33:44
+ GMT
+Sender: sibis=codeaurora.org@mg.codeaurora.org
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 8B71BC43217; Thu, 24 Jun 2021 18:33:43 +0000 (UTC)
+Received: from blr-ubuntu-87.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: sibis)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id F12E4C433D3;
+        Thu, 24 Jun 2021 18:33:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org F12E4C433D3
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=sibis@codeaurora.org
+From:   Sibi Sankar <sibis@codeaurora.org>
+To:     bjorn.andersson@linaro.org, vkoul@kernel.org
+Cc:     agross@kernel.org, ohad@wizery.com, mathieu.poirier@linaro.org,
+        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, Sibi Sankar <sibis@codeaurora.org>,
+        stable@vger.kernel.org
+Subject: [PATCH] remoteproc: qcom: pas: Add missing power-domain "mxc" for CDSP
+Date:   Fri, 25 Jun 2021 00:03:25 +0530
+Message-Id: <1624559605-29847-1-git-send-email-sibis@codeaurora.org>
+X-Mailer: git-send-email 2.7.4
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hello:
+Add missing power-domain "mxc" required by CDSP PAS remoteproc on SM8350
+SoC.
 
-This patch was applied to andersson/remoteproc.git (refs/heads/for-next):
+Fixes: e8b4e9a21af7 ("remoteproc: qcom: pas: Add SM8350 PAS remoteprocs")
+Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
+Cc: stable@vger.kernel.org
+---
 
-On Tue, 20 Apr 2021 12:26:45 -0700 you wrote:
-> When cdev_add is called after device_add has been called there is no
-> way for the userspace to know about the addition of a cdev as cdev_add
-> itself doesn't trigger a uevent notification, or for the kernel to
-> know about the change to devt. This results in two problems:
->  - mknod is never called for the cdev and hence no cdev appears on
->    devtmpfs.
->  - sysfs links to the new cdev are not established.
-> 
-> [...]
+The device tree and pas documentation lists mcx as a required pd for cdsp.
+Looks like it was missed while adding the proxy pds in the pas driver.
+Bjorn/Vinod you'll need to test this patch before picking it up.
 
-Here is the summary with links:
-  - remoteproc: core: Move cdev add before device add
-    https://git.kernel.org/andersson/remoteproc/c/c6659ee893e2
+ drivers/remoteproc/qcom_q6v5_pas.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-You are awesome, thank you!
---
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
+index b921fc26cd04..ad20065dbdea 100644
+--- a/drivers/remoteproc/qcom_q6v5_pas.c
++++ b/drivers/remoteproc/qcom_q6v5_pas.c
+@@ -661,6 +661,7 @@ static const struct adsp_data sm8350_cdsp_resource = {
+ 	},
+ 	.proxy_pd_names = (char*[]){
+ 		"cx",
++		"mxc",
+ 		NULL
+ 	},
+ 	.ssr_name = "cdsp",
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
 
