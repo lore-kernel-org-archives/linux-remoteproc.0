@@ -2,151 +2,112 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7996AC2B9F4
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 25 Jun 2021 04:47:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E0A4C2B9F4
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 25 Jun 2021 07:27:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 51FA561417
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 25 Jun 2021 04:47:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 02686613EF
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 25 Jun 2021 07:27:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230172AbhFYEuD (ORCPT
+        id S229764AbhFYH3f (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 25 Jun 2021 00:50:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38990 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230097AbhFYEuC (ORCPT
+        Fri, 25 Jun 2021 03:29:35 -0400
+Received: from mx07-00178001.pphosted.com ([185.132.182.106]:16656 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229616AbhFYH3e (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 25 Jun 2021 00:50:02 -0400
-Received: from mail-pf1-x434.google.com (mail-pf1-x434.google.com [IPv6:2607:f8b0:4864:20::434])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 99B3CC061756
-        for <linux-remoteproc@vger.kernel.org>; Thu, 24 Jun 2021 21:47:41 -0700 (PDT)
-Received: by mail-pf1-x434.google.com with SMTP id t32so7073670pfg.2
-        for <linux-remoteproc@vger.kernel.org>; Thu, 24 Jun 2021 21:47:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=AtTk+6QGKLof6Gu7Ev3cepmH8O53Op63rhLICrg+Eb8=;
-        b=Ypvg0mxaCTrsJqr5D08KpxEGYnjPnrEGE5Lh4jwDezc7RcM4boEj6VNfkBWXT6s2RG
-         cjVNCpIWtse8LclIVCXFHfO2ti1XDt1uetqT5HrM7mGwNdWweyQLrMh7YcG3i/W2581W
-         6FbDNYtQnoNtDWink9Se4Uyk8MeRqzmTWaavQx4XGEYLgXBbPhTVyDerI9rk26H7X3zC
-         wMEq9P7FRsayfNklJM1ThVWFB9eArF6yf57HXFgd6fE3NrKmhPyAoJ3Hez0/Lh4w8u8l
-         bZ9GNhZYZ8wDl45+l9hZExGj6jg1lLcFLjRW9VVKXkIuUmPJ39vMdQmEk2Y5CAHb3e9M
-         n5YQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=AtTk+6QGKLof6Gu7Ev3cepmH8O53Op63rhLICrg+Eb8=;
-        b=SEM1GUYXX4NHA6nai1uWqA90yUDUly5E6RZy6/9ERZ3ONjP0ZKut79BP9us7iLFsZi
-         rKP91dUOXtdfDWs9EygsUIZcgYxQJ1FJWEL2+eVxT4t2+Na92c2JvH31AH2isPxi6N9Y
-         2qfIzYMiE3pGZxgXW/jJmOyBq3UPmYwpVWBOPVLFY2WPDrsxU0GCVIkDacR6+B544DWE
-         eS68HX3cMgRtVJNI2vFWOonytDiShmqtbBx6q6MzRVhdrlhqajpH/5rx8MCjtXDKwInO
-         fCjCxdckxyZJiOolms5TPdoU/E4nFk/9rcoMgZ23kjPEmlsyTufGkIgPnkwn+LvVXWKi
-         O/uw==
-X-Gm-Message-State: AOAM532Rz6VZ5T/HAAZfrvwMbw4MMRshCBvHiKj8C3+bYrrHXPN4xb7C
-        dB8pSLZ0EUSs2rWX0IN0IQr1
-X-Google-Smtp-Source: ABdhPJwUiAiC28y9PI+2/abF+jcevjyqTqZv/OpN1QqH+yTCJOdS3d6tJgjgTSSUsBqDDHj0sKZVPA==
-X-Received: by 2002:a63:5d66:: with SMTP id o38mr7961955pgm.444.1624596460826;
-        Thu, 24 Jun 2021 21:47:40 -0700 (PDT)
-Received: from workstation ([120.138.13.204])
-        by smtp.gmail.com with ESMTPSA id y7sm4487159pfy.153.2021.06.24.21.47.37
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 24 Jun 2021 21:47:40 -0700 (PDT)
-Date:   Fri, 25 Jun 2021 10:17:36 +0530
-From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Andy Gross <agross@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] remoteproc: qcom: pas: Add SC8180X adsp, cdsp and
- mpss
-Message-ID: <20210625044736.GA4974@workstation>
-References: <20210608174944.2045215-1-bjorn.andersson@linaro.org>
- <20210608174944.2045215-2-bjorn.andersson@linaro.org>
+        Fri, 25 Jun 2021 03:29:34 -0400
+Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 15P7IPas013167;
+        Fri, 25 Jun 2021 09:27:11 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=selector1;
+ bh=BTGKsvUSUhdoLzovWKZXPnQ+NIY4Pr0YS4UnDtP45Qc=;
+ b=27dvD5Pvxn0AstuEmfukPmWZnGdIGCNCl8F/JGOGCoquXrLtfU9s+SK0eDkff6R7MX1m
+ nBJb8MglXkKiKlNO1KzIySJcY71abu//Rs6WemUceNWII+8znJcjl6URIx95Z1+saoXF
+ LpK2/xNgu13EFeBBK15fjAi6y2IKE5ne3TZ90nkWsKYip+ObX+0I9RvdFptLRPuPnbWg
+ rLaT3tMvwkqAg9wEGSM3oKx5ak5NV1by3ppBDTsSsJhZ791pRhpaXOiQHrZmUE3hbVhD
+ C3UiyLOgHe9wc4SHrVAlPkrI/Ktw1YnLMlwSnIw6agSrPTlD+rVsw5lQ5V1mTh1vEZwL tg== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 39d22m2esw-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 25 Jun 2021 09:27:11 +0200
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 6626E10002A;
+        Fri, 25 Jun 2021 09:27:10 +0200 (CEST)
+Received: from Webmail-eu.st.com (sfhdag2node3.st.com [10.75.127.6])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 507D2214D0B;
+        Fri, 25 Jun 2021 09:27:10 +0200 (CEST)
+Received: from lmecxl0889.lme.st.com (10.75.127.48) by SFHDAG2NODE3.st.com
+ (10.75.127.6) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Fri, 25 Jun
+ 2021 09:27:09 +0200
+Subject: Re: remoteproc DMA API abuse status
+To:     Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Christoph Hellwig <hch@lst.de>
+CC:     Ohad Ben-Cohen <ohad@wizery.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20210623134307.GA29505@lst.de> <20210624193514.GA1090275@p14s>
+From:   Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
+Message-ID: <011dac94-cfe0-d276-980a-b8ffe1447521@foss.st.com>
+Date:   Fri, 25 Jun 2021 09:27:09 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.11.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210608174944.2045215-2-bjorn.andersson@linaro.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20210624193514.GA1090275@p14s>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.75.127.48]
+X-ClientProxiedBy: SFHDAG1NODE2.st.com (10.75.127.2) To SFHDAG2NODE3.st.com
+ (10.75.127.6)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.391,18.0.790
+ definitions=2021-06-25_02:2021-06-24,2021-06-25 signatures=0
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Tue, Jun 08, 2021 at 10:49:44AM -0700, Bjorn Andersson wrote:
-> The Qualcomm SC8180X has the typical ADSP, CDSP and MPSS remote
-> processors operated using the PAS interface, add support for these.
+Hello Mathieu,
+
+On 6/24/21 9:35 PM, Mathieu Poirier wrote:
+> Good day Christoph,
 > 
-> Attempts to configuring mss.lvl is failing, so a new adsp_data is
-> provided that skips this resource, for now.
+> On Wed, Jun 23, 2021 at 03:43:07PM +0200, Christoph Hellwig wrote:
+>> Hi remoteproc maintainers,
+>>
+>> did you make any progress to get remoteproc out of creating fake
+>> devices that fake their dma ops status and the abuse of
+>> dma_declare_coherent_memory in removeproc_virtio?  I remember we had
+>> a discussion on this a long time ago, and there was an unfinished
+>> patchset to change the memory pool handling.  What happened to all that?
 > 
+> I believe the conversation and patchset you are referring to are pre-dating my
+> time in this subsystem.  To make sure I am looking at the right thing, can you
+> (or anyone else) point me to that discussion and related patches?
 
-What is the impact of this skipped resource? I guess it is enabled by
-the bootloader so we can't change it in runtime?
+2 references:
 
-> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+1)Previous discussion thread on the topic:
 
-Given that adsp remoteproc works without configuring mss power domain,
+https://patchwork.kernel.org/project/linux-remoteproc/patch/AOKowLclCbOCKxyiJ71WeNyuAAj2q8EUtxrXbyky5E@cp7-web-042.plabs.ch/
 
-Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+2) My patchset related to the refactoring of remoteproc virtio which tries to
+address the point by creating a remoteproc platform driver and declaring a
+virtio subnode in the device tree remoteproc node.
 
-Thanks,
-Mani
+https://lkml.org/lkml/2020/4/16/1817
 
-> ---
+No time yet on my side to come back on the patchset :(
+
+Regards,
+Arnaud
+
 > 
-> Changes since v1:
-> - None
-> 
->  drivers/remoteproc/qcom_q6v5_pas.c | 22 ++++++++++++++++++++++
->  1 file changed, 22 insertions(+)
-> 
-> diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
-> index b921fc26cd04..a79bee901e9b 100644
-> --- a/drivers/remoteproc/qcom_q6v5_pas.c
-> +++ b/drivers/remoteproc/qcom_q6v5_pas.c
-> @@ -689,6 +689,25 @@ static const struct adsp_data mpss_resource_init = {
->  	.ssctl_id = 0x12,
->  };
->  
-> +static const struct adsp_data sc8180x_mpss_resource = {
-> +	.crash_reason_smem = 421,
-> +	.firmware_name = "modem.mdt",
-> +	.pas_id = 4,
-> +	.has_aggre2_clk = false,
-> +	.auto_boot = false,
-> +	.active_pd_names = (char*[]){
-> +		"load_state",
-> +		NULL
-> +	},
-> +	.proxy_pd_names = (char*[]){
-> +		"cx",
-> +		NULL
-> +	},
-> +	.ssr_name = "mpss",
-> +	.sysmon_name = "modem",
-> +	.ssctl_id = 0x12,
-> +};
-> +
->  static const struct adsp_data slpi_resource_init = {
->  		.crash_reason_smem = 424,
->  		.firmware_name = "slpi.mdt",
-> @@ -811,6 +830,9 @@ static const struct of_device_id adsp_of_match[] = {
->  	{ .compatible = "qcom,qcs404-cdsp-pas", .data = &cdsp_resource_init },
->  	{ .compatible = "qcom,qcs404-wcss-pas", .data = &wcss_resource_init },
->  	{ .compatible = "qcom,sc7180-mpss-pas", .data = &mpss_resource_init},
-> +	{ .compatible = "qcom,sc8180x-adsp-pas", .data = &sm8150_adsp_resource},
-> +	{ .compatible = "qcom,sc8180x-cdsp-pas", .data = &sm8150_cdsp_resource},
-> +	{ .compatible = "qcom,sc8180x-mpss-pas", .data = &sc8180x_mpss_resource},
->  	{ .compatible = "qcom,sdm845-adsp-pas", .data = &adsp_resource_init},
->  	{ .compatible = "qcom,sdm845-cdsp-pas", .data = &cdsp_resource_init},
->  	{ .compatible = "qcom,sdx55-mpss-pas", .data = &sdx55_mpss_resource},
-> -- 
-> 2.29.2
+> Thanks,
+> Mathieu
 > 
