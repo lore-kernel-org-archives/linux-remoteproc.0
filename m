@@ -2,157 +2,206 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 072F9C11F66
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 30 Jun 2021 20:08:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 854E8C11F65
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 30 Jun 2021 20:38:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D1F8561351
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 30 Jun 2021 20:08:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 64DD2610E6
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 30 Jun 2021 20:38:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234108AbhF3UK6 (ORCPT
+        id S234505AbhF3Ukz (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 30 Jun 2021 16:10:58 -0400
-Received: from m43-7.mailgun.net ([69.72.43.7]:63586 "EHLO m43-7.mailgun.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S234057AbhF3UK4 (ORCPT <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 30 Jun 2021 16:10:56 -0400
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1625083707; h=Message-ID: References: In-Reply-To: Subject:
- Cc: To: From: Date: Content-Transfer-Encoding: Content-Type:
- MIME-Version: Sender; bh=aipWx0eXu5H1+PAAnZ34CVHzoEMTtgLG7iEC7D6WI5k=;
- b=j6B0VazRcu/vc1AgLfCXrbPLy3xTIQTPIxZR3kRHXRKSnpTBd2zlyQfbwGt1R7sFxz/VrTI+
- n218T7pK9UXonvbgr2hstcu2Ve0ChmVMbB3iN0F13IO+ZnhhkTND86YiX8/KEUOxQGdR5Is9
- mgqxaGtn2o0ctoJDooFevKZRLzY=
-X-Mailgun-Sending-Ip: 69.72.43.7
-X-Mailgun-Sid: WyI4ZWZiZiIsICJsaW51eC1yZW1vdGVwcm9jQHZnZXIua2VybmVsLm9yZyIsICJiZTllNGEiXQ==
-Received: from smtp.codeaurora.org
- (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
- smtp-out-n01.prod.us-east-1.postgun.com with SMTP id
- 60dccf34ec0b18a745275090 (version=TLS1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Wed, 30 Jun 2021 20:08:19
- GMT
-Sender: sibis=codeaurora.org@mg.codeaurora.org
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 208ECC43460; Wed, 30 Jun 2021 20:08:19 +0000 (UTC)
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: sibis)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id C3B2CC433D3;
-        Wed, 30 Jun 2021 20:08:16 +0000 (UTC)
+        Wed, 30 Jun 2021 16:40:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52674 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234208AbhF3Uky (ORCPT
+        <rfc822;linux-remoteproc@vger.kernel.org>);
+        Wed, 30 Jun 2021 16:40:54 -0400
+Received: from mail-pj1-x1030.google.com (mail-pj1-x1030.google.com [IPv6:2607:f8b0:4864:20::1030])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3F140C061756
+        for <linux-remoteproc@vger.kernel.org>; Wed, 30 Jun 2021 13:38:25 -0700 (PDT)
+Received: by mail-pj1-x1030.google.com with SMTP id cx9-20020a17090afd89b0290170a3e085edso2255107pjb.0
+        for <linux-remoteproc@vger.kernel.org>; Wed, 30 Jun 2021 13:38:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=29U3jHG7Pp1+7u6Mh/ME/IzDFz5tOMaeoDOJAA5iyCc=;
+        b=LATc6+sHrVVjNkZ/A2Q4iru8qz4SPu0DPaZ030h0AfrsZqQR7E2wruOhIi2/igoRmB
+         VXUVgpAx9PqQLsTyGd0l2CJFMX8Wg7DQPOSv2eu9hN+0koZUW0EtnLYMUiVPH8yJwQvf
+         kDUUB0NbFWHYyyozUlpGS4pkc2qUCxbUr5t1kjAsjyMPDHXy9iOnqCjQO/1xu0fWvnve
+         CEmh7WZgu+FV8Lu/L7MN3DZrmrGKWe+80/2XYRHoDEPyZgb/faX3Z3qX3blBQ0XpTkUl
+         EgOxN7sQ0E5DODJ/ZR5lmyASuI+Hk889QyJ5J2RJg8Jc9FRvx9qKOlcnHlGMghFfqS3G
+         IcYg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=29U3jHG7Pp1+7u6Mh/ME/IzDFz5tOMaeoDOJAA5iyCc=;
+        b=p1XHh5NbESI1es3ix0ftneB+UP2TCki3aJVOkVKS3lRjGZLnYu2EpkgJxjnLRy/2es
+         YlCzX+Nj7TEh/CbU8pLiJB0on4rFhOUmuJVtOjW9aIOIQENMgf5C8Z9lEKv2+99bKBtk
+         baePTRUIRHvEyFBAEgdknBj3gioKMNtxZLt2kigapuN057Glc5+6BQu4D+4vO/HX/KV7
+         GKCNVTk409OimKPu1NCzmhk6W3nuySSXLDKP+rGckz02j9z/dXv4g71Iacqfnol3pEVy
+         qPD2kjelp0zYhj50blGWBuBDVaLHao0akJc6z5zGsqWvpoLv+e3bNhqEOIixl3psDOMb
+         +YEg==
+X-Gm-Message-State: AOAM533b4P3YJnYEh/rMeuq437OeVUxBP8giv6asrY8M8UjdpWF+c6FC
+        o7qHUiA7A2PjHevClbyqBx6R0g==
+X-Google-Smtp-Source: ABdhPJySADZzfAvXzFglO2HxoY3PDjww1phzUZfKG8HhCFxivUc3Eir5TyRK7xqh6yHUpZBE6wuM/Q==
+X-Received: by 2002:a17:902:a981:b029:116:a139:6054 with SMTP id bh1-20020a170902a981b0290116a1396054mr33649783plb.60.1625085504194;
+        Wed, 30 Jun 2021 13:38:24 -0700 (PDT)
+Received: from p14s (S0106889e681aac74.cg.shawcable.net. [68.147.0.187])
+        by smtp.gmail.com with ESMTPSA id p10sm22283464pfn.147.2021.06.30.13.38.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 30 Jun 2021 13:38:23 -0700 (PDT)
+Date:   Wed, 30 Jun 2021 14:38:21 -0600
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+To:     Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Ohad Ben-Cohen <ohad@wizery.com>,
+        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com, julien.massot@iot.bzh
+Subject: Re: [PATCH v2 1/4] rpmsg: Introduce rpmsg_create_default_ept function
+Message-ID: <20210630203821.GA1290178@p14s>
+References: <20210623150504.14450-1-arnaud.pouliquen@foss.st.com>
+ <20210623150504.14450-2-arnaud.pouliquen@foss.st.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Thu, 01 Jul 2021 01:38:16 +0530
-From:   Sibi Sankar <sibis@codeaurora.org>
-To:     Matthias Kaehlcke <mka@chromium.org>
-Cc:     bjorn.andersson@linaro.org, robh+dt@kernel.org, will@kernel.org,
-        saiprakash.ranjan@codeaurora.org, ohad@wizery.com,
-        agross@kernel.org, mathieu.poirier@linaro.org,
-        robin.murphy@arm.com, joro@8bytes.org, p.zabel@pengutronix.de,
-        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, evgreen@chromium.org,
-        dianders@chromium.org, swboyd@chromium.org
-Subject: Re: [PATCH 9/9] arm64: dts: qcom: sc7280: Update Q6V5 MSS node
-In-Reply-To: <YNodaqE9n9+sQUFq@google.com>
-References: <1624564058-24095-1-git-send-email-sibis@codeaurora.org>
- <1624564058-24095-10-git-send-email-sibis@codeaurora.org>
- <YNodaqE9n9+sQUFq@google.com>
-Message-ID: <c561f99cb281c28581d10e5805190df8@codeaurora.org>
-X-Sender: sibis@codeaurora.org
-User-Agent: Roundcube Webmail/1.3.9
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210623150504.14450-2-arnaud.pouliquen@foss.st.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On 2021-06-29 00:35, Matthias Kaehlcke wrote:
-> On Fri, Jun 25, 2021 at 01:17:38AM +0530, Sibi Sankar wrote:
->> Update MSS node to support MSA based modem boot on SC7280 SoCs.
->> 
->> Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
->> ---
->>  arch/arm64/boot/dts/qcom/sc7280-idp.dts |  7 +++++++
->>  arch/arm64/boot/dts/qcom/sc7280.dtsi    | 19 ++++++++++++++++---
->>  2 files changed, 23 insertions(+), 3 deletions(-)
->> 
->> diff --git a/arch/arm64/boot/dts/qcom/sc7280-idp.dts 
->> b/arch/arm64/boot/dts/qcom/sc7280-idp.dts
->> index 191e8a92d153..d66e3ca42ad5 100644
->> --- a/arch/arm64/boot/dts/qcom/sc7280-idp.dts
->> +++ b/arch/arm64/boot/dts/qcom/sc7280-idp.dts
->> @@ -343,3 +343,10 @@
->>  		bias-pull-up;
->>  	};
->>  };
->> +
->> +&remoteproc_mpss {
->> +	status = "okay";
->> +	compatible = "qcom,sc7280-mss-pil";
->> +	iommus = <&apps_smmu 0x124 0x0>, <&apps_smmu 0x488 0x7>;
->> +	memory-region = <&mba_mem &mpss_mem>;
->> +};
->> diff --git a/arch/arm64/boot/dts/qcom/sc7280.dtsi 
->> b/arch/arm64/boot/dts/qcom/sc7280.dtsi
->> index 56ea172f641f..6d3687744440 100644
->> --- a/arch/arm64/boot/dts/qcom/sc7280.dtsi
->> +++ b/arch/arm64/boot/dts/qcom/sc7280.dtsi
->> @@ -586,7 +586,8 @@
->> 
->>  		remoteproc_mpss: remoteproc@4080000 {
->>  			compatible = "qcom,sc7280-mpss-pas";
->> -			reg = <0 0x04080000 0 0x10000>;
->> +			reg = <0 0x04080000 0 0x10000>, <0 0x04180000 0 0x48>;
->> +			reg-names = "qdsp6", "rmb";
+On Wed, Jun 23, 2021 at 05:05:01PM +0200, Arnaud Pouliquen wrote:
+> By providing a callback in the rpmsg_driver structure, the rpmsg devices
+> can be probed with a default endpoint created.
 > 
-> Binding needs update?
+> In this case, it is not possible to associated to this endpoint private data
+> that could allow the driver to retrieve the context.
 > 
-> Documentation/devicetree/bindings/remoteproc/qcom,adsp.yaml:
+> This helper function allows rpmsg drivers to create a default endpoint
+> on runtime with an associated private context.
 > 
->   reg:
->       maxItems: 1
+> For example, a driver might create a context structure on the probe and
+> want to provide that context as private data for the default rpmsg
+> callback.
 > 
->> 
->>  			interrupts-extended = <&intc GIC_SPI 264 IRQ_TYPE_EDGE_RISING>,
->>  					      <&modem_smp2p_in 0 IRQ_TYPE_EDGE_RISING>,
->> @@ -597,8 +598,11 @@
->>  			interrupt-names = "wdog", "fatal", "ready", "handover",
->>  					  "stop-ack", "shutdown-ack";
->> 
->> -			clocks = <&rpmhcc RPMH_CXO_CLK>;
->> -			clock-names = "xo";
->> +			clocks = <&gcc GCC_MSS_CFG_AHB_CLK>,
->> +				 <&gcc GCC_MSS_OFFLINE_AXI_CLK>,
->> +				 <&gcc GCC_MSS_SNOC_AXI_CLK>,
->> +				 <&rpmhcc RPMH_CXO_CLK>;
->> +			clock-names = "iface", "offline", "snoc_axi", "xo";
+> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+> ---
 > 
-> Binding needs update?
+> update from V1:
+> - Minor: alignement of the function parameter to have homogenous function declaration.
+> ---
 > 
-> Documentation/devicetree/bindings/remoteproc/qcom,adsp.yaml:
+>  drivers/rpmsg/rpmsg_core.c | 51 ++++++++++++++++++++++++++++++++++++++
+>  include/linux/rpmsg.h      | 13 ++++++++++
+>  2 files changed, 64 insertions(+)
 > 
->   clocks:
->     items:
->       - description: XO clock
->   clock-names:
->     items:
->       - const: xo
+> diff --git a/drivers/rpmsg/rpmsg_core.c b/drivers/rpmsg/rpmsg_core.c
+> index e5daee4f9373..07b680bda61f 100644
+> --- a/drivers/rpmsg/rpmsg_core.c
+> +++ b/drivers/rpmsg/rpmsg_core.c
+> @@ -115,6 +115,57 @@ struct rpmsg_endpoint *rpmsg_create_ept(struct rpmsg_device *rpdev,
+>  }
+>  EXPORT_SYMBOL(rpmsg_create_ept);
+>  
+> +/**
+> + * rpmsg_create_default_ept() - create a default rpmsg_endpoint for a rpmsg device
+> + * @rpdev: rpmsg channel device
+> + * @cb: rx callback handler
+> + * @priv: private data for the driver's use
+> + * @chinfo: channel_info with the local rpmsg address to bind with @cb
+> + *
+> + * On register_rpmsg_driver if no callback is provided in the rpmsg_driver structure,
+> + * no endpoint is created when the device is probed by the rpmsg bus.
+> + *
+> + * This function returns a pointer to the default endpoint if already created or creates
+> + * a endpoint and assign it as the default endpoint of the rpmsg device.
 
-qcom,sc7280-mpss-pas compatible requires
-just the xo clock and one reg space whereas
-the qcom,sc7280-mss-pil compatible requires
-the additional clks and reg spaces. We just
-overload properties where re-use is possible
-across boards. Hence it would be wrong to
-list those clks/reg spaces as requirements
-for the pas compatible.
+s/"a endpoint"/"an endpoint"
 
+> + *
+> + * Drivers should provide their @rpdev channel (so the new endpoint would belong
+> + * to the same remote processor their channel belongs to), an rx callback
+> + * function, an optional private data (which is provided back when the
+> + * rx callback is invoked), and an address they want to bind with the
+> + * callback. If @addr is RPMSG_ADDR_ANY, then rpmsg_create_ept will
+> + * dynamically assign them an available rpmsg address (drivers should have
+> + * a very good reason why not to always use RPMSG_ADDR_ANY here).
+> + *
+> + * Returns a pointer to the endpoint on success, or NULL on error.
+> + */
+> +struct rpmsg_endpoint *rpmsg_create_default_ept(struct rpmsg_device *rpdev,
+> +						rpmsg_rx_cb_t cb, void *priv,
+> +						struct rpmsg_channel_info chinfo)
+> +{
+> +	struct rpmsg_endpoint *ept;
+> +
+> +	if (WARN_ON(!rpdev))
+> +		return NULL;
+> +
+> +	/* It does not make sense to create a default  endpoint without a callback. */
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project.
+s/"default  endppoint"/"default endpoint"
+
+Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+
+> +	if (!cb)
+> +		return NULL;
+> +
+> +	if (rpdev->ept)
+> +		return rpdev->ept;
+> +
+> +	ept = rpdev->ops->create_ept(rpdev, cb, priv, chinfo);
+> +	if (!ept)
+> +		return NULL;
+> +
+> +	/* Assign the new endpoint as default endpoint */
+> +	rpdev->ept = ept;
+> +	rpdev->src = ept->addr;
+> +
+> +	return ept;
+> +}
+> +EXPORT_SYMBOL(rpmsg_create_default_ept);
+> +
+>  /**
+>   * rpmsg_destroy_ept() - destroy an existing rpmsg endpoint
+>   * @ept: endpoing to destroy
+> diff --git a/include/linux/rpmsg.h b/include/linux/rpmsg.h
+> index d97dcd049f18..11f473834e86 100644
+> --- a/include/linux/rpmsg.h
+> +++ b/include/linux/rpmsg.h
+> @@ -172,6 +172,9 @@ void rpmsg_destroy_ept(struct rpmsg_endpoint *);
+>  struct rpmsg_endpoint *rpmsg_create_ept(struct rpmsg_device *,
+>  					rpmsg_rx_cb_t cb, void *priv,
+>  					struct rpmsg_channel_info chinfo);
+> +struct rpmsg_endpoint *rpmsg_create_default_ept(struct rpmsg_device *rpdev,
+> +						rpmsg_rx_cb_t cb, void *priv,
+> +						struct rpmsg_channel_info chinfo);
+>  
+>  int rpmsg_send(struct rpmsg_endpoint *ept, void *data, int len);
+>  int rpmsg_sendto(struct rpmsg_endpoint *ept, void *data, int len, u32 dst);
+> @@ -234,6 +237,16 @@ static inline struct rpmsg_endpoint *rpmsg_create_ept(struct rpmsg_device *rpdev
+>  	return ERR_PTR(-ENXIO);
+>  }
+>  
+> +static inline struct rpmsg_endpoint *rpmsg_create_default_ept(struct rpmsg_device *rpdev,
+> +							      rpmsg_rx_cb_t cb, void *priv,
+> +							      struct rpmsg_channel_info chinfo)
+> +{
+> +	/* This shouldn't be possible */
+> +	WARN_ON(1);
+> +
+> +	return NULL;
+> +}
+> +
+>  static inline int rpmsg_send(struct rpmsg_endpoint *ept, void *data, int len)
+>  {
+>  	/* This shouldn't be possible */
+> -- 
+> 2.17.1
+> 
