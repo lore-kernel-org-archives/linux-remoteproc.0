@@ -7,33 +7,33 @@ X-Spam-Status: No, score=-10.3 required=3.0 tests=BAYES_00,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04BF9C07E99
-	for <linux-remoteproc@archiver.kernel.org>; Mon,  5 Jul 2021 07:23:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B891C07E99
+	for <linux-remoteproc@archiver.kernel.org>; Mon,  5 Jul 2021 21:08:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D40B86108D
-	for <linux-remoteproc@archiver.kernel.org>; Mon,  5 Jul 2021 07:23:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0F35D61987
+	for <linux-remoteproc@archiver.kernel.org>; Mon,  5 Jul 2021 21:08:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229884AbhGEHZi (ORCPT
+        id S229959AbhGEVKk (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 5 Jul 2021 03:25:38 -0400
-Received: from mga14.intel.com ([192.55.52.115]:16235 "EHLO mga14.intel.com"
+        Mon, 5 Jul 2021 17:10:40 -0400
+Received: from mga05.intel.com ([192.55.52.43]:3211 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229817AbhGEHZi (ORCPT <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 5 Jul 2021 03:25:38 -0400
-X-IronPort-AV: E=McAfee;i="6200,9189,10035"; a="208755461"
-X-IronPort-AV: E=Sophos;i="5.83,325,1616482800"; 
-   d="gz'50?scan'50,208,50";a="208755461"
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Jul 2021 00:22:43 -0700
+        id S229939AbhGEVKk (ORCPT <rfc822;linux-remoteproc@vger.kernel.org>);
+        Mon, 5 Jul 2021 17:10:40 -0400
+X-IronPort-AV: E=McAfee;i="6200,9189,10036"; a="294667114"
+X-IronPort-AV: E=Sophos;i="5.83,326,1616482800"; 
+   d="gz'50?scan'50,208,50";a="294667114"
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Jul 2021 14:08:01 -0700
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.83,325,1616482800"; 
-   d="gz'50?scan'50,208,50";a="448878511"
+X-IronPort-AV: E=Sophos;i="5.83,326,1616482800"; 
+   d="gz'50?scan'50,208,50";a="410064150"
 Received: from lkp-server01.sh.intel.com (HELO 4aae0cb4f5b5) ([10.239.97.150])
-  by orsmga007.jf.intel.com with ESMTP; 05 Jul 2021 00:22:40 -0700
+  by orsmga006.jf.intel.com with ESMTP; 05 Jul 2021 14:07:57 -0700
 Received: from kbuild by 4aae0cb4f5b5 with local (Exim 4.92)
         (envelope-from <lkp@intel.com>)
-        id 1m0IwB-000CKN-9n; Mon, 05 Jul 2021 07:22:39 +0000
-Date:   Mon, 5 Jul 2021 15:22:04 +0800
+        id 1m0Voq-000Cb5-E5; Mon, 05 Jul 2021 21:07:56 +0000
+Date:   Tue, 6 Jul 2021 05:07:05 +0800
 From:   kernel test robot <lkp@intel.com>
 To:     "Peng Fan (OSS)" <peng.fan@oss.nxp.com>, ohad@wizery.com,
         bjorn.andersson@linaro.org, mathieu.poirier@linaro.org,
@@ -43,10 +43,10 @@ Cc:     kbuild-all@lists.01.org, shawnguo@kernel.org,
         linux-imx@nxp.com, linux-remoteproc@vger.kernel.org
 Subject: Re: [PATCH] remoteproc: elf_loader: fix loading segment when
  is_iomem true
-Message-ID: <202107051547.CrIEyBta-lkp@intel.com>
+Message-ID: <202107060451.QixSe0ne-lkp@intel.com>
 References: <20210628070657.7669-1-peng.fan@oss.nxp.com>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="k+w/mQv8wyuph6w0"
+Content-Type: multipart/mixed; boundary="wRRV7LY7NUeQGEoC"
 Content-Disposition: inline
 In-Reply-To: <20210628070657.7669-1-peng.fan@oss.nxp.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
@@ -55,7 +55,7 @@ List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
 
---k+w/mQv8wyuph6w0
+--wRRV7LY7NUeQGEoC
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
@@ -217,12 +217,12 @@ vim +219 drivers/remoteproc/remoteproc_elf_loader.c
 0-DAY CI Kernel Test Service, Intel Corporation
 https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
 
---k+w/mQv8wyuph6w0
+--wRRV7LY7NUeQGEoC
 Content-Type: application/gzip
 Content-Disposition: attachment; filename=".config.gz"
 Content-Transfer-Encoding: base64
 
-H4sICO2i4mAAAy5jb25maWcAlFxPc9s4sr/Pp1BlLruHmbFlx8m8Vz6AIEhhRBI0QMqWLyxF
+H4sICAFj42AAAy5jb25maWcAlFxPc9s4sr/Pp1BlLruHmbFlx8m8Vz6AIEhhRBI0QMqWLyxF
 UWZcY1teWZ5Nvv3rBvgHAEElb6t2N+puNIBGo/HrBuiff/p5Rt6O+6fN8WG7eXz8Nvtz97w7
 bI67z7MvD4+7/53FYlaIasZiXv0KwtnD89vX3172/90dXraz97+eX/x69sthezFb7g7Pu8cZ
 3T9/efjzDTQ87J9/+vknKoqEpw2lzYpJxUXRVOyuun7XavjlEfX98ud2O/tXSum/Z7//Cgrf
@@ -1129,4 +1129,4 @@ Vhk6Wt5WelDd24wnshLExsSyp0vkapYNbNiJssfVqiWS376R19qZTQ/ZkxdhYV4NUGd/ONMD
 WLNYK0IN6Xn5D5IJvXiNOuBQSOdUxZheE1aT7dwcAe7tLnapODpqltSY46yLirDFPFzc1Cpl
 NkjU0NVMTdqH9n8+2XM/rRUDAA==
 
---k+w/mQv8wyuph6w0--
+--wRRV7LY7NUeQGEoC--
