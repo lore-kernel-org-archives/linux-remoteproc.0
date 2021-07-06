@@ -8,58 +8,60 @@ X-Spam-Status: No, score=-18.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F31B6C07E9C
-	for <linux-remoteproc@archiver.kernel.org>; Tue,  6 Jul 2021 14:43:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 849BBC07E96
+	for <linux-remoteproc@archiver.kernel.org>; Tue,  6 Jul 2021 14:43:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CEC8B613BD
-	for <linux-remoteproc@archiver.kernel.org>; Tue,  6 Jul 2021 14:43:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6ED98613C8
+	for <linux-remoteproc@archiver.kernel.org>; Tue,  6 Jul 2021 14:43:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231689AbhGFOpj (ORCPT
+        id S232643AbhGFOpl (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 6 Jul 2021 10:45:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34202 "EHLO
+        Tue, 6 Jul 2021 10:45:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34206 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232763AbhGFOpf (ORCPT
+        with ESMTP id S232764AbhGFOpf (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
         Tue, 6 Jul 2021 10:45:35 -0400
-Received: from EUR04-HE1-obe.outbound.protection.outlook.com (mail-he1eur04on0626.outbound.protection.outlook.com [IPv6:2a01:111:f400:fe0d::626])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8C68AC0613AF
-        for <linux-remoteproc@vger.kernel.org>; Tue,  6 Jul 2021 07:32:52 -0700 (PDT)
+Received: from EUR04-VI1-obe.outbound.protection.outlook.com (mail-vi1eur04on0616.outbound.protection.outlook.com [IPv6:2a01:111:f400:fe0e::616])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A186C0613B6
+        for <linux-remoteproc@vger.kernel.org>; Tue,  6 Jul 2021 07:33:03 -0700 (PDT)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=khI5si7RaZIuMwlf6vCKwKQeg18yaBSlhKo6HEY4Sn6w7nsLdjtN3+/qIwmnCZjQlXjesf+fJefe7gGL2pR0Rzr8tzMEIarNXNscx83T3jCfrMzr/rj+Bpij8+2kWyMyHrEq3GvjloJotOImZXOu7Tp0JQ83sdbsLIOgZSDd8riySxSSYlG9AMKq3A96rupCzqIxJtLOM59f5LBf/8CRFE6pZ+WZLj8nZkRbTsaMPyvfge2I0Ft/EtTStXVLy9MtSwmAZgODflq6deKNx8Ymj0rViQzOTG2Mhqu59aU3amNcNq1K5hc352skMZLi6FqBXuD4igiDvoghquhTa7otdw==
+ b=TqSs0fHJNJF5gyiCutaW2HK8mJ/uhrsBF0LdDWSgw6gGemO4vVXFhjApSZDL/PawHe7KgbIoxAe+kn01RXF+jemFeH6l4RXOAO1ng+5iR4ftxmMdL/b3Uw2F/183pU2eaB5jsL07INlcxzrMq8FcDtxfJF0Xi48DL/7UqeSYDGFx1K2JtiDN8s+f1VtmFsoMK26S5OUIr80OxvFR42TARYRRQPrVtqU3SOp11PdeuyJYg5w3wk93PZdfG7Jvf6rIPQWMmtJh8TonLdtYwzQXk6SojjXWwlBQUBJdCQTS48g301wB5F5d17U6cPU3QjUM30SjPN76fRNCXUaykDWfwQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=zF3XaEbnRR9Z5TL4dxjsr2JPlr20KSG1T6nnd6CDgnI=;
- b=ZYv1xl5XYiw/ttb03hCFLj9JUTQPEt4PujCLQ2NT7a2fUgYSe3nZCF7jqCfUPtn4EhIg4FOXu1YoZIaH7J8hjZUJH5zmcjnncu+i3nuajbfNbcVN6PJkR/USnQt0JjCGGLaGonyIOdoW3bRFSxpVUrFd39Lka3vusB0R9jY0Ynl+0ANfEMCdN2URvpUMk5W+wW+5NZXU7ttMjAMu4fpR3MvTeK/fwSxpjq8IwyOFXGldLVVB2AsyQwUno9hUENp/0HMSbl5mWgbnWRnsLKew8RYODJFJN+9zEo4ZgD7Q1H/ZrBy5bBu8LdwJ0zK5U9QAheUJiDF/2sN+oUh5Frv5Mw==
+ bh=vkPtt4dHfqLfHCNSafk0JjXMbvz6Xs4ym0v0F5g6bR0=;
+ b=lPJ7pCOcgAib9P2hY/j9bhtCS3x8NM9qeh04e1nPZLFfvs6CIJ3oQhwIZiVfU1Se8bAg9WpLpdwjKGl0ubz2V9GrDC78q//NNj9nDa8yRsAfMlnOd57N/QNnEniJKmT59yg3Hp3u+GJPw3Ek57YkpZIh8bJdiIH/bokRi2Nfqfwh5ATNPgNQYFSUTeAQEsEbVHSXtlEaNOpiBnbvVhJt+b10B/eyQN1E/n/x6+8KQJrcfClXucPhawrCV4AQuVoLfnz3VI/6ovVhxFmL3J6cVSOT92KxK2xUR4mVTQr6oiFjjQg4A0570ipzqYfxHGrmIMbMScEzvm7IUBxJFw79vw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
  header.d=nxp.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=zF3XaEbnRR9Z5TL4dxjsr2JPlr20KSG1T6nnd6CDgnI=;
- b=Wqid3L2KJTX2rtcmrCGG8KI9sBAmkn3e2UG/10Zk2dWhcUtV3YhcVzJv7ahoU9JMj8A8oM9AViPv6zr8NJg7U/+U9opcQh0o8NJ69lSeOrv4s1qnvxJNBSNDGmPEvbCZrrF0oOnP8StDxQQ+PzjT9M09Ib8+wXAYuGbisp+F5o0=
+ bh=vkPtt4dHfqLfHCNSafk0JjXMbvz6Xs4ym0v0F5g6bR0=;
+ b=DjciuZBOd2HjMwl4pdw4W25trhqj3nYGnpl9ty9k+P2LgIMk2I2MwfdURDf3YHemwTRylUp5nwM3RdmSUD8sMHVe2n04rCtNazEhszS9/DaF8JmLlDzW/raFP59J51REO7FO/wpfhOAh8aOM2LYVC3RVd90mfjAQa+u8EyGASbA=
 Authentication-Results: vger.kernel.org; dkim=none (message not signed)
  header.d=none;vger.kernel.org; dmarc=none action=none header.from=nxp.com;
 Received: from DB9PR04MB8477.eurprd04.prod.outlook.com (2603:10a6:10:2c3::11)
- by DU2PR04MB8600.eurprd04.prod.outlook.com (2603:10a6:10:2db::12) with
+ by DU2PR04MB8566.eurprd04.prod.outlook.com (2603:10a6:10:2d5::5) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4287.31; Tue, 6 Jul
- 2021 14:22:49 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4287.23; Tue, 6 Jul
+ 2021 14:22:53 +0000
 Received: from DB9PR04MB8477.eurprd04.prod.outlook.com
  ([fe80::9daa:ab21:f749:36d2]) by DB9PR04MB8477.eurprd04.prod.outlook.com
  ([fe80::9daa:ab21:f749:36d2%9]) with mapi id 15.20.4287.033; Tue, 6 Jul 2021
- 14:22:49 +0000
+ 14:22:52 +0000
 From:   Dong Aisheng <aisheng.dong@nxp.com>
 To:     linux-remoteproc@vger.kernel.org
 Cc:     linux-arm-kernel@lists.infradead.org, ohad@wizery.com,
         dongas86@gmail.com, bjorn.andersson@linaro.org,
         mathieu.poirier@linaro.org, cleger@kalray.eu,
         Dong Aisheng <aisheng.dong@nxp.com>
-Subject: [PATCH 1/2] remoteproc: fix an typo in fw_elf_get_class code comments
-Date:   Tue,  6 Jul 2021 22:21:55 +0800
-Message-Id: <20210706142156.952794-1-aisheng.dong@nxp.com>
+Subject: [PATCH 2/2] remoteproc: fix kernel doc for struct rproc_ops
+Date:   Tue,  6 Jul 2021 22:21:56 +0800
+Message-Id: <20210706142156.952794-2-aisheng.dong@nxp.com>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20210706142156.952794-1-aisheng.dong@nxp.com>
+References: <20210706142156.952794-1-aisheng.dong@nxp.com>
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 X-ClientProxiedBy: SG2PR01CA0107.apcprd01.prod.exchangelabs.com
@@ -67,77 +69,86 @@ X-ClientProxiedBy: SG2PR01CA0107.apcprd01.prod.exchangelabs.com
  (2603:10a6:10:2c3::11)
 MIME-Version: 1.0
 X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from localhost.localdomain (119.31.174.66) by SG2PR01CA0107.apcprd01.prod.exchangelabs.com (2603:1096:3:15::33) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4287.22 via Frontend Transport; Tue, 6 Jul 2021 14:22:47 +0000
+Received: from localhost.localdomain (119.31.174.66) by SG2PR01CA0107.apcprd01.prod.exchangelabs.com (2603:1096:3:15::33) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4287.22 via Frontend Transport; Tue, 6 Jul 2021 14:22:50 +0000
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 0733575a-d9a3-4f05-f620-08d940898888
-X-MS-TrafficTypeDiagnostic: DU2PR04MB8600:
+X-MS-Office365-Filtering-Correlation-Id: 98fd5b4f-e3bf-4891-bddb-08d940898a6d
+X-MS-TrafficTypeDiagnostic: DU2PR04MB8566:
 X-MS-Exchange-Transport-Forked: True
-X-Microsoft-Antispam-PRVS: <DU2PR04MB8600226C149E042E9857AD85801B9@DU2PR04MB8600.eurprd04.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:2150;
+X-Microsoft-Antispam-PRVS: <DU2PR04MB8566ABB0BFF349382272366B801B9@DU2PR04MB8566.eurprd04.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:2449;
 X-MS-Exchange-SenderADCheck: 1
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: D90lwXcmG2qPMF9Fz/eyfft53IPayIGuF1pxwWbIT0Uv3HWN8Q70vP2I85E+WOwS1gIHs2s0ITJsp2CinuU9UfHcrckpDp4GZF6zioHev04s/NE9Wq78E9gfTFMDQpqri9umc8kXCNz+gg6Ob0b4Q6eCsGmhXc9dG++eLoC/FAGxzjTYwTeUsAjUgwwimvEd4oycPEX8Czj9SaA7hzRSSJ9ukToctKYi8Z6F4ncxj/0tfjdCExwc+g3F3dal8TxXEt6G1hpDjUi9i0ORvtXgPjz0Ok17KhrOcyTmqfPJD+i1cinPFPismTCK91XAXXlFlrF2vb0LLBgWplp7ZboDdAFG1shO6W8uo+D2OX7R8ZnMiyWCcq6edOwP/G8codZUL7QJQPZSO/MCjwvxcISvNNf6tsjDXR9j5tDcS8RXrbqFj0K70ggsJXu18jdJh8Z1QfLlxCKI+7h0X1N5t5cOZZwUU4Kig1C70XYPTHr8el61YVl6OcBdyKGHcLMdpqrBP1KkfH7/Qe8J5InSrPZBcONiOk745o7Nh+vvmaXCbhKMz3mWkIcE3p4ZqpXy3P6xNUpOWRWaabGhop2MqLq590DY62Ff6vPiAZhPbE2hnIQzHwYzfbxoPXQ3UAKHtFU4vzXoMdqVM2F4azSb6V/1+/Cah7xlbRhQnKsL/btyDYdBh3iPoGKjKkP3M6LQAckoiZ6hGW8vfHwb7hNcvGj6wA==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB9PR04MB8477.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(366004)(396003)(39850400004)(136003)(346002)(376002)(478600001)(6512007)(8936002)(5660300002)(4744005)(186003)(316002)(36756003)(1076003)(956004)(38350700002)(66556008)(26005)(8676002)(66946007)(66476007)(2616005)(52116002)(6916009)(6486002)(83380400001)(38100700002)(86362001)(2906002)(6506007)(6666004)(4326008);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam-Message-Info: wjgmZ8itmoXRec3tTO1EQWn71TN4CMEuu0+jYYTvVSkQsm/yGJa0ZkvAIjIjZY9GFC5PeKjhqJuHKXetT4Rck8wMeFHC4MjEfE/7NgxfTC2bFcjkrynC5Rvvvfrtbd3qx+lHtCHqW4dr9LR3v2LcX3JntK5dI125CBdNHp/ladGf5FpCvlFn9awMzHII96RBXi1+xL23vfPeD7UzVgT4sGPHNTv6NQ+NHcxsfTIngRQoLOhm0pBSeZzw+zFkKUo3OEPiqkYdPBFljbGg3q3ouDMJJE4dz6YVCeVbpX2bSVAsgwGUhsWoNbq20w+fEWceUY8LmdFgVIC0fIGhe3NtSG9fEpWzMqU26kJSMrkTNn7/2ZNu9AfjZqmkLw6rIkPEEzTFL5SQlaCfarJAeQuHfJ/k+ZVn/UbOFVYlWlBJMJ++H6j5S0rDPUNXLQFDfpH5ANTaLOmLMMfxsB7xpMCTBW/ONaWHQO4eeOCJrN3eFxHcS+8I+qc8hO1WMh104CTtXvNWNXIrZL1TnFko/PIWD5l6y2y81bp30HMbU+bJVoqqWStsjmXlJoSb2CvtU7OlFpf53Gb9ZyIFttmMqCzQlt5F9fJ5JbeaxZ/EX8dJk4J0PH/2AvYb0dwtGhVq/Pr2QjGDM9qCsO/VnJhJ8CPey9VKdMWfJGtS2Up88oPAFjSCOixvCq6G8F5QaMPZ+nJBQJcA3iCfM8ZuDofBID0CGw==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB9PR04MB8477.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(366004)(136003)(346002)(396003)(376002)(39860400002)(4326008)(8676002)(52116002)(66556008)(5660300002)(6486002)(2906002)(6506007)(86362001)(316002)(83380400001)(956004)(66476007)(1076003)(6916009)(186003)(66946007)(2616005)(38350700002)(478600001)(6512007)(38100700002)(26005)(8936002)(36756003);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?73BbC9ZRUyLor91PhQIja6yMLMvDgP74dq6+cI/ZIh6h2wIvYiDNVhCxqoZ5?=
- =?us-ascii?Q?idmKJ4QB9cLth3n5RrbD6lwrvzGhpr2bCTe/zhCbHRW8XOcQFIlXmvtFhYB0?=
- =?us-ascii?Q?dDqz520thaMdhe/luHKJKlNm30hzktDgIHdO9Ykp2Pj67S3iTOpxldBUTPOS?=
- =?us-ascii?Q?jpX7gpaYz1yP/uj3JbfmObl2esCaX+WkE38DTUnB0nVbYQ1B3NHNsWQtg+/J?=
- =?us-ascii?Q?K14dMI0VWIUpaXfCNZsavXPW2+NueFlfC/k0WFdAhgd+04iDgNtRz2jy991y?=
- =?us-ascii?Q?v+GLiytEamNBcAHEOqPg2oSlKWUThZT7rv2w6bARFBOS/3EdT0QfWvbzXLH3?=
- =?us-ascii?Q?ZQcDJjNuqK/NMIiLpKJM1czcbC+l1LKSfevCcZeJgpiPBZXak3KLN3GczdSQ?=
- =?us-ascii?Q?aXgpMC5FK/0u+RdWICwA3l15HOrzCh6oxZg7ZPcAGiO9j3CnTcktMjCWFLOu?=
- =?us-ascii?Q?F81Os6xE6SrnZYnvkZL0wKjBdHflredWTz9lpZrs5gnJZUDt95Og+6R3ozAE?=
- =?us-ascii?Q?pmhhxl5Ld1qm+peIt9NI9xfxl8yTHuCHYtxXJTlzYRgHeljy0bUPpXS3VkYf?=
- =?us-ascii?Q?PpAZX9JNz+JwCXZ5bHovGNFfYqlmTXn29UUg5+648+JNzT8euWsWv7NP2Vv3?=
- =?us-ascii?Q?nb9zoO4+rLZV6LZg+mxClZ5LCEgYZIC4HEknUHRFFpS0lnyr04slyWP0XEsK?=
- =?us-ascii?Q?HB1uxJ4fWidVgD26bi8lSlaqecTnoBjl2Gd+7NenKDJZeB1Sj49X3UTxlkS5?=
- =?us-ascii?Q?bANmPz97XDbKy8glX9IeLdFomEfH7D5wZfrIMVZIXbt5UqM2mUPgiJR5/93p?=
- =?us-ascii?Q?NHK8dHs524zSMxTTcj1T7lnacT6RyDmdhcX/iiVtbmhneSvK1upEm+pFKPJq?=
- =?us-ascii?Q?SJLlBrBcY1MItGaRBXFBIh5Lq4zwEnfeLuRbLrfa5moxHBuuWM5CKLBZ2BbC?=
- =?us-ascii?Q?sLw92BjMTqDk6NPik9mRjhzyvIRygsvZHwD5evTq+gzSyQc6WpWlw4e9hdq3?=
- =?us-ascii?Q?YVo05hNkVXtdLmjvBprQw/Mw1BxCjMYZW+FJ/emcGtElwny7n9cg7J4Klk6F?=
- =?us-ascii?Q?3aKcw1r6ZYR+bCPSlIkLHRfmT+2bjuRO2M1OGrbrDUtkL6UBM7nXWltcNifA?=
- =?us-ascii?Q?xq/bC2oB/MSU0KiAPd3hQU5DZVljGaLNNHvz1n9wrtCUbvapNYORKAm/oHuU?=
- =?us-ascii?Q?loJX1xTaCVW8tczMOuIZ5rucfnTCZl6XpvR+pzwyAiUtVJfg01xPsWrLrn3J?=
- =?us-ascii?Q?FiTu0b6vaGRwabiojk1B4lkYLht7wzlDpzJbRSoDRWE2WVZuL89Cb+aZFuwA?=
- =?us-ascii?Q?Euz3T8BQivOEjIw6ANanZEtb?=
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?yPy24Euwqdp5+M3hU/wmS7NdZF7cg6FcFxMFbNTBrUytdZmIVMoZmGzQr494?=
+ =?us-ascii?Q?VFpKWALZkym8Mk17ePLGPSdtdLMkic/fDDjhxPnMiXHgPMUEhQZgELSDVCRA?=
+ =?us-ascii?Q?9PtsJI3VV6Cdi2Qarvoq5QMeBL3r3idnvDJN3NPNpqX5SDBQaDJM46BEGbxZ?=
+ =?us-ascii?Q?HFlr3+rlmYNP9B5bYuOc2hWW8YNJDJ1Q5PlBsaSYV2ySd2RzAn50FEeo1duI?=
+ =?us-ascii?Q?qge6Xegh9xYlSowpZDzJ+ch8Zm3s7dTNHNuwfAo+SU8b10MaTGpAudT9lBLI?=
+ =?us-ascii?Q?9DlXirgeQKnQE3oHRW8Y5n0oy7XiC0tJGRyQPM6h1JxNn6QGqztporsI+4mG?=
+ =?us-ascii?Q?IbzWLTQaFZgQPoaYiq9KOZjsAm8xhHV2BvI+iSml9aKBC6CuX+MIrj+7GRVY?=
+ =?us-ascii?Q?qLv+R+/8NvnOTbafUSozqB9ldlR/Xb7m/C1mPwBo3XtkS92+IFRQsPmXbSx0?=
+ =?us-ascii?Q?mzcPi0jje3gaqfzwJ0EP7uq8369mo+a9mtKLdx9Z+DlxpjthiYD99D04MiSA?=
+ =?us-ascii?Q?Ly3agumQT+G4ImunDp9m/A40S13w85PhVFeQ+Z9hdYxVnfl3JwGzg4o86QvY?=
+ =?us-ascii?Q?Lf05B9F+vYpl+iJBamhFe03BRPjZg1+mgm6a9DtVftS5x8ZMWnOHbPwFrpIm?=
+ =?us-ascii?Q?NfgOTARnBaZzh2pRsYWD2d47MBnS5gamQKF5yeBRbzG7O8t3gowTg1edmTmM?=
+ =?us-ascii?Q?avBM2Ch3JZY3ymE6BmrdACUjy7g52XkMnkKcQJ+VMcCtyS49aIYlhEyCkzEE?=
+ =?us-ascii?Q?vT48wuM+mF39oIm2lfpzz+lpKer3uD+fIEPGs5vzcl7lMfC9OqMUWRuqysnm?=
+ =?us-ascii?Q?786Gj/kylNuh/KMbjphM3+9Xj9yTefaALuvtHpc41lHGvovwseSsq10fIM/m?=
+ =?us-ascii?Q?uJRqyS9xSrEx8rcVDQD+l2FdHmvgk67rfRDu0Snx35yjWcBuw+8Q/cDhr1i2?=
+ =?us-ascii?Q?YwcVbmijPWopuQ+1akC9xp2hfdWqelwmuIF6xdIKTfXw/DydzZm5PW22lams?=
+ =?us-ascii?Q?J8oVmayyGCCM/y1oaxyQVsvzkGj6+Kcw58yiF37S0FIvdYMUJ2UYpvfsNVnY?=
+ =?us-ascii?Q?pf8T+11SDZ90sXpVZ0qbbP96tqGHLkcwFYkH1SPQQA/810leMc1O/EcZSoym?=
+ =?us-ascii?Q?PoCjxuVYl8rJGhpm47vhoa5NQIcebXteqUNmcFMHo8jBHKp42wPB+Uh1ZDFa?=
+ =?us-ascii?Q?y6ROxJspmVxieBMYVI8DScznfGqJ+Uivj5CzBJJX1rvs81Atu18g4gRsnKz9?=
+ =?us-ascii?Q?9D9zj+//MOqIS8odLO0CksNUaq+Gnt6I5JjjIFLcjJF47wzzq93wYl6qFcy6?=
+ =?us-ascii?Q?JMoOgwQpr3+Q2oU/THi32Hz3?=
 X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0733575a-d9a3-4f05-f620-08d940898888
+X-MS-Exchange-CrossTenant-Network-Message-Id: 98fd5b4f-e3bf-4891-bddb-08d940898a6d
 X-MS-Exchange-CrossTenant-AuthSource: DB9PR04MB8477.eurprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Jul 2021 14:22:49.8435
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Jul 2021 14:22:52.8483
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: +7avv146x7JFz3zjx5x6wm9jdltiU7e/f96GO8aKvtMgPEGgSbXRdJJR+rS8SazpURiEIhyyZzniKZRlSy5GYQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU2PR04MB8600
+X-MS-Exchange-CrossTenant-UserPrincipalName: gnpNlxV5urrjmN/q+w2ChvBzxrB/2gVUgqfzELP5tamflarJmh48+9UQ99qSPF1DWzczFgSUeM3TiQ10DtPHpQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU2PR04MB8566
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Drop 'and' which looks like unnecessary.
+The load_rsc_table was removed since the
+commit c1d35c1ab424 ("remoteproc: Rename "load_rsc_table" to "parse_fw"")
+but got added back again by mistake in the below commit:
+commit b1a17513a2d6 ("remoteproc: add vendor resources handling").
 
-Fixes: 73516a33588c ("remoteproc: Add elf helpers to access elf64 and elf32 fields")
+The patch fixed a small code indent issue which not worth
+a separate patch.
+
+Fixes: b1a17513a2d6 ("remoteproc: add vendor resources handling")
 Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
 ---
- drivers/remoteproc/remoteproc_elf_helpers.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ include/linux/remoteproc.h | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/remoteproc/remoteproc_elf_helpers.h b/drivers/remoteproc/remoteproc_elf_helpers.h
-index 26404e68e17a..e6de53a5000c 100644
---- a/drivers/remoteproc/remoteproc_elf_helpers.h
-+++ b/drivers/remoteproc/remoteproc_elf_helpers.h
-@@ -15,7 +15,7 @@
-  * fw_elf_get_class - Get elf class
-  * @fw: the ELF firmware image
-  *
-- * Note that we use and elf32_hdr to access the class since the start of the
-+ * Note that we use elf32_hdr to access the class since the start of the
-  * struct is the same for both elf class
-  *
-  * Return: elf class of the firmware
+diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+index a5b37bc10865..83c09ac36b13 100644
+--- a/include/linux/remoteproc.h
++++ b/include/linux/remoteproc.h
+@@ -369,9 +369,8 @@ enum rsc_handling_status {
+  * @da_to_va:	optional platform hook to perform address translations
+  * @parse_fw:	parse firmware to extract information (e.g. resource table)
+  * @handle_rsc:	optional platform hook to handle vendor resources. Should return
+- * RSC_HANDLED if resource was handled, RSC_IGNORED if not handled and a
+- * negative value on error
+- * @load_rsc_table:	load resource table from firmware image
++ *		RSC_HANDLED if resource was handled, RSC_IGNORED if not handled
++ *		and a negative value on error
+  * @find_loaded_rsc_table: find the loaded resource table from firmware image
+  * @get_loaded_rsc_table: get resource table installed in memory
+  *			  by external entity
 -- 
 2.25.1
 
