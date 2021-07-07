@@ -2,133 +2,105 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1F6DC07E9C
-	for <linux-remoteproc@archiver.kernel.org>; Wed,  7 Jul 2021 15:56:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15E48C07E95
+	for <linux-remoteproc@archiver.kernel.org>; Wed,  7 Jul 2021 17:55:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B388B61CC3
-	for <linux-remoteproc@archiver.kernel.org>; Wed,  7 Jul 2021 15:56:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E76CE61CC8
+	for <linux-remoteproc@archiver.kernel.org>; Wed,  7 Jul 2021 17:55:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231685AbhGGP7W (ORCPT
+        id S230184AbhGGR6X (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 7 Jul 2021 11:59:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60230 "EHLO
+        Wed, 7 Jul 2021 13:58:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58786 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232066AbhGGP7W (ORCPT
+        with ESMTP id S230164AbhGGR6X (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 7 Jul 2021 11:59:22 -0400
-Received: from mail-ot1-x332.google.com (mail-ot1-x332.google.com [IPv6:2607:f8b0:4864:20::332])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CA63DC06175F
-        for <linux-remoteproc@vger.kernel.org>; Wed,  7 Jul 2021 08:56:40 -0700 (PDT)
-Received: by mail-ot1-x332.google.com with SMTP id n99-20020a9d206c0000b029045d4f996e62so2694244ota.4
-        for <linux-remoteproc@vger.kernel.org>; Wed, 07 Jul 2021 08:56:40 -0700 (PDT)
+        Wed, 7 Jul 2021 13:58:23 -0400
+Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EB123C06175F
+        for <linux-remoteproc@vger.kernel.org>; Wed,  7 Jul 2021 10:55:41 -0700 (PDT)
+Received: by mail-lf1-x132.google.com with SMTP id f13so6097198lfh.6
+        for <linux-remoteproc@vger.kernel.org>; Wed, 07 Jul 2021 10:55:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=WClwSt7qahvqLc8S6VDs1WktQFeBcnd4I5Z/KAvSJ6Q=;
-        b=GyPnJFzj+FIqG12dqeMSz1D9H82hgXeeY6o8amJ/3QfGWrTW4vSslOfhmU4s265og4
-         4a/phVm7uLymyPOgZEKrAo2pPTxZY6KiABRTT2K2Oe5eBRkr13AjCK0pJbiCNf1mxUf8
-         K11PfK+ll5Wy5zOuGyUA2tNVUdswfBDDzCPMVy7clx4q4/HT71MYtctP1wx116Lr/mbS
-         1RLYuxFd7FEDvT1nfoSi6tSYf/KSTz/skS0EUZtfgnXMIva00UiLerPqpuCV+IuHeDyU
-         +OzLVycLqe0kBai9Lyf3DoVqTJ/eNbhNzlenLDXJWml9pZb6MlCatuNQ63CG2liw/PLe
-         RhSQ==
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=myWem3gj5bW37MhHpnhzxGgmeTIT4Kkz6D1nIRabDn0=;
+        b=DXGPF2TFMsvSQq0ntWuzUOHIBPJp3QRnEtFsVeaIclMv3ZA9GvuApeEj+dgcic88K5
+         eWEvHC/h9/HamFDX4w3DdQUWP1agT7itBBVXbIWwVxwhOUx6q7LQGPviiBigvG4HoXPQ
+         kOMSLfcfS3PvB44BReVGVxSIITsfad+UnKbmk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=WClwSt7qahvqLc8S6VDs1WktQFeBcnd4I5Z/KAvSJ6Q=;
-        b=qbHp3sC7WdesY5JTA0PYwfbyU8NzX3EtP2AwIrO3gDNxgTC011ibdjHevLBH8J08un
-         LU8Q48aIkftzpIDtC63P9ZELeX19sQyfTTER5PTy895qCW53nhqKzHpZFmCpqPZgT5ZF
-         +SLb3jyTXa3A6UZ0XjZKKlA9D67FG7G7GtDBkuO3C6ji0v1VyqDGrnEctqUuUA3IlUqh
-         sEKwn9XoWn02rGG2WxAF6zKXDNjgKQIiWqaFcSE+XAaLbk9ZbUs2OqanTJF+ne5LeYIp
-         PKuDt6A1HwB/O0doSCgCc6w8EdH+y/Bw7x27L/3fSJc5jCcRf/yPEG/wTqPagZXs460D
-         Xluw==
-X-Gm-Message-State: AOAM533Km9AlRJldC65LjhswIx+qiOPQXLuE0PVS6t1Q+HPYwUEJoEFx
-        7Kob0RlUnmTGfMgSNMfYZ9UywQ==
-X-Google-Smtp-Source: ABdhPJw0G2ZxbJQpJmRGIvwWpv4+5espexq+AeG21C4eJk5hnEYITZ0VBJFViyGAMDy2IV7iwV+cwQ==
-X-Received: by 2002:a9d:6c07:: with SMTP id f7mr14025619otq.50.1625673400158;
-        Wed, 07 Jul 2021 08:56:40 -0700 (PDT)
-Received: from yoga (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
-        by smtp.gmail.com with ESMTPSA id o20sm3504649ook.40.2021.07.07.08.56.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 Jul 2021 08:56:39 -0700 (PDT)
-Date:   Wed, 7 Jul 2021 10:56:37 -0500
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Lee Jones <lee.jones@linaro.org>
-Cc:     Deepak Kumar Singh <deesin@codeaurora.org>,
-        Chris Lew <clew@codeaurora.org>,
-        Mathieu <mathieu.poirier@linaro.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        linux-remoteproc@vger.kernel.org,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH V7 0/4] Signaling api support in glink/rpmsg clients
-Message-ID: <YOXOtRSpKO5WdlHZ@yoga>
-References: <1599063847-2347-1-git-send-email-deesin@codeaurora.org>
- <CAF2Aj3gAqjVbcMayR7yYBb6UxY5ekC9gdhpmNdz1-zLwo10yLw@mail.gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=myWem3gj5bW37MhHpnhzxGgmeTIT4Kkz6D1nIRabDn0=;
+        b=PMfb6kr/GSn6B+UCwu/ScRoY4rlQWMAAe18IgLeijVoWrTznXtlYDYxMB456+0PW8s
+         siHd+EXubFUzH8+z3dgQg/jaZZ/k6UPJj/726xYL1efggrTJ7EKfE8jQnnukhcADx2qu
+         +4wmLpLmWu8oVig7mzMsViojeOQp6A/eM2mGEsAlPb6MO3foX9diZ4L/pzbtLiXP/h28
+         YaBn7Etqb32iQLU+sBNnUrRgYaMLb5gG2gm7ez/vuRzsbQRwpH8dkKddIAUQJ7Eo/bSv
+         RVmQCgb4Juo2uxIVpLUc1O/Qxi26raueUnH8anxg+WuvdHNCtgoG9PxKz+rVGkDd4trw
+         KaFw==
+X-Gm-Message-State: AOAM530/J79HLA1U/5rkvQVrBKgbnWjsQEtqow4DcaRIu9gZtXIn9/j7
+        9ZoIoawXatiUyMgfCs9PlMj607GVq6kc4xoa
+X-Google-Smtp-Source: ABdhPJxk2Sr5w7zDso7bjgAKJ+APzBSrU2A8l6LR9CXkHUNcvOcv+f1pC9g0ZkomffzxpkgZ3ZPqRw==
+X-Received: by 2002:a2e:9d55:: with SMTP id y21mr19973368ljj.79.1625680540186;
+        Wed, 07 Jul 2021 10:55:40 -0700 (PDT)
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com. [209.85.167.47])
+        by smtp.gmail.com with ESMTPSA id t30sm1756527lfg.289.2021.07.07.10.55.38
+        for <linux-remoteproc@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 07 Jul 2021 10:55:39 -0700 (PDT)
+Received: by mail-lf1-f47.google.com with SMTP id c28so6065733lfp.11
+        for <linux-remoteproc@vger.kernel.org>; Wed, 07 Jul 2021 10:55:38 -0700 (PDT)
+X-Received: by 2002:ac2:4903:: with SMTP id n3mr19512860lfi.487.1625680538298;
+ Wed, 07 Jul 2021 10:55:38 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAF2Aj3gAqjVbcMayR7yYBb6UxY5ekC9gdhpmNdz1-zLwo10yLw@mail.gmail.com>
+References: <20210706210228.1229484-1-bjorn.andersson@linaro.org>
+In-Reply-To: <20210706210228.1229484-1-bjorn.andersson@linaro.org>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Wed, 7 Jul 2021 10:55:22 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wiXHZ=v4_HVL5TyP9DaHDd7Xxb8hiXjTQi1eDXOA_XRMw@mail.gmail.com>
+Message-ID: <CAHk-=wiXHZ=v4_HVL5TyP9DaHDd7Xxb8hiXjTQi1eDXOA_XRMw@mail.gmail.com>
+Subject: Re: [GIT PULL] remoteproc updates for v5.14
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Peng Fan <peng.fan@nxp.com>, Suman Anna <s-anna@ti.com>,
+        Siddharth Gupta <sidgup@codeaurora.org>,
+        Stephan Gerhold <stephan@gerhold.net>,
+        Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        Yassine Oudjana <y.oudjana@protonmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Tue 06 Jul 10:27 CDT 2021, Lee Jones wrote:
+On Tue, Jul 6, 2021 at 2:02 PM Bjorn Andersson
+<bjorn.andersson@linaro.org> wrote:
+>
+> Suman Anna (6):
+>       remoteproc: Add kernel-doc comment for is_iomem
+>       remoteproc: Fix various kernel-doc warnings
+>       remoteproc: k3-r5: Extend support to R5F clusters on AM64x SoCs
+>       dt-bindings: remoteproc: qcom: pas: Fix indentation warnings
+>       dt-bindings: remoteproc: pru: Update bindings for K3 AM64x SoCs
+>       remoteproc: pru: Add support for various PRU cores on K3 AM64x SoCs
 
-> On Wed, 2 Sept 2020 at 17:25, Deepak Kumar Singh <deesin@codeaurora.org>
-> wrote:
-> 
-> > Change from version 6
-> > In last series(v6) i had put wrong version(v5) for cover note.
-> > Which led to confusion for patch set series.
-> >
-> > In this series i have updated the label for cover letter(v7).
-> > There is no change in patches. Only cover note label is updated.
-> >
-> > Change from version 5
-> > [V6,4/4] rpmsg: char: Add signal callback and POLLPRI support
-> > Updated for sparse warning. Replaced POLLPRI => EPOLLPRI to fix
-> > warning.
-> >
-> > Change from version 4
-> > I am taking over these patches from aneela@codeaurora.org
-> > Fixed all the trivial review comments.
-> >
-> > Signal conversion to and from native signal as done in patch V4,2/4
-> > is intentional.
-> >
-> > Arun Kumar Neelakantam (3):
-> >   rpmsg: glink: Add support to handle signals command
-> >   rpmsg: char: Add TIOCMGET/TIOCMSET ioctl support
-> >   rpmsg: char: Add signal callback and POLLPRI support
-> >
-> > Deepak Kumar Singh (1):
-> >   rpmsg: core: Add signal API support
-> >
-> >  drivers/rpmsg/qcom_glink_native.c | 125
-> > ++++++++++++++++++++++++++++++++++++++
-> >  drivers/rpmsg/rpmsg_char.c        |  76 ++++++++++++++++++++++-
-> >  drivers/rpmsg/rpmsg_core.c        |  40 ++++++++++++
-> >  drivers/rpmsg/rpmsg_internal.h    |   5 ++
-> >  include/linux/rpmsg.h             |  27 ++++++++
-> >  5 files changed, 270 insertions(+), 3 deletions(-)
-> >
-> > --
-> > The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-> > a Linux Foundation Collaborative Project
-> >
-> >
-> Any idea why this died at v7?
-> 
+Hmm. I see an additional commit
 
-I had some concerns about the actual users of this and wanted the API to
-be more generic. Deepak brought this up again recently and I think we
-have a common understanding of how v8 should look like.
+      dt-bindings: remoteproc: k3-r5f: Update bindings for AM64x SoCs
 
-Regards,
-Bjorn
+and the diffstat I see differs by that extra DT binding too.
+
+If you end up adding commits to the end and updating the tag, please
+just let me know, so that I don't go "Hmm, this doesn't match the pull
+request" and have to go dig around what the difference is.
+
+              Linus
