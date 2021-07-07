@@ -6,65 +6,65 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
 	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15E48C07E95
-	for <linux-remoteproc@archiver.kernel.org>; Wed,  7 Jul 2021 17:55:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 637E4C07E95
+	for <linux-remoteproc@archiver.kernel.org>; Wed,  7 Jul 2021 17:57:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E76CE61CC8
-	for <linux-remoteproc@archiver.kernel.org>; Wed,  7 Jul 2021 17:55:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3C5F561CCA
+	for <linux-remoteproc@archiver.kernel.org>; Wed,  7 Jul 2021 17:57:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230184AbhGGR6X (ORCPT
+        id S230425AbhGGSAV (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 7 Jul 2021 13:58:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58786 "EHLO
+        Wed, 7 Jul 2021 14:00:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59216 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230164AbhGGR6X (ORCPT
+        with ESMTP id S230266AbhGGSAU (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 7 Jul 2021 13:58:23 -0400
-Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EB123C06175F
-        for <linux-remoteproc@vger.kernel.org>; Wed,  7 Jul 2021 10:55:41 -0700 (PDT)
-Received: by mail-lf1-x132.google.com with SMTP id f13so6097198lfh.6
-        for <linux-remoteproc@vger.kernel.org>; Wed, 07 Jul 2021 10:55:41 -0700 (PDT)
+        Wed, 7 Jul 2021 14:00:20 -0400
+Received: from mail-lf1-x136.google.com (mail-lf1-x136.google.com [IPv6:2a00:1450:4864:20::136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 02A08C06175F
+        for <linux-remoteproc@vger.kernel.org>; Wed,  7 Jul 2021 10:57:40 -0700 (PDT)
+Received: by mail-lf1-x136.google.com with SMTP id n14so6094076lfu.8
+        for <linux-remoteproc@vger.kernel.org>; Wed, 07 Jul 2021 10:57:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linux-foundation.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=myWem3gj5bW37MhHpnhzxGgmeTIT4Kkz6D1nIRabDn0=;
-        b=DXGPF2TFMsvSQq0ntWuzUOHIBPJp3QRnEtFsVeaIclMv3ZA9GvuApeEj+dgcic88K5
-         eWEvHC/h9/HamFDX4w3DdQUWP1agT7itBBVXbIWwVxwhOUx6q7LQGPviiBigvG4HoXPQ
-         kOMSLfcfS3PvB44BReVGVxSIITsfad+UnKbmk=
+        bh=owuNtJdNSbfSyKHzAYt3EuBOjT8SqaPcQMTJvlBjquc=;
+        b=f3Iikb/gIIimF7XR7NPHnX5JqGIGjw2miQlyj0BhoTBUO9gXUNLjfVkeEG+cvlEq8I
+         qeFiB82EuqkUsiQ0TlQ6wl9YXlvTKz1cE/XY6i6gEXG8RXRo2fe6HgrcZSqTxl5qbNpM
+         zeO0lYj9zB1nyfSmm8Mq+N/WlUIExGnVK1Aes=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=myWem3gj5bW37MhHpnhzxGgmeTIT4Kkz6D1nIRabDn0=;
-        b=PMfb6kr/GSn6B+UCwu/ScRoY4rlQWMAAe18IgLeijVoWrTznXtlYDYxMB456+0PW8s
-         siHd+EXubFUzH8+z3dgQg/jaZZ/k6UPJj/726xYL1efggrTJ7EKfE8jQnnukhcADx2qu
-         +4wmLpLmWu8oVig7mzMsViojeOQp6A/eM2mGEsAlPb6MO3foX9diZ4L/pzbtLiXP/h28
-         YaBn7Etqb32iQLU+sBNnUrRgYaMLb5gG2gm7ez/vuRzsbQRwpH8dkKddIAUQJ7Eo/bSv
-         RVmQCgb4Juo2uxIVpLUc1O/Qxi26raueUnH8anxg+WuvdHNCtgoG9PxKz+rVGkDd4trw
-         KaFw==
-X-Gm-Message-State: AOAM530/J79HLA1U/5rkvQVrBKgbnWjsQEtqow4DcaRIu9gZtXIn9/j7
-        9ZoIoawXatiUyMgfCs9PlMj607GVq6kc4xoa
-X-Google-Smtp-Source: ABdhPJxk2Sr5w7zDso7bjgAKJ+APzBSrU2A8l6LR9CXkHUNcvOcv+f1pC9g0ZkomffzxpkgZ3ZPqRw==
-X-Received: by 2002:a2e:9d55:: with SMTP id y21mr19973368ljj.79.1625680540186;
-        Wed, 07 Jul 2021 10:55:40 -0700 (PDT)
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com. [209.85.167.47])
-        by smtp.gmail.com with ESMTPSA id t30sm1756527lfg.289.2021.07.07.10.55.38
+        bh=owuNtJdNSbfSyKHzAYt3EuBOjT8SqaPcQMTJvlBjquc=;
+        b=DzCxTfr9UbRLrwcITQQvHLgJz4NLLQSEGBovXKclPSXc9fqr6ama1tQUgT/TtnTRCe
+         0Z4BZB2Skp6lnP27uG5lgMBfjI8QhX1hModaVEtjnh/0xxwJjz9JL576S13WxA/r5Wgp
+         acubllair74gQ+WgvwSAICh1tET/xUnuinDeDwTEuvypVHFB9ol4AoZNddI4TseCL49F
+         hOnw86rpAqWNjrLjB18Dl6bFmpjtL87JYRwrypwVR4B9pkdbWp6WMtRq4LYcnOar7vnr
+         7aWVoW9y8Nr6BM5VtgnluYW2bunzNAOSXahtS9yfBbDAx8YtDq9pU9uw4inpceq9yIAt
+         EmXw==
+X-Gm-Message-State: AOAM530R/RBUR6Ogu4XAEOZv6wKPZ6OHhj9Sv4Fvk/h00TYlLccwERz6
+        C/uOGiruKfA+R6fQKSAguGX94XmLdv85FWFM
+X-Google-Smtp-Source: ABdhPJyGsoVSuPQExYxeL4brB20TelwHWPPTWij0hTlPWeF06vLBOhfAR1SAq6tsdlHQpP7OgG9KpA==
+X-Received: by 2002:a2e:a7c7:: with SMTP id x7mr19498216ljp.442.1625680657802;
+        Wed, 07 Jul 2021 10:57:37 -0700 (PDT)
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com. [209.85.167.50])
+        by smtp.gmail.com with ESMTPSA id f23sm346751lfk.290.2021.07.07.10.57.37
         for <linux-remoteproc@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 07 Jul 2021 10:55:39 -0700 (PDT)
-Received: by mail-lf1-f47.google.com with SMTP id c28so6065733lfp.11
-        for <linux-remoteproc@vger.kernel.org>; Wed, 07 Jul 2021 10:55:38 -0700 (PDT)
-X-Received: by 2002:ac2:4903:: with SMTP id n3mr19512860lfi.487.1625680538298;
- Wed, 07 Jul 2021 10:55:38 -0700 (PDT)
+        Wed, 07 Jul 2021 10:57:37 -0700 (PDT)
+Received: by mail-lf1-f50.google.com with SMTP id a18so6067086lfs.10
+        for <linux-remoteproc@vger.kernel.org>; Wed, 07 Jul 2021 10:57:37 -0700 (PDT)
+X-Received: by 2002:a2e:a48c:: with SMTP id h12mr7468935lji.61.1625680656897;
+ Wed, 07 Jul 2021 10:57:36 -0700 (PDT)
 MIME-Version: 1.0
-References: <20210706210228.1229484-1-bjorn.andersson@linaro.org>
-In-Reply-To: <20210706210228.1229484-1-bjorn.andersson@linaro.org>
+References: <20210706210228.1229484-1-bjorn.andersson@linaro.org> <CAHk-=wiXHZ=v4_HVL5TyP9DaHDd7Xxb8hiXjTQi1eDXOA_XRMw@mail.gmail.com>
+In-Reply-To: <CAHk-=wiXHZ=v4_HVL5TyP9DaHDd7Xxb8hiXjTQi1eDXOA_XRMw@mail.gmail.com>
 From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Wed, 7 Jul 2021 10:55:22 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wiXHZ=v4_HVL5TyP9DaHDd7Xxb8hiXjTQi1eDXOA_XRMw@mail.gmail.com>
-Message-ID: <CAHk-=wiXHZ=v4_HVL5TyP9DaHDd7Xxb8hiXjTQi1eDXOA_XRMw@mail.gmail.com>
+Date:   Wed, 7 Jul 2021 10:57:21 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wiZradn2SLbZcY=sALkhdat-z=Dc07ZuDca+PWjK0mJZg@mail.gmail.com>
+Message-ID: <CAHk-=wiZradn2SLbZcY=sALkhdat-z=Dc07ZuDca+PWjK0mJZg@mail.gmail.com>
 Subject: Re: [GIT PULL] remoteproc updates for v5.14
 To:     Bjorn Andersson <bjorn.andersson@linaro.org>
 Cc:     Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org,
@@ -82,25 +82,13 @@ Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Tue, Jul 6, 2021 at 2:02 PM Bjorn Andersson
-<bjorn.andersson@linaro.org> wrote:
+On Wed, Jul 7, 2021 at 10:55 AM Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
 >
-> Suman Anna (6):
->       remoteproc: Add kernel-doc comment for is_iomem
->       remoteproc: Fix various kernel-doc warnings
->       remoteproc: k3-r5: Extend support to R5F clusters on AM64x SoCs
->       dt-bindings: remoteproc: qcom: pas: Fix indentation warnings
->       dt-bindings: remoteproc: pru: Update bindings for K3 AM64x SoCs
->       remoteproc: pru: Add support for various PRU cores on K3 AM64x SoCs
+> If you end up adding commits to the end and updating the tag [..]
 
-Hmm. I see an additional commit
+Actually, that's not what happened, the extra commit is in a separate
+branch that got merged early. So I'm not sure why your diffstat and
+shortlog were incorrect.
 
-      dt-bindings: remoteproc: k3-r5f: Update bindings for AM64x SoCs
-
-and the diffstat I see differs by that extra DT binding too.
-
-If you end up adding commits to the end and updating the tag, please
-just let me know, so that I don't go "Hmm, this doesn't match the pull
-request" and have to go dig around what the difference is.
-
-              Linus
+          Linus
