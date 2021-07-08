@@ -2,246 +2,487 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.0 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-17.0 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1ABA9C11F6C
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  8 Jul 2021 12:41:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5214C07E99
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  8 Jul 2021 16:58:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F38E861926
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  8 Jul 2021 12:41:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A11A461464
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  8 Jul 2021 16:58:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230417AbhGHMoa (ORCPT
+        id S229830AbhGHRB1 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 8 Jul 2021 08:44:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53056 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231587AbhGHMoX (ORCPT
-        <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 8 Jul 2021 08:44:23 -0400
-Received: from mail-vs1-xe2f.google.com (mail-vs1-xe2f.google.com [IPv6:2607:f8b0:4864:20::e2f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C4FD8C0613E3
-        for <linux-remoteproc@vger.kernel.org>; Thu,  8 Jul 2021 05:41:40 -0700 (PDT)
-Received: by mail-vs1-xe2f.google.com with SMTP id g25so3516375vss.3
-        for <linux-remoteproc@vger.kernel.org>; Thu, 08 Jul 2021 05:41:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=hP9H7HVTE7TFrRNTl1vyqWVVeZcuqXBCZg0bGqclL/A=;
-        b=VetX2Cfr8bdRNaZiWLEm04u6bqZW3l6DI4CAN74JIY7k4z1gUX2WPAhVDnzm350lf2
-         zN9Z12JQmbzlk/BWNUXvjVAbpB66ZXuvK3SPb444QQ5diXQOytBY51L2/oTaoUD9VeXU
-         uFurAnxdtCpnicZBLB0yD9ojUwv6W/qtm1PvBS9AFUFJNPr3tKxeC4wQWDvFkNeWRoRf
-         7SjXn45LyDiaoeLgbbyRwVPp/zZWqO3qYud0+Xn/514eUefuiFS0gjROioJ7tCP2C/ZN
-         ZUSLS7lmtDXFsaxdqMahs7f08oqXmzo9A5DfBGmAWg3PByPV9/9CFdzFbNZ8GtPMsFJE
-         z42g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=hP9H7HVTE7TFrRNTl1vyqWVVeZcuqXBCZg0bGqclL/A=;
-        b=aMfK5ggaOzZ8vG/bwdd89au3qBKEAq9pAFYLfbymd1eKiXAdLXrAIM6nIAxCDR01jO
-         pd6KkPWmMIrR3aS85MgM3WCqmzi3oMsD3z2RDpyPXgPkml0xAHT3Gf5ZpZVmsiboCk0T
-         jnxrKR4H4FBXKbv2bKN/ed23XdbPbpV3+cItul+6nqACMCin4Z2o7ifLDhAGyZU60P0K
-         oyAmD9tTsm0p25vgrMji/2bdQaNu3h0ayjIN7JvDZItpBfi8vNGcBPbmLP3WMwkMJDq/
-         UCCN90RYWgbqxaZXM0KF/HQGg0SydGOOn6xArWkMgFPgIbDvKQ+HaXe8tl7grjrFXBjW
-         z3xQ==
-X-Gm-Message-State: AOAM533DtolLvmxnSx9Ujpp1Chk4e/XYRqSyx/hn5Hc+P7YiREQ6vCED
-        +KrdXKL1Jjt7krEiKA4FrpD6OkNDCElfAPFehhRDfA==
-X-Google-Smtp-Source: ABdhPJywz4fR2V+V+6/E9OWxEVi9/b58VFa4IZ2LlJTPpT0B9SRAdSG9PM7u1rPMHG2ZlSabjmUDzfVjnsqdUEe3bFI=
-X-Received: by 2002:a67:8783:: with SMTP id j125mr27888650vsd.42.1625748098931;
- Thu, 08 Jul 2021 05:41:38 -0700 (PDT)
-MIME-Version: 1.0
-References: <20210706154803.1631813-1-u.kleine-koenig@pengutronix.de> <20210706154803.1631813-5-u.kleine-koenig@pengutronix.de>
-In-Reply-To: <20210706154803.1631813-5-u.kleine-koenig@pengutronix.de>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Thu, 8 Jul 2021 14:41:02 +0200
-Message-ID: <CAPDyKFo0zuooWAkuR=BcsvcJ2pmSrcEoBhuC8+ne18GQphyPHA@mail.gmail.com>
-Subject: Re: [PATCH v2 4/4] bus: Make remove callback return void
-To:     =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Cornelia Huck <cohuck@redhat.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
-        Helge Deller <deller@gmx.de>,
-        Geoff Levand <geoff@infradead.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>,
-        William Breathitt Gray <vilhelm.gray@gmail.com>,
-        =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Alison Schofield <alison.schofield@intel.com>,
-        Vishal Verma <vishal.l.verma@intel.com>,
-        Ira Weiny <ira.weiny@intel.com>,
-        Ben Widawsky <ben.widawsky@intel.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Jiang <dave.jiang@intel.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        Stefan Richter <stefanr@s5r6.in-berlin.de>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Cristian Marussi <cristian.marussi@arm.com>,
-        Wu Hao <hao.wu@intel.com>, Tom Rix <trix@redhat.com>,
-        Moritz Fischer <mdf@kernel.org>,
-        Jiri Kosina <jikos@kernel.org>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Wolfram Sang <wsa@kernel.org>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Samuel Iglesias Gonsalvez <siglesias@igalia.com>,
-        Jens Taprogge <jens.taprogge@taprogge.org>,
-        Johannes Thumshirn <morbidrsa@gmail.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Maxim Levitsky <maximlevitsky@gmail.com>,
-        Alex Dubov <oakad@yahoo.com>, Lee Jones <lee.jones@linaro.org>,
-        Tomas Winkler <tomas.winkler@intel.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Jakub Kicinski <kuba@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jon Mason <jdmason@kudzu.us>, Allen Hubbe <allenbh@gmail.com>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        Maximilian Luz <luzmaximilian@gmail.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Mark Gross <mgross@linux.intel.com>,
-        Matt Porter <mporter@kernel.crashing.org>,
-        Alexandre Bounine <alex.bou9@gmail.com>,
-        Ohad Ben-Cohen <ohad@wizery.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Thorsten Scherer <t.scherer@eckelmann.de>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Mark Brown <broonie@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>, Michael Buesch <m@bues.ch>,
-        Sven Van Asbroeck <TheSven73@gmail.com>,
-        Johan Hovold <johan@kernel.org>, Alex Elder <elder@kernel.org>,
-        Andreas Noever <andreas.noever@gmail.com>,
-        Michael Jamet <michael.jamet@intel.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Yehezkel Bernat <YehezkelShB@gmail.com>,
-        Rob Herring <robh@kernel.org>,
-        Jiri Slaby <jirislaby@kernel.org>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
-        Kirti Wankhede <kwankhede@nvidia.com>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Martyn Welch <martyn@welchs.me.uk>,
-        Manohar Vanga <manohar.vanga@gmail.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Juergen Gross <jgross@suse.com>,
-        Stefano Stabellini <sstabellini@kernel.org>,
-        Johannes Berg <johannes@sipsolutions.net>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>, Marc Zyngier <maz@kernel.org>,
-        Tyrel Datwyler <tyreld@linux.ibm.com>,
-        Vladimir Zapolskiy <vz@mleia.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Qinglang Miao <miaoqinglang@huawei.com>,
-        Alexey Kardashevskiy <aik@ozlabs.ru>,
-        Kai-Heng Feng <kai.heng.feng@canonical.com>,
-        Joey Pabalan <jpabalanb@gmail.com>,
-        =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali@kernel.org>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Frank Li <lznuaa@gmail.com>,
-        Mike Christie <michael.christie@oracle.com>,
-        Bodo Stroesser <bostroesser@gmail.com>,
-        Hannes Reinecke <hare@suse.de>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        SeongJae Park <sjpark@amazon.de>,
-        Julien Grall <jgrall@amazon.com>,
-        linux-arm-kernel@lists.infradead.org, linux-mips@vger.kernel.org,
-        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-acpi@vger.kernel.org, linux-wireless@vger.kernel.org,
-        linux-sunxi@lists.linux.dev, linux-cxl@vger.kernel.org,
-        nvdimm@lists.linux.dev, dmaengine@vger.kernel.org,
-        linux1394-devel@lists.sourceforge.net, linux-fpga@vger.kernel.org,
-        linux-input@vger.kernel.org, linux-hyperv@vger.kernel.org,
-        linux-i2c@vger.kernel.org, linux-i3c@lists.infradead.org,
-        industrypack-devel@lists.sourceforge.net,
-        linux-media@vger.kernel.org, linux-mmc@vger.kernel.org,
-        netdev@vger.kernel.org, linux-ntb@googlegroups.com,
-        linux-pci@vger.kernel.org, platform-driver-x86@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org, linux-scsi@vger.kernel.org,
-        alsa-devel@alsa-project.org, linux-arm-msm@vger.kernel.org,
-        linux-spi@vger.kernel.org, linux-staging@lists.linux.dev,
-        greybus-dev@lists.linaro.org, target-devel@vger.kernel.org,
-        linux-usb@vger.kernel.org, linux-serial@vger.kernel.org,
-        virtualization@lists.linux-foundation.org, kvm@vger.kernel.org,
-        xen-devel@lists.xenproject.org,
-        Russell King <rmk+kernel@armlinux.org.uk>,
-        Johannes Thumshirn <jth@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Thu, 8 Jul 2021 13:01:27 -0400
+Received: from m43-7.mailgun.net ([69.72.43.7]:29861 "EHLO m43-7.mailgun.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229533AbhGHRB1 (ORCPT <rfc822;linux-remoteproc@vger.kernel.org>);
+        Thu, 8 Jul 2021 13:01:27 -0400
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1625763525; h=References: In-Reply-To: Message-Id: Date:
+ Subject: Cc: To: From: Sender;
+ bh=nr6EchWQ0MZ4mkTndXZZR4s0j+FuoSAFsYfsfFlI2ME=; b=vSA+LXkeHzpGUBZFqadOWL8bbedCMwRtbPVtCwV6PSqU9VnXIm0qxDeIvae/zcLpCoZyqlum
+ IlC/na6ZFjW2mt+OPCS1/t5sh8AMkxld+S8A7GR4dd8fL9qiDc1KfKjfYtiauqp46vEYwPoH
+ wz+w/VHSzZ6kdbFc1Ddnq75td+g=
+X-Mailgun-Sending-Ip: 69.72.43.7
+X-Mailgun-Sid: WyI4ZWZiZiIsICJsaW51eC1yZW1vdGVwcm9jQHZnZXIua2VybmVsLm9yZyIsICJiZTllNGEiXQ==
+Received: from smtp.codeaurora.org
+ (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
+ smtp-out-n02.prod.us-east-1.postgun.com with SMTP id
+ 60e72ec3ec0b18a745928b53 (version=TLS1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Thu, 08 Jul 2021 16:58:43
+ GMT
+Sender: deesin=codeaurora.org@mg.codeaurora.org
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 7143FC433D3; Thu,  8 Jul 2021 16:58:42 +0000 (UTC)
+Received: from deesin-linux.qualcomm.com (unknown [202.46.22.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: deesin)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 6D3A4C43460;
+        Thu,  8 Jul 2021 16:58:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 6D3A4C43460
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=deesin@codeaurora.org
+From:   Deepak Kumar Singh <deesin@codeaurora.org>
+To:     bjorn.andersson@linaro.org, clew@codeaurora.org
+Cc:     linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org,
+        Deepak Kumar Singh <deesin@codeaurora.org>,
+        Andy Gross <agross@kernel.org>
+Subject: [PATCH V2 1/2] soc: qcom: smem: map only partitions used by local HOST
+Date:   Thu,  8 Jul 2021 22:28:21 +0530
+Message-Id: <1625763502-22806-2-git-send-email-deesin@codeaurora.org>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1625763502-22806-1-git-send-email-deesin@codeaurora.org>
+References: <1625763502-22806-1-git-send-email-deesin@codeaurora.org>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Tue, 6 Jul 2021 at 17:53, Uwe Kleine-K=C3=B6nig
-<u.kleine-koenig@pengutronix.de> wrote:
->
-> The driver core ignores the return value of this callback because there
-> is only little it can do when a device disappears.
->
-> This is the final bit of a long lasting cleanup quest where several
-> buses were converted to also return void from their remove callback.
-> Additionally some resource leaks were fixed that were caused by drivers
-> returning an error code in the expectation that the driver won't go
-> away.
->
-> With struct bus_type::remove returning void it's prevented that newly
-> implemented buses return an ignored error code and so don't anticipate
-> wrong expectations for driver authors.
->
-> Acked-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk> (For ARM, Am=
-ba and related parts)
-> Acked-by: Mark Brown <broonie@kernel.org>
-> Acked-by: Chen-Yu Tsai <wens@csie.org> (for drivers/bus/sunxi-rsb.c)
-> Acked-by: Pali Roh=C3=A1r <pali@kernel.org>
-> Acked-by: Mauro Carvalho Chehab <mchehab@kernel.org> (for drivers/media)
-> Acked-by: Hans de Goede <hdegoede@redhat.com> (For drivers/platform)
-> Acked-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
-> Acked-By: Vinod Koul <vkoul@kernel.org>
-> Acked-by: Juergen Gross <jgross@suse.com> (For Xen)
-> Acked-by: Lee Jones <lee.jones@linaro.org> (For drivers/mfd)
-> Acked-by: Johannes Thumshirn <jth@kernel.org> (For drivers/mcb)
-> Acked-by: Johan Hovold <johan@kernel.org>
-> Acked-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org> (For drive=
-rs/slimbus)
-> Acked-by: Kirti Wankhede <kwankhede@nvidia.com> (For drivers/vfio)
-> Acked-by: Maximilian Luz <luzmaximilian@gmail.com>
-> Acked-by: Heikki Krogerus <heikki.krogerus@linux.intel.com> (For ulpi and=
- typec)
-> Acked-by: Samuel Iglesias Gons=C3=A1lvez <siglesias@igalia.com> (For ipac=
-k)
-> Reviewed-by: Tom Rix <trix@redhat.com> (For fpga)
-> Acked-by: Geoff Levand <geoff@infradead.org> (For ps3)
-> Signed-off-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pengutronix.de>
+SMEM driver is IO mapping complete region and CPU is doing a speculative
+read into a partition where local HOST does not have permission resulting
+in a NOC error.
 
-Acked-by: Ulf Hansson <ulf.hansson@linaro.org> # For MMC
+Map only those partitions which are accessibly to local HOST.
 
-[...]
+Signed-off-by: Deepak Kumar Singh <deesin@codeaurora.org>
+---
+ drivers/soc/qcom/smem.c | 208 ++++++++++++++++++++++++++++++++++++------------
+ 1 file changed, 157 insertions(+), 51 deletions(-)
 
-Kind regards
-Uffe
+diff --git a/drivers/soc/qcom/smem.c b/drivers/soc/qcom/smem.c
+index cc4e065..9404eec 100644
+--- a/drivers/soc/qcom/smem.c
++++ b/drivers/soc/qcom/smem.c
+@@ -194,6 +194,20 @@ struct smem_partition_header {
+ 	__le32 reserved[3];
+ };
+ 
++/**
++ * struct smem_partition - describes smem partition
++ * @virt_base:	starting virtual address of partition
++ * @phys_base:	starting physical address of partition
++ * @cacheline:	alignment for "cached" entries
++ * @size:	size of partition
++ */
++struct smem_partition {
++	void __iomem *virt_base;
++	phys_addr_t phys_base;
++	size_t cacheline;
++	size_t size;
++};
++
+ static const u8 SMEM_PART_MAGIC[] = { 0x24, 0x50, 0x52, 0x54 };
+ 
+ /**
+@@ -249,11 +263,9 @@ struct smem_region {
+  * struct qcom_smem - device data for the smem device
+  * @dev:	device pointer
+  * @hwlock:	reference to a hwspinlock
+- * @global_partition:	pointer to global partition when in use
+- * @global_cacheline:	cacheline size for global partition
+- * @partitions:	list of pointers to partitions affecting the current
+- *		processor/host
+- * @cacheline:	list of cacheline sizes for each host
++ * @ptable: virtual base of partition table
++ * @global_partition: describes for global partition when in use
++ * @partitions: list of partitions of current processor/host
+  * @item_count: max accepted item number
+  * @socinfo:	platform device pointer
+  * @num_regions: number of @regions
+@@ -264,12 +276,11 @@ struct qcom_smem {
+ 
+ 	struct hwspinlock *hwlock;
+ 
+-	struct smem_partition_header *global_partition;
+-	size_t global_cacheline;
+-	struct smem_partition_header *partitions[SMEM_HOST_COUNT];
+-	size_t cacheline[SMEM_HOST_COUNT];
+ 	u32 item_count;
+ 	struct platform_device *socinfo;
++	struct smem_ptable *ptable;
++	struct smem_partition global_partition;
++	struct smem_partition partitions[SMEM_HOST_COUNT];
+ 
+ 	unsigned num_regions;
+ 	struct smem_region regions[];
+@@ -347,14 +358,17 @@ static struct qcom_smem *__smem;
+ #define HWSPINLOCK_TIMEOUT	1000
+ 
+ static int qcom_smem_alloc_private(struct qcom_smem *smem,
+-				   struct smem_partition_header *phdr,
++				   struct smem_partition *part,
+ 				   unsigned item,
+ 				   size_t size)
+ {
+ 	struct smem_private_entry *hdr, *end;
++	struct smem_partition_header *phdr;
+ 	size_t alloc_size;
+ 	void *cached;
+ 
++	phdr = part->virt_base;
++
+ 	hdr = phdr_to_first_uncached_entry(phdr);
+ 	end = phdr_to_last_uncached_entry(phdr);
+ 	cached = phdr_to_last_cached_entry(phdr);
+@@ -441,7 +455,7 @@ static int qcom_smem_alloc_global(struct qcom_smem *smem,
+  */
+ int qcom_smem_alloc(unsigned host, unsigned item, size_t size)
+ {
+-	struct smem_partition_header *phdr;
++	struct smem_partition *part;
+ 	unsigned long flags;
+ 	int ret;
+ 
+@@ -463,12 +477,12 @@ int qcom_smem_alloc(unsigned host, unsigned item, size_t size)
+ 	if (ret)
+ 		return ret;
+ 
+-	if (host < SMEM_HOST_COUNT && __smem->partitions[host]) {
+-		phdr = __smem->partitions[host];
+-		ret = qcom_smem_alloc_private(__smem, phdr, item, size);
+-	} else if (__smem->global_partition) {
+-		phdr = __smem->global_partition;
+-		ret = qcom_smem_alloc_private(__smem, phdr, item, size);
++	if (host < SMEM_HOST_COUNT && __smem->partitions[host].virt_base) {
++		part = &__smem->partitions[host];
++		ret = qcom_smem_alloc_private(__smem, part, item, size);
++	} else if (__smem->global_partition.virt_base) {
++		part = &__smem->global_partition;
++		ret = qcom_smem_alloc_private(__smem, part, item, size);
+ 	} else {
+ 		ret = qcom_smem_alloc_global(__smem, item, size);
+ 	}
+@@ -510,12 +524,14 @@ static void *qcom_smem_get_global(struct qcom_smem *smem,
+ }
+ 
+ static void *qcom_smem_get_private(struct qcom_smem *smem,
+-				   struct smem_partition_header *phdr,
+-				   size_t cacheline,
++				   struct smem_partition *part,
+ 				   unsigned item,
+ 				   size_t *size)
+ {
+ 	struct smem_private_entry *e, *end;
++	struct smem_partition_header *phdr;
++
++	phdr = part->virt_base;
+ 
+ 	e = phdr_to_first_uncached_entry(phdr);
+ 	end = phdr_to_last_uncached_entry(phdr);
+@@ -537,7 +553,7 @@ static void *qcom_smem_get_private(struct qcom_smem *smem,
+ 
+ 	/* Item was not found in the uncached list, search the cached list */
+ 
+-	e = phdr_to_first_cached_entry(phdr, cacheline);
++	e = phdr_to_first_cached_entry(phdr, part->cacheline);
+ 	end = phdr_to_last_cached_entry(phdr);
+ 
+ 	while (e > end) {
+@@ -552,7 +568,7 @@ static void *qcom_smem_get_private(struct qcom_smem *smem,
+ 			return cached_entry_to_item(e);
+ 		}
+ 
+-		e = cached_entry_next(e, cacheline);
++		e = cached_entry_next(e, part->cacheline);
+ 	}
+ 
+ 	return ERR_PTR(-ENOENT);
+@@ -575,9 +591,8 @@ static void *qcom_smem_get_private(struct qcom_smem *smem,
+  */
+ void *qcom_smem_get(unsigned host, unsigned item, size_t *size)
+ {
+-	struct smem_partition_header *phdr;
++	struct smem_partition *part;
+ 	unsigned long flags;
+-	size_t cacheln;
+ 	int ret;
+ 	void *ptr = ERR_PTR(-EPROBE_DEFER);
+ 
+@@ -593,14 +608,12 @@ void *qcom_smem_get(unsigned host, unsigned item, size_t *size)
+ 	if (ret)
+ 		return ERR_PTR(ret);
+ 
+-	if (host < SMEM_HOST_COUNT && __smem->partitions[host]) {
+-		phdr = __smem->partitions[host];
+-		cacheln = __smem->cacheline[host];
+-		ptr = qcom_smem_get_private(__smem, phdr, cacheln, item, size);
+-	} else if (__smem->global_partition) {
+-		phdr = __smem->global_partition;
+-		cacheln = __smem->global_cacheline;
+-		ptr = qcom_smem_get_private(__smem, phdr, cacheln, item, size);
++	if (host < SMEM_HOST_COUNT && __smem->partitions[host].virt_base) {
++		part = &__smem->partitions[host];
++		ptr = qcom_smem_get_private(__smem, part, item, size);
++	} else if (__smem->global_partition.virt_base) {
++		part = &__smem->global_partition;
++		ptr = qcom_smem_get_private(__smem, part, item, size);
+ 	} else {
+ 		ptr = qcom_smem_get_global(__smem, item, size);
+ 	}
+@@ -621,6 +634,7 @@ EXPORT_SYMBOL(qcom_smem_get);
+  */
+ int qcom_smem_get_free_space(unsigned host)
+ {
++	struct smem_partition *part;
+ 	struct smem_partition_header *phdr;
+ 	struct smem_header *header;
+ 	unsigned ret;
+@@ -628,12 +642,14 @@ int qcom_smem_get_free_space(unsigned host)
+ 	if (!__smem)
+ 		return -EPROBE_DEFER;
+ 
+-	if (host < SMEM_HOST_COUNT && __smem->partitions[host]) {
+-		phdr = __smem->partitions[host];
++	if (host < SMEM_HOST_COUNT && __smem->partitions[host].virt_base) {
++		part = &__smem->partitions[host];
++		phdr = part->virt_base;
+ 		ret = le32_to_cpu(phdr->offset_free_cached) -
+ 		      le32_to_cpu(phdr->offset_free_uncached);
+-	} else if (__smem->global_partition) {
+-		phdr = __smem->global_partition;
++	} else if (__smem->global_partition.virt_base) {
++		part = &__smem->global_partition;
++		phdr = part->virt_base;
+ 		ret = le32_to_cpu(phdr->offset_free_cached) -
+ 		      le32_to_cpu(phdr->offset_free_uncached);
+ 	} else {
+@@ -645,6 +661,11 @@ int qcom_smem_get_free_space(unsigned host)
+ }
+ EXPORT_SYMBOL(qcom_smem_get_free_space);
+ 
++static bool addr_in_range(void __iomem *base, size_t size, void *addr)
++{
++	return base && (addr >= base && addr < base + size);
++}
++
+ /**
+  * qcom_smem_virt_to_phys() - return the physical address associated
+  * with an smem item pointer (previously returned by qcom_smem_get()
+@@ -654,17 +675,36 @@ EXPORT_SYMBOL(qcom_smem_get_free_space);
+  */
+ phys_addr_t qcom_smem_virt_to_phys(void *p)
+ {
+-	unsigned i;
++	struct smem_partition *part;
++	struct smem_region *area;
++	u64 offset;
++	u32 i;
++
++	for (i = 0; i < SMEM_HOST_COUNT; i++) {
++		part = &__smem->partitions[i];
++
++		if (addr_in_range(part->virt_base, part->size, p)) {
++			offset = p - part->virt_base;
++
++			return (phys_addr_t)part->phys_base + offset;
++		}
++	}
++
++	part = &__smem->global_partition;
++
++	if (addr_in_range(part->virt_base, part->size, p)) {
++		offset = p - part->virt_base;
++
++		return (phys_addr_t)part->phys_base + offset;
++	}
+ 
+ 	for (i = 0; i < __smem->num_regions; i++) {
+-		struct smem_region *region = &__smem->regions[i];
++		area = &__smem->regions[i];
+ 
+-		if (p < region->virt_base)
+-			continue;
+-		if (p < region->virt_base + region->size) {
+-			u64 offset = p - region->virt_base;
++		if (addr_in_range(area->virt_base, area->size, p)) {
++			offset = p - area->virt_base;
+ 
+-			return (phys_addr_t)region->aux_base + offset;
++			return (phys_addr_t)area->aux_base + offset;
+ 		}
+ 	}
+ 
+@@ -688,7 +728,7 @@ static struct smem_ptable *qcom_smem_get_ptable(struct qcom_smem *smem)
+ 	struct smem_ptable *ptable;
+ 	u32 version;
+ 
+-	ptable = smem->regions[0].virt_base + smem->regions[0].size - SZ_4K;
++	ptable = smem->ptable;
+ 	if (memcmp(ptable->magic, SMEM_PTABLE_MAGIC, sizeof(ptable->magic)))
+ 		return ERR_PTR(-ENOENT);
+ 
+@@ -727,9 +767,14 @@ qcom_smem_partition_header(struct qcom_smem *smem,
+ 		struct smem_ptable_entry *entry, u16 host0, u16 host1)
+ {
+ 	struct smem_partition_header *header;
++	u32 phys_addr;
+ 	u32 size;
+ 
+-	header = smem->regions[0].virt_base + le32_to_cpu(entry->offset);
++	phys_addr = smem->regions[0].aux_base + le32_to_cpu(entry->offset);
++	header = devm_ioremap_wc(smem->dev, phys_addr, le32_to_cpu(entry->size));
++
++	if (!header)
++		return NULL;
+ 
+ 	if (memcmp(header->magic, SMEM_PART_MAGIC, sizeof(header->magic))) {
+ 		dev_err(smem->dev, "bad partition magic %4ph\n", header->magic);
+@@ -771,7 +816,7 @@ static int qcom_smem_set_global_partition(struct qcom_smem *smem)
+ 	bool found = false;
+ 	int i;
+ 
+-	if (smem->global_partition) {
++	if (smem->global_partition.virt_base) {
+ 		dev_err(smem->dev, "Already found the global partition\n");
+ 		return -EINVAL;
+ 	}
+@@ -806,8 +851,11 @@ static int qcom_smem_set_global_partition(struct qcom_smem *smem)
+ 	if (!header)
+ 		return -EINVAL;
+ 
+-	smem->global_partition = header;
+-	smem->global_cacheline = le32_to_cpu(entry->cacheline);
++	smem->global_partition.virt_base = (void __iomem *)header;
++	smem->global_partition.phys_base = smem->regions[0].aux_base +
++								le32_to_cpu(entry->offset);
++	smem->global_partition.size = le32_to_cpu(entry->size);
++	smem->global_partition.cacheline = le32_to_cpu(entry->cacheline);
+ 
+ 	return 0;
+ }
+@@ -847,7 +895,7 @@ qcom_smem_enumerate_partitions(struct qcom_smem *smem, u16 local_host)
+ 			return -EINVAL;
+ 		}
+ 
+-		if (smem->partitions[remote_host]) {
++		if (smem->partitions[remote_host].virt_base) {
+ 			dev_err(smem->dev, "duplicate host %hu\n", remote_host);
+ 			return -EINVAL;
+ 		}
+@@ -856,8 +904,11 @@ qcom_smem_enumerate_partitions(struct qcom_smem *smem, u16 local_host)
+ 		if (!header)
+ 			return -EINVAL;
+ 
+-		smem->partitions[remote_host] = header;
+-		smem->cacheline[remote_host] = le32_to_cpu(entry->cacheline);
++		smem->partitions[remote_host].virt_base = (void __iomem *)header;
++		smem->partitions[remote_host].phys_base = smem->regions[0].aux_base +
++										le32_to_cpu(entry->offset);
++		smem->partitions[remote_host].size = le32_to_cpu(entry->size);
++		smem->partitions[remote_host].cacheline = le32_to_cpu(entry->cacheline);
+ 	}
+ 
+ 	return 0;
+@@ -892,6 +943,58 @@ static int qcom_smem_map_memory(struct qcom_smem *smem, struct device *dev,
+ 	return 0;
+ }
+ 
++static int qcom_smem_map_toc(struct qcom_smem *smem, struct device *dev,
++				const char *name, int i)
++{
++	struct device_node *np;
++	struct resource r;
++	u32 ptable_start;
++	int ret;
++
++	np = of_parse_phandle(dev->of_node, name, 0);
++	if (!np) {
++		dev_err(dev, "No %s specified\n", name);
++		return -EINVAL;
++	}
++
++	ret = of_address_to_resource(np, 0, &r);
++	of_node_put(np);
++	if (ret)
++		return ret;
++
++	smem->regions[i].aux_base = (u32)r.start;
++	smem->regions[i].size = resource_size(&r);
++	/* map starting 4K for smem header */
++	smem->regions[i].virt_base = devm_ioremap_wc(dev, r.start, SZ_4K);
++	ptable_start = r.start + resource_size(&r) - SZ_4K;
++	/* map last 4k for toc */
++	smem->ptable = devm_ioremap_wc(dev, ptable_start, SZ_4K);
++
++	if (!smem->regions[i].virt_base || !smem->ptable)
++		return -ENOMEM;
++
++	return 0;
++}
++
++static int qcom_smem_map_global(struct qcom_smem *smem)
++{
++	struct smem_header *header;
++	u32 phys_addr;
++	u32 size;
++
++	phys_addr = smem->regions[0].aux_base;
++	header = smem->regions[0].virt_base;
++	size = header->available;
++
++	smem->regions[0].size = size;
++	smem->regions[0].virt_base = devm_ioremap_wc(smem->dev, phys_addr, size);
++
++	if (!smem->regions[0].virt_base)
++		return -ENOMEM;
++
++	return 0;
++}
++
+ static int qcom_smem_probe(struct platform_device *pdev)
+ {
+ 	struct smem_header *header;
+@@ -914,7 +1017,7 @@ static int qcom_smem_probe(struct platform_device *pdev)
+ 	smem->dev = &pdev->dev;
+ 	smem->num_regions = num_regions;
+ 
+-	ret = qcom_smem_map_memory(smem, &pdev->dev, "memory-region", 0);
++	ret = qcom_smem_map_toc(smem, &pdev->dev, "memory-region", 0);
+ 	if (ret)
+ 		return ret;
+ 
+@@ -930,6 +1033,8 @@ static int qcom_smem_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	version = qcom_smem_get_sbl_version(smem);
++	/* unmap smem header */
++	devm_iounmap(smem->dev, smem->regions[0].virt_base);
+ 	switch (version >> 16) {
+ 	case SMEM_GLOBAL_PART_VERSION:
+ 		ret = qcom_smem_set_global_partition(smem);
+@@ -938,6 +1043,7 @@ static int qcom_smem_probe(struct platform_device *pdev)
+ 		smem->item_count = qcom_smem_get_item_count(smem);
+ 		break;
+ 	case SMEM_GLOBAL_HEAP_VERSION:
++		qcom_smem_map_global(smem);
+ 		smem->item_count = SMEM_ITEM_COUNT;
+ 		break;
+ 	default:
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
+
