@@ -3,141 +3,245 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-11.0 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77C54C07E96
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  8 Jul 2021 11:20:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1ABA9C11F6C
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  8 Jul 2021 12:41:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 52F536161F
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  8 Jul 2021 11:20:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F38E861926
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  8 Jul 2021 12:41:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231559AbhGHLXW (ORCPT
+        id S230417AbhGHMoa (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 8 Jul 2021 07:23:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34706 "EHLO
+        Thu, 8 Jul 2021 08:44:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53056 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231540AbhGHLXW (ORCPT
+        with ESMTP id S231587AbhGHMoX (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 8 Jul 2021 07:23:22 -0400
-Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5EDF3C061574
-        for <linux-remoteproc@vger.kernel.org>; Thu,  8 Jul 2021 04:20:40 -0700 (PDT)
-Received: by mail-wm1-x335.google.com with SMTP id t14-20020a05600c198eb029020c8aac53d4so17836180wmq.1
-        for <linux-remoteproc@vger.kernel.org>; Thu, 08 Jul 2021 04:20:40 -0700 (PDT)
+        Thu, 8 Jul 2021 08:44:23 -0400
+Received: from mail-vs1-xe2f.google.com (mail-vs1-xe2f.google.com [IPv6:2607:f8b0:4864:20::e2f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C4FD8C0613E3
+        for <linux-remoteproc@vger.kernel.org>; Thu,  8 Jul 2021 05:41:40 -0700 (PDT)
+Received: by mail-vs1-xe2f.google.com with SMTP id g25so3516375vss.3
+        for <linux-remoteproc@vger.kernel.org>; Thu, 08 Jul 2021 05:41:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=rFpDh7TVWZtaM5cs5d5LHXdV3TqKZpl99EHToFRBjzg=;
-        b=Xnx0zHtsBOr98Vo5otxRILu0ikPe61GOmG7rqmRqh6XT1bOJdVJQUkn/kfK5NHZLFj
-         ILsIVMYUoB2BuY9g9N1vz7NeLQdZmo/8dRhc2KmGnt2tPFsdKhR2UhQtCAQ6M3/U66oq
-         3r4gTgizmGVOusPMoP4ysDG8SVE3/Byj0f1XW82bsvdXD32AjSTJ7garNje6lGn+zdRJ
-         XvHgLbHXZJ5NpA0RBUjadOXEZypLMHGHQXzj2TYzJqFoPWs3LQHc8tjnH9ooR2Jd/GH7
-         VdcpEIoZIEUZmshI80KVdwMJ/ldb6QXV/+8hZ5Ej5YcgQpeTreLwsO0dgLy6aRN7CpVs
-         aPBg==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=hP9H7HVTE7TFrRNTl1vyqWVVeZcuqXBCZg0bGqclL/A=;
+        b=VetX2Cfr8bdRNaZiWLEm04u6bqZW3l6DI4CAN74JIY7k4z1gUX2WPAhVDnzm350lf2
+         zN9Z12JQmbzlk/BWNUXvjVAbpB66ZXuvK3SPb444QQ5diXQOytBY51L2/oTaoUD9VeXU
+         uFurAnxdtCpnicZBLB0yD9ojUwv6W/qtm1PvBS9AFUFJNPr3tKxeC4wQWDvFkNeWRoRf
+         7SjXn45LyDiaoeLgbbyRwVPp/zZWqO3qYud0+Xn/514eUefuiFS0gjROioJ7tCP2C/ZN
+         ZUSLS7lmtDXFsaxdqMahs7f08oqXmzo9A5DfBGmAWg3PByPV9/9CFdzFbNZ8GtPMsFJE
+         z42g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=rFpDh7TVWZtaM5cs5d5LHXdV3TqKZpl99EHToFRBjzg=;
-        b=R9+PsTRzg2jch4Ftwm7k9ArMG5v4yy2NnNu3DMR3+GILexdjqXiH185pVIDvBTB45o
-         gJj0IPJxzw98bhugNqZgFhjY+wnWgYpvWZsTsPcw4qOZcWPLwLmrVeyRkP0HogiKH/SC
-         mvlv/AI/9j1w7sue3nMy/4RIaT8LgD+Rhu8GWolK0AML9LHfwlZGHITaAyHhVoZuOQnF
-         Vk+Zdc8tknbTE19jlHBtKYL0PcntbpcLCPE9Qv7g5Q4iihG0oTnUOk11xZynMmKpiIMj
-         X0VuBif8Tyl6CmThj8bwQpOeWumvojLxpV1IhOL3tOQIUW8+W+tpwPmxIa/TzsKD4iLS
-         SE1A==
-X-Gm-Message-State: AOAM532Obcuzyk1d5rGVBSfGZllickX6LC3Cq95wdVRf0j6tdE7rFYIO
-        s9/scZPnamr+bHCbepLNfsTTeQ==
-X-Google-Smtp-Source: ABdhPJx6exO8vO9udBHYfA8ebFe4eoju6SLYXTu4Sfdz7wzxhRRjMepfAj0J4wx5/njHb2XblKOFiw==
-X-Received: by 2002:a1c:4603:: with SMTP id t3mr2262634wma.178.1625743238929;
-        Thu, 08 Jul 2021 04:20:38 -0700 (PDT)
-Received: from google.com ([109.180.115.218])
-        by smtp.gmail.com with ESMTPSA id o11sm1711710wmq.1.2021.07.08.04.20.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 08 Jul 2021 04:20:38 -0700 (PDT)
-Date:   Thu, 8 Jul 2021 11:20:36 +0000
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Deepak Kumar Singh <deesin@codeaurora.org>,
-        Chris Lew <clew@codeaurora.org>,
-        Mathieu <mathieu.poirier@linaro.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        linux-remoteproc@vger.kernel.org,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH V7 0/4] Signaling api support in glink/rpmsg clients
-Message-ID: <YObfhBXAu6g5S3ws@google.com>
-References: <1599063847-2347-1-git-send-email-deesin@codeaurora.org>
- <CAF2Aj3gAqjVbcMayR7yYBb6UxY5ekC9gdhpmNdz1-zLwo10yLw@mail.gmail.com>
- <YOXOtRSpKO5WdlHZ@yoga>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=hP9H7HVTE7TFrRNTl1vyqWVVeZcuqXBCZg0bGqclL/A=;
+        b=aMfK5ggaOzZ8vG/bwdd89au3qBKEAq9pAFYLfbymd1eKiXAdLXrAIM6nIAxCDR01jO
+         pd6KkPWmMIrR3aS85MgM3WCqmzi3oMsD3z2RDpyPXgPkml0xAHT3Gf5ZpZVmsiboCk0T
+         jnxrKR4H4FBXKbv2bKN/ed23XdbPbpV3+cItul+6nqACMCin4Z2o7ifLDhAGyZU60P0K
+         oyAmD9tTsm0p25vgrMji/2bdQaNu3h0ayjIN7JvDZItpBfi8vNGcBPbmLP3WMwkMJDq/
+         UCCN90RYWgbqxaZXM0KF/HQGg0SydGOOn6xArWkMgFPgIbDvKQ+HaXe8tl7grjrFXBjW
+         z3xQ==
+X-Gm-Message-State: AOAM533DtolLvmxnSx9Ujpp1Chk4e/XYRqSyx/hn5Hc+P7YiREQ6vCED
+        +KrdXKL1Jjt7krEiKA4FrpD6OkNDCElfAPFehhRDfA==
+X-Google-Smtp-Source: ABdhPJywz4fR2V+V+6/E9OWxEVi9/b58VFa4IZ2LlJTPpT0B9SRAdSG9PM7u1rPMHG2ZlSabjmUDzfVjnsqdUEe3bFI=
+X-Received: by 2002:a67:8783:: with SMTP id j125mr27888650vsd.42.1625748098931;
+ Thu, 08 Jul 2021 05:41:38 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <YOXOtRSpKO5WdlHZ@yoga>
+References: <20210706154803.1631813-1-u.kleine-koenig@pengutronix.de> <20210706154803.1631813-5-u.kleine-koenig@pengutronix.de>
+In-Reply-To: <20210706154803.1631813-5-u.kleine-koenig@pengutronix.de>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Thu, 8 Jul 2021 14:41:02 +0200
+Message-ID: <CAPDyKFo0zuooWAkuR=BcsvcJ2pmSrcEoBhuC8+ne18GQphyPHA@mail.gmail.com>
+Subject: Re: [PATCH v2 4/4] bus: Make remove callback return void
+To:     =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Cornelia Huck <cohuck@redhat.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
+        Helge Deller <deller@gmx.de>,
+        Geoff Levand <geoff@infradead.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>,
+        William Breathitt Gray <vilhelm.gray@gmail.com>,
+        =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Alison Schofield <alison.schofield@intel.com>,
+        Vishal Verma <vishal.l.verma@intel.com>,
+        Ira Weiny <ira.weiny@intel.com>,
+        Ben Widawsky <ben.widawsky@intel.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Jiang <dave.jiang@intel.com>,
+        Vinod Koul <vkoul@kernel.org>,
+        Stefan Richter <stefanr@s5r6.in-berlin.de>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Cristian Marussi <cristian.marussi@arm.com>,
+        Wu Hao <hao.wu@intel.com>, Tom Rix <trix@redhat.com>,
+        Moritz Fischer <mdf@kernel.org>,
+        Jiri Kosina <jikos@kernel.org>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Wolfram Sang <wsa@kernel.org>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Samuel Iglesias Gonsalvez <siglesias@igalia.com>,
+        Jens Taprogge <jens.taprogge@taprogge.org>,
+        Johannes Thumshirn <morbidrsa@gmail.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Maxim Levitsky <maximlevitsky@gmail.com>,
+        Alex Dubov <oakad@yahoo.com>, Lee Jones <lee.jones@linaro.org>,
+        Tomas Winkler <tomas.winkler@intel.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Jakub Kicinski <kuba@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jon Mason <jdmason@kudzu.us>, Allen Hubbe <allenbh@gmail.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Maximilian Luz <luzmaximilian@gmail.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Mark Gross <mgross@linux.intel.com>,
+        Matt Porter <mporter@kernel.crashing.org>,
+        Alexandre Bounine <alex.bou9@gmail.com>,
+        Ohad Ben-Cohen <ohad@wizery.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Thorsten Scherer <t.scherer@eckelmann.de>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Mark Brown <broonie@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>, Michael Buesch <m@bues.ch>,
+        Sven Van Asbroeck <TheSven73@gmail.com>,
+        Johan Hovold <johan@kernel.org>, Alex Elder <elder@kernel.org>,
+        Andreas Noever <andreas.noever@gmail.com>,
+        Michael Jamet <michael.jamet@intel.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Yehezkel Bernat <YehezkelShB@gmail.com>,
+        Rob Herring <robh@kernel.org>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Kirti Wankhede <kwankhede@nvidia.com>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Martyn Welch <martyn@welchs.me.uk>,
+        Manohar Vanga <manohar.vanga@gmail.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Juergen Gross <jgross@suse.com>,
+        Stefano Stabellini <sstabellini@kernel.org>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, Marc Zyngier <maz@kernel.org>,
+        Tyrel Datwyler <tyreld@linux.ibm.com>,
+        Vladimir Zapolskiy <vz@mleia.com>,
+        Samuel Holland <samuel@sholland.org>,
+        Qinglang Miao <miaoqinglang@huawei.com>,
+        Alexey Kardashevskiy <aik@ozlabs.ru>,
+        Kai-Heng Feng <kai.heng.feng@canonical.com>,
+        Joey Pabalan <jpabalanb@gmail.com>,
+        =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali@kernel.org>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Frank Li <lznuaa@gmail.com>,
+        Mike Christie <michael.christie@oracle.com>,
+        Bodo Stroesser <bostroesser@gmail.com>,
+        Hannes Reinecke <hare@suse.de>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        SeongJae Park <sjpark@amazon.de>,
+        Julien Grall <jgrall@amazon.com>,
+        linux-arm-kernel@lists.infradead.org, linux-mips@vger.kernel.org,
+        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-acpi@vger.kernel.org, linux-wireless@vger.kernel.org,
+        linux-sunxi@lists.linux.dev, linux-cxl@vger.kernel.org,
+        nvdimm@lists.linux.dev, dmaengine@vger.kernel.org,
+        linux1394-devel@lists.sourceforge.net, linux-fpga@vger.kernel.org,
+        linux-input@vger.kernel.org, linux-hyperv@vger.kernel.org,
+        linux-i2c@vger.kernel.org, linux-i3c@lists.infradead.org,
+        industrypack-devel@lists.sourceforge.net,
+        linux-media@vger.kernel.org, linux-mmc@vger.kernel.org,
+        netdev@vger.kernel.org, linux-ntb@googlegroups.com,
+        linux-pci@vger.kernel.org, platform-driver-x86@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org, linux-scsi@vger.kernel.org,
+        alsa-devel@alsa-project.org, linux-arm-msm@vger.kernel.org,
+        linux-spi@vger.kernel.org, linux-staging@lists.linux.dev,
+        greybus-dev@lists.linaro.org, target-devel@vger.kernel.org,
+        linux-usb@vger.kernel.org, linux-serial@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, kvm@vger.kernel.org,
+        xen-devel@lists.xenproject.org,
+        Russell King <rmk+kernel@armlinux.org.uk>,
+        Johannes Thumshirn <jth@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Wed, 07 Jul 2021, Bjorn Andersson wrote:
+On Tue, 6 Jul 2021 at 17:53, Uwe Kleine-K=C3=B6nig
+<u.kleine-koenig@pengutronix.de> wrote:
+>
+> The driver core ignores the return value of this callback because there
+> is only little it can do when a device disappears.
+>
+> This is the final bit of a long lasting cleanup quest where several
+> buses were converted to also return void from their remove callback.
+> Additionally some resource leaks were fixed that were caused by drivers
+> returning an error code in the expectation that the driver won't go
+> away.
+>
+> With struct bus_type::remove returning void it's prevented that newly
+> implemented buses return an ignored error code and so don't anticipate
+> wrong expectations for driver authors.
+>
+> Acked-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk> (For ARM, Am=
+ba and related parts)
+> Acked-by: Mark Brown <broonie@kernel.org>
+> Acked-by: Chen-Yu Tsai <wens@csie.org> (for drivers/bus/sunxi-rsb.c)
+> Acked-by: Pali Roh=C3=A1r <pali@kernel.org>
+> Acked-by: Mauro Carvalho Chehab <mchehab@kernel.org> (for drivers/media)
+> Acked-by: Hans de Goede <hdegoede@redhat.com> (For drivers/platform)
+> Acked-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+> Acked-By: Vinod Koul <vkoul@kernel.org>
+> Acked-by: Juergen Gross <jgross@suse.com> (For Xen)
+> Acked-by: Lee Jones <lee.jones@linaro.org> (For drivers/mfd)
+> Acked-by: Johannes Thumshirn <jth@kernel.org> (For drivers/mcb)
+> Acked-by: Johan Hovold <johan@kernel.org>
+> Acked-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org> (For drive=
+rs/slimbus)
+> Acked-by: Kirti Wankhede <kwankhede@nvidia.com> (For drivers/vfio)
+> Acked-by: Maximilian Luz <luzmaximilian@gmail.com>
+> Acked-by: Heikki Krogerus <heikki.krogerus@linux.intel.com> (For ulpi and=
+ typec)
+> Acked-by: Samuel Iglesias Gons=C3=A1lvez <siglesias@igalia.com> (For ipac=
+k)
+> Reviewed-by: Tom Rix <trix@redhat.com> (For fpga)
+> Acked-by: Geoff Levand <geoff@infradead.org> (For ps3)
+> Signed-off-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pengutronix.de>
 
-> On Tue 06 Jul 10:27 CDT 2021, Lee Jones wrote:
-> 
-> > On Wed, 2 Sept 2020 at 17:25, Deepak Kumar Singh <deesin@codeaurora.org>
-> > wrote:
-> > 
-> > > Change from version 6
-> > > In last series(v6) i had put wrong version(v5) for cover note.
-> > > Which led to confusion for patch set series.
-> > >
-> > > In this series i have updated the label for cover letter(v7).
-> > > There is no change in patches. Only cover note label is updated.
-> > >
-> > > Change from version 5
-> > > [V6,4/4] rpmsg: char: Add signal callback and POLLPRI support
-> > > Updated for sparse warning. Replaced POLLPRI => EPOLLPRI to fix
-> > > warning.
-> > >
-> > > Change from version 4
-> > > I am taking over these patches from aneela@codeaurora.org
-> > > Fixed all the trivial review comments.
-> > >
-> > > Signal conversion to and from native signal as done in patch V4,2/4
-> > > is intentional.
-> > >
-> > > Arun Kumar Neelakantam (3):
-> > >   rpmsg: glink: Add support to handle signals command
-> > >   rpmsg: char: Add TIOCMGET/TIOCMSET ioctl support
-> > >   rpmsg: char: Add signal callback and POLLPRI support
-> > >
-> > > Deepak Kumar Singh (1):
-> > >   rpmsg: core: Add signal API support
-> > >
-> > >  drivers/rpmsg/qcom_glink_native.c | 125
-> > > ++++++++++++++++++++++++++++++++++++++
-> > >  drivers/rpmsg/rpmsg_char.c        |  76 ++++++++++++++++++++++-
-> > >  drivers/rpmsg/rpmsg_core.c        |  40 ++++++++++++
-> > >  drivers/rpmsg/rpmsg_internal.h    |   5 ++
-> > >  include/linux/rpmsg.h             |  27 ++++++++
-> > >  5 files changed, 270 insertions(+), 3 deletions(-)
-> > >
-> > >
-> > >
-> > Any idea why this died at v7?
-> > 
-> 
-> I had some concerns about the actual users of this and wanted the API to
-> be more generic. Deepak brought this up again recently and I think we
-> have a common understanding of how v8 should look like.
+Acked-by: Ulf Hansson <ulf.hansson@linaro.org> # For MMC
 
-Okay, great.
+[...]
 
-Deepak, would you be kind enough to Cc me on the next submission please?
-
--- 
-Lee Jones [李琼斯]
-Senior Technical Lead - Developer Services
-Linaro.org │ Open source software for Arm SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Kind regards
+Uffe
