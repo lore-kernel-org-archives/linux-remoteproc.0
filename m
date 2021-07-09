@@ -2,33 +2,34 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.0 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-13.0 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42643C07E99
-	for <linux-remoteproc@archiver.kernel.org>; Fri,  9 Jul 2021 17:02:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DC45C07E99
+	for <linux-remoteproc@archiver.kernel.org>; Fri,  9 Jul 2021 17:02:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1CC35611B0
-	for <linux-remoteproc@archiver.kernel.org>; Fri,  9 Jul 2021 17:02:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E5249613BF
+	for <linux-remoteproc@archiver.kernel.org>; Fri,  9 Jul 2021 17:02:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229491AbhGIRFE (ORCPT
+        id S229763AbhGIRFd (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 9 Jul 2021 13:05:04 -0400
-Received: from mail-0201.mail-europe.com ([51.77.79.158]:49385 "EHLO
+        Fri, 9 Jul 2021 13:05:33 -0400
+Received: from mail-0201.mail-europe.com ([51.77.79.158]:42898 "EHLO
         mail-0201.mail-europe.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229685AbhGIRFE (ORCPT
+        with ESMTP id S229618AbhGIRFd (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 9 Jul 2021 13:05:04 -0400
-Date:   Fri, 09 Jul 2021 17:02:09 +0000
+        Fri, 9 Jul 2021 13:05:33 -0400
+Date:   Fri, 09 Jul 2021 17:02:42 +0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
-        s=protonmail; t=1625850137;
-        bh=j/GiV8qTGiZFDN3SHsIQ9GaIZaq8LR9TG1PhKaFl6a4=;
+        s=protonmail; t=1625850167;
+        bh=80lmMy862wGV7v35JfsLiPl1/HjheMwvUvIo/8ZENUg=;
         h=Date:To:From:Cc:Reply-To:Subject:From;
-        b=TPmAWP+eJz/Y6wqmJ0ZWJYoQdyQsrkO4NthvjgOJk9r/aqbik5TgTaBWXLcPoc4F+
-         tok58gZwzVPkqeq7IfI56hnlRGYz9RvZBtVBwsIfMVV9URMIh9FEXMvHgWy14CFXV1
-         eOZEUuuB5dJzeWVLoztstDP4n6e6rTN5yByEO0aU=
+        b=Gp24XLw/S5svc20MAO9+IpQBCx3c6mrjZTCzRlWlUCjieRJuRYxVFZ0Co7o3I+wGu
+         LBDJx8et1P+Lc8FkCOP4GEDm12FcdFV0SKrG1xpbSAqH4qILSlAgqvVmSq9I0B4WT2
+         XxGD0+5aVe7fQ/svYVP9/BJIadrW3SBG6ujHjUHA=
 To:     linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org
 From:   Yassine Oudjana <y.oudjana@protonmail.com>
 Cc:     Yassine Oudjana <y.oudjana@protonmail.com>,
@@ -41,8 +42,8 @@ Cc:     Yassine Oudjana <y.oudjana@protonmail.com>,
         "Dr. Git" <drgitx@gmail.com>, Rob Herring <robh+dt@kernel.org>,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 Reply-To: Yassine Oudjana <y.oudjana@protonmail.com>
-Subject: [PATCH 0/5] msm8996: Remoteproc Enablement
-Message-ID: <1psXpLs4s2ivJ6uAXr4TiLbs2gmwRfTVjcyzG68k@cp3-web-021.plabs.ch>
+Subject: [PATCH 2/5] arm64: dts: qcom: msm8996: Unify smp2p naming
+Message-ID: <PjoL1JJVMLZRdErmWrNSNtHThaVx4nsyD2sXKMEpQ@cp4-web-038.plabs.ch>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
@@ -50,35 +51,110 @@ Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-This series adds the missing remoteprocs on msm8996, modem and SLPI.
+Rename smp2p-modem to smp2p-mpss, and make the subnode labels of smp2p_adsp
+and smp2p_slpi follow the <name>_smp2p_<out/in> layout.
+Also move smp2p_slpi_out above smp2p_slpi_in to make it match mpss and adsp
+where master-kernel is the first subnode.
 
-Dependencies:
- - https://lore.kernel.org/r/20210228130831.203765-3-konrad.dybcio@somainli=
-ne.org (merged in 5.14)
- - https://lore.kernel.org/r/Epn1vFjJb0oQhqMYxspzL6X1N6MPcDT1f9oVVOjXc@cp3-=
-web-020.plabs.ch
-   (merged in 5.14)
+This patch brings no functional change.
 
-Changes since v1 (4/5 remoteproc: qcom: pas: Use the same init resources fo=
-r MSM8996 and MSM8998):
- - Rename msm8998_adsp_resource to msm8996_adsp_resource
- - Add power domains to slpi_resource_init and use that instead of msm8998_=
-slpi_resource
+Signed-off-by: Yassine Oudjana <y.oudjana@protonmail.com>
+---
+ arch/arm64/boot/dts/qcom/msm8996.dtsi | 33 ++++++++++++++-------------
+ 1 file changed, 17 insertions(+), 16 deletions(-)
 
-Dr. Git (1):
-  arm64: dts: qcom: msm8996: Add modem remoteproc
-
-Yassine Oudjana (4):
-  arm64: dts: qcom: msm8996: Revamp reserved memory
-  arm64: dts: qcom: msm8996: Unify smp2p naming
-  remoteproc: qcom: pas: Use the same init resources for MSM8996 and
-    MSM8998
-  arm64: dts: qcom: msm8996: Add SLPI PIL
-
- arch/arm64/boot/dts/qcom/msm8996.dtsi | 192 ++++++++++++++++++++------
- drivers/remoteproc/qcom_q6v5_pas.c    |  27 ++--
- 2 files changed, 155 insertions(+), 64 deletions(-)
-
+diff --git a/arch/arm64/boot/dts/qcom/msm8996.dtsi b/arch/arm64/boot/dts/qc=
+om/msm8996.dtsi
+index 258be683ad6d..559612a3ddeb 100644
+--- a/arch/arm64/boot/dts/qcom/msm8996.dtsi
++++ b/arch/arm64/boot/dts/qcom/msm8996.dtsi
+@@ -284,12 +284,12 @@ smp2p-adsp {
+ =09=09qcom,local-pid =3D <0>;
+ =09=09qcom,remote-pid =3D <2>;
+=20
+-=09=09smp2p_adsp_out: master-kernel {
++=09=09adsp_smp2p_out: master-kernel {
+ =09=09=09qcom,entry-name =3D "master-kernel";
+ =09=09=09#qcom,smem-state-cells =3D <1>;
+ =09=09};
+=20
+-=09=09smp2p_adsp_in: slave-kernel {
++=09=09adsp_smp2p_in: slave-kernel {
+ =09=09=09qcom,entry-name =3D "slave-kernel";
+=20
+ =09=09=09interrupt-controller;
+@@ -297,7 +297,7 @@ smp2p_adsp_in: slave-kernel {
+ =09=09};
+ =09};
+=20
+-=09smp2p-modem {
++=09smp2p-mpss {
+ =09=09compatible =3D "qcom,smp2p";
+ =09=09qcom,smem =3D <435>, <428>;
+=20
+@@ -308,12 +308,12 @@ smp2p-modem {
+ =09=09qcom,local-pid =3D <0>;
+ =09=09qcom,remote-pid =3D <1>;
+=20
+-=09=09modem_smp2p_out: master-kernel {
++=09=09mpss_smp2p_out: master-kernel {
+ =09=09=09qcom,entry-name =3D "master-kernel";
+ =09=09=09#qcom,smem-state-cells =3D <1>;
+ =09=09};
+=20
+-=09=09modem_smp2p_in: slave-kernel {
++=09=09mpss_smp2p_in: slave-kernel {
+ =09=09=09qcom,entry-name =3D "slave-kernel";
+=20
+ =09=09=09interrupt-controller;
+@@ -332,16 +332,17 @@ smp2p-slpi {
+ =09=09qcom,local-pid =3D <0>;
+ =09=09qcom,remote-pid =3D <3>;
+=20
+-=09=09smp2p_slpi_in: slave-kernel {
++=09=09slpi_smp2p_out: master-kernel {
++=09=09=09qcom,entry-name =3D "master-kernel";
++=09=09=09#qcom,smem-state-cells =3D <1>;
++=09=09};
++
++=09=09slpi_smp2p_in: slave-kernel {
+ =09=09=09qcom,entry-name =3D "slave-kernel";
++
+ =09=09=09interrupt-controller;
+ =09=09=09#interrupt-cells =3D <2>;
+ =09=09};
+-
+-=09=09smp2p_slpi_out: master-kernel {
+-=09=09=09qcom,entry-name =3D "master-kernel";
+-=09=09=09#qcom,smem-state-cells =3D <1>;
+-=09=09};
+ =09};
+=20
+ =09soc: soc {
+@@ -2058,10 +2059,10 @@ adsp_pil: remoteproc@9300000 {
+ =09=09=09reg =3D <0x09300000 0x80000>;
+=20
+ =09=09=09interrupts-extended =3D <&intc 0 162 IRQ_TYPE_EDGE_RISING>,
+-=09=09=09=09=09      <&smp2p_adsp_in 0 IRQ_TYPE_EDGE_RISING>,
+-=09=09=09=09=09      <&smp2p_adsp_in 1 IRQ_TYPE_EDGE_RISING>,
+-=09=09=09=09=09      <&smp2p_adsp_in 2 IRQ_TYPE_EDGE_RISING>,
+-=09=09=09=09=09      <&smp2p_adsp_in 3 IRQ_TYPE_EDGE_RISING>;
++=09=09=09=09=09      <&adsp_smp2p_in 0 IRQ_TYPE_EDGE_RISING>,
++=09=09=09=09=09      <&adsp_smp2p_in 1 IRQ_TYPE_EDGE_RISING>,
++=09=09=09=09=09      <&adsp_smp2p_in 2 IRQ_TYPE_EDGE_RISING>,
++=09=09=09=09=09      <&adsp_smp2p_in 3 IRQ_TYPE_EDGE_RISING>;
+ =09=09=09interrupt-names =3D "wdog", "fatal", "ready",
+ =09=09=09=09=09  "handover", "stop-ack";
+=20
+@@ -2070,7 +2071,7 @@ adsp_pil: remoteproc@9300000 {
+=20
+ =09=09=09memory-region =3D <&adsp_mem>;
+=20
+-=09=09=09qcom,smem-states =3D <&smp2p_adsp_out 0>;
++=09=09=09qcom,smem-states =3D <&adsp_smp2p_out 0>;
+ =09=09=09qcom,smem-state-names =3D "stop";
+=20
+ =09=09=09power-domains =3D <&rpmpd MSM8996_VDDCX>;
 --=20
 2.32.0
 
