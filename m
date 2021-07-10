@@ -2,48 +2,48 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-19.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-19.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 098DEC11F6A
-	for <linux-remoteproc@archiver.kernel.org>; Sat, 10 Jul 2021 23:50:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F8BAC11F68
+	for <linux-remoteproc@archiver.kernel.org>; Sat, 10 Jul 2021 23:51:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E7BA161376
-	for <linux-remoteproc@archiver.kernel.org>; Sat, 10 Jul 2021 23:50:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7691261362
+	for <linux-remoteproc@archiver.kernel.org>; Sat, 10 Jul 2021 23:51:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232867AbhGJXwr (ORCPT
+        id S232717AbhGJXyD (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Sat, 10 Jul 2021 19:52:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39696 "EHLO mail.kernel.org"
+        Sat, 10 Jul 2021 19:54:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41456 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232661AbhGJXwd (ORCPT <rfc822;linux-remoteproc@vger.kernel.org>);
-        Sat, 10 Jul 2021 19:52:33 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id E983061057;
-        Sat, 10 Jul 2021 23:49:46 +0000 (UTC)
+        id S232394AbhGJXxa (ORCPT <rfc822;linux-remoteproc@vger.kernel.org>);
+        Sat, 10 Jul 2021 19:53:30 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id CBC22613AF;
+        Sat, 10 Jul 2021 23:50:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1625960987;
-        bh=NSz0HggK+LEffCybsslj3iHeHYAzmgeuo1Ce2nB3UMc=;
+        s=k20201202; t=1625961044;
+        bh=5s5W2nW/VJwzeHHfStZ6DKDgBTQn+P3DbBHGlW+c7Jc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Wy9SllXM/QTJzg/TD2YBlO+SLbJCYrRvMmxFKX//88DyYjPAP+00d57tmWkdxSa+x
-         H8gLaFLZNSNd64J4M3qQkXeLvrOAZicjcUkjUreB+42oVB3LkwS1LJg4szeM3riIu1
-         aTetV+dtoAuu5yAogyWFxECBT9zD3eLSeSwg3DoHWbaEFDg0EZ3/17pKlrYJvMAtMp
-         dkttwJnjy4rjuzixY9gFoEQplEy5QkWrp5R3PN2pdv7NSbcg+kJbjmuGWYnH9dntom
-         jsSZnqRS/n+IFXzkQr9d9efqPz1RO8QT/NphbuaMaGSmMDl7hBXc4DuGqm1JUi9aW7
-         dV7QUD5C/C8Zw==
+        b=mFd7yNCEX+OOoxik1DWG3NM1i4ro245ynr6oEcVa/G8WknMiChkVrcW0Z1KYVSaCF
+         JQ19jgCtGgqZ/cJ5pj57gnRJ0n9UnSN4808R75rJKWMwg+9MlzfxHEzjIJawr/7shj
+         9QgHstL739XSb8w55p7Q2AM0mGI9H5i9uTb7UNAuidRHktkYbr8Tn+b9dqo/HxjTPr
+         6dQNDvuatpr2Qgyizdu/ZQOrgs+b/LWtqIRcZMdWPInFhJ6v4yWEAga9CYuEgp76rz
+         7c3ydSAUEUGfpSjICTzdY770PU0ezyHfs9PX8pAL3C4KS7A1ejULqJG+Ar62YT1Xlg
+         tjYbFw9FKkT2w==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Siddharth Gupta <sidgup@codeaurora.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
         Sasha Levin <sashal@kernel.org>,
         linux-remoteproc@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.12 21/43] remoteproc: core: Fix cdev remove and rproc del
-Date:   Sat, 10 Jul 2021 19:48:53 -0400
-Message-Id: <20210710234915.3220342-21-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.10 20/37] remoteproc: core: Fix cdev remove and rproc del
+Date:   Sat, 10 Jul 2021 19:49:58 -0400
+Message-Id: <20210710235016.3221124-20-sashal@kernel.org>
 X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210710234915.3220342-1-sashal@kernel.org>
-References: <20210710234915.3220342-1-sashal@kernel.org>
+In-Reply-To: <20210710235016.3221124-1-sashal@kernel.org>
+References: <20210710235016.3221124-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -85,10 +85,10 @@ index b19ea3057bde..ff92ed25d8b0 100644
  
  void __init rproc_init_cdev(void)
 diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index ab150765d124..d9d2a240dd58 100644
+index dab2c0f5caf0..47924d5ed4f5 100644
 --- a/drivers/remoteproc/remoteproc_core.c
 +++ b/drivers/remoteproc/remoteproc_core.c
-@@ -2357,7 +2357,6 @@ int rproc_del(struct rproc *rproc)
+@@ -2290,7 +2290,6 @@ int rproc_del(struct rproc *rproc)
  	mutex_unlock(&rproc->lock);
  
  	rproc_delete_debug_dir(rproc);
@@ -96,7 +96,7 @@ index ab150765d124..d9d2a240dd58 100644
  
  	/* the rproc is downref'ed as soon as it's removed from the klist */
  	mutex_lock(&rproc_list_mutex);
-@@ -2368,6 +2367,7 @@ int rproc_del(struct rproc *rproc)
+@@ -2301,6 +2300,7 @@ int rproc_del(struct rproc *rproc)
  	synchronize_rcu();
  
  	device_del(&rproc->dev);
