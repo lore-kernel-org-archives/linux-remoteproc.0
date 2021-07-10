@@ -2,95 +2,108 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.0 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-19.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6A09C07E95
-	for <linux-remoteproc@archiver.kernel.org>; Sat, 10 Jul 2021 12:25:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 098DEC11F6A
+	for <linux-remoteproc@archiver.kernel.org>; Sat, 10 Jul 2021 23:50:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8C30F613AF
-	for <linux-remoteproc@archiver.kernel.org>; Sat, 10 Jul 2021 12:25:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E7BA161376
+	for <linux-remoteproc@archiver.kernel.org>; Sat, 10 Jul 2021 23:50:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232735AbhGJM16 (ORCPT
+        id S232867AbhGJXwr (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Sat, 10 Jul 2021 08:27:58 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:41490 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S232689AbhGJM1v (ORCPT
-        <rfc822;linux-remoteproc@vger.kernel.org>);
-        Sat, 10 Jul 2021 08:27:51 -0400
-X-UUID: ebdcc82543b0451bb65d8a10da3d97d4-20210710
-X-UUID: ebdcc82543b0451bb65d8a10da3d97d4-20210710
-Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw02.mediatek.com
-        (envelope-from <tinghan.shen@mediatek.com>)
-        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
-        with ESMTP id 1292515639; Sat, 10 Jul 2021 20:25:03 +0800
-Received: from mtkcas11.mediatek.inc (172.21.101.40) by
- mtkmbs02n2.mediatek.inc (172.21.101.101) with Microsoft SMTP Server (TLS) id
- 15.0.1497.2; Sat, 10 Jul 2021 20:25:01 +0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas11.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
- Transport; Sat, 10 Jul 2021 20:25:01 +0800
-From:   Tinghan Shen <tinghan.shen@mediatek.com>
-To:     <ohad@wizery.com>, <bjorn.andersson@linaro.org>,
-        <mathieu.poirier@linaro.org>, <robh+dt@kernel.org>,
-        <matthias.bgg@gmail.com>
-CC:     <linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <srv_heupstream@mediatek.com>,
-        <tzungbi@google.com>,
-        <Project_Global_Chrome_Upstream_Group@mediatek.com>,
-        Tinghan Shen <tinghan.shen@mediatek.com>
-Subject: [v2 1/2] dt-bindings: remoteproc: mediatek: Add binding for mt8195 scp
-Date:   Sat, 10 Jul 2021 20:24:45 +0800
-Message-ID: <20210710122446.5439-1-tinghan.shen@mediatek.com>
-X-Mailer: git-send-email 2.15.GIT
+        Sat, 10 Jul 2021 19:52:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39696 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S232661AbhGJXwd (ORCPT <rfc822;linux-remoteproc@vger.kernel.org>);
+        Sat, 10 Jul 2021 19:52:33 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id E983061057;
+        Sat, 10 Jul 2021 23:49:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1625960987;
+        bh=NSz0HggK+LEffCybsslj3iHeHYAzmgeuo1Ce2nB3UMc=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=Wy9SllXM/QTJzg/TD2YBlO+SLbJCYrRvMmxFKX//88DyYjPAP+00d57tmWkdxSa+x
+         H8gLaFLZNSNd64J4M3qQkXeLvrOAZicjcUkjUreB+42oVB3LkwS1LJg4szeM3riIu1
+         aTetV+dtoAuu5yAogyWFxECBT9zD3eLSeSwg3DoHWbaEFDg0EZ3/17pKlrYJvMAtMp
+         dkttwJnjy4rjuzixY9gFoEQplEy5QkWrp5R3PN2pdv7NSbcg+kJbjmuGWYnH9dntom
+         jsSZnqRS/n+IFXzkQr9d9efqPz1RO8QT/NphbuaMaGSmMDl7hBXc4DuGqm1JUi9aW7
+         dV7QUD5C/C8Zw==
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Siddharth Gupta <sidgup@codeaurora.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-remoteproc@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.12 21/43] remoteproc: core: Fix cdev remove and rproc del
+Date:   Sat, 10 Jul 2021 19:48:53 -0400
+Message-Id: <20210710234915.3220342-21-sashal@kernel.org>
+X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20210710234915.3220342-1-sashal@kernel.org>
+References: <20210710234915.3220342-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Add mt8195 compatible to binding document. The description of required
-properties are also modified to reflect the hardware change between
-mt8183 and mt8195. The mt8195 doesn't have to control the scp clock on
-kernel side.
+From: Siddharth Gupta <sidgup@codeaurora.org>
 
-Signed-off-by: Tinghan Shen <tinghan.shen@mediatek.com>
+[ Upstream commit 930eec0be20c93a53160c74005a1485a230e6911 ]
+
+The rproc_char_device_remove() call currently unmaps the cdev
+region instead of simply deleting the cdev that was added as a
+part of the rproc_char_device_add() call. This change fixes that
+behaviour, and also fixes the order in which device_del() and
+cdev_del() need to be called.
+
+Signed-off-by: Siddharth Gupta <sidgup@codeaurora.org>
+Link: https://lore.kernel.org/r/1623723671-5517-4-git-send-email-sidgup@codeaurora.org
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
-changes in v2:
-- fix missing 'compatible' line in binding document
+ drivers/remoteproc/remoteproc_cdev.c | 2 +-
+ drivers/remoteproc/remoteproc_core.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
- Documentation/devicetree/bindings/remoteproc/mtk,scp.txt | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
-
-diff --git a/Documentation/devicetree/bindings/remoteproc/mtk,scp.txt b/Documentation/devicetree/bindings/remoteproc/mtk,scp.txt
-index 3f5f78764b60..d64466eefbe3 100644
---- a/Documentation/devicetree/bindings/remoteproc/mtk,scp.txt
-+++ b/Documentation/devicetree/bindings/remoteproc/mtk,scp.txt
-@@ -5,13 +5,15 @@ This binding provides support for ARM Cortex M4 Co-processor found on some
- Mediatek SoCs.
+diff --git a/drivers/remoteproc/remoteproc_cdev.c b/drivers/remoteproc/remoteproc_cdev.c
+index b19ea3057bde..ff92ed25d8b0 100644
+--- a/drivers/remoteproc/remoteproc_cdev.c
++++ b/drivers/remoteproc/remoteproc_cdev.c
+@@ -111,7 +111,7 @@ int rproc_char_device_add(struct rproc *rproc)
  
- Required properties:
--- compatible		Should be "mediatek,mt8183-scp"
-+- compatible		Should be one of:
-+				"mediatek,mt8183-scp"
-+				"mediatek,mt8195-scp"
- - reg			Should contain the address ranges for memory regions:
- 			SRAM, CFG, and L1TCM.
- - reg-names		Contains the corresponding names for the memory regions:
- 			"sram", "cfg", and "l1tcm".
--- clocks		Clock for co-processor (See: ../clock/clock-bindings.txt)
--- clock-names		Contains the corresponding name for the clock. This
-+- clocks		Required by mt8183. Clock for co-processor (See: ../clock/clock-bindings.txt)
-+- clock-names		Required by mt8183. Contains the corresponding name for the clock. This
- 			should be named "main".
+ void rproc_char_device_remove(struct rproc *rproc)
+ {
+-	__unregister_chrdev(MAJOR(rproc->dev.devt), rproc->index, 1, "remoteproc");
++	cdev_del(&rproc->cdev);
+ }
  
- Subnodes
+ void __init rproc_init_cdev(void)
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index ab150765d124..d9d2a240dd58 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -2357,7 +2357,6 @@ int rproc_del(struct rproc *rproc)
+ 	mutex_unlock(&rproc->lock);
+ 
+ 	rproc_delete_debug_dir(rproc);
+-	rproc_char_device_remove(rproc);
+ 
+ 	/* the rproc is downref'ed as soon as it's removed from the klist */
+ 	mutex_lock(&rproc_list_mutex);
+@@ -2368,6 +2367,7 @@ int rproc_del(struct rproc *rproc)
+ 	synchronize_rcu();
+ 
+ 	device_del(&rproc->dev);
++	rproc_char_device_remove(rproc);
+ 
+ 	return 0;
+ }
 -- 
-2.18.0
+2.30.2
 
