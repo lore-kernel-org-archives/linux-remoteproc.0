@@ -7,43 +7,44 @@ X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 427C9C07E99
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 12 Jul 2021 13:19:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03CE9C07E99
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 12 Jul 2021 13:19:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1C6D16100B
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 12 Jul 2021 13:19:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D8CCB60FE3
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 12 Jul 2021 13:19:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230214AbhGLNW2 (ORCPT
+        id S232868AbhGLNWa (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 12 Jul 2021 09:22:28 -0400
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:6504 "EHLO
+        Mon, 12 Jul 2021 09:22:30 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:45786 "EHLO
         mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S229479AbhGLNW2 (ORCPT
+        by vger.kernel.org with ESMTP id S230004AbhGLNW3 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 12 Jul 2021 09:22:28 -0400
-Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 16CDHlpo024628;
+        Mon, 12 Jul 2021 09:22:29 -0400
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 16CDHgMP024624;
         Mon, 12 Jul 2021 15:19:35 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=from : to : cc :
- subject : date : message-id : mime-version : content-type; s=selector1;
- bh=gwVx0e9bF4mpE4juE3HjRfUvca3Xplg3oe0uE8gGxtc=;
- b=07OfkduQFJJbkZbNR6cwf2IG87kXrsTtWIsy0K931IcZMQsHitivJXgI3EerFYgBP92N
- YAghubr0tl/LeMAgQX+r2pxIu0760TnTSdwP4VGnLh0kA4xgGzMvBsl7ptODZcUGi0EC
- BdcS+TjiYvEOkDPabeaXcRiDmdZy+SpQvkMcJIVgqcu6Das4eFL4yK20VmC3rqWkSLmd
- vR/WqrKqVvfKhYYK6FlxX2h7yAMVXymYRZn+dcz9VCRdy+ewdU6nvpT2pjguElRdYBA2
- EpoRLQt6dxh944lygDxACKXNOFvf68V5QAPAP5RiZY35G5wqlvMTYE70XHoxJoJudzJe HA== 
+ subject : date : message-id : in-reply-to : references : mime-version :
+ content-type; s=selector1;
+ bh=HNFqYn5P+/mkBKYrBCDkF4nmQRrjvSWGyN6gND9vc2c=;
+ b=7di772L4eGCIPK8Cfa5dsEHYk46N546T7ubzAX5g6WQ/COz7p6Fr7GHWzW8bR2zhvf36
+ Bbxs5D3ad0ZXaLWOmGBVr+jgVZBh7Sxb5Hd0CBJ1WN1xflxY8NOXfLWbykZ2pRJKxG6p
+ KesGfGWixOK7Loi4l6eTw0ITrMSHOpchGOG+Jb87YGapr0a3N/pKBViSU86K88rwue/6
+ BN8elUF0bDFluZCM9++U/zoswbSf2g4aP1Z9rER4nYpo4uc/csS3kt05I/ZUXCfVBFId
+ C5TFdowxcW3VOLSPnAML+QsS+Z1gEOSBzY06p4v2x+uQToe+3XDyGT7vrZNM7c2oWZXA yg== 
 Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 39rh6w9vn2-1
+        by mx07-00178001.pphosted.com with ESMTP id 39rm34grsq-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
         Mon, 12 Jul 2021 15:19:35 +0200
 Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id D7E3310002A;
-        Mon, 12 Jul 2021 15:19:33 +0200 (CEST)
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 42008100038;
+        Mon, 12 Jul 2021 15:19:35 +0200 (CEST)
 Received: from Webmail-eu.st.com (sfhdag2node3.st.com [10.75.127.6])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id BB4812291D5;
-        Mon, 12 Jul 2021 15:19:33 +0200 (CEST)
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 338BD2291D5;
+        Mon, 12 Jul 2021 15:19:35 +0200 (CEST)
 Received: from localhost (10.75.127.50) by SFHDAG2NODE3.st.com (10.75.127.6)
- with Microsoft SMTP Server (TLS) id 15.0.1497.2; Mon, 12 Jul 2021 15:19:33
+ with Microsoft SMTP Server (TLS) id 15.0.1497.2; Mon, 12 Jul 2021 15:19:34
  +0200
 From:   Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
 To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
@@ -52,10 +53,12 @@ To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
 CC:     <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <linux-stm32@st-md-mailman.stormreply.com>,
         <julien.massot@iot.bzh>, <arnaud.pouliquen@foss.st.com>
-Subject: [PATCH v4 0/4] rpmsg: char: introduce the rpmsg-raw channel
-Date:   Mon, 12 Jul 2021 15:18:56 +0200
-Message-ID: <20210712131900.24752-1-arnaud.pouliquen@foss.st.com>
+Subject: [PATCH v4 2/4] rpmsg: char: Introduce __rpmsg_chrdev_create_eptdev function
+Date:   Mon, 12 Jul 2021 15:18:58 +0200
+Message-ID: <20210712131900.24752-3-arnaud.pouliquen@foss.st.com>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20210712131900.24752-1-arnaud.pouliquen@foss.st.com>
+References: <20210712131900.24752-1-arnaud.pouliquen@foss.st.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Originating-IP: [10.75.127.50]
@@ -67,57 +70,77 @@ Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
+Introduce the __rpmsg_chrdev_create_eptdev internal function that returns
+the rpmsg_eptdev context structure.
 
-Purpose:
-  Allow the remote processor to instantiate a /dev/rpmsgX interface relying on the NS announcement
-  of the "rpmsg-raw" service.
-  This patchet is extracted from  the series [1] with rework to add rpmsg_create_default_ept helper.
+This patch prepares the introduction of a rpmsg channel device for the
+char device. The rpmsg device will need a reference to the context.
 
-  
-Aim:
-  There is no generic sysfs interface based on RPMsg that allows a user application to communicate
-  with a remote processor in a simple way.
-  The rpmsg_char dev solves a part of this problem by allowing an endpoint to be created on the
-  local side. But it does not take advantage of the NS announcement mechanism implemented for some
-  backends such as the virtio backend. So it is not possible to probe it from  a remote initiative.
-  Extending the char rpmsg device to support NS announcement makes the rpmsg_char more generic.
-  By announcing a "rpmg-raw" service, the firmware of a remote processor will be able to
-  instantiate a /dev/rpmsgX interface providing to the user application a basic link to communicate
-  with it without any knowledge of the rpmsg protocol.
+Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+Tested-by: Julien Massot <julien.massot@iot.bzh>
+---
+ drivers/rpmsg/rpmsg_char.c | 24 +++++++++++++++++++-----
+ 1 file changed, 19 insertions(+), 5 deletions(-)
 
-Implementation details:
-  - Register a rpmsg driver for the rpmsg_char driver, associated to the "rpmsg-raw" channel service.
-  - In case of rpmsg char device instantiated by the rpmsg bus (on NS announcement) manage the 
-    channel default endpoint to ensure a stable default endpoint address, for communication with 
-    the remote processor.
-
-delta vs V3:
-- add Tested-by: Julien Massot <julien.massot@iot.bzh>
-- rebased on kernel V.14-rc1 + 
-   patchset V5: Restructure the rpmsg char to decorrelate the control part [2]
-
-
-How to test it:
-  - This series can be applied on e73f0f0ee754kernel V.14-rc1 (e73f0f0ee754)
-    + the "Restructure the rpmsg char to decorrelate the control part" series[2]
-
-[1] https://patchwork.kernel.org/project/linux-remoteproc/list/?series=475217
-[2] https://patchwork.kernel.org/project/linux-remoteproc/list/?series=514017
-
-
-
-Arnaud Pouliquen (4):
-  rpmsg: Introduce rpmsg_create_default_ept function
-  rpmsg: char: Introduce __rpmsg_chrdev_create_eptdev function
-  rpmsg: char: Add possibility to use default endpoint of the rpmsg
-    device.
-  rpmsg: char: Introduce the "rpmsg-raw" channel
-
- drivers/rpmsg/rpmsg_char.c | 120 ++++++++++++++++++++++++++++++++++---
- drivers/rpmsg/rpmsg_core.c |  51 ++++++++++++++++
- include/linux/rpmsg.h      |  13 ++++
- 3 files changed, 175 insertions(+), 9 deletions(-)
-
+diff --git a/drivers/rpmsg/rpmsg_char.c b/drivers/rpmsg/rpmsg_char.c
+index fbe10d527c5c..50b7d4b00175 100644
+--- a/drivers/rpmsg/rpmsg_char.c
++++ b/drivers/rpmsg/rpmsg_char.c
+@@ -323,8 +323,9 @@ static void rpmsg_eptdev_release_device(struct device *dev)
+ 	kfree(eptdev);
+ }
+ 
+-int rpmsg_chrdev_eptdev_create(struct rpmsg_device *rpdev, struct device *parent,
+-			       struct rpmsg_channel_info chinfo)
++static struct rpmsg_eptdev *__rpmsg_chrdev_eptdev_create(struct rpmsg_device *rpdev,
++							 struct device *parent,
++							 struct rpmsg_channel_info chinfo)
+ {
+ 	struct rpmsg_eptdev *eptdev;
+ 	struct device *dev;
+@@ -332,7 +333,7 @@ int rpmsg_chrdev_eptdev_create(struct rpmsg_device *rpdev, struct device *parent
+ 
+ 	eptdev = kzalloc(sizeof(*eptdev), GFP_KERNEL);
+ 	if (!eptdev)
+-		return -ENOMEM;
++		return ERR_PTR(-ENOMEM);
+ 
+ 	dev = &eptdev->dev;
+ 	eptdev->rpdev = rpdev;
+@@ -374,9 +375,10 @@ int rpmsg_chrdev_eptdev_create(struct rpmsg_device *rpdev, struct device *parent
+ 	if (ret) {
+ 		dev_err(dev, "device_add failed: %d\n", ret);
+ 		put_device(dev);
++		return ERR_PTR(ret);
+ 	}
+ 
+-	return ret;
++	return eptdev;
+ 
+ free_ept_ida:
+ 	ida_simple_remove(&rpmsg_ept_ida, dev->id);
+@@ -386,7 +388,19 @@ int rpmsg_chrdev_eptdev_create(struct rpmsg_device *rpdev, struct device *parent
+ 	put_device(dev);
+ 	kfree(eptdev);
+ 
+-	return ret;
++	return ERR_PTR(ret);
++}
++
++int rpmsg_chrdev_eptdev_create(struct rpmsg_device *rpdev, struct device *parent,
++			       struct rpmsg_channel_info chinfo)
++{
++	struct rpmsg_eptdev *eptdev;
++
++	eptdev = __rpmsg_chrdev_eptdev_create(rpdev, parent, chinfo);
++	if (IS_ERR(eptdev))
++		return PTR_ERR(eptdev);
++
++	return 0;
+ }
+ EXPORT_SYMBOL(rpmsg_chrdev_eptdev_create);
+ 
 -- 
 2.17.1
 
