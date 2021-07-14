@@ -4,78 +4,79 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CC9FC12002
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 14 Jul 2021 19:36:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E6E1C12002
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 14 Jul 2021 19:37:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 862C0613D0
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 14 Jul 2021 19:36:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6711E613CF
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 14 Jul 2021 19:37:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230078AbhGNTjb (ORCPT
+        id S229735AbhGNTkc (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 14 Jul 2021 15:39:31 -0400
-Received: from mail-il1-f172.google.com ([209.85.166.172]:46746 "EHLO
-        mail-il1-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229650AbhGNTjb (ORCPT
+        Wed, 14 Jul 2021 15:40:32 -0400
+Received: from mail-io1-f50.google.com ([209.85.166.50]:41600 "EHLO
+        mail-io1-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229650AbhGNTkc (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 14 Jul 2021 15:39:31 -0400
-Received: by mail-il1-f172.google.com with SMTP id y6so2716387ilj.13;
-        Wed, 14 Jul 2021 12:36:38 -0700 (PDT)
+        Wed, 14 Jul 2021 15:40:32 -0400
+Received: by mail-io1-f50.google.com with SMTP id z9so3506892iob.8;
+        Wed, 14 Jul 2021 12:37:39 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=zCob8KnLhd7BVyF49DM2VLmSQ+kXCXBfTyyPAmEAwzI=;
-        b=Lwll3maTAauMq/kmig6/+L4RVxM5ZmCkKVoKN6R/WnWoA5JcFkvTUvdQ9MYDXx4uj4
-         KIgoPJzLwbI+h+0Yn02U/Iq9nXglt56ZCkmjJyUbB6ESt4Ju6IxFsw+9QiZuVUwYtgTW
-         kWPEpG4JyS34WVZ4l2vCa9o9x0h27IKACr3cPq88Wz7WegE7yCVrM9L4gMhatyoYxX9H
-         NVYV4pCK0KjRSp75P7Kv64JmmQUg5kMSwAQ/cgmZFXrTZ4Xq6gm3QIlKOQiBDts/a9Nc
-         sj1XsOp/xVJIsI+CT2pSkjBC29EbRP4s+6vC4D0jQm5qDA72z2Jjgd9Xdvni8xGWXbYh
-         2lzg==
-X-Gm-Message-State: AOAM532peqNAHBol5t9xL+9R41DaVc+fdKAF5KVcwbvvWklobOBYQV9e
-        51o9gCVe+jTTMemH3Q8zCw==
-X-Google-Smtp-Source: ABdhPJwKha/W8xIOBtkVzmhR5IEcLbaVE7Ber5zf4dzP6xubPe/9bWpTYcvAquj0RFBEywrVCkppQQ==
-X-Received: by 2002:a92:4a0d:: with SMTP id m13mr7916538ilf.129.1626291398220;
-        Wed, 14 Jul 2021 12:36:38 -0700 (PDT)
+        bh=yFXysK5QOV9gybtnN9RhupuFfhn+ypkE022RTON7Xkk=;
+        b=AcZ8sdh/89HX5AimgEGcvQmxF/vpbwnwjEfn3TOZj2lLoVjckGd59FdQnXbmqUpzSe
+         VL4palhUUOe5zVQ7jquna9RmAae+BG/98EXdG88R4LDsIwEBqzdhhIof1gscS5wjTkTJ
+         OmgwFlhGQu5Gt5y2RTiWBHrBdMhqOVSzkwd2dyeyHOaZ+BOh+Jy3Tdd6IBlik4aCPaNN
+         yyXLVYAo9gVoXXsslf3scUWr2+Tn1zEbmy0A68KYJB1hs3pnYag/D8ACtbME974ShHZH
+         YS1fUFoaouwhOFRDeLjQxmONxU8aJ5n0hcuMjGvm9+W4s3Fwz09M5RSfDj5lbdAC5O/c
+         pmkQ==
+X-Gm-Message-State: AOAM5305RaoTzO0MWTs5M8FgyZB4PR1MftNHTgo+Z73gtB2IM+3PK3Qn
+        4IoTCZDCKq5HSRQGAS/Qjg==
+X-Google-Smtp-Source: ABdhPJzTVnCksi6USt4jMQ9BBc0xI6zwCtruKYr1fN/ZmcDbgZJEaOWxQ8Hm+smUBRc21truH7dzyA==
+X-Received: by 2002:a5d:858b:: with SMTP id f11mr8297275ioj.156.1626291459021;
+        Wed, 14 Jul 2021 12:37:39 -0700 (PDT)
 Received: from robh.at.kernel.org ([64.188.179.248])
-        by smtp.gmail.com with ESMTPSA id n5sm1829683ilo.78.2021.07.14.12.36.34
+        by smtp.gmail.com with ESMTPSA id t2sm1758841ilq.27.2021.07.14.12.37.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 14 Jul 2021 12:36:37 -0700 (PDT)
-Received: (nullmailer pid 3154413 invoked by uid 1000);
-        Wed, 14 Jul 2021 19:36:33 -0000
-Date:   Wed, 14 Jul 2021 13:36:33 -0600
+        Wed, 14 Jul 2021 12:37:38 -0700 (PDT)
+Received: (nullmailer pid 3160062 invoked by uid 1000);
+        Wed, 14 Jul 2021 19:37:34 -0000
+Date:   Wed, 14 Jul 2021 13:37:34 -0600
 From:   Rob Herring <robh@kernel.org>
 To:     Sibi Sankar <sibis@codeaurora.org>
-Cc:     dianders@chromium.org, evgreen@chromium.org,
-        bjorn.andersson@linaro.org, ohad@wizery.com,
-        linux-arm-msm@vger.kernel.org, agross@kernel.org,
-        saiprakash.ranjan@codeaurora.org, robin.murphy@arm.com,
-        linux-arm-kernel@lists.infradead.org, swboyd@chromium.org,
-        p.zabel@pengutronix.de, will@kernel.org, joro@8bytes.org,
-        linux-kernel@vger.kernel.org, mathieu.poirier@linaro.org,
-        devicetree@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        robh+dt@kernel.org
-Subject: Re: [PATCH 1/9] dt-bindings: remoteproc: qcom: pas: Add SC7280 MPSS
- support
-Message-ID: <20210714193633.GA3154320@robh.at.kernel.org>
+Cc:     evgreen@chromium.org, ohad@wizery.com,
+        saiprakash.ranjan@codeaurora.org, devicetree@vger.kernel.org,
+        swboyd@chromium.org, joro@8bytes.org,
+        linux-remoteproc@vger.kernel.org, agross@kernel.org,
+        mathieu.poirier@linaro.org, bjorn.andersson@linaro.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        will@kernel.org, linux-arm-msm@vger.kernel.org, robh+dt@kernel.org,
+        robin.murphy@arm.com, dianders@chromium.org, p.zabel@pengutronix.de
+Subject: Re: [PATCH 3/9] dt-bindings: remoteproc: qcom: Add Q6V5 Modem PIL
+ binding
+Message-ID: <20210714193734.GA3159989@robh.at.kernel.org>
 References: <1624564058-24095-1-git-send-email-sibis@codeaurora.org>
- <1624564058-24095-2-git-send-email-sibis@codeaurora.org>
+ <1624564058-24095-4-git-send-email-sibis@codeaurora.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1624564058-24095-2-git-send-email-sibis@codeaurora.org>
+In-Reply-To: <1624564058-24095-4-git-send-email-sibis@codeaurora.org>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Fri, 25 Jun 2021 01:17:30 +0530, Sibi Sankar wrote:
-> Add MPSS PAS support for SC7280 SoCs.
+On Fri, 25 Jun 2021 01:17:32 +0530, Sibi Sankar wrote:
+> Add a new modem compatible string for QTI SC7280 SoCs and introduce the
+> "qcom,ext-regs" and "qcom,qaccept-regs" bindings needed by the modem
+> sub-system running on SC7280 SoCs.
 > 
 > Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
 > ---
->  Documentation/devicetree/bindings/remoteproc/qcom,adsp.yaml | 6 ++++++
->  1 file changed, 6 insertions(+)
+>  .../devicetree/bindings/remoteproc/qcom,q6v5.txt   | 32 ++++++++++++++++++++--
+>  1 file changed, 30 insertions(+), 2 deletions(-)
 > 
 
 Acked-by: Rob Herring <robh@kernel.org>
