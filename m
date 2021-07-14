@@ -2,175 +2,230 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56E3DC07E9A
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 14 Jul 2021 10:23:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC4F1C11F68
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 14 Jul 2021 10:27:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3133B61362
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 14 Jul 2021 10:23:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 984C861363
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 14 Jul 2021 10:27:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238768AbhGNKZ4 (ORCPT
+        id S238330AbhGNK34 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 14 Jul 2021 06:25:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32996 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238728AbhGNKZ4 (ORCPT
-        <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 14 Jul 2021 06:25:56 -0400
-Received: from mail-oi1-x236.google.com (mail-oi1-x236.google.com [IPv6:2607:f8b0:4864:20::236])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1EBFDC06175F
-        for <linux-remoteproc@vger.kernel.org>; Wed, 14 Jul 2021 03:23:05 -0700 (PDT)
-Received: by mail-oi1-x236.google.com with SMTP id m18so1697584oie.9
-        for <linux-remoteproc@vger.kernel.org>; Wed, 14 Jul 2021 03:23:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=5nhr8B0n0RJGETsMiDfrGu6uX0+jGDPR9/ExJgu53y4=;
-        b=Sf8uihogrC75HgQHqsvXQsonGBlCv/tXwN7fVcXbpxL/ZsetpS4CMr29/U7GDlUbN1
-         wwz8EHI8nDQ+iDXbm9YF1Ig1GF4riNbxemavcNZlfOxHSRwT/gHV3MXB5iEc8F4GduLQ
-         sbw0Pqrg6khIWmmVhOcpEdgEznZ1PsE5vF51uoROyWTqq3LqU65Dgzh8S910Hj2Sqm4J
-         51ynKkIgMohES2YLAlrZT69TX06QpGba67o/3sEzKHbSdpbqw8xLsBDXauD6bJmdzHib
-         x2Qa3cJvldfBE+ysY4x7rvHZUvK4ydmgvECqjx8KIkaaCHu7TmhjHwdmlWEpBdv3F/D9
-         h/NQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=5nhr8B0n0RJGETsMiDfrGu6uX0+jGDPR9/ExJgu53y4=;
-        b=gIWbK2fs2lC039I2G0ijf+elK8lrRZI599iprs44a6qTPSzQc+r5LgujawGjiLgeY0
-         L0awM/3P3+TUN8qSbEwh1wm357tzRdGFioATygT3Sp5ulFHTekOmg5ecpm8EfkL9OJqX
-         gnPXJono1azMm77MTuOtszuusdecRyekxi2pfDUMEot2BtlfDB2L0Jm7mpUh/Lnko36A
-         I/x5a8T/TvpQZqjNE424IsahCzgWXZVe9GD7FmujoJuPghbueFoNn3hdVEM6ovGU/B20
-         N04EK8O3QljpsezCcvufY40ugmaxS8rdixriyyWwjT96D9rPRDI9v57zr20exeNjc0GI
-         culw==
-X-Gm-Message-State: AOAM5323SGgiqaMz5bE3UL7SPQiH64liXJGXVPWbgYyGOOlsm4CgQEac
-        LldDHVs4yPgaErEsrEK+hsQU94OuTvFhpbWe4KY=
-X-Google-Smtp-Source: ABdhPJzraJn5LUt25CrK6LSqeATY94HhjXYPgMVCP/fOOsvRlLeIMv3k9hA0lpEfK/TPME0lCJKNguomF5hAbrVya0E=
-X-Received: by 2002:aca:d64d:: with SMTP id n74mr2337174oig.47.1626258184545;
- Wed, 14 Jul 2021 03:23:04 -0700 (PDT)
+        Wed, 14 Jul 2021 06:29:56 -0400
+Received: from foss.arm.com ([217.140.110.172]:32922 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S230270AbhGNK3w (ORCPT <rfc822;linux-remoteproc@vger.kernel.org>);
+        Wed, 14 Jul 2021 06:29:52 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 354A311D4;
+        Wed, 14 Jul 2021 03:27:00 -0700 (PDT)
+Received: from bogus (unknown [10.57.79.213])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2FF633F774;
+        Wed, 14 Jul 2021 03:26:27 -0700 (PDT)
+Date:   Wed, 14 Jul 2021 11:25:29 +0100
+From:   Sudeep Holla <sudeep.holla@arm.com>
+To:     Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        kernel@pengutronix.de, Sudeep Holla <sudeep.holla@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Alexandre Bounine <alex.bou9@gmail.com>,
+        Alex Dubov <oakad@yahoo.com>, Alex Elder <elder@kernel.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Alison Schofield <alison.schofield@intel.com>,
+        Allen Hubbe <allenbh@gmail.com>,
+        Andreas Noever <andreas.noever@gmail.com>,
+        Andy Gross <agross@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        Ben Widawsky <ben.widawsky@intel.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Bodo Stroesser <bostroesser@gmail.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Cornelia Huck <cohuck@redhat.com>,
+        Cristian Marussi <cristian.marussi@arm.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Jiang <dave.jiang@intel.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        Dexuan Cui <decui@microsoft.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Finn Thain <fthain@linux-m68k.org>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Frank Li <lznuaa@gmail.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Geoff Levand <geoff@infradead.org>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Hannes Reinecke <hare@suse.de>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Harald Freudenberger <freude@linux.ibm.com>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Heiko Carstens <hca@linux.ibm.com>,
+        Helge Deller <deller@gmx.de>, Ira Weiny <ira.weiny@intel.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Jason Wang <jasowang@redhat.com>,
+        Jens Taprogge <jens.taprogge@taprogge.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Jiri Kosina <jikos@kernel.org>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        Joey Pabalan <jpabalanb@gmail.com>,
+        Johan Hovold <johan@kernel.org>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        Johannes Thumshirn <morbidrsa@gmail.com>,
+        Jon Mason <jdmason@kudzu.us>, Juergen Gross <jgross@suse.com>,
+        Julien Grall <jgrall@amazon.com>,
+        Kai-Heng Feng <kai.heng.feng@canonical.com>,
+        Kirti Wankhede <kwankhede@nvidia.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Lee Jones <lee.jones@linaro.org>, Len Brown <lenb@kernel.org>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Manohar Vanga <manohar.vanga@gmail.com>,
+        Marc Zyngier <maz@kernel.org>, Mark Brown <broonie@kernel.org>,
+        Mark Gross <mgross@linux.intel.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Martyn Welch <martyn@welchs.me.uk>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Matt Porter <mporter@kernel.crashing.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Maxime Ripard <mripard@kernel.org>,
+        Maximilian Luz <luzmaximilian@gmail.com>,
+        Maxim Levitsky <maximlevitsky@gmail.com>,
+        Michael Buesch <m@bues.ch>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Michael Jamet <michael.jamet@intel.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Mike Christie <michael.christie@oracle.com>,
+        Moritz Fischer <mdf@kernel.org>,
+        Ohad Ben-Cohen <ohad@wizery.com>,
+        Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Peter Oberparleiter <oberpar@linux.ibm.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>,
+        Rich Felker <dalias@libc.org>,
+        Rikard Falkeborn <rikard.falkeborn@gmail.com>,
+        Rob Herring <robh@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        "Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>,
+        Samuel Holland <samuel@sholland.org>,
+        Samuel Iglesias Gonsalvez <siglesias@igalia.com>,
+        SeongJae Park <sjpark@amazon.de>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+        Stefano Stabellini <sstabellini@kernel.org>,
+        Stefan Richter <stefanr@s5r6.in-berlin.de>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        Sven Van Asbroeck <TheSven73@gmail.com>,
+        Takashi Iwai <tiwai@suse.com>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        Thorsten Scherer <t.scherer@eckelmann.de>,
+        Tomas Winkler <tomas.winkler@intel.com>,
+        Tom Rix <trix@redhat.com>,
+        Tyrel Datwyler <tyreld@linux.ibm.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Vineeth Vijayan <vneethv@linux.ibm.com>,
+        Vinod Koul <vkoul@kernel.org>,
+        Vishal Verma <vishal.l.verma@intel.com>,
+        Wei Liu <wei.liu@kernel.org>,
+        William Breathitt Gray <vilhelm.gray@gmail.com>,
+        Wolfram Sang <wsa@kernel.org>, Wu Hao <hao.wu@intel.com>,
+        Yehezkel Bernat <YehezkelShB@gmail.com>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        YueHaibing <yuehaibing@huawei.com>,
+        Yufen Yu <yuyufen@huawei.com>, alsa-devel@alsa-project.org,
+        dmaengine@vger.kernel.org, greybus-dev@lists.linaro.org,
+        industrypack-devel@lists.sourceforge.net, kvm@vger.kernel.org,
+        linux1394-devel@lists.sourceforge.net, linux-acpi@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-cxl@vger.kernel.org,
+        linux-fpga@vger.kernel.org, linux-hyperv@vger.kernel.org,
+        linux-i2c@vger.kernel.org, linux-i3c@lists.infradead.org,
+        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-m68k@lists.linux-m68k.org, linux-media@vger.kernel.org,
+        linux-mips@vger.kernel.org, linux-mmc@vger.kernel.org,
+        linux-ntb@googlegroups.com, linux-parisc@vger.kernel.org,
+        linux-pci@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-remoteproc@vger.kernel.org, linux-s390@vger.kernel.org,
+        linux-scsi@vger.kernel.org, linux-serial@vger.kernel.org,
+        linux-sh@vger.kernel.org, linux-spi@vger.kernel.org,
+        linux-staging@lists.linux.dev, linux-sunxi@lists.linux.dev,
+        linux-usb@vger.kernel.org, linux-wireless@vger.kernel.org,
+        netdev@vger.kernel.org, nvdimm@lists.linux.dev,
+        platform-driver-x86@vger.kernel.org, sparclinux@vger.kernel.org,
+        target-devel@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        xen-devel@lists.xenproject.org,
+        Johannes Thumshirn <jth@kernel.org>,
+        "Rafael J . Wysocki" <rafael@kernel.org>
+Subject: Re: [PATCH v4 5/5] bus: Make remove callback return void
+Message-ID: <20210714102529.ehwquc2s2qlbccyg@bogus>
+References: <20210713193522.1770306-1-u.kleine-koenig@pengutronix.de>
+ <20210713193522.1770306-6-u.kleine-koenig@pengutronix.de>
 MIME-Version: 1.0
-References: <20210707094033.1959752-1-aisheng.dong@nxp.com>
- <20210707094033.1959752-5-aisheng.dong@nxp.com> <20210713170638.GA1816225@p14s>
- <DB6PR0402MB27606494C59B5DEC222639B088139@DB6PR0402MB2760.eurprd04.prod.outlook.com>
-In-Reply-To: <DB6PR0402MB27606494C59B5DEC222639B088139@DB6PR0402MB2760.eurprd04.prod.outlook.com>
-From:   Dong Aisheng <dongas86@gmail.com>
-Date:   Wed, 14 Jul 2021 18:21:04 +0800
-Message-ID: <CAA+hA=SZtJf-9Ajhg1a287WVkvGOGY3N8j5huxNV=pXBiMGvPg@mail.gmail.com>
-Subject: Re: [PATCH V2 5/5] remoteproc: imx_rproc: change to ioremap_wc for dram
-To:     Peng Fan <peng.fan@nxp.com>
-Cc:     Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Aisheng Dong <aisheng.dong@nxp.com>,
-        "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "ohad@wizery.com" <ohad@wizery.com>,
-        "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20210713193522.1770306-6-u.kleine-koenig@pengutronix.de>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Wed, Jul 14, 2021 at 8:59 AM Peng Fan <peng.fan@nxp.com> wrote:
->
-> Hi Mathieu,
->
-> > Subject: Re: [PATCH V2 5/5] remoteproc: imx_rproc: change to ioremap_wc
-> > for dram
-> >
-> > On Wed, Jul 07, 2021 at 05:40:33PM +0800, Dong Aisheng wrote:
-> > > DRAM is not io memory, so changed to ioremap_wc. This is also aligned
-> > > with core io accessories. e.g. memcpy/memset and cpu direct access.
-> > >
-> > > Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
-> > > Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
-> > > Fixes: 5e4c1243071d ("remoteproc: imx_rproc: support remote cores
-> > > booted before Linux Kernel")
-> > > Reviewed-by: Peng Fan <peng.fan@nxp.com>
-> > > Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
-> > > ---
-> > > v1->v2:
-> > >  * new patch
-> >
-> > It's a new patch and yet Peng's RB tag is already on it...
->
-> Aisheng's reply in the other email.
-> "
-> Above two lines were added by mistake. (copied from patch 4)
-> I'm going to wait for review comments first and resend with changes if any.
->
-> Regards
-> Aisheng
-> "
->
-> >
-> > > ---
-> > >  drivers/remoteproc/imx_rproc.c | 2 +-
-> > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > >
-> > > diff --git a/drivers/remoteproc/imx_rproc.c
-> > > b/drivers/remoteproc/imx_rproc.c index ff620688fad9..4ae416ba5080
-> > > 100644
-> > > --- a/drivers/remoteproc/imx_rproc.c
-> > > +++ b/drivers/remoteproc/imx_rproc.c
-> > > @@ -597,7 +597,7 @@ static int imx_rproc_addr_init(struct imx_rproc
-> > *priv,
-> > >                     break;
-> > >
-> > >             /* Not use resource version, because we might share region */
-> > > -           priv->mem[b].cpu_addr = devm_ioremap(&pdev->dev, res.start,
-> > resource_size(&res));
-> > > +           priv->mem[b].cpu_addr = devm_ioremap_wc(&pdev->dev,
-> > res.start,
-> > > +resource_size(&res));
-> >
-> > How was it working before?
->
-> we took all memory used by M-core as io memory, including TCM/SRAM/DRAM.
->
-> Will it really work for all platforms and was this
-> > extensively tested?
->
-> Aisheng may confirm, I not test this patchset.
->
-> >
-> > Peng - I will need an explicit reply from you that you are in agreement with
-> > this change.
->
-> I not test, but it should work per my understanding.
-> i.MX TCM area has limitation that not use ioremap_wc, DRAM has no such
-> limitation. Just think this not deserve a fix tag.
->
+On Tue, Jul 13, 2021 at 09:35:22PM +0200, Uwe Kleine-König wrote:
+> The driver core ignores the return value of this callback because there
+> is only little it can do when a device disappears.
+> 
+> This is the final bit of a long lasting cleanup quest where several
+> buses were converted to also return void from their remove callback.
+> Additionally some resource leaks were fixed that were caused by drivers
+> returning an error code in the expectation that the driver won't go
+> away.
+> 
+> With struct bus_type::remove returning void it's prevented that newly
+> implemented buses return an ignored error code and so don't anticipate
+> wrong expectations for driver authors.
+> 
 
-I tested with MX8MQ, i could find more to test although it should work
-theoretically.
-Why adding fixes tag is because using normal memory accessories (e.g. memset)
-for io memory (device type) may have issues.
-Does it make sense?
+[...]
 
-Regards
-Aisheng
+> diff --git a/drivers/firmware/arm_scmi/bus.c b/drivers/firmware/arm_scmi/bus.c
+> index 784cf0027da3..2682c3df651c 100644
+> --- a/drivers/firmware/arm_scmi/bus.c
+> +++ b/drivers/firmware/arm_scmi/bus.c
+> @@ -116,15 +116,13 @@ static int scmi_dev_probe(struct device *dev)
+>  	return scmi_drv->probe(scmi_dev);
+>  }
+>  
+> -static int scmi_dev_remove(struct device *dev)
+> +static void scmi_dev_remove(struct device *dev)
+>  {
+>  	struct scmi_driver *scmi_drv = to_scmi_driver(dev->driver);
+>  	struct scmi_device *scmi_dev = to_scmi_dev(dev);
+>  
+>  	if (scmi_drv->remove)
+>  		scmi_drv->remove(scmi_dev);
+> -
+> -	return 0;
+>  }
+>  
+>  static struct bus_type scmi_bus_type = {
 
+Acked-by: Sudeep Holla <sudeep.holla@arm.com>
 
-> > I will also need you to review patch 01 and 02 of this set.
->
-> Sure, I'll review.
->
-> Thanks,
-> Peng.
->
-> >
-> > Thanks,
-> > Mathieu
-> >
-> > >             if (!priv->mem[b].cpu_addr) {
-> > >                     dev_err(dev, "failed to remap %pr\n", &res);
-> > >                     return -ENOMEM;
-> > > --
-> > > 2.25.1
-> > >
+--
+Regards,
+Sudeep
