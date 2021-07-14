@@ -2,230 +2,265 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC4F1C11F68
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 14 Jul 2021 10:27:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7119CC07E9C
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 14 Jul 2021 10:27:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 984C861363
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 14 Jul 2021 10:27:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4D349613C9
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 14 Jul 2021 10:27:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238330AbhGNK34 (ORCPT
+        id S238826AbhGNK35 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 14 Jul 2021 06:29:56 -0400
-Received: from foss.arm.com ([217.140.110.172]:32922 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230270AbhGNK3w (ORCPT <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 14 Jul 2021 06:29:52 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 354A311D4;
-        Wed, 14 Jul 2021 03:27:00 -0700 (PDT)
-Received: from bogus (unknown [10.57.79.213])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2FF633F774;
-        Wed, 14 Jul 2021 03:26:27 -0700 (PDT)
-Date:   Wed, 14 Jul 2021 11:25:29 +0100
-From:   Sudeep Holla <sudeep.holla@arm.com>
-To:     Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        kernel@pengutronix.de, Sudeep Holla <sudeep.holla@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Alexandre Bounine <alex.bou9@gmail.com>,
-        Alex Dubov <oakad@yahoo.com>, Alex Elder <elder@kernel.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Alison Schofield <alison.schofield@intel.com>,
-        Allen Hubbe <allenbh@gmail.com>,
-        Andreas Noever <andreas.noever@gmail.com>,
-        Andy Gross <agross@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        Ben Widawsky <ben.widawsky@intel.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Bodo Stroesser <bostroesser@gmail.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Cornelia Huck <cohuck@redhat.com>,
-        Cristian Marussi <cristian.marussi@arm.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Jiang <dave.jiang@intel.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        Dexuan Cui <decui@microsoft.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        Finn Thain <fthain@linux-m68k.org>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Frank Li <lznuaa@gmail.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Geoff Levand <geoff@infradead.org>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Hannes Reinecke <hare@suse.de>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Harald Freudenberger <freude@linux.ibm.com>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Heiko Carstens <hca@linux.ibm.com>,
-        Helge Deller <deller@gmx.de>, Ira Weiny <ira.weiny@intel.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Jason Wang <jasowang@redhat.com>,
-        Jens Taprogge <jens.taprogge@taprogge.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Jiri Kosina <jikos@kernel.org>,
-        Jiri Slaby <jirislaby@kernel.org>,
-        Joey Pabalan <jpabalanb@gmail.com>,
-        Johan Hovold <johan@kernel.org>,
-        Johannes Berg <johannes@sipsolutions.net>,
-        Johannes Thumshirn <morbidrsa@gmail.com>,
-        Jon Mason <jdmason@kudzu.us>, Juergen Gross <jgross@suse.com>,
-        Julien Grall <jgrall@amazon.com>,
-        Kai-Heng Feng <kai.heng.feng@canonical.com>,
-        Kirti Wankhede <kwankhede@nvidia.com>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Lee Jones <lee.jones@linaro.org>, Len Brown <lenb@kernel.org>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Manohar Vanga <manohar.vanga@gmail.com>,
-        Marc Zyngier <maz@kernel.org>, Mark Brown <broonie@kernel.org>,
-        Mark Gross <mgross@linux.intel.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Martyn Welch <martyn@welchs.me.uk>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Matt Porter <mporter@kernel.crashing.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Maxime Ripard <mripard@kernel.org>,
-        Maximilian Luz <luzmaximilian@gmail.com>,
-        Maxim Levitsky <maximlevitsky@gmail.com>,
-        Michael Buesch <m@bues.ch>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Michael Jamet <michael.jamet@intel.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Mike Christie <michael.christie@oracle.com>,
-        Moritz Fischer <mdf@kernel.org>,
-        Ohad Ben-Cohen <ohad@wizery.com>,
-        Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Peter Oberparleiter <oberpar@linux.ibm.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>,
-        Rich Felker <dalias@libc.org>,
-        Rikard Falkeborn <rikard.falkeborn@gmail.com>,
-        Rob Herring <robh@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        "Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>,
-        Samuel Holland <samuel@sholland.org>,
-        Samuel Iglesias Gonsalvez <siglesias@igalia.com>,
-        SeongJae Park <sjpark@amazon.de>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        Stefano Stabellini <sstabellini@kernel.org>,
-        Stefan Richter <stefanr@s5r6.in-berlin.de>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        Sven Van Asbroeck <TheSven73@gmail.com>,
-        Takashi Iwai <tiwai@suse.com>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        Thorsten Scherer <t.scherer@eckelmann.de>,
-        Tomas Winkler <tomas.winkler@intel.com>,
-        Tom Rix <trix@redhat.com>,
-        Tyrel Datwyler <tyreld@linux.ibm.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Vineeth Vijayan <vneethv@linux.ibm.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        Vishal Verma <vishal.l.verma@intel.com>,
-        Wei Liu <wei.liu@kernel.org>,
-        William Breathitt Gray <vilhelm.gray@gmail.com>,
-        Wolfram Sang <wsa@kernel.org>, Wu Hao <hao.wu@intel.com>,
-        Yehezkel Bernat <YehezkelShB@gmail.com>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        YueHaibing <yuehaibing@huawei.com>,
-        Yufen Yu <yuyufen@huawei.com>, alsa-devel@alsa-project.org,
-        dmaengine@vger.kernel.org, greybus-dev@lists.linaro.org,
-        industrypack-devel@lists.sourceforge.net, kvm@vger.kernel.org,
-        linux1394-devel@lists.sourceforge.net, linux-acpi@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-cxl@vger.kernel.org,
-        linux-fpga@vger.kernel.org, linux-hyperv@vger.kernel.org,
-        linux-i2c@vger.kernel.org, linux-i3c@lists.infradead.org,
-        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-m68k@lists.linux-m68k.org, linux-media@vger.kernel.org,
-        linux-mips@vger.kernel.org, linux-mmc@vger.kernel.org,
-        linux-ntb@googlegroups.com, linux-parisc@vger.kernel.org,
-        linux-pci@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-remoteproc@vger.kernel.org, linux-s390@vger.kernel.org,
-        linux-scsi@vger.kernel.org, linux-serial@vger.kernel.org,
-        linux-sh@vger.kernel.org, linux-spi@vger.kernel.org,
-        linux-staging@lists.linux.dev, linux-sunxi@lists.linux.dev,
-        linux-usb@vger.kernel.org, linux-wireless@vger.kernel.org,
-        netdev@vger.kernel.org, nvdimm@lists.linux.dev,
-        platform-driver-x86@vger.kernel.org, sparclinux@vger.kernel.org,
-        target-devel@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        xen-devel@lists.xenproject.org,
-        Johannes Thumshirn <jth@kernel.org>,
-        "Rafael J . Wysocki" <rafael@kernel.org>
-Subject: Re: [PATCH v4 5/5] bus: Make remove callback return void
-Message-ID: <20210714102529.ehwquc2s2qlbccyg@bogus>
-References: <20210713193522.1770306-1-u.kleine-koenig@pengutronix.de>
- <20210713193522.1770306-6-u.kleine-koenig@pengutronix.de>
+        Wed, 14 Jul 2021 06:29:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33858 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S237998AbhGNK3y (ORCPT
+        <rfc822;linux-remoteproc@vger.kernel.org>);
+        Wed, 14 Jul 2021 06:29:54 -0400
+Received: from mail-ot1-x32e.google.com (mail-ot1-x32e.google.com [IPv6:2607:f8b0:4864:20::32e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A6EF6C06175F
+        for <linux-remoteproc@vger.kernel.org>; Wed, 14 Jul 2021 03:27:02 -0700 (PDT)
+Received: by mail-ot1-x32e.google.com with SMTP id o17-20020a9d76510000b02903eabfc221a9so2027691otl.0
+        for <linux-remoteproc@vger.kernel.org>; Wed, 14 Jul 2021 03:27:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=B+tfBuHb7/kW15VVhZVOcs3ykTV6M2hEc298Cb8pdFs=;
+        b=CT/5sKTekuX48StStI0OKf2LFfgOYjHAUilolN36r/Rhhvvfmw0azbYeir6bPIB046
+         uZ9g99EK0jrDZBcAqneA3LDf7d7bYXvJTMmTe/Oxz8qrMFh5+et3ijGQjLnTkz9kxJ3j
+         3xmUC4zWzFym/r+9E1qISOqPRyupMOtXtgzwQqCIFer9QeY88Q9rSRLUeq0O+NwAQOPA
+         qB4RagMX+ykVW9mbbcdOBoF1TklOBilxbFvgaHmTC6kN+xA5jBNPaP5dYz7zaaCnTkbb
+         j69c/XnV/xZ+PavH+DZka+ToafHAMHkek6MtHuAlGopDEtuL4vwYYZOMVGr4p8sHGpqF
+         DUCQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=B+tfBuHb7/kW15VVhZVOcs3ykTV6M2hEc298Cb8pdFs=;
+        b=fBN07svG0tCPfD0xMJoQbxJ0HkinjFl0G9cIlr9783bHpZsO3QVfs2ScX2rdM+m+f6
+         2Dzv2o4M11nK4lRPLdAOIy73hyYQpXfHsQ+Ds/R6QEYDITjOutXe/YBIGqsEQz/F5+cZ
+         Ndla5k3XR9g3BnKhWqr3lkAyPt5iDVK32eCI8nDMmDVvRiuKJRyb3P5dwMmrV3M/FydE
+         uj/XkFI99CWYTGLyRLaDi9EAWGi6l2xoQgU3/mG5KWh9lc7iJ5VCP8GUIqqyK2OGPf2c
+         josIbUir5SqvbV+6UnmX0S2L0Zc1Xbrj53G0L03fMtBEF0Xvkl7nBNaaxNcypMiM9Fsq
+         QwRQ==
+X-Gm-Message-State: AOAM530/YVLHkWiz87wL84ZlN6chy5eKpZHYljbbGNWznFR81wzY9CFx
+        yYZ8+BkMy47TwqFceNRT35BVnbvE6WH4IfLGMIs=
+X-Google-Smtp-Source: ABdhPJzUbCa3RFYROZmpAKbkzWB0B8WaYQQ2lOejtky5xwZ8qKT6M5NE6pfRm3/JiPNA6GYbY58Jqoj6Zk/npsWrnwc=
+X-Received: by 2002:a05:6830:160c:: with SMTP id g12mr7508699otr.118.1626258422102;
+ Wed, 14 Jul 2021 03:27:02 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20210713193522.1770306-6-u.kleine-koenig@pengutronix.de>
+References: <20210707094033.1959752-1-aisheng.dong@nxp.com>
+ <20210707094033.1959752-2-aisheng.dong@nxp.com> <DB6PR0402MB27600B2B114AC2FBE6E05EBF88139@DB6PR0402MB2760.eurprd04.prod.outlook.com>
+In-Reply-To: <DB6PR0402MB27600B2B114AC2FBE6E05EBF88139@DB6PR0402MB2760.eurprd04.prod.outlook.com>
+From:   Dong Aisheng <dongas86@gmail.com>
+Date:   Wed, 14 Jul 2021 18:25:02 +0800
+Message-ID: <CAA+hA=SkiVtWaPD+iw32n3KGA4BXYCPW1Z5FOMERZkLZy69CYA@mail.gmail.com>
+Subject: Re: [PATCH V2 2/5] remoteproc: imx_rproc: fix TCM io memory type
+To:     Peng Fan <peng.fan@nxp.com>
+Cc:     Aisheng Dong <aisheng.dong@nxp.com>,
+        "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "ohad@wizery.com" <ohad@wizery.com>,
+        "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>,
+        "mathieu.poirier@linaro.org" <mathieu.poirier@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Tue, Jul 13, 2021 at 09:35:22PM +0200, Uwe Kleine-König wrote:
-> The driver core ignores the return value of this callback because there
-> is only little it can do when a device disappears.
-> 
-> This is the final bit of a long lasting cleanup quest where several
-> buses were converted to also return void from their remove callback.
-> Additionally some resource leaks were fixed that were caused by drivers
-> returning an error code in the expectation that the driver won't go
-> away.
-> 
-> With struct bus_type::remove returning void it's prevented that newly
-> implemented buses return an ignored error code and so don't anticipate
-> wrong expectations for driver authors.
-> 
+On Wed, Jul 14, 2021 at 9:12 AM Peng Fan <peng.fan@nxp.com> wrote:
+>
+> > Subject: [PATCH V2 2/5] remoteproc: imx_rproc: fix TCM io memory type
+> >
+> > is_iomem was introduced in the commit 40df0a91b2a5 ("remoteproc: add
+> > is_iomem to da_to_va"), but the driver seemed missed to provide the io type
+>
+> missed->missing
+>
+> > correctly.
+> > This patch updates remoteproc driver to indicate the TCM on IMX are io
+> > memories. Without the change, remoteroc kick will fail.
+>
+> remoteroc->remoteproc
+>
 
-[...]
+Will fix, thanks.
 
-> diff --git a/drivers/firmware/arm_scmi/bus.c b/drivers/firmware/arm_scmi/bus.c
-> index 784cf0027da3..2682c3df651c 100644
-> --- a/drivers/firmware/arm_scmi/bus.c
-> +++ b/drivers/firmware/arm_scmi/bus.c
-> @@ -116,15 +116,13 @@ static int scmi_dev_probe(struct device *dev)
->  	return scmi_drv->probe(scmi_dev);
->  }
->  
-> -static int scmi_dev_remove(struct device *dev)
-> +static void scmi_dev_remove(struct device *dev)
->  {
->  	struct scmi_driver *scmi_drv = to_scmi_driver(dev->driver);
->  	struct scmi_device *scmi_dev = to_scmi_dev(dev);
->  
->  	if (scmi_drv->remove)
->  		scmi_drv->remove(scmi_dev);
-> -
-> -	return 0;
->  }
->  
->  static struct bus_type scmi_bus_type = {
+> >
+> > Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
+> > Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
+> > Cc: Peng Fan <peng.fan@nxp.com>
+> > Fixes: d59eedc0e408 ("remoteproc: imx_rproc: support i.MX8ULP")
+>
+> Drop this fix. 8ULP only support ROM loaded M33 images, no
+> chance to let Kernel load M33 image.
 
-Acked-by: Sudeep Holla <sudeep.holla@arm.com>
+Will drop, thanks
 
---
-Regards,
-Sudeep
+Regards
+Aisheng
+
+>
+> > Fixes: 79806d32d5aa ("remoteproc: imx_rproc: support i.MX8MN/P")
+> > Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+> > ---
+> > ChangeLog:
+> > v1->v2:
+> >  * using ioremap_wc for non TCM memory
+> > ---
+> >  drivers/remoteproc/imx_rproc.c | 35 ++++++++++++++++++++--------------
+> >  1 file changed, 21 insertions(+), 14 deletions(-)
+> >
+> > diff --git a/drivers/remoteproc/imx_rproc.c
+> > b/drivers/remoteproc/imx_rproc.c index d88f76f5305e..71dcc6dd32e4
+> > 100644
+> > --- a/drivers/remoteproc/imx_rproc.c
+> > +++ b/drivers/remoteproc/imx_rproc.c
+> > @@ -71,6 +71,7 @@ struct imx_rproc_mem {
+> >  /* att flags */
+> >  /* M4 own area. Can be mapped at probe */
+> >  #define ATT_OWN              BIT(1)
+> > +#define ATT_IOMEM    BIT(2)
+> >
+> >  /* address translation table */
+> >  struct imx_rproc_att {
+> > @@ -117,7 +118,7 @@ struct imx_rproc {
+> >  static const struct imx_rproc_att imx_rproc_att_imx8mn[] = {
+> >       /* dev addr , sys addr  , size      , flags */
+> >       /* ITCM   */
+> > -     { 0x00000000, 0x007E0000, 0x00020000, ATT_OWN },
+> > +     { 0x00000000, 0x007E0000, 0x00020000, ATT_OWN | ATT_IOMEM },
+> >       /* OCRAM_S */
+> >       { 0x00180000, 0x00180000, 0x00009000, 0 },
+> >       /* OCRAM */
+> > @@ -131,7 +132,7 @@ static const struct imx_rproc_att
+> > imx_rproc_att_imx8mn[] = {
+> >       /* DDR (Code) - alias */
+> >       { 0x10000000, 0x40000000, 0x0FFE0000, 0 },
+> >       /* DTCM */
+> > -     { 0x20000000, 0x00800000, 0x00020000, ATT_OWN },
+> > +     { 0x20000000, 0x00800000, 0x00020000, ATT_OWN | ATT_IOMEM },
+> >       /* OCRAM_S - alias */
+> >       { 0x20180000, 0x00180000, 0x00008000, ATT_OWN },
+> >       /* OCRAM */
+> > @@ -147,7 +148,7 @@ static const struct imx_rproc_att
+> > imx_rproc_att_imx8mn[] = {  static const struct imx_rproc_att
+> > imx_rproc_att_imx8mq[] = {
+> >       /* dev addr , sys addr  , size      , flags */
+> >       /* TCML - alias */
+> > -     { 0x00000000, 0x007e0000, 0x00020000, 0 },
+> > +     { 0x00000000, 0x007e0000, 0x00020000, ATT_IOMEM},
+> >       /* OCRAM_S */
+> >       { 0x00180000, 0x00180000, 0x00008000, 0 },
+> >       /* OCRAM */
+> > @@ -159,9 +160,9 @@ static const struct imx_rproc_att
+> > imx_rproc_att_imx8mq[] = {
+> >       /* DDR (Code) - alias */
+> >       { 0x10000000, 0x80000000, 0x0FFE0000, 0 },
+> >       /* TCML */
+> > -     { 0x1FFE0000, 0x007E0000, 0x00020000, ATT_OWN },
+> > +     { 0x1FFE0000, 0x007E0000, 0x00020000, ATT_OWN  | ATT_IOMEM},
+> >       /* TCMU */
+> > -     { 0x20000000, 0x00800000, 0x00020000, ATT_OWN },
+> > +     { 0x20000000, 0x00800000, 0x00020000, ATT_OWN  | ATT_IOMEM},
+> >       /* OCRAM_S */
+> >       { 0x20180000, 0x00180000, 0x00008000, ATT_OWN },
+> >       /* OCRAM */
+> > @@ -199,12 +200,12 @@ static const struct imx_rproc_att
+> > imx_rproc_att_imx7d[] = {
+> >       /* OCRAM_PXP (Code) - alias */
+> >       { 0x00940000, 0x00940000, 0x00008000, 0 },
+> >       /* TCML (Code) */
+> > -     { 0x1FFF8000, 0x007F8000, 0x00008000, ATT_OWN },
+> > +     { 0x1FFF8000, 0x007F8000, 0x00008000, ATT_OWN | ATT_IOMEM },
+> >       /* DDR (Code) - alias, first part of DDR (Data) */
+> >       { 0x10000000, 0x80000000, 0x0FFF0000, 0 },
+> >
+> >       /* TCMU (Data) */
+> > -     { 0x20000000, 0x00800000, 0x00008000, ATT_OWN },
+> > +     { 0x20000000, 0x00800000, 0x00008000, ATT_OWN | ATT_IOMEM },
+> >       /* OCRAM (Data) */
+> >       { 0x20200000, 0x00900000, 0x00020000, 0 },
+> >       /* OCRAM_EPDC (Data) */
+> > @@ -218,18 +219,18 @@ static const struct imx_rproc_att
+> > imx_rproc_att_imx7d[] = {  static const struct imx_rproc_att
+> > imx_rproc_att_imx6sx[] = {
+> >       /* dev addr , sys addr  , size      , flags */
+> >       /* TCML (M4 Boot Code) - alias */
+> > -     { 0x00000000, 0x007F8000, 0x00008000, 0 },
+> > +     { 0x00000000, 0x007F8000, 0x00008000, ATT_IOMEM },
+> >       /* OCRAM_S (Code) */
+> >       { 0x00180000, 0x008F8000, 0x00004000, 0 },
+> >       /* OCRAM_S (Code) - alias */
+> >       { 0x00180000, 0x008FC000, 0x00004000, 0 },
+> >       /* TCML (Code) */
+> > -     { 0x1FFF8000, 0x007F8000, 0x00008000, ATT_OWN },
+> > +     { 0x1FFF8000, 0x007F8000, 0x00008000, ATT_OWN | ATT_IOMEM },
+> >       /* DDR (Code) - alias, first part of DDR (Data) */
+> >       { 0x10000000, 0x80000000, 0x0FFF8000, 0 },
+> >
+> >       /* TCMU (Data) */
+> > -     { 0x20000000, 0x00800000, 0x00008000, ATT_OWN },
+> > +     { 0x20000000, 0x00800000, 0x00008000, ATT_OWN | ATT_IOMEM },
+> >       /* OCRAM_S (Data) - alias? */
+> >       { 0x208F8000, 0x008F8000, 0x00004000, 0 },
+> >       /* DDR (Data) */
+> > @@ -341,7 +342,7 @@ static int imx_rproc_stop(struct rproc *rproc)  }
+> >
+> >  static int imx_rproc_da_to_sys(struct imx_rproc *priv, u64 da,
+> > -                            size_t len, u64 *sys)
+> > +                            size_t len, u64 *sys, bool *is_iomem)
+> >  {
+> >       const struct imx_rproc_dcfg *dcfg = priv->dcfg;
+> >       int i;
+> > @@ -354,6 +355,8 @@ static int imx_rproc_da_to_sys(struct imx_rproc *priv,
+> > u64 da,
+> >                       unsigned int offset = da - att->da;
+> >
+> >                       *sys = att->sa + offset;
+> > +                     if (is_iomem)
+> > +                             *is_iomem = att->flags & ATT_IOMEM;
+> >                       return 0;
+> >               }
+> >       }
+> > @@ -377,7 +380,7 @@ static void *imx_rproc_da_to_va(struct rproc *rproc,
+> > u64 da, size_t len, bool *i
+> >        * On device side we have many aliases, so we need to convert device
+> >        * address (M4) to system bus address first.
+> >        */
+> > -     if (imx_rproc_da_to_sys(priv, da, len, &sys))
+> > +     if (imx_rproc_da_to_sys(priv, da, len, &sys, is_iomem))
+> >               return NULL;
+> >
+> >       for (i = 0; i < IMX_RPROC_MEM_MAX; i++) { @@ -553,8 +556,12 @@
+> > static int imx_rproc_addr_init(struct imx_rproc *priv,
+> >               if (b >= IMX_RPROC_MEM_MAX)
+> >                       break;
+> >
+> > -             priv->mem[b].cpu_addr = devm_ioremap(&pdev->dev,
+> > -                                                  att->sa, att->size);
+> > +             if (att->flags & ATT_IOMEM)
+> > +                     priv->mem[b].cpu_addr = devm_ioremap(&pdev->dev,
+> > +                                                          att->sa, att->size);
+> > +             else
+> > +                     priv->mem[b].cpu_addr = devm_ioremap_wc(&pdev->dev,
+> > +                                                             att->sa, att->size);
+> >               if (!priv->mem[b].cpu_addr) {
+> >                       dev_err(dev, "failed to remap %#x bytes from %#x\n", att->size,
+> > att->sa);
+> >                       return -ENOMEM;
+>
+>
+> Besides the upper comments, looks ok to me.
+> Reviewed-by: Peng Fan <peng.fan@nxp.com>
+>
+> > --
+> > 2.25.1
+>
