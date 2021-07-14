@@ -2,209 +2,182 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5EE2C07E95
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 14 Jul 2021 00:59:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E2B5C07E95
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 14 Jul 2021 01:01:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9A7936136E
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 14 Jul 2021 00:59:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3D77A6136E
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 14 Jul 2021 01:01:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237186AbhGNBCO (ORCPT
+        id S237228AbhGNBEY (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 13 Jul 2021 21:02:14 -0400
-Received: from mail-am6eur05on2053.outbound.protection.outlook.com ([40.107.22.53]:44512
+        Tue, 13 Jul 2021 21:04:24 -0400
+Received: from mail-am6eur05on2053.outbound.protection.outlook.com ([40.107.22.53]:58208
         "EHLO EUR05-AM6-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S237180AbhGNBCO (ORCPT <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 13 Jul 2021 21:02:14 -0400
+        id S237180AbhGNBEX (ORCPT <rfc822;linux-remoteproc@vger.kernel.org>);
+        Tue, 13 Jul 2021 21:04:23 -0400
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=CmE8+FTysnssyGZQEWaPZe7rwEjn1WOH8xL1HzVgqT69QkCy9LWr8jX1PnTgQZ9IOmPacy+qWvv4d+IJHYXBrojTh7OUjaFcGuXQCUtAB0Ji3Fh91mKfP6hFjw+D/uk+nV1ej715mR1uv+x7yityXvfJ3wJt7why5M+XCK44Otaa7+3X0EfFZpi8ZH4gfwAbTMAu3r/ZYWh4+qLojtTdNGgVsR1zeFhI0viLOZBT5A2C1KUwK22QVhCCQFp385fqZG3j6xk38AwoNqgqf9lb9VGDLOaBxxGQbmF03IYHBdQ1GYd+Kp2Bj4odBF7F6I/JRE+6ccgjkZ7Y8wcOLvGE1g==
+ b=knNr5uNFOkFO/AK4O+L6VfCeOyPGtLGzUcr6by4nLuDTzEDkR9f/hbbwDg0eRPXYWvUIOn6boxM4s1i2yN0SMxmgMeVUeGAYFmuIQEVxaa/0HIcP2n+DYC2CKdjLJTWGwuo38qHnKRa79PegPvmf3Csj5u6p9ThsgGle3UxbWIq13Sr+cz4w2gPMDT7ullqhdhx36VQ9pzvYxsQ8hy7Yb/ZTJH+k0SlGyo5sJe8tgRlPaVbIzXhbBCuWGNDffB/CQ6EP5krWKCYjbEaYX6YkXNnl06NYbBR836C5j33X//O+KnKLXcPWAZMiwiScdHYMOo+EbLsE8Iy4zs+lf1+kMA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=dRdkpkeDL+c0+roWKpQ7de0LACB9vlOnAtwmEVX5oto=;
- b=caK2vcaFfYaR8wv3pMl/oHR0Dm6RWuGfUEmhugyQrANETTuUzcPzzuebNCPF11gL233vuV4yT7JhbXIUWMqVSPZdBFOccC0RHUP7aDLdWb8bapOjAhfjLMoCfME6Tqo8hzz3UnS09UUKYKzRpuPfJjn2FR/2H5Syx7UpRVb7xQUhFLlUEdw2wj66noIa4darRD4s8cXFQaOf14tuGhq1MQK2qjgK1syX8yaAMWlGRifZkq3lYCiLGd9U1uJ1/IE5Ij5RtvcDwE9GTaMBZYgWwhEQvT6QRCKYaApIoTiRClVw/JHKOvVUw+qxlgJnUDIVtnKrLDSoWrIq2xNr6roLng==
+ bh=FgRHPGEqLIazi0K5ny0GdOkQwE68t7N7cBzrSEbXvI8=;
+ b=EuHsmCV9f9iFIbFn45Nkuaxtl0D9huS17B5vPKkOj4sMTOYc7t5lBMdCnVa9btIOWbXvg8gsbazMxYD2Y99re7d3U39PQwsEK846EqJVr6I2uyQMTcZXmCkFRaOp/QCyn1CE3litqoU0Sl8FuNh8M2JekSEuMpUm1+eWB8xY5fFQJRL3IfzTuBdTmZE4oBr88T5Xqi6eNFGWuKlz3thYduJkzwSBsCP9dgn8AJ6jN1kmR+2lWhqX4itRV/qNlgW2ZbhcP7bJ0pp95YEmMXT7RJP1rCiYH3IwuSvMnPH4AAyg2ZfIn1zVACTYFhSGM42juYRoWa8981VAS5+drpbKlQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector2-NXP1-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=dRdkpkeDL+c0+roWKpQ7de0LACB9vlOnAtwmEVX5oto=;
- b=LdXMzLJmJv7ak7d7cukmfejXSjBbUzD2U2j2OWNUfhH7VGmsJK0AcPnhTJMYY7rC3pde11V5XiRRfO8PBmxOmXp6Q4fsdRBNYltr4aukkEWpcXsLPfV0pq9WDHE6P5Dst4bHoUFvDOPSev1R1vnZK8hpduXDKCjEIC8CBDqIG7s=
+ bh=FgRHPGEqLIazi0K5ny0GdOkQwE68t7N7cBzrSEbXvI8=;
+ b=SvKxzA7kqvnE6Gc1EEDh4nwoPdvWcxgqWka5xYVSUFyJuNCY0spdLhYXT027MAYOTCAnY39jIsLKIkWOVs751+aLdxUhpMUvlmrwxkz09RvZMvJkhGpWJ8S4q0Fb3N9c4KUas/eg7d5MTO0QTdyK9R04QKFFl1SIJdsrRzpP+Xw=
 Received: from DB6PR0402MB2760.eurprd04.prod.outlook.com (2603:10a6:4:a1::14)
  by DB3PR0402MB3915.eurprd04.prod.outlook.com (2603:10a6:8:e::30) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4308.20; Wed, 14 Jul
- 2021 00:59:20 +0000
+ 2021 01:01:30 +0000
 Received: from DB6PR0402MB2760.eurprd04.prod.outlook.com
  ([fe80::c445:d742:eb76:86dd]) by DB6PR0402MB2760.eurprd04.prod.outlook.com
  ([fe80::c445:d742:eb76:86dd%9]) with mapi id 15.20.4308.027; Wed, 14 Jul 2021
- 00:59:20 +0000
-From:   Peng Fan <peng.fan@nxp.com>
-To:     Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Aisheng Dong <aisheng.dong@nxp.com>
-CC:     "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
+ 01:01:30 +0000
+From:   "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+To:     Aisheng Dong <aisheng.dong@nxp.com>,
+        "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>
+CC:     "linux-arm-kernel@lists.infradead.org" 
         <linux-arm-kernel@lists.infradead.org>,
         "ohad@wizery.com" <ohad@wizery.com>,
         "dongas86@gmail.com" <dongas86@gmail.com>,
-        "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>
-Subject: RE: [PATCH V2 5/5] remoteproc: imx_rproc: change to ioremap_wc for
- dram
-Thread-Topic: [PATCH V2 5/5] remoteproc: imx_rproc: change to ioremap_wc for
- dram
-Thread-Index: AQHXcxRKYHWFG+35eEGhDbDigAC4nKtBLLkAgACA9kA=
-Date:   Wed, 14 Jul 2021 00:59:20 +0000
-Message-ID: <DB6PR0402MB27606494C59B5DEC222639B088139@DB6PR0402MB2760.eurprd04.prod.outlook.com>
+        "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>,
+        "mathieu.poirier@linaro.org" <mathieu.poirier@linaro.org>
+Subject: RE: [PATCH V2 1/5] remoteproc: fix the wrong default value of
+ is_iomem
+Thread-Topic: [PATCH V2 1/5] remoteproc: fix the wrong default value of
+ is_iomem
+Thread-Index: AQHXcxRD6NwTvyegR0WKb459FchqnatBsT+w
+Date:   Wed, 14 Jul 2021 01:01:30 +0000
+Message-ID: <DB6PR0402MB27602BA2E0E587C9381051CF88139@DB6PR0402MB2760.eurprd04.prod.outlook.com>
 References: <20210707094033.1959752-1-aisheng.dong@nxp.com>
- <20210707094033.1959752-5-aisheng.dong@nxp.com>
- <20210713170638.GA1816225@p14s>
-In-Reply-To: <20210713170638.GA1816225@p14s>
+In-Reply-To: <20210707094033.1959752-1-aisheng.dong@nxp.com>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-authentication-results: linaro.org; dkim=none (message not signed)
- header.d=none;linaro.org; dmarc=none action=none header.from=nxp.com;
+authentication-results: nxp.com; dkim=none (message not signed)
+ header.d=none;nxp.com; dmarc=none action=none header.from=oss.nxp.com;
+x-ms-exchange-messagesentrepresentingtype: 1
 x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 545b9010-cce6-48ca-c455-08d946629ce1
+x-ms-office365-filtering-correlation-id: 4284a2c6-aea0-4e46-5265-08d94662eaa8
 x-ms-traffictypediagnostic: DB3PR0402MB3915:
+x-ms-exchange-sharedmailbox-routingagent-processed: True
 x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <DB3PR0402MB391537CF9CC128D833589E5F88139@DB3PR0402MB3915.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:9508;
+x-microsoft-antispam-prvs: <DB3PR0402MB3915A92AB554447F012A0E00C9139@DB3PR0402MB3915.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:7691;
 x-ms-exchange-senderadcheck: 1
 x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: p4blf5TIszVDMDt+ahMctVDMKzITktPlMCuviWBTWV1L3gqlAezXK51wQBjZnlIPep33rhuoP4pknUhrfxXtcE8vt6g8hPIrEjhW8GlNdMkclpVOkxhroPJ/E7PhTyvF79x46AfU8wTVO3vzIRDWUKwGAgD4v5dyL1y1vlSuv06w3XqZc5qBPm2x/oKgy2mubx/I2/kASjIApn+WMycEdNP1QFcy6q6lKKKLOYYUwHtBHrXfBWVAS6AbfFMKWYyQIBUsufMACKIQj5IWqRaqm8/zUG7Z0zZPhT+/k92VZ2/ODWI7ZKWB1OX6aUWyIjapkAYaHFk6bz0NRenC/+kTN+GgI8JM4ZOgsS6/l9HWMLaACey7U+qFgqv2qmZS5HZqwkA/45SH4uRL1qF+fZrNlzKbwTw4Ah+BgwqNRtySZn80qXFzDYIgkqwsThoTuWPdwleNEnm1AWFvl7L7pBOiiMHV0aBk+g3prWA9cDOhvi+DjjHq5Zli8RThzCxqSuwqfj3uBQwsoqM20jRXF7tfTRQSjQPSwhF4DuKXIsuFuo54hC6welNDfNmDSyChhSh3Su6YWpWOvk3tIRNzHtVvUBkSFtj6u6+1sTDbIQ7oJnJ6adL4lz7yn6unhQ4nJzNs4lzzPXHrbFwTZYLh4jabu/CI9tcgsQT36+UHgfmBwLIw/vkpHPMW1S/3TdXH4VPh9B62FVYBYJP9V3Q4Tjd6+Q==
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB6PR0402MB2760.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(39850400004)(376002)(396003)(136003)(346002)(366004)(55016002)(9686003)(26005)(52536014)(54906003)(44832011)(2906002)(8676002)(83380400001)(33656002)(6636002)(76116006)(71200400001)(4326008)(86362001)(38100700002)(6506007)(316002)(66946007)(186003)(66556008)(8936002)(5660300002)(7696005)(66476007)(478600001)(64756008)(122000001)(66446008)(110136005)(38070700004);DIR:OUT;SFP:1101;
+x-microsoft-antispam-message-info: K5BIuQbgYzf55u8NcUupPfjrJ3ZxeEobLc1rvOzna5+Jem8cpmsYJUup4gEkYSF4QnH0SPZkITnwkrfz7dqOzAL8pz9t+agJMm94PGKjXmjfAjhkDO9KeUmcC0Of5tzbufHBOTQ19fyy3wv0LhhxQsvNR+bFrNgthaov1yC7ZIYTonnKj4nngoKmz5Wq81u7VlRGIwqk/JjcvwXpNU9ZTQeZWFZaHmEQlhv0RtRvw2pTEMT45ButdbpZxgKO2q9c1mAZzWY/6ylttQN3ecy3kpLzJ2z1bZ4EzczHcOt3xGoe6mjEEoETZNO3RBRQZZoba6Z5n89fRzHGaNLfZ6jAiM5TZFul/v40kbSWUgtNs/NOU9u07HbjrlsQhPfy1uj2K3PbVWsHrR7eiKzq9vlQW7pH0v3GJJVIoR8KouDDAoBWCm9YTFGssyxAMDvpVy2cKsYlDHc0WldvmgD2Ieoxjvm7AUxjpIAWbUct54W7qibzzosauABTRw0La72PQT6XRjlJ30RuTTpno3zs54NbAmAjf0RRTBWZCanmipxzF3r//bosIm/q4VPgDCiUgmbfTqEmvPAPtnBsiF2dn91tg00M39K6IoqM/0y4wl/bqjf+Y3Dru5gccsbqpTmI6btXfq9bF1Vod+M+r1/2qr0u4GLSAIrESERx0uJL2dPXkfLIFp2xpw35lx9xUMgk9zr+RoSy3hTTPKO5Bj103h8Ixw==
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB6PR0402MB2760.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(39850400004)(376002)(396003)(136003)(346002)(366004)(55016002)(9686003)(26005)(52536014)(54906003)(2906002)(8676002)(83380400001)(33656002)(76116006)(71200400001)(4326008)(86362001)(38100700002)(6506007)(316002)(66946007)(186003)(66556008)(8936002)(5660300002)(7696005)(66476007)(478600001)(64756008)(122000001)(66446008)(110136005)(38070700004);DIR:OUT;SFP:1101;
 x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?PS2gNCLScRbab7xBvKPLQABn65YxxZFpouGvLwfhvtZjN9g0Lx1PSrTHFzOF?=
- =?us-ascii?Q?jpYX3N+DLhe0es+Ie0m/Hr2MDCR43w97btJ07Cw1oTOnaqilR8F5AkI6yx/0?=
- =?us-ascii?Q?v/GemHv5GUiXxA39Al7A+DZHhAz5xUOfRgRHkr32h9ag2dUiwRnO10Q0xOk/?=
- =?us-ascii?Q?pksA0mqe54cX73/Gksx10EDXFzxUI+DsY6mrEB0mnLg7L9dp0VTyLe4TaYKD?=
- =?us-ascii?Q?Q5xYAFvSxt1nj/OmEJb5mgpxCtX4jvh9CqJyBibtooo04K1CT6Te4ME+eY0K?=
- =?us-ascii?Q?S46zSAvc73X9Wqp0FdbwcmXYsZFahHZiH4ifwlahwUNHlJOmJ2VE5KZ4gomh?=
- =?us-ascii?Q?JzDXEAX7VMfBXm/HSI+3N5z1O23ApOL+6rzyFRyzW9rgEUeZtwZ4FtPGEMe/?=
- =?us-ascii?Q?XgeKAQ03hmLYqdQT7o3+te2JICr8jt3fDx7BgjaGQ5h6fiVuZ65WhCPEFGIl?=
- =?us-ascii?Q?Jg9HKo8eVa0dlql4HnVkJBhhKEk5aFWnwYTjRpEquZSBHnZ06tTcAkYmrJHT?=
- =?us-ascii?Q?3rHb415epkiy1ixh8Xx1f+1//kFCxbHjIJwtDcu7tiCNAmaOmp7zynamwKFR?=
- =?us-ascii?Q?QimcxR5DswAyxQxQ4oqysxcWWelQ4NWN2DhC1EkeEUJaFCLdK4/Pp9s1izgZ?=
- =?us-ascii?Q?FRf2xDSrCASVUq7hnV6GiLNqDoVP9YGvusN8RnszAuV5Y6QDNf7a7ZtWpeRz?=
- =?us-ascii?Q?KMbMSAV20W9vQRWuiHLQ+SWwOcQOKhBN9RpwNR72i83CaomheQrbhXMDEIzY?=
- =?us-ascii?Q?aVO/Li2uYLslKK/C9AASGkk3j4P4KY9ztOFp3cLx3tCwmv1cSl/ssl+o13OJ?=
- =?us-ascii?Q?oJ3Dk3qxqET9YrAgV87ITt1ERO/vQf2DH8KV3CWkX6Iqc4Ny21q0ogUG27up?=
- =?us-ascii?Q?g8XKUf/sr+KpJmJEUsTUzSUUjGigKRKcWiXzGjoenQd9yteQu0M6UovTT5NZ?=
- =?us-ascii?Q?dcSgQFbquI2bg7uPjSoW6NBVXeqwGGd7EbC/7k5kCHaYxV1j6J47Mbj2vhsy?=
- =?us-ascii?Q?21lj3eTgho0XhsLSoGB3SJw9QHNYe1ufwkBwLdnaEYKt58ORbV+fWvPqyqdd?=
- =?us-ascii?Q?qohZatnzMVjuv9BXcuMweqpbJrmKuXily2CorduhKI2oKD3K7l+d8tcQeEB3?=
- =?us-ascii?Q?/DfMXIQjG5IAsaPy8ED20LqLIbl/pmvOnMe30iG1QYrYUgOZPXazKfL5lQ0D?=
- =?us-ascii?Q?ZxIDRpNJHos6vQRmk+h1LW1OQmqTpMJvmnO8EmU7fhz6ERipthFBetpaVS6X?=
- =?us-ascii?Q?k3sAVssS2IIk5KfBlRysYzOqa0HyQF0Vy7+03SYFigEQSjAQRIlpLiHxWocL?=
- =?us-ascii?Q?43eKAg3PPQC6OYS4j0SedF5v?=
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?j0JJljD0dexivzsdJi8iuXidBSNykYDZmKh8IAg9lAmsfPvk6yJVYh/n823r?=
+ =?us-ascii?Q?IBYDHrllzGxg/V8/lcvWVxsyStBRtEwjHTT+HnZQTYjgL4jCHO1tGvqoKkyo?=
+ =?us-ascii?Q?6y3vxkcVpn8JQFcuaULue6kgC6TbEhZCDT9xtSaCuobR1MXy2AKiI51Msvx0?=
+ =?us-ascii?Q?YmqzHkh4yVALyN8Sqvg32DjEt3HVTNOmTUx7+gU6u9TjkhQ5c6Dktdrl74FZ?=
+ =?us-ascii?Q?a/pqQPEoTjqp9d7e8p93qQ3GP5qC9hmwwxTlXYykdWQNiv0F1B1Wn/z3tIWJ?=
+ =?us-ascii?Q?QMRyE2eV+4FWvbeXfGqGI2Xgw+9YnSIK6igSCOw5jDeW/58dg2vVvE5gYwvR?=
+ =?us-ascii?Q?RXYr1J3EkTDwhfMzYFFE54L/ahd1vTVYvLGJlmJdNbcAYcasObtJ2TsmVoIK?=
+ =?us-ascii?Q?WvakJOd5ju5SGlqJ368SW90SiF6N5dcy7QG3+xgZ7hSm7qf+hd8uACZ2s3mv?=
+ =?us-ascii?Q?FLq+Dh5n93m8OJ2dKRC12zQNxHlfsdAKudbWprygX3Yz2f5kGrxpF0qYfWc5?=
+ =?us-ascii?Q?9i4LfYTSz77zAgCsog9wxrX2L+l+mq47QPEtjZ+ru8gAZkrH8dawSRnaSYCU?=
+ =?us-ascii?Q?sr51lR8HsySlQ3KkrsbsUtDAa5tx13n/aiTxyU1Mprd8iZeGwTI+8PdAz/h2?=
+ =?us-ascii?Q?lJH0u4V8ONASdTStrLwSVuzlDJ3NsWC7ivQw2tKmzIYp1xfgtxo4neET0rbj?=
+ =?us-ascii?Q?TeEzh90oRK/h2sunpDkvJLl/syPlIiLOi+L1ijhHFqBWa8EFGRwQTXTQDV7g?=
+ =?us-ascii?Q?2v3dPsqVSTyg/Bak92rQZS7imGdXtZIWEtj58HWGKNz54mHKB8IPQL/NAF2h?=
+ =?us-ascii?Q?hXY4x+c6jVcZOuBtD/Kci9EO3rkTdKtrOE/scQ2zMxFdOq2wjWlnGHbeYIWZ?=
+ =?us-ascii?Q?XvCawuR8JWpFgVqui+1otJzi3GZrmZWWAWVE1ym5yar5/hR+01WdytHYP0Uv?=
+ =?us-ascii?Q?KH+IK3PIoCfNYlEZnIYhrLyBD5H4U/1CX7hLUQn1LxDsVhNTDpgSD0cLn7gE?=
+ =?us-ascii?Q?xEuKDqP743e8a1jee8z/5vuROW6I0nJSEIqGUjX2VFKKFcBXRus8fGBayP0B?=
+ =?us-ascii?Q?EouEFhGzRe2M9HdyQ7XV3lwVyNRSyXPRg01+AEE/Udy+8FTtnYhqvpuC6Li9?=
+ =?us-ascii?Q?scYr0jXo/ZJf7Sx4IR4x28FkOgtEXMCkOdSuaW7+TqK0Y3BUmaOK8daDJ5TS?=
+ =?us-ascii?Q?JjqHacYFcPUBAsCbgg+Z22FByKoJf/+zBy4Jvz7NpPuEqSwO5dubysiz8r63?=
+ =?us-ascii?Q?dWHYXo8Shz51IKvVjFdnHCGqv5iqpMiYLsSWXdhCK9dTfc9p0ACVkv9t9e7n?=
+ =?us-ascii?Q?xifzVMisYkdz63H5qwjX8VY5?=
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
+X-OriginatorOrg: oss.nxp.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
 X-MS-Exchange-CrossTenant-AuthSource: DB6PR0402MB2760.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 545b9010-cce6-48ca-c455-08d946629ce1
-X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Jul 2021 00:59:20.1737
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4284a2c6-aea0-4e46-5265-08d94662eaa8
+X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Jul 2021 01:01:30.6265
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: slW6oFYgyCFqvrcLIt/MCFEsLY+12hF77YWUBztY3M19Z+WjhGkFZXEzX+3YS71x0c/hO8dTwRFU2jVe6oI0WA==
+X-MS-Exchange-CrossTenant-userprincipalname: Kfyg2I6bfpXBMj196WptVpZpNfSRrn9OO4crNxZbbz2l5cyu7mogzjelapE84C1Nej028q5eC7qAcZchVyTWoA==
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB3PR0402MB3915
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi Mathieu,
-
-> Subject: Re: [PATCH V2 5/5] remoteproc: imx_rproc: change to ioremap_wc
-> for dram
+> Subject: [PATCH V2 1/5] remoteproc: fix the wrong default value of is_iom=
+em
 >=20
-> On Wed, Jul 07, 2021 at 05:40:33PM +0800, Dong Aisheng wrote:
-> > DRAM is not io memory, so changed to ioremap_wc. This is also aligned
-> > with core io accessories. e.g. memcpy/memset and cpu direct access.
-> >
-> > Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
-> > Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
-> > Fixes: 5e4c1243071d ("remoteproc: imx_rproc: support remote cores
-> > booted before Linux Kernel")
-> > Reviewed-by: Peng Fan <peng.fan@nxp.com>
-> > Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
-> > ---
-> > v1->v2:
-> >  * new patch
+> Currently the is_iomem is a random value in the stack which may be defaul=
+t
+> to true even on those platforms that not use iomem to store firmware.
 >=20
-> It's a new patch and yet Peng's RB tag is already on it...
-
-Aisheng's reply in the other email.
-"
-Above two lines were added by mistake. (copied from patch 4)
-I'm going to wait for review comments first and resend with changes if any.
-
-Regards
-Aisheng
-"
-
+> Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
+> Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
+> Cc: Peng Fan <peng.fan@nxp.com>
+> Fixes: 40df0a91b2a5 ("remoteproc: add is_iomem to da_to_va")
+> Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+> ---
+> v1->v2:
+>  * update rproc_copy_segment as well
+> ---
+>  drivers/remoteproc/remoteproc_coredump.c   | 2 +-
+>  drivers/remoteproc/remoteproc_elf_loader.c | 2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
 >=20
-> > ---
-> >  drivers/remoteproc/imx_rproc.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/remoteproc/imx_rproc.c
-> > b/drivers/remoteproc/imx_rproc.c index ff620688fad9..4ae416ba5080
-> > 100644
-> > --- a/drivers/remoteproc/imx_rproc.c
-> > +++ b/drivers/remoteproc/imx_rproc.c
-> > @@ -597,7 +597,7 @@ static int imx_rproc_addr_init(struct imx_rproc
-> *priv,
-> >  			break;
-> >
-> >  		/* Not use resource version, because we might share region */
-> > -		priv->mem[b].cpu_addr =3D devm_ioremap(&pdev->dev, res.start,
-> resource_size(&res));
-> > +		priv->mem[b].cpu_addr =3D devm_ioremap_wc(&pdev->dev,
-> res.start,
-> > +resource_size(&res));
+> diff --git a/drivers/remoteproc/remoteproc_coredump.c
+> b/drivers/remoteproc/remoteproc_coredump.c
+> index aee657cc08c6..c892f433a323 100644
+> --- a/drivers/remoteproc/remoteproc_coredump.c
+> +++ b/drivers/remoteproc/remoteproc_coredump.c
+> @@ -152,8 +152,8 @@ static void rproc_copy_segment(struct rproc *rproc,
+> void *dest,
+>  			       struct rproc_dump_segment *segment,
+>  			       size_t offset, size_t size)
+>  {
+> +	bool is_iomem =3D false;
+>  	void *ptr;
+> -	bool is_iomem;
 >=20
-> How was it working before? =20
-
-we took all memory used by M-core as io memory, including TCM/SRAM/DRAM.
-
-Will it really work for all platforms and was this
-> extensively tested?
-
-Aisheng may confirm, I not test this patchset.
-
+>  	if (segment->dump) {
+>  		segment->dump(rproc, segment, dest, offset, size); diff --git
+> a/drivers/remoteproc/remoteproc_elf_loader.c
+> b/drivers/remoteproc/remoteproc_elf_loader.c
+> index e8078efb3dec..3cd1798f17a3 100644
+> --- a/drivers/remoteproc/remoteproc_elf_loader.c
+> +++ b/drivers/remoteproc/remoteproc_elf_loader.c
+> @@ -178,8 +178,8 @@ int rproc_elf_load_segments(struct rproc *rproc,
+> const struct firmware *fw)
+>  		u64 filesz =3D elf_phdr_get_p_filesz(class, phdr);
+>  		u64 offset =3D elf_phdr_get_p_offset(class, phdr);
+>  		u32 type =3D elf_phdr_get_p_type(class, phdr);
+> +		bool is_iomem =3D false;
+>  		void *ptr;
+> -		bool is_iomem;
 >=20
-> Peng - I will need an explicit reply from you that you are in agreement w=
-ith
-> this change.=20
+>  		if (type !=3D PT_LOAD)
+>  			continue;
+> --
 
-I not test, but it should work per my understanding.
-i.MX TCM area has limitation that not use ioremap_wc, DRAM has no such
-limitation. Just think this not deserve a fix tag.
+Reviewed-by: Peng Fan <peng.fan@nxp.com>
 
-> I will also need you to review patch 01 and 02 of this set.
+> 2.25.1
 
-Sure, I'll review.
-
-Thanks,
-Peng.
-
->=20
-> Thanks,
-> Mathieu
->=20
-> >  		if (!priv->mem[b].cpu_addr) {
-> >  			dev_err(dev, "failed to remap %pr\n", &res);
-> >  			return -ENOMEM;
-> > --
-> > 2.25.1
-> >
