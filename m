@@ -2,105 +2,171 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CFD2C47E48
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 15 Jul 2021 15:17:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C078BC636CA
+	for <linux-remoteproc@archiver.kernel.org>; Sat, 17 Jul 2021 23:49:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5B2EB613D1
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 15 Jul 2021 15:17:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A30BE61042
+	for <linux-remoteproc@archiver.kernel.org>; Sat, 17 Jul 2021 23:49:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238643AbhGOPUF (ORCPT
+        id S231207AbhGQXwJ (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 15 Jul 2021 11:20:05 -0400
-Received: from mx07-00178001.pphosted.com ([185.132.182.106]:51766 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232994AbhGOPUF (ORCPT
+        Sat, 17 Jul 2021 19:52:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58448 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231197AbhGQXwI (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 15 Jul 2021 11:20:05 -0400
-Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 16FFCAr2025316;
-        Thu, 15 Jul 2021 17:17:02 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=selector1;
- bh=6AuPIvPC0e4Jj6MaY2nbVdaznRVtBzyFnECY1u8Uo40=;
- b=i4vi2MHt7MEUOlYT/yLTfYf8/eNpnqujEbk7OIShASyW3UPqBWFFlkq4KeOBDFc01Jy7
- 4+983uBaf+L1wRnReOouKw4OnAnoyFPim+CC0AmMh88u597HstRGQIp6FZpHfqxtZJ8D
- 9mcaBmBok4Y8tZXMy4dqP0RxI2NU5QJ76SKubMTo45dG3VMap4qSoL/xJlATye64z+of
- iz6rT3er60l9tdSvcT6YlGAZFnh+d7NIn+XD4k+RkJqRzhfJFOqmRLDPZz8O8SpAlhtr
- nB2JDgVHtQ2LXHkovynHo5A2yt1lGspmcUvRTEUMMUNMMoo+9yCgY9P6qRA0mlf2EI74 DQ== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 39tac3v6au-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 15 Jul 2021 17:17:02 +0200
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 8023A10002A;
-        Thu, 15 Jul 2021 17:17:01 +0200 (CEST)
-Received: from Webmail-eu.st.com (sfhdag2node3.st.com [10.75.127.6])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 6C2A02291D7;
-        Thu, 15 Jul 2021 17:17:01 +0200 (CEST)
-Received: from lmecxl0912.lme.st.com (10.75.127.46) by SFHDAG2NODE3.st.com
- (10.75.127.6) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Thu, 15 Jul
- 2021 17:16:35 +0200
-Subject: Re: [PATCH 0/2] Add new IPCC mailbox to support the coprocessor
- detach on some stm32mp15x boards
-To:     Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>,
-        Rob Herring <robh@kernel.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>
-CC:     <devicetree@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20210614164940.27153-1-arnaud.pouliquen@foss.st.com>
-From:   Alexandre TORGUE <alexandre.torgue@foss.st.com>
-Message-ID: <40d3f649-f56e-15bd-f7ef-59c62028c317@foss.st.com>
-Date:   Thu, 15 Jul 2021 17:16:35 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
+        Sat, 17 Jul 2021 19:52:08 -0400
+Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9911EC061762;
+        Sat, 17 Jul 2021 16:49:10 -0700 (PDT)
+Received: by mail-wm1-x335.google.com with SMTP id w13so8007629wmc.3;
+        Sat, 17 Jul 2021 16:49:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=oBGFOtNXdJtGI6zllMRiYFqQMCyuJWzibZ62ST2fM4g=;
+        b=UoPI9cT/aV3KiC2ZkWQlM9k6+BLn38/hBCBIZz7MioThojHAnTr+pGzZhxMUBCOZKj
+         p/XxcdsnrF666N5PRAIvK5wKermUMtxgJs61Cve/RbUWk6f96Lv10nrl0fH89OkW88wX
+         gBkcnpr0BvT5dA1er5ltGAEEd7ZAy//vdpI42rkzXXoON9gU4BGQt0Eo98RpbaigOQI1
+         gV0V+R5peeh9nx2eGDhoFLSfUo0fsBpy1YF5y7jYKJIbG5D0uRDo5UDSGeG14IyBDmNU
+         ZOagbeDpsfrQb7JNR0AorIcz5aJ6VfuGd+OCmgOzdK2h4V0gKLOwCjGPNV410DXTkLQ7
+         5E8Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=oBGFOtNXdJtGI6zllMRiYFqQMCyuJWzibZ62ST2fM4g=;
+        b=qIndK6uFB0kg4UJSUaxTRTAqHgNdBQSzPpOv1hz9actRBfFmbAUk/Sjt0z5uRY0X5r
+         mu8jekAYr16qE/Elmk/Z+CMpnOuysvyabNl34sft7PVso02o1uh6SZGhScT+llWcjAXO
+         ujIfN9b+R1zAzNh6w9zQrqAicFUSZuPK2gXqoqSwMonruLw3mLW3RYH1fmwWWd5B7xce
+         mThxn+i0pw4FY0XMK6K3kBD950BU1mwRGlTrm0yl6pK/NQvP89DO8dYfpY6lOYLuEZoL
+         tbZDSqIURkwKEl/ZoIbSOJ/Z6NBUO9YgJgY+rfs73D0wClvb9jqbztz1VaTuyqJvVp1G
+         RABg==
+X-Gm-Message-State: AOAM533jItAMGAy6qZetnffppy6d+6J0CvvJ9z19mbb3Urn3JJ1jcOcr
+        eX/gS+aZ5dveQNqZKYQe+nxEDxKHBl4=
+X-Google-Smtp-Source: ABdhPJy36kFbyqTdwDVbP5vyf9GTdh9YsWISuX1CjkkH15Qo0Aioai9FsOghz8lU4/JioPvCA9HUKA==
+X-Received: by 2002:a7b:c052:: with SMTP id u18mr25267205wmc.105.1626565749059;
+        Sat, 17 Jul 2021 16:49:09 -0700 (PDT)
+Received: from localhost.localdomain (dynamic-2a01-0c22-7602-4e00-f22f-74ff-fe21-0725.c22.pool.telefonica.de. [2a01:c22:7602:4e00:f22f:74ff:fe21:725])
+        by smtp.googlemail.com with ESMTPSA id p11sm14505044wro.78.2021.07.17.16.49.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 17 Jul 2021 16:49:08 -0700 (PDT)
+From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+To:     linux-remoteproc@vger.kernel.org, linux-amlogic@lists.infradead.org
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        mathieu.poirier@linaro.org, bjorn.andersson@linaro.org,
+        ohad@wizery.com,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Subject: [PATCH v3 0/2] Amlogic Meson Always-On ARC remote-processor support
+Date:   Sun, 18 Jul 2021 01:48:57 +0200
+Message-Id: <20210717234859.351911-1-martin.blumenstingl@googlemail.com>
+X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
-In-Reply-To: <20210614164940.27153-1-arnaud.pouliquen@foss.st.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.75.127.46]
-X-ClientProxiedBy: SFHDAG2NODE2.st.com (10.75.127.5) To SFHDAG2NODE3.st.com
- (10.75.127.6)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.391,18.0.790
- definitions=2021-07-15_10:2021-07-14,2021-07-15 signatures=0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi Arnaud
+Amlogic Meson6/8/8b/8m2 come with an ARC core in the Always-On (AO)
+power-domain. This is typically used for waking up the ARM CPU after
+powering it down for system suspend.
 
-On 6/14/21 6:49 PM, Arnaud Pouliquen wrote:
-> Purpose:
->    Add the IPCC channel 4 as "detach" mailbox to support the remoteproc the feature added in [1].
-> 
->    The enable of this feature is a design choice. As consequence, the new mbox is declared
->    only for stm32mp157c-ed1 & stm32mp15x-dkx boards maintained by ST Microelectronics.
-> 
-> Aim:
->    Allow to send to the remote processor a HW signal on IPCC channel 4 when user space requests
->    to detach the main processor from the remote processor (e.g. a reboot of the  Linux processor
->    on a crash).
-> 
-> [1] https://patchwork.ozlabs.org/project/devicetree-bindings/cover/20210331073347.8293-1-arnaud.pouliquen@foss.st.com/
-> 
-> Arnaud Pouliquen (2):
->    ARM: dts: stm32: Add coprocessor detach mbox on stm32mp157c-ed1 board
->    ARM: dts: stm32: Add coprocessor detach mbox on stm32mp15x-dkx boards
-> 
->   arch/arm/boot/dts/stm32mp157c-ed1.dts  | 4 ++--
->   arch/arm/boot/dts/stm32mp15xx-dkx.dtsi | 4 ++--
->   2 files changed, 4 insertions(+), 4 deletions(-)
-> 
+The exact ARC core used on Meson6 and earlier is not known. I believe
+it is an ARC625, but I am not sure about this. Meson8/8b/8m2 uses an
+ARC EM4 core.
+They all have in common that they use a section of the SoCs SRAM for
+running code on the ARC core.
 
-Series Applied on stm32-next;
+Unfortunately there's no information about the remote-processor control
+registers in the public Meson8b (S805) datasheet. All information is
+either taken from Amlogic's 3.10 kernel and 2011-03 u-boot or found by
+testing (for example the clock input is not mentioned anywhere in the
+reference code, but disabling it stops the AO ARC core from working).
 
-thanks
-Alex
+This series consists of five patches:
+ 1: dt-bindings for the SRAM section
+ 2: dt-bindings for the SECBUS2 syscon region which contains a few
+    bits for controlling this remote processor
+ 3: dt-bindings for the AO ARC remote processor
+ 4: the driver for booting code on the AO ARC remote processor
+ 5: (only included for documentation purposes) dts changes (these will
+    be re-sent separately)
+
+Patches #3 and #4 should go through the remoteproc tree. Patches #1
+and #2 may go through Rob's (devicetree) tree, Kevin's linux-amlogic
+tree or through the remoteproc tree. Personally I have no preference
+here.
+
+To test this series I ported the Amlogic serial driver and added the
+board files for the Amlogic AO ARC EM4 to the Zephyr RTOS. The code can
+be found here: [0] (the resulting zephyr.elf can then be loaded as
+remote-processor firmware from Linux).
+
+
+Changes since v1 at [1]:
+- fixed yamllint warnings (after installing the package these now also
+  show up on my build machine) in patches #2 and #3. Thanks for the
+  hint Rob
+- dropped the explicit "select" statement from the dt-bindings in patch
+  #2 as suggested by Rob (thanks)
+
+Changes since v2 at [2]:
+- added Rob's Reviewed-by to the dt-bindings patch (thank you!)
+- all other patches (secbus2 dt-bindings, .dtsi, etc.) are already
+  applied so they're not part of this series anymore
+- remove extra indentation for register fields
+- fix maximum (da + len) check in meson_mx_ao_arc_rproc_da_to_va to not
+  exceed the allocated SRAM size (thanks for spotting this Bjorn!)
+- remove extra usleep_range from meson_mx_ao_arc_rproc_start
+- make the code to generate the value for the AO_CPU_CNTL register
+  easier to read
+- removed unused secbus2_pdev variable from meson_mx_ao_arc_rproc_probe
+- add preprocessor defines for the AO_REMAP_REG0 and AO_REMAP_REG1
+  fields. Special thanks to Jianxin from Amlogic for providing this
+  information
+- program AO_REMAP_REG0 correctly so bits 17:14 in the SRAM address can
+  be used
+- program AO_REMAP_REG1 with 0x0 and add a comment as to why this is
+  needed. This comment should also clarify why the da_to_va
+  implementation can assume that the memory always starts at 0x0
+- allow bits 17:14 to be set in the SRAM address. I tested this with
+  physical address 0xd9010000 (SRAM offset 0x10000)
+- re-reading the Amlogic u-boot and kernel code again made me understand
+  what the bits in AO_SECURE_REG0 are used for: these need to be
+  programmed with bits [19:12] of the used SRAM address. The field macro
+  and GENMASK is updated accordingly.
+- initialize fw_name with NULL so we can simplify the code as we don't
+  have to check for the return value of device_property_read_string
+  anymore (thanks for the suggestion Bjorn)
+- drop of_match_ptr as it's not needed (thanks for the suggestion Bjorn)
+- add the new is_iomem parameter to the .da_to_va implementation
+
+
+[0] https://github.com/xdarklight/zephyr-rtos/commits/amlogic_ao_em4-20201229
+[1] https://patchwork.kernel.org/project/linux-amlogic/list/?series=407349
+[2] https://patchwork.kernel.org/project/linux-amlogic/cover/20210102205904.2691120-1-martin.blumenstingl@googlemail.com/
+
+
+Martin Blumenstingl (2):
+  dt-bindings: remoteproc: Add the documentation for Meson AO ARC rproc
+  remoteproc: meson-mx-ao-arc: Add a driver for the AO ARC remote
+    procesor
+
+ .../remoteproc/amlogic,meson-mx-ao-arc.yaml   |  87 ++++++
+ drivers/remoteproc/Kconfig                    |  11 +
+ drivers/remoteproc/Makefile                   |   1 +
+ drivers/remoteproc/meson_mx_ao_arc.c          | 260 ++++++++++++++++++
+ 4 files changed, 359 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/remoteproc/amlogic,meson-mx-ao-arc.yaml
+ create mode 100644 drivers/remoteproc/meson_mx_ao_arc.c
+
+-- 
+2.32.0
+
