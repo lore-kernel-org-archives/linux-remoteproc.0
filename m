@@ -2,524 +2,417 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93818C636C9
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 20 Jul 2021 10:15:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28925C07E9B
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 20 Jul 2021 20:46:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 772726113B
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 20 Jul 2021 10:15:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1651860FEA
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 20 Jul 2021 20:46:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236545AbhGTJex (ORCPT
+        id S235507AbhGTUFj (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 20 Jul 2021 05:34:53 -0400
-Received: from m43-7.mailgun.net ([69.72.43.7]:20738 "EHLO m43-7.mailgun.net"
+        Tue, 20 Jul 2021 16:05:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60814 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S236354AbhGTJdk (ORCPT <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 20 Jul 2021 05:33:40 -0400
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1626776058; h=References: In-Reply-To: Message-Id: Date:
- Subject: Cc: To: From: Sender;
- bh=a+yYyn77OjSm5XAIS5v6i9rsv0h+996utjekuBzCe2Q=; b=FW8jicmGp+6zQ9BmNCQB7mkbX0RNPxEiOBvhF54W7x22gJAzkzz3iss/yEZ+Kt2aoXYmyaKc
- vqlsHSXmZ7hD2nuth5Rm3YRv4nut7QIw/4ZVszkk+W+kJ96/ysXoGNoqvq0HmWpwbUyeyp/4
- +01FIxhZFcK5YzDumvBq9wYiVo8=
-X-Mailgun-Sending-Ip: 69.72.43.7
-X-Mailgun-Sid: WyI4ZWZiZiIsICJsaW51eC1yZW1vdGVwcm9jQHZnZXIua2VybmVsLm9yZyIsICJiZTllNGEiXQ==
-Received: from smtp.codeaurora.org
- (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
- smtp-out-n03.prod.us-west-2.postgun.com with SMTP id
- 60f6a1e3e31d882d184d1984 (version=TLS1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Tue, 20 Jul 2021 10:13:55
- GMT
-Sender: sibis=codeaurora.org@mg.codeaurora.org
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id E14D5C433F1; Tue, 20 Jul 2021 10:13:55 +0000 (UTC)
-Received: from blr-ubuntu-87.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: sibis)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 2AB8DC43460;
-        Tue, 20 Jul 2021 10:13:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 2AB8DC43460
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=sibis@codeaurora.org
-From:   Sibi Sankar <sibis@codeaurora.org>
-To:     bjorn.andersson@linaro.org, robh+dt@kernel.org, will@kernel.org,
-        saiprakash.ranjan@codeaurora.org, mka@chromium.org
-Cc:     ohad@wizery.com, agross@kernel.org, mathieu.poirier@linaro.org,
-        robin.murphy@arm.com, joro@8bytes.org, p.zabel@pengutronix.de,
-        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, evgreen@chromium.org,
-        dianders@chromium.org, swboyd@chromium.org,
-        Sibi Sankar <sibis@codeaurora.org>
-Subject: [PATCH v2 05/10] remoteproc: mss: q6v5-mss: Add modem support on SC7280
-Date:   Tue, 20 Jul 2021 15:42:55 +0530
-Message-Id: <1626775980-28637-6-git-send-email-sibis@codeaurora.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1626775980-28637-1-git-send-email-sibis@codeaurora.org>
-References: <1626775980-28637-1-git-send-email-sibis@codeaurora.org>
+        id S236897AbhGTTpQ (ORCPT <rfc822;linux-remoteproc@vger.kernel.org>);
+        Tue, 20 Jul 2021 15:45:16 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 56E9760BBB;
+        Tue, 20 Jul 2021 20:25:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1626812753;
+        bh=l5xDkWzCR3urdpTjqmcMUpN6o09NewdpR8Jc68Liw0U=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=VBe4HBaGXZMGD0ZdODVsdKbrJ8SORqt3SuXaX37yK3AHshxYDbXGRQXluA6mx7jW3
+         pTBW48mt4sopqYvfTU+bZO/p3bIz4jENtO9uPBTi0SuDufiC+I7vrG7Ce/qo8tgdbL
+         Vv6L36N+yjTOuiDCZaFxIklqrdMuw+BZDERVBNSuKxTccmMm+0DpHaq2hVxlihY0dP
+         QgyoMfzVLFJnhH8igTsTFxC4OBQeb5IzLYxfferXAP0fHcTPB3F6Yr+8KbAgAJLPf2
+         a0unVf6CWv1kUs6z+N9Cr2G8gL44dgqsGt8dlJjFYXR6m7PEcLW13zfgVQ2ipy0CDg
+         OpoYDDMZUiahA==
+Date:   Tue, 20 Jul 2021 22:25:42 +0200
+From:   Wolfram Sang <wsa@kernel.org>
+To:     Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        kernel@pengutronix.de,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Alexandre Bounine <alex.bou9@gmail.com>,
+        Alex Dubov <oakad@yahoo.com>, Alex Elder <elder@kernel.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Alison Schofield <alison.schofield@intel.com>,
+        Allen Hubbe <allenbh@gmail.com>,
+        Andreas Noever <andreas.noever@gmail.com>,
+        Andy Gross <agross@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        Ben Widawsky <ben.widawsky@intel.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Bodo Stroesser <bostroesser@gmail.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Cornelia Huck <cohuck@redhat.com>,
+        Cristian Marussi <cristian.marussi@arm.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Jiang <dave.jiang@intel.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        Dexuan Cui <decui@microsoft.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Finn Thain <fthain@linux-m68k.org>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Frank Li <lznuaa@gmail.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Geoff Levand <geoff@infradead.org>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Hannes Reinecke <hare@suse.de>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Harald Freudenberger <freude@linux.ibm.com>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Heiko Carstens <hca@linux.ibm.com>,
+        Helge Deller <deller@gmx.de>, Ira Weiny <ira.weiny@intel.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Jason Wang <jasowang@redhat.com>,
+        Jens Taprogge <jens.taprogge@taprogge.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Jiri Kosina <jikos@kernel.org>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        Joey Pabalan <jpabalanb@gmail.com>,
+        Johan Hovold <johan@kernel.org>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        Johannes Thumshirn <morbidrsa@gmail.com>,
+        Jon Mason <jdmason@kudzu.us>, Juergen Gross <jgross@suse.com>,
+        Julien Grall <jgrall@amazon.com>,
+        Kai-Heng Feng <kai.heng.feng@canonical.com>,
+        Kirti Wankhede <kwankhede@nvidia.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Lee Jones <lee.jones@linaro.org>, Len Brown <lenb@kernel.org>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Manohar Vanga <manohar.vanga@gmail.com>,
+        Marc Zyngier <maz@kernel.org>, Mark Brown <broonie@kernel.org>,
+        Mark Gross <mgross@linux.intel.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Martyn Welch <martyn@welchs.me.uk>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Matt Porter <mporter@kernel.crashing.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Maxime Ripard <mripard@kernel.org>,
+        Maximilian Luz <luzmaximilian@gmail.com>,
+        Maxim Levitsky <maximlevitsky@gmail.com>,
+        Michael Buesch <m@bues.ch>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Michael Jamet <michael.jamet@intel.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Mike Christie <michael.christie@oracle.com>,
+        Moritz Fischer <mdf@kernel.org>,
+        Ohad Ben-Cohen <ohad@wizery.com>,
+        Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Peter Oberparleiter <oberpar@linux.ibm.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>,
+        Rich Felker <dalias@libc.org>,
+        Rikard Falkeborn <rikard.falkeborn@gmail.com>,
+        Rob Herring <robh@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        "Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>,
+        Samuel Holland <samuel@sholland.org>,
+        Samuel Iglesias Gonsalvez <siglesias@igalia.com>,
+        SeongJae Park <sjpark@amazon.de>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+        Stefano Stabellini <sstabellini@kernel.org>,
+        Stefan Richter <stefanr@s5r6.in-berlin.de>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Sven Van Asbroeck <TheSven73@gmail.com>,
+        Takashi Iwai <tiwai@suse.com>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        Thorsten Scherer <t.scherer@eckelmann.de>,
+        Tomas Winkler <tomas.winkler@intel.com>,
+        Tom Rix <trix@redhat.com>,
+        Tyrel Datwyler <tyreld@linux.ibm.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Vineeth Vijayan <vneethv@linux.ibm.com>,
+        Vinod Koul <vkoul@kernel.org>,
+        Vishal Verma <vishal.l.verma@intel.com>,
+        Wei Liu <wei.liu@kernel.org>,
+        William Breathitt Gray <vilhelm.gray@gmail.com>,
+        Wu Hao <hao.wu@intel.com>,
+        Yehezkel Bernat <YehezkelShB@gmail.com>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        YueHaibing <yuehaibing@huawei.com>,
+        Yufen Yu <yuyufen@huawei.com>, alsa-devel@alsa-project.org,
+        dmaengine@vger.kernel.org, greybus-dev@lists.linaro.org,
+        industrypack-devel@lists.sourceforge.net, kvm@vger.kernel.org,
+        linux1394-devel@lists.sourceforge.net, linux-acpi@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-cxl@vger.kernel.org,
+        linux-fpga@vger.kernel.org, linux-hyperv@vger.kernel.org,
+        linux-i2c@vger.kernel.org, linux-i3c@lists.infradead.org,
+        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-m68k@lists.linux-m68k.org, linux-media@vger.kernel.org,
+        linux-mips@vger.kernel.org, linux-mmc@vger.kernel.org,
+        linux-ntb@googlegroups.com, linux-parisc@vger.kernel.org,
+        linux-pci@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-remoteproc@vger.kernel.org, linux-s390@vger.kernel.org,
+        linux-scsi@vger.kernel.org, linux-serial@vger.kernel.org,
+        linux-sh@vger.kernel.org, linux-spi@vger.kernel.org,
+        linux-staging@lists.linux.dev, linux-sunxi@lists.linux.dev,
+        linux-usb@vger.kernel.org, linux-wireless@vger.kernel.org,
+        netdev@vger.kernel.org, nvdimm@lists.linux.dev,
+        platform-driver-x86@vger.kernel.org, sparclinux@vger.kernel.org,
+        target-devel@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        xen-devel@lists.xenproject.org,
+        Johannes Thumshirn <jth@kernel.org>,
+        "Rafael J . Wysocki" <rafael@kernel.org>
+Subject: Re: [PATCH v4 5/5] bus: Make remove callback return void
+Message-ID: <YPcxRgfZymtjJ4ih@kunai>
+Mail-Followup-To: Wolfram Sang <wsa@kernel.org>,
+        Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        kernel@pengutronix.de,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Alexandre Bounine <alex.bou9@gmail.com>,
+        Alex Dubov <oakad@yahoo.com>, Alex Elder <elder@kernel.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Alison Schofield <alison.schofield@intel.com>,
+        Allen Hubbe <allenbh@gmail.com>,
+        Andreas Noever <andreas.noever@gmail.com>,
+        Andy Gross <agross@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        Ben Widawsky <ben.widawsky@intel.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Bodo Stroesser <bostroesser@gmail.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Cornelia Huck <cohuck@redhat.com>,
+        Cristian Marussi <cristian.marussi@arm.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Jiang <dave.jiang@intel.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        Dexuan Cui <decui@microsoft.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Finn Thain <fthain@linux-m68k.org>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Frank Li <lznuaa@gmail.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Geoff Levand <geoff@infradead.org>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Hannes Reinecke <hare@suse.de>, Hans de Goede <hdegoede@redhat.com>,
+        Harald Freudenberger <freude@linux.ibm.com>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Heiko Carstens <hca@linux.ibm.com>, Helge Deller <deller@gmx.de>,
+        Ira Weiny <ira.weiny@intel.com>, Jakub Kicinski <kuba@kernel.org>,
+        "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
+        Jaroslav Kysela <perex@perex.cz>, Jason Wang <jasowang@redhat.com>,
+        Jens Taprogge <jens.taprogge@taprogge.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Jiri Kosina <jikos@kernel.org>, Jiri Slaby <jirislaby@kernel.org>,
+        Joey Pabalan <jpabalanb@gmail.com>, Johan Hovold <johan@kernel.org>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        Johannes Thumshirn <morbidrsa@gmail.com>,
+        Jon Mason <jdmason@kudzu.us>, Juergen Gross <jgross@suse.com>,
+        Julien Grall <jgrall@amazon.com>,
+        Kai-Heng Feng <kai.heng.feng@canonical.com>,
+        Kirti Wankhede <kwankhede@nvidia.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Lee Jones <lee.jones@linaro.org>, Len Brown <lenb@kernel.org>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Manohar Vanga <manohar.vanga@gmail.com>,
+        Marc Zyngier <maz@kernel.org>, Mark Brown <broonie@kernel.org>,
+        Mark Gross <mgross@linux.intel.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Martyn Welch <martyn@welchs.me.uk>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Matt Porter <mporter@kernel.crashing.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Maxime Ripard <mripard@kernel.org>,
+        Maximilian Luz <luzmaximilian@gmail.com>,
+        Maxim Levitsky <maximlevitsky@gmail.com>,
+        Michael Buesch <m@bues.ch>, Michael Ellerman <mpe@ellerman.id.au>,
+        Michael Jamet <michael.jamet@intel.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Mike Christie <michael.christie@oracle.com>,
+        Moritz Fischer <mdf@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>,
+        Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Peter Oberparleiter <oberpar@linux.ibm.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>,
+        Rich Felker <dalias@libc.org>,
+        Rikard Falkeborn <rikard.falkeborn@gmail.com>,
+        Rob Herring <robh@kernel.org>, Russell King <linux@armlinux.org.uk>,
+        "Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>,
+        Samuel Holland <samuel@sholland.org>,
+        Samuel Iglesias Gonsalvez <siglesias@igalia.com>,
+        SeongJae Park <sjpark@amazon.de>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+        Stefano Stabellini <sstabellini@kernel.org>,
+        Stefan Richter <stefanr@s5r6.in-berlin.de>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Sven Van Asbroeck <TheSven73@gmail.com>,
+        Takashi Iwai <tiwai@suse.com>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        Thorsten Scherer <t.scherer@eckelmann.de>,
+        Tomas Winkler <tomas.winkler@intel.com>, Tom Rix <trix@redhat.com>,
+        Tyrel Datwyler <tyreld@linux.ibm.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Vineeth Vijayan <vneethv@linux.ibm.com>,
+        Vinod Koul <vkoul@kernel.org>,
+        Vishal Verma <vishal.l.verma@intel.com>,
+        Wei Liu <wei.liu@kernel.org>,
+        William Breathitt Gray <vilhelm.gray@gmail.com>,
+        Wu Hao <hao.wu@intel.com>, Yehezkel Bernat <YehezkelShB@gmail.com>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        YueHaibing <yuehaibing@huawei.com>, Yufen Yu <yuyufen@huawei.com>,
+        alsa-devel@alsa-project.org, dmaengine@vger.kernel.org,
+        greybus-dev@lists.linaro.org,
+        industrypack-devel@lists.sourceforge.net, kvm@vger.kernel.org,
+        linux1394-devel@lists.sourceforge.net, linux-acpi@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+        linux-cxl@vger.kernel.org, linux-fpga@vger.kernel.org,
+        linux-hyperv@vger.kernel.org, linux-i2c@vger.kernel.org,
+        linux-i3c@lists.infradead.org, linux-input@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
+        linux-media@vger.kernel.org, linux-mips@vger.kernel.org,
+        linux-mmc@vger.kernel.org, linux-ntb@googlegroups.com,
+        linux-parisc@vger.kernel.org, linux-pci@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-remoteproc@vger.kernel.org,
+        linux-s390@vger.kernel.org, linux-scsi@vger.kernel.org,
+        linux-serial@vger.kernel.org, linux-sh@vger.kernel.org,
+        linux-spi@vger.kernel.org, linux-staging@lists.linux.dev,
+        linux-sunxi@lists.linux.dev, linux-usb@vger.kernel.org,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        nvdimm@lists.linux.dev, platform-driver-x86@vger.kernel.org,
+        sparclinux@vger.kernel.org, target-devel@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        xen-devel@lists.xenproject.org, Johannes Thumshirn <jth@kernel.org>,
+        "Rafael J . Wysocki" <rafael@kernel.org>
+References: <20210713193522.1770306-1-u.kleine-koenig@pengutronix.de>
+ <20210713193522.1770306-6-u.kleine-koenig@pengutronix.de>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="o9Bjd73EPYzHYRI8"
+Content-Disposition: inline
+In-Reply-To: <20210713193522.1770306-6-u.kleine-koenig@pengutronix.de>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Add out of reset sequence support for modem sub-system on SC7280 SoCs.
-It requires access to an additional set of qaccept registers, external
-power/clk control registers and halt vq6 register to put the modem back
-into reset.
 
-Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
----
+--o9Bjd73EPYzHYRI8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-v2:
- * Document the q-channel takedown procedure. [Matthias]
+On Tue, Jul 13, 2021 at 09:35:22PM +0200, Uwe Kleine-K=C3=B6nig wrote:
+> The driver core ignores the return value of this callback because there
+> is only little it can do when a device disappears.
+>=20
+> This is the final bit of a long lasting cleanup quest where several
+> buses were converted to also return void from their remove callback.
+> Additionally some resource leaks were fixed that were caused by drivers
+> returning an error code in the expectation that the driver won't go
+> away.
+>=20
+> With struct bus_type::remove returning void it's prevented that newly
+> implemented buses return an ignored error code and so don't anticipate
+> wrong expectations for driver authors.
+>=20
+> Acked-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk> (For ARM, Am=
+ba and related parts)
+> Acked-by: Mark Brown <broonie@kernel.org>
+> Acked-by: Chen-Yu Tsai <wens@csie.org> (for sunxi-rsb)
+> Acked-by: Pali Roh=C3=A1r <pali@kernel.org>
+> Acked-by: Mauro Carvalho Chehab <mchehab@kernel.org> (for media)
+> Acked-by: Hans de Goede <hdegoede@redhat.com> (For drivers/platform)
+> Acked-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+> Acked-By: Vinod Koul <vkoul@kernel.org>
+> Acked-by: Juergen Gross <jgross@suse.com> (For xen)
+> Acked-by: Lee Jones <lee.jones@linaro.org> (For mfd)
+> Acked-by: Johannes Thumshirn <jth@kernel.org> (For mcb)
+> Acked-by: Johan Hovold <johan@kernel.org>
+> Acked-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org> (For slimb=
+us)
+> Acked-by: Kirti Wankhede <kwankhede@nvidia.com> (For vfio)
+> Acked-by: Maximilian Luz <luzmaximilian@gmail.com>
+> Acked-by: Heikki Krogerus <heikki.krogerus@linux.intel.com> (For ulpi and=
+ typec)
+> Acked-by: Samuel Iglesias Gons=C3=A1lvez <siglesias@igalia.com> (For ipac=
+k)
+> Reviewed-by: Tom Rix <trix@redhat.com> (For fpga)
+> Acked-by: Geoff Levand <geoff@infradead.org> (For ps3)
+> Acked-by: Yehezkel Bernat <YehezkelShB@gmail.com> (For thunderbolt)
+> Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+> Acked-by: Alexander Shishkin <alexander.shishkin@linux.intel.com> (For in=
+tel_th)
+> Acked-by: Dominik Brodowski <linux@dominikbrodowski.net> (For pcmcia)
+> Reviewed-by: Cornelia Huck <cohuck@redhat.com> (For drivers/s390 and driv=
+ers/vfio)
+> Acked-by: Rafael J. Wysocki <rafael@kernel.org> (For ACPI)
+> Acked-by: Bjorn Andersson <bjorn.andersson@linaro.org> (rpmsg and apr)
+> Acked-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com> (For =
+intel-ish-hid)
+> Acked-by: Dan Williams <dan.j.williams@intel.com> (For CXL, DAX, and NVDI=
+MM)
+> Acked-by: William Breathitt Gray <vilhelm.gray@gmail.com> (For isa)
+> Acked-by: Stefan Richter <stefanr@s5r6.in-berlin.de> (For firewire)
+> Acked-by: Benjamin Tissoires <benjamin.tissoires@redhat.com> (For hid)
+> Acked-by: Thorsten Scherer <t.scherer@eckelmann.de> (For siox)
+> Acked-by: Sven Van Asbroeck <TheSven73@gmail.com> (For anybuss)
+> Acked-by: Ulf Hansson <ulf.hansson@linaro.org> (For MMC)
+> Signed-off-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pengutronix.de>
 
- drivers/remoteproc/qcom_q6v5_mss.c | 252 ++++++++++++++++++++++++++++++++++++-
- 1 file changed, 248 insertions(+), 4 deletions(-)
+Acked-by: Wolfram Sang <wsa@kernel.org> # for I2C
 
-diff --git a/drivers/remoteproc/qcom_q6v5_mss.c b/drivers/remoteproc/qcom_q6v5_mss.c
-index 7a1422bd7925..90ff712f912c 100644
---- a/drivers/remoteproc/qcom_q6v5_mss.c
-+++ b/drivers/remoteproc/qcom_q6v5_mss.c
-@@ -77,6 +77,14 @@
- 
- #define HALT_ACK_TIMEOUT_US		100000
- 
-+/* QACCEPT Register Offsets */
-+#define QACCEPT_ACCEPT_REG		0x0
-+#define QACCEPT_ACTIVE_REG		0x4
-+#define QACCEPT_DENY_REG		0x8
-+#define QACCEPT_REQ_REG			0xC
-+
-+#define QACCEPT_TIMEOUT_US		50
-+
- /* QDSP6SS_RESET */
- #define Q6SS_STOP_CORE			BIT(0)
- #define Q6SS_CORE_ARES			BIT(1)
-@@ -143,6 +151,9 @@ struct rproc_hexagon_res {
- 	bool has_alt_reset;
- 	bool has_mba_logs;
- 	bool has_spare_reg;
-+	bool has_qaccept_regs;
-+	bool has_ext_cntl_regs;
-+	bool has_vq6;
- };
- 
- struct q6v5 {
-@@ -158,8 +169,18 @@ struct q6v5 {
- 	u32 halt_q6;
- 	u32 halt_modem;
- 	u32 halt_nc;
-+	u32 halt_vq6;
- 	u32 conn_box;
- 
-+	u32 qaccept_mdm;
-+	u32 qaccept_cx;
-+	u32 qaccept_axi;
-+
-+	u32 axim1_clk_off;
-+	u32 crypto_clk_off;
-+	u32 force_clk_on;
-+	u32 rscc_disable;
-+
- 	struct reset_control *mss_restart;
- 	struct reset_control *pdc_reset;
- 
-@@ -201,6 +222,9 @@ struct q6v5 {
- 	bool has_alt_reset;
- 	bool has_mba_logs;
- 	bool has_spare_reg;
-+	bool has_qaccept_regs;
-+	bool has_ext_cntl_regs;
-+	bool has_vq6;
- 	int mpss_perm;
- 	int mba_perm;
- 	const char *hexagon_mdt_image;
-@@ -213,6 +237,7 @@ enum {
- 	MSS_MSM8996,
- 	MSS_MSM8998,
- 	MSS_SC7180,
-+	MSS_SC7280,
- 	MSS_SDM845,
- };
- 
-@@ -473,6 +498,12 @@ static int q6v5_reset_assert(struct q6v5 *qproc)
- 		regmap_update_bits(qproc->conn_map, qproc->conn_box,
- 				   AXI_GATING_VALID_OVERRIDE, 0);
- 		ret = reset_control_deassert(qproc->mss_restart);
-+	} else if (qproc->has_ext_cntl_regs) {
-+		regmap_write(qproc->conn_map, qproc->rscc_disable, 0);
-+		reset_control_assert(qproc->pdc_reset);
-+		reset_control_assert(qproc->mss_restart);
-+		reset_control_deassert(qproc->pdc_reset);
-+		ret = reset_control_deassert(qproc->mss_restart);
- 	} else {
- 		ret = reset_control_assert(qproc->mss_restart);
- 	}
-@@ -490,7 +521,7 @@ static int q6v5_reset_deassert(struct q6v5 *qproc)
- 		ret = reset_control_reset(qproc->mss_restart);
- 		writel(0, qproc->rmb_base + RMB_MBA_ALT_RESET);
- 		reset_control_deassert(qproc->pdc_reset);
--	} else if (qproc->has_spare_reg) {
-+	} else if (qproc->has_spare_reg || qproc->has_ext_cntl_regs) {
- 		ret = reset_control_reset(qproc->mss_restart);
- 	} else {
- 		ret = reset_control_deassert(qproc->mss_restart);
-@@ -604,7 +635,7 @@ static int q6v5proc_reset(struct q6v5 *qproc)
- 		}
- 
- 		goto pbl_wait;
--	} else if (qproc->version == MSS_SC7180) {
-+	} else if (qproc->version == MSS_SC7180 || qproc->version == MSS_SC7280) {
- 		val = readl(qproc->reg_base + QDSP6SS_SLEEP);
- 		val |= Q6SS_CBCR_CLKEN;
- 		writel(val, qproc->reg_base + QDSP6SS_SLEEP);
-@@ -787,6 +818,89 @@ static int q6v5proc_reset(struct q6v5 *qproc)
- 	return ret;
- }
- 
-+static int q6v5proc_enable_qchannel(struct q6v5 *qproc, struct regmap *map, u32 offset)
-+{
-+	unsigned int val;
-+	int ret;
-+
-+	if (!qproc->has_qaccept_regs)
-+		return 0;
-+
-+	if (qproc->has_ext_cntl_regs) {
-+		regmap_write(qproc->conn_map, qproc->rscc_disable, 0);
-+		regmap_write(qproc->conn_map, qproc->force_clk_on, 1);
-+
-+		ret = regmap_read_poll_timeout(qproc->halt_map, qproc->axim1_clk_off, val,
-+					       !val, 1, Q6SS_CBCR_TIMEOUT_US);
-+		if (ret) {
-+			dev_err(qproc->dev, "failed to enable axim1 clock\n");
-+			return -ETIMEDOUT;
-+		}
-+	}
-+
-+	regmap_write(map, offset + QACCEPT_REQ_REG, 1);
-+
-+	/* Wait for accept */
-+	ret = regmap_read_poll_timeout(map, offset + QACCEPT_ACCEPT_REG, val, val, 5,
-+				       QACCEPT_TIMEOUT_US);
-+	if (ret) {
-+		dev_err(qproc->dev, "qchannel enable failed\n");
-+		return -ETIMEDOUT;
-+	}
-+
-+	return 0;
-+}
-+
-+static void q6v5proc_disable_qchannel(struct q6v5 *qproc, struct regmap *map, u32 offset)
-+{
-+	int ret;
-+	unsigned int val, retry;
-+	unsigned int nretry = 10;
-+	bool takedown_complete = false;
-+
-+	if (!qproc->has_qaccept_regs)
-+		return;
-+
-+	while (!takedown_complete && nretry) {
-+		nretry--;
-+
-+		/* Wait for active transactions to complete */
-+		regmap_read_poll_timeout(map, offset + QACCEPT_ACTIVE_REG, val, !val, 5,
-+					 QACCEPT_TIMEOUT_US);
-+
-+		/* Request Q-channel transaction takedown */
-+		regmap_write(map, offset + QACCEPT_REQ_REG, 0);
-+
-+		/*
-+		 * If the request is denied, reset the Q-channel takedown request,
-+		 * wait for active transactions to complete and retry takedown.
-+		 */
-+		retry = 10;
-+		while (retry) {
-+			usleep_range(5, 10);
-+			retry--;
-+			ret = regmap_read(map, offset + QACCEPT_DENY_REG, &val);
-+			if (!ret && val) {
-+				regmap_write(map, offset + QACCEPT_REQ_REG, 1);
-+				break;
-+			}
-+
-+			ret = regmap_read(map, offset + QACCEPT_ACCEPT_REG, &val);
-+			if (!ret && !val) {
-+				takedown_complete = true;
-+				break;
-+			}
-+		}
-+
-+		if (!retry)
-+			break;
-+	}
-+
-+	/* Rely on mss_restart to clear out pending transactions on takedown failure */
-+	if (!takedown_complete)
-+		dev_err(qproc->dev, "qchannel takedown failed\n");
-+}
-+
- static void q6v5proc_halt_axi_port(struct q6v5 *qproc,
- 				   struct regmap *halt_map,
- 				   u32 offset)
-@@ -950,6 +1064,12 @@ static int q6v5_mba_load(struct q6v5 *qproc)
- 		goto assert_reset;
- 	}
- 
-+	ret = q6v5proc_enable_qchannel(qproc, qproc->halt_map, qproc->qaccept_axi);
-+	if (ret) {
-+		dev_err(qproc->dev, "failed to enable axi bridge\n");
-+		goto disable_active_clks;
-+	}
-+
- 	/*
- 	 * Some versions of the MBA firmware will upon boot wipe the MPSS region as well, so provide
- 	 * the Q6 access to this region.
-@@ -996,8 +1116,13 @@ static int q6v5_mba_load(struct q6v5 *qproc)
- 
- halt_axi_ports:
- 	q6v5proc_halt_axi_port(qproc, qproc->halt_map, qproc->halt_q6);
-+	if (qproc->has_vq6)
-+		q6v5proc_halt_axi_port(qproc, qproc->halt_map, qproc->halt_vq6);
- 	q6v5proc_halt_axi_port(qproc, qproc->halt_map, qproc->halt_modem);
- 	q6v5proc_halt_axi_port(qproc, qproc->halt_map, qproc->halt_nc);
-+	q6v5proc_disable_qchannel(qproc, qproc->halt_map, qproc->qaccept_mdm);
-+	q6v5proc_disable_qchannel(qproc, qproc->halt_map, qproc->qaccept_cx);
-+	q6v5proc_disable_qchannel(qproc, qproc->halt_map, qproc->qaccept_axi);
- 	mba_load_err = true;
- reclaim_mba:
- 	xfermemop_ret = q6v5_xfer_mem_ownership(qproc, &qproc->mba_perm, true,
-@@ -1047,6 +1172,8 @@ static void q6v5_mba_reclaim(struct q6v5 *qproc)
- 	qproc->dp_size = 0;
- 
- 	q6v5proc_halt_axi_port(qproc, qproc->halt_map, qproc->halt_q6);
-+	if (qproc->has_vq6)
-+		q6v5proc_halt_axi_port(qproc, qproc->halt_map, qproc->halt_vq6);
- 	q6v5proc_halt_axi_port(qproc, qproc->halt_map, qproc->halt_modem);
- 	q6v5proc_halt_axi_port(qproc, qproc->halt_map, qproc->halt_nc);
- 	if (qproc->version == MSS_MSM8996) {
-@@ -1059,6 +1186,24 @@ static void q6v5_mba_reclaim(struct q6v5 *qproc)
- 		writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
- 	}
- 
-+	if (qproc->has_ext_cntl_regs) {
-+		regmap_write(qproc->conn_map, qproc->rscc_disable, 1);
-+
-+		ret = regmap_read_poll_timeout(qproc->halt_map, qproc->axim1_clk_off, val,
-+					       !val, 1, Q6SS_CBCR_TIMEOUT_US);
-+		if (ret)
-+			dev_err(qproc->dev, "failed to enable axim1 clock\n");
-+
-+		ret = regmap_read_poll_timeout(qproc->halt_map, qproc->crypto_clk_off, val,
-+					       !val, 1, Q6SS_CBCR_TIMEOUT_US);
-+		if (ret)
-+			dev_err(qproc->dev, "failed to enable crypto clock\n");
-+	}
-+
-+	q6v5proc_disable_qchannel(qproc, qproc->halt_map, qproc->qaccept_mdm);
-+	q6v5proc_disable_qchannel(qproc, qproc->halt_map, qproc->qaccept_cx);
-+	q6v5proc_disable_qchannel(qproc, qproc->halt_map, qproc->qaccept_axi);
-+
- 	q6v5_reset_assert(qproc);
- 
- 	q6v5_clk_disable(qproc->dev, qproc->reset_clks,
-@@ -1471,6 +1616,7 @@ static int q6v5_init_mem(struct q6v5 *qproc, struct platform_device *pdev)
- {
- 	struct of_phandle_args args;
- 	struct resource *res;
-+	int halt_cell_cnt = 3;
- 	int ret;
- 
- 	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "qdsp6");
-@@ -1483,8 +1629,11 @@ static int q6v5_init_mem(struct q6v5 *qproc, struct platform_device *pdev)
- 	if (IS_ERR(qproc->rmb_base))
- 		return PTR_ERR(qproc->rmb_base);
- 
-+	if (qproc->has_vq6)
-+		halt_cell_cnt++;
-+
- 	ret = of_parse_phandle_with_fixed_args(pdev->dev.of_node,
--					       "qcom,halt-regs", 3, 0, &args);
-+					       "qcom,halt-regs", halt_cell_cnt, 0, &args);
- 	if (ret < 0) {
- 		dev_err(&pdev->dev, "failed to parse qcom,halt-regs\n");
- 		return -EINVAL;
-@@ -1499,6 +1648,52 @@ static int q6v5_init_mem(struct q6v5 *qproc, struct platform_device *pdev)
- 	qproc->halt_modem = args.args[1];
- 	qproc->halt_nc = args.args[2];
- 
-+	if (qproc->has_vq6)
-+		qproc->halt_vq6 = args.args[3];
-+
-+	if (qproc->has_qaccept_regs) {
-+		ret = of_parse_phandle_with_fixed_args(pdev->dev.of_node,
-+						       "qcom,qaccept-regs",
-+						       3, 0, &args);
-+		if (ret < 0) {
-+			dev_err(&pdev->dev, "failed to parse qaccept-regs\n");
-+			return -EINVAL;
-+		}
-+
-+		qproc->qaccept_mdm = args.args[0];
-+		qproc->qaccept_cx = args.args[1];
-+		qproc->qaccept_axi = args.args[2];
-+	}
-+
-+	if (qproc->has_ext_cntl_regs) {
-+		ret = of_parse_phandle_with_fixed_args(pdev->dev.of_node,
-+						       "qcom,ext-regs",
-+						       2, 0, &args);
-+		if (ret < 0) {
-+			dev_err(&pdev->dev, "failed to parse ext-regs index 0\n");
-+			return -EINVAL;
-+		}
-+
-+		qproc->conn_map = syscon_node_to_regmap(args.np);
-+		of_node_put(args.np);
-+		if (IS_ERR(qproc->conn_map))
-+			return PTR_ERR(qproc->conn_map);
-+
-+		qproc->force_clk_on = args.args[0];
-+		qproc->rscc_disable = args.args[1];
-+
-+		ret = of_parse_phandle_with_fixed_args(pdev->dev.of_node,
-+						       "qcom,ext-regs",
-+						       2, 1, &args);
-+		if (ret < 0) {
-+			dev_err(&pdev->dev, "failed to parse ext-regs index 1\n");
-+			return -EINVAL;
-+		}
-+
-+		qproc->axim1_clk_off = args.args[0];
-+		qproc->crypto_clk_off = args.args[1];
-+	}
-+
- 	if (qproc->has_spare_reg) {
- 		ret = of_parse_phandle_with_fixed_args(pdev->dev.of_node,
- 						       "qcom,spare-regs",
-@@ -1590,7 +1785,7 @@ static int q6v5_init_reset(struct q6v5 *qproc)
- 		return PTR_ERR(qproc->mss_restart);
- 	}
- 
--	if (qproc->has_alt_reset || qproc->has_spare_reg) {
-+	if (qproc->has_alt_reset || qproc->has_spare_reg || qproc->has_ext_cntl_regs) {
- 		qproc->pdc_reset = devm_reset_control_get_exclusive(qproc->dev,
- 								    "pdc_reset");
- 		if (IS_ERR(qproc->pdc_reset)) {
-@@ -1697,6 +1892,9 @@ static int q6v5_probe(struct platform_device *pdev)
- 
- 	platform_set_drvdata(pdev, qproc);
- 
-+	qproc->has_qaccept_regs = desc->has_qaccept_regs;
-+	qproc->has_ext_cntl_regs = desc->has_ext_cntl_regs;
-+	qproc->has_vq6 = desc->has_vq6;
- 	qproc->has_spare_reg = desc->has_spare_reg;
- 	ret = q6v5_init_mem(qproc, pdev);
- 	if (ret)
-@@ -1857,9 +2055,39 @@ static const struct rproc_hexagon_res sc7180_mss = {
- 	.has_alt_reset = false,
- 	.has_mba_logs = true,
- 	.has_spare_reg = true,
-+	.has_qaccept_regs = false,
-+	.has_ext_cntl_regs = false,
-+	.has_vq6 = false,
- 	.version = MSS_SC7180,
- };
- 
-+static const struct rproc_hexagon_res sc7280_mss = {
-+	.hexagon_mba_image = "mba.mbn",
-+	.proxy_clk_names = (char*[]){
-+		"xo",
-+		NULL
-+	},
-+	.active_clk_names = (char*[]){
-+		"iface",
-+		"offline",
-+		"snoc_axi",
-+		NULL
-+	},
-+	.proxy_pd_names = (char*[]){
-+		"cx",
-+		"mss",
-+		NULL
-+	},
-+	.need_mem_protection = true,
-+	.has_alt_reset = false,
-+	.has_mba_logs = true,
-+	.has_spare_reg = false,
-+	.has_qaccept_regs = true,
-+	.has_ext_cntl_regs = true,
-+	.has_vq6 = true,
-+	.version = MSS_SC7280,
-+};
-+
- static const struct rproc_hexagon_res sdm845_mss = {
- 	.hexagon_mba_image = "mba.mbn",
- 	.proxy_clk_names = (char*[]){
-@@ -1889,6 +2117,9 @@ static const struct rproc_hexagon_res sdm845_mss = {
- 	.has_alt_reset = true,
- 	.has_mba_logs = false,
- 	.has_spare_reg = false,
-+	.has_qaccept_regs = false,
-+	.has_ext_cntl_regs = false,
-+	.has_vq6 = false,
- 	.version = MSS_SDM845,
- };
- 
-@@ -1917,6 +2148,9 @@ static const struct rproc_hexagon_res msm8998_mss = {
- 	.has_alt_reset = false,
- 	.has_mba_logs = false,
- 	.has_spare_reg = false,
-+	.has_qaccept_regs = false,
-+	.has_ext_cntl_regs = false,
-+	.has_vq6 = false,
- 	.version = MSS_MSM8998,
- };
- 
-@@ -1948,6 +2182,9 @@ static const struct rproc_hexagon_res msm8996_mss = {
- 	.has_alt_reset = false,
- 	.has_mba_logs = false,
- 	.has_spare_reg = false,
-+	.has_qaccept_regs = false,
-+	.has_ext_cntl_regs = false,
-+	.has_vq6 = false,
- 	.version = MSS_MSM8996,
- };
- 
-@@ -1990,6 +2227,9 @@ static const struct rproc_hexagon_res msm8916_mss = {
- 	.has_alt_reset = false,
- 	.has_mba_logs = false,
- 	.has_spare_reg = false,
-+	.has_qaccept_regs = false,
-+	.has_ext_cntl_regs = false,
-+	.has_vq6 = false,
- 	.version = MSS_MSM8916,
- };
- 
-@@ -2040,6 +2280,9 @@ static const struct rproc_hexagon_res msm8974_mss = {
- 	.has_alt_reset = false,
- 	.has_mba_logs = false,
- 	.has_spare_reg = false,
-+	.has_qaccept_regs = false,
-+	.has_ext_cntl_regs = false,
-+	.has_vq6 = false,
- 	.version = MSS_MSM8974,
- };
- 
-@@ -2050,6 +2293,7 @@ static const struct of_device_id q6v5_of_match[] = {
- 	{ .compatible = "qcom,msm8996-mss-pil", .data = &msm8996_mss},
- 	{ .compatible = "qcom,msm8998-mss-pil", .data = &msm8998_mss},
- 	{ .compatible = "qcom,sc7180-mss-pil", .data = &sc7180_mss},
-+	{ .compatible = "qcom,sc7280-mss-pil", .data = &sc7280_mss},
- 	{ .compatible = "qcom,sdm845-mss-pil", .data = &sdm845_mss},
- 	{ },
- };
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Thanks, Uwe!
 
+
+--o9Bjd73EPYzHYRI8
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmD3MUIACgkQFA3kzBSg
+KbYzoQ//fHsReQ7gV79Uj6MfHENOZAAxSFMd8yIWNeX0Ug8crVQ2fzQgvlotUS1y
+62KPO9MFbi37+nfCWwl5uNEiDPwYjpB+jM/jfqJ849ngfiIQyUqCK7qr5b1FIWkp
+TuEV1Rx/wlpmxMEjKFAuo+/5OkXVwvpxQGiqBemOeTmOKjqITCpXEBkYqDqqI/MY
+lnzwpE8R30sf8IH/aThtb9dZBz+8y2mry6nVtSbMMmZ0VAYgwEPmuPLfa9CIhaCJ
+Oqe6Uf+sJs/emp0nfyZ5IDXvO8vE5kgPoy0l/smHEtejHLUkHBKf4MusKOzDdbax
+Uk48fnhKgbhxbVN0guT7IzWvRG+80hU4Ns9YPjmHYNXr4Wg03//hoAv4otMAAqXU
+Tjk9sEMBGHasqHZ0e1j3xTRhxQOwTJjzwVNhkrTX4HIZ/k0gXQK0ojBXxGvWeds2
+yQ7FUakyf1LQBmrLwssWSXbyp+W6tVodIUmnebSK1IpVd7YK4NZPf796yD44Ckzd
+XM4O5xTksxr5X+cEsNNLxhXFMohR/BOpLCj4R1+vpRNyMTHLIqfsI7GL+TJh+Mri
++kuq0TQgbTRlrIw/jfTcenYmXhQte4oeFQa3uVwGY2b+5kB/zRMTKThU0e2Vpd+8
+Kifz6u9a8LEGAMrLNXVd1B/uHQSOMYeeIzsuZ+BHqVxDsyNvJds=
+=zPVh
+-----END PGP SIGNATURE-----
+
+--o9Bjd73EPYzHYRI8--
