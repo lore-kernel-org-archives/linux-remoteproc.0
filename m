@@ -5,875 +5,479 @@ X-Spam-Level:
 X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1CD4C636C8
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 20 Jul 2021 08:23:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC3C6C07E95
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 20 Jul 2021 08:54:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8D9CB6101B
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 20 Jul 2021 08:23:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9729C61208
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 20 Jul 2021 08:54:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233811AbhGTHmx (ORCPT
+        id S231402AbhGTINM (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 20 Jul 2021 03:42:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44140 "EHLO
+        Tue, 20 Jul 2021 04:13:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49358 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234253AbhGTHm0 (ORCPT
+        with ESMTP id S234394AbhGTIGd (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 20 Jul 2021 03:42:26 -0400
-Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4E9C9C061768
-        for <linux-remoteproc@vger.kernel.org>; Tue, 20 Jul 2021 01:22:43 -0700 (PDT)
-Received: by mail-wr1-x42a.google.com with SMTP id t5so25002018wrw.12
-        for <linux-remoteproc@vger.kernel.org>; Tue, 20 Jul 2021 01:22:43 -0700 (PDT)
+        Tue, 20 Jul 2021 04:06:33 -0400
+Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8D410C061767
+        for <linux-remoteproc@vger.kernel.org>; Tue, 20 Jul 2021 01:46:08 -0700 (PDT)
+Received: by mail-wm1-x333.google.com with SMTP id q18-20020a1ce9120000b02901f259f3a250so1555936wmc.2
+        for <linux-remoteproc@vger.kernel.org>; Tue, 20 Jul 2021 01:46:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=cwLXwsKnUrpqnQYIFqbFNVHpQGEC45Q8o4J8HH042aw=;
-        b=l0I+XOP0VM6+7Kx9JgnemqNvnwB89mLhGkwKQt/2Y3b7ObTtgBV0qjf2JLTU0QJYL2
-         n9+lytPNnmeG+D/DLuFYDYck1VSqJOn2kO8TXn3UMBHHzxUj6rg+tjv8uJWhfZ0z/BqK
-         yGySrOpM7WMFb/1ZuD3WioxHwCNk2Qx4KXwXxtwpWbxxGBg1+u0/NlINnN90k4GO+Ujz
-         2d90fhlgDxKbswLTK7lQpMsBXkBDBO9Zg/nY7SYzhoUB86TMWBnMU/WqCDwS+LlmlDOz
-         nt4Em5SsVPiuVYSHuMWoQGTg9ChA3MJgtL1M1Hr/S4k9tk5YMmea4f4eiNdIEGYFvAd+
-         7uZg==
+        bh=sfnB6pEXfoigvkI+81/RrVPdT9Ty3Lcn3N9ErXDBwX0=;
+        b=RGuET55vDuE2nzwz1lXE4fGZZb8Pcy27Ybk+IR1rLdiQX5ghY1CU9nVJRsikmW3RIT
+         RXc7NPXx9mx/JrJMj2PUjBVNw4X1SXi8a6ybZ7GqMZp3amfgTCFB0eo6pC1E56H+iFLp
+         eyDdCrmLYJd2nzpyTuon3zLzzAByZokdin4zWZHrQBF8Hgyq4cSbLXm4gDUfvBqDfdy5
+         bhmr9//nwCI8h4vMD/M35gIkTQ4VdxnvsZ89q5WA1W76UOnRLwNgXOT8jGwxyKPleKDd
+         eLKbJ6TpDGNMu1pENi3/+JVaYvfTZvKl+oxUkjLbDq8idm6WERtRR4m9lLXD+dAIo3Cg
+         L30w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-transfer-encoding
          :content-language;
-        bh=cwLXwsKnUrpqnQYIFqbFNVHpQGEC45Q8o4J8HH042aw=;
-        b=B2g4r+vnc3MCMLJav8dbvbp7ge2MqrUQlGk0yhSd7wT1xPRpm6XscAM4ewqzUFMRdi
-         /9XZKu+J4ND6FeClJNUfMPaXHTEPiv0HArLFiUYcp6eYVeaHvMLOkV08WWASefEu6cbZ
-         hq9rD4kUMn2W/C4m3cyMGNPmKKfz+i7JVokYEarDt2wEsfLxEZA2xCUUQ0AbNFxVaIqg
-         VA+RK6oU68l1roj5dnLcc73x18ALS8tOWhfXOTiHWyJA3Ja4WWaJQr7uEMs3B53uMLbC
-         f9SfqNxXo/zdQDjUi4aE/Pjg13nsEpTo69rcShbuyYttdl8SIHbYN3oFrKvewO2VZ4id
-         vCmA==
-X-Gm-Message-State: AOAM530EFPYHxey+57BkSc5xqAwAyMW/N5zL4GDkjAfU4B90pODVXTLI
-        jAgkd2YqUjwebxrvcDElYJ7uzQ==
-X-Google-Smtp-Source: ABdhPJzmZ9aZaTGn9l89FKUNl8itiC2WQBcQS69WxDYkpwYVq/M9DtC0sSxdGNFSBj5Pl9OM+HoPTg==
-X-Received: by 2002:adf:ce10:: with SMTP id p16mr34571643wrn.205.1626769361871;
-        Tue, 20 Jul 2021 01:22:41 -0700 (PDT)
+        bh=sfnB6pEXfoigvkI+81/RrVPdT9Ty3Lcn3N9ErXDBwX0=;
+        b=m0ORPJqbEpg9/PGJUKdrBqkEqvItDSkUWYiyXQaqAM70HXqps6CM98V57wQFJoVkym
+         OIuIpXyDivQMCztM74ngjxTeSELc5P2CEwhSlDm6w5JItBk0owA4CVpWaH7CZ20JF53H
+         iq2E/z9CwCt4YnBzanxgxgk99hyalmtQiib9sCShGV0S03xTc/juXHG0mhZNvuC/eWle
+         0WS8Qg3nombpgkQk4gPjoj6XbCOMXiOQ8Fu7DgU7F3kH/ZNG7qjS8gpJcnGzWUNhCAeZ
+         S29mN2zVifuKVhNlq7GWIbl2yKYMxxdGgucuu2gmmUVTOzEDXQP1mxR2x+lVwq7qlS+m
+         mGpg==
+X-Gm-Message-State: AOAM5322MJjnMSxnKK/FA/hWmdCDMqqQF/J0iNLMzbDswMkrMfY3Mt73
+        uPNL6EE3IBv3+4kMiJCpW8mqtA==
+X-Google-Smtp-Source: ABdhPJwIYw5ttbPqKjD+YOlc7V1LBRa4PNSFy7pfGuMZWU+YqytnaSW5a5r3TbwdGhLLEk9Sh+JhRw==
+X-Received: by 2002:a05:600c:214a:: with SMTP id v10mr34897190wml.17.1626770767138;
+        Tue, 20 Jul 2021 01:46:07 -0700 (PDT)
 Received: from [10.1.4.104] (laubervilliers-658-1-213-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id j3sm15533718wms.30.2021.07.20.01.22.40
+        by smtp.gmail.com with ESMTPSA id g18sm18851572wmk.37.2021.07.20.01.46.05
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 20 Jul 2021 01:22:41 -0700 (PDT)
-Subject: Re: [RFC PATCH 1/4] Add a RPMSG driver for the APU in the mt8183
+        Tue, 20 Jul 2021 01:46:06 -0700 (PDT)
+Subject: Re: [PATCH v2 2/4] remoteproc: Add a remoteproc driver for the
+ MT8183's APU
 To:     Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc:     linux-remoteproc@vger.kernel.org, ohad@wizery.com,
-        bjorn.andersson@linaro.org, sumit.semwal@linaro.org,
-        christian.koenig@amd.com, linux-kernel@vger.kernel.org,
-        linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linaro-mm-sig@lists.linaro.org, jstephan@baylibre.com,
-        stephane.leprovost@mediatek.com, gpain@baylibre.com,
-        mturquette@baylibre.com
-References: <20200930115350.5272-1-abailon@baylibre.com>
- <20200930115350.5272-2-abailon@baylibre.com> <20201014225534.GA1416674@xps15>
- <20201015163303.GC1450102@xps15>
+Cc:     ohad@wizery.com, bjorn.andersson@linaro.org, robh+dt@kernel.org,
+        matthias.bgg@gmail.com, linux-remoteproc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
+        stephane.leprovost@mediatek.com, gpain@baylibre.com
+References: <20200910130148.8734-1-abailon@baylibre.com>
+ <20200910130148.8734-3-abailon@baylibre.com> <20200929175214.GB124290@xps15>
 From:   Alexandre Bailon <abailon@baylibre.com>
-Message-ID: <18dc7298-3e48-2254-81df-492205124902@baylibre.com>
-Date:   Tue, 20 Jul 2021 10:24:09 +0200
+Message-ID: <59553610-3d88-7982-2a10-dec27d9c3fce@baylibre.com>
+Date:   Tue, 20 Jul 2021 10:47:33 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.11.0
 MIME-Version: 1.0
-In-Reply-To: <20201015163303.GC1450102@xps15>
+In-Reply-To: <20200929175214.GB124290@xps15>
 Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Content-Language: en-US
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
 Hi Mathieu,
-
-> On Wed, Oct 14, 2020 at 04:55:34PM -0600, Mathieu Poirier wrote:
->> Hi Alexandre,
+> Hi Alexandre,
+>
+> On Thu, Sep 10, 2020 at 03:01:46PM +0200, Alexandre Bailon wrote:
+>> This adds a driver to control the APU present in the MT8183.
+>> This loads the firmware and start the DSP.
 >>
->> On Wed, Sep 30, 2020 at 01:53:47PM +0200, Alexandre Bailon wrote:
->>> This adds a driver to communicate with the APU available
->>> in the mt8183. The driver is generic and could be used for other APU.
->>> It mostly provides a userspace interface to send messages and
->>> and share big buffers with the APU.
->>>
->>> Signed-off-by: Alexandre Bailon <abailon@baylibre.com>
->>> ---
->>>   drivers/rpmsg/Kconfig          |   9 +
->>>   drivers/rpmsg/Makefile         |   1 +
->>>   drivers/rpmsg/apu_rpmsg.c      | 606 +++++++++++++++++++++++++++++++++
->>>   drivers/rpmsg/apu_rpmsg.h      |  52 +++
->>>   include/uapi/linux/apu_rpmsg.h |  36 ++
->>>   5 files changed, 704 insertions(+)
->>>   create mode 100644 drivers/rpmsg/apu_rpmsg.c
->>>   create mode 100644 drivers/rpmsg/apu_rpmsg.h
->>>   create mode 100644 include/uapi/linux/apu_rpmsg.h
->>>
->>> diff --git a/drivers/rpmsg/Kconfig b/drivers/rpmsg/Kconfig
->>> index f96716893c2a..3437c6fc8647 100644
->>> --- a/drivers/rpmsg/Kconfig
->>> +++ b/drivers/rpmsg/Kconfig
->>> @@ -64,4 +64,13 @@ config RPMSG_VIRTIO
->>>   	select RPMSG
->>>   	select VIRTIO
->>>   
->>> +config RPMSG_APU
->>> +	tristate "APU RPMSG driver"
->>> +	help
->>> +	  This provides a RPMSG driver that provides some facilities to
->>> +	  communicate with an accelerated processing unit (APU).
->>> +	  This creates one or more char files that could be used by userspace
->>> +	  to send a message to an APU. In addition, this also take care of
->>> +	  sharing the memory buffer with the APU.
->>> +
->>>   endmenu
->>> diff --git a/drivers/rpmsg/Makefile b/drivers/rpmsg/Makefile
->>> index ffe932ef6050..93e0f3de99c9 100644
->>> --- a/drivers/rpmsg/Makefile
->>> +++ b/drivers/rpmsg/Makefile
->>> @@ -8,3 +8,4 @@ obj-$(CONFIG_RPMSG_QCOM_GLINK_RPM) += qcom_glink_rpm.o
->>>   obj-$(CONFIG_RPMSG_QCOM_GLINK_SMEM) += qcom_glink_smem.o
->>>   obj-$(CONFIG_RPMSG_QCOM_SMD)	+= qcom_smd.o
->>>   obj-$(CONFIG_RPMSG_VIRTIO)	+= virtio_rpmsg_bus.o
->>> +obj-$(CONFIG_RPMSG_APU)		+= apu_rpmsg.o
->>> diff --git a/drivers/rpmsg/apu_rpmsg.c b/drivers/rpmsg/apu_rpmsg.c
->>> new file mode 100644
->>> index 000000000000..5131b8b8e1f2
->>> --- /dev/null
->>> +++ b/drivers/rpmsg/apu_rpmsg.c
->>> @@ -0,0 +1,606 @@
->>> +// SPDX-License-Identifier: GPL-2.0
->>> +//
->>> +// Copyright 2020 BayLibre SAS
->>> +
->>> +#include <linux/cdev.h>
->>> +#include <linux/dma-buf.h>
->>> +#include <linux/iommu.h>
->>> +#include <linux/iova.h>
->>> +#include <linux/types.h>
->>> +#include <linux/module.h>
->>> +#include <linux/slab.h>
->>> +#include <linux/remoteproc.h>
->>> +#include <linux/rpmsg.h>
->>> +#include <linux/of.h>
->>> +#include <linux/platform_device.h>
->>> +#include "rpmsg_internal.h"
->>> +
->>> +#include <uapi/linux/apu_rpmsg.h>
->>> +
->>> +#include "apu_rpmsg.h"
->>> +
->>> +/* Maximum of APU devices supported */
->>> +#define APU_DEV_MAX 2
->>> +
->>> +#define dev_to_apu(dev) container_of(dev, struct rpmsg_apu, dev)
->>> +#define cdev_to_apu(i_cdev) container_of(i_cdev, struct rpmsg_apu, cdev)
->>> +
->>> +struct rpmsg_apu {
->>> +	struct rpmsg_device *rpdev;
->>> +	struct cdev cdev;
->>> +	struct device dev;
->>> +
->>> +	struct rproc *rproc;
->>> +	struct iommu_domain *domain;
->>> +	struct iova_domain *iovad;
->>> +	int iova_limit_pfn;
->>> +};
->>> +
->>> +struct rpmsg_request {
->>> +	struct completion completion;
->>> +	struct list_head node;
->>> +	void *req;
->>> +};
->>> +
->>> +struct apu_buffer {
->>> +	int fd;
->>> +	struct dma_buf *dma_buf;
->>> +	struct dma_buf_attachment *attachment;
->>> +	struct sg_table *sg_table;
->>> +	u32 iova;
->>> +};
->>> +
->>> +/*
->>> + * Shared IOVA domain.
->>> + * The MT8183 has two VP6 core but they are sharing the IOVA.
->>> + * They could be used alone, or together. In order to avoid conflict,
->>> + * create an IOVA domain that could be shared by those two core.
->>> + * @iovad: The IOVA domain to share between the APU cores
->>> + * @refcount: Allow to automatically release the IOVA domain once all the APU
->>> + *            cores has been stopped
->>> + */
->>> +struct apu_iova_domain {
->>> +	struct iova_domain iovad;
->>> +	struct kref refcount;
->>> +};
->>> +
->>> +static dev_t rpmsg_major;
->>> +static DEFINE_IDA(rpmsg_ctrl_ida);
->>> +static DEFINE_IDA(rpmsg_minor_ida);
->>> +static DEFINE_IDA(req_ida);
->>> +static LIST_HEAD(requests);
->>> +static struct apu_iova_domain *apu_iovad;
->>> +
->>> +static int apu_rpmsg_callback(struct rpmsg_device *dev, void *data, int count,
->>> +			      void *priv, u32 addr)
->>> +{
->>> +	struct rpmsg_request *rpmsg_req;
->>> +	struct apu_dev_request *hdr = data;
->>> +
->>> +	list_for_each_entry(rpmsg_req, &requests, node) {
->>> +		struct apu_dev_request *tmp_hdr = rpmsg_req->req;
->>> +
->>> +		if (hdr->id == tmp_hdr->id) {
->>> +			memcpy(rpmsg_req->req, data, count);
->>> +			complete(&rpmsg_req->completion);
->>> +
->>> +			return 0;
->>> +		}
->>> +	}
->>> +
->>> +	return 0;
->>> +}
->>> +
->>> +static int apu_device_memory_map(struct rpmsg_apu *apu,
->>> +				 struct apu_buffer *buffer)
->>> +{
->>> +	struct rpmsg_device *rpdev = apu->rpdev;
->>> +	phys_addr_t phys;
->>> +	int total_buf_space;
->>> +	int iova_pfn;
->>> +	int ret;
->>> +
->>> +	if (!buffer->fd)
->>> +		return 0;
->>> +
->>> +	buffer->dma_buf = dma_buf_get(buffer->fd);
->>> +	if (IS_ERR(buffer->dma_buf)) {
->>> +		dev_err(&rpdev->dev, "Failed to get dma_buf from fd: %ld\n",
->>> +			PTR_ERR(buffer->dma_buf));
->>> +		return PTR_ERR(buffer->dma_buf);
->>> +	}
->>> +
->>> +	buffer->attachment = dma_buf_attach(buffer->dma_buf, &rpdev->dev);
->>> +	if (IS_ERR(buffer->attachment)) {
->>> +		dev_err(&rpdev->dev, "Failed to attach dma_buf\n");
->>> +		ret = PTR_ERR(buffer->attachment);
->>> +		goto err_dma_buf_put;
->>> +	}
->>> +
->>> +	buffer->sg_table = dma_buf_map_attachment(buffer->attachment,
->>> +						   DMA_BIDIRECTIONAL);
->>> +	if (IS_ERR(buffer->sg_table)) {
->>> +		dev_err(&rpdev->dev, "Failed to map attachment\n");
->>> +		ret = PTR_ERR(buffer->sg_table);
->>> +		goto err_dma_buf_detach;
->>> +	}
->>> +	phys = page_to_phys(sg_page(buffer->sg_table->sgl));
->>> +	total_buf_space = sg_dma_len(buffer->sg_table->sgl);
->>> +
->>> +	iova_pfn = alloc_iova_fast(apu->iovad, total_buf_space >> PAGE_SHIFT,
->>> +				   apu->iova_limit_pfn, true);
->>> +	if (!iova_pfn) {
->>> +		dev_err(&rpdev->dev, "Failed to allocate iova address\n");
->>> +		ret = -ENOMEM;
->>> +		goto err_dma_unmap_attachment;
->>> +	}
->>> +
->>> +	buffer->iova = PFN_PHYS(iova_pfn);
->>> +	ret = iommu_map(apu->rproc->domain, buffer->iova, phys, total_buf_space,
->>> +			IOMMU_READ | IOMMU_WRITE | IOMMU_CACHE);
->>> +	if (ret) {
->>> +		dev_err(&rpdev->dev, "Failed to iommu map\n");
->>> +		goto err_free_iova;
->>> +	}
->>> +
->>> +	return 0;
->>> +
->>> +err_free_iova:
->>> +	free_iova(apu->iovad, iova_pfn);
->>> +err_dma_unmap_attachment:
->>> +	dma_buf_unmap_attachment(buffer->attachment,
->>> +				 buffer->sg_table,
->>> +				 DMA_BIDIRECTIONAL);
->>> +err_dma_buf_detach:
->>> +	dma_buf_detach(buffer->dma_buf, buffer->attachment);
->>> +err_dma_buf_put:
->>> +	dma_buf_put(buffer->dma_buf);
->>> +
->>> +	return ret;
->>> +}
->>> +
->>> +static void apu_device_memory_unmap(struct rpmsg_apu *apu,
->>> +				    struct apu_buffer *buffer)
->>> +{
->>> +	int total_buf_space;
->>> +
->>> +	if (!buffer->fd)
->>> +		return;
->>> +
->>> +	total_buf_space = sg_dma_len(buffer->sg_table->sgl);
->>> +	iommu_unmap(apu->rproc->domain, buffer->iova, total_buf_space);
->>> +	free_iova(apu->iovad, PHYS_PFN(buffer->iova));
->>> +	dma_buf_unmap_attachment(buffer->attachment,
->>> +				 buffer->sg_table,
->>> +				 DMA_BIDIRECTIONAL);
->>> +	dma_buf_detach(buffer->dma_buf, buffer->attachment);
->>> +	dma_buf_put(buffer->dma_buf);
->>> +}
->>> +
->>> +static int _apu_send_request(struct rpmsg_apu *apu,
->>> +			     struct rpmsg_device *rpdev,
->>> +			     struct apu_dev_request *req, int len)
->>> +{
->>> +
->>> +	struct rpmsg_request *rpmsg_req;
->>> +	int ret = 0;
->>> +
->>> +	req->id = ida_simple_get(&req_ida, 0, 0xffff, GFP_KERNEL);
->>> +	if (req->id < 0)
->>> +		return ret;
->>> +
->>> +	rpmsg_req = kzalloc(sizeof(*rpmsg_req), GFP_KERNEL);
->>> +	if (!rpmsg_req)
->>> +		return -ENOMEM;
->>> +
->>> +	rpmsg_req->req = req;
->>> +	init_completion(&rpmsg_req->completion);
->>> +	list_add(&rpmsg_req->node, &requests);
->>> +
->>> +	ret = rpmsg_send(rpdev->ept, req, len);
->>> +	if (ret)
->>> +		goto free_req;
->>> +
->>> +	/* be careful with race here between timeout and callback*/
->>> +	ret = wait_for_completion_timeout(&rpmsg_req->completion,
->>> +					  msecs_to_jiffies(1000));
->>> +	if (!ret)
->>> +		ret = -ETIMEDOUT;
->>> +	else
->>> +		ret = 0;
->>> +
->>> +	ida_simple_remove(&req_ida, req->id);
->>> +
->>> +free_req:
->>> +
->>> +	list_del(&rpmsg_req->node);
->>> +	kfree(rpmsg_req);
->>> +
->>> +	return ret;
->>> +}
->>> +
->>> +static int apu_send_request(struct rpmsg_apu *apu,
->>> +			    struct apu_request *req)
->>> +{
->>> +	int ret;
->>> +	struct rpmsg_device *rpdev = apu->rpdev;
->>> +	struct apu_dev_request *dev_req;
->>> +	struct apu_buffer *buffer;
->>> +
->>> +	int size = req->size_in + req->size_out +
->>> +		sizeof(u32) * req->count * 2 + sizeof(*dev_req);
->>> +	u32 *fd = (u32 *)(req->data + req->size_in + req->size_out);
->>> +	u32 *buffer_size = (u32 *)(fd + req->count);
->>> +	u32 *dev_req_da;
->>> +	u32 *dev_req_buffer_size;
->>> +	int i;
->>> +
->>> +	dev_req = kmalloc(size, GFP_KERNEL);
->>> +	if (!dev_req)
->>> +		return -ENOMEM;
->>> +
->>> +	dev_req->cmd = req->cmd;
->>> +	dev_req->size_in = req->size_in;
->>> +	dev_req->size_out = req->size_out;
->>> +	dev_req->count = req->count;
->>> +	dev_req_da = (u32 *)(dev_req->data + req->size_in + req->size_out);
->> I have started to review this set but it will take me more time to wrap my head
->> around what you are doing (the overall lack of comments in the code doesn't
->> help).
+>> Signed-off-by: Alexandre Bailon <abailon@baylibre.com>
+>> ---
+>>   drivers/remoteproc/Kconfig   |  10 ++
+>>   drivers/remoteproc/Makefile  |   1 +
+>>   drivers/remoteproc/mtk_apu.c | 288 +++++++++++++++++++++++++++++++++++
+>>   3 files changed, 299 insertions(+)
+>>   create mode 100644 drivers/remoteproc/mtk_apu.c
 >>
->> In the mean time the "dev_req->data" above is very puzzling to me - did you mean
->> to write "req-data"?  Otherwise I don't know how this can work since
->> dev_req->data is not initalised after the kmalloc().
-Data is declared as an array in struct apu_dev_request so we don't have 
-to initialize its address.
-This is working correctly but I think this would deserve much more 
-documentation.
-I will do it for the rewritten driver.
-> I haven't received an answer to the above question nor any feedback from the
-> comments I made on your previous set.  As such I will halt the revision of
-> this set until I hear back from you.
-My apologize, I have been focused on the driver rewriting, to use DRM 
-framework instead of
-managing the memory directly in the driver.
+>> diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
+>> index c6659dfea7c7..4ebea57bf4c8 100644
+>> --- a/drivers/remoteproc/Kconfig
+>> +++ b/drivers/remoteproc/Kconfig
+>> @@ -51,6 +51,16 @@ config MTK_SCP
+>>   
+>>   	  It's safe to say N here.
+>>   
+>> +config MTK_APU
+>> +	tristate "Mediatek APU remoteproc support"
+>> +	depends on ARCH_MEDIATEK
+>> +	depends on MTK_IOMMU
+>> +	help
+>> +	  Say y to support the Mediatek's Accelerated Processing Unit (APU) via
+>> +	  the remote processor framework.
+>> +
+>> +	  It's safe to say N here.
+>> +
+>>   config OMAP_REMOTEPROC
+>>   	tristate "OMAP remoteproc support"
+>>   	depends on ARCH_OMAP4 || SOC_OMAP5 || SOC_DRA7XX
+>> diff --git a/drivers/remoteproc/Makefile b/drivers/remoteproc/Makefile
+>> index 3dfa28e6c701..174644f38fda 100644
+>> --- a/drivers/remoteproc/Makefile
+>> +++ b/drivers/remoteproc/Makefile
+>> @@ -14,6 +14,7 @@ obj-$(CONFIG_REMOTEPROC_CDEV)		+= remoteproc_cdev.o
+>>   obj-$(CONFIG_IMX_REMOTEPROC)		+= imx_rproc.o
+>>   obj-$(CONFIG_INGENIC_VPU_RPROC)		+= ingenic_rproc.o
+>>   obj-$(CONFIG_MTK_SCP)			+= mtk_scp.o mtk_scp_ipi.o
+>> +obj-$(CONFIG_MTK_APU)			+= mtk_apu.o
+>>   obj-$(CONFIG_OMAP_REMOTEPROC)		+= omap_remoteproc.o
+>>   obj-$(CONFIG_WKUP_M3_RPROC)		+= wkup_m3_rproc.o
+>>   obj-$(CONFIG_DA8XX_REMOTEPROC)		+= da8xx_remoteproc.o
+>> diff --git a/drivers/remoteproc/mtk_apu.c b/drivers/remoteproc/mtk_apu.c
+>> new file mode 100644
+>> index 000000000000..6d2f577cfde5
+>> --- /dev/null
+>> +++ b/drivers/remoteproc/mtk_apu.c
+>> @@ -0,0 +1,288 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +/*
+>> + * Copyright (C) 2020 BayLibre SAS
+>> + */
+>> +
+>> +#include <linux/bitops.h>
+>> +#include <linux/clk.h>
+>> +#include <linux/delay.h>
+>> +#include <linux/highmem.h>
+> Not sure what this is for
+>
+>> +#include <linux/interrupt.h>
+>> +#include <linux/io.h>
+>> +#include <linux/iommu.h>
+>> +#include <linux/irq.h>
+>> +#include <linux/kernel.h>
+>> +#include <linux/module.h>
+>> +#include <linux/of_reserved_mem.h>
+>> +#include <linux/platform_device.h>
+>> +#include <linux/remoteproc.h>
+>> +
+>> +#include "remoteproc_internal.h"
+>> +
+>> +/* From MT8183 4.5 Vision Processor Unit (VPU).pdf datasheet */
+>> +#define SW_RST					(0x0000000C)
+>> +#define SW_RST_OCD_HALT_ON_RST			BIT(12)
+>> +#define SW_RST_IPU_D_RST			BIT(8)
+>> +#define SW_RST_IPU_B_RST			BIT(4)
+>> +#define CORE_CTRL				(0x00000110)
+>> +#define CORE_CTRL_PDEBUG_ENABLE			BIT(31)
+>> +#define CORE_CTRL_SRAM_64K_iMEM			(0x00 << 27)
+>> +#define CORE_CTRL_SRAM_96K_iMEM			(0x01 << 27)
+>> +#define CORE_CTRL_SRAM_128K_iMEM		(0x02 << 27)
+>> +#define CORE_CTRL_SRAM_192K_iMEM		(0x03 << 27)
+>> +#define CORE_CTRL_SRAM_256K_iMEM		(0x04 << 27)
+>> +#define CORE_CTRL_PBCLK_ENABLE			BIT(26)
+>> +#define CORE_CTRL_RUN_STALL			BIT(23)
+>> +#define CORE_CTRL_STATE_VECTOR_SELECT		BIT(19)
+>> +#define CORE_CTRL_PIF_GATED			BIT(17)
+>> +#define CORE_CTRL_NMI				BIT(0)
+>> +#define CORE_XTENSA_INT				(0x00000114)
+>> +#define CORE_CTL_XTENSA_INT			(0x00000118)
+>> +#define CORE_DEFAULT0				(0x0000013C)
+>> +#define CORE_DEFAULT0_QOS_SWAP_0		(0x00 << 28)
+>> +#define CORE_DEFAULT0_QOS_SWAP_1		(0x01 << 28)
+>> +#define CORE_DEFAULT0_QOS_SWAP_2		(0x02 << 28)
+>> +#define CORE_DEFAULT0_QOS_SWAP_3		(0x03 << 28)
+>> +#define CORE_DEFAULT0_ARUSER_USE_IOMMU		(0x10 << 23)
+>> +#define CORE_DEFAULT0_AWUSER_USE_IOMMU		(0x10 << 18)
+>> +#define CORE_DEFAULT1				(0x00000140)
+>> +#define CORE_DEFAULT0_ARUSER_IDMA_USE_IOMMU	(0x10 << 0)
+>> +#define CORE_DEFAULT0_AWUSER_IDMA_USE_IOMMU	(0x10 << 5)
+>> +#define CORE_XTENSA_ALTRESETVEC			(0x000001F8)
+>> +
+>> +struct mtk_apu_rproc {
+>> +	struct device *dev;
+>> +	struct rproc *rproc;
+> As far as I can tell @rproc is only used in apu_jtag_probe(), but it could just
+> as easily be given as a parameter to the function instead of bloating the
+> structure.
+>
+>> +
+> Extra line
+>
+>> +	void __iomem *base;
+>> +	int irq;
+>> +	struct clk_bulk_data clks[3];
+>> +};
+>> +
+>> +static int mtk_apu_rproc_prepare(struct rproc *rproc)
+>> +{
+>> +	struct mtk_apu_rproc *apu_rproc = rproc->priv;
+>> +	int ret;
+>> +
+>> +	ret = clk_bulk_prepare_enable(ARRAY_SIZE(apu_rproc->clks),
+>> +				      apu_rproc->clks);
+>> +	if (ret)
+>> +		dev_err(apu_rproc->dev, "Failed to enable clocks\n");
+>> +
+>> +	return ret;
+>> +}
+>> +
+>> +static int mtk_apu_rproc_unprepare(struct rproc *rproc)
+>> +{
+>> +	struct mtk_apu_rproc *apu_rproc = rproc->priv;
+>> +
+>> +	clk_bulk_disable_unprepare(ARRAY_SIZE(apu_rproc->clks),
+>> +				   apu_rproc->clks);
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static int mtk_apu_rproc_start(struct rproc *rproc)
+>> +{
+>> +	struct mtk_apu_rproc *apu_rproc = rproc->priv;
+>> +	u32 core_ctrl;
+>> +
+>> +	/* Set reset vector of APU firmware boot address */
+>> +	writel(rproc->bootaddr, apu_rproc->base + CORE_XTENSA_ALTRESETVEC);
+>> +
+>> +	/* Turn on the clocks and stall the APU */
+>> +	core_ctrl = readl(apu_rproc->base + CORE_CTRL);
+>> +	core_ctrl |= CORE_CTRL_PDEBUG_ENABLE | CORE_CTRL_PBCLK_ENABLE |
+>> +		     CORE_CTRL_STATE_VECTOR_SELECT | CORE_CTRL_RUN_STALL |
+>> +		     CORE_CTRL_PIF_GATED;
+>> +	writel(core_ctrl, apu_rproc->base + CORE_CTRL);
+>> +
+>> +	/* Reset the APU */
+>> +	writel(SW_RST_OCD_HALT_ON_RST | SW_RST_IPU_B_RST | SW_RST_IPU_D_RST,
+>> +		apu_rproc->base + SW_RST);
+>> +	ndelay(27);
+> What is this for and why 27 nanosecond precicely?  Is this a board specific
+> setting?  Are we sure it is the same value on all platform with a MT8183?
+>
+> Matthias, what is your take on this?
+I have got the response recently from the HW team and this 27 nanosecond 
+delay
+is the minimum delay required to reset the APU, and that should work at 
+any frequency.
+This delay is supposed to work for the mt8183 but also for the other 
+platform
+including an APU.
 
-Thanks,
+The HW also confirmed that there are no way to know if the reset has 
+been completed
+or not so we must way that delay.
+
+Maybe I should create a define instead of using directly 27 here, and 
+also add some documentation
+to explain why we need this delay.
+
+What do you think about it ?
+>
+>> +	writel(0, apu_rproc->base + SW_RST);
+>> +
+>> +	core_ctrl &= ~CORE_CTRL_PIF_GATED;
+>> +	writel(core_ctrl, apu_rproc->base + CORE_CTRL);
+>> +
+>> +	/* Configure memory accesses to go through the IOMMU */
+>> +	writel(CORE_DEFAULT0_AWUSER_USE_IOMMU | CORE_DEFAULT0_ARUSER_USE_IOMMU |
+>> +	      CORE_DEFAULT0_QOS_SWAP_1, apu_rproc->base + CORE_DEFAULT0);
+>> +	writel(CORE_DEFAULT0_AWUSER_IDMA_USE_IOMMU |
+>> +		CORE_DEFAULT0_ARUSER_IDMA_USE_IOMMU,
+>> +		apu_rproc->base + CORE_DEFAULT1);
+>> +
+>> +	/* Release the APU */
+>> +	core_ctrl &= ~CORE_CTRL_RUN_STALL;
+>> +	writel(core_ctrl, apu_rproc->base + CORE_CTRL);
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static int mtk_apu_rproc_stop(struct rproc *rproc)
+>> +{
+>> +	struct mtk_apu_rproc *apu_rproc = rproc->priv;
+>> +	u32 core_ctrl;
+>> +
+>> +	core_ctrl = readl(apu_rproc->base + CORE_CTRL);
+>> +	writel(core_ctrl | CORE_CTRL_RUN_STALL, apu_rproc->base + CORE_CTRL);
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static void mtk_apu_rproc_kick(struct rproc *rproc, int vqid)
+>> +{
+>> +	struct mtk_apu_rproc *apu_rproc = rproc->priv;
+>> +
+>> +	writel(1 << vqid, apu_rproc->base + CORE_CTL_XTENSA_INT);
+>> +}
+>> +
+>> +static const struct rproc_ops mtk_apu_rproc_ops = {
+>> +	.prepare	= mtk_apu_rproc_prepare,
+>> +	.unprepare	= mtk_apu_rproc_unprepare,
+>> +	.start		= mtk_apu_rproc_start,
+>> +	.stop		= mtk_apu_rproc_stop,
+>> +	.kick		= mtk_apu_rproc_kick,
+>> +};
+>> +
+>> +static irqreturn_t mtk_apu_rproc_callback(int irq, void *data)
+>> +{
+>> +	struct rproc *rproc = data;
+>> +	struct mtk_apu_rproc *apu_rproc = (struct mtk_apu_rproc *)rproc->priv;
+>> +
+>> +	writel(1, apu_rproc->base + CORE_XTENSA_INT);
+>> +
+>> +	return IRQ_WAKE_THREAD;
+>> +}
+>> +
+>> +static irqreturn_t handle_event(int irq, void *data)
+>> +{
+>> +	struct rproc *rproc = data;
+>> +
+>> +	rproc_vq_interrupt(rproc, 0);
+>> +	rproc_vq_interrupt(rproc, 1);
+>> +
+>> +	return IRQ_HANDLED;
+>> +}
+>> +
+>> +static int mtk_apu_rproc_probe(struct platform_device *pdev)
+>> +{
+>> +	struct device *dev = &pdev->dev;
+>> +	struct mtk_apu_rproc *apu_rproc;
+>> +	struct rproc *rproc;
+>> +	struct resource *res;
+>> +	int ret;
+>> +
+>> +	rproc = rproc_alloc(dev, dev_name(dev), &mtk_apu_rproc_ops, NULL,
+>> +			    sizeof(*apu_rproc));
+>> +	if (!rproc)
+>> +		return -ENOMEM;
+>> +
+>> +	rproc->recovery_disabled = true;
+>> +	rproc->has_iommu = false;
+>> +
+>> +	apu_rproc = rproc->priv;
+>> +	apu_rproc->rproc = rproc;
+>> +	apu_rproc->dev = dev;
+>> +
+>> +	platform_set_drvdata(pdev, rproc);
+>> +
+>> +	rproc->domain = iommu_get_domain_for_dev(dev);
+> Any reason why iommu_get_domain_for_dev() is explicitly called rather than
+> setting ->has_iommu to true and let the remoteproc core get the domain for
+> you?
+
+If I set ->has_iommu to true, the remoteproc framework will try to get a 
+unmanaged domain
+which is actually not supported by the iommu driver.
+I don't like that solution but when I sent this patch, it was the only 
+solution I had to make it work.
+
+Now, I have to options:
+- I update the iommu driver to support unmanaged domain
+   (I made a PoC and this works but I am not sure that I made it correctly)
+- I don't let the remoteproc framework manage the iommu 
+(has_iommu=false, and domain=NULL)
+   and I manage the iommu in this driver.
+I have chosen the second options the v3 because this also make easier to 
+manage some hardware
+constraint.
+
+Best Regards,
 Alexandre
 
 >
->> More comments will come tomorrow.
+>> +	if (!rproc->domain) {
+>> +		dev_err(dev, "Failed to get the IOMMU domain\n");
+>> +		ret = -EINVAL;
+>> +		goto free_rproc;
+>> +	}
+>> +
+>> +
+>> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+>> +	apu_rproc->base = devm_ioremap_resource(dev, res);
+>> +	if (IS_ERR(apu_rproc->base)) {
+>> +		dev_err(dev, "Failed to map mmio\n");
+>> +		ret = PTR_ERR(apu_rproc->base);
+>> +		goto free_rproc;
+>> +	}
+>> +
+>> +	apu_rproc->irq = platform_get_irq(pdev, 0);
+>> +	if (apu_rproc->irq < 0) {
+>> +		ret = apu_rproc->irq;
+>> +		goto free_rproc;
+>> +	}
+>> +
+>> +	ret = devm_request_threaded_irq(dev, apu_rproc->irq,
+>> +					mtk_apu_rproc_callback, handle_event,
+>> +					IRQF_SHARED | IRQF_ONESHOT,
+>> +					NULL, rproc);
+>> +	if (ret) {
+>> +		dev_err(dev, "devm_request_threaded_irq error: %d\n", ret);
+>> +		goto free_rproc;
+>> +	}
+>> +
+>> +	apu_rproc->clks[0].id = "ipu";
+>> +	apu_rproc->clks[1].id = "axi";
+>> +	apu_rproc->clks[1].id = "jtag";
+>> +
+>> +	ret = devm_clk_bulk_get(dev, ARRAY_SIZE(apu_rproc->clks),
+>> +				apu_rproc->clks);
+>> +	if (ret) {
+>> +		dev_err(dev, "Failed to get clocks\n");
+>> +		goto free_rproc;
+>> +	}
+>> +
+>> +	ret = of_reserved_mem_device_init(dev);
+>> +	if (ret) {
+>> +		dev_err(dev, "device does not have specific CMA pool\n");
+>> +		goto free_rproc;
+>> +	}
+>> +
+>> +	ret = rproc_add(rproc);
+>> +	if (ret) {
+>> +		dev_err(dev, "rproc_add failed: %d\n", ret);
+>> +		goto free_mem;
+>> +	}
+>> +
+>> +	return 0;
+>> +
+>> +free_mem:
+>> +	of_reserved_mem_device_release(dev);
+>> +free_rproc:
+>> +	rproc_free(rproc);
+>> +
+>> +	return ret;
+>> +}
+>> +
+>> +static int mtk_apu_rproc_remove(struct platform_device *pdev)
+>> +{
+>> +	struct rproc *rproc = platform_get_drvdata(pdev);
+>> +	struct mtk_apu_rproc *apu_rproc = (struct mtk_apu_rproc *)rproc->priv;
+>> +	struct device *dev = &pdev->dev;
+>> +
+>> +	disable_irq(apu_rproc->irq);
+>> +
+>> +	rproc_del(rproc);
+>> +	of_reserved_mem_device_release(dev);
+>> +	rproc_free(rproc);
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static const struct of_device_id mtk_apu_rproc_of_match[] = {
+>> +	{ .compatible = "mediatek,mt8183-apu", },
+>> +	{ /* sentinel */ },
+>> +};
+>> +MODULE_DEVICE_TABLE(of, mtk_apu_rproc_of_match);
+>> +
+>> +static struct platform_driver mtk_apu_rproc_driver = {
+>> +	.probe = mtk_apu_rproc_probe,
+>> +	.remove = mtk_apu_rproc_remove,
+>> +	.driver = {
+>> +		.name = "mtk_apu-rproc",
+>> +		.of_match_table = of_match_ptr(mtk_apu_rproc_of_match),
+>> +	},
+>> +};
+>> +module_platform_driver(mtk_apu_rproc_driver);
+>> +
+>> +MODULE_LICENSE("GPL v2");
+>> +MODULE_AUTHOR("Alexandre Bailon");
+>> +MODULE_DESCRIPTION("MTK APU Remote Processor control driver");
+>> -- 
+>> 2.26.2
 >>
->> Thanks,
->> Mathieu
->>
->>> +	dev_req_buffer_size = (u32 *)(dev_req_da + dev_req->count);
->>> +	memcpy(dev_req->data, req->data, req->size_in);
->>> +
->>> +	buffer = kmalloc_array(req->count, sizeof(*buffer), GFP_KERNEL);
->>> +	for (i = 0; i < req->count; i++) {
->>> +		buffer[i].fd = fd[i];
->>> +		ret = apu_device_memory_map(apu, &buffer[i]);
->>> +		if (ret)
->>> +			goto err_free_memory;
->>> +		dev_req_da[i] = buffer[i].iova;
->>> +		dev_req_buffer_size[i] = buffer_size[i];
->>> +	}
->>> +
->>> +	ret = _apu_send_request(apu, rpdev, dev_req, size);
->>> +
->>> +err_free_memory:
->>> +	for (i--; i >= 0; i--)
->>> +		apu_device_memory_unmap(apu, &buffer[i]);
->>> +
->>> +	req->result = dev_req->result;
->>> +	req->size_in = dev_req->size_in;
->>> +	req->size_out = dev_req->size_out;
->>> +	memcpy(req->data, dev_req->data, dev_req->size_in + dev_req->size_out +
->>> +	       sizeof(u32) * req->count);
->>> +
->>> +	kfree(buffer);
->>> +	kfree(dev_req);
->>> +
->>> +	return ret;
->>> +}
->>> +
->>> +
->>> +static long rpmsg_eptdev_ioctl(struct file *fp, unsigned int cmd,
->>> +			       unsigned long arg)
->>> +{
->>> +	struct rpmsg_apu *apu = fp->private_data;
->>> +	struct apu_request apu_req;
->>> +	struct apu_request *apu_req_full;
->>> +	void __user *argp = (void __user *)arg;
->>> +	int len;
->>> +	int ret;
->>> +
->>> +	switch (cmd) {
->>> +	case APU_SEND_REQ_IOCTL:
->>> +		/* Get the header */
->>> +		if (copy_from_user(&apu_req, argp,
->>> +				   sizeof(apu_req)))
->>> +			return -EFAULT;
->>> +
->>> +		len = sizeof(*apu_req_full) + apu_req.size_in +
->>> +			apu_req.size_out + apu_req.count * sizeof(u32) * 2;
->>> +		apu_req_full = kzalloc(len, GFP_KERNEL);
->>> +		if (!apu_req_full)
->>> +			return -ENOMEM;
->>> +
->>> +		/* Get the whole request */
->>> +		if (copy_from_user(apu_req_full, argp, len)) {
->>> +			kfree(apu_req_full);
->>> +			return -EFAULT;
->>> +		}
->>> +
->>> +		ret = apu_send_request(apu, apu_req_full);
->>> +		if (ret) {
->>> +			kfree(apu_req_full);
->>> +			return ret;
->>> +		}
->>> +
->>> +		if (copy_to_user(argp, apu_req_full, sizeof(apu_req) +
->>> +				 sizeof(u32) * apu_req_full->count +
->>> +				 apu_req_full->size_in + apu_req_full->size_out))
->>> +			ret = -EFAULT;
->>> +
->>> +		kfree(apu_req_full);
->>> +		return ret;
->>> +
->>> +	default:
->>> +		return -EINVAL;
->>> +	}
->>> +
->>> +	return 0;
->>> +}
->>> +
->>> +static int rpmsg_eptdev_open(struct inode *inode, struct file *filp)
->>> +{
->>> +	struct rpmsg_apu *apu = cdev_to_apu(inode->i_cdev);
->>> +
->>> +	get_device(&apu->dev);
->>> +	filp->private_data = apu;
->>> +
->>> +	return 0;
->>> +}
->>> +
->>> +static int rpmsg_eptdev_release(struct inode *inode, struct file *filp)
->>> +{
->>> +	struct rpmsg_apu *apu = cdev_to_apu(inode->i_cdev);
->>> +
->>> +	put_device(&apu->dev);
->>> +
->>> +	return 0;
->>> +}
->>> +
->>> +static const struct file_operations rpmsg_eptdev_fops = {
->>> +	.owner = THIS_MODULE,
->>> +	.open = rpmsg_eptdev_open,
->>> +	.release = rpmsg_eptdev_release,
->>> +	.unlocked_ioctl = rpmsg_eptdev_ioctl,
->>> +	.compat_ioctl = rpmsg_eptdev_ioctl,
->>> +};
->>> +
->>> +static void iova_domain_release(struct kref *ref)
->>> +{
->>> +	put_iova_domain(&apu_iovad->iovad);
->>> +	kfree(apu_iovad);
->>> +	apu_iovad = NULL;
->>> +}
->>> +
->>> +static struct fw_rsc_iova *apu_find_rcs_iova(struct rpmsg_apu *apu)
->>> +{
->>> +	struct rproc *rproc = apu->rproc;
->>> +	struct resource_table *table;
->>> +	struct fw_rsc_iova *rsc;
->>> +	int i;
->>> +
->>> +	table = rproc->table_ptr;
->>> +	for (i = 0; i < table->num; i++) {
->>> +		int offset = table->offset[i];
->>> +		struct fw_rsc_hdr *hdr = (void *)table + offset;
->>> +
->>> +		switch (hdr->type) {
->>> +		case RSC_VENDOR_IOVA:
->>> +			rsc = (void *)hdr + sizeof(*hdr);
->>> +				return rsc;
->>> +			break;
->>> +		default:
->>> +			continue;
->>> +		}
->>> +	}
->>> +
->>> +	return NULL;
->>> +}
->>> +
->>> +static int apu_reserve_iova(struct rpmsg_apu *apu, struct iova_domain *iovad)
->>> +{
->>> +	struct rproc *rproc = apu->rproc;
->>> +	struct resource_table *table;
->>> +	struct fw_rsc_carveout *rsc;
->>> +	int i;
->>> +
->>> +	table = rproc->table_ptr;
->>> +	for (i = 0; i < table->num; i++) {
->>> +		int offset = table->offset[i];
->>> +		struct fw_rsc_hdr *hdr = (void *)table + offset;
->>> +
->>> +		if (hdr->type == RSC_CARVEOUT) {
->>> +			struct iova *iova;
->>> +
->>> +			rsc = (void *)hdr + sizeof(*hdr);
->>> +			iova = reserve_iova(iovad, PHYS_PFN(rsc->da),
->>> +					    PHYS_PFN(rsc->da + rsc->len));
->>> +			if (!iova) {
->>> +				dev_err(&apu->dev, "failed to reserve iova\n");
->>> +				return -ENOMEM;
->>> +			}
->>> +			dev_dbg(&apu->dev, "Reserve: %x - %x\n",
->>> +				rsc->da, rsc->da + rsc->len);
->>> +		}
->>> +	}
->>> +
->>> +	return 0;
->>> +}
->>> +
->>> +static int apu_init_iovad(struct rpmsg_apu *apu)
->>> +{
->>> +	struct fw_rsc_iova *rsc;
->>> +
->>> +	if (!apu->rproc->table_ptr) {
->>> +		dev_err(&apu->dev,
->>> +			"No resource_table: has the firmware been loaded ?\n");
->>> +		return -ENODEV;
->>> +	}
->>> +
->>> +	rsc = apu_find_rcs_iova(apu);
->>> +	if (!rsc) {
->>> +		dev_err(&apu->dev, "No iova range defined in resource_table\n");
->>> +		return -ENOMEM;
->>> +	}
->>> +
->>> +	if (!apu_iovad) {
->>> +		apu_iovad = kzalloc(sizeof(*apu_iovad), GFP_KERNEL);
->>> +		if (!apu_iovad)
->>> +			return -ENOMEM;
->>> +
->>> +		init_iova_domain(&apu_iovad->iovad, PAGE_SIZE,
->>> +				 PHYS_PFN(rsc->da));
->>> +		apu_reserve_iova(apu, &apu_iovad->iovad);
->>> +		kref_init(&apu_iovad->refcount);
->>> +	} else
->>> +		kref_get(&apu_iovad->refcount);
->>> +
->>> +	apu->iovad = &apu_iovad->iovad;
->>> +	apu->iova_limit_pfn = PHYS_PFN(rsc->da + rsc->len) - 1;
->>> +
->>> +	return 0;
->>> +}
->>> +
->>> +static struct rproc *apu_get_rproc(struct rpmsg_device *rpdev)
->>> +{
->>> +	/*
->>> +	 * To work, the APU RPMsg driver need to get the rproc device.
->>> +	 * Currently, we only use virtio so we could use that to find the
->>> +	 * remoteproc parent.
->>> +	 */
->>> +	if (!rpdev->dev.parent && rpdev->dev.parent->bus) {
->>> +		dev_err(&rpdev->dev, "invalid rpmsg device\n");
->>> +		return ERR_PTR(-EINVAL);
->>> +	}
->>> +
->>> +	if (strcmp(rpdev->dev.parent->bus->name, "virtio")) {
->>> +		dev_err(&rpdev->dev, "unsupported bus\n");
->>> +		return ERR_PTR(-EINVAL);
->>> +	}
->>> +
->>> +	return vdev_to_rproc(dev_to_virtio(rpdev->dev.parent));
->>> +}
->>> +
->>> +static void rpmsg_apu_release_device(struct device *dev)
->>> +{
->>> +	struct rpmsg_apu *apu = dev_to_apu(dev);
->>> +
->>> +	ida_simple_remove(&rpmsg_ctrl_ida, dev->id);
->>> +	ida_simple_remove(&rpmsg_minor_ida, MINOR(dev->devt));
->>> +	cdev_del(&apu->cdev);
->>> +	kfree(apu);
->>> +}
->>> +
->>> +static int apu_rpmsg_probe(struct rpmsg_device *rpdev)
->>> +{
->>> +	struct rpmsg_apu *apu;
->>> +	struct device *dev;
->>> +	int ret;
->>> +
->>> +	apu = devm_kzalloc(&rpdev->dev, sizeof(*apu), GFP_KERNEL);
->>> +	if (!apu)
->>> +		return -ENOMEM;
->>> +	apu->rpdev = rpdev;
->>> +
->>> +	apu->rproc = apu_get_rproc(rpdev);
->>> +	if (IS_ERR_OR_NULL(apu->rproc))
->>> +		return PTR_ERR(apu->rproc);
->>> +
->>> +	dev = &apu->dev;
->>> +	device_initialize(dev);
->>> +	dev->parent = &rpdev->dev;
->>> +
->>> +	cdev_init(&apu->cdev, &rpmsg_eptdev_fops);
->>> +	apu->cdev.owner = THIS_MODULE;
->>> +
->>> +	ret = ida_simple_get(&rpmsg_minor_ida, 0, APU_DEV_MAX, GFP_KERNEL);
->>> +	if (ret < 0)
->>> +		goto free_apu;
->>> +	dev->devt = MKDEV(MAJOR(rpmsg_major), ret);
->>> +
->>> +	ret = ida_simple_get(&rpmsg_ctrl_ida, 0, 0, GFP_KERNEL);
->>> +	if (ret < 0)
->>> +		goto free_minor_ida;
->>> +	dev->id = ret;
->>> +	dev_set_name(&apu->dev, "apu%d", ret);
->>> +
->>> +	ret = cdev_add(&apu->cdev, dev->devt, 1);
->>> +	if (ret)
->>> +		goto free_ctrl_ida;
->>> +
->>> +	/* We can now rely on the release function for cleanup */
->>> +	dev->release = rpmsg_apu_release_device;
->>> +
->>> +	ret = device_add(dev);
->>> +	if (ret) {
->>> +		dev_err(&rpdev->dev, "device_add failed: %d\n", ret);
->>> +		put_device(dev);
->>> +	}
->>> +
->>> +	/* Make device dma capable by inheriting from parent's capabilities */
->>> +	set_dma_ops(&rpdev->dev, get_dma_ops(apu->rproc->dev.parent));
->>> +
->>> +	ret = dma_coerce_mask_and_coherent(&rpdev->dev,
->>> +					   dma_get_mask(apu->rproc->dev.parent));
->>> +	if (ret)
->>> +		goto err_put_device;
->>> +
->>> +	rpdev->dev.iommu_group = apu->rproc->dev.parent->iommu_group;
->>> +
->>> +	ret = apu_init_iovad(apu);
->>> +
->>> +	dev_set_drvdata(&rpdev->dev, apu);
->>> +
->>> +	return ret;
->>> +
->>> +err_put_device:
->>> +	put_device(dev);
->>> +free_ctrl_ida:
->>> +	ida_simple_remove(&rpmsg_ctrl_ida, dev->id);
->>> +free_minor_ida:
->>> +	ida_simple_remove(&rpmsg_minor_ida, MINOR(dev->devt));
->>> +free_apu:
->>> +	put_device(dev);
->>> +	kfree(apu);
->>> +
->>> +	return ret;
->>> +}
->>> +
->>> +static void apu_rpmsg_remove(struct rpmsg_device *rpdev)
->>> +{
->>> +	struct rpmsg_apu *apu = dev_get_drvdata(&rpdev->dev);
->>> +
->>> +	if (apu_iovad)
->>> +		kref_put(&apu_iovad->refcount, iova_domain_release);
->>> +
->>> +	device_del(&apu->dev);
->>> +	put_device(&apu->dev);
->>> +	kfree(apu);
->>> +}
->>> +
->>> +static const struct rpmsg_device_id apu_rpmsg_match[] = {
->>> +	{ APU_RPMSG_SERVICE_MT8183 },
->>> +	{}
->>> +};
->>> +
->>> +static struct rpmsg_driver apu_rpmsg_driver = {
->>> +	.probe = apu_rpmsg_probe,
->>> +	.remove = apu_rpmsg_remove,
->>> +	.callback = apu_rpmsg_callback,
->>> +	.id_table = apu_rpmsg_match,
->>> +	.drv  = {
->>> +		.name  = "apu_rpmsg",
->>> +	},
->>> +};
->>> +
->>> +static int __init apu_rpmsg_init(void)
->>> +{
->>> +	int ret;
->>> +
->>> +	ret = alloc_chrdev_region(&rpmsg_major, 0, APU_DEV_MAX, "apu");
->>> +	if (ret < 0) {
->>> +		pr_err("apu: failed to allocate char dev region\n");
->>> +		return ret;
->>> +	}
->>> +
->>> +	return register_rpmsg_driver(&apu_rpmsg_driver);
->>> +}
->>> +arch_initcall(apu_rpmsg_init);
->>> +
->>> +static void __exit apu_rpmsg_exit(void)
->>> +{
->>> +	unregister_rpmsg_driver(&apu_rpmsg_driver);
->>> +}
->>> +module_exit(apu_rpmsg_exit);
->>> +
->>> +
->>> +MODULE_LICENSE("GPL");
->>> +MODULE_DESCRIPTION("APU RPMSG driver");
->>> diff --git a/drivers/rpmsg/apu_rpmsg.h b/drivers/rpmsg/apu_rpmsg.h
->>> new file mode 100644
->>> index 000000000000..54b5b7880750
->>> --- /dev/null
->>> +++ b/drivers/rpmsg/apu_rpmsg.h
->>> @@ -0,0 +1,52 @@
->>> +/* SPDX-License-Identifier: GPL-2.0
->>> + *
->>> + * Copyright 2020 BayLibre SAS
->>> + */
->>> +
->>> +#ifndef __APU_RPMSG_H__
->>> +#define __APU_RPMSG_H__
->>> +
->>> +/*
->>> + * Firmware request, must be aligned with the one defined in firmware.
->>> + * @id: Request id, used in the case of reply, to find the pending request
->>> + * @cmd: The command id to execute in the firmware
->>> + * @result: The result of the command executed on the firmware
->>> + * @size: The size of the data available in this request
->>> + * @count: The number of shared buffer
->>> + * @data: Contains the data attached with the request if size is greater than
->>> + *        zero, and the addresses of shared buffers if count is greater than
->>> + *        zero. Both the data and the shared buffer could be read and write
->>> + *        by the APU.
->>> + */
->>> +struct  apu_dev_request {
->>> +	u16 id;
->>> +	u16 cmd;
->>> +	u16 result;
->>> +	u16 size_in;
->>> +	u16 size_out;
->>> +	u16 count;
->>> +	u8 data[0];
->>> +} __packed;
->>> +
->>> +#define APU_RPMSG_SERVICE_MT8183 "rpmsg-mt8183-apu0"
->>> +#define APU_CTRL_SRC 1
->>> +#define APU_CTRL_DST 1
->>> +
->>> +/* Vendor specific resource table entry */
->>> +#define RSC_VENDOR_IOVA 128
->>> +
->>> +/*
->>> + * Firmware IOVA resource table entry
->>> + * Define a range of virtual device address that could mapped using the IOMMU.
->>> + * @da: Start virtual device address
->>> + * @len: Length of the virtual device address
->>> + * @name: name of the resource
->>> + */
->>> +struct fw_rsc_iova {
->>> +	u32 da;
->>> +	u32 len;
->>> +	u32 reserved;
->>> +	u8 name[32];
->>> +} __packed;
->>> +
->>> +#endif /* __APU_RPMSG_H__ */
->>> diff --git a/include/uapi/linux/apu_rpmsg.h b/include/uapi/linux/apu_rpmsg.h
->>> new file mode 100644
->>> index 000000000000..81c9e4af9a94
->>> --- /dev/null
->>> +++ b/include/uapi/linux/apu_rpmsg.h
->>> @@ -0,0 +1,36 @@
->>> +/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
->>> +/*
->>> + * Copyright (c) 2020 BayLibre
->>> + */
->>> +
->>> +#ifndef _UAPI_RPMSG_APU_H_
->>> +#define _UAPI_RPMSG_APU_H_
->>> +
->>> +#include <linux/ioctl.h>
->>> +#include <linux/types.h>
->>> +
->>> +/*
->>> + * Structure containing the APU request from userspace application
->>> + * @cmd: The id of the command to execute on the APU
->>> + * @result: The result of the command executed on the APU
->>> + * @size: The size of the data available in this request
->>> + * @count: The number of shared buffer
->>> + * @data: Contains the data attached with the request if size is greater than
->>> + *        zero, and the files descriptors of shared buffers if count is greater
->>> + *        than zero. Both the data and the shared buffer could be read and write
->>> + *        by the APU.
->>> + */
->>> +struct apu_request {
->>> +	__u16 cmd;
->>> +	__u16 result;
->>> +	__u16 size_in;
->>> +	__u16 size_out;
->>> +	__u16 count;
->>> +	__u16 reserved;
->>> +	__u8 data[0];
->>> +};
->>> +
->>> +/* Send synchronous request to an APU */
->>> +#define APU_SEND_REQ_IOCTL	_IOWR(0xb7, 0x2, struct apu_request)
->>> +
->>> +#endif
->>> -- 
->>> 2.26.2
->>>
