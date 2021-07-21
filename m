@@ -4,62 +4,62 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-12.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	UNPARSEABLE_RELAY autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02225C636C9
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 21 Jul 2021 05:45:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2682C636CA
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 21 Jul 2021 05:46:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D183C6101E
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 21 Jul 2021 05:45:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D8B0B61029
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 21 Jul 2021 05:46:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232684AbhGUFFD (ORCPT
+        id S233283AbhGUFF3 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 21 Jul 2021 01:05:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49780 "EHLO
+        Wed, 21 Jul 2021 01:05:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50006 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233283AbhGUFEY (ORCPT
+        with ESMTP id S233356AbhGUFFR (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 21 Jul 2021 01:04:24 -0400
-Received: from mail-oi1-x22d.google.com (mail-oi1-x22d.google.com [IPv6:2607:f8b0:4864:20::22d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9A532C061767
-        for <linux-remoteproc@vger.kernel.org>; Tue, 20 Jul 2021 22:44:58 -0700 (PDT)
-Received: by mail-oi1-x22d.google.com with SMTP id t143so1727666oie.8
-        for <linux-remoteproc@vger.kernel.org>; Tue, 20 Jul 2021 22:44:58 -0700 (PDT)
+        Wed, 21 Jul 2021 01:05:17 -0400
+Received: from mail-ot1-x332.google.com (mail-ot1-x332.google.com [IPv6:2607:f8b0:4864:20::332])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9FEA2C0613DF
+        for <linux-remoteproc@vger.kernel.org>; Tue, 20 Jul 2021 22:45:54 -0700 (PDT)
+Received: by mail-ot1-x332.google.com with SMTP id o72-20020a9d224e0000b02904bb9756274cso1062766ota.6
+        for <linux-remoteproc@vger.kernel.org>; Tue, 20 Jul 2021 22:45:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=mime-version:in-reply-to:references:from:user-agent:date:message-id
          :subject:to:cc;
-        bh=OZ+eKXyM6tJgPfiMyzHLbhC2Gq2GeuohG8n3p1aQmww=;
-        b=a3ltlIFw3PDaPGWCtUL30D2NpHapO5Ew/TlfmUCEZKmzpGNEwGkbUPHe6vnMTnS3T3
-         SRzQtCjriEnnevgAxqb6+5turJkmn7YkBhK9zRjTD10ejpbCW4Giv3aLNrQHV/3PwCQv
-         cjwUI5lGJC+bixz1gLOaXL3vtrin4B8En2Xq8=
+        bh=dNfcxQisjjJv5eOHz1IDkcy0UHigEE+DFspSgTRkRS0=;
+        b=TmXoRy3h4S4nFy3pzooJOmvDq4Nlw9Mwyudp8nErttrXML7dj1of1i8ptfUEpePAQT
+         n0d3VZwXzyngirIwAIGbg5mZjQtO+FgvZQUN0xjrx954BhzuklPhnurxjZmfa1Lv6MD1
+         Kk57AEJ0JCSnu5rG3QYABH7B3tYUJj2rHBISw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:in-reply-to:references:from
          :user-agent:date:message-id:subject:to:cc;
-        bh=OZ+eKXyM6tJgPfiMyzHLbhC2Gq2GeuohG8n3p1aQmww=;
-        b=Fc8g6RGWCepdnUGr5V44aP0Qr1nDATfqtUhkPk3rr8k53zcY4SgLpKqaoI2S1YSCNo
-         cP2kH9zDK6wk3TQ+KVhV3rC1pmS+ZvI+Inxps0AZBAvUa1c48hUE/opx5NSl/gGbEdCk
-         vHhraSAsuniRRIgjHTOa54RTQe1DceK6Ut4epvyTho0ByyGlHoSjYqwGfXI8cu16n4Y+
-         JlG22PPKOvrlludilWOJDvaijLtQEsOvhhNasoFnKqIfD2X7VLHtVG8rp6c0okNRd5sZ
-         1nv/qGZqdTAUlB+0YrnMlNcEXfrpwzFI2SUlkBoZLJ3PCTmGh5PyYNlXtTCHSw/nqpkM
-         fyuQ==
-X-Gm-Message-State: AOAM532Ieog9tF6ascncVyOHdBZ2MLelYEuAfNFt/9ZC/0WsrXDpiJ68
-        YVNxG9WIEd7a/4BKlcdV1b2k7vB+55NHZ75S0rbheg==
-X-Google-Smtp-Source: ABdhPJyGZbF5q862hBiaxTRq3Av5De0RIunb58CNjCEgt4NMQAmb8EQUvqsGkvMKuQY34ShS7h5O9N404r3ozTEhOl8=
-X-Received: by 2002:a05:6808:114a:: with SMTP id u10mr4804173oiu.19.1626846298050;
- Tue, 20 Jul 2021 22:44:58 -0700 (PDT)
+        bh=dNfcxQisjjJv5eOHz1IDkcy0UHigEE+DFspSgTRkRS0=;
+        b=csGPJCUenHVOxKrJkctFxgYVFbpm7FEh8ZgHOuP1q2BrLInlglZ/eg3uMchyFFJHyO
+         v3ou98iq4T9PJJ2klOg4H0Xj4T9aNkyNX8LARKhofyKVgp2nRwg+L8JkgvbA/Wqae1VV
+         yLLI9tgyyeTaSOUhWNCLpzyhbcpi3orlt0FFYzSTyOuP3u1GrSKdFNzEa6GxhWuE5LSU
+         mwlHP0oJ6WcLcNhEXGFdy/si6hU1cfOIZwGwvNGhuitgpAdQZ+pWvCLwgYC/vt3Z0jHV
+         TwhiD67G7KoZbonSnDDSWsM6Nb4NdD1I+SJFXJMYWQZkXpE+YwVMGfh+e4u+CpLOC6v2
+         SsDw==
+X-Gm-Message-State: AOAM532lIjnu7jyDrZAXe/lncEaL1ASe27tQ2OzsSxiw6bwP/FOebucr
+        sBVePYoSgmqxPQUsv7RrB28CMNTQeVKZEDz2dzTrhQ==
+X-Google-Smtp-Source: ABdhPJwZnht3Kr2prR9o7Uwl1hUh3Rla9OGuKEOgfIbY2MFf609ZjI1kLJEbk8naHTyMzMVjSRkQgRiOyGVRCVR2GXo=
+X-Received: by 2002:a9d:1b6e:: with SMTP id l101mr10056846otl.34.1626846354073;
+ Tue, 20 Jul 2021 22:45:54 -0700 (PDT)
 Received: from 753933720722 named unknown by gmailapi.google.com with
- HTTPREST; Wed, 21 Jul 2021 05:44:57 +0000
+ HTTPREST; Wed, 21 Jul 2021 05:45:53 +0000
 MIME-Version: 1.0
-In-Reply-To: <1626775980-28637-9-git-send-email-sibis@codeaurora.org>
-References: <1626775980-28637-1-git-send-email-sibis@codeaurora.org> <1626775980-28637-9-git-send-email-sibis@codeaurora.org>
+In-Reply-To: <1626775980-28637-10-git-send-email-sibis@codeaurora.org>
+References: <1626775980-28637-1-git-send-email-sibis@codeaurora.org> <1626775980-28637-10-git-send-email-sibis@codeaurora.org>
 From:   Stephen Boyd <swboyd@chromium.org>
 User-Agent: alot/0.9.1
-Date:   Wed, 21 Jul 2021 05:44:57 +0000
-Message-ID: <CAE-0n50HwmuYWnqs9TYJYEoB=-BV8Bbz+AMUUy5t9dtN1jSsjA@mail.gmail.com>
-Subject: Re: [PATCH v2 08/10] arm64: dts: qcom: sc7280: Add nodes to boot modem
+Date:   Wed, 21 Jul 2021 05:45:53 +0000
+Message-ID: <CAE-0n528hftzM-JTv57k9P+Ac3M9Ug0PosFiCquzMQ=jNZ0H5Q@mail.gmail.com>
+Subject: Re: [PATCH v2 09/10] arm64: dts: qcom: sc7280: Add Q6V5 MSS node
 To:     Sibi Sankar <sibis@codeaurora.org>, bjorn.andersson@linaro.org,
         mka@chromium.org, robh+dt@kernel.org,
         saiprakash.ranjan@codeaurora.org, will@kernel.org
@@ -74,31 +74,11 @@ Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Quoting Sibi Sankar (2021-07-20 03:12:58)
-> diff --git a/arch/arm64/boot/dts/qcom/sc7280.dtsi b/arch/arm64/boot/dts/qcom/sc7280.dtsi
-> index 5ed7a511bfc9..3fb6a6ef39f8 100644
-> --- a/arch/arm64/boot/dts/qcom/sc7280.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/sc7280.dtsi
-> @@ -1219,6 +1224,21 @@
->                         };
->                 };
+Quoting Sibi Sankar (2021-07-20 03:12:59)
+> This patch adds Q6V5 MSS PAS remoteproc node for SC7280 SoCs.
 >
-> +               imem@146aa000 {
+> Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
+> Reviewed-by: Matthias Kaehlcke <mka@chromium.org>
+> ---
 
-is sram a more appropriate node name here? Is imem a generic node name
-in DT spec?
-
-> +                       compatible = "syscon", "simple-mfd";
-> +                       reg = <0 0x146aa000 0 0x2000>;
-> +
-> +                       #address-cells = <2>;
-> +                       #size-cells = <2>;
-> +
-> +                       ranges = <0 0x0 0 0x146aa000 0 0x2000>;
-> +
-> +                       pil-reloc@94c {
-> +                               compatible = "qcom,pil-reloc-info";
-> +                               reg = <0 0x94c 0 0xc8>;
-> +                       };
-> +               };
-> +
+Reviewed-by: Stephen Boyd <swboyd@chromium.org>
