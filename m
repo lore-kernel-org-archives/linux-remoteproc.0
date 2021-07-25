@@ -4,36 +4,36 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.3 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61E70C432BE
-	for <linux-remoteproc@archiver.kernel.org>; Sat, 24 Jul 2021 20:38:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 323AFC4338F
+	for <linux-remoteproc@archiver.kernel.org>; Sun, 25 Jul 2021 01:27:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 37B6760E9C
-	for <linux-remoteproc@archiver.kernel.org>; Sat, 24 Jul 2021 20:38:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ECEC960E93
+	for <linux-remoteproc@archiver.kernel.org>; Sun, 25 Jul 2021 01:27:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229707AbhGXT6J (ORCPT
+        id S229831AbhGYAqg (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Sat, 24 Jul 2021 15:58:09 -0400
-Received: from mga01.intel.com ([192.55.52.88]:62621 "EHLO mga01.intel.com"
+        Sat, 24 Jul 2021 20:46:36 -0400
+Received: from mga09.intel.com ([134.134.136.24]:31005 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229508AbhGXT6I (ORCPT <rfc822;linux-remoteproc@vger.kernel.org>);
-        Sat, 24 Jul 2021 15:58:08 -0400
-X-IronPort-AV: E=McAfee;i="6200,9189,10055"; a="233889833"
+        id S229588AbhGYAqg (ORCPT <rfc822;linux-remoteproc@vger.kernel.org>);
+        Sat, 24 Jul 2021 20:46:36 -0400
+X-IronPort-AV: E=McAfee;i="6200,9189,10055"; a="212059844"
 X-IronPort-AV: E=Sophos;i="5.84,266,1620716400"; 
-   d="gz'50?scan'50,208,50";a="233889833"
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jul 2021 12:31:24 -0700
+   d="gz'50?scan'50,208,50";a="212059844"
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jul 2021 18:27:06 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.84,266,1620716400"; 
-   d="gz'50?scan'50,208,50";a="436135515"
+   d="gz'50?scan'50,208,50";a="515086401"
 Received: from lkp-server01.sh.intel.com (HELO d053b881505b) ([10.239.97.150])
-  by fmsmga007.fm.intel.com with ESMTP; 24 Jul 2021 12:31:19 -0700
+  by fmsmga002.fm.intel.com with ESMTP; 24 Jul 2021 18:27:02 -0700
 Received: from kbuild by d053b881505b with local (Exim 4.92)
         (envelope-from <lkp@intel.com>)
-        id 1m7NMk-0003j3-QS; Sat, 24 Jul 2021 19:31:18 +0000
-Date:   Sun, 25 Jul 2021 03:30:59 +0800
+        id 1m7Suz-0003xW-P4; Sun, 25 Jul 2021 01:27:01 +0000
+Date:   Sun, 25 Jul 2021 09:26:30 +0800
 From:   kernel test robot <lkp@intel.com>
 To:     =?utf-8?B?5ZGo55Cw5p2wIChaaG91IFlhbmppZSk=?= 
         <zhouyanjie@wanyeetech.com>, ohad@wizery.com,
@@ -44,10 +44,10 @@ Cc:     kbuild-all@lists.01.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, dongsheng.qiu@ingenic.com
 Subject: Re: [PATCH 2/2] remoteproc: Ingenic: Add support for new Ingenic
  SoCs.
-Message-ID: <202107250305.kYuJPxBx-lkp@intel.com>
+Message-ID: <202107250945.VdfzvgVb-lkp@intel.com>
 References: <1627117898-125239-3-git-send-email-zhouyanjie@wanyeetech.com>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="pWyiEgJYm5f9v55/"
+Content-Type: multipart/mixed; boundary="VbJkn9YxBvnuCH5J"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 In-Reply-To: <1627117898-125239-3-git-send-email-zhouyanjie@wanyeetech.com>
@@ -57,17 +57,17 @@ List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
 
---pWyiEgJYm5f9v55/
+--VbJkn9YxBvnuCH5J
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 
 Hi "周琰杰,
 
-Thank you for the patch! Perhaps something to improve:
+Thank you for the patch! Yet something to improve:
 
-[auto build test WARNING on robh/for-next]
-[also build test WARNING on v5.14-rc2 next-20210723]
+[auto build test ERROR on robh/for-next]
+[also build test ERROR on v5.14-rc2 next-20210723]
 [cannot apply to remoteproc/for-next rpmsg/for-next]
 [If your patch is applied to the wrong git tree, kindly drop us a note.
 And when submitting patch, we suggest to use '--base' as documented in
@@ -90,17 +90,17 @@ reproduce (this is a W=1 build):
 If you fix the issue, kindly add following tag as appropriate
 Reported-by: kernel test robot <lkp@intel.com>
 
-All warnings (new ones prefixed by >>):
+All errors (new ones prefixed by >>):
 
    drivers/remoteproc/ingenic_rproc.c: In function 'ingenic_rproc_probe':
-   drivers/remoteproc/ingenic_rproc.c:256:18: error: implicit declaration of function 'kzalloc'; did you mean 'kvzalloc'? [-Werror=implicit-function-declaration]
+>> drivers/remoteproc/ingenic_rproc.c:256:18: error: implicit declaration of function 'kzalloc'; did you mean 'kvzalloc'? [-Werror=implicit-function-declaration]
      256 |  vpu->mem_info = kzalloc(sizeof(struct vpu_mem_info) * vpu->soc_info->num_mems, GFP_KERNEL);
          |                  ^~~~~~~
          |                  kvzalloc
->> drivers/remoteproc/ingenic_rproc.c:256:16: warning: assignment to 'struct vpu_mem_info *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
+   drivers/remoteproc/ingenic_rproc.c:256:16: warning: assignment to 'struct vpu_mem_info *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
      256 |  vpu->mem_info = kzalloc(sizeof(struct vpu_mem_info) * vpu->soc_info->num_mems, GFP_KERNEL);
          |                ^
->> drivers/remoteproc/ingenic_rproc.c:275:12: warning: assignment to 'struct clk_bulk_data *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
+   drivers/remoteproc/ingenic_rproc.c:275:12: warning: assignment to 'struct clk_bulk_data *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
      275 |  vpu->clks = kzalloc(sizeof(struct clk_bulk_data) * vpu->soc_info->num_clks, GFP_KERNEL);
          |            ^
    cc1: some warnings being treated as errors
@@ -157,7 +157,7 @@ vim +256 drivers/remoteproc/ingenic_rproc.c
    272			vpu->mem_info[i].map = &vpu->soc_info->mem_map[i];
    273		}
    274	
- > 275		vpu->clks = kzalloc(sizeof(struct clk_bulk_data) * vpu->soc_info->num_clks, GFP_KERNEL);
+   275		vpu->clks = kzalloc(sizeof(struct clk_bulk_data) * vpu->soc_info->num_clks, GFP_KERNEL);
    276		if (!vpu->clks)
    277			return -ENOMEM;
    278	
@@ -198,12 +198,12 @@ vim +256 drivers/remoteproc/ingenic_rproc.c
 0-DAY CI Kernel Test Service, Intel Corporation
 https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
 
---pWyiEgJYm5f9v55/
+--VbJkn9YxBvnuCH5J
 Content-Type: application/gzip
 Content-Disposition: attachment; filename=".config.gz"
 Content-Transfer-Encoding: base64
 
-H4sICB9V/GAAAy5jb25maWcAlFzbc9s2s3/vX6FxXtqZ08SXxF87Z/wAkqCEiiQYApQsv3Ac
+H4sICC6R/GAAAy5jb25maWcAlFzbc9s2s3/vX6FxXtqZ08SXxF87Z/wAkqCEiiQYApQsv3Ac
 R2k9dawcSe758v31Zxe8YQFQznlpw98ubovF3gD5zU9vZuzluPt6f3x8uH96+j77c/u83d8f
 t59nXx6ftv89S+SskHrGE6HfAnP2+Pzy73eHb/f7h9mHtxfv357/un+4mC23++ft0yzePX95
 /PMF2j/unn9681Msi1TMmzhuVrxSQhaN5rf65sy0v37/6xP29uufDw+zn+dx/Mvs4vzt1dvz
@@ -1494,4 +1494,4 @@ qPLgJYus+0QtHJ4lyeTxRkHj7dREVaKrd3FV3/Zia+HRau/yyr/JikhAaOwEBH3ZP6VuRRcx
 HmAl3rwTZwpqLb2UrbE7acVFXUu74PaEyDpvRMseRbjPuGzqTpDWiVuFtOg7XY3/C+zwqt43
 hAQA
 
---pWyiEgJYm5f9v55/--
+--VbJkn9YxBvnuCH5J--
