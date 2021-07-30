@@ -5,119 +5,293 @@ X-Spam-Level:
 X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 730C2C4338F
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 30 Jul 2021 15:58:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06ABAC432BE
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 30 Jul 2021 16:36:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5AD0760EBB
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 30 Jul 2021 15:58:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E1DEB60F00
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 30 Jul 2021 16:36:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230195AbhG3P6R (ORCPT
+        id S229479AbhG3Qg4 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 30 Jul 2021 11:58:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36684 "EHLO
+        Fri, 30 Jul 2021 12:36:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46900 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230264AbhG3P6P (ORCPT
+        with ESMTP id S229758AbhG3Qg4 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 30 Jul 2021 11:58:15 -0400
-Received: from mail-oo1-xc30.google.com (mail-oo1-xc30.google.com [IPv6:2607:f8b0:4864:20::c30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B7F4C0613CF
-        for <linux-remoteproc@vger.kernel.org>; Fri, 30 Jul 2021 08:58:10 -0700 (PDT)
-Received: by mail-oo1-xc30.google.com with SMTP id b25-20020a4ac2990000b0290263aab95660so2564728ooq.13
-        for <linux-remoteproc@vger.kernel.org>; Fri, 30 Jul 2021 08:58:10 -0700 (PDT)
+        Fri, 30 Jul 2021 12:36:56 -0400
+Received: from mail-oi1-x22a.google.com (mail-oi1-x22a.google.com [IPv6:2607:f8b0:4864:20::22a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ED5B5C0613CF
+        for <linux-remoteproc@vger.kernel.org>; Fri, 30 Jul 2021 09:36:50 -0700 (PDT)
+Received: by mail-oi1-x22a.google.com with SMTP id u10so13914143oiw.4
+        for <linux-remoteproc@vger.kernel.org>; Fri, 30 Jul 2021 09:36:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=xXNqWSr/rOC4EQDcPG5tueBmU/blNavYsUX/3Rklcr8=;
-        b=TDxHet75+KJYPXBOyj4Qpsipf04ggYz4gNIiL7z5WeCaNCEbDWbw1ludfUUdIAwnWl
-         QELftxDKswIa8A3hXuESnq0jCFZVthL2BR0JI6HaeD3lRv42W+9LVTO//VJ4T1NM853T
-         ORYy1yyDaJHLj0a20bBy2HOXSkLPGzewxTAU7JEbvpQzabOxTg7cDCNVVXV6kiXVtewj
-         d0m2Aax3ksfa5nt2bjLkkU6+oWaj8MC0vGZMHyB3cVsUbh8mrvU0HV8YRVBkXsOamJ6Q
-         sm5hNuAcWgRt99OxxHE6bWTzukgLVRxjqOLPgz+9zzWfR3s3s9V0XZOn9GTY+p4uAM/D
-         OhiA==
+        bh=+VAdv+WeR1jvOvgcgnqcYxpRfRpHfv5qO3GWKK9dmZw=;
+        b=LMBohOITePzc4wVsTkFVhKygBXZW4iqgqr2pshr0IqV5u30sIL8eN1nNetsNSxtslD
+         lXY9rHs5iWFhNBa36KgiFggL/E2bEc/L8pGCNbdfg5n5ujjQBUPZcBtvrw/HipQOqqy3
+         Rphy/TGaj1NfoXlRQKp8Bc4McAATWnXDGrWIVHkz+NHASH3PqVvlEk0SqeWV3NzUTqbm
+         FgFfUetOtWSOCy+eEHRQRXo2tLraleRZ92zu3BDHRO2LoXBwTcu3+WEZv5NvKVYIQGrP
+         QaOBRSHoD9iI3iFSoYye911ZQngN9QIpB84gvYZxoZ2R+IR7XxwyRiEjWLf+ScM01e/+
+         eAyg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=xXNqWSr/rOC4EQDcPG5tueBmU/blNavYsUX/3Rklcr8=;
-        b=DzbeCZN0TEALA0NPPa1vHYg+eswsaSrnua4dMxQIdfwhX20rZDTZOKM6RrVIhnPzUD
-         4oUgebkRZfy7PbojHdfmrPluSsEAwJJuq3F1i26Fz+lhnx/H6QUaS+PYioFFCrLuR5wc
-         C0UZNUahbi88/qRIOIv2kpr4VCZpPSv1RAdMHrogmcBGUYIxaUhH7BbhUJwfPWDal8ch
-         Fu5yg+J8Mf9ftBv6r5tkLI1R6f0S0/nBlTCTnacdr0wRryW5BINnzuoFf6YukpEfdHQy
-         JfHHyl/kTK8HqcHwDE8UNVjcPZbBL9GiiD/U9tkJzHKm8kzgc1vub4+rB9gUCDOzSbvq
-         Z6sg==
-X-Gm-Message-State: AOAM532MiD6hFLnDcZdrADPcsYegWdNH51q+3d2oRL3kXPguF+0Qtv2a
-        AhQK0dFnIpesqxH4mfqHZQP8aw==
-X-Google-Smtp-Source: ABdhPJxNj8jj5sY4NGuc2RO8NVr4KbyZYhV+2uDrbtcKs+ITXyvoyO/r+/cURV1f+got7YHENp8UZg==
-X-Received: by 2002:a4a:6042:: with SMTP id t2mr2154509oof.31.1627660688308;
-        Fri, 30 Jul 2021 08:58:08 -0700 (PDT)
+        bh=+VAdv+WeR1jvOvgcgnqcYxpRfRpHfv5qO3GWKK9dmZw=;
+        b=e+m/XvycLv+omTO7+ntPGRaSw1D6eKOqNeE1HAJaDfYOg8o5QCOAz2p7VeapIkOtjC
+         wMNw6/prt3CC4X1+oRrC6MPwBYYYQV/cHj2Y9X/Gx0ijh0Nc3cuEOlTRHGfr/jtDKEG7
+         FoYrE4L+j2AZYvbBTJlTCnq6UWGndQCGp/WXuXehCKlCW+xIEEFzYlQ5Vxuyc56goc9Y
+         m3ru8P9EROtN6Wn4CjiWZMbR7cuD643a1AtLyo7LYDrNSqrIdqCGXqbzh1skmRBeYmX6
+         l7d5O38mFFt/PbbWWfahktHU/ysXkS807kU8q0bT8KFLPox19RF0495LmXKOdSrg1u4r
+         nzKg==
+X-Gm-Message-State: AOAM532cuqgeNYJ08HUg5Yvqepnlge762vIihXLT0Y26M6PCA0fjWDey
+        DISy7QLJ6s9aIClBn5JfeUVlzA==
+X-Google-Smtp-Source: ABdhPJy9S4ERYG+NYbJHmT2b4l+CRSgIl/ARguLUHnMpNudWlcP48MLgOOQajgy8+J2pt07NuVzEjQ==
+X-Received: by 2002:aca:f54c:: with SMTP id t73mr2367532oih.175.1627663009726;
+        Fri, 30 Jul 2021 09:36:49 -0700 (PDT)
 Received: from builder.lan (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
-        by smtp.gmail.com with ESMTPSA id z22sm282294ooz.20.2021.07.30.08.58.07
+        by smtp.gmail.com with ESMTPSA id w24sm372033otp.28.2021.07.30.09.36.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 30 Jul 2021 08:58:07 -0700 (PDT)
-Date:   Fri, 30 Jul 2021 10:58:06 -0500
+        Fri, 30 Jul 2021 09:36:49 -0700 (PDT)
+Date:   Fri, 30 Jul 2021 11:36:46 -0500
 From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Tinghan Shen <tinghan.shen@mediatek.com>
-Cc:     ohad@wizery.com, mathieu.poirier@linaro.org, robh+dt@kernel.org,
-        matthias.bgg@gmail.com, linux-remoteproc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
-        srv_heupstream@mediatek.com, tzungbi@google.com,
-        Project_Global_Chrome_Upstream_Group@mediatek.com
-Subject: Re: [PATCH v4 4/4] remoteproc: mediatek: Support mt8195 scp
-Message-ID: <YQQhjuqAaT1xaIWM@builder.lan>
-References: <20210728035859.5405-1-tinghan.shen@mediatek.com>
- <20210728035859.5405-5-tinghan.shen@mediatek.com>
+To:     Sibi Sankar <sibis@codeaurora.org>
+Cc:     mka@chromium.org, swboyd@chromium.org, robh+dt@kernel.org,
+        ulf.hansson@linaro.org, rjw@rjwysocki.net, agross@kernel.org,
+        ohad@wizery.com, mathieu.poirier@linaro.org,
+        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        dianders@chromium.org, rishabhb@codeaurora.org,
+        sidgup@codeaurora.org
+Subject: Re: [PATCH v4 04/13] remoteproc: qcom: q6v5: Use qmp_send to update
+ co-processor load state
+Message-ID: <YQQqnoOJLP9ixWn1@builder.lan>
+References: <1626755807-11865-1-git-send-email-sibis@codeaurora.org>
+ <1626755807-11865-5-git-send-email-sibis@codeaurora.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210728035859.5405-5-tinghan.shen@mediatek.com>
+In-Reply-To: <1626755807-11865-5-git-send-email-sibis@codeaurora.org>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Tue 27 Jul 22:58 CDT 2021, Tinghan Shen wrote:
+On Mon 19 Jul 23:36 CDT 2021, Sibi Sankar wrote:
 
-> The SCP clock design is changed on mt8195 that doesn't need to control
-> SCP clock on kernel side.
+> The power domains exposed by the AOSS QMP driver control the load state
+> resources linked to modem, adsp, cdsp remoteprocs. These are used to
+> notify the Always on Subsystem (AOSS) that a particular co-processor is
+> up/down. AOSS uses this information to wait for the co-processors to
+> suspend before starting its sleep sequence.
 > 
-> Signed-off-by: Tinghan Shen <tinghan.shen@mediatek.com>
+> These co-processors enter low-power modes independent to that of the
+> application processor and the load state resources linked to them are
+> expected to remain unaltered across system suspend/resume cycles. To
+> achieve this behavior lets stop using the power-domains exposed by the
+> AOSS QMP node and replace them with generic qmp_send interface instead.
+> 
+> Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
 > ---
->  drivers/remoteproc/mtk_scp.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
 > 
-> diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
-> index 9679cc26895e..250cb946ea37 100644
-> --- a/drivers/remoteproc/mtk_scp.c
-> +++ b/drivers/remoteproc/mtk_scp.c
-> @@ -785,7 +785,7 @@ static int scp_probe(struct platform_device *pdev)
->  	if (ret)
->  		goto destroy_mutex;
+> v4:
+>  * Drop unused pdev and kfree the load state string in q6v5_deinit
+>    /probe path for patch 4. [Matthias]
+> 
+>  drivers/remoteproc/qcom_q6v5.c      | 57 ++++++++++++++++++++++++-
+>  drivers/remoteproc/qcom_q6v5.h      |  7 ++-
+>  drivers/remoteproc/qcom_q6v5_adsp.c |  7 ++-
+>  drivers/remoteproc/qcom_q6v5_mss.c  | 44 ++++---------------
+>  drivers/remoteproc/qcom_q6v5_pas.c  | 85 +++++++++----------------------------
+>  drivers/remoteproc/qcom_q6v5_wcss.c |  4 +-
+>  6 files changed, 96 insertions(+), 108 deletions(-)
+> 
+> diff --git a/drivers/remoteproc/qcom_q6v5.c b/drivers/remoteproc/qcom_q6v5.c
+> index 7e9244c748da..997ff21271f7 100644
+> --- a/drivers/remoteproc/qcom_q6v5.c
+> +++ b/drivers/remoteproc/qcom_q6v5.c
+> @@ -16,8 +16,28 @@
+>  #include "qcom_common.h"
+>  #include "qcom_q6v5.h"
 >  
-> -	scp->clk = devm_clk_get(dev, "main");
-> +	scp->clk = devm_clk_get_optional(dev, "main");
+> +#define Q6V5_LOAD_STATE_MSG_LEN	64
+>  #define Q6V5_PANIC_DELAY_MS	200
+>  
+> +static int q6v5_load_state_toggle(struct qcom_q6v5 *q6v5, bool enable)
+> +{
+> +	char buf[Q6V5_LOAD_STATE_MSG_LEN] = {};
+> +	int ret;
+> +
+> +	if (IS_ERR(q6v5->qmp))
 
-This makes the clock optional for mt8183 and mt8192 as well.
+I would prefer that you keep it NULL when there's no qmp.
 
-How about using mtk_scp_of_data to denote if the clock should be
-acquired?
+> +		return 0;
+> +
+> +	snprintf(buf, sizeof(buf),
+> +		 "{class: image, res: load_state, name: %s, val: %s}",
+> +		 q6v5->load_state, enable ? "on" : "off");
+> +
+> +	ret = qmp_send(q6v5->qmp, buf, sizeof(buf));
+> +	if (ret)
+> +		dev_err(q6v5->dev, "failed to toggle load state\n");
+> +
+> +	return ret;
+> +}
+> +
+>  /**
+>   * qcom_q6v5_prepare() - reinitialize the qcom_q6v5 context before start
+>   * @q6v5:	reference to qcom_q6v5 context to be reinitialized
+> @@ -26,6 +46,12 @@
+>   */
+>  int qcom_q6v5_prepare(struct qcom_q6v5 *q6v5)
+>  {
+> +	int ret;
+> +
+> +	ret = q6v5_load_state_toggle(q6v5, true);
+> +	if (ret)
+> +		return ret;
+> +
+>  	reinit_completion(&q6v5->start_done);
+>  	reinit_completion(&q6v5->stop_done);
+>  
+> @@ -47,6 +73,7 @@ EXPORT_SYMBOL_GPL(qcom_q6v5_prepare);
+>  int qcom_q6v5_unprepare(struct qcom_q6v5 *q6v5)
+>  {
+>  	disable_irq(q6v5->handover_irq);
+> +	q6v5_load_state_toggle(q6v5, false);
+>  
+>  	return !q6v5->handover_issued;
+>  }
+> @@ -196,12 +223,13 @@ EXPORT_SYMBOL_GPL(qcom_q6v5_panic);
+>   * @pdev:	platform_device reference for acquiring resources
+>   * @rproc:	associated remoteproc instance
+>   * @crash_reason: SMEM id for crash reason string, or 0 if none
+> + * @load_state: load state resource string
+>   * @handover:	function to be called when proxy resources should be released
+>   *
+>   * Return: 0 on success, negative errno on failure
+>   */
+>  int qcom_q6v5_init(struct qcom_q6v5 *q6v5, struct platform_device *pdev,
+> -		   struct rproc *rproc, int crash_reason,
+> +		   struct rproc *rproc, int crash_reason, const char *load_state,
+>  		   void (*handover)(struct qcom_q6v5 *q6v5))
+>  {
+>  	int ret;
+> @@ -286,9 +314,36 @@ int qcom_q6v5_init(struct qcom_q6v5 *q6v5, struct platform_device *pdev,
+>  		return PTR_ERR(q6v5->state);
+>  	}
+>  
+> +	q6v5->load_state = kstrdup_const(load_state, GFP_KERNEL);
+
+Can't you use devm_kstrdup_const(&pdev->dev, ...) for this?
+
+> +	q6v5->qmp = qmp_get(&pdev->dev);
+> +	if (IS_ERR(q6v5->qmp)) {
+> +		if (PTR_ERR(q6v5->qmp) != -ENODEV) {
+> +			if (PTR_ERR(q6v5->qmp) != -EPROBE_DEFER)
+> +				dev_err(&pdev->dev, "failed to acquire load state\n");
+> +			kfree_const(q6v5->load_state);
+
+Then you don't need to free it here.
+
+> +			return PTR_ERR(q6v5->qmp);
+> +		}
+> +	} else {
+> +		if (!q6v5->load_state) {
+> +			dev_err(&pdev->dev, "load state resource string empty\n");
+> +			return -EINVAL;
+
+I see two cases here:
+
+1) kstrdup_const() failed to allocate memory, the error print is
+unnecessary and misleading and it would be more appropriate to return
+-ENOMEM.
+
+2) kstrdup_const() failed because you passed load_state == NULL, in
+which case the error message could be more helpful by saying "unexpected
+qcom,qmp property found" or something like that.
+
+> +		}
+> +	}
+> +
+>  	return 0;
+>  }
+>  EXPORT_SYMBOL_GPL(qcom_q6v5_init);
+>  
+> +/**
+> + * qcom_q6v5_deinit() - deinitialize the q6v5 common struct
+> + * @q6v5:	reference to qcom_q6v5 context to be deinitialized
+> + */
+> +void qcom_q6v5_deinit(struct qcom_q6v5 *q6v5)
+> +{
+> +	kfree_const(q6v5->load_state);
+> +	qmp_put(q6v5->qmp);
+> +}
+> +EXPORT_SYMBOL_GPL(qcom_q6v5_deinit);
+> +
+>  MODULE_LICENSE("GPL v2");
+>  MODULE_DESCRIPTION("Qualcomm Peripheral Image Loader for Q6V5");
+> diff --git a/drivers/remoteproc/qcom_q6v5.h b/drivers/remoteproc/qcom_q6v5.h
+> index 1c212f670cbc..f35e04471ed7 100644
+> --- a/drivers/remoteproc/qcom_q6v5.h
+> +++ b/drivers/remoteproc/qcom_q6v5.h
+> @@ -5,6 +5,7 @@
+>  
+>  #include <linux/kernel.h>
+>  #include <linux/completion.h>
+> +#include <linux/soc/qcom/qcom_aoss.h>
+>  
+>  struct rproc;
+>  struct qcom_smem_state;
+> @@ -15,6 +16,8 @@ struct qcom_q6v5 {
+>  	struct rproc *rproc;
+>  
+>  	struct qcom_smem_state *state;
+> +	struct qmp *qmp;
+> +
+>  	unsigned stop_bit;
+>  
+>  	int wdog_irq;
+> @@ -32,12 +35,14 @@ struct qcom_q6v5 {
+>  
+>  	bool running;
+>  
+> +	const char *load_state;
+>  	void (*handover)(struct qcom_q6v5 *q6v5);
+>  };
+>  
+>  int qcom_q6v5_init(struct qcom_q6v5 *q6v5, struct platform_device *pdev,
+> -		   struct rproc *rproc, int crash_reason,
+> +		   struct rproc *rproc, int crash_reason, const char *load_state,
+>  		   void (*handover)(struct qcom_q6v5 *q6v5));
+> +void qcom_q6v5_deinit(struct qcom_q6v5 *q6v5);
+>  
+>  int qcom_q6v5_prepare(struct qcom_q6v5 *q6v5);
+>  int qcom_q6v5_unprepare(struct qcom_q6v5 *q6v5);
+> diff --git a/drivers/remoteproc/qcom_q6v5_adsp.c b/drivers/remoteproc/qcom_q6v5_adsp.c
+> index 8b0d8bbacd2e..098362e6e233 100644
+> --- a/drivers/remoteproc/qcom_q6v5_adsp.c
+> +++ b/drivers/remoteproc/qcom_q6v5_adsp.c
+> @@ -185,7 +185,9 @@ static int adsp_start(struct rproc *rproc)
+>  	int ret;
+>  	unsigned int val;
+>  
+> -	qcom_q6v5_prepare(&adsp->q6v5);
+> +	ret = qcom_q6v5_prepare(&adsp->q6v5);
+> +	if (ret)
+> +		return ret;
+
+In the (hopefully unlikely) case that we have instances of
+qcom_q6v5_prepare() failing today, the switch to the new qmp interface
+would also introduce a regression in the same commit.
+
+Could you please add the error handling in a separate commit? Just so
+that we can pinpoint which of the two changes caused any issues if we
+need to bisect this?
 
 Regards,
 Bjorn
-
->  	if (IS_ERR(scp->clk)) {
->  		dev_err(dev, "Failed to get clock\n");
->  		ret = PTR_ERR(scp->clk);
-> @@ -877,6 +877,7 @@ static const struct mtk_scp_of_data mt8192_of_data = {
->  static const struct of_device_id mtk_scp_of_match[] = {
->  	{ .compatible = "mediatek,mt8183-scp", .data = &mt8183_of_data },
->  	{ .compatible = "mediatek,mt8192-scp", .data = &mt8192_of_data },
-> +	{ .compatible = "mediatek,mt8195-scp", .data = &mt8192_of_data },
->  	{},
->  };
->  MODULE_DEVICE_TABLE(of, mtk_scp_of_match);
-> -- 
-> 2.18.0
-> 
