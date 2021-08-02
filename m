@@ -2,81 +2,218 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9082EC4338F
-	for <linux-remoteproc@archiver.kernel.org>; Mon,  2 Aug 2021 22:38:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C50F4C4338F
+	for <linux-remoteproc@archiver.kernel.org>; Mon,  2 Aug 2021 23:21:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6B769600D1
-	for <linux-remoteproc@archiver.kernel.org>; Mon,  2 Aug 2021 22:38:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A334960E78
+	for <linux-remoteproc@archiver.kernel.org>; Mon,  2 Aug 2021 23:21:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232695AbhHBWiO (ORCPT
+        id S232333AbhHBXVz (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 2 Aug 2021 18:38:14 -0400
-Received: from mail-io1-f51.google.com ([209.85.166.51]:36458 "EHLO
-        mail-io1-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231920AbhHBWiN (ORCPT
+        Mon, 2 Aug 2021 19:21:55 -0400
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:54452 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232130AbhHBXVy (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 2 Aug 2021 18:38:13 -0400
-Received: by mail-io1-f51.google.com with SMTP id f11so22115083ioj.3;
-        Mon, 02 Aug 2021 15:38:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=Ng2y7/T03+Ba8dW5J8buOzlTMdBr+pr5kotQ3AFjeDI=;
-        b=cmGRzEfhYt28ZgmVN1YlVQyHfxZpg09BpJqohxwW31yftcQ+gN4ahJ3TlFGSnnl8uK
-         Y9U6LcH22wj758+WDIKSih8d8pM3hXwXfU1hb3lpVNxCvX25AFtQ9FHUjFQX0jIrPGnh
-         EJ+TJGNjkoXUGXF2KEeE+Eo0LCkBkKvLXDmCHcFVdOOizxYkThxfai2/Gm3iVQqLmxsS
-         PaLxp7Y+yUYnDYCk5hfOYueRvMq8vH2JZKCsyr2lM+Xc14cWvMq17SGFum/T332sEkf3
-         AMa8YlvVpc2a1UAjbJEbMFNAPozkE5X+bBYFAFnBKG4olwloauZ2WGnkmOn/od48Mv4d
-         PFAg==
-X-Gm-Message-State: AOAM532h2bEJBbLfsDwjZ6FITrVd42W7Qf6AW7nLTRGXu3Kmpn+0DgNy
-        R8MxNFS0yGoX+tvaXMsRnQ==
-X-Google-Smtp-Source: ABdhPJx0ujFTJ6a7NaXu1vwbigp+ZC4igdEXJBxwvyoUtmewCs3yyN1KsU8jYnrYwG0/sSkiOU408g==
-X-Received: by 2002:a6b:4015:: with SMTP id k21mr1937ioa.28.1627943883210;
-        Mon, 02 Aug 2021 15:38:03 -0700 (PDT)
-Received: from robh.at.kernel.org ([64.188.179.248])
-        by smtp.gmail.com with ESMTPSA id z21sm4611883ioz.28.2021.08.02.15.38.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Aug 2021 15:38:02 -0700 (PDT)
-Received: (nullmailer pid 1751266 invoked by uid 1000);
-        Mon, 02 Aug 2021 22:38:00 -0000
-Date:   Mon, 2 Aug 2021 16:38:00 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Konrad Dybcio <konrad.dybcio@somainline.org>
-Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        linux-arm-msm@vger.kernel.org,
-        angelogioacchino.delregno@somainline.org,
-        martin.botka@somainline.org, Andy Gross <agross@kernel.org>,
-        Ohad Ben-Cohen <ohad@wizery.com>,
-        marijn.suijten@somainline.org,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        linux-remoteproc@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        ~postmarketos/upstreaming@lists.sr.ht,
-        jamipkettunen@somainline.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] dt-bindings: remoteproc: qcom: adsp: Add SDM660 ADSP
-Message-ID: <YQhzyA/sU99cwFMi@robh.at.kernel.org>
-References: <20210728215212.18217-1-konrad.dybcio@somainline.org>
+        Mon, 2 Aug 2021 19:21:54 -0400
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 172NLcWS079290;
+        Mon, 2 Aug 2021 18:21:38 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1627946498;
+        bh=lc5YJ8jr/E5ZmP2CWWKqbC9l2F6bbQuMBKIPXRsXrj0=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=ov8i+FhBad/ALU5fBbKNdscJmj8sNbP2fc6GWZZE48DTDSKzKNa+uS+k93eLujAUA
+         n3G2kw46FpBlUkjnb+2FACzgqorI2IXjhFbmn/GEUXI/3OOmN4nyURPkQsyyfUODh/
+         VzhrZzFpKoEJ3PR2sHu2tYvPD46zznsdq00ODPyY=
+Received: from DFLE106.ent.ti.com (dfle106.ent.ti.com [10.64.6.27])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 172NLc13081622
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 2 Aug 2021 18:21:38 -0500
+Received: from DFLE110.ent.ti.com (10.64.6.31) by DFLE106.ent.ti.com
+ (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2176.2; Mon, 2 Aug
+ 2021 18:21:38 -0500
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE110.ent.ti.com
+ (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2176.2 via
+ Frontend Transport; Mon, 2 Aug 2021 18:21:38 -0500
+Received: from [10.250.38.176] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 172NLclb033302;
+        Mon, 2 Aug 2021 18:21:38 -0500
+Subject: Re: [PATCH v2 1/5] remoteproc: Add support for detach-only during
+ shutdown
+To:     Mathieu Poirier <mathieu.poirier@linaro.org>
+CC:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Lokesh Vutla <lokeshvutla@ti.com>,
+        Praneeth Bajjuri <praneeth@ti.com>,
+        Hari Nagalla <hnagalla@ti.com>,
+        <linux-remoteproc@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20210723220248.6554-1-s-anna@ti.com>
+ <20210723220248.6554-2-s-anna@ti.com> <20210802184431.GC3051951@p14s>
+From:   Suman Anna <s-anna@ti.com>
+Message-ID: <cd399fef-6db7-72eb-933f-7454a043ed14@ti.com>
+Date:   Mon, 2 Aug 2021 18:21:38 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.11.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210728215212.18217-1-konrad.dybcio@somainline.org>
+In-Reply-To: <20210802184431.GC3051951@p14s>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Wed, 28 Jul 2021 23:52:11 +0200, Konrad Dybcio wrote:
-> Add a compatible string for SDM660 ADSP.
-> 
-> Signed-off-by: Konrad Dybcio <konrad.dybcio@somainline.org>
-> ---
->  Documentation/devicetree/bindings/remoteproc/qcom,adsp.yaml | 1 +
->  1 file changed, 1 insertion(+)
-> 
+Hi Mathieu,
 
-Acked-by: Rob Herring <robh@kernel.org>
+On 8/2/21 1:44 PM, Mathieu Poirier wrote:
+> On Fri, Jul 23, 2021 at 05:02:44PM -0500, Suman Anna wrote:
+>> The remoteproc core has support for both stopping and detaching a
+>> remote processor that was attached to previously, through both the
+>> remoteproc sysfs and cdev interfaces. The rproc_shutdown() though
+>> unconditionally only uses the stop functionality at present. This
+>> may not be the default desired functionality for all the remoteproc
+>> platform drivers.
+>>
+>> Enhance the remoteproc core logic to key off the presence of the
+>> .stop() ops and allow the individual remoteproc drivers to continue
+>> to use the standard rproc_add() and rproc_del() API. This allows
+>> the remoteproc drivers to only do detach if supported when the driver
+>> is uninstalled, and the remote processor continues to run undisturbed
+>> even after the driver removal.
+>>
+>> Signed-off-by: Suman Anna <s-anna@ti.com>
+>> ---
+>> v2: Addressed various review comments from v1
+>>  - Reworked the logic to not use remoteproc detach_on_shutdown and
+>>    rely only on rproc callback ops
+>>  - Updated the last para of the patch description
+>> v1: https://patchwork.kernel.org/project/linux-remoteproc/patch/20210522000309.26134-3-s-anna@ti.com/
+>>
+>>  drivers/remoteproc/remoteproc_cdev.c  | 7 +++++++
+>>  drivers/remoteproc/remoteproc_core.c  | 5 ++++-
+>>  drivers/remoteproc/remoteproc_sysfs.c | 6 ++++++
+>>  3 files changed, 17 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/remoteproc/remoteproc_cdev.c b/drivers/remoteproc/remoteproc_cdev.c
+>> index 4ad98b0b8caa..16c932beed88 100644
+>> --- a/drivers/remoteproc/remoteproc_cdev.c
+>> +++ b/drivers/remoteproc/remoteproc_cdev.c
+>> @@ -42,6 +42,13 @@ static ssize_t rproc_cdev_write(struct file *filp, const char __user *buf, size_
+>>  		    rproc->state != RPROC_ATTACHED)
+>>  			return -EINVAL;
+>>  
+>> +		if (rproc->state == RPROC_ATTACHED &&
+> 
+> This is already checked just above.
+> 
+>> +		    !rproc->ops->stop) {
+
+Well, this is checking for both conditions, and not just the stop ops
+independently. We expect to have .stop() defined normally for both regular
+remoteproc mode and attached mode where you want to stop (and not detach), but
+as you can see, I am supporting only detach and so will not have .stop() defined
+ with RPROC_ATTACHED.
+
+> 
+> This is checked in rproc_stop() where -EINVAL is returned if ops::stop has not
+> been provided.
+
+rproc_shutdown() actually doesn't return any status, so all its internal
+checking gets ignored and a success is returned today.
+
+> 
+>> +			dev_err(&rproc->dev,
+>> +				"stop not supported for this rproc, use detach\n");
+> 
+> The standard error message from the shell should be enough here, the same way it
+> is enough when the "start" and "stop" scenarios fail.
+
+Thought this was a bit more informative, but sure this trace can be dropped.
+
+> 
+>> +			return -EINVAL;
+>> +		}
+>> +
+>>  		rproc_shutdown(rproc);
+>>  	} else if (!strncmp(cmd, "detach", len)) {
+>>  		if (rproc->state != RPROC_ATTACHED)
+>> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+>> index 7de5905d276a..ab9e52180b04 100644
+>> --- a/drivers/remoteproc/remoteproc_core.c
+>> +++ b/drivers/remoteproc/remoteproc_core.c
+>> @@ -2075,7 +2075,10 @@ void rproc_shutdown(struct rproc *rproc)
+>>  	if (!atomic_dec_and_test(&rproc->power))
+>>  		goto out;
+>>  
+>> -	ret = rproc_stop(rproc, false);
+>> +	if (rproc->state == RPROC_ATTACHED && !rproc->ops->stop)
+>> +		ret = __rproc_detach(rproc);
+>> +	else
+>> +		ret = rproc_stop(rproc, false);
+> 
+> As I indicated in my last review I think rproc_shutdown() and rproc_del() should
+> be decoupled and the right call made in the platform drivers based on the state
+> of the remote processor.  
+
+We have various remoteproc API provided in pairs - rproc_alloc()/rproc_free(),
+rproc_add()/rproc_del(), rproc_boot()/rproc_shutdown() and
+rproc_attach()/rproc_detach(). The drivers are configuring conditions for
+auto-boot and RPROC_DETACHED. The reason they are coupled is primarily because
+of the auto-boot done during rproc_add(). And we handle the RPROC_DETACHED case
+just as well in rproc_boot().
+
+While what you have suggested works, but I am not quite convinced on this
+asymmetric usage, and why this state-machine logic should be split between the
+core and remoteproc drivers differently between attach and detach. To me,
+calling rproc_detach() in remoteproc drivers would have made sense only if they
+are also calling rproc_attach().
+
+
+Conditions such as the above make the core code
+> brittle, difficult to understand and tedious to maintain.
+
+The logic I have added actually makes rproc_shutdown behavior to be on par with
+the rproc_boot().
+
+regards
+Suman
+
+> 
+> Thanks,
+> Mathieu
+> 
+>>  	if (ret) {
+>>  		atomic_inc(&rproc->power);
+>>  		goto out;
+>> diff --git a/drivers/remoteproc/remoteproc_sysfs.c b/drivers/remoteproc/remoteproc_sysfs.c
+>> index ea8b89f97d7b..133e766f38d4 100644
+>> --- a/drivers/remoteproc/remoteproc_sysfs.c
+>> +++ b/drivers/remoteproc/remoteproc_sysfs.c
+>> @@ -206,6 +206,12 @@ static ssize_t state_store(struct device *dev,
+>>  		    rproc->state != RPROC_ATTACHED)
+>>  			return -EINVAL;
+>>  
+>> +		if (rproc->state == RPROC_ATTACHED &&
+>> +		    !rproc->ops->stop) {
+>> +			dev_err(&rproc->dev, "stop not supported for this rproc, use detach\n");
+>> +			return -EINVAL;
+>> +		}
+>> +
+>>  		rproc_shutdown(rproc);
+>>  	} else if (sysfs_streq(buf, "detach")) {
+>>  		if (rproc->state != RPROC_ATTACHED)
+>> -- 
+>> 2.32.0
+>>
+
