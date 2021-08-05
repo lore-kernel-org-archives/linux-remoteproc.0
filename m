@@ -2,226 +2,173 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,MSGID_FROM_MTA_HEADER,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C9C9C4338F
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  5 Aug 2021 09:13:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC02CC4338F
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  5 Aug 2021 09:57:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 32A0761078
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  5 Aug 2021 09:13:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B4FE360F58
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  5 Aug 2021 09:57:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237906AbhHEJN2 (ORCPT
+        id S232868AbhHEJ50 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 5 Aug 2021 05:13:28 -0400
-Received: from mail-eopbgr70085.outbound.protection.outlook.com ([40.107.7.85]:25230
-        "EHLO EUR04-HE1-obe.outbound.protection.outlook.com"
+        Thu, 5 Aug 2021 05:57:26 -0400
+Received: from mail-db8eur05on2054.outbound.protection.outlook.com ([40.107.20.54]:18401
+        "EHLO EUR05-DB8-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S231310AbhHEJN1 (ORCPT <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 5 Aug 2021 05:13:27 -0400
+        id S232852AbhHEJ50 (ORCPT <rfc822;linux-remoteproc@vger.kernel.org>);
+        Thu, 5 Aug 2021 05:57:26 -0400
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=i3lFb2MBu2Jxv5qxJsthwc8jC+VDq5tM8hFfcf/NQp4PIck1Ru0boSqFwVKORXEgabZZq4K3WRNm7e6/xt9bOJ5dW/xTgekfnnV9NDsxRu9qWQqxIOKjkyfM0rgXFLDPbp8kibZU+0sphqAXOXkbOl27dU+eqoH8rLM0P46X4lyAXWu9EBt3RcqNhjcR7DQHtv1GkhKMp1Dt2pgCl4dkmhuXrc43z+aF/YGBbKUtsEciPrDNC/ECdVdmQyNABLLCLm/F1O7lLqhp61ad4Tab9rNeLCqxmYKf0KAQCrTo3gn4UmigqCTNdEv1/Ak51Hzaf5A7G5a0yKdQ9vFo+V8N0g==
+ b=mi53G1JjPEWJahgVO69Z66VihzEXQcFx4JKbcRl0VL+P89KRE14coCv5wGh58Jwi+jQBW2hd+2iCj7WlJGYSrVhEz+uZZ+5zVSkZ7fLf8R6+tuQsJDETQ1iVG0tDxc7TWA9uyF4kt9EgEUnFF34DKeGM+FKKfOVRlT/Pf9EZPBYBrZyu4CldX+qNzBeSxLkRwsdkUOkDcFkrtnt/jGBBtjzCFGzr1RlC3gVpEzeTJodKQLZjfcrtzaFlTQBqVPJve5MqjZCWE6xx6KeA93reqDI8tnedjtlEchU5BVPg7+BC3GRA8AalfJuxLoEvjG4Y12sJ5KqigBAEARHTFvqrjQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=0bkc10URnZCDjtQnNRy8RJZ9U7dHUerzDZM2QhQEv5U=;
- b=NTjWQWo8wgmnezUozJ8tmirPgbYNg6BGfwvOkOBaGMFe6E9D8upO9hHxMYIa++9d/t36xqez8dhlDWoogyZwYfZHEfmHU1Pfc2evAYk2aYMDAvTTttDUZSmOSywawQqUxW4IH9rGRSyomoRI1TS48zG0S3+5qy6dCr8zFHNbgJM9WODtzZkQiXfe1L5wUg/R83XULRH61C5sLvHWWSj3AXRMgVOaxd6zD1Y9lZl6YAo7E0jVB+8YCLtfHMOaKf4xE4x1VZXXUwBsnelEYBHUdpCHUeNn0TU2WyETL+kTALyFOB75aYJ30hURlpgdzKNwCL7RBhoEIJZYHVVFM4ko1Q==
+ bh=0NJKRiIKZCPmlw8TpuENGmhmkt9n3PKhWkQDNFw3+Tw=;
+ b=Mcy3cG4SoUfko4vdKDMybXkcfQkNMklIOGGyu597Ip77Sa+av8POpLaUoVQYRmARhdOhrTtFnehCLGTb9haOfuYe6BwrZiLXdT3nBdLhyWlOMNeDeQFLFXlIYcSJVp/yr93GprNdoLOR3P9B0VlWhFGuaHeCgkkPDeVlrScvm8YTMArAUwJiAMToCiSPVg/gP8q5z38hGgEuSJmnifx1dpehoUsi4f6ExNtwJOsfa0t+4XUFza1G5UVv97P9ty3Q20t1xdphegcAaFXnKelaxFBEdrBzL7fIcdP/boSJyktSYlJidCIQDM0Z9vE7+rT6LgzRgy0u/4KHzWPBrR4b8w==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector2-NXP1-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=0bkc10URnZCDjtQnNRy8RJZ9U7dHUerzDZM2QhQEv5U=;
- b=iXGCkSloxI+yVTfsyCnMAes8U3YwFkHKK/hbWoiwW6F/sCEcdcg403MMX25FBMhPY/9nj7TFNFPzNOa9HI8TVQ3p+hI/O8R2UybU3kt40TRxPdBNcKSVcXtaaYjwyNG5kwXvId1XsFVThGzAohKFuJFKoQ+6XI6QcX7LChSHl90=
-Authentication-Results: vger.kernel.org; dkim=none (message not signed)
- header.d=none;vger.kernel.org; dmarc=none action=none header.from=nxp.com;
-Received: from DB9PR04MB8477.eurprd04.prod.outlook.com (2603:10a6:10:2c3::11)
- by DU2PR04MB8568.eurprd04.prod.outlook.com (2603:10a6:10:2d7::23) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4394.17; Thu, 5 Aug
- 2021 09:13:11 +0000
-Received: from DB9PR04MB8477.eurprd04.prod.outlook.com
- ([fe80::9daa:ab21:f749:36d2]) by DB9PR04MB8477.eurprd04.prod.outlook.com
- ([fe80::9daa:ab21:f749:36d2%9]) with mapi id 15.20.4394.017; Thu, 5 Aug 2021
- 09:13:11 +0000
-From:   Dong Aisheng <aisheng.dong@nxp.com>
-To:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc:     linux-remoteproc@vger.kernel.org, dongas86@gmail.com,
-        peng.fan@nxp.com, linux-imx@nxp.com, robh+dt@kernel.org,
-        shawnguo@kernel.org, kernel@pengutronix.de,
-        Dong Aisheng <aisheng.dong@nxp.com>
-Subject: [PATCH 2/2] arm64: dts: imx8mp: add remoteproc m7 support
-Date:   Thu,  5 Aug 2021 17:12:18 +0800
-Message-Id: <20210805091218.1626290-2-aisheng.dong@nxp.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20210805091218.1626290-1-aisheng.dong@nxp.com>
-References: <20210805091218.1626290-1-aisheng.dong@nxp.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SG2PR03CA0147.apcprd03.prod.outlook.com
- (2603:1096:4:c8::20) To DB9PR04MB8477.eurprd04.prod.outlook.com
- (2603:10a6:10:2c3::11)
+ bh=0NJKRiIKZCPmlw8TpuENGmhmkt9n3PKhWkQDNFw3+Tw=;
+ b=aGd+GJV3ZI/AdfW0RsO9f9uWp+ChDRfKQE7PPW7rmFQRnjIUbBXSdUR7sn86trnEC+f/RO5BVixkj+VFjQvVxgk6DRhsgMqpFoV+wF4eRiEIsOQlR9DguAFEz2faQ4noczzD942ZLUAIZ1xUdukHudMmOjEqy6CJpn2SsqQr+qY=
+Received: from AM5PR0402MB2756.eurprd04.prod.outlook.com
+ (2603:10a6:203:99::22) by AS8PR04MB7592.eurprd04.prod.outlook.com
+ (2603:10a6:20b:23f::11) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4373.19; Thu, 5 Aug
+ 2021 09:57:10 +0000
+Received: from AM5PR0402MB2756.eurprd04.prod.outlook.com
+ ([fe80::3839:217:6252:b1f8]) by AM5PR0402MB2756.eurprd04.prod.outlook.com
+ ([fe80::3839:217:6252:b1f8%11]) with mapi id 15.20.4373.026; Thu, 5 Aug 2021
+ 09:57:10 +0000
+From:   "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+To:     Aisheng Dong <aisheng.dong@nxp.com>,
+        "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>
+CC:     "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "ohad@wizery.com" <ohad@wizery.com>,
+        "dongas86@gmail.com" <dongas86@gmail.com>,
+        "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>,
+        "mathieu.poirier@linaro.org" <mathieu.poirier@linaro.org>,
+        "cleger@kalray.eu" <cleger@kalray.eu>
+Subject: RE: [PATCH v3 5/5] remoteproc: imx_rproc: change to ioremap_wc for
+ dram
+Thread-Topic: [PATCH v3 5/5] remoteproc: imx_rproc: change to ioremap_wc for
+ dram
+Thread-Index: AQHXiaqd7cYLytShwkSrk1tiAg3a+atkrQxg
+Date:   Thu, 5 Aug 2021 09:57:10 +0000
+Message-ID: <AM5PR0402MB275630A505C7828931043F1988F29@AM5PR0402MB2756.eurprd04.prod.outlook.com>
+References: <20210805033206.1295269-1-aisheng.dong@nxp.com>
+ <20210805033206.1295269-5-aisheng.dong@nxp.com>
+In-Reply-To: <20210805033206.1295269-5-aisheng.dong@nxp.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: nxp.com; dkim=none (message not signed)
+ header.d=none;nxp.com; dmarc=none action=none header.from=oss.nxp.com;
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 217f371e-bfb8-470e-f7b3-08d957f76471
+x-ms-traffictypediagnostic: AS8PR04MB7592:
+x-ms-exchange-sharedmailbox-routingagent-processed: True
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <AS8PR04MB7592A4696D8176FC0F3C47D6C9F29@AS8PR04MB7592.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:5797;
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: KDaJftHgszegirvf/9oUhd5kGkycQjUCwlvhMmlpVEWaPeNWQbTVcsmbEK13wog+cCVVEsEvd1amNc8bQN9tm7Dpb/4rg09Y8sZ1qaM8Y1DfDV7hFrC8Vv34DiXFhuJqUVzzYCXbFKFe+bJEmzWgBVszsshfmouSQ6Hz59NXS1i6Cu1RDsomRnTMOXPPlYPWuOArJYKhKIBdSM4WYqospV6cD1icZr7CtvOlnzfr5FXPOwSSd+YwRMQLFRSkEc1TpsauocaZyMS5cLXkRqyBN8+JGO5JY9HhfFT4EiNcVuNU3o49HosUpQvXxUMku8J8mzgGHM39r4m5ftZDR93bLvk1iJ0vzctmYVG1lxMYD7IcZq4i0kF6e0FLHq6LYk2bh9F4yrtct+HHNEQK/AOCrkDGNluP/9vxQWgJJWHywYfNXvZdEV0FGVJVsCSMa0fPocxY3WuNvg5kTdDeGmNmDKQnAPzttAMX4Uf/iZGGGANBENm3JOzliP+Cps/UO58ehfU8/QmzV/F2oTM/Pf7K0DGC4SbW8fFFnD8hsS0BjQ324cX5OeBVvBBjE/EwMiZ0JfiQQbp89BQS1Gxi7exeKtXQHLO4b9v6HGxwR5humWd/FTLtMwf6trhYjvSFowKoTZKLmHGDeSTp69fM1bU4u8RLFD21lP6JdyXOBSehE8gdXxqIAlfSbcYb/h7VXC4gaKGIsOpZ5UJDdEPu/L3+Ug==
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM5PR0402MB2756.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(366004)(396003)(39860400002)(376002)(136003)(346002)(122000001)(55016002)(7696005)(5660300002)(8936002)(52536014)(71200400001)(478600001)(9686003)(38070700005)(38100700002)(6506007)(86362001)(26005)(186003)(54906003)(83380400001)(110136005)(4326008)(66556008)(316002)(8676002)(66446008)(66476007)(2906002)(66946007)(33656002)(76116006)(64756008);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?yq5YbsZHae5HTvB258Fd4eLuto7imAOJuzJrD4EfQLrHRL1udyCz0+WdRayi?=
+ =?us-ascii?Q?kr3JbmBkzSoLtJ/fhCLpJ+bX2zpnGIyIJ6KHMYN54e3sGIBye8c16BZrQZGF?=
+ =?us-ascii?Q?u4Vf15aMP37Z6dZFXCdqpz7gV/FdVgN6poH23LNLlhFsHFBmWqFxIYognG0b?=
+ =?us-ascii?Q?NrQeAJeRRO/FqYn2PMYqkun7dOc2nUaF7HIUxcMqkKrHE/fP2FDPxMJfQbJa?=
+ =?us-ascii?Q?jQ58HsXjQQS6EqQuOt2kxmPB6uZnHdLHpLWwsclrSm95vPGjtEeVH4lqifsQ?=
+ =?us-ascii?Q?NM0P1JVE2U56iWeOY3I7njruq9NKuBLugmSvvTqq9hiOX5ueSPQvwNRsT8FG?=
+ =?us-ascii?Q?N58mdUQgwCzRHXEN2ASlgYKOC02U+oukM8SuU9bm0VmuBh3GFLdw5H6dvmOn?=
+ =?us-ascii?Q?AginGKFvgcGH5eP1rxuktFw6Jr8jpXZDy8PjAxiCA5lvGjik4XTwpkYSi1VD?=
+ =?us-ascii?Q?8qMpsGVeF6YcBOWrpXH868LzWhSp3IaDl7dtD00Edwwu4gSXV1kQWhrIn3U1?=
+ =?us-ascii?Q?hTR22r/VFd+BBWC/bqJeAlTWGCVKq7fTpcERvmvM4WXyLhsGkFAJDbIViSfh?=
+ =?us-ascii?Q?Pd68Le6vJu7CTeQVvtOaSC+W/4TT0tfcvEZeFm30TRktgUFk42t54Lc09d+l?=
+ =?us-ascii?Q?MXx9e4h7a3CewGiaCfda2Eh8VANK+pY7hYavp8toKNHtej2ub15KC/tvSaul?=
+ =?us-ascii?Q?19dt6tbARfom52w97mI6/eHeA/jmOC2Uh3lpG1OjvWMHTZspCjLeq6fxTTx2?=
+ =?us-ascii?Q?Wx9A8KDDv5SpJMmUW4hKxorKJ8ELnijNOfBMRTZqIQ10WCMgjtxuD0Pgux7O?=
+ =?us-ascii?Q?KkKS+Ex7ynlyQ1WClvnHvtagpbOVMRJRMeBp6voD4FOkthKVKgUp02nSms2o?=
+ =?us-ascii?Q?H7Y0DkiY7Xy5V9eNQcpRInxzCV0OnahvCrqa2oSGJeCsbXfeu/yByhBDGJhy?=
+ =?us-ascii?Q?t+Xb4XUiL0MLLgvtOafd2psaUAnVGSObZaKsU6Oo2AXBECqj4i3X5MVhF4MN?=
+ =?us-ascii?Q?cgrrn/JNlfD/l0P7YC1cMzRl13hZFMNnbP5jaA7CK3fUfWMm7l6nrPckeX0N?=
+ =?us-ascii?Q?1fPMWbcx1VLmCN/CrVGvd3YJ6i2JzI6L+vNghWbbrRNAXMKqxSAMwDQQGu2B?=
+ =?us-ascii?Q?OQtYQcsZvec1BYKBcSexBJ9llfHsbohvq3EgZw0iYiBa6Qk94kVBx+jASx5U?=
+ =?us-ascii?Q?i4hzYsKs5xvV8zJXNfD9ICsTTDTcbdFMhwZLadSebRAnNRWRshNlRP57B84+?=
+ =?us-ascii?Q?E+KTtCgAnE4YHis1ul2fXMfdYz1F91EiIsH9NRi+blFSZ+ZL8q75EN+Hc5wy?=
+ =?us-ascii?Q?rCa0QJmQAFb2Frubk/I95S57?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from localhost.localdomain (119.31.174.66) by SG2PR03CA0147.apcprd03.prod.outlook.com (2603:1096:4:c8::20) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4415.5 via Frontend Transport; Thu, 5 Aug 2021 09:13:08 +0000
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: bdcca708-7f92-45b0-1d2c-08d957f13f93
-X-MS-TrafficTypeDiagnostic: DU2PR04MB8568:
-X-MS-Exchange-Transport-Forked: True
-X-Microsoft-Antispam-PRVS: <DU2PR04MB8568D78AE0F3B9F7DBAC145F80F29@DU2PR04MB8568.eurprd04.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:238;
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: Cx+QJb7469OSzgnlhh70zqzXQaQdtOUUfS5OrCM5uMkRDyG5RVILRnEm5cPXgTj4HU2ZhO6Pm9U8+WECWJHs7MYGf/0W8OUzPpf/PvHNXNVymWyF9/J6hX9GEhV47OM4AaiNCOejqKDqU9uGYgSx4VNk/wi4KatyRnbX5mHmasu5gfmDiIh3/GESKh+HebT7fyuSXeGxC6wcGMNLVGCcR3uiJw1wBPbr/t4aopahi3jrFDe9WTiVnyjlPFVDgbczUyRm7L7bxhohBIPL45+thui35YOcrowxEQOCBJZ5EW7RKVCAXlncxj+odkdxPsMMYg4vWBDBp6nFhIcuvPLeYt5nEU6+FGkBT+NBTgDZK058wePZi1XfOGkc1N2nOwomt6WHJZtCqqMfyyqRD7YQ+hCljgiWv+DdFxJSrgkzF+/ZK5CKXSb9K0lOJZDF7ENkG03SweRVr+8sKWCkxn/LhG6IpHtjF5HXaWcJjUxmqEp/RZ1CYPogmTpRtezPjDjxWAYNTXfXa+gMnglIS2Xi28t99mmw0J+Tv836h0WyvlgXDjORv8Ukq6UawmAdQ4D3/l1AWHD3YlFuBwvokStrioNewucSNvS34GnMtYeP68Xuq3r4unbT6uvPiRU4Z9SMfU/HkZNsvUW33e7VB4Yib8H/OQjj4r6Hedh4G8SDRINeQ5wptqMe+isBaj47Bhntr91JcoLQoUcIi2Gh7Rw0YQPtKPczSZtUKwVxtBtK418=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB9PR04MB8477.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(366004)(376002)(39840400004)(346002)(136003)(396003)(38350700002)(38100700002)(1076003)(66946007)(5660300002)(66476007)(66556008)(52116002)(6512007)(956004)(2616005)(6486002)(6506007)(4326008)(316002)(186003)(26005)(83380400001)(2906002)(8936002)(8676002)(86362001)(6666004)(36756003)(478600001)(32563001);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?746JPMdJbHmW1QYJB2wVE51x3TvSmP4q3djeK47YjjFDQUh7hM1ODTt2yz/y?=
- =?us-ascii?Q?DAy8Ka/4nidlDAY6nBByTL/Q88oYOeyRH6IA2hAL3Wc/aMYmX7PpxePreTb5?=
- =?us-ascii?Q?387QTcexJeLAAwORsBAx3nAouwiR7VBF9P6/Yz68jt2ZUl3h+R0xpLRUiuLT?=
- =?us-ascii?Q?zVt2dfPiK6opmSSM8Cy+FaLnaA79+0lD8fNJXwObRY6uZBTyVkrZkSWWVa45?=
- =?us-ascii?Q?LuugKLz5o8sqsgVgVbvz02VHQsNqOgTx0cKSghI6SKCb9S1c2RztWrfaDNrp?=
- =?us-ascii?Q?kBJaq3D2yoxUeZSD6gkPImWQKsN1W3k3kHBNH5xAcs0LME18DwX1b6FlvanW?=
- =?us-ascii?Q?uH/eb0JuHOjhHs1l0Awdv8+wVADTvnwd7z+teqcZwCXRyW0xQDAhIJcDPLGP?=
- =?us-ascii?Q?93QH1E8GRSXlkgkf2jw34DeIPy/a4TfW1uMkIn+e7m/+iop6BG0U08hbHJCO?=
- =?us-ascii?Q?wLaDpWOe7xNZROCNfF1eLhSR5+eE8i9HQ/Lvo8Pu5rZiwESna4YxZ8NYNi2C?=
- =?us-ascii?Q?hqk7fCmEVr3s1wXejUVRrlhXiByX7d0079L/l5GASweqzkxPV7vj4jAwefxv?=
- =?us-ascii?Q?obiKueHxQecZ+WUaOxx02CDCVK27i5u1dgjQ0YEeZhD+8D79qQ+3WBDJ6nB2?=
- =?us-ascii?Q?44d23uVE39MVB4Utzk/iLe2mBVDxOcb1Ae6OWIWexcSg9yN1vPyV5oS/y5sh?=
- =?us-ascii?Q?MfRf969/tWj6TVV3XuH75dtEJHTROo+7HMHhK0cZTRjvyOIzu6KzgWpW7nuD?=
- =?us-ascii?Q?cO0CKsyzAMshwbRSU35yCj5LTjnztLG+MEE53ql+oIY8KKgVAv3Yzkz3NI7L?=
- =?us-ascii?Q?PuujH9kWMDqz8Se5Qj2Nh1/uhmxLqSQM6wELnMj5zpHKdbmxYpaai9wn2yAI?=
- =?us-ascii?Q?8UNFn5HQljc+PbMTDarS2g1lmL0OWyB1vvZ2Y37GY4GwHfd+BDWbVEVKDA0j?=
- =?us-ascii?Q?2whn4ZswJBSGvDJAVgi/pjnxs1V7/lDUaZxQmfIhJdz0QEddyEAFjboXm5Bt?=
- =?us-ascii?Q?+yQM6FPzn6Hrikl8gOMCqXJFFHk9/apyUPtj+7pqDCPUMkARIBcpQHu8KwCU?=
- =?us-ascii?Q?G4heX0O1U176+tYrkmbEppMJdmJyGK9+PZE9pyVhvOYu+859PxWyYVC39Wr2?=
- =?us-ascii?Q?MWi7wPybpmf+QSWVEVqUNqqLdfsrDTifYx/N3c4Ot+WiVznvcz83st0zF0a4?=
- =?us-ascii?Q?BD9GI0k+CevZS8SJciaV/JYYm+wigOnnRZs/dJqlb5uBi6AJTGrObKySBErG?=
- =?us-ascii?Q?az/NW4d2OthxxELgPfXIGaMam4d5tpVd97tEQTNXZks+oWAz0Mnh416OD4jC?=
- =?us-ascii?Q?CSPGJjXszgdO3G0KZkXQsHHD?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: bdcca708-7f92-45b0-1d2c-08d957f13f93
-X-MS-Exchange-CrossTenant-AuthSource: DB9PR04MB8477.eurprd04.prod.outlook.com
+X-OriginatorOrg: oss.nxp.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Aug 2021 09:13:11.6788
+X-MS-Exchange-CrossTenant-AuthSource: AM5PR0402MB2756.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 217f371e-bfb8-470e-f7b3-08d957f76471
+X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Aug 2021 09:57:10.2305
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: bl+GTJ/av/T1CFkxjwnxfT+PC8TfV8Z4mt6i/BTrBivVCATCjYytOuR0kt11DY1r/Rotc+gJyjOyTqbx0ADVUg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU2PR04MB8568
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: qRTq2OMqsRsDAaGmyzBMFSYZINuttzMuZu73cuxUQGI6Sw1WZOhU6HLdlgywWQUkYXILOvmL9M2i7SNGKAGCJQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB7592
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Add cm7 remoteproc which supports rpmsg naming service.
-It needs vdevbuffer and a pair of vrings and 16MB reserved memory.
+> Subject: [PATCH v3 5/5] remoteproc: imx_rproc: change to ioremap_wc for
+> dram
+>=20
+> DRAM is not io memory, so changed to ioremap_wc. This is also aligned wit=
+h
+> core io accessories. e.g. memcpy/memset and cpu direct access.
+>=20
+> Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
+> Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
+> Cc: Peng Fan <peng.fan@nxp.com>
+> Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
 
-Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
----
- arch/arm64/boot/dts/freescale/Makefile        |  1 +
- .../boot/dts/freescale/imx8mp-evk-rpmsg.dts   | 78 +++++++++++++++++++
- 2 files changed, 79 insertions(+)
- create mode 100644 arch/arm64/boot/dts/freescale/imx8mp-evk-rpmsg.dts
+Reviewed-by: Peng Fan <peng.fan@nxp.com>
 
-diff --git a/arch/arm64/boot/dts/freescale/Makefile b/arch/arm64/boot/dts/freescale/Makefile
-index 687ad9d68a85..e5f4d5779afe 100644
---- a/arch/arm64/boot/dts/freescale/Makefile
-+++ b/arch/arm64/boot/dts/freescale/Makefile
-@@ -47,6 +47,7 @@ dtb-$(CONFIG_ARCH_MXC) += imx8mn-evk.dtb
- dtb-$(CONFIG_ARCH_MXC) += imx8mn-ddr4-evk.dtb
- dtb-$(CONFIG_ARCH_MXC) += imx8mn-var-som-symphony.dtb
- dtb-$(CONFIG_ARCH_MXC) += imx8mp-evk.dtb
-+dtb-$(CONFIG_ARCH_MXC) += imx8mp-evk-rpmsg.dtb
- dtb-$(CONFIG_ARCH_MXC) += imx8mp-phyboard-pollux-rdk.dtb
- dtb-$(CONFIG_ARCH_MXC) += imx8mq-evk.dtb
- dtb-$(CONFIG_ARCH_MXC) += imx8mq-evk-rpmsg.dtb
-diff --git a/arch/arm64/boot/dts/freescale/imx8mp-evk-rpmsg.dts b/arch/arm64/boot/dts/freescale/imx8mp-evk-rpmsg.dts
-new file mode 100644
-index 000000000000..35c0a8d5501e
---- /dev/null
-+++ b/arch/arm64/boot/dts/freescale/imx8mp-evk-rpmsg.dts
-@@ -0,0 +1,78 @@
-+// SPDX-License-Identifier: (GPL-2.0 OR MIT)
-+/*
-+ * Copyright 2020-2021 NXP
-+ */
-+
-+#include "imx8mp-evk.dts"
-+
-+/ {
-+	reserved-memory {
-+		#address-cells = <2>;
-+		#size-cells = <2>;
-+		ranges;
-+
-+		vdev0vring0: vdev0vring0@55000000 {
-+			reg = <0 0x55000000 0 0x8000>;
-+			no-map;
-+		};
-+
-+		vdev0vring1: vdev0vring1@55008000 {
-+			reg = <0 0x55008000 0 0x8000>;
-+			no-map;
-+		};
-+
-+		rsc_table: rsc-table@550ff000 {
-+			reg = <0 0x550ff000 0 0x1000>;
-+			no-map;
-+		};
-+
-+		vdevbuffer: vdevbuffer@55400000 {
-+			compatible = "shared-dma-pool";
-+			reg = <0 0x55400000 0 0x100000>;
-+			no-map;
-+		};
-+
-+		remoteproc@80000000 {
-+			reg = <0 0x80000000 0 0x1000000>;
-+			no-map;
-+		};
-+	};
-+
-+	imx8mp-cm7 {
-+		compatible = "fsl,imx8mp-cm7";
-+		clocks = <&clk IMX8MP_CLK_M7_DIV>;
-+		mbox-names = "tx", "rx", "rxdb";
-+		mboxes = <&mu 0 1
-+			  &mu 1 1
-+			  &mu 3 1>;
-+		memory-region = <&vdevbuffer>, <&vdev0vring0>, <&vdev0vring1>,
-+				<&rsc_table>;
-+	};
-+};
-+
-+/*
-+ * Below devices are allocated on remoteproc
-+ */
-+&ecspi2 {
-+	status = "disabled";
-+};
-+
-+&flexcan1 {
-+	status = "disabled";
-+};
-+
-+&flexspi {
-+	status = "disabled";
-+};
-+
-+&i2c3 {
-+	status = "disabled";
-+};
-+
-+&pwm4 {
-+	status = "disabled";
-+};
-+
-+&uart4 {
-+	status = "disabled";
-+};
--- 
-2.25.1
+> ---
+> v2->v3:
+>  * patch content unchanged.
+>    Only drop the wrong tag in v2
+>    Tested on MX8MQ and MX8MP, MX7ULP.
+> v1->v2:
+>  * new patch
+> ---
+>  drivers/remoteproc/imx_rproc.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/remoteproc/imx_rproc.c
+> b/drivers/remoteproc/imx_rproc.c index ff620688fad9..4ae416ba5080
+> 100644
+> --- a/drivers/remoteproc/imx_rproc.c
+> +++ b/drivers/remoteproc/imx_rproc.c
+> @@ -597,7 +597,7 @@ static int imx_rproc_addr_init(struct imx_rproc *priv=
+,
+>  			break;
+>=20
+>  		/* Not use resource version, because we might share region */
+> -		priv->mem[b].cpu_addr =3D devm_ioremap(&pdev->dev, res.start,
+> resource_size(&res));
+> +		priv->mem[b].cpu_addr =3D devm_ioremap_wc(&pdev->dev,
+> res.start,
+> +resource_size(&res));
+>  		if (!priv->mem[b].cpu_addr) {
+>  			dev_err(dev, "failed to remap %pr\n", &res);
+>  			return -ENOMEM;
+> --
+> 2.25.1
 
