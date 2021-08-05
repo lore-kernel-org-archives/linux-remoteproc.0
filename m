@@ -7,128 +7,181 @@ X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10739C4338F
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  5 Aug 2021 16:37:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E11CC4338F
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  5 Aug 2021 16:39:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EC77460EE9
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  5 Aug 2021 16:37:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 83B78610FF
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  5 Aug 2021 16:39:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230028AbhHEQhl (ORCPT
+        id S232618AbhHEQkB (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 5 Aug 2021 12:37:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44040 "EHLO
+        Thu, 5 Aug 2021 12:40:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44562 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230099AbhHEQhl (ORCPT
+        with ESMTP id S231154AbhHEQkA (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 5 Aug 2021 12:37:41 -0400
-Received: from mail-pj1-x1031.google.com (mail-pj1-x1031.google.com [IPv6:2607:f8b0:4864:20::1031])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0F7B5C061765
-        for <linux-remoteproc@vger.kernel.org>; Thu,  5 Aug 2021 09:37:26 -0700 (PDT)
-Received: by mail-pj1-x1031.google.com with SMTP id pj14-20020a17090b4f4eb029017786cf98f9so10888016pjb.2
-        for <linux-remoteproc@vger.kernel.org>; Thu, 05 Aug 2021 09:37:26 -0700 (PDT)
+        Thu, 5 Aug 2021 12:40:00 -0400
+Received: from mail-pj1-x1029.google.com (mail-pj1-x1029.google.com [IPv6:2607:f8b0:4864:20::1029])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 812B6C061765
+        for <linux-remoteproc@vger.kernel.org>; Thu,  5 Aug 2021 09:39:46 -0700 (PDT)
+Received: by mail-pj1-x1029.google.com with SMTP id cl16-20020a17090af690b02901782c35c4ccso7129265pjb.5
+        for <linux-remoteproc@vger.kernel.org>; Thu, 05 Aug 2021 09:39:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=ScCSrb+0LlElQBDZymqW4N+GFGFpMM8jxuWTV0UN0ys=;
-        b=Jq0q2K+Yrtw+0B/X0gAkJfeVD9YOMZeEG6YZmvQrAiA+EDZ9q3MyoKDSXKaFKwo3JU
-         BZxgewbkNDqUGKH8AD+AvDOdLFsfan1cRt5uah5iSpqIxhmVnuQpL41kvNaTuzETq1GA
-         3MjYMTKx4Vga4iNe4mBN97LoF8mEXPxB0+CCNsqkNjfKyGplFtuwAKS7rcnYahbLJbui
-         cxNwt0L1Z44gr2Gl2D2x0CFBftpEUda/4d3y3UTcoNTAzux7kZBRfBgjwMgFUt+rgYQe
-         0amb4iNXhdlipM8PhZvnrbsk/RVjPmufcdiNJCFf2VIAK3uDCgFf9Q9J+CdtC5IvK7GD
-         HR2A==
+        bh=7pYOTxFSGlVG5k+ImUegey8RcLkXqCgr668GTeSPHPU=;
+        b=Jn/G+UgdcAUA+RNcG+K+xN77o0Vtf7I5+b0PYTCQH54VcojkqRE4m2RX+sNs99Pne5
+         DfXYrGLSBjVCQisktLZDkBv418FebTKvxeQhDlFeKL1AKOvkQsalQUuaE3CEa8oGp97C
+         kVTnUcEuz7zDLH6PLyAMa9qIpVVbkLL3hy4W9BH3YZeXrRrGZYuKOrhUpIdFpnLy1E31
+         KgSrnshbi56salKQxybv1HQYFRkH5rhYntU4Pd1vTfV7jjpeUI60knO/2JinbQd4IbND
+         TVXJuGDbOQRXEEyTRKQMlvk85UTNY/xFPzZYtu7kOwLqr7Gz5HwjheTpEOb2+0rcauh4
+         jA3A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=ScCSrb+0LlElQBDZymqW4N+GFGFpMM8jxuWTV0UN0ys=;
-        b=FTc0CWs1EMIi33O6BB54gUoreG/O1kJxGC84j8soVmCQke7pByQaV7Y4ihDSUHQY6R
-         +yyeLa+dId5UBXfH9FLhrYJe1KFPgGtZQM0frOfEXlCOmJ69/MGohyB9dqEd94VZ3MMf
-         YGkDgdxot3YnahWhbseMIg75Ie2OvRj6TQIDYxg3WJ4tw/UiVs34OhabSr64SMXWMF6U
-         7qoWy1HS7plG2uV63b7MH42BIJzgqCtZSFt5sVCZzArwqUt4+w/+AjIY9nUQR1wcre0O
-         fy0rlYHIgIRU7mh7v1VMxGRMUFEJcqotdX83eQCWkylO/LCU6yhQLoRWPsI2FdUT0lJh
-         yJKw==
-X-Gm-Message-State: AOAM530wrbBbrB/JmYHMinuDd+qqHigrTh7uLfxNNhOQJ98RwzKuzMAs
-        XcUBuhlVLLFG1CcUoY27LK5mxw==
-X-Google-Smtp-Source: ABdhPJz3U5WBhG6HDzWmDkcO9tCnQS+NsBaAwcTZpQCR+8C1giZ3HKcGcTxyHZaT46ODcbTJxYLPbA==
-X-Received: by 2002:a17:90b:8c5:: with SMTP id ds5mr16367049pjb.212.1628181445659;
-        Thu, 05 Aug 2021 09:37:25 -0700 (PDT)
+        bh=7pYOTxFSGlVG5k+ImUegey8RcLkXqCgr668GTeSPHPU=;
+        b=PY2ljln8lu/RKgfDhOKxejdLSdn884uzJncGr5/lWJnJN+EGiOEHnPUHP/MqJqT8ld
+         cYfj7ZpcD2n7fsywz1Kso37obA4dhBInxK0a5SMkmiY6mxK3enKesKyUXOuA6XDR91fR
+         VC81SYFnSKkN7EYMYo5OFFU1t5UJUH7Th2j2LFeYIHHhigyt7MSQNZ9ZD5WQlBumOxlC
+         CM9V3Xqu2W9R7we/Ud4bKqV9VJzA6qsqxJYmj4O8iHKp3oMErcdBNHLpVyOQ3W1mSbva
+         fTW2aI3fmRX/QQVilfPkEwE8QBICZ3W+a5gSmRd5Y6912qaJ9v/LaT8f98iQe2oBijcy
+         jtFw==
+X-Gm-Message-State: AOAM531Rx4fC0TOR8mdqpbTPww2oi49p+IagXlYOBknOxYmhi+jNmV/e
+        iuquEQjsd3FnmJ0uxwpty+sYKQ==
+X-Google-Smtp-Source: ABdhPJxCd4yhk5SyGoctI04Un47NU06NnSRlptmb1cq/6/73OZdxHd02cj7EuShbM5+lMgE//H5Crw==
+X-Received: by 2002:a17:90b:21c9:: with SMTP id ll9mr16442150pjb.161.1628181585971;
+        Thu, 05 Aug 2021 09:39:45 -0700 (PDT)
 Received: from p14s (S0106889e681aac74.cg.shawcable.net. [68.147.0.187])
-        by smtp.gmail.com with ESMTPSA id w9sm7265985pfg.151.2021.08.05.09.37.24
+        by smtp.gmail.com with ESMTPSA id x14sm7259129pfa.127.2021.08.05.09.39.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Aug 2021 09:37:25 -0700 (PDT)
-Date:   Thu, 5 Aug 2021 10:37:23 -0600
+        Thu, 05 Aug 2021 09:39:45 -0700 (PDT)
+Date:   Thu, 5 Aug 2021 10:39:43 -0600
 From:   Mathieu Poirier <mathieu.poirier@linaro.org>
 To:     Dong Aisheng <aisheng.dong@nxp.com>
-Cc:     linux-remoteproc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, ohad@wizery.com,
-        dongas86@gmail.com, bjorn.andersson@linaro.org, cleger@kalray.eu,
-        peng.fan@nxp.com
-Subject: Re: [PATCH v3 1/5] remoteproc: fix the wrong default value of
- is_iomem
-Message-ID: <20210805163723.GD3205691@p14s>
-References: <20210805033206.1295269-1-aisheng.dong@nxp.com>
+Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-remoteproc@vger.kernel.org, dongas86@gmail.com,
+        peng.fan@nxp.com, linux-imx@nxp.com, robh+dt@kernel.org,
+        shawnguo@kernel.org, kernel@pengutronix.de
+Subject: Re: [PATCH 1/2] arm64: dts: imx8mq: add remoteproc m4 support
+Message-ID: <20210805163943.GE3205691@p14s>
+References: <20210805091218.1626290-1-aisheng.dong@nxp.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210805033206.1295269-1-aisheng.dong@nxp.com>
+In-Reply-To: <20210805091218.1626290-1-aisheng.dong@nxp.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Please respin this set with all the RB and TB tags.
+Same for this set - I need Peng to add his RB _and_ TB tags to it before I
+consider for review.  Also, please start adding cover letters to your patchsets.
 
 Thanks,
 Mathieu
 
-On Thu, Aug 05, 2021 at 11:32:02AM +0800, Dong Aisheng wrote:
-> Currently the is_iomem is a random value in the stack which may
-> be default to true even on those platforms that not use iomem to
-> store firmware.
+On Thu, Aug 05, 2021 at 05:12:17PM +0800, Dong Aisheng wrote:
+> Add cm4 remoteproc which supports rpmsg naming service.
+> It needs vdevbuffer and a pair of vrings and 16MB reserved memory.
 > 
-> Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
-> Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
-> Fixes: 40df0a91b2a5 ("remoteproc: add is_iomem to da_to_va")
-> Reviewed-by: Peng Fan <peng.fan@nxp.com>
 > Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
 > ---
-> v2->v3:
->  * no changes
-> v1->v2:
->  * update rproc_copy_segment as well
-> ---
->  drivers/remoteproc/remoteproc_coredump.c   | 2 +-
->  drivers/remoteproc/remoteproc_elf_loader.c | 2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
+>  arch/arm64/boot/dts/freescale/Makefile        |  1 +
+>  .../boot/dts/freescale/imx8mq-evk-rpmsg.dts   | 72 +++++++++++++++++++
+>  2 files changed, 73 insertions(+)
+>  create mode 100644 arch/arm64/boot/dts/freescale/imx8mq-evk-rpmsg.dts
 > 
-> diff --git a/drivers/remoteproc/remoteproc_coredump.c b/drivers/remoteproc/remoteproc_coredump.c
-> index aee657cc08c6..c892f433a323 100644
-> --- a/drivers/remoteproc/remoteproc_coredump.c
-> +++ b/drivers/remoteproc/remoteproc_coredump.c
-> @@ -152,8 +152,8 @@ static void rproc_copy_segment(struct rproc *rproc, void *dest,
->  			       struct rproc_dump_segment *segment,
->  			       size_t offset, size_t size)
->  {
-> +	bool is_iomem = false;
->  	void *ptr;
-> -	bool is_iomem;
->  
->  	if (segment->dump) {
->  		segment->dump(rproc, segment, dest, offset, size);
-> diff --git a/drivers/remoteproc/remoteproc_elf_loader.c b/drivers/remoteproc/remoteproc_elf_loader.c
-> index e8078efb3dec..3cd1798f17a3 100644
-> --- a/drivers/remoteproc/remoteproc_elf_loader.c
-> +++ b/drivers/remoteproc/remoteproc_elf_loader.c
-> @@ -178,8 +178,8 @@ int rproc_elf_load_segments(struct rproc *rproc, const struct firmware *fw)
->  		u64 filesz = elf_phdr_get_p_filesz(class, phdr);
->  		u64 offset = elf_phdr_get_p_offset(class, phdr);
->  		u32 type = elf_phdr_get_p_type(class, phdr);
-> +		bool is_iomem = false;
->  		void *ptr;
-> -		bool is_iomem;
->  
->  		if (type != PT_LOAD)
->  			continue;
+> diff --git a/arch/arm64/boot/dts/freescale/Makefile b/arch/arm64/boot/dts/freescale/Makefile
+> index 4b4785d86324..687ad9d68a85 100644
+> --- a/arch/arm64/boot/dts/freescale/Makefile
+> +++ b/arch/arm64/boot/dts/freescale/Makefile
+> @@ -49,6 +49,7 @@ dtb-$(CONFIG_ARCH_MXC) += imx8mn-var-som-symphony.dtb
+>  dtb-$(CONFIG_ARCH_MXC) += imx8mp-evk.dtb
+>  dtb-$(CONFIG_ARCH_MXC) += imx8mp-phyboard-pollux-rdk.dtb
+>  dtb-$(CONFIG_ARCH_MXC) += imx8mq-evk.dtb
+> +dtb-$(CONFIG_ARCH_MXC) += imx8mq-evk-rpmsg.dtb
+>  dtb-$(CONFIG_ARCH_MXC) += imx8mq-hummingboard-pulse.dtb
+>  dtb-$(CONFIG_ARCH_MXC) += imx8mq-kontron-pitx-imx8m.dtb
+>  dtb-$(CONFIG_ARCH_MXC) += imx8mq-librem5-devkit.dtb
+> diff --git a/arch/arm64/boot/dts/freescale/imx8mq-evk-rpmsg.dts b/arch/arm64/boot/dts/freescale/imx8mq-evk-rpmsg.dts
+> new file mode 100644
+> index 000000000000..4a8911087e5f
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/freescale/imx8mq-evk-rpmsg.dts
+> @@ -0,0 +1,72 @@
+> +// SPDX-License-Identifier: (GPL-2.0 OR MIT)
+> +/*
+> + * Copyright 2019-2021 NXP
+> + */
+> +
+> +#include "imx8mq-evk.dts"
+> +
+> +/ {
+> +	reserved-memory {
+> +		#address-cells = <2>;
+> +		#size-cells = <2>;
+> +		ranges;
+> +
+> +		vdev0vring0: vdev0vring0@b8000000 {
+> +			reg = <0 0xb8000000 0 0x8000>;
+> +			no-map;
+> +		};
+> +
+> +		vdev0vring1: vdev0vring1@b8008000 {
+> +			reg = <0 0xb8008000 0 0x8000>;
+> +			no-map;
+> +		};
+> +
+> +		rsc_table: rsc-table@b80ff000 {
+> +			reg = <0 0xb80ff000 0 0x1000>;
+> +			no-map;
+> +		};
+> +
+> +		vdevbuffer: vdevbuffer@b8400000 {
+> +			compatible = "shared-dma-pool";
+> +			reg = <0 0xb8400000 0 0x100000>;
+> +			no-map;
+> +		};
+> +
+> +		remoteproc@80000000 {
+> +			reg = <0 0x80000000 0 0x1000000>;
+> +			no-map;
+> +		};
+> +	};
+> +
+> +	imx8mq-cm4 {
+> +		compatible = "fsl,imx8mq-cm4";
+> +		clocks = <&clk IMX8MQ_CLK_M4_DIV>;
+> +		mbox-names = "tx", "rx", "rxdb";
+> +		mboxes = <&mu 0 1
+> +			  &mu 1 1
+> +			  &mu 3 1>;
+> +		memory-region = <&vdevbuffer>, <&vdev0vring0>, <&vdev0vring1>,
+> +				<&rsc_table>;
+> +		syscon = <&src>;
+> +	};
+> +};
+> +
+> +/*
+> + * Below devices are allocated on remoteproc
+> + */
+> +
+> +&i2c2 {
+> +	status = "disabled";
+> +};
+> +
+> +&pwm4 {
+> +	status = "disabled";
+> +};
+> +
+> +&tmu {
+> +	status = "disabled";
+> +};
+> +
+> +&uart2 {
+> +	status = "disabled";
+> +};
 > -- 
 > 2.25.1
 > 
