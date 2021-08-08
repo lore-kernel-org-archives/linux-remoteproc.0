@@ -2,307 +2,152 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FF03C4338F
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  5 Aug 2021 23:27:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C33CC4338F
+	for <linux-remoteproc@archiver.kernel.org>; Sun,  8 Aug 2021 20:37:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EAE07610CD
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  5 Aug 2021 23:27:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2AC7C6056B
+	for <linux-remoteproc@archiver.kernel.org>; Sun,  8 Aug 2021 20:37:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236822AbhHEX2N (ORCPT
+        id S232315AbhHHUh1 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 5 Aug 2021 19:28:13 -0400
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:56396 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229626AbhHEX2M (ORCPT
+        Sun, 8 Aug 2021 16:37:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59554 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231559AbhHHUh1 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 5 Aug 2021 19:28:12 -0400
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 175NRlUJ006444;
-        Thu, 5 Aug 2021 18:27:48 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1628206068;
-        bh=DNsmsl4tSTYjHp90EBtOQMtXnrn7SIiqILGa2l0bK3o=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=rhdVSEIDOR4jnG4ia33PnGCBXMIb2avxXzkKTU18ukoxMHqF/6U6iFAfSLNSjPth2
-         fqWSjCA/fqo8xS6szu6OZHa50A1BptCGqgbu7wS/9a5JSpJ3xuWgvCkJtHL5hyKuzl
-         snIV4K0Bu4Zm2IzeNn5k6Kpy+sAyXhffTko3wbyY=
-Received: from DLEE107.ent.ti.com (dlee107.ent.ti.com [157.170.170.37])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 175NRlU2129083
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 5 Aug 2021 18:27:47 -0500
-Received: from DLEE112.ent.ti.com (157.170.170.23) by DLEE107.ent.ti.com
- (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2176.2; Thu, 5 Aug
- 2021 18:27:47 -0500
-Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE112.ent.ti.com
- (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2176.2 via
- Frontend Transport; Thu, 5 Aug 2021 18:27:47 -0500
-Received: from [10.250.68.246] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id 175NRlxh060097;
-        Thu, 5 Aug 2021 18:27:47 -0500
-Subject: Re: [PATCH v2 1/5] remoteproc: Add support for detach-only during
- shutdown
-To:     Mathieu Poirier <mathieu.poirier@linaro.org>
-CC:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Arnaud Pouliquen <arnaud.pouliquen@st.com>,
-        Loic Pallardy <loic.pallardy@st.com>,
-        Lokesh Vutla <lokeshvutla@ti.com>,
-        Praneeth Bajjuri <praneeth@ti.com>,
-        Hari Nagalla <hnagalla@ti.com>,
-        <linux-remoteproc@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20210723220248.6554-1-s-anna@ti.com>
- <20210723220248.6554-2-s-anna@ti.com> <20210802184431.GC3051951@p14s>
- <cd399fef-6db7-72eb-933f-7454a043ed14@ti.com> <20210803162311.GB3091608@p14s>
- <7e264184-60ea-a035-7bd3-1fc2c76a160d@ti.com> <20210805173506.GF3205691@p14s>
-From:   Suman Anna <s-anna@ti.com>
-Message-ID: <f7f6d096-3fea-47d4-b482-b874cb3db851@ti.com>
-Date:   Thu, 5 Aug 2021 18:27:47 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
+        Sun, 8 Aug 2021 16:37:27 -0400
+Received: from mail-ej1-x62f.google.com (mail-ej1-x62f.google.com [IPv6:2a00:1450:4864:20::62f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 96414C061760;
+        Sun,  8 Aug 2021 13:37:07 -0700 (PDT)
+Received: by mail-ej1-x62f.google.com with SMTP id hs10so25371535ejc.0;
+        Sun, 08 Aug 2021 13:37:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=XsY1naXGPpmVYSXrwp+yqNB1LAnbf0RuN1r5nzhLAKc=;
+        b=YpoIJarzT8405VxE8WC4sxtHg96SjtT5fNSHqFIQzaLuckx/pMl6h6p1S0I7ff24IA
+         aBHvrn1OEKjvBfZanjTydEWhvbgIm4NrkFvvcEITpHJN2iAbCEbgmyeuSLW/lxUtqsK1
+         HLpWOeg+qpCe3q+IX0SvIlbkcG5jad8OW0NX1dle4KmlL7ID5U1NQjVp5bN1PiXy11YP
+         wnbQnnfPSRC/vWxBLU7DcvlcIKD+ckvT0uPRHnxorXsWBc3tB1tmJMKwLv78V6CbmYP5
+         E0pX0bF5pUfLslrqs/8GeIpU9yFLPcdz5JKvoVWmIt/jdcwiofp4w2B4/pq9L406Pi5C
+         dkCQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=XsY1naXGPpmVYSXrwp+yqNB1LAnbf0RuN1r5nzhLAKc=;
+        b=Va0WAkcPt6waOuwFt6CgA5oGw6wE7LngFvWgShDsh+XDu5YjoU2L4iGNmUbBwMlHdh
+         M6hV9qOo7/r2xwnIRyuUErbsGgz65hHYDjlSML6VjYfFGJ/9TJ795ldIsL+wH9PjY7Qk
+         aC2V21uAzdPCW3iZJemAXZf7BTYmm6mkTNUD79YjhSvyWnKFYAFzZrVHw/95YrPxRcDW
+         3mRn6ufvNqheAMdnKRdebZYYHusmiZTRXrJfhJsaziMqp2/lySnai/lFvqRr32XimznJ
+         +zwBuJnXdxDxlWQn8SnhtxIFxHZWhjVlZbD38vDXfLiUFnqUXVTigEV75T+PadG/zbFZ
+         WmgA==
+X-Gm-Message-State: AOAM532ZB2Z0+7C4+FrZPHBnF053xNJYpJBapillp5Bpwrl24M3dVN8M
+        9nwdvXV6YWVFQmxrSp7e3S+w/fVggt4CdoDXi4I=
+X-Google-Smtp-Source: ABdhPJyPS9gMgKESOwyiS54NnGzpCieUBziLcUFhhc9CCfq11oy5PHyTJqO5wmW0KuUFc3nQOb342DcKuvScoSJXQN8=
+X-Received: by 2002:a17:906:b0c5:: with SMTP id bk5mr19137983ejb.428.1628455026119;
+ Sun, 08 Aug 2021 13:37:06 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20210805173506.GF3205691@p14s>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+References: <20210717234859.351911-1-martin.blumenstingl@googlemail.com>
+ <20210717234859.351911-3-martin.blumenstingl@googlemail.com>
+ <20210728175823.GA2766167@p14s> <CAFBinCB0-bAa7Y+YhscczarGrGuio37F8vRyfW6U2DiiDAvr-g@mail.gmail.com>
+ <20210805161506.GA3205691@p14s>
+In-Reply-To: <20210805161506.GA3205691@p14s>
+From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date:   Sun, 8 Aug 2021 22:36:55 +0200
+Message-ID: <CAFBinCCkOgkzuxZPby-rJeH7ei-G_khiStkX9Zs3w1u1RAd7_Q@mail.gmail.com>
+Subject: Re: [PATCH v3 2/2] remoteproc: meson-mx-ao-arc: Add a driver for the
+ AO ARC remote procesor
+To:     Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc:     linux-remoteproc@vger.kernel.org,
+        linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        bjorn.andersson@linaro.org, ohad@wizery.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On 8/5/21 12:35 PM, Mathieu Poirier wrote:
-> On Wed, Aug 04, 2021 at 02:17:22PM -0500, Suman Anna wrote:
->> Hi Mathieu,
->>
->> On 8/3/21 11:23 AM, Mathieu Poirier wrote:
->>> Good morning,
->>>
->>> On Mon, Aug 02, 2021 at 06:21:38PM -0500, Suman Anna wrote:
->>>> Hi Mathieu,
->>>>
->>>> On 8/2/21 1:44 PM, Mathieu Poirier wrote:
->>>>> On Fri, Jul 23, 2021 at 05:02:44PM -0500, Suman Anna wrote:
->>>>>> The remoteproc core has support for both stopping and detaching a
->>>>>> remote processor that was attached to previously, through both the
->>>>>> remoteproc sysfs and cdev interfaces. The rproc_shutdown() though
->>>>>> unconditionally only uses the stop functionality at present. This
->>>>>> may not be the default desired functionality for all the remoteproc
->>>>>> platform drivers.
->>>>>>
->>>>>> Enhance the remoteproc core logic to key off the presence of the
->>>>>> .stop() ops and allow the individual remoteproc drivers to continue
->>>>>> to use the standard rproc_add() and rproc_del() API. This allows
->>>>>> the remoteproc drivers to only do detach if supported when the driver
->>>>>> is uninstalled, and the remote processor continues to run undisturbed
->>>>>> even after the driver removal.
->>>>>>
->>>>>> Signed-off-by: Suman Anna <s-anna@ti.com>
->>>>>> ---
->>>>>> v2: Addressed various review comments from v1
->>>>>>  - Reworked the logic to not use remoteproc detach_on_shutdown and
->>>>>>    rely only on rproc callback ops
->>>>>>  - Updated the last para of the patch description
->>>>>> v1: https://patchwork.kernel.org/project/linux-remoteproc/patch/20210522000309.26134-3-s-anna@ti.com/
->>>>>>
->>>>>>  drivers/remoteproc/remoteproc_cdev.c  | 7 +++++++
->>>>>>  drivers/remoteproc/remoteproc_core.c  | 5 ++++-
->>>>>>  drivers/remoteproc/remoteproc_sysfs.c | 6 ++++++
->>>>>>  3 files changed, 17 insertions(+), 1 deletion(-)
->>>>>>
->>>>>> diff --git a/drivers/remoteproc/remoteproc_cdev.c b/drivers/remoteproc/remoteproc_cdev.c
->>>>>> index 4ad98b0b8caa..16c932beed88 100644
->>>>>> --- a/drivers/remoteproc/remoteproc_cdev.c
->>>>>> +++ b/drivers/remoteproc/remoteproc_cdev.c
->>>>>> @@ -42,6 +42,13 @@ static ssize_t rproc_cdev_write(struct file *filp, const char __user *buf, size_
->>>>>>  		    rproc->state != RPROC_ATTACHED)
->>>>>>  			return -EINVAL;
->>>>>>  
->>>>>> +		if (rproc->state == RPROC_ATTACHED &&
->>>>>
->>>>> This is already checked just above.
->>>>>
->>>>>> +		    !rproc->ops->stop) {
->>>>
->>>> Well, this is checking for both conditions, and not just the stop ops
->>>> independently. We expect to have .stop() defined normally for both regular
->>>> remoteproc mode and attached mode where you want to stop (and not detach), but
->>>> as you can see, I am supporting only detach and so will not have .stop() defined
->>>>  with RPROC_ATTACHED.
->>>>
->>>>>
->>>>> This is checked in rproc_stop() where -EINVAL is returned if ops::stop has not
->>>>> been provided.
->>>>
->>>> rproc_shutdown() actually doesn't return any status, so all its internal
->>>> checking gets ignored and a success is returned today.
->>>>
->>>
->>> That is correct, and I have suggested to add a return value in my previous
->>> review.
->>
->> Yeah ok. I can add a separate patch fixing that, and couple of these checks then
->> become redundant.
->>
->>>
->>>>>
->>>>>> +			dev_err(&rproc->dev,
->>>>>> +				"stop not supported for this rproc, use detach\n");
->>>>>
->>>>> The standard error message from the shell should be enough here, the same way it
->>>>> is enough when the "start" and "stop" scenarios fail.
->>>>
->>>> Thought this was a bit more informative, but sure this trace can be dropped.
->>>>
->>>>>
->>>>>> +			return -EINVAL;
->>>>>> +		}
->>>>>> +
->>>>>>  		rproc_shutdown(rproc);
->>>>>>  	} else if (!strncmp(cmd, "detach", len)) {
->>>>>>  		if (rproc->state != RPROC_ATTACHED)
->>>>>> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
->>>>>> index 7de5905d276a..ab9e52180b04 100644
->>>>>> --- a/drivers/remoteproc/remoteproc_core.c
->>>>>> +++ b/drivers/remoteproc/remoteproc_core.c
->>>>>> @@ -2075,7 +2075,10 @@ void rproc_shutdown(struct rproc *rproc)
->>>>>>  	if (!atomic_dec_and_test(&rproc->power))
->>>>>>  		goto out;
->>>>>>  
->>>>>> -	ret = rproc_stop(rproc, false);
->>>>>> +	if (rproc->state == RPROC_ATTACHED && !rproc->ops->stop)
->>>>>> +		ret = __rproc_detach(rproc);
->>>>>> +	else
->>>>>> +		ret = rproc_stop(rproc, false);
->>>>>
->>>>> As I indicated in my last review I think rproc_shutdown() and rproc_del() should
->>>>> be decoupled and the right call made in the platform drivers based on the state
->>>>> of the remote processor.  
->>>>
->>>> We have various remoteproc API provided in pairs - rproc_alloc()/rproc_free(),
->>>> rproc_add()/rproc_del(), rproc_boot()/rproc_shutdown() and
->>>> rproc_attach()/rproc_detach(). The drivers are configuring conditions for
->>>> auto-boot and RPROC_DETACHED. The reason they are coupled is primarily because
->>>> of the auto-boot done during rproc_add(). And we handle the RPROC_DETACHED case
->>>> just as well in rproc_boot().
->>>>
->>>
->>> The difference with rproc_boot() is that we are checking only the state of the
->>> remoteproc, everything else related to the remote processor operations is
->>> seamlessly handles by the state machine.  It is also tied to the
->>> rproc_trigger_auto_boot() mechanic - decoupling that would be messy without
->>> bringing any advantages other than keeping with a semantic symmetry.
->>
->> Most of this is actually tied to auto_boot if you think about it, not just the
->> rproc state. If we have auto_boot set to false, then rproc_add() would not do
->> anything, and the decision to start or attach can either be done through the
->> sysfs/cdev or a kernel remoteproc or some consumer driver. And the state machine
->> is getting influenced by this flag. auto-boot is a very useful feature.
->>
->> You are asking is to do things differently between the regular start/stop case
->> and attach/detach case ignoring the auto-boot. The semantic symmetry actually
->> makes it easier to follow the state machine given that there are some internal
->> reference counts as well.
-> 
-> I am definitely not asking to ignore the auto-boot flag.  All I said is that I
-> did not split the semantic in rproc_boot() because of the auto-boot flag and the
-> mechanic to handle it.
-> 
->>
->> Note that we also have the devres API, and rproc_alloc()/rproc_free() and
->> rproc_add()/rproc_del() form the main remoteproc subsystem API. The drivers
->> would end up using matching calls if we don't have auto_boot.
->>
->>>
->>>> While what you have suggested works, but I am not quite convinced on this
->>>> asymmetric usage, and why this state-machine logic should be split between the
->>>> core and remoteproc drivers differently between attach and detach. To me,
->>>> calling rproc_detach() in remoteproc drivers would have made sense only if they
->>>> are also calling rproc_attach().
->>>
->>> As pointed out above I see rproc_boot() as a special case but if that really
->>> concerns you I'm open to consider patches that will take rproc_attach() out of
->>> rproc_boot(). 
->>>
->>
->> We are talking about a bigger behavioral change to remoteproc core here. So I
->> would definitely want to hear from others as well on this before we spend any
->> time reworking code.
->>
->> Meanwhile, how do I take this series forward? One option I can probably do is
->> turn off auto-boot for early-boot case in my drivers and do the matching
->> attach/detach.
->>
-> 
-> I don't think there is a need to turn off auto-boot for early boot, rproc_boot()
-> will to the right thing.
-> 
-> As for the way forward, the easiest way I see is to call either rproc_shutdown()
-> or rproc_detach() based on rproc->state in rproc_del().  That will work with
-> devm_rproc_remove() and it is still possible for platorm drivers to explicitly
-> call rproc_shutdown() before rproc_del() to force a remote processor that was
-> attached to be switched off when the driver is removed.
-> 
-> That is all the time I had for remoteproc - I am officially away for the next two weeks.  
+Hi Mathieu,
 
-Yeah, I can make these modification. Let me spin a v3 with this, most probably
-waiting for you when you come back :)
+On Thu, Aug 5, 2021 at 6:15 PM Mathieu Poirier
+<mathieu.poirier@linaro.org> wrote:
+>
+> On Wed, Aug 04, 2021 at 11:03:57PM +0200, Martin Blumenstingl wrote:
+> > Hi Mathieu,
+> >
+> > thanks for taking the time to look into this!
+> >
+> > (I will address any of your comments that I am not mentioning in this
+> > email anymore. Thanks a lot for the suggestions!)
+> >
+> > On Wed, Jul 28, 2021 at 7:58 PM Mathieu Poirier
+> > <mathieu.poirier@linaro.org> wrote:
+> > [...]
+> > > > +     writel(FIELD_PREP(AO_REMAP_REG0_REMAP_AHB_SRAM_BITS_17_14_FOR_ARM_CPU,
+> > > > +                            priv->sram_pa >> 14),
+> > > Indentation problem
+> > The idea here is to align priv->sram_pa with AO_REMAP_REG0... which
+> > are both arguments to FIELD_PREP
+>
+> Right, this is what I would have expected.  When I applied the patch on my side
+> "priv->sram_pa ..." was aligned wiht the 'M' of "AO_REMAP_ ...".
+>
+> > Maybe using something like this will make that easier to read:
+> >     tmp = FIELD_PREP(AO_REMAP_REG0_REMAP_AHB_SRAM_BITS_17_14_FOR_ARM_CPU,
+> >                                      priv->sram_pa >> 14);
+> >     writel(tmp, priv->remap_base + AO_REMAP_REG0);
+>
+> I think the main problem is that
+> AO_REMAP_REG0_REMAP_AHB_SRAM_BITS_17_14_FOR_ARM_CPU is simply too long.  I
+> suggest making is shorter and add a comment to describe exactly what it does.
+AO_CPU_CNTL_AHB_SRAM_BITS_31_20 is used below and when looking at it
+now I think the alignment is also strange.
+For the next version I'll go with the tmp variable as I think it
+improves readability, even with the long(er) macro names.
 
-regards
-Suman
+[...]
+> > > > +     priv->arc_reset = devm_reset_control_get_exclusive(dev, NULL);
+> > > > +     if (IS_ERR(priv->arc_reset)) {
+> > >
+> > > Function __reset_control_get() in __devm_reset_control_get() can return NULL so
+> > > this should be IS_ERR_OR_NULL().
+> > The logic in there is: return optional ? NULL : ERR_PTR(-...);
+>
+> Ok, so you meant to do that.  And I just checked reset_control_reset() and it does
+> account for a NULL parameter.  I'm good with this one but add a comment to
+> make sure future readers don't think you've omitted to properly deal with the
+> NULL return value.
+>
+> > I am requesting a mandatory reset line here, so reset core will never
+> > return NULL
+> > See also [0]
+>
+> Indeed, I've read that too.  Nonetheless __reset_control_get() can return NULL
+> by way of __reset_control_get_from_lookup().
+I could not find where __reset_control_get_from_lookup returns NULL in
+case optional is false (which it is in this case because
+devm_reset_control_get_exclusive requests a "mandatory" reset line).
+Can you please point me to the problematic line(s) as I'd like to send
+a patch (which fixes this) to the reset subsystem maintainers
 
-> 
-> Thanks,
-> Mathieu
-> 
->> regards
->> Suman
->>
->>>>
->>>>
->>>> Conditions such as the above make the core code
->>>>> brittle, difficult to understand and tedious to maintain.
->>>>
->>>> The logic I have added actually makes rproc_shutdown behavior to be on par with
->>>> the rproc_boot().
->>>>
->>>> regards
->>>> Suman
->>>>
->>>>>
->>>>> Thanks,
->>>>> Mathieu
->>>>>
->>>>>>  	if (ret) {
->>>>>>  		atomic_inc(&rproc->power);
->>>>>>  		goto out;
->>>>>> diff --git a/drivers/remoteproc/remoteproc_sysfs.c b/drivers/remoteproc/remoteproc_sysfs.c
->>>>>> index ea8b89f97d7b..133e766f38d4 100644
->>>>>> --- a/drivers/remoteproc/remoteproc_sysfs.c
->>>>>> +++ b/drivers/remoteproc/remoteproc_sysfs.c
->>>>>> @@ -206,6 +206,12 @@ static ssize_t state_store(struct device *dev,
->>>>>>  		    rproc->state != RPROC_ATTACHED)
->>>>>>  			return -EINVAL;
->>>>>>  
->>>>>> +		if (rproc->state == RPROC_ATTACHED &&
->>>>>> +		    !rproc->ops->stop) {
->>>>>> +			dev_err(&rproc->dev, "stop not supported for this rproc, use detach\n");
->>>>>> +			return -EINVAL;
->>>>>> +		}
->>>>>> +
->>>>>>  		rproc_shutdown(rproc);
->>>>>>  	} else if (sysfs_streq(buf, "detach")) {
->>>>>>  		if (rproc->state != RPROC_ATTACHED)
->>>>>> -- 
->>>>>> 2.32.0
->>>>>>
->>>>
->>
+$ git grep -A1 devm_reset_control_get_exclusive | grep IS_ERR_OR_NULL
+drivers/remoteproc/ti_k3_r5_remoteproc.c-       if
+(IS_ERR_OR_NULL(core->reset)) {
+$
 
+I suspect that this can be simplified then as well.
+
+
+Best regards,
+Martin
+
+
+[0] https://elixir.bootlin.com/linux/v5.14-rc4/source/include/linux/reset.h#L227
+[1] https://elixir.bootlin.com/linux/v5.14-rc4/source/drivers/reset/core.c#L932
