@@ -2,128 +2,138 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6577C4338F
-	for <linux-remoteproc@archiver.kernel.org>; Mon,  9 Aug 2021 11:05:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73925C4338F
+	for <linux-remoteproc@archiver.kernel.org>; Mon,  9 Aug 2021 15:24:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9C16560295
-	for <linux-remoteproc@archiver.kernel.org>; Mon,  9 Aug 2021 11:05:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5828561019
+	for <linux-remoteproc@archiver.kernel.org>; Mon,  9 Aug 2021 15:24:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234409AbhHILFu (ORCPT
+        id S234454AbhHIPYf (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 9 Aug 2021 07:05:50 -0400
-Received: from m43-7.mailgun.net ([69.72.43.7]:12258 "EHLO m43-7.mailgun.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S234344AbhHILFt (ORCPT <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 9 Aug 2021 07:05:49 -0400
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1628507129; h=Content-Transfer-Encoding: Content-Type:
- In-Reply-To: MIME-Version: Date: Message-ID: From: References: Cc: To:
- Subject: Sender; bh=waegmgo6QVQ1/McQqZLS8wmP4jIGobm/fYg8pmRr6gA=; b=jgdwoNwN5gD3TOtkkbXCQgHZ9Alxj0iZRalAway3RlHw2UnaGZwnGGWeO1yM2DeWqGDGMYuX
- F2/lltJjIlPEB0G+gW8cChcmWcp36QzrareZ9m7/5WPj77AHfQAvz5eRqZp/eukW+J4390RJ
- Jq7E016olJigh6f1orlzZWQIhtU=
-X-Mailgun-Sending-Ip: 69.72.43.7
-X-Mailgun-Sid: WyI4ZWZiZiIsICJsaW51eC1yZW1vdGVwcm9jQHZnZXIua2VybmVsLm9yZyIsICJiZTllNGEiXQ==
-Received: from smtp.codeaurora.org
- (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
- smtp-out-n03.prod.us-east-1.postgun.com with SMTP id
- 61110becb4dfc4b0ef40564b (version=TLS1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Mon, 09 Aug 2021 11:05:16
- GMT
-Sender: deesin=codeaurora.org@mg.codeaurora.org
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 85E7AC4338A; Mon,  9 Aug 2021 11:05:15 +0000 (UTC)
-Received: from [192.168.1.3] (unknown [106.202.252.205])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: deesin)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 8B7FEC433F1;
-        Mon,  9 Aug 2021 11:05:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8B7FEC433F1
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=deesin@codeaurora.org
-Subject: Re: [PATCH V1 1/1] soc: qcom: smp2p: Add wakeup capability to SMP2P
- IRQ
-To:     Stephen Boyd <swboyd@chromium.org>, bjorn.andersson@linaro.org,
-        clew@codeaurora.org, sibis@codeaurora.org
-Cc:     linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org, Andy Gross <agross@kernel.org>
-References: <1628180254-758-1-git-send-email-deesin@codeaurora.org>
- <CAE-0n5203g4CkF5WP1fQYU57fntXbdyVBsMsTKU_xPkgvbt+7Q@mail.gmail.com>
-From:   Deepak Kumar Singh <deesin@codeaurora.org>
-Message-ID: <bf2b00c5-0826-00d2-ca95-b4ae6a030211@codeaurora.org>
-Date:   Mon, 9 Aug 2021 16:35:08 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.12.0
+        Mon, 9 Aug 2021 11:24:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57480 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233707AbhHIPYe (ORCPT
+        <rfc822;linux-remoteproc@vger.kernel.org>);
+        Mon, 9 Aug 2021 11:24:34 -0400
+Received: from mail-il1-x12a.google.com (mail-il1-x12a.google.com [IPv6:2607:f8b0:4864:20::12a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8307DC0613D3
+        for <linux-remoteproc@vger.kernel.org>; Mon,  9 Aug 2021 08:24:14 -0700 (PDT)
+Received: by mail-il1-x12a.google.com with SMTP id i9so11884563ilk.9
+        for <linux-remoteproc@vger.kernel.org>; Mon, 09 Aug 2021 08:24:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=to:from:subject:message-id:date:user-agent:mime-version
+         :content-language:content-transfer-encoding;
+        bh=N0YrjF4yal21NO5kIiR1rHPNaxzJuNy4C2enzlNDi1g=;
+        b=gw1j3e8TOyWGsp4NesgHxod+ewhvgFPRkJtYv87LnI/4VQRo9lTGKwjEx2dOBHfY3U
+         ATgzBtZ90sBQgoGzPEgX9tdL6+aq+mYxaxWA73km4zBqLePJ2Uv/V73usTnRkTHQ7DKg
+         UUEtanyvcv9vd/czrgKrSK491NUOv9xHH8XQACxuXLWzrv7gKJS2pdhTZDYx1vmXzVZO
+         UQn93xFBJUVLm18682PNnfSAjB+fJh6/FcslY6ZiRBEUX29wp/yg7DCOp/wSNFuHRTNi
+         asNk9qmQwRqMMdHJVKCeHUj/oH2eseXrYJj6M7HOFN66DwYN8hjoXr3P6dvYqqfkCGMU
+         eSjw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:to:from:subject:message-id:date:user-agent
+         :mime-version:content-language:content-transfer-encoding;
+        bh=N0YrjF4yal21NO5kIiR1rHPNaxzJuNy4C2enzlNDi1g=;
+        b=Gz0geOxchzAUUsi4eOCbaYu9g1MWIo/SkFEWTf99U2RK143IOQ+iILKh9ezg1eI1wT
+         NJ9+1UXOkld22WXp8MKWYe18yh8OU9dY38DYFt4THuWTN+iICjZ+63jpQijTIyNtrqCO
+         Y3E298uo4U8JAdUfEPmmkO4atxPeRRr0ZjqsOUzRMKDepYK9lI6BQ49Zbv8l8OgmJGJr
+         VyIFzK5cunqZc9ghlXbt6rdx9uu+zVWqgTIkizhKONQcKgbTm2Alksv0iOpFvalMuiA/
+         V3PcKK1177Lh633DNeANUUvUIHHbtP1cC7XqAUerTeDQIGnRbHTYLQ/9TYKs6Vmu4Uyy
+         9AHw==
+X-Gm-Message-State: AOAM533+0fi51yTHdCy7xmqFbMy0h8guwHgjZTW4mVkMyCe4/sdxgvPc
+        fVCKHl6OWnslVJaYm0K0WibA+bHiapoR7A==
+X-Google-Smtp-Source: ABdhPJxemqhgLiVoeC2FVjPST5MIl2eWpJzbeHuf+7YKgi+ZYvLu/VznCnGzvLz9/Q+OjxJhz8sbHA==
+X-Received: by 2002:a05:6e02:1041:: with SMTP id p1mr126061ilj.125.1628522653721;
+        Mon, 09 Aug 2021 08:24:13 -0700 (PDT)
+Received: from [172.22.22.4] (c-73-185-129-58.hsd1.mn.comcast.net. [73.185.129.58])
+        by smtp.googlemail.com with ESMTPSA id q10sm10680097ion.3.2021.08.09.08.24.12
+        for <linux-remoteproc@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 09 Aug 2021 08:24:13 -0700 (PDT)
+To:     linux-remoteproc@vger.kernel.org
+From:   Alex Elder <elder@linaro.org>
+Subject: Remoteproc and system suspend/resume
+Message-ID: <83426563-082f-5fee-4c25-b8ae46ff748f@linaro.org>
+Date:   Mon, 9 Aug 2021 10:24:12 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.11.0
 MIME-Version: 1.0
-In-Reply-To: <CAE-0n5203g4CkF5WP1fQYU57fntXbdyVBsMsTKU_xPkgvbt+7Q@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
 Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
+I'm adding automatic runtime suspend/resume to the IPA
+driver, and it interacts with a modem (qcom_q6v5_mss.c).
 
-On 8/6/2021 1:10 AM, Stephen Boyd wrote:
-> Quoting Deepak Kumar Singh (2021-08-05 09:17:33)
->> Some use cases require SMP2P interrupts to wake up the host
->> from suspend.
-> Please elaborate on this point so we understand what sort of scenarios
-> want to wakeup from suspend.
+One of the things I'm trying to avoid is errors being
+returned from pm_runtime_get_sync().  If I ignore the
+possibility that my hardware produces an error when
+powering up, the only condition that I expect could
+produce an error here is if the *system* is suspended
+at the time I call pm_runtime_get_sync().  And I would
+like to preclude that if possible.
 
-Once such scenario is where WiFi/modem crashes and notifies crash to 
-local host through smp2p
+One of the things the IPA driver depends on is remoteproc
+"SSR" notification; certain activities are triggered by
+modem starting or modem crashed/shutdown events.
 
-if local host is in suspend it should wake up to handle the crash and 
-reboot the WiFi/modem.
+In one example, I need to call pm_runtime_get_sync()
+when a QCOM_SSR_BEFORE_POWERUP notification arrives.
+That notification is implemented by ssr_notify_prepare()
+in the SSR subdevice, via rproc_prepare_subdevices().
+That function is called from rproc_start() as well as
+__rproc_attach().
 
->> Mark smp2p interrupt as wakeup capable to abort
->> the suspend.
->>
->> Signed-off-by: Deepak Kumar Singh <deesin@codeaurora.org>
->> ---
->>   drivers/soc/qcom/smp2p.c | 11 +++++++++++
->>   1 file changed, 11 insertions(+)
->>
->> diff --git a/drivers/soc/qcom/smp2p.c b/drivers/soc/qcom/smp2p.c
->> index 2df4883..f8659b0 100644
->> --- a/drivers/soc/qcom/smp2p.c
->> +++ b/drivers/soc/qcom/smp2p.c
->> @@ -18,6 +18,7 @@
->>   #include <linux/soc/qcom/smem.h>
->>   #include <linux/soc/qcom/smem_state.h>
->>   #include <linux/spinlock.h>
->> +#include <linux/pm_wakeirq.h>
->>
->>   /*
->>    * The Shared Memory Point to Point (SMP2P) protocol facilitates communication
->> @@ -538,9 +539,19 @@ static int qcom_smp2p_probe(struct platform_device *pdev)
->>                  goto unwind_interfaces;
->>          }
->>
->> +       ret = device_init_wakeup(&pdev->dev, true);
-> Is smp2p supposed to wake up the device by default? If not, then this
-> should be device_set_wakeup_capable() instead so that userspace can
-> decide if it wants to get the wakeup.
-yes, we want smp2p to be wake up capable by default.
->> +       if (ret)
->> +               goto unwind_interfaces;
->> +
->> +       ret = dev_pm_set_wake_irq(&pdev->dev, irq);
->> +       if (ret)
->> +               goto set_wakeup_failed;
-> Otherwise this looks good to me.
->
->>          return 0;
->>
->> +set_wakeup_failed:
->> +       device_init_wakeup(&pdev->dev, false);
->> +
->>   unwind_interfaces:
->>          list_for_each_entry(entry, &smp2p->inbound, node)
->>                  irq_domain_remove(entry->domain);
+Similarly, upon receipt of a QCOM_SSR_BEFORE_SHUTDOWN
+notification I again need to call pm_runtime_get_sync().
+
+It would be nice to know that the system was not
+suspended (and a system suspend will not be initiated)
+while I'm handling the SSR notifications.
+
+
+I notice that rproc_report_crash() includes this:
+
+         /* Prevent suspend while the remoteproc is being recovered */
+         pm_stay_awake(rproc->dev.parent);
+         /* . . . */
+         schedule_work(&rproc->crash_handler);
+
+And the crash handler work function contains this:
+
+         if (!rproc->recovery_disabled)
+                 rproc_trigger_recovery(rproc);
+
+         pm_relax(rproc->dev.parent);
+
+In other words, if a crash occurs, system suspend is
+prevented until recovery is complete.  And ultimately
+that means that the SSR notification for a modem
+remoteproc crash will not be run when the system
+is suspended, and no system suspend will be started
+before the notification handler completes.
+
+But there is no such system suspend prevention in the
+other cases I mention (attach and firmware boot).  So:
+- Why does rproc_report_crash() call pm_stay_awake()?
+- Why do other functions that cause state transitions
+   of a remoteproc (like the modem) *not* call
+   pm_stay_awake() until the transition is complete?
+     - rproc_fw_boot(), rproc_attach, rproc_shutdown()
+- Should all remoteproc transitions be prevented
+   from occurring while the system is suspended,
+   and protected from interruption by a system
+   suspend while the transition is underway?
+
+                     -Alex
