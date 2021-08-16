@@ -2,82 +2,110 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4842C4338F
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 13 Aug 2021 20:57:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9340C4338F
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 16 Aug 2021 10:08:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BD42E61038
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 13 Aug 2021 20:57:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 83DA161B43
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 16 Aug 2021 10:08:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234558AbhHMU5b (ORCPT
+        id S233423AbhHPKIu (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 13 Aug 2021 16:57:31 -0400
-Received: from mail-oi1-f182.google.com ([209.85.167.182]:43597 "EHLO
-        mail-oi1-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229519AbhHMU5a (ORCPT
-        <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 13 Aug 2021 16:57:30 -0400
-Received: by mail-oi1-f182.google.com with SMTP id bf25so8989145oib.10;
-        Fri, 13 Aug 2021 13:57:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=3wvmf7DOu12lxJGmuxwNus8Ei0TqBPYTO/Ya0rfIezM=;
-        b=XZ4bez+jEoD0nxwvVfnM7MR6X5KngPCcAVyh01S50NBYomgdsYxQG3MhZJvS2LzrKR
-         HRbhANSVwS9Z6Rq2PyXKsSadVqIWprYl8dD8SdQRvhytBHd6UF9AaHJY+9QNZNEsEdbV
-         pznvHDWPDwuzEUDzGjv3ZD0PdTTiymf4FFdoZ0tfMwaT4gpPHVgLzw0GjmdKcn6UOMKE
-         dZbx211SMpCTP0mNQw2RsDQQYgqsxKCFO0WLNtzNSD7xaOynv5sWdec3Zrnio/dpCakk
-         riFbRxeYCXE2RrUEjkzGeiS4xcXRER+6spdsX0NYJ0Y2zzcf2o0bLOkeJZq7BWtwXiQU
-         Nd4A==
-X-Gm-Message-State: AOAM5325oswN6YB45jD6kq0OdRve/6wh+uLedNEkr0k746KPJfx7lfou
-        boiaFekHDdsCXENek8jvVg==
-X-Google-Smtp-Source: ABdhPJzEqww+nuVlBCG4CJ4QIjNt2ny8eoAF/xFTGVu66sG0M0ICoNa+C3HT50atfQpNHUR72XfXZw==
-X-Received: by 2002:a05:6808:85:: with SMTP id s5mr3627786oic.31.1628888223215;
-        Fri, 13 Aug 2021 13:57:03 -0700 (PDT)
-Received: from robh.at.kernel.org (2603-8080-2a06-ed00-a2a6-2d62-395f-9378.res6.spectrum.com. [2603:8080:2a06:ed00:a2a6:2d62:395f:9378])
-        by smtp.gmail.com with ESMTPSA id l9sm530729otr.34.2021.08.13.13.57.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Aug 2021 13:57:02 -0700 (PDT)
-Received: (nullmailer pid 4019042 invoked by uid 1000);
-        Fri, 13 Aug 2021 20:57:00 -0000
-Date:   Fri, 13 Aug 2021 15:57:00 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Tinghan Shen <tinghan.shen@mediatek.com>
-Cc:     devicetree@vger.kernel.org, krzysztof.kozlowski@canonical.com,
-        robh+dt@kernel.org, matthias.bgg@gmail.com, shawnguo@kernel.org,
-        sam@ravnborg.org, geert+renesas@glider.be, fanghao11@huawei.com,
-        daniel@0x0f.com, linux-remoteproc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, ohad@wizery.com,
-        linux@rempel-privat.de, bjorn.andersson@linaro.org,
-        linux-kernel@vger.kernel.org, Max.Merchel@tq-group.com,
-        linux-mediatek@lists.infradead.org, mathieu.poirier@linaro.org
-Subject: Re: [PATCH v6 3/6] dt-bindings: remoteproc: mediatek: Convert
- mtk,scp to json-schema
-Message-ID: <YRbcnKLx43UcJNSm@robh.at.kernel.org>
-References: <20210809051959.31136-1-tinghan.shen@mediatek.com>
- <20210809051959.31136-4-tinghan.shen@mediatek.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210809051959.31136-4-tinghan.shen@mediatek.com>
+        Mon, 16 Aug 2021 06:08:50 -0400
+Received: from m43-7.mailgun.net ([69.72.43.7]:45569 "EHLO m43-7.mailgun.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S232210AbhHPKIs (ORCPT <rfc822;linux-remoteproc@vger.kernel.org>);
+        Mon, 16 Aug 2021 06:08:48 -0400
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1629108497; h=Message-Id: Date: Subject: Cc: To: From:
+ Sender; bh=stLY7GkwYgSHcjhNXA7SopqN29wNOpHyzuWjB7u9WJA=; b=DQsJSrthZRoHTIdXYt4RwzB8HgzX19BKAAGc67dfx3RNeHFN/5gYaPocS8RvwvH+LYTqfRWO
+ XrKS+vIljzTjZUbya+YRAiFVoUvS1O3XL923RnlNMG0CRUVpM33bho6Alh1+1dSMI8Cy/Rt9
+ ewlfCs75i6h/tXv4cNuAW/WwxWA=
+X-Mailgun-Sending-Ip: 69.72.43.7
+X-Mailgun-Sid: WyI4ZWZiZiIsICJsaW51eC1yZW1vdGVwcm9jQHZnZXIua2VybmVsLm9yZyIsICJiZTllNGEiXQ==
+Received: from smtp.codeaurora.org
+ (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
+ smtp-out-n03.prod.us-west-2.postgun.com with SMTP id
+ 611a3883f746c298d97e22c3 (version=TLS1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Mon, 16 Aug 2021 10:05:55
+ GMT
+Sender: deesin=codeaurora.org@mg.codeaurora.org
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 95F14C4360C; Mon, 16 Aug 2021 10:05:54 +0000 (UTC)
+Received: from deesin-linux.qualcomm.com (unknown [202.46.22.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: deesin)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id ED5FDC4338F;
+        Mon, 16 Aug 2021 10:05:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.1 smtp.codeaurora.org ED5FDC4338F
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=codeaurora.org
+From:   Deepak Kumar Singh <deesin@codeaurora.org>
+To:     bjorn.andersson@linaro.org, swboyd@chromium.org,
+        clew@codeaurora.org, sibis@codeaurora.org
+Cc:     linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org,
+        Deepak Kumar Singh <deesin@codeaurora.org>,
+        Andy Gross <agross@kernel.org>
+Subject: [PATCH V2 1/1] soc: qcom: smp2p: Add wakeup capability to SMP2P IRQ
+Date:   Mon, 16 Aug 2021 15:35:35 +0530
+Message-Id: <1629108335-23463-1-git-send-email-deesin@codeaurora.org>
+X-Mailer: git-send-email 2.7.4
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Mon, 09 Aug 2021 13:19:56 +0800, Tinghan Shen wrote:
-> Convert the mtk,scp binding to DT schema format using json-schema.
-> 
-> Signed-off-by: Tinghan Shen <tinghan.shen@mediatek.com>
-> ---
->  .../bindings/remoteproc/mtk,scp.txt           | 41 ---------
->  .../bindings/remoteproc/mtk,scp.yaml          | 92 +++++++++++++++++++
->  2 files changed, 92 insertions(+), 41 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/remoteproc/mtk,scp.txt
->  create mode 100644 Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml
-> 
+Remote susbsystems notify fatal crash throught smp2p interrupt.
+When modem/wifi crashes it can cause soc to come out of low power state
+and may not allow again to enter in low power state until crash is handled.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Mark smp2p interrupt wakeup capable so that interrupt handler is executed
+and remote susbsystem crash can be handled in system  resume path.
+
+Signed-off-by: Deepak Kumar Singh <deesin@codeaurora.org>
+---
+ drivers/soc/qcom/smp2p.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
+
+diff --git a/drivers/soc/qcom/smp2p.c b/drivers/soc/qcom/smp2p.c
+index 2df4883..646848b 100644
+--- a/drivers/soc/qcom/smp2p.c
++++ b/drivers/soc/qcom/smp2p.c
+@@ -18,6 +18,7 @@
+ #include <linux/soc/qcom/smem.h>
+ #include <linux/soc/qcom/smem_state.h>
+ #include <linux/spinlock.h>
++#include <linux/pm_wakeirq.h>
+ 
+ /*
+  * The Shared Memory Point to Point (SMP2P) protocol facilitates communication
+@@ -538,9 +539,20 @@ static int qcom_smp2p_probe(struct platform_device *pdev)
+ 		goto unwind_interfaces;
+ 	}
+ 
++	/* Setup smp2p interrupt as wakeup source */
++	ret = device_init_wakeup(&pdev->dev, true);
++	if (ret)
++		goto unwind_interfaces;
++
++	ret = dev_pm_set_wake_irq(&pdev->dev, irq);
++	if (ret)
++		goto set_wakeup_failed;
+ 
+ 	return 0;
+ 
++set_wakeup_failed:
++	device_init_wakeup(&pdev->dev, false);
++
+ unwind_interfaces:
+ 	list_for_each_entry(entry, &smp2p->inbound, node)
+ 		irq_domain_remove(entry->domain);
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
+
