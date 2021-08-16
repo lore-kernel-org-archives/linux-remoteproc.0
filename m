@@ -2,110 +2,119 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9340C4338F
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 16 Aug 2021 10:08:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB471C4338F
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 16 Aug 2021 11:12:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 83DA161B43
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 16 Aug 2021 10:08:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AFE2961C11
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 16 Aug 2021 11:12:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233423AbhHPKIu (ORCPT
+        id S235929AbhHPLMp (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 16 Aug 2021 06:08:50 -0400
-Received: from m43-7.mailgun.net ([69.72.43.7]:45569 "EHLO m43-7.mailgun.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232210AbhHPKIs (ORCPT <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 16 Aug 2021 06:08:48 -0400
+        Mon, 16 Aug 2021 07:12:45 -0400
+Received: from so254-9.mailgun.net ([198.61.254.9]:32052 "EHLO
+        so254-9.mailgun.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231143AbhHPLMo (ORCPT
+        <rfc822;linux-remoteproc@vger.kernel.org>);
+        Mon, 16 Aug 2021 07:12:44 -0400
 DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1629108497; h=Message-Id: Date: Subject: Cc: To: From:
- Sender; bh=stLY7GkwYgSHcjhNXA7SopqN29wNOpHyzuWjB7u9WJA=; b=DQsJSrthZRoHTIdXYt4RwzB8HgzX19BKAAGc67dfx3RNeHFN/5gYaPocS8RvwvH+LYTqfRWO
- XrKS+vIljzTjZUbya+YRAiFVoUvS1O3XL923RnlNMG0CRUVpM33bho6Alh1+1dSMI8Cy/Rt9
- ewlfCs75i6h/tXv4cNuAW/WwxWA=
-X-Mailgun-Sending-Ip: 69.72.43.7
+ s=smtp; t=1629112333; h=Content-Transfer-Encoding: Content-Type:
+ In-Reply-To: MIME-Version: Date: Message-ID: From: References: Cc: To:
+ Subject: Sender; bh=u5sPAV/lkbkRUwSXinAbzwupjK8Yencd4Nn83gWmewY=; b=uSreDpPx9xwzt/Lr+JvBeBoD98lIo0hK05CSIwmxWxj2f9p+sDL34Jq/jw+EwaYyUsQyejmB
+ qA37VIfLP/AZ1vyov2VqgZsJh8r7z4e6Hkltck4iEbPEXZLLTB/GInThLPSc2h6BrGB0O2hP
+ FFETwhljSqk3nUgqCvE3VTVjMLk=
+X-Mailgun-Sending-Ip: 198.61.254.9
 X-Mailgun-Sid: WyI4ZWZiZiIsICJsaW51eC1yZW1vdGVwcm9jQHZnZXIua2VybmVsLm9yZyIsICJiZTllNGEiXQ==
 Received: from smtp.codeaurora.org
  (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
- smtp-out-n03.prod.us-west-2.postgun.com with SMTP id
- 611a3883f746c298d97e22c3 (version=TLS1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Mon, 16 Aug 2021 10:05:55
+ smtp-out-n04.prod.us-east-1.postgun.com with SMTP id
+ 611a47f97ee604097778ed15 (version=TLS1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Mon, 16 Aug 2021 11:11:53
  GMT
 Sender: deesin=codeaurora.org@mg.codeaurora.org
 Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 95F14C4360C; Mon, 16 Aug 2021 10:05:54 +0000 (UTC)
-Received: from deesin-linux.qualcomm.com (unknown [202.46.22.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        id 86B72C4360D; Mon, 16 Aug 2021 11:11:52 +0000 (UTC)
+Received: from [192.168.1.3] (unknown [122.163.152.128])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
         (Authenticated sender: deesin)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id ED5FDC4338F;
-        Mon, 16 Aug 2021 10:05:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.1 smtp.codeaurora.org ED5FDC4338F
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 481CFC4360C;
+        Mon, 16 Aug 2021 11:11:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.1 smtp.codeaurora.org 481CFC4360C
 Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=codeaurora.org
+Subject: Re: [PATCH V1 1/1] soc: qcom: smp2p: Add wakeup capability to SMP2P
+ IRQ
+To:     Stephen Boyd <swboyd@chromium.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Sibi Sankar <sibis@codeaurora.org>, clew@codeaurora.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org, Andy Gross <agross@kernel.org>
+References: <1628180254-758-1-git-send-email-deesin@codeaurora.org>
+ <CAE-0n5203g4CkF5WP1fQYU57fntXbdyVBsMsTKU_xPkgvbt+7Q@mail.gmail.com>
+ <bf2b00c5-0826-00d2-ca95-b4ae6a030211@codeaurora.org>
+ <CAE-0n53ojhs+RMpsYtVjsrYbb_PRdkJOvxFhiTtJPMUDuoP_eA@mail.gmail.com>
+ <8009f5a1458468dbf0b7b20dd166911c@codeaurora.org>
+ <CAE-0n53TCo1UTVi3e18N5hF3+Y_bLiqgH1o5PEua7F9-bog_gQ@mail.gmail.com>
+ <YRMHjmEG3l4SolTi@builder.lan>
+ <CAE-0n51+t6ATCcDgfKeMyh0f0p0=otnUmBjChViX-r3qJYfhZg@mail.gmail.com>
 From:   Deepak Kumar Singh <deesin@codeaurora.org>
-To:     bjorn.andersson@linaro.org, swboyd@chromium.org,
-        clew@codeaurora.org, sibis@codeaurora.org
-Cc:     linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org,
-        Deepak Kumar Singh <deesin@codeaurora.org>,
-        Andy Gross <agross@kernel.org>
-Subject: [PATCH V2 1/1] soc: qcom: smp2p: Add wakeup capability to SMP2P IRQ
-Date:   Mon, 16 Aug 2021 15:35:35 +0530
-Message-Id: <1629108335-23463-1-git-send-email-deesin@codeaurora.org>
-X-Mailer: git-send-email 2.7.4
+Message-ID: <bcbd4fc6-9646-a526-16f9-cefd912d1de0@codeaurora.org>
+Date:   Mon, 16 Aug 2021 16:41:46 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.12.0
+MIME-Version: 1.0
+In-Reply-To: <CAE-0n51+t6ATCcDgfKeMyh0f0p0=otnUmBjChViX-r3qJYfhZg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Remote susbsystems notify fatal crash throught smp2p interrupt.
-When modem/wifi crashes it can cause soc to come out of low power state
-and may not allow again to enter in low power state until crash is handled.
 
-Mark smp2p interrupt wakeup capable so that interrupt handler is executed
-and remote susbsystem crash can be handled in system  resume path.
-
-Signed-off-by: Deepak Kumar Singh <deesin@codeaurora.org>
----
- drivers/soc/qcom/smp2p.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
-
-diff --git a/drivers/soc/qcom/smp2p.c b/drivers/soc/qcom/smp2p.c
-index 2df4883..646848b 100644
---- a/drivers/soc/qcom/smp2p.c
-+++ b/drivers/soc/qcom/smp2p.c
-@@ -18,6 +18,7 @@
- #include <linux/soc/qcom/smem.h>
- #include <linux/soc/qcom/smem_state.h>
- #include <linux/spinlock.h>
-+#include <linux/pm_wakeirq.h>
- 
- /*
-  * The Shared Memory Point to Point (SMP2P) protocol facilitates communication
-@@ -538,9 +539,20 @@ static int qcom_smp2p_probe(struct platform_device *pdev)
- 		goto unwind_interfaces;
- 	}
- 
-+	/* Setup smp2p interrupt as wakeup source */
-+	ret = device_init_wakeup(&pdev->dev, true);
-+	if (ret)
-+		goto unwind_interfaces;
-+
-+	ret = dev_pm_set_wake_irq(&pdev->dev, irq);
-+	if (ret)
-+		goto set_wakeup_failed;
- 
- 	return 0;
- 
-+set_wakeup_failed:
-+	device_init_wakeup(&pdev->dev, false);
-+
- unwind_interfaces:
- 	list_for_each_entry(entry, &smp2p->inbound, node)
- 		irq_domain_remove(entry->domain);
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
-
+On 8/11/2021 9:55 AM, Stephen Boyd wrote:
+> Quoting Bjorn Andersson (2021-08-10 16:11:10)
+>> On Tue 10 Aug 14:18 CDT 2021, Stephen Boyd wrote:
+>>
+>>> Quoting Sibi Sankar (2021-08-10 10:24:32)
+>>>> On 2021-08-09 23:28, Stephen Boyd wrote:
+>>>>> Quoting Deepak Kumar Singh (2021-08-09 04:05:08)
+>>>>>> On 8/6/2021 1:10 AM, Stephen Boyd wrote:
+>>>>>>> Quoting Deepak Kumar Singh (2021-08-05 09:17:33)
+>>>>>>>> Some use cases require SMP2P interrupts to wake up the host
+>>>>>>>> from suspend.
+>>>>>>> Please elaborate on this point so we understand what sort of scenarios
+>>>>>>> want to wakeup from suspend.
+>>>>>> Once such scenario is where WiFi/modem crashes and notifies crash to
+>>>>>> local host through smp2p
+>>>>>>
+>>>>>> if local host is in suspend it should wake up to handle the crash and
+>>>>>> reboot the WiFi/modem.
+>>>>> Does anything go wrong if the firmware crashes during suspend and the
+>>>>> local host doesn't handle it until it wakes for some other reason? I'd
+>>>>> like to understand if the crash handling can be delayed/combined with
+>>>>> another wakeup.
+>>>> If the modem firmware crashes
+>>>> during suspend, the system comes
+>>>> out of xo-shutdown and AFAIK stays
+>>>> there until we handle the interrupt.
+>>>>
+>>> So you're saying we waste power if we don't wakeup the AP and leave the
+>>> SoC in a shallow low power state? That would be good to have indicated
+>>> in the code via a comment and in the commit text so we know that we want
+>>> to handle the wakeup by default.
+>> Sounds like in a system without autosleep (or userspace equivalent) it
+>> would be desirable to leave the SoC in this lower state than to wake up
+>> the system handle the crash and then just idle?
+>>
+>> But leaving the system in this state will result in you missing your
+>> important phone calls...
+>>
+> Yes I think we should just add a comment to the code and commit text and
+> move on.
+Thanks, updated in patch set V2
