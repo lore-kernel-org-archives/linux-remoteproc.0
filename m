@@ -2,134 +2,123 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-19.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BFAE7C43214
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 18 Aug 2021 06:06:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F5C2C4338F
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 18 Aug 2021 08:05:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A85076112F
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 18 Aug 2021 06:06:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E4DB26108E
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 18 Aug 2021 08:05:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238232AbhHRGGc (ORCPT
+        id S239292AbhHRIGJ (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 18 Aug 2021 02:06:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44284 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238116AbhHRGG3 (ORCPT
+        Wed, 18 Aug 2021 04:06:09 -0400
+Received: from egress-ip4b.ess.de.barracuda.com ([18.185.115.208]:47154 "EHLO
+        egress-ip4b.ess.de.barracuda.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S239164AbhHRIFy (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 18 Aug 2021 02:06:29 -0400
-Received: from mail-pj1-x1033.google.com (mail-pj1-x1033.google.com [IPv6:2607:f8b0:4864:20::1033])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B3D20C0617A8
-        for <linux-remoteproc@vger.kernel.org>; Tue, 17 Aug 2021 23:05:53 -0700 (PDT)
-Received: by mail-pj1-x1033.google.com with SMTP id j12-20020a17090aeb0c00b00179530520b3so8282269pjz.0
-        for <linux-remoteproc@vger.kernel.org>; Tue, 17 Aug 2021 23:05:53 -0700 (PDT)
+        Wed, 18 Aug 2021 04:05:54 -0400
+X-Greylist: delayed 1473 seconds by postgrey-1.27 at vger.kernel.org; Wed, 18 Aug 2021 04:05:54 EDT
+Received: from mail-vs1-f69.google.com (mail-vs1-f69.google.com [209.85.217.69]) by mx-outbound22-121.eu-central-1b.ess.aws.cudaops.com (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO); Wed, 18 Aug 2021 08:05:17 +0000
+Received: by mail-vs1-f69.google.com with SMTP id p13-20020a67a60d0000b02902a88e22a5e8so311664vse.14
+        for <linux-remoteproc@vger.kernel.org>; Wed, 18 Aug 2021 01:05:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=q4cKFwd96rtgoKUA6YKX4IuNE9lx/g0UxBcz1pPF338=;
-        b=XMP/StYU8/uLPb/wnRLBGcR3u0V44//53QV0+x1LgHJ11cZUCGD0IAf1IdZ9lDwoLp
-         ZWOz/05bmRXmG9lRDJTD/ZXWTRiCTSdo0A6fczMhmhv2vGilaJvHGHdE7jf23BYsCSiQ
-         dajYZnjb8/arsD8ARG/qxbTWVP2y2RLAspLSY=
+        d=mistralsolutions.com; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=UkIuG9kG2oKl5x8f+ApK/mUtbc6w+fjs3SOOWN0kRIM=;
+        b=lr0HtKv9rPHKgCeJK6CrjS5BRAZ1C4gQekRy3DuWQbU6als+LRedy/my6VvNNdKrzL
+         oeepcNTjfgJEUIJB6A/fUlLESmSSfLP77HUvbevgfa4yUecJmIAGHdHdJXIY/5T/ZKpV
+         3/DSkwHpdm/UGUhK/7lqjaNCTabKq3+R8tSCo=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=q4cKFwd96rtgoKUA6YKX4IuNE9lx/g0UxBcz1pPF338=;
-        b=sVO+GcIR6QjbG1GVLxkByYFJhtmNsiZl6zGa+sfwGHUDUxrBPgNpOxK+Tp88ve337U
-         d7yco5FlzTm5TacJcqvQ6s4hT+KcSvzKQW+X8/atQuCmXbPbHwBkGkpPTDblKX5qTWWD
-         s5Cyr72bK4jf9D+X3TgCSQzGLpYoAVkJkIQtEAJyq2rTSXQttbAuWGxnTfBQVE3K0xqX
-         rdhFeGq7eOedXGaQdsWFx16X1zjSHCl7YvHgwvg7N/MrGX4IyZ9xq/tnrK0jZBSB3IxI
-         mcYqO7nHLmU89P65+V1oupk0A1xiv9+99u+PdAWTZ8zZbXV74++KcKNWUfp23G5rAv41
-         rdiA==
-X-Gm-Message-State: AOAM5303C870Gf6CrXG7zDlX1JBhiiizW0yT1UjPWbAGSmSzEC+8aUiE
-        n8NHqszB7Fa0bYhXM3cGTZ3l8w==
-X-Google-Smtp-Source: ABdhPJzh3Fos81jJQtXdS+gHGD3Ay4RQaFm6BN3MlQDNgQinKTKzGT7YEaeNTn6TT/NjBcYzUiAE7g==
-X-Received: by 2002:a17:90a:c244:: with SMTP id d4mr7684531pjx.38.1629266753333;
-        Tue, 17 Aug 2021 23:05:53 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id j4sm5379890pgi.6.2021.08.17.23.05.50
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=UkIuG9kG2oKl5x8f+ApK/mUtbc6w+fjs3SOOWN0kRIM=;
+        b=EATM1aYmJHqSAxqc65/lPkMMdv7pxmi6gvgcOMn6uRO3btGzc0ul98CvvVW0VC8CI6
+         AC+K897C4MFgh66PsslxN1iB/SXtw9KSkWMem+DwP3JVQXnzxDMMh1rC6QbZqTepzK5t
+         mC1NqrkaiiElr7+91l85xiz7G9UjeKd/oNuttT/ZXNIWGNa7I6AdtymGr4oRAD/qZkF7
+         bfkeHnXYwymk3u9ueBqSc923YrhYIauU5dBrnJo7Oa1+dEVLr/izk2fe3OPbhOkwi9sk
+         G2dkorlSfoEZ75gZ5wpSgUKmLgQ0IjgIP1KhZZNmwLNlS+GS3wpFG4MW0QHzarJfz0Qx
+         VPww==
+X-Gm-Message-State: AOAM531aGOh6UEfXHVEgnKwnYmx2AehvHpQeBUrvgMhuyEj10+1iY0Da
+        gg8C4J7MDM7yQfaEUd1CWR4bMeQsDJe6/94eGBFlnGMNP3aV19ejQ46g4tYNC+qjiN+sVcGAj03
+        pSQdNhBazeTjh87SCqp2Xzo5S21/CxBtOU3X/v2/wcuWnAob/2cr8VAVDwHgQy0yQrA==
+X-Received: by 2002:a17:903:248f:b029:128:d5ea:18a7 with SMTP id p15-20020a170903248fb0290128d5ea18a7mr6302801plw.83.1629272441673;
+        Wed, 18 Aug 2021 00:40:41 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJzW12eztIemFNz4nqgJdsosiXRAEcL1J4Iw8uicr4OKsG4mgSPpr0fXRPt4Rust4y8D+4i9aA==
+X-Received: by 2002:a17:903:248f:b029:128:d5ea:18a7 with SMTP id p15-20020a170903248fb0290128d5ea18a7mr6302778plw.83.1629272441424;
+        Wed, 18 Aug 2021 00:40:41 -0700 (PDT)
+Received: from LAP568U.mistral.in ([106.51.227.150])
+        by smtp.gmail.com with ESMTPSA id 186sm5224756pfg.11.2021.08.18.00.40.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Aug 2021 23:05:51 -0700 (PDT)
-From:   Kees Cook <keescook@chromium.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Kees Cook <keescook@chromium.org>, Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Ohad Ben-Cohen <ohad@wizery.com>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        "Gustavo A . R . Silva" <gustavoars@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-staging@lists.linux.dev,
-        linux-block@vger.kernel.org, linux-kbuild@vger.kernel.org,
-        clang-built-linux@googlegroups.com,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        linux-hardening@vger.kernel.org
-Subject: [PATCH v2 03/63] rpmsg: glink: Replace strncpy() with strscpy_pad()
-Date:   Tue, 17 Aug 2021 23:04:33 -0700
-Message-Id: <20210818060533.3569517-4-keescook@chromium.org>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210818060533.3569517-1-keescook@chromium.org>
-References: <20210818060533.3569517-1-keescook@chromium.org>
+        Wed, 18 Aug 2021 00:40:40 -0700 (PDT)
+From:   Sinthu Raja <sinthu.raja@mistralsolutions.com>
+X-Google-Original-From: Sinthu Raja <sinthu.raja@ti.com>
+To:     Ohad Ben-Cohen <ohad@wizery.com>, Rob Herring <robh+dt@kernel.org>,
+        Suman Anna <s-anna@ti.com>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc:     linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Nishanth Menon <nm@ti.com>,
+        Lokesh Vutla <lokeshvutla@ti.com>,
+        Sinthu Raja <sinthu.raja@ti.com>
+Subject: [PATCH V1] dt-bindings: remoteproc: k3-dsp: Update example to remove board specific
+Date:   Wed, 18 Aug 2021 13:10:30 +0530
+Message-Id: <20210818074030.1877-1-sinthu.raja@ti.com>
+X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2189; h=from:subject; bh=zEHqpi3jCPJJtimsK7NnbA6EWwLoFKP9r9dL5ArZyiQ=; b=owEBbQKS/ZANAwAKAYly9N/cbcAmAcsmYgBhHKMe8xrKEUyyynWY+9ZZnkpsPM1eYEwBqySCGW3z U2JTvZSJAjMEAAEKAB0WIQSlw/aPIp3WD3I+bhOJcvTf3G3AJgUCYRyjHgAKCRCJcvTf3G3AJsNcD/ 9XTm0UNtLhF3pcJlIGQ3OBX+21oX4i3rCVVUF6tE46BnLDEeTE53Dgx2PT3pmkaqnzHQEBiWdAf3D+ 2ibPEIWXlwbj/FEpJcA5DcOhIfEfnzVBjHhlpnJrh3SUlVbIH9XtzFjtsdZ62/6vRCWqqArv25gvTH 5vxwJnbsrBQoJVmDrGhqBbXkHwDMfTU3uqjDwaqLe+Jkddl6WDrvL7HDi/a/O+TPG8Ryye+tkF8oUf ynPS+GUMYS16FY7ASzH/0ByS7HnPSf7jbXyCDl9CItMWBCukRuP92dgD5E5h+780QjYVR1TOYTsK7L 29q0KYIRAz/CU7s7NU3I6O+skA8+wO2q8V/qNN9IwIYlovEae8xYxtZGFKS7Asnkx5L41BTHNAewGa ywsnWka4jG//fkzAcJxqaWp/LNz7YIf4ftOs7TahiCUUPyNjn9hGBXe/6UCbulNetUvkUh3MpYNLgO 29/PcVY/jHQm6XmFOLai05ukoMYzOImxjihjBRnvhun0ISzdDvZiF7LuyX34tnTNoUqw0tPYmoyzzS qwS895l/S/Iu0aJ6C60OCVKPU+rRZE7aqmw0H4xtsS4EhelVEbtCx+EFSZg6NR+iqtNBvI80hwpi2k l928h0W2SY4eY/GnEj658aM4Rs5DKGjtsLy4poujBDA8Ehq211Zk9Xhct33g==
-X-Developer-Key: i=keescook@chromium.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
 Content-Transfer-Encoding: 8bit
+X-BESS-ID: 1629273917-305753-5338-7616-1
+X-BESS-VER: 2019.1_20210805.2250
+X-BESS-Apparent-Source-IP: 209.85.217.69
+X-BESS-Outbound-Spam-Score: 0.00
+X-BESS-Outbound-Spam-Report: Code version 3.2, rules version 3.2.2.234027 [from 
+        cloudscan12-251.eu-central-1a.ess.aws.cudaops.com]
+        Rule breakdown below
+         pts rule name              description
+        ---- ---------------------- --------------------------------
+        0.00 BSF_SC0_MISMATCH_TO    META: Envelope rcpt doesn't match header 
+        0.00 BSF_BESS_OUTBOUND      META: BESS Outbound 
+X-BESS-Outbound-Spam-Status: SCORE=0.00 using account:ESS91090 scores of KILL_LEVEL=7.0 tests=BSF_SC0_MISMATCH_TO, BSF_BESS_OUTBOUND
+X-BESS-BRTS-Status: 1
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-The use of strncpy() is considered deprecated for NUL-terminated
-strings[1]. Replace strncpy() with strscpy_pad() (as it seems this case
-expects the NUL padding to fill the allocation following the flexible
-array). This additionally silences a warning seen when building under
--Warray-bounds:
+The example includes a board-specific compatible property, but developers
+need to add the board name each time when a new board is added to the K3
+J721E SoC list. This grows the compatible string-list. So, drop the
+board-specific compatible string and add cbass_main as a parent node to
+avoid parent node and child node address-cells mismatch error.
 
-./include/linux/fortify-string.h:38:30: warning: '__builtin_strncpy' offset 24 from the object at '__mptr' is out of the bounds of referenced subobject 'data' with type 'u8[]' {aka 'unsigned char[]'} at offset 24 [-Warray-bounds]
-   38 | #define __underlying_strncpy __builtin_strncpy
-      |                              ^
-./include/linux/fortify-string.h:50:9: note: in expansion of macro '__underlying_strncpy'
-   50 |  return __underlying_strncpy(p, q, size);
-      |         ^~~~~~~~~~~~~~~~~~~~
-drivers/rpmsg/qcom_glink_native.c: In function 'qcom_glink_work':
-drivers/rpmsg/qcom_glink_native.c:36:5: note: subobject 'data' declared here
-   36 |  u8 data[];
-      |     ^~~~
-
-[1] https://www.kernel.org/doc/html/latest/process/deprecated.html#strncpy-on-nul-terminated-strings
-
-Cc: Andy Gross <agross@kernel.org>
-Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Ohad Ben-Cohen <ohad@wizery.com>
-Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: linux-arm-msm@vger.kernel.org
-Cc: linux-remoteproc@vger.kernel.org
-Signed-off-by: Kees Cook <keescook@chromium.org>
-Reviewed-by: Gustavo A. R. Silva <gustavoars@kernel.org>
-Link: https://lore.kernel.org/lkml/20210728020745.GB35706@embeddedor
+Signed-off-by: Sinthu Raja <sinthu.raja@ti.com>
 ---
- drivers/rpmsg/qcom_glink_native.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Changes in V1:
+Fixed alignment issue which caused the yaml parse error.
 
-diff --git a/drivers/rpmsg/qcom_glink_native.c b/drivers/rpmsg/qcom_glink_native.c
-index 05533c71b10e..c7b9de655080 100644
---- a/drivers/rpmsg/qcom_glink_native.c
-+++ b/drivers/rpmsg/qcom_glink_native.c
-@@ -1440,7 +1440,7 @@ static int qcom_glink_rx_open(struct qcom_glink *glink, unsigned int rcid,
- 		}
+ .../devicetree/bindings/remoteproc/ti,k3-dsp-rproc.yaml     | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/remoteproc/ti,k3-dsp-rproc.yaml b/Documentation/devicetree/bindings/remoteproc/ti,k3-dsp-rproc.yaml
+index 6070456a7b67..e44a9397b8db 100644
+--- a/Documentation/devicetree/bindings/remoteproc/ti,k3-dsp-rproc.yaml
++++ b/Documentation/devicetree/bindings/remoteproc/ti,k3-dsp-rproc.yaml
+@@ -132,10 +132,8 @@ required:
+ unevaluatedProperties: false
  
- 		rpdev->ept = &channel->ept;
--		strncpy(rpdev->id.name, name, RPMSG_NAME_SIZE);
-+		strscpy_pad(rpdev->id.name, name, RPMSG_NAME_SIZE);
- 		rpdev->src = RPMSG_ADDR_ANY;
- 		rpdev->dst = RPMSG_ADDR_ANY;
- 		rpdev->ops = &glink_device_ops;
+ examples:
+-  - |
+-    / {
+-        model = "Texas Instruments K3 J721E SoC";
+-        compatible = "ti,j721e";
++  - |+
++    cbass_main {
+         #address-cells = <2>;
+         #size-cells = <2>;
+ 
 -- 
-2.30.2
+2.31.1
 
