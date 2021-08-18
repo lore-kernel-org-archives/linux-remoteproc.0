@@ -2,144 +2,134 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-19.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9FAEC4320A
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 17 Aug 2021 18:17:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BFAE7C43214
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 18 Aug 2021 06:06:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 92CC76102A
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 17 Aug 2021 18:17:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A85076112F
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 18 Aug 2021 06:06:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232993AbhHQSS2 (ORCPT
+        id S238232AbhHRGGc (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 17 Aug 2021 14:18:28 -0400
-Received: from mail-ot1-f48.google.com ([209.85.210.48]:35679 "EHLO
-        mail-ot1-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232301AbhHQSS1 (ORCPT
+        Wed, 18 Aug 2021 02:06:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44284 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S238116AbhHRGG3 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 17 Aug 2021 14:18:27 -0400
-Received: by mail-ot1-f48.google.com with SMTP id f16-20020a056830205000b00519b99d3dcbso4987608otp.2;
-        Tue, 17 Aug 2021 11:17:54 -0700 (PDT)
+        Wed, 18 Aug 2021 02:06:29 -0400
+Received: from mail-pj1-x1033.google.com (mail-pj1-x1033.google.com [IPv6:2607:f8b0:4864:20::1033])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B3D20C0617A8
+        for <linux-remoteproc@vger.kernel.org>; Tue, 17 Aug 2021 23:05:53 -0700 (PDT)
+Received: by mail-pj1-x1033.google.com with SMTP id j12-20020a17090aeb0c00b00179530520b3so8282269pjz.0
+        for <linux-remoteproc@vger.kernel.org>; Tue, 17 Aug 2021 23:05:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=q4cKFwd96rtgoKUA6YKX4IuNE9lx/g0UxBcz1pPF338=;
+        b=XMP/StYU8/uLPb/wnRLBGcR3u0V44//53QV0+x1LgHJ11cZUCGD0IAf1IdZ9lDwoLp
+         ZWOz/05bmRXmG9lRDJTD/ZXWTRiCTSdo0A6fczMhmhv2vGilaJvHGHdE7jf23BYsCSiQ
+         dajYZnjb8/arsD8ARG/qxbTWVP2y2RLAspLSY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject:date
-         :message-id;
-        bh=NAXgyIbRzbTu9mKb6Zt/CWOSEYX5VCJlC2wVw0DwXxs=;
-        b=sTmTQpfrtzE1ZCLgOmKRX2vAe06qMqX/46PKNWYtse6q/p/3u2Q7hoPBGg5GPl1Ve+
-         MFm/qAg3BCdtmZ7kwyFJvjRQtdONPpuMvX9qlodTfWQ0gSKv4VcZ8slSQx/KHc9EruR7
-         jPU00AtQxpjVba4G6UaoRMhUDJioRgrknW+Wc/pcyQ4RKhW1Vfcl3RB/a/5DLY0AM7D4
-         smxEZuW5+fhvpBqcaJkUwn3nsTBzWskp966j98+7Hqa/2EHVFaScLpqiq8LnhGuH2Ja4
-         TwFL9slOsX3TmyTNVNbEXnuDysYFtOOQFn8PUZdbdLx5SAIT5d0v9dy2O1jRSRTngaCd
-         GufA==
-X-Gm-Message-State: AOAM5339D4k6glcvyWk8z/sFICKqbbjwmC6gwsQ8jFP6fY4OGyrZ4L9o
-        5L8XB2V1FUTy7ZIWsT3eBw==
-X-Google-Smtp-Source: ABdhPJxwzhRAJ6gV8q/8dqOneXSlq4wvUdH27pleH4Nxmcvvag/vbAXNeIuDITKWAjtS/LPQIRn98A==
-X-Received: by 2002:a05:6830:108d:: with SMTP id y13mr3622248oto.295.1629224273805;
-        Tue, 17 Aug 2021 11:17:53 -0700 (PDT)
-Received: from robh.at.kernel.org (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id j6sm583874ooj.11.2021.08.17.11.17.52
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=q4cKFwd96rtgoKUA6YKX4IuNE9lx/g0UxBcz1pPF338=;
+        b=sVO+GcIR6QjbG1GVLxkByYFJhtmNsiZl6zGa+sfwGHUDUxrBPgNpOxK+Tp88ve337U
+         d7yco5FlzTm5TacJcqvQ6s4hT+KcSvzKQW+X8/atQuCmXbPbHwBkGkpPTDblKX5qTWWD
+         s5Cyr72bK4jf9D+X3TgCSQzGLpYoAVkJkIQtEAJyq2rTSXQttbAuWGxnTfBQVE3K0xqX
+         rdhFeGq7eOedXGaQdsWFx16X1zjSHCl7YvHgwvg7N/MrGX4IyZ9xq/tnrK0jZBSB3IxI
+         mcYqO7nHLmU89P65+V1oupk0A1xiv9+99u+PdAWTZ8zZbXV74++KcKNWUfp23G5rAv41
+         rdiA==
+X-Gm-Message-State: AOAM5303C870Gf6CrXG7zDlX1JBhiiizW0yT1UjPWbAGSmSzEC+8aUiE
+        n8NHqszB7Fa0bYhXM3cGTZ3l8w==
+X-Google-Smtp-Source: ABdhPJzh3Fos81jJQtXdS+gHGD3Ay4RQaFm6BN3MlQDNgQinKTKzGT7YEaeNTn6TT/NjBcYzUiAE7g==
+X-Received: by 2002:a17:90a:c244:: with SMTP id d4mr7684531pjx.38.1629266753333;
+        Tue, 17 Aug 2021 23:05:53 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id j4sm5379890pgi.6.2021.08.17.23.05.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Aug 2021 11:17:53 -0700 (PDT)
-Received: (nullmailer pid 589515 invoked by uid 1000);
-        Tue, 17 Aug 2021 18:17:50 -0000
-From:   Rob Herring <robh@kernel.org>
-To:     Sinthu Raja <sinthu.raja@mistralsolutions.com>
-Cc:     Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Sinthu Raja <sinthu.raja@ti.com>, linux-kernel@vger.kernel.org,
-        Lokesh Vutla <lokeshvutla@ti.com>,
-        Ohad Ben-Cohen <ohad@wizery.com>, devicetree@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org, Suman Anna <s-anna@ti.com>,
-        Nishanth Menon <nm@ti.com>
-In-Reply-To: <20210817152005.21575-1-sinthu.raja@ti.com>
-References: <20210817152005.21575-1-sinthu.raja@ti.com>
-Subject: Re: [PATCH] dt-bindings: remoteproc: k3-dsp: Update example to remove board specific
-Date:   Tue, 17 Aug 2021 13:17:50 -0500
-Message-Id: <1629224270.777170.589514.nullmailer@robh.at.kernel.org>
+        Tue, 17 Aug 2021 23:05:51 -0700 (PDT)
+From:   Kees Cook <keescook@chromium.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Kees Cook <keescook@chromium.org>, Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Ohad Ben-Cohen <ohad@wizery.com>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        "Gustavo A . R . Silva" <gustavoars@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-staging@lists.linux.dev,
+        linux-block@vger.kernel.org, linux-kbuild@vger.kernel.org,
+        clang-built-linux@googlegroups.com,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        linux-hardening@vger.kernel.org
+Subject: [PATCH v2 03/63] rpmsg: glink: Replace strncpy() with strscpy_pad()
+Date:   Tue, 17 Aug 2021 23:04:33 -0700
+Message-Id: <20210818060533.3569517-4-keescook@chromium.org>
+X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20210818060533.3569517-1-keescook@chromium.org>
+References: <20210818060533.3569517-1-keescook@chromium.org>
+MIME-Version: 1.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2189; h=from:subject; bh=zEHqpi3jCPJJtimsK7NnbA6EWwLoFKP9r9dL5ArZyiQ=; b=owEBbQKS/ZANAwAKAYly9N/cbcAmAcsmYgBhHKMe8xrKEUyyynWY+9ZZnkpsPM1eYEwBqySCGW3z U2JTvZSJAjMEAAEKAB0WIQSlw/aPIp3WD3I+bhOJcvTf3G3AJgUCYRyjHgAKCRCJcvTf3G3AJsNcD/ 9XTm0UNtLhF3pcJlIGQ3OBX+21oX4i3rCVVUF6tE46BnLDEeTE53Dgx2PT3pmkaqnzHQEBiWdAf3D+ 2ibPEIWXlwbj/FEpJcA5DcOhIfEfnzVBjHhlpnJrh3SUlVbIH9XtzFjtsdZ62/6vRCWqqArv25gvTH 5vxwJnbsrBQoJVmDrGhqBbXkHwDMfTU3uqjDwaqLe+Jkddl6WDrvL7HDi/a/O+TPG8Ryye+tkF8oUf ynPS+GUMYS16FY7ASzH/0ByS7HnPSf7jbXyCDl9CItMWBCukRuP92dgD5E5h+780QjYVR1TOYTsK7L 29q0KYIRAz/CU7s7NU3I6O+skA8+wO2q8V/qNN9IwIYlovEae8xYxtZGFKS7Asnkx5L41BTHNAewGa ywsnWka4jG//fkzAcJxqaWp/LNz7YIf4ftOs7TahiCUUPyNjn9hGBXe/6UCbulNetUvkUh3MpYNLgO 29/PcVY/jHQm6XmFOLai05ukoMYzOImxjihjBRnvhun0ISzdDvZiF7LuyX34tnTNoUqw0tPYmoyzzS qwS895l/S/Iu0aJ6C60OCVKPU+rRZE7aqmw0H4xtsS4EhelVEbtCx+EFSZg6NR+iqtNBvI80hwpi2k l928h0W2SY4eY/GnEj658aM4Rs5DKGjtsLy4poujBDA8Ehq211Zk9Xhct33g==
+X-Developer-Key: i=keescook@chromium.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Tue, 17 Aug 2021 20:50:05 +0530, Sinthu Raja wrote:
-> From: Sinthu Raja <sinthu.raja@ti.com>
-> 
-> The example includes a board-specific compatible property, but developers
-> need to add the board name each time when a new board is added to the K3
-> J721E SoC list. This grows the compatible string-list. So, drop the
-> board-specific compatible string and add cbass_main as a parent node to
-> avoid parent node and child node address-cells mismatch error.
-> 
-> Signed-off-by: Sinthu Raja <sinthu.raja@ti.com>
-> ---
->  .../devicetree/bindings/remoteproc/ti,k3-dsp-rproc.yaml     | 6 ++----
->  1 file changed, 2 insertions(+), 4 deletions(-)
-> 
+The use of strncpy() is considered deprecated for NUL-terminated
+strings[1]. Replace strncpy() with strscpy_pad() (as it seems this case
+expects the NUL padding to fill the allocation following the flexible
+array). This additionally silences a warning seen when building under
+-Warray-bounds:
 
-My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
-on your patch (DT_CHECKER_FLAGS is new in v5.13):
+./include/linux/fortify-string.h:38:30: warning: '__builtin_strncpy' offset 24 from the object at '__mptr' is out of the bounds of referenced subobject 'data' with type 'u8[]' {aka 'unsigned char[]'} at offset 24 [-Warray-bounds]
+   38 | #define __underlying_strncpy __builtin_strncpy
+      |                              ^
+./include/linux/fortify-string.h:50:9: note: in expansion of macro '__underlying_strncpy'
+   50 |  return __underlying_strncpy(p, q, size);
+      |         ^~~~~~~~~~~~~~~~~~~~
+drivers/rpmsg/qcom_glink_native.c: In function 'qcom_glink_work':
+drivers/rpmsg/qcom_glink_native.c:36:5: note: subobject 'data' declared here
+   36 |  u8 data[];
+      |     ^~~~
 
-yamllint warnings/errors:
+[1] https://www.kernel.org/doc/html/latest/process/deprecated.html#strncpy-on-nul-terminated-strings
 
-dtschema/dtc warnings/errors:
-make[1]: *** Deleting file 'Documentation/devicetree/bindings/remoteproc/ti,k3-dsp-rproc.example.dts'
-Traceback (most recent call last):
-  File "/usr/local/bin/dt-extract-example", line 45, in <module>
-    binding = yaml.load(open(args.yamlfile, encoding='utf-8').read())
-  File "/usr/local/lib/python3.8/dist-packages/ruamel/yaml/main.py", line 434, in load
-    return constructor.get_single_data()
-  File "/usr/local/lib/python3.8/dist-packages/ruamel/yaml/constructor.py", line 120, in get_single_data
-    node = self.composer.get_single_node()
-  File "_ruamel_yaml.pyx", line 706, in _ruamel_yaml.CParser.get_single_node
-  File "_ruamel_yaml.pyx", line 724, in _ruamel_yaml.CParser._compose_document
-  File "_ruamel_yaml.pyx", line 775, in _ruamel_yaml.CParser._compose_node
-  File "_ruamel_yaml.pyx", line 889, in _ruamel_yaml.CParser._compose_mapping_node
-  File "_ruamel_yaml.pyx", line 773, in _ruamel_yaml.CParser._compose_node
-  File "_ruamel_yaml.pyx", line 852, in _ruamel_yaml.CParser._compose_sequence_node
-  File "_ruamel_yaml.pyx", line 904, in _ruamel_yaml.CParser._parse_next_event
-ruamel.yaml.parser.ParserError: while parsing a block collection
-  in "<unicode string>", line 135, column 3
-did not find expected '-' indicator
-  in "<unicode string>", line 182, column 5
-make[1]: *** [Documentation/devicetree/bindings/Makefile:20: Documentation/devicetree/bindings/remoteproc/ti,k3-dsp-rproc.example.dts] Error 1
-make[1]: *** Waiting for unfinished jobs....
-Traceback (most recent call last):
-  File "/usr/bin/yamllint", line 11, in <module>
-    load_entry_point('yamllint==1.20.0', 'console_scripts', 'yamllint')()
-  File "/usr/lib/python3/dist-packages/yamllint/cli.py", line 184, in run
-    prob_level = show_problems(problems, file, args_format=args.format,
-  File "/usr/lib/python3/dist-packages/yamllint/cli.py", line 91, in show_problems
-    for problem in problems:
-  File "/usr/lib/python3/dist-packages/yamllint/linter.py", line 200, in _run
-    for problem in get_cosmetic_problems(buffer, conf, filepath):
-  File "/usr/lib/python3/dist-packages/yamllint/linter.py", line 137, in get_cosmetic_problems
-    for problem in rule.check(rule_conf,
-  File "/usr/lib/python3/dist-packages/yamllint/rules/indentation.py", line 570, in check
-    for problem in _check(conf, token, prev, next, nextnext, context):
-  File "/usr/lib/python3/dist-packages/yamllint/rules/indentation.py", line 336, in _check
-    'wrong indentation: expected %d but found %d' %
-TypeError: %d format: a number is required, not NoneType
-./Documentation/devicetree/bindings/remoteproc/ti,k3-dsp-rproc.yaml:  while parsing a block collection
-  in "<unicode string>", line 135, column 3
-did not find expected '-' indicator
-  in "<unicode string>", line 182, column 5
-/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/remoteproc/ti,k3-dsp-rproc.yaml: ignoring, error parsing file
-warning: no schema found in file: ./Documentation/devicetree/bindings/remoteproc/ti,k3-dsp-rproc.yaml
-make: *** [Makefile:1419: dt_binding_check] Error 2
+Cc: Andy Gross <agross@kernel.org>
+Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Ohad Ben-Cohen <ohad@wizery.com>
+Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org
+Cc: linux-remoteproc@vger.kernel.org
+Signed-off-by: Kees Cook <keescook@chromium.org>
+Reviewed-by: Gustavo A. R. Silva <gustavoars@kernel.org>
+Link: https://lore.kernel.org/lkml/20210728020745.GB35706@embeddedor
+---
+ drivers/rpmsg/qcom_glink_native.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/patch/1517765
-
-This check can fail if there are any dependencies. The base for a patch
-series is generally the most recent rc1.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit.
+diff --git a/drivers/rpmsg/qcom_glink_native.c b/drivers/rpmsg/qcom_glink_native.c
+index 05533c71b10e..c7b9de655080 100644
+--- a/drivers/rpmsg/qcom_glink_native.c
++++ b/drivers/rpmsg/qcom_glink_native.c
+@@ -1440,7 +1440,7 @@ static int qcom_glink_rx_open(struct qcom_glink *glink, unsigned int rcid,
+ 		}
+ 
+ 		rpdev->ept = &channel->ept;
+-		strncpy(rpdev->id.name, name, RPMSG_NAME_SIZE);
++		strscpy_pad(rpdev->id.name, name, RPMSG_NAME_SIZE);
+ 		rpdev->src = RPMSG_ADDR_ANY;
+ 		rpdev->dst = RPMSG_ADDR_ANY;
+ 		rpdev->ops = &glink_device_ops;
+-- 
+2.30.2
 
