@@ -2,48 +2,48 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CDD9C4320A
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 19 Aug 2021 03:36:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48E8AC4320A
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 19 Aug 2021 03:36:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3236261106
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 19 Aug 2021 03:36:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 270EC610CF
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 19 Aug 2021 03:36:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236444AbhHSDhT (ORCPT
+        id S236555AbhHSDh1 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 18 Aug 2021 23:37:19 -0400
-Received: from so254-9.mailgun.net ([198.61.254.9]:42830 "EHLO
-        so254-9.mailgun.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236473AbhHSDhS (ORCPT
-        <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 18 Aug 2021 23:37:18 -0400
+        Wed, 18 Aug 2021 23:37:27 -0400
+Received: from m43-7.mailgun.net ([69.72.43.7]:54316 "EHLO m43-7.mailgun.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S236497AbhHSDh0 (ORCPT <rfc822;linux-remoteproc@vger.kernel.org>);
+        Wed, 18 Aug 2021 23:37:26 -0400
 DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1629344203; h=Message-Id: Date: Subject: Cc: To: From:
- Sender; bh=BRlKnvIszGeVtgYU6QZFP1RjVcH510IRHsfahZ/MSvw=; b=BLYZ48ho+LX1gZ3USbMHbFVbiMkRzeAvA1Er3yk0EAVZscZyPA29H9bXnrypaUGL8rcfqFY+
- TZ/RvWFma92dOVUwOiGUzkKfmPU79j2CTuiXkOA5PV9QNQ6Mihi0KLw3KdMtai9Kuvl9ZB3X
- CQH+pqru8Tt0+FsjJOV3o6/crhQ=
-X-Mailgun-Sending-Ip: 198.61.254.9
+ s=smtp; t=1629344210; h=References: In-Reply-To: Message-Id: Date:
+ Subject: Cc: To: From: Sender;
+ bh=fowwfSiXCExEnICK20glnrDgDWdQHFmgsUMbdQgacxQ=; b=M3+8V/LdAlkPzpmNXcr/qFXd9/069zypqDCksLcMbyi4qe+dG/LAmDkPqvCCvBHlc9NlDeHC
+ 3ncAbxd1jc+GMITNshhvvwgeqwFh8OkIh6uv06l8b9Q3tF/wPOzTL9sCRHU5PfHQ0zReVJXf
+ 6sWDlPo62p1n+Io23v6UZkWX1j8=
+X-Mailgun-Sending-Ip: 69.72.43.7
 X-Mailgun-Sid: WyI4ZWZiZiIsICJsaW51eC1yZW1vdGVwcm9jQHZnZXIua2VybmVsLm9yZyIsICJiZTllNGEiXQ==
 Received: from smtp.codeaurora.org
  (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
- smtp-out-n01.prod.us-west-2.postgun.com with SMTP id
- 611dd1c9454b7a558f80f29d (version=TLS1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Thu, 19 Aug 2021 03:36:41
+ smtp-out-n04.prod.us-east-1.postgun.com with SMTP id
+ 611dd1d02892f803bc8999be (version=TLS1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Thu, 19 Aug 2021 03:36:48
  GMT
 Sender: sibis=codeaurora.org@mg.codeaurora.org
 Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 2E1EFC4361A; Thu, 19 Aug 2021 03:36:41 +0000 (UTC)
+        id A0B52C43639; Thu, 19 Aug 2021 03:36:47 +0000 (UTC)
 Received: from blr-ubuntu-87.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
         (Authenticated sender: sibis)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id D4535C4338F;
-        Thu, 19 Aug 2021 03:36:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.1 smtp.codeaurora.org D4535C4338F
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 0615EC43618;
+        Thu, 19 Aug 2021 03:36:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.1 smtp.codeaurora.org 0615EC43618
 Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=codeaurora.org
 From:   Sibi Sankar <sibis@codeaurora.org>
@@ -56,54 +56,77 @@ Cc:     ohad@wizery.com, agross@kernel.org, mathieu.poirier@linaro.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, evgreen@chromium.org,
         dianders@chromium.org, Sibi Sankar <sibis@codeaurora.org>
-Subject: [PATCH v3 00/10] Add Modem support on SC7280 SoCs
-Date:   Thu, 19 Aug 2021 09:06:15 +0530
-Message-Id: <1629344185-27368-1-git-send-email-sibis@codeaurora.org>
+Subject: [PATCH v3 01/10] dt-bindings: remoteproc: qcom: pas: Add SC7280 MPSS support
+Date:   Thu, 19 Aug 2021 09:06:16 +0530
+Message-Id: <1629344185-27368-2-git-send-email-sibis@codeaurora.org>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1629344185-27368-1-git-send-email-sibis@codeaurora.org>
+References: <1629344185-27368-1-git-send-email-sibis@codeaurora.org>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-This patch series adds support for booting the Modem Q6 DSP found on
-Qualcomm's SC7280 SoCs.
+Add MPSS PAS support for SC7280 SoCs.
 
-Depends on:
-qmp_send: https://patchwork.kernel.org/project/linux-arm-msm/cover/1629113954-14084-1-git-send-email-deesin@codeaurora.org/
-rproc qmp: https://patchwork.kernel.org/project/linux-arm-msm/cover/1629342136-3667-1-git-send-email-sibis@codeaurora.org/
+Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
+Reviewed-by: Matthias Kaehlcke <mka@chromium.org>
+Acked-by: Rob Herring <robh@kernel.org>
+---
+ Documentation/devicetree/bindings/remoteproc/qcom,adsp.yaml | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-V3:
- * Keep the memory map version in commit message (patch 6). [Bjorn]
- * Rename tcsr node and add qualifying compatibles to tcsr and imem nodes
-   (patch 8). [Bjorn]
- * Place remoteproc_mpss node in alphabetical order above pinctrl
-   section (patch 10). [Stephen]
-
-V2:
- * Misc. typos (patch 3). [Matthias]
- * Document the q-channel takedown procedure (patch 5). [Matthias]
- * Split reserved memory updates between SoC and platform (patch 6). [Matthias]
-
-Sibi Sankar (10):
-  dt-bindings: remoteproc: qcom: pas: Add SC7280 MPSS support
-  remoteproc: qcom: pas: Add SC7280 Modem support
-  dt-bindings: remoteproc: qcom: Update Q6V5 Modem PIL binding
-  iommu/arm-smmu-qcom: Request direct mapping for modem device
-  remoteproc: mss: q6v5-mss: Add modem support on SC7280
-  arm64: dts: qcom: sc7280: Update reserved memory map
-  arm64: dts: qcom: sc7280: Add/Delete/Update reserved memory nodes
-  arm64: dts: qcom: sc7280: Add nodes to boot modem
-  arm64: dts: qcom: sc7280: Add Q6V5 MSS node
-  arm64: dts: qcom: sc7280: Update Q6V5 MSS node
-
- .../devicetree/bindings/remoteproc/qcom,adsp.yaml  |   6 +
- .../devicetree/bindings/remoteproc/qcom,q6v5.txt   |  32 ++-
- arch/arm64/boot/dts/qcom/sc7280-idp.dtsi           |  59 +++++
- arch/arm64/boot/dts/qcom/sc7280.dtsi               | 107 +++++++++
- drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c         |   1 +
- drivers/remoteproc/qcom_q6v5_mss.c                 | 252 ++++++++++++++++++++-
- drivers/remoteproc/qcom_q6v5_pas.c                 |   1 +
- 7 files changed, 452 insertions(+), 6 deletions(-)
-
+diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,adsp.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,adsp.yaml
+index 0d2b5bd4907a..68ee7febddd9 100644
+--- a/Documentation/devicetree/bindings/remoteproc/qcom,adsp.yaml
++++ b/Documentation/devicetree/bindings/remoteproc/qcom,adsp.yaml
+@@ -25,6 +25,7 @@ properties:
+       - qcom,qcs404-cdsp-pas
+       - qcom,qcs404-wcss-pas
+       - qcom,sc7180-mpss-pas
++      - qcom,sc7280-mpss-pas
+       - qcom,sc8180x-adsp-pas
+       - qcom,sc8180x-cdsp-pas
+       - qcom,sc8180x-mpss-pas
+@@ -151,6 +152,7 @@ allOf:
+               - qcom,msm8998-adsp-pas
+               - qcom,qcs404-adsp-pas
+               - qcom,qcs404-wcss-pas
++              - qcom,sc7280-mpss-pas
+               - qcom,sc8180x-adsp-pas
+               - qcom,sc8180x-cdsp-pas
+               - qcom,sc8180x-mpss-pas
+@@ -296,6 +298,7 @@ allOf:
+           contains:
+             enum:
+               - qcom,sc7180-mpss-pas
++              - qcom,sc7280-mpss-pas
+               - qcom,sc8180x-mpss-pas
+               - qcom,sdx55-mpss-pas
+               - qcom,sm8150-mpss-pas
+@@ -400,6 +403,7 @@ allOf:
+         compatible:
+           contains:
+             enum:
++              - qcom,sc7280-mpss-pas
+               - qcom,sdx55-mpss-pas
+               - qcom,sm8150-mpss-pas
+               - qcom,sm8350-mpss-pas
+@@ -475,6 +479,7 @@ allOf:
+           contains:
+             enum:
+               - qcom,sc7180-mpss-pas
++              - qcom,sc7280-mpss-pas
+     then:
+       properties:
+         resets:
+@@ -492,6 +497,7 @@ allOf:
+           contains:
+             enum:
+               - qcom,sc7180-mpss-pas
++              - qcom,sc7280-mpss-pas
+               - qcom,sc8180x-adsp-pas
+               - qcom,sc8180x-cdsp-pas
+               - qcom,sc8180x-mpss-pas
 -- 
 The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
 a Linux Foundation Collaborative Project
