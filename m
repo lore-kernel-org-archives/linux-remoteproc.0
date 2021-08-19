@@ -2,84 +2,129 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F07CC4338F
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 19 Aug 2021 04:37:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DA65C4338F
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 19 Aug 2021 15:12:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 62E3D610E6
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 19 Aug 2021 04:37:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 664B560EFE
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 19 Aug 2021 15:12:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229548AbhHSEiB (ORCPT
+        id S238460AbhHSPMl (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 19 Aug 2021 00:38:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51190 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229451AbhHSEiA (ORCPT <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 19 Aug 2021 00:38:00 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 0B15561042;
-        Thu, 19 Aug 2021 04:37:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1629347845;
-        bh=pGZ5omv2oCYRcuBpQ6+cH1mFqh6u3/r87NghQa0XqeQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=bCcmq2zDptuL9eg/KaLcY95BKAyJtutlIiZtToFeg93WGU1fNndPprWxkOTZglfGE
-         TuXWUuo0V5ZaP450tfq1hl3uwvqzlOXyc+tWI0a8nWM6hWLF2OScc+fS/C9V2JnHql
-         7UBUN8y0oKaUMMpUGzsUb6pKtEN/ba5PMZ+ZErAs6dsY9gc5zSp2y81Rx8DwhH7Oyk
-         ZHe5f/UkLcxN7NQ9JNET33brXd5DreNMH8acz5QyCzSXYWhD6dKT70hQJ417AwUJfg
-         ixsrfWJQJBhzZdj3Vg8oWIymYIlLsNv64zFT6fE2z0PP67WnhIr5Fc4u/b/1Tg1gXO
-         Th3opgZk7n3tw==
-Date:   Thu, 19 Aug 2021 10:07:20 +0530
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Sibi Sankar <sibis@codeaurora.org>
-Cc:     bjorn.andersson@linaro.org, robh+dt@kernel.org, will@kernel.org,
-        saiprakash.ranjan@codeaurora.org, swboyd@chromium.org,
-        mka@chromium.org, ohad@wizery.com, agross@kernel.org,
-        mathieu.poirier@linaro.org, robin.murphy@arm.com, joro@8bytes.org,
-        p.zabel@pengutronix.de, linux-arm-msm@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        evgreen@chromium.org, dianders@chromium.org
-Subject: Re: [PATCH v3 06/10] arm64: dts: qcom: sc7280: Update reserved
- memory map
-Message-ID: <YR3gAD68xRtNJRhi@matsya>
-References: <1629344185-27368-1-git-send-email-sibis@codeaurora.org>
- <1629344185-27368-7-git-send-email-sibis@codeaurora.org>
+        Thu, 19 Aug 2021 11:12:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53436 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234280AbhHSPMk (ORCPT
+        <rfc822;linux-remoteproc@vger.kernel.org>);
+        Thu, 19 Aug 2021 11:12:40 -0400
+Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0156EC061757
+        for <linux-remoteproc@vger.kernel.org>; Thu, 19 Aug 2021 08:12:04 -0700 (PDT)
+Received: by mail-wr1-x431.google.com with SMTP id v4so9581620wro.12
+        for <linux-remoteproc@vger.kernel.org>; Thu, 19 Aug 2021 08:12:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=5fuKx796Elw77gjwAl8zSUCyFS8ubJYZz/EESfgpkks=;
+        b=yJO+jMFUHCHJyCh9Zu40TaUlUDaMmBDwvj6GBQ5q50P79oWOYEdyNpawb3tXW2vj/z
+         DNDwKA1kERRV4sFALw7q4B+eIHB9W0uAUI4UQT4nKyHTJ4HxggF05nBG32WgnRHI4hHz
+         GSZuIy1M61HsgU1IZwAkH78cpaMLJEcjOAm02QVu+HScUOkVgDIhfMfJdeDHeyzFtpth
+         8uWrVpmv004XMwHmWy0zyJOVKGSK3WXMx3a8wgsP0avywV5rNzXDAaT0O3yM3+sakDNb
+         ifH07P/3cHXavrfVgGWJ4pH4oYS8NlWeypmvN4syL1o0U6/c1x9c3jItYf3jTMQWNAyv
+         FBqg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=5fuKx796Elw77gjwAl8zSUCyFS8ubJYZz/EESfgpkks=;
+        b=GDCvbKAcwBIMbK/Pd0SqT9L5XchTlaQ8fsrhg1wFWEckeUTufEaqMCtZarZ+2n18Ns
+         n4JAr3hzTzBa7BM3aqjYsvVMTevEFxipBRMGHE48l6OXcpHcDnq+vq/M6KwLfzIldJ11
+         funv/UClEU+yZKbkAdfaesY+waSSIHzMgo4aoI0AaYRFEr7S3lHidEivcrOQLxJQxNRp
+         GThbtbTIpfI2IAY62AYbs28Q4m95owMNLLWaTuAFZWWZAW+iWQ9SwMosdcQM48v37Sc0
+         zkpNCjhc7hAHVUTQ7nF6cacb4uXsRUosOlNpcjxXld3/jLjwXzEXKdsTPvivZpQxImCR
+         ckBw==
+X-Gm-Message-State: AOAM533iRvCL4WBAmkaD24SGB/YY/7gorJvu8Nf8HSGjGJRKeghk59vX
+        JhKNwBeFxcj5/nNKF5TK32QmSw==
+X-Google-Smtp-Source: ABdhPJz4GjMnmtkXigDTLZBtL+MRkj19w1VdlfTSBix8abrDJ1TrXre8hr9XFACVNZy95wL68RZRmA==
+X-Received: by 2002:adf:d085:: with SMTP id y5mr4549112wrh.209.1629385922579;
+        Thu, 19 Aug 2021 08:12:02 -0700 (PDT)
+Received: from alex-xps13.baylibre.local (laubervilliers-658-1-213-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
+        by smtp.gmail.com with ESMTPSA id j37sm1556962wms.39.2021.08.19.08.12.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 19 Aug 2021 08:12:01 -0700 (PDT)
+From:   Alexandre Bailon <abailon@baylibre.com>
+To:     ohad@wizery.com, bjorn.andersson@linaro.org,
+        mathieu.poirier@linaro.org, robh+dt@kernel.org
+Cc:     matthias.bgg@gmail.com, linux-remoteproc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
+        stephane.leprovost@mediatek.com, gpain@baylibre.com,
+        khilman@baylibre.com, Alexandre Bailon <abailon@baylibre.com>
+Subject: [PATCH v3 0/4]  Add support of mt8183 APU
+Date:   Thu, 19 Aug 2021 17:13:36 +0200
+Message-Id: <20210819151340.741565-1-abailon@baylibre.com>
+X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1629344185-27368-7-git-send-email-sibis@codeaurora.org>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi Sibi,
+Some Mediatek's SoC have an Accelerated Processing Unit.
+This adds support of the one available in the mt8183
+(aswell some derivative SoC).
 
-On 19-08-21, 09:06, Sibi Sankar wrote:
+This v3 attempt to handle memory differently.
+In the v2, the memory was reserved in dts and all dma allocation made by
+remoteproc was using it. Since we may load many firmwares with different size,
+this could lead to a memory waste or out of memory issues.
+In addition, the APU itself expect the memory to mapped at a specific address.
+The firmware, because of many hardware / software limitations use hardcoded
+address.
+To simplify memory management of userspace application, kernel and firmware,
+and to rmeove a couple of hacks, we changed the way to manage the memory.
+With the v3, only the virtio memory (that won't never change) is reserved
+in the dts. The firmware declare resource similar to the CARVOUT_RSC 
+that used by this driver to allocate and map the memory using the IOMMU.
+I am not sure that the best solution but the simplest one I found so far.
 
-> diff --git a/arch/arm64/boot/dts/qcom/sc7280.dtsi b/arch/arm64/boot/dts/qcom/sc7280.dtsi
-> index 5e4f4f3b738a..894106efadfe 100644
-> --- a/arch/arm64/boot/dts/qcom/sc7280.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/sc7280.dtsi
-> @@ -48,6 +48,16 @@
->  		#size-cells = <2>;
->  		ranges;
->  
-> +		hyp_mem: memory@80000000 {
-> +			reg = <0x0 0x80000000 0x0 0x600000>;
-> +			no-map;
+Changes in v3:
+- Remove IOMMU hack. Instead, manage the IOMMU directly from the driver
+- Update the device tree bindings: only use reserved memory for virtio.
+  All the other memory allocation will be done using DMA API.
+  This sould simplify the memory management.
+- Add more comments
+Changes in v2:
+- Drop the workarounds needed to load bad firmwares
+- There are many name for the APU (most common one is VPU).
+  Rename many functions and dts nodes to be more consistent.
+- Use the bulk clock API, and enable / disable clock at a better place
+- add few comments explaining how to start the APU
+- update the way to use pinctl for JTAG
+- fix some minors issues
+- fix device tree bindings
 
-This should conflict with the memory defined in this file:
+Alexandre Bailon (4):
+  dt bindings: remoteproc: Add bindings for MT8183 APU
+  remoteproc: Add a remoteproc driver for the MT8183's APU
+  remoteproc: mtk_vpu_rproc: Add support of JTAG
+  ARM64: mt8183: Add support of APU to mt8183
 
-        memory@80000000 {
-                device_type = "memory";
-                /* We expect the bootloader to fill in the size */
-                reg = <0 0x80000000 0 0>;
-        };
-
-I think this should be updated?
+ .../bindings/remoteproc/mtk,apu.yaml          | 118 ++++
+ .../boot/dts/mediatek/mt8183-pumpkin.dts      |  48 ++
+ arch/arm64/boot/dts/mediatek/mt8183.dtsi      |  40 ++
+ drivers/remoteproc/Kconfig                    |  19 +
+ drivers/remoteproc/Makefile                   |   1 +
+ drivers/remoteproc/mtk_apu.c                  | 590 ++++++++++++++++++
+ 6 files changed, 816 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/remoteproc/mtk,apu.yaml
+ create mode 100644 drivers/remoteproc/mtk_apu.c
 
 -- 
-~Vinod
+2.31.1
+
