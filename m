@@ -2,108 +2,129 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36A60C4338F
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 20 Aug 2021 14:24:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2FBBC4338F
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 20 Aug 2021 17:04:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1E55761106
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 20 Aug 2021 14:24:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B851C610CC
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 20 Aug 2021 17:04:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240874AbhHTOZK (ORCPT
+        id S232611AbhHTRFb (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 20 Aug 2021 10:25:10 -0400
-Received: from m43-7.mailgun.net ([69.72.43.7]:57019 "EHLO m43-7.mailgun.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S237597AbhHTOZI (ORCPT <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 20 Aug 2021 10:25:08 -0400
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1629469470; h=Message-ID: References: In-Reply-To: Subject:
- Cc: To: From: Date: Content-Transfer-Encoding: Content-Type:
- MIME-Version: Sender; bh=cd51haHP+MBwD/UOdMJv/XyRlloOaggVKU0MpKh31MM=;
- b=nUPe52yf6uPdOqrVgbY2g1LhLvbUKxoTtc0dEGNuXTtGtKEFjyL/1EzFjXihxy7s2LuPPPIi
- 6FWulsjOzyzIBoLAtqhG33OUgq1yDvPysWljdjDcy3Z4+0TOnLtt1edEydnRmBbdK8CxNBIj
- Or+9e+2CJgK5Mq0bajo8eno0yU8=
-X-Mailgun-Sending-Ip: 69.72.43.7
-X-Mailgun-Sid: WyI4ZWZiZiIsICJsaW51eC1yZW1vdGVwcm9jQHZnZXIua2VybmVsLm9yZyIsICJiZTllNGEiXQ==
-Received: from smtp.codeaurora.org
- (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
- smtp-out-n03.prod.us-east-1.postgun.com with SMTP id
- 611fbb040f9b337f117be7f6 (version=TLS1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Fri, 20 Aug 2021 14:24:04
- GMT
-Sender: sibis=codeaurora.org@mg.codeaurora.org
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id B7BF2C4360C; Fri, 20 Aug 2021 14:24:03 +0000 (UTC)
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: sibis)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 0877BC4338F;
-        Fri, 20 Aug 2021 14:24:02 +0000 (UTC)
+        Fri, 20 Aug 2021 13:05:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43432 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232766AbhHTRFa (ORCPT
+        <rfc822;linux-remoteproc@vger.kernel.org>);
+        Fri, 20 Aug 2021 13:05:30 -0400
+Received: from mail-ot1-x334.google.com (mail-ot1-x334.google.com [IPv6:2607:f8b0:4864:20::334])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AAFD9C061757
+        for <linux-remoteproc@vger.kernel.org>; Fri, 20 Aug 2021 10:04:52 -0700 (PDT)
+Received: by mail-ot1-x334.google.com with SMTP id k12-20020a056830150c00b0051abe7f680bso10223510otp.1
+        for <linux-remoteproc@vger.kernel.org>; Fri, 20 Aug 2021 10:04:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=Qq2zv8NidueXDY9RTP1XJuRvSThnlS4Tgw1w5ySGQso=;
+        b=Ytw/TvevBJJxmZa6v3680rG8IdGuSSouHc+vk1jAd56rLtVmS0gGLVXQtUg/J3egdM
+         K2ob+s5ABx/4KKfUf4O2M/c143PU72dI09LGRepF7DGG3feZgUwIDijuB2P+vrs29rN6
+         0hjjPEeYGP5HUOY4RuHR2Wy6ebUz402nb49W4is+Itpa1cp6j9eN2X+zRb026WCwTJZP
+         BaLMM2CfHKKtnDuV2CFyfYMRk/N6d02okEsyBaoSAwHH/uzht9GWm9S3Rqrz/FgWG1gn
+         RqmDyzVc+WpK7PvSwRP6NchHXiMEcw7buAVCB9PJRvaNsz9RCg3XPb8FN02TzqR+/ByH
+         DZeQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=Qq2zv8NidueXDY9RTP1XJuRvSThnlS4Tgw1w5ySGQso=;
+        b=rFg1iHyAd5p1uSvo6tPdhwNkw2e/ZhY5KclueKFiWrjYbumCH4Ql7DWMnQYrYWlpU5
+         Ug0efLCss/McxSzKhUz2koL19yPfggA/3SyDzhiq5WE/q6gGWTAgrhxswW06yQNAon43
+         mo1lhhrAGjebzYZZZtd6KW578b0sOHpknTW0xn1E4FUwnibBLGxw/5c/Dl/vh5OxNl6c
+         7YgEsyHlZKYzjYmUjXcxlCq7KaF8pvggKeE4Bcb6jO+VevmUX0O3kA+XyYhPm3WX8Pti
+         +y+Uh7v5WtLEK/epRR4xt14Jnk82D983nwER9xQKh+1LLMszZ9MmL+6KYUvhdreUhaIN
+         7jsA==
+X-Gm-Message-State: AOAM532V6xBGsyqQByKGm+K0IxOc3Vvv6SzDNRQkmOpggEQT5FhxYZvM
+        I2axm4+PftFD3rP/fd1QQIajXQ==
+X-Google-Smtp-Source: ABdhPJzf9sPEVI5OzR130ghE05XTbi5B3J4mkCHel8gpOF4PQEyk1+jhfPwySwCC8YhKiqcXpJYHKw==
+X-Received: by 2002:a05:6830:2808:: with SMTP id w8mr15018728otu.244.1629479092057;
+        Fri, 20 Aug 2021 10:04:52 -0700 (PDT)
+Received: from ripper (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
+        by smtp.gmail.com with ESMTPSA id u27sm1720689otj.6.2021.08.20.10.04.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 20 Aug 2021 10:04:51 -0700 (PDT)
+Date:   Fri, 20 Aug 2021 10:06:13 -0700
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Sibi Sankar <sibis@codeaurora.org>
+Cc:     Vinod Koul <vkoul@kernel.org>, robh+dt@kernel.org, will@kernel.org,
+        saiprakash.ranjan@codeaurora.org, swboyd@chromium.org,
+        mka@chromium.org, ohad@wizery.com, agross@kernel.org,
+        mathieu.poirier@linaro.org, robin.murphy@arm.com, joro@8bytes.org,
+        p.zabel@pengutronix.de, linux-arm-msm@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        evgreen@chromium.org, dianders@chromium.org
+Subject: Re: [PATCH v3 06/10] arm64: dts: qcom: sc7280: Update reserved
+ memory map
+Message-ID: <YR/hBYyYuYWN68LV@ripper>
+References: <1629344185-27368-1-git-send-email-sibis@codeaurora.org>
+ <1629344185-27368-7-git-send-email-sibis@codeaurora.org>
+ <YR3gAD68xRtNJRhi@matsya>
+ <39da02506af192de14d346cdf80d0e4c@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Fri, 20 Aug 2021 19:54:02 +0530
-From:   Sibi Sankar <sibis@codeaurora.org>
-To:     Stephen Boyd <swboyd@chromium.org>
-Cc:     bjorn.andersson@linaro.org, mka@chromium.org, robh+dt@kernel.org,
-        ulf.hansson@linaro.org, rjw@rjwysocki.net, agross@kernel.org,
-        ohad@wizery.com, mathieu.poirier@linaro.org,
-        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        dianders@chromium.org, rishabhb@codeaurora.org,
-        sidgup@codeaurora.org
-Subject: Re: [PATCH v5 02/13] dt-bindings: remoteproc: qcom: pas: Add QMP
- property
-In-Reply-To: <CAE-0n531EgLx-gGJswmmNAFmy-P9z=Hh1N=fkLw_uemoeQnYVg@mail.gmail.com>
-References: <1629342136-3667-1-git-send-email-sibis@codeaurora.org>
- <1629342136-3667-3-git-send-email-sibis@codeaurora.org>
- <CAE-0n531EgLx-gGJswmmNAFmy-P9z=Hh1N=fkLw_uemoeQnYVg@mail.gmail.com>
-Message-ID: <d733d47bc6a86fe28302943e50d02bd5@codeaurora.org>
-X-Sender: sibis@codeaurora.org
-User-Agent: Roundcube Webmail/1.3.9
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <39da02506af192de14d346cdf80d0e4c@codeaurora.org>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On 2021-08-20 00:25, Stephen Boyd wrote:
-> Quoting Sibi Sankar (2021-08-18 20:02:05)
->> The load state power-domain, used by the co-processors to notify the
->> Always on Subsystem (AOSS) that a particular co-processor is up/down,
->> suffers from the side-effect of changing states during suspend/resume.
->> However the co-processors enter low-power modes independent to that of
->> the application processor and their states are expected to remain
->> unaltered across system suspend/resume cycles. To achieve this 
->> behavior
->> let's drop the load state power-domain and replace them with the qmp
->> property for all SoCs supporting low power mode signalling.
->> 
+On Fri 20 Aug 07:09 PDT 2021, Sibi Sankar wrote:
+
+> On 2021-08-19 10:07, Vinod Koul wrote:
+> > Hi Sibi,
+> > 
+> > On 19-08-21, 09:06, Sibi Sankar wrote:
+> > 
+> > > diff --git a/arch/arm64/boot/dts/qcom/sc7280.dtsi
+> > > b/arch/arm64/boot/dts/qcom/sc7280.dtsi
+> > > index 5e4f4f3b738a..894106efadfe 100644
+> > > --- a/arch/arm64/boot/dts/qcom/sc7280.dtsi
+> > > +++ b/arch/arm64/boot/dts/qcom/sc7280.dtsi
+> > > @@ -48,6 +48,16 @@
+> > >  		#size-cells = <2>;
+> > >  		ranges;
+> > > 
+> > > +		hyp_mem: memory@80000000 {
+> > > +			reg = <0x0 0x80000000 0x0 0x600000>;
+> > > +			no-map;
+> > 
+> > This should conflict with the memory defined in this file:
+> > 
+> >         memory@80000000 {
+> >                 device_type = "memory";
+> >                 /* We expect the bootloader to fill in the size */
+> >                 reg = <0 0x80000000 0 0>;
+> >         };
+> > 
+> > I think this should be updated?
 > 
-> How do we drop the load state property without breaking existing DTBs?
-> Maybe we need to leave it there and then somehow make it optional? Or 
-> do
-> we not care about this problem as the driver will start ignoring it?
+> Vinod,
+> 
+> I prefer we leave ^^ node untouched.  For platforms using hyp_mem, the
+> regions defined in the memory map are valid and for the other
+> platforms not using hyp_mem we would just delete them in the board
+> files anyway.
 
-We can afford to break the bindings
-because of the following reason:
+Logically this node describes where there is RAM, the reserved-memory
+then subtracts blocks of memory out of that. So I think it's perfectly
+legal for a region at the base to be marked as no-map.
 
-* Load state in mainline is currently
-   broken i.e. it doesn't serve its
-   main purpose of signalling AOP of
-   the correct state of Q6 during
-   system suspend/resume. Thus we
-   can maintain current functionality
-   even without the load state votes
-   i.e. when a new kernel with load
-   state removed is used with an older
-   dtb the remoteproc functionality
-   will remain the same.
+That said, isn't the address in the memory node just a placeholder?
 
-
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project.
+Regards,
+Bjorn
