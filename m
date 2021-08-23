@@ -2,129 +2,96 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-19.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY autolearn=no
-	autolearn_force=no version=3.4.0
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F99AC432BE
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 23 Aug 2021 20:18:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 588A3C432BE
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 23 Aug 2021 23:51:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4E0F5613DB
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 23 Aug 2021 20:18:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3EEFE613A7
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 23 Aug 2021 23:51:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232464AbhHWUTB (ORCPT
+        id S233441AbhHWXwG (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 23 Aug 2021 16:19:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54624 "EHLO
+        Mon, 23 Aug 2021 19:52:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46176 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232400AbhHWUTB (ORCPT
+        with ESMTP id S233360AbhHWXwG (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 23 Aug 2021 16:19:01 -0400
-Received: from mail-ot1-x32e.google.com (mail-ot1-x32e.google.com [IPv6:2607:f8b0:4864:20::32e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 10ACEC06175F
-        for <linux-remoteproc@vger.kernel.org>; Mon, 23 Aug 2021 13:18:18 -0700 (PDT)
-Received: by mail-ot1-x32e.google.com with SMTP id i3-20020a056830210300b0051af5666070so29923248otc.4
-        for <linux-remoteproc@vger.kernel.org>; Mon, 23 Aug 2021 13:18:18 -0700 (PDT)
+        Mon, 23 Aug 2021 19:52:06 -0400
+Received: from mail-pl1-x631.google.com (mail-pl1-x631.google.com [IPv6:2607:f8b0:4864:20::631])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 010F7C06175F
+        for <linux-remoteproc@vger.kernel.org>; Mon, 23 Aug 2021 16:51:23 -0700 (PDT)
+Received: by mail-pl1-x631.google.com with SMTP id n12so11165771plf.4
+        for <linux-remoteproc@vger.kernel.org>; Mon, 23 Aug 2021 16:51:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
-        h=mime-version:in-reply-to:references:from:user-agent:date:message-id
-         :subject:to:cc;
-        bh=e+9/i7ql0JBP0axXyyLhXNf4AItySuPk82qcEXlXd5g=;
-        b=fQrasVro5N3cZEnqPgBuX2YdB8zrxp3HHRfMlva8FJEkdLOEbBQirnmkqa04Oe+dnX
-         IS8z5u8Wjdsu2ToHGuX11ef42nmkeC+KkgzGKhdb9HCwVkztQRVqJWXcW+L0OV1+6XsN
-         FV/0Xckk73dNW8LW7WsYqjP2iP7Lw1YCKD++A=
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=qP9Pyq6spTLX2ZdL8bYbTvq8hc7AHiozjvavSsllrAo=;
+        b=F3tqRJJHZnRMhQgjkRoOgfFLcjx3oIDMv1a1W++h1Yoh2cfrWpCsucfcmjlbVamBT8
+         hjtmOYEMet7dHIvlPdxa7vrtyJhyTnwk8j0y6DkPINWRDoHuTzlPJUdZkrrzdqAS4Z1N
+         wj3cC2Ph1Fr4TM1YKEIepU/foKCshexlcRRF8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from
-         :user-agent:date:message-id:subject:to:cc;
-        bh=e+9/i7ql0JBP0axXyyLhXNf4AItySuPk82qcEXlXd5g=;
-        b=PaJYeWNdlFI76Z0GvylQeThDH9DOPu+GJuVCUYIRoNk6pOQwgLz38uvlrCrkF67QFF
-         NcErYZZZj+DRbPHILcg4J67pvbS+xFgigjlrMaY6aATafIwWViOBudg2qUHZ5kZbfYCi
-         sLN8Kw/ZG9kSU9USN9jGA1LKSKVUAEkgHJFQ8lRU/B0Lpx/vwoVL2dQ15nxodpEcPw2Y
-         wEpgRpJiRL5yxVfTE1eMex7gzN7DnMeC1CdrL91x0XUSRrWYvZkkdx/IsuKHiYP1R1cW
-         tvOYPZtpmkQ7aLmXGVklDyBhQnDOq17SvPUzJQlS7spzwg4dIc55fQqrBr+I5L+nPCpn
-         Pdng==
-X-Gm-Message-State: AOAM533LUuMq5q6+DtbxlQc7v5cWJkof7k809xJoGR85jVJJb8S1Wccf
-        xa5pFvDP0BQtM7NNB8Yo4R99YCsALJ+8/pWZWwpJxg==
-X-Google-Smtp-Source: ABdhPJz9EiIOtyDS5NnRoJX3EMQljO9+XE46gP4QRLRbWTE3xA90fnZY61ZeGvuqz4V7mlfd/oCvObFvauiBVAqP6kM=
-X-Received: by 2002:a05:6830:88:: with SMTP id a8mr29462620oto.233.1629749897488;
- Mon, 23 Aug 2021 13:18:17 -0700 (PDT)
-Received: from 753933720722 named unknown by gmailapi.google.com with
- HTTPREST; Mon, 23 Aug 2021 15:18:17 -0500
-MIME-Version: 1.0
-In-Reply-To: <5848670f513187734d7625f242bbf67b@codeaurora.org>
-References: <1629342136-3667-1-git-send-email-sibis@codeaurora.org>
- <1629342136-3667-3-git-send-email-sibis@codeaurora.org> <CAE-0n531EgLx-gGJswmmNAFmy-P9z=Hh1N=fkLw_uemoeQnYVg@mail.gmail.com>
- <d733d47bc6a86fe28302943e50d02bd5@codeaurora.org> <CAE-0n50z=MaEZhXRSQpN6Jo8m7nyQSS6MqikAgT5cfkH1ZvL_g@mail.gmail.com>
- <5848670f513187734d7625f242bbf67b@codeaurora.org>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=qP9Pyq6spTLX2ZdL8bYbTvq8hc7AHiozjvavSsllrAo=;
+        b=h1lp/C8u5g49+RV+PbMN3mSFfN5JCsHpOoU0NNUk+s4I837ehkEHqQsA2reF7iEddf
+         KO3ehIob5XHc0LcTcyL42FJXsEvovtGsYM610yO2f9BKJmmOFXshrbujzPKwO3y2P5wj
+         AFY6npMVZsq7cc/yq4qVlh0CxMg6g5SQGPDMxiVgzXZ8XOa2ivNJJFlaBhj6XAO3u5dc
+         KG33a2Ti9UpWtpN5armF+31zsukxsPRR67u4X22KnpdLsOPrLAQ5D+M0XrUNoPg4TBVK
+         KHGKIlEwrVcqESYDQ2f36RWIOg3dAuBGrTQdcjnLS+Acyzc5WSqmB7LyqKi4vyr7R03b
+         vSGg==
+X-Gm-Message-State: AOAM531zHjdrXTFSt0kCzfTQwSg1ZOpznkPXDAroE55EI66W1IyGHE+T
+        S0FDaXz/UbPl941KdIktvi7EAw==
+X-Google-Smtp-Source: ABdhPJzIG/7d35YPbe2fIJVHKCJ6NuWUFE4zsXPv3awoTTePAiL+yylLYE3st+O7LQHJSaif0gADKw==
+X-Received: by 2002:a17:902:d2c3:b0:136:3916:c936 with SMTP id n3-20020a170902d2c300b001363916c936mr566998plc.85.1629762682512;
+        Mon, 23 Aug 2021 16:51:22 -0700 (PDT)
+Received: from smtp.gmail.com ([2620:15c:202:201:d459:dfd5:c7a0:283c])
+        by smtp.gmail.com with ESMTPSA id t14sm20074660pga.62.2021.08.23.16.51.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 23 Aug 2021 16:51:22 -0700 (PDT)
 From:   Stephen Boyd <swboyd@chromium.org>
-User-Agent: alot/0.9.1
-Date:   Mon, 23 Aug 2021 15:18:16 -0500
-Message-ID: <CAE-0n514NRg6SkvPCC4hAyQVp4MX9ubHGvsTT14FuaB_d1QsEQ@mail.gmail.com>
-Subject: Re: [PATCH v5 02/13] dt-bindings: remoteproc: qcom: pas: Add QMP property
-To:     Sibi Sankar <sibis@codeaurora.org>
-Cc:     bjorn.andersson@linaro.org, mka@chromium.org, robh+dt@kernel.org,
-        ulf.hansson@linaro.org, rjw@rjwysocki.net, agross@kernel.org,
-        ohad@wizery.com, mathieu.poirier@linaro.org,
-        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        dianders@chromium.org, rishabhb@codeaurora.org,
-        sidgup@codeaurora.org
-Content-Type: text/plain; charset="UTF-8"
+To:     Ohad Ben-Cohen <ohad@wizery.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc:     linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org
+Subject: [PATCH 1/2] remoteproc: qcom: wcnss: Drop unused smd include
+Date:   Mon, 23 Aug 2021 16:51:19 -0700
+Message-Id: <20210823235120.1203512-1-swboyd@chromium.org>
+X-Mailer: git-send-email 2.33.0.rc2.250.ged5fa647cd-goog
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Quoting Sibi Sankar (2021-08-23 09:19:08)
-> On 2021-08-21 23:47, Stephen Boyd wrote:
-> > Quoting Sibi Sankar (2021-08-20 07:24:02)
-> >> On 2021-08-20 00:25, Stephen Boyd wrote:
-> >> > Quoting Sibi Sankar (2021-08-18 20:02:05)
-> >> >> The load state power-domain, used by the co-processors to notify the
-> >> >> Always on Subsystem (AOSS) that a particular co-processor is up/down,
-> >> >> suffers from the side-effect of changing states during suspend/resume.
-> >> >> However the co-processors enter low-power modes independent to that of
-> >> >> the application processor and their states are expected to remain
-> >> >> unaltered across system suspend/resume cycles. To achieve this
-> >> >> behavior
-> >> >> let's drop the load state power-domain and replace them with the qmp
-> >> >> property for all SoCs supporting low power mode signalling.
-> >> >>
-> >> >
-> >> > How do we drop the load state property without breaking existing DTBs?
-> >> > Maybe we need to leave it there and then somehow make it optional? Or
-> >> > do
-> >> > we not care about this problem as the driver will start ignoring it?
-> >>
-> >> We can afford to break the bindings
-> >> because of the following reason:
-> >>
-> >> * Load state in mainline is currently
-> >>    broken i.e. it doesn't serve its
-> >>    main purpose of signalling AOP of
-> >>    the correct state of Q6 during
-> >>    system suspend/resume. Thus we
-> >>    can maintain current functionality
-> >>    even without the load state votes
-> >>    i.e. when a new kernel with load
-> >>    state removed is used with an older
-> >>    dtb the remoteproc functionality
-> >>    will remain the same.
-> >>
-> >
-> > Alright. Is that reflected somewhere in the commit text? I must have
-> > missed it. Can you please add it?
->
-> Commit message throughout the series
-> mention that the current load state
-> implementation is broken but it is
-> never mentioned explicitly that it
-> is the reason why bindings can be
-> broken. I'll wait for a couple of
-> days to see if I get any more
-> comments and will re-word it in the
-> next re-spin.
->
+This include isn't used anymore because the smd functions have been
+moved to the qcom_common.c file.
 
-Ok. You can add my Reviewed-by tag with that text updated.
+Signed-off-by: Stephen Boyd <swboyd@chromium.org>
+---
+ drivers/remoteproc/qcom_wcnss.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/drivers/remoteproc/qcom_wcnss.c b/drivers/remoteproc/qcom_wcnss.c
+index f1cbc6b2edbb..33d786b93775 100644
+--- a/drivers/remoteproc/qcom_wcnss.c
++++ b/drivers/remoteproc/qcom_wcnss.c
+@@ -25,7 +25,6 @@
+ #include <linux/soc/qcom/mdt_loader.h>
+ #include <linux/soc/qcom/smem.h>
+ #include <linux/soc/qcom/smem_state.h>
+-#include <linux/rpmsg/qcom_smd.h>
+ 
+ #include "qcom_common.h"
+ #include "remoteproc_internal.h"
+
+base-commit: 36a21d51725af2ce0700c6ebcb6b9594aac658a6
+-- 
+https://chromeos.dev
+
