@@ -2,138 +2,143 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-19.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-16.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62D15C4320A
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 23 Aug 2021 23:51:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D2A2C4338F
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 24 Aug 2021 18:34:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4989F613AD
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 23 Aug 2021 23:51:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 412D86113B
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 24 Aug 2021 18:34:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233438AbhHWXwI (ORCPT
+        id S232867AbhHXSfc (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 23 Aug 2021 19:52:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46182 "EHLO
+        Tue, 24 Aug 2021 14:35:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50644 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233450AbhHWXwG (ORCPT
+        with ESMTP id S231956AbhHXSfa (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 23 Aug 2021 19:52:06 -0400
-Received: from mail-pl1-x62c.google.com (mail-pl1-x62c.google.com [IPv6:2607:f8b0:4864:20::62c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C1F88C061757
-        for <linux-remoteproc@vger.kernel.org>; Mon, 23 Aug 2021 16:51:23 -0700 (PDT)
-Received: by mail-pl1-x62c.google.com with SMTP id e15so11142605plh.8
-        for <linux-remoteproc@vger.kernel.org>; Mon, 23 Aug 2021 16:51:23 -0700 (PDT)
+        Tue, 24 Aug 2021 14:35:30 -0400
+Received: from mail-ot1-x332.google.com (mail-ot1-x332.google.com [IPv6:2607:f8b0:4864:20::332])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 515C4C061757
+        for <linux-remoteproc@vger.kernel.org>; Tue, 24 Aug 2021 11:34:46 -0700 (PDT)
+Received: by mail-ot1-x332.google.com with SMTP id x9-20020a056830278900b0051b8be1192fso27912203otu.7
+        for <linux-remoteproc@vger.kernel.org>; Tue, 24 Aug 2021 11:34:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=Ofv+j2S2FbiKvsZuOL3LOydJGqLAS0ftgkBRlwGwLQA=;
-        b=DRUPWBF+7oiDZ6doVRUz5uLuTc8hII8QmvugZNqz/WWkU12lBZlIkv/4xxEEvDL3Ay
-         DUSEcibMrh8t3srnfcL7KddUkz7JG0mo96E71E3w6bv4uKcZSR3n7XRbrm9b4UbgCooF
-         UA8Iw81QZ/AiQg5PvmgYLI2vvVHgp8Fe3/Zbk=
+        h=mime-version:in-reply-to:references:from:user-agent:date:message-id
+         :subject:to:cc;
+        bh=MpSjVxSMjJK4OJw4oTKLD3JL0PWvQPTVS0fPqXZYl3g=;
+        b=n/JcnajTDuWMOgB1dqCLhqVz/SK9+IAgpIc6Z5Dlx0X3Bz7NVcegvqK2cpm3DNJbPQ
+         10DZqlRko41kmEobXSLmA4zrYTieEAA4vI1y7bwkO66KsdU7sMqstshTU6BpT0hdAZfy
+         i6kXOJtX6evRy9U7I6Sp6+LA4yS0fHqGvNoOA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=Ofv+j2S2FbiKvsZuOL3LOydJGqLAS0ftgkBRlwGwLQA=;
-        b=RmVS3nueK5x6mZNWvezOJl9j2tX39AJQK9QzzmVmGzcD5fh2ax4CsYpLvFMEI2GQ/s
-         auqvj5PhEjZXftzZ6x6uKnKTwkBKkHhYjSqzlPXJQ485zXSVp1HhUSnmVFUFT305Bx46
-         KmjFV18/PfalpWWsiJpKK8U9g+L8iyQF6Is+PFRv+Odh2DhFh27U93fDlsikX91isL69
-         3h0uNmWsUskoXa56kg6lizxpYi43OgUfzccm9EnN3iasv67zZZn0UfZY/mNOWSeHg/l1
-         n+5hdJeQRy+aIYQV3ylPNRRFS4EDXqPEm0Km+uXYnSbHo21qzsHvTXdiV+gv8V+faQhB
-         qpOg==
-X-Gm-Message-State: AOAM531gq5m3r9dY+P2XXXvXbgfuHY4gU7N0AqraBUBIxu8SbdmXBfs+
-        +bFz/84u0BkAhkZMRzNOO3+EtQ==
-X-Google-Smtp-Source: ABdhPJzkpDY3t+VBB6BNghMoJ+ykky8fF3OI69J+keDxdweBYcplBMJj87ECZHqX3Cj7LOzRjdmjtQ==
-X-Received: by 2002:a17:90a:458c:: with SMTP id v12mr1178683pjg.50.1629762683388;
-        Mon, 23 Aug 2021 16:51:23 -0700 (PDT)
-Received: from smtp.gmail.com ([2620:15c:202:201:d459:dfd5:c7a0:283c])
-        by smtp.gmail.com with ESMTPSA id t14sm20074660pga.62.2021.08.23.16.51.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Aug 2021 16:51:23 -0700 (PDT)
-From:   Stephen Boyd <swboyd@chromium.org>
-To:     Ohad Ben-Cohen <ohad@wizery.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc:     linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org
-Subject: [PATCH 2/2] remoteproc: qcom: Loosen dependency on RPMSG_QCOM_SMD
-Date:   Mon, 23 Aug 2021 16:51:20 -0700
-Message-Id: <20210823235120.1203512-2-swboyd@chromium.org>
-X-Mailer: git-send-email 2.33.0.rc2.250.ged5fa647cd-goog
-In-Reply-To: <20210823235120.1203512-1-swboyd@chromium.org>
-References: <20210823235120.1203512-1-swboyd@chromium.org>
+        h=x-gm-message-state:mime-version:in-reply-to:references:from
+         :user-agent:date:message-id:subject:to:cc;
+        bh=MpSjVxSMjJK4OJw4oTKLD3JL0PWvQPTVS0fPqXZYl3g=;
+        b=EhFQhu90LzRkTuq1mjkkCyRjuGYTpmSzjvIiDyEImHuMihYIEJipORWdr4o5aIoQIk
+         Y7DTTN5jLD8SQytSF2j+oot2v2WMkKgwYUv4Pe204ueu2yHPoJ3h1MOqsoyvYirUexUG
+         Zre/21NxEg3bZsGMtGDNnNu7TcGba2RHbUYlcdMwqBlTfxSCjSfzK56VLbPzlAEjoPts
+         MXm1N6Cx54S0bni+oYdpiHNPR5t6kYeCi/vQV+v5nhZbRjlES7Byp9jY0depntXvkLz9
+         y0cbvTDLRWW+9Ifth0dZ2IK4kNLK9HX8Fn8NHYlwVdvSk1L8YakPBDGHHoqVHGeaVqNp
+         DP8g==
+X-Gm-Message-State: AOAM530HMxFqWS5r7QY+U3mwtLfyRH09OXTIttl5Qn2JaDvE7TtsSpHx
+        ZjAUJPUQQ7SFnx4O3WP1RlFBDzP71W/lGcFbc88Dfw==
+X-Google-Smtp-Source: ABdhPJzRH/Uc7RJJIpCbxFsIdbJBiPfb7rT9/hLjX1Vp9cEqoF/t87EH1mDk73cPqGvQmJ4MtwBCUJQX8YPNs8ZHDkQ=
+X-Received: by 2002:a05:6808:180e:: with SMTP id bh14mr3854642oib.19.1629830085691;
+ Tue, 24 Aug 2021 11:34:45 -0700 (PDT)
+Received: from 753933720722 named unknown by gmailapi.google.com with
+ HTTPREST; Tue, 24 Aug 2021 11:34:45 -0700
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <1629113954-14084-2-git-send-email-deesin@codeaurora.org>
+References: <1629113954-14084-1-git-send-email-deesin@codeaurora.org> <1629113954-14084-2-git-send-email-deesin@codeaurora.org>
+From:   Stephen Boyd <swboyd@chromium.org>
+User-Agent: alot/0.9.1
+Date:   Tue, 24 Aug 2021 11:34:45 -0700
+Message-ID: <CAE-0n50G_OYqR6R8+K5RkrCBvdQW-E-zDoMZ-yyAoEJW2WyxcA@mail.gmail.com>
+Subject: Re: [PATCH V6 1/2] soc: qcom: aoss: Expose send for generic usecase
+To:     Deepak Kumar Singh <deesin@codeaurora.org>,
+        bjorn.andersson@linaro.org, clew@codeaurora.org,
+        sibis@codeaurora.org
+Cc:     linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org, Andy Gross <agross@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-There doesn't seem to be any actual build time dependency on the
-RPMSG_QCOM_SMD, besides that these drivers should be a module if the smd
-rpmsg code is a module. Drop the compile test dependency so that these
-drivers can be used without RPMSG_QCOM_SMD being enabled. This is useful
-for the qcom SoCs that are using RPMSG_QCOM_GLINK_SMEM instead of
-RPMSG_QCOM_SMD and thus don't want to enable the SMD driver when it is
-never used.
+Quoting Deepak Kumar Singh (2021-08-16 04:39:13)
+> Not all upcoming usecases will have an interface to allow the aoss
+> driver to hook onto. Expose the send api and create a get function to
+> enable drivers to send their own messages to aoss.
+>
+> Signed-off-by: Chris Lew <clew@codeaurora.org>
+> Signed-off-by: Deepak Kumar Singh <deesin@codeaurora.org>
+> ---
 
-Signed-off-by: Stephen Boyd <swboyd@chromium.org>
----
- drivers/remoteproc/Kconfig | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+With one nit below
 
-diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
-index 9a6eedc3994a..f30d00a3aabe 100644
---- a/drivers/remoteproc/Kconfig
-+++ b/drivers/remoteproc/Kconfig
-@@ -154,7 +154,7 @@ config QCOM_Q6V5_ADSP
- 	tristate "Qualcomm Technology Inc ADSP Peripheral Image Loader"
- 	depends on OF && ARCH_QCOM
- 	depends on QCOM_SMEM
--	depends on RPMSG_QCOM_SMD || (COMPILE_TEST && RPMSG_QCOM_SMD=n)
-+	depends on RPMSG_QCOM_SMD || RPMSG_QCOM_SMD=n
- 	depends on RPMSG_QCOM_GLINK_SMEM || RPMSG_QCOM_GLINK_SMEM=n
- 	depends on QCOM_SYSMON || QCOM_SYSMON=n
- 	depends on RPMSG_QCOM_GLINK || RPMSG_QCOM_GLINK=n
-@@ -173,7 +173,7 @@ config QCOM_Q6V5_MSS
- 	tristate "Qualcomm Hexagon V5 self-authenticating modem subsystem support"
- 	depends on OF && ARCH_QCOM
- 	depends on QCOM_SMEM
--	depends on RPMSG_QCOM_SMD || (COMPILE_TEST && RPMSG_QCOM_SMD=n)
-+	depends on RPMSG_QCOM_SMD || RPMSG_QCOM_SMD=n
- 	depends on RPMSG_QCOM_GLINK_SMEM || RPMSG_QCOM_GLINK_SMEM=n
- 	depends on QCOM_SYSMON || QCOM_SYSMON=n
- 	depends on RPMSG_QCOM_GLINK || RPMSG_QCOM_GLINK=n
-@@ -192,7 +192,7 @@ config QCOM_Q6V5_PAS
- 	tristate "Qualcomm Hexagon v5 Peripheral Authentication Service support"
- 	depends on OF && ARCH_QCOM
- 	depends on QCOM_SMEM
--	depends on RPMSG_QCOM_SMD || (COMPILE_TEST && RPMSG_QCOM_SMD=n)
-+	depends on RPMSG_QCOM_SMD || RPMSG_QCOM_SMD=n
- 	depends on RPMSG_QCOM_GLINK_SMEM || RPMSG_QCOM_GLINK_SMEM=n
- 	depends on QCOM_SYSMON || QCOM_SYSMON=n
- 	depends on RPMSG_QCOM_GLINK || RPMSG_QCOM_GLINK=n
-@@ -213,7 +213,7 @@ config QCOM_Q6V5_WCSS
- 	tristate "Qualcomm Hexagon based WCSS Peripheral Image Loader"
- 	depends on OF && ARCH_QCOM
- 	depends on QCOM_SMEM
--	depends on RPMSG_QCOM_SMD || (COMPILE_TEST && RPMSG_QCOM_SMD=n)
-+	depends on RPMSG_QCOM_SMD || RPMSG_QCOM_SMD=n
- 	depends on RPMSG_QCOM_GLINK_SMEM || RPMSG_QCOM_GLINK_SMEM=n
- 	depends on QCOM_SYSMON || QCOM_SYSMON=n
- 	depends on RPMSG_QCOM_GLINK || RPMSG_QCOM_GLINK=n
-@@ -246,7 +246,7 @@ config QCOM_SYSMON
- config QCOM_WCNSS_PIL
- 	tristate "Qualcomm WCNSS Peripheral Image Loader"
- 	depends on OF && ARCH_QCOM
--	depends on RPMSG_QCOM_SMD || (COMPILE_TEST && RPMSG_QCOM_SMD=n)
-+	depends on RPMSG_QCOM_SMD || RPMSG_QCOM_SMD=n
- 	depends on RPMSG_QCOM_GLINK_SMEM || RPMSG_QCOM_GLINK_SMEM=n
- 	depends on QCOM_SMEM
- 	depends on QCOM_SYSMON || QCOM_SYSMON=n
--- 
-https://chromeos.dev
+Reviewed-by: Stephen Boyd <swboyd@chromium.org>
 
+> diff --git a/drivers/soc/qcom/qcom_aoss.c b/drivers/soc/qcom/qcom_aoss.c
+> index 934fcc4..a43c22c 100644
+> --- a/drivers/soc/qcom/qcom_aoss.c
+> +++ b/drivers/soc/qcom/qcom_aoss.c
+> @@ -515,6 +521,48 @@ static void qmp_cooling_devices_remove(struct qmp *qmp)
+>                 thermal_cooling_device_unregister(qmp->cooling_devs[i].cdev);
+>  }
+>
+> +/**
+> + * qmp_get() - get a qmp handle from a device
+> + * @dev: client device pointer
+> + *
+> + * Return: handle to qmp device on success, ERR_PTR() on failure
+> + */
+> +struct qmp *qmp_get(struct device *dev)
+> +{
+> +       struct platform_device *pdev;
+> +       struct device_node *np;
+> +       struct qmp *qmp;
+> +
+> +       if (!dev || !dev->of_node)
+> +               return ERR_PTR(-EINVAL);
+> +
+> +       np = of_parse_phandle(dev->of_node, "qcom,qmp", 0);
+> +       if (!np)
+> +               return ERR_PTR(-ENODEV);
+> +
+> +       pdev = of_find_device_by_node(np);
+> +       of_node_put(np);
+> +       if (!pdev)
+> +               return ERR_PTR(-EINVAL);
+> +
+> +       qmp = platform_get_drvdata(pdev);
+> +
+> +       return qmp ? qmp : ERR_PTR(-EPROBE_DEFER);
+> +}
+> +EXPORT_SYMBOL(qmp_get);
+> +
+> +/**
+> + * qmp_put() - Match get_device() inside of_find_device_by_node()
+> + *            in qmp_get()
+
+I meant to put this comment next to the put_device() call. This should
+say something like "release a qmp handle" and then the existing comment
+moved down to the if below.
+
+> + * @qmp: qmp handle obtained from qmp_get()
+> + */
+> +void qmp_put(struct qmp *qmp)
+> +{
+> +       if (!IS_ERR_OR_NULL(qmp))
+> +               put_device(qmp->dev);
+> +}
+> +EXPORT_SYMBOL(qmp_put);
+> +
+>  static int qmp_probe(struct platform_device *pdev)
+>  {
+>         struct resource *res;
