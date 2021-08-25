@@ -2,143 +2,219 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D2A2C4338F
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 24 Aug 2021 18:34:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97CA2C4338F
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 25 Aug 2021 07:51:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 412D86113B
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 24 Aug 2021 18:34:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 710D1610E8
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 25 Aug 2021 07:51:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232867AbhHXSfc (ORCPT
+        id S238693AbhHYHwO (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 24 Aug 2021 14:35:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50644 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231956AbhHXSfa (ORCPT
-        <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 24 Aug 2021 14:35:30 -0400
-Received: from mail-ot1-x332.google.com (mail-ot1-x332.google.com [IPv6:2607:f8b0:4864:20::332])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 515C4C061757
-        for <linux-remoteproc@vger.kernel.org>; Tue, 24 Aug 2021 11:34:46 -0700 (PDT)
-Received: by mail-ot1-x332.google.com with SMTP id x9-20020a056830278900b0051b8be1192fso27912203otu.7
-        for <linux-remoteproc@vger.kernel.org>; Tue, 24 Aug 2021 11:34:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:in-reply-to:references:from:user-agent:date:message-id
-         :subject:to:cc;
-        bh=MpSjVxSMjJK4OJw4oTKLD3JL0PWvQPTVS0fPqXZYl3g=;
-        b=n/JcnajTDuWMOgB1dqCLhqVz/SK9+IAgpIc6Z5Dlx0X3Bz7NVcegvqK2cpm3DNJbPQ
-         10DZqlRko41kmEobXSLmA4zrYTieEAA4vI1y7bwkO66KsdU7sMqstshTU6BpT0hdAZfy
-         i6kXOJtX6evRy9U7I6Sp6+LA4yS0fHqGvNoOA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from
-         :user-agent:date:message-id:subject:to:cc;
-        bh=MpSjVxSMjJK4OJw4oTKLD3JL0PWvQPTVS0fPqXZYl3g=;
-        b=EhFQhu90LzRkTuq1mjkkCyRjuGYTpmSzjvIiDyEImHuMihYIEJipORWdr4o5aIoQIk
-         Y7DTTN5jLD8SQytSF2j+oot2v2WMkKgwYUv4Pe204ueu2yHPoJ3h1MOqsoyvYirUexUG
-         Zre/21NxEg3bZsGMtGDNnNu7TcGba2RHbUYlcdMwqBlTfxSCjSfzK56VLbPzlAEjoPts
-         MXm1N6Cx54S0bni+oYdpiHNPR5t6kYeCi/vQV+v5nhZbRjlES7Byp9jY0depntXvkLz9
-         y0cbvTDLRWW+9Ifth0dZ2IK4kNLK9HX8Fn8NHYlwVdvSk1L8YakPBDGHHoqVHGeaVqNp
-         DP8g==
-X-Gm-Message-State: AOAM530HMxFqWS5r7QY+U3mwtLfyRH09OXTIttl5Qn2JaDvE7TtsSpHx
-        ZjAUJPUQQ7SFnx4O3WP1RlFBDzP71W/lGcFbc88Dfw==
-X-Google-Smtp-Source: ABdhPJzRH/Uc7RJJIpCbxFsIdbJBiPfb7rT9/hLjX1Vp9cEqoF/t87EH1mDk73cPqGvQmJ4MtwBCUJQX8YPNs8ZHDkQ=
-X-Received: by 2002:a05:6808:180e:: with SMTP id bh14mr3854642oib.19.1629830085691;
- Tue, 24 Aug 2021 11:34:45 -0700 (PDT)
-Received: from 753933720722 named unknown by gmailapi.google.com with
- HTTPREST; Tue, 24 Aug 2021 11:34:45 -0700
-MIME-Version: 1.0
-In-Reply-To: <1629113954-14084-2-git-send-email-deesin@codeaurora.org>
-References: <1629113954-14084-1-git-send-email-deesin@codeaurora.org> <1629113954-14084-2-git-send-email-deesin@codeaurora.org>
-From:   Stephen Boyd <swboyd@chromium.org>
-User-Agent: alot/0.9.1
-Date:   Tue, 24 Aug 2021 11:34:45 -0700
-Message-ID: <CAE-0n50G_OYqR6R8+K5RkrCBvdQW-E-zDoMZ-yyAoEJW2WyxcA@mail.gmail.com>
-Subject: Re: [PATCH V6 1/2] soc: qcom: aoss: Expose send for generic usecase
-To:     Deepak Kumar Singh <deesin@codeaurora.org>,
-        bjorn.andersson@linaro.org, clew@codeaurora.org,
-        sibis@codeaurora.org
-Cc:     linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org, Andy Gross <agross@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 25 Aug 2021 03:52:14 -0400
+Received: from inva021.nxp.com ([92.121.34.21]:40898 "EHLO inva021.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S231687AbhHYHwN (ORCPT <rfc822;linux-remoteproc@vger.kernel.org>);
+        Wed, 25 Aug 2021 03:52:13 -0400
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 29ADD20264D;
+        Wed, 25 Aug 2021 09:51:27 +0200 (CEST)
+Received: from aprdc01srsp001v.ap-rdc01.nxp.com (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id BB1F7202E5C;
+        Wed, 25 Aug 2021 09:51:26 +0200 (CEST)
+Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
+        by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 46985183AC72;
+        Wed, 25 Aug 2021 15:51:21 +0800 (+08)
+From:   Shengjiu Wang <shengjiu.wang@nxp.com>
+To:     ohad@wizery.com, bjorn.andersson@linaro.org,
+        mathieu.poirier@linaro.org, robh+dt@kernel.org,
+        shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
+        festevam@gmail.com
+Cc:     linux-imx@nxp.com, linux-remoteproc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, shengjiu.wang@gmail.com
+Subject: [PATCH v2 1/2] dt-bindings: remoteproc: Add fsl,imx-dsp-rproc binding document
+Date:   Wed, 25 Aug 2021 15:28:35 +0800
+Message-Id: <1629876516-16513-1-git-send-email-shengjiu.wang@nxp.com>
+X-Mailer: git-send-email 2.7.4
+X-Virus-Scanned: ClamAV using ClamSMTP
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Quoting Deepak Kumar Singh (2021-08-16 04:39:13)
-> Not all upcoming usecases will have an interface to allow the aoss
-> driver to hook onto. Expose the send api and create a get function to
-> enable drivers to send their own messages to aoss.
->
-> Signed-off-by: Chris Lew <clew@codeaurora.org>
-> Signed-off-by: Deepak Kumar Singh <deesin@codeaurora.org>
-> ---
+Define the compatible string and properties needed by imx_dsp_rproc
+driver.
 
-With one nit below
+Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
+---
+changes in v2:
+- add items for clock-names
+- change syscon to fsl,dsp-ctrl 
 
-Reviewed-by: Stephen Boyd <swboyd@chromium.org>
+ .../remoteproc/fsl,imx-dsp-rproc.yaml         | 150 ++++++++++++++++++
+ 1 file changed, 150 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/remoteproc/fsl,imx-dsp-rproc.yaml
 
-> diff --git a/drivers/soc/qcom/qcom_aoss.c b/drivers/soc/qcom/qcom_aoss.c
-> index 934fcc4..a43c22c 100644
-> --- a/drivers/soc/qcom/qcom_aoss.c
-> +++ b/drivers/soc/qcom/qcom_aoss.c
-> @@ -515,6 +521,48 @@ static void qmp_cooling_devices_remove(struct qmp *qmp)
->                 thermal_cooling_device_unregister(qmp->cooling_devs[i].cdev);
->  }
->
-> +/**
-> + * qmp_get() - get a qmp handle from a device
-> + * @dev: client device pointer
-> + *
-> + * Return: handle to qmp device on success, ERR_PTR() on failure
-> + */
-> +struct qmp *qmp_get(struct device *dev)
-> +{
-> +       struct platform_device *pdev;
-> +       struct device_node *np;
-> +       struct qmp *qmp;
-> +
-> +       if (!dev || !dev->of_node)
-> +               return ERR_PTR(-EINVAL);
-> +
-> +       np = of_parse_phandle(dev->of_node, "qcom,qmp", 0);
-> +       if (!np)
-> +               return ERR_PTR(-ENODEV);
-> +
-> +       pdev = of_find_device_by_node(np);
-> +       of_node_put(np);
-> +       if (!pdev)
-> +               return ERR_PTR(-EINVAL);
-> +
-> +       qmp = platform_get_drvdata(pdev);
-> +
-> +       return qmp ? qmp : ERR_PTR(-EPROBE_DEFER);
-> +}
-> +EXPORT_SYMBOL(qmp_get);
-> +
-> +/**
-> + * qmp_put() - Match get_device() inside of_find_device_by_node()
-> + *            in qmp_get()
+diff --git a/Documentation/devicetree/bindings/remoteproc/fsl,imx-dsp-rproc.yaml b/Documentation/devicetree/bindings/remoteproc/fsl,imx-dsp-rproc.yaml
+new file mode 100644
+index 000000000000..edf6e4b8d7bb
+--- /dev/null
++++ b/Documentation/devicetree/bindings/remoteproc/fsl,imx-dsp-rproc.yaml
+@@ -0,0 +1,150 @@
++# SPDX-License-Identifier: (GPL-2.0-only or BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/remoteproc/fsl,imx-dsp-rproc.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: i.MX DSP Remoteproc Devices
++
++maintainers:
++  - Shengjiu Wang <shengjiu.wang@nxp.com>
++
++description:
++  This binding provides support for DSP processors found on i.mX family of SoCs
++
++properties:
++  compatible:
++    enum:
++      - fsl,imx8qxp-hifi4
++      - fsl,imx8qm-hifi4
++      - fsl,imx8mp-hifi4
++      - fsl,imx8ulp-hifi4
++
++  clocks:
++    description:
++      Main functional clock for the remote processor
++    minItems: 1
++    maxItems: 32
++
++  clock-names:
++    description: |
++      List of clock names for the remote processor.
++      dsp_clkx for clocks of dsp itself.
++      per_clkx for clocks of peripherals used by dsp.
++    minItems: 1
++    maxItems: 26
++    items:
++      - const: dsp_clk1
++      - const: dsp_clk2
++      - const: dsp_clk3
++      - const: dsp_clk4
++      - const: dsp_clk5
++      - const: dsp_clk6
++      - const: dsp_clk7
++      - const: dsp_clk8
++      - const: per_clk1
++      - const: per_clk2
++      - const: per_clk3
++      - const: per_clk4
++      - const: per_clk5
++      - const: per_clk6
++      - const: per_clk7
++      - const: per_clk8
++      - const: per_clk9
++      - const: per_clk10
++      - const: per_clk11
++      - const: per_clk12
++      - const: per_clk13
++      - const: per_clk14
++      - const: per_clk15
++      - const: per_clk16
++      - const: per_clk17
++      - const: per_clk18
++
++  fsl,dsp-ctrl:
++    $ref: /schemas/types.yaml#/definitions/phandle
++    description:
++      Phandle to syscon block which provide access for processor enablement
++
++  mbox-names:
++    items:
++      - const: tx
++      - const: rx
++      - const: rxdb
++
++  mboxes:
++    description:
++      This property is required only if the rpmsg/virtio functionality is used.
++      List of <&phandle type channel> - 1 channel for TX, 1 channel for RX, 1 channel for RXDB.
++      (see mailbox/fsl,mu.yaml)
++    minItems: 1
++    maxItems: 3
++
++  firmware-name:
++    description: |
++      Default name of the firmware to load to the remote processor.
++
++  memory-region:
++    description:
++      If present, a phandle for a reserved memory area that used for vdev buffer,
++      resource table, vring region and others used by remote processor.
++    minItems: 1
++    maxItems: 32
++
++  reg:
++    description: |
++      Address space for any remoteproc memories present on the SoC.
++
++  power-domains:
++    minItems: 1
++    maxItems: 32
++
++required:
++  - compatible
++  - reg
++  - mboxes
++  - mbox-names
++  - clocks
++  - clock-names
++  - firmware-name
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/clock/imx8mp-clock.h>
++    dsp_reserved: dsp@92400000 {
++      reg = <0x92400000 0x1000000>;
++      no-map;
++    };
++    dsp_vdev0vring0: vdev0vring0@942f0000 {
++      reg = <0x942f0000 0x8000>;
++      no-map;
++    };
++    dsp_vdev0vring1: vdev0vring1@942f8000 {
++      reg = <0x942f8000 0x8000>;
++      no-map;
++    };
++    dsp_vdev0buffer: vdev0buffer@94300000 {
++      compatible = "shared-dma-pool";
++      reg = <0x94300000 0x100000>;
++      no-map;
++    };
++
++    dsp: dsp@3b6e8000 {
++      compatible = "fsl,imx8mp-hifi4";
++      reg = <0x3B6E8000 0x88000>;
++      clocks = <&audio_blk_ctrl IMX8MP_CLK_AUDIOMIX_OCRAMA_IPG>,
++               <&audio_blk_ctrl IMX8MP_CLK_AUDIOMIX_DSP_ROOT>,
++               <&audio_blk_ctrl IMX8MP_CLK_AUDIOMIX_DSPDBG_ROOT>;
++      clock-names = "dsp_clk1", "dsp_clk2", "dsp_clk3";
++      firmware-name = "imx/dsp/hifi4.bin";
++      power-domains = <&audiomix_pd>;
++      mbox-names = "tx", "rx", "rxdb";
++      mboxes = <&mu2 0 0>,
++               <&mu2 1 0>,
++               <&mu2 3 0>;
++      memory-region = <&dsp_vdev0buffer>, <&dsp_vdev0vring0>,
++                      <&dsp_vdev0vring1>, <&dsp_reserved>;
++      fsl,dsp-ctrl = <&audio_blk_ctrl>;
++    };
+-- 
+2.17.1
 
-I meant to put this comment next to the put_device() call. This should
-say something like "release a qmp handle" and then the existing comment
-moved down to the if below.
-
-> + * @qmp: qmp handle obtained from qmp_get()
-> + */
-> +void qmp_put(struct qmp *qmp)
-> +{
-> +       if (!IS_ERR_OR_NULL(qmp))
-> +               put_device(qmp->dev);
-> +}
-> +EXPORT_SYMBOL(qmp_put);
-> +
->  static int qmp_probe(struct platform_device *pdev)
->  {
->         struct resource *res;
