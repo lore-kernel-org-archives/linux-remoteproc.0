@@ -2,66 +2,64 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-11.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY autolearn=no
-	autolearn_force=no version=3.4.0
+	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E37AEC432BE
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 30 Aug 2021 23:01:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6FAFC19F35
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 30 Aug 2021 23:02:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C467760F6C
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 30 Aug 2021 23:01:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AFC4361004
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 30 Aug 2021 23:02:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238987AbhH3XCL (ORCPT
+        id S238962AbhH3XDW (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 30 Aug 2021 19:02:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54848 "EHLO
+        Mon, 30 Aug 2021 19:03:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55120 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231897AbhH3XCH (ORCPT
+        with ESMTP id S238916AbhH3XDV (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 30 Aug 2021 19:02:07 -0400
-Received: from mail-ot1-x32f.google.com (mail-ot1-x32f.google.com [IPv6:2607:f8b0:4864:20::32f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AE015C061575
-        for <linux-remoteproc@vger.kernel.org>; Mon, 30 Aug 2021 16:01:13 -0700 (PDT)
-Received: by mail-ot1-x32f.google.com with SMTP id x10-20020a056830408a00b004f26cead745so20470380ott.10
-        for <linux-remoteproc@vger.kernel.org>; Mon, 30 Aug 2021 16:01:13 -0700 (PDT)
+        Mon, 30 Aug 2021 19:03:21 -0400
+Received: from mail-ot1-x331.google.com (mail-ot1-x331.google.com [IPv6:2607:f8b0:4864:20::331])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0DEFBC061575
+        for <linux-remoteproc@vger.kernel.org>; Mon, 30 Aug 2021 16:02:27 -0700 (PDT)
+Received: by mail-ot1-x331.google.com with SMTP id c42-20020a05683034aa00b0051f4b99c40cso10214172otu.0
+        for <linux-remoteproc@vger.kernel.org>; Mon, 30 Aug 2021 16:02:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=mime-version:in-reply-to:references:from:user-agent:date:message-id
          :subject:to:cc;
-        bh=SBvWEFE7ZHRV6dF93YeVztgkppDJ5iGt+SWnxMoR3Zo=;
-        b=K2aL61yrvUo2pFacIrBVkLxIAHZ0ijDkNx0/BdyNj2ChxOpGGi2qY7C9FxzMzGGMOu
-         I20sjcqzzPEaxBrwdCj351IE5YaIWm0Wx/E/ou/QxI9ebJ6K/zg86A+ujSPHIphzLG9K
-         RA8odMrTuEgsYD1dRHXJAjSU2vAdSrFMTRgIA=
+        bh=eWM4/3yTwD02gfJC9rFF7KdMYiNQBXaOsLgx6akWtD8=;
+        b=PM1pNMQtWGrH46anjSbXZmaMSIzKWW6VD0gew5jdrK3kFfDUleakCbx5IVbIJtpEYa
+         Oh2WMagW6w4u+oKA422fnZP3Su+eKmPeqyu/nEjhX0qewMS2UGVT87y/fgLyFFBp6t0D
+         cTjAAYsEkR5GZ2oMR36LIt3oLM45RquoPiOqo=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:in-reply-to:references:from
          :user-agent:date:message-id:subject:to:cc;
-        bh=SBvWEFE7ZHRV6dF93YeVztgkppDJ5iGt+SWnxMoR3Zo=;
-        b=hcYnsB/cbfRQlAGQlgZjoTY+OZtXBTHQC5EykrFOwi8M+CTyrihx/XK5mLB/dH6AAJ
-         /DsCIPyT3vAq8h77PZdIiIccJu5HieLXAWxZUtdbAgQxm1U6XP1qSj292XrrKmPfJIex
-         kHY8gX4MG+7fDbnB0W7Jo+uBjVATmSHWFhIFiRmnusVzJ40sOBQ68vcdLy8EBM0ADxWk
-         J0HkuBx9NcwTX5QkWqrJNQlxcL5pQBsAEbWgkgptF8OdpLT1L59QE77bMa2g2h/mMpLX
-         +CqWCfFbrCYb0rHMgplWfl6zPw1N80ZUz6DVEDJ/P0t0btXXaNhYHF+q/pKTyf06J9Bo
-         vErA==
-X-Gm-Message-State: AOAM531m7XDvOivkwK1VCeSc1BspfC7T7cRCObMH1Kz5SeJrPiS6fsbm
-        k8VmMVNVFmzQPIG+xvDBd+D1ysbhFwW7jF0DTFfMzQ==
-X-Google-Smtp-Source: ABdhPJzSgj0nb7XkGDvk91kYGxUZ0WsaC4P3ErcshYBpH3DFM0ygLAqpUPjQZwKpE4ssB9Qo4tK9MMB77S1hsManWOI=
-X-Received: by 2002:a9d:123:: with SMTP id 32mr22337333otu.124.1630364473117;
- Mon, 30 Aug 2021 16:01:13 -0700 (PDT)
+        bh=eWM4/3yTwD02gfJC9rFF7KdMYiNQBXaOsLgx6akWtD8=;
+        b=pO1oOLoL11pg1fi5+ux37mIYu0fGoRSR/LaTg5Fdk38MDZPS/2dxI2SYjpZOznhMIS
+         f3qxpSy5ifXlf7wtOh/m9arA+HJGI0Wxx0jjhkcQYglhYPT8IKU1WdNKRX5KzhDjVV8x
+         4nK3JYJ7INxDqJsYcrDZ12yKyU4gE+pjPCtrWwMEOAG3/zBg/Wv6fQZSTTVx4/q38IbH
+         OBkoq/R620TFXr7BWZoaVTRCf0XTQOqWl+YK9rDuSkh+qxo38HSQe+I4nWIGcg1HYR36
+         RV7PUQOk7Zdb9fTcNxdkONeggmggkQzu6UqfooiG9wylsqFYl+H1idsRQb1V9liF4FWE
+         NwPg==
+X-Gm-Message-State: AOAM533Su8GWDE85IALVljF7imxWXIbqjy2LdhYN4HE0TIu9WmN9UdaG
+        oihwM3r9lQk7DkWHIR9dr5403/bAmBzAF2Fb82PshA==
+X-Google-Smtp-Source: ABdhPJyyuZmtDRvRnkmfPxPxg0ZfrKKxpTrd0LDO62OHgk8HUhCwm2cmZKKyWMG7q9pTFPFaQCbn6/Fld+sjB6K1R4o=
+X-Received: by 2002:a9d:123:: with SMTP id 32mr22341511otu.124.1630364546432;
+ Mon, 30 Aug 2021 16:02:26 -0700 (PDT)
 Received: from 753933720722 named unknown by gmailapi.google.com with
- HTTPREST; Mon, 30 Aug 2021 16:01:12 -0700
+ HTTPREST; Mon, 30 Aug 2021 16:02:26 -0700
 MIME-Version: 1.0
-In-Reply-To: <ff8ede00-008e-4dfb-7a39-19242d421462@codeaurora.org>
-References: <1628161974-7182-1-git-send-email-deesin@codeaurora.org>
- <1628161974-7182-3-git-send-email-deesin@codeaurora.org> <CAE-0n50CM=DpXx7fzrcnWox+ZSfqvWuEb-R_rTP8ghR+bd54eA@mail.gmail.com>
- <ff8ede00-008e-4dfb-7a39-19242d421462@codeaurora.org>
+In-Reply-To: <1630323451-7160-3-git-send-email-deesin@codeaurora.org>
+References: <1630323451-7160-1-git-send-email-deesin@codeaurora.org> <1630323451-7160-3-git-send-email-deesin@codeaurora.org>
 From:   Stephen Boyd <swboyd@chromium.org>
 User-Agent: alot/0.9.1
-Date:   Mon, 30 Aug 2021 16:01:12 -0700
-Message-ID: <CAE-0n52YXvTzvK4B3Aggg1fcRyjy=+HzNADP315-J0iJ8bMWUQ@mail.gmail.com>
-Subject: Re: [PATCH V5 2/2] soc: qcom: aoss: Add debugfs entry
+Date:   Mon, 30 Aug 2021 16:02:26 -0700
+Message-ID: <CAE-0n500=1tF2V8nTTfPH3P-wCm8xs-J+9pLK=xfeOc1p=PB5A@mail.gmail.com>
+Subject: Re: [PATCH V7 2/2] soc: qcom: aoss: Add debugfs entry
 To:     Deepak Kumar Singh <deesin@codeaurora.org>,
         bjorn.andersson@linaro.org, clew@codeaurora.org,
         sibis@codeaurora.org
@@ -72,25 +70,14 @@ Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Quoting Deepak Kumar Singh (2021-08-30 04:46:53)
+Quoting Deepak Kumar Singh (2021-08-30 04:37:31)
+> Some user space clients may require to change power states of various
+> parts of hardware. Add a debugfs node for qmp so messages can be sent
+> to aoss from user space.
 >
-> On 8/5/2021 11:58 PM, Stephen Boyd wrote:
-> > Quoting Deepak Kumar Singh (2021-08-05 04:12:54)
-> >> It can be useful to control the different power states of various
-> >> parts of hardware for device testing. Add a debugfs node for qmp so
-> >> messages can be sent to aoss for debugging and testing purposes.
-> > Is it ever useful after device testing? I'd prefer we not apply this
-> > patch as it looks like testing code that won't ever be used after
-> > developing this driver.
->
-> This is not only for testing. Some user space clients can also use this
-> to send messages to aoss.
->
-> One such example is setting higher ddr frequency during boot and
-> reducing it post boot from user space.
->
+> Signed-off-by: Chris Lew <clew@codeaurora.org>
+> Signed-off-by: Deepak Kumar Singh <deesin@codeaurora.org>
+> ---
 
-The debugfs file system should not be used by userspace to do things
-like that. It's a debugging file system, not a configuration file
-system. If you want to expose userspace control for this it needs to be
-done in a different way.
+NAK. We don't want userspace to treat debugfs as an ABI. See
+https://lore.kernel.org/r/CAE-0n52YXvTzvK4B3Aggg1fcRyjy=+HzNADP315-J0iJ8bMWUQ@mail.gmail.com
