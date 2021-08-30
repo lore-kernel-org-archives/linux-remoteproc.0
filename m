@@ -2,94 +2,150 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40619C432BE
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 26 Aug 2021 12:37:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56015C432BE
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 30 Aug 2021 11:38:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 28D3F6109E
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 26 Aug 2021 12:37:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 404036113E
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 30 Aug 2021 11:38:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241878AbhHZMiY (ORCPT
+        id S236507AbhH3Li7 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 26 Aug 2021 08:38:24 -0400
-Received: from smtp-relay-canonical-1.canonical.com ([185.125.188.121]:56148
-        "EHLO smtp-relay-canonical-1.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S241261AbhHZMiX (ORCPT
+        Mon, 30 Aug 2021 07:38:59 -0400
+Received: from so254-9.mailgun.net ([198.61.254.9]:55383 "EHLO
+        so254-9.mailgun.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S236523AbhH3Li6 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 26 Aug 2021 08:38:23 -0400
-Received: from localhost (1.general.cking.uk.vpn [10.172.193.212])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        Mon, 30 Aug 2021 07:38:58 -0400
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1630323485; h=References: In-Reply-To: Message-Id: Date:
+ Subject: Cc: To: From: Sender;
+ bh=Y4PjTzSPjc8+XQXBog20KPGjuypXcaIwVdWyjxmkx1A=; b=SdSyownpoHxICeAWmpaCRbvkBrTThxk+91RVgBXZkRxSTCkqyoNKx8Ufi+4CovAFH4QoAx82
+ VOl+/+KjsBASpPe1xZr7tftFtq8K7lEnLRXPDRL3GhB/cHDlIu6gcKkr4dZSdnxTW9NODIBJ
+ HEp+tOwg8jN0VYnmUf6XwKBT3rU=
+X-Mailgun-Sending-Ip: 198.61.254.9
+X-Mailgun-Sid: WyI4ZWZiZiIsICJsaW51eC1yZW1vdGVwcm9jQHZnZXIua2VybmVsLm9yZyIsICJiZTllNGEiXQ==
+Received: from smtp.codeaurora.org
+ (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
+ smtp-out-n03.prod.us-west-2.postgun.com with SMTP id
+ 612cc31a4cd9015037be6204 (version=TLS1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Mon, 30 Aug 2021 11:38:02
+ GMT
+Sender: deesin=codeaurora.org@mg.codeaurora.org
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 5F8FFC43460; Mon, 30 Aug 2021 11:38:02 +0000 (UTC)
+Received: from deesin-linux.qualcomm.com (unknown [202.46.22.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
-        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id BD0673F245;
-        Thu, 26 Aug 2021 12:37:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1629981455;
-        bh=8sFGVg+g2UkWDPsJWhC3mA0fD7X/I5c9eQbr5g4WoBs=;
-        h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type;
-        b=vKmFcEbilp8tNcVPatyFCMn1BJvAoxsUhtxrZRVp3WwbGu9UBkoBcu2NTcS84FJta
-         YwcAHgHJxwgSc5BiXVoMedGXmTJkEO/7+vShI63pPKYFA/EZsVqlixmOs6yiwyaLzz
-         RoOkbN72JKLtoPBGhuXQfCt8MrPChIi5zgz+HX0o2dKbgJZdlhr223MBzPw5jStObQ
-         nPTmT/pyIQdlqQh2PMDf+ckQVS0y1rh7KbM4pbGNrvyEcaPUtGT75XkRe9VLD3EaC2
-         UhOyr8qXtfBITPpBPOVd7QBaJnHpcHeVgNfTvUcaaaH0WuDN/mtH1f+h62qoTU0XBO
-         3H296puhfnZEw==
-From:   Colin King <colin.king@canonical.com>
-To:     Ohad Ben-Cohen <ohad@wizery.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        linux-remoteproc@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] remoteproc: Fix spelling mistake "atleast" -> "at least"
-Date:   Thu, 26 Aug 2021 13:37:35 +0100
-Message-Id: <20210826123735.14650-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.32.0
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+        (Authenticated sender: deesin)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id A9894C43617;
+        Mon, 30 Aug 2021 11:37:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.1 smtp.codeaurora.org A9894C43617
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=codeaurora.org
+From:   Deepak Kumar Singh <deesin@codeaurora.org>
+To:     bjorn.andersson@linaro.org, swboyd@chromium.org,
+        clew@codeaurora.org, sibis@codeaurora.org
+Cc:     linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org,
+        Deepak Kumar Singh <deesin@codeaurora.org>,
+        Andy Gross <agross@kernel.org>
+Subject: [PATCH V7 2/2] soc: qcom: aoss: Add debugfs entry
+Date:   Mon, 30 Aug 2021 17:07:31 +0530
+Message-Id: <1630323451-7160-3-git-send-email-deesin@codeaurora.org>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1630323451-7160-1-git-send-email-deesin@codeaurora.org>
+References: <1630323451-7160-1-git-send-email-deesin@codeaurora.org>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Some user space clients may require to change power states of various
+parts of hardware. Add a debugfs node for qmp so messages can be sent
+to aoss from user space.
 
-There are spelling mistakes dev_err messages. Fix them.
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Chris Lew <clew@codeaurora.org>
+Signed-off-by: Deepak Kumar Singh <deesin@codeaurora.org>
 ---
- drivers/remoteproc/ti_k3_dsp_remoteproc.c | 2 +-
- drivers/remoteproc/ti_k3_r5_remoteproc.c  | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ drivers/soc/qcom/qcom_aoss.c | 32 ++++++++++++++++++++++++++++++++
+ 1 file changed, 32 insertions(+)
 
-diff --git a/drivers/remoteproc/ti_k3_dsp_remoteproc.c b/drivers/remoteproc/ti_k3_dsp_remoteproc.c
-index fd4eb67a6681..c352fa277c8d 100644
---- a/drivers/remoteproc/ti_k3_dsp_remoteproc.c
-+++ b/drivers/remoteproc/ti_k3_dsp_remoteproc.c
-@@ -481,7 +481,7 @@ static int k3_dsp_reserved_mem_init(struct k3_dsp_rproc *kproc)
- 		return -EINVAL;
- 	}
- 	if (num_rmems < 2) {
--		dev_err(dev, "device needs atleast two memory regions to be defined, num = %d\n",
-+		dev_err(dev, "device needs at least two memory regions to be defined, num = %d\n",
- 			num_rmems);
- 		return -EINVAL;
- 	}
-diff --git a/drivers/remoteproc/ti_k3_r5_remoteproc.c b/drivers/remoteproc/ti_k3_r5_remoteproc.c
-index 71615210df3e..6499302d00c3 100644
---- a/drivers/remoteproc/ti_k3_r5_remoteproc.c
-+++ b/drivers/remoteproc/ti_k3_r5_remoteproc.c
-@@ -876,7 +876,7 @@ static int k3_r5_reserved_mem_init(struct k3_r5_rproc *kproc)
- 		return -EINVAL;
- 	}
- 	if (num_rmems < 2) {
--		dev_err(dev, "device needs atleast two memory regions to be defined, num = %d\n",
-+		dev_err(dev, "device needs at least two memory regions to be defined, num = %d\n",
- 			num_rmems);
- 		return -EINVAL;
- 	}
+diff --git a/drivers/soc/qcom/qcom_aoss.c b/drivers/soc/qcom/qcom_aoss.c
+index bf0a6280..4cd8670 100644
+--- a/drivers/soc/qcom/qcom_aoss.c
++++ b/drivers/soc/qcom/qcom_aoss.c
+@@ -4,6 +4,7 @@
+  */
+ #include <dt-bindings/power/qcom-aoss-qmp.h>
+ #include <linux/clk-provider.h>
++#include <linux/debugfs.h>
+ #include <linux/interrupt.h>
+ #include <linux/io.h>
+ #include <linux/mailbox_client.h>
+@@ -86,6 +87,7 @@ struct qmp {
+ 	struct clk_hw qdss_clk;
+ 	struct genpd_onecell_data pd_data;
+ 	struct qmp_cooling_device *cooling_devs;
++	struct dentry *debugfs_file;
+ };
+ 
+ struct qmp_pd {
+@@ -566,6 +568,31 @@ void qmp_put(struct qmp *qmp)
+ }
+ EXPORT_SYMBOL(qmp_put);
+ 
++static ssize_t aoss_dbg_write(struct file *file, const char __user *userstr,
++			      size_t len, loff_t *pos)
++{
++	struct qmp *qmp = file->private_data;
++	char buf[QMP_MSG_LEN] = {};
++	int ret;
++
++	if (!len || len >= QMP_MSG_LEN)
++		return -EINVAL;
++
++	ret  = copy_from_user(buf, userstr, len);
++	if (ret) {
++		return -EFAULT;
++	}
++
++	ret = qmp_send(qmp, buf, QMP_MSG_LEN);
++
++	return ret ? ret : len;
++}
++
++static const struct file_operations aoss_dbg_fops = {
++	.open = simple_open,
++	.write = aoss_dbg_write,
++};
++
+ static int qmp_probe(struct platform_device *pdev)
+ {
+ 	struct resource *res;
+@@ -620,6 +647,9 @@ static int qmp_probe(struct platform_device *pdev)
+ 
+ 	platform_set_drvdata(pdev, qmp);
+ 
++	qmp->debugfs_file = debugfs_create_file("aoss_send_message", 0220, NULL,
++						qmp, &aoss_dbg_fops);
++
+ 	return 0;
+ 
+ err_remove_qdss_clk:
+@@ -636,6 +666,8 @@ static int qmp_remove(struct platform_device *pdev)
+ {
+ 	struct qmp *qmp = platform_get_drvdata(pdev);
+ 
++	debugfs_remove(qmp->debugfs_file);
++
+ 	qmp_qdss_clk_remove(qmp);
+ 	qmp_pd_remove(qmp);
+ 	qmp_cooling_devices_remove(qmp);
 -- 
-2.32.0
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
 
