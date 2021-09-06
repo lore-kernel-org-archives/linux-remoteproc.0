@@ -2,91 +2,108 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A5BAC433EF
-	for <linux-remoteproc@archiver.kernel.org>; Sat,  4 Sep 2021 11:37:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69085C433EF
+	for <linux-remoteproc@archiver.kernel.org>; Mon,  6 Sep 2021 07:11:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0ACDB60FDC
-	for <linux-remoteproc@archiver.kernel.org>; Sat,  4 Sep 2021 11:37:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4C42D60F9E
+	for <linux-remoteproc@archiver.kernel.org>; Mon,  6 Sep 2021 07:11:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235615AbhIDLij (ORCPT
+        id S239933AbhIFHM6 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Sat, 4 Sep 2021 07:38:39 -0400
-Received: from smtp08.smtpout.orange.fr ([80.12.242.130]:18043 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235943AbhIDLii (ORCPT
+        Mon, 6 Sep 2021 03:12:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46002 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S238744AbhIFHM6 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Sat, 4 Sep 2021 07:38:38 -0400
-Received: from pop-os.home ([90.126.253.178])
-        by mwinf5d31 with ME
-        id pndZ250093riaq203ndZ3n; Sat, 04 Sep 2021 13:37:35 +0200
-X-ME-Helo: pop-os.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 04 Sep 2021 13:37:35 +0200
-X-ME-IP: 90.126.253.178
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     ohad@wizery.com, bjorn.andersson@linaro.org,
-        mathieu.poirier@linaro.org, james.quinlan@broadcom.com
-Cc:     linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] remoteproc: Fix a memory leak in an error handling path in 'rproc_handle_vdev()'
-Date:   Sat,  4 Sep 2021 13:37:32 +0200
-Message-Id: <e6d0dad6620da4fdf847faa903f79b735d35f262.1630755377.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.30.2
+        Mon, 6 Sep 2021 03:12:58 -0400
+Received: from mail-pg1-x536.google.com (mail-pg1-x536.google.com [IPv6:2607:f8b0:4864:20::536])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E1AC3C061575;
+        Mon,  6 Sep 2021 00:11:53 -0700 (PDT)
+Received: by mail-pg1-x536.google.com with SMTP id k24so5854384pgh.8;
+        Mon, 06 Sep 2021 00:11:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=nsg4YiSotxSwnOwFccYZzE+S2ol0/INLDN11u4LFXzo=;
+        b=AdKoz5/G7RmGrxhR+tjT418QLD/Xq4mtOAhi+KTkJS9voQnfrKrozfbfaOnCol4Kww
+         CN3Ugl/0JsIMDTJVghukl86iF+yodaALLeL/UghGvd8r5nyiL22EvZ7BigRtEDse5wuW
+         EkkHpB0aWlEzunQh3627lvJuYf6aa3PxcDcY539GjTdBeHNiOZSCbA/uvZcezzeu5tj7
+         MDzNbzL/+Lx+Whpa44RheD5AAUUJ+EO8EUZkrphxOMnhW25y0g/9AfmzKDod5YwdGMay
+         gQPi1pvRcc3FHhtJznNjnFJ3QqUd6lis29GCoKX7fs0mDhPS5kpaoxyeg1ehuOnIfTNr
+         UsuQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=nsg4YiSotxSwnOwFccYZzE+S2ol0/INLDN11u4LFXzo=;
+        b=orFw1HebGbpQbcxPDhiW9LC4ZyMC0vv8+ccDfBHxQ5c9+0EXPMkVAgHcLOK/WmMlRO
+         xCBdpD+bQDk1XAhjvrGm9AfcW+q5BQUI0KD9IVfjv1LcQ9vHofmOA1+e105aJP5cyptD
+         8xni5w5HSjieq7UdgF/x8+UIyqaYvzKa+cG0b17+PpHTVL4qNZJWhUQkeHO75mbAcXOt
+         q2VTHhNZ+SFywngia6WqZ1axXdwKTClSDJG0zS9hsNhtkjVObu6dE8rr9L3R9zw5c8+B
+         OpJ/FxjZfmpj0hZ2AZjYrmyiEKsFEbRaqxrLlOZqEQAu6PoQO38jU947gUduUyBceZ3N
+         k44g==
+X-Gm-Message-State: AOAM532lcOO3K+Lcej8Gvyk9yqBqqg8zlzxeCVgI0yPWNbxXY7RukUWl
+        jUQXsTTAiAkLGUicW/Z/2SE=
+X-Google-Smtp-Source: ABdhPJzNO3A1G/D7DYg4+w1B0Z3aDKOk0guF1R4BSr9HhpXDatP9gvYg756U0SkcLb8sA7YGNTE3MQ==
+X-Received: by 2002:a63:af50:: with SMTP id s16mr10752362pgo.137.1630912313487;
+        Mon, 06 Sep 2021 00:11:53 -0700 (PDT)
+Received: from localhost.localdomain ([111.207.172.18])
+        by smtp.gmail.com with ESMTPSA id 126sm8436347pgi.86.2021.09.06.00.11.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 06 Sep 2021 00:11:53 -0700 (PDT)
+From:   zhaoxiao <long870912@gmail.com>
+To:     agross@kernel.org, bjorn.andersson@linaro.org, ohad@wizery.com,
+        mathieu.poirier@linaro.org
+Cc:     linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, zhaoxiao <long870912@gmail.com>
+Subject: [PATCH] remoteproc: qcom_q6v5_mss: Use devm_platform_ioremap_resource_byname() to simplify code
+Date:   Mon,  6 Sep 2021 15:11:47 +0800
+Message-Id: <20210906071147.9095-1-long870912@gmail.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-If 'copy_dma_range_map() fails, the memory allocated for 'rvdev' will leak.
-Move the 'copy_dma_range_map()' call after the device registration so
-that 'rproc_rvdev_release()' can be called to free some resources.
+In this function, devm_platform_ioremap_resource_byname() should be
+suitable to simplify code.
 
-Also, branch to the error handling path if 'copy_dma_range_map()' instead
-of a direct return to avoid some other leaks.
-
-Fixes: e0d072782c73 ("dma-mapping: introduce DMA range map, supplanting dma_pfn_offset")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Signed-off-by: zhaoxiao <long870912@gmail.com>
 ---
-Compile tested only.
-Review with care. I don't like to move code around because of possible
-side-effect.
----
- drivers/remoteproc/remoteproc_core.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+ drivers/remoteproc/qcom_q6v5_mss.c | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index 502b6604b757..775df165eb45 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -556,9 +556,6 @@ static int rproc_handle_vdev(struct rproc *rproc, void *ptr,
- 	/* Initialise vdev subdevice */
- 	snprintf(name, sizeof(name), "vdev%dbuffer", rvdev->index);
- 	rvdev->dev.parent = &rproc->dev;
--	ret = copy_dma_range_map(&rvdev->dev, rproc->dev.parent);
--	if (ret)
--		return ret;
- 	rvdev->dev.release = rproc_rvdev_release;
- 	dev_set_name(&rvdev->dev, "%s#%s", dev_name(rvdev->dev.parent), name);
- 	dev_set_drvdata(&rvdev->dev, rvdev);
-@@ -568,6 +565,11 @@ static int rproc_handle_vdev(struct rproc *rproc, void *ptr,
- 		put_device(&rvdev->dev);
- 		return ret;
- 	}
-+
-+	ret = copy_dma_range_map(&rvdev->dev, rproc->dev.parent);
-+	if (ret)
-+		goto free_rvdev;
-+
- 	/* Make device dma capable by inheriting from parent's capabilities */
- 	set_dma_ops(&rvdev->dev, get_dma_ops(rproc->dev.parent));
+diff --git a/drivers/remoteproc/qcom_q6v5_mss.c b/drivers/remoteproc/qcom_q6v5_mss.c
+index 423b31dfa574..38d57af3149d 100644
+--- a/drivers/remoteproc/qcom_q6v5_mss.c
++++ b/drivers/remoteproc/qcom_q6v5_mss.c
+@@ -1480,16 +1480,13 @@ static void qcom_msa_handover(struct qcom_q6v5 *q6v5)
+ static int q6v5_init_mem(struct q6v5 *qproc, struct platform_device *pdev)
+ {
+ 	struct of_phandle_args args;
+-	struct resource *res;
+ 	int ret;
+ 
+-	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "qdsp6");
+-	qproc->reg_base = devm_ioremap_resource(&pdev->dev, res);
++	qproc->reg_base = devm_platform_ioremap_resource_byname(pdev, "qdsp6");
+ 	if (IS_ERR(qproc->reg_base))
+ 		return PTR_ERR(qproc->reg_base);
+ 
+-	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "rmb");
+-	qproc->rmb_base = devm_ioremap_resource(&pdev->dev, res);
++	qproc->rmb_base = devm_platform_ioremap_resource_byname(pdev, "rmb");
+ 	if (IS_ERR(qproc->rmb_base))
+ 		return PTR_ERR(qproc->rmb_base);
  
 -- 
-2.30.2
+2.20.1
 
