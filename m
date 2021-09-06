@@ -2,118 +2,134 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-7.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A5C1C433EF
-	for <linux-remoteproc@archiver.kernel.org>; Mon,  6 Sep 2021 08:57:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7040DC433EF
+	for <linux-remoteproc@archiver.kernel.org>; Mon,  6 Sep 2021 15:52:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1B0C9610E6
-	for <linux-remoteproc@archiver.kernel.org>; Mon,  6 Sep 2021 08:57:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 48F3A60C3E
+	for <linux-remoteproc@archiver.kernel.org>; Mon,  6 Sep 2021 15:52:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241107AbhIFI6h (ORCPT
+        id S238788AbhIFPx3 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 6 Sep 2021 04:58:37 -0400
-Received: from m43-7.mailgun.net ([69.72.43.7]:58847 "EHLO m43-7.mailgun.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S241166AbhIFI5e (ORCPT <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 6 Sep 2021 04:57:34 -0400
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1630918590; h=References: In-Reply-To: Message-Id: Date:
- Subject: Cc: To: From: Sender;
- bh=GHDgS/AjeFnDsPNJQSgeDJWNoiekSrqUSwj/khFH188=; b=fvASVenUCilXAuRLV/A+hxAml3f/k8JHvuOVesGb6g2skWz4QhyMQ7lOHHNeydAlltZUrN4n
- My87eI5tDLMux8/3D+4l6fS93PCtucBmGzcCK1tpidyX39DAlOzKD4zniy+37NXSSCtz9FlX
- Wb8B/w+RX8+gMzjxhHqXAzD7Cy0=
-X-Mailgun-Sending-Ip: 69.72.43.7
-X-Mailgun-Sid: WyI4ZWZiZiIsICJsaW51eC1yZW1vdGVwcm9jQHZnZXIua2VybmVsLm9yZyIsICJiZTllNGEiXQ==
-Received: from smtp.codeaurora.org
- (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
- smtp-out-n03.prod.us-east-1.postgun.com with SMTP id
- 6135d7aa6fc2cf7ad9dc718f (version=TLS1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Mon, 06 Sep 2021 08:56:10
- GMT
-Sender: sibis=codeaurora.org@mg.codeaurora.org
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 00F18C4314D; Mon,  6 Sep 2021 08:56:09 +0000 (UTC)
-Received: from blr-ubuntu-87.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: sibis)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id D79A0C4361A;
-        Mon,  6 Sep 2021 08:56:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.1 smtp.codeaurora.org D79A0C4361A
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=codeaurora.org
-From:   Sibi Sankar <sibis@codeaurora.org>
-To:     bjorn.andersson@linaro.org, robh+dt@kernel.org, will@kernel.org,
-        saiprakash.ranjan@codeaurora.org, swboyd@chromium.org,
-        mka@chromium.org
-Cc:     ohad@wizery.com, agross@kernel.org, mathieu.poirier@linaro.org,
-        robin.murphy@arm.com, joro@8bytes.org, p.zabel@pengutronix.de,
-        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, evgreen@chromium.org,
-        dianders@chromium.org, Sibi Sankar <sibis@codeaurora.org>
-Subject: [PATCH v4 08/10] arm64: dts: qcom: sc7280: Add nodes to boot modem
-Date:   Mon,  6 Sep 2021 14:24:43 +0530
-Message-Id: <1630918485-15052-9-git-send-email-sibis@codeaurora.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1630918485-15052-1-git-send-email-sibis@codeaurora.org>
-References: <1630918485-15052-1-git-send-email-sibis@codeaurora.org>
+        Mon, 6 Sep 2021 11:53:29 -0400
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:49036 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231359AbhIFPx2 (ORCPT
+        <rfc822;linux-remoteproc@vger.kernel.org>);
+        Mon, 6 Sep 2021 11:53:28 -0400
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 186FqLZ1103762;
+        Mon, 6 Sep 2021 10:52:21 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1630943541;
+        bh=AmCdNApGszIldNsIIkEGWv5ioCQhcJfxkbQ+XX/90J8=;
+        h=To:CC:From:Subject:Date;
+        b=gEHZA09u1yS7gjKMRjfKR4gxmjxHn3NzsT3Kv8rTM7EH60w8rYtOlpeFxXwHAdKW/
+         qGH5tGHEqecYJIGiADdE58zSsJG/8jYmWlerPBIiMCFffV6W0sCMkwHHQ7mV5ADbZr
+         6xID1HvP01opju7vBdBMAiFyQTNoJQh7HR3ggVXU=
+Received: from DLEE107.ent.ti.com (dlee107.ent.ti.com [157.170.170.37])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 186FqLsK061765
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 6 Sep 2021 10:52:21 -0500
+Received: from DLEE110.ent.ti.com (157.170.170.21) by DLEE107.ent.ti.com
+ (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2308.14; Mon, 6
+ Sep 2021 10:52:21 -0500
+Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE110.ent.ti.com
+ (157.170.170.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2308.14 via
+ Frontend Transport; Mon, 6 Sep 2021 10:52:21 -0500
+Received: from [10.250.235.239] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id 186FqGiv119307;
+        Mon, 6 Sep 2021 10:52:17 -0500
+To:     Cornelia Huck <cohuck@redhat.com>, <alex.williamson@redhat.com>
+CC:     <kvm@vger.kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        linux-remoteproc <linux-remoteproc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Vutla, Lokesh" <lokeshvutla@ti.com>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        "Strashko, Grygorii" <grygorii.strashko@ti.com>
+From:   Kishon Vijay Abraham I <kishon@ti.com>
+Subject: [QUERY] Flushing cache from userspace using VFIO
+Message-ID: <d338414f-ed88-20d4-7da0-6742dedb8579@ti.com>
+Date:   Mon, 6 Sep 2021 21:22:15 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.11.0
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Add miscellaneous nodes to boot the modem and support post-mortem debug
-on SC7280 SoCs.
+Hi Alex, Cornelia,
 
-Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
-Reviewed-by: Stephen Boyd <swboyd@chromium.org>
----
- arch/arm64/boot/dts/qcom/sc7280.dtsi | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
+I'm trying to see if I can use VFIO (Versatile Framework for userspace I/O
+[1]) for communication between two cores within the same SoC. I've tried to put
+down a picture like below which tries to communicate between ARM64 (running
+Linux) and CORTEX R5 (running firmware). It uses rpmsg/remoteproc for the
+control messages and the actual data buffers are directly accessed from the
+userspace. The location of the data buffers can be informed to the userspace via
+rpmsg_vfio (which has to be built as a rpmsg endpoint).
 
-diff --git a/arch/arm64/boot/dts/qcom/sc7280.dtsi b/arch/arm64/boot/dts/qcom/sc7280.dtsi
-index 894106efadfe..bd1ac93017ae 100644
---- a/arch/arm64/boot/dts/qcom/sc7280.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sc7280.dtsi
-@@ -662,6 +662,11 @@
- 			#hwlock-cells = <1>;
- 		};
- 
-+		tcsr: syscon@1fc0000 {
-+			compatible = "qcom,sc7280-tcsr", "syscon";
-+			reg = <0 0x01fc0000 0 0x30000>;
-+		};
-+
- 		lpasscc: lpasscc@3000000 {
- 			compatible = "qcom,sc7280-lpasscc";
- 			reg = <0 0x03000000 0 0x40>,
-@@ -1632,6 +1637,21 @@
- 			};
- 		};
- 
-+		imem@146a5000 {
-+			compatible = "qcom,sc7280-imem", "syscon";
-+			reg = <0 0x146a5000 0 0x6000>;
-+
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+
-+			ranges = <0 0 0x146a5000 0x6000>;
-+
-+			pil-reloc@594c {
-+				compatible = "qcom,pil-reloc-info";
-+				reg = <0x594c 0xc8>;
-+			};
-+		};
-+
- 		apps_smmu: iommu@15000000 {
- 			compatible = "qcom,sc7280-smmu-500", "arm,mmu-500";
- 			reg = <0 0x15000000 0 0x100000>;
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+My question is after the userspace application in ARM64 writes to a buffer in
+the SYSTEM MEMORY, can it flush it (through a VFIO IOCTL) before handing the
+buffer to the CORTEX R5.
 
+If it's implemented within kernel either we use dma_alloc_coherent() for
+allocating coherent memory or streaming DMA APIs like
+dma_map_single()/dma_unmap_single() for flushing/invalidate the cache.
+
+Trying to see if that is already supported in VFIO or if not, would it be
+acceptable to implement it.
+
+Please let me know your thoughts.
+
+┌───────────────────────────────────────────────────────────────────────────┐
+│                                                                           │
+│ ┌────────────────────┐                                                    │
+│ │                    │                                                    │
+│ │ ┌──────────────┐   │                                                    │
+│ │ │ userspace    │   │  Data Buffers                                      │
+│ │ │ Application  ├───┼──────────────┐                                     │
+│ │ │              │   │              │                                     │
+│ │ └──────▲──┬────┘   │              │                                     │
+│ │        │  │        │              │                                     │
+│ │        │  │ user   │              │                 ┌─────────────────┐ │
+│ │  ──────┼──┼─────── │              │                 │                 │ │
+│ │        │  │ kernel │              │                 │                 │ │
+│ │  ┌─────┴──▼────┐   │    ┌─────────┼────────────┐    │                 │ │
+│ │  │             │   │    │         │            │    │  Data           │ │
+│ │  │  rpmsg_vfio │   │    │  ┌──────▼─────────┐  │    │  Buffers        │ │
+│ │  │             │   │    │  │ Reserved Region◄──┼────┼────────┐        │ │
+│ │  └─────▲──┬────┘   │    │  │                │  │    │        │        │ │
+│ │        │  │        │    │  └────────────────┘  │    │        │        │ │
+│ │  ┌─────┴──▼────┐   │    │                      │    │        │        │ │
+│ │  │             │   │    │                      │    │ ┌──────┴──────┐ │ │
+│ │  │  rpmsg      │   │    │     SYSTEM MEMORY    │    │ │ Application │ │ │
+│ │  │             │   │    │       (DDR)          │    │ │   Logic     │ │ │
+│ │  └─────▲──┬────┘   │    └──────────────────────┘    │ └───▲────┬────┘ │ │
+│ │        │  │        │                                │     │    │      │ │
+│ │  ┌─────┴──▼────┐   │Notify Firmware/Control Message │ ┌───┴────▼────┐ │ │
+│ │  │             ├───┼────────────────────────────────┼─►             │ │ │
+│ │  │  remoteproc │   │Interrupt ARM/Control Message   │ │   Firmware  │ │ │
+│ │  │             ◄───┼────────────────────────────────┼─┤             │ │ │
+│ │  └─────────────┘   │                                │ └─────────────┘ │ │
+│ │      ARM64(Linux)  │                                │   ARM CORTEX R5 │ │
+│ └────────────────────┘                                └─────────────────┘ │
+│                                                                           │
+│                                                                       SoC │
+└───────────────────────────────────────────────────────────────────────────┘
+
+Thank You,
+Kishon
+
+[1] -> https://youtu.be/WFkdTFTOTpA
