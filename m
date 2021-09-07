@@ -2,134 +2,106 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+X-Spam-Status: No, score=-16.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7040DC433EF
-	for <linux-remoteproc@archiver.kernel.org>; Mon,  6 Sep 2021 15:52:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 260B3C433F5
+	for <linux-remoteproc@archiver.kernel.org>; Tue,  7 Sep 2021 12:50:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 48F3A60C3E
-	for <linux-remoteproc@archiver.kernel.org>; Mon,  6 Sep 2021 15:52:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 04171610F8
+	for <linux-remoteproc@archiver.kernel.org>; Tue,  7 Sep 2021 12:50:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238788AbhIFPx3 (ORCPT
+        id S1344455AbhIGMvd (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 6 Sep 2021 11:53:29 -0400
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:49036 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231359AbhIFPx2 (ORCPT
+        Tue, 7 Sep 2021 08:51:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56206 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1344461AbhIGMvc (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 6 Sep 2021 11:53:28 -0400
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 186FqLZ1103762;
-        Mon, 6 Sep 2021 10:52:21 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1630943541;
-        bh=AmCdNApGszIldNsIIkEGWv5ioCQhcJfxkbQ+XX/90J8=;
-        h=To:CC:From:Subject:Date;
-        b=gEHZA09u1yS7gjKMRjfKR4gxmjxHn3NzsT3Kv8rTM7EH60w8rYtOlpeFxXwHAdKW/
-         qGH5tGHEqecYJIGiADdE58zSsJG/8jYmWlerPBIiMCFffV6W0sCMkwHHQ7mV5ADbZr
-         6xID1HvP01opju7vBdBMAiFyQTNoJQh7HR3ggVXU=
-Received: from DLEE107.ent.ti.com (dlee107.ent.ti.com [157.170.170.37])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 186FqLsK061765
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 6 Sep 2021 10:52:21 -0500
-Received: from DLEE110.ent.ti.com (157.170.170.21) by DLEE107.ent.ti.com
- (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2308.14; Mon, 6
- Sep 2021 10:52:21 -0500
-Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE110.ent.ti.com
- (157.170.170.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2308.14 via
- Frontend Transport; Mon, 6 Sep 2021 10:52:21 -0500
-Received: from [10.250.235.239] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id 186FqGiv119307;
-        Mon, 6 Sep 2021 10:52:17 -0500
-To:     Cornelia Huck <cohuck@redhat.com>, <alex.williamson@redhat.com>
-CC:     <kvm@vger.kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        linux-remoteproc <linux-remoteproc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Vutla, Lokesh" <lokeshvutla@ti.com>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        "Strashko, Grygorii" <grygorii.strashko@ti.com>
-From:   Kishon Vijay Abraham I <kishon@ti.com>
-Subject: [QUERY] Flushing cache from userspace using VFIO
-Message-ID: <d338414f-ed88-20d4-7da0-6742dedb8579@ti.com>
-Date:   Mon, 6 Sep 2021 21:22:15 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
+        Tue, 7 Sep 2021 08:51:32 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id A0E3A610C9;
+        Tue,  7 Sep 2021 12:50:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1631019026;
+        bh=eE7IcVilEeLSkeD9jdj8PAa18oA0xgkkm+nApsk0DZk=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=mMkwAK0Rz3SOyZykHhBCwE0VBctxlyV5+MgeG+U850enODi2uT/+M2Rq2hug7fwPl
+         qy4h25ZnvOAPLKLXHZyBaldi9EAflsZ6d1zQh/rDC2USXMObmmSCAuB+SOEwnbO83o
+         Ihj4oSxY0GNGNk9BAyC8fKuXSbNtgdDFOBGPXo2SG5VY6k17zTLG0PL+cH3YcZlKyI
+         UC/O1TSbses582KUDzHUTUOkexan8c21j/WHDYTGdsOMe+7j/jE/gnsmntNYB1Sqrd
+         swgW2TS6bWkXz+XDJ+JLi1FGMbE2C9mO3staTvxg60WI05XLVsQGS1gbdjb0vesW/C
+         skvdDHMn9SFrQ==
+Received: by mail-ed1-f53.google.com with SMTP id q3so13771959edt.5;
+        Tue, 07 Sep 2021 05:50:26 -0700 (PDT)
+X-Gm-Message-State: AOAM530a4xfavdU0Ezwq/YbD+0CHbRYNYRXzEwTQGVyXfNXYV1jzuHvq
+        J0mG3DO+cgy47u+K4c0uI2Rbo6yFMjFQunXGfw==
+X-Google-Smtp-Source: ABdhPJw5cBPQONabehNgOWu4OgwSuYqkLspA0QJtmUpp9qSSrQXtvo+Sw8Ey+UBtk9U7PrrhKQnPS328rU7+LfBQEPU=
+X-Received: by 2002:aa7:c514:: with SMTP id o20mr18319405edq.318.1631019025305;
+ Tue, 07 Sep 2021 05:50:25 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+References: <1630661377-31244-1-git-send-email-shengjiu.wang@nxp.com>
+ <1630661377-31244-4-git-send-email-shengjiu.wang@nxp.com> <YTJQcIOU1mMxoIpF@robh.at.kernel.org>
+ <CAL_JsqL_5U0QB5d5VmgX3PMa9LNkyFa+RHWSAzeeTzq6xR=_nA@mail.gmail.com> <CAA+D8ANSR49juFDvPxHECKv7-uSowjdxruqnb=z6vu_CEkujjg@mail.gmail.com>
+In-Reply-To: <CAA+D8ANSR49juFDvPxHECKv7-uSowjdxruqnb=z6vu_CEkujjg@mail.gmail.com>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Tue, 7 Sep 2021 07:50:13 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqJ-vbMHGRkHSEuQQUjmv3dp4zaiYuCdpXimYnuJLQ7amQ@mail.gmail.com>
+Message-ID: <CAL_JsqJ-vbMHGRkHSEuQQUjmv3dp4zaiYuCdpXimYnuJLQ7amQ@mail.gmail.com>
+Subject: Re: [PATCH v3 3/4] dt-bindings: remoteproc: Add fsl,imx-dsp-rproc
+ binding document
+To:     Shengjiu Wang <shengjiu.wang@gmail.com>
+Cc:     Shengjiu Wang <shengjiu.wang@nxp.com>,
+        Daniel Baluta <daniel.baluta@nxp.com>,
+        Ohad Ben-Cohen <ohad@wizery.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        "open list:REMOTE PROCESSOR (REMOTEPROC) SUBSYSTEM" 
+        <linux-remoteproc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi Alex, Cornelia,
+On Fri, Sep 3, 2021 at 9:58 PM Shengjiu Wang <shengjiu.wang@gmail.com> wrote:
+>
+> Hi Rob
+>
+> On Sat, Sep 4, 2021 at 12:50 AM Rob Herring <robh+dt@kernel.org> wrote:
+> >
+> > On Fri, Sep 3, 2021 at 11:42 AM Rob Herring <robh@kernel.org> wrote:
+> > >
+> > > On Fri, 03 Sep 2021 17:29:36 +0800, Shengjiu Wang wrote:
+> > > > Define the compatible string and properties needed by imx_dsp_rproc
+> > > > driver.
+> > > >
+> > > > Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
+> > > > ---
+> > > >  .../remoteproc/fsl,imx-dsp-rproc.yaml         | 131 ++++++++++++++++++
+> > > >  1 file changed, 131 insertions(+)
+> > > >  create mode 100644 Documentation/devicetree/bindings/remoteproc/fsl,imx-dsp-rproc.yaml
+> > > >
+> > >
+> > > Reviewed-by: Rob Herring <robh@kernel.org>
+> >
+> > I take that back. What's the difference with this binding and
+> > Documentation/devicetree/bindings/dsp/fsl,dsp.yaml?
+>
+> Some devices, but two kinds of driver. one for remoteproc
+> framework,  another one is for ALSA.
+> So should I merge fsl,imx-dsp-rproc.yaml to fsl,dsp.yaml?
 
-I'm trying to see if I can use VFIO (Versatile Framework for userspace I/O
-[1]) for communication between two cores within the same SoC. I've tried to put
-down a picture like below which tries to communicate between ARM64 (running
-Linux) and CORTEX R5 (running firmware). It uses rpmsg/remoteproc for the
-control messages and the actual data buffers are directly accessed from the
-userspace. The location of the data buffers can be informed to the userspace via
-rpmsg_vfio (which has to be built as a rpmsg endpoint).
+You can have 100 drivers for all I care, but it's 1 DT binding for 1
+piece of h/w.
 
-My question is after the userspace application in ARM64 writes to a buffer in
-the SYSTEM MEMORY, can it flush it (through a VFIO IOCTL) before handing the
-buffer to the CORTEX R5.
-
-If it's implemented within kernel either we use dma_alloc_coherent() for
-allocating coherent memory or streaming DMA APIs like
-dma_map_single()/dma_unmap_single() for flushing/invalidate the cache.
-
-Trying to see if that is already supported in VFIO or if not, would it be
-acceptable to implement it.
-
-Please let me know your thoughts.
-
-┌───────────────────────────────────────────────────────────────────────────┐
-│                                                                           │
-│ ┌────────────────────┐                                                    │
-│ │                    │                                                    │
-│ │ ┌──────────────┐   │                                                    │
-│ │ │ userspace    │   │  Data Buffers                                      │
-│ │ │ Application  ├───┼──────────────┐                                     │
-│ │ │              │   │              │                                     │
-│ │ └──────▲──┬────┘   │              │                                     │
-│ │        │  │        │              │                                     │
-│ │        │  │ user   │              │                 ┌─────────────────┐ │
-│ │  ──────┼──┼─────── │              │                 │                 │ │
-│ │        │  │ kernel │              │                 │                 │ │
-│ │  ┌─────┴──▼────┐   │    ┌─────────┼────────────┐    │                 │ │
-│ │  │             │   │    │         │            │    │  Data           │ │
-│ │  │  rpmsg_vfio │   │    │  ┌──────▼─────────┐  │    │  Buffers        │ │
-│ │  │             │   │    │  │ Reserved Region◄──┼────┼────────┐        │ │
-│ │  └─────▲──┬────┘   │    │  │                │  │    │        │        │ │
-│ │        │  │        │    │  └────────────────┘  │    │        │        │ │
-│ │  ┌─────┴──▼────┐   │    │                      │    │        │        │ │
-│ │  │             │   │    │                      │    │ ┌──────┴──────┐ │ │
-│ │  │  rpmsg      │   │    │     SYSTEM MEMORY    │    │ │ Application │ │ │
-│ │  │             │   │    │       (DDR)          │    │ │   Logic     │ │ │
-│ │  └─────▲──┬────┘   │    └──────────────────────┘    │ └───▲────┬────┘ │ │
-│ │        │  │        │                                │     │    │      │ │
-│ │  ┌─────┴──▼────┐   │Notify Firmware/Control Message │ ┌───┴────▼────┐ │ │
-│ │  │             ├───┼────────────────────────────────┼─►             │ │ │
-│ │  │  remoteproc │   │Interrupt ARM/Control Message   │ │   Firmware  │ │ │
-│ │  │             ◄───┼────────────────────────────────┼─┤             │ │ │
-│ │  └─────────────┘   │                                │ └─────────────┘ │ │
-│ │      ARM64(Linux)  │                                │   ARM CORTEX R5 │ │
-│ └────────────────────┘                                └─────────────────┘ │
-│                                                                           │
-│                                                                       SoC │
-└───────────────────────────────────────────────────────────────────────────┘
-
-Thank You,
-Kishon
-
-[1] -> https://youtu.be/WFkdTFTOTpA
+Rob
