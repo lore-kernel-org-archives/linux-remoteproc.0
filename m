@@ -2,106 +2,121 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-23.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 260B3C433F5
-	for <linux-remoteproc@archiver.kernel.org>; Tue,  7 Sep 2021 12:50:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78ABBC433EF
+	for <linux-remoteproc@archiver.kernel.org>; Tue,  7 Sep 2021 14:00:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 04171610F8
-	for <linux-remoteproc@archiver.kernel.org>; Tue,  7 Sep 2021 12:50:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5B16D60F21
+	for <linux-remoteproc@archiver.kernel.org>; Tue,  7 Sep 2021 14:00:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344455AbhIGMvd (ORCPT
+        id S230427AbhIGOBc (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 7 Sep 2021 08:51:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56206 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1344461AbhIGMvc (ORCPT
+        Tue, 7 Sep 2021 10:01:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36298 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230297AbhIGOBc (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 7 Sep 2021 08:51:32 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id A0E3A610C9;
-        Tue,  7 Sep 2021 12:50:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1631019026;
-        bh=eE7IcVilEeLSkeD9jdj8PAa18oA0xgkkm+nApsk0DZk=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=mMkwAK0Rz3SOyZykHhBCwE0VBctxlyV5+MgeG+U850enODi2uT/+M2Rq2hug7fwPl
-         qy4h25ZnvOAPLKLXHZyBaldi9EAflsZ6d1zQh/rDC2USXMObmmSCAuB+SOEwnbO83o
-         Ihj4oSxY0GNGNk9BAyC8fKuXSbNtgdDFOBGPXo2SG5VY6k17zTLG0PL+cH3YcZlKyI
-         UC/O1TSbses582KUDzHUTUOkexan8c21j/WHDYTGdsOMe+7j/jE/gnsmntNYB1Sqrd
-         swgW2TS6bWkXz+XDJ+JLi1FGMbE2C9mO3staTvxg60WI05XLVsQGS1gbdjb0vesW/C
-         skvdDHMn9SFrQ==
-Received: by mail-ed1-f53.google.com with SMTP id q3so13771959edt.5;
-        Tue, 07 Sep 2021 05:50:26 -0700 (PDT)
-X-Gm-Message-State: AOAM530a4xfavdU0Ezwq/YbD+0CHbRYNYRXzEwTQGVyXfNXYV1jzuHvq
-        J0mG3DO+cgy47u+K4c0uI2Rbo6yFMjFQunXGfw==
-X-Google-Smtp-Source: ABdhPJw5cBPQONabehNgOWu4OgwSuYqkLspA0QJtmUpp9qSSrQXtvo+Sw8Ey+UBtk9U7PrrhKQnPS328rU7+LfBQEPU=
-X-Received: by 2002:aa7:c514:: with SMTP id o20mr18319405edq.318.1631019025305;
- Tue, 07 Sep 2021 05:50:25 -0700 (PDT)
+        Tue, 7 Sep 2021 10:01:32 -0400
+Received: from mail-oo1-xc36.google.com (mail-oo1-xc36.google.com [IPv6:2607:f8b0:4864:20::c36])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5B042C061757
+        for <linux-remoteproc@vger.kernel.org>; Tue,  7 Sep 2021 07:00:26 -0700 (PDT)
+Received: by mail-oo1-xc36.google.com with SMTP id y47-20020a4a9832000000b00290fb9f6d3fso2936964ooi.3
+        for <linux-remoteproc@vger.kernel.org>; Tue, 07 Sep 2021 07:00:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=SA1mhtpYtWRd9fvfdDUUAhfghCCNO8LibpejZwbq7KY=;
+        b=Abu+rZI3qC8rCRA/sBxBT++VNhG0T4Y68e0Gk8fqRDSxmUvfe7dtCYfNWr3Wvdhr/U
+         gfS5QmShGVNu68yIeA4aikN1wVlnxLd2qB1AuGE05J/jopYhXF6x/8NTqxZbvq14tzyM
+         owRmBKO/LhoBPGI6h8c/IxbfSx3WFwezyyWUrP+2tFUwpZ32inTtl3m2j5WZUjCI0+em
+         +bwqG3joXUpchLSOgLfk5eZnbUAlYgyjLvh8xuUPpLn922rGGB+muel4mo6xt6Z+Was5
+         Q/f2oOx5IwndB2BwV6n6fzTbuvrQJk7CAhsutoM7GwCK9tMssFfFGXWPD5kTNAOAva3a
+         ApxQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=SA1mhtpYtWRd9fvfdDUUAhfghCCNO8LibpejZwbq7KY=;
+        b=muzq1bXeIANGBmLiOifZD7OuN/Bw/U0Cn4PRhPuChvu2kRt/ASlFxxAl55Rf+bb/tg
+         D+XZsfo8hSNE7TwHM+gRjxwiVMOEaooAeglIyOyMuffQii9UnsAduzZE+2eQn6VmnnQB
+         hVuCMbCbWci4ceBGioqg73eWo0tgJCygq96v05jzkJSh8nA6VFaOEA+eyngep4+iTuZp
+         vhFPqulE1M3/7/dF9HdqUE9qAG+ryABZJi0B7BXPzS7a03PIOtXMIIs7Kf2dx9xS8Azl
+         0csjR+kABp+jtqAhUnGcEB5brVXlC8eiGGKa5l0bhkYI0TjzgNzpgn7P5IHdYPxujy0v
+         7SXw==
+X-Gm-Message-State: AOAM532l7pLFBOf5TMsLawmhy6IRmCokmI/yN8WF/k9BsAaUzHn4HDjO
+        KBZ2WNARquWj8stfS/CVwgDaTQ==
+X-Google-Smtp-Source: ABdhPJy4neyb9vQAxOCliffCIuMJP8B2gf3hkbimmCa7xRy3MCJaEkSNgZ0KG91VIEMKvyLwODi4FA==
+X-Received: by 2002:a4a:6f4a:: with SMTP id i10mr18190534oof.64.1631023225076;
+        Tue, 07 Sep 2021 07:00:25 -0700 (PDT)
+Received: from builder.lan (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
+        by smtp.gmail.com with ESMTPSA id z7sm1924500ooh.38.2021.09.07.07.00.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 07 Sep 2021 07:00:24 -0700 (PDT)
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Dong Aisheng <aisheng.dong@nxp.com>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Alex Elder <elder@linaro.org>
+Subject: [GIT PULL] remoteproc updates for v5.15
+Date:   Tue,  7 Sep 2021 09:00:23 -0500
+Message-Id: <20210907140023.2399178-1-bjorn.andersson@linaro.org>
+X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
-References: <1630661377-31244-1-git-send-email-shengjiu.wang@nxp.com>
- <1630661377-31244-4-git-send-email-shengjiu.wang@nxp.com> <YTJQcIOU1mMxoIpF@robh.at.kernel.org>
- <CAL_JsqL_5U0QB5d5VmgX3PMa9LNkyFa+RHWSAzeeTzq6xR=_nA@mail.gmail.com> <CAA+D8ANSR49juFDvPxHECKv7-uSowjdxruqnb=z6vu_CEkujjg@mail.gmail.com>
-In-Reply-To: <CAA+D8ANSR49juFDvPxHECKv7-uSowjdxruqnb=z6vu_CEkujjg@mail.gmail.com>
-From:   Rob Herring <robh+dt@kernel.org>
-Date:   Tue, 7 Sep 2021 07:50:13 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqJ-vbMHGRkHSEuQQUjmv3dp4zaiYuCdpXimYnuJLQ7amQ@mail.gmail.com>
-Message-ID: <CAL_JsqJ-vbMHGRkHSEuQQUjmv3dp4zaiYuCdpXimYnuJLQ7amQ@mail.gmail.com>
-Subject: Re: [PATCH v3 3/4] dt-bindings: remoteproc: Add fsl,imx-dsp-rproc
- binding document
-To:     Shengjiu Wang <shengjiu.wang@gmail.com>
-Cc:     Shengjiu Wang <shengjiu.wang@nxp.com>,
-        Daniel Baluta <daniel.baluta@nxp.com>,
-        Ohad Ben-Cohen <ohad@wizery.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        "open list:REMOTE PROCESSOR (REMOTEPROC) SUBSYSTEM" 
-        <linux-remoteproc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Fri, Sep 3, 2021 at 9:58 PM Shengjiu Wang <shengjiu.wang@gmail.com> wrote:
->
-> Hi Rob
->
-> On Sat, Sep 4, 2021 at 12:50 AM Rob Herring <robh+dt@kernel.org> wrote:
-> >
-> > On Fri, Sep 3, 2021 at 11:42 AM Rob Herring <robh@kernel.org> wrote:
-> > >
-> > > On Fri, 03 Sep 2021 17:29:36 +0800, Shengjiu Wang wrote:
-> > > > Define the compatible string and properties needed by imx_dsp_rproc
-> > > > driver.
-> > > >
-> > > > Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
-> > > > ---
-> > > >  .../remoteproc/fsl,imx-dsp-rproc.yaml         | 131 ++++++++++++++++++
-> > > >  1 file changed, 131 insertions(+)
-> > > >  create mode 100644 Documentation/devicetree/bindings/remoteproc/fsl,imx-dsp-rproc.yaml
-> > > >
-> > >
-> > > Reviewed-by: Rob Herring <robh@kernel.org>
-> >
-> > I take that back. What's the difference with this binding and
-> > Documentation/devicetree/bindings/dsp/fsl,dsp.yaml?
->
-> Some devices, but two kinds of driver. one for remoteproc
-> framework,  another one is for ALSA.
-> So should I merge fsl,imx-dsp-rproc.yaml to fsl,dsp.yaml?
+The following changes since commit e73f0f0ee7541171d89f2e2491130c7771ba58d3:
 
-You can have 100 drivers for all I care, but it's 1 DT binding for 1
-piece of h/w.
+  Linux 5.14-rc1 (2021-07-11 15:07:40 -0700)
 
-Rob
+are available in the Git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/andersson/remoteproc.git tags/rproc-v5.15
+
+for you to fetch changes up to a0a77028c85ad1f6f36c3ceea21b30dc43721665:
+
+  remoteproc: q6v5_pas: Add sdm660 ADSP PIL compatible (2021-08-04 12:37:32 -0500)
+
+----------------------------------------------------------------
+remoteproc updates for v5.15
+
+This moves the crash recovery worker to the freezable work queue to
+avoid interaction with other drivers during suspend & resume. It fixes a
+couple of typos in comments.
+
+It adds support for handling the audio DSP on SDM660 and it fixes a race
+between the Qualcomm wireless subsystem driver and the associated driver
+for the RF chip.
+
+----------------------------------------------------------------
+Alex Elder (1):
+      remoteproc: use freezable workqueue for crash notifications
+
+Bjorn Andersson (1):
+      remoteproc: qcom: wcnss: Fix race with iris probe
+
+Dong Aisheng (2):
+      remoteproc: fix an typo in fw_elf_get_class code comments
+      remoteproc: fix kernel doc for struct rproc_ops
+
+Konrad Dybcio (2):
+      dt-bindings: remoteproc: qcom: adsp: Add SDM660 ADSP
+      remoteproc: q6v5_pas: Add sdm660 ADSP PIL compatible
+
+ .../devicetree/bindings/remoteproc/qcom,adsp.yaml  |   1 +
+ drivers/remoteproc/qcom_q6v5_pas.c                 |   1 +
+ drivers/remoteproc/qcom_wcnss.c                    |  49 +++------
+ drivers/remoteproc/qcom_wcnss.h                    |   4 +-
+ drivers/remoteproc/qcom_wcnss_iris.c               | 120 +++++++++++++--------
+ drivers/remoteproc/remoteproc_core.c               |   4 +-
+ drivers/remoteproc/remoteproc_elf_helpers.h        |   2 +-
+ include/linux/remoteproc.h                         |   5 +-
+ 8 files changed, 96 insertions(+), 90 deletions(-)
