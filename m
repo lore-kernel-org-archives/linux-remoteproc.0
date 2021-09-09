@@ -2,144 +2,128 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6A8DC433F5
-	for <linux-remoteproc@archiver.kernel.org>; Wed,  8 Sep 2021 23:12:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DA86C433EF
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  9 Sep 2021 18:02:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AA7F4610E8
-	for <linux-remoteproc@archiver.kernel.org>; Wed,  8 Sep 2021 23:12:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 723AC6113E
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  9 Sep 2021 18:02:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233315AbhIHXNy (ORCPT
+        id S242587AbhIISDN (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 8 Sep 2021 19:13:54 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:26198 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229997AbhIHXNy (ORCPT
+        Thu, 9 Sep 2021 14:03:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37490 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S242249AbhIISDM (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 8 Sep 2021 19:13:54 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1631142765;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=nOaLPYWvCmKA3+gZFk6HgMiMUXXOGyn19f1P8xgHAEI=;
-        b=Dtjf43qFPQjT9LXwsVeqgb9sD2igASUeQfP9V/JV32VaM54g+ZZL2HeAlTvQi3RZ9IozSS
-        yHh4F83cbu3aUn6qpSbtuM6Ieju8N7/X/yRqQIEajHYneVtiHtRYGcH8FXN2U8JeOT/8fP
-        Dl2RaQyDiX6ssfr7aVbvBMcAZQiTHvU=
-Received: from mail-ot1-f69.google.com (mail-ot1-f69.google.com
- [209.85.210.69]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-195-6oVD03jQPhunaOzkJPlBAw-1; Wed, 08 Sep 2021 19:12:44 -0400
-X-MC-Unique: 6oVD03jQPhunaOzkJPlBAw-1
-Received: by mail-ot1-f69.google.com with SMTP id w35-20020a056830412300b0051bae474534so2353146ott.21
-        for <linux-remoteproc@vger.kernel.org>; Wed, 08 Sep 2021 16:12:44 -0700 (PDT)
+        Thu, 9 Sep 2021 14:03:12 -0400
+Received: from mail-pg1-x52c.google.com (mail-pg1-x52c.google.com [IPv6:2607:f8b0:4864:20::52c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 50B9BC061575
+        for <linux-remoteproc@vger.kernel.org>; Thu,  9 Sep 2021 11:02:03 -0700 (PDT)
+Received: by mail-pg1-x52c.google.com with SMTP id t1so2607481pgv.3
+        for <linux-remoteproc@vger.kernel.org>; Thu, 09 Sep 2021 11:02:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=dJQXSJ02QMh+Wh7r1j+JbzURrGUV/gl8Hy7GcnqmOCI=;
+        b=l/yR86TfFYKMMSesXKkjFyGszNrXtteqULk8eK5GjHYPDdsbR43JcpmjHS1f3NAmxD
+         QD3Kol0cxHDikvOQDK8v2qEPw0Vn9VNa4YmNhlWEoUTOGgv33+lmPPQ16WHIzgQB1oAC
+         Xo+RE0uy9dyt2wsE7qbPMXw5wC3k2KHgExJYHuC/awA9XMW4mRr6uOYeve7AVPgpuZra
+         1RAa6h5XYx99F+k3uOLWAbU4AQk1NTUUTsSZ++QA5GUjwsCn//HxcjTSDfyBHE8iZ8TK
+         8zW2z9RSxQnvnljsOM4mws/JI1THcrY+J5isVCIuudNuF8zzfU/ORIpWBbMlR3lGfasV
+         h+IA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
-         :references:organization:mime-version:content-transfer-encoding;
-        bh=nOaLPYWvCmKA3+gZFk6HgMiMUXXOGyn19f1P8xgHAEI=;
-        b=J6Axndyc1xEpzzMgIuilEdcSHEWsK+zyJ0/b6YBggKFzvHhEm4zsqMAVHXwxt7+Rha
-         X1FTvHTiIw+CiubQe7GOZhVQELOH5Da1YiglKAMqGuyOmxECwoZ3/pDodU0K7WHZ+ZZW
-         rEukSHDoyq+Ajffo7ubSP9GdEIsxqvj7Kz6LpFoe7G9WPRSnidIWkU1kuzRzKq+cjc8U
-         bFVCOIhblMEmid3khDL977se5mmnfhLhsB8wUB1jtCQ5Mama97Gi2aC3Aq8kbvTnpgDE
-         leJ5GGdbdUImt+ycoi2Q2hKITrbdJ7RLHZRCTvpObR9I/JKEFLZWGBMZzxjc0BlOlSu6
-         1nOg==
-X-Gm-Message-State: AOAM531y5HB4bgWWq4Fz/cQzepkhmCMEZBMCXkrOnJB9Rr1Znsfw56NS
-        iFzJLnMbCTvDMmlPY+7goLWL94/EXU5M3DGAvHd4DcKLR3y/Kum9/pP2pQz8T7Z8C0soi2AGJQ/
-        7ff7809xjVI/3yyDoBwlLuiruQc71zg==
-X-Received: by 2002:a9d:63cf:: with SMTP id e15mr498581otl.172.1631142763553;
-        Wed, 08 Sep 2021 16:12:43 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJxqJXuGzjBMZyjx4FIV1ALqedQxy0ByHV+FDgb9944WAR2nbxG24k2RxSKOZtXTYszMG+qinQ==
-X-Received: by 2002:a9d:63cf:: with SMTP id e15mr498561otl.172.1631142763201;
-        Wed, 08 Sep 2021 16:12:43 -0700 (PDT)
-Received: from redhat.com ([198.99.80.109])
-        by smtp.gmail.com with ESMTPSA id j10sm11655oiw.32.2021.09.08.16.12.42
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=dJQXSJ02QMh+Wh7r1j+JbzURrGUV/gl8Hy7GcnqmOCI=;
+        b=zD4B1QN3dFAZ52ATHzO3YDhIBLcydbJWhWkI8QBV0W9t/7FNQsUPQSmPUEeQTXmq5o
+         xDhmMAhL5IUl9PXRAawP78JI8xYktHuQ74ZwlgE4nV/k5S3kwEkc4zEUkiLPCRsLea4p
+         mpN/iNS73PXxNIFLn2LiPdMOTScXm1ENdcS0Ei4Pa4Y15qG4e1dDR0H6n8fGwooH+24Q
+         1tHB54zXhfsyCJuknFkzKQOdslKgBNB8uTh+AtXfKGRmkgh5Sm6mAOJbo8Os7wdclbfw
+         4Jiu3KCOpT9fMHwfY5CZ97BN6K6b2tP0v2/r5EI/U+If/m8IVewBEmxChSW+ZZiX6yIB
+         w+tA==
+X-Gm-Message-State: AOAM532C+fl0WeDWNNIgas+WjRf6g8kZ6rFLfoXbHRdxjYYsNHqECi/1
+        nnWjrMUrI9eziXzRjRYI0UeuPQ==
+X-Google-Smtp-Source: ABdhPJypPX2nDxAW3yVEJa6gTathAPgYr+otR+hNxtAmfzad85U54J1YqFfluXKmhDFTlwErlZGh5w==
+X-Received: by 2002:aa7:8617:0:b0:3f2:3cb2:33bc with SMTP id p23-20020aa78617000000b003f23cb233bcmr4338983pfn.36.1631210522767;
+        Thu, 09 Sep 2021 11:02:02 -0700 (PDT)
+Received: from p14s (S0106889e681aac74.cg.shawcable.net. [68.147.0.187])
+        by smtp.gmail.com with ESMTPSA id p12sm2788993pff.106.2021.09.09.11.02.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 Sep 2021 16:12:42 -0700 (PDT)
-Date:   Wed, 8 Sep 2021 17:12:41 -0600
-From:   Alex Williamson <alex.williamson@redhat.com>
-To:     Kishon Vijay Abraham I <kishon@ti.com>
-Cc:     Cornelia Huck <cohuck@redhat.com>, <kvm@vger.kernel.org>,
-        Ohad Ben-Cohen <ohad@wizery.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        linux-remoteproc <linux-remoteproc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Vutla, Lokesh" <lokeshvutla@ti.com>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        "Strashko, Grygorii" <grygorii.strashko@ti.com>
-Subject: Re: [QUERY] Flushing cache from userspace using VFIO
-Message-ID: <20210908171241.63b0b89c.alex.williamson@redhat.com>
-In-Reply-To: <d338414f-ed88-20d4-7da0-6742dedb8579@ti.com>
-References: <d338414f-ed88-20d4-7da0-6742dedb8579@ti.com>
-Organization: Red Hat
-X-Mailer: Claws Mail 3.18.0 (GTK+ 2.24.33; x86_64-redhat-linux-gnu)
+        Thu, 09 Sep 2021 11:02:01 -0700 (PDT)
+Date:   Thu, 9 Sep 2021 12:01:59 -0600
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     ohad@wizery.com, bjorn.andersson@linaro.org,
+        james.quinlan@broadcom.com, linux-remoteproc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] remoteproc: Fix a memory leak in an error handling path
+ in 'rproc_handle_vdev()'
+Message-ID: <20210909180159.GA1388472@p14s>
+References: <e6d0dad6620da4fdf847faa903f79b735d35f262.1630755377.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e6d0dad6620da4fdf847faa903f79b735d35f262.1630755377.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi Kishon,
-
-On Mon, 6 Sep 2021 21:22:15 +0530
-Kishon Vijay Abraham I <kishon@ti.com> wrote:
-
-> Hi Alex, Cornelia,
+On Sat, Sep 04, 2021 at 01:37:32PM +0200, Christophe JAILLET wrote:
+> If 'copy_dma_range_map() fails, the memory allocated for 'rvdev' will leak.
+> Move the 'copy_dma_range_map()' call after the device registration so
+> that 'rproc_rvdev_release()' can be called to free some resources.
 > 
-> I'm trying to see if I can use VFIO (Versatile Framework for userspace I/O
-> [1]) for communication between two cores within the same SoC. I've tried to put
-> down a picture like below which tries to communicate between ARM64 (running
-> Linux) and CORTEX R5 (running firmware). It uses rpmsg/remoteproc for the
-> control messages and the actual data buffers are directly accessed from the
-> userspace. The location of the data buffers can be informed to the userspace via
-> rpmsg_vfio (which has to be built as a rpmsg endpoint).
+> Also, branch to the error handling path if 'copy_dma_range_map()' instead
+> of a direct return to avoid some other leaks.
+> 
+> Fixes: e0d072782c73 ("dma-mapping: introduce DMA range map, supplanting dma_pfn_offset")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+> Compile tested only.
+> Review with care. I don't like to move code around because of possible
+> side-effect.
+> ---
+>  drivers/remoteproc/remoteproc_core.c | 8 +++++---
+>  1 file changed, 5 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+> index 502b6604b757..775df165eb45 100644
+> --- a/drivers/remoteproc/remoteproc_core.c
+> +++ b/drivers/remoteproc/remoteproc_core.c
+> @@ -556,9 +556,6 @@ static int rproc_handle_vdev(struct rproc *rproc, void *ptr,
+>  	/* Initialise vdev subdevice */
+>  	snprintf(name, sizeof(name), "vdev%dbuffer", rvdev->index);
+>  	rvdev->dev.parent = &rproc->dev;
+> -	ret = copy_dma_range_map(&rvdev->dev, rproc->dev.parent);
+> -	if (ret)
+> -		return ret;
+>  	rvdev->dev.release = rproc_rvdev_release;
+>  	dev_set_name(&rvdev->dev, "%s#%s", dev_name(rvdev->dev.parent), name);
+>  	dev_set_drvdata(&rvdev->dev, rvdev);
+> @@ -568,6 +565,11 @@ static int rproc_handle_vdev(struct rproc *rproc, void *ptr,
+>  		put_device(&rvdev->dev);
+>  		return ret;
+>  	}
+> +
+> +	ret = copy_dma_range_map(&rvdev->dev, rproc->dev.parent);
+> +	if (ret)
+> +		goto free_rvdev;
+> +
 
-In the vfio model, the user gets access to a device that's a member of
-an IOMMU isolation group whose IOMMU context is managed by a vfio
-container.  What "device" is the user getting access to here and is an
-IOMMU involved?
+Good catch.
 
-> My question is after the userspace application in ARM64 writes to a buffer in
-> the SYSTEM MEMORY, can it flush it (through a VFIO IOCTL) before handing the
-> buffer to the CORTEX R5.
+Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 
-No such vfio ioctl currently exists.  Now you're starting to get into
-KVM space if userspace requires elevated privileges to flush memory.
-See for example the handling of wbinvd (write-back-invalidate) in x86
-KVM based on an assigned device and coherency model supported by the
-IOMMU.  vfio is only facilitating isolated access to the device. 
- 
-> If it's implemented within kernel either we use dma_alloc_coherent() for
-> allocating coherent memory or streaming DMA APIs like
-> dma_map_single()/dma_unmap_single() for flushing/invalidate the cache.
-
-In vfio, DMA is mapped to userspace buffers.  The user allocates a
-buffer and maps it for device access.  The IOMMU restricts the device to
-only allow access to those buffers.  Accessing device memory in vfio is
-done via regions on the device file descriptor, a device specific
-region could allow a user to mmap that buffer, but the fact that this
-buffer actually lives in host memory per your model and requires DMA
-programming for the cortex core makes that really troubling.
-
-For a vfio model to work, I think userspace would need to allocate the
-buffers and the cortex core would need to be represented as a device
-that supports isolation via an IOMMU.  Otherwise I'm not sure what
-benefit you're getting from vfio.
- 
-> Trying to see if that is already supported in VFIO or if not, would it be
-> acceptable to implement it.
-
-vfio provides a user with privilege to access an isolated device, what
-you're proposing could possibly be mangled to fit that model, but it
-seems pretty awkward and there are existing solutions such as KVM for
-processor virtualization if userspace needs elevated privileges to
-handle CPU/RAM coherency.  Thanks,
-
-Alex
-
+>  	/* Make device dma capable by inheriting from parent's capabilities */
+>  	set_dma_ops(&rvdev->dev, get_dma_ops(rproc->dev.parent));
+>  
+> -- 
+> 2.30.2
+> 
