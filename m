@@ -7,123 +7,92 @@ X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DA86C433EF
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  9 Sep 2021 18:02:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B732CC433EF
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  9 Sep 2021 18:03:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 723AC6113E
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  9 Sep 2021 18:02:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9FB4D6113E
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  9 Sep 2021 18:03:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242587AbhIISDN (ORCPT
+        id S237271AbhIISFH (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 9 Sep 2021 14:03:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37490 "EHLO
+        Thu, 9 Sep 2021 14:05:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37948 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242249AbhIISDM (ORCPT
+        with ESMTP id S234493AbhIISFH (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 9 Sep 2021 14:03:12 -0400
-Received: from mail-pg1-x52c.google.com (mail-pg1-x52c.google.com [IPv6:2607:f8b0:4864:20::52c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 50B9BC061575
-        for <linux-remoteproc@vger.kernel.org>; Thu,  9 Sep 2021 11:02:03 -0700 (PDT)
-Received: by mail-pg1-x52c.google.com with SMTP id t1so2607481pgv.3
-        for <linux-remoteproc@vger.kernel.org>; Thu, 09 Sep 2021 11:02:03 -0700 (PDT)
+        Thu, 9 Sep 2021 14:05:07 -0400
+Received: from mail-ed1-x534.google.com (mail-ed1-x534.google.com [IPv6:2a00:1450:4864:20::534])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6CEBAC061574
+        for <linux-remoteproc@vger.kernel.org>; Thu,  9 Sep 2021 11:03:57 -0700 (PDT)
+Received: by mail-ed1-x534.google.com with SMTP id j13so3791066edv.13
+        for <linux-remoteproc@vger.kernel.org>; Thu, 09 Sep 2021 11:03:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=dJQXSJ02QMh+Wh7r1j+JbzURrGUV/gl8Hy7GcnqmOCI=;
-        b=l/yR86TfFYKMMSesXKkjFyGszNrXtteqULk8eK5GjHYPDdsbR43JcpmjHS1f3NAmxD
-         QD3Kol0cxHDikvOQDK8v2qEPw0Vn9VNa4YmNhlWEoUTOGgv33+lmPPQ16WHIzgQB1oAC
-         Xo+RE0uy9dyt2wsE7qbPMXw5wC3k2KHgExJYHuC/awA9XMW4mRr6uOYeve7AVPgpuZra
-         1RAa6h5XYx99F+k3uOLWAbU4AQk1NTUUTsSZ++QA5GUjwsCn//HxcjTSDfyBHE8iZ8TK
-         8zW2z9RSxQnvnljsOM4mws/JI1THcrY+J5isVCIuudNuF8zzfU/ORIpWBbMlR3lGfasV
-         h+IA==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=4dh4bYDTp2FTsS3WUNZUj89lgm/MpY+W/FPLNckjFKs=;
+        b=dxbJhY/4KETV4Rv7Fw7RpkOu+Z3IGn5RYltG4OAEUzQ6cTRhN8U5oIHWXTdfapJrOm
+         qGeEIGY0snt5Gvb67YLxFjPPrfL1G7h/1JCMOkQFRCmIzE8W9OPyvsLim8BrRFthms6Y
+         B90WRAtEfnhmNGceuVxOuzU3nKV8K+7R39yM+RkDWvWyd8BngX4PvjIAAqjF3C1RYg3b
+         HiA70/2IAGAXKABNwHzJBhuCwGr+ZLjz0U6+YBl0i4euN8RpF+rmJT6CnQkeROcPFBrp
+         76Gk7CBSNyoVovyywTiR2srlH9oqe6b6PvYcv3i6AdRwNZt3hFXFgx8HTw3V8m4O3s6X
+         MnYg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=dJQXSJ02QMh+Wh7r1j+JbzURrGUV/gl8Hy7GcnqmOCI=;
-        b=zD4B1QN3dFAZ52ATHzO3YDhIBLcydbJWhWkI8QBV0W9t/7FNQsUPQSmPUEeQTXmq5o
-         xDhmMAhL5IUl9PXRAawP78JI8xYktHuQ74ZwlgE4nV/k5S3kwEkc4zEUkiLPCRsLea4p
-         mpN/iNS73PXxNIFLn2LiPdMOTScXm1ENdcS0Ei4Pa4Y15qG4e1dDR0H6n8fGwooH+24Q
-         1tHB54zXhfsyCJuknFkzKQOdslKgBNB8uTh+AtXfKGRmkgh5Sm6mAOJbo8Os7wdclbfw
-         4Jiu3KCOpT9fMHwfY5CZ97BN6K6b2tP0v2/r5EI/U+If/m8IVewBEmxChSW+ZZiX6yIB
-         w+tA==
-X-Gm-Message-State: AOAM532C+fl0WeDWNNIgas+WjRf6g8kZ6rFLfoXbHRdxjYYsNHqECi/1
-        nnWjrMUrI9eziXzRjRYI0UeuPQ==
-X-Google-Smtp-Source: ABdhPJypPX2nDxAW3yVEJa6gTathAPgYr+otR+hNxtAmfzad85U54J1YqFfluXKmhDFTlwErlZGh5w==
-X-Received: by 2002:aa7:8617:0:b0:3f2:3cb2:33bc with SMTP id p23-20020aa78617000000b003f23cb233bcmr4338983pfn.36.1631210522767;
-        Thu, 09 Sep 2021 11:02:02 -0700 (PDT)
-Received: from p14s (S0106889e681aac74.cg.shawcable.net. [68.147.0.187])
-        by smtp.gmail.com with ESMTPSA id p12sm2788993pff.106.2021.09.09.11.02.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 Sep 2021 11:02:01 -0700 (PDT)
-Date:   Thu, 9 Sep 2021 12:01:59 -0600
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     ohad@wizery.com, bjorn.andersson@linaro.org,
-        james.quinlan@broadcom.com, linux-remoteproc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] remoteproc: Fix a memory leak in an error handling path
- in 'rproc_handle_vdev()'
-Message-ID: <20210909180159.GA1388472@p14s>
-References: <e6d0dad6620da4fdf847faa903f79b735d35f262.1630755377.git.christophe.jaillet@wanadoo.fr>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=4dh4bYDTp2FTsS3WUNZUj89lgm/MpY+W/FPLNckjFKs=;
+        b=NCAdxPrWroDDTHPawKPEb4K7IrQkavXCF9+eVQShIHvUiiNLPX0N82xrQIElxK2RTr
+         zl27zxzjgo5NXaUak53j7+ibxuykj02ZHtBs53pE23kw3eiCNgy3okxcXVCgwQlWkenN
+         iR2zVf4kFpFoJ0KdUlPGqRmRJZnapJSO03JdT3Ox7D1rS9/yuTzyf1hLVt45WAsIdl5F
+         UvoEF8+opm5Uh2kP10g4t83wqkJy6e87dam2vnJGBsIAv6q/Pixc4Rhc9bmeGW8CNHFc
+         C+baLWxODqDkMhoqeNSqJrgSfBh7piqxVs3s3rWebhESWJ0wIFc8WnXU6RnjeoFmUraq
+         qspQ==
+X-Gm-Message-State: AOAM531GbkdDRi2f2noQdyCDTmdqIraKUpxY3aZjGJxCqGzrrdJbHaf1
+        UGlba0qId+UzQP0mE275G6wFOztBt3QbEc+eS8+U4g==
+X-Google-Smtp-Source: ABdhPJwKGW4bIkzIitYZN7llzvNPoUmK3uA9YyeuidVR0h1oOzLozfouL1z7+/WogG4jazQ1J5p7bCJaQrL3cP1F6XU=
+X-Received: by 2002:a05:6402:4415:: with SMTP id y21mr4551106eda.79.1631210636044;
+ Thu, 09 Sep 2021 11:03:56 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e6d0dad6620da4fdf847faa903f79b735d35f262.1630755377.git.christophe.jaillet@wanadoo.fr>
+References: <20210811123125.143-1-caihuoqing@baidu.com>
+In-Reply-To: <20210811123125.143-1-caihuoqing@baidu.com>
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+Date:   Thu, 9 Sep 2021 12:03:44 -0600
+Message-ID: <CANLsYkxKsUONLCfUqgFxAw_ag=bp-wxfQod7RgrvaDD7W2o7=A@mail.gmail.com>
+Subject: Re: [PATCH] rpmsg: virtio: Remove unused including <linux/of_device.h>
+To:     Cai Huoqing <caihuoqing@baidu.com>
+Cc:     Ohad Ben-Cohen <ohad@wizery.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        linux-remoteproc <linux-remoteproc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Sat, Sep 04, 2021 at 01:37:32PM +0200, Christophe JAILLET wrote:
-> If 'copy_dma_range_map() fails, the memory allocated for 'rvdev' will leak.
-> Move the 'copy_dma_range_map()' call after the device registration so
-> that 'rproc_rvdev_release()' can be called to free some resources.
-> 
-> Also, branch to the error handling path if 'copy_dma_range_map()' instead
-> of a direct return to avoid some other leaks.
-> 
-> Fixes: e0d072782c73 ("dma-mapping: introduce DMA range map, supplanting dma_pfn_offset")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+On Wed, 11 Aug 2021 at 06:31, Cai Huoqing <caihuoqing@baidu.com> wrote:
+>
+> Remove including <linux/of_device.h> that don't need it.
+>
+> Signed-off-by: Cai Huoqing <caihuoqing@baidu.com>
 > ---
-> Compile tested only.
-> Review with care. I don't like to move code around because of possible
-> side-effect.
-> ---
->  drivers/remoteproc/remoteproc_core.c | 8 +++++---
->  1 file changed, 5 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-> index 502b6604b757..775df165eb45 100644
-> --- a/drivers/remoteproc/remoteproc_core.c
-> +++ b/drivers/remoteproc/remoteproc_core.c
-> @@ -556,9 +556,6 @@ static int rproc_handle_vdev(struct rproc *rproc, void *ptr,
->  	/* Initialise vdev subdevice */
->  	snprintf(name, sizeof(name), "vdev%dbuffer", rvdev->index);
->  	rvdev->dev.parent = &rproc->dev;
-> -	ret = copy_dma_range_map(&rvdev->dev, rproc->dev.parent);
-> -	if (ret)
-> -		return ret;
->  	rvdev->dev.release = rproc_rvdev_release;
->  	dev_set_name(&rvdev->dev, "%s#%s", dev_name(rvdev->dev.parent), name);
->  	dev_set_drvdata(&rvdev->dev, rvdev);
-> @@ -568,6 +565,11 @@ static int rproc_handle_vdev(struct rproc *rproc, void *ptr,
->  		put_device(&rvdev->dev);
->  		return ret;
->  	}
-> +
-> +	ret = copy_dma_range_map(&rvdev->dev, rproc->dev.parent);
-> +	if (ret)
-> +		goto free_rvdev;
-> +
-
-Good catch.
+>  drivers/rpmsg/virtio_rpmsg_bus.c | 1 -
+>  1 file changed, 1 deletion(-)
+>
+> diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
+> index 8e49a3bacfc7..a0634ef0420b 100644
+> --- a/drivers/rpmsg/virtio_rpmsg_bus.c
+> +++ b/drivers/rpmsg/virtio_rpmsg_bus.c
+> @@ -17,7 +17,6 @@
+>  #include <linux/kernel.h>
+>  #include <linux/module.h>
+>  #include <linux/mutex.h>
+> -#include <linux/of_device.h>
 
 Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 
->  	/* Make device dma capable by inheriting from parent's capabilities */
->  	set_dma_ops(&rvdev->dev, get_dma_ops(rproc->dev.parent));
->  
-> -- 
-> 2.30.2
-> 
+>  #include <linux/rpmsg.h>
+>  #include <linux/rpmsg/byteorder.h>
+>  #include <linux/rpmsg/ns.h>
+> --
+> 2.25.1
+>
