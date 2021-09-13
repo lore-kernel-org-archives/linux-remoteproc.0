@@ -2,369 +2,220 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-19.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9ED06C433EF
-	for <linux-remoteproc@archiver.kernel.org>; Sat, 11 Sep 2021 13:13:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3E59C433EF
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 13 Sep 2021 02:50:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8B86661368
-	for <linux-remoteproc@archiver.kernel.org>; Sat, 11 Sep 2021 13:13:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B3E776101E
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 13 Sep 2021 02:50:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236286AbhIKNPG (ORCPT
+        id S236949AbhIMCvW (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Sat, 11 Sep 2021 09:15:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37788 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S236454AbhIKNOC (ORCPT <rfc822;linux-remoteproc@vger.kernel.org>);
-        Sat, 11 Sep 2021 09:14:02 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id E6BAA61209;
-        Sat, 11 Sep 2021 13:12:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1631365956;
-        bh=nABzhFuLEadkNeNTTZiYTbpVVbm6lDcCKEwHvSmJUb8=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YZnvoXV8mAhP2e/FiWto83L5F9PVX+mKRs9sg1T7SnboGq7Hr8Te1yFs99O1OFeW9
-         izeq4k5DpQoefgZ1dRVhqr0pb0R+OSDFkYOFxGamKY95bPdktIzXMVfYOQbCSa3lA1
-         MXA2qA+aCKVCpj8Y4XUm+ljNmPxDiKTX8Ggcx6m3xGs3TQXEk8ZRBi9YnrYFZADpmt
-         FQut0IIFsfMnFyg1DQJQ5QR+5G6CCIAbFUWDtqJMt29W9fuCHBtnBX0ISnT8r4aLCk
-         3seXgQHuwMxKskx5/1pqO87EPZnjKSSv5mHvMRgQ2/VBmYNFC3WMAs8fsubVCgMunc
-         wR8JOwwPpwnEQ==
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Anibal Limon <anibal.limon@linaro.org>,
-        Loic Poulain <loic.poulain@linaro.org>,
-        Sasha Levin <sashal@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.13 02/29] remoteproc: qcom: wcnss: Fix race with iris probe
-Date:   Sat, 11 Sep 2021 09:12:06 -0400
-Message-Id: <20210911131233.284800-2-sashal@kernel.org>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210911131233.284800-1-sashal@kernel.org>
-References: <20210911131233.284800-1-sashal@kernel.org>
+        Sun, 12 Sep 2021 22:51:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55992 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S236880AbhIMCvW (ORCPT
+        <rfc822;linux-remoteproc@vger.kernel.org>);
+        Sun, 12 Sep 2021 22:51:22 -0400
+Received: from mail-qv1-xf29.google.com (mail-qv1-xf29.google.com [IPv6:2607:f8b0:4864:20::f29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6A3D1C061574;
+        Sun, 12 Sep 2021 19:50:07 -0700 (PDT)
+Received: by mail-qv1-xf29.google.com with SMTP id a12so5202402qvz.4;
+        Sun, 12 Sep 2021 19:50:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=JnZ+T81xxeMxYG/DyrFUoeTLNxItYvJm+vAp2jTLAZQ=;
+        b=jza6yE/fm8WFHUhKeWJzT2WE+AruH9/IyzcQ9SRwxSdsX7cHFd608qvGhlqG5MY2oc
+         adANEjGGi652gTiZR4H3fElz1JvvB44B13jjMWp9vOu1qJ2TUWCwMHoxYtBDtEBL/4mE
+         gr10Urm6rF6o8yAdfXE4wbiy4D6wM0Hu/7CVlVwKwc/FzagHO0uyi28plkNXpXd5DImb
+         kC6cXJjxNiTz+86DXcfBBgYgAntyClv5/rjD2f8flIvG4fm7QUICOAILaqD1zqktDHf0
+         IXl3ExCe9DPvmahpIvM+u5SM/L/pCPoSsNYpbA1d3gq0j37IC+hnxUk527o+cDexZdHp
+         ssgQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=JnZ+T81xxeMxYG/DyrFUoeTLNxItYvJm+vAp2jTLAZQ=;
+        b=43SM4oZfe1iPqrw8Lqo8l86C1lzpPAGcuL2ytKnhtIvuaI7F7fSLeIqCN4dZJzfMhX
+         d81RJcKw9bQq3khN0Q9YcHBqoygoGm9aFQHAULrcVKIMdC91Ox1lQYygzbu3d5JcgMdm
+         jka57w7TqQRMfdH740e/hJjggfGtrZipP2loloUktPDyMsp+UEEC/IkmnhScpPxd9Jhl
+         845GV9H706yE1pbajL9ROlVR2/QblGyQgutRLvZcszTglHwHthRv2BrLpKWb25I8iFoc
+         EHt6jccFaPWrUmQILcrgZuquLodg7TtVJqJ2tiNJ0Mg6Hh5luWTyoCyRCUWxUs5F1yKF
+         uTSQ==
+X-Gm-Message-State: AOAM532OrcxDKOKI2pymvbIPpaXY3I8nxLrcTY+DE8+u0XluAWZqwVOw
+        FrVcdq2oPg0aKklTzedGhuyjhkYbkqDEVqYuxlQ=
+X-Google-Smtp-Source: ABdhPJz98VN8iXHnjlxns/6j/ePNeoUcGPRvxViJL2XieOkvUCfGYuL0FKZUmxs7193sLurQ6venBPdc00qWr9qv2XM=
+X-Received: by 2002:ad4:470e:: with SMTP id k14mr8559532qvz.55.1631501406118;
+ Sun, 12 Sep 2021 19:50:06 -0700 (PDT)
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+References: <1631092255-25150-1-git-send-email-shengjiu.wang@nxp.com>
+ <1631092255-25150-5-git-send-email-shengjiu.wang@nxp.com> <YTvRlmIedfBiXSCg@robh.at.kernel.org>
+In-Reply-To: <YTvRlmIedfBiXSCg@robh.at.kernel.org>
+From:   Shengjiu Wang <shengjiu.wang@gmail.com>
+Date:   Mon, 13 Sep 2021 10:49:55 +0800
+Message-ID: <CAA+D8AM3RhN+=J1daZAV=DZJT52w4-KarBNMNHUzeg=GbtARvw@mail.gmail.com>
+Subject: Re: [PATCH v4 4/4] dt-bindings: dsp: fsl: update binding document for
+ remote proc driver
+To:     Rob Herring <robh@kernel.org>
+Cc:     Shengjiu Wang <shengjiu.wang@nxp.com>, ohad@wizery.com,
+        bjorn.andersson@linaro.org, mathieu.poirier@linaro.org,
+        shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
+        festevam@gmail.com, daniel.baluta@nxp.com, linux-imx@nxp.com,
+        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Hi Rob
 
-[ Upstream commit 1fcef985c8bdd542c43da0d87bd9d51980c3859b ]
+On Sat, Sep 11, 2021 at 5:43 AM Rob Herring <robh@kernel.org> wrote:
+>
+> On Wed, Sep 08, 2021 at 05:10:55PM +0800, Shengjiu Wang wrote:
+> > As there are two drivers for DSP on i.MX, one is for sound open
+> > firmware, another is for remote processor framework. In order to
+> > distinguish two kinds of driver, defining different compatible strings.
+>
+> What determines which firmware is used? Is it tied to the board? Or for
+> a given board, users could want different firmware? In the latter case,
+> this configuration should not be in DT.
 
-The remoteproc driver is split between the responsibilities of getting
-the SoC-internal ARM core up and running and the external RF (aka
-"Iris") part configured.
+The compatible string determines which firmware is used.
+For a given board, users could want different firmware, then need
+to reboot the kernel and switch to another DTB.
 
-In order to satisfy the regulator framework's need of a struct device *
-to look up supplies this was implemented as two different drivers, using
-of_platform_populate() in the remoteproc part to probe the iris part.
+>
+> > For remote proc driver, the properties firmware-name and fsl,dsp-ctrl
+> > are needed and the mailbox channel is different with SOF.
+> >
+> > Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
+> > ---
+> >  .../devicetree/bindings/dsp/fsl,dsp.yaml      | 81 +++++++++++++++++--
+> >  1 file changed, 75 insertions(+), 6 deletions(-)
+> >
+> > diff --git a/Documentation/devicetree/bindings/dsp/fsl,dsp.yaml b/Documentation/devicetree/bindings/dsp/fsl,dsp.yaml
+> > index 7afc9f2be13a..51ea657f6d42 100644
+> > --- a/Documentation/devicetree/bindings/dsp/fsl,dsp.yaml
+> > +++ b/Documentation/devicetree/bindings/dsp/fsl,dsp.yaml
+> > @@ -8,6 +8,7 @@ title: NXP i.MX8 DSP core
+> >
+> >  maintainers:
+> >    - Daniel Baluta <daniel.baluta@nxp.com>
+> > +  - Shengjiu Wang <shengjiu.wang@nxp.com>
+> >
+> >  description: |
+> >    Some boards from i.MX8 family contain a DSP core used for
+> > @@ -19,6 +20,10 @@ properties:
+> >        - fsl,imx8qxp-dsp
+> >        - fsl,imx8qm-dsp
+> >        - fsl,imx8mp-dsp
+> > +      - fsl,imx8qxp-hifi4
+> > +      - fsl,imx8qm-hifi4
+> > +      - fsl,imx8mp-hifi4
+> > +      - fsl,imx8ulp-hifi4
+> >
+> >    reg:
+> >      maxItems: 1
+> > @@ -28,37 +33,63 @@ properties:
+> >        - description: ipg clock
+> >        - description: ocram clock
+> >        - description: core clock
+> > +      - description: debug interface clock
+> > +      - description: message unit clock
+> > +    minItems: 3
+> > +    maxItems: 5
+> >
+> >    clock-names:
+> >      items:
+> >        - const: ipg
+> >        - const: ocram
+> >        - const: core
+> > +      - const: debug
+> > +      - const: mu
+> > +    minItems: 3
+> > +    maxItems: 5
+> >
+> >    power-domains:
+> >      description:
+> >        List of phandle and PM domain specifier as documented in
+> >        Documentation/devicetree/bindings/power/power_domain.txt
+> > +    minItems: 1
+> >      maxItems: 4
+>
+> How does the same h/w have different number of power domains?
 
-Unfortunately it's possible that the iris part probe defers on yet not
-available regulators and an attempt to start the remoteproc will have to
-be rejected, until this has been resolved. But there's no useful
-mechanism of knowing when this would be.
+For different SoC, the integration is different, on i.MX8QM/8QXP, there are
+4 power-domains for DSP,  but on i.MX8MP, there are 1 power-domain.
 
-Instead replace the of_platform_populate() and the iris probe with a
-function that rolls its own struct device, with the relevant of_node
-associated that is enough to acquire regulators and clocks specified in
-the DT node and that may propagate the EPROBE_DEFER back to the wcnss
-device's probe.
+>
+> >
+> >    mboxes:
+> >      description:
+> >        List of <&phandle type channel> - 2 channels for TXDB, 2 channels for RXDB
+> > +      or - 1 channel for TX, 1 channel for RX, 1 channel for RXDB
+> >        (see mailbox/fsl,mu.txt)
+> > +    minItems: 3
+> >      maxItems: 4
+> >
+> >    mbox-names:
+> > -    items:
+> > -      - const: txdb0
+> > -      - const: txdb1
+> > -      - const: rxdb0
+> > -      - const: rxdb1
+> > +    oneOf:
+> > +      - items:
+> > +          - const: txdb0
+> > +          - const: txdb1
+> > +          - const: rxdb0
+> > +          - const: rxdb1
+> > +      - items:
+> > +          - const: tx
+> > +          - const: rx
+> > +          - const: rxdb
+>
+> These are completely different mailboxes?
 
-Acked-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-Reported-by: Anibal Limon <anibal.limon@linaro.org>
-Reported-by: Loic Poulain <loic.poulain@linaro.org>
-Tested-by: Anibal Limon <anibal.limon@linaro.org>
-Link: https://lore.kernel.org/r/20210312002251.3273013-1-bjorn.andersson@linaro.org
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/remoteproc/qcom_wcnss.c      |  49 +++--------
- drivers/remoteproc/qcom_wcnss.h      |   4 +-
- drivers/remoteproc/qcom_wcnss_iris.c | 120 +++++++++++++++++----------
- 3 files changed, 89 insertions(+), 84 deletions(-)
+It is the same mailbox, for this mailbox, there are 16 channels
+(4 for tx,  4 for rx,  4 for txdb, 4 for rxdb).
+For sound open firmware and remoteproc firmware, they
+use different mailbox channels.
 
-diff --git a/drivers/remoteproc/qcom_wcnss.c b/drivers/remoteproc/qcom_wcnss.c
-index 5f3455aa7e0e..387b90cc18d2 100644
---- a/drivers/remoteproc/qcom_wcnss.c
-+++ b/drivers/remoteproc/qcom_wcnss.c
-@@ -142,18 +142,6 @@ static const struct wcnss_data pronto_v2_data = {
- 	.num_vregs = 1,
- };
- 
--void qcom_wcnss_assign_iris(struct qcom_wcnss *wcnss,
--			    struct qcom_iris *iris,
--			    bool use_48mhz_xo)
--{
--	mutex_lock(&wcnss->iris_lock);
--
--	wcnss->iris = iris;
--	wcnss->use_48mhz_xo = use_48mhz_xo;
--
--	mutex_unlock(&wcnss->iris_lock);
--}
--
- static int wcnss_load(struct rproc *rproc, const struct firmware *fw)
- {
- 	struct qcom_wcnss *wcnss = (struct qcom_wcnss *)rproc->priv;
-@@ -639,12 +627,20 @@ static int wcnss_probe(struct platform_device *pdev)
- 		goto detach_pds;
- 	}
- 
-+	wcnss->iris = qcom_iris_probe(&pdev->dev, &wcnss->use_48mhz_xo);
-+	if (IS_ERR(wcnss->iris)) {
-+		ret = PTR_ERR(wcnss->iris);
-+		goto detach_pds;
-+	}
-+
- 	ret = rproc_add(rproc);
- 	if (ret)
--		goto detach_pds;
-+		goto remove_iris;
- 
--	return of_platform_populate(pdev->dev.of_node, NULL, NULL, &pdev->dev);
-+	return 0;
- 
-+remove_iris:
-+	qcom_iris_remove(wcnss->iris);
- detach_pds:
- 	wcnss_release_pds(wcnss);
- free_rproc:
-@@ -657,7 +653,7 @@ static int wcnss_remove(struct platform_device *pdev)
- {
- 	struct qcom_wcnss *wcnss = platform_get_drvdata(pdev);
- 
--	of_platform_depopulate(&pdev->dev);
-+	qcom_iris_remove(wcnss->iris);
- 
- 	qcom_smem_state_put(wcnss->state);
- 	rproc_del(wcnss->rproc);
-@@ -687,28 +683,7 @@ static struct platform_driver wcnss_driver = {
- 	},
- };
- 
--static int __init wcnss_init(void)
--{
--	int ret;
--
--	ret = platform_driver_register(&wcnss_driver);
--	if (ret)
--		return ret;
--
--	ret = platform_driver_register(&qcom_iris_driver);
--	if (ret)
--		platform_driver_unregister(&wcnss_driver);
--
--	return ret;
--}
--module_init(wcnss_init);
--
--static void __exit wcnss_exit(void)
--{
--	platform_driver_unregister(&qcom_iris_driver);
--	platform_driver_unregister(&wcnss_driver);
--}
--module_exit(wcnss_exit);
-+module_platform_driver(wcnss_driver);
- 
- MODULE_DESCRIPTION("Qualcomm Peripheral Image Loader for Wireless Subsystem");
- MODULE_LICENSE("GPL v2");
-diff --git a/drivers/remoteproc/qcom_wcnss.h b/drivers/remoteproc/qcom_wcnss.h
-index 62c8682d0a92..6d01ee6afa7f 100644
---- a/drivers/remoteproc/qcom_wcnss.h
-+++ b/drivers/remoteproc/qcom_wcnss.h
-@@ -17,9 +17,9 @@ struct wcnss_vreg_info {
- 	bool super_turbo;
- };
- 
-+struct qcom_iris *qcom_iris_probe(struct device *parent, bool *use_48mhz_xo);
-+void qcom_iris_remove(struct qcom_iris *iris);
- int qcom_iris_enable(struct qcom_iris *iris);
- void qcom_iris_disable(struct qcom_iris *iris);
- 
--void qcom_wcnss_assign_iris(struct qcom_wcnss *wcnss, struct qcom_iris *iris, bool use_48mhz_xo);
--
- #endif
-diff --git a/drivers/remoteproc/qcom_wcnss_iris.c b/drivers/remoteproc/qcom_wcnss_iris.c
-index 169acd305ae3..09720ddddc85 100644
---- a/drivers/remoteproc/qcom_wcnss_iris.c
-+++ b/drivers/remoteproc/qcom_wcnss_iris.c
-@@ -17,7 +17,7 @@
- #include "qcom_wcnss.h"
- 
- struct qcom_iris {
--	struct device *dev;
-+	struct device dev;
- 
- 	struct clk *xo_clk;
- 
-@@ -75,7 +75,7 @@ int qcom_iris_enable(struct qcom_iris *iris)
- 
- 	ret = clk_prepare_enable(iris->xo_clk);
- 	if (ret) {
--		dev_err(iris->dev, "failed to enable xo clk\n");
-+		dev_err(&iris->dev, "failed to enable xo clk\n");
- 		goto disable_regulators;
- 	}
- 
-@@ -93,43 +93,90 @@ void qcom_iris_disable(struct qcom_iris *iris)
- 	regulator_bulk_disable(iris->num_vregs, iris->vregs);
- }
- 
--static int qcom_iris_probe(struct platform_device *pdev)
-+static const struct of_device_id iris_of_match[] = {
-+	{ .compatible = "qcom,wcn3620", .data = &wcn3620_data },
-+	{ .compatible = "qcom,wcn3660", .data = &wcn3660_data },
-+	{ .compatible = "qcom,wcn3660b", .data = &wcn3680_data },
-+	{ .compatible = "qcom,wcn3680", .data = &wcn3680_data },
-+	{}
-+};
-+
-+static void qcom_iris_release(struct device *dev)
-+{
-+	struct qcom_iris *iris = container_of(dev, struct qcom_iris, dev);
-+
-+	of_node_put(iris->dev.of_node);
-+	kfree(iris);
-+}
-+
-+struct qcom_iris *qcom_iris_probe(struct device *parent, bool *use_48mhz_xo)
- {
-+	const struct of_device_id *match;
- 	const struct iris_data *data;
--	struct qcom_wcnss *wcnss;
-+	struct device_node *of_node;
- 	struct qcom_iris *iris;
- 	int ret;
- 	int i;
- 
--	iris = devm_kzalloc(&pdev->dev, sizeof(struct qcom_iris), GFP_KERNEL);
--	if (!iris)
--		return -ENOMEM;
-+	of_node = of_get_child_by_name(parent->of_node, "iris");
-+	if (!of_node) {
-+		dev_err(parent, "No child node \"iris\" found\n");
-+		return ERR_PTR(-EINVAL);
-+	}
-+
-+	iris = kzalloc(sizeof(*iris), GFP_KERNEL);
-+	if (!iris) {
-+		of_node_put(of_node);
-+		return ERR_PTR(-ENOMEM);
-+	}
-+
-+	device_initialize(&iris->dev);
-+	iris->dev.parent = parent;
-+	iris->dev.release = qcom_iris_release;
-+	iris->dev.of_node = of_node;
-+
-+	dev_set_name(&iris->dev, "%s.iris", dev_name(parent));
-+
-+	ret = device_add(&iris->dev);
-+	if (ret) {
-+		put_device(&iris->dev);
-+		return ERR_PTR(ret);
-+	}
-+
-+	match = of_match_device(iris_of_match, &iris->dev);
-+	if (!match) {
-+		dev_err(&iris->dev, "no matching compatible for iris\n");
-+		ret = -EINVAL;
-+		goto err_device_del;
-+	}
- 
--	data = of_device_get_match_data(&pdev->dev);
--	wcnss = dev_get_drvdata(pdev->dev.parent);
-+	data = match->data;
- 
--	iris->xo_clk = devm_clk_get(&pdev->dev, "xo");
-+	iris->xo_clk = devm_clk_get(&iris->dev, "xo");
- 	if (IS_ERR(iris->xo_clk)) {
--		if (PTR_ERR(iris->xo_clk) != -EPROBE_DEFER)
--			dev_err(&pdev->dev, "failed to acquire xo clk\n");
--		return PTR_ERR(iris->xo_clk);
-+		ret = PTR_ERR(iris->xo_clk);
-+		if (ret != -EPROBE_DEFER)
-+			dev_err(&iris->dev, "failed to acquire xo clk\n");
-+		goto err_device_del;
- 	}
- 
- 	iris->num_vregs = data->num_vregs;
--	iris->vregs = devm_kcalloc(&pdev->dev,
-+	iris->vregs = devm_kcalloc(&iris->dev,
- 				   iris->num_vregs,
- 				   sizeof(struct regulator_bulk_data),
- 				   GFP_KERNEL);
--	if (!iris->vregs)
--		return -ENOMEM;
-+	if (!iris->vregs) {
-+		ret = -ENOMEM;
-+		goto err_device_del;
-+	}
- 
- 	for (i = 0; i < iris->num_vregs; i++)
- 		iris->vregs[i].supply = data->vregs[i].name;
- 
--	ret = devm_regulator_bulk_get(&pdev->dev, iris->num_vregs, iris->vregs);
-+	ret = devm_regulator_bulk_get(&iris->dev, iris->num_vregs, iris->vregs);
- 	if (ret) {
--		dev_err(&pdev->dev, "failed to get regulators\n");
--		return ret;
-+		dev_err(&iris->dev, "failed to get regulators\n");
-+		goto err_device_del;
- 	}
- 
- 	for (i = 0; i < iris->num_vregs; i++) {
-@@ -143,34 +190,17 @@ static int qcom_iris_probe(struct platform_device *pdev)
- 					   data->vregs[i].load_uA);
- 	}
- 
--	qcom_wcnss_assign_iris(wcnss, iris, data->use_48mhz_xo);
--
--	return 0;
--}
-+	*use_48mhz_xo = data->use_48mhz_xo;
- 
--static int qcom_iris_remove(struct platform_device *pdev)
--{
--	struct qcom_wcnss *wcnss = dev_get_drvdata(pdev->dev.parent);
-+	return iris;
- 
--	qcom_wcnss_assign_iris(wcnss, NULL, false);
-+err_device_del:
-+	device_del(&iris->dev);
- 
--	return 0;
-+	return ERR_PTR(ret);
- }
- 
--static const struct of_device_id iris_of_match[] = {
--	{ .compatible = "qcom,wcn3620", .data = &wcn3620_data },
--	{ .compatible = "qcom,wcn3660", .data = &wcn3660_data },
--	{ .compatible = "qcom,wcn3660b", .data = &wcn3680_data },
--	{ .compatible = "qcom,wcn3680", .data = &wcn3680_data },
--	{}
--};
--MODULE_DEVICE_TABLE(of, iris_of_match);
--
--struct platform_driver qcom_iris_driver = {
--	.probe = qcom_iris_probe,
--	.remove = qcom_iris_remove,
--	.driver = {
--		.name = "qcom-iris",
--		.of_match_table = iris_of_match,
--	},
--};
-+void qcom_iris_remove(struct qcom_iris *iris)
-+{
-+	device_del(&iris->dev);
-+}
--- 
-2.30.2
+>
+> >
+> >    memory-region:
+> >      description:
+> >        phandle to a node describing reserved memory (System RAM memory)
+> >        used by DSP (see bindings/reserved-memory/reserved-memory.txt)
+> > -    maxItems: 1
+> > +    minItems: 1
+> > +    maxItems: 4
+> > +
+> > +  firmware-name:
+> > +    description: |
+> > +      Default name of the firmware to load to the remote processor.
+> > +
+> > +  fsl,dsp-ctrl:
+> > +    $ref: /schemas/types.yaml#/definitions/phandle
+> > +    description:
+> > +      Phandle to syscon block which provide access for processor enablement
+>
+> Curious, how is this done with the open sound f/w?
 
+Currently the code for this in sound open firmware is not upsteamed,
+I think this phandle is also applied for sound open firmware.
+
+By the way, Should I separate the change of this file from this
+patch series?  Does it belong to your linux tree?
+
+
+Best Regards
+Wang Shengjiu
