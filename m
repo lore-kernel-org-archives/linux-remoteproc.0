@@ -2,95 +2,215 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY autolearn=no
+X-Spam-Status: No, score=-17.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A1DEC433F5
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 13 Sep 2021 19:42:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74812C433F5
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 14 Sep 2021 11:45:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 02A2260698
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 13 Sep 2021 19:42:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5439660E52
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 14 Sep 2021 11:45:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242269AbhIMTnr (ORCPT
+        id S232187AbhINLqe (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 13 Sep 2021 15:43:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34314 "EHLO
+        Tue, 14 Sep 2021 07:46:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55586 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236893AbhIMTnr (ORCPT
+        with ESMTP id S232156AbhINLqe (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 13 Sep 2021 15:43:47 -0400
-Received: from mail-ot1-x334.google.com (mail-ot1-x334.google.com [IPv6:2607:f8b0:4864:20::334])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 73FF0C061574
-        for <linux-remoteproc@vger.kernel.org>; Mon, 13 Sep 2021 12:42:31 -0700 (PDT)
-Received: by mail-ot1-x334.google.com with SMTP id l16-20020a9d6a90000000b0053b71f7dc83so14927302otq.7
-        for <linux-remoteproc@vger.kernel.org>; Mon, 13 Sep 2021 12:42:31 -0700 (PDT)
+        Tue, 14 Sep 2021 07:46:34 -0400
+Received: from mail-wm1-x32f.google.com (mail-wm1-x32f.google.com [IPv6:2a00:1450:4864:20::32f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C884DC061574;
+        Tue, 14 Sep 2021 04:45:16 -0700 (PDT)
+Received: by mail-wm1-x32f.google.com with SMTP id k5-20020a05600c1c8500b002f76c42214bso1815730wms.3;
+        Tue, 14 Sep 2021 04:45:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:in-reply-to:references:from:user-agent:date:message-id
-         :subject:to:cc;
-        bh=BqyiYC70ZQUHHw9//0XYXSrAX8+tnM8/YgezErnlDrU=;
-        b=e/ksqZ8nK4LM8K7qBzx6ztRoNrqG6PH8PC4yEvjbNVYCxAkYDmbjw+IMZbNNQPvF7R
-         fAfXBrgXMcKl+IMNADZbsi5JOMxER5obm4NoKcY/o71HCmbu9xY+Fnt3rDf/PnxozAoe
-         WlqJnz4bjYXgBaQmmKDkmPlCT/C9EH8dwVNhY=
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=srJ1nnPayRwL7lbGpY/83XlR5+6EDwIUs1YgAf5CvAc=;
+        b=Fc2tb5a+i6mPu1zN/Zy2JxO7WoxNmnQnZOv5gD83Goc9DsKmVsK/NYu2wuxtigRIX7
+         bvZCSnkatlKzFeuM8WHmywGr9Qm+Ot2AODaqLkfJAD0ujLhriqYZaDEVa4+odZxbeMYs
+         pmkCU3EUHQEVf7IaIkdPCfDJYulUV2iFDaw6+J6AvySE3oo87QbA7gikr2SUB9mG8pFM
+         iYzcB+AQP5SOR5K4w4iOZxQKw3OlSoNGDUMzhA2XLDzto1Pck1BbA2hcjswv5nLz2B+1
+         uKwoZyb271RHCRcPk/BbPiPGllvj8U9fq+819qFS0+H+VGy1dVZvq3L9l48SjL7a5dHg
+         7MqQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from
-         :user-agent:date:message-id:subject:to:cc;
-        bh=BqyiYC70ZQUHHw9//0XYXSrAX8+tnM8/YgezErnlDrU=;
-        b=eRFZ8pvHDFB5cSZbs64c3EyDb9vgxi9RHMDNye4xQdUFDMGc1ZzPlW4RmelSY2FCo3
-         ZfrgVP7RCSy9mBQ89wQktQvRI+n1jR/fxDASkgDy6/MtrAUQ/49O21CFXWf9bxH0HZCY
-         agdLlaXqPjKzWBUsmMec5poxyy7tRcw2qv56S9TgrZyX7IPN/XM6MpGtV04x04Wcb3be
-         RzXxW9m9URutygsYHjCySIk9979p5+4wwolBwjMtFB1Liybg4uyaSq3vceOeMevyya1A
-         kMpokBC3CD34wtXVt5dofZtAOEpWFACQXBlbZ7osbobXsvoEHN+gxHbwakjQJtlnCZ1M
-         zrbQ==
-X-Gm-Message-State: AOAM532PoKYU+plQxNVOmYH/Gtk1ZRLySK02/CYRpHE3q3uXdcDubMdE
-        IxCwdYRJzWq5NxQRB0ESDqEtIYojAQ2rn5dC7jw4jQ==
-X-Google-Smtp-Source: ABdhPJwZ8mXUoFC7htDszmiW3cET2FEd1QCjxSbxY2/mXROYf8yoBexV2QICbOCDGNL/7hR7V6ReQxz2sOFr7dvaHZ8=
-X-Received: by 2002:a05:6830:1212:: with SMTP id r18mr10734921otp.159.1631562150764;
- Mon, 13 Sep 2021 12:42:30 -0700 (PDT)
-Received: from 753933720722 named unknown by gmailapi.google.com with
- HTTPREST; Mon, 13 Sep 2021 12:42:30 -0700
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=srJ1nnPayRwL7lbGpY/83XlR5+6EDwIUs1YgAf5CvAc=;
+        b=1fVjJbSvPkidiouSx5qKQtfbXdEuV/C0p0PVKEttkH3Ctb4nFrDVMGyWTYKoCfOuT5
+         hRshZojzlAdQQKDs9MQmARjLItEBKC+DDpm2rCJic8WtjdHmIskCTUMWQejmAySVbQ7F
+         54Z0XaNMehc65GeAQA27eEtfoxOvwOYcJ4cyHZqJj0ITMeX1uebm4hfUGv/kgjiy9Wy9
+         l/9zyuY9K30zD/tPUtmHxykj06ndVDb3W4P8klHAGJmfI1Veicnr6kcC3SkpNO47Fj0d
+         K4sJJjYCRSePgHn0zxDWGFho3XnLiGsD+TlCFM5NTRhH1elnT7+yDN9mfbISVawaiYYk
+         Qu1w==
+X-Gm-Message-State: AOAM533MC6Fh2IqJMWiraFlnUUzLpNT+UE2KxMV8Isuapncdyu3W/hig
+        9BpY90T6kc783+t+XNDAdLVWVX4FNVXDlQfx9qM=
+X-Google-Smtp-Source: ABdhPJx6ROBbB/L3d3MCNwPfBiaV7A37myc/PvlyZsasGnqr7pvETJ6x8p8mEb6FpotSotV0OiSP+CebEkJvY9YeNxQ=
+X-Received: by 2002:a1c:1cc:: with SMTP id 195mr1703232wmb.188.1631619915376;
+ Tue, 14 Sep 2021 04:45:15 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <4697bec1-af58-53e4-9fd1-293bfd8754be@codeaurora.org>
-References: <1629108335-23463-1-git-send-email-deesin@codeaurora.org>
- <CAE-0n528DuP4MiAOhYY+Du+L=OZaGM5YJm=NwWia3JF7hp7sAA@mail.gmail.com> <4697bec1-af58-53e4-9fd1-293bfd8754be@codeaurora.org>
-From:   Stephen Boyd <swboyd@chromium.org>
-User-Agent: alot/0.9.1
-Date:   Mon, 13 Sep 2021 12:42:30 -0700
-Message-ID: <CAE-0n51XcRbY7UeU6bhrrnkvD7rboq3QZFw9Tu0xQZ6e1VyjRw@mail.gmail.com>
-Subject: Re: [PATCH V2 1/1] soc: qcom: smp2p: Add wakeup capability to SMP2P IRQ
-To:     Deepak Kumar Singh <deesin@codeaurora.org>,
-        bjorn.andersson@linaro.org, clew@codeaurora.org,
-        sibis@codeaurora.org
-Cc:     linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org, Andy Gross <agross@kernel.org>
+References: <1631092255-25150-1-git-send-email-shengjiu.wang@nxp.com>
+ <1631092255-25150-5-git-send-email-shengjiu.wang@nxp.com> <YTvRlmIedfBiXSCg@robh.at.kernel.org>
+In-Reply-To: <YTvRlmIedfBiXSCg@robh.at.kernel.org>
+From:   Daniel Baluta <daniel.baluta@gmail.com>
+Date:   Tue, 14 Sep 2021 14:45:02 +0300
+Message-ID: <CAEnQRZBQ4HqfNJq-tYE5+6eVz=WSHPHfnY7_qLYOttKD2pgtvg@mail.gmail.com>
+Subject: Re: [PATCH v4 4/4] dt-bindings: dsp: fsl: update binding document for
+ remote proc driver
+To:     Rob Herring <robh@kernel.org>
+Cc:     Shengjiu Wang <shengjiu.wang@nxp.com>,
+        Ohad Ben Cohen <ohad@wizery.com>, bjorn.andersson@linaro.org,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        Daniel Baluta <daniel.baluta@nxp.com>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        linux-remoteproc@vger.kernel.org,
+        Devicetree List <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Shengjiu Wang <shengjiu.wang@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Quoting Deepak Kumar Singh (2021-09-13 10:45:19)
+On Sat, Sep 11, 2021 at 12:45 AM Rob Herring <robh@kernel.org> wrote:
 >
-> On 8/17/2021 1:53 AM, Stephen Boyd wrote:
-> >> +       ret = device_init_wakeup(&pdev->dev, true);
-> > I still wonder if it's better to leave this off by default and only
-> > enable it if the kernel is using autosuspend (PM_AUTOSLEEP). Then
-> > userspace is responsible to decide if it can handle the wakeup with the
-> > screen off, reload the remoteproc, and go back to suspend if it isn't
-> > using autosuspend.
+> On Wed, Sep 08, 2021 at 05:10:55PM +0800, Shengjiu Wang wrote:
+> > As there are two drivers for DSP on i.MX, one is for sound open
+> > firmware, another is for remote processor framework. In order to
+> > distinguish two kinds of driver, defining different compatible strings.
 >
-> Seems like not all targets use PM_AUTOSLEEP feature, even those targets
-> may require wakeup to handle
+> What determines which firmware is used? Is it tied to the board? Or for
+> a given board, users could want different firmware? In the latter case,
+> this configuration should not be in DT.
 >
-> modem crash so that important modem events are not missed. I think we
-> can keep wake up as default behavior
+> > For remote proc driver, the properties firmware-name and fsl,dsp-ctrl
+> > are needed and the mailbox channel is different with SOF.
+> >
+> > Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
+> > ---
+> >  .../devicetree/bindings/dsp/fsl,dsp.yaml      | 81 +++++++++++++++++--
+> >  1 file changed, 75 insertions(+), 6 deletions(-)
+> >
+> > diff --git a/Documentation/devicetree/bindings/dsp/fsl,dsp.yaml b/Documentation/devicetree/bindings/dsp/fsl,dsp.yaml
+> > index 7afc9f2be13a..51ea657f6d42 100644
+> > --- a/Documentation/devicetree/bindings/dsp/fsl,dsp.yaml
+> > +++ b/Documentation/devicetree/bindings/dsp/fsl,dsp.yaml
+> > @@ -8,6 +8,7 @@ title: NXP i.MX8 DSP core
+> >
+> >  maintainers:
+> >    - Daniel Baluta <daniel.baluta@nxp.com>
+> > +  - Shengjiu Wang <shengjiu.wang@nxp.com>
+> >
+> >  description: |
+> >    Some boards from i.MX8 family contain a DSP core used for
+> > @@ -19,6 +20,10 @@ properties:
+> >        - fsl,imx8qxp-dsp
+> >        - fsl,imx8qm-dsp
+> >        - fsl,imx8mp-dsp
+> > +      - fsl,imx8qxp-hifi4
+> > +      - fsl,imx8qm-hifi4
+> > +      - fsl,imx8mp-hifi4
+> > +      - fsl,imx8ulp-hifi4
+> >
+> >    reg:
+> >      maxItems: 1
+> > @@ -28,37 +33,63 @@ properties:
+> >        - description: ipg clock
+> >        - description: ocram clock
+> >        - description: core clock
+> > +      - description: debug interface clock
+> > +      - description: message unit clock
+> > +    minItems: 3
+> > +    maxItems: 5
+> >
+> >    clock-names:
+> >      items:
+> >        - const: ipg
+> >        - const: ocram
+> >        - const: core
+> > +      - const: debug
+> > +      - const: mu
+> > +    minItems: 3
+> > +    maxItems: 5
+> >
+> >    power-domains:
+> >      description:
+> >        List of phandle and PM domain specifier as documented in
+> >        Documentation/devicetree/bindings/power/power_domain.txt
+> > +    minItems: 1
+> >      maxItems: 4
 >
-> and let the user space disable it through sysfs if it doesn't want it as
-> wake up source.
+> How does the same h/w have different number of power domains?
+>
+> >
+> >    mboxes:
+> >      description:
+> >        List of <&phandle type channel> - 2 channels for TXDB, 2 channels for RXDB
+> > +      or - 1 channel for TX, 1 channel for RX, 1 channel for RXDB
+> >        (see mailbox/fsl,mu.txt)
+> > +    minItems: 3
+> >      maxItems: 4
+> >
+> >    mbox-names:
+> > -    items:
+> > -      - const: txdb0
+> > -      - const: txdb1
+> > -      - const: rxdb0
+> > -      - const: rxdb1
+> > +    oneOf:
+> > +      - items:
+> > +          - const: txdb0
+> > +          - const: txdb1
+> > +          - const: rxdb0
+> > +          - const: rxdb1
+> > +      - items:
+> > +          - const: tx
+> > +          - const: rx
+> > +          - const: rxdb
+>
+> These are completely different mailboxes?
+>
+> >
+> >    memory-region:
+> >      description:
+> >        phandle to a node describing reserved memory (System RAM memory)
+> >        used by DSP (see bindings/reserved-memory/reserved-memory.txt)
+> > -    maxItems: 1
+> > +    minItems: 1
+> > +    maxItems: 4
+> > +
+> > +  firmware-name:
+> > +    description: |
+> > +      Default name of the firmware to load to the remote processor.
+> > +
+> > +  fsl,dsp-ctrl:
+> > +    $ref: /schemas/types.yaml#/definitions/phandle
+> > +    description:
+> > +      Phandle to syscon block which provide access for processor enablement
+>
+> Curious, how is this done with the open sound f/w?
 
-I don't understand. What if userspace is simple and doesn't use
-autosleep and will turn the screen on when the kernel resumes? Why do we
-expect the modem crashing and causing the screen to turn on to be a good
-user experience?
+Hi Rob,
+
+Should be the same story. Here is the PR sent for review with Sound
+Open Firmware (SOF):
+
+https://github.com/thesofproject/linux/pull/3156
+
+The only difference is that SOF uses:
+syscon_regmap_lookup_by_compatible while remoteproc driver uses
+syscon_regmap_lookup_by_phandle.
+
+thanks,
+Daniel.
