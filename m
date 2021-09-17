@@ -5,46 +5,45 @@ X-Spam-Level:
 X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F40AAC43217
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84497C4332F
 	for <linux-remoteproc@archiver.kernel.org>; Fri, 17 Sep 2021 13:56:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E20AB611F2
+	by mail.kernel.org (Postfix) with ESMTP id 6BD4A611F2
 	for <linux-remoteproc@archiver.kernel.org>; Fri, 17 Sep 2021 13:56:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242119AbhIQN5j (ORCPT
+        id S242080AbhIQN5i (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 17 Sep 2021 09:57:39 -0400
-Received: from so254-9.mailgun.net ([198.61.254.9]:46192 "EHLO
-        so254-9.mailgun.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242097AbhIQN5e (ORCPT
-        <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 17 Sep 2021 09:57:34 -0400
+        Fri, 17 Sep 2021 09:57:38 -0400
+Received: from m43-7.mailgun.net ([69.72.43.7]:22568 "EHLO m43-7.mailgun.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S242119AbhIQN5h (ORCPT <rfc822;linux-remoteproc@vger.kernel.org>);
+        Fri, 17 Sep 2021 09:57:37 -0400
 DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1631886972; h=References: In-Reply-To: Message-Id: Date:
+ s=smtp; t=1631886975; h=References: In-Reply-To: Message-Id: Date:
  Subject: Cc: To: From: Sender;
- bh=WexQqp9BoqjUB9knsWNxfgm1vKmn4957NZM6F3RIaT0=; b=SdV1nArEQNpye5d0qfRx8p3g/uuwaY5xHOQzzSh5p27CJ9R+aC2fDxYfHq3YLBP4h4G0x0yM
- P9Y6XAOzhRBn1K3u4A8meg2uhitBFZJBM3ZYbjAzm6/H8pV8OMcG+F9Iz16b62IGhwqBqQkq
- q+ve23ie5AcGTAmbfuMwoCvP2Fo=
-X-Mailgun-Sending-Ip: 198.61.254.9
+ bh=xMYuZuGolK9vrbTMYF4QFulI0IfKjQmcFt1fBnR5hQo=; b=QZA5u87SV8KW1h4/57FyS1751UFiCUdx4syeQvlaRP9TYTsLFWW3VBfzPyeVUwPXZRg+24PX
+ 9e9gkjWxUPCOCMKTzoy5XRAUGyEUgdZovdSEr06GwhYoYyo1Xg05knj3ebtDB7cNs4fPTl7t
+ 55/RWf/GpaPYQWrZNbNwVzvgsMQ=
+X-Mailgun-Sending-Ip: 69.72.43.7
 X-Mailgun-Sid: WyI4ZWZiZiIsICJsaW51eC1yZW1vdGVwcm9jQHZnZXIua2VybmVsLm9yZyIsICJiZTllNGEiXQ==
 Received: from smtp.codeaurora.org
  (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
- smtp-out-n06.prod.us-west-2.postgun.com with SMTP id
- 61449e6db585cc7d24566e44 (version=TLS1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Fri, 17 Sep 2021 13:55:57
+ smtp-out-n05.prod.us-west-2.postgun.com with SMTP id
+ 61449e798b04ef85893fec04 (version=TLS1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Fri, 17 Sep 2021 13:56:09
  GMT
 Sender: sibis=codeaurora.org@mg.codeaurora.org
 Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id D8828C43619; Fri, 17 Sep 2021 13:55:56 +0000 (UTC)
+        id E19D1C4361B; Fri, 17 Sep 2021 13:56:08 +0000 (UTC)
 Received: from blr-ubuntu-87.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
         (Authenticated sender: sibis)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id CAA31C43616;
-        Fri, 17 Sep 2021 13:55:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.1 smtp.codeaurora.org CAA31C43616
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 65B23C43617;
+        Fri, 17 Sep 2021 13:56:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.1 smtp.codeaurora.org 65B23C43617
 Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=codeaurora.org
 From:   Sibi Sankar <sibis@codeaurora.org>
@@ -57,9 +56,9 @@ Cc:     ohad@wizery.com, agross@kernel.org, mathieu.poirier@linaro.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, evgreen@chromium.org,
         dianders@chromium.org, Sibi Sankar <sibis@codeaurora.org>
-Subject: [PATCH v5 01/10] dt-bindings: remoteproc: qcom: pas: Add SC7280 MPSS support
-Date:   Fri, 17 Sep 2021 19:25:26 +0530
-Message-Id: <1631886935-14691-2-git-send-email-sibis@codeaurora.org>
+Subject: [PATCH v5 03/10] dt-bindings: remoteproc: qcom: Update Q6V5 Modem PIL binding
+Date:   Fri, 17 Sep 2021 19:25:28 +0530
+Message-Id: <1631886935-14691-4-git-send-email-sibis@codeaurora.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1631886935-14691-1-git-send-email-sibis@codeaurora.org>
 References: <1631886935-14691-1-git-send-email-sibis@codeaurora.org>
@@ -67,60 +66,113 @@ Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Add MPSS PAS support for SC7280 SoCs.
+Add a new modem compatible string for QTI SC7280 SoCs and introduce the
+"qcom,ext-regs" and "qcom,qaccept-regs" properties needed by the modem
+sub-system running on SC7280 SoCs.
 
 Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
-Reviewed-by: Matthias Kaehlcke <mka@chromium.org>
 Acked-by: Rob Herring <robh@kernel.org>
 Reviewed-by: Stephen Boyd <swboyd@chromium.org>
 ---
- Documentation/devicetree/bindings/remoteproc/qcom,adsp.yaml | 5 +++++
- 1 file changed, 5 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,adsp.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,adsp.yaml
-index ff265aa365de..63e06d93bca3 100644
---- a/Documentation/devicetree/bindings/remoteproc/qcom,adsp.yaml
-+++ b/Documentation/devicetree/bindings/remoteproc/qcom,adsp.yaml
-@@ -25,6 +25,7 @@ properties:
-       - qcom,qcs404-cdsp-pas
-       - qcom,qcs404-wcss-pas
-       - qcom,sc7180-mpss-pas
-+      - qcom,sc7280-mpss-pas
-       - qcom,sc8180x-adsp-pas
-       - qcom,sc8180x-cdsp-pas
-       - qcom,sc8180x-mpss-pas
-@@ -151,6 +152,7 @@ allOf:
-               - qcom,msm8998-adsp-pas
-               - qcom,qcs404-adsp-pas
-               - qcom,qcs404-wcss-pas
-+              - qcom,sc7280-mpss-pas
-               - qcom,sc8180x-adsp-pas
-               - qcom,sc8180x-cdsp-pas
-               - qcom,sc8180x-mpss-pas
-@@ -296,6 +298,7 @@ allOf:
-           contains:
-             enum:
-               - qcom,sc7180-mpss-pas
-+              - qcom,sc7280-mpss-pas
-               - qcom,sc8180x-mpss-pas
-               - qcom,sdx55-mpss-pas
-               - qcom,sm8150-mpss-pas
-@@ -400,6 +403,7 @@ allOf:
-         compatible:
-           contains:
-             enum:
-+              - qcom,sc7280-mpss-pas
-               - qcom,sdx55-mpss-pas
-               - qcom,sm8150-mpss-pas
-               - qcom,sm8350-mpss-pas
-@@ -475,6 +479,7 @@ allOf:
-           contains:
-             enum:
-               - qcom,sc7180-mpss-pas
-+              - qcom,sc7280-mpss-pas
-     then:
-       properties:
-         resets:
+v5:
+ * Add pka to the clock list to boot secure modem devices.
+
+ .../devicetree/bindings/remoteproc/qcom,q6v5.txt   | 32 ++++++++++++++++++++--
+ 1 file changed, 30 insertions(+), 2 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt b/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt
+index 494257010629..8f1507052afd 100644
+--- a/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt
++++ b/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt
+@@ -15,6 +15,7 @@ on the Qualcomm Hexagon core.
+ 		    "qcom,msm8996-mss-pil"
+ 		    "qcom,msm8998-mss-pil"
+ 		    "qcom,sc7180-mss-pil"
++		    "qcom,sc7280-mss-pil"
+ 		    "qcom,sdm845-mss-pil"
+ 
+ - reg:
+@@ -47,6 +48,7 @@ on the Qualcomm Hexagon core.
+ 	qcom,msm8996-mss-pil:
+ 	qcom,msm8998-mss-pil:
+ 	qcom,sc7180-mss-pil:
++	qcom,sc7280-mss-pil:
+ 	qcom,sdm845-mss-pil:
+ 		    must be "wdog", "fatal", "ready", "handover", "stop-ack",
+ 		    "shutdown-ack"
+@@ -87,6 +89,8 @@ on the Qualcomm Hexagon core.
+ 	qcom,sc7180-mss-pil:
+ 		    must be "iface", "bus", "xo", "snoc_axi", "mnoc_axi",
+ 		    "nav"
++	qcom,sc7280-mss-pil:
++		    must be "iface", "xo", "snoc_axi", "offline", "pka"
+ 	qcom,sdm845-mss-pil:
+ 		    must be "iface", "bus", "mem", "xo", "gpll0_mss",
+ 		    "snoc_axi", "mnoc_axi", "prng"
+@@ -98,7 +102,7 @@ on the Qualcomm Hexagon core.
+ 		    reference to the list of 3 reset-controllers for the
+ 		    wcss sub-system
+ 		    reference to the list of 2 reset-controllers for the modem
+-		    sub-system on SC7180, SDM845 SoCs
++		    sub-system on SC7180, SC7280, SDM845 SoCs
+ 
+ - reset-names:
+ 	Usage: required
+@@ -107,7 +111,7 @@ on the Qualcomm Hexagon core.
+ 		    must be "wcss_aon_reset", "wcss_reset", "wcss_q6_reset"
+ 		    for the wcss sub-system
+ 		    must be "mss_restart", "pdc_reset" for the modem
+-		    sub-system on SC7180, SDM845 SoCs
++		    sub-system on SC7180, SC7280, SDM845 SoCs
+ 
+ For devices where the mba and mpss sub-nodes are not specified, mba/mpss region
+ should be referenced as follows:
+@@ -173,6 +177,9 @@ For the compatible string below the following supplies are required:
+ 	qcom,msm8998-mss-pil:
+ 		    must be "cx", "mx"
+ 	qcom,sc7180-mss-pil:
++		    must be "cx", "mx", "mss"
++	qcom,sc7280-mss-pil:
++		    must be "cx", "mss"
+ 	qcom,sdm845-mss-pil:
+ 		    must be "cx", "mx", "mss"
+ 
+@@ -198,6 +205,9 @@ For the compatible string below the following supplies are required:
+ 	Definition: a phandle reference to a syscon representing TCSR followed
+ 		    by the three offsets within syscon for q6, modem and nc
+ 		    halt registers.
++		    a phandle reference to a syscon representing TCSR followed
++		    by the four offsets within syscon for q6, modem, nc and vq6
++		    halt registers on SC7280 SoCs.
+ 
+ For the compatible strings below the following phandle references are required:
+   "qcom,sc7180-mss-pil"
+@@ -208,6 +218,24 @@ For the compatible strings below the following phandle references are required:
+ 		    by the offset within syscon for conn_box_spare0 register
+ 		    used by the modem sub-system running on SC7180 SoC.
+ 
++For the compatible strings below the following phandle references are required:
++  "qcom,sc7280-mss-pil"
++- qcom,ext-regs:
++	Usage: required
++	Value type: <prop-encoded-array>
++	Definition: two phandle references to syscons representing TCSR_REG and
++		    TCSR register space followed by the two offsets within the syscon
++		    to force_clk_en/rscc_disable and axim1_clk_off/crypto_clk_off
++		    registers respectively.
++
++- qcom,qaccept-regs:
++	Usage: required
++	Value type: <prop-encoded-array>
++	Definition: a phandle reference to a syscon representing TCSR followed
++		    by the three offsets within syscon for mdm, cx and axi
++		    qaccept registers used by the modem sub-system running on
++		    SC7280 SoC.
++
+ The Hexagon node must contain iommus property as described in ../iommu/iommu.txt
+ on platforms which do not have TrustZone.
+ 
 -- 
 The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
 a Linux Foundation Collaborative Project
