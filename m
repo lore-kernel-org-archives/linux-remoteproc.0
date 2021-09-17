@@ -5,45 +5,46 @@ X-Spam-Level:
 X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B67AC433F5
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BAE90C43219
 	for <linux-remoteproc@archiver.kernel.org>; Fri, 17 Sep 2021 13:56:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3FE2361241
+	by mail.kernel.org (Postfix) with ESMTP id A3D3260E08
 	for <linux-remoteproc@archiver.kernel.org>; Fri, 17 Sep 2021 13:56:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242335AbhIQN5z (ORCPT
+        id S242318AbhIQN54 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 17 Sep 2021 09:57:55 -0400
-Received: from m43-7.mailgun.net ([69.72.43.7]:47046 "EHLO m43-7.mailgun.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S241846AbhIQN5y (ORCPT <rfc822;linux-remoteproc@vger.kernel.org>);
+        Fri, 17 Sep 2021 09:57:56 -0400
+Received: from so254-9.mailgun.net ([198.61.254.9]:36844 "EHLO
+        so254-9.mailgun.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S242339AbhIQN5y (ORCPT
+        <rfc822;linux-remoteproc@vger.kernel.org>);
         Fri, 17 Sep 2021 09:57:54 -0400
 DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1631886992; h=References: In-Reply-To: Message-Id: Date:
+ s=smtp; t=1631886993; h=References: In-Reply-To: Message-Id: Date:
  Subject: Cc: To: From: Sender;
- bh=3T69NRs9JR8R4ZO2Fmb7TxxsWZblWgreALjPp0qG2jE=; b=HlYi6fwtUCaNK4LxKTYJgrebnW8WizIR4Bsb/axX5dzeniw37u9KOxPwyvoDJD77FD+gSyQ7
- D4HPRAENaALBThlwDXmw70EIw4EWiKS9SRwyoXs4yJDc0fA+HE4VtBDvBx5PxZtIm1lbaHK2
- GzgVH8Uu3z03FfWClJpw+XKwbEA=
-X-Mailgun-Sending-Ip: 69.72.43.7
+ bh=KP9bNw/ZFCAkq1getd1e/E9TxBcbTKrdWkzsnCXqO0A=; b=s5a8MCoP5rcKkUaemcU7S+bUDiyEoB9kxYja9oOraoZ6y3PMbzUsjBN5sGwnsjuenVzaJhSh
+ 5zCprwEcyNZ+6pzff/v3ICZmcvk4vA8oFYRnHs3rRp8XMRX/aBW6lU64N467a7UwvXBb3Ick
+ s6D/CUHYOEj8wmYJS513f7t3Z80=
+X-Mailgun-Sending-Ip: 198.61.254.9
 X-Mailgun-Sid: WyI4ZWZiZiIsICJsaW51eC1yZW1vdGVwcm9jQHZnZXIua2VybmVsLm9yZyIsICJiZTllNGEiXQ==
 Received: from smtp.codeaurora.org
  (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
- smtp-out-n06.prod.us-east-1.postgun.com with SMTP id
- 61449e8cd914b051823aac4c (version=TLS1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Fri, 17 Sep 2021 13:56:28
+ smtp-out-n03.prod.us-west-2.postgun.com with SMTP id
+ 61449e73b585cc7d24568d58 (version=TLS1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Fri, 17 Sep 2021 13:56:03
  GMT
 Sender: sibis=codeaurora.org@mg.codeaurora.org
 Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 838DDC4363F; Fri, 17 Sep 2021 13:56:26 +0000 (UTC)
+        id 88E45C43635; Fri, 17 Sep 2021 13:56:02 +0000 (UTC)
 Received: from blr-ubuntu-87.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
         (Authenticated sender: sibis)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 17898C43616;
-        Fri, 17 Sep 2021 13:56:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.1 smtp.codeaurora.org 17898C43616
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 92D3DC4360C;
+        Fri, 17 Sep 2021 13:55:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.1 smtp.codeaurora.org 92D3DC4360C
 Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=codeaurora.org
 From:   Sibi Sankar <sibis@codeaurora.org>
@@ -56,9 +57,9 @@ Cc:     ohad@wizery.com, agross@kernel.org, mathieu.poirier@linaro.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, evgreen@chromium.org,
         dianders@chromium.org, Sibi Sankar <sibis@codeaurora.org>
-Subject: [PATCH v5 06/10] arm64: dts: qcom: sc7280: Update reserved memory map
-Date:   Fri, 17 Sep 2021 19:25:31 +0530
-Message-Id: <1631886935-14691-7-git-send-email-sibis@codeaurora.org>
+Subject: [PATCH v5 02/10] remoteproc: qcom: pas: Add SC7280 Modem support
+Date:   Fri, 17 Sep 2021 19:25:27 +0530
+Message-Id: <1631886935-14691-3-git-send-email-sibis@codeaurora.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1631886935-14691-1-git-send-email-sibis@codeaurora.org>
 References: <1631886935-14691-1-git-send-email-sibis@codeaurora.org>
@@ -66,77 +67,27 @@ Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Add missing reserved regions as described in v1 of SC7280 memory map.
+Add support for booting the Modem DSP found on QTI SC7280 SoCs.
 
 Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
+Reviewed-by: Matthias Kaehlcke <mka@chromium.org>
 Reviewed-by: Stephen Boyd <swboyd@chromium.org>
 ---
- arch/arm64/boot/dts/qcom/sc7280.dtsi | 34 ++++++++++++++++++++++++++++++++++
- 1 file changed, 34 insertions(+)
+ drivers/remoteproc/qcom_q6v5_pas.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm64/boot/dts/qcom/sc7280.dtsi b/arch/arm64/boot/dts/qcom/sc7280.dtsi
-index 89ed7f2b5583..386c559351d5 100644
---- a/arch/arm64/boot/dts/qcom/sc7280.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sc7280.dtsi
-@@ -48,6 +48,16 @@
- 		#size-cells = <2>;
- 		ranges;
- 
-+		hyp_mem: memory@80000000 {
-+			reg = <0x0 0x80000000 0x0 0x600000>;
-+			no-map;
-+		};
-+
-+		xbl_mem: memory@80600000 {
-+			reg = <0x0 0x80600000 0x0 0x200000>;
-+			no-map;
-+		};
-+
- 		aop_mem: memory@80800000 {
- 			reg = <0x0 0x80800000 0x0 0x60000>;
- 			no-map;
-@@ -59,6 +69,16 @@
- 			no-map;
- 		};
- 
-+		reserved_xbl_uefi_log: memory@80880000 {
-+			reg = <0x0 0x80884000 0x0 0x10000>;
-+			no-map;
-+		};
-+
-+		sec_apps_mem: memory@808ff000 {
-+			reg = <0x0 0x808ff000 0x0 0x1000>;
-+			no-map;
-+		};
-+
- 		smem_mem: memory@80900000 {
- 			reg = <0x0 0x80900000 0x0 0x200000>;
- 			no-map;
-@@ -69,10 +89,24 @@
- 			reg = <0x0 0x80b00000 0x0 0x100000>;
- 		};
- 
-+		wlan_fw_mem: memory@80c00000 {
-+			reg = <0x0 0x80c00000 0x0 0xc00000>;
-+			no-map;
-+		};
-+
- 		ipa_fw_mem: memory@8b700000 {
- 			reg = <0 0x8b700000 0 0x10000>;
- 			no-map;
- 		};
-+
-+		rmtfs_mem: memory@9c900000 {
-+			compatible = "qcom,rmtfs-mem";
-+			reg = <0x0 0x9c900000 0x0 0x280000>;
-+			no-map;
-+
-+			qcom,client-id = <1>;
-+			qcom,vmid = <15>;
-+		};
- 	};
- 
- 	cpus {
+diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
+index 8da0362d3d85..c466b97471a5 100644
+--- a/drivers/remoteproc/qcom_q6v5_pas.c
++++ b/drivers/remoteproc/qcom_q6v5_pas.c
+@@ -807,6 +807,7 @@ static const struct of_device_id adsp_of_match[] = {
+ 	{ .compatible = "qcom,qcs404-cdsp-pas", .data = &cdsp_resource_init },
+ 	{ .compatible = "qcom,qcs404-wcss-pas", .data = &wcss_resource_init },
+ 	{ .compatible = "qcom,sc7180-mpss-pas", .data = &mpss_resource_init},
++	{ .compatible = "qcom,sc7280-mpss-pas", .data = &mpss_resource_init},
+ 	{ .compatible = "qcom,sc8180x-adsp-pas", .data = &sm8150_adsp_resource},
+ 	{ .compatible = "qcom,sc8180x-cdsp-pas", .data = &sm8150_cdsp_resource},
+ 	{ .compatible = "qcom,sc8180x-mpss-pas", .data = &sc8180x_mpss_resource},
 -- 
 The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
 a Linux Foundation Collaborative Project
