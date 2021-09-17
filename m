@@ -2,233 +2,130 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54DE6C433EF
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 17 Sep 2021 15:24:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D79ECC433EF
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 17 Sep 2021 16:32:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 36CF061164
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 17 Sep 2021 15:24:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AFCA461019
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 17 Sep 2021 16:32:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229730AbhIQP0K (ORCPT
+        id S232361AbhIQQdc (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 17 Sep 2021 11:26:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48334 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344351AbhIQPY1 (ORCPT
-        <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 17 Sep 2021 11:24:27 -0400
-Received: from mail-pl1-x62b.google.com (mail-pl1-x62b.google.com [IPv6:2607:f8b0:4864:20::62b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 469E2C0613D3
-        for <linux-remoteproc@vger.kernel.org>; Fri, 17 Sep 2021 08:22:40 -0700 (PDT)
-Received: by mail-pl1-x62b.google.com with SMTP id w6so6414185pll.3
-        for <linux-remoteproc@vger.kernel.org>; Fri, 17 Sep 2021 08:22:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=OS94uZTmA0qnszl1fwVMo+RQL+/vTVqvtH0x+p48wY0=;
-        b=bRsPWtlhXzo4Tc/8or9LqnXhztTrk9NmxMapoTxWY0Ypjm1gL3iusGWCPx1hXm6hXA
-         OnJWj3AfeV/AyOHx5exXC8jx9r5SrprlQOmDZ4fXNd1uKmS3VPuHRNL+hiI+Z8GF4XPi
-         WK/2g61WY2v+O6shCYTiop8X+p9M/F/J96rA8m3g8Ut+moKVIOQoEjGLOImm2cOJAt7M
-         f5crjbQisPGL3RZe3I/3BFsuR2bOn0bHvJN95jx9lTXBpcsUvy5TCJbdsn1eUZwqGKRR
-         MXAOf8+zN8rXXGS6FxxD2Hn+G8vBOwu4E/XhZs8fEPSUn5SEgVF7Nbf60iAD89hmPRX4
-         Go7g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=OS94uZTmA0qnszl1fwVMo+RQL+/vTVqvtH0x+p48wY0=;
-        b=cmWFW3skenVJ+KgUZ2T89jlKdRobizuMy64Bw0O91cyampELlJKqQv2e5kGUfmza9W
-         DsVFcgtQ18e3EvEEYo6qEJsYegtWYqlnM+mVP1PIYQUO2Fiu3zrZUJx9Ocrkr9Z4yG1+
-         06focRckEgL33VhLqrH6utIfiA3Q1m5tNxOIS5vkboERA0PXel/KzRgEO8xA9D88rCPN
-         EXkhvHHWFDq2hJ0btIoDgYa/VnmQQ+Mz2G8+ZMiJqJuEIvqEZYM/wEIfsV1P5Qsv3ScV
-         JPx1xiStWg/dk/IWBfnCaoTruwnXEkkN03jtP68roPgJd+nx4V+VmCWKTOOJ92tBrjDQ
-         ZTOA==
-X-Gm-Message-State: AOAM531FM5GupSoEyoPshqNCrLkBdc0l+nUdmIUT0fNbaUA98tt70RVA
-        k2W6/lTDKFbhcKaEjIxZkPEFTA==
-X-Google-Smtp-Source: ABdhPJwTfxqmzpmynstN+ueD82dE7pITyL8lRsfd5Z/m6O2J/WXNuzsrz1m0cTCWJw2yZBW048Tt5g==
-X-Received: by 2002:a17:902:a3ca:b0:13c:a7be:1767 with SMTP id q10-20020a170902a3ca00b0013ca7be1767mr6481323plb.88.1631892159539;
-        Fri, 17 Sep 2021 08:22:39 -0700 (PDT)
-Received: from p14s (S0106889e681aac74.cg.shawcable.net. [68.147.0.187])
-        by smtp.gmail.com with ESMTPSA id 23sm6472340pfp.206.2021.09.17.08.22.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 Sep 2021 08:22:38 -0700 (PDT)
-Date:   Fri, 17 Sep 2021 09:22:36 -0600
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-To:     Shengjiu Wang <shengjiu.wang@gmail.com>
-Cc:     Shengjiu Wang <shengjiu.wang@nxp.com>,
-        Ohad Ben Cohen <ohad@wizery.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        Daniel Baluta <daniel.baluta@nxp.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        "open list:REMOTE PROCESSOR (REMOTEPROC) SUBSYSTEM" 
-        <linux-remoteproc@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4 3/4] remoteproc: imx_dsp_rproc: Add remoteproc driver
- for DSP on i.MX
-Message-ID: <20210917152236.GA1878943@p14s>
-References: <1631092255-25150-1-git-send-email-shengjiu.wang@nxp.com>
- <1631092255-25150-4-git-send-email-shengjiu.wang@nxp.com>
- <20210915161624.GA1770838@p14s>
- <CAA+D8AO0c+jk_k7j=ZvNFsVvC-p_zMLPJDS3qmLjNbJ+U0E9Cg@mail.gmail.com>
- <20210916165957.GA1825273@p14s>
- <CAA+D8AN_ni_XmEFNfY0Z0qLAJX00XFSUP1RkJdNQd-MVY6pd4g@mail.gmail.com>
- <CAA+D8AMaszzT5q8oGhXOtE3W5Ue9S3r=es2sTp2uJ7RwjX8Bzg@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAA+D8AMaszzT5q8oGhXOtE3W5Ue9S3r=es2sTp2uJ7RwjX8Bzg@mail.gmail.com>
+        Fri, 17 Sep 2021 12:33:32 -0400
+Received: from m43-7.mailgun.net ([69.72.43.7]:19143 "EHLO m43-7.mailgun.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S232906AbhIQQd3 (ORCPT <rfc822;linux-remoteproc@vger.kernel.org>);
+        Fri, 17 Sep 2021 12:33:29 -0400
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1631896326; h=Message-Id: Date: Subject: Cc: To: From:
+ Sender; bh=bC6WW1HCqOHoLARuCxv4vK+SHjilrqIcRBQKaBuMPto=; b=BnLO7tlcczznxExaqhDAfmkfB0zr23CD5swOQ2FsbDaPmh9PGgYvFIj+DkTd/EzSGKeuRRlg
+ cb/+CSlVrHGTVS7b2pn1H7RD6nftpwx4ln55PrGEpH0pWJJtQK6iP2J0D3L//Zq670RbjiNT
+ kpwsDBUq30Qr8q0G3OKdnD6squ4=
+X-Mailgun-Sending-Ip: 69.72.43.7
+X-Mailgun-Sid: WyI4ZWZiZiIsICJsaW51eC1yZW1vdGVwcm9jQHZnZXIua2VybmVsLm9yZyIsICJiZTllNGEiXQ==
+Received: from smtp.codeaurora.org
+ (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
+ smtp-out-n06.prod.us-west-2.postgun.com with SMTP id
+ 6144c306b585cc7d243210db (version=TLS1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Fri, 17 Sep 2021 16:32:06
+ GMT
+Sender: deesin=codeaurora.org@mg.codeaurora.org
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id AD68EC43616; Fri, 17 Sep 2021 16:32:05 +0000 (UTC)
+Received: from deesin-linux.qualcomm.com (unknown [202.46.22.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: deesin)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id D9A08C4338F;
+        Fri, 17 Sep 2021 16:32:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.1 smtp.codeaurora.org D9A08C4338F
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=codeaurora.org
+From:   Deepak Kumar Singh <deesin@codeaurora.org>
+To:     bjorn.andersson@linaro.org, swboyd@chromium.org,
+        clew@codeaurora.org, sibis@codeaurora.org
+Cc:     linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org,
+        Deepak Kumar Singh <deesin@codeaurora.org>,
+        Andy Gross <agross@kernel.org>
+Subject: [PATCH V3 1/1] soc: qcom: smp2p: Add wakeup capability to SMP2P IRQ
+Date:   Fri, 17 Sep 2021 22:01:28 +0530
+Message-Id: <1631896288-17281-1-git-send-email-deesin@codeaurora.org>
+X-Mailer: git-send-email 2.7.4
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Fri, Sep 17, 2021 at 05:44:44PM +0800, Shengjiu Wang wrote:
-> On Fri, Sep 17, 2021 at 1:20 PM Shengjiu Wang <shengjiu.wang@gmail.com> wrote:
-> >
-> > On Fri, Sep 17, 2021 at 1:00 AM Mathieu Poirier
-> > <mathieu.poirier@linaro.org> wrote:
-> > >
-> > > [...]
-> > >
-> > > > > > +
-> > > > > > +/**
-> > > > > > + * imx_dsp_rproc_elf_load_segments() - load firmware segments to memory
-> > > > > > + * @rproc: remote processor which will be booted using these fw segments
-> > > > > > + * @fw: the ELF firmware image
-> > > > > > + *
-> > > > > > + * This function specially checks if memsz is zero or not, otherwise it
-> > > > > > + * is mostly same as rproc_elf_load_segments().
-> > > > > > + */
-> > > > > > +static int imx_dsp_rproc_elf_load_segments(struct rproc *rproc,
-> > > > > > +                                        const struct firmware *fw)
-> > > > > > +{
-> > > > > > +     struct device *dev = &rproc->dev;
-> > > > > > +     u8 class = fw_elf_get_class(fw);
-> > > > > > +     u32 elf_phdr_get_size = elf_size_of_phdr(class);
-> > > > > > +     const u8 *elf_data = fw->data;
-> > > > > > +     const void *ehdr, *phdr;
-> > > > > > +     int i, ret = 0;
-> > > > > > +     u16 phnum;
-> > > > > > +
-> > > > > > +     ehdr = elf_data;
-> > > > > > +     phnum = elf_hdr_get_e_phnum(class, ehdr);
-> > > > > > +     phdr = elf_data + elf_hdr_get_e_phoff(class, ehdr);
-> > > > > > +
-> > > > > > +     /* go through the available ELF segments */
-> > > > > > +     for (i = 0; i < phnum; i++, phdr += elf_phdr_get_size) {
-> > > > > > +             u64 da = elf_phdr_get_p_paddr(class, phdr);
-> > > > > > +             u64 memsz = elf_phdr_get_p_memsz(class, phdr);
-> > > > > > +             u64 filesz = elf_phdr_get_p_filesz(class, phdr);
-> > > > > > +             u64 offset = elf_phdr_get_p_offset(class, phdr);
-> > > > > > +             u32 type = elf_phdr_get_p_type(class, phdr);
-> > > > > > +             void *ptr;
-> > > > > > +             bool is_iomem;
-> > > > > > +
-> > > > > > +             if (type != PT_LOAD || !memsz)
-> > > > >
-> > > > > You did a really good job with adding comments but this part is undocumented...
-> > > > > If I read this correctly you need to check for !memsz because some part of
-> > > > > the program segment may have a header but its memsz is zero, in which case it can
-> > > > > be safely skipped.  So why is that segment in the image to start with, and why
-> > > > > is it marked PT_LOAD if it is not needed?  This is very puzzling...
-> > > >
-> > > > Actually I have added comments in the header of this function.
-> > >
-> > > Indeed there is a mention of memsz in the function's header but it doesn't
-> > > mention _why_ this is needed, and that is what I'm looking for.
-> > >
-> > > >
-> > > > memsz= 0 with PT_LOAD issue, I have asked the toolchain's vendor,
-> > > > they said that this case is allowed by elf spec...
-> > > >
-> > > > And in the "pru_rproc.c" and "mtk_scp.c", seems they met same problem
-> > > > they also check the filesz in their internal xxx_elf_load_segments() function.
-> > >
-> > > In both cases they are skipping PT_LOAD sections where "filesz" is '0', which
-> > > makes sense because we don't know how many bytes to copy.  But here you are
-> > > skipping over a PT_LOAD section with a potentially valid filesz, and that is the
-> > > part I don't understand.
-> >
-> > Ok, I can use filesz instead. For my case, filesz = memsz = 0,
-> > it is the same result I want.
+Remote susbsystems notify fatal crash throught smp2p interrupt.
+When remoteproc crashes it can cause soc to come out of low power
+state and may not allow again to enter in low power state until
+crash is handled.
 
-If that is the case then rproc_elf_load_segments() should work, i.e it won't
-copy anything.  If rproc_elf_load_segments() doesn't work for you then there are
-corner cases you haven't told me about.
+Mark smp2p interrupt wakeup capable so that interrupt handler is
+executed and remoteproc crash can be handled in system  resume path.
+This patch marks interrupt wakeup capable but keeps wakeup disabled
+by default and leaves it to user space to enable it according to its
+requirement.
 
-> >
-> > The reason why I use "memsz '' is because there is  "if (filesz > memsz) "
-> > check after this,  if memsz is zero, then "filesz" should be zero too, other
-> > values are not allowed.
-> 
-> But I still think checking "!memsz" is better than filesz,  because
-> memsz > filesz is allowed (filesz = 0),  the code below can be executed.
-> filesz > memsz is not allowed.
-> 
-> What do you think?
+Signed-off-by: Deepak Kumar Singh <deesin@codeaurora.org>
+---
+ drivers/soc/qcom/smp2p.c | 21 +++++++++++++++++++++
+ 1 file changed, 21 insertions(+)
 
-I don't see a need to add a custom implementation for things that _may_ happen.
-If using the default rproc_elf_load_segments() works than go with that.  We can deal
-with problems if/when there is a need for it.
+diff --git a/drivers/soc/qcom/smp2p.c b/drivers/soc/qcom/smp2p.c
+index 2df4883..5f8ba96 100644
+--- a/drivers/soc/qcom/smp2p.c
++++ b/drivers/soc/qcom/smp2p.c
+@@ -14,6 +14,7 @@
+ #include <linux/mfd/syscon.h>
+ #include <linux/module.h>
+ #include <linux/platform_device.h>
++#include <linux/pm_wakeirq.h>
+ #include <linux/regmap.h>
+ #include <linux/soc/qcom/smem.h>
+ #include <linux/soc/qcom/smem_state.h>
+@@ -538,9 +539,26 @@ static int qcom_smp2p_probe(struct platform_device *pdev)
+ 		goto unwind_interfaces;
+ 	}
+ 
++	/*
++	 * Treat smp2p interrupt as wakeup source, but keep it disabled
++	 * by default. User space can decide enabling it depending on its
++	 * use cases. For example if remoteproc crashes and device wants
++	 * to handle it immediatedly (e.g. to not miss phone calls) it can
++	 * enable wakeup source from user space, while other devices which
++	 * do not have proper autosleep feature may want to handle it with
++	 * other wakeup events (e.g. Power button) instead waking up immediately.
++	 */
++	device_set_wakeup_capable(&pdev->dev, true);
++
++	ret = dev_pm_set_wake_irq(&pdev->dev, irq);
++	if (ret)
++		set_wake_irq_fail;
+ 
+ 	return 0;
+ 
++set_wake_irq_fail:
++	dev_pm_clear_wake_irq(&pdev->dev);
++
+ unwind_interfaces:
+ 	list_for_each_entry(entry, &smp2p->inbound, node)
+ 		irq_domain_remove(entry->domain);
+@@ -565,6 +583,9 @@ static int qcom_smp2p_remove(struct platform_device *pdev)
+ 	struct qcom_smp2p *smp2p = platform_get_drvdata(pdev);
+ 	struct smp2p_entry *entry;
+ 
++	dev_pm_clear_wake_irq(&pdev->dev);
++	device_init_wakeup(&pdev->dev, false);
++
+ 	list_for_each_entry(entry, &smp2p->inbound, node)
+ 		irq_domain_remove(entry->domain);
+ 
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
 
-> 
-> Best regards
-> Wang shengjiu
-> >
-> > >
-> > > >
-> > > > >
-> > > > >
-> > > > > > +                     continue;
-> > > > > > +
-> > > > > > +             dev_dbg(dev, "phdr: type %d da 0x%llx memsz 0x%llx filesz 0x%llx\n",
-> > > > > > +                     type, da, memsz, filesz);
-> > > > > > +
-> > > > > > +             if (filesz > memsz) {
-> > > > > > +                     dev_err(dev, "bad phdr filesz 0x%llx memsz 0x%llx\n",
-> > > > > > +                             filesz, memsz);
-> > > > > > +                     ret = -EINVAL;
-> > > > > > +                     break;
-> > > > > > +             }
-> > > > > > +
-> > > > > > +             if (offset + filesz > fw->size) {
-> > > > > > +                     dev_err(dev, "truncated fw: need 0x%llx avail 0x%zx\n",
-> > > > > > +                             offset + filesz, fw->size);
-> > > > > > +                     ret = -EINVAL;
-> > > > > > +                     break;
-> > > > > > +             }
-> > > > > > +
-> > > > > > +             if (!rproc_u64_fit_in_size_t(memsz)) {
-> > > > > > +                     dev_err(dev, "size (%llx) does not fit in size_t type\n",
-> > > > > > +                             memsz);
-> > > > > > +                     ret = -EOVERFLOW;
-> > > > > > +                     break;
-> > > > > > +             }
-> > > > > > +
-> > > > > > +             /* grab the kernel address for this device address */
-> > > > > > +             ptr = rproc_da_to_va(rproc, da, memsz, &is_iomem);
-> > > > >
-> > > > >                 rproc_da_to_va(rproc, da, memsz, NULL);
-> > > >
-> > > > yes, will update it.
-> > > >
-> > > > >
-> > > > > More comments to follow later today or tomorrow.
-> > > >
-> > > > Thanks.
-> > > >
-> > > > Best regards
-> > > > Wang Shengjiu
