@@ -2,169 +2,130 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AB2DC433F5
-	for <linux-remoteproc@archiver.kernel.org>; Sat, 18 Sep 2021 18:53:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A859C433FE
+	for <linux-remoteproc@archiver.kernel.org>; Sat, 18 Sep 2021 19:03:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7513561050
-	for <linux-remoteproc@archiver.kernel.org>; Sat, 18 Sep 2021 18:53:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 42E41610A6
+	for <linux-remoteproc@archiver.kernel.org>; Sat, 18 Sep 2021 19:03:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235290AbhIRSyd (ORCPT
+        id S235594AbhIRTEa (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Sat, 18 Sep 2021 14:54:33 -0400
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:35770 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233394AbhIRSyd (ORCPT
-        <rfc822;linux-remoteproc@vger.kernel.org>);
-        Sat, 18 Sep 2021 14:54:33 -0400
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 18IIqukW055099;
-        Sat, 18 Sep 2021 13:52:56 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1631991176;
-        bh=7M/aVuYrnKzWKsk0oq0vlafzkgNIfFCqLDA4zjJubyU=;
-        h=Date:From:To:CC:Subject:References:In-Reply-To;
-        b=KV7tpQDhC9PWW0mksniuacZPwEbB4vqJAkRqj6wAXsbtIGIi6j2Sl1uSYrjNUXOqO
-         qtr/bKE4+vp0W/5u6eerAlD3f1170qgA/XM9IFrF1qFpN6+o0aza/8ExHEbKpdTA8/
-         VMOnlPEvKneY7alTiOXBvk3rJ/MprZYa1Sneo8S4=
-Received: from DFLE109.ent.ti.com (dfle109.ent.ti.com [10.64.6.30])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 18IIqu9O086066
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Sat, 18 Sep 2021 13:52:56 -0500
-Received: from DFLE115.ent.ti.com (10.64.6.36) by DFLE109.ent.ti.com
- (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2308.14; Sat, 18
- Sep 2021 13:52:56 -0500
-Received: from fllv0039.itg.ti.com (10.64.41.19) by DFLE115.ent.ti.com
- (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2308.14 via
- Frontend Transport; Sat, 18 Sep 2021 13:52:56 -0500
-Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id 18IIquu7092846;
-        Sat, 18 Sep 2021 13:52:56 -0500
-Date:   Sat, 18 Sep 2021 13:52:56 -0500
-From:   Nishanth Menon <nm@ti.com>
-To:     Sinthu Raja <sinthu.raja@mistralsolutions.com>
-CC:     Suman Anna <s-anna@ti.com>, Rob Herring <robh+dt@kernel.org>,
-        Baolin Wang <baolin.wang7@gmail.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Ohad Ben-Cohen <ohad@wizery.com>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        Sinthu Raja <sinthu.raja@ti.com>
-Subject: Re: [PATCH V2] dt-bindings: hwlock: omap: Remove redundant binding
- example
-Message-ID: <20210918185256.jcjvlmgftycwf7lo@repeal>
-References: <20210917170805.5079-1-sinthu.raja@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20210917170805.5079-1-sinthu.raja@ti.com>
-User-Agent: NeoMutt/20171215
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+        Sat, 18 Sep 2021 15:04:30 -0400
+Received: from m43-7.mailgun.net ([69.72.43.7]:15076 "EHLO m43-7.mailgun.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S233159AbhIRTEa (ORCPT <rfc822;linux-remoteproc@vger.kernel.org>);
+        Sat, 18 Sep 2021 15:04:30 -0400
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1631991786; h=Message-Id: Date: Subject: Cc: To: From:
+ Sender; bh=+U2GiqwuWx+H3KaZJ3sfJgpTvDO76iW140USeHkgnAU=; b=Re98a7SRUADW948hpKw+CZig5KmPRyas/IlrXFaaB9xPNsre2HfZKYv4MG2oy1bLPJ/axZZQ
+ dP7C9Vx2wiFzlfUbtjzhMMZOYLw909/fYle8Ex1fSZBWxyTj7JRpiOwFJ59z5oua3j0414l9
+ jidjMVqu8LTh5qj69/CV7Pya6OI=
+X-Mailgun-Sending-Ip: 69.72.43.7
+X-Mailgun-Sid: WyI4ZWZiZiIsICJsaW51eC1yZW1vdGVwcm9jQHZnZXIua2VybmVsLm9yZyIsICJiZTllNGEiXQ==
+Received: from smtp.codeaurora.org
+ (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
+ smtp-out-n02.prod.us-east-1.postgun.com with SMTP id
+ 614637cfbd6681d8ed1291b4 (version=TLS1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Sat, 18 Sep 2021 19:02:39
+ GMT
+Sender: deesin=codeaurora.org@mg.codeaurora.org
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id D7E24C43618; Sat, 18 Sep 2021 19:02:38 +0000 (UTC)
+Received: from deesin-linux.qualcomm.com (unknown [202.46.22.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: deesin)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 33D1BC4338F;
+        Sat, 18 Sep 2021 19:02:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.1 smtp.codeaurora.org 33D1BC4338F
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=codeaurora.org
+From:   Deepak Kumar Singh <deesin@codeaurora.org>
+To:     bjorn.andersson@linaro.org, swboyd@chromium.org,
+        clew@codeaurora.org, sibis@codeaurora.org
+Cc:     linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org,
+        Deepak Kumar Singh <deesin@codeaurora.org>,
+        Andy Gross <agross@kernel.org>
+Subject: [PATCH V4 1/1] soc: qcom: smp2p: Add wakeup capability to SMP2P IRQ
+Date:   Sun, 19 Sep 2021 00:32:15 +0530
+Message-Id: <1631991735-18920-1-git-send-email-deesin@codeaurora.org>
+X-Mailer: git-send-email 2.7.4
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On 22:38-20210917, Sinthu Raja wrote:
-> From: Sinthu Raja <sinthu.raja@ti.com>
-> 
-> The example includes a board-specific compatible property, this is wrong
-> as the example should be board agnostic and should represent the particular
-> binding. Also, the file includes two similar examples, but with a different
-> compatible. So, drop the entire second example
-> 
-> Fixes: d8db9dc34871 ("dt-bindings: hwlock: omap: Convert binding to YAML")
+Remote susbsystems notify fatal crash throught smp2p interrupt.
+When remoteproc crashes it can cause soc to come out of low power
+state and may not allow again to enter in low power state until
+crash is handled.
 
-Since we are cleaning up, You should probably drop the fixes. Esp when
-adding fixes, checkout the specific commit and attempt to git am this
-patch.. you would notice it wont apply.. and per stable rules, it is
-probably too trivial to backport to so many stable kernels.
+Mark smp2p interrupt wakeup capable so that interrupt handler is
+executed and remoteproc crash can be handled in system  resume path.
+This patch marks interrupt wakeup capable but keeps wakeup disabled
+by default. User space can enable it based on its requirement for
+wakeup from suspend.
 
-The later commit 891adc1303fe ("dt-bindings: hwlock: omap:
-Fix warnings with k3.yaml") attempted to fixup by making it
-board-specific, which was'nt solving the underlying problem either as
-this patch is doing..
+Signed-off-by: Deepak Kumar Singh <deesin@codeaurora.org>
+---
+ drivers/soc/qcom/smp2p.c | 21 +++++++++++++++++++++
+ 1 file changed, 21 insertions(+)
 
-
-Also it would be nice if you could attribute this to Bjorn by adding:
-Suggested-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-
-> Signed-off-by: Sinthu Raja <sinthu.raja@ti.com>
-
-> ---
-> 
-> Changes in V2:
-> Addressed review comments, that includes dropping the redundant example,
-> updates to commit message and $subject.
-
-
-I like this version much better. Thanks Bjorn for pointing the same out,
-the yaml is much cleaner now and easier to maintain.
-
-> 
-> V1: https://lore.kernel.org/all/20210917094740.18891-1-sinthu.raja@ti.com/
-> 
->  .../bindings/hwlock/ti,omap-hwspinlock.yaml   | 32 +------------------
->  1 file changed, 1 insertion(+), 31 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/hwlock/ti,omap-hwspinlock.yaml b/Documentation/devicetree/bindings/hwlock/ti,omap-hwspinlock.yaml
-> index ae1b37dbee75..4feebd90bff1 100644
-> --- a/Documentation/devicetree/bindings/hwlock/ti,omap-hwspinlock.yaml
-> +++ b/Documentation/devicetree/bindings/hwlock/ti,omap-hwspinlock.yaml
-> @@ -40,38 +40,8 @@ examples:
->  
->    - |
->      /* OMAP4 SoCs */
-
-^^ Drop this?
-> -    hwspinlock: spinlock@4a0f6000 {
-> +    spinlock@4a0f6000 {
->          compatible = "ti,omap4-hwspinlock";
->          reg = <0x4a0f6000 0x1000>;
->          #hwlock-cells = <1>;
->      };
-> -
-> -  - |
-> -    / {
-> -        /* K3 AM65x SoCs */
-> -        model = "Texas Instruments K3 AM654 SoC";
-> -        compatible = "ti,am654-evm", "ti,am654";
-> -        #address-cells = <2>;
-> -        #size-cells = <2>;
-> -
-> -        bus@100000 {
-> -            compatible = "simple-bus";
-> -            #address-cells = <2>;
-> -            #size-cells = <2>;
-> -            ranges = <0x00 0x00100000 0x00 0x00100000 0x00 0x00020000>, /* ctrl mmr */
-> -                     <0x00 0x30800000 0x00 0x30800000 0x00 0x0bc00000>; /* Main NavSS */
-> -
-> -            bus@30800000 {
-> -                compatible = "simple-mfd";
-> -                #address-cells = <2>;
-> -                #size-cells = <2>;
-> -                ranges = <0x00 0x30800000 0x00 0x30800000 0x00 0x0bc00000>;
-> -
-> -                spinlock@30e00000 {
-> -                    compatible = "ti,am654-hwspinlock";
-> -                    reg = <0x00 0x30e00000 0x00 0x1000>;
-> -                    #hwlock-cells = <1>;
-> -                };
-> -            };
-> -        };
-> -    };
-> -- 
-> 2.31.1
-> 
-
-
+diff --git a/drivers/soc/qcom/smp2p.c b/drivers/soc/qcom/smp2p.c
+index 2df4883..60ad632 100644
+--- a/drivers/soc/qcom/smp2p.c
++++ b/drivers/soc/qcom/smp2p.c
+@@ -14,6 +14,7 @@
+ #include <linux/mfd/syscon.h>
+ #include <linux/module.h>
+ #include <linux/platform_device.h>
++#include <linux/pm_wakeirq.h>
+ #include <linux/regmap.h>
+ #include <linux/soc/qcom/smem.h>
+ #include <linux/soc/qcom/smem_state.h>
+@@ -538,9 +539,26 @@ static int qcom_smp2p_probe(struct platform_device *pdev)
+ 		goto unwind_interfaces;
+ 	}
+ 
++	/*
++	 * Treat smp2p interrupt as wakeup source, but keep it disabled
++	 * by default. User space can decide enabling it depending on its
++	 * use cases. For example if remoteproc crashes and device wants
++	 * to handle it immediatedly (e.g. to not miss phone calls) it can
++	 * enable wakeup source from user space, while other devices which
++	 * do not have proper autosleep feature may want to handle it with
++	 * other wakeup events (e.g. Power button) instead waking up immediately.
++	 */
++	device_set_wakeup_capable(&pdev->dev, true);
++
++	ret = dev_pm_set_wake_irq(&pdev->dev, irq);
++	if (ret)
++		goto set_wake_irq_fail;
+ 
+ 	return 0;
+ 
++set_wake_irq_fail:
++	dev_pm_clear_wake_irq(&pdev->dev);
++
+ unwind_interfaces:
+ 	list_for_each_entry(entry, &smp2p->inbound, node)
+ 		irq_domain_remove(entry->domain);
+@@ -565,6 +583,9 @@ static int qcom_smp2p_remove(struct platform_device *pdev)
+ 	struct qcom_smp2p *smp2p = platform_get_drvdata(pdev);
+ 	struct smp2p_entry *entry;
+ 
++	dev_pm_clear_wake_irq(&pdev->dev);
++	device_init_wakeup(&pdev->dev, false);
++
+ 	list_for_each_entry(entry, &smp2p->inbound, node)
+ 		irq_domain_remove(entry->domain);
+ 
 -- 
-Regards,
-Nishanth Menon
-Key (0xDDB5849D1736249D)/Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
+
