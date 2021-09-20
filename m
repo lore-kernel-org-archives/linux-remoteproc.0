@@ -3,126 +3,88 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 106A8C433F5
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 20 Sep 2021 09:06:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72635C4332F
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 20 Sep 2021 09:06:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E50DC606A5
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 20 Sep 2021 09:06:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 55AD461077
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 20 Sep 2021 09:06:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236171AbhITJHZ (ORCPT
+        id S236117AbhITJHa (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 20 Sep 2021 05:07:25 -0400
-Received: from www.zeus03.de ([194.117.254.33]:54158 "EHLO mail.zeus03.de"
+        Mon, 20 Sep 2021 05:07:30 -0400
+Received: from www.zeus03.de ([194.117.254.33]:54438 "EHLO mail.zeus03.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S236047AbhITJHI (ORCPT <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 20 Sep 2021 05:07:08 -0400
+        id S236167AbhITJH0 (ORCPT <rfc822;linux-remoteproc@vger.kernel.org>);
+        Mon, 20 Sep 2021 05:07:26 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
-        from:to:cc:subject:date:message-id:mime-version
-        :content-transfer-encoding; s=k1; bh=8Ic7rPl8wS6tSUDgDBOpnPfgXT8
-        diIPVuuJEV7+3x14=; b=y3zScd6qLqQkIP3VZO9fvHA8J6/TlWpstJuxEWG+2wh
-        RSUW1mVxF26O2U33Dq6EbBJ3XmayRck4KWgT5z4BxcgklO7B+9wEmZO5zVAmdCUU
-        eq691H+mkSBSVXJ5b+Z4iTQ6tBhA1RnGtNmi7NlL+YGjQ7U1KmJ/dc6bhwHIpZnk
-        =
-Received: (qmail 2412526 invoked from network); 20 Sep 2021 11:05:23 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 20 Sep 2021 11:05:23 +0200
-X-UD-Smtp-Session: l3s3148p1@Lz7AlGnMBosgAwDPXwlxANIWpbLKE1Uh
+        from:to:cc:subject:date:message-id:in-reply-to:references
+        :mime-version:content-transfer-encoding; s=k1; bh=kelsYgr6SqHCfz
+        FaSr+5PxcTB7+QvINlURnRo2qpgTs=; b=WVT+ZD4sJBq7gWM4rlglzY+jwq1feC
+        Iv+PxhjP77o6WHe8V1AE1WeSnpTMxxH4gZyg7m78AmfkaUzT11/C8u064DZyslkK
+        s1MWTEuxCq4WxVzg6GcQstBpo5kj8gK7k4DuaFdSR3dnjR0AOTw6or9YZYdiICKr
+        yjaOJR6+/zymY=
+Received: (qmail 2412787 invoked from network); 20 Sep 2021 11:05:28 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 20 Sep 2021 11:05:28 +0200
+X-UD-Smtp-Session: l3s3148p1@zvcMlWnMGIsgAwDPXwlxANIWpbLKE1Uh
 From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     linux-renesas-soc@vger.kernel.org,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        dmaengine@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        freedreno@lists.freedesktop.org, linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-iio@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com, netdev@vger.kernel.org
-Subject: [PATCH 0/9] treewide: simplify getting .driver_data
-Date:   Mon, 20 Sep 2021 11:05:12 +0200
-Message-Id: <20210920090522.23784-1-wsa+renesas@sang-engineering.com>
+        Ohad Ben-Cohen <ohad@wizery.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        linux-remoteproc@vger.kernel.org
+Subject: [PATCH 9/9] remoteproc: omap_remoteproc: simplify getting .driver_data
+Date:   Mon, 20 Sep 2021 11:05:21 +0200
+Message-Id: <20210920090522.23784-10-wsa+renesas@sang-engineering.com>
 X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20210920090522.23784-1-wsa+renesas@sang-engineering.com>
+References: <20210920090522.23784-1-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-I got tired of fixing this in Renesas drivers manually, so I took the big
-hammer. Remove this cumbersome code pattern which got copy-pasted too much
-already:
+We should get 'driver_data' from 'struct device' directly. Going via
+platform_device is an unneeded step back and forth.
 
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
+
+Build tested only. buildbot is happy.
+
+ drivers/remoteproc/omap_remoteproc.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/remoteproc/omap_remoteproc.c b/drivers/remoteproc/omap_remoteproc.c
+index 43531caa1959..32a588fefbdc 100644
+--- a/drivers/remoteproc/omap_remoteproc.c
++++ b/drivers/remoteproc/omap_remoteproc.c
+@@ -901,8 +901,7 @@ static int _omap_rproc_resume(struct rproc *rproc, bool auto_suspend)
+ 
+ static int __maybe_unused omap_rproc_suspend(struct device *dev)
+ {
 -	struct platform_device *pdev = to_platform_device(dev);
--	struct ep93xx_keypad *keypad = platform_get_drvdata(pdev);
-+	struct ep93xx_keypad *keypad = dev_get_drvdata(dev);
-
-A branch, tested by buildbot, can be found here:
-
-git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git coccinelle/get_drvdata
-
-I am open for other comments, suggestions, too, of course.
-
-Here is the cocci-script I created:
-
-@@
-struct device* d;
-identifier pdev;
-expression *ptr;
-@@
-(
--	struct platform_device *pdev = to_platform_device(d);
-|
--	struct platform_device *pdev;
-	...
--	pdev = to_platform_device(d);
-)
-	<... when != pdev
--	&pdev->dev
-+	d
-	...>
-
-	ptr =
--	platform_get_drvdata(pdev)
-+	dev_get_drvdata(d)
-
-	<... when != pdev
--	&pdev->dev
-+	d
-	...>
-
-Kind regards,
-
-   Wolfram
-
-
-Wolfram Sang (9):
-  dmaengine: stm32-dmamux: simplify getting .driver_data
-  firmware: meson: simplify getting .driver_data
-  gpio: xilinx: simplify getting .driver_data
-  drm/msm: simplify getting .driver_data
-  drm/panfrost: simplify getting .driver_data
-  iio: common: cros_ec_sensors: simplify getting .driver_data
-  net: mdio: mdio-bcm-iproc: simplify getting .driver_data
-  platform: chrome: cros_ec_sensorhub: simplify getting .driver_data
-  remoteproc: omap_remoteproc: simplify getting .driver_data
-
- drivers/dma/stm32-dmamux.c                         | 14 +++++---------
- drivers/firmware/meson/meson_sm.c                  |  3 +--
- drivers/gpio/gpio-xilinx.c                         |  6 ++----
- drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c            | 13 +++++--------
- drivers/gpu/drm/msm/disp/mdp5/mdp5_kms.c           |  6 ++----
- drivers/gpu/drm/msm/dp/dp_display.c                |  6 ++----
- drivers/gpu/drm/msm/dsi/dsi_host.c                 |  6 ++----
- drivers/gpu/drm/msm/msm_drv.c                      |  3 +--
- drivers/gpu/drm/panfrost/panfrost_device.c         |  6 ++----
- .../common/cros_ec_sensors/cros_ec_sensors_core.c  |  3 +--
- drivers/net/mdio/mdio-bcm-iproc.c                  |  3 +--
- drivers/platform/chrome/cros_ec_sensorhub.c        |  6 ++----
- drivers/remoteproc/omap_remoteproc.c               |  6 ++----
- 13 files changed, 28 insertions(+), 53 deletions(-)
-
+-	struct rproc *rproc = platform_get_drvdata(pdev);
++	struct rproc *rproc = dev_get_drvdata(dev);
+ 	struct omap_rproc *oproc = rproc->priv;
+ 	int ret = 0;
+ 
+@@ -938,8 +937,7 @@ static int __maybe_unused omap_rproc_suspend(struct device *dev)
+ 
+ static int __maybe_unused omap_rproc_resume(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct rproc *rproc = platform_get_drvdata(pdev);
++	struct rproc *rproc = dev_get_drvdata(dev);
+ 	struct omap_rproc *oproc = rproc->priv;
+ 	int ret = 0;
+ 
 -- 
 2.30.2
 
