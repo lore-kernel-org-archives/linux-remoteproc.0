@@ -5,67 +5,69 @@ X-Spam-Level:
 X-Spam-Status: No, score=-18.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30858C433FE
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 20 Sep 2021 21:00:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23447C433F5
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 20 Sep 2021 21:16:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0B8F560D42
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 20 Sep 2021 21:00:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 054BC61159
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 20 Sep 2021 21:16:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235707AbhITVBf (ORCPT
+        id S232047AbhITVSE (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 20 Sep 2021 17:01:35 -0400
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:35762 "EHLO
+        Mon, 20 Sep 2021 17:18:04 -0400
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:39088 "EHLO
         fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237455AbhITU7e (ORCPT
+        with ESMTP id S231410AbhITVQE (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 20 Sep 2021 16:59:34 -0400
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 18KKvprO118661;
-        Mon, 20 Sep 2021 15:57:51 -0500
+        Mon, 20 Sep 2021 17:16:04 -0400
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 18KLEU91124230;
+        Mon, 20 Sep 2021 16:14:30 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1632171471;
-        bh=OAlLenG3KBpsC940vecYGOKh/e9SP3yN0HVVeoPp9Pg=;
+        s=ti-com-17Q1; t=1632172470;
+        bh=dc0vdpYZrdrZqs1wDGFW6RFX3Ev+Zts4gHAzBSwfteM=;
         h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=s3/TEeFBahX4ZVwqIXu3D+/5F6swSyeIX5/DpgZLuhSZkNwQP7cM6Wcxc4AzBJqb0
-         bM3Rw3mnB5I6O+JijNSeh+V8bZAEfLuh8M1O/ZBcUaeUOEGuSigdKC8lANEv+6b3Pw
-         4tmvo6G1nSutDeTbz6tgVVwBCOpcIBmT7wctbhS0=
-Received: from DLEE103.ent.ti.com (dlee103.ent.ti.com [157.170.170.33])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 18KKvoVW038268
+        b=siUsHRn/GNMLY/0e/qLscVmhS2R9lieNZ1K3Y6GsC81fa/mDxo6pijb9VTuZAUEZl
+         oWNtsQWG4pcz0k3+ritwFjxD2qKkyC02nyC63ALzk79y/zsIs1EfHRTZCuEM2f1Jha
+         U/saZZ9PNk7GkCpGCZbj8a/x456nAiIwydY3xOAU=
+Received: from DFLE104.ent.ti.com (dfle104.ent.ti.com [10.64.6.25])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 18KLEUsL066541
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 20 Sep 2021 15:57:51 -0500
-Received: from DLEE102.ent.ti.com (157.170.170.32) by DLEE103.ent.ti.com
- (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
+        Mon, 20 Sep 2021 16:14:30 -0500
+Received: from DFLE100.ent.ti.com (10.64.6.21) by DFLE104.ent.ti.com
+ (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2308.14; Mon, 20
- Sep 2021 15:57:50 -0500
-Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE102.ent.ti.com
- (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
+ Sep 2021 16:14:29 -0500
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE100.ent.ti.com
+ (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2308.14 via
- Frontend Transport; Mon, 20 Sep 2021 15:57:50 -0500
+ Frontend Transport; Mon, 20 Sep 2021 16:14:29 -0500
 Received: from [10.250.37.219] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id 18KKvo9j090764;
-        Mon, 20 Sep 2021 15:57:50 -0500
-Subject: Re: [PATCH V3] dt-bindings: hwlock: omap: Remove redundant binding
- example
-To:     Sinthu Raja <sinthu.raja@mistralsolutions.com>,
-        Rob Herring <robh+dt@kernel.org>,
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 18KLETRd051683;
+        Mon, 20 Sep 2021 16:14:29 -0500
+Subject: Re: [PATCH] dt-bindings: hwlock: omap: Remove board-specific
+ compatible from DT example
+To:     Nishanth Menon <nm@ti.com>,
+        Sinthu Raja <sinthu.raja@mistralsolutions.com>
+CC:     Rob Herring <robh+dt@kernel.org>,
         Baolin Wang <baolin.wang7@gmail.com>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Ohad Ben-Cohen <ohad@wizery.com>
-CC:     <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        Ohad Ben-Cohen <ohad@wizery.com>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <linux-remoteproc@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, Nishanth Menon <nm@ti.com>,
+        <linux-arm-kernel@lists.infradead.org>,
         Sinthu Raja <sinthu.raja@ti.com>
-References: <20210920123152.32751-1-sinthu.raja@ti.com>
+References: <20210917094740.18891-1-sinthu.raja@ti.com>
+ <20210917144455.nj6bc2enytlgqmzn@studied>
 From:   Suman Anna <s-anna@ti.com>
-Message-ID: <cfb1b8eb-327f-1f2b-9939-df06c9d5f692@ti.com>
-Date:   Mon, 20 Sep 2021 15:57:49 -0500
+Message-ID: <ba7e9eff-6cd1-2705-4c27-f3a700345ed2@ti.com>
+Date:   Mon, 20 Sep 2021 16:14:28 -0500
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.13.0
 MIME-Version: 1.0
-In-Reply-To: <20210920123152.32751-1-sinthu.raja@ti.com>
+In-Reply-To: <20210917144455.nj6bc2enytlgqmzn@studied>
 Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -74,76 +76,67 @@ Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On 9/20/21 7:31 AM, Sinthu Raja wrote:
-> From: Sinthu Raja <sinthu.raja@ti.com>
+On 9/17/21 9:44 AM, Nishanth Menon wrote:
+> On 15:17-20210917, Sinthu Raja wrote:
+>> From: Sinthu Raja <sinthu.raja@ti.com>
+>>
+>> The example includes a board-specific compatible property, this is
+>> wrong as the example should be board agnostic. Replace the same with a
+>> generic soc node.
+>>
+>> Fixes: d8db9dc34871 ("dt-bindings: hwlock: omap: Convert binding to YAML")
+>> Signed-off-by: Sinthu Raja <sinthu.raja@ti.com>
+>> ---
+>>
+>> This patch was triggered by discussions in [1].
+>>
+>> When applying the patch, if you could provide an immutable tag for the
+>> bindings, it would help line things up for new platforms to be added for
+>> us. See [2] for the context
 > 
-> The example includes a board-specific compatible property, this is wrong
-> as the example should be board agnostic and should represent the particular
-> binding. Also, the file includes two similar examples but with a different
-> compatible. So, drop the entire second example
 > 
-> Suggested-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> Signed-off-by: Sinthu Raja <sinthu.raja@ti.com>
+> Aah yes, thanks.. Bjorn.. once Rob acks ofcourse (since this is
+> bindings).
 
-Acked-by: Suman Anna <s-anna@ti.com>
+Hmm, I don't think an immutable tag is needed for this patch. This is just
+cleanup, what is your exact dependency here?
+
+The relevant HwSpinlock dts nodes are all upstream on all applicable platforms
+already.
+
+regards
+Suman
+
 
 > 
-> ---
+> Reviewed-by: Nishanth Menon <nm@ti.com>
 > 
-> Changes in V3:
-> Addressed review comment, that includes adding Suggested By: tag to the 
-> commit message
 > 
-> V2: https://lore.kernel.org/all/20210917170805.5079-1-sinthu.raja@ti.com/
-> V1: https://lore.kernel.org/all/20210917094740.18891-1-sinthu.raja@ti.com/
-> 
->  .../bindings/hwlock/ti,omap-hwspinlock.yaml   | 33 +------------------
->  1 file changed, 1 insertion(+), 32 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/hwlock/ti,omap-hwspinlock.yaml b/Documentation/devicetree/bindings/hwlock/ti,omap-hwspinlock.yaml
-> index ae1b37dbee75..0a955c7b9706 100644
-> --- a/Documentation/devicetree/bindings/hwlock/ti,omap-hwspinlock.yaml
-> +++ b/Documentation/devicetree/bindings/hwlock/ti,omap-hwspinlock.yaml
-> @@ -39,39 +39,8 @@ additionalProperties: false
->  examples:
->  
->    - |
-> -    /* OMAP4 SoCs */
-> -    hwspinlock: spinlock@4a0f6000 {
-> +    spinlock@4a0f6000 {
->          compatible = "ti,omap4-hwspinlock";
->          reg = <0x4a0f6000 0x1000>;
->          #hwlock-cells = <1>;
->      };
-> -
-> -  - |
-> -    / {
-> -        /* K3 AM65x SoCs */
-> -        model = "Texas Instruments K3 AM654 SoC";
-> -        compatible = "ti,am654-evm", "ti,am654";
-> -        #address-cells = <2>;
-> -        #size-cells = <2>;
-> -
-> -        bus@100000 {
-> -            compatible = "simple-bus";
-> -            #address-cells = <2>;
-> -            #size-cells = <2>;
-> -            ranges = <0x00 0x00100000 0x00 0x00100000 0x00 0x00020000>, /* ctrl mmr */
-> -                     <0x00 0x30800000 0x00 0x30800000 0x00 0x0bc00000>; /* Main NavSS */
-> -
-> -            bus@30800000 {
-> -                compatible = "simple-mfd";
-> -                #address-cells = <2>;
-> -                #size-cells = <2>;
-> -                ranges = <0x00 0x30800000 0x00 0x30800000 0x00 0x0bc00000>;
-> -
-> -                spinlock@30e00000 {
-> -                    compatible = "ti,am654-hwspinlock";
-> -                    reg = <0x00 0x30e00000 0x00 0x1000>;
-> -                    #hwlock-cells = <1>;
-> -                };
-> -            };
-> -        };
-> -    };
+>>
+>> [1] https://lore.kernel.org/all/20210818074030.1877-1-sinthu.raja@ti.com/
+>> [2] https://lore.kernel.org/linux-arm-kernel/20210125141642.4yybjnklk3qsqjdy@steersman/
+>>
+>>  .../devicetree/bindings/hwlock/ti,omap-hwspinlock.yaml        | 4 +---
+>>  1 file changed, 1 insertion(+), 3 deletions(-)
+>>
+>> diff --git a/Documentation/devicetree/bindings/hwlock/ti,omap-hwspinlock.yaml b/Documentation/devicetree/bindings/hwlock/ti,omap-hwspinlock.yaml
+>> index ae1b37dbee75..d56dc1bebdc6 100644
+>> --- a/Documentation/devicetree/bindings/hwlock/ti,omap-hwspinlock.yaml
+>> +++ b/Documentation/devicetree/bindings/hwlock/ti,omap-hwspinlock.yaml
+>> @@ -47,10 +47,8 @@ examples:
+>>      };
+>>  
+>>    - |
+>> -    / {
+>> +    soc {
+>>          /* K3 AM65x SoCs */
+>> -        model = "Texas Instruments K3 AM654 SoC";
+>> -        compatible = "ti,am654-evm", "ti,am654";
+>>          #address-cells = <2>;
+>>          #size-cells = <2>;
+>>  
+>> -- 
+>> 2.32.0
+>>
 > 
 
