@@ -2,94 +2,131 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14F46C433EF
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 22 Sep 2021 20:00:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B937FC433F5
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 22 Sep 2021 21:00:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id ED92D611CA
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 22 Sep 2021 20:00:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9B1FC610D1
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 22 Sep 2021 21:00:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237276AbhIVUCV (ORCPT
+        id S237949AbhIVVCL (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 22 Sep 2021 16:02:21 -0400
-Received: from mail-oi1-f178.google.com ([209.85.167.178]:39611 "EHLO
-        mail-oi1-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230384AbhIVUCU (ORCPT
+        Wed, 22 Sep 2021 17:02:11 -0400
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:42352 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S237944AbhIVVBz (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 22 Sep 2021 16:02:20 -0400
-Received: by mail-oi1-f178.google.com with SMTP id a3so6229081oid.6;
-        Wed, 22 Sep 2021 13:00:50 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=fwXUy/4JQhmCnPcoi619P8tFhIeQmBOPJ5tYoHnaW7E=;
-        b=s7u37SBNzrAcduAuJcS941MaCbMuRR/GOgF91OAz5FfNvHrgfHpJUqKjQTKn5LM1PN
-         ulNo0dyNgPyGhMMi2U53qT7s5BeHPBxegZ3Pyqm1hHhI4Qj/8faW/N7bhH6GfzawApRP
-         lLTtfAeg6VLdxZTIt/O08VXD15dVuQqay1X8nFC/GBB9uhKlqy8Ycr3MWRpO013NJ4/4
-         5qfZcpdqrc88XOUnPNUAQSDLoaTeoLDkjlmZAK3BERwOn273qRHK/XiHYDmXl/6oxNCR
-         xXLHJ3fsuMOq5oYE7DO5t/v+OPukZoGo9VoYwvaed4LupPhGD0l6m1puRGpk1jki9sWw
-         xyZw==
-X-Gm-Message-State: AOAM533SmcX7Mp/XSag+OgFOkxWx/qJBYeS+pfd3UTKlAHlQZ/i8vzF7
-        B8YG5rcgLdZ5ZOZo/GpdPQ==
-X-Google-Smtp-Source: ABdhPJyFIHodX4xu/23e9sLcEMzMa1d5rbnTChn7GY2GUzktBRQcDb9QrYIrG6FOyhIVYy1l2ejm+A==
-X-Received: by 2002:a05:6808:8d2:: with SMTP id k18mr801632oij.62.1632340850100;
-        Wed, 22 Sep 2021 13:00:50 -0700 (PDT)
-Received: from robh.at.kernel.org (66-90-148-213.dyn.grandenetworks.net. [66.90.148.213])
-        by smtp.gmail.com with ESMTPSA id 21sm749993oij.39.2021.09.22.13.00.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Sep 2021 13:00:49 -0700 (PDT)
-Received: (nullmailer pid 1195776 invoked by uid 1000);
-        Wed, 22 Sep 2021 20:00:48 -0000
-Date:   Wed, 22 Sep 2021 15:00:48 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Sinthu Raja <sinthu.raja@mistralsolutions.com>
-Cc:     linux-arm-kernel@lists.infradead.org,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        devicetree@vger.kernel.org, Suman Anna <s-anna@ti.com>,
-        Sinthu Raja <sinthu.raja@ti.com>,
+        Wed, 22 Sep 2021 17:01:55 -0400
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 18ML08oh034020;
+        Wed, 22 Sep 2021 16:00:08 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1632344408;
+        bh=LUibseOnhjOc+FgMv1x4a+9RVzzzcJXHveE+rZFdCM4=;
+        h=Date:From:To:CC:Subject:References:In-Reply-To;
+        b=oGeBzH6DqTDB8kOuPXbjhQFmEeGO6XeyR1owA0a40tjTW6oWZG1a7y1aLYVNg92tR
+         OLJyHwy+2MGg78DioAM9HQcjOvJBmir2tNe2tKNXHB60zgADMbnAPCL2TZ5yUCTnQX
+         +vt+JxbmtRH8WkKUXEfq+Px/U5Q9gUN0GyIM7Vhg=
+Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 18ML08ru101677
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 22 Sep 2021 16:00:08 -0500
+Received: from DLEE114.ent.ti.com (157.170.170.25) by DLEE115.ent.ti.com
+ (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2308.14; Wed, 22
+ Sep 2021 16:00:07 -0500
+Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE114.ent.ti.com
+ (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2308.14 via
+ Frontend Transport; Wed, 22 Sep 2021 16:00:08 -0500
+Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id 18ML07VV030330;
+        Wed, 22 Sep 2021 16:00:07 -0500
+Date:   Wed, 22 Sep 2021 16:00:07 -0500
+From:   Nishanth Menon <nm@ti.com>
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+CC:     Suman Anna <s-anna@ti.com>,
+        Sinthu Raja <sinthu.raja@mistralsolutions.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Baolin Wang <baolin.wang7@gmail.com>,
         Ohad Ben-Cohen <ohad@wizery.com>,
-        linux-remoteproc@vger.kernel.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        Nishanth Menon <nm@ti.com>
-Subject: Re: [PATCH V3 2/2] dt-bindings: remoteproc: k3-dsp: Remove
- board-specific compatible from DT example
-Message-ID: <YUuLcDiBsS6urSm2@robh.at.kernel.org>
-References: <20210917095426.19277-1-sinthu.raja@ti.com>
- <20210917095426.19277-3-sinthu.raja@ti.com>
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        Sinthu Raja <sinthu.raja@ti.com>
+Subject: Re: [PATCH] dt-bindings: hwlock: omap: Remove board-specific
+ compatible from DT example
+Message-ID: <20210922210007.myuuwpwd7ltpdvtf@expanse>
+References: <20210917094740.18891-1-sinthu.raja@ti.com>
+ <20210917144455.nj6bc2enytlgqmzn@studied>
+ <ba7e9eff-6cd1-2705-4c27-f3a700345ed2@ti.com>
+ <YUkE1TRVBxnLuktb@builder.lan>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <20210917095426.19277-3-sinthu.raja@ti.com>
+In-Reply-To: <YUkE1TRVBxnLuktb@builder.lan>
+User-Agent: NeoMutt/20171215
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Fri, 17 Sep 2021 15:24:26 +0530, Sinthu Raja wrote:
-> From: Sinthu Raja <sinthu.raja@ti.com>
+On 17:01-20210920, Bjorn Andersson wrote:
+> On Mon 20 Sep 16:14 CDT 2021, Suman Anna wrote:
 > 
-> The example includes a board-specific compatible property, this is
-> wrong as the example should be board agnostic and gets in the way of
-> additions for newer platforms. Replace the same with a generic soc
-> node.
+> > On 9/17/21 9:44 AM, Nishanth Menon wrote:
+> > > On 15:17-20210917, Sinthu Raja wrote:
+> > >> From: Sinthu Raja <sinthu.raja@ti.com>
+> > >>
+> > >> The example includes a board-specific compatible property, this is
+> > >> wrong as the example should be board agnostic. Replace the same with a
+> > >> generic soc node.
+> > >>
+> > >> Fixes: d8db9dc34871 ("dt-bindings: hwlock: omap: Convert binding to YAML")
+> > >> Signed-off-by: Sinthu Raja <sinthu.raja@ti.com>
+> > >> ---
+> > >>
+> > >> This patch was triggered by discussions in [1].
+> > >>
+> > >> When applying the patch, if you could provide an immutable tag for the
+> > >> bindings, it would help line things up for new platforms to be added for
+> > >> us. See [2] for the context
+> > > 
+> > > 
+> > > Aah yes, thanks.. Bjorn.. once Rob acks ofcourse (since this is
+> > > bindings).
+> > 
+> > Hmm, I don't think an immutable tag is needed for this patch. This is just
+> > cleanup, what is your exact dependency here?
+> > 
+> > The relevant HwSpinlock dts nodes are all upstream on all applicable platforms
+> > already.
+> > 
 > 
-> Fixes: 2a2180206ab6 ("dt-bindings: remoteproc: Add bindings for C66x DSPs on TI K3 SoCs")
-> Signed-off-by: Sinthu Raja <sinthu.raja@ti.com>
-> ---
-> 
-> Changes since V2:
-> * review comment updates, including simplifying the changes, commit
->   message and $subject updates.
-> 
-> V2: https://lore.kernel.org/all/20210818074030.1877-1-sinthu.raja@ti.com/
-> V1: https://lore.kernel.org/all/20210817152005.21575-1-sinthu.raja@ti.com/
-> 
->  .../devicetree/bindings/remoteproc/ti,k3-dsp-rproc.yaml       | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
-> 
+> I agree and in general I think it's better to do DT validation against
+> linux-next, as you would otherwise miss out on any newly introduced
+> issues from inherited bindings etc.
 
-Acked-by: Rob Herring <robh@kernel.org>
+
+I agree that an immutable commit is not needed on this specific patch.
+The updated revision[1] posted had already dropped that request.
+
+On the other hand, series[2] makes Rob's checks fail (as it runs on
+rc1) - and helps keep everyone sane by getting an immutable commit
+merged in allowing for follow on patches to stay clean.
+
+NOTE: I do test patches for both checks and functionality to the best I
+can on both rc1 (my tree)[3] and on linux-next on the day I pick the
+patches up.
+
+[1] https://lore.kernel.org/all/20210920123152.32751-1-sinthu.raja@ti.com/
+[2] https://lore.kernel.org/all/20210917095426.19277-1-sinthu.raja@ti.com/
+[3] https://git.kernel.org/pub/scm/linux/kernel/git/nmenon/linux.git/tree/
+-- 
+Regards,
+Nishanth Menon
+Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
