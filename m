@@ -2,234 +2,359 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB0CCC433F5
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 23 Sep 2021 01:48:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC19BC433EF
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 23 Sep 2021 03:31:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B9CDE6115A
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 23 Sep 2021 01:48:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CE8F961130
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 23 Sep 2021 03:31:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238838AbhIWBtn (ORCPT
+        id S239056AbhIWDck (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 22 Sep 2021 21:49:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43924 "EHLO
+        Wed, 22 Sep 2021 23:32:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38716 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238177AbhIWBtm (ORCPT
+        with ESMTP id S239050AbhIWDck (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 22 Sep 2021 21:49:42 -0400
-Received: from mail-qv1-xf2d.google.com (mail-qv1-xf2d.google.com [IPv6:2607:f8b0:4864:20::f2d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE017C061574;
-        Wed, 22 Sep 2021 18:48:11 -0700 (PDT)
-Received: by mail-qv1-xf2d.google.com with SMTP id f2so3295850qvx.2;
-        Wed, 22 Sep 2021 18:48:11 -0700 (PDT)
+        Wed, 22 Sep 2021 23:32:40 -0400
+Received: from mail-oi1-x234.google.com (mail-oi1-x234.google.com [IPv6:2607:f8b0:4864:20::234])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6A39CC061756
+        for <linux-remoteproc@vger.kernel.org>; Wed, 22 Sep 2021 20:31:09 -0700 (PDT)
+Received: by mail-oi1-x234.google.com with SMTP id u22so7748917oie.5
+        for <linux-remoteproc@vger.kernel.org>; Wed, 22 Sep 2021 20:31:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=vHchXl8mrU0hcMLr2GF0n33FKRG61T38fqwkdg1AY/Q=;
-        b=iObpCcVfEXOR1qFpSmNg/dL3bBP7IDkI30qoSfwYqrmjrAOA/S7zkogrnLZMUN2kgG
-         KEspLpaVXS8WFLxOjMwPwM3VF+S1fKUMgO7FsnihdnY8yr4VkevWYFFjdR04eICgk7jB
-         PZLTv42hrFGGc2irzQ/LRbtwtbdCyoGAMufnl6nUdmlbe/MAvl5OzKUwCQTt1kWMOA6F
-         /5g1HWDpM7IaNC196Sg6TvEys43fDTdEbMTWjVSosB/anzCMhZYsL7bD2uDdpkFOQwin
-         xZQqTPI4u82z8pfdGDgeyjd8FJ25JNijINchot8wru0ULxm5RlbSDY8zMp6EsshlEMEI
-         3PDw==
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=WZnkbDqe35agx+YRdoGtlkEIS1vsNJiYQTbIpjWyLqg=;
+        b=P3kClDnLsxyd8P5md1GK2izJhbgXFpqpxbnKHA/qDWSDqZ1P9e4S93LBbgYC62Yq8T
+         R9UaBvr71Hsdw9Qj0ogvmHgPrs9nA1wIHDSmQSuCmI5BXq1lFS+SXlcuuJMu87sN//ts
+         uoAPab1EJfLPjXzcHCtyOod6MCr36/JsjZGHXkrS08VftM1XbrMnc3oaxktFgmfo0vMJ
+         t3zsbSBGmyNFg8GpXBD4sDxGxAGUUstl+bhic/DrGsf1M8oshxwuxGJQR4jQBkF6tgbQ
+         9K8Mc5CYg7yqg3huKD7lL3thxynHYPVd6unTn3tlAVKYNZOFsjTVusdqhsqsmGe5Tnii
+         M9Vg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=vHchXl8mrU0hcMLr2GF0n33FKRG61T38fqwkdg1AY/Q=;
-        b=aRVsqvgBYqrtp9G4OOcMWTJFYjbP1FM+EwgqNpBpXO0bPZWPrgi6oDpnueTX0eRBjx
-         itdkYjub1nIV8yrLiippeSqzjZcNr4Z7QewWqFZim3O78v53gJcgigPvuAY0RuqJHoUU
-         Gn3v47EmWoftaIZaE7/oGGbJguz49XofwVhVd9gH4vscm1JK2f2z/RYLfsMajeaGZKCm
-         WitA6WbGDuJ1Eg1WW0qjGney27PPykzCX+nVW42CWqhrty+xSMhlfq41aL3bcEbAI29g
-         WB/CXlV9VQzjOvYK0s5sVsyXF087Dwb4OanP65yp98JFAE7+1mH55X4+OFzCgmlTiWSF
-         7nsA==
-X-Gm-Message-State: AOAM530qMlM8MSmpSNvh3nmYrQI27tx6rvycdx3tXEAt0gTqQt/AuWdb
-        teyL01f1Wqm89OZSADOmBhzQS19LrYGLOhTSO8g=
-X-Google-Smtp-Source: ABdhPJxXcDiICkp9V2vpdhBV3Rs+efwY7tasjR5Y6NoCT15J86mqXDDAPpkCgJ8PW42HNo54E8b27JVnfg4ntU5zyuc=
-X-Received: by 2002:a05:6214:584:: with SMTP id bx4mr2261885qvb.40.1632361691038;
- Wed, 22 Sep 2021 18:48:11 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=WZnkbDqe35agx+YRdoGtlkEIS1vsNJiYQTbIpjWyLqg=;
+        b=IJsFRWsLJm+OE4fLpRifT527Wov2Rq+bLogTjKRyp5mv9zL37kVm4qgG0eIoSI4nQx
+         FwRzEo9joQpHUBzGs+c1APqt92ab95D97UroKQCN+YeMH1NDSuHrXyXyKy7XUrNxtwEY
+         T8Fz9OpNFKTJ+uNUy3sI6vwH65AbGEZCNMQpAU4h3aF6wioISJay36NbJW0uHi3tCpcF
+         UzJnJoJSL4UnCciLMs4J6HGfRILQelGl59Ym7EwNaNOg2geZDQOg4bjq6Rv895p5SYvN
+         4E/BBoQyhll0SLB1cgRpe++wL7Ze4xuofc18/r/X5sYSReSw/EVvbFEcepFdWxZlu18D
+         THnA==
+X-Gm-Message-State: AOAM532FKA8AARd3QRONMWRrhYcuhpwyEcei57HsV8YV61Qmk1UaFWFd
+        mj8/b1z7+aXj7RJone3CDqbo6Q==
+X-Google-Smtp-Source: ABdhPJyEqCFgpzYG5stN1XffFzyyUS7C0XaZxoEnwmEkDrixdgCQQ6CDVf7BYB8h73LGP9V2OIFLXA==
+X-Received: by 2002:a05:6808:618:: with SMTP id y24mr1978169oih.179.1632367868718;
+        Wed, 22 Sep 2021 20:31:08 -0700 (PDT)
+Received: from yoga (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
+        by smtp.gmail.com with ESMTPSA id bf6sm1051367oib.0.2021.09.22.20.31.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 22 Sep 2021 20:31:08 -0700 (PDT)
+Date:   Wed, 22 Sep 2021 22:31:06 -0500
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Alexandre Bailon <abailon@baylibre.com>
+Cc:     airlied@linux.ie, daniel@ffwll.ch, robh+dt@kernel.org,
+        matthias.bgg@gmail.com, maarten.lankhorst@linux.intel.com,
+        mripard@kernel.org, tzimmermann@suse.de, ohad@wizery.com,
+        mathieu.poirier@linaro.org, sumit.semwal@linaro.org,
+        christian.koenig@amd.com, dri-devel@lists.freedesktop.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org, linux-media@vger.kernel.org,
+        linaro-mm-sig@lists.linaro.org, khilman@baylibre.com,
+        gpain@baylibre.com
+Subject: Re: [RFC PATCH 3/4] rpmsg: Add support of AI Processor Unit (APU)
+Message-ID: <YUv0+jQ/91QdydkR@yoga>
+References: <20210917125945.620097-1-abailon@baylibre.com>
+ <20210917125945.620097-4-abailon@baylibre.com>
 MIME-Version: 1.0
-References: <1631092255-25150-1-git-send-email-shengjiu.wang@nxp.com>
- <1631092255-25150-4-git-send-email-shengjiu.wang@nxp.com> <20210915161624.GA1770838@p14s>
- <CAA+D8AO0c+jk_k7j=ZvNFsVvC-p_zMLPJDS3qmLjNbJ+U0E9Cg@mail.gmail.com>
- <20210916165957.GA1825273@p14s> <CAA+D8AN_ni_XmEFNfY0Z0qLAJX00XFSUP1RkJdNQd-MVY6pd4g@mail.gmail.com>
- <CAA+D8AMaszzT5q8oGhXOtE3W5Ue9S3r=es2sTp2uJ7RwjX8Bzg@mail.gmail.com>
- <20210917152236.GA1878943@p14s> <CAA+D8ANwXZdXheMkV8VHJ90JT8o+9YXFuE-EjTejijGUa4YALw@mail.gmail.com>
- <20210922175521.GA2157824@p14s>
-In-Reply-To: <20210922175521.GA2157824@p14s>
-From:   Shengjiu Wang <shengjiu.wang@gmail.com>
-Date:   Thu, 23 Sep 2021 09:48:00 +0800
-Message-ID: <CAA+D8AOXF_0qeg0H8zeSkz5bj8VQT95B1yMo98jSxxHUooYViw@mail.gmail.com>
-Subject: Re: [PATCH v4 3/4] remoteproc: imx_dsp_rproc: Add remoteproc driver
- for DSP on i.MX
-To:     Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc:     Shengjiu Wang <shengjiu.wang@nxp.com>,
-        Ohad Ben Cohen <ohad@wizery.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        Daniel Baluta <daniel.baluta@nxp.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        "open list:REMOTE PROCESSOR (REMOTEPROC) SUBSYSTEM" 
-        <linux-remoteproc@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210917125945.620097-4-abailon@baylibre.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Thu, Sep 23, 2021 at 1:55 AM Mathieu Poirier
-<mathieu.poirier@linaro.org> wrote:
->
-> On Wed, Sep 22, 2021 at 09:35:54AM +0800, Shengjiu Wang wrote:
-> > Hi Mathieu
-> >
-> > On Fri, Sep 17, 2021 at 11:22 PM Mathieu Poirier
-> > <mathieu.poirier@linaro.org> wrote:
-> > >
-> > > On Fri, Sep 17, 2021 at 05:44:44PM +0800, Shengjiu Wang wrote:
-> > > > On Fri, Sep 17, 2021 at 1:20 PM Shengjiu Wang <shengjiu.wang@gmail.com> wrote:
-> > > > >
-> > > > > On Fri, Sep 17, 2021 at 1:00 AM Mathieu Poirier
-> > > > > <mathieu.poirier@linaro.org> wrote:
-> > > > > >
-> > > > > > [...]
-> > > > > >
-> > > > > > > > > +
-> > > > > > > > > +/**
-> > > > > > > > > + * imx_dsp_rproc_elf_load_segments() - load firmware segments to memory
-> > > > > > > > > + * @rproc: remote processor which will be booted using these fw segments
-> > > > > > > > > + * @fw: the ELF firmware image
-> > > > > > > > > + *
-> > > > > > > > > + * This function specially checks if memsz is zero or not, otherwise it
-> > > > > > > > > + * is mostly same as rproc_elf_load_segments().
-> > > > > > > > > + */
-> > > > > > > > > +static int imx_dsp_rproc_elf_load_segments(struct rproc *rproc,
-> > > > > > > > > +                                        const struct firmware *fw)
-> > > > > > > > > +{
-> > > > > > > > > +     struct device *dev = &rproc->dev;
-> > > > > > > > > +     u8 class = fw_elf_get_class(fw);
-> > > > > > > > > +     u32 elf_phdr_get_size = elf_size_of_phdr(class);
-> > > > > > > > > +     const u8 *elf_data = fw->data;
-> > > > > > > > > +     const void *ehdr, *phdr;
-> > > > > > > > > +     int i, ret = 0;
-> > > > > > > > > +     u16 phnum;
-> > > > > > > > > +
-> > > > > > > > > +     ehdr = elf_data;
-> > > > > > > > > +     phnum = elf_hdr_get_e_phnum(class, ehdr);
-> > > > > > > > > +     phdr = elf_data + elf_hdr_get_e_phoff(class, ehdr);
-> > > > > > > > > +
-> > > > > > > > > +     /* go through the available ELF segments */
-> > > > > > > > > +     for (i = 0; i < phnum; i++, phdr += elf_phdr_get_size) {
-> > > > > > > > > +             u64 da = elf_phdr_get_p_paddr(class, phdr);
-> > > > > > > > > +             u64 memsz = elf_phdr_get_p_memsz(class, phdr);
-> > > > > > > > > +             u64 filesz = elf_phdr_get_p_filesz(class, phdr);
-> > > > > > > > > +             u64 offset = elf_phdr_get_p_offset(class, phdr);
-> > > > > > > > > +             u32 type = elf_phdr_get_p_type(class, phdr);
-> > > > > > > > > +             void *ptr;
-> > > > > > > > > +             bool is_iomem;
-> > > > > > > > > +
-> > > > > > > > > +             if (type != PT_LOAD || !memsz)
-> > > > > > > >
-> > > > > > > > You did a really good job with adding comments but this part is undocumented...
-> > > > > > > > If I read this correctly you need to check for !memsz because some part of
-> > > > > > > > the program segment may have a header but its memsz is zero, in which case it can
-> > > > > > > > be safely skipped.  So why is that segment in the image to start with, and why
-> > > > > > > > is it marked PT_LOAD if it is not needed?  This is very puzzling...
-> > > > > > >
-> > > > > > > Actually I have added comments in the header of this function.
-> > > > > >
-> > > > > > Indeed there is a mention of memsz in the function's header but it doesn't
-> > > > > > mention _why_ this is needed, and that is what I'm looking for.
-> > > > > >
-> > > > > > >
-> > > > > > > memsz= 0 with PT_LOAD issue, I have asked the toolchain's vendor,
-> > > > > > > they said that this case is allowed by elf spec...
-> > > > > > >
-> > > > > > > And in the "pru_rproc.c" and "mtk_scp.c", seems they met same problem
-> > > > > > > they also check the filesz in their internal xxx_elf_load_segments() function.
-> > > > > >
-> > > > > > In both cases they are skipping PT_LOAD sections where "filesz" is '0', which
-> > > > > > makes sense because we don't know how many bytes to copy.  But here you are
-> > > > > > skipping over a PT_LOAD section with a potentially valid filesz, and that is the
-> > > > > > part I don't understand.
-> > > > >
-> > > > > Ok, I can use filesz instead. For my case, filesz = memsz = 0,
-> > > > > it is the same result I want.
-> > >
-> > > If that is the case then rproc_elf_load_segments() should work, i.e it won't
-> > > copy anything.  If rproc_elf_load_segments() doesn't work for you then there are
-> > > corner cases you haven't told me about.
-> > >
-> > > > >
-> > > > > The reason why I use "memsz '' is because there is  "if (filesz > memsz) "
-> > > > > check after this,  if memsz is zero, then "filesz" should be zero too, other
-> > > > > values are not allowed.
-> > > >
-> > > > But I still think checking "!memsz" is better than filesz,  because
-> > > > memsz > filesz is allowed (filesz = 0),  the code below can be executed.
-> > > > filesz > memsz is not allowed.
->
-> The question remains the same - have you seen instances where memsz > filesz?
-> Also, can you point me to the reference where it is said that memsz is allowed?
-> And if it is allowed than how do we know that this program section has valid
-> data, because after all, filesz is 0?
+On Fri 17 Sep 07:59 CDT 2021, Alexandre Bailon wrote:
 
-https://refspecs.linuxbase.org/elf/elf.pdf
+> Some Mediatek SoC provides hardware accelerator for AI / ML.
+> This driver use the DRM driver to manage the shared memory,
+> and use rpmsg to execute jobs on the APU.
+> 
+> Signed-off-by: Alexandre Bailon <abailon@baylibre.com>
+> ---
+>  drivers/rpmsg/Kconfig     |  10 +++
+>  drivers/rpmsg/Makefile    |   1 +
+>  drivers/rpmsg/apu_rpmsg.c | 184 ++++++++++++++++++++++++++++++++++++++
+>  3 files changed, 195 insertions(+)
+>  create mode 100644 drivers/rpmsg/apu_rpmsg.c
+> 
+> diff --git a/drivers/rpmsg/Kconfig b/drivers/rpmsg/Kconfig
+> index 0b4407abdf138..fc1668f795004 100644
+> --- a/drivers/rpmsg/Kconfig
+> +++ b/drivers/rpmsg/Kconfig
+> @@ -73,4 +73,14 @@ config RPMSG_VIRTIO
+>  	select RPMSG_NS
+>  	select VIRTIO
+>  
+> +config RPMSG_APU
+> +	tristate "APU RPMSG driver"
+> +	select REMOTEPROC
+> +	select RPMSG_VIRTIO
+> +	select DRM_APU
+> +	help
+> +	  This provides a RPMSG driver that provides some facilities to
+> +	  communicate with an accelerated processing unit (APU).
+> +	  This Uses the APU DRM driver to manage memory and job scheduling.
 
-This is the specification. page 40,  p_filesz and p_memsz can be zero.
+Similar to how a driver for e.g. an I2C device doesn't live in
+drivers/i2c, this doesn't belong in drivers/rpmsg. Probably rather
+directly in the DRM driver.
 
-p_filesz This member gives the number of bytes in the file image of
-the segment; it may be
-zero.
-p_memsz This member gives the number of bytes in the memory image of
-the segment; it
-may be zero.
+> +
+>  endmenu
+> diff --git a/drivers/rpmsg/Makefile b/drivers/rpmsg/Makefile
+> index 8d452656f0ee3..8b336b9a817c1 100644
+> --- a/drivers/rpmsg/Makefile
+> +++ b/drivers/rpmsg/Makefile
+> @@ -9,3 +9,4 @@ obj-$(CONFIG_RPMSG_QCOM_GLINK_RPM) += qcom_glink_rpm.o
+>  obj-$(CONFIG_RPMSG_QCOM_GLINK_SMEM) += qcom_glink_smem.o
+>  obj-$(CONFIG_RPMSG_QCOM_SMD)	+= qcom_smd.o
+>  obj-$(CONFIG_RPMSG_VIRTIO)	+= virtio_rpmsg_bus.o
+> +obj-$(CONFIG_RPMSG_APU)		+= apu_rpmsg.o
+> diff --git a/drivers/rpmsg/apu_rpmsg.c b/drivers/rpmsg/apu_rpmsg.c
+> new file mode 100644
+> index 0000000000000..7e504bd176a4d
+> --- /dev/null
+> +++ b/drivers/rpmsg/apu_rpmsg.c
+> @@ -0,0 +1,184 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +//
+> +// Copyright 2020 BayLibre SAS
+> +
+> +#include <asm/cacheflush.h>
+> +
+> +#include <linux/cdev.h>
+> +#include <linux/dma-buf.h>
+> +#include <linux/dma-map-ops.h>
+> +#include <linux/dma-mapping.h>
+> +#include <linux/iommu.h>
+> +#include <linux/iova.h>
+> +#include <linux/mm.h>
+> +#include <linux/module.h>
+> +#include <linux/of.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/remoteproc.h>
+> +#include <linux/rpmsg.h>
+> +#include <linux/slab.h>
+> +#include <linux/types.h>
+> +
+> +#include <drm/apu_drm.h>
+> +
+> +#include "rpmsg_internal.h"
+> +
+> +#define APU_RPMSG_SERVICE_MT8183 "rpmsg-mt8183-apu0"
+> +
+> +struct rpmsg_apu {
+> +	struct apu_core *core;
+> +	struct rpmsg_device *rpdev;
+> +};
+> +
+> +static int apu_rpmsg_callback(struct rpmsg_device *rpdev, void *data, int count,
+> +			      void *priv, u32 addr)
+> +{
+> +	struct rpmsg_apu *apu = dev_get_drvdata(&rpdev->dev);
+> +	struct apu_core *apu_core = apu->core;
+> +
+> +	return apu_drm_callback(apu_core, data, count);
+> +}
+> +
+> +static int apu_rpmsg_send(struct apu_core *apu_core, void *data, int len)
+> +{
+> +	struct rpmsg_apu *apu = apu_drm_priv(apu_core);
+> +	struct rpmsg_device *rpdev = apu->rpdev;
+> +
+> +	return rpmsg_send(rpdev->ept, data, len);
 
-And page 41,  p_memsz can > p_filesz.
+The rpmsg API is exposed outside drivers/rpmsg, so as I said above, just
+implement this directly in your driver, no need to lug around a dummy
+wrapper for things like this.
 
-PT_LOAD The array element specifies a loadable segment, described by
-p_filesz and
-p_memsz. The bytes from the file are mapped to the beginning of the memory
-segment. If the segment's memory size (p_memsz) is larger than the file size
-(p_filesz), the "extra'' bytes are defined to hold the value 0 and to follow the
-segment's initialized area. The file size may not be larger than the
-memory size.
-Loadable segment entries in the program header table appear in ascending order,
-sorted on the p_vaddr member
+> +}
+> +
+> +static struct apu_drm_ops apu_rpmsg_ops = {
+> +	.send = apu_rpmsg_send,
+> +};
+> +
+> +static int apu_init_iovad(struct rproc *rproc, struct rpmsg_apu *apu)
+> +{
+> +	struct resource_table *table;
+> +	struct fw_rsc_carveout *rsc;
+> +	int i;
+> +
+> +	if (!rproc->table_ptr) {
+> +		dev_err(&apu->rpdev->dev,
+> +			"No resource_table: has the firmware been loaded ?\n");
+> +		return -ENODEV;
+> +	}
+> +
+> +	table = rproc->table_ptr;
+> +	for (i = 0; i < table->num; i++) {
+> +		int offset = table->offset[i];
+> +		struct fw_rsc_hdr *hdr = (void *)table + offset;
+> +
+> +		if (hdr->type != RSC_CARVEOUT)
+> +			continue;
+> +
+> +		rsc = (void *)hdr + sizeof(*hdr);
+> +		if (apu_drm_reserve_iova(apu->core, rsc->da, rsc->len)) {
+> +			dev_err(&apu->rpdev->dev,
+> +				"failed to reserve iova\n");
+> +			return -ENOMEM;
+> +		}
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static struct rproc *apu_get_rproc(struct rpmsg_device *rpdev)
+> +{
+> +	/*
+> +	 * To work, the APU RPMsg driver need to get the rproc device.
+> +	 * Currently, we only use virtio so we could use that to find the
+> +	 * remoteproc parent.
+> +	 */
+> +	if (!rpdev->dev.parent && rpdev->dev.parent->bus) {
+> +		dev_err(&rpdev->dev, "invalid rpmsg device\n");
+> +		return ERR_PTR(-EINVAL);
+> +	}
+> +
+> +	if (strcmp(rpdev->dev.parent->bus->name, "virtio")) {
+> +		dev_err(&rpdev->dev, "unsupported bus\n");
+> +		return ERR_PTR(-EINVAL);
+> +	}
+> +
+> +	return vdev_to_rproc(dev_to_virtio(rpdev->dev.parent));
+> +}
+> +
+> +static int apu_rpmsg_probe(struct rpmsg_device *rpdev)
+> +{
+> +	struct rpmsg_apu *apu;
+> +	struct rproc *rproc;
+> +	int ret;
+> +
+> +	apu = devm_kzalloc(&rpdev->dev, sizeof(*apu), GFP_KERNEL);
+> +	if (!apu)
+> +		return -ENOMEM;
+> +	apu->rpdev = rpdev;
+> +
+> +	rproc = apu_get_rproc(rpdev);
 
+I believe that you can replace apu_get_rproc() with:
 
-best regards
-wang shengjiu
+	rproc = rproc_get_by_child(&rpdev->dev);
 
->
-> > > >
-> > > > What do you think?
-> > >
-> > > I don't see a need to add a custom implementation for things that _may_ happen.
-> > > If using the default rproc_elf_load_segments() works than go with that.  We can deal
-> > > with problems if/when there is a need for it.
-> > >
-> >
-> > The default rproc_elf_load_segments() with filesz = memsz = 0, then the
-> > rproc_da_to_va() return ptr=NULL, then rproc_elf_load_segments() will return
-> > with error.  So this is the reason to add a custom implementation.
->
-> Ok, I see about rproc_da_to_va() returning NULL and failing everything from
-> there one.
->
-> >
-> > best regards
-> > wang shengjiu
+> +	if (IS_ERR_OR_NULL(rproc))
+> +		return PTR_ERR(rproc);
+> +
+> +	/* Make device dma capable by inheriting from parent's capabilities */
+> +	set_dma_ops(&rpdev->dev, get_dma_ops(rproc->dev.parent));
+> +
+> +	ret = dma_coerce_mask_and_coherent(&rpdev->dev,
+> +					   dma_get_mask(rproc->dev.parent));
+> +	if (ret)
+> +		goto err_put_device;
+> +
+> +	rpdev->dev.iommu_group = rproc->dev.parent->iommu_group;
+
+Would it be better or you if we have a device_node, so that you could
+specify the iommus property for this compute device?
+
+I'm asking because I've seen cases where multi-purpose remoteproc
+firmware operate using multiple different iommu streams...
+
+> +
+> +	apu->core = apu_drm_register_core(rproc, &apu_rpmsg_ops, apu);
+> +	if (!apu->core) {
+> +		ret = -ENODEV;
+> +		goto err_put_device;
+> +	}
+> +
+> +	ret = apu_init_iovad(rproc, apu);
+> +
+> +	dev_set_drvdata(&rpdev->dev, apu);
+> +
+> +	return ret;
+> +
+> +err_put_device:
+
+This label looks misplaced, and sure enough, if apu_init_iovad() fails
+you're not apu_drm_unregister_core().
+
+But on that note, don't you want to apu_init_iovad() before you
+apu_drm_register_core()?
+
+> +	devm_kfree(&rpdev->dev, apu);
+
+The reason for using devm_kzalloc() is that once you return
+unsuccessfully from probe, or from remove the memory is freed.
+
+So devm_kfree() should go in both cases.
+
+> +
+> +	return ret;
+> +}
+> +
+> +static void apu_rpmsg_remove(struct rpmsg_device *rpdev)
+> +{
+> +	struct rpmsg_apu *apu = dev_get_drvdata(&rpdev->dev);
+> +
+> +	apu_drm_unregister_core(apu);
+> +	devm_kfree(&rpdev->dev, apu);
+
+No need to explicitly free devm resources.
+
+Regards,
+Bjorn
+
+> +}
+> +
+> +static const struct rpmsg_device_id apu_rpmsg_match[] = {
+> +	{ APU_RPMSG_SERVICE_MT8183 },
+> +	{}
+> +};
+> +
+> +static struct rpmsg_driver apu_rpmsg_driver = {
+> +	.probe = apu_rpmsg_probe,
+> +	.remove = apu_rpmsg_remove,
+> +	.callback = apu_rpmsg_callback,
+> +	.id_table = apu_rpmsg_match,
+> +	.drv  = {
+> +		.name  = "apu_rpmsg",
+> +	},
+> +};
+> +
+> +static int __init apu_rpmsg_init(void)
+> +{
+> +	return register_rpmsg_driver(&apu_rpmsg_driver);
+> +}
+> +arch_initcall(apu_rpmsg_init);
+> +
+> +static void __exit apu_rpmsg_exit(void)
+> +{
+> +	unregister_rpmsg_driver(&apu_rpmsg_driver);
+> +}
+> +module_exit(apu_rpmsg_exit);
+> +
+> +MODULE_LICENSE("GPL");
+> +MODULE_DESCRIPTION("APU RPMSG driver");
+> -- 
+> 2.31.1
+> 
