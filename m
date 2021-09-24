@@ -1,220 +1,142 @@
 Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2EE0C05032
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 24 Sep 2021 03:39:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F248AC433EF
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 24 Sep 2021 16:11:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9B41460FA0
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 24 Sep 2021 03:39:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D69336124B
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 24 Sep 2021 16:11:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244080AbhIXDlT (ORCPT
+        id S236860AbhIXQMe (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 23 Sep 2021 23:41:19 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:37176 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S244056AbhIXDlR (ORCPT
+        Fri, 24 Sep 2021 12:12:34 -0400
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:54652 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233752AbhIXQM0 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 23 Sep 2021 23:41:17 -0400
-X-UUID: 9ca22d1fc0144aaca2d2e378c00508a6-20210924
-X-UUID: 9ca22d1fc0144aaca2d2e378c00508a6-20210924
-Received: from mtkmbs10n1.mediatek.inc [(172.21.101.34)] by mailgw02.mediatek.com
-        (envelope-from <tinghan.shen@mediatek.com>)
-        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-        with ESMTP id 1072256764; Fri, 24 Sep 2021 11:39:40 +0800
-Received: from mtkcas07.mediatek.inc (172.21.101.84) by
- mtkmbs10n2.mediatek.inc (172.21.101.183) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.792.3;
- Fri, 24 Sep 2021 11:39:39 +0800
-Received: from mtkcas11.mediatek.inc (172.21.101.40) by mtkcas07.mediatek.inc
- (172.21.101.84) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Fri, 24 Sep
- 2021 11:39:38 +0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas11.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
- Transport; Fri, 24 Sep 2021 11:39:38 +0800
-From:   Tinghan Shen <tinghan.shen@mediatek.com>
-To:     <ohad@wizery.com>, <bjorn.andersson@linaro.org>,
-        <mathieu.poirier@linaro.org>, <robh+dt@kernel.org>,
-        <matthias.bgg@gmail.com>
-CC:     <linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        Fri, 24 Sep 2021 12:12:26 -0400
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 18OGAhPV102811;
+        Fri, 24 Sep 2021 11:10:43 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1632499843;
+        bh=9Pop6oXiHVPFX2sciva/YG9DSuUyCmsf/YRPoCW7xjw=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=YtkIYS+011vlOBa52SP5+7lT3ZV6uxBHBh5TXBo5GPudnXjq/+jPcqyl4vJg79BQr
+         CtTOA1OwZ/WEZt13z3y5+eAUC8Q4qOnQzRHBdyZ2Vt6DtYCbcBeQr/DxXpPSa2g0CE
+         CTEj+m9arI82s79NY60Yjt1Oc3mKDOFCxwPO87nw=
+Received: from DFLE106.ent.ti.com (dfle106.ent.ti.com [10.64.6.27])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 18OGAhNF116842
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 24 Sep 2021 11:10:43 -0500
+Received: from DFLE106.ent.ti.com (10.64.6.27) by DFLE106.ent.ti.com
+ (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2308.14; Fri, 24
+ Sep 2021 11:10:42 -0500
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE106.ent.ti.com
+ (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2308.14 via
+ Frontend Transport; Fri, 24 Sep 2021 11:10:42 -0500
+Received: from [10.250.37.219] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 18OGAglw000461;
+        Fri, 24 Sep 2021 11:10:42 -0500
+Subject: Re: [PATCH V3 2/2] dt-bindings: remoteproc: k3-dsp: Remove
+ board-specific compatible from DT example
+To:     Sinthu Raja <sinthu.raja@mistralsolutions.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Ohad Ben-Cohen <ohad@wizery.com>
+CC:     <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        Tinghan Shen <tinghan.shen@mediatek.com>
-Subject: [PATCH v7 3/6] dt-bindings: remoteproc: mediatek: Convert mtk,scp to json-schema
-Date:   Fri, 24 Sep 2021 11:39:32 +0800
-Message-ID: <20210924033935.2127-4-tinghan.shen@mediatek.com>
-X-Mailer: git-send-email 2.15.GIT
-In-Reply-To: <20210924033935.2127-1-tinghan.shen@mediatek.com>
-References: <20210924033935.2127-1-tinghan.shen@mediatek.com>
+        <linux-remoteproc@vger.kernel.org>, Nishanth Menon <nm@ti.com>,
+        Sinthu Raja <sinthu.raja@ti.com>,
+        "Nagalla, Hari" <hnagalla@ti.com>
+References: <20210917095426.19277-1-sinthu.raja@ti.com>
+ <20210917095426.19277-3-sinthu.raja@ti.com>
+From:   Suman Anna <s-anna@ti.com>
+Message-ID: <4d43e927-3998-e9a9-87a6-6036b769a975@ti.com>
+Date:   Fri, 24 Sep 2021 11:10:42 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.13.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
+In-Reply-To: <20210917095426.19277-3-sinthu.raja@ti.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Convert the mtk,scp binding to DT schema format using json-schema.
+Hi Sinthu,
 
-Signed-off-by: Tinghan Shen <tinghan.shen@mediatek.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
----
- .../bindings/remoteproc/mtk,scp.txt           | 41 ---------
- .../bindings/remoteproc/mtk,scp.yaml          | 92 +++++++++++++++++++
- 2 files changed, 92 insertions(+), 41 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/remoteproc/mtk,scp.txt
- create mode 100644 Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml
+On 9/17/21 4:54 AM, Sinthu Raja wrote:
+> From: Sinthu Raja <sinthu.raja@ti.com>
+> 
+> The example includes a board-specific compatible property, this is
+> wrong as the example should be board agnostic and gets in the way of
+> additions for newer platforms. Replace the same with a generic soc
+> node.
 
-diff --git a/Documentation/devicetree/bindings/remoteproc/mtk,scp.txt b/Documentation/devicetree/bindings/remoteproc/mtk,scp.txt
-deleted file mode 100644
-index 88f37dee7bca..000000000000
---- a/Documentation/devicetree/bindings/remoteproc/mtk,scp.txt
-+++ /dev/null
-@@ -1,41 +0,0 @@
--Mediatek SCP Bindings
------------------------------------------
--
--This binding provides support for ARM Cortex M4 Co-processor found on some
--Mediatek SoCs.
--
--Required properties:
--- compatible		Should be one of:
--				"mediatek,mt8183-scp"
--				"mediatek,mt8192-scp"
--				"mediatek,mt8195-scp"
--- reg			Should contain the address ranges for memory regions:
--			SRAM, CFG, and L1TCM.
--- reg-names		Contains the corresponding names for the memory regions:
--			"sram", "cfg", and "l1tcm".
--- clocks		Required by mt8183 and mt8192. Clock for co-processor
--			(See: ../clock/clock-bindings.txt)
--- clock-names		Required by mt8183 and mt8192. Contains the
--			corresponding name for the clock. This should be
--			named "main".
--
--Subnodes
----------
--
--Subnodes of the SCP represent rpmsg devices. The names of the devices are not
--important. The properties of these nodes are defined by the individual bindings
--for the rpmsg devices - but must contain the following property:
--
--- mtk,rpmsg-name	Contains the name for the rpmsg device. Used to match
--			the subnode to rpmsg device announced by SCP.
--
--Example:
--
--	scp: scp@10500000 {
--		compatible = "mediatek,mt8183-scp";
--		reg = <0 0x10500000 0 0x80000>,
--		      <0 0x105c0000 0 0x5000>;
--		reg-names = "sram", "cfg";
--		clocks = <&infracfg CLK_INFRA_SCPSYS>;
--		clock-names = "main";
--	};
-diff --git a/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml b/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml
-new file mode 100644
-index 000000000000..d21a25ee96e6
---- /dev/null
-+++ b/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml
-@@ -0,0 +1,92 @@
-+# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/remoteproc/mtk,scp.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Mediatek SCP Bindings
-+
-+maintainers:
-+  - Tinghan Shen <tinghan.shen@mediatek.com>
-+
-+description:
-+  This binding provides support for ARM Cortex M4 Co-processor found on some
-+  Mediatek SoCs.
-+
-+properties:
-+  compatible:
-+    enum:
-+      - mediatek,mt8183-scp
-+      - mediatek,mt8192-scp
-+      - mediatek,mt8195-scp
-+
-+  reg:
-+    description:
-+      Should contain the address ranges for memory regions SRAM, CFG, and
-+      L1TCM.
-+    maxItems: 3
-+
-+  reg-names:
-+    items:
-+      - const: sram
-+      - const: cfg
-+      - const: l1tcm
-+
-+  clocks:
-+    description:
-+      Clock for co-processor (see ../clock/clock-bindings.txt).
-+      Required by mt8183 and mt8192.
-+    maxItems: 1
-+
-+  clock-names:
-+    const: main
-+
-+required:
-+  - compatible
-+  - reg
-+  - reg-names
-+
-+if:
-+  properties:
-+    compatible:
-+      enum:
-+        - mediatek,mt8183-scp
-+        - mediatek,mt8192-scp
-+then:
-+  required:
-+    - clocks
-+    - clock-names
-+
-+additionalProperties:
-+  type: object
-+  description:
-+    Subnodes of the SCP represent rpmsg devices. The names of the devices
-+    are not important. The properties of these nodes are defined by the
-+    individual bindings for the rpmsg devices.
-+  properties:
-+    mediatek,rpmsg-name:
-+      $ref: /schemas/types.yaml#/definitions/string-array
-+      description:
-+        Contains the name for the rpmsg device. Used to match
-+        the subnode to rpmsg device announced by SCP.
-+
-+  required:
-+    - mediatek,rpmsg-name
-+
-+examples:
-+  - |
-+    #include <dt-bindings/clock/mt8183-clk.h>
-+
-+    scp@10500000 {
-+        compatible = "mediatek,mt8183-scp";
-+        reg = <0x10500000 0x80000>,
-+              <0x10700000 0x8000>,
-+              <0x10720000 0xe0000>;
-+        reg-names = "sram", "cfg", "l1tcm";
-+        clocks = <&infracfg CLK_INFRA_SCPSYS>;
-+        clock-names = "main";
-+
-+        cros_ec {
-+            mediatek,rpmsg-name = "cros-ec-rpmsg";
-+        };
-+    };
--- 
-2.18.0
+What board specific property? This description looks wrong.
+
+> 
+> Fixes: 2a2180206ab6 ("dt-bindings: remoteproc: Add bindings for C66x DSPs on TI K3 SoCs")
+
+What error are you trying to fix exactly? The example used below is actually how
+it exactly appears in the J721E dts files, and there are no errors with
+dt_binding_check.
+
+This is more a cleanup than a fix.  You can look through the original binding
+submission patches to see why it is done like this.
+
+If this is triggered by the changes you are making to k3.yaml file as part of
+the J721E EAIK changes, then you probably may want to look at how you are doing
+that again. Looks like the k3.yaml file is being modified now to enforce
+"board-compatible", "soc-compatible" which may have triggered an error in this file.
+
+Please evaluate if you need to modify it to support just the "soc-compatible" as
+one of the items.
+
+
+> Signed-off-by: Sinthu Raja <sinthu.raja@ti.com>
+> ---
+> 
+> Changes since V2:
+> * review comment updates, including simplifying the changes, commit
+>   message and $subject updates.
+> 
+> V2: https://lore.kernel.org/all/20210818074030.1877-1-sinthu.raja@ti.com/
+> V1: https://lore.kernel.org/all/20210817152005.21575-1-sinthu.raja@ti.com/
+> 
+>  .../devicetree/bindings/remoteproc/ti,k3-dsp-rproc.yaml       | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/remoteproc/ti,k3-dsp-rproc.yaml b/Documentation/devicetree/bindings/remoteproc/ti,k3-dsp-rproc.yaml
+> index 6070456a7b67..5ec6505ac408 100644
+> --- a/Documentation/devicetree/bindings/remoteproc/ti,k3-dsp-rproc.yaml
+> +++ b/Documentation/devicetree/bindings/remoteproc/ti,k3-dsp-rproc.yaml
+> @@ -133,9 +133,7 @@ unevaluatedProperties: false
+>  
+>  examples:
+>    - |
+> -    / {
+> -        model = "Texas Instruments K3 J721E SoC";
+> -        compatible = "ti,j721e";
+> +    soc {
+
+While this may be resolving the dt_bindings_check you might be seeing with the
+modified k3.yaml, note that "soc" property is not used on K3 dts files, you
+might be creating confusion for people who look at this example and the actual
+usage.
+
+regards
+Suman
+
+>          #address-cells = <2>;
+>          #size-cells = <2>;
+>  
+> 
 
