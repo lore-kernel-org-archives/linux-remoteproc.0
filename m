@@ -2,98 +2,80 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC424C433EF
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 23 Sep 2021 20:31:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A8D6C433F5
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 24 Sep 2021 03:39:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9597A61241
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 23 Sep 2021 20:31:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2657F60FA0
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 24 Sep 2021 03:39:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243189AbhIWUcd (ORCPT
+        id S244044AbhIXDlQ (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 23 Sep 2021 16:32:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47446 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243188AbhIWUcd (ORCPT
+        Thu, 23 Sep 2021 23:41:16 -0400
+Received: from mailgw01.mediatek.com ([60.244.123.138]:46976 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S243927AbhIXDlP (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 23 Sep 2021 16:32:33 -0400
-Received: from mail-ot1-x330.google.com (mail-ot1-x330.google.com [IPv6:2607:f8b0:4864:20::330])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5FBB1C061756
-        for <linux-remoteproc@vger.kernel.org>; Thu, 23 Sep 2021 13:31:01 -0700 (PDT)
-Received: by mail-ot1-x330.google.com with SMTP id 97-20020a9d006a000000b00545420bff9eso10214197ota.8
-        for <linux-remoteproc@vger.kernel.org>; Thu, 23 Sep 2021 13:31:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=jrQFnds+enloHfbnp7JiG8L1TA0qPsvDwBgojFxND+Q=;
-        b=nccO5lqvS//QTh5SlYby7k5r8WGPEH2qrdntZZueS9PBJ/kNcUUyyscIQAedeb9Zi7
-         rKzaBZ3kv8EeRzkzRiDuutE2hh40P8jTdUKsLo3SIsulLUT1z/v+qxDiJK9rPHqHvF7B
-         5Utcd0QU9dK4U2fgZkBECtU4msOizit6SckVwoSMJhWhwCpcncNaLDOewvqVrfvMM3Le
-         TDCBhJ6zcNKLHm8TpTefczUDfR1DNc2FIWZUvkZ+y2WI+bc5L5BbWXnCrXAAV/+sLmwz
-         /KpFZcwHGK9I5hQQkABgG0EBzE3uEXzT8xfEMSMJgZ6PcWsXT3gvhF+g8hDr38pjT85j
-         1OUg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=jrQFnds+enloHfbnp7JiG8L1TA0qPsvDwBgojFxND+Q=;
-        b=hmwcvotp6c3EAq3voGK6C8QYl6VgVJaDSZjByoEN8nynU9spu379GX7BnIDpIOavu/
-         xhFN1lKHXPRPlZRHu1SntkVGeOVJbrDbYogE6NDZOp0/EeMDGxdzCFHhIlF+vW4/zS7r
-         9QOQnhjSlzJ5BysOL8q0Imjwg0nbZGS/YjZIA1SlgwCeqXDZxX30tuJoi0eU2BReu14F
-         L6KJ84vAbTJCLduEleHoRRg9A6FvE/mmuTOZMgK4l2b5Ix+4g232rHAp3+c7bshPg1TD
-         hJ7ypntLydPMk3KfolmaIGeYN13zKUoclCjfPbx36niXCv8a/L9YDkb6uYb279Lj32kj
-         03Kg==
-X-Gm-Message-State: AOAM533+HzrBg71vthawtGKlemdd+16IrZ1Fp/vrpDmZP0sYLOy7LVEj
-        Olwqh6I63v5PRePNga1bStFDeA==
-X-Google-Smtp-Source: ABdhPJxUf5eO7r2N/fQhBxg6FPAUzflU7DkCc2cdcpBbZpmn/8zckffn1DG/Ln2HKz/m1nZjs7ePDw==
-X-Received: by 2002:a05:6830:805:: with SMTP id r5mr549124ots.209.1632429060685;
-        Thu, 23 Sep 2021 13:31:00 -0700 (PDT)
-Received: from builder.lan (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
-        by smtp.gmail.com with ESMTPSA id i1sm1583036ooo.15.2021.09.23.13.31.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 Sep 2021 13:31:00 -0700 (PDT)
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     sibis@codeaurora.org, swboyd@chromium.org, clew@codeaurora.org,
-        Deepak Kumar Singh <deesin@codeaurora.org>
-Cc:     linux-remoteproc@vger.kernel.org, Andy Gross <agross@kernel.org>,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
-Subject: Re: (subset) [PATCH V5 1/1] soc: qcom: smp2p: Add wakeup capability to SMP2P IRQ
-Date:   Thu, 23 Sep 2021 15:30:58 -0500
-Message-Id: <163242893971.825761.9497807239519479301.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.32.0
-In-Reply-To: <1632220467-27410-1-git-send-email-deesin@codeaurora.org>
-References: <1632220467-27410-1-git-send-email-deesin@codeaurora.org>
+        Thu, 23 Sep 2021 23:41:15 -0400
+X-UUID: 49307a0b102b40bc9b983413f46c2494-20210924
+X-UUID: 49307a0b102b40bc9b983413f46c2494-20210924
+Received: from mtkmbs10n2.mediatek.inc [(172.21.101.183)] by mailgw01.mediatek.com
+        (envelope-from <tinghan.shen@mediatek.com>)
+        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+        with ESMTP id 1577762382; Fri, 24 Sep 2021 11:39:40 +0800
+Received: from mtkcas11.mediatek.inc (172.21.101.40) by
+ mtkmbs07n1.mediatek.inc (172.21.101.16) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.2; Fri, 24 Sep 2021 11:39:38 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas11.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
+ Transport; Fri, 24 Sep 2021 11:39:38 +0800
+From:   Tinghan Shen <tinghan.shen@mediatek.com>
+To:     <ohad@wizery.com>, <bjorn.andersson@linaro.org>,
+        <mathieu.poirier@linaro.org>, <robh+dt@kernel.org>,
+        <matthias.bgg@gmail.com>
+CC:     <linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        Tinghan Shen <tinghan.shen@mediatek.com>
+Subject: [PATCH v7 5/6] rpmsg: change naming of mediatek rpmsg property
+Date:   Fri, 24 Sep 2021 11:39:34 +0800
+Message-ID: <20210924033935.2127-6-tinghan.shen@mediatek.com>
+X-Mailer: git-send-email 2.15.GIT
+In-Reply-To: <20210924033935.2127-1-tinghan.shen@mediatek.com>
+References: <20210924033935.2127-1-tinghan.shen@mediatek.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-MTK:  N
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Tue, 21 Sep 2021 16:04:27 +0530, Deepak Kumar Singh wrote:
-> Remote susbsystems notify fatal crash throught smp2p interrupt.
-> When remoteproc crashes it can cause soc to come out of low power
-> state and may not allow again to enter in low power state until
-> crash is handled.
-> 
-> Mark smp2p interrupt wakeup capable so that interrupt handler is
-> executed and remoteproc crash can be handled in system  resume path.
-> This patch marks interrupt wakeup capable but keeps wakeup disabled
-> by default. User space can enable it based on its requirement for
-> wakeup from suspend.
-> 
-> [...]
+Change from "mtk,rpmsg-name" to "mediatek,rpmsg-name" to sync with the
+vendor name defined in vendor-prefixes.yaml.
 
-Applied, thanks!
+Signed-off-by: Tinghan Shen <tinghan.shen@mediatek.com>
+---
+ drivers/rpmsg/mtk_rpmsg.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-[1/1] soc: qcom: smp2p: Add wakeup capability to SMP2P IRQ
-      commit: 1a561c521ba901ac86acaf698e79ad6ecedbec2b
-
-Best regards,
+diff --git a/drivers/rpmsg/mtk_rpmsg.c b/drivers/rpmsg/mtk_rpmsg.c
+index 96a17ec29140..5b4404b8be4c 100644
+--- a/drivers/rpmsg/mtk_rpmsg.c
++++ b/drivers/rpmsg/mtk_rpmsg.c
+@@ -183,7 +183,7 @@ mtk_rpmsg_match_device_subnode(struct device_node *node, const char *channel)
+ 	int ret;
+ 
+ 	for_each_available_child_of_node(node, child) {
+-		ret = of_property_read_string(child, "mtk,rpmsg-name", &name);
++		ret = of_property_read_string(child, "mediatek,rpmsg-name", &name);
+ 		if (ret)
+ 			continue;
+ 
 -- 
-Bjorn Andersson <bjorn.andersson@linaro.org>
+2.18.0
+
