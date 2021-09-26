@@ -2,28 +2,28 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AB3EC433F5
-	for <linux-remoteproc@archiver.kernel.org>; Sun, 26 Sep 2021 19:06:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0507FC433FE
+	for <linux-remoteproc@archiver.kernel.org>; Sun, 26 Sep 2021 19:06:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1C53760EE4
-	for <linux-remoteproc@archiver.kernel.org>; Sun, 26 Sep 2021 19:06:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E0EE360EE4
+	for <linux-remoteproc@archiver.kernel.org>; Sun, 26 Sep 2021 19:06:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229844AbhIZTIE (ORCPT
+        id S229873AbhIZTIG (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Sun, 26 Sep 2021 15:08:04 -0400
-Received: from mail-0201.mail-europe.com ([51.77.79.158]:38017 "EHLO
-        mail-0201.mail-europe.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229846AbhIZTIE (ORCPT
+        Sun, 26 Sep 2021 15:08:06 -0400
+Received: from mail-4319.protonmail.ch ([185.70.43.19]:11417 "EHLO
+        mail-4319.protonmail.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229623AbhIZTIF (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Sun, 26 Sep 2021 15:08:04 -0400
-Date:   Sun, 26 Sep 2021 19:06:09 +0000
+        Sun, 26 Sep 2021 15:08:05 -0400
+Date:   Sun, 26 Sep 2021 19:06:22 +0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
-        s=protonmail; t=1632683176;
-        bh=lTmKN+WNUyYt6gy0Mw6k/pJmZMjur5+0ACFflivi3Z4=;
-        h=Date:To:From:Cc:Reply-To:Subject:From;
-        b=k7RnTLj7WfrdTiPaJ35j0ZgEodtPtNE8CsmH+Kx7CebVv8fveGv/PSCpYK/JwANCz
-         cmw9JnqlMFI6N2uHSk/lGEkMiYqyEDMqySPALiTobmz6z97Mj6ikeTN1LNVf2Gmqtf
-         47K3woLhCBa8TThLc0HO+6u19V4w0J0ZNWuKMwmI=
+        s=protonmail; t=1632683187;
+        bh=LdGDg/NBcAqIMdIuneUdujL/LJH1Ulm1hfpZVp1FwMU=;
+        h=Date:To:From:Cc:Reply-To:Subject:In-Reply-To:References:From;
+        b=ZtRFfojbOzl1fHV7Y+CbJ/OOPOsheYXpFS9R4z96mru8g+9HLVsZgzfoYrJW9aN66
+         /BN3MPC9RDuuScoqLsMeWetDXE3Wi6iLlrjWSM7cj+EaaaaKLsn/9KdvDI5Krc4AN6
+         M3dLWUwNWDldKk1TKt1mXG8nz9Tee4W0nqz+hYAo=
 To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
         Ohad Ben-Cohen <ohad@wizery.com>,
@@ -39,8 +39,10 @@ Cc:     Yassine Oudjana <y.oudjana@protonmail.com>,
         devicetree@vger.kernel.org, phone-devel@vger.kernel.org,
         linux-kernel@vger.kernel.org
 Reply-To: Yassine Oudjana <y.oudjana@protonmail.com>
-Subject: [PATCH v2 0/5] msm8996: Enable support for MSS and SLPI
-Message-ID: <20210926190555.278589-1-y.oudjana@protonmail.com>
+Subject: [PATCH v2 2/5] remoteproc: qcom: pas: Use the same init resources for MSM8996 and MSM8998
+Message-ID: <20210926190555.278589-3-y.oudjana@protonmail.com>
+In-Reply-To: <20210926190555.278589-1-y.oudjana@protonmail.com>
+References: <20210926190555.278589-1-y.oudjana@protonmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
@@ -48,35 +50,92 @@ Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-This series fixes reserved memory regions, adds a missing power domain
-for SLPI in qcom_q6v5_pas, and enables support for MSS and SLPI in DTS.
+The resources for MSM8996 are missing power domains, and adding them
+makes the resources identical to the MSM8998 ones.
+Rename msm8998_adsp_resource to msm8996_adsp_resource then use it
+for both chips. Also add power domains to slpi_resource_init and use
+it for both chips.
 
-Changes since v1:
- - Rebase on latest linux-next
- - Rewrite MSS node
- - Enable MSS and SLPI in some devices
-Changes since v1 (2/5 remoteproc: qcom: pas: Use the same init resources fo=
-r MSM8996 and MSM8998):
- - Rename msm8998_adsp_resource to msm8996_adsp_resource
- - Add power domains to slpi_resource_init and use that instead of msm8998_=
-slpi_resource
+Signed-off-by: Yassine Oudjana <y.oudjana@protonmail.com>
+---
+ drivers/remoteproc/qcom_q6v5_pas.c | 27 ++++++++-------------------
+ 1 file changed, 8 insertions(+), 19 deletions(-)
 
-Yassine Oudjana (5):
-  arm64: dts: qcom: msm8996: Revamp reserved memory
-  remoteproc: qcom: pas: Use the same init resources for MSM8996 and
-    MSM8998
-  arm64: dts: qcom: msm8996: Unify smp2p naming
-  arm64: dts: qcom: msm8996: Add MSS and SLPI
-  arm64: dts: qcom: msm8996-xiaomi-*: Enable MSS and SLPI
-
- .../dts/qcom/msm8996-sony-xperia-tone.dtsi    |  18 +-
- .../boot/dts/qcom/msm8996-xiaomi-common.dtsi  |  30 ++-
- .../boot/dts/qcom/msm8996-xiaomi-gemini.dts   |   9 +
- .../boot/dts/qcom/msm8996-xiaomi-scorpio.dts  |   9 +
- arch/arm64/boot/dts/qcom/msm8996.dtsi         | 195 ++++++++++++++----
- drivers/remoteproc/qcom_q6v5_pas.c            |  27 +--
- 6 files changed, 209 insertions(+), 79 deletions(-)
-
+diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q=
+6v5_pas.c
+index 401b1ec90785..5e862401b66e 100644
+--- a/drivers/remoteproc/qcom_q6v5_pas.c
++++ b/drivers/remoteproc/qcom_q6v5_pas.c
+@@ -585,7 +585,7 @@ static const struct adsp_data sm8350_adsp_resource =3D =
+{
+ =09.ssctl_id =3D 0x14,
+ };
+=20
+-static const struct adsp_data msm8998_adsp_resource =3D {
++static const struct adsp_data msm8996_adsp_resource =3D {
+ =09=09.crash_reason_smem =3D 423,
+ =09=09.firmware_name =3D "adsp.mdt",
+ =09=09.pas_id =3D 1,
+@@ -714,6 +714,10 @@ static const struct adsp_data slpi_resource_init =3D {
+ =09=09.pas_id =3D 12,
+ =09=09.has_aggre2_clk =3D true,
+ =09=09.auto_boot =3D true,
++=09=09.proxy_pd_names =3D (char*[]){
++=09=09=09"ssc_cx",
++=09=09=09NULL
++=09=09},
+ =09=09.ssr_name =3D "dsps",
+ =09=09.sysmon_name =3D "slpi",
+ =09=09.ssctl_id =3D 0x16,
+@@ -779,21 +783,6 @@ static const struct adsp_data sm8350_slpi_resource =3D=
+ {
+ =09.ssctl_id =3D 0x16,
+ };
+=20
+-static const struct adsp_data msm8998_slpi_resource =3D {
+-=09=09.crash_reason_smem =3D 424,
+-=09=09.firmware_name =3D "slpi.mdt",
+-=09=09.pas_id =3D 12,
+-=09=09.has_aggre2_clk =3D true,
+-=09=09.auto_boot =3D true,
+-=09=09.proxy_pd_names =3D (char*[]){
+-=09=09=09"ssc_cx",
+-=09=09=09NULL
+-=09=09},
+-=09=09.ssr_name =3D "dsps",
+-=09=09.sysmon_name =3D "slpi",
+-=09=09.ssctl_id =3D 0x16,
+-};
+-
+ static const struct adsp_data wcss_resource_init =3D {
+ =09.crash_reason_smem =3D 421,
+ =09.firmware_name =3D "wcnss.mdt",
+@@ -822,10 +811,10 @@ static const struct adsp_data sdx55_mpss_resource =3D=
+ {
+=20
+ static const struct of_device_id adsp_of_match[] =3D {
+ =09{ .compatible =3D "qcom,msm8974-adsp-pil", .data =3D &adsp_resource_ini=
+t},
+-=09{ .compatible =3D "qcom,msm8996-adsp-pil", .data =3D &adsp_resource_ini=
+t},
++=09{ .compatible =3D "qcom,msm8996-adsp-pil", .data =3D &msm8996_adsp_reso=
+urce},
+ =09{ .compatible =3D "qcom,msm8996-slpi-pil", .data =3D &slpi_resource_ini=
+t},
+-=09{ .compatible =3D "qcom,msm8998-adsp-pas", .data =3D &msm8998_adsp_reso=
+urce},
+-=09{ .compatible =3D "qcom,msm8998-slpi-pas", .data =3D &msm8998_slpi_reso=
+urce},
++=09{ .compatible =3D "qcom,msm8998-adsp-pas", .data =3D &msm8996_adsp_reso=
+urce},
++=09{ .compatible =3D "qcom,msm8998-slpi-pas", .data =3D &slpi_resource_ini=
+t},
+ =09{ .compatible =3D "qcom,qcs404-adsp-pas", .data =3D &adsp_resource_init=
+ },
+ =09{ .compatible =3D "qcom,qcs404-cdsp-pas", .data =3D &cdsp_resource_init=
+ },
+ =09{ .compatible =3D "qcom,qcs404-wcss-pas", .data =3D &wcss_resource_init=
+ },
 --=20
 2.33.0
 
