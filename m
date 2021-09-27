@@ -2,110 +2,86 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95598C433EF
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 27 Sep 2021 17:43:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 634E1C433EF
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 27 Sep 2021 20:04:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7128960F4B
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 27 Sep 2021 17:43:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 45FCE60FC0
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 27 Sep 2021 20:04:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237632AbhI0Rp3 (ORCPT
+        id S236736AbhI0UGa (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 27 Sep 2021 13:45:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45782 "EHLO
+        Mon, 27 Sep 2021 16:06:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52004 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237720AbhI0RpY (ORCPT
+        with ESMTP id S236726AbhI0UGa (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 27 Sep 2021 13:45:24 -0400
-Received: from mail-pf1-x433.google.com (mail-pf1-x433.google.com [IPv6:2607:f8b0:4864:20::433])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 769D5C128EFE
-        for <linux-remoteproc@vger.kernel.org>; Mon, 27 Sep 2021 10:23:59 -0700 (PDT)
-Received: by mail-pf1-x433.google.com with SMTP id n23so13646725pfv.4
-        for <linux-remoteproc@vger.kernel.org>; Mon, 27 Sep 2021 10:23:59 -0700 (PDT)
+        Mon, 27 Sep 2021 16:06:30 -0400
+Received: from mail-ed1-x536.google.com (mail-ed1-x536.google.com [IPv6:2a00:1450:4864:20::536])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2B54CC061575;
+        Mon, 27 Sep 2021 13:04:52 -0700 (PDT)
+Received: by mail-ed1-x536.google.com with SMTP id ee50so74044843edb.13;
+        Mon, 27 Sep 2021 13:04:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=5P3OrPu6+56qmlhZPoJJstlv8IRrXnOuHuYMrmMX4NI=;
-        b=n6L1AnuX/V+OuWLh5rssxLOAbc5rjEkkrwklXwK0ceoJvbKg/ttagXWHWY7DH0QY3C
-         rKB0DivqGj4OSONgSx5QkCyfcYab9Cf2ENkcYSoyAVCqUqxiJNGkFhLxeqE3C3cJxzwB
-         oDAYOGn8zq2HzyTfn5H82EWDCuxqVbGXO9yM5b3lcG41HAwl1Bcd0XffvVyZLzuEOVJg
-         Lq1ummIEoJWm3AO8x5LDWpRQyw/EMQ/LenKdTtHU4CfU26ykYvxAJl/Gpr81IgOqGPVb
-         JyCrWZ5UbrP12894aHYua7c/mFkSs1nQS7y9ZSpmLL2BLDnsD9PWfpW4ja+DNnyIe+VL
-         GYSQ==
+        d=googlemail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=7OX8yMzkk8iAoqm3EQC246sTeS8KMkAo8I3fGOIEk0o=;
+        b=jeaxrflHDslabpblAoWGyJ9CMxArRIOiQ6AgggHNG/E4JAzrSKTRDtxDKupBhU8Gnb
+         0EynIxCVGMXGy3RDx+gtNIuyGHfxNFZJMiistP250SzoxdgpfgtSJPxeEceuz+CDWJEc
+         CFx3lBQ0/esx6ft3FLZ2cIA9KpuAOAC/a0u178ZpC6XK0AD1HtB7mnoi+vxaNi0KpYnj
+         LLQ/AyIaUvj1u4j4Sl0/dtNoBiCRQ55wkJS/FZltVCVZ5dQmFU7n89ePggRQ2jnPvQQM
+         4xaMRaYLxapDhBG89Fudyd7F+FnbZMD7+5S/aNrTazb+TKbdUuZKILc39k9fD6f4CVqZ
+         i0qg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=5P3OrPu6+56qmlhZPoJJstlv8IRrXnOuHuYMrmMX4NI=;
-        b=6mRsJT9LX9QqqYhETTe++zJuM5wvTH8VfiA4anKDhBfC+v1McvFUDRrHV2N4vVBz1q
-         LSzSn3949KUmPt6sLfV+uXYMSY4YD2vEHr5aoEUkJ7MqzgngIm62CNHra+LUWA/FXrWX
-         V1FI/SZL/epSkjhrzu1nRnNZmHmL4F3mY3c4fi53q2w9hG/xmx1f80QJU/1faDcBOCh8
-         Bmid/FCrf+KsT4DCnraoy4LHv10qnSLxCYYdnWjjMHEkYeo3FMEiA+VJVjnDnFirY3IR
-         XDs7Ht+a9n3uC29crZ+kMS94SkqxKIbi/aDFKdlivT+nZtBaHi9Xr6eTaALJ7tjOuPkh
-         qJpQ==
-X-Gm-Message-State: AOAM530ZTDjz0uuHM2W2ucGMRfjGu04aiomvD6IM3VW2eaV6nzOjuB3k
-        6N9MkBnUBRTA0naa9fxj+zk/eA==
-X-Google-Smtp-Source: ABdhPJxFTFDsHgeCr6HVxvBjtijyCpBs6vjOVIWRqOO6IwwMSot6hv9oSpOisZRYBLUuHFzxloLRqg==
-X-Received: by 2002:a63:5902:: with SMTP id n2mr672051pgb.305.1632763439002;
-        Mon, 27 Sep 2021 10:23:59 -0700 (PDT)
-Received: from p14s (S0106889e681aac74.cg.shawcable.net. [68.147.0.187])
-        by smtp.gmail.com with ESMTPSA id l9sm57170pjz.55.2021.09.27.10.23.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 Sep 2021 10:23:58 -0700 (PDT)
-Date:   Mon, 27 Sep 2021 11:23:56 -0600
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-To:     Sinthu Raja <sinthu.raja@mistralsolutions.com>
-Cc:     Suman Anna <s-anna@ti.com>, Rob Herring <robh+dt@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Ohad Ben-Cohen <ohad@wizery.com>, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-remoteproc@vger.kernel.org, Nishanth Menon <nm@ti.com>,
-        Sinthu Raja <sinthu.raja@ti.com>
-Subject: Re: [PATCH V4 0/2] dt-bindings: remoteproc: k3-r5f|dsp: Remove
-Message-ID: <20210927172356.GC2837840@p14s>
-References: <20210927103811.11222-1-sinthu.raja@ti.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=7OX8yMzkk8iAoqm3EQC246sTeS8KMkAo8I3fGOIEk0o=;
+        b=IxFuuaAd83fNOMVIGytf+a1zP4TVkx8TQyF8FK6khlGe3wNsAcvf/SDMSfcJBaUnny
+         yoImbu7qvvtzQ2KQGsbDuiUTBx5Euo77Ls2jnyZzhnJxm279cefato8VdAoh9olb2i9R
+         wemqmUalV64nP4o85mThC/479q2CI1UW9xB30ciSYHIh0nG6H3uhb39NeGEm5pURqHhf
+         AJhHEdxSY3g0m0CuthHw89+RmlQm/skS+8Yjbf9VQ4+4ASKJ/4PJ9R0cZoLknL1SGgFU
+         OPyhDlCWXOPX4GCUNUkyh/JAq0MDGsv9kwhEwS/ndKTjuMWwypb27sJmODu11MwTl5iL
+         YTcA==
+X-Gm-Message-State: AOAM532iWGkeFIBvq06QNp6Q1QE/+KAZGYhXhNMKEQWvyoWCb2vAhUiN
+        qHxdD9e+r1rtXEz+ebdTMzveCaAjtO0Lg2vXRpU=
+X-Google-Smtp-Source: ABdhPJzuMhBwzbGpSC0BWzXQTXJ6xTuHcG+6DyWu4ypgvTPZ/5SFkk+EkuN8imBZmoAGRbFBIvfwepGqbgLbw0upOrQ=
+X-Received: by 2002:a17:906:318f:: with SMTP id 15mr2225309ejy.206.1632773090226;
+ Mon, 27 Sep 2021 13:04:50 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210927103811.11222-1-sinthu.raja@ti.com>
+References: <20210921192557.1610709-1-martin.blumenstingl@googlemail.com>
+ <20210921192557.1610709-3-martin.blumenstingl@googlemail.com> <20210927161955.GA2837840@p14s>
+In-Reply-To: <20210927161955.GA2837840@p14s>
+From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date:   Mon, 27 Sep 2021 22:04:39 +0200
+Message-ID: <CAFBinCBBoCONAkT97nspipbbkwgLU2RjeQa5rz-MKiwyKoKAqA@mail.gmail.com>
+Subject: Re: [PATCH v4 2/2] remoteproc: meson-mx-ao-arc: Add a driver for the
+ AO ARC remote procesor
+To:     Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc:     linux-remoteproc@vger.kernel.org,
+        linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        bjorn.andersson@linaro.org, ohad@wizery.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Mon, Sep 27, 2021 at 04:08:09PM +0530, Sinthu Raja wrote:
-> From: Sinthu Raja <sinthu.raja@ti.com>
-> 
-> Hi All,
-> The series of patches are meant to help make the rproc bindings for K3
-> r5f and dsp support independent of board/platform involved.
-> 
-> Changes in V4:
-> Addressed review comments:
-> - Removed Fixes tags from the commit descriptions.
-> - Updated subject and commit description to emphasis on cleaning up of the 
->   example to address the dt_binding_check warnings.
-> 
-> 
-> V3: https://lore.kernel.org/all/20210917095426.19277-1-sinthu.raja@ti.com/
-> V2: https://lore.kernel.org/all/20210818074030.1877-1-sinthu.raja@ti.com/
-> V1: https://lore.kernel.org/all/20210817152005.21575-1-sinthu.raja@ti.com/
-> 
-> Sinthu Raja (2):
->   dt-bindings: remoteproc: k3-r5f: Cleanup SoC compatible from DT
->     example
->   dt-bindings: remoteproc: k3-dsp: Cleanup SoC compatible from DT
->     example
-> 
->  .../devicetree/bindings/remoteproc/ti,k3-dsp-rproc.yaml       | 4 +---
->  .../devicetree/bindings/remoteproc/ti,k3-r5f-rproc.yaml       | 4 +---
->  2 files changed, 2 insertions(+), 6 deletions(-)
+Hi Mathieu,
 
-I have applied this set.
+On Mon, Sep 27, 2021 at 6:20 PM Mathieu Poirier
+<mathieu.poirier@linaro.org> wrote:
+[...]
+> > +#include <linux/bitfield.h>
+> > +#include <linux/bitops.h>
+> > +#include <linux/clk.h>
+> > +#include <linux/delay.h>
+> > +#include <linux/property.h>
+>
+> I moved this just above platform_device.h and applied this set.
+I missed that part - thanks for fixing this up and applying the other
+patch as well!
 
-Thanks,
-Mathieu
 
-> 
-> -- 
-> 2.31.1
-> 
+Best regards,
+Martin
