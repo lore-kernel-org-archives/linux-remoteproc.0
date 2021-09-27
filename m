@@ -2,88 +2,101 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62494C4332F
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 27 Sep 2021 20:54:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE05CC433EF
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 27 Sep 2021 21:09:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 499C761052
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 27 Sep 2021 20:54:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C1BEE61052
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 27 Sep 2021 21:09:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237119AbhI0U42 (ORCPT
+        id S237121AbhI0VKy (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 27 Sep 2021 16:56:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35438 "EHLO
+        Mon, 27 Sep 2021 17:10:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39112 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237202AbhI0U4M (ORCPT
+        with ESMTP id S237115AbhI0VKx (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 27 Sep 2021 16:56:12 -0400
-Received: from mail-ot1-x334.google.com (mail-ot1-x334.google.com [IPv6:2607:f8b0:4864:20::334])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 65D5CC06120D
-        for <linux-remoteproc@vger.kernel.org>; Mon, 27 Sep 2021 13:54:10 -0700 (PDT)
-Received: by mail-ot1-x334.google.com with SMTP id 97-20020a9d006a000000b00545420bff9eso26151798ota.8
-        for <linux-remoteproc@vger.kernel.org>; Mon, 27 Sep 2021 13:54:10 -0700 (PDT)
+        Mon, 27 Sep 2021 17:10:53 -0400
+Received: from mail-ot1-x335.google.com (mail-ot1-x335.google.com [IPv6:2607:f8b0:4864:20::335])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3EBD0C061604
+        for <linux-remoteproc@vger.kernel.org>; Mon, 27 Sep 2021 14:09:14 -0700 (PDT)
+Received: by mail-ot1-x335.google.com with SMTP id 77-20020a9d0ed3000000b00546e10e6699so26291575otj.2
+        for <linux-remoteproc@vger.kernel.org>; Mon, 27 Sep 2021 14:09:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=sWnZyTphdDZe5u0D1r/ElDTD3TO7HnP/sS1mclgplsM=;
-        b=fIrR1pfST8fkgbklbWioDGRIIrCcLfA6m32qQgtV+7bXgkI7FM8F8PWFfNGYeufkcM
-         eWEj2KutQsCq/omhkZIXGwjMyguBzuhnOe2AT2ueVxcxCAoIZ9xdwoRd4BwbC2W0x9KQ
-         vcHzgnA5o73GgaU7Ssoh1F/p8jZ5QZ+0Td2SRCSLzxc4zt9qYAaaycWNfCHhPJva5Mnt
-         FWVHVDCdwxMtuIxXjpjwcElXAddSl4YgUHOZjmUKBrgXGIqEVxLuU2eSo+WOrf1mqtb9
-         CeOn+5gxhOlpqhbgnIVAtvtxamaIIWjEDKSZdYsEdsWY3Q6YcBvltD14DyPDs+beql9I
-         +7bA==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=grE/QCgUPZomgAa82Baf4sqrNJQIrutG83y4os53Po0=;
+        b=oIjdg4rdeHFaTWkSFkv7r27Mw1ApU0OhaRY5ZEooHEBnmKhUItDHaPZjaFO1HWnBE+
+         gGA9jxLVQw9d8thRbErz6hqVo1Ej+RKxrYRsoW0XBg4kcIoJsDdXCJt+ykWDONiRSQOM
+         /l+Kmk/uQrlVN+vOdVaU+6B6RcjGOHHAAH4Cjpe+ooKeij3vU21ZiDLtBk5+s8YwyULj
+         BycRWA9rxAjoqIaTbey8iFYTDQEyLLnFkhK6U5+9zbuQgfDkoLWHR+3RnlwhZ3u4OU99
+         kXbvGZpcNFgQdS6aRpDh+XYhiiYB7PGtFp6iSEyIKnptMu16xxi4YwQFSzXFAXsl8UvR
+         pbZw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=sWnZyTphdDZe5u0D1r/ElDTD3TO7HnP/sS1mclgplsM=;
-        b=BNsbeFZg3Ma0IrGqVHLacdr82/XM1n5TkUbAHAWuwR3Bs+Neq4riymbezBRDDUxu/3
-         RwjewTKyEyMCxK3wizrHFCW6H0WsXTitlsOJx3og0AsksPk1i/ahoXUf0K5vnvbQQjLx
-         sb7ocnvqqaFHP0bBHqhQuAYoen/+HjignK7FEvaoj1epSIYU7EgWD4tRwiAMfWNqOQRx
-         YFFJLZWifml3EhWwsvdQZnG3GfcOWOtV9Wzk9cge+QTG8koSRbjDfw7ZbQkN+xKGF5GC
-         CllO2cBL2dzTwgOd0bVbJIBobNvS2tdTXhGHxCdB0pKtSYij5Vec0IWdRO+bw2cJ/u6p
-         N9/w==
-X-Gm-Message-State: AOAM533LWN1BJKISza2nD9BftWFsBqQeOWeGmTdWwWq0NGy5dnA9X7gp
-        9Wd1kzKj60Y5MujoYl5FtocAMQ==
-X-Google-Smtp-Source: ABdhPJyQy/YjQ2ajpYdAZm8ENqhdbf4HH3uUcOOX3tC3NDqP+y7F0PBDcsVw79yBZ+Y/7dOgvWzyTA==
-X-Received: by 2002:a05:6830:4182:: with SMTP id r2mr1882403otu.242.1632776049751;
-        Mon, 27 Sep 2021 13:54:09 -0700 (PDT)
-Received: from builder.lan (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
-        by smtp.gmail.com with ESMTPSA id z10sm4187275otq.64.2021.09.27.13.54.08
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=grE/QCgUPZomgAa82Baf4sqrNJQIrutG83y4os53Po0=;
+        b=soh5+khD8g3/5iNxM/vNOnL3qVGOJ+8n5prLhXHTRt086apwrXJKTr9k/ZsFKA/Ofh
+         TvUVNF8SxTY+/mlGUN+5trJUi6tNuS3OiOKUOlhtEjPs4obnBoIYR8PZF3OayIJE2ZVL
+         x55o8WyyeKtHH9KsOw97GEZEN+W2B1oryBgAcuZVDmqrmhTRSbzWcDBbN2I/1/GSHRTz
+         D/WfXNqhNamaIJ4RuckJiHbWYmSIPeN8BRGkdB/xBo2wES0u1v/99ofGiNAiQ8Wf+8wD
+         NMM80c5UUNHN40OLS3Rvz6Bf5QKFfml2mlik7S7QtXPxeXuREGTq+zq9pUNuaGX/460C
+         AXYA==
+X-Gm-Message-State: AOAM532mJKmFFslkihZF8a/annkgEp5qCRxzSpAzHF3fLQxWwcU9VnQh
+        rK43Q/qEWTu+r8NEvrKh/D8rDw==
+X-Google-Smtp-Source: ABdhPJyXeF7vQujghOoksF4uKMTC4XwnidezuOSOqHxkklyPUSzl/VVHyx+mF/W4Xji8LQvZuQOubw==
+X-Received: by 2002:a9d:7f12:: with SMTP id j18mr1790463otq.365.1632776953523;
+        Mon, 27 Sep 2021 14:09:13 -0700 (PDT)
+Received: from localhost.localdomain (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
+        by smtp.gmail.com with ESMTPSA id u26sm2180977oic.51.2021.09.27.14.09.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 Sep 2021 13:54:09 -0700 (PDT)
+        Mon, 27 Sep 2021 14:09:13 -0700 (PDT)
 From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     mka@chromium.org, robh+dt@kernel.org, swboyd@chromium.org,
-        Sibi Sankar <sibis@codeaurora.org>
-Cc:     ohad@wizery.com, sidgup@codeaurora.org, dianders@chromium.org,
-        linux-remoteproc@vger.kernel.org, rishabhb@codeaurora.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        rjw@rjwysocki.net, mathieu.poirier@linaro.org,
-        ulf.hansson@linaro.org, devicetree@vger.kernel.org,
-        agross@kernel.org
-Subject: Re: (subset) [PATCH v7 13/13] dt-bindings: soc: qcom: aoss: Delete unused power-domain definitions
-Date:   Mon, 27 Sep 2021 15:54:00 -0500
-Message-Id: <163277593826.1470888.8272015889163734088.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.32.0
-In-Reply-To: <1631800770-371-14-git-send-email-sibis@codeaurora.org>
-References: <1631800770-371-1-git-send-email-sibis@codeaurora.org> <1631800770-371-14-git-send-email-sibis@codeaurora.org>
+To:     Ohad Ben-Cohen <ohad@wizery.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc:     linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] MAINTAINERS: Update remoteproc repo url
+Date:   Mon, 27 Sep 2021 14:09:46 -0700
+Message-Id: <20210927210946.3746116-1-bjorn.andersson@linaro.org>
+X-Mailer: git-send-email 2.29.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Thu, 16 Sep 2021 19:29:30 +0530, Sibi Sankar wrote:
-> Delete unused power-domain definitions exposed by AOSS QMP.
-> 
-> 
+The remoteproc and rpmsg repos are moving from my personal namespace to
+allow Mathieu to push to the projects as well.
 
-Applied, thanks!
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+---
+ MAINTAINERS | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-[13/13] dt-bindings: soc: qcom: aoss: Delete unused power-domain definitions
-        commit: e603577231d4d041eceeaf23c25935df5d008798
-
-Best regards,
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 0f28fb4b4e5c..dfc93b8e4f28 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -15987,7 +15987,7 @@ M:	Bjorn Andersson <bjorn.andersson@linaro.org>
+ M:	Mathieu Poirier <mathieu.poirier@linaro.org>
+ L:	linux-remoteproc@vger.kernel.org
+ S:	Maintained
+-T:	git git://git.kernel.org/pub/scm/linux/kernel/git/andersson/remoteproc.git rproc-next
++T:	git https://git.kernel.org/pub/scm/linux/kernel/git/remoteproc/linux.git rproc-next
+ F:	Documentation/ABI/testing/sysfs-class-remoteproc
+ F:	Documentation/devicetree/bindings/remoteproc/
+ F:	Documentation/staging/remoteproc.rst
+@@ -16001,7 +16001,7 @@ M:	Bjorn Andersson <bjorn.andersson@linaro.org>
+ M:	Mathieu Poirier <mathieu.poirier@linaro.org>
+ L:	linux-remoteproc@vger.kernel.org
+ S:	Maintained
+-T:	git git://git.kernel.org/pub/scm/linux/kernel/git/andersson/remoteproc.git rpmsg-next
++T:	git https://git.kernel.org/pub/scm/linux/kernel/git/remoteproc/linux.git rpmsg-next
+ F:	Documentation/ABI/testing/sysfs-bus-rpmsg
+ F:	Documentation/staging/rpmsg.rst
+ F:	drivers/rpmsg/
 -- 
-Bjorn Andersson <bjorn.andersson@linaro.org>
+2.29.2
+
