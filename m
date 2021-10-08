@@ -2,104 +2,196 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4F80C433F5
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  7 Oct 2021 20:09:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BDDDC433F5
+	for <linux-remoteproc@archiver.kernel.org>; Fri,  8 Oct 2021 01:53:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A6A7061108
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  7 Oct 2021 20:09:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F030160FE8
+	for <linux-remoteproc@archiver.kernel.org>; Fri,  8 Oct 2021 01:53:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233894AbhJGULM (ORCPT
+        id S231688AbhJHBz1 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 7 Oct 2021 16:11:12 -0400
-Received: from m43-7.mailgun.net ([69.72.43.7]:24487 "EHLO m43-7.mailgun.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233603AbhJGULM (ORCPT <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 7 Oct 2021 16:11:12 -0400
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1633637358; h=Message-ID: References: In-Reply-To: Subject:
- Cc: To: From: Date: Content-Transfer-Encoding: Content-Type:
- MIME-Version: Sender; bh=TgUP7H/55CzhTMa+kBh6z+HzWDqvhowEqxczuK+iB1E=;
- b=cOgAqdGb37sKY9RaWlhMO89VjFQejErda0OF4E/C4d38cyh2HRouFSdh4W/RQJ/xQI5A8XrK
- s4kkEQYBLOxt2RLjC9ZgmbrdN+DEXVJjzMfEZmAvlJDbqK5Ds5QM7eZsXmtjGqlWyLbUZMJR
- eqFffOBSNgusWI/QkfchIFLt1rQ=
-X-Mailgun-Sending-Ip: 69.72.43.7
-X-Mailgun-Sid: WyI4ZWZiZiIsICJsaW51eC1yZW1vdGVwcm9jQHZnZXIua2VybmVsLm9yZyIsICJiZTllNGEiXQ==
-Received: from smtp.codeaurora.org
- (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
- smtp-out-n03.prod.us-east-1.postgun.com with SMTP id
- 615f53d9de4c4ed3855fb0f9 (version=TLS1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Thu, 07 Oct 2021 20:08:57
- GMT
-Sender: sibis=codeaurora.org@mg.codeaurora.org
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 379A6C4360D; Thu,  7 Oct 2021 20:08:57 +0000 (UTC)
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: sibis)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id B3021C4338F;
-        Thu,  7 Oct 2021 20:08:55 +0000 (UTC)
+        Thu, 7 Oct 2021 21:55:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45016 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229487AbhJHBzY (ORCPT
+        <rfc822;linux-remoteproc@vger.kernel.org>);
+        Thu, 7 Oct 2021 21:55:24 -0400
+Received: from mail-qk1-x729.google.com (mail-qk1-x729.google.com [IPv6:2607:f8b0:4864:20::729])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 31121C061570;
+        Thu,  7 Oct 2021 18:53:30 -0700 (PDT)
+Received: by mail-qk1-x729.google.com with SMTP id p4so8031652qki.3;
+        Thu, 07 Oct 2021 18:53:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=7todBHdUdrk6e6UQ0gc/p1j76bLvlAp/nPJIsH1ZwrU=;
+        b=pYnevWap+Nr7RyAO44CZlMPTpYR5EQmDloM6Oxm/wRKX1hYpweH+gBE4gQcMVfrbmQ
+         K1/A21aj+3oJSnOuO3k3MkrlFKZCgHjIkn0ZrCBlXaOtt7r4L56575GtYEA4jqvBxsee
+         m5cKizWctwS9lPtGra1C1CxemYkXhJEYYf2Xg/eBr7i3lTzJoslhdC2SnSyVuQdle0sC
+         IxecV14wttzHpdidvAmBJpAerxuInifYORccHbTQvGsbmuPnig+TiPLMbE58/MIzWDUa
+         gYC4M0+JxpYZPyjaqCmlvPZE11tt7CpFhgtIk9xPtPiYoiYwg/I2xEd8PUC8OemV1V8/
+         DdAw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=7todBHdUdrk6e6UQ0gc/p1j76bLvlAp/nPJIsH1ZwrU=;
+        b=Q9EmrozJgTR7T18o7QCPT0Acu4GHkfqQEzJ192Hv0w4ipz5mHO2lg6kvDgR+hEsv8P
+         FQwvB1dnnHiffaFtA7JG39JIxjDrlaxy/kYi5V+wIK9jtY/8x0iY25YKW0nPZj+n3HVa
+         qgCBxAvYrMJNQE9rJTq88O2AcL8UtdCiMRK0anYP3v8r6hC8MDRhCfgrDuxVucKYDfUq
+         fFiHh3+k0bdwDmdGdioe+OS0UeWxZhnitKofdcYIVg3CBah+SewDVz/FDVmMU6zPIP29
+         YCx5QXJgNri3zDdTDwB/liUk7HEXJaTKlirE+TD5IN282PzBAgLeN6E174hOMIyb19xT
+         qYoA==
+X-Gm-Message-State: AOAM530q7Eo8W5AvrjbMTUESMBfOPpLqBOfExRmWEu5SnhcIud7e7JYq
+        O+viPNvsLOlPga6VInSlcferu87fYc3AINPRaYg=
+X-Google-Smtp-Source: ABdhPJyub/QHvISEi0k5mdUs2wnnkzAP+wB09A+dNspF4cZL5duX0GGffeUg7FUrIvC5sukpkWeX0AAH4FOnxhM9WBI=
+X-Received: by 2002:a37:8ce:: with SMTP id 197mr663603qki.492.1633658009360;
+ Thu, 07 Oct 2021 18:53:29 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Fri, 08 Oct 2021 01:38:55 +0530
-From:   Sibi Sankar <sibis@codeaurora.org>
-To:     will@kernel.org
-Cc:     bjorn.andersson@linaro.org, robh+dt@kernel.org,
-        saiprakash.ranjan@codeaurora.org, swboyd@chromium.org,
-        mka@chromium.org, ohad@wizery.com, agross@kernel.org,
-        mathieu.poirier@linaro.org, robin.murphy@arm.com, joro@8bytes.org,
-        p.zabel@pengutronix.de, linux-arm-msm@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        evgreen@chromium.org, dianders@chromium.org,
-        sibis=codeaurora.org@codeaurora.org
-Subject: Re: [PATCH v5 04/10] iommu/arm-smmu-qcom: Request direct mapping for
- modem device
-In-Reply-To: <1631886935-14691-5-git-send-email-sibis@codeaurora.org>
-References: <1631886935-14691-1-git-send-email-sibis@codeaurora.org>
- <1631886935-14691-5-git-send-email-sibis@codeaurora.org>
-Message-ID: <0dcf1cae8c8d173922788d2807a7975f@codeaurora.org>
-X-Sender: sibis@codeaurora.org
-User-Agent: Roundcube Webmail/1.3.9
+References: <1632625630-784-1-git-send-email-shengjiu.wang@nxp.com>
+ <1632625630-784-4-git-send-email-shengjiu.wang@nxp.com> <20211006162511.GA3370862@p14s>
+In-Reply-To: <20211006162511.GA3370862@p14s>
+From:   Shengjiu Wang <shengjiu.wang@gmail.com>
+Date:   Fri, 8 Oct 2021 09:53:18 +0800
+Message-ID: <CAA+D8AOmnZ6wWBzJe5imMcyoVE0fSiOyLpWb83bYPwadJ5O-Mg@mail.gmail.com>
+Subject: Re: [PATCH v5 3/4] remoteproc: imx_dsp_rproc: Add remoteproc driver
+ for DSP on i.MX
+To:     Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc:     Shengjiu Wang <shengjiu.wang@nxp.com>,
+        Ohad Ben Cohen <ohad@wizery.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        "open list:REMOTE PROCESSOR (REMOTEPROC) SUBSYSTEM" 
+        <linux-remoteproc@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hey Will,
+Hi Mathieu
 
-Can you pick this patch up, the rest of
-the series is now in linux-next.
+On Thu, Oct 7, 2021 at 12:25 AM Mathieu Poirier
+<mathieu.poirier@linaro.org> wrote:
+>
+> Hi Shengjiu,
+>
+> This pachset doesn't apply to rproc-next, which is now located here[1].  The
+> change is in linux-next but not in mainline yet.
+>
+> https://git.kernel.org/pub/scm/linux/kernel/git/remoteproc/linux.git/log/?h=rproc-next
 
-On 2021-09-17 19:25, Sibi Sankar wrote:
-> The SID configuration requirement for Modem on SC7280 is similar to the
-> ones found on SC7180/SDM845 SoCs. So, add the SC7280 modem compatible 
-> to
-> the list to defer the programming of the modem SIDs to the kernel.
-> 
-> Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
-> Reviewed-by: Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
-> Reviewed-by: Stephen Boyd <swboyd@chromium.org>
-> ---
->  drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
-> b/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
-> index 55690af1b25d..3b9b46fca0b3 100644
-> --- a/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
-> +++ b/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
-> @@ -231,6 +231,7 @@ static const struct of_device_id
-> qcom_smmu_client_of_match[] __maybe_unused = {
->  	{ .compatible = "qcom,sc7180-mdss" },
->  	{ .compatible = "qcom,sc7180-mss-pil" },
->  	{ .compatible = "qcom,sc7280-mdss" },
-> +	{ .compatible = "qcom,sc7280-mss-pil" },
->  	{ .compatible = "qcom,sc8180x-mdss" },
->  	{ .compatible = "qcom,sdm845-mdss" },
->  	{ .compatible = "qcom,sdm845-mss-pil" },
+Ok, I will double check it and fix it.
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project.
+>
+> On Sun, Sep 26, 2021 at 11:07:09AM +0800, Shengjiu Wang wrote:
+> > Provide a basic driver to control DSP processor found on NXP i.MX8QM,
+> > i.MX8QXP, i.MX8MP and i.MX8ULP.
+> >
+> > Currently it is able to resolve addresses between DSP and main CPU,
+> > start and stop the processor, suspend and resume.
+> >
+> > The communication between DSP and main CPU is based on mailbox, there
+> > are three mailbox channels (tx, rx, rxdb).
+> >
+> > This driver was tested on NXP i.MX8QM, i.MX8QXP, i.MX8MP and i.MX8ULP.
+> >
+> > Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
+> > ---
+> >  drivers/remoteproc/Kconfig         |   11 +
+> >  drivers/remoteproc/Makefile        |    1 +
+> >  drivers/remoteproc/imx_dsp_rproc.c | 1206 ++++++++++++++++++++++++++++
+> >  3 files changed, 1218 insertions(+)
+> >  create mode 100644 drivers/remoteproc/imx_dsp_rproc.c
+> >
+>
+> [...]
+>
+> > +
+> > +/**
+> > + * imx_dsp_attach_pm_domains() - attach the power domains
+> > + * @priv: private data pointer
+> > + *
+> > + * On i.MX8QM and i.MX8QXP there is multiple power domains
+> > + * required, so need to link them.
+> > + */
+> > +static int imx_dsp_attach_pm_domains(struct imx_dsp_rproc *priv)
+> > +{
+> > +     struct device *dev = priv->rproc->dev.parent;
+> > +     int ret, i;
+> > +
+> > +     priv->num_domains = of_count_phandle_with_args(dev->of_node,
+> > +                                                    "power-domains",
+> > +                                                    "#power-domain-cells");
+> > +
+> > +     /* If only one domain, then no need to link the device */
+> > +     if (priv->num_domains <= 1)
+> > +             return 0;
+> > +
+> > +     priv->pd_dev = devm_kmalloc_array(dev, priv->num_domains,
+> > +                                       sizeof(*priv->pd_dev),
+> > +                                       GFP_KERNEL);
+> > +     if (!priv->pd_dev)
+> > +             return -ENOMEM;
+> > +
+> > +     priv->pd_dev_link = devm_kmalloc_array(dev, priv->num_domains,
+> > +                                            sizeof(*priv->pd_dev_link),
+> > +                                            GFP_KERNEL);
+> > +     if (!priv->pd_dev_link)
+> > +             return -ENOMEM;
+> > +
+> > +     for (i = 0; i < priv->num_domains; i++) {
+> > +             priv->pd_dev[i] = dev_pm_domain_attach_by_id(dev, i);
+> > +             if (IS_ERR(priv->pd_dev[i])) {
+> > +                     ret = PTR_ERR(priv->pd_dev[i]);
+> > +                     goto detach_pm;
+> > +             }
+>
+> I have pointed a problem with the error handling in the above during the
+> previous review and it was not addressed.
+
+I have considered your comments.  Actually when
+dev_pm_domain_attach_by_id() return NULL, the device_link_add()
+will break, I have added comments below, so above error handling
+for dev_pm_domain_attach_by_id() is enough.
+
+Best regards
+Wang Shengjiu
+>
+> > +
+> > +             /*
+> > +              * device_link_add will check priv->pd_dev[i], if it is
+> > +              * NULL, then will break.
+> > +              */
+> > +             priv->pd_dev_link[i] = device_link_add(dev,
+> > +                                                    priv->pd_dev[i],
+> > +                                                    DL_FLAG_STATELESS |
+> > +                                                    DL_FLAG_PM_RUNTIME);
+> > +             if (!priv->pd_dev_link[i]) {
+> > +                     dev_pm_domain_detach(priv->pd_dev[i], false);
+> > +                     ret = -EINVAL;
+> > +                     goto detach_pm;
+> > +             }
+> > +     }
+> > +
+> > +     return 0;
+> > +
+> > +detach_pm:
+> > +     while (--i >= 0) {
+> > +             device_link_del(priv->pd_dev_link[i]);
+> > +             dev_pm_domain_detach(priv->pd_dev[i], false);
+> > +     }
+> > +
+> > +     return ret;
+> > +}
+> > +
