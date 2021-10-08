@@ -2,66 +2,67 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BDDDC433F5
-	for <linux-remoteproc@archiver.kernel.org>; Fri,  8 Oct 2021 01:53:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AA7AC433F5
+	for <linux-remoteproc@archiver.kernel.org>; Fri,  8 Oct 2021 04:12:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F030160FE8
-	for <linux-remoteproc@archiver.kernel.org>; Fri,  8 Oct 2021 01:53:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2D1D360F6E
+	for <linux-remoteproc@archiver.kernel.org>; Fri,  8 Oct 2021 04:12:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231688AbhJHBz1 (ORCPT
+        id S230080AbhJHEON (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 7 Oct 2021 21:55:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45016 "EHLO
+        Fri, 8 Oct 2021 00:14:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48006 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229487AbhJHBzY (ORCPT
+        with ESMTP id S229470AbhJHEOM (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 7 Oct 2021 21:55:24 -0400
-Received: from mail-qk1-x729.google.com (mail-qk1-x729.google.com [IPv6:2607:f8b0:4864:20::729])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 31121C061570;
-        Thu,  7 Oct 2021 18:53:30 -0700 (PDT)
-Received: by mail-qk1-x729.google.com with SMTP id p4so8031652qki.3;
-        Thu, 07 Oct 2021 18:53:30 -0700 (PDT)
+        Fri, 8 Oct 2021 00:14:12 -0400
+Received: from mail-qt1-x835.google.com (mail-qt1-x835.google.com [IPv6:2607:f8b0:4864:20::835])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E384DC061570;
+        Thu,  7 Oct 2021 21:12:17 -0700 (PDT)
+Received: by mail-qt1-x835.google.com with SMTP id r1so8374773qta.12;
+        Thu, 07 Oct 2021 21:12:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=7todBHdUdrk6e6UQ0gc/p1j76bLvlAp/nPJIsH1ZwrU=;
-        b=pYnevWap+Nr7RyAO44CZlMPTpYR5EQmDloM6Oxm/wRKX1hYpweH+gBE4gQcMVfrbmQ
-         K1/A21aj+3oJSnOuO3k3MkrlFKZCgHjIkn0ZrCBlXaOtt7r4L56575GtYEA4jqvBxsee
-         m5cKizWctwS9lPtGra1C1CxemYkXhJEYYf2Xg/eBr7i3lTzJoslhdC2SnSyVuQdle0sC
-         IxecV14wttzHpdidvAmBJpAerxuInifYORccHbTQvGsbmuPnig+TiPLMbE58/MIzWDUa
-         gYC4M0+JxpYZPyjaqCmlvPZE11tt7CpFhgtIk9xPtPiYoiYwg/I2xEd8PUC8OemV1V8/
-         DdAw==
+        bh=kpVveClApwG0f1MnOqx8Bs+gZiIua6pFcbtmAW5z2vE=;
+        b=HFR4Iurmu8llLf9/t436kyERqMxFzX0S9BXVmQphHY+eC094l2FixYiSO/6IyRNrzg
+         aGnSn1JLegb+klcmlL9c1FHA6kv8ooUumw8gQ/zUrSEVix7JDROjy1ggNEtJ5OPfIKAE
+         DubkE0HzXEtoETInYz7iIkiFfSQcsa4UsOs6OumtJY+ohNxSwbSF3OxjqFAGOzJJ8Q75
+         zraUH9qJ/pgTZXCCXZj605AfcXXwEqvIf0LSSOmIvjgDCjW1EfRmaibzdvqNIpR+HJFp
+         LuKOKTNDsKsjt5X0SjEDa/dxID3ceTSPG9OgLZlioueIvqUmCwSxrW1ydmNwRjkabnca
+         Hzqg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=7todBHdUdrk6e6UQ0gc/p1j76bLvlAp/nPJIsH1ZwrU=;
-        b=Q9EmrozJgTR7T18o7QCPT0Acu4GHkfqQEzJ192Hv0w4ipz5mHO2lg6kvDgR+hEsv8P
-         FQwvB1dnnHiffaFtA7JG39JIxjDrlaxy/kYi5V+wIK9jtY/8x0iY25YKW0nPZj+n3HVa
-         qgCBxAvYrMJNQE9rJTq88O2AcL8UtdCiMRK0anYP3v8r6hC8MDRhCfgrDuxVucKYDfUq
-         fFiHh3+k0bdwDmdGdioe+OS0UeWxZhnitKofdcYIVg3CBah+SewDVz/FDVmMU6zPIP29
-         YCx5QXJgNri3zDdTDwB/liUk7HEXJaTKlirE+TD5IN282PzBAgLeN6E174hOMIyb19xT
-         qYoA==
-X-Gm-Message-State: AOAM530q7Eo8W5AvrjbMTUESMBfOPpLqBOfExRmWEu5SnhcIud7e7JYq
-        O+viPNvsLOlPga6VInSlcferu87fYc3AINPRaYg=
-X-Google-Smtp-Source: ABdhPJyub/QHvISEi0k5mdUs2wnnkzAP+wB09A+dNspF4cZL5duX0GGffeUg7FUrIvC5sukpkWeX0AAH4FOnxhM9WBI=
-X-Received: by 2002:a37:8ce:: with SMTP id 197mr663603qki.492.1633658009360;
- Thu, 07 Oct 2021 18:53:29 -0700 (PDT)
+        bh=kpVveClApwG0f1MnOqx8Bs+gZiIua6pFcbtmAW5z2vE=;
+        b=HLoI2Hlz4FSXG/MSelvtfuVPLZOW0SJcPzQ3Q00eaggOMkDB+FT2WAQr2RrUUSjZfc
+         UJWr+zvPSPnBiDingvTYXtZrLoNp1WBn8n3Dk2QFkDSlSxdR3YqNR5uGFDs6e+652rF+
+         c/dba00KFXs5RywOgn2iuazz7PxYpmwEADAGuViCMPRPYSqPu+L1lFZiiX8PzATNW9HP
+         AP/+UGPGGzWFFORNvEVAQQFXKQ3auh+VDJNpirFprK4Ff71EZSfhtK6578DhmWIM7RoH
+         7YMzDv1C15Dy9/c3JxR9ulEHwKXS8xQ9etAvYG1gDShexWw1Rd0JSlrSSUVmVWg3PZj4
+         PpAw==
+X-Gm-Message-State: AOAM530I/lMuNaaLXGCSyfS+Lry15A3ews6dlWRfPRvKzYB9W/VGAce6
+        R/wP4md+RUELvHZlkg4e9aQf2sH7zQkBU0s1K10=
+X-Google-Smtp-Source: ABdhPJzb94QCdtXn2IloaHOWQOje6kwaxFQI1o2Yjku+KrGOvzD0W8w4bJY53EmcCjFfEfO5v9EsOb93TC2vxJ2i4kM=
+X-Received: by 2002:ac8:1e06:: with SMTP id n6mr9069200qtl.365.1633666337060;
+ Thu, 07 Oct 2021 21:12:17 -0700 (PDT)
 MIME-Version: 1.0
 References: <1632625630-784-1-git-send-email-shengjiu.wang@nxp.com>
- <1632625630-784-4-git-send-email-shengjiu.wang@nxp.com> <20211006162511.GA3370862@p14s>
-In-Reply-To: <20211006162511.GA3370862@p14s>
+ <1632625630-784-5-git-send-email-shengjiu.wang@nxp.com> <YVTrbPC4/ir974xs@robh.at.kernel.org>
+ <CAA+D8ANdQQFuPh_F8DZka+Y6hVDGuT8BvRfWdUFJxHd5JTQPNA@mail.gmail.com> <CAL_JsqK2KHfDisDXsuyWX0P99uY+nmEG72AsNUmqGRjJKHmg_Q@mail.gmail.com>
+In-Reply-To: <CAL_JsqK2KHfDisDXsuyWX0P99uY+nmEG72AsNUmqGRjJKHmg_Q@mail.gmail.com>
 From:   Shengjiu Wang <shengjiu.wang@gmail.com>
-Date:   Fri, 8 Oct 2021 09:53:18 +0800
-Message-ID: <CAA+D8AOmnZ6wWBzJe5imMcyoVE0fSiOyLpWb83bYPwadJ5O-Mg@mail.gmail.com>
-Subject: Re: [PATCH v5 3/4] remoteproc: imx_dsp_rproc: Add remoteproc driver
- for DSP on i.MX
-To:     Mathieu Poirier <mathieu.poirier@linaro.org>
+Date:   Fri, 8 Oct 2021 12:12:06 +0800
+Message-ID: <CAA+D8ANDP0ZPFKbRaYCwD+8zE3qvckKo9JjXwNBFUPrJ66=idw@mail.gmail.com>
+Subject: Re: [PATCH v5 4/4] dt-bindings: dsp: fsl: update binding document for
+ remote proc driver
+To:     Rob Herring <robh@kernel.org>
 Cc:     Shengjiu Wang <shengjiu.wang@nxp.com>,
         Ohad Ben Cohen <ohad@wizery.com>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
         Shawn Guo <shawnguo@kernel.org>,
         Sascha Hauer <s.hauer@pengutronix.de>,
         Sascha Hauer <kernel@pengutronix.de>,
@@ -79,119 +80,137 @@ Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi Mathieu
+Hi Rob
 
-On Thu, Oct 7, 2021 at 12:25 AM Mathieu Poirier
-<mathieu.poirier@linaro.org> wrote:
+On Sat, Oct 2, 2021 at 12:40 AM Rob Herring <robh@kernel.org> wrote:
 >
-> Hi Shengjiu,
+> On Wed, Sep 29, 2021 at 9:34 PM Shengjiu Wang <shengjiu.wang@gmail.com> wrote:
+> >
+> > Hi Rob
+> >
+> > On Thu, Sep 30, 2021 at 6:40 AM Rob Herring <robh@kernel.org> wrote:
+> > >
+> > > On Sun, Sep 26, 2021 at 11:07:10AM +0800, Shengjiu Wang wrote:
+> > > > As there are two drivers for DSP on i.MX, one is for sound open
+> > > > firmware, another is for remote processor framework. In order to
+> > > > distinguish two kinds of driver, defining different compatible strings.
+> > > >
+> > > > For remote proc driver, the properties firmware-name and fsl,dsp-ctrl
+> > > > are needed and the mailbox channel is different with SOF.
+> > > >
+> > > > Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
+> > > > Acked-by: Daniel Baluta <daniel.baluta@nxp.com>
+> > > > ---
+> > > >  .../devicetree/bindings/dsp/fsl,dsp.yaml      | 81 +++++++++++++++++--
+> > > >  1 file changed, 75 insertions(+), 6 deletions(-)
+> > > >
+> > > > diff --git a/Documentation/devicetree/bindings/dsp/fsl,dsp.yaml b/Documentation/devicetree/bindings/dsp/fsl,dsp.yaml
+> > > > index 7afc9f2be13a..51ea657f6d42 100644
+> > > > --- a/Documentation/devicetree/bindings/dsp/fsl,dsp.yaml
+> > > > +++ b/Documentation/devicetree/bindings/dsp/fsl,dsp.yaml
+> > > > @@ -8,6 +8,7 @@ title: NXP i.MX8 DSP core
+> > > >
+> > > >  maintainers:
+> > > >    - Daniel Baluta <daniel.baluta@nxp.com>
+> > > > +  - Shengjiu Wang <shengjiu.wang@nxp.com>
+> > > >
+> > > >  description: |
+> > > >    Some boards from i.MX8 family contain a DSP core used for
+> > > > @@ -19,6 +20,10 @@ properties:
+> > > >        - fsl,imx8qxp-dsp
+> > > >        - fsl,imx8qm-dsp
+> > > >        - fsl,imx8mp-dsp
+> > > > +      - fsl,imx8qxp-hifi4
+> > > > +      - fsl,imx8qm-hifi4
+> > > > +      - fsl,imx8mp-hifi4
+> > > > +      - fsl,imx8ulp-hifi4
+> > > >
+> > > >    reg:
+> > > >      maxItems: 1
+> > > > @@ -28,37 +33,63 @@ properties:
+> > > >        - description: ipg clock
+> > > >        - description: ocram clock
+> > > >        - description: core clock
+> > > > +      - description: debug interface clock
+> > > > +      - description: message unit clock
+> > > > +    minItems: 3
+> > > > +    maxItems: 5
+> > >
+> > > Don't need maxItems.
+> >
+> > Ok, I will update it.
+> >
+> > >
+> > > >
+> > > >    clock-names:
+> > > >      items:
+> > > >        - const: ipg
+> > > >        - const: ocram
+> > > >        - const: core
+> > > > +      - const: debug
+> > > > +      - const: mu
+> > > > +    minItems: 3
+> > > > +    maxItems: 5
+> > >
+> > > ditto
+> >
+> > Ok, I will update it.
+> >
+> > >
+> > > >
+> > > >    power-domains:
+> > > >      description:
+> > > >        List of phandle and PM domain specifier as documented in
+> > > >        Documentation/devicetree/bindings/power/power_domain.txt
+> > > > +    minItems: 1
+> > >
+> > > This is curious. The h/w sometimes has fewer power domains?
+> >
+> > On i.MX8QM/8QXP,  there are independent power domains for DSP core,
+> > DSP's RAM and DSP's MU.
+> > But on i.MX8MP, all these DSP components are in same audio subsystem
+> > There is only one power domain for whole audio subsystem,  when
+> > power on audio subsystem, the DSP's components are powered on also.
+> >
+> > So the number of power domain depends on how the DSP component
+> > integrated in SoC.
 >
-> This pachset doesn't apply to rproc-next, which is now located here[1].  The
-> change is in linux-next but not in mainline yet.
+> Sounds like you can write an if/then schema for this difference.
 >
-> https://git.kernel.org/pub/scm/linux/kernel/git/remoteproc/linux.git/log/?h=rproc-next
 
-Ok, I will double check it and fix it.
+I try this:
 
->
-> On Sun, Sep 26, 2021 at 11:07:09AM +0800, Shengjiu Wang wrote:
-> > Provide a basic driver to control DSP processor found on NXP i.MX8QM,
-> > i.MX8QXP, i.MX8MP and i.MX8ULP.
-> >
-> > Currently it is able to resolve addresses between DSP and main CPU,
-> > start and stop the processor, suspend and resume.
-> >
-> > The communication between DSP and main CPU is based on mailbox, there
-> > are three mailbox channels (tx, rx, rxdb).
-> >
-> > This driver was tested on NXP i.MX8QM, i.MX8QXP, i.MX8MP and i.MX8ULP.
-> >
-> > Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
-> > ---
-> >  drivers/remoteproc/Kconfig         |   11 +
-> >  drivers/remoteproc/Makefile        |    1 +
-> >  drivers/remoteproc/imx_dsp_rproc.c | 1206 ++++++++++++++++++++++++++++
-> >  3 files changed, 1218 insertions(+)
-> >  create mode 100644 drivers/remoteproc/imx_dsp_rproc.c
-> >
->
-> [...]
->
-> > +
-> > +/**
-> > + * imx_dsp_attach_pm_domains() - attach the power domains
-> > + * @priv: private data pointer
-> > + *
-> > + * On i.MX8QM and i.MX8QXP there is multiple power domains
-> > + * required, so need to link them.
-> > + */
-> > +static int imx_dsp_attach_pm_domains(struct imx_dsp_rproc *priv)
-> > +{
-> > +     struct device *dev = priv->rproc->dev.parent;
-> > +     int ret, i;
-> > +
-> > +     priv->num_domains = of_count_phandle_with_args(dev->of_node,
-> > +                                                    "power-domains",
-> > +                                                    "#power-domain-cells");
-> > +
-> > +     /* If only one domain, then no need to link the device */
-> > +     if (priv->num_domains <= 1)
-> > +             return 0;
-> > +
-> > +     priv->pd_dev = devm_kmalloc_array(dev, priv->num_domains,
-> > +                                       sizeof(*priv->pd_dev),
-> > +                                       GFP_KERNEL);
-> > +     if (!priv->pd_dev)
-> > +             return -ENOMEM;
-> > +
-> > +     priv->pd_dev_link = devm_kmalloc_array(dev, priv->num_domains,
-> > +                                            sizeof(*priv->pd_dev_link),
-> > +                                            GFP_KERNEL);
-> > +     if (!priv->pd_dev_link)
-> > +             return -ENOMEM;
-> > +
-> > +     for (i = 0; i < priv->num_domains; i++) {
-> > +             priv->pd_dev[i] = dev_pm_domain_attach_by_id(dev, i);
-> > +             if (IS_ERR(priv->pd_dev[i])) {
-> > +                     ret = PTR_ERR(priv->pd_dev[i]);
-> > +                     goto detach_pm;
-> > +             }
->
-> I have pointed a problem with the error handling in the above during the
-> previous review and it was not addressed.
+allOf:
+  - if:
+      properties:
+        compatible:
+          contains:
+            enum:
+              - fsl,imx8mp-hifi4
+              - fsl,imx8mp-dsp
 
-I have considered your comments.  Actually when
-dev_pm_domain_attach_by_id() return NULL, the device_link_add()
-will break, I have added comments below, so above error handling
-for dev_pm_domain_attach_by_id() is enough.
+    then:
+      properties:
+        power-domains:
+          maxItems: 1
+
+    else:
+      properties:
+        power-domains:
+          maxItems: 4
+
+
+But the dt_binding_check report error:
+  DTEX    Documentation/devicetree/bindings/dsp/fsl,dsp.example.dts
+  DTC     Documentation/devicetree/bindings/dsp/fsl,dsp.example.dt.yaml
+  CHECK   Documentation/devicetree/bindings/dsp/fsl,dsp.example.dt.yaml
+/opt/alsa/sound/Documentation/devicetree/bindings/dsp/fsl,dsp.example.dt.yaml:
+dsp@3b6e8000: power-domains: [[4294967295]] is too short
+        From schema:
+/opt/alsa/sound/Documentation/devicetree/bindings/dsp/fsl,dsp.yaml
+
+I don't know the reason, could you please help to have a look what
+is wrong?
 
 Best regards
 Wang Shengjiu
->
-> > +
-> > +             /*
-> > +              * device_link_add will check priv->pd_dev[i], if it is
-> > +              * NULL, then will break.
-> > +              */
-> > +             priv->pd_dev_link[i] = device_link_add(dev,
-> > +                                                    priv->pd_dev[i],
-> > +                                                    DL_FLAG_STATELESS |
-> > +                                                    DL_FLAG_PM_RUNTIME);
-> > +             if (!priv->pd_dev_link[i]) {
-> > +                     dev_pm_domain_detach(priv->pd_dev[i], false);
-> > +                     ret = -EINVAL;
-> > +                     goto detach_pm;
-> > +             }
-> > +     }
-> > +
-> > +     return 0;
-> > +
-> > +detach_pm:
-> > +     while (--i >= 0) {
-> > +             device_link_del(priv->pd_dev_link[i]);
-> > +             dev_pm_domain_detach(priv->pd_dev[i], false);
-> > +     }
-> > +
-> > +     return ret;
-> > +}
-> > +
