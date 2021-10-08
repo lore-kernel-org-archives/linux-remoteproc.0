@@ -2,214 +2,141 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59886C433EF
-	for <linux-remoteproc@archiver.kernel.org>; Fri,  8 Oct 2021 19:27:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5343BC433FE
+	for <linux-remoteproc@archiver.kernel.org>; Fri,  8 Oct 2021 23:19:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 370BD610D1
-	for <linux-remoteproc@archiver.kernel.org>; Fri,  8 Oct 2021 19:27:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3109560F11
+	for <linux-remoteproc@archiver.kernel.org>; Fri,  8 Oct 2021 23:19:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231350AbhJHT24 (ORCPT
+        id S243742AbhJHXVV (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 8 Oct 2021 15:28:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:32852 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231316AbhJHT2z (ORCPT <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 8 Oct 2021 15:28:55 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 243BE61073;
-        Fri,  8 Oct 2021 19:27:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1633721220;
-        bh=QnbMDhIm9HL7pJkR672kGyuF+7MeVCbdnt2qg7XEDQs=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=S2irSZZb9tAfaQp/1hWnVHqEgXPHPRSFy3Jo9wgAjYJVOBJqcvE8qAWuH5FWtfihQ
-         7HZaRqR3/zgL7coZpXpoVoEUAzz+N4cIlzYUCs6mwhSnQLph/3iYzNVqDnw9mebWq+
-         9Xfb4IJCP2a3J+iXGjQoA7cbq1KyS89E802O2sJhBU6L5ypR3U8QagieZa9jN8Apzc
-         OpBTBnGaY4bPjvus9a5DgsFnR23lWuUYab1E2l7L5cW8S3iSezbWe3nfAA3OHP9NfX
-         /n7OvAOeMxwskm1yR0pn1X8hJpDV5PATi3ti0cPqbWBU/ZqKi+wf98w/Vz9ZiZu1xc
-         YMn6clcnlPzMQ==
-Received: by mail-ed1-f48.google.com with SMTP id b8so40123741edk.2;
-        Fri, 08 Oct 2021 12:27:00 -0700 (PDT)
-X-Gm-Message-State: AOAM5329Jp6QCnA5JVDQsibVFHTJ/bPehWwneOGrcP2lIy1O+ZPb1494
-        QhrfpdPrb45YttNlhldOupDK3qCPKG+NUlBwNw==
-X-Google-Smtp-Source: ABdhPJz+IaG9foJegj3syUX1Q/KhZ5o+aDRniyboqmQtQ+omUebDWUdPCNHXTCAG+ENu05ulqk/trTBuMHOfiThknVM=
-X-Received: by 2002:a05:6402:44c:: with SMTP id p12mr17558796edw.145.1633721218518;
- Fri, 08 Oct 2021 12:26:58 -0700 (PDT)
-MIME-Version: 1.0
-References: <1632625630-784-1-git-send-email-shengjiu.wang@nxp.com>
- <1632625630-784-5-git-send-email-shengjiu.wang@nxp.com> <YVTrbPC4/ir974xs@robh.at.kernel.org>
- <CAA+D8ANdQQFuPh_F8DZka+Y6hVDGuT8BvRfWdUFJxHd5JTQPNA@mail.gmail.com>
- <CAL_JsqK2KHfDisDXsuyWX0P99uY+nmEG72AsNUmqGRjJKHmg_Q@mail.gmail.com>
- <CAA+D8ANDP0ZPFKbRaYCwD+8zE3qvckKo9JjXwNBFUPrJ66=idw@mail.gmail.com> <CAA+D8AMLn6Hn4P9U38dPKFO1z4k5x1Nf43X2ej6ohNY9O8Z+tQ@mail.gmail.com>
-In-Reply-To: <CAA+D8AMLn6Hn4P9U38dPKFO1z4k5x1Nf43X2ej6ohNY9O8Z+tQ@mail.gmail.com>
-From:   Rob Herring <robh@kernel.org>
-Date:   Fri, 8 Oct 2021 14:26:47 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqJOZBPNZBv=Q32myz5SvvZ4Nifv88zWecu=6zxNqynAEA@mail.gmail.com>
-Message-ID: <CAL_JsqJOZBPNZBv=Q32myz5SvvZ4Nifv88zWecu=6zxNqynAEA@mail.gmail.com>
-Subject: Re: [PATCH v5 4/4] dt-bindings: dsp: fsl: update binding document for
- remote proc driver
-To:     Shengjiu Wang <shengjiu.wang@gmail.com>
-Cc:     Shengjiu Wang <shengjiu.wang@nxp.com>,
-        Ohad Ben Cohen <ohad@wizery.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Fri, 8 Oct 2021 19:21:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56238 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S243739AbhJHXVV (ORCPT
+        <rfc822;linux-remoteproc@vger.kernel.org>);
+        Fri, 8 Oct 2021 19:21:21 -0400
+Received: from mail-ot1-x332.google.com (mail-ot1-x332.google.com [IPv6:2607:f8b0:4864:20::332])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 421CDC061755
+        for <linux-remoteproc@vger.kernel.org>; Fri,  8 Oct 2021 16:19:25 -0700 (PDT)
+Received: by mail-ot1-x332.google.com with SMTP id w10-20020a056830280a00b0054e4e6c85a6so4464045otu.5
+        for <linux-remoteproc@vger.kernel.org>; Fri, 08 Oct 2021 16:19:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=x738ufZ26qwkomPQn+MfcJAOvsbxWorDBI+ovCJWAwQ=;
+        b=Q9QQAxS64wz/rk0hjJJp3RwiQQhf4XHpzAcJec/2dyG0OiD3EyShl6WQuS9Gj4WrXs
+         vLgfkhdQmchuR7yrGpntQrB+2ZPkof/7+DkIdy84Ny9kxgMZxdQPDw4o00YmDBYu4e7l
+         qKgst6bpVxYBnb/sDf7S/4xZFcCEzTGWgMk5IrLnKqnxzx9KTMH08xZY8FZIO0Gc+gTl
+         /qlYlv5Lvdrkq49dxuIdItdBzg4qTW7glw4U8FASrxAjLk8pijAONeL9u0mmBCqn3zxb
+         J8UfFnmpM84XTCCvBiik1XtBFydG8rwAERohf0dVsJKi7xsM9AvZHudi0Zt3hrr37Pvn
+         kbJw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=x738ufZ26qwkomPQn+MfcJAOvsbxWorDBI+ovCJWAwQ=;
+        b=djoY2yzdHEdNMtL0j/OwUsXEk2ubx4o85TyJ5EZxb4d4tyVMOY01FWynf9p6o0TA17
+         1tqKKvGzQxNf8kjrHjKQYA+ih/htAbFBYPX1ifNzT2/LdU7zNr9XQYqcOUNUv3zu7QrT
+         3ahA51/e/bdzRS9km0755aCtKrk6P/31unfM3dMzej//IpMMvcu5T2B7ktDLMDTOqQuE
+         7ew2qGH0aRcx+scq6JuaZKIAb4SWPCKXV2x2g09vXdknByz00JnIOs+O8f8ldmhUmB3j
+         5fEveroJhg625LNMf2LDAKSQpjD76QvfAPaFaKn2iFHewa76+28YIBjstsgFXGKD4Ely
+         rueA==
+X-Gm-Message-State: AOAM5318+WEBfdzTzbYYxTyYdZln4hPjAhbkLuHwDA+bTmbcgZG7heL6
+        GOBDQl9Wig1QXSS2goY0AzgbB97OrWVIqQ==
+X-Google-Smtp-Source: ABdhPJxY3pRS9QcITX6jzHIIwjpjFrwSORH5JXMYWCXknB5wISu9iN0QhmvY3K1bSk/MpqHp/n6gpg==
+X-Received: by 2002:a05:6830:2a0c:: with SMTP id y12mr5549935otu.377.1633735164504;
+        Fri, 08 Oct 2021 16:19:24 -0700 (PDT)
+Received: from ripper ([2600:1700:a0:3dc8:205:1bff:fec0:b9b3])
+        by smtp.gmail.com with ESMTPSA id h17sm140754oog.17.2021.10.08.16.19.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 08 Oct 2021 16:19:24 -0700 (PDT)
+Date:   Fri, 8 Oct 2021 16:21:02 -0700
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+Cc:     Ohad Ben-Cohen <ohad@wizery.com>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        "open list:REMOTE PROCESSOR (REMOTEPROC) SUBSYSTEM" 
-        <linux-remoteproc@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com
+Subject: Re: [PATCH v5 0/4] Restructure the rpmsg char to decorrelate the
+ control part.
+Message-ID: <YWDSXu/MDOwOLDg0@ripper>
+References: <20210712123752.10449-1-arnaud.pouliquen@foss.st.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210712123752.10449-1-arnaud.pouliquen@foss.st.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Fri, Oct 8, 2021 at 2:19 AM Shengjiu Wang <shengjiu.wang@gmail.com> wrote:
->
-> On Fri, Oct 8, 2021 at 12:12 PM Shengjiu Wang <shengjiu.wang@gmail.com> wrote:
-> >
-> > Hi Rob
-> >
-> > On Sat, Oct 2, 2021 at 12:40 AM Rob Herring <robh@kernel.org> wrote:
-> > >
-> > > On Wed, Sep 29, 2021 at 9:34 PM Shengjiu Wang <shengjiu.wang@gmail.com> wrote:
-> > > >
-> > > > Hi Rob
-> > > >
-> > > > On Thu, Sep 30, 2021 at 6:40 AM Rob Herring <robh@kernel.org> wrote:
-> > > > >
-> > > > > On Sun, Sep 26, 2021 at 11:07:10AM +0800, Shengjiu Wang wrote:
-> > > > > > As there are two drivers for DSP on i.MX, one is for sound open
-> > > > > > firmware, another is for remote processor framework. In order to
-> > > > > > distinguish two kinds of driver, defining different compatible strings.
-> > > > > >
-> > > > > > For remote proc driver, the properties firmware-name and fsl,dsp-ctrl
-> > > > > > are needed and the mailbox channel is different with SOF.
-> > > > > >
-> > > > > > Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
-> > > > > > Acked-by: Daniel Baluta <daniel.baluta@nxp.com>
-> > > > > > ---
-> > > > > >  .../devicetree/bindings/dsp/fsl,dsp.yaml      | 81 +++++++++++++++++--
-> > > > > >  1 file changed, 75 insertions(+), 6 deletions(-)
-> > > > > >
-> > > > > > diff --git a/Documentation/devicetree/bindings/dsp/fsl,dsp.yaml b/Documentation/devicetree/bindings/dsp/fsl,dsp.yaml
-> > > > > > index 7afc9f2be13a..51ea657f6d42 100644
-> > > > > > --- a/Documentation/devicetree/bindings/dsp/fsl,dsp.yaml
-> > > > > > +++ b/Documentation/devicetree/bindings/dsp/fsl,dsp.yaml
-> > > > > > @@ -8,6 +8,7 @@ title: NXP i.MX8 DSP core
-> > > > > >
-> > > > > >  maintainers:
-> > > > > >    - Daniel Baluta <daniel.baluta@nxp.com>
-> > > > > > +  - Shengjiu Wang <shengjiu.wang@nxp.com>
-> > > > > >
-> > > > > >  description: |
-> > > > > >    Some boards from i.MX8 family contain a DSP core used for
-> > > > > > @@ -19,6 +20,10 @@ properties:
-> > > > > >        - fsl,imx8qxp-dsp
-> > > > > >        - fsl,imx8qm-dsp
-> > > > > >        - fsl,imx8mp-dsp
-> > > > > > +      - fsl,imx8qxp-hifi4
-> > > > > > +      - fsl,imx8qm-hifi4
-> > > > > > +      - fsl,imx8mp-hifi4
-> > > > > > +      - fsl,imx8ulp-hifi4
-> > > > > >
-> > > > > >    reg:
-> > > > > >      maxItems: 1
-> > > > > > @@ -28,37 +33,63 @@ properties:
-> > > > > >        - description: ipg clock
-> > > > > >        - description: ocram clock
-> > > > > >        - description: core clock
-> > > > > > +      - description: debug interface clock
-> > > > > > +      - description: message unit clock
-> > > > > > +    minItems: 3
-> > > > > > +    maxItems: 5
-> > > > >
-> > > > > Don't need maxItems.
-> > > >
-> > > > Ok, I will update it.
-> > > >
-> > > > >
-> > > > > >
-> > > > > >    clock-names:
-> > > > > >      items:
-> > > > > >        - const: ipg
-> > > > > >        - const: ocram
-> > > > > >        - const: core
-> > > > > > +      - const: debug
-> > > > > > +      - const: mu
-> > > > > > +    minItems: 3
-> > > > > > +    maxItems: 5
-> > > > >
-> > > > > ditto
-> > > >
-> > > > Ok, I will update it.
-> > > >
-> > > > >
-> > > > > >
-> > > > > >    power-domains:
-> > > > > >      description:
-> > > > > >        List of phandle and PM domain specifier as documented in
-> > > > > >        Documentation/devicetree/bindings/power/power_domain.txt
-> > > > > > +    minItems: 1
-> > > > >
-> > > > > This is curious. The h/w sometimes has fewer power domains?
-> > > >
-> > > > On i.MX8QM/8QXP,  there are independent power domains for DSP core,
-> > > > DSP's RAM and DSP's MU.
-> > > > But on i.MX8MP, all these DSP components are in same audio subsystem
-> > > > There is only one power domain for whole audio subsystem,  when
-> > > > power on audio subsystem, the DSP's components are powered on also.
-> > > >
-> > > > So the number of power domain depends on how the DSP component
-> > > > integrated in SoC.
-> > >
-> > > Sounds like you can write an if/then schema for this difference.
-> > >
-> >
-> > I try this:
-> >
-> > allOf:
-> >   - if:
-> >       properties:
-> >         compatible:
-> >           contains:
-> >             enum:
-> >               - fsl,imx8mp-hifi4
-> >               - fsl,imx8mp-dsp
-> >
-> >     then:
-> >       properties:
-> >         power-domains:
-> >           maxItems: 1
-> >
-> >     else:
-> >       properties:
-> >         power-domains:
-> >           maxItems: 4
-> >
-> >
-> > But the dt_binding_check report error:
-> >   DTEX    Documentation/devicetree/bindings/dsp/fsl,dsp.example.dts
-> >   DTC     Documentation/devicetree/bindings/dsp/fsl,dsp.example.dt.yaml
-> >   CHECK   Documentation/devicetree/bindings/dsp/fsl,dsp.example.dt.yaml
-> > /opt/alsa/sound/Documentation/devicetree/bindings/dsp/fsl,dsp.example.dt.yaml:
-> > dsp@3b6e8000: power-domains: [[4294967295]] is too short
-> >         From schema:
-> > /opt/alsa/sound/Documentation/devicetree/bindings/dsp/fsl,dsp.yaml
-> >
-> > I don't know the reason, could you please help to have a look what
-> > is wrong?
->
-> Seems still need to add "minItems" in original power-domains besides
-> if/then schema. otherwise the dt_binding_check report above
-> error.
+On Mon 12 Jul 05:37 PDT 2021, Arnaud Pouliquen wrote:
 
-Yes, that's right. The main section has to pass for all cases, so you
-need the maximum range (1-4 items).
+> Main update from V4 [1] 
+>  - complete commit messages with Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+>  - rebased on kernel V.14-rc1.
+> 
+> This series can be applied and tested on "Linux 5.14-rc1"(e73f0f0ee754) branch
+> 
+> Series description:
+> This series is the second step in the division of the series [2]: 
+> "Introducing a Generic IOCTL Interface for RPMsg Channel Management".
+> 
+> The purpose of this patchset is to split the code related to the control
+> and the endpoint. The code related to the control part is moved in the rpmsg_ctrl.c.
 
-Rob
+I'm not convinced about the merits for this refactoring, you're creating
+yet another kernel module which is fairly tightly coupled with
+the rpmsg_char kernel module and the only case I can see where this
+would be useful is if you want to be able to create reach
+RPMSG_CREATE_DEV_IOCTL and RPMSG_DESTROY_EPT_IOCTL without having to
+include the rpmsg_char part in your kernel.
+
+> This split is an intermediate step to extend the controls to allow user applications to
+> instantiate rpmsg devices.
+>     
+
+Can you give a concrete example of when this would be used?
+
+Per our previous discussions I believe you intend to use this to bind
+your rpmsg_tty driver to arbitrary channels in runtime, which to me
+sounds like you're reinventing the bind/unbind sysfs attrs.
+
+Regards,
+Bjorn
+
+> Notice that this patchset does not modify the behavior for using the RPMSG_CREATE_EPT_IOCTL
+> and RPMSG_DESTROY_EPT_IOCTL controls.
+>   
+> The next step should be to add the capability to:
+> - instantiate rpmsg_chrdev from the remote side (NS announcement),
+> - instantiate rpmsg_chrdev from local user application by introducing the
+>   IOCTLs RPMSG_CREATE_DEV_IOCTL and RPMSG_DESTROY_DEV_IOCTL to instantiate the rpmsg devices,
+> - send a NS announcement to the remote side on rpmsg_chrdev local instantiation.
+> 
+> [1]: https://patchwork.kernel.org/project/linux-remoteproc/list/?series=483793
+> [2]: https://patchwork.kernel.org/project/linux-remoteproc/list/?series=435523
+> 
+> Arnaud Pouliquen (4):
+>   rpmsg: char: Remove useless include
+>   rpmsg: char: Export eptdev create an destroy functions
+>   rpmsg: Move the rpmsg control device from rpmsg_char to rpmsg_ctrl
+>   rpmsg: Update rpmsg_chrdev_register_device function
+> 
+>  drivers/rpmsg/Kconfig             |   9 ++
+>  drivers/rpmsg/Makefile            |   1 +
+>  drivers/rpmsg/qcom_glink_native.c |   2 +-
+>  drivers/rpmsg/qcom_smd.c          |   2 +-
+>  drivers/rpmsg/rpmsg_char.c        | 184 ++-----------------------
+>  drivers/rpmsg/rpmsg_char.h        |  51 +++++++
+>  drivers/rpmsg/rpmsg_ctrl.c        | 215 ++++++++++++++++++++++++++++++
+>  drivers/rpmsg/rpmsg_internal.h    |   8 +-
+>  drivers/rpmsg/virtio_rpmsg_bus.c  |   2 +-
+>  9 files changed, 293 insertions(+), 181 deletions(-)
+>  create mode 100644 drivers/rpmsg/rpmsg_char.h
+>  create mode 100644 drivers/rpmsg/rpmsg_ctrl.c
+> 
+> -- 
+> 2.17.1
+> 
