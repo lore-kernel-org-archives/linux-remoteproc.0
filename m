@@ -2,68 +2,66 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91683C433EF
-	for <linux-remoteproc@archiver.kernel.org>; Sat,  9 Oct 2021 00:30:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CE23C433F5
+	for <linux-remoteproc@archiver.kernel.org>; Sat,  9 Oct 2021 00:30:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7833E60F41
-	for <linux-remoteproc@archiver.kernel.org>; Sat,  9 Oct 2021 00:30:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 13A1760F70
+	for <linux-remoteproc@archiver.kernel.org>; Sat,  9 Oct 2021 00:30:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244027AbhJIAcj (ORCPT
+        id S244034AbhJIAcl (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 8 Oct 2021 20:32:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44048 "EHLO
+        Fri, 8 Oct 2021 20:32:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44056 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244016AbhJIAci (ORCPT
+        with ESMTP id S244025AbhJIAci (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
         Fri, 8 Oct 2021 20:32:38 -0400
-Received: from mail-oi1-x231.google.com (mail-oi1-x231.google.com [IPv6:2607:f8b0:4864:20::231])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5D3E8C061570
+Received: from mail-oi1-x229.google.com (mail-oi1-x229.google.com [IPv6:2607:f8b0:4864:20::229])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F0BC5C061570
         for <linux-remoteproc@vger.kernel.org>; Fri,  8 Oct 2021 17:30:42 -0700 (PDT)
-Received: by mail-oi1-x231.google.com with SMTP id o83so8423566oif.4
+Received: by mail-oi1-x229.google.com with SMTP id a3so15867234oid.6
         for <linux-remoteproc@vger.kernel.org>; Fri, 08 Oct 2021 17:30:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=d4DYf1R/vHJuoHLrKKzqNGOP7fMfeO41/+lqHM0JUWw=;
-        b=NcqhTehlNQIE4ojmKb0Fz6gj86Xczjmlc1UIDNdMn+rcHkTEFAUAAmu0ZcuQJ6bUIe
-         L8Rfc7D2EXu3xONNMZai+qF9VP11tf3aWnCzi3bNiEjIgZ0y48fZuvncxF+4pUjEfqmQ
-         4Uk1ceSmojObtxFwpN1GKeoQyjTpQO/VCSdDntDKLFXbKg7AWrrPksNpdGuGdMd0/s21
-         vxfCMWGB89iWWkZ9tPRhsgm/2KAPqezalI4216yADegGECUX/CdhJC4ElUXiWiNSvH/u
-         nPpimbZz+u57FyWH2JrjWQkzRqLAWHzCkjHUCD3A77QM/ThOFr3AroLVPWikz5S93Jh8
-         r0Hw==
+        bh=xavW1IJSPpG92dcmrs0mIel7JJLLlrZ32qaSmt56bpg=;
+        b=VyLGY2RNQc+NYwjpMbg/3K54LnzhJ95Eo81UtMUqgOiMGzIo4GLU3eqD1FazIpib1V
+         uiLg4dyYwGyCknCi5727OInWRw5SQTdTVVSXLL62NZw9V9d6SeaXv+55xP/nRR4oMwg/
+         7pSoYYaNF4zPgW3rGtJDVVxSGogxMMmqael0zTefTazYUxiv+sTNcoVzkEJFXmZSHTIb
+         G4ppRuXKZHbj5g0aj7TvfNbEXFHhvC+cSnr6xeMGLmUQEqHOljcF6iiGDXLx4tsuLoGW
+         GULoLoT54fE6llF4+Sb2XuEZev2CfepYD6jkah2ZUFUxs1dIPXj3cy1VHHDAs6r4qDRX
+         goLQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=d4DYf1R/vHJuoHLrKKzqNGOP7fMfeO41/+lqHM0JUWw=;
-        b=vU8um0Z9/vxAFl8Z9u0DrsEq5/6rNndtf+VAgmMWVO5GUW+xGtZdsurne7PPWkoeXx
-         HCTBPozlm4R99HXHTGbT9qlvHw02voc+SUgHmjxKNEH4EXSZWoDxor/BXTeZCmiteZpg
-         GkxfkFXm77H+e/WJeN+CbiYxdDoBuJJ89oA9r3JP0c8JSKo5QTnWohTUSaPimpZ9HFXA
-         8uVOrk7kJdWw1LBwFuz8dZ2LyMPGq1DRmkWnnQ/zHOyLJD5wGC+9vDgLpkvBlxbtROF+
-         R/u6a0f5gpdui6E7jF2Ef3E5rMJb3CxV+YW38mW6lv3YYMdI5QtdX2hM9lzErHeGbqL0
-         ux8Q==
-X-Gm-Message-State: AOAM531PLP7/x1fDHq+89lg9IW7iPNYHOCJovY+lnUfeRWWevy/NIFnm
-        vp5brid6CZKNWUdG0CELAljejw==
-X-Google-Smtp-Source: ABdhPJwCo9rdFuljZRiPw/CyTmJn1aBYUt1MYPu85j5RF41FR5MrjWqTV1/C4eKIrAhu7oTEqozLuw==
-X-Received: by 2002:aca:4007:: with SMTP id n7mr19529750oia.174.1633739441683;
-        Fri, 08 Oct 2021 17:30:41 -0700 (PDT)
+        bh=xavW1IJSPpG92dcmrs0mIel7JJLLlrZ32qaSmt56bpg=;
+        b=0xvanReEMRy9Mxn9LYh3WXw8wkLJIeqm245x13+FcvRikfk3aj3jMp7nWU+8+LUqFW
+         ao0gAMfTi/h4aHbOBuU20xssUInig+roudDYNTfiF4zQqSEE3ZlzsEfObGsvHjaeVC89
+         M9VU6tWW8dok16GTrxz3TWqt+1/hAqet4QsUlIULV9wYEbChfRuxbnwkACD7fceVhxV3
+         nY4hNKb1f3aYbOKgcQr/NQ7unYyMsAwm6WYWN1KAAqyY+jRiYrjuUNwu6Wcyq2UR9vcr
+         mcSZQIHyjQ2DYx/1p/gSc+5BGXozWIc1GhSFlnMn0v8zsFuwOp4L7jSfyuDtSjP24ABi
+         CR3w==
+X-Gm-Message-State: AOAM532hYgVDdVt32Quecq0nnjjWlMXPuwdSloV/d10f4pM5PN0S1ojJ
+        Z94XnCg1D7n5FnC46/4nAU0TJw==
+X-Google-Smtp-Source: ABdhPJzdewWNzDKPqqax9QLzvC1XQcc2v1dj9tqtwm1tL94Xv2JThYmzsiIUP4wjcbguhtmPCfZDzw==
+X-Received: by 2002:aca:c60e:: with SMTP id w14mr9715359oif.156.1633739442388;
+        Fri, 08 Oct 2021 17:30:42 -0700 (PDT)
 Received: from builder.lan ([2600:1700:a0:3dc8:3697:f6ff:fe85:aac9])
         by smtp.gmail.com with ESMTPSA id bh39sm267605oib.37.2021.10.08.17.30.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 08 Oct 2021 17:30:41 -0700 (PDT)
+        Fri, 08 Oct 2021 17:30:42 -0700 (PDT)
 From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>,
-        Ohad Ben-Cohen <ohad@wizery.com>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc:     linux-stm32@st-md-mailman.stormreply.com,
-        linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org
-Subject: Re: (subset) [PATCH v5 1/4] rpmsg: char: Remove useless include
-Date:   Fri,  8 Oct 2021 19:30:39 -0500
-Message-Id: <163373942992.719534.404561077896393426.b4-ty@linaro.org>
+To:     mathieu.poirier@linaro.org, ohad@wizery.com,
+        Cai Huoqing <caihuoqing@baidu.com>
+Cc:     linux-remoteproc@vger.kernel.org
+Subject: Re: (subset) [PATCH] rpmsg: virtio: Remove unused including <linux/of_device.h>
+Date:   Fri,  8 Oct 2021 19:30:40 -0500
+Message-Id: <163373942992.719534.3424106062185623232.b4-ty@linaro.org>
 X-Mailer: git-send-email 2.32.0
-In-Reply-To: <20210712123752.10449-2-arnaud.pouliquen@foss.st.com>
-References: <20210712123752.10449-1-arnaud.pouliquen@foss.st.com> <20210712123752.10449-2-arnaud.pouliquen@foss.st.com>
+In-Reply-To: <20210811123125.143-1-caihuoqing@baidu.com>
+References: <20210811123125.143-1-caihuoqing@baidu.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -71,15 +69,15 @@ Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Mon, 12 Jul 2021 14:37:49 +0200, Arnaud Pouliquen wrote:
-> No facility requests the include of rpmsg_internal.h header file.
+On Wed, 11 Aug 2021 20:31:25 +0800, Cai Huoqing wrote:
+> Remove including <linux/of_device.h> that don't need it.
 > 
 > 
 
 Applied, thanks!
 
-[1/4] rpmsg: char: Remove useless include
-      commit: bc774a3887cb513be08e846726bc4402897b267a
+[1/1] rpmsg: virtio: Remove unused including <linux/of_device.h>
+      commit: f0d1be1482aaab1aaadf68aa959f6d4c098a8e8f
 
 Best regards,
 -- 
