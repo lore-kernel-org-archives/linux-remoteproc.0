@@ -2,227 +2,225 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87D6AC433F5
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 11 Oct 2021 17:22:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC292C433F5
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 11 Oct 2021 18:02:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 64467604AC
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 11 Oct 2021 17:22:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AC02460F0F
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 11 Oct 2021 18:02:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233141AbhJKRYD (ORCPT
+        id S234243AbhJKSEu (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 11 Oct 2021 13:24:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56782 "EHLO
+        Mon, 11 Oct 2021 14:04:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38010 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232954AbhJKRYD (ORCPT
+        with ESMTP id S229496AbhJKSEt (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 11 Oct 2021 13:24:03 -0400
-Received: from mail-oi1-x22f.google.com (mail-oi1-x22f.google.com [IPv6:2607:f8b0:4864:20::22f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 15C35C06161C
-        for <linux-remoteproc@vger.kernel.org>; Mon, 11 Oct 2021 10:22:03 -0700 (PDT)
-Received: by mail-oi1-x22f.google.com with SMTP id z126so11287618oiz.12
-        for <linux-remoteproc@vger.kernel.org>; Mon, 11 Oct 2021 10:22:03 -0700 (PDT)
+        Mon, 11 Oct 2021 14:04:49 -0400
+Received: from mail-pj1-x102d.google.com (mail-pj1-x102d.google.com [IPv6:2607:f8b0:4864:20::102d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1D7C0C061570
+        for <linux-remoteproc@vger.kernel.org>; Mon, 11 Oct 2021 11:02:49 -0700 (PDT)
+Received: by mail-pj1-x102d.google.com with SMTP id ns7-20020a17090b250700b001a0937b87b7so382575pjb.1
+        for <linux-remoteproc@vger.kernel.org>; Mon, 11 Oct 2021 11:02:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=HmEokn5oUdJqWXRoigMGBMDU0hXxS+4uBuxS3ZcINxM=;
-        b=HWG22c1i7wrXnbbUxNqP0GHByQbqHrpCQ9uBz2JGkqyvFn+qNXPaX/ofKK/2zDb9wV
-         k8m9YtNdJeHBPpQpvMYTpL420BuMUzo+ihnJARKQz72AF+LjHSrYQZ2oe4q68WisiOzc
-         /JEtbiU1rPu5UMpvkqoY2d8M2LvxemL3g1do7ma8MOEVSzdUoBuCMSyg/L4G8ADl7Vv4
-         ZlBTJX14Ao0cu5Vu5jTq1DEnIU113RrIYZPWuJe31JHmIRrT887KU4xz1yqpQ7T6mYbc
-         wCsv1jKQqL/JUrEzyfyIjQrAQD9ZGOstplnB2HBmL1QHMykf53J3vIo0pKIEzpCAD2d5
-         /SUg==
+        bh=Y6R21h8pX+Bz854LkA70H/M6hXh6XvR/iiMhd64ZE3o=;
+        b=VwmuCZRSiIj7rRfK3NYfLwmHVarWN/WaoMm6tiqJEarC7+j5L2cmVu1ZiAd8Z4XsGw
+         nHoJUzCwZJI31UrVZMtLJRaM1cw8JDyEfGXm64KcIGjMMBgXnWlfnQUp8e2DriUtkq1R
+         bAlL5Dz8dY05K5Y7lmjgDZcLRPBFKx2XcOiVrtNtYiNNTf9ub50p0K1s+YpthYuV0LqR
+         imZOlW0o1yGJnfHRIEA5fSFCHdY2Jn0yjCZE90WKLXN6KCg2AmkpQXc10fgxnntx6UMR
+         gqTl5mzv+68d3HtXw7bA0EjdPm2V+2oB86JoHWgcDzqeJN9a6N47PJe5KdyaE2teb2sc
+         SUIQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=HmEokn5oUdJqWXRoigMGBMDU0hXxS+4uBuxS3ZcINxM=;
-        b=jSadiEAW4Y/nqd/mKaPIWce0rYzQO9M8CQiPvmGFbEcX6m0ZA3hSlZfcl3Jo2gUJ56
-         B8Q+qdWDo/aqgJebGKZ1Lo9/gjj5+tl4JIBJomDw1G/FAOdOsQ7yq3EWKNJgL9uYBtX5
-         kDwTIlAz1B00dHdHg5NHYqD24N7LCli8tRbUFEU4gWN2RSc5IYQtg8DHtUA0jWkHSe/I
-         t0tnpAiAhn6FQ5xfZ7yXoCgWg2j9GXCBRO3O4JhxH2JUwtXhMPRWhObjbyQFIocMC29S
-         2wNIGhhlglIsbTx1eKr8jTcJFdkWn+uCphLtmfMD1XNo6JapFLS6Cdpt9o9DZYRFR2Fg
-         lUJg==
-X-Gm-Message-State: AOAM531Don1iVnYQPRK07u43vlqZ/8XuwecNiLLVcVXhyGf+d0OvqJqm
-        pwLYD9KI6KZ9MFhAUE/LrF+YXplucAsRzg==
-X-Google-Smtp-Source: ABdhPJwlzOLG1W4ub2KbV14y6v+gpH90jywxXp37DBQhUdP75EU/sPsEI8FpAo2YyRWcehb3ZZte3A==
-X-Received: by 2002:a05:6808:1141:: with SMTP id u1mr135628oiu.123.1633972922358;
-        Mon, 11 Oct 2021 10:22:02 -0700 (PDT)
-Received: from ripper ([2600:1700:a0:3dc8:205:1bff:fec0:b9b3])
-        by smtp.gmail.com with ESMTPSA id n12sm1596854otq.32.2021.10.11.10.22.00
+        bh=Y6R21h8pX+Bz854LkA70H/M6hXh6XvR/iiMhd64ZE3o=;
+        b=0LQ3ATxrG4oOdw3w0P4s+U+NLqgPKfVEUr8NVyYDClhH6PkuZDaWu2xrws8ErkhVln
+         5vDXnAzk1778T295MQ3uheXtoT2knceTH4cive1PDdbE+aZ8zj4f8ID5MNnkSZHWai9S
+         YTWZexqJEmD4Um6YQht5Xr5torVy3TJlMomahyaA0h6vJ+pJSj4Zn7X+TzQv/rX9kUs9
+         7QXGMLk1ihZ/oWZIWLiCtjFQ4YEdtRPErEz7yoKSzNdfQ7WoBJxZS4bejPkvIVAN0BOj
+         T+HqxZVHgYItAcljxtEi9yPLvcm9t04GlUmLvzWJDBkk3d3EavVt1zwiok7IXfTE40JH
+         b3sA==
+X-Gm-Message-State: AOAM5334JTQI4E57ZTJ71ARuPtLzrOXFN1pJCd94FFCyEztqDtDmjovb
+        NeOvrlm0QoHkl5CsEdkGbv+s3g==
+X-Google-Smtp-Source: ABdhPJzEEsUFb4efS/DaiHNS6Qh7qBdHYW3vrals7htloZOSo4B1G43rNyL55vdrB6UsHuYx29rgPA==
+X-Received: by 2002:a17:90a:f415:: with SMTP id ch21mr449783pjb.235.1633975368546;
+        Mon, 11 Oct 2021 11:02:48 -0700 (PDT)
+Received: from p14s (S0106889e681aac74.cg.shawcable.net. [68.147.0.187])
+        by smtp.gmail.com with ESMTPSA id y24sm8393715pfo.69.2021.10.11.11.02.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Oct 2021 10:22:01 -0700 (PDT)
-Date:   Mon, 11 Oct 2021 10:23:35 -0700
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
-Cc:     Ohad Ben-Cohen <ohad@wizery.com>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        Rob Herring <robh@kernel.org>, Christoph Hellwig <hch@lst.de>,
-        Stefano Stabellini <stefanos@xilinx.com>,
-        Bruce Ashfield <bruce.ashfield@xilinx.com>
-Subject: Re: [RFC PATCH 4/7] remoteproc: create the REMOTEPROC_VIRTIO config
-Message-ID: <YWRzFyS5WX6m5rNd@ripper>
-References: <20211001101234.4247-1-arnaud.pouliquen@foss.st.com>
- <20211001101234.4247-5-arnaud.pouliquen@foss.st.com>
- <YWEOIHrp4Z8+MHaE@builder.lan>
- <c16ca06a-96da-ac04-5ae7-bbbdf4b48ee5@foss.st.com>
+        Mon, 11 Oct 2021 11:02:47 -0700 (PDT)
+Date:   Mon, 11 Oct 2021 12:02:45 -0600
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+To:     Deepak Kumar Singh <deesin@codeaurora.org>
+Cc:     bjorn.andersson@linaro.org, swboyd@chromium.org,
+        clew@codeaurora.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        Ohad Ben-Cohen <ohad@wizery.com>
+Subject: Re: [PATCH V1 1/3] rpmsg: core: Add signal API support
+Message-ID: <20211011180245.GA3817586@p14s>
+References: <1633015924-881-1-git-send-email-deesin@codeaurora.org>
+ <1633015924-881-2-git-send-email-deesin@codeaurora.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <c16ca06a-96da-ac04-5ae7-bbbdf4b48ee5@foss.st.com>
+In-Reply-To: <1633015924-881-2-git-send-email-deesin@codeaurora.org>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Mon 11 Oct 08:58 PDT 2021, Arnaud POULIQUEN wrote:
+Good day Deepak,
 
+On Thu, Sep 30, 2021 at 09:02:01PM +0530, Deepak Kumar Singh wrote:
+> Some transports like Glink support the state notifications between
+> clients using signals similar to serial protocol signals.
+> Local glink client drivers can send and receive signals to glink
+> clients running on remote processors.
 > 
+> Add apis to support sending and receiving of signals by rpmsg clients.
 > 
-> On 10/9/21 5:36 AM, Bjorn Andersson wrote:
-> > On Fri 01 Oct 05:12 CDT 2021, Arnaud Pouliquen wrote:
-> > 
-> >> Create the config to associate to the remoteproc virtio.
-> >>
-> >> Notice that the REMOTEPROC_VIRTIO config can not set to m. the reason
-> >> is that it defines API that is used by the built-in remote proc core.
-> >> Functions such are rproc_add_virtio_dev can be called during the
-> >> Linux boot phase.
-> >>
-> > 
-> > Please don't introduce new Kconfig options for everything. Consider that
-> > the expectation should be that everyone runs the default defconfig on
-> > their boards - and if someone actually needs this level of control, they
-> > are welcome to present patches with numbers showing the benefit of the
-> > savings.
+> Signed-off-by: Deepak Kumar Singh <deesin@codeaurora.org>
+> ---
+>  drivers/rpmsg/rpmsg_core.c     | 21 +++++++++++++++++++++
+>  drivers/rpmsg/rpmsg_internal.h |  2 ++
+>  include/linux/rpmsg.h          | 15 +++++++++++++++
+>  3 files changed, 38 insertions(+)
 > 
-> My goal here was to decorrelate the remote virtio from the remote proc,
-> so that platforms based on a non-virtio solution do not embed the code.
-> By reading your commentary it jumps out at me that that's stupid.
+> diff --git a/drivers/rpmsg/rpmsg_core.c b/drivers/rpmsg/rpmsg_core.c
+> index 9151836..5cae50c 100644
+> --- a/drivers/rpmsg/rpmsg_core.c
+> +++ b/drivers/rpmsg/rpmsg_core.c
+> @@ -327,6 +327,24 @@ int rpmsg_trysend_offchannel(struct rpmsg_endpoint *ept, u32 src, u32 dst,
+>  }
+>  EXPORT_SYMBOL(rpmsg_trysend_offchannel);
+>  
+> +/**
+> + * rpmsg_set_flow_control() - sets/clears searial flow control signals
+> + * @ept:	the rpmsg endpoint
+> + * @enable:	enable or disable serial flow control
+> + *
+> + * Returns 0 on success and an appropriate error value on failure.
+> + */
+> +int rpmsg_set_flow_control(struct rpmsg_endpoint *ept, bool enable)
+> +{
+> +	if (WARN_ON(!ept))
+> +		return -EINVAL;
+> +	if (!ept->ops->set_flow_control)
+> +		return -ENXIO;
+> +
+> +	return ept->ops->set_flow_control(ept, enable);
+> +}
+> +EXPORT_SYMBOL(rpmsg_set_flow_control);
+> +
 
-I definitely don't think it's stupid. In a resource constraint
-environment that want to use remoteproc but won't use virtio this makes
-total sense.
+I'm looking at this patchset as the introduction of an out-of-bound control interface.  But looking at the implementation of the GLINK's set_flow_control() the data is sent in-band, making me perplexed about introducing a new rpmsg_endpoint_ops for something that could be done from user space.  Especially when user space is triggering the message with an ioctl in patch 3.
 
-But the added Kconfig creates complexity and people run into issues
-because the default defconfig is incomplete, they got their defconfig
-"wrong" or "make olddefconfig" misses the new config.
+Moreover this interface is case specific and doesn't reflect the generic nature
+found in ept->sig_cb.
 
-As such, I simply would like us to postpone the introduction of
-configurability until there's someone that can show it's worth the
-complexity.
-
-> The REMOTEPROC_VIRTIO config is useless as the remoteproc_virtio must
-> be kept built-in for legacy compatibility.
+>  /*
+>   * match a rpmsg channel with a channel info struct.
+>   * this is used to make sure we're not creating rpmsg devices for channels
+> @@ -514,6 +532,9 @@ static int rpmsg_dev_probe(struct device *dev)
+>  
+>  		rpdev->ept = ept;
+>  		rpdev->src = ept->addr;
+> +
+> +		if (rpdrv->signals)
+> +			ept->sig_cb = rpdrv->signals;
+>  	}
+>  
+>  	err = rpdrv->probe(rpdev);
+> diff --git a/drivers/rpmsg/rpmsg_internal.h b/drivers/rpmsg/rpmsg_internal.h
+> index a76c344..dcb2ec1 100644
+> --- a/drivers/rpmsg/rpmsg_internal.h
+> +++ b/drivers/rpmsg/rpmsg_internal.h
+> @@ -53,6 +53,7 @@ struct rpmsg_device_ops {
+>   * @trysendto:		see @rpmsg_trysendto(), optional
+>   * @trysend_offchannel:	see @rpmsg_trysend_offchannel(), optional
+>   * @poll:		see @rpmsg_poll(), optional
+> + * @set_flow_control:	see @rpmsg_set_flow_control(), optional
+>   *
+>   * Indirection table for the operations that a rpmsg backend should implement.
+>   * In addition to @destroy_ept, the backend must at least implement @send and
+> @@ -72,6 +73,7 @@ struct rpmsg_endpoint_ops {
+>  			     void *data, int len);
+>  	__poll_t (*poll)(struct rpmsg_endpoint *ept, struct file *filp,
+>  			     poll_table *wait);
+> +	int (*set_flow_control)(struct rpmsg_endpoint *ept, bool enable);
+>  };
+>  
+>  struct device *rpmsg_find_device(struct device *parent,
+> diff --git a/include/linux/rpmsg.h b/include/linux/rpmsg.h
+> index d97dcd0..b805c70 100644
+> --- a/include/linux/rpmsg.h
+> +++ b/include/linux/rpmsg.h
+> @@ -62,12 +62,14 @@ struct rpmsg_device {
+>  };
+>  
+>  typedef int (*rpmsg_rx_cb_t)(struct rpmsg_device *, void *, int, void *, u32);
+> +typedef int (*rpmsg_rx_sig_t)(struct rpmsg_device *, void *, u32);
+>  
+>  /**
+>   * struct rpmsg_endpoint - binds a local rpmsg address to its user
+>   * @rpdev: rpmsg channel device
+>   * @refcount: when this drops to zero, the ept is deallocated
+>   * @cb: rx callback handler
+> + * @sig_cb: rx serial signal handler
+>   * @cb_lock: must be taken before accessing/changing @cb
+>   * @addr: local rpmsg address
+>   * @priv: private data for the driver's use
+> @@ -90,6 +92,7 @@ struct rpmsg_endpoint {
+>  	struct rpmsg_device *rpdev;
+>  	struct kref refcount;
+>  	rpmsg_rx_cb_t cb;
+> +	rpmsg_rx_sig_t sig_cb;
+>  	struct mutex cb_lock;
+>  	u32 addr;
+>  	void *priv;
+> @@ -104,6 +107,7 @@ struct rpmsg_endpoint {
+>   * @probe: invoked when a matching rpmsg channel (i.e. device) is found
+>   * @remove: invoked when the rpmsg channel is removed
+>   * @callback: invoked when an inbound message is received on the channel
+> + * @signals: invoked when a serial signal change is received on the channel
+>   */
+>  struct rpmsg_driver {
+>  	struct device_driver drv;
+> @@ -111,6 +115,7 @@ struct rpmsg_driver {
+>  	int (*probe)(struct rpmsg_device *dev);
+>  	void (*remove)(struct rpmsg_device *dev);
+>  	int (*callback)(struct rpmsg_device *, void *, int, void *, u32);
+> +	int (*signals)(struct rpmsg_device *rpdev, void *priv, u32);
+>  };
+>  
+>  static inline u16 rpmsg16_to_cpu(struct rpmsg_device *rpdev, __rpmsg16 val)
+> @@ -186,6 +191,8 @@ int rpmsg_trysend_offchannel(struct rpmsg_endpoint *ept, u32 src, u32 dst,
+>  __poll_t rpmsg_poll(struct rpmsg_endpoint *ept, struct file *filp,
+>  			poll_table *wait);
+>  
+> +int rpmsg_set_flow_control(struct rpmsg_endpoint *ept, bool enable);
+> +
+>  #else
+>  
+>  static inline int rpmsg_register_device(struct rpmsg_device *rpdev)
+> @@ -296,6 +303,14 @@ static inline __poll_t rpmsg_poll(struct rpmsg_endpoint *ept,
+>  	return 0;
+>  }
+>  
+> +static inline int rpmsg_set_flow_control(struct rpmsg_endpoint *ept, bool enable);
+> +{
+> +	/* This shouldn't be possible */
+> +	WARN_ON(1);
+> +
+> +	return -ENXIO;
+> +}
+> +
+>  #endif /* IS_ENABLED(CONFIG_RPMSG) */
+>  
+>  /* use a macro to avoid include chaining to get THIS_MODULE */
+> -- 
+> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+> a Linux Foundation Collaborative Project
 > 
-
-Right, so we would have to make sure that in all "standard"
-configurations REMOTEPROC_VIRTIO is included.
-
-Regards,
-Bjorn
-
-> Thanks,
-> Arnaud
-> 
-> > 
-> > Thanks,
-> > Bjorn
-> > 
-> >> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-> >> ---
-> >>  drivers/remoteproc/Kconfig               | 11 +++++++++-
-> >>  drivers/remoteproc/Makefile              |  2 +-
-> >>  drivers/remoteproc/remoteproc_internal.h | 28 ++++++++++++++++++++++++
-> >>  3 files changed, 39 insertions(+), 2 deletions(-)
-> >>
-> >> diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
-> >> index 9a6eedc3994a..f271552c0d84 100644
-> >> --- a/drivers/remoteproc/Kconfig
-> >> +++ b/drivers/remoteproc/Kconfig
-> >> @@ -6,7 +6,7 @@ config REMOTEPROC
-> >>  	depends on HAS_DMA
-> >>  	select CRC32
-> >>  	select FW_LOADER
-> >> -	select VIRTIO
-> >> +	select REMOTEPROC_VIRTIO
-> >>  	select WANT_DEV_COREDUMP
-> >>  	help
-> >>  	  Support for remote processors (such as DSP coprocessors). These
-> >> @@ -14,6 +14,15 @@ config REMOTEPROC
-> >>  
-> >>  if REMOTEPROC
-> >>  
-> >> +config REMOTEPROC_VIRTIO
-> >> +	bool "Remoteproc virtio device "
-> >> +	select VIRTIO
-> >> +	help
-> >> +	  Say y here to have a virtio device support for the remoteproc
-> >> +	  communication.
-> >> +
-> >> +	  It's safe to say N if you don't use the virtio for the IPC.
-> >> +
-> >>  config REMOTEPROC_CDEV
-> >>  	bool "Remoteproc character device interface"
-> >>  	help
-> >> diff --git a/drivers/remoteproc/Makefile b/drivers/remoteproc/Makefile
-> >> index bb26c9e4ef9c..73d2384a76aa 100644
-> >> --- a/drivers/remoteproc/Makefile
-> >> +++ b/drivers/remoteproc/Makefile
-> >> @@ -8,8 +8,8 @@ remoteproc-y				:= remoteproc_core.o
-> >>  remoteproc-y				+= remoteproc_coredump.o
-> >>  remoteproc-y				+= remoteproc_debugfs.o
-> >>  remoteproc-y				+= remoteproc_sysfs.o
-> >> -remoteproc-y				+= remoteproc_virtio.o
-> >>  remoteproc-y				+= remoteproc_elf_loader.o
-> >> +obj-$(CONFIG_REMOTEPROC_VIRTIO)		+= remoteproc_virtio.o
-> >>  obj-$(CONFIG_REMOTEPROC_CDEV)		+= remoteproc_cdev.o
-> >>  obj-$(CONFIG_IMX_REMOTEPROC)		+= imx_rproc.o
-> >>  obj-$(CONFIG_INGENIC_VPU_RPROC)		+= ingenic_rproc.o
-> >> diff --git a/drivers/remoteproc/remoteproc_internal.h b/drivers/remoteproc/remoteproc_internal.h
-> >> index 152fe2e8668a..4ce012c353c0 100644
-> >> --- a/drivers/remoteproc/remoteproc_internal.h
-> >> +++ b/drivers/remoteproc/remoteproc_internal.h
-> >> @@ -30,10 +30,38 @@ int rproc_of_parse_firmware(struct device *dev, int index,
-> >>  			    const char **fw_name);
-> >>  
-> >>  /* from remoteproc_virtio.c */
-> >> +#if IS_ENABLED(CONFIG_REMOTEPROC_VIRTIO)
-> >> +
-> >>  int rproc_rvdev_add_device(struct rproc_vdev *rvdev);
-> >>  irqreturn_t rproc_vq_interrupt(struct rproc *rproc, int vq_id);
-> >>  void rproc_vdev_release(struct kref *ref);
-> >>  
-> >> +#else
-> >> +
-> >> +int rproc_rvdev_add_device(struct rproc_vdev *rvdev)
-> >> +{
-> >> +	/* This shouldn't be possible */
-> >> +	WARN_ON(1);
-> >> +
-> >> +	return -ENXIO;
-> >> +}
-> >> +
-> >> +static inline irqreturn_t rproc_vq_interrupt(struct rproc *rproc, int vq_id)
-> >> +{
-> >> +	/* This shouldn't be possible */
-> >> +	WARN_ON(1);
-> >> +
-> >> +	return IRQ_NONE;
-> >> +}
-> >> +
-> >> +static inline void rproc_vdev_release(struct kref *ref)
-> >> +{
-> >> +	/* This shouldn't be possible */
-> >> +	WARN_ON(1);
-> >> +}
-> >> +
-> >> +#endif
-> >> +
-> >>  /* from remoteproc_debugfs.c */
-> >>  void rproc_remove_trace_file(struct dentry *tfile);
-> >>  struct dentry *rproc_create_trace_file(const char *name, struct rproc *rproc,
-> >> -- 
-> >> 2.17.1
-> >>
