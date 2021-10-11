@@ -2,150 +2,185 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B24DC433EF
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 11 Oct 2021 08:59:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0226FC433F5
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 11 Oct 2021 09:33:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1DCC860F5B
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 11 Oct 2021 08:59:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CAC7D60F38
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 11 Oct 2021 09:33:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235362AbhJKJBN (ORCPT
+        id S235497AbhJKJfu (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 11 Oct 2021 05:01:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52624 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235182AbhJKJBM (ORCPT
+        Mon, 11 Oct 2021 05:35:50 -0400
+Received: from mx07-00178001.pphosted.com ([185.132.182.106]:44902 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S235476AbhJKJfu (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 11 Oct 2021 05:01:12 -0400
-Received: from mail-pj1-x102c.google.com (mail-pj1-x102c.google.com [IPv6:2607:f8b0:4864:20::102c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4E8A9C061570;
-        Mon, 11 Oct 2021 01:59:13 -0700 (PDT)
-Received: by mail-pj1-x102c.google.com with SMTP id kk10so12778095pjb.1;
-        Mon, 11 Oct 2021 01:59:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=vGneKOC24QuMCjEYWlUBU8VDrtxfsIr1RhnhAhHHF+M=;
-        b=D/CqcjmkD+qbGKq75suNcj8TDyKFRdiYRHYuk0BPHs/eieJoB1wipP4/amVUpx3l2j
-         vPt+79WMN7Py1lY8Z4Q8E3b/VeI3RxfYiIoqm22+HwEU1NPERMvsfwLPKRyaqrTQ6GBA
-         6gy70m9iYD+s47FwXoh9567WCy4XbDZ5AwThlNwhKAg8yr9/TWuSTnhakvUpFDHrgU86
-         xqNFmIX5DlZb/P6Lg6zjRge2yqq+2ib9NP5qNd5LnK8YQpCdtrWR85IvpeoOxdNEU2vq
-         8SPCY+/J5NRNMuLA98wAb86QUvnDl6dKvyDupSZJWgEA3m+wytYWClhvXT753B1WsUn5
-         s2+Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=vGneKOC24QuMCjEYWlUBU8VDrtxfsIr1RhnhAhHHF+M=;
-        b=mYhKhpk5ORbwCUyULXOf/hr066luBUAA9DBQpHf6f7iB2LJg71mL6gs16uQfr/C+ey
-         5jabRVDo6C3eEqeHHVLDRP9tmSXcfw+0C9Sjd8nU7SgNWhHRrjZYVdVV7qhKguDHuA+U
-         Rigu9lwPoax8vBXittTaxZPq6fE/OZrpn1NGtiGBox64B8YWh7BUKEdHtWJ+df5vCW6q
-         E9VQziH5imVNKYHp6+anWVlws+MAkakiSEWOO3srksk/bq3HfuvQcQN41IzUUDazaKZn
-         +TkkWapKebLrJYswLXCyL7qRotMjAmglF4C2GUsc/Bot2wJ9H/63VFgNi0a/zel+PkJH
-         fOAA==
-X-Gm-Message-State: AOAM530YwYJCYFpzeg7HtqzBDapooBZwqGCc+E8/yv3d2ZWCW06yliWD
-        jo/pSOPCGL53yb2AkubHrn2L70L9PbViKsunym2RkFVg
-X-Google-Smtp-Source: ABdhPJwPsC9ZmdwzqBs+538/1xCR82uNDneuqKN86/VbU7FwTH6z1kJNOBpdAavDGyMDDLaZUUZt9pWlK7eNOwPFJHA=
-X-Received: by 2002:a17:90a:cd:: with SMTP id v13mr29462760pjd.81.1633942752653;
- Mon, 11 Oct 2021 01:59:12 -0700 (PDT)
+        Mon, 11 Oct 2021 05:35:50 -0400
+Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 19B824oX014133;
+        Mon, 11 Oct 2021 11:33:39 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-transfer-encoding :
+ content-type; s=selector1;
+ bh=4IZcyiEmJqJknYqY3HebfFSwzt2k+W5tkomkh6G8X1U=;
+ b=CbpIgAnUR55EcjRZf1X0kVgjPWJoRIC618TZrDIDc9/hstdYIZNTKjMaAcVFmmEiA9ty
+ 9dfQFnqopE80XabEmUdrUQO0oB2f96ucYo2SLLksyD905bB5ncCtsbn0czgIAdKVlhva
+ Y3k12HR74UnyQPep/lQwo+GEaNRfy1bAd2Tn8CScDYlIFp2g2JikFdq0xWSZvj5ZCtKg
+ 5fYwD0gSx56Oed3f5XEea04yInq+K+1GZQUR323V9PWI1wr8Ld7NrviGJQccj/DoWBHk
+ Kx0EBNzHumqaUoR/4nNJwWMqX//70/k+xvWFkVdwgP8jY7A+iY9sUHj9WaeXKFzKKx/x qw== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 3bmasq2kc3-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 11 Oct 2021 11:33:39 +0200
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 5049510002A;
+        Mon, 11 Oct 2021 11:33:37 +0200 (CEST)
+Received: from Webmail-eu.st.com (sfhdag2node2.st.com [10.75.127.5])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 47C9E21B501;
+        Mon, 11 Oct 2021 11:33:37 +0200 (CEST)
+Received: from localhost (10.75.127.49) by SFHDAG2NODE2.st.com (10.75.127.5)
+ with Microsoft SMTP Server (TLS) id 15.0.1497.18; Mon, 11 Oct 2021 11:33:36
+ +0200
+From:   Fabien Dessenne <fabien.dessenne@foss.st.com>
+To:     Ohad Ben-Cohen <ohad@wizery.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        <linux-remoteproc@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+CC:     Fabien Dessenne <fabien.dessenne@foss.st.com>
+Subject: [PATCH] hwspinlock: stm32: enable clock at probe
+Date:   Mon, 11 Oct 2021 11:33:26 +0200
+Message-ID: <20211011093326.817797-1-fabien.dessenne@foss.st.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-References: <20210928132902.1594277-1-aardelean@deviqon.com>
- <YVOKQwGj5/jR8Q5H@builder.lan> <CA+U=Dsr=C4zT3gZ2HdKc5jmbJ6HAwOOBBFzb03GtrxOCZ3cynQ@mail.gmail.com>
-In-Reply-To: <CA+U=Dsr=C4zT3gZ2HdKc5jmbJ6HAwOOBBFzb03GtrxOCZ3cynQ@mail.gmail.com>
-From:   Alexandru Ardelean <ardeleanalex@gmail.com>
-Date:   Mon, 11 Oct 2021 11:59:01 +0300
-Message-ID: <CA+U=DsrEuOdzn=YhQ_AwTFyaJesqHNC9vycDa9TyQMSaEwaEWw@mail.gmail.com>
-Subject: Re: [PATCH] rpmsg: virtio_rpmsg_bus: use dev_warn_ratelimited for msg
- with no recipient
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     linux-remoteproc@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Ohad Ben Cohen <ohad@wizery.com>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.75.127.49]
+X-ClientProxiedBy: SFHDAG2NODE1.st.com (10.75.127.4) To SFHDAG2NODE2.st.com
+ (10.75.127.5)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.182.1,Aquarius:18.0.790,Hydra:6.0.391,FMLib:17.0.607.475
+ definitions=2021-10-11_03,2021-10-07_02,2020-04-07_01
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Wed, Sep 29, 2021 at 12:40 PM Alexandru Ardelean
-<ardeleanalex@gmail.com> wrote:
->
-> On Wed, Sep 29, 2021 at 12:33 AM Bjorn Andersson
-> <bjorn.andersson@linaro.org> wrote:
-> >
-> > On Tue 28 Sep 08:29 CDT 2021, Alexandru Ardelean wrote:
-> >
-> > > From: Alexandru Ardelean <ardeleanalex@gmail.com>
-> > >
-> > > Even though it may be user-space's fault for this error (some application
-> > > terminated or crashed without cleaning up it's endpoint), the rpmsg
-> > > communication should not overflow the syslog with too many messages.
-> > >
-> > > A dev_warn_ratelimited() seems like a good alternative in case this can
-> > > occur.
-> > >
-> >
-> > Is there anything a user could/should do when they see this entry in
-> > their log?
->
-> Not really, no.
-> The userspace application would need to respawn, or some systemd (or
-> similar process manager) would need to respawn the application it
-> should recover the state, and communication should resume normally.
-> I think this message is good mostly as informative.
->
-> >
-> > It doesn't look very actionable to me, should we perhaps degrade it
-> > further to just a dev_dbg()?
->
-> It's not actionable unfortunately.
-> But I feel it is useful to have this message, until the application recovers.
-> Mostly to be informative.
-> A more robust mechanism would be to setup some counters, where we
-> count the number of missed messages.
-> And then access this counter via sysfs or something.
->
-> The problem is that a high-rate of dev_warn() (during failure),
-> temporarily increases system CPU usage & load-average, making the
-> recovery a bit slower, because systemd-journald is processing these
-> messages from the kernel.
-> So, dev_dbg() would definitely help, but would also require us to bump
-> the system log-level to see the messages.
-> And if they occur and we don't see them, it causes more questions and
-> debugging, because people won't know for sure what the issue is.
->
-> Ultimately, dev_dbg() or dev_warn_rate_limited() are both fine.
-> The goal is to avoid the temporary increase in CPU load.
-> I just wanted to state my arguments for dev_warn_ratelimite() :)
->
+Set the clock during probe and keep its control during suspend / resume
+operations.
+This fixes an issue when CONFIG_PM is not set and where the clock is
+never enabled.
 
-Ping on this :)
+Make use of devm_ functions to simplify the code.
 
-> Thank you
-> Alex
->
-> >
-> > Regards,
-> > Bjorn
-> >
-> > > Signed-off-by: Alexandru Ardelean <ardeleanalex@gmail.com>
-> > > ---
-> > >  drivers/rpmsg/virtio_rpmsg_bus.c | 2 +-
-> > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > >
-> > > diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
-> > > index 8e49a3bacfc7..546f0fb66f1d 100644
-> > > --- a/drivers/rpmsg/virtio_rpmsg_bus.c
-> > > +++ b/drivers/rpmsg/virtio_rpmsg_bus.c
-> > > @@ -749,7 +749,7 @@ static int rpmsg_recv_single(struct virtproc_info *vrp, struct device *dev,
-> > >               /* farewell, ept, we don't need you anymore */
-> > >               kref_put(&ept->refcount, __ept_release);
-> > >       } else
-> > > -             dev_warn(dev, "msg received with no recipient\n");
-> > > +             dev_warn_ratelimited(dev, "msg received with no recipient\n");
-> > >
-> > >       /* publish the real size of the buffer */
-> > >       rpmsg_sg_init(&sg, msg, vrp->buf_size);
-> > > --
-> > > 2.31.1
-> > >
+Signed-off-by: Fabien Dessenne <fabien.dessenne@foss.st.com>
+---
+ drivers/hwspinlock/stm32_hwspinlock.c | 60 +++++++++++++++++----------
+ 1 file changed, 38 insertions(+), 22 deletions(-)
+
+diff --git a/drivers/hwspinlock/stm32_hwspinlock.c b/drivers/hwspinlock/stm32_hwspinlock.c
+index 3ad0ce0da4d9..6c3be33f3faf 100644
+--- a/drivers/hwspinlock/stm32_hwspinlock.c
++++ b/drivers/hwspinlock/stm32_hwspinlock.c
+@@ -54,8 +54,23 @@ static const struct hwspinlock_ops stm32_hwspinlock_ops = {
+ 	.relax		= stm32_hwspinlock_relax,
+ };
+ 
++static void stm32_hwspinlock_disable_clk(void *data)
++{
++	struct platform_device *pdev = data;
++	struct stm32_hwspinlock *hw = platform_get_drvdata(pdev);
++	struct device *dev = &pdev->dev;
++
++	pm_runtime_get_sync(dev);
++	pm_runtime_disable(dev);
++	pm_runtime_set_suspended(dev);
++	pm_runtime_put_noidle(dev);
++
++	clk_disable_unprepare(hw->clk);
++}
++
+ static int stm32_hwspinlock_probe(struct platform_device *pdev)
+ {
++	struct device *dev = &pdev->dev;
+ 	struct stm32_hwspinlock *hw;
+ 	void __iomem *io_base;
+ 	size_t array_size;
+@@ -66,41 +81,43 @@ static int stm32_hwspinlock_probe(struct platform_device *pdev)
+ 		return PTR_ERR(io_base);
+ 
+ 	array_size = STM32_MUTEX_NUM_LOCKS * sizeof(struct hwspinlock);
+-	hw = devm_kzalloc(&pdev->dev, sizeof(*hw) + array_size, GFP_KERNEL);
++	hw = devm_kzalloc(dev, sizeof(*hw) + array_size, GFP_KERNEL);
+ 	if (!hw)
+ 		return -ENOMEM;
+ 
+-	hw->clk = devm_clk_get(&pdev->dev, "hsem");
++	hw->clk = devm_clk_get(dev, "hsem");
+ 	if (IS_ERR(hw->clk))
+ 		return PTR_ERR(hw->clk);
+ 
+-	for (i = 0; i < STM32_MUTEX_NUM_LOCKS; i++)
+-		hw->bank.lock[i].priv = io_base + i * sizeof(u32);
++	ret = clk_prepare_enable(hw->clk);
++	if (ret) {
++		dev_err(dev, "Failed to prepare_enable clock\n");
++		return ret;
++	}
++
++	pm_runtime_get_noresume(dev);
++	pm_runtime_set_active(dev);
++	pm_runtime_enable(dev);
++	pm_runtime_put(dev);
+ 
+ 	platform_set_drvdata(pdev, hw);
+-	pm_runtime_enable(&pdev->dev);
+ 
+-	ret = hwspin_lock_register(&hw->bank, &pdev->dev, &stm32_hwspinlock_ops,
+-				   0, STM32_MUTEX_NUM_LOCKS);
++	ret = devm_add_action_or_reset(dev, stm32_hwspinlock_disable_clk, pdev);
++	if (ret) {
++		dev_err(dev, "Failed to register action\n");
++		return ret;
++	}
+ 
+-	if (ret)
+-		pm_runtime_disable(&pdev->dev);
+-
+-	return ret;
+-}
++	for (i = 0; i < STM32_MUTEX_NUM_LOCKS; i++)
++		hw->bank.lock[i].priv = io_base + i * sizeof(u32);
+ 
+-static int stm32_hwspinlock_remove(struct platform_device *pdev)
+-{
+-	struct stm32_hwspinlock *hw = platform_get_drvdata(pdev);
+-	int ret;
++	ret = devm_hwspin_lock_register(dev, &hw->bank, &stm32_hwspinlock_ops,
++					0, STM32_MUTEX_NUM_LOCKS);
+ 
+-	ret = hwspin_lock_unregister(&hw->bank);
+ 	if (ret)
+-		dev_err(&pdev->dev, "%s failed: %d\n", __func__, ret);
+-
+-	pm_runtime_disable(&pdev->dev);
++		dev_err(dev, "Failed to register hwspinlock\n");
+ 
+-	return 0;
++	return ret;
+ }
+ 
+ static int __maybe_unused stm32_hwspinlock_runtime_suspend(struct device *dev)
+@@ -135,7 +152,6 @@ MODULE_DEVICE_TABLE(of, stm32_hwpinlock_ids);
+ 
+ static struct platform_driver stm32_hwspinlock_driver = {
+ 	.probe		= stm32_hwspinlock_probe,
+-	.remove		= stm32_hwspinlock_remove,
+ 	.driver		= {
+ 		.name	= "stm32_hwspinlock",
+ 		.of_match_table = stm32_hwpinlock_ids,
+-- 
+2.25.1
+
