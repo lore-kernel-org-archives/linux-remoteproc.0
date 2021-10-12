@@ -2,1352 +2,427 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CD45C433EF
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 12 Oct 2021 17:06:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FEC4C433F5
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 12 Oct 2021 18:07:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 35ECB60ED4
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 12 Oct 2021 17:06:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3A7CD6109E
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 12 Oct 2021 18:07:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230148AbhJLRII (ORCPT
+        id S231830AbhJLSJb (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 12 Oct 2021 13:08:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39464 "EHLO
+        Tue, 12 Oct 2021 14:09:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54068 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229606AbhJLRII (ORCPT
+        with ESMTP id S230394AbhJLSJa (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 12 Oct 2021 13:08:08 -0400
-Received: from mail-pg1-x535.google.com (mail-pg1-x535.google.com [IPv6:2607:f8b0:4864:20::535])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4C3BAC061745
-        for <linux-remoteproc@vger.kernel.org>; Tue, 12 Oct 2021 10:06:06 -0700 (PDT)
-Received: by mail-pg1-x535.google.com with SMTP id q12so13731773pgq.12
-        for <linux-remoteproc@vger.kernel.org>; Tue, 12 Oct 2021 10:06:06 -0700 (PDT)
+        Tue, 12 Oct 2021 14:09:30 -0400
+Received: from mail-pg1-x530.google.com (mail-pg1-x530.google.com [IPv6:2607:f8b0:4864:20::530])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E5E43C061570
+        for <linux-remoteproc@vger.kernel.org>; Tue, 12 Oct 2021 11:07:27 -0700 (PDT)
+Received: by mail-pg1-x530.google.com with SMTP id m21so14593548pgu.13
+        for <linux-remoteproc@vger.kernel.org>; Tue, 12 Oct 2021 11:07:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=gL7v5cfJ567j+9g+lo6MIeqFZSCjq5UpGskwE2pHbfg=;
-        b=lkUiyA8Zd+HQ0pI8h8b83wDesYCn1EOlg7Aiq4xUEWHOWD4F9eOFBPcHMYenUpt9xu
-         K5pb+cb7K013Gd3Yc/fWIE4fXkgCDGAzhn/mn3yhTrP0dmYly11majbliCeSHqERplPW
-         YlIzj/qJUWMMnqpzmRD3UzkirJcngcTPmJQzlii4Ulo1vlY+8dEXUUQTm5whGgvFFaOE
-         2LamfcZBGbbArQT4VjMPcvphcOZAWkJi4+MKY8MCYtqhWA03xe9VfkIqZX7WRhikvOXC
-         /LQX7r31jbyAFZaivZPCQC+BpPKY9e0Y3JCHdm8b3Q1I+SGpmvdZR9o0n6wrNahAbPip
-         NOOw==
+        bh=rMd1IaPeCuFrQobeBMJaKkh6bQtA9AR/auByeNqJ+RQ=;
+        b=S3hyd+VwcMOzJ2wNAL4Lp/F5Gp4nQRZExwedW78SfOusSVgVnIrWkpCirTVVvlaCu7
+         b8hX75+zBfprcY7gBEc4dJ1nO5t5JKei5LNICqySHsKH4AliRSlgtyVpxknry0RH6VTH
+         IRd4FOhhZyZjHhsvWfstMMyUvcC3ylNxDTrhCa17hGJshwIijGm2nmbaw2T4rfnOyiQj
+         o6rI0xW+cRsS/X/hn+0k0Hc+zCaXRsXtSBjmIEjsCm4640HuHJlpOlsoAO1cCXlLKppa
+         mW9+H3YuNLG61QqKXzIkMyv9R6Vo1kIap6pE0TqUc9Vzg+CbUg38SwSN+Uc7Zr+Tbyvu
+         iWaA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=gL7v5cfJ567j+9g+lo6MIeqFZSCjq5UpGskwE2pHbfg=;
-        b=lTdWBy4E++KcrIZZ/saJFvPBXwrWPrReMh7htGhaFxHv6w0JtTV5aeSODnSzE0+zyH
-         aZvVlR3p8X93KBx/VlchXXUqssFpyvIn2rU+klGV5QmYwbaZ7UfgG46wIew76BD1BeAg
-         wpGHLy5SCuH2zd9bHqKvnmgeUGFlx+eRYzXCr6Vu8duJ3lxdOxoTv7bgCOu7bZsMDYdb
-         2Xq8N7Q9c8oKwBLTJ29ZrV6RtP3ur9gfk+bPIwAGe/ARmF37JEBp+kv7M2FiA1oB524C
-         Wlgk94vRTLqhwY7wxnqX/YvqOlq0H3uWnHNjhO19mLY1a8ikAFLkh63wamli4sFVX8aK
-         I+yA==
-X-Gm-Message-State: AOAM531haDxZ2cFyMzi4vFe569F5MQ9elYjf3O3kFD8UvRpD8u7kl8nG
-        PQTf9xu6iiKqZvwaWnosyQPh/w==
-X-Google-Smtp-Source: ABdhPJx206fllKXpEYDnqKUDaxDjnG7/q5QEZ8SKBafD1r1xeKlYRTreco49sI+gX/qQzp7gxdmwXQ==
-X-Received: by 2002:a05:6a00:214d:b0:44d:35e9:4ce2 with SMTP id o13-20020a056a00214d00b0044d35e94ce2mr6504517pfk.13.1634058365238;
-        Tue, 12 Oct 2021 10:06:05 -0700 (PDT)
+        bh=rMd1IaPeCuFrQobeBMJaKkh6bQtA9AR/auByeNqJ+RQ=;
+        b=P5keSr3DJ/rwfia2XVC8QuID7PgchKFfWL7XsKoUQubWJM1UJMU4yjddbswVpiBXNE
+         B69DeQJWz4nqrUqAewEfXm7Bwv5mipKmSHlKyy8TUZbrXZM7euFUIrHSHMPwZrjNzEOL
+         H5uuJYGJg5FBWzJREGlYSSQOsTDp4IfpJ+w6SukBObuNHjQX/OmXW71D6Uh6rDtcD1/7
+         N6WrBBhNOYbYyXM6gZhQFe2NOgwdEcJy9BBCNodycNDj8SWzZqyM2bLgIburH8IEPISm
+         YgcRH30DdCAsqtGk5MFXGQv7eBSSjtDGi2+SpNTmmG4WBrJTfKyVM31nAqKjmEF6nC2z
+         xotA==
+X-Gm-Message-State: AOAM531S3GcBXxb6jQI5W2K6RcZlie25JV/GkPtq1FGQQT+aNhRlzq2y
+        AZsZYcaOUNRrf82pLfpvgKV1aw==
+X-Google-Smtp-Source: ABdhPJxTdbvMeegWk+dJtZYVHNS0MUiwCZX/EWGA6FGVaAvtkMyxjCTjsEBxTVoPrcHU3Bd9gQ9wAA==
+X-Received: by 2002:a62:b50d:0:b0:44b:b81f:a956 with SMTP id y13-20020a62b50d000000b0044bb81fa956mr32359669pfe.27.1634062046894;
+        Tue, 12 Oct 2021 11:07:26 -0700 (PDT)
 Received: from p14s (S0106889e681aac74.cg.shawcable.net. [68.147.0.187])
-        by smtp.gmail.com with ESMTPSA id t3sm9599807pgu.87.2021.10.12.10.06.02
+        by smtp.gmail.com with ESMTPSA id o5sm3499682pjg.40.2021.10.12.11.07.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Oct 2021 10:06:04 -0700 (PDT)
-Date:   Tue, 12 Oct 2021 11:06:01 -0600
+        Tue, 12 Oct 2021 11:07:25 -0700 (PDT)
+Date:   Tue, 12 Oct 2021 12:07:23 -0600
 From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-To:     Shengjiu Wang <shengjiu.wang@nxp.com>
-Cc:     ohad@wizery.com, bjorn.andersson@linaro.org, robh+dt@kernel.org,
-        shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
-        festevam@gmail.com, linux-imx@nxp.com,
-        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        shengjiu.wang@gmail.com
-Subject: Re: [PATCH v6 3/4] remoteproc: imx_dsp_rproc: Add remoteproc driver
- for DSP on i.MX
-Message-ID: <20211012170601.GB4010675@p14s>
-References: <1633944015-789-1-git-send-email-shengjiu.wang@nxp.com>
- <1633944015-789-4-git-send-email-shengjiu.wang@nxp.com>
+To:     Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+Cc:     Ohad Ben-Cohen <ohad@wizery.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jirislaby@kernel.org>, Suman Anna <s-anna@ti.com>,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org
+Subject: Re: [PATCH v9 2/2] tty: add rpmsg driver
+Message-ID: <20211012180723.GC4010675@p14s>
+References: <20211008153446.23188-1-arnaud.pouliquen@foss.st.com>
+ <20211008153446.23188-3-arnaud.pouliquen@foss.st.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1633944015-789-4-git-send-email-shengjiu.wang@nxp.com>
+In-Reply-To: <20211008153446.23188-3-arnaud.pouliquen@foss.st.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Mon, Oct 11, 2021 at 05:20:14PM +0800, Shengjiu Wang wrote:
-> Provide a basic driver to control DSP processor found on NXP i.MX8QM,
-> i.MX8QXP, i.MX8MP and i.MX8ULP.
+On Fri, Oct 08, 2021 at 05:34:46PM +0200, Arnaud Pouliquen wrote:
+> This driver exposes a standard TTY interface on top of the rpmsg
+> framework through a rpmsg service.
 > 
-> Currently it is able to resolve addresses between DSP and main CPU,
-> start and stop the processor, suspend and resume.
+> This driver supports multi-instances, offering a /dev/ttyRPMSGx entry
+> per rpmsg endpoint.
 > 
-> The communication between DSP and main CPU is based on mailbox, there
-> are three mailbox channels (tx, rx, rxdb).
+> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
 > 
-> This driver was tested on NXP i.MX8QM, i.MX8QXP, i.MX8MP and i.MX8ULP.
-> 
-> Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
-> Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 > ---
->  drivers/remoteproc/Kconfig         |   11 +
->  drivers/remoteproc/Makefile        |    1 +
->  drivers/remoteproc/imx_dsp_rproc.c | 1206 ++++++++++++++++++++++++++++
->  3 files changed, 1218 insertions(+)
->  create mode 100644 drivers/remoteproc/imx_dsp_rproc.c
+> Update from V8
+> => Update based on Greg Greg Kroah-Hartman comments:
+>  - add module name in kconfig
+>  - remove the tty_rpmsg.rst documentation file and add description in
+>    rpmsg_tty.c.
+>  - rpmsg_tty.c remove of useless check and logs.
+>  - print err log instead of debug log on truncated RX buffer.
+> ---
+>  drivers/tty/Kconfig     |  12 ++
+>  drivers/tty/Makefile    |   1 +
+>  drivers/tty/rpmsg_tty.c | 275 ++++++++++++++++++++++++++++++++++++++++
+>  3 files changed, 288 insertions(+)
+>  create mode 100644 drivers/tty/rpmsg_tty.c
 > 
-> diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
-> index dcb87a366ec7..f2e961f998ca 100644
-> --- a/drivers/remoteproc/Kconfig
-> +++ b/drivers/remoteproc/Kconfig
-> @@ -34,6 +34,17 @@ config IMX_REMOTEPROC
+> diff --git a/drivers/tty/Kconfig b/drivers/tty/Kconfig
+> index 23cc988c68a4..cc30ff93e2e4 100644
+> --- a/drivers/tty/Kconfig
+> +++ b/drivers/tty/Kconfig
+> @@ -368,6 +368,18 @@ config VCC
 >  
->  	  It's safe to say N here.
+>  source "drivers/tty/hvc/Kconfig"
 >  
-> +config IMX_DSP_REMOTEPROC
-> +	tristate "i.MX DSP remoteproc support"
-> +	depends on ARCH_MXC
-> +	depends on HAVE_ARM_SMCCC
-> +	select MAILBOX
+> +config RPMSG_TTY
+> +	tristate "RPMSG tty driver"
+> +	depends on RPMSG
 > +	help
-> +	  Say y here to support iMX's DSP remote processors via the remote
-> +	  processor framework.
+> +	  Say y here to export rpmsg endpoints as tty devices, usually found
+> +	  in /dev/ttyRPMSGx.
+> +	  This makes it possible for user-space programs to send and receive
+> +	  rpmsg messages as a standard tty protocol.
 > +
-> +	  It's safe to say N here.
+> +	  To compile this driver as a module, choose M here: the module will be
+> +	  called rpmsg_tty.
 > +
->  config INGENIC_VPU_RPROC
->  	tristate "Ingenic JZ47xx VPU remoteproc support"
->  	depends on MIPS || COMPILE_TEST
-> diff --git a/drivers/remoteproc/Makefile b/drivers/remoteproc/Makefile
-> index ce1abeb30907..0ac256b6c977 100644
-> --- a/drivers/remoteproc/Makefile
-> +++ b/drivers/remoteproc/Makefile
-> @@ -12,6 +12,7 @@ remoteproc-y				+= remoteproc_virtio.o
->  remoteproc-y				+= remoteproc_elf_loader.o
->  obj-$(CONFIG_REMOTEPROC_CDEV)		+= remoteproc_cdev.o
->  obj-$(CONFIG_IMX_REMOTEPROC)		+= imx_rproc.o
-> +obj-$(CONFIG_IMX_DSP_REMOTEPROC)	+= imx_dsp_rproc.o
->  obj-$(CONFIG_INGENIC_VPU_RPROC)		+= ingenic_rproc.o
->  obj-$(CONFIG_MTK_SCP)			+= mtk_scp.o mtk_scp_ipi.o
->  obj-$(CONFIG_OMAP_REMOTEPROC)		+= omap_remoteproc.o
-> diff --git a/drivers/remoteproc/imx_dsp_rproc.c b/drivers/remoteproc/imx_dsp_rproc.c
+>  endif # TTY
+>  
+>  source "drivers/tty/serdev/Kconfig"
+> diff --git a/drivers/tty/Makefile b/drivers/tty/Makefile
+> index a2bd75fbaaa4..07aca5184a55 100644
+> --- a/drivers/tty/Makefile
+> +++ b/drivers/tty/Makefile
+> @@ -26,5 +26,6 @@ obj-$(CONFIG_PPC_EPAPR_HV_BYTECHAN) += ehv_bytechan.o
+>  obj-$(CONFIG_GOLDFISH_TTY)	+= goldfish.o
+>  obj-$(CONFIG_MIPS_EJTAG_FDC_TTY) += mips_ejtag_fdc.o
+>  obj-$(CONFIG_VCC)		+= vcc.o
+> +obj-$(CONFIG_RPMSG_TTY)		+= rpmsg_tty.o
+>  
+>  obj-y += ipwireless/
+> diff --git a/drivers/tty/rpmsg_tty.c b/drivers/tty/rpmsg_tty.c
 > new file mode 100644
-> index 000000000000..63749cfcf22f
+> index 000000000000..226a13f6ef94
 > --- /dev/null
-> +++ b/drivers/remoteproc/imx_dsp_rproc.c
-> @@ -0,0 +1,1206 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +// Copyright 2021 NXP
-
-I just noticed the '//' on the copyright line.  Please send a patch to change
-that to C style comments.
-
-Thanks,
-Mathieu
-
+> +++ b/drivers/tty/rpmsg_tty.c
+> @@ -0,0 +1,275 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (C) 2021 STMicroelectronics - All Rights Reserved
+> + *
+> + * The rpmsg tty driver implements serial communication on the RPMsg bus to makes
+> + * possible for user-space programs to send and receive rpmsg messages as a standard
+> + * tty protocol.
+> + *
+> + * The remote processor can instantiate a new tty by requesting a "rpmsg-tty" RPMsg service.
+> + * The "rpmsg-tty" service is directly used for data exchange. No flow control is implemented yet.
+> + */
 > +
-> +#include <dt-bindings/firmware/imx/rsrc.h>
-> +#include <linux/arm-smccc.h>
-> +#include <linux/clk.h>
-> +#include <linux/err.h>
-> +#include <linux/firmware.h>
-> +#include <linux/firmware/imx/sci.h>
-> +#include <linux/interrupt.h>
-> +#include <linux/kernel.h>
-> +#include <linux/mailbox_client.h>
-> +#include <linux/mfd/syscon.h>
 > +#include <linux/module.h>
-> +#include <linux/of_address.h>
-> +#include <linux/of_device.h>
-> +#include <linux/of_reserved_mem.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/pm_domain.h>
-> +#include <linux/pm_runtime.h>
-> +#include <linux/regmap.h>
-> +#include <linux/remoteproc.h>
+> +#include <linux/rpmsg.h>
 > +#include <linux/slab.h>
+> +#include <linux/tty.h>
+> +#include <linux/tty_flip.h>
 > +
-> +#include "imx_rproc.h"
-> +#include "remoteproc_elf_helpers.h"
-> +#include "remoteproc_internal.h"
+> +#define MAX_TTY_RPMSG	32
 > +
-> +#define DSP_RPROC_CLK_MAX			5
+> +static DEFINE_IDR(tty_idr);	/* tty instance id */
+> +static DEFINE_MUTEX(idr_lock);	/* protects tty_idr */
 > +
-> +#define REMOTE_IS_READY				BIT(0)
-> +#define REMOTE_READY_WAIT_MAX_RETRIES		500
+> +static struct tty_driver *rpmsg_tty_driver;
 > +
-> +/* att flags */
-> +/* DSP own area */
-> +#define ATT_OWN					BIT(31)
-> +/* DSP instruction area */
-> +#define ATT_IRAM				BIT(30)
-> +
-> +/* Definitions for i.MX8MP */
-> +/* DAP registers */
-> +#define IMX8M_DAP_DEBUG				0x28800000
-> +#define IMX8M_DAP_DEBUG_SIZE			(64 * 1024)
-> +#define IMX8M_DAP_PWRCTL			(0x4000 + 0x3020)
-> +#define IMX8M_PWRCTL_CORERESET			BIT(16)
-> +
-> +/* DSP audio mix registers */
-> +#define IMX8M_AudioDSP_REG0			0x100
-> +#define IMX8M_AudioDSP_REG1			0x104
-> +#define IMX8M_AudioDSP_REG2			0x108
-> +#define IMX8M_AudioDSP_REG3			0x10c
-> +
-> +#define IMX8M_AudioDSP_REG2_RUNSTALL		BIT(5)
-> +#define IMX8M_AudioDSP_REG2_PWAITMODE		BIT(1)
-> +
-> +/* Definitions for i.MX8ULP */
-> +#define IMX8ULP_SIM_LPAV_REG_SYSCTRL0		0x8
-> +#define IMX8ULP_SYSCTRL0_DSP_DBG_RST		BIT(25)
-> +#define IMX8ULP_SYSCTRL0_DSP_PLAT_CLK_EN	BIT(19)
-> +#define IMX8ULP_SYSCTRL0_DSP_PBCLK_EN		BIT(18)
-> +#define IMX8ULP_SYSCTRL0_DSP_CLK_EN		BIT(17)
-> +#define IMX8ULP_SYSCTRL0_DSP_RST		BIT(16)
-> +#define IMX8ULP_SYSCTRL0_DSP_OCD_HALT		BIT(14)
-> +#define IMX8ULP_SYSCTRL0_DSP_STALL		BIT(13)
-> +
-> +#define IMX8ULP_SIP_HIFI_XRDC			0xc200000e
-> +
-> +/*
-> + * enum - Predefined Mailbox Messages
-> + *
-> + * @RP_MBOX_SUSPEND_SYSTEM: system suspend request for the remote processor
-> + *
-> + * @RP_MBOX_SUSPEND_ACK: successful response from remote processor for a
-> + * suspend request
-> + *
-> + * @RP_MBOX_RESUME_SYSTEM: system resume request for the remote processor
-> + *
-> + * @RP_MBOX_RESUME_ACK: successful response from remote processor for a
-> + * resume request
-> + */
-> +enum imx_dsp_rp_mbox_messages {
-> +	RP_MBOX_SUSPEND_SYSTEM			= 0xFF11,
-> +	RP_MBOX_SUSPEND_ACK			= 0xFF12,
-> +	RP_MBOX_RESUME_SYSTEM			= 0xFF13,
-> +	RP_MBOX_RESUME_ACK			= 0xFF14,
+> +struct rpmsg_tty_port {
+> +	struct tty_port		port;	 /* TTY port data */
+> +	int			id;	 /* TTY rpmsg index */
+> +	struct rpmsg_device	*rpdev;	 /* rpmsg device */
 > +};
 > +
-> +/**
-> + * struct imx_dsp_rproc - DSP remote processor state
-> + * @regmap: regmap handler
-> + * @rproc: rproc handler
-> + * @dsp_dcfg: device configuration pointer
-> + * @clks: clocks needed by this device
-> + * @cl: mailbox client to request the mailbox channel
-> + * @cl_rxdb: mailbox client to request the mailbox channel for doorbell
-> + * @tx_ch: mailbox tx channel handle
-> + * @rx_ch: mailbox rx channel handle
-> + * @rxdb_ch: mailbox rx doorbell channel handle
-> + * @pd_dev: power domain device
-> + * @pd_dev_link: power domain device link
-> + * @ipc_handle: System Control Unit ipc handle
-> + * @rproc_work: work for processing virtio interrupts
-> + * @pm_comp: completion primitive to sync for suspend response
-> + * @num_domains: power domain number
-> + * @flags: control flags
-> + */
-> +struct imx_dsp_rproc {
-> +	struct regmap				*regmap;
-> +	struct rproc				*rproc;
-> +	const struct imx_dsp_rproc_dcfg		*dsp_dcfg;
-> +	struct clk_bulk_data			clks[DSP_RPROC_CLK_MAX];
-> +	struct mbox_client			cl;
-> +	struct mbox_client			cl_rxdb;
-> +	struct mbox_chan			*tx_ch;
-> +	struct mbox_chan			*rx_ch;
-> +	struct mbox_chan			*rxdb_ch;
-> +	struct device				**pd_dev;
-> +	struct device_link			**pd_dev_link;
-> +	struct imx_sc_ipc			*ipc_handle;
-> +	struct work_struct			rproc_work;
-> +	struct completion			pm_comp;
-> +	int					num_domains;
-> +	u32					flags;
-> +};
-> +
-> +/**
-> + * struct imx_dsp_rproc_dcfg - DSP remote processor configuration
-> + * @dcfg: imx_rproc_dcfg handler
-> + * @reset: reset callback function
-> + */
-> +struct imx_dsp_rproc_dcfg {
-> +	const struct imx_rproc_dcfg		*dcfg;
-> +	int (*reset)(struct imx_dsp_rproc *priv);
-> +};
-> +
-> +static const struct imx_rproc_att imx_dsp_rproc_att_imx8qm[] = {
-> +	/* dev addr , sys addr  , size	    , flags */
-> +	{ 0x596e8000, 0x556e8000, 0x00008000, ATT_OWN },
-> +	{ 0x596f0000, 0x556f0000, 0x00008000, ATT_OWN },
-> +	{ 0x596f8000, 0x556f8000, 0x00000800, ATT_OWN | ATT_IRAM},
-> +	{ 0x55700000, 0x55700000, 0x00070000, ATT_OWN },
-> +	/* DDR (Data) */
-> +	{ 0x80000000, 0x80000000, 0x60000000, 0},
-> +};
-> +
-> +static const struct imx_rproc_att imx_dsp_rproc_att_imx8qxp[] = {
-> +	/* dev addr , sys addr  , size	    , flags */
-> +	{ 0x596e8000, 0x596e8000, 0x00008000, ATT_OWN },
-> +	{ 0x596f0000, 0x596f0000, 0x00008000, ATT_OWN },
-> +	{ 0x596f8000, 0x596f8000, 0x00000800, ATT_OWN | ATT_IRAM},
-> +	{ 0x59700000, 0x59700000, 0x00070000, ATT_OWN },
-> +	/* DDR (Data) */
-> +	{ 0x80000000, 0x80000000, 0x60000000, 0},
-> +};
-> +
-> +static const struct imx_rproc_att imx_dsp_rproc_att_imx8mp[] = {
-> +	/* dev addr , sys addr  , size	    , flags */
-> +	{ 0x3b6e8000, 0x3b6e8000, 0x00008000, ATT_OWN },
-> +	{ 0x3b6f0000, 0x3b6f0000, 0x00008000, ATT_OWN },
-> +	{ 0x3b6f8000, 0x3b6f8000, 0x00000800, ATT_OWN | ATT_IRAM},
-> +	{ 0x3b700000, 0x3b700000, 0x00040000, ATT_OWN },
-> +	/* DDR (Data) */
-> +	{ 0x40000000, 0x40000000, 0x80000000, 0},
-> +};
-> +
-> +static const struct imx_rproc_att imx_dsp_rproc_att_imx8ulp[] = {
-> +	/* dev addr , sys addr  , size	    , flags */
-> +	{ 0x21170000, 0x21170000, 0x00010000, ATT_OWN | ATT_IRAM},
-> +	{ 0x21180000, 0x21180000, 0x00010000, ATT_OWN },
-> +	/* DDR (Data) */
-> +	{ 0x0c000000, 0x80000000, 0x10000000, 0},
-> +	{ 0x30000000, 0x90000000, 0x10000000, 0},
-> +};
-> +
-> +/* Reset function for DSP on i.MX8MP */
-> +static int imx8mp_dsp_reset(struct imx_dsp_rproc *priv)
+> +static int rpmsg_tty_cb(struct rpmsg_device *rpdev, void *data, int len, void *priv, u32 src)
 > +{
-> +	void __iomem *dap = ioremap_wc(IMX8M_DAP_DEBUG, IMX8M_DAP_DEBUG_SIZE);
-> +	int pwrctl;
+> +	struct rpmsg_tty_port *cport = dev_get_drvdata(&rpdev->dev);
+> +	int copied;
 > +
-> +	/* Put DSP into reset and stall */
-> +	pwrctl = readl(dap + IMX8M_DAP_PWRCTL);
-> +	pwrctl |= IMX8M_PWRCTL_CORERESET;
-> +	writel(pwrctl, dap + IMX8M_DAP_PWRCTL);
-> +
-> +	/* Keep reset asserted for 10 cycles */
-> +	usleep_range(1, 2);
-> +
-> +	regmap_update_bits(priv->regmap, IMX8M_AudioDSP_REG2,
-> +			   IMX8M_AudioDSP_REG2_RUNSTALL,
-> +			   IMX8M_AudioDSP_REG2_RUNSTALL);
-> +
-> +	/* Take the DSP out of reset and keep stalled for FW loading */
-> +	pwrctl = readl(dap + IMX8M_DAP_PWRCTL);
-> +	pwrctl &= ~IMX8M_PWRCTL_CORERESET;
-> +	writel(pwrctl, dap + IMX8M_DAP_PWRCTL);
-> +
-> +	iounmap(dap);
-> +	return 0;
-> +}
-> +
-> +/* Reset function for DSP on i.MX8ULP */
-> +static int imx8ulp_dsp_reset(struct imx_dsp_rproc *priv)
-> +{
-> +	struct arm_smccc_res res;
-> +
-> +	/* Put DSP into reset and stall */
-> +	regmap_update_bits(priv->regmap, IMX8ULP_SIM_LPAV_REG_SYSCTRL0,
-> +			   IMX8ULP_SYSCTRL0_DSP_RST, IMX8ULP_SYSCTRL0_DSP_RST);
-> +	regmap_update_bits(priv->regmap, IMX8ULP_SIM_LPAV_REG_SYSCTRL0,
-> +			   IMX8ULP_SYSCTRL0_DSP_STALL,
-> +			   IMX8ULP_SYSCTRL0_DSP_STALL);
-> +
-> +	/* Configure resources of DSP through TFA */
-> +	arm_smccc_smc(IMX8ULP_SIP_HIFI_XRDC, 0, 0, 0, 0, 0, 0, 0, &res);
-> +
-> +	/* Take the DSP out of reset and keep stalled for FW loading */
-> +	regmap_update_bits(priv->regmap, IMX8ULP_SIM_LPAV_REG_SYSCTRL0,
-> +			   IMX8ULP_SYSCTRL0_DSP_RST, 0);
-> +	regmap_update_bits(priv->regmap, IMX8ULP_SIM_LPAV_REG_SYSCTRL0,
-> +			   IMX8ULP_SYSCTRL0_DSP_DBG_RST, 0);
+> +	if (!len)
+> +		return -EINVAL;
+> +	copied = tty_insert_flip_string(&cport->port, data, len);
+> +	if (copied != len)
+> +		dev_err(&rpdev->dev, "Trunc buffer: available space is %d\n",
+> +			copied);
+> +	tty_flip_buffer_push(&cport->port);
 > +
 > +	return 0;
 > +}
 > +
-> +/* Specific configuration for i.MX8MP */
-> +static const struct imx_rproc_dcfg dsp_rproc_cfg_imx8mp = {
-> +	.src_reg	= IMX8M_AudioDSP_REG2,
-> +	.src_mask	= IMX8M_AudioDSP_REG2_RUNSTALL,
-> +	.src_start	= 0,
-> +	.src_stop	= IMX8M_AudioDSP_REG2_RUNSTALL,
-> +	.att		= imx_dsp_rproc_att_imx8mp,
-> +	.att_size	= ARRAY_SIZE(imx_dsp_rproc_att_imx8mp),
-> +	.method		= IMX_RPROC_MMIO,
-> +};
-> +
-> +static const struct imx_dsp_rproc_dcfg imx_dsp_rproc_cfg_imx8mp = {
-> +	.dcfg		= &dsp_rproc_cfg_imx8mp,
-> +	.reset          = imx8mp_dsp_reset,
-> +};
-> +
-> +/* Specific configuration for i.MX8ULP */
-> +static const struct imx_rproc_dcfg dsp_rproc_cfg_imx8ulp = {
-> +	.src_reg	= IMX8ULP_SIM_LPAV_REG_SYSCTRL0,
-> +	.src_mask	= IMX8ULP_SYSCTRL0_DSP_STALL,
-> +	.src_start	= 0,
-> +	.src_stop	= IMX8ULP_SYSCTRL0_DSP_STALL,
-> +	.att		= imx_dsp_rproc_att_imx8ulp,
-> +	.att_size	= ARRAY_SIZE(imx_dsp_rproc_att_imx8ulp),
-> +	.method		= IMX_RPROC_MMIO,
-> +};
-> +
-> +static const struct imx_dsp_rproc_dcfg imx_dsp_rproc_cfg_imx8ulp = {
-> +	.dcfg		= &dsp_rproc_cfg_imx8ulp,
-> +	.reset          = imx8ulp_dsp_reset,
-> +};
-> +
-> +/* Specific configuration for i.MX8QXP */
-> +static const struct imx_rproc_dcfg dsp_rproc_cfg_imx8qxp = {
-> +	.att		= imx_dsp_rproc_att_imx8qxp,
-> +	.att_size	= ARRAY_SIZE(imx_dsp_rproc_att_imx8qxp),
-> +	.method		= IMX_RPROC_SCU_API,
-> +};
-> +
-> +static const struct imx_dsp_rproc_dcfg imx_dsp_rproc_cfg_imx8qxp = {
-> +	.dcfg		= &dsp_rproc_cfg_imx8qxp,
-> +};
-> +
-> +/* Specific configuration for i.MX8QM */
-> +static const struct imx_rproc_dcfg dsp_rproc_cfg_imx8qm = {
-> +	.att		= imx_dsp_rproc_att_imx8qm,
-> +	.att_size	= ARRAY_SIZE(imx_dsp_rproc_att_imx8qm),
-> +	.method		= IMX_RPROC_SCU_API,
-> +};
-> +
-> +static const struct imx_dsp_rproc_dcfg imx_dsp_rproc_cfg_imx8qm = {
-> +	.dcfg		= &dsp_rproc_cfg_imx8qm,
-> +};
-> +
-> +static int imx_dsp_rproc_ready(struct rproc *rproc)
+> +static int rpmsg_tty_install(struct tty_driver *driver, struct tty_struct *tty)
 > +{
-> +	struct imx_dsp_rproc *priv = rproc->priv;
-> +	int i;
+> +	struct rpmsg_tty_port *cport = idr_find(&tty_idr, tty->index);
 > +
-> +	if (!priv->rxdb_ch)
-> +		return 0;
+> +	tty->driver_data = cport;
 > +
-> +	for (i = 0; i < REMOTE_READY_WAIT_MAX_RETRIES; i++) {
-> +		if (priv->flags & REMOTE_IS_READY)
-> +			return 0;
-> +		usleep_range(100, 200);
-> +	}
-> +
-> +	return -ETIMEDOUT;
+> +	return tty_port_install(&cport->port, driver, tty);
 > +}
 > +
-> +/*
-> + * Start function for rproc_ops
-> + *
-> + * There is a handshake for start procedure: when DSP starts, it
-> + * will send a doorbell message to this driver, then the
-> + * REMOTE_IS_READY flags is set, then driver will kick
-> + * a message to DSP.
-> + */
-> +static int imx_dsp_rproc_start(struct rproc *rproc)
+> +static int rpmsg_tty_open(struct tty_struct *tty, struct file *filp)
 > +{
-> +	struct imx_dsp_rproc *priv = rproc->priv;
-> +	const struct imx_dsp_rproc_dcfg *dsp_dcfg = priv->dsp_dcfg;
-> +	const struct imx_rproc_dcfg *dcfg = dsp_dcfg->dcfg;
-> +	struct device *dev = rproc->dev.parent;
+> +	return tty_port_open(tty->port, tty, filp);
+> +}
+> +
+> +static void rpmsg_tty_close(struct tty_struct *tty, struct file *filp)
+> +{
+> +	return tty_port_close(tty->port, tty, filp);
+> +}
+> +
+> +static int rpmsg_tty_write(struct tty_struct *tty, const u8 *buf, int len)
+> +{
+> +	struct rpmsg_tty_port *cport = tty->driver_data;
+> +	struct rpmsg_device *rpdev;
+> +	int msg_max_size, msg_size;
 > +	int ret;
 > +
-> +	switch (dcfg->method) {
-> +	case IMX_RPROC_MMIO:
-> +		ret = regmap_update_bits(priv->regmap,
-> +					 dcfg->src_reg,
-> +					 dcfg->src_mask,
-> +					 dcfg->src_start);
-> +		break;
-> +	case IMX_RPROC_SCU_API:
-> +		ret = imx_sc_pm_cpu_start(priv->ipc_handle,
-> +					  IMX_SC_R_DSP,
-> +					  true,
-> +					  rproc->bootaddr);
-> +		break;
-> +	default:
-> +		return -EOPNOTSUPP;
-> +	}
+> +	rpdev = cport->rpdev;
 > +
-> +	if (ret)
-> +		dev_err(dev, "Failed to enable remote core!\n");
-> +	else
-> +		ret = imx_dsp_rproc_ready(rproc);
+> +	msg_max_size = rpmsg_get_mtu(rpdev->ept);
+> +	if (msg_max_size < 0)
+> +		return msg_max_size;
 > +
-> +	return ret;
-> +}
-> +
-> +/*
-> + * Stop function for rproc_ops
-> + * It clears the REMOTE_IS_READY flags
-> + */
-> +static int imx_dsp_rproc_stop(struct rproc *rproc)
-> +{
-> +	struct imx_dsp_rproc *priv = rproc->priv;
-> +	const struct imx_dsp_rproc_dcfg *dsp_dcfg = priv->dsp_dcfg;
-> +	const struct imx_rproc_dcfg *dcfg = dsp_dcfg->dcfg;
-> +	struct device *dev = rproc->dev.parent;
-> +	int ret = 0;
-> +
-> +	/* Make sure work is finished */
-> +	flush_work(&priv->rproc_work);
-> +
-> +	if (rproc->state == RPROC_CRASHED) {
-> +		priv->flags &= ~REMOTE_IS_READY;
-> +		return 0;
-> +	}
-> +
-> +	switch (dcfg->method) {
-> +	case IMX_RPROC_MMIO:
-> +		ret = regmap_update_bits(priv->regmap, dcfg->src_reg, dcfg->src_mask,
-> +					 dcfg->src_stop);
-> +		break;
-> +	case IMX_RPROC_SCU_API:
-> +		ret = imx_sc_pm_cpu_start(priv->ipc_handle,
-> +					  IMX_SC_R_DSP,
-> +					  false,
-> +					  rproc->bootaddr);
-> +		break;
-> +	default:
-> +		return -EOPNOTSUPP;
-> +	}
-> +
-> +	if (ret)
-> +		dev_err(dev, "Failed to stop remote core\n");
-> +	else
-> +		priv->flags &= ~REMOTE_IS_READY;
-> +
-> +	return ret;
-> +}
-> +
-> +/**
-> + * imx_dsp_rproc_sys_to_da() - internal memory translation helper
-> + * @priv: private data pointer
-> + * @sys: system address (DDR address)
-> + * @len: length of the memory buffer
-> + * @da: device address to translate
-> + *
-> + * Convert system address (DDR address) to device address (DSP)
-> + * for there may be memory remap for device.
-> + */
-> +static int imx_dsp_rproc_sys_to_da(struct imx_dsp_rproc *priv, u64 sys,
-> +				   size_t len, u64 *da)
-> +{
-> +	const struct imx_dsp_rproc_dcfg *dsp_dcfg = priv->dsp_dcfg;
-> +	const struct imx_rproc_dcfg *dcfg = dsp_dcfg->dcfg;
-> +	int i;
-> +
-> +	/* Parse address translation table */
-> +	for (i = 0; i < dcfg->att_size; i++) {
-> +		const struct imx_rproc_att *att = &dcfg->att[i];
-> +
-> +		if (sys >= att->sa && sys + len <= att->sa + att->size) {
-> +			unsigned int offset = sys - att->sa;
-> +
-> +			*da = att->da + offset;
-> +			return 0;
-> +		}
-> +	}
-> +
-> +	return -ENOENT;
-> +}
-> +
-> +/* Main virtqueue message work function
-> + *
-> + * This function is executed upon scheduling of the i.MX DSP remoteproc
-> + * driver's workqueue. The workqueue is scheduled by the mailbox rx
-> + * handler.
-> + *
-> + * This work function processes both the Tx and Rx virtqueue indices on
-> + * every invocation. The rproc_vq_interrupt function can detect if there
-> + * are new unprocessed messages or not (returns IRQ_NONE vs IRQ_HANDLED),
-> + * but there is no need to check for these return values. The index 0
-> + * triggering will process all pending Rx buffers, and the index 1 triggering
-> + * will process all newly available Tx buffers and will wakeup any potentially
-> + * blocked senders.
-> + *
-> + * NOTE:
-> + *    The current logic is based on an inherent design assumption of supporting
-> + *    only 2 vrings, but this can be changed if needed.
-> + */
-> +static void imx_dsp_rproc_vq_work(struct work_struct *work)
-> +{
-> +	struct imx_dsp_rproc *priv = container_of(work, struct imx_dsp_rproc,
-> +						  rproc_work);
-> +
-> +	rproc_vq_interrupt(priv->rproc, 0);
-> +	rproc_vq_interrupt(priv->rproc, 1);
-> +}
-> +
-> +/**
-> + * imx_dsp_rproc_rx_tx_callback() - inbound mailbox message handler
-> + * @cl: mailbox client pointer used for requesting the mailbox channel
-> + * @data: mailbox payload
-> + *
-> + * This handler is invoked by mailbox driver whenever a mailbox
-> + * message is received. Usually, the SUSPEND and RESUME related messages
-> + * are handled in this function, other messages are handled by remoteproc core
-> + */
-> +static void imx_dsp_rproc_rx_tx_callback(struct mbox_client *cl, void *data)
-> +{
-> +	struct rproc *rproc = dev_get_drvdata(cl->dev);
-> +	struct imx_dsp_rproc *priv = rproc->priv;
-> +	struct device *dev = rproc->dev.parent;
-> +	u32 message = (u32)(*(u32 *)data);
-> +
-> +	dev_dbg(dev, "mbox msg: 0x%x\n", message);
-> +
-> +	switch (message) {
-> +	case RP_MBOX_SUSPEND_ACK:
-> +		complete(&priv->pm_comp);
-> +		break;
-> +	case RP_MBOX_RESUME_ACK:
-> +		complete(&priv->pm_comp);
-> +		break;
-> +	default:
-> +		schedule_work(&priv->rproc_work);
-> +		break;
-> +	}
-> +}
-> +
-> +/**
-> + * imx_dsp_rproc_rxdb_callback() - inbound mailbox message handler
-> + * @cl: mailbox client pointer used for requesting the mailbox channel
-> + * @data: mailbox payload
-> + *
-> + * For doorbell, there is no message specified, just set REMOTE_IS_READY
-> + * flag.
-> + */
-> +static void imx_dsp_rproc_rxdb_callback(struct mbox_client *cl, void *data)
-> +{
-> +	struct rproc *rproc = dev_get_drvdata(cl->dev);
-> +	struct imx_dsp_rproc *priv = rproc->priv;
-> +
-> +	/* Remote is ready after firmware is loaded and running */
-> +	priv->flags |= REMOTE_IS_READY;
-> +}
-> +
-> +/**
-> + * imx_dsp_rproc_mbox_init() - request mailbox channels
-> + * @priv: private data pointer
-> + *
-> + * Request three mailbox channels (tx, rx, rxdb).
-> + */
-> +static int imx_dsp_rproc_mbox_init(struct imx_dsp_rproc *priv)
-> +{
-> +	struct device *dev = priv->rproc->dev.parent;
-> +	struct mbox_client *cl;
-> +	int ret;
-> +
-> +	if (!of_get_property(dev->of_node, "mbox-names", NULL))
-> +		return 0;
-> +
-> +	cl = &priv->cl;
-> +	cl->dev = dev;
-> +	cl->tx_block = true;
-> +	cl->tx_tout = 100;
-> +	cl->knows_txdone = false;
-> +	cl->rx_callback = imx_dsp_rproc_rx_tx_callback;
-> +
-> +	/* Channel for sending message */
-> +	priv->tx_ch = mbox_request_channel_byname(cl, "tx");
-> +	if (IS_ERR(priv->tx_ch)) {
-> +		ret = PTR_ERR(priv->tx_ch);
-> +		dev_dbg(cl->dev, "failed to request tx mailbox channel: %d\n",
-> +			ret);
-> +		goto err_out;
-> +	}
-> +
-> +	/* Channel for receiving message */
-> +	priv->rx_ch = mbox_request_channel_byname(cl, "rx");
-> +	if (IS_ERR(priv->rx_ch)) {
-> +		ret = PTR_ERR(priv->rx_ch);
-> +		dev_dbg(cl->dev, "failed to request rx mailbox channel: %d\n",
-> +			ret);
-> +		goto err_out;
-> +	}
-> +
-> +	cl = &priv->cl_rxdb;
-> +	cl->dev = dev;
-> +	cl->rx_callback = imx_dsp_rproc_rxdb_callback;
+> +	msg_size = min(len, msg_max_size);
 > +
 > +	/*
-> +	 * RX door bell is used to receive the ready signal from remote
-> +	 * after firmware loaded.
+> +	 * Use rpmsg_trysend instead of rpmsg_send to send the message so the caller is not
+> +	 * hung until a rpmsg buffer is available. In such case rpmsg_trysend returns -ENOMEM.
 > +	 */
-> +	priv->rxdb_ch = mbox_request_channel_byname(cl, "rxdb");
-> +	if (IS_ERR(priv->rxdb_ch)) {
-> +		ret = PTR_ERR(priv->rxdb_ch);
-> +		dev_dbg(cl->dev, "failed to request mbox chan rxdb, ret %d\n",
-> +			ret);
-> +		goto err_out;
-> +	}
-> +
-> +	return 0;
-> +
-> +err_out:
-> +	if (!IS_ERR(priv->tx_ch))
-> +		mbox_free_channel(priv->tx_ch);
-> +	if (!IS_ERR(priv->rx_ch))
-> +		mbox_free_channel(priv->rx_ch);
-> +	if (!IS_ERR(priv->rxdb_ch))
-> +		mbox_free_channel(priv->rxdb_ch);
-> +
-> +	return ret;
-> +}
-> +
-> +static void imx_dsp_rproc_free_mbox(struct imx_dsp_rproc *priv)
-> +{
-> +	mbox_free_channel(priv->tx_ch);
-> +	mbox_free_channel(priv->rx_ch);
-> +	mbox_free_channel(priv->rxdb_ch);
-> +}
-> +
-> +/**
-> + * imx_dsp_rproc_add_carveout() - request mailbox channels
-> + * @priv: private data pointer
-> + *
-> + * This function registers specified memory entry in @rproc carveouts list
-> + * The carveouts can help to mapping the memory address for DSP.
-> + */
-> +static int imx_dsp_rproc_add_carveout(struct imx_dsp_rproc *priv)
-> +{
-> +	const struct imx_dsp_rproc_dcfg *dsp_dcfg = priv->dsp_dcfg;
-> +	const struct imx_rproc_dcfg *dcfg = dsp_dcfg->dcfg;
-> +	struct rproc *rproc = priv->rproc;
-> +	struct device *dev = rproc->dev.parent;
-> +	struct device_node *np = dev->of_node;
-> +	struct of_phandle_iterator it;
-> +	struct rproc_mem_entry *mem;
-> +	struct reserved_mem *rmem;
-> +	void __iomem *cpu_addr;
-> +	int a;
-> +	u64 da;
-> +
-> +	/* Remap required addresses */
-> +	for (a = 0; a < dcfg->att_size; a++) {
-> +		const struct imx_rproc_att *att = &dcfg->att[a];
-> +
-> +		if (!(att->flags & ATT_OWN))
-> +			continue;
-> +
-> +		if (imx_dsp_rproc_sys_to_da(priv, att->sa, att->size, &da))
-> +			return -EINVAL;
-> +
-> +		cpu_addr = devm_ioremap_wc(dev, att->sa, att->size);
-> +		if (!cpu_addr) {
-> +			dev_err(dev, "failed to map memory %p\n", &att->sa);
-> +			return -ENOMEM;
-> +		}
-> +
-> +		/* Register memory region */
-> +		mem = rproc_mem_entry_init(dev, cpu_addr, (dma_addr_t)att->sa,
-> +					   att->size, da, NULL, NULL, "dsp_mem");
-> +
-> +		if (mem)
-> +			rproc_coredump_add_segment(rproc, da, att->size);
-> +		else
-> +			return -ENOMEM;
-> +
-> +		rproc_add_carveout(rproc, mem);
-> +	}
-> +
-> +	of_phandle_iterator_init(&it, np, "memory-region", NULL, 0);
-> +	while (of_phandle_iterator_next(&it) == 0) {
-> +		/*
-> +		 * Ignore the first memory region which will be used vdev buffer.
-> +		 * No need to do extra handlings, rproc_add_virtio_dev will handle it.
-> +		 */
-> +		if (!strcmp(it.node->name, "vdev0buffer"))
-> +			continue;
-> +
-> +		rmem = of_reserved_mem_lookup(it.node);
-> +		if (!rmem) {
-> +			dev_err(dev, "unable to acquire memory-region\n");
-> +			return -EINVAL;
-> +		}
-> +
-> +		if (imx_dsp_rproc_sys_to_da(priv, rmem->base, rmem->size, &da))
-> +			return -EINVAL;
-> +
-> +		cpu_addr = devm_ioremap_wc(dev, rmem->base, rmem->size);
-> +		if (!cpu_addr) {
-> +			dev_err(dev, "failed to map memory %p\n", &rmem->base);
-> +			return -ENOMEM;
-> +		}
-> +
-> +		/* Register memory region */
-> +		mem = rproc_mem_entry_init(dev, cpu_addr, (dma_addr_t)rmem->base,
-> +					   rmem->size, da, NULL, NULL, it.node->name);
-> +
-> +		if (mem)
-> +			rproc_coredump_add_segment(rproc, da, rmem->size);
-> +		else
-> +			return -ENOMEM;
-> +
-> +		rproc_add_carveout(rproc, mem);
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +/**
-> + * imx_dsp_rproc_elf_load_segments() - load firmware segments to memory
-> + * @rproc: remote processor which will be booted using these fw segments
-> + * @fw: the ELF firmware image
-> + *
-> + * This function specially checks if memsz is zero or not, otherwise it
-> + * is mostly same as rproc_elf_load_segments().
-> + */
-> +static int imx_dsp_rproc_elf_load_segments(struct rproc *rproc,
-> +					   const struct firmware *fw)
-> +{
-> +	struct device *dev = &rproc->dev;
-> +	u8 class = fw_elf_get_class(fw);
-> +	u32 elf_phdr_get_size = elf_size_of_phdr(class);
-> +	const u8 *elf_data = fw->data;
-> +	const void *ehdr, *phdr;
-> +	int i, ret = 0;
-> +	u16 phnum;
-> +
-> +	ehdr = elf_data;
-> +	phnum = elf_hdr_get_e_phnum(class, ehdr);
-> +	phdr = elf_data + elf_hdr_get_e_phoff(class, ehdr);
-> +
-> +	/* go through the available ELF segments */
-> +	for (i = 0; i < phnum; i++, phdr += elf_phdr_get_size) {
-> +		u64 da = elf_phdr_get_p_paddr(class, phdr);
-> +		u64 memsz = elf_phdr_get_p_memsz(class, phdr);
-> +		u64 filesz = elf_phdr_get_p_filesz(class, phdr);
-> +		u64 offset = elf_phdr_get_p_offset(class, phdr);
-> +		u32 type = elf_phdr_get_p_type(class, phdr);
-> +		void *ptr;
-> +
-> +		/*
-> +		 *  There is a case that with PT_LOAD type, the
-> +		 *  filesz = memsz = 0. If memsz = 0, rproc_da_to_va
-> +		 *  should return NULL ptr, then error is returned.
-> +		 *  So this case should be skipped from the loop.
-> +		 *  Add !memsz checking here.
-> +		 */
-> +		if (type != PT_LOAD || !memsz)
-> +			continue;
-> +
-> +		dev_dbg(dev, "phdr: type %d da 0x%llx memsz 0x%llx filesz 0x%llx\n",
-> +			type, da, memsz, filesz);
-> +
-> +		if (filesz > memsz) {
-> +			dev_err(dev, "bad phdr filesz 0x%llx memsz 0x%llx\n",
-> +				filesz, memsz);
-> +			ret = -EINVAL;
-> +			break;
-> +		}
-> +
-> +		if (offset + filesz > fw->size) {
-> +			dev_err(dev, "truncated fw: need 0x%llx avail 0x%zx\n",
-> +				offset + filesz, fw->size);
-> +			ret = -EINVAL;
-> +			break;
-> +		}
-> +
-> +		if (!rproc_u64_fit_in_size_t(memsz)) {
-> +			dev_err(dev, "size (%llx) does not fit in size_t type\n",
-> +				memsz);
-> +			ret = -EOVERFLOW;
-> +			break;
-> +		}
-> +
-> +		/* grab the kernel address for this device address */
-> +		ptr = rproc_da_to_va(rproc, da, memsz, NULL);
-> +		if (!ptr) {
-> +			dev_err(dev, "bad phdr da 0x%llx mem 0x%llx\n", da,
-> +				memsz);
-> +			ret = -EINVAL;
-> +			break;
-> +		}
-> +
-> +		/* put the segment where the remote processor expects it */
-> +		if (filesz)
-> +			memcpy(ptr, elf_data + offset, filesz);
-> +
-> +		/*
-> +		 * Zero out remaining memory for this segment.
-> +		 *
-> +		 * This isn't strictly required since dma_alloc_coherent already
-> +		 * did this for us. albeit harmless, we may consider removing
-> +		 * this.
-> +		 */
-> +		if (memsz > filesz)
-> +			memset(ptr + filesz, 0, memsz - filesz);
-> +	}
-> +
-> +	return ret;
-> +}
-> +
-> +/* Prepare function for rproc_ops */
-> +static int imx_dsp_rproc_prepare(struct rproc *rproc)
-> +{
-> +	struct imx_dsp_rproc *priv = rproc->priv;
-> +	struct device *dev = rproc->dev.parent;
-> +	struct rproc_mem_entry *carveout;
-> +	int ret;
-> +
-> +	ret = imx_dsp_rproc_add_carveout(priv);
+> +	ret = rpmsg_trysend(rpdev->ept, (void *)buf, msg_size);
 > +	if (ret) {
-> +		dev_err(dev, "failed on imx_dsp_rproc_add_carveout\n");
+> +		dev_dbg(&rpdev->dev, "rpmsg_send failed: %d\n", ret);
+
+I'm with Greg on this one.  Event if it's a dev_dbg() something like this could
+quickly fill the logs.  Customers should learn to use ftrace.  At the very least
+please use the ratelimited() version.  Same comment applies to rpmsg_tty_cb().
+
+Otherwise:
+
+Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+
 > +		return ret;
 > +	}
 > +
-> +	pm_runtime_get_sync(dev);
-> +
-> +	/*
-> +	 * Clear buffers after pm rumtime for internal ocram is not
-> +	 * accessible if power and clock are not enabled.
-> +	 */
-> +	list_for_each_entry(carveout, &rproc->carveouts, node) {
-> +		if (carveout->va)
-> +			memset(carveout->va, 0, carveout->len);
-> +	}
-> +
-> +	return  0;
+> +	return msg_size;
 > +}
 > +
-> +/* Unprepare function for rproc_ops */
-> +static int imx_dsp_rproc_unprepare(struct rproc *rproc)
+> +static unsigned int rpmsg_tty_write_room(struct tty_struct *tty)
 > +{
-> +	pm_runtime_put_sync(rproc->dev.parent);
+> +	struct rpmsg_tty_port *cport = tty->driver_data;
+> +	int size;
 > +
-> +	return  0;
+> +	size = rpmsg_get_mtu(cport->rpdev->ept);
+> +	if (size < 0)
+> +		return 0;
+> +
+> +	return size;
 > +}
 > +
-> +/* Kick function for rproc_ops */
-> +static void imx_dsp_rproc_kick(struct rproc *rproc, int vqid)
+> +static const struct tty_operations rpmsg_tty_ops = {
+> +	.install	= rpmsg_tty_install,
+> +	.open		= rpmsg_tty_open,
+> +	.close		= rpmsg_tty_close,
+> +	.write		= rpmsg_tty_write,
+> +	.write_room	= rpmsg_tty_write_room,
+> +};
+> +
+> +static struct rpmsg_tty_port *rpmsg_tty_alloc_cport(void)
 > +{
-> +	struct imx_dsp_rproc *priv = rproc->priv;
-> +	struct device *dev = rproc->dev.parent;
+> +	struct rpmsg_tty_port *cport;
 > +	int err;
-> +	__u32 mmsg;
 > +
-> +	if (!priv->tx_ch) {
-> +		dev_err(dev, "No initialized mbox tx channel\n");
-> +		return;
+> +	cport = kzalloc(sizeof(*cport), GFP_KERNEL);
+> +	if (!cport)
+> +		return ERR_PTR(-ENOMEM);
+> +
+> +	mutex_lock(&idr_lock);
+> +	cport->id = idr_alloc(&tty_idr, cport, 0, MAX_TTY_RPMSG, GFP_KERNEL);
+> +	mutex_unlock(&idr_lock);
+> +
+> +	if (cport->id < 0) {
+> +		err = cport->id;
+> +		kfree(cport);
+> +		return ERR_PTR(err);
 > +	}
 > +
-> +	/*
-> +	 * Send the index of the triggered virtqueue as the mu payload.
-> +	 * Let remote processor know which virtqueue is used.
-> +	 */
-> +	mmsg = vqid;
-> +
-> +	err = mbox_send_message(priv->tx_ch, (void *)&mmsg);
-> +	if (err < 0)
-> +		dev_err(dev, "%s: failed (%d, err:%d)\n", __func__, vqid, err);
+> +	return cport;
 > +}
 > +
-> +static const struct rproc_ops imx_dsp_rproc_ops = {
-> +	.prepare	= imx_dsp_rproc_prepare,
-> +	.unprepare	= imx_dsp_rproc_unprepare,
-> +	.start		= imx_dsp_rproc_start,
-> +	.stop		= imx_dsp_rproc_stop,
-> +	.kick		= imx_dsp_rproc_kick,
-> +	.load		= imx_dsp_rproc_elf_load_segments,
-> +	.parse_fw	= rproc_elf_load_rsc_table,
-> +	.sanity_check	= rproc_elf_sanity_check,
-> +	.get_boot_addr	= rproc_elf_get_boot_addr,
-> +};
-> +
-> +/**
-> + * imx_dsp_attach_pm_domains() - attach the power domains
-> + * @priv: private data pointer
-> + *
-> + * On i.MX8QM and i.MX8QXP there is multiple power domains
-> + * required, so need to link them.
-> + */
-> +static int imx_dsp_attach_pm_domains(struct imx_dsp_rproc *priv)
+> +static void rpmsg_tty_release_cport(struct rpmsg_tty_port *cport)
 > +{
-> +	struct device *dev = priv->rproc->dev.parent;
-> +	int ret, i;
+> +	mutex_lock(&idr_lock);
+> +	idr_remove(&tty_idr, cport->id);
+> +	mutex_unlock(&idr_lock);
 > +
-> +	priv->num_domains = of_count_phandle_with_args(dev->of_node,
-> +						       "power-domains",
-> +						       "#power-domain-cells");
+> +	kfree(cport);
+> +}
 > +
-> +	/* If only one domain, then no need to link the device */
-> +	if (priv->num_domains <= 1)
-> +		return 0;
+> +static const struct tty_port_operations rpmsg_tty_port_ops = { };
 > +
-> +	priv->pd_dev = devm_kmalloc_array(dev, priv->num_domains,
-> +					  sizeof(*priv->pd_dev),
-> +					  GFP_KERNEL);
-> +	if (!priv->pd_dev)
-> +		return -ENOMEM;
+> +static int rpmsg_tty_probe(struct rpmsg_device *rpdev)
+> +{
+> +	struct rpmsg_tty_port *cport;
+> +	struct device *dev = &rpdev->dev;
+> +	struct device *tty_dev;
+> +	int ret;
 > +
-> +	priv->pd_dev_link = devm_kmalloc_array(dev, priv->num_domains,
-> +					       sizeof(*priv->pd_dev_link),
-> +					       GFP_KERNEL);
-> +	if (!priv->pd_dev_link)
-> +		return -ENOMEM;
-> +
-> +	for (i = 0; i < priv->num_domains; i++) {
-> +		priv->pd_dev[i] = dev_pm_domain_attach_by_id(dev, i);
-> +		if (IS_ERR(priv->pd_dev[i])) {
-> +			ret = PTR_ERR(priv->pd_dev[i]);
-> +			goto detach_pm;
-> +		}
-> +
-> +		/*
-> +		 * device_link_add will check priv->pd_dev[i], if it is
-> +		 * NULL, then will break.
-> +		 */
-> +		priv->pd_dev_link[i] = device_link_add(dev,
-> +						       priv->pd_dev[i],
-> +						       DL_FLAG_STATELESS |
-> +						       DL_FLAG_PM_RUNTIME);
-> +		if (!priv->pd_dev_link[i]) {
-> +			dev_pm_domain_detach(priv->pd_dev[i], false);
-> +			ret = -EINVAL;
-> +			goto detach_pm;
-> +		}
+> +	cport = rpmsg_tty_alloc_cport();
+> +	if (IS_ERR(cport)) {
+> +		dev_err(dev, "Failed to alloc tty port\n");
+> +		return PTR_ERR(cport);
 > +	}
+> +
+> +	tty_port_init(&cport->port);
+> +	cport->port.ops = &rpmsg_tty_port_ops;
+> +
+> +	tty_dev = tty_port_register_device(&cport->port, rpmsg_tty_driver,
+> +					   cport->id, dev);
+> +	if (IS_ERR(tty_dev)) {
+> +		dev_err(dev, "Failed to register tty port\n");
+> +		ret = PTR_ERR(tty_dev);
+> +		goto  err_destroy;
+> +	}
+> +
+> +	cport->rpdev = rpdev;
+> +
+> +	dev_set_drvdata(dev, cport);
+> +
+> +	dev_dbg(dev, "New channel: 0x%x -> 0x%x : ttyRPMSG%d\n",
+> +		rpdev->src, rpdev->dst, cport->id);
 > +
 > +	return 0;
 > +
-> +detach_pm:
-> +	while (--i >= 0) {
-> +		device_link_del(priv->pd_dev_link[i]);
-> +		dev_pm_domain_detach(priv->pd_dev[i], false);
-> +	}
+> +err_destroy:
+> +	tty_port_destroy(&cport->port);
+> +	rpmsg_tty_release_cport(cport);
 > +
 > +	return ret;
 > +}
 > +
-> +static int imx_dsp_detach_pm_domains(struct imx_dsp_rproc *priv)
+> +static void rpmsg_tty_remove(struct rpmsg_device *rpdev)
 > +{
-> +	int i;
+> +	struct rpmsg_tty_port *cport = dev_get_drvdata(&rpdev->dev);
 > +
-> +	if (priv->num_domains <= 1)
-> +		return 0;
+> +	dev_dbg(&rpdev->dev, "Removing rpmsg tty device %d\n", cport->id);
 > +
-> +	for (i = 0; i < priv->num_domains; i++) {
-> +		device_link_del(priv->pd_dev_link[i]);
-> +		dev_pm_domain_detach(priv->pd_dev[i], false);
-> +	}
+> +	/* User hang up to release the tty */
+> +	if (tty_port_initialized(&cport->port))
+> +		tty_port_tty_hangup(&cport->port, false);
 > +
-> +	return 0;
+> +	tty_unregister_device(rpmsg_tty_driver, cport->id);
+> +
+> +	tty_port_destroy(&cport->port);
+> +	rpmsg_tty_release_cport(cport);
 > +}
 > +
-> +/**
-> + * imx_dsp_rproc_detect_mode() - detect DSP control mode
-> + * @priv: private data pointer
-> + *
-> + * Different platform has different control method for DSP, which depends
-> + * on how the DSP is integrated in platform.
-> + *
-> + * For i.MX8QXP and i.MX8QM, DSP should be started and stopped by System
-> + * Control Unit.
-> + * For i.MX8MP and i.MX8ULP, DSP should be started and stopped by system
-> + * integration module.
-> + */
-> +static int imx_dsp_rproc_detect_mode(struct imx_dsp_rproc *priv)
-> +{
-> +	const struct imx_dsp_rproc_dcfg *dsp_dcfg = priv->dsp_dcfg;
-> +	struct device *dev = priv->rproc->dev.parent;
-> +	struct regmap *regmap;
-> +	int ret = 0;
+> +static struct rpmsg_device_id rpmsg_driver_tty_id_table[] = {
+> +	{ .name	= "rpmsg-tty" },
+> +	{ },
+> +};
+> +MODULE_DEVICE_TABLE(rpmsg, rpmsg_driver_tty_id_table);
 > +
-> +	switch (dsp_dcfg->dcfg->method) {
-> +	case IMX_RPROC_SCU_API:
-> +		ret = imx_scu_get_handle(&priv->ipc_handle);
-> +		if (ret)
-> +			return ret;
-> +		break;
-> +	case IMX_RPROC_MMIO:
-> +		regmap = syscon_regmap_lookup_by_phandle(dev->of_node, "fsl,dsp-ctrl");
-> +		if (IS_ERR(regmap)) {
-> +			dev_err(dev, "failed to find syscon\n");
-> +			return PTR_ERR(regmap);
-> +		}
-> +
-> +		priv->regmap = regmap;
-> +		break;
-> +	default:
-> +		ret = -EOPNOTSUPP;
-> +		break;
-> +	}
-> +
-> +	return ret;
-> +}
-> +
-> +static const char *imx_dsp_clks_names[DSP_RPROC_CLK_MAX] = {
-> +	/* DSP clocks */
-> +	"core", "ocram", "debug", "ipg", "mu",
+> +static struct rpmsg_driver rpmsg_tty_rpmsg_drv = {
+> +	.drv.name	= KBUILD_MODNAME,
+> +	.id_table	= rpmsg_driver_tty_id_table,
+> +	.probe		= rpmsg_tty_probe,
+> +	.callback	= rpmsg_tty_cb,
+> +	.remove		= rpmsg_tty_remove,
 > +};
 > +
-> +static int imx_dsp_rproc_clk_get(struct imx_dsp_rproc *priv)
+> +static int __init rpmsg_tty_init(void)
 > +{
-> +	struct device *dev = priv->rproc->dev.parent;
-> +	struct clk_bulk_data *clks = priv->clks;
-> +	int i;
+> +	int err;
 > +
-> +	for (i = 0; i < DSP_RPROC_CLK_MAX; i++)
-> +		clks[i].id = imx_dsp_clks_names[i];
+> +	rpmsg_tty_driver = tty_alloc_driver(MAX_TTY_RPMSG, TTY_DRIVER_REAL_RAW |
+> +					    TTY_DRIVER_DYNAMIC_DEV);
+> +	if (IS_ERR(rpmsg_tty_driver))
+> +		return PTR_ERR(rpmsg_tty_driver);
 > +
-> +	return devm_clk_bulk_get_optional(dev, DSP_RPROC_CLK_MAX, clks);
-> +}
+> +	rpmsg_tty_driver->driver_name = "rpmsg_tty";
+> +	rpmsg_tty_driver->name = "ttyRPMSG";
+> +	rpmsg_tty_driver->major = 0;
+> +	rpmsg_tty_driver->type = TTY_DRIVER_TYPE_CONSOLE;
 > +
-> +static int imx_dsp_rproc_probe(struct platform_device *pdev)
-> +{
-> +	const struct imx_dsp_rproc_dcfg *dsp_dcfg;
-> +	struct device *dev = &pdev->dev;
-> +	struct imx_dsp_rproc *priv;
-> +	struct rproc *rproc;
-> +	const char *fw_name;
-> +	int ret;
+> +	/* Disable unused mode by default */
+> +	rpmsg_tty_driver->init_termios = tty_std_termios;
+> +	rpmsg_tty_driver->init_termios.c_lflag &= ~(ECHO | ICANON);
+> +	rpmsg_tty_driver->init_termios.c_oflag &= ~(OPOST | ONLCR);
 > +
-> +	dsp_dcfg = of_device_get_match_data(dev);
-> +	if (!dsp_dcfg)
-> +		return -ENODEV;
+> +	tty_set_operations(rpmsg_tty_driver, &rpmsg_tty_ops);
 > +
-> +	ret = rproc_of_parse_firmware(dev, 0, &fw_name);
-> +	if (ret) {
-> +		dev_err(dev, "failed to parse firmware-name property, ret = %d\n",
-> +			ret);
-> +		return ret;
+> +	err = tty_register_driver(rpmsg_tty_driver);
+> +	if (err < 0) {
+> +		pr_err("Couldn't install rpmsg tty driver: err %d\n", err);
+> +		goto error_put;
 > +	}
 > +
-> +	rproc = rproc_alloc(dev, "imx-dsp-rproc", &imx_dsp_rproc_ops, fw_name,
-> +			    sizeof(*priv));
-> +	if (!rproc)
-> +		return -ENOMEM;
-> +
-> +	priv = rproc->priv;
-> +	priv->rproc = rproc;
-> +	priv->dsp_dcfg = dsp_dcfg;
-> +
-> +	dev_set_drvdata(dev, rproc);
-> +
-> +	INIT_WORK(&priv->rproc_work, imx_dsp_rproc_vq_work);
-> +
-> +	ret = imx_dsp_rproc_detect_mode(priv);
-> +	if (ret) {
-> +		dev_err(dev, "failed on imx_dsp_rproc_detect_mode\n");
-> +		goto err_put_rproc;
-> +	}
-> +
-> +	/* There are multiple power domains required by DSP on some platform */
-> +	ret = imx_dsp_attach_pm_domains(priv);
-> +	if (ret) {
-> +		dev_err(dev, "failed on imx_dsp_attach_pm_domains\n");
-> +		goto err_put_rproc;
-> +	}
-> +	/* Get clocks */
-> +	ret = imx_dsp_rproc_clk_get(priv);
-> +	if (ret) {
-> +		dev_err(dev, "failed on imx_dsp_rproc_clk_get\n");
-> +		goto err_detach_domains;
-> +	}
-> +
-> +	init_completion(&priv->pm_comp);
-> +	rproc->auto_boot = false;
-> +	ret = rproc_add(rproc);
-> +	if (ret) {
-> +		dev_err(dev, "rproc_add failed\n");
-> +		goto err_detach_domains;
-> +	}
-> +
-> +	pm_runtime_enable(dev);
-> +
-> +	return 0;
-> +
-> +err_detach_domains:
-> +	imx_dsp_detach_pm_domains(priv);
-> +err_put_rproc:
-> +	rproc_free(rproc);
-> +
-> +	return ret;
-> +}
-> +
-> +static int imx_dsp_rproc_remove(struct platform_device *pdev)
-> +{
-> +	struct rproc *rproc = platform_get_drvdata(pdev);
-> +	struct imx_dsp_rproc *priv = rproc->priv;
-> +
-> +	pm_runtime_disable(&pdev->dev);
-> +	rproc_del(rproc);
-> +	imx_dsp_detach_pm_domains(priv);
-> +	rproc_free(rproc);
-> +
-> +	return 0;
-> +}
-> +
-> +/* pm runtime functions */
-> +static int imx_dsp_runtime_resume(struct device *dev)
-> +{
-> +	struct rproc *rproc = dev_get_drvdata(dev);
-> +	struct imx_dsp_rproc *priv = rproc->priv;
-> +	const struct imx_dsp_rproc_dcfg *dsp_dcfg = priv->dsp_dcfg;
-> +	int ret;
-> +
-> +	/*
-> +	 * There is power domain attached with mailbox, if setup mailbox
-> +	 * in probe(), then the power of mailbox is always enabled,
-> +	 * the power can't be saved.
-> +	 * So move setup of mailbox to runtime resume.
-> +	 */
-> +	ret = imx_dsp_rproc_mbox_init(priv);
-> +	if (ret) {
-> +		dev_err(dev, "failed on imx_dsp_rproc_mbox_init\n");
-> +		return ret;
-> +	}
-> +
-> +	ret = clk_bulk_prepare_enable(DSP_RPROC_CLK_MAX, priv->clks);
-> +	if (ret) {
-> +		dev_err(dev, "failed on clk_bulk_prepare_enable\n");
-> +		return ret;
-> +	}
-> +
-> +	/* Reset DSP if needed */
-> +	if (dsp_dcfg->reset)
-> +		dsp_dcfg->reset(priv);
-> +
-> +	return 0;
-> +}
-> +
-> +static int imx_dsp_runtime_suspend(struct device *dev)
-> +{
-> +	struct rproc *rproc = dev_get_drvdata(dev);
-> +	struct imx_dsp_rproc *priv = rproc->priv;
-> +
-> +	clk_bulk_disable_unprepare(DSP_RPROC_CLK_MAX, priv->clks);
-> +
-> +	imx_dsp_rproc_free_mbox(priv);
-> +
-> +	return 0;
-> +}
-> +
-> +static void imx_dsp_load_firmware(const struct firmware *fw, void *context)
-> +{
-> +	struct rproc *rproc = context;
-> +	int ret;
-> +
-> +	/*
-> +	 * Same flow as start procedure.
-> +	 * Load the ELF segments to memory firstly.
-> +	 */
-> +	ret = rproc_load_segments(rproc, fw);
-> +	if (ret)
-> +		goto out;
-> +
-> +	/* Start the remote processor */
-> +	ret = rproc->ops->start(rproc);
-> +	if (ret)
-> +		goto out;
-> +
-> +	rproc->ops->kick(rproc, 0);
-> +
-> +out:
-> +	release_firmware(fw);
-> +}
-> +
-> +static int imx_dsp_suspend(struct device *dev)
-> +{
-> +	struct rproc *rproc = dev_get_drvdata(dev);
-> +	struct imx_dsp_rproc *priv = rproc->priv;
-> +	__u32 mmsg = RP_MBOX_SUSPEND_SYSTEM;
-> +	int ret;
-> +
-> +	if (rproc->state != RPROC_RUNNING)
-> +		goto out;
-> +
-> +	reinit_completion(&priv->pm_comp);
-> +
-> +	/* Tell DSP that suspend is happening */
-> +	ret = mbox_send_message(priv->tx_ch, (void *)&mmsg);
-> +	if (ret < 0) {
-> +		dev_err(dev, "PM mbox_send_message failed: %d\n", ret);
-> +		return ret;
-> +	}
-> +
-> +	/*
-> +	 * DSP need to save the context at suspend.
-> +	 * Here waiting the response for DSP, then power can be disabled.
-> +	 */
-> +	if (!wait_for_completion_timeout(&priv->pm_comp, msecs_to_jiffies(100)))
-> +		return -EBUSY;
-> +
-> +out:
-> +	/*
-> +	 * The power of DSP is disabled in suspend, so force pm runtime
-> +	 * to be suspend, then we can reenable the power and clocks at
-> +	 * resume stage.
-> +	 */
-> +	return pm_runtime_force_suspend(dev);
-> +}
-> +
-> +static int imx_dsp_resume(struct device *dev)
-> +{
-> +	struct rproc *rproc = dev_get_drvdata(dev);
-> +	int ret = 0;
-> +
-> +	ret = pm_runtime_force_resume(dev);
-> +	if (ret)
-> +		return ret;
-> +
-> +	if (rproc->state != RPROC_RUNNING)
-> +		return 0;
-> +
-> +	/*
-> +	 * The power of DSP is disabled at suspend, the memory of dsp
-> +	 * is reset, the image segments are lost. So need to reload
-> +	 * firmware and restart the DSP if it is in running state.
-> +	 */
-> +	ret = request_firmware_nowait(THIS_MODULE, FW_ACTION_UEVENT,
-> +				      rproc->firmware, dev, GFP_KERNEL,
-> +				      rproc, imx_dsp_load_firmware);
-> +	if (ret < 0) {
-> +		dev_err(dev, "load firmware failed: %d\n", ret);
-> +		goto err;
+> +	err = register_rpmsg_driver(&rpmsg_tty_rpmsg_drv);
+> +	if (err < 0) {
+> +		pr_err("Couldn't register rpmsg tty driver: err %d\n", err);
+> +		goto error_unregister;
 > +	}
 > +
 > +	return 0;
 > +
-> +err:
-> +	pm_runtime_force_suspend(dev);
+> +error_unregister:
+> +	tty_unregister_driver(rpmsg_tty_driver);
 > +
-> +	return ret;
+> +error_put:
+> +	tty_driver_kref_put(rpmsg_tty_driver);
+> +
+> +	return err;
 > +}
 > +
-> +static const struct dev_pm_ops imx_dsp_rproc_pm_ops = {
-> +	SET_SYSTEM_SLEEP_PM_OPS(imx_dsp_suspend, imx_dsp_resume)
-> +	SET_RUNTIME_PM_OPS(imx_dsp_runtime_suspend,
-> +			   imx_dsp_runtime_resume, NULL)
-> +};
+> +static void __exit rpmsg_tty_exit(void)
+> +{
+> +	unregister_rpmsg_driver(&rpmsg_tty_rpmsg_drv);
+> +	tty_unregister_driver(rpmsg_tty_driver);
+> +	tty_driver_kref_put(rpmsg_tty_driver);
+> +	idr_destroy(&tty_idr);
+> +}
 > +
-> +static const struct of_device_id imx_dsp_rproc_of_match[] = {
-> +	{ .compatible = "fsl,imx8qxp-hifi4", .data = &imx_dsp_rproc_cfg_imx8qxp },
-> +	{ .compatible = "fsl,imx8qm-hifi4",  .data = &imx_dsp_rproc_cfg_imx8qm },
-> +	{ .compatible = "fsl,imx8mp-hifi4",  .data = &imx_dsp_rproc_cfg_imx8mp },
-> +	{ .compatible = "fsl,imx8ulp-hifi4", .data = &imx_dsp_rproc_cfg_imx8ulp },
-> +	{},
-> +};
-> +MODULE_DEVICE_TABLE(of, imx_dsp_rproc_of_match);
+> +module_init(rpmsg_tty_init);
+> +module_exit(rpmsg_tty_exit);
 > +
-> +static struct platform_driver imx_dsp_rproc_driver = {
-> +	.probe = imx_dsp_rproc_probe,
-> +	.remove = imx_dsp_rproc_remove,
-> +	.driver = {
-> +		.name = "imx-dsp-rproc",
-> +		.of_match_table = imx_dsp_rproc_of_match,
-> +		.pm = &imx_dsp_rproc_pm_ops,
-> +	},
-> +};
-> +module_platform_driver(imx_dsp_rproc_driver);
-> +
+> +MODULE_AUTHOR("Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>");
+> +MODULE_DESCRIPTION("remote processor messaging tty driver");
 > +MODULE_LICENSE("GPL v2");
-> +MODULE_DESCRIPTION("i.MX HiFi Core Remote Processor Control Driver");
-> +MODULE_AUTHOR("Shengjiu Wang <shengjiu.wang@nxp.com>");
 > -- 
 > 2.17.1
 > 
