@@ -2,95 +2,137 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A24FC433EF
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 14 Oct 2021 07:52:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BDACC43217
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 14 Oct 2021 08:36:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4325961019
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 14 Oct 2021 07:52:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 14ABC611ED
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 14 Oct 2021 08:36:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229970AbhJNHyt (ORCPT
+        id S230255AbhJNIim (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 14 Oct 2021 03:54:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47120 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229967AbhJNHyt (ORCPT <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 14 Oct 2021 03:54:49 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 6EB7061027;
-        Thu, 14 Oct 2021 07:52:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1634197964;
-        bh=qD+0G++7GvIbBcp1KcC76JBeUGQ4HMtVySdt0dwDMXo=;
-        h=From:To:Cc:Subject:Date:From;
-        b=QBtJkbALq4BE2jnsT6WHrt7SrIdrnv4OYnGoUrtD7tGgEsGCHPJsfMRVAwFvo0Mcb
-         kTT4sTkdcNQ3Y03OxP0yTkpM2eLMvVIqM+3vnph4MJH+J1WXvyC0OWVflOetmzw/AF
-         8WMdhTaIJiXAvfoy8qCwFKFtgQtvsxdp40NYYU8o/iCgqjV2rGyiAGaxhJ1jBPbqc7
-         mnkkjO9OuUCQMj0SSWMvfDWSb0pGvMQuR41VcmNsRt7sFigZR4gfnRbUHcAxT+cN41
-         DsE3sLY1f0v2mmpmeRWDFpbayWBZlXG8vDDMKurNvDhC6p1avBSmztOkeMTlRqpb+s
-         mXi3AOdKWJlsw==
-From:   Arnd Bergmann <arnd@kernel.org>
-To:     Ohad Ben-Cohen <ohad@wizery.com>,
+        Thu, 14 Oct 2021 04:38:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43660 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230174AbhJNIij (ORCPT
+        <rfc822;linux-remoteproc@vger.kernel.org>);
+        Thu, 14 Oct 2021 04:38:39 -0400
+Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C5775C061768
+        for <linux-remoteproc@vger.kernel.org>; Thu, 14 Oct 2021 01:36:34 -0700 (PDT)
+Received: by mail-wr1-x42a.google.com with SMTP id y3so17024910wrl.1
+        for <linux-remoteproc@vger.kernel.org>; Thu, 14 Oct 2021 01:36:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=cfakvhen/wxw5fHdRu0DEuLT5DMfJlXe2a/johLjqxo=;
+        b=h40uJnzRy4bIKfqfvwm3i/kik60+Kgx2sfXbHxmv0MsZax7HkeDmryc9yctryM7xlU
+         37bg2VuoZWdH4kTXGosC95Fa3QYJayYirIbI/UeFVNH/Nzn2/7/VodB6g1hiMuG9zp+p
+         egl0Br7pM5vnKxSuUDa7BUq17cmPH9MsIYOosVtDeEDQMUaCZ6h+AWD2esXOH1LRk+zZ
+         X2uV1Nn3ulaudun/4f5AT6jS5oilV0myDq9ozSQAqUnytF1YgcEInQmj+cCLjl5OgT5o
+         004n5bwSXge4iP3a4skCS8avlQccw5QvPN8BVpAjam8zZmlkvShcDVpQvgmxjplGDMKz
+         pkRQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=cfakvhen/wxw5fHdRu0DEuLT5DMfJlXe2a/johLjqxo=;
+        b=ZOwXqEoutNz4f6e/qxFEGapZqFCu+VHjn+x3jOaZq18ioqd80pJqSPCOiybz8MmDQC
+         khpUlE9XaDUe16SM17FCwHKZqrdnxOy2U1TTRK22cBdrKSn3MPsGWp16hmpOFNlO9y9t
+         gOKUSCrFUuNeTW2s9IN/pO4HKrAsdv8slKJNop2TuyqTorBXDw/ZOCL0OVrszvlsePMe
+         Q3Ou4bqNZAhzPWa42czsyC4wWzvZzTiRPF9GWkeaKSbAIj+HvkmRq0EmO3kZAnGF2rP/
+         RE8rvG6Dt5iLg07AVsVywHFYRHiYVbkakijUTjpamRF2T4fUUVG7gKDfZ5ccLKy53Kxp
+         +BqQ==
+X-Gm-Message-State: AOAM533nyv2Pd/AhnD8BpJ8bMlWpKC4KFZ3Pjqp7giTgN54tUf2PkQRm
+        qXSbQY1fyBOYbnclYnt/d3aAHA==
+X-Google-Smtp-Source: ABdhPJzpVg8OIER+zTALG2ilasSHxD7bC/dTlVAeWBUDgRwrRvN9DCthCd2lRX0ZyZDpw2FTk6Hq6g==
+X-Received: by 2002:a5d:59a9:: with SMTP id p9mr5151873wrr.386.1634200593067;
+        Thu, 14 Oct 2021 01:36:33 -0700 (PDT)
+Received: from myrica (cpc92880-cmbg19-2-0-cust679.5-4.cable.virginm.net. [82.27.106.168])
+        by smtp.gmail.com with ESMTPSA id r4sm2299114wrz.58.2021.10.14.01.36.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 14 Oct 2021 01:36:32 -0700 (PDT)
+Date:   Thu, 14 Oct 2021 09:36:09 +0100
+From:   Jean-Philippe Brucker <jean-philippe@linaro.org>
+To:     "Michael S. Tsirkin" <mst@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, Jeff Dike <jdike@addtoit.com>,
+        Richard Weinberger <richard@nod.at>,
+        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        Marcel Holtmann <marcel@holtmann.org>,
+        Johan Hedberg <johan.hedberg@gmail.com>,
+        Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
+        Matt Mackall <mpm@selenic.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Amit Shah <amit@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Gonglei <arei.gonglei@huawei.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Cristian Marussi <cristian.marussi@arm.com>,
+        "Enrico Weigelt, metux IT consult" <info@metux.net>,
+        Viresh Kumar <vireshk@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        David Airlie <airlied@linux.ie>,
+        Gerd Hoffmann <kraxel@redhat.com>,
+        Daniel Vetter <daniel@ffwll.ch>, Jie Deng <jie.deng@intel.com>,
+        Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Vishal Verma <vishal.l.verma@intel.com>,
+        Dave Jiang <dave.jiang@intel.com>,
+        Ira Weiny <ira.weiny@intel.com>,
+        Ohad Ben-Cohen <ohad@wizery.com>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Shengjiu Wang <shengjiu.wang@nxp.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        linux-remoteproc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] remoteproc: imx_dsp_rproc: mark PM functions as __maybe_unused
-Date:   Thu, 14 Oct 2021 09:52:24 +0200
-Message-Id: <20211014075239.3714694-1-arnd@kernel.org>
-X-Mailer: git-send-email 2.29.2
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        David Hildenbrand <david@redhat.com>,
+        Vivek Goyal <vgoyal@redhat.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Eric Van Hensbergen <ericvh@gmail.com>,
+        Latchesar Ionkov <lucho@ionkov.net>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        Stefano Garzarella <sgarzare@redhat.com>,
+        Anton Yakovlev <anton.yakovlev@opensynergy.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, linux-um@lists.infradead.org,
+        virtualization@lists.linux-foundation.org,
+        linux-block@vger.kernel.org, linux-bluetooth@vger.kernel.org,
+        linux-crypto@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-gpio@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-i2c@vger.kernel.org, iommu@lists.linux-foundation.org,
+        netdev@vger.kernel.org, linux-wireless@vger.kernel.org,
+        nvdimm@lists.linux.dev, linux-remoteproc@vger.kernel.org,
+        linux-scsi@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        v9fs-developer@lists.sourceforge.net, kvm@vger.kernel.org,
+        alsa-devel@alsa-project.org
+Subject: Re: [PATCH RFC] virtio: wrap config->reset calls
+Message-ID: <YWfr+Z0wgpQ48yC5@myrica>
+References: <20211013105226.20225-1-mst@redhat.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20211013105226.20225-1-mst@redhat.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-From: Arnd Bergmann <arnd@arndb.de>
+On Wed, Oct 13, 2021 at 06:55:31AM -0400, Michael S. Tsirkin wrote:
+> This will enable cleanups down the road.
+> The idea is to disable cbs, then add "flush_queued_cbs" callback
+> as a parameter, this way drivers can flush any work
+> queued after callbacks have been disabled.
+> 
+> Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
+> ---
 
-When CONFIG_PM_SLEEP is disabled, we get a harmless warning:
+>  drivers/iommu/virtio-iommu.c               | 2 +-
 
-drivers/remoteproc/imx_dsp_rproc.c:1145:12: error: 'imx_dsp_resume' defined but not used [-Werror=unused-function]
- 1145 | static int imx_dsp_resume(struct device *dev)
-      |            ^~~~~~~~~~~~~~
-drivers/remoteproc/imx_dsp_rproc.c:1110:12: error: 'imx_dsp_suspend' defined but not used [-Werror=unused-function]
- 1110 | static int imx_dsp_suspend(struct device *dev)
-      |            ^~~~~~~~~~~~~~~
-
-Mark these as __maybe_unused to get a clean build.
-
-Fixes: ec0e5549f358 ("remoteproc: imx_dsp_rproc: Add remoteproc driver for DSP on i.MX")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- drivers/remoteproc/imx_dsp_rproc.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/remoteproc/imx_dsp_rproc.c b/drivers/remoteproc/imx_dsp_rproc.c
-index 63749cfcf22f..90fcb389e252 100644
---- a/drivers/remoteproc/imx_dsp_rproc.c
-+++ b/drivers/remoteproc/imx_dsp_rproc.c
-@@ -1107,7 +1107,7 @@ static void imx_dsp_load_firmware(const struct firmware *fw, void *context)
- 	release_firmware(fw);
- }
- 
--static int imx_dsp_suspend(struct device *dev)
-+static __maybe_unused int imx_dsp_suspend(struct device *dev)
- {
- 	struct rproc *rproc = dev_get_drvdata(dev);
- 	struct imx_dsp_rproc *priv = rproc->priv;
-@@ -1142,7 +1142,7 @@ static int imx_dsp_suspend(struct device *dev)
- 	return pm_runtime_force_suspend(dev);
- }
- 
--static int imx_dsp_resume(struct device *dev)
-+static __maybe_unused int imx_dsp_resume(struct device *dev)
- {
- 	struct rproc *rproc = dev_get_drvdata(dev);
- 	int ret = 0;
--- 
-2.29.2
-
+Reviewed-by: Jean-Philippe Brucker <jean-philippe@linaro.org>
