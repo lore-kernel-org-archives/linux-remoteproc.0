@@ -2,94 +2,121 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 142FEC433F5
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 15 Oct 2021 12:42:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C83BFC433EF
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 15 Oct 2021 14:47:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EF87D6109E
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 15 Oct 2021 12:42:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B149861027
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 15 Oct 2021 14:47:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239042AbhJOMo2 (ORCPT
+        id S236844AbhJOOt7 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 15 Oct 2021 08:44:28 -0400
-Received: from mx07-00178001.pphosted.com ([185.132.182.106]:48150 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S239071AbhJOMnO (ORCPT
+        Fri, 15 Oct 2021 10:49:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59756 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S240818AbhJOOty (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 15 Oct 2021 08:43:14 -0400
-Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 19F7UbMO023032;
-        Fri, 15 Oct 2021 14:41:05 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=from : to : cc :
- subject : date : message-id : mime-version : content-type; s=selector1;
- bh=PSRQtKvul7nBUbjCFnqgc0JZc5qe+dTvzWqUeSqg0s0=;
- b=EVApnq2RH92D4Tsx42kq/1+v9CP3eEKx3Ze4drcujHimKINbsO+FWpuycxGGyz3N/jq7
- CJYJqzQlCPQuj4YEU97vHvuPSNT7fJ2r+YagpsabRqD/AO2RqtgduCWIZFaMrjbHfjWi
- 678WNpFwRqpfsBCyqdL+apetzb8ixvC18k0w/E6OJSZuV9DTh47un+tnWDLAjJtmWNtU
- tCC2ovLUiVDW+TYYLk8JjlF4MtrvOpm8KE44m2NzKwqYpJG60YzvAL/UlFFN1FBOI38a
- wakvSzqlCuZgWXOHfioSWmGLnKRbq9DZOAu0KV7VhSLadGPM0y2bl+4YVpMnC7eahG2f Fw== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 3bq5aphxhf-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 15 Oct 2021 14:41:05 +0200
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 07D0010002A;
-        Fri, 15 Oct 2021 14:41:05 +0200 (CEST)
-Received: from Webmail-eu.st.com (sfhdag2node2.st.com [10.75.127.5])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id EE7BB22F7BC;
-        Fri, 15 Oct 2021 14:41:04 +0200 (CEST)
-Received: from localhost (10.75.127.44) by SFHDAG2NODE2.st.com (10.75.127.5)
- with Microsoft SMTP Server (TLS) id 15.0.1497.18; Fri, 15 Oct 2021 14:41:04
- +0200
-From:   Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Ohad Ben-Cohen <ohad@wizery.com>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>
-CC:     <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <arnaud.pouliquen@foss.st.com>
-Subject: [PATCH] remoteproc: core: fix potential memory leakage
-Date:   Fri, 15 Oct 2021 14:40:10 +0200
-Message-ID: <20211015124010.4075-1-arnaud.pouliquen@foss.st.com>
-X-Mailer: git-send-email 2.17.1
+        Fri, 15 Oct 2021 10:49:54 -0400
+Received: from mail-ot1-x330.google.com (mail-ot1-x330.google.com [IPv6:2607:f8b0:4864:20::330])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8842EC061771
+        for <linux-remoteproc@vger.kernel.org>; Fri, 15 Oct 2021 07:47:47 -0700 (PDT)
+Received: by mail-ot1-x330.google.com with SMTP id d21-20020a9d4f15000000b0054e677e0ac5so13113543otl.11
+        for <linux-remoteproc@vger.kernel.org>; Fri, 15 Oct 2021 07:47:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=++7yTK3eP5/FAO2Z0iSkv+MDdc9B89z1wkbeU182Ikg=;
+        b=XbPtXBIpqXS+4GqKUpLKnV/TL+EYThYjN2Cv59T7YtpgcFk7nvnfhURMU1P6igmu5n
+         Lg6HiV8Ul7ZsJoL8tsChafYC1KPwjh4CPHQgWqUcfMMZ4I3THsL0kRAW1fwdw41G/UMm
+         ZVGxLF4qC7/KEI2KjTsNcGz9Qm1iMwIbxEpbuMmI2Hog8TvbIEUEZV8qstnjyh6Z7zvO
+         XeJ7b3qWz84ZOkiZyQ9qPacf+Ggxhub1DzfDOtcRRGB9HhmYgu62GN1axwEtZGVAHxdz
+         rlUJvUyO/cT1FsdwGLG7YybpFRdZpNhoqntShLvILJcFWXJkmTLcsU6+wX9GRW87RiWb
+         MzZw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=++7yTK3eP5/FAO2Z0iSkv+MDdc9B89z1wkbeU182Ikg=;
+        b=ZaNEALvZ9W71tP2IYwAmsjyjHHN7CbSE9JYFzwGI7M+yj0aiRlI9nf+CoHAqkQbgzf
+         mWkkGDiN148CPcaPS/IILr44CpMT7qRMvN9QiJ4/hglrSByLl8LmtHUdoGDbdTaA9LaK
+         mMihxvlilGGNt3lkEe2qk/9HBOsq4AIZ2BnP6FZOMfWhcJ0jaUpTWcMfAb0Mz3JAIuKK
+         QoakwaL68MtRMRxkF1T1lFkix81nyujOWB6FW/MJFlUB4MPQZBYKZLFyFF/B656n0eNk
+         zvmgQJGRLu5ZKwW/bhLYOzf6gABcCC1q0h07XYDnk7uiPFm/HQrwMnxEDvRE/qbkmmXk
+         XbWQ==
+X-Gm-Message-State: AOAM531t3RoDuRU49vE9bKAQiqj85js6/Zf8ucv3fB/IFhpBYS/krrrJ
+        5h48XoLQxrEl3Zc+vPtXYYNa2g==
+X-Google-Smtp-Source: ABdhPJyGAZ75fYt5dPrlwAFKkMmfgKxwkXWHpeKEeQM39FmqX5zKruHfjOM0yMa3O+bAFrGIsmDFBg==
+X-Received: by 2002:a05:6830:214c:: with SMTP id r12mr8343587otd.200.1634309266857;
+        Fri, 15 Oct 2021 07:47:46 -0700 (PDT)
+Received: from builder.lan ([2600:1700:a0:3dc8:3697:f6ff:fe85:aac9])
+        by smtp.gmail.com with ESMTPSA id bf3sm1193006oib.34.2021.10.15.07.47.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 15 Oct 2021 07:47:46 -0700 (PDT)
+Date:   Fri, 15 Oct 2021 09:47:44 -0500
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Deepak Kumar Singh <deesin@codeaurora.org>
+Cc:     clew@codeaurora.org, mathieu.poirier@linaro.org,
+        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Konstantin Dorfman <kdorfman@codeaurora.org>
+Subject: Re: [PATCH V1 1/6] rpmsg: glink: fix destroy channel endpoint logic
+Message-ID: <YWmUkD0ABryJEsU8@builder.lan>
+References: <1596086296-28529-1-git-send-email-deesin@codeaurora.org>
+ <1596086296-28529-2-git-send-email-deesin@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.75.127.44]
-X-ClientProxiedBy: SFHDAG1NODE3.st.com (10.75.127.3) To SFHDAG2NODE2.st.com
- (10.75.127.5)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.182.1,Aquarius:18.0.790,Hydra:6.0.425,FMLib:17.0.607.475
- definitions=2021-10-15_03,2021-10-14_02,2020-04-07_01
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1596086296-28529-2-git-send-email-deesin@codeaurora.org>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-If copy_dma_range_map returns an error, the rvdev structure must
-be freed.
+On Thu 30 Jul 00:18 CDT 2020, Deepak Kumar Singh wrote:
 
-Fixes: e0d072782c73 ("dma-mapping: introduce DMA range map, supplanting dma_pfn_offset")
+> From: Konstantin Dorfman <kdorfman@codeaurora.org>
+> 
+> When rpmsg client driver destroys last channel endpoint, remove rpmsg
+> device is triggered. In both cases (destroy endpoint and remove device)
+> a glink close command sent to the remote peer.
+> 
+> This change, when for removing rpmsg device endpoint already destroyed
+> will avoid sending second glink close command.
+> 
 
-Suggested-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
----
- drivers/remoteproc/remoteproc_core.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+Should it really be considered valid to rpmsg_destroy_ept() the
+rpmsg_device's primary endpoint?
 
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index 502b6604b757..aaa281c8fc82 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -557,8 +557,10 @@ static int rproc_handle_vdev(struct rproc *rproc, void *ptr,
- 	snprintf(name, sizeof(name), "vdev%dbuffer", rvdev->index);
- 	rvdev->dev.parent = &rproc->dev;
- 	ret = copy_dma_range_map(&rvdev->dev, rproc->dev.parent);
--	if (ret)
-+	if (ret) {
-+		kfree(rvdev);
- 		return ret;
-+	}
- 	rvdev->dev.release = rproc_rvdev_release;
- 	dev_set_name(&rvdev->dev, "%s#%s", dev_name(rvdev->dev.parent), name);
- 	dev_set_drvdata(&rvdev->dev, rvdev);
--- 
-2.17.1
+Do you have a use case where this makes sense?
 
+
+Also, I think this has a potential to hide a problems of clients doing a
+"double free" on the ept.
+
+Regards,
+Bjorn
+
+> Signed-off-by: Konstantin Dorfman <kdorfman@codeaurora.org>
+> Signed-off-by: Deepak Kumar Singh <deesin@codeaurora.org>
+> ---
+>  drivers/rpmsg/qcom_glink_native.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/drivers/rpmsg/qcom_glink_native.c b/drivers/rpmsg/qcom_glink_native.c
+> index 1995f5b..2668c66 100644
+> --- a/drivers/rpmsg/qcom_glink_native.c
+> +++ b/drivers/rpmsg/qcom_glink_native.c
+> @@ -1210,6 +1210,10 @@ static void qcom_glink_destroy_ept(struct rpmsg_endpoint *ept)
+>  	unsigned long flags;
+>  
+>  	spin_lock_irqsave(&channel->recv_lock, flags);
+> +	if (!channel->ept.cb) {
+> +		spin_unlock_irqrestore(&channel->recv_lock, flags);
+> +		return;
+> +	}
+>  	channel->ept.cb = NULL;
+>  	spin_unlock_irqrestore(&channel->recv_lock, flags);
+>  
+> -- 
+> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+> a Linux Foundation Collaborative Project
+> 
