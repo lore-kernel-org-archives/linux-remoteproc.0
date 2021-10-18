@@ -2,91 +2,104 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F4E5C433F5
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 18 Oct 2021 00:13:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CFE13C433EF
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 18 Oct 2021 07:09:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EFD9461247
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 18 Oct 2021 00:13:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AF6C7610A3
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 18 Oct 2021 07:09:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344828AbhJRAQH (ORCPT
+        id S229708AbhJRHMA (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Sun, 17 Oct 2021 20:16:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52966 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344825AbhJRAQH (ORCPT
+        Mon, 18 Oct 2021 03:12:00 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:37342 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S230419AbhJRHMA (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Sun, 17 Oct 2021 20:16:07 -0400
-Received: from mail-oi1-x236.google.com (mail-oi1-x236.google.com [IPv6:2607:f8b0:4864:20::236])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F3708C06161C
-        for <linux-remoteproc@vger.kernel.org>; Sun, 17 Oct 2021 17:13:56 -0700 (PDT)
-Received: by mail-oi1-x236.google.com with SMTP id g125so22029176oif.9
-        for <linux-remoteproc@vger.kernel.org>; Sun, 17 Oct 2021 17:13:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=by+ieTTmuyDSriuTe138Ihlo/MV2ONswmXg6TUAPeOI=;
-        b=Xk38DdpFgMJxeifcBOeyXsSCv2v4EYFe5zZ7TIy+SRYzc82FReD9CDoVcxg9OfAZse
-         J1WBRD1pmDPg6dKMAOd6gO2d/KDauWHBek9iXFLAUsrRHgoOZ1wAjp6Bsi4IwNTAgApO
-         69pzrq2hvUJVTNBwHyhIUfkWePJxXFQASRFGp5MJSbeOvPCXX736Ob3LozQ0sHa30bgU
-         Czm57Oxk+ViEYhJWXHF/V3aVO/jITn4NW1hapBG8LOqGKGzFu5LStIoz9FDG1Py2kMoN
-         IMN0uYHF5c8my7IRzEtxu4rAaRDKtlbjQm1d0VZ2x605vLyvSxeXKhVIXa48Eev21IfK
-         9nqw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=by+ieTTmuyDSriuTe138Ihlo/MV2ONswmXg6TUAPeOI=;
-        b=X7QMPnfULcaczm3kTZl8/4SNFk4FeyaGeHfjjt5NXgIN/pIP/fxezblH0LaCoW6dyA
-         WY68pURoo64ZgUHNeVOSSPcaQurfKWU/9KZGCGJ/7PibYLf4ofl36/jDFs3lMOTk9Td4
-         V2QXLidA73ZFLueEawZQrrHdjrSeFEfE9AbZFzsuWQkQDMzEVR1FsjbMk+zjJthgqFIY
-         8+5n90ZEyEu4Oin7tVrohU0yBXcGNSNwVlwliOYm5iaw/y455VKCMGVJI37W++quMRex
-         1Xnz1f57BdoqYTeOIc7QrynPBgR+VzhUA6tYkbCWIMv9RLHvMT2HPIDmABRsQa7booTC
-         Y/VA==
-X-Gm-Message-State: AOAM530Fuqn65MaNMYVCZwkUtXIUjgMIY8yd4hytcQxZm5HzapRSD8eM
-        xYzwupcYgoHNgRcu5cFFLeOevg==
-X-Google-Smtp-Source: ABdhPJwFcIikHfk/i4pYlpa1QTYFDGW9zMwyoLnJ2/Jjhw98ZeGn2zA+Gb5OkwrqTkGEjCDCj28tNw==
-X-Received: by 2002:aca:be54:: with SMTP id o81mr17661659oif.64.1634516036239;
-        Sun, 17 Oct 2021 17:13:56 -0700 (PDT)
-Received: from builder.lan ([2600:1700:a0:3dc8:3697:f6ff:fe85:aac9])
-        by smtp.gmail.com with ESMTPSA id l10sm2670189otj.9.2021.10.17.17.13.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 17 Oct 2021 17:13:55 -0700 (PDT)
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     clew@codeaurora.org, Deepak Kumar Singh <deesin@codeaurora.org>
-Cc:     Andy Gross <agross@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org
-Subject: Re: (subset) [PATCH V2 1/1] soc: qcom: smp2p: add feature negotiation and ssr ack feature support
-Date:   Sun, 17 Oct 2021 19:13:54 -0500
-Message-Id: <163451593812.443375.14432148732623995552.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.32.0
-In-Reply-To: <1633450403-21281-1-git-send-email-deesin@codeaurora.org>
-References: <1633450403-21281-1-git-send-email-deesin@codeaurora.org>
+        Mon, 18 Oct 2021 03:12:00 -0400
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 19I0Pg0C021737;
+        Mon, 18 Oct 2021 09:09:40 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=selector1;
+ bh=PVPUry39WCKQ8aJ+bKK0+Bp3HnBuEcws7c4ZZVZtcVQ=;
+ b=HBvFAocbd0uLUS//m/GtRv98rEAeP4nXVjA8yOMY+LgzOzRKRGYsChgKRaSG1/yHPVgd
+ pbDDJrH2ilpN/evknwWF5tCE2jif4bbneA5OYQFEm83vogNzuOufs859uuKiJCd4SJtu
+ zZXNm9PcUkmZomdD2umNnvPrBtnVz9NaeQWhI9RnUe3isIbA4i4mmT5bPlGVNwFaYLEl
+ KD35LN67uiNrBgUjaPSghSoFcixo08dVZEqVGyv8kk+YfLspLzpgbe2iE1CHL9cR1+B8
+ XMBBJc3opD/SWTDFBFnwuRe6t4sh7MlK8fvXYHm6by80+Dte8IuL62rHjFOiGUKw4gL2 Ng== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 3brxbm1s51-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 18 Oct 2021 09:09:40 +0200
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id D5EA7100034;
+        Mon, 18 Oct 2021 09:09:39 +0200 (CEST)
+Received: from Webmail-eu.st.com (sfhdag2node2.st.com [10.75.127.5])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 4E016210F61;
+        Mon, 18 Oct 2021 09:09:39 +0200 (CEST)
+Received: from lmecxl0889.lme.st.com (10.75.127.44) by SFHDAG2NODE2.st.com
+ (10.75.127.5) with Microsoft SMTP Server (TLS) id 15.0.1497.18; Mon, 18 Oct
+ 2021 09:09:38 +0200
+Subject: Re: [PATCH] remoteproc: core: fix potential memory leakage
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Ohad Ben-Cohen <ohad@wizery.com>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>
+CC:     <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>
+References: <20211015124010.4075-1-arnaud.pouliquen@foss.st.com>
+From:   Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
+Message-ID: <c4fc93a5-22d5-303e-d032-d578ebfb48fe@foss.st.com>
+Date:   Mon, 18 Oct 2021 09:09:38 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.13.0
 MIME-Version: 1.0
+In-Reply-To: <20211015124010.4075-1-arnaud.pouliquen@foss.st.com>
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.75.127.44]
+X-ClientProxiedBy: SFHDAG1NODE3.st.com (10.75.127.3) To SFHDAG2NODE2.st.com
+ (10.75.127.5)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.182.1,Aquarius:18.0.790,Hydra:6.0.425,FMLib:17.0.607.475
+ definitions=2021-10-18_02,2021-10-14_02,2020-04-07_01
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Tue, 5 Oct 2021 21:43:23 +0530, Deepak Kumar Singh wrote:
-> From: Chris Lew <clew@codeaurora.org>
+On 10/15/21 2:40 PM, Arnaud Pouliquen wrote:
+> If copy_dma_range_map returns an error, the rvdev structure must
+> be freed.
 > 
-> This patch adds feature negotiation and ssr ack feature between
-> local host and remote processor. Local host can negotiate on common
-> features supported with remote processor.
+> Fixes: e0d072782c73 ("dma-mapping: introduce DMA range map, supplanting dma_pfn_offset")
 > 
-> When ssr ack feature bit is set, the remote processor will tell local
-> host when it is reinitialized. All clients registered for falling edge
-> interrupts will be notified when the smp2p entries are cleared for ssr.
+> Suggested-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+
+Patch to ignore as already fixed by Christophe JAILLET
+
+https://lore.kernel.org/all/163431847249.251657.11309404044031278395.b4-ty@linaro.org/T/
+
+
+> ---
+>  drivers/remoteproc/remoteproc_core.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
 > 
-> [...]
-
-Applied, thanks!
-
-[1/1] soc: qcom: smp2p: add feature negotiation and ssr ack feature support
-      commit: 85f755083b23b1ee59c96df80f148e6203bb078f
-
-Best regards,
--- 
-Bjorn Andersson <bjorn.andersson@linaro.org>
+> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+> index 502b6604b757..aaa281c8fc82 100644
+> --- a/drivers/remoteproc/remoteproc_core.c
+> +++ b/drivers/remoteproc/remoteproc_core.c
+> @@ -557,8 +557,10 @@ static int rproc_handle_vdev(struct rproc *rproc, void *ptr,
+>  	snprintf(name, sizeof(name), "vdev%dbuffer", rvdev->index);
+>  	rvdev->dev.parent = &rproc->dev;
+>  	ret = copy_dma_range_map(&rvdev->dev, rproc->dev.parent);
+> -	if (ret)
+> +	if (ret) {
+> +		kfree(rvdev);
+>  		return ret;
+> +	}
+>  	rvdev->dev.release = rproc_rvdev_release;
+>  	dev_set_name(&rvdev->dev, "%s#%s", dev_name(rvdev->dev.parent), name);
+>  	dev_set_drvdata(&rvdev->dev, rvdev);
+> 
