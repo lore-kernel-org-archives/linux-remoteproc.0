@@ -2,177 +2,163 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BC32C433F5
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 18 Oct 2021 09:13:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62AA9C4321E
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 18 Oct 2021 09:24:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 44D08610C7
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 18 Oct 2021 09:13:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 44D71610E7
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 18 Oct 2021 09:24:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231519AbhJRJPV (ORCPT
+        id S231598AbhJRJ0b (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 18 Oct 2021 05:15:21 -0400
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:50712 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S231372AbhJRJPU (ORCPT
+        Mon, 18 Oct 2021 05:26:31 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:27053 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S231489AbhJRJ02 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 18 Oct 2021 05:15:20 -0400
-Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 19I866p3017986;
-        Mon, 18 Oct 2021 11:13:06 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=selector1;
- bh=Q05oiVZenwvMaTTs9dcXkuW+qIz1ZGdBjDkzxjUaWFs=;
- b=As7Y4FHjuqy2kZU2fG019L7ghM6kt5QA1P+myJtlL5jxqV+e+5BhEd7tv+5n6vwO3AIQ
- j9d183SjS3XEULfdd20sato6QaC69FBFWOF9POgz9rzb1cjmpiWlygB1TAq4+HrcUB8W
- cEt/c/1/j5xMvYcBmBy1Srh9OAYpmNYU1NmkyZWIkA4BegbBlRnC7X7E/XVzL5sO4JBv
- 3ULZSs7EPm5b+I2hyMN9vLYCW/wwUip6V5WvR0wiMXsWzhgs0GW0pMkUfFdEGc+GPBLY
- kSonsIGYcs6xvdk8S49hG+9Iu9Xjbm1x5bUZbfgC+YKhBpZd6e3+b5iAIVM6m1iHyHyV cQ== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 3brxbm2k4b-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 18 Oct 2021 11:13:06 +0200
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 290B910002A;
-        Mon, 18 Oct 2021 11:13:06 +0200 (CEST)
-Received: from Webmail-eu.st.com (sfhdag2node2.st.com [10.75.127.5])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 20A8F216EF1;
-        Mon, 18 Oct 2021 11:13:06 +0200 (CEST)
-Received: from lmecxl0889.lme.st.com (10.75.127.45) by SFHDAG2NODE2.st.com
- (10.75.127.5) with Microsoft SMTP Server (TLS) id 15.0.1497.18; Mon, 18 Oct
- 2021 11:13:05 +0200
-Subject: Re: [PATCH v5 3/4] rpmsg: Move the rpmsg control device from
- rpmsg_char to rpmsg_ctrl
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-CC:     Ohad Ben-Cohen <ohad@wizery.com>,
+        Mon, 18 Oct 2021 05:26:28 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1634549057;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=tcERYHsACD8OiG9LERSlpQxmHuHdSGg0GMtHO86OE84=;
+        b=AyGrhM8i9mDj3QLHcrg+gTGbyI6PHy3rsEeHVq8VDXGYGu8MKhRpG6G4e1za8iIahRJSem
+        WZmylplqll/25D0gmJhQS0Y2i2mkaAL1YV71IMKQo2F3fi0MVrkyLsHjuswYn6C8NVbQj/
+        LN7ep9+EZV6FqsxRENUTaW6PrU91h+U=
+Received: from mail-ed1-f72.google.com (mail-ed1-f72.google.com
+ [209.85.208.72]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-342-LjcBdG3eNsqP5j8bNkMhSA-1; Mon, 18 Oct 2021 05:24:15 -0400
+X-MC-Unique: LjcBdG3eNsqP5j8bNkMhSA-1
+Received: by mail-ed1-f72.google.com with SMTP id i7-20020a50d747000000b003db0225d219so9162752edj.0
+        for <linux-remoteproc@vger.kernel.org>; Mon, 18 Oct 2021 02:24:15 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=tcERYHsACD8OiG9LERSlpQxmHuHdSGg0GMtHO86OE84=;
+        b=4Gk+UG4pAHTvZcGudLYPHUJnHd2SZ2roMA1HlOTxdSiYpedAsz5q82y4l74C51ElWw
+         AFlpa/EvlYkuGNAlxFWcFOXdDgtdyDnOGDcCVdhTEynIs0v14H9F8dzrV2NTACczGbIl
+         ZXvvzhnQi4VW7IU3CU4Mv3+F7ksg4oZihdOJO3RufOdCMYbnwwiGWaOVyVCMsXLSjP7Q
+         ih5dQ3wQLMBUXeN37GPZGWNaSbyZYLgeQZpmgzpPV3isTmOCR3a+vXnTfCHCzh/Fjt7X
+         dBWIJ8bmu03xqO5iTNZ7BIYXzWlkxhWnSCJUcgy00Osqvmlu56AXFPyBlLRjlSDLstml
+         d1iQ==
+X-Gm-Message-State: AOAM530NXuYA7fpETETc15MEgcr+XJuXXo9Rg4qKEC+VOinDxNajn+xp
+        Acv93H7mGZT+4zkaE0TDQO++4dE+J8Rip1RWGKCOg/uieRq5zfonzTHEbS/MqV3g9LH2pf3U8JS
+        nbYXBRypgRWA7/qPqYLPyfUkjqN7Tjw==
+X-Received: by 2002:a50:9d8e:: with SMTP id w14mr42193519ede.74.1634549054553;
+        Mon, 18 Oct 2021 02:24:14 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJxUJYrHxvUXjdPELjIDpPtrZ181C1I4vTJbRWD4jS3vqGv74zCzzGw5AmjDAdcPLpxevcG2mg==
+X-Received: by 2002:a50:9d8e:: with SMTP id w14mr42193472ede.74.1634549054384;
+        Mon, 18 Oct 2021 02:24:14 -0700 (PDT)
+Received: from steredhat (host-79-34-250-211.business.telecomitalia.it. [79.34.250.211])
+        by smtp.gmail.com with ESMTPSA id lm14sm8629911ejb.24.2021.10.18.02.24.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 18 Oct 2021 02:24:13 -0700 (PDT)
+Date:   Mon, 18 Oct 2021 11:24:10 +0200
+From:   Stefano Garzarella <sgarzare@redhat.com>
+To:     "Michael S. Tsirkin" <mst@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, Jeff Dike <jdike@addtoit.com>,
+        Richard Weinberger <richard@nod.at>,
+        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        Marcel Holtmann <marcel@holtmann.org>,
+        Johan Hedberg <johan.hedberg@gmail.com>,
+        Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
+        Matt Mackall <mpm@selenic.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Amit Shah <amit@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Gonglei <arei.gonglei@huawei.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Cristian Marussi <cristian.marussi@arm.com>,
+        "Enrico Weigelt, metux IT consult" <info@metux.net>,
+        Viresh Kumar <vireshk@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        David Airlie <airlied@linux.ie>,
+        Gerd Hoffmann <kraxel@redhat.com>,
+        Daniel Vetter <daniel@ffwll.ch>, Jie Deng <jie.deng@intel.com>,
+        Jean-Philippe Brucker <jean-philippe@linaro.org>,
+        Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Vishal Verma <vishal.l.verma@intel.com>,
+        Dave Jiang <dave.jiang@intel.com>,
+        Ira Weiny <ira.weiny@intel.com>,
+        Ohad Ben-Cohen <ohad@wizery.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
-        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>
-References: <20210712123752.10449-1-arnaud.pouliquen@foss.st.com>
- <20210712123752.10449-4-arnaud.pouliquen@foss.st.com>
- <YWDVwArEz5Yub3GJ@ripper> <f0696b4d-c0b6-5283-2eda-e5791462cbba@foss.st.com>
- <YWpZMwgWqcPMvL5q@yoga>
-From:   Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
-Message-ID: <ffb110dc-bc3b-dbc2-679f-de2416f7b90f@foss.st.com>
-Date:   Mon, 18 Oct 2021 11:13:04 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.13.0
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        David Hildenbrand <david@redhat.com>,
+        Vivek Goyal <vgoyal@redhat.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Eric Van Hensbergen <ericvh@gmail.com>,
+        Latchesar Ionkov <lucho@ionkov.net>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        Anton Yakovlev <anton.yakovlev@opensynergy.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, linux-um@lists.infradead.org,
+        virtualization@lists.linux-foundation.org,
+        linux-block@vger.kernel.org, linux-bluetooth@vger.kernel.org,
+        linux-crypto@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-gpio@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-i2c@vger.kernel.org, iommu@lists.linux-foundation.org,
+        netdev@vger.kernel.org, linux-wireless@vger.kernel.org,
+        nvdimm@lists.linux.dev, linux-remoteproc@vger.kernel.org,
+        linux-scsi@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        v9fs-developer@lists.sourceforge.net, kvm@vger.kernel.org,
+        alsa-devel@alsa-project.org
+Subject: Re: [PATCH RFC] virtio: wrap config->reset calls
+Message-ID: <20211018092410.t5hilzz7kbto2mhy@steredhat>
+References: <20211013105226.20225-1-mst@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <YWpZMwgWqcPMvL5q@yoga>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.75.127.45]
-X-ClientProxiedBy: SFHDAG2NODE2.st.com (10.75.127.5) To SFHDAG2NODE2.st.com
- (10.75.127.5)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.182.1,Aquarius:18.0.790,Hydra:6.0.425,FMLib:17.0.607.475
- definitions=2021-10-18_02,2021-10-14_02,2020-04-07_01
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20211013105226.20225-1-mst@redhat.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
+On Wed, Oct 13, 2021 at 06:55:31AM -0400, Michael S. Tsirkin wrote:
+>This will enable cleanups down the road.
+>The idea is to disable cbs, then add "flush_queued_cbs" callback
+>as a parameter, this way drivers can flush any work
+>queued after callbacks have been disabled.
+>
+>Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
+>---
+> arch/um/drivers/virt-pci.c                 | 2 +-
+> drivers/block/virtio_blk.c                 | 4 ++--
+> drivers/bluetooth/virtio_bt.c              | 2 +-
+> drivers/char/hw_random/virtio-rng.c        | 2 +-
+> drivers/char/virtio_console.c              | 4 ++--
+> drivers/crypto/virtio/virtio_crypto_core.c | 8 ++++----
+> drivers/firmware/arm_scmi/virtio.c         | 2 +-
+> drivers/gpio/gpio-virtio.c                 | 2 +-
+> drivers/gpu/drm/virtio/virtgpu_kms.c       | 2 +-
+> drivers/i2c/busses/i2c-virtio.c            | 2 +-
+> drivers/iommu/virtio-iommu.c               | 2 +-
+> drivers/net/caif/caif_virtio.c             | 2 +-
+> drivers/net/virtio_net.c                   | 4 ++--
+> drivers/net/wireless/mac80211_hwsim.c      | 2 +-
+> drivers/nvdimm/virtio_pmem.c               | 2 +-
+> drivers/rpmsg/virtio_rpmsg_bus.c           | 2 +-
+> drivers/scsi/virtio_scsi.c                 | 2 +-
+> drivers/virtio/virtio.c                    | 5 +++++
+> drivers/virtio/virtio_balloon.c            | 2 +-
+> drivers/virtio/virtio_input.c              | 2 +-
+> drivers/virtio/virtio_mem.c                | 2 +-
+> fs/fuse/virtio_fs.c                        | 4 ++--
+> include/linux/virtio.h                     | 1 +
+> net/9p/trans_virtio.c                      | 2 +-
+> net/vmw_vsock/virtio_transport.c           | 4 ++--
 
+Reviewed-by: Stefano Garzarella <sgarzare@redhat.com>
 
-On 10/16/21 6:46 AM, Bjorn Andersson wrote:
-> On Mon 11 Oct 05:46 CDT 2021, Arnaud POULIQUEN wrote:
-> 
->>
->>
->> On 10/9/21 1:35 AM, Bjorn Andersson wrote:
->>> On Mon 12 Jul 05:37 PDT 2021, Arnaud Pouliquen wrote:
->>>
->>>> Create the rpmsg_ctrl.c module and move the code related to the
->>>> rpmsg_ctrldev device in this new module.
->>>>
->>>> Add the dependency between rpmsg_char and rpmsg_ctrl in the
->>>> kconfig file.
->>>>
->>>
->>> As I said in the cover letter, the only reason I can see for doing this
->>> refactoring is in relation to the introduction of
->>> RPMSG_CREATE_DEV_IOCTL. So I would like this patch to go together with
->>> that patch, together with a good motivation why there's merit to
->>> creating yet another kernel module (and by bind/unbind can't be used).
->>>
->>> Perhaps I'm just missing some good usecase related to this?
->>
->>
->>>
->>>> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
->>>> Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
->>>> ---
->>>>  drivers/rpmsg/Kconfig      |   9 ++
->>>>  drivers/rpmsg/Makefile     |   1 +
->>>>  drivers/rpmsg/rpmsg_char.c | 170 +----------------------------
->>>>  drivers/rpmsg/rpmsg_char.h |   2 +
->>>>  drivers/rpmsg/rpmsg_ctrl.c | 215 +++++++++++++++++++++++++++++++++++++
->>>>  5 files changed, 229 insertions(+), 168 deletions(-)
->>>>  create mode 100644 drivers/rpmsg/rpmsg_ctrl.c
->>>>
->>> [..]
->>>> diff --git a/drivers/rpmsg/rpmsg_char.c b/drivers/rpmsg/rpmsg_char.c
->>> [..]
->>>> -static int rpmsg_chrdev_probe(struct rpmsg_device *rpdev)
->>>> -{
->>> [..]
->>>> -	dev = &ctrldev->dev;
->>>> -	device_initialize(dev);
->>>> -	dev->parent = &rpdev->dev;
->>>> -	dev->class = rpmsg_class;
->>> [..]
->>>> diff --git a/drivers/rpmsg/rpmsg_ctrl.c b/drivers/rpmsg/rpmsg_ctrl.c
->>> [..]
->>>> +static int rpmsg_ctrldev_probe(struct rpmsg_device *rpdev)
->>>> +{
->>> [..]
->>>> +	dev = &ctrldev->dev;
->>>> +	device_initialize(dev);
->>>> +	dev->parent = &rpdev->dev;
->>>
->>> You lost the assignment of dev->class here, which breaks the udev rules
->>> we use to invoke rpmsgexport to create endpoints and it causes udevadm
->>> to complain that rpmsg_ctrlN doesn't have a "subsystem".
->>
->> We discussed this point with Mathieu, as a first step i kept the class, but that
->> generated another dependency with the rpmsg_char device while information was
->> available on the rpmsg bus. The char device and ctrl device should share the
->> same class. As rpmsg_ctrl is created first it would have to create the class,and
->> provide an API to rpmsg char
->>
-> 
-> Perhaps if this is considered a common piece shared between multiple
-> rpmsg modules we can create such class in the rpmsg "core" itself?
-
-Yes that seems a good alternative
-
-> 
->> Please could you details what does means "rpmsg_ctrlN doesn't have a
->> "subsystem"." What exactly the udev is looking for? could it base it check on
->> the /dev/rpmsg_ctrl0 or /sys/bus/rpmsg/devices/...?
->>
-> 
-> If I read the uevent messages correctly they seem to contain a SUBSYTEM=
-> property when the class is provided. But I'm not sure about the reasons
-> for that.
-
-If it part of the udev requirement, i suppose that it is mandatory, and in this
-case, declare the class in the core make sense.
-
-I will send a new patchset that will squash all the remaining patches, taking
-into account your comment.
-
-Thanks,
-Arnaud
-
-> 
-> Regards,
-> Bjorn
-> 
->> Thanks,
->> Arnaud
->>
->>>
->>> Regards,
->>> Bjorn
->>>
