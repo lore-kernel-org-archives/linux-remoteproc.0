@@ -2,57 +2,57 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0FBFC433F5
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 22 Oct 2021 17:40:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A36D9C433EF
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 22 Oct 2021 17:43:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DA4AE6128E
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 22 Oct 2021 17:40:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8EFF76109D
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 22 Oct 2021 17:43:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233907AbhJVRmk (ORCPT
+        id S231472AbhJVRpV (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 22 Oct 2021 13:42:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41474 "EHLO
+        Fri, 22 Oct 2021 13:45:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42130 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233901AbhJVRmj (ORCPT
+        with ESMTP id S233876AbhJVRpT (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 22 Oct 2021 13:42:39 -0400
-Received: from mail-pl1-x634.google.com (mail-pl1-x634.google.com [IPv6:2607:f8b0:4864:20::634])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 82450C061764
-        for <linux-remoteproc@vger.kernel.org>; Fri, 22 Oct 2021 10:40:21 -0700 (PDT)
-Received: by mail-pl1-x634.google.com with SMTP id t21so3244189plr.6
-        for <linux-remoteproc@vger.kernel.org>; Fri, 22 Oct 2021 10:40:21 -0700 (PDT)
+        Fri, 22 Oct 2021 13:45:19 -0400
+Received: from mail-pf1-x42e.google.com (mail-pf1-x42e.google.com [IPv6:2607:f8b0:4864:20::42e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A552C061766
+        for <linux-remoteproc@vger.kernel.org>; Fri, 22 Oct 2021 10:43:02 -0700 (PDT)
+Received: by mail-pf1-x42e.google.com with SMTP id 187so4276561pfc.10
+        for <linux-remoteproc@vger.kernel.org>; Fri, 22 Oct 2021 10:43:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=liWZli0eAF8afgakhBPCOuJHOqUaz+9glMsUeQZ0bBE=;
-        b=gh/gv+dOl3T/Yz05wZAfdRzAQ4bnQBamqpZxekxHgeqJ2A79ET86YbMYyM1JZ2iFmu
-         Cjpnhc0niQwAJKYkuGzKVLSvsdyxdBUaZZPv+N4kgz8Vhn3pZsZxqMRQ/gOHyd3cb8ot
-         PISuK6HiPDwX2jOiQbiVy/2wAp8HHQxSbCvog1OQLw5YYrEceThndvKImgBFIsU5BKuS
-         Vyacuioa2wnsH4ODtvE+/aYsXk9Qg/0rulnzNOyOEc3LFsQR+baYe1mYxGiz6CiNecsD
-         ebVdw/TQ3UNceLFu7ZoOW0+dfxv4pgfyI4qiOUgUkw1fvKJtQllDW4Kn8dqMfU3mllHr
-         MtPg==
+        bh=9n/cqrzRbqe+8NgRURNa9xyWoP4yHX8hd+RzSNaaxRM=;
+        b=nzYbGo7KXNJ+pz9cuiwU9Et1Mhjpd9qmzBAJPhTz/EY2AyAu+nrL6LRL0mn9i0Y7cY
+         4WjRzRGmQpIa2RhU8uw/NgsAMyXnlHjd0PLI0TXEN0dDUtkzb8qvOgYoq1vH3uUHgcoe
+         W8oqq8wQ+5Q4ffoKQcKSBv28/YiHcgpzde+/zGV0QVJ55g1wJ9wrO3YsuIF5XRXhaH13
+         yc01/smZgcUa9KfuDd4ZdhzDWkUt9NHgvGIXROrIZ3satkK04u+s3gsdUTEeM+W/rG68
+         xneGbKP8fJ5W5Jn0suJ0dAvUx/PGbTzpi/HSM0GAGlodBQXTO4e8XGjYmoFqjsfijV8V
+         uqsg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=liWZli0eAF8afgakhBPCOuJHOqUaz+9glMsUeQZ0bBE=;
-        b=atj8zRWAEOZ9rO0To2N7nFwkBESGO+rhqwAgbd0mLRZdNMHJJU0eWb+nYKPuqAamCA
-         XI+MC6u1NzC89GQbqrbTk+KchgXy60Nt7PszIf+QVB7VlzlMT0/ClxEuikj0MbfFmvsF
-         UHGiE159k4Ni6oTqcTmzTccFwiaR2O1yffhJ1xsZdxXutDFA1wRbd0fDDHInoA3KNcIw
-         ZcOUOwSrZV8hulUneIF2zfGKK2bgmSmf8rBk4rTXzjStHCyLnqV1tbr7/ni9BkbChYkl
-         9Klgbft/uQ9KukXWDB6nee2ZKh205CsVZ2RGAGUg5+3fRc+wY8LIj4MBHLqRVrWft7u9
-         f40Q==
-X-Gm-Message-State: AOAM532tafNP6T6vRlZas9MXvvhJAHbmpgG+UI0xa4tnkz6ChroGI1Tz
-        bMESvEcsdQvy80chXkTCbzp0YA==
-X-Google-Smtp-Source: ABdhPJz1BO5gT/0qxla2xBJC7oQyx8/tu9cL5I+Ak00IcmUjFcs98nrq0S0UY2+Ty/lGxPN/egORYQ==
-X-Received: by 2002:a17:90a:6583:: with SMTP id k3mr16418390pjj.147.1634924420954;
-        Fri, 22 Oct 2021 10:40:20 -0700 (PDT)
+        bh=9n/cqrzRbqe+8NgRURNa9xyWoP4yHX8hd+RzSNaaxRM=;
+        b=z7vwYIGuvTaR5siHDM33/uUW8a8HUFcwuBzdZIprgu+Ge8wftMqiZzJQ22eEWLdUC2
+         vFhZaKBr4BrqnD+T8bH3UWWK3ev0IZ//ggER4AbCOse0rItB4Mc5jKREAksO58hOU1LV
+         a/gEk4o10pGPb5+ZYMPJXiyEbhPnuVO373S3+gPIJKDeO46FRtBGPshY5v4GF+k1bLH7
+         Jhy7LJSPzRgdiwj7S3uRfhTcXtcBm6QiNzL4JhnRxnuoq3Pdy/VbQ92qea09eMIOOUVV
+         1cPYOy0UB6i9CJYb2JtaYBziriZJvaFg9IeB9Estjt8CkL60xi78TEQspSTZvLnRqaIJ
+         aWdg==
+X-Gm-Message-State: AOAM532XtrKpm9d9va6SbAT+QblAc0Nae8nSR4Whb5+Cf55olUofObFl
+        pEmFy29idAbi7d1R7lYSttweew==
+X-Google-Smtp-Source: ABdhPJx0pd6dzLUNZono6TwvzeMgOEHqx8YHF0LofvRdAtYUOGdpReFSxR3L85OmL6WGUlVTO/eG3g==
+X-Received: by 2002:a63:561a:: with SMTP id k26mr894072pgb.144.1634924581389;
+        Fri, 22 Oct 2021 10:43:01 -0700 (PDT)
 Received: from p14s (S0106889e681aac74.cg.shawcable.net. [68.147.0.187])
-        by smtp.gmail.com with ESMTPSA id p16sm9142083pgd.78.2021.10.22.10.40.19
+        by smtp.gmail.com with ESMTPSA id b18sm12047386pfl.24.2021.10.22.10.42.59
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 22 Oct 2021 10:40:19 -0700 (PDT)
-Date:   Fri, 22 Oct 2021 11:40:17 -0600
+        Fri, 22 Oct 2021 10:43:00 -0700 (PDT)
+Date:   Fri, 22 Oct 2021 11:42:58 -0600
 From:   Mathieu Poirier <mathieu.poirier@linaro.org>
 To:     Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
 Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
@@ -64,7 +64,7 @@ Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
         Bruce Ashfield <bruce.ashfield@xilinx.com>
 Subject: Re: [RFC PATCH 5/7] remoteproc: virtio: Create platform device for
  the remoteproc_virtio
-Message-ID: <20211022174017.GB3659113@p14s>
+Message-ID: <20211022174258.GC3659113@p14s>
 References: <20211001101234.4247-1-arnaud.pouliquen@foss.st.com>
  <20211001101234.4247-6-arnaud.pouliquen@foss.st.com>
 MIME-Version: 1.0
@@ -75,18 +75,9 @@ Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-The title mentions the creation of a "platform device" but this patch adds a
-platform driver interface.
-
 On Fri, Oct 01, 2021 at 12:12:32PM +0200, Arnaud Pouliquen wrote:
 > Define a platform device for the remoteproc virtio to prepare the
 > management of the remoteproc virtio as a platform device.
-
-The above should be:
-
-"Define a platform driver to prepare for the managemnt of remoteproc virtio
-devices as platform devices."
-
 > 
 > The platform device allows to pass rproc_vdev_data platform data to
 > specify properties that are stored in the rproc_vdev structure.
@@ -110,6 +101,9 @@ devices as platform devices."
 >  };
 >  
 > +struct rproc_vdev_data {
+
+s/rproc_vdev_data/rproc_vdev_pdata
+
 > +	u32 rsc_offset;
 > +	unsigned int id;
 > +	unsigned int index;
