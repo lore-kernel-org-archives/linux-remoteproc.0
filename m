@@ -2,445 +2,337 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0B74C433F5
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 22 Oct 2021 17:59:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12D72C433FE
+	for <linux-remoteproc@archiver.kernel.org>; Sun, 24 Oct 2021 03:04:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BB57561248
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 22 Oct 2021 17:59:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E285260F36
+	for <linux-remoteproc@archiver.kernel.org>; Sun, 24 Oct 2021 03:04:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233524AbhJVSBV (ORCPT
+        id S231454AbhJXDGl (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 22 Oct 2021 14:01:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45624 "EHLO
+        Sat, 23 Oct 2021 23:06:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51868 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233278AbhJVSBV (ORCPT
+        with ESMTP id S231263AbhJXDGk (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 22 Oct 2021 14:01:21 -0400
-Received: from mail-pg1-x529.google.com (mail-pg1-x529.google.com [IPv6:2607:f8b0:4864:20::529])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C9E60C061764
-        for <linux-remoteproc@vger.kernel.org>; Fri, 22 Oct 2021 10:59:02 -0700 (PDT)
-Received: by mail-pg1-x529.google.com with SMTP id 75so4023771pga.3
-        for <linux-remoteproc@vger.kernel.org>; Fri, 22 Oct 2021 10:59:02 -0700 (PDT)
+        Sat, 23 Oct 2021 23:06:40 -0400
+Received: from mail-ot1-x329.google.com (mail-ot1-x329.google.com [IPv6:2607:f8b0:4864:20::329])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 05623C061348
+        for <linux-remoteproc@vger.kernel.org>; Sat, 23 Oct 2021 20:04:19 -0700 (PDT)
+Received: by mail-ot1-x329.google.com with SMTP id 34-20020a9d0325000000b00552cae0decbso9829967otv.0
+        for <linux-remoteproc@vger.kernel.org>; Sat, 23 Oct 2021 20:04:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=1nDeFqUsvdr45xYBBhOarNLLfojMepdfV0/mCVhVbb0=;
-        b=WMZD2G+BtQJ4swZmvJf05IVsSn+NEsPVuB+h01UixO7xDUEaiKd3Ys9yNjUK++B6zq
-         Is+AUX+MLgbH0dYEQPYCRMtSEwmXoUY1Pi+YCs5kO90JyxF56p34npR/WHD9pDCOmsPQ
-         bqOBU1ihg5Elry1BA2GtEPB3IZY8wBgnyeu39AISEo/tGC6qOq5V0KyPkpu8PN+BMb6y
-         TTH6W3775XJGnfSOrHVlXuLFw+3JhbT9dj95vkcKBPNux57j38tqtWjJn0dplVIKKKhV
-         h1+9WAtaKy1DJ41cxXr3Tl+B0YKrEjoiIozvl3mlGdpHQCtD70Oapvor5bF05D802Tup
-         fkbg==
+        bh=09khimdAjQRi8HKATJj9Yiw14F//GZIJY/3Fe7+1+Ew=;
+        b=lHDyo+4Dao/LPjRiG1bPgSM38hRwp9NmMy+FE4x4UHptLKk5sQX82TX7R+yqo/Sx1k
+         vpmwoKDWHfskPP7m3dpCjBSwcLHkZ3OZ+0rZ/xNTX+qi/cB3O2MvU2BGYzrCOPP73+Ko
+         Nz8xruVnyHemho7jFWSjyfS7glTYTx1jInbqcttKImabSlDLIUzh/yHzieGAVxO6OGyl
+         ZFY2B2eYCP466an727i+vHIuOWDzkDSQJnH0Z9tl0KsQDXQEeGSoYySzgw8cQZooqebY
+         XvKTE6zrAC2cCr3Btcl0mS/SOtSmfMNTy8SaWiLYgK3mK3YtlUMpbnLXL9AkO36Vni/Z
+         1WVg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=1nDeFqUsvdr45xYBBhOarNLLfojMepdfV0/mCVhVbb0=;
-        b=vOhUwf+CSDTBWbFGSlBn8UokhmA4O3rcS+iX7Nao/jIIfx79Dw+qU7+Mtm4REToX00
-         A2OkaLemgdflthPv+bbRL8q+Q3RFqWulJGyLz9AV1oS83LlEZjLL7M0lzjPwSQuTacVG
-         7R0bNkUkl1vI7eeztNdmg1LMph3eM+YMSTvU6gh8k2LJ155xjv4PjFUBCvxbnNAvVglG
-         CF1kT89SvI2cAmOcif2lVoTSpGtohyo98HMhKz2RwYB707de2pxI5g+vt9c+AB/Ralsr
-         fGxDL2WXEQm17zveAGslbLF4EKFh9S8qBKiRcA9QTDKfHyqWhUXgsZnDAz7rmvDXKCG/
-         x9+A==
-X-Gm-Message-State: AOAM533SPm3shnX7RSp9/2EyeAbi2Hd5R3BMObFdc4C2hDwDY9sxg9M8
-        y1wnDQpeXzro/bbvOBtg6Eur5w==
-X-Google-Smtp-Source: ABdhPJw72Fmm/kS3VHDLkcNXxpmFVQYnmJFQhbmrrivfykR4cI1KO3ChooWG+GKJf7A6AVXripL8iw==
-X-Received: by 2002:a05:6a00:c81:b029:30e:21bf:4c15 with SMTP id a1-20020a056a000c81b029030e21bf4c15mr1274191pfv.70.1634925542182;
-        Fri, 22 Oct 2021 10:59:02 -0700 (PDT)
-Received: from p14s (S0106889e681aac74.cg.shawcable.net. [68.147.0.187])
-        by smtp.gmail.com with ESMTPSA id gm14sm13637730pjb.40.2021.10.22.10.58.59
+        bh=09khimdAjQRi8HKATJj9Yiw14F//GZIJY/3Fe7+1+Ew=;
+        b=EKwOms4Y1Xw5nsn2oOwAIHO2p0AyJ6amW6Jb6Oq0f/oebZLSMSwdsDPNMXzfUR8yvP
+         lD/W/td4xtJty5h6yOFI37e2AduVGenIKNIUKiOuTX2OQailAr6bwRKAulaQBytiVZ7k
+         NLSVdcK2f2utBtnGVPjsmBbwMya5aj1jrnq33ODpaj3BNfdABKkybbUxXyzvLc6dvp6M
+         ilFWwODvJfwnDkAYnvKYupJlNLixznJekTnZPIvtuvEg+E5x0bvuJwTtRgmiVnZ+c1lD
+         A7ofE7u1tukmA1vJlYpT5On07kdG8TnirrDmhM7UmCj+mzapxq+iNI1x1OG1npUu88kY
+         vXrg==
+X-Gm-Message-State: AOAM530jxUEu6iLF2RHA8vA0K9qs+hM6WGxSUyWqMducch5M+t1ZXynT
+        l66Dv6G3yU/b92NfXeLckKvsyA==
+X-Google-Smtp-Source: ABdhPJxXIK+1OUczhalebYJ7/W4p3n75GDzIHUTDynp8eQPC+UOq1fcxo3/zmNL2HgmGyBdZhEfL9A==
+X-Received: by 2002:a9d:20a3:: with SMTP id x32mr6982286ota.91.1635044658537;
+        Sat, 23 Oct 2021 20:04:18 -0700 (PDT)
+Received: from builder.lan ([2600:1700:a0:3dc8:3697:f6ff:fe85:aac9])
+        by smtp.gmail.com with ESMTPSA id h2sm2679287otr.37.2021.10.23.20.04.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 22 Oct 2021 10:59:00 -0700 (PDT)
-Date:   Fri, 22 Oct 2021 11:58:57 -0600
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-To:     Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Ohad Ben-Cohen <ohad@wizery.com>,
-        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        Rob Herring <robh@kernel.org>, Christoph Hellwig <hch@lst.de>,
-        Stefano Stabellini <stefanos@xilinx.com>,
-        Bruce Ashfield <bruce.ashfield@xilinx.com>
-Subject: Re: [RFC PATCH 7/7] remoteproc: Instantiate the new remoteproc
- virtio platform device
-Message-ID: <20211022175857.GD3659113@p14s>
-References: <20211001101234.4247-1-arnaud.pouliquen@foss.st.com>
- <20211001101234.4247-8-arnaud.pouliquen@foss.st.com>
+        Sat, 23 Oct 2021 20:04:17 -0700 (PDT)
+Date:   Sat, 23 Oct 2021 22:04:15 -0500
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Yassine Oudjana <y.oudjana@protonmail.com>
+Cc:     Andy Gross <agross@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@somainline.org>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Raffaele Tranquillini <raffaele.tranquillini@gmail.com>,
+        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        devicetree@vger.kernel.org, phone-devel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/5] arm64: dts: qcom: msm8996: Revamp reserved memory
+Message-ID: <YXTNL7boyiRFKQiV@builder.lan>
+References: <20210926190555.278589-1-y.oudjana@protonmail.com>
+ <20210926190555.278589-2-y.oudjana@protonmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20211001101234.4247-8-arnaud.pouliquen@foss.st.com>
+In-Reply-To: <20210926190555.278589-2-y.oudjana@protonmail.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Fri, Oct 01, 2021 at 12:12:34PM +0200, Arnaud Pouliquen wrote:
-> Migrate from the rvdev device to the rvdev platform device.
-> From this patch, when a vdev resource is found in the resource table
-> the remoteproc core register a platform device.
+On Sun 26 Sep 14:06 CDT 2021, Yassine Oudjana wrote:
+
+> Fix a total overlap between zap_shader_region and slpi_region, and rename
+> all regions to match the naming convention in other Qualcomm SoC device trees.
 > 
-> All reference to the rvdev->dev has been updated to rvdev-pdev->dev
-> 
-> The use of kref counter is replaced by get/put_device on the remoteproc
-> virtio device.
-> 
-> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+> Signed-off-by: Yassine Oudjana <y.oudjana@protonmail.com>
+
+FYI, I like this series, but I held off applying it because I wanted to
+verify that the shuffling of the memory regions works on the existing
+8996 boards.
+
+Unfortunately it didn't work, either with or without the shuffling on
+the db820c - and I've not found the time to figure out why that is. I
+hope to get back to this shortly (or that someone else will figure it
+out and provide a tested-by)
+
+Regards,
+Bjorn
+
 > ---
->  drivers/remoteproc/remoteproc_core.c     | 49 +++++++------
->  drivers/remoteproc/remoteproc_internal.h | 16 ----
->  drivers/remoteproc/remoteproc_virtio.c   | 93 ++++++------------------
->  include/linux/remoteproc.h               |  4 -
->  4 files changed, 50 insertions(+), 112 deletions(-)
+>  .../dts/qcom/msm8996-sony-xperia-tone.dtsi    | 18 ++++--
+>  .../boot/dts/qcom/msm8996-xiaomi-common.dtsi  | 18 +++---
+>  arch/arm64/boot/dts/qcom/msm8996.dtsi         | 63 ++++++++++---------
+>  3 files changed, 55 insertions(+), 44 deletions(-)
 > 
-> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-> index 67ccd088db8f..d9256db8b130 100644
-> --- a/drivers/remoteproc/remoteproc_core.c
-> +++ b/drivers/remoteproc/remoteproc_core.c
-> @@ -467,6 +467,8 @@ static int rproc_handle_vdev(struct rproc *rproc, void *ptr,
->  {
->  	struct fw_rsc_vdev *rsc = ptr;
->  	struct device *dev = &rproc->dev;
-> +	struct rproc_vdev_data vdev_data;
-> +	struct platform_device *pdev;
->  	struct rproc_vdev *rvdev;
->  	int i, ret;
+> diff --git a/arch/arm64/boot/dts/qcom/msm8996-sony-xperia-tone.dtsi b/arch/arm64/boot/dts/qcom/msm8996-sony-xperia-tone.dtsi
+> index 507396c4d23b..4c26e66f0610 100644
+> --- a/arch/arm64/boot/dts/qcom/msm8996-sony-xperia-tone.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/msm8996-sony-xperia-tone.dtsi
+> @@ -13,9 +13,10 @@
+>  #include <dt-bindings/pinctrl/qcom,pmic-gpio.h>
+>  #include <dt-bindings/pinctrl/qcom,pmic-mpp.h>
 >  
-> @@ -486,28 +488,34 @@ static int rproc_handle_vdev(struct rproc *rproc, void *ptr,
->  	dev_dbg(dev, "vdev rsc: id %d, dfeatures 0x%x, cfg len %d, %d vrings\n",
->  		rsc->id, rsc->dfeatures, rsc->config_len, rsc->num_of_vrings);
+> -/delete-node/ &slpi_region;
+> -/delete-node/ &venus_region;
+> -/delete-node/ &zap_shader_region;
+> +/delete-node/ &adsp_mem;
+> +/delete-node/ &slpi_mem;
+> +/delete-node/ &venus_mem;
+> +/delete-node/ &gpu_mem;
 >  
-> -	/* we currently support only two vrings per rvdev */
-> -	if (rsc->num_of_vrings > ARRAY_SIZE(rvdev->vring)) {
-> -		dev_err(dev, "too many vrings: %d\n", rsc->num_of_vrings);
-> -		return -EINVAL;
-> -	}
-> +	/* platform data of the new rvdev platform */
-> +	vdev_data.rsc_offset = offset;
-> +	vdev_data.id  = rsc->id;
-> +	vdev_data.index  = rproc->nb_vdev;
+>  / {
+>  	qcom,msm-id = <246 0x30001>; /* MSM8996 V3.1 (Final) */
+> @@ -46,18 +47,23 @@ cont_splash_mem: memory@83401000 {
+>  			no-map;
+>  		};
 >  
-> -	rvdev = kzalloc(sizeof(*rvdev), GFP_KERNEL);
-> -	if (!rvdev)
-> -		return -ENOMEM;
-> -
-> -	kref_init(&rvdev->refcount);
-> -
-> -	rvdev->id = rsc->id;
-> -	rvdev->rproc = rproc;
-> -	rvdev->index = rproc->nb_vdev;
-> +	pdev = rproc_virtio_register_device(rproc, &vdev_data);
-> +	if (PTR_ERR_OR_ZERO(pdev)) {
-> +		dev_err(rproc->dev.parent,
-> +			"failed to create rproc-virtio device\n");
-> +		return PTR_ERR_OR_ZERO(pdev);
-> +	}
->  
-> -	ret = rproc_rvdev_add_device(rvdev);
-> -	if (ret)
-> -		return ret;
-> +	/* If we made it to this point the remote proc virtio platform at been probed */
-> +	rvdev = platform_get_drvdata(pdev);
-> +	if (WARN_ON(!rvdev)) {
-> +		ret = -EINVAL;
-> +		goto free_rvdev;
-> +	}
->  
->  	rproc->nb_vdev++;
->  
-> +	/* we currently support only two vrings per rvdev */
-> +	if (rsc->num_of_vrings > ARRAY_SIZE(rvdev->vring)) {
-> +		dev_err(dev, "too many vrings: %d\n", rsc->num_of_vrings);
-> +		ret = -EINVAL;
-> +		goto free_rvdev;
-> +	}
+> -		zap_shader_region: gpu@90400000 {
+> +		adsp_mem: adsp@8ea00000 {
+> +			reg = <0x0 0x8ea00000 0x0 0x1a00000>;
+> +			no-map;
+> +		};
 > +
->  	/* parse the vrings */
->  	for (i = 0; i < rsc->num_of_vrings; i++) {
->  		ret = rproc_parse_vring(rvdev, rsc, i);
-> @@ -515,9 +523,6 @@ static int rproc_handle_vdev(struct rproc *rproc, void *ptr,
->  			goto free_rvdev;
->  	}
+> +		gpu_mem: gpu@90400000 {
+>  			compatible = "shared-dma-pool";
+>  			reg = <0x0 0x90400000 0x0 0x2000>;
+>  			no-map;
+>  		};
 >  
-> -	/* remember the resource offset*/
-> -	rvdev->rsc_offset = offset;
-> -
->  	/* allocate the vring resources */
->  	for (i = 0; i < rsc->num_of_vrings; i++) {
->  		ret = rproc_alloc_vring(rvdev, i);
-> @@ -531,7 +536,7 @@ static int rproc_handle_vdev(struct rproc *rproc, void *ptr,
->  	for (i--; i >= 0; i--)
->  		rproc_free_vring(&rvdev->vring[i]);
->  free_rvdev:
-> -	device_unregister(&rvdev->dev);
-> +	rproc_virtio_unregister_device(rvdev);
->  	return ret;
->  }
-
-I have made it up to here but running out of time for this patchset.  I will review
-the rest in another revision.  I haven't found a justification for
-rproc_register_rvdev() and rproc_unregister_rvdev().  Am I missing something or
-they can simply be removed and the list manipulations done in the code as it
-currently is?
-
-Thanks,
-Mathieu
-
+> -		slpi_region: memory@90500000 {
+> +		slpi_mem: memory@90500000 {
+>  			reg = <0 0x90500000 0 0xa00000>;
+>  			no-map;
+>  		};
 >  
-> @@ -1270,7 +1275,7 @@ void rproc_resource_cleanup(struct rproc *rproc)
+> -		venus_region: memory@90f00000 {
+> +		venus_mem: memory@90f00000 {
+>  			reg = <0 0x90f00000 0 0x500000>;
+>  			no-map;
+>  		};
+> diff --git a/arch/arm64/boot/dts/qcom/msm8996-xiaomi-common.dtsi b/arch/arm64/boot/dts/qcom/msm8996-xiaomi-common.dtsi
+> index d239b01b8505..a5e7bccadba2 100644
+> --- a/arch/arm64/boot/dts/qcom/msm8996-xiaomi-common.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/msm8996-xiaomi-common.dtsi
+> @@ -66,32 +66,32 @@ memory@88800000 {
 >  
->  	/* clean up remote vdev entries */
->  	list_for_each_entry_safe(rvdev, rvtmp, &rproc->rvdevs, node)
-> -		kref_put(&rvdev->refcount, rproc_vdev_release);
-> +		rproc_virtio_unregister_device(rvdev);
+>  		/* This platform has all PIL regions offset by 0x1400000 */
+>  		/delete-node/ mpss@88800000;
+> -		mpss_region: mpss@89c00000 {
+> +		mpss_mem: mpss@89c00000 {
+>  			reg = <0x0 0x89c00000 0x0 0x6200000>;
+>  			no-map;
+>  		};
 >  
->  	rproc_coredump_cleanup(rproc);
->  }
-> diff --git a/drivers/remoteproc/remoteproc_internal.h b/drivers/remoteproc/remoteproc_internal.h
-> index 0bb1b14e5136..2f68e7380c77 100644
-> --- a/drivers/remoteproc/remoteproc_internal.h
-> +++ b/drivers/remoteproc/remoteproc_internal.h
-> @@ -38,12 +38,10 @@ int rproc_of_parse_firmware(struct device *dev, int index,
->  /* from remoteproc_virtio.c */
->  #if IS_ENABLED(CONFIG_REMOTEPROC_VIRTIO)
+>  		/delete-node/ adsp@8ea00000;
+> -		adsp_region: adsp@8ea00000 {
+> +		adsp_mem: adsp@8fe00000 {
+>  			reg = <0x0 0x8fe00000 0x0 0x1b00000>;
+>  			no-map;
+>  		};
 >  
-> -int rproc_rvdev_add_device(struct rproc_vdev *rvdev);
->  struct platform_device *
->  rproc_virtio_register_device(struct rproc *rproc, struct rproc_vdev_data *vdev_data);
->  void rproc_virtio_unregister_device(struct rproc_vdev *rvdev);
->  irqreturn_t rproc_vq_interrupt(struct rproc *rproc, int vq_id);
-> -void rproc_vdev_release(struct kref *ref);
+> -		/delete-node/ slpi@90b00000;
+> -		slpi_region: slpi@91900000 {
+> +		/delete-node/ slpi@90500000;
+> +		slpi_mem: slpi@91900000 {
+>  			reg = <0x0 0x91900000 0x0 0xa00000>;
+>  			no-map;
+>  		};
 >  
->  #else
+> -		/delete-node/ gpu@8f200000;
+> -		zap_shader_region: gpu@92300000 {
+> +		/delete-node/ gpu@90f00000;
+> +		gpu_mem: gpu@92300000 {
+>  			compatible = "shared-dma-pool";
+>  			reg = <0x0 0x92300000 0x0 0x2000>;
+>  			no-map;
+>  		};
 >  
-> @@ -59,14 +57,6 @@ static inline void rproc_virtio_unregister_device(struct rproc_vdev *rvdev)
->  	WARN_ON(1);
->  }
+>  		/delete-node/ venus@91000000;
+> -		venus_region: venus@90400000 {
+> +		venus_mem: venus@92400000 {
+>  			reg = <0x0 0x92400000 0x0 0x500000>;
+>  			no-map;
+>  		};
+> @@ -107,7 +107,7 @@ ramoops@92900000 {
+>  			pmsg-size = <0x40000>;
+>  		};
 >  
-> -int rproc_rvdev_add_device(struct rproc_vdev *rvdev)
-> -{
-> -	/* This shouldn't be possible */
-> -	WARN_ON(1);
-> -
-> -	return -ENXIO;
-> -}
-> -
->  static inline irqreturn_t rproc_vq_interrupt(struct rproc *rproc, int vq_id)
->  {
->  	/* This shouldn't be possible */
-> @@ -75,12 +65,6 @@ static inline irqreturn_t rproc_vq_interrupt(struct rproc *rproc, int vq_id)
->  	return IRQ_NONE;
->  }
+> -		/delete-node/ rmtfs@86700000;
+> +		/delete-node/ rmtfs;
+>  		rmtfs@f6c00000 {
+>  			compatible = "qcom,rmtfs-mem";
+>  			reg = <0 0xf6c00000 0 0x200000>;
+> @@ -118,7 +118,7 @@ rmtfs@f6c00000 {
+>  		};
 >  
-> -static inline void rproc_vdev_release(struct kref *ref)
-> -{
-> -	/* This shouldn't be possible */
-> -	WARN_ON(1);
-> -}
-> -
->  #endif
+>  		/delete-node/ mba@91500000;
+> -		mba_region: mba@f6f00000 {
+> +		mba_mem: mba@f6f00000 {
+>  			reg = <0x0 0xf6f00000 0x0 0x100000>;
+>  			no-map;
+>  		};
+> diff --git a/arch/arm64/boot/dts/qcom/msm8996.dtsi b/arch/arm64/boot/dts/qcom/msm8996.dtsi
+> index eb3ec5ff46eb..1495fff6ffc9 100644
+> --- a/arch/arm64/boot/dts/qcom/msm8996.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/msm8996.dtsi
+> @@ -384,60 +384,65 @@ reserved-memory {
+>  		#size-cells = <2>;
+>  		ranges;
 >  
->  /* from remoteproc_debugfs.c */
-> diff --git a/drivers/remoteproc/remoteproc_virtio.c b/drivers/remoteproc/remoteproc_virtio.c
-> index 7188fb8ce40f..34781a2136e6 100644
-> --- a/drivers/remoteproc/remoteproc_virtio.c
-> +++ b/drivers/remoteproc/remoteproc_virtio.c
-> @@ -29,7 +29,11 @@
+> -		mba_region: mba@91500000 {
+> -			reg = <0x0 0x91500000 0x0 0x200000>;
+> +		hyp_mem: memory@85800000 {
+> +			reg = <0x0 0x85800000 0x0 0x600000>;
+>  			no-map;
+>  		};
 >  
->  static struct rproc_vdev *vdev_to_rvdev(struct virtio_device *vdev)
->  {
-> -	return container_of(vdev->dev.parent, struct rproc_vdev, dev);
-> +	struct platform_device *pdev;
+> -		slpi_region: slpi@90b00000 {
+> -			reg = <0x0 0x90b00000 0x0 0xa00000>;
+> +		xbl_mem: memory@85e00000 {
+> +			reg = <0x0 0x85e00000 0x0 0x200000>;
+>  			no-map;
+>  		};
+>  
+> -		venus_region: venus@90400000 {
+> -			reg = <0x0 0x90400000 0x0 0x700000>;
+> +		smem_mem: smem-mem@86000000 {
+> +			reg = <0x0 0x86000000 0x0 0x200000>;
+>  			no-map;
+>  		};
+>  
+> -		adsp_region: adsp@8ea00000 {
+> -			reg = <0x0 0x8ea00000 0x0 0x1a00000>;
+> +		tz_mem: memory@86200000 {
+> +			reg = <0x0 0x86200000 0x0 0x2600000>;
+>  			no-map;
+>  		};
+>  
+> -		mpss_region: mpss@88800000 {
+> -			reg = <0x0 0x88800000 0x0 0x6200000>;
+> +		rmtfs_mem: rmtfs {
+> +			compatible = "qcom,rmtfs-mem";
 > +
-> +	pdev = container_of(vdev->dev.parent, struct platform_device, dev);
+> +			size = <0x0 0x200000>;
+> +			alloc-ranges = <0x0 0xa0000000 0x0 0x2000000>;
+>  			no-map;
 > +
-> +	return platform_get_drvdata(pdev);
->  }
+> +			qcom,client-id = <1>;
+> +			qcom,vmid = <15>;
+>  		};
 >  
->  static  struct rproc *vdev_to_rproc(struct virtio_device *vdev)
-> @@ -343,13 +347,10 @@ static void rproc_virtio_dev_release(struct device *dev)
->  {
->  	struct virtio_device *vdev = dev_to_virtio(dev);
->  	struct rproc_vdev *rvdev = vdev_to_rvdev(vdev);
-> -	struct rproc *rproc = vdev_to_rproc(vdev);
+> -		smem_mem: smem-mem@86000000 {
+> -			reg = <0x0 0x86000000 0x0 0x200000>;
+> +		mpss_mem: mpss@88800000 {
+> +			reg = <0x0 0x88800000 0x0 0x6200000>;
+>  			no-map;
+>  		};
 >  
->  	kfree(vdev);
+> -		memory@85800000 {
+> -			reg = <0x0 0x85800000 0x0 0x800000>;
+> +		adsp_mem: adsp@8ea00000 {
+> +			reg = <0x0 0x8ea00000 0x0 0x1b00000>;
+>  			no-map;
+>  		};
 >  
-> -	kref_put(&rvdev->refcount, rproc_vdev_release);
+> -		memory@86200000 {
+> -			reg = <0x0 0x86200000 0x0 0x2600000>;
+> +		slpi_mem: slpi@90500000 {
+> +			reg = <0x0 0x90500000 0x0 0xa00000>;
+>  			no-map;
+>  		};
+>  
+> -		rmtfs@86700000 {
+> -			compatible = "qcom,rmtfs-mem";
 > -
-> -	put_device(&rproc->dev);
-> +	put_device(&rvdev->pdev->dev);
->  }
+> -			size = <0x0 0x200000>;
+> -			alloc-ranges = <0x0 0xa0000000 0x0 0x2000000>;
+> +		gpu_mem: gpu@90f00000 {
+> +			compatible = "shared-dma-pool";
+> +			reg = <0x0 0x90f00000 0x0 0x100000>;
+>  			no-map;
+> +		};
 >  
->  /**
-> @@ -365,7 +366,7 @@ static void rproc_virtio_dev_release(struct device *dev)
->  static int rproc_add_virtio_dev(struct rproc_vdev *rvdev, int id)
->  {
->  	struct rproc *rproc = rvdev->rproc;
-> -	struct device *dev = &rvdev->dev;
-> +	struct device *dev = &rvdev->pdev->dev;
->  	struct virtio_device *vdev;
->  	struct rproc_mem_entry *mem;
->  	int ret;
-> @@ -436,17 +437,15 @@ static int rproc_add_virtio_dev(struct rproc_vdev *rvdev, int id)
->  	vdev->dev.release = rproc_virtio_dev_release;
+> -			qcom,client-id = <1>;
+> -			qcom,vmid = <15>;
+> +		venus_mem: venus@91000000 {
+> +			reg = <0x0 0x91000000 0x0 0x500000>;
+> +			no-map;
+>  		};
 >  
->  	/*
-> -	 * We're indirectly making a non-temporary copy of the rproc pointer
-> +	 * We're indirectly making a non-temporary copy of the rvdev pointer
->  	 * here, because drivers probed with this vdev will indirectly
->  	 * access the wrapping rproc.
->  	 *
-> -	 * Therefore we must increment the rproc refcount here, and decrement
-> +	 * Therefore we must increment the rvdev refcount here, and decrement
->  	 * it _only_ when the vdev is released.
->  	 */
-> -	get_device(&rproc->dev);
-> +	get_device(dev);
+> -		zap_shader_region: gpu@8f200000 {
+> -			compatible = "shared-dma-pool";
+> -			reg = <0x0 0x90b00000 0x0 0xa00000>;
+> +		mba_mem: mba@91500000 {
+> +			reg = <0x0 0x91500000 0x0 0x200000>;
+>  			no-map;
+>  		};
+>  	};
+> @@ -1013,7 +1018,7 @@ opp-133000000 {
+>  			};
 >  
-> -	/* Reference the vdev and vring allocations */
-> -	kref_get(&rvdev->refcount);
+>  			zap-shader {
+> -				memory-region = <&zap_shader_region>;
+> +				memory-region = <&gpu_mem>;
+>  			};
+>  		};
 >  
->  	ret = register_virtio_device(vdev);
->  	if (ret) {
-> @@ -488,57 +487,33 @@ static int rproc_vdev_do_start(struct rproc_subdev *subdev)
->  static void rproc_vdev_do_stop(struct rproc_subdev *subdev, bool crashed)
->  {
->  	struct rproc_vdev *rvdev = container_of(subdev, struct rproc_vdev, subdev);
-> +	struct device *dev = &rvdev->pdev->dev;
->  	int ret;
+> @@ -2001,7 +2006,7 @@ venus: video-codec@c00000 {
+>  				 <&venus_smmu 0x2c>,
+>  				 <&venus_smmu 0x2d>,
+>  				 <&venus_smmu 0x31>;
+> -			memory-region = <&venus_region>;
+> +			memory-region = <&venus_mem>;
+>  			status = "disabled";
 >  
-> -	ret = device_for_each_child(&rvdev->dev, NULL, rproc_remove_virtio_dev);
-> +	ret = device_for_each_child(dev, NULL, rproc_remove_virtio_dev);
->  	if (ret)
-> -		dev_warn(&rvdev->dev, "can't remove vdev child device: %d\n", ret);
-> -}
-> -
-> -/**
-> - * rproc_rvdev_release() - release the existence of a rvdev
-> - *
-> - * @dev: the subdevice's dev
-> - */
-> -static void rproc_rvdev_release(struct device *dev)
-> -{
-> -	struct rproc_vdev *rvdev = container_of(dev, struct rproc_vdev, dev);
-> -
-> -	of_reserved_mem_device_release(dev);
-> -
-> -	kfree(rvdev);
-> +		dev_warn(dev, "can't remove vdev child device: %d\n", ret);
->  }
+>  			video-decoder {
+> @@ -3008,7 +3013,7 @@ adsp_pil: remoteproc@9300000 {
+>  			clocks = <&xo_board>;
+>  			clock-names = "xo";
 >  
-> -int rproc_rvdev_add_device(struct rproc_vdev *rvdev)
-> +static int rproc_rvdev_add_device(struct rproc_vdev *rvdev)
->  {
->  	struct rproc *rproc = rvdev->rproc;
-> -	char name[16];
-> +	struct device *dev = &rvdev->pdev->dev;
->  	int ret;
+> -			memory-region = <&adsp_region>;
+> +			memory-region = <&adsp_mem>;
 >  
-> -	snprintf(name, sizeof(name), "vdev%dbuffer", rvdev->index);
-> -	rvdev->dev.parent = &rproc->dev;
-> -	ret = copy_dma_range_map(&rvdev->dev, rproc->dev.parent);
-> +	ret = copy_dma_range_map(dev, rproc->dev.parent);
->  	if (ret)
->  		return ret;
->  
-> -	rvdev->dev.release = rproc_rvdev_release;
-> -	dev_set_name(&rvdev->dev, "%s#%s", dev_name(rvdev->dev.parent), name);
-> -	dev_set_drvdata(&rvdev->dev, rvdev);
->  
-> -	ret = device_register(&rvdev->dev);
-> -	if (ret) {
-> -		put_device(&rvdev->dev);
-> -		return ret;
-> -	}
->  	/* Make device dma capable by inheriting from parent's capabilities */
-> -	set_dma_ops(&rvdev->dev, get_dma_ops(rproc->dev.parent));
-> +	set_dma_ops(dev, get_dma_ops(rproc->dev.parent));
->  
-> -	ret = dma_coerce_mask_and_coherent(&rvdev->dev,
-> -					   dma_get_mask(rproc->dev.parent));
-> +	ret = dma_coerce_mask_and_coherent(dev, dma_get_mask(rproc->dev.parent));
->  	if (ret) {
-> -		dev_warn(&rvdev->dev,
-> -			 "Failed to set DMA mask %llx. Trying to continue... %x\n",
-> +		dev_warn(dev, "Failed to set DMA mask %llx. Trying to continue... %x\n",
->  			 dma_get_mask(rproc->dev.parent), ret);
-> +		return ret;
->  	}
->  
->  	rproc_register_rvdev(rvdev);
-> @@ -548,30 +523,9 @@ int rproc_rvdev_add_device(struct rproc_vdev *rvdev)
->  
->  	rproc_add_subdev(rproc, &rvdev->subdev);
->  
-> -	return 0;
-> -}
-> -
-> -static void rproc_rvdev_remove_device(struct rproc_vdev *rvdev)
-> -{
-> -	struct rproc *rproc = rvdev->rproc;
-> -
-> -	rproc_remove_subdev(rproc, &rvdev->subdev);
-> -	rproc_unregister_rvdev(rvdev);
-> -	device_unregister(&rvdev->dev);
-> -}
-> -
-> -void rproc_vdev_release(struct kref *ref)
-> -{
-> -	struct rproc_vdev *rvdev = container_of(ref, struct rproc_vdev, refcount);
-> -	struct rproc_vring *rvring;
-> -	int id;
-> +	dev_dbg(dev, "virtio dev %d added\n",  rvdev->index);
->  
-> -	for (id = 0; id < ARRAY_SIZE(rvdev->vring); id++) {
-> -		rvring = &rvdev->vring[id];
-> -		rproc_free_vring(rvring);
-> -	}
-> -
-> -	rproc_rvdev_remove_device(rvdev);
-> +	return 0;
->  }
->  
->  /**
-> @@ -590,8 +544,7 @@ rproc_virtio_register_device(struct rproc *rproc, struct rproc_vdev_data *vdev_d
->  	pdev = platform_device_register_data(dev, "rproc-virtio", vdev_data->index, vdev_data,
->  					     sizeof(*vdev_data));
->  	if (PTR_ERR_OR_ZERO(pdev)) {
-> -		dev_err(rproc->dev.parent,
-> -			"failed to create rproc-virtio device\n");
-> +		dev_err(rproc->dev.parent, "failed to create rproc-virtio device\n");
->  	}
->  
->  	return  pdev;
-> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-> index 542a3d4664f2..7951a3e2b62a 100644
-> --- a/include/linux/remoteproc.h
-> +++ b/include/linux/remoteproc.h
-> @@ -614,10 +614,8 @@ struct rproc_vring {
->  
->  /**
->   * struct rproc_vdev - remoteproc state for a supported virtio device
-> - * @refcount: reference counter for the vdev and vring allocations
->   * @subdev: handle for registering the vdev as a rproc subdevice
->   * @pdev: remoteproc virtio platform device
-> - * @dev: device struct used for reference count semantics
->   * @id: virtio device id (as in virtio_ids.h)
->   * @node: list node
->   * @rproc: the rproc handle
-> @@ -626,11 +624,9 @@ struct rproc_vring {
->   * @index: vdev position versus other vdev declared in resource table
->   */
->  struct rproc_vdev {
-> -	struct kref refcount;
->  
->  	struct rproc_subdev subdev;
->  	struct platform_device *pdev;
-> -	struct device dev;
->  
->  	unsigned int id;
->  	struct list_head node;
+>  			qcom,smem-states = <&smp2p_adsp_out 0>;
+>  			qcom,smem-state-names = "stop";
 > -- 
-> 2.17.1
+> 2.33.0
+> 
 > 
