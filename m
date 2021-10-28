@@ -2,60 +2,59 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38BA6C433EF
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 28 Oct 2021 22:05:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A19DC433F5
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 28 Oct 2021 22:08:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 217E361056
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 28 Oct 2021 22:05:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 70AA160FC1
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 28 Oct 2021 22:08:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231405AbhJ1WHv (ORCPT
+        id S231361AbhJ1WKx (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 28 Oct 2021 18:07:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51228 "EHLO
+        Thu, 28 Oct 2021 18:10:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51918 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230420AbhJ1WHv (ORCPT
+        with ESMTP id S230420AbhJ1WKw (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 28 Oct 2021 18:07:51 -0400
-Received: from mail-oi1-x22f.google.com (mail-oi1-x22f.google.com [IPv6:2607:f8b0:4864:20::22f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 121AFC061767
-        for <linux-remoteproc@vger.kernel.org>; Thu, 28 Oct 2021 15:05:24 -0700 (PDT)
-Received: by mail-oi1-x22f.google.com with SMTP id n11so2274306oig.6
-        for <linux-remoteproc@vger.kernel.org>; Thu, 28 Oct 2021 15:05:24 -0700 (PDT)
+        Thu, 28 Oct 2021 18:10:52 -0400
+Received: from mail-oi1-x235.google.com (mail-oi1-x235.google.com [IPv6:2607:f8b0:4864:20::235])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4AA3AC061745
+        for <linux-remoteproc@vger.kernel.org>; Thu, 28 Oct 2021 15:08:25 -0700 (PDT)
+Received: by mail-oi1-x235.google.com with SMTP id t4so10389716oie.5
+        for <linux-remoteproc@vger.kernel.org>; Thu, 28 Oct 2021 15:08:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=mime-version:in-reply-to:references:from:user-agent:date:message-id
          :subject:to:cc;
-        bh=K9UBnDgY425QDygPvGt3o1Td/4RRZ5EAJhMXHkdozRU=;
-        b=FM0rLYNu1+ErBFuS26Bd+y+C6G51CyTBQZ2r5DkqkLzOKvN6ApYpobItt2PNtXDs2b
-         AzSg5WVoRoSBQT3oB8FrHN/bGv5G2+wGLFKpfZXPZS0KBpTTXlKTovdMsKIDLF9yGKjx
-         gkv/ZVNFnzoKgHcc7DKHaXnrk7PlDgQFf1CwQ=
+        bh=/Pr4+moq6uxxSNErzs5t8Ot9an4fXCfokoXqjuAIaPM=;
+        b=ebzHjuz36pjePUwf6bx+AtX5Vlyr9kmsxahF9QG/CPujIICXfNLXBrhctdsiDigC1r
+         oC7gWnW3ZT1+gitykWhbRQnv2Gst/kC9DCuQ/JAe75+aAQQ4EKrMFiBd2823/zZCIbL0
+         mwG/AgqpbsrScim2HxTEhOieAPh1KtKBEnhbE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:in-reply-to:references:from
          :user-agent:date:message-id:subject:to:cc;
-        bh=K9UBnDgY425QDygPvGt3o1Td/4RRZ5EAJhMXHkdozRU=;
-        b=eiQWeF9+jX63+cE9NQrZ4aIaUbOhLQM0uyipEU3Dd0AO8koIPLft1rxlURIOWPLicX
-         NifGt08ACv1mYbclCDT/+DA6DQjIuj667cSVvjy1Zuuztfnr+4xfsNn0gXsRNiexkaQd
-         sn/8XL1ykODuvYIaVGpeSAXHuC41m5P+HQUOn/B5aM8bb6qb3dJFvLRMsGeg6WXzhCuj
-         iiKJYDbLCCXiJzxxh5j+Ppzxq6SsjJBj7mKJJjnIq3wrrXyQodRSd2GcrKx0IaJQvUl+
-         urAMsEfQCjZOBlXZBja7NJJ5IWyPcI1Y+/guYxZ6qPyjiYGyuAp5smyNCuGw0H1JK9Uy
-         vB8Q==
-X-Gm-Message-State: AOAM530pV9rAtEoWqD+seVdZRTNy609SPQ1Ysm/kqle835lyDPV/SHOw
-        F4Hq09my/xNe+Ws6wu+k/sOxBcPgE3ANTaPmDZATig==
-X-Google-Smtp-Source: ABdhPJwg2zw1/jW0y61U8U7GYDUhUDAXyhoBEIGD5TwRhN4mcpqiCyxsEbT8u9/uL4TUn7cBNIBdRV+TaG1F7YXwbzk=
-X-Received: by 2002:a05:6808:2124:: with SMTP id r36mr5286797oiw.64.1635458723366;
- Thu, 28 Oct 2021 15:05:23 -0700 (PDT)
+        bh=/Pr4+moq6uxxSNErzs5t8Ot9an4fXCfokoXqjuAIaPM=;
+        b=e6PvkuI25PO5ygoSaU5H/hIvzBC61MkcUT/o9wqEfOz/nySWNN8CZpNYgzr3oTLdZx
+         DUFIZoxn+wCchKDRV3ig4qXwS6GV1cUCcNXiMMOd+G0PVVKbTUE+gcLdAfzsyNJqeyho
+         EktgVR1RxmxFU731JwPCy8UFmOkc/fC3//KX2sxfbn4zix0ZQEObwZLvhIOszJtOg0ZL
+         yHwZ31rs35PU6O6nIea8cb5DIbJ318IfYlNZSiRPnB+ik11xTHrt5b7GU/crpOYWkIu3
+         uwM5AT7nebJxgUrhy1dNSaOhdAlB0E570PmRgWNPDq8B56KWbEBSnkzo4D6rDPEhDCi8
+         yELg==
+X-Gm-Message-State: AOAM5303L1AZkfOhGFh+zYjoNoPHJAsFW+24eEbbBLKq9XAbHzANHtzK
+        RX/FlIYFqxC8v8ZS3Vwa2AK0DNhk07aoQlliYar3WQ==
+X-Google-Smtp-Source: ABdhPJyTHzX6uF5OsBpL7VXXllfq+d9ZMUgRaSJsFQgxo4OpDV3YsTM9R8u9y+LDZWpQqgNTTdKDKdEBLc9IG7kuVko=
+X-Received: by 2002:a05:6808:2124:: with SMTP id r36mr5299547oiw.64.1635458904676;
+ Thu, 28 Oct 2021 15:08:24 -0700 (PDT)
 Received: from 753933720722 named unknown by gmailapi.google.com with
- HTTPREST; Thu, 28 Oct 2021 15:05:22 -0700
+ HTTPREST; Thu, 28 Oct 2021 15:08:24 -0700
 MIME-Version: 1.0
-In-Reply-To: <1635408817-14426-2-git-send-email-pillair@codeaurora.org>
-References: <1635408817-14426-1-git-send-email-pillair@codeaurora.org> <1635408817-14426-2-git-send-email-pillair@codeaurora.org>
+In-Reply-To: <1635408817-14426-3-git-send-email-pillair@codeaurora.org>
+References: <1635408817-14426-1-git-send-email-pillair@codeaurora.org> <1635408817-14426-3-git-send-email-pillair@codeaurora.org>
 From:   Stephen Boyd <swboyd@chromium.org>
 User-Agent: alot/0.9.1
-Date:   Thu, 28 Oct 2021 15:05:22 -0700
-Message-ID: <CAE-0n53_qNfsdXa2eLY3g74bpq2HhN2DjSGCe0gCwDfovnWPdw@mail.gmail.com>
-Subject: Re: [PATCH v7 1/3] dt-bindings: remoteproc: qcom: adsp: Convert
- binding to YAML
+Date:   Thu, 28 Oct 2021 15:08:24 -0700
+Message-ID: <CAE-0n50z=h-avn+K-weZnZFVN7nsR=fLAtge7jFZ0JLx2JvP2w@mail.gmail.com>
+Subject: Re: [PATCH v7 2/3] dt-bindings: remoteproc: qcom: Add SC7280 WPSS support
 To:     Rakesh Pillai <pillair@codeaurora.org>, agross@kernel.org,
         bjorn.andersson@linaro.org, mathieu.poirier@linaro.org,
         ohad@wizery.com, p.zabel@pengutronix.de, robh+dt@kernel.org
@@ -67,58 +66,221 @@ Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Quoting Rakesh Pillai (2021-10-28 01:13:35)
-> Convert Qualcomm ADSP/CDSP Remoteproc devicetree
-> binding to YAML.
->
-> Signed-off-by: Rakesh Pillai <pillair@codeaurora.org>
-> ---
-
-Found it. I think it hit spam :(
-
-> diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,qcs404-cdsp-pil.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,qcs404-cdsp-pil.yaml
+Quoting Rakesh Pillai (2021-10-28 01:13:36)
+> diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,sc7280-wpss-pil.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,sc7280-wpss-pil.yaml
 > new file mode 100644
-> index 0000000..90ca7e0
+> index 0000000..96d11a4
 > --- /dev/null
-> +++ b/Documentation/devicetree/bindings/remoteproc/qcom,qcs404-cdsp-pil.yaml
-> @@ -0,0 +1,161 @@
+> +++ b/Documentation/devicetree/bindings/remoteproc/qcom,sc7280-wpss-pil.yaml
+> @@ -0,0 +1,194 @@
 > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
 > +%YAML 1.2
 > +---
-> +$id: http://devicetree.org/schemas/remoteproc/qcom,qcs404-cdsp-pil.yaml#
+> +$id: http://devicetree.org/schemas/remoteproc/qcom,sc7280-wpss-pil.yaml#
 > +$schema: http://devicetree.org/meta-schemas/core.yaml#
 > +
-> +title: Qualcomm QCS404 CDSP Peripheral Image Loader
+> +title: Qualcomm SC7280 WPSS Peripheral Image Loader
 > +
 > +maintainers:
 > +  - Bjorn Andersson <bjorn.andersson@linaro.org>
 > +
 > +description:
 > +  This document defines the binding for a component that loads and boots firmware
-> +  on the Qualcomm Technology Inc. CDSP.
-
-What does CDSP mean? Can you spell out the acronym once?
-
+> +  on the Qualcomm Technology Inc. WPSS.
 > +
 > +properties:
 > +  compatible:
 > +    enum:
-> +      - qcom,qcs404-cdsp-pil
+> +      - qcom,sc7280-wpss-pil
 > +
 > +  reg:
 > +    maxItems: 1
 > +    description:
 > +      The base address and size of the qdsp6ss register
 > +
-> +  interrupts-extended:
-
-I think the recommendation is to use interrupts and the schema will know
-to treat interrupts-extended the same.
-
+> +  interrupts:
 > +    items:
 > +      - description: Watchdog interrupt
 > +      - description: Fatal interrupt
 > +      - description: Ready interrupt
 > +      - description: Handover interrupt
 > +      - description: Stop acknowledge interrupt
+> +      - description: Shutdown acknowledge interrupt
 > +
+> +  interrupt-names:
+> +    items:
+> +      - const: wdog
+> +      - const: fatal
+> +      - const: ready
+> +      - const: handover
+> +      - const: stop-ack
+> +      - const: shutdown-ack
+> +
+> +  clocks:
+> +    items:
+> +      - description: GCC WPSS AHB BDG Master clock
+> +      - description: GCC WPSS AHB clock
+> +      - description: GCC WPSS RSCP clock
+> +      - description: XO clock
+> +
+> +  clock-names:
+> +    items:
+> +      - const: ahb_bdg
+> +      - const: ahb
+> +      - const: rscp
+> +      - const: xo
+> +
+> +  power-domains:
+> +    items:
+> +      - description: CX power domain
+> +      - description: MX power domain
+> +
+> +  power-domain-names:
+> +    items:
+> +      - const: cx
+> +      - const: mx
+> +
+> +  resets:
+> +    items:
+> +      - description: AOSS restart
+> +      - description: PDC SYNC
+> +
+> +  reset-names:
+> +    items:
+> +      - const: restart
+> +      - const: pdc_sync
+> +
+> +  memory-region:
+
+Does it need
+
+    $ref: /schemas/types.yaml#/definitions/phandle
+
+because it's a phandle?
+
+> +    maxItems: 1
+> +    description: Reference to the reserved-memory for the Hexagon core
+> +
+> +  firmware-name:
+> +    $ref: /schemas/types.yaml#/definitions/string
+> +    description:
+> +      The name of the firmware which should be loaded for this remote
+> +      processor.
+> +
+> +  qcom,halt-regs:
+> +    $ref: /schemas/types.yaml#/definitions/phandle-array
+> +    description:
+> +      Phandle reference to a syscon representing TCSR followed by the
+> +      three offsets within syscon for q6, modem and nc halt registers.
+> +
+> +  qcom,qmp:
+> +    $ref: /schemas/types.yaml#/definitions/phandle
+> +    description: Reference to the AOSS side-channel message RAM.
+> +
+> +  qcom,smem-states:
+> +    $ref: /schemas/types.yaml#/definitions/phandle-array
+> +    description: States used by the AP to signal the Hexagon core
+> +    items:
+> +      - description: Stop the modem
+> +
+> +  qcom,smem-state-names:
+> +    $ref: /schemas/types.yaml#/definitions/string
+> +    description: The names of the state bits used for SMP2P output
+> +    items:
+> +      - const: stop
+> +
+> +  glink-edge:
+> +    type: object
+> +    description:
+> +      Qualcomm G-Link subnode which represents communication edge, channels
+> +      and devices related to the ADSP.
+
+Any properties of glink-edge that are required?
+
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - interrupts-extended
+
+interrupts
+
+> +  - interrupt-names
+> +  - clocks
+> +  - clock-names
+> +  - power-domains
+> +  - power-domain-names
+> +  - reset
+> +  - reset-names
+> +  - qcom,halt-regs
+> +  - memory-region
+> +  - qcom,qmp
+> +  - qcom,smem-states
+> +  - qcom,smem-state-names
+> +  - glink-edge
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +    #include <dt-bindings/clock/qcom,gcc-sc7280.h>
+> +    #include <dt-bindings/clock/qcom,rpmh.h>
+> +    #include <dt-bindings/power/qcom-rpmpd.h>
+> +    #include <dt-bindings/reset/qcom,sdm845-aoss.h>
+> +    #include <dt-bindings/reset/qcom,sdm845-pdc.h>
+> +    #include <dt-bindings/mailbox/qcom-ipcc.h>
+> +    remoteproc@8a00000 {
+> +        compatible = "qcom,sc7280-wpss-pil";
+> +        reg = <0x08a00000 0x10000>;
+> +
+> +        interrupts-extended = <&intc GIC_SPI 587 IRQ_TYPE_EDGE_RISING>,
+> +                              <&wpss_smp2p_in 0 IRQ_TYPE_EDGE_RISING>,
+> +                              <&wpss_smp2p_in 1 IRQ_TYPE_EDGE_RISING>,
+> +                              <&wpss_smp2p_in 2 IRQ_TYPE_EDGE_RISING>,
+> +                              <&wpss_smp2p_in 3 IRQ_TYPE_EDGE_RISING>,
+> +                              <&wpss_smp2p_in 7 IRQ_TYPE_EDGE_RISING>;
+> +        interrupt-names = "wdog", "fatal", "ready", "handover",
+> +                          "stop-ack", "shutdown-ack";
+> +
+> +        clocks = <&gcc GCC_WPSS_AHB_BDG_MST_CLK>,
+> +                 <&gcc GCC_WPSS_AHB_CLK>,
+> +                 <&gcc GCC_WPSS_RSCP_CLK>,
+> +                 <&rpmhcc RPMH_CXO_CLK>;
+> +        clock-names = "ahb_bdg", "ahb",
+> +                      "rscp", "xo";
+> +
+> +        power-domains = <&rpmhpd SC7280_CX>,
+> +                        <&rpmhpd SC7280_MX>;
+> +        power-domain-names = "cx", "mx";
+> +
+> +        memory-region = <&wpss_mem>;
+> +
+> +        qcom,qmp = <&aoss_qmp>;
+> +
+> +        qcom,smem-states = <&wpss_smp2p_out 0>;
+> +        qcom,smem-state-names = "stop";
+> +
+> +        resets = <&aoss_reset AOSS_CC_WCSS_RESTART>,
+> +                 <&pdc_reset PDC_WPSS_SYNC_RESET>;
+> +        reset-names = "restart", "pdc_sync";
+> +
+> +        qcom,halt-regs = <&tcsr_mutex 0x37000>;
+> +
+> +        status = "disabled";
+
+status can be left out of examples.
+
+> +
+> +        glink-edge {
+> +            interrupts-extended = <&ipcc IPCC_CLIENT_WPSS
+> +                                         IPCC_MPROC_SIGNAL_GLINK_QMP
+> +                                         IRQ_TYPE_EDGE_RISING>;
+> +            mboxes = <&ipcc IPCC_CLIENT_WPSS
+> +                            IPCC_MPROC_SIGNAL_GLINK_QMP>;
+> +
+> +            label = "wpss";
+> +            qcom,remote-pid = <13>;
+
+There are a few properties here that don't seem to be required. Is that
+intentional?
