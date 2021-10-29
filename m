@@ -2,90 +2,105 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A031C433FE
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 28 Oct 2021 22:12:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C673AC433F5
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 29 Oct 2021 10:46:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0F529610F8
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 28 Oct 2021 22:12:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A346061166
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 29 Oct 2021 10:46:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231124AbhJ1WOc (ORCPT
+        id S231719AbhJ2KtA (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 28 Oct 2021 18:14:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52840 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231344AbhJ1WOb (ORCPT
-        <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 28 Oct 2021 18:14:31 -0400
-Received: from mail-ot1-x332.google.com (mail-ot1-x332.google.com [IPv6:2607:f8b0:4864:20::332])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 24F4DC061570
-        for <linux-remoteproc@vger.kernel.org>; Thu, 28 Oct 2021 15:12:04 -0700 (PDT)
-Received: by mail-ot1-x332.google.com with SMTP id v2-20020a05683018c200b0054e3acddd91so10707948ote.8
-        for <linux-remoteproc@vger.kernel.org>; Thu, 28 Oct 2021 15:12:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:in-reply-to:references:from:user-agent:date:message-id
-         :subject:to:cc;
-        bh=OHxLopxNEBanCZRKOtQcZ5uSqZ+qeUFTuCeN9w/lCos=;
-        b=JLjHX6/8BiMeoxPRuWgnunt+TsIKdAQgoR8CnVpm6O2zWjouuINwX2w2NXimyHyMdS
-         07wLyCV96TWEWIN2TawN9INC29Y7UxMpTIbRoHf2s63EPEHyJ6VgMtKpHjQKiWlqzpgZ
-         k6GQ49H53onSLG6DJ8/uFk/oT11GpD7CZkRFo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from
-         :user-agent:date:message-id:subject:to:cc;
-        bh=OHxLopxNEBanCZRKOtQcZ5uSqZ+qeUFTuCeN9w/lCos=;
-        b=wXwFFYpVH/19UVnSl7L4GRPqXy/PHOaztwVjl8MbpNMgSJGoudT26aLV3uS9Eh0R6c
-         sqFKJqjZ3zzgLAMKH3REd6zoAMAjF9qJIjZ7iLAnb4U4xCUhe18rhSjhNpGNR2KtwfAo
-         axvKmjCJ0YRutLgWLNzzRqGfXy4//7i75RF54S7RK3thq5ah0rVEHrEfYxJTdAy5S51n
-         KfxJe0CnrMzUP54xfigJSxG2m0Vpo65bslvxtg5NRmtBtt75+QRmi5CYeeot4Cmr7des
-         b+eJSkOQCOLDM7zCNhft2DwtJ7bwHm+9ZqDE3zX4YFWaznZuupp9sVpadSMhqp3WqhRR
-         /DWw==
-X-Gm-Message-State: AOAM530HZOQGp0NNGBj/afeVYwoiveHGKXUn6vBye1bW8xhlOwnSyv84
-        aNhyRT5jR0oqd5dSCyiFA4ST5ILymUTKkxtLvB+IppuclNs=
-X-Google-Smtp-Source: ABdhPJymYK7RRjD8jVuxnnAa91/fKSwHBCjvBeAtBGDqTrvqkslprxmA9McUv6qb/4kOS6YRYOGApzE+23oQHYB1iA0=
-X-Received: by 2002:a9d:7655:: with SMTP id o21mr5635145otl.126.1635459123556;
- Thu, 28 Oct 2021 15:12:03 -0700 (PDT)
-Received: from 753933720722 named unknown by gmailapi.google.com with
- HTTPREST; Thu, 28 Oct 2021 15:12:03 -0700
+        Fri, 29 Oct 2021 06:49:00 -0400
+Received: from m43-7.mailgun.net ([69.72.43.7]:54365 "EHLO m43-7.mailgun.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S231749AbhJ2Ks7 (ORCPT <rfc822;linux-remoteproc@vger.kernel.org>);
+        Fri, 29 Oct 2021 06:48:59 -0400
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1635504391; h=Content-Transfer-Encoding: Content-Type:
+ MIME-Version: Message-ID: Date: Subject: In-Reply-To: References: Cc:
+ To: From: Sender; bh=rFU43CZFSHt8yp8kFqVcfqXL2hfgxXG01x0my4/WQE8=; b=mTvPr9uIhPBRO3vHQNXxlLb9WpZONqo8f9YS50c4vyUQBiq8qtmjgNozhm9gEwR0pihAP1w1
+ KP8NEqORaZCs0scRRKzNBjwFTbzuHhuEVID1eW6Oad2kaBu0MCnPhk1lW6nqmXJGTmV87HBb
+ NVAKrLXCIDCGGLXy0BV6sqr+xA0=
+X-Mailgun-Sending-Ip: 69.72.43.7
+X-Mailgun-Sid: WyI4ZWZiZiIsICJsaW51eC1yZW1vdGVwcm9jQHZnZXIua2VybmVsLm9yZyIsICJiZTllNGEiXQ==
+Received: from smtp.codeaurora.org
+ (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
+ smtp-out-n07.prod.us-east-1.postgun.com with SMTP id
+ 617bd0f5f6a3eeacf9a3114d (version=TLS1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Fri, 29 Oct 2021 10:46:13
+ GMT
+Sender: pillair=codeaurora.org@mg.codeaurora.org
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id BCA14C4338F; Fri, 29 Oct 2021 10:46:12 +0000 (UTC)
+Received: from PILLAIR1 (unknown [49.205.244.232])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: pillair)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 493C6C4338F;
+        Fri, 29 Oct 2021 10:46:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.1 smtp.codeaurora.org 493C6C4338F
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=codeaurora.org
+From:   <pillair@codeaurora.org>
+To:     "'Stephen Boyd'" <swboyd@chromium.org>, <agross@kernel.org>,
+        <bjorn.andersson@linaro.org>, <mathieu.poirier@linaro.org>,
+        <ohad@wizery.com>, <p.zabel@pengutronix.de>, <robh+dt@kernel.org>
+Cc:     <linux-arm-msm@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <sibis@codeaurora.org>,
+        <mpubbise@codeaurora.org>, <kuabhs@chromium.org>
+References: <1635408817-14426-1-git-send-email-pillair@codeaurora.org> <1635408817-14426-3-git-send-email-pillair@codeaurora.org> <CAE-0n50z=h-avn+K-weZnZFVN7nsR=fLAtge7jFZ0JLx2JvP2w@mail.gmail.com>
+In-Reply-To: <CAE-0n50z=h-avn+K-weZnZFVN7nsR=fLAtge7jFZ0JLx2JvP2w@mail.gmail.com>
+Subject: RE: [PATCH v7 2/3] dt-bindings: remoteproc: qcom: Add SC7280 WPSS support
+Date:   Fri, 29 Oct 2021 16:16:03 +0530
+Message-ID: <000201d7ccb2$300dba50$90292ef0$@codeaurora.org>
 MIME-Version: 1.0
-In-Reply-To: <1635408817-14426-4-git-send-email-pillair@codeaurora.org>
-References: <1635408817-14426-1-git-send-email-pillair@codeaurora.org> <1635408817-14426-4-git-send-email-pillair@codeaurora.org>
-From:   Stephen Boyd <swboyd@chromium.org>
-User-Agent: alot/0.9.1
-Date:   Thu, 28 Oct 2021 15:12:03 -0700
-Message-ID: <CAE-0n53Xj_gCf4SucsQAHNF5fbfGpBzrCXzGyi3Jq6r=E=mL0w@mail.gmail.com>
-Subject: Re: [PATCH v7 3/3] remoteproc: qcom: q6v5_wpss: Add support for
- sc7280 WPSS
-To:     Rakesh Pillai <pillair@codeaurora.org>, agross@kernel.org,
-        bjorn.andersson@linaro.org, mathieu.poirier@linaro.org,
-        ohad@wizery.com, p.zabel@pengutronix.de, robh+dt@kernel.org
-Cc:     linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        sibis@codeaurora.org, mpubbise@codeaurora.org, kuabhs@chromium.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain;
+        charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQJgH59fIqV+fNPJ+TYlgPfT9cxLcAIxEhLJAenqyY+quEywIA==
+Content-Language: en-us
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Quoting Rakesh Pillai (2021-10-28 01:13:37)
-> diff --git a/drivers/remoteproc/qcom_q6v5_adsp.c b/drivers/remoteproc/qcom_q6v5_adsp.c
-> index 098362e6..7d07e79 100644
-> --- a/drivers/remoteproc/qcom_q6v5_adsp.c
-> +++ b/drivers/remoteproc/qcom_q6v5_adsp.c
-> @@ -93,11 +100,143 @@ struct qcom_adsp {
->         void *mem_region;
->         size_t mem_size;
->
-> +       struct device *proxy_pds[QCOM_Q6V5_RPROC_PROXY_PD_MAX];
-> +       int proxy_pd_count;
 
-size_t?
 
-> +
->         struct qcom_rproc_glink glink_subdev;
->         struct qcom_rproc_ssr ssr_subdev;
->         struct qcom_sysmon *sysmon;
-> +
-> +       int (*shutdown)(struct qcom_adsp *adsp);
->  };
+> -----Original Message-----
+> From: Stephen Boyd <swboyd@chromium.org>
+> Sent: Friday, October 29, 2021 3:38 AM
+> To: Rakesh Pillai <pillair@codeaurora.org>; agross@kernel.org;
+> bjorn.andersson@linaro.org; mathieu.poirier@linaro.org; =
+ohad@wizery.com;
+> p.zabel@pengutronix.de; robh+dt@kernel.org
+> Cc: linux-arm-msm@vger.kernel.org; linux-remoteproc@vger.kernel.org;
+> devicetree@vger.kernel.org; linux-kernel@vger.kernel.org;
+> sibis@codeaurora.org; mpubbise@codeaurora.org; kuabhs@chromium.org
+> Subject: Re: [PATCH v7 2/3] dt-bindings: remoteproc: qcom: Add SC7280
+> WPSS support
 >
+> > +
+> > +        glink-edge {
+> > +            interrupts-extended =3D <&ipcc IPCC_CLIENT_WPSS
+> > +                                         =
+IPCC_MPROC_SIGNAL_GLINK_QMP
+> > +                                         IRQ_TYPE_EDGE_RISING>;
+> > +            mboxes =3D <&ipcc IPCC_CLIENT_WPSS
+> > +                            IPCC_MPROC_SIGNAL_GLINK_QMP>;
+> > +
+> > +            label =3D "wpss";
+> > +            qcom,remote-pid =3D <13>;
+>=20
+> There are a few properties here that don't seem to be required. Is =
+that
+> intentional?
+
+Hi Stephen,
+All the properties in the example are listed as required (except for =
+status, which will be removed in the subsequent patchset).
+Do you mean the glink-edge node properties ?
+
+Thanks,
+Rakesh Pillai.
+
