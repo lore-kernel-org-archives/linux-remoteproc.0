@@ -2,91 +2,84 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13488C433F5
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 29 Oct 2021 19:04:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C03BC433EF
+	for <linux-remoteproc@archiver.kernel.org>; Mon,  1 Nov 2021 07:27:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EF3BF610C7
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 29 Oct 2021 19:04:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 40DF061058
+	for <linux-remoteproc@archiver.kernel.org>; Mon,  1 Nov 2021 07:27:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230126AbhJ2TGf (ORCPT
+        id S229984AbhKAHaE (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 29 Oct 2021 15:06:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51840 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229979AbhJ2TGf (ORCPT
+        Mon, 1 Nov 2021 03:30:04 -0400
+Received: from mail-ed1-f47.google.com ([209.85.208.47]:41608 "EHLO
+        mail-ed1-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229827AbhKAHaC (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 29 Oct 2021 15:06:35 -0400
-Received: from mail-ot1-x32a.google.com (mail-ot1-x32a.google.com [IPv6:2607:f8b0:4864:20::32a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D9D26C061714
-        for <linux-remoteproc@vger.kernel.org>; Fri, 29 Oct 2021 12:04:05 -0700 (PDT)
-Received: by mail-ot1-x32a.google.com with SMTP id s23-20020a056830125700b00553e2ca2dccso10013182otp.3
-        for <linux-remoteproc@vger.kernel.org>; Fri, 29 Oct 2021 12:04:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:in-reply-to:references:from:user-agent:date:message-id
-         :subject:to:cc;
-        bh=msvWE2t5mYMtRDZ8I+17Fkh9yjZ5rWivjCZQNykv7fk=;
-        b=h8ZNXZO6Y41SOBnORBN6mWRYXD8NiYviTASTihebDxoUBuG4reKkOwBjpj+PhwUfIR
-         EV5RM3FzdALQPD4l4MUqP3QJRnMHFt/0jEojgCD2KmkD14HzRAd3+BkSsi/qrM3jG9+U
-         JTXeDZrrA9GfjTCcPg4wlcAMDm50yudFoBXYM=
+        Mon, 1 Nov 2021 03:30:02 -0400
+Received: by mail-ed1-f47.google.com with SMTP id h7so61935224ede.8;
+        Mon, 01 Nov 2021 00:27:28 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from
-         :user-agent:date:message-id:subject:to:cc;
-        bh=msvWE2t5mYMtRDZ8I+17Fkh9yjZ5rWivjCZQNykv7fk=;
-        b=pGlj3Fmk/YLp+I6Ib1VtkfP5fYi9EbZCMLP19WZj6bEnBs3V2YVU9tRIsvOvEAX9CO
-         CY4F+jishsDGpTlwEzaCk9wbQ4+RCEHe4bNs5Be1u6wSr+WJosVhAJ1LCZg5MXgSqRdP
-         6A5B5OmMXle2CSKy1SAzMngiBNJng0zmjJTvFIirfpNkdIYzGNXxUZA5q3moNK47zaz7
-         C2+Bia9SMZ5giMgH0ZVIMZZhPOAnWdaAVOeoPjRoJA4g3ue0t0m077Al147XfzEoo858
-         T3FzhJ0/iuEF40FbOKqQ2emeI7A7DMcnAm3g/ETUr8UfhCMgWhOvGNNHbTBYKKKcHC5d
-         97yA==
-X-Gm-Message-State: AOAM531IYaVnvWJ3Z61JSYmnCXe6/3PiGROSiykRoxitdj1Im6R0K1WS
-        vlHD2wGvVN+8P7AvI3jefTaI5QSOF3rFHL3r/VkPbA==
-X-Google-Smtp-Source: ABdhPJwejTge5mxVTo1xpsG7+GmYiYIEclbSkYga1ic0Puo/7kWiWy21jY9P4cFhgjzOxE55swj6TqN6+gG4s2vvMTY=
-X-Received: by 2002:a9d:7655:: with SMTP id o21mr9902382otl.126.1635534245276;
- Fri, 29 Oct 2021 12:04:05 -0700 (PDT)
-Received: from 753933720722 named unknown by gmailapi.google.com with
- HTTPREST; Fri, 29 Oct 2021 14:04:04 -0500
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=QX73/TVtR5W8m/Vq63b5sJhbliBL72ushPOHfy32+cA=;
+        b=KM4JJfDijYvvnT3SEC2XN73FuVc1kdbqJ+pW/VkmK7MkP+QvJY0229gHw1RyEv1nOl
+         7gnOaY83bDfwrYvJXulTfyGwigUT4/CgiBSdRXn5xKAlo3jjqTqqkPKSUPRTQwrNLXxc
+         KpWKofXV9c6kaPrvFYRMG+08AhUNaUaJdVZ1P19kZvZOjfsL+Vv1f4mU8GqXgA2QOafA
+         ACFs740O8y2wdJ60BT3bSDCiMBOfbPhMvxg59XG1NhpG89lsnCm/N+UNyECdtwggLAw1
+         ORHK7S+/PFb6HGI5hg6hMs5S3uAeTo4s+N5MvRwRcxXAe2qxSd33RnfXfmxYaP6dIiSb
+         zewQ==
+X-Gm-Message-State: AOAM53138G8dZXhUrKGDrdzJkGi/94AlC5xcn+TFUuB2s074Hr0fojoq
+        Ppih9/NKjA3orO2q9xgpGpE=
+X-Google-Smtp-Source: ABdhPJz67dOV3GnCoSUWOvabzexqGXdP8guxumkAaVgH9YZqCSQCmsiydaI/dW9/wtOJPyA45DiFiw==
+X-Received: by 2002:a17:906:4e54:: with SMTP id g20mr31002753ejw.284.1635751648035;
+        Mon, 01 Nov 2021 00:27:28 -0700 (PDT)
+Received: from ?IPV6:2a0b:e7c0:0:107::70f? ([2a0b:e7c0:0:107::70f])
+        by smtp.gmail.com with ESMTPSA id w1sm1854315edd.49.2021.11.01.00.27.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 01 Nov 2021 00:27:27 -0700 (PDT)
+Message-ID: <0b42eede-d909-1afb-f3fc-c4ee1e2fc0f4@kernel.org>
+Date:   Mon, 1 Nov 2021 08:27:26 +0100
 MIME-Version: 1.0
-In-Reply-To: <000201d7ccb2$300dba50$90292ef0$@codeaurora.org>
-References: <1635408817-14426-1-git-send-email-pillair@codeaurora.org>
- <1635408817-14426-3-git-send-email-pillair@codeaurora.org>
- <CAE-0n50z=h-avn+K-weZnZFVN7nsR=fLAtge7jFZ0JLx2JvP2w@mail.gmail.com> <000201d7ccb2$300dba50$90292ef0$@codeaurora.org>
-From:   Stephen Boyd <swboyd@chromium.org>
-User-Agent: alot/0.9.1
-Date:   Fri, 29 Oct 2021 14:04:04 -0500
-Message-ID: <CAE-0n5155J4vvvFES9V5=v+nX3BhZsBgZxkB=uLQOPij=-sf-Q@mail.gmail.com>
-Subject: RE: [PATCH v7 2/3] dt-bindings: remoteproc: qcom: Add SC7280 WPSS support
-To:     agross@kernel.org, bjorn.andersson@linaro.org,
-        mathieu.poirier@linaro.org, ohad@wizery.com,
-        p.zabel@pengutronix.de, pillair@codeaurora.org, robh+dt@kernel.org
-Cc:     linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        sibis@codeaurora.org, mpubbise@codeaurora.org, kuabhs@chromium.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.2.1
+Subject: Re: [PATCH v10 0/2] Add rpmsg tty driver
+Content-Language: en-US
+To:     Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>,
+        Ohad Ben-Cohen <ohad@wizery.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Suman Anna <s-anna@ti.com>,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org
+References: <20211015094701.5732-1-arnaud.pouliquen@foss.st.com>
+From:   Jiri Slaby <jirislaby@kernel.org>
+In-Reply-To: <20211015094701.5732-1-arnaud.pouliquen@foss.st.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Quoting pillair@codeaurora.org (2021-10-29 03:46:03)
->
-> > > +
-> > > +        glink-edge {
-> > > +            interrupts-extended = <&ipcc IPCC_CLIENT_WPSS
-> > > +                                         IPCC_MPROC_SIGNAL_GLINK_QMP
-> > > +                                         IRQ_TYPE_EDGE_RISING>;
-> > > +            mboxes = <&ipcc IPCC_CLIENT_WPSS
-> > > +                            IPCC_MPROC_SIGNAL_GLINK_QMP>;
-> > > +
-> > > +            label = "wpss";
-> > > +            qcom,remote-pid = <13>;
-> >
-> > There are a few properties here that don't seem to be required. Is that
-> > intentional?
->
-> Hi Stephen,
-> All the properties in the example are listed as required (except for status, which will be removed in the subsequent patchset).
-> Do you mean the glink-edge node properties ?
+On 15. 10. 21, 11:46, Arnaud Pouliquen wrote:
+...
+>   drivers/rpmsg/rpmsg_core.c       |  21 +++
+>   drivers/rpmsg/rpmsg_internal.h   |   2 +
+>   drivers/rpmsg/virtio_rpmsg_bus.c |  10 ++
+>   drivers/tty/Kconfig              |  12 ++
+>   drivers/tty/Makefile             |   1 +
+>   drivers/tty/rpmsg_tty.c          | 274 +++++++++++++++++++++++++++++++
+>   include/linux/rpmsg.h            |  10 ++
 
-Yes I mean all the properties in the glink-edge node. Are they required?
-If so then we need to list them in the schema.
+Hi,
+
+care to add an entry to MAINTAINERS too?
+
+thanks,
+-- 
+js
+suse labs
