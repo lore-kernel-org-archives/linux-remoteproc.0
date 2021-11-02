@@ -2,262 +2,237 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BB11C433FE
-	for <linux-remoteproc@archiver.kernel.org>; Tue,  2 Nov 2021 16:38:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ECB7CC433F5
+	for <linux-remoteproc@archiver.kernel.org>; Tue,  2 Nov 2021 16:57:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 79D9860EE9
-	for <linux-remoteproc@archiver.kernel.org>; Tue,  2 Nov 2021 16:38:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D6E6E60F45
+	for <linux-remoteproc@archiver.kernel.org>; Tue,  2 Nov 2021 16:57:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234618AbhKBQlN (ORCPT
+        id S230008AbhKBQ7h (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 2 Nov 2021 12:41:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42836 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235013AbhKBQk0 (ORCPT
+        Tue, 2 Nov 2021 12:59:37 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:43936 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S229684AbhKBQ7g (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 2 Nov 2021 12:40:26 -0400
-Received: from mail-ot1-x334.google.com (mail-ot1-x334.google.com [IPv6:2607:f8b0:4864:20::334])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6C9AFC0432F3
-        for <linux-remoteproc@vger.kernel.org>; Tue,  2 Nov 2021 09:36:53 -0700 (PDT)
-Received: by mail-ot1-x334.google.com with SMTP id v40-20020a056830092800b0055591caa9c6so22561833ott.4
-        for <linux-remoteproc@vger.kernel.org>; Tue, 02 Nov 2021 09:36:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=Hm1s1/+vcD/eENdvDXhNAAKv0AXEzr2FBFBpPoaluhc=;
-        b=FvXnExitK3HslLrf7rUdnG9+Lr+7sI0WE4F0fC1+thajKo07qBSz+9fH2rldHchIxl
-         1fsdt33UBZ5uXA4s21yFTysAVnUL/xhCDOKR/U2XJe+A++WyVuTk2fjCCC/zQUP1SBQl
-         7zXznhLV+XdBBhwfdaA4D+koqwz41rnuG4S4m4bnfGCBf72Z8EBkz3tejpw51rL7/Rij
-         QlLCIhPIhhYVyYvukk5n/88YM6obUt4I2Sw1fkhO8T9pnkMam6xa4MXBlZviZxW6PW0L
-         0vA6wzVsErPT8/bnoLL9sBWsb0a6nC/F4mJW+e34wnfizShZnp4Iv3M8+2HGtmddl1+h
-         31Lg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=Hm1s1/+vcD/eENdvDXhNAAKv0AXEzr2FBFBpPoaluhc=;
-        b=z1EUTKFKoKRlLgYVDxTFIlOgdLBiAf3AIBEkhalFj0KgaL6nQxDt93uyLgDO9DD5AZ
-         eYf5E6L8yaUkeQyyjekApzg4d+vixuvjvWnaulW6dzvt8x5ZNuQP3v2GypSRpfeGvggS
-         hWwrdVyghoWjZsp77K9GF6/7ZVK/ZdZouPCT1Z/a74osdb1RwilpfNHBIYEzdct94Ea4
-         6pwa9lI7pbNjcIqbLYYfWWn0VMnayJbVb4/Q2q6ss2Bmcdff/fxDecc3LkMawif+RuLb
-         +YJS54eqOrIwbSbU45BIkv0sCKAawAb21tJrSWFwPJR0+kV1xF+VDckWsU39gRJKwcQb
-         opfQ==
-X-Gm-Message-State: AOAM530+QhBJH9cN7j8Mm96H5+bj/dwSnvrGEA5B8TSQ3ptZ7drn0mD6
-        b7C7vEAMnjyl93Ix8pJwvQJrrw==
-X-Google-Smtp-Source: ABdhPJwImzdHUnfzXZUwIbmB7Ar4uCodc97YlCqozA49KiW587cp4yzswjeQNxlDu+Tw+UoLzjw+aw==
-X-Received: by 2002:a05:6830:1516:: with SMTP id k22mr15770258otp.280.1635871012666;
-        Tue, 02 Nov 2021 09:36:52 -0700 (PDT)
-Received: from ripper (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
-        by smtp.gmail.com with ESMTPSA id q11sm1938274ota.54.2021.11.02.09.36.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Nov 2021 09:36:52 -0700 (PDT)
-Date:   Tue, 2 Nov 2021 09:38:34 -0700
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
-Cc:     Ohad Ben-Cohen <ohad@wizery.com>,
+        Tue, 2 Nov 2021 12:59:36 -0400
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.1.2/8.16.1.2) with ESMTP id 1A2GBcXa027700;
+        Tue, 2 Nov 2021 17:56:53 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=selector1;
+ bh=Cco84+3VE3T5v9x8tbKVq5wUeAloej3D5kb7+sWmIDA=;
+ b=6Mb0MsR79aHQ5ZUSvM+jfTP0Q4jBdKYRBxk7fV8biwkoBpuvX888am/qkx9bTBnDM2EZ
+ MwlbLxEl62DamCeTXC82jGZsINUejBqLrYlzxFIeZuL0eE3W2sq8AWNQA799DAVH/jAA
+ gFJro5VUOBYkdxon4omzPFr/dIp3CMYwiUJLhwzyz3J8yxZeT+lHMoW1XDMBxxijBval
+ k+ieW+txFt9d7zDaPPdjlYqWGk2g4H4Cj3IOZK3c9UikxFd96NmtNEkPXHWxiVQHRvcX
+ 1Lnrk1u8AlnLpCP0x5Z46gUIaKGZX4AfYDAGGNuuWEP/tjQUJHk/S7RnIeYNJPI4beRm wA== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3c30uvkru9-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 02 Nov 2021 17:56:53 +0100
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id B948910002A;
+        Tue,  2 Nov 2021 17:56:52 +0100 (CET)
+Received: from Webmail-eu.st.com (sfhdag2node2.st.com [10.75.127.5])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id ACACA21AE21;
+        Tue,  2 Nov 2021 17:56:52 +0100 (CET)
+Received: from lmecxl0889.lme.st.com (10.75.127.49) by SFHDAG2NODE2.st.com
+ (10.75.127.5) with Microsoft SMTP Server (TLS) id 15.0.1497.18; Tue, 2 Nov
+ 2021 17:56:52 +0100
+Subject: Re: [PATCH v6 06/10] rpmsg: Introduce rpmsg_create_default_ept
+ function
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+CC:     Ohad Ben-Cohen <ohad@wizery.com>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
-        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com, julien.massot@iot.bzh
-Subject: Re: [PATCH v6 02/10] rpmsg: create the rpmsg class in core instead
- of in rpmsg char
-Message-ID: <YYFpit0SixojReo+@ripper>
+        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>, <julien.massot@iot.bzh>
 References: <20211022125426.2579-1-arnaud.pouliquen@foss.st.com>
- <20211022125426.2579-3-arnaud.pouliquen@foss.st.com>
- <YYAcYLxEmbwJShg7@builder.lan>
- <962ca426-5cc4-4adb-df55-27fe93f7e767@foss.st.com>
+ <20211022125426.2579-7-arnaud.pouliquen@foss.st.com>
+ <YYAlzvXns4Ejxa6S@builder.lan>
+From:   Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
+Message-ID: <d1352a00-bc6d-91ae-b902-622c75448e3a@foss.st.com>
+Date:   Tue, 2 Nov 2021 17:56:51 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.13.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <962ca426-5cc4-4adb-df55-27fe93f7e767@foss.st.com>
+In-Reply-To: <YYAlzvXns4Ejxa6S@builder.lan>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.75.127.49]
+X-ClientProxiedBy: SFHDAG2NODE3.st.com (10.75.127.6) To SFHDAG2NODE2.st.com
+ (10.75.127.5)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.182.1,Aquarius:18.0.790,Hydra:6.0.425,FMLib:17.0.607.475
+ definitions=2021-11-02_08,2021-11-02_01,2020-04-07_01
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Tue 02 Nov 08:23 PDT 2021, Arnaud POULIQUEN wrote:
+
+
+On 11/1/21 6:37 PM, Bjorn Andersson wrote:
+> On Fri 22 Oct 07:54 CDT 2021, Arnaud Pouliquen wrote:
+> 
+>> By providing a callback in the rpmsg_driver structure, the rpmsg devices
+>> can be probed with a default endpoint created.
+>>
+>> In this case, it is not possible to associated to this endpoint private data
+>> that could allow the driver to retrieve the context.
+>>
+>> This helper function allows rpmsg drivers to create a default endpoint
+>> on runtime with an associated private context.
+>>
+>> For example, a driver might create a context structure on the probe and
+>> want to provide that context as private data for the default rpmsg
+>> callback.
+>>
+>> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+>> Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+>> Tested-by: Julien Massot <julien.massot@iot.bzh>
+>> ---
+>>  drivers/rpmsg/rpmsg_core.c | 51 ++++++++++++++++++++++++++++++++++++++
+>>  include/linux/rpmsg.h      | 13 ++++++++++
+>>  2 files changed, 64 insertions(+)
+>>
+>> diff --git a/drivers/rpmsg/rpmsg_core.c b/drivers/rpmsg/rpmsg_core.c
+>> index 53162038254d..92557c49d460 100644
+>> --- a/drivers/rpmsg/rpmsg_core.c
+>> +++ b/drivers/rpmsg/rpmsg_core.c
+>> @@ -132,6 +132,57 @@ void rpmsg_destroy_ept(struct rpmsg_endpoint *ept)
+>>  }
+>>  EXPORT_SYMBOL(rpmsg_destroy_ept);
+>>  
+>> +/**
+>> + * rpmsg_create_default_ept() - create a default rpmsg_endpoint for a rpmsg device
+>> + * @rpdev: rpmsg channel device
+>> + * @cb: rx callback handler
+>> + * @priv: private data for the driver's use
+>> + * @chinfo: channel_info with the local rpmsg address to bind with @cb
+>> + *
+>> + * On register_rpmsg_driver if no callback is provided in the rpmsg_driver structure,
+>> + * no endpoint is created when the device is probed by the rpmsg bus.
+>> + *
+>> + * This function returns a pointer to the default endpoint if already created or creates
+>> + * an endpoint and assign it as the default endpoint of the rpmsg device.
+> 
+> But if the driver didn't specify a callback, when would this ever
+> happen?
+
+Not sure to understand your point here...
+Do you mean that something is missing in description such as:
+ * On register_rpmsg_driver if no callback is provided in the rpmsg_driver
+ * structure, no endpoint is created when the device is probed by the rpmsg bus.
+ * The rpmsg driver can call rpmsg_create_default_ept during or after its
+ * probing to register a default endpoint with an associated callback and @priv
+ * context.
 
 > 
+>> + *
+>> + * Drivers should provide their @rpdev channel (so the new endpoint would belong
+>> + * to the same remote processor their channel belongs to), an rx callback
+>> + * function, an optional private data (which is provided back when the
+>> + * rx callback is invoked), and an address they want to bind with the
+>> + * callback. If @addr is RPMSG_ADDR_ANY, then rpmsg_create_ept will
+>> + * dynamically assign them an available rpmsg address (drivers should have
+>> + * a very good reason why not to always use RPMSG_ADDR_ANY here).
+>> + *
+>> + * Returns a pointer to the endpoint on success, or NULL on error.
 > 
-> On 11/1/21 5:57 PM, Bjorn Andersson wrote:
-> > On Fri 22 Oct 07:54 CDT 2021, Arnaud Pouliquen wrote:
-> > 
-> >> Migrate the creation of the rpmsg class from the rpmsg_char
-> >> to the core that the class is usable by all rpmsg services.
-> >>
-> >> Suggested-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> >> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-> >> ---
-> >>  drivers/rpmsg/rpmsg_char.c | 14 ++------------
-> >>  drivers/rpmsg/rpmsg_core.c | 26 ++++++++++++++++++++++++--
-> >>  include/linux/rpmsg.h      | 10 ++++++++++
-> >>  3 files changed, 36 insertions(+), 14 deletions(-)
-> >>
-> >> diff --git a/drivers/rpmsg/rpmsg_char.c b/drivers/rpmsg/rpmsg_char.c
-> >> index 941c5c54dd72..327ed739a3a7 100644
-> >> --- a/drivers/rpmsg/rpmsg_char.c
-> >> +++ b/drivers/rpmsg/rpmsg_char.c
-> >> @@ -28,7 +28,6 @@
-> >>  #define RPMSG_DEV_MAX	(MINORMASK + 1)
-> >>  
-> >>  static dev_t rpmsg_major;
-> >> -static struct class *rpmsg_class;
-> >>  
-> >>  static DEFINE_IDA(rpmsg_ctrl_ida);
-> >>  static DEFINE_IDA(rpmsg_ept_ida);
-> >> @@ -362,7 +361,7 @@ int rpmsg_chrdev_eptdev_create(struct rpmsg_device *rpdev, struct device *parent
-> >>  	init_waitqueue_head(&eptdev->readq);
-> >>  
-> >>  	device_initialize(dev);
-> >> -	dev->class = rpmsg_class;
-> >> +	dev->class = rpmsg_get_class();
-> >>  	dev->parent = parent;
-> >>  	dev->groups = rpmsg_eptdev_groups;
-> >>  	dev_set_drvdata(dev, eptdev);
-> >> @@ -482,7 +481,7 @@ static int rpmsg_chrdev_probe(struct rpmsg_device *rpdev)
-> >>  	dev = &ctrldev->dev;
-> >>  	device_initialize(dev);
-> >>  	dev->parent = &rpdev->dev;
-> >> -	dev->class = rpmsg_class;
-> >> +	dev->class = rpmsg_get_class();
-> >>  
-> >>  	cdev_init(&ctrldev->cdev, &rpmsg_ctrldev_fops);
-> >>  	ctrldev->cdev.owner = THIS_MODULE;
-> >> @@ -558,17 +557,9 @@ static int rpmsg_chrdev_init(void)
-> >>  		return ret;
-> >>  	}
-> >>  
-> >> -	rpmsg_class = class_create(THIS_MODULE, "rpmsg");
-> >> -	if (IS_ERR(rpmsg_class)) {
-> >> -		pr_err("failed to create rpmsg class\n");
-> >> -		unregister_chrdev_region(rpmsg_major, RPMSG_DEV_MAX);
-> >> -		return PTR_ERR(rpmsg_class);
-> >> -	}
-> >> -
-> >>  	ret = register_rpmsg_driver(&rpmsg_chrdev_driver);
-> >>  	if (ret < 0) {
-> >>  		pr_err("rpmsgchr: failed to register rpmsg driver\n");
-> >> -		class_destroy(rpmsg_class);
-> >>  		unregister_chrdev_region(rpmsg_major, RPMSG_DEV_MAX);
-> >>  	}
-> >>  
-> >> @@ -579,7 +570,6 @@ postcore_initcall(rpmsg_chrdev_init);
-> >>  static void rpmsg_chrdev_exit(void)
-> >>  {
-> >>  	unregister_rpmsg_driver(&rpmsg_chrdev_driver);
-> >> -	class_destroy(rpmsg_class);
-> >>  	unregister_chrdev_region(rpmsg_major, RPMSG_DEV_MAX);
-> >>  }
-> >>  module_exit(rpmsg_chrdev_exit);
-> >> diff --git a/drivers/rpmsg/rpmsg_core.c b/drivers/rpmsg/rpmsg_core.c
-> >> index 9151836190ce..53162038254d 100644
-> >> --- a/drivers/rpmsg/rpmsg_core.c
-> >> +++ b/drivers/rpmsg/rpmsg_core.c
-> >> @@ -20,6 +20,8 @@
-> >>  
-> >>  #include "rpmsg_internal.h"
-> >>  
-> >> +static struct class *rpmsg_class;
-> >> +
-> >>  /**
-> >>   * rpmsg_create_channel() - create a new rpmsg channel
-> >>   * using its name and address info.
-> >> @@ -296,6 +298,19 @@ __poll_t rpmsg_poll(struct rpmsg_endpoint *ept, struct file *filp,
-> >>  }
-> >>  EXPORT_SYMBOL(rpmsg_poll);
-> >>  
-> >> +/**
-> >> + * rpmsg_get_class() - get reference to the sysfs rpmsg class
-> >> + *
-> >> + * This function return the pointer to the "rpmsg" class created by the rpmsg core.
-> >> + *
-> >> + * Returns the struct class pointer
-> >> + */
-> >> +struct class *rpmsg_get_class(void)
-> > 
-> > What value does this helper function add? Can't we just expose
-> > rpmsg_class directly?
-> 
-> look to me cleaner to not expose directly the rpmsg_class in rpmsg.h as this
-> variable is read only for rpmsg services.
-> 
+> Correct kerneldoc is "Return: ..."
 
-The pointer is read only, but the object isn't. So I think it's cleaner
-to just share the pointer in the first place.
+I will update this
 
-But that said, looking at this a little bit more, I don't think there's
-any guarantee that class_create() has been executed before
-rpmsg_ctrl_probe() is being invoked.
-
-> > 
-> >> +{
-> >> +	return rpmsg_class;
-> >> +}
-> >> +EXPORT_SYMBOL(rpmsg_get_class);
-[..]
-> >> diff --git a/include/linux/rpmsg.h b/include/linux/rpmsg.h
-> > 
-> > Isn't this just going to be used by rpmsg_char and rpmsg_ctrl? Do we
-> > really need to expose it in the client-facing API?
 > 
-> I based this dev on hypothesis that the class could be used by some other rpmsg
-> clients. But it is not mandatory. It can be extended later, on need.
+>> + */
+>> +struct rpmsg_endpoint *rpmsg_create_default_ept(struct rpmsg_device *rpdev,
+>> +						rpmsg_rx_cb_t cb, void *priv,
+>> +						struct rpmsg_channel_info chinfo)
+>> +{
+>> +	struct rpmsg_endpoint *ept;
+>> +
+>> +	if (WARN_ON(!rpdev))
+>> +		return NULL;
+>> +
+>> +	/* It does not make sense to create a default endpoint without a callback. */
+>> +	if (!cb)
+>> +		return NULL;
+>> +
+>> +	if (rpdev->ept)
+>> +		return rpdev->ept;
 > 
+> How does the caller know if they should call rpmsg_destroy_ept() on the
+> returned ept or not?
 
-That's a good hypothesis, it might be useful in other places as well.
-But I think it's best to keep it local for now and make an explicit
-decision about opening up when that need comes.
+This case is probably a bug. What about replacing the condition by
+if(WARN_ON(rpdev->ept))?
 
-> What would you propose as an alternative to this API?
 > 
-> I can see 2 alternatives:
-> - Define the rpmsg_class in rpmsg_internal.h
->   In current patchset rpmsg_char.c does not include the rpmsg_internal.h.
->   I'm not sure if this include makes sense for an rpmsg service driver.
+>> +
+>> +	ept = rpdev->ops->create_ept(rpdev, cb, priv, chinfo);
+>> +	if (!ept)
+>> +		return NULL;
+>> +
+>> +	/* Assign the new endpoint as default endpoint */
+>> +	rpdev->ept = ept;
+>> +	rpdev->src = ept->addr;
+>> +
+>> +	return ept;
+>> +}
+>> +EXPORT_SYMBOL(rpmsg_create_default_ept);
+>> +
+>>  /**
+>>   * rpmsg_send() - send a message across to the remote processor
+>>   * @ept: the rpmsg endpoint
+>> diff --git a/include/linux/rpmsg.h b/include/linux/rpmsg.h
+>> index 6fe51549d931..b071ac17ff78 100644
+>> --- a/include/linux/rpmsg.h
+>> +++ b/include/linux/rpmsg.h
+>> @@ -172,6 +172,9 @@ void rpmsg_destroy_ept(struct rpmsg_endpoint *);
+>>  struct rpmsg_endpoint *rpmsg_create_ept(struct rpmsg_device *,
+>>  					rpmsg_rx_cb_t cb, void *priv,
+>>  					struct rpmsg_channel_info chinfo);
+>> +struct rpmsg_endpoint *rpmsg_create_default_ept(struct rpmsg_device *rpdev,
 > 
+> Is there ever a case where someone outside drivers/rpmsg/ should call
+> this function?
 
-rpmsg_ctrl and rpmsg_char are more tightly coupled to rpmsg than typical
-rpmsg drivers, so I think it's better to include rpmsg_internal.h than to
-open up the API to the clients.
+A rpmsg service driver could call it to generate the ns announcement after
+the probe (for instance on a sysfs open).
+(Please have a look to [PATCH v6 10/10] rpmsg: core: send a ns announcement when
+a default endpoint is created)
 
 Thanks,
-Bjorn
+Arnaud
 
-> - Use "extern struct class *rpmsg_class; " in rpmsg_char and rpmsg_ctrl modules
 > 
 > Regards,
-> Arnaud
+> Bjorn
 > 
-> > 
-> > Regards,
-> > Bjorn
-> > 
-> >> index a8dcf8a9ae88..6fe51549d931 100644
-> >> --- a/include/linux/rpmsg.h
-> >> +++ b/include/linux/rpmsg.h
-> >> @@ -186,6 +186,8 @@ int rpmsg_trysend_offchannel(struct rpmsg_endpoint *ept, u32 src, u32 dst,
-> >>  __poll_t rpmsg_poll(struct rpmsg_endpoint *ept, struct file *filp,
-> >>  			poll_table *wait);
-> >>  
-> >> +struct class *rpmsg_get_class(void);
-> >> +
-> >>  #else
-> >>  
-> >>  static inline int rpmsg_register_device(struct rpmsg_device *rpdev)
-> >> @@ -296,6 +298,14 @@ static inline __poll_t rpmsg_poll(struct rpmsg_endpoint *ept,
-> >>  	return 0;
-> >>  }
-> >>  
-> >> +static inline struct class *rpmsg_get_class(void)
-> >> +{
-> >> +	/* This shouldn't be possible */
-> >> +	WARN_ON(1);
-> >> +
-> >> +	return NULL;
-> >> +}
-> >> +
-> >>  #endif /* IS_ENABLED(CONFIG_RPMSG) */
-> >>  
-> >>  /* use a macro to avoid include chaining to get THIS_MODULE */
-> >> -- 
-> >> 2.17.1
-> >>
+>> +						rpmsg_rx_cb_t cb, void *priv,
+>> +						struct rpmsg_channel_info chinfo);
+>>  
+>>  int rpmsg_send(struct rpmsg_endpoint *ept, void *data, int len);
+>>  int rpmsg_sendto(struct rpmsg_endpoint *ept, void *data, int len, u32 dst);
+>> @@ -236,6 +239,16 @@ static inline struct rpmsg_endpoint *rpmsg_create_ept(struct rpmsg_device *rpdev
+>>  	return NULL;
+>>  }
+>>  
+>> +static inline struct rpmsg_endpoint *rpmsg_create_default_ept(struct rpmsg_device *rpdev,
+>> +							      rpmsg_rx_cb_t cb, void *priv,
+>> +							      struct rpmsg_channel_info chinfo)
+>> +{
+>> +	/* This shouldn't be possible */
+>> +	WARN_ON(1);
+>> +
+>> +	return NULL;
+>> +}
+>> +
+>>  static inline int rpmsg_send(struct rpmsg_endpoint *ept, void *data, int len)
+>>  {
+>>  	/* This shouldn't be possible */
+>> -- 
+>> 2.17.1
+>>
