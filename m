@@ -2,275 +2,366 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16C39C433EF
-	for <linux-remoteproc@archiver.kernel.org>; Tue,  2 Nov 2021 17:11:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AD61C433EF
+	for <linux-remoteproc@archiver.kernel.org>; Tue,  2 Nov 2021 23:50:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DFA6D61052
-	for <linux-remoteproc@archiver.kernel.org>; Tue,  2 Nov 2021 17:11:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 82AB061076
+	for <linux-remoteproc@archiver.kernel.org>; Tue,  2 Nov 2021 23:50:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230366AbhKBROK (ORCPT
+        id S230046AbhKBXxM (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 2 Nov 2021 13:14:10 -0400
-Received: from mx07-00178001.pphosted.com ([185.132.182.106]:45008 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229689AbhKBROD (ORCPT
+        Tue, 2 Nov 2021 19:53:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58172 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230054AbhKBXxL (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 2 Nov 2021 13:14:03 -0400
-Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.1.2/8.16.1.2) with ESMTP id 1A2EJUeG011773;
-        Tue, 2 Nov 2021 18:11:14 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=selector1;
- bh=jFbWexfVVsZE7MzAbDgySXVklqbP8iiroGc1J7oWwmQ=;
- b=lsx/4bc/GxkdTj3DB+PeRaUmncpVUwzcqZKITD3aJMI4U6D9OzZPu0cdPByz7uh3oWy9
- odEuRi7FTN9CkgD3t7i4VswSk3/4yIsuT5pyScb8FP0WWoq0G9zUHLt26ZdxXojMT53n
- Vhs5WliNbwchJ82JX/0QqQc4H2HKKvmj67NhvP8bZ3nnlhcPuhdsFsSuzmn9ZtrFFOIU
- CDd8zGsl1wl0LaN2/SFb6VF0eNI3sHat9FfjQQH9XFSgsLzP9DcfJlnHR+oiJ/+XlT7F
- TlqC6b1TW5yA3nkIjVmmRUvW4jaDM14eVXW5ehxsQwqwQgJo5l4jEXx2r640eOqtrXOF 4g== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3c2jfj6s7c-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 02 Nov 2021 18:11:14 +0100
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 1466B10002A;
-        Tue,  2 Nov 2021 18:11:13 +0100 (CET)
-Received: from Webmail-eu.st.com (sfhdag2node2.st.com [10.75.127.5])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 094DF220C6D;
-        Tue,  2 Nov 2021 18:11:13 +0100 (CET)
-Received: from lmecxl0889.lme.st.com (10.75.127.50) by SFHDAG2NODE2.st.com
- (10.75.127.5) with Microsoft SMTP Server (TLS) id 15.0.1497.18; Tue, 2 Nov
- 2021 18:11:12 +0100
-Subject: Re: [PATCH v6 02/10] rpmsg: create the rpmsg class in core instead of
- in rpmsg char
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-CC:     Ohad Ben-Cohen <ohad@wizery.com>,
+        Tue, 2 Nov 2021 19:53:11 -0400
+Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 170A8C061205
+        for <linux-remoteproc@vger.kernel.org>; Tue,  2 Nov 2021 16:50:36 -0700 (PDT)
+Received: by mail-lf1-x129.google.com with SMTP id u11so1735185lfs.1
+        for <linux-remoteproc@vger.kernel.org>; Tue, 02 Nov 2021 16:50:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=fVBGk1MYyCWrNZI+cGnXDaPmanq61gpSQuTYWAYJ+rg=;
+        b=ct6rwWB5FRv5Mti6ZNWlPXqu8r/Q2ELC3sZ//jRtNp/MEx7eF4jfyZIdP733Qhi1LS
+         3zUM+Cdkey0NBeVZZhuNPNH/nkmYS7FtlOwQEYFYI/lFgzIj9UOxmiuKiZhImhAA8sFp
+         +FvtNKpYI8yOZM5EGEQIgMkFwHA37YNcBlF3i6ercceteicQIpR+V4nvzLEyj1/e85nD
+         6OL7Gp0bxn/3ZI02LjXDUH+G6TeVjTQrA9NVp/4A7FfeC2VOwEccVrYvKpl4b/Y1Xxgb
+         WDqOU90M4L2K0yG/V6diro/qFJxz6Hbml+w28liXPAycWrahis2aOW+7+x7i28fSid5m
+         xWlQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=fVBGk1MYyCWrNZI+cGnXDaPmanq61gpSQuTYWAYJ+rg=;
+        b=FSsEod3vNPsqLietqN6u4pA/DN9IjCjEDOp7AdgQ6IZRNzsgM3dN7O8dCuEJARtIcd
+         9A+ee6uL6ImvCd+eqPXa9emKvgRS10wZpdgh2JnRmH+R84gJDc6xFN5wmam/HSieYBdM
+         R2OXREOzddoNE7Zn+sxzUE1tfsTwwn33VdUyNWPAuseOWWoNb22Lx5I5lGRyrYpcV1Ed
+         o28mnpKIg0TloMAB0v8kc7p30OOYlAbvBYzSlqSraHB2q7a4E2qSByZYEzFGl0UTXQFg
+         JKQrYzf4+9WOdbeBsjjDIb1BLH1Bcgaj9Q5DMZ3Ec0XDBl0PuKR+g1bCmP3v92gTedVM
+         xjkg==
+X-Gm-Message-State: AOAM531oVjGEpOdoKgyvEG64FaUHueDZaB3jx5NUj0H1zjmXaVSWTCLW
+        IG2GttLM87QgV+5kdrh0XKc70w==
+X-Google-Smtp-Source: ABdhPJzVjWt0dzeXhRVr9LeJ7wx4S7kb2JiWs4DZ1Y5b+WPKmsokaDHCGflD/Im5gu1IMPh0Ik3PVA==
+X-Received: by 2002:a05:6512:2022:: with SMTP id s2mr36121348lfs.661.1635897034131;
+        Tue, 02 Nov 2021 16:50:34 -0700 (PDT)
+Received: from [192.168.1.211] ([37.153.55.125])
+        by smtp.gmail.com with ESMTPSA id o17sm30262lfg.211.2021.11.02.16.50.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 02 Nov 2021 16:50:33 -0700 (PDT)
+Subject: Re: [PATCH v2 1/5] arm64: dts: qcom: msm8996: Revamp reserved memory
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Yassine Oudjana <y.oudjana@protonmail.com>
+Cc:     Andy Gross <agross@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
-        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>, <julien.massot@iot.bzh>
-References: <20211022125426.2579-1-arnaud.pouliquen@foss.st.com>
- <20211022125426.2579-3-arnaud.pouliquen@foss.st.com>
- <YYAcYLxEmbwJShg7@builder.lan>
- <962ca426-5cc4-4adb-df55-27fe93f7e767@foss.st.com> <YYFpit0SixojReo+@ripper>
-From:   Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
-Message-ID: <16853c3d-0b23-4d59-9c33-c7c99da4b9a1@foss.st.com>
-Date:   Tue, 2 Nov 2021 18:11:11 +0100
+        Rob Herring <robh+dt@kernel.org>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@somainline.org>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Raffaele Tranquillini <raffaele.tranquillini@gmail.com>,
+        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        devicetree@vger.kernel.org, phone-devel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20210926190555.278589-1-y.oudjana@protonmail.com>
+ <20210926190555.278589-2-y.oudjana@protonmail.com>
+ <YXTNL7boyiRFKQiV@builder.lan>
+From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Message-ID: <4455e52f-7e8a-c431-9977-dcf4aefe9822@linaro.org>
+Date:   Wed, 3 Nov 2021 02:50:32 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.13.0
+ Thunderbird/78.14.0
 MIME-Version: 1.0
-In-Reply-To: <YYFpit0SixojReo+@ripper>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
+In-Reply-To: <YXTNL7boyiRFKQiV@builder.lan>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.75.127.50]
-X-ClientProxiedBy: SFHDAG1NODE2.st.com (10.75.127.2) To SFHDAG2NODE2.st.com
- (10.75.127.5)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.182.1,Aquarius:18.0.790,Hydra:6.0.425,FMLib:17.0.607.475
- definitions=2021-11-02_08,2021-11-02_01,2020-04-07_01
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-
-
-On 11/2/21 5:38 PM, Bjorn Andersson wrote:
-> On Tue 02 Nov 08:23 PDT 2021, Arnaud POULIQUEN wrote:
+On 24/10/2021 06:04, Bjorn Andersson wrote:
+> On Sun 26 Sep 14:06 CDT 2021, Yassine Oudjana wrote:
 > 
+>> Fix a total overlap between zap_shader_region and slpi_region, and rename
+>> all regions to match the naming convention in other Qualcomm SoC device trees.
 >>
->>
->> On 11/1/21 5:57 PM, Bjorn Andersson wrote:
->>> On Fri 22 Oct 07:54 CDT 2021, Arnaud Pouliquen wrote:
->>>
->>>> Migrate the creation of the rpmsg class from the rpmsg_char
->>>> to the core that the class is usable by all rpmsg services.
->>>>
->>>> Suggested-by: Bjorn Andersson <bjorn.andersson@linaro.org>
->>>> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
->>>> ---
->>>>  drivers/rpmsg/rpmsg_char.c | 14 ++------------
->>>>  drivers/rpmsg/rpmsg_core.c | 26 ++++++++++++++++++++++++--
->>>>  include/linux/rpmsg.h      | 10 ++++++++++
->>>>  3 files changed, 36 insertions(+), 14 deletions(-)
->>>>
->>>> diff --git a/drivers/rpmsg/rpmsg_char.c b/drivers/rpmsg/rpmsg_char.c
->>>> index 941c5c54dd72..327ed739a3a7 100644
->>>> --- a/drivers/rpmsg/rpmsg_char.c
->>>> +++ b/drivers/rpmsg/rpmsg_char.c
->>>> @@ -28,7 +28,6 @@
->>>>  #define RPMSG_DEV_MAX	(MINORMASK + 1)
->>>>  
->>>>  static dev_t rpmsg_major;
->>>> -static struct class *rpmsg_class;
->>>>  
->>>>  static DEFINE_IDA(rpmsg_ctrl_ida);
->>>>  static DEFINE_IDA(rpmsg_ept_ida);
->>>> @@ -362,7 +361,7 @@ int rpmsg_chrdev_eptdev_create(struct rpmsg_device *rpdev, struct device *parent
->>>>  	init_waitqueue_head(&eptdev->readq);
->>>>  
->>>>  	device_initialize(dev);
->>>> -	dev->class = rpmsg_class;
->>>> +	dev->class = rpmsg_get_class();
->>>>  	dev->parent = parent;
->>>>  	dev->groups = rpmsg_eptdev_groups;
->>>>  	dev_set_drvdata(dev, eptdev);
->>>> @@ -482,7 +481,7 @@ static int rpmsg_chrdev_probe(struct rpmsg_device *rpdev)
->>>>  	dev = &ctrldev->dev;
->>>>  	device_initialize(dev);
->>>>  	dev->parent = &rpdev->dev;
->>>> -	dev->class = rpmsg_class;
->>>> +	dev->class = rpmsg_get_class();
->>>>  
->>>>  	cdev_init(&ctrldev->cdev, &rpmsg_ctrldev_fops);
->>>>  	ctrldev->cdev.owner = THIS_MODULE;
->>>> @@ -558,17 +557,9 @@ static int rpmsg_chrdev_init(void)
->>>>  		return ret;
->>>>  	}
->>>>  
->>>> -	rpmsg_class = class_create(THIS_MODULE, "rpmsg");
->>>> -	if (IS_ERR(rpmsg_class)) {
->>>> -		pr_err("failed to create rpmsg class\n");
->>>> -		unregister_chrdev_region(rpmsg_major, RPMSG_DEV_MAX);
->>>> -		return PTR_ERR(rpmsg_class);
->>>> -	}
->>>> -
->>>>  	ret = register_rpmsg_driver(&rpmsg_chrdev_driver);
->>>>  	if (ret < 0) {
->>>>  		pr_err("rpmsgchr: failed to register rpmsg driver\n");
->>>> -		class_destroy(rpmsg_class);
->>>>  		unregister_chrdev_region(rpmsg_major, RPMSG_DEV_MAX);
->>>>  	}
->>>>  
->>>> @@ -579,7 +570,6 @@ postcore_initcall(rpmsg_chrdev_init);
->>>>  static void rpmsg_chrdev_exit(void)
->>>>  {
->>>>  	unregister_rpmsg_driver(&rpmsg_chrdev_driver);
->>>> -	class_destroy(rpmsg_class);
->>>>  	unregister_chrdev_region(rpmsg_major, RPMSG_DEV_MAX);
->>>>  }
->>>>  module_exit(rpmsg_chrdev_exit);
->>>> diff --git a/drivers/rpmsg/rpmsg_core.c b/drivers/rpmsg/rpmsg_core.c
->>>> index 9151836190ce..53162038254d 100644
->>>> --- a/drivers/rpmsg/rpmsg_core.c
->>>> +++ b/drivers/rpmsg/rpmsg_core.c
->>>> @@ -20,6 +20,8 @@
->>>>  
->>>>  #include "rpmsg_internal.h"
->>>>  
->>>> +static struct class *rpmsg_class;
->>>> +
->>>>  /**
->>>>   * rpmsg_create_channel() - create a new rpmsg channel
->>>>   * using its name and address info.
->>>> @@ -296,6 +298,19 @@ __poll_t rpmsg_poll(struct rpmsg_endpoint *ept, struct file *filp,
->>>>  }
->>>>  EXPORT_SYMBOL(rpmsg_poll);
->>>>  
->>>> +/**
->>>> + * rpmsg_get_class() - get reference to the sysfs rpmsg class
->>>> + *
->>>> + * This function return the pointer to the "rpmsg" class created by the rpmsg core.
->>>> + *
->>>> + * Returns the struct class pointer
->>>> + */
->>>> +struct class *rpmsg_get_class(void)
->>>
->>> What value does this helper function add? Can't we just expose
->>> rpmsg_class directly?
->>
->> look to me cleaner to not expose directly the rpmsg_class in rpmsg.h as this
->> variable is read only for rpmsg services.
->>
+>> Signed-off-by: Yassine Oudjana <y.oudjana@protonmail.com>
 > 
-> The pointer is read only, but the object isn't. So I think it's cleaner
-> to just share the pointer in the first place.
+> FYI, I like this series, but I held off applying it because I wanted to
+> verify that the shuffling of the memory regions works on the existing
+> 8996 boards.
 > 
-> But that said, looking at this a little bit more, I don't think there's
-> any guarantee that class_create() has been executed before
-> rpmsg_ctrl_probe() is being invoked.
+> Unfortunately it didn't work, either with or without the shuffling on
+> the db820c - and I've not found the time to figure out why that is. I
+> hope to get back to this shortly (or that someone else will figure it
+> out and provide a tested-by)
 
-class_create is called in in the rpmsg_init (rpmsg_core.c). as RPMSG_CTRL and
-RPMSG_CHAR depend on RPMSG config this use case should not occurs, or did I miss
-something?
+I gave this a test too on my db820c. Usually the board MSS will crash 
+after ~0.1 - 0.15 seconds after booting up, then during recovery the 
+board will crash/reboot somewhere at the end of q6v5_mss_load() (and 
+typically after successful q6v5_rmb_mba_wait() call.
+
+Occasionally (approximately 1 of 20) the MSS will not crash, presenting 
+PDS service to the userspace. Even in this state it doesn't seem to be 
+able to lock the gps location (but this might be related to the big UART 
+mezzanine sitting on top of the board).
+
+Unfortunately there seem to be no SLPI firmware for the db820c, so I can 
+not test slpi.
+
+A notice regarding the patchset itself. It looks like pil_q6v5_mss.c 
+driver misses mx and cx proxy power domains for the MSS_MSM8996 case.
 
 > 
->>>
->>>> +{
->>>> +	return rpmsg_class;
->>>> +}
->>>> +EXPORT_SYMBOL(rpmsg_get_class);
-> [..]
->>>> diff --git a/include/linux/rpmsg.h b/include/linux/rpmsg.h
->>>
->>> Isn't this just going to be used by rpmsg_char and rpmsg_ctrl? Do we
->>> really need to expose it in the client-facing API?
->>
->> I based this dev on hypothesis that the class could be used by some other rpmsg
->> clients. But it is not mandatory. It can be extended later, on need.
->>
-> 
-> That's a good hypothesis, it might be useful in other places as well.
-> But I think it's best to keep it local for now and make an explicit
-> decision about opening up when that need comes.
-> 
->> What would you propose as an alternative to this API?
->>
->> I can see 2 alternatives:
->> - Define the rpmsg_class in rpmsg_internal.h
->>   In current patchset rpmsg_char.c does not include the rpmsg_internal.h.
->>   I'm not sure if this include makes sense for an rpmsg service driver.
->>
-> 
-> rpmsg_ctrl and rpmsg_char are more tightly coupled to rpmsg than typical
-> rpmsg drivers, so I think it's better to include rpmsg_internal.h than to
-> open up the API to the clients.
-
-So i will declare the variable in rpmsg_internal.h and remove the
-rpmsg_get_class to use directly the variable.
-
-Thanks,
-Arnaud
-
-> 
-> Thanks,
+> Regards,
 > Bjorn
 > 
->> - Use "extern struct class *rpmsg_class; " in rpmsg_char and rpmsg_ctrl modules
+>> ---
+>>   .../dts/qcom/msm8996-sony-xperia-tone.dtsi    | 18 ++++--
+>>   .../boot/dts/qcom/msm8996-xiaomi-common.dtsi  | 18 +++---
+>>   arch/arm64/boot/dts/qcom/msm8996.dtsi         | 63 ++++++++++---------
+>>   3 files changed, 55 insertions(+), 44 deletions(-)
 >>
->> Regards,
->> Arnaud
+>> diff --git a/arch/arm64/boot/dts/qcom/msm8996-sony-xperia-tone.dtsi b/arch/arm64/boot/dts/qcom/msm8996-sony-xperia-tone.dtsi
+>> index 507396c4d23b..4c26e66f0610 100644
+>> --- a/arch/arm64/boot/dts/qcom/msm8996-sony-xperia-tone.dtsi
+>> +++ b/arch/arm64/boot/dts/qcom/msm8996-sony-xperia-tone.dtsi
+>> @@ -13,9 +13,10 @@
+>>   #include <dt-bindings/pinctrl/qcom,pmic-gpio.h>
+>>   #include <dt-bindings/pinctrl/qcom,pmic-mpp.h>
+>>   
+>> -/delete-node/ &slpi_region;
+>> -/delete-node/ &venus_region;
+>> -/delete-node/ &zap_shader_region;
+>> +/delete-node/ &adsp_mem;
+>> +/delete-node/ &slpi_mem;
+>> +/delete-node/ &venus_mem;
+>> +/delete-node/ &gpu_mem;
+>>   
+>>   / {
+>>   	qcom,msm-id = <246 0x30001>; /* MSM8996 V3.1 (Final) */
+>> @@ -46,18 +47,23 @@ cont_splash_mem: memory@83401000 {
+>>   			no-map;
+>>   		};
+>>   
+>> -		zap_shader_region: gpu@90400000 {
+>> +		adsp_mem: adsp@8ea00000 {
+>> +			reg = <0x0 0x8ea00000 0x0 0x1a00000>;
+>> +			no-map;
+>> +		};
+>> +
+>> +		gpu_mem: gpu@90400000 {
+>>   			compatible = "shared-dma-pool";
+>>   			reg = <0x0 0x90400000 0x0 0x2000>;
+>>   			no-map;
+>>   		};
+>>   
+>> -		slpi_region: memory@90500000 {
+>> +		slpi_mem: memory@90500000 {
+>>   			reg = <0 0x90500000 0 0xa00000>;
+>>   			no-map;
+>>   		};
+>>   
+>> -		venus_region: memory@90f00000 {
+>> +		venus_mem: memory@90f00000 {
+>>   			reg = <0 0x90f00000 0 0x500000>;
+>>   			no-map;
+>>   		};
+>> diff --git a/arch/arm64/boot/dts/qcom/msm8996-xiaomi-common.dtsi b/arch/arm64/boot/dts/qcom/msm8996-xiaomi-common.dtsi
+>> index d239b01b8505..a5e7bccadba2 100644
+>> --- a/arch/arm64/boot/dts/qcom/msm8996-xiaomi-common.dtsi
+>> +++ b/arch/arm64/boot/dts/qcom/msm8996-xiaomi-common.dtsi
+>> @@ -66,32 +66,32 @@ memory@88800000 {
+>>   
+>>   		/* This platform has all PIL regions offset by 0x1400000 */
+>>   		/delete-node/ mpss@88800000;
+>> -		mpss_region: mpss@89c00000 {
+>> +		mpss_mem: mpss@89c00000 {
+>>   			reg = <0x0 0x89c00000 0x0 0x6200000>;
+>>   			no-map;
+>>   		};
+>>   
+>>   		/delete-node/ adsp@8ea00000;
+>> -		adsp_region: adsp@8ea00000 {
+>> +		adsp_mem: adsp@8fe00000 {
+>>   			reg = <0x0 0x8fe00000 0x0 0x1b00000>;
+>>   			no-map;
+>>   		};
+>>   
+>> -		/delete-node/ slpi@90b00000;
+>> -		slpi_region: slpi@91900000 {
+>> +		/delete-node/ slpi@90500000;
+>> +		slpi_mem: slpi@91900000 {
+>>   			reg = <0x0 0x91900000 0x0 0xa00000>;
+>>   			no-map;
+>>   		};
+>>   
+>> -		/delete-node/ gpu@8f200000;
+>> -		zap_shader_region: gpu@92300000 {
+>> +		/delete-node/ gpu@90f00000;
+>> +		gpu_mem: gpu@92300000 {
+>>   			compatible = "shared-dma-pool";
+>>   			reg = <0x0 0x92300000 0x0 0x2000>;
+>>   			no-map;
+>>   		};
+>>   
+>>   		/delete-node/ venus@91000000;
+>> -		venus_region: venus@90400000 {
+>> +		venus_mem: venus@92400000 {
+>>   			reg = <0x0 0x92400000 0x0 0x500000>;
+>>   			no-map;
+>>   		};
+>> @@ -107,7 +107,7 @@ ramoops@92900000 {
+>>   			pmsg-size = <0x40000>;
+>>   		};
+>>   
+>> -		/delete-node/ rmtfs@86700000;
+>> +		/delete-node/ rmtfs;
+>>   		rmtfs@f6c00000 {
+>>   			compatible = "qcom,rmtfs-mem";
+>>   			reg = <0 0xf6c00000 0 0x200000>;
+>> @@ -118,7 +118,7 @@ rmtfs@f6c00000 {
+>>   		};
+>>   
+>>   		/delete-node/ mba@91500000;
+>> -		mba_region: mba@f6f00000 {
+>> +		mba_mem: mba@f6f00000 {
+>>   			reg = <0x0 0xf6f00000 0x0 0x100000>;
+>>   			no-map;
+>>   		};
+>> diff --git a/arch/arm64/boot/dts/qcom/msm8996.dtsi b/arch/arm64/boot/dts/qcom/msm8996.dtsi
+>> index eb3ec5ff46eb..1495fff6ffc9 100644
+>> --- a/arch/arm64/boot/dts/qcom/msm8996.dtsi
+>> +++ b/arch/arm64/boot/dts/qcom/msm8996.dtsi
+>> @@ -384,60 +384,65 @@ reserved-memory {
+>>   		#size-cells = <2>;
+>>   		ranges;
+>>   
+>> -		mba_region: mba@91500000 {
+>> -			reg = <0x0 0x91500000 0x0 0x200000>;
+>> +		hyp_mem: memory@85800000 {
+>> +			reg = <0x0 0x85800000 0x0 0x600000>;
+>>   			no-map;
+>>   		};
+>>   
+>> -		slpi_region: slpi@90b00000 {
+>> -			reg = <0x0 0x90b00000 0x0 0xa00000>;
+>> +		xbl_mem: memory@85e00000 {
+>> +			reg = <0x0 0x85e00000 0x0 0x200000>;
+>>   			no-map;
+>>   		};
+>>   
+>> -		venus_region: venus@90400000 {
+>> -			reg = <0x0 0x90400000 0x0 0x700000>;
+>> +		smem_mem: smem-mem@86000000 {
+>> +			reg = <0x0 0x86000000 0x0 0x200000>;
+>>   			no-map;
+>>   		};
+>>   
+>> -		adsp_region: adsp@8ea00000 {
+>> -			reg = <0x0 0x8ea00000 0x0 0x1a00000>;
+>> +		tz_mem: memory@86200000 {
+>> +			reg = <0x0 0x86200000 0x0 0x2600000>;
+>>   			no-map;
+>>   		};
+>>   
+>> -		mpss_region: mpss@88800000 {
+>> -			reg = <0x0 0x88800000 0x0 0x6200000>;
+>> +		rmtfs_mem: rmtfs {
+>> +			compatible = "qcom,rmtfs-mem";
+>> +
+>> +			size = <0x0 0x200000>;
+>> +			alloc-ranges = <0x0 0xa0000000 0x0 0x2000000>;
+>>   			no-map;
+>> +
+>> +			qcom,client-id = <1>;
+>> +			qcom,vmid = <15>;
+>>   		};
+>>   
+>> -		smem_mem: smem-mem@86000000 {
+>> -			reg = <0x0 0x86000000 0x0 0x200000>;
+>> +		mpss_mem: mpss@88800000 {
+>> +			reg = <0x0 0x88800000 0x0 0x6200000>;
+>>   			no-map;
+>>   		};
+>>   
+>> -		memory@85800000 {
+>> -			reg = <0x0 0x85800000 0x0 0x800000>;
+>> +		adsp_mem: adsp@8ea00000 {
+>> +			reg = <0x0 0x8ea00000 0x0 0x1b00000>;
+>>   			no-map;
+>>   		};
+>>   
+>> -		memory@86200000 {
+>> -			reg = <0x0 0x86200000 0x0 0x2600000>;
+>> +		slpi_mem: slpi@90500000 {
+>> +			reg = <0x0 0x90500000 0x0 0xa00000>;
+>>   			no-map;
+>>   		};
+>>   
+>> -		rmtfs@86700000 {
+>> -			compatible = "qcom,rmtfs-mem";
+>> -
+>> -			size = <0x0 0x200000>;
+>> -			alloc-ranges = <0x0 0xa0000000 0x0 0x2000000>;
+>> +		gpu_mem: gpu@90f00000 {
+>> +			compatible = "shared-dma-pool";
+>> +			reg = <0x0 0x90f00000 0x0 0x100000>;
+>>   			no-map;
+>> +		};
+>>   
+>> -			qcom,client-id = <1>;
+>> -			qcom,vmid = <15>;
+>> +		venus_mem: venus@91000000 {
+>> +			reg = <0x0 0x91000000 0x0 0x500000>;
+>> +			no-map;
+>>   		};
+>>   
+>> -		zap_shader_region: gpu@8f200000 {
+>> -			compatible = "shared-dma-pool";
+>> -			reg = <0x0 0x90b00000 0x0 0xa00000>;
+>> +		mba_mem: mba@91500000 {
+>> +			reg = <0x0 0x91500000 0x0 0x200000>;
+>>   			no-map;
+>>   		};
+>>   	};
+>> @@ -1013,7 +1018,7 @@ opp-133000000 {
+>>   			};
+>>   
+>>   			zap-shader {
+>> -				memory-region = <&zap_shader_region>;
+>> +				memory-region = <&gpu_mem>;
+>>   			};
+>>   		};
+>>   
+>> @@ -2001,7 +2006,7 @@ venus: video-codec@c00000 {
+>>   				 <&venus_smmu 0x2c>,
+>>   				 <&venus_smmu 0x2d>,
+>>   				 <&venus_smmu 0x31>;
+>> -			memory-region = <&venus_region>;
+>> +			memory-region = <&venus_mem>;
+>>   			status = "disabled";
+>>   
+>>   			video-decoder {
+>> @@ -3008,7 +3013,7 @@ adsp_pil: remoteproc@9300000 {
+>>   			clocks = <&xo_board>;
+>>   			clock-names = "xo";
+>>   
+>> -			memory-region = <&adsp_region>;
+>> +			memory-region = <&adsp_mem>;
+>>   
+>>   			qcom,smem-states = <&smp2p_adsp_out 0>;
+>>   			qcom,smem-state-names = "stop";
+>> -- 
+>> 2.33.0
 >>
->>>
->>> Regards,
->>> Bjorn
->>>
->>>> index a8dcf8a9ae88..6fe51549d931 100644
->>>> --- a/include/linux/rpmsg.h
->>>> +++ b/include/linux/rpmsg.h
->>>> @@ -186,6 +186,8 @@ int rpmsg_trysend_offchannel(struct rpmsg_endpoint *ept, u32 src, u32 dst,
->>>>  __poll_t rpmsg_poll(struct rpmsg_endpoint *ept, struct file *filp,
->>>>  			poll_table *wait);
->>>>  
->>>> +struct class *rpmsg_get_class(void);
->>>> +
->>>>  #else
->>>>  
->>>>  static inline int rpmsg_register_device(struct rpmsg_device *rpdev)
->>>> @@ -296,6 +298,14 @@ static inline __poll_t rpmsg_poll(struct rpmsg_endpoint *ept,
->>>>  	return 0;
->>>>  }
->>>>  
->>>> +static inline struct class *rpmsg_get_class(void)
->>>> +{
->>>> +	/* This shouldn't be possible */
->>>> +	WARN_ON(1);
->>>> +
->>>> +	return NULL;
->>>> +}
->>>> +
->>>>  #endif /* IS_ENABLED(CONFIG_RPMSG) */
->>>>  
->>>>  /* use a macro to avoid include chaining to get THIS_MODULE */
->>>> -- 
->>>> 2.17.1
->>>>
+>>
+
+
+-- 
+With best wishes
+Dmitry
