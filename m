@@ -2,114 +2,61 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A244C433FE
-	for <linux-remoteproc@archiver.kernel.org>; Tue,  2 Nov 2021 13:45:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58EFDC433EF
+	for <linux-remoteproc@archiver.kernel.org>; Tue,  2 Nov 2021 14:04:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3B8246023E
-	for <linux-remoteproc@archiver.kernel.org>; Tue,  2 Nov 2021 13:45:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2741460F90
+	for <linux-remoteproc@archiver.kernel.org>; Tue,  2 Nov 2021 14:04:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231443AbhKBNsA (ORCPT
+        id S230257AbhKBOHN (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 2 Nov 2021 09:48:00 -0400
-Received: from m43-7.mailgun.net ([69.72.43.7]:23105 "EHLO m43-7.mailgun.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231588AbhKBNrz (ORCPT <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 2 Nov 2021 09:47:55 -0400
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1635860720; h=Content-Transfer-Encoding: Content-Type:
- MIME-Version: Message-ID: Date: Subject: In-Reply-To: References: Cc:
- To: From: Sender; bh=KUvUGRZzsphP6mR3IJn0PbjCPeH/bpgZmxetMRolTjY=; b=TizQjLp6B6VkfeqBpNhztxJBYSPculUD3TKYA2ORaaTgLbF6oHsQiaRNwPHkl/HmU9+ZYCSY
- kC+MTuiYVVpqHC+kFI+4m9uqw4LGANOoSCBMWvOod+kl8AqA+zgj0dRhpCM9OFdnxHtvCNXJ
- QJtGraGWx4ZczNeq6SFfN7VGhUg=
-X-Mailgun-Sending-Ip: 69.72.43.7
-X-Mailgun-Sid: WyI4ZWZiZiIsICJsaW51eC1yZW1vdGVwcm9jQHZnZXIua2VybmVsLm9yZyIsICJiZTllNGEiXQ==
-Received: from smtp.codeaurora.org
- (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
- smtp-out-n05.prod.us-east-1.postgun.com with SMTP id
- 618140f097bbea7fcc7f501b (version=TLS1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Tue, 02 Nov 2021 13:45:20
- GMT
-Sender: pillair=codeaurora.org@mg.codeaurora.org
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 9E139C43637; Tue,  2 Nov 2021 13:45:19 +0000 (UTC)
-Received: from PILLAIR1 (unknown [49.205.244.232])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: pillair)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id D9DFFC4338F;
-        Tue,  2 Nov 2021 13:45:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.1 smtp.codeaurora.org D9DFFC4338F
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=codeaurora.org
-From:   <pillair@codeaurora.org>
-To:     "'Stephen Boyd'" <swboyd@chromium.org>, <agross@kernel.org>,
-        <bjorn.andersson@linaro.org>, <mathieu.poirier@linaro.org>,
-        <ohad@wizery.com>, <p.zabel@pengutronix.de>, <robh+dt@kernel.org>
-Cc:     <linux-arm-msm@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <sibis@codeaurora.org>,
-        <mpubbise@codeaurora.org>, <kuabhs@chromium.org>
-References: <1635408817-14426-1-git-send-email-pillair@codeaurora.org> <1635408817-14426-3-git-send-email-pillair@codeaurora.org> <CAE-0n50z=h-avn+K-weZnZFVN7nsR=fLAtge7jFZ0JLx2JvP2w@mail.gmail.com> <000201d7ccb2$300dba50$90292ef0$@codeaurora.org> <CAE-0n5155J4vvvFES9V5=v+nX3BhZsBgZxkB=uLQOPij=-sf-Q@mail.gmail.com>
-In-Reply-To: <CAE-0n5155J4vvvFES9V5=v+nX3BhZsBgZxkB=uLQOPij=-sf-Q@mail.gmail.com>
-Subject: RE: [PATCH v7 2/3] dt-bindings: remoteproc: qcom: Add SC7280 WPSS support
-Date:   Tue, 2 Nov 2021 19:15:09 +0530
-Message-ID: <001f01d7cfef$dee34a50$9ca9def0$@codeaurora.org>
+        Tue, 2 Nov 2021 10:07:13 -0400
+Received: from mailgw01.mediatek.com ([60.244.123.138]:37164 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S230124AbhKBOHN (ORCPT
+        <rfc822;linux-remoteproc@vger.kernel.org>);
+        Tue, 2 Nov 2021 10:07:13 -0400
+X-UUID: 6670d21069c341a5b8172b5157fe5cef-20211102
+X-UUID: 6670d21069c341a5b8172b5157fe5cef-20211102
+Received: from mtkmbs10n2.mediatek.inc [(172.21.101.183)] by mailgw01.mediatek.com
+        (envelope-from <mark-pk.tsai@mediatek.com>)
+        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+        with ESMTP id 672707749; Tue, 02 Nov 2021 22:04:34 +0800
+Received: from mtkmbs10n2.mediatek.inc (172.21.101.183) by
+ mtkmbs07n1.mediatek.inc (172.21.101.16) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.2; Tue, 2 Nov 2021 22:04:33 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
+ mtkmbs10n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.792.3 via Frontend Transport; Tue, 2 Nov 2021 22:04:33 +0800
+From:   Mark-PK Tsai <mark-pk.tsai@mediatek.com>
+To:     <linux@armlinux.org.uk>
+CC:     <bjorn.andersson@linaro.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-remoteproc@vger.kernel.org>, <mark-pk.tsai@mediatek.com>,
+        <mathieu.poirier@linaro.org>, <matthias.bgg@gmail.com>,
+        <ohad@wizery.com>, <yj.chiang@mediatek.com>
+Subject: Re: [PATCH] remoteproc: use %d format string to print return error code
+Date:   Tue, 2 Nov 2021 22:04:33 +0800
+Message-ID: <20211102140433.28170-1-mark-pk.tsai@mediatek.com>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <YYErBcJlkTi0sJ/N@shell.armlinux.org.uk>
+References: <YYErBcJlkTi0sJ/N@shell.armlinux.org.uk>
 MIME-Version: 1.0
-Content-Type: text/plain;
-        charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQJgH59fIqV+fNPJ+TYlgPfT9cxLcAIxEhLJAenqyY8CQYFEaQEeLmltqqOPGyA=
-Content-Language: en-us
+Content-Type: text/plain
+X-MTK:  N
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
+> On Tue, Nov 02, 2021 at 08:08:05PM +0800, Mark-PK Tsai wrote:
+> > Use %d format string to print return error code which
+> > make the error message easier to understand.
+> 
+> Even better, if you use %pe after converting "ret" to a pointer via
+> ERR_PTR(ret), when the kernel is appropriately configured, the kernel
+> will give a textual version of the error code, which is even easier!
 
-
-> -----Original Message-----
-> From: Stephen Boyd <swboyd@chromium.org>
-> Sent: Saturday, October 30, 2021 12:34 AM
-> To: agross@kernel.org; bjorn.andersson@linaro.org;
-> mathieu.poirier@linaro.org; ohad@wizery.com; p.zabel@pengutronix.de;
-> pillair@codeaurora.org; robh+dt@kernel.org
-> Cc: linux-arm-msm@vger.kernel.org; linux-remoteproc@vger.kernel.org;
-> devicetree@vger.kernel.org; linux-kernel@vger.kernel.org;
-> sibis@codeaurora.org; mpubbise@codeaurora.org; kuabhs@chromium.org
-> Subject: RE: [PATCH v7 2/3] dt-bindings: remoteproc: qcom: Add SC7280
-> WPSS support
->=20
-> Quoting pillair@codeaurora.org (2021-10-29 03:46:03)
-> >
-> > > > +
-> > > > +        glink-edge {
-> > > > +            interrupts-extended =3D <&ipcc IPCC_CLIENT_WPSS
-> > > > +                                         =
-IPCC_MPROC_SIGNAL_GLINK_QMP
-> > > > +                                         IRQ_TYPE_EDGE_RISING>;
-> > > > +            mboxes =3D <&ipcc IPCC_CLIENT_WPSS
-> > > > +                            IPCC_MPROC_SIGNAL_GLINK_QMP>;
-> > > > +
-> > > > +            label =3D "wpss";
-> > > > +            qcom,remote-pid =3D <13>;
-> > >
-> > > There are a few properties here that don't seem to be required. Is
-> > > that intentional?
-> >
-> > Hi Stephen,
-> > All the properties in the example are listed as required (except for =
-status,
-> which will be removed in the subsequent patchset).
-> > Do you mean the glink-edge node properties ?
->=20
-> Yes I mean all the properties in the glink-edge node. Are they =
-required?
-> If so then we need to list them in the schema.
-
-Hi Stephen,
-I have sent v8 with glink-edge properties also included in the =
-dt-bindings.
-
-Thanks,
-Rakesh Pillai.
-
+Thanks for the suggestion!
+I will use it in v2.
