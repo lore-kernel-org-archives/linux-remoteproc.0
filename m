@@ -2,175 +2,352 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7B9BC433F5
-	for <linux-remoteproc@archiver.kernel.org>; Tue,  2 Nov 2021 23:53:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC35BC433F5
+	for <linux-remoteproc@archiver.kernel.org>; Wed,  3 Nov 2021 02:42:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B711160E0C
-	for <linux-remoteproc@archiver.kernel.org>; Tue,  2 Nov 2021 23:53:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B1F8260FC4
+	for <linux-remoteproc@archiver.kernel.org>; Wed,  3 Nov 2021 02:42:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230462AbhKBXz4 (ORCPT
+        id S229650AbhKCCpX (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 2 Nov 2021 19:55:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58816 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230054AbhKBXzz (ORCPT
+        Tue, 2 Nov 2021 22:45:23 -0400
+Received: from mail-0301.mail-europe.com ([188.165.51.139]:49600 "EHLO
+        mail-0301.mail-europe.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231340AbhKCCpX (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 2 Nov 2021 19:55:55 -0400
-Received: from mail-pj1-x102e.google.com (mail-pj1-x102e.google.com [IPv6:2607:f8b0:4864:20::102e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2E6F6C061714
-        for <linux-remoteproc@vger.kernel.org>; Tue,  2 Nov 2021 16:53:20 -0700 (PDT)
-Received: by mail-pj1-x102e.google.com with SMTP id oa4so54707pjb.2
-        for <linux-remoteproc@vger.kernel.org>; Tue, 02 Nov 2021 16:53:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=y+r26zNNgBcIz3im3DkAHzeewQtTALiQkL+quMZnbyo=;
-        b=hVvxW3o16/F4YBgNWiGzZVdRFH69kmwYoy611tZ60ME2gIxI0ALNhN/h7GrqhC3jgh
-         FswAtBYL0SPU0Mje9pPCSlJRCVMP/UpWMiXb62gtGJxUsts9gZK1Jzhnl8/y/Ut/xPVQ
-         7jf+9oUxE1X2AeKK019wlB2yR/hx7d9Pq1Br0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=y+r26zNNgBcIz3im3DkAHzeewQtTALiQkL+quMZnbyo=;
-        b=iHkfguvDjh/+n5UZEq5Zl/AFotweEi574XkihwVAT85avQfvnbkwF+E42o7A58GlcY
-         t2dh0MLfEnFgMIbr9EJDO5rN+gwcPqHzP8Sw27Ys7IEuMUSmnvx+XiCEUlEm64je+0O6
-         fhzcAS3Z/LhuzL1neeaJQkZQnUJRwPe2lmifpS/Ifc4Oj8lgUN5Js4fzdXkGpCGwtc4L
-         ID4PRORUBfkWxw12XYM/GWAGs42apqsA1r01cwi6H81TVoQg/Iq8OsF2rFL68/eRqMpV
-         2ICrLSZjDD2YprpxjIKBR77MxTPg/8wEgaVCiO1IijURv/nK0gUkx30rSH7V97j1mGHs
-         daZg==
-X-Gm-Message-State: AOAM532zbSY5sLBA6nY6gqPDxeBpYk8tt3P6DGFVahWr6yJy9bwg7XVK
-        si1GbLxdPD4FncD1YhuGGOdMIA==
-X-Google-Smtp-Source: ABdhPJxRQFPawvsYetO+y3o4XhiTO+2eVh24XagUVRoXyh2MB61WrzPmmu45k3xP+96dMPtc5OVyDA==
-X-Received: by 2002:a17:902:ec90:b0:142:269:4691 with SMTP id x16-20020a170902ec9000b0014202694691mr9477998plg.48.1635897199716;
-        Tue, 02 Nov 2021 16:53:19 -0700 (PDT)
-Received: from sujitka-glaptop.hsd1.ca.comcast.net ([2601:646:8e00:b2f0:c31d:1b47:2691:7a67])
-        by smtp.gmail.com with ESMTPSA id z73sm176381pgz.23.2021.11.02.16.53.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Nov 2021 16:53:19 -0700 (PDT)
-From:   Sujit Kautkar <sujitka@chromium.org>
-To:     Andy Gross <agross@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>
-Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Sibi Sankar <sibis@codeaurora.org>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Sujit Kautkar <sujitka@chromium.org>,
-        linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org
-Subject: [PATCH v3 2/2] rpmsg: glink: Update cdev add/del API in rpmsg_ctrldev_release_device()
-Date:   Tue,  2 Nov 2021 16:51:51 -0700
-Message-Id: <20211102165137.v3.2.Ie09561c5b453a91f10ecc7e1974c602c4ff78245@changeid>
-X-Mailer: git-send-email 2.31.0
-In-Reply-To: <20211102235147.872921-1-sujitka@chromium.org>
-References: <20211102235147.872921-1-sujitka@chromium.org>
+        Tue, 2 Nov 2021 22:45:23 -0400
+Date:   Wed, 03 Nov 2021 02:42:34 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
+        s=protonmail; t=1635907362;
+        bh=4uE4ykr+J3w0ILwejY+w4R1tl1K1S3DQISYVJru9WIo=;
+        h=Date:To:From:Cc:Reply-To:Subject:In-Reply-To:References:From;
+        b=oNdMb84kxJLOuKJGGqb9XOBzzo/ol1iwEkqF6hmU/AIydbuY1Z18gZJndGmFvSGSJ
+         YhAgTdTpqO46MB/aJvUU3n6wzb4e/ckvBokfLmt6Tb5+MzsQnhnGRHEcgz/cMAo6nc
+         0r4AWDYtJBEilLehVE0Mh0T3YapjsA+CFw4KfV8o=
+To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>
+From:   Yassine Oudjana <y.oudjana@protonmail.com>
+Cc:     Andy Gross <agross@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@somainline.org>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Raffaele Tranquillini <raffaele.tranquillini@gmail.com>,
+        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        devicetree@vger.kernel.org, phone-devel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Reply-To: Yassine Oudjana <y.oudjana@protonmail.com>
+Subject: Re: [PATCH v2 1/5] arm64: dts: qcom: msm8996: Revamp reserved memory
+Message-ID: <91b184266e545efcc5969fe6661b50da82351119.camel@protonmail.com>
+In-Reply-To: <4455e52f-7e8a-c431-9977-dcf4aefe9822@linaro.org>
+References: <20210926190555.278589-1-y.oudjana@protonmail.com> <20210926190555.278589-2-y.oudjana@protonmail.com> <YXTNL7boyiRFKQiV@builder.lan> <4455e52f-7e8a-c431-9977-dcf4aefe9822@linaro.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Replace cdev add/del APIs with cdev_device_add/cdev_device_del to avoid
-below kernel warning. This correctly takes a reference to the parent
-device so the parent will not get released until all references to the
-cdev are released.
+On Wed, 2021-11-03 at 03:50 +0400, Dmitry Baryshkov wrote:
+> On 24/10/2021 06:04, Bjorn Andersson wrote:
+> > On Sun 26 Sep 14:06 CDT 2021, Yassine Oudjana wrote:
+> >=20
+> > > Fix a total overlap between zap_shader_region and slpi_region, and re=
+name
+> > > all regions to match the naming convention in other Qualcomm SoC devi=
+ce trees.
+> > >=20
+> > > Signed-off-by: Yassine Oudjana <y.oudjana@protonmail.com>
+> >=20
+> > FYI, I like this series, but I held off applying it because I wanted to
+> > verify that the shuffling of the memory regions works on the existing
+> > 8996 boards.
+> >=20
+> > Unfortunately it didn't work, either with or without the shuffling on
+> > the db820c - and I've not found the time to figure out why that is. I
+> > hope to get back to this shortly (or that someone else will figure it
+> > out and provide a tested-by)
+>=20
+> I gave this a test too on my db820c. Usually the board MSS will crash
+> after ~0.1 - 0.15 seconds after booting up, then during recovery the
+> board will crash/reboot somewhere at the end of q6v5_mss_load() (and
+> typically after successful q6v5_rmb_mba_wait() call.
 
-| ODEBUG: free active (active state 0) object type: timer_list hint: delayed_work_timer_fn+0x0/0x7c
-| WARNING: CPU: 7 PID: 19892 at lib/debugobjects.c:488 debug_print_object+0x13c/0x1b0
-| CPU: 7 PID: 19892 Comm: kworker/7:4 Tainted: G        W         5.4.147-lockdep #1
-| ==================================================================
-| Hardware name: Google CoachZ (rev1 - 2) with LTE (DT)
-| Workqueue: events kobject_delayed_cleanup
-| pstate: 60c00009 (nZCv daif +PAN +UAO)
-| pc : debug_print_object+0x13c/0x1b0
-| lr : debug_print_object+0x13c/0x1b0
-| sp : ffffff83b2ec7970
-| x29: ffffff83b2ec7970 x28: dfffffd000000000
-| x27: ffffff83d674f000 x26: dfffffd000000000
-| x25: ffffffd06b8fa660 x24: dfffffd000000000
-| x23: 0000000000000000 x22: ffffffd06b7c5108
-| x21: ffffffd06d597860 x20: ffffffd06e2c21c0
-| x19: ffffffd06d5974c0 x18: 000000000001dad8
-| x17: 0000000000000000 x16: dfffffd000000000
-| BUG: KASAN: use-after-free in qcom_glink_rpdev_release+0x54/0x70
-| x15: ffffffffffffffff x14: 79616c6564203a74
-| x13: 0000000000000000 x12: 0000000000000080
-| Write of size 8 at addr ffffff83d95768d0 by task kworker/3:1/150
-| x11: 0000000000000001 x10: 0000000000000000
-| x9 : fc9e8edec0ad0300 x8 : fc9e8edec0ad0300
-|
-| x7 : 0000000000000000 x6 : 0000000000000000
-| x5 : 0000000000000080 x4 : 0000000000000000
-| CPU: 3 PID: 150 Comm: kworker/3:1 Tainted: G        W         5.4.147-lockdep #1
-| x3 : ffffffd06c149574 x2 : ffffff83f77f7498
-| x1 : ffffffd06d596f60 x0 : 0000000000000061
-| Hardware name: Google CoachZ (rev1 - 2) with LTE (DT)
-| Call trace:
-|  debug_print_object+0x13c/0x1b0
-| Workqueue: events kobject_delayed_cleanup
-|  __debug_check_no_obj_freed+0x25c/0x3c0
-|  debug_check_no_obj_freed+0x18/0x20
-| Call trace:
-|  slab_free_freelist_hook+0xb4/0x1bc
-|  kfree+0xe8/0x2d8
-|  dump_backtrace+0x0/0x27c
-|  rpmsg_ctrldev_release_device+0x78/0xb8
-|  device_release+0x68/0x14c
-|  show_stack+0x20/0x2c
-|  kobject_cleanup+0x12c/0x298
-|  kobject_delayed_cleanup+0x10/0x18
-|  dump_stack+0xe0/0x19c
-|  process_one_work+0x578/0x92c
-|  worker_thread+0x804/0xcf8
-|  print_address_description+0x3c/0x4a8
-|  kthread+0x2a8/0x314
-|  ret_from_fork+0x10/0x18
-|  __kasan_report+0x100/0x124
+> Occasionally (approximately 1 of 20) the MSS will not crash, presenting
+> PDS service to the userspace. Even in this state it doesn't seem to be
+> able to lock the gps location (but this might be related to the big UART
+> mezzanine sitting on top of the board).
 
-Signed-off-by: Sujit Kautkar <sujitka@chromium.org>
+I've had MSS crash on xiaomi-scorpio too, but far less often. It seemed
+like some sort of race condition, as it only happened when ADSP and MSS
+were booted at the same time. To workaround this, I delayed loading of
+the rmtfs service to leave some time between booting ADSP and MSS.
+
+>=20
+> Unfortunately there seem to be no SLPI firmware for the db820c, so I can
+> not test slpi.
+>=20
+> A notice regarding the patchset itself. It looks like pil_q6v5_mss.c
+> driver misses mx and cx proxy power domains for the MSS_MSM8996 case.
+
+I didn't notice that. I guess they stay on and MSS is able to boot
+anyway. I'll add them similar to PATCH 2/5.
+
+>=20
+> >=20
+> > Regards,
+> > Bjorn
+> >=20
+> > > ---
+> > >   .../dts/qcom/msm8996-sony-xperia-tone.dtsi    | 18 ++++--
+> > >   .../boot/dts/qcom/msm8996-xiaomi-common.dtsi  | 18 +++---
+> > >   arch/arm64/boot/dts/qcom/msm8996.dtsi         | 63 ++++++++++------=
 ---
-Changes in v3:
-- Remove unecessary error check as per Matthias's comment
+> > >   3 files changed, 55 insertions(+), 44 deletions(-)
+> > >=20
+> > > diff --git a/arch/arm64/boot/dts/qcom/msm8996-sony-xperia-tone.dtsi b=
+/arch/arm64/boot/dts/qcom/msm8996-sony-xperia-tone.dtsi
+> > > index 507396c4d23b..4c26e66f0610 100644
+> > > --- a/arch/arm64/boot/dts/qcom/msm8996-sony-xperia-tone.dtsi
+> > > +++ b/arch/arm64/boot/dts/qcom/msm8996-sony-xperia-tone.dtsi
+> > > @@ -13,9 +13,10 @@
+> > >   #include <dt-bindings/pinctrl/qcom,pmic-gpio.h>
+> > >   #include <dt-bindings/pinctrl/qcom,pmic-mpp.h>
+> > >=20
+> > > -/delete-node/ &slpi_region;
+> > > -/delete-node/ &venus_region;
+> > > -/delete-node/ &zap_shader_region;
+> > > +/delete-node/ &adsp_mem;
+> > > +/delete-node/ &slpi_mem;
+> > > +/delete-node/ &venus_mem;
+> > > +/delete-node/ &gpu_mem;
+> > >=20
+> > >   / {
+> > >   =09qcom,msm-id =3D <246 0x30001>; /* MSM8996 V3.1 (Final) */
+> > > @@ -46,18 +47,23 @@ cont_splash_mem: memory@83401000 {
+> > >   =09=09=09no-map;
+> > >   =09=09};
+> > >=20
+> > > -=09=09zap_shader_region: gpu@90400000 {
+> > > +=09=09adsp_mem: adsp@8ea00000 {
+> > > +=09=09=09reg =3D <0x0 0x8ea00000 0x0 0x1a00000>;
+> > > +=09=09=09no-map;
+> > > +=09=09};
+> > > +
+> > > +=09=09gpu_mem: gpu@90400000 {
+> > >   =09=09=09compatible =3D "shared-dma-pool";
+> > >   =09=09=09reg =3D <0x0 0x90400000 0x0 0x2000>;
+> > >   =09=09=09no-map;
+> > >   =09=09};
+> > >=20
+> > > -=09=09slpi_region: memory@90500000 {
+> > > +=09=09slpi_mem: memory@90500000 {
+> > >   =09=09=09reg =3D <0 0x90500000 0 0xa00000>;
+> > >   =09=09=09no-map;
+> > >   =09=09};
+> > >=20
+> > > -=09=09venus_region: memory@90f00000 {
+> > > +=09=09venus_mem: memory@90f00000 {
+> > >   =09=09=09reg =3D <0 0x90f00000 0 0x500000>;
+> > >   =09=09=09no-map;
+> > >   =09=09};
+> > > diff --git a/arch/arm64/boot/dts/qcom/msm8996-xiaomi-common.dtsi b/ar=
+ch/arm64/boot/dts/qcom/msm8996-xiaomi-common.dtsi
+> > > index d239b01b8505..a5e7bccadba2 100644
+> > > --- a/arch/arm64/boot/dts/qcom/msm8996-xiaomi-common.dtsi
+> > > +++ b/arch/arm64/boot/dts/qcom/msm8996-xiaomi-common.dtsi
+> > > @@ -66,32 +66,32 @@ memory@88800000 {
+> > >=20
+> > >   =09=09/* This platform has all PIL regions offset by 0x1400000 */
+> > >   =09=09/delete-node/ mpss@88800000;
+> > > -=09=09mpss_region: mpss@89c00000 {
+> > > +=09=09mpss_mem: mpss@89c00000 {
+> > >   =09=09=09reg =3D <0x0 0x89c00000 0x0 0x6200000>;
+> > >   =09=09=09no-map;
+> > >   =09=09};
+> > >=20
+> > >   =09=09/delete-node/ adsp@8ea00000;
+> > > -=09=09adsp_region: adsp@8ea00000 {
+> > > +=09=09adsp_mem: adsp@8fe00000 {
+> > >   =09=09=09reg =3D <0x0 0x8fe00000 0x0 0x1b00000>;
+> > >   =09=09=09no-map;
+> > >   =09=09};
+> > >=20
+> > > -=09=09/delete-node/ slpi@90b00000;
+> > > -=09=09slpi_region: slpi@91900000 {
+> > > +=09=09/delete-node/ slpi@90500000;
+> > > +=09=09slpi_mem: slpi@91900000 {
+> > >   =09=09=09reg =3D <0x0 0x91900000 0x0 0xa00000>;
+> > >   =09=09=09no-map;
+> > >   =09=09};
+> > >=20
+> > > -=09=09/delete-node/ gpu@8f200000;
+> > > -=09=09zap_shader_region: gpu@92300000 {
+> > > +=09=09/delete-node/ gpu@90f00000;
+> > > +=09=09gpu_mem: gpu@92300000 {
+> > >   =09=09=09compatible =3D "shared-dma-pool";
+> > >   =09=09=09reg =3D <0x0 0x92300000 0x0 0x2000>;
+> > >   =09=09=09no-map;
+> > >   =09=09};
+> > >=20
+> > >   =09=09/delete-node/ venus@91000000;
+> > > -=09=09venus_region: venus@90400000 {
+> > > +=09=09venus_mem: venus@92400000 {
+> > >   =09=09=09reg =3D <0x0 0x92400000 0x0 0x500000>;
+> > >   =09=09=09no-map;
+> > >   =09=09};
+> > > @@ -107,7 +107,7 @@ ramoops@92900000 {
+> > >   =09=09=09pmsg-size =3D <0x40000>;
+> > >   =09=09};
+> > >=20
+> > > -=09=09/delete-node/ rmtfs@86700000;
+> > > +=09=09/delete-node/ rmtfs;
+> > >   =09=09rmtfs@f6c00000 {
+> > >   =09=09=09compatible =3D "qcom,rmtfs-mem";
+> > >   =09=09=09reg =3D <0 0xf6c00000 0 0x200000>;
+> > > @@ -118,7 +118,7 @@ rmtfs@f6c00000 {
+> > >   =09=09};
+> > >=20
+> > >   =09=09/delete-node/ mba@91500000;
+> > > -=09=09mba_region: mba@f6f00000 {
+> > > +=09=09mba_mem: mba@f6f00000 {
+> > >   =09=09=09reg =3D <0x0 0xf6f00000 0x0 0x100000>;
+> > >   =09=09=09no-map;
+> > >   =09=09};
+> > > diff --git a/arch/arm64/boot/dts/qcom/msm8996.dtsi b/arch/arm64/boot/=
+dts/qcom/msm8996.dtsi
+> > > index eb3ec5ff46eb..1495fff6ffc9 100644
+> > > --- a/arch/arm64/boot/dts/qcom/msm8996.dtsi
+> > > +++ b/arch/arm64/boot/dts/qcom/msm8996.dtsi
+> > > @@ -384,60 +384,65 @@ reserved-memory {
+> > >   =09=09#size-cells =3D <2>;
+> > >   =09=09ranges;
+> > >=20
+> > > -=09=09mba_region: mba@91500000 {
+> > > -=09=09=09reg =3D <0x0 0x91500000 0x0 0x200000>;
+> > > +=09=09hyp_mem: memory@85800000 {
+> > > +=09=09=09reg =3D <0x0 0x85800000 0x0 0x600000>;
+> > >   =09=09=09no-map;
+> > >   =09=09};
+> > >=20
+> > > -=09=09slpi_region: slpi@90b00000 {
+> > > -=09=09=09reg =3D <0x0 0x90b00000 0x0 0xa00000>;
+> > > +=09=09xbl_mem: memory@85e00000 {
+> > > +=09=09=09reg =3D <0x0 0x85e00000 0x0 0x200000>;
+> > >   =09=09=09no-map;
+> > >   =09=09};
+> > >=20
+> > > -=09=09venus_region: venus@90400000 {
+> > > -=09=09=09reg =3D <0x0 0x90400000 0x0 0x700000>;
+> > > +=09=09smem_mem: smem-mem@86000000 {
+> > > +=09=09=09reg =3D <0x0 0x86000000 0x0 0x200000>;
+> > >   =09=09=09no-map;
+> > >   =09=09};
+> > >=20
+> > > -=09=09adsp_region: adsp@8ea00000 {
+> > > -=09=09=09reg =3D <0x0 0x8ea00000 0x0 0x1a00000>;
+> > > +=09=09tz_mem: memory@86200000 {
+> > > +=09=09=09reg =3D <0x0 0x86200000 0x0 0x2600000>;
+> > >   =09=09=09no-map;
+> > >   =09=09};
+> > >=20
+> > > -=09=09mpss_region: mpss@88800000 {
+> > > -=09=09=09reg =3D <0x0 0x88800000 0x0 0x6200000>;
+> > > +=09=09rmtfs_mem: rmtfs {
+> > > +=09=09=09compatible =3D "qcom,rmtfs-mem";
+> > > +
+> > > +=09=09=09size =3D <0x0 0x200000>;
+> > > +=09=09=09alloc-ranges =3D <0x0 0xa0000000 0x0 0x2000000>;
+> > >   =09=09=09no-map;
+> > > +
+> > > +=09=09=09qcom,client-id =3D <1>;
+> > > +=09=09=09qcom,vmid =3D <15>;
+> > >   =09=09};
+> > >=20
+> > > -=09=09smem_mem: smem-mem@86000000 {
+> > > -=09=09=09reg =3D <0x0 0x86000000 0x0 0x200000>;
+> > > +=09=09mpss_mem: mpss@88800000 {
+> > > +=09=09=09reg =3D <0x0 0x88800000 0x0 0x6200000>;
+> > >   =09=09=09no-map;
+> > >   =09=09};
+> > >=20
+> > > -=09=09memory@85800000 {
+> > > -=09=09=09reg =3D <0x0 0x85800000 0x0 0x800000>;
+> > > +=09=09adsp_mem: adsp@8ea00000 {
+> > > +=09=09=09reg =3D <0x0 0x8ea00000 0x0 0x1b00000>;
+> > >   =09=09=09no-map;
+> > >   =09=09};
+> > >=20
+> > > -=09=09memory@86200000 {
+> > > -=09=09=09reg =3D <0x0 0x86200000 0x0 0x2600000>;
+> > > +=09=09slpi_mem: slpi@90500000 {
+> > > +=09=09=09reg =3D <0x0 0x90500000 0x0 0xa00000>;
+> > >   =09=09=09no-map;
+> > >   =09=09};
+> > >=20
+> > > -=09=09rmtfs@86700000 {
+> > > -=09=09=09compatible =3D "qcom,rmtfs-mem";
+> > > -
+> > > -=09=09=09size =3D <0x0 0x200000>;
+> > > -=09=09=09alloc-ranges =3D <0x0 0xa0000000 0x0 0x2000000>;
+> > > +=09=09gpu_mem: gpu@90f00000 {
+> > > +=09=09=09compatible =3D "shared-dma-pool";
+> > > +=09=09=09reg =3D <0x0 0x90f00000 0x0 0x100000>;
+> > >   =09=09=09no-map;
+> > > +=09=09};
+> > >=20
+> > > -=09=09=09qcom,client-id =3D <1>;
+> > > -=09=09=09qcom,vmid =3D <15>;
+> > > +=09=09venus_mem: venus@91000000 {
+> > > +=09=09=09reg =3D <0x0 0x91000000 0x0 0x500000>;
+> > > +=09=09=09no-map;
+> > >   =09=09};
+> > >=20
+> > > -=09=09zap_shader_region: gpu@8f200000 {
+> > > -=09=09=09compatible =3D "shared-dma-pool";
+> > > -=09=09=09reg =3D <0x0 0x90b00000 0x0 0xa00000>;
+> > > +=09=09mba_mem: mba@91500000 {
+> > > +=09=09=09reg =3D <0x0 0x91500000 0x0 0x200000>;
+> > >   =09=09=09no-map;
+> > >   =09=09};
+> > >   =09};
+> > > @@ -1013,7 +1018,7 @@ opp-133000000 {
+> > >   =09=09=09};
+> > >=20
+> > >   =09=09=09zap-shader {
+> > > -=09=09=09=09memory-region =3D <&zap_shader_region>;
+> > > +=09=09=09=09memory-region =3D <&gpu_mem>;
+> > >   =09=09=09};
+> > >   =09=09};
+> > >=20
+> > > @@ -2001,7 +2006,7 @@ venus: video-codec@c00000 {
+> > >   =09=09=09=09 <&venus_smmu 0x2c>,
+> > >   =09=09=09=09 <&venus_smmu 0x2d>,
+> > >   =09=09=09=09 <&venus_smmu 0x31>;
+> > > -=09=09=09memory-region =3D <&venus_region>;
+> > > +=09=09=09memory-region =3D <&venus_mem>;
+> > >   =09=09=09status =3D "disabled";
+> > >=20
+> > >   =09=09=09video-decoder {
+> > > @@ -3008,7 +3013,7 @@ adsp_pil: remoteproc@9300000 {
+> > >   =09=09=09clocks =3D <&xo_board>;
+> > >   =09=09=09clock-names =3D "xo";
+> > >=20
+> > > -=09=09=09memory-region =3D <&adsp_region>;
+> > > +=09=09=09memory-region =3D <&adsp_mem>;
+> > >=20
+> > >   =09=09=09qcom,smem-states =3D <&smp2p_adsp_out 0>;
+> > >   =09=09=09qcom,smem-state-names =3D "stop";
+> > > --
+> > > 2.33.0
+> > >=20
+> > >=20
+>=20
+>=20
+> --
+> With best wishes
+> Dmitry
 
-Changes in v2:
-- Fix typo in commit message
 
- drivers/rpmsg/rpmsg_char.c | 10 ++--------
- 1 file changed, 2 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/rpmsg/rpmsg_char.c b/drivers/rpmsg/rpmsg_char.c
-index 876ce43df732b..a6a33155ca859 100644
---- a/drivers/rpmsg/rpmsg_char.c
-+++ b/drivers/rpmsg/rpmsg_char.c
-@@ -458,7 +458,7 @@ static void rpmsg_ctrldev_release_device(struct device *dev)
- 
- 	ida_simple_remove(&rpmsg_ctrl_ida, dev->id);
- 	ida_simple_remove(&rpmsg_minor_ida, MINOR(dev->devt));
--	cdev_del(&ctrldev->cdev);
-+	cdev_device_del(&ctrldev->cdev, &ctrldev->dev);
- 	kfree(ctrldev);
- }
- 
-@@ -493,19 +493,13 @@ static int rpmsg_chrdev_probe(struct rpmsg_device *rpdev)
- 	dev->id = ret;
- 	dev_set_name(&ctrldev->dev, "rpmsg_ctrl%d", ret);
- 
--	ret = cdev_add(&ctrldev->cdev, dev->devt, 1);
-+	ret = cdev_device_add(&ctrldev->cdev, &ctrldev->dev);
- 	if (ret)
- 		goto free_ctrl_ida;
- 
- 	/* We can now rely on the release function for cleanup */
- 	dev->release = rpmsg_ctrldev_release_device;
- 
--	ret = device_add(dev);
--	if (ret) {
--		dev_err(&rpdev->dev, "device_add failed: %d\n", ret);
--		put_device(dev);
--	}
--
- 	dev_set_drvdata(&rpdev->dev, ctrldev);
- 
- 	return ret;
--- 
-2.31.0
 
