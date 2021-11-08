@@ -2,44 +2,44 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1F82C433F5
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20A90C4332F
 	for <linux-remoteproc@archiver.kernel.org>; Mon,  8 Nov 2021 14:20:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9BCE3610C8
+	by mail.kernel.org (Postfix) with ESMTP id 09662617E5
 	for <linux-remoteproc@archiver.kernel.org>; Mon,  8 Nov 2021 14:20:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240417AbhKHOWp (ORCPT
+        id S240381AbhKHOWo (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 8 Nov 2021 09:22:45 -0500
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:55440 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S240376AbhKHOWj (ORCPT
+        Mon, 8 Nov 2021 09:22:44 -0500
+Received: from mx07-00178001.pphosted.com ([185.132.182.106]:47996 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S240371AbhKHOWi (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 8 Nov 2021 09:22:39 -0500
-Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.1.2/8.16.1.2) with ESMTP id 1A8DUxdj020896;
-        Mon, 8 Nov 2021 15:19:47 +0100
+        Mon, 8 Nov 2021 09:22:38 -0500
+Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.1.2/8.16.1.2) with ESMTP id 1A8EDdYq022333;
+        Mon, 8 Nov 2021 15:19:49 +0100
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=from : to : cc :
  subject : date : message-id : in-reply-to : references : mime-version :
  content-type; s=selector1;
- bh=f2I+XAVbYtZMp7pxiPlaaNbcvsoVuTMZ9BMDNcl2/Ss=;
- b=Th+grss24pWvomYgdQ8IPZtEcXFGS/vcH2hobNl7KS01Zs7BTKDBYv7Dz3Y9GoOFY9En
- 4PmRiCSCJwps6wkEoBTeZonabIKXiF5LVVsA7obTVizJxuPTtBmJOVwqM0rI2z6Lfs9a
- L78EHYRLoOH5Q0DRo1WJFfIg6hrVGrStKgyNKTsIL28l/Krv3r8Zb9MHNdMd/bK6dvGW
- RfzKe0S6QdqootqNCnk5jhG2lDLF9LPV83f+gMjiKQdyb9aJBNtyXwkiddcARHyhH5st
- 0dpO4u1hDFk1JY4s6fHB0tp73Ic1mZgmma1kGV6dkF+FcLJnZ7depChszHHYtOao09pH /Q== 
+ bh=WIhFo7X9uyqbD8WfEhBG8++Awrdx/gd6pyzx9YwkQPs=;
+ b=5UbSTzTHpYicEg6eMLMMYWEIIPKXFRKgNk05tMpibeh3r8wgp8oT9Gns+4AGSrOObcPH
+ CwQ/4yOYzYV0k2t3gbS06t6rO0IcIvGdtjOpJKqsDXetLsW1tS/zBgcWy0soKzBS/s4L
+ J7INB3fGWVdSBKfaaYrHbZ1+XHT1dmrU+dXN1BfFIBBPJNUyko7MapKTwUn/aUGDCPyv
+ jClDwNNjVejpn88xx5NM1H6GCy2gDrh/Wwjf0jokQ9ET/vSr1wgZoSNJC/Uv/HQhUrQ6
+ ixsG1vZcWD03ZuAlTCrsKKtRO3GCPfCtkZW3s8y2zpHU4naoFbdVxY7jS5le3y3jcSLM jA== 
 Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3c74uk8b9n-1
+        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3c6u5vcm2y-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 08 Nov 2021 15:19:47 +0100
+        Mon, 08 Nov 2021 15:19:49 +0100
 Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 9F7F6100034;
-        Mon,  8 Nov 2021 15:19:46 +0100 (CET)
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 1DCF310002A;
+        Mon,  8 Nov 2021 15:19:49 +0100 (CET)
 Received: from Webmail-eu.st.com (sfhdag2node2.st.com [10.75.127.5])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 9913921BF6B;
-        Mon,  8 Nov 2021 15:19:46 +0100 (CET)
-Received: from localhost (10.75.127.49) by SFHDAG2NODE2.st.com (10.75.127.5)
- with Microsoft SMTP Server (TLS) id 15.0.1497.18; Mon, 8 Nov 2021 15:19:46
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 1789821E665;
+        Mon,  8 Nov 2021 15:19:49 +0100 (CET)
+Received: from localhost (10.75.127.50) by SFHDAG2NODE2.st.com (10.75.127.5)
+ with Microsoft SMTP Server (TLS) id 15.0.1497.18; Mon, 8 Nov 2021 15:19:48
  +0100
 From:   Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
 To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
@@ -48,16 +48,16 @@ To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
 CC:     <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <linux-stm32@st-md-mailman.stormreply.com>,
         <julien.massot@iot.bzh>, <arnaud.pouliquen@foss.st.com>
-Subject: [PATCH v7 06/12] rpmsg: Update rpmsg_chrdev_register_device function
-Date:   Mon, 8 Nov 2021 15:19:31 +0100
-Message-ID: <20211108141937.13016-7-arnaud.pouliquen@foss.st.com>
+Subject: [PATCH v7 09/12] rpmsg: char: Add possibility to use default endpoint of the rpmsg device.
+Date:   Mon, 8 Nov 2021 15:19:34 +0100
+Message-ID: <20211108141937.13016-10-arnaud.pouliquen@foss.st.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20211108141937.13016-1-arnaud.pouliquen@foss.st.com>
 References: <20211108141937.13016-1-arnaud.pouliquen@foss.st.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-X-Originating-IP: [10.75.127.49]
-X-ClientProxiedBy: SFHDAG2NODE1.st.com (10.75.127.4) To SFHDAG2NODE2.st.com
+X-Originating-IP: [10.75.127.50]
+X-ClientProxiedBy: SFHDAG2NODE3.st.com (10.75.127.6) To SFHDAG2NODE2.st.com
  (10.75.127.5)
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.205,Aquarius:18.0.790,Hydra:6.0.425,FMLib:17.0.607.475
@@ -66,103 +66,101 @@ Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-The rpmsg_chrdev driver has been replaced by the rpmsg_ctrl driver
-for the /dev/rpmsg_ctrlX devices management. The reference for the
-driver override is now the rpmsg_ctrl.
+Current implementation create/destroy a new endpoint on each
+rpmsg_eptdev_open/rpmsg_eptdev_release calls.
 
-Update the rpmsg_chrdev_register_device function to reflect the update,
-and rename the function to use the rpmsg_ctrldev prefix.
+For a rpmsg device created by the NS announcement mechanism we need to
+use a unique static endpoint that is the default rpmsg device endpoint
+associated to the channel.
 
-The platform drivers are updated accordingly.
+This patch prepares the introduction of a rpmsg channel device for the
+char device. The rpmsg channel device will require a default endpoint to
+communicate to the remote processor.
+
+Add the default_ept field in rpmsg_eptdev structure.This pointer
+determines the behavior on rpmsg_eptdev_open and rpmsg_eptdev_release call.
+
+- If default_ept == NULL:
+  Use the legacy behavior by creating a new endpoint each time
+  rpmsg_eptdev_open is called and release it when rpmsg_eptdev_release
+  is called on /dev/rpmsgX device open/close.
+
+- If default_ept is set:
+  use the rpmsg device default endpoint for the communication.
+
+Address the update of _rpmsg_chrdev_eptdev_create in a separate patch for readability.
+
+Add protection in rpmsg_eptdev_ioctl to prevent to destroy a default endpoint.
 
 Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 ---
- drivers/rpmsg/qcom_glink_native.c | 2 +-
- drivers/rpmsg/qcom_smd.c          | 2 +-
- drivers/rpmsg/rpmsg_ctrl.c        | 2 +-
- drivers/rpmsg/rpmsg_internal.h    | 8 ++++----
- drivers/rpmsg/virtio_rpmsg_bus.c  | 2 +-
- 5 files changed, 8 insertions(+), 8 deletions(-)
+ drivers/rpmsg/rpmsg_char.c | 21 +++++++++++++++++++--
+ 1 file changed, 19 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/rpmsg/qcom_glink_native.c b/drivers/rpmsg/qcom_glink_native.c
-index 05533c71b10e..7d7e809800ec 100644
---- a/drivers/rpmsg/qcom_glink_native.c
-+++ b/drivers/rpmsg/qcom_glink_native.c
-@@ -1642,7 +1642,7 @@ static int qcom_glink_create_chrdev(struct qcom_glink *glink)
- 	rpdev->dev.parent = glink->dev;
- 	rpdev->dev.release = qcom_glink_device_release;
+diff --git a/drivers/rpmsg/rpmsg_char.c b/drivers/rpmsg/rpmsg_char.c
+index 3daf62df69a0..6a01e8e1c111 100644
+--- a/drivers/rpmsg/rpmsg_char.c
++++ b/drivers/rpmsg/rpmsg_char.c
+@@ -47,6 +47,8 @@ static DEFINE_IDA(rpmsg_minor_ida);
+  * @queue_lock:	synchronization of @queue operations
+  * @queue:	incoming message queue
+  * @readq:	wait object for incoming queue
++ * @default_ept: set to channel default endpoint if the default endpoint should be re-used
++ *              on device open to prevent endpoint address update.
+  */
+ struct rpmsg_eptdev {
+ 	struct device dev;
+@@ -57,10 +59,12 @@ struct rpmsg_eptdev {
  
--	return rpmsg_chrdev_register_device(rpdev);
-+	return rpmsg_ctrldev_register_device(rpdev);
- }
+ 	struct mutex ept_lock;
+ 	struct rpmsg_endpoint *ept;
++	struct rpmsg_endpoint *default_ept;
  
- struct qcom_glink *qcom_glink_native_probe(struct device *dev,
-diff --git a/drivers/rpmsg/qcom_smd.c b/drivers/rpmsg/qcom_smd.c
-index 8da1b5cb31b3..d223e438d17c 100644
---- a/drivers/rpmsg/qcom_smd.c
-+++ b/drivers/rpmsg/qcom_smd.c
-@@ -1113,7 +1113,7 @@ static int qcom_smd_create_chrdev(struct qcom_smd_edge *edge)
- 	qsdev->rpdev.dev.parent = &edge->dev;
- 	qsdev->rpdev.dev.release = qcom_smd_release_device;
- 
--	return rpmsg_chrdev_register_device(&qsdev->rpdev);
-+	return rpmsg_ctrldev_register_device(&qsdev->rpdev);
- }
- 
- /*
-diff --git a/drivers/rpmsg/rpmsg_ctrl.c b/drivers/rpmsg/rpmsg_ctrl.c
-index 33c38cbf2b83..59d2bd264fdb 100644
---- a/drivers/rpmsg/rpmsg_ctrl.c
-+++ b/drivers/rpmsg/rpmsg_ctrl.c
-@@ -183,7 +183,7 @@ static struct rpmsg_driver rpmsg_ctrldev_driver = {
- 	.probe = rpmsg_ctrldev_probe,
- 	.remove = rpmsg_ctrldev_remove,
- 	.drv = {
--		.name = "rpmsg_chrdev",
-+		.name = "rpmsg_ctrl",
- 	},
+ 	spinlock_t queue_lock;
+ 	struct sk_buff_head queue;
+ 	wait_queue_head_t readq;
++
  };
  
-diff --git a/drivers/rpmsg/rpmsg_internal.h b/drivers/rpmsg/rpmsg_internal.h
-index 1b6f998e1a4a..8bb56d347c81 100644
---- a/drivers/rpmsg/rpmsg_internal.h
-+++ b/drivers/rpmsg/rpmsg_internal.h
-@@ -84,16 +84,16 @@ struct rpmsg_device *rpmsg_create_channel(struct rpmsg_device *rpdev,
- int rpmsg_release_channel(struct rpmsg_device *rpdev,
- 			  struct rpmsg_channel_info *chinfo);
- /**
-- * rpmsg_chrdev_register_device() - register chrdev device based on rpdev
-+ * rpmsg_ctrldev_register_device() - register a char device for control based on rpdev
-  * @rpdev:	prepared rpdev to be used for creating endpoints
-  *
-  * This function wraps rpmsg_register_device() preparing the rpdev for use as
-  * basis for the rpmsg chrdev.
-  */
--static inline int rpmsg_chrdev_register_device(struct rpmsg_device *rpdev)
-+static inline int rpmsg_ctrldev_register_device(struct rpmsg_device *rpdev)
- {
--	strcpy(rpdev->id.name, "rpmsg_chrdev");
--	rpdev->driver_override = "rpmsg_chrdev";
-+	strcpy(rpdev->id.name, "rpmsg_ctrl");
-+	rpdev->driver_override = "rpmsg_ctrl";
+ int rpmsg_chrdev_eptdev_destroy(struct device *dev, void *data)
+@@ -118,7 +122,15 @@ static int rpmsg_eptdev_open(struct inode *inode, struct file *filp)
  
- 	return rpmsg_register_device(rpdev);
+ 	get_device(dev);
+ 
+-	ept = rpmsg_create_ept(rpdev, rpmsg_ept_cb, eptdev, eptdev->chinfo);
++	/*
++	 * If the default_ept is set to true, the rpmsg device default endpoint is used.
++	 * Else a new endpoint is created on open that will be destroyed on release.
++	 */
++	if (eptdev->default_ept)
++		ept = eptdev->default_ept;
++	else
++		ept = rpmsg_create_ept(rpdev, rpmsg_ept_cb, eptdev, eptdev->chinfo);
++
+ 	if (!ept) {
+ 		dev_err(dev, "failed to open %s\n", eptdev->chinfo.name);
+ 		put_device(dev);
+@@ -139,7 +151,8 @@ static int rpmsg_eptdev_release(struct inode *inode, struct file *filp)
+ 	/* Close the endpoint, if it's not already destroyed by the parent */
+ 	mutex_lock(&eptdev->ept_lock);
+ 	if (eptdev->ept) {
+-		rpmsg_destroy_ept(eptdev->ept);
++		if (!eptdev->default_ept)
++			rpmsg_destroy_ept(eptdev->ept);
+ 		eptdev->ept = NULL;
+ 	}
+ 	mutex_unlock(&eptdev->ept_lock);
+@@ -266,6 +279,10 @@ static long rpmsg_eptdev_ioctl(struct file *fp, unsigned int cmd,
+ 	if (cmd != RPMSG_DESTROY_EPT_IOCTL)
+ 		return -EINVAL;
+ 
++	/* Don't allow to destroy a default endpoint. */
++	if (eptdev->default_ept)
++		return -EINVAL;
++
+ 	return rpmsg_chrdev_eptdev_destroy(&eptdev->dev, NULL);
  }
-diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
-index 8e49a3bacfc7..e42234a3e2ab 100644
---- a/drivers/rpmsg/virtio_rpmsg_bus.c
-+++ b/drivers/rpmsg/virtio_rpmsg_bus.c
-@@ -840,7 +840,7 @@ static struct rpmsg_device *rpmsg_virtio_add_ctrl_dev(struct virtio_device *vdev
- 	rpdev_ctrl->dev.release = virtio_rpmsg_release_device;
- 	rpdev_ctrl->little_endian = virtio_is_little_endian(vrp->vdev);
  
--	err = rpmsg_chrdev_register_device(rpdev_ctrl);
-+	err = rpmsg_ctrldev_register_device(rpdev_ctrl);
- 	if (err) {
- 		kfree(vch);
- 		return ERR_PTR(err);
 -- 
 2.17.1
 
