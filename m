@@ -2,89 +2,128 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01F26C4167D
-	for <linux-remoteproc@archiver.kernel.org>; Mon,  8 Nov 2021 16:30:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49891C433F5
+	for <linux-remoteproc@archiver.kernel.org>; Mon,  8 Nov 2021 17:24:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DE9EF61361
-	for <linux-remoteproc@archiver.kernel.org>; Mon,  8 Nov 2021 16:30:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2561D611C4
+	for <linux-remoteproc@archiver.kernel.org>; Mon,  8 Nov 2021 17:24:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241285AbhKHQct (ORCPT
+        id S229627AbhKHR0r (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 8 Nov 2021 11:32:49 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:40218 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S239403AbhKHQcr (ORCPT <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 8 Nov 2021 11:32:47 -0500
-Received: from zn.tnic (p200300ec2f331100181cb4ce2fe9e1de.dip0.t-ipconnect.de [IPv6:2003:ec:2f33:1100:181c:b4ce:2fe9:e1de])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 652D11EC0512;
-        Mon,  8 Nov 2021 17:29:57 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1636388997;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=OSbzA4U/ida8aXvLATS9A1smiSvQH5VirglC+wMEOMM=;
-        b=pBzIQNPgz9f6MnJz8NuSpWeZa+X2KJ2EY1gkFfqIgUOOdk5ooj7nS3SZlOvvPfnLO1w7js
-        1rE5oU8U3sZ2kD0zZzsPOjz5Rjy821j5ugVLv+TE7mQzDtZGil7p5QTxNJmqJYfQhl3i/U
-        43Oeu8iAMBrtl8n9GGHPMyt/ODoo1Kk=
-Date:   Mon, 8 Nov 2021 17:29:55 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Alan Stern <stern@rowland.harvard.edu>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Ayush Sawal <ayush.sawal@chelsio.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rohit Maheshwari <rohitm@chelsio.com>,
-        Vinay Kumar Yadav <vinay.yadav@chelsio.com>,
-        alsa-devel@alsa-project.org, bcm-kernel-feedback-list@broadcom.com,
-        intel-gfx@lists.freedesktop.org,
-        intel-gvt-dev@lists.freedesktop.org, linux-alpha@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-crypto@vger.kernel.org, linux-edac@vger.kernel.org,
-        linux-fbdev@vger.kernel.org, linux-hyperv@vger.kernel.org,
-        linux-iio@vger.kernel.org, linux-leds@vger.kernel.org,
-        linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
-        linux-pm@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-remoteproc@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-s390@vger.kernel.org,
-        linux-scsi@vger.kernel.org, linux-sh@vger.kernel.org,
-        linux-staging@lists.linux.dev, linux-tegra@vger.kernel.org,
-        linux-um@lists.infradead.org, linux-usb@vger.kernel.org,
-        linux-xtensa@linux-xtensa.org, netdev@vger.kernel.org,
-        openipmi-developer@lists.sourceforge.net, rcu@vger.kernel.org,
-        sparclinux@vger.kernel.org, x86@kernel.org,
-        xen-devel@lists.xenproject.org
-Subject: Re: [PATCH v0 00/42] notifiers: Return an error when callback is
- already registered
-Message-ID: <YYlQg+OvUpUL630W@zn.tnic>
-References: <20211108101157.15189-1-bp@alien8.de>
- <20211108101924.15759-1-bp@alien8.de>
- <20211108141703.GB1666297@rowland.harvard.edu>
- <YYkzJ3+faVga2Tl3@zn.tnic>
- <YYk1xi3eJdMJdjHC@zn.tnic>
- <20211108112313.73d0727e@gandalf.local.home>
+        Mon, 8 Nov 2021 12:26:47 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52852 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231304AbhKHR0q (ORCPT
+        <rfc822;linux-remoteproc@vger.kernel.org>);
+        Mon, 8 Nov 2021 12:26:46 -0500
+Received: from mail-ot1-x32e.google.com (mail-ot1-x32e.google.com [IPv6:2607:f8b0:4864:20::32e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6068AC061570
+        for <linux-remoteproc@vger.kernel.org>; Mon,  8 Nov 2021 09:24:02 -0800 (PST)
+Received: by mail-ot1-x32e.google.com with SMTP id h16-20020a9d7990000000b0055c7ae44dd2so10630475otm.10
+        for <linux-remoteproc@vger.kernel.org>; Mon, 08 Nov 2021 09:24:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=6WxNy+sbprXqh5vUpIWWndzj2Xknzdzzhl1WXIKKdHQ=;
+        b=jGRpem+QkB3LWgMkD1Rnnfu6Yf5Z+jVo0M55XBh3r847EYt0OfjzNGjaPk5xuBakSy
+         RlwUxyz48wK1ogpcuTDgcHs4uTnGnHpr51twgj2PHLneYxMhWyTDHMUp4nJ2+bLwAU+R
+         7l0esbWNGbAXZ5MspFa6gVYyTrM7mXevu3/yolaB73rYX9qtk6CxQiGISZQ04MyjHM3l
+         DE3I91clpu4dXZh2Dx/Eb4Rjau+PkSBwew9QINYrHTuqvKhZUmXliIuIMjI67m4IivvN
+         NniEYiZgXrZySmIBeNtjas/D6raW1GjvarZpHFkwl0LZCiF9S45azGPe1edyN16ra4YY
+         Opfg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=6WxNy+sbprXqh5vUpIWWndzj2Xknzdzzhl1WXIKKdHQ=;
+        b=5nMCP6IEFK2jcq+XF/1pxBdF9ukhmgaGGTDgmA2/zhv/77V4ynkRGaUrl1j/gl4BT/
+         VjajPVYPwXaTka5u1sTSA/RyGKdNc0ZIFFJHmJtyDpFSq7WNS8aFRjRPLlmOhXQeHFyL
+         gGWi2yfouzwJE+xMJmoLTdNYx0fgjColJmEcsPEdlefcYEtJ50CNKsdjyYQqJTbAVQze
+         fkNMcj6iSM6F+OdEEri7lgL5NOJzyz7I8nE66bvmsnhyWLI0eo5Om5PS7g6r82XEmHmA
+         rqVyVB3I1rQOVpnDVwlC5ufnQ3Z02keiIFigsjK3eGEmxi/qtLDGB+47M62eqF0tUpvu
+         K7bQ==
+X-Gm-Message-State: AOAM533oKm+e/sSUOR2cyCRoswuYikBXZMdq+SfAFrRHfUIfB5H2qbQu
+        S2FdDzImf56rdgS7XjU9Y+3ly/wIYmb+fQ==
+X-Google-Smtp-Source: ABdhPJwnI/0a8eSi6T5sh6kjSDOylJYlYzjZs/9j5wYlWMNfnHQj5nFJ1qQvJFLzV0DvMv8An3yI3A==
+X-Received: by 2002:a05:6830:91a:: with SMTP id v26mr462006ott.313.1636392241682;
+        Mon, 08 Nov 2021 09:24:01 -0800 (PST)
+Received: from builder.lan (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
+        by smtp.gmail.com with ESMTPSA id y1sm1595919otu.58.2021.11.08.09.24.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 08 Nov 2021 09:24:01 -0800 (PST)
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Arun Kumar Neelakantam <aneela@codeaurora.org>,
+        Alexandru Ardelean <ardeleanalex@gmail.com>,
+        Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>,
+        Cai Huoqing <caihuoqing@baidu.com>,
+        Chris Lew <clew@codeaurora.org>,
+        Kees Cook <keescook@chromium.org>,
+        Tinghan Shen <tinghan.shen@mediatek.com>
+Subject: [GIT PULL] rpmsg updates for v5.16
+Date:   Mon,  8 Nov 2021 11:23:57 -0600
+Message-Id: <20211108172357.2477129-1-bjorn.andersson@linaro.org>
+X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20211108112313.73d0727e@gandalf.local.home>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Mon, Nov 08, 2021 at 11:23:13AM -0500, Steven Rostedt wrote:
-> Question, how often does this warning trigger? Is it common to see in
-> development?
+The following changes since commit 6880fa6c56601bb8ed59df6c30fd390cc5f6dd8f:
 
-Yeah, haven't seen it myself yet.
+  Linux 5.15-rc1 (2021-09-12 16:28:37 -0700)
 
-But we hashed it out over IRC. :-)
+are available in the Git repository at:
 
--- 
-Regards/Gruss,
-    Boris.
+  https://git.kernel.org/pub/scm/linux/kernel/git/remoteproc/linux.git tags/rpmsg-v5.16
 
-https://people.kernel.org/tglx/notes-about-netiquette
+for you to fetch changes up to b16a37e1846c9573a847a56fa2f31ba833dae45a:
+
+  rpmsg: glink: Send READ_NOTIFY command in FIFO full case (2021-10-15 11:02:11 -0500)
+
+----------------------------------------------------------------
+rpmsg updates for v5.16
+
+For the GLINK implementation this adds support for splitting outgoing
+messages that are too large to fit in the fifo, it introduces the use of
+"read notifications", to avoid polling in the case where the outgoing
+fifo is full and a few bugs are squashed.
+
+The return value of rpmsg_create_ept() for when RPMSG is disabled is
+corrected to return a valid error, the Mediatek rpmsg driver is updated
+to match the DT binding and a couple of cleanups are done in the virtio
+rpmsg driver.
+
+----------------------------------------------------------------
+Alexandru Ardelean (1):
+      rpmsg: virtio_rpmsg_bus: use dev_warn_ratelimited for msg with no recipient
+
+Arnaud Pouliquen (1):
+      rpmsg: Fix rpmsg_create_ept return when RPMSG config is not defined
+
+Arun Kumar Neelakantam (3):
+      rpmsg: glink: Add TX_DATA_CONT command while sending
+      rpmsg: glink: Remove the rpmsg dev in close_ack
+      rpmsg: glink: Send READ_NOTIFY command in FIFO full case
+
+Cai Huoqing (1):
+      rpmsg: virtio: Remove unused including <linux/of_device.h>
+
+Chris Lew (1):
+      rpmsg: glink: Remove channel decouple from rpdev release
+
+Kees Cook (1):
+      rpmsg: glink: Replace strncpy() with strscpy_pad()
+
+Tinghan Shen (1):
+      rpmsg: Change naming of mediatek rpmsg property
+
+ drivers/rpmsg/mtk_rpmsg.c         |  2 +-
+ drivers/rpmsg/qcom_glink_native.c | 90 +++++++++++++++++++++++++++++++++++----
+ drivers/rpmsg/virtio_rpmsg_bus.c  |  3 +-
+ include/linux/rpmsg.h             |  2 +-
+ 4 files changed, 85 insertions(+), 12 deletions(-)
