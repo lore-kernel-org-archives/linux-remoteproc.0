@@ -2,230 +2,163 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48B8EC433F5
-	for <linux-remoteproc@archiver.kernel.org>; Mon,  8 Nov 2021 14:01:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E789EC4332F
+	for <linux-remoteproc@archiver.kernel.org>; Mon,  8 Nov 2021 14:07:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2762D611C0
-	for <linux-remoteproc@archiver.kernel.org>; Mon,  8 Nov 2021 14:01:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C3BE8610E9
+	for <linux-remoteproc@archiver.kernel.org>; Mon,  8 Nov 2021 14:07:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240164AbhKHOEU (ORCPT
+        id S240240AbhKHOKI convert rfc822-to-8bit (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 8 Nov 2021 09:04:20 -0500
-Received: from mx07-00178001.pphosted.com ([185.132.182.106]:49416 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S235902AbhKHOET (ORCPT
+        Mon, 8 Nov 2021 09:10:08 -0500
+Received: from mail-ua1-f54.google.com ([209.85.222.54]:34507 "EHLO
+        mail-ua1-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S240246AbhKHOKC (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 8 Nov 2021 09:04:19 -0500
-Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.1.2/8.16.1.2) with ESMTP id 1A8DGOhU021040;
-        Mon, 8 Nov 2021 15:01:33 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=from : to : cc :
- subject : date : message-id : mime-version : content-type; s=selector1;
- bh=G26Ve/HFn2wXHMnOpCOEz7WG0SiuPkgmMHKdcZnpApE=;
- b=G4XywgKF/KG2XlKQbaQVfawPeH/cbo6DwsjHG0n0WssAvgqltnKMYtp4cp7TKYJL8SJ2
- mJZYqF+EWm+uFOM8HZqO4JGOFrbjDxTjar8PaPlHxy2P8e5SU+yXnopYq69GXgo+tVbI
- pCZpnmDxBUyo4YADduhRSumo4EjS8TJ9t7SGOp4cRmkcPMibG2rRJuBzK5IaT1Y+lXIC
- yB+H+vakNEHBNkxLSi8XJWS38ZCMulJZ6zKnb1a8wR0H2dNDiJJ//AVNCAZxVnxR77PB
- Rz7Ial5i0D2ZSGweiSkcFLCjRUfA7E502AMxdc/Rw8PRdx9xzAgbSp3djJNX6alSYIgo fQ== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3c709q26am-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 08 Nov 2021 15:01:33 +0100
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 79D4710002A;
-        Mon,  8 Nov 2021 15:01:32 +0100 (CET)
-Received: from Webmail-eu.st.com (sfhdag2node2.st.com [10.75.127.5])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 698A322D19D;
-        Mon,  8 Nov 2021 15:01:32 +0100 (CET)
-Received: from localhost (10.75.127.48) by SFHDAG2NODE2.st.com (10.75.127.5)
- with Microsoft SMTP Server (TLS) id 15.0.1497.18; Mon, 8 Nov 2021 15:01:32
- +0100
-From:   Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Ohad Ben-Cohen <ohad@wizery.com>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>
-CC:     <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-msm@vger.kernel.org>, <arnaud.pouliquen@foss.st.com>
-Subject: [PATCH] rpmsg: Fix documentation return formatting
-Date:   Mon, 8 Nov 2021 15:01:26 +0100
-Message-ID: <20211108140126.3530-1-arnaud.pouliquen@foss.st.com>
-X-Mailer: git-send-email 2.17.1
+        Mon, 8 Nov 2021 09:10:02 -0500
+Received: by mail-ua1-f54.google.com with SMTP id b3so31739471uam.1;
+        Mon, 08 Nov 2021 06:07:16 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=srssYsTsVb5ivMDmTAt6Y7lXgP/lHHGiJX97jzZpFII=;
+        b=lT7Q627YXwAYYti9TyWmhNrAwxF37ER+DnnHvi8ZOaxozyOw/rwlQ66wlApkNuyNN0
+         l/36WyzNYJX7UwsJU1aMV3bW5Sz7j/IP33Z/kZbh3aJA6GtHX+o7tNp9p+l7GF4QkKIB
+         sjbbINID3WCsCkZrFWfMUwfrp9PjYh6onoNzXUnoEQ/95F5HYU5n5UHmTstBfe0urn4h
+         1SE5gPNj3Pc2mvjTTyE8StQTFs4/Z7quYn3ZeZl33bFkXJAPxUlQqv23fQ05cU4PyTMU
+         am1ot2b90FgHRA4kFfiBdu8fFSdh6YxyoBpITiqz4ORJJJdFb9hLqYTU1fxm5MWEErbR
+         0b5Q==
+X-Gm-Message-State: AOAM531VcfMwSWKNLwI/Nir0vc2ScGiGBGnffpEeKxm2KOJGi6tJeJ4f
+        ZdyVgO2KwEjymrO3gMZbXCXik2FZgi7ZJAl7
+X-Google-Smtp-Source: ABdhPJx9G54VGw4oc23XJRelgp9dkMEtXydk+uvqLajllgER83nLii76Q7zBboH+kgBjAPFdw36B5A==
+X-Received: by 2002:ab0:3e3:: with SMTP id 90mr185644uau.102.1636380435783;
+        Mon, 08 Nov 2021 06:07:15 -0800 (PST)
+Received: from mail-vk1-f171.google.com (mail-vk1-f171.google.com. [209.85.221.171])
+        by smtp.gmail.com with ESMTPSA id c11sm3226781vsh.22.2021.11.08.06.07.14
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 08 Nov 2021 06:07:14 -0800 (PST)
+Received: by mail-vk1-f171.google.com with SMTP id a129so8254621vkb.8;
+        Mon, 08 Nov 2021 06:07:14 -0800 (PST)
+X-Received: by 2002:a05:6122:1350:: with SMTP id f16mr21288847vkp.26.1636380434409;
+ Mon, 08 Nov 2021 06:07:14 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.75.127.48]
-X-ClientProxiedBy: SFHDAG1NODE2.st.com (10.75.127.2) To SFHDAG2NODE2.st.com
- (10.75.127.5)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.790,Hydra:6.0.425,FMLib:17.0.607.475
- definitions=2021-11-08_05,2021-11-08_01,2020-04-07_01
+References: <20211108101157.15189-1-bp@alien8.de> <20211108101157.15189-43-bp@alien8.de>
+In-Reply-To: <20211108101157.15189-43-bp@alien8.de>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Mon, 8 Nov 2021 15:07:03 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdWH+txiSP_d7Jc4f_bU8Lf9iWpT4E3o5o7BJr-YdA6-VA@mail.gmail.com>
+Message-ID: <CAMuHMdWH+txiSP_d7Jc4f_bU8Lf9iWpT4E3o5o7BJr-YdA6-VA@mail.gmail.com>
+Subject: Re: [PATCH v0 42/42] notifier: Return an error when callback is
+ already registered
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Ayush Sawal <ayush.sawal@chelsio.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rohit Maheshwari <rohitm@chelsio.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Vinay Kumar Yadav <vinay.yadav@chelsio.com>,
+        ALSA Development Mailing List <alsa-devel@alsa-project.org>,
+        bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>,
+        Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
+        intel-gvt-dev@lists.freedesktop.org,
+        alpha <linux-alpha@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+        linux-edac@vger.kernel.org,
+        Linux Fbdev development list <linux-fbdev@vger.kernel.org>,
+        linux-hyperv@vger.kernel.org, linux-iio@vger.kernel.org,
+        linux-leds <linux-leds@vger.kernel.org>,
+        "open list:BROADCOM NVRAM DRIVER" <linux-mips@vger.kernel.org>,
+        Parisc List <linux-parisc@vger.kernel.org>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        "open list:REMOTE PROCESSOR (REMOTEPROC) SUBSYSTEM" 
+        <linux-remoteproc@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-s390 <linux-s390@vger.kernel.org>,
+        scsi <linux-scsi@vger.kernel.org>,
+        Linux-sh list <linux-sh@vger.kernel.org>,
+        linux-staging@lists.linux.dev,
+        linux-tegra <linux-tegra@vger.kernel.org>,
+        linux-um <linux-um@lists.infradead.org>,
+        USB list <linux-usb@vger.kernel.org>,
+        "open list:TENSILICA XTENSA PORT (xtensa)" 
+        <linux-xtensa@linux-xtensa.org>, netdev <netdev@vger.kernel.org>,
+        openipmi-developer@lists.sourceforge.net, rcu@vger.kernel.org,
+        sparclinux <sparclinux@vger.kernel.org>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        xen-devel@lists.xenproject.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-kernel documentation specification:
-"The return value, if any, should be described in a dedicated section
-named Return."
+Hi Borislav,
 
-Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
----
- drivers/rpmsg/qcom_glink_native.c |  2 +-
- drivers/rpmsg/qcom_smd.c          |  2 +-
- drivers/rpmsg/rpmsg_core.c        | 24 ++++++++++++------------
- drivers/rpmsg/virtio_rpmsg_bus.c  |  2 +-
- 4 files changed, 15 insertions(+), 15 deletions(-)
+On Mon, Nov 8, 2021 at 11:13 AM Borislav Petkov <bp@alien8.de> wrote:
+> From: Borislav Petkov <bp@suse.de>
+>
+> The notifier registration routine doesn't return a proper error value
+> when a callback has already been registered, leading people to track
+> whether that registration has happened at the call site:
+>
+>   https://lore.kernel.org/amd-gfx/20210512013058.6827-1-mukul.joshi@amd.com/
+>
+> Which is unnecessary.
+>
+> Return -EEXIST to signal that case so that callers can act accordingly.
+> Enforce callers to check the return value, leading to loud screaming
+> during build:
+>
+>   arch/x86/kernel/cpu/mce/core.c: In function ‘mce_register_decode_chain’:
+>   arch/x86/kernel/cpu/mce/core.c:167:2: error: ignoring return value of \
+>    ‘blocking_notifier_chain_register’, declared with attribute warn_unused_result [-Werror=unused-result]
+>     blocking_notifier_chain_register(&x86_mce_decoder_chain, nb);
+>   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>
+> Drop the WARN too, while at it.
+>
+> Suggested-by: Thomas Gleixner <tglx@linutronix.de>
+> Signed-off-by: Borislav Petkov <bp@suse.de>
 
-diff --git a/drivers/rpmsg/qcom_glink_native.c b/drivers/rpmsg/qcom_glink_native.c
-index 3f377a795b33..1030cfa80e04 100644
---- a/drivers/rpmsg/qcom_glink_native.c
-+++ b/drivers/rpmsg/qcom_glink_native.c
-@@ -427,7 +427,7 @@ static void qcom_glink_handle_intent_req_ack(struct qcom_glink *glink,
-  * Allocates a local channel id and sends a RPM_CMD_OPEN message to the remote.
-  * Will return with refcount held, regardless of outcome.
-  *
-- * Returns 0 on success, negative errno otherwise.
-+ * Return: 0 on success, negative errno otherwise.
-  */
- static int qcom_glink_send_open_req(struct qcom_glink *glink,
- 				    struct glink_channel *channel)
-diff --git a/drivers/rpmsg/qcom_smd.c b/drivers/rpmsg/qcom_smd.c
-index 8da1b5cb31b3..540e027f08c4 100644
---- a/drivers/rpmsg/qcom_smd.c
-+++ b/drivers/rpmsg/qcom_smd.c
-@@ -1467,7 +1467,7 @@ ATTRIBUTE_GROUPS(qcom_smd_edge);
-  * @parent:    parent device for the edge
-  * @node:      device_node describing the edge
-  *
-- * Returns an edge reference, or negative ERR_PTR() on failure.
-+ * Return: an edge reference, or negative ERR_PTR() on failure.
-  */
- struct qcom_smd_edge *qcom_smd_register_edge(struct device *parent,
- 					     struct device_node *node)
-diff --git a/drivers/rpmsg/rpmsg_core.c b/drivers/rpmsg/rpmsg_core.c
-index d3eb60059ef1..f031b2b1b21c 100644
---- a/drivers/rpmsg/rpmsg_core.c
-+++ b/drivers/rpmsg/rpmsg_core.c
-@@ -26,7 +26,7 @@
-  * @rpdev: rpmsg device
-  * @chinfo: channel_info to bind
-  *
-- * Returns a pointer to the new rpmsg device on success, or NULL on error.
-+ * Return: a pointer to the new rpmsg device on success, or NULL on error.
-  */
- struct rpmsg_device *rpmsg_create_channel(struct rpmsg_device *rpdev,
- 					  struct rpmsg_channel_info *chinfo)
-@@ -48,7 +48,7 @@ EXPORT_SYMBOL(rpmsg_create_channel);
-  * @rpdev: rpmsg device
-  * @chinfo: channel_info to bind
-  *
-- * Returns 0 on success or an appropriate error value.
-+ * Return: 0 on success or an appropriate error value.
-  */
- int rpmsg_release_channel(struct rpmsg_device *rpdev,
- 			  struct rpmsg_channel_info *chinfo)
-@@ -102,7 +102,7 @@ EXPORT_SYMBOL(rpmsg_release_channel);
-  * dynamically assign them an available rpmsg address (drivers should have
-  * a very good reason why not to always use RPMSG_ADDR_ANY here).
-  *
-- * Returns a pointer to the endpoint on success, or NULL on error.
-+ * Return: a pointer to the endpoint on success, or NULL on error.
-  */
- struct rpmsg_endpoint *rpmsg_create_ept(struct rpmsg_device *rpdev,
- 					rpmsg_rx_cb_t cb, void *priv,
-@@ -146,7 +146,7 @@ EXPORT_SYMBOL(rpmsg_destroy_ept);
-  *
-  * Can only be called from process context (for now).
-  *
-- * Returns 0 on success and an appropriate error value on failure.
-+ * Return: 0 on success and an appropriate error value on failure.
-  */
- int rpmsg_send(struct rpmsg_endpoint *ept, void *data, int len)
- {
-@@ -175,7 +175,7 @@ EXPORT_SYMBOL(rpmsg_send);
-  *
-  * Can only be called from process context (for now).
-  *
-- * Returns 0 on success and an appropriate error value on failure.
-+ * Return: 0 on success and an appropriate error value on failure.
-  */
- int rpmsg_sendto(struct rpmsg_endpoint *ept, void *data, int len, u32 dst)
- {
-@@ -206,7 +206,7 @@ EXPORT_SYMBOL(rpmsg_sendto);
-  *
-  * Can only be called from process context (for now).
-  *
-- * Returns 0 on success and an appropriate error value on failure.
-+ * Return: 0 on success and an appropriate error value on failure.
-  */
- int rpmsg_send_offchannel(struct rpmsg_endpoint *ept, u32 src, u32 dst,
- 			  void *data, int len)
-@@ -235,7 +235,7 @@ EXPORT_SYMBOL(rpmsg_send_offchannel);
-  *
-  * Can only be called from process context (for now).
-  *
-- * Returns 0 on success and an appropriate error value on failure.
-+ * Return: 0 on success and an appropriate error value on failure.
-  */
- int rpmsg_trysend(struct rpmsg_endpoint *ept, void *data, int len)
- {
-@@ -263,7 +263,7 @@ EXPORT_SYMBOL(rpmsg_trysend);
-  *
-  * Can only be called from process context (for now).
-  *
-- * Returns 0 on success and an appropriate error value on failure.
-+ * Return: 0 on success and an appropriate error value on failure.
-  */
- int rpmsg_trysendto(struct rpmsg_endpoint *ept, void *data, int len, u32 dst)
- {
-@@ -282,7 +282,7 @@ EXPORT_SYMBOL(rpmsg_trysendto);
-  * @filp:	file for poll_wait()
-  * @wait:	poll_table for poll_wait()
-  *
-- * Returns mask representing the current state of the endpoint's send buffers
-+ * Return: mask representing the current state of the endpoint's send buffers
-  */
- __poll_t rpmsg_poll(struct rpmsg_endpoint *ept, struct file *filp,
- 			poll_table *wait)
-@@ -313,7 +313,7 @@ EXPORT_SYMBOL(rpmsg_poll);
-  *
-  * Can only be called from process context (for now).
-  *
-- * Returns 0 on success and an appropriate error value on failure.
-+ * Return: 0 on success and an appropriate error value on failure.
-  */
- int rpmsg_trysend_offchannel(struct rpmsg_endpoint *ept, u32 src, u32 dst,
- 			     void *data, int len)
-@@ -623,7 +623,7 @@ EXPORT_SYMBOL(rpmsg_unregister_device);
-  * @rpdrv: pointer to a struct rpmsg_driver
-  * @owner: owning module/driver
-  *
-- * Returns 0 on success, and an appropriate error value on failure.
-+ * Return: 0 on success, and an appropriate error value on failure.
-  */
- int __register_rpmsg_driver(struct rpmsg_driver *rpdrv, struct module *owner)
- {
-@@ -637,7 +637,7 @@ EXPORT_SYMBOL(__register_rpmsg_driver);
-  * unregister_rpmsg_driver() - unregister an rpmsg driver from the rpmsg bus
-  * @rpdrv: pointer to a struct rpmsg_driver
-  *
-- * Returns 0 on success, and an appropriate error value on failure.
-+ * Return: 0 on success, and an appropriate error value on failure.
-  */
- void unregister_rpmsg_driver(struct rpmsg_driver *rpdrv)
- {
-diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
-index 9c112aa65040..c37451512835 100644
---- a/drivers/rpmsg/virtio_rpmsg_bus.c
-+++ b/drivers/rpmsg/virtio_rpmsg_bus.c
-@@ -547,7 +547,7 @@ static void rpmsg_downref_sleepers(struct virtproc_info *vrp)
-  * should use the appropriate rpmsg_{try}send{to, _offchannel} API
-  * (see include/linux/rpmsg.h).
-  *
-- * Returns 0 on success and an appropriate error value on failure.
-+ * Return: 0 on success and an appropriate error value on failure.
-  */
- static int rpmsg_send_offchannel_raw(struct rpmsg_device *rpdev,
- 				     u32 src, u32 dst,
--- 
-2.17.1
+Thanks for your patch!
 
+> --- a/include/linux/notifier.h
+> +++ b/include/linux/notifier.h
+> @@ -141,13 +141,13 @@ extern void srcu_init_notifier_head(struct srcu_notifier_head *nh);
+>
+>  #ifdef __KERNEL__
+>
+> -extern int atomic_notifier_chain_register(struct atomic_notifier_head *nh,
+> +extern int __must_check atomic_notifier_chain_register(struct atomic_notifier_head *nh,
+>                 struct notifier_block *nb);
+> -extern int blocking_notifier_chain_register(struct blocking_notifier_head *nh,
+> +extern int __must_check blocking_notifier_chain_register(struct blocking_notifier_head *nh,
+>                 struct notifier_block *nb);
+> -extern int raw_notifier_chain_register(struct raw_notifier_head *nh,
+> +extern int __must_check raw_notifier_chain_register(struct raw_notifier_head *nh,
+>                 struct notifier_block *nb);
+> -extern int srcu_notifier_chain_register(struct srcu_notifier_head *nh,
+> +extern int __must_check srcu_notifier_chain_register(struct srcu_notifier_head *nh,
+>                 struct notifier_block *nb);
+
+I think the addition of __must_check is overkill, leading to the
+addition of useless error checks and message printing.  Many callers
+call this where it cannot fail, and where nothing can be done in the
+very unlikely event that the call would ever start to fail.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
