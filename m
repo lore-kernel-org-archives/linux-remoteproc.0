@@ -2,410 +2,112 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65DE1C433FE
-	for <linux-remoteproc@archiver.kernel.org>; Mon,  8 Nov 2021 18:43:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3B31C43217
+	for <linux-remoteproc@archiver.kernel.org>; Mon,  8 Nov 2021 20:59:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4E582619E1
-	for <linux-remoteproc@archiver.kernel.org>; Mon,  8 Nov 2021 18:43:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A3F1E619E8
+	for <linux-remoteproc@archiver.kernel.org>; Mon,  8 Nov 2021 20:59:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235844AbhKHSpn (ORCPT
+        id S238561AbhKHVCP (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 8 Nov 2021 13:45:43 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42668 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235810AbhKHSpl (ORCPT
+        Mon, 8 Nov 2021 16:02:15 -0500
+Received: from netrider.rowland.org ([192.131.102.5]:37885 "HELO
+        netrider.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with SMTP id S238256AbhKHVCN (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 8 Nov 2021 13:45:41 -0500
-Received: from mail-pl1-x62f.google.com (mail-pl1-x62f.google.com [IPv6:2607:f8b0:4864:20::62f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7550AC061714
-        for <linux-remoteproc@vger.kernel.org>; Mon,  8 Nov 2021 10:42:56 -0800 (PST)
-Received: by mail-pl1-x62f.google.com with SMTP id v20so16412380plo.7
-        for <linux-remoteproc@vger.kernel.org>; Mon, 08 Nov 2021 10:42:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=6vpn1QBh4JUsvkVX/vyhhORqWxD/TkuBknE6CGGsOPc=;
-        b=nG0FeAuYu8QZvM57tWMXYgihc5ZZe9GJRcQPJ+JVUXLP7SInNybyl55j2N5/bqmuTA
-         ekjqK2fYktoqApyuXK13bYecO4g7yr3RpucjPoU6jVsj9uEPFd3Eau1Ihr+vnzcMvQLK
-         3qD8QI9G3+16C9ECdlsd9euUnmUTztvQZpE46aGOoEX2x/fwrPNnctEJbpRDkHsB7pMV
-         CkQAH14uXdTmKnsqgj+i1kNbZjN7Epnm0/HZ136aEX7sn/UZnmFlFe15Kn4bdIZZQjX/
-         PuHfsychrFe7J/4zJG15Gpay3wb+ONglMVzBh4A/DJGFbqj+2EGV2gnQXtJ66hZrZ1+D
-         qefw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=6vpn1QBh4JUsvkVX/vyhhORqWxD/TkuBknE6CGGsOPc=;
-        b=TsiCNtA3ASKoktw7vVX9jROvKolhoNHFQA8+hfoC10glmhCRhY7F/SzPur5hsVrtDW
-         AMWAkCo0gb4SRIAz5h44reIcNCLYmCRvtc+NnOvYT3gaPmhVbX7wJBnbJ93E6dEJeWPY
-         UPKfpBq+Z/IUURe6SqDGzfq1KUuQwjEmaZV3nhpTH1PWWklb7BMg1H4OqsGSsGZCVtXC
-         Oinu7suHLPAdrstJO+0Puku7yT9fgqZoPkvqYZxgt9GOghdsXBSQ5ThRgQ0IugX6KiDL
-         hQ8nmLMAXrX7rDuEc8RnhpZbxGTbgwwPGyn6BxJ7LlK62/qQ+H8rQCBy6WeAL4Q7PB+l
-         hRDA==
-X-Gm-Message-State: AOAM531wU25soutPa1Z/NwAQQJ/M06cLV8Lv3BgL+ZtvTqCktXTvWpyb
-        KeZpbWDWGLFnGy5NWQAhm0zveQ==
-X-Google-Smtp-Source: ABdhPJwLlGXFweXwwDpJrdMmjX2Udz+xmBSSfeOaRtl+CMlK/wRDhcA+RrAJxccU/YxF5Be/sty2Ug==
-X-Received: by 2002:a17:903:1207:b0:13d:b9b1:ead7 with SMTP id l7-20020a170903120700b0013db9b1ead7mr1289720plh.63.1636396975824;
-        Mon, 08 Nov 2021 10:42:55 -0800 (PST)
-Received: from p14s (S0106889e681aac74.cg.shawcable.net. [68.147.0.187])
-        by smtp.gmail.com with ESMTPSA id 11sm15804657pfl.41.2021.11.08.10.42.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 Nov 2021 10:42:54 -0800 (PST)
-Date:   Mon, 8 Nov 2021 11:42:52 -0700
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-To:     Julien Massot <julien.massot@iot.bzh>
-Cc:     bjorn.andersson@linaro.org, robh+dt@kernel.org,
-        geert+renesas@glider.be, linux-renesas-soc@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [RFC PATCH 3/3] remoteproc: Add Renesas rcar driver
-Message-ID: <20211108184252.GA1971795@p14s>
-References: <20211027073020.17055-1-julien.massot@iot.bzh>
- <20211027073020.17055-4-julien.massot@iot.bzh>
+        Mon, 8 Nov 2021 16:02:13 -0500
+Received: (qmail 1679175 invoked by uid 1000); 8 Nov 2021 15:59:26 -0500
+Date:   Mon, 8 Nov 2021 15:59:26 -0500
+From:   Alan Stern <stern@rowland.harvard.edu>
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Ayush Sawal <ayush.sawal@chelsio.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rohit Maheshwari <rohitm@chelsio.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Vinay Kumar Yadav <vinay.yadav@chelsio.com>,
+        ALSA Development Mailing List <alsa-devel@alsa-project.org>,
+        bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>,
+        Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
+        intel-gvt-dev@lists.freedesktop.org,
+        alpha <linux-alpha@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+        linux-edac@vger.kernel.org,
+        Linux Fbdev development list <linux-fbdev@vger.kernel.org>,
+        linux-hyperv@vger.kernel.org, linux-iio@vger.kernel.org,
+        linux-leds <linux-leds@vger.kernel.org>,
+        "open list:BROADCOM NVRAM DRIVER" <linux-mips@vger.kernel.org>,
+        Parisc List <linux-parisc@vger.kernel.org>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        "open list:REMOTE PROCESSOR \(REMOTEPROC\) SUBSYSTEM" 
+        <linux-remoteproc@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-s390 <linux-s390@vger.kernel.org>,
+        scsi <linux-scsi@vger.kernel.org>,
+        Linux-sh list <linux-sh@vger.kernel.org>,
+        linux-staging@lists.linux.dev,
+        linux-tegra <linux-tegra@vger.kernel.org>,
+        linux-um <linux-um@lists.infradead.org>,
+        USB list <linux-usb@vger.kernel.org>,
+        "open list:TENSILICA XTENSA PORT \(xtensa\)" 
+        <linux-xtensa@linux-xtensa.org>, netdev <netdev@vger.kernel.org>,
+        openipmi-developer@lists.sourceforge.net, rcu@vger.kernel.org,
+        sparclinux <sparclinux@vger.kernel.org>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        xen-devel@lists.xenproject.org
+Subject: Re: [PATCH v0 42/42] notifier: Return an error when callback is
+ already registered
+Message-ID: <20211108205926.GA1678880@rowland.harvard.edu>
+References: <20211108101157.15189-1-bp@alien8.de>
+ <20211108101157.15189-43-bp@alien8.de>
+ <CAMuHMdWH+txiSP_d7Jc4f_bU8Lf9iWpT4E3o5o7BJr-YdA6-VA@mail.gmail.com>
+ <YYkyUEqcsOwQMb1S@zn.tnic>
+ <CAMuHMdXiBEQyEXJagSfpH44hxVA2t0sDH7B7YubLGHrb2MJLLA@mail.gmail.com>
+ <YYlJQYLiIrhjwOmT@zn.tnic>
+ <CAMuHMdXHikGrmUzuq0WG5JRHUUE=5zsaVCTF+e4TiHpM5tc5kA@mail.gmail.com>
+ <YYlOmd0AeA8DSluD@zn.tnic>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20211027073020.17055-4-julien.massot@iot.bzh>
+In-Reply-To: <YYlOmd0AeA8DSluD@zn.tnic>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Good morning Julien,
-
-On Wed, Oct 27, 2021 at 09:30:20AM +0200, Julien Massot wrote:
-> Renesas Gen3 platform includes a Cortex-r7 processor.
+On Mon, Nov 08, 2021 at 05:21:45PM +0100, Borislav Petkov wrote:
+> On Mon, Nov 08, 2021 at 05:12:16PM +0100, Geert Uytterhoeven wrote:
+> > Returning void is the other extreme ;-)
+> > 
+> > There are 3 levels (ignoring BUG_ON()/panic () inside the callee):
+> >   1. Return void: no one can check success or failure,
+> >   2. Return an error code: up to the caller to decide,
+> >   3. Return a __must_check error code: every caller must check.
+> > 
+> > I'm in favor of 2, as there are several places where it cannot fail.
 > 
-> Both: the application cores (A5x) and the realtime core (CR7)
-> share access to the RAM and devices with the same address map,
-> so device addresses are equal to the Linux physical addresses.
-> 
-> In order to initialize this remote processor we need to:
-> - power on the realtime core
-> - put the firmware in a ram area
-> - set the boot address for this firmware (reset vector)
-> - Deassert the reset
-> 
-> This initial driver allows to start and stop the Cortex R7
-> processor.
-> 
-> Signed-off-by: Julien Massot <julien.massot@iot.bzh>
-> ---
->  drivers/remoteproc/Kconfig      |  11 ++
->  drivers/remoteproc/Makefile     |   1 +
->  drivers/remoteproc/rcar_rproc.c | 229 ++++++++++++++++++++++++++++++++
->  3 files changed, 241 insertions(+)
->  create mode 100644 drivers/remoteproc/rcar_rproc.c
-> 
-> diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
-> index 9a6eedc3994a..3e87eadbaf59 100644
-> --- a/drivers/remoteproc/Kconfig
-> +++ b/drivers/remoteproc/Kconfig
-> @@ -261,6 +261,17 @@ config QCOM_WCNSS_PIL
->  	  verified and booted with the help of the Peripheral Authentication
->  	  System (PAS) in TrustZone.
->  
-> +config RCAR_REMOTEPROC
-> +	tristate "Renesas RCAR remoteproc support"
+> Makes sense to me. I'll do that in the next iteration.
 
-It is probably a good idea to include the type of SoC being supported, something
-like:
+Is there really any reason for returning an error code?  For example, is 
+it anticipated that at some point in the future these registration calls 
+might fail?
 
-        tristate "Renesas Gen3 RCAR remoteproc support"
+Currently, the only reason for failing to register a notifier callback 
+is because the callback is already registered.  In a sense this isn't 
+even an actual failure -- after the registration returns the callback 
+_will_ still be registered.
 
-That will make it easier to support future RCAR processors that may not share
-the same architecture.
+So if the call can never really fail, why bother with a return code?  
+Especially since the caller can't do anything with such a code value.
 
+Given the current state of affairs, I vote in favor of 1 (plus a WARN or 
+something similar to generate a stack dump in the callee, since double 
+registration really is a bug).
 
-> +	depends on ARCH_RENESAS
-> +	depends on REMOTEPROC
-> +	help
-> +	  Say y here to support R-Car realtime processor via the
-> +	  remote processor framework. An elf firmware can be loaded
-> +	  thanks to sysfs remoteproc entries. The remote processor
-> +	  can be started and stopped.
-> +	  This can be either built-in or a loadable module.  
-
-Please add the name of the module when compiled as such.
-
-> +
->  config ST_REMOTEPROC
->  	tristate "ST remoteproc support"
->  	depends on ARCH_STI
-> diff --git a/drivers/remoteproc/Makefile b/drivers/remoteproc/Makefile
-> index bb26c9e4ef9c..bb290cc08e99 100644
-> --- a/drivers/remoteproc/Makefile
-> +++ b/drivers/remoteproc/Makefile
-> @@ -30,6 +30,7 @@ obj-$(CONFIG_QCOM_SYSMON)		+= qcom_sysmon.o
->  obj-$(CONFIG_QCOM_WCNSS_PIL)		+= qcom_wcnss_pil.o
->  qcom_wcnss_pil-y			+= qcom_wcnss.o
->  qcom_wcnss_pil-y			+= qcom_wcnss_iris.o
-> +obj-$(CONFIG_RCAR_REMOTEPROC)		+= rcar_rproc.o
->  obj-$(CONFIG_ST_REMOTEPROC)		+= st_remoteproc.o
->  obj-$(CONFIG_ST_SLIM_REMOTEPROC)	+= st_slim_rproc.o
->  obj-$(CONFIG_STM32_RPROC)		+= stm32_rproc.o
-> diff --git a/drivers/remoteproc/rcar_rproc.c b/drivers/remoteproc/rcar_rproc.c
-> new file mode 100644
-> index 000000000000..ae0bfc8d4e85
-> --- /dev/null
-> +++ b/drivers/remoteproc/rcar_rproc.c
-> @@ -0,0 +1,229 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (C) IoT.bzh 2021
-> + */
-> +
-> +#include <linux/module.h>
-> +#include <linux/of_device.h>
-> +#include <linux/of_reserved_mem.h>
-> +#include <linux/pm_runtime.h>
-> +#include <linux/remoteproc.h>
-> +#include <linux/reset.h>
-> +#include <linux/soc/renesas/rcar-rst.h>
-> +
-> +#include "remoteproc_internal.h"
-> +
-> +struct rcar_rproc {
-> +	struct device			*dev;
-> +	struct rproc			*rproc;
-> +	struct reset_control            *rst;
-> +};
-> +
-> +static int rcar_rproc_mem_alloc(struct rproc *rproc,
-> +				 struct rproc_mem_entry *mem)
-> +{
-> +	struct device *dev = rproc->dev.parent;
-> +	void *va;
-> +
-> +	dev_dbg(dev, "map memory: %p+%zx\n", &mem->dma, mem->len);
-
-I think this should be "map memory: %pa+%lx\n" to be consistent with dev_err()
-below and the original implementation in stm32_rproc.c.
-
-> +	va = ioremap_wc(mem->dma, mem->len);
-> +	if (IS_ERR_OR_NULL(va)) {
-> +		dev_err(dev, "Unable to map memory region: %pa+%lx\n",
-> +			&mem->dma, mem->len);
-> +		return -ENOMEM;
-> +	}
-> +
-> +	/* Update memory entry va */
-> +	mem->va = va;
-> +
-> +	return 0;
-> +}
-> +
-> +static int rcar_rproc_mem_release(struct rproc *rproc,
-> +				   struct rproc_mem_entry *mem)
-> +{
-> +	dev_dbg(rproc->dev.parent, "unmap memory: %pa\n", &mem->dma);
-> +	iounmap(mem->va);
-> +
-> +	return 0;
-> +}
-> +
-> +static int rcar_rproc_prepare(struct rproc *rproc)
-> +{
-> +	struct device *dev = rproc->dev.parent;
-> +	struct device_node *np = dev->of_node;
-> +	struct of_phandle_iterator it;
-> +	struct rproc_mem_entry *mem;
-> +	struct reserved_mem *rmem;
-> +	u64 da;
-> +
-> +	/* Register associated reserved memory regions */
-> +	of_phandle_iterator_init(&it, np, "memory-region", NULL, 0);
-> +	while (of_phandle_iterator_next(&it) == 0) {
-> +
-> +		rmem = of_reserved_mem_lookup(it.node);
-> +		if (!rmem) {
-> +			dev_err(dev, "unable to acquire memory-region\n");
-> +			return -EINVAL;
-> +		}
-> +
-> +		/* No need to translate pa to da, R-Car use same map */
-> +		da = rmem->base;
-> +
-> +		mem = rproc_mem_entry_init(dev, NULL,
-> +					   (dma_addr_t)rmem->base,
-> +					   rmem->size, da,
-> +					   rcar_rproc_mem_alloc,
-> +					   rcar_rproc_mem_release,
-> +					   it.node->name);
-> +
-> +		if (!mem)
-> +			return -ENOMEM;
-> +
-> +		rproc_add_carveout(rproc, mem);
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static int rcar_rproc_parse_fw(struct rproc *rproc, const struct firmware *fw)
-> +{
-> +	int ret;
-> +
-> +	ret = rproc_elf_load_rsc_table(rproc, fw);
-> +	if (ret)
-> +		dev_info(&rproc->dev, "No resource table in elf\n");
-
-In the above functions rproc->dev.parent is used for output.  I don't have a
-strong opinion on which of rproc->dev or rproc->dev.parent is used but I would
-like to see consistency throughout the driver.
-
-> +
-> +	return 0;
-> +}
-> +
-> +static int rcar_rproc_start(struct rproc *rproc)
-> +{
-> +	struct rcar_rproc *priv = rproc->priv;
-> +	int err;
-> +
-> +	if (!rproc->bootaddr)
-> +		return -EINVAL;
-> +
-> +	err = rcar_rst_set_rproc_boot_addr(rproc->bootaddr);
-> +	if (err) {
-> +		dev_err(&rproc->dev, "failed to set rproc boot addr\n");
-
-Same comment as above.
-
-> +		return err;
-> +	}
-> +
-> +	err = reset_control_deassert(priv->rst);
-> +	if (err)
-> +		dev_err(&rproc->dev, "failed to deassert reset\n");
-> +
-> +	return err;
-> +}
-> +
-> +static int rcar_rproc_stop(struct rproc *rproc)
-> +{
-> +	struct rcar_rproc *priv = rproc->priv;
-> +	int err;
-> +
-> +	err = reset_control_assert(priv->rst);
-> +	if (err)
-> +		dev_err(&rproc->dev, "failed to assert reset\n");
-> +
-> +	return err;
-> +}
-> +
-> +static struct rproc_ops rcar_rproc_ops = {
-> +	.prepare	= rcar_rproc_prepare,
-> +	.start		= rcar_rproc_start,
-> +	.stop		= rcar_rproc_stop,
-> +	.load		= rproc_elf_load_segments,
-> +	.parse_fw	= rcar_rproc_parse_fw,
-> +	.find_loaded_rsc_table = rproc_elf_find_loaded_rsc_table,
-> +	.sanity_check	= rproc_elf_sanity_check,
-> +	.get_boot_addr	= rproc_elf_get_boot_addr,
-> +
-> +};
-> +
-> +static int rcar_rproc_probe(struct platform_device *pdev)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	struct device_node *np = dev->of_node;
-> +	struct rcar_rproc *priv;
-> +	struct rproc *rproc;
-> +	int ret;
-> +
-> +	rproc = rproc_alloc(dev, np->name, &rcar_rproc_ops,
-> +			    NULL, sizeof(*priv));
-> +	if (!rproc)
-> +		return -ENOMEM;
-> +
-> +	priv = rproc->priv;
-> +	priv->rproc = rproc;
-
-I don't see rcar_rproc::rproc being used anywhere.
-
-> +	priv->dev = dev;
-> +
-> +	priv->rst = devm_reset_control_get_exclusive(&pdev->dev, NULL);
-> +	if (IS_ERR(priv->rst)) {
-> +		ret = PTR_ERR(priv->rst);
-> +		dev_err(dev, "fail to acquire rproc reset\n");
-> +		goto free_rproc;
-> +	}
-> +
-> +	pm_runtime_enable(priv->dev);
-> +	ret = pm_runtime_get_sync(priv->dev);
-
-There is no dev_pm_ops for the platform driver nor clocks to manage for this
-device - is there something that requires pm_runtime operations to be called?
-
-> +	if (ret) {
-> +		dev_err(&rproc->dev, "failed to power up\n");
-> +		goto free_rproc;
-> +	}
-> +
-> +	dev_set_drvdata(dev, rproc);
-> +
-> +	/* Manually start the rproc */
-> +	rproc->auto_boot = false;
-> +
-> +	ret = rproc_add(rproc);
-> +	if (ret) {
-> +		dev_err(dev, "rproc_add failed\n");
-> +		goto pm_disable;
-> +	}
-> +
-> +	return 0;
-> +
-> +pm_disable:
-> +	pm_runtime_disable(priv->dev);
-> +free_rproc:
-> +	rproc_free(rproc);
-> +
-> +	return ret;
-> +}
-> +
-> +static int rcar_rproc_remove(struct platform_device *pdev)
-> +{
-> +	struct rproc *rproc = platform_get_drvdata(pdev);
-> +	struct rcar_rproc *priv = rproc->priv;
-> +
-> +	rproc_del(rproc);
-> +	pm_runtime_disable(priv->dev);
-
-As far as I can tell rcar_rproc::dev is not required.  It is only used in
-rproc_probe() and rproc_remove() where pdev->dev is available.
-
-> +	rproc_free(rproc);
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct of_device_id rcar_rproc_of_match[] = {
-> +	{ .compatible = "renesas,rcar-cr7" },
-> +	{},
-> +};
-> +
-> +MODULE_DEVICE_TABLE(of, rcar_rproc_of_match);
-> +
-> +static struct platform_driver rcar_rproc_driver = {
-> +	.probe = rcar_rproc_probe,
-> +	.remove = rcar_rproc_remove,
-> +	.driver = {
-> +		.name = "rcar-rproc",
-> +		.of_match_table = rcar_rproc_of_match,
-> +	},
-> +};
-
-Thanks,
-Mathieu
-
-> +
-> +module_platform_driver(rcar_rproc_driver);
-> +
-> +MODULE_LICENSE("GPL v2");
-> +MODULE_DESCRIPTION("Renesas Gen3 R-Car remote processor control driver");
-> +MODULE_AUTHOR("Julien Massot <julien.massot@iot.bzh>");
-> -- 
-> 2.31.1
-> 
-> 
+Alan Stern
