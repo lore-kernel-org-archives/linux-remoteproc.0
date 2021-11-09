@@ -2,168 +2,85 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 479B0C433EF
-	for <linux-remoteproc@archiver.kernel.org>; Tue,  9 Nov 2021 08:09:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B547C433F5
+	for <linux-remoteproc@archiver.kernel.org>; Tue,  9 Nov 2021 08:31:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2EA8A6112D
-	for <linux-remoteproc@archiver.kernel.org>; Tue,  9 Nov 2021 08:09:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E4AD46115A
+	for <linux-remoteproc@archiver.kernel.org>; Tue,  9 Nov 2021 08:31:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243929AbhKIIM3 (ORCPT
+        id S244077AbhKIIdv (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 9 Nov 2021 03:12:29 -0500
-Received: from mail-ua1-f51.google.com ([209.85.222.51]:42592 "EHLO
-        mail-ua1-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235389AbhKIIM3 (ORCPT
+        Tue, 9 Nov 2021 03:33:51 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59284 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S244071AbhKIIds (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 9 Nov 2021 03:12:29 -0500
-Received: by mail-ua1-f51.google.com with SMTP id t13so21585888uad.9;
-        Tue, 09 Nov 2021 00:09:43 -0800 (PST)
+        Tue, 9 Nov 2021 03:33:48 -0500
+Received: from mail-wr1-x42c.google.com (mail-wr1-x42c.google.com [IPv6:2a00:1450:4864:20::42c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 54506C061764;
+        Tue,  9 Nov 2021 00:31:02 -0800 (PST)
+Received: by mail-wr1-x42c.google.com with SMTP id d5so31564415wrc.1;
+        Tue, 09 Nov 2021 00:31:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=unuXmXs/dvGgqVqGq+uRDlZebRR93xnb/ylYDWpJ5xg=;
+        b=P1smeGAzzLUluvWADi3R9qZ0ZYcDwRTTDgzSFUvEJj+wKkXLLDjyb8iAOzcLu9bXKU
+         PbKYz1Df1nUBlJtrx3o6TBSWB4wzW3+PD6bZLVRRG5sAXkIIXXmBVndw/U8BpEvhqqOO
+         n7QxxrD4XWkOP46fVNDnakxs/IW8YQc6f+gVtAH9chmgi1L8ARNSz01s9pF3imzp5fo/
+         0ptuZ4bc4cIWYYFlAZJC4xsV4xYL9dHCFoSXoTfqzt7MLYr66sZQBTqRAnDPHaxSXNGW
+         m65K1wqHzSHV3c3PkCXkiRN7P+ObHEDj6hQ146hl9w9xpO/kuj2Kvzp8NCuA8UMIRXwZ
+         jisg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=VDlawz965Utm7O9XOUz+5TnqIAPK1Wn3ecvbxBCM5IQ=;
-        b=O45J1pSNetUeKfCgsij5th/d99JOKbHd+tVW4VF5reN+D3rKf6JGj6E4+WrqRCGpRI
-         KqjU/Tjb42RK/PBILDF+OW57Hm/nSCHmpQ48CnOjvoHro4rps6lpgIfDvDVzxhkLStmC
-         UEkH+OKjjvPGKpSPoDYkdBqQmAFCtR+1ipoLlbzo+1RZkKZwchZWr7NkFSrpoZtgn1TB
-         +U2c5TN6rSAXlJ8J79QRJ0Q3rmOz4ts6dhmuS8uME7tE/36+V+xHvOB7PBVEcQE4DXVz
-         mY+9WQMlfaqOX2fMolMcPGRvYGmRhl2F1su3CXYhax8d+UGwzfFxDwbsMuI7WECtRZ0l
-         69KA==
-X-Gm-Message-State: AOAM530nhVTdyiVT2PyUBvlNpybx0bhUovKCryO130QdWxk0ds4beKVw
-        KhA7ikPKeOKjJdxljwMErsCjeGNVJ+JuBZIE
-X-Google-Smtp-Source: ABdhPJy2x31gSzQ1qmersN1hpOk8ZGgNSwRfhitJ+gXCi9txjO7T2Bnr03QHTiWWxuG+a3civNBSGQ==
-X-Received: by 2002:a05:6102:3f48:: with SMTP id l8mr8844845vsv.3.1636445383130;
-        Tue, 09 Nov 2021 00:09:43 -0800 (PST)
-Received: from mail-ua1-f54.google.com (mail-ua1-f54.google.com. [209.85.222.54])
-        by smtp.gmail.com with ESMTPSA id v1sm3142603uac.18.2021.11.09.00.09.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 09 Nov 2021 00:09:42 -0800 (PST)
-Received: by mail-ua1-f54.google.com with SMTP id t13so21585802uad.9;
-        Tue, 09 Nov 2021 00:09:42 -0800 (PST)
-X-Received: by 2002:a67:c38f:: with SMTP id s15mr9356518vsj.50.1636445382453;
- Tue, 09 Nov 2021 00:09:42 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=unuXmXs/dvGgqVqGq+uRDlZebRR93xnb/ylYDWpJ5xg=;
+        b=Y8zpcXG4HJbKTVe44fn84OnnRcRX8dKelRwjsmFs/LuFRMIExmKC7XH/0zKcIAI4Qz
+         Lo3mpkXST//SprP4WaMSZnshz01HJ6qY22vDvolbL2Uweau1glxdsDViVAJQvdXfqMs7
+         bcdk1xU2WDqN6ibrAuBiYk7dev0S/2E8be6dqcB34ukCQqVVYRIYScU/FT6jPURV5k+n
+         mtDClNRq6yZUoIdV/a7EcWoTj7ickbA+g4EAxaQAKOGu+lIiVYBXN9gXd2uH0grFLD90
+         DLUsIwlQeZK6SzPnD27DBVttepN9h+tjK+jt4xfeaxhsoKBCAwaNlmDrNQofdxo/B0i4
+         9MqQ==
+X-Gm-Message-State: AOAM533ggja/f5cpq5ltgsLHo06FRHzAoX2P1hoB8Pke565+F3DV6lPE
+        UBBPXR9kMUaiV5IZ8WWqrPQWsr0vKiA=
+X-Google-Smtp-Source: ABdhPJx28T6WgUKO8jYf/Kat6J64nSuGuYoxtKadTtBdt0Nzv6aiBc5KG+k7HjqX2BXIzhYcsnyIdQ==
+X-Received: by 2002:a05:6000:2a3:: with SMTP id l3mr7131173wry.415.1636446660558;
+        Tue, 09 Nov 2021 00:31:00 -0800 (PST)
+Received: from localhost.localdomain.at (62-178-82-229.cable.dynamic.surfer.at. [62.178.82.229])
+        by smtp.gmail.com with ESMTPSA id v185sm1821600wme.35.2021.11.09.00.30.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 09 Nov 2021 00:30:59 -0800 (PST)
+From:   Christian Gmeiner <christian.gmeiner@gmail.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Christian Gmeiner <christian.gmeiner@gmail.com>,
+        Ohad Ben-Cohen <ohad@wizery.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        linux-remoteproc@vger.kernel.org
+Subject: [RFC PATCH 0/1] rpmsg: syslog driver
+Date:   Tue,  9 Nov 2021 09:30:43 +0100
+Message-Id: <20211109083051.17831-1-christian.gmeiner@gmail.com>
+X-Mailer: git-send-email 2.33.1
 MIME-Version: 1.0
-References: <20211027073020.17055-1-julien.massot@iot.bzh> <20211027073020.17055-4-julien.massot@iot.bzh>
- <20211108184252.GA1971795@p14s>
-In-Reply-To: <20211108184252.GA1971795@p14s>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Tue, 9 Nov 2021 09:09:31 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdWZTXp5O56wkf3Lesd4jDv4tvhpKfagq3uUW5qNTNYdOQ@mail.gmail.com>
-Message-ID: <CAMuHMdWZTXp5O56wkf3Lesd4jDv4tvhpKfagq3uUW5qNTNYdOQ@mail.gmail.com>
-Subject: Re: [RFC PATCH 3/3] remoteproc: Add Renesas rcar driver
-To:     Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc:     Julien Massot <julien.massot@iot.bzh>,
-        =?UTF-8?Q?Bj=C3=B6rn_Andersson?= <bjorn.andersson@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "open list:REMOTE PROCESSOR (REMOTEPROC) SUBSYSTEM" 
-        <linux-remoteproc@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Mon, Nov 8, 2021 at 7:42 PM Mathieu Poirier
-<mathieu.poirier@linaro.org> wrote:
-> On Wed, Oct 27, 2021 at 09:30:20AM +0200, Julien Massot wrote:
-> > Renesas Gen3 platform includes a Cortex-r7 processor.
-> >
-> > Both: the application cores (A5x) and the realtime core (CR7)
-> > share access to the RAM and devices with the same address map,
-> > so device addresses are equal to the Linux physical addresses.
-> >
-> > In order to initialize this remote processor we need to:
-> > - power on the realtime core
-> > - put the firmware in a ram area
-> > - set the boot address for this firmware (reset vector)
-> > - Deassert the reset
-> >
-> > This initial driver allows to start and stop the Cortex R7
-> > processor.
-> >
-> > Signed-off-by: Julien Massot <julien.massot@iot.bzh>
+I am sending this patch as RFC I am am aware that this is
+not ready for inclusion. I am however want to get some
+feedback on this choosen approach. In the end I want to be
+able to get log messages from the remote firmware into syslog.
 
-> > --- a/drivers/remoteproc/Kconfig
-> > +++ b/drivers/remoteproc/Kconfig
-> > @@ -261,6 +261,17 @@ config QCOM_WCNSS_PIL
-> >         verified and booted with the help of the Peripheral Authentication
-> >         System (PAS) in TrustZone.
-> >
-> > +config RCAR_REMOTEPROC
-> > +     tristate "Renesas RCAR remoteproc support"
->
-> It is probably a good idea to include the type of SoC being supported, something
-> like:
->
->         tristate "Renesas Gen3 RCAR remoteproc support"
+Christian Gmeiner (1):
+  rpmsg: add syslog driver
 
-R-Car Gen3 please
+ drivers/rpmsg/Kconfig  | 8 ++++++++
+ drivers/rpmsg/Makefile | 1 +
+ 2 files changed, 9 insertions(+)
 
-> That will make it easier to support future RCAR processors that may not share
-> the same architecture.
+-- 
+2.33.1
 
-> > --- /dev/null
-> > +++ b/drivers/remoteproc/rcar_rproc.c
-
-> > +static int rcar_rproc_probe(struct platform_device *pdev)
-> > +{
-> > +     struct device *dev = &pdev->dev;
-> > +     struct device_node *np = dev->of_node;
-> > +     struct rcar_rproc *priv;
-> > +     struct rproc *rproc;
-> > +     int ret;
-> > +
-> > +     rproc = rproc_alloc(dev, np->name, &rcar_rproc_ops,
-> > +                         NULL, sizeof(*priv));
-> > +     if (!rproc)
-> > +             return -ENOMEM;
-> > +
-> > +     priv = rproc->priv;
-> > +     priv->rproc = rproc;
->
-> I don't see rcar_rproc::rproc being used anywhere.
->
-> > +     priv->dev = dev;
-> > +
-> > +     priv->rst = devm_reset_control_get_exclusive(&pdev->dev, NULL);
-> > +     if (IS_ERR(priv->rst)) {
-> > +             ret = PTR_ERR(priv->rst);
-> > +             dev_err(dev, "fail to acquire rproc reset\n");
-> > +             goto free_rproc;
-> > +     }
-> > +
-> > +     pm_runtime_enable(priv->dev);
-> > +     ret = pm_runtime_get_sync(priv->dev);
->
-> There is no dev_pm_ops for the platform driver nor clocks to manage for this
-> device - is there something that requires pm_runtime operations to be called?
-
-Given
-
-    cr7_rproc: cr7 {
-        compatible = "renesas,rcar-cr7";
-        memory-region = <&cr7_ram>;
-        power-domains = <&sysc R8A7795_PD_CR7>;
-        resets = <&cpg 222>;
-        status = "okay";
-    };
-
-the pm_runtime_get_sync() is intended to power the CR7 power domain,
-right?
-
-However, I have my doubt about the (bindings for) that node, as it
-does not represent the hardware.  Shouldn't the Cortex R7 have its
-own CPU node instead, with an appropriate enable-method?
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
