@@ -2,56 +2,56 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43BEEC433EF
-	for <linux-remoteproc@archiver.kernel.org>; Tue,  9 Nov 2021 08:31:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5244BC433EF
+	for <linux-remoteproc@archiver.kernel.org>; Tue,  9 Nov 2021 08:39:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2B2F3611C1
-	for <linux-remoteproc@archiver.kernel.org>; Tue,  9 Nov 2021 08:31:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 36F29611BD
+	for <linux-remoteproc@archiver.kernel.org>; Tue,  9 Nov 2021 08:39:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244079AbhKIIdw (ORCPT
+        id S242139AbhKIImR (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 9 Nov 2021 03:33:52 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59294 "EHLO
+        Tue, 9 Nov 2021 03:42:17 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33128 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244073AbhKIIdv (ORCPT
+        with ESMTP id S237880AbhKIImR (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 9 Nov 2021 03:33:51 -0500
-Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 94B87C061766;
-        Tue,  9 Nov 2021 00:31:05 -0800 (PST)
-Received: by mail-wr1-x433.google.com with SMTP id d24so31574470wra.0;
-        Tue, 09 Nov 2021 00:31:05 -0800 (PST)
+        Tue, 9 Nov 2021 03:42:17 -0500
+Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DE40EC061764;
+        Tue,  9 Nov 2021 00:39:31 -0800 (PST)
+Received: by mail-wm1-x336.google.com with SMTP id d72-20020a1c1d4b000000b00331140f3dc8so1667322wmd.1;
+        Tue, 09 Nov 2021 00:39:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=s0IKHA14fyfH6614d1MLit1k252lJikwUDfjSyF9sD4=;
-        b=E6Hj8nsb6ona45YrTSPoMfGXmM9mqwDdNgWFKLMbkZ9FLzu3CrXtZKeg73X1xSsBu+
-         dVpyJV/bgsS1YapHj/gCRJAhL7tT2veJRCPl79gUVFnRF+PLEvVjxRa7dlyRWFu+AQrL
-         YJrQufW36LbeQ+USDh+QGGszGFZ2idKF1JNMPvIgLViyG8CHy4sSG2f3fuxwHqdZGKXB
-         kl9T1Vt8OgIVPPYWiWzI52hReinv0S1lhH/A9j9EWj4bvikdYFySfjcPYEPJc7Z9Lutq
-         BHnjlvWixRbbnl9RnqQeAPeKDyyRMbaFkBWqnZ2J7XR/w22+A7suuoxGVm2CEpZjCv2a
-         yVtg==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=xUMx2SzpISmAUmDxXrL4U6V2fvsKDrKV28VBdFMbGfg=;
+        b=ADYGiTOE7NGgfZHzddoLpEL6GrE0faIPVBEeuNA21DoSVt0YcjI59y+htJSOiGzFS9
+         ug+z/lYhUCeLiPQhMoNVDVTjMMO1e+mqg8SYc7AI7Y/cuBoDH9S5yYN9u/5iG+PLyErH
+         cXGyAXy/zg93FE6s1J4mknvJA0GkaIc4zV9AAdLU5CxWWrAEyq1OfeiKvSRnuJd9b4KG
+         PWcSF95FTSRl0915eWGv0KyBmztybe7JyXy4qpnvFZ0lV6O5mMIUqMsXyVjYJLAkstv1
+         juX9PoZXOmaijSVCtMKY9b9ewLol3NmFtCwYyaT4GjxXOUEBp/h4cssA7fyNIO43xDWG
+         ONOA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=s0IKHA14fyfH6614d1MLit1k252lJikwUDfjSyF9sD4=;
-        b=MBf+S+3LGReorGRYWtc5zK1wu7LGeCqIIUwgAg1eMo+lvHNEtqfurd1Kcz/lmaO03M
-         8YPdfGOI8hqamE4m5K2rply3JoVt4Ew3sphS7ApzdL+LvvwrT0OF8kDmmP0ge2fF2uWz
-         BvY+0secwoKJ371OEoJngR8tAG1OXdvXmBdhfQdSavhzk32sjUzgQwlEXJEfu9dpFmVk
-         E6C2crixZDDxkx9qBI+ULcedufy95SER4LQWPwSxGPd++Q0JOrNuNAFM63IxJEv+70G8
-         2CtJqBczJubJuH2QomS8Mnw1YRlHLsyldZgxXcZON2fMNAYO7OIlZrPgQFF/tzfNJ84X
-         xwrw==
-X-Gm-Message-State: AOAM532OklFSXfmJ5yqy73QMOfxuI36s4mv5KNc4j0wlJHGRRHyNe2Vj
-        WaQQQB5tPjDtDNGNeD49pBOgkBOMgoQ=
-X-Google-Smtp-Source: ABdhPJz9ZwtCQbgEDklrL6PF0o4INiZ9dJFQn38KrbMCIQeH6jtTxgNqRJ7ktnJkzD89gwSJv2wMlQ==
-X-Received: by 2002:adf:ed83:: with SMTP id c3mr6941656wro.169.1636446664027;
-        Tue, 09 Nov 2021 00:31:04 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=xUMx2SzpISmAUmDxXrL4U6V2fvsKDrKV28VBdFMbGfg=;
+        b=2LMVnR+wquE7QJ00KWUosDg9iBViTRrpTDOBcMsiG7rdlfOM11qXGfxK98OcJtQykx
+         pXqdQ4z9dfCczE3iBbtDVGb5/cwooP4Iv/BZnM0ZqCFSXuqPfJEhKB7y7n6teTz7SEyD
+         T9SXy1yHoFd0j0IVSYxCIsbwyHR6dtPVNA8rb0ok0ebtYT1ZkLVZm0hDmbNmeXpoQ03x
+         rJkaKh1dqZdJSW7BjMjfq1fYz+Fw4w4Z5aIqPybBbhAgqwvxwqw2TPuXh9MfrKZmRnaA
+         BY7eicvlpgZsVq+P4WaTr6OEGHRbcL/zXs+mBitNrJKFqW4r7ApFHe/Awtw1rmKLFMQe
+         LyhA==
+X-Gm-Message-State: AOAM533oZw4NKNMt0Btnzxw+PTFSAaXmeUUP+eeOGr7Ij9IHMNeHCpUb
+        l4U59sebcc86Gag/RG+0fJOB28XYJV0=
+X-Google-Smtp-Source: ABdhPJyA3t1YVxqVxH31o6CjuvgwZfEowYNuxeTZ4ETu3zQHqok2lhkQ8lLGk20DIi9ynDYP3iIsPg==
+X-Received: by 2002:a1c:cc09:: with SMTP id h9mr5417541wmb.191.1636447170290;
+        Tue, 09 Nov 2021 00:39:30 -0800 (PST)
 Received: from localhost.localdomain.at (62-178-82-229.cable.dynamic.surfer.at. [62.178.82.229])
-        by smtp.gmail.com with ESMTPSA id v185sm1821600wme.35.2021.11.09.00.31.03
+        by smtp.gmail.com with ESMTPSA id q26sm19086055wrc.39.2021.11.09.00.39.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Nov 2021 00:31:03 -0800 (PST)
+        Tue, 09 Nov 2021 00:39:29 -0800 (PST)
 From:   Christian Gmeiner <christian.gmeiner@gmail.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     Christian Gmeiner <christian.gmeiner@gmail.com>,
@@ -59,52 +59,30 @@ Cc:     Christian Gmeiner <christian.gmeiner@gmail.com>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
         linux-remoteproc@vger.kernel.org
-Subject: [RFC PATCH 1/1] rpmsg: add syslog driver
-Date:   Tue,  9 Nov 2021 09:30:44 +0100
-Message-Id: <20211109083051.17831-2-christian.gmeiner@gmail.com>
+Subject: [RFC PATCH v2 0/1] rpmsg: syslog driver
+Date:   Tue,  9 Nov 2021 09:39:20 +0100
+Message-Id: <20211109083926.32052-1-christian.gmeiner@gmail.com>
 X-Mailer: git-send-email 2.33.1
-In-Reply-To: <20211109083051.17831-1-christian.gmeiner@gmail.com>
-References: <20211109083051.17831-1-christian.gmeiner@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Allows the remote firmware to log into syslog.
+I am sending this patch as RFC I am am aware that this is
+not ready for inclusion. I am however want to get some
+feedback on this choosen approach. In the end I want to be
+able to get log messages from the remote firmware into syslog.
 
-Signed-off-by: Christian Gmeiner <christian.gmeiner@gmail.com>
----
- drivers/rpmsg/Kconfig  | 8 ++++++++
- drivers/rpmsg/Makefile | 1 +
- 2 files changed, 9 insertions(+)
+Christian Gmeiner (1):
+  rpmsg: add syslog driver
 
-diff --git a/drivers/rpmsg/Kconfig b/drivers/rpmsg/Kconfig
-index 0b4407abdf13..801f9956ec21 100644
---- a/drivers/rpmsg/Kconfig
-+++ b/drivers/rpmsg/Kconfig
-@@ -73,4 +73,12 @@ config RPMSG_VIRTIO
- 	select RPMSG_NS
- 	select VIRTIO
- 
-+config RPMSG_SYSLOG
-+	tristate "SYSLOG device interface"
-+	depends on RPMSG
-+	help
-+	  Say Y here to export rpmsg endpoints as device files, usually found
-+	  in /dev. They make it possible for user-space programs to send and
-+	  receive rpmsg packets.
-+
- endmenu
-diff --git a/drivers/rpmsg/Makefile b/drivers/rpmsg/Makefile
-index 8d452656f0ee..75b2ec7133a5 100644
---- a/drivers/rpmsg/Makefile
-+++ b/drivers/rpmsg/Makefile
-@@ -9,3 +9,4 @@ obj-$(CONFIG_RPMSG_QCOM_GLINK_RPM) += qcom_glink_rpm.o
- obj-$(CONFIG_RPMSG_QCOM_GLINK_SMEM) += qcom_glink_smem.o
- obj-$(CONFIG_RPMSG_QCOM_SMD)	+= qcom_smd.o
- obj-$(CONFIG_RPMSG_VIRTIO)	+= virtio_rpmsg_bus.o
-+obj-$(CONFIG_RPMSG_SYSLOG)	+= rpmsg_syslog.o
+ drivers/rpmsg/Kconfig        |  8 +++++
+ drivers/rpmsg/Makefile       |  1 +
+ drivers/rpmsg/rpmsg_syslog.c | 65 ++++++++++++++++++++++++++++++++++++
+ 3 files changed, 74 insertions(+)
+ create mode 100644 drivers/rpmsg/rpmsg_syslog.c
+
 -- 
 2.33.1
 
