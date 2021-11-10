@@ -2,168 +2,171 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BF3BC433EF
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 10 Nov 2021 08:54:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD656C433F5
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 10 Nov 2021 15:02:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1582F611C0
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 10 Nov 2021 08:54:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A5DFD60F90
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 10 Nov 2021 15:02:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230290AbhKJI46 (ORCPT
+        id S232556AbhKJPF2 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 10 Nov 2021 03:56:58 -0500
-Received: from mail-eopbgr70042.outbound.protection.outlook.com ([40.107.7.42]:52806
-        "EHLO EUR04-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S229831AbhKJI45 (ORCPT <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 10 Nov 2021 03:56:57 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=L8QPQpQSdhG+3BNTgPxAjiRvHTFGNMkOSNj6fw/jYY1wQKscQa7Z0ZdEYXCQRoeQXvgs0ojYHfZSvc80ifIO1CNSYMA0wWLDFkjjfzHWG3J08WUoBKMnUrEsqk/aDakg+7jm83rpYKBDWU93Yk/IDPvulaf+wVEDUiezZPjZmltMh0C/BxYYeg0yTUeM1w8+mv3KjBg5RibXa03FYTWrCpCjdeH1Y9ohS9epjjip+C8fvyHQWdaTi06HNjqNHgjPjDpP5ZARcE8Zzx0bxmDfdURlUUR/2RL9ufdeZwdw67Znp9LqalHQsMahWkXdz/uId/x50gdwRL6J0RUKHt5TuQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=VPJGlVpRTlQIc4bAx8wb1jvxVDTiIkItfkJZW6a3+44=;
- b=oeH/Zo6NS5HUslEnjfWwRnNJ/+6xAvQsRRciJTLBls8UxfmyCv3nPVoH5Qal6JUXCpKqDTo441JijHxaTYK1P1BNuNbjcdX074ybV4/mXCIGayKOqBqib0Zb3JhjUzW2rHqOlcTqx2MJcqqTOq1IHKGVuEIgwZfn/H3etowQssQorhuzZwupUbOL2Tk5afSrocYSs/ahe+kk8qYaWvEHXG4GH6bh71TukIJ+1SiF0Ll4fKZswKediJMHWCHMo2DSSo9cV7UaGb1qrj4+nGLv+i6Q7f9jXQUReEStrRmpLN2Hs1YeCPxNGJGDeHKMRsZlXHgcyHqdUb3EYLUDtlMNfg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=VPJGlVpRTlQIc4bAx8wb1jvxVDTiIkItfkJZW6a3+44=;
- b=A1GEBBkSCp2bS0LKH3h/aJF4mVszJ4HKYDwvMoAbfsgjeg5oGuTdKTy/WEXAzNUACmXCO0Mca4ruWJBQ0Nr9pMq+pq7XL4PbONFmC7NX8c+2Pd4Ulkgpa6wOjo0AJ7a4vbrHZ0ezdNSJ1F+m3luS+bBXzoIgbLcj1aXEbxMxIII=
-Received: from DU0PR04MB9417.eurprd04.prod.outlook.com (2603:10a6:10:358::11)
- by DB9PR04MB9332.eurprd04.prod.outlook.com (2603:10a6:10:36c::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4690.15; Wed, 10 Nov
- 2021 08:54:08 +0000
-Received: from DU0PR04MB9417.eurprd04.prod.outlook.com
- ([fe80::82e:6ad2:dd1d:df43]) by DU0PR04MB9417.eurprd04.prod.outlook.com
- ([fe80::82e:6ad2:dd1d:df43%9]) with mapi id 15.20.4669.016; Wed, 10 Nov 2021
- 08:54:08 +0000
-From:   Peng Fan <peng.fan@nxp.com>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        "ohad@wizery.com" <ohad@wizery.com>,
-        "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>,
-        "mathieu.poirier@linaro.org" <mathieu.poirier@linaro.org>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        Hongxing Zhu <hongxing.zhu@nxp.com>
-CC:     "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
+        Wed, 10 Nov 2021 10:05:28 -0500
+Received: from mx07-00178001.pphosted.com ([185.132.182.106]:45776 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232374AbhKJPFI (ORCPT
+        <rfc822;linux-remoteproc@vger.kernel.org>);
+        Wed, 10 Nov 2021 10:05:08 -0500
+Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.1.2/8.16.1.2) with ESMTP id 1AAEQeW4017950;
+        Wed, 10 Nov 2021 16:01:53 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=from : to : cc :
+ subject : date : message-id : in-reply-to : references : mime-version :
+ content-type; s=selector1;
+ bh=N5V+BbtvYrsb+kqmfbPEbma9cqG0GoeZx3DzAXMNF24=;
+ b=IB2xpbz84oqAquUfdJaKwITkZVLAMk1Rp7HR3B0qfOJN5/kJ0nUP+gl31WA/m5xXIfYO
+ aRJgliij5QJMLPFqHzYqYStiVGzCIOpp8NfpWy4LShFpRkbPzkwXtNQ9qpMZzDdVVGQX
+ AcUF7IlqlPtP4R0Q7FTHzqMq2ZRPaKab5KpswqmoTpKsA0uJyZ56QQ1cXrPTwV0ZURPf
+ nqEfS0GhBdFrW+KwiPp8t6pmqS8nN+55TjdoM0Yac0/bZNO+zmaWcQmB7oFoBA7sqRRZ
+ w7sSQ7lvhpXQN3BMtIaZcuQwXG2p0uHBFnlLroDS3GZcwMobyCtv3Bj30BEM5uc2ssk3 6w== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3c7ufnfufs-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 10 Nov 2021 16:01:53 +0100
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 8B487100038;
+        Wed, 10 Nov 2021 16:01:52 +0100 (CET)
+Received: from Webmail-eu.st.com (sfhdag2node2.st.com [10.75.127.5])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 79616207568;
+        Wed, 10 Nov 2021 16:01:52 +0100 (CET)
+Received: from localhost (10.75.127.51) by SFHDAG2NODE2.st.com (10.75.127.5)
+ with Microsoft SMTP Server (TLS) id 15.0.1497.18; Wed, 10 Nov 2021 16:01:51
+ +0100
+From:   <patrice.chotard@foss.st.com>
+To:     Rob Herring <robh+dt@kernel.org>,
+        maxime coquelin <mcoquelin.stm32@gmail.com>,
+        alexandre torgue <alexandre.torgue@foss.st.com>,
+        michael turquette <mturquette@baylibre.com>,
+        stephen boyd <sboyd@kernel.org>,
+        herbert xu <herbert@gondor.apana.org.au>,
+        "david s . miller" <davem@davemloft.net>,
+        david airlie <airlied@linux.ie>,
+        daniel vetter <daniel@ffwll.ch>,
+        thierry reding <thierry.reding@gmail.com>,
+        sam ravnborg <sam@ravnborg.org>,
+        yannick fertre <yannick.fertre@foss.st.com>,
+        "philippe cornu" <philippe.cornu@foss.st.com>,
+        benjamin gaignard <benjamin.gaignard@linaro.org>,
+        vinod koul <vkoul@kernel.org>,
+        ohad ben-cohen <ohad@wizery.com>,
+        bjorn andersson <bjorn.andersson@linaro.org>,
+        baolin wang <baolin.wang7@gmail.com>,
+        jonathan cameron <jic23@kernel.org>,
+        "lars-peter clausen" <lars@metafoo.de>,
+        olivier moysan <olivier.moysan@foss.st.com>,
+        arnaud pouliquen <arnaud.pouliquen@foss.st.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Marc Zyngier <maz@kernel.org>,
+        Jassi Brar <jassisinghbrar@gmail.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hugues Fruchet <hugues.fruchet@foss.st.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Fabrice Gasnier <fabrice.gasnier@foss.st.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        "Miquel Raynal" <miquel.raynal@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Matt Mackall <mpm@selenic.com>,
+        "Alessandro Zummo" <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Amit Kucheria <amitk@kernel.org>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Patrice Chotard <patrice.chotard@foss.st.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Ahmad Fatoum <a.fatoum@pengutronix.de>,
+        Jagan Teki <jagan@amarulasolutions.com>,
+        "dillon min" <dillon.minfei@gmail.com>,
+        Marek Vasut <marex@denx.de>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Sebastian Reichel <sre@kernel.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Paul Cercueil <paul@crapouillou.net>,
+        Fabien Dessenne <fabien.dessenne@foss.st.com>,
+        Christophe Roullier <christophe.roullier@foss.st.com>,
+        Gabriel Fernandez <gabriel.fernandez@foss.st.com>,
+        Lionel Debieve <lionel.debieve@foss.st.com>,
+        Amelie Delaunay <amelie.delaunay@foss.st.com>,
+        Pierre-Yves MORDRET <pierre-yves.mordret@foss.st.com>,
+        Ludovic Barre <ludovic.barre@foss.st.com>,
+        Christophe Kerello <christophe.kerello@foss.st.com>,
+        pascal Paillet <p.paillet@foss.st.com>,
+        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+        "Jose Abreu" <joabreu@synopsys.com>,
+        Le Ray <erwan.leray@foss.st.com>
+CC:     <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
         <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
-Subject: RE: [PATCH] remoteproc: imx_rproc: Fix a resource leak in the remove
- function
-Thread-Topic: [PATCH] remoteproc: imx_rproc: Fix a resource leak in the remove
- function
-Thread-Index: AQHXwllGUAnFZVoMdkqW8DriEOlDKqv8nCWw
-Date:   Wed, 10 Nov 2021 08:54:07 +0000
-Message-ID: <DU0PR04MB94173DCAA87A0B24E1C7073388939@DU0PR04MB9417.eurprd04.prod.outlook.com>
-References: <d28ca94a4031bd7297d47c2164e18885a5a6ec19.1634366546.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <d28ca94a4031bd7297d47c2164e18885a5a6ec19.1634366546.git.christophe.jaillet@wanadoo.fr>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 1d357e0b-31e2-4a1b-e69d-08d9a427a816
-x-ms-traffictypediagnostic: DB9PR04MB9332:
-x-microsoft-antispam-prvs: <DB9PR04MB93322D0CCFE135A90DF22B1588939@DB9PR04MB9332.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:5516;
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: I3Fxnq0cnbf+pPZrPIdF3GnzioLD4LMVRZE+pp8m7sWEBH5plGVPtQvfd8cJlSwtAHodQ/PeH+zdgSu8ClRbNpj6r3YHwXB57LkMiAW9XVoFiiwyJh2V4cJPXWyMMghokXJRX10xVJOiN3hqJEvkjqi9ah32baUmZb3Wq9BmwQvS6nGPY0rNjwCzREVn6OHWvFUAS9xF4bmKqntAj2cseWorYTTB1rOukY+8He6dYNei0GPv5a+XRI8tbijQHQI/skfjmZHCBfHpdFPPIvyDAFb+Y0YYyhkce+w7dRhhdfPz9TpkXoDhGNfxbfcZdZkVhIapB5cBWB4vP4KFWiYjfdl8tMF1MfiCkt1hUwtfLRuAR6vbUHbWGu4z3uUokEDPbPD1lp4HtkxjlOn2q3hzHAm6GyWyPi2DdVWTdZUc+pq+Z5T6SyHasH8TdeHYTyto9JjBkqekZ2Bq/Z5r2jdY9sTYyRFvQ1bKBEVmaLrdRnTezZu/FXXM1Pjb2nFiqr8Zv4H/7dTMHsILaDRG/YgC7eKQ/l70jl+RtohmdoLJeO98gMlUF3vEwao3cBlE1lK7IzeK/AsuTYzaeWxHBtMQZbxJ2v04uXshAZ7RHhGPguCYiETJ2rpH75mYsJpVX1ZWu7ulLlyoADYmWuY2DLcG+LRMPhuhdkpDFiUaANLMBDL5m0Tc6ywFJgy92joQekr5/u+nm88li8rJUZjPkEVK+7t2tCL1N0X/a1wy8i9Zrdw=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU0PR04MB9417.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(366004)(33656002)(7696005)(4326008)(6506007)(71200400001)(44832011)(54906003)(6636002)(83380400001)(921005)(55016002)(66946007)(2906002)(86362001)(66446008)(5660300002)(508600001)(7416002)(38070700005)(8936002)(38100700002)(66476007)(316002)(66556008)(122000001)(9686003)(64756008)(26005)(8676002)(110136005)(186003)(76116006)(52536014);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?JwKq05RSndWRDBSsR5u34sLzz456gBbDfkNgfQB/xCaMRyW09HE4mMHuV4uP?=
- =?us-ascii?Q?AtflUb/10JgV299DaCZFRQTsZL57mErCGqm9Y5MPdCrV+j9GMX+1RmTQJDJR?=
- =?us-ascii?Q?CoXrjh8nrVsXzY+MdNY0C4zrfWRQdJRAg4yd5T4GZet5fBxF93yVgo1yq51d?=
- =?us-ascii?Q?O6tKMF9baTdU4hEMQs/802CAs+tLZyK5WInPk8Avr21ZNxmUKqF+zMVtVQVQ?=
- =?us-ascii?Q?mtYJnmSV/Fng1jB/aepECiH1QlCcl581uBCTU4m3dnHc+E7t/q70HIIIexOo?=
- =?us-ascii?Q?dMXdclpN90NnFiZAXsz0h4y6YxP2QEli96v4PW6HZ4dqpDUBQPtKr29PcGpP?=
- =?us-ascii?Q?OJbERzeDhVVIrC+NvPGIEdcOTstbbMhlLm54H8GJzwlpuxH9dJEuj7w54MfV?=
- =?us-ascii?Q?Qu5YlouvB8IHTOEs0XdPdi0HZUiMnB4jfSvWsa/1L7k22UKLb2U2UsB+7KI5?=
- =?us-ascii?Q?XjZBPaxgN7Z6P64uJ+KaUYRSNwx6weFBnPEyPIRjjI54N8J2+ZixeFEGIq11?=
- =?us-ascii?Q?bS+Ki82nUjzPHtoqVrQaEdyJmJNLfhrTdoxPQijbDNg+CKLvKXkvjgrt3Bvj?=
- =?us-ascii?Q?jehTEstLZTm56zZnDjQmRHkzdQSpUuWZfmFvO35hyonQCPVcf6fmeo9nLe1Z?=
- =?us-ascii?Q?4YCHJhQbV0igT7kK2mLnkcaFGadF0/iX4dTS1I4pti93sNL7xWnA/o3Sla6a?=
- =?us-ascii?Q?8iTR/B0DlFNl70R/cfudM5tx5nj4c99HvI6fIx1jlmZmd/8e9bfnLVQLV9nj?=
- =?us-ascii?Q?BC8l9qK3iHndfSMi7Qq0z3o4vJtWmA7r5JGz83Nd4PFFMPUDqtar2o0qdMYJ?=
- =?us-ascii?Q?2F/9C23tprdhIup1D5I/i5cPH99T6Q3t07QtjzU003xm4DTO5dv+WhJnRNT8?=
- =?us-ascii?Q?2CNWIp4tleTlhfwonk3ZecD8aA2I1cKeDDAR3eBfcTWXEisA4wroFjegl2EW?=
- =?us-ascii?Q?sKGTpzKzAhuiLwtm2/E+IbkyvVrFflVXhgF/mUcb0ULOp1C/Sug4N+5ltbB7?=
- =?us-ascii?Q?6xhpVEqbEKb3XL0g2CyygzJrL5+kHWZxSibaUuXIdowxmaVPaBcjgUCvCTbJ?=
- =?us-ascii?Q?KyDUrJ0/R2T9WUgIfUZa1lce2wU6UhZsPFNV2Hm58aozsWyB/tOoGG73BBk8?=
- =?us-ascii?Q?t77elgn7lXbpce/Y9Tf5kCx5d0Acqv9UVz1LJ7+0sCqeqULjkYZBHWERUVNK?=
- =?us-ascii?Q?mJwjBYK91eq9PQB57nbS3aEXTBPOVauhQpbTGHYaS8aOLryiqIQmfL09vQ8A?=
- =?us-ascii?Q?zXlTfbPxoDI+4hOIQWRVqxQU+I9bRfQccT0Q8v5MKM2HkMw8M4gwEC7Z4M1V?=
- =?us-ascii?Q?bXSxHL6QbyjnznDe1YJUAcD4zDaQyHQ9IcwHY59AmgTED9lq3j5uv6avIsTy?=
- =?us-ascii?Q?cU/MvcIOdHU3Bqd7jU/2lOOWMNWAx66gWdk0ftHLzT/cV/jU2ZVdM82TgmeV?=
- =?us-ascii?Q?KJTfEZCZxm3XC0VxFLoQNVQHeokTeiDlvx3oGMBRaVtf7l0q27aRBW1+6tQN?=
- =?us-ascii?Q?U0wXMCABuqQgsi2ByiMzsfwyNMHbQMZcfSHdQ0RJSYsN+WLWSTxg5VYv1xTs?=
- =?us-ascii?Q?s0jjOESejdJ1nyAYcaoAPKXSiXwb/gFaCykc0ru/QfKYCDb2HJbntoi8qADR?=
- =?us-ascii?Q?sBLkFSoOINJ5ErlIBG7M9oU=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        <linux-clk@vger.kernel.org>, <linux-crypto@vger.kernel.org>,
+        <dri-devel@lists.freedesktop.org>, <dmaengine@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>, <linux-i2c@vger.kernel.org>,
+        <linux-iio@vger.kernel.org>, <alsa-devel@alsa-project.org>,
+        <linux-media@vger.kernel.org>, <linux-mtd@lists.infradead.org>,
+        <netdev@vger.kernel.org>, <linux-phy@lists.infradead.org>,
+        <linux-gpio@vger.kernel.org>, <linux-rtc@vger.kernel.org>,
+        <linux-serial@vger.kernel.org>, <linux-spi@vger.kernel.org>,
+        <linux-pm@vger.kernel.org>, <linux-usb@vger.kernel.org>,
+        <linux-watchdog@vger.kernel.org>
+Subject: [PATCH v3 3/5] dt-bindings: media: Update maintainers for st,stm32-cec.yaml
+Date:   Wed, 10 Nov 2021 16:01:42 +0100
+Message-ID: <20211110150144.18272-4-patrice.chotard@foss.st.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20211110150144.18272-1-patrice.chotard@foss.st.com>
+References: <20211110150144.18272-1-patrice.chotard@foss.st.com>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: DU0PR04MB9417.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1d357e0b-31e2-4a1b-e69d-08d9a427a816
-X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Nov 2021 08:54:07.9771
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 6UTEEzzPCYnFvy7orr7PHjRIFMdjtumUuzwKcP5NL3FHHzXoVeqXWSBLtjLXwNH+/TyDnU3pYcg2+G5zIkNbLg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR04MB9332
+Content-Type: text/plain
+X-Originating-IP: [10.75.127.51]
+X-ClientProxiedBy: SFHDAG1NODE2.st.com (10.75.127.2) To SFHDAG2NODE2.st.com
+ (10.75.127.5)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.790,Hydra:6.0.425,FMLib:17.0.607.475
+ definitions=2021-11-10_05,2021-11-08_02,2020-04-07_01
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-> Subject: [PATCH] remoteproc: imx_rproc: Fix a resource leak in the remove
-> function
->=20
-> 'priv->workqueue' is destroyed in the error handling path of the probe bu=
-t not
-> in the remove function.
->=20
-> Add the missing call to release some resources.
->=20
-> Fixes: 2df7062002d0 ("remoteproc: imx_proc: enable virtio/mailbox")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+From: Patrice Chotard <patrice.chotard@foss.st.com>
 
-Reviewed-and-Tested-by: Peng Fan <peng.fan@nxp.com>
+Benjamin has left the company, remove his name from maintainers.
 
-> ---
-> This patch is speculative. I'm not sure if the added function call is at =
-the right
-> place in the remove function.
-> Review with care.
-> ---
->  drivers/remoteproc/imx_rproc.c | 1 +
->  1 file changed, 1 insertion(+)
->=20
-> diff --git a/drivers/remoteproc/imx_rproc.c
-> b/drivers/remoteproc/imx_rproc.c index ff8170dbbc3c..0a45bc0d3f73
-> 100644
-> --- a/drivers/remoteproc/imx_rproc.c
-> +++ b/drivers/remoteproc/imx_rproc.c
-> @@ -804,6 +804,7 @@ static int imx_rproc_remove(struct platform_device
-> *pdev)
->  	clk_disable_unprepare(priv->clk);
->  	rproc_del(rproc);
->  	imx_rproc_free_mbox(rproc);
-> +	destroy_workqueue(priv->workqueue);
->  	rproc_free(rproc);
->=20
->  	return 0;
-> --
-> 2.30.2
+Signed-off-by: Patrice Chotard <patrice.chotard@foss.st.com>
+---
+ Documentation/devicetree/bindings/media/st,stm32-cec.yaml | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/Documentation/devicetree/bindings/media/st,stm32-cec.yaml b/Documentation/devicetree/bindings/media/st,stm32-cec.yaml
+index d75019c093a4..33e47e371941 100644
+--- a/Documentation/devicetree/bindings/media/st,stm32-cec.yaml
++++ b/Documentation/devicetree/bindings/media/st,stm32-cec.yaml
+@@ -7,7 +7,6 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
+ title: STMicroelectronics STM32 CEC bindings
+ 
+ maintainers:
+-  - Benjamin Gaignard <benjamin.gaignard@st.com>
+   - Yannick Fertre <yannick.fertre@st.com>
+ 
+ properties:
+-- 
+2.17.1
 
