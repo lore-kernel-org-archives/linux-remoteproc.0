@@ -2,267 +2,115 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BFC3C4332F
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 17 Nov 2021 17:57:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95820C433F5
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 17 Nov 2021 18:57:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 61C9060FED
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 17 Nov 2021 17:57:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7C9C261212
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 17 Nov 2021 18:57:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239791AbhKQSAn (ORCPT
+        id S231894AbhKQTAT (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 17 Nov 2021 13:00:43 -0500
-Received: from mx07-00178001.pphosted.com ([185.132.182.106]:46792 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S239770AbhKQSAn (ORCPT
+        Wed, 17 Nov 2021 14:00:19 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34404 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S236388AbhKQTAP (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 17 Nov 2021 13:00:43 -0500
-Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.1.2/8.16.1.2) with ESMTP id 1AHE9Jup025138;
-        Wed, 17 Nov 2021 18:57:41 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=from : subject : to
- : cc : references : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=selector1;
- bh=4HIUPeHNHnT2ABWApLlxzCPqPmI2sh9D1w9nWA/LeDA=;
- b=lHkfaEE66Rg2UOcBB3K79s4XEBg61gOSQYK4xuk1Y7zBRtztfptRbWGy9T7UTZuo96uQ
- qBHGIdE9PGvYkoKnPp9BJ2ruFUmPlX6W4yM/w7WUU+5fXKA2GLtBWs7s7PiglwDr3Dbr
- hEi3aKHjT3ebFybTEse8eFxsRIPkBGKfe1VPy/hkBHBLChZNHRkDBwzQBNnsei1ZomGw
- NuV5Tw6Stzo8ZUq8R9A0zPHgq75TA4VouyChQ9YEKaLWPe7wi/g+/XB1uTuDDsaKYx5r
- 8D67lhdrMuvU/RuvQXDZrEdk+ZpcomHHwy/emut9FKTVJApRnzVbz0aOoCYmCfWcXDkt +g== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3ccxypk0t6-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 17 Nov 2021 18:57:41 +0100
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 4B84510002A;
-        Wed, 17 Nov 2021 18:57:40 +0100 (CET)
-Received: from Webmail-eu.st.com (sfhdag2node2.st.com [10.75.127.5])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 42EA32C41F2;
-        Wed, 17 Nov 2021 18:57:40 +0100 (CET)
-Received: from lmecxl0889.lme.st.com (10.75.127.44) by SFHDAG2NODE2.st.com
- (10.75.127.5) with Microsoft SMTP Server (TLS) id 15.0.1497.26; Wed, 17 Nov
- 2021 18:57:39 +0100
-From:   Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
-Subject: Re: [RFC PATCH v2 1/1] rpmsg: add syslog driver
-To:     Christian Gmeiner <christian.gmeiner@gmail.com>
-CC:     LKML <linux-kernel@vger.kernel.org>,
-        Ohad Ben-Cohen <ohad@wizery.com>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        <linux-remoteproc@vger.kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>
-References: <20211109083926.32052-1-christian.gmeiner@gmail.com>
- <20211109083926.32052-2-christian.gmeiner@gmail.com>
- <YYq4tjyv0qh+Zpqe@ripper> <30de037d-3acd-8e9d-979c-b3d0c1c84002@foss.st.com>
- <CAH9NwWdy9WsaXW+XE06=yA9pGXGs_Ye6kRiNPMfM5D=Jd1rSGg@mail.gmail.com>
-Message-ID: <90704c5c-75fa-8eb1-ef2c-19073a5a8ac9@foss.st.com>
-Date:   Wed, 17 Nov 2021 18:57:39 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.14.0
+        Wed, 17 Nov 2021 14:00:15 -0500
+Received: from mail-ot1-x332.google.com (mail-ot1-x332.google.com [IPv6:2607:f8b0:4864:20::332])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 21ED9C061766
+        for <linux-remoteproc@vger.kernel.org>; Wed, 17 Nov 2021 10:57:16 -0800 (PST)
+Received: by mail-ot1-x332.google.com with SMTP id x43-20020a056830246b00b00570d09d34ebso6439373otr.2
+        for <linux-remoteproc@vger.kernel.org>; Wed, 17 Nov 2021 10:57:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=J0Ee9uS/yNgK0Q38kRm9WiYIRO1wJYHsfH9qjA2K+7w=;
+        b=kzHn6zBkFHRDLpiKcjHC6wdwdCAsiEWlU1A5ga8fIQG/NkKrfuEM8UZ3GubHSyljZi
+         dlmvBmBNnQT9teK9HvVXlqZvz+6UVAeg1BFSrCcJUtplhufu5Op8acDCURafV1GBgdfU
+         z1u1DnUZ8YuocgW5tefkx3WD5X6RKKxK4xOsVED+2Lzq87RbE6PuwJONo8w2o6CS+WxH
+         Zlo2jgIXcZRhHnYTxS3GURFTCVj5NmhUGUAd3ZaCaDItviXTrhJSz34JvZj0aP2CYB4o
+         sxtCxhNc/0Lnv3GnEHGqPMy42lbkh/09Dx+kOwc6UKyIoGh0FDOH8Le4th2dj5XVWYVf
+         dZtQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=J0Ee9uS/yNgK0Q38kRm9WiYIRO1wJYHsfH9qjA2K+7w=;
+        b=CZ/tjOg+QelT6SP419EEKXjemHumBsCz3is5H1SaGydvaRwg4L6/ZC41RcBpUOpYVT
+         lD0ADswFW9Or9hheluA8OSZsmtPQo1Fd87qf3G1SUnAoHjEfhiYCNGS8bvc37B7GM0FY
+         iJjTaGlgeQ0+LpJCmAZeiDyqCvJaXdQd/hx6p+E+44d/7WIRXfUTjuYYndHG2AiPZsiM
+         22MAiNAXKl3Ysv/UtcJP6WqLdImbmhinD+OGQhRwDqkJqeOK6KwjLduUtzJTsMpSq0bn
+         SJtRbeLxMpsgtVyhEPY6P1nAiGF9yaeNCHkyUwkbBhhmhe8OjXEFkLmci6rLOGnUmNw5
+         kOsg==
+X-Gm-Message-State: AOAM530fBsY7PBuOUl+sbd4ocjiR5fb5OfUGE6HP4gh/gNCzg6IhFOkR
+        HyeDZ0/PR1DU0hJiDPQtZJMlRA==
+X-Google-Smtp-Source: ABdhPJynSXjZcC1ekGOZbGSEKHkQCV4LlmAj0G8v/H9dQsgtSOa6o3k4RrWaDEeFL6ED7RfR1PFFkA==
+X-Received: by 2002:a9d:7dca:: with SMTP id k10mr15971598otn.274.1637175435285;
+        Wed, 17 Nov 2021 10:57:15 -0800 (PST)
+Received: from builder.lan (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
+        by smtp.gmail.com with ESMTPSA id a13sm150174oiy.9.2021.11.17.10.57.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 17 Nov 2021 10:57:14 -0800 (PST)
+Date:   Wed, 17 Nov 2021 12:57:12 -0600
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Sibi Sankar <sibis@codeaurora.org>
+Cc:     vkoul@kernel.org, agross@kernel.org, ohad@wizery.com,
+        mathieu.poirier@linaro.org, linux-remoteproc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        stable@vger.kernel.org
+Subject: Re: [PATCH] remoteproc: qcom: pas: Add missing power-domain "mxc"
+ for CDSP
+Message-ID: <YZVQiG5ChGFHwquA@builder.lan>
+References: <1624559605-29847-1-git-send-email-sibis@codeaurora.org>
 MIME-Version: 1.0
-In-Reply-To: <CAH9NwWdy9WsaXW+XE06=yA9pGXGs_Ye6kRiNPMfM5D=Jd1rSGg@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.75.127.44]
-X-ClientProxiedBy: SFHDAG2NODE2.st.com (10.75.127.5) To SFHDAG2NODE2.st.com
- (10.75.127.5)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.790,Hydra:6.0.425,FMLib:17.0.607.475
- definitions=2021-11-17_06,2021-11-17_01,2020-04-07_01
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1624559605-29847-1-git-send-email-sibis@codeaurora.org>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi Christian,
+On Thu 24 Jun 13:33 CDT 2021, Sibi Sankar wrote:
 
-On 11/11/21 11:29 AM, Christian Gmeiner wrote:
-> Hi Arnaud
+> Add missing power-domain "mxc" required by CDSP PAS remoteproc on SM8350
+> SoC.
 > 
->>
->> On 11/9/21 7:06 PM, Bjorn Andersson wrote:
->>> On Tue 09 Nov 00:39 PST 2021, Christian Gmeiner wrote:
->>>
->>>> Allows the remote firmware to log into syslog.
->>>>
->>
->> For you information a similar patch has been sent few years ago:
->> https://www.spinics.net/lists/kernel/msg3045824.html
->>
+> Fixes: e8b4e9a21af7 ("remoteproc: qcom: pas: Add SM8350 PAS remoteprocs")
+> Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
+> Cc: stable@vger.kernel.org
+> ---
 > 
-> Interesting - do you know why the patch was not taken?
+> The device tree and pas documentation lists mcx as a required pd for cdsp.
+> Looks like it was missed while adding the proxy pds in the pas driver.
+> Bjorn/Vinod you'll need to test this patch before picking it up.
+> 
 
-I don't know. It might be worthwhile to contact Xiang Xiao for more details.
+At least on the HDK mxc seems to be optional given the current system
+state, but I don't see any regressions so let's land this before we put
+the system in a state where it would matter.
 
-> 
->> The suspend /resume mechanism seems interesting to manage the low power use case.
->>
-> 
-> Yeah .. nothing I thought about.
-> 
->>>
->>> This allows the remote firmware to print log messages in the kernel log,
->>> not the syslog (although your system might inject the kernel log into
->>> the syslog as well)
->>>
->>>> Signed-off-by: Christian Gmeiner <christian.gmeiner@gmail.com>
->>>> ---
->>>>  drivers/rpmsg/Kconfig        |  8 +++++
->>>>  drivers/rpmsg/Makefile       |  1 +
->>>>  drivers/rpmsg/rpmsg_syslog.c | 65 ++++++++++++++++++++++++++++++++++++
->>>
->>> drivers/rpmsg is for rpmsg bus and transport drivers. Client drivers
->>> should live elsewhere.
->>>
->>> But perhaps, rather than having a driver for this, you could simply use
->>> rpmsg_char and a userspace tool; if you want to get the remote processor
->>> logs into syslog, instead of the kernel log?
->>
->> This is also a question that comes to me while looking at the patch.
->> rpmsg_tty service (if available in 5.16) could be another alternative.
->>
-> 
-> I thought about it too but I do not see how the syslog/journald can read the log
-> messages from this tty device without an extra user space component.
-> 
-> With a syslog redirection rpmsg service this happens automatically without any
-> extra user space daemon that reads from tty and writes to syslog.
-> 
-> Maybe I am missing something.
-
-That's true, this is one constraint. I suppose that you already have user code
-to start the remoteproc. In this case it could also launch a deamon which could
-redirects and/or perhaps analyzes traces to detect errors...
-
-That said it is my point of view, working on a general purpose platform
-(stm32mp15), I guess other people have other feedbacks.
-
-A last question: Do you manage the traces enable/disable and trace level during
-runtime?
+Tested-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 
 Regards,
-Arnaud
+Bjorn
 
+>  drivers/remoteproc/qcom_q6v5_pas.c | 1 +
+>  1 file changed, 1 insertion(+)
 > 
->> Regards,
->> Arnaud
->>
->>>
->>>>  3 files changed, 74 insertions(+)
->>>>  create mode 100644 drivers/rpmsg/rpmsg_syslog.c
->>>>
->>>> diff --git a/drivers/rpmsg/Kconfig b/drivers/rpmsg/Kconfig
->>>> index 0b4407abdf13..801f9956ec21 100644
->>>> --- a/drivers/rpmsg/Kconfig
->>>> +++ b/drivers/rpmsg/Kconfig
->>>> @@ -73,4 +73,12 @@ config RPMSG_VIRTIO
->>>>      select RPMSG_NS
->>>>      select VIRTIO
->>>>
->>>> +config RPMSG_SYSLOG
->>>> +    tristate "SYSLOG device interface"
->>>> +    depends on RPMSG
->>>> +    help
->>>> +      Say Y here to export rpmsg endpoints as device files, usually found
->>>> +      in /dev. They make it possible for user-space programs to send and
->>>> +      receive rpmsg packets.
->>>> +
->>>>  endmenu
->>>> diff --git a/drivers/rpmsg/Makefile b/drivers/rpmsg/Makefile
->>>> index 8d452656f0ee..75b2ec7133a5 100644
->>>> --- a/drivers/rpmsg/Makefile
->>>> +++ b/drivers/rpmsg/Makefile
->>>> @@ -9,3 +9,4 @@ obj-$(CONFIG_RPMSG_QCOM_GLINK_RPM) += qcom_glink_rpm.o
->>>>  obj-$(CONFIG_RPMSG_QCOM_GLINK_SMEM) += qcom_glink_smem.o
->>>>  obj-$(CONFIG_RPMSG_QCOM_SMD)        += qcom_smd.o
->>>>  obj-$(CONFIG_RPMSG_VIRTIO)  += virtio_rpmsg_bus.o
->>>> +obj-$(CONFIG_RPMSG_SYSLOG)  += rpmsg_syslog.o
->>>> diff --git a/drivers/rpmsg/rpmsg_syslog.c b/drivers/rpmsg/rpmsg_syslog.c
->>>> new file mode 100644
->>>> index 000000000000..b3fdae495fd9
->>>> --- /dev/null
->>>> +++ b/drivers/rpmsg/rpmsg_syslog.c
->>>> @@ -0,0 +1,65 @@
->>>> +// SPDX-License-Identifier: GPL-2.0
->>>> +
->>>> +#include <linux/kernel.h>
->>>> +#include <linux/module.h>
->>>> +#include <linux/rpmsg.h>
->>>> +
->>>> +static int rpmsg_syslog_cb(struct rpmsg_device *rpdev, void *data, int len,
->>>> +                       void *priv, u32 src)
->>>> +{
->>>> +    const char *buffer = data;
->>>> +
->>>> +    switch (buffer[0]) {
->>>> +    case 'e':
->>>> +            dev_err(&rpdev->dev, "%s", buffer + 1);
->>>> +            break;
->>>> +    case 'w':
->>>> +            dev_warn(&rpdev->dev, "%s", buffer + 1);
->>>> +            break;
->>>> +    case 'i':
->>>> +            dev_info(&rpdev->dev, "%s", buffer + 1);
->>>> +            break;
->>>> +    default:
->>>> +            dev_info(&rpdev->dev, "%s", buffer);
->>>> +            break;
->>>> +    }
->>>> +
->>>> +    return 0;
->>>> +}
->>>> +
->>>> +static int rpmsg_syslog_probe(struct rpmsg_device *rpdev)
->>>> +{
->>>> +    struct rpmsg_endpoint *syslog_ept;
->>>> +    struct rpmsg_channel_info syslog_chinfo = {
->>>> +            .src = 42,
->>>> +            .dst = 42,
->>>> +            .name = "syslog",
->>>> +    };
->>>> +
->>>> +    /*
->>>> +     * Create the syslog service endpoint associated to the RPMsg
->>>> +     * device. The endpoint will be automatically destroyed when the RPMsg
->>>> +     * device will be deleted.
->>>> +     */
->>>> +    syslog_ept = rpmsg_create_ept(rpdev, rpmsg_syslog_cb, NULL, syslog_chinfo);
->>>
->>> The rpmsg_device_id below should cause the device to probe on the
->>> presence of a "syslog" channel announcement, so why are you creating a
->>> new endpoint with the same here?
->>>
->>> Why aren't you just specifying the callback of the driver?
->>>
->>>> +    if (!syslog_ept) {
->>>> +            dev_err(&rpdev->dev, "failed to create the syslog ept\n");
->>>> +            return -ENOMEM;
->>>> +    }
->>>> +    rpdev->ept = syslog_ept;
->>>> +
->>>> +    return 0;
->>>> +}
->>>> +
->>>> +static struct rpmsg_device_id rpmsg_driver_syslog_id_table[] = {
->>>> +    { .name = "syslog" },
->>>> +    { },
->>>> +};
->>>> +MODULE_DEVICE_TABLE(rpmsg, rpmsg_driver_syslog_id_table);
->>>> +
->>>> +static struct rpmsg_driver rpmsg_syslog_client = {
->>>> +    .drv.name       = KBUILD_MODNAME,
->>>> +    .id_table       = rpmsg_driver_syslog_id_table,
->>>> +    .probe          = rpmsg_syslog_probe,
->>>> +};
->>>> +module_rpmsg_driver(rpmsg_syslog_client);
->>>
->>> I would expect that building this as a module gives you complaints about
->>> lacking MODULE_LICENSE().
->>>
->>> Regards,
->>> Bjorn
->>>
->>>> --
->>>> 2.33.1
->>>>
-> 
-> 
+> diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
+> index b921fc26cd04..ad20065dbdea 100644
+> --- a/drivers/remoteproc/qcom_q6v5_pas.c
+> +++ b/drivers/remoteproc/qcom_q6v5_pas.c
+> @@ -661,6 +661,7 @@ static const struct adsp_data sm8350_cdsp_resource = {
+>  	},
+>  	.proxy_pd_names = (char*[]){
+>  		"cx",
+> +		"mxc",
+>  		NULL
+>  	},
+>  	.ssr_name = "cdsp",
+> -- 
+> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+> a Linux Foundation Collaborative Project
 > 
