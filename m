@@ -2,300 +2,121 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB0C1C43217
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 18 Nov 2021 15:50:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED3CEC433EF
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 18 Nov 2021 17:26:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B9FDA61994
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 18 Nov 2021 15:50:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CD12A61284
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 18 Nov 2021 17:26:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232745AbhKRPx5 (ORCPT
+        id S231745AbhKRR34 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 18 Nov 2021 10:53:57 -0500
-Received: from so254-9.mailgun.net ([198.61.254.9]:41809 "EHLO
-        so254-9.mailgun.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232818AbhKRPxt (ORCPT
+        Thu, 18 Nov 2021 12:29:56 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57194 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234099AbhKRR3w (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 18 Nov 2021 10:53:49 -0500
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1637250649; h=References: In-Reply-To: Message-Id: Date:
- Subject: Cc: To: From: Sender;
- bh=62Ktp84RwZEop6pBY1vhiqRUf6nuZKot61c/l2R3wv4=; b=brITNabJhzScZlJ3X8JoxNDTAccwqtZUHWDgqqWRX7n8o29JEbFuyz94JAp/AU1H0UHj645H
- 7JkIJg3fdGx/FG3Nxt3r88h7rBzfQbAIDtTIk7L4DKgLNM0Ex5MijWj1LticU4IG2qE9bEuG
- EU8OCmtD/uGdlJ0W5Uc8m7n7dFo=
-X-Mailgun-Sending-Ip: 198.61.254.9
-X-Mailgun-Sid: WyI4ZWZiZiIsICJsaW51eC1yZW1vdGVwcm9jQHZnZXIua2VybmVsLm9yZyIsICJiZTllNGEiXQ==
-Received: from smtp.codeaurora.org
- (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
- smtp-out-n06.prod.us-west-2.postgun.com with SMTP id
- 61967659f5c956d49e79c97b (version=TLS1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Thu, 18 Nov 2021 15:50:49
- GMT
-Sender: pillair=codeaurora.org@mg.codeaurora.org
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 17B6BC43619; Thu, 18 Nov 2021 15:50:49 +0000 (UTC)
-Received: from pillair-linux.qualcomm.com (unknown [202.46.22.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: pillair)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 1508CC4338F;
-        Thu, 18 Nov 2021 15:50:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.1 smtp.codeaurora.org 1508CC4338F
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=codeaurora.org
-From:   Rakesh Pillai <pillair@codeaurora.org>
-To:     agross@kernel.org, bjorn.andersson@linaro.org, ohad@wizery.com,
-        mathieu.poirier@linaro.org, robh+dt@kernel.org,
-        p.zabel@pengutronix.de
-Cc:     swboyd@chromium.org, linux-arm-msm@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, sibis@codeaurora.org,
-        mpubbise@codeaurora.org, kuabhs@chromium.org,
-        Rakesh Pillai <pillair@codeaurora.org>
-Subject: [PATCH v9 2/3] dt-bindings: remoteproc: qcom: Add SC7280 WPSS support
-Date:   Thu, 18 Nov 2021 21:20:19 +0530
-Message-Id: <1637250620-8926-3-git-send-email-pillair@codeaurora.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1637250620-8926-1-git-send-email-pillair@codeaurora.org>
-References: <1637250620-8926-1-git-send-email-pillair@codeaurora.org>
+        Thu, 18 Nov 2021 12:29:52 -0500
+Received: from mail-pj1-x1035.google.com (mail-pj1-x1035.google.com [IPv6:2607:f8b0:4864:20::1035])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 449CEC06173E
+        for <linux-remoteproc@vger.kernel.org>; Thu, 18 Nov 2021 09:26:52 -0800 (PST)
+Received: by mail-pj1-x1035.google.com with SMTP id n15-20020a17090a160f00b001a75089daa3so8809890pja.1
+        for <linux-remoteproc@vger.kernel.org>; Thu, 18 Nov 2021 09:26:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=ffg8RENMvUuNEkBhbj1rA+p5DmTOHVu6yl2demT0EE4=;
+        b=fb17491S/0gCnhjw+z0N6OqW92Tpeno6JI0c/csN8eX8CnIeKqlHLLnbYOpgouQx5q
+         /vtBplywQdcqf0PQ3Qwot2PPxBcx3YU6PQ2GCes4CuxMTHWYtAK1HKc0+3i8o7FAbRpY
+         01mzWpo1DwrHuAepeXOHU6IF2mjHq+r09yhUe01Lh42slxYx0G0lRzkQWMNGjzL1ixPw
+         Yxp4dRABOXdkmw/u3rWxmnxmfcPPSBUfUvSfP63GYg4Rz2jZ16TtwkMYE1Imud86YSZ+
+         +iPhSMPj46izY9h6v8K7QFlyNbHHE3x4LMg3ekEun1ZTGngs9MDjCwXVWFVLZIWKo/FG
+         wJNA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=ffg8RENMvUuNEkBhbj1rA+p5DmTOHVu6yl2demT0EE4=;
+        b=pKXe/3zuxZTPoRzCgcQDRjCKCygeQu+eJJMn6MZtiK6WBv6tnfr3x/NnK/R/uq0HpD
+         PzqwjcowVTKvzZ/Dmp8LMAeO4sj7Ujelvdq1qul+xGlcNxMuOxAdVvIlb/WF8zQrGKu7
+         tvLeYQdbZt/grdaKDp8fzalF5gT/ZIFVrTlYIP1eEVIVD+9UWOqgk6/j1R4mG6tZROSU
+         cKeHBa0d1fqjbtoh+r/Z3NbFXhTZbjYOe0Zf9ROMcPgEnsVZOK4kfcEa+2KzH19KRSR7
+         TEDR+0bbxK93hqk0g9/RvQcPAyC0ROKsvvdn7CTggPQi7/AaNEe86H8YP9qHv1kzFOCj
+         jL2g==
+X-Gm-Message-State: AOAM530T1mf1rwcCtcYWQTlhMNaz+F+eXT3zPfR46hnvFPwTcLRX40gb
+        yp5N5moI9LqeNeIegFiAzRQP3A==
+X-Google-Smtp-Source: ABdhPJwT015s86rLy9F8ng6d55iG1IPThLw+nvpC0UIAsjoQ/rL8E+JpvJUMBGsEjaoL3VO27U59zg==
+X-Received: by 2002:a17:902:e548:b0:141:f4ae:d2bd with SMTP id n8-20020a170902e54800b00141f4aed2bdmr69754101plf.41.1637256411831;
+        Thu, 18 Nov 2021 09:26:51 -0800 (PST)
+Received: from p14s (S0106889e681aac74.cg.shawcable.net. [68.147.0.187])
+        by smtp.gmail.com with ESMTPSA id z22sm233489pfe.93.2021.11.18.09.26.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 18 Nov 2021 09:26:50 -0800 (PST)
+Date:   Thu, 18 Nov 2021 10:26:48 -0700
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+To:     Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Ohad Ben-Cohen <ohad@wizery.com>,
+        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com
+Subject: Re: [PATCH] rpmsg: char: Add pr_fmt() to prefix messages
+Message-ID: <20211118172648.GC2530497@p14s>
+References: <20211108135945.3364-1-arnaud.pouliquen@foss.st.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20211108135945.3364-1-arnaud.pouliquen@foss.st.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Add WPSS PIL loading support for SC7280 SoCs.
+On Mon, Nov 08, 2021 at 02:59:45PM +0100, Arnaud Pouliquen wrote:
+> Make all messages to be prefixed in a unified way.
+> Add pr_fmt() to achieve this.
+> 
+> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+> ---
+>  drivers/rpmsg/rpmsg_char.c | 7 +++++--
+>  1 file changed, 5 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/rpmsg/rpmsg_char.c b/drivers/rpmsg/rpmsg_char.c
+> index b5907b80727c..d6214cb66026 100644
+> --- a/drivers/rpmsg/rpmsg_char.c
+> +++ b/drivers/rpmsg/rpmsg_char.c
+> @@ -9,6 +9,9 @@
+>   * Based on rpmsg performance statistics driver by Michal Simek, which in turn
+>   * was based on TI & Google OMX rpmsg driver.
+>   */
+> +
+> +#define pr_fmt(fmt)	KBUILD_MODNAME ": " fmt
+> +
+>  #include <linux/cdev.h>
+>  #include <linux/device.h>
+>  #include <linux/fs.h>
+> @@ -550,7 +553,7 @@ static int rpmsg_chrdev_init(void)
+>  
+>  	ret = alloc_chrdev_region(&rpmsg_major, 0, RPMSG_DEV_MAX, "rpmsg");
+>  	if (ret < 0) {
+> -		pr_err("rpmsg: failed to allocate char dev region\n");
+> +		pr_err("failed to allocate char dev region\n");
+>  		return ret;
+>  	}
+>  
+> @@ -563,7 +566,7 @@ static int rpmsg_chrdev_init(void)
+>  
+>  	ret = register_rpmsg_driver(&rpmsg_chrdev_driver);
+>  	if (ret < 0) {
+> -		pr_err("rpmsgchr: failed to register rpmsg driver\n");
+> +		pr_err("failed to register rpmsg driver\n");
 
-Reviewed-by: Rob Herring <robh@kernel.org>
-Reviewed-by: Stephen Boyd <swboyd@chromium.org>
-Signed-off-by: Rakesh Pillai <pillair@codeaurora.org>
----
- .../bindings/remoteproc/qcom,sc7280-wpss-pil.yaml  | 219 +++++++++++++++++++++
- 1 file changed, 219 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/remoteproc/qcom,sc7280-wpss-pil.yaml
+This probably the right thing to do - I will pick up this patch.
 
-diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,sc7280-wpss-pil.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,sc7280-wpss-pil.yaml
-new file mode 100644
-index 0000000..2424de7
---- /dev/null
-+++ b/Documentation/devicetree/bindings/remoteproc/qcom,sc7280-wpss-pil.yaml
-@@ -0,0 +1,219 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/remoteproc/qcom,sc7280-wpss-pil.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Qualcomm SC7280 WPSS Peripheral Image Loader
-+
-+maintainers:
-+  - Bjorn Andersson <bjorn.andersson@linaro.org>
-+
-+description:
-+  This document defines the binding for a component that loads and boots firmware
-+  on the Qualcomm Technology Inc. WPSS.
-+
-+properties:
-+  compatible:
-+    enum:
-+      - qcom,sc7280-wpss-pil
-+
-+  reg:
-+    maxItems: 1
-+    description:
-+      The base address and size of the qdsp6ss register
-+
-+  interrupts:
-+    items:
-+      - description: Watchdog interrupt
-+      - description: Fatal interrupt
-+      - description: Ready interrupt
-+      - description: Handover interrupt
-+      - description: Stop acknowledge interrupt
-+      - description: Shutdown acknowledge interrupt
-+
-+  interrupt-names:
-+    items:
-+      - const: wdog
-+      - const: fatal
-+      - const: ready
-+      - const: handover
-+      - const: stop-ack
-+      - const: shutdown-ack
-+
-+  clocks:
-+    items:
-+      - description: GCC WPSS AHB BDG Master clock
-+      - description: GCC WPSS AHB clock
-+      - description: GCC WPSS RSCP clock
-+      - description: XO clock
-+
-+  clock-names:
-+    items:
-+      - const: ahb_bdg
-+      - const: ahb
-+      - const: rscp
-+      - const: xo
-+
-+  power-domains:
-+    items:
-+      - description: CX power domain
-+      - description: MX power domain
-+
-+  power-domain-names:
-+    items:
-+      - const: cx
-+      - const: mx
-+
-+  resets:
-+    items:
-+      - description: AOSS restart
-+      - description: PDC SYNC
-+
-+  reset-names:
-+    items:
-+      - const: restart
-+      - const: pdc_sync
-+
-+  memory-region:
-+    $ref: /schemas/types.yaml#/definitions/phandle
-+    description: Reference to the reserved-memory for the Hexagon core
-+
-+  firmware-name:
-+    $ref: /schemas/types.yaml#/definitions/string
-+    description:
-+      The name of the firmware which should be loaded for this remote
-+      processor.
-+
-+  qcom,halt-regs:
-+    $ref: /schemas/types.yaml#/definitions/phandle-array
-+    description:
-+      Phandle reference to a syscon representing TCSR followed by the
-+      three offsets within syscon for q6, modem and nc halt registers.
-+
-+  qcom,qmp:
-+    $ref: /schemas/types.yaml#/definitions/phandle
-+    description: Reference to the AOSS side-channel message RAM.
-+
-+  qcom,smem-states:
-+    $ref: /schemas/types.yaml#/definitions/phandle-array
-+    description: States used by the AP to signal the Hexagon core
-+    items:
-+      - description: Stop the modem
-+
-+  qcom,smem-state-names:
-+    $ref: /schemas/types.yaml#/definitions/string
-+    description: The names of the state bits used for SMP2P output
-+    items:
-+      - const: stop
-+
-+  glink-edge:
-+    type: object
-+    description: |
-+      Qualcomm G-Link subnode which represents communication edge, channels
-+      and devices related to the ADSP.
-+
-+    properties:
-+      interrupts:
-+        items:
-+          - description: IRQ from WPSS to GLINK
-+
-+      mboxes:
-+        items:
-+          - description: Mailbox for communication between APPS and WPSS
-+
-+      label:
-+        description: The names of the state bits used for SMP2P output
-+        items:
-+          - const: wpss
-+
-+      qcom,remote-pid:
-+        $ref: /schemas/types.yaml#/definitions/uint32
-+        description: ID of the shared memory used by GLINK for communication with WPSS
-+        maxItems: 1
-+
-+    required:
-+      - interrupts
-+      - mboxes
-+      - label
-+      - qcom,remote-pid
-+
-+    additionalProperties: false
-+
-+required:
-+  - compatible
-+  - reg
-+  - interrupts
-+  - interrupt-names
-+  - clocks
-+  - clock-names
-+  - power-domains
-+  - power-domain-names
-+  - resets
-+  - reset-names
-+  - qcom,halt-regs
-+  - memory-region
-+  - qcom,qmp
-+  - qcom,smem-states
-+  - qcom,smem-state-names
-+  - glink-edge
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/interrupt-controller/arm-gic.h>
-+    #include <dt-bindings/clock/qcom,gcc-sc7280.h>
-+    #include <dt-bindings/clock/qcom,rpmh.h>
-+    #include <dt-bindings/power/qcom-rpmpd.h>
-+    #include <dt-bindings/reset/qcom,sdm845-aoss.h>
-+    #include <dt-bindings/reset/qcom,sdm845-pdc.h>
-+    #include <dt-bindings/mailbox/qcom-ipcc.h>
-+    remoteproc@8a00000 {
-+        compatible = "qcom,sc7280-wpss-pil";
-+        reg = <0x08a00000 0x10000>;
-+
-+        interrupts-extended = <&intc GIC_SPI 587 IRQ_TYPE_EDGE_RISING>,
-+                              <&wpss_smp2p_in 0 IRQ_TYPE_EDGE_RISING>,
-+                              <&wpss_smp2p_in 1 IRQ_TYPE_EDGE_RISING>,
-+                              <&wpss_smp2p_in 2 IRQ_TYPE_EDGE_RISING>,
-+                              <&wpss_smp2p_in 3 IRQ_TYPE_EDGE_RISING>,
-+                              <&wpss_smp2p_in 7 IRQ_TYPE_EDGE_RISING>;
-+        interrupt-names = "wdog", "fatal", "ready", "handover",
-+                          "stop-ack", "shutdown-ack";
-+
-+        clocks = <&gcc GCC_WPSS_AHB_BDG_MST_CLK>,
-+                 <&gcc GCC_WPSS_AHB_CLK>,
-+                 <&gcc GCC_WPSS_RSCP_CLK>,
-+                 <&rpmhcc RPMH_CXO_CLK>;
-+        clock-names = "ahb_bdg", "ahb",
-+                      "rscp", "xo";
-+
-+        power-domains = <&rpmhpd SC7280_CX>,
-+                        <&rpmhpd SC7280_MX>;
-+        power-domain-names = "cx", "mx";
-+
-+        memory-region = <&wpss_mem>;
-+
-+        qcom,qmp = <&aoss_qmp>;
-+
-+        qcom,smem-states = <&wpss_smp2p_out 0>;
-+        qcom,smem-state-names = "stop";
-+
-+        resets = <&aoss_reset AOSS_CC_WCSS_RESTART>,
-+                 <&pdc_reset PDC_WPSS_SYNC_RESET>;
-+        reset-names = "restart", "pdc_sync";
-+
-+        qcom,halt-regs = <&tcsr_mutex 0x37000>;
-+
-+        glink-edge {
-+            interrupts-extended = <&ipcc IPCC_CLIENT_WPSS
-+                                         IPCC_MPROC_SIGNAL_GLINK_QMP
-+                                         IRQ_TYPE_EDGE_RISING>;
-+            mboxes = <&ipcc IPCC_CLIENT_WPSS
-+                            IPCC_MPROC_SIGNAL_GLINK_QMP>;
-+
-+            label = "wpss";
-+            qcom,remote-pid = <13>;
-+        };
-+    };
--- 
-2.7.4
+Thanks,
+Mathieu
 
+>  		class_destroy(rpmsg_class);
+>  		unregister_chrdev_region(rpmsg_major, RPMSG_DEV_MAX);
+>  	}
+> -- 
+> 2.17.1
+> 
