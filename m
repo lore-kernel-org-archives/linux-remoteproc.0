@@ -2,210 +2,99 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BD23C433F5
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 17 Nov 2021 23:29:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85172C433F5
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 18 Nov 2021 15:50:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E5B7F6128E
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 17 Nov 2021 23:29:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6135A61155
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 18 Nov 2021 15:50:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241599AbhKQXcM (ORCPT
+        id S232590AbhKRPxk (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 17 Nov 2021 18:32:12 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39150 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232744AbhKQXcL (ORCPT
-        <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 17 Nov 2021 18:32:11 -0500
-Received: from mail-ot1-x32a.google.com (mail-ot1-x32a.google.com [IPv6:2607:f8b0:4864:20::32a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CECBDC061570
-        for <linux-remoteproc@vger.kernel.org>; Wed, 17 Nov 2021 15:29:12 -0800 (PST)
-Received: by mail-ot1-x32a.google.com with SMTP id x43-20020a056830246b00b00570d09d34ebso7634868otr.2
-        for <linux-remoteproc@vger.kernel.org>; Wed, 17 Nov 2021 15:29:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=gVOidswxtyfjR15IzCo616YI0K9jYAoJlUzTrw9zeVk=;
-        b=wKLZkJ7rMo1SswUXumI205EwZ1TFYlvtdqcLUGm7rCCxPuLM213bq1U4pPnI3p4+sr
-         ajAWMxrOKbvu+naOwhiNf/DxgMvazJQACKgagOyrG0tiKHWSKzMLYGmFMnlFKsi6CSKn
-         Hcs/P1528Lyro2Cs8BZd+C7eq09QJif3+EAPlqPY99s2TN5QsZYI8X8fzNOKlRk/3zDi
-         7LeyqSBmegqrtcjGktpqJfYvJM5UiLwy7SWtoHygC6Zpezh3e8WUlnEbaeUIsvVEFa94
-         fPmSs6D3NkklijqdZFeQ4cvMscvtf1RhFTmXp9FV8grkvfh7phCy9sHgPr+oH3rMNzUL
-         vXOw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=gVOidswxtyfjR15IzCo616YI0K9jYAoJlUzTrw9zeVk=;
-        b=uYkLAZRf8076gkq4EC6YPW/WO5qb+DLi1qXY4dcs5PCzrx/emUO6ibbMF+tH3nfY3L
-         FiFcF3OesoS+z6I10gxB9d3bEYRgUEy4FB2mVzMpuPFN8kyN/jNi3ofsSWGjUPy/V6Tl
-         WE9ZWyrHJMkQ5+4xEGR7O9chinvEspimZyd37H5vTdcQsZWK1g0v5kihaIcR9ohQilQG
-         VDrhdBy6I2kPJ33SXaWm/uNSfbCL4zPgCCkBu/XHBBbUXKNKmoBUPFdYOJO6WGxvXjRf
-         DEe+iuSOMog3ftDSPnQ5DHFpxZd7o+UZUxIB35C7RA1lwgljfpb6CqBvs5CY7HEPAdrP
-         qLBQ==
-X-Gm-Message-State: AOAM532esQmMfDyN1vPvbRzBahxlvWQ3zofnQnTzpDhuwXYz2cwGdgVQ
-        2ODIW5qfHs3jv9RRle1FhZmvvQ==
-X-Google-Smtp-Source: ABdhPJzvQuRWdUtu/2FcRKGyc+2L2t05Gl+t1fCx0w3DTUnUY6XfhkrBkm+4yLRyDTwzX1is5/ScdA==
-X-Received: by 2002:a05:6830:2681:: with SMTP id l1mr17387416otu.378.1637191752089;
-        Wed, 17 Nov 2021 15:29:12 -0800 (PST)
-Received: from builder.lan (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
-        by smtp.gmail.com with ESMTPSA id m5sm212638oon.45.2021.11.17.15.29.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 17 Nov 2021 15:29:11 -0800 (PST)
-Date:   Wed, 17 Nov 2021 17:29:07 -0600
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Sujit Kautkar <sujitka@chromium.org>
-Cc:     Andy Gross <agross@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>,
-        Sibi Sankar <sibis@codeaurora.org>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Stephen Boyd <swboyd@chromium.org>,
-        linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org
-Subject: Re: [PATCH v3 2/2] rpmsg: glink: Update cdev add/del API in
- rpmsg_ctrldev_release_device()
-Message-ID: <YZWQQ6XPIdMLtZEy@builder.lan>
-References: <20211102235147.872921-1-sujitka@chromium.org>
- <20211102165137.v3.2.Ie09561c5b453a91f10ecc7e1974c602c4ff78245@changeid>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20211102165137.v3.2.Ie09561c5b453a91f10ecc7e1974c602c4ff78245@changeid>
+        Thu, 18 Nov 2021 10:53:40 -0500
+Received: from m43-7.mailgun.net ([69.72.43.7]:30998 "EHLO m43-7.mailgun.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S232688AbhKRPxj (ORCPT <rfc822;linux-remoteproc@vger.kernel.org>);
+        Thu, 18 Nov 2021 10:53:39 -0500
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1637250639; h=Message-Id: Date: Subject: Cc: To: From:
+ Sender; bh=iX11h+Op1PNzjFTEsnyBCkeChhmqWolo+4Fuu4ZniBo=; b=UVGm1ihuIwXsvijUpF4F09rnZP4GDJopXzpRhYb69k2boC0p85O/nHmCFSqKmh153DCAKFP6
+ dhzoEn1cpe6Yh/UdSw6yDla3LaMCCX8qp0vIOToBcx0cy/pgWPQsD1aw9X6KNBS7P6xDgNlA
+ WBeYdRJxkoYIy3VP7VzMObG+9Ds=
+X-Mailgun-Sending-Ip: 69.72.43.7
+X-Mailgun-Sid: WyI4ZWZiZiIsICJsaW51eC1yZW1vdGVwcm9jQHZnZXIua2VybmVsLm9yZyIsICJiZTllNGEiXQ==
+Received: from smtp.codeaurora.org
+ (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
+ smtp-out-n05.prod.us-west-2.postgun.com with SMTP id
+ 6196764e1e1d2f523309027b (version=TLS1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Thu, 18 Nov 2021 15:50:38
+ GMT
+Sender: pillair=codeaurora.org@mg.codeaurora.org
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 46EA6C4361B; Thu, 18 Nov 2021 15:50:38 +0000 (UTC)
+Received: from pillair-linux.qualcomm.com (unknown [202.46.22.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: pillair)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 8942EC4338F;
+        Thu, 18 Nov 2021 15:50:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.1 smtp.codeaurora.org 8942EC4338F
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=codeaurora.org
+From:   Rakesh Pillai <pillair@codeaurora.org>
+To:     agross@kernel.org, bjorn.andersson@linaro.org, ohad@wizery.com,
+        mathieu.poirier@linaro.org, robh+dt@kernel.org,
+        p.zabel@pengutronix.de
+Cc:     swboyd@chromium.org, linux-arm-msm@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, sibis@codeaurora.org,
+        mpubbise@codeaurora.org, kuabhs@chromium.org,
+        Rakesh Pillai <pillair@codeaurora.org>
+Subject: [PATCH v9 0/3] Add support for sc7280 WPSS PIL loading
+Date:   Thu, 18 Nov 2021 21:20:17 +0530
+Message-Id: <1637250620-8926-1-git-send-email-pillair@codeaurora.org>
+X-Mailer: git-send-email 2.7.4
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Tue 02 Nov 18:51 CDT 2021, Sujit Kautkar wrote:
+Add support for PIL loading of WPSS co-processor for SC7280 SOCs.
 
-I like Stephen's suggestion about modifying the $subject.
-Also note that the change isn't in the glink driver, so prefix should
-reflect that:
+Changes from v8:
+- Disallow num_proxy_pds to be more than the max allowed
+- Add "additionalProperties: false" for glink-edge property in wpss dt-bindings.
 
-$ git log --oneline --no-decorate -- drivers/rpmsg/rpmsg_char.c
-f998d48f9b3c rpmsg: glink: Update cdev add/del API in rpmsg_ctrldev_release_device()
-bc774a3887cb rpmsg: char: Remove useless include
-964e8bedd5a1 rpmsg: char: Return an error if device already open
-...
+Changes from v7:
+- Use "interrupts" instead of "interrupts-extended" in DT bindings.
+- Add glink-edge properties in DT bindings.
+- Use size_t for "proxy_pd_count" in wpss remoteproc driver
 
-> Replace cdev add/del APIs with cdev_device_add/cdev_device_del to avoid
-> below kernel warning. This correctly takes a reference to the parent
-> device so the parent will not get released until all references to the
-> cdev are released.
-> 
-> | ODEBUG: free active (active state 0) object type: timer_list hint: delayed_work_timer_fn+0x0/0x7c
-> | WARNING: CPU: 7 PID: 19892 at lib/debugobjects.c:488 debug_print_object+0x13c/0x1b0
-> | CPU: 7 PID: 19892 Comm: kworker/7:4 Tainted: G        W         5.4.147-lockdep #1
-> | ==================================================================
-> | Hardware name: Google CoachZ (rev1 - 2) with LTE (DT)
-> | Workqueue: events kobject_delayed_cleanup
-> | pstate: 60c00009 (nZCv daif +PAN +UAO)
-> | pc : debug_print_object+0x13c/0x1b0
-> | lr : debug_print_object+0x13c/0x1b0
-> | sp : ffffff83b2ec7970
-> | x29: ffffff83b2ec7970 x28: dfffffd000000000
-> | x27: ffffff83d674f000 x26: dfffffd000000000
-> | x25: ffffffd06b8fa660 x24: dfffffd000000000
-> | x23: 0000000000000000 x22: ffffffd06b7c5108
-> | x21: ffffffd06d597860 x20: ffffffd06e2c21c0
-> | x19: ffffffd06d5974c0 x18: 000000000001dad8
-> | x17: 0000000000000000 x16: dfffffd000000000
-> | BUG: KASAN: use-after-free in qcom_glink_rpdev_release+0x54/0x70
-> | x15: ffffffffffffffff x14: 79616c6564203a74
-> | x13: 0000000000000000 x12: 0000000000000080
-> | Write of size 8 at addr ffffff83d95768d0 by task kworker/3:1/150
-> | x11: 0000000000000001 x10: 0000000000000000
-> | x9 : fc9e8edec0ad0300 x8 : fc9e8edec0ad0300
-> |
-> | x7 : 0000000000000000 x6 : 0000000000000000
-> | x5 : 0000000000000080 x4 : 0000000000000000
-> | CPU: 3 PID: 150 Comm: kworker/3:1 Tainted: G        W         5.4.147-lockdep #1
-> | x3 : ffffffd06c149574 x2 : ffffff83f77f7498
-> | x1 : ffffffd06d596f60 x0 : 0000000000000061
-> | Hardware name: Google CoachZ (rev1 - 2) with LTE (DT)
-> | Call trace:
-> |  debug_print_object+0x13c/0x1b0
-> | Workqueue: events kobject_delayed_cleanup
-> |  __debug_check_no_obj_freed+0x25c/0x3c0
-> |  debug_check_no_obj_freed+0x18/0x20
-> | Call trace:
-> |  slab_free_freelist_hook+0xb4/0x1bc
-> |  kfree+0xe8/0x2d8
-> |  dump_backtrace+0x0/0x27c
+Changes from v6:
+- Fixed the dt-bindings check in qcom,sc7280-wpss-pil.yaml
+- Fixed CDSP dt-bindings example node (compatible, glink-edge)
+- Fixed the clock-names used in wpss driver
+- Add support to get firmware-name from DTSI entry for wpss.
 
-Why is dump_backtrace in the callstack here inbetween
-rpmsg_ctrldev_release_device() and kfree()? Isn't the error that we're
-calling kfree() on an chunk of memory that contains a live object?
+Changes from v4/v5:
+- Add yaml conversion for adsp/cdsp dt-bindings
+- Change clock names in wpss dt-bindings
+- Correct mistake in signed-off enail ID
 
-> |  rpmsg_ctrldev_release_device+0x78/0xb8
-> |  device_release+0x68/0x14c
-> |  show_stack+0x20/0x2c
-> |  kobject_cleanup+0x12c/0x298
-> |  kobject_delayed_cleanup+0x10/0x18
-> |  dump_stack+0xe0/0x19c
-> |  process_one_work+0x578/0x92c
-> |  worker_thread+0x804/0xcf8
-> |  print_address_description+0x3c/0x4a8
-> |  kthread+0x2a8/0x314
-> |  ret_from_fork+0x10/0x18
-> |  __kasan_report+0x100/0x124
-> 
-> Signed-off-by: Sujit Kautkar <sujitka@chromium.org>
-> ---
-> Changes in v3:
-> - Remove unecessary error check as per Matthias's comment
-> 
-> Changes in v2:
-> - Fix typo in commit message
-> 
->  drivers/rpmsg/rpmsg_char.c | 10 ++--------
->  1 file changed, 2 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/rpmsg/rpmsg_char.c b/drivers/rpmsg/rpmsg_char.c
-> index 876ce43df732b..a6a33155ca859 100644
-> --- a/drivers/rpmsg/rpmsg_char.c
-> +++ b/drivers/rpmsg/rpmsg_char.c
-> @@ -458,7 +458,7 @@ static void rpmsg_ctrldev_release_device(struct device *dev)
->  
->  	ida_simple_remove(&rpmsg_ctrl_ida, dev->id);
->  	ida_simple_remove(&rpmsg_minor_ida, MINOR(dev->devt));
-> -	cdev_del(&ctrldev->cdev);
-> +	cdev_device_del(&ctrldev->cdev, &ctrldev->dev);
+Rakesh Pillai (3):
+  dt-bindings: remoteproc: qcom: adsp: Convert binding to YAML
+  dt-bindings: remoteproc: qcom: Add SC7280 WPSS support
+  remoteproc: qcom: q6v5_wpss: Add support for sc7280 WPSS
 
-I am not able to find any other instance where cdev_device_del() is
-called from the device's release function itself, which tells me that
-this probably is not the right thing to do. Instead the appropriate way
-seem to put the cdev_device_del() in rpmsg_chrdev_remove().
+ .../bindings/remoteproc/qcom,hexagon-v56.txt       | 140 -------------
+ .../bindings/remoteproc/qcom,qcs404-cdsp-pil.yaml  | 161 +++++++++++++++
+ .../bindings/remoteproc/qcom,sc7280-wpss-pil.yaml  | 219 ++++++++++++++++++++
+ .../bindings/remoteproc/qcom,sdm845-adsp-pil.yaml  | 160 +++++++++++++++
+ drivers/remoteproc/qcom_q6v5_adsp.c                | 222 +++++++++++++++++++--
+ 5 files changed, 746 insertions(+), 156 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/remoteproc/qcom,hexagon-v56.txt
+ create mode 100644 Documentation/devicetree/bindings/remoteproc/qcom,qcs404-cdsp-pil.yaml
+ create mode 100644 Documentation/devicetree/bindings/remoteproc/qcom,sc7280-wpss-pil.yaml
+ create mode 100644 Documentation/devicetree/bindings/remoteproc/qcom,sdm845-adsp-pil.yaml
 
+-- 
+2.7.4
 
-That said, we already do device_del() in rpmsg_chrdev_remove() so if the
-warning is trying to tell us that ctrldev->dev is not deleted I think we
-have an unbalanced put_device()?
-
-Regards,
-Bjorn
-
->  	kfree(ctrldev);
->  }
->  
-> @@ -493,19 +493,13 @@ static int rpmsg_chrdev_probe(struct rpmsg_device *rpdev)
->  	dev->id = ret;
->  	dev_set_name(&ctrldev->dev, "rpmsg_ctrl%d", ret);
->  
-> -	ret = cdev_add(&ctrldev->cdev, dev->devt, 1);
-> +	ret = cdev_device_add(&ctrldev->cdev, &ctrldev->dev);
->  	if (ret)
->  		goto free_ctrl_ida;
->  
->  	/* We can now rely on the release function for cleanup */
->  	dev->release = rpmsg_ctrldev_release_device;
->  
-> -	ret = device_add(dev);
-> -	if (ret) {
-> -		dev_err(&rpdev->dev, "device_add failed: %d\n", ret);
-> -		put_device(dev);
-> -	}
-> -
->  	dev_set_drvdata(&rpdev->dev, ctrldev);
->  
->  	return ret;
-> -- 
-> 2.31.0
-> 
