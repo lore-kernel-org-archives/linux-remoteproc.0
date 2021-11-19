@@ -2,144 +2,274 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45C48C433EF
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 18 Nov 2021 18:29:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E9AFC433EF
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 19 Nov 2021 00:54:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2C48361360
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 18 Nov 2021 18:29:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 340F061A8C
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 19 Nov 2021 00:54:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232816AbhKRScK (ORCPT
+        id S233808AbhKSA5w (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 18 Nov 2021 13:32:10 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43280 "EHLO
+        Thu, 18 Nov 2021 19:57:52 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45596 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232873AbhKRScK (ORCPT
+        with ESMTP id S231314AbhKSA5v (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 18 Nov 2021 13:32:10 -0500
-Received: from mail-pg1-x52a.google.com (mail-pg1-x52a.google.com [IPv6:2607:f8b0:4864:20::52a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 296CBC06173E
-        for <linux-remoteproc@vger.kernel.org>; Thu, 18 Nov 2021 10:29:10 -0800 (PST)
-Received: by mail-pg1-x52a.google.com with SMTP id 28so6150733pgq.8
-        for <linux-remoteproc@vger.kernel.org>; Thu, 18 Nov 2021 10:29:10 -0800 (PST)
+        Thu, 18 Nov 2021 19:57:51 -0500
+Received: from mail-ot1-x32a.google.com (mail-ot1-x32a.google.com [IPv6:2607:f8b0:4864:20::32a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0316CC06173E
+        for <linux-remoteproc@vger.kernel.org>; Thu, 18 Nov 2021 16:54:51 -0800 (PST)
+Received: by mail-ot1-x32a.google.com with SMTP id h12-20020a056830034c00b0055c8458126fso14205125ote.0
+        for <linux-remoteproc@vger.kernel.org>; Thu, 18 Nov 2021 16:54:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=uSpY8+ZZw7VrKc1FtbyhIu09kHALiBf3b1wB2/ERM84=;
-        b=FFDOLGcNCvLCzew0kAl/PrKO6GF2WJn0StIk8lHWGW/Nsegh4lz7mceUZxz0rj3xpg
-         zv9r0YDfv48Tk0S2QuVib3gTJYpn7lsBm+mgXLUjl0dA7OtUV/twZggjJT5/XLGQ1Lgo
-         yJCThsCKqhtw7RYN0FPeMP7R4JimYDPQiA/HNJSHS+gJr1Nra7mJF6bhXbWZCqcgdXGi
-         OD+PN1T/Z3IMbXTAerzxq7ZO8dt2mO4dgwnHyTOGsyb0iqWO5Mcpx2Ws84AeZjPhUHXv
-         506ausdqvVSQpNg//HRe3ZUWt52rGUt9eLhqPWTphicODw1IjaEM6xPTYtxQuDiplH5g
-         DyJQ==
+        d=chromium.org; s=google;
+        h=mime-version:in-reply-to:references:from:user-agent:date:message-id
+         :subject:to:cc;
+        bh=YtbzYcH20HCvxqP+/jnZdYoOJLvfi4p9cYsZ82G0wxg=;
+        b=YSnwXhgG+0sOhhkkxQeMAYOVA85727/2DFwIjcMcfM/zcjtmmeC1PIyXziCTpkvPXt
+         wljKrwBJEJE7wOsVd1n8S2q+pf/4KXSpBswfDCjylJAL4OU9ceH8BPCdBbySaMhljf4k
+         tZbmbP9GTznrgxAwaqf/T4p69Tq4loztfAzhI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=uSpY8+ZZw7VrKc1FtbyhIu09kHALiBf3b1wB2/ERM84=;
-        b=DCxctV1fGvQzywZwynJD5NHiLsrc1nUHETiyJufDFx7AKdsUdncEDy6huLP4t5kfb5
-         WdmhlkK6ofjrm+4IXl/R/HjB4b/UAJm6nySWg1OGf068wBgvxhKp6GkHDFqYgMvT5svC
-         I/0Wxxg6AfYvwazH6c8wUIjogBWHuCiRbLztlzpAJKRumow+Nqg1DxfQNnzqkVxK5Bxt
-         QFg8fxQ00ok3DqUObiPAui0pi6O90T49RjsEaCxm0Edd5vnQeeVtifTNZ2H/c2LvmWVU
-         z2YFd0nkBRrglj535tPRwoNqe/eEJ802LliEeUvyqfbLG83el2NP8ZbkqVCBKZMRUk1i
-         +/3w==
-X-Gm-Message-State: AOAM532Uj1cWfBYleHijweZs9AxREZA6CZX8L9jMCgY04BTsDuq82jxg
-        lCiKrfekklPTb171k1mDGDXvTw==
-X-Google-Smtp-Source: ABdhPJwy3KjQMrd7Y6BMNeVoxIqHpThnIeHkISg6+ofmx1GlKl2PNcRgVasH/MbvMqrZYDcJwBeo4g==
-X-Received: by 2002:a05:6a00:181a:b0:47c:1057:52e with SMTP id y26-20020a056a00181a00b0047c1057052emr17426322pfa.76.1637260149673;
-        Thu, 18 Nov 2021 10:29:09 -0800 (PST)
-Received: from p14s (S0106889e681aac74.cg.shawcable.net. [68.147.0.187])
-        by smtp.gmail.com with ESMTPSA id v15sm298349pfu.195.2021.11.18.10.29.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 18 Nov 2021 10:29:08 -0800 (PST)
-Date:   Thu, 18 Nov 2021 11:29:05 -0700
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-To:     "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
-Cc:     ohad@wizery.com, bjorn.andersson@linaro.org,
-        o.rempel@pengutronix.de, shawnguo@kernel.org,
-        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
-        linux-imx@nxp.com, linux-remoteproc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Peng Fan <peng.fan@nxp.com>
-Subject: Re: [PATCH] remoteproc: imx_rproc: use imx specific hook for
- find_loaded_rsc_table
-Message-ID: <20211118182905.GE2530497@p14s>
-References: <20211112063416.3485866-1-peng.fan@oss.nxp.com>
+        h=x-gm-message-state:mime-version:in-reply-to:references:from
+         :user-agent:date:message-id:subject:to:cc;
+        bh=YtbzYcH20HCvxqP+/jnZdYoOJLvfi4p9cYsZ82G0wxg=;
+        b=zr51Bv+hP/88TA4B2UR4V8CehFuo54cIRLh82e77UMMhfA9AAtGcR1lKhfdCspPSGK
+         A1QSAEmWS7Ee9lNz0QlpxXm8AJi0fsvJb97yucN56BLzpprxs3OyqH1k7dKajlDx4C2x
+         Hj/+xL7hikagblt5JN/c+ybPZ8jQcdn45GeFJ6faBMTGL8LIXkCFmiBo5G70gbxW4pS7
+         D++ZKNM2WIlRfmvvpdrlx9rGzAo3nWDPxvhVSJn8KMWoAmjlMuebcZk4cHMfSa7zz/iP
+         3SLF0kccejiXOl115tv8gA8JFoXI69xwwnjnqMusSWA1vmq9c1qH7mtHe193i5AZ2649
+         kxEw==
+X-Gm-Message-State: AOAM533E7QK7p24yN0Q+TR25d4+TdvTYFsZlyLVCzrLXuO+W7jATt92i
+        sQGJBY0gtqyn4Qa6jETktXWVXEIxa6ffD3xgvcKCaA==
+X-Google-Smtp-Source: ABdhPJyDd0hrbleHezY0hLWJtqvrTiRAue5bx79zJQJU08DkPgzeJPBPBOXM/6epGLykUFqeI1tAQP9RrBpuGgDBAuE=
+X-Received: by 2002:a05:6830:30b7:: with SMTP id g23mr1190918ots.159.1637283290320;
+ Thu, 18 Nov 2021 16:54:50 -0800 (PST)
+Received: from 753933720722 named unknown by gmailapi.google.com with
+ HTTPREST; Fri, 19 Nov 2021 01:54:49 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20211112063416.3485866-1-peng.fan@oss.nxp.com>
+In-Reply-To: <1637250620-8926-4-git-send-email-pillair@codeaurora.org>
+References: <1637250620-8926-1-git-send-email-pillair@codeaurora.org> <1637250620-8926-4-git-send-email-pillair@codeaurora.org>
+From:   Stephen Boyd <swboyd@chromium.org>
+User-Agent: alot/0.9.1
+Date:   Fri, 19 Nov 2021 01:54:49 +0100
+Message-ID: <CAE-0n5371rNqs6+_ZRtPDqOb7WCrzXUHbxGMjPAdVeLsGgX8_w@mail.gmail.com>
+Subject: Re: [PATCH v9 3/3] remoteproc: qcom: q6v5_wpss: Add support for
+ sc7280 WPSS
+To:     Rakesh Pillai <pillair@codeaurora.org>, agross@kernel.org,
+        bjorn.andersson@linaro.org, mathieu.poirier@linaro.org,
+        ohad@wizery.com, p.zabel@pengutronix.de, robh+dt@kernel.org
+Cc:     linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        sibis@codeaurora.org, mpubbise@codeaurora.org, kuabhs@chromium.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi Peng,
-
-On Fri, Nov 12, 2021 at 02:34:16PM +0800, Peng Fan (OSS) wrote:
-> From: Peng Fan <peng.fan@nxp.com>
-> 
-> When loading elf and kicking M core from Linux, previously we directly
-> use the address of the resource table in elf file. After i.MX8MN/P
-> RDC enabled to proect TCM, linux not able to access the TCM space
-
-It would be nice to know what RDC is and what it stands for.  Moreover I assume
-you mean "protect" here when writing "proect".
-
-> when updating resource table status and cause kernel dump.
-
-How was it possible to boot an i.MX8MN before this patch?  Why wasn't this part
-of the patchset that introduced support for the i.MX8MN?
-
-> 
-> So let's check whether rsc_table is available, if available, we use this
-> address.
-> 
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+Quoting Rakesh Pillai (2021-11-18 07:50:20)
+> Add support for PIL loading of WPSS processor for SC7280
+> - WPSS boot will be requested by the wifi driver and hence
+>   disable auto-boot for WPSS.
+> - Add a separate shutdown sequence handler for WPSS.
+> - Add multiple power-domain voting support
+> - Parse firmware-name from dtsi entry
+>
+> Signed-off-by: Rakesh Pillai <pillair@codeaurora.org>
 > ---
->  drivers/remoteproc/imx_rproc.c | 13 ++++++++++++-
->  1 file changed, 12 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rproc.c
-> index ff8170dbbc3c..96a56ab39ccb 100644
-> --- a/drivers/remoteproc/imx_rproc.c
-> +++ b/drivers/remoteproc/imx_rproc.c
-> @@ -497,6 +497,17 @@ static struct resource_table *imx_rproc_get_loaded_rsc_table(struct rproc *rproc
->  	return (struct resource_table *)priv->rsc_table;
->  }
->  
-> +static struct resource_table *
-> +imx_rproc_elf_find_loaded_rsc_table(struct rproc *rproc, const struct firmware *fw)
+
+Just a couple nitpicks. Otherwise looks good to me.
+
+>  drivers/remoteproc/qcom_q6v5_adsp.c | 222 +++++++++++++++++++++++++++++++++---
+>  1 file changed, 206 insertions(+), 16 deletions(-)
+>
+> diff --git a/drivers/remoteproc/qcom_q6v5_adsp.c b/drivers/remoteproc/qcom_q6v5_adsp.c
+> index 098362e6..34a6b73 100644
+> --- a/drivers/remoteproc/qcom_q6v5_adsp.c
+> +++ b/drivers/remoteproc/qcom_q6v5_adsp.c
+> @@ -32,6 +32,7 @@
+>
+>  /* time out value */
+>  #define ACK_TIMEOUT                    1000
+> +#define ACK_TIMEOUT_US                 1000000
+>  #define BOOT_FSM_TIMEOUT               10000
+>  /* mask values */
+>  #define EVB_MASK                       GENMASK(27, 4)
+> @@ -51,6 +52,8 @@
+>  #define QDSP6SS_CORE_CBCR      0x20
+>  #define QDSP6SS_SLEEP_CBCR     0x3c
+>
+> +#define QCOM_Q6V5_RPROC_PROXY_PD_MAX   3
+> +
+>  struct adsp_pil_data {
+>         int crash_reason_smem;
+>         const char *firmware_name;
+> @@ -58,9 +61,13 @@ struct adsp_pil_data {
+>         const char *ssr_name;
+>         const char *sysmon_name;
+>         int ssctl_id;
+> +       bool is_wpss;
+> +       bool auto_boot;
+>
+>         const char **clk_ids;
+>         int num_clks;
+> +       const char **proxy_pd_names;
+> +       const char *load_state;
+>  };
+>
+>  struct qcom_adsp {
+> @@ -93,11 +100,146 @@ struct qcom_adsp {
+>         void *mem_region;
+>         size_t mem_size;
+>
+> +       struct device *proxy_pds[QCOM_Q6V5_RPROC_PROXY_PD_MAX];
+> +       size_t proxy_pd_count;
+> +
+>         struct qcom_rproc_glink glink_subdev;
+>         struct qcom_rproc_ssr ssr_subdev;
+>         struct qcom_sysmon *sysmon;
+> +
+> +       int (*shutdown)(struct qcom_adsp *adsp);
+>  };
+>
+> +static int qcom_rproc_pds_attach(struct device *dev, struct device **devs,
+
+Can 'devs' be replaced by 'struct qcom_adsp'? And then we can compare
+the size against ARRAY_SIZE(adsp->proxy_pds) instead of the #define.
+
+> +                                const char **pd_names)
 > +{
-> +	struct imx_rproc *priv = rproc->priv;
+> +       size_t num_pds = 0;
+> +       int ret;
+> +       int i;
 > +
-
-This is lacking proper documentation.  Please specify which remote processor
-is supposed to find a resource table address in the device tree and which should
-rely on the address in the resource table.  It would be much better to rely on
-the remote processor model to decide where to get the resource table from, and
-return an error if it is not where we expect it to be.
-
-Thanks,
-Mathieu
-
-> +	if (priv->rsc_table)
-> +		return (struct resource_table *)priv->rsc_table;
+> +       if (!pd_names)
+> +               return 0;
 > +
-> +	return rproc_elf_find_loaded_rsc_table(rproc, fw);
+> +       /* Handle single power domain */
+> +       if (dev->pm_domain) {
+> +               devs[0] = dev;
+> +               pm_runtime_enable(dev);
+> +               return 1;
+> +       }
+> +
+> +       while (pd_names[num_pds])
+> +               num_pds++;
+> +
+> +       if (num_pds > QCOM_Q6V5_RPROC_PROXY_PD_MAX)
+> +               return -E2BIG;
+> +
+> +       for (i = 0; i < num_pds; i++) {
+> +               devs[i] = dev_pm_domain_attach_by_name(dev, pd_names[i]);
+> +               if (IS_ERR_OR_NULL(devs[i])) {
+> +                       ret = PTR_ERR(devs[i]) ? : -ENODATA;
+> +                       goto unroll_attach;
+> +               }
+> +       }
+> +
+> +       return num_pds;
+> +
+> +unroll_attach:
+> +       for (i--; i >= 0; i--)
+> +               dev_pm_domain_detach(devs[i], false);
+> +
+> +       return ret;
 > +}
 > +
->  static const struct rproc_ops imx_rproc_ops = {
->  	.prepare	= imx_rproc_prepare,
->  	.attach		= imx_rproc_attach,
-> @@ -506,7 +517,7 @@ static const struct rproc_ops imx_rproc_ops = {
->  	.da_to_va       = imx_rproc_da_to_va,
->  	.load		= rproc_elf_load_segments,
->  	.parse_fw	= imx_rproc_parse_fw,
-> -	.find_loaded_rsc_table = rproc_elf_find_loaded_rsc_table,
-> +	.find_loaded_rsc_table = imx_rproc_elf_find_loaded_rsc_table,
->  	.get_loaded_rsc_table = imx_rproc_get_loaded_rsc_table,
->  	.sanity_check	= rproc_elf_sanity_check,
->  	.get_boot_addr	= rproc_elf_get_boot_addr,
-> -- 
-> 2.25.1
-> 
+> +static void qcom_rproc_pds_detach(struct qcom_adsp *adsp, struct device **pds,
+> +                                 size_t pd_count)
+> +{
+> +       struct device *dev = adsp->dev;
+> +       int i;
+> +
+> +       /* Handle single power domain */
+> +       if (dev->pm_domain && pd_count) {
+> +               pm_runtime_disable(dev);
+> +               return;
+> +       }
+> +
+> +       for (i = 0; i < pd_count; i++)
+> +               dev_pm_domain_detach(pds[i], false);
+> +}
+> +
+> +static int qcom_rproc_pds_enable(struct qcom_adsp *adsp, struct device **pds,
+> +                                size_t pd_count)
+> +{
+> +       int ret;
+> +       int i;
+> +
+> +       for (i = 0; i < pd_count; i++) {
+> +               dev_pm_genpd_set_performance_state(pds[i], INT_MAX);
+> +               ret = pm_runtime_get_sync(pds[i]);
+> +               if (ret < 0) {
+> +                       pm_runtime_put_noidle(pds[i]);
+> +                       dev_pm_genpd_set_performance_state(pds[i], 0);
+> +                       goto unroll_pd_votes;
+> +               }
+> +       }
+> +
+> +       return 0;
+> +
+> +unroll_pd_votes:
+> +       for (i--; i >= 0; i--) {
+> +               dev_pm_genpd_set_performance_state(pds[i], 0);
+> +               pm_runtime_put(pds[i]);
+> +       }
+> +
+> +       return ret;
+> +}
+> +
+> +static void qcom_rproc_pds_disable(struct qcom_adsp *adsp, struct device **pds,
+> +                                  size_t pd_count)
+> +{
+> +       int i;
+> +
+> +       for (i = 0; i < pd_count; i++) {
+> +               dev_pm_genpd_set_performance_state(pds[i], 0);
+> +               pm_runtime_put(pds[i]);
+> +       }
+> +}
+> +
+> +static int qcom_wpss_shutdown(struct qcom_adsp *adsp)
+> +{
+> +       unsigned int val;
+> +
+> +       regmap_write(adsp->halt_map, adsp->halt_lpass + LPASS_HALTREQ_REG, 1);
+> +
+> +       /* Wait for halt ACK from QDSP6 */
+> +       regmap_read_poll_timeout(adsp->halt_map,
+> +                                adsp->halt_lpass + LPASS_HALTACK_REG, val,
+> +                                val, 1000, ACK_TIMEOUT_US);
+> +
+> +       /* Assert the WPSS PDC Reset */
+> +       reset_control_assert(adsp->pdc_sync_reset);
+> +       /* Place the WPSS processor into reset */
+> +       reset_control_assert(adsp->restart);
+> +       /* wait after asserting subsystem restart from AOSS */
+> +       usleep_range(200, 205);
+> +       /* Remove the WPSS reset */
+> +       reset_control_deassert(adsp->restart);
+> +       /* De-assert the WPSS PDC Reset */
+> +       reset_control_deassert(adsp->pdc_sync_reset);
+
+Please add newlines between comments and previous code. The above chunk
+is really hard to read.
+
+> +
+> +       usleep_range(100, 105);
+> +
+> +       clk_bulk_disable_unprepare(adsp->num_clks, adsp->clks);
+> +
+> +       regmap_write(adsp->halt_map, adsp->halt_lpass + LPASS_HALTREQ_REG, 0);
+> +
+> +       /* Wait for halt ACK from QDSP6 */
+> +       regmap_read_poll_timeout(adsp->halt_map,
+> +                                adsp->halt_lpass + LPASS_HALTACK_REG, val,
+> +                                !val, 1000, ACK_TIMEOUT_US);
+> +
+> +       return 0;
+> +}
+> +
+>  static int qcom_adsp_shutdown(struct qcom_adsp *adsp)
+>  {
+>         unsigned long timeout;
