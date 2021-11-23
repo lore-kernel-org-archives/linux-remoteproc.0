@@ -2,58 +2,58 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BF74C433F5
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 23 Nov 2021 02:15:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5927FC433F5
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 23 Nov 2021 02:17:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231363AbhKWCSz (ORCPT
+        id S232342AbhKWCUH (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 22 Nov 2021 21:18:55 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:28660 "EHLO
+        Mon, 22 Nov 2021 21:20:07 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:45011 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231879AbhKWCSy (ORCPT
+        by vger.kernel.org with ESMTP id S232138AbhKWCUH (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 22 Nov 2021 21:18:54 -0500
+        Mon, 22 Nov 2021 21:20:07 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1637633746;
+        s=mimecast20190719; t=1637633819;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=W1DldLfSNZ3GZO5TU3A8eWGee6MOniRNFPe++o8u1a8=;
-        b=MwHIO3lkC84qaTE2GHPcelXtOImMGBosDQNuu19riZQouGYB8dYaM5sjANIplEL0apyFcb
-        6V8uVSG/MB1iDjFVRAGm0Hz3exFWBSOns1Jfp5sBTUes169+5Fp/qim2qiGpLlb0mFA2IY
-        5SJk15hL/4RvtBvc+yEvpiiGTBRjrC8=
-Received: from mail-lf1-f72.google.com (mail-lf1-f72.google.com
- [209.85.167.72]) by relay.mimecast.com with ESMTP with STARTTLS
+        bh=ecCKMHgh1nP5alHe1rExeQVJFcZLj5dbAYvcIuSvMp8=;
+        b=VG8Xqdyi/3vrjMtWhIk9rx182nOzySy9PxzY/2qbbn7wODOsrCOcY6SN49JLX66a0NUoqD
+        RTVcPP5GI+5V0a0+L8bebxZi824bPpTcnVD6YNMfIaEtVTIjztuAdWk289i97t/lprwf4u
+        G3oFEDBfUbtTJK7Vl0yl8km3IktEeBk=
+Received: from mail-lf1-f69.google.com (mail-lf1-f69.google.com
+ [209.85.167.69]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-58-7qJ5kwUiPyq6DotwrVdHJQ-1; Mon, 22 Nov 2021 21:15:45 -0500
-X-MC-Unique: 7qJ5kwUiPyq6DotwrVdHJQ-1
-Received: by mail-lf1-f72.google.com with SMTP id bp10-20020a056512158a00b0040376f60e35so13438725lfb.8
-        for <linux-remoteproc@vger.kernel.org>; Mon, 22 Nov 2021 18:15:45 -0800 (PST)
+ us-mta-82-FxmsnzM0P6GONSH9Nr_Xwg-1; Mon, 22 Nov 2021 21:16:58 -0500
+X-MC-Unique: FxmsnzM0P6GONSH9Nr_Xwg-1
+Received: by mail-lf1-f69.google.com with SMTP id k32-20020a0565123da000b0041643c6a467so2746507lfv.5
+        for <linux-remoteproc@vger.kernel.org>; Mon, 22 Nov 2021 18:16:58 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=W1DldLfSNZ3GZO5TU3A8eWGee6MOniRNFPe++o8u1a8=;
-        b=rjuYpjfC3xLcTaqad6aReLrxnGYj5wGj3AtdkELS4u/6Dsj3tKuIKw5p6q/iN+JpEA
-         eDMk5eOAmciRa1Lr4+UojBVYVVYab0Fc5cpbMuQ38mzSgHDMnlcblgX1G7DQ5QhZLiev
-         Sg6KrcLQMLUCdiAJCnIWi6icLDnvhE8tPiYNfYPeg0tV371/h1Q+Z7JV8o7KgyGvMU8m
-         mCWuxvxQYW8+t3I5epTnEsDLhXV3ewjqbJ7Z/jjKOg42Z03Ij3UX9vLCo/37Huni+Gmu
-         bmuUHbKFG6ME63FU1N/TPD7DrmwvgbIR/jrDWA0IwVNP6vqEOxgC7KgxadpWVUhfbhFs
-         LLgA==
-X-Gm-Message-State: AOAM532EJ6j3S0EGFv8hDJmS0FbNZZhDMJ0UjvmVQFdRbjUCOrne28Yp
-        Zl8kpK1wNi3oqDy8Z3rfVQAFrQ7g4dI/0laZj0KLvEUxuWu8KdEL9++TbnkumYGc7e8+nfa/5HD
-        X5GuM1q6u3Tp9JqSHUYHMDv8zzH+/ToH61WKNUiOlxJvwHw==
-X-Received: by 2002:ac2:5310:: with SMTP id c16mr1146923lfh.580.1637633743784;
-        Mon, 22 Nov 2021 18:15:43 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJy5F3fLTnFecDRwlbxWQoSLXoV9918xgCV7czUaBFIpkdKJC7LiNweYTTTLyK3IrQGG25LnISfSApYTs8M+AAs=
-X-Received: by 2002:ac2:5310:: with SMTP id c16mr1146901lfh.580.1637633743597;
- Mon, 22 Nov 2021 18:15:43 -0800 (PST)
+        bh=ecCKMHgh1nP5alHe1rExeQVJFcZLj5dbAYvcIuSvMp8=;
+        b=PoKcBsNRg1ULl5cY3AeGTMtLHE3HyEgZSlzhmS10gDlBVfK0DrG1Vu1THw3mhxZZbT
+         WV5A4KnrAWIpgKYGQrTGI8XQmyOxpnpmhPDnmmE5CtekTKnKuktU7NWVUnoYiz7LjJI3
+         4Tr5ijj0XOTQIQcA+lRd6s/Lf3gt08tTRoGTRQxtbnJA4lLxCL2UJKhH2F+d8xAkF47N
+         TvwHjS3JGuywliEHcarAqTzVVivkt0wKYBx8HhA2wA/ptT1Sb2P0aCJcctUxtG0bnXkA
+         tllm6YTUQOPXOinT7CIe7x+9CSSoadNjj0ZTVHCZOlXgVf6AaKE/y1ck3Q009Ot8/Nu2
+         joEA==
+X-Gm-Message-State: AOAM530BX/kiqQXhtEQDdonf5PKFIp9WnwN/eoyKsx1Yy4kYPh1vK46j
+        v06f4wBVVMqC8VQ9DmA3TonvwcanIAefritVEPIEhxid6DvlgyolJZ4qN0yZRT3OEKP8QsVOltE
+        YfmTc03qCkRf3wOdT02pyVT3ol/zItGRP7Z/W8Zu/gvS8Dw==
+X-Received: by 2002:a05:6512:3d09:: with SMTP id d9mr1123009lfv.481.1637633816979;
+        Mon, 22 Nov 2021 18:16:56 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJxZdt/n+KGQPmtzq9KuLUyNSmS94ktfV31AZ4jOSU6mpao1hmU4eoYuLOvVeqk6uzcISZjccIPmcIlCHFZVPA8=
+X-Received: by 2002:a05:6512:3d09:: with SMTP id d9mr1122994lfv.481.1637633816808;
+ Mon, 22 Nov 2021 18:16:56 -0800 (PST)
 MIME-Version: 1.0
-References: <20211122160812.25125-1-arnaud.pouliquen@foss.st.com>
-In-Reply-To: <20211122160812.25125-1-arnaud.pouliquen@foss.st.com>
+References: <20211122160812.25125-1-arnaud.pouliquen@foss.st.com> <CACGkMEsQVVMx_+ezoVZ86xEFuadNOzjwcNBnv+-h-pE0JnXhxw@mail.gmail.com>
+In-Reply-To: <CACGkMEsQVVMx_+ezoVZ86xEFuadNOzjwcNBnv+-h-pE0JnXhxw@mail.gmail.com>
 From:   Jason Wang <jasowang@redhat.com>
-Date:   Tue, 23 Nov 2021 10:15:32 +0800
-Message-ID: <CACGkMEsQVVMx_+ezoVZ86xEFuadNOzjwcNBnv+-h-pE0JnXhxw@mail.gmail.com>
+Date:   Tue, 23 Nov 2021 10:16:46 +0800
+Message-ID: <CACGkMEvXNbAseqQSyJL-7W5VZvEQGnK0WttVYLvGY2btJ_mTPw@mail.gmail.com>
 Subject: Re: [PATCH] rpmsg: virtio: don't let virtio core to validate used length
 To:     Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
 Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
@@ -68,53 +68,61 @@ Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Tue, Nov 23, 2021 at 12:08 AM Arnaud Pouliquen
-<arnaud.pouliquen@foss.st.com> wrote:
+On Tue, Nov 23, 2021 at 10:15 AM Jason Wang <jasowang@redhat.com> wrote:
 >
-> For RX virtqueue, the used length is validated in all the three paths
-> (big, small and mergeable). For control vq, we never tries to use used
-> length. So this patch forbids the core to validate the used length.
+> On Tue, Nov 23, 2021 at 12:08 AM Arnaud Pouliquen
+> <arnaud.pouliquen@foss.st.com> wrote:
+> >
+> > For RX virtqueue, the used length is validated in all the three paths
+> > (big, small and mergeable). For control vq, we never tries to use used
+> > length. So this patch forbids the core to validate the used length.
+>
+> If I understand the code correctly, the function that calls
+> virtqueue_get_buf() ares:
+>
+> rpmsg_recv_done()
+> get_a_tx_buf()
+>
+> So it looks to me like the above change log needs some tweak? (It
+> looks like a copy from the virtio-net patch).
+>
+> The codes are fine.
+>
+> Thanks
+>
+> >
+> > Without patch the rpmsg client sample does not work.
 
-If I understand the code correctly, the function that calls
-virtqueue_get_buf() ares:
 
-rpmsg_recv_done()
-get_a_tx_buf()
-
-So it looks to me like the above change log needs some tweak? (It
-looks like a copy from the virtio-net patch).
-
-The codes are fine.
+Btw, this probably uncovers a bug of the rpmsg device which needs to be fixed.
 
 Thanks
 
->
-> Without patch the rpmsg client sample does not work.
->
-> Fixes: 939779f5152d ("virtio_ring: validate used buffer length")
->
-> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-> Cc: Jason Wang <jasowang@redhat.com>
-> Cc: Michael S. Tsirkin <mst@redhat.com>
-> ---
-> base-commit: fa55b7dcdc43c1aa1ba12bca9d2dd4318c2a0dbf
-> ---
->  drivers/rpmsg/virtio_rpmsg_bus.c | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
-> index 9c112aa65040..5f73f19c2c38 100644
-> --- a/drivers/rpmsg/virtio_rpmsg_bus.c
-> +++ b/drivers/rpmsg/virtio_rpmsg_bus.c
-> @@ -1054,6 +1054,7 @@ static struct virtio_driver virtio_ipc_driver = {
->         .feature_table_size = ARRAY_SIZE(features),
->         .driver.name    = KBUILD_MODNAME,
->         .driver.owner   = THIS_MODULE,
-> +       .suppress_used_validation = true,
->         .id_table       = id_table,
->         .probe          = rpmsg_probe,
->         .remove         = rpmsg_remove,
-> --
-> 2.17.1
->
+> >
+> > Fixes: 939779f5152d ("virtio_ring: validate used buffer length")
+> >
+> > Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+> > Cc: Jason Wang <jasowang@redhat.com>
+> > Cc: Michael S. Tsirkin <mst@redhat.com>
+> > ---
+> > base-commit: fa55b7dcdc43c1aa1ba12bca9d2dd4318c2a0dbf
+> > ---
+> >  drivers/rpmsg/virtio_rpmsg_bus.c | 1 +
+> >  1 file changed, 1 insertion(+)
+> >
+> > diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
+> > index 9c112aa65040..5f73f19c2c38 100644
+> > --- a/drivers/rpmsg/virtio_rpmsg_bus.c
+> > +++ b/drivers/rpmsg/virtio_rpmsg_bus.c
+> > @@ -1054,6 +1054,7 @@ static struct virtio_driver virtio_ipc_driver = {
+> >         .feature_table_size = ARRAY_SIZE(features),
+> >         .driver.name    = KBUILD_MODNAME,
+> >         .driver.owner   = THIS_MODULE,
+> > +       .suppress_used_validation = true,
+> >         .id_table       = id_table,
+> >         .probe          = rpmsg_probe,
+> >         .remove         = rpmsg_remove,
+> > --
+> > 2.17.1
+> >
 
