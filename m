@@ -2,116 +2,145 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F1E0C433F5
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 29 Nov 2021 20:41:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2C3EC433FE
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 29 Nov 2021 22:03:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231788AbhK2UoY (ORCPT
+        id S233172AbhK2WG3 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 29 Nov 2021 15:44:24 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35094 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233886AbhK2UmY (ORCPT
+        Mon, 29 Nov 2021 17:06:29 -0500
+Received: from mail-ot1-f46.google.com ([209.85.210.46]:42711 "EHLO
+        mail-ot1-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231650AbhK2WE3 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 29 Nov 2021 15:42:24 -0500
-Received: from mail-pf1-x42d.google.com (mail-pf1-x42d.google.com [IPv6:2607:f8b0:4864:20::42d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B5B12C0C0846
-        for <linux-remoteproc@vger.kernel.org>; Mon, 29 Nov 2021 09:17:25 -0800 (PST)
-Received: by mail-pf1-x42d.google.com with SMTP id x5so17637280pfr.0
-        for <linux-remoteproc@vger.kernel.org>; Mon, 29 Nov 2021 09:17:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=KemDiumlbcxPouh3L3ClUWKSB7PfWKN1Cz/0fv3QOaw=;
-        b=UQv0URHo8nxtKCt7je9Sq9wTHqcHzxkUrRHbShEspIK7Q2+HbT9hOSF9OYliMQixPa
-         J7omcX6U6626oz7bKQIPyuaiAk6pa+MNUMQfd9wVzpqr5CgNkcxkEhLcN8bFupEu3FOV
-         NtsrjAC/343kTFrG6/WiKShdz/bf5AcOVy9dWIxPehQYL+MRRJ8+qR9OTO/3a2L2qaN+
-         bB3jbveAWsbGg8OA9LsO/wrDmelR6CLYifZbdlk/MOeRwLF5oVmjhzcLpfTGmLolLJcI
-         AxwyDax7GFz/ZNTZzg8znPdhuF3iZqXC+fxRxEb33evOP/jZ4NgT4VA//M/L37JGUWYo
-         scDA==
+        Mon, 29 Nov 2021 17:04:29 -0500
+Received: by mail-ot1-f46.google.com with SMTP id 47-20020a9d0332000000b005798ac20d72so27448881otv.9;
+        Mon, 29 Nov 2021 14:01:11 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=KemDiumlbcxPouh3L3ClUWKSB7PfWKN1Cz/0fv3QOaw=;
-        b=F/7eJ00lE1GAAyGOJbi+FOmxTHBhKOgzCb9P+i1CVXKCIPLGUBEkOeKbdxJGM/GkjH
-         ol4qKGzawObyEDSEkuk8iRrCaQJ/wAxLV+PAwhYrnXUHrLR+VKvUKaZdBzMirjCFWA03
-         NwyZ3qotXjhFPe+1SM06WDSD5dSr6HgGHLF+MAsTjlWJjQDFGkKd0/Je09FWphXJHzI7
-         d92bXIqR32Gzf68rKUhjRoPjuHWrbJCcicOjbfiChXaT5t8h2O4Y5yoOE/m2O5GliunL
-         i2hhtuoL/c4P/Dk7XXMcyTUhu4XBL5hW4aoCQvHcfsistoEVsZt7MggyJ/b3JbiTLgB5
-         zMqw==
-X-Gm-Message-State: AOAM532LqAsdS54M9UworG8ixByO82OP9wGLoBDtEFft1yERbvg646a+
-        GFHPhYSs/nTBKEIWLsgfZwQWcQ==
-X-Google-Smtp-Source: ABdhPJweaCP3RA/mL6V/zy5lv6zuvs50a2hfob+eURt3NfLVY9uZ16ZmI/IdVVr97/nlSBGArcLYpg==
-X-Received: by 2002:a05:6a00:2188:b0:4a7:ec46:349c with SMTP id h8-20020a056a00218800b004a7ec46349cmr33274369pfi.26.1638206245157;
-        Mon, 29 Nov 2021 09:17:25 -0800 (PST)
-Received: from p14s (S0106889e681aac74.cg.shawcable.net. [68.147.0.187])
-        by smtp.gmail.com with ESMTPSA id h3sm18914739pjz.43.2021.11.29.09.17.23
+         :mime-version:content-disposition:in-reply-to;
+        bh=ntfA5gkRhMVJoS1Zo+ZVOScfKDImals7GHKfKOpJLx0=;
+        b=nHFnpRhuJwxmIlMcXzjDxuXOdUBhVqRpNZA5oxaEvDRM+Fk170yAP+ojiMML34RlGG
+         1c0vAWFMrEA/jtvhklbgAmi/3USyk4iW7u7kqi2Sz8Xq7jMO2SPIbqVctY8GdMoCH9Gd
+         g77Twxdpg2g3BEW6sZpZkrCRGIFGpIjEudMmWtg7r2tqgT+P3WCMZun9+k/S9MZLSWXE
+         CQZLAMTXrEr26idSTviKlNdqphWYx6peJKHwCj8lRHrNHDhrzDMGGvyPFHGck7xjGb3+
+         ngOhbys9KJPavw6tOe6a9gZERFQE0cYOgX3X+tQuUQYAbELd+NwMnswGn82EuYaip3s7
+         EN5w==
+X-Gm-Message-State: AOAM533TbnYYLsN5eLzrEE/kY2ozoQrU1Xflvfm127IaXjFuYsbtVhIs
+        xKyw5QzXDRshV3CBHaQC1phl43DlVw==
+X-Google-Smtp-Source: ABdhPJwz7RkFJIybwrrQobNKFCy9baUiR4GndvW31uDvqIQGPAuKgjPmQHzAAPPQ19/i1/FDIyg6Xw==
+X-Received: by 2002:a05:6830:44c:: with SMTP id d12mr46086049otc.66.1638223270667;
+        Mon, 29 Nov 2021 14:01:10 -0800 (PST)
+Received: from robh.at.kernel.org (66-90-148-213.dyn.grandenetworks.net. [66.90.148.213])
+        by smtp.gmail.com with ESMTPSA id r10sm2523754ool.1.2021.11.29.14.01.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 29 Nov 2021 09:17:24 -0800 (PST)
-Date:   Mon, 29 Nov 2021 10:17:21 -0700
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-To:     Hari Nagalla <hnagalla@ti.com>
-Cc:     bjorn.andersson@linaro.org, robh+dt@kernel.org,
-        devicetree@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        a-govindraju@ti.com
-Subject: Re: [PATCH 0/4] TI K3 R5F and C71x support on J721S2
-Message-ID: <20211129171721.GA676889@p14s>
-References: <20211122122726.8532-1-hnagalla@ti.com>
+        Mon, 29 Nov 2021 14:01:09 -0800 (PST)
+Received: (nullmailer pid 687058 invoked by uid 1000);
+        Mon, 29 Nov 2021 22:01:09 -0000
+Date:   Mon, 29 Nov 2021 16:01:09 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Julien Massot <julien.massot@iot.bzh>
+Cc:     bjorn.andersson@linaro.org, mathieu.poirier@linaro.org,
+        geert+renesas@glider.be, linux-renesas-soc@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v1 1/3] dt-bindings: remoteproc: Add Renesas R-Car
+Message-ID: <YaVNpcv/R/iKxn1w@robh.at.kernel.org>
+References: <20211115135032.129227-1-julien.massot@iot.bzh>
+ <20211115135032.129227-2-julien.massot@iot.bzh>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20211122122726.8532-1-hnagalla@ti.com>
+In-Reply-To: <20211115135032.129227-2-julien.massot@iot.bzh>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Good morning Hari,
-
-On Mon, Nov 22, 2021 at 06:27:22AM -0600, Hari Nagalla wrote:
-> Hi All,
+On Mon, Nov 15, 2021 at 02:50:30PM +0100, Julien Massot wrote:
+> Renesas R-Car SoCs may contains a Realtime processor.
+> This patch adds binding for this remote processor.
 > 
-> The following series enhances the K3 R5F and DSP remoteproc drivers to
-> add support for the R5F clusters and C71x DSP on the newer TI K3 J721S2
-> SoC family. The J721S2 SoCs have 3 R5FSS clusters, one in MCU voltage
-> domain and the other two in MAIN voltage domain. There are also 2 C71x
-> DSP subsystems in MAIN voltage domain. The R5FSS is similar to the R5FSS
-> in J7200 SoCs, while the C71x DSPs are similar to the C71x DSP on J721e
-> SoCs.
+> Signed-off-by: Julien Massot <julien.massot@iot.bzh>
+> ---
+> Change since RFC:
+> Adds missing address-cells and size-cells and change reg cell
+> accordingly.
+> ---
+>  .../remoteproc/renesas,rcar-rproc.yaml        | 66 +++++++++++++++++++
+>  1 file changed, 66 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/remoteproc/renesas,rcar-rproc.yaml
 > 
-> See J721S2 Technical Reference Manual (SPRUJ28 – NOVEMBER 2021)
-> for further details: http://www.ti.com/lit/pdf/spruj28
-> 
-> Regards
-> Hari
-> 
-> Hari Nagalla (4):
->   dt-bindings: remoteproc: k3-r5f: Update bindings for J721S2 SoCs
->   dt-bindings: remoteproc: k3-dsp: Update bindings for J721S2 SoCs
->   remoteproc: k3-dsp: Extend support for C71x DSPs on J721S2 SoCs
->   remoteproc: k3-r5: Extend support for R5F clusters on J721S2 SoCs
-> 
->  .../devicetree/bindings/remoteproc/ti,k3-dsp-rproc.yaml   | 3 +++
->  .../devicetree/bindings/remoteproc/ti,k3-r5f-rproc.yaml   | 8 +++++---
->  drivers/remoteproc/ti_k3_dsp_remoteproc.c                 | 1 +
->  drivers/remoteproc/ti_k3_r5_remoteproc.c                  | 5 +++--
+> diff --git a/Documentation/devicetree/bindings/remoteproc/renesas,rcar-rproc.yaml b/Documentation/devicetree/bindings/remoteproc/renesas,rcar-rproc.yaml
+> new file mode 100644
+> index 000000000000..dcb6b0f75dda
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/remoteproc/renesas,rcar-rproc.yaml
+> @@ -0,0 +1,66 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: "http://devicetree.org/schemas/remoteproc/renesas,rcar-rproc.yaml#"
+> +$schema: "http://devicetree.org/meta-schemas/core.yaml#"
+> +
+> +title: Renesas R-Car remote processor controller bindings
+> +
+> +maintainers:
+> +  - Julien Massot <julien.massot@iot.bzh>
+> +
+> +description: |
+> +  This document defines the binding for the remoteproc component that loads and
+> +  boots firmwares on the Renesas R-Car family chipset.
+> +  R-Car gen3 family may have a realtime processor, this processor share peripheral
+> +  and RAM with the host processor with the same address map.
+> +
+> +properties:
+> +  compatible:
+> +    const: renesas,rcar-cr7
+> +
+> +  resets:
+> +    maxItems: 1
+> +
+> +  power-domains:
+> +    maxItems: 1
+> +
+> +  memory-region:
+> +    description:
+> +      List of phandles to the reserved memory regions associated with the
+> +      remoteproc device. This is variable and describes the memories shared with
+> +      the remote processor (e.g. remoteproc firmware and carveouts, rpmsg
+> +      vrings, ...).
+> +      (see ../reserved-memory/reserved-memory.yaml)
+> +
+> +required:
+> +  - compatible
+> +  - resets
+> +  - memory-region
+> +  - power-domains
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/clock/r8a7795-cpg-mssr.h>
+> +    #include <dt-bindings/power/r8a7795-sysc.h>
+> +    reserved-memory {
+> +        #address-cells = <2>;
+> +        #size-cells = <2>;
+> +
+> +        cr7_ram: cr7_ram@40040000 {
+> +            no-map;
+> +            reg = <0x0 0x40040000 0x0 0x1fc0000>;
+> +        };
+> +    };
+> +
+> +    cr7_rproc: cr7 {
+> +        compatible = "renesas,rcar-cr7";
+> +        memory-region = <&cr7_ram>;
+> +        power-domains = <&sysc R8A7795_PD_CR7>;
+> +        resets = <&cpg 222>;
+> +        status = "okay";
 
-For all 4 patches:
+Don't show status in examples.
 
-Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+With that,
 
-It was a holiday last week in the US so I'll give more time for Rob to review this (should
-he want to) before publishing.
-
-Thanks,
-Mathieu
-
-
->  4 files changed, 12 insertions(+), 5 deletions(-)
-> 
-> -- 
-> 2.17.1
-> 
+Reviewed-by: Rob Herring <robh@kernel.org>
