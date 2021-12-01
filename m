@@ -2,147 +2,137 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72555C433F5
-	for <linux-remoteproc@archiver.kernel.org>; Wed,  1 Dec 2021 09:09:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DDAB3C433F5
+	for <linux-remoteproc@archiver.kernel.org>; Wed,  1 Dec 2021 16:46:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348146AbhLAJMa (ORCPT
+        id S232924AbhLAQtl (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 1 Dec 2021 04:12:30 -0500
-Received: from mo4-p01-ob.smtp.rzone.de ([85.215.255.51]:32268 "EHLO
-        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242325AbhLAJM3 (ORCPT
+        Wed, 1 Dec 2021 11:49:41 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49518 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230361AbhLAQtl (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 1 Dec 2021 04:12:29 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1638349744;
-    s=strato-dkim-0002; d=gerhold.net;
-    h=In-Reply-To:References:Message-ID:Subject:Cc:To:From:Date:Cc:Date:
-    From:Subject:Sender;
-    bh=ktYS9iuRKHdZDzICD4l2BwfqGtaFxG7/qEVsEt7N3Jg=;
-    b=BJ7ga5T8603X7+gtXhrnhRDXGVPHG29IJ4lhXtDhebeYWxwhw7JvQ62EZaH0jQJlZW
-    PlaQhg6pGz1lEpLJWHxloYKC20Kry0Lr4RvB++V/gEtrXSSE2hBKKZ2TQXxbSsS0qPSB
-    ylsAZjTtCsuyHsLIgfHAntGCJItreV87YB1BuZ2XYLzqxVoZ9B3KVpCRoU/UJfbIzYUf
-    uuykiATar6su76mAezl1VG7jyxXDY8vOwxOxiXmOOH4mYqy/iRAbHN51D6BEognwWMdy
-    QonYQh/nDPSNLwgDhVTrsakf/WRjNgaYIrBkobCQbLq5CNsuLtQKKXzE9F4kMhPzCVzz
-    b/9A==
-Authentication-Results: strato.com;
-    dkim=none
-X-RZG-AUTH: ":P3gBZUipdd93FF5ZZvYFPugejmSTVR2nRPhVOQ/OcYgojyw4j34+u267FZF9PwpcNKLUrK85/aY="
-X-RZG-CLASS-ID: mo00
-Received: from gerhold.net
-    by smtp.strato.de (RZmta 47.34.10 AUTH)
-    with ESMTPSA id j03bcbxB1993eju
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
-        (Client did not present a certificate);
-    Wed, 1 Dec 2021 10:09:03 +0100 (CET)
-Date:   Wed, 1 Dec 2021 10:09:02 +0100
-From:   Stephan Gerhold <stephan@gerhold.net>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Andy Gross <agross@kernel.org>, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht,
-        Ohad Ben-Cohen <ohad@wizery.com>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        linux-remoteproc@vger.kernel.org, phone-devel@vger.kernel.org,
-        Aleksander Morgado <aleksander@aleksander.es>
-Subject: Re: [PATCH 1/2] remoteproc: qcom_q6v5_mss: Populate additional
- devices from DT
-Message-ID: <Yac7rvxHhWld1/s3@gerhold.net>
-References: <20211129132930.6901-1-stephan@gerhold.net>
- <20211129132930.6901-2-stephan@gerhold.net>
- <Yabw7kCsbhE1EFhW@builder.lan>
+        Wed, 1 Dec 2021 11:49:41 -0500
+Received: from mail-pj1-x1030.google.com (mail-pj1-x1030.google.com [IPv6:2607:f8b0:4864:20::1030])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 451A1C061574
+        for <linux-remoteproc@vger.kernel.org>; Wed,  1 Dec 2021 08:46:20 -0800 (PST)
+Received: by mail-pj1-x1030.google.com with SMTP id iq11so18442984pjb.3
+        for <linux-remoteproc@vger.kernel.org>; Wed, 01 Dec 2021 08:46:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=wBDlagZhzaCKQPO8KQRJcEbdw+pTfLmf8ix5585yKYE=;
+        b=cDYR9mbfas8zcxichBHZJo10Gp7Lm7XyQANLAtsQdZcrQRWtsvQ9FmsS+3cUbSpPei
+         D737Mj5iSi/mzkaeVQ0sIkhYtWBZdDmIU02oe2nxMmeabpZXGApjZi7328TCTK11/ldP
+         HN2CEvwmXQrmDpsY8J+4V6MZ3YpBAW1oHnICnBwWN1WmCi3amn+rjlllvSN6MkcYjzl3
+         7mefC7ANsTXu8FB8CjCJl3p/8+JyyC+O58GQd7J11Mdi7OGdMVE/J1LTLNWzxMWZ1Pf+
+         IucYaTl63tPyBVHs4EhijQ2nIWDeyYyunawoZeOGKssOdWyLnFP2C4M1BDKzpMO4wwM9
+         BYSg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=wBDlagZhzaCKQPO8KQRJcEbdw+pTfLmf8ix5585yKYE=;
+        b=r2KRVX5u6PvQOHcHP/ypNNxQBBAHr8PslDK+Wl8Sz2j6kPaQEu7/URCe/X04ygz7en
+         NcaCK8yXnA8osFiVkiLuQHLhsTlqbVuUl/Nhx3/GrvS4+NQULj4oKNqo7SS7Dr4odSog
+         BOLmphrJKNGaSPFhV85bdxTMv5k/yVCd15s8KsSJ6S7eAmwWF6nr2DvZR3c3TEhCGW3L
+         SBUacSoIUnEesl/PWY4ntNTs2PQpQqk8UnBL+fP9RWHwPsnVCqba5wLGSIL6gS8Js//i
+         qVfXvnUpdXOd8mpMrtRJi7889ffSzJKAzlMadYt7q4+MZ9j9QLPOQU24yY6E+UfgnpNU
+         WNHg==
+X-Gm-Message-State: AOAM530RH3BFYm6IMebf//0SYr0xeeoLu3KcY1F9YM/YPIt/RyBfFmed
+        MEzPj8ke2ECvS8NYbCU768tXWA==
+X-Google-Smtp-Source: ABdhPJw1KJ3akbkNHnkpRR0aVBwuKap2U8kx/wsFNADR5HXFaJmmqShB3r0PApZxx+T3Mq2LN8muGg==
+X-Received: by 2002:a17:903:22cc:b0:142:d31:bd9 with SMTP id y12-20020a17090322cc00b001420d310bd9mr8743022plg.64.1638377179767;
+        Wed, 01 Dec 2021 08:46:19 -0800 (PST)
+Received: from p14s (S0106889e681aac74.cg.shawcable.net. [68.147.0.187])
+        by smtp.gmail.com with ESMTPSA id v63sm196215pgv.71.2021.12.01.08.46.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 01 Dec 2021 08:46:18 -0800 (PST)
+Date:   Wed, 1 Dec 2021 09:46:16 -0700
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+To:     Julien Massot <julien.massot@iot.bzh>
+Cc:     bjorn.andersson@linaro.org, robh+dt@kernel.org,
+        geert+renesas@glider.be, linux-renesas-soc@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 0/2] Initial Renesas R-Car remoteproc support
+Message-ID: <20211201164616.GA834591@p14s>
+References: <20211130100049.129418-1-julien.massot@iot.bzh>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Yabw7kCsbhE1EFhW@builder.lan>
+In-Reply-To: <20211130100049.129418-1-julien.massot@iot.bzh>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Tue, Nov 30, 2021 at 09:50:06PM -0600, Bjorn Andersson wrote:
-> On Mon 29 Nov 07:29 CST 2021, Stephan Gerhold wrote:
+Good morning,
+
+On Tue, Nov 30, 2021 at 11:00:47AM +0100, Julien Massot wrote:
+> Most of the SoCs in the R-Car gen3 SoC series such as
+> H3,M3 and E3 have an 'Arm Realtime Core'.
+> This Realtime core is an Arm Cortex-R7 clocked at 800MHz.
+> This series adds initial support to load a firmware and start
+> this remote processor through the remoteproc subsystem.
 > 
-> > Some devices without own memory resources could be placed anywhere in the
-> > device tree but they logically belong to the modem remote processor. Make
-> > it possible to probe them when defined under the mpss device tree node
-> > by calling of_platform_populate().
-> > 
-> 
-> This seems reasonable, but other "child devices" of the remoteproc
-> follows the state of the remoteproc instance. So I'm worried that this
-> will create an inconsistency in that assumption.
-> 
+> This series depends on
+> https://patchwork.kernel.org/project/linux-renesas-soc/patch/20211022122101.66998-1-julien.massot@iot.bzh/
+> to be able to set the Cortex-R7 boot address.
 
-On Linux there are two devices managed by qcom_q6v5_mss, the platform
-device used by the driver and the actual remoteproc instance that has
-the state. The devices that follow the state are children of the
-remoteproc instance. I'm creating BAM-DMUX below the platform device.
+The above depencency is needed for this patchset to compile properly.  Since
+Geert has already applied it to his renesas-devel tree we can do two things:
 
-This is just not represented in the device tree very well since both
-platform device and remoteproc instance share the same device tree node.
-However, all the state managed nodes are manually managed and do not
-have a compatible so it should not cause problems.
+1) Make this set go through Geert's tree.
+2) Geert publishes an immutable branch I can pull the dependency from.
 
-> > This can be used for BAM-DMUX for example, which provides the WWAN network
-> > interfaces on some older Qualcomm SoCs such as MSM8916 or MSM8974.
-> > 
-> 
-> Is there a technical reason for placing the BAM-DMUX within the modem
-> remoteproc node? Can we simply move it to / ?
-> 
-
-I had it at / originally and at the moment it would still work there.
-I moved it below the remoteproc when the whole "WWAN subsystem"
-discussion came up. The goal is to have a common parent device for all
-the ports of a WWAN modem.
-
-The way it works is that you give the WWAN subsystem a (parent) device
-that represents the modem itself, and then it groups all WWAN ports
-below that. The control ports (rpmsg_wwan_ctrl driver) are currently
-already created below the modem platform device.
-
-The bam-dmux driver does not integrate with the WWAN subsystem yet
-because of some unrelated open problems, but in the future I will likely
-need a reference to the modem platform device there as well.
-
-There are other approaches of course (e.g. a phandle to the modem
-remoteproc node), but I still think it logically fits best somewhere
-below the modem node. If the modem remoteproc is status = "disabled",
-it does not make sense to load bam-dmux either etc.
+I'm good either way, just let me know what you want to do.
 
 Thanks,
-Stephan
+Mathieu
 
-> > Signed-off-by: Stephan Gerhold <stephan@gerhold.net>
-> > ---
-> >  drivers/remoteproc/qcom_q6v5_mss.c | 7 +++++++
-> >  1 file changed, 7 insertions(+)
-> > 
-> > diff --git a/drivers/remoteproc/qcom_q6v5_mss.c b/drivers/remoteproc/qcom_q6v5_mss.c
-> > index 43ea8455546c..69f3d1ebf1f1 100644
-> > --- a/drivers/remoteproc/qcom_q6v5_mss.c
-> > +++ b/drivers/remoteproc/qcom_q6v5_mss.c
-> > @@ -1989,8 +1989,14 @@ static int q6v5_probe(struct platform_device *pdev)
-> >  	if (ret)
-> >  		goto remove_sysmon_subdev;
-> >  
-> > +	ret = of_platform_populate(pdev->dev.of_node, NULL, NULL, &pdev->dev);
-> > +	if (ret)
-> > +		goto remove_rproc;
-> > +
-> >  	return 0;
-> >  
-> > +remove_rproc:
-> > +	rproc_del(rproc);
-> >  remove_sysmon_subdev:
-> >  	qcom_remove_sysmon_subdev(qproc->sysmon);
-> >  remove_subdevs:
-> > @@ -2010,6 +2016,7 @@ static int q6v5_remove(struct platform_device *pdev)
-> >  	struct q6v5 *qproc = platform_get_drvdata(pdev);
-> >  	struct rproc *rproc = qproc->rproc;
-> >  
-> > +	of_platform_depopulate(&pdev->dev);
-> >  	rproc_del(rproc);
-> >  
-> >  	qcom_q6v5_deinit(&qproc->q6v5);
-> > -- 
-> > 2.34.1
-> > 
+> 
+> One of the way to test this driver is to use the zephyr upstream support
+> for h3ulcb board 'blinky' demo is my favorite testing firmware.
+> 
+> To generate a firmware with the zephyr project.
+> 
+> follow this starting guide
+> https://docs.zephyrproject.org/2.7.0/getting_started/index.html
+> 
+> Then compile your zephyr demo
+> west build -b rcar_h3ulcb_cr7 zephyr/samples/basic/blinky \
+>     -DCONFIG_KERNEL_ENTRY=\"_vector_table\" \
+>     --build-dir h3-blinky
+> 
+> Then you can use h3-blinky/zephyr/zephyr.elf as a testing
+> firmware.
+> 
+> Patch 1/2 adds the dt-bindings
+> 
+> Patch 2/2 is a small driver to cover basic remoteproc
+> usage: loading firmware from filesystem, starting and stopping the
+> Cortex-r7 processor.
+> 
+> Device tree modifications have been dropped in this patchset version.
+> Reason is that memory range used by the Cortex-R7 depends on
+> design choice.
+> One thing we could do in the future is to add CR7 node
+> in the different Gen3 SoCs dtsi files such as r8a77951.dtsi, r8a77990.dtsi,
+> r8a77961.dtsi.. 
+> 
+> Julien Massot (2):
+>   dt-bindings: remoteproc: Add Renesas R-Car
+>   remoteproc: Add Renesas rcar driver
+> 
+>  .../remoteproc/renesas,rcar-rproc.yaml        |  65 +++++
+>  drivers/remoteproc/Kconfig                    |  11 +
+>  drivers/remoteproc/Makefile                   |   1 +
+>  drivers/remoteproc/rcar_rproc.c               | 226 ++++++++++++++++++
+>  4 files changed, 303 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/remoteproc/renesas,rcar-rproc.yaml
+>  create mode 100644 drivers/remoteproc/rcar_rproc.c
+> 
+> -- 
+> 2.33.1
+> 
+> 
