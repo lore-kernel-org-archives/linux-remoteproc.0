@@ -2,143 +2,143 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BBC1C433EF
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  2 Dec 2021 17:00:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6F02C433F5
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  2 Dec 2021 17:11:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1359692AbhLBRDk (ORCPT
+        id S235350AbhLBROz (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 2 Dec 2021 12:03:40 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43576 "EHLO
+        Thu, 2 Dec 2021 12:14:55 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46144 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1359682AbhLBRDj (ORCPT
+        with ESMTP id S1359496AbhLBROv (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 2 Dec 2021 12:03:39 -0500
-Received: from mail-pg1-x534.google.com (mail-pg1-x534.google.com [IPv6:2607:f8b0:4864:20::534])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F2245C06174A
-        for <linux-remoteproc@vger.kernel.org>; Thu,  2 Dec 2021 09:00:16 -0800 (PST)
-Received: by mail-pg1-x534.google.com with SMTP id s137so335324pgs.5
-        for <linux-remoteproc@vger.kernel.org>; Thu, 02 Dec 2021 09:00:16 -0800 (PST)
+        Thu, 2 Dec 2021 12:14:51 -0500
+Received: from mail-pl1-x633.google.com (mail-pl1-x633.google.com [IPv6:2607:f8b0:4864:20::633])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 27065C06174A
+        for <linux-remoteproc@vger.kernel.org>; Thu,  2 Dec 2021 09:11:29 -0800 (PST)
+Received: by mail-pl1-x633.google.com with SMTP id u17so160458plg.9
+        for <linux-remoteproc@vger.kernel.org>; Thu, 02 Dec 2021 09:11:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=NJpF2n0u3f+V7LbnqKcCz27brPpeZJOecaGwU3axpi0=;
-        b=CiMe61IIzyOL1BdLkQAxHVUenkc57I8TLB0f1Bw9VwRKN3NPdIv/6r4TknCta3x1lI
-         i+9oJjkhEOYH9hjYG+ZnlIfdBUh5d+QSjZ9qBO6/lJg+Q3FcEFUwe5pu+R8L9w7HICuD
-         AqEQXCbmxpq191HswrrCvq3MvTLqtOv0adbZBd9L+Rr5cWynWnOyNe1hCx4skCUqNd/u
-         uhHFW17VS7Wix2xuQBWPV2WqpV3cWEdxbypaZXAqMOUWLAvlwsBarUABz9y3fq9maIZG
-         pAv0I308HwItzYIgzVsNCyL5piFKlE6P/tUGVAozP3zXXsu22OSkoNabHrqXG+/j3f2e
-         08Vg==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=RwOKt3OOkRPRdK64nOMB7Wk4/4KZ8STlxMRNjUNA2As=;
+        b=oib93oLHva7M20RUYAcWefBezzxTGxy2OyKORb1mNqbOQ8862ewuDc0yGaxPLB6DNu
+         jk9LMO7lYx9np4d/whEpjboaBToF4xKAhsVDMmxjOM0kxj+lRbGbzLBla1DVPnqNprVh
+         zzBR7XL2/MkNuramhYxsni3hGRN+MUbEXr2jIzjx4lH7RaTysMyKBzrY+AEm4Oa6zEmC
+         EkS5/27JITyjtjzNYJE4K0YqVUDCwMtCENTOXIXhaUwFULzVFgefoV1aMqFKCCG/AdmH
+         Vn330MCcJ2xyzQpKBplpUgbRPAvhuvbrle23U0j2/eV5eKp2jHa+B9xfSNFEmdFHIMqy
+         BHLQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=NJpF2n0u3f+V7LbnqKcCz27brPpeZJOecaGwU3axpi0=;
-        b=vCSP1Jv4Lfpy42ZDBIIhBdMsg2bvVKlmcXuqRLhFejI0El1EWIkGaeLljBK1IxQSWO
-         xU9pfRnf7YOykKAnCRIRVU3aOFjunBMQN7Q3kXOEwP/FjcwIIhLMQ+r9peg9N7hVBiK7
-         f/2r6A9h+EE50q4DP64zXOqCsFPXV5/9BTzM+gjH7K8JOswh+stspbj+HMlhrf/Xf7Nx
-         DqEMRokrtmoolHjB53nvfVF2su94HhDc7bf06STFwDRHxglrDnlYMa08Lgnt9YkZiKm9
-         IDLd204CN1QlKlTzKokePPnp1d9KpeAe/mb2E8Zjyp2nf7kEdiyrU8VeV8vDV0O271g4
-         45GQ==
-X-Gm-Message-State: AOAM530P0NxM06i7j8yfAHvu+Luq9lyIG2VEahe8BiI0GDPI9Iqb6X1H
-        Q5SzvB06mOPb+fss0LZSP9ejdA==
-X-Google-Smtp-Source: ABdhPJykaF4uJUYc6GupHBk20usta49lUngRp9G2RsDCMbhgeVs6B+tYMdejk7ROtLxS7brmW4lP0w==
-X-Received: by 2002:a63:534d:: with SMTP id t13mr284539pgl.604.1638464416221;
-        Thu, 02 Dec 2021 09:00:16 -0800 (PST)
-Received: from p14s (S0106889e681aac74.cg.shawcable.net. [68.147.0.187])
-        by smtp.gmail.com with ESMTPSA id 66sm180331pgg.63.2021.12.02.09.00.13
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=RwOKt3OOkRPRdK64nOMB7Wk4/4KZ8STlxMRNjUNA2As=;
+        b=clESFAEALIws8N4Ucnf207De8Pmk5TIMb5cWsRsTV6Y3at1fNv2xYumr4jd377f67D
+         7F0FsiS1X5ullhq+FV75Y4jIyFRC8lV8Obvv/u5loHp1+r2+Kvpi1DayKI9DtWDen0s4
+         tjwOoL303l+3Vk9UwUOZXck/T6L3MO+N+kLIKjuK/I6k2xOHjxT6UHuiEVMuenfCUsf7
+         KMTi/p84pqZbti7HInA+hjVB+WddYDmpnYqWwEiLtGbrQUY4+nLktJWjnq+0aAze7UbN
+         cos2mOXDLztehxImPFVqjHuAQ1LFgZTi5WfH5DDVxBSWs5owlqC8A4WjGguYvtgHL0Id
+         X/4g==
+X-Gm-Message-State: AOAM5302k9KriSDAXhVdxOYdEmyDYpJlgZIDVLAH/YEQ42dCY8QGWsX7
+        PbBqYSnwONZ+IbAoTzPmgn/rEvBBoc3PxA==
+X-Google-Smtp-Source: ABdhPJyclO6l/nByo9s1d6Ao5p3spwc35ODbw53u8jGW8M5/K0rNZpCjQmPES1s8TwxqKDKayvN3Rg==
+X-Received: by 2002:a17:90a:158f:: with SMTP id m15mr7592898pja.200.1638465088619;
+        Thu, 02 Dec 2021 09:11:28 -0800 (PST)
+Received: from p14s.cg.shawcable.net (S0106889e681aac74.cg.shawcable.net. [68.147.0.187])
+        by smtp.gmail.com with ESMTPSA id s19sm386523pfu.104.2021.12.02.09.11.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 02 Dec 2021 09:00:14 -0800 (PST)
-Date:   Thu, 2 Dec 2021 10:00:11 -0700
+        Thu, 02 Dec 2021 09:11:27 -0800 (PST)
 From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-To:     Jason Wang <jasowang@redhat.com>
-Cc:     "Michael S. Tsirkin" <mst@redhat.com>,
-        Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Ohad Ben-Cohen <ohad@wizery.com>,
-        linux-remoteproc@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-stm32@st-md-mailman.stormreply.com
-Subject: Re: [PATCH v2] rpmsg: virtio: don't let virtio core to validate used
- length
-Message-ID: <20211202170011.GA900071@p14s>
-References: <20211124162045.25983-1-arnaud.pouliquen@foss.st.com>
- <20211124161055-mutt-send-email-mst@kernel.org>
- <CACGkMEvQoUcPFgOTvEDGkZHMXhjhPrk0xq-Zq3+G20_Lp-hu8A@mail.gmail.com>
+To:     bjorn.andersson@linaro.org, ohad@wizery.com
+Cc:     linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2] MAINTAINERS: Removing Ohad from remoteproc/rpmsg maintenance
+Date:   Thu,  2 Dec 2021 10:11:25 -0700
+Message-Id: <20211202171125.903608-1-mathieu.poirier@linaro.org>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CACGkMEvQoUcPFgOTvEDGkZHMXhjhPrk0xq-Zq3+G20_Lp-hu8A@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hey guys,
+Ohad has not reviewed patches in the remoteproc and rpmsg subsystems for
+several years now:
 
-On Thu, Nov 25, 2021 at 10:15:44AM +0800, Jason Wang wrote:
-> On Thu, Nov 25, 2021 at 5:12 AM Michael S. Tsirkin <mst@redhat.com> wrote:
-> >
-> > On Wed, Nov 24, 2021 at 05:20:45PM +0100, Arnaud Pouliquen wrote:
-> > > Using OpenAMP library on remote side, when the rpmsg framework tries to
-> > > reuse the buffer the following error message is displayed in
-> > > the virtqueue_get_buf_ctx_split function:
-> > > "virtio_rpmsg_bus virtio0: output:used len 28 is larger than in buflen 0"
-> > >
-> > > As described in virtio specification:
-> > > "many drivers ignored the len value, as a result, many devices set len
-> > > incorrectly. Thus, when using the legacy interface, it is generally
-> > > a good idea to ignore the len value in used ring entries if possible."
-> > >
-> > > To stay in compliance with the legacy libraries, this patch prevents the
-> > > virtio core from validating used length.
-> > >
-> > > Fixes: 939779f5152d ("virtio_ring: validate used buffer length")
-> > >
-> > > Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-> > > Cc: Jason Wang <jasowang@redhat.com>
-> > > Cc: Michael S. Tsirkin <mst@redhat.com>
-> > > ---
-> >
-> > Arnaud, thanks a lot for the analysis.
-> >
-> > Jason, I think this is another good point. We really should not
-> > validate input for legacy devices at all.
-> 
-> I agree. Will do that in the next version.
+$ git log --no-merges --format=email drivers/remoteproc/ drivers/rpmsg/ | \
+  grep -Pi "^Subject:|^Date:|^[\w\-]+-by:.*ohad*" | grep -B2 ohad
 
-I'm a little unclear about the "next version" in the above comment - is this
-something I should wait for?  Should I move forward with Arnaud's patch?
+Date: Wed, 16 Sep 2015 07:32:54 -0500
+Subject: [PATCH] remoteproc/wkup_m3: Use MODULE_DEVICE_TABLE to export alias
+Signed-off-by: Ohad Ben-Cohen <ohad@wizery.com>
+Date: Fri, 28 Aug 2015 18:08:19 -0700
+Subject: [PATCH] remoteproc: report error if resource table doesn't exist
+Signed-off-by: Ohad Ben-Cohen <ohad@wizery.com>
+--
+Date: Wed, 16 Sep 2015 19:29:18 -0500
+Subject: [PATCH] remoteproc: fix memory leak of remoteproc ida cache layers
+Signed-off-by: Ohad Ben-Cohen <ohad@wizery.com>
+Date: Fri, 20 Nov 2015 18:26:07 +0100
+Subject: [PATCH] remoteproc: avoid stack overflow in debugfs file
+Signed-off-by: Ohad Ben-Cohen <ohad@wizery.com>
+Date: Thu, 18 Jun 2015 11:44:41 +0300
+Subject: [PATCH] remoteproc: fix !CONFIG_OF build breakage
+Signed-off-by: Ohad Ben-Cohen <ohad@wizery.com>
+Date: Fri, 22 May 2015 15:45:30 -0500
+Subject: [PATCH] remoteproc/wkup_m3: add a remoteproc driver for TI Wakeup M3
+Signed-off-by: Ohad Ben-Cohen <ohad@wizery.com>
 
-Thanks,
-Mathieu
+As such move his names to the CREDITS file.
 
-> 
-> Thanks
-> 
-> >
-> >
-> > > Update vs v1[1]: update commit message to clarify the context.
-> > >
-> > > base-commit: fa55b7dcdc43c1aa1ba12bca9d2dd4318c2a0dbf
-> > >
-> > > [1]https://lore.kernel.org/lkml/20211122160812.25125-1-arnaud.pouliquen@foss.st.com/T/
-> > > ---
-> > >  drivers/rpmsg/virtio_rpmsg_bus.c | 1 +
-> > >  1 file changed, 1 insertion(+)
-> > >
-> > > diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
-> > > index 9c112aa65040..5f73f19c2c38 100644
-> > > --- a/drivers/rpmsg/virtio_rpmsg_bus.c
-> > > +++ b/drivers/rpmsg/virtio_rpmsg_bus.c
-> > > @@ -1054,6 +1054,7 @@ static struct virtio_driver virtio_ipc_driver = {
-> > >       .feature_table_size = ARRAY_SIZE(features),
-> > >       .driver.name    = KBUILD_MODNAME,
-> > >       .driver.owner   = THIS_MODULE,
-> > > +     .suppress_used_validation = true,
-> > >       .id_table       = id_table,
-> > >       .probe          = rpmsg_probe,
-> > >       .remove         = rpmsg_remove,
-> > > --
-> > > 2.17.1
-> >
-> 
+Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+---
+
+Credits to Joe Perches for the git script.
+
+New for V2:
+- Fixed Ohad's name and contribution in CREDITS
+- Updated Joe's git script in changelog.
+---
+ CREDITS     | 5 +++++
+ MAINTAINERS | 2 --
+ 2 files changed, 5 insertions(+), 2 deletions(-)
+
+diff --git a/CREDITS b/CREDITS
+index d8f63e8329e8..b97256d5bc24 100644
+--- a/CREDITS
++++ b/CREDITS
+@@ -315,6 +315,11 @@ S: Via Delle Palme, 9
+ S: Terni 05100
+ S: Italy
+ 
++N: Ohad Ben Cohen
++E: ohad@wizery.com
++D: Remote Processor (remoteproc) subsystem
++D: Remote Processor Messaging (rpmsg) subsystem
++
+ N: Krzysztof Benedyczak
+ E: golbi@mat.uni.torun.pl
+ W: http://www.mat.uni.torun.pl/~golbi
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 7a2345ce8521..ee82a598b3ba 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -16171,7 +16171,6 @@ S:	Supported
+ F:	fs/reiserfs/
+ 
+ REMOTE PROCESSOR (REMOTEPROC) SUBSYSTEM
+-M:	Ohad Ben-Cohen <ohad@wizery.com>
+ M:	Bjorn Andersson <bjorn.andersson@linaro.org>
+ M:	Mathieu Poirier <mathieu.poirier@linaro.org>
+ L:	linux-remoteproc@vger.kernel.org
+@@ -16185,7 +16184,6 @@ F:	include/linux/remoteproc.h
+ F:	include/linux/remoteproc/
+ 
+ REMOTE PROCESSOR MESSAGING (RPMSG) SUBSYSTEM
+-M:	Ohad Ben-Cohen <ohad@wizery.com>
+ M:	Bjorn Andersson <bjorn.andersson@linaro.org>
+ M:	Mathieu Poirier <mathieu.poirier@linaro.org>
+ L:	linux-remoteproc@vger.kernel.org
+-- 
+2.25.1
+
