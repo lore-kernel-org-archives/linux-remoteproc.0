@@ -2,127 +2,143 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F3E7C433FE
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  2 Dec 2021 13:42:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BBC1C433EF
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  2 Dec 2021 17:00:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1350382AbhLBNpu (ORCPT
+        id S1359692AbhLBRDk (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 2 Dec 2021 08:45:50 -0500
-Received: from mail-ua1-f45.google.com ([209.85.222.45]:42584 "EHLO
-        mail-ua1-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1358302AbhLBNpc (ORCPT
+        Thu, 2 Dec 2021 12:03:40 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43576 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1359682AbhLBRDj (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 2 Dec 2021 08:45:32 -0500
-Received: by mail-ua1-f45.google.com with SMTP id t13so55892902uad.9;
-        Thu, 02 Dec 2021 05:42:10 -0800 (PST)
+        Thu, 2 Dec 2021 12:03:39 -0500
+Received: from mail-pg1-x534.google.com (mail-pg1-x534.google.com [IPv6:2607:f8b0:4864:20::534])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F2245C06174A
+        for <linux-remoteproc@vger.kernel.org>; Thu,  2 Dec 2021 09:00:16 -0800 (PST)
+Received: by mail-pg1-x534.google.com with SMTP id s137so335324pgs.5
+        for <linux-remoteproc@vger.kernel.org>; Thu, 02 Dec 2021 09:00:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=NJpF2n0u3f+V7LbnqKcCz27brPpeZJOecaGwU3axpi0=;
+        b=CiMe61IIzyOL1BdLkQAxHVUenkc57I8TLB0f1Bw9VwRKN3NPdIv/6r4TknCta3x1lI
+         i+9oJjkhEOYH9hjYG+ZnlIfdBUh5d+QSjZ9qBO6/lJg+Q3FcEFUwe5pu+R8L9w7HICuD
+         AqEQXCbmxpq191HswrrCvq3MvTLqtOv0adbZBd9L+Rr5cWynWnOyNe1hCx4skCUqNd/u
+         uhHFW17VS7Wix2xuQBWPV2WqpV3cWEdxbypaZXAqMOUWLAvlwsBarUABz9y3fq9maIZG
+         pAv0I308HwItzYIgzVsNCyL5piFKlE6P/tUGVAozP3zXXsu22OSkoNabHrqXG+/j3f2e
+         08Vg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=g6vM/KsgUxxXezVblDiuJC01W0UqMEadCQ6PHWIUNbI=;
-        b=oyNebhSvw8QM4I66R2ragZuJOgRvV7aFdGWIKdHGo+yncpjXk/5J6L4DhPRT1nWgou
-         rugSulCRHNwU1oMrIFbX4tlhuxdKFMbfmWKUMmnAsHAxYYoSYSuvalAUVbc9dZCRZhc/
-         5fN+SX5wxNBjjfTd0mwdbrS/iMraNDR27alkZw7b9RC17KrQ2JpLu1lY7dRC/e3wjeg2
-         Fre9wJuJdDuhZJJGYQPVtjiSuNmX8B4YGnlUL2HFR6AyylJf1IVPAWUzdtgd7STjBcDo
-         Ln0MIOExsHYfCzgosbuXWGMtysyvZ5JOn2vQTdgEweBd/LFzvlrHkaluSLYbpsyd8SeP
-         8GCw==
-X-Gm-Message-State: AOAM533BbaajmP3XWUaOakWq88rc1pnZ46Yf7ZU499MScUw4h11MiUVf
-        JSrv+zpllftLeSfRH2EG5JOsNFR6gNvjMQ==
-X-Google-Smtp-Source: ABdhPJzxwW+b+X0BQeDih/p29V6u1Hq0JhTQK48WZgUoiEedAr1yDwvDuheBBpMsMHHJwwLd7pFLfw==
-X-Received: by 2002:a05:6102:358b:: with SMTP id h11mr15496874vsu.82.1638452529353;
-        Thu, 02 Dec 2021 05:42:09 -0800 (PST)
-Received: from mail-ua1-f46.google.com (mail-ua1-f46.google.com. [209.85.222.46])
-        by smtp.gmail.com with ESMTPSA id z188sm929043vsz.12.2021.12.02.05.42.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 02 Dec 2021 05:42:09 -0800 (PST)
-Received: by mail-ua1-f46.google.com with SMTP id p37so55847232uae.8;
-        Thu, 02 Dec 2021 05:42:09 -0800 (PST)
-X-Received: by 2002:a05:6102:21dc:: with SMTP id r28mr15375907vsg.57.1638452528588;
- Thu, 02 Dec 2021 05:42:08 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=NJpF2n0u3f+V7LbnqKcCz27brPpeZJOecaGwU3axpi0=;
+        b=vCSP1Jv4Lfpy42ZDBIIhBdMsg2bvVKlmcXuqRLhFejI0El1EWIkGaeLljBK1IxQSWO
+         xU9pfRnf7YOykKAnCRIRVU3aOFjunBMQN7Q3kXOEwP/FjcwIIhLMQ+r9peg9N7hVBiK7
+         f/2r6A9h+EE50q4DP64zXOqCsFPXV5/9BTzM+gjH7K8JOswh+stspbj+HMlhrf/Xf7Nx
+         DqEMRokrtmoolHjB53nvfVF2su94HhDc7bf06STFwDRHxglrDnlYMa08Lgnt9YkZiKm9
+         IDLd204CN1QlKlTzKokePPnp1d9KpeAe/mb2E8Zjyp2nf7kEdiyrU8VeV8vDV0O271g4
+         45GQ==
+X-Gm-Message-State: AOAM530P0NxM06i7j8yfAHvu+Luq9lyIG2VEahe8BiI0GDPI9Iqb6X1H
+        Q5SzvB06mOPb+fss0LZSP9ejdA==
+X-Google-Smtp-Source: ABdhPJykaF4uJUYc6GupHBk20usta49lUngRp9G2RsDCMbhgeVs6B+tYMdejk7ROtLxS7brmW4lP0w==
+X-Received: by 2002:a63:534d:: with SMTP id t13mr284539pgl.604.1638464416221;
+        Thu, 02 Dec 2021 09:00:16 -0800 (PST)
+Received: from p14s (S0106889e681aac74.cg.shawcable.net. [68.147.0.187])
+        by smtp.gmail.com with ESMTPSA id 66sm180331pgg.63.2021.12.02.09.00.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 02 Dec 2021 09:00:14 -0800 (PST)
+Date:   Thu, 2 Dec 2021 10:00:11 -0700
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+To:     Jason Wang <jasowang@redhat.com>
+Cc:     "Michael S. Tsirkin" <mst@redhat.com>,
+        Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Ohad Ben-Cohen <ohad@wizery.com>,
+        linux-remoteproc@vger.kernel.org,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-stm32@st-md-mailman.stormreply.com
+Subject: Re: [PATCH v2] rpmsg: virtio: don't let virtio core to validate used
+ length
+Message-ID: <20211202170011.GA900071@p14s>
+References: <20211124162045.25983-1-arnaud.pouliquen@foss.st.com>
+ <20211124161055-mutt-send-email-mst@kernel.org>
+ <CACGkMEvQoUcPFgOTvEDGkZHMXhjhPrk0xq-Zq3+G20_Lp-hu8A@mail.gmail.com>
 MIME-Version: 1.0
-References: <20211130100049.129418-1-julien.massot@iot.bzh> <20211201164616.GA834591@p14s>
-In-Reply-To: <20211201164616.GA834591@p14s>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Thu, 2 Dec 2021 14:41:57 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdUE4HpA_JKiTDiMhUcPi99RvtoPm3A1cFD8MjpAkwtYWg@mail.gmail.com>
-Message-ID: <CAMuHMdUE4HpA_JKiTDiMhUcPi99RvtoPm3A1cFD8MjpAkwtYWg@mail.gmail.com>
-Subject: Re: [PATCH v2 0/2] Initial Renesas R-Car remoteproc support
-To:     Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc:     Julien Massot <julien.massot@iot.bzh>,
-        =?UTF-8?Q?Bj=C3=B6rn_Andersson?= <bjorn.andersson@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "open list:REMOTE PROCESSOR (REMOTEPROC) SUBSYSTEM" 
-        <linux-remoteproc@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CACGkMEvQoUcPFgOTvEDGkZHMXhjhPrk0xq-Zq3+G20_Lp-hu8A@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi Mathieu,
+Hey guys,
 
-On Wed, Dec 1, 2021 at 5:46 PM Mathieu Poirier
-<mathieu.poirier@linaro.org> wrote:
-> On Tue, Nov 30, 2021 at 11:00:47AM +0100, Julien Massot wrote:
-> > Most of the SoCs in the R-Car gen3 SoC series such as
-> > H3,M3 and E3 have an 'Arm Realtime Core'.
-> > This Realtime core is an Arm Cortex-R7 clocked at 800MHz.
-> > This series adds initial support to load a firmware and start
-> > this remote processor through the remoteproc subsystem.
+On Thu, Nov 25, 2021 at 10:15:44AM +0800, Jason Wang wrote:
+> On Thu, Nov 25, 2021 at 5:12 AM Michael S. Tsirkin <mst@redhat.com> wrote:
 > >
-> > This series depends on
-> > https://patchwork.kernel.org/project/linux-renesas-soc/patch/20211022122101.66998-1-julien.massot@iot.bzh/
-> > to be able to set the Cortex-R7 boot address.
->
-> The above depencency is needed for this patchset to compile properly.  Since
-> Geert has already applied it to his renesas-devel tree we can do two things:
->
-> 1) Make this set go through Geert's tree.
-> 2) Geert publishes an immutable branch I can pull the dependency from.
->
-> I'm good either way, just let me know what you want to do.
+> > On Wed, Nov 24, 2021 at 05:20:45PM +0100, Arnaud Pouliquen wrote:
+> > > Using OpenAMP library on remote side, when the rpmsg framework tries to
+> > > reuse the buffer the following error message is displayed in
+> > > the virtqueue_get_buf_ctx_split function:
+> > > "virtio_rpmsg_bus virtio0: output:used len 28 is larger than in buflen 0"
+> > >
+> > > As described in virtio specification:
+> > > "many drivers ignored the len value, as a result, many devices set len
+> > > incorrectly. Thus, when using the legacy interface, it is generally
+> > > a good idea to ignore the len value in used ring entries if possible."
+> > >
+> > > To stay in compliance with the legacy libraries, this patch prevents the
+> > > virtio core from validating used length.
+> > >
+> > > Fixes: 939779f5152d ("virtio_ring: validate used buffer length")
+> > >
+> > > Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+> > > Cc: Jason Wang <jasowang@redhat.com>
+> > > Cc: Michael S. Tsirkin <mst@redhat.com>
+> > > ---
+> >
+> > Arnaud, thanks a lot for the analysis.
+> >
+> > Jason, I think this is another good point. We really should not
+> > validate input for legacy devices at all.
+> 
+> I agree. Will do that in the next version.
 
-I prefer you to handle the remoteproc parts.
-Please find a pull request for the immutable branch below.
-Thanks!
+I'm a little unclear about the "next version" in the above comment - is this
+something I should wait for?  Should I move forward with Arnaud's patch?
 
-The following changes since commit fa55b7dcdc43c1aa1ba12bca9d2dd4318c2a0dbf:
+Thanks,
+Mathieu
 
-  Linux 5.16-rc1 (2021-11-14 13:56:52 -0800)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git
-tags/rcar_rst_rproc-tag1
-
-for you to fetch changes up to 4c7924fb905b02323ff6d9d20f370892615dccfa:
-
-  soc: renesas: rcar-rst: Add support to set rproc boot address
-(2021-11-15 10:01:10 +0100)
-
-----------------------------------------------------------------
-Renesas R-Car Reset Controller remoteproc API
-
-Definition of rcar_rst_set_rproc_boot_addr(), to be consumed by the
-Renesas R-Car Gen3 remote processor driver.
-
-----------------------------------------------------------------
-Julien Massot (1):
-      soc: renesas: rcar-rst: Add support to set rproc boot address
-
- drivers/soc/renesas/rcar-rst.c       | 43 +++++++++++++++++++++++++++++++++---
- include/linux/soc/renesas/rcar-rst.h |  2 ++
- 2 files changed, 42 insertions(+), 3 deletions(-)
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+> 
+> Thanks
+> 
+> >
+> >
+> > > Update vs v1[1]: update commit message to clarify the context.
+> > >
+> > > base-commit: fa55b7dcdc43c1aa1ba12bca9d2dd4318c2a0dbf
+> > >
+> > > [1]https://lore.kernel.org/lkml/20211122160812.25125-1-arnaud.pouliquen@foss.st.com/T/
+> > > ---
+> > >  drivers/rpmsg/virtio_rpmsg_bus.c | 1 +
+> > >  1 file changed, 1 insertion(+)
+> > >
+> > > diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
+> > > index 9c112aa65040..5f73f19c2c38 100644
+> > > --- a/drivers/rpmsg/virtio_rpmsg_bus.c
+> > > +++ b/drivers/rpmsg/virtio_rpmsg_bus.c
+> > > @@ -1054,6 +1054,7 @@ static struct virtio_driver virtio_ipc_driver = {
+> > >       .feature_table_size = ARRAY_SIZE(features),
+> > >       .driver.name    = KBUILD_MODNAME,
+> > >       .driver.owner   = THIS_MODULE,
+> > > +     .suppress_used_validation = true,
+> > >       .id_table       = id_table,
+> > >       .probe          = rpmsg_probe,
+> > >       .remove         = rpmsg_remove,
+> > > --
+> > > 2.17.1
+> >
+> 
