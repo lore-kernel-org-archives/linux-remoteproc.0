@@ -2,158 +2,254 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C454C433F5
-	for <linux-remoteproc@archiver.kernel.org>; Fri,  3 Dec 2021 02:07:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A8FCC433F5
+	for <linux-remoteproc@archiver.kernel.org>; Fri,  3 Dec 2021 02:17:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1377966AbhLCCLU (ORCPT
+        id S1350532AbhLCCUq (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 2 Dec 2021 21:11:20 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.129.124]:48861 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S243619AbhLCCLT (ORCPT
+        Thu, 2 Dec 2021 21:20:46 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56230 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S236338AbhLCCUq (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 2 Dec 2021 21:11:19 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1638497276;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=xTEet6pLGYYGny4qkW0aFj01Nakh9JQXlab8tLgNhaw=;
-        b=JnqY/xEi6YtebJyrsfeeyjeWl8sHPkoanaCupKyqtYGQJdZbAg32drVZsi8Gcn7uWbGSN/
-        KbXbSC4mLhgu7w4hQC/fH2wLTT1o4ark1G3Y9AAuOuCSZ7FJPSBEQxK9O01BNLDLu9WRs1
-        S5vPGRzZ1kYOhYHXnBip7b5gtXu0Oq0=
-Received: from mail-lj1-f198.google.com (mail-lj1-f198.google.com
- [209.85.208.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-213-jGTjGJcSN4iCvaNFDMr-gw-1; Thu, 02 Dec 2021 21:07:55 -0500
-X-MC-Unique: jGTjGJcSN4iCvaNFDMr-gw-1
-Received: by mail-lj1-f198.google.com with SMTP id 2-20020a2e0902000000b00218c22336abso621083ljj.0
-        for <linux-remoteproc@vger.kernel.org>; Thu, 02 Dec 2021 18:07:55 -0800 (PST)
+        Thu, 2 Dec 2021 21:20:46 -0500
+Received: from mail-ot1-x32d.google.com (mail-ot1-x32d.google.com [IPv6:2607:f8b0:4864:20::32d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D816C061757
+        for <linux-remoteproc@vger.kernel.org>; Thu,  2 Dec 2021 18:17:23 -0800 (PST)
+Received: by mail-ot1-x32d.google.com with SMTP id a23-20020a9d4717000000b0056c15d6d0caso2152785otf.12
+        for <linux-remoteproc@vger.kernel.org>; Thu, 02 Dec 2021 18:17:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=FZvck9JuYvrpR0l3Xs3KJHgn/fFcTHh248jFmt6hypE=;
+        b=DKdlLt3Bk0+hq+EEUWr6ZyUmlFADF2Fj/udXAHkGGSAlrylUL4y6la+RrqCGIpAPpl
+         DReXEuFAinJXjdY8pLHE5/gUZimFt503is+IMBJ2WzBIOureAlQfsC3tVffSlKTA8sqw
+         w+lWgo5IorSaXdRkb69YUzGY6e5iKcQLEL2+CUH8aYC1AWz/e7yb0ccEXMJmc305ocR2
+         NVpzeWysjeICC8l3OOlXfGai1T+C9ZC2yYdVIPUMpB7RJUbZ0mhXnV2ykvjX7affa4aC
+         bxh4hMDoJkTxQSp4/5+5QPOnpuWjQyWLxAPF2mOfVBwXRYn9ITOr67UTjKLw7+wmie/h
+         qhUQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=xTEet6pLGYYGny4qkW0aFj01Nakh9JQXlab8tLgNhaw=;
-        b=wtqq42EWa2VlV4mSigo6kWJC5fBXsq/U9NHShlakKtJiritz1BgMsOd3lTC2g5fDSB
-         Lle+vKmLT0C5dj+Murbo9VKcwmB2Di5m5BpBBRTKFar5/bu+zxQSd0RPsWkju/V2oQsF
-         5ja/E3fRvt7ldtlcXY7hoMtN2a/8poS1tMdWdCwKlUn44Jvcbej8CYyjBYrBgdYNAe1o
-         7SXrNeHzeK5/L+NJrYrG9u6f4I5lsUcbbv1Lz6EMYOwFi18bXPGJMwZCZDf5ko88LOJe
-         4ldmMWEpsIYwcy2yPIGVZPl5gdGz58Pr/G3BVeP5cLaLweoJciQMu0bcXTaiuosrTQVn
-         rMrw==
-X-Gm-Message-State: AOAM533KsRPw12o4cFMxnV1yJPGow10z/mzsfKZtNmpDAgGjddLWyMq/
-        /R/FsnJhVry9T2IGQnuOSo+htoCyhIONNX2RxcQiqqmr91YtlFf8+a0ERhj/Cbx7OX0/BV3VAUs
-        IjeBqoE5LRyGTjOwaQawb2fVdW5VOreHSEiA1Ym8FKGytqg==
-X-Received: by 2002:a05:6512:3d09:: with SMTP id d9mr15987271lfv.481.1638497273634;
-        Thu, 02 Dec 2021 18:07:53 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJwJRoPd+cWIW68hbj/YiNMRxYyNhn/ZnlOPexARC9hJ5F7TK6WyGKAKRGjhJM+pT5KjTXm/Q7GaYzO+2iabKiY=
-X-Received: by 2002:a05:6512:3d09:: with SMTP id d9mr15987247lfv.481.1638497273400;
- Thu, 02 Dec 2021 18:07:53 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=FZvck9JuYvrpR0l3Xs3KJHgn/fFcTHh248jFmt6hypE=;
+        b=32BBRA+vx2NwH17s8bRMHmrPKyDlSQ0sT1TcVJ8ClCbeLYMiWtOKDgEMioKyIZ1Wes
+         1U5MmJDKJ9yGSj8h2OJhKzi0gESwiYxEcELwmLVZUuia04hgC9k45Ptq0umi8gV3Qe8c
+         f4rBwH2IbOFokPXo3B2bOpGfo3kaJKBot3I/e3k1Y3hfBfOlodnJJrmSJTXXUymlA34z
+         UT5XZtwCs6MuLXvoU044B9Rji1JQMPVikKTvR5CkV7cDaq+x4Lgeb2lnNIWo7zZlCPmE
+         7u+SqT7FjhdB4Nx1YIQ/EgEmVKPjiyQzx1i0thna1fjW60jKtJBP4aLE1aGJW4pqP3e9
+         Jrpg==
+X-Gm-Message-State: AOAM5316kDvhLReDp3ZHf9qzbG75zc6cuyS++GVPZ2hU3XF2qZV4m6dz
+        pyaQZ+lsCKTBbPipmlO/gfodDdEt3D7JGA==
+X-Google-Smtp-Source: ABdhPJwVGM4OMeZ1USNcKGJ6i+DQIqH+fwHfE5/YXlId34vHC1x+qfcEBv9VmlhCoFfBhkKFMHGZiQ==
+X-Received: by 2002:a9d:6001:: with SMTP id h1mr14130015otj.257.1638497842314;
+        Thu, 02 Dec 2021 18:17:22 -0800 (PST)
+Received: from builder.lan (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
+        by smtp.gmail.com with ESMTPSA id n11sm359412oor.9.2021.12.02.18.17.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 02 Dec 2021 18:17:21 -0800 (PST)
+Date:   Thu, 2 Dec 2021 20:17:16 -0600
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+Cc:     Ohad Ben-Cohen <ohad@wizery.com>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com, julien.massot@iot.bzh
+Subject: Re: [PATCH v7 01/12] rpmsg: char: Export eptdev create an destroy
+ functions
+Message-ID: <Yal+LKVqvp2v26BD@builder.lan>
+References: <20211108141937.13016-1-arnaud.pouliquen@foss.st.com>
+ <20211108141937.13016-2-arnaud.pouliquen@foss.st.com>
 MIME-Version: 1.0
-References: <20211124162045.25983-1-arnaud.pouliquen@foss.st.com>
- <20211124161055-mutt-send-email-mst@kernel.org> <CACGkMEvQoUcPFgOTvEDGkZHMXhjhPrk0xq-Zq3+G20_Lp-hu8A@mail.gmail.com>
- <20211202170011.GA900071@p14s>
-In-Reply-To: <20211202170011.GA900071@p14s>
-From:   Jason Wang <jasowang@redhat.com>
-Date:   Fri, 3 Dec 2021 10:07:42 +0800
-Message-ID: <CACGkMEs5DWPT76U8KYdr385e0Y6EUQQRSfRMfR3ZZz34HBdVKA@mail.gmail.com>
-Subject: Re: [PATCH v2] rpmsg: virtio: don't let virtio core to validate used length
-To:     Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc:     "Michael S. Tsirkin" <mst@redhat.com>,
-        Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Ohad Ben-Cohen <ohad@wizery.com>,
-        linux-remoteproc@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-stm32@st-md-mailman.stormreply.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20211108141937.13016-2-arnaud.pouliquen@foss.st.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Fri, Dec 3, 2021 at 1:00 AM Mathieu Poirier
-<mathieu.poirier@linaro.org> wrote:
->
-> Hey guys,
->
-> On Thu, Nov 25, 2021 at 10:15:44AM +0800, Jason Wang wrote:
-> > On Thu, Nov 25, 2021 at 5:12 AM Michael S. Tsirkin <mst@redhat.com> wrote:
-> > >
-> > > On Wed, Nov 24, 2021 at 05:20:45PM +0100, Arnaud Pouliquen wrote:
-> > > > Using OpenAMP library on remote side, when the rpmsg framework tries to
-> > > > reuse the buffer the following error message is displayed in
-> > > > the virtqueue_get_buf_ctx_split function:
-> > > > "virtio_rpmsg_bus virtio0: output:used len 28 is larger than in buflen 0"
-> > > >
-> > > > As described in virtio specification:
-> > > > "many drivers ignored the len value, as a result, many devices set len
-> > > > incorrectly. Thus, when using the legacy interface, it is generally
-> > > > a good idea to ignore the len value in used ring entries if possible."
-> > > >
-> > > > To stay in compliance with the legacy libraries, this patch prevents the
-> > > > virtio core from validating used length.
-> > > >
-> > > > Fixes: 939779f5152d ("virtio_ring: validate used buffer length")
-> > > >
-> > > > Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-> > > > Cc: Jason Wang <jasowang@redhat.com>
-> > > > Cc: Michael S. Tsirkin <mst@redhat.com>
-> > > > ---
-> > >
-> > > Arnaud, thanks a lot for the analysis.
-> > >
-> > > Jason, I think this is another good point. We really should not
-> > > validate input for legacy devices at all.
-> >
-> > I agree. Will do that in the next version.
->
-> I'm a little unclear about the "next version" in the above comment - is this
-> something I should wait for?  Should I move forward with Arnaud's patch?
+On Mon 08 Nov 08:19 CST 2021, Arnaud Pouliquen wrote:
 
-Just to make it clear. If my understanding is correct, my series was
-reverted so this patch is not needed.
+> To prepare the split of the code related to the control (ctrldev)
+> and the endpoint (eptdev) devices in 2 separate files:
+> 
+> - Rename and export the functions in rpmsg_char.h.
+> 
+> - Suppress the dependency with the rpmsg_ctrldev struct in the
+>   rpmsg_eptdev_create function.
+> 
+> Suggested-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+> ---
+> Update vs previous revision:
+> - change IS_REACHABLE by IS_ENABLE ( dependency will be fixed in kconfig instead
+> - fix licensing
+> ---
+>  drivers/rpmsg/rpmsg_char.c | 17 +++++++------
+>  drivers/rpmsg/rpmsg_char.h | 51 ++++++++++++++++++++++++++++++++++++++
+>  2 files changed, 61 insertions(+), 7 deletions(-)
+>  create mode 100644 drivers/rpmsg/rpmsg_char.h
+> 
+> diff --git a/drivers/rpmsg/rpmsg_char.c b/drivers/rpmsg/rpmsg_char.c
+> index 2bebc9b2d163..44934d7fa3c4 100644
+> --- a/drivers/rpmsg/rpmsg_char.c
+> +++ b/drivers/rpmsg/rpmsg_char.c
+> @@ -1,5 +1,6 @@
+>  // SPDX-License-Identifier: GPL-2.0
+>  /*
+> + * Copyright (C) 2021, STMicroelectronics
+>   * Copyright (c) 2016, Linaro Ltd.
+>   * Copyright (c) 2012, Michal Simek <monstr@monstr.eu>
+>   * Copyright (c) 2012, PetaLogix
+> @@ -23,6 +24,7 @@
+>  #include <uapi/linux/rpmsg.h>
+>  
+>  #include "rpmsg_internal.h"
+> +#include "rpmsg_char.h"
+>  
+>  #define RPMSG_DEV_MAX	(MINORMASK + 1)
+>  
+> @@ -78,7 +80,7 @@ struct rpmsg_eptdev {
+>  	wait_queue_head_t readq;
+>  };
+>  
+> -static int rpmsg_eptdev_destroy(struct device *dev, void *data)
+> +int rpmsg_chrdev_eptdev_destroy(struct device *dev, void *data)
+>  {
+>  	struct rpmsg_eptdev *eptdev = dev_to_eptdev(dev);
+>  
+> @@ -97,6 +99,7 @@ static int rpmsg_eptdev_destroy(struct device *dev, void *data)
+>  
+>  	return 0;
+>  }
+> +EXPORT_SYMBOL(rpmsg_chrdev_eptdev_destroy);
+>  
+>  static int rpmsg_ept_cb(struct rpmsg_device *rpdev, void *buf, int len,
+>  			void *priv, u32 addr)
+> @@ -280,7 +283,7 @@ static long rpmsg_eptdev_ioctl(struct file *fp, unsigned int cmd,
+>  	if (cmd != RPMSG_DESTROY_EPT_IOCTL)
+>  		return -EINVAL;
+>  
+> -	return rpmsg_eptdev_destroy(&eptdev->dev, NULL);
+> +	return rpmsg_chrdev_eptdev_destroy(&eptdev->dev, NULL);
+>  }
+>  
+>  static const struct file_operations rpmsg_eptdev_fops = {
+> @@ -339,10 +342,9 @@ static void rpmsg_eptdev_release_device(struct device *dev)
+>  	kfree(eptdev);
+>  }
+>  
+> -static int rpmsg_eptdev_create(struct rpmsg_ctrldev *ctrldev,
+> +int rpmsg_chrdev_eptdev_create(struct rpmsg_device *rpdev, struct device *parent,
+>  			       struct rpmsg_channel_info chinfo)
+>  {
+> -	struct rpmsg_device *rpdev = ctrldev->rpdev;
+>  	struct rpmsg_eptdev *eptdev;
+>  	struct device *dev;
+>  	int ret;
+> @@ -362,7 +364,7 @@ static int rpmsg_eptdev_create(struct rpmsg_ctrldev *ctrldev,
+>  
+>  	device_initialize(dev);
+>  	dev->class = rpmsg_class;
+> -	dev->parent = &ctrldev->dev;
+> +	dev->parent = parent;
+>  	dev->groups = rpmsg_eptdev_groups;
+>  	dev_set_drvdata(dev, eptdev);
+>  
+> @@ -405,6 +407,7 @@ static int rpmsg_eptdev_create(struct rpmsg_ctrldev *ctrldev,
+>  
+>  	return ret;
+>  }
+> +EXPORT_SYMBOL(rpmsg_chrdev_eptdev_create);
+>  
+>  static int rpmsg_ctrldev_open(struct inode *inode, struct file *filp)
+>  {
+> @@ -444,7 +447,7 @@ static long rpmsg_ctrldev_ioctl(struct file *fp, unsigned int cmd,
+>  	chinfo.src = eptinfo.src;
+>  	chinfo.dst = eptinfo.dst;
+>  
+> -	return rpmsg_eptdev_create(ctrldev, chinfo);
+> +	return rpmsg_chrdev_eptdev_create(ctrldev->rpdev, &ctrldev->dev, chinfo);
+>  };
+>  
+>  static const struct file_operations rpmsg_ctrldev_fops = {
+> @@ -530,7 +533,7 @@ static void rpmsg_chrdev_remove(struct rpmsg_device *rpdev)
+>  	int ret;
+>  
+>  	/* Destroy all endpoints */
+> -	ret = device_for_each_child(&ctrldev->dev, NULL, rpmsg_eptdev_destroy);
+> +	ret = device_for_each_child(&ctrldev->dev, NULL, rpmsg_chrdev_eptdev_destroy);
+>  	if (ret)
+>  		dev_warn(&rpdev->dev, "failed to nuke endpoints: %d\n", ret);
+>  
+> diff --git a/drivers/rpmsg/rpmsg_char.h b/drivers/rpmsg/rpmsg_char.h
+> new file mode 100644
+> index 000000000000..aa6e08a04577
+> --- /dev/null
+> +++ b/drivers/rpmsg/rpmsg_char.h
+> @@ -0,0 +1,51 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +/*
+> + * Copyright (C) STMicroelectronics 2021.
+> + */
+> +
+> +#ifndef __RPMSG_CHRDEV_H__
+> +#define __RPMSG_CHRDEV_H__
+> +
+> +#if IS_ENABLED(CONFIG_RPMSG_CHAR)
+> +/**
+> + * rpmsg_chrdev_eptdev_create() - register char device based on an endpoint
+> + * @rpdev:  prepared rpdev to be used for creating endpoints
+> + * @parent: parent device
+> + * @chinfo: associated endpoint channel information.
+> + *
+> + * This function create a new rpmsg char endpoint device to instantiate a new
+> + * endpoint based on chinfo information.
+> + */
+> +int rpmsg_chrdev_eptdev_create(struct rpmsg_device *rpdev, struct device *parent,
+> +			       struct rpmsg_channel_info chinfo);
+> +
+> +/**
+> + * rpmsg_chrdev_eptdev_destroy() - destroy created char device endpoint.
+> + * @data: private data associated to the endpoint device
+> + *
+> + * This function destroys a rpmsg char endpoint device created by the RPMSG_DESTROY_EPT_IOCTL
+> + * control.
+> + */
+> +int rpmsg_chrdev_eptdev_destroy(struct device *dev, void *data);
+> +
+> +#else  /*IS_ENABLED(CONFIG_RPMSG_CHAR) */
+> +
+> +static inline int rpmsg_chrdev_eptdev_create(struct rpmsg_device *rpdev, struct device *parent,
+> +					     struct rpmsg_channel_info chinfo)
+> +{
+> +	/* This shouldn't be possible */
 
-For "next version", I meant I will resend the new version of used
-length validation that
+But isn't it very much possible that userspace invokes this function
+through the ioctl that you move to the separate rpmsg_ctrl driver?
 
-- only do the validation when it was explicitly enabled
-- warn instead of bug
-- do not validate legacy device
+> +	WARN_ON(1);
 
-Thanks
+Which would mean that this will spam the kernel with stack dumps.
 
->
-> Thanks,
-> Mathieu
->
-> >
-> > Thanks
-> >
-> > >
-> > >
-> > > > Update vs v1[1]: update commit message to clarify the context.
-> > > >
-> > > > base-commit: fa55b7dcdc43c1aa1ba12bca9d2dd4318c2a0dbf
-> > > >
-> > > > [1]https://lore.kernel.org/lkml/20211122160812.25125-1-arnaud.pouliquen@foss.st.com/T/
-> > > > ---
-> > > >  drivers/rpmsg/virtio_rpmsg_bus.c | 1 +
-> > > >  1 file changed, 1 insertion(+)
-> > > >
-> > > > diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
-> > > > index 9c112aa65040..5f73f19c2c38 100644
-> > > > --- a/drivers/rpmsg/virtio_rpmsg_bus.c
-> > > > +++ b/drivers/rpmsg/virtio_rpmsg_bus.c
-> > > > @@ -1054,6 +1054,7 @@ static struct virtio_driver virtio_ipc_driver = {
-> > > >       .feature_table_size = ARRAY_SIZE(features),
-> > > >       .driver.name    = KBUILD_MODNAME,
-> > > >       .driver.owner   = THIS_MODULE,
-> > > > +     .suppress_used_validation = true,
-> > > >       .id_table       = id_table,
-> > > >       .probe          = rpmsg_probe,
-> > > >       .remove         = rpmsg_remove,
-> > > > --
-> > > > 2.17.1
-> > >
-> >
->
+Regards,
+Bjorn
 
+> +	return -EINVAL;
+> +}
+> +
+> +static inline int rpmsg_chrdev_eptdev_destroy(struct device *dev, void *data)
+> +{
+> +	/* This shouldn't be possible */
+> +	WARN_ON(1);
+> +
+> +	return 0;
+> +}
+> +
+> +#endif /*IS_ENABLED(CONFIG_RPMSG_CHAR) */
+> +
+> +#endif /*__RPMSG_CHRDEV_H__ */
+> -- 
+> 2.17.1
+> 
