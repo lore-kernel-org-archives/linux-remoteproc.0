@@ -2,176 +2,170 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 721F7C433EF
-	for <linux-remoteproc@archiver.kernel.org>; Fri,  3 Dec 2021 02:33:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08CD8C433FE
+	for <linux-remoteproc@archiver.kernel.org>; Fri,  3 Dec 2021 14:34:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245012AbhLCChJ (ORCPT
+        id S1381472AbhLCOiE (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 2 Dec 2021 21:37:09 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59530 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1350201AbhLCCgr (ORCPT
+        Fri, 3 Dec 2021 09:38:04 -0500
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:57166 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1381466AbhLCOiE (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 2 Dec 2021 21:36:47 -0500
-Received: from mail-oi1-x22c.google.com (mail-oi1-x22c.google.com [IPv6:2607:f8b0:4864:20::22c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E71C6C0613B3
-        for <linux-remoteproc@vger.kernel.org>; Thu,  2 Dec 2021 18:32:36 -0800 (PST)
-Received: by mail-oi1-x22c.google.com with SMTP id bk14so3004282oib.7
-        for <linux-remoteproc@vger.kernel.org>; Thu, 02 Dec 2021 18:32:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=vNaYqjCjQc904Z13HmAKfcwIkPL725ElEfHMJwuxDWY=;
-        b=Dyt3II34OBSHrs9XQOHEEGMlXO2iLvoBQfPWQDnnMEbZKQJY0kMwm3LK+eHqI/tO5q
-         mT2hegRHGRkMKTqRxV3/F+WzLRtjyABlNjIxdY3HkkoJm03D2fwbDf2dY/qL8bK4Vay+
-         SVa98O1/SR274ng/ONJdWWKzkH0EbYLo8bsvh+GzKMT5eYe84E0rxvUtfiAOcV5Y6Igy
-         PFdvDdmNXFbc8+ZbwHw6yGuOOx7WstA2dRg1s8Lb44azj8zleqMFrv8UDzdpefP/M62c
-         XC/8piL9wfmvKcoMbCZlODSfNjYtn+DyYFeugMcMHWUq7iAj4kGPrCuMC2XGWo6suUfx
-         +rKQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=vNaYqjCjQc904Z13HmAKfcwIkPL725ElEfHMJwuxDWY=;
-        b=7k5lGgqJNrrX1bzgS6wjsSSDbquRKICM+ktlB3+YsXTQyRZ9CXRcsMiCi82HV9/HQN
-         bpR6TET40UznVkAdyta0z958nxbu/C6bSvvb6/SKkOT1mRNOABhZltO3QUqDZdZl+r3x
-         csKNJUtpVsbajcuU5MOmyOZAmRfn+r9hia8LbNDzW03JA6S3qabHrj+4d8IZWfZ/UU5Z
-         mfyQ4SF67bLSks5tqycCN3jGVhLIXFZr1034WuRAblCR3QhNMJUN66h8hmSJq1ABNvGh
-         myNQ2wEqQy5OVH/4hV8HFmfl4w25gX2T0viFOH0K+zxFEzE0d/gPs1Ls6sxkbdWZiwqa
-         002Q==
-X-Gm-Message-State: AOAM532sbQQv8gThgIveOXEZeQjw12tgZ4dLBF+D+9AI9waWtxRx0bS4
-        yJJoc3jKHYi1BrBk2ZYpwKruJg==
-X-Google-Smtp-Source: ABdhPJzN4WrZ36DnDDdVhdtDPHx1v21wNvqj3q+Bakva89PpDJjiLJnpaDjE1t/84LULA+pbUcrx/Q==
-X-Received: by 2002:a05:6808:159a:: with SMTP id t26mr7862306oiw.106.1638498756227;
-        Thu, 02 Dec 2021 18:32:36 -0800 (PST)
-Received: from builder.lan (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
-        by smtp.gmail.com with ESMTPSA id s6sm564825ois.3.2021.12.02.18.32.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 02 Dec 2021 18:32:35 -0800 (PST)
-Date:   Thu, 2 Dec 2021 20:32:31 -0600
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-Cc:     Ohad Ben-Cohen <ohad@wizery.com>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com, julien.massot@iot.bzh
-Subject: Re: [PATCH v7 09/12] rpmsg: char: Add possibility to use default
- endpoint of the rpmsg device.
-Message-ID: <YamBv4Sy3Jtdp7Wu@builder.lan>
-References: <20211108141937.13016-1-arnaud.pouliquen@foss.st.com>
- <20211108141937.13016-10-arnaud.pouliquen@foss.st.com>
+        Fri, 3 Dec 2021 09:38:04 -0500
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.1.2/8.16.1.2) with ESMTP id 1B3Cqcfi015449;
+        Fri, 3 Dec 2021 15:34:35 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=selector1;
+ bh=VI2K8c0oDwm8vA1Za0Lg2QSYKD+dzfliBMxPDI725T4=;
+ b=a3PBruJoaZ3xQ/99ImlBWmGtb5GcC+ckCtiEAN+uLKl2eSfnT48kNg1dXWsGjuT3daLM
+ d3aDEMh0DF0fBuxhksHqu1dvACCq5S+IQwxRRb80X1sNghrH5QmZUZmvUmw+jpL74Qte
+ KEFCvBcJ9vOv5Vc4h3zRmALrbLhEbRxcyHnFTyJrExqKnSkPnUCDTZihsE4m08xGKfP+
+ E4lc6N20W6vxovjpi5jrClVG7zGzZEMiI85yykKU0DuNzH1cIWwtnuS+eiyR4+h2ob0m
+ DtCct+MJz6BJleAOExGGo/F3lzWFEmYGTOZSzQ+mRZT2zkBBJ+xdMuKp3lu+ZUv6x7U/ CA== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3cqkmj0p9c-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 03 Dec 2021 15:34:35 +0100
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id CCBE510002A;
+        Fri,  3 Dec 2021 15:34:34 +0100 (CET)
+Received: from Webmail-eu.st.com (sfhdag2node2.st.com [10.75.127.5])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id B186822E852;
+        Fri,  3 Dec 2021 15:34:34 +0100 (CET)
+Received: from lmecxl0889.lme.st.com (10.75.127.44) by SFHDAG2NODE2.st.com
+ (10.75.127.5) with Microsoft SMTP Server (TLS) id 15.0.1497.26; Fri, 3 Dec
+ 2021 15:34:33 +0100
+Subject: Re: [PATCH v2] rpmsg: virtio: don't let virtio core to validate used
+ length
+To:     Jason Wang <jasowang@redhat.com>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>
+CC:     "Michael S. Tsirkin" <mst@redhat.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Ohad Ben-Cohen <ohad@wizery.com>,
+        <linux-remoteproc@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>
+References: <20211124162045.25983-1-arnaud.pouliquen@foss.st.com>
+ <20211124161055-mutt-send-email-mst@kernel.org>
+ <CACGkMEvQoUcPFgOTvEDGkZHMXhjhPrk0xq-Zq3+G20_Lp-hu8A@mail.gmail.com>
+ <20211202170011.GA900071@p14s>
+ <CACGkMEs5DWPT76U8KYdr385e0Y6EUQQRSfRMfR3ZZz34HBdVKA@mail.gmail.com>
+From:   Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
+Message-ID: <638350d2-9695-413d-a508-6b852a70f472@foss.st.com>
+Date:   Fri, 3 Dec 2021 15:34:33 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.14.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20211108141937.13016-10-arnaud.pouliquen@foss.st.com>
+In-Reply-To: <CACGkMEs5DWPT76U8KYdr385e0Y6EUQQRSfRMfR3ZZz34HBdVKA@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.75.127.44]
+X-ClientProxiedBy: SFHDAG2NODE2.st.com (10.75.127.5) To SFHDAG2NODE2.st.com
+ (10.75.127.5)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.790,Hydra:6.0.425,FMLib:17.11.62.513
+ definitions=2021-12-03_07,2021-12-02_01,2021-12-02_01
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Mon 08 Nov 08:19 CST 2021, Arnaud Pouliquen wrote:
 
-> Current implementation create/destroy a new endpoint on each
-> rpmsg_eptdev_open/rpmsg_eptdev_release calls.
-> 
-> For a rpmsg device created by the NS announcement mechanism we need to
-> use a unique static endpoint that is the default rpmsg device endpoint
-> associated to the channel.
-> 
-> This patch prepares the introduction of a rpmsg channel device for the
-> char device. The rpmsg channel device will require a default endpoint to
-> communicate to the remote processor.
-> 
-> Add the default_ept field in rpmsg_eptdev structure.This pointer
-> determines the behavior on rpmsg_eptdev_open and rpmsg_eptdev_release call.
-> 
-> - If default_ept == NULL:
->   Use the legacy behavior by creating a new endpoint each time
->   rpmsg_eptdev_open is called and release it when rpmsg_eptdev_release
->   is called on /dev/rpmsgX device open/close.
-> 
-> - If default_ept is set:
->   use the rpmsg device default endpoint for the communication.
-> 
-> Address the update of _rpmsg_chrdev_eptdev_create in a separate patch for readability.
-> 
-> Add protection in rpmsg_eptdev_ioctl to prevent to destroy a default endpoint.
-> 
-> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-> ---
->  drivers/rpmsg/rpmsg_char.c | 21 +++++++++++++++++++--
->  1 file changed, 19 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/rpmsg/rpmsg_char.c b/drivers/rpmsg/rpmsg_char.c
-> index 3daf62df69a0..6a01e8e1c111 100644
-> --- a/drivers/rpmsg/rpmsg_char.c
-> +++ b/drivers/rpmsg/rpmsg_char.c
-> @@ -47,6 +47,8 @@ static DEFINE_IDA(rpmsg_minor_ida);
->   * @queue_lock:	synchronization of @queue operations
->   * @queue:	incoming message queue
->   * @readq:	wait object for incoming queue
-> + * @default_ept: set to channel default endpoint if the default endpoint should be re-used
-> + *              on device open to prevent endpoint address update.
->   */
->  struct rpmsg_eptdev {
->  	struct device dev;
-> @@ -57,10 +59,12 @@ struct rpmsg_eptdev {
->  
->  	struct mutex ept_lock;
->  	struct rpmsg_endpoint *ept;
-> +	struct rpmsg_endpoint *default_ept;
->  
->  	spinlock_t queue_lock;
->  	struct sk_buff_head queue;
->  	wait_queue_head_t readq;
-> +
->  };
->  
->  int rpmsg_chrdev_eptdev_destroy(struct device *dev, void *data)
-> @@ -118,7 +122,15 @@ static int rpmsg_eptdev_open(struct inode *inode, struct file *filp)
->  
->  	get_device(dev);
->  
-> -	ept = rpmsg_create_ept(rpdev, rpmsg_ept_cb, eptdev, eptdev->chinfo);
-> +	/*
-> +	 * If the default_ept is set to true, the rpmsg device default endpoint is used.
 
-default_ept will no longer be "set to true".
+On 12/3/21 3:07 AM, Jason Wang wrote:
+> On Fri, Dec 3, 2021 at 1:00 AM Mathieu Poirier
+> <mathieu.poirier@linaro.org> wrote:
+>>
+>> Hey guys,
+>>
+>> On Thu, Nov 25, 2021 at 10:15:44AM +0800, Jason Wang wrote:
+>>> On Thu, Nov 25, 2021 at 5:12 AM Michael S. Tsirkin <mst@redhat.com> wrote:
+>>>>
+>>>> On Wed, Nov 24, 2021 at 05:20:45PM +0100, Arnaud Pouliquen wrote:
+>>>>> Using OpenAMP library on remote side, when the rpmsg framework tries to
+>>>>> reuse the buffer the following error message is displayed in
+>>>>> the virtqueue_get_buf_ctx_split function:
+>>>>> "virtio_rpmsg_bus virtio0: output:used len 28 is larger than in buflen 0"
+>>>>>
+>>>>> As described in virtio specification:
+>>>>> "many drivers ignored the len value, as a result, many devices set len
+>>>>> incorrectly. Thus, when using the legacy interface, it is generally
+>>>>> a good idea to ignore the len value in used ring entries if possible."
+>>>>>
+>>>>> To stay in compliance with the legacy libraries, this patch prevents the
+>>>>> virtio core from validating used length.
+>>>>>
+>>>>> Fixes: 939779f5152d ("virtio_ring: validate used buffer length")
+>>>>>
+>>>>> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+>>>>> Cc: Jason Wang <jasowang@redhat.com>
+>>>>> Cc: Michael S. Tsirkin <mst@redhat.com>
+>>>>> ---
+>>>>
+>>>> Arnaud, thanks a lot for the analysis.
+>>>>
+>>>> Jason, I think this is another good point. We really should not
+>>>> validate input for legacy devices at all.
+>>>
+>>> I agree. Will do that in the next version.
+>>
+>> I'm a little unclear about the "next version" in the above comment - is this
+>> something I should wait for?  Should I move forward with Arnaud's patch?
+> 
+> Just to make it clear. If my understanding is correct, my series was
+> reverted so this patch is not needed.
 
-Regards,
-Bjorn
+Indeed your patchset is no longer in the v5.16-rc3
 
-> +	 * Else a new endpoint is created on open that will be destroyed on release.
-> +	 */
-> +	if (eptdev->default_ept)
-> +		ept = eptdev->default_ept;
-> +	else
-> +		ept = rpmsg_create_ept(rpdev, rpmsg_ept_cb, eptdev, eptdev->chinfo);
-> +
->  	if (!ept) {
->  		dev_err(dev, "failed to open %s\n", eptdev->chinfo.name);
->  		put_device(dev);
-> @@ -139,7 +151,8 @@ static int rpmsg_eptdev_release(struct inode *inode, struct file *filp)
->  	/* Close the endpoint, if it's not already destroyed by the parent */
->  	mutex_lock(&eptdev->ept_lock);
->  	if (eptdev->ept) {
-> -		rpmsg_destroy_ept(eptdev->ept);
-> +		if (!eptdev->default_ept)
-> +			rpmsg_destroy_ept(eptdev->ept);
->  		eptdev->ept = NULL;
->  	}
->  	mutex_unlock(&eptdev->ept_lock);
-> @@ -266,6 +279,10 @@ static long rpmsg_eptdev_ioctl(struct file *fp, unsigned int cmd,
->  	if (cmd != RPMSG_DESTROY_EPT_IOCTL)
->  		return -EINVAL;
->  
-> +	/* Don't allow to destroy a default endpoint. */
-> +	if (eptdev->default_ept)
-> +		return -EINVAL;
-> +
->  	return rpmsg_chrdev_eptdev_destroy(&eptdev->dev, NULL);
->  }
->  
-> -- 
-> 2.17.1
+Thanks,
+Arnaud
+
+> 
+> For "next version", I meant I will resend the new version of used
+> length validation that
+> 
+> - only do the validation when it was explicitly enabled
+> - warn instead of bug
+> - do not validate legacy device
+> 
+> Thanks
+> 
+>>
+>> Thanks,
+>> Mathieu
+>>
+>>>
+>>> Thanks
+>>>
+>>>>
+>>>>
+>>>>> Update vs v1[1]: update commit message to clarify the context.
+>>>>>
+>>>>> base-commit: fa55b7dcdc43c1aa1ba12bca9d2dd4318c2a0dbf
+>>>>>
+>>>>> [1]https://lore.kernel.org/lkml/20211122160812.25125-1-arnaud.pouliquen@foss.st.com/T/
+>>>>> ---
+>>>>>  drivers/rpmsg/virtio_rpmsg_bus.c | 1 +
+>>>>>  1 file changed, 1 insertion(+)
+>>>>>
+>>>>> diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
+>>>>> index 9c112aa65040..5f73f19c2c38 100644
+>>>>> --- a/drivers/rpmsg/virtio_rpmsg_bus.c
+>>>>> +++ b/drivers/rpmsg/virtio_rpmsg_bus.c
+>>>>> @@ -1054,6 +1054,7 @@ static struct virtio_driver virtio_ipc_driver = {
+>>>>>       .feature_table_size = ARRAY_SIZE(features),
+>>>>>       .driver.name    = KBUILD_MODNAME,
+>>>>>       .driver.owner   = THIS_MODULE,
+>>>>> +     .suppress_used_validation = true,
+>>>>>       .id_table       = id_table,
+>>>>>       .probe          = rpmsg_probe,
+>>>>>       .remove         = rpmsg_remove,
+>>>>> --
+>>>>> 2.17.1
+>>>>
+>>>
+>>
 > 
