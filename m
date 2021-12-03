@@ -2,220 +2,148 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 347F6C433F5
-	for <linux-remoteproc@archiver.kernel.org>; Fri,  3 Dec 2021 01:52:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91A84C433EF
+	for <linux-remoteproc@archiver.kernel.org>; Fri,  3 Dec 2021 01:58:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345567AbhLCBz7 (ORCPT
+        id S232743AbhLCCBp (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 2 Dec 2021 20:55:59 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50706 "EHLO
+        Thu, 2 Dec 2021 21:01:45 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52000 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245313AbhLCBz6 (ORCPT
+        with ESMTP id S231834AbhLCCBo (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 2 Dec 2021 20:55:58 -0500
-Received: from mail-ot1-x334.google.com (mail-ot1-x334.google.com [IPv6:2607:f8b0:4864:20::334])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A08EC06174A
-        for <linux-remoteproc@vger.kernel.org>; Thu,  2 Dec 2021 17:52:35 -0800 (PST)
-Received: by mail-ot1-x334.google.com with SMTP id i5-20020a05683033e500b0057a369ac614so2107145otu.10
-        for <linux-remoteproc@vger.kernel.org>; Thu, 02 Dec 2021 17:52:35 -0800 (PST)
+        Thu, 2 Dec 2021 21:01:44 -0500
+Received: from mail-ot1-x32e.google.com (mail-ot1-x32e.google.com [IPv6:2607:f8b0:4864:20::32e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8021CC06174A
+        for <linux-remoteproc@vger.kernel.org>; Thu,  2 Dec 2021 17:58:21 -0800 (PST)
+Received: by mail-ot1-x32e.google.com with SMTP id 35-20020a9d08a6000000b00579cd5e605eso2248146otf.0
+        for <linux-remoteproc@vger.kernel.org>; Thu, 02 Dec 2021 17:58:21 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=7mMlMJcjWFiI2W1C5SLC/CCOWk/rtwKkTXW1CQZM02M=;
-        b=vdZDqYWqqFPSHHnrXxQ/QouLOJQrts2O2q7uKSoiGjwDgCArLHicGCh4baJKAgFDAd
-         8wsz01sIKQbZuABTqg6PwTDo4zXMT76ApuSQJ87S69wlEc+1jgZ/WdZdf2snuHo0GQ0E
-         wdF49QMck7QD/ww8ZCyUomdYFYiKCsFATXgNOriFbUVNbdMg9KwBzPHQrvOdJOYxhsFl
-         5AM4SWdSL0z+I+DJhx6AAWk/ZfaLSpXbv37fsdA9DpiOGt5KEyi2qBh8zKBY4TyrsitM
-         H2x3h9jdn3G4uq9pmnpYZRGmfv8biU6jLg/+jJafHF5cQUtYCm63ll5SjVToOg7ewrxE
-         Ksmw==
+        bh=smb1r2XfUg8MLMMqcLmw+mdb8mXA88P8HeDQMpSaQXQ=;
+        b=mW8Rv4d2wGlgGwsDI0ch3/RY0Wx//Sz5OSXjuV8KTLtxaXMX3yJhSuWICAf0tiPXXP
+         mhRyWyrnEOMmQAY5PmQIqRnmCi34S3AaT9pOatU6pFWx5R7Wa0S/9NhcaTvz7duM+vDs
+         nA3AZGMHH96/GUTHGFwj/UwgokoPy3sm9eajYvMSDLi76bO3DuIP3JEkHXGsNVf8TLZq
+         XlYLUSN2AJtWdRlwJXlaFcxgmioaNoOPZ1mXKifsIwkHmnHKW9fvwOqRcihaSsqlskqa
+         tXlOxgjfiasJv+t0NcHn7ZdD8obF5EDzesBHZzo1dJOInzClaQ2eOrr1OX6u2vpynfDd
+         d6dA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=7mMlMJcjWFiI2W1C5SLC/CCOWk/rtwKkTXW1CQZM02M=;
-        b=EY1qmKFDKwlG2XJunQiqM794Gvpr4/epDitqcUcqjna61c9OrHhQ1vbXu88w0IeT12
-         ehbEjw38oCahqbBL6eBD6ij/zpSlDhc5wv+Uy3xAMwvtbxhgnIk67efrXs44TInLH1I0
-         rITyOc69/sn4hb2Nt9YckR4RZubhrsQPF+BpNsWNtMwJkWyuS6INHJV9CLk2xXYYGJC5
-         Oh/HEbdX+qO/QauVl9m7D56je0EptteBG4sBl5rD8RwlMgJByNbcLRv5gPA/xHAVqr9V
-         WBE5004jQWxpHrUlmS6rbXNSRUF46NC050LsJsMtB0dEwQe3Aj+WW7WE0m91ujVpHrmI
-         hgdA==
-X-Gm-Message-State: AOAM530+A5p860smN5lWitYa7itejq53jGwdME/sVvosTfJB+eZOIT4X
-        GUXF2hy4mzFRxyxjCbxfTZBKA6sX5oxMcg==
-X-Google-Smtp-Source: ABdhPJxDEprfD0kGWyUVTAE4w3xRpccrCwQvCjeV/FWVKojpFKNxDvfWyALAionnLaK9K+JYbRGrow==
-X-Received: by 2002:a9d:2605:: with SMTP id a5mr14557262otb.217.1638496354819;
-        Thu, 02 Dec 2021 17:52:34 -0800 (PST)
+        bh=smb1r2XfUg8MLMMqcLmw+mdb8mXA88P8HeDQMpSaQXQ=;
+        b=emFeWVDFBUxTh1pa2wN4MiLXrLtCbzVlV9zhJcP2vmJD8q2EAjvrsn+6ke+eSIfLcd
+         wXiNieuq6NYaJ1wgLbv5e1drDlXt4iV2xfbgEcIpSYJ6MEwZnAtj7vjIqWbLXtNHN76s
+         Dbc88H7ZKPDgbJAdbl9YgGqgKvEBIFXD+oMEE1jp5UQNDHeUdAJu0jv+T4xseJXxKiN0
+         jXXdWxAc+LEVhsmuBl09h65r70Axqw59vFraK7y8LgKs8gPrQvwT+fIXYAx7A0ucNIZJ
+         OW8w67sGWnD26O8ZotX6l/LDadsd06qL4IJO7DDYa341zPqAwfW27CMi343ikFTB3gwP
+         1G/g==
+X-Gm-Message-State: AOAM533ZCMzEsttUcyfSHgCpiqNUjUDA7/GiFGRqnu/ELyJsH1b20olW
+        qVMi3Jnt7MFfttqpWZ8gN0sl4A==
+X-Google-Smtp-Source: ABdhPJx5tNIkP0zfsreHzBezhGIR/QP82WXkGRhO9QXAzHMcFilI+uffVEm1od0Li4r41vInbereeg==
+X-Received: by 2002:a05:6830:22cf:: with SMTP id q15mr14047768otc.255.1638496700813;
+        Thu, 02 Dec 2021 17:58:20 -0800 (PST)
 Received: from builder.lan (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
-        by smtp.gmail.com with ESMTPSA id a12sm380940otk.35.2021.12.02.17.52.34
+        by smtp.gmail.com with ESMTPSA id t18sm376710ott.2.2021.12.02.17.58.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 02 Dec 2021 17:52:34 -0800 (PST)
-Date:   Thu, 2 Dec 2021 19:52:29 -0600
+        Thu, 02 Dec 2021 17:58:19 -0800 (PST)
+Date:   Thu, 2 Dec 2021 19:58:14 -0600
 From:   Bjorn Andersson <bjorn.andersson@linaro.org>
 To:     Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
 Cc:     Ohad Ben-Cohen <ohad@wizery.com>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
         linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-stm32@st-md-mailman.stormreply.com, julien.massot@iot.bzh
-Subject: Re: [PATCH v7 10/12] rpmsg: char: Introduce the "rpmsg-raw" channel
-Message-ID: <Yal4XcCVa6GAQYkG@builder.lan>
+Subject: Re: [PATCH v7 12/12] rpmsg: core: send a ns announcement when a
+ default endpoint is created
+Message-ID: <Yal5tplvcqDjEeTs@builder.lan>
 References: <20211108141937.13016-1-arnaud.pouliquen@foss.st.com>
- <20211108141937.13016-11-arnaud.pouliquen@foss.st.com>
+ <20211108141937.13016-13-arnaud.pouliquen@foss.st.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20211108141937.13016-11-arnaud.pouliquen@foss.st.com>
+In-Reply-To: <20211108141937.13016-13-arnaud.pouliquen@foss.st.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
 On Mon 08 Nov 08:19 CST 2021, Arnaud Pouliquen wrote:
 
-> Allows to probe the endpoint device on a remote name service announcement,
-> by registering a rpmsg_driverfor the "rpmsg-raw" channel.
-> 
-> With this patch the /dev/rpmsgX interface can be instantiated by the remote
-> firmware.
+> When a channel is created by user space application with the
+> RPMSG_CREATE_DEV_IOCTL controls, a ns announcement has to be sent
+> (depending on backend) to inform the remote side that a new service
+> is available.
 > 
 > Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
 > ---
->  drivers/rpmsg/rpmsg_char.c | 64 ++++++++++++++++++++++++++++++++++++++
->  drivers/rpmsg/rpmsg_ctrl.c |  7 +++--
->  2 files changed, 69 insertions(+), 2 deletions(-)
+>  drivers/rpmsg/rpmsg_core.c | 14 ++++++++++++++
+>  1 file changed, 14 insertions(+)
 > 
-> diff --git a/drivers/rpmsg/rpmsg_char.c b/drivers/rpmsg/rpmsg_char.c
-> index 6a01e8e1c111..dd754c870ba1 100644
-> --- a/drivers/rpmsg/rpmsg_char.c
-> +++ b/drivers/rpmsg/rpmsg_char.c
-> @@ -432,6 +432,58 @@ int rpmsg_chrdev_eptdev_create(struct rpmsg_device *rpdev, struct device *parent
->  }
->  EXPORT_SYMBOL(rpmsg_chrdev_eptdev_create);
+> diff --git a/drivers/rpmsg/rpmsg_core.c b/drivers/rpmsg/rpmsg_core.c
+> index bdcde57c22f6..63227279397d 100644
+> --- a/drivers/rpmsg/rpmsg_core.c
+> +++ b/drivers/rpmsg/rpmsg_core.c
+> @@ -145,6 +145,9 @@ EXPORT_SYMBOL(rpmsg_destroy_ept);
+>   *
+>   * This function returns a pointer to an endpoint created and assigned as the default
+>   * endpoint of the rpmsg device.
+> + * If we need to, we also announce about this channel to the remote
+> + * processor. This announcement is needed in case the driver is exposing an rpmsg service that has
+> + * been created locally.
+>   *
+>   * Drivers should provide their @rpdev channel (so the new endpoint would belong
+>   * to the same remote processor their channel belongs to), an rx callback
+> @@ -161,6 +164,7 @@ struct rpmsg_endpoint *rpmsg_create_default_ept(struct rpmsg_device *rpdev,
+>  						struct rpmsg_channel_info chinfo)
+>  {
+>  	struct rpmsg_endpoint *ept;
+> +	int err = 0;
 >  
-> +static int rpmsg_chrdev_probe(struct rpmsg_device *rpdev)
-> +{
-> +	struct rpmsg_channel_info chinfo;
-> +	struct rpmsg_eptdev *eptdev;
-> +	struct device *dev = &rpdev->dev;
+>  	if (WARN_ON(!rpdev))
+>  		return NULL;
+> @@ -183,6 +187,16 @@ struct rpmsg_endpoint *rpmsg_create_default_ept(struct rpmsg_device *rpdev,
+>  	rpdev->ept = ept;
+>  	rpdev->src = ept->addr;
+>  
+> +	if (rpdev->ops->announce_create)
+> +		err = rpdev->ops->announce_create(rpdev);
+> +	if (err) {
+> +		rpmsg_destroy_ept(ept);
+> +		rpdev->ept = NULL;
+> +		rpdev->src = RPMSG_ADDR_ANY;
 > +
-> +	memcpy(chinfo.name, rpdev->id.name, RPMSG_NAME_SIZE);
-> +	chinfo.src = rpdev->src;
-> +	chinfo.dst = rpdev->dst;
+> +		return NULL;
+> +	}
 > +
-> +	eptdev = rpmsg_chrdev_eptdev_alloc(rpdev, dev);
-> +	if (IS_ERR(eptdev))
-> +		return PTR_ERR(eptdev);
-> +
-> +	/*
-> +	 * Create the default endpoint associated to the rpmsg device and provide rpmsg_eptdev
-> +	 * structure as callback private data.
-> +	 * Do not allow the creation and release of an endpoint on /dev/rpmsgX open and close,
-> +	 * reuse the default endpoint instead
-> +	 */
-> +	eptdev->default_ept = rpmsg_create_default_ept(rpdev, rpmsg_ept_cb, eptdev, chinfo);
-> +	if (!eptdev->default_ept) {
-> +		dev_err(&rpdev->dev, "failed to create %s\n", chinfo.name);
-> +		put_device(dev);
 
-Which get_device() does this correlate to?
+Unless I'm missing something I think this would be cleaner as:
 
-> +		kfree(eptdev);
+	if (rpdev->ops->announce_create) {
+		err = rpdev->ops->announce_create(rpdev);
+		if (err) {
+			...;
+		}
+	}
 
-After the device_initialize() in rpmsg_chrdev_eptdev_alloc() you're
-supposed to put_device() &eptdev->dev, which would kfree(eptdev)...
+which also implies that you don't need to zero-initialize err.
+
+Other than that, this looks good and follows what would happen in
+rpmsg_dev_probe()...
 
 
-Note though that rpmsg_eptdev_release_device() calls cdev_del(), which
-you can't do. It was however recently reported that this cdev_del()
-should be done in conjunction with the device_del() as the current
-implementation enables a race between release and fops->open.
+PS. In rpmsg_dev_probe(), if rpdrv->probe() succeeds but announce_create
+returns a failure we will exit the function with an error, which will
+just fail really_probe() and we won't ever clean up the device (i.e.
+call rpdev->remove()).
 
 Regards,
 Bjorn
 
-> +		return -EINVAL;
-> +	}
-> +
-> +	return rpmsg_chrdev_eptdev_add(eptdev, chinfo);
-> +}
-> +
-> +static void rpmsg_chrdev_remove(struct rpmsg_device *rpdev)
-> +{
-> +	int ret;
-> +
-> +	ret = device_for_each_child(&rpdev->dev, NULL, rpmsg_chrdev_eptdev_destroy);
-> +	if (ret)
-> +		dev_warn(&rpdev->dev, "failed to destroy endpoints: %d\n", ret);
-> +}
-> +
-> +static struct rpmsg_device_id rpmsg_chrdev_id_table[] = {
-> +	{ .name	= "rpmsg-raw" },
-> +	{ },
-> +};
-> +
-> +static struct rpmsg_driver rpmsg_chrdev_driver = {
-> +	.probe = rpmsg_chrdev_probe,
-> +	.remove = rpmsg_chrdev_remove,
-> +	.id_table = rpmsg_chrdev_id_table,
-> +	.drv.name = "rpmsg_chrdev",
-> +};
-> +
->  static int rpmsg_chrdev_init(void)
->  {
->  	int ret;
-> @@ -442,12 +494,24 @@ static int rpmsg_chrdev_init(void)
->  		return ret;
->  	}
->  
-> +	ret = register_rpmsg_driver(&rpmsg_chrdev_driver);
-> +	if (ret < 0) {
-> +		pr_err("rpmsg: failed to register rpmsg raw driver\n");
-> +		goto free_region;
-> +	}
-> +
->  	return 0;
-> +
-> +free_region:
-> +	unregister_chrdev_region(rpmsg_major, RPMSG_DEV_MAX);
-> +
-> +	return ret;
+>  	return ept;
 >  }
->  postcore_initcall(rpmsg_chrdev_init);
->  
->  static void rpmsg_chrdev_exit(void)
->  {
-> +	unregister_rpmsg_driver(&rpmsg_chrdev_driver);
->  	unregister_chrdev_region(rpmsg_major, RPMSG_DEV_MAX);
->  }
->  module_exit(rpmsg_chrdev_exit);
-> diff --git a/drivers/rpmsg/rpmsg_ctrl.c b/drivers/rpmsg/rpmsg_ctrl.c
-> index 59d2bd264fdb..298e75dc7774 100644
-> --- a/drivers/rpmsg/rpmsg_ctrl.c
-> +++ b/drivers/rpmsg/rpmsg_ctrl.c
-> @@ -10,6 +10,9 @@
->   * Based on rpmsg performance statistics driver by Michal Simek, which in turn
->   * was based on TI & Google OMX rpmsg driver.
->   */
-> +
-> +#define pr_fmt(fmt)		KBUILD_MODNAME ": " fmt
-> +
->  #include <linux/cdev.h>
->  #include <linux/device.h>
->  #include <linux/fs.h>
-> @@ -193,13 +196,13 @@ static int rpmsg_ctrldev_init(void)
->  
->  	ret = alloc_chrdev_region(&rpmsg_major, 0, RPMSG_DEV_MAX, "rpmsg_ctrl");
->  	if (ret < 0) {
-> -		pr_err("rpmsg: failed to allocate char dev region\n");
-> +		pr_err("failed to allocate char dev region\n");
->  		return ret;
->  	}
->  
->  	ret = register_rpmsg_driver(&rpmsg_ctrldev_driver);
->  	if (ret < 0) {
-> -		pr_err("rpmsg ctrl: failed to register rpmsg driver\n");
-> +		pr_err("failed to register rpmsg driver\n");
->  		unregister_chrdev_region(rpmsg_major, RPMSG_DEV_MAX);
->  	}
->  
+>  EXPORT_SYMBOL(rpmsg_create_default_ept);
 > -- 
 > 2.17.1
 > 
