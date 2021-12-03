@@ -2,143 +2,220 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6F02C433F5
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  2 Dec 2021 17:11:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 347F6C433F5
+	for <linux-remoteproc@archiver.kernel.org>; Fri,  3 Dec 2021 01:52:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235350AbhLBROz (ORCPT
+        id S1345567AbhLCBz7 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 2 Dec 2021 12:14:55 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46144 "EHLO
+        Thu, 2 Dec 2021 20:55:59 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50706 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1359496AbhLBROv (ORCPT
+        with ESMTP id S245313AbhLCBz6 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 2 Dec 2021 12:14:51 -0500
-Received: from mail-pl1-x633.google.com (mail-pl1-x633.google.com [IPv6:2607:f8b0:4864:20::633])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 27065C06174A
-        for <linux-remoteproc@vger.kernel.org>; Thu,  2 Dec 2021 09:11:29 -0800 (PST)
-Received: by mail-pl1-x633.google.com with SMTP id u17so160458plg.9
-        for <linux-remoteproc@vger.kernel.org>; Thu, 02 Dec 2021 09:11:29 -0800 (PST)
+        Thu, 2 Dec 2021 20:55:58 -0500
+Received: from mail-ot1-x334.google.com (mail-ot1-x334.google.com [IPv6:2607:f8b0:4864:20::334])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A08EC06174A
+        for <linux-remoteproc@vger.kernel.org>; Thu,  2 Dec 2021 17:52:35 -0800 (PST)
+Received: by mail-ot1-x334.google.com with SMTP id i5-20020a05683033e500b0057a369ac614so2107145otu.10
+        for <linux-remoteproc@vger.kernel.org>; Thu, 02 Dec 2021 17:52:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=RwOKt3OOkRPRdK64nOMB7Wk4/4KZ8STlxMRNjUNA2As=;
-        b=oib93oLHva7M20RUYAcWefBezzxTGxy2OyKORb1mNqbOQ8862ewuDc0yGaxPLB6DNu
-         jk9LMO7lYx9np4d/whEpjboaBToF4xKAhsVDMmxjOM0kxj+lRbGbzLBla1DVPnqNprVh
-         zzBR7XL2/MkNuramhYxsni3hGRN+MUbEXr2jIzjx4lH7RaTysMyKBzrY+AEm4Oa6zEmC
-         EkS5/27JITyjtjzNYJE4K0YqVUDCwMtCENTOXIXhaUwFULzVFgefoV1aMqFKCCG/AdmH
-         Vn330MCcJ2xyzQpKBplpUgbRPAvhuvbrle23U0j2/eV5eKp2jHa+B9xfSNFEmdFHIMqy
-         BHLQ==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=7mMlMJcjWFiI2W1C5SLC/CCOWk/rtwKkTXW1CQZM02M=;
+        b=vdZDqYWqqFPSHHnrXxQ/QouLOJQrts2O2q7uKSoiGjwDgCArLHicGCh4baJKAgFDAd
+         8wsz01sIKQbZuABTqg6PwTDo4zXMT76ApuSQJ87S69wlEc+1jgZ/WdZdf2snuHo0GQ0E
+         wdF49QMck7QD/ww8ZCyUomdYFYiKCsFATXgNOriFbUVNbdMg9KwBzPHQrvOdJOYxhsFl
+         5AM4SWdSL0z+I+DJhx6AAWk/ZfaLSpXbv37fsdA9DpiOGt5KEyi2qBh8zKBY4TyrsitM
+         H2x3h9jdn3G4uq9pmnpYZRGmfv8biU6jLg/+jJafHF5cQUtYCm63ll5SjVToOg7ewrxE
+         Ksmw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=RwOKt3OOkRPRdK64nOMB7Wk4/4KZ8STlxMRNjUNA2As=;
-        b=clESFAEALIws8N4Ucnf207De8Pmk5TIMb5cWsRsTV6Y3at1fNv2xYumr4jd377f67D
-         7F0FsiS1X5ullhq+FV75Y4jIyFRC8lV8Obvv/u5loHp1+r2+Kvpi1DayKI9DtWDen0s4
-         tjwOoL303l+3Vk9UwUOZXck/T6L3MO+N+kLIKjuK/I6k2xOHjxT6UHuiEVMuenfCUsf7
-         KMTi/p84pqZbti7HInA+hjVB+WddYDmpnYqWwEiLtGbrQUY4+nLktJWjnq+0aAze7UbN
-         cos2mOXDLztehxImPFVqjHuAQ1LFgZTi5WfH5DDVxBSWs5owlqC8A4WjGguYvtgHL0Id
-         X/4g==
-X-Gm-Message-State: AOAM5302k9KriSDAXhVdxOYdEmyDYpJlgZIDVLAH/YEQ42dCY8QGWsX7
-        PbBqYSnwONZ+IbAoTzPmgn/rEvBBoc3PxA==
-X-Google-Smtp-Source: ABdhPJyclO6l/nByo9s1d6Ao5p3spwc35ODbw53u8jGW8M5/K0rNZpCjQmPES1s8TwxqKDKayvN3Rg==
-X-Received: by 2002:a17:90a:158f:: with SMTP id m15mr7592898pja.200.1638465088619;
-        Thu, 02 Dec 2021 09:11:28 -0800 (PST)
-Received: from p14s.cg.shawcable.net (S0106889e681aac74.cg.shawcable.net. [68.147.0.187])
-        by smtp.gmail.com with ESMTPSA id s19sm386523pfu.104.2021.12.02.09.11.26
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=7mMlMJcjWFiI2W1C5SLC/CCOWk/rtwKkTXW1CQZM02M=;
+        b=EY1qmKFDKwlG2XJunQiqM794Gvpr4/epDitqcUcqjna61c9OrHhQ1vbXu88w0IeT12
+         ehbEjw38oCahqbBL6eBD6ij/zpSlDhc5wv+Uy3xAMwvtbxhgnIk67efrXs44TInLH1I0
+         rITyOc69/sn4hb2Nt9YckR4RZubhrsQPF+BpNsWNtMwJkWyuS6INHJV9CLk2xXYYGJC5
+         Oh/HEbdX+qO/QauVl9m7D56je0EptteBG4sBl5rD8RwlMgJByNbcLRv5gPA/xHAVqr9V
+         WBE5004jQWxpHrUlmS6rbXNSRUF46NC050LsJsMtB0dEwQe3Aj+WW7WE0m91ujVpHrmI
+         hgdA==
+X-Gm-Message-State: AOAM530+A5p860smN5lWitYa7itejq53jGwdME/sVvosTfJB+eZOIT4X
+        GUXF2hy4mzFRxyxjCbxfTZBKA6sX5oxMcg==
+X-Google-Smtp-Source: ABdhPJxDEprfD0kGWyUVTAE4w3xRpccrCwQvCjeV/FWVKojpFKNxDvfWyALAionnLaK9K+JYbRGrow==
+X-Received: by 2002:a9d:2605:: with SMTP id a5mr14557262otb.217.1638496354819;
+        Thu, 02 Dec 2021 17:52:34 -0800 (PST)
+Received: from builder.lan (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
+        by smtp.gmail.com with ESMTPSA id a12sm380940otk.35.2021.12.02.17.52.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 02 Dec 2021 09:11:27 -0800 (PST)
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-To:     bjorn.andersson@linaro.org, ohad@wizery.com
-Cc:     linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2] MAINTAINERS: Removing Ohad from remoteproc/rpmsg maintenance
-Date:   Thu,  2 Dec 2021 10:11:25 -0700
-Message-Id: <20211202171125.903608-1-mathieu.poirier@linaro.org>
-X-Mailer: git-send-email 2.25.1
+        Thu, 02 Dec 2021 17:52:34 -0800 (PST)
+Date:   Thu, 2 Dec 2021 19:52:29 -0600
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+Cc:     Ohad Ben-Cohen <ohad@wizery.com>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com, julien.massot@iot.bzh
+Subject: Re: [PATCH v7 10/12] rpmsg: char: Introduce the "rpmsg-raw" channel
+Message-ID: <Yal4XcCVa6GAQYkG@builder.lan>
+References: <20211108141937.13016-1-arnaud.pouliquen@foss.st.com>
+ <20211108141937.13016-11-arnaud.pouliquen@foss.st.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20211108141937.13016-11-arnaud.pouliquen@foss.st.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Ohad has not reviewed patches in the remoteproc and rpmsg subsystems for
-several years now:
+On Mon 08 Nov 08:19 CST 2021, Arnaud Pouliquen wrote:
 
-$ git log --no-merges --format=email drivers/remoteproc/ drivers/rpmsg/ | \
-  grep -Pi "^Subject:|^Date:|^[\w\-]+-by:.*ohad*" | grep -B2 ohad
+> Allows to probe the endpoint device on a remote name service announcement,
+> by registering a rpmsg_driverfor the "rpmsg-raw" channel.
+> 
+> With this patch the /dev/rpmsgX interface can be instantiated by the remote
+> firmware.
+> 
+> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+> ---
+>  drivers/rpmsg/rpmsg_char.c | 64 ++++++++++++++++++++++++++++++++++++++
+>  drivers/rpmsg/rpmsg_ctrl.c |  7 +++--
+>  2 files changed, 69 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/rpmsg/rpmsg_char.c b/drivers/rpmsg/rpmsg_char.c
+> index 6a01e8e1c111..dd754c870ba1 100644
+> --- a/drivers/rpmsg/rpmsg_char.c
+> +++ b/drivers/rpmsg/rpmsg_char.c
+> @@ -432,6 +432,58 @@ int rpmsg_chrdev_eptdev_create(struct rpmsg_device *rpdev, struct device *parent
+>  }
+>  EXPORT_SYMBOL(rpmsg_chrdev_eptdev_create);
+>  
+> +static int rpmsg_chrdev_probe(struct rpmsg_device *rpdev)
+> +{
+> +	struct rpmsg_channel_info chinfo;
+> +	struct rpmsg_eptdev *eptdev;
+> +	struct device *dev = &rpdev->dev;
+> +
+> +	memcpy(chinfo.name, rpdev->id.name, RPMSG_NAME_SIZE);
+> +	chinfo.src = rpdev->src;
+> +	chinfo.dst = rpdev->dst;
+> +
+> +	eptdev = rpmsg_chrdev_eptdev_alloc(rpdev, dev);
+> +	if (IS_ERR(eptdev))
+> +		return PTR_ERR(eptdev);
+> +
+> +	/*
+> +	 * Create the default endpoint associated to the rpmsg device and provide rpmsg_eptdev
+> +	 * structure as callback private data.
+> +	 * Do not allow the creation and release of an endpoint on /dev/rpmsgX open and close,
+> +	 * reuse the default endpoint instead
+> +	 */
+> +	eptdev->default_ept = rpmsg_create_default_ept(rpdev, rpmsg_ept_cb, eptdev, chinfo);
+> +	if (!eptdev->default_ept) {
+> +		dev_err(&rpdev->dev, "failed to create %s\n", chinfo.name);
+> +		put_device(dev);
 
-Date: Wed, 16 Sep 2015 07:32:54 -0500
-Subject: [PATCH] remoteproc/wkup_m3: Use MODULE_DEVICE_TABLE to export alias
-Signed-off-by: Ohad Ben-Cohen <ohad@wizery.com>
-Date: Fri, 28 Aug 2015 18:08:19 -0700
-Subject: [PATCH] remoteproc: report error if resource table doesn't exist
-Signed-off-by: Ohad Ben-Cohen <ohad@wizery.com>
---
-Date: Wed, 16 Sep 2015 19:29:18 -0500
-Subject: [PATCH] remoteproc: fix memory leak of remoteproc ida cache layers
-Signed-off-by: Ohad Ben-Cohen <ohad@wizery.com>
-Date: Fri, 20 Nov 2015 18:26:07 +0100
-Subject: [PATCH] remoteproc: avoid stack overflow in debugfs file
-Signed-off-by: Ohad Ben-Cohen <ohad@wizery.com>
-Date: Thu, 18 Jun 2015 11:44:41 +0300
-Subject: [PATCH] remoteproc: fix !CONFIG_OF build breakage
-Signed-off-by: Ohad Ben-Cohen <ohad@wizery.com>
-Date: Fri, 22 May 2015 15:45:30 -0500
-Subject: [PATCH] remoteproc/wkup_m3: add a remoteproc driver for TI Wakeup M3
-Signed-off-by: Ohad Ben-Cohen <ohad@wizery.com>
+Which get_device() does this correlate to?
 
-As such move his names to the CREDITS file.
+> +		kfree(eptdev);
 
-Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
----
+After the device_initialize() in rpmsg_chrdev_eptdev_alloc() you're
+supposed to put_device() &eptdev->dev, which would kfree(eptdev)...
 
-Credits to Joe Perches for the git script.
 
-New for V2:
-- Fixed Ohad's name and contribution in CREDITS
-- Updated Joe's git script in changelog.
----
- CREDITS     | 5 +++++
- MAINTAINERS | 2 --
- 2 files changed, 5 insertions(+), 2 deletions(-)
+Note though that rpmsg_eptdev_release_device() calls cdev_del(), which
+you can't do. It was however recently reported that this cdev_del()
+should be done in conjunction with the device_del() as the current
+implementation enables a race between release and fops->open.
 
-diff --git a/CREDITS b/CREDITS
-index d8f63e8329e8..b97256d5bc24 100644
---- a/CREDITS
-+++ b/CREDITS
-@@ -315,6 +315,11 @@ S: Via Delle Palme, 9
- S: Terni 05100
- S: Italy
- 
-+N: Ohad Ben Cohen
-+E: ohad@wizery.com
-+D: Remote Processor (remoteproc) subsystem
-+D: Remote Processor Messaging (rpmsg) subsystem
-+
- N: Krzysztof Benedyczak
- E: golbi@mat.uni.torun.pl
- W: http://www.mat.uni.torun.pl/~golbi
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 7a2345ce8521..ee82a598b3ba 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -16171,7 +16171,6 @@ S:	Supported
- F:	fs/reiserfs/
- 
- REMOTE PROCESSOR (REMOTEPROC) SUBSYSTEM
--M:	Ohad Ben-Cohen <ohad@wizery.com>
- M:	Bjorn Andersson <bjorn.andersson@linaro.org>
- M:	Mathieu Poirier <mathieu.poirier@linaro.org>
- L:	linux-remoteproc@vger.kernel.org
-@@ -16185,7 +16184,6 @@ F:	include/linux/remoteproc.h
- F:	include/linux/remoteproc/
- 
- REMOTE PROCESSOR MESSAGING (RPMSG) SUBSYSTEM
--M:	Ohad Ben-Cohen <ohad@wizery.com>
- M:	Bjorn Andersson <bjorn.andersson@linaro.org>
- M:	Mathieu Poirier <mathieu.poirier@linaro.org>
- L:	linux-remoteproc@vger.kernel.org
--- 
-2.25.1
+Regards,
+Bjorn
 
+> +		return -EINVAL;
+> +	}
+> +
+> +	return rpmsg_chrdev_eptdev_add(eptdev, chinfo);
+> +}
+> +
+> +static void rpmsg_chrdev_remove(struct rpmsg_device *rpdev)
+> +{
+> +	int ret;
+> +
+> +	ret = device_for_each_child(&rpdev->dev, NULL, rpmsg_chrdev_eptdev_destroy);
+> +	if (ret)
+> +		dev_warn(&rpdev->dev, "failed to destroy endpoints: %d\n", ret);
+> +}
+> +
+> +static struct rpmsg_device_id rpmsg_chrdev_id_table[] = {
+> +	{ .name	= "rpmsg-raw" },
+> +	{ },
+> +};
+> +
+> +static struct rpmsg_driver rpmsg_chrdev_driver = {
+> +	.probe = rpmsg_chrdev_probe,
+> +	.remove = rpmsg_chrdev_remove,
+> +	.id_table = rpmsg_chrdev_id_table,
+> +	.drv.name = "rpmsg_chrdev",
+> +};
+> +
+>  static int rpmsg_chrdev_init(void)
+>  {
+>  	int ret;
+> @@ -442,12 +494,24 @@ static int rpmsg_chrdev_init(void)
+>  		return ret;
+>  	}
+>  
+> +	ret = register_rpmsg_driver(&rpmsg_chrdev_driver);
+> +	if (ret < 0) {
+> +		pr_err("rpmsg: failed to register rpmsg raw driver\n");
+> +		goto free_region;
+> +	}
+> +
+>  	return 0;
+> +
+> +free_region:
+> +	unregister_chrdev_region(rpmsg_major, RPMSG_DEV_MAX);
+> +
+> +	return ret;
+>  }
+>  postcore_initcall(rpmsg_chrdev_init);
+>  
+>  static void rpmsg_chrdev_exit(void)
+>  {
+> +	unregister_rpmsg_driver(&rpmsg_chrdev_driver);
+>  	unregister_chrdev_region(rpmsg_major, RPMSG_DEV_MAX);
+>  }
+>  module_exit(rpmsg_chrdev_exit);
+> diff --git a/drivers/rpmsg/rpmsg_ctrl.c b/drivers/rpmsg/rpmsg_ctrl.c
+> index 59d2bd264fdb..298e75dc7774 100644
+> --- a/drivers/rpmsg/rpmsg_ctrl.c
+> +++ b/drivers/rpmsg/rpmsg_ctrl.c
+> @@ -10,6 +10,9 @@
+>   * Based on rpmsg performance statistics driver by Michal Simek, which in turn
+>   * was based on TI & Google OMX rpmsg driver.
+>   */
+> +
+> +#define pr_fmt(fmt)		KBUILD_MODNAME ": " fmt
+> +
+>  #include <linux/cdev.h>
+>  #include <linux/device.h>
+>  #include <linux/fs.h>
+> @@ -193,13 +196,13 @@ static int rpmsg_ctrldev_init(void)
+>  
+>  	ret = alloc_chrdev_region(&rpmsg_major, 0, RPMSG_DEV_MAX, "rpmsg_ctrl");
+>  	if (ret < 0) {
+> -		pr_err("rpmsg: failed to allocate char dev region\n");
+> +		pr_err("failed to allocate char dev region\n");
+>  		return ret;
+>  	}
+>  
+>  	ret = register_rpmsg_driver(&rpmsg_ctrldev_driver);
+>  	if (ret < 0) {
+> -		pr_err("rpmsg ctrl: failed to register rpmsg driver\n");
+> +		pr_err("failed to register rpmsg driver\n");
+>  		unregister_chrdev_region(rpmsg_major, RPMSG_DEV_MAX);
+>  	}
+>  
+> -- 
+> 2.17.1
+> 
