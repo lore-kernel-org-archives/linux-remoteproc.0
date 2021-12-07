@@ -2,228 +2,143 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AD05C433F5
-	for <linux-remoteproc@archiver.kernel.org>; Tue,  7 Dec 2021 00:15:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78768C433EF
+	for <linux-remoteproc@archiver.kernel.org>; Tue,  7 Dec 2021 08:09:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1353961AbhLGASq (ORCPT
+        id S231562AbhLGIMi (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 6 Dec 2021 19:18:46 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45004 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344222AbhLGASp (ORCPT
+        Tue, 7 Dec 2021 03:12:38 -0500
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:42028 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S229953AbhLGIMi (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 6 Dec 2021 19:18:45 -0500
-Received: from mail-pj1-x102d.google.com (mail-pj1-x102d.google.com [IPv6:2607:f8b0:4864:20::102d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B66ABC0613F8
-        for <linux-remoteproc@vger.kernel.org>; Mon,  6 Dec 2021 16:15:16 -0800 (PST)
-Received: by mail-pj1-x102d.google.com with SMTP id n15-20020a17090a160f00b001a75089daa3so591758pja.1
-        for <linux-remoteproc@vger.kernel.org>; Mon, 06 Dec 2021 16:15:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=1z1Amt/gcZvrn9YuV827NdLJuv0ueBqvE/K6X6pp/OM=;
-        b=UByy/pOsB3XhG+dtY1dgRqOqscESyAIpuwSdt78c2k4XXGjsvdjzLRCnCWlM0f25tb
-         yoQbaL22bQwAof2uskEIKQQZWuyS1NluK/mGGUCw9/T0mLN2HJ0z7pRxqY8kyxOj6/cT
-         aj8/TzSv/cCxiQhnQ0vtiqMYRVl/7bnYchtUk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=1z1Amt/gcZvrn9YuV827NdLJuv0ueBqvE/K6X6pp/OM=;
-        b=j0Y/XEJqcqwuSjsntqvm5MGha7SjesM8iA7a6vvMF/VjHixbMVvu2MT7ARglwPOWoA
-         0LyZs5BcXxWH2onh+VKX05dw0veD8wuCNXCnI7X3+z7GC0+kD+jRkjxO11xOVVVijx30
-         axkfZo6cYg1ZVgsVutphtJpNADmHCAN+60PK8dfJz+qsJSq60Jl7mlSbIaZiGfl6vJFp
-         Crr/mA93ulfopSkzdVy3TY72gwVSPFuLRq5HlBaJgPj0izaAU8gsFgTFVIp8jH6SQ5Fx
-         jVm/q2jmel/yyELO2WidtTHjjm/ekEVzb9hAvJp07Xe+JZDca2Gl0G8hL8jsoYy60lg1
-         O1Ig==
-X-Gm-Message-State: AOAM532UI91MDemO271D5VmUMl+afTvoYQxhrsN+17YClK5WGdSIakHp
-        j0pDcQnnL6iEp8/Z77ccQhgg4g==
-X-Google-Smtp-Source: ABdhPJw34rhOXkkazRivd6dbc/G/DWRJyOIYHaoWZnpGkGOYNi2+d3ggUWw+DbcD2/I+T4CW4JCRBg==
-X-Received: by 2002:a17:902:bc8b:b0:143:caf5:4a0e with SMTP id bb11-20020a170902bc8b00b00143caf54a0emr47292568plb.38.1638836116208;
-        Mon, 06 Dec 2021 16:15:16 -0800 (PST)
-Received: from localhost ([2620:15c:202:201:ab1b:c09c:ed69:5925])
-        by smtp.gmail.com with UTF8SMTPSA id j8sm14298566pfc.8.2021.12.06.16.15.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 06 Dec 2021 16:15:15 -0800 (PST)
-Date:   Mon, 6 Dec 2021 16:15:14 -0800
-From:   Matthias Kaehlcke <mka@chromium.org>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Sujit Kautkar <sujitka@chromium.org>,
-        Andy Gross <agross@kernel.org>,
-        Ohad Ben-Cohen <ohad@wizery.com>,
-        Sibi Sankar <sibis@codeaurora.org>,
-        Stephen Boyd <swboyd@chromium.org>,
-        linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org
-Subject: Re: [PATCH v3 2/2] rpmsg: glink: Update cdev add/del API in
- rpmsg_ctrldev_release_device()
-Message-ID: <Ya6nks3V4/G7aA9Q@google.com>
-References: <20211102235147.872921-1-sujitka@chromium.org>
- <20211102165137.v3.2.Ie09561c5b453a91f10ecc7e1974c602c4ff78245@changeid>
- <YZWQQ6XPIdMLtZEy@builder.lan>
+        Tue, 7 Dec 2021 03:12:38 -0500
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.1.2/8.16.1.2) with ESMTP id 1B73n2xh018579;
+        Tue, 7 Dec 2021 09:08:54 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-type; s=selector1;
+ bh=gjFn/nVZwppaV7/cJByjqjgVSBYzYI5mm14aPOcd/5E=;
+ b=PkSr1dkwbvvrtFEcGYEqKAXakUbvVRy3xBvMrhdHKO8q/XBW/5Xv2z9yirTkyZ7aNR6G
+ 1/k1dv7mAwkR7r/XCgrRuwn5Njg3OPEaTKXIGJvwrXQj8wfQ1MhSvECKCGptat/PzwRa
+ n5F8vzQvHeA9gQ0MqlDn1z8BEuFkiO5FmAuF6FM2ztAZY6D382Dle+iMKytKNl5tjW3J
+ 6Kw3LbE20l1V55WiMzG5xSLT/f1aDowkfZXbZ2GL/OZgo+fih/cPDnFwo/j/g8f8XGNy
+ flzG61QggEG479Y8Ww5MXg6K2A7/2WkwRC3EgUa4nSczzHkWA6xrcIQySqTttc/u9yjJ oA== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3csp32bc8s-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 07 Dec 2021 09:08:54 +0100
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id AFE7510002A;
+        Tue,  7 Dec 2021 09:08:52 +0100 (CET)
+Received: from Webmail-eu.st.com (sfhdag2node2.st.com [10.75.127.5])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id D268E2220AE;
+        Tue,  7 Dec 2021 09:08:52 +0100 (CET)
+Received: from localhost (10.75.127.50) by SFHDAG2NODE2.st.com (10.75.127.5)
+ with Microsoft SMTP Server (TLS) id 15.0.1497.26; Tue, 7 Dec 2021 09:08:52
+ +0100
+From:   Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>
+CC:     <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <julien.massot@iot.bzh>, <arnaud.pouliquen@foss.st.com>
+Subject: [PATCH v8 00/13] Restructure the rpmsg_char driver and introduce rpmsg_ctrl driver
+Date:   Tue, 7 Dec 2021 09:08:30 +0100
+Message-ID: <20211207080843.21222-1-arnaud.pouliquen@foss.st.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <YZWQQ6XPIdMLtZEy@builder.lan>
+Content-Type: text/plain
+X-Originating-IP: [10.75.127.50]
+X-ClientProxiedBy: SFHDAG2NODE3.st.com (10.75.127.6) To SFHDAG2NODE2.st.com
+ (10.75.127.5)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.790,Hydra:6.0.425,FMLib:17.11.62.513
+ definitions=2021-12-07_03,2021-12-06_02,2021-12-02_01
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Wed, Nov 17, 2021 at 05:29:07PM -0600, Bjorn Andersson wrote:
-> On Tue 02 Nov 18:51 CDT 2021, Sujit Kautkar wrote:
-> 
-> I like Stephen's suggestion about modifying the $subject.
-> Also note that the change isn't in the glink driver, so prefix should
-> reflect that:
-> 
-> $ git log --oneline --no-decorate -- drivers/rpmsg/rpmsg_char.c
-> f998d48f9b3c rpmsg: glink: Update cdev add/del API in rpmsg_ctrldev_release_device()
-> bc774a3887cb rpmsg: char: Remove useless include
-> 964e8bedd5a1 rpmsg: char: Return an error if device already open
-> ...
-> 
-> > Replace cdev add/del APIs with cdev_device_add/cdev_device_del to avoid
-> > below kernel warning. This correctly takes a reference to the parent
-> > device so the parent will not get released until all references to the
-> > cdev are released.
-> > 
-> > | ODEBUG: free active (active state 0) object type: timer_list hint: delayed_work_timer_fn+0x0/0x7c
-> > | WARNING: CPU: 7 PID: 19892 at lib/debugobjects.c:488 debug_print_object+0x13c/0x1b0
-> > | CPU: 7 PID: 19892 Comm: kworker/7:4 Tainted: G        W         5.4.147-lockdep #1
-> > | ==================================================================
-> > | Hardware name: Google CoachZ (rev1 - 2) with LTE (DT)
-> > | Workqueue: events kobject_delayed_cleanup
-> > | pstate: 60c00009 (nZCv daif +PAN +UAO)
-> > | pc : debug_print_object+0x13c/0x1b0
-> > | lr : debug_print_object+0x13c/0x1b0
-> > | sp : ffffff83b2ec7970
-> > | x29: ffffff83b2ec7970 x28: dfffffd000000000
-> > | x27: ffffff83d674f000 x26: dfffffd000000000
-> > | x25: ffffffd06b8fa660 x24: dfffffd000000000
-> > | x23: 0000000000000000 x22: ffffffd06b7c5108
-> > | x21: ffffffd06d597860 x20: ffffffd06e2c21c0
-> > | x19: ffffffd06d5974c0 x18: 000000000001dad8
-> > | x17: 0000000000000000 x16: dfffffd000000000
-> > | BUG: KASAN: use-after-free in qcom_glink_rpdev_release+0x54/0x70
-> > | x15: ffffffffffffffff x14: 79616c6564203a74
-> > | x13: 0000000000000000 x12: 0000000000000080
-> > | Write of size 8 at addr ffffff83d95768d0 by task kworker/3:1/150
-> > | x11: 0000000000000001 x10: 0000000000000000
-> > | x9 : fc9e8edec0ad0300 x8 : fc9e8edec0ad0300
-> > |
-> > | x7 : 0000000000000000 x6 : 0000000000000000
-> > | x5 : 0000000000000080 x4 : 0000000000000000
-> > | CPU: 3 PID: 150 Comm: kworker/3:1 Tainted: G        W         5.4.147-lockdep #1
-> > | x3 : ffffffd06c149574 x2 : ffffff83f77f7498
-> > | x1 : ffffffd06d596f60 x0 : 0000000000000061
-> > | Hardware name: Google CoachZ (rev1 - 2) with LTE (DT)
-> > | Call trace:
-> > |  debug_print_object+0x13c/0x1b0
-> > | Workqueue: events kobject_delayed_cleanup
-> > |  __debug_check_no_obj_freed+0x25c/0x3c0
-> > |  debug_check_no_obj_freed+0x18/0x20
-> > | Call trace:
-> > |  slab_free_freelist_hook+0xb4/0x1bc
-> > |  kfree+0xe8/0x2d8
-> > |  dump_backtrace+0x0/0x27c
-> 
-> Why is dump_backtrace in the callstack here inbetween
-> rpmsg_ctrldev_release_device() and kfree()? Isn't the error that we're
-> calling kfree() on an chunk of memory that contains a live object?
+Update from V7 [1]:
+- miscellaneous fixes based on Bjorn Andersson's comments
+- add "arm64: defconfig: Config that had RPMSG_CHAR now gets RPMSG_CTRL"
+  for 5.16 compatibility
 
-When I tried to repro there was no dump_backtrace():
+Patchset description:
 
-  Call trace:
-   debug_print_object+0x13c/0x1b0
-   __debug_check_no_obj_freed+0x25c/0x3c0
-   debug_check_no_obj_freed+0x18/0x20
-   slab_free_freelist_hook+0xbc/0x1e4
-   kfree+0xfc/0x2f4
-   rpmsg_ctrldev_release_device+0x78/0xb8
-   device_release+0x84/0x168
-   kobject_cleanup+0x12c/0x298
-   kobject_delayed_cleanup+0x10/0x18
-   process_one_work+0x578/0x92c
-   worker_thread+0x804/0xcf8
-   kthread+0x2a8/0x314
-   ret_from_fork+0x10/0x18
+The current rpmsg_char module implements a /dev/rpmsg_ctrl interface that provides the ability to
+instantiate char devices (/dev/rpmsgX) associated with an rpmsg endpoint for communication with the
+remote processor.
+This implementation fit with QCOM rpmsg backend but not with themagement by chanel implemented in 
+the generic rpmsg virtio backend.
+This series restructures the rpmsg_char driver to decorrelate the control part from the data part
+in order to improve its compatible with the rpmsg virtio backend.
 
-My guess is that Sujit added a dump_backtrace() for debugging and it was
-still there when the backtrace of the commit message was generated. That
-would also explain the two 'Call trace:' entries in the log.
+Objective:
+- Expose a /dev/rpmsg_ctrlX interface for the application that is no longer dedicated to the
+  rpmsg_char but generalized to all rpmsg services. This offers capability to create and destroy
+  rpmsg channels from a user's application initiative (using the new RPMSG_CREATE_DEV_IOCTL and
+  RPMSG_DESTROY_DEV_IOCTL controls).
+  An application will be able to create/establish an rpmsg communication channel to communicate
+  with the remote processor, and not only wait the remote processor initiative.
+  This is interesting for example to establish a temporary communication link for diagnosis,
+  calibration, debugging... or instantiate  new data flows on some user actions.
+- Add capability to probe the rpmsg_char device at the initiative of the remote processor
+ (rpmsg service announcement mechanism).
+  This allows platforms based on the rpmsg virtio backend to create the /dev/rpmgX interface with
+  a rpmsg name service announcement.
 
-> > |  rpmsg_ctrldev_release_device+0x78/0xb8
-> > |  device_release+0x68/0x14c
-> > |  show_stack+0x20/0x2c
-> > |  kobject_cleanup+0x12c/0x298
-> > |  kobject_delayed_cleanup+0x10/0x18
-> > |  dump_stack+0xe0/0x19c
-> > |  process_one_work+0x578/0x92c
-> > |  worker_thread+0x804/0xcf8
-> > |  print_address_description+0x3c/0x4a8
-> > |  kthread+0x2a8/0x314
-> > |  ret_from_fork+0x10/0x18
-> > |  __kasan_report+0x100/0x124
-> > 
-> > Signed-off-by: Sujit Kautkar <sujitka@chromium.org>
-> > ---
-> > Changes in v3:
-> > - Remove unecessary error check as per Matthias's comment
-> > 
-> > Changes in v2:
-> > - Fix typo in commit message
-> > 
-> >  drivers/rpmsg/rpmsg_char.c | 10 ++--------
-> >  1 file changed, 2 insertions(+), 8 deletions(-)
-> > 
-> > diff --git a/drivers/rpmsg/rpmsg_char.c b/drivers/rpmsg/rpmsg_char.c
-> > index 876ce43df732b..a6a33155ca859 100644
-> > --- a/drivers/rpmsg/rpmsg_char.c
-> > +++ b/drivers/rpmsg/rpmsg_char.c
-> > @@ -458,7 +458,7 @@ static void rpmsg_ctrldev_release_device(struct device *dev)
-> >  
-> >  	ida_simple_remove(&rpmsg_ctrl_ida, dev->id);
-> >  	ida_simple_remove(&rpmsg_minor_ida, MINOR(dev->devt));
-> > -	cdev_del(&ctrldev->cdev);
-> > +	cdev_device_del(&ctrldev->cdev, &ctrldev->dev);
-> 
-> I am not able to find any other instance where cdev_device_del() is
-> called from the device's release function itself, which tells me that
-> this probably is not the right thing to do. Instead the appropriate way
-> seem to put the cdev_device_del() in rpmsg_chrdev_remove().
+Subsets:
+  - Extract the control part of the char dev and create the rpmsg_ctrl.c file (patches 1 to 6)
+  - Introduce the "rpmsg-raw" channel in rpmsg_char(patches 7 to 11)
+  - Introduce the RPMSG_CREATE_DEV_IOCTL IOCTL and RPMSG_DESTROY_DEV_IOCTL to instantiate RPMsg
+    devices (patch 12)
+    The application can then create or release a channel by specifying:
+       - the name service of the device to instantiate.   
+       - the source address.
+       - the destination address.
+  - Send a ns announcement to the remote processor on default endpoint creation (patche 13)
 
-Yes, it sounds reasonable to me to delete the char device when the control
-device is removed.
+This series has be applied and tested on for-next branch 'c4b39a582b9b)[2].
 
-> That said, we already do device_del() in rpmsg_chrdev_remove() so if the
-> warning is trying to tell us that ctrldev->dev is not deleted I think we
-> have an unbalanced put_device()?
+[1] https://lkml.org/lkml/2021/11/8/501
+[2] https://git.kernel.org/pub/scm/linux/kernel/git/remoteproc/linux.git
 
-My understanding is that the situation is analogous to this one:
+Arnaud Pouliquen (10):
+  rpmsg: char: Export eptdev create an destroy functions
+  rpmsg: Create the rpmsg class in core instead of in rpmsg char
+  rpmsg: Move the rpmsg control device from rpmsg_char to rpmsg_ctrl
+  arm: configs: Configs that had RPMSG_CHAR now get RPMSG_CTRL
+  RISC-V: configs: Configs that had RPMSG_CHAR now get RPMSG_CTRL
+  arm64: defconfig: Config that had RPMSG_CHAR now gets RPMSG_CTRL
+  rpmsg: Update rpmsg_chrdev_register_device function
+  rpmsg: char: Refactor rpmsg_chrdev_eptdev_create function
+  rpmsg: Introduce rpmsg_create_default_ept function
+  rpmsg: char: Add possibility to use default endpoint of the rpmsg
+    device.
+  rpmsg: char: Introduce the "rpmsg-raw" channel
+  rpmsg: ctrl: Introduce new RPMSG_CREATE/RELEASE_DEV_IOCTL controls
+  rpmsg: core: Send a ns announcement when a default endpoint is created
 
-commit 1413ef638abae4ab5621901cf4d8ef08a4a48ba6
-Author: Kevin Hao <haokexin@gmail.com>
-Date:   Fri Oct 11 23:00:14 2019 +0800
+ arch/arm/configs/qcom_defconfig   |   1 +
+ arch/arm64/configs/defconfig      |   1 +
+ arch/riscv/configs/defconfig      |   1 +
+ arch/riscv/configs/rv32_defconfig |   1 +
+ drivers/rpmsg/Kconfig             |   8 +
+ drivers/rpmsg/Makefile            |   1 +
+ drivers/rpmsg/qcom_glink_native.c |   2 +-
+ drivers/rpmsg/qcom_smd.c          |   2 +-
+ drivers/rpmsg/rpmsg_char.c        | 246 +++++++++++------------------
+ drivers/rpmsg/rpmsg_char.h        |  46 ++++++
+ drivers/rpmsg/rpmsg_core.c        |  84 +++++++++-
+ drivers/rpmsg/rpmsg_ctrl.c        | 250 ++++++++++++++++++++++++++++++
+ drivers/rpmsg/rpmsg_internal.h    |  14 +-
+ drivers/rpmsg/virtio_rpmsg_bus.c  |   2 +-
+ include/uapi/linux/rpmsg.h        |  10 ++
+ 15 files changed, 505 insertions(+), 164 deletions(-)
+ create mode 100644 drivers/rpmsg/rpmsg_char.h
+ create mode 100644 drivers/rpmsg/rpmsg_ctrl.c
 
-    i2c: dev: Fix the race between the release of i2c_dev and cdev
-
-    The struct cdev is embedded in the struct i2c_dev. In the current code,
-    we would free the i2c_dev struct directly in put_i2c_dev(), but the
-    cdev is manged by a kobject, and the release of it is not predictable.
-    So it is very possible that the i2c_dev is freed before the cdev is
-    entirely released. We can easily get the following call trace with
-    CONFIG_DEBUG_KOBJECT_RELEASE and CONFIG_DEBUG_OBJECTS_TIMERS enabled.
-      ODEBUG: free active (active state 0) object type: timer_list hint: delayed_work_timer_fn+0x0/0x38
-      WARNING: CPU: 19 PID: 1 at lib/debugobjects.c:325 debug_print_object+0xb0/0xf0
-
-    ...
-
-    This is a common issue when using cdev embedded in a struct.
-    Fortunately, we already have a mechanism to solve this kind of issue.
-    Please see commit 233ed09d7fda ("chardev: add helper function to
-    egister char devs with a struct device") for more detail.
-
-    In this patch, we choose to embed the struct device into the i2c_dev,
-    and use the API provided by the commit 233ed09d7fda to make sure that
-    the release of i2c_dev and cdev are in sequence.
+-- 
+2.17.1
 
