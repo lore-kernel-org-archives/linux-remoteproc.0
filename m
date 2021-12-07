@@ -2,125 +2,228 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57396C433EF
-	for <linux-remoteproc@archiver.kernel.org>; Mon,  6 Dec 2021 20:11:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AD05C433F5
+	for <linux-remoteproc@archiver.kernel.org>; Tue,  7 Dec 2021 00:15:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349255AbhLFUPE (ORCPT
+        id S1353961AbhLGASq (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 6 Dec 2021 15:15:04 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44212 "EHLO
+        Mon, 6 Dec 2021 19:18:46 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45004 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1349378AbhLFUPC (ORCPT
+        with ESMTP id S1344222AbhLGASp (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 6 Dec 2021 15:15:02 -0500
-Received: from mail-ot1-x333.google.com (mail-ot1-x333.google.com [IPv6:2607:f8b0:4864:20::333])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8C905C061359
-        for <linux-remoteproc@vger.kernel.org>; Mon,  6 Dec 2021 12:11:33 -0800 (PST)
-Received: by mail-ot1-x333.google.com with SMTP id x19-20020a9d7053000000b0055c8b39420bso15166282otj.1
-        for <linux-remoteproc@vger.kernel.org>; Mon, 06 Dec 2021 12:11:33 -0800 (PST)
+        Mon, 6 Dec 2021 19:18:45 -0500
+Received: from mail-pj1-x102d.google.com (mail-pj1-x102d.google.com [IPv6:2607:f8b0:4864:20::102d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B66ABC0613F8
+        for <linux-remoteproc@vger.kernel.org>; Mon,  6 Dec 2021 16:15:16 -0800 (PST)
+Received: by mail-pj1-x102d.google.com with SMTP id n15-20020a17090a160f00b001a75089daa3so591758pja.1
+        for <linux-remoteproc@vger.kernel.org>; Mon, 06 Dec 2021 16:15:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
+        d=chromium.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=ypDUIho7eWHCZJ7Rm8us7oavNNmEtNxG3tY05fvu+RY=;
-        b=XyUZEWbAbyTD3x8dQ0p4NuyJAKpyRvj+HcEOYnANI8nHWL+EDMYBkNOYd8KkvNo7rr
-         H7aODQqhN0WeBX86PxnV6HGVSJQ8tugnbzyQYFmtDECQgYqjhF3Oxoh25iq+Jt2LBjJd
-         S1c1GUR6Z/a+4ww8MN0HudJG+cJfdlrC/yydAMmDrxz057uJxYXNVHnigGxiMOqih+ql
-         YWgsgm9xIDs/jeZ/snxT8AOdXJXIjk5cvgaTfpBX92Pt8p74dNz1WkiSgKKJIy6JYm/a
-         0Qv8Kjx3FlVasKJ2TpLwvfHxWo7Vu16ubsK9o+AsZzuCcUtriZbw79MyZ8Ovhzbk/qjr
-         ZILw==
+        bh=1z1Amt/gcZvrn9YuV827NdLJuv0ueBqvE/K6X6pp/OM=;
+        b=UByy/pOsB3XhG+dtY1dgRqOqscESyAIpuwSdt78c2k4XXGjsvdjzLRCnCWlM0f25tb
+         yoQbaL22bQwAof2uskEIKQQZWuyS1NluK/mGGUCw9/T0mLN2HJ0z7pRxqY8kyxOj6/cT
+         aj8/TzSv/cCxiQhnQ0vtiqMYRVl/7bnYchtUk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=ypDUIho7eWHCZJ7Rm8us7oavNNmEtNxG3tY05fvu+RY=;
-        b=nOp2ItfYug3kMP0B51OpYM0PdM3M44PWRaFfEMRaCgBcZnNgbsnfyinkmtRCjbNEbt
-         g8lXQsAzT6AlXW0/8cKHhd3pLtlH+CuVYkRBML7bP29eyQy7HXMVq8GJRvsu598eTKOu
-         yZ44O3Tx0vPIEFt3EjfwiIdNpFBT6nZzSUNaJyfLvzCs0Uv1xgGuGfUJCfwysAzRSGAi
-         l12FzcBOUwLVvtyJYgzNXiz8Q3VBYbV4ppjtHJopU60JhJR5F62YpClgX7XTNhCteN6j
-         6kDUGd8QuX4IwKynXMsOtixLGFvSmXBEue0dsk912kO8EN9F/cf1TlS4Y9akRINkFfwN
-         8YqQ==
-X-Gm-Message-State: AOAM531gZ4yvKozs/qbpZiKqu7F1u79m+N08pdsJq5LoFBH/qFkuS0q5
-        GkWaltdZs4AkyrC99Wv0tCgSow==
-X-Google-Smtp-Source: ABdhPJxquBRAhZlmEi8XL4TUa6etjEftnBL+pcRWhwWyPPZUItxs0BtS0PUQYihYDzhMNEPZEIkxBw==
-X-Received: by 2002:a9d:7f91:: with SMTP id t17mr30910146otp.197.1638821492818;
-        Mon, 06 Dec 2021 12:11:32 -0800 (PST)
-Received: from builder.lan (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
-        by smtp.gmail.com with ESMTPSA id q2sm2478175otg.64.2021.12.06.12.11.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 Dec 2021 12:11:32 -0800 (PST)
-Date:   Mon, 6 Dec 2021 14:11:29 -0600
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-Cc:     Mathieu Poirier <mathieu.poirier@linaro.org>,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        Matthias Brugger <matthias.bgg@gmail.com>
-Subject: Re: [PATCH] remoteproc: Fix remaining wrong return formatting in
- documentation
-Message-ID: <Ya5ucVAGf/qFpVbx@builder.lan>
-References: <20211206191858.10741-1-arnaud.pouliquen@foss.st.com>
+        bh=1z1Amt/gcZvrn9YuV827NdLJuv0ueBqvE/K6X6pp/OM=;
+        b=j0Y/XEJqcqwuSjsntqvm5MGha7SjesM8iA7a6vvMF/VjHixbMVvu2MT7ARglwPOWoA
+         0LyZs5BcXxWH2onh+VKX05dw0veD8wuCNXCnI7X3+z7GC0+kD+jRkjxO11xOVVVijx30
+         axkfZo6cYg1ZVgsVutphtJpNADmHCAN+60PK8dfJz+qsJSq60Jl7mlSbIaZiGfl6vJFp
+         Crr/mA93ulfopSkzdVy3TY72gwVSPFuLRq5HlBaJgPj0izaAU8gsFgTFVIp8jH6SQ5Fx
+         jVm/q2jmel/yyELO2WidtTHjjm/ekEVzb9hAvJp07Xe+JZDca2Gl0G8hL8jsoYy60lg1
+         O1Ig==
+X-Gm-Message-State: AOAM532UI91MDemO271D5VmUMl+afTvoYQxhrsN+17YClK5WGdSIakHp
+        j0pDcQnnL6iEp8/Z77ccQhgg4g==
+X-Google-Smtp-Source: ABdhPJw34rhOXkkazRivd6dbc/G/DWRJyOIYHaoWZnpGkGOYNi2+d3ggUWw+DbcD2/I+T4CW4JCRBg==
+X-Received: by 2002:a17:902:bc8b:b0:143:caf5:4a0e with SMTP id bb11-20020a170902bc8b00b00143caf54a0emr47292568plb.38.1638836116208;
+        Mon, 06 Dec 2021 16:15:16 -0800 (PST)
+Received: from localhost ([2620:15c:202:201:ab1b:c09c:ed69:5925])
+        by smtp.gmail.com with UTF8SMTPSA id j8sm14298566pfc.8.2021.12.06.16.15.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 06 Dec 2021 16:15:15 -0800 (PST)
+Date:   Mon, 6 Dec 2021 16:15:14 -0800
+From:   Matthias Kaehlcke <mka@chromium.org>
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Sujit Kautkar <sujitka@chromium.org>,
+        Andy Gross <agross@kernel.org>,
+        Ohad Ben-Cohen <ohad@wizery.com>,
+        Sibi Sankar <sibis@codeaurora.org>,
+        Stephen Boyd <swboyd@chromium.org>,
+        linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org
+Subject: Re: [PATCH v3 2/2] rpmsg: glink: Update cdev add/del API in
+ rpmsg_ctrldev_release_device()
+Message-ID: <Ya6nks3V4/G7aA9Q@google.com>
+References: <20211102235147.872921-1-sujitka@chromium.org>
+ <20211102165137.v3.2.Ie09561c5b453a91f10ecc7e1974c602c4ff78245@changeid>
+ <YZWQQ6XPIdMLtZEy@builder.lan>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20211206191858.10741-1-arnaud.pouliquen@foss.st.com>
+In-Reply-To: <YZWQQ6XPIdMLtZEy@builder.lan>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Mon 06 Dec 13:18 CST 2021, Arnaud Pouliquen wrote:
-
-> kernel documentation specification:
-> "The return value, if any, should be described in a dedicated section
-> named Return."
+On Wed, Nov 17, 2021 at 05:29:07PM -0600, Bjorn Andersson wrote:
+> On Tue 02 Nov 18:51 CDT 2021, Sujit Kautkar wrote:
 > 
-> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-
-Thanks,
-Bjorn
-
-> ---
->  drivers/remoteproc/mtk_scp_ipi.c   | 4 ++--
->  drivers/remoteproc/st_slim_rproc.c | 2 +-
->  2 files changed, 3 insertions(+), 3 deletions(-)
+> I like Stephen's suggestion about modifying the $subject.
+> Also note that the change isn't in the glink driver, so prefix should
+> reflect that:
 > 
-> diff --git a/drivers/remoteproc/mtk_scp_ipi.c b/drivers/remoteproc/mtk_scp_ipi.c
-> index 6dc955ecab80..00f041ebcde6 100644
-> --- a/drivers/remoteproc/mtk_scp_ipi.c
-> +++ b/drivers/remoteproc/mtk_scp_ipi.c
-> @@ -23,7 +23,7 @@
->   *
->   * Register an ipi function to receive ipi interrupt from SCP.
->   *
-> - * Returns 0 if ipi registers successfully, -error on error.
-> + * Return: 0 if ipi registers successfully, -error on error.
->   */
->  int scp_ipi_register(struct mtk_scp *scp,
->  		     u32 id,
-> @@ -150,7 +150,7 @@ EXPORT_SYMBOL_GPL(scp_ipi_unlock);
->   * When the processing completes, IPI handler registered
->   * by scp_ipi_register will be called in interrupt context.
->   *
-> - * Returns 0 if sending data successfully, -error on error.
-> + * Return: 0 if sending data successfully, -error on error.
->   **/
->  int scp_ipi_send(struct mtk_scp *scp, u32 id, void *buf, unsigned int len,
->  		 unsigned int wait)
-> diff --git a/drivers/remoteproc/st_slim_rproc.c b/drivers/remoteproc/st_slim_rproc.c
-> index 22096adc1ad3..4ed9467897e5 100644
-> --- a/drivers/remoteproc/st_slim_rproc.c
-> +++ b/drivers/remoteproc/st_slim_rproc.c
-> @@ -216,7 +216,7 @@ static const struct rproc_ops slim_rproc_ops = {
->   * obtains and enables any clocks required by the SLIM core and also
->   * ioremaps the various IO.
->   *
-> - * Returns st_slim_rproc pointer or PTR_ERR() on error.
-> + * Return: st_slim_rproc pointer or PTR_ERR() on error.
->   */
->  
->  struct st_slim_rproc *st_slim_rproc_alloc(struct platform_device *pdev,
-> -- 
-> 2.17.1
+> $ git log --oneline --no-decorate -- drivers/rpmsg/rpmsg_char.c
+> f998d48f9b3c rpmsg: glink: Update cdev add/del API in rpmsg_ctrldev_release_device()
+> bc774a3887cb rpmsg: char: Remove useless include
+> 964e8bedd5a1 rpmsg: char: Return an error if device already open
+> ...
 > 
+> > Replace cdev add/del APIs with cdev_device_add/cdev_device_del to avoid
+> > below kernel warning. This correctly takes a reference to the parent
+> > device so the parent will not get released until all references to the
+> > cdev are released.
+> > 
+> > | ODEBUG: free active (active state 0) object type: timer_list hint: delayed_work_timer_fn+0x0/0x7c
+> > | WARNING: CPU: 7 PID: 19892 at lib/debugobjects.c:488 debug_print_object+0x13c/0x1b0
+> > | CPU: 7 PID: 19892 Comm: kworker/7:4 Tainted: G        W         5.4.147-lockdep #1
+> > | ==================================================================
+> > | Hardware name: Google CoachZ (rev1 - 2) with LTE (DT)
+> > | Workqueue: events kobject_delayed_cleanup
+> > | pstate: 60c00009 (nZCv daif +PAN +UAO)
+> > | pc : debug_print_object+0x13c/0x1b0
+> > | lr : debug_print_object+0x13c/0x1b0
+> > | sp : ffffff83b2ec7970
+> > | x29: ffffff83b2ec7970 x28: dfffffd000000000
+> > | x27: ffffff83d674f000 x26: dfffffd000000000
+> > | x25: ffffffd06b8fa660 x24: dfffffd000000000
+> > | x23: 0000000000000000 x22: ffffffd06b7c5108
+> > | x21: ffffffd06d597860 x20: ffffffd06e2c21c0
+> > | x19: ffffffd06d5974c0 x18: 000000000001dad8
+> > | x17: 0000000000000000 x16: dfffffd000000000
+> > | BUG: KASAN: use-after-free in qcom_glink_rpdev_release+0x54/0x70
+> > | x15: ffffffffffffffff x14: 79616c6564203a74
+> > | x13: 0000000000000000 x12: 0000000000000080
+> > | Write of size 8 at addr ffffff83d95768d0 by task kworker/3:1/150
+> > | x11: 0000000000000001 x10: 0000000000000000
+> > | x9 : fc9e8edec0ad0300 x8 : fc9e8edec0ad0300
+> > |
+> > | x7 : 0000000000000000 x6 : 0000000000000000
+> > | x5 : 0000000000000080 x4 : 0000000000000000
+> > | CPU: 3 PID: 150 Comm: kworker/3:1 Tainted: G        W         5.4.147-lockdep #1
+> > | x3 : ffffffd06c149574 x2 : ffffff83f77f7498
+> > | x1 : ffffffd06d596f60 x0 : 0000000000000061
+> > | Hardware name: Google CoachZ (rev1 - 2) with LTE (DT)
+> > | Call trace:
+> > |  debug_print_object+0x13c/0x1b0
+> > | Workqueue: events kobject_delayed_cleanup
+> > |  __debug_check_no_obj_freed+0x25c/0x3c0
+> > |  debug_check_no_obj_freed+0x18/0x20
+> > | Call trace:
+> > |  slab_free_freelist_hook+0xb4/0x1bc
+> > |  kfree+0xe8/0x2d8
+> > |  dump_backtrace+0x0/0x27c
+> 
+> Why is dump_backtrace in the callstack here inbetween
+> rpmsg_ctrldev_release_device() and kfree()? Isn't the error that we're
+> calling kfree() on an chunk of memory that contains a live object?
+
+When I tried to repro there was no dump_backtrace():
+
+  Call trace:
+   debug_print_object+0x13c/0x1b0
+   __debug_check_no_obj_freed+0x25c/0x3c0
+   debug_check_no_obj_freed+0x18/0x20
+   slab_free_freelist_hook+0xbc/0x1e4
+   kfree+0xfc/0x2f4
+   rpmsg_ctrldev_release_device+0x78/0xb8
+   device_release+0x84/0x168
+   kobject_cleanup+0x12c/0x298
+   kobject_delayed_cleanup+0x10/0x18
+   process_one_work+0x578/0x92c
+   worker_thread+0x804/0xcf8
+   kthread+0x2a8/0x314
+   ret_from_fork+0x10/0x18
+
+My guess is that Sujit added a dump_backtrace() for debugging and it was
+still there when the backtrace of the commit message was generated. That
+would also explain the two 'Call trace:' entries in the log.
+
+> > |  rpmsg_ctrldev_release_device+0x78/0xb8
+> > |  device_release+0x68/0x14c
+> > |  show_stack+0x20/0x2c
+> > |  kobject_cleanup+0x12c/0x298
+> > |  kobject_delayed_cleanup+0x10/0x18
+> > |  dump_stack+0xe0/0x19c
+> > |  process_one_work+0x578/0x92c
+> > |  worker_thread+0x804/0xcf8
+> > |  print_address_description+0x3c/0x4a8
+> > |  kthread+0x2a8/0x314
+> > |  ret_from_fork+0x10/0x18
+> > |  __kasan_report+0x100/0x124
+> > 
+> > Signed-off-by: Sujit Kautkar <sujitka@chromium.org>
+> > ---
+> > Changes in v3:
+> > - Remove unecessary error check as per Matthias's comment
+> > 
+> > Changes in v2:
+> > - Fix typo in commit message
+> > 
+> >  drivers/rpmsg/rpmsg_char.c | 10 ++--------
+> >  1 file changed, 2 insertions(+), 8 deletions(-)
+> > 
+> > diff --git a/drivers/rpmsg/rpmsg_char.c b/drivers/rpmsg/rpmsg_char.c
+> > index 876ce43df732b..a6a33155ca859 100644
+> > --- a/drivers/rpmsg/rpmsg_char.c
+> > +++ b/drivers/rpmsg/rpmsg_char.c
+> > @@ -458,7 +458,7 @@ static void rpmsg_ctrldev_release_device(struct device *dev)
+> >  
+> >  	ida_simple_remove(&rpmsg_ctrl_ida, dev->id);
+> >  	ida_simple_remove(&rpmsg_minor_ida, MINOR(dev->devt));
+> > -	cdev_del(&ctrldev->cdev);
+> > +	cdev_device_del(&ctrldev->cdev, &ctrldev->dev);
+> 
+> I am not able to find any other instance where cdev_device_del() is
+> called from the device's release function itself, which tells me that
+> this probably is not the right thing to do. Instead the appropriate way
+> seem to put the cdev_device_del() in rpmsg_chrdev_remove().
+
+Yes, it sounds reasonable to me to delete the char device when the control
+device is removed.
+
+> That said, we already do device_del() in rpmsg_chrdev_remove() so if the
+> warning is trying to tell us that ctrldev->dev is not deleted I think we
+> have an unbalanced put_device()?
+
+My understanding is that the situation is analogous to this one:
+
+commit 1413ef638abae4ab5621901cf4d8ef08a4a48ba6
+Author: Kevin Hao <haokexin@gmail.com>
+Date:   Fri Oct 11 23:00:14 2019 +0800
+
+    i2c: dev: Fix the race between the release of i2c_dev and cdev
+
+    The struct cdev is embedded in the struct i2c_dev. In the current code,
+    we would free the i2c_dev struct directly in put_i2c_dev(), but the
+    cdev is manged by a kobject, and the release of it is not predictable.
+    So it is very possible that the i2c_dev is freed before the cdev is
+    entirely released. We can easily get the following call trace with
+    CONFIG_DEBUG_KOBJECT_RELEASE and CONFIG_DEBUG_OBJECTS_TIMERS enabled.
+      ODEBUG: free active (active state 0) object type: timer_list hint: delayed_work_timer_fn+0x0/0x38
+      WARNING: CPU: 19 PID: 1 at lib/debugobjects.c:325 debug_print_object+0xb0/0xf0
+
+    ...
+
+    This is a common issue when using cdev embedded in a struct.
+    Fortunately, we already have a mechanism to solve this kind of issue.
+    Please see commit 233ed09d7fda ("chardev: add helper function to
+    egister char devs with a struct device") for more detail.
+
+    In this patch, we choose to embed the struct device into the i2c_dev,
+    and use the API provided by the commit 233ed09d7fda to make sure that
+    the release of i2c_dev and cdev are in sequence.
+
