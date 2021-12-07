@@ -2,41 +2,41 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55026C433F5
-	for <linux-remoteproc@archiver.kernel.org>; Tue,  7 Dec 2021 08:09:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BC4FC43217
+	for <linux-remoteproc@archiver.kernel.org>; Tue,  7 Dec 2021 08:09:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229953AbhLGIMj (ORCPT
+        id S231821AbhLGIMj (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
         Tue, 7 Dec 2021 03:12:39 -0500
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:40148 "EHLO
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:40154 "EHLO
         mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S230107AbhLGIMi (ORCPT
+        by vger.kernel.org with ESMTP id S231319AbhLGIMi (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
         Tue, 7 Dec 2021 03:12:38 -0500
 Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.1.2/8.16.1.2) with ESMTP id 1B75RNPd021901;
-        Tue, 7 Dec 2021 09:08:55 +0100
+        by mx07-00178001.pphosted.com (8.16.1.2/8.16.1.2) with ESMTP id 1B75RNgu021902;
+        Tue, 7 Dec 2021 09:08:59 +0100
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=from : to : cc :
  subject : date : message-id : in-reply-to : references : mime-version :
  content-type; s=selector1;
- bh=eshN3+K9TXtLzi8d6WwiLBLXYlbm6YlpUT5rkK6+HFs=;
- b=mnsJwCOp294xxTgYutBgF68k2TPGd05NOlfZB/sO7slFjI4SD07oTL5UcrNO0Ufm6gra
- sJt7001b4FFWJFujR5+PcaQJpsmQGo6ENo8WUNiBpgIyNWXpjtHYEmXr4WCspzgJLKPZ
- syDJwueWFOsEf7lK+E9l8uxwS7SlBMdxCJLib9UDIPCdPkRLUMzVfNZWm4t1Pgna3lwi
- cquiTTo8I/4FQNTrYLfTiPS0VGb0JueCVIxpeG28Lcqi+dcU78+9WT4GGA4K2V9xHSbq
- 64IuLP0RjAp2nQZvP2fMEua0JtlHc3yd1xlzluMAI4Ic95dbDgSflCFGEzonBTWZGD/f +A== 
+ bh=nuURO2W1SWhsAI0sfv3vm7CocfSqChGxGc5QjbrslfA=;
+ b=awLvh8qQICL/HqFha1BbUd6OI5hphEnErPEyteey9V5A3gf9i3jKnRWcFNLARzEEDPad
+ obGX8fW+Jwd1M3Y3xo4QlyIxVhEZWReQO3DQW+Xe7hvegA2XmVCPpgZUVrBDpbhDibUA
+ 5x2F0LHRLuSYM1MX1EIlBgR3GwInIQdEVCGLTdCHZJchLow4IsZ353K/uUKEdFmh2uhX
+ LmF5J7YWkG8TBLEI9oRg1TeE9RYMm5Ua5OCsURX8O4cMNC7JgiCNJkKVH7EzxbRtnavL
+ lhXWrE7M3JnkN4fwUGos3+scAJi5oV7Zb3Ixfd9WCvLrz1GELdNsVs+JfNS2cP3E4OLf 1A== 
 Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3ct1fx8rfq-1
+        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3ct1fx8rgc-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 07 Dec 2021 09:08:55 +0100
+        Tue, 07 Dec 2021 09:08:59 +0100
 Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 76122100038;
-        Tue,  7 Dec 2021 09:08:54 +0100 (CET)
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 8326F100038;
+        Tue,  7 Dec 2021 09:08:58 +0100 (CET)
 Received: from Webmail-eu.st.com (sfhdag2node2.st.com [10.75.127.5])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 6AF012220AE;
-        Tue,  7 Dec 2021 09:08:54 +0100 (CET)
-Received: from localhost (10.75.127.51) by SFHDAG2NODE2.st.com (10.75.127.5)
- with Microsoft SMTP Server (TLS) id 15.0.1497.26; Tue, 7 Dec 2021 09:08:54
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 7B5E22220AE;
+        Tue,  7 Dec 2021 09:08:58 +0100 (CET)
+Received: from localhost (10.75.127.48) by SFHDAG2NODE2.st.com (10.75.127.5)
+ with Microsoft SMTP Server (TLS) id 15.0.1497.26; Tue, 7 Dec 2021 09:08:58
  +0100
 From:   Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
 To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
@@ -44,16 +44,16 @@ To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
 CC:     <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <linux-stm32@st-md-mailman.stormreply.com>,
         <julien.massot@iot.bzh>, <arnaud.pouliquen@foss.st.com>
-Subject: [PATCH v8 02/13] rpmsg: Create the rpmsg class in core instead of in rpmsg char
-Date:   Tue, 7 Dec 2021 09:08:32 +0100
-Message-ID: <20211207080843.21222-3-arnaud.pouliquen@foss.st.com>
+Subject: [PATCH v8 07/13] rpmsg: Update rpmsg_chrdev_register_device function
+Date:   Tue, 7 Dec 2021 09:08:37 +0100
+Message-ID: <20211207080843.21222-8-arnaud.pouliquen@foss.st.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20211207080843.21222-1-arnaud.pouliquen@foss.st.com>
 References: <20211207080843.21222-1-arnaud.pouliquen@foss.st.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-X-Originating-IP: [10.75.127.51]
-X-ClientProxiedBy: SFHDAG2NODE3.st.com (10.75.127.6) To SFHDAG2NODE2.st.com
+X-Originating-IP: [10.75.127.48]
+X-ClientProxiedBy: SFHDAG1NODE2.st.com (10.75.127.2) To SFHDAG2NODE2.st.com
  (10.75.127.5)
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.205,Aquarius:18.0.790,Hydra:6.0.425,FMLib:17.11.62.513
@@ -62,117 +62,103 @@ Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Migrate the creation of the rpmsg class from the rpmsg_char
-to the core that the class is usable by the rpmsg_char and
-the future rpmsg_ctrl module.
+The rpmsg_chrdev driver has been replaced by the rpmsg_ctrl driver
+for the /dev/rpmsg_ctrlX devices management. The reference for the
+driver override is now the rpmsg_ctrl.
 
-Suggested-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Update the rpmsg_chrdev_register_device function to reflect the update,
+and rename the function to use the rpmsg_ctrldev prefix.
+
+The platform drivers are updated accordingly.
+
 Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 ---
- drivers/rpmsg/rpmsg_char.c     | 11 +----------
- drivers/rpmsg/rpmsg_core.c     | 15 +++++++++++++--
- drivers/rpmsg/rpmsg_internal.h |  2 ++
- 3 files changed, 16 insertions(+), 12 deletions(-)
+ drivers/rpmsg/qcom_glink_native.c | 2 +-
+ drivers/rpmsg/qcom_smd.c          | 2 +-
+ drivers/rpmsg/rpmsg_ctrl.c        | 2 +-
+ drivers/rpmsg/rpmsg_internal.h    | 8 ++++----
+ drivers/rpmsg/virtio_rpmsg_bus.c  | 2 +-
+ 5 files changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/rpmsg/rpmsg_char.c b/drivers/rpmsg/rpmsg_char.c
-index f7aa2dd302a5..55f503aaf385 100644
---- a/drivers/rpmsg/rpmsg_char.c
-+++ b/drivers/rpmsg/rpmsg_char.c
-@@ -27,11 +27,11 @@
- #include <uapi/linux/rpmsg.h>
+diff --git a/drivers/rpmsg/qcom_glink_native.c b/drivers/rpmsg/qcom_glink_native.c
+index 1030cfa80e04..cf2c057b738c 100644
+--- a/drivers/rpmsg/qcom_glink_native.c
++++ b/drivers/rpmsg/qcom_glink_native.c
+@@ -1715,7 +1715,7 @@ static int qcom_glink_create_chrdev(struct qcom_glink *glink)
+ 	rpdev->dev.parent = glink->dev;
+ 	rpdev->dev.release = qcom_glink_device_release;
  
- #include "rpmsg_char.h"
-+#include "rpmsg_internal.h"
- 
- #define RPMSG_DEV_MAX	(MINORMASK + 1)
- 
- static dev_t rpmsg_major;
--static struct class *rpmsg_class;
- 
- static DEFINE_IDA(rpmsg_ctrl_ida);
- static DEFINE_IDA(rpmsg_ept_ida);
-@@ -561,17 +561,9 @@ static int rpmsg_chrdev_init(void)
- 		return ret;
- 	}
- 
--	rpmsg_class = class_create(THIS_MODULE, "rpmsg");
--	if (IS_ERR(rpmsg_class)) {
--		pr_err("failed to create rpmsg class\n");
--		unregister_chrdev_region(rpmsg_major, RPMSG_DEV_MAX);
--		return PTR_ERR(rpmsg_class);
--	}
--
- 	ret = register_rpmsg_driver(&rpmsg_chrdev_driver);
- 	if (ret < 0) {
- 		pr_err("failed to register rpmsg driver\n");
--		class_destroy(rpmsg_class);
- 		unregister_chrdev_region(rpmsg_major, RPMSG_DEV_MAX);
- 	}
- 
-@@ -582,7 +574,6 @@ postcore_initcall(rpmsg_chrdev_init);
- static void rpmsg_chrdev_exit(void)
- {
- 	unregister_rpmsg_driver(&rpmsg_chrdev_driver);
--	class_destroy(rpmsg_class);
- 	unregister_chrdev_region(rpmsg_major, RPMSG_DEV_MAX);
+-	return rpmsg_chrdev_register_device(rpdev);
++	return rpmsg_ctrldev_register_device(rpdev);
  }
- module_exit(rpmsg_chrdev_exit);
-diff --git a/drivers/rpmsg/rpmsg_core.c b/drivers/rpmsg/rpmsg_core.c
-index f031b2b1b21c..d2129d3e6225 100644
---- a/drivers/rpmsg/rpmsg_core.c
-+++ b/drivers/rpmsg/rpmsg_core.c
-@@ -20,6 +20,9 @@
  
- #include "rpmsg_internal.h"
+ struct qcom_glink *qcom_glink_native_probe(struct device *dev,
+diff --git a/drivers/rpmsg/qcom_smd.c b/drivers/rpmsg/qcom_smd.c
+index 540e027f08c4..cd623e3e8aa9 100644
+--- a/drivers/rpmsg/qcom_smd.c
++++ b/drivers/rpmsg/qcom_smd.c
+@@ -1113,7 +1113,7 @@ static int qcom_smd_create_chrdev(struct qcom_smd_edge *edge)
+ 	qsdev->rpdev.dev.parent = &edge->dev;
+ 	qsdev->rpdev.dev.release = qcom_smd_release_device;
  
-+struct class *rpmsg_class;
-+EXPORT_SYMBOL(rpmsg_class);
-+
- /**
-  * rpmsg_create_channel() - create a new rpmsg channel
-  * using its name and address info.
-@@ -650,10 +653,17 @@ static int __init rpmsg_init(void)
- {
- 	int ret;
- 
-+	rpmsg_class = class_create(THIS_MODULE, "rpmsg");
-+	if (IS_ERR(rpmsg_class)) {
-+		pr_err("failed to create rpmsg class\n");
-+		return PTR_ERR(rpmsg_class);
-+	}
-+
- 	ret = bus_register(&rpmsg_bus);
--	if (ret)
-+	if (ret) {
- 		pr_err("failed to register rpmsg bus: %d\n", ret);
--
-+		class_destroy(rpmsg_class);
-+	}
- 	return ret;
+-	return rpmsg_chrdev_register_device(&qsdev->rpdev);
++	return rpmsg_ctrldev_register_device(&qsdev->rpdev);
  }
- postcore_initcall(rpmsg_init);
-@@ -661,6 +671,7 @@ postcore_initcall(rpmsg_init);
- static void __exit rpmsg_fini(void)
- {
- 	bus_unregister(&rpmsg_bus);
-+	class_destroy(rpmsg_class);
- }
- module_exit(rpmsg_fini);
+ 
+ /*
+diff --git a/drivers/rpmsg/rpmsg_ctrl.c b/drivers/rpmsg/rpmsg_ctrl.c
+index 33c38cbf2b83..59d2bd264fdb 100644
+--- a/drivers/rpmsg/rpmsg_ctrl.c
++++ b/drivers/rpmsg/rpmsg_ctrl.c
+@@ -183,7 +183,7 @@ static struct rpmsg_driver rpmsg_ctrldev_driver = {
+ 	.probe = rpmsg_ctrldev_probe,
+ 	.remove = rpmsg_ctrldev_remove,
+ 	.drv = {
+-		.name = "rpmsg_chrdev",
++		.name = "rpmsg_ctrl",
+ 	},
+ };
  
 diff --git a/drivers/rpmsg/rpmsg_internal.h b/drivers/rpmsg/rpmsg_internal.h
-index b1245d3ed7c6..416316200bde 100644
+index 416316200bde..d4b23fd019a8 100644
 --- a/drivers/rpmsg/rpmsg_internal.h
 +++ b/drivers/rpmsg/rpmsg_internal.h
-@@ -18,6 +18,8 @@
- #define to_rpmsg_device(d) container_of(d, struct rpmsg_device, dev)
- #define to_rpmsg_driver(d) container_of(d, struct rpmsg_driver, drv)
- 
-+extern struct class *rpmsg_class;
-+
+@@ -86,16 +86,16 @@ struct rpmsg_device *rpmsg_create_channel(struct rpmsg_device *rpdev,
+ int rpmsg_release_channel(struct rpmsg_device *rpdev,
+ 			  struct rpmsg_channel_info *chinfo);
  /**
-  * struct rpmsg_device_ops - indirection table for the rpmsg_device operations
-  * @create_channel:	create backend-specific channel, optional
+- * rpmsg_chrdev_register_device() - register chrdev device based on rpdev
++ * rpmsg_ctrldev_register_device() - register a char device for control based on rpdev
+  * @rpdev:	prepared rpdev to be used for creating endpoints
+  *
+  * This function wraps rpmsg_register_device() preparing the rpdev for use as
+  * basis for the rpmsg chrdev.
+  */
+-static inline int rpmsg_chrdev_register_device(struct rpmsg_device *rpdev)
++static inline int rpmsg_ctrldev_register_device(struct rpmsg_device *rpdev)
+ {
+-	strcpy(rpdev->id.name, "rpmsg_chrdev");
+-	rpdev->driver_override = "rpmsg_chrdev";
++	strcpy(rpdev->id.name, "rpmsg_ctrl");
++	rpdev->driver_override = "rpmsg_ctrl";
+ 
+ 	return rpmsg_register_device(rpdev);
+ }
+diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
+index c37451512835..7f786cc70df9 100644
+--- a/drivers/rpmsg/virtio_rpmsg_bus.c
++++ b/drivers/rpmsg/virtio_rpmsg_bus.c
+@@ -849,7 +849,7 @@ static struct rpmsg_device *rpmsg_virtio_add_ctrl_dev(struct virtio_device *vdev
+ 	rpdev_ctrl->dev.release = virtio_rpmsg_release_device;
+ 	rpdev_ctrl->little_endian = virtio_is_little_endian(vrp->vdev);
+ 
+-	err = rpmsg_chrdev_register_device(rpdev_ctrl);
++	err = rpmsg_ctrldev_register_device(rpdev_ctrl);
+ 	if (err) {
+ 		kfree(vch);
+ 		return ERR_PTR(err);
 -- 
 2.17.1
 
