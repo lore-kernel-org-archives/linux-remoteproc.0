@@ -2,144 +2,90 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B262C433EF
-	for <linux-remoteproc@archiver.kernel.org>; Tue,  7 Dec 2021 13:58:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04350C433F5
+	for <linux-remoteproc@archiver.kernel.org>; Tue,  7 Dec 2021 16:58:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231919AbhLGOCK (ORCPT
+        id S239690AbhLGRCT (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 7 Dec 2021 09:02:10 -0500
-Received: from mail.iot.bzh ([51.75.236.24]:44922 "EHLO frontal.iot.bzh"
+        Tue, 7 Dec 2021 12:02:19 -0500
+Received: from mail.iot.bzh ([51.75.236.24]:30667 "EHLO frontal.iot.bzh"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S237422AbhLGOCK (ORCPT <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 7 Dec 2021 09:02:10 -0500
+        id S231156AbhLGRCT (ORCPT <rfc822;linux-remoteproc@vger.kernel.org>);
+        Tue, 7 Dec 2021 12:02:19 -0500
 Received: from frontal.iot.bzh (localhost [127.0.0.1])
-        by frontal.iot.bzh (Proxmox) with ESMTP id 42FD044819;
-        Tue,  7 Dec 2021 14:58:38 +0100 (CET)
+        by frontal.iot.bzh (Proxmox) with ESMTP id 0985F45603;
+        Tue,  7 Dec 2021 17:58:47 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iot.bzh; h=cc:cc
-        :content-transfer-encoding:content-type:content-type:date:from
-        :from:in-reply-to:message-id:mime-version:references:reply-to
-        :subject:subject:to:to; s=iot.bzh; bh=S9th2APfTI6XxcTWTT4s6iJmCj
-        a4Q8VizfkO5jFYODI=; b=VRJLgfzbB0wgAoePSmI/5FkRzCTH+SYfFC9N3v1whx
-        QgXi9u7JkzxJzP4zYccmzGfHs4ISSa1LlEQJ9QeBbD6URkYpVBTR5foz2c5zXMs0
-        iuUQhnO8B0R8vkP3uC29PXT3GW/3sfjHPu4C0GdiQ7dkcWsft3OK2QHZSHvCS9RR
-        ydStxipc9OFDn4E6XwOqSLAMJaMZDxCg23lCMhmlRXb1pcZ8BvtGlt+uCloyWYE8
-        hJzd+diBVeafFw2r0Y7PhEMcfA6GcB74IceEkqXBuJfC9ZQYcXDemPgF1k14A+NP
-        Ut5vHFM4UL5c6JDlL6orUWlJCNwihlVVIzl1KwWuEOsA==
-Message-ID: <40cee684-43d0-d060-ea3a-c0eaf1e81361@iot.bzh>
-Date:   Tue, 7 Dec 2021 14:58:31 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.3.0
-Subject: Re: [PATCH v2 1/2] dt-bindings: remoteproc: Add Renesas R-Car
-Content-Language: en-US
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     =?UTF-8?Q?Bj=c3=b6rn_Andersson?= <bjorn.andersson@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "open list:REMOTE PROCESSOR (REMOTEPROC) SUBSYSTEM" 
-        <linux-remoteproc@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, Rob Herring <robh@kernel.org>
-References: <20211130100049.129418-1-julien.massot@iot.bzh>
- <20211130100049.129418-2-julien.massot@iot.bzh>
- <CAMuHMdUoKvgvRcQwq4fuP4WHr5me5cXKG8w0fotVO3Eqrne-2A@mail.gmail.com>
+        :content-transfer-encoding:date:from:from:message-id
+        :mime-version:reply-to:subject:subject:to:to; s=iot.bzh; bh=J//L
+        RnmrEV9XzQJLWe6jbFb/lrFqth3Hxb1+UlGEHl8=; b=SjVMf6wPHeFnE87V6NR3
+        GhDTjLuaCJa8ecjcTepQrdQyEsESqyr0o/ElifQPwNutIzmBRmsfRynikZQ39rHj
+        N1L1aS+m391DdeGHO3Ihjo6FYnrbIRw+LqUqwOOfq9wVSCR9aQ01UXcJqTtGKvJQ
+        FpoXSgg9qUQC3+pNxCxMSg8cV6ecCiXguW04IYCYA4pOhH5q2zXFuKRI7QzX1k0v
+        YMdh5L2MZZwxRvpLicu9/MFJ3YYn5VZ65L/cXGIAW9fBbVJzgCBYKZLc4erdjj3F
+        3tkfgn3nLPh/ZK+RMiqp/paHpSxTSRYbdTGzuctklyjTvkAOq7lXiVdGkcNz6XBx
+        Bw==
 From:   Julien Massot <julien.massot@iot.bzh>
-In-Reply-To: <CAMuHMdUoKvgvRcQwq4fuP4WHr5me5cXKG8w0fotVO3Eqrne-2A@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+To:     bjorn.andersson@linaro.org, mathieu.poirier@linaro.org,
+        robh+dt@kernel.org, geert+renesas@glider.be
+Cc:     linux-renesas-soc@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+        Julien Massot <julien.massot@iot.bzh>
+Subject: [PATCH v3 0/2] Initial Renesas R-Car remoteproc support
+Date:   Tue,  7 Dec 2021 17:58:27 +0100
+Message-Id: <20211207165829.195537-1-julien.massot@iot.bzh>
+X-Mailer: git-send-email 2.33.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi Geert,
+Most of the SoCs in the R-Car gen3 SoC series such as
+H3,M3 and E3 have an 'Arm Realtime Core'.
+This Realtime core is an Arm Cortex-R7 clocked at 800MHz.
+This series adds initial support to load a firmware and start
+this remote processor through the remoteproc subsystem.
 
-On 12/2/21 14:22, Geert Uytterhoeven wrote:
-> Hi Julien,
-> 
-> Thanks for your patch!
-> 
-> On Tue, Nov 30, 2021 at 11:01 AM Julien Massot <julien.massot@iot.bzh> wrote:
->> Renesas R-Car SoCs may contains a Realtime processor.
-> 
-> contain
-> 
->> This patch adds binding for this remote processor.
-> 
-> bindings
-> 
->>
->> Signed-off-by: Julien Massot <julien.massot@iot.bzh>
->> Reviewed-by: Rob Herring <robh@kernel.org>
->> ---
->> Changes since v1
->> - dropped 'status = "okay";' in the sample
->> - Add Rob's Reviewed-by tag
->>
->> ---
->>   .../remoteproc/renesas,rcar-rproc.yaml        | 65 +++++++++++++++++++
->>   1 file changed, 65 insertions(+)
->>   create mode 100644 Documentation/devicetree/bindings/remoteproc/renesas,rcar-rproc.yaml
->>
->> diff --git a/Documentation/devicetree/bindings/remoteproc/renesas,rcar-rproc.yaml b/Documentation/devicetree/bindings/remoteproc/renesas,rcar-rproc.yaml
->> new file mode 100644
->> index 000000000000..3fe8d49051e6
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/remoteproc/renesas,rcar-rproc.yaml
->> @@ -0,0 +1,65 @@
->> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
->> +%YAML 1.2
->> +---
->> +$id: "http://devicetree.org/schemas/remoteproc/renesas,rcar-rproc.yaml#"
->> +$schema: "http://devicetree.org/meta-schemas/core.yaml#"
->> +
->> +title: Renesas R-Car remote processor controller bindings
->> +
->> +maintainers:
->> +  - Julien Massot <julien.massot@iot.bzh>
->> +
->> +description: |
->> +  This document defines the binding for the remoteproc component that loads and
-> 
-> bindings
-> 
->> +  boots firmwares on the Renesas R-Car family chipset.
->> +  R-Car gen3 family may have a realtime processor, this processor share peripheral
-> 
-> shares
-> 
->> +  and RAM with the host processor with the same address map.
->> +
->> +properties:
->> +  compatible:
->> +    const: renesas,rcar-cr7
->> +
->> +  resets:
->> +    maxItems: 1
->> +
->> +  power-domains:
->> +    maxItems: 1
->> +
->> +  memory-region:
->> +    description:
->> +      List of phandles to the reserved memory regions associated with the
->> +      remoteproc device. This is variable and describes the memories shared with
->> +      the remote processor (e.g. remoteproc firmware and carveouts, rpmsg
-Thanks for fixing all these english mistakes.
-Will resend this patch soon.
+This series depends on
+https://patchwork.kernel.org/project/linux-renesas-soc/patch/20211022122101.66998-1-julien.massot@iot.bzh/
+to be able to set the Cortex-R7 boot address.
 
-> 
-> carve-out
+One of the way to test this driver is to use the zephyr upstream support
+for h3ulcb board 'blinky' demo is my favorite testing firmware.
 
-Will keep 'carveouts' since this term is intensively used in the remoteproc core.
+To generate a firmware with the zephyr project.
 
-> 
->> +      vrings, ...).
->> +      (see ../reserved-memory/reserved-memory.yaml)
-> 
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Regards,
+follow this starting guide
+https://docs.zephyrproject.org/2.7.0/getting_started/index.html
+
+Then compile your zephyr demo
+west build -b rcar_h3ulcb_cr7 zephyr/samples/basic/blinky \
+    -DCONFIG_KERNEL_ENTRY=\"_vector_table\" \
+    --build-dir h3-blinky
+
+Then you can use h3-blinky/zephyr/zephyr.elf as a testing
+firmware.
+
+Patch 1/2 adds the dt-bindings
+
+Patch 2/2 is a small driver to cover basic remoteproc
+usage: loading firmware from filesystem, starting and stopping the
+Cortex-r7 processor.
+
+Julien Massot (2):
+  dt-bindings: remoteproc: Add Renesas R-Car
+  remoteproc: Add Renesas rcar driver
+
+ .../remoteproc/renesas,rcar-rproc.yaml        |  65 +++++
+ drivers/remoteproc/Kconfig                    |  11 +
+ drivers/remoteproc/Makefile                   |   1 +
+ drivers/remoteproc/rcar_rproc.c               | 223 ++++++++++++++++++
+ 4 files changed, 300 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/remoteproc/renesas,rcar-rproc.yaml
+ create mode 100644 drivers/remoteproc/rcar_rproc.c
 
 -- 
-Julien Massot [IoT.bzh]
+2.33.1
+
 
