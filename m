@@ -2,24 +2,24 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53757C433F5
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 13 Dec 2021 19:11:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BC15C433EF
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 13 Dec 2021 19:17:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242129AbhLMTLe (ORCPT
+        id S234587AbhLMTRZ (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 13 Dec 2021 14:11:34 -0500
-Received: from mail-bn7nam10on2073.outbound.protection.outlook.com ([40.107.92.73]:7424
+        Mon, 13 Dec 2021 14:17:25 -0500
+Received: from mail-bn7nam10on2040.outbound.protection.outlook.com ([40.107.92.40]:22849
         "EHLO NAM10-BN7-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S238018AbhLMTLe (ORCPT <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 13 Dec 2021 14:11:34 -0500
+        id S242152AbhLMTRY (ORCPT <rfc822;linux-remoteproc@vger.kernel.org>);
+        Mon, 13 Dec 2021 14:17:24 -0500
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Z7QERsM5dcA7PO9ktexZ8iWvgbmT+/wiaI0OrmqXV2V8DRZXxynxPQPxqrcX/pMfDo3jVZBcI9W3aRDAAGbkJmZtlGLl1JQllL4+X/+kdovn6xzkIiaCcdq6poo/SkPMepOutaPfVSSzeiI6fhPDCZKllJeBVRj3JXU0ac3Vs0th6sN1LNhxKrWayTORSBJVQmvp6UZfNza/YeidWuj1wftg6z03PWNkioojJcjtMt/ABihbhkzBelHBUBkHgCnSAQd2OxyrxfPzvipznnZUZ6sHAFQ4KAvOZ65U9YlL5ASmMqlWZ0C8ieBPu2sscPrsXm9EZZfCnTXM5YAoA5so0g==
+ b=DaaBS29uYnmUwZgtyvkN2eAG8ipckvgXrQ038Zo0H/VXW/tmWuJKV0AkdFML5pgl3kQB9aJtkfgFRJczsVDos/LN+2KcFbE2ofFCxGp7nJqHZ+YAWbjqM1FRT//5ao6HSEgKKJayAyol8L0BeZmml8uKmU+vLTsK6pwgU7NIaN6B01iss8o95W4tTy3e1O5xHemPFMRpnCZ6LVZQ9bpYe6IVqqllN0zYuuZXLHtkiKREuDmNYDv+jhvTfJtX86vJxkVKG/ESJwlvINoigr2um4RQ0rwx9zEekh05QtuKrpXt2eo+BFlwiLKl0LaxXYqgxtI69zu+JcmvfVDHUAv4bg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=3+amc2ZHpXin1es5KXf/Nu4T/sV3l22BiQ8PTtIh4nQ=;
- b=crqvvn1Pmw0Pswpsel0Imj1vsdB8/G5fgFJaYRNs5gzJQQxR/4g+BgRZCk4u/HxraHRr9kxHsQkbNQVUWeddabgzKji29FaQGQca23xgIRw+/KUaFcEt9zjy26rk/Lf9JyTCaXhTfGnbHp44/gY5qBy2+yVu4fh0tiMKJhipwEr+7ZPavg+ECSPkIcsi0zqvFG/pWPg9TWJ+VF1r776kSueWtTYFZ3c2yvp5J0FtziMvOY5cty+VY9T5B1Z6JinAuV/z6fntocrAZ88GngFy/457YVLFcYW64uV8G90Eic23bmhtWEew4H+IJHCpnxxRuEOSGSd9gQxXIYmpVoCaYQ==
+ bh=TmERxat/7G2D5CUc+Fm1hcqAkukYASzQHt2ZcHWf8cI=;
+ b=bxpaeboJAydJ9PK84q4R83TXFuqGP1D5oeW4vMqBB6xuoB4HV4nktskE8rWjIoittMDzREX/O7jF/m1g1fNUUO1wvA/xqiMw/RWdhz6onGWE6POQiseNfWQChL70808cwLFa3Agoa1wKvdhfF6xS/r2rVf0SFZA5PTPaomN/xN35gOW1jtQUhxkeMj1Jgo2tsGcpzru8Iys3Rj6G8QsIBFAH7bn/x7tuBaSebQw/ieZZsWTWQT681df3iZitt/BQ2iyzHDbWweTq4EkAVmhmFH0WZXI4O+qE1Jd6UC2rFsyOft5dFTEkHv9q0YLJ5sz5GZybkOthDUxBNDOlI+B96A==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  149.199.80.198) smtp.rcpttodomain=linaro.org smtp.mailfrom=xilinx.com;
  dmarc=pass (p=none sp=none pct=100) action=none header.from=xilinx.com;
@@ -27,35 +27,35 @@ ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=xilinx.onmicrosoft.com; s=selector2-xilinx-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=3+amc2ZHpXin1es5KXf/Nu4T/sV3l22BiQ8PTtIh4nQ=;
- b=ZOX9GJeD4mwX3mFrF9QCjpljv3OOMpbwItYR8aSMkyLKNsvaRIxNxCYilyBd/HCNfSnXMek0m7z2fFRczYNQWEgE1jKAmL3CBQN0FOypjrpDfb8hFaSvi5nOVoJcV1rAmgiI/uCYjRbZG2BNr5JKR7L+zLNdvjN8yVvZWh9KldQ=
-Received: from BN6PR14CA0026.namprd14.prod.outlook.com (2603:10b6:404:13f::12)
- by DM5PR02MB3832.namprd02.prod.outlook.com (2603:10b6:4:b1::11) with
+ bh=TmERxat/7G2D5CUc+Fm1hcqAkukYASzQHt2ZcHWf8cI=;
+ b=HyCLkuqW5eYQj4bYYWEiI/KtAxCVjbH2V0yxhFo8Px/PKVnavFN+Qs3vXM6Vn+85vbtavrBPnIsuAwDccvLKDCRONe9/2EXhyEhirOtiOJenY1Emgyw/t+HmHfRH/u0aYBe9IpX2dvBnGJHv/0EAt44d62FAKUe8f/YFkjyApiQ=
+Received: from DM6PR07CA0108.namprd07.prod.outlook.com (2603:10b6:5:330::14)
+ by BY5PR02MB6244.namprd02.prod.outlook.com (2603:10b6:a03:1b0::17) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4778.15; Mon, 13 Dec
- 2021 19:11:30 +0000
-Received: from BN1NAM02FT029.eop-nam02.prod.protection.outlook.com
- (2603:10b6:404:13f:cafe::ca) by BN6PR14CA0026.outlook.office365.com
- (2603:10b6:404:13f::12) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4778.17 via Frontend
- Transport; Mon, 13 Dec 2021 19:11:30 +0000
+ 2021 19:17:20 +0000
+Received: from DM3NAM02FT007.eop-nam02.prod.protection.outlook.com
+ (2603:10b6:5:330:cafe::20) by DM6PR07CA0108.outlook.office365.com
+ (2603:10b6:5:330::14) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4778.12 via Frontend
+ Transport; Mon, 13 Dec 2021 19:17:19 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 149.199.80.198)
  smtp.mailfrom=xilinx.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=xilinx.com;
 Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
  149.199.80.198 as permitted sender) receiver=protection.outlook.com;
- client-ip=149.199.80.198; helo=xir-pvapexch01.xlnx.xilinx.com;
-Received: from xir-pvapexch01.xlnx.xilinx.com (149.199.80.198) by
- BN1NAM02FT029.mail.protection.outlook.com (10.13.2.143) with Microsoft SMTP
+ client-ip=149.199.80.198; helo=xir-pvapexch02.xlnx.xilinx.com;
+Received: from xir-pvapexch02.xlnx.xilinx.com (149.199.80.198) by
+ DM3NAM02FT007.mail.protection.outlook.com (10.13.4.88) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.4778.12 via Frontend Transport; Mon, 13 Dec 2021 19:11:29 +0000
+ 15.20.4778.12 via Frontend Transport; Mon, 13 Dec 2021 19:17:19 +0000
 Received: from xir-pvapexch01.xlnx.xilinx.com (172.21.17.15) by
- xir-pvapexch01.xlnx.xilinx.com (172.21.17.15) with Microsoft SMTP Server
+ xir-pvapexch02.xlnx.xilinx.com (172.21.17.17) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2176.14; Mon, 13 Dec 2021 19:11:28 +0000
-Received: from smtp.xilinx.com (172.21.105.197) by
+ 15.1.2176.14; Mon, 13 Dec 2021 19:17:18 +0000
+Received: from smtp.xilinx.com (172.21.105.198) by
  xir-pvapexch01.xlnx.xilinx.com (172.21.17.15) with Microsoft SMTP Server id
- 15.1.2176.14 via Frontend Transport; Mon, 13 Dec 2021 19:11:28 +0000
+ 15.1.2176.14 via Frontend Transport; Mon, 13 Dec 2021 19:17:18 +0000
 Envelope-to: michal.simek@xilinx.com,
  ben.levinsky@xilinx.com,
  sergei.korneichuk@xilinx.com,
@@ -68,12 +68,12 @@ Envelope-to: michal.simek@xilinx.com,
  linux-kernel@vger.kernel.org,
  devicetree@vger.kernel.org,
  linux-arm-kernel@lists.infradead.org
-Received: from [10.71.116.145] (port=11921)
+Received: from [10.71.116.145] (port=61586)
         by smtp.xilinx.com with esmtp (Exim 4.90)
         (envelope-from <tanmay.shah@xilinx.com>)
-        id 1mwqjP-0004tF-3H; Mon, 13 Dec 2021 19:11:28 +0000
-Message-ID: <69687530-5342-10f7-998f-6d4d4e0cdaed@xilinx.com>
-Date:   Tue, 14 Dec 2021 00:41:23 +0530
+        id 1mwqp3-0001Pj-94; Mon, 13 Dec 2021 19:17:18 +0000
+Message-ID: <320faee0-9019-66d1-7c0c-639d958cae56@xilinx.com>
+Date:   Tue, 14 Dec 2021 00:47:14 +0530
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
  Gecko/20100101 Thunderbird/91.3.2
@@ -93,90 +93,40 @@ CC:     Bjorn Andersson <bjorn.andersson@linaro.org>,
         <linux-arm-kernel@lists.infradead.org>
 References: <20211123062050.1442712-1-tanmay.shah@xilinx.com>
  <20211123062050.1442712-7-tanmay.shah@xilinx.com>
- <20211206190451.GA1059064@p14s>
+ <20211207183118.GA1099463@p14s>
 From:   Tanmay Shah <tanmay.shah@xilinx.com>
-In-Reply-To: <20211206190451.GA1059064@p14s>
+In-Reply-To: <20211207183118.GA1099463@p14s>
 Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 70bd0df4-0d61-4a5e-69ac-08d9be6c5e7f
-X-MS-TrafficTypeDiagnostic: DM5PR02MB3832:EE_
-X-Microsoft-Antispam-PRVS: <DM5PR02MB3832179973B83B65FB7EE681CA749@DM5PR02MB3832.namprd02.prod.outlook.com>
+X-MS-Office365-Filtering-Correlation-Id: 2494cb21-1206-46a2-c176-08d9be6d2ef6
+X-MS-TrafficTypeDiagnostic: BY5PR02MB6244:EE_
+X-Microsoft-Antispam-PRVS: <BY5PR02MB6244005B50659DF2CE480940CA749@BY5PR02MB6244.namprd02.prod.outlook.com>
 X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
-X-MS-Oob-TLC-OOBClassifiers: OLM:4303;
+X-MS-Oob-TLC-OOBClassifiers: OLM:5797;
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: hoIW0MyjAGv+7wKYYLU0xp8zwHRddeOwGI25UVjizBZ9KWsfPT8ZOZghY1PVyIXhQlGBL3JfPiDhjLzKpF6R4RFRCEdUNPbUecU+MhUftYzneVmAi1ZY3/uJ6Kl3ePhCX820Q3CEpWzEHg6R0su6h7Tc/f9GKSAcEZrCTy5vMtYbjabrj4AtamBMOfG0NT1MwxQS0yjwbFzvQDjQJiNMoKK2b9st9+IILQD4d++sG1/x/yFVFyuWdN6uwI2oqY2S0RrMtHLbsQEHxUNN+XSih7rIeEswlWoxvNqQLL8j3YPSCMnikEqg+nxcMTpY5LcsZOfuDzwBHOHX9SvwTAtEq6slLYldB4RyRAjGOI8gV+KjBNXq268IAa/vWTg2EdDBompdX7QHipcXWK7imTVMd7/fkQy3vKfDN7bhjDtDnc5p79G1kgqnpqVNn6R1syEefBsy9Yyn4LM1jmXwdlkohBaCGbwL5ESLxUrKBV9Yn179G3GsuvzMYeXD3YepwE8DreRxkn4z7GWk5/MleuzP4GGCDaUJrtIf2BWZZSzAo7wa3OEIZqdHukMZ8VtH6BnQjyms46qMiKQwOJ9qxLKtHLNVRF7YjFYui/wDxNqn1YboBlamoqsnQdGRRWqyz7x7QwE0hQmBy5ri+Z/zoEa6UUjpOENn3lc12wuerZTa9VZdGH+dMVdyMGkZSaUj+hBtIjrjj/EG8likmO4ZXUFKbcR/lxSMQg2yx9tvs6Opny6a7tgwSnlUrKRn16JyH2oy
-X-Forefront-Antispam-Report: CIP:149.199.80.198;CTRY:IE;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:xir-pvapexch01.xlnx.xilinx.com;PTR:unknown-80-198.xilinx.com;CAT:NONE;SFS:(36840700001)(46966006)(426003)(2906002)(6916009)(9786002)(82310400004)(54906003)(83380400001)(31696002)(316002)(508600001)(5660300002)(26005)(36756003)(8936002)(4326008)(47076005)(70206006)(31686004)(30864003)(186003)(70586007)(336012)(2616005)(6666004)(44832011)(8676002)(7636003)(356005)(36860700001)(50156003)(43740500002);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam-Message-Info: P5P9JDp9RDwrqU2FiuCZefV8cQMCKtJL6ENinLGJnSkJPUBCz/Xip5snMMAb/WLljtw73B5hbr6EQE3kJcul8slH7Qi+C3KXd4xkoX2Zzd0BvdXQ/A/YqfNhXNiAeMihwPopExRTdeHrfikXSNpxrtQ95QMaLIdOIAoHL7Zh+Ib3nyGqN39Eo6QGsUAb/wOhWmtvt1EUE8UzcPa+iziXwhu4eRvw54a4XnqQu6Fv+8s+sAUZFmKykrY9M+bbaD7nw69ZR+3cOOAN+uc9WA+AhaLbTfvDIYpccULZSIflkdEWerQFv8L22VXuz+q29lVOhPggh80qM/N8LvOvCoKjg+IoHHuglR2r2ZPZ4I/Uoi1nXgra2xUcSvDsjQAe+Uos4bcZB9jmQmqa836SQQsvlfTKy+2Mews4tjomnDAnhPgh8/fiKHj4TmWjYKwKQ5zsmTEQ46KDAfVNjo8o+b+h95jPrDgs6T0hPsacqicQ0v1gPVWfhhX/xAoRaN/g5IQcGAiy94zRD8ZIpeYcRzHlEedXr2TrzaYfy2YG2RtZ3gsU6slj6q0cB8UUurloR3sYQnZewXJLp9pwSQos64gSgAkPROClRVq5Rkm7KOeKCcoSHo+qeH4cvTGnIxUtWwFWYgTyXURPYJQ42cQsy+kjjxBmWnNsPaSMIecTo442lsVF6g4Y/F69Y3082CjEHIjnLgTfgzaW7/7B3m75oi2hA1qDhV1qUnCPzPbM+yyiVIgLknwpWqXoyAc36MJxz2Vh
+X-Forefront-Antispam-Report: CIP:149.199.80.198;CTRY:IE;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:xir-pvapexch02.xlnx.xilinx.com;PTR:unknown-80-198.xilinx.com;CAT:NONE;SFS:(46966006)(36840700001)(54906003)(6666004)(2906002)(26005)(36860700001)(2616005)(70206006)(426003)(5660300002)(70586007)(53546011)(186003)(336012)(30864003)(36756003)(6916009)(44832011)(4326008)(508600001)(82310400004)(8936002)(8676002)(9786002)(316002)(47076005)(31696002)(31686004)(7636003)(83380400001)(356005)(50156003)(43740500002);DIR:OUT;SFP:1101;
 X-OriginatorOrg: xilinx.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Dec 2021 19:11:29.9071
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Dec 2021 19:17:19.6240
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 70bd0df4-0d61-4a5e-69ac-08d9be6c5e7f
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2494cb21-1206-46a2-c176-08d9be6d2ef6
 X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.80.198];Helo=[xir-pvapexch01.xlnx.xilinx.com]
-X-MS-Exchange-CrossTenant-AuthSource: BN1NAM02FT029.eop-nam02.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.80.198];Helo=[xir-pvapexch02.xlnx.xilinx.com]
+X-MS-Exchange-CrossTenant-AuthSource: DM3NAM02FT007.eop-nam02.prod.protection.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR02MB3832
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR02MB6244
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Thanks Mathieu for reviews.
 
+On 12/8/21 12:01 AM, Mathieu Poirier wrote:
 [...]
-
->> + * zynqmp_r5_set_mode - set RPU operation mode
->> + *
->> + * set RPU operation mode
->> + *
->> + * Return: 0 for success, negative value for failure
->> + */
->> +static int zynqmp_r5_set_mode(struct zynqmp_r5_core *r5_core,
->> +			      enum zynqmp_r5_cluster_mode rpu_mode)
->> +{
->> +	enum rpu_tcm_comb tcm_mode;
->> +	int ret, reg_val;
->> +
->> +	reg_val = (rpu_mode == LOCKSTEP_MODE ? 0 : 1);
-> Here split and single-cpu mode are treated the same... Is this an omission or
-> really how the HW works?  A good dose of documentation is definitely needed.
-
-In this patchset, driver probe is failing in zynqmp_r5_cluster_init
-
-if single-cpu mode is set in device-tree with message that
-
-single-cpu mode is not supported by driver. So, here it is only for 
-split mode.
-
-Later when single-cpu mode is supported, this will be modified accordingly.
-
-Sure adding comments sounds good idea. I will take care it in next revision.
-
-Also, I agree with all the comments in this email. I will address them 
-in next revision.
-
-If I have any question while development, I will ask before posting next 
-revision.
-
->
->> +
->> +	ret = zynqmp_pm_set_rpu_mode(r5_core->pm_domain_id, reg_val);
->> +	if (ret < 0) {
->> +		pr_err("failed to set RPU mode\n");
->> +		return ret;
->> +	}
->> +
->> +	tcm_mode = (rpu_mode == LOCKSTEP_MODE) ?
->> +		    PM_RPU_TCM_COMB : PM_RPU_TCM_SPLIT;
->> +	ret = zynqmp_pm_set_tcm_config(r5_core->pm_domain_id, tcm_mode);
->> +	if (ret < 0)
->> +		pr_err("failed to configure TCM\n");
->> +
->> +	return ret;
->> +}
 >> +
 >> +/*
 >> + * zynqmp_r5_rproc_start
@@ -196,9 +146,13 @@ revision.
 >> +		pr_err("can't get r5 core\n");
 >> +		return -EINVAL;
 >> +	}
+> Please remove.
+>
 >> +
 >> +	bootmem = (rproc->bootaddr >= 0xFFFC0000) ?
 >> +		   PM_RPU_BOOTMEM_HIVEC : PM_RPU_BOOTMEM_LOVEC;
+> Some comments as to what is happening here would be appreciated.
+>
 >> +
 >> +	dev_dbg(r5_core->dev, "RPU boot addr 0x%llx from %s.", rproc->bootaddr,
 >> +		bootmem == PM_RPU_BOOTMEM_HIVEC ? "OCM" : "TCM");
@@ -293,6 +247,8 @@ revision.
 >> +	/* Register associated reserved memory regions */
 >> +	for (i = 0; i < r5_core->res_mem_count; i++) {
 >> +		rmem = &r5_core->res_mem[i];
+> Indentation problem
+>
 >> +		mem = rproc_mem_entry_init(dev, NULL,
 >> +					   (dma_addr_t)rmem->base,
 >> +					   rmem->size, rmem->base,
@@ -304,6 +260,12 @@ revision.
 >> +
 >> +		rproc_add_carveout(rproc, mem);
 >> +	}
+> Not sure why this wasn't done in zynqmp_r5_get_mem_region_node()...  That would
+> prevent the need to keep a copy of the reserved memories in the zynqmp_r5_core
+> structure.
+
+Sure, I will analyze this optimization.
+
 >> +
 >> +	return 0;
 >> +}
@@ -353,6 +315,8 @@ revision.
 >> + */
 >> +static int tcm_mem_map(struct rproc *rproc,
 >> +			 struct rproc_mem_entry *mem)
+> Indentation problem
+>
 >> +{
 >> +	void __iomem *va;
 >> +
@@ -399,7 +363,11 @@ revision.
 >> +	struct rproc_mem_entry *mem;
 >> +	enum pm_node_id pm_domain_id;
 >> +	u32 bank_addr;
+>          phys_addr_t bank_addr;
+>
 >> +	size_t bank_size = 0;
+> No initialisation needed.
+>
 >> +	char *bank_name;
 >> +	struct device *dev;
 >> +	struct zynqmp_r5_core *r5_core;
@@ -407,6 +375,8 @@ revision.
 >> +	r5_core = (struct zynqmp_r5_core *)rproc->priv;
 >> +	if (!r5_core)
 >> +		return -EINVAL;
+> Remove.
+>
 >> +
 >> +	dev = r5_core->dev;
 >> +
@@ -439,11 +409,22 @@ revision.
 >> +					   bank_size, bank_addr,
 >> +					   tcm_mem_map, tcm_mem_unmap,
 >> +					   bank_name);
+> I'm pretty sure that if you run the sparse checker on this you will get a lot of
+> angry warnings.
+>
+>
 >> +		if (IS_ERR_OR_NULL(mem)) {
+> Function rproc_mem_entry_init() does not return an error code.
+>
 >> +			/* Turn off all TCM banks turned on before */
 >> +			do {
 >> +				pm_domain_id = r5_core->tcm_banks[i].pm_domain_id;
 >> +				ret = zynqmp_pm_release_node((u32)pm_domain_id);
+> Here @pm_domain_id is casted as a u32 but it isn't above when calling
+> zynqmp_pm_request_node(), and that despite both functions taking a "const u32
+> node".  Again, I'm sure the sparse checker will complain here.
+>
+>
 >> +				if (ret)
 >> +					dev_warn(dev,
 >> +						 "fail to release node: %x, %x\n",
@@ -465,6 +446,8 @@ revision.
 >> +	enum pm_node_id pm_domain_id;
 >> +	u32 bank_addr;
 >> +	size_t bank_size = 0;
+> Same as above.
+>
 >> +	char *bank_name;
 >> +	struct device *dev;
 >> +	struct platform_device *parent_pdev;
@@ -481,6 +464,8 @@ revision.
 >> +		return -ENODEV;
 >> +	}
 >> +
+> Same as above.
+>
 >> +	/* go through zynqmp banks for r5 node */
 >> +	num_banks = r5_core->tcm_bank_count;
 >> +	if (num_banks <= 0) {
@@ -502,6 +487,11 @@ revision.
 >> +			return ret;
 >> +		}
 >> +	}
+> I know what is happening above but in 6 months it will all be gone from
+> memory.  Please add enough documentation for someone not familiar with the
+> platform to understand why things are done that way.  Here and throughout the
+> driver.
+>
 >> +
 >> +	dev_dbg(dev, "TCM add carveout lockstep mode %s addr=0x%x, size=0x%lx",
 >> +		bank_name, bank_addr, bank_size);
@@ -554,6 +544,8 @@ revision.
 >> +		pr_err("r5 core device unavailable\n");
 >> +		return -ENODEV;
 >> +	}
+> Remove.
+>
 >> +
 >> +	parent_pdev = to_platform_device(dev->parent);
 >> +	if (!parent_pdev) {
@@ -566,6 +558,9 @@ revision.
 >> +		dev_err(&parent_pdev->dev, "Invalid driver data\n");
 >> +		return -EINVAL;
 >> +	}
+> Why not simply calling dev_get_drvdata(dev->parent) instead of going through the
+> platform API?
+>
 >> +
 >> +	if (cluster->mode == SPLIT_MODE)
 >> +		return add_tcm_carveout_split_mode(rproc);
@@ -596,6 +591,26 @@ revision.
 >> +		dev_err(&rproc->dev, "r5 core not available\n");
 >> +		return -EINVAL;
 >> +	}
+> Same as above and throughout.
+>
+> I am done reviewing this set - the overall structure is sound but there is a
+> fair amount of work to be done.  There is no need to rush another revision as I
+> won't have time to review it before the holidays.  On that front, change
+> _only_ the things I have commented on.  We can address other issues as we move
+> forward.  Last but not least, please run the sparse checker on your work.
+>
+> Thanks,
+> Mathieu
+>
+Sure Mathieu. I will address all the comments you have posted.
+
+Running sparse checker is also good idea. I will run it for all the next 
+revisions.
+
+Thanks,
+
+Tanmay
+
 >> +
 >> +	dev = r5_core->dev;
 >> +
@@ -679,9 +694,6 @@ revision.
 >> + *		       set up mailbox, Xilinx platform manager unique ID,
 >> + *		       add to rproc core
 >> + *
-> Please get rid of the indentations.  That way it conforms to the rest of the
-> style in this file.
->
 >> + * @r5_core: zynqmp_r5_core r5 core object to initialize
 >> + *
 >> + * Return: 0 for success, negative value for failure.
@@ -704,14 +716,9 @@ revision.
 >> +				    NULL, sizeof(struct zynqmp_r5_core));
 >> +	if (IS_ERR_OR_NULL(r5_rproc))
 >> +		return -ENOMEM;
-> devm_rproc_alloc() doesn't return an error code.
->
 >> +
 >> +	r5_rproc->auto_boot = false;
 >> +	r5_rproc->priv = r5_core;
-> Here the original value of rproc->priv allocated by rproc_alloc() is replaced by
-> @r5_core, resulting in a memory leak.
->
 >> +
 >> +	/* Add R5 remoteproc */
 >> +	ret = devm_rproc_add(dev, r5_rproc);
@@ -765,9 +772,6 @@ revision.
 >> +
 >> +		r5_core->tcm_bank_count = tcm_bank_count;
 >> +	}
-> Please use 'i' for the outer loop and 'j' for the inner one.  Otherwise people
-> are looking for a subtlety that isn't here.
->
 >> +
 >> +	return 0;
 >> +}
@@ -786,9 +790,6 @@ revision.
 >> +		pr_err("invalid device node of r5 core\n");
 >> +		return -EINVAL;
 >> +	}
-> In normal cases this kind of defensive programming makes sense but here
-> r5_core->np has just been set in zynqmp_r5_cluster_init() where there is
-> plenty of gards against errors.  Please remove.
 >> +
 >> +	res_mem_count = of_property_count_elems_of_size(np, "memory-region",
 >> +							sizeof(phandle));
@@ -801,9 +802,6 @@ revision.
 >> +	r5_core->res_mem = devm_kzalloc(dev,
 >> +					res_mem_count * sizeof(struct reserved_mem),
 >> +					GFP_KERNEL);
-> Use devm_kcalloc() when more than one element is required.  Here and throughout
-> the driver.
->
 >> +	if (!r5_core->res_mem) {
 >> +		dev_err(dev, "failed to allocate mem region memory\n");
 >> +		return -ENOMEM;
@@ -822,9 +820,6 @@ revision.
 >> +
 >> +		memcpy(&r5_core->res_mem[i], rmem,
 >> +		       sizeof(struct reserved_mem));
-> Why is the whole reserved_mem is duplicated when only ->base, ->size and ->name
-> are used?  And even those I'm not sure about really needing them...
->
 >> +		of_node_put(rmem_np);
 >> +	}
 >> +
@@ -851,8 +846,6 @@ revision.
 >> +			pr_err("invalid r5 core\n");
 >> +			return -EINVAL;
 >> +		}
-> Same here - please remove.
->
 >> +
 >> +		ret = zynqmp_r5_get_mem_region_node(r5_core);
 >> +		if (ret)
@@ -944,15 +937,6 @@ revision.
 >> +			pr_err("can't get device node for r5 core %d\n", i);
 >> +			return -ENODEV;
 >> +		}
-> The error path for both if() conditions above needs to release the
-> child_pdev->dev, as instructed by the documentation for
-> of_find_device_by_node().  The same needs to be done when there is no errors.
->
-> More comments to come tomorrow.
->
-> Thanks,
-> Mathieu
->
 >> +
 >> +		i++;
 >> +		if (i == core_count)
