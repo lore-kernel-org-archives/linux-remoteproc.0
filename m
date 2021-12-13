@@ -2,217 +2,141 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DC36C433F5
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 13 Dec 2021 11:08:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B07C3C433FE
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 13 Dec 2021 16:55:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233145AbhLMLIj (ORCPT
+        id S241165AbhLMQzv (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 13 Dec 2021 06:08:39 -0500
-Received: from www381.your-server.de ([78.46.137.84]:46432 "EHLO
-        www381.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229644AbhLMLIi (ORCPT
+        Mon, 13 Dec 2021 11:55:51 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47398 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S241170AbhLMQzq (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 13 Dec 2021 06:08:38 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=metafoo.de;
-         s=default2002; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
-        MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender:Reply-To:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID;
-        bh=Y4dtkF/fMMRIvoWTochjJh1M/yoOLIPvlhPe/ZJAB28=; b=bjFQDgK5Yh1g30FOoZQwC+sp7l
-        rH6to49nqPPpFkBQFGSDt4CeWPAiDRmaVy8K+ISajzCu1zk85vM5aQXM4MkUJ8ik/DtzX6ezn2dUK
-        ILDKZOVuGM+Qpr4PpBLV8NT4vObqrXXX5f59iYqZIBV3E6C2uF3PZI/nCD1/fy8c+fLj6wwnP2Khi
-        1COXitSPV6zePf/yeQ/CFdfa1smv1id7Rkq3EQBfkHZxDqW5fCvOi/DyLON7yKrRHTzQYS/4D3MtY
-        JYAYHR+LcJt7tE1mkdH6cUs8j8ffhNY/YwlCfp7KHtusBScnRUc4znFPCtagCTMrxMmkJUfbdobjJ
-        mEbbC7RQ==;
-Received: from [78.46.152.42] (helo=sslproxy04.your-server.de)
-        by www381.your-server.de with esmtpsa (TLSv1.3:TLS_AES_256_GCM_SHA384:256)
-        (Exim 4.92.3)
-        (envelope-from <lars@metafoo.de>)
-        id 1mwjC6-000FYH-K0; Mon, 13 Dec 2021 12:08:34 +0100
-Received: from [2001:a61:2aa6:c001:9e5c:8eff:fe01:8578]
-        by sslproxy04.your-server.de with esmtpsa (TLSv1.3:TLS_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <lars@metafoo.de>)
-        id 1mwjC6-000ObZ-97; Mon, 13 Dec 2021 12:08:34 +0100
-Subject: Re: [PATCH v2 6/6] drivers: remoteproc: Add Xilinx r5 remoteproc
- driver
-To:     Tanmay Shah <tanmay.shah@xilinx.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Michal Simek <michal.simek@xilinx.com>
-Cc:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Ben Levinsky <ben.levinsky@xilinx.com>,
-        Bill Mills <bill.mills@linaro.org>,
-        Sergei Korneichuk <sergei.korneichuk@xilinx.com>,
-        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <20211123062050.1442712-1-tanmay.shah@xilinx.com>
- <20211123062050.1442712-7-tanmay.shah@xilinx.com>
-From:   Lars-Peter Clausen <lars@metafoo.de>
-Message-ID: <ab9e009a-5e35-ae49-2c8e-65be6ba36d7f@metafoo.de>
-Date:   Mon, 13 Dec 2021 12:08:33 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.14.0
+        Mon, 13 Dec 2021 11:55:46 -0500
+Received: from mail-pf1-x434.google.com (mail-pf1-x434.google.com [IPv6:2607:f8b0:4864:20::434])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 49BFCC0613FE
+        for <linux-remoteproc@vger.kernel.org>; Mon, 13 Dec 2021 08:55:42 -0800 (PST)
+Received: by mail-pf1-x434.google.com with SMTP id k26so15433993pfp.10
+        for <linux-remoteproc@vger.kernel.org>; Mon, 13 Dec 2021 08:55:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=Otkd94Ddo+0y+d19P9705aLyzrf8R+OhLjXGWeBBDgI=;
+        b=D2pQ/ahpacnzEw4VKDE+IWQG9HUL/EEsWexNqmtOR4aNU5XRNcTMGIcFE4kTfkdg0u
+         Urd3qw/wp/ybiCNZNvxY6XJqtkpMjR7QhPecu67jMtnbj8hmJRn7kKShA1+mgYpvL4D9
+         oJ+CQnNFirWc+8lo2KnWjDX25k+depiKcixPXsbzZLKTktNrWBdmAfNhMUPhXTPMeaC2
+         FaS6wUQ2IcWiOerE3Pyg6w+scfVh9PTa34b3UVdXWWrmV5TO7oDfLZvKZNzeU2MkUqEa
+         DLItbA1GxSmg2iPv/Kl/jc/yWytd88vFon1VNR3NZdFRymNAlInFzVkcL5HrNEtJUZ4a
+         gcyA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=Otkd94Ddo+0y+d19P9705aLyzrf8R+OhLjXGWeBBDgI=;
+        b=gh8tq6eg/HLhEbg7TNk+08Ar0+RdjOGqPkj8BS2lCHie2RDZLNkbRU3JRApJ9RsEXo
+         WaxV5i2aNhjfl8E0yH8mz2xdyiqmIe0QVLf3NTCwrTI+1f2Ly98vb3NtURuyN+e80nfb
+         p9AD1EXduhPUOP8LqrsXh8OMr00diep2DdqbOz/Ew7EOriRky9r42Ez2mrp7xUoOcYSC
+         1YW/fxi8nAeuFjpS4FijN6eB7uSAgbbYOZ0lw9Nbo3UZmzgqtfDof/aTDieDVcbfr4dm
+         ieGb/emq1KudEw69BiLXMKq8mAClqfb/Fd8JZ4iR0rk/gb0Egs3Qi29c9T2Foy2iyDgW
+         OSVg==
+X-Gm-Message-State: AOAM531Izxdnc/tBnMkggMUQDqVjMYYZwMn6UeWq+RleQeL5ATbxl8/I
+        LKdiCOYYqqg20DhJf+VOsckVVw==
+X-Google-Smtp-Source: ABdhPJxcG+pDaR82nQIpiGgA+GsZ94Xtzp0Mh0VcEJpkpsk7NgrveddXN3qtbe4XWzRsAWtKejnyUw==
+X-Received: by 2002:a65:6557:: with SMTP id a23mr12921258pgw.451.1639414541767;
+        Mon, 13 Dec 2021 08:55:41 -0800 (PST)
+Received: from p14s (S0106889e681aac74.cg.shawcable.net. [68.147.0.187])
+        by smtp.gmail.com with ESMTPSA id r6sm7378794pjz.56.2021.12.13.08.55.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 13 Dec 2021 08:55:40 -0800 (PST)
+Date:   Mon, 13 Dec 2021 09:55:38 -0700
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+To:     Mark-PK Tsai <mark-pk.tsai@mediatek.com>
+Cc:     bjorn.andersson@linaro.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        linux-remoteproc@vger.kernel.org, matthias.bgg@gmail.com,
+        ohad@wizery.com, yj.chiang@mediatek.com
+Subject: Re: [PATCH v2] remoteproc: use %pe format string to print return
+ error code
+Message-ID: <20211213165538.GA1396405@p14s>
+References: <20211116162933.GA2318486@p14s>
+ <20211213072015.32235-1-mark-pk.tsai@mediatek.com>
 MIME-Version: 1.0
-In-Reply-To: <20211123062050.1442712-7-tanmay.shah@xilinx.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Authenticated-Sender: lars@metafoo.de
-X-Virus-Scanned: Clear (ClamAV 0.103.3/26385/Mon Dec 13 10:38:12 2021)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20211213072015.32235-1-mark-pk.tsai@mediatek.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On 11/23/21 7:20 AM, Tanmay Shah wrote:
-> [...]
-> +/*
-> + * zynqmp_r5_rproc_mem_map
-> + * @rproc: single R5 core's corresponding rproc instance
-> + * @mem: mem entry to map
-> + *
-> + * Callback to map va for memory-region's carveout.
-> + *
-> + * return 0 on success, otherwise non-zero value on failure
-> + */
-> +static int zynqmp_r5_rproc_mem_map(struct rproc *rproc,
-> +				   struct rproc_mem_entry *mem)
-> +{
-> +	void __iomem *va;
-> +
-> +	va = ioremap_wc(mem->dma, mem->len);
+On Mon, Dec 13, 2021 at 03:20:15PM +0800, Mark-PK Tsai wrote:
+> > Good day,
+> > 
+> > On Tue, Nov 16, 2021 at 09:57:03PM +0800, Mark-PK Tsai wrote:
+> > > > > > > Use %pe format string to print return error code which
+> > > > > > > make the error message easier to understand.
+> > > > > > >
+> > > > > > > Signed-off-by: Mark-PK Tsai <mark-pk.tsai@mediatek.com>
+> > > > > > > ---
+> > > > > > >  drivers/remoteproc/remoteproc_core.c | 4 ++--
+> > > > > > >  1 file changed, 2 insertions(+), 2 deletions(-)
+> > > > > > >
+> > > > > > > diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+> > > > > > > index 502b6604b757..2242da320368 100644
+> > > > > > > --- a/drivers/remoteproc/remoteproc_core.c
+> > > > > > > +++ b/drivers/remoteproc/remoteproc_core.c
+> > > > > > > @@ -575,8 +575,8 @@ static int rproc_handle_vdev(struct rproc *rproc, void *ptr,
+> > > > > > >                                            dma_get_mask(rproc->dev.parent));
+> > > > > > >         if (ret) {
+> > > > > > >                 dev_warn(dev,
+> > > > > > > -                        "Failed to set DMA mask %llx. Trying to continue... %x\n",
+> > > > > > > -                        dma_get_mask(rproc->dev.parent), ret);
+> > > > > > > +                        "Failed to set DMA mask %llx. Trying to continue... (%pe)\n",
+> > > > > > > +                        dma_get_mask(rproc->dev.parent), ERR_PTR(ret));
+> > > > > >
+> > > > > > Macro ERR_PTR() is used to convert error codes to pointer type when
+> > > > > > returning from a function - I fail to see how doing so in a dev_warn()
+> > > > > > context can make the message easier to understand.  Can you provide an
+> > > > > > example?
+> > > > >
+> > > > > Hi,
+> > > > >
+> > > > > When dma_coerce_mask_and_coherent() fail, the output log will be as following.
+> > > > >
+> > > > > format          log
+> > > > > %x              Trying to continue... fffffffb
+> > > > > %d              Trying to continue... -5
+> > > > > %pe             Trying to continue... -5        (if CONFIG_SYMBOLIC_ERRNAME is not set)
+> > > > > %pe             Trying to continue... -EIO      (if CONFIG_SYMBOLIC_ERRNAME=y)
+> > > >
+> > > > When failing, functions dma_coerce_mask_and_coherent() returns -EIO.
+> > > > Casting that to a (void *) with ERR_PTR() does not change that value.
+> > > > Since variable @ret is already declared as "int" the real fix is to
+> > > > change "%x" to "%d".
+> > > 
+> > > There're some other drivers do the same thing in the recent kernel, so I think
+> > > it's fine to casting the `ret` to a (void *) for more user friendly.
+> > > But I suppose it would depend on the maintainer's opinion.
+> > > 
+> > > So how about previous patch I sent, which also fix this issue by using %d.
+> > > 
+> > > https://lore.kernel.org/lkml/20211102120805.27137-1-mark-pk.tsai@mediatek.com/
+> > 
+> > I had not seen Russell's reply in the link you posted above.  I am not
+> > completely sure about his solution but his insight and guidance in kernel
+> > programming have precedence over mine.
+> > 
+> > I will take this patch.
+> > 
+> > Thanks,
+> > Mathieu
+> > 
+> 
+> Hi,
+> 
+> Sorry to disturb you.
+> Is this patch queued?
+> Just want to make sure it has not been forgotten.
 
-Since you want normal memory and not IO memory a better choice might be 
-memremap() with MEMREMAP_WC. Internally memremap() will call 
-ioremap_wc(), but this will make the intention clear and you do not have 
-to deal with the __iomem type cast.
-
-> +	if (IS_ERR_OR_NULL(va))
-> +		return -ENOMEM;
-> +
-> +	mem->va = (void *)va;
-> +
-> +	return 0;
-> +}
-> [...]
->
-> +static int add_tcm_banks(struct rproc *rproc)
-> +{
-> +	struct device *dev;
-> +	struct platform_device *parent_pdev;
-> +	struct zynqmp_r5_cluster *cluster;
-> +	struct zynqmp_r5_core *r5_core;
-> +
-> +	r5_core = (struct zynqmp_r5_core *)rproc->priv;
-> +	if (!r5_core)
-> +		return -EINVAL;
-> +
-> +	dev = r5_core->dev;
-> +	if (!dev) {
-> +		pr_err("r5 core device unavailable\n");
-> +		return -ENODEV;
-> +	}
-> +
-> +	parent_pdev = to_platform_device(dev->parent);
-> +	if (!parent_pdev) {
-> +		dev_err(dev, "parent platform dev unavailable\n");
-> +		return -ENODEV;
-> +	}
-> +
-> +	cluster = platform_get_drvdata(parent_pdev);
-
-You could just use dev_get_drvdata() without having to cast back to the 
-platform_device first.
-
-
-> +	if (!cluster) {
-> +		dev_err(&parent_pdev->dev, "Invalid driver data\n");
-> +		return -EINVAL;
-> +	}
-> +
-> +	if (cluster->mode == SPLIT_MODE)
-> +		return add_tcm_carveout_split_mode(rproc);
-> +	else if (cluster->mode == LOCKSTEP_MODE)
-> +		return add_tcm_carveout_lockstep_mode(rproc);
-> +
-> +	dev_err(cluster->dev, "invalid cluster mode\n");
-> +	return -EINVAL;
-> +}
-> +
-> [...]
-> +
-> +static struct rproc_ops zynqmp_r5_rproc_ops = {
-const
-> +	.start		= zynqmp_r5_rproc_start,
-> +	.stop		= zynqmp_r5_rproc_stop,
-> +	.load		= rproc_elf_load_segments,
-> +	.parse_fw	= zynqmp_r5_parse_fw,
-> +	.find_loaded_rsc_table = rproc_elf_find_loaded_rsc_table,
-> +	.sanity_check	= rproc_elf_sanity_check,
-> +	.get_boot_addr	= rproc_elf_get_boot_addr,
-> +};
-> [....]
-> +static int zynqmp_r5_get_mem_region_node(struct zynqmp_r5_core *r5_core)
-> +{
-> [...]
-> +
-> +	for (i = 0; i < res_mem_count; i++) {
-> +		rmem_np = of_parse_phandle(np, "memory-region", i);
-> +		if (!rmem_np)
-> +			return -EINVAL;
-> +
-> +		rmem = of_reserved_mem_lookup(rmem_np);
-> +		if (!rmem) {
-> +			of_node_put(rmem_np);
-> +			return -EINVAL;
-> +		}
-> +
-> +		memcpy(&r5_core->res_mem[i], rmem,
-> +		       sizeof(struct reserved_mem));
-
-r5_core->res_mem[i] = *mem;
-
-This will give you proper type checking and is also a bit shorter.
-
-> +		of_node_put(rmem_np);
-> +	}
-> +
-> +	r5_core->res_mem_count = res_mem_count;
-> +
-> +	return 0;
-> +}
-> [...]
-> +
-> +static int zynqmp_r5_cluster_init(struct zynqmp_r5_cluster *cluster)
-> +{
-> [...]
-> +
->
-> +	i = 0;
-> +	for_each_available_child_of_node(dev_node, child) {
-> +		child_pdev = of_find_device_by_node(child);
-> +		if (!child_pdev)
-A return or a break in a for_each_available_child_of_node() will leak 
-the reference to the child node.
-> [...]
-> +	}
-> +
-> [...]
-> +
-> +	return 0;
-> +}
-> +
-> +static void zynqmp_r5_cluster_exit(void *data)
-> +{
-> +	struct platform_device *pdev = (struct platform_device *)data;
-> +
-> +	platform_set_drvdata(pdev, NULL);
-This is not needed. The device driver core will set drvdata to NULL when 
-the device is removed.
-> +
-> +	pr_info("Exit r5f subsystem driver\n");
-This is probably also not needed.
-> +}
-
+https://git.kernel.org/pub/scm/linux/kernel/git/remoteproc/linux.git/log/?h=for-next
 
