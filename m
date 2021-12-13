@@ -2,108 +2,115 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A26FC433EF
-	for <linux-remoteproc@archiver.kernel.org>; Sat, 11 Dec 2021 06:46:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27DDEC433F5
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 13 Dec 2021 07:20:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229529AbhLKGqQ (ORCPT
+        id S232387AbhLMHUU (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Sat, 11 Dec 2021 01:46:16 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53740 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229514AbhLKGqQ (ORCPT
+        Mon, 13 Dec 2021 02:20:20 -0500
+Received: from mailgw01.mediatek.com ([60.244.123.138]:44742 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S229695AbhLMHUU (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Sat, 11 Dec 2021 01:46:16 -0500
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 29B9EC061714;
-        Fri, 10 Dec 2021 22:46:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
-        Content-ID:Content-Description:In-Reply-To:References;
-        bh=m/bupCjck7SxJ1A7FuvUBMcV3+Q621Kz/I2dJt2yOgQ=; b=IqdHkG0K6whIhKqFjDtE0wtmRi
-        1FfmsLyX3yzBHgD0npJ3Thipx2HYM9BqEywbgwo0ecZw5jLPcJ0wS9B+UoX/r3PrnllSwAN3ZQkfn
-        c+RmJ7sG40Ye2FexCw1xztW4WWQHIuMAu6aMw2naeqbLBj+bZLSjsXogCg0e3sbxM/sOnEWA1ax0O
-        PCXl7RVmryoSG2tblidqJOQM44+SYqHEuIKvZF31AiSqDL2QQ0AvulduLiop/FbRGV+A0VyoovWxE
-        SZz7+CGMClfM2fNqk+FZVvGgv+ax+Oo1mQHHxg2PEd8OxCjsG5R92Qu3OghSozRtcz3lhZlxYMI9c
-        3LhiNBWA==;
-Received: from [2601:1c0:6280:3f0::aa0b] (helo=bombadil.infradead.org)
-        by bombadil.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1mvw98-004duM-Q4; Sat, 11 Dec 2021 06:46:14 +0000
-From:   Randy Dunlap <rdunlap@infradead.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Randy Dunlap <rdunlap@infradead.org>,
-        Sibi Sankar <sibis@codeaurora.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Ohad Ben-Cohen <ohad@wizery.com>,
-        linux-remoteproc@vger.kernel.org
-Subject: [PATCH] remoteproc: qcom: q6v5: make symbols modular when QCOM_AOSS_QMP=m
-Date:   Fri, 10 Dec 2021 22:46:14 -0800
-Message-Id: <20211211064614.1315-1-rdunlap@infradead.org>
-X-Mailer: git-send-email 2.31.1
+        Mon, 13 Dec 2021 02:20:20 -0500
+X-UUID: 07cee0b2e577421d86b982df49550b9e-20211213
+X-UUID: 07cee0b2e577421d86b982df49550b9e-20211213
+Received: from mtkmbs10n2.mediatek.inc [(172.21.101.183)] by mailgw01.mediatek.com
+        (envelope-from <mark-pk.tsai@mediatek.com>)
+        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+        with ESMTP id 1083407559; Mon, 13 Dec 2021 15:20:17 +0800
+Received: from mtkcas11.mediatek.inc (172.21.101.40) by
+ mtkmbs07n2.mediatek.inc (172.21.101.141) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.2; Mon, 13 Dec 2021 15:20:15 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas11.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
+ Transport; Mon, 13 Dec 2021 15:20:15 +0800
+From:   Mark-PK Tsai <mark-pk.tsai@mediatek.com>
+To:     <mathieu.poirier@linaro.org>
+CC:     <bjorn.andersson@linaro.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-remoteproc@vger.kernel.org>, <mark-pk.tsai@mediatek.com>,
+        <matthias.bgg@gmail.com>, <ohad@wizery.com>,
+        <yj.chiang@mediatek.com>
+Subject: Re: [PATCH v2] remoteproc: use %pe format string to print return error code
+Date:   Mon, 13 Dec 2021 15:20:15 +0800
+Message-ID: <20211213072015.32235-1-mark-pk.tsai@mediatek.com>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20211116162933.GA2318486@p14s>
+References: <20211116162933.GA2318486@p14s>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-MTK:  N
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-When CONFIG_QCOM_Q6V5_COMMON=y and CONFIG_QCOM_AOSS_QMP=m,
-there are linker errors:
+> Good day,
+> 
+> On Tue, Nov 16, 2021 at 09:57:03PM +0800, Mark-PK Tsai wrote:
+> > > > > > Use %pe format string to print return error code which
+> > > > > > make the error message easier to understand.
+> > > > > >
+> > > > > > Signed-off-by: Mark-PK Tsai <mark-pk.tsai@mediatek.com>
+> > > > > > ---
+> > > > > >  drivers/remoteproc/remoteproc_core.c | 4 ++--
+> > > > > >  1 file changed, 2 insertions(+), 2 deletions(-)
+> > > > > >
+> > > > > > diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+> > > > > > index 502b6604b757..2242da320368 100644
+> > > > > > --- a/drivers/remoteproc/remoteproc_core.c
+> > > > > > +++ b/drivers/remoteproc/remoteproc_core.c
+> > > > > > @@ -575,8 +575,8 @@ static int rproc_handle_vdev(struct rproc *rproc, void *ptr,
+> > > > > >                                            dma_get_mask(rproc->dev.parent));
+> > > > > >         if (ret) {
+> > > > > >                 dev_warn(dev,
+> > > > > > -                        "Failed to set DMA mask %llx. Trying to continue... %x\n",
+> > > > > > -                        dma_get_mask(rproc->dev.parent), ret);
+> > > > > > +                        "Failed to set DMA mask %llx. Trying to continue... (%pe)\n",
+> > > > > > +                        dma_get_mask(rproc->dev.parent), ERR_PTR(ret));
+> > > > >
+> > > > > Macro ERR_PTR() is used to convert error codes to pointer type when
+> > > > > returning from a function - I fail to see how doing so in a dev_warn()
+> > > > > context can make the message easier to understand.  Can you provide an
+> > > > > example?
+> > > >
+> > > > Hi,
+> > > >
+> > > > When dma_coerce_mask_and_coherent() fail, the output log will be as following.
+> > > >
+> > > > format          log
+> > > > %x              Trying to continue... fffffffb
+> > > > %d              Trying to continue... -5
+> > > > %pe             Trying to continue... -5        (if CONFIG_SYMBOLIC_ERRNAME is not set)
+> > > > %pe             Trying to continue... -EIO      (if CONFIG_SYMBOLIC_ERRNAME=y)
+> > >
+> > > When failing, functions dma_coerce_mask_and_coherent() returns -EIO.
+> > > Casting that to a (void *) with ERR_PTR() does not change that value.
+> > > Since variable @ret is already declared as "int" the real fix is to
+> > > change "%x" to "%d".
+> > 
+> > There're some other drivers do the same thing in the recent kernel, so I think
+> > it's fine to casting the `ret` to a (void *) for more user friendly.
+> > But I suppose it would depend on the maintainer's opinion.
+> > 
+> > So how about previous patch I sent, which also fix this issue by using %d.
+> > 
+> > https://lore.kernel.org/lkml/20211102120805.27137-1-mark-pk.tsai@mediatek.com/
+> 
+> I had not seen Russell's reply in the link you posted above.  I am not
+> completely sure about his solution but his insight and guidance in kernel
+> programming have precedence over mine.
+> 
+> I will take this patch.
+> 
+> Thanks,
+> Mathieu
+> 
 
-aarch64-linux-ld: drivers/remoteproc/qcom_q6v5.o: in function `q6v5_load_state_toggle':
-qcom_q6v5.c:(.text+0xac): undefined reference to `qmp_send'
-qcom_q6v5.c:(.text+0xac): relocation truncated to fit: R_AARCH64_CALL26 against undefined symbol `qmp_send'
-aarch64-linux-ld: drivers/remoteproc/qcom_q6v5.o: in function `qcom_q6v5_deinit':
-(.text+0x204): undefined reference to `qmp_put'
-(.text+0x204): relocation truncated to fit: R_AARCH64_CALL26 against undefined symbol `qmp_put'
+Hi,
 
-Fix these by requiring QCOM_Q6V5 symbols to be modular (=m) when
-QCOM_AOSS_QMP=m.
-
-Fixes: c1fe10d238c0 ("remoteproc: qcom: q6v5: Use qmp_send to update co-processor load state")
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-Cc: Sibi Sankar <sibis@codeaurora.org>
-Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Stephen Boyd <swboyd@chromium.org>
-Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: Ohad Ben-Cohen <ohad@wizery.com>
-Cc: linux-remoteproc@vger.kernel.org
----
- drivers/remoteproc/Kconfig |    4 ++++
- 1 file changed, 4 insertions(+)
-
---- next-2021-1210.orig/drivers/remoteproc/Kconfig
-+++ next-2021-1210/drivers/remoteproc/Kconfig
-@@ -176,6 +176,7 @@ config QCOM_Q6V5_ADSP
- 	tristate "Qualcomm Technology Inc ADSP Peripheral Image Loader"
- 	depends on OF && ARCH_QCOM
- 	depends on QCOM_SMEM
-+	depends on QCOM_AOSS_QMP
- 	depends on RPMSG_QCOM_SMD || RPMSG_QCOM_SMD=n
- 	depends on RPMSG_QCOM_GLINK_SMEM || RPMSG_QCOM_GLINK_SMEM=n
- 	depends on QCOM_SYSMON || QCOM_SYSMON=n
-@@ -195,6 +196,7 @@ config QCOM_Q6V5_MSS
- 	tristate "Qualcomm Hexagon V5 self-authenticating modem subsystem support"
- 	depends on OF && ARCH_QCOM
- 	depends on QCOM_SMEM
-+	depends on QCOM_AOSS_QMP
- 	depends on RPMSG_QCOM_SMD || RPMSG_QCOM_SMD=n
- 	depends on RPMSG_QCOM_GLINK_SMEM || RPMSG_QCOM_GLINK_SMEM=n
- 	depends on QCOM_SYSMON || QCOM_SYSMON=n
-@@ -214,6 +216,7 @@ config QCOM_Q6V5_PAS
- 	tristate "Qualcomm Hexagon v5 Peripheral Authentication Service support"
- 	depends on OF && ARCH_QCOM
- 	depends on QCOM_SMEM
-+	depends on QCOM_AOSS_QMP
- 	depends on RPMSG_QCOM_SMD || RPMSG_QCOM_SMD=n
- 	depends on RPMSG_QCOM_GLINK_SMEM || RPMSG_QCOM_GLINK_SMEM=n
- 	depends on QCOM_SYSMON || QCOM_SYSMON=n
-@@ -235,6 +238,7 @@ config QCOM_Q6V5_WCSS
- 	tristate "Qualcomm Hexagon based WCSS Peripheral Image Loader"
- 	depends on OF && ARCH_QCOM
- 	depends on QCOM_SMEM
-+	depends on QCOM_AOSS_QMP
- 	depends on RPMSG_QCOM_SMD || RPMSG_QCOM_SMD=n
- 	depends on RPMSG_QCOM_GLINK_SMEM || RPMSG_QCOM_GLINK_SMEM=n
- 	depends on QCOM_SYSMON || QCOM_SYSMON=n
+Sorry to disturb you.
+Is this patch queued?
+Just want to make sure it has not been forgotten.
