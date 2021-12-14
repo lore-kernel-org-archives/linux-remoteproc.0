@@ -2,107 +2,135 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04C44C433EF
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 14 Dec 2021 06:43:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BE68C433F5
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 14 Dec 2021 15:38:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231174AbhLNGnN (ORCPT
+        id S234681AbhLNPiV (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 14 Dec 2021 01:43:13 -0500
-Received: from mail-ed1-f43.google.com ([209.85.208.43]:39747 "EHLO
-        mail-ed1-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231145AbhLNGnN (ORCPT
+        Tue, 14 Dec 2021 10:38:21 -0500
+Received: from mx07-00178001.pphosted.com ([185.132.182.106]:36524 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S234470AbhLNPiU (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 14 Dec 2021 01:43:13 -0500
-Received: by mail-ed1-f43.google.com with SMTP id b7so361715edd.6;
-        Mon, 13 Dec 2021 22:43:12 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=mES/VN9NDUylN7hikeYFALLjEFWfcxTzSl0FnDEQ4qo=;
-        b=QUttYACoGErkqDpq8YTWu3RDTmi0moLK916QoiQZT+4TYJIGojHij+GJ9WrG2q3GPe
-         HgRqIj//Pb3dxx6lFH7cHijW+d65bTsH9fTeRB9CMfpOiZslJnvdxisYp4FafmuSja+t
-         gFxblUOZGlVbmm+On2Vmi5E/oCcd/CPpSzuT+IYPbUENFXsh79fcNu11FHm5o9yx5O97
-         K1IgA99Z9QJrO8ObW4M4HeMp6Axnanio2fHDwbdtMELIT8KpyuwIVHIng3OrwBSf1iQT
-         Z6pHFn/HNC80uu6SObjOhyvwPB5xodQCCeOgKyX+jA9ZdxKsKCO5BGRCKbz7ejokhlfh
-         cMjQ==
-X-Gm-Message-State: AOAM531SPWtWup4ko5lMSfg4dkG/6HCgE8OtDtguu/y9P+XQ/VAuYMyg
-        ms2mKM7UddIcheYxRHXNzaDGqUIgWFA=
-X-Google-Smtp-Source: ABdhPJwoeQCTf8Mof4FF699wk5L77oT25Ghoc8KhHQrzUkQstWBRt8nQILINgn+e7vIb09ikundH8Q==
-X-Received: by 2002:a17:906:c08:: with SMTP id s8mr3626628ejf.673.1639464191777;
-        Mon, 13 Dec 2021 22:43:11 -0800 (PST)
-Received: from [192.168.1.49] (185-219-167-24-static.vivo.cz. [185.219.167.24])
-        by smtp.gmail.com with ESMTPSA id e19sm7251549edu.47.2021.12.13.22.43.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 13 Dec 2021 22:43:11 -0800 (PST)
-Message-ID: <8bbd1a77-5f88-bb97-db88-6842df2e3e3c@kernel.org>
-Date:   Tue, 14 Dec 2021 07:43:10 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.4.0
+        Tue, 14 Dec 2021 10:38:20 -0500
+Received: from pps.filterd (m0288072.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.1.2/8.16.1.2) with ESMTP id 1BEE7ZFO021142;
+        Tue, 14 Dec 2021 16:38:09 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=selector1;
+ bh=55TRlyPa1csvltjFSGJc7MC8zSTcqi9KhSJ8TqVGvPo=;
+ b=n4+2qguQFrO2LYPE3fxelbRizl65JB5BEn63gFRrVQmTMRUTJDZ66gtp4iEFhwdVz7X7
+ fbajk/6aI96BMvzNELKmpPIJsB/of0mFT88fv5jJus/KUlRFl9a3ydTEsQlI9XAdz4Gb
+ mHuUm+7sk3df/dZ1fARuuxutN8fI0F7nusZKlc2kyd/LoatRFmwBrtHyxBFyVQC3iVH7
+ j4aI1G4Na2zhfKFP+w1JAe8IDFA/zVS3ShfCa8w131v2mTZIdwI0IZJlnxrwxDgygerf
+ oJI8FqZW8myIDqstxY4mGQ2bFaXnMAIZUmoWVzjGcURYbUX7P05yZWigPjE0rAd96fx5 3A== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3cxr8rabpj-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 14 Dec 2021 16:38:09 +0100
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 8B8A910002A;
+        Tue, 14 Dec 2021 16:38:08 +0100 (CET)
+Received: from Webmail-eu.st.com (sfhdag2node2.st.com [10.75.127.5])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 7E662231DEF;
+        Tue, 14 Dec 2021 16:38:08 +0100 (CET)
+Received: from lmecxl0889.lme.st.com (10.75.127.50) by SFHDAG2NODE2.st.com
+ (10.75.127.5) with Microsoft SMTP Server (TLS) id 15.0.1497.26; Tue, 14 Dec
+ 2021 16:38:07 +0100
 Subject: Re: [PATCH] tty: rpmsg: Fix race condition releasing tty port
-Content-Language: en-US
-To:     Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>,
+To:     Jiri Slaby <jirislaby@kernel.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+CC:     Bjorn Andersson <bjorn.andersson@linaro.org>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
-        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com
+        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>
 References: <20211213195346.12894-1-arnaud.pouliquen@foss.st.com>
-From:   Jiri Slaby <jirislaby@kernel.org>
-In-Reply-To: <20211213195346.12894-1-arnaud.pouliquen@foss.st.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+ <8bbd1a77-5f88-bb97-db88-6842df2e3e3c@kernel.org>
+From:   Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
+Message-ID: <2008dd33-5d23-961c-ca61-53ff3e34479a@foss.st.com>
+Date:   Tue, 14 Dec 2021 16:38:06 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.14.0
+MIME-Version: 1.0
+In-Reply-To: <8bbd1a77-5f88-bb97-db88-6842df2e3e3c@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.75.127.50]
+X-ClientProxiedBy: SFHDAG2NODE1.st.com (10.75.127.4) To SFHDAG2NODE2.st.com
+ (10.75.127.5)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.790,Hydra:6.0.425,FMLib:17.11.62.513
+ definitions=2021-12-14_07,2021-12-14_01,2021-12-02_01
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi,
+Hello Jiri,
 
-On 13. 12. 21, 20:53, Arnaud Pouliquen wrote:
-> In current implementation the tty_port struct is part of the
-> rpmsg_tty_port structure.The issue is that the rpmsg_tty_port structure is
-> freed on rpmsg_tty_remove but also referenced in the tty_struct.
-> Its release is not predictable due to workqueues.
+On 12/14/21 7:43 AM, Jiri Slaby wrote:
+> Hi,
 > 
-> For instance following ftrace shows that rpmsg_tty_close is called after
-> rpmsg_tty_release_cport:
+> On 13. 12. 21, 20:53, Arnaud Pouliquen wrote:
+>> In current implementation the tty_port struct is part of the
+>> rpmsg_tty_port structure.The issue is that the rpmsg_tty_port structure is
+>> freed on rpmsg_tty_remove but also referenced in the tty_struct.
+>> Its release is not predictable due to workqueues.
+>>
+>> For instance following ftrace shows that rpmsg_tty_close is called after
+>> rpmsg_tty_release_cport:
+>>
+>>       nr_test.sh-389     [000] .....   212.093752: rpmsg_tty_remove <-rpmsg_dev_
+>> remove
+>>               cat-1191    [001] .....   212.095697: tty_release <-__fput
+>>        nr_test.sh-389     [000] .....   212.099166: rpmsg_tty_release_cport <-rpm
+>> sg_tty_remove
+>>               cat-1191    [001] .....   212.115352: rpmsg_tty_close <-tty_release
+>>               cat-1191    [001] .....   212.115371: release_tty <-tty_release_str
+>>
+>> As consequence, the port must be free only when user has released the TTY
+>> interface.
+>>
+>> This path (inspired from vcc.c):
+>> - moves the management of the port in the install and clean-up tty ops,
+>> - allocates the tty_port struct independently of the rpmsg_tty_port structure,
 > 
->       nr_test.sh-389     [000] .....   212.093752: rpmsg_tty_remove <-rpmsg_dev_
-> remove
->               cat-1191    [001] .....   212.095697: tty_release <-__fput
->        nr_test.sh-389     [000] .....   212.099166: rpmsg_tty_release_cport <-rpm
-> sg_tty_remove
->               cat-1191    [001] .....   212.115352: rpmsg_tty_close <-tty_release
->               cat-1191    [001] .....   212.115371: release_tty <-tty_release_str
+> This looks rather wrong. Why not to use tty_port refcounting?
+
+Please could you detail what seems rather wrong for you? Everything or do the
+tty_port port struct independently of the rpmsg_tty_port structure?
+
+Concerning the tty_port refcounting:
+Yes it also an option that I have already tried without success, before
+implementing this patch.
+That said, as you pointed it out, I reimplemented it today in another way, and
+this time it seems that it works without any runtime warning or error.
+I need to perform more test to confirm, then I will propose a V2 based on
+tty_port refcountingt and the .destruct tty_port_operations.
+
 > 
-> As consequence, the port must be free only when user has released the TTY
-> interface.
+>> - uses tty_vhangup and tty_port_hangup.
 > 
-> This path (inspired from vcc.c):
-> - moves the management of the port in the install and clean-up tty ops,
-> - allocates the tty_port struct independently of the rpmsg_tty_port structure,
+> OK, but don't store a tty pointer as it looks racy. You should use
+> tty_port_tty_get instead.
+> 
+> Hm, we look we need tty_port_tty_vhangup (aside from tty_port_tty_hangup). There
+> are plenty of drivers doing:
+>     tty = tty_port_tty_get(port);
+>     if (tty) {
+>             tty_vhangup(port->tty);
+>             tty_kref_put(tty);
 
-This looks rather wrong. Why not to use tty_port refcounting?
+I would like to first fix the issue in rpmsg_tty.c in separate thread.
+But yes this should not take me too much time to propose this helper next.
 
-> - uses tty_vhangup and tty_port_hangup.
+Thanks,
+Arnaud
 
-OK, but don't store a tty pointer as it looks racy. You should use 
-tty_port_tty_get instead.
-
-Hm, we look we need tty_port_tty_vhangup (aside from 
-tty_port_tty_hangup). There are plenty of drivers doing:
-     tty = tty_port_tty_get(port);
-     if (tty) {
-             tty_vhangup(port->tty);
-             tty_kref_put(tty);
-
-
-> Fixes: 7c0408d80579 ("tty: add rpmsg driver")
-> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-
-thanks,
--- 
-js
-suse labs
+> 
+> 
+>> Fixes: 7c0408d80579 ("tty: add rpmsg driver")
+>> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+> 
+> thanks,
