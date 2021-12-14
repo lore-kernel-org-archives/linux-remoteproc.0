@@ -2,58 +2,107 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54EDBC433EF
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 14 Dec 2021 01:31:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04C44C433EF
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 14 Dec 2021 06:43:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244320AbhLNBbS (ORCPT
+        id S231174AbhLNGnN (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 13 Dec 2021 20:31:18 -0500
-Received: from mailgw02.mediatek.com ([210.61.82.184]:34566 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S239113AbhLNBbR (ORCPT
+        Tue, 14 Dec 2021 01:43:13 -0500
+Received: from mail-ed1-f43.google.com ([209.85.208.43]:39747 "EHLO
+        mail-ed1-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231145AbhLNGnN (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 13 Dec 2021 20:31:17 -0500
-X-UUID: afa802f74dd5491abb05b9d488ed79cf-20211214
-X-UUID: afa802f74dd5491abb05b9d488ed79cf-20211214
-Received: from mtkcas11.mediatek.inc [(172.21.101.40)] by mailgw02.mediatek.com
-        (envelope-from <mark-pk.tsai@mediatek.com>)
-        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
-        with ESMTP id 1180143756; Tue, 14 Dec 2021 09:31:12 +0800
-Received: from mtkexhb01.mediatek.inc (172.21.101.102) by
- mtkmbs10n1.mediatek.inc (172.21.101.34) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.2.792.15; Tue, 14 Dec 2021 09:31:11 +0800
-Received: from mtkcas11.mediatek.inc (172.21.101.40) by mtkexhb01.mediatek.inc
- (172.21.101.102) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Tue, 14 Dec
- 2021 09:31:11 +0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas11.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
- Transport; Tue, 14 Dec 2021 09:31:11 +0800
-From:   Mark-PK Tsai <mark-pk.tsai@mediatek.com>
-To:     <mathieu.poirier@linaro.org>
-CC:     <bjorn.andersson@linaro.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <linux-remoteproc@vger.kernel.org>, <mark-pk.tsai@mediatek.com>,
-        <matthias.bgg@gmail.com>, <ohad@wizery.com>,
-        <yj.chiang@mediatek.com>
-Subject: Re: [PATCH v2] remoteproc: use %pe format string to print return error code
-Date:   Tue, 14 Dec 2021 09:31:11 +0800
-Message-ID: <20211214013111.17634-1-mark-pk.tsai@mediatek.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20211213165538.GA1396405@p14s>
-References: <20211213165538.GA1396405@p14s>
+        Tue, 14 Dec 2021 01:43:13 -0500
+Received: by mail-ed1-f43.google.com with SMTP id b7so361715edd.6;
+        Mon, 13 Dec 2021 22:43:12 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=mES/VN9NDUylN7hikeYFALLjEFWfcxTzSl0FnDEQ4qo=;
+        b=QUttYACoGErkqDpq8YTWu3RDTmi0moLK916QoiQZT+4TYJIGojHij+GJ9WrG2q3GPe
+         HgRqIj//Pb3dxx6lFH7cHijW+d65bTsH9fTeRB9CMfpOiZslJnvdxisYp4FafmuSja+t
+         gFxblUOZGlVbmm+On2Vmi5E/oCcd/CPpSzuT+IYPbUENFXsh79fcNu11FHm5o9yx5O97
+         K1IgA99Z9QJrO8ObW4M4HeMp6Axnanio2fHDwbdtMELIT8KpyuwIVHIng3OrwBSf1iQT
+         Z6pHFn/HNC80uu6SObjOhyvwPB5xodQCCeOgKyX+jA9ZdxKsKCO5BGRCKbz7ejokhlfh
+         cMjQ==
+X-Gm-Message-State: AOAM531SPWtWup4ko5lMSfg4dkG/6HCgE8OtDtguu/y9P+XQ/VAuYMyg
+        ms2mKM7UddIcheYxRHXNzaDGqUIgWFA=
+X-Google-Smtp-Source: ABdhPJwoeQCTf8Mof4FF699wk5L77oT25Ghoc8KhHQrzUkQstWBRt8nQILINgn+e7vIb09ikundH8Q==
+X-Received: by 2002:a17:906:c08:: with SMTP id s8mr3626628ejf.673.1639464191777;
+        Mon, 13 Dec 2021 22:43:11 -0800 (PST)
+Received: from [192.168.1.49] (185-219-167-24-static.vivo.cz. [185.219.167.24])
+        by smtp.gmail.com with ESMTPSA id e19sm7251549edu.47.2021.12.13.22.43.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 13 Dec 2021 22:43:11 -0800 (PST)
+Message-ID: <8bbd1a77-5f88-bb97-db88-6842df2e3e3c@kernel.org>
+Date:   Tue, 14 Dec 2021 07:43:10 +0100
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.4.0
+Subject: Re: [PATCH] tty: rpmsg: Fix race condition releasing tty port
+Content-Language: en-US
+To:     Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com
+References: <20211213195346.12894-1-arnaud.pouliquen@foss.st.com>
+From:   Jiri Slaby <jirislaby@kernel.org>
+In-Reply-To: <20211213195346.12894-1-arnaud.pouliquen@foss.st.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-> 
-> https://git.kernel.org/pub/scm/linux/kernel/git/remoteproc/linux.git/log/?h=for-next
-> 
+Hi,
 
-Got it, thanks!
+On 13. 12. 21, 20:53, Arnaud Pouliquen wrote:
+> In current implementation the tty_port struct is part of the
+> rpmsg_tty_port structure.The issue is that the rpmsg_tty_port structure is
+> freed on rpmsg_tty_remove but also referenced in the tty_struct.
+> Its release is not predictable due to workqueues.
+> 
+> For instance following ftrace shows that rpmsg_tty_close is called after
+> rpmsg_tty_release_cport:
+> 
+>       nr_test.sh-389     [000] .....   212.093752: rpmsg_tty_remove <-rpmsg_dev_
+> remove
+>               cat-1191    [001] .....   212.095697: tty_release <-__fput
+>        nr_test.sh-389     [000] .....   212.099166: rpmsg_tty_release_cport <-rpm
+> sg_tty_remove
+>               cat-1191    [001] .....   212.115352: rpmsg_tty_close <-tty_release
+>               cat-1191    [001] .....   212.115371: release_tty <-tty_release_str
+> 
+> As consequence, the port must be free only when user has released the TTY
+> interface.
+> 
+> This path (inspired from vcc.c):
+> - moves the management of the port in the install and clean-up tty ops,
+> - allocates the tty_port struct independently of the rpmsg_tty_port structure,
 
+This looks rather wrong. Why not to use tty_port refcounting?
+
+> - uses tty_vhangup and tty_port_hangup.
+
+OK, but don't store a tty pointer as it looks racy. You should use 
+tty_port_tty_get instead.
+
+Hm, we look we need tty_port_tty_vhangup (aside from 
+tty_port_tty_hangup). There are plenty of drivers doing:
+     tty = tty_port_tty_get(port);
+     if (tty) {
+             tty_vhangup(port->tty);
+             tty_kref_put(tty);
+
+
+> Fixes: 7c0408d80579 ("tty: add rpmsg driver")
+> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+
+thanks,
+-- 
+js
+suse labs
