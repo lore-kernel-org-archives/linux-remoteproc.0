@@ -2,132 +2,141 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AE8DC433EF
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 15 Dec 2021 06:49:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A04E6C433F5
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 15 Dec 2021 10:05:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236077AbhLOGtH (ORCPT
+        id S236487AbhLOKFk (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 15 Dec 2021 01:49:07 -0500
-Received: from mail-ed1-f43.google.com ([209.85.208.43]:46917 "EHLO
-        mail-ed1-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234590AbhLOGtG (ORCPT
+        Wed, 15 Dec 2021 05:05:40 -0500
+Received: from mx07-00178001.pphosted.com ([185.132.182.106]:41936 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S236515AbhLOKFj (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 15 Dec 2021 01:49:06 -0500
-Received: by mail-ed1-f43.google.com with SMTP id y13so70783637edd.13;
-        Tue, 14 Dec 2021 22:49:06 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=5c4Y2EZIe2jTzIgDwq+5ULEM5PC+1wAhegx/cChmgDA=;
-        b=y+X4oL8dYNWTVOCLi9tAmoH9AV8+QHvskj197Vxi8sDno1UAsN78g6e2j6FAH9SItg
-         QfSZLOklNyvelxwyCQYd8QQ7XDuTz7vXOqwnDMcpZjTK/a/orDl4cX3AjwTMt3er/xgO
-         UCT1PiTrdgsX9EgZF8lecciHymRSD0wHUNo1ku02fJUp2AOqR0vj1an+HmugHaHozmW7
-         S2NG3H5ASPdyHfSF60hdytIeAH72xt3mP0qjqkxyOQqkTbqsv0eCUIl32z8J0gnRmhWl
-         4RorE7TA9jiEycv0CQgi/oJY3/OSFc0V4wuD+2LAOZbbtR03oQNGWkjv2JW66rWqbma/
-         0Wuw==
-X-Gm-Message-State: AOAM531JhrWd2NnuNCBRu6xfYGUXD9NdU0vh1ckNFVeMGEBlII+92SK4
-        2Q1YlSbF6GixFqAiAzt8af8=
-X-Google-Smtp-Source: ABdhPJyriWwORnVntwdo6aVlHnp8hfkLwlO/XGAJQkPjX7l4/X9i08gGHm5/S0C5dC4T6U4jZ1dWww==
-X-Received: by 2002:aa7:d80d:: with SMTP id v13mr12964158edq.7.1639550945669;
-        Tue, 14 Dec 2021 22:49:05 -0800 (PST)
-Received: from ?IPV6:2a0b:e7c0:0:107::70f? ([2a0b:e7c0:0:107::70f])
-        by smtp.gmail.com with ESMTPSA id 23sm305145ejg.213.2021.12.14.22.49.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 14 Dec 2021 22:49:05 -0800 (PST)
-Message-ID: <3fc784f1-5985-1553-c39f-8472cb63b1af@kernel.org>
-Date:   Wed, 15 Dec 2021 07:49:04 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.4.0
+        Wed, 15 Dec 2021 05:05:39 -0500
+Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.1.2/8.16.1.2) with ESMTP id 1BF8xctf015267;
+        Wed, 15 Dec 2021 11:05:33 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=selector1;
+ bh=3BmR+IunfXlXTt4gyyNN854tdQIgeq49/tg0NzOw1sQ=;
+ b=l2jYnSVWXey8pRiDuQw4YH4DuQVxXo3jqJkwJcbVK37Le0q8hwUdzuj+kUf96Jk/3LK1
+ FvrSsXTIWQkMEneDrNoPNbFsj3hibP6w38qdfACestZ6GG37qqD4oL6D+MoBLbqzVvKH
+ utgoDUvyMx6jeB2KOsjmxv7xsHcIwNk8UW2V7gPJngmAOEJevFFEMBkNdIuib4EJZxmA
+ ZqnTKuMR5RnK0pcymYxpRuUKGMCLmQa42Jp+2bNRbWywQsRGw3wwal1vaK2DpMHmQfmm
+ X6K+JWxk9845ZMqJ9HDWbQA8nKWM0QffWdZqUfNT+4peTTiS1e74aLaNnpKC9dlo3njN BA== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3cxrthxptn-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 15 Dec 2021 11:05:33 +0100
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 5B75B10002A;
+        Wed, 15 Dec 2021 11:05:32 +0100 (CET)
+Received: from Webmail-eu.st.com (sfhdag2node2.st.com [10.75.127.5])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id BE06222682C;
+        Wed, 15 Dec 2021 11:05:27 +0100 (CET)
+Received: from lmecxl0889.lme.st.com (10.75.127.49) by SFHDAG2NODE2.st.com
+ (10.75.127.5) with Microsoft SMTP Server (TLS) id 15.0.1497.26; Wed, 15 Dec
+ 2021 11:05:27 +0100
 Subject: Re: [PATCH v2] tty: rpmsg: Fix race condition releasing tty port
-Content-Language: en-US
-To:     Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>,
+To:     Jiri Slaby <jirislaby@kernel.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+CC:     Bjorn Andersson <bjorn.andersson@linaro.org>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
-        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com
+        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>
 References: <20211214170646.25775-1-arnaud.pouliquen@foss.st.com>
-From:   Jiri Slaby <jirislaby@kernel.org>
-In-Reply-To: <20211214170646.25775-1-arnaud.pouliquen@foss.st.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+ <3fc784f1-5985-1553-c39f-8472cb63b1af@kernel.org>
+From:   Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
+Message-ID: <250fd384-1dde-e800-2bac-ca37e53d50a2@foss.st.com>
+Date:   Wed, 15 Dec 2021 11:05:27 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.14.0
+MIME-Version: 1.0
+In-Reply-To: <3fc784f1-5985-1553-c39f-8472cb63b1af@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.75.127.49]
+X-ClientProxiedBy: SFHDAG1NODE2.st.com (10.75.127.2) To SFHDAG2NODE2.st.com
+ (10.75.127.5)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.790,Hydra:6.0.425,FMLib:17.11.62.513
+ definitions=2021-12-15_07,2021-12-14_01,2021-12-02_01
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi,
 
-much better IMO.
 
-On 14. 12. 21, 18:06, Arnaud Pouliquen wrote:
-> In current implementation the tty_port struct is part of the
-> rpmsg_tty_port structure.The issue is that the rpmsg_tty_port structure is
-> freed on rpmsg_tty_remove but also referenced in the tty_struct.
-> Its release is not predictable due to workqueues.
+On 12/15/21 7:49 AM, Jiri Slaby wrote:
+> Hi,
 > 
-> For instance following ftrace shows that rpmsg_tty_close is called after
-> rpmsg_tty_release_cport:
-...
-> diff --git a/drivers/tty/rpmsg_tty.c b/drivers/tty/rpmsg_tty.c
-> index dae2a4e44f38..69272ad92266 100644
-> --- a/drivers/tty/rpmsg_tty.c
-> +++ b/drivers/tty/rpmsg_tty.c
-> @@ -53,9 +53,19 @@ static int rpmsg_tty_install(struct tty_driver *driver, struct tty_struct *tty)
->   
->   	tty->driver_data = cport;
->   
-> +	tty_port_get(&cport->port);
+> much better IMO.
+> 
+> On 14. 12. 21, 18:06, Arnaud Pouliquen wrote:
+>> In current implementation the tty_port struct is part of the
+>> rpmsg_tty_port structure.The issue is that the rpmsg_tty_port structure is
+>> freed on rpmsg_tty_remove but also referenced in the tty_struct.
+>> Its release is not predictable due to workqueues.
+>>
+>> For instance following ftrace shows that rpmsg_tty_close is called after
+>> rpmsg_tty_release_cport:
+> ...
+>> diff --git a/drivers/tty/rpmsg_tty.c b/drivers/tty/rpmsg_tty.c
+>> index dae2a4e44f38..69272ad92266 100644
+>> --- a/drivers/tty/rpmsg_tty.c
+>> +++ b/drivers/tty/rpmsg_tty.c
+>> @@ -53,9 +53,19 @@ static int rpmsg_tty_install(struct tty_driver *driver,
+>> struct tty_struct *tty)
+>>         tty->driver_data = cport;
+>>   +    tty_port_get(&cport->port);
+> 
+> Can't this fail? Like when racing with removal?
+> 
+>>       return tty_port_install(&cport->port, driver, tty);
+>>   }
+> ...
+>>   static struct rpmsg_tty_port *rpmsg_tty_alloc_cport(void)
+>> @@ -139,6 +156,8 @@ static struct rpmsg_tty_port *rpmsg_tty_alloc_cport(void)
+>>     static void rpmsg_tty_release_cport(struct rpmsg_tty_port *cport)
+>>   {
+>> +    tty_port_destroy(&cport->port);
+>> +
+> 
+> You should not call tty_port_destroy when you use refcounting. The port is
+> already destroyed when ->destruct() is called. (It has currently no bad effect
+> calling it twice on a port though.)
+> 
+>> @@ -146,7 +165,17 @@ static void rpmsg_tty_release_cport(struct rpmsg_tty_port
+>> *cport)
+>>       kfree(cport);
+>>   }
+>>   -static const struct tty_port_operations rpmsg_tty_port_ops = { };
+>> +static void rpmsg_tty_destruct_port(struct tty_port *port)
+>> +{
+>> +    struct rpmsg_tty_port *cport = container_of(port, struct rpmsg_tty_port,
+>> port);
+>> +
+>> +    rpmsg_tty_release_cport(cport);
+>> +}
+>> +
+>> +static const struct tty_port_operations rpmsg_tty_port_ops = {
+>> +    .destruct = rpmsg_tty_destruct_port,
+>> +};
+>> +
+>>     static int rpmsg_tty_probe(struct rpmsg_device *rpdev)
+>>   {
+>> @@ -179,7 +208,6 @@ static int rpmsg_tty_probe(struct rpmsg_device *rpdev)
+>>       return 0;
+>>     err_destroy:
+>> -    tty_port_destroy(&cport->port);
+>>       rpmsg_tty_release_cport(cport);
+> 
+> Couldn't you just put the port here? And inline rpmsg_tty_release_cport into the
+> new rpmsg_tty_destruct_port?
+> 
 
-Can't this fail? Like when racing with removal?
+Thanks for all the insightful comments, V3 is coming.
 
->   	return tty_port_install(&cport->port, driver, tty);
->   }
-...
->   static struct rpmsg_tty_port *rpmsg_tty_alloc_cport(void)
-> @@ -139,6 +156,8 @@ static struct rpmsg_tty_port *rpmsg_tty_alloc_cport(void)
->   
->   static void rpmsg_tty_release_cport(struct rpmsg_tty_port *cport)
->   {
-> +	tty_port_destroy(&cport->port);
-> +
-
-You should not call tty_port_destroy when you use refcounting. The port 
-is already destroyed when ->destruct() is called. (It has currently no 
-bad effect calling it twice on a port though.)
-
-> @@ -146,7 +165,17 @@ static void rpmsg_tty_release_cport(struct rpmsg_tty_port *cport)
->   	kfree(cport);
->   }
->   
-> -static const struct tty_port_operations rpmsg_tty_port_ops = { };
-> +static void rpmsg_tty_destruct_port(struct tty_port *port)
-> +{
-> +	struct rpmsg_tty_port *cport = container_of(port, struct rpmsg_tty_port, port);
-> +
-> +	rpmsg_tty_release_cport(cport);
-> +}
-> +
-> +static const struct tty_port_operations rpmsg_tty_port_ops = {
-> +	.destruct = rpmsg_tty_destruct_port,
-> +};
-> +
->   
->   static int rpmsg_tty_probe(struct rpmsg_device *rpdev)
->   {
-> @@ -179,7 +208,6 @@ static int rpmsg_tty_probe(struct rpmsg_device *rpdev)
->   	return 0;
->   
->   err_destroy:
-> -	tty_port_destroy(&cport->port);
->   	rpmsg_tty_release_cport(cport);
-
-Couldn't you just put the port here? And inline rpmsg_tty_release_cport 
-into the new rpmsg_tty_destruct_port?
-
-thanks,
--- 
-js
-suse labs
+> thanks,
