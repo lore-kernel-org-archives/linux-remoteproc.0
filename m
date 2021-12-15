@@ -2,207 +2,94 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C122EC4332F
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 14 Dec 2021 17:08:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 967B0C433F5
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 15 Dec 2021 04:01:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236315AbhLNRIX (ORCPT
+        id S239665AbhLOEB3 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 14 Dec 2021 12:08:23 -0500
-Received: from mx07-00178001.pphosted.com ([185.132.182.106]:40938 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231544AbhLNRIW (ORCPT
+        Tue, 14 Dec 2021 23:01:29 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49116 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S239664AbhLOEB2 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 14 Dec 2021 12:08:22 -0500
-Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.1.2/8.16.1.2) with ESMTP id 1BEFIo6k015351;
-        Tue, 14 Dec 2021 18:08:10 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=from : to : cc :
- subject : date : message-id : mime-version : content-type; s=selector1;
- bh=3Xtp4aP90kvDpm0AC8bVtGgEJLQdVLnsqjJXaa8DtyM=;
- b=zpZOjai97Le2JOpHJJBjOduoOrSHwk/frK7zZ9GHgRa/ZAjGxSEFF8mPu+iPpfp0FpCr
- /SylndrRd7Yb/F36hNnZYR25ETK23KKoVPhjXIcP9p0JwFxdIxYUijX5zJnXv3KF/3NI
- Gc58rmkNpgx+GQGyP9jTbja+sASHuQJacwWiWQh0oJjEgxPxl81lNBsG20n3PyfLg+2e
- TAiv0RTzeR6dmPj8YlTIrboBXt9vOjdSVuEM5E1HkPU4He8vcay/qiWv6p6xNHpnJhOH
- v/MniMAVpe5Y/ChyCJhH3p7YQnr/ZfCvSO2InN6J0iFJbfHsf91jCN/uroPZhD8w+geS Xg== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3cxrththv8-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 14 Dec 2021 18:08:09 +0100
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 64C6610002A;
-        Tue, 14 Dec 2021 18:08:09 +0100 (CET)
-Received: from Webmail-eu.st.com (sfhdag2node2.st.com [10.75.127.5])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 5981820AA86;
-        Tue, 14 Dec 2021 18:08:09 +0100 (CET)
-Received: from localhost (10.75.127.46) by SFHDAG2NODE2.st.com (10.75.127.5)
- with Microsoft SMTP Server (TLS) id 15.0.1497.26; Tue, 14 Dec 2021 18:08:08
- +0100
-From:   Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jirislaby@kernel.org>
-CC:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <arnaud.pouliquen@foss.st.com>
-Subject: [PATCH v2] tty: rpmsg: Fix race condition releasing tty port
-Date:   Tue, 14 Dec 2021 18:06:46 +0100
-Message-ID: <20211214170646.25775-1-arnaud.pouliquen@foss.st.com>
-X-Mailer: git-send-email 2.17.1
+        Tue, 14 Dec 2021 23:01:28 -0500
+Received: from mail-oo1-xc35.google.com (mail-oo1-xc35.google.com [IPv6:2607:f8b0:4864:20::c35])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B5A5C061574
+        for <linux-remoteproc@vger.kernel.org>; Tue, 14 Dec 2021 20:01:28 -0800 (PST)
+Received: by mail-oo1-xc35.google.com with SMTP id p2-20020a4adfc2000000b002c2676904fdso5514783ood.13
+        for <linux-remoteproc@vger.kernel.org>; Tue, 14 Dec 2021 20:01:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=3p21cZX6VTVJfDbT+xtRQs4392W+Wmz3Ks+mLBHxP7M=;
+        b=BZq61RILd+nULFwvm2GxQkU9S8LWIa1H1hgca+PB0mf2Kjj0r9PNv1LUepCNPM8jUj
+         E2aTNbha2RqV+ObUt5CMqXgcv/g2s4rGeAPRsIptcmJPndDWCBC73VZXl1c2EvfAdcAC
+         dn1zJ5P83Gr1PNFHtSjU0MfvNCNUUbTIAXUxsrmzPpzsmVYz+ch6b/xMQyS7xYkLYTQN
+         bNNoa9VWPcyTQA2CioVbpG4bIFFWQvGGMRKKXItdwVD0XX9KhOrWsAjLHdMOLJNq0YKP
+         MYp6flmUJnmy+gGxCXwB9eowL/p86IzLO+LQBDq7RTXMfOexqccg//UvfDhiV1RwSUk6
+         l+3w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=3p21cZX6VTVJfDbT+xtRQs4392W+Wmz3Ks+mLBHxP7M=;
+        b=MrHPBGpp7cuZypR+ewjgcfypLAbDz6ghBkHWSpCPrK14fXiVtH2uW9gvLB6E0itaWp
+         71MrNXfjD+61P7Bz9aC5lwdFsglimFot5iRUAZgDGtgTKZJSr2HEIhYhaQvKxXUOMEhe
+         mxxhEBRfsApOtP31RaNIGaKUkdwgFfr7ART5uyGcGRjKez0W6H3st4eQcwKIxekKezGC
+         4KgVsOcxcSLeqX6xmPrnOITxD+gac6aGreh+tEToy45O8j7JDahRbb9vDQxtytFeZeoU
+         i5mjDTKNlTK7FmCJ7vraWPnAgw49IP5JkuYPSXaHu871aVwTHd6eaXP7+cGo7SR3SG0U
+         Mc0w==
+X-Gm-Message-State: AOAM533Z/PsHzoyT3Fq7XcA0M6ZaQdg40a9Y5xcnwryNYVBZhTVDsuEe
+        j2KiQXqb0xJsdvV6Wpia6WOsYYyZLCZ2tA==
+X-Google-Smtp-Source: ABdhPJylGahtXNpt8ZT81qnmWmURXAJa8/4nDbCQ3NP/HgyFvMAjCgzGr2/TKK0vAKV08Kyhp6HyTw==
+X-Received: by 2002:a4a:3110:: with SMTP id k16mr6030549ooa.64.1639540887319;
+        Tue, 14 Dec 2021 20:01:27 -0800 (PST)
+Received: from builder.lan (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
+        by smtp.gmail.com with ESMTPSA id p6sm221765oof.0.2021.12.14.20.01.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 14 Dec 2021 20:01:26 -0800 (PST)
+Date:   Tue, 14 Dec 2021 22:01:23 -0600
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Deepak Kumar Singh <deesin@codeaurora.org>
+Cc:     clew@codeaurora.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org
+Subject: Re: [PATCH V3 0/2] smem partition remap and bound check changes
+Message-ID: <Yblok/6vHI0Zv9he@builder.lan>
+References: <1633426371-4827-1-git-send-email-deesin@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.75.127.46]
-X-ClientProxiedBy: SFHDAG2NODE2.st.com (10.75.127.5) To SFHDAG2NODE2.st.com
- (10.75.127.5)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.790,Hydra:6.0.425,FMLib:17.11.62.513
- definitions=2021-12-14_07,2021-12-14_01,2021-12-02_01
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1633426371-4827-1-git-send-email-deesin@codeaurora.org>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-In current implementation the tty_port struct is part of the
-rpmsg_tty_port structure.The issue is that the rpmsg_tty_port structure is
-freed on rpmsg_tty_remove but also referenced in the tty_struct.
-Its release is not predictable due to workqueues.
+On Tue 05 Oct 04:32 CDT 2021, Deepak Kumar Singh wrote:
 
-For instance following ftrace shows that rpmsg_tty_close is called after
-rpmsg_tty_release_cport:
+> Addressed pointer conversion error in previous set and devm_iounmap
+> code reordering. Corrected code for calculating global partition size,
+> added code inside hardware mutex p_size = avilable + free.
+> 
 
-     nr_test.sh-389     [000] .....   212.093752: rpmsg_tty_remove <-rpmsg_dev_
-remove
-             cat-1191    [001] .....   212.095697: tty_release <-__fput
-      nr_test.sh-389     [000] .....   212.099166: rpmsg_tty_release_cport <-rpm
-sg_tty_remove
-             cat-1191    [001] .....   212.115352: rpmsg_tty_close <-tty_release
-             cat-1191    [001] .....   212.115371: release_tty <-tty_release_str
+Hi Deepak,
 
-As consequence, the port must be free only when user has released the TTY
-interface.
+Sorry for taking my time reviewing and testing this series. I think it
+looks good and was hoping to just merge it, but it no longer applies.
 
-This path :
-- manages the port refcounting to trig the .destruct port ops,
-- introduces the rpmsg_tty_cleanup function to ensure that the TTY is
-  removed before decreasing the port refcount.
-- calls rpmsg_tty_release_cport function in the rpmsg_tty_destruct_port
-  function instead of in the rpmsg_tty_remove function.
-- uses tty_vhangup and tty_port_hangup instead of tty_port_tty_hangup.
+Could you please help me rebase it ontop of linux-next?
 
-Fixes: 7c0408d80579 ("tty: add rpmsg driver")
-Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
----
-diff vs V1:
- - rework patch based on port refcounting.
-Applied and tested on fa55b7dcdc43 ("Linux 5.16-rc1", 2021-11-14)
----
- drivers/tty/rpmsg_tty.c | 43 +++++++++++++++++++++++++++++++++++------
- 1 file changed, 37 insertions(+), 6 deletions(-)
+Thanks,
+Bjorn
 
-diff --git a/drivers/tty/rpmsg_tty.c b/drivers/tty/rpmsg_tty.c
-index dae2a4e44f38..69272ad92266 100644
---- a/drivers/tty/rpmsg_tty.c
-+++ b/drivers/tty/rpmsg_tty.c
-@@ -53,9 +53,19 @@ static int rpmsg_tty_install(struct tty_driver *driver, struct tty_struct *tty)
- 
- 	tty->driver_data = cport;
- 
-+	tty_port_get(&cport->port);
- 	return tty_port_install(&cport->port, driver, tty);
- }
- 
-+static void rpmsg_tty_cleanup(struct tty_struct *tty)
-+{
-+	struct tty_port *port = tty->port;
-+
-+	WARN_ON(!port);
-+
-+	tty_port_put(port);
-+}
-+
- static int rpmsg_tty_open(struct tty_struct *tty, struct file *filp)
- {
- 	return tty_port_open(tty->port, tty, filp);
-@@ -106,12 +116,19 @@ static unsigned int rpmsg_tty_write_room(struct tty_struct *tty)
- 	return size;
- }
- 
-+static void rpmsg_tty_hangup(struct tty_struct *tty)
-+{
-+	tty_port_hangup(tty->port);
-+}
-+
- static const struct tty_operations rpmsg_tty_ops = {
- 	.install	= rpmsg_tty_install,
- 	.open		= rpmsg_tty_open,
- 	.close		= rpmsg_tty_close,
- 	.write		= rpmsg_tty_write,
- 	.write_room	= rpmsg_tty_write_room,
-+	.hangup		= rpmsg_tty_hangup,
-+	.cleanup	= rpmsg_tty_cleanup,
- };
- 
- static struct rpmsg_tty_port *rpmsg_tty_alloc_cport(void)
-@@ -139,6 +156,8 @@ static struct rpmsg_tty_port *rpmsg_tty_alloc_cport(void)
- 
- static void rpmsg_tty_release_cport(struct rpmsg_tty_port *cport)
- {
-+	tty_port_destroy(&cport->port);
-+
- 	mutex_lock(&idr_lock);
- 	idr_remove(&tty_idr, cport->id);
- 	mutex_unlock(&idr_lock);
-@@ -146,7 +165,17 @@ static void rpmsg_tty_release_cport(struct rpmsg_tty_port *cport)
- 	kfree(cport);
- }
- 
--static const struct tty_port_operations rpmsg_tty_port_ops = { };
-+static void rpmsg_tty_destruct_port(struct tty_port *port)
-+{
-+	struct rpmsg_tty_port *cport = container_of(port, struct rpmsg_tty_port, port);
-+
-+	rpmsg_tty_release_cport(cport);
-+}
-+
-+static const struct tty_port_operations rpmsg_tty_port_ops = {
-+	.destruct = rpmsg_tty_destruct_port,
-+};
-+
- 
- static int rpmsg_tty_probe(struct rpmsg_device *rpdev)
- {
-@@ -179,7 +208,6 @@ static int rpmsg_tty_probe(struct rpmsg_device *rpdev)
- 	return 0;
- 
- err_destroy:
--	tty_port_destroy(&cport->port);
- 	rpmsg_tty_release_cport(cport);
- 
- 	return ret;
-@@ -188,17 +216,20 @@ static int rpmsg_tty_probe(struct rpmsg_device *rpdev)
- static void rpmsg_tty_remove(struct rpmsg_device *rpdev)
- {
- 	struct rpmsg_tty_port *cport = dev_get_drvdata(&rpdev->dev);
-+	struct tty_struct *tty;
- 
- 	dev_dbg(&rpdev->dev, "Removing rpmsg tty device %d\n", cport->id);
- 
- 	/* User hang up to release the tty */
--	if (tty_port_initialized(&cport->port))
--		tty_port_tty_hangup(&cport->port, false);
-+	tty = tty_port_tty_get(&cport->port);
-+	if (tty) {
-+		tty_vhangup(tty);
-+		tty_kref_put(tty);
-+	}
- 
- 	tty_unregister_device(rpmsg_tty_driver, cport->id);
- 
--	tty_port_destroy(&cport->port);
--	rpmsg_tty_release_cport(cport);
-+	tty_port_put(&cport->port);
- }
- 
- static struct rpmsg_device_id rpmsg_driver_tty_id_table[] = {
--- 
-2.17.1
-
+> Deepak Kumar Singh (2):
+>   soc: qcom: smem: map only partitions used by local HOST
+>   soc: qcom: smem: validate fields of shared structures
+> 
+>  drivers/soc/qcom/smem.c | 317 +++++++++++++++++++++++++++++++++++++-----------
+>  1 file changed, 245 insertions(+), 72 deletions(-)
+> 
+> -- 
+> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+> a Linux Foundation Collaborative Project
+> 
