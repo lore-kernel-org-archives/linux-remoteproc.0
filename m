@@ -2,66 +2,87 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5BDAC43217
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 16 Dec 2021 16:07:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A4DCC433EF
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 20 Dec 2021 13:44:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238958AbhLPQHk (ORCPT
+        id S233045AbhLTNok (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 16 Dec 2021 11:07:40 -0500
-Received: from mail.iot.bzh ([51.75.236.24]:48012 "EHLO frontal.iot.bzh"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S238912AbhLPQHg (ORCPT <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 16 Dec 2021 11:07:36 -0500
-Received: from frontal.iot.bzh (localhost [127.0.0.1])
-        by frontal.iot.bzh (Proxmox) with ESMTP id 4B5D510299;
-        Thu, 16 Dec 2021 17:07:34 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iot.bzh; h=cc:cc
-        :content-transfer-encoding:date:from:from:message-id
-        :mime-version:reply-to:subject:subject:to:to; s=iot.bzh; bh=fYWw
-        n03jiiuLczTKdRmbPfCPUYmu7Pgk7nhBh9DjseI=; b=An28merbAJfinfFO/fkC
-        oBl5p13bUMIiwZ3BOG5+eiRGLRgXr1k9+iaEBhHHfx/ZZLw1V3GJEE51Dv9tNa2w
-        /aYUmugcXWZGFjbUjmqSfhgHgLAcwmuBGI+gN7Kt/AtIahF5S8zAf/Sl03BtSgkt
-        kdz35gzyNxX/JQTmXpH3WesHbPaWdLHUI4Gu0Q5iNtRUE+AMUENUweGYui3UxuEl
-        zO6/qpKPzl2AUED9mh80jgk4arTBFTlbkOBytYNY7UHaOCYgSwCKWjhegw6xXAni
-        83ft1NtL2+LIknRir8NMGryxQhzGpRs1UBvmIq2fe3C0nYrnxiNcR9x8v92WAhwx
-        5A==
-From:   Julien Massot <julien.massot@iot.bzh>
-To:     bjorn.andersson@linaro.org, mathieu.poirier@linaro.org,
-        geert+renesas@glider.be
-Cc:     linux-renesas-soc@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org,
-        Julien Massot <julien.massot@iot.bzh>
-Subject: [PATCH 2/2] remoteproc: rcar_rproc: remove trailing semicolon
-Date:   Thu, 16 Dec 2021 17:07:21 +0100
-Message-Id: <20211216160721.203794-1-julien.massot@iot.bzh>
-X-Mailer: git-send-email 2.33.1
+        Mon, 20 Dec 2021 08:44:40 -0500
+Received: from mail-vk1-f170.google.com ([209.85.221.170]:35722 "EHLO
+        mail-vk1-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233027AbhLTNoj (ORCPT
+        <rfc822;linux-remoteproc@vger.kernel.org>);
+        Mon, 20 Dec 2021 08:44:39 -0500
+Received: by mail-vk1-f170.google.com with SMTP id c10so3371711vkn.2;
+        Mon, 20 Dec 2021 05:44:39 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=zrnnwNW5r+M7KomjOpjD0fvHJ5V+2b8e6a+wdptPZcI=;
+        b=P4/T/KeAjQdTJbzEtyeEDrn/23v/MEzPwX27xpupmai+7JP3kax1w7aZe6jGn72J4E
+         B6L7S53x+ulqPr1b82qYFs+0adE5I56pIvnno0v+FDCqpUeiw8mOoNMFal6CKqUOeBZ+
+         hBMEiKJquyO1uXNdUUMXhc4BXhRPWXBR6TM32f3xeyerR/b6dS1Bcgpqo38gyUA4dh+L
+         0D4HbhGX0n5InL07RmZjFF2bpH3KdTb3VmOTJr06s6pFaZJ2udG2I7xgTD65T/5+AYlX
+         EXQumZ7eBgWqgXtucNEgbo3s6U665wvJir33GRPgJYCcWjkBtuWNUHGy6nw1+RAhkx6Z
+         RFiQ==
+X-Gm-Message-State: AOAM530x4U7IV5Qa6iaxwGovwfFWj1phuNPytElH7Kv9RSRHOv2qQV6w
+        yaAZgt/zAz1J7rD1PbklFsXMbgdJtfYcKA==
+X-Google-Smtp-Source: ABdhPJzUaTUP0mqLhvt2N4TxrkDPLUqP5RGcds+ZvBHCpOu+ouptX2aZJip15Mq54fPtw2PLUjhLvg==
+X-Received: by 2002:a1f:3094:: with SMTP id w142mr5542664vkw.7.1640007878381;
+        Mon, 20 Dec 2021 05:44:38 -0800 (PST)
+Received: from mail-ua1-f47.google.com (mail-ua1-f47.google.com. [209.85.222.47])
+        by smtp.gmail.com with ESMTPSA id g21sm3423433vkd.26.2021.12.20.05.44.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 20 Dec 2021 05:44:38 -0800 (PST)
+Received: by mail-ua1-f47.google.com with SMTP id r15so17766842uao.3;
+        Mon, 20 Dec 2021 05:44:37 -0800 (PST)
+X-Received: by 2002:a05:6102:2155:: with SMTP id h21mr2896172vsg.68.1640007877712;
+ Mon, 20 Dec 2021 05:44:37 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20211216160653.203768-1-julien.massot@iot.bzh>
+In-Reply-To: <20211216160653.203768-1-julien.massot@iot.bzh>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Mon, 20 Dec 2021 14:44:26 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdWAPuPCgnRcqUiqY_FXYmOmHb8_=PuhNfAdUNprbsZOJw@mail.gmail.com>
+Message-ID: <CAMuHMdWAPuPCgnRcqUiqY_FXYmOmHb8_=PuhNfAdUNprbsZOJw@mail.gmail.com>
+Subject: Re: [PATCH 1/2] remoteproc: rcar_rproc: fix pm_runtime_get_sync error check
+To:     Julien Massot <julien.massot@iot.bzh>
+Cc:     =?UTF-8?Q?Bj=C3=B6rn_Andersson?= <bjorn.andersson@linaro.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "open list:REMOTE PROCESSOR (REMOTEPROC) SUBSYSTEM" 
+        <linux-remoteproc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Remove trailing semicolon.
+On Thu, Dec 16, 2021 at 5:07 PM Julien Massot <julien.massot@iot.bzh> wrote:
+> pm_runtime_get_sync can also return 1 on success, change
+> to use pm_runtime_resume_and_get which return 0 only on
+> success.
+>
+> This bug has been discovered by Dan Carpenter by using Smatch
+> static checker.
+>
+> Fixes: 285892a74f13 ("remoteproc: Add Renesas rcar driver")
+>
 
-Signed-off-by: Julien Massot <julien.massot@iot.bzh>
----
- drivers/remoteproc/rcar_rproc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Please no blank lines between tags.
 
-diff --git a/drivers/remoteproc/rcar_rproc.c b/drivers/remoteproc/rcar_rproc.c
-index 3408c6e51a7c..aa86154109c7 100644
---- a/drivers/remoteproc/rcar_rproc.c
-+++ b/drivers/remoteproc/rcar_rproc.c
-@@ -163,7 +163,7 @@ static int rcar_rproc_probe(struct platform_device *pdev)
- 	if (IS_ERR(priv->rst)) {
- 		ret = PTR_ERR(priv->rst);
- 		dev_err_probe(dev, ret, "fail to acquire rproc reset\n");
--		return ret;;
-+		return ret;
- 	}
- 
- 	pm_runtime_enable(dev);
--- 
-2.33.1
+> Signed-off-by: Julien Massot <julien.massot@iot.bzh>
 
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
