@@ -2,106 +2,123 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B92FC433F5
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 20 Dec 2021 16:57:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84A9BC433F5
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 21 Dec 2021 08:18:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239181AbhLTQ5g (ORCPT
+        id S235515AbhLUISe (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 20 Dec 2021 11:57:36 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36350 "EHLO
+        Tue, 21 Dec 2021 03:18:34 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44674 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231579AbhLTQ5g (ORCPT
+        with ESMTP id S235501AbhLUISb (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 20 Dec 2021 11:57:36 -0500
-Received: from mail-pf1-x42e.google.com (mail-pf1-x42e.google.com [IPv6:2607:f8b0:4864:20::42e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1D847C061574
-        for <linux-remoteproc@vger.kernel.org>; Mon, 20 Dec 2021 08:57:36 -0800 (PST)
-Received: by mail-pf1-x42e.google.com with SMTP id u20so4354597pfi.12
-        for <linux-remoteproc@vger.kernel.org>; Mon, 20 Dec 2021 08:57:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=yOsgS9YhfvcT1xx0dm/7Y4cMzNzCetRVRzj1B63i2mE=;
-        b=a5bpQAgv4qquR0hWlOG5WfSkfvtNzPWWbxqoG9iKC5+hPf6XeONiRYD5W+pmE4c4dF
-         6G749PHQKcmn/P+5+kC+ZBrQyfU2jrdWKnOfNmYuRw1IS74Nmfdkfyk7TcRFh5iCqtP+
-         JzSRnIX13gn4ckiVetLr/HFeDTq8Xmky1+MsyCWqX8Y5sWsfNduqyWG/aFdDBBzCecXk
-         q44mQFk7CkqC/IUbSiY4VX/GJWe10rqTDFQw6fWEgDnMzPeTLqI45bbVQlW0prtAhPDS
-         xrMWftJR7RStbM+Ypgc740YOgcIr4/h435lP2BtSwAfVByc1jPxdeV6muT7h+ZhshwNd
-         xaLQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=yOsgS9YhfvcT1xx0dm/7Y4cMzNzCetRVRzj1B63i2mE=;
-        b=Kg/aDjXGZch/Ttv6hZLci6nVQbzGmQOv/1DurFv3h+9RbX5gCWoBrjIJWKrcibe+G+
-         qy3g8oaruvNL0DqJ6wDpd5wOLgytFmBwuiwb6eYCtosCZbdmLnjxEQXfsxLJW7LY0MLz
-         BFVNLWRjr0Rs5XeYbt405pm14CmrVGuI5VYE985h26RrhFneJdNSvPmReVFZU/wlwCcQ
-         1UNH8BU6aMbyymmriuKnL3p15Dg58GIESZoufMZseWmPO6QNqk04UWeKGDLax5VZ7D/S
-         mX+Fa6V0CqlSbyNHM1Y9pv/bkjgtnjx3683AcPwl7MgB042j36KmpSlZwb7D6d7zgPR6
-         Bdew==
-X-Gm-Message-State: AOAM530qFw2T/b/QxdO7DmIRvw38sISj86Kr6qhpCdxLzrswbmyFfw9T
-        z6ZgMQNcZa4DGUNrWNgjVCSLVg==
-X-Google-Smtp-Source: ABdhPJxE/bYhops5kddHnyVdeQa+UTx6/w2moxJYNRdC7GXIaZL+7d8OhxDuyxzzSKL/xy61WDT2AQ==
-X-Received: by 2002:a62:6497:0:b0:4ba:737c:8021 with SMTP id y145-20020a626497000000b004ba737c8021mr17114937pfb.18.1640019455498;
-        Mon, 20 Dec 2021 08:57:35 -0800 (PST)
-Received: from p14s (S0106889e681aac74.cg.shawcable.net. [68.147.0.187])
-        by smtp.gmail.com with ESMTPSA id g14sm16992349pgo.88.2021.12.20.08.57.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Dec 2021 08:57:34 -0800 (PST)
-Date:   Mon, 20 Dec 2021 09:57:32 -0700
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Julien Massot <julien.massot@iot.bzh>,
-        =?iso-8859-1?Q?Bj=F6rn?= Andersson <bjorn.andersson@linaro.org>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "open list:REMOTE PROCESSOR (REMOTEPROC) SUBSYSTEM" 
-        <linux-remoteproc@vger.kernel.org>
-Subject: Re: [PATCH 1/2] remoteproc: rcar_rproc: fix pm_runtime_get_sync
- error check
-Message-ID: <20211220165732.GA241456@p14s>
-References: <20211216160653.203768-1-julien.massot@iot.bzh>
- <CAMuHMdWAPuPCgnRcqUiqY_FXYmOmHb8_=PuhNfAdUNprbsZOJw@mail.gmail.com>
+        Tue, 21 Dec 2021 03:18:31 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AE010C061574;
+        Tue, 21 Dec 2021 00:18:30 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 6D45EB80E07;
+        Tue, 21 Dec 2021 08:18:29 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1161C36AE7;
+        Tue, 21 Dec 2021 08:18:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+        s=korg; t=1640074708;
+        bh=vrx6RPSDmWAICZO/O856wjjtSS7R7umwCZ+joXnTXy8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=f2fbqHayxI5zE8rz7XssFncNFlkheTrC0qEaUpbufP9D9nhnmrUkTSTw4Fd3KzNzw
+         XvDaug56XhG1VsIE0IDzOOaRQiMo3IR70nij7cfM1Gse1OCuIQ72t7al9hpTAAoPXG
+         EmRiiBLfpv7UZXc9K41Jl5l0+8LPNyGRwQhRcf6g=
+Date:   Tue, 21 Dec 2021 09:18:25 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+Cc:     Jiri Slaby <jirislaby@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com
+Subject: Re: [PATCH v3] tty: rpmsg: Fix race condition releasing tty port
+Message-ID: <YcGN0fDn2hqAdrP9@kroah.com>
+References: <20211215153121.30010-1-arnaud.pouliquen@foss.st.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAMuHMdWAPuPCgnRcqUiqY_FXYmOmHb8_=PuhNfAdUNprbsZOJw@mail.gmail.com>
+In-Reply-To: <20211215153121.30010-1-arnaud.pouliquen@foss.st.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Mon, Dec 20, 2021 at 02:44:26PM +0100, Geert Uytterhoeven wrote:
-> On Thu, Dec 16, 2021 at 5:07 PM Julien Massot <julien.massot@iot.bzh> wrote:
-> > pm_runtime_get_sync can also return 1 on success, change
-> > to use pm_runtime_resume_and_get which return 0 only on
-> > success.
-> >
-> > This bug has been discovered by Dan Carpenter by using Smatch
-> > static checker.
-> >
-> > Fixes: 285892a74f13 ("remoteproc: Add Renesas rcar driver")
-> >
+On Wed, Dec 15, 2021 at 04:31:21PM +0100, Arnaud Pouliquen wrote:
+> The tty_port struct is part of the rpmsg_tty_port structure.
+> The issue is that the rpmsg_tty_port structure is freed on
+> rpmsg_tty_remove while it is still referenced in the tty_struct.
+> Its release is not predictable due to workqueues.
 > 
-> Please no blank lines between tags.
+> For instance following ftrace shows that rpmsg_tty_close is called after
+> rpmsg_tty_release_cport:
+> 
+>      nr_test.sh-389     [000] .....   212.093752: rpmsg_tty_remove <-rpmsg_dev_
+> remove
+>              cat-1191    [001] .....   212.095697: tty_release <-__fput
+>       nr_test.sh-389     [000] .....   212.099166: rpmsg_tty_release_cport <-rpm
+> sg_tty_remove
+>              cat-1191    [001] .....   212.115352: rpmsg_tty_close <-tty_release
+>              cat-1191    [001] .....   212.115371: release_tty <-tty_release_str
+> 
+> As consequence, the port must be free only when user has released the TTY
+> interface.
+> 
+> This path :
+> - Introduce the .destruct port ops function to release the allocated
+>   rpmsg_tty_port structure.
+> - Manages the tty port refcounting to trig the .destruct port ops,
+> - Introduces the rpmsg_tty_cleanup function to ensure that the TTY is
+>   removed before decreasing the port refcount.
+> - Uses tty_vhangup and tty_port_hangup instead of tty_port_tty_hangup.
 
-I have fixed the blank lines and applied this series.
-
-Thanks,
-Mathieu
+Shouldn't this hangup change be a separate change?
 
 > 
-> > Signed-off-by: Julien Massot <julien.massot@iot.bzh>
+> Fixes: 7c0408d80579 ("tty: add rpmsg driver")
+> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+> ---
+> delta vs V2: taking into account Jiri Slaby's comments:
+>  - Inline rpmsg_tty_release_cport in rpmsg_tty_destruct_port,
+>  - call tty_port_put in case of error in rpmsg_tty_probe,
+>  - use tty_port_get port return in rpmsg_tty_install to take into account
+>    NULL port return case.
 > 
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Applied and tested on fa55b7dcdc43 ("Linux 5.16-rc1", 2021-11-14)
+> ---
+>  drivers/tty/rpmsg_tty.c | 49 +++++++++++++++++++++++++++++------------
+>  1 file changed, 35 insertions(+), 14 deletions(-)
 > 
-> Gr{oetje,eeting}s,
-> 
->                         Geert
-> 
-> --
-> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-> 
-> In personal conversations with technical people, I call myself a hacker. But
-> when I'm talking to journalists I just say "programmer" or something like that.
->                                 -- Linus Torvalds
+> diff --git a/drivers/tty/rpmsg_tty.c b/drivers/tty/rpmsg_tty.c
+> index dae2a4e44f38..cdc590c63f03 100644
+> --- a/drivers/tty/rpmsg_tty.c
+> +++ b/drivers/tty/rpmsg_tty.c
+> @@ -50,10 +50,21 @@ static int rpmsg_tty_cb(struct rpmsg_device *rpdev, void *data, int len, void *p
+>  static int rpmsg_tty_install(struct tty_driver *driver, struct tty_struct *tty)
+>  {
+>  	struct rpmsg_tty_port *cport = idr_find(&tty_idr, tty->index);
+> +	struct tty_port *port = tty->port;
+>  
+>  	tty->driver_data = cport;
+>  
+> -	return tty_port_install(&cport->port, driver, tty);
+> +	port = tty_port_get(&cport->port);
+> +	return tty_port_install(port, driver, tty);
+> +}
+> +
+> +static void rpmsg_tty_cleanup(struct tty_struct *tty)
+> +{
+> +	struct tty_port *port = tty->port;
+> +
+> +	WARN_ON(!port);
+
+How can this ever trigger?  Shouldn't you do something if it can?
+
+thanks,
+
+greg k-h
