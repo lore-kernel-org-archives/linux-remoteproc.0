@@ -2,56 +2,52 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0920C433F5
-	for <linux-remoteproc@archiver.kernel.org>; Sat, 25 Dec 2021 14:58:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 399C7C433F5
+	for <linux-remoteproc@archiver.kernel.org>; Sun, 26 Dec 2021 09:42:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230027AbhLYO6G (ORCPT
+        id S229862AbhLZJm3 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Sat, 25 Dec 2021 09:58:06 -0500
-Received: from ixit.cz ([94.230.151.217]:55888 "EHLO ixit.cz"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229896AbhLYO6F (ORCPT <rfc822;linux-remoteproc@vger.kernel.org>);
-        Sat, 25 Dec 2021 09:58:05 -0500
-Received: from [192.168.1.138] (ip-89-176-96-70.net.upcbroadband.cz [89.176.96.70])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by ixit.cz (Postfix) with ESMTPSA id B4F292243C;
-        Sat, 25 Dec 2021 15:58:00 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ixit.cz; s=dkim;
-        t=1640444281; h=from:from:reply-to:reply-to:subject:subject:date:date:
-         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-         content-type:content-type; bh=/LnLMxqfZ7m239b7PJ+Ig6oQYO7elvpQqGQ3CYEemms=;
-        b=roVJfviBv3coP/BbjRNHUaOckQ7XDEQ1iZwLyLUi2Z9tV7Y83bPMYrzrY+tY93PfOkqIle
-        viKroG6j/lLLIKq7Q9hGDsjYoQaqeeW7H1VJg59wUO4g4z+gUBwCOH2+EjMhjSZ1dmy4ei
-        ltekRHlhWA4+NZm6KHMfR6scMaC2PHw=
-Date:   Sat, 25 Dec 2021 15:57:55 +0100
-From:   David Heidelberg <david@ixit.cz>
-Reply-To: 20200622075956.171058-5-bjorn.andersson@linaro.org
-Subject: Re: [PATCH v2 4/4] arm64: dts: qcom: sm8250: Drop tcsr_mutex syscon
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Andy Gross <agross@kernel.org>,
-        Ohad Ben-Cohen <ohad@wizery.com>,
-        Baolin Wang <baolin.wang7@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>
-Message-Id: <JWEO4R.7M77VCZXYS531@ixit.cz>
-X-Mailer: geary/40.0
+        Sun, 26 Dec 2021 04:42:29 -0500
+Received: from slot0.jllresort.com ([62.197.136.5]:59576 "EHLO
+        slot0.jllresort.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233196AbhLZJm2 (ORCPT
+        <rfc822;linux-remoteproc@vger.kernel.org>);
+        Sun, 26 Dec 2021 04:42:28 -0500
+X-Greylist: delayed 729 seconds by postgrey-1.27 at vger.kernel.org; Sun, 26 Dec 2021 04:42:28 EST
+DKIM-Signature: v=1; a=rsa-sha1; c=relaxed/relaxed; s=dkim; d=jllresort.com;
+ h=Reply-To:From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding; i=ele.mon@jllresort.com;
+ bh=XRUC/Xl0k/oM12yfI2mzJvKBcfU=;
+ b=uEkVJMrsbDkH2LFzpq0tbXgNaI8aqNUmPKeHObWPJgycXc5qkesL30CfMnnUwqZ4AejcHHHsMFhz
+   fekx/237UjEbb7FTf5QaUJImA3pl5jZ1UnanwQ3aURRazjVlZR3jWAYk4kmCjW3fbBrl6OrfQ92U
+   whiTQtkuLUs5ccnKcNYXXUclD6H3+fboOFTh/BlEnIDkT4720qggK1xb5il2n323cfzckz5+FZD/
+   g6u/0Ek2EPwuF7RJpmhKVdSdbvVcbtmJ225n5DsdK6RLnveuqIm4mpSdBbWBkuZY9Shd9xcsnqhJ
+   1oPUue5Fc3YeCcXkqfcAm5QYAkdUvCQV6xdUVg==
+DomainKey-Signature: a=rsa-sha1; c=nofws; q=dns; s=dkim; d=jllresort.com;
+ b=RbISpX0yBNAHiOnOgrVYMtJVr9/lkq49/U0V/2a51hrXVGwvO7EzYj2J3OivTAtaCSO8gUo9e+Yo
+   0iGLLWt+oJQp5MFtYI91u1CTIrFWgkdo/Mqc7AVKaZph7o7cJdY8B0vJx12kvXcu7JkT7BAtrJ+A
+   lAWJ5TuN2bh/DdRRWFWuiaJIwRbKqTVTj1oAX9W2fVIy34VQ31jrTAzrdvMY3BsLbJs/rzybUe8E
+   x6Wr968a+UoVaRt3FqO1ff/0mF2VJjjW8EBVoFVpGZJC9CAYPi0l82fl1DIFJcmMvgbV0yJfONLY
+   OTr642MxLRJ39HpDzajXBC6BdTdAVVPwql+X9w==;
+Reply-To: mustafa.ayvaz@ayvazburosu.com
+From:   ele.mon@jllresort.com
+To:     linux-remoteproc@vger.kernel.org
+Subject: Happy Weekend:
+Date:   26 Dec 2021 10:29:31 +0100
+Message-ID: <20211226102855.6AC420AA4BF3B068@jllresort.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Type: text/plain;
+        charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hello,
+Greetings to you linux-remoteproc,
 
-any particular reason, why you did applied this patch only to sm8250?
-
-Is it safe to convert rest of tcsr-mutex nodes to new schema without 
-additional testing?
+I was wondering if you got my previous email? I have been trying=20
+to reach you by email linux-remoteproc@vger.kernel.org, kindly=20
+get back to me swiftly, it is very important and urgent.
 
 Thanks
-David
-
-
+Mustafa Ayvaz
+Email: mustafa.ayvaz@ayvazburosu.com
