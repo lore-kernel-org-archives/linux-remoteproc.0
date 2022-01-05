@@ -2,253 +2,123 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 894E4C433EF
-	for <linux-remoteproc@archiver.kernel.org>; Tue,  4 Jan 2022 19:08:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AFC34C433F5
+	for <linux-remoteproc@archiver.kernel.org>; Wed,  5 Jan 2022 06:42:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234842AbiADTIP (ORCPT
+        id S234833AbiAEGmT (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 4 Jan 2022 14:08:15 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34624 "EHLO
+        Wed, 5 Jan 2022 01:42:19 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48962 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233466AbiADTIO (ORCPT
+        with ESMTP id S231960AbiAEGmS (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 4 Jan 2022 14:08:14 -0500
-Received: from mail-pl1-x635.google.com (mail-pl1-x635.google.com [IPv6:2607:f8b0:4864:20::635])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 80449C061784
-        for <linux-remoteproc@vger.kernel.org>; Tue,  4 Jan 2022 11:08:14 -0800 (PST)
-Received: by mail-pl1-x635.google.com with SMTP id l16so15619899plg.10
-        for <linux-remoteproc@vger.kernel.org>; Tue, 04 Jan 2022 11:08:14 -0800 (PST)
+        Wed, 5 Jan 2022 01:42:18 -0500
+Received: from mail-pf1-x42c.google.com (mail-pf1-x42c.google.com [IPv6:2607:f8b0:4864:20::42c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B0374C061761;
+        Tue,  4 Jan 2022 22:42:18 -0800 (PST)
+Received: by mail-pf1-x42c.google.com with SMTP id 8so34360748pfo.4;
+        Tue, 04 Jan 2022 22:42:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=cQF+XH6V3kVHXWMXV3EqI1J84nIsrn1qXMCyxHnZTsc=;
-        b=FiB1DfbLLjQ29EVkKGbeCeHRekDd/OS5bBExr6rJx7COnYOge7ZEpfxupcxx5TqM4/
-         loCsJHdeShJSN0TTKrNk0O/MedFHbumhWmFnidhP6D2gW6t+gOiipwKILPj29DdHKHci
-         w6+yJaBBExlOwHKk9R8QIZCr6xNjFB+LSp8YcoAPNb/hkI3YEFArKh6XxoqLouzdHZfj
-         7UDna6l9NTPRmT3xuwNHagpxn9IrKt01pBMyHd22sJdPKTHiRIWj6B94Y86HEl41HQBH
-         UwkQ9WR8bJwPd7ixBptosHbjI0DO6Iivoq+eb+UePncHwXZX8X52EOYAPtG1oJVabPNj
-         oLDA==
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=2iN9EGLEph4xOa1rzlV6HP0Zqf6BhRdNyhQVEqdz5GI=;
+        b=NKW+mIEvUmLJU0NEiIEDVziEhab0imP627Hag8mPnjIVcMS3DCZ/OuYLGPDOOoAOIk
+         l3YixhtdImUY4IeD9eYH8YHoAUkpFOqMdk0TJokM2kwbJB914YpHMMTNc5GucQzlDwNL
+         iZDGCyGWiR7lr7LhIzEdY4hoxGiDdiJOv4bfA4CQJvTIBBVQfNYHHqiZ4OT4XipYrstj
+         uT8IkBoKzeIN4rL8+OobbNa0kgjcc4uMTIg50P/1VdibiyXoPJPdSin+cIbUAnFb1HE+
+         FYpKZJ2aLtN3XibrwJgGPHPRm4CAmVQSwv+o9WMifYw2+rNE7ONrnJrQYxCeFyDN5dNv
+         o6SQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=cQF+XH6V3kVHXWMXV3EqI1J84nIsrn1qXMCyxHnZTsc=;
-        b=iXVjNSpQJBCKvO1i1Dm52NCFMu6S7UmhfvWGqsCXoWO7cyLta58gb0S/wd2rKh+lit
-         7c4fwW+rTmx+1epibe+H7u+OgFS9lHyoYVJcUO6z6Q1/Rg18aTt4BqSltnJwg4YMD8np
-         I3Z+NHyBapBEsm6Cu20dZOQN2wlnoQJujLD1FV4NONZmFoWfCXmN6pZ+oIm3/Xr734x9
-         uRiDtCwDtduObiu4JLrr2/paPgKTDcnAq0a4gsWcGxLBYFO0B6N5NwsPZBXmk3rsh6js
-         XHkk1E4aMbLDXwY6uHvDkqFV5ccBD+SriO1m969IZk+Dhs3PUgLzP6PM6cn8gQ9TcCxn
-         zmng==
-X-Gm-Message-State: AOAM5325aCig1BI6sJWnlR6NK9cl2d5mF/Tw6YljNW/vUqpNUqFv+Kwr
-        X8kKMLnWf3V88CZiJuIFzivLug==
-X-Google-Smtp-Source: ABdhPJw+rINow93orCEPCmEtD0MDuQgTEqcobjcf4Rhbdbw1tMT0NIZjbrecupBcM9PPml8ExcaUEA==
-X-Received: by 2002:a17:90b:4d8c:: with SMTP id oj12mr62468509pjb.11.1641323293874;
-        Tue, 04 Jan 2022 11:08:13 -0800 (PST)
-Received: from p14s (S0106889e681aac74.cg.shawcable.net. [68.147.0.187])
-        by smtp.gmail.com with ESMTPSA id h4sm499390pjk.2.2022.01.04.11.08.12
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=2iN9EGLEph4xOa1rzlV6HP0Zqf6BhRdNyhQVEqdz5GI=;
+        b=V3wfbcUeBFKRjY/CTONZW1cStLfKLRld+V2os+PISyTTNzvXkTQjzeLDOXeQIE2xKg
+         G923XJLzlPVhjgVxoyTGUKBlsIEb/4bV6Dd0v3VPcU8i/hxH3mElxKxZaO2wO64+v96e
+         goWRo+6jXlB47XabUV/gdOmOWyh1EqR41vr1mZUqYPxdQqj7sOAFjRV2QWHwXo8YvtOY
+         l15sW9QrtCI6TV9LK6O+4EmWSdF2hR+NQmvSxclTSDt5TqdzNnOljCW/dFhiilFc5wO2
+         nJAC1AKCWfq7AHRk0cKpd8ZcQs7QhzBSnT9AJVWgBPpdxjyrjd5vXhXRB47nrfjSeHwL
+         50TA==
+X-Gm-Message-State: AOAM531A4IL9YOcn65uDpDA3/0U7awhD3E/IrCdWcQgyr9RARszKmw+D
+        kOnxf8nw/9tLFQM56Ee+dwE=
+X-Google-Smtp-Source: ABdhPJwWUoYbMtFJirfZTUsl99jYfxQVt6E/K1jaWpkf0WlGDMgCWLERYLQGjhNeKEh7BxYOnzLZrQ==
+X-Received: by 2002:a62:7ed4:0:b0:4bb:5951:aac7 with SMTP id z203-20020a627ed4000000b004bb5951aac7mr54243976pfc.31.1641364938244;
+        Tue, 04 Jan 2022 22:42:18 -0800 (PST)
+Received: from localhost.localdomain ([159.226.95.43])
+        by smtp.googlemail.com with ESMTPSA id n34sm41687462pfv.129.2022.01.04.22.42.16
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Jan 2022 11:08:12 -0800 (PST)
-Date:   Tue, 4 Jan 2022 12:08:10 -0700
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-To:     Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com
-Subject: Re: [RFC PATCH v2 1/6] remoteproc: core: Introduce virtio device
- add/remove functions
-Message-ID: <20220104190810.GB540353@p14s>
-References: <20211222082349.30378-1-arnaud.pouliquen@foss.st.com>
- <20211222082349.30378-2-arnaud.pouliquen@foss.st.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20211222082349.30378-2-arnaud.pouliquen@foss.st.com>
+        Tue, 04 Jan 2022 22:42:17 -0800 (PST)
+From:   Miaoqian Lin <linmq006@gmail.com>
+To:     mathieu.poirier@linaro.org
+Cc:     bjorn.andersson@linaro.org, linmq006@gmail.com,
+        linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        ohad@wizery.com
+Subject: [PATCH v2] remoteproc: Fix NULL vs IS_ERR() checking in rproc_create_trace_file
+Date:   Wed,  5 Jan 2022 06:42:01 +0000
+Message-Id: <20220105064201.3907-1-linmq006@gmail.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20220104174623.GA540353@p14s>
+References: <20220104174623.GA540353@p14s>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Good morning,
+The debugfs_create_file() function doesn't return NULL.
+It returns error pointers. Fix check in rproc_create_trace_file
+and make it returns return error pointers.
+Fix check in rproc_handle_trace propagate the error code.
 
-On Wed, Dec 22, 2021 at 09:23:44AM +0100, Arnaud Pouliquen wrote:
-> In preparation of the migration of the management of rvdev in
-> remoteproc_virtio.c, this patch spins off new functions to manage the
-> remoteproc virtio device.
-> 
-> The rproc_rvdev_add_device and rproc_rvdev_remove_device will be
-> moved to remoteproc_virtio.c.
-> 
-> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-> ---
-> update vs previous revision:
->  - update according to the rebase from v15-rc1 to v16-rc1
->  - split patch to introduce rproc_register_rvdev and rproc_unregister_rvdev
->    function in a separate patch
-> ---
->  drivers/remoteproc/remoteproc_core.c | 94 +++++++++++++++++-----------
->  1 file changed, 57 insertions(+), 37 deletions(-)
-> 
-> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-> index 69f51acf235e..d1f1c5c25bd7 100644
-> --- a/drivers/remoteproc/remoteproc_core.c
-> +++ b/drivers/remoteproc/remoteproc_core.c
-> @@ -484,6 +484,61 @@ static int copy_dma_range_map(struct device *to, struct device *from)
->  	return 0;
->  }
->  
-> +static int rproc_rvdev_add_device(struct rproc_vdev *rvdev)
-> +{
-> +	struct rproc *rproc = rvdev->rproc;
-> +	char name[16];
-> +	int ret;
-> +
-> +	snprintf(name, sizeof(name), "vdev%dbuffer", rvdev->index);
-> +	rvdev->dev.parent = &rproc->dev;
-> +	rvdev->dev.release = rproc_rvdev_release;
-> +	dev_set_name(&rvdev->dev, "%s#%s", dev_name(rvdev->dev.parent), name);
-> +	dev_set_drvdata(&rvdev->dev, rvdev);
-> +
-> +	ret = device_register(&rvdev->dev);
-> +	if (ret) {
-> +		put_device(&rvdev->dev);
-> +		return ret;
-> +	}
+Signed-off-by: Miaoqian Lin <linmq006@gmail.com>
+---
+Changes in v2:
+- return PTR_ERR(tfile) in rproc_create_trace_file
+- fix check in rproc_handle_trace()
+---
+ drivers/remoteproc/remoteproc_core.c    | 6 ++++--
+ drivers/remoteproc/remoteproc_debugfs.c | 4 ++--
+ 2 files changed, 6 insertions(+), 4 deletions(-)
 
-Registering the device here is a problem...  If device_register() fails
-put_device() is called and we return, only to call device_unregister() on the
-same device in rproc_handle_vdev(). 
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index 775df165eb45..5608408f8eac 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -656,6 +656,7 @@ static int rproc_handle_trace(struct rproc *rproc, void *ptr,
+ 	struct rproc_debug_trace *trace;
+ 	struct device *dev = &rproc->dev;
+ 	char name[15];
++	int ret;
+ 
+ 	if (sizeof(*rsc) > avail) {
+ 		dev_err(dev, "trace rsc is truncated\n");
+@@ -684,9 +685,10 @@ static int rproc_handle_trace(struct rproc *rproc, void *ptr,
+ 
+ 	/* create the debugfs entry */
+ 	trace->tfile = rproc_create_trace_file(name, rproc, trace);
+-	if (!trace->tfile) {
++	if (IS_ERR(trace->tfile)) {
++		ret = PTR_ERR(trace->tfile);
+ 		kfree(trace);
+-		return -EINVAL;
++		return ret;
+ 	}
+ 
+ 	list_add_tail(&trace->node, &rproc->traces);
+diff --git a/drivers/remoteproc/remoteproc_debugfs.c b/drivers/remoteproc/remoteproc_debugfs.c
+index b5a1e3b697d9..c1aa7272da1e 100644
+--- a/drivers/remoteproc/remoteproc_debugfs.c
++++ b/drivers/remoteproc/remoteproc_debugfs.c
+@@ -390,9 +390,9 @@ struct dentry *rproc_create_trace_file(const char *name, struct rproc *rproc,
+ 
+ 	tfile = debugfs_create_file(name, 0400, rproc->dbg_dir, trace,
+ 				    &trace_rproc_ops);
+-	if (!tfile) {
++	if (IS_ERR(tfile)) {
+ 		dev_err(&rproc->dev, "failed to create debugfs trace entry\n");
+-		return NULL;
++		return PTR_ERR(tfile);
+ 	}
+ 
+ 	return tfile;
+-- 
+2.17.1
 
-Moreover in rproc_handle_vdev(), device_unregister() is called in the error
-path but device_register() is called here in rproc_rvdev_add_device().  This
-introduces coupling between the two functions, making it hard to maintain from
-hereon.
-
-I suggest calling device_register() in rproc_handle_vdev() after
-rproc_rvdev_add_device() has returned successfully. 
-
-More comments to come tomorrow.
-
-Thanks,
-Mathieu
-
-> +	ret = copy_dma_range_map(&rvdev->dev, rproc->dev.parent);
-> +	if (ret)
-> +		goto free_rvdev;
-> +
-> +	/* Make device dma capable by inheriting from parent's capabilities */
-> +	set_dma_ops(&rvdev->dev, get_dma_ops(rproc->dev.parent));
-> +
-> +	ret = dma_coerce_mask_and_coherent(&rvdev->dev,
-> +					   dma_get_mask(rproc->dev.parent));
-> +	if (ret) {
-> +		dev_warn(&rvdev->dev,
-> +			 "Failed to set DMA mask %llx. Trying to continue... (%pe)\n",
-> +			 dma_get_mask(rproc->dev.parent), ERR_PTR(ret));
-> +	}
-> +
-> +	list_add_tail(&rvdev->node, &rproc->rvdevs);
-> +
-> +	rvdev->subdev.start = rproc_vdev_do_start;
-> +	rvdev->subdev.stop = rproc_vdev_do_stop;
-> +
-> +	rproc_add_subdev(rproc, &rvdev->subdev);
-> +
-> +	return 0;
-> +
-> +free_rvdev:
-> +	device_unregister(&rvdev->dev);
-> +	return ret;
-> +}
-> +
-> +static void rproc_rvdev_remove_device(struct rproc_vdev *rvdev)
-> +{
-> +	struct rproc *rproc = rvdev->rproc;
-> +
-> +	rproc_remove_subdev(rproc, &rvdev->subdev);
-> +	list_del(&rvdev->node);
-> +	device_unregister(&rvdev->dev);
-> +}
-> +
->  /**
->   * rproc_handle_vdev() - handle a vdev fw resource
->   * @rproc: the remote processor
-> @@ -519,7 +574,6 @@ static int rproc_handle_vdev(struct rproc *rproc, void *ptr,
->  	struct device *dev = &rproc->dev;
->  	struct rproc_vdev *rvdev;
->  	int i, ret;
-> -	char name[16];
->  
->  	/* make sure resource isn't truncated */
->  	if (struct_size(rsc, vring, rsc->num_of_vrings) + rsc->config_len >
-> @@ -553,34 +607,10 @@ static int rproc_handle_vdev(struct rproc *rproc, void *ptr,
->  	rvdev->rproc = rproc;
->  	rvdev->index = rproc->nb_vdev++;
->  
-> -	/* Initialise vdev subdevice */
-> -	snprintf(name, sizeof(name), "vdev%dbuffer", rvdev->index);
-> -	rvdev->dev.parent = &rproc->dev;
-> -	rvdev->dev.release = rproc_rvdev_release;
-> -	dev_set_name(&rvdev->dev, "%s#%s", dev_name(rvdev->dev.parent), name);
-> -	dev_set_drvdata(&rvdev->dev, rvdev);
-> -
-> -	ret = device_register(&rvdev->dev);
-> -	if (ret) {
-> -		put_device(&rvdev->dev);
-> -		return ret;
-> -	}
-> -
-> -	ret = copy_dma_range_map(&rvdev->dev, rproc->dev.parent);
-> +	ret = rproc_rvdev_add_device(rvdev);
->  	if (ret)
->  		goto free_rvdev;
->  
-> -	/* Make device dma capable by inheriting from parent's capabilities */
-> -	set_dma_ops(&rvdev->dev, get_dma_ops(rproc->dev.parent));
-> -
-> -	ret = dma_coerce_mask_and_coherent(&rvdev->dev,
-> -					   dma_get_mask(rproc->dev.parent));
-> -	if (ret) {
-> -		dev_warn(dev,
-> -			 "Failed to set DMA mask %llx. Trying to continue... (%pe)\n",
-> -			 dma_get_mask(rproc->dev.parent), ERR_PTR(ret));
-> -	}
-> -
->  	/* parse the vrings */
->  	for (i = 0; i < rsc->num_of_vrings; i++) {
->  		ret = rproc_parse_vring(rvdev, rsc, i);
-> @@ -598,13 +628,6 @@ static int rproc_handle_vdev(struct rproc *rproc, void *ptr,
->  			goto unwind_vring_allocations;
->  	}
->  
-> -	list_add_tail(&rvdev->node, &rproc->rvdevs);
-> -
-> -	rvdev->subdev.start = rproc_vdev_do_start;
-> -	rvdev->subdev.stop = rproc_vdev_do_stop;
-> -
-> -	rproc_add_subdev(rproc, &rvdev->subdev);
-> -
->  	return 0;
->  
->  unwind_vring_allocations:
-> @@ -619,7 +642,6 @@ void rproc_vdev_release(struct kref *ref)
->  {
->  	struct rproc_vdev *rvdev = container_of(ref, struct rproc_vdev, refcount);
->  	struct rproc_vring *rvring;
-> -	struct rproc *rproc = rvdev->rproc;
->  	int id;
->  
->  	for (id = 0; id < ARRAY_SIZE(rvdev->vring); id++) {
-> @@ -627,9 +649,7 @@ void rproc_vdev_release(struct kref *ref)
->  		rproc_free_vring(rvring);
->  	}
->  
-> -	rproc_remove_subdev(rproc, &rvdev->subdev);
-> -	list_del(&rvdev->node);
-> -	device_unregister(&rvdev->dev);
-> +	rproc_rvdev_remove_device(rvdev);
->  }
->  
->  /**
-> -- 
-> 2.17.1
-> 
