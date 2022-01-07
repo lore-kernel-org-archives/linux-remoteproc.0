@@ -2,122 +2,94 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F358AC433EF
-	for <linux-remoteproc@archiver.kernel.org>; Fri,  7 Jan 2022 14:17:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE569C433F5
+	for <linux-remoteproc@archiver.kernel.org>; Fri,  7 Jan 2022 17:21:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239206AbiAGORz (ORCPT
+        id S240730AbiAGRVt (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 7 Jan 2022 09:17:55 -0500
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:58350 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239091AbiAGORz (ORCPT
+        Fri, 7 Jan 2022 12:21:49 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55438 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232691AbiAGRVs (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 7 Jan 2022 09:17:55 -0500
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 207EHqCO042918;
-        Fri, 7 Jan 2022 08:17:52 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1641565072;
-        bh=HSVQzyMdA0QJV/hriLNqRvdOYdA9p7o5eaHwOePeRAA=;
-        h=Subject:From:To:CC:References:Date:In-Reply-To;
-        b=FpOg1jXPq9MDFvAToVmX/Puv8BxVFCKKB0tPrtj0MjCvdKgSZbhMXY4ptl8VQdL/F
-         eKa+PLNH+tGFxrvH8LZQVvcqTLn14WiySgQzyTEMvCOPA+UDHPxt91S4s2gbrxLliK
-         f25pXOO0Kk+0XYkIRWfmQ8X6omb2xUP47+O7PPlY=
-Received: from DFLE105.ent.ti.com (dfle105.ent.ti.com [10.64.6.26])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 207EHqSf058117
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 7 Jan 2022 08:17:52 -0600
-Received: from DFLE111.ent.ti.com (10.64.6.32) by DFLE105.ent.ti.com
- (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2308.14; Fri, 7
- Jan 2022 08:17:51 -0600
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE111.ent.ti.com
- (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2308.14 via
- Frontend Transport; Fri, 7 Jan 2022 08:17:51 -0600
-Received: from [10.249.36.164] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 207EHpmU081495;
-        Fri, 7 Jan 2022 08:17:51 -0600
-Subject: Re: [PATCH] dt-bindings: remoteproc: ti: Fix the number of mailboxes
-From:   Suman Anna <s-anna@ti.com>
-To:     Rob Herring <robh@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>
-CC:     <linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, "Nagalla, Hari" <hnagalla@ti.com>
-References: <20220107030457.2383750-1-robh@kernel.org>
- <642312db-4af8-7087-45bf-e86923396038@ti.com>
-Message-ID: <762335b1-d6a2-64d2-75a1-f865cd557098@ti.com>
-Date:   Fri, 7 Jan 2022 08:17:51 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.14.0
+        Fri, 7 Jan 2022 12:21:48 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6F388C061574;
+        Fri,  7 Jan 2022 09:21:48 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id E4F12611B1;
+        Fri,  7 Jan 2022 17:21:47 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53BF6C36AEB;
+        Fri,  7 Jan 2022 17:21:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1641576107;
+        bh=R4m7g3AlfOH+TrxVDcGPDb1ic2Lz8Nne1NVo+cQ1N/o=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=D7ng5rOcjMyaXcNKxaIPMKpFqGcvu6GCEIbmCgIT5S5jb7hxZ/FEzUejsUMX9iSyv
+         8WqQryhnACz2lpDOYCJhR5PbwKdm/hpkB3ouNWukJjHObWVPRjQs8OeBG4y4yuBY7L
+         JmQbGnIFTdqF54ZCRMEoLdvV6rsNvm8RF6Qo98/nRuD1FXM8T329C4p59DeUOmQ9r5
+         lgO5k3ePiACXqjqGsVRb4PRuWtkzUyJdupWeJfafjciPKbeNu4jL33taBlXoHSuDl7
+         qDZVWAEUTS5wLFHs4EhZWb1eH0ayl33PWMTvQFJph1sNUhx1s5a4jHQQ6Tf/9+H/pU
+         RURBia/lyIgqQ==
+Received: by mail-ed1-f46.google.com with SMTP id c71so13149001edf.6;
+        Fri, 07 Jan 2022 09:21:47 -0800 (PST)
+X-Gm-Message-State: AOAM531j+Nxw2MsVvUkY0tP4FNkrs9V51hvx4qr/zuMq6yWEbBbEPTeT
+        ZfP/WqGTVu0poZUwO+PU9VP0rgA/dgEzLK6M7Q==
+X-Google-Smtp-Source: ABdhPJwSri5klnWOlYutuBDglAE7lCy6dumP313wBQDYBZdCdr17gajDIZeXx9w5rXYDTz8oEGTgDGoIWRFYjpl+2g0=
+X-Received: by 2002:a17:906:7945:: with SMTP id l5mr50449077ejo.82.1641576105689;
+ Fri, 07 Jan 2022 09:21:45 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <642312db-4af8-7087-45bf-e86923396038@ti.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+References: <20220107030457.2383750-1-robh@kernel.org> <642312db-4af8-7087-45bf-e86923396038@ti.com>
+ <762335b1-d6a2-64d2-75a1-f865cd557098@ti.com>
+In-Reply-To: <762335b1-d6a2-64d2-75a1-f865cd557098@ti.com>
+From:   Rob Herring <robh@kernel.org>
+Date:   Fri, 7 Jan 2022 11:21:34 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqL85KE-WjBO1hkxw_VQdLTwZd8Bu0LzUaNXoABVoqK0TQ@mail.gmail.com>
+Message-ID: <CAL_JsqL85KE-WjBO1hkxw_VQdLTwZd8Bu0LzUaNXoABVoqK0TQ@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: remoteproc: ti: Fix the number of mailboxes
+To:     Suman Anna <s-anna@ti.com>
+Cc:     Ohad Ben-Cohen <ohad@wizery.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        "open list:REMOTE PROCESSOR (REMOTEPROC) SUBSYSTEM" 
+        <linux-remoteproc@vger.kernel.org>, devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Nagalla, Hari" <hnagalla@ti.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On 1/7/22 8:13 AM, Suman Anna wrote:
-> Hi Rob,
-> 
-> On 1/6/22 9:04 PM, Rob Herring wrote:
->> Based on the example, the TI K3 DSP and R5 have 2 mailboxes, but the schema
->> says 1. Fix the schema.
-> 
-> No, 1 is correct. The OMAP Mailbox binding uses #mbox-cells as 1 and not 0, and
-> uses a phandle as the cell-value.
+On Fri, Jan 7, 2022 at 8:17 AM Suman Anna <s-anna@ti.com> wrote:
+>
+> On 1/7/22 8:13 AM, Suman Anna wrote:
+> > Hi Rob,
+> >
+> > On 1/6/22 9:04 PM, Rob Herring wrote:
+> >> Based on the example, the TI K3 DSP and R5 have 2 mailboxes, but the schema
+> >> says 1. Fix the schema.
+> >
+> > No, 1 is correct. The OMAP Mailbox binding uses #mbox-cells as 1 and not 0, and
+> > uses a phandle as the cell-value.
 
-The following is what you get with your current patch,
+That's unfortunate. Really, ti,mbox-tx/rx should have been the mbox
+cells with 2 entries (rx and tx)...
 
-Documentation/devicetree/bindings/remoteproc/ti,k3-dsp-rproc.example.dt.yaml:
-dsp@4d80800000: mboxes: [[4294967295, 4294967295]] is too short
-Documentation/devicetree/bindings/remoteproc/ti,k3-dsp-rproc.example.dt.yaml:
-dsp@64800000: mboxes: [[4294967295, 4294967295]] is too short
+>
+> The following is what you get with your current patch,
+>
+> Documentation/devicetree/bindings/remoteproc/ti,k3-dsp-rproc.example.dt.yaml:
+> dsp@4d80800000: mboxes: [[4294967295, 4294967295]] is too short
+> Documentation/devicetree/bindings/remoteproc/ti,k3-dsp-rproc.example.dt.yaml:
+> dsp@64800000: mboxes: [[4294967295, 4294967295]] is too short
 
-regards
-Suman
+Ugg, yes. What I'm working on is getting validation on dtb files to
+work. That means the dts <> are lost and we have to either parse the
+properties properly (look up #foo-cells) or use __fixups__ to find
+unresolved phandles (the case for most examples). The latter works
+most of the time except a few cases like above. So the fix here is to
+add a mbox provider node to the example.
 
-> 
-> regards
-> Suman
-> 
->>
->> Signed-off-by: Rob Herring <robh@kernel.org>
->> ---
->>  .../devicetree/bindings/remoteproc/ti,k3-dsp-rproc.yaml         | 2 +-
->>  .../devicetree/bindings/remoteproc/ti,k3-r5f-rproc.yaml         | 2 +-
->>  2 files changed, 2 insertions(+), 2 deletions(-)
->>
->> diff --git a/Documentation/devicetree/bindings/remoteproc/ti,k3-dsp-rproc.yaml b/Documentation/devicetree/bindings/remoteproc/ti,k3-dsp-rproc.yaml
->> index 5ec6505ac408..648144fa1582 100644
->> --- a/Documentation/devicetree/bindings/remoteproc/ti,k3-dsp-rproc.yaml
->> +++ b/Documentation/devicetree/bindings/remoteproc/ti,k3-dsp-rproc.yaml
->> @@ -53,7 +53,7 @@ properties:
->>        OMAP Mailbox specifier denoting the sub-mailbox, to be used for
->>        communication with the remote processor. This property should match
->>        with the sub-mailbox node used in the firmware image.
->> -    maxItems: 1
->> +    maxItems: 2
->>  
->>    memory-region:
->>      minItems: 2
->> diff --git a/Documentation/devicetree/bindings/remoteproc/ti,k3-r5f-rproc.yaml b/Documentation/devicetree/bindings/remoteproc/ti,k3-r5f-rproc.yaml
->> index eeef255c4045..2c5f91ea5296 100644
->> --- a/Documentation/devicetree/bindings/remoteproc/ti,k3-r5f-rproc.yaml
->> +++ b/Documentation/devicetree/bindings/remoteproc/ti,k3-r5f-rproc.yaml
->> @@ -135,7 +135,7 @@ patternProperties:
->>            OMAP Mailbox specifier denoting the sub-mailbox, to be used for
->>            communication with the remote processor. This property should match
->>            with the sub-mailbox node used in the firmware image.
->> -        maxItems: 1
->> +        maxItems: 2
->>  
->>        memory-region:
->>          description: |
->>
-> 
-
+Rob
