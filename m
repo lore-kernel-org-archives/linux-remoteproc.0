@@ -2,227 +2,91 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B09DCC433EF
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  6 Jan 2022 18:53:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0162C433FE
+	for <linux-remoteproc@archiver.kernel.org>; Fri,  7 Jan 2022 03:05:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243049AbiAFSxO (ORCPT
+        id S1344981AbiAGDFJ (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 6 Jan 2022 13:53:14 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33020 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243048AbiAFSxN (ORCPT
+        Thu, 6 Jan 2022 22:05:09 -0500
+Received: from mail-oi1-f169.google.com ([209.85.167.169]:42579 "EHLO
+        mail-oi1-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1344950AbiAGDFJ (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 6 Jan 2022 13:53:13 -0500
-Received: from mail-pg1-x534.google.com (mail-pg1-x534.google.com [IPv6:2607:f8b0:4864:20::534])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A623EC061201
-        for <linux-remoteproc@vger.kernel.org>; Thu,  6 Jan 2022 10:53:13 -0800 (PST)
-Received: by mail-pg1-x534.google.com with SMTP id f8so3373836pgf.8
-        for <linux-remoteproc@vger.kernel.org>; Thu, 06 Jan 2022 10:53:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=JNS0S6ws0b44uRH/I7fHJUlSoq/HfDftbNx1kWhJBDY=;
-        b=C3J72x1eujONqwRMfNpCgBraDBl5F0HTlrDwkyG9dAbOZ7scJAuWZffpVhejkYf9VR
-         UpQcWhRIQvduHeJONSD+e14UoZ1WCvIASeYtusK3tPaLvANNBhuKDj0+VLoiPOgMlUuS
-         qMshNcLU4baJG+xltNXFhjexyYyFdSfmjZXK+baX7VfgBWvpl0SYtxi8eLu1vtERU6xa
-         UG87F3wqoLKtmV46VMsRz7X9SfLMLWadperyd5xdGjJ9QcEXxArShoCdFLIrADyv0UKt
-         EQyMtYvu5ggCGiYshY2JTv9iwRhQhbTAmLgf9enVLS/L6Ttk6Gc2EzDmrDpbRa30OZwM
-         UahA==
+        Thu, 6 Jan 2022 22:05:09 -0500
+Received: by mail-oi1-f169.google.com with SMTP id w80so6460097oie.9;
+        Thu, 06 Jan 2022 19:05:09 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=JNS0S6ws0b44uRH/I7fHJUlSoq/HfDftbNx1kWhJBDY=;
-        b=jftQxmQNXoYofYQWe0jwpDsnEueJSNcqSkpmk/Q7AgzaiRmvtycrYkhAGGcNUs07CZ
-         wZYekfza0qgWnRZFXxJlaMcUY6HbTsYAKIjHRZcZsSgIPp30ytNx33I/dxohqsfO1ICB
-         +W3wCUTABcYj3gWIh6Sjm+8BStlwGoFfBDV/6ot+Myt6TVNzS87ahREcz0ncZBgxAFKn
-         Y8o+6weAn89QmimNiuJj6+fuOiqTXcaoBHJLvZpX1/d+H75nrMjJgEEwJI0XWFpB+iil
-         0V6QHzyql54ahbwAXOtSuCccKmPxfxPHvVt9yFwjK3YZBTdeKDJh6mb6BdyvBRefv33H
-         Dwtw==
-X-Gm-Message-State: AOAM530F/qIXvahqGqfcYClP7rEc4JBV7Ru1Vlk+e6R3ZZLCUD+xCLVu
-        h5B7zm7lqOBh+YjmL7zljgItrw==
-X-Google-Smtp-Source: ABdhPJy6rQHSiSMgrDLVkpo3O/ViA2YSigATsKEr+J9KyotV6Ig/DgyVJF2M7sByf/cSlIP2E9VC6g==
-X-Received: by 2002:a63:6ecf:: with SMTP id j198mr43522960pgc.287.1641495193133;
-        Thu, 06 Jan 2022 10:53:13 -0800 (PST)
-Received: from p14s (S0106889e681aac74.cg.shawcable.net. [68.147.0.187])
-        by smtp.gmail.com with ESMTPSA id c10sm127881pfl.200.2022.01.06.10.53.11
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Zsx3qDj2DvypF3b69YZdJxriNNUsp6EFVMJrxgh19EU=;
+        b=ncRfCPat9M1evSjlCAUbZljvzSbEoHMnK4E+6vAAwIxlEK+sjVn8/9FDGqUjDXgorE
+         AYHrtZF1AQ3pNxazZQCoXR71L2wjzVyyzWdWjw9UCiDBO+4dwJPQ8YmZXai0n25fUYn+
+         0eObE/hXL70l67kr1l5mtGcOAL3KKQXmOaLPzwaI+4RQXsQLzv18yrX6NksU6sQwpBea
+         AMvFv9aVGR4IC8mO20QSsed5TnUD7okglsX/yf+fwBicjPoMB4tzDZ6eI/nmyxlucgVt
+         GQfHO1mJRh4/7KjtG4tiBbFuzi7zvdoVGVng9i++mpODCe1CRaO/wVfOskTxz4hCYpZi
+         DfCg==
+X-Gm-Message-State: AOAM531TO51SQZnrINZSMpU510KGyAu1ssLhKonniMWdk2viaNidMXw/
+        AYNJCHCNAj+uOlDcWrI4qQ==
+X-Google-Smtp-Source: ABdhPJxoO85v786P50dk73DP0YuhspO0BtdFzkoW3DJQcQ3BmFECERFl6LAlAPvElshDGjsrHV8TSQ==
+X-Received: by 2002:a05:6808:19a5:: with SMTP id bj37mr2597227oib.132.1641524708699;
+        Thu, 06 Jan 2022 19:05:08 -0800 (PST)
+Received: from xps15.herring.priv (66-90-148-213.dyn.grandenetworks.net. [66.90.148.213])
+        by smtp.googlemail.com with ESMTPSA id p7sm665573ots.57.2022.01.06.19.05.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Jan 2022 10:53:11 -0800 (PST)
-Date:   Thu, 6 Jan 2022 11:53:09 -0700
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-To:     Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com
-Subject: Re: [RFC PATCH v2 4/6] remoteproc: virtio: Create platform device
- for the remoteproc_virtio
-Message-ID: <20220106185309.GC642186@p14s>
-References: <20211222082349.30378-1-arnaud.pouliquen@foss.st.com>
- <20211222082349.30378-5-arnaud.pouliquen@foss.st.com>
+        Thu, 06 Jan 2022 19:05:08 -0800 (PST)
+From:   Rob Herring <robh@kernel.org>
+To:     Ohad Ben-Cohen <ohad@wizery.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Suman Anna <s-anna@ti.com>
+Cc:     linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] dt-bindings: remoteproc: ti: Fix the number of mailboxes
+Date:   Thu,  6 Jan 2022 21:04:55 -0600
+Message-Id: <20220107030457.2383750-1-robh@kernel.org>
+X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20211222082349.30378-5-arnaud.pouliquen@foss.st.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Wed, Dec 22, 2021 at 09:23:47AM +0100, Arnaud Pouliquen wrote:
-> Define a platform driver to prepare for the management of
-> remoteproc virtio devices as platform devices.
-> 
-> The platform device allows to pass rproc_vdev_data platform data to
-> specify properties that are stored in the rproc_vdev structure.
-> 
-> Such approach will allow to preserve legacy remoteproc virtio device
-> creation but also to probe the device using device tree mechanism.
-> 
-> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-> ---
-> Update vs previous revision:
->   - Fix commit and rename rproc_vdev_data to rproc_vdev_pdata
-> ---
->  drivers/remoteproc/remoteproc_internal.h |  6 +++
->  drivers/remoteproc/remoteproc_virtio.c   | 65 ++++++++++++++++++++++++
->  include/linux/remoteproc.h               |  2 +
->  3 files changed, 73 insertions(+)
-> 
-> diff --git a/drivers/remoteproc/remoteproc_internal.h b/drivers/remoteproc/remoteproc_internal.h
-> index e9e9a551a8c2..6f511c50a15d 100644
-> --- a/drivers/remoteproc/remoteproc_internal.h
-> +++ b/drivers/remoteproc/remoteproc_internal.h
-> @@ -24,6 +24,12 @@ struct rproc_debug_trace {
->  	struct rproc_mem_entry trace_mem;
->  };
->  
-> +struct rproc_vdev_pdata {
-> +	u32 rsc_offset;
-> +	unsigned int id;
-> +	unsigned int index;
-> +};
-> +
->  /* from remoteproc_core.c */
->  void rproc_release(struct kref *kref);
->  int rproc_of_parse_firmware(struct device *dev, int index,
-> diff --git a/drivers/remoteproc/remoteproc_virtio.c b/drivers/remoteproc/remoteproc_virtio.c
-> index 51d415744fc6..5f8005caeb6e 100644
-> --- a/drivers/remoteproc/remoteproc_virtio.c
-> +++ b/drivers/remoteproc/remoteproc_virtio.c
-> @@ -4,6 +4,7 @@
->   *
->   * Copyright (C) 2011 Texas Instruments, Inc.
->   * Copyright (C) 2011 Google, Inc.
-> + * Copyright (C) 2021 STMicroelectronics
->   *
->   * Ohad Ben-Cohen <ohad@wizery.com>
->   * Brian Swetland <swetland@google.com>
-> @@ -13,6 +14,7 @@
->  #include <linux/dma-map-ops.h>
->  #include <linux/dma-mapping.h>
->  #include <linux/export.h>
-> +#include <linux/of_platform.h>
->  #include <linux/of_reserved_mem.h>
->  #include <linux/remoteproc.h>
->  #include <linux/virtio.h>
-> @@ -575,3 +577,66 @@ void rproc_vdev_release(struct kref *ref)
->  
->  	rproc_rvdev_remove_device(rvdev);
->  }
-> +
-> +static int rproc_virtio_probe(struct platform_device *pdev)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	struct rproc_vdev_pdata *vdev_data = dev->platform_data;
-> +	struct rproc_vdev *rvdev;
-> +	struct rproc *rproc;
-> +
-> +	if (!vdev_data)
-> +		return -EINVAL;
-> +
-> +	rvdev = devm_kzalloc(dev, sizeof(*rvdev), GFP_KERNEL);
-> +	if (!rvdev)
-> +		return -ENOMEM;
-> +
-> +	rproc = container_of(dev->parent, struct rproc, dev);
-> +
-> +	rvdev->rsc_offset = vdev_data->rsc_offset;
-> +	rvdev->id = vdev_data->id;
-> +	rvdev->index = vdev_data->index;
-> +
-> +	rvdev->pdev = pdev;
-> +	rvdev->rproc = rproc;
-> +
-> +	platform_set_drvdata(pdev, rvdev);
-> +
-> +	return rproc_rvdev_add_device(rvdev);
-> +}
-> +
-> +static int rproc_virtio_remove(struct platform_device *pdev)
-> +{
-> +	struct rproc_vdev *rvdev = dev_get_drvdata(&pdev->dev);
-> +	struct rproc *rproc = rvdev->rproc;
-> +	struct rproc_vring *rvring;
-> +	int id;
-> +
-> +	for (id = 0; id < ARRAY_SIZE(rvdev->vring); id++) {
-> +		rvring = &rvdev->vring[id];
-> +		rproc_free_vring(rvring);
-> +	}
-> +
-> +	rproc_remove_subdev(rproc, &rvdev->subdev);
-> +	rproc_unregister_rvdev(rvdev);
-> +	dev_dbg(&pdev->dev, "virtio dev %d removed\n",  rvdev->index);
-> +
+Based on the example, the TI K3 DSP and R5 have 2 mailboxes, but the schema
+says 1. Fix the schema.
 
-Function rproc_virtio_remove() doesn't do the opposite of rproc_virtio_probe(),
-making it hard for people to wrap their head around what is happening.  This may
-get cleaned up as part of the error path problem we already talked about...  If not
-this is something to improve one.
+Signed-off-by: Rob Herring <robh@kernel.org>
+---
+ .../devicetree/bindings/remoteproc/ti,k3-dsp-rproc.yaml         | 2 +-
+ .../devicetree/bindings/remoteproc/ti,k3-r5f-rproc.yaml         | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-I am done reviewing this set.
+diff --git a/Documentation/devicetree/bindings/remoteproc/ti,k3-dsp-rproc.yaml b/Documentation/devicetree/bindings/remoteproc/ti,k3-dsp-rproc.yaml
+index 5ec6505ac408..648144fa1582 100644
+--- a/Documentation/devicetree/bindings/remoteproc/ti,k3-dsp-rproc.yaml
++++ b/Documentation/devicetree/bindings/remoteproc/ti,k3-dsp-rproc.yaml
+@@ -53,7 +53,7 @@ properties:
+       OMAP Mailbox specifier denoting the sub-mailbox, to be used for
+       communication with the remote processor. This property should match
+       with the sub-mailbox node used in the firmware image.
+-    maxItems: 1
++    maxItems: 2
+ 
+   memory-region:
+     minItems: 2
+diff --git a/Documentation/devicetree/bindings/remoteproc/ti,k3-r5f-rproc.yaml b/Documentation/devicetree/bindings/remoteproc/ti,k3-r5f-rproc.yaml
+index eeef255c4045..2c5f91ea5296 100644
+--- a/Documentation/devicetree/bindings/remoteproc/ti,k3-r5f-rproc.yaml
++++ b/Documentation/devicetree/bindings/remoteproc/ti,k3-r5f-rproc.yaml
+@@ -135,7 +135,7 @@ patternProperties:
+           OMAP Mailbox specifier denoting the sub-mailbox, to be used for
+           communication with the remote processor. This property should match
+           with the sub-mailbox node used in the firmware image.
+-        maxItems: 1
++        maxItems: 2
+ 
+       memory-region:
+         description: |
+-- 
+2.32.0
 
-Thanks,
-Mathieu
-
-> +	return 0;
-> +}
-> +
-> +/* Platform driver */
-> +static const struct of_device_id rproc_virtio_match[] = {
-> +	{ .compatible = "rproc-virtio", },
-> +	{},
-> +};
-> +
-> +static struct platform_driver rproc_virtio_driver = {
-> +	.probe		= rproc_virtio_probe,
-> +	.remove		= rproc_virtio_remove,
-> +	.driver		= {
-> +		.name	= "rproc-virtio",
-> +		.of_match_table	= rproc_virtio_match,
-> +	},
-> +};
-> +builtin_platform_driver(rproc_virtio_driver);
-> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-> index e0600e1e5c17..542a3d4664f2 100644
-> --- a/include/linux/remoteproc.h
-> +++ b/include/linux/remoteproc.h
-> @@ -616,6 +616,7 @@ struct rproc_vring {
->   * struct rproc_vdev - remoteproc state for a supported virtio device
->   * @refcount: reference counter for the vdev and vring allocations
->   * @subdev: handle for registering the vdev as a rproc subdevice
-> + * @pdev: remoteproc virtio platform device
->   * @dev: device struct used for reference count semantics
->   * @id: virtio device id (as in virtio_ids.h)
->   * @node: list node
-> @@ -628,6 +629,7 @@ struct rproc_vdev {
->  	struct kref refcount;
->  
->  	struct rproc_subdev subdev;
-> +	struct platform_device *pdev;
->  	struct device dev;
->  
->  	unsigned int id;
-> -- 
-> 2.17.1
-> 
