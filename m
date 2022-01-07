@@ -2,94 +2,193 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE569C433F5
-	for <linux-remoteproc@archiver.kernel.org>; Fri,  7 Jan 2022 17:21:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 206CCC433EF
+	for <linux-remoteproc@archiver.kernel.org>; Fri,  7 Jan 2022 19:45:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240730AbiAGRVt (ORCPT
+        id S233308AbiAGTo7 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 7 Jan 2022 12:21:49 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55438 "EHLO
+        Fri, 7 Jan 2022 14:44:59 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60070 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232691AbiAGRVs (ORCPT
+        with ESMTP id S233301AbiAGTo7 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 7 Jan 2022 12:21:48 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6F388C061574;
-        Fri,  7 Jan 2022 09:21:48 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id E4F12611B1;
-        Fri,  7 Jan 2022 17:21:47 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53BF6C36AEB;
-        Fri,  7 Jan 2022 17:21:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1641576107;
-        bh=R4m7g3AlfOH+TrxVDcGPDb1ic2Lz8Nne1NVo+cQ1N/o=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=D7ng5rOcjMyaXcNKxaIPMKpFqGcvu6GCEIbmCgIT5S5jb7hxZ/FEzUejsUMX9iSyv
-         8WqQryhnACz2lpDOYCJhR5PbwKdm/hpkB3ouNWukJjHObWVPRjQs8OeBG4y4yuBY7L
-         JmQbGnIFTdqF54ZCRMEoLdvV6rsNvm8RF6Qo98/nRuD1FXM8T329C4p59DeUOmQ9r5
-         lgO5k3ePiACXqjqGsVRb4PRuWtkzUyJdupWeJfafjciPKbeNu4jL33taBlXoHSuDl7
-         qDZVWAEUTS5wLFHs4EhZWb1eH0ayl33PWMTvQFJph1sNUhx1s5a4jHQQ6Tf/9+H/pU
-         RURBia/lyIgqQ==
-Received: by mail-ed1-f46.google.com with SMTP id c71so13149001edf.6;
-        Fri, 07 Jan 2022 09:21:47 -0800 (PST)
-X-Gm-Message-State: AOAM531j+Nxw2MsVvUkY0tP4FNkrs9V51hvx4qr/zuMq6yWEbBbEPTeT
-        ZfP/WqGTVu0poZUwO+PU9VP0rgA/dgEzLK6M7Q==
-X-Google-Smtp-Source: ABdhPJwSri5klnWOlYutuBDglAE7lCy6dumP313wBQDYBZdCdr17gajDIZeXx9w5rXYDTz8oEGTgDGoIWRFYjpl+2g0=
-X-Received: by 2002:a17:906:7945:: with SMTP id l5mr50449077ejo.82.1641576105689;
- Fri, 07 Jan 2022 09:21:45 -0800 (PST)
-MIME-Version: 1.0
-References: <20220107030457.2383750-1-robh@kernel.org> <642312db-4af8-7087-45bf-e86923396038@ti.com>
- <762335b1-d6a2-64d2-75a1-f865cd557098@ti.com>
-In-Reply-To: <762335b1-d6a2-64d2-75a1-f865cd557098@ti.com>
-From:   Rob Herring <robh@kernel.org>
-Date:   Fri, 7 Jan 2022 11:21:34 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqL85KE-WjBO1hkxw_VQdLTwZd8Bu0LzUaNXoABVoqK0TQ@mail.gmail.com>
-Message-ID: <CAL_JsqL85KE-WjBO1hkxw_VQdLTwZd8Bu0LzUaNXoABVoqK0TQ@mail.gmail.com>
-Subject: Re: [PATCH] dt-bindings: remoteproc: ti: Fix the number of mailboxes
-To:     Suman Anna <s-anna@ti.com>
-Cc:     Ohad Ben-Cohen <ohad@wizery.com>,
+        Fri, 7 Jan 2022 14:44:59 -0500
+Received: from mail-pf1-x435.google.com (mail-pf1-x435.google.com [IPv6:2607:f8b0:4864:20::435])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 50FB3C061574
+        for <linux-remoteproc@vger.kernel.org>; Fri,  7 Jan 2022 11:44:59 -0800 (PST)
+Received: by mail-pf1-x435.google.com with SMTP id t19so5946349pfg.9
+        for <linux-remoteproc@vger.kernel.org>; Fri, 07 Jan 2022 11:44:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=2fAVPS4vIomp45HwXYqp8+6IH/VBUNUy6V6mpZtei9A=;
+        b=H2Zi+3v6F0UJq0fBGzl10bvfvIsR/+/l9Ee6kLBS8epfOQYZTOSdUk3yAoo6b4KkzF
+         yxQFgikcyHRarnQcH0ybwI2CUfito3PTLxzDdwDz60OGhq5GaNC6iQskZBeaomRQnJpV
+         QUysX/YORJ9iWlV4ZXQGv8Xh6aPlmgyWGzRMw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=2fAVPS4vIomp45HwXYqp8+6IH/VBUNUy6V6mpZtei9A=;
+        b=dscm4xNg/GpzEs1WIeldPJaY5xdLPv9Ds7G3jCqEs+vArSuCpawGwf3pfkox9RUwa+
+         NWjxTDbOkc71BWPHvIYSAhGAZUw1rWeN0/ggdIa9fu8EUGouyJaEcfUINZVaHlCg2bkf
+         FT1rlb6eGM/pwy6k8YMZ+N7xo8/kqtgbjP7OC6LHLh8Rd4ypfX52MK4UWCQr8jd1fMnE
+         BkdAX5/d/PZFD39WjLPMzuPoQy7QdgSoVv9xqqDev7E1L4E0f0oK586Fz1coy8j/UubM
+         lUqMH8W4Ot6s6m5paUla0z+bJ8taL7u5o2CSLrdxeEP/f9zxGk485gD2IIkGU504PKsM
+         QSUQ==
+X-Gm-Message-State: AOAM533+go37mNBnL9jg6HuckHnV963SddOy4+F/n3dOkujI0WuwP7EQ
+        Bv4mV9jIGErsrtwkGdp9X+jmIw==
+X-Google-Smtp-Source: ABdhPJz3TzXqz213tky7ygNBL0rf27hl+uIVWpRq1mhythZMq2bKNEeYUzWoXuznW/GoFJXqxySv1g==
+X-Received: by 2002:a62:7545:0:b0:4bc:80a2:e08b with SMTP id q66-20020a627545000000b004bc80a2e08bmr30993274pfc.75.1641584698755;
+        Fri, 07 Jan 2022 11:44:58 -0800 (PST)
+Received: from localhost ([2620:15c:202:201:3fb0:fef5:9c2f:25a3])
+        by smtp.gmail.com with UTF8SMTPSA id g21sm6472644pfc.75.2022.01.07.11.44.57
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 07 Jan 2022 11:44:58 -0800 (PST)
+Date:   Fri, 7 Jan 2022 11:44:56 -0800
+From:   Matthias Kaehlcke <mka@chromium.org>
+To:     Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc:     Andy Gross <agross@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Sibi Sankar <sibis@codeaurora.org>,
+        Sujit Kautkar <sujitka@chromium.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        "open list:REMOTE PROCESSOR (REMOTEPROC) SUBSYSTEM" 
-        <linux-remoteproc@vger.kernel.org>, devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Nagalla, Hari" <hnagalla@ti.com>
-Content-Type: text/plain; charset="UTF-8"
+        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4] rpmsg: char: Fix race between the release of
+ rpmsg_ctrldev and cdev
+Message-ID: <YdiYOP9mhmWay/Ho@google.com>
+References: <20211208125220.v4.1.Iaac908f3e3149a89190ce006ba166e2d3fd247a3@changeid>
+ <20211213173207.GB1396405@p14s>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20211213173207.GB1396405@p14s>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Fri, Jan 7, 2022 at 8:17 AM Suman Anna <s-anna@ti.com> wrote:
->
-> On 1/7/22 8:13 AM, Suman Anna wrote:
-> > Hi Rob,
-> >
-> > On 1/6/22 9:04 PM, Rob Herring wrote:
-> >> Based on the example, the TI K3 DSP and R5 have 2 mailboxes, but the schema
-> >> says 1. Fix the schema.
-> >
-> > No, 1 is correct. The OMAP Mailbox binding uses #mbox-cells as 1 and not 0, and
-> > uses a phandle as the cell-value.
+On Mon, Dec 13, 2021 at 10:32:07AM -0700, Mathieu Poirier wrote:
+> On Wed, Dec 08, 2021 at 12:52:28PM -0800, Matthias Kaehlcke wrote:
+> > From: Sujit Kautkar <sujitka@chromium.org>
+> > 
+> > From: Sujit Kautkar <sujitka@chromium.org>
+> > 
+> > struct rpmsg_ctrldev contains a struct cdev. The current code frees
+> > the rpmsg_ctrldev struct in rpmsg_ctrldev_release_device(), but the
+> > cdev is a managed object, therefore its release is not predictable
+> > and the rpmsg_ctrldev could be freed before the cdev is entirely
+> > released, as in the backtrace below.
+> > 
+> > [   93.625603] ODEBUG: free active (active state 0) object type: timer_list hint: delayed_work_timer_fn+0x0/0x7c
+> > [   93.636115] WARNING: CPU: 0 PID: 12 at lib/debugobjects.c:488 debug_print_object+0x13c/0x1b0
+> > [   93.644799] Modules linked in: veth xt_cgroup xt_MASQUERADE rfcomm algif_hash algif_skcipher af_alg uinput ip6table_nat fuse uvcvideo videobuf2_vmalloc venus_enc venus_dec videobuf2_dma_contig hci_uart btandroid btqca snd_soc_rt5682_i2c bluetooth qcom_spmi_temp_alarm snd_soc_rt5682v
+> > [   93.715175] CPU: 0 PID: 12 Comm: kworker/0:1 Tainted: G    B             5.4.163-lockdep #26
+> > [   93.723855] Hardware name: Google Lazor (rev3 - 8) with LTE (DT)
+> > [   93.730055] Workqueue: events kobject_delayed_cleanup
+> > [   93.735271] pstate: 60c00009 (nZCv daif +PAN +UAO)
+> > [   93.740216] pc : debug_print_object+0x13c/0x1b0
+> > [   93.744890] lr : debug_print_object+0x13c/0x1b0
+> > [   93.749555] sp : ffffffacf5bc7940
+> > [   93.752978] x29: ffffffacf5bc7940 x28: dfffffd000000000
+> > [   93.758448] x27: ffffffacdb11a800 x26: dfffffd000000000
+> > [   93.763916] x25: ffffffd0734f856c x24: dfffffd000000000
+> > [   93.769389] x23: 0000000000000000 x22: ffffffd0733c35b0
+> > [   93.774860] x21: ffffffd0751994a0 x20: ffffffd075ec27c0
+> > [   93.780338] x19: ffffffd075199100 x18: 00000000000276e0
+> > [   93.785814] x17: 0000000000000000 x16: dfffffd000000000
+> > [   93.791291] x15: ffffffffffffffff x14: 6e6968207473696c
+> > [   93.796768] x13: 0000000000000000 x12: ffffffd075e2b000
+> > [   93.802244] x11: 0000000000000001 x10: 0000000000000000
+> > [   93.807723] x9 : d13400dff1921900 x8 : d13400dff1921900
+> > [   93.813200] x7 : 0000000000000000 x6 : 0000000000000000
+> > [   93.818676] x5 : 0000000000000080 x4 : 0000000000000000
+> > [   93.824152] x3 : ffffffd0732a0fa4 x2 : 0000000000000001
+> > [   93.829628] x1 : ffffffacf5bc7580 x0 : 0000000000000061
+> > [   93.835104] Call trace:
+> > [   93.837644]  debug_print_object+0x13c/0x1b0
+> > [   93.841963]  __debug_check_no_obj_freed+0x25c/0x3c0
+> > [   93.846987]  debug_check_no_obj_freed+0x18/0x20
+> > [   93.851669]  slab_free_freelist_hook+0xbc/0x1e4
+> > [   93.856346]  kfree+0xfc/0x2f4
+> > [   93.859416]  rpmsg_ctrldev_release_device+0x78/0xb8
+> > [   93.864445]  device_release+0x84/0x168
+> > [   93.868310]  kobject_cleanup+0x12c/0x298
+> > [   93.872356]  kobject_delayed_cleanup+0x10/0x18
+> > [   93.876948]  process_one_work+0x578/0x92c
+> > [   93.881086]  worker_thread+0x804/0xcf8
+> > [   93.884963]  kthread+0x2a8/0x314
+> > [   93.888303]  ret_from_fork+0x10/0x18
+> > 
+> > The cdev_device_add/del() API was created to address this issue
+> > (see commit 233ed09d7fda), use it instead of cdev add/del().
+> > 
+> > Signed-off-by: Sujit Kautkar <sujitka@chromium.org>
+> > Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+> > ---
+> > 
+> > Changes in v4:
+> > - call cdev_device_del() from rpmsg_chrdev_remove() instead of
+> >   rpmsg_ctrldev_release_device()
+> > - updated subject (was: "rpmsg: glink: Update cdev add/del API in
+> >   rpmsg_ctrldev_release_device()")
+> > - updated commit message
+> > - replaced backtrace in commit message with one that doesn't have
+> >   a dump_backtrace() call
+> > 
+> > Changes in v3:
+> > - Remove unecessary error check as per Matthias's comment
+> > 
+> > Changes in v2:
+> > - Fix typo in commit message
+> > 
+> >  drivers/rpmsg/rpmsg_char.c | 11 ++---------
+> >  1 file changed, 2 insertions(+), 9 deletions(-)
+> > 
+> > diff --git a/drivers/rpmsg/rpmsg_char.c b/drivers/rpmsg/rpmsg_char.c
+> > index b5907b80727c..b1b75ef04560 100644
+> > --- a/drivers/rpmsg/rpmsg_char.c
+> > +++ b/drivers/rpmsg/rpmsg_char.c
+> > @@ -459,7 +459,6 @@ static void rpmsg_ctrldev_release_device(struct device *dev)
+> >  
+> >  	ida_simple_remove(&rpmsg_ctrl_ida, dev->id);
+> >  	ida_simple_remove(&rpmsg_minor_ida, MINOR(dev->devt));
+> > -	cdev_del(&ctrldev->cdev);
+> >  	kfree(ctrldev);
+> >  }
+> >  
+> > @@ -494,19 +493,13 @@ static int rpmsg_chrdev_probe(struct rpmsg_device *rpdev)
+> >  	dev->id = ret;
+> >  	dev_set_name(&ctrldev->dev, "rpmsg_ctrl%d", ret);
+> >  
+> > -	ret = cdev_add(&ctrldev->cdev, dev->devt, 1);
+> > +	ret = cdev_device_add(&ctrldev->cdev, &ctrldev->dev);
+> >  	if (ret)
+> >  		goto free_ctrl_ida;
+> >  
+> >  	/* We can now rely on the release function for cleanup */
+> >  	dev->release = rpmsg_ctrldev_release_device;
+> >  
+> > -	ret = device_add(dev);
+> > -	if (ret) {
+> > -		dev_err(&rpdev->dev, "device_add failed: %d\n", ret);
+> > -		put_device(dev);
+> > -	}
+> > -
+> >  	dev_set_drvdata(&rpdev->dev, ctrldev);
+> >  
+> >  	return ret;
+> > @@ -532,7 +525,7 @@ static void rpmsg_chrdev_remove(struct rpmsg_device *rpdev)
+> >  	if (ret)
+> >  		dev_warn(&rpdev->dev, "failed to nuke endpoints: %d\n", ret);
+> >  
+> > -	device_del(&ctrldev->dev);
+> > +	cdev_device_del(&ctrldev->cdev, &ctrldev->dev);
+> >  	put_device(&ctrldev->dev);
+> 
+> Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+> 
+> I'll let Bjorn pick this one to make sure it doesn't break anything for current
+> users of the driver.
 
-That's unfortunate. Really, ti,mbox-tx/rx should have been the mbox
-cells with 2 entries (rx and tx)...
-
->
-> The following is what you get with your current patch,
->
-> Documentation/devicetree/bindings/remoteproc/ti,k3-dsp-rproc.example.dt.yaml:
-> dsp@4d80800000: mboxes: [[4294967295, 4294967295]] is too short
-> Documentation/devicetree/bindings/remoteproc/ti,k3-dsp-rproc.example.dt.yaml:
-> dsp@64800000: mboxes: [[4294967295, 4294967295]] is too short
-
-Ugg, yes. What I'm working on is getting validation on dtb files to
-work. That means the dts <> are lost and we have to either parse the
-properties properly (look up #foo-cells) or use __fixups__ to find
-unresolved phandles (the case for most examples). The latter works
-most of the time except a few cases like above. So the fix here is to
-add a mbox provider node to the example.
-
-Rob
+Bjorn: can this land or is there any action pending on my side?
