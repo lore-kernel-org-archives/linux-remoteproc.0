@@ -2,147 +2,112 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27F80C433F5
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 10 Jan 2022 13:01:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2F26C433EF
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 10 Jan 2022 16:49:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234221AbiAJNBg (ORCPT
+        id S237687AbiAJQtC (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 10 Jan 2022 08:01:36 -0500
-Received: from mail-ua1-f54.google.com ([209.85.222.54]:43662 "EHLO
-        mail-ua1-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235159AbiAJNAT (ORCPT
+        Mon, 10 Jan 2022 11:49:02 -0500
+Received: from mail-oi1-f180.google.com ([209.85.167.180]:37655 "EHLO
+        mail-oi1-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229864AbiAJQtB (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 10 Jan 2022 08:00:19 -0500
-Received: by mail-ua1-f54.google.com with SMTP id i5so23160734uaq.10;
-        Mon, 10 Jan 2022 05:00:19 -0800 (PST)
+        Mon, 10 Jan 2022 11:49:01 -0500
+Received: by mail-oi1-f180.google.com with SMTP id i9so19497836oih.4;
+        Mon, 10 Jan 2022 08:49:01 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=c+WSoOZSLfe+3ubRX3qKEV+/g4DwW+r0hvnbkW/lOq4=;
-        b=MjbCcyXptLYiyK6nyGJwG/ojeCYIfTHGJbhIjQXnRPb4Q8AB7pylYPRTJzPoJKpPzH
-         LyD3+jB8b/QI3/iEXrsQ51aql9u9+8CrpYaLtVj6RlFVN+yapkxTfgdUHwXSr3aHHjBw
-         +i3ZyR8pj+rmzfPcDGIURTbz+KQ/ovY07uejgowN39ToXGc5OS333zeoKfnV9/AU/gMb
-         KdgXEt9+x4p/BUTp7ZeRUeeIq5OOv09gyd0tPiV9/TEx7cfQHDqiYo/ADluS/TnkJqmD
-         QTJYieiluyWSxw9lhjBuXDPO4EtIT+PTsLLvVw/VJqJt2I/kiyEWDlLu8jKF/kchtikZ
-         L+Gw==
-X-Gm-Message-State: AOAM532ng1oQKnlouW9N2flvbb7o/CJqvhQqpnGC2kM5clexIazBD5z1
-        8h8azc2UnxTxe2W4auT43W70GNiYPZU28w==
-X-Google-Smtp-Source: ABdhPJwMRpO4AvT3ss5Z7iKLN/I74/3T3Uh8TgebM7JiY5aWYJ+F7rp6ZgOcZKriZ/UQ47kUyrsgFQ==
-X-Received: by 2002:ab0:2a48:: with SMTP id p8mr25477573uar.125.1641819617729;
-        Mon, 10 Jan 2022 05:00:17 -0800 (PST)
-Received: from mail-ua1-f51.google.com (mail-ua1-f51.google.com. [209.85.222.51])
-        by smtp.gmail.com with ESMTPSA id h26sm3928690vsl.21.2022.01.10.05.00.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 10 Jan 2022 05:00:17 -0800 (PST)
-Received: by mail-ua1-f51.google.com with SMTP id p37so23196990uae.8;
-        Mon, 10 Jan 2022 05:00:17 -0800 (PST)
-X-Received: by 2002:a67:c81c:: with SMTP id u28mr24673977vsk.38.1641819616956;
- Mon, 10 Jan 2022 05:00:16 -0800 (PST)
-MIME-Version: 1.0
-References: <20211115135032.129227-1-julien.massot@iot.bzh> <20211115135032.129227-3-julien.massot@iot.bzh>
-In-Reply-To: <20211115135032.129227-3-julien.massot@iot.bzh>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 10 Jan 2022 14:00:05 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdVR6EZa44GJCecWgN+6GNESCyNCsenaEPW7qa-W8-_evA@mail.gmail.com>
-Message-ID: <CAMuHMdVR6EZa44GJCecWgN+6GNESCyNCsenaEPW7qa-W8-_evA@mail.gmail.com>
-Subject: Re: [PATCH v1 2/3] arm64: dts: renesas: r8a77951: Add CR7 realtime processor
-To:     Julien Massot <julien.massot@iot.bzh>
-Cc:     =?UTF-8?Q?Bj=C3=B6rn_Andersson?= <bjorn.andersson@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "open list:REMOTE PROCESSOR (REMOTEPROC) SUBSYSTEM" 
-        <linux-remoteproc@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject:date
+         :message-id;
+        bh=PcweNAAyqTtCgPxQQaHXUvqxCWk/Vwq0k3RGXJnNlJo=;
+        b=c+D1SPgv8VE+7ixpSITfmmHeVLUQLgaLdpNLlR01gH0I4RjQWIe/9Z+WKFhSfddq9b
+         uju12dslFksw/fhIfM6q18FZEtC4JnlFA1MQ3LkRTwilv4sBWpnwpMvee+ZIsO1P4GnC
+         ZDkI/DBqniUjerjUBoeOc7affBzYOcYSNnldJQHdlcqpYzE5PQSx8ytwJa+KIWHrBQxt
+         Bm+kfncjyoMTU2j1vnVtz0aQc74HVXeQ+hRuZ2riDAuiL99nZQljbLuBG8OBcW8jDGU5
+         /aBxhZQ5NNdg5mJKGhiG2QTyC8rDMdPLIrmRMCvdaliu8t4ncTotW1ykanV/e55upiiO
+         Xamg==
+X-Gm-Message-State: AOAM531KOaMGOpJ6l3DBd2w4Eeuy5eWkAiC8katRtAagaiLTv6QqvK1A
+        DiBnCX2SAdcJr0QmSIpQyg==
+X-Google-Smtp-Source: ABdhPJzmfBgp0bKgpoqASyCFdgI+r5ioWFa75FF5Ozek+i/mv86mQuy/p6hZZ6ozGyUSF/tQwF6kdg==
+X-Received: by 2002:aca:1811:: with SMTP id h17mr17991649oih.178.1641833341058;
+        Mon, 10 Jan 2022 08:49:01 -0800 (PST)
+Received: from robh.at.kernel.org (66-90-148-213.dyn.grandenetworks.net. [66.90.148.213])
+        by smtp.gmail.com with ESMTPSA id c6sm1538169oto.19.2022.01.10.08.49.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 10 Jan 2022 08:49:00 -0800 (PST)
+Received: (nullmailer pid 1067451 invoked by uid 1000);
+        Mon, 10 Jan 2022 16:48:59 -0000
+From:   Rob Herring <robh@kernel.org>
+To:     Hari Nagalla <hnagalla@ti.com>
+Cc:     linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, bjorn.andersson@linaro.org,
+        mathieu.poirier@linaro.org, robh+dt@kernel.org,
+        devicetree@vger.kernel.org
+In-Reply-To: <20220110040650.18186-2-hnagalla@ti.com>
+References: <20220110040650.18186-1-hnagalla@ti.com> <20220110040650.18186-2-hnagalla@ti.com>
+Subject: Re: [PATCH 1/2] dt-bindings: remoteproc: k3-m4f: Add bindings for K3 AM64x SoCs
+Date:   Mon, 10 Jan 2022 10:48:59 -0600
+Message-Id: <1641833339.676351.1067450.nullmailer@robh.at.kernel.org>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi Julien,
+On Sun, 09 Jan 2022 22:06:49 -0600, Hari Nagalla wrote:
+> K3 AM64x SoC has a Cortex M4F subsystem in the MCU volatge domain.
+> The remote processor's life cycle management and IPC mechanisms are
+> similar across the R5F and M4F cores from remote processor driver
+> point of view. However, there are subtle differences in image loading
+> and starting the M4F subsystems.
+> 
+> The YAML binding document provides the various node properties to be
+> configured by the consumers of the M4F subsystem.
+> 
+> Signed-off-by: Hari Nagalla <hnagalla@ti.com>
+> ---
+>  .../bindings/remoteproc/ti,k3-m4f-rproc.yaml  | 121 ++++++++++++++++++
+>  1 file changed, 121 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/remoteproc/ti,k3-m4f-rproc.yaml
+> 
 
-On Mon, Nov 15, 2021 at 2:50 PM Julien Massot <julien.massot@iot.bzh> wrote:
-> r8a77951 as some other members of rcar gen3 soc series
-> has a Cortex R7 processor.
-> This processor shares the same mapped devices and memory mapping.
->
-> Choose 0x40040000 area to store the Cortex-R7 firmware.
->
-> Signed-off-by: Julien Massot <julien.massot@iot.bzh>
+My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
+on your patch (DT_CHECKER_FLAGS is new in v5.13):
 
-Thanks for your patch!
+yamllint warnings/errors:
 
-> No change since RFC, Geert most likely it sounds better
-> to drop this patch in v2 ?
+dtschema/dtc warnings/errors:
+/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/remoteproc/ti,k3-m4f-rproc.yaml: properties:memory-region: 'anyOf' conditional failed, one must be fixed:
+	'minItems' is not one of ['maxItems', 'description', 'deprecated']
+		hint: Only "maxItems" is required for a single entry if there are no constraints defined for the values.
+	'additionalItems' is not one of ['maxItems', 'description', 'deprecated']
+		hint: Only "maxItems" is required for a single entry if there are no constraints defined for the values.
+	'unevaluatedProperties' is not one of ['maxItems', 'description', 'deprecated']
+		hint: Only "maxItems" is required for a single entry if there are no constraints defined for the values.
+	Additional properties are not allowed ('unevaluatedProperties' was unexpected)
+		hint: Arrays must be described with a combination of minItems/maxItems/items
+	'minItems' is not one of ['description', 'deprecated', 'const', 'enum', 'minimum', 'maximum', 'multipleOf', 'default', '$ref']
+	'maxItems' is not one of ['description', 'deprecated', 'const', 'enum', 'minimum', 'maximum', 'multipleOf', 'default', '$ref']
+	'additionalItems' is not one of ['description', 'deprecated', 'const', 'enum', 'minimum', 'maximum', 'multipleOf', 'default', '$ref']
+	'unevaluatedProperties' is not one of ['description', 'deprecated', 'const', 'enum', 'minimum', 'maximum', 'multipleOf', 'default', '$ref']
+	1 was expected
+		hint: Only "maxItems" is required for a single entry if there are no constraints defined for the values.
+	hint: cell array properties must define how many entries and what the entries are when there is more than one entry.
+	from schema $id: http://devicetree.org/meta-schemas/core.yaml#
+/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/remoteproc/ti,k3-m4f-rproc.yaml: ignoring, error in schema: properties: memory-region
+Documentation/devicetree/bindings/remoteproc/ti,k3-m4f-rproc.example.dts:19.31-36.11: Warning (unit_address_vs_reg): /example-0/bus@f4000: node has a unit name, but no reg or ranges property
+Documentation/devicetree/bindings/remoteproc/ti,k3-m4f-rproc.example.dt.yaml:0:0: /example-0/bus@f4000/m4fss@5000000: failed to match any schema with compatible: ['ti,am64-m4fss']
 
-Indeed, cfr. my comments below.
+doc reference errors (make refcheckdocs):
 
-> --- a/arch/arm64/boot/dts/renesas/r8a77951-ulcb.dts
-> +++ b/arch/arm64/boot/dts/renesas/r8a77951-ulcb.dts
-> @@ -34,6 +34,16 @@ memory@700000000 {
->                 device_type = "memory";
->                 reg = <0x7 0x00000000 0x0 0x40000000>;
->         };
-> +
-> +       reserved-memory {
-> +               #address-cells = <2>;
-> +               #size-cells = <2>;
-> +
-> +               cr7_ram: cr7_ram@40040000 {
-> +                       no-map;
-> +                       reg = <0x0 0x40040000 0x0 0x1fc0000>;
-> +               };
-> +       };
+See https://patchwork.ozlabs.org/patch/1577759
 
-Tgis depends on a specific configuration, and is thus not suitable for
-upstream.
+This check can fail if there are any dependencies. The base for a patch
+series is generally the most recent rc1.
 
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
 
->  };
->
->  &du {
-> @@ -48,3 +58,8 @@ &du {
->         clock-names = "du.0", "du.1", "du.2", "du.3",
->                       "dclkin.0", "dclkin.1", "dclkin.2", "dclkin.3";
->  };
-> +
-> +&cr7_rproc {
-> +       memory-region = <&cr7_ram>;
-> +       status = "okay";
-> +};
-> diff --git a/arch/arm64/boot/dts/renesas/r8a77951.dtsi b/arch/arm64/boot/dts/renesas/r8a77951.dtsi
-> index 1768a3e6bb8d..3ee247fc5aec 100644
-> --- a/arch/arm64/boot/dts/renesas/r8a77951.dtsi
-> +++ b/arch/arm64/boot/dts/renesas/r8a77951.dtsi
-> @@ -366,6 +366,13 @@ soc: soc {
->                 #size-cells = <2>;
->                 ranges;
->
-> +               cr7_rproc: cr7 {
-> +                       compatible = "renesas,rcar-cr7";
-> +                       power-domains = <&sysc R8A7795_PD_CR7>;
-> +                       resets = <&cpg 222>;
-> +                       status = "disabled";
-> +               };
-> +
+pip3 install dtschema --upgrade
 
-This part is generic, but I think the cr7 node should be moved outside
-the soc node (like the PMUs and the ARMv8 timer), as it does not have
-a unit address.
+Please check and re-submit.
 
->                 rwdt: watchdog@e6020000 {
->                         compatible = "renesas,r8a7795-wdt", "renesas,rcar-gen3-wdt";
->                         reg = <0 0xe6020000 0 0x0c>;
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
