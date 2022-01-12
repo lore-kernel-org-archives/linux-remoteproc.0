@@ -2,101 +2,121 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5979AC4332F
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 12 Jan 2022 19:52:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE8BAC433EF
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 12 Jan 2022 21:43:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1357496AbiALTwr (ORCPT
+        id S229798AbiALVnM (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 12 Jan 2022 14:52:47 -0500
-Received: from mail.z3ntu.xyz ([128.199.32.197]:33198 "EHLO mail.z3ntu.xyz"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1356987AbiALTv6 (ORCPT
+        Wed, 12 Jan 2022 16:43:12 -0500
+Received: from mo4-p01-ob.smtp.rzone.de ([85.215.255.50]:39335 "EHLO
+        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230245AbiALVnJ (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 12 Jan 2022 14:51:58 -0500
-Received: from localhost.localdomain (ip-213-127-106-2.ip.prioritytelecom.net [213.127.106.2])
-        by mail.z3ntu.xyz (Postfix) with ESMTPSA id 99ECDCDF9F;
-        Wed, 12 Jan 2022 19:42:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=z3ntu.xyz; s=z3ntu;
-        t=1642016544; bh=0kWYHyQ+FdQZVfHCIbfLblrDXNannTFucaCQYt2r6LQ=;
-        h=From:To:Cc:Subject:Date;
-        b=miax10sWCxLcvuPulMRI9I8OxkGClnhZ7on8fnVVyuxu3eLoIzlmYgDUW+CcsPSnK
-         Cz95AHMYXfk4vBg0yIPTahxcsi7xikZlNOJK59DxWJKpylDH8bAjfHzKVFpB2OfNoy
-         ookhq+C83s4UtZgJGkb6zXdZKvG7GFw/47b1tpAI=
-From:   Luca Weiss <luca@z3ntu.xyz>
-To:     linux-arm-msm@vger.kernel.org
-Cc:     ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
-        Luca Weiss <luca@z3ntu.xyz>, Amit Kucheria <amitk@kernel.org>,
+        Wed, 12 Jan 2022 16:43:09 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1642023600;
+    s=strato-dkim-0002; d=gerhold.net;
+    h=In-Reply-To:References:Message-ID:Subject:Cc:To:From:Date:Cc:Date:
+    From:Subject:Sender;
+    bh=C9K3tsw1DVfAhcGDUvIMCIJJwfXNhxlv/0SrOmFPm/o=;
+    b=jLREmipLG+n1fMmuQS5UQZRs14UIigNgWXU96Mknv4q3f3yqdCTbUjhCbCX2+g4oJv
+    APnvI2q57IpsHWdgAb+94CJ6tGiHD1jJMeBG4ovUt0opPqwthTjAx1g7bBBZamsEA0N8
+    1k3SLegZtCMHxm079QNlfreM3BiGaMPFu1MOFaTxU7CkoiktQ1SJWa0CYNCgUBoKxFTd
+    cIOLAQxrSKgK0Ex0OsutkFnJXNeH+S0RjsBRkfNVrS8hT/C2zq36GS5yAGUfXr6uYR+A
+    WTYw34/tHlxMXNl/Al/R7GRRHLB8ZW+NDZGUYYEPCnAKvNlxYKyL7egSvMUQ8m99HQx6
+    Z8RQ==
+Authentication-Results: strato.com;
+    dkim=none
+X-RZG-AUTH: ":P3gBZUipdd93FF5ZZvYFPugejmSTVR2nRPhVOQ/OcYgojyw4j34+u267FZF9PwpcNKLVrK85lg=="
+X-RZG-CLASS-ID: mo00
+Received: from gerhold.net
+    by smtp.strato.de (RZmta 47.37.6 AUTH)
+    with ESMTPSA id h68d06y0CLdxbrB
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
+        (Client did not present a certificate);
+    Wed, 12 Jan 2022 22:39:59 +0100 (CET)
+Date:   Wed, 12 Jan 2022 22:39:53 +0100
+From:   Stephan Gerhold <stephan@gerhold.net>
+To:     Luca Weiss <luca@z3ntu.xyz>
+Cc:     linux-arm-msm@vger.kernel.org,
+        ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
+        Vladimir Lypak <vladimir.lypak@gmail.com>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Andy Gross <agross@kernel.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Manu Gautam <mgautam@codeaurora.org>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Zhang Rui <rui.zhang@intel.com>, devicetree@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mmc@vger.kernel.org, linux-phy@lists.infradead.org,
-        linux-pm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        linux-usb@vger.kernel.org
-Subject: [PATCH 00/15] Initial MSM8953 & Fairphone 3 support
-Date:   Wed, 12 Jan 2022 20:40:49 +0100
-Message-Id: <20220112194118.178026-1-luca@z3ntu.xyz>
-X-Mailer: git-send-email 2.34.1
+        Ohad Ben-Cohen <ohad@wizery.com>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Subject: Re: [PATCH 09/15] rpmsg: smd: Drop unnecessary condition for channel
+ creation
+Message-ID: <Yd9KebiZUjTuHtIM@gerhold.net>
+References: <20220112194118.178026-1-luca@z3ntu.xyz>
+ <20220112194118.178026-10-luca@z3ntu.xyz>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220112194118.178026-10-luca@z3ntu.xyz>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-This series adds initial support for MSM8953 (and SDM632 which is based
-on MSM8953) and the Fairphone 3 smartphone.
+Hi,
 
-Only relatively basic functionality is supported like storage, volume
-keys and USB.
++Cc Srinivas
 
-There is currently close-to-mainline support for other components for
-this SoC including GPU, WiFi and audio, this series adds only basic
-support so that the other components can start getting upstreamed
-easier.
+On Wed, Jan 12, 2022 at 08:40:58PM +0100, Luca Weiss wrote:
+> From: Vladimir Lypak <vladimir.lypak@gmail.com>
+> 
+> RPM Firmware on variety of newer SoCs such as MSM8917 (also likely
+> MSM8937, MSM8940, MSM8952), MSM8953 and on some MSM8916 devices) doesn't
+> initiate opening of the SMD channel if it was previously opened by
+> bootloader. This doesn't allow probing of smd-rpm driver on such devices
+> because there is a check that requires RPM this behaviour.
+> 
+> Signed-off-by: Vladimir Lypak <vladimir.lypak@gmail.com>
+> Signed-off-by: Luca Weiss <luca@z3ntu.xyz>
+> Reviewed-by: Konrad Dybcio <konrad.dybcio@somainline.org>
 
-Luca Weiss (10):
-  dt-bindings: phy: qcom,qusb2: Document msm8953 compatible
-  phy: qcom-qusb2: Add compatible for MSM8953
-  dt-bindings: mfd: qcom,tcsr: Document msm8953 compatible
-  mfd: qcom-spmi-pmic: Add pm8953 compatible
-  dt-bindings: mmc: sdhci-msm: Add msm8953 compatible
-  dt-bindings: thermal: tsens: Add msm8953 compatible
-  dt-bindings: usb: qcom,dwc3: Add msm8953 compatible
-  dt-bindings: pinctrl: qcom: msm8953: allow gpio-reserved-ranges
-  dt-bindings: arm: qcom: Document sdm632 and fairphone,fp3 board
-  arm64: dts: qcom: sdm632: Add device tree for Fairphone 3
+This is effectively a "Revert "Revert "rpmsg: smd: Create device for all
+channels""":
 
-Vladimir Lypak (5):
-  rpmsg: smd: Drop unnecessary condition for channel creation
-  arm64: dts: qcom: Add MSM8953 device tree
-  arm64: dts: qcom: Add PM8953 PMIC
-  arm64: dts: qcom: Add SDM632 device tree
-  arm64: dts: qcom: Add MSM8953+PM8953 device tree
+https://lore.kernel.org/linux-arm-msm/20171212235857.10432-3-bjorn.andersson@linaro.org/
+https://lore.kernel.org/linux-arm-msm/20180315181244.8859-1-bjorn.andersson@linaro.org/
 
- .../devicetree/bindings/arm/qcom.yaml         |    6 +
- .../bindings/mfd/qcom,spmi-pmic.txt           |    1 +
- .../devicetree/bindings/mfd/qcom,tcsr.txt     |    1 +
- .../devicetree/bindings/mmc/sdhci-msm.txt     |    1 +
- .../bindings/phy/qcom,qusb2-phy.yaml          |    1 +
- .../pinctrl/qcom,msm8953-pinctrl.yaml         |    2 +
- .../bindings/thermal/qcom-tsens.yaml          |    1 +
- .../devicetree/bindings/usb/qcom,dwc3.yaml    |    1 +
- arch/arm64/boot/dts/qcom/Makefile             |    1 +
- arch/arm64/boot/dts/qcom/msm8953-pm8953.dtsi  |   50 +
- arch/arm64/boot/dts/qcom/msm8953.dtsi         | 1337 +++++++++++++++++
- arch/arm64/boot/dts/qcom/pm8953.dtsi          |   90 ++
- .../boot/dts/qcom/sdm632-fairphone-fp3.dts    |  189 +++
- arch/arm64/boot/dts/qcom/sdm632.dtsi          |  125 ++
- drivers/phy/qualcomm/phy-qcom-qusb2.c         |    3 +
- drivers/rpmsg/qcom_smd.c                      |    8 +-
- 16 files changed, 1810 insertions(+), 7 deletions(-)
- create mode 100644 arch/arm64/boot/dts/qcom/msm8953-pm8953.dtsi
- create mode 100644 arch/arm64/boot/dts/qcom/msm8953.dtsi
- create mode 100644 arch/arm64/boot/dts/qcom/pm8953.dtsi
- create mode 100644 arch/arm64/boot/dts/qcom/sdm632-fairphone-fp3.dts
- create mode 100644 arch/arm64/boot/dts/qcom/sdm632.dtsi
+Won't this cause the same regression reported by Srinivas again?
 
--- 
-2.34.1
+Thanks,
+Stephan
 
+> ---
+>  drivers/rpmsg/qcom_smd.c | 8 +-------
+>  1 file changed, 1 insertion(+), 7 deletions(-)
+> 
+> diff --git a/drivers/rpmsg/qcom_smd.c b/drivers/rpmsg/qcom_smd.c
+> index 8da1b5cb31b3..6a01ef932b01 100644
+> --- a/drivers/rpmsg/qcom_smd.c
+> +++ b/drivers/rpmsg/qcom_smd.c
+> @@ -1280,19 +1280,13 @@ static void qcom_channel_state_worker(struct work_struct *work)
+>  	unsigned long flags;
+>  
+>  	/*
+> -	 * Register a device for any closed channel where the remote processor
+> -	 * is showing interest in opening the channel.
+> +	 * Register a device for any closed channel.
+>  	 */
+>  	spin_lock_irqsave(&edge->channels_lock, flags);
+>  	list_for_each_entry(channel, &edge->channels, list) {
+>  		if (channel->state != SMD_CHANNEL_CLOSED)
+>  			continue;
+>  
+> -		remote_state = GET_RX_CHANNEL_INFO(channel, state);
+> -		if (remote_state != SMD_CHANNEL_OPENING &&
+> -		    remote_state != SMD_CHANNEL_OPENED)
+> -			continue;
+> -
+>  		if (channel->registered)
+>  			continue;
+>  
+> -- 
+> 2.34.1
+> 
