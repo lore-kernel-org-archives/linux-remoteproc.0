@@ -2,30 +2,30 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CF59C433EF
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 14 Jan 2022 11:59:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AF3AC433EF
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 14 Jan 2022 13:33:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230369AbiANL7z (ORCPT
+        id S236861AbiANNdV (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 14 Jan 2022 06:59:55 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:57194 "EHLO
+        Fri, 14 Jan 2022 08:33:21 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:57896 "EHLO
         bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240924AbiANL7y (ORCPT
+        with ESMTP id S231860AbiANNdV (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 14 Jan 2022 06:59:54 -0500
+        Fri, 14 Jan 2022 08:33:21 -0500
 Received: from [127.0.0.1] (localhost [127.0.0.1])
         (Authenticated sender: kholk11)
-        with ESMTPSA id 19B361F413B3
+        with ESMTPSA id 2ADCB1F46992
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1642161591;
-        bh=C2OaY+DhNtPJtmQACKGNG+vM/ZeGsj7cOskW2Yvq4yY=;
+        s=mail; t=1642167199;
+        bh=bIGZkqg8TQB584qijqAGY+JJJVnU59xCz/eRyLXwgkI=;
         h=From:To:Cc:Subject:Date:From;
-        b=E1BpdhOfREAsM1kb5H4XmdiOodQfLrc7/B5fm1ZFE84qLmp6xn5QE8GaGsGYIQh5d
-         3fs2wnYLKjalX4aLqEifEKwBzNiXYCZI65EFYgv4fqe89E8rCt1z/blUidgsnBLNP7
-         hCOrEHoWk957bTe1vjBjKpQr1pu+zZAUFKfYc8Gg9EzMzWca51m85+lnhQ7JTbCX37
-         h7Z/snujy7GxfIgwlM4fiLi51WFz5e3LRJ+GxE6h8UZU2dskrI1qSB9gLms76I5cF5
-         SyWWaVIPAgCw9IozDVY8Ma+KhB4vIZhVdU3LyJNfUfQflKXuthSZIv4o6sDatiGXIr
-         AxqoFjPVWhD1w==
+        b=c5xKYpgSzYg0CLKJsgl7jrbku95RwK5bFFjlw7yyT9Nz+yuzagvspFdbKMAKOsMi1
+         Hq0GGOPfQXh9rWbmanKrVXZpogKs0WbrEb/31KMoFTi9sqgMCFTkZtb/UfsJ9r02Ij
+         dhc2no736Q3KKl9d2rtsdSvEpk5H+KRbo9CIAohmwvZw5y5DZNX2lmg9F4CImiJBGx
+         GeqUtjv0uWfaVIcL5ZZDO2wZYMvocWWBH69QsNJZXZEZ6w5z9WzwtgWK2ls6WZ/Us9
+         3ldfMfw8W6BvshG4g7GmX5SzBYRV9has5kA5aDuzvfXal6zDxXudEFOiX6fWg6rAI6
+         byF9mb1dXHWeA==
 From:   AngeloGioacchino Del Regno 
         <angelogioacchino.delregno@collabora.com>
 To:     agross@kernel.org
@@ -36,9 +36,9 @@ Cc:     bjorn.andersson@linaro.org, mathieu.poirier@linaro.org,
         ~postmarketos/upstreaming@lists.sr.ht,
         AngeloGioacchino Del Regno 
         <angelogioacchino.delregno@collabora.com>
-Subject: [PATCH] rpmsg: qcom_smd: Fix redundant channel->assigned assignment
-Date:   Fri, 14 Jan 2022 12:59:39 +0100
-Message-Id: <20220114115939.146434-1-angelogioacchino.delregno@collabora.com>
+Subject: [PATCH v2] rpmsg: qcom_smd: Fix redundant channel->registered assignment
+Date:   Fri, 14 Jan 2022 14:32:59 +0100
+Message-Id: <20220114133259.247726-1-angelogioacchino.delregno@collabora.com>
 X-Mailer: git-send-email 2.33.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -55,6 +55,8 @@ Remove the assignment done out of the spinlock to fix this redundancy.
 Fixes: 53e2822e56c7 ("rpmsg: Introduce Qualcomm SMD backend")
 Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 ---
+v2: Fixed funny typo in commit title (channel->assigned => channel->registered)
+
  drivers/rpmsg/qcom_smd.c | 2 --
  1 file changed, 2 deletions(-)
 
