@@ -2,43 +2,43 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AF3AC433EF
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 14 Jan 2022 13:33:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3278CC433FE
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 14 Jan 2022 14:47:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236861AbiANNdV (ORCPT
+        id S242007AbiANOru (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 14 Jan 2022 08:33:21 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:57896 "EHLO
+        Fri, 14 Jan 2022 09:47:50 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:58570 "EHLO
         bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231860AbiANNdV (ORCPT
+        with ESMTP id S241999AbiANOrt (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 14 Jan 2022 08:33:21 -0500
+        Fri, 14 Jan 2022 09:47:49 -0500
 Received: from [127.0.0.1] (localhost [127.0.0.1])
         (Authenticated sender: kholk11)
-        with ESMTPSA id 2ADCB1F46992
+        with ESMTPSA id A6C881F46A72
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1642167199;
-        bh=bIGZkqg8TQB584qijqAGY+JJJVnU59xCz/eRyLXwgkI=;
+        s=mail; t=1642171668;
+        bh=cTHqww4IZbi5PdxScVJ5RmgEFWGNWZU4AMAqnvnN1vM=;
         h=From:To:Cc:Subject:Date:From;
-        b=c5xKYpgSzYg0CLKJsgl7jrbku95RwK5bFFjlw7yyT9Nz+yuzagvspFdbKMAKOsMi1
-         Hq0GGOPfQXh9rWbmanKrVXZpogKs0WbrEb/31KMoFTi9sqgMCFTkZtb/UfsJ9r02Ij
-         dhc2no736Q3KKl9d2rtsdSvEpk5H+KRbo9CIAohmwvZw5y5DZNX2lmg9F4CImiJBGx
-         GeqUtjv0uWfaVIcL5ZZDO2wZYMvocWWBH69QsNJZXZEZ6w5z9WzwtgWK2ls6WZ/Us9
-         3ldfMfw8W6BvshG4g7GmX5SzBYRV9has5kA5aDuzvfXal6zDxXudEFOiX6fWg6rAI6
-         byF9mb1dXHWeA==
+        b=D8AJQ4G4r14QCgGUpRCWn6AKwg2pAfphNZFKn9dWfT35vWJoI66KVSW7wOn/gXH8F
+         8+A7uBI3Sn2tDAHAu12zTel7evWbULUfMEnbsbcxcD7qYOmoOwRj5QuEa6f11pCGRl
+         5TKGmqC9UO3H/KHxP4s6DO9sC+IGFySuqpp0mit5cnsdk9mYk37bFOnzi4dGPnKHZv
+         ANmplostgKQQYVTggvCRI3XtxFzRbJFVi+xojzgODipky/Se7m9u57A3wmx0z3RvM+
+         VgAMkZairRwIwTkLmvYFbS+bM97KSZJjTomHxGawqHkf0W88KMMwmKbb8P1u8d1H3U
+         7bYait9ekDf5w==
 From:   AngeloGioacchino Del Regno 
         <angelogioacchino.delregno@collabora.com>
-To:     agross@kernel.org
-Cc:     bjorn.andersson@linaro.org, mathieu.poirier@linaro.org,
-        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel@collabora.com,
-        konrad.dybcio@somainline.org, marijn.suijten@somainline.org,
-        ~postmarketos/upstreaming@lists.sr.ht,
+To:     bjorn.andersson@linaro.org
+Cc:     mathieu.poirier@linaro.org, matthias.bgg@gmail.com,
+        pihsun@chromium.org, linux-remoteproc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
+        kernel@collabora.com,
         AngeloGioacchino Del Regno 
         <angelogioacchino.delregno@collabora.com>
-Subject: [PATCH v2] rpmsg: qcom_smd: Fix redundant channel->registered assignment
-Date:   Fri, 14 Jan 2022 14:32:59 +0100
-Message-Id: <20220114133259.247726-1-angelogioacchino.delregno@collabora.com>
+Subject: [PATCH] rpmsg: mtk_rpmsg: Fix circular locking dependency
+Date:   Fri, 14 Jan 2022 15:47:37 +0100
+Message-Id: <20220114144737.375621-1-angelogioacchino.delregno@collabora.com>
 X-Mailer: git-send-email 2.33.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -46,34 +46,49 @@ Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-In qcom_channel_state_worker(), we are setting channel->registered
-to true when registering a channel, but this is getting repeated both
-before and after re-locking the channels_lock spinlock, which is
-obviously a typo.
-Remove the assignment done out of the spinlock to fix this redundancy.
+During execution of the worker that's used to register rpmsg devices
+we are safely locking the channels mutex but, when creating a new
+endpoint for such devices, we are registering a IPI on the SCP, which
+then makes the SCP to trigger an interrupt, lock its own mutex and in
+turn register more subdevices.
+This creates a circular locking dependency situation, as the mtk_rpmsg
+channels_lock will then depend on the SCP IPI lock.
 
-Fixes: 53e2822e56c7 ("rpmsg: Introduce Qualcomm SMD backend")
+[   18.014514]  Possible unsafe locking scenario:
+[   18.014515]        CPU0                    CPU1
+[   18.014517]        ----                    ----
+[   18.045467]   lock(&mtk_subdev->channels_lock);
+[   18.045474]                                lock(&scp->ipi_desc[i].lock);
+[   18.228399]                                lock(&mtk_subdev->channels_lock);
+[   18.228405]   lock(&scp->ipi_desc[i].lock);
+[   18.264405]
+
+To solve this, simply unlock the channels_lock mutex before calling
+mtk_rpmsg_register_device() and relock it right after, as safety is
+still ensured by the locking mechanism that happens right after
+through SCP.
+Notably, mtk_rpmsg_register_device() does not even require locking.
+
+Fixes: 7017996951fd ("rpmsg: add rpmsg support for mt8183 SCP.")
 Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 ---
-v2: Fixed funny typo in commit title (channel->assigned => channel->registered)
+ drivers/rpmsg/mtk_rpmsg.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
- drivers/rpmsg/qcom_smd.c | 2 --
- 1 file changed, 2 deletions(-)
-
-diff --git a/drivers/rpmsg/qcom_smd.c b/drivers/rpmsg/qcom_smd.c
-index 540e027f08c4..0ee3f7ddabb0 100644
---- a/drivers/rpmsg/qcom_smd.c
-+++ b/drivers/rpmsg/qcom_smd.c
-@@ -1298,9 +1298,7 @@ static void qcom_channel_state_worker(struct work_struct *work)
+diff --git a/drivers/rpmsg/mtk_rpmsg.c b/drivers/rpmsg/mtk_rpmsg.c
+index 5b4404b8be4c..d1213c33da20 100644
+--- a/drivers/rpmsg/mtk_rpmsg.c
++++ b/drivers/rpmsg/mtk_rpmsg.c
+@@ -234,7 +234,9 @@ static void mtk_register_device_work_function(struct work_struct *register_work)
+ 		if (info->registered)
+ 			continue;
  
- 		spin_unlock_irqrestore(&edge->channels_lock, flags);
- 		qcom_smd_create_device(channel);
--		channel->registered = true;
- 		spin_lock_irqsave(&edge->channels_lock, flags);
--
- 		channel->registered = true;
- 	}
- 
++		mutex_unlock(&subdev->channels_lock);
+ 		ret = mtk_rpmsg_register_device(subdev, &info->info);
++		mutex_lock(&subdev->channels_lock);
+ 		if (ret) {
+ 			dev_err(&pdev->dev, "Can't create rpmsg_device\n");
+ 			continue;
 -- 
 2.33.1
 
