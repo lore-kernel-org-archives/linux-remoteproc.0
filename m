@@ -2,121 +2,76 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE8BAC433EF
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 12 Jan 2022 21:43:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CF59C433EF
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 14 Jan 2022 11:59:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229798AbiALVnM (ORCPT
+        id S230369AbiANL7z (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 12 Jan 2022 16:43:12 -0500
-Received: from mo4-p01-ob.smtp.rzone.de ([85.215.255.50]:39335 "EHLO
-        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230245AbiALVnJ (ORCPT
+        Fri, 14 Jan 2022 06:59:55 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:57194 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S240924AbiANL7y (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 12 Jan 2022 16:43:09 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1642023600;
-    s=strato-dkim-0002; d=gerhold.net;
-    h=In-Reply-To:References:Message-ID:Subject:Cc:To:From:Date:Cc:Date:
-    From:Subject:Sender;
-    bh=C9K3tsw1DVfAhcGDUvIMCIJJwfXNhxlv/0SrOmFPm/o=;
-    b=jLREmipLG+n1fMmuQS5UQZRs14UIigNgWXU96Mknv4q3f3yqdCTbUjhCbCX2+g4oJv
-    APnvI2q57IpsHWdgAb+94CJ6tGiHD1jJMeBG4ovUt0opPqwthTjAx1g7bBBZamsEA0N8
-    1k3SLegZtCMHxm079QNlfreM3BiGaMPFu1MOFaTxU7CkoiktQ1SJWa0CYNCgUBoKxFTd
-    cIOLAQxrSKgK0Ex0OsutkFnJXNeH+S0RjsBRkfNVrS8hT/C2zq36GS5yAGUfXr6uYR+A
-    WTYw34/tHlxMXNl/Al/R7GRRHLB8ZW+NDZGUYYEPCnAKvNlxYKyL7egSvMUQ8m99HQx6
-    Z8RQ==
-Authentication-Results: strato.com;
-    dkim=none
-X-RZG-AUTH: ":P3gBZUipdd93FF5ZZvYFPugejmSTVR2nRPhVOQ/OcYgojyw4j34+u267FZF9PwpcNKLVrK85lg=="
-X-RZG-CLASS-ID: mo00
-Received: from gerhold.net
-    by smtp.strato.de (RZmta 47.37.6 AUTH)
-    with ESMTPSA id h68d06y0CLdxbrB
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
-        (Client did not present a certificate);
-    Wed, 12 Jan 2022 22:39:59 +0100 (CET)
-Date:   Wed, 12 Jan 2022 22:39:53 +0100
-From:   Stephan Gerhold <stephan@gerhold.net>
-To:     Luca Weiss <luca@z3ntu.xyz>
-Cc:     linux-arm-msm@vger.kernel.org,
-        ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
-        Vladimir Lypak <vladimir.lypak@gmail.com>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Ohad Ben-Cohen <ohad@wizery.com>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: Re: [PATCH 09/15] rpmsg: smd: Drop unnecessary condition for channel
- creation
-Message-ID: <Yd9KebiZUjTuHtIM@gerhold.net>
-References: <20220112194118.178026-1-luca@z3ntu.xyz>
- <20220112194118.178026-10-luca@z3ntu.xyz>
+        Fri, 14 Jan 2022 06:59:54 -0500
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: kholk11)
+        with ESMTPSA id 19B361F413B3
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1642161591;
+        bh=C2OaY+DhNtPJtmQACKGNG+vM/ZeGsj7cOskW2Yvq4yY=;
+        h=From:To:Cc:Subject:Date:From;
+        b=E1BpdhOfREAsM1kb5H4XmdiOodQfLrc7/B5fm1ZFE84qLmp6xn5QE8GaGsGYIQh5d
+         3fs2wnYLKjalX4aLqEifEKwBzNiXYCZI65EFYgv4fqe89E8rCt1z/blUidgsnBLNP7
+         hCOrEHoWk957bTe1vjBjKpQr1pu+zZAUFKfYc8Gg9EzMzWca51m85+lnhQ7JTbCX37
+         h7Z/snujy7GxfIgwlM4fiLi51WFz5e3LRJ+GxE6h8UZU2dskrI1qSB9gLms76I5cF5
+         SyWWaVIPAgCw9IozDVY8Ma+KhB4vIZhVdU3LyJNfUfQflKXuthSZIv4o6sDatiGXIr
+         AxqoFjPVWhD1w==
+From:   AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>
+To:     agross@kernel.org
+Cc:     bjorn.andersson@linaro.org, mathieu.poirier@linaro.org,
+        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel@collabora.com,
+        konrad.dybcio@somainline.org, marijn.suijten@somainline.org,
+        ~postmarketos/upstreaming@lists.sr.ht,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>
+Subject: [PATCH] rpmsg: qcom_smd: Fix redundant channel->assigned assignment
+Date:   Fri, 14 Jan 2022 12:59:39 +0100
+Message-Id: <20220114115939.146434-1-angelogioacchino.delregno@collabora.com>
+X-Mailer: git-send-email 2.33.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220112194118.178026-10-luca@z3ntu.xyz>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi,
+In qcom_channel_state_worker(), we are setting channel->registered
+to true when registering a channel, but this is getting repeated both
+before and after re-locking the channels_lock spinlock, which is
+obviously a typo.
+Remove the assignment done out of the spinlock to fix this redundancy.
 
-+Cc Srinivas
+Fixes: 53e2822e56c7 ("rpmsg: Introduce Qualcomm SMD backend")
+Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+---
+ drivers/rpmsg/qcom_smd.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-On Wed, Jan 12, 2022 at 08:40:58PM +0100, Luca Weiss wrote:
-> From: Vladimir Lypak <vladimir.lypak@gmail.com>
-> 
-> RPM Firmware on variety of newer SoCs such as MSM8917 (also likely
-> MSM8937, MSM8940, MSM8952), MSM8953 and on some MSM8916 devices) doesn't
-> initiate opening of the SMD channel if it was previously opened by
-> bootloader. This doesn't allow probing of smd-rpm driver on such devices
-> because there is a check that requires RPM this behaviour.
-> 
-> Signed-off-by: Vladimir Lypak <vladimir.lypak@gmail.com>
-> Signed-off-by: Luca Weiss <luca@z3ntu.xyz>
-> Reviewed-by: Konrad Dybcio <konrad.dybcio@somainline.org>
+diff --git a/drivers/rpmsg/qcom_smd.c b/drivers/rpmsg/qcom_smd.c
+index 540e027f08c4..0ee3f7ddabb0 100644
+--- a/drivers/rpmsg/qcom_smd.c
++++ b/drivers/rpmsg/qcom_smd.c
+@@ -1298,9 +1298,7 @@ static void qcom_channel_state_worker(struct work_struct *work)
+ 
+ 		spin_unlock_irqrestore(&edge->channels_lock, flags);
+ 		qcom_smd_create_device(channel);
+-		channel->registered = true;
+ 		spin_lock_irqsave(&edge->channels_lock, flags);
+-
+ 		channel->registered = true;
+ 	}
+ 
+-- 
+2.33.1
 
-This is effectively a "Revert "Revert "rpmsg: smd: Create device for all
-channels""":
-
-https://lore.kernel.org/linux-arm-msm/20171212235857.10432-3-bjorn.andersson@linaro.org/
-https://lore.kernel.org/linux-arm-msm/20180315181244.8859-1-bjorn.andersson@linaro.org/
-
-Won't this cause the same regression reported by Srinivas again?
-
-Thanks,
-Stephan
-
-> ---
->  drivers/rpmsg/qcom_smd.c | 8 +-------
->  1 file changed, 1 insertion(+), 7 deletions(-)
-> 
-> diff --git a/drivers/rpmsg/qcom_smd.c b/drivers/rpmsg/qcom_smd.c
-> index 8da1b5cb31b3..6a01ef932b01 100644
-> --- a/drivers/rpmsg/qcom_smd.c
-> +++ b/drivers/rpmsg/qcom_smd.c
-> @@ -1280,19 +1280,13 @@ static void qcom_channel_state_worker(struct work_struct *work)
->  	unsigned long flags;
->  
->  	/*
-> -	 * Register a device for any closed channel where the remote processor
-> -	 * is showing interest in opening the channel.
-> +	 * Register a device for any closed channel.
->  	 */
->  	spin_lock_irqsave(&edge->channels_lock, flags);
->  	list_for_each_entry(channel, &edge->channels, list) {
->  		if (channel->state != SMD_CHANNEL_CLOSED)
->  			continue;
->  
-> -		remote_state = GET_RX_CHANNEL_INFO(channel, state);
-> -		if (remote_state != SMD_CHANNEL_OPENING &&
-> -		    remote_state != SMD_CHANNEL_OPENED)
-> -			continue;
-> -
->  		if (channel->registered)
->  			continue;
->  
-> -- 
-> 2.34.1
-> 
