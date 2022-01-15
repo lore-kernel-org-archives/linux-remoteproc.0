@@ -2,93 +2,127 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3278CC433FE
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 14 Jan 2022 14:47:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EFC1C433EF
+	for <linux-remoteproc@archiver.kernel.org>; Sat, 15 Jan 2022 01:13:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242007AbiANOru (ORCPT
+        id S231842AbiAOBNk (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 14 Jan 2022 09:47:50 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:58570 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241999AbiANOrt (ORCPT
+        Fri, 14 Jan 2022 20:13:40 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56384 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229775AbiAOBNj (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 14 Jan 2022 09:47:49 -0500
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: kholk11)
-        with ESMTPSA id A6C881F46A72
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1642171668;
-        bh=cTHqww4IZbi5PdxScVJ5RmgEFWGNWZU4AMAqnvnN1vM=;
-        h=From:To:Cc:Subject:Date:From;
-        b=D8AJQ4G4r14QCgGUpRCWn6AKwg2pAfphNZFKn9dWfT35vWJoI66KVSW7wOn/gXH8F
-         8+A7uBI3Sn2tDAHAu12zTel7evWbULUfMEnbsbcxcD7qYOmoOwRj5QuEa6f11pCGRl
-         5TKGmqC9UO3H/KHxP4s6DO9sC+IGFySuqpp0mit5cnsdk9mYk37bFOnzi4dGPnKHZv
-         ANmplostgKQQYVTggvCRI3XtxFzRbJFVi+xojzgODipky/Se7m9u57A3wmx0z3RvM+
-         VgAMkZairRwIwTkLmvYFbS+bM97KSZJjTomHxGawqHkf0W88KMMwmKbb8P1u8d1H3U
-         7bYait9ekDf5w==
-From:   AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-To:     bjorn.andersson@linaro.org
-Cc:     mathieu.poirier@linaro.org, matthias.bgg@gmail.com,
-        pihsun@chromium.org, linux-remoteproc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
-        kernel@collabora.com,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-Subject: [PATCH] rpmsg: mtk_rpmsg: Fix circular locking dependency
-Date:   Fri, 14 Jan 2022 15:47:37 +0100
-Message-Id: <20220114144737.375621-1-angelogioacchino.delregno@collabora.com>
-X-Mailer: git-send-email 2.33.1
+        Fri, 14 Jan 2022 20:13:39 -0500
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AF805C061574;
+        Fri, 14 Jan 2022 17:13:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+        Content-ID:Content-Description:In-Reply-To:References;
+        bh=j4X69JcLD6mdNWGbTcpDg4N2e78q2bD3JRVc0T2jhBs=; b=lS9h5WOextxA0Om5wNMAfwTXEa
+        oh0VkAalNyGQuqUvoEJC2NPDtDNs2xeN9h6fXM0sQhTfxnvxIpmKPTJse7I6NcVErK8sxJMUN0WPJ
+        CwvZwG8GDtRiDC7lb4bQDAwbXiiiNpbgqMaBDlt7/8/5m5cGiDXiEAjKtC6dlypZOppiJXP03g1Ee
+        5Hu0R3InL5I1gy0L47RZafgBDJ/98wqceuGkCz8NoNEfE7NgOsSdATX+qGW/eMO5gNEqCHQ0yqvAn
+        TZaYJuAMHimVlbSpT5iwGIkaF5EE3vGUBrpCv1cggDbY02o2Dd/caG6n7tnYHoqQWybl4mYVcpA70
+        ri+kW4kQ==;
+Received: from [2601:1c0:6280:3f0::aa0b] (helo=bombadil.infradead.org)
+        by bombadil.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1n8XdS-00AWnV-Ui; Sat, 15 Jan 2022 01:13:39 +0000
+From:   Randy Dunlap <rdunlap@infradead.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Randy Dunlap <rdunlap@infradead.org>,
+        kernel test robot <lkp@intel.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        linux-remoteproc@vger.kernel.org,
+        Sibi Sankar <sibis@codeaurora.org>,
+        Stephen Boyd <swboyd@chromium.org>
+Subject: [PATCH] remoteproc: qcom: q6v5: fix service routines build errors
+Date:   Fri, 14 Jan 2022 17:13:38 -0800
+Message-Id: <20220115011338.2973-1-rdunlap@infradead.org>
+X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-During execution of the worker that's used to register rpmsg devices
-we are safely locking the channels mutex but, when creating a new
-endpoint for such devices, we are registering a IPI on the SCP, which
-then makes the SCP to trigger an interrupt, lock its own mutex and in
-turn register more subdevices.
-This creates a circular locking dependency situation, as the mtk_rpmsg
-channels_lock will then depend on the SCP IPI lock.
+When CONFIG_QCOM_AOSS_QMP=m and CONFIG_QCOM_Q6V5_MSS=y, the builtin
+driver cannot call into the loadable module's low-level service
+functions. Trying to build with that config combo causes linker errors.
 
-[   18.014514]  Possible unsafe locking scenario:
-[   18.014515]        CPU0                    CPU1
-[   18.014517]        ----                    ----
-[   18.045467]   lock(&mtk_subdev->channels_lock);
-[   18.045474]                                lock(&scp->ipi_desc[i].lock);
-[   18.228399]                                lock(&mtk_subdev->channels_lock);
-[   18.228405]   lock(&scp->ipi_desc[i].lock);
-[   18.264405]
+There are two problems here. First, drivers/remoteproc/qcom_q6v5.c
+should #include <linux/soc/qcom/qcom_aoss.h> for the definitions of
+the service functions, depending on whether CONFIG_QCOM_AOSS_QMP is
+set/enabled or not. Second, the qcom remoteproc drivers should depend
+on QCOM_AOSS_QMP iff it is enabled (=y or =m) so that the qcom
+remoteproc drivers can be built properly.
 
-To solve this, simply unlock the channels_lock mutex before calling
-mtk_rpmsg_register_device() and relock it right after, as safety is
-still ensured by the locking mechanism that happens right after
-through SCP.
-Notably, mtk_rpmsg_register_device() does not even require locking.
+This prevents these build errors:
 
-Fixes: 7017996951fd ("rpmsg: add rpmsg support for mt8183 SCP.")
-Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+aarch64-linux-ld: drivers/remoteproc/qcom_q6v5.o: in function `q6v5_load_state_toggle':
+qcom_q6v5.c:(.text+0xc4): undefined reference to `qmp_send'
+aarch64-linux-ld: drivers/remoteproc/qcom_q6v5.o: in function `qcom_q6v5_deinit':
+(.text+0x2e4): undefined reference to `qmp_put'
+aarch64-linux-ld: drivers/remoteproc/qcom_q6v5.o: in function `qcom_q6v5_init':
+(.text+0x778): undefined reference to `qmp_get'
+aarch64-linux-ld: (.text+0x7d8): undefined reference to `qmp_put'
+
+Fixes: c1fe10d238c0 ("remoteproc: qcom: q6v5: Use qmp_send to update co-processor load state")
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Reported-by: kernel test robot <lkp@intel.com>
+Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: linux-remoteproc@vger.kernel.org
+Cc: Sibi Sankar <sibis@codeaurora.org>
+Cc: Stephen Boyd <swboyd@chromium.org>
 ---
- drivers/rpmsg/mtk_rpmsg.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/remoteproc/Kconfig     |    4 ++++
+ drivers/remoteproc/qcom_q6v5.c |    1 +
+ 2 files changed, 5 insertions(+)
 
-diff --git a/drivers/rpmsg/mtk_rpmsg.c b/drivers/rpmsg/mtk_rpmsg.c
-index 5b4404b8be4c..d1213c33da20 100644
---- a/drivers/rpmsg/mtk_rpmsg.c
-+++ b/drivers/rpmsg/mtk_rpmsg.c
-@@ -234,7 +234,9 @@ static void mtk_register_device_work_function(struct work_struct *register_work)
- 		if (info->registered)
- 			continue;
- 
-+		mutex_unlock(&subdev->channels_lock);
- 		ret = mtk_rpmsg_register_device(subdev, &info->info);
-+		mutex_lock(&subdev->channels_lock);
- 		if (ret) {
- 			dev_err(&pdev->dev, "Can't create rpmsg_device\n");
- 			continue;
--- 
-2.33.1
-
+--- linux-next-20220114.orig/drivers/remoteproc/qcom_q6v5.c
++++ linux-next-20220114/drivers/remoteproc/qcom_q6v5.c
+@@ -10,6 +10,7 @@
+ #include <linux/platform_device.h>
+ #include <linux/interrupt.h>
+ #include <linux/module.h>
++#include <linux/soc/qcom/qcom_aoss.h>
+ #include <linux/soc/qcom/smem.h>
+ #include <linux/soc/qcom/smem_state.h>
+ #include <linux/remoteproc.h>
+--- linux-next-20220114.orig/drivers/remoteproc/Kconfig
++++ linux-next-20220114/drivers/remoteproc/Kconfig
+@@ -180,6 +180,7 @@ config QCOM_Q6V5_ADSP
+ 	depends on RPMSG_QCOM_GLINK_SMEM || RPMSG_QCOM_GLINK_SMEM=n
+ 	depends on QCOM_SYSMON || QCOM_SYSMON=n
+ 	depends on RPMSG_QCOM_GLINK || RPMSG_QCOM_GLINK=n
++	depends on QCOM_AOSS_QMP || QCOM_AOSS_QMP=n
+ 	select MFD_SYSCON
+ 	select QCOM_PIL_INFO
+ 	select QCOM_MDT_LOADER
+@@ -199,6 +200,7 @@ config QCOM_Q6V5_MSS
+ 	depends on RPMSG_QCOM_GLINK_SMEM || RPMSG_QCOM_GLINK_SMEM=n
+ 	depends on QCOM_SYSMON || QCOM_SYSMON=n
+ 	depends on RPMSG_QCOM_GLINK || RPMSG_QCOM_GLINK=n
++	depends on QCOM_AOSS_QMP || QCOM_AOSS_QMP=n
+ 	select MFD_SYSCON
+ 	select QCOM_MDT_LOADER
+ 	select QCOM_PIL_INFO
+@@ -218,6 +220,7 @@ config QCOM_Q6V5_PAS
+ 	depends on RPMSG_QCOM_GLINK_SMEM || RPMSG_QCOM_GLINK_SMEM=n
+ 	depends on QCOM_SYSMON || QCOM_SYSMON=n
+ 	depends on RPMSG_QCOM_GLINK || RPMSG_QCOM_GLINK=n
++	depends on QCOM_AOSS_QMP || QCOM_AOSS_QMP=n
+ 	select MFD_SYSCON
+ 	select QCOM_PIL_INFO
+ 	select QCOM_MDT_LOADER
+@@ -239,6 +242,7 @@ config QCOM_Q6V5_WCSS
+ 	depends on RPMSG_QCOM_GLINK_SMEM || RPMSG_QCOM_GLINK_SMEM=n
+ 	depends on QCOM_SYSMON || QCOM_SYSMON=n
+ 	depends on RPMSG_QCOM_GLINK || RPMSG_QCOM_GLINK=n
++	depends on QCOM_AOSS_QMP || QCOM_AOSS_QMP=n
+ 	select MFD_SYSCON
+ 	select QCOM_MDT_LOADER
+ 	select QCOM_PIL_INFO
