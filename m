@@ -2,97 +2,135 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DEF58C433F5
-	for <linux-remoteproc@archiver.kernel.org>; Sat, 15 Jan 2022 08:09:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF740C433EF
+	for <linux-remoteproc@archiver.kernel.org>; Sun, 16 Jan 2022 16:08:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229744AbiAOIJn (ORCPT
+        id S235567AbiAPQIh (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Sat, 15 Jan 2022 03:09:43 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33228 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229739AbiAOIJn (ORCPT
-        <rfc822;linux-remoteproc@vger.kernel.org>);
-        Sat, 15 Jan 2022 03:09:43 -0500
-Received: from mail-oi1-x231.google.com (mail-oi1-x231.google.com [IPv6:2607:f8b0:4864:20::231])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DC638C06161C
-        for <linux-remoteproc@vger.kernel.org>; Sat, 15 Jan 2022 00:09:42 -0800 (PST)
-Received: by mail-oi1-x231.google.com with SMTP id e81so15620769oia.6
-        for <linux-remoteproc@vger.kernel.org>; Sat, 15 Jan 2022 00:09:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:in-reply-to:references:from:user-agent:date:message-id
-         :subject:to:cc;
-        bh=vfhunlj9nQmQKNmF7Wj+BYTeOFfCavkVzFjEDPkYdiE=;
-        b=i+bcdAa9vVPOaIjwQ7K+m8bgWBs2sGdOc3rp9SxWgfPWinzTLJCfkGt9spA8KJ9Di3
-         n/Uf/zfIAQC0Mu5oqzMTS8wGG5v8/Iu7UAGA3CwXGWmv4ULHmexDaPjLMoryPvnYO7lr
-         BCW2O1kmRCouONOqeHvhyxTwxZhzgwj9M9UDY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from
-         :user-agent:date:message-id:subject:to:cc;
-        bh=vfhunlj9nQmQKNmF7Wj+BYTeOFfCavkVzFjEDPkYdiE=;
-        b=hZn7u52/s4ThsgFO3EUOk8hqytdLX1tIXmbeLKlyrIUflTtQc99KMkpemxsvp7huuZ
-         98hC8heIdzPA/Nz7GfvjLNORaPtaLkvS7Ejq3kKdpCKYM+bOyicVcFdtblI86qTlMxhy
-         VmNRxrhl0M+4AJqUG/zXjOeZwVaPIgPMsi5TP6a5046uysqw2ecSQ2oGrTOOQ/VdzUv7
-         iSP5D89SVINn5k4oV1HiKUoLogFAGA2bYEXIKySbwHIlZiBR1Xa/9SgDSjtdSGBeXzp5
-         Jcu/uwtxCE3SvSDoLaQhabVixxJATOJ+J2+9dado1aA5X1tKXJv4Pf6o724VEecldvie
-         kzgg==
-X-Gm-Message-State: AOAM532hUheci6X4jqr3v7GOdIHIPVCuxVhTKew69hBHi8NRnVsa5lzF
-        YUgbtB0lnTN9Y9lpPFC+0a7OBqD/G0X4cEN1SC+HP0ozbng=
-X-Google-Smtp-Source: ABdhPJzoiOosGWLxjp+CHkMjoztQPbXGKMRKAVC5I4mWHIH9Iu8JH7ikpQNtcfA4CJYQUftjdF/JNAJKh8n+WaWqjHM=
-X-Received: by 2002:aca:4382:: with SMTP id q124mr10403906oia.64.1642234182123;
- Sat, 15 Jan 2022 00:09:42 -0800 (PST)
-Received: from 753933720722 named unknown by gmailapi.google.com with
- HTTPREST; Sat, 15 Jan 2022 02:09:41 -0600
-MIME-Version: 1.0
-In-Reply-To: <20220115011338.2973-1-rdunlap@infradead.org>
-References: <20220115011338.2973-1-rdunlap@infradead.org>
-From:   Stephen Boyd <swboyd@chromium.org>
-User-Agent: alot/0.10
-Date:   Sat, 15 Jan 2022 02:09:41 -0600
-Message-ID: <CAE-0n50w=dvD=UQyeFvwq6W6E2p3M6zy2yO9V5ah1GFwKq4AJg@mail.gmail.com>
-Subject: Re: [PATCH] remoteproc: qcom: q6v5: fix service routines build errors
-To:     Randy Dunlap <rdunlap@infradead.org>, linux-kernel@vger.kernel.org
-Cc:     kernel test robot <lkp@intel.com>,
+        Sun, 16 Jan 2022 11:08:37 -0500
+Received: from mail.z3ntu.xyz ([128.199.32.197]:43306 "EHLO mail.z3ntu.xyz"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S232447AbiAPQIe (ORCPT <rfc822;linux-remoteproc@vger.kernel.org>);
+        Sun, 16 Jan 2022 11:08:34 -0500
+Received: from g550jk.localnet (ip-213-127-106-2.ip.prioritytelecom.net [213.127.106.2])
+        by mail.z3ntu.xyz (Postfix) with ESMTPSA id 95420CE70A;
+        Sun, 16 Jan 2022 16:08:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=z3ntu.xyz; s=z3ntu;
+        t=1642349310; bh=4LMg+1VVMXQXKYNpkZ8tcMuM7sLu2TwLatA8b+djne4=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References;
+        b=wUEfk15OLngMxPUrqY11hbr6UZvR6c6o7n4bmgShT0A2CeSSPbcSDabmkOOyNtxrd
+         C8Xx5/Y9K0dpWFdFa9zqsxYBC8jH5poVVNnHP9rm9XEspWaceXijKkWbGMhyWS2B0v
+         88IZNlfqxpXtu+WpdgnUZ8zDPcvi9ehnRQcCMEEs=
+From:   Luca Weiss <luca@z3ntu.xyz>
+To:     Stephan Gerhold <stephan@gerhold.net>
+Cc:     linux-arm-msm@vger.kernel.org,
+        ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
+        Vladimir Lypak <vladimir.lypak@gmail.com>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Andy Gross <agross@kernel.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Ohad Ben-Cohen <ohad@wizery.com>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
-        linux-remoteproc@vger.kernel.org,
-        Sibi Sankar <sibis@codeaurora.org>
-Content-Type: text/plain; charset="UTF-8"
+        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Subject: Re: [PATCH 09/15] rpmsg: smd: Drop unnecessary condition for channel creation
+Date:   Sun, 16 Jan 2022 17:08:29 +0100
+Message-ID: <12385151.O9o76ZdvQC@g550jk>
+In-Reply-To: <Yd9KebiZUjTuHtIM@gerhold.net>
+References: <20220112194118.178026-1-luca@z3ntu.xyz> <20220112194118.178026-10-luca@z3ntu.xyz> <Yd9KebiZUjTuHtIM@gerhold.net>
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Quoting Randy Dunlap (2022-01-14 17:13:38)
-> When CONFIG_QCOM_AOSS_QMP=m and CONFIG_QCOM_Q6V5_MSS=y, the builtin
-> driver cannot call into the loadable module's low-level service
-> functions. Trying to build with that config combo causes linker errors.
->
-> There are two problems here. First, drivers/remoteproc/qcom_q6v5.c
-> should #include <linux/soc/qcom/qcom_aoss.h> for the definitions of
-> the service functions, depending on whether CONFIG_QCOM_AOSS_QMP is
-> set/enabled or not. Second, the qcom remoteproc drivers should depend
-> on QCOM_AOSS_QMP iff it is enabled (=y or =m) so that the qcom
-> remoteproc drivers can be built properly.
->
-> This prevents these build errors:
->
-> aarch64-linux-ld: drivers/remoteproc/qcom_q6v5.o: in function `q6v5_load_state_toggle':
-> qcom_q6v5.c:(.text+0xc4): undefined reference to `qmp_send'
-> aarch64-linux-ld: drivers/remoteproc/qcom_q6v5.o: in function `qcom_q6v5_deinit':
-> (.text+0x2e4): undefined reference to `qmp_put'
-> aarch64-linux-ld: drivers/remoteproc/qcom_q6v5.o: in function `qcom_q6v5_init':
-> (.text+0x778): undefined reference to `qmp_get'
-> aarch64-linux-ld: (.text+0x7d8): undefined reference to `qmp_put'
->
-> Fixes: c1fe10d238c0 ("remoteproc: qcom: q6v5: Use qmp_send to update co-processor load state")
-> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-> Reported-by: kernel test robot <lkp@intel.com>
-> Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
-> Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
-> Cc: linux-remoteproc@vger.kernel.org
-> Cc: Sibi Sankar <sibis@codeaurora.org>
-> Cc: Stephen Boyd <swboyd@chromium.org>
-> ---
+Hi Stephan,
 
-Reviewed-by: Stephen Boyd <swboyd@chromium.org>
+On Mittwoch, 12. J=E4nner 2022 22:39:53 CET Stephan Gerhold wrote:
+> Hi,
+>=20
+> +Cc Srinivas
+>=20
+> On Wed, Jan 12, 2022 at 08:40:58PM +0100, Luca Weiss wrote:
+> > From: Vladimir Lypak <vladimir.lypak@gmail.com>
+> >=20
+> > RPM Firmware on variety of newer SoCs such as MSM8917 (also likely
+> > MSM8937, MSM8940, MSM8952), MSM8953 and on some MSM8916 devices) doesn't
+> > initiate opening of the SMD channel if it was previously opened by
+> > bootloader. This doesn't allow probing of smd-rpm driver on such devices
+> > because there is a check that requires RPM this behaviour.
+> >=20
+> > Signed-off-by: Vladimir Lypak <vladimir.lypak@gmail.com>
+> > Signed-off-by: Luca Weiss <luca@z3ntu.xyz>
+> > Reviewed-by: Konrad Dybcio <konrad.dybcio@somainline.org>
+>=20
+> This is effectively a "Revert "Revert "rpmsg: smd: Create device for all
+> channels""":
+>=20
+> https://lore.kernel.org/linux-arm-msm/20171212235857.10432-3-bjorn.anders=
+son
+> @linaro.org/
+> https://lore.kernel.org/linux-arm-msm/20180315181244.8859-1-bjorn.anderss=
+on
+> @linaro.org/
+>=20
+> Won't this cause the same regression reported by Srinivas again?
+>=20
+
+Do you have any suggestion on another way to solve this? Without this commi=
+t=20
+the regulators just won't probe at all, I haven't looked very deep into it=
+=20
+though given this patch solves it.
+
+I guess worst case it'll become a devicetree property to enable this quirk?
+
+Regards
+Luca
+
+> Thanks,
+> Stephan
+>=20
+> > ---
+> >=20
+> >  drivers/rpmsg/qcom_smd.c | 8 +-------
+> >  1 file changed, 1 insertion(+), 7 deletions(-)
+> >=20
+> > diff --git a/drivers/rpmsg/qcom_smd.c b/drivers/rpmsg/qcom_smd.c
+> > index 8da1b5cb31b3..6a01ef932b01 100644
+> > --- a/drivers/rpmsg/qcom_smd.c
+> > +++ b/drivers/rpmsg/qcom_smd.c
+> > @@ -1280,19 +1280,13 @@ static void qcom_channel_state_worker(struct
+> > work_struct *work)>=20
+> >  	unsigned long flags;
+> >  =09
+> >  	/*
+> >=20
+> > -	 * Register a device for any closed channel where the remote=20
+processor
+> > -	 * is showing interest in opening the channel.
+> > +	 * Register a device for any closed channel.
+> >=20
+> >  	 */
+> >  =09
+> >  	spin_lock_irqsave(&edge->channels_lock, flags);
+> >  	list_for_each_entry(channel, &edge->channels, list) {
+> >  =09
+> >  		if (channel->state !=3D SMD_CHANNEL_CLOSED)
+> >  	=09
+> >  			continue;
+> >=20
+> > -		remote_state =3D GET_RX_CHANNEL_INFO(channel, state);
+> > -		if (remote_state !=3D SMD_CHANNEL_OPENING &&
+> > -		    remote_state !=3D SMD_CHANNEL_OPENED)
+> > -			continue;
+> > -
+> >=20
+> >  		if (channel->registered)
+> >  	=09
+> >  			continue;
+
+
+
+
