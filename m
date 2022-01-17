@@ -2,84 +2,103 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5DDDC433F5
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 17 Jan 2022 22:32:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93374C433F5
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 17 Jan 2022 22:43:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243623AbiAQWcn (ORCPT
+        id S238519AbiAQWnr (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 17 Jan 2022 17:32:43 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34914 "EHLO
+        Mon, 17 Jan 2022 17:43:47 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37322 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243572AbiAQWcm (ORCPT
+        with ESMTP id S232161AbiAQWnq (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 17 Jan 2022 17:32:42 -0500
-Received: from mail-oi1-x234.google.com (mail-oi1-x234.google.com [IPv6:2607:f8b0:4864:20::234])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ECEE1C06161C
-        for <linux-remoteproc@vger.kernel.org>; Mon, 17 Jan 2022 14:32:41 -0800 (PST)
-Received: by mail-oi1-x234.google.com with SMTP id e81so25678581oia.6
-        for <linux-remoteproc@vger.kernel.org>; Mon, 17 Jan 2022 14:32:41 -0800 (PST)
+        Mon, 17 Jan 2022 17:43:46 -0500
+Received: from mail-ot1-x32b.google.com (mail-ot1-x32b.google.com [IPv6:2607:f8b0:4864:20::32b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 85CBAC061574
+        for <linux-remoteproc@vger.kernel.org>; Mon, 17 Jan 2022 14:43:46 -0800 (PST)
+Received: by mail-ot1-x32b.google.com with SMTP id l64-20020a9d1b46000000b005983a0a8aaaso9145623otl.3
+        for <linux-remoteproc@vger.kernel.org>; Mon, 17 Jan 2022 14:43:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=D/J052/7DxEQiqaUZqwqhtE5Bv0OFiyXqeykY1SUoqI=;
-        b=bmuxq/xx64m6+VBkCdJmTqXMbE2AYvvG/dbXUQ7yUlBIz3JzNsIEA4m3GrzsrYwjr+
-         ht0MdMHdQiQz1HtcIeqHJIZUGFqqqsFdkwb/0FT2dO8FsPKHEIw5Kj3kFpTZzYnFZc3D
-         BnRqZ///E+XFo09qKhNy4ztP7G3JAU6eSLnyCrPhEHwZFiV4atCg5mQrAq0a/O5HcqmQ
-         vg7li1e8lVU6nJBO8iTivdXgiqvxSHVli6DGDk6URCSDXL+u3Sz/u5iiANZIm2IBj/e1
-         COxfsACPPHxwGlxu1J3oFM1iUvFZvUOJ1qJAiC6/bxLiVfjCtrBzQgnjB8RkEgyK7Wth
-         gPwQ==
+        bh=5+E4PSnXMRT02TmZcKnGMPVWqaFVYJ6Z2tvBmRV+d5Q=;
+        b=t3pn50gIW/BLODEIGKxX+/HYRFZ2do7KWL+MipSCuuPPhMd2/oIBrQ7vkfxgSeXPcl
+         h/O/zYj3vEojFPgdmfgFUYrFnCvKBFJ72q61KBC+GJtmJM9hcQUkj5Kfbd0ucg/rBGmQ
+         o5g5MMi1va5MWn2Dx62Dd40tvrDX2TM/M6+7vaM6iWZa1K43GYSjgkjbY13au3QqGXo4
+         6tuzIwfdwGNkh6BGqQF5aPkX8G2oo0W4vNqF4Q0qUEdNaYtaC6Gy+lGLQJF+VPYAYudn
+         VxDnImhIK8VW2qcHKpLB3xfvJMf7V8ZoFf7qysY5STehzwDZCDla0CWFp9LXbW1Q6TmE
+         95og==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=D/J052/7DxEQiqaUZqwqhtE5Bv0OFiyXqeykY1SUoqI=;
-        b=E93fyNnNpiKn14MPRQ8KzyLpEWHiG5bQFlQNxkw7BMKYa9gfP8hbYOE2N+5ZdzWoVW
-         DIEB8+7DBR5RI9NYxJYpZ5XC3Fi06st2jJ7K3K2i0uvpoLEvEhWNwZwTwGOXstXikfGM
-         M75ka+A+Mx7tOYmyTjM8M2r8pDppkG+LuCdMqn47dIkg+0ua9My71wqK1t0+Lmr+6vdm
-         tOOVctcpLvGnP5sqJXIwO5g+1Ix3jAU+GYMwKzDLHZFu4d8uA56wMF9cp2gyiGMkw6/u
-         Oz3VdR/TM8cepxtygUiYH5CRYejlk/PkTE29oqILhW+H9mhlIxEbrHXNrlMBebVU44IE
-         VLlg==
-X-Gm-Message-State: AOAM533uAl3YXA1Sr6HvxQ+aGWtou8qe91S0zbWb1edSJ0DZ7KTkQX0p
-        1Upg83aT7iVQXup3BDX8YzvDUg==
-X-Google-Smtp-Source: ABdhPJwelesxWK0Ycd7ezTwfbCelxQl40slAy0ZL2w0WkN/vwhxGvN8YjqN5VGsg82SXWRPyeX4uBg==
-X-Received: by 2002:aca:c08a:: with SMTP id q132mr24805444oif.82.1642458761244;
-        Mon, 17 Jan 2022 14:32:41 -0800 (PST)
+        bh=5+E4PSnXMRT02TmZcKnGMPVWqaFVYJ6Z2tvBmRV+d5Q=;
+        b=pp/tMxjP7H8z21b11/4s0TgRGzq4zW6yXgyNZh3AeGY+qe6X4esiszGOQPJaCmAscD
+         M8bw4uxG53VQp0f78MNoiCArC/ZVSL7o/PM3dEOTfgeaBvEh8dudSbtIbtvy+OfFW1r/
+         P7wju3GTkvhb8iVDz72pQm0tOcuVMhm7AjO2WqrFtfNN4sqsHasXxMFnxh/X0zUlqPve
+         TtD687Vk24BSCR6hcN/k9sXmqtItZlqUDiro6jPytTO3XpFGOn7DPd3vIXJevzHSY5ot
+         MdoMN+CM/ia4NNoSF9JUviobf97rYQvKuWNAY2kTXUcOyuVZGLl6osKTcD+2/TDVKhIW
+         nyFg==
+X-Gm-Message-State: AOAM532fGjbpGNi55UyuqOuymBMC1DXwcxYx1ZMlHgTm05hLJSY35cb3
+        zBwTUDABYiSRq7zTP7P4Q/OV1w==
+X-Google-Smtp-Source: ABdhPJwpan1hHIn3UngpvQmmwyO8P1iik8MOHOqSlTskwtmmmCcRQec+wDqLPuV1g4FmOHc+t+bbjw==
+X-Received: by 2002:a05:6830:1512:: with SMTP id k18mr5351958otp.134.1642459425886;
+        Mon, 17 Jan 2022 14:43:45 -0800 (PST)
 Received: from builder.lan (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
-        by smtp.gmail.com with ESMTPSA id b24sm6180394oti.68.2022.01.17.14.32.40
+        by smtp.gmail.com with ESMTPSA id bg17sm7662177oib.25.2022.01.17.14.43.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Jan 2022 14:32:40 -0800 (PST)
-Date:   Mon, 17 Jan 2022 16:32:38 -0600
+        Mon, 17 Jan 2022 14:43:45 -0800 (PST)
+Date:   Mon, 17 Jan 2022 16:43:40 -0600
 From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-Cc:     Mathieu Poirier <mathieu.poirier@linaro.org>,
-        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com, julien.massot@iot.bzh
-Subject: Re: [PATCH v8 01/13] rpmsg: char: Export eptdev create an destroy
- functions
-Message-ID: <YeXuhoIuanXbVxI2@builder.lan>
-References: <20211207080843.21222-1-arnaud.pouliquen@foss.st.com>
- <20211207080843.21222-2-arnaud.pouliquen@foss.st.com>
+To:     Randy Dunlap <rdunlap@infradead.org>
+Cc:     linux-kernel@vger.kernel.org, kernel test robot <lkp@intel.com>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        linux-remoteproc@vger.kernel.org,
+        Sibi Sankar <sibis@codeaurora.org>,
+        Stephen Boyd <swboyd@chromium.org>
+Subject: Re: [PATCH] remoteproc: qcom: q6v5: fix service routines build errors
+Message-ID: <YeXxHE31J6CafxIz@builder.lan>
+References: <20220115011338.2973-1-rdunlap@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20211207080843.21222-2-arnaud.pouliquen@foss.st.com>
+In-Reply-To: <20220115011338.2973-1-rdunlap@infradead.org>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Tue 07 Dec 02:08 CST 2021, Arnaud Pouliquen wrote:
+On Fri 14 Jan 19:13 CST 2022, Randy Dunlap wrote:
 
-> To prepare the split of the code related to the control (ctrldev)
-> and the endpoint (eptdev) devices in 2 separate files:
+> When CONFIG_QCOM_AOSS_QMP=m and CONFIG_QCOM_Q6V5_MSS=y, the builtin
+> driver cannot call into the loadable module's low-level service
+> functions. Trying to build with that config combo causes linker errors.
 > 
-> - Rename and export the functions in rpmsg_char.h.
+> There are two problems here. First, drivers/remoteproc/qcom_q6v5.c
+> should #include <linux/soc/qcom/qcom_aoss.h> for the definitions of
+> the service functions, depending on whether CONFIG_QCOM_AOSS_QMP is
+> set/enabled or not. Second, the qcom remoteproc drivers should depend
+> on QCOM_AOSS_QMP iff it is enabled (=y or =m) so that the qcom
+> remoteproc drivers can be built properly.
 > 
-> - Suppress the dependency with the rpmsg_ctrldev struct in the
->   rpmsg_eptdev_create function.
+> This prevents these build errors:
 > 
-> Suggested-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+> aarch64-linux-ld: drivers/remoteproc/qcom_q6v5.o: in function `q6v5_load_state_toggle':
+> qcom_q6v5.c:(.text+0xc4): undefined reference to `qmp_send'
+> aarch64-linux-ld: drivers/remoteproc/qcom_q6v5.o: in function `qcom_q6v5_deinit':
+> (.text+0x2e4): undefined reference to `qmp_put'
+> aarch64-linux-ld: drivers/remoteproc/qcom_q6v5.o: in function `qcom_q6v5_init':
+> (.text+0x778): undefined reference to `qmp_get'
+> aarch64-linux-ld: (.text+0x7d8): undefined reference to `qmp_put'
+> 
+> Fixes: c1fe10d238c0 ("remoteproc: qcom: q6v5: Use qmp_send to update co-processor load state")
+> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+> Reported-by: kernel test robot <lkp@intel.com>
+> Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
+> Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
+> Cc: linux-remoteproc@vger.kernel.org
+> Cc: Sibi Sankar <sibis@codeaurora.org>
+> Cc: Stephen Boyd <swboyd@chromium.org>
 
 Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 
@@ -87,159 +106,51 @@ Regards,
 Bjorn
 
 > ---
-> Update vs previous revision:
-> - suppress WARN_ON when CONFIG_RPMSG_CHAR not defined and return -ENXIO
-> ---
->  drivers/rpmsg/rpmsg_char.c | 18 +++++++++------
->  drivers/rpmsg/rpmsg_char.h | 46 ++++++++++++++++++++++++++++++++++++++
->  2 files changed, 57 insertions(+), 7 deletions(-)
->  create mode 100644 drivers/rpmsg/rpmsg_char.h
+>  drivers/remoteproc/Kconfig     |    4 ++++
+>  drivers/remoteproc/qcom_q6v5.c |    1 +
+>  2 files changed, 5 insertions(+)
 > 
-> diff --git a/drivers/rpmsg/rpmsg_char.c b/drivers/rpmsg/rpmsg_char.c
-> index d6214cb66026..f7aa2dd302a5 100644
-> --- a/drivers/rpmsg/rpmsg_char.c
-> +++ b/drivers/rpmsg/rpmsg_char.c
-> @@ -1,5 +1,6 @@
->  // SPDX-License-Identifier: GPL-2.0
->  /*
-> + * Copyright (C) 2021, STMicroelectronics
->   * Copyright (c) 2016, Linaro Ltd.
->   * Copyright (c) 2012, Michal Simek <monstr@monstr.eu>
->   * Copyright (c) 2012, PetaLogix
-> @@ -25,6 +26,8 @@
->  #include <linux/uaccess.h>
->  #include <uapi/linux/rpmsg.h>
->  
-> +#include "rpmsg_char.h"
-> +
->  #define RPMSG_DEV_MAX	(MINORMASK + 1)
->  
->  static dev_t rpmsg_major;
-> @@ -79,7 +82,7 @@ struct rpmsg_eptdev {
->  	wait_queue_head_t readq;
->  };
->  
-> -static int rpmsg_eptdev_destroy(struct device *dev, void *data)
-> +int rpmsg_chrdev_eptdev_destroy(struct device *dev, void *data)
->  {
->  	struct rpmsg_eptdev *eptdev = dev_to_eptdev(dev);
->  
-> @@ -98,6 +101,7 @@ static int rpmsg_eptdev_destroy(struct device *dev, void *data)
->  
->  	return 0;
->  }
-> +EXPORT_SYMBOL(rpmsg_chrdev_eptdev_destroy);
->  
->  static int rpmsg_ept_cb(struct rpmsg_device *rpdev, void *buf, int len,
->  			void *priv, u32 addr)
-> @@ -281,7 +285,7 @@ static long rpmsg_eptdev_ioctl(struct file *fp, unsigned int cmd,
->  	if (cmd != RPMSG_DESTROY_EPT_IOCTL)
->  		return -EINVAL;
->  
-> -	return rpmsg_eptdev_destroy(&eptdev->dev, NULL);
-> +	return rpmsg_chrdev_eptdev_destroy(&eptdev->dev, NULL);
->  }
->  
->  static const struct file_operations rpmsg_eptdev_fops = {
-> @@ -340,10 +344,9 @@ static void rpmsg_eptdev_release_device(struct device *dev)
->  	kfree(eptdev);
->  }
->  
-> -static int rpmsg_eptdev_create(struct rpmsg_ctrldev *ctrldev,
-> +int rpmsg_chrdev_eptdev_create(struct rpmsg_device *rpdev, struct device *parent,
->  			       struct rpmsg_channel_info chinfo)
->  {
-> -	struct rpmsg_device *rpdev = ctrldev->rpdev;
->  	struct rpmsg_eptdev *eptdev;
->  	struct device *dev;
->  	int ret;
-> @@ -363,7 +366,7 @@ static int rpmsg_eptdev_create(struct rpmsg_ctrldev *ctrldev,
->  
->  	device_initialize(dev);
->  	dev->class = rpmsg_class;
-> -	dev->parent = &ctrldev->dev;
-> +	dev->parent = parent;
->  	dev->groups = rpmsg_eptdev_groups;
->  	dev_set_drvdata(dev, eptdev);
->  
-> @@ -406,6 +409,7 @@ static int rpmsg_eptdev_create(struct rpmsg_ctrldev *ctrldev,
->  
->  	return ret;
->  }
-> +EXPORT_SYMBOL(rpmsg_chrdev_eptdev_create);
->  
->  static int rpmsg_ctrldev_open(struct inode *inode, struct file *filp)
->  {
-> @@ -445,7 +449,7 @@ static long rpmsg_ctrldev_ioctl(struct file *fp, unsigned int cmd,
->  	chinfo.src = eptinfo.src;
->  	chinfo.dst = eptinfo.dst;
->  
-> -	return rpmsg_eptdev_create(ctrldev, chinfo);
-> +	return rpmsg_chrdev_eptdev_create(ctrldev->rpdev, &ctrldev->dev, chinfo);
->  };
->  
->  static const struct file_operations rpmsg_ctrldev_fops = {
-> @@ -531,7 +535,7 @@ static void rpmsg_chrdev_remove(struct rpmsg_device *rpdev)
->  	int ret;
->  
->  	/* Destroy all endpoints */
-> -	ret = device_for_each_child(&ctrldev->dev, NULL, rpmsg_eptdev_destroy);
-> +	ret = device_for_each_child(&ctrldev->dev, NULL, rpmsg_chrdev_eptdev_destroy);
->  	if (ret)
->  		dev_warn(&rpdev->dev, "failed to nuke endpoints: %d\n", ret);
->  
-> diff --git a/drivers/rpmsg/rpmsg_char.h b/drivers/rpmsg/rpmsg_char.h
-> new file mode 100644
-> index 000000000000..dd0a16f2acd1
-> --- /dev/null
-> +++ b/drivers/rpmsg/rpmsg_char.h
-> @@ -0,0 +1,46 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +/*
-> + * Copyright (C) STMicroelectronics 2021.
-> + */
-> +
-> +#ifndef __RPMSG_CHRDEV_H__
-> +#define __RPMSG_CHRDEV_H__
-> +
-> +#if IS_ENABLED(CONFIG_RPMSG_CHAR)
-> +/**
-> + * rpmsg_chrdev_eptdev_create() - register char device based on an endpoint
-> + * @rpdev:  prepared rpdev to be used for creating endpoints
-> + * @parent: parent device
-> + * @chinfo: associated endpoint channel information.
-> + *
-> + * This function create a new rpmsg char endpoint device to instantiate a new
-> + * endpoint based on chinfo information.
-> + */
-> +int rpmsg_chrdev_eptdev_create(struct rpmsg_device *rpdev, struct device *parent,
-> +			       struct rpmsg_channel_info chinfo);
-> +
-> +/**
-> + * rpmsg_chrdev_eptdev_destroy() - destroy created char device endpoint.
-> + * @data: private data associated to the endpoint device
-> + *
-> + * This function destroys a rpmsg char endpoint device created by the RPMSG_DESTROY_EPT_IOCTL
-> + * control.
-> + */
-> +int rpmsg_chrdev_eptdev_destroy(struct device *dev, void *data);
-> +
-> +#else  /*IS_ENABLED(CONFIG_RPMSG_CHAR) */
-> +
-> +static inline int rpmsg_chrdev_eptdev_create(struct rpmsg_device *rpdev, struct device *parent,
-> +					     struct rpmsg_channel_info chinfo)
-> +{
-> +	return -ENXIO;
-> +}
-> +
-> +static inline int rpmsg_chrdev_eptdev_destroy(struct device *dev, void *data)
-> +{
-> +	return -ENXIO;
-> +}
-> +
-> +#endif /*IS_ENABLED(CONFIG_RPMSG_CHAR) */
-> +
-> +#endif /*__RPMSG_CHRDEV_H__ */
-> -- 
-> 2.17.1
-> 
+> --- linux-next-20220114.orig/drivers/remoteproc/qcom_q6v5.c
+> +++ linux-next-20220114/drivers/remoteproc/qcom_q6v5.c
+> @@ -10,6 +10,7 @@
+>  #include <linux/platform_device.h>
+>  #include <linux/interrupt.h>
+>  #include <linux/module.h>
+> +#include <linux/soc/qcom/qcom_aoss.h>
+>  #include <linux/soc/qcom/smem.h>
+>  #include <linux/soc/qcom/smem_state.h>
+>  #include <linux/remoteproc.h>
+> --- linux-next-20220114.orig/drivers/remoteproc/Kconfig
+> +++ linux-next-20220114/drivers/remoteproc/Kconfig
+> @@ -180,6 +180,7 @@ config QCOM_Q6V5_ADSP
+>  	depends on RPMSG_QCOM_GLINK_SMEM || RPMSG_QCOM_GLINK_SMEM=n
+>  	depends on QCOM_SYSMON || QCOM_SYSMON=n
+>  	depends on RPMSG_QCOM_GLINK || RPMSG_QCOM_GLINK=n
+> +	depends on QCOM_AOSS_QMP || QCOM_AOSS_QMP=n
+>  	select MFD_SYSCON
+>  	select QCOM_PIL_INFO
+>  	select QCOM_MDT_LOADER
+> @@ -199,6 +200,7 @@ config QCOM_Q6V5_MSS
+>  	depends on RPMSG_QCOM_GLINK_SMEM || RPMSG_QCOM_GLINK_SMEM=n
+>  	depends on QCOM_SYSMON || QCOM_SYSMON=n
+>  	depends on RPMSG_QCOM_GLINK || RPMSG_QCOM_GLINK=n
+> +	depends on QCOM_AOSS_QMP || QCOM_AOSS_QMP=n
+>  	select MFD_SYSCON
+>  	select QCOM_MDT_LOADER
+>  	select QCOM_PIL_INFO
+> @@ -218,6 +220,7 @@ config QCOM_Q6V5_PAS
+>  	depends on RPMSG_QCOM_GLINK_SMEM || RPMSG_QCOM_GLINK_SMEM=n
+>  	depends on QCOM_SYSMON || QCOM_SYSMON=n
+>  	depends on RPMSG_QCOM_GLINK || RPMSG_QCOM_GLINK=n
+> +	depends on QCOM_AOSS_QMP || QCOM_AOSS_QMP=n
+>  	select MFD_SYSCON
+>  	select QCOM_PIL_INFO
+>  	select QCOM_MDT_LOADER
+> @@ -239,6 +242,7 @@ config QCOM_Q6V5_WCSS
+>  	depends on RPMSG_QCOM_GLINK_SMEM || RPMSG_QCOM_GLINK_SMEM=n
+>  	depends on QCOM_SYSMON || QCOM_SYSMON=n
+>  	depends on RPMSG_QCOM_GLINK || RPMSG_QCOM_GLINK=n
+> +	depends on QCOM_AOSS_QMP || QCOM_AOSS_QMP=n
+>  	select MFD_SYSCON
+>  	select QCOM_MDT_LOADER
+>  	select QCOM_PIL_INFO
