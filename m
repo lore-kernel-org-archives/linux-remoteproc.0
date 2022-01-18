@@ -2,132 +2,131 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50BDEC433EF
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 18 Jan 2022 09:27:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02160C433EF
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 18 Jan 2022 10:44:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240533AbiARJ1Q (ORCPT
+        id S237916AbiARKom (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 18 Jan 2022 04:27:16 -0500
-Received: from alexa-out-sd-01.qualcomm.com ([199.106.114.38]:46151 "EHLO
-        alexa-out-sd-01.qualcomm.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S234638AbiARJ1Q (ORCPT
+        Tue, 18 Jan 2022 05:44:42 -0500
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:39418 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S237931AbiARKom (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 18 Jan 2022 04:27:16 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=quicinc.com; i=@quicinc.com; q=dns/txt; s=qcdkim;
-  t=1642498036; x=1674034036;
-  h=subject:to:cc:references:from:message-id:date:
-   mime-version:in-reply-to:content-transfer-encoding;
-  bh=pBpAdki5wF5bxKDytfc9sD9oUt2UYpuMdypcx78WBtM=;
-  b=Ier3qBJOMHQ4oQxfLsfiJ1nEGTQztqkg+2xZPFoxR5mzS7E3+9/CHni8
-   cHSVfn5PLYz+UlHsqBzcm0jIM7VHhhT4J9DCmsR3mHA6BHHUER/uu1yVa
-   HIQxsvhltMt+bxNrt6wvqaVA0XVZqqdSXYC3yWy/OVmAQkaAvQpnBapSO
-   8=;
-Received: from unknown (HELO ironmsg04-sd.qualcomm.com) ([10.53.140.144])
-  by alexa-out-sd-01.qualcomm.com with ESMTP; 18 Jan 2022 01:27:16 -0800
-X-QCInternal: smtphost
-Received: from nasanex01c.na.qualcomm.com ([10.47.97.222])
-  by ironmsg04-sd.qualcomm.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jan 2022 01:27:16 -0800
-Received: from [10.216.2.106] (10.80.80.8) by nasanex01c.na.qualcomm.com
- (10.47.97.222) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.922.19; Tue, 18 Jan
- 2022 01:27:13 -0800
-Subject: Re: Query on moving Recovery remoteproc work to a separate wq instead
- of system freezable wq
+        Tue, 18 Jan 2022 05:44:42 -0500
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.1.2/8.16.1.2) with ESMTP id 20I97GDu009658;
+        Tue, 18 Jan 2022 11:44:33 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=selector1;
+ bh=8tSOi6hFO4mBG1V3W8bMA0J9PppE7RMIf5SisFC//CI=;
+ b=2rCtH5QP/v8r3GgsSoY6Pq3pXO6qXE4aw1ZZ0RrQW4IAynpj+Bo85F9ip/XsEgq/flNg
+ 7hQpCHpIon9MYzLQPpP+P6T+E38l6qM5l/FUo3QkYtb+icyvkRCNbxt5B0E6Fm/SEH9Q
+ 2rjVHQtzvmutThtVNwrmSlrR04YnfdBlodDAruT3tulCjOhgWAHUiaHcnDLlmw212XU2
+ YvrOSGIVKRAMMk/rHzakdmqojXD+vkH5g7rIXRaFzkuk1V5RgWk0wanLgftTH0JOzbFO
+ uqDFNidLjygE9+RCaKVZPIM4rNSNdYFZFP2hCr7G9ZIlMMquIw2J9ZFBieJ2orP+W+E4 tA== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3dnkesjnu8-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 18 Jan 2022 11:44:33 +0100
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 7D5BA10002A;
+        Tue, 18 Jan 2022 11:44:32 +0100 (CET)
+Received: from Webmail-eu.st.com (sfhdag2node1.st.com [10.75.127.4])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 6A797211F15;
+        Tue, 18 Jan 2022 11:44:32 +0100 (CET)
+Received: from lmecxl0889.lme.st.com (10.75.127.50) by SFHDAG2NODE1.st.com
+ (10.75.127.4) with Microsoft SMTP Server (TLS) id 15.0.1497.26; Tue, 18 Jan
+ 2022 11:44:31 +0100
+Subject: Re: [PATCH v8 03/13] rpmsg: Move the rpmsg control device from
+ rpmsg_char to rpmsg_ctrl
 To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-CC:     <linux-remoteproc@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>
-References: <ea64436c-3d9b-9ac1-d4e8-38f15142a764@quicinc.com>
- <YeXrtuQglDwhNvLm@builder.lan>
-From:   Mukesh Ojha <quic_mojha@quicinc.com>
-Message-ID: <03bde95c-dfd3-cdf6-2b0f-afa6a0ec036d@quicinc.com>
-Date:   Tue, 18 Jan 2022 14:57:08 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+CC:     Mathieu Poirier <mathieu.poirier@linaro.org>,
+        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>, <julien.massot@iot.bzh>
+References: <20211207080843.21222-1-arnaud.pouliquen@foss.st.com>
+ <20211207080843.21222-4-arnaud.pouliquen@foss.st.com>
+ <YeXz2SFqYr+eUvnw@builder.lan>
+From:   Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
+Message-ID: <cffe6884-2059-d1e7-7dfd-37c852924959@foss.st.com>
+Date:   Tue, 18 Jan 2022 11:44:31 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.14.0
 MIME-Version: 1.0
-In-Reply-To: <YeXrtuQglDwhNvLm@builder.lan>
+In-Reply-To: <YeXz2SFqYr+eUvnw@builder.lan>
 Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 8bit
 Content-Language: en-US
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01c.na.qualcomm.com (10.47.97.222)
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.75.127.50]
+X-ClientProxiedBy: SFHDAG2NODE3.st.com (10.75.127.6) To SFHDAG2NODE1.st.com
+ (10.75.127.4)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.816,Hydra:6.0.425,FMLib:17.11.62.513
+ definitions=2022-01-18_03,2022-01-18_01,2021-12-02_01
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
+Hello Bjorn,
 
-On 1/18/2022 3:50 AM, Bjorn Andersson wrote:
-> On Mon 17 Jan 09:09 CST 2022, Mukesh Ojha wrote:
->
->> Hi,
->>
->> There could be a situation there is too much load(of tasks which is affined
-> As in "it's theoretically possible" or "we run into this issue all the
-> time"?
+On 1/17/22 11:55 PM, Bjorn Andersson wrote:
+> On Tue 07 Dec 02:08 CST 2021, Arnaud Pouliquen wrote:
+>> diff --git a/drivers/rpmsg/rpmsg_char.c b/drivers/rpmsg/rpmsg_char.c
+> [..]
+>> -static void rpmsg_ctrldev_release_device(struct device *dev)
+>> -{
+>> -	struct rpmsg_ctrldev *ctrldev = dev_to_ctrldev(dev);
+>> -
+>> -	ida_simple_remove(&rpmsg_ctrl_ida, dev->id);
+>> -	ida_simple_remove(&rpmsg_minor_ida, MINOR(dev->devt));
+>> -	cdev_del(&ctrldev->cdev);
+>> -	kfree(ctrldev);
+>> -}
+>> -
+>> -static int rpmsg_chrdev_probe(struct rpmsg_device *rpdev)
+>> -{
+>> -	struct rpmsg_ctrldev *ctrldev;
+>> -	struct device *dev;
+>> -	int ret;
+>> -
+>> -	ctrldev = kzalloc(sizeof(*ctrldev), GFP_KERNEL);
+>> -	if (!ctrldev)
+>> -		return -ENOMEM;
+>> -
+>> -	ctrldev->rpdev = rpdev;
+>> -
+>> -	dev = &ctrldev->dev;
+>> -	device_initialize(dev);
+>> -	dev->parent = &rpdev->dev;
+>> -	dev->class = rpmsg_class;
+>> -
+>> -	cdev_init(&ctrldev->cdev, &rpmsg_ctrldev_fops);
+>> -	ctrldev->cdev.owner = THIS_MODULE;
+>> -
+>> -	ret = ida_simple_get(&rpmsg_minor_ida, 0, RPMSG_DEV_MAX, GFP_KERNEL);
+>> -	if (ret < 0)
+>> -		goto free_ctrldev;
+>> -	dev->devt = MKDEV(MAJOR(rpmsg_major), ret);
+>> -
+>> -	ret = ida_simple_get(&rpmsg_ctrl_ida, 0, 0, GFP_KERNEL);
+>> -	if (ret < 0)
+>> -		goto free_minor_ida;
+>> -	dev->id = ret;
+>> -	dev_set_name(&ctrldev->dev, "rpmsg_ctrl%d", ret);
+>> -
+>> -	ret = cdev_add(&ctrldev->cdev, dev->devt, 1);
+> 
+> This turns out to be incomplete and the cdev_del above is in the wrong
+> place. This, and the same for eptdev, is being corrected in:
+> 
+> https://lore.kernel.org/linux-remoteproc/164245960510.1698571.4998090450663669237.b4-ty@linaro.org/T/#t
 
-During recovery we notify all the remoteproc kernel clients about the 
-crash and if one of the notification gets stuck
-
-for more than 20-30s we ideally inject panic . During analysis, We saw 
-that just because of the load(stress testing) on the
-
-core we are not able to proceed. would be good to avail this work to run 
-on different CPU.
-
->
->> to particular core) on a core on which  rproc
->> recovery thread will not get a chance to run with no reason but the load. If
->> we make this queue unbound, then this work
->> can run on any core.
->>
->> Kindly Let me if i can post a proper patch for this like below.
->>
->> --- a/drivers/remoteproc/remoteproc_core.c
->> +++ b/drivers/remoteproc/remoteproc_core.c
->> @@ -59,6 +59,7 @@ static int rproc_release_carveout(struct rproc *rproc,
->>
->>   /* Unique indices for remoteproc devices */
->>   static DEFINE_IDA(rproc_dev_index);
->> +static struct workqueue_struct *rproc_recovery_wq;
->>
->>   static const char * const rproc_crash_names[] = {
->>          [RPROC_MMUFAULT]        = "mmufault",
->> @@ -2487,7 +2488,7 @@ void rproc_report_crash(struct rproc *rproc, enum
->> rproc_crash_type type)
->>                  rproc->name, rproc_crash_to_string(type));
->>
->>          /* Have a worker handle the error; ensure system is not suspended */
->> -       queue_work(system_freezable_wq, &rproc->crash_handler);
->> +       queue_work(rproc_recovery_wq, &rproc->crash_handler);
->>   }
->>   EXPORT_SYMBOL(rproc_report_crash);
->>
->> @@ -2532,6 +2533,12 @@ static void __exit rproc_exit_panic(void)
->>
->>   static int __init remoteproc_init(void)
->>   {
->> +       rproc_recovery_wq = alloc_workqueue("rproc_recovery_wq", WQ_UNBOUND
->> |
->> +                               WQ_HIGHPRI | WQ_FREEZABLE |
->> WQ_CPU_INTENSIVE, 0);
-> Afaict this is not only a separate work queue, but a high priority, "cpu
-> intensive" work queue. Does that really represent the urgency of getting
-> the recovery under way?
-
-Adding a WQ_CPU_INTENSIVE(no use) here is a blunder from my end, will 
-remove this.
+I will rebase on next branch including this patchset
 
 Thanks,
--Mukesh
+Arnaud
 
+> 
 > Regards,
 > Bjorn
->
->> +       if (!rproc_recovery_wq) {
->> +               pr_err("creation of rproc_recovery_wq failed\n");
->> +       }
->> +
->>
->> Thanks,
->> Mukesh
+> 
