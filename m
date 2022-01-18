@@ -2,216 +2,73 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B50DFC433EF
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 18 Jan 2022 19:17:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98FDEC433F5
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 18 Jan 2022 19:43:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348185AbiARTRy (ORCPT
+        id S1348882AbiARTnf (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 18 Jan 2022 14:17:54 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39614 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244903AbiARTRy (ORCPT
+        Tue, 18 Jan 2022 14:43:35 -0500
+Received: from alexa-out-sd-02.qualcomm.com ([199.106.114.39]:17610 "EHLO
+        alexa-out-sd-02.qualcomm.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1348857AbiARTne (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 18 Jan 2022 14:17:54 -0500
-Received: from mail-ot1-x335.google.com (mail-ot1-x335.google.com [IPv6:2607:f8b0:4864:20::335])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8D42FC06161C
-        for <linux-remoteproc@vger.kernel.org>; Tue, 18 Jan 2022 11:17:53 -0800 (PST)
-Received: by mail-ot1-x335.google.com with SMTP id t4-20020a05683022e400b00591aaf48277so25612494otc.13
-        for <linux-remoteproc@vger.kernel.org>; Tue, 18 Jan 2022 11:17:53 -0800 (PST)
+        Tue, 18 Jan 2022 14:43:34 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=RndWnG63hC9GiAGmx76qqI29dqe7Vqx89DCPaLYncN8=;
-        b=z7GFutigYH1M8I3nQKuB55wkKm3Rbbdg4zwxqyflJeLMT8cX29rTwC1AXsItiex/VR
-         hl6f/C+gj5Co9+4ul+Ezm5F+qMP/U/qG93xjISMxV7iCOgQc38eOfzL3JvxWs7g7bd5K
-         FGFmw2A1cRnCNNclU7zzWCl4NzOk8s4Pt020VC+D5cJUW5DFFQfxomPCKFSt2ottEF4k
-         7kV6gjE2kXQIkQgWAWgJ7qnCLQvPY/AZj60F12Qj91Z7lE2xEdAJS8gD6eUTXzi1slYW
-         wMnweyJya+/l/pf6o8HSiNYE7ZQLzM7Q9pXAp+MA2oZqNNo9uL17YnkiADmZVzWoxsJy
-         f1JQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=RndWnG63hC9GiAGmx76qqI29dqe7Vqx89DCPaLYncN8=;
-        b=a2UrHTWGB4DkVskaWyxjPU7jlYRdxiKjl6zsBT/kRZ1xxPC8UXpptsHPb5vgmPP+2f
-         Wgqd7lFhqElTBlBvf1LVkz7/ml4ei448fO19GjmZ3LoJrdFhPf5KN92jHGSoZUtLrlGI
-         zkVl6c4iQqv0PlFqlOyH97IuzF0fa5FuN0YijYvNpVYWFXQLhGy5n9e9KOpjcZ4u03iM
-         Tt4kfRsHS9tRw/9DSVe7yE+BK/9JncrecJ1QGKO0YEF8KMdGgHTEnpYPiz5k4Efk/tCj
-         N4ACnIz1frKFR/XUrmAhnCHxaI0Bw9df5bhclfl+vKLyY50oB2YKd/BEeeVaWV3MiqJ7
-         Go1w==
-X-Gm-Message-State: AOAM533266FLqNbDRFbN6DPhDJUmwwQbFN9/9lwb0qJ/BEjwJ8DCAHqH
-        HvgJKqJ8mji+kQGB5MTyX1vLI6EygDQI2w==
-X-Google-Smtp-Source: ABdhPJwLymRH6H8v4hYJtWO8ifHWw31laYW6E+NPDZZWkYBiVY3R3XVCm2SWE0Opdwl4IJNljRj2dQ==
-X-Received: by 2002:a9d:1b0f:: with SMTP id l15mr21210879otl.38.1642533472867;
-        Tue, 18 Jan 2022 11:17:52 -0800 (PST)
-Received: from builder.lan ([2600:1700:a0:3dc8:3697:f6ff:fe85:aac9])
-        by smtp.gmail.com with ESMTPSA id 17sm7809183oij.21.2022.01.18.11.17.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Jan 2022 11:17:52 -0800 (PST)
-Date:   Tue, 18 Jan 2022 13:17:50 -0600
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc:     Miaoqian Lin <linmq006@gmail.com>, linux-kernel@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org, ohad@wizery.com
-Subject: Re: [PATCH v3] remoteproc: Fix NULL vs IS_ERR() checking in
- rproc_create_trace_file
-Message-ID: <YecSXpGRTCKClS8w@builder.lan>
-References: <20220105064201.3907-1-linmq006@gmail.com>
- <20220105131022.25247-1-linmq006@gmail.com>
- <20220117170600.GA1119324@p14s>
- <YeXuOwm3yJW2gnSE@builder.lan>
- <20220118165621.GA1207193@p14s>
+  d=quicinc.com; i=@quicinc.com; q=dns/txt; s=qcdkim;
+  t=1642535014; x=1674071014;
+  h=from:to:cc:subject:date:message-id:mime-version;
+  bh=epAwb4kSa9aNM9KRnbmlhSaoE0blUF/epw/IFB2mcn0=;
+  b=oK4E668ZDuH2yz4yksuQ1Pe/tOX0RL3wFrm+b7QWLtQRUNp/qCkpomI7
+   bnw+aHnLGU2GVWPRSRUrKwGMAdxLEa6IBs7OFkj12RRXnk0F5RYvzWI//
+   3WaixxDYItd95UlP8RR4XdN67BwvnfEecHVoZ9+YxiHg30J5MfZmYk7FA
+   o=;
+Received: from unknown (HELO ironmsg03-sd.qualcomm.com) ([10.53.140.143])
+  by alexa-out-sd-02.qualcomm.com with ESMTP; 18 Jan 2022 11:43:34 -0800
+X-QCInternal: smtphost
+Received: from nasanex01c.na.qualcomm.com ([10.47.97.222])
+  by ironmsg03-sd.qualcomm.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jan 2022 11:43:34 -0800
+Received: from nalasex01a.na.qualcomm.com (10.47.209.196) by
+ nasanex01c.na.qualcomm.com (10.47.97.222) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.922.19; Tue, 18 Jan 2022 11:43:34 -0800
+Received: from deesin-linux.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.922.19; Tue, 18 Jan 2022 11:43:31 -0800
+From:   Deepak Kumar Singh <quic_deesin@quicinc.com>
+To:     <bjorn.andersson@linaro.org>, <swboyd@chromium.org>,
+        <quic_clew@quicinc.com>, <mathieu.poirier@linaro.org>
+CC:     <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>,
+        Deepak Kumar Singh <quic_deesin@quicinc.com>
+Subject: [PATCH V2 0/3] rpmsg and glink signaling API support
+Date:   Wed, 19 Jan 2022 01:13:10 +0530
+Message-ID: <1642534993-6552-1-git-send-email-quic_deesin@quicinc.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220118165621.GA1207193@p14s>
+Content-Type: text/plain
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Tue 18 Jan 10:56 CST 2022, Mathieu Poirier wrote:
+[Change from V1]
+Fixed most of the review comments in V1.
 
-> On Mon, Jan 17, 2022 at 04:31:23PM -0600, Bjorn Andersson wrote:
-> > On Mon 17 Jan 11:06 CST 2022, Mathieu Poirier wrote:
-> > 
-> > > On Wed, Jan 05, 2022 at 01:10:22PM +0000, Miaoqian Lin wrote:
-> > > > The debugfs_create_file() function doesn't return NULL.
-> > > > It returns error pointers. Fix check in rproc_create_trace_file
-> > > > and make it returns return error pointers.
-> > > 
-> > > s/"returns return"/return
-> > > 
-> > > > Fix check in rproc_handle_trace to propagate the error code.
-> > > > 
-> > > > Signed-off-by: Miaoqian Lin <linmq006@gmail.com>
-> > > > ---
-> > > > Changes in v2:
-> > > > - return PTR_ERR(tfile) in rproc_create_trace_file
-> > > > - fix check in rproc_handle_trace()
-> > > > Changes in v3:
-> > > > - return tfile to fix incorrect return type in v2
-> > > > ---
-> > > >  drivers/remoteproc/remoteproc_core.c    | 6 ++++--
-> > > >  drivers/remoteproc/remoteproc_debugfs.c | 4 +---
-> > > >  2 files changed, 5 insertions(+), 5 deletions(-)
-> > > >
-> > > 
-> > > I will fix the above, add a proper "Fixes" tag and apply this patch to
-> > > rproc-next when v5.17-rc1 comes out next week.
-> > > 
-> > 
-> > We're actually not supposed to check debugfs_create_*() for errors.
-> 
-> I'm interested in knowing more about this - can you expand on the specifics or
-> perharps provide a link?
-> 
+Deepak Kumar Singh (3):
+  rpmsg: core: Add signal API support
+  rpmsg: glink: Add support to handle signals command
+  rpmsg: char: Add TIOCMGET/TIOCMSET ioctl support
 
-I'm not able to find anything going into the reasoning behind it, but
-you can find lots of examples where Greg says that we shouldn't do this:
+ drivers/rpmsg/qcom_glink_native.c | 77 +++++++++++++++++++++++++++++++++++++++
+ drivers/rpmsg/rpmsg_char.c        | 47 ++++++++++++++++++++++--
+ drivers/rpmsg/rpmsg_core.c        | 21 +++++++++++
+ drivers/rpmsg/rpmsg_internal.h    |  2 +
+ include/linux/rpmsg.h             | 14 +++++++
+ 5 files changed, 157 insertions(+), 4 deletions(-)
 
-$ git log --grep "no need to check return value of debugfs_create functions"
+-- 
+2.7.4
 
-E.g.:
-https://lore.kernel.org/r/20200818133701.462958-1-gregkh@linuxfoundation.org
-
-> > 
-> > > Thanks,
-> > > Mathieu
-> > > 
-> > > > diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-> > > > index 775df165eb45..5608408f8eac 100644
-> > > > --- a/drivers/remoteproc/remoteproc_core.c
-> > > > +++ b/drivers/remoteproc/remoteproc_core.c
-> > > > @@ -656,6 +656,7 @@ static int rproc_handle_trace(struct rproc *rproc, void *ptr,
-> > > >  	struct rproc_debug_trace *trace;
-> > > >  	struct device *dev = &rproc->dev;
-> > > >  	char name[15];
-> > > > +	int ret;
-> > > >  
-> > > >  	if (sizeof(*rsc) > avail) {
-> > > >  		dev_err(dev, "trace rsc is truncated\n");
-> > > > @@ -684,9 +685,10 @@ static int rproc_handle_trace(struct rproc *rproc, void *ptr,
-> > > >  
-> > > >  	/* create the debugfs entry */
-> > > >  	trace->tfile = rproc_create_trace_file(name, rproc, trace);
-> > > > -	if (!trace->tfile) {
-> > > > +	if (IS_ERR(trace->tfile)) {
-> > > > +		ret = PTR_ERR(trace->tfile);
-> > > >  		kfree(trace);
-> > > > -		return -EINVAL;
-> > > > +		return ret;
-> > 
-> > 
-> > And actually catching and propagating the error here means that we will
-> > start failing rproc_boot() for firmware including a RSC_TRACE when
-> > debugfs is disabled...
-> > 
-> > So if we really want to save the heap space we should at least cleanly
-> > ignore the error, by cleaning up and returning 0 here.
-> 
-> Humm... To me the _intent_ of the upstream code has always been to propagate
-> errors reported by rproc_create_trace_file().  The fact that is hasn't happen
-> because of inappropriate error handling is something that should be corrected.  
-> 
-
-I share that view, in general. I suspect that the idea with debugfs is
-that it's for debugging purposes and you don't want your remoteproc to
-stop working just because there might be an issue debugging it.
-
-> That being said disabling debugfs is a common practice for production systems
-> and I agree that handling such a condition by returning 0 when
-> rproc_create_trace_file() returns -ENODEV is the right thing to do.   
-> 
-
-Right, but even with debugfs enabled, do you want to prevent your
-remoteproc from booting just because the debugfs, for some reason,
-wasn't able to add the trace file?
-
-For me the question is if we should clean up the "trace" object or not,
-as this only relates to the debugfs file. Ignoring the error would imply
-that we just keep this memory allocated - which I'm fine with for the
-sake of avoiding the error handling.
-
-> Thanks,
-> Mathieu
-> 
-> > 
-> > > >  	}
-> > > >  
-> > > >  	list_add_tail(&trace->node, &rproc->traces);
-> > > > diff --git a/drivers/remoteproc/remoteproc_debugfs.c b/drivers/remoteproc/remoteproc_debugfs.c
-> > > > index b5a1e3b697d9..2ae59a365b7e 100644
-> > > > --- a/drivers/remoteproc/remoteproc_debugfs.c
-> > > > +++ b/drivers/remoteproc/remoteproc_debugfs.c
-> > > > @@ -390,10 +390,8 @@ struct dentry *rproc_create_trace_file(const char *name, struct rproc *rproc,
-> > > >  
-> > > >  	tfile = debugfs_create_file(name, 0400, rproc->dbg_dir, trace,
-> > > >  				    &trace_rproc_ops);
-> > > > -	if (!tfile) {
-> > > > +	if (IS_ERR(tfile))
-> > > >  		dev_err(&rproc->dev, "failed to create debugfs trace entry\n");
-> > 
-> > And I therefor think this function would be better reduced to:
-> > 
-> > 	return debugfs_create_file(...);
-> > 
-
-Taking another look at the implementation of debugfs_create_file() this
-dev_err() should be removed, because there will already be a more useful
-error printed by debugfs_create_file().
-
-Regards,
-Bjorn
-
-> > Regards,
-> > Bjorn
-> > 
-> > > > -		return NULL;
-> > > > -	}
-> > > >  
-> > > >  	return tfile;
-> > > >  }
-> > > > -- 
-> > > > 2.17.1
-> > > > 
