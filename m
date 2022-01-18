@@ -2,181 +2,323 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85811C433EF
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 18 Jan 2022 16:56:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 411A0C433F5
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 18 Jan 2022 17:27:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233226AbiARQ4Z (ORCPT
+        id S235820AbiARR1v (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 18 Jan 2022 11:56:25 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34626 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233016AbiARQ4Z (ORCPT
+        Tue, 18 Jan 2022 12:27:51 -0500
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:58604 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1347220AbiARR1s (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 18 Jan 2022 11:56:25 -0500
-Received: from mail-pg1-x52f.google.com (mail-pg1-x52f.google.com [IPv6:2607:f8b0:4864:20::52f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E214AC06161C
-        for <linux-remoteproc@vger.kernel.org>; Tue, 18 Jan 2022 08:56:24 -0800 (PST)
-Received: by mail-pg1-x52f.google.com with SMTP id h23so14633895pgk.11
-        for <linux-remoteproc@vger.kernel.org>; Tue, 18 Jan 2022 08:56:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=V/ljcXc947htbm7e8nRcOqipXDJ44mgk+bzTSDu9q+g=;
-        b=SFECuiKAFxeX6yuZLWXqeAYfo4NB4D4NcL4UcGKndwoL3mlyhK1MnGck/U7UubIt1h
-         gVJoE515zXRZzHt6dlDFHaWTpOBwQBHjTXHSGM3FsXcDVZ2RHCGda8OGpqI8P7i54rHj
-         sh9EC12pQ9P6fmdSdCRgcGufBg3PjtgL528yXJYNY5PouUzLFYhLM/A000WEi+/q3M8i
-         zHkVPQ0biFbq8zjFzewA3NkuoqI4Hk4uuurEloptIAsLyducOn+k1n2en5ghX8987CJN
-         TU3wdB6piBBaWYeElJdIWYWfFcBQB+x6Axdgc2vNbfxTX/djPEDHrJah+jWTWrHdJ2Ry
-         fy1Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=V/ljcXc947htbm7e8nRcOqipXDJ44mgk+bzTSDu9q+g=;
-        b=ntcEPAffrnGhx34UYEzdt/pt7yIZwjeFiVGSxb/rLSG1++MJTJmBKvq6sjcLSyjy1x
-         7wcZNbUmDRWdM7WcX50kfAP/R0UebHtvbGBRMccQTErigCykQaJZuY4KvCA1tX+1xJPq
-         0apiUAPyt6OSAdB8/fo1WTOkxDcrIsyWmC9CINalDEHYn2G0ZRUOjMbrxhYhPe0dfeaP
-         tjtg4ZCaocVhdu2DeYUeC0gX+A3kNoG3apXh/mRLBbl0PJCkfwasr6cO6zvWObiHy3dd
-         rP8y5rVBWvWhoxBSGPKA5LQIAqKubzUH7xkFE7wSc2Hg/3FubE2l7p60JquwiGrdtXst
-         +Dlw==
-X-Gm-Message-State: AOAM531xxu6EvA5zqPsCsc0JUMjlcaq9bbfgX1ASTCaldVhCXB+mZHiT
-        9plDnP4JKHsQcb2Dw+uaMquKRg==
-X-Google-Smtp-Source: ABdhPJztzxOIa8UA3CT7I4R7P1CFkUowZiS5Yadl7bu23OnEPV6p3/ervRCs72BMiZUeWfUaD8ogvg==
-X-Received: by 2002:a63:8c0f:: with SMTP id m15mr23860440pgd.598.1642524984344;
-        Tue, 18 Jan 2022 08:56:24 -0800 (PST)
-Received: from p14s (S0106889e681aac74.cg.shawcable.net. [68.147.0.187])
-        by smtp.gmail.com with ESMTPSA id w10sm3155270pjl.23.2022.01.18.08.56.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Jan 2022 08:56:23 -0800 (PST)
-Date:   Tue, 18 Jan 2022 09:56:21 -0700
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+        Tue, 18 Jan 2022 12:27:48 -0500
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.1.2/8.16.1.2) with ESMTP id 20IEwo2Z009619;
+        Tue, 18 Jan 2022 18:27:45 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=selector1;
+ bh=66YE/3TG3VhtiMv2Yzzla3MmHYUgrOKEt7gFyNU1aBk=;
+ b=vmNskqtgMKI1F9xGZiCra2/yrFeIuaMaIlRVpiIdNTgTCTm2/5+/UHwbMhqTk8mvjnqI
+ AEOVz2l1qUb6s3FZ7av4mV10fw+Lz0veJNWIhYSb25IXTLS8E+1yhE0Ayj8jhXd+DZ23
+ Mk6BKYeYkavXBs7XXopWEEj5ec9qK5Vx92xCUe4WCRbbrSDWMMDXtK6KJCiwclUA2CjC
+ mu6zCEliB3qCOZDdfgge1K/i2mGx2d/vwknEoMGjZv7QYPImmWdpqDfMXzFtsQea7/03
+ 5WxlnZmki3dDgDpZoBozUqRwsjKbtejGFJKqtYek800+9W7yjbGBRQDNzNuMBxkanhP2 fQ== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3dnkesmqhq-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 18 Jan 2022 18:27:45 +0100
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 6EDCC10002A;
+        Tue, 18 Jan 2022 18:27:44 +0100 (CET)
+Received: from Webmail-eu.st.com (sfhdag2node1.st.com [10.75.127.4])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 5D67F21FE8B;
+        Tue, 18 Jan 2022 18:27:44 +0100 (CET)
+Received: from lmecxl0889.lme.st.com (10.75.127.48) by SFHDAG2NODE1.st.com
+ (10.75.127.4) with Microsoft SMTP Server (TLS) id 15.0.1497.26; Tue, 18 Jan
+ 2022 18:27:43 +0100
+Subject: Re: [PATCH v8 11/13] rpmsg: char: Introduce the "rpmsg-raw" channel
 To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Miaoqian Lin <linmq006@gmail.com>, linux-kernel@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org, ohad@wizery.com
-Subject: Re: [PATCH v3] remoteproc: Fix NULL vs IS_ERR() checking in
- rproc_create_trace_file
-Message-ID: <20220118165621.GA1207193@p14s>
-References: <20220105064201.3907-1-linmq006@gmail.com>
- <20220105131022.25247-1-linmq006@gmail.com>
- <20220117170600.GA1119324@p14s>
- <YeXuOwm3yJW2gnSE@builder.lan>
+CC:     Mathieu Poirier <mathieu.poirier@linaro.org>,
+        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>, <julien.massot@iot.bzh>
+References: <20211207080843.21222-1-arnaud.pouliquen@foss.st.com>
+ <20211207080843.21222-12-arnaud.pouliquen@foss.st.com>
+ <YeX13cUAerjCM5Li@builder.lan>
+ <6db32381-6615-3916-088a-d1cd27e3443a@foss.st.com>
+ <YebQhrO+l6J+w9Hj@builder.lan>
+From:   Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
+Message-ID: <96c528ff-9857-be6b-cd5b-7b5d565e1e7e@foss.st.com>
+Date:   Tue, 18 Jan 2022 18:27:43 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.14.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YeXuOwm3yJW2gnSE@builder.lan>
+In-Reply-To: <YebQhrO+l6J+w9Hj@builder.lan>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.75.127.48]
+X-ClientProxiedBy: SFHDAG2NODE3.st.com (10.75.127.6) To SFHDAG2NODE1.st.com
+ (10.75.127.4)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.816,Hydra:6.0.425,FMLib:17.11.62.513
+ definitions=2022-01-18_05,2022-01-18_01,2021-12-02_01
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Mon, Jan 17, 2022 at 04:31:23PM -0600, Bjorn Andersson wrote:
-> On Mon 17 Jan 11:06 CST 2022, Mathieu Poirier wrote:
-> 
-> > On Wed, Jan 05, 2022 at 01:10:22PM +0000, Miaoqian Lin wrote:
-> > > The debugfs_create_file() function doesn't return NULL.
-> > > It returns error pointers. Fix check in rproc_create_trace_file
-> > > and make it returns return error pointers.
-> > 
-> > s/"returns return"/return
-> > 
-> > > Fix check in rproc_handle_trace to propagate the error code.
-> > > 
-> > > Signed-off-by: Miaoqian Lin <linmq006@gmail.com>
-> > > ---
-> > > Changes in v2:
-> > > - return PTR_ERR(tfile) in rproc_create_trace_file
-> > > - fix check in rproc_handle_trace()
-> > > Changes in v3:
-> > > - return tfile to fix incorrect return type in v2
-> > > ---
-> > >  drivers/remoteproc/remoteproc_core.c    | 6 ++++--
-> > >  drivers/remoteproc/remoteproc_debugfs.c | 4 +---
-> > >  2 files changed, 5 insertions(+), 5 deletions(-)
-> > >
-> > 
-> > I will fix the above, add a proper "Fixes" tag and apply this patch to
-> > rproc-next when v5.17-rc1 comes out next week.
-> > 
-> 
-> We're actually not supposed to check debugfs_create_*() for errors.
 
-I'm interested in knowing more about this - can you expand on the specifics or
-perharps provide a link?
 
+On 1/18/22 3:36 PM, Bjorn Andersson wrote:
+> On Tue 18 Jan 05:04 CST 2022, Arnaud POULIQUEN wrote:
 > 
-> > Thanks,
-> > Mathieu
-> > 
-> > > diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-> > > index 775df165eb45..5608408f8eac 100644
-> > > --- a/drivers/remoteproc/remoteproc_core.c
-> > > +++ b/drivers/remoteproc/remoteproc_core.c
-> > > @@ -656,6 +656,7 @@ static int rproc_handle_trace(struct rproc *rproc, void *ptr,
-> > >  	struct rproc_debug_trace *trace;
-> > >  	struct device *dev = &rproc->dev;
-> > >  	char name[15];
-> > > +	int ret;
-> > >  
-> > >  	if (sizeof(*rsc) > avail) {
-> > >  		dev_err(dev, "trace rsc is truncated\n");
-> > > @@ -684,9 +685,10 @@ static int rproc_handle_trace(struct rproc *rproc, void *ptr,
-> > >  
-> > >  	/* create the debugfs entry */
-> > >  	trace->tfile = rproc_create_trace_file(name, rproc, trace);
-> > > -	if (!trace->tfile) {
-> > > +	if (IS_ERR(trace->tfile)) {
-> > > +		ret = PTR_ERR(trace->tfile);
-> > >  		kfree(trace);
-> > > -		return -EINVAL;
-> > > +		return ret;
+>>
+>>
+>> On 1/18/22 12:03 AM, Bjorn Andersson wrote:
+>>> On Tue 07 Dec 02:08 CST 2021, Arnaud Pouliquen wrote:
+>>>
+>>>> Allows to probe the endpoint device on a remote name service announcement,
+>>>> by registering a rpmsg_driverfor the "rpmsg-raw" channel.
 > 
-> 
-> And actually catching and propagating the error here means that we will
-> start failing rproc_boot() for firmware including a RSC_TRACE when
-> debugfs is disabled...
-> 
-> So if we really want to save the heap space we should at least cleanly
-> ignore the error, by cleaning up and returning 0 here.
+> Thought of this after replying yesterday, I really would like this to be
+> updated to include an explanation of _why_ this is a good thing. What is
+> the use case etc.
 
-Humm... To me the _intent_ of the upstream code has always been to propagate
-errors reported by rproc_create_trace_file().  The fact that is hasn't happen
-because of inappropriate error handling is something that should be corrected.  
+Not sure to understand your point here. Do you mean that "Allows to probe the
+endpoint device on a remote name service announcement" is not a sufficient
+reason?
+Would the following explanation address your concern?
 
-That being said disabling debugfs is a common practice for production systems
-and I agree that handling such a condition by returning 0 when
-rproc_create_trace_file() returns -ENODEV is the right thing to do.   
+"
+For the rpmsg virtio backend, the current implementation of the rpmsg char
+only allows to instantiate static(i.e. prefixed source and destination addresses)
+end points, and only on the Linux user space initiative.
 
-Thanks,
-Mathieu
+This patch defines the the "rpmsg-raw" channel and register it to the rpmsg bus.
+This registration allows:
+- To create the channel at the initiative of the remote proc initiative relying 
+on the name service announcement mechanism.
+- To use the channel object instead of the endpoint, thus preventing the user 
+space from having the knowledge of the remote processor's endpoint addresses.
+- To rely on udev to be inform when a /dev/rpmsgX is created on remote processor 
+request, indicating that the remote processor is ready to communicate.
+"
 
 > 
-> > >  	}
-> > >  
-> > >  	list_add_tail(&trace->node, &rproc->traces);
-> > > diff --git a/drivers/remoteproc/remoteproc_debugfs.c b/drivers/remoteproc/remoteproc_debugfs.c
-> > > index b5a1e3b697d9..2ae59a365b7e 100644
-> > > --- a/drivers/remoteproc/remoteproc_debugfs.c
-> > > +++ b/drivers/remoteproc/remoteproc_debugfs.c
-> > > @@ -390,10 +390,8 @@ struct dentry *rproc_create_trace_file(const char *name, struct rproc *rproc,
-> > >  
-> > >  	tfile = debugfs_create_file(name, 0400, rproc->dbg_dir, trace,
-> > >  				    &trace_rproc_ops);
-> > > -	if (!tfile) {
-> > > +	if (IS_ERR(tfile))
-> > >  		dev_err(&rproc->dev, "failed to create debugfs trace entry\n");
+>>>>
+>>>> With this patch the /dev/rpmsgX interface can be instantiated by the remote
+>>>> firmware.
 > 
-> And I therefor think this function would be better reduced to:
+> It would be nice if this mentioned why you can rely on udev events and
+> rpmsgexport.
 > 
-> 	return debugfs_create_file(...);
+
+By rpmsgexport you mean the tool available on your github to create a endpoint?
+Could you details what you have in mind? I don't see a relationship with
+this patch.
+
+>>>>
+>>>> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+>>>> ---
+>>>>    drivers/rpmsg/rpmsg_char.c | 64 ++++++++++++++++++++++++++++++++++++++
+>>>>    drivers/rpmsg/rpmsg_ctrl.c |  7 +++--
+>>>>    2 files changed, 69 insertions(+), 2 deletions(-)
+>>>>
+>>>> diff --git a/drivers/rpmsg/rpmsg_char.c b/drivers/rpmsg/rpmsg_char.c
+>>>> index cf97839f5833..92b44630e03a 100644
+>>>> --- a/drivers/rpmsg/rpmsg_char.c
+>>>> +++ b/drivers/rpmsg/rpmsg_char.c
+>>>> @@ -435,6 +435,58 @@ int rpmsg_chrdev_eptdev_create(struct rpmsg_device *rpdev, struct device *parent
+>>>>    }
+>>>>    EXPORT_SYMBOL(rpmsg_chrdev_eptdev_create);
+>>>> +static int rpmsg_chrdev_probe(struct rpmsg_device *rpdev)
+>>>> +{
+>>>> +	struct rpmsg_channel_info chinfo;
+>>>> +	struct rpmsg_eptdev *eptdev;
+>>>> +	struct device *dev = &rpdev->dev;
+>>>> +
+>>>> +	memcpy(chinfo.name, rpdev->id.name, RPMSG_NAME_SIZE);
+>>>> +	chinfo.src = rpdev->src;
+>>>> +	chinfo.dst = rpdev->dst;
+>>>> +
+>>>> +	eptdev = rpmsg_chrdev_eptdev_alloc(rpdev, dev);
+>>>> +	if (IS_ERR(eptdev))
+>>>> +		return PTR_ERR(eptdev);
+>>>> +
+>>>> +	/*
+>>>> +	 * Create the default endpoint associated to the rpmsg device and provide rpmsg_eptdev
+>>>> +	 * structure as callback private data.
+>>>
+>>> If the only this the probe function does is to create a new endpoint
+>>> with the same properties as the rpdev, why can't you just specify a
+>>> callback on the rpmsg_chrdev_driver?
+>>>
+>>> As this isn't the typical way you create a default endpoint I think the
+>>> reasoning behind this warrants a proper explanation in the commit
+>>> message.
+>>>
+>>
+>> As mentioned in [PATCH v8 09/13] rpmsg: Introduce rpmsg_create_default_ept function
+>> "This helper function allows rpmsg drivers to create a default endpoint
+>> on runtime with an associated private context."
+>>
+>> Here the private context is the eptdev structure. I need to create the
+>> structure first, before
+>> the endpoint.
+>> I will add more details in the commit message as you suggest.
+> 
+> Okay, I think the important part to document is _why_ this has to happen
+> in this order - in particular since I suspect that this reason might not
+> be unique to this driver.
+
+Right.
+In the rpmsg-client-sample implementation [1], the endpoint callback uses the 
+dev_get_drvdata to retrieve the device context.
+If the dev->driver_data is used for some other purpose (this is the case for the 
+rpmsg char) you need to use the "*priv" parameter.
+
+The rpmsg-core seems expecting implementation based dev->driver_data use, when 
+use rpmsg bus probing mechanism.
+
+[1] 
+https://elixir.bootlin.com/linux/latest/source/samples/rpmsg/rpmsg_client_sample.c#L29
+
+> 
+>>
+>> An alternative could be to directly set default_ept->priv but as the
+>> rpmsg_create_default_ept
+>> "priv" parameter is forwarded to the rpmsg backend (using create_ept ops).
+>> This could introduces unexpected side effect.
+>>
+> 
+> I'm not sure I understand the unexpected side effect of reassigning priv
+> here.
+
+I have no concrete use case in mind just that the priv parameter is provided to
+the rpmsg backend. My assumption is that, calling rpmsg_create_ept function, there
+is no protection from the use of the priv parameter in backend for some other 
+purpose.
+As the rpmsg_dev_probe calls rpmsg_create_ept with priv = NULL, This parameter will
+not be sent by the backend.
+But perhaps this is some over protection?
+Please just tell me if you prefer that I suppress rpmsg_create_default_ept API and
+set directly the default_ept->priv field.
+
+Regards,
+Arnaud
+
 > 
 > Regards,
 > Bjorn
 > 
-> > > -		return NULL;
-> > > -	}
-> > >  
-> > >  	return tfile;
-> > >  }
-> > > -- 
-> > > 2.17.1
-> > > 
+>>>> +	 * Do not allow the creation and release of an endpoint on /dev/rpmsgX open and close,
+>>>> +	 * reuse the default endpoint instead
+>>>
+>>> This sentence doesn't tell me anything about this code snippet and
+>>> doesn't indicate that it relates to the snippet added elsewhere in this
+>>> file by the previous patch.
+>>>
+>>>> +	 */
+>>>> +	eptdev->default_ept = rpmsg_create_default_ept(rpdev, rpmsg_ept_cb, eptdev, chinfo);
+>>>> +	if (!eptdev->default_ept) {
+>>>> +		dev_err(&rpdev->dev, "failed to create %s\n", chinfo.name);
+>>>> +		put_device(dev);
+>>>> +		kfree(eptdev);
+>>>> +		return -EINVAL;
+>>>> +	}
+>>>> +
+>>>> +	return rpmsg_chrdev_eptdev_add(eptdev, chinfo);
+>>>> +}
+>>>> +
+>>>> +static void rpmsg_chrdev_remove(struct rpmsg_device *rpdev)
+>>>> +{
+>>>> +	int ret;
+>>>> +
+>>>> +	ret = device_for_each_child(&rpdev->dev, NULL, rpmsg_chrdev_eptdev_destroy);
+>>>> +	if (ret)
+>>>> +		dev_warn(&rpdev->dev, "failed to destroy endpoints: %d\n", ret);
+>>>> +}
+>>>> +
+>>>> +static struct rpmsg_device_id rpmsg_chrdev_id_table[] = {
+>>>> +	{ .name	= "rpmsg-raw" },
+>>>> +	{ },
+>>>> +};
+>>>> +
+>>>> +static struct rpmsg_driver rpmsg_chrdev_driver = {
+>>>> +	.probe = rpmsg_chrdev_probe,
+>>>> +	.remove = rpmsg_chrdev_remove,
+>>>> +	.id_table = rpmsg_chrdev_id_table,
+>>>> +	.drv.name = "rpmsg_chrdev",
+>>>> +};
+>>>> +
+>>>>    static int rpmsg_chrdev_init(void)
+>>>>    {
+>>>>    	int ret;
+>>>> @@ -445,12 +497,24 @@ static int rpmsg_chrdev_init(void)
+>>>>    		return ret;
+>>>>    	}
+>>>> +	ret = register_rpmsg_driver(&rpmsg_chrdev_driver);
+>>>> +	if (ret < 0) {
+>>>> +		pr_err("rpmsg: failed to register rpmsg raw driver\n");
+>>>> +		goto free_region;
+>>>> +	}
+>>>> +
+>>>>    	return 0;
+>>>> +
+>>>> +free_region:
+>>>> +	unregister_chrdev_region(rpmsg_major, RPMSG_DEV_MAX);
+>>>> +
+>>>> +	return ret;
+>>>>    }
+>>>>    postcore_initcall(rpmsg_chrdev_init);
+>>>>    static void rpmsg_chrdev_exit(void)
+>>>>    {
+>>>> +	unregister_rpmsg_driver(&rpmsg_chrdev_driver);
+>>>>    	unregister_chrdev_region(rpmsg_major, RPMSG_DEV_MAX);
+>>>>    }
+>>>>    module_exit(rpmsg_chrdev_exit);
+>>>> diff --git a/drivers/rpmsg/rpmsg_ctrl.c b/drivers/rpmsg/rpmsg_ctrl.c
+>>>> index 59d2bd264fdb..298e75dc7774 100644
+>>>> --- a/drivers/rpmsg/rpmsg_ctrl.c
+>>>> +++ b/drivers/rpmsg/rpmsg_ctrl.c
+>>>> @@ -10,6 +10,9 @@
+>>>>     * Based on rpmsg performance statistics driver by Michal Simek, which in turn
+>>>>     * was based on TI & Google OMX rpmsg driver.
+>>>>     */
+>>>> +
+>>>> +#define pr_fmt(fmt)		KBUILD_MODNAME ": " fmt
+>>>
+>>> These changes seems unrelated to above.
+>>
+>> I apparently broke something in my patchset here during a rebase. The previous
+>> irrelevant comment you pointed out to me is also a consequence. My apologies
+>> for this dirty patch...
+>>
+>> Thanks,
+>> Arnaud
+>>
+>>>
+>>> Regards,
+>>> Bjorn
+>>>
+>>>> +
+>>>>    #include <linux/cdev.h>
+>>>>    #include <linux/device.h>
+>>>>    #include <linux/fs.h>
+>>>> @@ -193,13 +196,13 @@ static int rpmsg_ctrldev_init(void)
+>>>>    	ret = alloc_chrdev_region(&rpmsg_major, 0, RPMSG_DEV_MAX, "rpmsg_ctrl");
+>>>>    	if (ret < 0) {
+>>>> -		pr_err("rpmsg: failed to allocate char dev region\n");
+>>>> +		pr_err("failed to allocate char dev region\n");
+>>>>    		return ret;
+>>>>    	}
+>>>>    	ret = register_rpmsg_driver(&rpmsg_ctrldev_driver);
+>>>>    	if (ret < 0) {
+>>>> -		pr_err("rpmsg ctrl: failed to register rpmsg driver\n");
+>>>> +		pr_err("failed to register rpmsg driver\n");
+>>>>    		unregister_chrdev_region(rpmsg_major, RPMSG_DEV_MAX);
+>>>>    	}
+>>>> -- 
+>>>> 2.17.1
+>>>>
