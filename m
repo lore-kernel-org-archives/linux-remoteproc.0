@@ -2,40 +2,40 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B79BC433EF
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 19 Jan 2022 02:25:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6B22C433FE
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 19 Jan 2022 02:28:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1350958AbiASCZx (ORCPT
+        id S1350515AbiASC2f (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 18 Jan 2022 21:25:53 -0500
-Received: from mail-eopbgr70089.outbound.protection.outlook.com ([40.107.7.89]:49667
+        Tue, 18 Jan 2022 21:28:35 -0500
+Received: from mail-eopbgr70079.outbound.protection.outlook.com ([40.107.7.79]:56008
         "EHLO EUR04-HE1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S238636AbiASCZw (ORCPT <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 18 Jan 2022 21:25:52 -0500
+        id S238636AbiASC2e (ORCPT <rfc822;linux-remoteproc@vger.kernel.org>);
+        Tue, 18 Jan 2022 21:28:34 -0500
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=mjH84sHkahHVJtbGdITCIgkDuzBuD9MiWUj3If3HSZFTH829aBV+RSTf+vG4TgUT2kgsa5pOT79TQ7EKkU7OPgJSGg89Cf0dGZrBJPQZyU+GhXdQuY12hhH90k5qkpCn96nFptMVROJ4ng4RaQVFwf+3+d0WJgZEZVMiUEk0EXoXh/47sNaw2zp3IsxNN+GJA5lf2pUUXcJtxnvNjczMUyitT2jqUbtDIV47PBZIjKqKxYHtmUrGXrQAppW0QacXv60n9H5sh5zYYtDv3sqPXgh7mpR+ublClnp2nkEWZTXQwelKfMLi/ISR8lHRAjlF+MdzwG2w1qgEdSMHgoI/Qg==
+ b=KMNWiEBPpkXaEpCW42085hkoDKmXHPnt6zXIdwP8AJ9TrWEmGP80kjA03W8LP7VPVl13K1tNHmvWye23vqxmf4itTXFge+z6Bdy4CUTRMHRLk3tURea1d553WnX7IXuhoST4CQ/unYHbELOxRdMlt+hr0REHN4UMy6EZEzhc34r2cutNVwXzQD+j1ZdQUEIjBzbnvRKav2cVjR1Av7ddyUF4+KPx3Asbj3eLqjEUHhQiWSrCQQjpNtJx0w+ETtmtHiSGPckq28kwWt7l113jC7R2HWOPzhltQpGY7xFAhwBRoCaXvS4VMEQY6j4+p/+yQMOVgP2xqtmKcCyKl1tj8Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=bUbDiQAKkAKH8/vHypuM7MhKLu5E+o9rPPGfeEX5GEc=;
- b=Iynow4udiVfDPwV1yTmt7zPbZElcLn9SkjkltTLcnKlYDqmkOY8F5WLbucpdIQXxiZT1wquXjsM78EpKfbeIxzbDTZgQcxC8nuMOzIrnohqR1EEr3cN60IL0bJKf4npIDeVC35RW5+4zDIxXoWuMYrK1ij4B8HUykarYTR7EqA/SwoXI1SlXSj9MnLfnPGxiSoVhlLcDir7qfm5ybuENNVfM99tYuBOlpb2nxo/XhhMV8CR47n6qGTkwJWN22conusx2qBgWSQ9ML9kNqlXBJcieErt14axFolFuYO90nEqxmjAbTOzP+eglHd+jeGCWV8KHWYPd+tisBjOY4t154g==
+ bh=DySkXGajEHg4mKWzz2wXq9bwiCpprjz5GfZ7biiqV7I=;
+ b=K0RHYQRTam+RKnv4YR6jk4HDKaLQDK/Mxh6ImKdyCp5wNbL13qvjdgNbA8GHykd7iWMKpwPEAAajc/wqSua3iDyevaL7P73BgWsc8mOgBKO7ctM+9Ux95gv+dNYNZCqAVn9IZP4Wjy4YnGu7g7GYlKLXYPbt366NG4AZuj/nrxUv6JfSMQpKotqq/gpqu3x+OpaiSc+J/jq+/c6IqNceLRf583R6qMPEb9cY47/Cvt1hhhWJ+XbDr9hf9JO2PN+HnZCPflQzwBO4BjehzIuDbw3zQ8v3QZmNagy/IT/dC7Tqi4gLNIBmr77NTlNW1SB5BHyul6ushcF4cUFgrcLA7g==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
  header.d=nxp.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=bUbDiQAKkAKH8/vHypuM7MhKLu5E+o9rPPGfeEX5GEc=;
- b=I0T7LbGS6KslX4Av965tgeX6erJlebAqJgjXVfUEDLxZXYlld4sxAXzlTwIrCK+5q1lAdaEIYEnYb/5ok05yHMMPuka2y50a9itoHwRffJN2J859bkzM+pFcXbCj1nsoFVUDpIL9Vw326+ZtEOPHmlFjkqSrybqo1Cr5uHdYYbg=
+ bh=DySkXGajEHg4mKWzz2wXq9bwiCpprjz5GfZ7biiqV7I=;
+ b=QNIvz7JP5LpiNgJMOl9RHpWqfKjFBFBpo2wKghQaTxKKfXPc6BF0kQC9KmB28kn1TBQMWhRtl1L5O44NKK69bUr0iy3SIkPDmlI23iNJ3Ybea8oDLDzPkz2Q3jUPBgDTer+zhO9AnQx18gKh9rcSDBCZjPnT3uGdb7KA2ni8oTc=
 Received: from DU0PR04MB9417.eurprd04.prod.outlook.com (2603:10a6:10:358::11)
  by AM6PR04MB5045.eurprd04.prod.outlook.com (2603:10a6:20b:12::30) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4888.9; Wed, 19 Jan
- 2022 02:25:48 +0000
+ 2022 02:28:31 +0000
 Received: from DU0PR04MB9417.eurprd04.prod.outlook.com
  ([fe80::d4dc:8c9a:55d0:81d8]) by DU0PR04MB9417.eurprd04.prod.outlook.com
  ([fe80::d4dc:8c9a:55d0:81d8%4]) with mapi id 15.20.4888.013; Wed, 19 Jan 2022
- 02:25:48 +0000
+ 02:28:31 +0000
 From:   Peng Fan <peng.fan@nxp.com>
 To:     Mathieu Poirier <mathieu.poirier@linaro.org>,
         "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
@@ -49,15 +49,17 @@ CC:     "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>,
         "linux-arm-kernel@lists.infradead.org" 
         <linux-arm-kernel@lists.infradead.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH 5/9] remoteproc: imx_rproc: make clk optional
-Thread-Topic: [PATCH 5/9] remoteproc: imx_rproc: make clk optional
-Thread-Index: AQHYBpwzP9GGJX1tsEmTz0jYXsJFWaxpK0KAgAB+tJA=
-Date:   Wed, 19 Jan 2022 02:25:48 +0000
-Message-ID: <DU0PR04MB9417B0AC80F41D425F43277C88599@DU0PR04MB9417.eurprd04.prod.outlook.com>
+Subject: RE: [PATCH 6/9] remoteproc: imx_rproc: support attaching to i.MX8QXP
+ M4
+Thread-Topic: [PATCH 6/9] remoteproc: imx_rproc: support attaching to i.MX8QXP
+ M4
+Thread-Index: AQHYBpw1XSm7ohRXCUiPzYJqNJAQmaxpLUKAgAB9VcA=
+Date:   Wed, 19 Jan 2022 02:28:31 +0000
+Message-ID: <DU0PR04MB9417335FFEBEB5CE91A5A67888599@DU0PR04MB9417.eurprd04.prod.outlook.com>
 References: <20220111033333.403448-1-peng.fan@oss.nxp.com>
- <20220111033333.403448-8-peng.fan@oss.nxp.com>
- <20220118185019.GG1119324@p14s>
-In-Reply-To: <20220118185019.GG1119324@p14s>
+ <20220111033333.403448-9-peng.fan@oss.nxp.com>
+ <20220118185729.GH1119324@p14s>
+In-Reply-To: <20220118185729.GH1119324@p14s>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
@@ -65,123 +67,300 @@ X-MS-TNEF-Correlator:
 authentication-results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=nxp.com;
 x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: bff1c1c6-15e2-4fdf-8284-08d9daf30148
+x-ms-office365-filtering-correlation-id: 1feed45f-888b-4d93-e4a9-08d9daf362a4
 x-ms-traffictypediagnostic: AM6PR04MB5045:EE_
-x-microsoft-antispam-prvs: <AM6PR04MB5045B6122AAFA11DA199AB1888599@AM6PR04MB5045.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:8273;
+x-microsoft-antispam-prvs: <AM6PR04MB504516149BC3320652BBA45088599@AM6PR04MB5045.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:1923;
 x-ms-exchange-senderadcheck: 1
 x-ms-exchange-antispam-relay: 0
 x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: a0/VCLvXMfYyCGkE1vBx6M6wmbcz8TzTehLNcE6hVXfUhICLtO3h83PBwULwz+S9xslam4iRPIEIy0zM59mC8/H1TqgCMYrY9tfCCmJ48BsUqbMJ2VQ1Y1E6lnNUHihn+6HFnBZme/2g9PniPYSuGNlqOJ/2BXAPcBZPe9l2yEU7cqLos8jgps4Xa6hSvv2zqpslOyAT3IZuX/Af9UVEXn6nd5T7cDAehbrhsTDi9HuoZJ0DTnsLswUdERASWDwCPb1Hu//UZYv9Ax7L7oNYJZMdlVVdJqVWQAInFnznQ7Yi/3UAys0vl9tvugKFV48HhlwtQ4Nxd0NgocvN8Hj4VE3pfsuJFGUQX2XsWgOl4M7AmjBCdfpHU4Dc0YoIDZWNnRUQINSYNkcsh4+lmRnvTWffGVHKTM/9RCLuMw8NaNqkI5Nr8cdtrJ/lrMEOCp1kS1EtIPHhFn0/JNr2AndJzWTG55GoaoqB4ENNbkhyWqf7rY8rH62+MEWI1eW5OWZwu//rVD8n2fua/lWmTzhhnLSxhhu5Pg4PaxLSk9hMLCbH0w9RFhv7Xnruf9yi71fjtJZ+t5Bhdom3MX/V5wBKF03fzHES4xIAprPxHiDWKjxt+iP64ppzclHgYfmMj81TuZDqsxZFJ+SJ4pWglS+MkmJ4g4qnfyK04ApvpuwEL/HjRB5c3nPDE23WIp69MdI22X99h4kJihshzZIFmHGvew==
+x-microsoft-antispam-message-info: /bTVodWnku6gUSurmsrjQ80Sq1tCvkwipd9nWkyzY9Ls6iWGpQow8KlNv8AduVI/oJdLEl76UasheirlEBjAvfWoTL9wMFrtSLKa5P8qZZ6AAyjhduddRZkF3bcnnhE9Aru0tLrhYFfc1jn1SflDJc3wm18+Ul0dxj80fRjCMC+qBRs18OxAugvF6Q79nDnaYkN3EVzpAZJFsuXxMwQmPh5kGb9JHxfyfjVKddhgyPl3rRN8L3IhVqi1J4TXeiAWn1+uU+jfC1OeIgJ93GNVSFWUCqh1m405WnLqBDo2Ld9dMs6ZNuG2zvAYWQUckhaYgZYklSKPP1VSXAUbOiNEDHT14MXok3hv/Fp2E+p+PDrtUayo4qwRgd9Ib/HUgmvHzxW2O6dxj2NnCVeyxsf+Rtik9+In/zkRe/6mFlBOatNW0yS7Xv5G2HJj6dm16yCM2dXZ1m0gsah6UYVUhoq8RyMDUUnVq/GiG2fT42Xrz/3hbXXEnhVbrEsUK06jkkZluIQNzIVvZ2klT4GBW/+aqDOOyfy4g/ofqGnF8sWLY7fYt9bEII1clwc3LUa3oc8YD6qXyw40x7YAHLLZQOk1gbAl72Wh1W0KhUK842DpwvMOwKTAthbev8WywqP6ryALm7ACIIx+dFG/TyroKbJDQIZtjpt1GvMtBu5xcu8g6U7NgMZbWwAvzntGzfRndL50Nx0XiJLiLndgAy2ai3/ApQ==
 x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU0PR04MB9417.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(366004)(52536014)(66556008)(55016003)(186003)(26005)(122000001)(44832011)(54906003)(66476007)(66946007)(86362001)(64756008)(33656002)(316002)(110136005)(4326008)(76116006)(9686003)(71200400001)(38100700002)(38070700005)(7696005)(83380400001)(2906002)(8676002)(8936002)(5660300002)(508600001)(66446008)(6506007);DIR:OUT;SFP:1101;
 x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?Tqq4FQRtDFwwNjyZ9VQUKkg7AY3IkDiGfHZ42LuqlDRaDP0LQopynv03aEe0?=
- =?us-ascii?Q?s9y/i7amufJ7mt0T1geS3FHWSZndSN3dgidZZMjWyRX+pMDAPwO9FiUU1OpJ?=
- =?us-ascii?Q?sWq46CzWNKUFSZPfUsH92pgXt20v6OQcof4mwbtBV6vg9vypgh32W+R96Pg2?=
- =?us-ascii?Q?hnEKpbPM/jd3SHHRi9PdV7U7BUTzGY9ue4WYPsT8qcfaDz/Nn1XvmPiQ8n9w?=
- =?us-ascii?Q?9GOgUX0/KT9aoi3zLWACOCxlbGZ9i+9/s03J7vQL8OgFaieLUSPimNQAaq0i?=
- =?us-ascii?Q?oGuy7ghOSwKH4mHyBhzV1W2dEOhnC8zlf7SzHm7nG9Bf/S7w6aw2RRbdOGlI?=
- =?us-ascii?Q?0KSwXytNK9RSmBw5TZNFjZrjeGgiWmSeO3kwP9htaq3oG3t/1cI0RLnrLqQ8?=
- =?us-ascii?Q?iTODpSGewEJaQp5aCyFhh/MqTJNsEo2Kgt3mjJZL+yLXtxMr5X7ZlzePmqWS?=
- =?us-ascii?Q?z5y7HxLhIQe/yZAFQN//Jp/3yIY8yKOWhxQV9VO45iY89PZto6J7fai1T8XM?=
- =?us-ascii?Q?lA2M0kCnRlEFogojGFhWBFBq6Kd3LOUWfHwBdwbPOLmKlgidUpPB+pr99zZX?=
- =?us-ascii?Q?UcaAh3trIXAdpj78+tKornp1q4ZyEiD9/MI+4P0kSMw7hUWtf5mpPX9WA/X7?=
- =?us-ascii?Q?3mh/sa/ZUeKDdMHMtbaDKCDC9o0lIbfmL54V1E2T3tutx/+psDFfd5PMkBOz?=
- =?us-ascii?Q?iXH76AlLZ5aegtahhSCYGFyywNazZjN/D/26sHqyCE3OvrLRtqB2JKBnQPBl?=
- =?us-ascii?Q?vu6mMS0kLEZEn9YOWXqpo8Mlbj3YtBRSiq0Hstz52BB6kJ3FeLfo1/S6XVzK?=
- =?us-ascii?Q?PJqGq6ojq39KUJxW8lGM0WNvfeWxXRDRz7inAZt6zHdAjgtU/4TI/wrf9AyR?=
- =?us-ascii?Q?XtjpKjXICHhPQWf7E3kZeZHcv71KijOU7oqGazhUDZlxKQPsHXHP4olboSFi?=
- =?us-ascii?Q?AndOqPgf9htoVIdK9FfhQOTO+a76XQMl/+vn7GTSap2rJdqSSY0HqjPtltKP?=
- =?us-ascii?Q?HdnQB5dFN8QFQG6EUI6h2txUga7HjrkRFugtou2KeOubGq9FoDol01y6+itU?=
- =?us-ascii?Q?Cp47dNmMaS8TrKULGNTs87e6+AkmhO2hdpKxmDwHRQcqi7ucvf+54vcKH4K5?=
- =?us-ascii?Q?eVAWuRfSar94KEfm7br8CFbFWAeqGUpXKJ0Q2mjif2kc949qWuZNCJ5ky0e4?=
- =?us-ascii?Q?VvRhEV+C7O0s+ARSVCGV7bgVzpF95+O8fyGoy8iAv28PN3eqU9JnBSctCMeO?=
- =?us-ascii?Q?VJW8827R3JssyUdrd1ywPaQXv4KEvI/tY9Wm64KoXXS3s2DlHRi9zlyu47Am?=
- =?us-ascii?Q?318O97CRa2rKInsDUHQETw3sUBXhWs4rk9VNo0bXtTMjQLnvu+YjB8M3IH2I?=
- =?us-ascii?Q?DQsmn2c0pVM+v9c+5MmtZO51vznIPWzkNjdx0tiIPkISXb2RedPUxfhHde9o?=
- =?us-ascii?Q?Hlb9tCVTCXKYwAFUqEbLTktl1VuQmkulGH5iy+Vq3rZ3dFuw+JJVe/+x2ov/?=
- =?us-ascii?Q?ufboJ5fgSp//NjHguImnHbJeCbWmrkc76SPLCsAiyhmJeoj0K1IourG9aaX1?=
- =?us-ascii?Q?YR/ZyqdGp1C2AadLolzpTNaSeKJNdYGy8m4Rv9ueHPkQKcADno1gliSC+zQ2?=
- =?us-ascii?Q?gRYrFagu1ubgw7FxGeBklZk=3D?=
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?gRvSRDV9nEcabyJeSY75mg7IeDm3IHZ6SiEY5L9qfIn+oPWi+vISC2//n0rB?=
+ =?us-ascii?Q?MIRCbIxLYLPIZEDbHeZzKxBOloJtldaCTk2vMfxIjd3lEfcvV4coWNfTHyJX?=
+ =?us-ascii?Q?iRtih69cJx3kF3/R2fYRRHl9Z40s+/NhtwBSSZd9z1hzy5OHU4P3VlP6xp1U?=
+ =?us-ascii?Q?9y49vmwi3lBOu3LDM7d2yH0NsfDlyTYLsPYh3kfJVWRhi1RohEgpgvK6CULn?=
+ =?us-ascii?Q?tV84vZh1ZeSsp6HtiiKel+SH5mEUlXIVTwO8YwQNlw9UqIWf4dld160aqxxk?=
+ =?us-ascii?Q?IydOmymh4oqcT/i5SJNlbA/c9AJzUo2U3ojzKy7gGix7rk78rxyZRp5CU5no?=
+ =?us-ascii?Q?lHwMfP+39QFrawN7viUummtlkWyKHcjbFpbtCTFChAO1d6N+ROQH4n9/77dd?=
+ =?us-ascii?Q?iDi+G4wIrbhyEbfmQ8aJ0l19YeRQzzX88pvNOzwl5ZUf5aJXtLEd4Z4GhytU?=
+ =?us-ascii?Q?paLaIa7b9GNTjuuk5qwtctEEUFw8mbsJqzrskM1FzVbyDx3ruKMfy9Uj9QHZ?=
+ =?us-ascii?Q?zGUBEdLwhV42hNDoQxS35vc9JK6v7mpgbJR8rEH48HWNP5h68WlRrDJQGqoK?=
+ =?us-ascii?Q?TA3MKr0tfc3v/H55SQrUa5CckpoczyqDZCX+aSxXs5yHtyhuCQ9jNlUQDVOF?=
+ =?us-ascii?Q?muXiP7yBuyTf+rFNV10RV0Bz3iLwW3WYKw/PedsdqL8sWOk4Al3NvZkWucHu?=
+ =?us-ascii?Q?MJPivUadVEVCTctUEESVo4+ZXCMURhpw+iPd7mV76qp8wIYCe0qPK1HTUTod?=
+ =?us-ascii?Q?hkvhjzHjFU7qg8LH4TUKW9NvUIGLleORqhsHiyB+Qgado9wpaPRmPp+KVqSM?=
+ =?us-ascii?Q?I7D9NgCEd/bbFnhCpwV4Cl0rn/r6JAeVZ8Zo3WwuCZS5N95RvdMke9liCKoX?=
+ =?us-ascii?Q?0JrOksJmN3pSWBjXY3L0ehEQ/1VsXwjlFad+KbkHPsRI2IEvo1TaYKWAWxWa?=
+ =?us-ascii?Q?0PV6KEgwSnqjZCWp70SzmGHcikboZHglYIDjP/Pnbt9YrjZ7WbuUkrifurVz?=
+ =?us-ascii?Q?tVhTTZvPfo5oft+5QCRA0U+2wigTT8otONHrCj/Q5+K0J9vXgPzNkMh/xX0s?=
+ =?us-ascii?Q?UlpgT2R7leYL65poD8CjWAErDJZlibSxEC1OfIeFrNk9CdpBBzSXuuP48aSN?=
+ =?us-ascii?Q?TkKIcm5XM/Y3e3p7Jnt0ed2aHFsCLH2t1UgEa6CM7XiMCrkgiA0OWDq8Wpci?=
+ =?us-ascii?Q?SAbZGTwkcNs3+s9Dt3f/1P+YY2TSwqhrQV3NPItrUUy4EIlnEfNeX2MfXCjp?=
+ =?us-ascii?Q?pEoXQkove0rJFztxm3lWgv30Yrp07zN5egpL1QnkXfssjKfOVPxneDjOOqju?=
+ =?us-ascii?Q?1P6GsDR1gc/XWhDEA4Q90ZCKGN/JffsomfxxheFmLCuyzrSBATCBSAd9DaRG?=
+ =?us-ascii?Q?ApqKjC+ajM3pBaV8NgcK9WxbVSz02Pa0pbcVzb5A5uYa4VbkmAe9fWy/fk6+?=
+ =?us-ascii?Q?f14I9Y57gmouYCYCFjyinmuoXoEGvYFqSmwSl2/+MEkWXbOMQ/i4zSWW5nAe?=
+ =?us-ascii?Q?hVrF9sS/OD2AwXg7+p3vn833fduS/uWALdxPPAstBo+qiuP6VOM7IXwYHng3?=
+ =?us-ascii?Q?3xTEaFNk0j53L71slR9n8gxPNmKNgQcLgHQCCqhICrfDMa0e32lUTaKVa3wX?=
+ =?us-ascii?Q?wYRAl+7EbLj1s6rRufqXTlQ=3D?=
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: nxp.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
 X-MS-Exchange-CrossTenant-AuthSource: DU0PR04MB9417.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: bff1c1c6-15e2-4fdf-8284-08d9daf30148
-X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Jan 2022 02:25:48.2136
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1feed45f-888b-4d93-e4a9-08d9daf362a4
+X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Jan 2022 02:28:31.5424
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: FU+8M1ABB9mFIfayNMNizSTznOVQvHFVog3Yti2St01YF6UXMy+Pdx+WtqhJU5hkrqcULvJ5CVgmLZFWh1Ojlg==
+X-MS-Exchange-CrossTenant-userprincipalname: LdkD12OOmk2G6gtPoOxeOmBuoPp3LhqgwNwkABF2MQF1ml+BDb+e1CKmy2YMzPIWev0CfJcGBwjLX9yBoedrqA==
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR04MB5045
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-> Subject: Re: [PATCH 5/9] remoteproc: imx_rproc: make clk optional
+> Subject: Re: [PATCH 6/9] remoteproc: imx_rproc: support attaching to
+> i.MX8QXP M4
 >=20
-> On Tue, Jan 11, 2022 at 11:33:29AM +0800, Peng Fan (OSS) wrote:
+> On Tue, Jan 11, 2022 at 11:33:30AM +0800, Peng Fan (OSS) wrote:
 > > From: Peng Fan <peng.fan@nxp.com>
 > >
-> > To i.MX8QXP/QM/ULP and i.MX7ULP, Mcore maybe out of control of Linux.
-> > And in such case, no need clk, so make clk optional with has_clk.
+> > When M4 is kicked by SCFW, M4 runs in its own hardware partition,
+> > Linux could only do IPC with M4, it could not start, stop, update image=
+.
+> >
+> > When M4 crash reboot, it could notify Linux, so Linux could prepare to
+> > reattach to M4 after M4 recovery.
 > >
 > > Signed-off-by: Peng Fan <peng.fan@nxp.com>
 > > ---
-> >  drivers/remoteproc/imx_rproc.c | 5 +++++
-> >  1 file changed, 5 insertions(+)
+> >  drivers/remoteproc/imx_rproc.c | 96
+> > ++++++++++++++++++++++++++++++++++
+> >  1 file changed, 96 insertions(+)
 > >
 > > diff --git a/drivers/remoteproc/imx_rproc.c
-> > b/drivers/remoteproc/imx_rproc.c index 7b2578177ea8..0e99a3ca6fbc
+> > b/drivers/remoteproc/imx_rproc.c index 0e99a3ca6fbc..5f04aea2f6a1
 > > 100644
 > > --- a/drivers/remoteproc/imx_rproc.c
 > > +++ b/drivers/remoteproc/imx_rproc.c
-> > @@ -89,6 +89,7 @@ struct imx_rproc {
-> >  	struct work_struct		rproc_work;
+> > @@ -6,6 +6,7 @@
+> >  #include <linux/arm-smccc.h>
+> >  #include <linux/clk.h>
+> >  #include <linux/err.h>
+> > +#include <linux/firmware/imx/sci.h>
+> >  #include <linux/interrupt.h>
+> >  #include <linux/kernel.h>
+> >  #include <linux/mailbox_client.h>
+> > @@ -59,6 +60,8 @@
+> >  #define IMX_SIP_RPROC_STARTED		0x01
+> >  #define IMX_SIP_RPROC_STOP		0x02
+> >
+> > +#define	IMX_SC_IRQ_GROUP_REBOOTED	5
+> > +
+> >  /**
+> >   * struct imx_rproc_mem - slim internal memory structure
+> >   * @cpu_addr: MPU virtual address of the memory region @@ -90,6
+> > +93,23 @@ struct imx_rproc {
 > >  	struct workqueue_struct		*workqueue;
 > >  	void __iomem			*rsc_table;
-> > +	bool				has_clk;
+> >  	bool				has_clk;
+> > +	struct imx_sc_ipc		*ipc_handle;
+> > +	struct notifier_block		proc_nb;
+> > +	u32				rproc_pt;
+> > +	u32				rsrc;
 >=20
-> I am usually weary of bloating structures with flags.  I suggest achievin=
-g the
-> same functionality with a macro that compares priv->dcfg with the right
-> imx_rproc_dcfg structure.
+> There is no documentation for the above two fields and I have to guess wh=
+at
+> they do.
 
-priv->dcfg is some kind fixed settings, however has_clk could be runtime ch=
-anged,
-because i.MX platform M-core support multiple booting method and it
-could work w/o clk handled by Linux depending on some pre-configuration
-such as moving M-core in an separate hardware partition.
-
-Thanks,
-Peng.=20
+Fix in V2.
 
 >=20
+> > +};
+> > +
+> > +static const struct imx_rproc_att imx_rproc_att_imx8qxp[] =3D {
+> > +	/* dev addr , sys addr  , size	    , flags */
+> > +	{ 0x08000000, 0x08000000, 0x10000000, 0},
+> > +	/* TCML/U */
+> > +	{ 0x1FFE0000, 0x34FE0000, 0x00040000, ATT_OWN | ATT_IOMEM },
+> > +	/* OCRAM(Low 96KB) */
+> > +	{ 0x21000000, 0x00100000, 0x00018000, 0},
+> > +	/* OCRAM */
+> > +	{ 0x21100000, 0x00100000, 0x00040000, 0},
+> > +	/* DDR (Data) */
+> > +	{ 0x80000000, 0x80000000, 0x60000000, 0 },
 > >  };
 > >
 > >  static const struct imx_rproc_att imx_rproc_att_imx8mn[] =3D { @@
-> > -724,6 +725,9 @@ static int imx_rproc_clk_enable(struct imx_rproc *priv=
-)
-> >  	if (dcfg->method =3D=3D IMX_RPROC_NONE)
-> >  		return 0;
+> > -236,6 +256,12 @@ static const struct imx_rproc_dcfg
+> imx_rproc_cfg_imx8ulp =3D {
+> >  	.method		=3D IMX_RPROC_NONE,
+> >  };
 > >
-> > +	if (!priv->has_clk)
+> > +static const struct imx_rproc_dcfg imx_rproc_cfg_imx8qxp =3D {
+> > +	.att		=3D imx_rproc_att_imx8qxp,
+> > +	.att_size	=3D ARRAY_SIZE(imx_rproc_att_imx8qxp),
+> > +	.method		=3D IMX_RPROC_SCU_API,
+> > +};
+> > +
+> >  static const struct imx_rproc_dcfg imx_rproc_cfg_imx7ulp =3D {
+> >  	.att		=3D imx_rproc_att_imx7ulp,
+> >  	.att_size	=3D ARRAY_SIZE(imx_rproc_att_imx7ulp),
+> > @@ -491,6 +517,11 @@ static int imx_rproc_attach(struct rproc *rproc)
+> >  	return 0;
+> >  }
+> >
+> > +static int imx_rproc_detach(struct rproc *rproc) {
+> > +	return 0;
+>=20
+> Is it possible to detach the remote processor from the application core? =
+ If
+> not please write a comment that says so.
+
+No from my understanding.
+
+  And shouldn't this return some
+> kind of error so that users don't think the operation was carried out
+> successfully?
+
+No. This is to match patch 3/9 to support M-core self recovery. After M-cor=
+e
+crash reboot, remoteproc framework just detach and re-attach.
+
+>=20
+> I am out of time for today and as such will continue with this set tomorr=
+ow.
+
+Thanks for you reviewing the patchset.
+
+Thanks,
+Peng.
+
+>=20
+> Thanks,
+> Mathieu
+>=20
+> > +}
+> > +
+> >  static struct resource_table *imx_rproc_get_loaded_rsc_table(struct
+> > rproc *rproc, size_t *table_sz)  {
+> >  	struct imx_rproc *priv =3D rproc->priv; @@ -525,6 +556,7 @@
+> > imx_rproc_elf_find_loaded_rsc_table(struct rproc *rproc, const struct
+> > firmware *  static const struct rproc_ops imx_rproc_ops =3D {
+> >  	.prepare	=3D imx_rproc_prepare,
+> >  	.attach		=3D imx_rproc_attach,
+> > +	.detach		=3D imx_rproc_detach,
+> >  	.start		=3D imx_rproc_start,
+> >  	.stop		=3D imx_rproc_stop,
+> >  	.kick		=3D imx_rproc_kick,
+> > @@ -671,6 +703,22 @@ static void imx_rproc_free_mbox(struct rproc
+> *rproc)
+> >  	mbox_free_channel(priv->rx_ch);
+> >  }
+> >
+> > +static int imx_rproc_partition_notify(struct notifier_block *nb,
+> > +				      unsigned long event, void *group) {
+> > +	struct imx_rproc *priv =3D container_of(nb, struct imx_rproc,
+> > +proc_nb);
+> > +
+> > +	/* Ignore other irqs */
+> > +	if (!((event & BIT(priv->rproc_pt)) && (*(u8 *)group =3D=3D
+> IMX_SC_IRQ_GROUP_REBOOTED)))
 > > +		return 0;
 > > +
-> >  	priv->clk =3D devm_clk_get(dev, NULL);
-> >  	if (IS_ERR(priv->clk)) {
-> >  		dev_err(dev, "Failed to get clock\n"); @@ -768,6 +772,7 @@ static
-> > int imx_rproc_probe(struct platform_device *pdev)
-> >  	priv->rproc =3D rproc;
-> >  	priv->dcfg =3D dcfg;
-> >  	priv->dev =3D dev;
-> > +	priv->has_clk =3D true;
+> > +	rproc_report_crash(priv->rproc, RPROC_WATCHDOG);
+> > +
+> > +	pr_info("Patition%d reset!\n", priv->rproc_pt);
+> > +
+> > +	return 0;
+> > +}
+> > +
+> >  static int imx_rproc_detect_mode(struct imx_rproc *priv)  {
+> >  	struct regmap_config config =3D { .name =3D "imx-rproc" }; @@ -680,6
+> > +728,7 @@ static int imx_rproc_detect_mode(struct imx_rproc *priv)
+> >  	struct arm_smccc_res res;
+> >  	int ret;
+> >  	u32 val;
+> > +	u8 pt;
 > >
-> >  	dev_set_drvdata(dev, rproc);
-> >  	priv->workqueue =3D create_workqueue(dev_name(dev));
+> >  	switch (dcfg->method) {
+> >  	case IMX_RPROC_NONE:
+> > @@ -690,6 +739,52 @@ static int imx_rproc_detect_mode(struct
+> imx_rproc *priv)
+> >  		if (res.a0)
+> >  			priv->rproc->state =3D RPROC_DETACHED;
+> >  		return 0;
+> > +	case IMX_RPROC_SCU_API:
+> > +		ret =3D imx_scu_get_handle(&priv->ipc_handle);
+> > +		if (ret)
+> > +			return ret;
+> > +		ret =3D of_property_read_u32(dev->of_node, "rsrc-id", &priv->rsrc);
+> > +		if (ret) {
+> > +			dev_err(dev, "no rsrc-id\n");
+> > +			return ret;
+> > +		}
+> > +
+> > +		/*
+> > +		 * If Mcore resource is not owned by Acore partition, It is kicked b=
+y
+> ROM,
+> > +		 * and Linux could only do IPC with Mcore and nothing else.
+> > +		 */
+> > +		if (!imx_sc_rm_is_resource_owned(priv->ipc_handle, priv->rsrc)) {
+> > +
+> > +			priv->has_clk =3D false;
+> > +			priv->rproc->self_recovery =3D true;
+> > +			priv->rproc->state =3D RPROC_DETACHED;
+> > +
+> > +			/* Get partition id and enable irq in SCFW */
+> > +			ret =3D imx_sc_rm_get_resource_owner(priv->ipc_handle,
+> priv->rsrc, &pt);
+> > +			if (ret) {
+> > +				dev_err(dev, "not able to get resource owner\n");
+> > +				return ret;
+> > +			}
+> > +
+> > +			priv->rproc_pt =3D pt;
+> > +			priv->proc_nb.notifier_call =3D imx_rproc_partition_notify;
+> > +
+> > +			ret =3D imx_scu_irq_register_notifier(&priv->proc_nb);
+> > +			if (ret) {
+> > +				dev_warn(dev, "register scu notifier failed.\n");
+> > +				return ret;
+> > +			}
+> > +
+> > +			ret =3D
+> imx_scu_irq_group_enable(IMX_SC_IRQ_GROUP_REBOOTED,
+> > +						       BIT(priv->rproc_pt), true);
+> > +			if (ret) {
+> > +				imx_scu_irq_unregister_notifier(&priv->proc_nb);
+> > +				dev_warn(dev, "Enable irq failed.\n");
+> > +				return ret;
+> > +			}
+> > +		}
+> > +
+> > +		return 0;
+> >  	default:
+> >  		break;
+> >  	}
+> > @@ -847,6 +942,7 @@ static const struct of_device_id
+> imx_rproc_of_match[] =3D {
+> >  	{ .compatible =3D "fsl,imx8mm-cm4", .data =3D &imx_rproc_cfg_imx8mq }=
+,
+> >  	{ .compatible =3D "fsl,imx8mn-cm7", .data =3D &imx_rproc_cfg_imx8mn }=
+,
+> >  	{ .compatible =3D "fsl,imx8mp-cm7", .data =3D &imx_rproc_cfg_imx8mn }=
+,
+> > +	{ .compatible =3D "fsl,imx8qxp-cm4", .data =3D &imx_rproc_cfg_imx8qxp=
+ },
+> >  	{ .compatible =3D "fsl,imx8ulp-cm33", .data =3D &imx_rproc_cfg_imx8ul=
+p },
+> >  	{},
+> >  };
 > > --
 > > 2.25.1
 > >
