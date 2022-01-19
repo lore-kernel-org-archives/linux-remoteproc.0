@@ -2,107 +2,270 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C92E5C433F5
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 19 Jan 2022 18:12:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE868C433EF
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 19 Jan 2022 18:31:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235059AbiASSMg (ORCPT
+        id S1356812AbiASSbe (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 19 Jan 2022 13:12:36 -0500
-Received: from mail-ot1-f41.google.com ([209.85.210.41]:36508 "EHLO
-        mail-ot1-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1356655AbiASSMf (ORCPT
+        Wed, 19 Jan 2022 13:31:34 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44710 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1356797AbiASSbW (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 19 Jan 2022 13:12:35 -0500
-Received: by mail-ot1-f41.google.com with SMTP id l64-20020a9d1b46000000b005983a0a8aaaso4229542otl.3;
-        Wed, 19 Jan 2022 10:12:35 -0800 (PST)
+        Wed, 19 Jan 2022 13:31:22 -0500
+Received: from mail-pf1-x435.google.com (mail-pf1-x435.google.com [IPv6:2607:f8b0:4864:20::435])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 03D9EC06173F
+        for <linux-remoteproc@vger.kernel.org>; Wed, 19 Jan 2022 10:31:22 -0800 (PST)
+Received: by mail-pf1-x435.google.com with SMTP id t192so353228pfc.1
+        for <linux-remoteproc@vger.kernel.org>; Wed, 19 Jan 2022 10:31:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=WE80LPrsoKRXzdHL41J7C3rtPUMvrkVMO2iBekQMkPA=;
+        b=xZXUqRDJ0yPTjaO6bGXXJpTSFEGHuWVHBwpBdrbNJdqZHrI0iFd7sZb5+9pzHvrDeS
+         K/3EUhRthF3obF5h4IjS8nyfmiwrAobxd1tjqfLDg5EYJSBPPFdTE6zh7uegManr+XMh
+         SfJME63w/N5eUEsFnLS9G1BPDRHGxGDgl5vy4T//q8zsMEHgCer7v5H/nbXrz850xAwx
+         GF10sb67BCcTIVDYpLf5kOVp4zOYEkmGz8+wQG/WgqJ83sU0VLipE/S9zyGvssWsPiU2
+         5XsbbEDYyI5HwAPtenlynQ664EoWUsKOc84/mhNBnbcHSTFN0VxRav3QOXHbkV42r4tz
+         4ulA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=KhnGgRppULmhUr9DM7eE177qZR72yiD2dlY3z/aqigQ=;
-        b=ZaaHwVdiPG+KTHBrdaKF5bIRpJcdz8ywkUgZ7NN0L9mbmTLHYmt5qs8vVaKPWaSNbS
-         rEAQx6ZiVjs/We/LEU0nlw4qXeAaZprgTtdNbmPmS1E7w8y7AawwwTVqpI46oN4HOAKk
-         7sFF8iuHlrD6NLen11SvwKA7BnXqJfOG3Km/lNx2tdPk02n2isDJP+38D7J/Nc2/YOcO
-         RWkCgQPGNZrC9PGP1Qnh4dsJsjWm5eCaFHjnDJ5o4AF35/Vg9zUJFfXVdFyYZ3MHzlBi
-         g551gLrEXZeF++so8WlfuiSxsf56r5VfIUlHPE6YAjlgMuP57LKeqLBja2mEvcuspjA0
-         k2Zg==
-X-Gm-Message-State: AOAM531WCcVQpiAfGE3JRlndMC8Hh5+Ac2Tp41UXoE8r7Wn5QzNL5QrV
-        xqPNnQGRJ8fjtyYWmSwu5Q==
-X-Google-Smtp-Source: ABdhPJzsbITfBARgU7b1i5+U3tC7JZJlZvXyEKRNEEAVQxSrK4IGBg/+pZtb+Z7s39J19P337Vlgkg==
-X-Received: by 2002:a05:6830:1be9:: with SMTP id k9mr13572805otb.217.1642615955104;
-        Wed, 19 Jan 2022 10:12:35 -0800 (PST)
-Received: from xps15.herring.priv (66-90-148-213.dyn.grandenetworks.net. [66.90.148.213])
-        by smtp.googlemail.com with ESMTPSA id v22sm228657oot.10.2022.01.19.10.12.34
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=WE80LPrsoKRXzdHL41J7C3rtPUMvrkVMO2iBekQMkPA=;
+        b=FFzHi0bWan7JyKvTtj9IWGj7FTnOrQy0oYagmY+YMJGd4mzbWgi4uyGOYr5wKIPlPi
+         w1IxSWd0RPt2puuKmhe545xePqC0aLj+QyuBGFnof3ILF2gPaafju+eKzjNvvYlQlynE
+         VNF7J+TskeL82Cx20hbjdtBPIEHGUSVlTFpOQrblgdbSza7DEEsxAfjfYRcoMByojwsZ
+         TgUoZRrEMZfekipEwuJXFpj+3WjBRSMSYLJgvUP/nl7zZFliWxL3BST9ZFHJ1utSQ5MO
+         Bc6ov85XeB3RNQeSfp/I20PnGzgH1Iqq/qO30SksLbFpCmRN6SgQeWeO1VVyAR/6cnOd
+         umZQ==
+X-Gm-Message-State: AOAM531R1nNR6RBlCmeAKbRxHPD/K/uM1MADkJWfuKutg15QX1YxOkZU
+        ju8c/kTxMQ+jtEo0m/I2X/jxWQ==
+X-Google-Smtp-Source: ABdhPJygoX/tffA1AVJrF15VCwFE4xsnn7Kz9mszVkpRmtEYASugV41weiiGmJEqMUtB11PyL7ezpQ==
+X-Received: by 2002:a63:384d:: with SMTP id h13mr27781957pgn.472.1642617081487;
+        Wed, 19 Jan 2022 10:31:21 -0800 (PST)
+Received: from p14s (S0106889e681aac74.cg.shawcable.net. [68.147.0.187])
+        by smtp.gmail.com with ESMTPSA id pj6sm6938827pjb.21.2022.01.19.10.31.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Jan 2022 10:12:34 -0800 (PST)
-From:   Rob Herring <robh@kernel.org>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Suman Anna <s-anna@ti.com>
-Cc:     linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2] dt-bindings: remoteproc: ti: Add mailbox provider nodes to example
-Date:   Wed, 19 Jan 2022 12:10:54 -0600
-Message-Id: <20220119181053.3846613-1-robh@kernel.org>
-X-Mailer: git-send-email 2.32.0
+        Wed, 19 Jan 2022 10:31:20 -0800 (PST)
+Date:   Wed, 19 Jan 2022 11:31:18 -0700
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+To:     "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+Cc:     bjorn.andersson@linaro.org, shawnguo@kernel.org,
+        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
+        linux-imx@nxp.com, linux-remoteproc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Peng Fan <peng.fan@nxp.com>
+Subject: Re: [PATCH 6/9] remoteproc: imx_rproc: support attaching to i.MX8QXP
+ M4
+Message-ID: <20220119183118.GA1284752@p14s>
+References: <20220111033333.403448-1-peng.fan@oss.nxp.com>
+ <20220111033333.403448-9-peng.fan@oss.nxp.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220111033333.403448-9-peng.fan@oss.nxp.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-In order to make the 'mboxes' property in the TI remoteproc examples
-parseable, mailbox provider nodes are needed. Normally, the examples
-have a __fixup__ node which can be used for determining each
-phandle+arg entry. However, for this binding the arg cells contain a
-phandle, and the __fixups__ information can't be used.
+On Tue, Jan 11, 2022 at 11:33:30AM +0800, Peng Fan (OSS) wrote:
+> From: Peng Fan <peng.fan@nxp.com>
+> 
+> When M4 is kicked by SCFW, M4 runs in its own hardware partition, Linux
+> could only do IPC with M4, it could not start, stop, update image.
+> 
+> When M4 crash reboot, it could notify Linux, so Linux could prepare to
+> reattach to M4 after M4 recovery.
+> 
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> ---
+>  drivers/remoteproc/imx_rproc.c | 96 ++++++++++++++++++++++++++++++++++
+>  1 file changed, 96 insertions(+)
+> 
+> diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rproc.c
+> index 0e99a3ca6fbc..5f04aea2f6a1 100644
+> --- a/drivers/remoteproc/imx_rproc.c
+> +++ b/drivers/remoteproc/imx_rproc.c
+> @@ -6,6 +6,7 @@
+>  #include <linux/arm-smccc.h>
+>  #include <linux/clk.h>
+>  #include <linux/err.h>
+> +#include <linux/firmware/imx/sci.h>
+>  #include <linux/interrupt.h>
+>  #include <linux/kernel.h>
+>  #include <linux/mailbox_client.h>
+> @@ -59,6 +60,8 @@
+>  #define IMX_SIP_RPROC_STARTED		0x01
+>  #define IMX_SIP_RPROC_STOP		0x02
+>  
+> +#define	IMX_SC_IRQ_GROUP_REBOOTED	5
+> +
+>  /**
+>   * struct imx_rproc_mem - slim internal memory structure
+>   * @cpu_addr: MPU virtual address of the memory region
+> @@ -90,6 +93,23 @@ struct imx_rproc {
+>  	struct workqueue_struct		*workqueue;
+>  	void __iomem			*rsc_table;
+>  	bool				has_clk;
+> +	struct imx_sc_ipc		*ipc_handle;
+> +	struct notifier_block		proc_nb;
+> +	u32				rproc_pt;
+> +	u32				rsrc;
+> +};
+> +
+> +static const struct imx_rproc_att imx_rproc_att_imx8qxp[] = {
+> +	/* dev addr , sys addr  , size	    , flags */
+> +	{ 0x08000000, 0x08000000, 0x10000000, 0},
+> +	/* TCML/U */
+> +	{ 0x1FFE0000, 0x34FE0000, 0x00040000, ATT_OWN | ATT_IOMEM },
+> +	/* OCRAM(Low 96KB) */
+> +	{ 0x21000000, 0x00100000, 0x00018000, 0},
+> +	/* OCRAM */
+> +	{ 0x21100000, 0x00100000, 0x00040000, 0},
+> +	/* DDR (Data) */
+> +	{ 0x80000000, 0x80000000, 0x60000000, 0 },
+>  };
+>  
+>  static const struct imx_rproc_att imx_rproc_att_imx8mn[] = {
+> @@ -236,6 +256,12 @@ static const struct imx_rproc_dcfg imx_rproc_cfg_imx8ulp = {
+>  	.method		= IMX_RPROC_NONE,
+>  };
+>  
+> +static const struct imx_rproc_dcfg imx_rproc_cfg_imx8qxp = {
+> +	.att		= imx_rproc_att_imx8qxp,
+> +	.att_size	= ARRAY_SIZE(imx_rproc_att_imx8qxp),
+> +	.method		= IMX_RPROC_SCU_API,
+> +};
+> +
+>  static const struct imx_rproc_dcfg imx_rproc_cfg_imx7ulp = {
+>  	.att		= imx_rproc_att_imx7ulp,
+>  	.att_size	= ARRAY_SIZE(imx_rproc_att_imx7ulp),
+> @@ -491,6 +517,11 @@ static int imx_rproc_attach(struct rproc *rproc)
+>  	return 0;
+>  }
+>  
+> +static int imx_rproc_detach(struct rproc *rproc)
+> +{
+> +	return 0;
+> +}
+> +
+>  static struct resource_table *imx_rproc_get_loaded_rsc_table(struct rproc *rproc, size_t *table_sz)
+>  {
+>  	struct imx_rproc *priv = rproc->priv;
+> @@ -525,6 +556,7 @@ imx_rproc_elf_find_loaded_rsc_table(struct rproc *rproc, const struct firmware *
+>  static const struct rproc_ops imx_rproc_ops = {
+>  	.prepare	= imx_rproc_prepare,
+>  	.attach		= imx_rproc_attach,
+> +	.detach		= imx_rproc_detach,
+>  	.start		= imx_rproc_start,
+>  	.stop		= imx_rproc_stop,
+>  	.kick		= imx_rproc_kick,
+> @@ -671,6 +703,22 @@ static void imx_rproc_free_mbox(struct rproc *rproc)
+>  	mbox_free_channel(priv->rx_ch);
+>  }
+>  
+> +static int imx_rproc_partition_notify(struct notifier_block *nb,
+> +				      unsigned long event, void *group)
+> +{
+> +	struct imx_rproc *priv = container_of(nb, struct imx_rproc, proc_nb);
+> +
+> +	/* Ignore other irqs */
+> +	if (!((event & BIT(priv->rproc_pt)) && (*(u8 *)group == IMX_SC_IRQ_GROUP_REBOOTED)))
+> +		return 0;
+> +
+> +	rproc_report_crash(priv->rproc, RPROC_WATCHDOG);
+> +
+> +	pr_info("Patition%d reset!\n", priv->rproc_pt);
 
-Signed-off-by: Rob Herring <robh@kernel.org>
----
-v2: Fix the example rather than changing the schema which was correct
+s/Patition/Partition
 
- .../devicetree/bindings/remoteproc/ti,k3-dsp-rproc.yaml   | 8 ++++++++
- .../devicetree/bindings/remoteproc/ti,k3-r5f-rproc.yaml   | 8 ++++++++
- 2 files changed, 16 insertions(+)
+> +
+> +	return 0;
+> +}
+> +
+>  static int imx_rproc_detect_mode(struct imx_rproc *priv)
+>  {
+>  	struct regmap_config config = { .name = "imx-rproc" };
+> @@ -680,6 +728,7 @@ static int imx_rproc_detect_mode(struct imx_rproc *priv)
+>  	struct arm_smccc_res res;
+>  	int ret;
+>  	u32 val;
+> +	u8 pt;
+>  
+>  	switch (dcfg->method) {
+>  	case IMX_RPROC_NONE:
+> @@ -690,6 +739,52 @@ static int imx_rproc_detect_mode(struct imx_rproc *priv)
+>  		if (res.a0)
+>  			priv->rproc->state = RPROC_DETACHED;
+>  		return 0;
+> +	case IMX_RPROC_SCU_API:
+> +		ret = imx_scu_get_handle(&priv->ipc_handle);
+> +		if (ret)
+> +			return ret;
+> +		ret = of_property_read_u32(dev->of_node, "rsrc-id", &priv->rsrc);
+> +		if (ret) {
+> +			dev_err(dev, "no rsrc-id\n");
+> +			return ret;
+> +		}
+> +
+> +		/*
+> +		 * If Mcore resource is not owned by Acore partition, It is kicked by ROM,
+> +		 * and Linux could only do IPC with Mcore and nothing else.
+> +		 */
+> +		if (!imx_sc_rm_is_resource_owned(priv->ipc_handle, priv->rsrc)) {
 
-diff --git a/Documentation/devicetree/bindings/remoteproc/ti,k3-dsp-rproc.yaml b/Documentation/devicetree/bindings/remoteproc/ti,k3-dsp-rproc.yaml
-index 4323cefdf19b..cedbc5efdc56 100644
---- a/Documentation/devicetree/bindings/remoteproc/ti,k3-dsp-rproc.yaml
-+++ b/Documentation/devicetree/bindings/remoteproc/ti,k3-dsp-rproc.yaml
-@@ -142,6 +142,14 @@ examples:
-         #address-cells = <2>;
-         #size-cells = <2>;
- 
-+        mailbox0_cluster3: mailbox-0 {
-+            #mbox-cells = <1>;
-+        };
-+
-+        mailbox0_cluster4: mailbox-1 {
-+            #mbox-cells = <1>;
-+        };
-+
-         bus@100000 {
-             compatible = "simple-bus";
-             #address-cells = <2>;
-diff --git a/Documentation/devicetree/bindings/remoteproc/ti,k3-r5f-rproc.yaml b/Documentation/devicetree/bindings/remoteproc/ti,k3-r5f-rproc.yaml
-index 0f2bb06cb7b4..0868154a0364 100644
---- a/Documentation/devicetree/bindings/remoteproc/ti,k3-r5f-rproc.yaml
-+++ b/Documentation/devicetree/bindings/remoteproc/ti,k3-r5f-rproc.yaml
-@@ -238,6 +238,14 @@ examples:
-         #address-cells = <2>;
-         #size-cells = <2>;
- 
-+        mailbox0: mailbox-0 {
-+            #mbox-cells = <1>;
-+        };
-+
-+        mailbox1: mailbox-1 {
-+            #mbox-cells = <1>;
-+        };
-+
-         bus@100000 {
-             compatible = "simple-bus";
-             #address-cells = <2>;
--- 
-2.32.0
+                if (imx_sc_rm_is_resource_owned(priv->ipc_handle, priv->rsrc))
+                        return 0;
 
+> +
+> +			priv->has_clk = false;
+> +			priv->rproc->self_recovery = true;
+> +			priv->rproc->state = RPROC_DETACHED;
+
+This is further proof that information is already available to determine if
+clocks should be managed on the application processor or not and that
+priv->has_clk carries redundant information.
+
+> +
+> +			/* Get partition id and enable irq in SCFW */
+> +			ret = imx_sc_rm_get_resource_owner(priv->ipc_handle, priv->rsrc, &pt);
+> +			if (ret) {
+> +				dev_err(dev, "not able to get resource owner\n");
+> +				return ret;
+> +			}
+> +
+> +			priv->rproc_pt = pt;
+> +			priv->proc_nb.notifier_call = imx_rproc_partition_notify;
+> +
+> +			ret = imx_scu_irq_register_notifier(&priv->proc_nb);
+> +			if (ret) {
+> +				dev_warn(dev, "register scu notifier failed.\n");
+> +				return ret;
+> +			}
+> +
+> +			ret = imx_scu_irq_group_enable(IMX_SC_IRQ_GROUP_REBOOTED,
+> +						       BIT(priv->rproc_pt), true);
+> +			if (ret) {
+> +				imx_scu_irq_unregister_notifier(&priv->proc_nb);
+> +				dev_warn(dev, "Enable irq failed.\n");
+> +				return ret;
+> +			}
+> +		}
+> +
+> +		return 0;
+>  	default:
+>  		break;
+>  	}
+> @@ -847,6 +942,7 @@ static const struct of_device_id imx_rproc_of_match[] = {
+>  	{ .compatible = "fsl,imx8mm-cm4", .data = &imx_rproc_cfg_imx8mq },
+>  	{ .compatible = "fsl,imx8mn-cm7", .data = &imx_rproc_cfg_imx8mn },
+>  	{ .compatible = "fsl,imx8mp-cm7", .data = &imx_rproc_cfg_imx8mn },
+> +	{ .compatible = "fsl,imx8qxp-cm4", .data = &imx_rproc_cfg_imx8qxp },
+>  	{ .compatible = "fsl,imx8ulp-cm33", .data = &imx_rproc_cfg_imx8ulp },
+>  	{},
+>  };
+> -- 
+> 2.25.1
+> 
