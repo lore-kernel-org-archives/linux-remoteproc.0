@@ -2,71 +2,201 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5CECC433EF
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 19 Jan 2022 09:48:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE894C433FE
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 19 Jan 2022 10:32:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1353284AbiASJsN (ORCPT
+        id S1353786AbiASKc3 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 19 Jan 2022 04:48:13 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36964 "EHLO
+        Wed, 19 Jan 2022 05:32:29 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47358 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1353207AbiASJsN (ORCPT
+        with ESMTP id S1353809AbiASKc0 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 19 Jan 2022 04:48:13 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BDDB7C061574;
-        Wed, 19 Jan 2022 01:48:12 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 76820B81910;
-        Wed, 19 Jan 2022 09:48:11 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 476C3C004E1;
-        Wed, 19 Jan 2022 09:48:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1642585690;
-        bh=9lxZq+V4fSgTWNQiG1VvKwxS0DDDwwI9vkyCXU5Dadc=;
-        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-        b=MRfpYKSb8lqKw4tTykefdx8ci8PYb9ZCVwUMaUX6KFXmxOuLcxDToLTqVScC0uUTe
-         TEtXKUpk2DODrLYxUPpTuvmklvOKkjFYSsl13BNKiSAvJXjMHk7IWbkygf19h1Yc7i
-         2LDcmffqS3CklBq+hMaaTxTAkGz0xe6juqsWKMCbJTblDXQAB1F+6NaIbbF3C3Vwxl
-         v2DXJc1LmjVg2Nd765Djp7zakehxX5qMstXROVRBxI38ipB8t37Fj7JdG4GzyPxRDL
-         mnRgyIeOWYLI9yo8ZOGT2U+MENgqSVXlsBc9A/ON8FbCFeq38+EOwm17OKchj7vDc4
-         Xf2ui+EXhfJsg==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 36037F60797;
-        Wed, 19 Jan 2022 09:48:10 +0000 (UTC)
-Subject: Re: [GIT PULL] hwspinlock updates for v5.17
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20220118142809.1751011-1-bjorn.andersson@linaro.org>
-References: <20220118142809.1751011-1-bjorn.andersson@linaro.org>
-X-PR-Tracked-List-Id: <linux-remoteproc.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20220118142809.1751011-1-bjorn.andersson@linaro.org>
-X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/remoteproc/linux.git tags/hwlock-v5.17
-X-PR-Tracked-Commit-Id: 60630924bb5af8751adcecc896e7763c3783ca89
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 39b419eaf0df0de720ed417e785e6c0b004b0a51
-Message-Id: <164258569021.19279.10799535405213687040.pr-tracker-bot@kernel.org>
-Date:   Wed, 19 Jan 2022 09:48:10 +0000
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Ohad Ben-Cohen <ohad@wizery.com>,
-        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Fabien Dessenne <fabien.dessenne@foss.st.com>
+        Wed, 19 Jan 2022 05:32:26 -0500
+Received: from mail-lf1-x12a.google.com (mail-lf1-x12a.google.com [IPv6:2a00:1450:4864:20::12a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9E2E8C06175D
+        for <linux-remoteproc@vger.kernel.org>; Wed, 19 Jan 2022 02:32:24 -0800 (PST)
+Received: by mail-lf1-x12a.google.com with SMTP id s30so7482229lfo.7
+        for <linux-remoteproc@vger.kernel.org>; Wed, 19 Jan 2022 02:32:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Sr17yjVIJ3L6nqEXDMpIqK2xXImflLFzz6ALbEm9u68=;
+        b=Xp8s21ftcZ0WG13DDgbdH7NIUsuYX+ghvkD5zw1hiLod5qbV+yjC9/iw3BxedgypWz
+         j185xcOoN7LD6uCNH62mSJRvMAjwIi7qcbYCznd6Wd0VuvmCQ/sizMwR5aWhMScNA/rl
+         hmuEc+DbVv1NqMjk5IXcy/Hk3oFXKZ0haMWzOfivc06wvoxpEiX1vitoLqGmZuk04L2x
+         HC73i8VxJwVCI/4Mkmi2NET/E8BffuYg/4Zged81GUTCUySqRPVe2agczTV87+sP+2pN
+         pDJV7fJq03+xTsoQaVBtN6S+RGEn7oHeifzgS2DkyqcDDGnQ9aAHk1KN9hJBM2T+WaJf
+         EdtQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Sr17yjVIJ3L6nqEXDMpIqK2xXImflLFzz6ALbEm9u68=;
+        b=SR6RCq/FP6RlmcD3xc0E/sM7lsbHJhpD0V1CWIEYkQMILTBAPxyGF7HPR78WqHLP+9
+         3KeKI2x2Bs784h/p/uOx1OVw/DWWVinwYOZE46brV3NZdAHQS73aKVjRpYxvYJZrrPPf
+         24r65b5vjrgi96jrq8kZ26C30YMDiWNWQ1YrVoEaHa4Kn47c1Y5EkZb5AnrvIwCI8n5z
+         o3YRNijWLSinfw5vMTfm5Ac1EmGoaxB/gxsDwNUj+nbsZo9DdGmZIF/YbexZr+evkw8Y
+         lBuUuOKnSbLleGO7Fn2m+UEziAvvmmIqWtsh2u/mXs4f+wZZ2WK9mlcsnxIcNtznc4ds
+         M4kQ==
+X-Gm-Message-State: AOAM532bbrKTuUXkLjF0GLJ6qHk4F90gddeg4CDkwVxVx8JGTjQYd5oW
+        c8SBE4wi7pS7tk6l+p45J/TmMHVJ64qY3DU9St49hQ==
+X-Google-Smtp-Source: ABdhPJz5t3UBuJxmMbI2E3pOLPGLQiV4ByMa0pgkUilXefnRDUK3bGbZ4bWfdB/wwOZVZ58x7DxfCbRQTc3tUAIioE8=
+X-Received: by 2002:a2e:a26d:: with SMTP id k13mr10012578ljm.300.1642588342599;
+ Wed, 19 Jan 2022 02:32:22 -0800 (PST)
+MIME-Version: 1.0
+References: <20220119015038.2433585-1-robh@kernel.org>
+In-Reply-To: <20220119015038.2433585-1-robh@kernel.org>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Wed, 19 Jan 2022 11:31:45 +0100
+Message-ID: <CAPDyKFr5uT3H8NaAvPyGajo2R6DriYC92y=RdAk=G4PMC4MxYw@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: Improve phandle-array schemas
+To:     Rob Herring <robh@kernel.org>
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Damien Le Moal <damien.lemoal@opensource.wdc.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        Chun-Kuang Hu <chunkuang.hu@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Vinod Koul <vkoul@kernel.org>,
+        Georgi Djakov <djakov@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Marc Zyngier <maz@kernel.org>, Joerg Roedel <joro@8bytes.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Jingoo Han <jingoohan1@gmail.com>, Pavel Machek <pavel@ucw.cz>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Wolfgang Grandegger <wg@grandegger.com>,
+        Marc Kleine-Budde <mkl@pengutronix.de>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Vivien Didelot <vivien.didelot@gmail.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Vladimir Oltean <olteanv@gmail.com>,
+        Kalle Valo <kvalo@kernel.org>,
+        Viresh Kumar <vireshk@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Kevin Hilman <khilman@kernel.org>,
+        Sebastian Reichel <sre@kernel.org>,
+        Mark Brown <broonie@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        linux-ide@vger.kernel.org, linux-crypto@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, dmaengine@vger.kernel.org,
+        linux-pm@vger.kernel.org, iommu@lists.linux-foundation.org,
+        linux-leds@vger.kernel.org, linux-media@vger.kernel.org,
+        netdev@vger.kernel.org, linux-can@vger.kernel.org,
+        linux-wireless@vger.kernel.org, linux-phy@lists.infradead.org,
+        linux-gpio@vger.kernel.org, linux-riscv@lists.infradead.org,
+        linux-remoteproc@vger.kernel.org, alsa-devel@alsa-project.org,
+        linux-usb@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-The pull request you sent on Tue, 18 Jan 2022 08:28:09 -0600:
+On Wed, 19 Jan 2022 at 02:50, Rob Herring <robh@kernel.org> wrote:
+>
+> The 'phandle-array' type is a bit ambiguous. It can be either just an
+> array of phandles or an array of phandles plus args. Many schemas for
+> phandle-array properties aren't clear in the schema which case applies
+> though the description usually describes it.
+>
+> The array of phandles case boils down to needing:
+>
+> items:
+>   maxItems: 1
+>
+> The phandle plus args cases should typically take this form:
+>
+> items:
+>   - items:
+>       - description: A phandle
+>       - description: 1st arg cell
+>       - description: 2nd arg cell
+>
+> With this change, some examples need updating so that the bracketing of
+> property values matches the schema.
+>
+> Cc: Damien Le Moal <damien.lemoal@opensource.wdc.com>
+> Cc: Herbert Xu <herbert@gondor.apana.org.au>
+> Cc: "David S. Miller" <davem@davemloft.net>
+> Cc: Chun-Kuang Hu <chunkuang.hu@kernel.org>
+> Cc: Philipp Zabel <p.zabel@pengutronix.de>
+> Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+> Cc: Vinod Koul <vkoul@kernel.org>
+> Cc: Georgi Djakov <djakov@kernel.org>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Marc Zyngier <maz@kernel.org>
+> Cc: Joerg Roedel <joro@8bytes.org>
+> Cc: Lee Jones <lee.jones@linaro.org>
+> Cc: Daniel Thompson <daniel.thompson@linaro.org>
+> Cc: Jingoo Han <jingoohan1@gmail.com>
+> Cc: Pavel Machek <pavel@ucw.cz>
+> Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
+> Cc: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+> Cc: Jakub Kicinski <kuba@kernel.org>
+> Cc: Wolfgang Grandegger <wg@grandegger.com>
+> Cc: Marc Kleine-Budde <mkl@pengutronix.de>
+> Cc: Andrew Lunn <andrew@lunn.ch>
+> Cc: Vivien Didelot <vivien.didelot@gmail.com>
+> Cc: Florian Fainelli <f.fainelli@gmail.com>
+> Cc: Vladimir Oltean <olteanv@gmail.com>
+> Cc: Kalle Valo <kvalo@kernel.org>
+> Cc: Viresh Kumar <vireshk@kernel.org>
+> Cc: Stephen Boyd <sboyd@kernel.org>
+> Cc: Kishon Vijay Abraham I <kishon@ti.com>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: "Rafael J. Wysocki" <rafael@kernel.org>
+> Cc: Kevin Hilman <khilman@kernel.org>
+> Cc: Ulf Hansson <ulf.hansson@linaro.org>
+> Cc: Sebastian Reichel <sre@kernel.org>
+> Cc: Mark Brown <broonie@kernel.org>
+> Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
+> Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
+> Cc: Zhang Rui <rui.zhang@intel.com>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Cc: Thierry Reding <thierry.reding@gmail.com>
+> Cc: Jonathan Hunter <jonathanh@nvidia.com>
+> Cc: Sudeep Holla <sudeep.holla@arm.com>
+> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+> Cc: linux-ide@vger.kernel.org
+> Cc: linux-crypto@vger.kernel.org
+> Cc: dri-devel@lists.freedesktop.org
+> Cc: dmaengine@vger.kernel.org
+> Cc: linux-pm@vger.kernel.org
+> Cc: iommu@lists.linux-foundation.org
+> Cc: linux-leds@vger.kernel.org
+> Cc: linux-media@vger.kernel.org
+> Cc: netdev@vger.kernel.org
+> Cc: linux-can@vger.kernel.org
+> Cc: linux-wireless@vger.kernel.org
+> Cc: linux-phy@lists.infradead.org
+> Cc: linux-gpio@vger.kernel.org
+> Cc: linux-riscv@lists.infradead.org
+> Cc: linux-remoteproc@vger.kernel.org
+> Cc: alsa-devel@alsa-project.org
+> Cc: linux-usb@vger.kernel.org
+> Signed-off-by: Rob Herring <robh@kernel.org>
+> ---
 
-> https://git.kernel.org/pub/scm/linux/kernel/git/remoteproc/linux.git tags/hwlock-v5.17
+For CPUs and PM domains:
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/39b419eaf0df0de720ed417e785e6c0b004b0a51
+Acked-by: Ulf Hansson <ulf.hansson@linaro.org>
 
-Thank you!
-
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+Kind regards
+Uffe
