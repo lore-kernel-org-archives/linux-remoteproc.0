@@ -2,111 +2,121 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B41BC433EF
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 20 Jan 2022 00:23:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92F99C433EF
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 20 Jan 2022 04:39:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345224AbiATAX4 (ORCPT
+        id S1358515AbiATEjI (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 19 Jan 2022 19:23:56 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39222 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345217AbiATAXz (ORCPT
+        Wed, 19 Jan 2022 23:39:08 -0500
+Received: from ams.source.kernel.org ([145.40.68.75]:35036 "EHLO
+        ams.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233536AbiATEjA (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 19 Jan 2022 19:23:55 -0500
-Received: from mail-ot1-x32e.google.com (mail-ot1-x32e.google.com [IPv6:2607:f8b0:4864:20::32e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AD12CC06173E
-        for <linux-remoteproc@vger.kernel.org>; Wed, 19 Jan 2022 16:23:55 -0800 (PST)
-Received: by mail-ot1-x32e.google.com with SMTP id k13-20020a056830150d00b0059c6afb8627so3278063otp.5
-        for <linux-remoteproc@vger.kernel.org>; Wed, 19 Jan 2022 16:23:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=+zOzBednldscnhra6JkUaxzTXlQRRyK3OUBhQ9RJ0wI=;
-        b=NpbjfuoZWYoirSiXxGLn/doWeM127etmTOHNo1OItL5dp01OmD4hyhCDg/xM0UfCT1
-         rOxi8tW+uJMockG2eaGOkKyQkhejkhEHCXiyqfrzq+ciH0g6dpIRKcYX07utdfhT3bDK
-         VYmw5pI/A/scDX13g6SvUKDgDgrx8Jn6KdQXFqHaVOksRgZ28FTLBAqzIMZENvjfAHSf
-         ivs0JEfRrZF9cW/oIqtR4yVAvSkhulG6nWnApHAvLLhY8hHKNqQK5hg1QwyQ6oagmBKc
-         iWKbvRHLeasZuqyYveCKMJcVVvgf5/hOJufpLa4HW+6VoZ9+PLLXF+dg64v0fz1t8vLe
-         tX0w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=+zOzBednldscnhra6JkUaxzTXlQRRyK3OUBhQ9RJ0wI=;
-        b=aSgS4e8QJe+5WmW3V/zdVkcs7ypN/Lh+6dkC559CQ4raiiTIAgOkh/kZGdmFLJ9m8r
-         rQi22Ps4Tsop4GTXJTd9sswEoCiViRvDyG1J62CbQO57jrDf04wdTWbNNM4joDyLuvzZ
-         xn703ZbZJ7i6kqWx66E60kqGqmfSm/NAb23xGXT22gk1WG4v14BHOV4gpiDTqo0NKLra
-         NewXHXOr/UNwWRxFOlXDYwa0gbXcHaxrjukDZufyIP+RYykaL4VEHAdIi5sh6n8L2u3t
-         8cqG7sm4xhKOrH3oweVBXrm3AKXCA4G4Ins3K/MRmUqTlMpluatUQxxbProPmzeqbBaa
-         UVdA==
-X-Gm-Message-State: AOAM531qI3rGISZAI2J3RgZ+RlR6jSfmtn1Fz22PbOXyHtUahdS/jw8f
-        TIef/a4PnGyFzTQbH/4I0tyOvQ==
-X-Google-Smtp-Source: ABdhPJy37utAjcXmDJpvkZf5F+Wf0nXgH3gIhBsUk14LTso8ERUlIkmIzuj9uCtuTYG1ry2DQ346/Q==
-X-Received: by 2002:a05:6830:4425:: with SMTP id q37mr7059637otv.14.1642638235040;
-        Wed, 19 Jan 2022 16:23:55 -0800 (PST)
-Received: from ripper ([2600:1700:a0:3dc8:205:1bff:fec0:b9b3])
-        by smtp.gmail.com with ESMTPSA id l18sm732081otv.49.2022.01.19.16.23.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Jan 2022 16:23:54 -0800 (PST)
-Date:   Wed, 19 Jan 2022 16:24:29 -0800
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Alistair Delva <adelva@google.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Rishabh Bhatnagar <rishabhb@codeaurora.org>,
-        stable@vger.kernel.org, Ohad Ben-Cohen <ohad@wizery.com>,
+        Wed, 19 Jan 2022 23:39:00 -0500
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 0F266B81A7F;
+        Thu, 20 Jan 2022 04:38:57 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 88872C340E0;
+        Thu, 20 Jan 2022 04:38:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1642653535;
+        bh=htKcbIrjG0vVOoiPk/qRtlgHN478W8928ENhwhjbOV8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=tcjQQaQOiKyW2rup4+boNuKbOg3E4wRGo65VzR07gC+38qSCzvueDNKsXw0qo25YC
+         FSd0ZcH2wQg6ndifOdoQOkK2AJmdoc/+4rI6MmV2c/JFq5Pexryrmw1KB1d/0gPVBl
+         sWawaQ0ExefWlf40mUq9Bc8b+b0Qb2Q5qMv7yPvuNl/Oofe4bBEX/PiYiXEeBZKR0X
+         EjFvQKQ1CgVK+xoQIHG870JcNdkXhCEh0WjV8YV/fIr1+Jk++MmTcC3rf6PE8hP7MQ
+         G3IiXEurawyW3OC2zMo29dGuuRnBtF45ciDi4rN7el/r42r9B4pcaecJpdXwaUbl+p
+         usDTqhZxOraiQ==
+Date:   Thu, 20 Jan 2022 10:08:51 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Rob Herring <robh@kernel.org>
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Damien Le Moal <damien.lemoal@opensource.wdc.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        Chun-Kuang Hu <chunkuang.hu@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Georgi Djakov <djakov@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Marc Zyngier <maz@kernel.org>, Joerg Roedel <joro@8bytes.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Jingoo Han <jingoohan1@gmail.com>, Pavel Machek <pavel@ucw.cz>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Wolfgang Grandegger <wg@grandegger.com>,
+        Marc Kleine-Budde <mkl@pengutronix.de>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Vivien Didelot <vivien.didelot@gmail.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Vladimir Oltean <olteanv@gmail.com>,
+        Kalle Valo <kvalo@kernel.org>,
+        Viresh Kumar <vireshk@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Kevin Hilman <khilman@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Sebastian Reichel <sre@kernel.org>,
+        Mark Brown <broonie@kernel.org>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Sibi Sankar <sibis@codeaurora.org>,
-        linux-remoteproc@vger.kernel.org, kernel-team@android.com
-Subject: Re: [PATCH] remoteproc: Fix count check in rproc_coredump_write()
-Message-ID: <YeirvbTh5Cztcgxh@ripper>
-References: <20220119232139.1125908-1-adelva@google.com>
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        linux-ide@vger.kernel.org, linux-crypto@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, dmaengine@vger.kernel.org,
+        linux-pm@vger.kernel.org, iommu@lists.linux-foundation.org,
+        linux-leds@vger.kernel.org, linux-media@vger.kernel.org,
+        netdev@vger.kernel.org, linux-can@vger.kernel.org,
+        linux-wireless@vger.kernel.org, linux-phy@lists.infradead.org,
+        linux-gpio@vger.kernel.org, linux-riscv@lists.infradead.org,
+        linux-remoteproc@vger.kernel.org, alsa-devel@alsa-project.org,
+        linux-usb@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: Improve phandle-array schemas
+Message-ID: <YejnW2sEV4Rc8GVO@matsya>
+References: <20220119015038.2433585-1-robh@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220119232139.1125908-1-adelva@google.com>
+In-Reply-To: <20220119015038.2433585-1-robh@kernel.org>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Wed 19 Jan 15:21 PST 2022, Alistair Delva wrote:
-
-> Check count for 0, to avoid a potential underflow. Make the check the
-> same as the one in rproc_recovery_write().
+On 18-01-22, 19:50, Rob Herring wrote:
+> The 'phandle-array' type is a bit ambiguous. It can be either just an
+> array of phandles or an array of phandles plus args. Many schemas for
+> phandle-array properties aren't clear in the schema which case applies
+> though the description usually describes it.
 > 
-> Fixes: 3afdc59e4390 ("remoteproc: Add coredump debugfs entry")
-> Signed-off-by: Alistair Delva <adelva@google.com>
-> Cc: Rishabh Bhatnagar <rishabhb@codeaurora.org>
-> Cc: stable@vger.kernel.org
-> Cc: Ohad Ben-Cohen <ohad@wizery.com>
-> Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
-> Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
-> Cc: Sibi Sankar <sibis@codeaurora.org>
-> Cc: linux-remoteproc@vger.kernel.org
-> Cc: kernel-team@android.com
-
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-
-Regards,
-Bjorn
-
-> ---
->  drivers/remoteproc/remoteproc_debugfs.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> The array of phandles case boils down to needing:
 > 
-> diff --git a/drivers/remoteproc/remoteproc_debugfs.c b/drivers/remoteproc/remoteproc_debugfs.c
-> index b5a1e3b697d9..581930483ef8 100644
-> --- a/drivers/remoteproc/remoteproc_debugfs.c
-> +++ b/drivers/remoteproc/remoteproc_debugfs.c
-> @@ -76,7 +76,7 @@ static ssize_t rproc_coredump_write(struct file *filp,
->  	int ret, err = 0;
->  	char buf[20];
->  
-> -	if (count > sizeof(buf))
-> +	if (count < 1 || count > sizeof(buf))
->  		return -EINVAL;
->  
->  	ret = copy_from_user(buf, user_buf, count);
-> -- 
-> 2.30.2
+> items:
+>   maxItems: 1
 > 
+> The phandle plus args cases should typically take this form:
+> 
+> items:
+>   - items:
+>       - description: A phandle
+>       - description: 1st arg cell
+>       - description: 2nd arg cell
+> 
+> With this change, some examples need updating so that the bracketing of
+> property values matches the schema.
+
+Acked-By: Vinod Koul <vkoul@kernel.org>
+
+-- 
+~Vinod
