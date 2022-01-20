@@ -2,236 +2,229 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B597C433EF
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 20 Jan 2022 17:23:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12960C433F5
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 20 Jan 2022 20:05:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1377329AbiATRXt (ORCPT
+        id S1377541AbiATUFU (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 20 Jan 2022 12:23:49 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44478 "EHLO
+        Thu, 20 Jan 2022 15:05:20 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52974 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1377331AbiATRXs (ORCPT
+        with ESMTP id S1377533AbiATUFU (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 20 Jan 2022 12:23:48 -0500
-Received: from mail-pl1-x62b.google.com (mail-pl1-x62b.google.com [IPv6:2607:f8b0:4864:20::62b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9F567C06161C
-        for <linux-remoteproc@vger.kernel.org>; Thu, 20 Jan 2022 09:23:47 -0800 (PST)
-Received: by mail-pl1-x62b.google.com with SMTP id l7so2870945pls.6
-        for <linux-remoteproc@vger.kernel.org>; Thu, 20 Jan 2022 09:23:47 -0800 (PST)
+        Thu, 20 Jan 2022 15:05:20 -0500
+Received: from mail-pg1-x530.google.com (mail-pg1-x530.google.com [IPv6:2607:f8b0:4864:20::530])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 30F3DC06161C
+        for <linux-remoteproc@vger.kernel.org>; Thu, 20 Jan 2022 12:05:20 -0800 (PST)
+Received: by mail-pg1-x530.google.com with SMTP id i8so6172678pgt.13
+        for <linux-remoteproc@vger.kernel.org>; Thu, 20 Jan 2022 12:05:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=57MlWgTciyxXwlhqlF3nVQS9i7uH1Dz0RfKk3iP2XAw=;
-        b=fIlwDTmIcIU6AGBGW573iDAcwDD1t0MyZPs0tsVV3oAwgz439OBuIOzcFqvWVdpxDK
-         zVwuRWDBsD3Hj99e1DzG/p8ov+gBXjIbV2N5+yXDiPd0dFp8CwPQ7N3/VbQjhdWt+wzR
-         3eU8YcKKVktcwXCRaEfp7zta8VGkSXvN26O8Nvl0Y5aDLMOsh9ood7Lh8uZOzldDJ54c
-         zGkWEkXGMx1Yz9JiErx/nmohmDgGnPQUpryyIhKhi4/cCvDJThBOorqf10PYf/JwgiM+
-         9TEONCHRYLpc65FIUps7nnyj6hhOmLb6b1xyNbNEsyNM7/KsBCRZ1cTkIVxq1oaUe6uk
-         SdGA==
+        bh=wHjoIaDVZb3U/EHjsENWmQp9GXF9mNsSLLXq3Gksg2Q=;
+        b=VeN5p/tiaTaLsJPPMbZoCiHAwnp+zZmc48JvKaG2+9Qhh817tNlFhiC3hQTeZCvBK0
+         fmf5Vo1UQchPCq88/GrexsaTtE3oBZiXK7jZPY1ElLRIi42U1JFRhR1a7JZ6bN0xpEP5
+         eeF76RHYQXoHG6kk/Z60lEYe4QOxC1+oa2cb4FAK0to44JrnLhaRkGzXfj+ktJ3mEQUF
+         kkDodCcwVIPIMi3fo4wlYKbOgha5UHa7FLkqx/nNGFT+KPSNa4eQvKCPquUm7jOr/q/n
+         JQR6YzvtBbc/kqQ1Tme/kJ+Mob1giIBpres/wUS/rCLkZ/Vh43cyEzGrYKG08sxfj6e+
+         01CQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=57MlWgTciyxXwlhqlF3nVQS9i7uH1Dz0RfKk3iP2XAw=;
-        b=mtUhZ66gUM4UdiSbKRNghvTPzAXSfcGt+DJTBKwaig61DfC9GwejTpftt4YEoS7myW
-         YH1mhrj6FlifSBSxwBBkOCJEn+d1xoKWUaAs0xBhIaVzMEHOuQmruOCD0tuh5NVzWS9d
-         ZHdG3o2XyqCZDM3VkW0JE+60zEXiIHgF8cqywAKFZ3BFLWISoWAJkDEhb1Re6JK3YBfD
-         fPX2Adoc5w1EzF5sJIdbicQTS/AjSesLlnhof8T58rSkkcR472z2hiPq458oB05xkwqH
-         3GRw8o3D3KxGHzk2j2VDuTU+FkXH5QhJwy3xMhYaRFM2Kz48BO/L1sTQpcs8eaSBCdQ+
-         ek5w==
-X-Gm-Message-State: AOAM531pyu1euvVufS+CpQq1UJkCVf76Vj5RYLGbYeYZ7U73PLV0jz2s
-        rQP3kmPuWeHt4T0Tznu3szZqjQ==
-X-Google-Smtp-Source: ABdhPJwsKxXKcx7FolSUNG7zSGPWZFQs5W4Redl5G4sTK5OO76GZwZNbj86yHMbHr+IlQ75YdhmTOA==
-X-Received: by 2002:a17:90b:4c0e:: with SMTP id na14mr12192436pjb.84.1642699427041;
-        Thu, 20 Jan 2022 09:23:47 -0800 (PST)
+        bh=wHjoIaDVZb3U/EHjsENWmQp9GXF9mNsSLLXq3Gksg2Q=;
+        b=MDJeedZTjsECT354+Tn8Xnln+xAJaw9dPY3UXp1fFgWb6ObHSS9RjbIudbSCSOvCUz
+         D5XSFOTcLJbUPAfQ0ceZRfsi59/xGitt2DjAhz8cHVGKNVo8jpPFoaadCRf3BBsDDHPi
+         pZtjRzGnjWqMg428qMMe7NjbyCiULjaM8GVBHdxf5kYudWWtAzap7bM4pjjEW4lcy5Le
+         OblnOprZCBrofw6WtKnQPsuKVlzbmGYaO2ZdKJHY3xWUEtoSSVz5kEnAsBPSNxq61y2V
+         a/TFuSkVhtXn6KkTDDlOFOHAJRE3IhXEAdnJ1vDAF8cj0WRlYbM6wQEg9NsgF6xnHe3A
+         FKbQ==
+X-Gm-Message-State: AOAM530f9v7+OeRVWDRchIb8zxhWAkRVZ9SQWrJC02weMrv0zWW7aKQz
+        HAlM//s4yKiX7nUkRV8JVwA8CnMLvbBINg==
+X-Google-Smtp-Source: ABdhPJzVjh145XPHiOEZ5dflryXS4RcgNqxRnLNGBPw4EpVZda65QlJOLPaFaq26UvQOQ8Nht6wPAg==
+X-Received: by 2002:a65:5a8c:: with SMTP id c12mr341956pgt.54.1642709119472;
+        Thu, 20 Jan 2022 12:05:19 -0800 (PST)
 Received: from p14s (S0106889e681aac74.cg.shawcable.net. [68.147.0.187])
-        by smtp.gmail.com with ESMTPSA id t23sm2935750pgg.30.2022.01.20.09.23.44
+        by smtp.gmail.com with ESMTPSA id f7sm4634906pfv.30.2022.01.20.12.05.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Jan 2022 09:23:45 -0800 (PST)
-Date:   Thu, 20 Jan 2022 10:23:43 -0700
+        Thu, 20 Jan 2022 12:05:18 -0800 (PST)
+Date:   Thu, 20 Jan 2022 13:05:16 -0700
 From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-To:     "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
-Cc:     bjorn.andersson@linaro.org, shawnguo@kernel.org,
-        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
-        linux-imx@nxp.com, linux-remoteproc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Peng Fan <peng.fan@nxp.com>
-Subject: Re: [PATCH 8/9] remoteproc: imx_rproc: support i.MX8QM
-Message-ID: <20220120172343.GA1338735@p14s>
-References: <20220111033333.403448-1-peng.fan@oss.nxp.com>
- <20220111033333.403448-11-peng.fan@oss.nxp.com>
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Miaoqian Lin <linmq006@gmail.com>, linux-kernel@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org, ohad@wizery.com
+Subject: Re: [PATCH v3] remoteproc: Fix NULL vs IS_ERR() checking in
+ rproc_create_trace_file
+Message-ID: <20220120200516.GA1343808@p14s>
+References: <20220105064201.3907-1-linmq006@gmail.com>
+ <20220105131022.25247-1-linmq006@gmail.com>
+ <20220117170600.GA1119324@p14s>
+ <YeXuOwm3yJW2gnSE@builder.lan>
+ <20220118165621.GA1207193@p14s>
+ <YecSXpGRTCKClS8w@builder.lan>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220111033333.403448-11-peng.fan@oss.nxp.com>
+In-Reply-To: <YecSXpGRTCKClS8w@builder.lan>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Tue, Jan 11, 2022 at 11:33:32AM +0800, Peng Fan (OSS) wrote:
-> From: Peng Fan <peng.fan@nxp.com>
+On Tue, Jan 18, 2022 at 01:17:50PM -0600, Bjorn Andersson wrote:
+> On Tue 18 Jan 10:56 CST 2022, Mathieu Poirier wrote:
 > 
-> Most logic are same as i.MX8QXP, but i.MX8QM has two general purpose
-> M4 cores:
->  Use the lower 16 bits specifying core, higher 16 bits for flags.
->  The 2nd core has different start address from SCFW view
+> > On Mon, Jan 17, 2022 at 04:31:23PM -0600, Bjorn Andersson wrote:
+> > > On Mon 17 Jan 11:06 CST 2022, Mathieu Poirier wrote:
+> > > 
+> > > > On Wed, Jan 05, 2022 at 01:10:22PM +0000, Miaoqian Lin wrote:
+> > > > > The debugfs_create_file() function doesn't return NULL.
+> > > > > It returns error pointers. Fix check in rproc_create_trace_file
+> > > > > and make it returns return error pointers.
+> > > > 
+> > > > s/"returns return"/return
+> > > > 
+> > > > > Fix check in rproc_handle_trace to propagate the error code.
+> > > > > 
+> > > > > Signed-off-by: Miaoqian Lin <linmq006@gmail.com>
+> > > > > ---
+> > > > > Changes in v2:
+> > > > > - return PTR_ERR(tfile) in rproc_create_trace_file
+> > > > > - fix check in rproc_handle_trace()
+> > > > > Changes in v3:
+> > > > > - return tfile to fix incorrect return type in v2
+> > > > > ---
+> > > > >  drivers/remoteproc/remoteproc_core.c    | 6 ++++--
+> > > > >  drivers/remoteproc/remoteproc_debugfs.c | 4 +---
+> > > > >  2 files changed, 5 insertions(+), 5 deletions(-)
+> > > > >
+> > > > 
+> > > > I will fix the above, add a proper "Fixes" tag and apply this patch to
+> > > > rproc-next when v5.17-rc1 comes out next week.
+> > > > 
+> > > 
+> > > We're actually not supposed to check debugfs_create_*() for errors.
+> > 
+> > I'm interested in knowing more about this - can you expand on the specifics or
+> > perharps provide a link?
+> > 
+> 
+> I'm not able to find anything going into the reasoning behind it, but
+> you can find lots of examples where Greg says that we shouldn't do this:
+> 
+> $ git log --grep "no need to check return value of debugfs_create functions"
+> 
+> E.g.:
+> https://lore.kernel.org/r/20200818133701.462958-1-gregkh@linuxfoundation.org
 
-Are the cores running independently or in lockstep?  This is relevant
-information that should be in the changelog.  The above is an implementation
-detail that should be added as comments in the code. 
+Greg's changelog leaves little doubt, thanks for pointing that out.
 
 > 
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
-> ---
->  drivers/remoteproc/imx_rproc.c | 55 +++++++++++++++++++++++++++++++---
->  1 file changed, 51 insertions(+), 4 deletions(-)
+> > > 
+> > > > Thanks,
+> > > > Mathieu
+> > > > 
+> > > > > diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+> > > > > index 775df165eb45..5608408f8eac 100644
+> > > > > --- a/drivers/remoteproc/remoteproc_core.c
+> > > > > +++ b/drivers/remoteproc/remoteproc_core.c
+> > > > > @@ -656,6 +656,7 @@ static int rproc_handle_trace(struct rproc *rproc, void *ptr,
+> > > > >  	struct rproc_debug_trace *trace;
+> > > > >  	struct device *dev = &rproc->dev;
+> > > > >  	char name[15];
+> > > > > +	int ret;
+> > > > >  
+> > > > >  	if (sizeof(*rsc) > avail) {
+> > > > >  		dev_err(dev, "trace rsc is truncated\n");
+> > > > > @@ -684,9 +685,10 @@ static int rproc_handle_trace(struct rproc *rproc, void *ptr,
+> > > > >  
+> > > > >  	/* create the debugfs entry */
+> > > > >  	trace->tfile = rproc_create_trace_file(name, rproc, trace);
+> > > > > -	if (!trace->tfile) {
+> > > > > +	if (IS_ERR(trace->tfile)) {
+> > > > > +		ret = PTR_ERR(trace->tfile);
+> > > > >  		kfree(trace);
+> > > > > -		return -EINVAL;
+> > > > > +		return ret;
+> > > 
+> > > 
+> > > And actually catching and propagating the error here means that we will
+> > > start failing rproc_boot() for firmware including a RSC_TRACE when
+> > > debugfs is disabled...
+> > > 
+> > > So if we really want to save the heap space we should at least cleanly
+> > > ignore the error, by cleaning up and returning 0 here.
+> > 
+> > Humm... To me the _intent_ of the upstream code has always been to propagate
+> > errors reported by rproc_create_trace_file().  The fact that is hasn't happen
+> > because of inappropriate error handling is something that should be corrected.  
+> > 
 > 
-> diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rproc.c
-> index 09d2a06e5ed6..7bc274fbce9f 100644
-> --- a/drivers/remoteproc/imx_rproc.c
-> +++ b/drivers/remoteproc/imx_rproc.c
-> @@ -77,8 +77,11 @@ struct imx_rproc_mem {
->  
->  /* att flags */
->  /* M4 own area. Can be mapped at probe */
-> -#define ATT_OWN		BIT(1)
-> -#define ATT_IOMEM	BIT(2)
-> +#define ATT_OWN         BIT(31)
-> +#define ATT_IOMEM       BIT(30)
-
-ATT_OWN was defined in 2017 and has had the same value since.  ATT_IOMEM was
-introduced by this commit [1] (that you signed off on), which as supposed to be
-a fix for another commit.
-
-Now, overnight, both bitfields are changed without any explanation other than a
-cryptic comments.  What about all the other platforms that previously used those
-bitfields - was this change tested on those as well?
-
-I will stop here with this patchset - it needs to much work for me to continue
-reviewing it.
-
-Thanks,
-Mathieu
-
-[1]. 91bb26637353 remoteproc: imx_rproc: Fix TCM io memory type
-
-
-> +/* I = [0:7] */
-> +#define ATT_CORE_MASK   0xffff
-> +#define ATT_CORE(I)     BIT((I))
->  
->  struct imx_rproc {
->  	struct device			*dev;
-> @@ -98,11 +101,25 @@ struct imx_rproc {
->  	struct notifier_block		proc_nb;
->  	u32				rproc_pt;
->  	u32				rsrc;
-> +	u32				reg;
->  	int                             num_pd;
->  	struct device                   **pd_dev;
->  	struct device_link              **pd_dev_link;
->  };
->  
-> +static const struct imx_rproc_att imx_rproc_att_imx8qm[] = {
-> +	/* dev addr , sys addr  , size      , flags */
-> +	{ 0x08000000, 0x08000000, 0x10000000, 0},
-> +	/* TCML */
-> +	{ 0x1FFE0000, 0x34FE0000, 0x00020000, ATT_OWN | ATT_CORE(0)},
-> +	{ 0x1FFE0000, 0x38FE0000, 0x00020000, ATT_OWN | ATT_CORE(1)},
-> +	/* TCMU */
-> +	{ 0x20000000, 0x35000000, 0x00020000, ATT_OWN | ATT_CORE(0)},
-> +	{ 0x20000000, 0x39000000, 0x00020000, ATT_OWN | ATT_CORE(1)},
-> +	/* DDR (Data) */
-> +	{ 0x80000000, 0x80000000, 0x60000000, 0 },
-> +};
-> +
->  static const struct imx_rproc_att imx_rproc_att_imx8qxp[] = {
->  	/* dev addr , sys addr  , size	    , flags */
->  	{ 0x08000000, 0x08000000, 0x10000000, 0},
-> @@ -260,6 +277,12 @@ static const struct imx_rproc_dcfg imx_rproc_cfg_imx8ulp = {
->  	.method		= IMX_RPROC_NONE,
->  };
->  
-> +static const struct imx_rproc_dcfg imx_rproc_cfg_imx8qm = {
-> +	.att            = imx_rproc_att_imx8qm,
-> +	.att_size       = ARRAY_SIZE(imx_rproc_att_imx8qm),
-> +	.method         = IMX_RPROC_SCU_API,
-> +};
-> +
->  static const struct imx_rproc_dcfg imx_rproc_cfg_imx8qxp = {
->  	.att		= imx_rproc_att_imx8qxp,
->  	.att_size	= ARRAY_SIZE(imx_rproc_att_imx8qxp),
-> @@ -310,7 +333,10 @@ static int imx_rproc_start(struct rproc *rproc)
->  		ret = res.a0;
->  		break;
->  	case IMX_RPROC_SCU_API:
-> -		ret = imx_sc_pm_cpu_start(priv->ipc_handle, priv->rsrc, true, 0x34fe0000);
-> +		if (priv->reg)
-> +			ret = imx_sc_pm_cpu_start(priv->ipc_handle, priv->rsrc, true, 0x38fe0000);
-> +		else
-> +			ret = imx_sc_pm_cpu_start(priv->ipc_handle, priv->rsrc, true, 0x34fe0000);
->  		break;
->  	default:
->  		return -EOPNOTSUPP;
-> @@ -342,7 +368,10 @@ static int imx_rproc_stop(struct rproc *rproc)
->  			dev_info(dev, "Not in wfi, force stopped\n");
->  		break;
->  	case IMX_RPROC_SCU_API:
-> -		ret = imx_sc_pm_cpu_start(priv->ipc_handle, priv->rsrc, false, 0x34fe0000);
-> +		if (priv->reg)
-> +			ret = imx_sc_pm_cpu_start(priv->ipc_handle, priv->rsrc, false, 0x38fe0000);
-> +		else
-> +			ret = imx_sc_pm_cpu_start(priv->ipc_handle, priv->rsrc, false, 0x34fe0000);
->  		break;
->  	default:
->  		return -EOPNOTSUPP;
-> @@ -364,6 +393,11 @@ static int imx_rproc_da_to_sys(struct imx_rproc *priv, u64 da,
->  	for (i = 0; i < dcfg->att_size; i++) {
->  		const struct imx_rproc_att *att = &dcfg->att[i];
->  
-> +		if (att->flags & ATT_CORE_MASK) {
-> +			if (!((BIT(priv->reg)) & (att->flags & ATT_CORE_MASK)))
-> +				continue;
-> +		}
-> +
->  		if (da >= att->da && da + len < att->da + att->size) {
->  			unsigned int offset = da - att->da;
->  
-> @@ -594,6 +628,11 @@ static int imx_rproc_addr_init(struct imx_rproc *priv,
->  		if (!(att->flags & ATT_OWN))
->  			continue;
->  
-> +		if (att->flags & ATT_CORE_MASK) {
-> +			if (!((BIT(priv->reg)) & (att->flags & ATT_CORE_MASK)))
-> +				continue;
-> +		}
-> +
->  		if (b >= IMX_RPROC_MEM_MAX)
->  			break;
->  
-> @@ -809,6 +848,13 @@ static int imx_rproc_detect_mode(struct imx_rproc *priv)
->  			return ret;
->  		}
->  
-> +		priv->reg = of_get_cpu_hwid(dev->of_node, 0);
-> +		if (priv->reg == ~0U)
-> +			priv->reg = 0;
-> +
-> +		if (priv->reg > 1)
-> +			return -EINVAL;
-> +
->  		priv->has_clk = false;
->  		/*
->  		 * If Mcore resource is not owned by Acore partition, It is kicked by ROM,
-> @@ -1005,6 +1051,7 @@ static const struct of_device_id imx_rproc_of_match[] = {
->  	{ .compatible = "fsl,imx8mn-cm7", .data = &imx_rproc_cfg_imx8mn },
->  	{ .compatible = "fsl,imx8mp-cm7", .data = &imx_rproc_cfg_imx8mn },
->  	{ .compatible = "fsl,imx8qxp-cm4", .data = &imx_rproc_cfg_imx8qxp },
-> +	{ .compatible = "fsl,imx8qm-cm4", .data = &imx_rproc_cfg_imx8qm },
->  	{ .compatible = "fsl,imx8ulp-cm33", .data = &imx_rproc_cfg_imx8ulp },
->  	{},
->  };
-> -- 
-> 2.25.1
+> I share that view, in general. I suspect that the idea with debugfs is
+> that it's for debugging purposes and you don't want your remoteproc to
+> stop working just because there might be an issue debugging it.
 > 
+> > That being said disabling debugfs is a common practice for production systems
+> > and I agree that handling such a condition by returning 0 when
+> > rproc_create_trace_file() returns -ENODEV is the right thing to do.   
+> > 
+> 
+> Right, but even with debugfs enabled, do you want to prevent your
+> remoteproc from booting just because the debugfs, for some reason,
+> wasn't able to add the trace file?
+
+Greg's comments brings a different angle to the conversation - I agree there is
+no need to dwell on debugfs error conditions.
+
+> 
+> For me the question is if we should clean up the "trace" object or not,
+> as this only relates to the debugfs file. Ignoring the error would imply
+> that we just keep this memory allocated - which I'm fine with for the
+> sake of avoiding the error handling.
+
+I would also be fine with not cleaning up the trace object, it will be free'd
+as part of the resource cleanup process anyway.
+
+> 
+> > Thanks,
+> > Mathieu
+> > 
+> > > 
+> > > > >  	}
+> > > > >  
+> > > > >  	list_add_tail(&trace->node, &rproc->traces);
+> > > > > diff --git a/drivers/remoteproc/remoteproc_debugfs.c b/drivers/remoteproc/remoteproc_debugfs.c
+> > > > > index b5a1e3b697d9..2ae59a365b7e 100644
+> > > > > --- a/drivers/remoteproc/remoteproc_debugfs.c
+> > > > > +++ b/drivers/remoteproc/remoteproc_debugfs.c
+> > > > > @@ -390,10 +390,8 @@ struct dentry *rproc_create_trace_file(const char *name, struct rproc *rproc,
+> > > > >  
+> > > > >  	tfile = debugfs_create_file(name, 0400, rproc->dbg_dir, trace,
+> > > > >  				    &trace_rproc_ops);
+> > > > > -	if (!tfile) {
+> > > > > +	if (IS_ERR(tfile))
+> > > > >  		dev_err(&rproc->dev, "failed to create debugfs trace entry\n");
+> > > 
+> > > And I therefor think this function would be better reduced to:
+> > > 
+> > > 	return debugfs_create_file(...);
+> > > 
+> 
+> Taking another look at the implementation of debugfs_create_file() this
+> dev_err() should be removed, because there will already be a more useful
+> error printed by debugfs_create_file().
+> 
+> Regards,
+> Bjorn
+> 
+> > > Regards,
+> > > Bjorn
+> > > 
+> > > > > -		return NULL;
+> > > > > -	}
+> > > > >  
+> > > > >  	return tfile;
+> > > > >  }
+> > > > > -- 
+> > > > > 2.17.1
+> > > > > 
