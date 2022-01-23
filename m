@@ -2,37 +2,37 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF198C433EF
-	for <linux-remoteproc@archiver.kernel.org>; Sun, 23 Jan 2022 00:14:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96D83C4332F
+	for <linux-remoteproc@archiver.kernel.org>; Sun, 23 Jan 2022 00:15:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235729AbiAWAOm (ORCPT
+        id S235791AbiAWAPx (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Sat, 22 Jan 2022 19:14:42 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36916 "EHLO
+        Sat, 22 Jan 2022 19:15:53 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36904 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235727AbiAWANz (ORCPT
+        with ESMTP id S235684AbiAWAOf (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Sat, 22 Jan 2022 19:13:55 -0500
+        Sat, 22 Jan 2022 19:14:35 -0500
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ED3C6C061749;
-        Sat, 22 Jan 2022 16:13:06 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 80DB3C0613A0;
+        Sat, 22 Jan 2022 16:13:37 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 8AF2060F2F;
-        Sun, 23 Jan 2022 00:13:06 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4BBAC004E1;
-        Sun, 23 Jan 2022 00:13:04 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 15EF660F7E;
+        Sun, 23 Jan 2022 00:13:37 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6331CC340E2;
+        Sun, 23 Jan 2022 00:13:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1642896786;
-        bh=nxtaYekpVBFkHlh4jI55ddbaFFhM89Sm46JH25MlHJ4=;
+        s=k20201202; t=1642896816;
+        bh=GlF2L503/OqGfD7Suq/5l6l9pAHSlpCv5k6DE/Z4pWg=;
         h=From:To:Cc:Subject:Date:From;
-        b=JOStWGvzVypZnOeITP4Q7u4fm7plP7HhAD12Ak7f8mLdehQ2blaDCZ6vyiqlC9aN4
-         yYoDQaqfXK/0fe1WFdim7kpv1vUU1l9bYbj8Rjrc4jGfgbsk+X5DWAxvmegqHJJehv
-         JOivSbjx1OjE82HK7mDQJWt6FYNAWlNoJWQ9SbiLd70X07ZUhBcNFM6qz7P3yB069z
-         Nd0b9BEBm/EvOa+i/ZEjPX9g3s3aluUMWaTvG5xm6R1Z7L5MqppoY4VqEiH98kmwRz
-         wPH0jLsJmFEp1mCGr7ZATUb/KJAXHS9SYgizjxBxrUKmdFXZi9udxPY7Nh9pUpXctr
-         hRAlP4gFpfiGg==
+        b=h1+gk24SBW7VPUFn5Sj7E7k/x0aoMG/DlHvrBlotOpfmatjo+7uh9SaRqd/eFIg7K
+         x8DnGIFs4IbRkeTMEj7vD/rUZ0lHwG9j3/SVLfkn3ADaCskwfrLwj6peco73+IIphE
+         66HT/RgQ7o0tC918JljbEbNllMB1QhzdajYTfp0CVVrjFURVbg9+jZLcTjXkeaO7di
+         XXVVgVtxpQcQWXy/JlT+gdF/PbtMmqG1dISc5e6hTKNYouaXsLbfQJhLVSuwK6r+sL
+         ZEtxANuj/ENxm58HDj7tv7jdpkc32H73gxqzFzmnjPREVdRjGKeHlObeSxNEUCJyAI
+         vEHs82QNbwPPg==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Fabien Dessenne <fabien.dessenne@foss.st.com>,
@@ -42,9 +42,9 @@ Cc:     Fabien Dessenne <fabien.dessenne@foss.st.com>,
         linux-remoteproc@vger.kernel.org,
         linux-stm32@st-md-mailman.stormreply.com,
         linux-arm-kernel@lists.infradead.org
-Subject: [PATCH AUTOSEL 5.10 1/9] hwspinlock: stm32: enable clock at probe
-Date:   Sat, 22 Jan 2022 19:12:50 -0500
-Message-Id: <20220123001258.2460594-1-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.4 1/8] hwspinlock: stm32: enable clock at probe
+Date:   Sat, 22 Jan 2022 19:13:16 -0500
+Message-Id: <20220123001323.2460719-1-sashal@kernel.org>
 X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 X-stable: review
@@ -74,7 +74,7 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 37 insertions(+), 21 deletions(-)
 
 diff --git a/drivers/hwspinlock/stm32_hwspinlock.c b/drivers/hwspinlock/stm32_hwspinlock.c
-index 3ad0ce0da4d98..5bd11a7fab65d 100644
+index c8eacf4f9692b..f1ca4717230ac 100644
 --- a/drivers/hwspinlock/stm32_hwspinlock.c
 +++ b/drivers/hwspinlock/stm32_hwspinlock.c
 @@ -54,8 +54,23 @@ static const struct hwspinlock_ops stm32_hwspinlock_ops = {
@@ -100,8 +100,8 @@ index 3ad0ce0da4d98..5bd11a7fab65d 100644
 +	struct device *dev = &pdev->dev;
  	struct stm32_hwspinlock *hw;
  	void __iomem *io_base;
- 	size_t array_size;
-@@ -66,41 +81,43 @@ static int stm32_hwspinlock_probe(struct platform_device *pdev)
+ 	struct resource *res;
+@@ -68,41 +83,43 @@ static int stm32_hwspinlock_probe(struct platform_device *pdev)
  		return PTR_ERR(io_base);
  
  	array_size = STM32_MUTEX_NUM_LOCKS * sizeof(struct hwspinlock);
@@ -165,7 +165,7 @@ index 3ad0ce0da4d98..5bd11a7fab65d 100644
  }
  
  static int __maybe_unused stm32_hwspinlock_runtime_suspend(struct device *dev)
-@@ -135,7 +152,6 @@ MODULE_DEVICE_TABLE(of, stm32_hwpinlock_ids);
+@@ -137,7 +154,6 @@ MODULE_DEVICE_TABLE(of, stm32_hwpinlock_ids);
  
  static struct platform_driver stm32_hwspinlock_driver = {
  	.probe		= stm32_hwspinlock_probe,
