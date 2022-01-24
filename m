@@ -2,177 +2,178 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96D83C4332F
-	for <linux-remoteproc@archiver.kernel.org>; Sun, 23 Jan 2022 00:15:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7011EC433F5
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 24 Jan 2022 10:26:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235791AbiAWAPx (ORCPT
+        id S236049AbiAXK0E (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Sat, 22 Jan 2022 19:15:53 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36904 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235684AbiAWAOf (ORCPT
+        Mon, 24 Jan 2022 05:26:04 -0500
+Received: from mx07-00178001.pphosted.com ([185.132.182.106]:53476 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232375AbiAXK0D (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Sat, 22 Jan 2022 19:14:35 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 80DB3C0613A0;
-        Sat, 22 Jan 2022 16:13:37 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 15EF660F7E;
-        Sun, 23 Jan 2022 00:13:37 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6331CC340E2;
-        Sun, 23 Jan 2022 00:13:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1642896816;
-        bh=GlF2L503/OqGfD7Suq/5l6l9pAHSlpCv5k6DE/Z4pWg=;
-        h=From:To:Cc:Subject:Date:From;
-        b=h1+gk24SBW7VPUFn5Sj7E7k/x0aoMG/DlHvrBlotOpfmatjo+7uh9SaRqd/eFIg7K
-         x8DnGIFs4IbRkeTMEj7vD/rUZ0lHwG9j3/SVLfkn3ADaCskwfrLwj6peco73+IIphE
-         66HT/RgQ7o0tC918JljbEbNllMB1QhzdajYTfp0CVVrjFURVbg9+jZLcTjXkeaO7di
-         XXVVgVtxpQcQWXy/JlT+gdF/PbtMmqG1dISc5e6hTKNYouaXsLbfQJhLVSuwK6r+sL
-         ZEtxANuj/ENxm58HDj7tv7jdpkc32H73gxqzFzmnjPREVdRjGKeHlObeSxNEUCJyAI
-         vEHs82QNbwPPg==
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Fabien Dessenne <fabien.dessenne@foss.st.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Sasha Levin <sashal@kernel.org>, ohad@wizery.com,
-        mcoquelin.stm32@gmail.com, alexandre.torgue@foss.st.com,
-        linux-remoteproc@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH AUTOSEL 5.4 1/8] hwspinlock: stm32: enable clock at probe
-Date:   Sat, 22 Jan 2022 19:13:16 -0500
-Message-Id: <20220123001323.2460719-1-sashal@kernel.org>
-X-Mailer: git-send-email 2.34.1
+        Mon, 24 Jan 2022 05:26:03 -0500
+Received: from pps.filterd (m0288072.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.1.2/8.16.1.2) with ESMTP id 20O6jNgC004848;
+        Mon, 24 Jan 2022 11:25:53 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=from : to : cc :
+ subject : date : message-id : in-reply-to : references : mime-version :
+ content-transfer-encoding : content-type; s=selector1;
+ bh=m2pE2NjuAQdxDmxVVEBqH4NGL47GpfjItWxKc/nx7t0=;
+ b=I6Wbu1Wx4+NzOH+pvadjWCyDXtmarUBUHopawoDE7Xz1nDODXWb72VWSgZnH4mkGWZs7
+ Ad9Q+8zCku2NDRAnTFmLSo38Bs7+E7SsdXasPTP7j9bB7/ombPyC8X07U4zDkADbPUNB
+ eGLkSV7ATQ4KQsuKYECYGxz31GXe2eMEIAdzq0/l1DLoXwcCWGHIkamJd55cYYgy/WLl
+ PAxDkwk1N8OE4elNbFyecbWcvmicRzbpQmwF2leS05XUtO/D/KpCw7iVlSHHv557/d/r
+ 1CpkO7uyVd3ymhmU+FJA9lIQSVqK+ozy/28KrAKcWZD4GsCd5bd5v6OKlhhnuSfUobhe Gg== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3ds9v1kcjc-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 24 Jan 2022 11:25:53 +0100
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 33FF9100038;
+        Mon, 24 Jan 2022 11:25:53 +0100 (CET)
+Received: from Webmail-eu.st.com (sfhdag2node2.st.com [10.75.127.5])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 2DFF82128B5;
+        Mon, 24 Jan 2022 11:25:53 +0100 (CET)
+Received: from localhost (10.75.127.44) by SFHDAG2NODE2.st.com (10.75.127.5)
+ with Microsoft SMTP Server (TLS) id 15.0.1497.26; Mon, 24 Jan 2022 11:25:52
+ +0100
+From:   Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>
+CC:     <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <julien.massot@iot.bzh>, <arnaud.pouliquen@foss.st.com>
+Subject: [PATCH v9 02/11] rpmsg: Create the rpmsg class in core instead of in rpmsg char
+Date:   Mon, 24 Jan 2022 11:25:15 +0100
+Message-ID: <20220124102524.295783-3-arnaud.pouliquen@foss.st.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20220124102524.295783-1-arnaud.pouliquen@foss.st.com>
+References: <20220124102524.295783-1-arnaud.pouliquen@foss.st.com>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.75.127.44]
+X-ClientProxiedBy: SFHDAG2NODE2.st.com (10.75.127.5) To SFHDAG2NODE2.st.com
+ (10.75.127.5)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.816,Hydra:6.0.425,FMLib:17.11.62.513
+ definitions=2022-01-24_06,2022-01-24_01,2021-12-02_01
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-From: Fabien Dessenne <fabien.dessenne@foss.st.com>
+Migrate the creation of the rpmsg class from the rpmsg_char
+to the core that the class is usable by the rpmsg_char and
+the future rpmsg_ctrl module.
 
-[ Upstream commit 60630924bb5af8751adcecc896e7763c3783ca89 ]
-
-Set the clock during probe and keep its control during suspend / resume
-operations.
-This fixes an issue when CONFIG_PM is not set and where the clock is
-never enabled.
-
-Make use of devm_ functions to simplify the code.
-
-Signed-off-by: Fabien Dessenne <fabien.dessenne@foss.st.com>
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-Link: https://lore.kernel.org/r/20211011135836.1045437-1-fabien.dessenne@foss.st.com
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Suggested-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 ---
- drivers/hwspinlock/stm32_hwspinlock.c | 58 +++++++++++++++++----------
- 1 file changed, 37 insertions(+), 21 deletions(-)
+ drivers/rpmsg/rpmsg_char.c     | 11 +----------
+ drivers/rpmsg/rpmsg_core.c     | 15 +++++++++++++--
+ drivers/rpmsg/rpmsg_internal.h |  2 ++
+ 3 files changed, 16 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/hwspinlock/stm32_hwspinlock.c b/drivers/hwspinlock/stm32_hwspinlock.c
-index c8eacf4f9692b..f1ca4717230ac 100644
---- a/drivers/hwspinlock/stm32_hwspinlock.c
-+++ b/drivers/hwspinlock/stm32_hwspinlock.c
-@@ -54,8 +54,23 @@ static const struct hwspinlock_ops stm32_hwspinlock_ops = {
- 	.relax		= stm32_hwspinlock_relax,
- };
+diff --git a/drivers/rpmsg/rpmsg_char.c b/drivers/rpmsg/rpmsg_char.c
+index 3708233cf736..fd56e7967ee3 100644
+--- a/drivers/rpmsg/rpmsg_char.c
++++ b/drivers/rpmsg/rpmsg_char.c
+@@ -27,11 +27,11 @@
+ #include <uapi/linux/rpmsg.h>
  
-+static void stm32_hwspinlock_disable_clk(void *data)
-+{
-+	struct platform_device *pdev = data;
-+	struct stm32_hwspinlock *hw = platform_get_drvdata(pdev);
-+	struct device *dev = &pdev->dev;
-+
-+	pm_runtime_get_sync(dev);
-+	pm_runtime_disable(dev);
-+	pm_runtime_set_suspended(dev);
-+	pm_runtime_put_noidle(dev);
-+
-+	clk_disable_unprepare(hw->clk);
-+}
-+
- static int stm32_hwspinlock_probe(struct platform_device *pdev)
- {
-+	struct device *dev = &pdev->dev;
- 	struct stm32_hwspinlock *hw;
- 	void __iomem *io_base;
- 	struct resource *res;
-@@ -68,41 +83,43 @@ static int stm32_hwspinlock_probe(struct platform_device *pdev)
- 		return PTR_ERR(io_base);
+ #include "rpmsg_char.h"
++#include "rpmsg_internal.h"
  
- 	array_size = STM32_MUTEX_NUM_LOCKS * sizeof(struct hwspinlock);
--	hw = devm_kzalloc(&pdev->dev, sizeof(*hw) + array_size, GFP_KERNEL);
-+	hw = devm_kzalloc(dev, sizeof(*hw) + array_size, GFP_KERNEL);
- 	if (!hw)
- 		return -ENOMEM;
+ #define RPMSG_DEV_MAX	(MINORMASK + 1)
  
--	hw->clk = devm_clk_get(&pdev->dev, "hsem");
-+	hw->clk = devm_clk_get(dev, "hsem");
- 	if (IS_ERR(hw->clk))
- 		return PTR_ERR(hw->clk);
+ static dev_t rpmsg_major;
+-static struct class *rpmsg_class;
  
--	for (i = 0; i < STM32_MUTEX_NUM_LOCKS; i++)
--		hw->bank.lock[i].priv = io_base + i * sizeof(u32);
-+	ret = clk_prepare_enable(hw->clk);
-+	if (ret) {
-+		dev_err(dev, "Failed to prepare_enable clock\n");
-+		return ret;
-+	}
+ static DEFINE_IDA(rpmsg_ctrl_ida);
+ static DEFINE_IDA(rpmsg_ept_ida);
+@@ -547,17 +547,9 @@ static int rpmsg_chrdev_init(void)
+ 		return ret;
+ 	}
  
- 	platform_set_drvdata(pdev, hw);
--	pm_runtime_enable(&pdev->dev);
- 
--	ret = hwspin_lock_register(&hw->bank, &pdev->dev, &stm32_hwspinlock_ops,
--				   0, STM32_MUTEX_NUM_LOCKS);
-+	pm_runtime_get_noresume(dev);
-+	pm_runtime_set_active(dev);
-+	pm_runtime_enable(dev);
-+	pm_runtime_put(dev);
- 
--	if (ret)
--		pm_runtime_disable(&pdev->dev);
-+	ret = devm_add_action_or_reset(dev, stm32_hwspinlock_disable_clk, pdev);
-+	if (ret) {
-+		dev_err(dev, "Failed to register action\n");
-+		return ret;
-+	}
- 
--	return ret;
--}
-+	for (i = 0; i < STM32_MUTEX_NUM_LOCKS; i++)
-+		hw->bank.lock[i].priv = io_base + i * sizeof(u32);
- 
--static int stm32_hwspinlock_remove(struct platform_device *pdev)
--{
--	struct stm32_hwspinlock *hw = platform_get_drvdata(pdev);
--	int ret;
-+	ret = devm_hwspin_lock_register(dev, &hw->bank, &stm32_hwspinlock_ops,
-+					0, STM32_MUTEX_NUM_LOCKS);
- 
--	ret = hwspin_lock_unregister(&hw->bank);
- 	if (ret)
--		dev_err(&pdev->dev, "%s failed: %d\n", __func__, ret);
+-	rpmsg_class = class_create(THIS_MODULE, "rpmsg");
+-	if (IS_ERR(rpmsg_class)) {
+-		pr_err("failed to create rpmsg class\n");
+-		unregister_chrdev_region(rpmsg_major, RPMSG_DEV_MAX);
+-		return PTR_ERR(rpmsg_class);
+-	}
 -
--	pm_runtime_disable(&pdev->dev);
-+		dev_err(dev, "Failed to register hwspinlock\n");
+ 	ret = register_rpmsg_driver(&rpmsg_chrdev_driver);
+ 	if (ret < 0) {
+ 		pr_err("failed to register rpmsg driver\n");
+-		class_destroy(rpmsg_class);
+ 		unregister_chrdev_region(rpmsg_major, RPMSG_DEV_MAX);
+ 	}
  
--	return 0;
-+	return ret;
+@@ -568,7 +560,6 @@ postcore_initcall(rpmsg_chrdev_init);
+ static void rpmsg_chrdev_exit(void)
+ {
+ 	unregister_rpmsg_driver(&rpmsg_chrdev_driver);
+-	class_destroy(rpmsg_class);
+ 	unregister_chrdev_region(rpmsg_major, RPMSG_DEV_MAX);
  }
+ module_exit(rpmsg_chrdev_exit);
+diff --git a/drivers/rpmsg/rpmsg_core.c b/drivers/rpmsg/rpmsg_core.c
+index d9e612f4f0f2..79368a957d89 100644
+--- a/drivers/rpmsg/rpmsg_core.c
++++ b/drivers/rpmsg/rpmsg_core.c
+@@ -20,6 +20,9 @@
  
- static int __maybe_unused stm32_hwspinlock_runtime_suspend(struct device *dev)
-@@ -137,7 +154,6 @@ MODULE_DEVICE_TABLE(of, stm32_hwpinlock_ids);
+ #include "rpmsg_internal.h"
  
- static struct platform_driver stm32_hwspinlock_driver = {
- 	.probe		= stm32_hwspinlock_probe,
--	.remove		= stm32_hwspinlock_remove,
- 	.driver		= {
- 		.name	= "stm32_hwspinlock",
- 		.of_match_table = stm32_hwpinlock_ids,
++struct class *rpmsg_class;
++EXPORT_SYMBOL(rpmsg_class);
++
+ /**
+  * rpmsg_create_channel() - create a new rpmsg channel
+  * using its name and address info.
+@@ -662,10 +665,17 @@ static int __init rpmsg_init(void)
+ {
+ 	int ret;
+ 
++	rpmsg_class = class_create(THIS_MODULE, "rpmsg");
++	if (IS_ERR(rpmsg_class)) {
++		pr_err("failed to create rpmsg class\n");
++		return PTR_ERR(rpmsg_class);
++	}
++
+ 	ret = bus_register(&rpmsg_bus);
+-	if (ret)
++	if (ret) {
+ 		pr_err("failed to register rpmsg bus: %d\n", ret);
+-
++		class_destroy(rpmsg_class);
++	}
+ 	return ret;
+ }
+ postcore_initcall(rpmsg_init);
+@@ -673,6 +683,7 @@ postcore_initcall(rpmsg_init);
+ static void __exit rpmsg_fini(void)
+ {
+ 	bus_unregister(&rpmsg_bus);
++	class_destroy(rpmsg_class);
+ }
+ module_exit(rpmsg_fini);
+ 
+diff --git a/drivers/rpmsg/rpmsg_internal.h b/drivers/rpmsg/rpmsg_internal.h
+index b1245d3ed7c6..416316200bde 100644
+--- a/drivers/rpmsg/rpmsg_internal.h
++++ b/drivers/rpmsg/rpmsg_internal.h
+@@ -18,6 +18,8 @@
+ #define to_rpmsg_device(d) container_of(d, struct rpmsg_device, dev)
+ #define to_rpmsg_driver(d) container_of(d, struct rpmsg_driver, drv)
+ 
++extern struct class *rpmsg_class;
++
+ /**
+  * struct rpmsg_device_ops - indirection table for the rpmsg_device operations
+  * @create_channel:	create backend-specific channel, optional
 -- 
-2.34.1
+2.25.1
 
