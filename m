@@ -2,58 +2,59 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68DC0C433EF
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A365C433FE
 	for <linux-remoteproc@archiver.kernel.org>; Mon, 24 Jan 2022 10:27:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234139AbiAXK1D (ORCPT
+        id S237064AbiAXK1D (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
         Mon, 24 Jan 2022 05:27:03 -0500
-Received: from mx07-00178001.pphosted.com ([185.132.182.106]:54606 "EHLO
+Received: from mx07-00178001.pphosted.com ([185.132.182.106]:54612 "EHLO
         mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S234177AbiAXK1B (ORCPT
+        by vger.kernel.org with ESMTP id S234210AbiAXK1C (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 24 Jan 2022 05:27:01 -0500
+        Mon, 24 Jan 2022 05:27:02 -0500
 Received: from pps.filterd (m0288072.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.1.2/8.16.1.2) with ESMTP id 20O72PVc025630;
-        Mon, 24 Jan 2022 11:26:59 +0100
+        by mx07-00178001.pphosted.com (8.16.1.2/8.16.1.2) with ESMTP id 20O73h7O014327;
+        Mon, 24 Jan 2022 11:26:56 +0100
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=from : to : cc :
  subject : date : message-id : in-reply-to : references : mime-version :
  content-transfer-encoding : content-type; s=selector1;
- bh=kN+Qgo+0RDqY66NGKZnkxYmBBwK4wLmm/g2d1LTo5lI=;
- b=0hDSiFDRfQ8XqWFsO9/JftEE0OUmSx87DR+ovf00I1aozf9I4epZ6p9eRVzGLoN2PxE6
- QtckqaxMtqGZCDElpdvBEmoFrSdLvUZhurcZ8vVa7KgM0DJNXnkItZ1OSVRvO5bpuFFY
- garEtEr4YgieHFOPmwT7qEZMYPbAnbfDkrAKjr00X9/ttE3g2NlmCilQy3RgeCQn9v9q
- xeR1lBR7U/FDz4AOj4JVnrdtoAPYDtYVDxW5moX6JSqDQmPAo3CRhke/CAVQPEyWQs4m
- cnIQf5c1hSLYKmxoqnadSSEKL4HUwxnxD3vOxS5uAUfoLc99AjJIhEIWGgTz42maUWeb Rw== 
+ bh=iYKk6pJjsYeuYCAO1v2lT4D7+S8Aij8LxEqK+fmKc9U=;
+ b=3VfpNknBmpFA4l9jUY0xSVKIg3hcTgUqy9MfICRiA1N172J2WSWJPPjG+kPQkR1KBsTy
+ +1NTnSklknxP09JY+rE9RVwcqdAdZtMUQ/X842Y8RKmqtFHlDVA2/joJcfKsf1ZceBfl
+ C19x0SlKAeiHvw4f+kCUMmKG0P8b439NTjG3pi3hMvClLHZW7SBC35RbM8RLiIcs84b8
+ PL2OFGGDVxSch45cnkDj/vV7/nLZ4tDdr4vDU1QiiBphzP2XYXByu0f3kyWh82L6GGMt
+ fJi4ew1RX9FYqYTaHDLVLd3NEsJjpoJQuJAMODHl/IPAoBhl7DwvNb4coOCtlnHDJ2gs Ng== 
 Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3ds9v1kcsh-1
+        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3ds9v1kcsb-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 24 Jan 2022 11:26:59 +0100
+        Mon, 24 Jan 2022 11:26:56 +0100
 Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 848DD10002A;
-        Mon, 24 Jan 2022 11:26:57 +0100 (CET)
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id D5E45100034;
+        Mon, 24 Jan 2022 11:26:55 +0100 (CET)
 Received: from Webmail-eu.st.com (sfhdag2node2.st.com [10.75.127.5])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 2A6192128BC;
-        Mon, 24 Jan 2022 11:26:57 +0100 (CET)
-Received: from localhost (10.75.127.46) by SFHDAG2NODE2.st.com (10.75.127.5)
- with Microsoft SMTP Server (TLS) id 15.0.1497.26; Mon, 24 Jan 2022 11:26:56
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id CDE892128C0;
+        Mon, 24 Jan 2022 11:26:55 +0100 (CET)
+Received: from localhost (10.75.127.45) by SFHDAG2NODE2.st.com (10.75.127.5)
+ with Microsoft SMTP Server (TLS) id 15.0.1497.26; Mon, 24 Jan 2022 11:26:55
  +0100
 From:   Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
 To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
         Mathieu Poirier <mathieu.poirier@linaro.org>
 CC:     <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <linux-stm32@st-md-mailman.stormreply.com>,
-        <julien.massot@iot.bzh>, <arnaud.pouliquen@foss.st.com>
-Subject: [PATCH v9 08/11] rpmsg: char: Refactor rpmsg_chrdev_eptdev_create function
-Date:   Mon, 24 Jan 2022 11:25:21 +0100
-Message-ID: <20220124102524.295783-9-arnaud.pouliquen@foss.st.com>
+        <julien.massot@iot.bzh>, <arnaud.pouliquen@foss.st.com>,
+        <linux-arm-kernel@lists.infradead.org>
+Subject: [PATCH v9 06/11] arm64: defconfig: Config that had RPMSG_CHAR now gets RPMSG_CTRL
+Date:   Mon, 24 Jan 2022 11:25:19 +0100
+Message-ID: <20220124102524.295783-7-arnaud.pouliquen@foss.st.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20220124102524.295783-1-arnaud.pouliquen@foss.st.com>
 References: <20220124102524.295783-1-arnaud.pouliquen@foss.st.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-Originating-IP: [10.75.127.46]
+X-Originating-IP: [10.75.127.45]
 X-ClientProxiedBy: SFHDAG2NODE2.st.com (10.75.127.5) To SFHDAG2NODE2.st.com
  (10.75.127.5)
 X-Proofpoint-Virus-Version: vendor=baseguard
@@ -63,85 +64,29 @@ Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Introduce the rpmsg_chrdev_eptdev_alloc and rpmsg_chrdev_eptdev_add
-internal function to split the allocation part from the device add.
-
-This patch prepares the introduction of a rpmsg channel device for the
-char device. An default endpoint will be created,
-referenced in the rpmsg_eptdev structure before adding the devices.
+In the patch "rpmsg: Move the rpmsg control device from rpmsg_char
+to rpmsg_ctrl", we split the rpmsg_char driver in two.
+By default give everyone who had the old driver enabled the rpmsg_ctrl
+driver too.
 
 Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+cc: linux-arm-kernel@lists.infradead.org
 ---
- drivers/rpmsg/rpmsg_char.c | 33 ++++++++++++++++++++++++++++-----
- 1 file changed, 28 insertions(+), 5 deletions(-)
+ arch/arm64/configs/defconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/rpmsg/rpmsg_char.c b/drivers/rpmsg/rpmsg_char.c
-index fcd583472d5a..e7bc7dcdba63 100644
---- a/drivers/rpmsg/rpmsg_char.c
-+++ b/drivers/rpmsg/rpmsg_char.c
-@@ -327,20 +327,18 @@ static void rpmsg_eptdev_release_device(struct device *dev)
- 	kfree(eptdev);
- }
- 
--int rpmsg_chrdev_eptdev_create(struct rpmsg_device *rpdev, struct device *parent,
--			       struct rpmsg_channel_info chinfo)
-+static struct rpmsg_eptdev *rpmsg_chrdev_eptdev_alloc(struct rpmsg_device *rpdev,
-+						      struct device *parent)
- {
- 	struct rpmsg_eptdev *eptdev;
- 	struct device *dev;
--	int ret;
- 
- 	eptdev = kzalloc(sizeof(*eptdev), GFP_KERNEL);
- 	if (!eptdev)
--		return -ENOMEM;
-+		return ERR_PTR(-ENOMEM);
- 
- 	dev = &eptdev->dev;
- 	eptdev->rpdev = rpdev;
--	eptdev->chinfo = chinfo;
- 
- 	mutex_init(&eptdev->ept_lock);
- 	spin_lock_init(&eptdev->queue_lock);
-@@ -356,6 +354,16 @@ int rpmsg_chrdev_eptdev_create(struct rpmsg_device *rpdev, struct device *parent
- 	cdev_init(&eptdev->cdev, &rpmsg_eptdev_fops);
- 	eptdev->cdev.owner = THIS_MODULE;
- 
-+	return eptdev;
-+}
-+
-+static int rpmsg_chrdev_eptdev_add(struct rpmsg_eptdev *eptdev, struct rpmsg_channel_info chinfo)
-+{
-+	struct device *dev = &eptdev->dev;
-+	int ret;
-+
-+	eptdev->chinfo = chinfo;
-+
- 	ret = ida_simple_get(&rpmsg_minor_ida, 0, RPMSG_DEV_MAX, GFP_KERNEL);
- 	if (ret < 0)
- 		goto free_eptdev;
-@@ -386,6 +394,21 @@ int rpmsg_chrdev_eptdev_create(struct rpmsg_device *rpdev, struct device *parent
- 
- 	return ret;
- }
-+
-+int rpmsg_chrdev_eptdev_create(struct rpmsg_device *rpdev, struct device *parent,
-+			       struct rpmsg_channel_info chinfo)
-+{
-+	struct rpmsg_eptdev *eptdev;
-+	int ret;
-+
-+	eptdev = rpmsg_chrdev_eptdev_alloc(rpdev, parent);
-+	if (IS_ERR(eptdev))
-+		return PTR_ERR(eptdev);
-+
-+	ret = rpmsg_chrdev_eptdev_add(eptdev, chinfo);
-+
-+	return ret;
-+}
- EXPORT_SYMBOL(rpmsg_chrdev_eptdev_create);
- 
- static int rpmsg_chrdev_init(void)
+diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+index 30516dc0b70e..485c55f19d68 100644
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@ -1039,6 +1039,7 @@ CONFIG_QCOM_Q6V5_PAS=m
+ CONFIG_QCOM_SYSMON=m
+ CONFIG_QCOM_WCNSS_PIL=m
+ CONFIG_RPMSG_CHAR=m
++CONFIG_RPMSG_CTRL=m
+ CONFIG_RPMSG_QCOM_GLINK_RPM=y
+ CONFIG_RPMSG_QCOM_GLINK_SMEM=m
+ CONFIG_RPMSG_QCOM_SMD=y
 -- 
 2.25.1
 
