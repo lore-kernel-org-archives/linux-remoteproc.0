@@ -2,125 +2,121 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F044EC433FE
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 24 Jan 2022 12:09:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FFF2C433F5
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 24 Jan 2022 14:04:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238262AbiAXMJ1 (ORCPT
+        id S238200AbiAXOET (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 24 Jan 2022 07:09:27 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59860 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238247AbiAXMJ0 (ORCPT
+        Mon, 24 Jan 2022 09:04:19 -0500
+Received: from alexa-out.qualcomm.com ([129.46.98.28]:48014 "EHLO
+        alexa-out.qualcomm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230156AbiAXOET (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 24 Jan 2022 07:09:26 -0500
-Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e3e3])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC7AEC06173B;
-        Mon, 24 Jan 2022 04:09:26 -0800 (PST)
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: kholk11)
-        with ESMTPSA id EED441F42E77
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1643026165;
-        bh=K2ObFY3Vsm+qnoFl2QeGq49BSilMuqWVDQ+bAXw3Mog=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MXIzTOobugUM0mowy79jjk1wphZsdQeaD09BgOWJkvg9YkRg2INPxE+3z59OGCbaP
-         oGOgJZyLmJ/EDqaqCFR1peOp+C5HLSeEVSR8VN0fCVIerLlfa/PSP1gY89+4F7ymtk
-         RmjpdpgsBEgOl0FqpJblVZj1Dsgw+lIhVOFigOX7JF8PmoIIh6/UCs+6NvySXOCRTo
-         y5203U/mGV2mQ1spOsg1DoKw98o9G0kotfqk6RVIhRaDN8DxbfmdXuoyMl1P0n3i1d
-         mZVoDugn6pJSvub6XGR1RYeiACs7trCsDaFVHFCgXjKt9Wq6pVhef28Ejy1BIlwamf
-         GmUSTmUu1bXhg==
-From:   AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-To:     bjorn.andersson@linaro.org
-Cc:     mathieu.poirier@linaro.org, matthias.bgg@gmail.com,
-        linux-remoteproc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
-        kernel@collabora.com,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-Subject: [PATCH 3/3] remoteproc: mtk_scp: Use dev_err_probe() where possible
-Date:   Mon, 24 Jan 2022 13:09:15 +0100
-Message-Id: <20220124120915.41292-3-angelogioacchino.delregno@collabora.com>
-X-Mailer: git-send-email 2.33.1
-In-Reply-To: <20220124120915.41292-1-angelogioacchino.delregno@collabora.com>
-References: <20220124120915.41292-1-angelogioacchino.delregno@collabora.com>
+        Mon, 24 Jan 2022 09:04:19 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=quicinc.com; i=@quicinc.com; q=dns/txt; s=qcdkim;
+  t=1643033059; x=1674569059;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=hK6Gk5mnXF4IHRICMmepTdEfNCx/EzeL17Dix2QUIaU=;
+  b=OGSCboF8Fn9X54gI+CpLoN7tH+gJi/KtdhubT5uyh6/cQiIOGW0KfZBl
+   Wtlr8LM/DabWj2unrWbYcf1OBR/D8YO8GPHVR14ZDHZCkFGe/pTFJdp5k
+   m5dJzICVsQma+KvLsYIsJX6W/pG4fx8k5sckRk7Dqqoc9A0hOJxhrRvSN
+   w=;
+Received: from ironmsg09-lv.qualcomm.com ([10.47.202.153])
+  by alexa-out.qualcomm.com with ESMTP; 24 Jan 2022 06:04:19 -0800
+X-QCInternal: smtphost
+Received: from nasanex01c.na.qualcomm.com ([10.47.97.222])
+  by ironmsg09-lv.qualcomm.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jan 2022 06:04:19 -0800
+Received: from [10.216.45.46] (10.80.80.8) by nasanex01c.na.qualcomm.com
+ (10.47.97.222) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.922.19; Mon, 24 Jan
+ 2022 06:04:15 -0800
+Message-ID: <49c9611e-f8cd-3a18-19b3-123da5d8d8eb@quicinc.com>
+Date:   Mon, 24 Jan 2022 19:34:09 +0530
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.5.0
+Subject: Re: [PATCH] remoteproc: Use unbounded/high priority workqueue for
+ recovery work
+Content-Language: en-US
+To:     <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC:     <bjorn.andersson@linaro.org>, <mathieu.poirier@linaro.org>,
+        <linux-arm-msm@vger.kernel.org>
+References: <1642620644-19297-1-git-send-email-quic_mojha@quicinc.com>
+From:   Mukesh Ojha <quic_mojha@quicinc.com>
+In-Reply-To: <1642620644-19297-1-git-send-email-quic_mojha@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01c.na.qualcomm.com (10.47.97.222)
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Simplify the probe function, where possible, by using dev_err_probe().
-While at it, as to increase human readability, also remove some
-unnecessary forced void pointer casts that were previously used in
-error checking.
++linux-arm-msm
 
-Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
----
- drivers/remoteproc/mtk_scp.c | 28 ++++++++++++----------------
- 1 file changed, 12 insertions(+), 16 deletions(-)
+Thanks,
+-Mukesh
 
-diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
-index e40706b0e015..dcddb33e9997 100644
---- a/drivers/remoteproc/mtk_scp.c
-+++ b/drivers/remoteproc/mtk_scp.c
-@@ -757,10 +757,8 @@ static int scp_probe(struct platform_device *pdev)
- 	int ret, i;
- 
- 	rproc = devm_rproc_alloc(dev, np->name, &scp_ops, fw_name, sizeof(*scp));
--	if (!rproc) {
--		dev_err(dev, "unable to allocate remoteproc\n");
--		return -ENOMEM;
--	}
-+	if (!rproc)
-+		return dev_err_probe(dev, -ENOMEM, "unable to allocate remoteproc\n");
- 
- 	scp = (struct mtk_scp *)rproc->priv;
- 	scp->rproc = rproc;
-@@ -770,21 +768,20 @@ static int scp_probe(struct platform_device *pdev)
- 
- 	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "sram");
- 	scp->sram_base = devm_ioremap_resource(dev, res);
--	if (IS_ERR((__force void *)scp->sram_base)) {
--		dev_err(dev, "Failed to parse and map sram memory\n");
--		return PTR_ERR((__force void *)scp->sram_base);
--	}
-+	if (IS_ERR(scp->sram_base))
-+		return dev_err_probe(dev, PTR_ERR(scp->sram_base),
-+				     "Failed to parse and map sram memory\n");
-+
- 	scp->sram_size = resource_size(res);
- 	scp->sram_phys = res->start;
- 
- 	/* l1tcm is an optional memory region */
- 	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "l1tcm");
- 	scp->l1tcm_base = devm_ioremap_resource(dev, res);
--	if (IS_ERR((__force void *)scp->l1tcm_base)) {
--		ret = PTR_ERR((__force void *)scp->l1tcm_base);
-+	if (IS_ERR(scp->l1tcm_base)) {
-+		ret = PTR_ERR(scp->l1tcm_base);
- 		if (ret != -EINVAL) {
--			dev_err(dev, "Failed to map l1tcm memory\n");
--			return ret;
-+			return dev_err_probe(dev, ret, "Failed to map l1tcm memory\n");
- 		}
- 	} else {
- 		scp->l1tcm_size = resource_size(res);
-@@ -792,10 +789,9 @@ static int scp_probe(struct platform_device *pdev)
- 	}
- 
- 	scp->reg_base = devm_platform_ioremap_resource_byname(pdev, "cfg");
--	if (IS_ERR((__force void *)scp->reg_base)) {
--		dev_err(dev, "Failed to parse and map cfg memory\n");
--		return PTR_ERR((__force void *)scp->reg_base);
--	}
-+	if (IS_ERR(scp->reg_base))
-+		return dev_err_probe(dev, PTR_ERR(scp->reg_base),
-+				     "Failed to parse and map cfg memory\n");
- 
- 	ret = scp->data->scp_clk_get(scp);
- 	if (ret)
--- 
-2.33.1
-
+On 1/20/2022 1:00 AM, Mukesh Ojha wrote:
+> There could be a scenario where there is too much load(n number
+> of tasks which is affined) on a core on which rproc recovery
+> is queued. Due to which, it takes number of seconds to complete
+> the recovery.
+>
+> If we make this queue unbounded and move it to high priority worker
+> pool then this work can be attempted to finished in less time.
+>
+> Signed-off-by: Mukesh Ojha <quic_mojha@quicinc.com>
+> ---
+>   drivers/remoteproc/remoteproc_core.c | 14 ++++++++++++--
+>   1 file changed, 12 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+> index 69f51ac..efb6316 100644
+> --- a/drivers/remoteproc/remoteproc_core.c
+> +++ b/drivers/remoteproc/remoteproc_core.c
+> @@ -59,6 +59,7 @@ static int rproc_release_carveout(struct rproc *rproc,
+>   
+>   /* Unique indices for remoteproc devices */
+>   static DEFINE_IDA(rproc_dev_index);
+> +static struct workqueue_struct *rproc_recovery_wq;
+>   
+>   static const char * const rproc_crash_names[] = {
+>   	[RPROC_MMUFAULT]	= "mmufault",
+> @@ -2752,8 +2753,10 @@ void rproc_report_crash(struct rproc *rproc, enum rproc_crash_type type)
+>   	dev_err(&rproc->dev, "crash detected in %s: type %s\n",
+>   		rproc->name, rproc_crash_to_string(type));
+>   
+> -	/* Have a worker handle the error; ensure system is not suspended */
+> -	queue_work(system_freezable_wq, &rproc->crash_handler);
+> +	if (rproc_recovery_wq)
+> +		queue_work(rproc_recovery_wq, &rproc->crash_handler);
+> +	else
+> +		queue_work(system_freezable_wq, &rproc->crash_handler);
+>   }
+>   EXPORT_SYMBOL(rproc_report_crash);
+>   
+> @@ -2802,6 +2805,11 @@ static void __exit rproc_exit_panic(void)
+>   
+>   static int __init remoteproc_init(void)
+>   {
+> +	rproc_recovery_wq = alloc_workqueue("rproc_recovery_wq", WQ_UNBOUND |
+> +				WQ_HIGHPRI | WQ_FREEZABLE, 0);
+> +	if (!rproc_recovery_wq)
+> +		pr_err("remoteproc: creation of rproc_recovery_wq failed\n");
+> +
+>   	rproc_init_sysfs();
+>   	rproc_init_debugfs();
+>   	rproc_init_cdev();
+> @@ -2818,6 +2826,8 @@ static void __exit remoteproc_exit(void)
+>   	rproc_exit_panic();
+>   	rproc_exit_debugfs();
+>   	rproc_exit_sysfs();
+> +	if (rproc_recovery_wq)
+> +		destroy_workqueue(rproc_recovery_wq);
+>   }
+>   module_exit(remoteproc_exit);
+>   
