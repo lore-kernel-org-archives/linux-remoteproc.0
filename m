@@ -2,130 +2,251 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 335EFC28CF5
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 26 Jan 2022 08:29:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0015BC2BA4C
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 26 Jan 2022 08:52:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238462AbiAZI3r (ORCPT
+        id S238570AbiAZIwU (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 26 Jan 2022 03:29:47 -0500
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:58938 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S238420AbiAZI3r (ORCPT
-        <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 26 Jan 2022 03:29:47 -0500
-Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.1.2/8.16.1.2) with ESMTP id 20Q4eNre021515;
-        Wed, 26 Jan 2022 09:29:25 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=selector1;
- bh=HqDC/OjVj/xPLO7ZZ9W6iTk/stZzn8M/W5EdEzByj68=;
- b=UWaXSzEyyD9azgCoJykNRixWshb3bYFrPJZJfzcQappHNjLhO6s4e427jgbHBnkojawH
- HrFmh79edtskl6t3g25fKLMLYWGs5Hg2Mmbv27oM2xPfqPtGD5zeqcg8HKi9jECLipD7
- xYBN74zPVpV+85EvqnxlgbWMOizbaeEmanYv8ME9Jjz6zuApT6/w7DKENGSdGQSviQco
- TaPkaUn7PJgFdJxk1U6a88lQGS+lf6VnynUaZTnobA8C9DL18GQe0Rr21jvxYF/Qoed0
- NTPfTMhpf2waUdKzhUuQQ3tBb5+VnEAcmKGvUkMUiwuLuhGhHnPPX/6BIeGxJmeV9MvM ZA== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3dtyfw13q9-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 26 Jan 2022 09:29:25 +0100
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 7352310002A;
-        Wed, 26 Jan 2022 09:29:23 +0100 (CET)
-Received: from Webmail-eu.st.com (sfhdag2node2.st.com [10.75.127.5])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 69D87210F6A;
-        Wed, 26 Jan 2022 09:29:23 +0100 (CET)
-Received: from lmecxl1091.lme.st.com (10.75.127.49) by SFHDAG2NODE2.st.com
- (10.75.127.5) with Microsoft SMTP Server (TLS) id 15.0.1497.26; Wed, 26 Jan
- 2022 09:29:22 +0100
-Subject: Re: [Linux-stm32] [PATCH][next] hwspinlock: stm32: Use struct_size()
- helper in devm_kzalloc()
-To:     "Gustavo A. R. Silva" <gustavoars@kernel.org>,
-        Ohad Ben-Cohen <ohad@wizery.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Baolin Wang <baolin.wang7@gmail.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>
-CC:     <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-hardening@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>
-References: <20220125021353.GA29777@embeddedor>
-From:   Fabien DESSENNE <fabien.dessenne@foss.st.com>
-Message-ID: <ad53072e-e497-3321-eaa4-bbe8b2da2af4@foss.st.com>
-Date:   Wed, 26 Jan 2022 09:29:22 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.14.0
+        Wed, 26 Jan 2022 03:52:20 -0500
+Received: from mail-eopbgr80041.outbound.protection.outlook.com ([40.107.8.41]:25056
+        "EHLO EUR04-VI1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S238583AbiAZIwU (ORCPT <rfc822;linux-remoteproc@vger.kernel.org>);
+        Wed, 26 Jan 2022 03:52:20 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=hCaroeZWeXxKuRaEreUQH9GKTEAPzSPWeFnLwwvApVCqcxrVWNLsSnpxFwbnO6bZQoRkLw7gSIMo7TNQrgm7WFl2PzXnsvC7/oANMvbl0jHXVsU6gC81i7DDaw/PuspKpKfHRmgxjt2GUP2vDjWdtpZvoGHRnUD7e4gqqttNp7HDlWtDD3AAXo/E7JVPtnExP6u4OQLPTXqknf6zGE32Q0L8Ft9EL/i0Csbh0/phbr5XHMsOJgLzElilQdBhtuspX0/0jA7x1+NSULNEnN9TmLYqIN8+laASHXM6RkyXX4DHXAKSStstlQKyEnuZpQnq7uHWkruOtRBl5LDSKtw+0w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=1UHUSfUrfnSNNJhQv6a3mg3eMDCmzSiz6dxyr3fGCZQ=;
+ b=A4ot+QHxvZf94i9eyT/wFF3t+VnH0rwJ4LwV0x12YQ9w66rng+ZHQGaEcLHaJhggUmIr26QQlkdhcxhzCtafGfzvKLKrPm1ltKjZvPv0igk5F/waHUZYniw+RXxJHhj/hQhPhE4A/1YsLJ5ECsmHSYUEDxj+Mi998/BwId9oEzRLuNrSyv0JhNBTV3Ndi8oWGB51LYvIa6Zu+ClxIdsILDrO4wxbS4bkGOgCq9RHgK0rRKOVIdmJSyX73+z3PoAtYh2uk1lPJtDgqhKbdwQHdbpLRRyV6AzmIkk5X5ohB0mOF8GugKAbQU7Y8q91/3He9jnjhOZJM1RfGJsv8iQmGw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector2-NXP1-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=1UHUSfUrfnSNNJhQv6a3mg3eMDCmzSiz6dxyr3fGCZQ=;
+ b=clQW59xm4FKlZoABTt1TKt0p0giGU2IgIg3+UydNPhQNJ4V3qedJJ2sVmkAK0V2Qdr+KBXWSR0aUg5KHhjVD6A9BxJf3aSk1icDRX72Z4ZrmSIFi9pVcWU9CLHCl+Tkq9JfyU998ALfOi00M49QocuAcwTVhAnc4/JZelTgL8LM=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=oss.nxp.com;
+Received: from DU0PR04MB9417.eurprd04.prod.outlook.com (2603:10a6:10:358::11)
+ by DB8PR04MB7130.eurprd04.prod.outlook.com (2603:10a6:10:123::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4930.15; Wed, 26 Jan
+ 2022 08:52:16 +0000
+Received: from DU0PR04MB9417.eurprd04.prod.outlook.com
+ ([fe80::d4dc:8c9a:55d0:81d8]) by DU0PR04MB9417.eurprd04.prod.outlook.com
+ ([fe80::d4dc:8c9a:55d0:81d8%3]) with mapi id 15.20.4930.015; Wed, 26 Jan 2022
+ 08:52:16 +0000
+From:   "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+To:     bjorn.andersson@linaro.org, mathieu.poirier@linaro.org,
+        linux-remoteproc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     Peng Fan <peng.fan@nxp.com>
+Subject: [PATCH V2] remoteproc: support self recovery after rproc crash
+Date:   Wed, 26 Jan 2022 16:51:20 +0800
+Message-Id: <20220126085120.3397450-1-peng.fan@oss.nxp.com>
+X-Mailer: git-send-email 2.25.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SG2PR03CA0092.apcprd03.prod.outlook.com
+ (2603:1096:4:7c::20) To DU0PR04MB9417.eurprd04.prod.outlook.com
+ (2603:10a6:10:358::11)
 MIME-Version: 1.0
-In-Reply-To: <20220125021353.GA29777@embeddedor>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.75.127.49]
-X-ClientProxiedBy: SFHDAG2NODE3.st.com (10.75.127.6) To SFHDAG2NODE2.st.com
- (10.75.127.5)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.816,Hydra:6.0.425,FMLib:17.11.62.513
- definitions=2022-01-26_02,2022-01-25_02,2021-12-02_01
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 38d49383-41a0-4a91-eeed-08d9e0a926d4
+X-MS-TrafficTypeDiagnostic: DB8PR04MB7130:EE_
+X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
+X-Microsoft-Antispam-PRVS: <DB8PR04MB713083132E35818A3B30795FC9209@DB8PR04MB7130.eurprd04.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:5516;
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 6EGT7JwrxCVobc3NQeJSU8q5HrVSEe2RXKK/jTN6Z/J0I4OLAlbLjA4TbW50Z1W9FHDf798idt+NWRWusxNcE8m4dvjPjC3RP0lYsztOdb48Ueyzp7XVXH4ortlkDuOk2CJqPAJdp2RyrUFha8Ob1G0jnyTynro2TKpcGuImKAX6LMwZQox0m/SGj+v1SdZrgDHrRkkhQh6dhjXnieF80XTzVTSwtoyZtHUysf8uB3ga6tlcEPM5UDQEH0sCtPRyYoumFtWUD3QKWHkqyb+f5H8D8d6qtbyO5JYtxcA0rDlUztoQQC86lXU/k48GslrC/6/0OBt3iEpHS32nX5QluuyekhJCzwmv037hBHiNrnDzEQ/BagpPYYKPvNEXRc1eWKZqwPlgBtNKrpi5QzestadflbEU9HispPozUU1jJip7NlzSYCvs0eWKgmoNx5SE9L9GIFrOWGbssUq1RhpKvJVnXj55sERw2oWIA1u4OkK0anpFsTFVBdzgB6EZkBnX/Jk3ve+iy3InslOCq56LoNJ/lpmNPR2HgwSBbYqLGkCH0ocCl4uu/cVJyEfPynHI3gxdzyMfqqCC2+wnnQ3lfWpUaVPPITCpnIW+BzpZFNBSoriSdjtQg9zefSx1dlxWyw2Zwsv/nWbIBMi7kypHTIAQVESMMLeBFOcjro+Ex7hE40v4uCqb7PofEOTnWSKiUySxAVfMgraKmLou4OyzxaLdX+OMoCov1g1NePjMhHvkkxi4VcsBuhYCOiku2vA5Uy3SWlGRfict/7Bfu2Yp8xu23IE1hXQ5LsfI+8AVlcU=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU0PR04MB9417.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(4636009)(366004)(26005)(2616005)(1076003)(8676002)(52116002)(6506007)(6512007)(6666004)(186003)(83380400001)(8936002)(4326008)(86362001)(5660300002)(66556008)(66476007)(66946007)(38100700002)(38350700002)(2906002)(966005)(6486002)(316002)(508600001)(20210929001);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?kRHgRoyX67+QX8c7kp1tFyEri0I0/08uUWncFekrDw60ItvyUpcv43sqC+xX?=
+ =?us-ascii?Q?dhysQ7Qv/zIC+nlkyBy9fzE/ldU7139EJnDPWzKx4zZlLM+Z54Z1tfrL/RrP?=
+ =?us-ascii?Q?HgTooB2SMyu1xMvk/yeS10bBdD48Me2KaaVnDGyJhhYIsspR9kfuEXGvZYRX?=
+ =?us-ascii?Q?wBa+L2HxLa5keKQTpjzDVyNYXY+YiSoErXE84tyBdRPxZ5oIu2hJdhk/Y1Jv?=
+ =?us-ascii?Q?HfEoECfKaBJqFJ6Ml2+k+Osat4k35IrRRD89/KyIvjzxSlZo5034bR1wnGxm?=
+ =?us-ascii?Q?/sx5LTFq2LMIqFzG6d6oX8AjpC0L87R1WbRUYew1S1FkUd3sdHh+DMrAsvF3?=
+ =?us-ascii?Q?3YetL2/0jEZyW0YlCOuU/6AOcY5aAd0ZOWBCjMqx1dKkAhn0ZizqJzA5qF5w?=
+ =?us-ascii?Q?LGoggnIQU9MEDeRiDetGBrGbBCpXklw6nPhk0D1n2ZLfrf2vlSBjTdbbG14k?=
+ =?us-ascii?Q?liAvUGsmleVXcI3QItR3Cbvb9lkh0B9LmHe3joIDQcbfwtcAfpE99c8fR4H0?=
+ =?us-ascii?Q?jT/zfuFKYnSu8XyrOD/uRn8tfGC2nR+2+YyMusLfrrX1v9r5Xs/lDVwl3xH0?=
+ =?us-ascii?Q?qJNHm9jOMmUalt6Agg3ZD95Y5WBC6vnhazgPGP7STSVVY3DdwLuEVx94r1kq?=
+ =?us-ascii?Q?pOrakiX6pznFOB77nUggmoa3iZmIHP9VJEBfFtvpG9Wp9b6FN9Z5mzHjjVDA?=
+ =?us-ascii?Q?Na1glDmP6bgFDaKIN/qUYLQBzeYJXKvOwc4NvFPtqVtmGaPsFpr49Flp+5iM?=
+ =?us-ascii?Q?VGANmg3bzMgTQZkuM49LB+Lgm2LqfdkgAsKznu/hB40BcHovn8jaI8SzJyFM?=
+ =?us-ascii?Q?14jeqTI3tVxWV0rBlAFt6cMx3B8W9aIjaCyba2zlZUzTjmxyKFA86WDYRrWe?=
+ =?us-ascii?Q?yWENpwxYWS3DVvHYEHfYkhMO9JuxIv88Hegi3xRqCSoo67R0cfAiuB1rfgYO?=
+ =?us-ascii?Q?20kWLblcVy4/u0Poh7EQcwJylRou2uNOX4xEzN1Hs4mRJQXs2SzfvOMld74q?=
+ =?us-ascii?Q?67aPOOdJMLT5O8+J9HTZvwKiNI57FSmEBAzqTG1EbRbdVnRP7inExm4urX3c?=
+ =?us-ascii?Q?WthSv9VlYoiLetsYF/QCjl1+Pjt0LSvs/+4h/ossO2d3fquw2fZqRDe1AS9P?=
+ =?us-ascii?Q?tHbAKUvtq4+teG2Y7KVEi1b/Eg483NFP5qMDtrkcoXUoz7ab1uFVAm6IMaNz?=
+ =?us-ascii?Q?W5rfYANpWoHjgdRAaktO/AlJcPUDj7Twrs5t+qI1gwfay7SHAbIh/Nq4aQeL?=
+ =?us-ascii?Q?ypZFUfg86AWGstYEtJ1G6J/28IkWlTxIokueaqL4cMdvj6viwSuqq9OxvDk+?=
+ =?us-ascii?Q?rctQebdga2jj5QB09nyjWzbKvlY6lUWedGt8Ta8b6vjnSfX8FdElIyzdGXuF?=
+ =?us-ascii?Q?e/w17W7PO5nbBuNU9ROd6QKrOB5n6/0KekKg+CLXC1VC2EUoRqtNtKYnMXqA?=
+ =?us-ascii?Q?qRyewNcSEqufcPvalTLbVwzKM+yBPNUjy2T67LYoeI45A4jEAIunaHsCvizb?=
+ =?us-ascii?Q?RnAPboUytZYCTgy/BClPR+UaWFK3LYgknvFC9lwkxGNyFTh5jQi04CZtvqe1?=
+ =?us-ascii?Q?rwnOn41mEl6E9/c3krotHVfAoyvUxilRocJK19yfBcEn6YiUk1BGOjvTZn7u?=
+ =?us-ascii?Q?aq8akW0DSTOWJSNJ1flNat4=3D?=
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 38d49383-41a0-4a91-eeed-08d9e0a926d4
+X-MS-Exchange-CrossTenant-AuthSource: DU0PR04MB9417.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Jan 2022 08:52:15.9125
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Hw+QCY0BKDvh5KeU9v7rtFVOz/lbd4h7bxLO/BeP/b4zVJJrktAxRES5VfqJGDmrLmiuluumNewHhl/sCujFCA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB8PR04MB7130
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi Gustavo,
+From: Peng Fan <peng.fan@nxp.com>
 
-Thank you for the patch.
-I am fine with it with a nit picking comment regarding the non-mandatory 
-80 characters line break [1].
+Current logic only support main processor to stop/start the remote
+processor after rproc crash. However to SoC, such as i.MX8QM/QXP, the
+remote processor could do self recovery after crash and trigger watchdog
+reboot. It does not need main processor to load image, stop/start M4
+core.
 
-BR
+This patch add a new flag to indicate whether the SoC has self recovery
+capability. And introduce two functions: rproc_self_recovery,
+rproc_assisted_recovery for the two cases. Assisted recovery is as
+before, let main processor to help recovery, while self recovery is
+recover itself withou help. To self recovery, we only do detach and
+attach.
 
-Fabien
+Signed-off-by: Peng Fan <peng.fan@nxp.com>
+---
 
-[1] https://lkml.org/lkml/2020/5/29/1038
+V2:
+ Nothing change in V2.
+ Only move this patch out from
+ https://patchwork.kernel.org/project/linux-remoteproc/list/?series=604364
 
+ drivers/remoteproc/remoteproc_core.c | 66 ++++++++++++++++++++--------
+ include/linux/remoteproc.h           |  2 +
+ 2 files changed, 49 insertions(+), 19 deletions(-)
 
-On 25/01/2022 03:13, Gustavo A. R. Silva wrote:
-> Make use of the struct_size() helper instead of an open-coded version,
-> in order to avoid any potential type mistakes or integer overflows that,
-> in the worst scenario, could lead to heap overflows.
-> 
-> Also, address the following sparse warnings:
-> drivers/hwspinlock/stm32_hwspinlock.c:84:32: warning: using sizeof on a
-> flexible structure
-> 
-> Link: https://github.com/KSPP/linux/issues/174
-> Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
-> ---
->   drivers/hwspinlock/stm32_hwspinlock.c | 5 ++---
->   1 file changed, 2 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/hwspinlock/stm32_hwspinlock.c
-> b/drivers/hwspinlock/stm32_hwspinlock.c
-> index 5bd11a7fab65..716ad4401249 100644
-> --- a/drivers/hwspinlock/stm32_hwspinlock.c
-> +++ b/drivers/hwspinlock/stm32_hwspinlock.c
-> @@ -73,15 +73,14 @@ static int stm32_hwspinlock_probe(struct
-> platform_device *pdev)
->   	struct device *dev = &pdev->dev;
->   	struct stm32_hwspinlock *hw;
->   	void __iomem *io_base;
-> -	size_t array_size;
->   	int i, ret;
->   
->   	io_base = devm_platform_ioremap_resource(pdev, 0);
->   	if (IS_ERR(io_base))
->   		return PTR_ERR(io_base);
->   
-> -	array_size = STM32_MUTEX_NUM_LOCKS * sizeof(struct hwspinlock);
-> -	hw = devm_kzalloc(dev, sizeof(*hw) + array_size, GFP_KERNEL);
-> +	hw = devm_kzalloc(dev, struct_size(hw, bank.lock,
-> STM32_MUTEX_NUM_LOCKS),
-> +			  GFP_KERNEL);
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index 69f51acf235e..4bd5544dab8f 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -1887,6 +1887,49 @@ static int __rproc_detach(struct rproc *rproc)
+ 	return 0;
+ }
+ 
++static int rproc_self_recovery(struct rproc *rproc)
++{
++	int ret;
++
++	mutex_unlock(&rproc->lock);
++	ret = rproc_detach(rproc);
++	mutex_lock(&rproc->lock);
++	if (ret)
++		return ret;
++
++	if (atomic_inc_return(&rproc->power) > 1)
++		return 0;
++	return rproc_attach(rproc);
++}
++
++static int rproc_assisted_recovery(struct rproc *rproc)
++{
++	const struct firmware *firmware_p;
++	struct device *dev = &rproc->dev;
++	int ret;
++
++	ret = rproc_stop(rproc, true);
++	if (ret)
++		return ret;
++
++	/* generate coredump */
++	rproc->ops->coredump(rproc);
++
++	/* load firmware */
++	ret = request_firmware(&firmware_p, rproc->firmware, dev);
++	if (ret < 0) {
++		dev_err(dev, "request_firmware failed: %d\n", ret);
++		return ret;
++	}
++
++	/* boot the remote processor up again */
++	ret = rproc_start(rproc, firmware_p);
++
++	release_firmware(firmware_p);
++
++	return ret;
++}
++
+ /**
+  * rproc_trigger_recovery() - recover a remoteproc
+  * @rproc: the remote processor
+@@ -1901,7 +1944,6 @@ static int __rproc_detach(struct rproc *rproc)
+  */
+ int rproc_trigger_recovery(struct rproc *rproc)
+ {
+-	const struct firmware *firmware_p;
+ 	struct device *dev = &rproc->dev;
+ 	int ret;
+ 
+@@ -1915,24 +1957,10 @@ int rproc_trigger_recovery(struct rproc *rproc)
+ 
+ 	dev_err(dev, "recovering %s\n", rproc->name);
+ 
+-	ret = rproc_stop(rproc, true);
+-	if (ret)
+-		goto unlock_mutex;
+-
+-	/* generate coredump */
+-	rproc->ops->coredump(rproc);
+-
+-	/* load firmware */
+-	ret = request_firmware(&firmware_p, rproc->firmware, dev);
+-	if (ret < 0) {
+-		dev_err(dev, "request_firmware failed: %d\n", ret);
+-		goto unlock_mutex;
+-	}
+-
+-	/* boot the remote processor up again */
+-	ret = rproc_start(rproc, firmware_p);
+-
+-	release_firmware(firmware_p);
++	if (rproc->self_recovery)
++		ret = rproc_self_recovery(rproc);
++	else
++		ret = rproc_assisted_recovery(rproc);
+ 
+ unlock_mutex:
+ 	mutex_unlock(&rproc->lock);
+diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+index e0600e1e5c17..b32ef46f8aa4 100644
+--- a/include/linux/remoteproc.h
++++ b/include/linux/remoteproc.h
+@@ -529,6 +529,7 @@ struct rproc_dump_segment {
+  * @elf_machine: firmware ELF machine
+  * @cdev: character device of the rproc
+  * @cdev_put_on_release: flag to indicate if remoteproc should be shutdown on @char_dev release
++ * @self_recovery: flag to indicate if remoteproc support self recovery
+  */
+ struct rproc {
+ 	struct list_head node;
+@@ -568,6 +569,7 @@ struct rproc {
+ 	u16 elf_machine;
+ 	struct cdev cdev;
+ 	bool cdev_put_on_release;
++	bool self_recovery;
+ };
+ 
+ /**
+-- 
+2.25.1
 
-No need from line break here.
-
-
->   	if (!hw)
->   		return -ENOMEM;
->   
-> 
