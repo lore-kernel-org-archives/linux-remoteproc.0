@@ -2,135 +2,72 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 996A1C2BA4C
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 26 Jan 2022 19:05:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 731E2C433EF
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 27 Jan 2022 09:44:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244358AbiAZTFf (ORCPT
+        id S238792AbiA0Jof (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 26 Jan 2022 14:05:35 -0500
-Received: from alexa-out-sd-01.qualcomm.com ([199.106.114.38]:42425 "EHLO
-        alexa-out-sd-01.qualcomm.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S244338AbiAZTFb (ORCPT
+        Thu, 27 Jan 2022 04:44:35 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38158 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S238758AbiA0Jod (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 26 Jan 2022 14:05:31 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=quicinc.com; i=@quicinc.com; q=dns/txt; s=qcdkim;
-  t=1643223931; x=1674759931;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version;
-  bh=LFRE4HwPeuPzOCaR80UUEjsVA+y4mxNn65JRwX9K7fY=;
-  b=vd7evSiHlLgyzx8/iS9pn3kEXxYWcMdqr5DtYK3TX17CmNTAlYsooMbv
-   v/+9d1Qu5l4nRJojFziOdU4y2tAJHWXQev8HlrBDvx4isWgcaU9mysyZk
-   OVlWV6R+gV80LidOqjTv6nO/0Ptcp5uPxgnqn7cFqYTAFTMnh22ZtPOmf
-   o=;
-Received: from unknown (HELO ironmsg05-sd.qualcomm.com) ([10.53.140.145])
-  by alexa-out-sd-01.qualcomm.com with ESMTP; 26 Jan 2022 11:05:31 -0800
-X-QCInternal: smtphost
-Received: from nasanex01c.na.qualcomm.com ([10.47.97.222])
-  by ironmsg05-sd.qualcomm.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jan 2022 11:05:30 -0800
-Received: from nalasex01a.na.qualcomm.com (10.47.209.196) by
- nasanex01c.na.qualcomm.com (10.47.97.222) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.922.19; Wed, 26 Jan 2022 11:05:30 -0800
-Received: from deesin-linux.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.922.19; Wed, 26 Jan 2022 11:05:27 -0800
-From:   Deepak Kumar Singh <quic_deesin@quicinc.com>
-To:     <bjorn.andersson@linaro.org>, <swboyd@chromium.org>,
-        <quic_clew@quicinc.com>, <mathieu.poirier@linaro.org>
-CC:     <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>,
-        Deepak Kumar Singh <quic_deesin@quicinc.com>,
-        Ohad Ben-Cohen <ohad@wizery.com>
-Subject: [PATCH V1 3/3] rpmsg: glink: Add lock for ctrl device
-Date:   Thu, 27 Jan 2022 00:34:46 +0530
-Message-ID: <1643223886-28170-4-git-send-email-quic_deesin@quicinc.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1643223886-28170-1-git-send-email-quic_deesin@quicinc.com>
-References: <1643223886-28170-1-git-send-email-quic_deesin@quicinc.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
+        Thu, 27 Jan 2022 04:44:33 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C41EAC061714;
+        Thu, 27 Jan 2022 01:44:32 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 63AED6171F;
+        Thu, 27 Jan 2022 09:44:32 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id CB5D6C340E6;
+        Thu, 27 Jan 2022 09:44:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1643276671;
+        bh=Ffzck3eFl4mkVuJsdP0IVa5GHoXlurx5/oGYPyox2k0=;
+        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+        b=CedC0SvwhUF5c8Z+NSd4jcZUTc+p7RQimKuCyf90JjBzz7bN/eLQPbP1WxsZVqILw
+         gcnzsWNvbGd7cc8UMGprQicurmn7ZIwAYuy2m1wDQeHxd5cTFeqGWj7e5HYQQ0oYXN
+         MgbFaewc/KCFqPHNQf7FK3cE6yItI6Xg39Alvdo9djc9bmeltATIXU6lDcqotnqv9e
+         gF3x+cH0nuTiScp20W2LqvAZH5KTZtVDaWPQyQHTb0xwiLvOonD5uP32Ajak3+g5BT
+         Ap2xtdVEzjvMG7nDsZdTTmuW5tZBWwHCVIz7bj5eC/ho3qHH2RmtRD7fnqNUVryXHx
+         2CMlGKE0pGYfg==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id BA0BDF6079C;
+        Thu, 27 Jan 2022 09:44:31 +0000 (UTC)
+Subject: Re: [GIT PULL] rpmsg fixes for v5.17-rc1
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <20220126154233.2453010-1-bjorn.andersson@linaro.org>
+References: <20220126154233.2453010-1-bjorn.andersson@linaro.org>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20220126154233.2453010-1-bjorn.andersson@linaro.org>
+X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/remoteproc/linux.git tags/rpmsg-v5.17-fixes
+X-PR-Tracked-Commit-Id: 7a534ae89e34e9b51acb5a63dd0f88308178b46a
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 626b2dda7651a7c766108db4cdc0825db05b980d
+Message-Id: <164327667175.12060.2197137780478914338.pr-tracker-bot@kernel.org>
+Date:   Thu, 27 Jan 2022 09:44:31 +0000
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Ohad Ben-Cohen <ohad@wizery.com>,
+        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Sujit Kautkar <sujitka@chromium.org>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Race between rpmsg_eptdev_create and rpmsg_chrdev_remove
-can sometime casue crash while accessing rpdev while new
-endpoint is being created. Using lock ensure no new eptdev
-is created after rpmsg_chrdev_remove has been completed.
----
- drivers/rpmsg/rpmsg_char.c | 11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
+The pull request you sent on Wed, 26 Jan 2022 09:42:33 -0600:
 
-diff --git a/drivers/rpmsg/rpmsg_char.c b/drivers/rpmsg/rpmsg_char.c
-index 2108ef8..3e5b85d 100644
---- a/drivers/rpmsg/rpmsg_char.c
-+++ b/drivers/rpmsg/rpmsg_char.c
-@@ -27,6 +27,7 @@
- 
- static dev_t rpmsg_major;
- static struct class *rpmsg_class;
-+struct mutex ctrl_lock;
- 
- static DEFINE_IDA(rpmsg_ctrl_ida);
- static DEFINE_IDA(rpmsg_ept_ida);
-@@ -396,9 +397,12 @@ static int rpmsg_eptdev_create(struct rpmsg_ctrldev *ctrldev,
- 	struct device *dev;
- 	int ret;
- 
-+	mutex_lock(&ctrl_lock);
- 	eptdev = kzalloc(sizeof(*eptdev), GFP_KERNEL);
--	if (!eptdev)
-+	if (!eptdev) {
-+		mutex_unlock(&ctrl_lock);
- 		return -ENOMEM;
-+	}
- 
- 	dev = &eptdev->dev;
- 	eptdev->rpdev = rpdev;
-@@ -443,6 +447,7 @@ static int rpmsg_eptdev_create(struct rpmsg_ctrldev *ctrldev,
- 		put_device(dev);
- 	}
- 
-+	mutex_unlock(&ctrl_lock);
- 	return ret;
- 
- free_ept_ida:
-@@ -453,6 +458,7 @@ static int rpmsg_eptdev_create(struct rpmsg_ctrldev *ctrldev,
- 	put_device(dev);
- 	kfree(eptdev);
- 
-+	mutex_unlock(&ctrl_lock);
- 	return ret;
- }
- 
-@@ -525,6 +531,7 @@ static int rpmsg_chrdev_probe(struct rpmsg_device *rpdev)
- 	if (!ctrldev)
- 		return -ENOMEM;
- 
-+	mutex_init(&ctrl_lock);
- 	ctrldev->rpdev = rpdev;
- 
- 	dev = &ctrldev->dev;
-@@ -581,12 +588,14 @@ static void rpmsg_chrdev_remove(struct rpmsg_device *rpdev)
- 	int ret;
- 
- 	/* Destroy all endpoints */
-+	mutex_lock(&ctrl_lock);
- 	ret = device_for_each_child(&ctrldev->dev, NULL, rpmsg_eptdev_destroy);
- 	if (ret)
- 		dev_warn(&rpdev->dev, "failed to nuke endpoints: %d\n", ret);
- 
- 	device_del(&ctrldev->dev);
- 	put_device(&ctrldev->dev);
-+	mutex_unlock(&ctrl_lock);
- }
- 
- static struct rpmsg_driver rpmsg_chrdev_driver = {
+> https://git.kernel.org/pub/scm/linux/kernel/git/remoteproc/linux.git tags/rpmsg-v5.17-fixes
+
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/626b2dda7651a7c766108db4cdc0825db05b980d
+
+Thank you!
+
 -- 
-2.7.4
-
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
