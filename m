@@ -2,152 +2,93 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CD65C433EF
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 31 Jan 2022 11:35:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 949C4C433FE
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 31 Jan 2022 14:12:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1359551AbiAaLfv (ORCPT
+        id S1376596AbiAaOMO (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 31 Jan 2022 06:35:51 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49908 "EHLO
+        Mon, 31 Jan 2022 09:12:14 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32878 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1376986AbiAaLcv (ORCPT
+        with ESMTP id S240507AbiAaOMN (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 31 Jan 2022 06:32:51 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B7B7BC0604CB;
-        Mon, 31 Jan 2022 03:21:53 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 7D0C0B82A66;
-        Mon, 31 Jan 2022 11:21:52 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 936C1C340E8;
-        Mon, 31 Jan 2022 11:21:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1643628111;
-        bh=zq0eIqyEOraPAsidksoElf7gEdCbjdbpAhnUeeYukTw=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=oEgZCusmyeFjGePPuDzLFacT88J2wNspfxsEIH2g7DIzOEt3dx6mML/64YJ7fmaYB
-         RPT+/DDTCqTQyjggqKTnkvAnqZqVKEwFN/dXt0nkyAeW+nhuNeLuBhTG+X7eIWn46L
-         IJDUftr/sSVLBm1BzhivAhpL08QXNd1LK7KFtdk8=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>,
-        kernel test robot <lkp@intel.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        linux-remoteproc@vger.kernel.org,
-        Sibi Sankar <sibis@codeaurora.org>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.16 127/200] remoteproc: qcom: q6v5: fix service routines build errors
-Date:   Mon, 31 Jan 2022 11:56:30 +0100
-Message-Id: <20220131105237.835248185@linuxfoundation.org>
-X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20220131105233.561926043@linuxfoundation.org>
-References: <20220131105233.561926043@linuxfoundation.org>
-User-Agent: quilt/0.66
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Mon, 31 Jan 2022 09:12:13 -0500
+Received: from mail-pj1-x1033.google.com (mail-pj1-x1033.google.com [IPv6:2607:f8b0:4864:20::1033])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D0B12C061714;
+        Mon, 31 Jan 2022 06:12:13 -0800 (PST)
+Received: by mail-pj1-x1033.google.com with SMTP id qe6-20020a17090b4f8600b001b7aaad65b9so7806107pjb.2;
+        Mon, 31 Jan 2022 06:12:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id;
+        bh=LfxBbcc8sOMG6OCY4dbokwU0H9EPLp8J38lLXb92tpo=;
+        b=dK9veWso8b2VKdA1LHJ6APHUuIAzhaTR+aV4A9gGVAuR3SMU5az+cpfyoI0TgYfE2h
+         tI6TMLtjzA4ZhykohQUak11uIT00wPgywULQs2KEXLnX3uK8CsDc0N37xOrGz4QMTdkl
+         mywmECiJoQPIfCLJ0Llczb7aQSJ3zCxVrWPElUJ6UVMVWQFLBPC/HnlTp6mKYuxHh1JS
+         qBImqyWTUZOmUyUctKsXjwcTou0F8jOFS+t25C4FnhQ0dPQ0oU6a88h/8+w6sMtt2gJ2
+         sks8XWDL5VWNrahLfAJXbhcPKdAL4c23DPK9qCbIYHLjzMg0lo0myS1DBp9XdA5I4Pi8
+         fokw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=LfxBbcc8sOMG6OCY4dbokwU0H9EPLp8J38lLXb92tpo=;
+        b=Jt+VWLBSG38oK9G4UQXLWoYTZBcjC+5muNrJtHX+CFT5kaFR2QUM+B3NzrTl9mgsUf
+         INUQsjJ9ECaLdygUqeIl4ZRkeH1VNsDylfrwGE6O7Lb6nT+FZp8A5wk6offx97dxk2FM
+         FGZ5QsSRCx2qBsdg+iZ4D9qfLuS3oY8RBbjKp+ifn7poTl1M9ga9MYh6rIVrv3+Gh2gH
+         CVSDWfNoampKCfgvP/+6RTlVnbnBu1DsvdUuQvV3tzP0OkcOAaH+yUTXT2BKSs/T8z5c
+         QmTaLdiqnFqVCiBq8MH1ZQ+GQqquzyXknj4R1aI6djn/cGW1RQktSofNDEbN0K5v3m/R
+         +ing==
+X-Gm-Message-State: AOAM531q3n2S1+XHBMHqhInZnaTqIgFVfW6hZZtyudyQBGqw7EWYzyk5
+        UKC/hQqg8gFuQApoBg4/oVY=
+X-Google-Smtp-Source: ABdhPJz/cXOr81TfHzE3W9vpHPG0tMpDlSLPWWS9NZh1dXfmexQ9sTp7Qbp8+MWi2C3lNNOLnN9bGw==
+X-Received: by 2002:a17:902:e2d4:: with SMTP id l20mr1827484plc.36.1643638333053;
+        Mon, 31 Jan 2022 06:12:13 -0800 (PST)
+Received: from localhost.localdomain ([124.253.246.115])
+        by smtp.googlemail.com with ESMTPSA id g12sm18101682pfm.119.2022.01.31.06.12.09
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 31 Jan 2022 06:12:12 -0800 (PST)
+From:   Puranjay Mohan <puranjay12@gmail.com>
+X-Google-Original-From: Puranjay Mohan <p-mohan@ti.com>
+To:     kishon@ti.com, vigneshr@ti.com, s-anna@ti.com,
+        bjorn.andersson@linaro.org, mathieu.poirier@linaro.org,
+        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Puranjay Mohan <p-mohan@ti.com>
+Subject: [PATCH 0/2] remoteproc sysfs fixes/improvements
+Date:   Mon, 31 Jan 2022 19:41:50 +0530
+Message-Id: <1643638312-3912-1-git-send-email-p-mohan@ti.com>
+X-Mailer: git-send-email 2.7.4
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-From: Randy Dunlap <rdunlap@infradead.org>
+This is a refresh of the patches from an old series [1].
+Patch 1 of that series is not required now as [2] serves its purpose.
+Patch 2 has been improved and is being posted here.
+Patch 3 is unchanged, it has been rebased and posted.
 
-[ Upstream commit eee412e968f7b950564880bc6a7a9f00f49034da ]
+The features being introduced here will be needed by the recently posted PRU
+remoteproc driver [3] in addition to the existing Wkup M3 remoteproc driver.
+Both of these drivers follow a client-driven boot methodology, with the latter
+strictly booted by another driver in kernel. The PRU remoteproc driver will be
+supporting both in-kernel clients as well as control from userspace orthogonally.
+The logic though is applicable and useful to any remoteproc driver not using
+'auto-boot' and using an external driver/application to boot the remoteproc.
 
-When CONFIG_QCOM_AOSS_QMP=m and CONFIG_QCOM_Q6V5_MSS=y, the builtin
-driver cannot call into the loadable module's low-level service
-functions. Trying to build with that config combo causes linker errors.
+[1] https://patchwork.kernel.org/project/linux-remoteproc/cover/20201121030156.22857-1-s-anna@ti.com/
+[2] https://patchwork.kernel.org/project/linux-remoteproc/patch/20201126210642.897302-4-mathieu.poirier@linaro.org/
+[3] https://patchwork.kernel.org/project/linux-remoteproc/cover/20201119140850.12268-1-grzegorz.jaszczyk@linaro.org/
 
-There are two problems here. First, drivers/remoteproc/qcom_q6v5.c
-should #include <linux/soc/qcom/qcom_aoss.h> for the definitions of
-the service functions, depending on whether CONFIG_QCOM_AOSS_QMP is
-set/enabled or not. Second, the qcom remoteproc drivers should depend
-on QCOM_AOSS_QMP iff it is enabled (=y or =m) so that the qcom
-remoteproc drivers can be built properly.
+Puranjay Mohan (1):
+  remoteproc: Introduce deny_sysfs_ops flag
 
-This prevents these build errors:
+Suman Anna (1):
+  remoteproc: wkup_m3: Set deny_sysfs_ops flag
 
-aarch64-linux-ld: drivers/remoteproc/qcom_q6v5.o: in function `q6v5_load_state_toggle':
-qcom_q6v5.c:(.text+0xc4): undefined reference to `qmp_send'
-aarch64-linux-ld: drivers/remoteproc/qcom_q6v5.o: in function `qcom_q6v5_deinit':
-(.text+0x2e4): undefined reference to `qmp_put'
-aarch64-linux-ld: drivers/remoteproc/qcom_q6v5.o: in function `qcom_q6v5_init':
-(.text+0x778): undefined reference to `qmp_get'
-aarch64-linux-ld: (.text+0x7d8): undefined reference to `qmp_put'
+ drivers/remoteproc/remoteproc_sysfs.c | 18 +++++++++++++++++-
+ drivers/remoteproc/wkup_m3_rproc.c    |  1 +
+ include/linux/remoteproc.h            |  2 ++
+ 3 files changed, 20 insertions(+), 1 deletion(-)
 
-Fixes: c1fe10d238c0 ("remoteproc: qcom: q6v5: Use qmp_send to update co-processor load state")
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-Reported-by: kernel test robot <lkp@intel.com>
-Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: linux-remoteproc@vger.kernel.org
-Cc: Sibi Sankar <sibis@codeaurora.org>
-Cc: Stephen Boyd <swboyd@chromium.org>
-Reviewed-by: Stephen Boyd <swboyd@chromium.org>
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-Link: https://lore.kernel.org/r/20220115011338.2973-1-rdunlap@infradead.org
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/remoteproc/Kconfig     | 4 ++++
- drivers/remoteproc/qcom_q6v5.c | 1 +
- 2 files changed, 5 insertions(+)
-
-diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
-index f2e961f998ca2..341156e2a29b9 100644
---- a/drivers/remoteproc/Kconfig
-+++ b/drivers/remoteproc/Kconfig
-@@ -180,6 +180,7 @@ config QCOM_Q6V5_ADSP
- 	depends on RPMSG_QCOM_GLINK_SMEM || RPMSG_QCOM_GLINK_SMEM=n
- 	depends on QCOM_SYSMON || QCOM_SYSMON=n
- 	depends on RPMSG_QCOM_GLINK || RPMSG_QCOM_GLINK=n
-+	depends on QCOM_AOSS_QMP || QCOM_AOSS_QMP=n
- 	select MFD_SYSCON
- 	select QCOM_PIL_INFO
- 	select QCOM_MDT_LOADER
-@@ -199,6 +200,7 @@ config QCOM_Q6V5_MSS
- 	depends on RPMSG_QCOM_GLINK_SMEM || RPMSG_QCOM_GLINK_SMEM=n
- 	depends on QCOM_SYSMON || QCOM_SYSMON=n
- 	depends on RPMSG_QCOM_GLINK || RPMSG_QCOM_GLINK=n
-+	depends on QCOM_AOSS_QMP || QCOM_AOSS_QMP=n
- 	select MFD_SYSCON
- 	select QCOM_MDT_LOADER
- 	select QCOM_PIL_INFO
-@@ -218,6 +220,7 @@ config QCOM_Q6V5_PAS
- 	depends on RPMSG_QCOM_GLINK_SMEM || RPMSG_QCOM_GLINK_SMEM=n
- 	depends on QCOM_SYSMON || QCOM_SYSMON=n
- 	depends on RPMSG_QCOM_GLINK || RPMSG_QCOM_GLINK=n
-+	depends on QCOM_AOSS_QMP || QCOM_AOSS_QMP=n
- 	select MFD_SYSCON
- 	select QCOM_PIL_INFO
- 	select QCOM_MDT_LOADER
-@@ -239,6 +242,7 @@ config QCOM_Q6V5_WCSS
- 	depends on RPMSG_QCOM_GLINK_SMEM || RPMSG_QCOM_GLINK_SMEM=n
- 	depends on QCOM_SYSMON || QCOM_SYSMON=n
- 	depends on RPMSG_QCOM_GLINK || RPMSG_QCOM_GLINK=n
-+	depends on QCOM_AOSS_QMP || QCOM_AOSS_QMP=n
- 	select MFD_SYSCON
- 	select QCOM_MDT_LOADER
- 	select QCOM_PIL_INFO
-diff --git a/drivers/remoteproc/qcom_q6v5.c b/drivers/remoteproc/qcom_q6v5.c
-index eada7e34f3af5..442a388f81028 100644
---- a/drivers/remoteproc/qcom_q6v5.c
-+++ b/drivers/remoteproc/qcom_q6v5.c
-@@ -10,6 +10,7 @@
- #include <linux/platform_device.h>
- #include <linux/interrupt.h>
- #include <linux/module.h>
-+#include <linux/soc/qcom/qcom_aoss.h>
- #include <linux/soc/qcom/smem.h>
- #include <linux/soc/qcom/smem_state.h>
- #include <linux/remoteproc.h>
 -- 
-2.34.1
-
-
+2.24.3
 
