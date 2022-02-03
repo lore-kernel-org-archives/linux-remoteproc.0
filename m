@@ -2,121 +2,118 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A1CDC433F5
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  3 Feb 2022 15:11:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0F78C433EF
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  3 Feb 2022 17:35:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1351675AbiBCPLy (ORCPT
+        id S233617AbiBCRfR (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 3 Feb 2022 10:11:54 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39148 "EHLO
+        Thu, 3 Feb 2022 12:35:17 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44840 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1351664AbiBCPLx (ORCPT
+        with ESMTP id S240791AbiBCRfP (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 3 Feb 2022 10:11:53 -0500
-Received: from mail-lj1-x22b.google.com (mail-lj1-x22b.google.com [IPv6:2a00:1450:4864:20::22b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B986C061714
-        for <linux-remoteproc@vger.kernel.org>; Thu,  3 Feb 2022 07:11:53 -0800 (PST)
-Received: by mail-lj1-x22b.google.com with SMTP id z20so4351028ljo.6
-        for <linux-remoteproc@vger.kernel.org>; Thu, 03 Feb 2022 07:11:53 -0800 (PST)
+        Thu, 3 Feb 2022 12:35:15 -0500
+Received: from mail-pj1-x1034.google.com (mail-pj1-x1034.google.com [IPv6:2607:f8b0:4864:20::1034])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B2B64C06173B
+        for <linux-remoteproc@vger.kernel.org>; Thu,  3 Feb 2022 09:35:15 -0800 (PST)
+Received: by mail-pj1-x1034.google.com with SMTP id y5-20020a17090aca8500b001b8127e3d3aso3684687pjt.3
+        for <linux-remoteproc@vger.kernel.org>; Thu, 03 Feb 2022 09:35:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=3jMVdLq4GUgaO11QIrhwxdJoHRT+QLBq0pbEQojhKq0=;
-        b=yBtLoSKKnxfDFFCJ1uAqPhrLMlkfhCUoGJsVXM3egqDv6ZcDmKkENXOJpRv439vJt3
-         Xk9nYXrCgwnnn5PDmG3kafuyOp0g7lKYxaX3en2GmfzreuW3QbNFmpfTD8dxhBQiQ4rY
-         t0X+cCCyDr1p9jKEaobfj/j8Q/tkrocN+5EME1pu3w2Zx5Hk4MI2C1yk3/1HEHcCQrQf
-         lsO3cJZq2wIRx7zOAF+9G/dT9X2svsrBIx1f3/jSQDOxozyV/m+ZQGVsMkJ8v5WBxi9Q
-         119Ndf8PZZlqCl9fw5H/1wd9YS0qn/Eb2uCfqER0+mc7SIOfrlSzWUc+V+RVWQNgXlJQ
-         ONkw==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=9e0oxCku0Awg8Sfq6RwVv/SH5AvdTEcLXDJ8KHAWSBI=;
+        b=taFBh+thCKl5Jv/LEOX1LgoAt1cWwIlDf2gcDD57Hl8dOAegKbyMp4wwejfdITEY6n
+         aRhE9cCKXTHjAjDxE2ms/2VVej2/Z3Nal7SC6V0aVlyjoQRfTYQkTWolE3o94pJppD33
+         4DIBpeM8/8m4dD9OyiuPIyS6tXloCSJrPvkvcbaffucKQ+ullmkKYeCdT8k5yzOM4Cef
+         OU2QLpM8gynxD27x9GvTAXlQOaqufYtIfqGAKfaeZiBmPYYJuWLWjapuJ9f8ozDMgYE+
+         5LjhCpz2B84WMwZ/W4+EcqCMDKr6kqpVgf3UUpvNfbrOKc9ncVSuX7Pds/rggeqYYwdW
+         PQ3g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=3jMVdLq4GUgaO11QIrhwxdJoHRT+QLBq0pbEQojhKq0=;
-        b=anSbiEVWjDcPZINYNrWzKu4LfkQ12GTIr3zy4/EBEstatuGKxz98N5qoncYVSfuJfR
-         d8/2Ob0oOOw+U8Tj48JQ3MoiR0gFKmJdq+fQnEmbjPPrcbL3dZpXeBY89q3b4FRpex4C
-         TS+R4q1JbNSlDwiU1TgotwcyD7k3taZgEDfvrI9LDhspg9IBQDk5Z9fXDd5/K8dcnsKu
-         cGLROvdugPX8JWgmsAPhXz+5ikcd4IRB2qd1C1iMn99Zobq8n4lJAqNEtqzbdK3d1neG
-         Grex8aZ1lspOzbK+TnW7CUG7cHeJNqCvh/bamQsiRNlUrQ9V4CcrjUrf50GuYHbdSaCp
-         eS/g==
-X-Gm-Message-State: AOAM533CBuuBRApYXqw8U29EFFXI9oH92G1iIxL2MJ8ApYcxKVR4PWXE
-        GW66zeZ4qVmeFYfea9FX9dcWBg==
-X-Google-Smtp-Source: ABdhPJw959nrqfUUznQbhLkjORxKYctwuauk03xdZdKbIrZXciEfJG0xtHiwGtCM7fhQ8sMrIDXP5A==
-X-Received: by 2002:a2e:8689:: with SMTP id l9mr23500865lji.417.1643901111338;
-        Thu, 03 Feb 2022 07:11:51 -0800 (PST)
-Received: from [192.168.1.211] ([37.153.55.125])
-        by smtp.gmail.com with ESMTPSA id w35sm5108834lfu.273.2022.02.03.07.11.50
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 03 Feb 2022 07:11:50 -0800 (PST)
-Message-ID: <8ee1cea3-00f3-7a9c-dbd9-aaf8160db006@linaro.org>
-Date:   Thu, 3 Feb 2022 18:11:49 +0300
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=9e0oxCku0Awg8Sfq6RwVv/SH5AvdTEcLXDJ8KHAWSBI=;
+        b=kOYWvULbXgxisuES8E9xFjkn3wWvq9HG3UE2UrT1FXzhPRKRfaDiJhQqLGaPwcvx/r
+         OFzHvqiZ3h4vTSvQGjGWmTdNGKnVgNcV1juMz9aKDiqp+kZ5bcP94txK1yjem7gEqzyS
+         /NOp+blwtzyFsNVjtNVhB9qi3MUtUb/6lhZBX6kOE5XVQ+zJqltrFcPrd9Vwrm+FjLtc
+         AqnpezWOjBEr/wcJaiPEI+PqRJG4HkJhPijHGsZvldP/ouYcnjstQB/elDAHRClbcvnm
+         MABvuI272WCRmU9umOeZEPNKK1bOOYsYJrh88Ay7A30Jtln3oU+X8YE0/OeiFaafzwl3
+         KVMg==
+X-Gm-Message-State: AOAM533YFljzHjPQ7vHEWnq4lV/FzWG1MElo/jI6psC5usu/mg8MxfjU
+        2X2tWV5P5RO17IGzCU4LGRjHrCcq+C8Lew==
+X-Google-Smtp-Source: ABdhPJzVjXtIyaIqU4Iftz/N5PHRDNQvMN/XP/gzP+j0ZLSMhFFIngn16sdHfs8mtnP17sR4rnss+w==
+X-Received: by 2002:a17:903:22d1:: with SMTP id y17mr36826313plg.107.1643909715150;
+        Thu, 03 Feb 2022 09:35:15 -0800 (PST)
+Received: from p14s (S0106889e681aac74.cg.shawcable.net. [68.147.0.187])
+        by smtp.gmail.com with ESMTPSA id me4sm11085727pjb.26.2022.02.03.09.35.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 03 Feb 2022 09:35:13 -0800 (PST)
+Date:   Thu, 3 Feb 2022 10:35:10 -0700
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+To:     Deepak Kumar Singh <quic_deesin@quicinc.com>
+Cc:     bjorn.andersson@linaro.org, swboyd@chromium.org,
+        quic_clew@quicinc.com, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        Ohad Ben-Cohen <ohad@wizery.com>
+Subject: Re: [PATCH V1 1/3] rpmsg: glink: Free device context only when cdev
+ not in use
+Message-ID: <20220203173510.GA2982815@p14s>
+References: <1643223886-28170-1-git-send-email-quic_deesin@quicinc.com>
+ <1643223886-28170-2-git-send-email-quic_deesin@quicinc.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.0
-Subject: Re: [PATCH 00/13] soc: qcom: mdt_loader: Support Qualcomm SM8450
-Content-Language: en-GB
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc:     Rob Herring <robh+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20220128025513.97188-1-bjorn.andersson@linaro.org>
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-In-Reply-To: <20220128025513.97188-1-bjorn.andersson@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1643223886-28170-2-git-send-email-quic_deesin@quicinc.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On 28/01/2022 05:55, Bjorn Andersson wrote:
-> The Qualcomm SM8450 platform comes with both some smaller changes in the
-> firmware packaging and a new requirement to hold onto the metadata buffer until
-> PAS auth_and_reset has been completed.
+Hi Deepak,
+
+On Thu, Jan 27, 2022 at 12:34:44AM +0530, Deepak Kumar Singh wrote:
+> Struct device holding cdev should not be freed unless cdev
+> is not in use. It is possible that user space has opened
+> char device while kernel has freed the associated struct
+> device context.
 > 
-> Extend the PAS api and rework the mdt_loader to meet these new requirements,
-> then wire this up with the PAS remoteproc driver and finally add the SM8450
-> remoteproc instances.
+> Mark dev kobj as parent of cdev, so that chardev_add gets
+> an extra reference to dev. This ensures device context is not
+> freed until cdev is is not in uses.
+> ---
+>  drivers/rpmsg/rpmsg_char.c | 2 ++
+>  1 file changed, 2 insertions(+)
 > 
-> Bjorn Andersson (13):
->    firmware: qcom: scm: Introduce pas_metadata context
->    soc: qcom: mdt_loader: Split out split-file-loader
->    soc: qcom: mdt_loader: Allow hash segment to be split out
->    soc: qcom: mdt_loader: Allow hash to reside in any segment
->    soc: qcom: mdt_loader: Extend check for split firmware
->    soc: qcom: mdt_loader: Reorder parts of __qcom_mdt_load()
->    soc: qcom: mdt_loader: Always invoke PAS mem_setup
->    soc: qcom: mdt_loader: Extract PAS operations
->    remoteproc: qcom: pas: Carry PAS metadata context
->    dt-bindings: remoteproc: qcom: pas: Add SM8450 PAS compatibles
->    remoteproc: qcom: pas: Add SM8450 remoteproc support
->    arm64: dts: qcom: sm8450: Add remoteproc enablers and instances
->    arm64: dts: qcom: sm8450-qrd: Enable remoteproc instances
+> diff --git a/drivers/rpmsg/rpmsg_char.c b/drivers/rpmsg/rpmsg_char.c
+> index c03a118..72ee101 100644
+> --- a/drivers/rpmsg/rpmsg_char.c
+> +++ b/drivers/rpmsg/rpmsg_char.c
+> @@ -417,6 +417,7 @@ static int rpmsg_eptdev_create(struct rpmsg_ctrldev *ctrldev,
+>  	dev->id = ret;
+>  	dev_set_name(dev, "rpmsg%d", ret);
+>  
+> +	cdev_set_parent(&eptdev->cdev, &dev->kobj);
+>  	ret = cdev_add(&eptdev->cdev, dev->devt, 1);
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+This issue should have been fixed when cdev_add() was replaced by
+cdev_device_add(), something you will find on v5.17-rc2.
 
-Minor nitpicks:
-  - I'd reorder the series by moving patch 1 (pas_metadata) closer to 
-patch 8&9 (pas metadata usage)
-  - I would have added pas_metadata as an argument to qcom_mdt_load(). 
-However I see, why you didn't want to add another argument to the list.
+Also, this set is generating checkpatch warnings and as such I will not review
+the other patches in it. 
 
+Thanks,
+Mathieu
+
+>  	if (ret)
+>  		goto free_ept_ida;
+> @@ -533,6 +534,7 @@ static int rpmsg_chrdev_probe(struct rpmsg_device *rpdev)
+>  	dev->id = ret;
+>  	dev_set_name(&ctrldev->dev, "rpmsg_ctrl%d", ret);
+>  
+> +	cdev_set_parent(&ctrldev->cdev, &dev->kobj);
+>  	ret = cdev_add(&ctrldev->cdev, dev->devt, 1);
+>  	if (ret)
+>  		goto free_ctrl_ida;
+> -- 
+> 2.7.4
 > 
->   .../bindings/remoteproc/qcom,adsp.yaml        |  16 +
->   arch/arm64/boot/dts/qcom/sm8450-qrd.dts       |  20 ++
->   arch/arm64/boot/dts/qcom/sm8450.dtsi          | 297 ++++++++++++++++++
->   drivers/firmware/qcom_scm.c                   |  39 ++-
->   drivers/remoteproc/qcom_q6v5_mss.c            |   7 +-
->   drivers/remoteproc/qcom_q6v5_pas.c            |  36 ++-
->   drivers/soc/qcom/mdt_loader.c                 | 232 +++++++++-----
->   include/linux/qcom_scm.h                      |  10 +-
->   include/linux/soc/qcom/mdt_loader.h           |  17 +-
->   9 files changed, 579 insertions(+), 95 deletions(-)
-> 
-
-
--- 
-With best wishes
-Dmitry
