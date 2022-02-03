@@ -2,180 +2,199 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D2E0C433F5
-	for <linux-remoteproc@archiver.kernel.org>; Wed,  2 Feb 2022 17:53:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A181C433F5
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  3 Feb 2022 05:27:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239722AbiBBRxc (ORCPT
+        id S236565AbiBCF13 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 2 Feb 2022 12:53:32 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32964 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237224AbiBBRxc (ORCPT
+        Thu, 3 Feb 2022 00:27:29 -0500
+Received: from esa.hc3962-90.iphmx.com ([216.71.140.77]:17356 "EHLO
+        esa.hc3962-90.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229872AbiBCF13 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 2 Feb 2022 12:53:32 -0500
-Received: from mail-ed1-x536.google.com (mail-ed1-x536.google.com [IPv6:2a00:1450:4864:20::536])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B5782C06173B
-        for <linux-remoteproc@vger.kernel.org>; Wed,  2 Feb 2022 09:53:31 -0800 (PST)
-Received: by mail-ed1-x536.google.com with SMTP id m11so193743edi.13
-        for <linux-remoteproc@vger.kernel.org>; Wed, 02 Feb 2022 09:53:31 -0800 (PST)
+        Thu, 3 Feb 2022 00:27:29 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=4UCJ1jUJ4zsq4RQrX6k+nXy4mHY8saVQioi5/XKVhkU=;
-        b=LLr8ELYvbwUDr+aWKlSrG7aUEVXyzH50uh6oKTFF7ifbs0kTp+dePMb7OIOs/lJCtT
-         qaJ8Z+yD1zBb3jPMgX+hcXZn8jnlqb+ScSFNJo0JtmS9p6QniJMseacEDgSDBtBsKBOU
-         ZWAbLXI5JASZmkTiW0hegjZXUDbom39pQhwENiJcJAYXfMFJnASas543LR60wciqH+9t
-         KobLEDbuFSmwRUoucGbr3iNZgHslL2pv1YGuXfqU3aUmB8ZtAG/av0CWvJzxEdGyFJng
-         nefKqmCJBXsKClb/eskETv9fJXR90QdKQcDMyV0Dau4hVNITUOA4BtMNF9NCaZlxSzai
-         jh4w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=4UCJ1jUJ4zsq4RQrX6k+nXy4mHY8saVQioi5/XKVhkU=;
-        b=GRNAvQGdN17891VHadAbf9gEKDlkK922SHJ3DPPwKDGteE+eMuuOHwxY8IUP2J/Btu
-         YMUteM9vxvkqjhQjdC/NTOsR1H4X9wpZwtmYC7f3PYTRxH6eaxbuSapgWaq2I8dPk4X8
-         q8H4KuCDhdHdCEYRMQ+6bj+Mdh+x2/f554OWueRHeTDOYNaTeg5KJP33Y6xxyH93eALu
-         Avdkfo1VCM7Ba40ln/hniwhN+eSCxnUoTIwBYXU3UlHtzekxgnhZH0JaguAF3SLrlmNj
-         vUmbEmfeATfsWtIHx2DoIbYHphsRDvo5KtSektWMVHxE7N5UVvdvmVmQHfuy66RJi7p8
-         knbQ==
-X-Gm-Message-State: AOAM531JR0czJ5B5RGMpOgmad9Y3+tFCmgvk9Rp505KQnavhQneesF2N
-        k3EHjkoN6PqfYKv6B6ocmGz1QbGVrRZmjXIC8OEFCw==
-X-Google-Smtp-Source: ABdhPJzPLQuBlKBdAk3DgJxcL7/Vai1iSQbErpTS/hjbkdjk5vyySChn7iBuszxnIeVrklMcRWdQdnaOS2CYaap+n8M=
-X-Received: by 2002:a05:6402:1c95:: with SMTP id cy21mr31387969edb.170.1643824410275;
- Wed, 02 Feb 2022 09:53:30 -0800 (PST)
+  d=quicinc.com; i=@quicinc.com; q=dns/txt; s=qccesdkim1;
+  t=1643866048; x=1644470848;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=cSivUgOGkPW/7zxHDc3Qegezmq2wyGIPBp2pWGRefzI=;
+  b=HmKUNkTlissZICHMz5stUdgaFjb9U2Iv67h73qABxw/wsnyKgbFnErqx
+   ybuX3ILGNTXnGB6II89O7CUt4hgxjZUhC4ReXuSbsejwXbeNZRsfGjd1F
+   SdzWkcvTe6nXrJsZ1jfocxPD/kmdF5dYjpME1/+YuWS5I8iehRRrGy25R
+   U=;
+Received: from mail-mw2nam10lp2105.outbound.protection.outlook.com (HELO NAM10-MW2-obe.outbound.protection.outlook.com) ([104.47.55.105])
+  by ob1.hc3962-90.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Feb 2022 05:27:26 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=ZEYF0LWXoX4y2nox38UDOQm42a1IjqzPBC3i8wz9e/rVBM+/+06xf8xed9QiemEXa0bfwmMwz1ohB6f7WGCVMCi56CCc4YpVhw26DBQNZsR11qeSqQwEVl1BpSJfTwj/TNQuz0kMGXRiiW2JshgGDf5zNy/JYvFKx4HoQTZ9Kulv5Ay8ed1kbBwcGUpcvMHOt4H3t9XvFbduMzebLDf1cm0g/6Ds6xFat/ZWO5KBOWMvJ+WA8BtaOHtUsEXleGxIDF/3KkWAiz9Pzz3YbOubPp+PPIGEkqtcTGgsynI2FmkWr1P9QJTQ4A0HMdytS7+DoFQGeM9vJk4qxi/1aHpVoQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=cSivUgOGkPW/7zxHDc3Qegezmq2wyGIPBp2pWGRefzI=;
+ b=ByI+7wMss+W9HfDfySpKvdsLxWpkQwqZo4RLJe8HfIKzXl73Zn4wub88xm+leANNWSYrymz0M+3NZzdYcJIlHFWv6BQyqTkgHFhJhXFpzm9LiknU6PYjylVJWTT8ig4sljGLA5gwRw5cTGORNl2df6H/bBBaBIIrNHwM2oRwbCJqe+DrGLJFK70mVR3zCPxqANaTqkYwZdlHiKSQpCx6W6oPHOjmeY2h7Elhfxn3mJmQIQ9G9pguICCmTLSvrRJMVW5SOz7kPuJuaJ3QtobjkGLXALpUd7UCxo5J80w04AvWhChyLZWgjjJb9z6CUdNNJcan0gFqr/you7gILcphLQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+Received: from CO1PR02MB8853.namprd02.prod.outlook.com (2603:10b6:303:162::24)
+ by SN6PR02MB4814.namprd02.prod.outlook.com (2603:10b6:805:90::23) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4951.11; Thu, 3 Feb
+ 2022 05:27:24 +0000
+Received: from CO1PR02MB8853.namprd02.prod.outlook.com
+ ([fe80::a998:9c96:df98:4ada]) by CO1PR02MB8853.namprd02.prod.outlook.com
+ ([fe80::a998:9c96:df98:4ada%9]) with mapi id 15.20.4951.012; Thu, 3 Feb 2022
+ 05:27:24 +0000
+From:   "Manikanta Pubbisetty (QUIC)" <quic_mpubbise@quicinc.com>
+To:     "Manikanta Pubbisetty (QUIC)" <quic_mpubbise@quicinc.com>,
+        "agross@kernel.org" <agross@kernel.org>,
+        "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "ohad@wizery.com" <ohad@wizery.com>,
+        "mathieu.poirier@linaro.org" <mathieu.poirier@linaro.org>,
+        "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>
+CC:     "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
+        "swboyd@chromium.org" <swboyd@chromium.org>,
+        "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Sibi Sankar (QUIC)" <quic_sibis@quicinc.com>,
+        "kuabhs@chromium.org" <kuabhs@chromium.org>,
+        "Rakesh Pillai (QUIC)" <quic_pillair@quicinc.com>
+Subject: RE: [PATCH v10 0/3] Add support for sc7280 WPSS PIL loading
+Thread-Topic: [PATCH v10 0/3] Add support for sc7280 WPSS PIL loading
+Thread-Index: AQHYF1nX15IDnaDjA06a8NOpDR2LWayBTrlg
+Date:   Thu, 3 Feb 2022 05:27:23 +0000
+Message-ID: <CO1PR02MB885393107EC4D176861041D9E5289@CO1PR02MB8853.namprd02.prod.outlook.com>
+References: <1643712724-12436-1-git-send-email-quic_mpubbise@quicinc.com>
+In-Reply-To: <1643712724-12436-1-git-send-email-quic_mpubbise@quicinc.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=quicinc.com;
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 858962ad-5f6a-443a-cef4-08d9e6d5dbde
+x-ms-traffictypediagnostic: SN6PR02MB4814:EE_
+x-ld-processed: 98e9ba89-e1a1-4e38-9007-8bdabc25de1d,ExtAddr
+x-microsoft-antispam-prvs: <SN6PR02MB48149877B65A2D1E430407CE99289@SN6PR02MB4814.namprd02.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:9508;
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: FifxPJNULJzxUNZJqxwj+mr6uDgbBcdi3lqj9YalSaczL4TXJ8qwPpL4MW2EpcJKfp3K/xIRJLzTBkt46lNXEi1wp78/T0FCqzZOOYUIa1RdjtAJabJDcfVSr1j+fVvaHm3AV4fynJ4GgqRMo+B9JTuITpqDHCCawGrCpZqCL3zgukbeVTxE71wPnG6rtShxgIIHG9+97gceRkqjsUQeqCoWTiJPNO9tg3nKuHKM2fXyMffUD5hMFDBPYJdZ65IwHWaZOi65EQ5EWavvQ/rdFHsYt4CTM1GTFlt7bn3PZcI2UyQuiaMg6iFW3wOBGpEVniqq7CJwQz5EcPNA34I5w9q8S2UBxCGqtX78zZSlsM2402aaFJh3fswRqFn2nSidTzROy0bbhWG7Ld3g+9f0I1eALjwTPiYLPdKhIV/7bp/kPTCCMlIbaiLUSH5TMoszkEt83+DSBqFbdc2hbkRm7uiD/weZOMDF5wx9Xlq6ku6KVu8PrRUIvRr4WtvETFwTciIzhYuBZtzgMWwefkWAtoIbD/wUgPtBFFPJcSRR8i08AvK1tdD3/iA9On64hZ57fTbmUbMPzxmhby5SFX1Vm6nikCW6pDqXSeBSvFwVVrJvOAMPtqG9q624f4ON4ujKgpOKB2Xv7ph2MoXFeg+Rty8/6AWH4uygOsB0B13fGdH1bEF2sLxNpGNQUcnYKmokwWVd8SHb+jhErDH2LHE+jg==
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO1PR02MB8853.namprd02.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(4636009)(366004)(26005)(4326008)(8676002)(66476007)(2906002)(107886003)(8936002)(33656002)(66556008)(53546011)(7696005)(83380400001)(66446008)(186003)(64756008)(66946007)(5660300002)(71200400001)(6506007)(52536014)(76116006)(9686003)(122000001)(38070700005)(38100700002)(508600001)(86362001)(316002)(55016003)(54906003)(110136005)(7416002);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?rb+bSvfmpEx4FJnUErfQ2EWqCbKAtvFJCda83UqYqF1DPYbly59B9cuNF7FP?=
+ =?us-ascii?Q?GEi9L2WJzGiqjF78Dw71ae9vm8GgRmaN+INKwMOBt/lcXL5+1yMkwkIVqe4n?=
+ =?us-ascii?Q?ly3YwdvI6khn1OV4h/zcRw7UZgIZfH5Dh9LRDhcKpVHPsxtOexwCKEruaC1t?=
+ =?us-ascii?Q?LfdMRnyacwxS9MFL9LoI5mRXkT86xRbx8ud+CPrGdT5uxOeQGt4UWGzXBMsq?=
+ =?us-ascii?Q?qKd79EmWPhKkC5Ny6hmV3i3WUg2g0n/rbTdKdyZHgdMuJByj+klJ4GC4E2xR?=
+ =?us-ascii?Q?mABHIZFWtwa3g6LsKKe3xfAiYf9ZAPPQj2wrUh3eGleLByI4dwrrvjClCjm+?=
+ =?us-ascii?Q?yV4hF/PH6uZWijuDFlmRkYkfUxge3mwVCJeUeOWGT7CGesM6Wpt14uIC19PX?=
+ =?us-ascii?Q?0qJo3YKCR2TBjF//VSqTrB3uXC88RaHpRVjbeeV9bpTnonD18gHEm6tg+qB6?=
+ =?us-ascii?Q?73AeZ/zHL+pdBoiEdbi8FVugdYYjUSkMbMRXWxLSgoKhOrWmgj79R4/gqIxT?=
+ =?us-ascii?Q?dbOAx1m1XkzMXWlKCkCx5tCnvXWK3xEgJFoIhLyeo3c47J9GvKn52XijMiuf?=
+ =?us-ascii?Q?SsNB1hEfI46E/GWmjzbfybO81jrlkIR5CrPCL+NlAi/AB4Ud+YI9bK2VowSb?=
+ =?us-ascii?Q?LMzYylrKF+KtDPbEQBJk/IOQ7cxphupdR5AhrB7rwoARtCx8BRlSyeMxjEwF?=
+ =?us-ascii?Q?EMLMF6MB08yEDphcBad1yRSmatBF5Bs2sYPsFoKN/dFN3u2dBqlnKPa5eUoX?=
+ =?us-ascii?Q?9347G/ud9Qb8btlkI0J2YgDiMNWCKZbskYro9Fjqin91kOLLxqk1CUXTg7N+?=
+ =?us-ascii?Q?K4ojH7D4LDjdEyZJrA/JQbm0tFhtu9Nt3W7LF9pcgL2huIB8Y1oaaJO92Fzp?=
+ =?us-ascii?Q?XqywERq+KuuQ6jegPmMfzkQV5xcVglIAB3OKYHi9qzlPPBTW2h/vEFPvfQI0?=
+ =?us-ascii?Q?jiWDeo9P1HPmS48sp/pmFoRKFx7hrDR7N4ijT54Pxx7NyMXG3bJHt6sElA5/?=
+ =?us-ascii?Q?It68fpyt8WNMUuQPpHAFn84XwxufxM1SIjFDXYiaaTFRR/yujDdmmJGT/N6C?=
+ =?us-ascii?Q?7DZKbsLFDGSV1lTAD1PXCwe4R1jbnfmH2s/wGmLHdlXBUA+7Css7atw4fE9E?=
+ =?us-ascii?Q?yP08XWZw3Gr+dp9eANDjDSgKqNJWPUq6WGCcvC1X8ePOb7khjK2+MKLr5vi8?=
+ =?us-ascii?Q?t4dBraS3nYytcssIJZQEODbSMeSfh/Uiljy+0/w6RfKsl+yfr7MVXlmeDlJv?=
+ =?us-ascii?Q?Wck2HlyNy9kB2H8hGpY8v3pw6+Hvm03Q52Go3RraHIu7DfhqaLPLxsjGQZhb?=
+ =?us-ascii?Q?aZZ/PxkfYNa6q6x/cP0ZUydwvKuAy2v52vIJNuGZkQmck6WjSU4DVp7VTNY2?=
+ =?us-ascii?Q?EbHAf8Avmu7vN9D5sHGTEcgozBglswu8uI1DJVC124FxKIjnK3Bj8YW6BPpi?=
+ =?us-ascii?Q?Xoi7DcD6afxnySMrOjGXLYGkUa9L0KAWYxyk1LKzEBX79NJR92FVCm/bo+Dt?=
+ =?us-ascii?Q?KpPO28qsKR72MTCPaGem6ngX8KJRXD/QucZmBBlrbC+0oq43QUN1G6FrShif?=
+ =?us-ascii?Q?zN9uN/PVzgILY5Kc/03t1R8KMRg3k2gD3X9WkpQBT0kc6JXMd4RpbqpPJ9Bj?=
+ =?us-ascii?Q?a0Ps5ORlRyk1zCiA2PJpiNErVV7zSvbQEt+o0ciWjFrrWZ/QvyYvARVyCeMf?=
+ =?us-ascii?Q?WVn7Kg=3D=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-References: <20220124120915.41292-1-angelogioacchino.delregno@collabora.com>
- <20220124120915.41292-3-angelogioacchino.delregno@collabora.com>
- <20220201183612.GC2490199@p14s> <91fff43a-c85d-2934-b54b-67ffe6fc2f29@collabora.com>
-In-Reply-To: <91fff43a-c85d-2934-b54b-67ffe6fc2f29@collabora.com>
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-Date:   Wed, 2 Feb 2022 10:53:17 -0700
-Message-ID: <CANLsYkyWqKw9-QGO6oRLsk7=Gp2gU1bpHUzJWxCpVmx7Smhkcg@mail.gmail.com>
-Subject: Re: [PATCH 3/3] remoteproc: mtk_scp: Use dev_err_probe() where possible
-To:     AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-Cc:     bjorn.andersson@linaro.org, matthias.bgg@gmail.com,
-        linux-remoteproc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
-        kernel@collabora.com
-Content-Type: text/plain; charset="UTF-8"
+X-OriginatorOrg: quicinc.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: CO1PR02MB8853.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 858962ad-5f6a-443a-cef4-08d9e6d5dbde
+X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Feb 2022 05:27:23.7902
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 98e9ba89-e1a1-4e38-9007-8bdabc25de1d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: DY+clJyqXLCYmy8jpnp5xdZM9i5cGCGxvxdQcSyEbNI/tlRAsRBOZjf9+xHjPxf0w69sm94tKuy1HXFNZS2Em+TQGOw8lTZq0vIearD75P4=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR02MB4814
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Wed, 2 Feb 2022 at 02:03, AngeloGioacchino Del Regno
-<angelogioacchino.delregno@collabora.com> wrote:
->
-> Il 01/02/22 19:36, Mathieu Poirier ha scritto:
-> > Hi Angelo,
-> >
-> > On Mon, Jan 24, 2022 at 01:09:15PM +0100, AngeloGioacchino Del Regno wrote:
-> >> Simplify the probe function, where possible, by using dev_err_probe().
-> >> While at it, as to increase human readability, also remove some
-> >> unnecessary forced void pointer casts that were previously used in
-> >> error checking.
-> >
-> > I am in favour of all 3 patches (please add a cover letter next time) but weary
-> > about testing - do you have access to a Mediatek platform to try this on or
-> > is it purely theoretical?
-> >
-> > I would definitely feel better to see a "Tested-by" tag by someone out there
-> > with access to the HW.
-> >
-> > Thanks,
-> > Mathieu
-> >
->
-> Hello Mathieu,
->
-> I have multiple MediaTek platforms and I always test on all of them before
-> pushing such commits upstream, so, even though this kind of patch is trivial,
-> this is *not* purely theoretical and I confirm that this was successfully tested.
+> -----Original Message-----
+> From: Manikanta Pubbisetty (QUIC) <quic_mpubbise@quicinc.com>
+> Sent: Tuesday, February 1, 2022 4:22 PM
+> To: agross@kernel.org; bjorn.andersson@linaro.org; robh+dt@kernel.org;
+> ohad@wizery.com; mathieu.poirier@linaro.org; p.zabel@pengutronix.de
+> Cc: linux-remoteproc@vger.kernel.org; swboyd@chromium.org; linux-arm-
+> msm@vger.kernel.org; devicetree@vger.kernel.org; linux-
+> kernel@vger.kernel.org; Sibi Sankar (QUIC) <quic_sibis@quicinc.com>;
+> kuabhs@chromium.org; Rakesh Pillai (QUIC) <quic_pillair@quicinc.com>;
+> Manikanta Pubbisetty (QUIC) <quic_mpubbise@quicinc.com>
+> Subject: [PATCH v10 0/3] Add support for sc7280 WPSS PIL loading
+>=20
+> Add support for PIL loading of WPSS co-processor for SC7280 SOCs.
+>=20
+> Changes from v9:
+> - Minor cosmetic changes
+>=20
+> Changes from v8:
+> - Disallow num_proxy_pds to be more than the max allowed
+> - Add "additionalProperties: false" for glink-edge property in wpss dt-bi=
+ndings.
+>=20
+> Changes from v7:
+> - Use "interrupts" instead of "interrupts-extended" in DT bindings.
+> - Add glink-edge properties in DT bindings.
+> - Use size_t for "proxy_pd_count" in wpss remoteproc driver
+>=20
+> Changes from v6:
+> - Fixed the dt-bindings check in qcom,sc7280-wpss-pil.yaml
+> - Fixed CDSP dt-bindings example node (compatible, glink-edge)
+> - Fixed the clock-names used in wpss driver
+> - Add support to get firmware-name from DTSI entry for wpss.
+>=20
+> Changes from v4/v5:
+> - Add yaml conversion for adsp/cdsp dt-bindings
+> - Change clock names in wpss dt-bindings
+> - Correct mistake in signed-off email ID
+>=20
+> Rakesh Pillai (3):
+>   dt-bindings: remoteproc: qcom: adsp: Convert binding to YAML
+>   dt-bindings: remoteproc: qcom: Add SC7280 WPSS support
+>   remoteproc: qcom: q6v5_wpss: Add support for sc7280 WPSS
+>=20
+>  .../bindings/remoteproc/qcom,hexagon-v56.txt       | 140 -------------
+>  .../bindings/remoteproc/qcom,qcs404-cdsp-pil.yaml  | 161 +++++++++++++++
+> .../bindings/remoteproc/qcom,sc7280-wpss-pil.yaml  | 219
+> ++++++++++++++++++++  .../bindings/remoteproc/qcom,sdm845-adsp-pil.yaml
+> | 160 +++++++++++++++
+>  drivers/remoteproc/qcom_q6v5_adsp.c                | 227 +++++++++++++++=
+++++--
+>  5 files changed, 751 insertions(+), 156 deletions(-)  delete mode 100644
+> Documentation/devicetree/bindings/remoteproc/qcom,hexagon-v56.txt
+>  create mode 100644
+> Documentation/devicetree/bindings/remoteproc/qcom,qcs404-cdsp-pil.yaml
+>  create mode 100644
+> Documentation/devicetree/bindings/remoteproc/qcom,sc7280-wpss-pil.yaml
+>  create mode 100644
+> Documentation/devicetree/bindings/remoteproc/qcom,sdm845-adsp-pil.yaml
+>=20
 
- I have applied all 3 patches.
+Hi Bjorn,
+Could you please help review this series and see if any further changes are=
+ required?
 
->
-> Regards,
-> Angelo
->
-> >>
-> >> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-> >> ---
-> >>   drivers/remoteproc/mtk_scp.c | 28 ++++++++++++----------------
-> >>   1 file changed, 12 insertions(+), 16 deletions(-)
-> >>
-> >> diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
-> >> index e40706b0e015..dcddb33e9997 100644
-> >> --- a/drivers/remoteproc/mtk_scp.c
-> >> +++ b/drivers/remoteproc/mtk_scp.c
-> >> @@ -757,10 +757,8 @@ static int scp_probe(struct platform_device *pdev)
-> >>      int ret, i;
-> >>
-> >>      rproc = devm_rproc_alloc(dev, np->name, &scp_ops, fw_name, sizeof(*scp));
-> >> -    if (!rproc) {
-> >> -            dev_err(dev, "unable to allocate remoteproc\n");
-> >> -            return -ENOMEM;
-> >> -    }
-> >> +    if (!rproc)
-> >> +            return dev_err_probe(dev, -ENOMEM, "unable to allocate remoteproc\n");
-> >>
-> >>      scp = (struct mtk_scp *)rproc->priv;
-> >>      scp->rproc = rproc;
-> >> @@ -770,21 +768,20 @@ static int scp_probe(struct platform_device *pdev)
-> >>
-> >>      res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "sram");
-> >>      scp->sram_base = devm_ioremap_resource(dev, res);
-> >> -    if (IS_ERR((__force void *)scp->sram_base)) {
-> >> -            dev_err(dev, "Failed to parse and map sram memory\n");
-> >> -            return PTR_ERR((__force void *)scp->sram_base);
-> >> -    }
-> >> +    if (IS_ERR(scp->sram_base))
-> >> +            return dev_err_probe(dev, PTR_ERR(scp->sram_base),
-> >> +                                 "Failed to parse and map sram memory\n");
-> >> +
-> >>      scp->sram_size = resource_size(res);
-> >>      scp->sram_phys = res->start;
-> >>
-> >>      /* l1tcm is an optional memory region */
-> >>      res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "l1tcm");
-> >>      scp->l1tcm_base = devm_ioremap_resource(dev, res);
-> >> -    if (IS_ERR((__force void *)scp->l1tcm_base)) {
-> >> -            ret = PTR_ERR((__force void *)scp->l1tcm_base);
-> >> +    if (IS_ERR(scp->l1tcm_base)) {
-> >> +            ret = PTR_ERR(scp->l1tcm_base);
-> >>              if (ret != -EINVAL) {
-> >> -                    dev_err(dev, "Failed to map l1tcm memory\n");
-> >> -                    return ret;
-> >> +                    return dev_err_probe(dev, ret, "Failed to map l1tcm memory\n");
-> >>              }
-> >>      } else {
-> >>              scp->l1tcm_size = resource_size(res);
-> >> @@ -792,10 +789,9 @@ static int scp_probe(struct platform_device *pdev)
-> >>      }
-> >>
-> >>      scp->reg_base = devm_platform_ioremap_resource_byname(pdev, "cfg");
-> >> -    if (IS_ERR((__force void *)scp->reg_base)) {
-> >> -            dev_err(dev, "Failed to parse and map cfg memory\n");
-> >> -            return PTR_ERR((__force void *)scp->reg_base);
-> >> -    }
-> >> +    if (IS_ERR(scp->reg_base))
-> >> +            return dev_err_probe(dev, PTR_ERR(scp->reg_base),
-> >> +                                 "Failed to parse and map cfg memory\n");
-> >>
-> >>      ret = scp->data->scp_clk_get(scp);
-> >>      if (ret)
-> >> --
-> >> 2.33.1
-> >>
->
->
-> --
-> AngeloGioacchino Del Regno
-> Software Engineer
->
-> Collabora Ltd.
-> Platinum Building, St John's Innovation Park, Cambridge CB4 0DS, UK
-> Registered in England & Wales, no. 5513718
+Thanks,
+Manikanta
