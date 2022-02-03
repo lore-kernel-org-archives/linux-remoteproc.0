@@ -2,149 +2,211 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC4B7C433F5
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  3 Feb 2022 18:20:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F87EC433FE
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  3 Feb 2022 18:37:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345390AbiBCSUF (ORCPT
+        id S1353012AbiBCShF (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 3 Feb 2022 13:20:05 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55806 "EHLO
+        Thu, 3 Feb 2022 13:37:05 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59838 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1353340AbiBCSUF (ORCPT
+        with ESMTP id S1353006AbiBCShE (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 3 Feb 2022 13:20:05 -0500
-Received: from mail-ot1-x32f.google.com (mail-ot1-x32f.google.com [IPv6:2607:f8b0:4864:20::32f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E430DC061714
-        for <linux-remoteproc@vger.kernel.org>; Thu,  3 Feb 2022 10:20:04 -0800 (PST)
-Received: by mail-ot1-x32f.google.com with SMTP id n6-20020a9d6f06000000b005a0750019a7so3284669otq.5
-        for <linux-remoteproc@vger.kernel.org>; Thu, 03 Feb 2022 10:20:04 -0800 (PST)
+        Thu, 3 Feb 2022 13:37:04 -0500
+Received: from mail-pf1-x434.google.com (mail-pf1-x434.google.com [IPv6:2607:f8b0:4864:20::434])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 60E3CC06173B
+        for <linux-remoteproc@vger.kernel.org>; Thu,  3 Feb 2022 10:37:04 -0800 (PST)
+Received: by mail-pf1-x434.google.com with SMTP id d187so2923676pfa.10
+        for <linux-remoteproc@vger.kernel.org>; Thu, 03 Feb 2022 10:37:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=FCGv/qYKeyIfFckxFA2H8QoH1f78f7u1cBQ9C1Sjl3M=;
-        b=eF5N1ay0x01zbCkcH51YulCjlbhEz3kuA1OuFLPpYD06veDb//xhGfkMg66RE1E7cM
-         RXivflDbMlN/+L96DUHKvaL/WzBE+5OQwylRvm5Nr8Nz6bfZHtBrn51QRqndqNBUOqmY
-         XNLOYbDTOC6rIydYZgoJWdk7zx8nzbetY1GzohlLLRh+VqdnKO6TqsPQT8nqZ9YJ4FWq
-         ibNHoEZ3MyBsTJVKaIfyZlHW/zHh5dOnWTgg9YcNZdDdHUc+v/thpYW5HfkanOU7QYxZ
-         5vWVO5umEUNLp4nbmCXz1wcRoutZfkOM/wN48fx/yQ97mmaWp7h9qb0GIJ9VVhig+9WE
-         KL/g==
+        bh=vzZUhs+LvlRcv0A+Ri6qvyj7oWe7wjman1xGhk401Ro=;
+        b=f2PMz7JEUoXN9aqJmBJlduYN3ABzpb5WPq4s9IdL2ZyLCNggfy7ctONKqgxe1rt6C5
+         Nv2gnFfoJJ3EQtAWTFApijfxF4tTPOGe8wcWlThL6MK3bjS2ITAbpOukmLkrUVP//H9c
+         BbD8p7HzMSLMV5YBetgfFQgJU/yIW/MsISDNwe+/M5m0tzOa/C3lkn8103/BCZfTyy8O
+         gUVQ/41ndMMRpkrxu6xMSf5F4l1PVL5ocF7yQy4wKdcND9byEA7uZnNq6S2At2k4xrUG
+         B+TfzpwzL8qgXeQ2/QzetfcKqxe0p6uNCIrdB/wl1v9p4u/ZNzqKF2rnwUsSTurPY4M+
+         uyVg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=FCGv/qYKeyIfFckxFA2H8QoH1f78f7u1cBQ9C1Sjl3M=;
-        b=JIaUDIFWxzpqqfIzXTPKz66PgZCgwlYxggKr1YN/uQ6XQw/rIKGjvFXfME9LgWKgg1
-         LJJ1jUuz8VNPHWfG8aPF1+/kFr0qHrOKDLP1oJbS/dNK7i5V7Qq56MIDXhNiBLiPc310
-         9/eudb33anI7irqtltdYji/wh4SozCMmt6b7+rs9Hl/gjjF23epdxF6gf6PnZS6tj7Gb
-         7XeNLX5s2zT5dWqmum4SLgsg26K1IiS7bUpjbZRUJ3wjtWNee7g9ApCIQ6CgODbnddbm
-         K3n1bAUWTBWS3fIaCXx53A12f4sF1bsm7eRZ8g3GRRTaDpoOglFjz/tUR+NUeGkwmhft
-         6mmQ==
-X-Gm-Message-State: AOAM533W9A8UrBHZpq/tSxxjZwsRbFHD5FFRQUJyM6b32xvXULSbQenb
-        Sr7nHML2OUiqfbBEn45PUuD3Dg==
-X-Google-Smtp-Source: ABdhPJwIMo1ObNoIxykn8Wni8kH14hmmZ6CyaP0CsL8r060Q8Mrt4EjdgnqBRcqUNAj85m5E+K8NOQ==
-X-Received: by 2002:a05:6830:42:: with SMTP id d2mr19692222otp.27.1643912404228;
-        Thu, 03 Feb 2022 10:20:04 -0800 (PST)
-Received: from ripper ([2600:1700:a0:3dc8:205:1bff:fec0:b9b3])
-        by smtp.gmail.com with ESMTPSA id r186sm13107645oie.23.2022.02.03.10.20.03
+        bh=vzZUhs+LvlRcv0A+Ri6qvyj7oWe7wjman1xGhk401Ro=;
+        b=FZhXO1ph8WMaAo6S834WbzBGwBiVQe5rV8PR23O45LrE+guTXwK6rKIQ05wkeIFAcH
+         oaNB15hvikCPdm3x2jIgkM8/ppD9KgrLaG9Z7fH/xVxGg0gQWasOTcHmEef6JsBUstXN
+         3hF64CAjGQNVkN/6WZntXTV0c9upo8bfFvnG/NozyL8AOTP/OktWJIFztD39I3Xk6Lmg
+         a/vbJlZvfz0fllaIhRDqv7jR4/c8pO4xw5NSaJ8Hey5aA/C/s6w9FC+W3z/jIByLc3Ue
+         N+v8Y3Bplx2hH7qYvMcZhbTpP0qAr3aPDlYsXYR+pHoKt9CyJ0bcEFDds2yNh2Mdkjuk
+         uybg==
+X-Gm-Message-State: AOAM530mGBPiS/6hZgtZglYSHL1cIubXsB+M9N+DSg0Qn1GVnbTl6lGt
+        etdzHWJwXScn6yy9/bydg5Q3bg==
+X-Google-Smtp-Source: ABdhPJxknTdG19mZXvMk18istJ7ki/4RPtCUMeJmi/D0pr22BTygxcdPXcMdwRjfOjjOyEwA+ZLlYA==
+X-Received: by 2002:a63:710c:: with SMTP id m12mr28808753pgc.591.1643913423798;
+        Thu, 03 Feb 2022 10:37:03 -0800 (PST)
+Received: from p14s (S0106889e681aac74.cg.shawcable.net. [68.147.0.187])
+        by smtp.gmail.com with ESMTPSA id mh1sm11806612pjb.29.2022.02.03.10.37.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Feb 2022 10:20:03 -0800 (PST)
-Date:   Thu, 3 Feb 2022 10:20:20 -0800
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc:     Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 00/13] soc: qcom: mdt_loader: Support Qualcomm SM8450
-Message-ID: <Yfwc5NG2sB5LNWut@ripper>
-References: <20220128025513.97188-1-bjorn.andersson@linaro.org>
- <8ee1cea3-00f3-7a9c-dbd9-aaf8160db006@linaro.org>
+        Thu, 03 Feb 2022 10:37:02 -0800 (PST)
+Date:   Thu, 3 Feb 2022 11:37:00 -0700
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+To:     Puranjay Mohan <puranjay12@gmail.com>
+Cc:     kishon@ti.com, vigneshr@ti.com, s-anna@ti.com,
+        bjorn.andersson@linaro.org, linux-remoteproc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Puranjay Mohan <p-mohan@ti.com>
+Subject: Re: [PATCH 1/2] remoteproc: Introduce deny_sysfs_ops flag
+Message-ID: <20220203183700.GB2982815@p14s>
+References: <1643638312-3912-1-git-send-email-p-mohan@ti.com>
+ <1643638312-3912-2-git-send-email-p-mohan@ti.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <8ee1cea3-00f3-7a9c-dbd9-aaf8160db006@linaro.org>
+In-Reply-To: <1643638312-3912-2-git-send-email-p-mohan@ti.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Thu 03 Feb 07:11 PST 2022, Dmitry Baryshkov wrote:
+Hi Puranjay,
 
-> On 28/01/2022 05:55, Bjorn Andersson wrote:
-> > The Qualcomm SM8450 platform comes with both some smaller changes in the
-> > firmware packaging and a new requirement to hold onto the metadata buffer until
-> > PAS auth_and_reset has been completed.
-> > 
-> > Extend the PAS api and rework the mdt_loader to meet these new requirements,
-> > then wire this up with the PAS remoteproc driver and finally add the SM8450
-> > remoteproc instances.
-> > 
-> > Bjorn Andersson (13):
-> >    firmware: qcom: scm: Introduce pas_metadata context
-> >    soc: qcom: mdt_loader: Split out split-file-loader
-> >    soc: qcom: mdt_loader: Allow hash segment to be split out
-> >    soc: qcom: mdt_loader: Allow hash to reside in any segment
-> >    soc: qcom: mdt_loader: Extend check for split firmware
-> >    soc: qcom: mdt_loader: Reorder parts of __qcom_mdt_load()
-> >    soc: qcom: mdt_loader: Always invoke PAS mem_setup
-> >    soc: qcom: mdt_loader: Extract PAS operations
-> >    remoteproc: qcom: pas: Carry PAS metadata context
-> >    dt-bindings: remoteproc: qcom: pas: Add SM8450 PAS compatibles
-> >    remoteproc: qcom: pas: Add SM8450 remoteproc support
-> >    arm64: dts: qcom: sm8450: Add remoteproc enablers and instances
-> >    arm64: dts: qcom: sm8450-qrd: Enable remoteproc instances
+On Mon, Jan 31, 2022 at 07:41:51PM +0530, Puranjay Mohan wrote:
+> The remoteproc framework provides sysfs interfaces for changing
+> the firmware name and for starting/stopping a remote processor
+> through the sysfs files 'state' and 'firmware'. The 'recovery'
+> sysfs file can also be used similarly to control the error recovery
+> state machine of a remoteproc. These interfaces are currently
+> allowed irrespective of how the remoteprocs were booted (like
+> remoteproc self auto-boot, remoteproc client-driven boot etc).
+> These interfaces can adversely affect a remoteproc and its clients
+> especially when a remoteproc is being controlled by a remoteproc
+> client driver(s). Also, not all remoteproc drivers may want to
+> support the sysfs interfaces by default.
 > 
-> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> Add support to deny the sysfs state/firmware/recovery change by
+> introducing a state flag 'deny_sysfs_ops' that the individual
+> remoteproc drivers can set based on their usage needs. The default
+> behavior is to allow the sysfs operations as before.
+> 
+> Implement attribute_group->is_visible() to hide the sysfs
+> state/firmware/recovery entries when deny_sysfs_ops flag is set.
 > 
 
-Thanks.
+The address in the "To:" field of this email doesn't match the one in the SoB,
+Something that makes checkpatch angry.
 
-> Minor nitpicks:
->  - I'd reorder the series by moving patch 1 (pas_metadata) closer to patch
-> 8&9 (pas metadata usage)
-
-For a while the design where such that I would merge the first patch
-into a immutable branch and then merge the soc/qcom and remoteproc
-changes separately.
-
-But as you can see, in the end the remoteproc patch ended up depending
-on the mdt_loader changes.
-
-I like your suggestion, so I can move the scm change down to keep things
-together.
-
->  - I would have added pas_metadata as an argument to qcom_mdt_load().
-> However I see, why you didn't want to add another argument to the list.
+> Signed-off-by: Puranjay Mohan <p-mohan@ti.com>
+> ---
+>  drivers/remoteproc/remoteproc_sysfs.c | 18 +++++++++++++++++-
+>  include/linux/remoteproc.h            |  2 ++
+>  2 files changed, 19 insertions(+), 1 deletion(-)
 > 
+> diff --git a/drivers/remoteproc/remoteproc_sysfs.c b/drivers/remoteproc/remoteproc_sysfs.c
+> index ea8b89f97d7b..4a41abdd1f7b 100644
+> --- a/drivers/remoteproc/remoteproc_sysfs.c
+> +++ b/drivers/remoteproc/remoteproc_sysfs.c
+> @@ -230,6 +230,21 @@ static ssize_t name_show(struct device *dev, struct device_attribute *attr,
+>  }
+>  static DEVICE_ATTR_RO(name);
+>  
+> +static umode_t rproc_is_visible(struct kobject *kobj, struct attribute *attr,
+> +			       int n)
+> +{
+> +	struct device *dev = kobj_to_dev(kobj);
+> +	struct rproc *rproc = to_rproc(dev);
+> +	umode_t mode = attr->mode;
+> +
+> +	if (rproc->deny_sysfs_ops && (attr == &dev_attr_recovery.attr ||
+> +				      attr == &dev_attr_firmware.attr ||
+> +				      attr == &dev_attr_state.attr))
 
-I looked at that, but I was already unhappy with the argument explosion
-in that function prototype.
+I toyed with this solution for a little while.  I think the use case is valid
+but hiding the above options will also result in a system that is difficult to
+use (and debug) because they convey important information.
 
-By splitting out the difference between qcom_mdt_load() and
-qcom_mdt_load_no_init() into a separate function will allow some cleanup
-and better reuse in the client drivers.
+I suggest introducing a new kernel configuration options to make the attributes
+of the rproc_devgroup return -EINVAL when it is set.  So in remoteproc_sysfs.c
+do something like:
 
-As we bring up the various clients on SM8450 we will need to perform the
-same modifications that was done to the remoteproc driver, by doing it
-like this we don't need to change the prototype twice.
+#if CONFIG_REMOTEPROC_SYSFS_RO
+static bool option_is_read_only()
+{
+        return true;
+}
+#else
+static bool option_is_read_only()
+{
+        return false;
+}
+#endif
 
-Regards,
-Bjorn
+[...]
 
-> > 
-> >   .../bindings/remoteproc/qcom,adsp.yaml        |  16 +
-> >   arch/arm64/boot/dts/qcom/sm8450-qrd.dts       |  20 ++
-> >   arch/arm64/boot/dts/qcom/sm8450.dtsi          | 297 ++++++++++++++++++
-> >   drivers/firmware/qcom_scm.c                   |  39 ++-
-> >   drivers/remoteproc/qcom_q6v5_mss.c            |   7 +-
-> >   drivers/remoteproc/qcom_q6v5_pas.c            |  36 ++-
-> >   drivers/soc/qcom/mdt_loader.c                 | 232 +++++++++-----
-> >   include/linux/qcom_scm.h                      |  10 +-
-> >   include/linux/soc/qcom/mdt_loader.h           |  17 +-
-> >   9 files changed, 579 insertions(+), 95 deletions(-)
-> > 
-> 
-> 
+static ssize_t recovery_store(struct device *dev,
+			      struct device_attribute *attr,
+			      const char *buf, size_t count)
+{
+	struct rproc *rproc = to_rproc(dev);
+
+        if (option_is_read_only())
+                return -EINVAL;
+
+	if (sysfs_streq(buf, "enabled")) {
+		/* change the flag and begin the recovery process if needed */
+		rproc->recovery_disabled = false;
+		rproc_trigger_recovery(rproc);
+	} else if (sysfs_streq(buf, "disabled")) {
+		rproc->recovery_disabled = true;
+	} else if (sysfs_streq(buf, "recover")) {
+		/* begin the recovery process without changing the flag */
+		rproc_trigger_recovery(rproc);
+	} else {
+		return -EINVAL;
+	}
+
+	return count;
+}
+
+Thanks,
+Mathieu
+
+> +		mode = 0;
+> +
+> +	return mode;
+> +}
+> +
+>  static struct attribute *rproc_attrs[] = {
+>  	&dev_attr_coredump.attr,
+>  	&dev_attr_recovery.attr,
+> @@ -240,7 +255,8 @@ static struct attribute *rproc_attrs[] = {
+>  };
+>  
+>  static const struct attribute_group rproc_devgroup = {
+> -	.attrs = rproc_attrs
+> +	.attrs = rproc_attrs,
+> +	.is_visible = rproc_is_visible,
+>  };
+>  
+>  static const struct attribute_group *rproc_devgroups[] = {
+> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+> index e0600e1e5c17..3849c66ce38f 100644
+> --- a/include/linux/remoteproc.h
+> +++ b/include/linux/remoteproc.h
+> @@ -523,6 +523,7 @@ struct rproc_dump_segment {
+>   * @table_sz: size of @cached_table
+>   * @has_iommu: flag to indicate if remote processor is behind an MMU
+>   * @auto_boot: flag to indicate if remote processor should be auto-started
+> + * @deny_sysfs_ops: flag to not permit sysfs operations on state, firmware and recovery
+>   * @dump_segments: list of segments in the firmware
+>   * @nb_vdev: number of vdev currently handled by rproc
+>   * @elf_class: firmware ELF class
+> @@ -562,6 +563,7 @@ struct rproc {
+>  	size_t table_sz;
+>  	bool has_iommu;
+>  	bool auto_boot;
+> +	bool deny_sysfs_ops;
+>  	struct list_head dump_segments;
+>  	int nb_vdev;
+>  	u8 elf_class;
 > -- 
-> With best wishes
-> Dmitry
+> 2.24.3
+> 
