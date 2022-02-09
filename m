@@ -2,46 +2,45 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C5A6C43219
-	for <linux-remoteproc@archiver.kernel.org>; Wed,  9 Feb 2022 12:03:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B953C433EF
+	for <linux-remoteproc@archiver.kernel.org>; Wed,  9 Feb 2022 12:14:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232171AbiBIMDa (ORCPT
+        id S229683AbiBIMN5 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 9 Feb 2022 07:03:30 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38894 "EHLO
+        Wed, 9 Feb 2022 07:13:57 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60536 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231490AbiBIMDK (ORCPT
+        with ESMTP id S232841AbiBIMNp (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 9 Feb 2022 07:03:10 -0500
-X-Greylist: delayed 2546 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Wed, 09 Feb 2022 03:34:53 PST
-Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E188CDF28AC9;
-        Wed,  9 Feb 2022 03:34:52 -0800 (PST)
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 21996EFf090046;
-        Wed, 9 Feb 2022 03:06:14 -0600
+        Wed, 9 Feb 2022 07:13:45 -0500
+Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 850D5E01A22A;
+        Wed,  9 Feb 2022 03:58:30 -0800 (PST)
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 21996C76083007;
+        Wed, 9 Feb 2022 03:06:12 -0600
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1644397574;
-        bh=vZWnswFoW5qNOblJvZoycCjjkCTkGBkJNS2nZCj+Hwg=;
+        s=ti-com-17Q1; t=1644397572;
+        bh=Fn0tXBQRpBz/aFWd0LHh4mdtpypyY2LI48sKNyRaWbs=;
         h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=KbuttjlqOH5cn0/jKQqyDGySCCS6DrAfpKA8kK1fXDwwP+bNeE1gIxAmR36OcYoXE
-         SzCJsCtWKrfqFSBSQjZjGokRcH/braWtJJlC264buHZUFv0b9pKqWcwd4eio7bawK5
-         7saZ2Fe0sZkmLR0P8F7mlpVLMDakXX44FQD3Sb4M=
-Received: from DFLE100.ent.ti.com (dfle100.ent.ti.com [10.64.6.21])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 21996EVk117791
+        b=LgumQn26hUfrJRqhpE74LR89hwQXUutNLELMIwHTpgtIAQJPE65MZF8coAZy4Fybz
+         685grtGdv/LvWxwSA19Bi/OUrcEEDZOMoEPkpaOFfBaSX1UZs/Po2/Z3fQROoVTO+n
+         MP0qsxbJYl3k+H2Rcx4dqex6FMB4O1f212+D6Hvs=
+Received: from DFLE109.ent.ti.com (dfle109.ent.ti.com [10.64.6.30])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 21996CjP045827
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 9 Feb 2022 03:06:14 -0600
-Received: from DFLE103.ent.ti.com (10.64.6.24) by DFLE100.ent.ti.com
- (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
+        Wed, 9 Feb 2022 03:06:12 -0600
+Received: from DFLE105.ent.ti.com (10.64.6.26) by DFLE109.ent.ti.com
+ (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2308.14; Wed, 9
- Feb 2022 03:06:14 -0600
-Received: from fllv0039.itg.ti.com (10.64.41.19) by DFLE103.ent.ti.com
- (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
+ Feb 2022 03:06:12 -0600
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE105.ent.ti.com
+ (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2308.14 via
- Frontend Transport; Wed, 9 Feb 2022 03:06:14 -0600
+ Frontend Transport; Wed, 9 Feb 2022 03:06:12 -0600
 Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id 21996DSi118771;
-        Wed, 9 Feb 2022 03:06:13 -0600
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 21996A0b040498;
+        Wed, 9 Feb 2022 03:06:11 -0600
 From:   Puranjay Mohan <p-mohan@ti.com>
 To:     <puranjay12@gmail.com>, <kishon@ti.com>, <vigneshr@ti.com>,
         <s-anna@ti.com>, <bjorn.andersson@linaro.org>,
@@ -49,9 +48,9 @@ To:     <puranjay12@gmail.com>, <kishon@ti.com>, <vigneshr@ti.com>,
         <linux-kernel@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>
 CC:     Puranjay Mohan <p-mohan@ti.com>
-Subject: [PATCH v4 2/2] remoteproc: wkup_m3: Set deny_sysfs_ops flag
-Date:   Wed, 9 Feb 2022 14:33:42 +0530
-Message-ID: <20220209090342.13220-3-p-mohan@ti.com>
+Subject: [PATCH v4 1/2] remoteproc: Introduce deny_sysfs_ops flag
+Date:   Wed, 9 Feb 2022 14:33:41 +0530
+Message-ID: <20220209090342.13220-2-p-mohan@ti.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20220209090342.13220-1-p-mohan@ti.com>
 References: <20220209090342.13220-1-p-mohan@ti.com>
@@ -62,31 +61,92 @@ Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-From: Suman Anna <s-anna@ti.com>
+The remoteproc framework provides sysfs interfaces for changing
+the firmware name and for starting/stopping a remote processor
+through the sysfs files 'state' and 'firmware'. The 'recovery'
+sysfs file can also be used similarly to control the error recovery
+state machine of a remoteproc. These interfaces are currently
+allowed irrespective of how the remoteprocs were booted (like
+remoteproc self auto-boot, remoteproc client-driven boot etc).
+These interfaces can adversely affect a remoteproc and its clients
+especially when a remoteproc is being controlled by a remoteproc
+client driver(s). Also, not all remoteproc drivers may want to
+support the sysfs interfaces by default.
 
-The Wakeup M3 remote processor is controlled by the wkup_m3_ipc
-client driver, so set the newly introduced 'deny_sysfs_ops' flag
-to not allow any overriding of the remoteproc firmware or state
-from userspace.
+Add support to deny the sysfs state/firmware/recovery change by
+introducing a state flag 'deny_sysfs_ops' that the individual
+remoteproc drivers can set based on their usage needs. The default
+behavior is to allow the sysfs operations as before.
 
-Signed-off-by: Suman Anna <s-anna@ti.com>
+Implement attribute_group->is_visible() to hide the sysfs
+state/firmware/recovery entries when deny_sysfs_ops flag is set.
+
 Signed-off-by: Puranjay Mohan <p-mohan@ti.com>
 ---
- drivers/remoteproc/wkup_m3_rproc.c | 1 +
- 1 file changed, 1 insertion(+)
+Changes in v3->v4:
+Use mode = 0444 in rproc_is_visible() to make the sysfs entries
+read-only when the deny_sysfs_ops flag is set.
+---
+ drivers/remoteproc/remoteproc_sysfs.c | 18 +++++++++++++++++-
+ include/linux/remoteproc.h            |  2 ++
+ 2 files changed, 19 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/remoteproc/wkup_m3_rproc.c b/drivers/remoteproc/wkup_m3_rproc.c
-index 484f7605823e..bbb84bb28af8 100644
---- a/drivers/remoteproc/wkup_m3_rproc.c
-+++ b/drivers/remoteproc/wkup_m3_rproc.c
-@@ -163,6 +163,7 @@ static int wkup_m3_rproc_probe(struct platform_device *pdev)
- 	}
+diff --git a/drivers/remoteproc/remoteproc_sysfs.c b/drivers/remoteproc/remoteproc_sysfs.c
+index ea8b89f97d7b..da2d0eecfa44 100644
+--- a/drivers/remoteproc/remoteproc_sysfs.c
++++ b/drivers/remoteproc/remoteproc_sysfs.c
+@@ -230,6 +230,21 @@ static ssize_t name_show(struct device *dev, struct device_attribute *attr,
+ }
+ static DEVICE_ATTR_RO(name);
  
- 	rproc->auto_boot = false;
-+	rproc->deny_sysfs_ops = true;
++static umode_t rproc_is_visible(struct kobject *kobj, struct attribute *attr,
++				int n)
++{
++	struct device *dev = kobj_to_dev(kobj);
++	struct rproc *rproc = to_rproc(dev);
++	umode_t mode = attr->mode;
++
++	if (rproc->deny_sysfs_ops && (attr == &dev_attr_recovery.attr ||
++				      attr == &dev_attr_firmware.attr ||
++				      attr == &dev_attr_state.attr))
++		mode = 0444;
++
++	return mode;
++}
++
+ static struct attribute *rproc_attrs[] = {
+ 	&dev_attr_coredump.attr,
+ 	&dev_attr_recovery.attr,
+@@ -240,7 +255,8 @@ static struct attribute *rproc_attrs[] = {
+ };
  
- 	wkupm3 = rproc->priv;
- 	wkupm3->rproc = rproc;
+ static const struct attribute_group rproc_devgroup = {
+-	.attrs = rproc_attrs
++	.attrs = rproc_attrs,
++	.is_visible = rproc_is_visible,
+ };
+ 
+ static const struct attribute_group *rproc_devgroups[] = {
+diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+index e0600e1e5c17..3849c66ce38f 100644
+--- a/include/linux/remoteproc.h
++++ b/include/linux/remoteproc.h
+@@ -523,6 +523,7 @@ struct rproc_dump_segment {
+  * @table_sz: size of @cached_table
+  * @has_iommu: flag to indicate if remote processor is behind an MMU
+  * @auto_boot: flag to indicate if remote processor should be auto-started
++ * @deny_sysfs_ops: flag to not permit sysfs operations on state, firmware and recovery
+  * @dump_segments: list of segments in the firmware
+  * @nb_vdev: number of vdev currently handled by rproc
+  * @elf_class: firmware ELF class
+@@ -562,6 +563,7 @@ struct rproc {
+ 	size_t table_sz;
+ 	bool has_iommu;
+ 	bool auto_boot;
++	bool deny_sysfs_ops;
+ 	struct list_head dump_segments;
+ 	int nb_vdev;
+ 	u8 elf_class;
 -- 
 2.17.1
 
