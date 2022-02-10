@@ -2,116 +2,176 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43083C433F5
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 10 Feb 2022 17:58:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CFF2C433F5
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 10 Feb 2022 18:48:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245431AbiBJR6w (ORCPT
+        id S1343553AbiBJSsG (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 10 Feb 2022 12:58:52 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:58016 "EHLO
+        Thu, 10 Feb 2022 13:48:06 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:36842 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245422AbiBJR6v (ORCPT
+        with ESMTP id S1343552AbiBJSsF (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 10 Feb 2022 12:58:51 -0500
-Received: from mail-pl1-x62d.google.com (mail-pl1-x62d.google.com [IPv6:2607:f8b0:4864:20::62d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B16E61A8
-        for <linux-remoteproc@vger.kernel.org>; Thu, 10 Feb 2022 09:58:51 -0800 (PST)
-Received: by mail-pl1-x62d.google.com with SMTP id x3so2492183pll.3
-        for <linux-remoteproc@vger.kernel.org>; Thu, 10 Feb 2022 09:58:51 -0800 (PST)
+        Thu, 10 Feb 2022 13:48:05 -0500
+Received: from mail-pf1-x42d.google.com (mail-pf1-x42d.google.com [IPv6:2607:f8b0:4864:20::42d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45547CE9
+        for <linux-remoteproc@vger.kernel.org>; Thu, 10 Feb 2022 10:48:06 -0800 (PST)
+Received: by mail-pf1-x42d.google.com with SMTP id r19so11836473pfh.6
+        for <linux-remoteproc@vger.kernel.org>; Thu, 10 Feb 2022 10:48:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=eJjpjiZFmC3NVaxARYWkgFsjJKrhv1BAcceimkRM1uc=;
-        b=I4hwIxjkkeAi4jIAR7EXdb4NWii/7oxAC6AKqPuQcnGc8TW/3D7Kxhqam1lyFsXflt
-         Vm5HJqIQnwHvwhbzNaVZa/mGzfaowJ3SBRqQD0pO7VdYw06AMqhgorMLoVu687YW6uRy
-         xkDO6nKGEP1GdnvBreXiy7Bzs/r8JG5ZY52itSe+2nWNR7aR/w54AI9EhT004OHlxO41
-         Zue5nM3Rjk/3mHOTvwbP6nVoO7O6C5tofS/BRIFKSU4np+suf7OKHgu8N9LUfARepCSh
-         PX2O6hjyeqrkf2K0IX6MAgjAOqbTm0uSfwncU7ax0gdaHn259R4/6H92h5F65UBFMXJT
-         ESLw==
+        bh=VsLbb6fw09jdueYA3hgQp5c4zAw8XroJudfdKUin7Pk=;
+        b=A8nvS+811owjf+WxW8Y85nR1hJR7SCEE+KgU8+3UxXLVggL/+xneQ3xxsdomZFPAXG
+         OaZZns42B0hs+2AsdSfvl8hZUQmWzBzWaH+qByMuY7ubAhFgdcv1EROA3CJCgEy/N22l
+         qmKSV+hHkJbd7bT6MgvX7/y2JnhJOHkdFr/61DANa7QNv4LT4OZu2oaxNjPV1Lga/EOK
+         x2OpCvmMg468WnKAGYiPbFU1VuRr0K8cuufsAJcAQy0IEiH7azT/CN/3npSBGlK6TsiP
+         rDNUBNMI0KBHn/4JWMEqwhUKIGMF3KH+fTYbZc6Wt/kmUsDuNzJoEeiaBD0Q7Euky40n
+         KPng==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=eJjpjiZFmC3NVaxARYWkgFsjJKrhv1BAcceimkRM1uc=;
-        b=2YAP1bdcaUrkxb863u3erB+ofYhdEFW9lJDLRqL5kPbD3A7LU1yfPRRb+9emU2OVlS
-         YgWw+Yq6P8r54eVb/NEk8DX0EcKCljnyq1hG3IYFz+Vv+S3Uu7poCU/BhTbYWG49ldj8
-         +6QikqYvCzSTM8rtTdL7IKVg9hTnGaQB9PpQZq2wifdybJEb/eY0e13takL52epn2El+
-         yNmjReDTeoBoGdeBNg0KwXHti468eB2+tB6/XdDt4ThtGAfC4tKXvMM/PUzeFMpQpRTG
-         dj3MawDr67Hv82eh/4WSeW6BK2KYGv+C0See6xEinoCFIopdUJ8XS8Pa3YO2mPQrFBtD
-         w/Tg==
-X-Gm-Message-State: AOAM530/7uNAvueDrxoGABtJXOhz9ReRmcFzgMUdVDCS0LZrgYYrvGJq
-        6H89dBCP8em145oyIt5zv5K/fA==
-X-Google-Smtp-Source: ABdhPJybX2DTRur/fqp1T3fsi1sv7jdOfBkzRKrTiFCl1wtzaexEErRObkoG10fCF7lKUo/ZB94mrw==
-X-Received: by 2002:a17:902:db01:: with SMTP id m1mr8805397plx.53.1644515931043;
-        Thu, 10 Feb 2022 09:58:51 -0800 (PST)
+        bh=VsLbb6fw09jdueYA3hgQp5c4zAw8XroJudfdKUin7Pk=;
+        b=ERP450mxqOPw2BfebJctEk9cml1XBSuk9IFyW9EnO9bLunjXrvOe25KXAnnWPQ3A9c
+         1NC0BNIOBM4ytQnAckUZkF5V6hQaCqJUhewHZRnaSoRYlb3rxOReyHiYt41v5v4Ew8Od
+         FKjQ8rXRzlaKyVFOT+peqsNMrMVOTcOVn8khVOT9vXZyXsBV4n9/qG8MZU6ao+ynitit
+         ihqa/YeaF0CsfIAFf+2Et/z+X54zFMAvt4ElA8VEHpfOXWwcRj++W4H8nbJwAr+v9bZK
+         bv+GiQqLdPGMe2EAtCz1nGyiYOuNNVr9eP3MC5KL66sRHl1HYVkOeZiOLiOdHmlgQZz9
+         MY5w==
+X-Gm-Message-State: AOAM53278GMrbdMGhfSYPfYiKe4hc0T7a2dhtqcKMMEX1MlA3BOksBxp
+        2Z7ocTITu+4DDMHWojOD7oHupA==
+X-Google-Smtp-Source: ABdhPJyAcsZT8dibcimAmFBciTXwwwCwtwpwFfr1/pJSIRwcJLfqtsWO+mS9FQ3RSw4EpD30XVcViw==
+X-Received: by 2002:a63:6ac3:: with SMTP id f186mr7163744pgc.81.1644518885741;
+        Thu, 10 Feb 2022 10:48:05 -0800 (PST)
 Received: from p14s (S0106889e681aac74.cg.shawcable.net. [68.147.0.187])
-        by smtp.gmail.com with ESMTPSA id y30sm3834969pfq.142.2022.02.10.09.58.49
+        by smtp.gmail.com with ESMTPSA id oa10sm964695pjb.54.2022.02.10.10.48.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Feb 2022 09:58:49 -0800 (PST)
-Date:   Thu, 10 Feb 2022 10:58:47 -0700
+        Thu, 10 Feb 2022 10:48:04 -0800 (PST)
+Date:   Thu, 10 Feb 2022 11:48:02 -0700
 From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-To:     Julia Lawall <julia.lawall@inria.fr>
-Cc:     Wendy Liang <wendy.liang@xilinx.com>,
-        Michal Simek <monstr@monstr.eu>,
-        Ohad Ben-Cohen <ohad@wizery.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
+To:     Puranjay Mohan <p-mohan@ti.com>
+Cc:     puranjay12@gmail.com, kishon@ti.com, vigneshr@ti.com,
+        s-anna@ti.com, bjorn.andersson@linaro.org,
         linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kbuild-all@lists.01.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] remoteproc: fix minmax.cocci warnings
-Message-ID: <20220210175847.GA3603040@p14s>
-References: <alpine.DEB.2.22.394.2202082139180.52266@hadrien>
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v4 1/2] remoteproc: Introduce deny_sysfs_ops flag
+Message-ID: <20220210184802.GB3603040@p14s>
+References: <20220209090342.13220-1-p-mohan@ti.com>
+ <20220209090342.13220-2-p-mohan@ti.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.22.394.2202082139180.52266@hadrien>
+In-Reply-To: <20220209090342.13220-2-p-mohan@ti.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi,
+Hi Puranjay,
 
-On Tue, Feb 08, 2022 at 09:41:39PM +0100, Julia Lawall wrote:
-> From: kernel test robot <lkp@intel.com>
+On Wed, Feb 09, 2022 at 02:33:41PM +0530, Puranjay Mohan wrote:
+> The remoteproc framework provides sysfs interfaces for changing
+> the firmware name and for starting/stopping a remote processor
+> through the sysfs files 'state' and 'firmware'. The 'recovery'
+> sysfs file can also be used similarly to control the error recovery
+> state machine of a remoteproc. These interfaces are currently
+> allowed irrespective of how the remoteprocs were booted (like
+> remoteproc self auto-boot, remoteproc client-driven boot etc).
+> These interfaces can adversely affect a remoteproc and its clients
+> especially when a remoteproc is being controlled by a remoteproc
+> client driver(s). Also, not all remoteproc drivers may want to
+> support the sysfs interfaces by default.
 > 
-> The code seems more readable with min.
+> Add support to deny the sysfs state/firmware/recovery change by
+> introducing a state flag 'deny_sysfs_ops' that the individual
+> remoteproc drivers can set based on their usage needs. The default
+> behavior is to allow the sysfs operations as before.
 > 
-> Generated by: scripts/coccinelle/misc/minmax.cocci
+> Implement attribute_group->is_visible() to hide the sysfs
+> state/firmware/recovery entries when deny_sysfs_ops flag is set.
 > 
-> Fixes: 2b9408d09dc6 ("remoteproc: Add support for peek from remote and acking kick from remote")
-> CC: Wendy Liang <wendy.liang@xilinx.com>
-> Reported-by: kernel test robot <lkp@intel.com>
-> Signed-off-by: kernel test robot <lkp@intel.com>
-> Signed-off-by: Julia Lawall <julia.lawall@inria.fr>
-> 
+> Signed-off-by: Puranjay Mohan <p-mohan@ti.com>
 > ---
+> Changes in v3->v4:
+> Use mode = 0444 in rproc_is_visible() to make the sysfs entries
+> read-only when the deny_sysfs_ops flag is set.
+> ---
+>  drivers/remoteproc/remoteproc_sysfs.c | 18 +++++++++++++++++-
+>  include/linux/remoteproc.h            |  2 ++
+>  2 files changed, 19 insertions(+), 1 deletion(-)
 > 
-> tree:   https://github.com/Xilinx/linux-xlnx xlnx_rebase_v5.15
-> head:   1183ce490adb103e5e569b8ebd74c50c885ddc05
-> commit: 2b9408d09dc6367fd2f0820f0c7beab69e9aed56 [550/872] remoteproc: Add support for peek from remote and acking kick from remote
-> :::::: branch date: 7 days ago
-> :::::: commit date: 7 days ago
-> 
->  remoteproc_sysfs.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
+> diff --git a/drivers/remoteproc/remoteproc_sysfs.c b/drivers/remoteproc/remoteproc_sysfs.c
+> index ea8b89f97d7b..da2d0eecfa44 100644
 > --- a/drivers/remoteproc/remoteproc_sysfs.c
 > +++ b/drivers/remoteproc/remoteproc_sysfs.c
-> @@ -241,7 +241,7 @@ static ssize_t kick_store(struct device
->  	size_t cpy_len;
+> @@ -230,6 +230,21 @@ static ssize_t name_show(struct device *dev, struct device_attribute *attr,
+>  }
+>  static DEVICE_ATTR_RO(name);
+>  
+> +static umode_t rproc_is_visible(struct kobject *kobj, struct attribute *attr,
+> +				int n)
+> +{
+> +	struct device *dev = kobj_to_dev(kobj);
+> +	struct rproc *rproc = to_rproc(dev);
+> +	umode_t mode = attr->mode;
+> +
+> +	if (rproc->deny_sysfs_ops && (attr == &dev_attr_recovery.attr ||
+> +				      attr == &dev_attr_firmware.attr ||
+> +				      attr == &dev_attr_state.attr))
+
+I was wondering if we should also add coredump to this group to make it an all
+or nothing option (name is already read only).
+
+> +		mode = 0444;
+
+Much better.
+
+> +
+> +	return mode;
+> +}
+> +
+>  static struct attribute *rproc_attrs[] = {
+>  	&dev_attr_coredump.attr,
+>  	&dev_attr_recovery.attr,
+> @@ -240,7 +255,8 @@ static struct attribute *rproc_attrs[] = {
+>  };
+>  
+>  static const struct attribute_group rproc_devgroup = {
+> -	.attrs = rproc_attrs
+> +	.attrs = rproc_attrs,
+> +	.is_visible = rproc_is_visible,
+>  };
+>  
+>  static const struct attribute_group *rproc_devgroups[] = {
+> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+> index e0600e1e5c17..3849c66ce38f 100644
+> --- a/include/linux/remoteproc.h
+> +++ b/include/linux/remoteproc.h
+> @@ -523,6 +523,7 @@ struct rproc_dump_segment {
+>   * @table_sz: size of @cached_table
+>   * @has_iommu: flag to indicate if remote processor is behind an MMU
+>   * @auto_boot: flag to indicate if remote processor should be auto-started
+> + * @deny_sysfs_ops: flag to not permit sysfs operations on state, firmware and recovery
+>   * @dump_segments: list of segments in the firmware
+>   * @nb_vdev: number of vdev currently handled by rproc
+>   * @elf_class: firmware ELF class
+> @@ -562,6 +563,7 @@ struct rproc {
+>  	size_t table_sz;
+>  	bool has_iommu;
+>  	bool auto_boot;
+> +	bool deny_sysfs_ops;
+
+Wouldn't "sysfs_read_only" make more sense?
+
+
+With or without the above and for this set:
+
+Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+
+>  	struct list_head dump_segments;
+>  	int nb_vdev;
+>  	u8 elf_class;
+> -- 
+> 2.17.1
 > 
->  	(void)attr;
-> -	cpy_len = count <= sizeof(id) ? count : sizeof(id);
-> +	cpy_len = min(count, sizeof(id));
-
-Looking at the min() macro the above would become "count < sizeof(id)" rather
-than "count <= sizeof(id)".  I don't have more context into this code because I
-can't find it in rproc-next nor today's linux-next, but it is something to look
-into.  The patch is also missing the minmax.h include for the min() macro.
-
-Thanks,
-Mathieu
-
->  	memcpy((char *)(&id), buf, cpy_len);
-> 
->  	if (rproc->ops->kick)
