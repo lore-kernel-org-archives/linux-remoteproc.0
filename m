@@ -2,176 +2,184 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CFF2C433F5
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 10 Feb 2022 18:48:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59F18C433F5
+	for <linux-remoteproc@archiver.kernel.org>; Sun, 13 Feb 2022 20:13:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343553AbiBJSsG (ORCPT
+        id S238078AbiBMUNH (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 10 Feb 2022 13:48:06 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:36842 "EHLO
+        Sun, 13 Feb 2022 15:13:07 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:44372 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1343552AbiBJSsF (ORCPT
+        with ESMTP id S238055AbiBMUNH (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 10 Feb 2022 13:48:05 -0500
-Received: from mail-pf1-x42d.google.com (mail-pf1-x42d.google.com [IPv6:2607:f8b0:4864:20::42d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45547CE9
-        for <linux-remoteproc@vger.kernel.org>; Thu, 10 Feb 2022 10:48:06 -0800 (PST)
-Received: by mail-pf1-x42d.google.com with SMTP id r19so11836473pfh.6
-        for <linux-remoteproc@vger.kernel.org>; Thu, 10 Feb 2022 10:48:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=VsLbb6fw09jdueYA3hgQp5c4zAw8XroJudfdKUin7Pk=;
-        b=A8nvS+811owjf+WxW8Y85nR1hJR7SCEE+KgU8+3UxXLVggL/+xneQ3xxsdomZFPAXG
-         OaZZns42B0hs+2AsdSfvl8hZUQmWzBzWaH+qByMuY7ubAhFgdcv1EROA3CJCgEy/N22l
-         qmKSV+hHkJbd7bT6MgvX7/y2JnhJOHkdFr/61DANa7QNv4LT4OZu2oaxNjPV1Lga/EOK
-         x2OpCvmMg468WnKAGYiPbFU1VuRr0K8cuufsAJcAQy0IEiH7azT/CN/3npSBGlK6TsiP
-         rDNUBNMI0KBHn/4JWMEqwhUKIGMF3KH+fTYbZc6Wt/kmUsDuNzJoEeiaBD0Q7Euky40n
-         KPng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=VsLbb6fw09jdueYA3hgQp5c4zAw8XroJudfdKUin7Pk=;
-        b=ERP450mxqOPw2BfebJctEk9cml1XBSuk9IFyW9EnO9bLunjXrvOe25KXAnnWPQ3A9c
-         1NC0BNIOBM4ytQnAckUZkF5V6hQaCqJUhewHZRnaSoRYlb3rxOReyHiYt41v5v4Ew8Od
-         FKjQ8rXRzlaKyVFOT+peqsNMrMVOTcOVn8khVOT9vXZyXsBV4n9/qG8MZU6ao+ynitit
-         ihqa/YeaF0CsfIAFf+2Et/z+X54zFMAvt4ElA8VEHpfOXWwcRj++W4H8nbJwAr+v9bZK
-         bv+GiQqLdPGMe2EAtCz1nGyiYOuNNVr9eP3MC5KL66sRHl1HYVkOeZiOLiOdHmlgQZz9
-         MY5w==
-X-Gm-Message-State: AOAM53278GMrbdMGhfSYPfYiKe4hc0T7a2dhtqcKMMEX1MlA3BOksBxp
-        2Z7ocTITu+4DDMHWojOD7oHupA==
-X-Google-Smtp-Source: ABdhPJyAcsZT8dibcimAmFBciTXwwwCwtwpwFfr1/pJSIRwcJLfqtsWO+mS9FQ3RSw4EpD30XVcViw==
-X-Received: by 2002:a63:6ac3:: with SMTP id f186mr7163744pgc.81.1644518885741;
-        Thu, 10 Feb 2022 10:48:05 -0800 (PST)
-Received: from p14s (S0106889e681aac74.cg.shawcable.net. [68.147.0.187])
-        by smtp.gmail.com with ESMTPSA id oa10sm964695pjb.54.2022.02.10.10.48.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Feb 2022 10:48:04 -0800 (PST)
-Date:   Thu, 10 Feb 2022 11:48:02 -0700
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-To:     Puranjay Mohan <p-mohan@ti.com>
-Cc:     puranjay12@gmail.com, kishon@ti.com, vigneshr@ti.com,
-        s-anna@ti.com, bjorn.andersson@linaro.org,
-        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v4 1/2] remoteproc: Introduce deny_sysfs_ops flag
-Message-ID: <20220210184802.GB3603040@p14s>
-References: <20220209090342.13220-1-p-mohan@ti.com>
- <20220209090342.13220-2-p-mohan@ti.com>
+        Sun, 13 Feb 2022 15:13:07 -0500
+Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A91E4A912;
+        Sun, 13 Feb 2022 12:12:56 -0800 (PST)
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 21DKCo2o015311;
+        Sun, 13 Feb 2022 14:12:50 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1644783170;
+        bh=9irqzYnrEpjWi9U3Xpk+DuQR+/hIGdWOOh9XnlBDeH0=;
+        h=From:To:CC:Subject:Date:In-Reply-To:References;
+        b=mqg31rRxFQoh9uwzs82GMt0MYdPhhWfznOUXujfzScP9BPiB9oEvpG9sReET0AjX9
+         OtRcQWYqnyKRruiKwRtT2B2XjD5PiBLiSNRE/MDF7kf/AMNm3YWaRtJJMJqA+3CmuQ
+         XfVL4RS4YHzTac7dWMvEE8G7Tup6ynevoVe+5Jck=
+Received: from DLEE103.ent.ti.com (dlee103.ent.ti.com [157.170.170.33])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 21DKCogc065496
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Sun, 13 Feb 2022 14:12:50 -0600
+Received: from DLEE109.ent.ti.com (157.170.170.41) by DLEE103.ent.ti.com
+ (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2308.14; Sun, 13
+ Feb 2022 14:12:49 -0600
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE109.ent.ti.com
+ (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2308.14 via
+ Frontend Transport; Sun, 13 Feb 2022 14:12:49 -0600
+Received: from lelv0854.itg.ti.com (lelv0854.itg.ti.com [10.181.64.140])
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 21DKCnQO085417;
+        Sun, 13 Feb 2022 14:12:49 -0600
+Received: from localhost ([10.249.37.221])
+        by lelv0854.itg.ti.com (8.14.7/8.14.7) with ESMTP id 21DKCnNG002412;
+        Sun, 13 Feb 2022 14:12:49 -0600
+From:   Suman Anna <s-anna@ti.com>
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>
+CC:     Hari Nagalla <hnagalla@ti.com>, Praneeth Bajjuri <praneeth@ti.com>,
+        <linux-remoteproc@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, Suman Anna <s-anna@ti.com>
+Subject: [PATCH v3 1/5] remoteproc: Change rproc_shutdown() to return a status
+Date:   Sun, 13 Feb 2022 14:12:42 -0600
+Message-ID: <20220213201246.25952-2-s-anna@ti.com>
+X-Mailer: git-send-email 2.32.0
+In-Reply-To: <20220213201246.25952-1-s-anna@ti.com>
+References: <20220213201246.25952-1-s-anna@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220209090342.13220-2-p-mohan@ti.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi Puranjay,
+The rproc_shutdown() function is currently not returning any
+error code, and any failures within rproc_stop() are not passed
+back to the users. Change the signature to return a success value
+back to the callers.
 
-On Wed, Feb 09, 2022 at 02:33:41PM +0530, Puranjay Mohan wrote:
-> The remoteproc framework provides sysfs interfaces for changing
-> the firmware name and for starting/stopping a remote processor
-> through the sysfs files 'state' and 'firmware'. The 'recovery'
-> sysfs file can also be used similarly to control the error recovery
-> state machine of a remoteproc. These interfaces are currently
-> allowed irrespective of how the remoteprocs were booted (like
-> remoteproc self auto-boot, remoteproc client-driven boot etc).
-> These interfaces can adversely affect a remoteproc and its clients
-> especially when a remoteproc is being controlled by a remoteproc
-> client driver(s). Also, not all remoteproc drivers may want to
-> support the sysfs interfaces by default.
-> 
-> Add support to deny the sysfs state/firmware/recovery change by
-> introducing a state flag 'deny_sysfs_ops' that the individual
-> remoteproc drivers can set based on their usage needs. The default
-> behavior is to allow the sysfs operations as before.
-> 
-> Implement attribute_group->is_visible() to hide the sysfs
-> state/firmware/recovery entries when deny_sysfs_ops flag is set.
-> 
-> Signed-off-by: Puranjay Mohan <p-mohan@ti.com>
-> ---
-> Changes in v3->v4:
-> Use mode = 0444 in rproc_is_visible() to make the sysfs entries
-> read-only when the deny_sysfs_ops flag is set.
-> ---
->  drivers/remoteproc/remoteproc_sysfs.c | 18 +++++++++++++++++-
->  include/linux/remoteproc.h            |  2 ++
->  2 files changed, 19 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/remoteproc/remoteproc_sysfs.c b/drivers/remoteproc/remoteproc_sysfs.c
-> index ea8b89f97d7b..da2d0eecfa44 100644
-> --- a/drivers/remoteproc/remoteproc_sysfs.c
-> +++ b/drivers/remoteproc/remoteproc_sysfs.c
-> @@ -230,6 +230,21 @@ static ssize_t name_show(struct device *dev, struct device_attribute *attr,
->  }
->  static DEVICE_ATTR_RO(name);
->  
-> +static umode_t rproc_is_visible(struct kobject *kobj, struct attribute *attr,
-> +				int n)
-> +{
-> +	struct device *dev = kobj_to_dev(kobj);
-> +	struct rproc *rproc = to_rproc(dev);
-> +	umode_t mode = attr->mode;
-> +
-> +	if (rproc->deny_sysfs_ops && (attr == &dev_attr_recovery.attr ||
-> +				      attr == &dev_attr_firmware.attr ||
-> +				      attr == &dev_attr_state.attr))
+The remoteproc sysfs and cdev interfaces are also updated to
+return back this status to userspace.
 
-I was wondering if we should also add coredump to this group to make it an all
-or nothing option (name is already read only).
+Signed-off-by: Suman Anna <s-anna@ti.com>
+---
+v3:
+ - New patch in place of v2 patch "remoteproc: Add support for detach-only 
+   during shutdown",  
+   https://patchwork.kernel.org/project/linux-remoteproc/patch/20210723220248.6554-2-s-anna@ti.com/
 
-> +		mode = 0444;
+ Documentation/staging/remoteproc.rst  | 3 ++-
+ drivers/remoteproc/remoteproc_cdev.c  | 2 +-
+ drivers/remoteproc/remoteproc_core.c  | 9 ++++++---
+ drivers/remoteproc/remoteproc_sysfs.c | 2 +-
+ include/linux/remoteproc.h            | 2 +-
+ 5 files changed, 11 insertions(+), 7 deletions(-)
 
-Much better.
+diff --git a/Documentation/staging/remoteproc.rst b/Documentation/staging/remoteproc.rst
+index 9cccd3dd6a4b..348ee7e508ac 100644
+--- a/Documentation/staging/remoteproc.rst
++++ b/Documentation/staging/remoteproc.rst
+@@ -49,13 +49,14 @@ might also consider using dev_archdata for this).
+ 
+ ::
+ 
+-  void rproc_shutdown(struct rproc *rproc)
++  int rproc_shutdown(struct rproc *rproc)
+ 
+ Power off a remote processor (previously booted with rproc_boot()).
+ In case @rproc is still being used by an additional user(s), then
+ this function will just decrement the power refcount and exit,
+ without really powering off the device.
+ 
++Returns 0 on success, and an appropriate error value otherwise.
+ Every call to rproc_boot() must (eventually) be accompanied by a call
+ to rproc_shutdown(). Calling rproc_shutdown() redundantly is a bug.
+ 
+diff --git a/drivers/remoteproc/remoteproc_cdev.c b/drivers/remoteproc/remoteproc_cdev.c
+index 4ad98b0b8caa..906ff3c4dfdd 100644
+--- a/drivers/remoteproc/remoteproc_cdev.c
++++ b/drivers/remoteproc/remoteproc_cdev.c
+@@ -42,7 +42,7 @@ static ssize_t rproc_cdev_write(struct file *filp, const char __user *buf, size_
+ 		    rproc->state != RPROC_ATTACHED)
+ 			return -EINVAL;
+ 
+-		rproc_shutdown(rproc);
++		ret = rproc_shutdown(rproc);
+ 	} else if (!strncmp(cmd, "detach", len)) {
+ 		if (rproc->state != RPROC_ATTACHED)
+ 			return -EINVAL;
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index 69f51acf235e..c510125769b9 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -2061,16 +2061,18 @@ EXPORT_SYMBOL(rproc_boot);
+  *   which means that the @rproc handle stays valid even after rproc_shutdown()
+  *   returns, and users can still use it with a subsequent rproc_boot(), if
+  *   needed.
++ *
++ * Return: 0 on success, and an appropriate error value otherwise
+  */
+-void rproc_shutdown(struct rproc *rproc)
++int rproc_shutdown(struct rproc *rproc)
+ {
+ 	struct device *dev = &rproc->dev;
+-	int ret;
++	int ret = 0;
+ 
+ 	ret = mutex_lock_interruptible(&rproc->lock);
+ 	if (ret) {
+ 		dev_err(dev, "can't lock rproc %s: %d\n", rproc->name, ret);
+-		return;
++		return ret;
+ 	}
+ 
+ 	/* if the remote proc is still needed, bail out */
+@@ -2097,6 +2099,7 @@ void rproc_shutdown(struct rproc *rproc)
+ 	rproc->table_ptr = NULL;
+ out:
+ 	mutex_unlock(&rproc->lock);
++	return ret;
+ }
+ EXPORT_SYMBOL(rproc_shutdown);
+ 
+diff --git a/drivers/remoteproc/remoteproc_sysfs.c b/drivers/remoteproc/remoteproc_sysfs.c
+index ea8b89f97d7b..645c70c8109b 100644
+--- a/drivers/remoteproc/remoteproc_sysfs.c
++++ b/drivers/remoteproc/remoteproc_sysfs.c
+@@ -206,7 +206,7 @@ static ssize_t state_store(struct device *dev,
+ 		    rproc->state != RPROC_ATTACHED)
+ 			return -EINVAL;
+ 
+-		rproc_shutdown(rproc);
++		ret = rproc_shutdown(rproc);
+ 	} else if (sysfs_streq(buf, "detach")) {
+ 		if (rproc->state != RPROC_ATTACHED)
+ 			return -EINVAL;
+diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+index e0600e1e5c17..cfc0c95c95b2 100644
+--- a/include/linux/remoteproc.h
++++ b/include/linux/remoteproc.h
+@@ -669,7 +669,7 @@ rproc_of_resm_mem_entry_init(struct device *dev, u32 of_resm_idx, size_t len,
+ 			     u32 da, const char *name, ...);
+ 
+ int rproc_boot(struct rproc *rproc);
+-void rproc_shutdown(struct rproc *rproc);
++int rproc_shutdown(struct rproc *rproc);
+ int rproc_detach(struct rproc *rproc);
+ int rproc_set_firmware(struct rproc *rproc, const char *fw_name);
+ void rproc_report_crash(struct rproc *rproc, enum rproc_crash_type type);
+-- 
+2.32.0
 
-> +
-> +	return mode;
-> +}
-> +
->  static struct attribute *rproc_attrs[] = {
->  	&dev_attr_coredump.attr,
->  	&dev_attr_recovery.attr,
-> @@ -240,7 +255,8 @@ static struct attribute *rproc_attrs[] = {
->  };
->  
->  static const struct attribute_group rproc_devgroup = {
-> -	.attrs = rproc_attrs
-> +	.attrs = rproc_attrs,
-> +	.is_visible = rproc_is_visible,
->  };
->  
->  static const struct attribute_group *rproc_devgroups[] = {
-> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-> index e0600e1e5c17..3849c66ce38f 100644
-> --- a/include/linux/remoteproc.h
-> +++ b/include/linux/remoteproc.h
-> @@ -523,6 +523,7 @@ struct rproc_dump_segment {
->   * @table_sz: size of @cached_table
->   * @has_iommu: flag to indicate if remote processor is behind an MMU
->   * @auto_boot: flag to indicate if remote processor should be auto-started
-> + * @deny_sysfs_ops: flag to not permit sysfs operations on state, firmware and recovery
->   * @dump_segments: list of segments in the firmware
->   * @nb_vdev: number of vdev currently handled by rproc
->   * @elf_class: firmware ELF class
-> @@ -562,6 +563,7 @@ struct rproc {
->  	size_t table_sz;
->  	bool has_iommu;
->  	bool auto_boot;
-> +	bool deny_sysfs_ops;
-
-Wouldn't "sysfs_read_only" make more sense?
-
-
-With or without the above and for this set:
-
-Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-
->  	struct list_head dump_segments;
->  	int nb_vdev;
->  	u8 elf_class;
-> -- 
-> 2.17.1
-> 
