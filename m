@@ -2,184 +2,163 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D14FC433F5
-	for <linux-remoteproc@archiver.kernel.org>; Sun, 13 Feb 2022 20:32:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F1BEC433EF
+	for <linux-remoteproc@archiver.kernel.org>; Sun, 13 Feb 2022 20:51:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235568AbiBMUdC (ORCPT
+        id S238303AbiBMUvW (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Sun, 13 Feb 2022 15:33:02 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:51066 "EHLO
+        Sun, 13 Feb 2022 15:51:22 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:56772 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230399AbiBMUdB (ORCPT
+        with ESMTP id S238297AbiBMUvS (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Sun, 13 Feb 2022 15:33:01 -0500
-X-Greylist: delayed 1196 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Sun, 13 Feb 2022 12:32:55 PST
-Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 38BE953700;
-        Sun, 13 Feb 2022 12:32:55 -0800 (PST)
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 21DKCnMN106250;
-        Sun, 13 Feb 2022 14:12:49 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1644783169;
-        bh=VlsO5Co1YhSU4oiDDo1I0Cx/Bw8CNI0Q8dDUb0hAK2I=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=NawsxXxR6eIs7TMKija8kqcc++qcaNWEq8iHOncWMtPphMzxSPm00wLL5k5HwAkJZ
-         x6V/xlwE0pACnm8G2773C+3nVWmr7lV5f65AgRpaj9t00bpjBkgdvMmSC+6QRExXFI
-         zB/3uV49CYeEdTPY5k9NSqZf/mTZevmelqps/94s=
-Received: from DLEE113.ent.ti.com (dlee113.ent.ti.com [157.170.170.24])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 21DKCnPd065490
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Sun, 13 Feb 2022 14:12:49 -0600
-Received: from DLEE110.ent.ti.com (157.170.170.21) by DLEE113.ent.ti.com
- (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2308.14; Sun, 13
- Feb 2022 14:12:49 -0600
-Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE110.ent.ti.com
- (157.170.170.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2308.14 via
- Frontend Transport; Sun, 13 Feb 2022 14:12:49 -0600
-Received: from lelv0854.itg.ti.com (lelv0854.itg.ti.com [10.181.64.140])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id 21DKCnsU020622;
-        Sun, 13 Feb 2022 14:12:49 -0600
-Received: from localhost ([10.249.37.221])
-        by lelv0854.itg.ti.com (8.14.7/8.14.7) with ESMTP id 21DKCnFd002415;
-        Sun, 13 Feb 2022 14:12:49 -0600
-From:   Suman Anna <s-anna@ti.com>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>
-CC:     Hari Nagalla <hnagalla@ti.com>, Praneeth Bajjuri <praneeth@ti.com>,
-        <linux-remoteproc@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, Suman Anna <s-anna@ti.com>
-Subject: [PATCH v3 2/5] remoteproc: k3-r5: Refactor mbox request code in start
-Date:   Sun, 13 Feb 2022 14:12:43 -0600
-Message-ID: <20220213201246.25952-3-s-anna@ti.com>
-X-Mailer: git-send-email 2.32.0
-In-Reply-To: <20220213201246.25952-1-s-anna@ti.com>
-References: <20220213201246.25952-1-s-anna@ti.com>
+        Sun, 13 Feb 2022 15:51:18 -0500
+Received: from mail.z3ntu.xyz (mail.z3ntu.xyz [128.199.32.197])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A859A53717;
+        Sun, 13 Feb 2022 12:51:12 -0800 (PST)
+Received: from g550jk.localnet (mobiledyn-62-240-134-32.mrsn.at [62.240.134.32])
+        by mail.z3ntu.xyz (Postfix) with ESMTPSA id 9C480C6663;
+        Sun, 13 Feb 2022 20:51:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=z3ntu.xyz; s=z3ntu;
+        t=1644785471; bh=9MXa6ypwqHPugUz9R83CYNLxExHJTxgjpEJeOoX190c=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References;
+        b=hWZ+p/0AUdCNsc8zdR11AHFgAbrp5cW+wBUSg81w5udgpwi/Dx20I8Tz7SIlgszDn
+         ishgkpbjGG33o0XLa2T1zfriZ2uuq1PhWYKqgV/wpWoAjDIMA8jTK9qPbi1RrohR9a
+         zMR6ZSrb7MmBjLJ4qytu2ynl5hiIsaq9BVmrba4U=
+From:   Luca Weiss <luca@z3ntu.xyz>
+To:     Stephan Gerhold <stephan@gerhold.net>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     linux-arm-msm@vger.kernel.org,
+        ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
+        Vladimir Lypak <vladimir.lypak@gmail.com>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Andy Gross <agross@kernel.org>,
+        Ohad Ben-Cohen <ohad@wizery.com>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Subject: Re: [PATCH 09/15] rpmsg: smd: Drop unnecessary condition for channel creation
+Date:   Sun, 13 Feb 2022 21:51:09 +0100
+Message-ID: <3503848.e9J7NaK4W3@g550jk>
+In-Reply-To: <2615776.mvXUDI8C0e@g550jk>
+References: <20220112194118.178026-1-luca@z3ntu.xyz> <Yfhjil3pfZLa5g3j@builder.lan> <2615776.mvXUDI8C0e@g550jk>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Refactor out the mailbox request and associated ping logic code
-from k3_r5_rproc_start() function into its own separate function
-so that it can be re-used in the soon to be added .attach() ops
-callback.
+Hi Bjorn,
 
-Signed-off-by: Suman Anna <s-anna@ti.com>
-Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
----
-v3: Updated license years, no code changes
-v2: https://patchwork.kernel.org/project/linux-remoteproc/patch/20210723220248.6554-3-s-anna@ti.com/
-v1: https://patchwork.kernel.org/project/linux-remoteproc/patch/20210522000309.26134-4-s-anna@ti.com/
+On Sonntag, 6. Februar 2022 21:17:22 CET Luca Weiss wrote:
+> Hi Bjorn,
+>=20
+> On Montag, 31. J=E4nner 2022 23:32:42 CET Bjorn Andersson wrote:
+> > On Sun 16 Jan 10:30 CST 2022, Stephan Gerhold wrote:
+> > > On Sun, Jan 16, 2022 at 05:08:29PM +0100, Luca Weiss wrote:
+> > > > On Mittwoch, 12. J=E4nner 2022 22:39:53 CET Stephan Gerhold wrote:
+> > > > > On Wed, Jan 12, 2022 at 08:40:58PM +0100, Luca Weiss wrote:
+> > > > > > From: Vladimir Lypak <vladimir.lypak@gmail.com>
+> > > > > >=20
+> > > > > > RPM Firmware on variety of newer SoCs such as MSM8917 (also lik=
+ely
+> > > > > > MSM8937, MSM8940, MSM8952), MSM8953 and on some MSM8916 devices)
+> > > > > > doesn't
+> > > > > > initiate opening of the SMD channel if it was previously opened=
+ by
+> > > > > > bootloader. This doesn't allow probing of smd-rpm driver on such
+> > > > > > devices
+> > > > > > because there is a check that requires RPM this behaviour.
+> > > > > >=20
+> > > > > > Signed-off-by: Vladimir Lypak <vladimir.lypak@gmail.com>
+> > > > > > Signed-off-by: Luca Weiss <luca@z3ntu.xyz>
+> > > > > > Reviewed-by: Konrad Dybcio <konrad.dybcio@somainline.org>
+> > > > >=20
+> > > > > This is effectively a "Revert "Revert "rpmsg: smd: Create device =
+for
+> > > > > all
+> > > > > channels""":
+> > > > >=20
+> > > > > https://lore.kernel.org/linux-arm-msm/20171212235857.10432-3-bjor=
+n.a
+> > > > > nd
+> > > > > ersson @linaro.org/
+> > > > > https://lore.kernel.org/linux-arm-msm/20180315181244.8859-1-bjorn=
+=2Ean
+> > > > > de
+> > > > > rsson
+> > > > > @linaro.org/
+> > > > >=20
+> > > > > Won't this cause the same regression reported by Srinivas again?
+> > > >=20
+> > > > Do you have any suggestion on another way to solve this? Without th=
+is
+> > > > commit the regulators just won't probe at all, I haven't looked very
+> > > > deep into it though given this patch solves it.
+> > > >=20
+> > > > I guess worst case it'll become a devicetree property to enable this
+> > > > quirk?
+> > >=20
+> > > My spontaneous suggestion would be to skip the check only for the
+> > > "rpm_requests" channel, e.g. something like
+> > >=20
+> > > 	if (remote_state !=3D SMD_CHANNEL_OPENING &&
+> > > =09
+> > > 	    remote_state !=3D SMD_CHANNEL_OPENED &&
+> > > 	    strcmp(channel->name, "rpm_requests")
+> > > 	=09
+> > > 		continue;
+> > >=20
+> > > This will avoid changing the behavior for anything but the RPM channe=
+l.
+> > > I don't think anything else is affected by the same problem (since the
+> > > bootloader or earlier firmware should not make use of any other
+> > > channel).
+> > > Also, we definitely *always* want to open the channel to the RPM beca=
+use
+> > > otherwise almost everything breaks.
+> >=20
+> > Last time this came up I asked if someone could test if the RPM is stuck
+> > in the state machine trying to close the channel and as such we could
+> > kick it by making sure that we "ack" the closing of the channel and
+> > hence it would come back up again.
+> >=20
+> > But I don't remember seeing any outcome of this.
+>=20
+> Do you have a link to this or should I go digging in the archives?
 
- drivers/remoteproc/ti_k3_r5_remoteproc.c | 68 ++++++++++++++----------
- 1 file changed, 41 insertions(+), 27 deletions(-)
+Replying to myself, I went searching but couldn't find anything. If you hav=
+e=20
+some PoC code I'd be happy to try but as I'm not familiar with rpm/smd at a=
+ll=20
+I'd have to read myself into it first.
 
-diff --git a/drivers/remoteproc/ti_k3_r5_remoteproc.c b/drivers/remoteproc/ti_k3_r5_remoteproc.c
-index 969531c05b13..ff4e1fac1c7f 100644
---- a/drivers/remoteproc/ti_k3_r5_remoteproc.c
-+++ b/drivers/remoteproc/ti_k3_r5_remoteproc.c
-@@ -2,7 +2,7 @@
- /*
-  * TI K3 R5F (MCU) Remote Processor driver
-  *
-- * Copyright (C) 2017-2020 Texas Instruments Incorporated - https://www.ti.com/
-+ * Copyright (C) 2017-2022 Texas Instruments Incorporated - https://www.ti.com/
-  *	Suman Anna <s-anna@ti.com>
-  */
- 
-@@ -376,6 +376,44 @@ static inline int k3_r5_core_run(struct k3_r5_core *core)
- 				       0, PROC_BOOT_CTRL_FLAG_R5_CORE_HALT);
- }
- 
-+static int k3_r5_rproc_request_mbox(struct rproc *rproc)
-+{
-+	struct k3_r5_rproc *kproc = rproc->priv;
-+	struct mbox_client *client = &kproc->client;
-+	struct device *dev = kproc->dev;
-+	int ret;
-+
-+	client->dev = dev;
-+	client->tx_done = NULL;
-+	client->rx_callback = k3_r5_rproc_mbox_callback;
-+	client->tx_block = false;
-+	client->knows_txdone = false;
-+
-+	kproc->mbox = mbox_request_channel(client, 0);
-+	if (IS_ERR(kproc->mbox)) {
-+		ret = -EBUSY;
-+		dev_err(dev, "mbox_request_channel failed: %ld\n",
-+			PTR_ERR(kproc->mbox));
-+		return ret;
-+	}
-+
-+	/*
-+	 * Ping the remote processor, this is only for sanity-sake for now;
-+	 * there is no functional effect whatsoever.
-+	 *
-+	 * Note that the reply will _not_ arrive immediately: this message
-+	 * will wait in the mailbox fifo until the remote processor is booted.
-+	 */
-+	ret = mbox_send_message(kproc->mbox, (void *)RP_MBOX_ECHO_REQUEST);
-+	if (ret < 0) {
-+		dev_err(dev, "mbox_send_message failed: %d\n", ret);
-+		mbox_free_channel(kproc->mbox);
-+		return ret;
-+	}
-+
-+	return 0;
-+}
-+
- /*
-  * The R5F cores have controls for both a reset and a halt/run. The code
-  * execution from DDR requires the initial boot-strapping code to be run
-@@ -495,38 +533,14 @@ static int k3_r5_rproc_start(struct rproc *rproc)
- {
- 	struct k3_r5_rproc *kproc = rproc->priv;
- 	struct k3_r5_cluster *cluster = kproc->cluster;
--	struct mbox_client *client = &kproc->client;
- 	struct device *dev = kproc->dev;
- 	struct k3_r5_core *core;
- 	u32 boot_addr;
- 	int ret;
- 
--	client->dev = dev;
--	client->tx_done = NULL;
--	client->rx_callback = k3_r5_rproc_mbox_callback;
--	client->tx_block = false;
--	client->knows_txdone = false;
--
--	kproc->mbox = mbox_request_channel(client, 0);
--	if (IS_ERR(kproc->mbox)) {
--		ret = -EBUSY;
--		dev_err(dev, "mbox_request_channel failed: %ld\n",
--			PTR_ERR(kproc->mbox));
-+	ret = k3_r5_rproc_request_mbox(rproc);
-+	if (ret)
- 		return ret;
--	}
--
--	/*
--	 * Ping the remote processor, this is only for sanity-sake for now;
--	 * there is no functional effect whatsoever.
--	 *
--	 * Note that the reply will _not_ arrive immediately: this message
--	 * will wait in the mailbox fifo until the remote processor is booted.
--	 */
--	ret = mbox_send_message(kproc->mbox, (void *)RP_MBOX_ECHO_REQUEST);
--	if (ret < 0) {
--		dev_err(dev, "mbox_send_message failed: %d\n", ret);
--		goto put_mbox;
--	}
- 
- 	boot_addr = rproc->bootaddr;
- 	/* TODO: add boot_addr sanity checking */
--- 
-2.32.0
+If Stephans suggestion with the strcmp(channel->name, "rpm_requests") is ok=
+=20
+then I'd test this and use that in v2. I'd personally rather not spend too=
+=20
+much time on this issue right now as it's blocking msm8953 completely (no=20
+regulators =3D no nothing),
+
+Regards
+Luca
+
+>=20
+> Regards
+> Luca
+>=20
+> > > Many solutions are possible though so at the end it is mostly up to
+> > > Bjorn to decide I think. :)
+> >=20
+> > I would prefer to get an answer to above question, but if that doesn't
+> > work (or look like crap) I'm willing to take your suggestion of skipping
+> > the continue for the rpm_requests channel. Obviously with a comment
+> > above describing why we're carrying that special case.
+> >=20
+> > Regards,
+> > Bjorn
+
+
+
 
