@@ -2,263 +2,258 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE214C433FE
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 14 Feb 2022 18:22:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A538C433F5
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 14 Feb 2022 18:42:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349455AbiBNSWW (ORCPT
+        id S230486AbiBNSmN (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 14 Feb 2022 13:22:22 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:34808 "EHLO
+        Mon, 14 Feb 2022 13:42:13 -0500
+Received: from gmail-smtp-in.l.google.com ([23.128.96.19]:53378 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1347859AbiBNSWV (ORCPT
+        with ESMTP id S229929AbiBNSmN (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 14 Feb 2022 13:22:21 -0500
-Received: from mail-pj1-x1036.google.com (mail-pj1-x1036.google.com [IPv6:2607:f8b0:4864:20::1036])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 21A49BCAB
-        for <linux-remoteproc@vger.kernel.org>; Mon, 14 Feb 2022 10:22:13 -0800 (PST)
-Received: by mail-pj1-x1036.google.com with SMTP id v13-20020a17090ac90d00b001b87bc106bdso19642575pjt.4
-        for <linux-remoteproc@vger.kernel.org>; Mon, 14 Feb 2022 10:22:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=3lf6aWAMMF8x0ksRHMk2/ZMhShybab0gNxcrkOJeaEA=;
-        b=TrzsLlC8akpRgInaSWfHjrpJ/hOkT0uExIR6zoHuXIoyCKKM7Bt64SDkVaa2JxyJew
-         avrn9rmZdYysznTzUpgGTfksZuxuteTKVnbqnIxMNcH1PvaV8QFfmVFTDsBPcIPI/VZD
-         zMXs4g06rWysmbkjcvIu9FMwS0JeDlVoeJSOvRVkAFX1iaYgDlujyzFegN48/WauBHG7
-         g2qVOXJ4a5oYI1+3G9AbTbKJQXOu6CVFAN5k2BhAc7IqHVdfT1JZrnE2HUERmSWG1xps
-         UaaVaE3VjorIptbKqbjitZ+sAiN1KOh4KO96KBUrZ3WSNJ2WvlyMTvqNiLt5EuT0H48Y
-         h/lg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=3lf6aWAMMF8x0ksRHMk2/ZMhShybab0gNxcrkOJeaEA=;
-        b=YGw06C7HSoByaIgRrdwJvz3rcCBlV2rHFPMgqh/VlVysScDFwyBRlzwlPWKIZQayyY
-         +Qp09kvZBgw8+qIMYZ46MHA81LeHdKuYVlwS21f67ztHLSUu0gPLMH6jHNEgbDsvAAeG
-         hNe0tlwttxMRon89XMxA4HsJLwK7vfbsoY8x3T2AdxfmmKTRNi8MeRJ8mtqsUQHrkIVh
-         3MEYydvZQldtLU9nK8z1k9MVAC4KjCohaaNkfr+gR9gDe3irvEaOxg11hwXUd0UJuhLQ
-         jEBlig4d55JYWYS0ruxFT9PhvEi48esbuBRB6P65ORaAUt1kYHzNbRmDWFRkD1EunxUf
-         wxgg==
-X-Gm-Message-State: AOAM533ML1N+BmZxug9zLQR9y4e5xwAfjvgrGFEkZdJmoC67Ljq1d6p6
-        pnAvbFtOQKFRZcwZzd2aJgX62A==
-X-Google-Smtp-Source: ABdhPJy0vYddQB71wBgDXGEbjDBhvyykkKtMovCif5Ui8Ku4qon38pmZykD5ApuHhqxO8imONMthDQ==
-X-Received: by 2002:a17:902:eac5:: with SMTP id p5mr66590pld.160.1644862932491;
-        Mon, 14 Feb 2022 10:22:12 -0800 (PST)
-Received: from p14s (S0106889e681aac74.cg.shawcable.net. [68.147.0.187])
-        by smtp.gmail.com with ESMTPSA id ip10sm15436pjb.11.2022.02.14.10.22.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Feb 2022 10:22:11 -0800 (PST)
-Date:   Mon, 14 Feb 2022 11:22:08 -0700
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-To:     Tanmay Shah <tanmay.shah@xilinx.com>
-Cc:     bjorn.andersson@linaro.org, robh+dt@kernel.org,
-        michal.simek@xilinx.com, laurent.pinchart@ideasonboard.com,
-        ben.levinsky@xilinx.com, bill.mills@linaro.org,
-        sergei.korneichuk@xilinx.com, arun.balaji.kannan@xilinx.com,
-        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v3 1/6] dt-bindings: remoteproc: Add Xilinx RPU subsystem
- bindings
-Message-ID: <20220214182208.GA101373@p14s>
-References: <20220210112824.2084724-1-tanmay.shah@xilinx.com>
- <20220210112824.2084724-2-tanmay.shah@xilinx.com>
+        Mon, 14 Feb 2022 13:42:13 -0500
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1E5576734E;
+        Mon, 14 Feb 2022 10:41:58 -0800 (PST)
+Received: from pps.filterd (m0288072.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.1.2/8.16.1.2) with ESMTP id 21EFbae7002001;
+        Mon, 14 Feb 2022 19:41:42 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=selector1;
+ bh=KGz2678pGQbIbcVEydZQMC3hC9P2ytNR+Hdz3Z+2McY=;
+ b=s+2QXTxsdXXVHNmJusjAWCUcRA5/Pf/8M48NOyWKLzUEpKst0u80bF8101lORhKqbOb2
+ afRQjXGiQBdLsYQmYc+zRrUwvQN2X+QgecGTB0TVGFzzs/CwqzQ+h7sanAAvHgXQz8bR
+ A+mJLRvHSeJmBGdYdvDptL6b0k6SjfGuNpymlYgMK8pi2OKD/kDxXoVo2BQG0p0GFmM6
+ +M+TGM5CfSS8dcef5knA8kfaQXlrsJ99gRv9QTfgJOEt5iTKy4v6imaqvxzLJFD8LD7v
+ A4NxJapkr0JstTLptPflFtG7685ac3LSwQ0gvjSL42qQEYMle8F42+hpId/kblPx1MZ2 sA== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3e7pj7j9yw-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 14 Feb 2022 19:41:42 +0100
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id B92D310002A;
+        Mon, 14 Feb 2022 19:41:41 +0100 (CET)
+Received: from Webmail-eu.st.com (sfhdag2node2.st.com [10.75.127.5])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id AC008231DE5;
+        Mon, 14 Feb 2022 19:41:41 +0100 (CET)
+Received: from [10.211.3.63] (10.75.127.49) by SFHDAG2NODE2.st.com
+ (10.75.127.5) with Microsoft SMTP Server (TLS) id 15.0.1497.26; Mon, 14 Feb
+ 2022 19:41:40 +0100
+Message-ID: <67ddf940-6f87-d8cc-8dc6-29a39a022265@foss.st.com>
+Date:   Mon, 14 Feb 2022 19:41:40 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220210112824.2084724-2-tanmay.shah@xilinx.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.5.0
+Subject: Re: [PATCH V2] remoteproc: support self recovery after rproc crash
+Content-Language: en-US
+To:     "Peng Fan (OSS)" <peng.fan@oss.nxp.com>,
+        <bjorn.andersson@linaro.org>, <mathieu.poirier@linaro.org>,
+        <linux-remoteproc@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+CC:     Peng Fan <peng.fan@nxp.com>
+References: <20220126085120.3397450-1-peng.fan@oss.nxp.com>
+From:   Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
+In-Reply-To: <20220126085120.3397450-1-peng.fan@oss.nxp.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.75.127.49]
+X-ClientProxiedBy: SFHDAG2NODE3.st.com (10.75.127.6) To SFHDAG2NODE2.st.com
+ (10.75.127.5)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.816,Hydra:6.0.425,FMLib:17.11.62.513
+ definitions=2022-02-14_07,2022-02-14_03,2021-12-02_01
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Thu, Feb 10, 2022 at 03:28:19AM -0800, Tanmay Shah wrote:
-> Xilinx ZynqMP platform has dual-core ARM Cortex R5 Realtime Processing
-> Unit(RPU) subsystem. This patch adds dt-bindings for RPU subsystem (cluster).
+Hi Peng,
+
+On 1/26/22 09:51, Peng Fan (OSS) wrote:
+> From: Peng Fan <peng.fan@nxp.com>
 > 
-> Signed-off-by: Tanmay Shah <tanmay.shah@xilinx.com>
+> Current logic only support main processor to stop/start the remote
+> processor after rproc crash. However to SoC, such as i.MX8QM/QXP, the
+> remote processor could do self recovery after crash and trigger watchdog
+> reboot. It does not need main processor to load image, stop/start M4
+> core.
+
+
+On stm32mp1 platform the remote processor watchdog generates an early interrupt
+that could be used to detach and reattach before the reset of the remote processor.
+I need to test race condition,but I suppose that this should works if the resource
+table is not reinitialized by the remote processor firmware.
+
+Another option for the stm32mp1 is that remoteproc manages the reset of the 
+remote processor.
+For instance this allows to save a core-dump before manually resetting the remote
+processor.
+But looks like this use case can be handled later, as mentioned below. 
+
+> 
+> This patch add a new flag to indicate whether the SoC has self recovery
+> capability. And introduce two functions: rproc_self_recovery,
+> rproc_assisted_recovery for the two cases. Assisted recovery is as
+> before, let main processor to help recovery, while self recovery is
+> recover itself withou help. To self recovery, we only do detach and
+> attach.
+
+
+> 
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
 > ---
 > 
-> Changes in v3:
->   - None
+> V2:
+>  Nothing change in V2.
+>  Only move this patch out from
+>  https://patchwork.kernel.org/project/linux-remoteproc/list/?series=604364
 > 
->  .../bindings/remoteproc/xlnx,r5f-rproc.yaml   | 139 ++++++++++++++++++
->  include/dt-bindings/power/xlnx-zynqmp-power.h |   6 +
->  2 files changed, 145 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/remoteproc/xlnx,r5f-rproc.yaml
+>  drivers/remoteproc/remoteproc_core.c | 66 ++++++++++++++++++++--------
+>  include/linux/remoteproc.h           |  2 +
+>  2 files changed, 49 insertions(+), 19 deletions(-)
 > 
-> diff --git a/Documentation/devicetree/bindings/remoteproc/xlnx,r5f-rproc.yaml b/Documentation/devicetree/bindings/remoteproc/xlnx,r5f-rproc.yaml
-> new file mode 100644
-> index 000000000000..d43f0b16ad7f
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/remoteproc/xlnx,r5f-rproc.yaml
-> @@ -0,0 +1,139 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only or BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/remoteproc/xlnx,r5f-rproc.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Xilinx R5F processor subsystem
-> +
-> +maintainers:
-> +  - Ben Levinsky <ben.levinsky@xilinx.com>
-> +  - Tanmay Shah <tanmay.shah@xilinx.com>
-> +
-> +description: |
-> +  The Xilinx platforms include a pair of Cortex-R5F processors (RPU) for
-> +  real-time processing based on the Cortex-R5F processor core from ARM.
-> +  The Cortex-R5F processor implements the Arm v7-R architecture and includes a
-> +  floating-point unit that implements the Arm VFPv3 instruction set.
-> +
-> +properties:
-> +  compatible:
-> +    const: xlnx,zynqmp-r5fss
-> +
-> +  xlnx,cluster-mode:
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    description: |
-> +      The RPU MPCore can operate in split mode(Dual-processor performance), Safety
-> +      lock-step mode(Both RPU cores execute the same code in lock-step,
-> +      clock-for-clock) or Single CPU mode (RPU core 0 can be held in reset while
-> +      core 1 runs normally). The processor does not support dynamic configuration.
-> +      Switching between modes is only permitted immediately after a processor reset.
-> +      If set to  1 then lockstep mode and if 0 then split mode.
-> +      If set to  2 then single CPU mode. When not defined, default will be lockstep mode.
-> +
-> +  "#address-cells":
-> +    const: 1
-> +
-> +  "#size-cells":
-> +    const: 1
-> +
-> +  reg:
-> +    items:
-> +      - description: RPU subsystem status and control registers
-> +
-> +patternProperties:
-> +  "^r5f-[a-f0-9]+$":
-> +    type: object
-> +    description: |
-> +      The RPU is located in the Low Power Domain of the Processor Subsystem.
-> +      Each processor includes separate L1 instruction and data caches and
-> +      tightly coupled memories (TCM). System memory is cacheable, but the TCM
-> +      memory space is non-cacheable.
-> +
-> +      Each RPU contains one 64KB memory and two 32KB memories that
-> +      are accessed via the TCM A and B port interfaces, for a total of 128KB
-> +      per processor. In lock-step mode, the processor has access to 256KB of
-> +      TCM memory.
-> +
-> +    properties:
-> +      compatible:
-> +        const: xlnx,zynqmp-r5f
-> +
-> +      power-domains:
-> +        description: |
-> +          phandle to a PM domain provider node and an args specifier containing
-> +          the r5f0 and r5f1 node id value.
-> +
-> +      reg:
-> +        items:
-> +          - description: RPU0 and RPU1 control and status registers
-> +
-> +      mboxes:
-> +        items:
-> +          - description: |
-> +              Bi-directional channel to send data to RPU and receive ack from RPU.
-> +              Request and response message buffers are available and each buffer is 32 bytes.
-> +          - description: |
-> +              Bi-directional channel to receive data from RPU and send ack from RPU.
-> +              Request and response message buffers are available and each buffer is 32 bytes.
-> +        minItems: 1
-> +
-> +      mbox-names:
-> +        items:
-> +          - const: tx
-> +          - const: rx
-> +        minItems: 1
-> +
-> +      sram:
-> +        $ref: /schemas/types.yaml#/definitions/phandle-array
-> +        minItems: 1
-> +        description: |
-> +          phandles to one or more reserved on-chip SRAM regions. Other than TCM,
-> +          the RPU can execute instructions and access data from, the OCM memory,
-> +          the main DDR memory, and other system memories.
-> +
-> +          The regions should be defined as child nodes of the respective SRAM
-> +          node, and should be defined as per the generic bindings in,
-> +          Documentation/devicetree/bindings/sram/sram.yaml
-> +
-> +      memory-region:
-> +        $ref: /schemas/types.yaml#/definitions/phandle-array
-> +        description: |
-> +          List of phandles to the reserved memory regions associated with the
-> +          remoteproc device. This is variable and describes the memories shared with
-> +          the remote processor (e.g. remoteproc firmware and carveouts, rpmsg
-> +          vrings, ...). This reserved memory region will be allocated on DDR memory.
-> +          See Documentation/devicetree/bindings/reserved-memory/reserved-memory.txt
-> 
-
-Aside from "compatible" and "power-domains", none of the above properties appear
-in the example below, making this patchset harder to review.
-
-I am pretty sure to have commented on this earlier...
-
-More comments to come later or tomorrow.
-
-Thanks,
-Mathieu
-
-> +    required:
-> +      - compatible
-> +      - power-domains
-> +
-> +    unevaluatedProperties: false
-> +
-> +required:
-> +  - compatible
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    r5fss: r5fss@ff9a0000 {
-> +        compatible = "xlnx,zynqmp-r5fss";
-> +        xlnx,cluster-mode = <1>;
-> +
-> +        #address-cells = <1>;
-> +        #size-cells = <1>;
-> +        reg = <0xff9a0000 0x228>;
-> +
-> +        r5f-0 {
-> +            compatible = "xlnx,zynqmp-r5f";
-> +            power-domains = <&zynqmp_firmware 0x7>;
-> +        };
-> +
-> +        r5f-1 {
-> +            compatible = "xlnx,zynqmp-r5f";
-> +            power-domains = <&zynqmp_firmware 0x8>;
-> +        };
-> +    };
-> +...
-> diff --git a/include/dt-bindings/power/xlnx-zynqmp-power.h b/include/dt-bindings/power/xlnx-zynqmp-power.h
-> index 0d9a412fd5e0..618024cbb20d 100644
-> --- a/include/dt-bindings/power/xlnx-zynqmp-power.h
-> +++ b/include/dt-bindings/power/xlnx-zynqmp-power.h
-> @@ -6,6 +6,12 @@
->  #ifndef _DT_BINDINGS_ZYNQMP_POWER_H
->  #define _DT_BINDINGS_ZYNQMP_POWER_H
+> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+> index 69f51acf235e..4bd5544dab8f 100644
+> --- a/drivers/remoteproc/remoteproc_core.c
+> +++ b/drivers/remoteproc/remoteproc_core.c
+> @@ -1887,6 +1887,49 @@ static int __rproc_detach(struct rproc *rproc)
+>  	return 0;
+>  }
 >  
-> +#define		PD_RPU_0	7
-> +#define		PD_RPU_1	8
-> +#define		PD_R5_0_ATCM	15
-> +#define		PD_R5_0_BTCM	16
-> +#define		PD_R5_1_ATCM	17
-> +#define		PD_R5_1_BTCM	18
->  #define		PD_USB_0	22
->  #define		PD_USB_1	23
->  #define		PD_TTC_0	24
-> -- 
-> 2.25.1
-> 
+> +static int rproc_self_recovery(struct rproc *rproc)
+> +{
+> +	int ret;
+> +
+> +	mutex_unlock(&rproc->lock);
+> +	ret = rproc_detach(rproc);
+> +	mutex_lock(&rproc->lock);
+> +	if (ret)
+> +		return ret;
+
+Here we would want to perform a core dump and manually reset the
+co-processor.
+I suppose that a new rproc ops could be called here in a next step.
+
+> +
+> +	if (atomic_inc_return(&rproc->power) > 1)
+> +		return 0;
+
+Do you identify a use case that needs to test rproc->power to
+skip the attach?
+If yes could you add a comment to describe it?
+
+> +	return rproc_attach(rproc);
+> +}
+> +
+> +static int rproc_assisted_recovery(struct rproc *rproc)
+> +{
+> +	const struct firmware *firmware_p;
+> +	struct device *dev = &rproc->dev;
+> +	int ret;
+> +
+> +	ret = rproc_stop(rproc, true);
+> +	if (ret)
+> +		return ret;
+> +
+> +	/* generate coredump */
+> +	rproc->ops->coredump(rproc);
+> +
+> +	/* load firmware */
+> +	ret = request_firmware(&firmware_p, rproc->firmware, dev);
+> +	if (ret < 0) {
+> +		dev_err(dev, "request_firmware failed: %d\n", ret);
+> +		return ret;
+> +	}
+> +
+> +	/* boot the remote processor up again */
+> +	ret = rproc_start(rproc, firmware_p);
+> +
+> +	release_firmware(firmware_p);
+> +
+> +	return ret;
+> +}
+> +
+>  /**
+>   * rproc_trigger_recovery() - recover a remoteproc
+>   * @rproc: the remote processor
+> @@ -1901,7 +1944,6 @@ static int __rproc_detach(struct rproc *rproc)
+>   */
+>  int rproc_trigger_recovery(struct rproc *rproc)
+>  {
+> -	const struct firmware *firmware_p;
+>  	struct device *dev = &rproc->dev;
+>  	int ret;
+>  
+> @@ -1915,24 +1957,10 @@ int rproc_trigger_recovery(struct rproc *rproc)
+>  
+>  	dev_err(dev, "recovering %s\n", rproc->name);
+>  
+> -	ret = rproc_stop(rproc, true);
+> -	if (ret)
+> -		goto unlock_mutex;
+> -
+> -	/* generate coredump */
+> -	rproc->ops->coredump(rproc);
+> -
+> -	/* load firmware */
+> -	ret = request_firmware(&firmware_p, rproc->firmware, dev);
+> -	if (ret < 0) {
+> -		dev_err(dev, "request_firmware failed: %d\n", ret);
+> -		goto unlock_mutex;
+> -	}
+> -
+> -	/* boot the remote processor up again */
+> -	ret = rproc_start(rproc, firmware_p);
+> -
+> -	release_firmware(firmware_p);
+> +	if (rproc->self_recovery)
+> +		ret = rproc_self_recovery(rproc);
+
+If some platforms have to manually reset the remote processor (without
+reloading the firmware) the name could not be relevant...
+
+Following comments are only suggestions that needs to be commented by maintainers
+
+What about rproc_attach_recovery ?
+
+> +	else
+> +		ret = rproc_assisted_recovery(rproc);
+
+and rproc_firmware_recovery ?
+
+
+>  
+>  unlock_mutex:
+>  	mutex_unlock(&rproc->lock);
+> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+> index e0600e1e5c17..b32ef46f8aa4 100644
+> --- a/include/linux/remoteproc.h
+> +++ b/include/linux/remoteproc.h
+> @@ -529,6 +529,7 @@ struct rproc_dump_segment {
+>   * @elf_machine: firmware ELF machine
+>   * @cdev: character device of the rproc
+>   * @cdev_put_on_release: flag to indicate if remoteproc should be shutdown on @char_dev release
+> + * @self_recovery: flag to indicate if remoteproc support self recovery
+>   */
+>  struct rproc {
+>  	struct list_head node;
+> @@ -568,6 +569,7 @@ struct rproc {
+>  	u16 elf_machine;
+>  	struct cdev cdev;
+>  	bool cdev_put_on_release;
+> +	bool self_recovery;
+
+This bool seems needed because we have lost the previous state before crash. 
+I wonder if a new rproc->state such as RPROC_REBOOT could avoid this boolean.
+
+
+I will try to test you patch on stm32mp1 next week
+
+Regards,
+Arnaud
+
+>  };
+>  
+>  /**
