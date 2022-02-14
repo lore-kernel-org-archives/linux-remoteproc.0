@@ -2,101 +2,81 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36409C43217
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 14 Feb 2022 07:28:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F437C433EF
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 14 Feb 2022 09:32:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241323AbiBNH2r (ORCPT
+        id S243681AbiBNJcK (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 14 Feb 2022 02:28:47 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:47052 "EHLO
+        Mon, 14 Feb 2022 04:32:10 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:43044 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241291AbiBNH2q (ORCPT
+        with ESMTP id S243523AbiBNJbw (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 14 Feb 2022 02:28:46 -0500
-Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B95923205D
-        for <linux-remoteproc@vger.kernel.org>; Sun, 13 Feb 2022 23:28:37 -0800 (PST)
-Received: from mail-ed1-f69.google.com (mail-ed1-f69.google.com [209.85.208.69])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 71DE94033C
-        for <linux-remoteproc@vger.kernel.org>; Mon, 14 Feb 2022 07:28:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1644823716;
-        bh=stPjNYKT8jIgNyF2oAsLzVlTYEd+kLoCabs8ksrQu4Y=;
-        h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-         In-Reply-To:Content-Type;
-        b=jMUvOorPXRbTgIjo4QR8OnJfJhD41D7iRu6JLBzukJQF1jiU2Y2nWVL+Q+iZnJjEn
-         oWNg9FbFxvORs0j4MDeFe82rEJ0KZFXtSwXovnFPpjPw5sSOoFAKfKT9MZMdRBvabI
-         Phf2HfAlqj8F6rO6e1oq6ujY983lW5M4U5tlrh1+fo52PPRqF80f2+WBiDDt2wGunr
-         oBbctpjNdwymicPGTAD6qWgYxRvOf6xhvgw0Z4jjZvDgqaWftgi1KWWxdCn7ZTUYT3
-         9EgTXrMlR/Sqepi8jx//r76tb7fysw2Fv1ngo6TqA2+TmAYYy2JBpCnL3T/stMMUYa
-         xfDRnXpv8A9lg==
-Received: by mail-ed1-f69.google.com with SMTP id d11-20020a50c88b000000b00410ba7a14acso1045986edh.6
-        for <linux-remoteproc@vger.kernel.org>; Sun, 13 Feb 2022 23:28:36 -0800 (PST)
+        Mon, 14 Feb 2022 04:31:52 -0500
+Received: from mail-pf1-x42a.google.com (mail-pf1-x42a.google.com [IPv6:2607:f8b0:4864:20::42a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 93446AE57
+        for <linux-remoteproc@vger.kernel.org>; Mon, 14 Feb 2022 01:30:33 -0800 (PST)
+Received: by mail-pf1-x42a.google.com with SMTP id d187so28193771pfa.10
+        for <linux-remoteproc@vger.kernel.org>; Mon, 14 Feb 2022 01:30:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=oMccKlvHSTv2/XLdnihbR0kUurA2iu+qyWrXmp9OvIg=;
+        b=ouAlZ1K54ZqGOYcrw3aW7NEHM0vrvrW8oO01WlyyblX5vSoL/UBr39pKCCALaa7dVu
+         OjPGn5fzXtOnIk4SgMTqyQhX91zRQe1Db27GN/CfbY9IOB92ZBa+QIS+MOPKbq/mHtEA
+         ZkcQu0y9JE1sxBLtnCxdtK0Fe1KGR1u0X6UpPbh/aZnLPqVtkg/4Yln0HRWTSAA7ZClU
+         66C6rGz/aSLTHW2z8rD8wAh4rIEh7I5nT0xpxEyIa41dJYN0kBH278fRmjWwuKDZHmii
+         DPXWHDFXTiATX3qgpwYJMGw8nOGpZgIbNdqPD6OB/xUCExOpEpSnXtDGmSpMfuOnZ0X1
+         h76g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=stPjNYKT8jIgNyF2oAsLzVlTYEd+kLoCabs8ksrQu4Y=;
-        b=ED5Bi2CuPXtdbwJmGpfAfV+N+cybxAl0V2R4wH/BLmm3nM2YXJ1jPW1FIqWQrkSUCY
-         8Z9KSF1lQb0/7AGuMVTl/SyxjuPZGJCE6w0yhDByMbDOwuHjbRXKEjgE61HzDVVysvLz
-         44ALL7W4qEA8E+sZ84N0iCMIjhZxqmRBPuXUPXbtwpqULK3yU8LUlQmZeDkuQLOooCwO
-         GpQY0kV7a1Cr0I0n8Tf470ES0u0TaAULtY1EKTbqhTezIYq+PTRmk3NhmkieHJssZm4a
-         gsg1BXUG340fQblJQtHTxVfGF6WAbDW+IJrxPOP/gEl64E5R8LpaaesE8m4xXltsWNGj
-         5a/g==
-X-Gm-Message-State: AOAM530pDUQGK/DGVv2TzhlDn3Yg+V7fcVyNaG2kXP8MtFZDyPklCB+L
-        i1NRC6DpXcVs6a4LzRIq/XFIWvX/ChnAjuFdQxolk5UfdeVw/9SfmyZ8JQc9UaneYkuqTWsPRsT
-        kC0LoPjbAUgX7tjQwu3/eNd20skK/bMJbcJt36IIlEZuVFNs=
-X-Received: by 2002:a05:6402:51d2:: with SMTP id r18mr14335291edd.88.1644823715487;
-        Sun, 13 Feb 2022 23:28:35 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJyzkInTRfFMDmTIqQtdD3PzZngKjB6pp383xOK8wNzWd9H/435n+6VZuhhh/TUUVZehlXzKrw==
-X-Received: by 2002:a05:6402:51d2:: with SMTP id r18mr14335283edd.88.1644823715381;
-        Sun, 13 Feb 2022 23:28:35 -0800 (PST)
-Received: from [192.168.0.103] (xdsl-188-155-168-84.adslplus.ch. [188.155.168.84])
-        by smtp.gmail.com with ESMTPSA id n2sm10098365ejl.86.2022.02.13.23.28.34
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 13 Feb 2022 23:28:34 -0800 (PST)
-Message-ID: <b7dad94f-4e59-cb4b-251d-05f747bb0862@canonical.com>
-Date:   Mon, 14 Feb 2022 08:28:34 +0100
+        bh=oMccKlvHSTv2/XLdnihbR0kUurA2iu+qyWrXmp9OvIg=;
+        b=a7+zJL0KSvTWdRkuIFoU+L/L28plsnF6qGLcsfB06rvn4G0fGi8L/B+ezrZ5BRi3T4
+         /8pgPzjPaqP4kBqAYTJMF2JgcyQa6HBf0TrIQrik3Ngt0UCOfzNabv/GmtiYsB6fRXEs
+         K3FfKRDOEK1l4Xx8j20S6DYqnS8BBP1lrywITP45OSrBa7heW9wg7i8p/sYDQAxy434X
+         Y+TvGZacNqrNV4y4UQSI0z26B6E2+RHfapX/v4WtSlhEXvuHZhWE0coR3Zo/71q/mDTe
+         EbioBAWw5aRme39Azo6ipoYfLFVsPw0hz1dNUouOO0zVmNP4drvWa/wffRoqhGESfOvg
+         G+3Q==
+X-Gm-Message-State: AOAM5320mShZnwZ32bgzNz3bR0gvZhA6Lx3mUliToPeF7Sfm1IJdmbNR
+        P1+4gIlE1S95SnBELmUQWz/UYi2/IIsnNLUx
+X-Google-Smtp-Source: ABdhPJwYf+nJUwueV28LW8gzTcVtRfa23+nn6GXHD6tkxC6Vw7cM35qhd5ynHXjlP0dqnUmGtH0bQg==
+X-Received: by 2002:a63:a550:: with SMTP id r16mr4273608pgu.270.1644831032666;
+        Mon, 14 Feb 2022 01:30:32 -0800 (PST)
+Received: from localhost.localdomain ([2001:f40:906:26d6:f1ad:2f40:58c6:fd2f])
+        by smtp.googlemail.com with ESMTPSA id v10sm1720310pfu.38.2022.02.14.01.30.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 14 Feb 2022 01:30:32 -0800 (PST)
+From:   Tim Blechmann <tim.blechmann@gmail.com>
+X-Google-Original-From: Tim Blechmann <tim@klingt.org>
+To:     linux-remoteproc@vger.kernel.org
+Cc:     Tim Blechmann <tim@klingt.org>
+Subject: [PATCH 0/1] rpmsg: char - treat `ENOMEM` as `EAGAIN`
+Date:   Mon, 14 Feb 2022 17:30:19 +0800
+Message-Id: <20220214093020.1765833-1-tim@klingt.org>
+X-Mailer: git-send-email 2.35.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.0
-Subject: Re: [PATCH 1/3] dt-bindings: remoteproc: qcom: Add interconnects
- property
-Content-Language: en-US
-To:     Sibi Sankar <quic_sibis@quicinc.com>, bjorn.andersson@linaro.org,
-        robh+dt@kernel.org
-Cc:     ohad@wizery.com, agross@kernel.org, mathieu.poirier@linaro.org,
-        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        evgreen@chromium.org, dianders@chromium.org, swboyd@chromium.org,
-        mka@chromium.org
-References: <1644813252-12897-1-git-send-email-quic_sibis@quicinc.com>
- <1644813252-12897-2-git-send-email-quic_sibis@quicinc.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-In-Reply-To: <1644813252-12897-2-git-send-email-quic_sibis@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On 14/02/2022 05:34, Sibi Sankar wrote:
-> Add interconnects property to support the bandwidth requirements
-> during modem bootup on SC7280 SoCs.
-> 
-> Signed-off-by: Sibi Sankar <quic_sibis@quicinc.com>
-> ---
->  .../devicetree/bindings/remoteproc/qcom,q6v5.txt   | 23 ++++++++++++++++++++++
->  1 file changed, 23 insertions(+)
-> 
-
-There were several properties added within last months, so in total you
-changed these bindings quite a lot. Please convert them to YAML.
+This patch should allow the use of `rpmsg_char` character devices with
+libraries that do a `poll`/`write` loop and expect `EAGAIN` when sending
+fails and the user space application needs to `poll` to wait for more
+space to be available.
+`boost::asio::write` is a notable example of a library, which implements
+such a loop.
 
 
-Best regards,
-Krzysztof
+Tim Blechmann (1):
+  rpmsg: char - treat `ENOMEM` as `EAGAIN`
+
+ drivers/rpmsg/rpmsg_char.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+-- 
+2.35.1
+
