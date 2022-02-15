@@ -2,218 +2,198 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 853C5C433EF
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 15 Feb 2022 13:16:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08CF5C433EF
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 15 Feb 2022 15:42:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237825AbiBONRF (ORCPT
+        id S240225AbiBOPmj (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 15 Feb 2022 08:17:05 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:46804 "EHLO
+        Tue, 15 Feb 2022 10:42:39 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:43630 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232006AbiBONRE (ORCPT
+        with ESMTP id S241273AbiBOPlI (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 15 Feb 2022 08:17:04 -0500
-Received: from mga17.intel.com (mga17.intel.com [192.55.52.151])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 53240C7D4E;
-        Tue, 15 Feb 2022 05:16:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1644931014; x=1676467014;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=w/fCEkspTynMx/KBUNmalbFEyHPshGMZWUJ7Yi9YEdY=;
-  b=VX4GJyTTpn49ihfaU96YFA3qbY232+7ltnC49JbTlqVZbPeW8IAIFC3g
-   KygJFJKrtY+CrtC7bd4de63mCvsyeCK/4LThZHtxf6rZntEBI0lV/zvCZ
-   02zStrQr14gAneRRxkwylbtwEEyJP9T7pLWlrOPTbdT7ybUFh/M2pNg6E
-   2RYM3LzLiT5ATbAdB2ZKtazS6W35dlKZpA7buRWAmGRd5lnky8Vfu/ZVv
-   qyHtV9Yhz+ABSH9FKPSqO321gvBpMJiQ3qKWs4rqqy+avcs57id29Xhmy
-   ob/F5uD5sNKOMsNqXVGotuUPvoaDF1OSsScZ2snWUxJMEoM9ybvadp40z
-   A==;
-X-IronPort-AV: E=McAfee;i="6200,9189,10258"; a="230976804"
-X-IronPort-AV: E=Sophos;i="5.88,370,1635231600"; 
-   d="scan'208";a="230976804"
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Feb 2022 05:16:54 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.88,370,1635231600"; 
-   d="scan'208";a="703670560"
-Received: from lkp-server01.sh.intel.com (HELO d95dc2dabeb1) ([10.239.97.150])
-  by orsmga005.jf.intel.com with ESMTP; 15 Feb 2022 05:16:50 -0800
-Received: from kbuild by d95dc2dabeb1 with local (Exim 4.92)
-        (envelope-from <lkp@intel.com>)
-        id 1nJxhJ-0009gq-Kk; Tue, 15 Feb 2022 13:16:49 +0000
-Date:   Tue, 15 Feb 2022 21:16:16 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Deepak Kumar Singh <quic_deesin@quicinc.com>,
-        bjorn.andersson@linaro.org, quic_clew@quicinc.com,
-        mathieu.poirier@linaro.org
-Cc:     kbuild-all@lists.01.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        Deepak Kumar Singh <quic_deesin@quicinc.com>,
-        Andy Gross <agross@kernel.org>
-Subject: Re: [PATCH V4 2/2] soc: qcom: smem: validate fields of shared
- structures
-Message-ID: <202202152150.EZ8yJDzm-lkp@intel.com>
-References: <1644849974-8043-2-git-send-email-quic_deesin@quicinc.com>
+        Tue, 15 Feb 2022 10:41:08 -0500
+Received: from mail-oo1-xc34.google.com (mail-oo1-xc34.google.com [IPv6:2607:f8b0:4864:20::c34])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D5C8F13FAF0
+        for <linux-remoteproc@vger.kernel.org>; Tue, 15 Feb 2022 07:34:44 -0800 (PST)
+Received: by mail-oo1-xc34.google.com with SMTP id c7-20020a4ad207000000b002e7ab4185d2so23607795oos.6
+        for <linux-remoteproc@vger.kernel.org>; Tue, 15 Feb 2022 07:34:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=lICLxHXDz47Zrz6aevlppIMXuruBJmDOc0eDfWsdodY=;
+        b=aOv1eEN1wu7TUzfxLlt1pmrdqkCiCXVvy082d8mxVz2pU32xBefNtT/wpBtTs0PUsU
+         WwFnGpSIkEloJ/856De8fJh4guiKI0xAxyFNlzg4vVoQVc/WnoFJ/NrTRFzi2ESDqdqS
+         IId/m6wv/SOKu9M6zd5nap7i4WyFfVMLuaIL0gyYX6toG5+s7nLWd+i+tirCg8zHzsMg
+         SDTg2Cpv+nQTB3Nnka8YtN0Uh4zlr3FkijikOZoQ5KLcIGJr7Z+UqG6JPYyP/wxZaOAP
+         3ttr8rjFy8T8qhCw4YXvCBSfZSHlCEBXR4Qtn7kxh0iUgk7GOTH7GMz/rHQvW+sJrFCU
+         EvzA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=lICLxHXDz47Zrz6aevlppIMXuruBJmDOc0eDfWsdodY=;
+        b=LG1HwjeXB5YNXdunSaYBJcPgupWaCWzgl/14GskqXufBv+Be6hUvj7PC1KFGXf8ifi
+         VGGBy8DhpMkjP8oPd4prmMe5xtNhFXq9qIij9yh6xlmtWSKl+f9+R9z67ZdZj30P8E7N
+         tZooT7lJfbgbI7AxAqv+1Q5FliRlYOQmepYfSoPLaLKsA+ksXCTa71INxpwxh4wDUQd6
+         qBXV4jGBYa1Lwaxg9d3rkg+rdgLRUkvNnKzNo1xoPQJytZA8QniyoOZi1x+WBcp2OGmQ
+         VctOJGl1IrEmZyCIpkuOLiGlUYbVpKlnKOVVffA36jxgxMrSWtYdpL+TtIkeqqTLFaNo
+         lIYQ==
+X-Gm-Message-State: AOAM5314DDQRwuA2gxvVqYk2KP/XK24btxdct6mIop+YoRGsH5vfyKhq
+        MFA05WKURYnmKjHdFwjmSP/HCA==
+X-Google-Smtp-Source: ABdhPJzbWwU42jNoOxbpoCebn0T7UnHfSr29OBuXpn3I/sQBF5m3RpPW5CFBWyczhtgGB+fVXx6EUA==
+X-Received: by 2002:a05:6870:1059:b0:ce:c0c9:5b2 with SMTP id 25-20020a056870105900b000cec0c905b2mr1573971oaj.4.1644939283973;
+        Tue, 15 Feb 2022 07:34:43 -0800 (PST)
+Received: from yoga ([2600:1700:a0:3dc8:5c39:baff:fe03:898d])
+        by smtp.gmail.com with ESMTPSA id b8sm5414114oae.30.2022.02.15.07.34.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 15 Feb 2022 07:34:43 -0800 (PST)
+Date:   Tue, 15 Feb 2022 09:34:41 -0600
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Luca Weiss <luca@z3ntu.xyz>
+Cc:     Stephan Gerhold <stephan@gerhold.net>,
+        linux-arm-msm@vger.kernel.org,
+        ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
+        Vladimir Lypak <vladimir.lypak@gmail.com>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Andy Gross <agross@kernel.org>,
+        Ohad Ben-Cohen <ohad@wizery.com>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Subject: Re: [PATCH 09/15] rpmsg: smd: Drop unnecessary condition for channel
+ creation
+Message-ID: <YgvIEYOAZTFHN6fb@yoga>
+References: <20220112194118.178026-1-luca@z3ntu.xyz>
+ <Yfhjil3pfZLa5g3j@builder.lan>
+ <2615776.mvXUDI8C0e@g550jk>
+ <3503848.e9J7NaK4W3@g550jk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <1644849974-8043-2-git-send-email-quic_deesin@quicinc.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <3503848.e9J7NaK4W3@g550jk>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi Deepak,
+On Sun 13 Feb 14:51 CST 2022, Luca Weiss wrote:
 
-Thank you for the patch! Perhaps something to improve:
+> Hi Bjorn,
+> 
+> On Sonntag, 6. Februar 2022 21:17:22 CET Luca Weiss wrote:
+> > Hi Bjorn,
+> > 
+> > On Montag, 31. Jänner 2022 23:32:42 CET Bjorn Andersson wrote:
+> > > On Sun 16 Jan 10:30 CST 2022, Stephan Gerhold wrote:
+> > > > On Sun, Jan 16, 2022 at 05:08:29PM +0100, Luca Weiss wrote:
+> > > > > On Mittwoch, 12. Jänner 2022 22:39:53 CET Stephan Gerhold wrote:
+> > > > > > On Wed, Jan 12, 2022 at 08:40:58PM +0100, Luca Weiss wrote:
+> > > > > > > From: Vladimir Lypak <vladimir.lypak@gmail.com>
+> > > > > > > 
+> > > > > > > RPM Firmware on variety of newer SoCs such as MSM8917 (also likely
+> > > > > > > MSM8937, MSM8940, MSM8952), MSM8953 and on some MSM8916 devices)
+> > > > > > > doesn't
+> > > > > > > initiate opening of the SMD channel if it was previously opened by
+> > > > > > > bootloader. This doesn't allow probing of smd-rpm driver on such
+> > > > > > > devices
+> > > > > > > because there is a check that requires RPM this behaviour.
+> > > > > > > 
+> > > > > > > Signed-off-by: Vladimir Lypak <vladimir.lypak@gmail.com>
+> > > > > > > Signed-off-by: Luca Weiss <luca@z3ntu.xyz>
+> > > > > > > Reviewed-by: Konrad Dybcio <konrad.dybcio@somainline.org>
+> > > > > > 
+> > > > > > This is effectively a "Revert "Revert "rpmsg: smd: Create device for
+> > > > > > all
+> > > > > > channels""":
+> > > > > > 
+> > > > > > https://lore.kernel.org/linux-arm-msm/20171212235857.10432-3-bjorn.a
+> > > > > > nd
+> > > > > > ersson @linaro.org/
+> > > > > > https://lore.kernel.org/linux-arm-msm/20180315181244.8859-1-bjorn.an
+> > > > > > de
+> > > > > > rsson
+> > > > > > @linaro.org/
+> > > > > > 
+> > > > > > Won't this cause the same regression reported by Srinivas again?
+> > > > > 
+> > > > > Do you have any suggestion on another way to solve this? Without this
+> > > > > commit the regulators just won't probe at all, I haven't looked very
+> > > > > deep into it though given this patch solves it.
+> > > > > 
+> > > > > I guess worst case it'll become a devicetree property to enable this
+> > > > > quirk?
+> > > > 
+> > > > My spontaneous suggestion would be to skip the check only for the
+> > > > "rpm_requests" channel, e.g. something like
+> > > > 
+> > > > 	if (remote_state != SMD_CHANNEL_OPENING &&
+> > > > 	
+> > > > 	    remote_state != SMD_CHANNEL_OPENED &&
+> > > > 	    strcmp(channel->name, "rpm_requests")
+> > > > 		
+> > > > 		continue;
+> > > > 
+> > > > This will avoid changing the behavior for anything but the RPM channel.
+> > > > I don't think anything else is affected by the same problem (since the
+> > > > bootloader or earlier firmware should not make use of any other
+> > > > channel).
+> > > > Also, we definitely *always* want to open the channel to the RPM because
+> > > > otherwise almost everything breaks.
+> > > 
+> > > Last time this came up I asked if someone could test if the RPM is stuck
+> > > in the state machine trying to close the channel and as such we could
+> > > kick it by making sure that we "ack" the closing of the channel and
+> > > hence it would come back up again.
+> > > 
+> > > But I don't remember seeing any outcome of this.
+> > 
+> > Do you have a link to this or should I go digging in the archives?
+> 
+> Replying to myself, I went searching but couldn't find anything. If you have 
+> some PoC code I'd be happy to try but as I'm not familiar with rpm/smd at all 
+> I'd have to read myself into it first.
+> 
 
-[auto build test WARNING on linus/master]
-[also build test WARNING on v5.17-rc4 next-20220215]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch]
+A quick search didn't turn anything up on my side either.
 
-url:    https://github.com/0day-ci/linux/commits/Deepak-Kumar-Singh/soc-qcom-smem-map-only-partitions-used-by-local-HOST/20220214-224750
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git 754e0b0e35608ed5206d6a67a791563c631cec07
-config: openrisc-randconfig-s031-20220214 (https://download.01.org/0day-ci/archive/20220215/202202152150.EZ8yJDzm-lkp@intel.com/config)
-compiler: or1k-linux-gcc (GCC) 11.2.0
-reproduce:
-        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-        chmod +x ~/bin/make.cross
-        # apt-get install sparse
-        # sparse version: v0.6.4-dirty
-        # https://github.com/0day-ci/linux/commit/cfc33be784b2bfdafba0ae278dfbf92bdd9111da
-        git remote add linux-review https://github.com/0day-ci/linux
-        git fetch --no-tags linux-review Deepak-Kumar-Singh/soc-qcom-smem-map-only-partitions-used-by-local-HOST/20220214-224750
-        git checkout cfc33be784b2bfdafba0ae278dfbf92bdd9111da
-        # save the config file to linux build tree
-        mkdir build_dir
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-11.2.0 make.cross C=1 CF='-fdiagnostic-prefix -D__CHECK_ENDIAN__' O=build_dir ARCH=openrisc SHELL=/bin/bash drivers/soc/qcom/
+And while I had suggestions of what could be tried, I don't have any
+devices myself that manifest this problem, so I haven't been able to
+debug it.
 
-If you fix the issue, kindly add following tag as appropriate
-Reported-by: kernel test robot <lkp@intel.com>
+> If Stephans suggestion with the strcmp(channel->name, "rpm_requests") is ok 
+> then I'd test this and use that in v2. I'd personally rather not spend too 
+> much time on this issue right now as it's blocking msm8953 completely (no 
+> regulators = no nothing),
+> 
 
+It's been a long time since this problem was initially reported, so I
+rather see us land the strcmp() hack to unblock you and others. Then
+someone who knows SMD can take a proper look at this.
 
-sparse warnings: (new ones prefixed by >>)
-   drivers/soc/qcom/smem.c:430:16: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected struct smem_header *header @@     got void [noderef] __iomem *virt_base @@
-   drivers/soc/qcom/smem.c:430:16: sparse:     expected struct smem_header *header
-   drivers/soc/qcom/smem.c:430:16: sparse:     got void [noderef] __iomem *virt_base
-   drivers/soc/qcom/smem.c:517:16: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected struct smem_header *header @@     got void [noderef] __iomem *virt_base @@
-   drivers/soc/qcom/smem.c:517:16: sparse:     expected struct smem_header *header
-   drivers/soc/qcom/smem.c:517:16: sparse:     got void [noderef] __iomem *virt_base
-   drivers/soc/qcom/smem.c:534:50: sparse: sparse: incorrect type in return expression (different address spaces) @@     expected void * @@     got void [noderef] __iomem * @@
-   drivers/soc/qcom/smem.c:534:50: sparse:     expected void *
-   drivers/soc/qcom/smem.c:534:50: sparse:     got void [noderef] __iomem *
->> drivers/soc/qcom/smem.c:695:22: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected struct smem_partition_header *phdr @@     got void [noderef] __iomem *virt_base @@
-   drivers/soc/qcom/smem.c:695:22: sparse:     expected struct smem_partition_header *phdr
-   drivers/soc/qcom/smem.c:695:22: sparse:     got void [noderef] __iomem *virt_base
->> drivers/soc/qcom/smem.c:699:27: sparse: sparse: cast to restricted __le32
->> drivers/soc/qcom/smem.c:699:27: sparse: sparse: cast to restricted __le32
->> drivers/soc/qcom/smem.c:699:27: sparse: sparse: cast to restricted __le32
->> drivers/soc/qcom/smem.c:699:27: sparse: sparse: cast to restricted __le32
->> drivers/soc/qcom/smem.c:699:27: sparse: sparse: cast to restricted __le32
->> drivers/soc/qcom/smem.c:699:27: sparse: sparse: cast to restricted __le32
-   drivers/soc/qcom/smem.c:703:22: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected struct smem_partition_header *phdr @@     got void [noderef] __iomem *virt_base @@
-   drivers/soc/qcom/smem.c:703:22: sparse:     expected struct smem_partition_header *phdr
-   drivers/soc/qcom/smem.c:703:22: sparse:     got void [noderef] __iomem *virt_base
-   drivers/soc/qcom/smem.c:707:27: sparse: sparse: cast to restricted __le32
-   drivers/soc/qcom/smem.c:707:27: sparse: sparse: cast to restricted __le32
-   drivers/soc/qcom/smem.c:707:27: sparse: sparse: cast to restricted __le32
-   drivers/soc/qcom/smem.c:707:27: sparse: sparse: cast to restricted __le32
-   drivers/soc/qcom/smem.c:707:27: sparse: sparse: cast to restricted __le32
-   drivers/soc/qcom/smem.c:707:27: sparse: sparse: cast to restricted __le32
-   drivers/soc/qcom/smem.c:710:24: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected struct smem_header *header @@     got void [noderef] __iomem *virt_base @@
-   drivers/soc/qcom/smem.c:710:24: sparse:     expected struct smem_header *header
-   drivers/soc/qcom/smem.c:710:24: sparse:     got void [noderef] __iomem *virt_base
-   drivers/soc/qcom/smem.c:723:30: sparse: sparse: incompatible types in comparison expression (different address spaces):
-   drivers/soc/qcom/smem.c:723:30: sparse:    void *
-   drivers/soc/qcom/smem.c:723:30: sparse:    void [noderef] __iomem *
-   drivers/soc/qcom/smem.c:744:36: sparse: sparse: subtraction of different types can't work (different address spaces)
-   drivers/soc/qcom/smem.c:753:28: sparse: sparse: subtraction of different types can't work (different address spaces)
-   drivers/soc/qcom/smem.c:762:36: sparse: sparse: subtraction of different types can't work (different address spaces)
-   drivers/soc/qcom/smem.c:777:16: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected struct smem_header *header @@     got void [noderef] __iomem *virt_base @@
-   drivers/soc/qcom/smem.c:777:16: sparse:     expected struct smem_header *header
-   drivers/soc/qcom/smem.c:777:16: sparse:     got void [noderef] __iomem *virt_base
-   drivers/soc/qcom/smem.c:810:57: sparse: sparse: restricted __le32 degrades to integer
-   drivers/soc/qcom/smem.c:831:16: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected struct smem_partition_header *header @@     got void [noderef] __iomem * @@
-   drivers/soc/qcom/smem.c:831:16: sparse:     expected struct smem_partition_header *header
-   drivers/soc/qcom/smem.c:831:16: sparse:     got void [noderef] __iomem *
-   drivers/soc/qcom/smem.c:982:22: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected struct smem_ptable *ptable @@     got void [noderef] __iomem * @@
-   drivers/soc/qcom/smem.c:982:22: sparse:     expected struct smem_ptable *ptable
-   drivers/soc/qcom/smem.c:982:22: sparse:     got void [noderef] __iomem *
-   drivers/soc/qcom/smem.c:1091:16: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected struct smem_header *header @@     got void [noderef] __iomem *virt_base @@
-   drivers/soc/qcom/smem.c:1091:16: sparse:     expected struct smem_header *header
-   drivers/soc/qcom/smem.c:1091:16: sparse:     got void [noderef] __iomem *virt_base
->> drivers/soc/qcom/smem.c:1112:31: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected void const volatile [noderef] __iomem *addr @@     got restricted __le32 * @@
-   drivers/soc/qcom/smem.c:1112:31: sparse:     expected void const volatile [noderef] __iomem *addr
-   drivers/soc/qcom/smem.c:1112:31: sparse:     got restricted __le32 *
-   drivers/soc/qcom/smem.c:1112:67: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected void const volatile [noderef] __iomem *addr @@     got restricted __le32 * @@
-   drivers/soc/qcom/smem.c:1112:67: sparse:     expected void const volatile [noderef] __iomem *addr
-   drivers/soc/qcom/smem.c:1112:67: sparse:     got restricted __le32 *
-   drivers/soc/qcom/smem.c: note: in included file (through arch/openrisc/include/asm/io.h, include/linux/io.h):
-   include/asm-generic/io.h:267:16: sparse: sparse: cast to restricted __le32
-   include/asm-generic/io.h:267:16: sparse: sparse: cast to restricted __le32
-   include/asm-generic/io.h:267:16: sparse: sparse: cast to restricted __le32
-   include/asm-generic/io.h:267:16: sparse: sparse: cast to restricted __le32
-   include/asm-generic/io.h:267:16: sparse: sparse: cast to restricted __le32
-   include/asm-generic/io.h:267:16: sparse: sparse: cast to restricted __le32
-   include/asm-generic/io.h:267:16: sparse: sparse: cast to restricted __le32
-   include/asm-generic/io.h:267:16: sparse: sparse: cast to restricted __le32
-   include/asm-generic/io.h:267:16: sparse: sparse: cast to restricted __le32
-   include/asm-generic/io.h:267:16: sparse: sparse: cast to restricted __le32
-   include/asm-generic/io.h:267:16: sparse: sparse: cast to restricted __le32
-   include/asm-generic/io.h:267:16: sparse: sparse: cast to restricted __le32
+Regards,
+Bjorn
 
-vim +695 drivers/soc/qcom/smem.c
-
-4b638df4c9d556 Bjorn Andersson    2015-06-26  675  
-4b638df4c9d556 Bjorn Andersson    2015-06-26  676  /**
-4b638df4c9d556 Bjorn Andersson    2015-06-26  677   * qcom_smem_get_free_space() - retrieve amount of free space in a partition
-4b638df4c9d556 Bjorn Andersson    2015-06-26  678   * @host:	the remote processor identifying a partition, or -1
-4b638df4c9d556 Bjorn Andersson    2015-06-26  679   *
-4b638df4c9d556 Bjorn Andersson    2015-06-26  680   * To be used by smem clients as a quick way to determine if any new
-4b638df4c9d556 Bjorn Andersson    2015-06-26  681   * allocations has been made.
-4b638df4c9d556 Bjorn Andersson    2015-06-26  682   */
-4b638df4c9d556 Bjorn Andersson    2015-06-26  683  int qcom_smem_get_free_space(unsigned host)
-4b638df4c9d556 Bjorn Andersson    2015-06-26  684  {
-70716a4ee6c89c Deepak Kumar Singh 2022-02-14  685  	struct smem_partition *part;
-4b638df4c9d556 Bjorn Andersson    2015-06-26  686  	struct smem_partition_header *phdr;
-4b638df4c9d556 Bjorn Andersson    2015-06-26  687  	struct smem_header *header;
-4b638df4c9d556 Bjorn Andersson    2015-06-26  688  	unsigned ret;
-4b638df4c9d556 Bjorn Andersson    2015-06-26  689  
-4b638df4c9d556 Bjorn Andersson    2015-06-26  690  	if (!__smem)
-4b638df4c9d556 Bjorn Andersson    2015-06-26  691  		return -EPROBE_DEFER;
-4b638df4c9d556 Bjorn Andersson    2015-06-26  692  
-70716a4ee6c89c Deepak Kumar Singh 2022-02-14  693  	if (host < SMEM_HOST_COUNT && __smem->partitions[host].virt_base) {
-70716a4ee6c89c Deepak Kumar Singh 2022-02-14  694  		part = &__smem->partitions[host];
-70716a4ee6c89c Deepak Kumar Singh 2022-02-14 @695  		phdr = part->virt_base;
-9806884d8cd552 Stephen Boyd       2015-09-02  696  		ret = le32_to_cpu(phdr->offset_free_cached) -
-9806884d8cd552 Stephen Boyd       2015-09-02  697  		      le32_to_cpu(phdr->offset_free_uncached);
-cfc33be784b2bf Deepak Kumar Singh 2022-02-14  698  
-cfc33be784b2bf Deepak Kumar Singh 2022-02-14 @699  		if (ret > le32_to_cpu(part->size))
-cfc33be784b2bf Deepak Kumar Singh 2022-02-14  700  			return -EINVAL;
-70716a4ee6c89c Deepak Kumar Singh 2022-02-14  701  	} else if (__smem->global_partition.virt_base) {
-70716a4ee6c89c Deepak Kumar Singh 2022-02-14  702  		part = &__smem->global_partition;
-70716a4ee6c89c Deepak Kumar Singh 2022-02-14  703  		phdr = part->virt_base;
-d52e404874369f Chris Lew          2017-10-11  704  		ret = le32_to_cpu(phdr->offset_free_cached) -
-d52e404874369f Chris Lew          2017-10-11  705  		      le32_to_cpu(phdr->offset_free_uncached);
-cfc33be784b2bf Deepak Kumar Singh 2022-02-14  706  
-cfc33be784b2bf Deepak Kumar Singh 2022-02-14  707  		if (ret > le32_to_cpu(part->size))
-cfc33be784b2bf Deepak Kumar Singh 2022-02-14  708  			return -EINVAL;
-4b638df4c9d556 Bjorn Andersson    2015-06-26  709  	} else {
-4b638df4c9d556 Bjorn Andersson    2015-06-26  710  		header = __smem->regions[0].virt_base;
-9806884d8cd552 Stephen Boyd       2015-09-02  711  		ret = le32_to_cpu(header->available);
-cfc33be784b2bf Deepak Kumar Singh 2022-02-14  712  
-cfc33be784b2bf Deepak Kumar Singh 2022-02-14  713  		if (ret > __smem->regions[0].size)
-cfc33be784b2bf Deepak Kumar Singh 2022-02-14  714  			return -EINVAL;
-4b638df4c9d556 Bjorn Andersson    2015-06-26  715  	}
-4b638df4c9d556 Bjorn Andersson    2015-06-26  716  
-4b638df4c9d556 Bjorn Andersson    2015-06-26  717  	return ret;
-4b638df4c9d556 Bjorn Andersson    2015-06-26  718  }
-4b638df4c9d556 Bjorn Andersson    2015-06-26  719  EXPORT_SYMBOL(qcom_smem_get_free_space);
-4b638df4c9d556 Bjorn Andersson    2015-06-26  720  
-
----
-0-DAY CI Kernel Test Service, Intel Corporation
-https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
+> Regards
+> Luca
+> 
+> > 
+> > Regards
+> > Luca
+> > 
+> > > > Many solutions are possible though so at the end it is mostly up to
+> > > > Bjorn to decide I think. :)
+> > > 
+> > > I would prefer to get an answer to above question, but if that doesn't
+> > > work (or look like crap) I'm willing to take your suggestion of skipping
+> > > the continue for the rpm_requests channel. Obviously with a comment
+> > > above describing why we're carrying that special case.
+> > > 
+> > > Regards,
+> > > Bjorn
+> 
+> 
+> 
+> 
