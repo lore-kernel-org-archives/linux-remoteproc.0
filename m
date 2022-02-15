@@ -2,276 +2,218 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22198C433F5
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 15 Feb 2022 11:11:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 853C5C433EF
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 15 Feb 2022 13:16:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236968AbiBOLMF (ORCPT
+        id S237825AbiBONRF (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 15 Feb 2022 06:12:05 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:35896 "EHLO
+        Tue, 15 Feb 2022 08:17:05 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:46804 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236969AbiBOLMF (ORCPT
+        with ESMTP id S232006AbiBONRE (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 15 Feb 2022 06:12:05 -0500
-Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9D463107DBE;
-        Tue, 15 Feb 2022 03:11:54 -0800 (PST)
-Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.1.2/8.16.1.2) with ESMTP id 21F9Bucp025990;
-        Tue, 15 Feb 2022 12:11:39 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=selector1;
- bh=on4k+60RiSNwLWTdRuXuMFB/7V82oPjCfha0VCpeuH4=;
- b=5CUPCiDNY9q7t2d/i6z1C9lnGp9GYZsYAZzGt4o8+GkgRmivAiWekflryER54LrT0fan
- qk0vBMK/d4Ae1rHgUeuVrvyzf3Lvswc9rZza1XHXPcnr/CFi42ebyzJdLMnFYtUWsGtL
- rADFSvXMz6Ja0qabzcucj7VYh06GZKu7wX3zE6oXv3GtwLerQimbn2w0GqJsBNwNsP12
- sB2CN960JnlPznH2g5BgPTuIgTpZZfFL9CtmF+MAjIwmcVjwAW8AMqtu6kdCjLCcj8yt
- HKhUyIQPE06qSYDOBJmo8vxPW0fvZA2SwgdZQcTV6iLiOLDlBB9p+CpZtMUSeUgmq/W0 2w== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3e89b5grs3-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 15 Feb 2022 12:11:39 +0100
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id DAFF1100038;
-        Tue, 15 Feb 2022 12:11:37 +0100 (CET)
-Received: from Webmail-eu.st.com (sfhdag2node2.st.com [10.75.127.5])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id CD95521E691;
-        Tue, 15 Feb 2022 12:11:37 +0100 (CET)
-Received: from [10.211.1.48] (10.75.127.44) by SFHDAG2NODE2.st.com
- (10.75.127.5) with Microsoft SMTP Server (TLS) id 15.0.1497.26; Tue, 15 Feb
- 2022 12:11:37 +0100
-Message-ID: <b483084b-59ab-4821-8079-4999236aec9d@foss.st.com>
-Date:   Tue, 15 Feb 2022 12:11:36 +0100
+        Tue, 15 Feb 2022 08:17:04 -0500
+Received: from mga17.intel.com (mga17.intel.com [192.55.52.151])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 53240C7D4E;
+        Tue, 15 Feb 2022 05:16:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1644931014; x=1676467014;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=w/fCEkspTynMx/KBUNmalbFEyHPshGMZWUJ7Yi9YEdY=;
+  b=VX4GJyTTpn49ihfaU96YFA3qbY232+7ltnC49JbTlqVZbPeW8IAIFC3g
+   KygJFJKrtY+CrtC7bd4de63mCvsyeCK/4LThZHtxf6rZntEBI0lV/zvCZ
+   02zStrQr14gAneRRxkwylbtwEEyJP9T7pLWlrOPTbdT7ybUFh/M2pNg6E
+   2RYM3LzLiT5ATbAdB2ZKtazS6W35dlKZpA7buRWAmGRd5lnky8Vfu/ZVv
+   qyHtV9Yhz+ABSH9FKPSqO321gvBpMJiQ3qKWs4rqqy+avcs57id29Xhmy
+   ob/F5uD5sNKOMsNqXVGotuUPvoaDF1OSsScZ2snWUxJMEoM9ybvadp40z
+   A==;
+X-IronPort-AV: E=McAfee;i="6200,9189,10258"; a="230976804"
+X-IronPort-AV: E=Sophos;i="5.88,370,1635231600"; 
+   d="scan'208";a="230976804"
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Feb 2022 05:16:54 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.88,370,1635231600"; 
+   d="scan'208";a="703670560"
+Received: from lkp-server01.sh.intel.com (HELO d95dc2dabeb1) ([10.239.97.150])
+  by orsmga005.jf.intel.com with ESMTP; 15 Feb 2022 05:16:50 -0800
+Received: from kbuild by d95dc2dabeb1 with local (Exim 4.92)
+        (envelope-from <lkp@intel.com>)
+        id 1nJxhJ-0009gq-Kk; Tue, 15 Feb 2022 13:16:49 +0000
+Date:   Tue, 15 Feb 2022 21:16:16 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Deepak Kumar Singh <quic_deesin@quicinc.com>,
+        bjorn.andersson@linaro.org, quic_clew@quicinc.com,
+        mathieu.poirier@linaro.org
+Cc:     kbuild-all@lists.01.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        Deepak Kumar Singh <quic_deesin@quicinc.com>,
+        Andy Gross <agross@kernel.org>
+Subject: Re: [PATCH V4 2/2] soc: qcom: smem: validate fields of shared
+ structures
+Message-ID: <202202152150.EZ8yJDzm-lkp@intel.com>
+References: <1644849974-8043-2-git-send-email-quic_deesin@quicinc.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.0
-Subject: Re: [RFC PATCH v3 0/4] remoteproc: restructure the remoteproc VirtIO
- device
-Content-Language: en-US
-To:     Peng Fan <peng.fan@nxp.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>
-CC:     "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-stm32@st-md-mailman.stormreply.com" 
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        Rob Herring <robh@kernel.org>, Christoph Hellwig <hch@lst.de>,
-        Stefano Stabellini <stefanos@xilinx.com>,
-        Bruce Ashfield <bruce.ashfield@xilinx.com>
-References: <20220126162405.1131323-1-arnaud.pouliquen@foss.st.com>
- <DU0PR04MB941722D995004F877DC6171D88349@DU0PR04MB9417.eurprd04.prod.outlook.com>
-From:   Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
-In-Reply-To: <DU0PR04MB941722D995004F877DC6171D88349@DU0PR04MB9417.eurprd04.prod.outlook.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.75.127.44]
-X-ClientProxiedBy: SFHDAG2NODE2.st.com (10.75.127.5) To SFHDAG2NODE2.st.com
- (10.75.127.5)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.816,Hydra:6.0.425,FMLib:17.11.62.513
- definitions=2022-02-15_04,2022-02-14_04,2021-12-02_01
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1644849974-8043-2-git-send-email-quic_deesin@quicinc.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
+Hi Deepak,
+
+Thank you for the patch! Perhaps something to improve:
+
+[auto build test WARNING on linus/master]
+[also build test WARNING on v5.17-rc4 next-20220215]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch]
+
+url:    https://github.com/0day-ci/linux/commits/Deepak-Kumar-Singh/soc-qcom-smem-map-only-partitions-used-by-local-HOST/20220214-224750
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git 754e0b0e35608ed5206d6a67a791563c631cec07
+config: openrisc-randconfig-s031-20220214 (https://download.01.org/0day-ci/archive/20220215/202202152150.EZ8yJDzm-lkp@intel.com/config)
+compiler: or1k-linux-gcc (GCC) 11.2.0
+reproduce:
+        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
+        # apt-get install sparse
+        # sparse version: v0.6.4-dirty
+        # https://github.com/0day-ci/linux/commit/cfc33be784b2bfdafba0ae278dfbf92bdd9111da
+        git remote add linux-review https://github.com/0day-ci/linux
+        git fetch --no-tags linux-review Deepak-Kumar-Singh/soc-qcom-smem-map-only-partitions-used-by-local-HOST/20220214-224750
+        git checkout cfc33be784b2bfdafba0ae278dfbf92bdd9111da
+        # save the config file to linux build tree
+        mkdir build_dir
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-11.2.0 make.cross C=1 CF='-fdiagnostic-prefix -D__CHECK_ENDIAN__' O=build_dir ARCH=openrisc SHELL=/bin/bash drivers/soc/qcom/
+
+If you fix the issue, kindly add following tag as appropriate
+Reported-by: kernel test robot <lkp@intel.com>
 
 
-On 2/15/22 09:34, Peng Fan wrote:
->> Subject: [RFC PATCH v3 0/4] remoteproc: restructure the remoteproc VirtIO
->> device
->>
->> Update from V2 [1]:
->> In order to better handle error cases and to have something more
->> symmetrical between the functions in charge of rvdev initialization/deletion,
->> the patchset has been reworked.
->>  - Introduction in the first patch, of rproc_vdev_data structure which allows
->> to better
->>    decorrelate the rproc from the management of the rvdev structure. This
->> structure is reused
->>    in the last patch of the series for the creation of the remoteproc virtio
->> platform device.
->>  - In addition to the previous version, the management of the vring lifecycle
->> has been fully
->>    migrated to the remoteproc_virtio.c (rproc_parse_vring, rproc_alloc_vring,
->> rproc_free_vring)
->>
->> [1]
->> https://eur01.safelinks.protection.outlook.com/?url=https%3A%2F%2Flkml.or
->> g%2Flkml%2F2021%2F12%2F22%2F111&amp;data=04%7C01%7Cpeng.fan%4
->> 0nxp.com%7C9e663eefc30a4fbb1fdb08d9e0e855e2%7C686ea1d3bc2b4c6fa
->> 92cd99c5c301635%7C0%7C0%7C637788110748757786%7CUnknown%7CT
->> WFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLC
->> JXVCI6Mn0%3D%7C3000&amp;sdata=bFfSxpPMpPRGYcMBcwxaQ152mRzf3c
->> fwoFPjiJ0SIgw%3D&amp;reserved=0
->>
->> Patchset description:
->>
->> This series is a part of the work initiated a long time ago in the series
->> "remoteproc: Decorelate virtio from core"[2]
->>
->> Objective of the work:
->> - Update the remoteproc VirtIO device creation (use platform device)
->> - Allow to declare remoteproc VirtIO device in DT
-> 
-> This means not using resource table anymore with new approach?
-> If yes, would that introduce a problem that different M-core images
-> requires different dtb?
+sparse warnings: (new ones prefixed by >>)
+   drivers/soc/qcom/smem.c:430:16: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected struct smem_header *header @@     got void [noderef] __iomem *virt_base @@
+   drivers/soc/qcom/smem.c:430:16: sparse:     expected struct smem_header *header
+   drivers/soc/qcom/smem.c:430:16: sparse:     got void [noderef] __iomem *virt_base
+   drivers/soc/qcom/smem.c:517:16: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected struct smem_header *header @@     got void [noderef] __iomem *virt_base @@
+   drivers/soc/qcom/smem.c:517:16: sparse:     expected struct smem_header *header
+   drivers/soc/qcom/smem.c:517:16: sparse:     got void [noderef] __iomem *virt_base
+   drivers/soc/qcom/smem.c:534:50: sparse: sparse: incorrect type in return expression (different address spaces) @@     expected void * @@     got void [noderef] __iomem * @@
+   drivers/soc/qcom/smem.c:534:50: sparse:     expected void *
+   drivers/soc/qcom/smem.c:534:50: sparse:     got void [noderef] __iomem *
+>> drivers/soc/qcom/smem.c:695:22: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected struct smem_partition_header *phdr @@     got void [noderef] __iomem *virt_base @@
+   drivers/soc/qcom/smem.c:695:22: sparse:     expected struct smem_partition_header *phdr
+   drivers/soc/qcom/smem.c:695:22: sparse:     got void [noderef] __iomem *virt_base
+>> drivers/soc/qcom/smem.c:699:27: sparse: sparse: cast to restricted __le32
+>> drivers/soc/qcom/smem.c:699:27: sparse: sparse: cast to restricted __le32
+>> drivers/soc/qcom/smem.c:699:27: sparse: sparse: cast to restricted __le32
+>> drivers/soc/qcom/smem.c:699:27: sparse: sparse: cast to restricted __le32
+>> drivers/soc/qcom/smem.c:699:27: sparse: sparse: cast to restricted __le32
+>> drivers/soc/qcom/smem.c:699:27: sparse: sparse: cast to restricted __le32
+   drivers/soc/qcom/smem.c:703:22: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected struct smem_partition_header *phdr @@     got void [noderef] __iomem *virt_base @@
+   drivers/soc/qcom/smem.c:703:22: sparse:     expected struct smem_partition_header *phdr
+   drivers/soc/qcom/smem.c:703:22: sparse:     got void [noderef] __iomem *virt_base
+   drivers/soc/qcom/smem.c:707:27: sparse: sparse: cast to restricted __le32
+   drivers/soc/qcom/smem.c:707:27: sparse: sparse: cast to restricted __le32
+   drivers/soc/qcom/smem.c:707:27: sparse: sparse: cast to restricted __le32
+   drivers/soc/qcom/smem.c:707:27: sparse: sparse: cast to restricted __le32
+   drivers/soc/qcom/smem.c:707:27: sparse: sparse: cast to restricted __le32
+   drivers/soc/qcom/smem.c:707:27: sparse: sparse: cast to restricted __le32
+   drivers/soc/qcom/smem.c:710:24: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected struct smem_header *header @@     got void [noderef] __iomem *virt_base @@
+   drivers/soc/qcom/smem.c:710:24: sparse:     expected struct smem_header *header
+   drivers/soc/qcom/smem.c:710:24: sparse:     got void [noderef] __iomem *virt_base
+   drivers/soc/qcom/smem.c:723:30: sparse: sparse: incompatible types in comparison expression (different address spaces):
+   drivers/soc/qcom/smem.c:723:30: sparse:    void *
+   drivers/soc/qcom/smem.c:723:30: sparse:    void [noderef] __iomem *
+   drivers/soc/qcom/smem.c:744:36: sparse: sparse: subtraction of different types can't work (different address spaces)
+   drivers/soc/qcom/smem.c:753:28: sparse: sparse: subtraction of different types can't work (different address spaces)
+   drivers/soc/qcom/smem.c:762:36: sparse: sparse: subtraction of different types can't work (different address spaces)
+   drivers/soc/qcom/smem.c:777:16: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected struct smem_header *header @@     got void [noderef] __iomem *virt_base @@
+   drivers/soc/qcom/smem.c:777:16: sparse:     expected struct smem_header *header
+   drivers/soc/qcom/smem.c:777:16: sparse:     got void [noderef] __iomem *virt_base
+   drivers/soc/qcom/smem.c:810:57: sparse: sparse: restricted __le32 degrades to integer
+   drivers/soc/qcom/smem.c:831:16: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected struct smem_partition_header *header @@     got void [noderef] __iomem * @@
+   drivers/soc/qcom/smem.c:831:16: sparse:     expected struct smem_partition_header *header
+   drivers/soc/qcom/smem.c:831:16: sparse:     got void [noderef] __iomem *
+   drivers/soc/qcom/smem.c:982:22: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected struct smem_ptable *ptable @@     got void [noderef] __iomem * @@
+   drivers/soc/qcom/smem.c:982:22: sparse:     expected struct smem_ptable *ptable
+   drivers/soc/qcom/smem.c:982:22: sparse:     got void [noderef] __iomem *
+   drivers/soc/qcom/smem.c:1091:16: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected struct smem_header *header @@     got void [noderef] __iomem *virt_base @@
+   drivers/soc/qcom/smem.c:1091:16: sparse:     expected struct smem_header *header
+   drivers/soc/qcom/smem.c:1091:16: sparse:     got void [noderef] __iomem *virt_base
+>> drivers/soc/qcom/smem.c:1112:31: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected void const volatile [noderef] __iomem *addr @@     got restricted __le32 * @@
+   drivers/soc/qcom/smem.c:1112:31: sparse:     expected void const volatile [noderef] __iomem *addr
+   drivers/soc/qcom/smem.c:1112:31: sparse:     got restricted __le32 *
+   drivers/soc/qcom/smem.c:1112:67: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected void const volatile [noderef] __iomem *addr @@     got restricted __le32 * @@
+   drivers/soc/qcom/smem.c:1112:67: sparse:     expected void const volatile [noderef] __iomem *addr
+   drivers/soc/qcom/smem.c:1112:67: sparse:     got restricted __le32 *
+   drivers/soc/qcom/smem.c: note: in included file (through arch/openrisc/include/asm/io.h, include/linux/io.h):
+   include/asm-generic/io.h:267:16: sparse: sparse: cast to restricted __le32
+   include/asm-generic/io.h:267:16: sparse: sparse: cast to restricted __le32
+   include/asm-generic/io.h:267:16: sparse: sparse: cast to restricted __le32
+   include/asm-generic/io.h:267:16: sparse: sparse: cast to restricted __le32
+   include/asm-generic/io.h:267:16: sparse: sparse: cast to restricted __le32
+   include/asm-generic/io.h:267:16: sparse: sparse: cast to restricted __le32
+   include/asm-generic/io.h:267:16: sparse: sparse: cast to restricted __le32
+   include/asm-generic/io.h:267:16: sparse: sparse: cast to restricted __le32
+   include/asm-generic/io.h:267:16: sparse: sparse: cast to restricted __le32
+   include/asm-generic/io.h:267:16: sparse: sparse: cast to restricted __le32
+   include/asm-generic/io.h:267:16: sparse: sparse: cast to restricted __le32
+   include/asm-generic/io.h:267:16: sparse: sparse: cast to restricted __le32
 
-The resource table still exists. The main difference is that the virtio devices
-would be predefined in the DT with their own resources ( memories , mailboxes,...)
-No need to inherit from the rproc device.
+vim +695 drivers/soc/qcom/smem.c
 
+4b638df4c9d556 Bjorn Andersson    2015-06-26  675  
+4b638df4c9d556 Bjorn Andersson    2015-06-26  676  /**
+4b638df4c9d556 Bjorn Andersson    2015-06-26  677   * qcom_smem_get_free_space() - retrieve amount of free space in a partition
+4b638df4c9d556 Bjorn Andersson    2015-06-26  678   * @host:	the remote processor identifying a partition, or -1
+4b638df4c9d556 Bjorn Andersson    2015-06-26  679   *
+4b638df4c9d556 Bjorn Andersson    2015-06-26  680   * To be used by smem clients as a quick way to determine if any new
+4b638df4c9d556 Bjorn Andersson    2015-06-26  681   * allocations has been made.
+4b638df4c9d556 Bjorn Andersson    2015-06-26  682   */
+4b638df4c9d556 Bjorn Andersson    2015-06-26  683  int qcom_smem_get_free_space(unsigned host)
+4b638df4c9d556 Bjorn Andersson    2015-06-26  684  {
+70716a4ee6c89c Deepak Kumar Singh 2022-02-14  685  	struct smem_partition *part;
+4b638df4c9d556 Bjorn Andersson    2015-06-26  686  	struct smem_partition_header *phdr;
+4b638df4c9d556 Bjorn Andersson    2015-06-26  687  	struct smem_header *header;
+4b638df4c9d556 Bjorn Andersson    2015-06-26  688  	unsigned ret;
+4b638df4c9d556 Bjorn Andersson    2015-06-26  689  
+4b638df4c9d556 Bjorn Andersson    2015-06-26  690  	if (!__smem)
+4b638df4c9d556 Bjorn Andersson    2015-06-26  691  		return -EPROBE_DEFER;
+4b638df4c9d556 Bjorn Andersson    2015-06-26  692  
+70716a4ee6c89c Deepak Kumar Singh 2022-02-14  693  	if (host < SMEM_HOST_COUNT && __smem->partitions[host].virt_base) {
+70716a4ee6c89c Deepak Kumar Singh 2022-02-14  694  		part = &__smem->partitions[host];
+70716a4ee6c89c Deepak Kumar Singh 2022-02-14 @695  		phdr = part->virt_base;
+9806884d8cd552 Stephen Boyd       2015-09-02  696  		ret = le32_to_cpu(phdr->offset_free_cached) -
+9806884d8cd552 Stephen Boyd       2015-09-02  697  		      le32_to_cpu(phdr->offset_free_uncached);
+cfc33be784b2bf Deepak Kumar Singh 2022-02-14  698  
+cfc33be784b2bf Deepak Kumar Singh 2022-02-14 @699  		if (ret > le32_to_cpu(part->size))
+cfc33be784b2bf Deepak Kumar Singh 2022-02-14  700  			return -EINVAL;
+70716a4ee6c89c Deepak Kumar Singh 2022-02-14  701  	} else if (__smem->global_partition.virt_base) {
+70716a4ee6c89c Deepak Kumar Singh 2022-02-14  702  		part = &__smem->global_partition;
+70716a4ee6c89c Deepak Kumar Singh 2022-02-14  703  		phdr = part->virt_base;
+d52e404874369f Chris Lew          2017-10-11  704  		ret = le32_to_cpu(phdr->offset_free_cached) -
+d52e404874369f Chris Lew          2017-10-11  705  		      le32_to_cpu(phdr->offset_free_uncached);
+cfc33be784b2bf Deepak Kumar Singh 2022-02-14  706  
+cfc33be784b2bf Deepak Kumar Singh 2022-02-14  707  		if (ret > le32_to_cpu(part->size))
+cfc33be784b2bf Deepak Kumar Singh 2022-02-14  708  			return -EINVAL;
+4b638df4c9d556 Bjorn Andersson    2015-06-26  709  	} else {
+4b638df4c9d556 Bjorn Andersson    2015-06-26  710  		header = __smem->regions[0].virt_base;
+9806884d8cd552 Stephen Boyd       2015-09-02  711  		ret = le32_to_cpu(header->available);
+cfc33be784b2bf Deepak Kumar Singh 2022-02-14  712  
+cfc33be784b2bf Deepak Kumar Singh 2022-02-14  713  		if (ret > __smem->regions[0].size)
+cfc33be784b2bf Deepak Kumar Singh 2022-02-14  714  			return -EINVAL;
+4b638df4c9d556 Bjorn Andersson    2015-06-26  715  	}
+4b638df4c9d556 Bjorn Andersson    2015-06-26  716  
+4b638df4c9d556 Bjorn Andersson    2015-06-26  717  	return ret;
+4b638df4c9d556 Bjorn Andersson    2015-06-26  718  }
+4b638df4c9d556 Bjorn Andersson    2015-06-26  719  EXPORT_SYMBOL(qcom_smem_get_free_space);
+4b638df4c9d556 Bjorn Andersson    2015-06-26  720  
 
-On resource table parsing, the remoteproc looks first for pre registered 
-rproc_virtio devices. If found then it uses it. Else it instantiates a new 
-one (legacy method).  
-
-
-> 
->>     - declare resources associated to a remote proc VirtIO
->>     - declare a list of VirtIO supported by the platform.
->> - Prepare the enhancement to more VirtIO devices (e.g I2C, audio, video, ...).
->>   For instance be able to declare a I2C device in a virtio-i2C node.
-> 
-> As my understanding virtio-i2c is a i2c bus, you could declare a i2c device
-> in the virtual bus without your patchset, would you please share more?
-
-Yes virtio-i2c is a bus, There is different methods to declare I2C device on
-a bus[1].
-
-In ST we rely on DT to statically declare an I2C device,as child of the I2C
-adapter node.
-I haven't implemented the virtio-I2C part yet, but it would make sense to have
-such an implementation.
-
-Which alternative have you in mind?  
-
-[1] https://www.kernel.org/doc/html/latest/i2c/instantiating-devices.html
-
-Thanks,
-Arnaud
-
-> 
-> Thanks,
-> Peng.
-> 
->> - Keep the legacy working!
->> - Try to improve the picture about concerns reported by Christoph Hellwing
->> [3][4]
->>
->> [2]
->> https://eur01.safelinks.protection.outlook.com/?url=https%3A%2F%2Flkml.or
->> g%2Flkml%2F2020%2F4%2F16%2F1817&amp;data=04%7C01%7Cpeng.fan%4
->> 0nxp.com%7C9e663eefc30a4fbb1fdb08d9e0e855e2%7C686ea1d3bc2b4c6fa
->> 92cd99c5c301635%7C0%7C0%7C637788110748757786%7CUnknown%7CT
->> WFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLC
->> JXVCI6Mn0%3D%7C3000&amp;sdata=O2BZw5PCY19eD5xMGxrGUKC%2Fty1
->> Sdc3LE6rhK4cSXvs%3D&amp;reserved=0
->> [3]
->> https://eur01.safelinks.protection.outlook.com/?url=https%3A%2F%2Flkml.or
->> g%2Flkml%2F2021%2F6%2F23%2F607&amp;data=04%7C01%7Cpeng.fan%40
->> nxp.com%7C9e663eefc30a4fbb1fdb08d9e0e855e2%7C686ea1d3bc2b4c6fa9
->> 2cd99c5c301635%7C0%7C0%7C637788110748757786%7CUnknown%7CTW
->> FpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJX
->> VCI6Mn0%3D%7C3000&amp;sdata=xqX50iDeL%2BtFBOgyADnEUE5HH4gogK
->> C0MwyqZSxVqNo%3D&amp;reserved=0
->> [4]
->> https://eur01.safelinks.protection.outlook.com/?url=https%3A%2F%2Fpatch
->> work.kernel.org%2Fproject%2Flinux-remoteproc%2Fpatch%2FAOKowLclCbO
->> CKxyiJ71WeNyuAAj2q8EUtxrXbyky5E%40cp7-web-042.plabs.ch%2F&amp;da
->> ta=04%7C01%7Cpeng.fan%40nxp.com%7C9e663eefc30a4fbb1fdb08d9e0e85
->> 5e2%7C686ea1d3bc2b4c6fa92cd99c5c301635%7C0%7C0%7C637788110748
->> 757786%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2
->> luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C3000&amp;sdata=mvSm3wM
->> LgQ%2BDFhqjXIkG8de58zFjwPSURzw55JhGNaA%3D&amp;reserved=0
->>
->> In term of device tree this would result in such hiearchy (stm32mp1 example
->> with 2 virtio RPMSG):
->>
->> 	m4_rproc: m4@10000000 {
->> 		compatible = "st,stm32mp1-m4";
->> 		reg = <0x10000000 0x40000>,
->> 		      <0x30000000 0x40000>,
->> 		      <0x38000000 0x10000>;
->>         memory-region = <&retram>, <&mcuram>,<&mcuram2>;
->>         mboxes = <&ipcc 2>, <&ipcc 3>;
->>         mbox-names = "shutdown", "detach";
->>         status = "okay";
->>
->>         #address-cells = <1>;
->>         #size-cells = <0>;
->>
->>         vdev@0 {
->> 		compatible = "rproc-virtio";
->> 		reg = <0>;
->> 		virtio,id = <7>;  /* RPMSG */
->> 		memory-region = <&vdev0vring0>, <&vdev0vring1>,
->> <&vdev0buffer>;
->> 		mboxes = <&ipcc 0>, <&ipcc 1>;
->> 		mbox-names = "vq0", "vq1";
->> 		status = "okay";
->>         };
->>
->>         vdev@1 {
->> 		compatible = "rproc-virtio";
->> 		reg = <1>;
->> 		virtio,id = <7>;  /*RPMSG */
->> 		memory-region = <&vdev1vring0>, <&vdev1vring1>,
->> <&vdev1buffer>;
->> 		mboxes = <&ipcc 4>, <&ipcc 5>;
->> 		mbox-names = "vq0", "vq1";
->> 		status = "okay";
->>         };
->> };
->>
->> I have divided the work in 4 steps to simplify the review, This series
->> implements only the step 1:
->> step 1:  redefine the remoteproc VirtIO device as a platform device
->>   - migrate rvdev management in remoteproc virtio.c,
->>   - create a remotproc virtio config ( can be disabled for platform that not use
->> VirtIO IPC.
->> step 2: add possibility to declare and prob a VirtIO sub node
->>   - VirtIO bindings declaration,
->>   - multi DT VirtIO devices support,
->>   - introduction of a remote proc virtio bind device mechanism , =>
->> https://eur01.safelinks.protection.outlook.com/?url=https%3A%2F%2Fgithub.
->> com%2Farnopo%2Flinux%2Fcommits%2Fstep2-virtio-in-DT&amp;data=04%7
->> C01%7Cpeng.fan%40nxp.com%7C9e663eefc30a4fbb1fdb08d9e0e855e2%7C
->> 686ea1d3bc2b4c6fa92cd99c5c301635%7C0%7C0%7C637788110748757786
->> %7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiL
->> CJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C3000&amp;sdata=X%2B462681gcxe6
->> 2GP%2BV7ji2nef%2FuTbQVvIlddcMQwtmg%3D&amp;reserved=0
->> step 3: Add memory declaration in VirtIO subnode =>
->> https://eur01.safelinks.protection.outlook.com/?url=https%3A%2F%2Fgithub.
->> com%2Farnopo%2Flinux%2Fcommits%2Fstep3-virtio-memories&amp;data=0
->> 4%7C01%7Cpeng.fan%40nxp.com%7C9e663eefc30a4fbb1fdb08d9e0e855e2
->> %7C686ea1d3bc2b4c6fa92cd99c5c301635%7C0%7C0%7C637788110748757
->> 786%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luM
->> zIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C3000&amp;sdata=eMlXgCgrV6l46
->> h3Ywv1%2BCoX3gLBabdTZs9ybsm4t4ys%3D&amp;reserved=0
->> step 4: Add mailbox declaration in VirtIO subnode =>
->> https://eur01.safelinks.protection.outlook.com/?url=https%3A%2F%2Fgithub.
->> com%2Farnopo%2Flinux%2Fcommits%2Fstep4-virtio-mailboxes&amp;data=0
->> 4%7C01%7Cpeng.fan%40nxp.com%7C9e663eefc30a4fbb1fdb08d9e0e855e2
->> %7C686ea1d3bc2b4c6fa92cd99c5c301635%7C0%7C0%7C637788110748757
->> 786%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luM
->> zIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C3000&amp;sdata=75hApOwihqMZ
->> UUKz1VcitY2VPDc6KAIwAvH8enEZOPY%3D&amp;reserved=0
->>
->> Arnaud Pouliquen (4):
->>   remoteproc: core: Introduce virtio device add/remove functions
->>   remoteproc: core: Introduce rproc_register_rvdev function
->>   remoteproc: Move rproc_vdev management to remoteproc_virtio.c
->>   remoteproc: virtio: Create platform device for the remoteproc_virtio
->>
->>  drivers/remoteproc/remoteproc_core.c     | 159 +++----------------
->>  drivers/remoteproc/remoteproc_internal.h |  33 +++-
->>  drivers/remoteproc/remoteproc_virtio.c   | 193
->> ++++++++++++++++++++---
->>  include/linux/remoteproc.h               |   6 +-
->>  4 files changed, 227 insertions(+), 164 deletions(-)
->>
->> --
->> 2.25.1
-> 
+---
+0-DAY CI Kernel Test Service, Intel Corporation
+https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
