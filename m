@@ -2,185 +2,127 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7D87C433EF
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 17 Feb 2022 06:14:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BA15C433F5
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 17 Feb 2022 16:08:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235225AbiBQGOh (ORCPT
+        id S233863AbiBQQJL (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 17 Feb 2022 01:14:37 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:40418 "EHLO
+        Thu, 17 Feb 2022 11:09:11 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:50344 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230254AbiBQGOh (ORCPT
+        with ESMTP id S233312AbiBQQJK (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 17 Feb 2022 01:14:37 -0500
-Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 24E1D2A2284;
-        Wed, 16 Feb 2022 22:14:22 -0800 (PST)
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 21H6EEYB041371;
-        Thu, 17 Feb 2022 00:14:14 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1645078454;
-        bh=aLTZogrRpGo1Uu1bmA0UH4iVsPcFR2kuNZvj/aRW3Vw=;
-        h=Date:Subject:To:CC:References:From:In-Reply-To;
-        b=F/+dQ9QTp4akMJ1cLEPJNXKg8PQKf3YgHg3DagIEJRct/7EB9Rw47liR/2UljsxwQ
-         5aAdBAyaw1YvJjw9lYOUfRorlAG3S7rCC3PTcOwKQ6nSMYQE9OXV4rBAeNC4DlyoU5
-         V7K3FNQpZHPHJNUR3FwdJOXk1h5JDVUijRWIsNls=
-Received: from DFLE112.ent.ti.com (dfle112.ent.ti.com [10.64.6.33])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 21H6EErd104575
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 17 Feb 2022 00:14:14 -0600
-Received: from DFLE109.ent.ti.com (10.64.6.30) by DFLE112.ent.ti.com
- (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2308.14; Thu, 17
- Feb 2022 00:14:14 -0600
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE109.ent.ti.com
- (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2308.14 via
- Frontend Transport; Thu, 17 Feb 2022 00:14:13 -0600
-Received: from [10.250.233.253] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 21H6E5NJ116873;
-        Thu, 17 Feb 2022 00:14:06 -0600
-Message-ID: <bd3149df-3c24-7287-03ef-4efb700dd51b@ti.com>
-Date:   Thu, 17 Feb 2022 11:44:04 +0530
+        Thu, 17 Feb 2022 11:09:10 -0500
+Received: from mail-pl1-x634.google.com (mail-pl1-x634.google.com [IPv6:2607:f8b0:4864:20::634])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A0FA7178BD7
+        for <linux-remoteproc@vger.kernel.org>; Thu, 17 Feb 2022 08:08:55 -0800 (PST)
+Received: by mail-pl1-x634.google.com with SMTP id 10so4976695plj.1
+        for <linux-remoteproc@vger.kernel.org>; Thu, 17 Feb 2022 08:08:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=VD8H9XEccLJ1gEJ8HFd5QAYd/aMwLkrTq6BJhjDSisU=;
+        b=F2rnoQOUj5vrdaK05HWLiQ7Dayy2FS/VLwwppCjteGUtmVGphPSPL1yNlR/PsVhO4Q
+         SGeRoVRv5Uus+p4dn8QbXAGf80LP4h24IJAa0YKQc/bBrJA2mgvX6k6S+QaZhSinsQPe
+         o216cTDDHjXReLeUyM4oLkcXFtL1l/32drgLI8Q3Ol851JV0AFiUSkZYV96ZmH6yoaRz
+         AKOTAqvSoj03fN1c6IOu25o9+GmlKYmh8Tz/z/Z1zg3CfaJqHt1e0AWkINesw/Pf2V0l
+         g76JZRFDHXvhz1CCgn1/99do97O3lEyvZTQa1XyJAFrLSbwg3bv9oVKn+Ugr30Tfha1B
+         919w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=VD8H9XEccLJ1gEJ8HFd5QAYd/aMwLkrTq6BJhjDSisU=;
+        b=Xd+SlpQ78fktUmibca/RrAm73bu6WK0xnNNy487RTR51agwwVlfsoEbBY7p9nw/2OB
+         oCqx4Qq4HwjrCYRppiTRewVvqXgl4EKzasAFPEdh7RbTQHsgLddS6yo5DwEtpd6+b86Q
+         Pzmzn6K6bYgxi5zx6+O3p5T9/lTDzEYD95wX7XPyX4NeoYvJurbGkxv6AkeL+fnpTA25
+         BUS6rz0HcWOM8gG/VAv5RH0EgqOnjZOaRHp4xIAlvYB3y7apAIEad2nhgJlPDGB8vHa3
+         v0llBbsgihmmx27HKJJ9wvSd17VG77hcbUW6PJcPLO5ztBpYgbAwCVIZOlaKYVPszvE/
+         Ypqw==
+X-Gm-Message-State: AOAM530iCRboKEcjcWmdO2vvIiGSMk8vbz0C8uWexYQX+vUcbaHjboK0
+        ntK/Pt4vaEfUZQAviuXTST6RBg==
+X-Google-Smtp-Source: ABdhPJyFsjmnJxcyI3zQL+VFCRE3os2dZrHdxY5v38ChREUHcE+PvGbETp2COJG44FjB8IEmuf5tZQ==
+X-Received: by 2002:a17:90a:4dc7:b0:1b9:ca2:311e with SMTP id r7-20020a17090a4dc700b001b90ca2311emr3717927pjl.175.1645114135171;
+        Thu, 17 Feb 2022 08:08:55 -0800 (PST)
+Received: from p14s (S0106889e681aac74.cg.shawcable.net. [68.147.0.187])
+        by smtp.gmail.com with ESMTPSA id h9sm51611pfv.135.2022.02.17.08.08.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 17 Feb 2022 08:08:53 -0800 (PST)
+Date:   Thu, 17 Feb 2022 09:08:51 -0700
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+To:     AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>
+Cc:     bjorn.andersson@linaro.org, matthias.bgg@gmail.com,
+        pihsun@chromium.org, linux-remoteproc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
+        kernel@collabora.com
+Subject: Re: [PATCH] rpmsg: mtk_rpmsg: Fix circular locking dependency
+Message-ID: <20220217160851.GA474184@p14s>
+References: <20220114144737.375621-1-angelogioacchino.delregno@collabora.com>
+ <b531eeca-40e8-d759-5579-59567eb5af84@collabora.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.0
-Subject: Re: [PATCH v5 1/2] remoteproc: Introduce sysfs_read_only flag
-Content-Language: en-US
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-CC:     <kishon@ti.com>, <vigneshr@ti.com>, <s-anna@ti.com>,
-        <mathieu.poirier@linaro.org>, <linux-remoteproc@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>
-References: <20220216081224.9956-1-p-mohan@ti.com>
- <20220216081224.9956-2-p-mohan@ti.com> <Yg1Y1dtT9CjZTxgW@yoga>
-From:   Puranjay Mohan <p-mohan@ti.com>
-In-Reply-To: <Yg1Y1dtT9CjZTxgW@yoga>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b531eeca-40e8-d759-5579-59567eb5af84@collabora.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi Bjorn,
-
-On 17/02/22 01:34, Bjorn Andersson wrote:
-> On Wed 16 Feb 02:12 CST 2022, Puranjay Mohan wrote:
+On Wed, Feb 16, 2022 at 05:06:22PM +0100, AngeloGioacchino Del Regno wrote:
+> Il 14/01/22 15:47, AngeloGioacchino Del Regno ha scritto:
+> > During execution of the worker that's used to register rpmsg devices
+> > we are safely locking the channels mutex but, when creating a new
+> > endpoint for such devices, we are registering a IPI on the SCP, which
+> > then makes the SCP to trigger an interrupt, lock its own mutex and in
+> > turn register more subdevices.
+> > This creates a circular locking dependency situation, as the mtk_rpmsg
+> > channels_lock will then depend on the SCP IPI lock.
+> > 
+> > [   18.014514]  Possible unsafe locking scenario:
+> > [   18.014515]        CPU0                    CPU1
+> > [   18.014517]        ----                    ----
+> > [   18.045467]   lock(&mtk_subdev->channels_lock);
+> > [   18.045474]                                lock(&scp->ipi_desc[i].lock);
+> > [   18.228399]                                lock(&mtk_subdev->channels_lock);
+> > [   18.228405]   lock(&scp->ipi_desc[i].lock);
+> > [   18.264405]
+> > 
+> > To solve this, simply unlock the channels_lock mutex before calling
+> > mtk_rpmsg_register_device() and relock it right after, as safety is
+> > still ensured by the locking mechanism that happens right after
+> > through SCP.
+> > Notably, mtk_rpmsg_register_device() does not even require locking.
+> > 
+> > Fixes: 7017996951fd ("rpmsg: add rpmsg support for mt8183 SCP.")
+> > Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 > 
->> The remoteproc framework provides sysfs interfaces for changing
->> the firmware name and for starting/stopping a remote processor
->> through the sysfs files 'state' and 'firmware'. The 'coredump'
->> file is used to set the coredump configuration. The 'recovery'
->> sysfs file can also be used similarly to control the error recovery
->> state machine of a remoteproc. These interfaces are currently
->> allowed irrespective of how the remoteprocs were booted (like
->> remoteproc self auto-boot, remoteproc client-driven boot etc).
->> These interfaces can adversely affect a remoteproc and its clients
->> especially when a remoteproc is being controlled by a remoteproc
->> client driver(s). Also, not all remoteproc drivers may want to
->> support the sysfs interfaces by default.
->>
->> Add support to make the remoteproc sysfs files read only by
->> introducing a state flag 'sysfs_read_only' that the individual
->> remoteproc drivers can set based on their usage needs. The default
->> behavior is to allow the sysfs operations as before.
->>
->> Implement attribute_group->is_visible() to make the sysfs
->> entries read only when 'sysfs_read_only' flag is set.
->>
->> Signed-off-by: Puranjay Mohan <p-mohan@ti.com>
->> Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
->> ---
->> Changes in v4->v5:
->> Rename deny_sysfs_ops to sysfs_read_only.
->> Make coredump readonly with other files.
->>
->> Changes in v3->v4:
->> Use mode = 0444 in rproc_is_visible() to make the sysfs entries
->> read-only when the deny_sysfs_ops flag is set.
->> ---
->>  drivers/remoteproc/remoteproc_sysfs.c | 19 ++++++++++++++++++-
->>  include/linux/remoteproc.h            |  2 ++
->>  2 files changed, 20 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/remoteproc/remoteproc_sysfs.c b/drivers/remoteproc/remoteproc_sysfs.c
->> index ea8b89f97d7b..abf0cd05d5e1 100644
->> --- a/drivers/remoteproc/remoteproc_sysfs.c
->> +++ b/drivers/remoteproc/remoteproc_sysfs.c
->> @@ -230,6 +230,22 @@ static ssize_t name_show(struct device *dev, struct device_attribute *attr,
->>  }
->>  static DEVICE_ATTR_RO(name);
->>  
->> +static umode_t rproc_is_visible(struct kobject *kobj, struct attribute *attr,
->> +				int n)
->> +{
->> +	struct device *dev = kobj_to_dev(kobj);
->> +	struct rproc *rproc = to_rproc(dev);
->> +	umode_t mode = attr->mode;
->> +
->> +	if (rproc->sysfs_read_only && (attr == &dev_attr_recovery.attr ||
->> +				       attr == &dev_attr_firmware.attr ||
->> +				       attr == &dev_attr_state.attr ||
->> +				       attr == &dev_attr_coredump.attr))
->> +		mode = 0444;
-> 
-> Change looks good now, but just to make sure, you actually care about
-> the content of these files for the Wakup M3? Read-only vs hiding them...
+> Friendly ping for an important fix... :)
+>
 
-Yes, it is useful for debugging purposes, hence making it read-only is
-the correct approach.
-
-Also, I will be re-sending PRU remoteproc consumer API patch series[1]
-that depends on this change.
-
-[1]https://patchwork.kernel.org/project/linux-remoteproc/cover/20201216165239.2744-1-grzegorz.jaszczyk@linaro.org/
+This seems to have slipped through the cracks...  I will take a look later
+today.
 
 Thanks,
-Puranjay Mohan
+Mathieu
 
+> > ---
+> >   drivers/rpmsg/mtk_rpmsg.c | 2 ++
+> >   1 file changed, 2 insertions(+)
+> > 
+> > diff --git a/drivers/rpmsg/mtk_rpmsg.c b/drivers/rpmsg/mtk_rpmsg.c
+> > index 5b4404b8be4c..d1213c33da20 100644
+> > --- a/drivers/rpmsg/mtk_rpmsg.c
+> > +++ b/drivers/rpmsg/mtk_rpmsg.c
+> > @@ -234,7 +234,9 @@ static void mtk_register_device_work_function(struct work_struct *register_work)
+> >   		if (info->registered)
+> >   			continue;
+> > +		mutex_unlock(&subdev->channels_lock);
+> >   		ret = mtk_rpmsg_register_device(subdev, &info->info);
+> > +		mutex_lock(&subdev->channels_lock);
+> >   		if (ret) {
+> >   			dev_err(&pdev->dev, "Can't create rpmsg_device\n");
+> >   			continue;
 > 
-> regards,
-> Bjorn
 > 
->> +
->> +	return mode;
->> +}
->> +
->>  static struct attribute *rproc_attrs[] = {
->>  	&dev_attr_coredump.attr,
->>  	&dev_attr_recovery.attr,
->> @@ -240,7 +256,8 @@ static struct attribute *rproc_attrs[] = {
->>  };
->>  
->>  static const struct attribute_group rproc_devgroup = {
->> -	.attrs = rproc_attrs
->> +	.attrs = rproc_attrs,
->> +	.is_visible = rproc_is_visible,
->>  };
->>  
->>  static const struct attribute_group *rproc_devgroups[] = {
->> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
->> index e0600e1e5c17..93a1d0050fbc 100644
->> --- a/include/linux/remoteproc.h
->> +++ b/include/linux/remoteproc.h
->> @@ -523,6 +523,7 @@ struct rproc_dump_segment {
->>   * @table_sz: size of @cached_table
->>   * @has_iommu: flag to indicate if remote processor is behind an MMU
->>   * @auto_boot: flag to indicate if remote processor should be auto-started
->> + * @sysfs_read_only: flag to make remoteproc sysfs files read only
->>   * @dump_segments: list of segments in the firmware
->>   * @nb_vdev: number of vdev currently handled by rproc
->>   * @elf_class: firmware ELF class
->> @@ -562,6 +563,7 @@ struct rproc {
->>  	size_t table_sz;
->>  	bool has_iommu;
->>  	bool auto_boot;
->> +	bool sysfs_read_only;
->>  	struct list_head dump_segments;
->>  	int nb_vdev;
->>  	u8 elf_class;
->> -- 
->> 2.17.1
->>
