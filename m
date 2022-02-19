@@ -2,53 +2,53 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B91E8C433F5
-	for <linux-remoteproc@archiver.kernel.org>; Sat, 19 Feb 2022 21:55:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89A41C4332F
+	for <linux-remoteproc@archiver.kernel.org>; Sat, 19 Feb 2022 21:55:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233756AbiBSV4B (ORCPT
+        id S236444AbiBSV4C (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Sat, 19 Feb 2022 16:56:01 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:55066 "EHLO
+        Sat, 19 Feb 2022 16:56:02 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:55118 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231324AbiBSVz7 (ORCPT
+        with ESMTP id S234690AbiBSV4B (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Sat, 19 Feb 2022 16:55:59 -0500
-Received: from mail-pj1-x1034.google.com (mail-pj1-x1034.google.com [IPv6:2607:f8b0:4864:20::1034])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B75E154188
-        for <linux-remoteproc@vger.kernel.org>; Sat, 19 Feb 2022 13:55:39 -0800 (PST)
-Received: by mail-pj1-x1034.google.com with SMTP id gi6so1966216pjb.1
-        for <linux-remoteproc@vger.kernel.org>; Sat, 19 Feb 2022 13:55:39 -0800 (PST)
+        Sat, 19 Feb 2022 16:56:01 -0500
+Received: from mail-pj1-x102a.google.com (mail-pj1-x102a.google.com [IPv6:2607:f8b0:4864:20::102a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5C10154188
+        for <linux-remoteproc@vger.kernel.org>; Sat, 19 Feb 2022 13:55:42 -0800 (PST)
+Received: by mail-pj1-x102a.google.com with SMTP id v4so11570053pjh.2
+        for <linux-remoteproc@vger.kernel.org>; Sat, 19 Feb 2022 13:55:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20210112.gappssmtp.com; s=20210112;
-        h=from:to:subject:date:message-id:mime-version
+        h=from:to:subject:date:message-id:in-reply-to:references:mime-version
          :content-transfer-encoding;
-        bh=+iB57UsJFQk/qq+LqVrtygemXd0B+XVilZt4bFe5htU=;
-        b=u5QhJnaaBF1SaKzz2/AjuOZECD3NVFhQ0Zrh5Uh70FXAXPLK+SYH6ZFV67648MToHb
-         24xqZa0KtbsnXxThMuOffKAsoP58K2KgmpJUtNMWIDGvxSCZdzA9jbUwLjkUg40g3Qq/
-         2fEc2Ftlb5+zx65nVGgQhT0bTvZsJMRgDFVpQdz5vkmWbmIdIH53utimgQiiwHLfGgqU
-         NGAboZr1sbE/ZFi8SVqEkF3X2XMNZ6/+lXxVpVgWyr33R7152G11sYVSyRtIpTbc0smC
-         EFi/H9O+GQPGZpOzvhdvWxlXMvuy4U0WANQxUt+GLjmJAKmuhM6WgGd+00YDW+1E1BC+
-         ncQA==
+        bh=tlXNd4WfVV+N9MiUaNSDYcpKd5QnvzkHB2jHSyxHiSE=;
+        b=5CsPhfBVJpIWa/x8rm2/nRs+N1fPus18cLloeaRd9q55k67hSctSfb4OPSgzhhJRKN
+         ds1xDXNKBbrg/YjO4G0VLVCjHl3B+o1j4RfesE2fybq4r4tYeUdXsR+h9I0zKcJRX1in
+         ANy2eEEcRhi4ELUpvbxjt5gssa2HV/zXKk2xsUk1RXisQDOuDCvNlCnLYGYeJ6jUPjfR
+         MxSpYh+aNtu+Y1K6tIqqytBwhlY1/fikjip6nBX029rlIymhVbR4Sj+dMNh/5faVGfUM
+         EeXF5jv0IbknANDnNMHFurfvscQuwqwHttIU0niSRoEwE97/ecOlUqR7CWReYDyAIxo/
+         Fbkg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=+iB57UsJFQk/qq+LqVrtygemXd0B+XVilZt4bFe5htU=;
-        b=H4hsHYSkgURyRUTzjGfJi6fqgFDRWwgm6JIttJSnhA37iAY9OG4HC6O4xbvIZ8e19M
-         hFtn5z6qwTQIOhuZSMt63XyCG4igjwDtQQrG1CB2mFTFGNBNRgKeUUbDzA4Wep0mg0pX
-         nLgjDfyLpwuMhiQ+BF/F5roEsEAWjymeWy1SATGjxVjmoCt+rgGWzJDTYJnw5mXK94Lt
-         SBj1/KSpWS1F2EgBOtPftYeFOhITG90eD1klMSz3fia3yhv6G6XI9JZx9CIX/DhQaOM3
-         dVVEJRy+SEaqFVjFfAJKEspTx6h1AOBlFF9be8t4yYvUQ2czmP2+lByD/pN+9S24oTM3
-         lI7Q==
-X-Gm-Message-State: AOAM533pFTBJDRlL35ZH+uwWR7AdQk+k38Pd3VWz5ulDo9t5MDZ7NDcK
-        nLh6btz8mdys9Ab/yFbwFPJsOQ==
-X-Google-Smtp-Source: ABdhPJyLzGQfZEFYVEdwDM8G/RuzZT3/PENOwn2dG/FOspxT/iak7Uij73jUVZB1jllVqos1xyCcQg==
-X-Received: by 2002:a17:90a:c706:b0:1b8:a942:3e36 with SMTP id o6-20020a17090ac70600b001b8a9423e36mr14451630pjt.40.1645307739266;
-        Sat, 19 Feb 2022 13:55:39 -0800 (PST)
+        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=tlXNd4WfVV+N9MiUaNSDYcpKd5QnvzkHB2jHSyxHiSE=;
+        b=QqAiOr7Lgn/EcaoeNgsdKvJex2XjwjeGqadRULXAxVIp7qq8We3u5Q6+PSIz0PdVpv
+         WN4MBFfvz/EAYUn7z7t1chup45tyOWwbh6+LqoGfOKs4ytT5i8yfy0L1cRZ7JLJOyjec
+         8rn9HG2029Df5H6n6PkvaSJcPQ+hs8lQDQLZFm+hsChGj34aFEJnVvbY2zODi3ieZ3Ez
+         VZooKQjFoaYE3s/gDnMHWrCYikfDhoreNtme2JFSAxAMR4f4Ivo3zDwYqcgFtEc7btl5
+         D5Iha34HXPJU8leYqK12qMRl8mps8vpzTLQprQ2D3EWRfyjshjqbc0sCOvbybdlXXdSN
+         0MfA==
+X-Gm-Message-State: AOAM531YQ/6Hb5A0REDdT6Em5c61Ta92OH5CtSEE0IJxJSqFeBAj600b
+        cgCc/S43A3L9mR9/kgvhelE7Lw==
+X-Google-Smtp-Source: ABdhPJxlo3caslaF3DdogQsF2CNkabNAPdTzgIT92VlqtQMgcaudXdsWCY5mLtbEZK5i64FQjhgHfg==
+X-Received: by 2002:a17:90b:4cc6:b0:1bc:210d:b6fa with SMTP id nd6-20020a17090b4cc600b001bc210db6famr741799pjb.104.1645307741905;
+        Sat, 19 Feb 2022 13:55:41 -0800 (PST)
 Received: from x1.hsd1.or.comcast.net ([2601:1c2:1001:7090:31ab:1e81:9550:f30a])
-        by smtp.gmail.com with ESMTPSA id i17sm13447337pgn.82.2022.02.19.13.55.36
+        by smtp.gmail.com with ESMTPSA id i17sm13447337pgn.82.2022.02.19.13.55.40
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 19 Feb 2022 13:55:38 -0800 (PST)
+        Sat, 19 Feb 2022 13:55:41 -0800 (PST)
 From:   Drew Fustini <dfustini@baylibre.com>
 To:     =?UTF-8?q?Beno=C3=AEt=20Cousson?= <bcousson@baylibre.com>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
@@ -62,66 +62,71 @@ To:     =?UTF-8?q?Beno=C3=AEt=20Cousson?= <bcousson@baylibre.com>,
         Santosh Shilimkar <ssantosh@kernel.org>,
         Tony Lindgren <tony@atomide.com>, s-anna@ti.com,
         khilman@baylibre.com
-Subject: [PATCH 00/11] soc: ti: wkup_m3_ipc: support vtt toggle, io isolation & voltage scaling
-Date:   Sat, 19 Feb 2022 13:53:17 -0800
-Message-Id: <20220219215328.485660-1-dfustini@baylibre.com>
+Subject: [PATCH 02/11] dt-bindings: wkup_m3_ipc: Add vtt toggling bindings
+Date:   Sat, 19 Feb 2022 13:53:19 -0800
+Message-Id: <20220219215328.485660-3-dfustini@baylibre.com>
 X-Mailer: git-send-email 2.32.0
+In-Reply-To: <20220219215328.485660-1-dfustini@baylibre.com>
+References: <20220219215328.485660-1-dfustini@baylibre.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Improve the wkup_m3_ipc driver to better support the TI Wakeup Cortex M3 
-device found on TI AM33xx and AM43xx SoCs.
+From: Dave Gerlach <d-gerlach@ti.com>
 
-This series derives from these commits in the ti-linux-5.10.y branch of
-the TI Linux repo [1]:
+Add description of the wkup_m3_ipc DT properties that can be used to
+toggle VTT regulator during low power mode transitions.
 
-  6ab4eff1034b ("remoteproc: move rproc_da_to_va declaration to remoteproc.h")
-  2a9be39a26f7 ("dt-bindings: wkup_m3_ipc: Add vtt toggling bindings")
-  c65263f9e12c ("wkup_m3_ipc: Add support for toggling VTT regulator")
-  5c6c821803e1 ("dt-bindings: wkup_m3_ipc: Add ti,io-isolation property")
-  196c46f7577d ("wkup_m3_ipc: Add support for IO Isolation")
-  c28acc847e5d ("soc: ti: wkup_m3_ipc: Add support for i2c voltage scaling")
-  a4f9ef4ab5ca ("ARM: dts: am437x-gp-evm: Enable wkup_m3 control of IO isolation")
-  94de756f1771 ("ARM: dts: am33xx: Add scale data fw to wkup_m3_ipc node")
-  b7ae4b063793 ("ARM: dts: am43xx: Add scale data fw to wkup_m3_ipc node")
-  451ec7871ae7 ("soc: ti: wkup_m3_ipc: Add debug option to halt m3 in suspend")
+Signed-off-by: Dave Gerlach <d-gerlach@ti.com>
+Signed-off-by: Drew Fustini <dfustini@baylibre.com>
+---
+ .../bindings/soc/ti/wkup_m3_ipc.txt           | 34 +++++++++++++++++++
+ 1 file changed, 34 insertions(+)
 
-Minor changes have been made to some patches to resolve conflicts and 
-to split i2c voltage scaling dt-bindings into separate patch.
-
-[1] git://git.ti.com/ti-linux-kernel/ti-linux-kernel.git
-
-Dave Gerlach (10):
-  dt-bindings: wkup_m3_ipc: Add vtt toggling bindings
-  soc: ti: wkup_m3_ipc: Add support for toggling VTT regulator
-  dt-bindings: wkup_m3_ipc: Add ti,io-isolation property
-  soc: ti: wkup_m3_ipc: Add support for IO Isolation
-  ARM: dts: am437x-gp-evm: Enable wkup_m3 control of IO isolation
-  dt-bindings: wkup_m3_ipc: Add scale-data-fw property
-  soc: ti: wkup_m3_ipc: Add support for i2c voltage scaling
-  ARM: dts: am33xx: Add scale data fw to wkup_m3_ipc node
-  ARM: dts: am43xx: Add scale data fw to wkup_m3_ipc node
-  soc: ti: wkup_m3_ipc: Add debug option to halt m3 in suspend
-
-Suman Anna (1):
-  remoteproc: move rproc_da_to_va declaration to remoteproc.h
-
- .../bindings/soc/ti/wkup_m3_ipc.txt           |  91 ++++++++
- arch/arm/boot/dts/am335x-bone-common.dtsi     |   4 +
- arch/arm/boot/dts/am335x-evm.dts              |   4 +
- arch/arm/boot/dts/am335x-evmsk.dts            |   4 +
- arch/arm/boot/dts/am437x-gp-evm.dts           |   5 +
- arch/arm/boot/dts/am437x-sk-evm.dts           |   4 +
- arch/arm/boot/dts/am43x-epos-evm.dts          |   4 +
- drivers/remoteproc/remoteproc_internal.h      |   1 -
- drivers/soc/ti/wkup_m3_ipc.c                  | 208 +++++++++++++++++-
- include/linux/remoteproc.h                    |   1 +
- include/linux/wkup_m3_ipc.h                   |  13 ++
- 11 files changed, 334 insertions(+), 5 deletions(-)
-
+diff --git a/Documentation/devicetree/bindings/soc/ti/wkup_m3_ipc.txt b/Documentation/devicetree/bindings/soc/ti/wkup_m3_ipc.txt
+index 401550487ed6..4cdbb60fd0d0 100644
+--- a/Documentation/devicetree/bindings/soc/ti/wkup_m3_ipc.txt
++++ b/Documentation/devicetree/bindings/soc/ti/wkup_m3_ipc.txt
+@@ -55,3 +55,37 @@ Example:
+ 			...
+ 		};
+ 	};
++
++Support for VTT Toggle
++==================================
++In order to enable the support for VTT toggle during Suspend/Resume
++sequence needed by some boards (like AM335x EVM-SK & AM437x GP EVM),
++the below DT properties are required. It is possible to toggle VTT
++using one of two methods depending on the SoC being used, either
++GPIO0 toggle (AM335x and AM437x), or any GPIO with DS_PAD_CONFIG
++bits in the control module (AM437x only).
++
++VTT Toggle using GPIO0
++----------------------------------
++Supported by: AM335x and AM437x
++Used on: AM335x EVM-SK
++
++Optional properties:
++- ti,needs-vtt-toggle:	Indicates that the boards requires VTT toggling
++			during suspend/resume.
++- ti,vtt-gpio-pin:	Specifies the GPIO0 pin used for VTT toggle.
++
++Important Note:
++- Here it is assumed that VTT Toggle will be done using a pin on GPIO-0 Instance.
++  It will not work on any other GPIO using the above properties, regardless of
++  which part is being used.
++
++Example:
++	wkup_m3_ipc: wkup_m3_ipc@1324 {
++		compatible = "ti,am3352-wkup-m3-ipc";
++		...
++		...
++		ti,needs-vtt-toggle;
++		ti,vtt-gpio-pin = <7>;
++		...
++	};
 -- 
 2.32.0
 
