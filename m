@@ -2,53 +2,53 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB1D8C4321E
-	for <linux-remoteproc@archiver.kernel.org>; Sat, 19 Feb 2022 21:55:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 573ECC433F5
+	for <linux-remoteproc@archiver.kernel.org>; Sat, 19 Feb 2022 21:55:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235325AbiBSV4B (ORCPT
+        id S243172AbiBSV4J (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Sat, 19 Feb 2022 16:56:01 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:55086 "EHLO
+        Sat, 19 Feb 2022 16:56:09 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:55226 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231686AbiBSV4A (ORCPT
+        with ESMTP id S243169AbiBSV4I (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Sat, 19 Feb 2022 16:56:00 -0500
-Received: from mail-pl1-x62a.google.com (mail-pl1-x62a.google.com [IPv6:2607:f8b0:4864:20::62a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2C04F541A9
-        for <linux-remoteproc@vger.kernel.org>; Sat, 19 Feb 2022 13:55:41 -0800 (PST)
-Received: by mail-pl1-x62a.google.com with SMTP id u5so9898741ple.3
-        for <linux-remoteproc@vger.kernel.org>; Sat, 19 Feb 2022 13:55:41 -0800 (PST)
+        Sat, 19 Feb 2022 16:56:08 -0500
+Received: from mail-pj1-x1036.google.com (mail-pj1-x1036.google.com [IPv6:2607:f8b0:4864:20::1036])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 97E1753B7F
+        for <linux-remoteproc@vger.kernel.org>; Sat, 19 Feb 2022 13:55:44 -0800 (PST)
+Received: by mail-pj1-x1036.google.com with SMTP id t4-20020a17090a510400b001b8c4a6cd5dso11642966pjh.5
+        for <linux-remoteproc@vger.kernel.org>; Sat, 19 Feb 2022 13:55:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20210112.gappssmtp.com; s=20210112;
         h=from:to:subject:date:message-id:in-reply-to:references:mime-version
          :content-transfer-encoding;
-        bh=xFv8pYP/ZU+UReQceN+3cdKUVINAH0lfYR5sSaL4wpY=;
-        b=XPsUi7jSiA5kjSrk5AzxuhDHnSy45szyngwKqcCazfH7MoUZob4Lm3qB/pUi+xGH1w
-         tM2FTl2egymaCOspqlEYDrzD7iXa5xVrTZ5GeLKxYZzbH4R7UehkDivjq5OPJiotItOs
-         fKrT6Etz8W7S5vIN7qCH3x04vVBdMLLHfjy+uoDjlbBK4EnnJyLJtPTURv+kLWXXhi39
-         +3ekYDxTkPkpAjFkPprNKmRbSUMpOa2XWRWcwRVdE/LKBcDKQ5qLIBZX0JoZDg9/gH4r
-         ydgqdMa7gdqIe+e3fy3oMstvVM4dBgTXBGUGgEshGlHfPMQ8ULFmRInkq6jCb39i2CS+
-         LmsQ==
+        bh=DPqC7sk0jXG3KL4pgR3flZBRy+4blHrbIS6/yBS27Mg=;
+        b=RCOdYH6WIaW2xVqRGFA32u3oOOKisUBbxh2bQZ6OLEuubkB37e/DLlUPUI/qS7ZsPp
+         K9vvLxcUrbv9BMjXSg9sciDkhvYNEdsasmZcb9Ita6e1im3+L2SufG4wk2DJXmvo5pK+
+         Wx2IcMPhbQ1baTb9PqWZsTEBmfmjFo8u1nF5FRQu3fsbnEslXRYQAawKzZ/FeLpMmYU+
+         P3YLroiH1jtnPz8t/uPk7nZkuRosB1f+3Lu82Nd6FqbNMUN3ETXpC3qUUkI2D6KutTCV
+         MvLoFxsc1KMYD2sK6O4571yQv32Zu02CNtmn8AKwLrNsFHFGSBRAnJHyhvH6+ZTianzC
+         Gd9g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=xFv8pYP/ZU+UReQceN+3cdKUVINAH0lfYR5sSaL4wpY=;
-        b=yYKH5/46iy/S5y0zrMaVhw8pZ87zK6yJNkCq9TzyUh400vKPNxFWpA75wJbEQNQNSD
-         CQxH8/8onP0IeSs2Dy0BpU9GKWH/jIlNSN45CA5OxYDDiTxspWPb0wNe8ThHbEqPE5SQ
-         8b5gNick4lDuTdwCS+IVaQydrQkroS/9DQwRo1bbz67brnO03HRR77XjEaDUWi7rrtX7
-         MMxFvrmF/qKdL0qDTL4/EIqt89pdUGCqlQ/B4XDkh/NRsUODNf4EEzWsZuC5w/Vk752g
-         k8akOkvi6powZ6d5NRtoKXA41IcjiBk9rqBPjNcgj/Irt+lDK25QthoSoCh92nbGxYVK
-         8cCQ==
-X-Gm-Message-State: AOAM531b+4mkCzI26ghbFqQ1OoKoziCLtClNJdsb/Pw/OBnlQM/EDCH9
-        dG0CZU657V3cna5gevBZuDRLwg==
-X-Google-Smtp-Source: ABdhPJyS54Vh+H8WNTs+GkpNEVkoLaIFTLqYsD/C0UVOD/Oa+ZbdqlFNf5Y7Edc06y/9TO+gZLiBSA==
-X-Received: by 2002:a17:90b:f88:b0:1b8:ad41:e200 with SMTP id ft8-20020a17090b0f8800b001b8ad41e200mr18633706pjb.1.1645307740514;
-        Sat, 19 Feb 2022 13:55:40 -0800 (PST)
+        bh=DPqC7sk0jXG3KL4pgR3flZBRy+4blHrbIS6/yBS27Mg=;
+        b=T89TBs8S3bfdD6DggBIl4jXgzGlcuYiRO3CthxoEisjGLgGjYXh77vH+9qTGdULIrv
+         LrUzDsOpwDZwl6NJnggtQ1l07KFzCUmkuxYjkh06FdQZ5d6NdpEuyZ9hn8I01CItEk9Z
+         ofsmUooDwrPhvDuqe8nzr2FDWEk6bwmGecMEgOZvgzj+00gy2VCAZB3n+L9m6oY3rtHk
+         fKZuy04/u4qRTbB9YYtiSD5ElL6U4J2YFYkp3sr55PHsoGcnsXFCoF+upF4JZf8dcbPs
+         5xKAgUEVtflVN6Ja4Y+3MDQG9WZPrNgmbW8qAAQkMfQxKnyIIiCf6SvYs3JpczxYBrbu
+         6PLA==
+X-Gm-Message-State: AOAM533K8lE5fCxS/f8Bg0T0RySv0RFxfh1ILR5FqDJAZqTTvvr2yAHR
+        yDRYJiSR8ibxaEjRY5JHMQSmqg==
+X-Google-Smtp-Source: ABdhPJyrjgGWD8uK2oJsFpdirNDfgtzWoV5CCSu0s9ORmrFOQ1CeFPo+nYa0r4tS45fI/XS//g8JLQ==
+X-Received: by 2002:a17:90a:9309:b0:1bc:1bf1:dad4 with SMTP id p9-20020a17090a930900b001bc1bf1dad4mr1336912pjo.169.1645307744093;
+        Sat, 19 Feb 2022 13:55:44 -0800 (PST)
 Received: from x1.hsd1.or.comcast.net ([2601:1c2:1001:7090:31ab:1e81:9550:f30a])
-        by smtp.gmail.com with ESMTPSA id i17sm13447337pgn.82.2022.02.19.13.55.39
+        by smtp.gmail.com with ESMTPSA id i17sm13447337pgn.82.2022.02.19.13.55.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 19 Feb 2022 13:55:39 -0800 (PST)
+        Sat, 19 Feb 2022 13:55:43 -0800 (PST)
 From:   Drew Fustini <dfustini@baylibre.com>
 To:     =?UTF-8?q?Beno=C3=AEt=20Cousson?= <bcousson@baylibre.com>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
@@ -62,9 +62,9 @@ To:     =?UTF-8?q?Beno=C3=AEt=20Cousson?= <bcousson@baylibre.com>,
         Santosh Shilimkar <ssantosh@kernel.org>,
         Tony Lindgren <tony@atomide.com>, s-anna@ti.com,
         khilman@baylibre.com
-Subject: [PATCH 01/11] remoteproc: move rproc_da_to_va declaration to remoteproc.h
-Date:   Sat, 19 Feb 2022 13:53:18 -0800
-Message-Id: <20220219215328.485660-2-dfustini@baylibre.com>
+Subject: [PATCH 03/11] soc: ti: wkup_m3_ipc: Add support for toggling VTT regulator
+Date:   Sat, 19 Feb 2022 13:53:20 -0800
+Message-Id: <20220219215328.485660-4-dfustini@baylibre.com>
 X-Mailer: git-send-email 2.32.0
 In-Reply-To: <20220219215328.485660-1-dfustini@baylibre.com>
 References: <20220219215328.485660-1-dfustini@baylibre.com>
@@ -74,48 +74,117 @@ Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-From: Suman Anna <s-anna@ti.com>
+From: Dave Gerlach <d-gerlach@ti.com>
 
-The rproc_da_to_va() API is an exported function, so move its
-declaration from the remoteproc local remoteproc_internal.h
-to the public remoteproc.h file.
+Some boards (currently AM335x EVM-SK) provides s/w control via
+GPIO to toggle VTT regulator to reduce power consumption in low
+power state.
 
-This will allow drivers outside of the remoteproc folder to be
-able to use this API.
+The VTT regulator should be disabled after enabling self-refresh on
+suspend, and should be enabled before disabling self-refresh on resume.
+This is to allow proper self-refresh entry/exit commands to be
+transmitted to the memory.
 
-Signed-off-by: Suman Anna <s-anna@ti.com>
+Add support for toggling VTT regulator using DT properties.
+Actual toggling happens in CM3 Firmware. The enable option & the GPIO
+pin used is collected in A8 Core and then sent to CM3 using IPC
+registers.
+
+Note:
+Here it is assumed that VTT Toggle will be done using a pin on GPIO-0
+Instance. The reason is GPIO-0 is in wakeup domain.
+
 Signed-off-by: Dave Gerlach <d-gerlach@ti.com>
-[dfustini: fix line number conflict]
+Signed-off-by: Keerthy <j-keerthy@ti.com>
 Signed-off-by: Drew Fustini <dfustini@baylibre.com>
 ---
- drivers/remoteproc/remoteproc_internal.h | 1 -
- include/linux/remoteproc.h               | 1 +
- 2 files changed, 1 insertion(+), 1 deletion(-)
+ drivers/soc/ti/wkup_m3_ipc.c | 27 +++++++++++++++++++++++++--
+ include/linux/wkup_m3_ipc.h  |  1 +
+ 2 files changed, 26 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/remoteproc/remoteproc_internal.h b/drivers/remoteproc/remoteproc_internal.h
-index a328e634b1de..72d4d3d7d94d 100644
---- a/drivers/remoteproc/remoteproc_internal.h
-+++ b/drivers/remoteproc/remoteproc_internal.h
-@@ -84,7 +84,6 @@ static inline void  rproc_char_device_remove(struct rproc *rproc)
- void rproc_free_vring(struct rproc_vring *rvring);
- int rproc_alloc_vring(struct rproc_vdev *rvdev, int i);
+diff --git a/drivers/soc/ti/wkup_m3_ipc.c b/drivers/soc/ti/wkup_m3_ipc.c
+index 72386bd393fe..974b4118a893 100644
+--- a/drivers/soc/ti/wkup_m3_ipc.c
++++ b/drivers/soc/ti/wkup_m3_ipc.c
+@@ -40,6 +40,13 @@
+ #define M3_FW_VERSION_MASK		0xffff
+ #define M3_WAKE_SRC_MASK		0xff
  
--void *rproc_da_to_va(struct rproc *rproc, u64 da, size_t len, bool *is_iomem);
- phys_addr_t rproc_va_to_pa(void *cpu_addr);
- int rproc_trigger_recovery(struct rproc *rproc);
++#define IPC_MEM_TYPE_SHIFT		(0x0)
++#define IPC_MEM_TYPE_MASK		(0x7 << 0)
++#define IPC_VTT_STAT_SHIFT		(0x3)
++#define IPC_VTT_STAT_MASK		(0x1 << 3)
++#define IPC_VTT_GPIO_PIN_SHIFT		(0x4)
++#define IPC_VTT_GPIO_PIN_MASK		(0x3f << 4)
++
+ #define M3_STATE_UNKNOWN		0
+ #define M3_STATE_RESET			1
+ #define M3_STATE_INITED			2
+@@ -215,6 +222,12 @@ static int wkup_m3_is_available(struct wkup_m3_ipc *m3_ipc)
+ 		(m3_ipc->state != M3_STATE_UNKNOWN));
+ }
  
-diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-index e0600e1e5c17..cc9dc9aef0c0 100644
---- a/include/linux/remoteproc.h
-+++ b/include/linux/remoteproc.h
-@@ -673,6 +673,7 @@ void rproc_shutdown(struct rproc *rproc);
- int rproc_detach(struct rproc *rproc);
- int rproc_set_firmware(struct rproc *rproc, const char *fw_name);
- void rproc_report_crash(struct rproc *rproc, enum rproc_crash_type type);
-+void *rproc_da_to_va(struct rproc *rproc, u64 da, size_t len, bool *is_iomem);
- void rproc_coredump_using_sections(struct rproc *rproc);
- int rproc_coredump_add_segment(struct rproc *rproc, dma_addr_t da, size_t size);
- int rproc_coredump_add_custom_segment(struct rproc *rproc,
++static void wkup_m3_set_vtt_gpio(struct wkup_m3_ipc *m3_ipc, int gpio)
++{
++	m3_ipc->vtt_conf = (1 << IPC_VTT_STAT_SHIFT) |
++			    (gpio << IPC_VTT_GPIO_PIN_SHIFT);
++}
++
+ /* Public functions */
+ /**
+  * wkup_m3_set_mem_type - Pass wkup_m3 which type of memory is in use
+@@ -294,7 +307,8 @@ static int wkup_m3_prepare_low_power(struct wkup_m3_ipc *m3_ipc, int state)
+ 	/* Program each required IPC register then write defaults to others */
+ 	wkup_m3_ctrl_ipc_write(m3_ipc, m3_ipc->resume_addr, 0);
+ 	wkup_m3_ctrl_ipc_write(m3_ipc, m3_power_state, 1);
+-	wkup_m3_ctrl_ipc_write(m3_ipc, m3_ipc->mem_type, 4);
++	wkup_m3_ctrl_ipc_write(m3_ipc, m3_ipc->mem_type |
++			       m3_ipc->vtt_conf, 4);
+ 
+ 	wkup_m3_ctrl_ipc_write(m3_ipc, DS_IPC_DEFAULT, 2);
+ 	wkup_m3_ctrl_ipc_write(m3_ipc, DS_IPC_DEFAULT, 3);
+@@ -433,12 +447,13 @@ static int wkup_m3_rproc_boot_thread(void *arg)
+ static int wkup_m3_ipc_probe(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+-	int irq, ret;
++	int irq, ret, temp;
+ 	phandle rproc_phandle;
+ 	struct rproc *m3_rproc;
+ 	struct resource *res;
+ 	struct task_struct *task;
+ 	struct wkup_m3_ipc *m3_ipc;
++	struct device_node *np = dev->of_node;
+ 
+ 	m3_ipc = devm_kzalloc(dev, sizeof(*m3_ipc), GFP_KERNEL);
+ 	if (!m3_ipc)
+@@ -496,6 +511,14 @@ static int wkup_m3_ipc_probe(struct platform_device *pdev)
+ 
+ 	m3_ipc->ops = &ipc_ops;
+ 
++	if (of_find_property(np, "ti,needs-vtt-toggle", NULL) &&
++	    !(of_property_read_u32(np, "ti,vtt-gpio-pin", &temp))) {
++		if (temp >= 0 && temp <= 31)
++			wkup_m3_set_vtt_gpio(m3_ipc, temp);
++		else
++			dev_warn(dev, "Invalid VTT GPIO(%d) pin\n", temp);
++	}
++
+ 	/*
+ 	 * Wait for firmware loading completion in a thread so we
+ 	 * can boot the wkup_m3 as soon as it's ready without holding
+diff --git a/include/linux/wkup_m3_ipc.h b/include/linux/wkup_m3_ipc.h
+index 3f496967b538..2bc52c6381d5 100644
+--- a/include/linux/wkup_m3_ipc.h
++++ b/include/linux/wkup_m3_ipc.h
+@@ -33,6 +33,7 @@ struct wkup_m3_ipc {
+ 
+ 	int mem_type;
+ 	unsigned long resume_addr;
++	int vtt_conf;
+ 	int state;
+ 
+ 	struct completion sync_complete;
 -- 
 2.32.0
 
