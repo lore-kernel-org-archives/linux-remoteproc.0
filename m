@@ -2,105 +2,107 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D345BC43219
-	for <linux-remoteproc@archiver.kernel.org>; Sat, 19 Feb 2022 21:56:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC34AC433F5
+	for <linux-remoteproc@archiver.kernel.org>; Sun, 20 Feb 2022 20:19:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243203AbiBSV42 (ORCPT
+        id S244798AbiBTUUG (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Sat, 19 Feb 2022 16:56:28 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:55370 "EHLO
+        Sun, 20 Feb 2022 15:20:06 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:48058 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243201AbiBSV4N (ORCPT
+        with ESMTP id S236782AbiBTUUE (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Sat, 19 Feb 2022 16:56:13 -0500
-Received: from mail-pg1-x52f.google.com (mail-pg1-x52f.google.com [IPv6:2607:f8b0:4864:20::52f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 32390541BB
-        for <linux-remoteproc@vger.kernel.org>; Sat, 19 Feb 2022 13:55:48 -0800 (PST)
-Received: by mail-pg1-x52f.google.com with SMTP id 12so7347225pgd.0
-        for <linux-remoteproc@vger.kernel.org>; Sat, 19 Feb 2022 13:55:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20210112.gappssmtp.com; s=20210112;
-        h=from:to:subject:date:message-id:in-reply-to:references:mime-version
-         :content-transfer-encoding;
-        bh=65Eb1HUPdIjM8zVi86DKNREnJ4z9OvkieF1s3FEMLrI=;
-        b=4VytRZT6CAyhgtB0WgTO1CmH6FyEiVE195+cE4dlZVCWFZ8iudpzgTS+gBHtUACxvT
-         MIhY2IZkpmy+hYNGyiNLj9Y0MnvZ5oytRW9znNCeTPHETg9mvXJEBGHAHEdlGiJRuNLt
-         D+NUYwS3fm0pLZSNi2C+PmG/A8uDIxZr9DmzK08CFnih9aSO6qES+NCnIBrB3KUMnrbm
-         kpLLAwu2YKChJx0fZYrR3/P1jV9rMelaKyUtjcKN/EnWjFr8gf9C+6LL0fF+akcmtImi
-         Bk0gAc2Jo5ISBuUh8e3VOK1t/cbq9ZGfd+0hq6z+P+AQypLHD1kIcNXwooUfd9dPHsB4
-         evUw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=65Eb1HUPdIjM8zVi86DKNREnJ4z9OvkieF1s3FEMLrI=;
-        b=LPKJAYCufJkp0Eh3NppT5i6zXXq0kbejB+06HGcO+gJIDIUzgKBnHTsFtKNxYwiTur
-         PF8L1qfeM8u0JwNqLKFc2YYygx3580ECL3FEyyn18o0LtAznczDtB/z3n+D7EZlza/7A
-         wQ819cquSs8Ylz6l/RQMLJxz8Ye7GBWDhJ2LXmO731aAHPLaNf0acDF7kMZVWXB9xTGc
-         KQigo0PtE4+F1WANZCalgoGeO2kdxf18rFKlsjsAFlcHdYpX6JNtee8/DNdcIHm+OnLR
-         T/Ni9V7+bUgyx5YZdmLamknju/wKoIlxKDHFqlk0l1jCTAoU/OZH0vj04nr9UgLimgrx
-         dp6g==
-X-Gm-Message-State: AOAM532p5Fd/Kwq/8w3aNgZ7g/64JrG/lAEEGrf5bl5Fr+9ldRfNq9TD
-        m9jhgyn2XqT2OQgjpTkNvuyxYFRerWNuKlnK
-X-Google-Smtp-Source: ABdhPJzR11qeGJpsKF8keWXr323YCIBX9Clo8mnHXsBsgwGyif8SWMepT1n0NinmAP+YMeQZ1Q2ZaA==
-X-Received: by 2002:a63:3f42:0:b0:363:c08a:8dfd with SMTP id m63-20020a633f42000000b00363c08a8dfdmr11119666pga.108.1645307747624;
-        Sat, 19 Feb 2022 13:55:47 -0800 (PST)
-Received: from x1.hsd1.or.comcast.net ([2601:1c2:1001:7090:31ab:1e81:9550:f30a])
-        by smtp.gmail.com with ESMTPSA id i17sm13447337pgn.82.2022.02.19.13.55.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 19 Feb 2022 13:55:47 -0800 (PST)
-From:   Drew Fustini <dfustini@baylibre.com>
-To:     =?UTF-8?q?Beno=C3=AEt=20Cousson?= <bcousson@baylibre.com>,
+        Sun, 20 Feb 2022 15:20:04 -0500
+Received: from mail.z3ntu.xyz (mail.z3ntu.xyz [128.199.32.197])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2ADFC4C43C;
+        Sun, 20 Feb 2022 12:19:42 -0800 (PST)
+Received: from localhost.localdomain (ip-213-127-118-180.ip.prioritytelecom.net [213.127.118.180])
+        by mail.z3ntu.xyz (Postfix) with ESMTPSA id 0A706C6D5A;
+        Sun, 20 Feb 2022 20:19:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=z3ntu.xyz; s=z3ntu;
+        t=1645388380; bh=m6+0G7kMhIz7HsIPX/lDQc+bJdPk1YftvzsitotuDew=;
+        h=From:To:Cc:Subject:Date;
+        b=K+bXim3X2qVn78qrWNwVF9x83UOent1HzpLSuC/FDJoIX49K2/c5PhDo4MoB1TP8y
+         S7vJZBjFwYXS6DMDqnEX7HQJI6o5iBi+qD0z2XrABZ/6AH4dmnhDpZaNVs26MHuvod
+         CiZk15Ff0Lx4+HzTTqircIuMJ8xfHsdXtFRXRYZQ=
+From:   Luca Weiss <luca@z3ntu.xyz>
+To:     linux-arm-msm@vger.kernel.org
+Cc:     ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
+        Luca Weiss <luca@z3ntu.xyz>, Amit Kucheria <amitk@kernel.org>,
+        Bartosz Dudziak <bartosz.dudziak@snejp.pl>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Dave Gerlach <d-gerlach@ti.com>, devicetree@vger.kernel.org,
-        Drew Fustini <dfustini@baylibre.com>,
-        Keerthy <j-keerthy@ti.com>, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Tony Lindgren <tony@atomide.com>, s-anna@ti.com,
-        khilman@baylibre.com
-Subject: [PATCH 06/11] ARM: dts: am437x-gp-evm: Enable wkup_m3 control of IO isolation
-Date:   Sat, 19 Feb 2022 13:53:23 -0800
-Message-Id: <20220219215328.485660-7-dfustini@baylibre.com>
-X-Mailer: git-send-email 2.32.0
-In-Reply-To: <20220219215328.485660-1-dfustini@baylibre.com>
-References: <20220219215328.485660-1-dfustini@baylibre.com>
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Hector Martin <marcan@marcan.st>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Manu Gautam <mgautam@codeaurora.org>,
+        Mark Brown <broonie@kernel.org>,
+        Maxime Ripard <maxime@cerno.tech>,
+        Rob Herring <robh@kernel.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Stephan Gerhold <stephan@gerhold.net>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Zhang Rui <rui.zhang@intel.com>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org, linux-usb@vger.kernel.org
+Subject: [PATCH v2 00/10] Initial MSM8953 & Fairphone 3 support
+Date:   Sun, 20 Feb 2022 21:18:53 +0100
+Message-Id: <20220220201909.445468-1-luca@z3ntu.xyz>
+X-Mailer: git-send-email 2.35.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-From: Dave Gerlach <d-gerlach@ti.com>
+This series adds initial support for MSM8953 (and SDM632 which is based
+on MSM8953) and the Fairphone 3 smartphone.
 
-With this flag wkup_m3 is able to control IO isolation during
-suspend on the board.
+Only relatively basic functionality is supported like storage, volume
+keys and USB.
 
-Signed-off-by: Dave Gerlach <d-gerlach@ti.com>
-Signed-off-by: Keerthy <j-keerthy@ti.com>
-Signed-off-by: Drew Fustini <dfustini@baylibre.com>
----
- arch/arm/boot/dts/am437x-gp-evm.dts | 4 ++++
- 1 file changed, 4 insertions(+)
+There is currently close-to-mainline support for other components for
+this SoC including GPU, WiFi and audio, this series adds only basic
+support so that the other components can start getting upstreamed
+easier.
 
-diff --git a/arch/arm/boot/dts/am437x-gp-evm.dts b/arch/arm/boot/dts/am437x-gp-evm.dts
-index 4416ddb559e4..91b67b428a06 100644
---- a/arch/arm/boot/dts/am437x-gp-evm.dts
-+++ b/arch/arm/boot/dts/am437x-gp-evm.dts
-@@ -1127,6 +1127,10 @@ &cpu {
- 	cpu0-supply = <&dcdc2>;
- };
- 
-+&wkup_m3_ipc {
-+	ti,set-io-isolation;
-+};
-+
- &pruss1_mdio {
- 	status = "disabled";
- };
+Changes in v2:
+- rebase on linux-next and drop already applied patches
+- drop msm8953-pm8953.dtsi patch: integrate changes into FP3 patch
+- for individual patches for other changes
+
+Luca Weiss (7):
+  dt-bindings: mfd: qcom,tcsr: Document msm8953 compatible
+  dt-bindings: thermal: tsens: Add msm8953 compatible
+  dt-bindings: usb: qcom,dwc3: Add msm8953 compatible
+  dt-bindings: arm: cpus: Add Kryo 250 CPUs
+  rpmsg: smd: allow opening rpm_requests even if already opened
+  dt-bindings: arm: qcom: Document sdm632 and fairphone,fp3 board
+  arm64: dts: qcom: sdm632: Add device tree for Fairphone 3
+
+Vladimir Lypak (3):
+  arm64: dts: qcom: Add MSM8953 device tree
+  arm64: dts: qcom: Add PM8953 PMIC
+  arm64: dts: qcom: Add SDM632 device tree
+
+ .../devicetree/bindings/arm/cpus.yaml         |    1 +
+ .../devicetree/bindings/arm/qcom.yaml         |    6 +
+ .../devicetree/bindings/mfd/qcom,tcsr.txt     |    1 +
+ .../bindings/thermal/qcom-tsens.yaml          |    1 +
+ .../devicetree/bindings/usb/qcom,dwc3.yaml    |    1 +
+ arch/arm64/boot/dts/qcom/Makefile             |    1 +
+ arch/arm64/boot/dts/qcom/msm8953.dtsi         | 1326 +++++++++++++++++
+ arch/arm64/boot/dts/qcom/pm8953.dtsi          |   90 ++
+ .../boot/dts/qcom/sdm632-fairphone-fp3.dts    |  183 +++
+ arch/arm64/boot/dts/qcom/sdm632.dtsi          |   81 +
+ drivers/rpmsg/qcom_smd.c                      |    5 +-
+ 11 files changed, 1695 insertions(+), 1 deletion(-)
+ create mode 100644 arch/arm64/boot/dts/qcom/msm8953.dtsi
+ create mode 100644 arch/arm64/boot/dts/qcom/pm8953.dtsi
+ create mode 100644 arch/arm64/boot/dts/qcom/sdm632-fairphone-fp3.dts
+ create mode 100644 arch/arm64/boot/dts/qcom/sdm632.dtsi
+
 -- 
-2.32.0
+2.35.1
 
