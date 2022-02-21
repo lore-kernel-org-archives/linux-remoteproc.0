@@ -2,196 +2,186 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47742C433EF
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 21 Feb 2022 16:47:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EBB2C43219
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 21 Feb 2022 17:45:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245115AbiBUQsC (ORCPT
+        id S229669AbiBURpd (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 21 Feb 2022 11:48:02 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:35112 "EHLO
+        Mon, 21 Feb 2022 12:45:33 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:51842 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1381204AbiBUQsB (ORCPT
+        with ESMTP id S230286AbiBURpD (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 21 Feb 2022 11:48:01 -0500
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4266122BEF;
-        Mon, 21 Feb 2022 08:47:38 -0800 (PST)
-Received: by mail-ed1-f41.google.com with SMTP id s14so13239510edw.0;
-        Mon, 21 Feb 2022 08:47:38 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=6uoQveL+AD9RUCzosFzI8fgp4aGHk8q16xyazzg5bDY=;
-        b=CCgED8i18vq6cbHpVRExlsxnVU5/6OmxFJvjA2ZgmIb9BRhEy9tewKTbQO5BTFrDEZ
-         wCKhZaLptVJrepeai8WbSp7fx2wphXSFk+oABigmcnbOAf3vTUssIIsYQlrlPPakbjYs
-         VX4BrbonSxY3a/bq623BHi3PxgYBF1bDl/jrpXQA6nwMyb6dqpSR004xRKYY9/k+vpP4
-         +j8gr7eRvPkB4whXgXy6IzvJsubh3vIT30xi/uRMoNRbVKIK/jTume8hFjhwc3LJ6GGQ
-         x3nh2W3S0SYuKjx14v0c8KlcgZsW2r0xX9aLDo01UYDnnikQtSy+2gMxvqXdpykZ9LGb
-         +YCQ==
-X-Gm-Message-State: AOAM5320fgUtqGFkthFWvfbXF0KfEOvtqTG89ZbEXEadz+zAxe1D+oCb
-        JGPIEFdyN33r/LyRtwK4Yfc=
-X-Google-Smtp-Source: ABdhPJwLiISVhc2YR4ZxaIDiGLJ7BTzOKu2ot3AVX6stdd3PHhVYLTNRJ/enKvUfksmKQHriNQlsUg==
-X-Received: by 2002:a05:6402:4245:b0:410:ee7d:8f0b with SMTP id g5-20020a056402424500b00410ee7d8f0bmr22300690edb.295.1645462056810;
-        Mon, 21 Feb 2022 08:47:36 -0800 (PST)
-Received: from [192.168.0.122] (xdsl-188-155-181-108.adslplus.ch. [188.155.181.108])
-        by smtp.googlemail.com with ESMTPSA id v12sm8942549edr.8.2022.02.21.08.47.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 21 Feb 2022 08:47:35 -0800 (PST)
-Message-ID: <3e1ee336-1c78-7719-826c-2a093a20ee8e@kernel.org>
-Date:   Mon, 21 Feb 2022 17:47:34 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.0
-Subject: Re: [PATCH 2/3] dt-bindings: remoteproc: Add AVM WASP
-Content-Language: en-US
+        Mon, 21 Feb 2022 12:45:03 -0500
+Received: from mga01.intel.com (mga01.intel.com [192.55.52.88])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1657622B07;
+        Mon, 21 Feb 2022 09:44:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1645465479; x=1677001479;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=+thVCD7e5H0u/zoGVJJR51K03QVG5BFmzVuy+pL8UXs=;
+  b=LEjuhxAUdk+0xEc+mzqONdElgLPRt1G4OTzTPCBID7pJkoOHbh02d/bG
+   kpl8W4aFYOX5/yOgX3kOV/gNDqvqRXemqapWui1ogPl5YIL82uWQf4VMc
+   cOzY1sDM9KTEUysIMuQ9n2dI6MNelkVrlIiuBRKQVqJk9r4B2z9SVQuqp
+   jNWLvCF1BOWlU1FeYxQb1pLwPqveGA0J6esTPYMLlBmh8uNjIkyZ7hw5N
+   USG0m+vr6dZxt4MVIVtPXvMnQUl3P8j9+HAA46pkDGCEwS/sqPxgSDA52
+   H/g+gBiZ3QrWQzq0FrnO0M85yerXg6j6sOP7n/KLseOCwEI6aTc4lW/rG
+   g==;
+X-IronPort-AV: E=McAfee;i="6200,9189,10265"; a="276142135"
+X-IronPort-AV: E=Sophos;i="5.88,386,1635231600"; 
+   d="scan'208";a="276142135"
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Feb 2022 09:44:38 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.88,386,1635231600"; 
+   d="scan'208";a="573171307"
+Received: from lkp-server01.sh.intel.com (HELO da3212ac2f54) ([10.239.97.150])
+  by orsmga001.jf.intel.com with ESMTP; 21 Feb 2022 09:44:36 -0800
+Received: from kbuild by da3212ac2f54 with local (Exim 4.92)
+        (envelope-from <lkp@intel.com>)
+        id 1nMCjj-0001pq-Io; Mon, 21 Feb 2022 17:44:35 +0000
+Date:   Tue, 22 Feb 2022 01:43:43 +0800
+From:   kernel test robot <lkp@intel.com>
 To:     Daniel Kestrel <kestrelseventyfour@gmail.com>
-Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+Cc:     kbuild-all@lists.01.org,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
+        Daniel Kestrel <kestrelseventyfour@gmail.com>,
         linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org
-References: <20220221135351.GA7342@ubuntu>
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-In-Reply-To: <20220221135351.GA7342@ubuntu>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH 3/3] remoteproc: Add AVM WASP driver
+Message-ID: <202202220129.7LjlrUsi-lkp@intel.com>
+References: <20220221135424.GA7385@ubuntu>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220221135424.GA7385@ubuntu>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On 21/02/2022 14:53, Daniel Kestrel wrote:
-> AVM Fritzbox router boards may contain an additional ATH79
-> based SoC that has the wifi cards connected.
-> This patch adds bindings for this remote processor.
-> 
-> Signed-off-by: Daniel Kestrel <kestrelseventyfour@gmail.com>
-> ---
->  .../bindings/remoteproc/avm,wasp-rproc.yaml   | 93 +++++++++++++++++++
->  1 file changed, 93 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/remoteproc/avm,wasp-rproc.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/remoteproc/avm,wasp-rproc.yaml b/Documentation/devicetree/bindings/remoteproc/avm,wasp-rproc.yaml
-> new file mode 100644
-> index 000000000000..21f3bbcc4202
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/remoteproc/avm,wasp-rproc.yaml
-> @@ -0,0 +1,93 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/remoteproc/avm,wasp-rproc.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: AVM WASP processor controller bindings
-> +
-> +maintainers:
-> +  - Daniel Kestrel <kestrelseventyfour@gmail.com>
-> +
-> +description: |
-> +  This document defines the bindings for the remoteproc component that loads and
-> +  boots firmwares on the AVM Wireless Assistent Support Processor (WASP) SoC
-> +  that is attached to some AVM Fritzbox devices (3390, 3490, 5490, 5491, 7490).
-> +
-> +properties:
-> +  compatible:
-> +    const: avm,wasp
-> +
-> +  ath9k-firmware:
-> +    $ref: /schemas/types.yaml#/definitions/string
-> +    description: |
-> +      Should contain the name of the ath9k eeprom that is to be loaded from
-> +      the lantiq host flash. Wifi on the WASP SoC does not work without it.
-> +      The file should be located on the firmware search path.
+Hi Daniel,
 
-Are you sure this is a property of hardware? It looks like runtime
-configuration parameter.
+Thank you for the patch! Perhaps something to improve:
 
-> +
-> +  ath10k-caldata:
-> +    $ref: /schemas/types.yaml#/definitions/string
-> +    description: |
-> +      Should contain the name of the ath10k caldata that is to be loaded from
-> +      the lantiq host flash. Wifi on the WASP SoC does not work without it.
-> +      The file should be located on the firmware search path.
+[auto build test WARNING on remoteproc/rproc-next]
+[also build test WARNING on robh/for-next v5.17-rc5 next-20220217]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch]
 
-Same.
+url:    https://github.com/0day-ci/linux/commits/Daniel-Kestrel/Add-support-for-WASP-SoC-on-AVM-router-boards/20220221-215619
+base:   git://git.kernel.org/pub/scm/linux/kernel/git/remoteproc/linux.git rproc-next
+config: nios2-allyesconfig (https://download.01.org/0day-ci/archive/20220222/202202220129.7LjlrUsi-lkp@intel.com/config)
+compiler: nios2-linux-gcc (GCC) 11.2.0
+reproduce (this is a W=1 build):
+        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
+        # https://github.com/0day-ci/linux/commit/76e19a3c7ae383687205d7be3ac6224253d97704
+        git remote add linux-review https://github.com/0day-ci/linux
+        git fetch --no-tags linux-review Daniel-Kestrel/Add-support-for-WASP-SoC-on-AVM-router-boards/20220221-215619
+        git checkout 76e19a3c7ae383687205d7be3ac6224253d97704
+        # save the config file to linux build tree
+        mkdir build_dir
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-11.2.0 make.cross O=build_dir ARCH=nios2 SHELL=/bin/bash drivers/remoteproc/
 
-> +
-> +  wasp-netboot-firmware:
-> +    $ref: /schemas/types.yaml#/definitions/string
-> +    description: |
-> +      Should contain the name of the netboot firmware that is to be loaded
-> +      and started on the WASP SoC using mdio in order to be able to load
-> +      the initramfs image as a second stage.
-> +      The file should be located on the firmware search path.
+If you fix the issue, kindly add following tag as appropriate
+Reported-by: kernel test robot <lkp@intel.com>
 
-Same.
+All warnings (new ones prefixed by >>):
 
-> +
-> +  wasp-netboot-mdio:
-> +    $ref: /schemas/types.yaml#/definitions/phandle
-> +    description: Reference to the Lantiq GSWIP switch mdio.
-
-Vendor prefix.
-
-> +
-> +  wasp-initramfs-port:
-> +    $ref: /schemas/types.yaml#/definitions/phandle
-> +    description: Reference to the network port, where the WASP SoC is connected to.
-
-Vendor prefix.
-
-> +
-> +  wasp-initramfs-image:
-> +    $ref: /schemas/types.yaml#/definitions/string
-> +    description: |
-> +      Should contain the name of the initramfs linux image that is to be loaded
-> +      and started on the WASP SoC.
-> +      The file should be located on the firmware search path.
-
-initramfs path looks even less like a property of hardware... If you
-change initramfs from CPIO to initrd or GZ, hardware changes as well?
-
-> +  reset-gpio:
-> +    $ref: /schemas/types.yaml#/definitions/phandle-array
-> +    description: Reference and parameters for the reset gpio of the WASP SoC.
-
-Wrong suffix, unneeded type. Did you run dt_binding_check?
-
-"Reference and parameters" are obvious, so they should be skipped.
-
-> +
-> +  startup-gpio:
-> +    $ref: /schemas/types.yaml#/definitions/phandle-array
-> +    description: Reference and parameters for the power switch gpio of the WASP SoC.
-
-Same.
-
-> +
-> +required:
-> +  - compatible
-> +  - ath9k-firmware
-> +  - ath10k-caldata
-> +  - wasp-netboot-firmware
-> +  - wasp-netboot-mdio
-> +  - wasp-initramfs-port
-> +  - wasp-initramfs-image
-> +  - reset-gpio
-> +  - startup-gpio
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/gpio/gpio.h>
-> +
-> +    avm-wasp {
-
-Generic node name describing class of a device. AVM is company, WASP is
-product, so neither of them are generic.
+>> drivers/remoteproc/avm_wasp.c:150:5: warning: no previous prototype for 'avm_wasp_netboot_mdio_read' [-Wmissing-prototypes]
+     150 | int avm_wasp_netboot_mdio_read(struct avm_wasp_rproc *avmwasp,
+         |     ^~~~~~~~~~~~~~~~~~~~~~~~~~
+>> drivers/remoteproc/avm_wasp.c:176:6: warning: no previous prototype for 'avm_wasp_netboot_mdio_write' [-Wmissing-prototypes]
+     176 | void avm_wasp_netboot_mdio_write(struct avm_wasp_rproc *avmwasp,
+         |      ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+>> drivers/remoteproc/avm_wasp.c:197:6: warning: no previous prototype for 'avm_wasp_netboot_mdio_write_u32_split' [-Wmissing-prototypes]
+     197 | void avm_wasp_netboot_mdio_write_u32_split(struct avm_wasp_rproc *avmwasp,
+         |      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>> drivers/remoteproc/avm_wasp.c:380:5: warning: no previous prototype for 'avm_wasp_netboot_load_firmware' [-Wmissing-prototypes]
+     380 | int avm_wasp_netboot_load_firmware(struct avm_wasp_rproc *avmwasp)
+         |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>> drivers/remoteproc/avm_wasp.c:569:5: warning: no previous prototype for 'avm_wasp_load_initramfs_image' [-Wmissing-prototypes]
+     569 | int avm_wasp_load_initramfs_image(struct avm_wasp_rproc *avmwasp)
+         |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
-Best regards,
-Krzysztof
+vim +/avm_wasp_netboot_mdio_read +150 drivers/remoteproc/avm_wasp.c
+
+   138	
+   139	/**
+   140	 * avm_wasp_netboot_mdio_read() - read with gswip mdio bus
+   141	 * @avmwasp: pointer to drivers private avm_wasp_rproc structure
+   142	 * @location: register number of the m_regs_wasp register array
+   143	 *
+   144	 * Reads a value from the specified register for the mdio address
+   145	 * that is used for the connection to the WASP SoC
+   146	 * Mutex on mdio_lock is required to serialize access on bus
+   147	 *
+   148	 * Return: Value that was read from the specified register
+   149	 */
+ > 150	int avm_wasp_netboot_mdio_read(struct avm_wasp_rproc *avmwasp,
+   151				       int location)
+   152	{
+   153		int value;
+   154	
+   155		if (location > M_REGS_WASP_INDEX_MAX || location < 0)
+   156			return 0;
+   157		mutex_lock(&avmwasp->mdio_bus->mdio_lock);
+   158		value = avmwasp->mdio_bus->read(avmwasp->mdio_bus,
+   159				WASP_ADDR, m_regs_wasp[location]);
+   160		mutex_unlock(&avmwasp->mdio_bus->mdio_lock);
+   161		return value;
+   162	}
+   163	
+   164	/**
+   165	 * avm_wasp_netboot_mdio_write() - write with gswip mdio bus
+   166	 * @avmwasp: pointer to drivers private avm_wasp_rproc structure
+   167	 * @location: register number of the m_regs_wasp register array
+   168	 * @value: value to be written to the register
+   169	 *
+   170	 * Writes a value to the specified register for the mdio address
+   171	 * that is used for the connection to the WASP SoC
+   172	 * Mutex on mdio_lock is required to serialize access on bus
+   173	 * Makes sure not to write to invalid registers as this can have
+   174	 * unpredictable results
+   175	 */
+ > 176	void avm_wasp_netboot_mdio_write(struct avm_wasp_rproc *avmwasp,
+   177					 int location, int value)
+   178	{
+   179		if (location > M_REGS_WASP_INDEX_MAX || location < 0)
+   180			return;
+   181		mutex_lock(&avmwasp->mdio_bus->mdio_lock);
+   182		avmwasp->mdio_bus->write(avmwasp->mdio_bus, WASP_ADDR,
+   183				m_regs_wasp[location], value);
+   184		mutex_unlock(&avmwasp->mdio_bus->mdio_lock);
+   185	}
+   186	
+   187	/**
+   188	 * avm_wasp_netboot_mdio_write_u32_split() - write 32bit value
+   189	 * @avmwasp: pointer to drivers private avm_wasp_rproc structure
+   190	 * @location: register number of the m_regs_wasp register array
+   191	 * @value: value to be written to the register
+   192	 *
+   193	 * As the mdio registers are 16bit, this function writes a 32bit value
+   194	 * to two subsequent registers starting with the specified register
+   195	 * for the mdio address that is used for the connection to the WASP SoC
+   196	 */
+ > 197	void avm_wasp_netboot_mdio_write_u32_split(struct avm_wasp_rproc *avmwasp,
+   198						   int location, const u32 value)
+   199	{
+   200		avm_wasp_netboot_mdio_write(avmwasp, location,
+   201					    ((value & 0xffff0000) >> 16));
+   202		avm_wasp_netboot_mdio_write(avmwasp, location + 1,
+   203					    (value & 0x0000ffff));
+   204	}
+   205	
+
+---
+0-DAY CI Kernel Test Service, Intel Corporation
+https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
