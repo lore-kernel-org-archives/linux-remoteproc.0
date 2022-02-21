@@ -2,140 +2,138 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A9D6C433FE
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 21 Feb 2022 12:58:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 458E7C43219
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 21 Feb 2022 13:53:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1358431AbiBUM65 (ORCPT
+        id S1377099AbiBUNxa (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 21 Feb 2022 07:58:57 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:57778 "EHLO
+        Mon, 21 Feb 2022 08:53:30 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:48984 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231617AbiBUM6y (ORCPT
+        with ESMTP id S1376929AbiBUNwk (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 21 Feb 2022 07:58:54 -0500
-Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 384401EAD5;
-        Mon, 21 Feb 2022 04:58:30 -0800 (PST)
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 21LCwI27047020;
-        Mon, 21 Feb 2022 06:58:18 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1645448298;
-        bh=zJPkUq5bndr8qfbg5WIBf/HuUb+QSE7Kcn6n8iOJ4gU=;
-        h=Date:From:To:CC:Subject:References:In-Reply-To;
-        b=Xix/xZcWtlSkqka3uGCAoboZQFohva0T2zZu93RneAZaStraEU8uCUh28fIkSYXxv
-         Ngt5guRsBnBV2GhcFu/gr/S1Xeitq9pwA34d/8QQVncSRP5QuKvqTxyiE2XgEQ48R+
-         hF18EocxkGyJS2S1Vkjp1PE5cflc3pWWhjCluARg=
-Received: from DLEE105.ent.ti.com (dlee105.ent.ti.com [157.170.170.35])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 21LCwI3Z035992
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 21 Feb 2022 06:58:18 -0600
-Received: from DLEE108.ent.ti.com (157.170.170.38) by DLEE105.ent.ti.com
- (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2308.14; Mon, 21
- Feb 2022 06:58:18 -0600
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE108.ent.ti.com
- (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2308.14 via
- Frontend Transport; Mon, 21 Feb 2022 06:58:18 -0600
-Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 21LCwHha021570;
-        Mon, 21 Feb 2022 06:58:17 -0600
-Date:   Mon, 21 Feb 2022 06:58:17 -0600
-From:   Nishanth Menon <nm@ti.com>
-To:     Drew Fustini <dfustini@baylibre.com>
-CC:     =?iso-8859-1?Q?Beno=EEt?= Cousson <bcousson@baylibre.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Dave Gerlach <d-gerlach@ti.com>, <devicetree@vger.kernel.org>,
-        Keerthy <j-keerthy@ti.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-omap@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>,
+        Mon, 21 Feb 2022 08:52:40 -0500
+Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C62A59FE2;
+        Mon, 21 Feb 2022 05:52:15 -0800 (PST)
+Received: by mail-ej1-x636.google.com with SMTP id p15so33383231ejc.7;
+        Mon, 21 Feb 2022 05:52:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=date:from:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=0jY72INQ+Kfy8mY8YvrubiEx7D1Fcsl6Uov11Zh6YiI=;
+        b=g94bR3IUa/Sz6N2lLkK+W14JjY/Btaxaboed/zL+wYivm8kvaxmhWznwk8/UYc6898
+         JHW33UhKXpjVA1aWQuQa0+GE0saEure8olWa1Im97HL6BV1iFix+lMLzeg8/I8mXYHl5
+         GI7B9+BafVrzV7397Fzjo3jppxC/I/zLdnYzQmzaapAGbzgwH+ShEEqaON4PBxt1Be6Y
+         OxC7bw7Rg+Y0q8FN4CCqtcX8BonFjdxDBxmUZfqWbfp6lozZn7jB/xc/KjOgyoshu7xu
+         8XNrnQbnrQii3KG4ilqoJOmKn9MCHkIqGojiD4SGfsRUoOYUaHxivhM/0FqpPW8e4Jl3
+         NDjA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=0jY72INQ+Kfy8mY8YvrubiEx7D1Fcsl6Uov11Zh6YiI=;
+        b=e8IaX/n/oBQ2eBakBH6mBZx6jInDN849TKK8Ql1uYc/rQ1qxoh8Rv614Etum6lk5D6
+         vjwlUcQyAMLGSi/lwOfZhUme/YcGKTt9AJNcF6f2OLAXLI8696DpkslskQ0suO7zCnk7
+         WmffaBOIDdvbxpKgKZCtlRlKF8t61PQRzbZECylivJQBCxpFBbtNg214YjAnEJoZulUy
+         4t8nPcyYJJwHytUeYPlVqk86QFZ9bewQBOVvZB/wZEKTh6fTQZKqEMLAZxUjAZwNMT0r
+         XxwBJTlwZvKf/aB+OfpaUUOWta95QKh7NzS0X9M9HFOZ+IVxd8c7zcsQz5msqdYyKc5d
+         U1tw==
+X-Gm-Message-State: AOAM533EANB+H0KOActQW1UiMrpCh/ZF6GL7DuAWT6wS58NuE8wqVxUQ
+        qIXEWz/xdaTwxdMwc4DVk2pPIPY6rMtDhA==
+X-Google-Smtp-Source: ABdhPJxdWvEQ1IuXHxmlfTB7XK4BITCX2Ck5UcH3i+QD3QSD/7jvpwzt82YhNtCQS/328ucrWRANpw==
+X-Received: by 2002:a17:907:2711:b0:6cf:350:81c3 with SMTP id w17-20020a170907271100b006cf035081c3mr15679810ejk.712.1645451534338;
+        Mon, 21 Feb 2022 05:52:14 -0800 (PST)
+Received: from ubuntu ([155.133.219.250])
+        by smtp.gmail.com with ESMTPSA id 23sm5107799ejg.209.2022.02.21.05.52.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 21 Feb 2022 05:52:14 -0800 (PST)
+Date:   Mon, 21 Feb 2022 14:52:13 +0100
+From:   Daniel Kestrel <kestrelseventyfour@gmail.com>
+Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Tony Lindgren <tony@atomide.com>, <s-anna@ti.com>,
-        <khilman@baylibre.com>
-Subject: Re: [PATCH 00/11] soc: ti: wkup_m3_ipc: support vtt toggle, io
- isolation & voltage scaling
-Message-ID: <20220221125817.eg2rf6ktrhiq7eck@overbook>
-References: <20220219215328.485660-1-dfustini@baylibre.com>
+        Daniel Kestrel <kestrelseventyfour@gmail.com>,
+        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 0/3] Add support for WASP SoC on AVM router boards
+Message-ID: <20220221135213.GA7264@ubuntu>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220219215328.485660-1-dfustini@baylibre.com>
-User-Agent: NeoMutt/20171215
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+User-Agent: Mutt/1.9.4 (2018-02-28)
+To:     unlisted-recipients:; (no To-header on input)
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On 13:53-20220219, Drew Fustini wrote:
-> Improve the wkup_m3_ipc driver to better support the TI Wakeup Cortex M3 
-> device found on TI AM33xx and AM43xx SoCs.
-> 
-> This series derives from these commits in the ti-linux-5.10.y branch of
-> the TI Linux repo [1]:
-> 
->   6ab4eff1034b ("remoteproc: move rproc_da_to_va declaration to remoteproc.h")
->   2a9be39a26f7 ("dt-bindings: wkup_m3_ipc: Add vtt toggling bindings")
->   c65263f9e12c ("wkup_m3_ipc: Add support for toggling VTT regulator")
->   5c6c821803e1 ("dt-bindings: wkup_m3_ipc: Add ti,io-isolation property")
->   196c46f7577d ("wkup_m3_ipc: Add support for IO Isolation")
->   c28acc847e5d ("soc: ti: wkup_m3_ipc: Add support for i2c voltage scaling")
->   a4f9ef4ab5ca ("ARM: dts: am437x-gp-evm: Enable wkup_m3 control of IO isolation")
->   94de756f1771 ("ARM: dts: am33xx: Add scale data fw to wkup_m3_ipc node")
->   b7ae4b063793 ("ARM: dts: am43xx: Add scale data fw to wkup_m3_ipc node")
->   451ec7871ae7 ("soc: ti: wkup_m3_ipc: Add debug option to halt m3 in suspend")
-> 
-> Minor changes have been made to some patches to resolve conflicts and 
-> to split i2c voltage scaling dt-bindings into separate patch.
-> 
-> [1] git://git.ti.com/ti-linux-kernel/ti-linux-kernel.git
-> 
-> Dave Gerlach (10):
->   dt-bindings: wkup_m3_ipc: Add vtt toggling bindings
->   soc: ti: wkup_m3_ipc: Add support for toggling VTT regulator
->   dt-bindings: wkup_m3_ipc: Add ti,io-isolation property
->   soc: ti: wkup_m3_ipc: Add support for IO Isolation
->   ARM: dts: am437x-gp-evm: Enable wkup_m3 control of IO isolation
->   dt-bindings: wkup_m3_ipc: Add scale-data-fw property
->   soc: ti: wkup_m3_ipc: Add support for i2c voltage scaling
->   ARM: dts: am33xx: Add scale data fw to wkup_m3_ipc node
->   ARM: dts: am43xx: Add scale data fw to wkup_m3_ipc node
->   soc: ti: wkup_m3_ipc: Add debug option to halt m3 in suspend
-> 
-> Suman Anna (1):
->   remoteproc: move rproc_da_to_va declaration to remoteproc.h
+There is a popular set of Lantiq xrx200 router boards by AVM in
+Germany (AVM Fritzbox 3390, 3490, 5490, 5491 and 7490) which
+have the strange implementation of having the wifi cards
+connected to a separate memory only ATH79 based SoC. It has no
+persistent storage and no access to any resource on the Lantiq
+host, but is connect to the Lantiq GSWIP switch on an additional
+fixed internal network port.
+This kernel module is to support booting the secondary SoC called
+Wireless Assistant Support Processor (WASP).
+After turning it on, a small network boot firmware is sent to
+the SoC by using mdio and when it is started, an initramfs
+linux image is sent to the SoC using raw ethernet frames.
 
+The whole procedure takes about 6 seconds, if there is no error.
+So far tested on 3490, 5490 and 7490 devices based on OpenWrt.
 
-This series seems to needing to go to various maintainers here
+Patch 1/3 adds the vendor name
+Patch 2/3 adds the dt-bindings
+Patch 3/3 adds the remoteproc driver
 
-Series should cleanup (example: txt files to yaml bindings),
-prior to creating patch series for each maintainer. I'd suggest bindings
-and drivers in 1 kernel rev and follow it up with dts updata for the
-next rev.
+To build and run, there is OpenWrt PR 5075.
 
+I have read a couple of responses on other submitted patches and
+after that I did the following changes to my code:
+- Check for c style comments
+- Remove all dev_info output
+- Did run checkpatch.pl before, but double check and run again
+- Add timeout for send and receive socket in order to not stall
+  the kernel module in case of blocking tcpip calls
+- Add a timeout to while loop in avm_wasp_load_initramfs_image
+  to make sure the loop is not infinite
+- Add put_device after using (of_)mdio_find_bus
+- Use devm_gpio_free instead of gpio_free
+- Check for all of_... calls if they increase ref count and
+  add of_put_node if required
+- Replace all return -1 with return -<some errno>
+- Check if the os methods return error and/or NULL and look up
+  how other callers in the kernel sources check for errors
+  after calling those methods
+- Try to find any pointer references that were not checked in
+  code running before accessing them
+- Rename all methods to start with avm_wasp_
+- Restructure code to aquire mdio bus just before using it and
+  free it right after avm_wasp_netboot_load_firmware
+- Replace rproc_add and rproc_alloc with devm_ methods and
+  remove rproc_del and rproc_free
+- make dt_binding_check and fix missing gpio include
 
-> 
->  .../bindings/soc/ti/wkup_m3_ipc.txt           |  91 ++++++++
->  arch/arm/boot/dts/am335x-bone-common.dtsi     |   4 +
->  arch/arm/boot/dts/am335x-evm.dts              |   4 +
->  arch/arm/boot/dts/am335x-evmsk.dts            |   4 +
->  arch/arm/boot/dts/am437x-gp-evm.dts           |   5 +
->  arch/arm/boot/dts/am437x-sk-evm.dts           |   4 +
->  arch/arm/boot/dts/am43x-epos-evm.dts          |   4 +
->  drivers/remoteproc/remoteproc_internal.h      |   1 -
->  drivers/soc/ti/wkup_m3_ipc.c                  | 208 +++++++++++++++++-
->  include/linux/remoteproc.h                    |   1 +
->  include/linux/wkup_m3_ipc.h                   |  13 ++
->  11 files changed, 334 insertions(+), 5 deletions(-)
-> 
-> -- 
-> 2.32.0
-> 
+I likely still have missed things.
+
+Daniel Kestrel (3):
+  dt-bindings: vendor-prefixes: Add AVM
+  dt-bindings: remoteproc: Add AVM WASP
+  remoteproc: Add AVM WASP driver
+
+ .../bindings/remoteproc/avm,wasp-rproc.yaml   |   93 ++
+ .../devicetree/bindings/vendor-prefixes.yaml  |    2 +
+ drivers/remoteproc/Kconfig                    |   10 +
+ drivers/remoteproc/Makefile                   |    1 +
+ drivers/remoteproc/avm_wasp.c                 | 1251 +++++++++++++++++
+ drivers/remoteproc/avm_wasp.h                 |   95 ++
+ 6 files changed, 1452 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/remoteproc/avm,wasp-rproc.yaml
+ create mode 100644 drivers/remoteproc/avm_wasp.c
+ create mode 100644 drivers/remoteproc/avm_wasp.h
 
 -- 
-Regards,
-Nishanth Menon
-Key (0xDDB5849D1736249D)/Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
+2.17.1
+
