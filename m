@@ -2,54 +2,54 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4417EC433EF
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 22 Feb 2022 16:49:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 485E1C433F5
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 22 Feb 2022 16:57:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231817AbiBVQuW (ORCPT
+        id S234425AbiBVQ6F (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 22 Feb 2022 11:50:22 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48340 "EHLO
+        Tue, 22 Feb 2022 11:58:05 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45656 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230091AbiBVQuV (ORCPT
+        with ESMTP id S232616AbiBVQ6F (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 22 Feb 2022 11:50:21 -0500
-Received: from mail-pf1-x431.google.com (mail-pf1-x431.google.com [IPv6:2607:f8b0:4864:20::431])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CF4D116AA42
-        for <linux-remoteproc@vger.kernel.org>; Tue, 22 Feb 2022 08:49:55 -0800 (PST)
-Received: by mail-pf1-x431.google.com with SMTP id l19so12649055pfu.2
-        for <linux-remoteproc@vger.kernel.org>; Tue, 22 Feb 2022 08:49:55 -0800 (PST)
+        Tue, 22 Feb 2022 11:58:05 -0500
+Received: from mail-pg1-x535.google.com (mail-pg1-x535.google.com [IPv6:2607:f8b0:4864:20::535])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5374216C4C4
+        for <linux-remoteproc@vger.kernel.org>; Tue, 22 Feb 2022 08:57:38 -0800 (PST)
+Received: by mail-pg1-x535.google.com with SMTP id 132so17541248pga.5
+        for <linux-remoteproc@vger.kernel.org>; Tue, 22 Feb 2022 08:57:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=7Ljxg0fnUTAqNuMf+CJgicX0/L6Xlb1XybLuSqJDmXk=;
-        b=uE6SBmObEnrdiczQzKgPlGMv8vibgsSwlxw/OWFFl5tJSF9LjJF/rjG8oPclIfaq1L
-         UrUHsspinjXruRROM/iCiRWSxVGr3+ZWbUfPXuqR5xPy9dpJrysOCoqnjFVzn3CbXW0K
-         FCKyXKEg8rhNgXlRkNrIQsE6/NN+LgqGbt5mGlHsuiZsT3NofE0iGEeeZfq9/54ENmnb
-         OxKoGs2xB0FOOyjbM74jnMvao5bsUuTeDX+pWsT+q+FqCCi/z1haGKUhSozFloM/kgDo
-         3pRMq1envIYSHJ2wyzatIlSQnPBm9eAoqpLDc05axNwkjc6xKIXSWut2kjBzGHYi/YFR
-         VfFA==
+        bh=iYp8eNy/Nx7jP2HPM3fRAaeyIaFSVJven/4EBmZrFm8=;
+        b=xky7X+BDn1zEZL2FTEf/96Htn3+aok0xwUM+Vh1i7P2bboofy7dVqAq2iDwBgYZdSs
+         sZTI4yXLuuBF+yLzxyzcxII2639wLht6hTNyMWeQUw8QsCHqKVm0TCUO7bJSVNbV43Ga
+         Q/t5AdpDP2OREntcgl/d60pmJCQyhS5gvt/NxP66uoSVeTfnE3Onoviamw19LYJmyhJT
+         NWY4qi3RPwPacYOc7DsrGi3GYE9L4bt1tzlz3N4Tk+TroeUROk9ylFjBlOYjvKRH2yNn
+         QMWSzGwengkSi6aBhjcQC8Yrh+wRgOzyTcK0WdLSJcXiTEQiHC3dtGDl38VgOtQhsSje
+         7PtQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=7Ljxg0fnUTAqNuMf+CJgicX0/L6Xlb1XybLuSqJDmXk=;
-        b=UefO8MhHckGNSVR3gUcaFPA5Ya3nDI35PB0LzHxsNXzihgHym3TWQ/prTNxgSalo3N
-         USCaSDtH0w8lKOsGsoOeXS+NRZWoEX5X+GQ7RHF/UhR8q5zem/GNWgEQ65og+78o47Re
-         /GDXFheJ8yzEBQQNgTbl+HYsg1KVqtqYVztTMvmGsvVwWa4rzyEI5cC2s7D+aQiN/hDU
-         VbLiFfA9rMeobV3/qjCzL1EU0SvcSvvbczi9sQsJd5dysNx5/zY2TTTusi1kRvAsI+5I
-         nAE1Tl/p/nCwem0Q8OJBzmiSuFKuvRqOobsnJpzlWxN7g6Sluh8TwA2q7CV04m9KRJOX
-         IQhQ==
-X-Gm-Message-State: AOAM530H/iUAeyY8FscBeA3ttXSe9H3TyTyIuUYk7vl22M+NL7VLlNlu
-        aKFaKm1XWr+z1qN2Hzw+V04MzQ==
-X-Google-Smtp-Source: ABdhPJzq9169xLlO34W8P9IgbAuUtBoSjkMowSoJhPUCS8RWnTU5gOJmAR7QpjMOeL9mOr3qha8IXw==
-X-Received: by 2002:a62:ee12:0:b0:4e1:2ec1:cba2 with SMTP id e18-20020a62ee12000000b004e12ec1cba2mr25805336pfi.71.1645548595246;
-        Tue, 22 Feb 2022 08:49:55 -0800 (PST)
+        bh=iYp8eNy/Nx7jP2HPM3fRAaeyIaFSVJven/4EBmZrFm8=;
+        b=Ijm+rC5Hbi2v8s5Bq+Nkh3xEETtZmHPrw5ZlE6PExi1ZDz2WYWBl210oHGSoNEVy8j
+         FL4dr1fU9cTDFwFP5PpXhjkjciK85/JvQk63QPCGFP9EN+vVxHE5Lz5fKRkVnT6yJciM
+         LCUF05Lh5qDRkV9wdMnfFy/gGpF6X1qZON7WiAN1xjgzpNnJ0Hk7hDCer23K2Yg0e3pD
+         N5NFsRxhj77DtlJlhkfTeOo0Oq5obwD+MwcxNdvyF5R8UYnhgl1BQ6K4F7oLgYAIFWs/
+         3VWbEsR6LqcMp0OrbBdy6Qpc2rlW2nj7acvKjs2v3Euhdu2dRt+jb7iiFypXhbC3JQxZ
+         Y+wg==
+X-Gm-Message-State: AOAM533f1Unkl1ZuP6x41gM7pj8hJFHHVFkBPhbtTSw+ZV0xpauW6xyt
+        XbIYK1Lwqls11Xlm2uBWZR5O6Q==
+X-Google-Smtp-Source: ABdhPJwFdk/RNl7RlT45tPUzDsvynRxqxHgx1ERD0B9uZttQc4ul4gr/UUI9jxV5KadXmOh5VTyHNw==
+X-Received: by 2002:a63:3c1:0:b0:36c:6a33:6652 with SMTP id 184-20020a6303c1000000b0036c6a336652mr20482198pgd.316.1645549057655;
+        Tue, 22 Feb 2022 08:57:37 -0800 (PST)
 Received: from p14s (S0106889e681aac74.cg.shawcable.net. [68.147.0.187])
-        by smtp.gmail.com with ESMTPSA id z11-20020a17090a1fcb00b001bc58804974sm76007pjz.27.2022.02.22.08.49.53
+        by smtp.gmail.com with ESMTPSA id f60sm33510pjk.39.2022.02.22.08.57.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Feb 2022 08:49:54 -0800 (PST)
-Date:   Tue, 22 Feb 2022 09:49:51 -0700
+        Tue, 22 Feb 2022 08:57:36 -0800 (PST)
+Date:   Tue, 22 Feb 2022 09:57:34 -0700
 From:   Mathieu Poirier <mathieu.poirier@linaro.org>
 To:     Tanmay Shah <tanmay.shah@xilinx.com>
 Cc:     bjorn.andersson@linaro.org, robh+dt@kernel.org,
@@ -60,21 +60,229 @@ Cc:     bjorn.andersson@linaro.org, robh+dt@kernel.org,
         devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 Subject: Re: [PATCH v3 6/6] drivers: remoteproc: Add Xilinx r5 remoteproc
  driver
-Message-ID: <20220222164951.GB923552@p14s>
+Message-ID: <20220222165734.GC923552@p14s>
 References: <20220210112824.2084724-1-tanmay.shah@xilinx.com>
  <20220210112824.2084724-7-tanmay.shah@xilinx.com>
- <20220216182631.GA347485@p14s>
- <9d20b1ae-e158-a0a7-7415-cd589ec44900@xilinx.com>
+ <20220218191150.GB574087@p14s>
+ <6a9dcca9-3c86-f603-d13a-acc74161f1a1@xilinx.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <9d20b1ae-e158-a0a7-7415-cd589ec44900@xilinx.com>
+In-Reply-To: <6a9dcca9-3c86-f603-d13a-acc74161f1a1@xilinx.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
+
 [...]
 
+> > > +/**
+> > > + * zynqmp_r5_get_tcm_node()
+> > > + * Ideally this function should parse tcm node and store information
+> > > + * in r5_core instance. We will use hardcoded TCM information from
+> > > + * driver for now in this function.
+> > > + *
+> > > + * @cluster: pointer to zynqmp_r5_cluster type object
+> > > + *
+> > > + * Return: 0 for success and error code for failure.
+> > > + */
+> > > +static int zynqmp_r5_get_tcm_node(struct zynqmp_r5_cluster *cluster)
+> > > +{
+> > > +	int tcm_bank_count, tcm_node;
+> > > +	int i = 0, j;
+> > Variable @i doesn't need to be initialised.
+> Agree.
+> > > +	struct zynqmp_r5_core *r5_core;
+> > > +	const struct mem_bank_data *tcm = zynqmp_tcm_banks;
+> > > +	struct device *dev = cluster->dev;
+> > > +
+> > > +	/*
+> > > +	 * ToDo: Use predefined TCM address space values from driver until
+> > > +	 * system-dt spec is not final for TCM
+> > > +	 */
+> > > +	tcm_bank_count = ARRAY_SIZE(zynqmp_tcm_banks);
+> > > +
+> > > +	/* count per core tcm banks */
+> > > +	tcm_bank_count = tcm_bank_count / cluster->core_count;
+> > > +
+> > > +	/* r5 core 0 will use all of TCM banks in lockstep mode.
+> > > +	 * In split mode, r5 core0 will use 128k and r5 core1 will use another
+> > > +	 * 128k. Assign TCM banks to each core accordingly
+> > > +	 */
+> > Comment format problem.
+> My bad. I will fix it.
+> > > +	tcm_node = 0;
+> > > +	for (i = 0; i < cluster->core_count; i++) {
+> > > +		r5_core = cluster->r5_cores[i];
+> > > +		r5_core->tcm_banks = devm_kcalloc(dev, tcm_bank_count,
+> > > +						  sizeof(struct mem_bank_data),
+> > > +						  GFP_KERNEL);
+> > > +		if (!r5_core->tcm_banks)
+> > > +			return -ENOMEM;
+> > > +
+> > > +		for (j = 0; j < tcm_bank_count; j++) {
+> > > +			/* Use pre-defined TCM reg values.
+> > > +			 * Eventually this should be replaced by values
+> > > +			 * parsed from dts.
+> > > +			 */
+> > Same.  I commented on that in my previous review of this set.
+> Yes. I will fix it.
+> > > +			r5_core->tcm_banks[j].addr = tcm[tcm_node].addr;
+> > > +			r5_core->tcm_banks[j].size = tcm[tcm_node].size;
+> > > +			r5_core->tcm_banks[j].pm_domain_id = tcm[tcm_node].pm_domain_id;
+> > > +			r5_core->tcm_banks[j].bank_name = tcm[tcm_node].bank_name;
+> > > +			tcm_node++;
+> > > +		}
+> > > +
+> > > +		r5_core->tcm_bank_count = tcm_bank_count;
+> > Why do we need to copy the exact same information from zynqmp_tcm_banks to ->tcm_banks?  Why can't ->tcm_banks point to an offset in zynqmp_tcm_banks and ->tcm_bank_count set accordingly?
+> 
+> zynqmp_tcm_banks is global variable. If I use ->tcm_banks point to offset of
+> zynqmp_tcm_banks and use it in driver, that section of code won't be thread
+> safe anymore.
+> 
+> I might have to use mutex to protect it. So Instead of pointing it to global
+> variable, I decided to copy information from global variable to ->tcm_banks.
+
+As far as I can tell ->tcm_banks is a read-only field and as such shouldn't
+need mutext protection.
+
+Thanks,
+Mathieu
+
+> 
+> > > +	}
+> > > +
+> > > +	return 0;
+> > > +}
+> > > +
+> > > +/**
+> > > + * zynqmp_r5_get_mem_region_node()
+> > > + * parse memory-region property from dt node and add
+> > > + * memory region carveouts
+> > > + *
+> > > + * @r5_core: pointer to zynqmp_r5_core type object
+> > > + *
+> > > + * Return: 0 for success and error code for failure.
+> > > + */
+> > > +static int zynqmp_r5_get_mem_region_node(struct zynqmp_r5_core *r5_core)
+> > > +{
+> > > +	int res_mem_count, i, ret;
+> > > +	struct device *dev;
+> > > +	struct device_node *np, *rmem_np;
+> > > +	struct reserved_mem *rmem;
+> > > +
+> > > +	dev = r5_core->dev;
+> > > +
+> > > +	np = r5_core->np;
+> > > +
+> > > +	res_mem_count = of_property_count_elems_of_size(np, "memory-region",
+> > > +							sizeof(phandle));
+> > > +	if (res_mem_count <= 0) {
+> > > +		dev_warn(dev, "failed to get memory-region property %d\n",
+> > > +			 res_mem_count);
+> > > +		return -EINVAL;
+> > > +	}
+> > > +
+> > > +	for (i = 0; i < res_mem_count; i++) {
+> > > +		rmem_np = of_parse_phandle(np, "memory-region", i);
+> > > +		if (!rmem_np)
+> > > +			return -EINVAL;
+> > > +
+> > > +		rmem = of_reserved_mem_lookup(rmem_np);
+> > > +		if (!rmem) {
+> > > +			of_node_put(rmem_np);
+> > > +			return -EINVAL;
+> > What happens to previously allocated regions when there is a failure?
+> 
+> Right, I need to unmap memory and use kfree(rmem) to de-allocate memory.
+> 
+> > > +		}
+> > > +
+> > > +		ret = add_mem_regions_carveout(r5_core, rmem);
+> > > +		if (ret)
+> > > +			dev_warn(dev, "failed to get reserve mem regions %d\n",
+> > > +				 ret);
+> > Same here.
+> 
+> Here as well. I will release reserved mem dev with
+> of_reserved_mem_device_release API.
+> 
+> One more thing. I moved add_mem_regions_carveout from parse_fw to
+> zynqmp_r5_get_mem_region_node.
+> 
+> However, I believe I should move it back to parse_fw.
+> 
+> Following test case is failing in when add_mem_regions_carveout is not
+> available in parse_fw:
+> 
+> load_rpu_fw -> start rpu -> stop rpu -> start rpu again
+> 
+> In above case, during mem regions are not added again.
+> 
+> Is it fine, if I move this add_mem_regions_carveout back to
+> zynqmp_r5_parse_fw ?
+> 
+> > I am out of time for this set.  Please address comments provided up to here and
+> > we will see about the rest in a future revision.
+> > 
+> > Thanks,
+> > Mathieu
+> > 
+> > > +
+> > > +		of_node_put(rmem_np);
+> > > +	}
+> > > +
+> > > +	return 0;
+> > > +}
+> > > +
+> > > +/*
+> > > + * zynqmp_r5_core_init()
+> > > + * Create and initialize zynqmp_r5_core type object
+> > > + *
+> > > + * @cluster: pointer to zynqmp_r5_cluster type object
+> > > + *
+> > > + * Return: 0 for success and error code for failure.
+> > > + */
+> > > +static int zynqmp_r5_core_init(struct zynqmp_r5_cluster *cluster)
+> > > +{
+> > > +	int ret, i;
+> > > +	struct zynqmp_r5_core *r5_core;
+> > > +	struct device *dev = cluster->dev;
+> > > +
+> > > +	ret = zynqmp_r5_get_tcm_node(cluster);
+> > > +	if (ret < 0) {
+> > > +		dev_err(dev, "can't get tcm node, err %d\n", ret);
+> > > +		return ret;
+> > > +	}
+> > > +
+> > > +	for (i = 0; i < cluster->core_count; i++) {
+> > > +		r5_core = cluster->r5_cores[i];
+> > > +
+> > > +		ret = zynqmp_r5_get_mem_region_node(r5_core);
+> > > +		if (ret)
+> > > +			dev_warn(dev, "memory-region prop failed %d\n", ret);
+> > > +
+> > > +		/* Initialize r5 cores with power-domains parsed from dts */
+> > > +		ret = of_property_read_u32_index(r5_core->np, "power-domains",
+> > > +						 1, &r5_core->pm_domain_id);
+> > > +		if (ret) {
+> > > +			dev_err(dev, "failed to get power-domains property\n");
+> > > +			return ret;
+> > > +		}
+> > > +
+> > > +		ret = zynqmp_r5_set_mode(r5_core, cluster->mode);
+> > > +		if (ret) {
+> > > +			dev_err(dev, "failed to set r5 cluster mode %d, err %d\n",
+> > > +				cluster->mode, ret);
+> > > +			return ret;
+> > > +		}
+> > > +	}
+> > > +
+> > > +	return 0;
+> > > +}
+> > > +
+> > > +/*
 > > > + * zynqmp_r5_cluster_init()
 > > > + * Create and initialize zynqmp_r5_cluster type object
 > > > + *
@@ -151,56 +359,17 @@ X-Mailing-List: linux-remoteproc@vger.kernel.org
 > > > +
 > > > +		/* create and add remoteproc instance of type struct rproc */
 > > > +		r5_cores[i] = zynqmp_r5_add_rproc_core(&child_pdev->dev);
-> > Function zynqmp_r5_add_rproc_core() returns an error code on error that is never
-> > checked.
-> > 
 > > > +		r5_cores[i]->dev = &child_pdev->dev;
-> > This will result in a kernel stack trace if zynqmp_r5_add_rproc_core() fails.
-> Sure I will fix it.
 > > > +		if (!r5_cores[i]->dev) {
 > > > +			dev_err(dev, "can't get device for r5 core %d\n", i);
 > > > +			of_node_put(child);
 > > > +			return -ENODEV;
 > > > +		}
-> > And here the validity of child_pdev->dev is checked _after_ it has been passed
-> > to zynqmp_r5_add_rproc_core().  This check should not be needed if proper
-> > error handling is done above.
-> I agree.
 > > > +
 > > > +		r5_cores[i]->np = dev_of_node(r5_cores[i]->dev);
 > > > +		if (!r5_cores[i]->np) {
 > > > +			dev_err(dev, "can't get device node for r5 core %d\n", i);
 > > > +			of_node_put(child);
-> > As mention in the documentation for of_find_device_by_node(), the function takes
-> > a reference to child_pdev->dev that needs to be released with put_device().  In
-> > fact I don't see the reference dropped anywhere, even when the driver is
-> > released.
-> 
-> I agree. I want to use r5_cores[i]->dev throughout driver so,
-> 
-> Is it fine if I use put_device() during driver release i.e. function
-> zynqmp_r5_cluster_exit( ) ?
-> 
-
-Yes, that would be the right place to do it.
-
-> > Moreover, if we end up here for r5_cores[1], resources acquired for r5_core[0]
-> > are not released.
-> 
-> Most of the resources (such as zynqmp_r5_rproc_ops and r5_rproc objects) for
-> r5_core[0] are allocated using devm_* API,
-> 
-> so I believe it will be de-allocated when driver probe fails and driver
-> exits.
-> 
-> If r5_cores[1] fails, then r5_cores[0]->np needs to be released here. I will
-> find out mechanism to take care of this.
-> 
-> Please let me know if I am missing anything here.
-> 
-
-I'll take another look in your next revision.
-
 > > > +			return -ENODEV;
 > > > +		}
 > > > +
@@ -215,16 +384,6 @@ I'll take another look in your next revision.
 > > > +			break;
 > > > +		}
 > > > +		of_node_put(child);
-> > This one is not needed as it is already done by the
-> > for_each_available_child_of_node() loop.
-> 
-> Ok I will remove it.
-> 
-> > More comments tomorrow.
-> > 
-> > Thanks,
-> > Mathieu
-> > 
 > > > +	}
 > > > +
 > > > +	cluster->mode = cluster_mode;
