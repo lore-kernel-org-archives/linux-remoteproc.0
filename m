@@ -2,27 +2,27 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76DFAC433FE
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 22 Feb 2022 02:00:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 014BAC433F5
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 22 Feb 2022 02:01:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231240AbiBVCAZ (ORCPT
+        id S235467AbiBVCBj (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 21 Feb 2022 21:00:25 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:50200 "EHLO
+        Mon, 21 Feb 2022 21:01:39 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:50600 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231191AbiBVCAY (ORCPT
+        with ESMTP id S229873AbiBVCBj (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 21 Feb 2022 21:00:24 -0500
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2079.outbound.protection.outlook.com [40.107.94.79])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F33A01EECA;
-        Mon, 21 Feb 2022 17:59:58 -0800 (PST)
+        Mon, 21 Feb 2022 21:01:39 -0500
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2085.outbound.protection.outlook.com [40.107.237.85])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D2B991EECA;
+        Mon, 21 Feb 2022 18:01:12 -0800 (PST)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=YWxZttprfJpkOs9HdRyCnDYTNxHmtnXbq1zYRT/c6j2ndM+TF9dvP3dfHkLqWEO/fbyV7ZR/ILvHuptLPISIdXpG8iust25vP/z/ww6aoLtiHHXNhf6A+MqtdnNM380WeTMGfY35jSEOQT9SnpHjK3crXpp/lpNp3H+1wxkWuwbcmxTAdSHD/8ekJuBxbMf3c20c/iVLT0cef5Ic0XcNs61812zX6NKgoIcNTqf6OVFtoGJ7RPiXsJNBf/4lWC3OMOjEXHM8N0jsGuWbcbyMx51jgZkxM6UHcF8UHX0XhWGlMCGKC+fDb5lGzMSe3GsTZuw7X4Tyu9Z2o3Ta04VO4g==
+ b=DddkIZyYLZyLJDLoqjHtWA8XKmCeR3sb6l8LDaKKssNasfydqkYDwnbRwYHZabegqDJ3FRUEYvhC6ob2Kzuc/0oONpKhOgCYLLtz2oiYGi/Qy6NRsFH42HdXVIwqRpI6LF3M3P1+bzJ3In206kS7cuI29HcF1uHqe0Ce96NZ5pjF/VUqwQVwycJQY45Me+uRHEN0BdutHaQVYWls2Nfojjyi/caobKMHDQAa1LRFCUV4yLT0YzDN4wES4tjyHWicWuUEBbQH/CLynNNVkXqo1a4pMuSMdMlMEn634qWUAAyHpU6FljBo04CPAjxoYL92jUb/JyDGSVHRCRm3v4uo0w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=OToCk+IAbAlTw4lFscXKZtT7O4aSFkZoiwzb8G5LA9M=;
- b=g2oW6XRISbvcwzHhm/vHsb/pcIL9xeibhc1hD5fQvsPhwhAmz+tojGRvwnW9IHJ26gEzgSv1JPQQg2ABjtvXwWk1lWLdfnrzmSRWuyP3SCaScu98cjJEmzcClSOYsgOyuySm4/lzQ7yyZH6/x8LqXxqtNo4lVw5a6u/dFez7JI8wMtulFfv/HPM1jagKGLrjjZBXf3mIh/clfi/NzOglmFyEMLauTFK3lF0F993mmBUGtyepvG65gvkV+B6kzo5QCE3UeU1ISKnGDn9NCu71DlGMKJP+A1UBm8fici3KWCoooYsfKR+tMR+Pa3lFEXaC5UG+Syk17drT1wACr4vKGA==
+ bh=M9pClUFCABCje5NE2sMRz33FqleBZbl0p6ypSGo61zw=;
+ b=Fr0gv50OsTQ/BAntoyv8/tQEe3kPgPPVdRwUc5EHGKFbIqZmsylRT+pHKKVXUbiQsSPRfWahVWNwhd9ZTQFTcQ6XbtPfM0RiJCIG9NiEc3iaZP2GWKbeFipQm+yavrF6AYshScs/bsi0wfydCoysDqSRmXdmN9G7mzto62UrnECCLcmqb3fIRPD0R0q4ujzsBvAYZVt7zsJyHbofMmZ+Gsu2fwG8vvViM9UrnDGbjXRw2DjjRbTOU+An6CkEfuxSKA0lSTQHX7Tt5Onx2LvbUIWSfeAsG1bHoTDL1K4fkGkKkZ4cw/ohW39LD/rUMHa5zbKQ3xtKdFI5DtPRBvQalg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  149.199.80.198) smtp.rcpttodomain=linaro.org smtp.mailfrom=xilinx.com;
  dmarc=pass (p=none sp=none pct=100) action=none header.from=xilinx.com;
@@ -30,35 +30,35 @@ ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=xilinx.onmicrosoft.com; s=selector2-xilinx-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=OToCk+IAbAlTw4lFscXKZtT7O4aSFkZoiwzb8G5LA9M=;
- b=FdAsiRWTCeKI5vAQ3HF3GWRj9W2HHTdj62oGWLS+xSy/Pps0NVGpjw4O9ST77FkOkLSbRUz7nS4dc3HEQ1WIirp5/XV2k3pKV2AnDjV01Ce0LzT+WoK5fk8yRKd5IQkgtfx2cokQobEEbsm4VXPXUE2vIVFzy3BgFCBnTApxfyE=
-Received: from DM5PR13CA0008.namprd13.prod.outlook.com (2603:10b6:3:23::18) by
- SA2PR02MB7530.namprd02.prod.outlook.com (2603:10b6:806:149::18) with
- Microsoft SMTP Server (version=TLS1_2,
+ bh=M9pClUFCABCje5NE2sMRz33FqleBZbl0p6ypSGo61zw=;
+ b=aznC+uqQg72Jf48ppR6gE3alIAFTESevO7WViUb012Wv/jBx6jXRImx0QkYfW0jW8uUjMTQPKjUif1CIfi0uC5a/dYQyxgnwwrDRzvtwtvLdVL//L2U23fnHEJ7cFDL/PHFqEQyXrKdXd+rhXg1mabqAov/+SW4IQGkWD/mbEb4=
+Received: from SN4PR0201CA0001.namprd02.prod.outlook.com
+ (2603:10b6:803:2b::11) by BYAPR02MB4566.namprd02.prod.outlook.com
+ (2603:10b6:a03:57::27) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4995.24; Tue, 22 Feb
- 2022 01:59:53 +0000
-Received: from DM3NAM02FT003.eop-nam02.prod.protection.outlook.com
- (2603:10b6:3:23:cafe::6c) by DM5PR13CA0008.outlook.office365.com
- (2603:10b6:3:23::18) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5017.9 via Frontend
- Transport; Tue, 22 Feb 2022 01:59:53 +0000
+ 2022 02:01:09 +0000
+Received: from SN1NAM02FT0054.eop-nam02.prod.protection.outlook.com
+ (2603:10b6:803:2b:cafe::a8) by SN4PR0201CA0001.outlook.office365.com
+ (2603:10b6:803:2b::11) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4995.14 via Frontend
+ Transport; Tue, 22 Feb 2022 02:01:09 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 149.199.80.198)
  smtp.mailfrom=xilinx.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=xilinx.com;
 Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
  149.199.80.198 as permitted sender) receiver=protection.outlook.com;
- client-ip=149.199.80.198; helo=xir-pvapexch02.xlnx.xilinx.com;
-Received: from xir-pvapexch02.xlnx.xilinx.com (149.199.80.198) by
- DM3NAM02FT003.mail.protection.outlook.com (10.13.4.168) with Microsoft SMTP
+ client-ip=149.199.80.198; helo=xir-pvapexch01.xlnx.xilinx.com;
+Received: from xir-pvapexch01.xlnx.xilinx.com (149.199.80.198) by
+ SN1NAM02FT0054.mail.protection.outlook.com (10.97.4.242) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.4995.19 via Frontend Transport; Tue, 22 Feb 2022 01:59:53 +0000
+ 15.20.4975.11 via Frontend Transport; Tue, 22 Feb 2022 02:01:08 +0000
 Received: from xir-pvapexch02.xlnx.xilinx.com (172.21.17.17) by
- xir-pvapexch02.xlnx.xilinx.com (172.21.17.17) with Microsoft SMTP Server
+ xir-pvapexch01.xlnx.xilinx.com (172.21.17.15) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2176.14; Tue, 22 Feb 2022 01:59:52 +0000
+ 15.1.2176.14; Tue, 22 Feb 2022 02:01:07 +0000
 Received: from smtp.xilinx.com (172.21.105.197) by
  xir-pvapexch02.xlnx.xilinx.com (172.21.17.17) with Microsoft SMTP Server id
- 15.1.2176.14 via Frontend Transport; Tue, 22 Feb 2022 01:59:52 +0000
+ 15.1.2176.14 via Frontend Transport; Tue, 22 Feb 2022 02:01:07 +0000
 Envelope-to: michal.simek@xilinx.com,
  ben.levinsky@xilinx.com,
  sergei.korneichuk@xilinx.com,
@@ -72,12 +72,12 @@ Envelope-to: michal.simek@xilinx.com,
  linux-kernel@vger.kernel.org,
  devicetree@vger.kernel.org,
  linux-arm-kernel@lists.infradead.org
-Received: from [10.71.118.67] (port=46224)
+Received: from [10.71.118.67] (port=62149)
         by smtp.xilinx.com with esmtp (Exim 4.90)
         (envelope-from <tanmay.shah@xilinx.com>)
-        id 1nMKT1-0004Yb-7B; Tue, 22 Feb 2022 01:59:51 +0000
-Message-ID: <fae6849d-04a2-c130-9baa-e4c3a53d1515@xilinx.com>
-Date:   Mon, 21 Feb 2022 17:59:48 -0800
+        id 1nMKUE-0004c7-6t; Tue, 22 Feb 2022 02:01:06 +0000
+Message-ID: <9d20b1ae-e158-a0a7-7415-cd589ec44900@xilinx.com>
+Date:   Mon, 21 Feb 2022 18:01:03 -0800
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
  Gecko/20100101 Thunderbird/91.6.1
@@ -94,38 +94,38 @@ CC:     <bjorn.andersson@linaro.org>, <robh+dt@kernel.org>,
         <linux-arm-kernel@lists.infradead.org>
 References: <20220210112824.2084724-1-tanmay.shah@xilinx.com>
  <20220210112824.2084724-7-tanmay.shah@xilinx.com>
- <20220215185816.GB101373@p14s>
+ <20220216182631.GA347485@p14s>
 Content-Language: en-US
-In-Reply-To: <20220215185816.GB101373@p14s>
+In-Reply-To: <20220216182631.GA347485@p14s>
 Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: b6c22416-7c21-4ca4-3eef-08d9f5a7049a
-X-MS-TrafficTypeDiagnostic: SA2PR02MB7530:EE_
-X-Microsoft-Antispam-PRVS: <SA2PR02MB753067540BE7534EEDFD4530CA3B9@SA2PR02MB7530.namprd02.prod.outlook.com>
+X-MS-Office365-Filtering-Correlation-Id: e4600338-97cf-45ec-3be9-08d9f5a731bb
+X-MS-TrafficTypeDiagnostic: BYAPR02MB4566:EE_
+X-Microsoft-Antispam-PRVS: <BYAPR02MB45665F8D1FB0ED92E0421786CA3B9@BYAPR02MB4566.namprd02.prod.outlook.com>
 X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 58D1YeZqnHX860YUNcFeTmpD7Z3cp9S+p8aIqHjUpl8MtVr2XoYJnzmuu8qfDHV1tF2yYdmriR5M2SasZVloCCyGA7NjZydstufpFCiR2jfUD0yvlGDjGFJaUK//cKQWZm0ej5Gmkr37SrR+9F/NDCdGI5Fiq9Zll355Jos1hNILLohcZ2paCaaK52OqQ+dJkBaDt6sYSm8293m3C88AJattk128MidJQzJOFb0vRRtSxmXovRpfw+Ax+NqZHPT1dqaGK51vyVzFW0ADBJdH6mhWdEapj/h+1jWbbQ8EwOYb05JBYRYGpOwLAkiybjkaS7JpbeYZcsThCjsnVQ0WSE0+IUSuj+aXga8pS8lGN0SwYiac/3iqBZcPYkh+OTYmPk6Gz+EsnT1jSXziizXMnrIAOLcIaRsoqqQZOHBsyriKRRihzbyzSFRxdByvSfZWQ7d1xASZ6/by/c+4GWGrbdHYU/i4+DiEVKs+2XS2BnUhLWmU6ze6EJ528BhuJfs3eVD/H2oXQwLsTNhXgCDTtZwrtzBDffgKQ4SxfEmT57nNoIbTWxnjDg7jv0yjZkYQptpLJCIWOzZaEFRw1W2T+arlM0U6/g8weHxka35SR+p7qyY65ClvssHPLtf8Skb2mF06eBqmrPw7RZoObXz873wY2O8cEUVJfWlf8aeldSVhfyNKGseqmP3guOOdHX6X/Lp/7Nn0IIDKDsZvgb93516Np92HQaWYYhpJgn3OR7Q=
-X-Forefront-Antispam-Report: CIP:149.199.80.198;CTRY:IE;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:xir-pvapexch02.xlnx.xilinx.com;PTR:unknown-80-198.xilinx.com;CAT:NONE;SFS:(13230001)(4636009)(36840700001)(46966006)(40470700004)(30864003)(6916009)(54906003)(426003)(83380400001)(2906002)(44832011)(40460700003)(53546011)(336012)(6666004)(31686004)(8936002)(47076005)(9786002)(36860700001)(36756003)(5660300002)(70206006)(82310400004)(26005)(186003)(2616005)(8676002)(4326008)(70586007)(356005)(31696002)(508600001)(316002)(7636003)(50156003)(43740500002);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam-Message-Info: 5sx7N+y0int89OjpbLkr/PAGWPH261Kuj4XniW3jDdVcVP3/rxn2pwnJ1Rhjknpa1HntrTi3qC7+b/NCVptHrq3jAkja1TLPWlprP8cxR0qIva3TFa07J00pRHtC/3D2Oq47N168nX8yRCtcXLZx+adq6ZIlrfJCSY10N8YwyH4Or/eWaSk2TRt9NmO2gdgl/7YmXAEsvBApENS0kcb42V9z9AkxVKMRgdSh9PAswTu7rwGf1WeaqXSu0mEkIghk/x12qg8CwdhLsX5qpaznzIxuPukhXg50mqUO9wxhxFPSQo+j+S2DkjRL21HAfoU6+9wJisQgKUAWknqauFzKzpvMP0rKBJCfjFwPipb4ba0lRIY+MBCq+aVYkhanKw9wdIWTt7IrSVhDYy89wf8Jcxdz+C+zcAQydwnTXDJeEjAUtj3el5TNecb9gBPGq2vakGSsP/XVCqV4RCSAB/GrDLP9mBeH+pcf26J1WvNYRo+cbo/Ef9rfpuPUA4I68b+iXWLoQn+xuqt4s1rgj51DDPRenONz97Qe4qzYn9tk8Uo0FqKhCDx0AttUuTuQ6LTVpILn0BifWy2C8jbZcdLaxom9CXmkIWahpxfaJjDg2+CPr5+bxZAI3Sr5yMQiRcHW2BUF5URmd8tQTb0YK96vqRUzU2DnAKtjVKM/VibCSDCkOIkjbPFcdhaB+CFCWpIwJ8XNX9gIXGJaVCSG+p0XTQ==
+X-Forefront-Antispam-Report: CIP:149.199.80.198;CTRY:IE;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:xir-pvapexch01.xlnx.xilinx.com;PTR:unknown-80-198.xilinx.com;CAT:NONE;SFS:(13230001)(4636009)(36840700001)(46966006)(53546011)(54906003)(31696002)(70586007)(8676002)(4326008)(9786002)(8936002)(82310400004)(6916009)(316002)(70206006)(508600001)(6666004)(83380400001)(2616005)(36860700001)(426003)(336012)(7636003)(186003)(26005)(356005)(36756003)(5660300002)(31686004)(2906002)(30864003)(44832011)(47076005)(50156003)(43740500002);DIR:OUT;SFP:1101;
 X-OriginatorOrg: xilinx.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Feb 2022 01:59:53.2853
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Feb 2022 02:01:08.9521
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: b6c22416-7c21-4ca4-3eef-08d9f5a7049a
+X-MS-Exchange-CrossTenant-Network-Message-Id: e4600338-97cf-45ec-3be9-08d9f5a731bb
 X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.80.198];Helo=[xir-pvapexch02.xlnx.xilinx.com]
-X-MS-Exchange-CrossTenant-AuthSource: DM3NAM02FT003.eop-nam02.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.80.198];Helo=[xir-pvapexch01.xlnx.xilinx.com]
+X-MS-Exchange-CrossTenant-AuthSource: SN1NAM02FT0054.eop-nam02.prod.protection.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA2PR02MB7530
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR02MB4566
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
 
-On 2/15/22 10:58 AM, Mathieu Poirier wrote:
+On 2/16/22 10:26 AM, Mathieu Poirier wrote:
 > On Thu, Feb 10, 2022 at 03:28:24AM -0800, Tanmay Shah wrote:
 >> This driver enables r5f dual core Real time Processing Unit subsystem
 >> available on Xilinx Zynq Ultrascale MPSoC Platform. RPU subsystem
@@ -228,8 +228,6 @@ On 2/15/22 10:58 AM, Mathieu Poirier wrote:
 >> +#include <linux/list.h>
 >> +#include <linux/mailbox_client.h>
 >> +#include <linux/mailbox/zynqmp-ipi-message.h>
-> No mailboxes are used in this revision and as such the above are not needed.
-Sure I will remove them.
 >> +#include <linux/module.h>
 >> +#include <linux/of_address.h>
 >> +#include <linux/of_platform.h>
@@ -238,10 +236,6 @@ Sure I will remove them.
 >> +#include <linux/remoteproc.h>
 >> +#include <linux/skbuff.h>
 >> +#include <linux/sysfs.h>
-> As far as I can tell the above two includes are also not needed.  Moreover
-> dma-mapping.h should be included because of dma_set_coherent_mask() and
-> DMA_BIT_MASK().
-Ok I will add it and remove redundant headers.
 >> +
 >> +#include "remoteproc_internal.h"
 >> +
@@ -1082,17 +1076,50 @@ Ok I will add it and remove redundant headers.
 >> +
 >> +		/* create and add remoteproc instance of type struct rproc */
 >> +		r5_cores[i] = zynqmp_r5_add_rproc_core(&child_pdev->dev);
+> Function zynqmp_r5_add_rproc_core() returns an error code on error that is never
+> checked.
+>
 >> +		r5_cores[i]->dev = &child_pdev->dev;
+> This will result in a kernel stack trace if zynqmp_r5_add_rproc_core() fails.
+Sure I will fix it.
 >> +		if (!r5_cores[i]->dev) {
 >> +			dev_err(dev, "can't get device for r5 core %d\n", i);
 >> +			of_node_put(child);
 >> +			return -ENODEV;
 >> +		}
+> And here the validity of child_pdev->dev is checked _after_ it has been passed
+> to zynqmp_r5_add_rproc_core().  This check should not be needed if proper
+> error handling is done above.
+I agree.
 >> +
 >> +		r5_cores[i]->np = dev_of_node(r5_cores[i]->dev);
 >> +		if (!r5_cores[i]->np) {
 >> +			dev_err(dev, "can't get device node for r5 core %d\n", i);
 >> +			of_node_put(child);
+> As mention in the documentation for of_find_device_by_node(), the function takes
+> a reference to child_pdev->dev that needs to be released with put_device().  In
+> fact I don't see the reference dropped anywhere, even when the driver is
+> released.
+
+I agree. I want to use r5_cores[i]->dev throughout driver so,
+
+Is it fine if I use put_device() during driver release i.e. function 
+zynqmp_r5_cluster_exit( ) ?
+
+> Moreover, if we end up here for r5_cores[1], resources acquired for r5_core[0]
+> are not released.
+
+Most of the resources (such as zynqmp_r5_rproc_ops and r5_rproc objects) 
+for r5_core[0] are allocated using devm_* API,
+
+so I believe it will be de-allocated when driver probe fails and driver 
+exits.
+
+If r5_cores[1] fails, then r5_cores[0]->np needs to be released here. I 
+will find out mechanism to take care of this.
+
+Please let me know if I am missing anything here.
+
 >> +			return -ENODEV;
 >> +		}
 >> +
@@ -1107,6 +1134,16 @@ Ok I will add it and remove redundant headers.
 >> +			break;
 >> +		}
 >> +		of_node_put(child);
+> This one is not needed as it is already done by the
+> for_each_available_child_of_node() loop.
+
+Ok I will remove it.
+
+> More comments tomorrow.
+>
+> Thanks,
+> Mathieu
+>
 >> +	}
 >> +
 >> +	cluster->mode = cluster_mode;
@@ -1157,8 +1194,6 @@ Ok I will add it and remove redundant headers.
 >> +	if (ret) {
 >> +		dev_err(dev, "failed to populate platform dev %d\n", ret);
 >> +		return ret;
-> Please use dev_err_probe()
-Ok.
 >> +	}
 >> +
 >> +	/* wire in so each core can be cleaned up at driver remove */
@@ -1167,26 +1202,11 @@ Ok.
 >> +	ret = devm_add_action_or_reset(dev, zynqmp_r5_cluster_exit, pdev);
 >> +	if (ret)
 >> +		return ret;
-> Not sure this is needed.  The TI guys used that mechanic to release acquired
-> resources but merely setting driver data to NULL doesn't mandate all this.
-
-If I use zynqmp_r5_cluster_exit to free devices of r5_core using 
-put_device( ) API then can I keep this?
-
-More on this in next email.
-
 >> +
 >> +	ret = zynqmp_r5_cluster_init(cluster);
 >> +	if (ret) {
 >> +		dev_err(dev, "Invalid r5f subsystem device tree\n");
 >> +		return ret;
-> Here to.
->
-> More comments to come tomorrow.
->
-> Thanks,
-> Mathieu
->
 >> +	}
 >> +
 >> +	return 0;
