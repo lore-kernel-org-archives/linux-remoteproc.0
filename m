@@ -2,212 +2,295 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C033BC433EF
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 22 Feb 2022 15:28:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FB6BC433F5
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 22 Feb 2022 16:36:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233262AbiBVP2Y (ORCPT
+        id S233254AbiBVQgr (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 22 Feb 2022 10:28:24 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46646 "EHLO
+        Tue, 22 Feb 2022 11:36:47 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55256 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233166AbiBVP2X (ORCPT
+        with ESMTP id S232731AbiBVQgn (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 22 Feb 2022 10:28:23 -0500
-Received: from mail-qv1-xf29.google.com (mail-qv1-xf29.google.com [IPv6:2607:f8b0:4864:20::f29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3BEE6BF94E
-        for <linux-remoteproc@vger.kernel.org>; Tue, 22 Feb 2022 07:27:57 -0800 (PST)
-Received: by mail-qv1-xf29.google.com with SMTP id o5so43033954qvm.3
-        for <linux-remoteproc@vger.kernel.org>; Tue, 22 Feb 2022 07:27:57 -0800 (PST)
+        Tue, 22 Feb 2022 11:36:43 -0500
+Received: from mail-pg1-x52b.google.com (mail-pg1-x52b.google.com [IPv6:2607:f8b0:4864:20::52b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7CD2E15F087
+        for <linux-remoteproc@vger.kernel.org>; Tue, 22 Feb 2022 08:36:17 -0800 (PST)
+Received: by mail-pg1-x52b.google.com with SMTP id 75so17471376pgb.4
+        for <linux-remoteproc@vger.kernel.org>; Tue, 22 Feb 2022 08:36:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:cc;
-        bh=sRXHeZa3R3XlgQ3HiJffd+JnUn0eLfdgPeYFYoXUPrA=;
-        b=OM8uvKjAqiC1AFy883I9phKcgjUhezz0SI1Zd0n1/e8N0pexuTzZYEesBLhTn2J0q5
-         wuNz/qzfZoQx4gqHM/2EUgCZxcH7nIl1zwNAKSvKD24YcWjwl0AwQWwugipEssZ0ddsz
-         eYkIurkODq75S+udILDkgjj4Bf8oN29wqttH1Rvrgg+K7uxImMrUBrbcrOHwuOL98oIT
-         GKtf0eZHgpx7aZs3kFNxWdTYHTp1n8SL3+gOjX8PRQENJ34taYBHy0wFPXx4DStnb86x
-         hqFlDVWhl2c0ecYNcteLMpF/nN3QGe2N9QH0szYwtdm/fq1JJ9F8qUNRdSuT6B/PHblj
-         BcOw==
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=cGfg7SzK60hTzPzU6ehbR2PDv3GsZi0qKrZOQnAODkU=;
+        b=AUIIco/2inR+8I7aH+Pyg4fwYdkiolcG213TdJ0X5lweNW9bSX+pZoB4IHeg8VVZd6
+         JzRhgAdx4ZGoQ6qso0qo/w3jYB3T9jM4M/Urf8xD2FdBsJypiLSkVzkmsGnzXkD5bsp9
+         fDAVAhndI5qICDB4mdVkNFleEj8N5asKSb6quR9pZrzXJH5sAMotwIVQuME9nqwtbae+
+         mn8fcl/QddnMYHtkUy6edmuZQL24BloTQT9qakNHl3otil5KwlCnkfic89nO6ix3T4Wm
+         AF8XVy+nCrpzSiFK4UVaInuCalMFuRgXnBhfEjo5fwxiDSn0M1CCG01/bOq/ZCZLYTdf
+         klfA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:cc;
-        bh=sRXHeZa3R3XlgQ3HiJffd+JnUn0eLfdgPeYFYoXUPrA=;
-        b=wfuT16ZYtXGPCPPnbE8EFp35Uy0oGolCvqdMSpkYbMJ6ojq0tJqFJv2i6JKqhYaj9e
-         2GmR/cWltmStN31YGpGvD+CUrwOSq3hVAUGtd2kgwCTC+9IudHS1jx/zuErH0qDvNsNy
-         QUseLzQSvSeSzq3jkA/bgn7F80CZ7PNg8yw2gXWv9vJFvvLxTMTo9++bccBdVKXI1KIh
-         GvdLU5X3DyCQ7Dnla5yYKRZlthTMr+TLnIi71EXC1iQgiGdt+BigY49S8CrAx9th85bV
-         PZ0ts5ibybJuXZsEyER75W1l+UUE7Ta9iWYPH5ZQSGfqtGtYaZr5VXLL6nmCW8KHcYSp
-         9Z6Q==
-X-Gm-Message-State: AOAM531206NSQOtqm2ptXDwhZxFfL/ecYzdI3SO1SdaXPHNkvCHJkF+A
-        WAZ75zHdy1rbYb8kZ+a9sWQk3kt5SvQCH+HVhEM=
-X-Received: by 2002:a05:622a:588:b0:2de:6f57:1576 with SMTP id
- c8-20020a05622a058800b002de6f571576mt1162221qtb.83.1645543676369; Tue, 22 Feb
- 2022 07:27:56 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=cGfg7SzK60hTzPzU6ehbR2PDv3GsZi0qKrZOQnAODkU=;
+        b=IId5d/We8/op997uWrwKiK3hik1kqtsHVp3KdMeg7xUKRM+X1OXaF+9uqih1Ca1AWN
+         mEhjH4ftwq7DMUk9LlB9KvE5wYgishSuQMTMXa07RpbksEyoH4iJwmtCXfxIAeCTcaCR
+         LxjRSW0fqd1Rh1D65KKbpiVsHx8ikNULE2J9JXaFZfJQyhq7JdkdU1jM0V6d1QEioZhC
+         Tk2IEa2BJLqag9aGYv/Lzy6FaODt1dlkhPWL9dfvAf0VJkrqxkxTizn8GJAbrQ8pO4K+
+         4k1Guf28wwirDpbtIEKHlYvZNEjcl/LulY5z/J2Pd6cC/eUJ42vmYDifgpBcR7TQy+yD
+         cJ4A==
+X-Gm-Message-State: AOAM531qDdzHqpq06+CzSCV5oHjFsPKN6dA6PU1WOK3cFDXAqgHlmBL9
+        XMGQSaQvoguoZVD0QgVqizXzAw==
+X-Google-Smtp-Source: ABdhPJxOBQmir6IdwffJxdtp5EScm5kselNJW4g3MGWY6cnK67KAGdSSIM12h28f6yt/WrFs98gghQ==
+X-Received: by 2002:a05:6a00:7c6:b0:4e1:799:7a2 with SMTP id n6-20020a056a0007c600b004e1079907a2mr25306856pfu.25.1645547776950;
+        Tue, 22 Feb 2022 08:36:16 -0800 (PST)
+Received: from p14s (S0106889e681aac74.cg.shawcable.net. [68.147.0.187])
+        by smtp.gmail.com with ESMTPSA id 142sm18356534pfy.11.2022.02.22.08.36.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 22 Feb 2022 08:36:15 -0800 (PST)
+Date:   Tue, 22 Feb 2022 09:36:13 -0700
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+To:     Tanmay Shah <tanmay.shah@xilinx.com>
+Cc:     bjorn.andersson@linaro.org, robh+dt@kernel.org,
+        michal.simek@xilinx.com, laurent.pinchart@ideasonboard.com,
+        ben.levinsky@xilinx.com, bill.mills@linaro.org,
+        sergei.korneichuk@xilinx.com, arun.balaji.kannan@xilinx.com,
+        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v3 1/6] dt-bindings: remoteproc: Add Xilinx RPU subsystem
+ bindings
+Message-ID: <20220222163613.GA923552@p14s>
+References: <20220210112824.2084724-1-tanmay.shah@xilinx.com>
+ <20220210112824.2084724-2-tanmay.shah@xilinx.com>
+ <20220214182208.GA101373@p14s>
+ <f383cd27-9757-7b56-4ebc-1227b28f51f7@xilinx.com>
 MIME-Version: 1.0
-References: <20220221135351.GA7342@ubuntu> <3e1ee336-1c78-7719-826c-2a093a20ee8e@kernel.org>
-In-Reply-To: <3e1ee336-1c78-7719-826c-2a093a20ee8e@kernel.org>
-From:   Kestrel seventyfour <kestrelseventyfour@gmail.com>
-Date:   Tue, 22 Feb 2022 16:27:45 +0100
-Message-ID: <CAE9cyGRcDSJwrKOWER9wxHSAQzLs2ZdL+uWsme0etMV+8wKcMg@mail.gmail.com>
-Subject: Re: [PATCH 2/3] dt-bindings: remoteproc: Add AVM WASP
-Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-To:     unlisted-recipients:; (no To-header on input)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f383cd27-9757-7b56-4ebc-1227b28f51f7@xilinx.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Am Mo., 21. Feb. 2022 um 17:47 Uhr schrieb Krzysztof Kozlowski
-<krzk@kernel.org>:
->
-> On 21/02/2022 14:53, Daniel Kestrel wrote:
-> > AVM Fritzbox router boards may contain an additional ATH79
-> > based SoC that has the wifi cards connected.
-> > This patch adds bindings for this remote processor.
-> >
-> > Signed-off-by: Daniel Kestrel <kestrelseventyfour@gmail.com>
-> > ---
-> >  .../bindings/remoteproc/avm,wasp-rproc.yaml   | 93 +++++++++++++++++++
-> >  1 file changed, 93 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/remoteproc/avm,wasp-rproc.yaml
-> >
-> > diff --git a/Documentation/devicetree/bindings/remoteproc/avm,wasp-rproc.yaml b/Documentation/devicetree/bindings/remoteproc/avm,wasp-rproc.yaml
-> > new file mode 100644
-> > index 000000000000..21f3bbcc4202
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/remoteproc/avm,wasp-rproc.yaml
-> > @@ -0,0 +1,93 @@
-> > +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/remoteproc/avm,wasp-rproc.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: AVM WASP processor controller bindings
-> > +
-> > +maintainers:
-> > +  - Daniel Kestrel <kestrelseventyfour@gmail.com>
-> > +
-> > +description: |
-> > +  This document defines the bindings for the remoteproc component that loads and
-> > +  boots firmwares on the AVM Wireless Assistent Support Processor (WASP) SoC
-> > +  that is attached to some AVM Fritzbox devices (3390, 3490, 5490, 5491, 7490).
-> > +
-> > +properties:
-> > +  compatible:
-> > +    const: avm,wasp
-> > +
-> > +  ath9k-firmware:
-> > +    $ref: /schemas/types.yaml#/definitions/string
-> > +    description: |
-> > +      Should contain the name of the ath9k eeprom that is to be loaded from
-> > +      the lantiq host flash. Wifi on the WASP SoC does not work without it.
-> > +      The file should be located on the firmware search path.
->
-> Are you sure this is a property of hardware? It looks like runtime
-> configuration parameter.
->
-> > +
-> > +  ath10k-caldata:
-> > +    $ref: /schemas/types.yaml#/definitions/string
-> > +    description: |
-> > +      Should contain the name of the ath10k caldata that is to be loaded from
-> > +      the lantiq host flash. Wifi on the WASP SoC does not work without it.
-> > +      The file should be located on the firmware search path.
->
-> Same.
->
-> > +
-> > +  wasp-netboot-firmware:
-> > +    $ref: /schemas/types.yaml#/definitions/string
-> > +    description: |
-> > +      Should contain the name of the netboot firmware that is to be loaded
-> > +      and started on the WASP SoC using mdio in order to be able to load
-> > +      the initramfs image as a second stage.
-> > +      The file should be located on the firmware search path.
->
-> Same.
->
-> > +
-> > +  wasp-netboot-mdio:
-> > +    $ref: /schemas/types.yaml#/definitions/phandle
-> > +    description: Reference to the Lantiq GSWIP switch mdio.
->
-> Vendor prefix.
->
-> > +
-> > +  wasp-initramfs-port:
-> > +    $ref: /schemas/types.yaml#/definitions/phandle
-> > +    description: Reference to the network port, where the WASP SoC is connected to.
->
-> Vendor prefix.
->
-> > +
-> > +  wasp-initramfs-image:
-> > +    $ref: /schemas/types.yaml#/definitions/string
-> > +    description: |
-> > +      Should contain the name of the initramfs linux image that is to be loaded
-> > +      and started on the WASP SoC.
-> > +      The file should be located on the firmware search path.
->
-> initramfs path looks even less like a property of hardware... If you
-> change initramfs from CPIO to initrd or GZ, hardware changes as well?
->
-> > +  reset-gpio:
-> > +    $ref: /schemas/types.yaml#/definitions/phandle-array
-> > +    description: Reference and parameters for the reset gpio of the WASP SoC.
->
-> Wrong suffix, unneeded type. Did you run dt_binding_check?
+On Mon, Feb 21, 2022 at 05:58:15PM -0800, Tanmay Shah wrote:
+> Hi Mathieu,
+> 
+> Thanks for reviews.
+> 
+> Please find my comments below.
+> 
+> On 2/14/22 10:22 AM, Mathieu Poirier wrote:
+> > On Thu, Feb 10, 2022 at 03:28:19AM -0800, Tanmay Shah wrote:
+> > > Xilinx ZynqMP platform has dual-core ARM Cortex R5 Realtime Processing
+> > > Unit(RPU) subsystem. This patch adds dt-bindings for RPU subsystem (cluster).
+> > > 
+> > > Signed-off-by: Tanmay Shah<tanmay.shah@xilinx.com>
+> > > ---
+> > > 
+> > > Changes in v3:
+> > >    - None
+> > > 
+> > >   .../bindings/remoteproc/xlnx,r5f-rproc.yaml   | 139 ++++++++++++++++++
+> > >   include/dt-bindings/power/xlnx-zynqmp-power.h |   6 +
+> > >   2 files changed, 145 insertions(+)
+> > >   create mode 100644 Documentation/devicetree/bindings/remoteproc/xlnx,r5f-rproc.yaml
+> > > 
+> > > diff --git a/Documentation/devicetree/bindings/remoteproc/xlnx,r5f-rproc.yaml b/Documentation/devicetree/bindings/remoteproc/xlnx,r5f-rproc.yaml
+> > > new file mode 100644
+> > > index 000000000000..d43f0b16ad7f
+> > > --- /dev/null
+> > > +++ b/Documentation/devicetree/bindings/remoteproc/xlnx,r5f-rproc.yaml
+> > > @@ -0,0 +1,139 @@
+> > > +# SPDX-License-Identifier: (GPL-2.0-only or BSD-2-Clause)
+> > > +%YAML 1.2
+> > > +---
+> > > +$id:http://devicetree.org/schemas/remoteproc/xlnx,r5f-rproc.yaml#
+> > > +$schema:http://devicetree.org/meta-schemas/core.yaml#
+> > > +
+> > > +title: Xilinx R5F processor subsystem
+> > > +
+> > > +maintainers:
+> > > +  - Ben Levinsky<ben.levinsky@xilinx.com>
+> > > +  - Tanmay Shah<tanmay.shah@xilinx.com>
+> > > +
+> > > +description: |
+> > > +  The Xilinx platforms include a pair of Cortex-R5F processors (RPU) for
+> > > +  real-time processing based on the Cortex-R5F processor core from ARM.
+> > > +  The Cortex-R5F processor implements the Arm v7-R architecture and includes a
+> > > +  floating-point unit that implements the Arm VFPv3 instruction set.
+> > > +
+> > > +properties:
+> > > +  compatible:
+> > > +    const: xlnx,zynqmp-r5fss
+> > > +
+> > > +  xlnx,cluster-mode:
+> > > +    $ref: /schemas/types.yaml#/definitions/uint32
+> > > +    description: |
+> > > +      The RPU MPCore can operate in split mode(Dual-processor performance), Safety
+> > > +      lock-step mode(Both RPU cores execute the same code in lock-step,
+> > > +      clock-for-clock) or Single CPU mode (RPU core 0 can be held in reset while
+> > > +      core 1 runs normally). The processor does not support dynamic configuration.
+> > > +      Switching between modes is only permitted immediately after a processor reset.
+> > > +      If set to  1 then lockstep mode and if 0 then split mode.
+> > > +      If set to  2 then single CPU mode. When not defined, default will be lockstep mode.
+> > > +
+> > > +  "#address-cells":
+> > > +    const: 1
+> > > +
+> > > +  "#size-cells":
+> > > +    const: 1
+> > > +
+> > > +  reg:
+> > > +    items:
+> > > +      - description: RPU subsystem status and control registers
+> > > +
+> > > +patternProperties:
+> > > +  "^r5f-[a-f0-9]+$":
+> > > +    type: object
+> > > +    description: |
+> > > +      The RPU is located in the Low Power Domain of the Processor Subsystem.
+> > > +      Each processor includes separate L1 instruction and data caches and
+> > > +      tightly coupled memories (TCM). System memory is cacheable, but the TCM
+> > > +      memory space is non-cacheable.
+> > > +
+> > > +      Each RPU contains one 64KB memory and two 32KB memories that
+> > > +      are accessed via the TCM A and B port interfaces, for a total of 128KB
+> > > +      per processor. In lock-step mode, the processor has access to 256KB of
+> > > +      TCM memory.
+> > > +
+> > > +    properties:
+> > > +      compatible:
+> > > +        const: xlnx,zynqmp-r5f
+> > > +
+> > > +      power-domains:
+> > > +        description: |
+> > > +          phandle to a PM domain provider node and an args specifier containing
+> > > +          the r5f0 and r5f1 node id value.
+> > > +
+> > > +      reg:
+> > > +        items:
+> > > +          - description: RPU0 and RPU1 control and status registers
+> > > +
+> > > +      mboxes:
+> > > +        items:
+> > > +          - description: |
+> > > +              Bi-directional channel to send data to RPU and receive ack from RPU.
+> > > +              Request and response message buffers are available and each buffer is 32 bytes.
+> > > +          - description: |
+> > > +              Bi-directional channel to receive data from RPU and send ack from RPU.
+> > > +              Request and response message buffers are available and each buffer is 32 bytes.
+> > > +        minItems: 1
+> > > +
+> > > +      mbox-names:
+> > > +        items:
+> > > +          - const: tx
+> > > +          - const: rx
+> > > +        minItems: 1
+> > > +
+> > > +      sram:
+> > > +        $ref: /schemas/types.yaml#/definitions/phandle-array
+> > > +        minItems: 1
+> > > +        description: |
+> > > +          phandles to one or more reserved on-chip SRAM regions. Other than TCM,
+> > > +          the RPU can execute instructions and access data from, the OCM memory,
+> > > +          the main DDR memory, and other system memories.
+> > > +
+> > > +          The regions should be defined as child nodes of the respective SRAM
+> > > +          node, and should be defined as per the generic bindings in,
+> > > +          Documentation/devicetree/bindings/sram/sram.yaml
+> > > +
+> > > +      memory-region:
+> > > +        $ref: /schemas/types.yaml#/definitions/phandle-array
+> > > +        description: |
+> > > +          List of phandles to the reserved memory regions associated with the
+> > > +          remoteproc device. This is variable and describes the memories shared with
+> > > +          the remote processor (e.g. remoteproc firmware and carveouts, rpmsg
+> > > +          vrings, ...). This reserved memory region will be allocated on DDR memory.
+> > > +          See Documentation/devicetree/bindings/reserved-memory/reserved-memory.txt
+> > > 
+> > Aside from "compatible" and "power-domains", none of the above properties appear
+> > in the example below, making this patchset harder to review.
+> > 
+> > I am pretty sure to have commented on this earlier...
+> 
+> In example, I have included only required property nodes.
+> 
+> If you want, I can include other properties as well. However, some of the
+> properties needs new bindings for example "sram".
+> 
+> So, I can't include it as I don't know how bindings for them will look like.
+> 
 
-Hi Krzystof,
+I'm fine with that part.
 
-Sorry for missing the dt_binding_check.
-I have switched to use devm_gpiod_get and it does not work if the
-suffix is not -gpio
-or -gpios (see of_find_gpio method).
-Would avm,reset-gpio be ok to use here?
+> In next revision, I can include mboxes, mbox-names and memory-region
+> properties. Is that fine?
+> 
+> Also, should I add those nodes in actual device-tree now or later?
+> 
+> For example, mboxes and mbox-names are not needed for driver as of now.
+> 
+> So should I include them in dts now or later when I send rpmsg related
+> patches?
 
-Thanks.
->
-> "Reference and parameters" are obvious, so they should be skipped.
->
-> > +
-> > +  startup-gpio:
-> > +    $ref: /schemas/types.yaml#/definitions/phandle-array
-> > +    description: Reference and parameters for the power switch gpio of the WASP SoC.
->
-> Same.
-Is avm,startup-gpio ok, like above?
->
-> > +
-> > +required:
-> > +  - compatible
-> > +  - ath9k-firmware
-> > +  - ath10k-caldata
-> > +  - wasp-netboot-firmware
-> > +  - wasp-netboot-mdio
-> > +  - wasp-initramfs-port
-> > +  - wasp-initramfs-image
-> > +  - reset-gpio
-> > +  - startup-gpio
-> > +
-> > +additionalProperties: false
-> > +
-> > +examples:
-> > +  - |
-> > +    #include <dt-bindings/gpio/gpio.h>
-> > +
-> > +    avm-wasp {
->
-> Generic node name describing class of a device. AVM is company, WASP is
-> product, so neither of them are generic.
->
->
-> Best regards,
-> Krzysztof
+Include in the example the properties currently supported by the driver.  Not
+all of them have to be in the DTS though.
+
+> 
+> > More comments to come later or tomorrow.
+> > 
+> > Thanks,
+> > Mathieu
+> > 
+> > > +    required:
+> > > +      - compatible
+> > > +      - power-domains
+> > > +
+> > > +    unevaluatedProperties: false
+> > > +
+> > > +required:
+> > > +  - compatible
+> > > +
+> > > +additionalProperties: false
+> > > +
+> > > +examples:
+> > > +  - |
+> > > +    r5fss: r5fss@ff9a0000 {
+> > > +        compatible = "xlnx,zynqmp-r5fss";
+> > > +        xlnx,cluster-mode = <1>;
+> > > +
+> > > +        #address-cells = <1>;
+> > > +        #size-cells = <1>;
+> > > +        reg = <0xff9a0000 0x228>;
+> > > +
+> > > +        r5f-0 {
+> > > +            compatible = "xlnx,zynqmp-r5f";
+> > > +            power-domains = <&zynqmp_firmware 0x7>;
+> > > +        };
+> > > +
+> > > +        r5f-1 {
+> > > +            compatible = "xlnx,zynqmp-r5f";
+> > > +            power-domains = <&zynqmp_firmware 0x8>;
+> > > +        };
+> > > +    };
+> > > +...
+> > > diff --git a/include/dt-bindings/power/xlnx-zynqmp-power.h b/include/dt-bindings/power/xlnx-zynqmp-power.h
+> > > index 0d9a412fd5e0..618024cbb20d 100644
+> > > --- a/include/dt-bindings/power/xlnx-zynqmp-power.h
+> > > +++ b/include/dt-bindings/power/xlnx-zynqmp-power.h
+> > > @@ -6,6 +6,12 @@
+> > >   #ifndef _DT_BINDINGS_ZYNQMP_POWER_H
+> > >   #define _DT_BINDINGS_ZYNQMP_POWER_H
+> > > +#define		PD_RPU_0	7
+> > > +#define		PD_RPU_1	8
+> > > +#define		PD_R5_0_ATCM	15
+> > > +#define		PD_R5_0_BTCM	16
+> > > +#define		PD_R5_1_ATCM	17
+> > > +#define		PD_R5_1_BTCM	18
+> > >   #define		PD_USB_0	22
+> > >   #define		PD_USB_1	23
+> > >   #define		PD_TTC_0	24
+> > > -- 
+> > > 2.25.1
+> > > 
