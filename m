@@ -2,295 +2,201 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1AB3C433EF
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 22 Feb 2022 18:31:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E341C433F5
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 23 Feb 2022 07:07:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233991AbiBVScF (ORCPT
+        id S233602AbiBWHH1 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 22 Feb 2022 13:32:05 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51472 "EHLO
+        Wed, 23 Feb 2022 02:07:27 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38132 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232868AbiBVScE (ORCPT
+        with ESMTP id S238097AbiBWHH0 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 22 Feb 2022 13:32:04 -0500
-Received: from mail-oo1-xc36.google.com (mail-oo1-xc36.google.com [IPv6:2607:f8b0:4864:20::c36])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EA4D8C5580
-        for <linux-remoteproc@vger.kernel.org>; Tue, 22 Feb 2022 10:31:37 -0800 (PST)
-Received: by mail-oo1-xc36.google.com with SMTP id r15-20020a4ae5cf000000b002edba1d3349so18825803oov.3
-        for <linux-remoteproc@vger.kernel.org>; Tue, 22 Feb 2022 10:31:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=0eQyxholJjBEMSQZWDFEm2M/Fwxq/JEZfGHCPfXfVx8=;
-        b=thYh2iioevpyO45vzlZllF8/uQycsw5qB0AzyDTe8QlJze9noS9xsmGOXfKGboW3r3
-         c0ok3dv5hPdiR2CSjzMMaqeCbB2HsDDTY+SsOC0AoUySifZZxYovcu6hcu48SQd2T8o9
-         fj4spOik4Pn6arfwgGudjfXt19jgURL5QutrZAyuMRZqqsPDLOm1PM5odlUalYIsVV0h
-         hBv+mwavegmmIHuDZ1BM3YHQzMxSYnLa7F/i6H1SfR0xcxod4XYm0P0DDT5I2oEKlSOV
-         ab1zDYCmhjDnHl5RTW56/I/w0sFdrVpRVYy3N57IWtQ515LmcJsmqUekdB8JcybLBa1u
-         HraQ==
+        Wed, 23 Feb 2022 02:07:26 -0500
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BCD1C6335;
+        Tue, 22 Feb 2022 23:06:57 -0800 (PST)
+Received: by mail-ej1-f48.google.com with SMTP id a23so50209218eju.3;
+        Tue, 22 Feb 2022 23:06:57 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=0eQyxholJjBEMSQZWDFEm2M/Fwxq/JEZfGHCPfXfVx8=;
-        b=ch+naVcqLdlFTpo3n1TMuApJMV9AePJYHwehMCJEHBdHMKLlb5wXh/Jr6s7WJ2O3Bk
-         KQNCGRW7im8fgVpAx2jH95yMMYMVhjsWcdoZ7mJWz3/obwMvIrxELaKL3EUQjUA0tF+K
-         erF3sF9t/ikXBzs6bk3daJ2kr3+NwtPM6bcRlQAeuAGe6dTcQBZmy+yks0ckSsiyM9AX
-         S0lxRYU3JTWc++C1FHzpFFM3NG3t/RjMwTrFCkSgEOVBXFmJKNp4VybK+SzTRLfZkEUX
-         mdlD1rbWboQpgK4z/0tHb06keIHFGYhOKcb3Iu7+vXLPUTVsgCeBZqf6ozGfSuSE6K40
-         UvMw==
-X-Gm-Message-State: AOAM531tK8B2va9gHIvnDsGdgxZquu2N+Ouc93vdg+RO7ngjuwam3b6z
-        inhg4K9c21FohTRvgoUgkDbujg==
-X-Google-Smtp-Source: ABdhPJzi3P1ahgtmbW5BDgyO3RTaYuowS42Lg/e49loUlZZ9lvfcpXXgGyzz8pMAJZgBO55dNtdQrw==
-X-Received: by 2002:a05:6870:d915:b0:d3:dc7f:9dd0 with SMTP id gq21-20020a056870d91500b000d3dc7f9dd0mr2256041oab.138.1645554696895;
-        Tue, 22 Feb 2022 10:31:36 -0800 (PST)
-Received: from ripper ([2600:1700:a0:3dc8:205:1bff:fec0:b9b3])
-        by smtp.gmail.com with ESMTPSA id x22sm5704272ooo.20.2022.02.22.10.31.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Feb 2022 10:31:36 -0800 (PST)
-Date:   Tue, 22 Feb 2022 10:33:37 -0800
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Sibi Sankar <quic_sibis@quicinc.com>
-Cc:     robh+dt@kernel.org, ohad@wizery.com, agross@kernel.org,
-        mathieu.poirier@linaro.org, linux-arm-msm@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, evgreen@chromium.org,
-        dianders@chromium.org, swboyd@chromium.org, mka@chromium.org,
-        krzysztof.kozlowski@canonical.com
-Subject: Re: [PATCH 2/3] remoteproc: qcom_q6v5_mss: Add support for
- interconnect bandwidth voting
-Message-ID: <YhUsgVWJo8emK3bj@ripper>
-References: <1644813252-12897-1-git-send-email-quic_sibis@quicinc.com>
- <1644813252-12897-3-git-send-email-quic_sibis@quicinc.com>
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=ObENWS/hj5zY1mVUZ7GyGOu2G+FMnfCnwItgeAu0qvU=;
+        b=7teXXEDX/hwh/VYglJHouK1ukUJo/AH4t/4dere0sCw9wApomsnXCIR051pBFSLdm5
+         FpgwWgxDeQOAdAKwcYh/IxBP06TdwAWM7m2aL0VO4zW3lXuZyWLsKiyQ4yhySLBsdBtP
+         eSVFrI/9raBZrD6drANTOZkEGB1s20AaFSfCisKYuWj0OsTHMo80SJRhkkNawTB+blcJ
+         r8tkeUZYCw7kIUCOmMhvxHsQbjkz6vdhCBA7A1X9O9US27KvY5TkBvP4r7AiI8TK8IB4
+         hj81UB+JI2lMX64uD0BtsCYGjxd000SF3xws+NPIAUWhy4O44YwWyZL3ZpmO3Pu91taB
+         I34Q==
+X-Gm-Message-State: AOAM533yL8QC9pEWddvfyStJya7Cu6eVizdyZhJFp0rBcdGb7XZ0nLlW
+        +h+W4azByKJontR5P9zHvJsToHI0kpk=
+X-Google-Smtp-Source: ABdhPJyWWy+Cb9A31GxKcYIrYJ/8SE/IDHrMOfRGQPDdvYdyBzQ1Awt6FtUXg9KlRqAOosOzi6JgHg==
+X-Received: by 2002:a17:906:a24b:b0:6ce:70da:12bb with SMTP id bi11-20020a170906a24b00b006ce70da12bbmr20765929ejb.667.1645600016008;
+        Tue, 22 Feb 2022 23:06:56 -0800 (PST)
+Received: from [192.168.0.124] (xdsl-188-155-181-108.adslplus.ch. [188.155.181.108])
+        by smtp.googlemail.com with ESMTPSA id s18sm257263eja.87.2022.02.22.23.06.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 22 Feb 2022 23:06:54 -0800 (PST)
+Message-ID: <a05ccb6a-4807-ad1d-06bc-bcf79d9624b8@kernel.org>
+Date:   Wed, 23 Feb 2022 08:06:53 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1644813252-12897-3-git-send-email-quic_sibis@quicinc.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.5.0
+Subject: Re: [PATCH 2/3] dt-bindings: remoteproc: Add AVM WASP
+Content-Language: en-US
+To:     Kestrel seventyfour <kestrelseventyfour@gmail.com>
+Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20220221135351.GA7342@ubuntu>
+ <3e1ee336-1c78-7719-826c-2a093a20ee8e@kernel.org>
+ <CAE9cyGRcDSJwrKOWER9wxHSAQzLs2ZdL+uWsme0etMV+8wKcMg@mail.gmail.com>
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+In-Reply-To: <CAE9cyGRcDSJwrKOWER9wxHSAQzLs2ZdL+uWsme0etMV+8wKcMg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Sun 13 Feb 20:34 PST 2022, Sibi Sankar wrote:
-
-> Add support for proxy interconnect bandwidth votes during modem bootup on
-> SC7280 SoCs.
+On 22/02/2022 16:27, Kestrel seventyfour wrote:
+> Am Mo., 21. Feb. 2022 um 17:47 Uhr schrieb Krzysztof Kozlowski
+> <krzk@kernel.org>:
+>>
+>> On 21/02/2022 14:53, Daniel Kestrel wrote:
+>>> AVM Fritzbox router boards may contain an additional ATH79
+>>> based SoC that has the wifi cards connected.
+>>> This patch adds bindings for this remote processor.
+>>>
+>>> Signed-off-by: Daniel Kestrel <kestrelseventyfour@gmail.com>
+>>> ---
+>>>  .../bindings/remoteproc/avm,wasp-rproc.yaml   | 93 +++++++++++++++++++
+>>>  1 file changed, 93 insertions(+)
+>>>  create mode 100644 Documentation/devicetree/bindings/remoteproc/avm,wasp-rproc.yaml
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/remoteproc/avm,wasp-rproc.yaml b/Documentation/devicetree/bindings/remoteproc/avm,wasp-rproc.yaml
+>>> new file mode 100644
+>>> index 000000000000..21f3bbcc4202
+>>> --- /dev/null
+>>> +++ b/Documentation/devicetree/bindings/remoteproc/avm,wasp-rproc.yaml
+>>> @@ -0,0 +1,93 @@
+>>> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+>>> +%YAML 1.2
+>>> +---
+>>> +$id: http://devicetree.org/schemas/remoteproc/avm,wasp-rproc.yaml#
+>>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>>> +
+>>> +title: AVM WASP processor controller bindings
+>>> +
+>>> +maintainers:
+>>> +  - Daniel Kestrel <kestrelseventyfour@gmail.com>
+>>> +
+>>> +description: |
+>>> +  This document defines the bindings for the remoteproc component that loads and
+>>> +  boots firmwares on the AVM Wireless Assistent Support Processor (WASP) SoC
+>>> +  that is attached to some AVM Fritzbox devices (3390, 3490, 5490, 5491, 7490).
+>>> +
+>>> +properties:
+>>> +  compatible:
+>>> +    const: avm,wasp
+>>> +
+>>> +  ath9k-firmware:
+>>> +    $ref: /schemas/types.yaml#/definitions/string
+>>> +    description: |
+>>> +      Should contain the name of the ath9k eeprom that is to be loaded from
+>>> +      the lantiq host flash. Wifi on the WASP SoC does not work without it.
+>>> +      The file should be located on the firmware search path.
+>>
+>> Are you sure this is a property of hardware? It looks like runtime
+>> configuration parameter.
+>>
+>>> +
+>>> +  ath10k-caldata:
+>>> +    $ref: /schemas/types.yaml#/definitions/string
+>>> +    description: |
+>>> +      Should contain the name of the ath10k caldata that is to be loaded from
+>>> +      the lantiq host flash. Wifi on the WASP SoC does not work without it.
+>>> +      The file should be located on the firmware search path.
+>>
+>> Same.
+>>
+>>> +
+>>> +  wasp-netboot-firmware:
+>>> +    $ref: /schemas/types.yaml#/definitions/string
+>>> +    description: |
+>>> +      Should contain the name of the netboot firmware that is to be loaded
+>>> +      and started on the WASP SoC using mdio in order to be able to load
+>>> +      the initramfs image as a second stage.
+>>> +      The file should be located on the firmware search path.
+>>
+>> Same.
+>>
+>>> +
+>>> +  wasp-netboot-mdio:
+>>> +    $ref: /schemas/types.yaml#/definitions/phandle
+>>> +    description: Reference to the Lantiq GSWIP switch mdio.
+>>
+>> Vendor prefix.
+>>
+>>> +
+>>> +  wasp-initramfs-port:
+>>> +    $ref: /schemas/types.yaml#/definitions/phandle
+>>> +    description: Reference to the network port, where the WASP SoC is connected to.
+>>
+>> Vendor prefix.
+>>
+>>> +
+>>> +  wasp-initramfs-image:
+>>> +    $ref: /schemas/types.yaml#/definitions/string
+>>> +    description: |
+>>> +      Should contain the name of the initramfs linux image that is to be loaded
+>>> +      and started on the WASP SoC.
+>>> +      The file should be located on the firmware search path.
+>>
+>> initramfs path looks even less like a property of hardware... If you
+>> change initramfs from CPIO to initrd or GZ, hardware changes as well?
+>>
+>>> +  reset-gpio:
+>>> +    $ref: /schemas/types.yaml#/definitions/phandle-array
+>>> +    description: Reference and parameters for the reset gpio of the WASP SoC.
+>>
+>> Wrong suffix, unneeded type. Did you run dt_binding_check?
 > 
-> Signed-off-by: Sibi Sankar <quic_sibis@quicinc.com>
-> ---
->  drivers/remoteproc/qcom_q6v5_mss.c | 95 +++++++++++++++++++++++++++++++++++++-
->  1 file changed, 94 insertions(+), 1 deletion(-)
+> Hi Krzystof,
 > 
-> diff --git a/drivers/remoteproc/qcom_q6v5_mss.c b/drivers/remoteproc/qcom_q6v5_mss.c
-> index a2c231a17b2b..5a37628311c6 100644
-> --- a/drivers/remoteproc/qcom_q6v5_mss.c
-> +++ b/drivers/remoteproc/qcom_q6v5_mss.c
-> @@ -12,6 +12,7 @@
->  #include <linux/devcoredump.h>
->  #include <linux/dma-mapping.h>
->  #include <linux/interrupt.h>
-> +#include <linux/interconnect.h>
->  #include <linux/kernel.h>
->  #include <linux/mfd/syscon.h>
->  #include <linux/module.h>
-> @@ -125,6 +126,18 @@
->  #define QDSP6SS_BOOT_CMD                0x404
->  #define BOOT_FSM_TIMEOUT                10000
->  
-> +struct interconnect_info {
+> Sorry for missing the dt_binding_check.
+> I have switched to use devm_gpiod_get and it does not work if the
+> suffix is not -gpio
+> or -gpios (see of_find_gpio method).
+> Would avm,reset-gpio be ok to use here?
 
-This is a rather generic name.
+No, because the suffix must be -gpios.
+These are the legacy, often deprecated properties:
+git grep '\-gpio:' -- Documentation/devicetree/ | grep yaml
 
-> +	struct icc_path *path;
-> +	u32 average_bandwidth;
-> +	u32 peak_bandwidth;
-> +};
-> +
-> +struct qcom_mss_icc_res {
-> +	const char *name;
-> +	u32 average_bandwidth;
-> +	u32 peak_bandwidth;
-> +};
-> +
->  struct reg_info {
->  	struct regulator *reg;
->  	int uV;
-> @@ -142,6 +155,7 @@ struct rproc_hexagon_res {
->  	struct qcom_mss_reg_res *proxy_supply;
->  	struct qcom_mss_reg_res *fallback_proxy_supply;
->  	struct qcom_mss_reg_res *active_supply;
-> +	struct qcom_mss_icc_res *proxy_path;
->  	char **proxy_clk_names;
->  	char **reset_clk_names;
->  	char **active_clk_names;
-> @@ -202,6 +216,9 @@ struct q6v5 {
->  	int proxy_reg_count;
->  	int fallback_proxy_reg_count;
->  
-> +	struct interconnect_info interconnect[1];
+These are proper:
+git grep '\-gpios:' -- Documentation/devicetree/ | grep yaml
 
-If there is only one, then I think it's perfectly fine that we postpone
-the introduction of an array and the loops etc.
 
-But if you see a reason to support multiple paths, I think we should
-utilize the icc bulk API.
-
-> +	int proxy_path_count;
-> +
->  	bool dump_mba_loaded;
->  	size_t current_dump_size;
->  	size_t total_dump_size;
-> @@ -267,6 +284,29 @@ static int q6v5_regulator_init(struct device *dev, struct reg_info *regs,
->  	return i;
->  }
->  
-> +static int q6v5_interconnect_init(struct device *dev, struct interconnect_info *interconnect,
-> +				  const struct qcom_mss_icc_res *icc_res)
-> +{
-> +	struct icc_path *path;
-> +	int i;
-> +
-> +	for (i = 0; icc_res[i].name; i++) {
-> +		path = devm_of_icc_get(dev, icc_res[i].name);
-> +		if (IS_ERR(path)) {
-> +			int ret = PTR_ERR(path);
-> +
-> +			dev_err_probe(dev, ret, "Failed to get %s interconnect\n", icc_res[i].name);
-> +			return ret;
-> +		}
-> +
-> +		interconnect[i].path = path;
-> +		interconnect[i].average_bandwidth = icc_res[i].average_bandwidth;
-> +		interconnect[i].peak_bandwidth = icc_res[i].peak_bandwidth;
-> +	}
-> +
-> +	return i;
-> +}
-> +
->  static int q6v5_regulator_enable(struct q6v5 *qproc,
->  				 struct reg_info *regs, int count)
->  {
-> @@ -364,6 +404,36 @@ static void q6v5_clk_disable(struct device *dev,
->  		clk_disable_unprepare(clks[i]);
->  }
->  
-> +static int q6v5_icc_enable(struct device *dev, struct interconnect_info *interconnect, int count)
-> +{
-> +	int ret;
-> +	int i;
-> +
-> +	for (i = 0; i < count; i++) {
-> +		ret = icc_set_bw(interconnect[i].path, interconnect[i].average_bandwidth,
-> +				 interconnect[i].peak_bandwidth);
-> +		if (ret)
-> +			dev_err(dev, "Failed enabling %s interconnect\n",
-> +				icc_get_name(interconnect[i].path));
-> +		goto err;
-> +	}
-> +
-> +	return 0;
-> +err:
-> +	for (i--; i >= 0; i--)
-> +		icc_set_bw(interconnect[i].path, 0, 0);
-
-devm_of_icc_get() will return an "enabled" path, but from that point we
-can use icc_enable() and icc_disable() to toggle if our vote should be
-taking part in the aggregation.
-
-By using that we should be able to just icc_set_bw() in
-q6v5_interconnect_init(), call icc_disable() and from there on we can
-wrap our proxy vote in icc_enable() and icc_disable(). That way you
-don't need to copy average_bandwidth and peak_bandwidth into the
-interconnect_info.
-
-Regards,
-Bjorn
-
-> +
-> +	return ret;
-> +}
-> +
-> +static void q6v5_icc_disable(struct device *dev, struct interconnect_info *interconnect, int count)
-> +{
-> +	int i;
-> +
-> +	for (i = 0; i < count; i++)
-> +		icc_set_bw(interconnect[i].path, 0, 0);
-> +}
-> +
->  static int q6v5_pds_enable(struct q6v5 *qproc, struct device **pds,
->  			   size_t pd_count)
->  {
-> @@ -1011,10 +1081,14 @@ static int q6v5_mba_load(struct q6v5 *qproc)
->  	if (ret)
->  		return ret;
->  
-> +	ret = q6v5_icc_enable(qproc->dev, qproc->interconnect, qproc->proxy_path_count);
-> +	if (ret)
-> +		goto disable_irqs;
-> +
->  	ret = q6v5_pds_enable(qproc, qproc->proxy_pds, qproc->proxy_pd_count);
->  	if (ret < 0) {
->  		dev_err(qproc->dev, "failed to enable proxy power domains\n");
-> -		goto disable_irqs;
-> +		goto disable_path;
->  	}
->  
->  	ret = q6v5_regulator_enable(qproc, qproc->fallback_proxy_regs,
-> @@ -1158,6 +1232,8 @@ static int q6v5_mba_load(struct q6v5 *qproc)
->  			       qproc->fallback_proxy_reg_count);
->  disable_proxy_pds:
->  	q6v5_pds_disable(qproc, qproc->proxy_pds, qproc->proxy_pd_count);
-> +disable_path:
-> +	q6v5_icc_disable(qproc->dev, qproc->interconnect, qproc->proxy_path_count);
->  disable_irqs:
->  	qcom_q6v5_unprepare(&qproc->q6v5);
->  
-> @@ -1232,6 +1308,7 @@ static void q6v5_mba_reclaim(struct q6v5 *qproc)
->  				       qproc->fallback_proxy_reg_count);
->  		q6v5_regulator_disable(qproc, qproc->proxy_regs,
->  				       qproc->proxy_reg_count);
-> +		q6v5_icc_disable(qproc->dev, qproc->interconnect, qproc->proxy_path_count);
->  	}
->  }
->  
-> @@ -1611,6 +1688,7 @@ static void qcom_msa_handover(struct qcom_q6v5 *q6v5)
->  	q6v5_regulator_disable(qproc, qproc->fallback_proxy_regs,
->  			       qproc->fallback_proxy_reg_count);
->  	q6v5_pds_disable(qproc, qproc->proxy_pds, qproc->proxy_pd_count);
-> +	q6v5_icc_disable(qproc->dev, qproc->interconnect, qproc->proxy_path_count);
->  }
->  
->  static int q6v5_init_mem(struct q6v5 *qproc, struct platform_device *pdev)
-> @@ -1942,6 +2020,13 @@ static int q6v5_probe(struct platform_device *pdev)
->  	}
->  	qproc->active_reg_count = ret;
->  
-> +	ret = q6v5_interconnect_init(&pdev->dev, qproc->interconnect, desc->proxy_path);
-> +	if (ret < 0) {
-> +		dev_err(&pdev->dev, "Failed to get proxy interconnects.\n");
-> +		goto free_rproc;
-> +	}
-> +	qproc->proxy_path_count = ret;
-> +
->  	ret = q6v5_pds_attach(&pdev->dev, qproc->proxy_pds,
->  			      desc->proxy_pd_names);
->  	/* Fallback to regulators for old device trees */
-> @@ -2077,6 +2162,14 @@ static const struct rproc_hexagon_res sc7280_mss = {
->  		"mss",
->  		NULL
->  	},
-> +	.proxy_path = (struct qcom_mss_icc_res[]) {
-> +		{
-> +			.name = "imem",
-> +			.average_bandwidth = 0,
-> +			.peak_bandwidth = 8532000,
-> +		},
-> +		{}
-> +	},
->  	.need_mem_protection = true,
->  	.has_alt_reset = false,
->  	.has_mba_logs = true,
-> -- 
-> 2.7.4
 > 
+> Thanks.
+>>
+>> "Reference and parameters" are obvious, so they should be skipped.
+>>
+>>> +
+>>> +  startup-gpio:
+>>> +    $ref: /schemas/types.yaml#/definitions/phandle-array
+>>> +    description: Reference and parameters for the power switch gpio of the WASP SoC.
+>>
+>> Same.
+> Is avm,startup-gpio ok, like above?
+
+avm,startup-gpios
+
+
+Best regards,
+Krzysztof
