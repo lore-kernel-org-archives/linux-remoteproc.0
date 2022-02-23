@@ -2,61 +2,62 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F145CC433EF
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 23 Feb 2022 19:14:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0D5CC433F5
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 23 Feb 2022 19:14:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244181AbiBWTO2 (ORCPT
+        id S244206AbiBWTOn (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 23 Feb 2022 14:14:28 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55758 "EHLO
+        Wed, 23 Feb 2022 14:14:43 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55876 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233231AbiBWTO1 (ORCPT
+        with ESMTP id S244197AbiBWTOc (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 23 Feb 2022 14:14:27 -0500
+        Wed, 23 Feb 2022 14:14:32 -0500
 Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5601531213
-        for <linux-remoteproc@vger.kernel.org>; Wed, 23 Feb 2022 11:13:59 -0800 (PST)
-Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com [209.85.218.69])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 24C1D3F8BA
+        for <linux-remoteproc@vger.kernel.org>; Wed, 23 Feb 2022 11:14:02 -0800 (PST)
+Received: from mail-ed1-f71.google.com (mail-ed1-f71.google.com [209.85.208.71])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 3342E3FCA9
-        for <linux-remoteproc@vger.kernel.org>; Wed, 23 Feb 2022 19:13:48 +0000 (UTC)
+        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id D9C2140814
+        for <linux-remoteproc@vger.kernel.org>; Wed, 23 Feb 2022 19:14:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1645643628;
-        bh=7G3yQO1ggdyvs1MDXGTTghLlHGfX3RftlATUX++IZLE=;
-        h=From:To:Cc:Subject:Date:Message-Id:MIME-Version;
-        b=R9QPNmTgqpJQkzBnZcufPsqKiHSK6RpPxVG70CC2MXSEzrMx/RUn55X8bTWq+fUo1
-         /9tAoxuGS98iKMjxEZyxeQoGSpVPFXKZjOFI3EiHLjkDbfHUx/1+7u0W98+CPvHZt8
-         J3DivFq91XKtziYwIXQtMix8IeaWLzqaA+1dioFy1mvlHR4M07QcxuZTtK8mzDswPK
-         1o7d4EYZ3xxs/2XCSP9nvkBKBMa4b2vLXHPKlqhQx3ICwrNnE/7v4Np1l1UsaO/bz1
-         h4im8BaUKR2DENCCGIcNHmiTg+EaBOULnDsMvKZ0jmKQzabdkMK7NMnHv3R9qOCquD
-         sJepQs5NiVfwQ==
-Received: by mail-ej1-f69.google.com with SMTP id mp5-20020a1709071b0500b0069f2ba47b20so7401406ejc.19
-        for <linux-remoteproc@vger.kernel.org>; Wed, 23 Feb 2022 11:13:48 -0800 (PST)
+        s=20210705; t=1645643640;
+        bh=jDkZtIbGu7Rx+CZZvT8FrNfVIDpOYhUi3Zl4KFBr3UY=;
+        h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+         MIME-Version;
+        b=nUN+mhR+Ks3V1x3V/vRFuLQSSyKfkAMr6WxM0HpwFLOZ0Qibig3OnCKSMV4z6+hnV
+         Nen+QsDRFKKE1Us4s9pWHb9O8wrhOE/gn5+1SyP7HU/CSFLTqz1RGBYQDvlxzmosVs
+         KOHug2ND6z+P4g64Hqo/hs3puChyTrU9mxWqLdnUsfy5cYo7pdAezZGzwnX/pTS/mF
+         HUM1PZmN1XKGxRPVTesFMQ3eAnJvlJcaV4qgm2uL2SdimiRRklqAP1f/dN913oMJdB
+         4Lu+9coFOsU9EozsKvNVhofDhzyYVY6HQ9NG/6Sj3JfRN0P+b73LjwNzQKdeTTRGk1
+         gJoybgCW6UQUw==
+Received: by mail-ed1-f71.google.com with SMTP id m12-20020a056402510c00b00413298c3c42so2848808edd.15
+        for <linux-remoteproc@vger.kernel.org>; Wed, 23 Feb 2022 11:14:00 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=7G3yQO1ggdyvs1MDXGTTghLlHGfX3RftlATUX++IZLE=;
-        b=5t+aksCPKn7n7YXJQBkxJGzjkVahq5VAFGteK7jpuPwM2aDy+g/Y1kQzbFLQjZtfSq
-         9JxV/dBk+DguNr+P3lQq8Hab2NW9kTOluwmNm0mZyGCMs3BhnXx7PoHnP7w4kogf4S7U
-         bM8HCQZIXBIP1RaOQba8IDL6kof+uwWJpyONJiLGlUDIL9L2fsh8NZkTCt+3XFpPboIv
-         aLlxgkGJp8Gvlc6Tc9uHvQn37wT+YTykVFFrmKFBVJFDhqhGPFA7XsJuU4CXchxAj9t9
-         gqeFvhQUW//tXL5X5jusz5qQnGEmM1c/A/7d2EfRnZ/GhPE3DLGcCqPcSK7PD0LObj7o
-         wZ1Q==
-X-Gm-Message-State: AOAM530NPl+sEHxnPbp7hIj/yB+IdtcvguNoPqgUcsNZsLRYn4oBsXmB
-        NufWU5KMq04yY1ZMGlq+hY5IbjcTi0N7UADloK0dBonHptSh6vAKO3hUmjIDzW/KVHQAs6Fuqd5
-        AYrldx9gfURc83FV+fhgObf+UX1NWcU6OvCdVyTw9DS4xkBo=
-X-Received: by 2002:a17:907:3e1d:b0:6d1:cb2e:a5f7 with SMTP id hp29-20020a1709073e1d00b006d1cb2ea5f7mr912435ejc.34.1645643627844;
-        Wed, 23 Feb 2022 11:13:47 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJzGBRIhr5hXOOi9m1HuHlbXHVVNJ7NbK5fFuNrM/4KQXFCcM1cXqPM7bQRPgfLpUUwT4AX8Nw==
-X-Received: by 2002:a17:907:3e1d:b0:6d1:cb2e:a5f7 with SMTP id hp29-20020a1709073e1d00b006d1cb2ea5f7mr912389ejc.34.1645643627533;
-        Wed, 23 Feb 2022 11:13:47 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=jDkZtIbGu7Rx+CZZvT8FrNfVIDpOYhUi3Zl4KFBr3UY=;
+        b=DQTLNL++q7jZr1J+gxxLVJvjEYXA9M+iwRTUUh+ACZhnOYOlq+xf04l3xQlycBUZL2
+         TE10cirkxmCU8M+abBWS1ABuDKhhj9xyx6cD3YQryXiyEJHolD+AqnwtYegufdCFBS3X
+         gdhcDVUrXkvEniy0P4aYSU838P54DebxyD7hf3wfWMglHaALSWv/IWSqkSICsDX3K8tG
+         IyV4nHNLQp8wV8njJqFYSYQfUbJEnudWQ/v8g8KFy+m4I90wFpg9xUlHttFw0ocrvsu/
+         2v+sL9afpvvzD/nzb5f7BIUnYB9Y70cZtEJZfEUs8MhD+KbXJIEGcO8T/OC6QZpdzO8F
+         z9Og==
+X-Gm-Message-State: AOAM533WrvWc7O1GQ+jgv8oxQFNSuFPWs5c4AX7FJY7iR8sIrzunnjzE
+        qDeYRY8ESUnuKD9lslhrIVNFHXGMhk+EHvSjV7POnEWnmag8rypsY8iCbCjktlukyv/RSQ0kTTu
+        7Uw0uEUszPPvUwWkSpMSpN7u4k5u8nPdd8nlOmcya2cR4QDw=
+X-Received: by 2002:a17:906:16cc:b0:6ce:e607:ff02 with SMTP id t12-20020a17090616cc00b006cee607ff02mr872195ejd.418.1645643630079;
+        Wed, 23 Feb 2022 11:13:50 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJwxRdig8NaceeNOO2F1vxV5JTwYIw54VeRpY5+G4e03MaYaAg/BDtvoqP0gdGTwXBo6IyszVA==
+X-Received: by 2002:a17:906:16cc:b0:6ce:e607:ff02 with SMTP id t12-20020a17090616cc00b006cee607ff02mr872176ejd.418.1645643629849;
+        Wed, 23 Feb 2022 11:13:49 -0800 (PST)
 Received: from localhost.localdomain (xdsl-188-155-181-108.adslplus.ch. [188.155.181.108])
-        by smtp.gmail.com with ESMTPSA id q5sm212611ejc.115.2022.02.23.11.13.45
+        by smtp.gmail.com with ESMTPSA id q5sm212611ejc.115.2022.02.23.11.13.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Feb 2022 11:13:47 -0800 (PST)
+        Wed, 23 Feb 2022 11:13:48 -0800 (PST)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         "Rafael J. Wysocki" <rafael@kernel.org>,
@@ -93,79 +94,186 @@ To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Linus Torvalds <torvalds@linux-foundation.org>
 Cc:     Rasmus Villemoes <linux@rasmusvillemoes.dk>,
         Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Subject: [PATCH v2 00/11] Fix broken usage of driver_override (and kfree of static memory)
-Date:   Wed, 23 Feb 2022 20:12:59 +0100
-Message-Id: <20220223191310.347669-1-krzysztof.kozlowski@canonical.com>
+Subject: [PATCH v2 01/11] driver: platform: add and use helper for safer setting of driver_override
+Date:   Wed, 23 Feb 2022 20:13:00 +0100
+Message-Id: <20220223191310.347669-2-krzysztof.kozlowski@canonical.com>
 X-Mailer: git-send-email 2.32.0
+In-Reply-To: <20220223191310.347669-1-krzysztof.kozlowski@canonical.com>
+References: <20220223191310.347669-1-krzysztof.kozlowski@canonical.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi,
+Several core drivers and buses expect that driver_override is a
+dynamically allocated memory thus later they can kfree() it.
 
-This is a continuation of my old patchset from 2019. [1]
-Back then, few drivers set driver_override wrong. I fixed Exynos
-in a different way after discussions. QCOM NGD was not fixed
-and a new user appeared - IMX SCU.
+However such assumption is not documented, there were in the past and
+there are already users setting it to a string literal. This leads to
+kfree() of static memory during device release (e.g. in error paths or
+during unbind):
 
-It seems "char *" in driver_override looks too consty, so we
-tend to make a mistake of storing there string literals.
+    kernel BUG at ../mm/slub.c:3960!
+    Internal error: Oops - BUG: 0 [#1] PREEMPT SMP ARM
+    ...
+    (kfree) from [<c058da50>] (platform_device_release+0x88/0xb4)
+    (platform_device_release) from [<c0585be0>] (device_release+0x2c/0x90)
+    (device_release) from [<c0a69050>] (kobject_put+0xec/0x20c)
+    (kobject_put) from [<c0f2f120>] (exynos5_clk_probe+0x154/0x18c)
+    (exynos5_clk_probe) from [<c058de70>] (platform_drv_probe+0x6c/0xa4)
+    (platform_drv_probe) from [<c058b7ac>] (really_probe+0x280/0x414)
+    (really_probe) from [<c058baf4>] (driver_probe_device+0x78/0x1c4)
+    (driver_probe_device) from [<c0589854>] (bus_for_each_drv+0x74/0xb8)
+    (bus_for_each_drv) from [<c058b48c>] (__device_attach+0xd4/0x16c)
+    (__device_attach) from [<c058a638>] (bus_probe_device+0x88/0x90)
+    (bus_probe_device) from [<c05871fc>] (device_add+0x3dc/0x62c)
+    (device_add) from [<c075ff10>] (of_platform_device_create_pdata+0x94/0xbc)
+    (of_platform_device_create_pdata) from [<c07600ec>] (of_platform_bus_create+0x1a8/0x4fc)
+    (of_platform_bus_create) from [<c0760150>] (of_platform_bus_create+0x20c/0x4fc)
+    (of_platform_bus_create) from [<c07605f0>] (of_platform_populate+0x84/0x118)
+    (of_platform_populate) from [<c0f3c964>] (of_platform_default_populate_init+0xa0/0xb8)
+    (of_platform_default_populate_init) from [<c01031f8>] (do_one_initcall+0x8c/0x404)
+    (do_one_initcall) from [<c0f012c0>] (kernel_init_freeable+0x3d0/0x4d8)
+    (kernel_init_freeable) from [<c0a7def0>] (kernel_init+0x8/0x114)
+    (kernel_init) from [<c01010b4>] (ret_from_fork+0x14/0x20)
 
-Changes of latest since v1 (not the old 2019 solution):
-=======================================================
-https://lore.kernel.org/all/708eabb1-7b35-d525-d4c3-451d4a3de84f@rasmusvillemoes.dk/
-1. Add helper for setting driver_override.
-2. Use the helper.
+Provide a helper which clearly documents the usage of driver_override.
+This will allow later to reuse the helper and reduce amount of
+duplicated code.
 
-Dependencies (and stable):
-==========================
-1. All patches, including last three fixes, depend on first patch
-   introducing the helper.
-2. The last three commits - fixes - are probably not backportable
-   directly, because of this dependency. I don't know how to express
-   it here, since stable-kernel-rules.rst mentions only commits as
-   possible dependencies.
-
-[1] https://lore.kernel.org/all/1550484960-2392-3-git-send-email-krzk@kernel.org/
-
-Best regards,
-Krzysztof
-
-Krzysztof Kozlowski (11):
-  driver: platform: add and use helper for safer setting of
-    driver_override
-  amba: use helper for safer setting of driver_override
-  fsl-mc: use helper for safer setting of driver_override
-  hv: vmbus: use helper for safer setting of driver_override
-  pci: use helper for safer setting of driver_override
-  s390: cio: use helper for safer setting of driver_override
-  spi: use helper for safer setting of driver_override
-  vdpa: use helper for safer setting of driver_override
-  clk: imx: scu: fix kfree() of static memory on setting driver_override
-  slimbus: qcom-ngd: fix kfree() of static memory on setting
-    driver_override
-  rpmsg: fix kfree() of static memory on setting driver_override
-
- drivers/amba/bus.c              | 24 +++---------------
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+---
  drivers/base/driver.c           | 44 +++++++++++++++++++++++++++++++++
  drivers/base/platform.c         | 24 +++---------------
- drivers/bus/fsl-mc/fsl-mc-bus.c | 22 +++--------------
- drivers/clk/imx/clk-scu.c       |  7 +++++-
- drivers/hv/vmbus_drv.c          | 24 +++---------------
- drivers/pci/pci-sysfs.c         | 24 +++---------------
- drivers/rpmsg/rpmsg_internal.h  | 13 ++++++++--
- drivers/rpmsg/rpmsg_ns.c        | 14 +++++++++--
- drivers/s390/cio/css.c          | 24 +++---------------
- drivers/slimbus/qcom-ngd-ctrl.c | 12 ++++++++-
- drivers/spi/spi.c               | 20 +++------------
- drivers/vdpa/vdpa.c             | 25 +++----------------
  include/linux/device/driver.h   |  1 +
  include/linux/platform_device.h |  6 ++++-
- include/linux/spi/spi.h         |  2 +-
- 16 files changed, 123 insertions(+), 163 deletions(-)
+ 4 files changed, 54 insertions(+), 21 deletions(-)
 
+diff --git a/drivers/base/driver.c b/drivers/base/driver.c
+index 8c0d33e182fd..79efe51bb4c0 100644
+--- a/drivers/base/driver.c
++++ b/drivers/base/driver.c
+@@ -30,6 +30,50 @@ static struct device *next_device(struct klist_iter *i)
+ 	return dev;
+ }
+ 
++/*
++ * set_driver_override() - Helper to set or clear driver override.
++ * @dev: Device to change
++ * @override: Address of string to change (e.g. &device->driver_override);
++ *            The contents will be freed and hold newly allocated override.
++ * @s: NULL terminated string, new driver name to force a match, pass empty
++ *     string to clear it
++ *
++ * Helper to setr or clear driver override in a device, intended for the cases
++ * when the driver_override field is allocated by driver/bus code.
++ *
++ * Returns: 0 on success or a negative error code on failure.
++ */
++int driver_set_override(struct device *dev, char **override, const char *s)
++{
++	char *new, *old, *cp;
++
++	if (!dev || !override || !s)
++		return -EINVAL;
++
++	new = kstrndup(s, strlen(s), GFP_KERNEL);
++	if (!new)
++		return -ENOMEM;
++
++	cp = strchr(new, '\n');
++	if (cp)
++		*cp = '\0';
++
++	device_lock(dev);
++	old = *override;
++	if (strlen(new)) {
++		*override = new;
++	} else {
++		kfree(new);
++		*override = NULL;
++	}
++	device_unlock(dev);
++
++	kfree(old);
++
++	return 0;
++}
++EXPORT_SYMBOL_GPL(driver_set_override);
++
+ /**
+  * driver_for_each_device - Iterator for devices bound to a driver.
+  * @drv: Driver we're iterating.
+diff --git a/drivers/base/platform.c b/drivers/base/platform.c
+index 6cb04ac48bf0..d8853b32ea10 100644
+--- a/drivers/base/platform.c
++++ b/drivers/base/platform.c
+@@ -1275,31 +1275,15 @@ static ssize_t driver_override_store(struct device *dev,
+ 				     const char *buf, size_t count)
+ {
+ 	struct platform_device *pdev = to_platform_device(dev);
+-	char *driver_override, *old, *cp;
++	int ret;
+ 
+ 	/* We need to keep extra room for a newline */
+ 	if (count >= (PAGE_SIZE - 1))
+ 		return -EINVAL;
+ 
+-	driver_override = kstrndup(buf, count, GFP_KERNEL);
+-	if (!driver_override)
+-		return -ENOMEM;
+-
+-	cp = strchr(driver_override, '\n');
+-	if (cp)
+-		*cp = '\0';
+-
+-	device_lock(dev);
+-	old = pdev->driver_override;
+-	if (strlen(driver_override)) {
+-		pdev->driver_override = driver_override;
+-	} else {
+-		kfree(driver_override);
+-		pdev->driver_override = NULL;
+-	}
+-	device_unlock(dev);
+-
+-	kfree(old);
++	ret = driver_set_override(dev, &pdev->driver_override, buf);
++	if (ret)
++		return ret;
+ 
+ 	return count;
+ }
+diff --git a/include/linux/device/driver.h b/include/linux/device/driver.h
+index 15e7c5e15d62..81c0d9f65a40 100644
+--- a/include/linux/device/driver.h
++++ b/include/linux/device/driver.h
+@@ -151,6 +151,7 @@ extern int __must_check driver_create_file(struct device_driver *driver,
+ extern void driver_remove_file(struct device_driver *driver,
+ 			       const struct driver_attribute *attr);
+ 
++int driver_set_override(struct device *dev, char **override, const char *s);
+ extern int __must_check driver_for_each_device(struct device_driver *drv,
+ 					       struct device *start,
+ 					       void *data,
+diff --git a/include/linux/platform_device.h b/include/linux/platform_device.h
+index 7c96f169d274..37ac14459499 100644
+--- a/include/linux/platform_device.h
++++ b/include/linux/platform_device.h
+@@ -31,7 +31,11 @@ struct platform_device {
+ 	struct resource	*resource;
+ 
+ 	const struct platform_device_id	*id_entry;
+-	char *driver_override; /* Driver name to force a match */
++	/*
++	 * Driver name to force a match, use
++	 * driver_set_override() to set or clear it.
++	 */
++	char *driver_override;
+ 
+ 	/* MFD cell pointer */
+ 	struct mfd_cell *mfd_cell;
 -- 
 2.32.0
 
