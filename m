@@ -2,105 +2,115 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DE8AC433F5
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 24 Feb 2022 19:59:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 993C3C433EF
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 24 Feb 2022 20:54:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234120AbiBXUAM (ORCPT
+        id S234521AbiBXUzE (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 24 Feb 2022 15:00:12 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37762 "EHLO
+        Thu, 24 Feb 2022 15:55:04 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36186 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232905AbiBXUAM (ORCPT
+        with ESMTP id S234484AbiBXUy4 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 24 Feb 2022 15:00:12 -0500
-Received: from mail-oi1-x234.google.com (mail-oi1-x234.google.com [IPv6:2607:f8b0:4864:20::234])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B6BC62763FA
-        for <linux-remoteproc@vger.kernel.org>; Thu, 24 Feb 2022 11:59:41 -0800 (PST)
-Received: by mail-oi1-x234.google.com with SMTP id z7so4617882oid.4
-        for <linux-remoteproc@vger.kernel.org>; Thu, 24 Feb 2022 11:59:41 -0800 (PST)
+        Thu, 24 Feb 2022 15:54:56 -0500
+Received: from mail-oi1-x236.google.com (mail-oi1-x236.google.com [IPv6:2607:f8b0:4864:20::236])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 05F701C9470
+        for <linux-remoteproc@vger.kernel.org>; Thu, 24 Feb 2022 12:54:18 -0800 (PST)
+Received: by mail-oi1-x236.google.com with SMTP id a6so4914565oid.9
+        for <linux-remoteproc@vger.kernel.org>; Thu, 24 Feb 2022 12:54:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=HBUQkf1c18D3IhqFKKwGMruvkg+pP4vMasYemb3Ge/g=;
-        b=cPb4xYwq2xRZS+pSueX4DQu6ZCDCLqP2zEW/h7owqO6uHVQvOrk1zoIh8Q1RdX66Qh
-         UhdMCHKoc+l6RL0gUHi2lJybdQa0+l+lOLGjDnsAT5lHaP+4HBKT1rlAzaGhHG4Z2ghY
-         TxnimbdvqiPMQABvzhR7jfiurKiOHqdg6HGzGpzfzTXyjPd1x1INf91bmhVlq8uCMp3K
-         LIxxahS79FRl4FMaUlNBEsgXQgq9fRfD4RhET4p6G1xG0tPxUxsRY4bgxnOoNE7aNzuC
-         18damqu6g9V8qVAkTVXzRO8LJfvD77VHUTqgCFd2mDt0R7UtU9F6YDh4t7uDieeiWIH6
-         3pwQ==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=5yuNRPfZ4wSXNWFo4eJjPd8/1lZiboAzYQHF2bGrwvk=;
+        b=v1lToXbj6oZ1yX9wpwPl5hYdstrCcyekZCPmIEOlGppkubYZ6pJNuzpaFkf7bGP4Se
+         BOJbrNy3BWI+s2+QR/gmTqGk+eDdELRHlq4z8WMk5EaVKMpNGONSux38H5N0dzs6z/2u
+         rxdQ5G5zH9RCdv4USnV5CdtUZjD/A2AKGK3yGpzXb0bNEaugvhgupX9mV6O8pCkxc2IV
+         YOarLdNp3J0mvPG+8K3uN7xNAH+/lFMH/CZMDBJaIvaiFExN0KH2Gf9dQfCLA8i1pP3E
+         BoLb6j5UA/QQea21t7zIeIXiYLYu6S3CLhgHqm+uobeQgHBsziL+Nhhy/bkTPqhF1zfz
+         KS6w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=HBUQkf1c18D3IhqFKKwGMruvkg+pP4vMasYemb3Ge/g=;
-        b=pD2BdnLFIG0CcERolYmIdIV92t1rhIJZRb35STAeYvHx/zpDJaJ/iRT4d9QLE+HF1U
-         zw1UUKt+657uWIj9LEyGMI8NU0u5KLeyl4Ii+NkbpUN6LZVAScp/d7cENJ9nVM9oEJzH
-         APYhbPfXmiqSJ+eoa1VLahG/gzTQOPSvaU89aCZ41QJs1m9uTCjIZxZqHC/Isj1m3huF
-         LI1hikj2glioRW3cL9Ge1Ou4We8OgoQU6IVcaTIVUGKsOfZG37L4c+5BpQDmc+5DF95m
-         xggrBRN5pscY+rk3vbPV9mUngEc0iMIVr9vZRk0hwWMxflmc41XTbh4IC+RBuYrnDAXk
-         5ISg==
-X-Gm-Message-State: AOAM532Acw9IpXIZk4ygh/nk6z3huG9V2MQkR8QF5i2358Feg7hpcLXW
-        VdjXd7Cuxbi1Xk6WWcokxsLCng==
-X-Google-Smtp-Source: ABdhPJygt08vCBVo/UgfpVMiox5duayX+DsGCbmNeAge1yQH/WLLoKbK6XrUt+uABY6Q/U/7ApF/Uw==
-X-Received: by 2002:a05:6808:56b:b0:2d4:5f04:f2fa with SMTP id j11-20020a056808056b00b002d45f04f2famr8135225oig.96.1645732781147;
-        Thu, 24 Feb 2022 11:59:41 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=5yuNRPfZ4wSXNWFo4eJjPd8/1lZiboAzYQHF2bGrwvk=;
+        b=11oHW7L8EyAegmvgyl0s6eyhMwvMv+dErzZa7DA01wV2w01krn00mPidYBsBgkJ5Kc
+         e/OEr6Q3dO9GKPDpHv39UjJFUILrCq1WMgGWWwHRfliUh4urnkH6Y2B+d8zxO9wfnjVI
+         bCKifdQBZLbomLbC6IdThXbjYyKglesf5hsyVx3Cus9UZNOo2aKse5Gy9kcU0MUhW5xv
+         Z6avoivL7zif/vy25b6kIO+S53DBS7RjlkOdnhVjpb6nJygCJKb0ESUDqPS25pqTY/vO
+         fNB99O2Lbfwd5E+HIyfq5e5ATlL4eHz7ZlVXiV8U8GbfkWXKm5VWczvVOmbxL/9oZD9W
+         Z2Jg==
+X-Gm-Message-State: AOAM532q6qD2t/iEKvtuSZKURJj+r6bKkaKIoMgH8mOvE6OkSKjTST7A
+        AnfTn6xaJfYMMVeTfLUQdsrixw==
+X-Google-Smtp-Source: ABdhPJxxjHsZdlkR1kwbPa4Qzyy0vNpFU3AB0yGjO2kGTUXG4HI3QT47u3CtJHIp3y7C0I3N9YK+gQ==
+X-Received: by 2002:a05:6808:1718:b0:2d7:416e:d9d9 with SMTP id bc24-20020a056808171800b002d7416ed9d9mr1652260oib.76.1645736057319;
+        Thu, 24 Feb 2022 12:54:17 -0800 (PST)
 Received: from builder.lan ([2600:1700:a0:3dc8:3697:f6ff:fe85:aac9])
-        by smtp.gmail.com with ESMTPSA id bf39-20020a056808192700b002d51f615f1csm235794oib.34.2022.02.24.11.59.40
+        by smtp.gmail.com with ESMTPSA id c8-20020a4ad788000000b0031ce69b1640sm191259oou.10.2022.02.24.12.54.16
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Feb 2022 11:59:40 -0800 (PST)
-Date:   Thu, 24 Feb 2022 13:59:38 -0600
+        Thu, 24 Feb 2022 12:54:16 -0800 (PST)
 From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Sibi Sankar <quic_sibis@quicinc.com>
-Cc:     robh+dt@kernel.org, ohad@wizery.com, agross@kernel.org,
-        mathieu.poirier@linaro.org, linux-arm-msm@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, evgreen@chromium.org,
-        dianders@chromium.org, swboyd@chromium.org, mka@chromium.org,
-        krzysztof.kozlowski@canonical.com
-Subject: Re: [PATCH 3/3] arm64: dts: qcom: sc7280: Add proxy interconnect
- requirements for modem
-Message-ID: <YhfjqsrHhbU36OqH@builder.lan>
-References: <1644813252-12897-1-git-send-email-quic_sibis@quicinc.com>
- <1644813252-12897-4-git-send-email-quic_sibis@quicinc.com>
+To:     Luca Weiss <luca@z3ntu.xyz>, linux-arm-msm@vger.kernel.org
+Cc:     Stephan Gerhold <stephan@gerhold.net>,
+        ~postmarketos/upstreaming@lists.sr.ht,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-pm@vger.kernel.org, Robin Murphy <robin.murphy@arm.com>,
+        Mark Brown <broonie@kernel.org>,
+        Manu Gautam <mgautam@codeaurora.org>,
+        linux-usb@vger.kernel.org,
+        Bartosz Dudziak <bartosz.dudziak@snejp.pl>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        linux-kernel@vger.kernel.org, Hector Martin <marcan@marcan.st>,
+        Maxime Ripard <maxime@cerno.tech>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        devicetree@vger.kernel.org, Rob Herring <robh@kernel.org>,
+        linux-remoteproc@vger.kernel.org, phone-devel@vger.kernel.org,
+        Amit Kucheria <amitk@kernel.org>
+Subject: Re: (subset) [PATCH v2 00/10] Initial MSM8953 & Fairphone 3 support
+Date:   Thu, 24 Feb 2022 14:54:03 -0600
+Message-Id: <164573604162.1471031.13389413392112165052.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.32.0
+In-Reply-To: <20220220201909.445468-1-luca@z3ntu.xyz>
+References: <20220220201909.445468-1-luca@z3ntu.xyz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1644813252-12897-4-git-send-email-quic_sibis@quicinc.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Sun 13 Feb 22:34 CST 2022, Sibi Sankar wrote:
-
-> Add interconnects that are required to be proxy voted upon during modem
-> bootup on SC7280 SoCs.
+On Sun, 20 Feb 2022 21:18:53 +0100, Luca Weiss wrote:
+> This series adds initial support for MSM8953 (and SDM632 which is based
+> on MSM8953) and the Fairphone 3 smartphone.
 > 
-
-Looked at this again, and it makes me wonder why do we need to vote on
-the path LLCC -> EBI1 and why do we call that path "imem"?
-
-Regards,
-Bjorn
-
-> Signed-off-by: Sibi Sankar <quic_sibis@quicinc.com>
-> ---
->  arch/arm64/boot/dts/qcom/sc7280-chrome-common.dtsi | 2 ++
->  1 file changed, 2 insertions(+)
+> Only relatively basic functionality is supported like storage, volume
+> keys and USB.
 > 
-> diff --git a/arch/arm64/boot/dts/qcom/sc7280-chrome-common.dtsi b/arch/arm64/boot/dts/qcom/sc7280-chrome-common.dtsi
-> index 9f4a9c263c35..1969f4cf59fe 100644
-> --- a/arch/arm64/boot/dts/qcom/sc7280-chrome-common.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/sc7280-chrome-common.dtsi
-> @@ -89,6 +89,8 @@
->  	compatible = "qcom,sc7280-mss-pil";
->  	iommus = <&apps_smmu 0x124 0x0>, <&apps_smmu 0x488 0x7>;
->  	memory-region = <&mba_mem>, <&mpss_mem>;
-> +	interconnects = <&mc_virt MASTER_LLCC 0 &mc_virt SLAVE_EBI1 0>;
-> +	interconnect-names = "imem";
->  };
->  
->  /* Increase the size from 2.5MB to 8MB */
-> -- 
-> 2.7.4
+> There is currently close-to-mainline support for other components for
+> this SoC including GPU, WiFi and audio, this series adds only basic
+> support so that the other components can start getting upstreamed
+> easier.
 > 
+> [...]
+
+Applied, thanks!
+
+[04/10] dt-bindings: arm: cpus: Add Kryo 250 CPUs
+        commit: 08b25f7d99e15f2aa5f4cce3f13ad0c67a4c1e34
+[06/10] arm64: dts: qcom: Add MSM8953 device tree
+        commit: 9fb08c8019234a0759aab66914f01bc0971e4eed
+[07/10] arm64: dts: qcom: Add PM8953 PMIC
+        commit: 06ea71e42975cdd43cc1e2dacd3e56c8693ac733
+[08/10] arm64: dts: qcom: Add SDM632 device tree
+        commit: 24af02271ca7cf095186963002d1d98349d9e5e5
+[09/10] dt-bindings: arm: qcom: Document sdm632 and fairphone,fp3 board
+        commit: cb898d5e59b41a268dcf4dbef31d651c393dfbae
+[10/10] arm64: dts: qcom: sdm632: Add device tree for Fairphone 3
+        commit: 308b26cddb04afc7776de1cbbe07172eeccc7c98
+
+Best regards,
+-- 
+Bjorn Andersson <bjorn.andersson@linaro.org>
