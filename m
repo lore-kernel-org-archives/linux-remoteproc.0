@@ -2,174 +2,105 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A4DBC433F5
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 24 Feb 2022 16:09:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DE8AC433F5
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 24 Feb 2022 19:59:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229581AbiBXQJ4 (ORCPT
+        id S234120AbiBXUAM (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 24 Feb 2022 11:09:56 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48762 "EHLO
+        Thu, 24 Feb 2022 15:00:12 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37762 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229689AbiBXQJz (ORCPT
+        with ESMTP id S232905AbiBXUAM (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 24 Feb 2022 11:09:55 -0500
-Received: from mail-oi1-f174.google.com (mail-oi1-f174.google.com [209.85.167.174])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 38730198D34;
-        Thu, 24 Feb 2022 08:09:15 -0800 (PST)
-Received: by mail-oi1-f174.google.com with SMTP id s5so3073345oic.10;
-        Thu, 24 Feb 2022 08:09:15 -0800 (PST)
+        Thu, 24 Feb 2022 15:00:12 -0500
+Received: from mail-oi1-x234.google.com (mail-oi1-x234.google.com [IPv6:2607:f8b0:4864:20::234])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B6BC62763FA
+        for <linux-remoteproc@vger.kernel.org>; Thu, 24 Feb 2022 11:59:41 -0800 (PST)
+Received: by mail-oi1-x234.google.com with SMTP id z7so4617882oid.4
+        for <linux-remoteproc@vger.kernel.org>; Thu, 24 Feb 2022 11:59:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=HBUQkf1c18D3IhqFKKwGMruvkg+pP4vMasYemb3Ge/g=;
+        b=cPb4xYwq2xRZS+pSueX4DQu6ZCDCLqP2zEW/h7owqO6uHVQvOrk1zoIh8Q1RdX66Qh
+         UhdMCHKoc+l6RL0gUHi2lJybdQa0+l+lOLGjDnsAT5lHaP+4HBKT1rlAzaGhHG4Z2ghY
+         TxnimbdvqiPMQABvzhR7jfiurKiOHqdg6HGzGpzfzTXyjPd1x1INf91bmhVlq8uCMp3K
+         LIxxahS79FRl4FMaUlNBEsgXQgq9fRfD4RhET4p6G1xG0tPxUxsRY4bgxnOoNE7aNzuC
+         18damqu6g9V8qVAkTVXzRO8LJfvD77VHUTqgCFd2mDt0R7UtU9F6YDh4t7uDieeiWIH6
+         3pwQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=uvLEO9/kZEQfHdrhfnopif7Jzot/9NUySUoyWbKmb+U=;
-        b=35LzIHZ6+KxkL1a6O6GyXneSqw5byotkvKG9Y7eqeQvb8KjvipzRDMSJCHupoHXQAL
-         D6EOOMxSWkASdV99qtS6kMupxIRcOeaw8pasYJMZz0sS+UqaqeUMIkQZMhIjqOJY7CTI
-         2KCnXnV4Y441qSvTQby1KIcdc7V84Y/pKANrljEmcKAxdKBf4ZeBQaBnH+K2yIW57Arh
-         rR6ToW0uHiF2qQzkny+ReTY+3AJ4yG56OCQLdP588LwG/GJlHi5dRjWXSK3+1tLckCwV
-         K+V/sSO2zCbaCPpEUSpYIkW8gi1DKc+4yJ1EQswN4VZVdP/QSU08dQsJjbuK+pOFlRBO
-         gajQ==
-X-Gm-Message-State: AOAM5314oXBokKlsHvDCx+rF5pPMeNqA8P0payjRt2njrpOlqN4c+bNW
-        lmuv8pHfh7k2e0nlP6THKvRflu22Iw==
-X-Google-Smtp-Source: ABdhPJwKFU27nQR8bl6CoParBjRWn3zniqHxXTGjB8UYFOCaCKNf3LRScbmUWpAqGdYpKOQqSLaEfQ==
-X-Received: by 2002:a05:6870:311a:b0:ce:c0c9:5ff with SMTP id v26-20020a056870311a00b000cec0c905ffmr6120512oaa.81.1645718876006;
-        Thu, 24 Feb 2022 08:07:56 -0800 (PST)
-Received: from robh.at.kernel.org (66-90-148-213.dyn.grandenetworks.net. [66.90.148.213])
-        by smtp.gmail.com with ESMTPSA id d18sm1699134oiw.18.2022.02.24.08.07.54
+        bh=HBUQkf1c18D3IhqFKKwGMruvkg+pP4vMasYemb3Ge/g=;
+        b=pD2BdnLFIG0CcERolYmIdIV92t1rhIJZRb35STAeYvHx/zpDJaJ/iRT4d9QLE+HF1U
+         zw1UUKt+657uWIj9LEyGMI8NU0u5KLeyl4Ii+NkbpUN6LZVAScp/d7cENJ9nVM9oEJzH
+         APYhbPfXmiqSJ+eoa1VLahG/gzTQOPSvaU89aCZ41QJs1m9uTCjIZxZqHC/Isj1m3huF
+         LI1hikj2glioRW3cL9Ge1Ou4We8OgoQU6IVcaTIVUGKsOfZG37L4c+5BpQDmc+5DF95m
+         xggrBRN5pscY+rk3vbPV9mUngEc0iMIVr9vZRk0hwWMxflmc41XTbh4IC+RBuYrnDAXk
+         5ISg==
+X-Gm-Message-State: AOAM532Acw9IpXIZk4ygh/nk6z3huG9V2MQkR8QF5i2358Feg7hpcLXW
+        VdjXd7Cuxbi1Xk6WWcokxsLCng==
+X-Google-Smtp-Source: ABdhPJygt08vCBVo/UgfpVMiox5duayX+DsGCbmNeAge1yQH/WLLoKbK6XrUt+uABY6Q/U/7ApF/Uw==
+X-Received: by 2002:a05:6808:56b:b0:2d4:5f04:f2fa with SMTP id j11-20020a056808056b00b002d45f04f2famr8135225oig.96.1645732781147;
+        Thu, 24 Feb 2022 11:59:41 -0800 (PST)
+Received: from builder.lan ([2600:1700:a0:3dc8:3697:f6ff:fe85:aac9])
+        by smtp.gmail.com with ESMTPSA id bf39-20020a056808192700b002d51f615f1csm235794oib.34.2022.02.24.11.59.40
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Feb 2022 08:07:55 -0800 (PST)
-Received: (nullmailer pid 3163849 invoked by uid 1000);
-        Thu, 24 Feb 2022 16:07:54 -0000
-Date:   Thu, 24 Feb 2022 10:07:54 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     Daniel Kestrel <kestrelseventyfour@gmail.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Thu, 24 Feb 2022 11:59:40 -0800 (PST)
+Date:   Thu, 24 Feb 2022 13:59:38 -0600
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Sibi Sankar <quic_sibis@quicinc.com>
+Cc:     robh+dt@kernel.org, ohad@wizery.com, agross@kernel.org,
+        mathieu.poirier@linaro.org, linux-arm-msm@vger.kernel.org,
         linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/3] dt-bindings: remoteproc: Add AVM WASP
-Message-ID: <YhetWlZ4m2vfB40e@robh.at.kernel.org>
-References: <20220221135351.GA7342@ubuntu>
- <3e1ee336-1c78-7719-826c-2a093a20ee8e@kernel.org>
+        linux-kernel@vger.kernel.org, evgreen@chromium.org,
+        dianders@chromium.org, swboyd@chromium.org, mka@chromium.org,
+        krzysztof.kozlowski@canonical.com
+Subject: Re: [PATCH 3/3] arm64: dts: qcom: sc7280: Add proxy interconnect
+ requirements for modem
+Message-ID: <YhfjqsrHhbU36OqH@builder.lan>
+References: <1644813252-12897-1-git-send-email-quic_sibis@quicinc.com>
+ <1644813252-12897-4-git-send-email-quic_sibis@quicinc.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <3e1ee336-1c78-7719-826c-2a093a20ee8e@kernel.org>
+In-Reply-To: <1644813252-12897-4-git-send-email-quic_sibis@quicinc.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Mon, Feb 21, 2022 at 05:47:34PM +0100, Krzysztof Kozlowski wrote:
-> On 21/02/2022 14:53, Daniel Kestrel wrote:
-> > AVM Fritzbox router boards may contain an additional ATH79
-> > based SoC that has the wifi cards connected.
-> > This patch adds bindings for this remote processor.
-> > 
-> > Signed-off-by: Daniel Kestrel <kestrelseventyfour@gmail.com>
-> > ---
-> >  .../bindings/remoteproc/avm,wasp-rproc.yaml   | 93 +++++++++++++++++++
-> >  1 file changed, 93 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/remoteproc/avm,wasp-rproc.yaml
-> > 
-> > diff --git a/Documentation/devicetree/bindings/remoteproc/avm,wasp-rproc.yaml b/Documentation/devicetree/bindings/remoteproc/avm,wasp-rproc.yaml
-> > new file mode 100644
-> > index 000000000000..21f3bbcc4202
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/remoteproc/avm,wasp-rproc.yaml
-> > @@ -0,0 +1,93 @@
-> > +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/remoteproc/avm,wasp-rproc.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: AVM WASP processor controller bindings
-> > +
-> > +maintainers:
-> > +  - Daniel Kestrel <kestrelseventyfour@gmail.com>
-> > +
-> > +description: |
-> > +  This document defines the bindings for the remoteproc component that loads and
-> > +  boots firmwares on the AVM Wireless Assistent Support Processor (WASP) SoC
-> > +  that is attached to some AVM Fritzbox devices (3390, 3490, 5490, 5491, 7490).
-> > +
-> > +properties:
-> > +  compatible:
-> > +    const: avm,wasp
-> > +
-> > +  ath9k-firmware:
-> > +    $ref: /schemas/types.yaml#/definitions/string
-> > +    description: |
-> > +      Should contain the name of the ath9k eeprom that is to be loaded from
-> > +      the lantiq host flash. Wifi on the WASP SoC does not work without it.
-> > +      The file should be located on the firmware search path.
-> 
-> Are you sure this is a property of hardware? It looks like runtime
-> configuration parameter.
+On Sun 13 Feb 22:34 CST 2022, Sibi Sankar wrote:
 
-The standardish name for this is 'firmware-name'.
+> Add interconnects that are required to be proxy voted upon during modem
+> bootup on SC7280 SoCs.
+> 
 
-'name of the ath9k eeprom' is an odd description given there is no 
-eeprom in this case. Where it is loaded from exactly is outside the 
-scope of this binding.
+Looked at this again, and it makes me wonder why do we need to vote on
+the path LLCC -> EBI1 and why do we call that path "imem"?
 
-> 
-> > +
-> > +  ath10k-caldata:
-> > +    $ref: /schemas/types.yaml#/definitions/string
-> > +    description: |
-> > +      Should contain the name of the ath10k caldata that is to be loaded from
-> > +      the lantiq host flash. Wifi on the WASP SoC does not work without it.
-> > +      The file should be located on the firmware search path.
-> 
-> Same.
+Regards,
+Bjorn
 
-Ideally, 'firmware-name' would cover both cases and just provide a base 
-name that the driver transforms into file names.
-
+> Signed-off-by: Sibi Sankar <quic_sibis@quicinc.com>
+> ---
+>  arch/arm64/boot/dts/qcom/sc7280-chrome-common.dtsi | 2 ++
+>  1 file changed, 2 insertions(+)
 > 
-> > +
-> > +  wasp-netboot-firmware:
-> > +    $ref: /schemas/types.yaml#/definitions/string
-> > +    description: |
-> > +      Should contain the name of the netboot firmware that is to be loaded
-> > +      and started on the WASP SoC using mdio in order to be able to load
-> > +      the initramfs image as a second stage.
-
-initramfs is a Linux detail and should not be in binding.
-
-> > +      The file should be located on the firmware search path.
+> diff --git a/arch/arm64/boot/dts/qcom/sc7280-chrome-common.dtsi b/arch/arm64/boot/dts/qcom/sc7280-chrome-common.dtsi
+> index 9f4a9c263c35..1969f4cf59fe 100644
+> --- a/arch/arm64/boot/dts/qcom/sc7280-chrome-common.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/sc7280-chrome-common.dtsi
+> @@ -89,6 +89,8 @@
+>  	compatible = "qcom,sc7280-mss-pil";
+>  	iommus = <&apps_smmu 0x124 0x0>, <&apps_smmu 0x488 0x7>;
+>  	memory-region = <&mba_mem>, <&mpss_mem>;
+> +	interconnects = <&mc_virt MASTER_LLCC 0 &mc_virt SLAVE_EBI1 0>;
+> +	interconnect-names = "imem";
+>  };
+>  
+>  /* Increase the size from 2.5MB to 8MB */
+> -- 
+> 2.7.4
 > 
-> Same.
-> 
-> > +
-> > +  wasp-netboot-mdio:
-> > +    $ref: /schemas/types.yaml#/definitions/phandle
-> > +    description: Reference to the Lantiq GSWIP switch mdio.
-> 
-> Vendor prefix.
-> 
-> > +
-> > +  wasp-initramfs-port:
-> > +    $ref: /schemas/types.yaml#/definitions/phandle
-> > +    description: Reference to the network port, where the WASP SoC is connected to.
-> 
-> Vendor prefix.
-> 
-> > +
-> > +  wasp-initramfs-image:
-> > +    $ref: /schemas/types.yaml#/definitions/string
-> > +    description: |
-> > +      Should contain the name of the initramfs linux image that is to be loaded
-> > +      and started on the WASP SoC.
-> > +      The file should be located on the firmware search path.
-> 
-> initramfs path looks even less like a property of hardware... If you
-> change initramfs from CPIO to initrd or GZ, hardware changes as well?
-
-And simply not how standard initramfs loading works. Boot menu files are 
-how one gives the bootloader a location of initramfs file and chosen is 
-how the kernel gets the memory location it was loaded to.
-
-Rob
