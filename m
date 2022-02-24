@@ -2,269 +2,174 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6C6AC433F5
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 24 Feb 2022 14:08:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A4DBC433F5
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 24 Feb 2022 16:09:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235330AbiBXOJU (ORCPT
+        id S229581AbiBXQJ4 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 24 Feb 2022 09:09:20 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59772 "EHLO
+        Thu, 24 Feb 2022 11:09:56 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48762 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232103AbiBXOJT (ORCPT
+        with ESMTP id S229689AbiBXQJz (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 24 Feb 2022 09:09:19 -0500
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 145BE247771;
-        Thu, 24 Feb 2022 06:08:47 -0800 (PST)
-Received: from pps.filterd (m0288072.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.1.2/8.16.1.2) with ESMTP id 21OC4AkA029958;
-        Thu, 24 Feb 2022 15:08:29 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=message-id : date :
- mime-version : subject : from : to : cc : references : in-reply-to :
- content-type : content-transfer-encoding; s=selector1;
- bh=OZyEljsP9pa68/pPXqNDTjzClhBC6YqXLqS4/jt+DlY=;
- b=QVOE3nmH7IfGHnfLIk1uU7JMsu2HiYBdUthmICcfdnDXbAXCK3b/kF12S4KJ5DBX41pO
- +j/2oPi7WsQRQ3tDcpFPjdS/haPjTHLeegEZTrz1LBiHprHUNbp2mAP32n/SWxJm/AQ3
- voGbC77v5Z9pEuc49IsWtBs6vLQ6nXH2XkCbqZD9CoQ6vZcwjdBYXPjICjohlmjqFF8z
- iuyskU87JcD4CPKYJKG3XDUHg86EX6G3LJzPqJgK3+4udVmfYfq2yczn+tMhNpXoh7pu
- lbXZPSLBJS9vNMhoyS0ZC5YjlGw+yBaPJa0qyavmciNR92lEAJDwLhxPoFKB+NllG3cn iw== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3ee5pajk28-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 24 Feb 2022 15:08:29 +0100
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 88FA110002A;
-        Thu, 24 Feb 2022 15:08:28 +0100 (CET)
-Received: from Webmail-eu.st.com (sfhdag2node2.st.com [10.75.127.5])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 7581122ECDC;
-        Thu, 24 Feb 2022 15:08:28 +0100 (CET)
-Received: from [10.211.2.44] (10.75.127.46) by SFHDAG2NODE2.st.com
- (10.75.127.5) with Microsoft SMTP Server (TLS) id 15.0.1497.26; Thu, 24 Feb
- 2022 15:08:27 +0100
-Message-ID: <da6bee63-6a79-2341-e099-d26b53fb557f@foss.st.com>
-Date:   Thu, 24 Feb 2022 15:08:27 +0100
+        Thu, 24 Feb 2022 11:09:55 -0500
+Received: from mail-oi1-f174.google.com (mail-oi1-f174.google.com [209.85.167.174])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 38730198D34;
+        Thu, 24 Feb 2022 08:09:15 -0800 (PST)
+Received: by mail-oi1-f174.google.com with SMTP id s5so3073345oic.10;
+        Thu, 24 Feb 2022 08:09:15 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=uvLEO9/kZEQfHdrhfnopif7Jzot/9NUySUoyWbKmb+U=;
+        b=35LzIHZ6+KxkL1a6O6GyXneSqw5byotkvKG9Y7eqeQvb8KjvipzRDMSJCHupoHXQAL
+         D6EOOMxSWkASdV99qtS6kMupxIRcOeaw8pasYJMZz0sS+UqaqeUMIkQZMhIjqOJY7CTI
+         2KCnXnV4Y441qSvTQby1KIcdc7V84Y/pKANrljEmcKAxdKBf4ZeBQaBnH+K2yIW57Arh
+         rR6ToW0uHiF2qQzkny+ReTY+3AJ4yG56OCQLdP588LwG/GJlHi5dRjWXSK3+1tLckCwV
+         K+V/sSO2zCbaCPpEUSpYIkW8gi1DKc+4yJ1EQswN4VZVdP/QSU08dQsJjbuK+pOFlRBO
+         gajQ==
+X-Gm-Message-State: AOAM5314oXBokKlsHvDCx+rF5pPMeNqA8P0payjRt2njrpOlqN4c+bNW
+        lmuv8pHfh7k2e0nlP6THKvRflu22Iw==
+X-Google-Smtp-Source: ABdhPJwKFU27nQR8bl6CoParBjRWn3zniqHxXTGjB8UYFOCaCKNf3LRScbmUWpAqGdYpKOQqSLaEfQ==
+X-Received: by 2002:a05:6870:311a:b0:ce:c0c9:5ff with SMTP id v26-20020a056870311a00b000cec0c905ffmr6120512oaa.81.1645718876006;
+        Thu, 24 Feb 2022 08:07:56 -0800 (PST)
+Received: from robh.at.kernel.org (66-90-148-213.dyn.grandenetworks.net. [66.90.148.213])
+        by smtp.gmail.com with ESMTPSA id d18sm1699134oiw.18.2022.02.24.08.07.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 24 Feb 2022 08:07:55 -0800 (PST)
+Received: (nullmailer pid 3163849 invoked by uid 1000);
+        Thu, 24 Feb 2022 16:07:54 -0000
+Date:   Thu, 24 Feb 2022 10:07:54 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     Daniel Kestrel <kestrelseventyfour@gmail.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/3] dt-bindings: remoteproc: Add AVM WASP
+Message-ID: <YhetWlZ4m2vfB40e@robh.at.kernel.org>
+References: <20220221135351.GA7342@ubuntu>
+ <3e1ee336-1c78-7719-826c-2a093a20ee8e@kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.0
-Subject: Re: [PATCH V2] remoteproc: support self recovery after rproc crash
-Content-Language: en-US
-From:   Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
-To:     "Peng Fan (OSS)" <peng.fan@oss.nxp.com>,
-        <bjorn.andersson@linaro.org>, <mathieu.poirier@linaro.org>,
-        <linux-remoteproc@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-CC:     Peng Fan <peng.fan@nxp.com>
-References: <20220126085120.3397450-1-peng.fan@oss.nxp.com>
- <67ddf940-6f87-d8cc-8dc6-29a39a022265@foss.st.com>
-In-Reply-To: <67ddf940-6f87-d8cc-8dc6-29a39a022265@foss.st.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.75.127.46]
-X-ClientProxiedBy: SFHDAG2NODE2.st.com (10.75.127.5) To SFHDAG2NODE2.st.com
- (10.75.127.5)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.816,Hydra:6.0.425,FMLib:17.11.64.514
- definitions=2022-02-24_02,2022-02-24_01,2022-02-23_01
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3e1ee336-1c78-7719-826c-2a093a20ee8e@kernel.org>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi Peng,
+On Mon, Feb 21, 2022 at 05:47:34PM +0100, Krzysztof Kozlowski wrote:
+> On 21/02/2022 14:53, Daniel Kestrel wrote:
+> > AVM Fritzbox router boards may contain an additional ATH79
+> > based SoC that has the wifi cards connected.
+> > This patch adds bindings for this remote processor.
+> > 
+> > Signed-off-by: Daniel Kestrel <kestrelseventyfour@gmail.com>
+> > ---
+> >  .../bindings/remoteproc/avm,wasp-rproc.yaml   | 93 +++++++++++++++++++
+> >  1 file changed, 93 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/remoteproc/avm,wasp-rproc.yaml
+> > 
+> > diff --git a/Documentation/devicetree/bindings/remoteproc/avm,wasp-rproc.yaml b/Documentation/devicetree/bindings/remoteproc/avm,wasp-rproc.yaml
+> > new file mode 100644
+> > index 000000000000..21f3bbcc4202
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/remoteproc/avm,wasp-rproc.yaml
+> > @@ -0,0 +1,93 @@
+> > +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/remoteproc/avm,wasp-rproc.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: AVM WASP processor controller bindings
+> > +
+> > +maintainers:
+> > +  - Daniel Kestrel <kestrelseventyfour@gmail.com>
+> > +
+> > +description: |
+> > +  This document defines the bindings for the remoteproc component that loads and
+> > +  boots firmwares on the AVM Wireless Assistent Support Processor (WASP) SoC
+> > +  that is attached to some AVM Fritzbox devices (3390, 3490, 5490, 5491, 7490).
+> > +
+> > +properties:
+> > +  compatible:
+> > +    const: avm,wasp
+> > +
+> > +  ath9k-firmware:
+> > +    $ref: /schemas/types.yaml#/definitions/string
+> > +    description: |
+> > +      Should contain the name of the ath9k eeprom that is to be loaded from
+> > +      the lantiq host flash. Wifi on the WASP SoC does not work without it.
+> > +      The file should be located on the firmware search path.
+> 
+> Are you sure this is a property of hardware? It looks like runtime
+> configuration parameter.
 
-On 2/14/22 19:41, Arnaud POULIQUEN wrote:
-> Hi Peng,
-> 
-> On 1/26/22 09:51, Peng Fan (OSS) wrote:
->> From: Peng Fan <peng.fan@nxp.com>
->>
->> Current logic only support main processor to stop/start the remote
->> processor after rproc crash. However to SoC, such as i.MX8QM/QXP, the
->> remote processor could do self recovery after crash and trigger watchdog
->> reboot. It does not need main processor to load image, stop/start M4
->> core.
-> 
-> 
-> On stm32mp1 platform the remote processor watchdog generates an early interrupt
-> that could be used to detach and reattach before the reset of the remote processor.
-> I need to test race condition,but I suppose that this should works if the resource
-> table is not reinitialized by the remote processor firmware.
-> 
-> Another option for the stm32mp1 is that remoteproc manages the reset of the 
-> remote processor.
-> For instance this allows to save a core-dump before manually resetting the remote
-> processor.
-> But looks like this use case can be handled later, as mentioned below. 
-> 
->>
->> This patch add a new flag to indicate whether the SoC has self recovery
->> capability. And introduce two functions: rproc_self_recovery,
->> rproc_assisted_recovery for the two cases. Assisted recovery is as
->> before, let main processor to help recovery, while self recovery is
->> recover itself withou help. To self recovery, we only do detach and
->> attach.
-> 
-> 
->>
->> Signed-off-by: Peng Fan <peng.fan@nxp.com>
->> ---
->>
->> V2:
->>  Nothing change in V2.
->>  Only move this patch out from
->>  https://patchwork.kernel.org/project/linux-remoteproc/list/?series=604364
->>
->>  drivers/remoteproc/remoteproc_core.c | 66 ++++++++++++++++++++--------
->>  include/linux/remoteproc.h           |  2 +
->>  2 files changed, 49 insertions(+), 19 deletions(-)
->>
->> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
->> index 69f51acf235e..4bd5544dab8f 100644
->> --- a/drivers/remoteproc/remoteproc_core.c
->> +++ b/drivers/remoteproc/remoteproc_core.c
->> @@ -1887,6 +1887,49 @@ static int __rproc_detach(struct rproc *rproc)
->>  	return 0;
->>  }
->>  
->> +static int rproc_self_recovery(struct rproc *rproc)
->> +{
->> +	int ret;
->> +
->> +	mutex_unlock(&rproc->lock);
->> +	ret = rproc_detach(rproc);
->> +	mutex_lock(&rproc->lock);
->> +	if (ret)
->> +		return ret;
-> 
-> Here we would want to perform a core dump and manually reset the
-> co-processor.
-> I suppose that a new rproc ops could be called here in a next step.
-> 
->> +
->> +	if (atomic_inc_return(&rproc->power) > 1)
->> +		return 0;
-> 
-> Do you identify a use case that needs to test rproc->power to
-> skip the attach?
-> If yes could you add a comment to describe it?
-> 
->> +	return rproc_attach(rproc);
->> +}
->> +
->> +static int rproc_assisted_recovery(struct rproc *rproc)
->> +{
->> +	const struct firmware *firmware_p;
->> +	struct device *dev = &rproc->dev;
->> +	int ret;
->> +
->> +	ret = rproc_stop(rproc, true);
->> +	if (ret)
->> +		return ret;
->> +
->> +	/* generate coredump */
->> +	rproc->ops->coredump(rproc);
->> +
->> +	/* load firmware */
->> +	ret = request_firmware(&firmware_p, rproc->firmware, dev);
->> +	if (ret < 0) {
->> +		dev_err(dev, "request_firmware failed: %d\n", ret);
->> +		return ret;
->> +	}
->> +
->> +	/* boot the remote processor up again */
->> +	ret = rproc_start(rproc, firmware_p);
->> +
->> +	release_firmware(firmware_p);
->> +
->> +	return ret;
->> +}
->> +
->>  /**
->>   * rproc_trigger_recovery() - recover a remoteproc
->>   * @rproc: the remote processor
->> @@ -1901,7 +1944,6 @@ static int __rproc_detach(struct rproc *rproc)
->>   */
->>  int rproc_trigger_recovery(struct rproc *rproc)
->>  {
->> -	const struct firmware *firmware_p;
->>  	struct device *dev = &rproc->dev;
->>  	int ret;
->>  
->> @@ -1915,24 +1957,10 @@ int rproc_trigger_recovery(struct rproc *rproc)
->>  
->>  	dev_err(dev, "recovering %s\n", rproc->name);
->>  
->> -	ret = rproc_stop(rproc, true);
->> -	if (ret)
->> -		goto unlock_mutex;
->> -
->> -	/* generate coredump */
->> -	rproc->ops->coredump(rproc);
->> -
->> -	/* load firmware */
->> -	ret = request_firmware(&firmware_p, rproc->firmware, dev);
->> -	if (ret < 0) {
->> -		dev_err(dev, "request_firmware failed: %d\n", ret);
->> -		goto unlock_mutex;
->> -	}
->> -
->> -	/* boot the remote processor up again */
->> -	ret = rproc_start(rproc, firmware_p);
->> -
->> -	release_firmware(firmware_p);
->> +	if (rproc->self_recovery)
->> +		ret = rproc_self_recovery(rproc);
-> 
-> If some platforms have to manually reset the remote processor (without
-> reloading the firmware) the name could not be relevant...
-> 
-> Following comments are only suggestions that needs to be commented by maintainers
-> 
-> What about rproc_attach_recovery ?
-> 
->> +	else
->> +		ret = rproc_assisted_recovery(rproc);
-> 
-> and rproc_firmware_recovery ?
-> 
-> 
->>  
->>  unlock_mutex:
->>  	mutex_unlock(&rproc->lock);
->> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
->> index e0600e1e5c17..b32ef46f8aa4 100644
->> --- a/include/linux/remoteproc.h
->> +++ b/include/linux/remoteproc.h
->> @@ -529,6 +529,7 @@ struct rproc_dump_segment {
->>   * @elf_machine: firmware ELF machine
->>   * @cdev: character device of the rproc
->>   * @cdev_put_on_release: flag to indicate if remoteproc should be shutdown on @char_dev release
->> + * @self_recovery: flag to indicate if remoteproc support self recovery
->>   */
->>  struct rproc {
->>  	struct list_head node;
->> @@ -568,6 +569,7 @@ struct rproc {
->>  	u16 elf_machine;
->>  	struct cdev cdev;
->>  	bool cdev_put_on_release;
->> +	bool self_recovery;
-> 
-> This bool seems needed because we have lost the previous state before crash. 
-> I wonder if a new rproc->state such as RPROC_REBOOT could avoid this boolean.
-> 
-> 
-> I will try to test you patch on stm32mp1 next week
+The standardish name for this is 'firmware-name'.
 
-I performed few tests on the stm32mp1 with your patch.
-Thanks to the resetting of the resource tables on detachment, this works quite well.
-
-Regards,
-Arnaud
+'name of the ath9k eeprom' is an odd description given there is no 
+eeprom in this case. Where it is loaded from exactly is outside the 
+scope of this binding.
 
 > 
-> Regards,
-> Arnaud
+> > +
+> > +  ath10k-caldata:
+> > +    $ref: /schemas/types.yaml#/definitions/string
+> > +    description: |
+> > +      Should contain the name of the ath10k caldata that is to be loaded from
+> > +      the lantiq host flash. Wifi on the WASP SoC does not work without it.
+> > +      The file should be located on the firmware search path.
 > 
->>  };
->>  
->>  /**
+> Same.
+
+Ideally, 'firmware-name' would cover both cases and just provide a base 
+name that the driver transforms into file names.
+
+> 
+> > +
+> > +  wasp-netboot-firmware:
+> > +    $ref: /schemas/types.yaml#/definitions/string
+> > +    description: |
+> > +      Should contain the name of the netboot firmware that is to be loaded
+> > +      and started on the WASP SoC using mdio in order to be able to load
+> > +      the initramfs image as a second stage.
+
+initramfs is a Linux detail and should not be in binding.
+
+> > +      The file should be located on the firmware search path.
+> 
+> Same.
+> 
+> > +
+> > +  wasp-netboot-mdio:
+> > +    $ref: /schemas/types.yaml#/definitions/phandle
+> > +    description: Reference to the Lantiq GSWIP switch mdio.
+> 
+> Vendor prefix.
+> 
+> > +
+> > +  wasp-initramfs-port:
+> > +    $ref: /schemas/types.yaml#/definitions/phandle
+> > +    description: Reference to the network port, where the WASP SoC is connected to.
+> 
+> Vendor prefix.
+> 
+> > +
+> > +  wasp-initramfs-image:
+> > +    $ref: /schemas/types.yaml#/definitions/string
+> > +    description: |
+> > +      Should contain the name of the initramfs linux image that is to be loaded
+> > +      and started on the WASP SoC.
+> > +      The file should be located on the firmware search path.
+> 
+> initramfs path looks even less like a property of hardware... If you
+> change initramfs from CPIO to initrd or GZ, hardware changes as well?
+
+And simply not how standard initramfs loading works. Boot menu files are 
+how one gives the bootloader a location of initramfs file and chosen is 
+how the kernel gets the memory location it was loaded to.
+
+Rob
