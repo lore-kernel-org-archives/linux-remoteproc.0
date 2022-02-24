@@ -2,132 +2,269 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E75CC433FE
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 24 Feb 2022 08:43:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6C6AC433F5
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 24 Feb 2022 14:08:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231480AbiBXInv (ORCPT
+        id S235330AbiBXOJU (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 24 Feb 2022 03:43:51 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54872 "EHLO
+        Thu, 24 Feb 2022 09:09:20 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59772 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231322AbiBXInu (ORCPT
+        with ESMTP id S232103AbiBXOJT (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 24 Feb 2022 03:43:50 -0500
-Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0227A5749B
-        for <linux-remoteproc@vger.kernel.org>; Thu, 24 Feb 2022 00:43:20 -0800 (PST)
-Received: from mail-ed1-f71.google.com (mail-ed1-f71.google.com [209.85.208.71])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 6126940017
-        for <linux-remoteproc@vger.kernel.org>; Thu, 24 Feb 2022 08:43:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1645692199;
-        bh=Dcj0D0zPsXPEVS1eNhpQqfPztDcGavIHA1/tOM5ybJI=;
-        h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-         In-Reply-To:Content-Type;
-        b=vGoUGBSHR0NPxOJBu6YrNJbSU6AY1ZGUAsOXmrzup0QLfiuyWIPqHJc8nqaRS553y
-         3jTQmUFQhnQkW/ID0oB2IDzeRhd5hObf7NfkWnsr4XYSqHIxvHk6QUM804OiCvxJIO
-         HwawE0wtB2jrkj1Cuj0+Xhq4wwnXEYUQ3NK+1swZ6qfrhhc11O9S0ZGeeN+VVo1z7z
-         NVsBYtTqyaHYqXUxhtWxfnglZ69JBCEbkYkMyhYNzt9uF+R48sPOxDvEJzMb8evrD6
-         piEQipAxzq/tpdM8G5o2SXUiVqF7wL5EtA0PGlT2M90BUGxIM7szEsc6B1qfLfsub7
-         /HdvMa9qcPagw==
-Received: by mail-ed1-f71.google.com with SMTP id r9-20020a05640251c900b00412d54ea618so426912edd.3
-        for <linux-remoteproc@vger.kernel.org>; Thu, 24 Feb 2022 00:43:19 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:from:to:cc:references:in-reply-to
-         :content-transfer-encoding;
-        bh=Dcj0D0zPsXPEVS1eNhpQqfPztDcGavIHA1/tOM5ybJI=;
-        b=N2xdNEhvZQBrImbWyjR+ghBq2Jw4QhHv42alWsUv/WIjzLUsIDQlgckggK4pCpT9Hf
-         xbH4TW0o4TIQ3x9tnpcsGtBLjcFIMueW1uG69fsEJAh4g2OnnQyW53j2eXe8zk0bn1zh
-         hUQKuwRB+iu6yHuohnQuW/VXs1EWmmGVSFc3fBIg1bG7pTk27iRX07olfHf3evHbe1IN
-         /0zGLVz1hHXywD2+VYhNatXs6N7K+T8Hmfzt3vbUHxbm6LEwPQtGgw+PiEwBBY1uHJi5
-         9jk6Ximm9XKw7CeHL0mwFd3t7OSpvjLtZrYKduq7/WSYBqbT8niouyh4OybsBbCl6I/B
-         E17Q==
-X-Gm-Message-State: AOAM533yrrPah13sAX5uHVlUDZTngxTZfbl1Bsxo2lB1j8x1L0GSNGUx
-        tQvo9Jyo0Ll4qyTepEeDgmKuQ/38XoJt89eUosTnvw/0VvRRv10wExHWeIkh1Ixnla7ay7X7h0H
-        gxrnZS75wW0NLjVYtd07PuG+SgMOKAZNf0LtN3VJUIFcpVQk=
-X-Received: by 2002:a05:6402:2744:b0:404:ba60:fec6 with SMTP id z4-20020a056402274400b00404ba60fec6mr1261643edd.235.1645692198568;
-        Thu, 24 Feb 2022 00:43:18 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJyR9ltyboSTjtHA8dcoqW8jhNMCdSS02AQooqb5CLRWmWM576orT/UQwLqy77zZSpmBsHCJBQ==
-X-Received: by 2002:a05:6402:2744:b0:404:ba60:fec6 with SMTP id z4-20020a056402274400b00404ba60fec6mr1261610edd.235.1645692198343;
-        Thu, 24 Feb 2022 00:43:18 -0800 (PST)
-Received: from [192.168.0.127] (xdsl-188-155-181-108.adslplus.ch. [188.155.181.108])
-        by smtp.gmail.com with ESMTPSA id 16sm1006988eji.94.2022.02.24.00.43.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 24 Feb 2022 00:43:17 -0800 (PST)
-Message-ID: <cd89539b-92b8-0376-03c2-1a9268721b92@canonical.com>
-Date:   Thu, 24 Feb 2022 09:43:16 +0100
+        Thu, 24 Feb 2022 09:09:19 -0500
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 145BE247771;
+        Thu, 24 Feb 2022 06:08:47 -0800 (PST)
+Received: from pps.filterd (m0288072.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.1.2/8.16.1.2) with ESMTP id 21OC4AkA029958;
+        Thu, 24 Feb 2022 15:08:29 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=message-id : date :
+ mime-version : subject : from : to : cc : references : in-reply-to :
+ content-type : content-transfer-encoding; s=selector1;
+ bh=OZyEljsP9pa68/pPXqNDTjzClhBC6YqXLqS4/jt+DlY=;
+ b=QVOE3nmH7IfGHnfLIk1uU7JMsu2HiYBdUthmICcfdnDXbAXCK3b/kF12S4KJ5DBX41pO
+ +j/2oPi7WsQRQ3tDcpFPjdS/haPjTHLeegEZTrz1LBiHprHUNbp2mAP32n/SWxJm/AQ3
+ voGbC77v5Z9pEuc49IsWtBs6vLQ6nXH2XkCbqZD9CoQ6vZcwjdBYXPjICjohlmjqFF8z
+ iuyskU87JcD4CPKYJKG3XDUHg86EX6G3LJzPqJgK3+4udVmfYfq2yczn+tMhNpXoh7pu
+ lbXZPSLBJS9vNMhoyS0ZC5YjlGw+yBaPJa0qyavmciNR92lEAJDwLhxPoFKB+NllG3cn iw== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3ee5pajk28-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 24 Feb 2022 15:08:29 +0100
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 88FA110002A;
+        Thu, 24 Feb 2022 15:08:28 +0100 (CET)
+Received: from Webmail-eu.st.com (sfhdag2node2.st.com [10.75.127.5])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 7581122ECDC;
+        Thu, 24 Feb 2022 15:08:28 +0100 (CET)
+Received: from [10.211.2.44] (10.75.127.46) by SFHDAG2NODE2.st.com
+ (10.75.127.5) with Microsoft SMTP Server (TLS) id 15.0.1497.26; Thu, 24 Feb
+ 2022 15:08:27 +0100
+Message-ID: <da6bee63-6a79-2341-e099-d26b53fb557f@foss.st.com>
+Date:   Thu, 24 Feb 2022 15:08:27 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.5.0
-Subject: Re: [PATCH v2 01/11] driver: platform: add and use helper for safer
- setting of driver_override
+Subject: Re: [PATCH V2] remoteproc: support self recovery after rproc crash
 Content-Language: en-US
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-To:     Bjorn Helgaas <helgaas@kernel.org>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Stuart Yoder <stuyoder@gmail.com>,
-        Laurentiu Tudor <laurentiu.tudor@nxp.com>,
-        Abel Vesa <abel.vesa@nxp.com>, Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Vineeth Vijayan <vneethv@linux.ibm.com>,
-        Peter Oberparleiter <oberpar@linux.ibm.com>,
-        Heiko Carstens <hca@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        Andy Gross <agross@kernel.org>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Mark Brown <broonie@kernel.org>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, NXP Linux Team <linux-imx@nxp.com>,
-        linux-arm-kernel@lists.infradead.org, linux-hyperv@vger.kernel.org,
-        linux-pci@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        linux-s390@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        alsa-devel@alsa-project.org, linux-spi@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>
-References: <20220223215342.GA155282@bhelgaas>
- <bc4f3314-46f2-72a8-f25c-c9774d987ca1@canonical.com>
-In-Reply-To: <bc4f3314-46f2-72a8-f25c-c9774d987ca1@canonical.com>
-Content-Type: text/plain; charset=UTF-8
+From:   Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
+To:     "Peng Fan (OSS)" <peng.fan@oss.nxp.com>,
+        <bjorn.andersson@linaro.org>, <mathieu.poirier@linaro.org>,
+        <linux-remoteproc@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+CC:     Peng Fan <peng.fan@nxp.com>
+References: <20220126085120.3397450-1-peng.fan@oss.nxp.com>
+ <67ddf940-6f87-d8cc-8dc6-29a39a022265@foss.st.com>
+In-Reply-To: <67ddf940-6f87-d8cc-8dc6-29a39a022265@foss.st.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.75.127.46]
+X-ClientProxiedBy: SFHDAG2NODE2.st.com (10.75.127.5) To SFHDAG2NODE2.st.com
+ (10.75.127.5)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.816,Hydra:6.0.425,FMLib:17.11.64.514
+ definitions=2022-02-24_02,2022-02-24_01,2022-02-23_01
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On 24/02/2022 08:47, Krzysztof Kozlowski wrote:
-> On 23/02/2022 22:53, Bjorn Helgaas wrote:
->> On Wed, Feb 23, 2022 at 08:13:00PM +0100, Krzysztof Kozlowski wrote:
->>> Several core drivers and buses expect that driver_override is a
->>> dynamically allocated memory thus later they can kfree() it.
->>> ...
->>
->>> + * set_driver_override() - Helper to set or clear driver override.
->>
->> Doesn't match actual function name.
+Hi Peng,
+
+On 2/14/22 19:41, Arnaud POULIQUEN wrote:
+> Hi Peng,
 > 
-> Good point. I wonder why build W=1 did not complain... I need to check.
+> On 1/26/22 09:51, Peng Fan (OSS) wrote:
+>> From: Peng Fan <peng.fan@nxp.com>
+>>
+>> Current logic only support main processor to stop/start the remote
+>> processor after rproc crash. However to SoC, such as i.MX8QM/QXP, the
+>> remote processor could do self recovery after crash and trigger watchdog
+>> reboot. It does not need main processor to load image, stop/start M4
+>> core.
 > 
+> 
+> On stm32mp1 platform the remote processor watchdog generates an early interrupt
+> that could be used to detach and reattach before the reset of the remote processor.
+> I need to test race condition,but I suppose that this should works if the resource
+> table is not reinitialized by the remote processor firmware.
+> 
+> Another option for the stm32mp1 is that remoteproc manages the reset of the 
+> remote processor.
+> For instance this allows to save a core-dump before manually resetting the remote
+> processor.
+> But looks like this use case can be handled later, as mentioned below. 
+> 
+>>
+>> This patch add a new flag to indicate whether the SoC has self recovery
+>> capability. And introduce two functions: rproc_self_recovery,
+>> rproc_assisted_recovery for the two cases. Assisted recovery is as
+>> before, let main processor to help recovery, while self recovery is
+>> recover itself withou help. To self recovery, we only do detach and
+>> attach.
+> 
+> 
+>>
+>> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+>> ---
+>>
+>> V2:
+>>  Nothing change in V2.
+>>  Only move this patch out from
+>>  https://patchwork.kernel.org/project/linux-remoteproc/list/?series=604364
+>>
+>>  drivers/remoteproc/remoteproc_core.c | 66 ++++++++++++++++++++--------
+>>  include/linux/remoteproc.h           |  2 +
+>>  2 files changed, 49 insertions(+), 19 deletions(-)
+>>
+>> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+>> index 69f51acf235e..4bd5544dab8f 100644
+>> --- a/drivers/remoteproc/remoteproc_core.c
+>> +++ b/drivers/remoteproc/remoteproc_core.c
+>> @@ -1887,6 +1887,49 @@ static int __rproc_detach(struct rproc *rproc)
+>>  	return 0;
+>>  }
+>>  
+>> +static int rproc_self_recovery(struct rproc *rproc)
+>> +{
+>> +	int ret;
+>> +
+>> +	mutex_unlock(&rproc->lock);
+>> +	ret = rproc_detach(rproc);
+>> +	mutex_lock(&rproc->lock);
+>> +	if (ret)
+>> +		return ret;
+> 
+> Here we would want to perform a core dump and manually reset the
+> co-processor.
+> I suppose that a new rproc ops could be called here in a next step.
+> 
+>> +
+>> +	if (atomic_inc_return(&rproc->power) > 1)
+>> +		return 0;
+> 
+> Do you identify a use case that needs to test rproc->power to
+> skip the attach?
+> If yes could you add a comment to describe it?
+> 
+>> +	return rproc_attach(rproc);
+>> +}
+>> +
+>> +static int rproc_assisted_recovery(struct rproc *rproc)
+>> +{
+>> +	const struct firmware *firmware_p;
+>> +	struct device *dev = &rproc->dev;
+>> +	int ret;
+>> +
+>> +	ret = rproc_stop(rproc, true);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	/* generate coredump */
+>> +	rproc->ops->coredump(rproc);
+>> +
+>> +	/* load firmware */
+>> +	ret = request_firmware(&firmware_p, rproc->firmware, dev);
+>> +	if (ret < 0) {
+>> +		dev_err(dev, "request_firmware failed: %d\n", ret);
+>> +		return ret;
+>> +	}
+>> +
+>> +	/* boot the remote processor up again */
+>> +	ret = rproc_start(rproc, firmware_p);
+>> +
+>> +	release_firmware(firmware_p);
+>> +
+>> +	return ret;
+>> +}
+>> +
+>>  /**
+>>   * rproc_trigger_recovery() - recover a remoteproc
+>>   * @rproc: the remote processor
+>> @@ -1901,7 +1944,6 @@ static int __rproc_detach(struct rproc *rproc)
+>>   */
+>>  int rproc_trigger_recovery(struct rproc *rproc)
+>>  {
+>> -	const struct firmware *firmware_p;
+>>  	struct device *dev = &rproc->dev;
+>>  	int ret;
+>>  
+>> @@ -1915,24 +1957,10 @@ int rproc_trigger_recovery(struct rproc *rproc)
+>>  
+>>  	dev_err(dev, "recovering %s\n", rproc->name);
+>>  
+>> -	ret = rproc_stop(rproc, true);
+>> -	if (ret)
+>> -		goto unlock_mutex;
+>> -
+>> -	/* generate coredump */
+>> -	rproc->ops->coredump(rproc);
+>> -
+>> -	/* load firmware */
+>> -	ret = request_firmware(&firmware_p, rproc->firmware, dev);
+>> -	if (ret < 0) {
+>> -		dev_err(dev, "request_firmware failed: %d\n", ret);
+>> -		goto unlock_mutex;
+>> -	}
+>> -
+>> -	/* boot the remote processor up again */
+>> -	ret = rproc_start(rproc, firmware_p);
+>> -
+>> -	release_firmware(firmware_p);
+>> +	if (rproc->self_recovery)
+>> +		ret = rproc_self_recovery(rproc);
+> 
+> If some platforms have to manually reset the remote processor (without
+> reloading the firmware) the name could not be relevant...
+> 
+> Following comments are only suggestions that needs to be commented by maintainers
+> 
+> What about rproc_attach_recovery ?
+> 
+>> +	else
+>> +		ret = rproc_assisted_recovery(rproc);
+> 
+> and rproc_firmware_recovery ?
+> 
+> 
+>>  
+>>  unlock_mutex:
+>>  	mutex_unlock(&rproc->lock);
+>> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+>> index e0600e1e5c17..b32ef46f8aa4 100644
+>> --- a/include/linux/remoteproc.h
+>> +++ b/include/linux/remoteproc.h
+>> @@ -529,6 +529,7 @@ struct rproc_dump_segment {
+>>   * @elf_machine: firmware ELF machine
+>>   * @cdev: character device of the rproc
+>>   * @cdev_put_on_release: flag to indicate if remoteproc should be shutdown on @char_dev release
+>> + * @self_recovery: flag to indicate if remoteproc support self recovery
+>>   */
+>>  struct rproc {
+>>  	struct list_head node;
+>> @@ -568,6 +569,7 @@ struct rproc {
+>>  	u16 elf_machine;
+>>  	struct cdev cdev;
+>>  	bool cdev_put_on_release;
+>> +	bool self_recovery;
+> 
+> This bool seems needed because we have lost the previous state before crash. 
+> I wonder if a new rproc->state such as RPROC_REBOOT could avoid this boolean.
+> 
+> 
+> I will try to test you patch on stm32mp1 next week
 
-I see why - I missed kerneldoc /** opener.
+I performed few tests on the stm32mp1 with your patch.
+Thanks to the resetting of the resource tables on detachment, this works quite well.
 
+Regards,
+Arnaud
 
-Best regards,
-Krzysztof
+> 
+> Regards,
+> Arnaud
+> 
+>>  };
+>>  
+>>  /**
