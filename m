@@ -2,222 +2,132 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D10CC433F5
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 24 Feb 2022 08:30:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E75CC433FE
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 24 Feb 2022 08:43:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232053AbiBXIbH (ORCPT
+        id S231480AbiBXInv (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 24 Feb 2022 03:31:07 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38700 "EHLO
+        Thu, 24 Feb 2022 03:43:51 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54872 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231995AbiBXIaa (ORCPT
+        with ESMTP id S231322AbiBXInu (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 24 Feb 2022 03:30:30 -0500
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E6A4027B99B;
-        Thu, 24 Feb 2022 00:29:37 -0800 (PST)
-Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.1.2/8.16.1.2) with ESMTP id 21O3wL0S007085;
-        Thu, 24 Feb 2022 09:29:27 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=selector1;
- bh=5vxBlUo7IqSUsV8ak9FdX0a2AbnJY1ZznkqgwSpJMok=;
- b=FD2xbYxeUb94ev/5iLRiUuaKg3IftMpVAhgnSJ1kEA928Ejy973Z8e9Aw1z8jsPLrlUK
- La5oI0Nup18Olsc1hAJrJKWg/tsF9zaMXuwo/GU+S9zs/bPa3YSr5zGY1pGlDWDuMKfO
- Bcs3beuVlZP7PfY3rHOwhghrQcaEEpnub53W0e9D0wmwdIoLaqjw/3knqI0r85+WbMkt
- 0fAkJxScOWhpZGT1dt99SJ8S4LMr0hU6rlAqk5smlAajQYYlsoEXX7wn5dRsA1xvRMDE
- 00LbEoJqV2Sh/JwXmXSr7Eh8+S2g7KHil6fbZXDgU8HuBo4GvlQEysEkrPcKhvMfGblB dw== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3edfyaft40-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 24 Feb 2022 09:29:27 +0100
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 8FCA010002A;
-        Thu, 24 Feb 2022 09:29:26 +0100 (CET)
-Received: from Webmail-eu.st.com (sfhdag2node2.st.com [10.75.127.5])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 87A2F216EDD;
-        Thu, 24 Feb 2022 09:29:26 +0100 (CET)
-Received: from [10.201.20.246] (10.75.127.49) by SFHDAG2NODE2.st.com
- (10.75.127.5) with Microsoft SMTP Server (TLS) id 15.0.1497.26; Thu, 24 Feb
- 2022 09:29:25 +0100
-Message-ID: <670ee336-9ad4-401e-e3b2-02531e975e51@foss.st.com>
-Date:   Thu, 24 Feb 2022 09:29:25 +0100
+        Thu, 24 Feb 2022 03:43:50 -0500
+Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0227A5749B
+        for <linux-remoteproc@vger.kernel.org>; Thu, 24 Feb 2022 00:43:20 -0800 (PST)
+Received: from mail-ed1-f71.google.com (mail-ed1-f71.google.com [209.85.208.71])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 6126940017
+        for <linux-remoteproc@vger.kernel.org>; Thu, 24 Feb 2022 08:43:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1645692199;
+        bh=Dcj0D0zPsXPEVS1eNhpQqfPztDcGavIHA1/tOM5ybJI=;
+        h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+         In-Reply-To:Content-Type;
+        b=vGoUGBSHR0NPxOJBu6YrNJbSU6AY1ZGUAsOXmrzup0QLfiuyWIPqHJc8nqaRS553y
+         3jTQmUFQhnQkW/ID0oB2IDzeRhd5hObf7NfkWnsr4XYSqHIxvHk6QUM804OiCvxJIO
+         HwawE0wtB2jrkj1Cuj0+Xhq4wwnXEYUQ3NK+1swZ6qfrhhc11O9S0ZGeeN+VVo1z7z
+         NVsBYtTqyaHYqXUxhtWxfnglZ69JBCEbkYkMyhYNzt9uF+R48sPOxDvEJzMb8evrD6
+         piEQipAxzq/tpdM8G5o2SXUiVqF7wL5EtA0PGlT2M90BUGxIM7szEsc6B1qfLfsub7
+         /HdvMa9qcPagw==
+Received: by mail-ed1-f71.google.com with SMTP id r9-20020a05640251c900b00412d54ea618so426912edd.3
+        for <linux-remoteproc@vger.kernel.org>; Thu, 24 Feb 2022 00:43:19 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:from:to:cc:references:in-reply-to
+         :content-transfer-encoding;
+        bh=Dcj0D0zPsXPEVS1eNhpQqfPztDcGavIHA1/tOM5ybJI=;
+        b=N2xdNEhvZQBrImbWyjR+ghBq2Jw4QhHv42alWsUv/WIjzLUsIDQlgckggK4pCpT9Hf
+         xbH4TW0o4TIQ3x9tnpcsGtBLjcFIMueW1uG69fsEJAh4g2OnnQyW53j2eXe8zk0bn1zh
+         hUQKuwRB+iu6yHuohnQuW/VXs1EWmmGVSFc3fBIg1bG7pTk27iRX07olfHf3evHbe1IN
+         /0zGLVz1hHXywD2+VYhNatXs6N7K+T8Hmfzt3vbUHxbm6LEwPQtGgw+PiEwBBY1uHJi5
+         9jk6Ximm9XKw7CeHL0mwFd3t7OSpvjLtZrYKduq7/WSYBqbT8niouyh4OybsBbCl6I/B
+         E17Q==
+X-Gm-Message-State: AOAM533yrrPah13sAX5uHVlUDZTngxTZfbl1Bsxo2lB1j8x1L0GSNGUx
+        tQvo9Jyo0Ll4qyTepEeDgmKuQ/38XoJt89eUosTnvw/0VvRRv10wExHWeIkh1Ixnla7ay7X7h0H
+        gxrnZS75wW0NLjVYtd07PuG+SgMOKAZNf0LtN3VJUIFcpVQk=
+X-Received: by 2002:a05:6402:2744:b0:404:ba60:fec6 with SMTP id z4-20020a056402274400b00404ba60fec6mr1261643edd.235.1645692198568;
+        Thu, 24 Feb 2022 00:43:18 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJyR9ltyboSTjtHA8dcoqW8jhNMCdSS02AQooqb5CLRWmWM576orT/UQwLqy77zZSpmBsHCJBQ==
+X-Received: by 2002:a05:6402:2744:b0:404:ba60:fec6 with SMTP id z4-20020a056402274400b00404ba60fec6mr1261610edd.235.1645692198343;
+        Thu, 24 Feb 2022 00:43:18 -0800 (PST)
+Received: from [192.168.0.127] (xdsl-188-155-181-108.adslplus.ch. [188.155.181.108])
+        by smtp.gmail.com with ESMTPSA id 16sm1006988eji.94.2022.02.24.00.43.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 24 Feb 2022 00:43:17 -0800 (PST)
+Message-ID: <cd89539b-92b8-0376-03c2-1a9268721b92@canonical.com>
+Date:   Thu, 24 Feb 2022 09:43:16 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.5.0
-Subject: Re: [PATCH v9 00/11] Restructure the rpmsg_char driver and introduce
- rpmsg_ctrl driver
+Subject: Re: [PATCH v2 01/11] driver: platform: add and use helper for safer
+ setting of driver_override
 Content-Language: en-US
-To:     Philipp Rossak <embed3d@gmail.com>,
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+To:     Bjorn Helgaas <helgaas@kernel.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Stuart Yoder <stuyoder@gmail.com>,
+        Laurentiu Tudor <laurentiu.tudor@nxp.com>,
+        Abel Vesa <abel.vesa@nxp.com>, Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>
-CC:     <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>, <julien.massot@iot.bzh>
-References: <20220124102524.295783-1-arnaud.pouliquen@foss.st.com>
- <ab97c2a5-7705-eae8-9bc2-908e7a9cb709@gmail.com>
-From:   Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
-In-Reply-To: <ab97c2a5-7705-eae8-9bc2-908e7a9cb709@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.75.127.49]
-X-ClientProxiedBy: SFHDAG2NODE1.st.com (10.75.127.4) To SFHDAG2NODE2.st.com
- (10.75.127.5)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.816,Hydra:6.0.425,FMLib:17.11.64.514
- definitions=2022-02-23_09,2022-02-23_01,2022-02-23_01
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Vineeth Vijayan <vneethv@linux.ibm.com>,
+        Peter Oberparleiter <oberpar@linux.ibm.com>,
+        Heiko Carstens <hca@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        Andy Gross <agross@kernel.org>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Mark Brown <broonie@kernel.org>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, NXP Linux Team <linux-imx@nxp.com>,
+        linux-arm-kernel@lists.infradead.org, linux-hyperv@vger.kernel.org,
+        linux-pci@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        linux-s390@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        alsa-devel@alsa-project.org, linux-spi@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>
+References: <20220223215342.GA155282@bhelgaas>
+ <bc4f3314-46f2-72a8-f25c-c9774d987ca1@canonical.com>
+In-Reply-To: <bc4f3314-46f2-72a8-f25c-c9774d987ca1@canonical.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi Philipp,
-
-On 2/23/22 22:28, Philipp Rossak wrote:
-> Hi Arnaud,
+On 24/02/2022 08:47, Krzysztof Kozlowski wrote:
+> On 23/02/2022 22:53, Bjorn Helgaas wrote:
+>> On Wed, Feb 23, 2022 at 08:13:00PM +0100, Krzysztof Kozlowski wrote:
+>>> Several core drivers and buses expect that driver_override is a
+>>> dynamically allocated memory thus later they can kfree() it.
+>>> ...
+>>
+>>> + * set_driver_override() - Helper to set or clear driver override.
+>>
+>> Doesn't match actual function name.
 > 
-> thanks for working on this! I'm currently testing/using this patch
-> series on my imx7d project because it adds the capability that the
-> remote processor can register it's endpoints dynamically (as mentioned
-> in the objectives).
-
-Thanks for your feedback on this work! 
-Don't hesitate to add your tested-by, this help maintainers for the reviews. 
-
+> Good point. I wonder why build W=1 did not complain... I need to check.
 > 
-> After a few tests, debugging, and checking the openamp specification [1]
-> I think that you missed the second ns_announcement that should be sent
-> from linux master to the slave after it created the channel/endpoint.
-> Without this second announcement the remote processor is not able to
-> send messages to the linux master because it doesn't know the
-> destination address until it receives a message from the linux master.
 
-Yes I detected this issues, it is not related to the series
-but to the remoteproc_virtio backend.
-
-As you mentioned, after the ns announcement from Linux, the remote processor
-send first messages. But the Linux virtio does not do the match between the
-local channel created and the remote endpoint.
-
-This is a feature that is missing in the rpmsg virtio, and perhaps in rpmsg protocol
-itself (a ns annoucement ack message or something similar).
+I see why - I missed kerneldoc /** opener.
 
 
-A fix for the remoteproc virtio is available here:
-https://github.com/arnopo/meta-st-stm32mp-oss/commit/3e57fe73bd19c9bb835ac5a118e50727758b0b96
-
-Don't hesitate to give me feedback on the fix, if you test it.
-
-I plan to propose the fix after this series.    
-
-Thanks,
-Arnaud
-
-> 
-> Cheers,
-> Philipp
-> 
-> 
-> [1]:
-> https://github.com/OpenAMP/open-amp/blob/main/docs/img/coprocessor-rpmsg-ns.png
-> 
-> 
-> On 24.01.22 11:25, Arnaud Pouliquen wrote:
->> Updates from V8 [1]:
->> - rebase on 5.17-rc1 + rpmsg char cdev release fixes[2][3]
->> - updates based on Bjorn Andersson's comments:
->>    - remove rpmsg_create_default_ept API, set directly the ept->priv
->> in rpmsg_chrdev_probe
->>      function.
->>    - rework commit message in [8/9]rpmsg: char: Introduce the
->> "rpmsg-raw" channel
->>
->> Patchset description:
->>
->> The current rpmsg_char module implements a /dev/rpmsg_ctrl interface
->> that provides the ability to
->> instantiate char devices (/dev/rpmsgX) associated with an rpmsg
->> endpoint for communication with the
->> remote processor.
->> This implementation fits with QCOM rpmsg backend but not with the
->> magement by chanel implemented
->> in the generic rpmsg virtio backend.
->> This series restructures the rpmsg_char driver to decorrelate the
->> control part from the data part
->> in order to improve its compatible with the rpmsg virtio backend.
->>
->> Objective:
->> - Expose a /dev/rpmsg_ctrlX interface for the application that is no
->> longer dedicated to the
->>    rpmsg_char but generalized to all rpmsg services. This offers
->> capability to create and destroy
->>    rpmsg channels from a user's application initiative (using the new
->> RPMSG_CREATE_DEV_IOCTL and
->>    RPMSG_DESTROY_DEV_IOCTL controls).
->>    An application will be able to create/establish an rpmsg
->> communication channel to communicate
->>    with the remote processor, and not only wait the remote processor
->> initiative.
->>    This is interesting for example to establish a temporary
->> communication link for diagnosis,
->>    calibration, debugging... or instantiate  new data flows on some
->> user actions.
->> - Add capability to probe the rpmsg_char device at the initiative of
->> the remote processor
->>   (rpmsg service announcement mechanism).
->>    This allows platforms based on the rpmsg virtio backend to create
->> the /dev/rpmgX interface with
->>    a rpmsg name service announcement.
->>
->> Subsets:
->>    - Extract the control part of the char dev and create the
->> rpmsg_ctrl.c file (patches 1 to 6)
->>    - Introduce the "rpmsg-raw" channel in rpmsg_char(patches 7 to 10)
->>    - Introduce the RPMSG_CREATE_DEV_IOCTL IOCTL and
->> RPMSG_DESTROY_DEV_IOCTL to instantiate RPMsg
->>      devices (patch 11)
->>      The application can then create or release a channel by specifying:
->>         - the name service of the device to instantiate.
->>         - the source address.
->>         - the destination address.
->>
->> This series has be applied and tested on 'commit e783362eb54c ("Linux
->> 5.17-rc1") +
->> rpmsg_char cdev release fixes [2][3]
->>
->> [1] https://lkml.org/lkml/2021/12/7/186
->> [2] https://lkml.org/lkml/2022/1/10/1129
->> [3] https://lkml.org/lkml/2022/1/10/1130
->>
->> Arnaud Pouliquen (11):
->>    rpmsg: char: Export eptdev create and destroy functions
->>    rpmsg: Create the rpmsg class in core instead of in rpmsg char
->>    rpmsg: Move the rpmsg control device from rpmsg_char to rpmsg_ctrl
->>    arm: configs: Configs that had RPMSG_CHAR now get RPMSG_CTRL
->>    RISC-V: configs: Configs that had RPMSG_CHAR now get RPMSG_CTRL
->>    arm64: defconfig: Config that had RPMSG_CHAR now gets RPMSG_CTRL
->>    rpmsg: Update rpmsg_chrdev_register_device function
->>    rpmsg: char: Refactor rpmsg_chrdev_eptdev_create function
->>    rpmsg: char: Add possibility to use default endpoint of the rpmsg
->>      device
->>    rpmsg: char: Introduce the "rpmsg-raw" channel
->>    rpmsg: ctrl: Introduce new RPMSG_CREATE/RELEASE_DEV_IOCTL controls
->>
->>   arch/arm/configs/qcom_defconfig   |   1 +
->>   arch/arm64/configs/defconfig      |   1 +
->>   arch/riscv/configs/defconfig      |   1 +
->>   arch/riscv/configs/rv32_defconfig |   1 +
->>   drivers/rpmsg/Kconfig             |   8 +
->>   drivers/rpmsg/Makefile            |   1 +
->>   drivers/rpmsg/qcom_glink_native.c |   2 +-
->>   drivers/rpmsg/qcom_smd.c          |   2 +-
->>   drivers/rpmsg/rpmsg_char.c        | 231 +++++++++++-----------------
->>   drivers/rpmsg/rpmsg_char.h        |  46 ++++++
->>   drivers/rpmsg/rpmsg_core.c        |  15 +-
->>   drivers/rpmsg/rpmsg_ctrl.c        | 243 ++++++++++++++++++++++++++++++
->>   drivers/rpmsg/rpmsg_internal.h    |  10 +-
->>   drivers/rpmsg/virtio_rpmsg_bus.c  |   2 +-
->>   include/uapi/linux/rpmsg.h        |  10 ++
->>   15 files changed, 419 insertions(+), 155 deletions(-)
->>   create mode 100644 drivers/rpmsg/rpmsg_char.h
->>   create mode 100644 drivers/rpmsg/rpmsg_ctrl.c
->>
+Best regards,
+Krzysztof
