@@ -2,143 +2,132 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98CD9C433EF
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 25 Feb 2022 13:28:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B138AC4321E
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 25 Feb 2022 17:13:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241308AbiBYN2b (ORCPT
+        id S243519AbiBYROR (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 25 Feb 2022 08:28:31 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46420 "EHLO
+        Fri, 25 Feb 2022 12:14:17 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55418 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241298AbiBYN2a (ORCPT
+        with ESMTP id S240804AbiBYROQ (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 25 Feb 2022 08:28:30 -0500
-Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 59FA61A7DAC;
-        Fri, 25 Feb 2022 05:27:57 -0800 (PST)
-X-UUID: 3c33adf8969946cca74dfbcc264e8e64-20220225
-X-UUID: 3c33adf8969946cca74dfbcc264e8e64-20220225
-Received: from mtkcas11.mediatek.inc [(172.21.101.40)] by mailgw01.mediatek.com
-        (envelope-from <allen-kh.cheng@mediatek.com>)
-        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
-        with ESMTP id 587001712; Fri, 25 Feb 2022 21:27:52 +0800
-Received: from mtkcas11.mediatek.inc (172.21.101.40) by
- mtkmbs07n1.mediatek.inc (172.21.101.16) with Microsoft SMTP Server (TLS) id
- 15.0.1497.2; Fri, 25 Feb 2022 21:27:50 +0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas11.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
- Transport; Fri, 25 Feb 2022 21:27:50 +0800
-From:   Allen-KH Cheng <allen-kh.cheng@mediatek.com>
-To:     Ohad Ben-Cohen <ohad@wizery.com>,
+        Fri, 25 Feb 2022 12:14:16 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A91AB1A8043;
+        Fri, 25 Feb 2022 09:13:43 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 4E5EE61D73;
+        Fri, 25 Feb 2022 17:13:43 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E452C340E7;
+        Fri, 25 Feb 2022 17:13:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1645809222;
+        bh=4sE4Gtevnk8/TCjMANbcRjCHG8DgJ5S+RZAsg3tQewo=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:From;
+        b=aKNMEZYO9GYS47EsbtSGoBp7jQ6cq+PB2zbte+AwwqqiqpcVRMxGDM0F0Afex5ZJW
+         4rYESli2esu86LIUX6eb+GIiQqKG0aJoZCwpzqlHuXkixzO/1AezAk2443Z9c992ps
+         XywAbCY1/AWyw1jhDZ3bHZQXnfC+/H1QPWErc949Yi5ixSLpl4/cO2POfTAAfrxKho
+         CAVXpDY7lijl79zw4wxpFlP592n7RcY/q2RQ45t4e4X5U4/DfLgdvmThUjLUu/hMNF
+         a6Vl3pNKPQMeAYVdX3MJ7TCbUyat1DVH9TvH+imzTBTV3gNbtHMVmiV6Fa05o9r3/n
+         oKdbLx9yzFJlA==
+Date:   Fri, 25 Feb 2022 11:13:41 -0600
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Stuart Yoder <stuyoder@gmail.com>,
+        Laurentiu Tudor <laurentiu.tudor@nxp.com>,
+        Abel Vesa <abel.vesa@nxp.com>, Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>
-CC:     Tinghan Shen <tinghan.shen@mediatek.com>,
-        <Project_Global_Chrome_Upstream_Group@mediatek.com>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-remoteproc@vger.kernel.org>,
-        Allen-KH Cheng <Allen-KH.Cheng@mediatek.com>
-Subject: [RESEND v5 2/2] remoteproc: mediatek: Support mt8186 scp
-Date:   Fri, 25 Feb 2022 21:27:47 +0800
-Message-ID: <20220225132747.31808-3-allen-kh.cheng@mediatek.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20220225132747.31808-1-allen-kh.cheng@mediatek.com>
-References: <20220225132747.31808-1-allen-kh.cheng@mediatek.com>
+        Vineeth Vijayan <vneethv@linux.ibm.com>,
+        Peter Oberparleiter <oberpar@linux.ibm.com>,
+        Heiko Carstens <hca@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        Andy Gross <agross@kernel.org>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Mark Brown <broonie@kernel.org>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, NXP Linux Team <linux-imx@nxp.com>,
+        linux-arm-kernel@lists.infradead.org, linux-hyperv@vger.kernel.org,
+        linux-pci@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        linux-s390@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        alsa-devel@alsa-project.org, linux-spi@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Subject: Re: [PATCH v2 05/11] pci: use helper for safer setting of
+ driver_override
+Message-ID: <20220225171341.GA364850@bhelgaas>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0aff95ff-5b79-8ae9-48fd-720a9f27cbce@canonical.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-From: Allen-KH Cheng <Allen-KH.Cheng@mediatek.com>
+On Fri, Feb 25, 2022 at 10:36:20AM +0100, Krzysztof Kozlowski wrote:
+> On 25/02/2022 00:52, Bjorn Helgaas wrote:
+> > On Thu, Feb 24, 2022 at 08:49:15AM +0100, Krzysztof Kozlowski wrote:
+> >> On 23/02/2022 22:51, Bjorn Helgaas wrote:
+> >>> In subject, to match drivers/pci/ convention, do something like:
+> >>>
+> >>>   PCI: Use driver_set_override() instead of open-coding
+> >>>
+> >>> On Wed, Feb 23, 2022 at 08:13:04PM +0100, Krzysztof Kozlowski wrote:
+> >>>> Use a helper for seting driver_override to reduce amount of duplicated
+> >>>> code.
+> >>>> @@ -567,31 +567,15 @@ static ssize_t driver_override_store(struct device *dev,
+> >>>>  				     const char *buf, size_t count)
+> >>>>  {
+> >>>>  	struct pci_dev *pdev = to_pci_dev(dev);
+> >>>> -	char *driver_override, *old, *cp;
+> >>>> +	int ret;
+> >>>>  
+> >>>>  	/* We need to keep extra room for a newline */
+> >>>>  	if (count >= (PAGE_SIZE - 1))
+> >>>>  		return -EINVAL;
+> >>>
+> >>> This check makes no sense in the new function.  Michael alluded to
+> >>> this as well.
+> >>
+> >> I am not sure if I got your comment properly. You mean here:
+> >> 1. Move this check to driver_set_override()?
+> >> 2. Remove the check entirely?
+> > 
+> > I was mistaken about the purpose of the comment and the check.  I
+> > thought it had to do with *this* function, and this function doesn't
+> > add a newline, and there's no obvious connection with PAGE_SIZE.
+> > 
+> > But looking closer, I think the "extra room for a newline" is really
+> > to make sure that *driver_override_show()* can add a newline and have
+> > it still fit within the PAGE_SIZE sysfs limit.
+> > 
+> > Most driver_override_*() functions have the same comment, so maybe
+> > this was obvious to everybody except me :)  I do see that spi.c adds
+> > "when displaying value" at the end, which helps a lot.
+> > 
+> > Sorry for the wild goose chase.
+> 
+> I think I will move this check anyway to driver_set_override() helper,
+> because there is no particular benefit to have duplicated all over. The
+> helper will receive "count" argument so can perform all checks.
 
-Add SCP support for mt8186
+Thanks, I think that would be good!
 
-Signed-off-by: Allen-KH Cheng <Allen-KH.Cheng@mediatek.com>
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
----
- drivers/remoteproc/mtk_common.h |  3 +++
- drivers/remoteproc/mtk_scp.c    | 35 +++++++++++++++++++++++++++++++++
- 2 files changed, 38 insertions(+)
-
-diff --git a/drivers/remoteproc/mtk_common.h b/drivers/remoteproc/mtk_common.h
-index 5ff3867c72f3..71ce4977cb0b 100644
---- a/drivers/remoteproc/mtk_common.h
-+++ b/drivers/remoteproc/mtk_common.h
-@@ -32,6 +32,9 @@
- #define MT8183_SCP_CACHESIZE_8KB	BIT(8)
- #define MT8183_SCP_CACHE_CON_WAYEN	BIT(10)
- 
-+#define MT8186_SCP_L1_SRAM_PD_P1	0x40B0
-+#define MT8186_SCP_L1_SRAM_PD_p2	0x40B4
-+
- #define MT8192_L2TCM_SRAM_PD_0		0x10C0
- #define MT8192_L2TCM_SRAM_PD_1		0x10C4
- #define MT8192_L2TCM_SRAM_PD_2		0x10C8
-diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
-index 36e48cf58ed6..6860ea4d5125 100644
---- a/drivers/remoteproc/mtk_scp.c
-+++ b/drivers/remoteproc/mtk_scp.c
-@@ -383,6 +383,27 @@ static void mt8192_power_off_sram(void __iomem *addr)
- 		writel(GENMASK(i, 0), addr);
- }
- 
-+static int mt8186_scp_before_load(struct mtk_scp *scp)
-+{
-+	/* Clear SCP to host interrupt */
-+	writel(MT8183_SCP_IPC_INT_BIT, scp->reg_base + MT8183_SCP_TO_HOST);
-+
-+	/* Reset clocks before loading FW */
-+	writel(0x0, scp->reg_base + MT8183_SCP_CLK_SW_SEL);
-+	writel(0x0, scp->reg_base + MT8183_SCP_CLK_DIV_SEL);
-+
-+	/* Turn on the power of SCP's SRAM before using it. Enable 1 block per time*/
-+	mt8192_power_on_sram(scp->reg_base + MT8183_SCP_SRAM_PDN);
-+
-+	/* Initialize TCM before loading FW. */
-+	writel(0x0, scp->reg_base + MT8183_SCP_L1_SRAM_PD);
-+	writel(0x0, scp->reg_base + MT8183_SCP_TCM_TAIL_SRAM_PD);
-+	writel(0x0, scp->reg_base + MT8186_SCP_L1_SRAM_PD_P1);
-+	writel(0x0, scp->reg_base + MT8186_SCP_L1_SRAM_PD_p2);
-+
-+	return 0;
-+}
-+
- static int mt8192_scp_before_load(struct mtk_scp *scp)
- {
- 	/* clear SPM interrupt, SCP2SPM_IPC_CLR */
-@@ -887,6 +908,19 @@ static const struct mtk_scp_of_data mt8183_of_data = {
- 	.ipi_buf_offset = 0x7bdb0,
- };
- 
-+static const struct mtk_scp_of_data mt8186_of_data = {
-+	.scp_clk_get = mt8195_scp_clk_get,
-+	.scp_before_load = mt8186_scp_before_load,
-+	.scp_irq_handler = mt8183_scp_irq_handler,
-+	.scp_reset_assert = mt8183_scp_reset_assert,
-+	.scp_reset_deassert = mt8183_scp_reset_deassert,
-+	.scp_stop = mt8183_scp_stop,
-+	.scp_da_to_va = mt8183_scp_da_to_va,
-+	.host_to_scp_reg = MT8183_HOST_TO_SCP,
-+	.host_to_scp_int_bit = MT8183_HOST_IPC_INT_BIT,
-+	.ipi_buf_offset = 0x7bdb0,
-+};
-+
- static const struct mtk_scp_of_data mt8192_of_data = {
- 	.scp_clk_get = mt8192_scp_clk_get,
- 	.scp_before_load = mt8192_scp_before_load,
-@@ -913,6 +947,7 @@ static const struct mtk_scp_of_data mt8195_of_data = {
- 
- static const struct of_device_id mtk_scp_of_match[] = {
- 	{ .compatible = "mediatek,mt8183-scp", .data = &mt8183_of_data },
-+	{ .compatible = "mediatek,mt8186-scp", .data = &mt8186_of_data },
- 	{ .compatible = "mediatek,mt8192-scp", .data = &mt8192_of_data },
- 	{ .compatible = "mediatek,mt8195-scp", .data = &mt8195_of_data },
- 	{},
--- 
-2.18.0
-
+Bjorn
