@@ -2,182 +2,161 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B7DAC433EF
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 25 Feb 2022 03:30:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D413C4332F
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 25 Feb 2022 09:36:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237038AbiBYDa7 (ORCPT
+        id S239167AbiBYJhP (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 24 Feb 2022 22:30:59 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32926 "EHLO
+        Fri, 25 Feb 2022 04:37:15 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33328 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229812AbiBYDa6 (ORCPT
+        with ESMTP id S239160AbiBYJhO (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 24 Feb 2022 22:30:58 -0500
-Received: from mail-ot1-x32d.google.com (mail-ot1-x32d.google.com [IPv6:2607:f8b0:4864:20::32d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 60496149B9C
-        for <linux-remoteproc@vger.kernel.org>; Thu, 24 Feb 2022 19:30:27 -0800 (PST)
-Received: by mail-ot1-x32d.google.com with SMTP id j9-20020a9d7d89000000b005ad5525ba09so2750169otn.10
-        for <linux-remoteproc@vger.kernel.org>; Thu, 24 Feb 2022 19:30:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=fXXZvdlTybfcJufCRJu6AzZ8AhUXW83H0a85LXNskao=;
-        b=EYCQiacCdeDF0+9tvuZErbGuAPAIvcBmUw4GMyBwZJuLA/ACOPsZCm5rpU4i847Czd
-         Fe5ydtfXeye3HqVmCvPApOoEZM83h6vV10MulxJPDFxAkTA7k7MOa2AED/wS1jCQzAtJ
-         nr7W0HcR44jCemYM0w4mWDTcoMzlqQYlxxqgBTZWvOP8Dr+Vjnh1cwkkCst/FLj2VJOg
-         HgYi1S4m0K5WVsajI+WUVeCq7YPf4Xqei7pjGLPyZ4oo/OYtmtUOy2y9c76Ohcj7LdTV
-         p5ufXq6u011pqS1tGWR1ORhDrhb4FbWmpmgsnAUV0lFWUb9nTv6vwpCtz8c+LaeGjfeo
-         RGpg==
+        Fri, 25 Feb 2022 04:37:14 -0500
+Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8B674645B
+        for <linux-remoteproc@vger.kernel.org>; Fri, 25 Feb 2022 01:36:35 -0800 (PST)
+Received: from mail-lf1-f72.google.com (mail-lf1-f72.google.com [209.85.167.72])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 1B2AA405D7
+        for <linux-remoteproc@vger.kernel.org>; Fri, 25 Feb 2022 09:36:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1645781794;
+        bh=mwBGuSv1vzWcEgYl2MgCXz9QnnQmXLrpGmSTa9ywwuI=;
+        h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+         In-Reply-To:Content-Type;
+        b=KHCZv9PjuwGoCt/QrmnJvY7WcQkEeD2cBoeYvJ3Ryb6qZ76X0y9njnAPpjEufrbTK
+         kNOSLNM9qvagHz1btaep1tiWADwO462j/vfozoz6OsnqygyurmYkzMmGaLfr91D07x
+         bz7zAv6xEKYKP8nFSQJgH4Pg+VtmDF8PqjN9kSQcpRFHYldg9H/6fw6iz7R+n3mzZx
+         PPulzqFRDEUIYC+3ps9yfUMBrEoMXcez5cFsssvgDgR1/SJqNLpwYNVHgum93nKuKz
+         yxA7K++UV0uXZlkGmXPZz4fBZ3BSOqxX0TLgskPE976Fp6wxByn5exPEpUSNqP6Pwl
+         1tjVcB9LnCDbw==
+Received: by mail-lf1-f72.google.com with SMTP id a5-20020ac25205000000b00443a34a9472so771496lfl.15
+        for <linux-remoteproc@vger.kernel.org>; Fri, 25 Feb 2022 01:36:34 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
          :content-transfer-encoding;
-        bh=fXXZvdlTybfcJufCRJu6AzZ8AhUXW83H0a85LXNskao=;
-        b=CvutkOo66/Rxwp4FRCUa+Y2X+IAnIZRUP+EXReiAeullwTYRUMEyDbBQ1cdzRQFXK0
-         2fE5t8RVBZDTLw1uB+c3AZr9atpYn+JDRW2H1fmXnMfKSFEktQQslAqSf6/DcCdqDK58
-         kgQYy8HIns7rNIj/LNVdd8eVL/tpDKINC/tdVt7IkgOHSs/Iqh6S8tL5PUa3M2DkPGwU
-         dbPptyt3Sjo75nXVSPBN5tLZHc6sze2PuY1Ahhb3hemo+YvCCtUMbqnSJ+WTLJysimMQ
-         ZPcofzEaP08f81pGw6b/5cmlHEZep/5FG/7kZ1UKPZr0mcrTa5UdqvqjIzEUAFcs9fNf
-         Fwiw==
-X-Gm-Message-State: AOAM532qmz13rGyBxzF6jnc8zrOCUTtzHPuYIXTvjs9BSws+zOSs5OMM
-        noZE3zmD7fLRzFBNSou2Jj4J/A==
-X-Google-Smtp-Source: ABdhPJyKdA0REsFSweiq4F2TgdrIsVFq4tGWuKvM+LH6k0VZ5nIshAagqnGhRkkxnv1GYtUDpQVkAw==
-X-Received: by 2002:a05:6830:33cf:b0:5af:4018:fc2a with SMTP id q15-20020a05683033cf00b005af4018fc2amr2116489ott.161.1645759826638;
-        Thu, 24 Feb 2022 19:30:26 -0800 (PST)
-Received: from ripper.. ([2600:1700:a0:3dc8:205:1bff:fec0:b9b3])
-        by smtp.gmail.com with ESMTPSA id a23-20020a056830101700b005ad0bd6fe0csm598253otp.47.2022.02.24.19.30.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Feb 2022 19:30:26 -0800 (PST)
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Sibi Sankar <quic_sibis@quicinc.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc:     linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] remoteproc: qcom: q6v5: Add interconnect path proxy vote
-Date:   Thu, 24 Feb 2022 19:32:24 -0800
-Message-Id: <20220225033224.2238425-1-bjorn.andersson@linaro.org>
-X-Mailer: git-send-email 2.33.1
+        bh=mwBGuSv1vzWcEgYl2MgCXz9QnnQmXLrpGmSTa9ywwuI=;
+        b=D5EPS5GeKzKrAFBRfk4r/fNwqPVkOI9e/veFY1Bcg6lumZImcx5/7pYtNrXMOWduhm
+         8IIxJCsKodsS8gv2Tmes8y1QUc+H1NKS1FIfwyJ1P4MHFAbuy9opwYPh1UqiltpH2LIZ
+         xnUXCXTULu6o/eC0I250AgjPrIeyoY/iFrrCqgHM/ZwWaDsIK2Liobh4YQiPDIwxXnZh
+         YkYGdLWtxrb9SMNOaALprwQJYwCtUm9OcB+86Dtz0M9hhdw8Q9rVxFKSRCderU+5VKEG
+         wPPTcxscjSqK/NMMniP2mQNhRUSht2U0x1Ynf/JaI/lIQd7WH8FaswrjxdUsfBRRdiKP
+         pr8Q==
+X-Gm-Message-State: AOAM533ceR0whHQJfPBzdHsojWP6dCYJRPut40YD30S79+59ZkvkDgPL
+        rNPpOKjoQf1opWjroFIVFeaDD+gWLEv06bjgb+g0FBkpmFi2Y1ewqkBWpLk0nEAuOY4ZpKLOFhM
+        L2JPqI/1XHYuVO2HqmBxtcFUL9uhoa330nL7u9HcggKwEZdY=
+X-Received: by 2002:a17:906:4cca:b0:6ce:6a06:bf7 with SMTP id q10-20020a1709064cca00b006ce6a060bf7mr5644773ejt.109.1645781782638;
+        Fri, 25 Feb 2022 01:36:22 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJxvGXs5zpBbIxYfXArg3HJWTHPHMBjqJChT5RpHzF7M3/UrStNiNcxogS5o2fNS3FLp8Ip6Ag==
+X-Received: by 2002:a17:906:4cca:b0:6ce:6a06:bf7 with SMTP id q10-20020a1709064cca00b006ce6a060bf7mr5644737ejt.109.1645781782424;
+        Fri, 25 Feb 2022 01:36:22 -0800 (PST)
+Received: from [192.168.0.130] (xdsl-188-155-181-108.adslplus.ch. [188.155.181.108])
+        by smtp.gmail.com with ESMTPSA id bo9-20020a170906d04900b006ce6b8e05c1sm773655ejb.150.2022.02.25.01.36.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 25 Feb 2022 01:36:21 -0800 (PST)
+Message-ID: <0aff95ff-5b79-8ae9-48fd-720a9f27cbce@canonical.com>
+Date:   Fri, 25 Feb 2022 10:36:20 +0100
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.5.0
+Subject: Re: [PATCH v2 05/11] pci: use helper for safer setting of
+ driver_override
+Content-Language: en-US
+To:     Bjorn Helgaas <helgaas@kernel.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Stuart Yoder <stuyoder@gmail.com>,
+        Laurentiu Tudor <laurentiu.tudor@nxp.com>,
+        Abel Vesa <abel.vesa@nxp.com>, Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Vineeth Vijayan <vneethv@linux.ibm.com>,
+        Peter Oberparleiter <oberpar@linux.ibm.com>,
+        Heiko Carstens <hca@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        Andy Gross <agross@kernel.org>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Mark Brown <broonie@kernel.org>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, NXP Linux Team <linux-imx@nxp.com>,
+        linux-arm-kernel@lists.infradead.org, linux-hyperv@vger.kernel.org,
+        linux-pci@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        linux-s390@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        alsa-devel@alsa-project.org, linux-spi@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>
+References: <20220224235206.GA302751@bhelgaas>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+In-Reply-To: <20220224235206.GA302751@bhelgaas>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Many remoteproc instances requires that Linux casts a proxy vote for an
-interconnect path during boot, until they can do it themselves. Add
-support for voting for a single path.
+On 25/02/2022 00:52, Bjorn Helgaas wrote:
+> On Thu, Feb 24, 2022 at 08:49:15AM +0100, Krzysztof Kozlowski wrote:
+>> On 23/02/2022 22:51, Bjorn Helgaas wrote:
+>>> In subject, to match drivers/pci/ convention, do something like:
+>>>
+>>>   PCI: Use driver_set_override() instead of open-coding
+>>>
+>>> On Wed, Feb 23, 2022 at 08:13:04PM +0100, Krzysztof Kozlowski wrote:
+>>>> Use a helper for seting driver_override to reduce amount of duplicated
+>>>> code.
+>>>> @@ -567,31 +567,15 @@ static ssize_t driver_override_store(struct device *dev,
+>>>>  				     const char *buf, size_t count)
+>>>>  {
+>>>>  	struct pci_dev *pdev = to_pci_dev(dev);
+>>>> -	char *driver_override, *old, *cp;
+>>>> +	int ret;
+>>>>  
+>>>>  	/* We need to keep extra room for a newline */
+>>>>  	if (count >= (PAGE_SIZE - 1))
+>>>>  		return -EINVAL;
+>>>
+>>> This check makes no sense in the new function.  Michael alluded to
+>>> this as well.
+>>
+>> I am not sure if I got your comment properly. You mean here:
+>> 1. Move this check to driver_set_override()?
+>> 2. Remove the check entirely?
+> 
+> I was mistaken about the purpose of the comment and the check.  I
+> thought it had to do with *this* function, and this function doesn't
+> add a newline, and there's no obvious connection with PAGE_SIZE.
+> 
+> But looking closer, I think the "extra room for a newline" is really
+> to make sure that *driver_override_show()* can add a newline and have
+> it still fit within the PAGE_SIZE sysfs limit.
+> 
+> Most driver_override_*() functions have the same comment, so maybe
+> this was obvious to everybody except me :)  I do see that spi.c adds
+> "when displaying value" at the end, which helps a lot.
+> 
+> Sorry for the wild goose chase.
 
-As this is a shared problem between both PAS and MSS drivers, the path
-is acquired and votes casted from the common helper code.
-
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
----
-
-Sibi posted recently a patch to add interconnect votes from the modem driver,
-today I needed the same feature for one of the PAS remoteprocs. After
-essentially duplicating Sibi's patch I realized that it doesn't look too bad to
-put this in the common Q6V5 code.
-
-The main difference is that this would be messy if we need to support multiple
-paths, so we probably would have to push it out to the individual drivers at
-that point.
-
-Sibi's patch can be found here.
-https://lore.kernel.org/all/1644813252-12897-3-git-send-email-quic_sibis@quicinc.com/
+I think I will move this check anyway to driver_set_override() helper,
+because there is no particular benefit to have duplicated all over. The
+helper will receive "count" argument so can perform all checks.
 
 
-This makes the implementation pick up one path, relevant DT bindings would
-still need to be updated in order be allowed to this in the DeviceTree files.
-
- drivers/remoteproc/qcom_q6v5.c | 21 ++++++++++++++++++++-
- drivers/remoteproc/qcom_q6v5.h |  3 +++
- 2 files changed, 23 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/remoteproc/qcom_q6v5.c b/drivers/remoteproc/qcom_q6v5.c
-index 442a388f8102..5280ec9b5449 100644
---- a/drivers/remoteproc/qcom_q6v5.c
-+++ b/drivers/remoteproc/qcom_q6v5.c
-@@ -8,6 +8,7 @@
-  */
- #include <linux/kernel.h>
- #include <linux/platform_device.h>
-+#include <linux/interconnect.h>
- #include <linux/interrupt.h>
- #include <linux/module.h>
- #include <linux/soc/qcom/qcom_aoss.h>
-@@ -51,9 +52,17 @@ int qcom_q6v5_prepare(struct qcom_q6v5 *q6v5)
- {
- 	int ret;
- 
-+	ret = icc_set_bw(q6v5->path, 0, UINT_MAX);
-+	if (ret < 0) {
-+		dev_err(q6v5->dev, "failed to set bandwidth request\n");
-+		return ret;
-+	}
-+
- 	ret = q6v5_load_state_toggle(q6v5, true);
--	if (ret)
-+	if (ret) {
-+		icc_set_bw(q6v5->path, 0, 0);
- 		return ret;
-+	}
- 
- 	reinit_completion(&q6v5->start_done);
- 	reinit_completion(&q6v5->stop_done);
-@@ -78,6 +87,9 @@ int qcom_q6v5_unprepare(struct qcom_q6v5 *q6v5)
- 	disable_irq(q6v5->handover_irq);
- 	q6v5_load_state_toggle(q6v5, false);
- 
-+	/* Disable interconnect vote, in case handover never happened */
-+	icc_set_bw(q6v5->path, 0, 0);
-+
- 	return !q6v5->handover_issued;
- }
- EXPORT_SYMBOL_GPL(qcom_q6v5_unprepare);
-@@ -160,6 +172,8 @@ static irqreturn_t q6v5_handover_interrupt(int irq, void *data)
- 	if (q6v5->handover)
- 		q6v5->handover(q6v5);
- 
-+	icc_set_bw(q6v5->path, 0, 0);
-+
- 	q6v5->handover_issued = true;
- 
- 	return IRQ_HANDLED;
-@@ -332,6 +346,11 @@ int qcom_q6v5_init(struct qcom_q6v5 *q6v5, struct platform_device *pdev,
- 		return load_state ? -ENOMEM : -EINVAL;
- 	}
- 
-+	q6v5->path = devm_of_icc_get(&pdev->dev, NULL);
-+	if (IS_ERR(q6v5->path))
-+		return dev_err_probe(&pdev->dev, PTR_ERR(q6v5->path),
-+				     "failed to acquire interconnect path\n");
-+
- 	return 0;
- }
- EXPORT_SYMBOL_GPL(qcom_q6v5_init);
-diff --git a/drivers/remoteproc/qcom_q6v5.h b/drivers/remoteproc/qcom_q6v5.h
-index f35e04471ed7..5a859c41896e 100644
---- a/drivers/remoteproc/qcom_q6v5.h
-+++ b/drivers/remoteproc/qcom_q6v5.h
-@@ -7,6 +7,7 @@
- #include <linux/completion.h>
- #include <linux/soc/qcom/qcom_aoss.h>
- 
-+struct icc_path;
- struct rproc;
- struct qcom_smem_state;
- struct qcom_sysmon;
-@@ -18,6 +19,8 @@ struct qcom_q6v5 {
- 	struct qcom_smem_state *state;
- 	struct qmp *qmp;
- 
-+	struct icc_path *path;
-+
- 	unsigned stop_bit;
- 
- 	int wdog_irq;
--- 
-2.33.1
-
+Best regards,
+Krzysztof
