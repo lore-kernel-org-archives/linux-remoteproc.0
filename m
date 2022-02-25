@@ -2,132 +2,70 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B138AC4321E
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 25 Feb 2022 17:13:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 611DCC433F5
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 25 Feb 2022 19:08:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243519AbiBYROR (ORCPT
+        id S234151AbiBYTJA (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 25 Feb 2022 12:14:17 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55418 "EHLO
+        Fri, 25 Feb 2022 14:09:00 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56176 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240804AbiBYROQ (ORCPT
+        with ESMTP id S232633AbiBYTI7 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 25 Feb 2022 12:14:16 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A91AB1A8043;
-        Fri, 25 Feb 2022 09:13:43 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 4E5EE61D73;
-        Fri, 25 Feb 2022 17:13:43 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E452C340E7;
-        Fri, 25 Feb 2022 17:13:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1645809222;
-        bh=4sE4Gtevnk8/TCjMANbcRjCHG8DgJ5S+RZAsg3tQewo=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:From;
-        b=aKNMEZYO9GYS47EsbtSGoBp7jQ6cq+PB2zbte+AwwqqiqpcVRMxGDM0F0Afex5ZJW
-         4rYESli2esu86LIUX6eb+GIiQqKG0aJoZCwpzqlHuXkixzO/1AezAk2443Z9c992ps
-         XywAbCY1/AWyw1jhDZ3bHZQXnfC+/H1QPWErc949Yi5ixSLpl4/cO2POfTAAfrxKho
-         CAVXpDY7lijl79zw4wxpFlP592n7RcY/q2RQ45t4e4X5U4/DfLgdvmThUjLUu/hMNF
-         a6Vl3pNKPQMeAYVdX3MJ7TCbUyat1DVH9TvH+imzTBTV3gNbtHMVmiV6Fa05o9r3/n
-         oKdbLx9yzFJlA==
-Date:   Fri, 25 Feb 2022 11:13:41 -0600
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Stuart Yoder <stuyoder@gmail.com>,
-        Laurentiu Tudor <laurentiu.tudor@nxp.com>,
-        Abel Vesa <abel.vesa@nxp.com>, Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Vineeth Vijayan <vneethv@linux.ibm.com>,
-        Peter Oberparleiter <oberpar@linux.ibm.com>,
-        Heiko Carstens <hca@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        Andy Gross <agross@kernel.org>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Mark Brown <broonie@kernel.org>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, NXP Linux Team <linux-imx@nxp.com>,
-        linux-arm-kernel@lists.infradead.org, linux-hyperv@vger.kernel.org,
-        linux-pci@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        linux-s390@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        alsa-devel@alsa-project.org, linux-spi@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Subject: Re: [PATCH v2 05/11] pci: use helper for safer setting of
- driver_override
-Message-ID: <20220225171341.GA364850@bhelgaas>
+        Fri, 25 Feb 2022 14:08:59 -0500
+Received: from mail-oo1-f42.google.com (mail-oo1-f42.google.com [209.85.161.42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9A6D7194149;
+        Fri, 25 Feb 2022 11:08:26 -0800 (PST)
+Received: by mail-oo1-f42.google.com with SMTP id p206-20020a4a2fd7000000b0031bfec11983so7485797oop.13;
+        Fri, 25 Feb 2022 11:08:26 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=gLaPPylCSRSRt4wztREpwI4m1e+FOfbTqnD+bNNy18I=;
+        b=kL9NxMiS1LVbbdKX+GR0T/uG7CddPaelVkJGwB4iBIygLacZTv6DKPxnzPXGyBobRs
+         dzftPpYXo2shLcjXVn2nrl63dP35xidAOsXu07HFMtHpGrFQyssADaQ+28uTIEdDrUTG
+         IMhxAuxXRz3k6SRkomOcvRZDgCECY1vlFl2esG9iOPJOG8Nt25HbCtIVAewZEBfXJely
+         bRQnYi0y7sJgaNafyPiKH7/9Vzr3wFFW1kRugBX35pVQbTn/tPkiLBQ7JU9HWlveMvwb
+         HCEniL1TxKhOjdxqaz1/lejXP2Hff7LacMRMqsj3DSoX2HVK/5uqeIvJP2Ul+BxtVpbk
+         TccA==
+X-Gm-Message-State: AOAM533wqrijLKKuGkvVQBcxDOr4fLzde+QCn4GtUuZyNm7sABWfczkP
+        gdYjTwiJKUs5bElMaEXDbOU1sdv0pw==
+X-Google-Smtp-Source: ABdhPJwjQqWTZ60aOvX3GXryd3E9kdB2g5bch4rI35l6Axo2X1+NCXqYiukhpG/7sn59PDrE+LlA5Q==
+X-Received: by 2002:a05:6870:5b9e:b0:cf:f6de:3e89 with SMTP id em30-20020a0568705b9e00b000cff6de3e89mr1919572oab.94.1645816105917;
+        Fri, 25 Feb 2022 11:08:25 -0800 (PST)
+Received: from robh.at.kernel.org (66-90-148-213.dyn.grandenetworks.net. [66.90.148.213])
+        by smtp.gmail.com with ESMTPSA id 23-20020a9d0b97000000b005ad33994e93sm1495550oth.31.2022.02.25.11.08.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 25 Feb 2022 11:08:25 -0800 (PST)
+Received: (nullmailer pid 1262255 invoked by uid 1000);
+        Fri, 25 Feb 2022 19:08:24 -0000
+Date:   Fri, 25 Feb 2022 13:08:24 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Daniel Kestrel <kestrelseventyfour@gmail.com>
+Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>,
+        linux-remoteproc@vger.kernel.org,
+        Mathieu Poirier <mathieu.poirier@linaro.org>
+Subject: Re: [PATCH 1/3] dt-bindings: vendor-prefixes: Add AVM
+Message-ID: <YhkpKI7scFKaqAqC@robh.at.kernel.org>
+References: <20220221135259.GA7306@ubuntu>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <0aff95ff-5b79-8ae9-48fd-720a9f27cbce@canonical.com>
+In-Reply-To: <20220221135259.GA7306@ubuntu>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Fri, Feb 25, 2022 at 10:36:20AM +0100, Krzysztof Kozlowski wrote:
-> On 25/02/2022 00:52, Bjorn Helgaas wrote:
-> > On Thu, Feb 24, 2022 at 08:49:15AM +0100, Krzysztof Kozlowski wrote:
-> >> On 23/02/2022 22:51, Bjorn Helgaas wrote:
-> >>> In subject, to match drivers/pci/ convention, do something like:
-> >>>
-> >>>   PCI: Use driver_set_override() instead of open-coding
-> >>>
-> >>> On Wed, Feb 23, 2022 at 08:13:04PM +0100, Krzysztof Kozlowski wrote:
-> >>>> Use a helper for seting driver_override to reduce amount of duplicated
-> >>>> code.
-> >>>> @@ -567,31 +567,15 @@ static ssize_t driver_override_store(struct device *dev,
-> >>>>  				     const char *buf, size_t count)
-> >>>>  {
-> >>>>  	struct pci_dev *pdev = to_pci_dev(dev);
-> >>>> -	char *driver_override, *old, *cp;
-> >>>> +	int ret;
-> >>>>  
-> >>>>  	/* We need to keep extra room for a newline */
-> >>>>  	if (count >= (PAGE_SIZE - 1))
-> >>>>  		return -EINVAL;
-> >>>
-> >>> This check makes no sense in the new function.  Michael alluded to
-> >>> this as well.
-> >>
-> >> I am not sure if I got your comment properly. You mean here:
-> >> 1. Move this check to driver_set_override()?
-> >> 2. Remove the check entirely?
-> > 
-> > I was mistaken about the purpose of the comment and the check.  I
-> > thought it had to do with *this* function, and this function doesn't
-> > add a newline, and there's no obvious connection with PAGE_SIZE.
-> > 
-> > But looking closer, I think the "extra room for a newline" is really
-> > to make sure that *driver_override_show()* can add a newline and have
-> > it still fit within the PAGE_SIZE sysfs limit.
-> > 
-> > Most driver_override_*() functions have the same comment, so maybe
-> > this was obvious to everybody except me :)  I do see that spi.c adds
-> > "when displaying value" at the end, which helps a lot.
-> > 
-> > Sorry for the wild goose chase.
+On Mon, 21 Feb 2022 14:52:59 +0100, Daniel Kestrel wrote:
+> Add vendor prefix for AVM Computersysteme Vertriebs GmbH (http://www.avm.de/en)
 > 
-> I think I will move this check anyway to driver_set_override() helper,
-> because there is no particular benefit to have duplicated all over. The
-> helper will receive "count" argument so can perform all checks.
+> Signed-off-by: Daniel Kestrel <kestrelseventyfour@gmail.com>
+> ---
+>  Documentation/devicetree/bindings/vendor-prefixes.yaml | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
 
-Thanks, I think that would be good!
-
-Bjorn
+Acked-by: Rob Herring <robh@kernel.org>
