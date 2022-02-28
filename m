@@ -2,41 +2,42 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA0E4C433EF
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 28 Feb 2022 22:58:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 906D3C43219
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 28 Feb 2022 22:58:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231652AbiB1W7c (ORCPT
+        id S231654AbiB1W7d (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 28 Feb 2022 17:59:32 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53142 "EHLO
+        Mon, 28 Feb 2022 17:59:33 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53156 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229765AbiB1W7b (ORCPT
+        with ESMTP id S229895AbiB1W7b (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
         Mon, 28 Feb 2022 17:59:31 -0500
-X-Greylist: delayed 179 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 28 Feb 2022 14:58:51 PST
-Received: from mo4-p01-ob.smtp.rzone.de (mo4-p01-ob.smtp.rzone.de [85.215.255.51])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 972879F3BE;
+X-Greylist: delayed 179 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 28 Feb 2022 14:58:50 PST
+Received: from mo4-p02-ob.smtp.rzone.de (mo4-p02-ob.smtp.rzone.de [85.215.255.80])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8EE419D07D;
         Mon, 28 Feb 2022 14:58:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1646088947;
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1646088948;
     s=strato-dkim-0002; d=gerhold.net;
-    h=Message-Id:Date:Subject:Cc:To:From:Cc:Date:From:Subject:Sender;
-    bh=a/gAEMN65dNbL3ATcc5dOu/F+K7mQe5TkMeEHj9kOHk=;
-    b=kcn99mJFc13QRBZ1qprlucgyIq80zEm146rskwegsrB7yf41cOdtAd6uMPP+nOlBPs
-    TB670z7v/Q390MezIP4S/HzmFPlyMcOYQeXT64CWfy09iaeEyi80DmHvqZ4xcvzcHzSI
-    kBIDwxMEfLB7M4yi7ucc9gdr8PkszcTg/Ze6e47i5y5oG0wERpW66dxAGXvFwIPD1Ju8
-    PQz119l3P0KTSL4UlB9O2ci4vyDPQynRrzzuOR0IgScNeCky+Fa/Y8BXCor/B9Kp9JQU
-    E+T6odYpQbNoM8TaTJAeMZm4MzZLi1itW9tLxTtZDauMAGlpxRUUpCA/U9ugFhgmBH6F
-    GhYg==
+    h=References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Cc:Date:
+    From:Subject:Sender;
+    bh=dqH8VpKpHp6Ppb3BmpkraxlbOG5eMMt8r+ipCo9yp6E=;
+    b=MkHeIQiJesf3XeP1Cey8nnMxMbEQs1y+L9AVlrFHRCKKnlyNl37NmqdpimGrj0Jq5v
+    9g1S4GQ4vX8g0EROqv9hScmXX/LkpEn6WuNEKNRVeamVpkUk8UTGOtRHxHeoTeMFvd2R
+    7SnAcNwWPjR7vjoUVI33OU7AqF/xZbcirEUeOkmgdoT2ah+1D7a4Rwdzm7dcqCTX5xf9
+    /lMQGZnHDvpv+nUNTg17W6v8mvHLJns0ZILnu0oZAUsCPyiBs1e07OVHijXVEO5gLWrO
+    1j8OJ92OMkyA9+VnJn+PKJ70jLv/5TVW9j0//u/5nGLN5yzgPAWwMQ9MrsFQgXWSghjY
+    NoGg==
 Authentication-Results: strato.com;
     dkim=none
 X-RZG-AUTH: ":P3gBZUipdd93FF5ZZvYFPugejmSTVR2nRPhVORvLd4SsytBXQ7UOGqRde+a0fyL/oVo="
 X-RZG-CLASS-ID: mo00
 Received: from droid..
     by smtp.strato.de (RZmta 47.40.1 AUTH)
-    with ESMTPSA id kdc58dy1SMtkWqD
+    with ESMTPSA id kdc58dy1SMtlWqG
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
         (Client did not present a certificate);
-    Mon, 28 Feb 2022 23:55:46 +0100 (CET)
+    Mon, 28 Feb 2022 23:55:47 +0100 (CET)
 From:   Stephan Gerhold <stephan@gerhold.net>
 To:     Bjorn Andersson <bjorn.andersson@linaro.org>
 Cc:     Andy Gross <agross@kernel.org>, linux-arm-msm@vger.kernel.org,
@@ -45,38 +46,86 @@ Cc:     Andy Gross <agross@kernel.org>, linux-arm-msm@vger.kernel.org,
         linux-remoteproc@vger.kernel.org, phone-devel@vger.kernel.org,
         Aleksander Morgado <aleksander@aleksander.es>,
         Stephan Gerhold <stephan@gerhold.net>
-Subject: [PATCH v2 0/2] Enable BAM-DMUX/WWAN on Qualcomm MSM8916
-Date:   Mon, 28 Feb 2022 23:53:58 +0100
-Message-Id: <20220228225400.146555-1-stephan@gerhold.net>
+Subject: [PATCH v2 2/2] arm64: dts: qcom: msm8916: Add BAM-DMUX for WWAN network interfaces
+Date:   Mon, 28 Feb 2022 23:54:00 +0100
+Message-Id: <20220228225400.146555-3-stephan@gerhold.net>
 X-Mailer: git-send-email 2.35.1
+In-Reply-To: <20220228225400.146555-1-stephan@gerhold.net>
+References: <20220228225400.146555-1-stephan@gerhold.net>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-This series enables using mobile Internet/WWAN on devices based on Qualcomm
-MSM8916. The network driver for that has already landed in Linux 5.17.
+The BAM Data Multiplexer provides access to the network data channels
+of modems integrated into many older Qualcomm SoCs, including MSM8916.
 
-The device tree node of BAM-DMUX does not have any own memory resources.
-It just bundles resources from other hardware blocks. It could be added to the
-device tree root node, but it logically belongs below the modem remote processor.
+Add the nodes for the BAM DMA engine and BAM-DMUX to enable using WWAN
+on smartphones/tablets based on MSM8916. This should work out of the box
+with open-source WWAN userspace such as ModemManager.
 
-To allow adding it there, the qcom_q6v5_mss driver is modified slightly to
-create a platform device for it.
+The nodes are disabled by default to avoid loading unnecessary drivers
+on devices that cannot use BAM-DMUX (e.g. DragonBoard 410c). However,
+strictly speaking the nodes could be enabled by default since both the
+bam_dma and bam_dmux driver will simply do nothing if the modem does
+not announce any BAM-DMUX channels.
 
-Changes in v2:
-  - Avoid using of_platform_populate() and create platform device 
-    specifically only for "qcom,bam-dmux".
-
-Stephan Gerhold (2):
-  remoteproc: qcom_q6v5_mss: Create platform device for BAM-DMUX
-  arm64: dts: qcom: msm8916: Add BAM-DMUX for WWAN network interfaces
-
+Signed-off-by: Stephan Gerhold <stephan@gerhold.net>
+---
+Changes in v2: None.
+---
  arch/arm64/boot/dts/qcom/msm8916.dtsi | 30 +++++++++++++++++++++++++++
- drivers/remoteproc/qcom_q6v5_mss.c    |  8 +++++++
- 2 files changed, 38 insertions(+)
+ 1 file changed, 30 insertions(+)
 
+diff --git a/arch/arm64/boot/dts/qcom/msm8916.dtsi b/arch/arm64/boot/dts/qcom/msm8916.dtsi
+index 0a0be43529f6..26b321d2dca1 100644
+--- a/arch/arm64/boot/dts/qcom/msm8916.dtsi
++++ b/arch/arm64/boot/dts/qcom/msm8916.dtsi
+@@ -1314,6 +1314,20 @@ spmi_bus: spmi@200f000 {
+ 			#interrupt-cells = <4>;
+ 		};
+ 
++		bam_dmux_dma: dma-controller@4044000 {
++			compatible = "qcom,bam-v1.7.0";
++			reg = <0x04044000 0x19000>;
++			interrupts = <GIC_SPI 29 IRQ_TYPE_LEVEL_HIGH>;
++			#dma-cells = <1>;
++			qcom,ee = <0>;
++
++			num-channels = <6>;
++			qcom,num-ees = <1>;
++			qcom,powered-remotely;
++
++			status = "disabled";
++		};
++
+ 		mpss: remoteproc@4080000 {
+ 			compatible = "qcom,msm8916-mss-pil", "qcom,q6v5-pil";
+ 			reg = <0x04080000 0x100>,
+@@ -1357,6 +1371,22 @@ mpss {
+ 				memory-region = <&mpss_mem>;
+ 			};
+ 
++			bam_dmux: bam-dmux {
++				compatible = "qcom,bam-dmux";
++
++				interrupt-parent = <&hexagon_smsm>;
++				interrupts = <1 IRQ_TYPE_EDGE_BOTH>, <11 IRQ_TYPE_EDGE_BOTH>;
++				interrupt-names = "pc", "pc-ack";
++
++				qcom,smem-states = <&apps_smsm 1>, <&apps_smsm 11>;
++				qcom,smem-state-names = "pc", "pc-ack";
++
++				dmas = <&bam_dmux_dma 4>, <&bam_dmux_dma 5>;
++				dma-names = "tx", "rx";
++
++				status = "disabled";
++			};
++
+ 			smd-edge {
+ 				interrupts = <GIC_SPI 25 IRQ_TYPE_EDGE_RISING>;
+ 
 -- 
 2.35.1
 
