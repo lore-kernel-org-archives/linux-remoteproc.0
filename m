@@ -2,110 +2,81 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5339AC433EF
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 28 Feb 2022 22:09:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA0E4C433EF
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 28 Feb 2022 22:58:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231204AbiB1WKY (ORCPT
+        id S231652AbiB1W7c (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 28 Feb 2022 17:10:24 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46242 "EHLO
+        Mon, 28 Feb 2022 17:59:32 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53142 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229634AbiB1WKX (ORCPT
+        with ESMTP id S229765AbiB1W7b (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 28 Feb 2022 17:10:23 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 738FCC681F;
-        Mon, 28 Feb 2022 14:09:43 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 39DA4B81698;
-        Mon, 28 Feb 2022 22:09:42 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7D10FC340EE;
-        Mon, 28 Feb 2022 22:09:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1646086180;
-        bh=C3m4pnnTAF+o+8Z+tsT22TMwOAoIvmDl7rQIHuiLdMA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=BdRbVBZNF8SyrlpXKAsHjo1A6k3f944Uzsh5hy2UmK5ywn8cPtoiWatoTWpomjQzc
-         x44Jv7/Wzxo8T+fSgsmyLRYgbKXOQkqEy86p/ln+HE5A679Zvs+XoyM7aJWc8wSHt6
-         ACqagutJzp7I7JrJGyMxpDRREGY/HUyTANKgF4FJ/99jkm+o2X+/pda0xDuvY8MbdY
-         Sv4Zfi/zQD1hFPf6GsOnP6lA5hiuplekt76UNCcR1YonNLI47HOJfCmRDkLAT1NcBE
-         yuQHyRRcOkNLJGUq9zBF6RREf+bF8FScygNYfOz5OBENPb041Vfalb0bt696k7uf4U
-         g+dDDXgOJFcHA==
-Date:   Mon, 28 Feb 2022 22:09:31 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Rob Herring <robh@kernel.org>
-Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>, Lee Jones <lee.jones@linaro.org>,
-        Guenter Roeck <groeck@chromium.org>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Richard Weinberger <richard@nod.at>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        Sebastian Reichel <sre@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Mon, 28 Feb 2022 17:59:31 -0500
+X-Greylist: delayed 179 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 28 Feb 2022 14:58:51 PST
+Received: from mo4-p01-ob.smtp.rzone.de (mo4-p01-ob.smtp.rzone.de [85.215.255.51])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 972879F3BE;
+        Mon, 28 Feb 2022 14:58:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1646088947;
+    s=strato-dkim-0002; d=gerhold.net;
+    h=Message-Id:Date:Subject:Cc:To:From:Cc:Date:From:Subject:Sender;
+    bh=a/gAEMN65dNbL3ATcc5dOu/F+K7mQe5TkMeEHj9kOHk=;
+    b=kcn99mJFc13QRBZ1qprlucgyIq80zEm146rskwegsrB7yf41cOdtAd6uMPP+nOlBPs
+    TB670z7v/Q390MezIP4S/HzmFPlyMcOYQeXT64CWfy09iaeEyi80DmHvqZ4xcvzcHzSI
+    kBIDwxMEfLB7M4yi7ucc9gdr8PkszcTg/Ze6e47i5y5oG0wERpW66dxAGXvFwIPD1Ju8
+    PQz119l3P0KTSL4UlB9O2ci4vyDPQynRrzzuOR0IgScNeCky+Fa/Y8BXCor/B9Kp9JQU
+    E+T6odYpQbNoM8TaTJAeMZm4MzZLi1itW9tLxTtZDauMAGlpxRUUpCA/U9ugFhgmBH6F
+    GhYg==
+Authentication-Results: strato.com;
+    dkim=none
+X-RZG-AUTH: ":P3gBZUipdd93FF5ZZvYFPugejmSTVR2nRPhVORvLd4SsytBXQ7UOGqRde+a0fyL/oVo="
+X-RZG-CLASS-ID: mo00
+Received: from droid..
+    by smtp.strato.de (RZmta 47.40.1 AUTH)
+    with ESMTPSA id kdc58dy1SMtkWqD
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
+        (Client did not present a certificate);
+    Mon, 28 Feb 2022 23:55:46 +0100 (CET)
+From:   Stephan Gerhold <stephan@gerhold.net>
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Andy Gross <agross@kernel.org>, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org, linux-input@vger.kernel.org,
-        linux-leds@vger.kernel.org, linux-mtd@lists.infradead.org,
-        netdev@vger.kernel.org, linux-phy@lists.infradead.org,
-        linux-pm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        alsa-devel@alsa-project.org, linux-spi@vger.kernel.org,
-        linux-usb@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: Another pass removing cases of 'allOf'
- containing a '$ref'
-Message-ID: <Yh1IG9daOUOB52rf@sirena.org.uk>
-References: <20220228213802.1639658-1-robh@kernel.org>
+        linux-remoteproc@vger.kernel.org, phone-devel@vger.kernel.org,
+        Aleksander Morgado <aleksander@aleksander.es>,
+        Stephan Gerhold <stephan@gerhold.net>
+Subject: [PATCH v2 0/2] Enable BAM-DMUX/WWAN on Qualcomm MSM8916
+Date:   Mon, 28 Feb 2022 23:53:58 +0100
+Message-Id: <20220228225400.146555-1-stephan@gerhold.net>
+X-Mailer: git-send-email 2.35.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="xC2AwCckB4yHmCdp"
-Content-Disposition: inline
-In-Reply-To: <20220228213802.1639658-1-robh@kernel.org>
-X-Cookie: Killing turkeys causes winter.
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
+This series enables using mobile Internet/WWAN on devices based on Qualcomm
+MSM8916. The network driver for that has already landed in Linux 5.17.
 
---xC2AwCckB4yHmCdp
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The device tree node of BAM-DMUX does not have any own memory resources.
+It just bundles resources from other hardware blocks. It could be added to the
+device tree root node, but it logically belongs below the modem remote processor.
 
-On Mon, Feb 28, 2022 at 03:38:02PM -0600, Rob Herring wrote:
-> Another pass at removing unnecessary use of 'allOf' with a '$ref'.
->=20
-> json-schema versions draft7 and earlier have a weird behavior in that
-> any keywords combined with a '$ref' are ignored (silently). The correct
-> form was to put a '$ref' under an 'allOf'. This behavior is now changed
-> in the 2019-09 json-schema spec and '$ref' can be mixed with other
-> keywords.
+To allow adding it there, the qcom_q6v5_mss driver is modified slightly to
+create a platform device for it.
 
-Acked-by: Mark Brown <broonie@kernel.org>
+Changes in v2:
+  - Avoid using of_platform_populate() and create platform device 
+    specifically only for "qcom,bam-dmux".
 
---xC2AwCckB4yHmCdp
-Content-Type: application/pgp-signature; name="signature.asc"
+Stephan Gerhold (2):
+  remoteproc: qcom_q6v5_mss: Create platform device for BAM-DMUX
+  arm64: dts: qcom: msm8916: Add BAM-DMUX for WWAN network interfaces
 
------BEGIN PGP SIGNATURE-----
+ arch/arm64/boot/dts/qcom/msm8916.dtsi | 30 +++++++++++++++++++++++++++
+ drivers/remoteproc/qcom_q6v5_mss.c    |  8 +++++++
+ 2 files changed, 38 insertions(+)
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmIdSBoACgkQJNaLcl1U
-h9Brnwf9Gb7P9H3jku9OngoretGUxGN4DtDmr+0Bvk7ZZFkSIVQYVBROL0mmUfer
-wPLiKHS48VJM6irhxRMqHLa1CrIeAmJHZpkg0R1JH1Iw36fWPZiBTfrDG8qubOti
-l/cEx7Jmxoj2EtB8xcTpbYGqwOqSZtDkAz1smUIh3coKzArwCPjkAYE59GjQ28SS
-F+P6ze1awYqRh/vkZC5ge03hrBhxOKU1iVyqv4iRfWtwCXRxYM3aPTs4aLB/T0NW
-svINogVRgGsGVmY7gRufv1wI7bJle7+MP7byPwsqzx2AXthe0fYt3x457mV59wjc
-Ej2pLNgE/IiOKyZ8gmWU8kkWHOh2hQ==
-=Hxgn
------END PGP SIGNATURE-----
+-- 
+2.35.1
 
---xC2AwCckB4yHmCdp--
