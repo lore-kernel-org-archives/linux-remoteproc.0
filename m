@@ -2,249 +2,201 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2F7EC433F5
-	for <linux-remoteproc@archiver.kernel.org>; Tue,  1 Mar 2022 15:18:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B632C43217
+	for <linux-remoteproc@archiver.kernel.org>; Tue,  1 Mar 2022 16:02:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235625AbiCAPTg (ORCPT
+        id S235921AbiCAQCt (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 1 Mar 2022 10:19:36 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37204 "EHLO
+        Tue, 1 Mar 2022 11:02:49 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33054 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235626AbiCAPTe (ORCPT
+        with ESMTP id S234216AbiCAQCs (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 1 Mar 2022 10:19:34 -0500
-Received: from alexa-out.qualcomm.com (alexa-out.qualcomm.com [129.46.98.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C0B682E0BF;
-        Tue,  1 Mar 2022 07:18:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=quicinc.com; i=@quicinc.com; q=dns/txt; s=qcdkim;
-  t=1646147932; x=1677683932;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version;
-  bh=b9ZaCMYU7AMRZzESuVXMPojdYou2JKYQcNtOccNCo/s=;
-  b=KUHcPUkFe85CRdMeLp86jqNL0NApEWM7Nsd1UBn1I59okJtICP+McHDc
-   JtM5uso8MSqvDuF4vdqWNbzwtkjhXWIR/Z6TkxBM2P2/k60AchEx+BiAl
-   k4xZdj7JMhTDDDDdDpOmeTXzjVhjXWgxyvcyGn79VUDhaansHCMi38j5z
-   E=;
-Received: from ironmsg07-lv.qualcomm.com ([10.47.202.151])
-  by alexa-out.qualcomm.com with ESMTP; 01 Mar 2022 07:18:52 -0800
-X-QCInternal: smtphost
-Received: from nasanex01c.na.qualcomm.com ([10.47.97.222])
-  by ironmsg07-lv.qualcomm.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Mar 2022 07:18:52 -0800
-Received: from nalasex01a.na.qualcomm.com (10.47.209.196) by
- nasanex01c.na.qualcomm.com (10.47.97.222) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.15; Tue, 1 Mar 2022 07:18:51 -0800
-Received: from deesin-linux.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.15; Tue, 1 Mar 2022 07:18:49 -0800
-From:   Deepak Kumar Singh <quic_deesin@quicinc.com>
-To:     <bjorn.andersson@linaro.org>, <quic_clew@quicinc.com>,
-        <mathieu.poirier@linaro.org>
-CC:     <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>,
-        Deepak Kumar Singh <quic_deesin@quicinc.com>,
-        Andy Gross <agross@kernel.org>
-Subject: [PATCH V5 2/2] soc: qcom: smem: validate fields of shared structures
-Date:   Tue, 1 Mar 2022 20:48:33 +0530
-Message-ID: <1646147913-15791-2-git-send-email-quic_deesin@quicinc.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1646147913-15791-1-git-send-email-quic_deesin@quicinc.com>
-References: <1646147913-15791-1-git-send-email-quic_deesin@quicinc.com>
+        Tue, 1 Mar 2022 11:02:48 -0500
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F04A6A145F;
+        Tue,  1 Mar 2022 08:02:07 -0800 (PST)
+Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 221G0rsD008364;
+        Tue, 1 Mar 2022 16:01:39 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=pp1;
+ bh=5bY54GIfqV2Jrj+zob+Kzfp/785R923S9y5UdokMSTY=;
+ b=cTEjWFiDoDzgklnz8XmCDBVZZf/EOFyYKgfKWFVqfwcKr/T2QDXQFlsGiZt4OWQAdMGq
+ 4adsleM18NBEfaEqHRN9Bu2TiHQi5YqOMn1patOrp6CI1m9QLvFatoDeXXAHnVZPKWuN
+ 2L/4TUqPCjstjNtIA3M7DYAqxnj3hHVn7Vdzm5R0gE/DjuCbMqv3e1gZMp/EwNbcWDDa
+ C3w69dyAlov+VJ+AbcHXTaFxawtdMD4YDgnIaXMAZXvuRD8VSbRZT26N2yA5pph2osAg
+ NT8AvoDYJxYcKFUfwe9e7/YTOHs8NqCNp3i3RxhPQ6RHwx8j2Z9FVUnvuiiANKuSB/AG OA== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3ehpbn8haj-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 01 Mar 2022 16:01:38 +0000
+Received: from m0098409.ppops.net (m0098409.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 221G1b7O011765;
+        Tue, 1 Mar 2022 16:01:38 GMT
+Received: from ppma03fra.de.ibm.com (6b.4a.5195.ip4.static.sl-reverse.com [149.81.74.107])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3ehpbn8h8u-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 01 Mar 2022 16:01:37 +0000
+Received: from pps.filterd (ppma03fra.de.ibm.com [127.0.0.1])
+        by ppma03fra.de.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 221Fw2Vs007708;
+        Tue, 1 Mar 2022 16:01:34 GMT
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (d06relay13.portsmouth.uk.ibm.com [9.149.109.198])
+        by ppma03fra.de.ibm.com with ESMTP id 3efbu9b25b-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 01 Mar 2022 16:01:34 +0000
+Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 221G1QKg43450802
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 1 Mar 2022 16:01:26 GMT
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 346CE4C050;
+        Tue,  1 Mar 2022 16:01:26 +0000 (GMT)
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 9DE1C4C044;
+        Tue,  1 Mar 2022 16:01:24 +0000 (GMT)
+Received: from [9.145.23.254] (unknown [9.145.23.254])
+        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Tue,  1 Mar 2022 16:01:24 +0000 (GMT)
+Message-ID: <b2295eba-722a-67e2-baae-20dac9d72625@linux.ibm.com>
+Date:   Tue, 1 Mar 2022 17:01:24 +0100
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.6.0
+Subject: Re: [PATCH v3 06/11] s390: cio: Use driver_set_override() instead of
+ open-coding
+Content-Language: en-US
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Stuart Yoder <stuyoder@gmail.com>,
+        Laurentiu Tudor <laurentiu.tudor@nxp.com>,
+        Abel Vesa <abel.vesa@nxp.com>, Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Peter Oberparleiter <oberpar@linux.ibm.com>,
+        Heiko Carstens <hca@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        Andy Gross <agross@kernel.org>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Mark Brown <broonie@kernel.org>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, NXP Linux Team <linux-imx@nxp.com>,
+        linux-arm-kernel@lists.infradead.org, linux-hyperv@vger.kernel.org,
+        linux-pci@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        linux-s390@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        alsa-devel@alsa-project.org, linux-spi@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Rasmus Villemoes <linux@rasmusvillemoes.dk>
+References: <20220227135214.145599-1-krzysztof.kozlowski@canonical.com>
+ <20220227135214.145599-7-krzysztof.kozlowski@canonical.com>
+From:   Vineeth Vijayan <vneethv@linux.ibm.com>
+In-Reply-To: <20220227135214.145599-7-krzysztof.kozlowski@canonical.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: VwR9OiefAhT359vuW89HdrkWzjVzSJvV
+X-Proofpoint-GUID: 77Yd1MtoDGNnH1_0a7MDCf3mUHkKdN3G
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.816,Hydra:6.0.425,FMLib:17.11.64.514
+ definitions=2022-03-01_07,2022-02-26_01,2022-02-23_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 spamscore=0
+ priorityscore=1501 mlxscore=0 malwarescore=0 suspectscore=0 bulkscore=0
+ mlxlogscore=999 impostorscore=0 lowpriorityscore=0 clxscore=1011
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2201110000 definitions=main-2203010085
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Structures in shared memory that can be modified by remote
-processors may have untrusted values, they should be validated
-before use.
 
-Adding proper validation before using fields of shared
-structures.
+On 2/27/22 14:52, Krzysztof Kozlowski wrote:
+> Use a helper for seting driver_override to reduce amount of duplicated
+> code. Make the driver_override field const char, because it is not
+> modified by the core and it matches other subsystems.
+s/seting/setting/
 
-Signed-off-by: Deepak Kumar Singh <quic_deesin@quicinc.com>
----
- drivers/soc/qcom/smem.c | 79 ++++++++++++++++++++++++++++++++++++++++++-------
- 1 file changed, 69 insertions(+), 10 deletions(-)
+Also could you please change the title to start with "s390/cio:"
+instead of "s390 : cio"
 
-diff --git a/drivers/soc/qcom/smem.c b/drivers/soc/qcom/smem.c
-index 2dde9b6..7733989 100644
---- a/drivers/soc/qcom/smem.c
-+++ b/drivers/soc/qcom/smem.c
-@@ -367,13 +367,18 @@ static int qcom_smem_alloc_private(struct qcom_smem *smem,
- 	struct smem_partition_header *phdr;
- 	size_t alloc_size;
- 	void *cached;
-+	void *p_end;
- 
- 	phdr = (struct smem_partition_header __force *)part->virt_base;
-+	p_end = (void *)phdr + part->size;
- 
- 	hdr = phdr_to_first_uncached_entry(phdr);
- 	end = phdr_to_last_uncached_entry(phdr);
- 	cached = phdr_to_last_cached_entry(phdr);
- 
-+	if (WARN_ON((void *)end > p_end || cached > p_end))
-+		return -EINVAL;
-+
- 	while (hdr < end) {
- 		if (hdr->canary != SMEM_PRIVATE_CANARY)
- 			goto bad_canary;
-@@ -383,6 +388,9 @@ static int qcom_smem_alloc_private(struct qcom_smem *smem,
- 		hdr = uncached_entry_next(hdr);
- 	}
- 
-+	if (WARN_ON((void *)hdr > p_end))
-+		return -EINVAL;
-+
- 	/* Check that we don't grow into the cached region */
- 	alloc_size = sizeof(*hdr) + ALIGN(size, 8);
- 	if ((void *)hdr + alloc_size > cached) {
-@@ -501,6 +509,8 @@ static void *qcom_smem_get_global(struct qcom_smem *smem,
- 	struct smem_header *header;
- 	struct smem_region *region;
- 	struct smem_global_entry *entry;
-+	u64 entry_offset;
-+	u32 e_size;
- 	u32 aux_base;
- 	unsigned i;
- 
-@@ -515,9 +525,16 @@ static void *qcom_smem_get_global(struct qcom_smem *smem,
- 		region = &smem->regions[i];
- 
- 		if ((u32)region->aux_base == aux_base || !aux_base) {
-+			e_size = le32_to_cpu(entry->size);
-+			entry_offset = le32_to_cpu(entry->offset);
-+
-+			if (WARN_ON(e_size + entry_offset > region->size))
-+				return ERR_PTR(-EINVAL);
-+
- 			if (size != NULL)
--				*size = le32_to_cpu(entry->size);
--			return region->virt_base + le32_to_cpu(entry->offset);
-+				*size = e_size;
-+
-+			return region->virt_base + entry_offset;
- 		}
- 	}
- 
-@@ -531,8 +548,12 @@ static void *qcom_smem_get_private(struct qcom_smem *smem,
- {
- 	struct smem_private_entry *e, *end;
- 	struct smem_partition_header *phdr;
-+	void *item_ptr, *p_end;
-+	u32 padding_data;
-+	u32 e_size;
- 
- 	phdr = (struct smem_partition_header __force *)part->virt_base;
-+	p_end = (void *)phdr + part->size;
- 
- 	e = phdr_to_first_uncached_entry(phdr);
- 	end = phdr_to_last_uncached_entry(phdr);
-@@ -542,36 +563,65 @@ static void *qcom_smem_get_private(struct qcom_smem *smem,
- 			goto invalid_canary;
- 
- 		if (le16_to_cpu(e->item) == item) {
--			if (size != NULL)
--				*size = le32_to_cpu(e->size) -
--					le16_to_cpu(e->padding_data);
-+			if (size != NULL) {
-+				e_size = le32_to_cpu(e->size);
-+				padding_data = le16_to_cpu(e->padding_data);
-+
-+				if (WARN_ON(e_size > part->size || padding_data > e_size))
-+					return ERR_PTR(-EINVAL);
-+
-+				*size = e_size - padding_data;
-+			}
-+
-+			item_ptr = uncached_entry_to_item(e);
-+			if (WARN_ON(item_ptr > p_end))
-+				return ERR_PTR(-EINVAL);
- 
--			return uncached_entry_to_item(e);
-+			return item_ptr;
- 		}
- 
- 		e = uncached_entry_next(e);
- 	}
- 
-+	if (WARN_ON((void *)e > p_end))
-+		return ERR_PTR(-EINVAL);
-+
- 	/* Item was not found in the uncached list, search the cached list */
- 
- 	e = phdr_to_first_cached_entry(phdr, part->cacheline);
- 	end = phdr_to_last_cached_entry(phdr);
- 
-+	if (WARN_ON((void *)e < (void *)phdr || (void *)end > p_end))
-+		return ERR_PTR(-EINVAL);
-+
- 	while (e > end) {
- 		if (e->canary != SMEM_PRIVATE_CANARY)
- 			goto invalid_canary;
- 
- 		if (le16_to_cpu(e->item) == item) {
--			if (size != NULL)
--				*size = le32_to_cpu(e->size) -
--					le16_to_cpu(e->padding_data);
-+			if (size != NULL) {
-+				e_size = le32_to_cpu(e->size);
-+				padding_data = le16_to_cpu(e->padding_data);
-+
-+				if (WARN_ON(e_size > part->size || padding_data > e_size))
-+					return ERR_PTR(-EINVAL);
-+
-+				*size = e_size - padding_data;
-+			}
- 
--			return cached_entry_to_item(e);
-+			item_ptr = cached_entry_to_item(e);
-+			if (WARN_ON(item_ptr < (void *)phdr))
-+				return ERR_PTR(-EINVAL);
-+
-+			return item_ptr;
- 		}
- 
- 		e = cached_entry_next(e, part->cacheline);
- 	}
- 
-+	if (WARN_ON((void *)e < (void *)phdr))
-+		return ERR_PTR(-EINVAL);
-+
- 	return ERR_PTR(-ENOENT);
- 
- invalid_canary:
-@@ -648,14 +698,23 @@ int qcom_smem_get_free_space(unsigned host)
- 		phdr = part->virt_base;
- 		ret = le32_to_cpu(phdr->offset_free_cached) -
- 		      le32_to_cpu(phdr->offset_free_uncached);
-+
-+		if (ret > le32_to_cpu(part->size))
-+			return -EINVAL;
- 	} else if (__smem->global_partition.virt_base) {
- 		part = &__smem->global_partition;
- 		phdr = part->virt_base;
- 		ret = le32_to_cpu(phdr->offset_free_cached) -
- 		      le32_to_cpu(phdr->offset_free_uncached);
-+
-+		if (ret > le32_to_cpu(part->size))
-+			return -EINVAL;
- 	} else {
- 		header = __smem->regions[0].virt_base;
- 		ret = le32_to_cpu(header->available);
-+
-+		if (ret > __smem->regions[0].size)
-+			return -EINVAL;
- 	}
- 
- 	return ret;
--- 
-2.7.4
+Otherwise,
 
+Acked-by: Vineeth Vijayan <vneethv@linux.ibm.com>
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+> ---
+>   drivers/s390/cio/cio.h |  7 ++++++-
+>   drivers/s390/cio/css.c | 28 ++++------------------------
+>   2 files changed, 10 insertions(+), 25 deletions(-)
+>
+> diff --git a/drivers/s390/cio/cio.h b/drivers/s390/cio/cio.h
+> index 1cb9daf9c645..e110c10613e8 100644
+> --- a/drivers/s390/cio/cio.h
+> +++ b/drivers/s390/cio/cio.h
+> @@ -103,7 +103,12 @@ struct subchannel {
+>   	struct work_struct todo_work;
+>   	struct schib_config config;
+>   	u64 dma_mask;
+> -	char *driver_override; /* Driver name to force a match */
+> +	/*
+> +	 * Driver name to force a match.
+> +	 * Do not set directly, because core frees it.
+> +	 * Use driver_set_override() to set or clear it.
+> +	 */
+As Bjorn Helgaas mentioned, please wrap this comment.
+> +	const char *driver_override;
+>   } __attribute__ ((aligned(8)));
+>   
+>   DECLARE_PER_CPU_ALIGNED(struct irb, cio_irb);
+> diff --git a/drivers/s390/cio/css.c b/drivers/s390/cio/css.c
+> index fa8293335077..913b6ddd040b 100644
+> --- a/drivers/s390/cio/css.c
+> +++ b/drivers/s390/cio/css.c
+> @@ -338,31 +338,11 @@ static ssize_t driver_override_store(struct device *dev,
+>   				     const char *buf, size_t count)
+>   {
+>   	struct subchannel *sch = to_subchannel(dev);
+> -	char *driver_override, *old, *cp;
+> -
+> -	/* We need to keep extra room for a newline */
+> -	if (count >= (PAGE_SIZE - 1))
+> -		return -EINVAL;
+> -
+> -	driver_override = kstrndup(buf, count, GFP_KERNEL);
+> -	if (!driver_override)
+> -		return -ENOMEM;
+> -
+> -	cp = strchr(driver_override, '\n');
+> -	if (cp)
+> -		*cp = '\0';
+> -
+> -	device_lock(dev);
+> -	old = sch->driver_override;
+> -	if (strlen(driver_override)) {
+> -		sch->driver_override = driver_override;
+> -	} else {
+> -		kfree(driver_override);
+> -		sch->driver_override = NULL;
+> -	}
+> -	device_unlock(dev);
+> +	int ret;
+>   
+> -	kfree(old);
+> +	ret = driver_set_override(dev, &sch->driver_override, buf, count);
+> +	if (ret)
+> +		return ret;
+>   
+>   	return count;
+>   }
