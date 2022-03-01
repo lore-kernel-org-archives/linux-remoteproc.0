@@ -2,135 +2,143 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3ADFCC4167D
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 28 Feb 2022 22:58:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF6B5C43219
+	for <linux-remoteproc@archiver.kernel.org>; Tue,  1 Mar 2022 07:51:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231657AbiB1W7d (ORCPT
+        id S233119AbiCAHvz (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 28 Feb 2022 17:59:33 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53198 "EHLO
+        Tue, 1 Mar 2022 02:51:55 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55684 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231569AbiB1W7b (ORCPT
+        with ESMTP id S232923AbiCAHvy (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 28 Feb 2022 17:59:31 -0500
-Received: from mo4-p01-ob.smtp.rzone.de (mo4-p01-ob.smtp.rzone.de [85.215.255.54])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AB10DA41B2;
-        Mon, 28 Feb 2022 14:58:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1646088947;
-    s=strato-dkim-0002; d=gerhold.net;
-    h=References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Cc:Date:
-    From:Subject:Sender;
-    bh=6QtiDtoRb+0unR4ATY8ygChkhFlrPo5rBKJ8ZschNIs=;
-    b=p5DfGdrYhWDRnNfYEDTPR3zctNZ76/M3aAAAsYbcTjXvo1vB+qWuQEeTHvSls2DZ9Z
-    aYEhSY6Z38UtvrEGm0YNGvsdvgg0i78obnvQ5LCCOKS5/wWzpOa4lL/rjo1zgE5UC8Y3
-    qBJNMqYbGHlfdKJEOCN64HodvKezN0zwcabTOiGMr9bBOBzucMsHlHzJAG3YvoWALE9m
-    9sf93jUbDI0Xu4uqrHROZlL0jnph+g8lW0bBy133qhRg1/ErpSgtbt+1UhpcIpANZh5Y
-    wZ03NRAk8V/mttcT9wSjR1LcoZch7AdmeaVhxIACcMfJe2b067+fziyE82R6UE4Ox/Ms
-    l9+Q==
-Authentication-Results: strato.com;
-    dkim=none
-X-RZG-AUTH: ":P3gBZUipdd93FF5ZZvYFPugejmSTVR2nRPhVORvLd4SsytBXQ7UOGqRde+a0fyL/oVo="
-X-RZG-CLASS-ID: mo00
-Received: from droid..
-    by smtp.strato.de (RZmta 47.40.1 AUTH)
-    with ESMTPSA id kdc58dy1SMtlWqF
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
-        (Client did not present a certificate);
-    Mon, 28 Feb 2022 23:55:47 +0100 (CET)
-From:   Stephan Gerhold <stephan@gerhold.net>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Andy Gross <agross@kernel.org>, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht,
+        Tue, 1 Mar 2022 02:51:54 -0500
+Received: from mslow1.mail.gandi.net (mslow1.mail.gandi.net [217.70.178.240])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ABF7970F71;
+        Mon, 28 Feb 2022 23:51:11 -0800 (PST)
+Received: from relay11.mail.gandi.net (unknown [217.70.178.231])
+        by mslow1.mail.gandi.net (Postfix) with ESMTP id C52A4C3D50;
+        Tue,  1 Mar 2022 07:40:13 +0000 (UTC)
+Received: (Authenticated sender: miquel.raynal@bootlin.com)
+        by mail.gandi.net (Postfix) with ESMTPSA id 2B2C310000D;
+        Tue,  1 Mar 2022 07:40:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+        t=1646120409;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=1EOlbUxAApC61mQjvw+lG70+JM2jHWLUjBcqvnLcepA=;
+        b=EWUY1TKvGS6Yg129zF29NgHJHMwcv48rJCLCe7SF45JHcNNriVOQo+vcGiYixEAaHnyulB
+        nJQBl068EP/pSVzbkdxbgXCJZTn/Woy6xox0qwrhuWnLDJmO7Aw8fafuMklMsuzENOIIXz
+        c+TC7F7dcVRu1QNFnUnAFY2l+9/i9oBUcQ4iFhctYdJL7TClStx6/rANhA1Sbvyn0M96zz
+        DN43uNBfzPSoxhjSP8ns2qwAGgi1xkMICNqykUP4WLVTs0I1l9IOPWWY8T3PooNnoadHUN
+        InLV/E29BXUcvgd0jZP/wxq0rm/fa2yidd9Or23IERKtnX+02I184mza7r59qQ==
+Date:   Tue, 1 Mar 2022 08:40:01 +0100
+From:   Miquel Raynal <miquel.raynal@bootlin.com>
+To:     Rob Herring <robh@kernel.org>
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Pavel Machek <pavel@ucw.cz>, Lee Jones <lee.jones@linaro.org>,
+        Guenter Roeck <groeck@chromium.org>,
+        Richard Weinberger <richard@nod.at>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Vinod Koul <vkoul@kernel.org>,
+        Sebastian Reichel <sre@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
-        linux-remoteproc@vger.kernel.org, phone-devel@vger.kernel.org,
-        Aleksander Morgado <aleksander@aleksander.es>,
-        Stephan Gerhold <stephan@gerhold.net>
-Subject: [PATCH v2 1/2] remoteproc: qcom_q6v5_mss: Create platform device for BAM-DMUX
-Date:   Mon, 28 Feb 2022 23:53:59 +0100
-Message-Id: <20220228225400.146555-2-stephan@gerhold.net>
-X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20220228225400.146555-1-stephan@gerhold.net>
-References: <20220228225400.146555-1-stephan@gerhold.net>
+        Mark Brown <broonie@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org, linux-input@vger.kernel.org,
+        linux-leds@vger.kernel.org, linux-mtd@lists.infradead.org,
+        netdev@vger.kernel.org, linux-phy@lists.infradead.org,
+        linux-pm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        alsa-devel@alsa-project.org, linux-spi@vger.kernel.org,
+        linux-usb@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: Another pass removing cases of 'allOf'
+ containing a '$ref'
+Message-ID: <20220301084001.3771855e@xps13>
+In-Reply-To: <20220228213802.1639658-1-robh@kernel.org>
+References: <20220228213802.1639658-1-robh@kernel.org>
+Organization: Bootlin
+X-Mailer: Claws Mail 3.17.7 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-The modem remoteproc on older Qualcomm SoCs (e.g. MSM8916 and MSM8974)
-implements the BAM-DMUX protocol to allow access to the network data
-channels of the modem. The hardware/firmware resources required to
-implement the BAM-DMUX driver are described in an extra node in the
-device tree (with the compatible "qcom,bam-dmux").
+Hi Rob,
 
-This node logically belongs below the modem remoteproc, so that both
-control interfaces (rpmsg_wwan_ctrl) and network interfaces (bam_dmux)
-have a common parent.
+robh@kernel.org wrote on Mon, 28 Feb 2022 15:38:02 -0600:
 
-Unlike other child devices of the modem remoteproc, the bam-dmux device
-currently does not follow the state of the remoteproc (i.e. it is not
-added/removed when the remoteproc is started/stopped). However, this is
-an implementation detail of the bam_dmux driver in Linux that might
-change in the future.
+> Another pass at removing unnecessary use of 'allOf' with a '$ref'.
+>=20
+> json-schema versions draft7 and earlier have a weird behavior in that
+> any keywords combined with a '$ref' are ignored (silently). The correct
+> form was to put a '$ref' under an 'allOf'. This behavior is now changed
+> in the 2019-09 json-schema spec and '$ref' can be mixed with other
+> keywords.
+>=20
+> Cc: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+> Cc: Thierry Reding <thierry.reding@gmail.com>
+> Cc: Sam Ravnborg <sam@ravnborg.org>
+> Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+> Cc: Pavel Machek <pavel@ucw.cz>
+> Cc: Lee Jones <lee.jones@linaro.org>
+> Cc: Guenter Roeck <groeck@chromium.org>
+> Cc: Miquel Raynal <miquel.raynal@bootlin.com>
+> Cc: Richard Weinberger <richard@nod.at>
+> Cc: Vignesh Raghavendra <vigneshr@ti.com>
+> Cc: "David S. Miller" <davem@davemloft.net>
+> Cc: Jakub Kicinski <kuba@kernel.org>
+> Cc: Kishon Vijay Abraham I <kishon@ti.com>
+> Cc: Vinod Koul <vkoul@kernel.org>
+> Cc: Sebastian Reichel <sre@kernel.org>
+> Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
+> Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
+> Cc: Mark Brown <broonie@kernel.org>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> Cc: dri-devel@lists.freedesktop.org
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-input@vger.kernel.org
+> Cc: linux-leds@vger.kernel.org
+> Cc: linux-mtd@lists.infradead.org
+> Cc: netdev@vger.kernel.org
+> Cc: linux-phy@lists.infradead.org
+> Cc: linux-pm@vger.kernel.org
+> Cc: linux-remoteproc@vger.kernel.org
+> Cc: alsa-devel@alsa-project.org
+> Cc: linux-spi@vger.kernel.org
+> Cc: linux-usb@vger.kernel.org
+> Signed-off-by: Rob Herring <robh@kernel.org>
+> ---
+>  .../bindings/connector/usb-connector.yaml         |  3 +--
+>  .../bindings/display/brcm,bcm2711-hdmi.yaml       |  3 +--
+>  .../bindings/display/bridge/adi,adv7511.yaml      |  5 ++---
+>  .../bindings/display/bridge/synopsys,dw-hdmi.yaml |  5 ++---
+>  .../bindings/display/panel/display-timings.yaml   |  3 +--
+>  .../devicetree/bindings/display/ste,mcde.yaml     |  4 ++--
+>  .../devicetree/bindings/input/adc-joystick.yaml   |  9 ++++-----
+>  .../bindings/leds/cznic,turris-omnia-leds.yaml    |  3 +--
+>  .../devicetree/bindings/leds/leds-lp50xx.yaml     |  3 +--
+>  .../devicetree/bindings/mfd/google,cros-ec.yaml   | 12 ++++--------
+>  .../devicetree/bindings/mtd/nand-controller.yaml  |  8 +++-----
+>  .../bindings/mtd/rockchip,nand-controller.yaml    |  3 +--
 
-To be flexible for future changes, create a standard platform device
-specifically only for "qcom,bam-dmux", rather than populating all child
-nodes. This is also more consistent with the way the other child nodes
-are handled in the driver.
+For MTD bindings:
 
-Note: of_platform_device_create() and of_node_put() have NULL-checks
-internally, so there is no need to check if the "qcom,bam-dmux" node
-actually exists in the device tree.
+Acked-by: Miquel Raynal <miquel.raynal@bootlin.com>
 
-Signed-off-by: Stephan Gerhold <stephan@gerhold.net>
----
-Changes in v2:
-  - Avoid using of_platform_populate() and create platform device 
-    specifically only for "qcom,bam-dmux".
----
- drivers/remoteproc/qcom_q6v5_mss.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
-
-diff --git a/drivers/remoteproc/qcom_q6v5_mss.c b/drivers/remoteproc/qcom_q6v5_mss.c
-index a2c231a17b2b..b2e57981de2c 100644
---- a/drivers/remoteproc/qcom_q6v5_mss.c
-+++ b/drivers/remoteproc/qcom_q6v5_mss.c
-@@ -218,6 +218,7 @@ struct q6v5 {
- 	struct qcom_rproc_subdev smd_subdev;
- 	struct qcom_rproc_ssr ssr_subdev;
- 	struct qcom_sysmon *sysmon;
-+	struct platform_device *bam_dmux;
- 	bool need_mem_protection;
- 	bool has_alt_reset;
- 	bool has_mba_logs;
-@@ -1847,6 +1848,7 @@ static int q6v5_alloc_memory_region(struct q6v5 *qproc)
- static int q6v5_probe(struct platform_device *pdev)
- {
- 	const struct rproc_hexagon_res *desc;
-+	struct device_node *node;
- 	struct q6v5 *qproc;
- 	struct rproc *rproc;
- 	const char *mba_image;
-@@ -1990,6 +1992,10 @@ static int q6v5_probe(struct platform_device *pdev)
- 	if (ret)
- 		goto remove_sysmon_subdev;
- 
-+	node = of_get_compatible_child(pdev->dev.of_node, "qcom,bam-dmux");
-+	qproc->bam_dmux = of_platform_device_create(node, NULL, &pdev->dev);
-+	of_node_put(node);
-+
- 	return 0;
- 
- remove_sysmon_subdev:
-@@ -2011,6 +2017,8 @@ static int q6v5_remove(struct platform_device *pdev)
- 	struct q6v5 *qproc = platform_get_drvdata(pdev);
- 	struct rproc *rproc = qproc->rproc;
- 
-+	if (qproc->bam_dmux)
-+		of_platform_device_destroy(&qproc->bam_dmux->dev, NULL);
- 	rproc_del(rproc);
- 
- 	qcom_q6v5_deinit(&qproc->q6v5);
--- 
-2.35.1
-
+Thanks,
+Miqu=C3=A8l
