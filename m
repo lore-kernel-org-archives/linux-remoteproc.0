@@ -2,158 +2,130 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B0F2C43217
-	for <linux-remoteproc@archiver.kernel.org>; Wed,  2 Mar 2022 02:46:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19E66C433F5
+	for <linux-remoteproc@archiver.kernel.org>; Wed,  2 Mar 2022 11:01:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232333AbiCBCqw (ORCPT
+        id S241177AbiCBLCX (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 1 Mar 2022 21:46:52 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48716 "EHLO
+        Wed, 2 Mar 2022 06:02:23 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48780 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239133AbiCBCqu (ORCPT
+        with ESMTP id S241175AbiCBLCV (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 1 Mar 2022 21:46:50 -0500
-Received: from mail-oo1-xc2b.google.com (mail-oo1-xc2b.google.com [IPv6:2607:f8b0:4864:20::c2b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 00A8DA9E30
-        for <linux-remoteproc@vger.kernel.org>; Tue,  1 Mar 2022 18:46:06 -0800 (PST)
-Received: by mail-oo1-xc2b.google.com with SMTP id i6-20020a4ac506000000b0031c5ac6c078so446456ooq.6
-        for <linux-remoteproc@vger.kernel.org>; Tue, 01 Mar 2022 18:46:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=wjdqSaPpltqhLridozcEUTEQoIYV6/3L4YmJnQ5z0lY=;
-        b=LN9nnhqICRhttXAVr1od9T1t/Ymtpxhtz4tHsjH3dYjcd3Rkq9C9wMhSXlkrlSYC1A
-         DlJ/JptFxg1yVABD2c1AkWjsPC7Du3KLmBhl0PmcAe7J/mlUk1cp6g/yIWvbZRRK/ixo
-         +bm5IDVzJdC4fxWuoEI4G5CHndK46TO9kW9KbAaQI641rdN+rU1dvb6VBLEpmuuVwgUt
-         80QLDod/jgV5iicQ0WoUYh+G5NUspA9Y6GZrYqrOz6zP3KBF8+B00J/JX/kKtJbsLcZw
-         Nn9Y0EtKII81vB9nbqmK7v/AXIDRsz2QxYS4EGE2oGDGOXpVkmABqBHnLwBv01oaAEdI
-         u6og==
+        Wed, 2 Mar 2022 06:02:21 -0500
+Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7DDEC6D85C
+        for <linux-remoteproc@vger.kernel.org>; Wed,  2 Mar 2022 03:01:38 -0800 (PST)
+Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com [209.85.218.69])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 4E1C13F5F9
+        for <linux-remoteproc@vger.kernel.org>; Wed,  2 Mar 2022 11:01:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1646218895;
+        bh=Si9sQ7yLz6JK6Nen6lACTBVX2ecHMiwS0ByLXYRxjJA=;
+        h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+         In-Reply-To:Content-Type;
+        b=ilcPuStkkOSXcrQlPpgyR3RC0LVaMRHDnDtwKcf/x0PpMKYEjsDD7cQJxuAr5SIrK
+         5z2zkx4PJCe7j1EX18NJg9igSjx2ka5eVTyyr7Re+IzksWWCCb2r2xkJLdkwI6owGQ
+         uIyVgu6dRPwrnXc97TZheCvA9uXwMK3IiJOv+MRVHSfimjjVH+DW7cahaVDwRLANn3
+         jb++Bx+2TQ59B4cTYLISiBBMbRHZTcoohn40zcWKR34MCJlZX46zhMMjBAGpBU2ms9
+         yr8o4xpM2KgDEVjdywtHVBrJwI4o44GyJVUqsF3WTHb3IYEPRYdYfASM3eW+k0CrLL
+         jcLLE9X9/vpig==
+Received: by mail-ej1-f69.google.com with SMTP id o22-20020a1709061d5600b006d1aa593787so830268ejh.0
+        for <linux-remoteproc@vger.kernel.org>; Wed, 02 Mar 2022 03:01:35 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=wjdqSaPpltqhLridozcEUTEQoIYV6/3L4YmJnQ5z0lY=;
-        b=SEQqSyD3xHj7Dq0+J3RPh/RqtQcpKDBoWmZbRFa/q2PgvgUvasXtc+JK5PdfELt0IS
-         Ta8K/9yr0Ak0LpbMWhRnb1aAW+1dl10EkCIzOy24oRXofOqafK7IGYyj8yfU4vvr3ATP
-         UsB2yN2sm1qEyXUb5ZR2oL9MaBlcbu3d+kZkHZSyd7xGXg+wehZ1BRxC4tkf+2AP+JdG
-         VQwv6ACrEAoNpv0NpgNL8qqOcOtNfnOFcMNPvwVqe2WRYBfPPkeWfcKtItc1DAK9JgrX
-         T8LjuQmvF8XtKucgqdhIu0Gk/RlfS/WCbgc3+IKPy6Mm6WYJDj8M+/NgVSwagKTUUgmM
-         8QPQ==
-X-Gm-Message-State: AOAM530PYsnFlYN5ZjnYrtcyFrAA1kvpaT62Z+Yoz9OCrCpqOed9a50S
-        uhOJZGG2o+1+4TYn4hI/RKgPgQ==
-X-Google-Smtp-Source: ABdhPJyABJwssvqzs0MiuFje5MNOUuD4BXQpc8Bd2B6R1kdb3joprE0iJZUcrLXMN5kygRaNyqLzdA==
-X-Received: by 2002:a05:6820:1396:b0:31c:59f4:2fe4 with SMTP id i22-20020a056820139600b0031c59f42fe4mr13722344oow.10.1646189166017;
-        Tue, 01 Mar 2022 18:46:06 -0800 (PST)
-Received: from ripper ([2600:1700:a0:3dc8:205:1bff:fec0:b9b3])
-        by smtp.gmail.com with ESMTPSA id 23-20020a9d0b97000000b005ad33994e93sm7196700oth.31.2022.03.01.18.46.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Mar 2022 18:46:05 -0800 (PST)
-Date:   Tue, 1 Mar 2022 18:47:56 -0800
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Rob Herring <robh@kernel.org>
-Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>, Lee Jones <lee.jones@linaro.org>,
-        Guenter Roeck <groeck@chromium.org>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Richard Weinberger <richard@nod.at>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        Sebastian Reichel <sre@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Mark Brown <broonie@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org, linux-input@vger.kernel.org,
-        linux-leds@vger.kernel.org, linux-mtd@lists.infradead.org,
-        netdev@vger.kernel.org, linux-phy@lists.infradead.org,
-        linux-pm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        alsa-devel@alsa-project.org, linux-spi@vger.kernel.org,
-        linux-usb@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: Another pass removing cases of 'allOf'
- containing a '$ref'
-Message-ID: <Yh7a3Gl6PPamTjY5@ripper>
-References: <20220228213802.1639658-1-robh@kernel.org>
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=Si9sQ7yLz6JK6Nen6lACTBVX2ecHMiwS0ByLXYRxjJA=;
+        b=Nppse4Kd50byau++XZFEfznMUfX1W3wZX7JSZANBsiPUldKpGVgj8jPmthz0VxoN9Z
+         Jh27fg3YKJ8mXRU6NCbyt3472PKutBjj4oYdJwwX6cCXmBAHRaeP95YLM54MShvEzrh3
+         wnf/6U1cLI8fDb2kcJ4hVITW59yMlRbpbXBwdL6zSXp9WaWHajmAzGWGfYxqyqslebK2
+         vKxMzFQ74bOI5HvhVI+HD4gxO++k8utGtdunME2tNX3SoJWvXpRp0EKW3zIECwW4vpEr
+         GEv52d+xcs2EoIdHhmtT8bKEJWrf1N85X5J3TojucyiERYiRQ9Yf3ov4xa74kvalmvuI
+         Qjqw==
+X-Gm-Message-State: AOAM530kQv0gdHa89Vml53ESsuZQEemcbj0dUpNEaYexnT0fhtS3qbzg
+        AKE94+iZDMHwbJiOMh3ORLSbwNHLZC3Udj8nis/Md/PZb5RaQsO8lIchfArxRQUGSmCpGsZm7Ms
+        JEjyi/I/2bopvVn5+CRmSZZnqC7jnarcaiDfUUw2nfWqLFLg=
+X-Received: by 2002:a05:6402:369a:b0:413:81b5:7b64 with SMTP id ej26-20020a056402369a00b0041381b57b64mr22935782edb.163.1646218881684;
+        Wed, 02 Mar 2022 03:01:21 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJwaXIpVKlG8abGyix74I9rTqmFoJz7zygw3QnLROE8hwqkRWj9/wBCxZT5ACGsypW51MBpi7Q==
+X-Received: by 2002:a05:6402:369a:b0:413:81b5:7b64 with SMTP id ej26-20020a056402369a00b0041381b57b64mr22935729edb.163.1646218881424;
+        Wed, 02 Mar 2022 03:01:21 -0800 (PST)
+Received: from [192.168.0.136] (xdsl-188-155-181-108.adslplus.ch. [188.155.181.108])
+        by smtp.gmail.com with ESMTPSA id et3-20020a170907294300b006d6534ef273sm5617821ejc.156.2022.03.02.03.01.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 02 Mar 2022 03:01:20 -0800 (PST)
+Message-ID: <22099da9-fad0-a5fb-f45a-484635ca485f@canonical.com>
+Date:   Wed, 2 Mar 2022 12:01:19 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220228213802.1639658-1-robh@kernel.org>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.5.0
+Subject: Re: [PATCH v3 06/11] s390: cio: Use driver_set_override() instead of
+ open-coding
+Content-Language: en-US
+To:     Vineeth Vijayan <vneethv@linux.ibm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Stuart Yoder <stuyoder@gmail.com>,
+        Laurentiu Tudor <laurentiu.tudor@nxp.com>,
+        Abel Vesa <abel.vesa@nxp.com>, Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Peter Oberparleiter <oberpar@linux.ibm.com>,
+        Heiko Carstens <hca@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        Andy Gross <agross@kernel.org>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Mark Brown <broonie@kernel.org>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, NXP Linux Team <linux-imx@nxp.com>,
+        linux-arm-kernel@lists.infradead.org, linux-hyperv@vger.kernel.org,
+        linux-pci@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        linux-s390@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        alsa-devel@alsa-project.org, linux-spi@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Rasmus Villemoes <linux@rasmusvillemoes.dk>
+References: <20220227135214.145599-1-krzysztof.kozlowski@canonical.com>
+ <20220227135214.145599-7-krzysztof.kozlowski@canonical.com>
+ <b2295eba-722a-67e2-baae-20dac9d72625@linux.ibm.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+In-Reply-To: <b2295eba-722a-67e2-baae-20dac9d72625@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Mon 28 Feb 13:38 PST 2022, Rob Herring wrote:
-
-> Another pass at removing unnecessary use of 'allOf' with a '$ref'.
+On 01/03/2022 17:01, Vineeth Vijayan wrote:
 > 
-> json-schema versions draft7 and earlier have a weird behavior in that
-> any keywords combined with a '$ref' are ignored (silently). The correct
-> form was to put a '$ref' under an 'allOf'. This behavior is now changed
-> in the 2019-09 json-schema spec and '$ref' can be mixed with other
-> keywords.
+> On 2/27/22 14:52, Krzysztof Kozlowski wrote:
+>> Use a helper for seting driver_override to reduce amount of duplicated
+>> code. Make the driver_override field const char, because it is not
+>> modified by the core and it matches other subsystems.
+> s/seting/setting/
 > 
-> Cc: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-> Cc: Thierry Reding <thierry.reding@gmail.com>
-> Cc: Sam Ravnborg <sam@ravnborg.org>
-> Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-> Cc: Pavel Machek <pavel@ucw.cz>
-> Cc: Lee Jones <lee.jones@linaro.org>
-> Cc: Guenter Roeck <groeck@chromium.org>
-> Cc: Miquel Raynal <miquel.raynal@bootlin.com>
-> Cc: Richard Weinberger <richard@nod.at>
-> Cc: Vignesh Raghavendra <vigneshr@ti.com>
-> Cc: "David S. Miller" <davem@davemloft.net>
-> Cc: Jakub Kicinski <kuba@kernel.org>
-> Cc: Kishon Vijay Abraham I <kishon@ti.com>
-> Cc: Vinod Koul <vkoul@kernel.org>
-> Cc: Sebastian Reichel <sre@kernel.org>
-> Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
-> Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
-> Cc: Mark Brown <broonie@kernel.org>
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> Cc: dri-devel@lists.freedesktop.org
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linux-input@vger.kernel.org
-> Cc: linux-leds@vger.kernel.org
-> Cc: linux-mtd@lists.infradead.org
-> Cc: netdev@vger.kernel.org
-> Cc: linux-phy@lists.infradead.org
-> Cc: linux-pm@vger.kernel.org
-> Cc: linux-remoteproc@vger.kernel.org
-> Cc: alsa-devel@alsa-project.org
-> Cc: linux-spi@vger.kernel.org
-> Cc: linux-usb@vger.kernel.org
-> Signed-off-by: Rob Herring <robh@kernel.org>
-> ---
->  .../bindings/connector/usb-connector.yaml         |  3 +--
->  .../bindings/display/brcm,bcm2711-hdmi.yaml       |  3 +--
->  .../bindings/display/bridge/adi,adv7511.yaml      |  5 ++---
->  .../bindings/display/bridge/synopsys,dw-hdmi.yaml |  5 ++---
->  .../bindings/display/panel/display-timings.yaml   |  3 +--
->  .../devicetree/bindings/display/ste,mcde.yaml     |  4 ++--
->  .../devicetree/bindings/input/adc-joystick.yaml   |  9 ++++-----
->  .../bindings/leds/cznic,turris-omnia-leds.yaml    |  3 +--
->  .../devicetree/bindings/leds/leds-lp50xx.yaml     |  3 +--
->  .../devicetree/bindings/mfd/google,cros-ec.yaml   | 12 ++++--------
->  .../devicetree/bindings/mtd/nand-controller.yaml  |  8 +++-----
->  .../bindings/mtd/rockchip,nand-controller.yaml    |  3 +--
->  .../devicetree/bindings/net/ti,cpsw-switch.yaml   |  3 +--
->  .../bindings/phy/phy-stm32-usbphyc.yaml           |  3 +--
->  .../bindings/power/supply/sbs,sbs-manager.yaml    |  4 +---
->  .../bindings/remoteproc/ti,k3-r5f-rproc.yaml      |  3 +--
+> Also could you please change the title to start with "s390/cio:"
+> instead of "s390 : cio"
+> 
 
-For the remoteproc binding:
+Sure, thanks for review!
 
-Acked-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 
-Thanks,
-Bjorn
+Best regards,
+Krzysztof
