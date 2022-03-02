@@ -2,155 +2,85 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56D97C4167D
-	for <linux-remoteproc@archiver.kernel.org>; Tue,  1 Mar 2022 17:28:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F441C43217
+	for <linux-remoteproc@archiver.kernel.org>; Wed,  2 Mar 2022 02:06:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234411AbiCAR3K (ORCPT
+        id S239028AbiCBCHj (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 1 Mar 2022 12:29:10 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44436 "EHLO
+        Tue, 1 Mar 2022 21:07:39 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56084 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231172AbiCAR3J (ORCPT
+        with ESMTP id S232069AbiCBCHi (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 1 Mar 2022 12:29:09 -0500
-Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D7A554BCE
-        for <linux-remoteproc@vger.kernel.org>; Tue,  1 Mar 2022 09:28:27 -0800 (PST)
-Received: by mail-wm1-x332.google.com with SMTP id a5-20020a05600c224500b003832be89f25so9252wmm.2
-        for <linux-remoteproc@vger.kernel.org>; Tue, 01 Mar 2022 09:28:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=Y86hBfPWj9E4aTo+XMBrAu6Y5p4SQMawkPD4Q/SuKPY=;
-        b=ifR445Ptk0kZIwyK/iR5LauUeexT4h+Xm5fWIS9UfHsJTwIXI+TBUH0b1B1nklV58Q
-         e3posB9tDmWAuXNqOByYa8OEIeuEgFpyIkDoWKkxe1RAiCnFE6ZEzQVCpMvS62fGzNFV
-         nWcw5JV2lmoD9jxvmDMFuNVsgy/NwYWUQ6a0I1zB2e5jSr3/JFEIp9xW/NRIDhtT+/y6
-         uvAB7/5ZICC2qcmaHb2EAlpVYU+L8My5syB7aELi6iajmzjea09g2vNncJq3GY6hv/nP
-         g2d17hu4ZYUIRYCXpyuRUhAY/Kr9r3k7MyrtDEVfLOZZZFWPJ239r6w7DpTzLNolCHHw
-         A62A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=Y86hBfPWj9E4aTo+XMBrAu6Y5p4SQMawkPD4Q/SuKPY=;
-        b=khZX4EWeoBP+Jk5i1MLHy+0rHuRJl0AxuCoC9i4lLJ6NLP3+dax0rL7yNomB0L1zNg
-         KGKaXUmdeLGVmhYMXxaPCyjf1F8HQReIkhCL5ODjECT+TWa4wfzpSozK+rXyKGz4XhFf
-         PPhbU9yd9kqMaFzkjOgLXY9p4wBpmFcueKL45yhKLV+BQoaZRbmBdQzuquQ9XugUgouN
-         3e0BQNX4mJ5+y8YIZK8bdV/X2KKF/LVb1r3hwTHUAxeLo9PobCzpgTNNUaO0fVdygZtv
-         e+AIaQAFvmGbHX/fHDGSi9kVr+Sf4anxnp68c2gh67BLK8ShdqkhIRLxDPnA9tmoHeql
-         rI0w==
-X-Gm-Message-State: AOAM531I95FYjKpw5XDIuBSgrptbWKXEnJDPyS3r2mSqNOlHbzDBwPS0
-        K2KhX7GhU1vaJNrukhfLUTaQZQ==
-X-Google-Smtp-Source: ABdhPJyP4zzjkBPeDrhk1IU4HHA4Z4mVRSeyWw7DiZ4BmjKx+FbF6/CkwhxttMvqrC0XO+mqNoqKvQ==
-X-Received: by 2002:a05:600c:a4b:b0:37b:ea2b:5583 with SMTP id c11-20020a05600c0a4b00b0037bea2b5583mr18173339wmq.139.1646155705687;
-        Tue, 01 Mar 2022 09:28:25 -0800 (PST)
-Received: from [192.168.86.34] (cpc90716-aztw32-2-0-cust825.18-1.cable.virginm.net. [86.26.103.58])
-        by smtp.googlemail.com with ESMTPSA id c4-20020adfed84000000b001e5b8d5b8dasm20457807wro.36.2022.03.01.09.28.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 01 Mar 2022 09:28:24 -0800 (PST)
-Message-ID: <5f481315-021c-39d6-8c6c-91918851ab13@linaro.org>
-Date:   Tue, 1 Mar 2022 17:28:22 +0000
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.0
-Subject: Re: [PATCH v3 10/11] slimbus: qcom-ngd: Fix kfree() of static memory
- on setting driver_override
-Content-Language: en-US
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Stuart Yoder <stuyoder@gmail.com>,
-        Laurentiu Tudor <laurentiu.tudor@nxp.com>,
-        Abel Vesa <abel.vesa@nxp.com>, Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
+        Tue, 1 Mar 2022 21:07:38 -0500
+Received: from sin.source.kernel.org (sin.source.kernel.org [IPv6:2604:1380:40e1:4800::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EEA85A419F;
+        Tue,  1 Mar 2022 18:06:55 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by sin.source.kernel.org (Postfix) with ESMTPS id 437D8CE20C1;
+        Wed,  2 Mar 2022 02:06:54 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45615C340EE;
+        Wed,  2 Mar 2022 02:06:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1646186812;
+        bh=RbXjCq2vc9KTjJ2ViOIg4WEUsqUh0ts1JySeSDecJPA=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=CeKdGh4HJ5xY8VnlinUJxQ4c1yi48El5NRql2ZCTIP2Mmz0h+R9wG20554NXflcMb
+         h6p72p9M9T34mgM1urwfL0Ac2+setqTN/Hus8HEP5hSlYeKrX8CP+Je136zRGYM7VA
+         w1pjE71yLhWfV68Lf6cJfJbdXpWGyL0GKTqAv/ac1YdSambaOKcoPt74fztMyceRi0
+         5dvchGms8HIYcCELtkRrsq91AyGKV8jHUTZngeLt8ODz7/UTURXidE5aF4tRsfmx/S
+         3akqly+ZZPX8OcHC4ilBq/WvlehbRgEdqm1HbTL1VkHGK5IVG2BcNKHdXUlJV0iXmx
+         dVIuoFk3QvPLw==
+Date:   Tue, 1 Mar 2022 18:06:50 -0800
+From:   Jakub Kicinski <kuba@kernel.org>
+To:     Rob Herring <robh@kernel.org>
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Pavel Machek <pavel@ucw.cz>, Lee Jones <lee.jones@linaro.org>,
+        Guenter Roeck <groeck@chromium.org>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Vinod Koul <vkoul@kernel.org>,
+        Sebastian Reichel <sre@kernel.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Vineeth Vijayan <vneethv@linux.ibm.com>,
-        Peter Oberparleiter <oberpar@linux.ibm.com>,
-        Heiko Carstens <hca@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        Andy Gross <agross@kernel.org>,
         Mark Brown <broonie@kernel.org>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, NXP Linux Team <linux-imx@nxp.com>,
-        linux-arm-kernel@lists.infradead.org, linux-hyperv@vger.kernel.org,
-        linux-pci@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        linux-s390@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org, linux-input@vger.kernel.org,
+        linux-leds@vger.kernel.org, linux-mtd@lists.infradead.org,
+        netdev@vger.kernel.org, linux-phy@lists.infradead.org,
+        linux-pm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
         alsa-devel@alsa-project.org, linux-spi@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Rasmus Villemoes <linux@rasmusvillemoes.dk>, stable@vger.kernel.org
-References: <20220227135214.145599-1-krzysztof.kozlowski@canonical.com>
- <20220227135329.145862-4-krzysztof.kozlowski@canonical.com>
-From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-In-Reply-To: <20220227135329.145862-4-krzysztof.kozlowski@canonical.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+        linux-usb@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: Another pass removing cases of 'allOf'
+ containing a '$ref'
+Message-ID: <20220301180650.6188a66c@kicinski-fedora-PC1C0HJN.hsd1.ca.comcast.net>
+In-Reply-To: <20220228213802.1639658-1-robh@kernel.org>
+References: <20220228213802.1639658-1-robh@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-
-
-On 27/02/2022 13:53, Krzysztof Kozlowski wrote:
-> The driver_override field from platform driver should not be initialized
-> from static memory (string literal) because the core later kfree() it,
-> for example when driver_override is set via sysfs.
+On Mon, 28 Feb 2022 15:38:02 -0600 Rob Herring wrote:
+> Another pass at removing unnecessary use of 'allOf' with a '$ref'.
 > 
-> Use dedicated helper to set driver_override properly.
-> 
-> Fixes: 917809e2280b ("slimbus: ngd: Add qcom SLIMBus NGD driver")
-> Cc: <stable@vger.kernel.org>
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+> json-schema versions draft7 and earlier have a weird behavior in that
+> any keywords combined with a '$ref' are ignored (silently). The correct
+> form was to put a '$ref' under an 'allOf'. This behavior is now changed
+> in the 2019-09 json-schema spec and '$ref' can be mixed with other
+> keywords.
 
-LGTM,
-
-Reviewed-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-
-> ---
->   drivers/slimbus/qcom-ngd-ctrl.c | 13 ++++++++++++-
->   1 file changed, 12 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/slimbus/qcom-ngd-ctrl.c b/drivers/slimbus/qcom-ngd-ctrl.c
-> index 7040293c2ee8..e5d9fdb81eb0 100644
-> --- a/drivers/slimbus/qcom-ngd-ctrl.c
-> +++ b/drivers/slimbus/qcom-ngd-ctrl.c
-> @@ -1434,6 +1434,7 @@ static int of_qcom_slim_ngd_register(struct device *parent,
->   	const struct of_device_id *match;
->   	struct device_node *node;
->   	u32 id;
-> +	int ret;
->   
->   	match = of_match_node(qcom_slim_ngd_dt_match, parent->of_node);
->   	data = match->data;
-> @@ -1455,7 +1456,17 @@ static int of_qcom_slim_ngd_register(struct device *parent,
->   		}
->   		ngd->id = id;
->   		ngd->pdev->dev.parent = parent;
-> -		ngd->pdev->driver_override = QCOM_SLIM_NGD_DRV_NAME;
-> +
-> +		ret = driver_set_override(&ngd->pdev->dev,
-> +					  &ngd->pdev->driver_override,
-> +					  QCOM_SLIM_NGD_DRV_NAME,
-> +					  strlen(QCOM_SLIM_NGD_DRV_NAME));
-> +		if (ret) {
-> +			platform_device_put(ngd->pdev);
-> +			kfree(ngd);
-> +			of_node_put(node);
-> +			return ret;
-> +		}
->   		ngd->pdev->dev.of_node = node;
->   		ctrl->ngd = ngd;
->   
+Acked-by: Jakub Kicinski <kuba@kernel.org>
