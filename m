@@ -2,281 +2,196 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7DFFC433EF
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  3 Mar 2022 00:06:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3F7BC433F5
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  3 Mar 2022 08:00:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229945AbiCCAH0 (ORCPT
+        id S230444AbiCCIBJ (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 2 Mar 2022 19:07:26 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46768 "EHLO
+        Thu, 3 Mar 2022 03:01:09 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33222 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230023AbiCCAHY (ORCPT
+        with ESMTP id S230258AbiCCIBI (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 2 Mar 2022 19:07:24 -0500
-Received: from mga04.intel.com (mga04.intel.com [192.55.52.120])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0D1735AA40;
-        Wed,  2 Mar 2022 16:06:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1646265996; x=1677801996;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=HVHanwyjNPrhRvb+P3c0SOz57+0zoQiIF+ri4Z2H6BM=;
-  b=gFXEd/n6NAZbofk0v41z4PcM9aEAwveqxmreaquywhfqUwBQAuSiOsnx
-   0GLiAN7LDd3eMXFxqqTW8+ajyJZViSniSb+sQVZx4aT/AJGtt8kc1neV3
-   scPSME/hqwdtVRBzuSuigvLKhMolw76cFz7VHcfB2EVBuFQTfZ0QAmOzL
-   /oennNb0yOnLF69WxHIQXFeFHP7q49/rk8iPX5mHFHkOhdk1RS6wa660i
-   a1xBqsmMtHWUCAj2bsmOxwLZ+Rty2NgXzsmw9iBU4IQ1F8pcxC4DJk4Iv
-   iCVmmfJnTeGUUmsRqTGYSmEVlZvTRhZykzIeJ3Gxfk/TDFKULKeSyTSpS
-   w==;
-X-IronPort-AV: E=McAfee;i="6200,9189,10274"; a="252363984"
-X-IronPort-AV: E=Sophos;i="5.90,150,1643702400"; 
-   d="scan'208";a="252363984"
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Mar 2022 16:04:05 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.90,150,1643702400"; 
-   d="scan'208";a="535590607"
-Received: from lkp-server02.sh.intel.com (HELO e9605edfa585) ([10.239.97.151])
-  by orsmga007.jf.intel.com with ESMTP; 02 Mar 2022 16:04:01 -0800
-Received: from kbuild by e9605edfa585 with local (Exim 4.92)
-        (envelope-from <lkp@intel.com>)
-        id 1nPYwr-000276-0r; Thu, 03 Mar 2022 00:04:01 +0000
-Date:   Thu, 3 Mar 2022 08:03:18 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Deepak Kumar Singh <quic_deesin@quicinc.com>,
-        bjorn.andersson@linaro.org, quic_clew@quicinc.com,
-        mathieu.poirier@linaro.org
-Cc:     kbuild-all@lists.01.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        Deepak Kumar Singh <quic_deesin@quicinc.com>,
-        Andy Gross <agross@kernel.org>
-Subject: Re: [PATCH V5 1/2] soc: qcom: smem: map only partitions used by
- local HOST
-Message-ID: <202203030741.cBjO3T7h-lkp@intel.com>
-References: <1646147913-15791-1-git-send-email-quic_deesin@quicinc.com>
+        Thu, 3 Mar 2022 03:01:08 -0500
+Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 294BC1688EB;
+        Thu,  3 Mar 2022 00:00:20 -0800 (PST)
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 22380CJ0096549;
+        Thu, 3 Mar 2022 02:00:12 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1646294412;
+        bh=cUfnBSa5Y6H8tD7pfJUnVu2gf9wOMmbuMF7hXOj/rLM=;
+        h=Date:Subject:To:CC:References:From:In-Reply-To;
+        b=FJOojwEbdjEIzmTEGlhn4FQV/tCuAiekPplalBRd2gJiXgIp/RoXyIajvMXcjvMRm
+         mlw1ofsus+dBEa+x4iItMi2uRwidlfWlJbc9rLs7K0aZKIREXs10iu+MN5n6izHDGi
+         7Jcf/93JvWjaJF8iDCxNDyvEc9la6+c4IJhBucXc=
+Received: from DFLE115.ent.ti.com (dfle115.ent.ti.com [10.64.6.36])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 22380Cjf073496
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 3 Mar 2022 02:00:12 -0600
+Received: from DFLE111.ent.ti.com (10.64.6.32) by DFLE115.ent.ti.com
+ (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2308.14; Thu, 3
+ Mar 2022 02:00:12 -0600
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE111.ent.ti.com
+ (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2308.14 via
+ Frontend Transport; Thu, 3 Mar 2022 02:00:12 -0600
+Received: from [10.250.233.98] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 223808Cq049411;
+        Thu, 3 Mar 2022 02:00:09 -0600
+Message-ID: <869aa1ad-e3ed-cd0b-ab5e-a4b7d1d23311@ti.com>
+Date:   Thu, 3 Mar 2022 13:30:08 +0530
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1646147913-15791-1-git-send-email-quic_deesin@quicinc.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.5.0
+Subject: Re: [EXTERNAL] Re: [PATCH v5 1/2] remoteproc: Introduce
+ sysfs_read_only flag
+Content-Language: en-US
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Kishon Vijay Abraham I <kishon@ti.com>
+CC:     <vigneshr@ti.com>, <s-anna@ti.com>, <mathieu.poirier@linaro.org>,
+        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>
+References: <20220216081224.9956-1-p-mohan@ti.com>
+ <20220216081224.9956-2-p-mohan@ti.com>
+ <0d44d73f-d882-83db-9cf2-09f7cdc91ab2@ti.com> <Yg80gABeszDDN/m6@ripper>
+From:   Puranjay Mohan <p-mohan@ti.com>
+In-Reply-To: <Yg80gABeszDDN/m6@ripper>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi Deepak,
+Hi Bjorn,
+Hi Mathieu,
 
-Thank you for the patch! Perhaps something to improve:
+When is this series expected to be applied?
 
-[auto build test WARNING on linus/master]
-[also build test WARNING on v5.17-rc6 next-20220302]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch]
+I am going to post another series titled "PRU Consumer API".
+One patch from that series depends on this "Introduce sysfs_read_only
+flag" patch.
 
-url:    https://github.com/0day-ci/linux/commits/Deepak-Kumar-Singh/soc-qcom-smem-map-only-partitions-used-by-local-HOST/20220301-231925
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git 719fce7539cd3e186598e2aed36325fe892150cf
-config: mips-randconfig-s032-20220302 (https://download.01.org/0day-ci/archive/20220303/202203030741.cBjO3T7h-lkp@intel.com/config)
-compiler: mipsel-linux-gcc (GCC) 11.2.0
-reproduce:
-        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-        chmod +x ~/bin/make.cross
-        # apt-get install sparse
-        # sparse version: v0.6.4-dirty
-        # https://github.com/0day-ci/linux/commit/de1c04b67e5fb3075d0e655769a200cad55b02d9
-        git remote add linux-review https://github.com/0day-ci/linux
-        git fetch --no-tags linux-review Deepak-Kumar-Singh/soc-qcom-smem-map-only-partitions-used-by-local-HOST/20220301-231925
-        git checkout de1c04b67e5fb3075d0e655769a200cad55b02d9
-        # save the config file to linux build tree
-        mkdir build_dir
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-11.2.0 make.cross C=1 CF='-fdiagnostic-prefix -D__CHECK_ENDIAN__' O=build_dir ARCH=mips SHELL=/bin/bash drivers/misc/ drivers/soc/qcom/
+Please let me know so I can rebase and post that series.
 
-If you fix the issue, kindly add following tag as appropriate
-Reported-by: kernel test robot <lkp@intel.com>
+Thanks,
+Puranjay Mohan
 
-
-sparse warnings: (new ones prefixed by >>)
-   command-line: note: in included file:
-   builtin:1:9: sparse: sparse: preprocessor token __ATOMIC_ACQUIRE redefined
-   builtin:0:0: sparse: this was the original definition
-   builtin:1:9: sparse: sparse: preprocessor token __ATOMIC_SEQ_CST redefined
-   builtin:0:0: sparse: this was the original definition
-   builtin:1:9: sparse: sparse: preprocessor token __ATOMIC_ACQ_REL redefined
-   builtin:0:0: sparse: this was the original definition
-   builtin:1:9: sparse: sparse: preprocessor token __ATOMIC_RELEASE redefined
-   builtin:0:0: sparse: this was the original definition
-   drivers/soc/qcom/smem.c:422:16: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected struct smem_header *header @@     got void [noderef] __iomem *virt_base @@
-   drivers/soc/qcom/smem.c:422:16: sparse:     expected struct smem_header *header
-   drivers/soc/qcom/smem.c:422:16: sparse:     got void [noderef] __iomem *virt_base
-   drivers/soc/qcom/smem.c:507:16: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected struct smem_header *header @@     got void [noderef] __iomem *virt_base @@
-   drivers/soc/qcom/smem.c:507:16: sparse:     expected struct smem_header *header
-   drivers/soc/qcom/smem.c:507:16: sparse:     got void [noderef] __iomem *virt_base
-   drivers/soc/qcom/smem.c:520:50: sparse: sparse: incorrect type in return expression (different address spaces) @@     expected void * @@     got void [noderef] __iomem * @@
-   drivers/soc/qcom/smem.c:520:50: sparse:     expected void *
-   drivers/soc/qcom/smem.c:520:50: sparse:     got void [noderef] __iomem *
-   drivers/soc/qcom/smem.c:648:22: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected struct smem_partition_header *phdr @@     got void [noderef] __iomem *virt_base @@
-   drivers/soc/qcom/smem.c:648:22: sparse:     expected struct smem_partition_header *phdr
-   drivers/soc/qcom/smem.c:648:22: sparse:     got void [noderef] __iomem *virt_base
-   drivers/soc/qcom/smem.c:653:22: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected struct smem_partition_header *phdr @@     got void [noderef] __iomem *virt_base @@
-   drivers/soc/qcom/smem.c:653:22: sparse:     expected struct smem_partition_header *phdr
-   drivers/soc/qcom/smem.c:653:22: sparse:     got void [noderef] __iomem *virt_base
-   drivers/soc/qcom/smem.c:657:24: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected struct smem_header *header @@     got void [noderef] __iomem *virt_base @@
-   drivers/soc/qcom/smem.c:657:24: sparse:     expected struct smem_header *header
-   drivers/soc/qcom/smem.c:657:24: sparse:     got void [noderef] __iomem *virt_base
-   drivers/soc/qcom/smem.c:667:30: sparse: sparse: incompatible types in comparison expression (different address spaces):
-   drivers/soc/qcom/smem.c:667:30: sparse:    void *
-   drivers/soc/qcom/smem.c:667:30: sparse:    void [noderef] __iomem *
-   drivers/soc/qcom/smem.c:688:36: sparse: sparse: subtraction of different types can't work (different address spaces)
-   drivers/soc/qcom/smem.c:697:28: sparse: sparse: subtraction of different types can't work (different address spaces)
-   drivers/soc/qcom/smem.c:706:36: sparse: sparse: subtraction of different types can't work (different address spaces)
-   drivers/soc/qcom/smem.c:721:16: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected struct smem_header *header @@     got void [noderef] __iomem *virt_base @@
-   drivers/soc/qcom/smem.c:721:16: sparse:     expected struct smem_header *header
-   drivers/soc/qcom/smem.c:721:16: sparse:     got void [noderef] __iomem *virt_base
-   drivers/soc/qcom/smem.c:754:57: sparse: sparse: restricted __le32 degrades to integer
-   drivers/soc/qcom/smem.c:775:16: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected struct smem_partition_header *header @@     got void [noderef] __iomem * @@
-   drivers/soc/qcom/smem.c:775:16: sparse:     expected struct smem_partition_header *header
-   drivers/soc/qcom/smem.c:775:16: sparse:     got void [noderef] __iomem *
-   drivers/soc/qcom/smem.c:926:22: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected struct smem_ptable *ptable @@     got void [noderef] __iomem * @@
-   drivers/soc/qcom/smem.c:926:22: sparse:     expected struct smem_ptable *ptable
-   drivers/soc/qcom/smem.c:926:22: sparse:     got void [noderef] __iomem *
-   drivers/soc/qcom/smem.c:1035:16: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected struct smem_header *header @@     got void [noderef] __iomem *virt_base @@
-   drivers/soc/qcom/smem.c:1035:16: sparse:     expected struct smem_header *header
-   drivers/soc/qcom/smem.c:1035:16: sparse:     got void [noderef] __iomem *virt_base
->> drivers/soc/qcom/smem.c:1056:31: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected void const volatile [noderef] __iomem *mem @@     got restricted __le32 * @@
-   drivers/soc/qcom/smem.c:1056:31: sparse:     expected void const volatile [noderef] __iomem *mem
-   drivers/soc/qcom/smem.c:1056:31: sparse:     got restricted __le32 *
-   drivers/soc/qcom/smem.c:1056:67: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected void const volatile [noderef] __iomem *mem @@     got restricted __le32 * @@
-   drivers/soc/qcom/smem.c:1056:67: sparse:     expected void const volatile [noderef] __iomem *mem
-   drivers/soc/qcom/smem.c:1056:67: sparse:     got restricted __le32 *
-
-vim +1056 drivers/soc/qcom/smem.c
-
-   973	
-   974	static int qcom_smem_probe(struct platform_device *pdev)
-   975	{
-   976		struct smem_header *header;
-   977		struct reserved_mem *rmem;
-   978		struct qcom_smem *smem;
-   979		unsigned long flags;
-   980		size_t array_size;
-   981		int num_regions;
-   982		int hwlock_id;
-   983		u32 version;
-   984		u32 size;
-   985		int ret;
-   986		int i;
-   987	
-   988		num_regions = 1;
-   989		if (of_find_property(pdev->dev.of_node, "qcom,rpm-msg-ram", NULL))
-   990			num_regions++;
-   991	
-   992		array_size = num_regions * sizeof(struct smem_region);
-   993		smem = devm_kzalloc(&pdev->dev, sizeof(*smem) + array_size, GFP_KERNEL);
-   994		if (!smem)
-   995			return -ENOMEM;
-   996	
-   997		smem->dev = &pdev->dev;
-   998		smem->num_regions = num_regions;
-   999	
-  1000		rmem = of_reserved_mem_lookup(pdev->dev.of_node);
-  1001		if (rmem) {
-  1002			smem->regions[0].aux_base = rmem->base;
-  1003			smem->regions[0].size = rmem->size;
-  1004		} else {
-  1005			/*
-  1006			 * Fall back to the memory-region reference, if we're not a
-  1007			 * reserved-memory node.
-  1008			 */
-  1009			ret = qcom_smem_resolve_mem(smem, "memory-region", &smem->regions[0]);
-  1010			if (ret)
-  1011				return ret;
-  1012		}
-  1013	
-  1014		if (num_regions > 1) {
-  1015			ret = qcom_smem_resolve_mem(smem, "qcom,rpm-msg-ram", &smem->regions[1]);
-  1016			if (ret)
-  1017				return ret;
-  1018		}
-  1019	
-  1020	
-  1021		ret = qcom_smem_map_toc(smem, &smem->regions[0]);
-  1022	 	if (ret)
-  1023	 		return ret;
-  1024	
-  1025		for (i = 1; i < num_regions; i++) {
-  1026			smem->regions[i].virt_base = devm_ioremap_wc(&pdev->dev,
-  1027								     smem->regions[i].aux_base,
-  1028								     smem->regions[i].size);
-  1029			if (!smem->regions[i].virt_base) {
-  1030				dev_err(&pdev->dev, "failed to remap %pa\n", &smem->regions[i].aux_base);
-  1031				return -ENOMEM;
-  1032			}
-  1033		}
-  1034	
-  1035		header = smem->regions[0].virt_base;
-  1036		if (le32_to_cpu(header->initialized) != 1 ||
-  1037		    le32_to_cpu(header->reserved)) {
-  1038			dev_err(&pdev->dev, "SMEM is not initialized by SBL\n");
-  1039			return -EINVAL;
-  1040		}
-  1041	
-  1042		hwlock_id = of_hwspin_lock_get_id(pdev->dev.of_node, 0);
-  1043		if (hwlock_id < 0) {
-  1044			if (hwlock_id != -EPROBE_DEFER)
-  1045				dev_err(&pdev->dev, "failed to retrieve hwlock\n");
-  1046			return hwlock_id;
-  1047		}
-  1048	
-  1049		smem->hwlock = hwspin_lock_request_specific(hwlock_id);
-  1050		if (!smem->hwlock)
-  1051			return -ENXIO;
-  1052	
-  1053		ret = hwspin_lock_timeout_irqsave(smem->hwlock, HWSPINLOCK_TIMEOUT, &flags);
-  1054		if (ret)
-  1055			return ret;
-> 1056		size = readl_relaxed(&header->available) + readl_relaxed(&header->free_offset);
-  1057		hwspin_unlock_irqrestore(smem->hwlock, &flags);
-  1058	
-  1059		version = qcom_smem_get_sbl_version(smem);
-  1060		/*
-  1061		 * smem header mapping is required only in heap version scheme, so unmap
-  1062		 * it here. It will be remapped in qcom_smem_map_global() when whole
-  1063		 * partition is mapped again.
-  1064		 */
-  1065		devm_iounmap(smem->dev, smem->regions[0].virt_base);
-  1066		switch (version >> 16) {
-  1067		case SMEM_GLOBAL_PART_VERSION:
-  1068			ret = qcom_smem_set_global_partition(smem);
-  1069			if (ret < 0)
-  1070				return ret;
-  1071			smem->item_count = qcom_smem_get_item_count(smem);
-  1072			break;
-  1073		case SMEM_GLOBAL_HEAP_VERSION:
-  1074			qcom_smem_map_global(smem, size);
-  1075			smem->item_count = SMEM_ITEM_COUNT;
-  1076			break;
-  1077		default:
-  1078			dev_err(&pdev->dev, "Unsupported SMEM version 0x%x\n", version);
-  1079			return -EINVAL;
-  1080		}
-  1081	
-  1082		BUILD_BUG_ON(SMEM_HOST_APPS >= SMEM_HOST_COUNT);
-  1083		ret = qcom_smem_enumerate_partitions(smem, SMEM_HOST_APPS);
-  1084		if (ret < 0 && ret != -ENOENT)
-  1085			return ret;
-  1086	
-  1087		__smem = smem;
-  1088	
-  1089		smem->socinfo = platform_device_register_data(&pdev->dev, "qcom-socinfo",
-  1090							      PLATFORM_DEVID_NONE, NULL,
-  1091							      0);
-  1092		if (IS_ERR(smem->socinfo))
-  1093			dev_dbg(&pdev->dev, "failed to register socinfo device\n");
-  1094	
-  1095		return 0;
-  1096	}
-  1097	
-
----
-0-DAY CI Kernel Test Service, Intel Corporation
-https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
+On 18/02/22 11:24, Bjorn Andersson wrote:
+> On Thu 17 Feb 21:00 PST 2022, Kishon Vijay Abraham I wrote:
+> 
+>>
+>>
+>> On 16/02/22 1:42 pm, Puranjay Mohan wrote:
+>>> The remoteproc framework provides sysfs interfaces for changing
+>>> the firmware name and for starting/stopping a remote processor
+>>> through the sysfs files 'state' and 'firmware'. The 'coredump'
+>>> file is used to set the coredump configuration. The 'recovery'
+>>> sysfs file can also be used similarly to control the error recovery
+>>> state machine of a remoteproc. These interfaces are currently
+>>> allowed irrespective of how the remoteprocs were booted (like
+>>> remoteproc self auto-boot, remoteproc client-driven boot etc).
+>>> These interfaces can adversely affect a remoteproc and its clients
+>>> especially when a remoteproc is being controlled by a remoteproc
+>>> client driver(s). Also, not all remoteproc drivers may want to
+>>> support the sysfs interfaces by default.
+>>>
+>>> Add support to make the remoteproc sysfs files read only by
+>>> introducing a state flag 'sysfs_read_only' that the individual
+>>> remoteproc drivers can set based on their usage needs. The default
+>>> behavior is to allow the sysfs operations as before.
+>>>
+>>> Implement attribute_group->is_visible() to make the sysfs
+>>> entries read only when 'sysfs_read_only' flag is set.
+>>>
+>>> Signed-off-by: Puranjay Mohan <p-mohan@ti.com>
+>>> Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+>>> ---
+>>> Changes in v4->v5:
+>>> Rename deny_sysfs_ops to sysfs_read_only.
+>>> Make coredump readonly with other files.
+>>>
+>>> Changes in v3->v4:
+>>> Use mode = 0444 in rproc_is_visible() to make the sysfs entries
+>>> read-only when the deny_sysfs_ops flag is set.
+>>> ---
+>>>  drivers/remoteproc/remoteproc_sysfs.c | 19 ++++++++++++++++++-
+>>>  include/linux/remoteproc.h            |  2 ++
+>>>  2 files changed, 20 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git a/drivers/remoteproc/remoteproc_sysfs.c b/drivers/remoteproc/remoteproc_sysfs.c
+>>> index ea8b89f97d7b..abf0cd05d5e1 100644
+>>> --- a/drivers/remoteproc/remoteproc_sysfs.c
+>>> +++ b/drivers/remoteproc/remoteproc_sysfs.c
+>>> @@ -230,6 +230,22 @@ static ssize_t name_show(struct device *dev, struct device_attribute *attr,
+>>>  }
+>>>  static DEVICE_ATTR_RO(name);
+>>>  
+>>> +static umode_t rproc_is_visible(struct kobject *kobj, struct attribute *attr,
+>>> +				int n)
+>>> +{
+>>> +	struct device *dev = kobj_to_dev(kobj);
+>>> +	struct rproc *rproc = to_rproc(dev);
+>>> +	umode_t mode = attr->mode;
+>>> +
+>>> +	if (rproc->sysfs_read_only && (attr == &dev_attr_recovery.attr ||
+>>> +				       attr == &dev_attr_firmware.attr ||
+>>> +				       attr == &dev_attr_state.attr ||
+>>> +				       attr == &dev_attr_coredump.attr))
+>>> +		mode = 0444;
+>>
+>> Nitpick: use S_IRUGO instead of 0444.
+>>
+> 
+> Thanks for the suggestion Kishon, but I like 0444, it has direct meaning
+> to me.
+> 
+> So unless there's some directive to use S_I*** throughout the kernel I
+> would prefer this.
+> 
+> Regards,
+> Bjorn
+> 
+>> Thanks,
+>> Kishon
+>>> +
+>>> +	return mode;
+>>> +}
+>>> +
+>>>  static struct attribute *rproc_attrs[] = {
+>>>  	&dev_attr_coredump.attr,
+>>>  	&dev_attr_recovery.attr,
+>>> @@ -240,7 +256,8 @@ static struct attribute *rproc_attrs[] = {
+>>>  };
+>>>  
+>>>  static const struct attribute_group rproc_devgroup = {
+>>> -	.attrs = rproc_attrs
+>>> +	.attrs = rproc_attrs,
+>>> +	.is_visible = rproc_is_visible,
+>>>  };
+>>>  
+>>>  static const struct attribute_group *rproc_devgroups[] = {
+>>> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+>>> index e0600e1e5c17..93a1d0050fbc 100644
+>>> --- a/include/linux/remoteproc.h
+>>> +++ b/include/linux/remoteproc.h
+>>> @@ -523,6 +523,7 @@ struct rproc_dump_segment {
+>>>   * @table_sz: size of @cached_table
+>>>   * @has_iommu: flag to indicate if remote processor is behind an MMU
+>>>   * @auto_boot: flag to indicate if remote processor should be auto-started
+>>> + * @sysfs_read_only: flag to make remoteproc sysfs files read only
+>>>   * @dump_segments: list of segments in the firmware
+>>>   * @nb_vdev: number of vdev currently handled by rproc
+>>>   * @elf_class: firmware ELF class
+>>> @@ -562,6 +563,7 @@ struct rproc {
+>>>  	size_t table_sz;
+>>>  	bool has_iommu;
+>>>  	bool auto_boot;
+>>> +	bool sysfs_read_only;
+>>>  	struct list_head dump_segments;
+>>>  	int nb_vdev;
+>>>  	u8 elf_class;
+>>>
