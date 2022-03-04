@@ -2,196 +2,169 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3F7BC433F5
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  3 Mar 2022 08:00:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25F41C433EF
+	for <linux-remoteproc@archiver.kernel.org>; Fri,  4 Mar 2022 13:36:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230444AbiCCIBJ (ORCPT
+        id S233959AbiCDNhb (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 3 Mar 2022 03:01:09 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33222 "EHLO
+        Fri, 4 Mar 2022 08:37:31 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57472 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230258AbiCCIBI (ORCPT
+        with ESMTP id S231792AbiCDNha (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 3 Mar 2022 03:01:08 -0500
-Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 294BC1688EB;
-        Thu,  3 Mar 2022 00:00:20 -0800 (PST)
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 22380CJ0096549;
-        Thu, 3 Mar 2022 02:00:12 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1646294412;
-        bh=cUfnBSa5Y6H8tD7pfJUnVu2gf9wOMmbuMF7hXOj/rLM=;
-        h=Date:Subject:To:CC:References:From:In-Reply-To;
-        b=FJOojwEbdjEIzmTEGlhn4FQV/tCuAiekPplalBRd2gJiXgIp/RoXyIajvMXcjvMRm
-         mlw1ofsus+dBEa+x4iItMi2uRwidlfWlJbc9rLs7K0aZKIREXs10iu+MN5n6izHDGi
-         7Jcf/93JvWjaJF8iDCxNDyvEc9la6+c4IJhBucXc=
-Received: from DFLE115.ent.ti.com (dfle115.ent.ti.com [10.64.6.36])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 22380Cjf073496
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 3 Mar 2022 02:00:12 -0600
-Received: from DFLE111.ent.ti.com (10.64.6.32) by DFLE115.ent.ti.com
- (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2308.14; Thu, 3
- Mar 2022 02:00:12 -0600
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE111.ent.ti.com
- (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2308.14 via
- Frontend Transport; Thu, 3 Mar 2022 02:00:12 -0600
-Received: from [10.250.233.98] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 223808Cq049411;
-        Thu, 3 Mar 2022 02:00:09 -0600
-Message-ID: <869aa1ad-e3ed-cd0b-ab5e-a4b7d1d23311@ti.com>
-Date:   Thu, 3 Mar 2022 13:30:08 +0530
+        Fri, 4 Mar 2022 08:37:30 -0500
+Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C72E91B762C
+        for <linux-remoteproc@vger.kernel.org>; Fri,  4 Mar 2022 05:36:42 -0800 (PST)
+Received: from mail-ed1-f71.google.com (mail-ed1-f71.google.com [209.85.208.71])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id E73013F610
+        for <linux-remoteproc@vger.kernel.org>; Fri,  4 Mar 2022 13:36:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1646401000;
+        bh=G8BoUtDwWRG/T6yTrFWDQ38LNVbbwgFUxvn7b9NKrcg=;
+        h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+         In-Reply-To:Content-Type;
+        b=p2sqZf6zeFWkI9WbU+Uiv4kofVFXQWKWBFHH7MBNKlfAF5dKC5lkuW8oTJh5FdwD7
+         8ijxwIiJSMFTRFybcBmoF21UA30Aui1pC6RVOYh0MD0aAbKiud3u9iYareIawk1k2S
+         +srM8HXGMNpxWMGbODADb1KG07bwsnFLUlzUXtjHilr2OgqitAz7N50P3qEHE3VsWT
+         yvHu5Uou15Rap0iR/FQwqVe15yK+iyuzVAwxgIR9MjlUsVKWEC0eTUbwy3oXgxhUC3
+         7yxhD9t5JwLj0JR8lq4NUs1E4rlcv0O20US0ugXcoEGCJwaIS8Ig5xd1ed0jaEksov
+         qHK+7BkoHIPIA==
+Received: by mail-ed1-f71.google.com with SMTP id h17-20020a05640250d100b004133863d836so4604606edb.0
+        for <linux-remoteproc@vger.kernel.org>; Fri, 04 Mar 2022 05:36:40 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=G8BoUtDwWRG/T6yTrFWDQ38LNVbbwgFUxvn7b9NKrcg=;
+        b=nH3YMhDdDZCBnNYwyLAUw0q1U+rEKf9s6A7urCbAuH18osWpehyYAFjk6M92YuxaWP
+         svCDa1qY3CcvFsUq1L8ij1PVUMe8m+rHvSRwLXskGrxcIPXBkdYc34eSagwLfmcFbbf3
+         SZrFJx0hpR9toDOmPho7SrQ44SuaX2fhFbQVFVCJCbh8hobPAZNWSZYcdHmqUewNVbBg
+         RL+ts7QxU+3oyMsC9pZJHFWOdfU/ZRspT1t3qjcB8buHkPv+uR4GWAzUITlVj4Ac2NlS
+         eO+pM/VqqI362M2lP/4GlwnWeqEZML0cTnQ9fXF4mKel2msdJa70A9hc6ymkKxCAp/Fa
+         9tcQ==
+X-Gm-Message-State: AOAM533hC4vKQNztS58XBK1FRQY9nWmZrrtVUV00q5i+pw0uuachhG5m
+        CxbctWVyYVkGUBzSGGiqNZxXiS9OymYldRhvljZ/ajGcOTGsHrc8M6KxIUK4zkxh8Y+7pcCVZAf
+        Y2tLdzsvfSOHJZyr1IB8zGGowY9tuHu8/l7OFJNOaHsHWQFs=
+X-Received: by 2002:a17:906:5d08:b0:6da:b4ea:937 with SMTP id g8-20020a1709065d0800b006dab4ea0937mr2982746ejt.446.1646401000568;
+        Fri, 04 Mar 2022 05:36:40 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJxXSloxVKU/uB+P+Qe8lxuU0aSrsdcd2j1OAvPHH2N5wZJyWjhLLLr1TExNVWeKR3YLHFUbvg==
+X-Received: by 2002:a17:906:5d08:b0:6da:b4ea:937 with SMTP id g8-20020a1709065d0800b006dab4ea0937mr2982729ejt.446.1646401000352;
+        Fri, 04 Mar 2022 05:36:40 -0800 (PST)
+Received: from [192.168.0.139] (xdsl-188-155-181-108.adslplus.ch. [188.155.181.108])
+        by smtp.gmail.com with ESMTPSA id s5-20020a170906284500b006cc551d6cabsm1774511ejc.63.2022.03.04.05.36.39
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 04 Mar 2022 05:36:39 -0800 (PST)
+Message-ID: <f58869e3-8b5c-ed4b-c11c-27a8e465c3a2@canonical.com>
+Date:   Fri, 4 Mar 2022 14:36:39 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.5.0
-Subject: Re: [EXTERNAL] Re: [PATCH v5 1/2] remoteproc: Introduce
- sysfs_read_only flag
+Subject: Re: [PATCH v2 2/3] dt-bindings: remoteproc: Add AVM WASP
 Content-Language: en-US
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Kishon Vijay Abraham I <kishon@ti.com>
-CC:     <vigneshr@ti.com>, <s-anna@ti.com>, <mathieu.poirier@linaro.org>,
-        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>
-References: <20220216081224.9956-1-p-mohan@ti.com>
- <20220216081224.9956-2-p-mohan@ti.com>
- <0d44d73f-d882-83db-9cf2-09f7cdc91ab2@ti.com> <Yg80gABeszDDN/m6@ripper>
-From:   Puranjay Mohan <p-mohan@ti.com>
-In-Reply-To: <Yg80gABeszDDN/m6@ripper>
-Content-Type: text/plain; charset="UTF-8"
+To:     Daniel Kestrel <kestrelseventyfour@gmail.com>
+Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20220227115832.13490-1-kestrelseventyfour@gmail.com>
+ <20220227115832.13490-3-kestrelseventyfour@gmail.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+In-Reply-To: <20220227115832.13490-3-kestrelseventyfour@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi Bjorn,
-Hi Mathieu,
-
-When is this series expected to be applied?
-
-I am going to post another series titled "PRU Consumer API".
-One patch from that series depends on this "Introduce sysfs_read_only
-flag" patch.
-
-Please let me know so I can rebase and post that series.
-
-Thanks,
-Puranjay Mohan
-
-On 18/02/22 11:24, Bjorn Andersson wrote:
-> On Thu 17 Feb 21:00 PST 2022, Kishon Vijay Abraham I wrote:
+On 27/02/2022 12:58, Daniel Kestrel wrote:
+> AVM Fritzbox router boards may contain an additional ATH79
+> based SoC that has the wifi cards connected.
+> This patch adds bindings for this remote processor.
 > 
->>
->>
->> On 16/02/22 1:42 pm, Puranjay Mohan wrote:
->>> The remoteproc framework provides sysfs interfaces for changing
->>> the firmware name and for starting/stopping a remote processor
->>> through the sysfs files 'state' and 'firmware'. The 'coredump'
->>> file is used to set the coredump configuration. The 'recovery'
->>> sysfs file can also be used similarly to control the error recovery
->>> state machine of a remoteproc. These interfaces are currently
->>> allowed irrespective of how the remoteprocs were booted (like
->>> remoteproc self auto-boot, remoteproc client-driven boot etc).
->>> These interfaces can adversely affect a remoteproc and its clients
->>> especially when a remoteproc is being controlled by a remoteproc
->>> client driver(s). Also, not all remoteproc drivers may want to
->>> support the sysfs interfaces by default.
->>>
->>> Add support to make the remoteproc sysfs files read only by
->>> introducing a state flag 'sysfs_read_only' that the individual
->>> remoteproc drivers can set based on their usage needs. The default
->>> behavior is to allow the sysfs operations as before.
->>>
->>> Implement attribute_group->is_visible() to make the sysfs
->>> entries read only when 'sysfs_read_only' flag is set.
->>>
->>> Signed-off-by: Puranjay Mohan <p-mohan@ti.com>
->>> Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
->>> ---
->>> Changes in v4->v5:
->>> Rename deny_sysfs_ops to sysfs_read_only.
->>> Make coredump readonly with other files.
->>>
->>> Changes in v3->v4:
->>> Use mode = 0444 in rproc_is_visible() to make the sysfs entries
->>> read-only when the deny_sysfs_ops flag is set.
->>> ---
->>>  drivers/remoteproc/remoteproc_sysfs.c | 19 ++++++++++++++++++-
->>>  include/linux/remoteproc.h            |  2 ++
->>>  2 files changed, 20 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/drivers/remoteproc/remoteproc_sysfs.c b/drivers/remoteproc/remoteproc_sysfs.c
->>> index ea8b89f97d7b..abf0cd05d5e1 100644
->>> --- a/drivers/remoteproc/remoteproc_sysfs.c
->>> +++ b/drivers/remoteproc/remoteproc_sysfs.c
->>> @@ -230,6 +230,22 @@ static ssize_t name_show(struct device *dev, struct device_attribute *attr,
->>>  }
->>>  static DEVICE_ATTR_RO(name);
->>>  
->>> +static umode_t rproc_is_visible(struct kobject *kobj, struct attribute *attr,
->>> +				int n)
->>> +{
->>> +	struct device *dev = kobj_to_dev(kobj);
->>> +	struct rproc *rproc = to_rproc(dev);
->>> +	umode_t mode = attr->mode;
->>> +
->>> +	if (rproc->sysfs_read_only && (attr == &dev_attr_recovery.attr ||
->>> +				       attr == &dev_attr_firmware.attr ||
->>> +				       attr == &dev_attr_state.attr ||
->>> +				       attr == &dev_attr_coredump.attr))
->>> +		mode = 0444;
->>
->> Nitpick: use S_IRUGO instead of 0444.
->>
+> Signed-off-by: Daniel Kestrel <kestrelseventyfour@gmail.com>
+> ---
+>  .../bindings/remoteproc/avm,wasp-rproc.yaml   | 56 +++++++++++++++++++
+>  1 file changed, 56 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/remoteproc/avm,wasp-rproc.yaml
 > 
-> Thanks for the suggestion Kishon, but I like 0444, it has direct meaning
-> to me.
-> 
-> So unless there's some directive to use S_I*** throughout the kernel I
-> would prefer this.
-> 
-> Regards,
-> Bjorn
-> 
->> Thanks,
->> Kishon
->>> +
->>> +	return mode;
->>> +}
->>> +
->>>  static struct attribute *rproc_attrs[] = {
->>>  	&dev_attr_coredump.attr,
->>>  	&dev_attr_recovery.attr,
->>> @@ -240,7 +256,8 @@ static struct attribute *rproc_attrs[] = {
->>>  };
->>>  
->>>  static const struct attribute_group rproc_devgroup = {
->>> -	.attrs = rproc_attrs
->>> +	.attrs = rproc_attrs,
->>> +	.is_visible = rproc_is_visible,
->>>  };
->>>  
->>>  static const struct attribute_group *rproc_devgroups[] = {
->>> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
->>> index e0600e1e5c17..93a1d0050fbc 100644
->>> --- a/include/linux/remoteproc.h
->>> +++ b/include/linux/remoteproc.h
->>> @@ -523,6 +523,7 @@ struct rproc_dump_segment {
->>>   * @table_sz: size of @cached_table
->>>   * @has_iommu: flag to indicate if remote processor is behind an MMU
->>>   * @auto_boot: flag to indicate if remote processor should be auto-started
->>> + * @sysfs_read_only: flag to make remoteproc sysfs files read only
->>>   * @dump_segments: list of segments in the firmware
->>>   * @nb_vdev: number of vdev currently handled by rproc
->>>   * @elf_class: firmware ELF class
->>> @@ -562,6 +563,7 @@ struct rproc {
->>>  	size_t table_sz;
->>>  	bool has_iommu;
->>>  	bool auto_boot;
->>> +	bool sysfs_read_only;
->>>  	struct list_head dump_segments;
->>>  	int nb_vdev;
->>>  	u8 elf_class;
->>>
+> diff --git a/Documentation/devicetree/bindings/remoteproc/avm,wasp-rproc.yaml b/Documentation/devicetree/bindings/remoteproc/avm,wasp-rproc.yaml
+> new file mode 100644
+> index 000000000000..8b39fafc60aa
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/remoteproc/avm,wasp-rproc.yaml
+> @@ -0,0 +1,56 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/remoteproc/avm,wasp-rproc.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: AVM WASP processor controller bindings
+> +
+> +maintainers:
+> +  - Daniel Kestrel <kestrelseventyfour@gmail.com>
+> +
+> +description: |
+> +  This document defines the bindings for the remoteproc component that loads and
+> +  boots firmwares on the AVM Wireless Assistent Support Processor (WASP) SoC
+> +  that is attached to some AVM Fritzbox devices (3390, 3490, 5490, 5491, 7490).
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - avm,fritzbox3390-wasp
+> +      - avm,fritzboxx490-wasp
+
+This should be specific compatible instead of wildcard "x490".
+
+> +
+> +  avm,wasp-mdio:
+> +    $ref: /schemas/types.yaml#/definitions/phandle
+> +    description: Lantiq GSWIP switch mdio.
+> +
+> +  avm,wasp-port:
+> +    $ref: /schemas/types.yaml#/definitions/phandle
+> +    description: Network port, where the WASP SoC is connected to.
+> +
+> +  avm,reset-gpios:
+> +    description: Reset gpio of the WASP SoC.
+
+maxItems
+
+> +
+> +  avm,startup-gpios:
+> +    description: Startup gpio of the WASP SoC.
+
+maxItems
+
+> +
+> +required:
+> +  - compatible
+> +  - avm,wasp-mdio
+> +  - avm,wasp-port
+> +  - avm,reset-gpios
+> +  - avm,startup-gpios
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/gpio/gpio.h>
+> +
+> +    remoteproc {
+> +        compatible = "avm,fritzboxx490-wasp";
+> +        avm,wasp-mdio = <&gswip_mdio>;
+> +        avm,wasp-port = <&port5>;
+> +        avm,reset-gpios = <&gpio 34 GPIO_ACTIVE_HIGH>;
+> +        avm,startup-gpios = <&gpio 5 GPIO_ACTIVE_HIGH>;
+> +    };
+
+
+Best regards,
+Krzysztof
