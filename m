@@ -2,203 +2,209 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E359C4332F
-	for <linux-remoteproc@archiver.kernel.org>; Fri,  4 Mar 2022 16:15:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D499C433EF
+	for <linux-remoteproc@archiver.kernel.org>; Fri,  4 Mar 2022 16:53:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240728AbiCDQQ0 (ORCPT
+        id S240416AbiCDQyj (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 4 Mar 2022 11:16:26 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56594 "EHLO
+        Fri, 4 Mar 2022 11:54:39 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58414 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240732AbiCDQQX (ORCPT
+        with ESMTP id S240211AbiCDQyi (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 4 Mar 2022 11:16:23 -0500
-Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E3BA91B8FC6
-        for <linux-remoteproc@vger.kernel.org>; Fri,  4 Mar 2022 08:15:34 -0800 (PST)
-Received: by mail-wr1-x434.google.com with SMTP id i8so13394115wrr.8
-        for <linux-remoteproc@vger.kernel.org>; Fri, 04 Mar 2022 08:15:34 -0800 (PST)
+        Fri, 4 Mar 2022 11:54:38 -0500
+Received: from mail-pl1-x62d.google.com (mail-pl1-x62d.google.com [IPv6:2607:f8b0:4864:20::62d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A2CBAE033
+        for <linux-remoteproc@vger.kernel.org>; Fri,  4 Mar 2022 08:53:50 -0800 (PST)
+Received: by mail-pl1-x62d.google.com with SMTP id q11so8232570pln.11
+        for <linux-remoteproc@vger.kernel.org>; Fri, 04 Mar 2022 08:53:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20210112.gappssmtp.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=xJskNak95cvJcdUCyQawVbbPcPNz7aQv6i/qtIFC/D0=;
-        b=1py/SiRHzXJFbv03+N9Hala6db1fZOCrZVfBakEeZ1XEqEzCNZ68ScYMDGX6fAyeUO
-         hYeZgwCDOPK/5etYhM6FF8r9BmtRRtkdHxuM6ptY/4J01I0SZKaL44Od/4tjZVDGnMFj
-         REa9Xex5sJEPK0jvhX7ZjrY0JsNUccCEe6WyqWZTYC4U8q+ZiWsj7fVnoA+9zkoj3gjl
-         SEMRy8iuTI7qojEl+wDMmPnofqFSIxB2Q7JMb0bwuUUCK+MZfBo5s9I1XyZ5sUVm1++L
-         XBxUYl0Pkvq9A2mdS3WgiOtdryfXlaz1zQdLnumxQLuwBiYtfBB8mrsBzW07IQ3I+Cpc
-         np3w==
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=ZJXcL3W0PceqyXw7IwKfN6bUx/3T6GH15UnFDMEPoyo=;
+        b=NxwJ+wJHufNaI64Yw/N2Vt9y267jPm97S7C07biM+6lpT/aiHcUYs8IiVXNvtXVH3M
+         HMEk/a9R/Ku0yCWlpbEECB7MApj65vJTN0ULmL1tvSdIel5emNYt0KOZYpMvXymY7hP5
+         z33R5CBVh2ogXPDlREqfcHRP6+oIlbfZH4Vka1S1psxJMcUTGOIZCikFlRqXU8QzLV3A
+         ElJcXS/gNePe1BY2rL2w8fg7c0nUU63MhjZ6BKlaxp0I5d+swl/FewWpdmGWCvqrpw+p
+         gixHUt+g966yE9LPX8FvwzjeT4NhNChkzwwiCDSzP3nUUTcfmAxAvE87AzxEl6Saab+w
+         QYPw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=xJskNak95cvJcdUCyQawVbbPcPNz7aQv6i/qtIFC/D0=;
-        b=4FhH9N3Oja5YkpqUS50I+UADIf1l+MGztyVANFMMDVEoCgVa6hWlczESuSstiMCgjw
-         vtqcOrsme0lrAvB5KqAL++kcwB1a2jVmOJ6Fq4JDW5+ZcTxOFLRyG2l08u2Cr0TGokru
-         H1xsBT3M232tTrEXZn5ZQbUn8ygRuKZPmjyaarJ18LZjyugDn3lWJJVNTXFTfkKFuGcy
-         l/2MH6yQhDmd1NR4WRq30lt6wxfQeU8oXBe5wNjWcZN/xOc/ErgOFfTwt16qmzs93QYO
-         CC6nH9KCcIT54hXMpJTyMMIkTB0sQv2f4EHECgnDVHjqhEx5gnDxrL63IQ84Ce9qn/xp
-         kJQg==
-X-Gm-Message-State: AOAM533X1gX9HWEuoHsBeCKrA8UBX6Of+jIcvmLHN8JOcT4Ii82fAhQ2
-        i48qtmC6L+LhW33paIPta34ymg==
-X-Google-Smtp-Source: ABdhPJwbTnyZIIz3MhW8i2qeaIJqAT8wW1Pa+ypKCSwBrOZfy77WETAvGz5t2zqL46vAdLT4K0tDtw==
-X-Received: by 2002:adf:f389:0:b0:1ef:5f0f:cb83 with SMTP id m9-20020adff389000000b001ef5f0fcb83mr26228592wro.26.1646410533312;
-        Fri, 04 Mar 2022 08:15:33 -0800 (PST)
-Received: from xps-9300.baylibre (laubervilliers-658-1-213-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id g6-20020a5d5406000000b001f049726044sm4937307wrv.79.2022.03.04.08.15.32
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=ZJXcL3W0PceqyXw7IwKfN6bUx/3T6GH15UnFDMEPoyo=;
+        b=kDpOYeK2zDTlAiXFX6ymbFqiYMDO8f/OjLiLazukfdYNVmSBdNZ3ZD2NxONmlK82eI
+         R/irLzZmYXMBZk3bxZaByQCiqm10IsroXTKVM//I+4NQuCMp89m2safmZR/UH6b7cPhl
+         A9k0aRt5xxTsdUC3UDYGsp+SIAITctdf2FykXno0YVBY2LdshDpoT82/VdaGLig87h29
+         SQaverLljuxZJl6pKT+AaRsD9L1vzZAaW4Sp4WlQTuasv+P4FIsjApBPUwOZEajxqVGO
+         LZ3FnEUTLT25B84T5ra95WWKjlCKXBZZfm+mnVbw2x0KY8VGw5UxVc+xKjee3aQSI5ls
+         qmDA==
+X-Gm-Message-State: AOAM530r7CnzYb3LMv7S3sBUUXlLUcsMghMXEnTJlFsZI4gtNo66hIio
+        JFvvjWqxe2bSiDGHxSl5p1qLpa4nOMYeIA==
+X-Google-Smtp-Source: ABdhPJzyp3E1abihfMJ+ATBcvCgaGVdYSLV9D9EeJ3juz7sdVGYzhlEMIMYMxOdbDTfF5OXRPauR6w==
+X-Received: by 2002:a17:90a:6c01:b0:1bf:1e67:b532 with SMTP id x1-20020a17090a6c0100b001bf1e67b532mr6524691pjj.138.1646412830143;
+        Fri, 04 Mar 2022 08:53:50 -0800 (PST)
+Received: from p14s (S0106889e681aac74.cg.shawcable.net. [68.147.0.187])
+        by smtp.gmail.com with ESMTPSA id l20-20020a056a00141400b004f65cedfb09sm6451193pfu.48.2022.03.04.08.53.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Mar 2022 08:15:32 -0800 (PST)
-From:   Alexandre Bailon <abailon@baylibre.com>
-To:     ohad@wizery.com, bjorn.andersson@linaro.org,
-        mathieu.poirier@linaro.org, robh+dt@kernel.or
-Cc:     matthias.bgg@gmail.com, linux-remoteproc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
-        stephane.leprovost@mediatek.com, khilman@baylibre.com,
-        Alexandre Bailon <abailon@baylibre.com>
-Subject: [PATCH v4 7/7] ARM64: mt8183: Add support of APU to mt8183
-Date:   Fri,  4 Mar 2022 17:15:14 +0100
-Message-Id: <20220304161514.994128-8-abailon@baylibre.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20220304161514.994128-1-abailon@baylibre.com>
-References: <20220304161514.994128-1-abailon@baylibre.com>
+        Fri, 04 Mar 2022 08:53:48 -0800 (PST)
+Date:   Fri, 4 Mar 2022 09:53:46 -0700
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+To:     Puranjay Mohan <p-mohan@ti.com>
+Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Kishon Vijay Abraham I <kishon@ti.com>, vigneshr@ti.com,
+        s-anna@ti.com, linux-remoteproc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [EXTERNAL] Re: [PATCH v5 1/2] remoteproc: Introduce
+ sysfs_read_only flag
+Message-ID: <20220304165346.GA1646337@p14s>
+References: <20220216081224.9956-1-p-mohan@ti.com>
+ <20220216081224.9956-2-p-mohan@ti.com>
+ <0d44d73f-d882-83db-9cf2-09f7cdc91ab2@ti.com>
+ <Yg80gABeszDDN/m6@ripper>
+ <869aa1ad-e3ed-cd0b-ab5e-a4b7d1d23311@ti.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <869aa1ad-e3ed-cd0b-ab5e-a4b7d1d23311@ti.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-This adds the support of APU to mt8183.
+On Thu, Mar 03, 2022 at 01:30:08PM +0530, Puranjay Mohan wrote:
+> Hi Bjorn,
+> Hi Mathieu,
+> 
+> When is this series expected to be applied?
+> 
+> I am going to post another series titled "PRU Consumer API".
+> One patch from that series depends on this "Introduce sysfs_read_only
+> flag" patch.
+> 
+> Please let me know so I can rebase and post that series.
 
-Signed-off-by: Alexandre Bailon <abailon@baylibre.com>
----
- .../boot/dts/mediatek/mt8183-pumpkin.dts      | 50 +++++++++++++++++++
- arch/arm64/boot/dts/mediatek/mt8183.dtsi      | 40 +++++++++++++++
- 2 files changed, 90 insertions(+)
+Applied and pushed.
 
-diff --git a/arch/arm64/boot/dts/mediatek/mt8183-pumpkin.dts b/arch/arm64/boot/dts/mediatek/mt8183-pumpkin.dts
-index ee912825cfc6..155c89c998d3 100644
---- a/arch/arm64/boot/dts/mediatek/mt8183-pumpkin.dts
-+++ b/arch/arm64/boot/dts/mediatek/mt8183-pumpkin.dts
-@@ -37,6 +37,42 @@ scp_mem_reserved: scp_mem_region@50000000 {
- 			reg = <0 0x50000000 0 0x2900000>;
- 			no-map;
- 		};
-+
-+		vdev0buffer: vdev0buffer@52900000 {
-+			compatible = "shared-dma-pool";
-+			reg = <0 0x52900000 0 0x4000>;
-+			no-map;
-+		};
-+
-+		vdev0vring0: vdev0vring0@52904000 {
-+			compatible = "shared-dma-pool";
-+			reg = <0 0x52904000 0 0x2000>;
-+			no-map;
-+		};
-+
-+		vdev0vring1: vdev0vring1@52906000 {
-+			compatible = "shared-dma-pool";
-+			reg = <0 0x52906000 0 0x2000>;
-+			no-map;
-+		};
-+
-+		vdev1buffer: vdev1buffer@52908000 {
-+			compatible = "shared-dma-pool";
-+			reg = <0 0x52908000 0 0x4000>;
-+			no-map;
-+		};
-+
-+		vdev1vring0: vdev1vring0@5290C000 {
-+			compatible = "shared-dma-pool";
-+			reg = <0 0x5290C000 0 0x2000>;
-+			no-map;
-+		};
-+
-+		vdev1vring1: vdev1vring1@5290E000 {
-+			compatible = "shared-dma-pool";
-+			reg = <0 0x5290E000 0 0x2000>;
-+			no-map;
-+		};
- 	};
- 
- 	leds {
-@@ -381,3 +417,17 @@ &scp {
- &dsi0 {
- 	status = "disabled";
- };
-+
-+&apu0 {
-+	memory-region = <&vdev0buffer>, <&vdev0vring0>, <&vdev0vring1>;
-+	memory-region-names = "vdev0buffer", "vdev0vring0", "vdev0vring1";
-+	memory-region-da = <0x6fff8000>, <0x6fffc000>, <0x6fffe000>;
-+	status = "okay";
-+};
-+
-+&apu1 {
-+	memory-region = <&vdev1buffer>, <&vdev1vring0>, <&vdev1vring1>;
-+	memory-region-names = "vdev1buffer", "vdev1vring0", "vdev1vring1";
-+	memory-region-da = <0x6fff0000>, <0x6fff4000>, <0x6fff6000>;
-+	status = "okay";
-+};
-diff --git a/arch/arm64/boot/dts/mediatek/mt8183.dtsi b/arch/arm64/boot/dts/mediatek/mt8183.dtsi
-index ba4584faca5a..cb02f57e000d 100644
---- a/arch/arm64/boot/dts/mediatek/mt8183.dtsi
-+++ b/arch/arm64/boot/dts/mediatek/mt8183.dtsi
-@@ -1542,12 +1542,52 @@ ipu_adl: syscon@19010000 {
- 			#clock-cells = <1>;
- 		};
- 
-+		apu0: apu@0x19100000 {
-+			compatible = "mediatek,mt8183-apu";
-+			reg = <0 0x19180000 0 0x14000>;
-+			interrupts = <GIC_SPI 292 IRQ_TYPE_LEVEL_LOW>;
-+
-+			iommus = <&iommu M4U_PORT_IMG_IPUO>,
-+				 <&iommu M4U_PORT_IMG_IPU3O>,
-+				 <&iommu M4U_PORT_IMG_IPUI>;
-+
-+			clocks = <&ipu_core0 CLK_IPU_CORE0_AXI>,
-+				 <&ipu_core0 CLK_IPU_CORE0_IPU>,
-+				 <&ipu_core0 CLK_IPU_CORE0_JTAG>;
-+
-+			clock-names = "axi", "ipu", "jtag";
-+
-+			power-domains = <&spm MT8183_POWER_DOMAIN_VPU_CORE0>;
-+
-+			status = "disabled";
-+		};
-+
- 		ipu_core0: syscon@19180000 {
- 			compatible = "mediatek,mt8183-ipu_core0", "syscon";
- 			reg = <0 0x19180000 0 0x1000>;
- 			#clock-cells = <1>;
- 		};
- 
-+		apu1: apu@19200000 {
-+			compatible = "mediatek,mt8183-apu";
-+			reg = <0 0x19280000 0 0x14000>;
-+			interrupts = <GIC_SPI 293 IRQ_TYPE_LEVEL_LOW>;
-+
-+			iommus = <&iommu M4U_PORT_CAM_IPUO>,
-+				 <&iommu M4U_PORT_CAM_IPU2O>,
-+				 <&iommu M4U_PORT_CAM_IPU3O>;
-+
-+			clocks = <&ipu_core0 CLK_IPU_CORE1_AXI>,
-+				 <&ipu_core0 CLK_IPU_CORE1_IPU>,
-+				 <&ipu_core0 CLK_IPU_CORE1_JTAG>;
-+
-+			clock-names = "axi", "ipu", "jtag";
-+
-+			power-domains = <&spm MT8183_POWER_DOMAIN_VPU_CORE1>;
-+
-+			status = "disabled";
-+		};
-+
- 		ipu_core1: syscon@19280000 {
- 			compatible = "mediatek,mt8183-ipu_core1", "syscon";
- 			reg = <0 0x19280000 0 0x1000>;
--- 
-2.34.1
+Thanks,
+Mathieu
 
+> 
+> Thanks,
+> Puranjay Mohan
+> 
+> On 18/02/22 11:24, Bjorn Andersson wrote:
+> > On Thu 17 Feb 21:00 PST 2022, Kishon Vijay Abraham I wrote:
+> > 
+> >>
+> >>
+> >> On 16/02/22 1:42 pm, Puranjay Mohan wrote:
+> >>> The remoteproc framework provides sysfs interfaces for changing
+> >>> the firmware name and for starting/stopping a remote processor
+> >>> through the sysfs files 'state' and 'firmware'. The 'coredump'
+> >>> file is used to set the coredump configuration. The 'recovery'
+> >>> sysfs file can also be used similarly to control the error recovery
+> >>> state machine of a remoteproc. These interfaces are currently
+> >>> allowed irrespective of how the remoteprocs were booted (like
+> >>> remoteproc self auto-boot, remoteproc client-driven boot etc).
+> >>> These interfaces can adversely affect a remoteproc and its clients
+> >>> especially when a remoteproc is being controlled by a remoteproc
+> >>> client driver(s). Also, not all remoteproc drivers may want to
+> >>> support the sysfs interfaces by default.
+> >>>
+> >>> Add support to make the remoteproc sysfs files read only by
+> >>> introducing a state flag 'sysfs_read_only' that the individual
+> >>> remoteproc drivers can set based on their usage needs. The default
+> >>> behavior is to allow the sysfs operations as before.
+> >>>
+> >>> Implement attribute_group->is_visible() to make the sysfs
+> >>> entries read only when 'sysfs_read_only' flag is set.
+> >>>
+> >>> Signed-off-by: Puranjay Mohan <p-mohan@ti.com>
+> >>> Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+> >>> ---
+> >>> Changes in v4->v5:
+> >>> Rename deny_sysfs_ops to sysfs_read_only.
+> >>> Make coredump readonly with other files.
+> >>>
+> >>> Changes in v3->v4:
+> >>> Use mode = 0444 in rproc_is_visible() to make the sysfs entries
+> >>> read-only when the deny_sysfs_ops flag is set.
+> >>> ---
+> >>>  drivers/remoteproc/remoteproc_sysfs.c | 19 ++++++++++++++++++-
+> >>>  include/linux/remoteproc.h            |  2 ++
+> >>>  2 files changed, 20 insertions(+), 1 deletion(-)
+> >>>
+> >>> diff --git a/drivers/remoteproc/remoteproc_sysfs.c b/drivers/remoteproc/remoteproc_sysfs.c
+> >>> index ea8b89f97d7b..abf0cd05d5e1 100644
+> >>> --- a/drivers/remoteproc/remoteproc_sysfs.c
+> >>> +++ b/drivers/remoteproc/remoteproc_sysfs.c
+> >>> @@ -230,6 +230,22 @@ static ssize_t name_show(struct device *dev, struct device_attribute *attr,
+> >>>  }
+> >>>  static DEVICE_ATTR_RO(name);
+> >>>  
+> >>> +static umode_t rproc_is_visible(struct kobject *kobj, struct attribute *attr,
+> >>> +				int n)
+> >>> +{
+> >>> +	struct device *dev = kobj_to_dev(kobj);
+> >>> +	struct rproc *rproc = to_rproc(dev);
+> >>> +	umode_t mode = attr->mode;
+> >>> +
+> >>> +	if (rproc->sysfs_read_only && (attr == &dev_attr_recovery.attr ||
+> >>> +				       attr == &dev_attr_firmware.attr ||
+> >>> +				       attr == &dev_attr_state.attr ||
+> >>> +				       attr == &dev_attr_coredump.attr))
+> >>> +		mode = 0444;
+> >>
+> >> Nitpick: use S_IRUGO instead of 0444.
+> >>
+> > 
+> > Thanks for the suggestion Kishon, but I like 0444, it has direct meaning
+> > to me.
+> > 
+> > So unless there's some directive to use S_I*** throughout the kernel I
+> > would prefer this.
+> > 
+> > Regards,
+> > Bjorn
+> > 
+> >> Thanks,
+> >> Kishon
+> >>> +
+> >>> +	return mode;
+> >>> +}
+> >>> +
+> >>>  static struct attribute *rproc_attrs[] = {
+> >>>  	&dev_attr_coredump.attr,
+> >>>  	&dev_attr_recovery.attr,
+> >>> @@ -240,7 +256,8 @@ static struct attribute *rproc_attrs[] = {
+> >>>  };
+> >>>  
+> >>>  static const struct attribute_group rproc_devgroup = {
+> >>> -	.attrs = rproc_attrs
+> >>> +	.attrs = rproc_attrs,
+> >>> +	.is_visible = rproc_is_visible,
+> >>>  };
+> >>>  
+> >>>  static const struct attribute_group *rproc_devgroups[] = {
+> >>> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+> >>> index e0600e1e5c17..93a1d0050fbc 100644
+> >>> --- a/include/linux/remoteproc.h
+> >>> +++ b/include/linux/remoteproc.h
+> >>> @@ -523,6 +523,7 @@ struct rproc_dump_segment {
+> >>>   * @table_sz: size of @cached_table
+> >>>   * @has_iommu: flag to indicate if remote processor is behind an MMU
+> >>>   * @auto_boot: flag to indicate if remote processor should be auto-started
+> >>> + * @sysfs_read_only: flag to make remoteproc sysfs files read only
+> >>>   * @dump_segments: list of segments in the firmware
+> >>>   * @nb_vdev: number of vdev currently handled by rproc
+> >>>   * @elf_class: firmware ELF class
+> >>> @@ -562,6 +563,7 @@ struct rproc {
+> >>>  	size_t table_sz;
+> >>>  	bool has_iommu;
+> >>>  	bool auto_boot;
+> >>> +	bool sysfs_read_only;
+> >>>  	struct list_head dump_segments;
+> >>>  	int nb_vdev;
+> >>>  	u8 elf_class;
+> >>>
