@@ -2,307 +2,171 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25B0CC4332F
-	for <linux-remoteproc@archiver.kernel.org>; Mon,  7 Mar 2022 22:18:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A988CC433F5
+	for <linux-remoteproc@archiver.kernel.org>; Mon,  7 Mar 2022 22:41:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343720AbiCGWTA (ORCPT
+        id S239920AbiCGWmH (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 7 Mar 2022 17:19:00 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33578 "EHLO
+        Mon, 7 Mar 2022 17:42:07 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39306 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1343719AbiCGWS7 (ORCPT
+        with ESMTP id S233890AbiCGWmG (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 7 Mar 2022 17:18:59 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 4E88547573
-        for <linux-remoteproc@vger.kernel.org>; Mon,  7 Mar 2022 14:18:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1646691482;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=iFnTaI43lavXr0zuCkHA2ZcyUcWqspn6tFseaLpKUCE=;
-        b=jI8rsE0dVuztYUBZAiGb5jX/970D2Suda8Kbc61nYw0E1b0x48ZU1qNALumJsnUs6lsZXI
-        1lyu4wncOQX0ONy1nyD7MWdBJ5beNoSXcU0HZ130PuGdyDbaJqp+CUh8rGqb7kNS2xVkK9
-        hXiTluGMcZSEILW+S3qMFuz1mvE1zsk=
-Received: from mail-ed1-f71.google.com (mail-ed1-f71.google.com
- [209.85.208.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-310-5PypqFP3OjSka-3U6dPUug-1; Mon, 07 Mar 2022 17:18:01 -0500
-X-MC-Unique: 5PypqFP3OjSka-3U6dPUug-1
-Received: by mail-ed1-f71.google.com with SMTP id n11-20020a50cc4b000000b00415e939bf9eso7263815edi.22
-        for <linux-remoteproc@vger.kernel.org>; Mon, 07 Mar 2022 14:18:00 -0800 (PST)
+        Mon, 7 Mar 2022 17:42:06 -0500
+Received: from mail-oo1-xc31.google.com (mail-oo1-xc31.google.com [IPv6:2607:f8b0:4864:20::c31])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 942B0DF7C
+        for <linux-remoteproc@vger.kernel.org>; Mon,  7 Mar 2022 14:41:10 -0800 (PST)
+Received: by mail-oo1-xc31.google.com with SMTP id n5-20020a4a9545000000b0031d45a442feso19729047ooi.3
+        for <linux-remoteproc@vger.kernel.org>; Mon, 07 Mar 2022 14:41:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=u+HxVrmr9/wIVPGnqjkJowBAbXCNibxa+a47AT7FYmc=;
+        b=kVk8SOVW/iiKd2v1gTN9DpvUG9WzaoGZPbr9soXaMjEt6UsjM3EwBOPNVeQCX+2CLO
+         xPn23If8HwPAI5StphwjMWy7aaULGZuOK5dkKA/LYcUHxB6q1g3aNWJJSjIt5Rth6i1a
+         nVbUgWAqrk67KRodYd72vRKVsL+UkDkFnE/cdrPjGqPCybaJZzkUnU5g7kUMm+wX9HIO
+         M4ogM4vQyFaymIAEk7Eg+jP+Bak0vkN3J7ETbFdiyYhUIV2y3v4WRvfBedM0JB13CHZs
+         H8ud1QRKr3wKt7k9+Jg22qOvEq2UMuldaUlW72Ygzag6DFDMjEVUsslOFOGWDRRA7Lxp
+         haGg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=iFnTaI43lavXr0zuCkHA2ZcyUcWqspn6tFseaLpKUCE=;
-        b=LDsnrgXHwYR+PFGlCqtVv6hkXm/mDqoWWVlSRhEcdMm1fiFlccKtjA7pjDAt846e1l
-         TyM33qC0aPJI23C9+eXhnEg2gmKz8XtYWp/bD5VBGnm5falZXaXJL71rhAklQ2tTMoD7
-         /Gqn1P/YMNmPF4tfQbhFmpXVHDLSjLaXahnweDg3Ne3gVtB1+sqHENmKOQhGDI6hAUQL
-         fyL8L96gMSUzdwRGcr4QfcE5kI1SwRwgxKeoS2F1nr6vQfFsfE0DChkqt6tpScOmy0WC
-         SxZ+a1SR7Mf1uTbFLTbWFquwrtjnbwwm9F3v92G8F7MWeb9V2ldqByaN/GkjjgHG3ujY
-         oiNg==
-X-Gm-Message-State: AOAM530BVLVDLHWVtdcX2xVlDqYCxwpcVMUDryj0ZN44sW/teBwVkZpL
-        vBil8ojW1KeJIG7dS+ZgxdOSVR0Y3gazMsOG9rft1ySq9+tsEA3FfGQl8kMqol63p3pGhJVxo9f
-        Bfes+Fto6nFtWmCiQyigwZPk1NKfUHA==
-X-Received: by 2002:a17:907:3e9a:b0:6db:b5e:676c with SMTP id hs26-20020a1709073e9a00b006db0b5e676cmr8489743ejc.314.1646691479814;
-        Mon, 07 Mar 2022 14:17:59 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJwDeGEIDmtuFmkZLr82drLK9sutEnJoYFwl22WhDCUdWElmN9EcTUW1/sSRnLfyl48w2KixZw==
-X-Received: by 2002:a17:907:3e9a:b0:6db:b5e:676c with SMTP id hs26-20020a1709073e9a00b006db0b5e676cmr8489720ejc.314.1646691479562;
-        Mon, 07 Mar 2022 14:17:59 -0800 (PST)
-Received: from redhat.com ([2.55.138.228])
-        by smtp.gmail.com with ESMTPSA id s14-20020aa7cb0e000000b00410bf015567sm6554353edt.92.2022.03.07.14.17.54
+        bh=u+HxVrmr9/wIVPGnqjkJowBAbXCNibxa+a47AT7FYmc=;
+        b=AHuQvACjzfBiYE5sZHL0NmZVcSicdnICj/WPb9P6492DxHbXngElOQTQDY3E/6DFeg
+         UfPKp7gGGKn/UlQbly4K3BfgBUZfIhTU8+3hB1YA+PybyJNRHklxitVtoI7dbOtnIw5O
+         Ti0qjulYpx1JHdBbVZImwt+tqHwtjMPr/r1a5SABzcm5ptWIZAHsULzPzCRHHlLYh4Vr
+         j3Kys0ndwQaaoVD01vwavCsaP7AcLgbMrRcVl9e5SN/vbwp2naLydlSM9yzHzB+tJ45P
+         8UyRwQW/2Aiv7x7UCj/RssyIP+5nOM3JjLWv/4zxPDPBiT29zrmklj9ep1b8R+dOKCSV
+         6dyg==
+X-Gm-Message-State: AOAM532rZ6IIKEdHE/0dWXHc9gPTjyqE23inL0SyLo4Kz0bs2Uc1/gGW
+        S3VZvRr1bOYUr4xcXtiuWQwoRpbJDdcx1A==
+X-Google-Smtp-Source: ABdhPJynHgOD50IYhViIADKSPnv8ztHZHbrRi/3JCjkOSQU+0t0a9WCyxiSGe2Qqa3exr324JljcdQ==
+X-Received: by 2002:a05:6871:1d0:b0:da:b3f:3210 with SMTP id q16-20020a05687101d000b000da0b3f3210mr680906oad.192.1646692869913;
+        Mon, 07 Mar 2022 14:41:09 -0800 (PST)
+Received: from ripper ([2600:1700:a0:3dc8:205:1bff:fec0:b9b3])
+        by smtp.gmail.com with ESMTPSA id f21-20020a4ada55000000b0031c16df28f9sm6260868oou.42.2022.03.07.14.41.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Mar 2022 14:17:58 -0800 (PST)
-Date:   Mon, 7 Mar 2022 17:17:51 -0500
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     Xuan Zhuo <xuanzhuo@linux.alibaba.com>
-Cc:     virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
-        Jeff Dike <jdike@addtoit.com>,
-        Richard Weinberger <richard@nod.at>,
-        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
-        Jason Wang <jasowang@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Mark Gross <markgross@kernel.org>,
-        Vadim Pasternak <vadimp@nvidia.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Mon, 07 Mar 2022 14:41:09 -0800 (PST)
+Date:   Mon, 7 Mar 2022 14:42:53 -0800
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Georgi Djakov <djakov@kernel.org>
+Cc:     Sibi Sankar <quic_sibis@quicinc.com>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Cornelia Huck <cohuck@redhat.com>,
-        Halil Pasic <pasic@linux.ibm.com>,
-        Heiko Carstens <hca@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Jesper Dangaard Brouer <hawk@kernel.org>,
-        John Fastabend <john.fastabend@gmail.com>,
-        Johannes Berg <johannes.berg@intel.com>,
-        Vincent Whitchurch <vincent.whitchurch@axis.com>,
-        linux-um@lists.infradead.org, platform-driver-x86@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org, linux-s390@vger.kernel.org,
-        kvm@vger.kernel.org, bpf@vger.kernel.org
-Subject: Re: [PATCH v6 06/26] virtio_ring: packed: extrace the logic of
- creating vring
-Message-ID: <20220307171629-mutt-send-email-mst@kernel.org>
-References: <20220224081102.80224-1-xuanzhuo@linux.alibaba.com>
- <20220224081102.80224-7-xuanzhuo@linux.alibaba.com>
+        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] remoteproc: qcom: q6v5: Add interconnect path proxy vote
+Message-ID: <YiaKbbxJ/QE7yItC@ripper>
+References: <20220225033224.2238425-1-bjorn.andersson@linaro.org>
+ <5a9210d9-c726-1ef9-4bf2-716f2ed1fb8b@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220224081102.80224-7-xuanzhuo@linux.alibaba.com>
+In-Reply-To: <5a9210d9-c726-1ef9-4bf2-716f2ed1fb8b@kernel.org>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Thu, Feb 24, 2022 at 04:10:42PM +0800, Xuan Zhuo wrote:
-> Separate the logic of packed to create vring queue.
+On Mon 07 Mar 10:35 PST 2022, Georgi Djakov wrote:
+
 > 
-> For the convenience of passing parameters, add a structure
-> vring_packed.
+> On 25.02.22 5:32, Bjorn Andersson wrote:
+> > Many remoteproc instances requires that Linux casts a proxy vote for an
+> > interconnect path during boot, until they can do it themselves. Add
+> > support for voting for a single path.
+> > 
+> > As this is a shared problem between both PAS and MSS drivers, the path
+> > is acquired and votes casted from the common helper code.
+> > 
+> > Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> > ---
+> > 
+> > Sibi posted recently a patch to add interconnect votes from the modem driver,
+> > today I needed the same feature for one of the PAS remoteprocs. After
+> > essentially duplicating Sibi's patch I realized that it doesn't look too bad to
+> > put this in the common Q6V5 code.
+> > 
+> > The main difference is that this would be messy if we need to support multiple
+> > paths, so we probably would have to push it out to the individual drivers at
+> > that point.
+> > 
+> > Sibi's patch can be found here.
+> > https://lore.kernel.org/all/1644813252-12897-3-git-send-email-quic_sibis@quicinc.com/
+> > 
+> > 
+> > This makes the implementation pick up one path, relevant DT bindings would
+> > still need to be updated in order be allowed to this in the DeviceTree files.
+> > 
+> >   drivers/remoteproc/qcom_q6v5.c | 21 ++++++++++++++++++++-
+> >   drivers/remoteproc/qcom_q6v5.h |  3 +++
+> >   2 files changed, 23 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/remoteproc/qcom_q6v5.c b/drivers/remoteproc/qcom_q6v5.c
+> > index 442a388f8102..5280ec9b5449 100644
+> > --- a/drivers/remoteproc/qcom_q6v5.c
+> > +++ b/drivers/remoteproc/qcom_q6v5.c
+> > @@ -8,6 +8,7 @@
+> >    */
+> >   #include <linux/kernel.h>
+> >   #include <linux/platform_device.h>
+> > +#include <linux/interconnect.h>
+> >   #include <linux/interrupt.h>
+> >   #include <linux/module.h>
+> >   #include <linux/soc/qcom/qcom_aoss.h>
+> > @@ -51,9 +52,17 @@ int qcom_q6v5_prepare(struct qcom_q6v5 *q6v5)
+> >   {
+> >   	int ret;
+> > +	ret = icc_set_bw(q6v5->path, 0, UINT_MAX);
+> > +	if (ret < 0) {
+> > +		dev_err(q6v5->dev, "failed to set bandwidth request\n");
+> > +		return ret;
+> > +	}
+> > +
+> >   	ret = q6v5_load_state_toggle(q6v5, true);
+> > -	if (ret)
+> > +	if (ret) {
+> > +		icc_set_bw(q6v5->path, 0, 0);
+> >   		return ret;
+> > +	}
+> >   	reinit_completion(&q6v5->start_done);
+> >   	reinit_completion(&q6v5->stop_done);
+> > @@ -78,6 +87,9 @@ int qcom_q6v5_unprepare(struct qcom_q6v5 *q6v5)
+> >   	disable_irq(q6v5->handover_irq);
+> >   	q6v5_load_state_toggle(q6v5, false);
+> > +	/* Disable interconnect vote, in case handover never happened */
+> > +	icc_set_bw(q6v5->path, 0, 0);
+> > +
+> >   	return !q6v5->handover_issued;
+> >   }
+> >   EXPORT_SYMBOL_GPL(qcom_q6v5_unprepare);
+> > @@ -160,6 +172,8 @@ static irqreturn_t q6v5_handover_interrupt(int irq, void *data)
+> >   	if (q6v5->handover)
+> >   		q6v5->handover(q6v5);
+> > +	icc_set_bw(q6v5->path, 0, 0);
+> > +
+> >   	q6v5->handover_issued = true;
+> >   	return IRQ_HANDLED;
+> > @@ -332,6 +346,11 @@ int qcom_q6v5_init(struct qcom_q6v5 *q6v5, struct platform_device *pdev,
+> >   		return load_state ? -ENOMEM : -EINVAL;
+> >   	}
+> > +	q6v5->path = devm_of_icc_get(&pdev->dev, NULL);
+> > +	if (IS_ERR(q6v5->path))
+> > +		return dev_err_probe(&pdev->dev, PTR_ERR(q6v5->path),
+> > +				     "failed to acquire interconnect path\n");
+> > +
+> >   	return 0;
+> >   }
+> >   EXPORT_SYMBOL_GPL(qcom_q6v5_init);
 > 
-> This feature is required for subsequent virtuqueue reset vring.
+> Probably we should also call icc_put(q6v5->path) in qcom_q6v5_deinit().
 > 
-> Signed-off-by: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
 
-Subject has a typo.
-Besides:
+The use of devm_of_icc_get() should take care of that for us. Or am I
+missing something?
 
-> ---
->  drivers/virtio/virtio_ring.c | 121 ++++++++++++++++++++++++++---------
->  1 file changed, 92 insertions(+), 29 deletions(-)
+> Reviewed-by: Georgi Djakov <djakov@kernel.org>
 > 
-> diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
-> index dc6313b79305..41864c5e665f 100644
-> --- a/drivers/virtio/virtio_ring.c
-> +++ b/drivers/virtio/virtio_ring.c
-> @@ -92,6 +92,18 @@ struct vring_split {
->  	struct vring vring;
->  };
->  
-> +struct vring_packed {
-> +	u32 num;
-> +	struct vring_packed_desc *ring;
-> +	struct vring_packed_desc_event *driver;
-> +	struct vring_packed_desc_event *device;
-> +	dma_addr_t ring_dma_addr;
-> +	dma_addr_t driver_event_dma_addr;
-> +	dma_addr_t device_event_dma_addr;
-> +	size_t ring_size_in_bytes;
-> +	size_t event_size_in_bytes;
-> +};
-> +
->  struct vring_virtqueue {
->  	struct virtqueue vq;
->  
-> @@ -1683,45 +1695,101 @@ static struct vring_desc_extra *vring_alloc_desc_extra(struct vring_virtqueue *v
->  	return desc_extra;
->  }
->  
-> -static struct virtqueue *vring_create_virtqueue_packed(
-> -	unsigned int index,
-> -	unsigned int num,
-> -	unsigned int vring_align,
-> -	struct virtio_device *vdev,
-> -	bool weak_barriers,
-> -	bool may_reduce_num,
-> -	bool context,
-> -	bool (*notify)(struct virtqueue *),
-> -	void (*callback)(struct virtqueue *),
-> -	const char *name)
-> +static void vring_free_vring_packed(struct vring_packed *vring,
-> +				    struct virtio_device *vdev)
-> +{
-> +	dma_addr_t ring_dma_addr, driver_event_dma_addr, device_event_dma_addr;
-> +	struct vring_packed_desc_event *driver, *device;
-> +	size_t ring_size_in_bytes, event_size_in_bytes;
-> +	struct vring_packed_desc *ring;
-> +
-> +	ring                  = vring->ring;
-> +	driver                = vring->driver;
-> +	device                = vring->device;
-> +	ring_dma_addr         = vring->ring_size_in_bytes;
-> +	event_size_in_bytes   = vring->event_size_in_bytes;
-> +	ring_dma_addr         = vring->ring_dma_addr;
-> +	driver_event_dma_addr = vring->driver_event_dma_addr;
-> +	device_event_dma_addr = vring->device_event_dma_addr;
-> +
-> +	if (device)
-> +		vring_free_queue(vdev, event_size_in_bytes, device, device_event_dma_addr);
-> +
-> +	if (driver)
-> +		vring_free_queue(vdev, event_size_in_bytes, driver, driver_event_dma_addr);
-> +
-> +	if (ring)
-> +		vring_free_queue(vdev, ring_size_in_bytes, ring, ring_dma_addr);
 
-ring_size_in_bytes is uninitialized here.
-
-Which begs the question how was this tested patchset generally and
-this patch in particular.
-Please add note on tested configurations and tests run to the patchset.
-
-> +}
-> +
-> +static int vring_create_vring_packed(struct vring_packed *vring,
-> +				    struct virtio_device *vdev,
-> +				    u32 num)
->  {
-> -	struct vring_virtqueue *vq;
->  	struct vring_packed_desc *ring;
->  	struct vring_packed_desc_event *driver, *device;
->  	dma_addr_t ring_dma_addr, driver_event_dma_addr, device_event_dma_addr;
->  	size_t ring_size_in_bytes, event_size_in_bytes;
->  
-> +	memset(vring, 0, sizeof(*vring));
-> +
->  	ring_size_in_bytes = num * sizeof(struct vring_packed_desc);
->  
->  	ring = vring_alloc_queue(vdev, ring_size_in_bytes,
->  				 &ring_dma_addr,
->  				 GFP_KERNEL|__GFP_NOWARN|__GFP_ZERO);
->  	if (!ring)
-> -		goto err_ring;
-> +		goto err;
-> +
-> +	vring->num = num;
-> +	vring->ring = ring;
-> +	vring->ring_size_in_bytes = ring_size_in_bytes;
-> +	vring->ring_dma_addr = ring_dma_addr;
->  
->  	event_size_in_bytes = sizeof(struct vring_packed_desc_event);
-> +	vring->event_size_in_bytes = event_size_in_bytes;
->  
->  	driver = vring_alloc_queue(vdev, event_size_in_bytes,
->  				   &driver_event_dma_addr,
->  				   GFP_KERNEL|__GFP_NOWARN|__GFP_ZERO);
->  	if (!driver)
-> -		goto err_driver;
-> +		goto err;
-> +
-> +	vring->driver = driver;
-> +	vring->driver_event_dma_addr = driver_event_dma_addr;
->  
->  	device = vring_alloc_queue(vdev, event_size_in_bytes,
->  				   &device_event_dma_addr,
->  				   GFP_KERNEL|__GFP_NOWARN|__GFP_ZERO);
->  	if (!device)
-> -		goto err_device;
-> +		goto err;
-> +
-> +	vring->device = device;
-> +	vring->device_event_dma_addr = device_event_dma_addr;
-> +	return 0;
-> +
-> +err:
-> +	vring_free_vring_packed(vring, vdev);
-> +	return -ENOMEM;
-> +}
-> +
-> +static struct virtqueue *vring_create_virtqueue_packed(
-> +	unsigned int index,
-> +	unsigned int num,
-> +	unsigned int vring_align,
-> +	struct virtio_device *vdev,
-> +	bool weak_barriers,
-> +	bool may_reduce_num,
-> +	bool context,
-> +	bool (*notify)(struct virtqueue *),
-> +	void (*callback)(struct virtqueue *),
-> +	const char *name)
-> +{
-> +	struct vring_virtqueue *vq;
-> +	struct vring_packed vring;
-> +
-> +	if (vring_create_vring_packed(&vring, vdev, num))
-> +		goto err_vq;
->  
->  	vq = kmalloc(sizeof(*vq), GFP_KERNEL);
->  	if (!vq)
-> @@ -1753,17 +1821,17 @@ static struct virtqueue *vring_create_virtqueue_packed(
->  	if (virtio_has_feature(vdev, VIRTIO_F_ORDER_PLATFORM))
->  		vq->weak_barriers = false;
->  
-> -	vq->packed.ring_dma_addr = ring_dma_addr;
-> -	vq->packed.driver_event_dma_addr = driver_event_dma_addr;
-> -	vq->packed.device_event_dma_addr = device_event_dma_addr;
-> +	vq->packed.ring_dma_addr = vring.ring_dma_addr;
-> +	vq->packed.driver_event_dma_addr = vring.driver_event_dma_addr;
-> +	vq->packed.device_event_dma_addr = vring.device_event_dma_addr;
->  
-> -	vq->packed.ring_size_in_bytes = ring_size_in_bytes;
-> -	vq->packed.event_size_in_bytes = event_size_in_bytes;
-> +	vq->packed.ring_size_in_bytes = vring.ring_size_in_bytes;
-> +	vq->packed.event_size_in_bytes = vring.event_size_in_bytes;
->  
->  	vq->packed.vring.num = num;
-> -	vq->packed.vring.desc = ring;
-> -	vq->packed.vring.driver = driver;
-> -	vq->packed.vring.device = device;
-> +	vq->packed.vring.desc = vring.ring;
-> +	vq->packed.vring.driver = vring.driver;
-> +	vq->packed.vring.device = vring.device;
->  
->  	vq->packed.next_avail_idx = 0;
->  	vq->packed.avail_wrap_counter = 1;
-> @@ -1804,12 +1872,7 @@ static struct virtqueue *vring_create_virtqueue_packed(
->  err_desc_state:
->  	kfree(vq);
->  err_vq:
-> -	vring_free_queue(vdev, event_size_in_bytes, device, device_event_dma_addr);
-> -err_device:
-> -	vring_free_queue(vdev, event_size_in_bytes, driver, driver_event_dma_addr);
-> -err_driver:
-> -	vring_free_queue(vdev, ring_size_in_bytes, ring, ring_dma_addr);
-> -err_ring:
-> +	vring_free_vring_packed(&vring, vdev);
->  	return NULL;
->  }
->  
-> -- 
-> 2.31.0
-
+Thanks,
+Bjorn
