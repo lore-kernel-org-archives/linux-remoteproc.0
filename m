@@ -2,171 +2,207 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A988CC433F5
-	for <linux-remoteproc@archiver.kernel.org>; Mon,  7 Mar 2022 22:41:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6727AC433EF
+	for <linux-remoteproc@archiver.kernel.org>; Mon,  7 Mar 2022 23:13:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239920AbiCGWmH (ORCPT
+        id S235309AbiCGXOJ (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 7 Mar 2022 17:42:07 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39306 "EHLO
+        Mon, 7 Mar 2022 18:14:09 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55382 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233890AbiCGWmG (ORCPT
+        with ESMTP id S236576AbiCGXOH (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 7 Mar 2022 17:42:06 -0500
-Received: from mail-oo1-xc31.google.com (mail-oo1-xc31.google.com [IPv6:2607:f8b0:4864:20::c31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 942B0DF7C
-        for <linux-remoteproc@vger.kernel.org>; Mon,  7 Mar 2022 14:41:10 -0800 (PST)
-Received: by mail-oo1-xc31.google.com with SMTP id n5-20020a4a9545000000b0031d45a442feso19729047ooi.3
-        for <linux-remoteproc@vger.kernel.org>; Mon, 07 Mar 2022 14:41:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=u+HxVrmr9/wIVPGnqjkJowBAbXCNibxa+a47AT7FYmc=;
-        b=kVk8SOVW/iiKd2v1gTN9DpvUG9WzaoGZPbr9soXaMjEt6UsjM3EwBOPNVeQCX+2CLO
-         xPn23If8HwPAI5StphwjMWy7aaULGZuOK5dkKA/LYcUHxB6q1g3aNWJJSjIt5Rth6i1a
-         nVbUgWAqrk67KRodYd72vRKVsL+UkDkFnE/cdrPjGqPCybaJZzkUnU5g7kUMm+wX9HIO
-         M4ogM4vQyFaymIAEk7Eg+jP+Bak0vkN3J7ETbFdiyYhUIV2y3v4WRvfBedM0JB13CHZs
-         H8ud1QRKr3wKt7k9+Jg22qOvEq2UMuldaUlW72Ygzag6DFDMjEVUsslOFOGWDRRA7Lxp
-         haGg==
+        Mon, 7 Mar 2022 18:14:07 -0500
+Received: from mail-ot1-f50.google.com (mail-ot1-f50.google.com [209.85.210.50])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E125A1EC77;
+        Mon,  7 Mar 2022 15:13:12 -0800 (PST)
+Received: by mail-ot1-f50.google.com with SMTP id z9-20020a05683020c900b005b22bf41872so4211520otq.13;
+        Mon, 07 Mar 2022 15:13:12 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=u+HxVrmr9/wIVPGnqjkJowBAbXCNibxa+a47AT7FYmc=;
-        b=AHuQvACjzfBiYE5sZHL0NmZVcSicdnICj/WPb9P6492DxHbXngElOQTQDY3E/6DFeg
-         UfPKp7gGGKn/UlQbly4K3BfgBUZfIhTU8+3hB1YA+PybyJNRHklxitVtoI7dbOtnIw5O
-         Ti0qjulYpx1JHdBbVZImwt+tqHwtjMPr/r1a5SABzcm5ptWIZAHsULzPzCRHHlLYh4Vr
-         j3Kys0ndwQaaoVD01vwavCsaP7AcLgbMrRcVl9e5SN/vbwp2naLydlSM9yzHzB+tJ45P
-         8UyRwQW/2Aiv7x7UCj/RssyIP+5nOM3JjLWv/4zxPDPBiT29zrmklj9ep1b8R+dOKCSV
-         6dyg==
-X-Gm-Message-State: AOAM532rZ6IIKEdHE/0dWXHc9gPTjyqE23inL0SyLo4Kz0bs2Uc1/gGW
-        S3VZvRr1bOYUr4xcXtiuWQwoRpbJDdcx1A==
-X-Google-Smtp-Source: ABdhPJynHgOD50IYhViIADKSPnv8ztHZHbrRi/3JCjkOSQU+0t0a9WCyxiSGe2Qqa3exr324JljcdQ==
-X-Received: by 2002:a05:6871:1d0:b0:da:b3f:3210 with SMTP id q16-20020a05687101d000b000da0b3f3210mr680906oad.192.1646692869913;
-        Mon, 07 Mar 2022 14:41:09 -0800 (PST)
-Received: from ripper ([2600:1700:a0:3dc8:205:1bff:fec0:b9b3])
-        by smtp.gmail.com with ESMTPSA id f21-20020a4ada55000000b0031c16df28f9sm6260868oou.42.2022.03.07.14.41.09
+        bh=2/DahnhrrL/jdB0W/TX4PSLrYdtNRildr05b0KSXkCI=;
+        b=WF9PODNO7slZyaOxxW8j3epZMkQzX9oVqQlrDj6d6+iPpEZjBS6gYMSXrguQV4xQpI
+         kOsSFq6Ccq1FLrVFLzLqFNbiCzgGo/uM6V82zSl7UPgUCKJoEKh10jvhfiAOkuCTpKlb
+         18m6ngtig3/VGlwHtDq68WlBAFlwAlcL2wixDCxUvVIRSICOCfHIEiKOxkW8Z9pc4RAP
+         2NQXEqTR0m6osY85kSDJHVIzLV1lYk7wEMUxsRVR1RDzueEh0XIQloTf/LIUjTf6GQHX
+         3spLwmLdBvGMB1U8XT51ABAb2OJQFFBLv4tGy82U4ncySDPnNdG2ItUlk5ojoYSS5hGN
+         02dQ==
+X-Gm-Message-State: AOAM532kOPzrPvULaVM/bQyN1/YQSQwWmOXcVcC51bMz6UUxCW9HaKXW
+        81O4oCstNWlcmGRUyG23Jw==
+X-Google-Smtp-Source: ABdhPJz5YrAJp5ahVdp+farn9/jwvddcBMFpjQ8JynmRqN9lTMELxi2ky9lAb04HsWWkxDZTDgMR3A==
+X-Received: by 2002:a05:6830:165a:b0:5af:12dc:65e5 with SMTP id h26-20020a056830165a00b005af12dc65e5mr6983650otr.30.1646694792187;
+        Mon, 07 Mar 2022 15:13:12 -0800 (PST)
+Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id 69-20020a9d0bcb000000b005af83322c6asm6917909oth.12.2022.03.07.15.13.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Mar 2022 14:41:09 -0800 (PST)
-Date:   Mon, 7 Mar 2022 14:42:53 -0800
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Georgi Djakov <djakov@kernel.org>
-Cc:     Sibi Sankar <quic_sibis@quicinc.com>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] remoteproc: qcom: q6v5: Add interconnect path proxy vote
-Message-ID: <YiaKbbxJ/QE7yItC@ripper>
-References: <20220225033224.2238425-1-bjorn.andersson@linaro.org>
- <5a9210d9-c726-1ef9-4bf2-716f2ed1fb8b@kernel.org>
+        Mon, 07 Mar 2022 15:13:11 -0800 (PST)
+Received: (nullmailer pid 3439393 invoked by uid 1000);
+        Mon, 07 Mar 2022 23:13:10 -0000
+Date:   Mon, 7 Mar 2022 17:13:10 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Alexandre Bailon <abailon@baylibre.com>
+Cc:     ohad@wizery.com, bjorn.andersson@linaro.org,
+        mathieu.poirier@linaro.org, robh+dt@kernel.or,
+        matthias.bgg@gmail.com, linux-remoteproc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
+        stephane.leprovost@mediatek.com, khilman@baylibre.com
+Subject: Re: [PATCH v4 1/7] dt bindings: remoteproc: Add bindings for the
+ MT8183 APU
+Message-ID: <YiaRhu+tSg7+ZH16@robh.at.kernel.org>
+References: <20220304161514.994128-1-abailon@baylibre.com>
+ <20220304161514.994128-2-abailon@baylibre.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <5a9210d9-c726-1ef9-4bf2-716f2ed1fb8b@kernel.org>
+In-Reply-To: <20220304161514.994128-2-abailon@baylibre.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Mon 07 Mar 10:35 PST 2022, Georgi Djakov wrote:
-
+On Fri, Mar 04, 2022 at 05:15:08PM +0100, Alexandre Bailon wrote:
+> This adds dt bindings for the APU present in the MT8183.
 > 
-> On 25.02.22 5:32, Bjorn Andersson wrote:
-> > Many remoteproc instances requires that Linux casts a proxy vote for an
-> > interconnect path during boot, until they can do it themselves. Add
-> > support for voting for a single path.
-> > 
-> > As this is a shared problem between both PAS and MSS drivers, the path
-> > is acquired and votes casted from the common helper code.
-> > 
-> > Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> > ---
-> > 
-> > Sibi posted recently a patch to add interconnect votes from the modem driver,
-> > today I needed the same feature for one of the PAS remoteprocs. After
-> > essentially duplicating Sibi's patch I realized that it doesn't look too bad to
-> > put this in the common Q6V5 code.
-> > 
-> > The main difference is that this would be messy if we need to support multiple
-> > paths, so we probably would have to push it out to the individual drivers at
-> > that point.
-> > 
-> > Sibi's patch can be found here.
-> > https://lore.kernel.org/all/1644813252-12897-3-git-send-email-quic_sibis@quicinc.com/
-> > 
-> > 
-> > This makes the implementation pick up one path, relevant DT bindings would
-> > still need to be updated in order be allowed to this in the DeviceTree files.
-> > 
-> >   drivers/remoteproc/qcom_q6v5.c | 21 ++++++++++++++++++++-
-> >   drivers/remoteproc/qcom_q6v5.h |  3 +++
-> >   2 files changed, 23 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/remoteproc/qcom_q6v5.c b/drivers/remoteproc/qcom_q6v5.c
-> > index 442a388f8102..5280ec9b5449 100644
-> > --- a/drivers/remoteproc/qcom_q6v5.c
-> > +++ b/drivers/remoteproc/qcom_q6v5.c
-> > @@ -8,6 +8,7 @@
-> >    */
-> >   #include <linux/kernel.h>
-> >   #include <linux/platform_device.h>
-> > +#include <linux/interconnect.h>
-> >   #include <linux/interrupt.h>
-> >   #include <linux/module.h>
-> >   #include <linux/soc/qcom/qcom_aoss.h>
-> > @@ -51,9 +52,17 @@ int qcom_q6v5_prepare(struct qcom_q6v5 *q6v5)
-> >   {
-> >   	int ret;
-> > +	ret = icc_set_bw(q6v5->path, 0, UINT_MAX);
-> > +	if (ret < 0) {
-> > +		dev_err(q6v5->dev, "failed to set bandwidth request\n");
-> > +		return ret;
-> > +	}
-> > +
-> >   	ret = q6v5_load_state_toggle(q6v5, true);
-> > -	if (ret)
-> > +	if (ret) {
-> > +		icc_set_bw(q6v5->path, 0, 0);
-> >   		return ret;
-> > +	}
-> >   	reinit_completion(&q6v5->start_done);
-> >   	reinit_completion(&q6v5->stop_done);
-> > @@ -78,6 +87,9 @@ int qcom_q6v5_unprepare(struct qcom_q6v5 *q6v5)
-> >   	disable_irq(q6v5->handover_irq);
-> >   	q6v5_load_state_toggle(q6v5, false);
-> > +	/* Disable interconnect vote, in case handover never happened */
-> > +	icc_set_bw(q6v5->path, 0, 0);
-> > +
-> >   	return !q6v5->handover_issued;
-> >   }
-> >   EXPORT_SYMBOL_GPL(qcom_q6v5_unprepare);
-> > @@ -160,6 +172,8 @@ static irqreturn_t q6v5_handover_interrupt(int irq, void *data)
-> >   	if (q6v5->handover)
-> >   		q6v5->handover(q6v5);
-> > +	icc_set_bw(q6v5->path, 0, 0);
-> > +
-> >   	q6v5->handover_issued = true;
-> >   	return IRQ_HANDLED;
-> > @@ -332,6 +346,11 @@ int qcom_q6v5_init(struct qcom_q6v5 *q6v5, struct platform_device *pdev,
-> >   		return load_state ? -ENOMEM : -EINVAL;
-> >   	}
-> > +	q6v5->path = devm_of_icc_get(&pdev->dev, NULL);
-> > +	if (IS_ERR(q6v5->path))
-> > +		return dev_err_probe(&pdev->dev, PTR_ERR(q6v5->path),
-> > +				     "failed to acquire interconnect path\n");
-> > +
-> >   	return 0;
-> >   }
-> >   EXPORT_SYMBOL_GPL(qcom_q6v5_init);
+> Signed-off-by: Alexandre Bailon <abailon@baylibre.com>
+> ---
+>  .../bindings/remoteproc/mtk,apu.yaml          | 122 ++++++++++++++++++
+>  1 file changed, 122 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/remoteproc/mtk,apu.yaml
 > 
-> Probably we should also call icc_put(q6v5->path) in qcom_q6v5_deinit().
+> diff --git a/Documentation/devicetree/bindings/remoteproc/mtk,apu.yaml b/Documentation/devicetree/bindings/remoteproc/mtk,apu.yaml
+> new file mode 100644
+> index 000000000000..b640aa96d678
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/remoteproc/mtk,apu.yaml
+> @@ -0,0 +1,122 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +
+> +---
+> +$id: "http://devicetree.org/schemas/remoteproc/mtk,apu.yaml#"
+> +$schema: "http://devicetree.org/meta-schemas/core.yaml#"
+> +
+> +title: Mediatek AI Processor Unit (APU)
+> +
+> +description:
+> +  This document defines the binding for the APU, a co-processor that could
+> +  offload the CPU for machine learning and neural network.
+> +
+> +maintainers:
+> +  - Alexandre Bailon <abailon@bayLibre.com>
+> +
+> +properties:
+> +  compatible:
+> +    const: mediatek,mt8183-apu
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    minItems: 3
+> +    maxItems: 3
+> +
+> +  clock-names:
+> +    items:
+> +      - const: axi
+> +      - const: ipu
+> +      - const: jtag
+> +
+> +  iommus:
+> +    maxItems: 3
+> +
+> +  memory-region:
+> +    maxItems: 3
+> +
+> +  memory-region-da:
+> +    description:
+> +      Array of APU device address. This is used to map the APU device address
+> +      to a physical address.
+> +    maxItems: 3
+
+'dma-ranges' should work for this.
+
+> +
+> +  power-domains:
+> +    maxItems: 1
+> +
+> +  pinctrl:
+> +    description: pinctrl handles, required to configure pins for JTAG.
+> +
+> +  pinctrl-names:
+> +    items:
+> +      - const: jtag
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - interrupts
+> +  - clocks
+> +  - clock-names
+> +  - iommus
+> +  - memory-region
+> +  - memory-region-da
+> +  - power-domains
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/clock/mt8183-clk.h>
+> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +    #include <dt-bindings/memory/mt8183-larb-port.h>
+> +    #include <dt-bindings/power/mt8183-power.h>
+> +
+> +    reserved-memory {
+> +      #address-cells = <1>;
+> +      #size-cells = <1>;
+> +      ranges;
+> +
+> +      vdev0buffer: vdev0buffer@52900000 {
+> +        compatible = "shared-dma-pool";
+> +        reg = <0x52900000 0x4000>;
+> +        no-map;
+> +      };
+> +
+> +      vdev0vring0: vdev0vring0@52904000 {
+> +        compatible = "shared-dma-pool";
+> +        reg = <0x52904000 0x2000>;
+> +        no-map;
+> +      };
+> +
+> +      vdev0vring1: vdev0vring1@52906000 {
+> +        compatible = "shared-dma-pool";
+> +        reg = <0x52906000 0x2000>;
+> +        no-map;
+> +      };
+> +    };
+> +
+> +    apu0: apu@19100000 {
+> +      compatible = "mediatek,mt8183-apu";
+> +      reg = <0x19180000 0x14000>;
+> +      interrupts = <GIC_SPI 292 IRQ_TYPE_LEVEL_LOW>;
+> +
+> +      iommus = <&iommu M4U_PORT_IMG_IPUO>,
+> +         <&iommu M4U_PORT_IMG_IPU3O>,
+> +         <&iommu M4U_PORT_IMG_IPUI>;
+> +
+> +      clocks = <&ipu_core0 CLK_IPU_CORE0_AXI>,
+> +         <&ipu_core0 CLK_IPU_CORE0_IPU>,
+> +         <&ipu_core0 CLK_IPU_CORE0_JTAG>;
+> +
+> +      clock-names = "axi", "ipu", "jtag";
+> +
+> +      power-domains = <&scpsys MT8183_POWER_DOMAIN_VPU_CORE0>;
+> +      memory-region = <&vdev0buffer>, <&vdev0vring0>, <&vdev0vring1>;
+> +      memory-region-da = <0x6fff8000>, <0x6fffc000>, <0x6fffe000>;
+> +    };
+> +...
+> -- 
+> 2.34.1
 > 
-
-The use of devm_of_icc_get() should take care of that for us. Or am I
-missing something?
-
-> Reviewed-by: Georgi Djakov <djakov@kernel.org>
 > 
-
-Thanks,
-Bjorn
