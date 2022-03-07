@@ -2,45 +2,45 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6727AC433EF
-	for <linux-remoteproc@archiver.kernel.org>; Mon,  7 Mar 2022 23:13:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F86EC433F5
+	for <linux-remoteproc@archiver.kernel.org>; Mon,  7 Mar 2022 23:15:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235309AbiCGXOJ (ORCPT
+        id S235249AbiCGXQa (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 7 Mar 2022 18:14:09 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55382 "EHLO
+        Mon, 7 Mar 2022 18:16:30 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36154 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236576AbiCGXOH (ORCPT
+        with ESMTP id S238337AbiCGXQ3 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 7 Mar 2022 18:14:07 -0500
-Received: from mail-ot1-f50.google.com (mail-ot1-f50.google.com [209.85.210.50])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E125A1EC77;
-        Mon,  7 Mar 2022 15:13:12 -0800 (PST)
-Received: by mail-ot1-f50.google.com with SMTP id z9-20020a05683020c900b005b22bf41872so4211520otq.13;
-        Mon, 07 Mar 2022 15:13:12 -0800 (PST)
+        Mon, 7 Mar 2022 18:16:29 -0500
+Received: from mail-oo1-f49.google.com (mail-oo1-f49.google.com [209.85.161.49])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2EAB13DDCA;
+        Mon,  7 Mar 2022 15:15:33 -0800 (PST)
+Received: by mail-oo1-f49.google.com with SMTP id k13-20020a4a948d000000b003172f2f6bdfso19895109ooi.1;
+        Mon, 07 Mar 2022 15:15:33 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=2/DahnhrrL/jdB0W/TX4PSLrYdtNRildr05b0KSXkCI=;
-        b=WF9PODNO7slZyaOxxW8j3epZMkQzX9oVqQlrDj6d6+iPpEZjBS6gYMSXrguQV4xQpI
-         kOsSFq6Ccq1FLrVFLzLqFNbiCzgGo/uM6V82zSl7UPgUCKJoEKh10jvhfiAOkuCTpKlb
-         18m6ngtig3/VGlwHtDq68WlBAFlwAlcL2wixDCxUvVIRSICOCfHIEiKOxkW8Z9pc4RAP
-         2NQXEqTR0m6osY85kSDJHVIzLV1lYk7wEMUxsRVR1RDzueEh0XIQloTf/LIUjTf6GQHX
-         3spLwmLdBvGMB1U8XT51ABAb2OJQFFBLv4tGy82U4ncySDPnNdG2ItUlk5ojoYSS5hGN
-         02dQ==
-X-Gm-Message-State: AOAM532kOPzrPvULaVM/bQyN1/YQSQwWmOXcVcC51bMz6UUxCW9HaKXW
-        81O4oCstNWlcmGRUyG23Jw==
-X-Google-Smtp-Source: ABdhPJz5YrAJp5ahVdp+farn9/jwvddcBMFpjQ8JynmRqN9lTMELxi2ky9lAb04HsWWkxDZTDgMR3A==
-X-Received: by 2002:a05:6830:165a:b0:5af:12dc:65e5 with SMTP id h26-20020a056830165a00b005af12dc65e5mr6983650otr.30.1646694792187;
-        Mon, 07 Mar 2022 15:13:12 -0800 (PST)
+        bh=AI7+nqdRFcGCglUrZMOmz1VIH3qVmbPTfJ/l66ayM3Y=;
+        b=rtbKvBPVCdyzqn+lsHNRSSPVE42XhvMHzdsH1qpQWQSlwNHTv3raqOzlACicxGqhmT
+         EN+Mx/BtfvwDDRIPfMCex528orQXl7j17J3uzXz4Xb6cwe0/7EXJa8LH6V9s0//1jILS
+         bvIcN812K65kyaijciEq+UkoGy0antvW4itkhAw2O+6KA/LrKlck5XjRypZqWmK9/nWj
+         bQZoWl/Y/x+C3sh1aiyNmAziqPhya5y5c7xf7aTEaHT9vI1v8p4IucWcSmf6UuSVG6Ka
+         O3im3eQp6pDPVj0Zq6BjtD4v8+9oax0mhM4Q4VWTJfxb34Y0XRyE8je1Uj2OaQHwC9dD
+         5YtA==
+X-Gm-Message-State: AOAM530uOaWp+aMY4TNlxMVxV+WDvnKdgNX2iAfn/X0mr/yCUI0ic/0q
+        q9txR+ZUQst85OLGZSjUng==
+X-Google-Smtp-Source: ABdhPJxeFOFFe9Vq2gohlV5XyQjqZbVfPdy2gBMuBEd/YoU/2W3BbN5NDiSR16FW9csAOMqydlNNvg==
+X-Received: by 2002:a05:6870:a986:b0:da:b3f:3279 with SMTP id ep6-20020a056870a98600b000da0b3f3279mr741000oab.297.1646694932365;
+        Mon, 07 Mar 2022 15:15:32 -0800 (PST)
 Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id 69-20020a9d0bcb000000b005af83322c6asm6917909oth.12.2022.03.07.15.13.10
+        by smtp.gmail.com with ESMTPSA id bj27-20020a056808199b00b002d49b02cb41sm7268602oib.22.2022.03.07.15.15.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Mar 2022 15:13:11 -0800 (PST)
-Received: (nullmailer pid 3439393 invoked by uid 1000);
-        Mon, 07 Mar 2022 23:13:10 -0000
-Date:   Mon, 7 Mar 2022 17:13:10 -0600
+        Mon, 07 Mar 2022 15:15:31 -0800 (PST)
+Received: (nullmailer pid 3443222 invoked by uid 1000);
+        Mon, 07 Mar 2022 23:15:30 -0000
+Date:   Mon, 7 Mar 2022 17:15:30 -0600
 From:   Rob Herring <robh@kernel.org>
 To:     Alexandre Bailon <abailon@baylibre.com>
 Cc:     ohad@wizery.com, bjorn.andersson@linaro.org,
@@ -49,160 +49,97 @@ Cc:     ohad@wizery.com, bjorn.andersson@linaro.org,
         devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
         stephane.leprovost@mediatek.com, khilman@baylibre.com
-Subject: Re: [PATCH v4 1/7] dt bindings: remoteproc: Add bindings for the
- MT8183 APU
-Message-ID: <YiaRhu+tSg7+ZH16@robh.at.kernel.org>
+Subject: Re: [PATCH v4 2/7] dt-bindings: remoteproc: Add bindings for the
+ MT8365 APU
+Message-ID: <YiaSEtqLAAYmBYgh@robh.at.kernel.org>
 References: <20220304161514.994128-1-abailon@baylibre.com>
- <20220304161514.994128-2-abailon@baylibre.com>
+ <20220304161514.994128-3-abailon@baylibre.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220304161514.994128-2-abailon@baylibre.com>
+In-Reply-To: <20220304161514.994128-3-abailon@baylibre.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Fri, Mar 04, 2022 at 05:15:08PM +0100, Alexandre Bailon wrote:
-> This adds dt bindings for the APU present in the MT8183.
+On Fri, Mar 04, 2022 at 05:15:09PM +0100, Alexandre Bailon wrote:
+> This updates the Mediatek APU bindings to support the MT8365.
 > 
 > Signed-off-by: Alexandre Bailon <abailon@baylibre.com>
 > ---
->  .../bindings/remoteproc/mtk,apu.yaml          | 122 ++++++++++++++++++
->  1 file changed, 122 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/remoteproc/mtk,apu.yaml
+>  .../bindings/remoteproc/mtk,apu.yaml          | 45 ++++++++++++++++---
+>  1 file changed, 39 insertions(+), 6 deletions(-)
 > 
 > diff --git a/Documentation/devicetree/bindings/remoteproc/mtk,apu.yaml b/Documentation/devicetree/bindings/remoteproc/mtk,apu.yaml
-> new file mode 100644
-> index 000000000000..b640aa96d678
-> --- /dev/null
+> index b640aa96d678..388352ccb2b5 100644
+> --- a/Documentation/devicetree/bindings/remoteproc/mtk,apu.yaml
 > +++ b/Documentation/devicetree/bindings/remoteproc/mtk,apu.yaml
-> @@ -0,0 +1,122 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +
-> +---
-> +$id: "http://devicetree.org/schemas/remoteproc/mtk,apu.yaml#"
-> +$schema: "http://devicetree.org/meta-schemas/core.yaml#"
-> +
-> +title: Mediatek AI Processor Unit (APU)
-> +
-> +description:
-> +  This document defines the binding for the APU, a co-processor that could
-> +  offload the CPU for machine learning and neural network.
-> +
-> +maintainers:
-> +  - Alexandre Bailon <abailon@bayLibre.com>
-> +
-> +properties:
-> +  compatible:
-> +    const: mediatek,mt8183-apu
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +
-> +  clocks:
+> @@ -16,7 +16,9 @@ maintainers:
+>  
+>  properties:
+>    compatible:
+> -    const: mediatek,mt8183-apu
+> +    enum:
+> +      - mediatek,mt8183-apu
+> +      - mediatek,mt8365-apu
+>  
+>    reg:
+>      maxItems: 1
+> @@ -26,13 +28,11 @@ properties:
+>  
+>    clocks:
+>      minItems: 3
+> -    maxItems: 3
+> +    maxItems: 8
+>  
+>    clock-names:
+> -    items:
+> -      - const: axi
+> -      - const: ipu
+> -      - const: jtag
 > +    minItems: 3
-> +    maxItems: 3
-> +
-> +  clock-names:
-> +    items:
-> +      - const: axi
-> +      - const: ipu
-> +      - const: jtag
-> +
-> +  iommus:
-> +    maxItems: 3
-> +
-> +  memory-region:
-> +    maxItems: 3
-> +
-> +  memory-region-da:
-> +    description:
-> +      Array of APU device address. This is used to map the APU device address
-> +      to a physical address.
-> +    maxItems: 3
+> +    maxItems: 8
+>  
+>    iommus:
+>      maxItems: 3
+> @@ -69,6 +69,39 @@ required:
+>  
+>  additionalProperties: false
+>  
+> +allOf:
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            enum:
+> +              - mediatek,mt8183-apu
+> +    then:
+> +      properties:
+> +        clock-names:
+> +          items:
+> +            - const: axi
+> +            - const: ipu
+> +            - const: jtag
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            enum:
+> +              - mediatek,mt8365-apu
+> +    then:
+> +      properties:
+> +        clock-names:
+> +          items:
+> +            - const: if_ck
+> +            - const: edma
+> +            - const: ahb
+> +            - const: axi
+> +            - const: ipu
+> +            - const: jtag
+> +            - const: smi_cam
+> +            - const: ifr_apu_axi
 
-'dma-ranges' should work for this.
+Keep the first 3 clocks the same as prior h/w and keep at the top level. 
+Then the if/then just needs to set the number of entries to 3 or 8.
 
-> +
-> +  power-domains:
-> +    maxItems: 1
-> +
-> +  pinctrl:
-> +    description: pinctrl handles, required to configure pins for JTAG.
-> +
-> +  pinctrl-names:
-> +    items:
-> +      - const: jtag
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - interrupts
-> +  - clocks
-> +  - clock-names
-> +  - iommus
-> +  - memory-region
-> +  - memory-region-da
-> +  - power-domains
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/clock/mt8183-clk.h>
-> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> +    #include <dt-bindings/memory/mt8183-larb-port.h>
-> +    #include <dt-bindings/power/mt8183-power.h>
-> +
-> +    reserved-memory {
-> +      #address-cells = <1>;
-> +      #size-cells = <1>;
-> +      ranges;
-> +
-> +      vdev0buffer: vdev0buffer@52900000 {
-> +        compatible = "shared-dma-pool";
-> +        reg = <0x52900000 0x4000>;
-> +        no-map;
-> +      };
-> +
-> +      vdev0vring0: vdev0vring0@52904000 {
-> +        compatible = "shared-dma-pool";
-> +        reg = <0x52904000 0x2000>;
-> +        no-map;
-> +      };
-> +
-> +      vdev0vring1: vdev0vring1@52906000 {
-> +        compatible = "shared-dma-pool";
-> +        reg = <0x52906000 0x2000>;
-> +        no-map;
-> +      };
-> +    };
-> +
-> +    apu0: apu@19100000 {
-> +      compatible = "mediatek,mt8183-apu";
-> +      reg = <0x19180000 0x14000>;
-> +      interrupts = <GIC_SPI 292 IRQ_TYPE_LEVEL_LOW>;
-> +
-> +      iommus = <&iommu M4U_PORT_IMG_IPUO>,
-> +         <&iommu M4U_PORT_IMG_IPU3O>,
-> +         <&iommu M4U_PORT_IMG_IPUI>;
-> +
-> +      clocks = <&ipu_core0 CLK_IPU_CORE0_AXI>,
-> +         <&ipu_core0 CLK_IPU_CORE0_IPU>,
-> +         <&ipu_core0 CLK_IPU_CORE0_JTAG>;
-> +
-> +      clock-names = "axi", "ipu", "jtag";
-> +
-> +      power-domains = <&scpsys MT8183_POWER_DOMAIN_VPU_CORE0>;
-> +      memory-region = <&vdev0buffer>, <&vdev0vring0>, <&vdev0vring1>;
-> +      memory-region-da = <0x6fff8000>, <0x6fffc000>, <0x6fffe000>;
-> +    };
-> +...
-> -- 
-> 2.34.1
-> 
-> 
+Rob
