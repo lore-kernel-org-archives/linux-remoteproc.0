@@ -2,144 +2,163 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F86EC433F5
-	for <linux-remoteproc@archiver.kernel.org>; Mon,  7 Mar 2022 23:15:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94C35C433EF
+	for <linux-remoteproc@archiver.kernel.org>; Mon,  7 Mar 2022 23:48:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235249AbiCGXQa (ORCPT
+        id S1343977AbiCGXtk (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 7 Mar 2022 18:16:30 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36154 "EHLO
+        Mon, 7 Mar 2022 18:49:40 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32834 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238337AbiCGXQ3 (ORCPT
+        with ESMTP id S1343999AbiCGXtf (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 7 Mar 2022 18:16:29 -0500
-Received: from mail-oo1-f49.google.com (mail-oo1-f49.google.com [209.85.161.49])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2EAB13DDCA;
-        Mon,  7 Mar 2022 15:15:33 -0800 (PST)
-Received: by mail-oo1-f49.google.com with SMTP id k13-20020a4a948d000000b003172f2f6bdfso19895109ooi.1;
-        Mon, 07 Mar 2022 15:15:33 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=AI7+nqdRFcGCglUrZMOmz1VIH3qVmbPTfJ/l66ayM3Y=;
-        b=rtbKvBPVCdyzqn+lsHNRSSPVE42XhvMHzdsH1qpQWQSlwNHTv3raqOzlACicxGqhmT
-         EN+Mx/BtfvwDDRIPfMCex528orQXl7j17J3uzXz4Xb6cwe0/7EXJa8LH6V9s0//1jILS
-         bvIcN812K65kyaijciEq+UkoGy0antvW4itkhAw2O+6KA/LrKlck5XjRypZqWmK9/nWj
-         bQZoWl/Y/x+C3sh1aiyNmAziqPhya5y5c7xf7aTEaHT9vI1v8p4IucWcSmf6UuSVG6Ka
-         O3im3eQp6pDPVj0Zq6BjtD4v8+9oax0mhM4Q4VWTJfxb34Y0XRyE8je1Uj2OaQHwC9dD
-         5YtA==
-X-Gm-Message-State: AOAM530uOaWp+aMY4TNlxMVxV+WDvnKdgNX2iAfn/X0mr/yCUI0ic/0q
-        q9txR+ZUQst85OLGZSjUng==
-X-Google-Smtp-Source: ABdhPJxeFOFFe9Vq2gohlV5XyQjqZbVfPdy2gBMuBEd/YoU/2W3BbN5NDiSR16FW9csAOMqydlNNvg==
-X-Received: by 2002:a05:6870:a986:b0:da:b3f:3279 with SMTP id ep6-20020a056870a98600b000da0b3f3279mr741000oab.297.1646694932365;
-        Mon, 07 Mar 2022 15:15:32 -0800 (PST)
-Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id bj27-20020a056808199b00b002d49b02cb41sm7268602oib.22.2022.03.07.15.15.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Mar 2022 15:15:31 -0800 (PST)
-Received: (nullmailer pid 3443222 invoked by uid 1000);
-        Mon, 07 Mar 2022 23:15:30 -0000
-Date:   Mon, 7 Mar 2022 17:15:30 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Alexandre Bailon <abailon@baylibre.com>
-Cc:     ohad@wizery.com, bjorn.andersson@linaro.org,
-        mathieu.poirier@linaro.org, robh+dt@kernel.or,
-        matthias.bgg@gmail.com, linux-remoteproc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
-        stephane.leprovost@mediatek.com, khilman@baylibre.com
-Subject: Re: [PATCH v4 2/7] dt-bindings: remoteproc: Add bindings for the
- MT8365 APU
-Message-ID: <YiaSEtqLAAYmBYgh@robh.at.kernel.org>
-References: <20220304161514.994128-1-abailon@baylibre.com>
- <20220304161514.994128-3-abailon@baylibre.com>
+        Mon, 7 Mar 2022 18:49:35 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A0E45192A4;
+        Mon,  7 Mar 2022 15:48:40 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 3EEA661267;
+        Mon,  7 Mar 2022 23:48:40 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D3C4C340E9;
+        Mon,  7 Mar 2022 23:48:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1646696919;
+        bh=fHWO6maflMjyRFHNuByrtSCugopIWmyU6sb+v2UuxbI=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=YBwjydWfykhLRFG4dbT6Yt76164B3VgaHQawbf73WiXHSmSXxVWY3n6Q5liJGGgaB
+         0j19wf83O8+ti7zRHiEY/bqXeBH+ygzxG+4zx3Bd08cXBzz3uriXRCJqTcAZdUW65o
+         tlKw4PP2TLQcBoM5TJ5Y1cUjV/rFT4jU54y3sCIHreVhbAOKCaoyBREliaQin8y6S3
+         l5zaHi0S2Lt+3BH5gNntHHU8xAMNL1ARdJQ4TgJ65pU0IUkBY/el7k/wIu+NpiMvEO
+         jL0VZZSLxzyRg/1XCxyapHBsafOzSrq8Hk9ePfbarg1jPy15jo77OHES8XdhdWiB/Z
+         s8a4zovDAoOHA==
+Message-ID: <a2b941db-d0ed-68fe-a0dc-f328f9bc2105@kernel.org>
+Date:   Tue, 8 Mar 2022 01:48:34 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220304161514.994128-3-abailon@baylibre.com>
+Subject: Re: [PATCH] remoteproc: qcom: q6v5: Add interconnect path proxy vote
+Content-Language: en-US
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Sibi Sankar <quic_sibis@quicinc.com>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20220225033224.2238425-1-bjorn.andersson@linaro.org>
+ <5a9210d9-c726-1ef9-4bf2-716f2ed1fb8b@kernel.org> <YiaKbbxJ/QE7yItC@ripper>
+From:   Georgi Djakov <djakov@kernel.org>
+In-Reply-To: <YiaKbbxJ/QE7yItC@ripper>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Fri, Mar 04, 2022 at 05:15:09PM +0100, Alexandre Bailon wrote:
-> This updates the Mediatek APU bindings to support the MT8365.
+On 8.03.22 0:42, Bjorn Andersson wrote:
+> On Mon 07 Mar 10:35 PST 2022, Georgi Djakov wrote:
 > 
-> Signed-off-by: Alexandre Bailon <abailon@baylibre.com>
-> ---
->  .../bindings/remoteproc/mtk,apu.yaml          | 45 ++++++++++++++++---
->  1 file changed, 39 insertions(+), 6 deletions(-)
+>>
+>> On 25.02.22 5:32, Bjorn Andersson wrote:
+>>> Many remoteproc instances requires that Linux casts a proxy vote for an
+>>> interconnect path during boot, until they can do it themselves. Add
+>>> support for voting for a single path.
+>>>
+>>> As this is a shared problem between both PAS and MSS drivers, the path
+>>> is acquired and votes casted from the common helper code.
+>>>
+>>> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+>>> ---
+>>>
+>>> Sibi posted recently a patch to add interconnect votes from the modem driver,
+>>> today I needed the same feature for one of the PAS remoteprocs. After
+>>> essentially duplicating Sibi's patch I realized that it doesn't look too bad to
+>>> put this in the common Q6V5 code.
+>>>
+>>> The main difference is that this would be messy if we need to support multiple
+>>> paths, so we probably would have to push it out to the individual drivers at
+>>> that point.
+>>>
+>>> Sibi's patch can be found here.
+>>> https://lore.kernel.org/all/1644813252-12897-3-git-send-email-quic_sibis@quicinc.com/
+>>>
+>>>
+>>> This makes the implementation pick up one path, relevant DT bindings would
+>>> still need to be updated in order be allowed to this in the DeviceTree files.
+>>>
+>>>    drivers/remoteproc/qcom_q6v5.c | 21 ++++++++++++++++++++-
+>>>    drivers/remoteproc/qcom_q6v5.h |  3 +++
+>>>    2 files changed, 23 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git a/drivers/remoteproc/qcom_q6v5.c b/drivers/remoteproc/qcom_q6v5.c
+>>> index 442a388f8102..5280ec9b5449 100644
+>>> --- a/drivers/remoteproc/qcom_q6v5.c
+>>> +++ b/drivers/remoteproc/qcom_q6v5.c
+>>> @@ -8,6 +8,7 @@
+>>>     */
+>>>    #include <linux/kernel.h>
+>>>    #include <linux/platform_device.h>
+>>> +#include <linux/interconnect.h>
+>>>    #include <linux/interrupt.h>
+>>>    #include <linux/module.h>
+>>>    #include <linux/soc/qcom/qcom_aoss.h>
+>>> @@ -51,9 +52,17 @@ int qcom_q6v5_prepare(struct qcom_q6v5 *q6v5)
+>>>    {
+>>>    	int ret;
+>>> +	ret = icc_set_bw(q6v5->path, 0, UINT_MAX);
+>>> +	if (ret < 0) {
+>>> +		dev_err(q6v5->dev, "failed to set bandwidth request\n");
+>>> +		return ret;
+>>> +	}
+>>> +
+>>>    	ret = q6v5_load_state_toggle(q6v5, true);
+>>> -	if (ret)
+>>> +	if (ret) {
+>>> +		icc_set_bw(q6v5->path, 0, 0);
+>>>    		return ret;
+>>> +	}
+>>>    	reinit_completion(&q6v5->start_done);
+>>>    	reinit_completion(&q6v5->stop_done);
+>>> @@ -78,6 +87,9 @@ int qcom_q6v5_unprepare(struct qcom_q6v5 *q6v5)
+>>>    	disable_irq(q6v5->handover_irq);
+>>>    	q6v5_load_state_toggle(q6v5, false);
+>>> +	/* Disable interconnect vote, in case handover never happened */
+>>> +	icc_set_bw(q6v5->path, 0, 0);
+>>> +
+>>>    	return !q6v5->handover_issued;
+>>>    }
+>>>    EXPORT_SYMBOL_GPL(qcom_q6v5_unprepare);
+>>> @@ -160,6 +172,8 @@ static irqreturn_t q6v5_handover_interrupt(int irq, void *data)
+>>>    	if (q6v5->handover)
+>>>    		q6v5->handover(q6v5);
+>>> +	icc_set_bw(q6v5->path, 0, 0);
+>>> +
+>>>    	q6v5->handover_issued = true;
+>>>    	return IRQ_HANDLED;
+>>> @@ -332,6 +346,11 @@ int qcom_q6v5_init(struct qcom_q6v5 *q6v5, struct platform_device *pdev,
+>>>    		return load_state ? -ENOMEM : -EINVAL;
+>>>    	}
+>>> +	q6v5->path = devm_of_icc_get(&pdev->dev, NULL);
+>>> +	if (IS_ERR(q6v5->path))
+>>> +		return dev_err_probe(&pdev->dev, PTR_ERR(q6v5->path),
+>>> +				     "failed to acquire interconnect path\n");
+>>> +
+>>>    	return 0;
+>>>    }
+>>>    EXPORT_SYMBOL_GPL(qcom_q6v5_init);
+>>
+>> Probably we should also call icc_put(q6v5->path) in qcom_q6v5_deinit().
+>>
 > 
-> diff --git a/Documentation/devicetree/bindings/remoteproc/mtk,apu.yaml b/Documentation/devicetree/bindings/remoteproc/mtk,apu.yaml
-> index b640aa96d678..388352ccb2b5 100644
-> --- a/Documentation/devicetree/bindings/remoteproc/mtk,apu.yaml
-> +++ b/Documentation/devicetree/bindings/remoteproc/mtk,apu.yaml
-> @@ -16,7 +16,9 @@ maintainers:
->  
->  properties:
->    compatible:
-> -    const: mediatek,mt8183-apu
-> +    enum:
-> +      - mediatek,mt8183-apu
-> +      - mediatek,mt8365-apu
->  
->    reg:
->      maxItems: 1
-> @@ -26,13 +28,11 @@ properties:
->  
->    clocks:
->      minItems: 3
-> -    maxItems: 3
-> +    maxItems: 8
->  
->    clock-names:
-> -    items:
-> -      - const: axi
-> -      - const: ipu
-> -      - const: jtag
-> +    minItems: 3
-> +    maxItems: 8
->  
->    iommus:
->      maxItems: 3
-> @@ -69,6 +69,39 @@ required:
->  
->  additionalProperties: false
->  
-> +allOf:
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - mediatek,mt8183-apu
-> +    then:
-> +      properties:
-> +        clock-names:
-> +          items:
-> +            - const: axi
-> +            - const: ipu
-> +            - const: jtag
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - mediatek,mt8365-apu
-> +    then:
-> +      properties:
-> +        clock-names:
-> +          items:
-> +            - const: if_ck
-> +            - const: edma
-> +            - const: ahb
-> +            - const: axi
-> +            - const: ipu
-> +            - const: jtag
-> +            - const: smi_cam
-> +            - const: ifr_apu_axi
+> The use of devm_of_icc_get() should take care of that for us. Or am I
+> missing something?
 
-Keep the first 3 clocks the same as prior h/w and keep at the top level. 
-Then the if/then just needs to set the number of entries to 3 or 8.
+Right, it's fine then. Sorry for the noise.
 
-Rob
+BR,
+Georgi
+
+>> Reviewed-by: Georgi Djakov <djakov@kernel.org>
+>>
+> 
+> Thanks,
+> Bjorn
+
