@@ -2,163 +2,89 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94C35C433EF
-	for <linux-remoteproc@archiver.kernel.org>; Mon,  7 Mar 2022 23:48:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 504F7C433EF
+	for <linux-remoteproc@archiver.kernel.org>; Tue,  8 Mar 2022 03:12:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343977AbiCGXtk (ORCPT
+        id S240927AbiCHDNY (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 7 Mar 2022 18:49:40 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32834 "EHLO
+        Mon, 7 Mar 2022 22:13:24 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60838 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1343999AbiCGXtf (ORCPT
+        with ESMTP id S240534AbiCHDNY (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 7 Mar 2022 18:49:35 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A0E45192A4;
-        Mon,  7 Mar 2022 15:48:40 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 3EEA661267;
-        Mon,  7 Mar 2022 23:48:40 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D3C4C340E9;
-        Mon,  7 Mar 2022 23:48:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1646696919;
-        bh=fHWO6maflMjyRFHNuByrtSCugopIWmyU6sb+v2UuxbI=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=YBwjydWfykhLRFG4dbT6Yt76164B3VgaHQawbf73WiXHSmSXxVWY3n6Q5liJGGgaB
-         0j19wf83O8+ti7zRHiEY/bqXeBH+ygzxG+4zx3Bd08cXBzz3uriXRCJqTcAZdUW65o
-         tlKw4PP2TLQcBoM5TJ5Y1cUjV/rFT4jU54y3sCIHreVhbAOKCaoyBREliaQin8y6S3
-         l5zaHi0S2Lt+3BH5gNntHHU8xAMNL1ARdJQ4TgJ65pU0IUkBY/el7k/wIu+NpiMvEO
-         jL0VZZSLxzyRg/1XCxyapHBsafOzSrq8Hk9ePfbarg1jPy15jo77OHES8XdhdWiB/Z
-         s8a4zovDAoOHA==
-Message-ID: <a2b941db-d0ed-68fe-a0dc-f328f9bc2105@kernel.org>
-Date:   Tue, 8 Mar 2022 01:48:34 +0200
-MIME-Version: 1.0
-Subject: Re: [PATCH] remoteproc: qcom: q6v5: Add interconnect path proxy vote
-Content-Language: en-US
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Sibi Sankar <quic_sibis@quicinc.com>,
+        Mon, 7 Mar 2022 22:13:24 -0500
+Received: from mail-pg1-x532.google.com (mail-pg1-x532.google.com [IPv6:2607:f8b0:4864:20::532])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A7EB81160;
+        Mon,  7 Mar 2022 19:12:27 -0800 (PST)
+Received: by mail-pg1-x532.google.com with SMTP id c11so2845093pgu.11;
+        Mon, 07 Mar 2022 19:12:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id;
+        bh=T4Ldh9wP6NrK55uA0+WDFo63kUJzzU3JlOSL2h2P1mk=;
+        b=PDQt0K+4JI0d9CJfngLON56gnSZBseP33imtVIA1IINB0GjO2bpqdMaSsP5N3ge9vT
+         pJLJsCWuKCEEzA44XZTqDlySXahQgCh1cvuaN+0QPWMoi7GBKgIqL6I9h1Dvf+ZDFUM9
+         ImTTZ1DI+ipqKDy5PBhdQ24EaPsM0MYsCZbwgJGFDfMUqdZ+fpqwAyMlG8oWtP2xUVxs
+         yoh+AIU8IuAkgnpBBEWPhr10WHVZiZqpbbulzPHytr+HhiN30FOEkbvMAI7gxRzM8Ip4
+         xIQNTAh9n9JIiua9cU0aApWEiHmZWBpNc6hklNCsKnJsCmNGYRacdL+4Vgcebh4v6edN
+         qy9A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=T4Ldh9wP6NrK55uA0+WDFo63kUJzzU3JlOSL2h2P1mk=;
+        b=MgF/gCMIRSKnMLIZawHhIv+c3cLKRmuP70KB5pELH9/TV5b1d8fv8rQoPgtJjwjP7N
+         mfRxg63IUwJC/02G4J1VtV7M34QY4fBi69kkTXzZjOAXK/Q/ES6dk/kZN8FAA/NwrwkH
+         MUqIeNB7mJR+H5ZoEnrPa7mNecpkQYpbt5NYQYs61MRPaay4mAVMAw8kQges0gZAazGE
+         xnYIABntUdGrqaYFNtCfuICpVYplnyahCtMXReu42U9PSYUXBo69RuC/PEtcjIUIy1WT
+         cWcf1Yo9LkMpuvm50722b5ku26svjfSFmTQtNKvuPQSMTfE3x8otG03RBzZkIgH5iB3c
+         d3DA==
+X-Gm-Message-State: AOAM53021HJa8AtMYBh9biFuujt80neY0eafzPayTZloZe7MZLXCWD/x
+        Kv2OYqgE+kBRmQBKyhlZZLY=
+X-Google-Smtp-Source: ABdhPJw96EciYF9gDT4HQ7IT8e1ZtgTYP/ty/zMjL8Ml8IqRNfwzcDPsJul8Xt25SBl+X7u3zzKffw==
+X-Received: by 2002:a63:e60:0:b0:374:6620:f372 with SMTP id 32-20020a630e60000000b003746620f372mr12423978pgo.557.1646709147212;
+        Mon, 07 Mar 2022 19:12:27 -0800 (PST)
+Received: from localhost.localdomain ([159.226.95.43])
+        by smtp.googlemail.com with ESMTPSA id bi29-20020a056a00311d00b004f6fa51e70dsm5445580pfb.196.2022.03.07.19.12.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Mar 2022 19:12:26 -0800 (PST)
+From:   Miaoqian Lin <linmq006@gmail.com>
+To:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Rohit kumar <rohitkr@codeaurora.org>,
+        Sibi Sankar <sibis@codeaurora.org>,
         linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
         linux-kernel@vger.kernel.org
-References: <20220225033224.2238425-1-bjorn.andersson@linaro.org>
- <5a9210d9-c726-1ef9-4bf2-716f2ed1fb8b@kernel.org> <YiaKbbxJ/QE7yItC@ripper>
-From:   Georgi Djakov <djakov@kernel.org>
-In-Reply-To: <YiaKbbxJ/QE7yItC@ripper>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Cc:     linmq006@gmail.com
+Subject: [PATCH] remoteproc: qcom: Fix missing of_node_put in adsp_alloc_memory_region
+Date:   Tue,  8 Mar 2022 03:12:19 +0000
+Message-Id: <20220308031219.4718-1-linmq006@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On 8.03.22 0:42, Bjorn Andersson wrote:
-> On Mon 07 Mar 10:35 PST 2022, Georgi Djakov wrote:
-> 
->>
->> On 25.02.22 5:32, Bjorn Andersson wrote:
->>> Many remoteproc instances requires that Linux casts a proxy vote for an
->>> interconnect path during boot, until they can do it themselves. Add
->>> support for voting for a single path.
->>>
->>> As this is a shared problem between both PAS and MSS drivers, the path
->>> is acquired and votes casted from the common helper code.
->>>
->>> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
->>> ---
->>>
->>> Sibi posted recently a patch to add interconnect votes from the modem driver,
->>> today I needed the same feature for one of the PAS remoteprocs. After
->>> essentially duplicating Sibi's patch I realized that it doesn't look too bad to
->>> put this in the common Q6V5 code.
->>>
->>> The main difference is that this would be messy if we need to support multiple
->>> paths, so we probably would have to push it out to the individual drivers at
->>> that point.
->>>
->>> Sibi's patch can be found here.
->>> https://lore.kernel.org/all/1644813252-12897-3-git-send-email-quic_sibis@quicinc.com/
->>>
->>>
->>> This makes the implementation pick up one path, relevant DT bindings would
->>> still need to be updated in order be allowed to this in the DeviceTree files.
->>>
->>>    drivers/remoteproc/qcom_q6v5.c | 21 ++++++++++++++++++++-
->>>    drivers/remoteproc/qcom_q6v5.h |  3 +++
->>>    2 files changed, 23 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/drivers/remoteproc/qcom_q6v5.c b/drivers/remoteproc/qcom_q6v5.c
->>> index 442a388f8102..5280ec9b5449 100644
->>> --- a/drivers/remoteproc/qcom_q6v5.c
->>> +++ b/drivers/remoteproc/qcom_q6v5.c
->>> @@ -8,6 +8,7 @@
->>>     */
->>>    #include <linux/kernel.h>
->>>    #include <linux/platform_device.h>
->>> +#include <linux/interconnect.h>
->>>    #include <linux/interrupt.h>
->>>    #include <linux/module.h>
->>>    #include <linux/soc/qcom/qcom_aoss.h>
->>> @@ -51,9 +52,17 @@ int qcom_q6v5_prepare(struct qcom_q6v5 *q6v5)
->>>    {
->>>    	int ret;
->>> +	ret = icc_set_bw(q6v5->path, 0, UINT_MAX);
->>> +	if (ret < 0) {
->>> +		dev_err(q6v5->dev, "failed to set bandwidth request\n");
->>> +		return ret;
->>> +	}
->>> +
->>>    	ret = q6v5_load_state_toggle(q6v5, true);
->>> -	if (ret)
->>> +	if (ret) {
->>> +		icc_set_bw(q6v5->path, 0, 0);
->>>    		return ret;
->>> +	}
->>>    	reinit_completion(&q6v5->start_done);
->>>    	reinit_completion(&q6v5->stop_done);
->>> @@ -78,6 +87,9 @@ int qcom_q6v5_unprepare(struct qcom_q6v5 *q6v5)
->>>    	disable_irq(q6v5->handover_irq);
->>>    	q6v5_load_state_toggle(q6v5, false);
->>> +	/* Disable interconnect vote, in case handover never happened */
->>> +	icc_set_bw(q6v5->path, 0, 0);
->>> +
->>>    	return !q6v5->handover_issued;
->>>    }
->>>    EXPORT_SYMBOL_GPL(qcom_q6v5_unprepare);
->>> @@ -160,6 +172,8 @@ static irqreturn_t q6v5_handover_interrupt(int irq, void *data)
->>>    	if (q6v5->handover)
->>>    		q6v5->handover(q6v5);
->>> +	icc_set_bw(q6v5->path, 0, 0);
->>> +
->>>    	q6v5->handover_issued = true;
->>>    	return IRQ_HANDLED;
->>> @@ -332,6 +346,11 @@ int qcom_q6v5_init(struct qcom_q6v5 *q6v5, struct platform_device *pdev,
->>>    		return load_state ? -ENOMEM : -EINVAL;
->>>    	}
->>> +	q6v5->path = devm_of_icc_get(&pdev->dev, NULL);
->>> +	if (IS_ERR(q6v5->path))
->>> +		return dev_err_probe(&pdev->dev, PTR_ERR(q6v5->path),
->>> +				     "failed to acquire interconnect path\n");
->>> +
->>>    	return 0;
->>>    }
->>>    EXPORT_SYMBOL_GPL(qcom_q6v5_init);
->>
->> Probably we should also call icc_put(q6v5->path) in qcom_q6v5_deinit().
->>
-> 
-> The use of devm_of_icc_get() should take care of that for us. Or am I
-> missing something?
+The device_node pointer is returned by of_parse_phandle()  with refcount
+incremented. We should use of_node_put() on it when done.
 
-Right, it's fine then. Sorry for the noise.
+Fixes: dc160e449122 ("remoteproc: qcom: Introduce Non-PAS ADSP PIL driver")
+Signed-off-by: Miaoqian Lin <linmq006@gmail.com>
+---
+ drivers/remoteproc/qcom_q6v5_adsp.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-BR,
-Georgi
-
->> Reviewed-by: Georgi Djakov <djakov@kernel.org>
->>
-> 
-> Thanks,
-> Bjorn
+diff --git a/drivers/remoteproc/qcom_q6v5_adsp.c b/drivers/remoteproc/qcom_q6v5_adsp.c
+index 098362e6e233..7c02bc132247 100644
+--- a/drivers/remoteproc/qcom_q6v5_adsp.c
++++ b/drivers/remoteproc/qcom_q6v5_adsp.c
+@@ -408,6 +408,7 @@ static int adsp_alloc_memory_region(struct qcom_adsp *adsp)
+ 	}
+ 
+ 	ret = of_address_to_resource(node, 0, &r);
++	of_node_put(node);
+ 	if (ret)
+ 		return ret;
+ 
+-- 
+2.17.1
 
