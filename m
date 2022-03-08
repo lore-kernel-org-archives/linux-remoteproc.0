@@ -2,24 +2,24 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C498C433F5
-	for <linux-remoteproc@archiver.kernel.org>; Tue,  8 Mar 2022 12:35:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F966C43217
+	for <linux-remoteproc@archiver.kernel.org>; Tue,  8 Mar 2022 12:35:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346887AbiCHMgs (ORCPT
+        id S1346938AbiCHMgw (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 8 Mar 2022 07:36:48 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33966 "EHLO
+        Tue, 8 Mar 2022 07:36:52 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34022 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244184AbiCHMgq (ORCPT
+        with ESMTP id S1346913AbiCHMgs (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 8 Mar 2022 07:36:46 -0500
-Received: from out30-44.freemail.mail.aliyun.com (out30-44.freemail.mail.aliyun.com [115.124.30.44])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DDC0547058;
-        Tue,  8 Mar 2022 04:35:44 -0800 (PST)
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R961e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04426;MF=xuanzhuo@linux.alibaba.com;NM=1;PH=DS;RN=34;SR=0;TI=SMTPD_---0V6eSq5e_1646742935;
-Received: from localhost(mailfrom:xuanzhuo@linux.alibaba.com fp:SMTPD_---0V6eSq5e_1646742935)
+        Tue, 8 Mar 2022 07:36:48 -0500
+Received: from out30-42.freemail.mail.aliyun.com (out30-42.freemail.mail.aliyun.com [115.124.30.42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CA12C45527;
+        Tue,  8 Mar 2022 04:35:50 -0800 (PST)
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R101e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04426;MF=xuanzhuo@linux.alibaba.com;NM=1;PH=DS;RN=34;SR=0;TI=SMTPD_---0V6eTXbt_1646742944;
+Received: from localhost(mailfrom:xuanzhuo@linux.alibaba.com fp:SMTPD_---0V6eTXbt_1646742944)
           by smtp.aliyun-inc.com(127.0.0.1);
-          Tue, 08 Mar 2022 20:35:37 +0800
+          Tue, 08 Mar 2022 20:35:45 +0800
 From:   Xuan Zhuo <xuanzhuo@linux.alibaba.com>
 To:     virtualization@lists.linux-foundation.org, netdev@vger.kernel.org
 Cc:     Jeff Dike <jdike@addtoit.com>, Richard Weinberger <richard@nod.at>,
@@ -50,9 +50,9 @@ Cc:     Jeff Dike <jdike@addtoit.com>, Richard Weinberger <richard@nod.at>,
         linux-um@lists.infradead.org, platform-driver-x86@vger.kernel.org,
         linux-remoteproc@vger.kernel.org, linux-s390@vger.kernel.org,
         kvm@vger.kernel.org, bpf@vger.kernel.org
-Subject: [PATCH v7 08/26] virtio_ring: extract the logic of freeing vring
-Date:   Tue,  8 Mar 2022 20:35:00 +0800
-Message-Id: <20220308123518.33800-9-xuanzhuo@linux.alibaba.com>
+Subject: [PATCH v7 12/26] virtio_ring: update the document of the virtqueue_detach_unused_buf for queue reset
+Date:   Tue,  8 Mar 2022 20:35:04 +0800
+Message-Id: <20220308123518.33800-13-xuanzhuo@linux.alibaba.com>
 X-Mailer: git-send-email 2.31.0
 In-Reply-To: <20220308123518.33800-1-xuanzhuo@linux.alibaba.com>
 References: <20220308123518.33800-1-xuanzhuo@linux.alibaba.com>
@@ -63,88 +63,29 @@ Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Introduce vring_free() to free the vring of vq.
-
-Prevent double free by setting vq->reset.
+Added documentation for virtqueue_detach_unused_buf, allowing it to be
+called on queue reset.
 
 Signed-off-by: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
 ---
- drivers/virtio/virtio_ring.c | 25 ++++++++++++++++++++-----
- include/linux/virtio.h       |  8 ++++++++
- 2 files changed, 28 insertions(+), 5 deletions(-)
+ drivers/virtio/virtio_ring.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
-index b5a9bf4f45b3..e0422c04c903 100644
+index bbff9ba53f80..f388be7562cd 100644
 --- a/drivers/virtio/virtio_ring.c
 +++ b/drivers/virtio/virtio_ring.c
-@@ -2442,14 +2442,10 @@ struct virtqueue *vring_new_virtqueue(unsigned int index,
- }
- EXPORT_SYMBOL_GPL(vring_new_virtqueue);
- 
--void vring_del_virtqueue(struct virtqueue *_vq)
-+static void __vring_free(struct virtqueue *_vq)
+@@ -2357,8 +2357,8 @@ EXPORT_SYMBOL_GPL(virtqueue_enable_cb_delayed);
+  * @_vq: the struct virtqueue we're talking about.
+  *
+  * Returns NULL or the "data" token handed to virtqueue_add_*().
+- * This is not valid on an active queue; it is useful only for device
+- * shutdown.
++ * This is not valid on an active queue; it is useful for device
++ * shutdown or the reset queue.
+  */
+ void *virtqueue_detach_unused_buf(struct virtqueue *_vq)
  {
- 	struct vring_virtqueue *vq = to_vvq(_vq);
- 
--	spin_lock(&vq->vq.vdev->vqs_list_lock);
--	list_del(&_vq->list);
--	spin_unlock(&vq->vq.vdev->vqs_list_lock);
--
- 	if (vq->we_own_ring) {
- 		if (vq->packed_ring) {
- 			vring_free_queue(vq->vq.vdev,
-@@ -2480,6 +2476,25 @@ void vring_del_virtqueue(struct virtqueue *_vq)
- 		kfree(vq->split.desc_state);
- 		kfree(vq->split.desc_extra);
- 	}
-+}
-+
-+static void vring_free(struct virtqueue *vq)
-+{
-+	__vring_free(vq);
-+	vq->reset = VIRTIO_VQ_RESET_STEP_VRING_RELEASE;
-+}
-+
-+void vring_del_virtqueue(struct virtqueue *_vq)
-+{
-+	struct vring_virtqueue *vq = to_vvq(_vq);
-+
-+	spin_lock(&vq->vq.vdev->vqs_list_lock);
-+	list_del(&_vq->list);
-+	spin_unlock(&vq->vq.vdev->vqs_list_lock);
-+
-+	if (_vq->reset != VIRTIO_VQ_RESET_STEP_VRING_RELEASE)
-+		__vring_free(_vq);
-+
- 	kfree(vq);
- }
- EXPORT_SYMBOL_GPL(vring_del_virtqueue);
-diff --git a/include/linux/virtio.h b/include/linux/virtio.h
-index d59adc4be068..e3714e6db330 100644
---- a/include/linux/virtio.h
-+++ b/include/linux/virtio.h
-@@ -10,6 +10,13 @@
- #include <linux/mod_devicetable.h>
- #include <linux/gfp.h>
- 
-+enum virtio_vq_reset_step {
-+	VIRTIO_VQ_RESET_STEP_NONE,
-+	VIRTIO_VQ_RESET_STEP_DEVICE,
-+	VIRTIO_VQ_RESET_STEP_VRING_RELEASE,
-+	VIRTIO_VQ_RESET_STEP_VRING_ATTACH,
-+};
-+
- /**
-  * virtqueue - a queue to register buffers for sending or receiving.
-  * @list: the chain of virtqueues for this device
-@@ -33,6 +40,7 @@ struct virtqueue {
- 	unsigned int num_free;
- 	unsigned int num_max;
- 	void *priv;
-+	enum virtio_vq_reset_step reset;
- };
- 
- int virtqueue_add_outbuf(struct virtqueue *vq,
 -- 
 2.31.0
 
