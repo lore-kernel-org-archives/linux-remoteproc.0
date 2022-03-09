@@ -2,200 +2,106 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F989C433F5
-	for <linux-remoteproc@archiver.kernel.org>; Wed,  9 Mar 2022 11:47:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25D23C433F5
+	for <linux-remoteproc@archiver.kernel.org>; Wed,  9 Mar 2022 17:10:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231704AbiCILsZ (ORCPT
+        id S236054AbiCIRLK (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 9 Mar 2022 06:48:25 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33594 "EHLO
+        Wed, 9 Mar 2022 12:11:10 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53680 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231716AbiCILsY (ORCPT
+        with ESMTP id S236533AbiCIRK7 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 9 Mar 2022 06:48:24 -0500
-Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6CF2E171EDA;
-        Wed,  9 Mar 2022 03:47:21 -0800 (PST)
-X-UUID: deca741a9de44af4903e34c783dfca40-20220309
-X-UUID: deca741a9de44af4903e34c783dfca40-20220309
-Received: from mtkcas11.mediatek.inc [(172.21.101.40)] by mailgw01.mediatek.com
-        (envelope-from <tinghan.shen@mediatek.com>)
-        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
-        with ESMTP id 490752552; Wed, 09 Mar 2022 19:47:16 +0800
-Received: from mtkcas10.mediatek.inc (172.21.101.39) by
- mtkmbs10n2.mediatek.inc (172.21.101.183) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.792.3;
- Wed, 9 Mar 2022 19:47:15 +0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas10.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
- Transport; Wed, 9 Mar 2022 19:47:15 +0800
-From:   Tinghan Shen <tinghan.shen@mediatek.com>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>
-CC:     <linux-remoteproc@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        <Project_Global_Chrome_Upstream_Group@mediatek.com>,
-        Tinghan Shen <tinghan.shen@mediatek.com>
-Subject: [PATCH] remoteproc: mediatek: fix side effect of mt8195 sram power on
-Date:   Wed, 9 Mar 2022 19:47:13 +0800
-Message-ID: <20220309114713.8156-1-tinghan.shen@mediatek.com>
-X-Mailer: git-send-email 2.15.GIT
+        Wed, 9 Mar 2022 12:10:59 -0500
+Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A39F13A1CC
+        for <linux-remoteproc@vger.kernel.org>; Wed,  9 Mar 2022 09:03:35 -0800 (PST)
+Received: by mail-wr1-x42d.google.com with SMTP id r6so3633045wrr.2
+        for <linux-remoteproc@vger.kernel.org>; Wed, 09 Mar 2022 09:03:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20210112.gappssmtp.com; s=20210112;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=Ir5bVYmd+GDqrhgpmSsI/44Rjx3zoGsQyPBdgifnOm4=;
+        b=62qwrFZl3ip7SXOEd8Sas+k1oSyOol6TkoVZQDsX4mqhReWMvm0l6V18+GoOAIBK3f
+         58Y9T7mkkmw9ShgU+IyfhXgvmNZSYeW5PjIcWbGAq9tGZ3xd4qOHxeBbA0PxxXX1J74j
+         7gxPbRO6FfkbX6X16jL6SFnkEIB5Tgd3z640Jl+94Y94aFV7OSco0KGQQMbbpSag6uD5
+         a/dhdEWKsSzAdB8UsP79H+Obj5xpbLuFohzq/a2v2Hj4QZ+JdJrZHn6jyukeaHICXzcC
+         RHIfICkpsN4qgz0DiLdBv9TNZcFTYcDz8uurKyUIOtkwKl4rcYLpwGvD2sDMlUZMxfVH
+         3xYg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=Ir5bVYmd+GDqrhgpmSsI/44Rjx3zoGsQyPBdgifnOm4=;
+        b=FxcijDrTTpy1uFcl78uCifaqxybONqizrg38bc2UKI4zDnfndRxtCqBVmrImV+4zkr
+         6XL6iL+SSt/gAWmcwiYPylT8oZbvuDXZTo6VvTvjPWvCFYvAviOq/J/EDqysMphDc0BI
+         r/FvVU5joWUMl7fHhF7OZTk8daFwGlB3Nyqh22l5mWkDzLM4rpzpc8rkwji0aJB5zmZ9
+         Ema7N9j2+UfMTgY6o5mvImh5vgHfYXbUgS1Xb0238V3Xbcr7JOPHsCkxwU4abLupL9Bg
+         gO5J2e+IyEtwvQ6wInVxX7yAJ4MedEOtZ+hW2/8zIQ4lIXr7dpfWOhAdC4qic/oHvNSd
+         qpFg==
+X-Gm-Message-State: AOAM532mxvyiUyWlDqCaOKy1qDX+EWXcignQdF5CjI0hIb090Z5xjfB6
+        Tz2gjWriLX7P7YvBBD98kK6fPg==
+X-Google-Smtp-Source: ABdhPJxjt0PqA3aqbLG4HVsi6/Pbb+DTp7XlLszuxXvpWgvK9SUDFfb65Aiw8SI8qmDTxnsKbcLljQ==
+X-Received: by 2002:adf:c188:0:b0:1e6:8ecb:ea5a with SMTP id x8-20020adfc188000000b001e68ecbea5amr417272wre.711.1646845413590;
+        Wed, 09 Mar 2022 09:03:33 -0800 (PST)
+Received: from x1 (laubervilliers-658-1-213-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
+        by smtp.gmail.com with ESMTPSA id s17-20020adfbc11000000b001f023d197b8sm2185200wrg.68.2022.03.09.09.03.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 09 Mar 2022 09:03:32 -0800 (PST)
+Date:   Wed, 9 Mar 2022 18:04:14 +0100
+From:   Drew Fustini <dfustini@baylibre.com>
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Mathieu Poirier <mathieu.poirier@linaro.org>,
+        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Suman Anna <s-anna@ti.com>, Dave Gerlach <d-gerlach@ti.com>
+Subject: Re: [PATCH] remoteproc: move rproc_da_to_va declaration to
+ remoteproc.h
+Message-ID: <YijeDirNSJ6bpRMj@x1>
+References: <20220308172515.29556-1-dfustini@baylibre.com>
+ <YiedlvZWpHd8HP40@ripper>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YiedlvZWpHd8HP40@ripper>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-The definition of L1TCM_SRAM_PDN bits on mt8195 is different to mt8192.
+On Tue, Mar 08, 2022 at 10:16:54AM -0800, Bjorn Andersson wrote:
+> On Tue 08 Mar 09:25 PST 2022, Drew Fustini wrote:
+> 
+> > From: Suman Anna <s-anna@ti.com>
+> > 
+> > The rproc_da_to_va() API is an exported function, so move its
+> > declaration from the remoteproc local remoteproc_internal.h
+> > to the public remoteproc.h file.
+> > 
+> > This will allow drivers outside of the remoteproc folder to be
+> > able to use this API.
+> > 
+> 
+> Can you explain why drivers outside of the remoteproc folder should be
+> able to poke straight into the memory of the remoteproc?
+> 
+> Your reasoning makes sense, but we've on purpose kept it out of
+> remoteproc.h because no one has had a proper reason for it and I sense
+> that we might open the door for some new creative solutions...
 
-L1TCM_SRAM_PDN bits[3:0] control the power of mt8195 L1TCM SRAM.
+rproc_da_to_va() is used in a patch for drivers/soc/ti/wkup_m3_ipc.c
+that adds support for i2c voltage scaling [1].
 
-L1TCM_SRAM_PDN bits[7:4] control the access path to EMI for SCP.
-These bits have to be powered on to allow EMI access for SCP.
+wkup_m3_copy_aux_data() will copy auxiliary data to special region of
+the Cortex M3 memory. It calls rproc_da_to_va() to get aux_data_addr
+which is then used as a memcpy destination.
 
-Bits[7:4] also affect audio DSP because audio DSP and SCP are
-placed on the same hardware bus. If SCP cannot access EMI, audio DSP is
-blocked too.
+Does that seem like a reasonable way to do it?
 
-L1TCM_SRAM_PDN bits[31:8] are not used.
+I was going to submit the i2c voltage scaling patches later. However,
+I could combine them into a series with this remoteproc patch if that
+helps to justify the remoteproc.h change.
 
-This fix removes modification of bits[7:4] when power on/off mt8195 SCP
-L1TCM. It's because the modification introduces a short period of time
-blocking audio DSP to access EMI. This was not a problem until we have
-to load both SCP module and audio DSP module. audio DSP needs to access
-EMI because it has source/data on DRAM. Audio DSP will have unexpected
-behavior when it accesses EMI and the SCP driver blocks the EMI path at
-the same time.
+Thanks,
+Drew
 
-Signed-off-by: Tinghan Shen <tinghan.shen@mediatek.com>
----
- drivers/remoteproc/mtk_common.h |  4 +++
- drivers/remoteproc/mtk_scp.c    | 57 +++++++++++++++++++++++++++++----
- 2 files changed, 55 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/remoteproc/mtk_common.h b/drivers/remoteproc/mtk_common.h
-index 5ff3867c72f3..27e7172c926d 100644
---- a/drivers/remoteproc/mtk_common.h
-+++ b/drivers/remoteproc/mtk_common.h
-@@ -51,6 +51,10 @@
- #define MT8192_CORE0_WDT_IRQ		0x10030
- #define MT8192_CORE0_WDT_CFG		0x10034
- 
-+#define MT8195_L1TCM_SRAM_PDN_RESERVED_RSI_BITS		0xF0
-+#define MT8195_L1TCM_SRAM_PDN_RESERVED_BITS \
-+	MT8195_L1TCM_SRAM_PDN_RESERVED_RSI_BITS
-+
- #define SCP_FW_VER_LEN			32
- #define SCP_SHARE_BUFFER_SIZE		288
- 
-diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
-index dcddb33e9997..4d75af856fd1 100644
---- a/drivers/remoteproc/mtk_scp.c
-+++ b/drivers/remoteproc/mtk_scp.c
-@@ -365,22 +365,32 @@ static int mt8183_scp_before_load(struct mtk_scp *scp)
- 	return 0;
- }
- 
--static void mt8192_power_on_sram(void __iomem *addr)
-+static void scp_sram_power_on(void __iomem *addr, u32 reserved_mask)
- {
- 	int i;
- 
- 	for (i = 31; i >= 0; i--)
--		writel(GENMASK(i, 0), addr);
-+		writel(GENMASK(i, 0) & ~reserved_mask, addr);
- 	writel(0, addr);
- }
- 
--static void mt8192_power_off_sram(void __iomem *addr)
-+static void scp_sram_power_off(void __iomem *addr, u32 reserved_mask)
- {
- 	int i;
- 
- 	writel(0, addr);
- 	for (i = 0; i < 32; i++)
--		writel(GENMASK(i, 0), addr);
-+		writel(GENMASK(i, 0) & ~reserved_mask, addr);
-+}
-+
-+static void mt8192_power_on_sram(void __iomem *addr)
-+{
-+	scp_sram_power_on(addr, 0);
-+}
-+
-+static void mt8192_power_off_sram(void __iomem *addr)
-+{
-+	scp_sram_power_off(addr, 0);
- }
- 
- static int mt8192_scp_before_load(struct mtk_scp *scp)
-@@ -403,6 +413,27 @@ static int mt8192_scp_before_load(struct mtk_scp *scp)
- 	return 0;
- }
- 
-+static int mt8195_scp_before_load(struct mtk_scp *scp)
-+{
-+	/* clear SPM interrupt, SCP2SPM_IPC_CLR */
-+	writel(0xff, scp->reg_base + MT8192_SCP2SPM_IPC_CLR);
-+
-+	writel(1, scp->reg_base + MT8192_CORE0_SW_RSTN_SET);
-+
-+	/* enable SRAM clock */
-+	mt8192_power_on_sram(scp->reg_base + MT8192_L2TCM_SRAM_PD_0);
-+	mt8192_power_on_sram(scp->reg_base + MT8192_L2TCM_SRAM_PD_1);
-+	mt8192_power_on_sram(scp->reg_base + MT8192_L2TCM_SRAM_PD_2);
-+	scp_sram_power_on(scp->reg_base + MT8192_L1TCM_SRAM_PDN,
-+			  MT8195_L1TCM_SRAM_PDN_RESERVED_BITS);
-+	mt8192_power_on_sram(scp->reg_base + MT8192_CPU0_SRAM_PD);
-+
-+	/* enable MPU for all memory regions */
-+	writel(0xff, scp->reg_base + MT8192_CORE0_MEM_ATT_PREDEF);
-+
-+	return 0;
-+}
-+
- static int scp_load(struct rproc *rproc, const struct firmware *fw)
- {
- 	struct mtk_scp *scp = rproc->priv;
-@@ -561,6 +592,20 @@ static void mt8192_scp_stop(struct mtk_scp *scp)
- 	writel(0, scp->reg_base + MT8192_CORE0_WDT_CFG);
- }
- 
-+static void mt8195_scp_stop(struct mtk_scp *scp)
-+{
-+	/* Disable SRAM clock */
-+	mt8192_power_off_sram(scp->reg_base + MT8192_L2TCM_SRAM_PD_0);
-+	mt8192_power_off_sram(scp->reg_base + MT8192_L2TCM_SRAM_PD_1);
-+	mt8192_power_off_sram(scp->reg_base + MT8192_L2TCM_SRAM_PD_2);
-+	scp_sram_power_off(scp->reg_base + MT8192_L1TCM_SRAM_PDN,
-+			   MT8195_L1TCM_SRAM_PDN_RESERVED_BITS);
-+	mt8192_power_off_sram(scp->reg_base + MT8192_CPU0_SRAM_PD);
-+
-+	/* Disable SCP watchdog */
-+	writel(0, scp->reg_base + MT8192_CORE0_WDT_CFG);
-+}
-+
- static int scp_stop(struct rproc *rproc)
- {
- 	struct mtk_scp *scp = (struct mtk_scp *)rproc->priv;
-@@ -888,11 +933,11 @@ static const struct mtk_scp_of_data mt8192_of_data = {
- 
- static const struct mtk_scp_of_data mt8195_of_data = {
- 	.scp_clk_get = mt8195_scp_clk_get,
--	.scp_before_load = mt8192_scp_before_load,
-+	.scp_before_load = mt8195_scp_before_load,
- 	.scp_irq_handler = mt8192_scp_irq_handler,
- 	.scp_reset_assert = mt8192_scp_reset_assert,
- 	.scp_reset_deassert = mt8192_scp_reset_deassert,
--	.scp_stop = mt8192_scp_stop,
-+	.scp_stop = mt8195_scp_stop,
- 	.scp_da_to_va = mt8192_scp_da_to_va,
- 	.host_to_scp_reg = MT8192_GIPC_IN_SET,
- 	.host_to_scp_int_bit = MT8192_HOST_IPC_INT_BIT,
--- 
-2.18.0
-
+[1] https://lore.kernel.org/linux-omap/20220219215328.485660-9-dfustini@baylibre.com/
