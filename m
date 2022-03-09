@@ -2,203 +2,145 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DFB2DC433FE
-	for <linux-remoteproc@archiver.kernel.org>; Wed,  9 Mar 2022 09:36:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75221C433EF
+	for <linux-remoteproc@archiver.kernel.org>; Wed,  9 Mar 2022 09:41:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232193AbiCIJh1 (ORCPT
+        id S232019AbiCIJmG (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 9 Mar 2022 04:37:27 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45940 "EHLO
+        Wed, 9 Mar 2022 04:42:06 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55736 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229924AbiCIJh1 (ORCPT
+        with ESMTP id S229774AbiCIJmF (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 9 Mar 2022 04:37:27 -0500
-Received: from out30-130.freemail.mail.aliyun.com (out30-130.freemail.mail.aliyun.com [115.124.30.130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D83EF16F95B;
-        Wed,  9 Mar 2022 01:36:27 -0800 (PST)
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R211e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e01424;MF=xuanzhuo@linux.alibaba.com;NM=1;PH=DS;RN=33;SR=0;TI=SMTPD_---0V6j1lsR_1646818580;
-Received: from localhost(mailfrom:xuanzhuo@linux.alibaba.com fp:SMTPD_---0V6j1lsR_1646818580)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Wed, 09 Mar 2022 17:36:21 +0800
-Message-ID: <1646818559.1648765-11-xuanzhuo@linux.alibaba.com>
-Subject: Re: [PATCH v7 25/26] virtio_net: set the default max ring size by find_vqs()
-Date:   Wed, 9 Mar 2022 17:35:59 +0800
-From:   Xuan Zhuo <xuanzhuo@linux.alibaba.com>
-To:     Jason Wang <jasowang@redhat.com>
-Cc:     Jeff Dike <jdike@addtoit.com>, Richard Weinberger <richard@nod.at>,
-        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Mark Gross <markgross@kernel.org>,
-        Vadim Pasternak <vadimp@nvidia.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Cornelia Huck <cohuck@redhat.com>,
-        Halil Pasic <pasic@linux.ibm.com>,
-        Heiko Carstens <hca@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Jesper Dangaard Brouer <hawk@kernel.org>,
-        John Fastabend <john.fastabend@gmail.com>,
-        Johannes Berg <johannes.berg@intel.com>,
-        Vincent Whitchurch <vincent.whitchurch@axis.com>,
-        linux-um@lists.infradead.org, platform-driver-x86@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org, linux-s390@vger.kernel.org,
-        kvm@vger.kernel.org, bpf@vger.kernel.org,
-        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org
-References: <20220308123518.33800-1-xuanzhuo@linux.alibaba.com>
- <20220308123518.33800-26-xuanzhuo@linux.alibaba.com>
- <d7ec6eed-d692-091b-a438-1ae1cc5ee614@redhat.com>
-In-Reply-To: <d7ec6eed-d692-091b-a438-1ae1cc5ee614@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Wed, 9 Mar 2022 04:42:05 -0500
+Received: from EUR03-VE1-obe.outbound.protection.outlook.com (mail-eopbgr50048.outbound.protection.outlook.com [40.107.5.48])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 703CA106CA7;
+        Wed,  9 Mar 2022 01:41:07 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=ExLzqNAcAWWE0XONpYALixxPjA5+C1qML5a2HriEJoTWOgqkUYPeLHaOrjITWDINeD93Ua8kfE867yE48bWoLRuL2yAlhNnzgW73pH3z0MRIfvV5Vk2Q6tDecWHHDTwrVKnxXila69WDSgm4uy5yJqKVLa45jqCmR81XBglxbCr0lBHgPSf52bZHwM8Oi/4uUzGcOur+2BzF1887wRQpNFvQGMid1owaFGIYWB5ip6gS8p/aCiFZoskoHCDTuOgJEVSiHrBZsLH1SNh6cg76N9UnL0ajYaLPOTG//i52mI9vdYibAaG2rhJ/mXr+uluWRABTVRWJFWynBll6OJ0Hzw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=kNqHSPKxL3oC1pudsU1hWIqe0O8qhQwnJwtiPnDEpjE=;
+ b=JOz7lVubav0VE/FcXVD1p7DQlptQqUdR7c4/BqZIKFgHX+IcpGFp4hyP6T1n48+X8lFM/EnXJoUV3Nn9HJCADQf5XHzCyXR1rdrpIDnyUOFgwY7ey3oHd8LdUX24Y7gVd2d3mBPzKgb7ImlLs+rXfjlUABkvbHd0eGNPEQslURSsvTb5qUOfUYixhylmW7uGPH1pGTcHAMjZiRIhJ64PLf23lQM5LGeyaOnxDmyQNK8x9KI7WCIpS77GdkOpK8Qq2bNIpJBiTN+y7oYIVdW4PHDiavZme1o78lhfkX2afE/oyXq88f8VYx5sv/thFMwlK2GNwViVJs1PdFhzWRUZjg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector2-NXP1-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=kNqHSPKxL3oC1pudsU1hWIqe0O8qhQwnJwtiPnDEpjE=;
+ b=JGpMAhXjtS1eC1J5E+sMCXEfEJsYd0FnTHVNe3k3fSu3seawA8fF8h+kY+Imd8ol3KKMMfwBHkIvF78+2qfZ+axtKi3clDn3Ge5SA8du0bzB9oO2cgER/IhHx+mbg3r8o5YcP1ZZYrLTHaK/8CTbD0s84uf24HuJmNUWWXOVn6c=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=oss.nxp.com;
+Received: from DU0PR04MB9417.eurprd04.prod.outlook.com (2603:10a6:10:358::11)
+ by DBBPR04MB6043.eurprd04.prod.outlook.com (2603:10a6:10:c5::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5038.14; Wed, 9 Mar
+ 2022 09:41:04 +0000
+Received: from DU0PR04MB9417.eurprd04.prod.outlook.com
+ ([fe80::5538:7e34:6843:2bc7]) by DU0PR04MB9417.eurprd04.prod.outlook.com
+ ([fe80::5538:7e34:6843:2bc7%6]) with mapi id 15.20.5038.027; Wed, 9 Mar 2022
+ 09:41:04 +0000
+From:   "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+To:     bjorn.andersson@linaro.org, mathieu.poirier@linaro.org,
+        robh+dt@kernel.org, krzysztof.kozlowski@canonical.com
+Cc:     shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
+        festevam@gmail.com, linux-imx@nxp.com,
+        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Peng Fan <peng.fan@nxp.com>
+Subject: [PATCH V2 0/6] remoteproc: imx_rproc: support i.MX8QM/QXP
+Date:   Wed,  9 Mar 2022 18:21:12 +0800
+Message-Id: <20220309102118.8131-1-peng.fan@oss.nxp.com>
+X-Mailer: git-send-email 2.30.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SI2PR04CA0002.apcprd04.prod.outlook.com
+ (2603:1096:4:197::17) To DU0PR04MB9417.eurprd04.prod.outlook.com
+ (2603:10a6:10:358::11)
+MIME-Version: 1.0
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 664ed3f3-38ba-4ebb-c57f-08da01b0ed4d
+X-MS-TrafficTypeDiagnostic: DBBPR04MB6043:EE_
+X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
+X-Microsoft-Antispam-PRVS: <DBBPR04MB60434ED0DC95943E7C551919C90A9@DBBPR04MB6043.eurprd04.prod.outlook.com>
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: NBDwRqHKtozxI0aFbdAbr4Avb3uyFOufEtr7ENdDu/hB9CpAo0Cel4JCq1Le4E7CIGmTq0lvYZCey+rwyolvQscGoilDe6x//e39txrkySo29lZ+Zj9t8GeaiiyWx6AozOlPxJwjDW2Ba1djc2mFxQwj4bx2EBLFH1uROwMeBzibxxG0T7gysIw/usrU7tJg1tgVQjJuAF/Cds2TiU9yoM9taq9TSdVZAydEYUJGgfJk20TWSKk7iA9CUZScPS6RMXKluJuqm3B19mcKhBriWw3vlwkOyrId7roZJjizFU9xCRqIbvcAzTfw/db4wUA7xyvPbXNEVssnl39VMk9/o86w+aylODT0p8fXDFKDw99kzoEAmQUI8IbnaLqPe5wv8v0p9M28vFJAyiAgArkOovmlKZHdlJ7HaTIVX/8pMfC+o5bbou19lxOLDcU2MGN5s0rCR5RfVRe9av0qVwbNOlAAvM0qVCLzgwomREHxUNoQKeJe6DaIFRLr9XpEa/EMzcBmCHX3xutchKTyt2BZVar6WFMVjWZuiJiWqt9zV5vwRl3VxqdMn31918wCsRXLjeov1XOx3/uquqIDEdJwYMadYBoUNW+DnoXseJHBo9sLnRHxXAs7mOyZ3aEUq+weod26Vvsk8GygPUQUeBBXQAvJq1k6ysg8NjQDZzDElMbfdJ6MNsaSet/Lz2QnQqz5lMB3JjVrUER4sB0XIJBOu7/OCmWLdiCYwv/IbeyVYKdK8Xpqg8IpYkoob3uCFqYK3+7bObEie3fgl2uq6GAtylQb82Dvff5tMFqGqjQ2Kms=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU0PR04MB9417.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(4636009)(366004)(86362001)(52116002)(66476007)(66556008)(66946007)(6512007)(8676002)(966005)(8936002)(7416002)(2906002)(6506007)(4326008)(6666004)(6486002)(38350700002)(38100700002)(5660300002)(498600001)(1076003)(186003)(26005)(2616005)(83380400001);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?FYA9rswvJcb06jSUuCxJRvGPEWLeY+Yq8TZYwIIWMWPgzNB0bGcVDHf3TXwM?=
+ =?us-ascii?Q?mRB1emhM3WQ6Tq0/qeTNelL76M8KpUF3ucbk65ZFLdWvQ7GzaPWmPY5gkv2g?=
+ =?us-ascii?Q?ptYwtsXFTsdMPxUQRq2z3lDxIVmmCbyz4Fvqn/0pJ+gPamuzCADFFcqTKJH/?=
+ =?us-ascii?Q?FHZlesUUOkJBlK5b7Z8mT1yaS+oAUJyWsBPnDcQE6zB/4fO8Z+dJsJ1o9fKv?=
+ =?us-ascii?Q?FTvyAuW5OtYywt602piVvjdaYjhHjXcTx2wz8tg0TC5Suc5avdn4ch+Sw+UK?=
+ =?us-ascii?Q?ZjmHgp+FqCXfNj7AtTrjI77npSYaTxL+qmpWJlyCt7wCl1be+5EKgtO/AA7S?=
+ =?us-ascii?Q?4n7SRpm0PxNTT0tPHfQQEW2hfUk4ZssEL9iclC97HuE3IC1RXh1HeP9H4Gs3?=
+ =?us-ascii?Q?F7h4EHdYrQLRPLbpTB5WeREAWwA0jjG4E/YndVhballmxsuwcXyBwV8A2zDs?=
+ =?us-ascii?Q?hwQWUjXU0zDO9r12oCaJMuT2N7Y6zLMYReVG7SLvADYggL502lQmYvqEsszw?=
+ =?us-ascii?Q?9Z5nxIuwUe+zgx5TxcGAPZKSZ+pR7oH6vAziWbTZw7lz86QDB2LqSQkKB903?=
+ =?us-ascii?Q?hB6CMMEtIXnY0xWgVpPJz0M6Ghk8Exz9QVjjkovdhCdJm2XqNAO4nbqdIxvq?=
+ =?us-ascii?Q?7zOFD+RB2YweRgY3UsG5bgc9UiNsXue0AbiE3VT/RBYVooitTGuYakJJ9del?=
+ =?us-ascii?Q?f4hhC2K20YZXpAh9Nz0oQGAGS58fKHMrIzAPD2mpMrpHEPsd6ArfFVfACffo?=
+ =?us-ascii?Q?N3sWs1J/IQzYBgNbDZWNa3hKPXM3dPt7wAqPlYmyRGF16oapD5AhbsAVUSfU?=
+ =?us-ascii?Q?0v9QqjCoKkqf/avETtgCGX8ZfnOrZvXTeWNrNi/Cja+DmKxeZvwIoMtlyJsC?=
+ =?us-ascii?Q?29kFyzNqCLr3VDvGsEVkvjQABKk8P3sSBHGOUtREzl7p3+SFH/wZDZCeJWCS?=
+ =?us-ascii?Q?+di0ULjvb7kToClLj1GPWD8h3GEV8D+HD1ydXVz1nC4MnwwzNduzD5EC9Ovd?=
+ =?us-ascii?Q?dJuC7IBidHIE9DqEJMx8EALWm6tOgQ7vP9KMbbG8lWEqMo+WdknWKfpLzPBM?=
+ =?us-ascii?Q?hymGBJKp/XOksHS5rBp8nnjvZabI+2JorKnrfvJPlwrGrsGU1t5BUtfFr3w2?=
+ =?us-ascii?Q?AASoByJnQhArzp7BcsNhjO1BSjyUSLoe0KMmsZa3axAZtBwC840T9S7X+/9t?=
+ =?us-ascii?Q?I080n3w7g/Uu05NDXoFXBBamydsQ/C1I9qvExw/cDlEnQ00qcPGL1nzlv57J?=
+ =?us-ascii?Q?us6YhQ37ef7wNwRQeNeldeyyMcdOv6o5MJ6hVpwKZJbYCBzR3WGgpiEyci2j?=
+ =?us-ascii?Q?pQDQPv5oeqEA6MFC5kzb+MbemdkQuUO89O4NJxw/HOA+7YGoAgpdjQ9xqvo0?=
+ =?us-ascii?Q?dVDMHFauL0ik/72snjqwD2jStA2RlWWG029z0oa7atXJm00g3mD7BuMrANM2?=
+ =?us-ascii?Q?UCRqXCk9I1TTwbPjRPOEC5baAQVD2IPOZr3glbHzqKLk1WyNjBL3guY/ebjp?=
+ =?us-ascii?Q?dM8gkWgxy2tr6OJ8jVdFwS87OP8M+ApmNRZswaXxWOm1AJmbJcasf+4MbZdG?=
+ =?us-ascii?Q?mtr512eIsAxslcYb+aQev2dh90UfR2AY4LBO4EyOF8FY231F/bWbVrjZpK4+?=
+ =?us-ascii?Q?8YYC1EOZNCW8/jJJHoe15OI=3D?=
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 664ed3f3-38ba-4ebb-c57f-08da01b0ed4d
+X-MS-Exchange-CrossTenant-AuthSource: DU0PR04MB9417.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Mar 2022 09:41:03.8514
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: t3iHxzA72Tlb9GqpYglG0kkSYpnL8JIEEeyYwJ2cvTuPfjzmmpB2UVKWzcEKl5vVLlzQmxXp/wVSQ5I3/N64gQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBBPR04MB6043
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Wed, 9 Mar 2022 17:28:21 +0800, Jason Wang <jasowang@redhat.com> wrote:
->
-> =E5=9C=A8 2022/3/8 =E4=B8=8B=E5=8D=888:35, Xuan Zhuo =E5=86=99=E9=81=93:
-> > Use virtio_find_vqs_ctx_size() to specify the maximum ring size of tx,
-> > rx at the same time.
-> >
-> >                           | rx/tx ring size
-> > -------------------------------------------
-> > speed =3D=3D UNKNOWN or < 10G| 1024
-> > speed < 40G              | 4096
-> > speed >=3D 40G             | 8192
-> >
-> > Call virtnet_update_settings() once before calling init_vqs() to update
-> > speed.
-> >
-> > Signed-off-by: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
-> > ---
-> >   drivers/net/virtio_net.c | 42 ++++++++++++++++++++++++++++++++++++----
-> >   1 file changed, 38 insertions(+), 4 deletions(-)
-> >
-> > diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
-> > index ffff323dcef0..f1bdc6ce21c3 100644
-> > --- a/drivers/net/virtio_net.c
-> > +++ b/drivers/net/virtio_net.c
-> > @@ -2977,6 +2977,29 @@ static unsigned int mergeable_min_buf_len(struct=
- virtnet_info *vi, struct virtqu
-> >   		   (unsigned int)GOOD_PACKET_LEN);
-> >   }
-> >
-> > +static void virtnet_config_sizes(struct virtnet_info *vi, u32 *sizes)
-> > +{
-> > +	u32 i, rx_size, tx_size;
-> > +
-> > +	if (vi->speed =3D=3D SPEED_UNKNOWN || vi->speed < SPEED_10000) {
-> > +		rx_size =3D 1024;
-> > +		tx_size =3D 1024;
-> > +
-> > +	} else if (vi->speed < SPEED_40000) {
-> > +		rx_size =3D 1024 * 4;
-> > +		tx_size =3D 1024 * 4;
-> > +
-> > +	} else {
-> > +		rx_size =3D 1024 * 8;
-> > +		tx_size =3D 1024 * 8;
-> > +	}
-> > +
-> > +	for (i =3D 0; i < vi->max_queue_pairs; i++) {
-> > +		sizes[rxq2vq(i)] =3D rx_size;
-> > +		sizes[txq2vq(i)] =3D tx_size;
-> > +	}
-> > +}
-> > +
-> >   static int virtnet_find_vqs(struct virtnet_info *vi)
-> >   {
-> >   	vq_callback_t **callbacks;
-> > @@ -2984,6 +3007,7 @@ static int virtnet_find_vqs(struct virtnet_info *=
-vi)
-> >   	int ret =3D -ENOMEM;
-> >   	int i, total_vqs;
-> >   	const char **names;
-> > +	u32 *sizes;
-> >   	bool *ctx;
-> >
-> >   	/* We expect 1 RX virtqueue followed by 1 TX virtqueue, followed by
-> > @@ -3011,10 +3035,15 @@ static int virtnet_find_vqs(struct virtnet_info=
- *vi)
-> >   		ctx =3D NULL;
-> >   	}
-> >
-> > +	sizes =3D kmalloc_array(total_vqs, sizeof(*sizes), GFP_KERNEL);
-> > +	if (!sizes)
-> > +		goto err_sizes;
-> > +
-> >   	/* Parameters for control virtqueue, if any */
-> >   	if (vi->has_cvq) {
-> >   		callbacks[total_vqs - 1] =3D NULL;
-> >   		names[total_vqs - 1] =3D "control";
-> > +		sizes[total_vqs - 1] =3D 0;
->
->
-> Nit: Do we need a sane value for the control vq? (e.g 64)
+From: Peng Fan <peng.fan@nxp.com>
 
+V2:
+ Depends on https://patchwork.kernel.org/project/linux-remoteproc/list/?series=621311
+ Tested on i.MX8QXP/QM/8MP
+ Addressed Mathieu's comments
+ Drop V1 patch 5/9, patch 3/9 is replaced with upper dependency patchset
+ Move V1 patch 4/9 out to https://patchwork.kernel.org/project/linux-remoteproc/patch/20220308065754.3355-1-peng.fan@oss.nxp.com/
+ Update commit log
+ Drop magic number to get entry address from device tree in patch 4/6
 
-I think it can.
+The V1 patchset:
+https://patchwork.kernel.org/project/linux-remoteproc/patch/20220111033333.403448-4-peng.fan@oss.nxp.com/
 
-Thanks.
+Peng Fan (6):
+  dt-bindings: remoteproc: imx_rproc: support i.MX8QXP
+  dt-bindings: remoteproc: imx_rproc: support i.MX8QM
+  remoteproc: imx_rproc: support attaching to i.MX8QXP M4
+  remoteproc: imx_rproc: support kicking Mcore from Linux for i.MX8QXP
+  remoteproc: imx_rproc: support i.MX8QM
+  remoteproc: imx_rproc: request mbox channel later
 
->
-> Thanks
->
->
-> >   	}
-> >
-> >   	/* Allocate/initialize parameters for send/receive virtqueues */
-> > @@ -3029,8 +3058,10 @@ static int virtnet_find_vqs(struct virtnet_info =
-*vi)
-> >   			ctx[rxq2vq(i)] =3D true;
-> >   	}
-> >
-> > -	ret =3D virtio_find_vqs_ctx(vi->vdev, total_vqs, vqs, callbacks,
-> > -				  names, ctx, NULL);
-> > +	virtnet_config_sizes(vi, sizes);
-> > +
-> > +	ret =3D virtio_find_vqs_ctx_size(vi->vdev, total_vqs, vqs, callbacks,
-> > +				       names, ctx, NULL, sizes);
-> >   	if (ret)
-> >   		goto err_find;
-> >
-> > @@ -3050,6 +3081,8 @@ static int virtnet_find_vqs(struct virtnet_info *=
-vi)
-> >
-> >
-> >   err_find:
-> > +	kfree(sizes);
-> > +err_sizes:
-> >   	kfree(ctx);
-> >   err_ctx:
-> >   	kfree(names);
-> > @@ -3368,6 +3401,9 @@ static int virtnet_probe(struct virtio_device *vd=
-ev)
-> >   		vi->curr_queue_pairs =3D num_online_cpus();
-> >   	vi->max_queue_pairs =3D max_queue_pairs;
-> >
-> > +	virtnet_init_settings(dev);
-> > +	virtnet_update_settings(vi);
-> > +
-> >   	/* Allocate/initialize the rx/tx queues, and invoke find_vqs */
-> >   	err =3D init_vqs(vi);
-> >   	if (err)
-> > @@ -3380,8 +3416,6 @@ static int virtnet_probe(struct virtio_device *vd=
-ev)
-> >   	netif_set_real_num_tx_queues(dev, vi->curr_queue_pairs);
-> >   	netif_set_real_num_rx_queues(dev, vi->curr_queue_pairs);
-> >
-> > -	virtnet_init_settings(dev);
-> > -
-> >   	if (virtio_has_feature(vdev, VIRTIO_NET_F_STANDBY)) {
-> >   		vi->failover =3D net_failover_create(vi->dev);
-> >   		if (IS_ERR(vi->failover)) {
->
+ .../bindings/remoteproc/fsl,imx-rproc.yaml    |  19 ++
+ drivers/remoteproc/imx_rproc.c                | 240 +++++++++++++++++-
+ 2 files changed, 246 insertions(+), 13 deletions(-)
+
+-- 
+2.30.0
+
