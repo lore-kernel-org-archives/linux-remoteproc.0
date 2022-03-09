@@ -2,106 +2,160 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25D23C433F5
-	for <linux-remoteproc@archiver.kernel.org>; Wed,  9 Mar 2022 17:10:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17079C433EF
+	for <linux-remoteproc@archiver.kernel.org>; Wed,  9 Mar 2022 17:19:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236054AbiCIRLK (ORCPT
+        id S236815AbiCIRUN (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 9 Mar 2022 12:11:10 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53680 "EHLO
+        Wed, 9 Mar 2022 12:20:13 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53168 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236533AbiCIRK7 (ORCPT
+        with ESMTP id S237037AbiCIRUA (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 9 Mar 2022 12:10:59 -0500
-Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A39F13A1CC
-        for <linux-remoteproc@vger.kernel.org>; Wed,  9 Mar 2022 09:03:35 -0800 (PST)
-Received: by mail-wr1-x42d.google.com with SMTP id r6so3633045wrr.2
-        for <linux-remoteproc@vger.kernel.org>; Wed, 09 Mar 2022 09:03:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20210112.gappssmtp.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=Ir5bVYmd+GDqrhgpmSsI/44Rjx3zoGsQyPBdgifnOm4=;
-        b=62qwrFZl3ip7SXOEd8Sas+k1oSyOol6TkoVZQDsX4mqhReWMvm0l6V18+GoOAIBK3f
-         58Y9T7mkkmw9ShgU+IyfhXgvmNZSYeW5PjIcWbGAq9tGZ3xd4qOHxeBbA0PxxXX1J74j
-         7gxPbRO6FfkbX6X16jL6SFnkEIB5Tgd3z640Jl+94Y94aFV7OSco0KGQQMbbpSag6uD5
-         a/dhdEWKsSzAdB8UsP79H+Obj5xpbLuFohzq/a2v2Hj4QZ+JdJrZHn6jyukeaHICXzcC
-         RHIfICkpsN4qgz0DiLdBv9TNZcFTYcDz8uurKyUIOtkwKl4rcYLpwGvD2sDMlUZMxfVH
-         3xYg==
+        Wed, 9 Mar 2022 12:20:00 -0500
+Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A9A064B42E
+        for <linux-remoteproc@vger.kernel.org>; Wed,  9 Mar 2022 09:18:43 -0800 (PST)
+Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com [209.85.218.70])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 46C993F7DE
+        for <linux-remoteproc@vger.kernel.org>; Wed,  9 Mar 2022 17:18:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1646846322;
+        bh=H8Ivl0XLyOS7GNgoia0im1pfPz2SRotfVrPwXjnk3/c=;
+        h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+         In-Reply-To:Content-Type;
+        b=cUeAVTDVN33Lx3eKHQlRl+lmHxcw66Mcx9ko8rXBQdQeKtwcVOMhSHVzm7ot7UU8E
+         aywPhf9xoRSi3OxK4oAJ333ST6YF157iIZ/OGSx+CTIkXthpLv4bX9IRb4bhvIdSSE
+         xa+Sa8UUOphmIuYLUk/uCeloB2TidswJUS2nXLpPDbgPQxUH1O8vmyqY+UFm13CXX5
+         kCcuIngjbzt6EDo2JR+x/48/lJvcwBwNxwSFfYd8iDK6+eMSrTWmUPs/7W8RHioO6O
+         F2bGldgfeKJHpKR8NdShxzdVR2nUmN+GmqVGdh1umDYipKqDHG3KNwMx0AYmf/S2q3
+         eZnKx9/+l41pg==
+Received: by mail-ej1-f70.google.com with SMTP id hx13-20020a170906846d00b006db02e1a307so1667506ejc.2
+        for <linux-remoteproc@vger.kernel.org>; Wed, 09 Mar 2022 09:18:42 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=Ir5bVYmd+GDqrhgpmSsI/44Rjx3zoGsQyPBdgifnOm4=;
-        b=FxcijDrTTpy1uFcl78uCifaqxybONqizrg38bc2UKI4zDnfndRxtCqBVmrImV+4zkr
-         6XL6iL+SSt/gAWmcwiYPylT8oZbvuDXZTo6VvTvjPWvCFYvAviOq/J/EDqysMphDc0BI
-         r/FvVU5joWUMl7fHhF7OZTk8daFwGlB3Nyqh22l5mWkDzLM4rpzpc8rkwji0aJB5zmZ9
-         Ema7N9j2+UfMTgY6o5mvImh5vgHfYXbUgS1Xb0238V3Xbcr7JOPHsCkxwU4abLupL9Bg
-         gO5J2e+IyEtwvQ6wInVxX7yAJ4MedEOtZ+hW2/8zIQ4lIXr7dpfWOhAdC4qic/oHvNSd
-         qpFg==
-X-Gm-Message-State: AOAM532mxvyiUyWlDqCaOKy1qDX+EWXcignQdF5CjI0hIb090Z5xjfB6
-        Tz2gjWriLX7P7YvBBD98kK6fPg==
-X-Google-Smtp-Source: ABdhPJxjt0PqA3aqbLG4HVsi6/Pbb+DTp7XlLszuxXvpWgvK9SUDFfb65Aiw8SI8qmDTxnsKbcLljQ==
-X-Received: by 2002:adf:c188:0:b0:1e6:8ecb:ea5a with SMTP id x8-20020adfc188000000b001e68ecbea5amr417272wre.711.1646845413590;
-        Wed, 09 Mar 2022 09:03:33 -0800 (PST)
-Received: from x1 (laubervilliers-658-1-213-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id s17-20020adfbc11000000b001f023d197b8sm2185200wrg.68.2022.03.09.09.03.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Mar 2022 09:03:32 -0800 (PST)
-Date:   Wed, 9 Mar 2022 18:04:14 +0100
-From:   Drew Fustini <dfustini@baylibre.com>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Mathieu Poirier <mathieu.poirier@linaro.org>,
-        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Suman Anna <s-anna@ti.com>, Dave Gerlach <d-gerlach@ti.com>
-Subject: Re: [PATCH] remoteproc: move rproc_da_to_va declaration to
- remoteproc.h
-Message-ID: <YijeDirNSJ6bpRMj@x1>
-References: <20220308172515.29556-1-dfustini@baylibre.com>
- <YiedlvZWpHd8HP40@ripper>
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=H8Ivl0XLyOS7GNgoia0im1pfPz2SRotfVrPwXjnk3/c=;
+        b=kmw+i7iadM6rUj46meD0RZp8licFoyfFTUt0bOn+GkRJQuiM8YhuRWI0QATbRvCGds
+         wc4wXryABYhuIa0buaFI4BQ336CxJN5RCq2qDmCLM8zrssYo1A2O67fExqSg17zgvSMq
+         zKemhWYWSBWIYSDmC9GOLoVZslGroPgNlBnZq3e6rBt1jjH9UTLxxfMOZT0R3kuo4PBe
+         mxp431L9lYbnzF0QSnYgzHrbxY4fYpyIaMtv2cxsIpDOIeDVBV2IrPjUAkF4DomdH9Ph
+         fiVHfu8BbCO6pgFMTb56MQnafIrAFg1CtbZgAuVjqw01r9aPLWj/34azWqkuYqPo+gVw
+         DHfQ==
+X-Gm-Message-State: AOAM530pCKcXCGnR0nmQKRP39KAC1KZ8C0l3Gc2S0fm76pR3F7QS58J4
+        Xhl9+DGJzRox2SrHVkQflQ0xSAtczaOXZffzc54WoprJoLCs5TNxhA6jr63KVXOboaHq5BD/yg3
+        zYI+eO5iIYvWd6xdI1O2i7s6X8SFMVrkA+5uNv2JpAmdK9j4=
+X-Received: by 2002:a17:906:3cf1:b0:6cf:86c6:8a12 with SMTP id d17-20020a1709063cf100b006cf86c68a12mr749681ejh.202.1646846321158;
+        Wed, 09 Mar 2022 09:18:41 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJxoD6omDe6HZFAnJP+cvkzbuKcGFkT8i7+ULUKxhNjWehKZ6E0AiATCG5uWRGdE3yK+Z3N7TA==
+X-Received: by 2002:a17:906:3cf1:b0:6cf:86c6:8a12 with SMTP id d17-20020a1709063cf100b006cf86c68a12mr749653ejh.202.1646846320969;
+        Wed, 09 Mar 2022 09:18:40 -0800 (PST)
+Received: from [192.168.0.144] (xdsl-188-155-174-239.adslplus.ch. [188.155.174.239])
+        by smtp.gmail.com with ESMTPSA id gl2-20020a170906e0c200b006a767d52373sm969225ejb.182.2022.03.09.09.18.39
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 09 Mar 2022 09:18:40 -0800 (PST)
+Message-ID: <b7ae988c-b420-83bc-0a4a-e82393d1549f@canonical.com>
+Date:   Wed, 9 Mar 2022 18:18:39 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YiedlvZWpHd8HP40@ripper>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.5.0
+Subject: Re: [PATCH V2 1/6] dt-bindings: remoteproc: imx_rproc: support
+ i.MX8QXP
+Content-Language: en-US
+To:     "Peng Fan (OSS)" <peng.fan@oss.nxp.com>,
+        bjorn.andersson@linaro.org, mathieu.poirier@linaro.org,
+        robh+dt@kernel.org
+Cc:     shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
+        festevam@gmail.com, linux-imx@nxp.com,
+        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Peng Fan <peng.fan@nxp.com>
+References: <20220309102118.8131-1-peng.fan@oss.nxp.com>
+ <20220309102118.8131-2-peng.fan@oss.nxp.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+In-Reply-To: <20220309102118.8131-2-peng.fan@oss.nxp.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Tue, Mar 08, 2022 at 10:16:54AM -0800, Bjorn Andersson wrote:
-> On Tue 08 Mar 09:25 PST 2022, Drew Fustini wrote:
+On 09/03/2022 11:21, Peng Fan (OSS) wrote:
+> From: Peng Fan <peng.fan@nxp.com>
 > 
-> > From: Suman Anna <s-anna@ti.com>
-> > 
-> > The rproc_da_to_va() API is an exported function, so move its
-> > declaration from the remoteproc local remoteproc_internal.h
-> > to the public remoteproc.h file.
-> > 
-> > This will allow drivers outside of the remoteproc folder to be
-> > able to use this API.
-> > 
+> Add i.MX8QXP compatible
 > 
-> Can you explain why drivers outside of the remoteproc folder should be
-> able to poke straight into the memory of the remoteproc?
+> Add a new property rsrc-id(resource id) for SoC which supports
+> SCFW(System Controller Firmware). SCFW manages resources using resource
+> id, here the rsrc-id is used to check whether remote process is under
+> control of Linux or not.
 > 
-> Your reasoning makes sense, but we've on purpose kept it out of
-> remoteproc.h because no one has had a proper reason for it and I sense
-> that we might open the door for some new creative solutions...
+> To i.MX8QM/QXP, when M4 is in the same hardware partition with Cortex-A
+> cores, need power up M4 through SCFW, then M4 could start. So introduce
+> power-domains property.
+> 
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> ---
+>  .../bindings/remoteproc/fsl,imx-rproc.yaml        | 15 +++++++++++++++
+>  1 file changed, 15 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.yaml b/Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.yaml
+> index fc16d903353e..f25c203dd2f9 100644
+> --- a/Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.yaml
+> +++ b/Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.yaml
+> @@ -19,6 +19,7 @@ properties:
+>        - fsl,imx8mm-cm4
+>        - fsl,imx8mn-cm7
+>        - fsl,imx8mp-cm7
+> +      - fsl,imx8qxp-cm4
+>        - fsl,imx8ulp-cm33
+>        - fsl,imx7d-cm4
+>        - fsl,imx7ulp-cm4
+> @@ -27,6 +28,11 @@ properties:
+>    clocks:
+>      maxItems: 1
+>  
+> +  entry:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
 
-rproc_da_to_va() is used in a patch for drivers/soc/ti/wkup_m3_ipc.c
-that adds support for i2c voltage scaling [1].
+Does not look like a generic property, so please add vendor prefix.
+Suffix also would look good, so:
+"fsl,entry-address"
 
-wkup_m3_copy_aux_data() will copy auxiliary data to special region of
-the Cortex M3 memory. It calls rproc_da_to_va() to get aux_data_addr
-which is then used as a memcpy destination.
+> +    description: |
+> +      Specify cpu entry address for SCU enabled processor.
 
-Does that seem like a reasonable way to do it?
+s/cpu/CPU/
 
-I was going to submit the i2c voltage scaling patches later. However,
-I could combine them into a series with this remoteproc patch if that
-helps to justify the remoteproc.h change.
+> +
+>    syscon:
+>      $ref: /schemas/types.yaml#/definitions/phandle
+>      description:
+> @@ -59,6 +65,15 @@ properties:
+>        Indicate whether need to load the default firmware and start the remote
+>        processor automatically.
+>  
+> +  power-domains:
+> +    maxItems: 8
+> +
+> +  rsrc-id:
+> +    description:
+> +      This property is to specify the resource id of the remote processor in SoC
+> +      which supports SCFW
 
-Thanks,
-Drew
+Needs type, vendor prefix.
 
-[1] https://lore.kernel.org/linux-omap/20220219215328.485660-9-dfustini@baylibre.com/
+> +    maxItems: 1
+> +
+>  required:
+>    - compatible
+>  
+
+
+Best regards,
+Krzysztof
