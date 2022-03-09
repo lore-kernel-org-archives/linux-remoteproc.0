@@ -2,135 +2,242 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BEA5C433EF
-	for <linux-remoteproc@archiver.kernel.org>; Tue,  8 Mar 2022 18:15:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37075C433F5
+	for <linux-remoteproc@archiver.kernel.org>; Wed,  9 Mar 2022 04:46:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349050AbiCHSQK (ORCPT
+        id S229496AbiCIErP (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 8 Mar 2022 13:16:10 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36794 "EHLO
+        Tue, 8 Mar 2022 23:47:15 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38122 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345355AbiCHSQK (ORCPT
+        with ESMTP id S229448AbiCIErO (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 8 Mar 2022 13:16:10 -0500
-Received: from mail-oo1-xc30.google.com (mail-oo1-xc30.google.com [IPv6:2607:f8b0:4864:20::c30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 96EAD4C788
-        for <linux-remoteproc@vger.kernel.org>; Tue,  8 Mar 2022 10:15:12 -0800 (PST)
-Received: by mail-oo1-xc30.google.com with SMTP id l24-20020a4a8558000000b00320d5a1f938so10464884ooh.8
-        for <linux-remoteproc@vger.kernel.org>; Tue, 08 Mar 2022 10:15:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=K4GIB1a+cgx4ASeA8RiYFt2Phvx3d2n9qYtTtjZSkjo=;
-        b=UuFWGLCWyKSF1937a9Wv2qLhK28Wkbk9bEbbmmrrfvDRJ1Wtzfdj1sks2P69kNILqn
-         EPQd5G/VRqb8jjyzV2yyXcuczhNYHyervElZWFcN0DuJdw2O34wuDg6AGovcTtMiCRjr
-         PxPxce4e0JuQN4adwPVYMGDm5lUSUNp6hxV2hQBpnRWATRqv8QHWJURKk83phuW448Vb
-         NUXR5P8PFZudugMtiyCTu9nfk/2lQ1jwnS06yyX5/MJH9l5qdypLdYhDePlgoTLWudmv
-         dQB7ILfS0cZb1jrTD9P7lfXH6OmQOQWT15Fhdbrby8crHAMSNLJi3aCzTz8B36Fo0hb2
-         7u4A==
+        Tue, 8 Mar 2022 23:47:14 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id C4A78ECC60
+        for <linux-remoteproc@vger.kernel.org>; Tue,  8 Mar 2022 20:46:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1646801174;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=O9y7hYtf8DIbE/b1LIIjEL5hDziwE2SHgt9FQ5yzHZY=;
+        b=Rw4HgqxFdx9R5XkzimF6Q9vaE+dGRjq1OMXXjp7p85D65q11yr3aRAPXED6Qoe6GjCoD2S
+        sQSpzf87Gil43Ninq0cTK7PoOn9yk/cjLYbmHiDeUkKVnrr/j+vDSBVVqtyj9T3RBGJZiy
+        rwPY3QURaQOEi0scarEuUK/0yqVt9sM=
+Received: from mail-pg1-f200.google.com (mail-pg1-f200.google.com
+ [209.85.215.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-295-37Undi58Nfukv80ttYlo2Q-1; Tue, 08 Mar 2022 23:46:13 -0500
+X-MC-Unique: 37Undi58Nfukv80ttYlo2Q-1
+Received: by mail-pg1-f200.google.com with SMTP id t62-20020a635f41000000b0037c9ae5fb8bso640354pgb.19
+        for <linux-remoteproc@vger.kernel.org>; Tue, 08 Mar 2022 20:46:13 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=K4GIB1a+cgx4ASeA8RiYFt2Phvx3d2n9qYtTtjZSkjo=;
-        b=xv/+t+5R7R9kmRVVfBa1PWyS4nG4sfmfHMuudsJL6yJuZyirLrF1wRrztXFdQA3qh8
-         ngp3mPwED13c1eJh/FNalT66wgc9x6i4znP6JIEWOS3AJQVfoebIVMTNoRWpSZeslGtf
-         GIo6XZD6cPkYWJrnsXyRGB+Z83JaIFWH/rvWvGhLPM0PLftn9cmHlYdfuJM0LaUfWOGW
-         tJcCiNyQpKKvKX+yJoAQIxUHTXrLKoNNlgbsWh1RyVaxYxBYj6r3NErRLlK/mKCZ5Vmh
-         oSt5cGh0qhFjyi5z38A9uYjkqMnNXC+V/0cJavTGkj+//cbaS3OM5HBk5NoaSzvyP08U
-         Bnbg==
-X-Gm-Message-State: AOAM531eFGlGOsKLLSBZe8KKLbB6EjDIJ2PXJFsOVFrrVqB9uugEW+rk
-        QyGgGJia6zNL60oaEtmfsli0ag==
-X-Google-Smtp-Source: ABdhPJxMxiUBjaZfyfik8ZsFdtHh5D/+Th3AexX3SwQukuqx41mBNh7mZv7BtOgxyId3ct0kIoaJlA==
-X-Received: by 2002:a05:6870:3049:b0:da:371b:5864 with SMTP id u9-20020a056870304900b000da371b5864mr3179434oau.105.1646763311852;
-        Tue, 08 Mar 2022 10:15:11 -0800 (PST)
-Received: from ripper ([2600:1700:a0:3dc8:205:1bff:fec0:b9b3])
-        by smtp.gmail.com with ESMTPSA id 37-20020a9d0328000000b005b2265711fcsm4672999otv.16.2022.03.08.10.15.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Mar 2022 10:15:11 -0800 (PST)
-Date:   Tue, 8 Mar 2022 10:16:54 -0800
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Drew Fustini <dfustini@baylibre.com>
-Cc:     Mathieu Poirier <mathieu.poirier@linaro.org>,
-        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Suman Anna <s-anna@ti.com>, Dave Gerlach <d-gerlach@ti.com>
-Subject: Re: [PATCH] remoteproc: move rproc_da_to_va declaration to
- remoteproc.h
-Message-ID: <YiedlvZWpHd8HP40@ripper>
-References: <20220308172515.29556-1-dfustini@baylibre.com>
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=O9y7hYtf8DIbE/b1LIIjEL5hDziwE2SHgt9FQ5yzHZY=;
+        b=OhRDfeA3a6UogGcCG3aArGO6xzD9oDdaCy9mhTIwCSzHqqiXQ8Na1uT5PqQGJlfQzo
+         +GYAM8gm+fn0ln6NF/coy3cLHlHIOJhbWuJEGu1S3W2ajnOYUPNmXOVuCX5vmE641IHU
+         g+FhTe9wkvTEw3M5DPkVJM+wPMchFdQdPeohdwgazQ0eO1AkmYiYhcKCyYxcrVXJ6oyz
+         q5hB25SjGFEbY2uiUTN/pVhXTt6Oitb0nTRNuN4A0FQGisK5tJhPCtbb0FK/trTn03/O
+         WqWMYM6woEoPwCJrTQVSQ6JNqU6C0ZfGx1ao90Noodx7wA4rY1UWwdOsT0ZfI+idsrdj
+         p97A==
+X-Gm-Message-State: AOAM531a/wZXLcACF10n+K7Nquf+cGhwqG/jntniJfVEeVgu56DM4hFI
+        9TMf3L0rYQXiw/CGLC7fPdqjcwyBzJoyGPJVrWMnI5vK31+/Ejbx5unbSwVi27nKVaxW69Xr12Y
+        YMVnqT9Frt8+ZkeMgQxduNQXLjS6knA==
+X-Received: by 2002:a17:90a:17ab:b0:1bf:9519:fe86 with SMTP id q40-20020a17090a17ab00b001bf9519fe86mr5407270pja.25.1646801172045;
+        Tue, 08 Mar 2022 20:46:12 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJzNoaLCqq9sRt9psO5uqafOMqGFVYmxmfOSqOlDkq0FsYupDy1WKwY2W2xGCXK65aGhCKiuiQ==
+X-Received: by 2002:a17:90a:17ab:b0:1bf:9519:fe86 with SMTP id q40-20020a17090a17ab00b001bf9519fe86mr5407253pja.25.1646801171689;
+        Tue, 08 Mar 2022 20:46:11 -0800 (PST)
+Received: from [10.72.13.251] ([209.132.188.80])
+        by smtp.gmail.com with ESMTPSA id o5-20020a056a00214500b004bd7036b50asm810863pfk.172.2022.03.08.20.46.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 08 Mar 2022 20:46:11 -0800 (PST)
+Message-ID: <2c823fed-8024-39e7-f6f5-176fb518fc1a@redhat.com>
+Date:   Wed, 9 Mar 2022 12:45:57 +0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220308172515.29556-1-dfustini@baylibre.com>
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
+ Gecko/20100101 Thunderbird/91.6.1
+Subject: Re: [PATCH v7 00/26] virtio pci support VIRTIO_F_RING_RESET
+Content-Language: en-US
+To:     Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org
+Cc:     Jeff Dike <jdike@addtoit.com>, Richard Weinberger <richard@nod.at>,
+        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Mark Gross <markgross@kernel.org>,
+        Vadim Pasternak <vadimp@nvidia.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Cornelia Huck <cohuck@redhat.com>,
+        Halil Pasic <pasic@linux.ibm.com>,
+        Heiko Carstens <hca@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Jesper Dangaard Brouer <hawk@kernel.org>,
+        John Fastabend <john.fastabend@gmail.com>,
+        Johannes Berg <johannes.berg@intel.com>,
+        Vincent Whitchurch <vincent.whitchurch@axis.com>,
+        linux-um@lists.infradead.org, platform-driver-x86@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org, linux-s390@vger.kernel.org,
+        kvm@vger.kernel.org, bpf@vger.kernel.org
+References: <20220308123518.33800-1-xuanzhuo@linux.alibaba.com>
+From:   Jason Wang <jasowang@redhat.com>
+In-Reply-To: <20220308123518.33800-1-xuanzhuo@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Tue 08 Mar 09:25 PST 2022, Drew Fustini wrote:
 
-> From: Suman Anna <s-anna@ti.com>
-> 
-> The rproc_da_to_va() API is an exported function, so move its
-> declaration from the remoteproc local remoteproc_internal.h
-> to the public remoteproc.h file.
-> 
-> This will allow drivers outside of the remoteproc folder to be
-> able to use this API.
-> 
+在 2022/3/8 下午8:34, Xuan Zhuo 写道:
+> The virtio spec already supports the virtio queue reset function. This patch set
+> is to add this function to the kernel. The relevant virtio spec information is
+> here:
+>
+>      https://github.com/oasis-tcs/virtio-spec/issues/124
+>
+> Also regarding MMIO support for queue reset, I plan to support it after this
+> patch is passed.
+>
+> Performing reset on a queue is divided into four steps:
+>       1. virtio_reset_vq()              - notify the device to reset the queue
+>       2. virtqueue_detach_unused_buf()  - recycle the buffer submitted
+>       3. virtqueue_reset_vring()        - reset the vring (may re-alloc)
+>       4. virtio_enable_resetq()         - mmap vring to device, and enable the queue
+>
+> The first part 1-17 of this patch set implements virtio pci's support and API
+> for queue reset. The latter part is to make virtio-net support set_ringparam. Do
+> these things for this feature:
+>
+>        1. virtio-net support rx,tx reset
+>        2. find_vqs() support to special the max size of each vq
+>        3. virtio-net support set_ringparam
+>
+> #1 -#3 :       prepare
+> #4 -#12:       virtio ring support reset vring of the vq
+> #13-#14:       add helper
+> #15-#17:       virtio pci support reset queue and re-enable
+> #18-#21:       find_vqs() support sizes to special the max size of each vq
+> #23-#24:       virtio-net support rx, tx reset
+> #22, #25, #26: virtio-net support set ringparam
+>
+> Test environment:
+>      Host: 4.19.91
+>      Qemu: QEMU emulator version 6.2.50 (with vq reset support)
+>      Test Cmd:  ethtool -G eth1 rx $1 tx $2; ethtool -g eth1
+>
+>      The default is split mode, modify Qemu virtio-net to add PACKED feature to test
+>      packed mode.
+>
+>
+> Please review. Thanks.
+>
+> v7:
+>    1. fix #6 subject typo
+>    2. fix #6 ring_size_in_bytes is uninitialized
+>    3. check by: make W=12
+>
+> v6:
+>    1. virtio_pci: use synchronize_irq(irq) to sync the irq callbacks
+>    2. Introduce virtqueue_reset_vring() to implement the reset of vring during
+>       the reset process. May use the old vring if num of the vq not change.
+>    3. find_vqs() support sizes to special the max size of each vq
+>
+> v5:
+>    1. add virtio-net support set_ringparam
+>
+> v4:
+>    1. just the code of virtio, without virtio-net
+>    2. Performing reset on a queue is divided into these steps:
+>      1. reset_vq: reset one vq
+>      2. recycle the buffer from vq by virtqueue_detach_unused_buf()
+>      3. release the ring of the vq by vring_release_virtqueue()
+>      4. enable_reset_vq: re-enable the reset queue
+>    3. Simplify the parameters of enable_reset_vq()
+>    4. add container structures for virtio_pci_common_cfg
+>
+> v3:
+>    1. keep vq, irq unreleased
 
-Can you explain why drivers outside of the remoteproc folder should be
-able to poke straight into the memory of the remoteproc?
 
-Your reasoning makes sense, but we've on purpose kept it out of
-remoteproc.h because no one has had a proper reason for it and I sense
-that we might open the door for some new creative solutions...
+The series became kind of huge.
 
-Regards,
-Bjorn
+I'd suggest to split it into two series.
 
-> Signed-off-by: Suman Anna <s-anna@ti.com>
-> Signed-off-by: Dave Gerlach <d-gerlach@ti.com>
-> [adjusted line numbers to apply]
-> Signed-off-by: Drew Fustini <dfustini@baylibre.com>
-> ---
-> Note: I previously posted this patch as part of a series:
-> [PATCH 00/11] soc: ti: wkup_m3_ipc: support vtt toggle, io isolation & voltage scaling
-> https://lore.kernel.org/linux-omap/20220219215328.485660-1-dfustini@baylibre.com/
-> 
-> I was advised to break that series up into smaller pieces, so I am
-> submitting this patch individually. I will in the future post a series
-> to support i2c voltage scaling which will utilize rproc_da_to_va() from 
-> drivers/soc/ti/wkup_m3_ipc.c
-> 
->  drivers/remoteproc/remoteproc_internal.h | 1 -
->  include/linux/remoteproc.h               | 1 +
->  2 files changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/remoteproc/remoteproc_internal.h b/drivers/remoteproc/remoteproc_internal.h
-> index a328e634b1de..72d4d3d7d94d 100644
-> --- a/drivers/remoteproc/remoteproc_internal.h
-> +++ b/drivers/remoteproc/remoteproc_internal.h
-> @@ -84,7 +84,6 @@ static inline void  rproc_char_device_remove(struct rproc *rproc)
->  void rproc_free_vring(struct rproc_vring *rvring);
->  int rproc_alloc_vring(struct rproc_vdev *rvdev, int i);
->  
-> -void *rproc_da_to_va(struct rproc *rproc, u64 da, size_t len, bool *is_iomem);
->  phys_addr_t rproc_va_to_pa(void *cpu_addr);
->  int rproc_trigger_recovery(struct rproc *rproc);
->  
-> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-> index e0600e1e5c17..cc9dc9aef0c0 100644
-> --- a/include/linux/remoteproc.h
-> +++ b/include/linux/remoteproc.h
-> @@ -673,6 +673,7 @@ void rproc_shutdown(struct rproc *rproc);
->  int rproc_detach(struct rproc *rproc);
->  int rproc_set_firmware(struct rproc *rproc, const char *fw_name);
->  void rproc_report_crash(struct rproc *rproc, enum rproc_crash_type type);
-> +void *rproc_da_to_va(struct rproc *rproc, u64 da, size_t len, bool *is_iomem);
->  void rproc_coredump_using_sections(struct rproc *rproc);
->  int rproc_coredump_add_segment(struct rproc *rproc, dma_addr_t da, size_t size);
->  int rproc_coredump_add_custom_segment(struct rproc *rproc,
-> -- 
-> 2.32.0
-> 
+1) refactoring of the virtio_ring to prepare for the resize
+2) the reset support + virtio-net support
+
+Thanks
+
+
+>
+> *** BLURB HERE ***
+>
+> Xuan Zhuo (26):
+>    virtio_pci: struct virtio_pci_common_cfg add queue_notify_data
+>    virtio: queue_reset: add VIRTIO_F_RING_RESET
+>    virtio: add helper virtqueue_get_vring_max_size()
+>    virtio_ring: split: extract the logic of creating vring
+>    virtio_ring: split: extract the logic of init vq and attach vring
+>    virtio_ring: packed: extract the logic of creating vring
+>    virtio_ring: packed: extract the logic of init vq and attach vring
+>    virtio_ring: extract the logic of freeing vring
+>    virtio_ring: split: implement virtqueue_reset_vring_split()
+>    virtio_ring: packed: implement virtqueue_reset_vring_packed()
+>    virtio_ring: introduce virtqueue_reset_vring()
+>    virtio_ring: update the document of the virtqueue_detach_unused_buf
+>      for queue reset
+>    virtio: queue_reset: struct virtio_config_ops add callbacks for
+>      queue_reset
+>    virtio: add helper for queue reset
+>    virtio_pci: queue_reset: update struct virtio_pci_common_cfg and
+>      option functions
+>    virtio_pci: queue_reset: extract the logic of active vq for modern pci
+>    virtio_pci: queue_reset: support VIRTIO_F_RING_RESET
+>    virtio: find_vqs() add arg sizes
+>    virtio_pci: support the arg sizes of find_vqs()
+>    virtio_mmio: support the arg sizes of find_vqs()
+>    virtio: add helper virtio_find_vqs_ctx_size()
+>    virtio_net: get ringparam by virtqueue_get_vring_max_size()
+>    virtio_net: split free_unused_bufs()
+>    virtio_net: support rx/tx queue reset
+>    virtio_net: set the default max ring size by find_vqs()
+>    virtio_net: support set_ringparam
+>
+>   arch/um/drivers/virtio_uml.c             |   2 +-
+>   drivers/net/virtio_net.c                 | 257 ++++++++--
+>   drivers/platform/mellanox/mlxbf-tmfifo.c |   3 +-
+>   drivers/remoteproc/remoteproc_virtio.c   |   2 +-
+>   drivers/s390/virtio/virtio_ccw.c         |   2 +-
+>   drivers/virtio/virtio_mmio.c             |  12 +-
+>   drivers/virtio/virtio_pci_common.c       |  28 +-
+>   drivers/virtio/virtio_pci_common.h       |   3 +-
+>   drivers/virtio/virtio_pci_legacy.c       |   8 +-
+>   drivers/virtio/virtio_pci_modern.c       | 146 +++++-
+>   drivers/virtio/virtio_pci_modern_dev.c   |  36 ++
+>   drivers/virtio/virtio_ring.c             | 584 +++++++++++++++++------
+>   drivers/virtio/virtio_vdpa.c             |   2 +-
+>   include/linux/virtio.h                   |  12 +
+>   include/linux/virtio_config.h            |  74 ++-
+>   include/linux/virtio_pci_modern.h        |   2 +
+>   include/uapi/linux/virtio_config.h       |   7 +-
+>   include/uapi/linux/virtio_pci.h          |  14 +
+>   18 files changed, 979 insertions(+), 215 deletions(-)
+>
+> --
+> 2.31.0
+>
+
