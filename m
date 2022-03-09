@@ -2,68 +2,67 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F911C4332F
-	for <linux-remoteproc@archiver.kernel.org>; Wed,  9 Mar 2022 04:48:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2044EC43217
+	for <linux-remoteproc@archiver.kernel.org>; Wed,  9 Mar 2022 06:15:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229518AbiCIEtu (ORCPT
+        id S229941AbiCIGP4 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 8 Mar 2022 23:49:50 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42674 "EHLO
+        Wed, 9 Mar 2022 01:15:56 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49512 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229524AbiCIEtr (ORCPT
+        with ESMTP id S229930AbiCIGPw (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 8 Mar 2022 23:49:47 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id DBEA0158783
-        for <linux-remoteproc@vger.kernel.org>; Tue,  8 Mar 2022 20:48:48 -0800 (PST)
+        Wed, 9 Mar 2022 01:15:52 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 7FC281617C8
+        for <linux-remoteproc@vger.kernel.org>; Tue,  8 Mar 2022 22:14:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1646801328;
+        s=mimecast20190719; t=1646806489;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=7yW1kWq855MoycbxENZXn/INYb5Qcrtgiwr9xtyGJCE=;
-        b=BqcZKHSgPtV7wWEAkPYeiBzssX0Az1kSsBGdDEKxPjUvA7V2z5hV1mkVlg0JxvlQnA8Y/0
-        VxeVA6q+OC04lUufrR7TOzDd2br5jEc5uQFn3UPUaVLmPXn/5kFttwlcy4EvpivAPdlxTm
-        heJyLu3qEqXVlYqzbPVjgnG3RREYeG8=
-Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com
- [209.85.216.70]) by relay.mimecast.com with ESMTP with STARTTLS
+        bh=Ap6RrdGHmNkYVL8OAqPmtOOXTX9dVLo0fsotyLbFTFg=;
+        b=d2TS+Hy3FBoYz64XltSspcIpJWbwAC2ceQBa1WhCut1XhLf2CwlmhE4M++pkDhm0UIFpCP
+        I4ZWvLZElMPgv9qWPmjKov/XepoiyawFm8s5YxYqoH05FjHMxnmC3QijkDe6yKg44kkowK
+        DBtgdHLM4Hyw8uG+gNgljUQSriL7Lfs=
+Received: from mail-pf1-f200.google.com (mail-pf1-f200.google.com
+ [209.85.210.200]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-65-UxdfwhdINk2BCm1drPUPJw-1; Tue, 08 Mar 2022 23:48:46 -0500
-X-MC-Unique: UxdfwhdINk2BCm1drPUPJw-1
-Received: by mail-pj1-f70.google.com with SMTP id s20-20020a17090ad49400b001bf481fae01so2176674pju.1
-        for <linux-remoteproc@vger.kernel.org>; Tue, 08 Mar 2022 20:48:46 -0800 (PST)
+ us-mta-206-oFy724mKOQaJl00HCqYB0w-1; Wed, 09 Mar 2022 01:14:48 -0500
+X-MC-Unique: oFy724mKOQaJl00HCqYB0w-1
+Received: by mail-pf1-f200.google.com with SMTP id k130-20020a628488000000b004f362b45f28so979755pfd.9
+        for <linux-remoteproc@vger.kernel.org>; Tue, 08 Mar 2022 22:14:47 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
          :content-language:to:cc:references:from:in-reply-to
          :content-transfer-encoding;
-        bh=7yW1kWq855MoycbxENZXn/INYb5Qcrtgiwr9xtyGJCE=;
-        b=c4PEeSQuBPkjbGLjDy70VVN3pv8o5lUTyUmXaKI7MkabtPaCrA0tLHhmc69nJLSM7T
-         bDDTRDGrj81wDus0AdrJWCrfJMaigZWF31t1VbeAWyJgxXBnqxdkq96bOPyvebymBpCB
-         ci1UnajQQNzn3Bvz8SjfwBULIn/zAHb6EKAwsPj8OWbzKYQkORUpnw8VZSEblJ6pWgob
-         f4xoNuBbtRX3JEE9pX5TjZDAKUBFocWfkQfCkrjzv4sBvy6+jrne27Ffx9vA9fhHrQUd
-         dbxPjXwWNZi6/kaxiLD6iYpWHSiiwB56veQNgXxr4Seph5bEDN+qDVgGRHzoQ0itd7xw
-         X3Zg==
-X-Gm-Message-State: AOAM530GUV1HZcIQ2JL6BRht5b7450X5VO7gs1x+isCpfHle5Uex24dU
-        1MUfvG4K7EwcQtTiiYUKdso6wqd8KEXhEzDv2wJ735VIf1jcKHezuRPm0SSTEIOFlfUDtDEav7y
-        IP41RX6vEhZ/gNZoMEH13UCLGTvfw0w==
-X-Received: by 2002:a17:90b:17ca:b0:1bf:6188:cc00 with SMTP id me10-20020a17090b17ca00b001bf6188cc00mr8597564pjb.2.1646801325729;
-        Tue, 08 Mar 2022 20:48:45 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJwosqJUOOIblsYGQ27dg95V2/uz330dPMJom2dl9RgGa8k3TOiXYiGNo7Wasa+ovCrQzyH4wQ==
-X-Received: by 2002:a17:90b:17ca:b0:1bf:6188:cc00 with SMTP id me10-20020a17090b17ca00b001bf6188cc00mr8597538pjb.2.1646801325443;
-        Tue, 08 Mar 2022 20:48:45 -0800 (PST)
-Received: from [10.72.13.251] ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id g15-20020a056a0023cf00b004e17e11cb17sm821341pfc.111.2022.03.08.20.48.35
+        bh=Ap6RrdGHmNkYVL8OAqPmtOOXTX9dVLo0fsotyLbFTFg=;
+        b=ncDfx4pu6QkL7YWk3s1pol0uvR6cCxUEbkuF1KFecQTXk7wauFtDYiEzcssrUSRMYo
+         aaiSG7Pf9GjbAf0NKsJ1lC7kFZNB8VYyTFsHuJzrPNug1BiuyVDvq7+1mY5Kork3eSpn
+         Z4UO6h3T9A29TCu5WIIEeIRr6QRZ30OKwQnIZ/nknd/Iu4f4P0Nn0EvrtEnSbMrfPZfq
+         EWqfsNLhDDnaFolz4IdAKTLd1270YHVgLxcXyVL6UYXRC7JnUL7oG86/9Vr/lqaoX59V
+         3DG/acbLsQCUL1XqfzLYVcozhOJH2e3z7uqHN2qe7SCipaEWVYW/qShjX8N/KYi0Aicm
+         6gBg==
+X-Gm-Message-State: AOAM5318DPy4A0K9jgjpqn+H5gFhiAc3oHSpk9veEBheG8yTX8BXSOzo
+        h2HgVv3L127B7sjUwv/OFSWAJNmy1/gd/NMBEx2sytbCTBR3HCehY+xP93BsElI0KHVesfI4aRq
+        4IzoFGgqxKaB6AoNHY7ifDHOxdc1K2Q==
+X-Received: by 2002:a17:903:22cb:b0:151:9f41:8738 with SMTP id y11-20020a17090322cb00b001519f418738mr21847646plg.46.1646806487030;
+        Tue, 08 Mar 2022 22:14:47 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJyBCiRie4tAloFgqDg9JGwKT4KtqZzw2Fk+Xq44JLOLrxTAEP8NZVRRnFNWgW3q7UR+lbtsrg==
+X-Received: by 2002:a17:903:22cb:b0:151:9f41:8738 with SMTP id y11-20020a17090322cb00b001519f418738mr21847626plg.46.1646806486782;
+        Tue, 08 Mar 2022 22:14:46 -0800 (PST)
+Received: from [10.72.12.183] ([209.132.188.80])
+        by smtp.gmail.com with ESMTPSA id v14-20020a056a00148e00b004e1cee6f6b4sm1233248pfu.47.2022.03.08.22.14.37
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 08 Mar 2022 20:48:44 -0800 (PST)
-Message-ID: <373494ae-825b-d573-012c-4e7d453934da@redhat.com>
-Date:   Wed, 9 Mar 2022 12:48:33 +0800
+        Tue, 08 Mar 2022 22:14:46 -0800 (PST)
+Message-ID: <4bc140fa-9e72-4bb5-47d9-84d9db384898@redhat.com>
+Date:   Wed, 9 Mar 2022 14:14:31 +0800
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
  Gecko/20100101 Thunderbird/91.6.1
-Subject: Re: [PATCH v7 01/26] virtio_pci: struct virtio_pci_common_cfg add
- queue_notify_data
+Subject: Re: [PATCH v7 02/26] virtio: queue_reset: add VIRTIO_F_RING_RESET
 Content-Language: en-US
 To:     Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
         virtualization@lists.linux-foundation.org, netdev@vger.kernel.org
@@ -94,9 +93,9 @@ Cc:     Jeff Dike <jdike@addtoit.com>, Richard Weinberger <richard@nod.at>,
         linux-remoteproc@vger.kernel.org, linux-s390@vger.kernel.org,
         kvm@vger.kernel.org, bpf@vger.kernel.org
 References: <20220308123518.33800-1-xuanzhuo@linux.alibaba.com>
- <20220308123518.33800-2-xuanzhuo@linux.alibaba.com>
+ <20220308123518.33800-3-xuanzhuo@linux.alibaba.com>
 From:   Jason Wang <jasowang@redhat.com>
-In-Reply-To: <20220308123518.33800-2-xuanzhuo@linux.alibaba.com>
+In-Reply-To: <20220308123518.33800-3-xuanzhuo@linux.alibaba.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -105,40 +104,44 @@ X-Mailing-List: linux-remoteproc@vger.kernel.org
 
 
 在 2022/3/8 下午8:34, Xuan Zhuo 写道:
-> Add queue_notify_data in struct virtio_pci_common_cfg, which comes from
-> here https://github.com/oasis-tcs/virtio-spec/issues/89
->
-> For not breaks uABI, add a new struct virtio_pci_common_cfg_notify.
->
-> Since I want to add queue_reset after queue_notify_data, I submitted
-> this patch first.
->
-> Signed-off-by: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
+> Added VIRTIO_F_RING_RESET, it came from here
+> https://github.com/oasis-tcs/virtio-spec/issues/124
 
+
+Nit: it's better to explain VIRTIO_F_RING_RESET a little bit here.
+
+Other than this.
 
 Acked-by: Jason Wang <jasowang@redhat.com>
 
 
-> ---
->   include/uapi/linux/virtio_pci.h | 7 +++++++
->   1 file changed, 7 insertions(+)
 >
-> diff --git a/include/uapi/linux/virtio_pci.h b/include/uapi/linux/virtio_pci.h
-> index 3a86f36d7e3d..22bec9bd0dfc 100644
-> --- a/include/uapi/linux/virtio_pci.h
-> +++ b/include/uapi/linux/virtio_pci.h
-> @@ -166,6 +166,13 @@ struct virtio_pci_common_cfg {
->   	__le32 queue_used_hi;		/* read-write */
->   };
+> Signed-off-by: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
+> ---
+>   include/uapi/linux/virtio_config.h | 7 ++++++-
+>   1 file changed, 6 insertions(+), 1 deletion(-)
+>
+> diff --git a/include/uapi/linux/virtio_config.h b/include/uapi/linux/virtio_config.h
+> index b5eda06f0d57..0862be802ff8 100644
+> --- a/include/uapi/linux/virtio_config.h
+> +++ b/include/uapi/linux/virtio_config.h
+> @@ -52,7 +52,7 @@
+>    * rest are per-device feature bits.
+>    */
+>   #define VIRTIO_TRANSPORT_F_START	28
+> -#define VIRTIO_TRANSPORT_F_END		38
+> +#define VIRTIO_TRANSPORT_F_END		41
 >   
-> +struct virtio_pci_common_cfg_notify {
-> +	struct virtio_pci_common_cfg cfg;
+>   #ifndef VIRTIO_CONFIG_NO_LEGACY
+>   /* Do we get callbacks when the ring is completely used, even if we've
+> @@ -92,4 +92,9 @@
+>    * Does the device support Single Root I/O Virtualization?
+>    */
+>   #define VIRTIO_F_SR_IOV			37
 > +
-> +	__le16 queue_notify_data;	/* read-write */
-> +	__le16 padding;
-> +};
-> +
->   /* Fields in VIRTIO_PCI_CAP_PCI_CFG: */
->   struct virtio_pci_cfg_cap {
->   	struct virtio_pci_cap cap;
+> +/*
+> + * This feature indicates that the driver can reset a queue individually.
+> + */
+> +#define VIRTIO_F_RING_RESET		40
+>   #endif /* _UAPI_LINUX_VIRTIO_CONFIG_H */
 
