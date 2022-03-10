@@ -2,302 +2,191 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A055DC433EF
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 10 Mar 2022 14:20:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BBD8C433F5
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 10 Mar 2022 14:53:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243377AbiCJOVq (ORCPT
+        id S237482AbiCJOyZ (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 10 Mar 2022 09:21:46 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43462 "EHLO
+        Thu, 10 Mar 2022 09:54:25 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36970 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243817AbiCJOSY (ORCPT
+        with ESMTP id S1346147AbiCJOmi (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 10 Mar 2022 09:18:24 -0500
-Received: from out30-44.freemail.mail.aliyun.com (out30-44.freemail.mail.aliyun.com [115.124.30.44])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2981E166E31;
-        Thu, 10 Mar 2022 06:14:51 -0800 (PST)
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R121e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04400;MF=xuanzhuo@linux.alibaba.com;NM=1;PH=DS;RN=33;SR=0;TI=SMTPD_---0V6onflR_1646921659;
-Received: from localhost(mailfrom:xuanzhuo@linux.alibaba.com fp:SMTPD_---0V6onflR_1646921659)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Thu, 10 Mar 2022 22:14:20 +0800
-Message-ID: <1646921388.7015996-1-xuanzhuo@linux.alibaba.com>
-Subject: Re: [PATCH v7 09/26] virtio_ring: split: implement virtqueue_reset_vring_split()
-Date:   Thu, 10 Mar 2022 22:09:48 +0800
-From:   Xuan Zhuo <xuanzhuo@linux.alibaba.com>
-To:     "Michael S. Tsirkin" <mst@redhat.com>
-Cc:     virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
-        Jeff Dike <jdike@addtoit.com>,
-        Richard Weinberger <richard@nod.at>,
-        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
-        Jason Wang <jasowang@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Mark Gross <markgross@kernel.org>,
-        Vadim Pasternak <vadimp@nvidia.com>,
+        Thu, 10 Mar 2022 09:42:38 -0500
+Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [46.235.227.227])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3512110EC71;
+        Thu, 10 Mar 2022 06:40:42 -0800 (PST)
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: kholk11)
+        with ESMTPSA id 42B881F4592C
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1646923240;
+        bh=twmvPMBXpCtjQaOxFlhSQ0t2WCEZ9mk4gP1Gmfjc8cY=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=bu6K6V2iDa++LupO2x7yaRGExEZNhxm11yrUSf02TZ9Kxyrz7sb9akpciPqa7AZ1H
+         /lGsHPgeVloLRWcIFAb3182BKNwYEyU5OktHpyzzRENe8KOYfeY+0eljBkpJui6AAU
+         Z535DZMSTrDqmXmw6DoVWIxVeZFvkXtJyfRbazGi5XS7KHwGzOFlwDHRzZt9i43rAZ
+         KEWauRFPe8gk8QJRmjPCAX5xO+/rvRSjZkCVNuinwhy4Egew/utvEcPNJy9uuhfRLa
+         HTp9gAPz2rhoqAhCnKwpX0wDXclIsmca4LRGlheB1nVPfbPB9R4UieXX2Y/9opXp3h
+         MlLZxpKubHQFg==
+Message-ID: <4974d21c-953c-30c1-8dbf-5826dbb20d8e@collabora.com>
+Date:   Thu, 10 Mar 2022 15:40:37 +0100
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.5.1
+Subject: Re: [PATCH] remoteproc: mediatek: fix side effect of mt8195 sram
+ power on
+Content-Language: en-US
+To:     Tinghan Shen <tinghan.shen@mediatek.com>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Cornelia Huck <cohuck@redhat.com>,
-        Halil Pasic <pasic@linux.ibm.com>,
-        Heiko Carstens <hca@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Jesper Dangaard Brouer <hawk@kernel.org>,
-        John Fastabend <john.fastabend@gmail.com>,
-        Johannes Berg <johannes.berg@intel.com>,
-        Vincent Whitchurch <vincent.whitchurch@axis.com>,
-        linux-um@lists.infradead.org, platform-driver-x86@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org, linux-s390@vger.kernel.org,
-        kvm@vger.kernel.org, bpf@vger.kernel.org
-References: <20220308123518.33800-1-xuanzhuo@linux.alibaba.com>
- <20220308123518.33800-10-xuanzhuo@linux.alibaba.com>
- <20220310015418-mutt-send-email-mst@kernel.org>
- <1646896623.3794115-2-xuanzhuo@linux.alibaba.com>
- <20220310025930-mutt-send-email-mst@kernel.org>
- <1646900056.7775025-1-xuanzhuo@linux.alibaba.com>
- <20220310071335-mutt-send-email-mst@kernel.org>
- <1646915610.3936472-1-xuanzhuo@linux.alibaba.com>
- <20220310080212-mutt-send-email-mst@kernel.org>
-In-Reply-To: <20220310080212-mutt-send-email-mst@kernel.org>
+        Matthias Brugger <matthias.bgg@gmail.com>
+Cc:     linux-remoteproc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Project_Global_Chrome_Upstream_Group@mediatek.com
+References: <20220309114713.8156-1-tinghan.shen@mediatek.com>
+From:   AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>
+In-Reply-To: <20220309114713.8156-1-tinghan.shen@mediatek.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Thu, 10 Mar 2022 08:04:27 -0500, "Michael S. Tsirkin" <mst@redhat.com> wrote:
-> On Thu, Mar 10, 2022 at 08:33:30PM +0800, Xuan Zhuo wrote:
-> > On Thu, 10 Mar 2022 07:17:09 -0500, "Michael S. Tsirkin" <mst@redhat.com> wrote:
-> > > On Thu, Mar 10, 2022 at 04:14:16PM +0800, Xuan Zhuo wrote:
-> > > > On Thu, 10 Mar 2022 03:07:22 -0500, "Michael S. Tsirkin" <mst@redhat.com> wrote:
-> > > > > On Thu, Mar 10, 2022 at 03:17:03PM +0800, Xuan Zhuo wrote:
-> > > > > > On Thu, 10 Mar 2022 02:00:39 -0500, "Michael S. Tsirkin" <mst@redhat.com> wrote:
-> > > > > > > On Tue, Mar 08, 2022 at 08:35:01PM +0800, Xuan Zhuo wrote:
-> > > > > > > > virtio ring supports reset.
-> > > > > > > >
-> > > > > > > > Queue reset is divided into several stages.
-> > > > > > > >
-> > > > > > > > 1. notify device queue reset
-> > > > > > > > 2. vring release
-> > > > > > > > 3. attach new vring
-> > > > > > > > 4. notify device queue re-enable
-> > > > > > > >
-> > > > > > > > After the first step is completed, the vring reset operation can be
-> > > > > > > > performed. If the newly set vring num does not change, then just reset
-> > > > > > > > the vq related value.
-> > > > > > > >
-> > > > > > > > Otherwise, the vring will be released and the vring will be reallocated.
-> > > > > > > > And the vring will be attached to the vq. If this process fails, the
-> > > > > > > > function will exit, and the state of the vq will be the vring release
-> > > > > > > > state. You can call this function again to reallocate the vring.
-> > > > > > > >
-> > > > > > > > In addition, vring_align, may_reduce_num are necessary for reallocating
-> > > > > > > > vring, so they are retained when creating vq.
-> > > > > > > >
-> > > > > > > > Signed-off-by: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
-> > > > > > > > ---
-> > > > > > > >  drivers/virtio/virtio_ring.c | 69 ++++++++++++++++++++++++++++++++++++
-> > > > > > > >  1 file changed, 69 insertions(+)
-> > > > > > > >
-> > > > > > > > diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
-> > > > > > > > index e0422c04c903..148fb1fd3d5a 100644
-> > > > > > > > --- a/drivers/virtio/virtio_ring.c
-> > > > > > > > +++ b/drivers/virtio/virtio_ring.c
-> > > > > > > > @@ -158,6 +158,12 @@ struct vring_virtqueue {
-> > > > > > > >  			/* DMA address and size information */
-> > > > > > > >  			dma_addr_t queue_dma_addr;
-> > > > > > > >  			size_t queue_size_in_bytes;
-> > > > > > > > +
-> > > > > > > > +			/* The parameters for creating vrings are reserved for
-> > > > > > > > +			 * creating new vrings when enabling reset queue.
-> > > > > > > > +			 */
-> > > > > > > > +			u32 vring_align;
-> > > > > > > > +			bool may_reduce_num;
-> > > > > > > >  		} split;
-> > > > > > > >
-> > > > > > > >  		/* Available for packed ring */
-> > > > > > > > @@ -217,6 +223,12 @@ struct vring_virtqueue {
-> > > > > > > >  #endif
-> > > > > > > >  };
-> > > > > > > >
-> > > > > > > > +static void vring_free(struct virtqueue *vq);
-> > > > > > > > +static void __vring_virtqueue_init_split(struct vring_virtqueue *vq,
-> > > > > > > > +					 struct virtio_device *vdev);
-> > > > > > > > +static int __vring_virtqueue_attach_split(struct vring_virtqueue *vq,
-> > > > > > > > +					  struct virtio_device *vdev,
-> > > > > > > > +					  struct vring vring);
-> > > > > > > >
-> > > > > > > >  /*
-> > > > > > > >   * Helpers.
-> > > > > > > > @@ -1012,6 +1024,8 @@ static struct virtqueue *vring_create_virtqueue_split(
-> > > > > > > >  		return NULL;
-> > > > > > > >  	}
-> > > > > > > >
-> > > > > > > > +	to_vvq(vq)->split.vring_align = vring_align;
-> > > > > > > > +	to_vvq(vq)->split.may_reduce_num = may_reduce_num;
-> > > > > > > >  	to_vvq(vq)->split.queue_dma_addr = vring.dma_addr;
-> > > > > > > >  	to_vvq(vq)->split.queue_size_in_bytes = vring.queue_size_in_bytes;
-> > > > > > > >  	to_vvq(vq)->we_own_ring = true;
-> > > > > > > > @@ -1019,6 +1033,59 @@ static struct virtqueue *vring_create_virtqueue_split(
-> > > > > > > >  	return vq;
-> > > > > > > >  }
-> > > > > > > >
-> > > > > > > > +static int virtqueue_reset_vring_split(struct virtqueue *_vq, u32 num)
-> > > > > > > > +{
-> > > > > > > > +	struct vring_virtqueue *vq = to_vvq(_vq);
-> > > > > > > > +	struct virtio_device *vdev = _vq->vdev;
-> > > > > > > > +	struct vring_split vring;
-> > > > > > > > +	int err;
-> > > > > > > > +
-> > > > > > > > +	if (num > _vq->num_max)
-> > > > > > > > +		return -E2BIG;
-> > > > > > > > +
-> > > > > > > > +	switch (vq->vq.reset) {
-> > > > > > > > +	case VIRTIO_VQ_RESET_STEP_NONE:
-> > > > > > > > +		return -ENOENT;
-> > > > > > > > +
-> > > > > > > > +	case VIRTIO_VQ_RESET_STEP_VRING_ATTACH:
-> > > > > > > > +	case VIRTIO_VQ_RESET_STEP_DEVICE:
-> > > > > > > > +		if (vq->split.vring.num == num || !num)
-> > > > > > > > +			break;
-> > > > > > > > +
-> > > > > > > > +		vring_free(_vq);
-> > > > > > > > +
-> > > > > > > > +		fallthrough;
-> > > > > > > > +
-> > > > > > > > +	case VIRTIO_VQ_RESET_STEP_VRING_RELEASE:
-> > > > > > > > +		if (!num)
-> > > > > > > > +			num = vq->split.vring.num;
-> > > > > > > > +
-> > > > > > > > +		err = vring_create_vring_split(&vring, vdev,
-> > > > > > > > +					       vq->split.vring_align,
-> > > > > > > > +					       vq->weak_barriers,
-> > > > > > > > +					       vq->split.may_reduce_num, num);
-> > > > > > > > +		if (err)
-> > > > > > > > +			return -ENOMEM;
-> > > > > > > > +
-> > > > > > > > +		err = __vring_virtqueue_attach_split(vq, vdev, vring.vring);
-> > > > > > > > +		if (err) {
-> > > > > > > > +			vring_free_queue(vdev, vring.queue_size_in_bytes,
-> > > > > > > > +					 vring.queue,
-> > > > > > > > +					 vring.dma_addr);
-> > > > > > > > +			return -ENOMEM;
-> > > > > > > > +		}
-> > > > > > > > +
-> > > > > > > > +		vq->split.queue_dma_addr = vring.dma_addr;
-> > > > > > > > +		vq->split.queue_size_in_bytes = vring.queue_size_in_bytes;
-> > > > > > > > +	}
-> > > > > > > > +
-> > > > > > > > +	__vring_virtqueue_init_split(vq, vdev);
-> > > > > > > > +	vq->we_own_ring = true;
-> > > > > > > > +	vq->vq.reset = VIRTIO_VQ_RESET_STEP_VRING_ATTACH;
-> > > > > > > > +
-> > > > > > > > +	return 0;
-> > > > > > > > +}
-> > > > > > > > +
-> > > > > > >
-> > > > > > > I kind of dislike this state machine.
-> > > > > > >
-> > > > > > > Hacks like special-casing num = 0 to mean "reset" are especially
-> > > > > > > confusing.
-> > > > > >
-> > > > > > I'm removing it. I'll say in the function description that this function is
-> > > > > > currently only called when vq has been reset. I'm no longer checking it based on
-> > > > > > state.
-> > > > > >
-> > > > > > >
-> > > > > > > And as Jason points out, when we want a resize then yes this currently
-> > > > > > > implies reset but that is an implementation detail.
-> > > > > > >
-> > > > > > > There should be a way to just make these cases separate functions
-> > > > > > > and then use them to compose consistent external APIs.
-> > > > > >
-> > > > > > Yes, virtqueue_resize_split() is fine for ethtool -G.
-> > > > > >
-> > > > > > But in the case of AF_XDP, just execute reset to free the buffer. The name
-> > > > > > virtqueue_reset_vring_split() I think can cover both cases. Or we use two apis
-> > > > > > to handle both scenarios?
-> > > > > >
-> > > > > > Or can anyone think of a better name. ^_^
-> > > > > >
-> > > > > > Thanks.
-> > > > >
-> > > > >
-> > > > > I'd say resize should be called resize and reset should be called reset.
-> > > >
-> > > >
-> > > > OK, I'll change it to resize here.
-> > > >
-> > > > But I want to know that when I implement virtio-net to support AF_XDP, its
-> > > > requirement is to release all submitted buffers. Then should I add a new api
-> > > > such as virtqueue_reset_vring()?
-> > >
-> > > Sounds like a reasonable name.
-> > >
-> > > > >
-> > > > > The big issue is a sane API for resize. Ideally it would resubmit
-> > > > > buffers which did not get used. Question is what to do
-> > > > > about buffers which don't fit (if ring has been downsized)?
-> > > > > Maybe a callback that will handle them?
-> > > > > And then what? Queue them up and readd later? Drop?
-> > > > > If we drop we should drop from the head not the tail ...
-> > > >
-> > > > It's a good idea, let's implement it later.
-> > > >
-> > > > Thanks.
-> > >
-> > > Well ... not sure how you are going to support resize
-> > > if you don't know what to do with buffers that were
-> > > in the ring.
-> >
-> > The current solution is to call virtqueue_detach_unused_buf() to release buffers
-> > before resize ring.
-> >
-> > Thanks.
->
-> This requires basically a richer api:
-> - stop
-> - detach
-> - resize
-> - start
+Il 09/03/22 12:47, Tinghan Shen ha scritto:
+> The definition of L1TCM_SRAM_PDN bits on mt8195 is different to mt8192.
+> 
+> L1TCM_SRAM_PDN bits[3:0] control the power of mt8195 L1TCM SRAM.
+> 
+> L1TCM_SRAM_PDN bits[7:4] control the access path to EMI for SCP.
+> These bits have to be powered on to allow EMI access for SCP.
+> 
+> Bits[7:4] also affect audio DSP because audio DSP and SCP are
+> placed on the same hardware bus. If SCP cannot access EMI, audio DSP is
+> blocked too.
+> 
+> L1TCM_SRAM_PDN bits[31:8] are not used.
+> 
+> This fix removes modification of bits[7:4] when power on/off mt8195 SCP
+> L1TCM. It's because the modification introduces a short period of time
+> blocking audio DSP to access EMI. This was not a problem until we have
+> to load both SCP module and audio DSP module. audio DSP needs to access
+> EMI because it has source/data on DRAM. Audio DSP will have unexpected
+> behavior when it accesses EMI and the SCP driver blocks the EMI path at
+> the same time.
+> 
+> Signed-off-by: Tinghan Shen <tinghan.shen@mediatek.com>
+> ---
+>   drivers/remoteproc/mtk_common.h |  4 +++
+>   drivers/remoteproc/mtk_scp.c    | 57 +++++++++++++++++++++++++++++----
+>   2 files changed, 55 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/remoteproc/mtk_common.h b/drivers/remoteproc/mtk_common.h
+> index 5ff3867c72f3..27e7172c926d 100644
+> --- a/drivers/remoteproc/mtk_common.h
+> +++ b/drivers/remoteproc/mtk_common.h
+> @@ -51,6 +51,10 @@
+>   #define MT8192_CORE0_WDT_IRQ		0x10030
+>   #define MT8192_CORE0_WDT_CFG		0x10034
+>   
+> +#define MT8195_L1TCM_SRAM_PDN_RESERVED_RSI_BITS		0xF0
 
-Yes, that's how it is currently implemented.
+This is GENMASK(7, 4)..
 
->
-> with a callback you would just have a resize, and the fact
-> it resets internally becomes an implementation detail.
+> +#define MT8195_L1TCM_SRAM_PDN_RESERVED_BITS \
+> +	MT8195_L1TCM_SRAM_PDN_RESERVED_RSI_BITS
+> +
+
+Why are you defining the same thing twice?
+Please drop this.
+
+>   #define SCP_FW_VER_LEN			32
+>   #define SCP_SHARE_BUFFER_SIZE		288
+>   
+> diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
+> index dcddb33e9997..4d75af856fd1 100644
+> --- a/drivers/remoteproc/mtk_scp.c
+> +++ b/drivers/remoteproc/mtk_scp.c
+> @@ -365,22 +365,32 @@ static int mt8183_scp_before_load(struct mtk_scp *scp)
+>   	return 0;
+>   }
+>   
+> -static void mt8192_power_on_sram(void __iomem *addr)
+> +static void scp_sram_power_on(void __iomem *addr, u32 reserved_mask)
+>   {
+>   	int i;
+>   
+>   	for (i = 31; i >= 0; i--)
+> -		writel(GENMASK(i, 0), addr);
+> +		writel(GENMASK(i, 0) & ~reserved_mask, addr);
+>   	writel(0, addr);
+>   }
+>   
+> -static void mt8192_power_off_sram(void __iomem *addr)
+> +static void scp_sram_power_off(void __iomem *addr, u32 reserved_mask)
+>   {
+>   	int i;
+>   
+>   	writel(0, addr);
+>   	for (i = 0; i < 32; i++)
+> -		writel(GENMASK(i, 0), addr);
+> +		writel(GENMASK(i, 0) & ~reserved_mask, addr);
+> +}
+> +
+> +static void mt8192_power_on_sram(void __iomem *addr)
+> +{
+> +	scp_sram_power_on(addr, 0);
+> +}
+> +
+> +static void mt8192_power_off_sram(void __iomem *addr)
+> +{
+> +	scp_sram_power_off(addr, 0);
+>   }
+>   
+>   static int mt8192_scp_before_load(struct mtk_scp *scp)
+> @@ -403,6 +413,27 @@ static int mt8192_scp_before_load(struct mtk_scp *scp)
+>   	return 0;
+>   }
+>   
+> +static int mt8195_scp_before_load(struct mtk_scp *scp)
+> +{
+> +	/* clear SPM interrupt, SCP2SPM_IPC_CLR */
+> +	writel(0xff, scp->reg_base + MT8192_SCP2SPM_IPC_CLR);
+> +
+> +	writel(1, scp->reg_base + MT8192_CORE0_SW_RSTN_SET);
+> +
+> +	/* enable SRAM clock */
+> +	mt8192_power_on_sram(scp->reg_base + MT8192_L2TCM_SRAM_PD_0);
+
+At this point, you can simply use scp_sram_power_{on, off} instead of defining
+a new function for just one call... I get that your intent here is to enhance
+human readability, but I don't think that this is really happening with that and,
+if it is, it's just about a little ignorable difference.
+
+Please use scp_sram_power_on() and scp_sram_power_off() directly.
+
+	scp_sram_power_on(scp->reg_base + MT8192_L2TCM_SRAM_PD_1, 0);
+	... etc :)
+
+> +	mt8192_power_on_sram(scp->reg_base + MT8192_L2TCM_SRAM_PD_1);
+> +	mt8192_power_on_sram(scp->reg_base + MT8192_L2TCM_SRAM_PD_2);
+> +	scp_sram_power_on(scp->reg_base + MT8192_L1TCM_SRAM_PDN,
+> +			  MT8195_L1TCM_SRAM_PDN_RESERVED_BITS);
+> +	mt8192_power_on_sram(scp->reg_base + MT8192_CPU0_SRAM_PD);
+> +
+> +	/* enable MPU for all memory regions */
+> +	writel(0xff, scp->reg_base + MT8192_CORE0_MEM_ATT_PREDEF);
+> +
+> +	return 0;
+> +}
+> +
+
+Please remember to add me to the Cc's for the next version, so that I will be
+able to timely give you my R-b tag for this one.
+
+Regards,
+Angelo
 
 
-I think, I understand what you mean, we encapsulate the following code into a
-function as an external interface.
-
-int virtqueue_resize(vq, callback)
-{
-	err = virtqueue_reset(sq->vq);
-	if (err) {
-		netif_start_subqueue(vi->dev, qindex);
-		goto err;
-	}
-
-	/* detach */
-	while ((buf = virtqueue_detach_unused_buf(sq->vq)) != NULL) {
-		callback(vq, buf);
-	}
-
-	err = virtqueue_resize(sq->vq, ring_num);
-	if (err)
-		goto err;
-
-	err = virtqueue_enable_resetq(sq->vq);
-	if (err)
-		goto err;
-}
-
-Thanks.
-
->
-> --
-> MST
->
